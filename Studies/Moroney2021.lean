@@ -61,33 +61,22 @@ open scoped SetRel
 
 /-! ### Type-shift selection -/
 
-/-- With a non-kind predicate a Shan bare noun type-shifts by ι, the definite reading, while an
-English bare singular has no shift available at all, since *the* blocks ι and ι^x, *a* blocks ∃,
-and ∩ is undefined for a singular count noun. -/
 theorem shan_iota_english_none :
     MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .iota ∧
       ∀ τ, ¬ English.Determiners.inventory.Available False τ := by
   decide
 
-/-- With a kind-compatible predicate ∩, ι and ι^x are all maximal, which is the kind and definite
-ambiguity of Shan bare nouns. -/
 theorem shan_kind_ambiguity :
     MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .down ∧
       MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .iota ∧
       MaximalFor (Shan.Determiners.inventory.Available True) (· ≠ .exists) .iotaAnaphoric := by
   decide
 
-/-- Shan blocks no ι^x, so bare nouns reach anaphoric definiteness; Thai's demonstrative marks
-familiarity and blocks it. -/
 theorem shan_thai_anaphoric_contrast :
     Shan.Determiners.inventory.Available False .iotaAnaphoric ∧
       ¬ Thai.Determiners.inventory.Available False .iotaAnaphoric := by
   decide
 
-/-- Under Meaning Preservation ι outranks ∃, which is available to a Shan bare noun but never
-selected beside ι, so Shan bare nouns default to definite or kind readings and the existential
-reading arises only through existential closure at vP, whence the missing high-scope
-existential. -/
 theorem shan_exists_is_last_resort :
     Shan.Determiners.inventory.Available False .exists ∧
       ¬ MaximalFor (Shan.Determiners.inventory.Available False) (· ≠ .exists) .exists := by
@@ -98,8 +87,6 @@ theorem shan_exists_is_last_resort :
 /-- An unmarked inventory marks neither presupposition. -/
 def IsUnmarked (ds : Determiner.Inventory) : Prop := ds.strengths = ∅
 
-/-- The four languages fill the four types of the revised typology, English being generally marked,
-German bipartite, Thai marked anaphoric and Shan unmarked. -/
 theorem derive_all_languages :
     IsGenerallyMarked English.Determiners.inventory ∧ IsBipartite German.Determiners.inventory ∧
       IsMarkedAnaphoric Thai.Determiners.inventory ∧ IsUnmarked Shan.Determiners.inventory :=
@@ -107,21 +94,16 @@ theorem derive_all_languages :
     ⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
     Thai.Determiners.strengths_inventory, Shan.Determiners.strengths_inventory⟩
 
-/-- Shan has no determiner realizing anaphoric definiteness, yet expresses it — through bare
-nouns (unblocked ι^x) and the optional demonstratives, which it does realize. -/
 theorem shan_anaphoric_without_article :
     ¬ Shan.Determiners.inventory.Realizes .anaphoric ∧
       Shan.Determiners.inventory.Realizes .demonstrative := by
   constructor <;> decide
 
-/-- English realizes anaphoric definiteness through syncretic *the* and German through its
-dedicated strong article. -/
 theorem english_german_anaphoric_realized :
     English.Determiners.inventory.Realizes .anaphoric ∧
       German.Determiners.inventory.Realizes .anaphoric := by
   decide
 
-/-- Shan is of none of [jenks-2018]'s four types. -/
 theorem shan_refutes_jenks_typology :
     ¬ (IsBipartite Shan.Determiners.inventory ∨ IsMarkedAnaphoric Shan.Determiners.inventory ∨
       IsGenerallyMarked Shan.Determiners.inventory ∨
@@ -140,8 +122,6 @@ def LacksMinimalParts {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
 /-- The dog-pluralities over two dogs are the nonempty subsets. -/
 abbrev isDog (x : Finset (Fin 2)) : Prop := x.Nonempty
 
-/-- Shan *mǎa* 'dog' patterns with English *furniture*. The sum of dogs is dogs, but the individual
-dogs are minimal, so the predicate is cumulative without being homogeneous. -/
 theorem maa_cumulative_not_divisive : CUM isDog ∧ ¬ LacksMinimalParts isDog := by
   refine ⟨fun _ hx _ _ ↦ hx.mono Finset.subset_union_left, fun h ↦ ?_⟩
   obtain ⟨y, hy, hne⟩ := h {0} (Finset.singleton_nonempty 0)
@@ -164,9 +144,6 @@ noncomputable def demDenotation (d : DemonstrativeDeterminer) (restrictor : E �
     Option E :=
   iota fun x ↦ restrictor x ∧ x ∈ χ.image (c.participants ⁻¹' d.deixis)
 
-/-- The demonstrative refers to the bare definite's referent whenever that referent lies in the
-demonstrative's deictic domain, so *nâj/nân* are optional wherever the bare noun already
-provides the definite reading. -/
 theorem demDenotation_eq_some_of_bareDefinite {d : DemonstrativeDeterminer}
     {restrictor : E → Prop} {e : E} (h : bareDefinite restrictor = some e)
     (hs : e ∈ χ.image (c.participants ⁻¹' d.deixis)) :

@@ -151,15 +151,11 @@ denotes. -/
 def sem (l : Lex) (m : Msg) : Finset World :=
   Finset.univ.filter fun w => w.atoms ⊆ atomDen l m
 
-/-- Under the exclusivized lexicon *A* and *X* are disjoint, the Hurford rescue; under the
-synonym lexicon *A or X* is *A*, the Hurford violation; and under the exclusivized lexicon the
-uncertain state satisfies exactly the disjunctions containing *A* and the null message. -/
 theorem lexica_facts :
     Disjoint (atomDen .excl .A) (atomDen .excl .X) ∧ atomDen .syn .AorX = atomDen .syn .A ∧
       (∀ m, World.w₁₂ ∈ sem .excl m ↔ m = .AorX ∨ m = .AorB ∨ m = .AorBorX ∨ m = .null) := by
   decide
 
-/-- Every message is true at some state under every lexicon. -/
 theorem sem_nonempty (l : Lex) (m : Msg) : ∃ w, w ∈ sem l m := by
   revert l m; decide
 
@@ -237,8 +233,6 @@ theorem l1_real_lt_iff (l : Lex) (m : Msg) (v v' : World) :
       (S1 α c l v).real {m} < (S1 α c l v').real {m} :=
   listener_uniformOn_real_lt_iff _ m v v'
 
-/-- On reals, the fixed-lexicon listener's mass is the speaker's share of the message at the
-state over its shares at every state. -/
 theorem l1_real (l : Lex) (m : Msg) (w : World) :
     (l1 α c l m).real {w} = (S1 α c l w).real {m} / ∑ w', (S1 α c l w').real {m} := by
   simpa [l1] using listener_uniformOn_univ_real_finset (S1 α c l) m {w}
@@ -257,8 +251,6 @@ theorem L1_snd_real_lt_iff (m : Msg) (l₁ l₂ : Lex) :
   rw [L1, listener_snd_real_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
     uniformOn_univ_singleton_ne_zero]
 
-/-- On reals, the lexicon posterior is the lexicon's speakers' shares of the message pooled over
-states, over the shares of every state–lexicon pair. -/
 theorem L1_snd_real (m : Msg) (l : Lex) :
     (L1 α c m).snd.real {l}
       = (∑ w, (S1 α c l w).real {m}) / ∑ p : World × Lex, (S1 α c p.2 p.1).real {m} := by
@@ -273,23 +265,17 @@ section Model
 variable {α : ℝ} (hα : 0 < α) {c : ℝ}
 include hα
 
-/-- The speaker produces a message at a state exactly when it is true there. -/
 theorem S1_ne_zero_iff (l : Lex) (w : World) (m : Msg) : S1 α c l w {m} ≠ 0 ↔ w ∈ sem l m :=
   speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (sem l) hα _ w m
 
-/-- The fixed-lexicon listener assigns mass to a state exactly when the message is true
-there. -/
 theorem l1_ne_zero_iff (l : Lex) (m : Msg) (w : World) : l1 α c l m {w} ≠ 0 ↔ w ∈ sem l m := by
   rw [l1, listener_apply_singleton_ne_zero_iff, and_iff_right (uniformOn_univ_singleton_ne_zero w)]
   exact S1_ne_zero_iff hα l w m
 
-/-- The joint listener assigns mass to a state–lexicon pair exactly when the message is true
-at the state under the lexicon. -/
 theorem L1_ne_zero_iff (m : Msg) (p : World × Lex) : L1 α c m {p} ≠ 0 ↔ p.1 ∈ sem p.2 m := by
   rw [L1, listener_apply_singleton_ne_zero_iff, and_iff_right (uniformOn_univ_singleton_ne_zero p)]
   exact S1_ne_zero_iff hα p.2 p.1 m
 
-/-- Every lexicon keeps positive posterior mass under every message. -/
 theorem L1_snd_ne_zero (m : Msg) (l : Lex) : (L1 α c m).snd {l} ≠ 0 := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty l m
   rw [Measure.snd_apply_singleton]
@@ -312,8 +298,6 @@ theorem L0_rpow_toReal {α : ℝ} (hα : 0 < α) (l : Lex) (m : Msg) (w : World)
   · rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
   · rw [ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, Real.zero_rpow hα.ne']
 
-/-- The speaker's share of a message is its weight, the literal listener's mass to the
-rationality times the cost factor, over the weights of every message. -/
 theorem S1_real {α : ℝ} (hα : 0 < α) (c : ℝ) (l : Lex) (w : World) (m : Msg) :
     (S1 α c l w).real {m}
       = l0r l m w ^ α * costFactor c m / ∑ m', l0r l m' w ^ α * costFactor c m' := by
@@ -335,7 +319,6 @@ private theorem S2_weight_ne_zero {p : World × Lex} {m : Msg} (hm : p.1 ∈ sem
     (ENNReal.rpow_pos (pos_iff_ne_zero.2 (L1_snd_ne_zero hα m p.2)) (measure_ne_top _ _)).ne')
     (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne'
 
-/-- The expertise speaker gives no mass to a message false at the state under her lexicon. -/
 theorem S2_apply_eq_zero {p : World × Lex} {m : Msg} (hm : p.1 ∉ sem p.2 m) : S2 α β c p {m} = 0 :=
   Kernel.ofWeights_apply_singleton_eq_zero (by
     rw [not_ne_iff.1 (mt (l1_ne_zero_iff hα p.2 m p.1).1 hm), ENNReal.zero_rpow_of_pos hα,
@@ -414,7 +397,6 @@ theorem Lex.sum_univ {M : Type*} [AddCommMonoid M] (f : Lex → M) :
 
 /-! ### The Hurfordian context (§5.2, Figure 10) -/
 
-/-- The Bernstein monomials of an interval are nonnegative on it. -/
 private theorem bern {x a b : ℝ} (ha : a ≤ x) (hb : x ≤ b) (i j : ℕ) :
     0 ≤ (x - a) ^ i * (b - x) ^ j :=
   mul_nonneg (pow_nonneg (sub_nonneg.2 ha) i) (pow_nonneg (sub_nonneg.2 hb) j)
@@ -423,8 +405,6 @@ section Findings
 
 variable {c : ℝ}
 
-/-- Hearing *A or X*, the lexical-uncertainty listener ranks the uncertain state above the first
-atom and that above the second, the ignorance implicature. -/
 theorem l1_uncertainty (hc : 0 ≤ c) :
     (L1 2 c .AorX).fst.real {.w₂} < (L1 2 c .AorX).fst.real {.w₁} ∧
       (L1 2 c .AorX).fst.real {.w₁} < (L1 2 c .AorX).fst.real {.w₁₂} := by
@@ -440,8 +420,6 @@ theorem l1_uncertainty (hc : 0 ≤ c) :
   · linarith [bern hκ'.le hκ1' 4 0, bern hκ'.le hκ1' 3 1, bern hκ'.le hκ1' 2 2,
       bern hκ'.le hκ1' 1 3, bern hκ'.le hκ1' 0 4]
 
-/-- Hearing *A or X*, the listener ranks the exclusivized lexicon above the base lexicon and
-that above the synonym lexicon, the Hurford rescue. -/
 theorem l1_lexicon (hc : 0 ≤ c) :
     (L1 2 c .AorX).snd.real {.syn} < (L1 2 c .AorX).snd.real {.base} ∧
       (L1 2 c .AorX).snd.real {.base} < (L1 2 c .AorX).snd.real {.excl} := by
@@ -457,8 +435,6 @@ theorem l1_lexicon (hc : 0 ≤ c) :
       bern hκ'.le hκ1' 0 3]
   · linarith [pow_pos hκ' 2, pow_pos hκ' 3]
 
-/-- The exclusivizing speaker uses the disjunction exactly when uncertain. At the uncertain
-state it beats both bare disjuncts, while knowing the first atom the bare *A* wins. -/
 theorem s1_disjunction_iff_uncertain (hc : 0 ≤ c) :
     (S1 2 c .excl .w₁₂).real {.A} < (S1 2 c .excl .w₁₂).real {.AorX} ∧
       (S1 2 c .excl .w₁₂).real {.X} < (S1 2 c .excl .w₁₂).real {.AorX} ∧
@@ -474,8 +450,6 @@ theorem s1_disjunction_iff_uncertain (hc : 0 ≤ c) :
   ring_nf
   linarith
 
-/-- At a disjunction cost of at least `log 2`, *A or X* signals the exclusivized lexicon more
-strongly than the bare *A* does, which every lexicon reads alike. -/
 theorem AorX_signals_excl (hc : Real.log 2 ≤ c) :
     (L1 2 c .A).snd.real {.excl} < (L1 2 c .AorX).snd.real {.excl} := by
   have hκ' := Real.exp_pos (-c)
@@ -535,8 +509,6 @@ theorem s2_prefers_disjunction (hc0 : 0 ≤ c) (hc10 : c ≤ Real.log 10) (m : M
       bern hκ10' hκ1' 6 4, bern hκ10' hκ1' 5 5, bern hκ10' hκ1' 4 6, bern hκ10' hκ1' 3 7,
       bern hκ10' hκ1' 2 8, bern hκ10' hκ1' 1 9, bern hκ10' hκ1' 0 10]
 
-/-- The marginal expertise speaker at the uncertain state never uses the bare *A* and does use
-the disjunction. -/
 theorem s2exp_uncertain : S2exp 2 1 c .w₁₂ {.A} = 0 ∧ S2exp 2 1 c .w₁₂ {.AorX} ≠ 0 := by
   refine ⟨?_, ?_⟩
   · simp only [S2exp, sum_apply, smul_apply, Measure.finsetSum_apply, Measure.smul_apply,

@@ -103,15 +103,12 @@ variable {step : C → Finset C} {pick : Finset C → Option C} {c c' : C} (n : 
 
 @[simp] theorem iterateGen_zero : iterateGen step pick 0 c = some c := rfl
 
-/-- A converged form is a fixed point of the search step. -/
 theorem isFixedPt_hsStep_of_converged (h : step c = {c}) :
     Function.IsFixedPt (hsStep step pick) (some c) := by
   simp [Function.IsFixedPt, h]
 
-/-- Failure is a fixed point of the search step. -/
 theorem isFixedPt_hsStep_none : Function.IsFixedPt (hsStep step pick) none := rfl
 
-/-- At a converged form the search is constant: convergence is durable. -/
 theorem iterateGen_const_of_converged (h : step c = {c}) :
     iterateGen step pick n c = some c :=
   Function.IsFixedPt.iterate (isFixedPt_hsStep_of_converged h) n
@@ -119,20 +116,16 @@ theorem iterateGen_const_of_converged (h : step c = {c}) :
 variable (hcv : step c ≠ {c})
 
 include hcv in
-/-- One round from a non-converged form recurses with the picked successor. -/
 theorem iterateGen_succ_of_step (hpick : pick (step c) = some c') :
     iterateGen step pick (n + 1) c = iterateGen step pick n c' := by
   rw [iterateGen, Function.iterate_succ_apply, hsStep_some, ite_eq_right hcv, hpick]; rfl
 
 include hcv in
-/-- One round from a non-converged form where `pick` fails yields `none`, durably. -/
 theorem iterateGen_of_pickFail (hpick : pick (step c) = none) :
     iterateGen step pick (n + 1) c = none := by
   rw [iterateGen, Function.iterate_succ_apply, hsStep_some, ite_eq_right hcv, hpick]
   exact Function.IsFixedPt.iterate isFixedPt_hsStep_none n
 
-/-- The search step moves every non-fixed point strictly down the lifted harmony
-order: non-converged forms descend by `sound`, failure descends to the bottom. -/
 private theorem hsStep_descends {lt : C → C → Prop}
     (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
     (oc : Option C) (hne : hsStep step pick oc ≠ oc) :
@@ -151,11 +144,6 @@ private theorem hsStep_descends {lt : C → C → Prop}
         rw [hp] at hne
         exact sound a a' hcv hp fun he => hne (congrArg some he)
 
-/-- **HS terminates under a well-founded harmony order.** If every genuine step
-descends a well-founded `lt` (`sound`), the search is eventually constant: some `N`
-past which further fuel doesn't change the result. Derivations cannot loop while each
-step makes measurable progress, so the explicit `Nat` bound is harmless: the orbit cannot
-descend the harmony order lifted to `Option` forever, so some iterate is a fixed point. -/
 theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded lt)
     (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
     (c : C) :
@@ -190,7 +178,6 @@ variable {C : Type*} [DecidableEq C] (D : HSDerivation C) (c : C)
 durable ranking. -/
 def stepOptimum : Finset C := (Tableau.ofList (D.gen c) D.ranking).optimal
 
-/-- An empty `gen` output yields an empty optimal set. -/
 @[simp] theorem stepOptimum_of_empty_gen (h : D.gen c = ∅) : D.stepOptimum c = ∅ := by
   simp [stepOptimum, Tableau.optimal, h]
 
@@ -202,15 +189,11 @@ def Converged : Prop := D.stepOptimum c = ({c} : Finset C)
 
 instance : Decidable (D.Converged c) := decEq (D.stepOptimum c) ({c} : Finset C)
 
-/-- `Converged` is `Function.IsFixedPt` of the powerset step
-`s ↦ ⋃ x ∈ s, stepOptimum x` at the singleton `{c}` — by `Finset.singleton_biUnion`,
-with no intermediate combinator. Simp-normalized toward `Converged`. -/
 @[simp] theorem isFixedPt_singleton_iff_converged :
     Function.IsFixedPt (fun s => s.biUnion D.stepOptimum) ({c} : Finset C)
       ↔ D.Converged c := by
   simp [Converged, Function.IsFixedPt, Finset.singleton_biUnion]
 
-/-- GEN-restriction to the faithful candidate forces convergence. -/
 theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c :=
   Tableau.optimal_singleton h
 

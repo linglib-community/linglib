@@ -100,7 +100,6 @@ variable (A : Presupposing W (Set W)) {C : Set W}
 hold. -/
 def truth : Set W := A.val ∩ {w | ∀ C ∈ A.log, w ∈ C}
 
-/-- Internal negation is an involution. -/
 theorem compl_map_compl : (·ᶜ) <$> (·ᶜ) <$> A = A :=
   Writer.ext (compl_compl A.val) rfl
 
@@ -154,8 +153,6 @@ filtered, and the Writer monad's own conjunction, which concatenates the presupp
 theorem conj_false : conj (fun _ _ ↦ False) A B = (· ∩ ·) <$> A <*> B := by
   ext <;> simp [conj, seq_eq_bind_map]
 
-/-- Under the original condition, a filtered presupposition holds wherever the first conjunct is
-true, so the conjunction is true exactly where both conjuncts are. -/
 theorem truth_conj : (conj (· ⊆ ·) A B).truth = A.truth ∩ B.truth := by
   ext w
   simp only [Presupposing.truth, Set.mem_inter_iff, Set.mem_ofPred_eq, mem_log_conj]
@@ -171,18 +168,15 @@ theorem truth_conj : (conj (· ⊆ ·) A B).truth = A.truth ∩ B.truth := by
 
 /-! ### Harman's derivation (§8) -/
 
-/-- The rules satisfy Harman's principle for the equivalence of `A ⊃ B` with `¬A ∨ B`. -/
 theorem log_cond : (cond φ A B).log = (disj φ ((·ᶜ) <$> A) B).log := by
   simp only [cond, disj, Writer.log_mk, Writer.log_map]
   rw [Presupposing.compl_map_compl]
 
-/-- The rules satisfy Harman's principle for the equivalence of `A & B` with `¬(¬A ∨ ¬B)`. -/
 theorem log_conj :
     (conj φ A B).log = ((·ᶜ) <$> disj φ ((·ᶜ) <$> A) ((·ᶜ) <$> B)).log := by
   simp only [conj, disj, Writer.log_mk, Writer.log_map]
   rw [Presupposing.compl_map_compl]
 
-/-- The rules satisfy Harman's principle for the equivalence of `A ∨ B` with `¬A ⊃ B`. -/
 theorem log_disj : (disj φ A B).log = (cond φ ((·ᶜ) <$> A) B).log := rfl
 
 end Filters
@@ -291,19 +285,13 @@ of them, possibly empty, entails `C` together with `P`, though it does not entai
 def Filters (F : Set (Set W)) (P C : Set W) : Prop :=
   ∃ X ⊆ F, ⋂₀ X ∩ P ⊆ C ∧ ¬ ⋂₀ X ⊆ Pᶜ ∧ ¬ ⋂₀ X ⊆ C
 
-/-- With no assumed facts, a premise filters what it entails, if it is consistent and what it
-entails is not a tautology. -/
 theorem filters_empty_iff {P C : Set W} :
     Filters ∅ P C ↔ P ⊆ C ∧ P.Nonempty ∧ C ≠ Set.univ := by
   simp [Filters, Set.subset_empty_iff, Set.not_subset, Set.eq_univ_iff_forall, Set.nonempty_def]
 
-/-- No set of assumed facts filters a tautology, which each of them entails alone. -/
 theorem not_filters_univ (F : Set (Set W)) (P : Set W) : ¬ Filters F P Set.univ :=
   fun ⟨_, _, _, _, h⟩ ↦ h (Set.subset_univ _)
 
-/-- Over the propositions a deductively closed context accepts, Murphy's first restriction blocks
-nothing, since a context that entails `¬P` accepts `P ⊃ C` as well, which is consistent with `P`
-where `C` is and entails `C` with it. -/
 theorem filters_sets_of_compl_mem {G : Filter W} {P C : Set W} (hP : Pᶜ ∈ G)
     (hPC : (P ∩ C).Nonempty) (hC : ¬ Pᶜ ⊆ C) : Filters G.sets P C := by
   refine ⟨{Pᶜ ∪ C}, Set.singleton_subset_iff.2 (G.mem_of_superset hP Set.subset_union_left), ?_,

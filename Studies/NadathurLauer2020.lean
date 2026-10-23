@@ -212,8 +212,6 @@ def s_b : V → Flat Bool := [.D ← true, .G ← true]
 /-- The background `s_b1` also fixes the line as down. -/
 def s_b1 : V → Flat Bool := Function.update s_b .L ↑true
 
-/-- Every route to the fire passes through the power: a situation leaving the fire open that
-settles it settles the power as restored. -/
 theorem power_of_fire {s : V → Flat Bool} (hs : s .F = ⊥)
     (h : fireModel.CausallyEntails s .F true) : fireModel.CausallyEntails s .P true :=
   h.parent_eq hs (by decide) fun _ y hy ↦ by
@@ -229,11 +227,8 @@ theorem cause : Cause fireModel s_b actual .P true .F true :=
   ⟨⟨by decide, ⟨[.D ← true, .G ← true, .P ← true, .L ← true], by decide, by decide, by decide⟩,
     fun _ _ ↦ power_of_fire⟩, by decide, by decide⟩
 
-/-- With the line known to be down, *restoring power made the field catch fire* is felicitous. -/
 theorem make_of_line_down : Make fireModel s_b1 actual .P true .F true := by decide
 
-/-- With the line known to be down, *restoring power caused the field to catch fire* stays
-felicitous. -/
 theorem cause_of_line_down : Cause fireModel s_b1 actual .P true .F true :=
   ⟨⟨by decide, ⟨[.D ← true, .G ← true, .P ← true, .L ← true], by decide, by decide, by decide⟩,
     fun _ _ ↦ power_of_fire⟩, by decide, by decide⟩
@@ -328,12 +323,10 @@ def actual : Context := ⟨true, true⟩
 def time : V → ℕ
   | .Q => 0 | .S => 1 | .L => 2
 
-/-- A situation leaving the collapse open that settles it settles the earthquake. -/
 theorem earthquake_of_collapse {s : V → Flat Bool} (hs : s .L = ⊥)
     (h : lighthouseModel.CausallyEntails s .L true) : lighthouseModel.CausallyEntails s .Q true :=
   h.parent_eq hs (by decide) fun _ y hy ↦ by simpa using (Bool.and_eq_true_iff.1 hy).1
 
-/-- A situation leaving the collapse open that settles it settles the storms. -/
 theorem storms_of_collapse {s : V → Flat Bool} (hs : s .L = ⊥)
     (h : lighthouseModel.CausallyEntails s .L true) : lighthouseModel.CausallyEntails s .S true :=
   h.parent_eq hs (by decide) fun _ y hy ↦ by simpa using (Bool.and_eq_true_iff.1 hy).2
@@ -377,14 +370,12 @@ end Lighthouse
 
 /-! ### Neither relation implies the other -/
 
-/-- Causal sufficiency does not imply causal necessity, by the bus scenario. -/
 theorem not_forall_causallySufficient_imp_causallyNecessary :
     ¬ ∀ (U V : Type) [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
       (s : V → Flat Bool) (c : V) (x : Bool) (e : V) (y : Bool),
       M.CausallySufficient s c x e y → M.CausallyNecessary (· ≤ ·) s c x e y :=
   fun h ↦ Bus.not_cause ⟨h _ _ _ _ _ _ _ _ Bus.make.1, Bus.make.2, by decide⟩
 
-/-- Causal necessity does not imply causal sufficiency, by the fire scenario. -/
 theorem not_forall_causallyNecessary_imp_causallySufficient :
     ¬ ∀ (U V : Type) [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
       (s : V → Flat Bool) (c : V) (x : Bool) (e : V) (y : Bool),

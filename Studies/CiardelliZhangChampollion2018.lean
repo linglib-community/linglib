@@ -74,7 +74,6 @@ abbrev lightOff : Set World := lightOnᶜ
 
 /-! ### De Morgan equivalence -/
 
-/-- The two antecedents have the same truth conditions. -/
 theorem aOrBdn_eq_notBothUp : aOrBdn = notBothUp := (Set.compl_inter aUp bUp).symm
 
 /-! ### Predictions under Hamming similarity -/
@@ -90,17 +89,12 @@ def hamming : World → World → Nat
 /-- Similarity by Hamming distance, one natural ordering on the scenario. -/
 abbrev hammingSim (w₀ : World) : Preorder World := Preorder.lift (hamming w₀)
 
-/-- *If A were down, the light would be off* is true at the actual world, since the closest
-A-down world is `du`. -/
 theorem aDn_off_at_uu :
     .uu ∈ closestImp hammingSim aDn lightOff := by decide
 
-/-- *If B were down, the light would be off* is true at the actual world. -/
 theorem bDn_off_at_uu :
     .uu ∈ closestImp hammingSim bDn lightOff := by decide
 
-/-- *If A or B were down, the light would be off* is true at the actual world, since the closest
-worlds are `ud` and `du`. -/
 theorem aOrBdn_off_at_uu :
     .uu ∈ closestImp hammingSim aOrBdn lightOff := by decide
 
@@ -110,28 +104,21 @@ minority (Table 3). -/
 theorem notBothUp_off_at_uu :
     .uu ∈ closestImp hammingSim notBothUp lightOff := by decide
 
-/-- The selectional counterfactual makes the same prediction. -/
 theorem selectional_notBothUp_off_at_uu :
     selectionalCounterfactual hammingSim notBothUp lightOff .uu = 1 := by
   decide
 
-/-- The homogeneity counterfactual makes the same prediction, with its presupposition satisfied.
--/
 theorem homogeneity_notBothUp_off_at_uu :
     homogeneityCounterfactual hammingSim notBothUp lightOff .uu = 1 :=
   homogeneityCounterfactual_eq_one_iff.2 notBothUp_off_at_uu
 
 /-! ### Minimal change forces the equivalence (§1.2) -/
 
-/-- For any similarity ordering and consequent, if the A-down and the B-down counterfactuals
-are true, so is the not-both-up one, since a closest not-both-up world is a closest A-down or a
-closest B-down world. -/
 theorem minimal_change_forces_notBothUp (ord : World → Preorder World) (w₀ : World)
     {C : Set World} (h_a : w₀ ∈ closestImp ord aDn C) (h_b : w₀ ∈ closestImp ord bDn C) :
     w₀ ∈ closestImp ord notBothUp C :=
   aOrBdn_eq_notBothUp ▸ mem_closestImp_union h_a h_b
 
-/-- The selectional counterfactual's true verdict is the same quantifier. -/
 theorem selectional_minimal_change_forces_notBothUp_off
     (ord : World → Preorder World) [∀ w, DecidableRel (ord w).le] (w₀ : World)
     (h_a : selectionalCounterfactual ord aDn lightOff w₀ = 1)
@@ -140,8 +127,6 @@ theorem selectional_minimal_change_forces_notBothUp_off
   rw [selectionalCounterfactual_eq_one_iff] at *
   exact minimal_change_forces_notBothUp ord w₀ h_a h_b
 
-/-- The homogeneity counterfactual's true verdict, with its presupposition satisfied, is the
-same quantifier. -/
 theorem homogeneity_minimal_change_forces_notBothUp_off
     (ord : World → Preorder World) (w₀ : World)
     (h_a : homogeneityCounterfactual ord aDn lightOff w₀ = 1)
@@ -163,8 +148,6 @@ def trueRate_notBothUp_off : ℚ := 82 / 372
 /-- The proportion judged true of *if A and B were not both up, the light would be on*. -/
 def trueRate_notBothUp_on : ℚ := 43 / 200
 
-/-- The first three sentences were judged true by a majority and the two not-both-up sentences
-were not. -/
 theorem table3_pattern :
     (1 / 2 < trueRate_aDn_off ∧ 1 / 2 < trueRate_bDn_off ∧
       1 / 2 < trueRate_aOrBdn_off) ∧
@@ -173,8 +156,6 @@ theorem table3_pattern :
     norm_num [trueRate_aDn_off, trueRate_bDn_off, trueRate_aOrBdn_off,
       trueRate_notBothUp_off, trueRate_notBothUp_on]
 
-/-- The De Morgan pair diverges, the disjunctive antecedent being judged true more often than
-its equivalent. -/
 theorem deMorgan_antecedents_diverge :
     trueRate_notBothUp_off < trueRate_aOrBdn_off := by
   norm_num [trueRate_aOrBdn_off, trueRate_notBothUp_off]

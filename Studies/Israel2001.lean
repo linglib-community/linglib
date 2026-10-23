@@ -109,13 +109,9 @@ def Felicitous : Force → (α → Set W) → α → α → Prop
 
 variable {Q : α → Set W} {n x : α}
 
-/-- When the expressed function is strictly monotone, inferences run from low values to high
-ones and the emphatic propositions are the ones below the norm. -/
 theorem emphatic_iff_of_strictMono (h : StrictMono Q) (hx : x ≠ n) : Emphatic Q n x ↔ x < n :=
   ⟨λ hE => (lt_or_gt_of_ne hx).resolve_right λ hn => lt_asymm (h hn) hE, λ hxn => h hxn⟩
 
-/-- When it is strictly antitone, inferences run from high values to low ones and the emphatic
-propositions are the ones above the norm. -/
 theorem emphatic_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) : Emphatic Q n x ↔ n < x :=
   ⟨λ hE => (lt_or_gt_of_ne hx).resolve_left λ hn => lt_asymm (h hn) hE, λ hxn => h hxn⟩
 
@@ -127,8 +123,6 @@ theorem attenuating_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) :
     Attenuating Q n x ↔ x < n :=
   ⟨λ hA => (lt_or_gt_of_ne hx).resolve_right λ hn => lt_asymm (h hn) hA, λ hxn => h hxn⟩
 
-/-- Under a strictly monotone expressed function an emphatic item needs a low value and an
-attenuating one a high value. -/
 theorem felicitous_iff_of_strictMono (h : StrictMono Q) (hx : x ≠ n) (d : Force) :
     Felicitous d Q n x ↔ (d = .emphatic ↔ x < n) := by
   cases d
@@ -137,7 +131,6 @@ theorem felicitous_iff_of_strictMono (h : StrictMono Q) (hx : x ≠ n) (d : Forc
     simp only [reduceCtorEq, false_iff, not_lt]
     exact ⟨le_of_lt, λ h => lt_of_le_of_ne h hx.symm⟩
 
-/-- Under a strictly antitone one the values are reversed. -/
 theorem felicitous_iff_of_strictAnti (h : StrictAnti Q) (hx : x ≠ n) (d : Force) :
     Felicitous d Q n x ↔ (d = .emphatic ↔ n < x) := by
   cases d
@@ -153,20 +146,16 @@ emphatic large items in facilitating roles are NPIs, needing scale reversal, as 
 items of the opposite quantities; the remaining cells are PPIs. -/
 def licensingContext (d : Force) (q : Quantity) (r : Role) : Polarity := d.sign * q.sign * r.sign
 
-/-- A quantity standing to the norm as the item says is below it exactly for a small item. -/
 theorem Quantity.lt_iff_of_rel {q : Quantity} (hq : q.Rel x n) : x < n ↔ q = .small := by
   cases q
   · exact iff_of_true hq rfl
   · exact iff_of_false (lt_asymm hq) (by decide)
 
-/-- And above it exactly for a large item. -/
 theorem Quantity.gt_iff_of_rel {q : Quantity} (hq : q.Rel x n) : n < x ↔ q = .large := by
   cases q
   · exact iff_of_false (lt_asymm hq) (by decide)
   · exact iff_of_true hq rfl
 
-/-- An item is felicitous exactly when its force has the sign of the direction of the expressed
-function times that of its quantity. -/
 theorem felicitous_iff_of_strictMonoBy {δ : Polarity} {q : Quantity} (h : δ.StrictMonoBy Q)
     (hq : q.Rel x n) (d : Force) : Felicitous d Q n x ↔ d.sign = δ * q.sign := by
   have hx : x ≠ n := by
@@ -237,7 +226,6 @@ def PolarityItem.contextType (e : PolarityItem) : Option Polarity :=
   if e.antiLicensor.isSome then some .positive else if e.licensor.isSome then some .negative
   else none
 
-/-- Every classified item's derived licensing context is the one the fragment records. -/
 theorem classified_licensingContext :
     ∀ c ∈ classified,
       PolarityItem.contextType c.item = some (licensingContext c.force c.quantity c.role) := by

@@ -57,12 +57,10 @@ instance [Fintype ι] [DecidableRel r] [DecidablePred A] : Decidable (exhAgainst
 
 /-! ### Independent rivals -/
 
-/-- Some member is exhaustified against all the others iff exactly one member holds. -/
 theorem exists_exhAgainst_ne_iff_existsUnique : (∃ i, exhAgainst (· ≠ ·) A i) ↔ ∃! i, A i :=
   ⟨fun ⟨i, hi, h⟩ ↦ ⟨i, hi, fun j hj ↦ by_contra fun hne ↦ h j (Ne.symm hne) hj⟩,
     fun ⟨i, hi, h⟩ ↦ ⟨i, hi, fun j hne hj ↦ hne (h j hj).symm⟩⟩
 
-/-- Negating every member exhaustified against the others denies that exactly one holds. -/
 theorem forall_not_exhAgainst_ne_iff : (∀ i, ¬ exhAgainst (· ≠ ·) A i) ↔ ¬ ∃! i, A i := by
   rw [← exists_exhAgainst_ne_iff_existsUnique, not_exists]
 
@@ -78,7 +76,6 @@ theorem exhAgainst_lt_iff_succ (hA : Antitone A) (his : i < s) (hleast : ∀ j, 
     exhAgainst (· < ·) A i ↔ A i ∧ ¬ A s :=
   ⟨fun ⟨hi, h⟩ ↦ ⟨hi, h s his⟩, fun ⟨hi, hs⟩ ↦ ⟨hi, fun j hj hAj ↦ hs (hA (hleast j hj) hAj)⟩⟩
 
-/-- On an entailment chain with successors, exhaustification denies the successor. -/
 theorem exhAgainst_lt_iff_succOrder [SuccOrder ι] [NoMaxOrder ι] (hA : Antitone A) :
     exhAgainst (· < ·) A i ↔ A i ∧ ¬ A (Order.succ i) :=
   exhAgainst_lt_iff_succ hA (Order.lt_succ i) fun _ ↦ Order.succ_le_of_lt

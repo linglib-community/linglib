@@ -110,20 +110,17 @@ clause, the bare definite does not. -/
 def Supports (c : ReferentialContext) (d : Disambiguation) : Prop :=
   (iota (c.restrictor d)).isSome ∧ (d.IsRelative → iota c.Woman = none)
 
-/-- *The woman* refers exactly when the context has one woman. -/
 theorem iota_woman_isSome_iff (c : ReferentialContext) :
     (iota c.Woman).isSome ↔ c = .uniqueReferent := by
   rw [iota_isSome_iff]
   cases c <;> simp [Woman, ExistsUnique]
   decide
 
-/-- *The woman* fails to refer exactly when the context has two women. -/
 theorem iota_woman_eq_none_iff (c : ReferentialContext) :
     iota c.Woman = none ↔ c = .nonUniqueReferents := by
   rw [← Option.not_isSome_iff_eq_none, iota_woman_isSome_iff]
   cases c <;> simp
 
-/-- *The woman that he'd risked his life for* refers in either context. -/
 theorem iota_restrictor_isSome (c : ReferentialContext) {d : Disambiguation}
     (hd : d.IsRelative) : (iota (c.restrictor d)).isSome := by
   have hw : c.Woman .rescued := by cases c <;> simp [Woman]
@@ -144,8 +141,6 @@ structure Condition where
 /-- A condition matches when its context supports its disambiguation. -/
 def Condition.IsMatch (c : Condition) : Prop := c.context.Supports c.disambiguation
 
-/-- A condition matches exactly when its context has two women and its disambiguation is a
-relative clause, or one woman and a complement clause. -/
 theorem Condition.isMatch_iff (c : Condition) :
     c.IsMatch ↔ (c.context = .nonUniqueReferents ↔ c.disambiguation.IsRelative) := by
   obtain ⟨d, x⟩ := c
@@ -280,19 +275,15 @@ section Marginals
 
 variable (p : Params)
 
-/-- Garden-pathing has the probability of attentive reading times that of garden-pathing. -/
 theorem tree_real_gardenPathed :
     (tree p).real {o | o.GardenPathed} = p.attentive * p.gardenPath := by
   simp [tree, node_real_apply, Route.GardenPathed]
 
-/-- A regression has the probability of overt reanalysis. -/
 theorem tree_real_regresses : (tree p).real {o | o.Regresses} =
     p.attentive * p.gardenPath * (1 - p.triage) * (1 - p.covert) := by
   simp [tree, node_real_apply, Route.Regresses]
   ring
 
-/-- Acceptance collects the accepting guess, the correct first pass, and the successful
-reanalyses, and its probability does not depend on postponement. -/
 theorem tree_real_accepts : (tree p).real {o | o.Accepts} =
     (1 - p.attentive) * p.bias + p.attentive * (1 - p.gardenPath + p.gardenPath *
       (1 - p.triage) * ((1 - p.covert) * p.overtSuccess + p.covert * p.covertSuccess)) := by
@@ -338,8 +329,6 @@ section Means
 
 variable (p : Params) (k : Costs)
 
-/-- The mean cost at the disambiguating region adds the attention cost of attentive reading to
-the garden-path probability times the expected cost of a garden-pathed trial. -/
 theorem integral_disambiguating_tree : ∫ o, k.disambiguating o ∂tree p =
     p.attentive * (k.attention + p.gardenPath * (k.gardenPath + (1 - p.triage) *
       ((1 - p.covert) * k.regression + p.covert * (1 - p.postpone) * k.covert))) := by
@@ -347,14 +336,12 @@ theorem integral_disambiguating_tree : ∫ o, k.disambiguating o ∂tree p =
     Costs.disambiguating, smul_eq_mul]
   ring
 
-/-- The mean cost at the spillover region is the covert reanalysis cost on postponed trials. -/
 theorem integral_spillover_tree : ∫ o, k.spillover o ∂tree p =
     p.attentive * p.gardenPath * (1 - p.triage) * p.covert * p.postpone * k.covert := by
   simp only [tree, integral_node, integral_bernoulliMeasure, integral_dirac, Costs.spillover,
     smul_eq_mul]
   ring
 
-/-- A lower garden-path probability never raises the mean cost at the disambiguating region. -/
 theorem monotone_integral_gardenPath :
     Monotone fun g ↦ ∫ o, k.disambiguating o ∂tree {p with gardenPath := g} := by
   intro g g' h
@@ -366,7 +353,6 @@ theorem monotone_integral_gardenPath :
   gcongr
   unit_interval
 
-/-- A lower covert reanalysis cost never raises the mean cost at the disambiguating region. -/
 theorem monotone_integral_covert :
     Monotone fun c ↦ ∫ o, Costs.disambiguating {k with covert := c} o ∂tree p := by
   refine fun c c' h ↦ integral_mono .of_finite .of_finite fun o ↦ ?_
@@ -374,11 +360,6 @@ theorem monotone_integral_covert :
 
 end Means
 
-/-- Condition means cannot locate an effect of context. From garden-path probability `1 / 2`
-and covert reanalysis cost `800`, illustrative values, an effect on attachment that halves the
-probability and an effect on reanalysis that halves the cost leave the same mean cost at both
-regions and the same rates of regression and acceptance, but different mixtures over route
-costs, `800` on a quarter of the trials against `400` on half of them. -/
 theorem means_not_identifiable :
     ∃ (p : Params) (k : Costs) (g : I) (c : ℝ≥0), g < p.gardenPath ∧ c < k.covert ∧
       ∫ o, k.disambiguating o ∂tree {p with gardenPath := g} =

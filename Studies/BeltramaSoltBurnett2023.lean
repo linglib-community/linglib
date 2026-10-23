@@ -92,8 +92,6 @@ theorem precise_not_mem_underspecified (e : Experiment) :
   cases e <;> simp [stimuli, Comparison.interval_eq, Comparison.interval_ge]
 
 open Semantics in
-/-- The approximate description of the trip is true on every reading of its approximator that is
-not exact. -/
 theorem precise_mem_approximate (e : Experiment) {a : Approximator}
     (ha : (stimuli e .approximate).afterApproximator = some a) {m : Modifier (Set ℕ)}
     (hr : m ∈ ⟦a.modifier⟧)
@@ -158,8 +156,6 @@ difference of means counting. -/
 def contrastField (e : Experiment) : AssociationField Variant Dimension SignType :=
   ((means e).contrast .underspecified).signs
 
-/-- The precise and approximate variants are the two ends of a single opposition, since the
-underspecified variant lies between them. -/
 theorem antipodal_contrastField (e : Experiment) :
     (contrastField e).Antipodal .precise .approximate :=
   AssociationField.antipodal_signs_contrast_iff.2 fun d ↦ .inl (underspecified_mem_uIoo e d)
@@ -176,8 +172,6 @@ theorem ground_contrastField_approximate (e : Experiment) :
     (contrastField e).ground.indexes .approximate = {.incompetent, .warm, .solidary} := by
   rw [(antipodal_contrastField e).ground_indexes, ground_contrastField_precise]; decide
 
-/-- On the opposition reading the precise and approximate variants ground as complementary
-personae, each meeting every persona but the other's. -/
 theorem complementary_contrastField (e : Experiment) :
     (contrastField e).ground.Complementary .precise .approximate :=
   (antipodal_contrastField e).complementary fun d ↦ by revert d; cases e <;> decide +kernel
@@ -206,7 +200,6 @@ def neutral (e : Experiment) : AssociationField Variant Dimension SignType :=
     | .approximate =>
       -(verdicts e (Factor.dimension.symm d) .underspecifiedApproximate).verdict.sign
 
-/-- Where the paper reports a difference, it runs in the direction of the means. -/
 theorem neutral_eq_zero_or_eq_contrastField (e : Experiment) (v : Variant) (d : Dimension) :
     neutral e v d = 0 ∨ neutral e v d = contrastField e v d := by
   revert v d; cases e <;> decide +kernel
@@ -304,7 +297,6 @@ def LoadsMostOn (e : Experiment) (s : Scale) (f : Factor) : Prop :=
 instance (e : Experiment) (s : Scale) (f : Factor) : Decidable (LoadsMostOn e s f) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-/-- In Experiment 1 every scale loads most on the dimension it was included to measure. -/
 theorem loadsMostOn_exp1 (s : Scale) : LoadsMostOn .exp1 s (scales s).dimension := by
   revert s; decide +kernel
 

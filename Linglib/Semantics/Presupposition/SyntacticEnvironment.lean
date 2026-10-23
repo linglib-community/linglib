@@ -188,7 +188,6 @@ def SameInitialString (K K' : SyntacticEnvironment Atom) : Prop :=
 @[refl] theorem SameInitialString.refl (K : SyntacticEnvironment Atom) : SameInitialString K K :=
   List.forall₂_same.2 fun s _ ↦ .refl s
 
-/-- A good final of `K ++ [s]` is a good final of `K` inside a good final of the outermost step. -/
 theorem sameInitialString_append_singleton {K L : SyntacticEnvironment Atom} {s : Step Atom} :
     SameInitialString (K ++ [s]) L ↔
       ∃ K' s', L = K' ++ [s'] ∧ SameInitialString K K' ∧ s.SameInitialString s' := by
@@ -261,7 +260,6 @@ theorem Step.agreeUpTo_zero_iff {s s' : Step Atom} : s.AgreeUpTo 0 s' ↔ s.Same
     exact ⟨fun ⟨c', G', he, hc⟩ ↦ he ▸ .left hc G G', fun h ↦ by cases h with
       | left hc _ G' => exact ⟨_, G', rfl, hc⟩⟩
 
-/-- The first parsing point, right after the trigger, admits every good final. -/
 theorem agreeUpTo_zero_iff {K K' : SyntacticEnvironment Atom} :
     AgreeUpTo 0 K K' ↔ SameInitialString K K' := by
   induction K generalizing K' with
@@ -333,7 +331,6 @@ theorem Step.agreeUpTo_iff_eq {n : ℕ} {s s' : Step Atom} (hn : s.rightItems �
     have hn' : ¬ n < c.rightItems := by simp only [rightItems] at hn; omega
     simp only [AgreeUpTo, hn0, hn', ite_false]
 
-/-- From the last parsing point on, only the environment itself agrees. -/
 theorem agreeUpTo_iff_eq {n : ℕ} {K K' : SyntacticEnvironment Atom} (hn : rightItems K ≤ n) :
     AgreeUpTo n K K' ↔ K' = K := by
   induction K generalizing n K' with
@@ -344,7 +341,6 @@ theorem agreeUpTo_iff_eq {n : ℕ} {K K' : SyntacticEnvironment Atom} (hn : righ
       ih (show rightItems K ≤ n - s.rightItems by omega)]
     exact ⟨fun ⟨_, _, he, rfl, rfl⟩ ↦ he, fun h ↦ ⟨s, K, h, rfl, rfl⟩⟩
 
-/-- A good final of `K ++ [s]` up to a parsing point is a good final of `K` inside one of `s`. -/
 theorem agreeUpTo_append_singleton {n : ℕ} {K L : SyntacticEnvironment Atom} {s : Step Atom} :
     AgreeUpTo n (K ++ [s]) L ↔
       ∃ K' s', L = K' ++ [s'] ∧ AgreeUpTo n K K' ∧ s.AgreeUpTo (n - rightItems K) s' := by
@@ -378,7 +374,6 @@ def continuations (K : SyntacticEnvironment Atom) : ℕ∞ → Set (Set W → Se
 theorem continuations_natCast (n : ℕ) (K : SyntacticEnvironment Atom) :
     K.continuations I n = (·.truth I) '' {K' | AgreeUpTo n K K'} := rfl
 
-/-- The first parsing point consults every good final. -/
 theorem continuations_zero (K : SyntacticEnvironment Atom) :
     K.continuations I 0 = (·.truth I) '' {K' | K.SameInitialString K'} := by
   rw [show (0 : ℕ∞) = ((0 : ℕ) : ℕ∞) from rfl, continuations_natCast]
@@ -390,7 +385,6 @@ theorem truth_mem_continuations (n : ℕ∞) (K : SyntacticEnvironment Atom) :
   | top => rfl
   | coe n => exact ⟨K, AgreeUpTo.refl n K, rfl⟩
 
-/-- A later parsing point consults fewer continuations. -/
 theorem antitone_continuations (K : SyntacticEnvironment Atom) : Antitone (K.continuations I) := by
   intro m n hmn
   induction n using ENat.recTopCoe with
@@ -402,7 +396,6 @@ theorem antitone_continuations (K : SyntacticEnvironment Atom) : Antitone (K.con
       rintro _ ⟨K', hK', rfl⟩
       exact ⟨K', hK'.mono (by exact_mod_cast hmn), rfl⟩
 
-/-- From the last item after the gap on, a parsing point consults only the sentence itself. -/
 theorem continuations_eq_top_of_le {n : ℕ} {K : SyntacticEnvironment Atom} (hn : rightItems K ≤ n) :
     K.continuations I n = K.continuations I ⊤ := by
   rw [continuations_natCast, continuations_top]
@@ -423,7 +416,6 @@ def triggers : Formula Atom → List (SyntacticEnvironment Atom × Atom × Atom)
   | bin c F G => (triggers F).map (fun o ↦ (o.1 ++ [.left c G], o.2)) ++
       (triggers G).map fun o ↦ (o.1 ++ [.right c F], o.2)
 
-/-- Local accommodation leaves no trigger. -/
 @[simp] theorem triggers_accommodate (F : Formula Atom) : F.accommodate.triggers = [] := by
   induction F with
   | atom => rfl
@@ -481,8 +473,6 @@ theorem isTruthFunctional_of_mem_continuations {n : ℕ∞} {K : SyntacticEnviro
     obtain ⟨K', -, rfl⟩ := hf
     exact isTruthFunctional_truth I K'
 
-/-- The formula's truth value depends on the gap of `s :: K` iff it depends on the gap of `s` and
-on the gap of `K`. -/
 theorem dependsAt_truth_cons {s : Step Atom} {K : SyntacticEnvironment Atom} {w : W} :
     DependsAt (truth I (s :: K)) w ↔ DependsAt (s.truth I) w ∧ DependsAt (K.truth I) w := by
   have hK := isTruthFunctional_truth I K
@@ -494,15 +484,11 @@ theorem dependsAt_truth_cons {s : Step Atom} {K : SyntacticEnvironment Atom} {w 
   · rw [hK.mem_iff_of_notMem ha, hK.mem_iff_of_mem hb]; tauto
   · rw [hK.mem_iff_of_notMem ha, hK.mem_iff_of_notMem hb]; tauto
 
-/-- The truth value depends on the second argument of a binary connective exactly in its local
-context. -/
 theorem dependsAt_right_iff (c : Connective) (F : Formula Atom) (w : W) :
     DependsAt ((Step.right c F).truth I) w ↔ w ∈ (Step.right c F).localContext I Set.univ := by
   cases c <;> simp [DependsAt, Step.truth, Step.localContext, Connective.eval,
     Connective.localContext]
 
-/-- Some second argument makes the truth value depend on the first argument of a binary
-connective. -/
 theorem exists_dependsAt_left [Nonempty Atom] (c : Connective) (w : W) :
     ∃ G, DependsAt ((Step.left c G).truth I) w := by
   let a := Classical.arbitrary Atom
@@ -526,8 +512,6 @@ private theorem mem_localContext_of_dependsAt {K K' : SyntacticEnvironment Atom}
     | right c F => exact (dependsAt_right_iff I c F w).1 hs'
     | left => trivial
 
-/-- Some good final makes the truth value at `w` depend on the gap of `K` iff `w` is in
-[karttunen-1974-presupposition]'s local context of the gap. -/
 theorem exists_dependsAt_iff [Nonempty Atom] (K : SyntacticEnvironment Atom) (w : W) :
     (∃ K', SameInitialString K K' ∧ DependsAt (K'.truth I) w) ↔
       w ∈ K.localContext I Set.univ := by
@@ -551,8 +535,6 @@ theorem exists_dependsAt_iff [Nonempty Atom] (K : SyntacticEnvironment Atom) (w 
 
 end SyntacticEnvironment
 
-/-- The filtering evaluation is defined at `w` iff every trigger's presupposition holds there
-whenever `w` is in the trigger's [karttunen-1974-presupposition] local context. -/
 theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom) (w : W) :
     F.middleKleene I w ≠ 0 ↔
       ∀ o ∈ F.triggers, w ∈ o.1.localContext I Set.univ → w ∈ I o.2.1 := by

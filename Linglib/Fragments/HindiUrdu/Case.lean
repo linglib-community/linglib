@@ -118,11 +118,9 @@ oblique plural *-õ* ([masica-1991] p. 239). -/
 theorem plural_larkaa_injective : Function.Injective larkaa.plural := by
   decide
 
-/-- The singular has one form for the oblique and the vocative. -/
 theorem singular_oblique_eq_vocative : ∀ n ∈ nouns, n.singular .oblique = n.singular .vocative := by
   decide
 
-/-- The feminine singular has one form for all three cases. -/
 theorem singular_larkii_eq (c : Case) : larkii.singular c = "laRkii" := by
   cases c <;> rfl
 

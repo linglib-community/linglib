@@ -118,8 +118,6 @@ theorem verifies_iff {K : DRS L V} :
     VerifiesCondition f (.dis l r) ↔
       (∃ g, l.Extends f g ∧ Verifies g l) ∨ (∃ g, r.Extends f g ∧ Verifies g r) := Iff.rfl
 
-/-- Verification is invariant under permutation of the conditions — the set
-semantics the `List`-valued `conditions` field promises (`DRS/Defs.lean`). -/
 theorem verifies_perm {U : Finset V} {cs ds : List (Condition L V)} (h : cs.Perm ds) :
     Verifies f (.mk U cs) ↔ Verifies f (.mk U ds) := by
   simp only [verifies_mk, h.mem_iff]
@@ -130,8 +128,6 @@ section Map
 
 variable {W : Type*} [DecidableEq W]
 
-/-- An embedding verifies a renamed DRS iff its precomposition verifies the
-original, given the transport for each of the DRS's conditions. -/
 private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : W → M)
     (ih : ∀ c ∈ K.conditions, ∀ u : W → M,
       VerifiesCondition u (c.map e) ↔ VerifiesCondition (u ∘ e) c) :
@@ -139,8 +135,6 @@ private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : W → M)
   simp only [verifies_iff, DRS.conditions_map, List.forall_mem_map]
   exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
 
-/-- "Some extension of `f` verifies `K`" transported along renaming, given the
-transport for each condition of `K`. -/
 private theorem exists_extends_verifies_map_aux (e : V ≃ W) (K : DRS L V) (f : W → M)
     (ih : ∀ c ∈ K.conditions, ∀ u : W → M,
       VerifiesCondition u (c.map e) ↔ VerifiesCondition (u ∘ e) c) :
@@ -149,8 +143,6 @@ private theorem exists_extends_verifies_map_aux (e : V ≃ W) (K : DRS L V) (f :
   (exists_congr fun g => and_congr_right fun _ => verifies_map_all e K g ih).trans
     (DRS.exists_extends_map e K f (Verifies · K))
 
-/-- Renaming along a bijection transports verification (the condition form of
-`verifies_map`). -/
 theorem verifies_map_condition (e : V ≃ W) (f : W → M) (c : Condition L V) :
     VerifiesCondition f (c.map e) ↔ VerifiesCondition (f ∘ e) c := by
   induction c generalizing f with
@@ -170,13 +162,10 @@ theorem verifies_map_condition (e : V ≃ W) (f : W → M) (c : Condition L V) :
     exact or_congr (exists_extends_verifies_map_aux e l f ihl)
       (exists_extends_verifies_map_aux e r f ihr)
 
-/-- `f` verifies `K.map e` iff `f ∘ e` verifies `K`, so alphabetic variants have the same
-semantics. -/
 theorem verifies_map (e : V ≃ W) (f : W → M) (K : DRS L V) :
     Verifies f (K.map e) ↔ Verifies (f ∘ e) K :=
   verifies_map_all e K f (fun c _ u => verifies_map_condition e u c)
 
-/-- `f` has a verifying `K.map e`-extension iff `f ∘ e` has a verifying `K`-extension. -/
 theorem exists_extends_verifies_map (e : V ≃ W) (f : W → M) (K : DRS L V) :
     (∃ g, (K.map e).Extends f g ∧ Verifies g (K.map e)) ↔
       ∃ g, K.Extends (f ∘ e) g ∧ Verifies g K :=
@@ -191,8 +180,6 @@ section Coincidence
 
 variable [DecidableEq V]
 
-/-- An embedding agreeing with a verifying one on the free referents of the conditions
-verifies them too, given coincidence for each condition. -/
 private theorem verifies_of_eqOn {K : DRS L V}
     (ih : ∀ c ∈ K.conditions, ∀ {g₁ g₂ : V → M}, Set.EqOn g₁ g₂ ↑c.freeVarFinset →
       (VerifiesCondition g₁ c ↔ VerifiesCondition g₂ c))
@@ -233,8 +220,6 @@ theorem verifiesCondition_congr (c : Condition L V) {f₁ f₂ : V → M}
       (Box.exists_extends_congr l (verifies_of_eqOn ihl) (h.mono Set.subset_union_left))
       (Box.exists_extends_congr r (verifies_of_eqOn ihr) (h.mono Set.subset_union_right))
 
-/-- "Some extension verifies `K`" reads the input embedding only at `K`'s free
-referents. -/
 theorem exists_extends_verifies_congr {K : DRS L V} {f₁ f₂ : V → M}
     (h : Set.EqOn f₁ f₂ ↑K.freeVarFinset) :
     (∃ g, K.Extends f₁ g ∧ Verifies g K) ↔ ∃ g, K.Extends f₂ g ∧ Verifies g K := by

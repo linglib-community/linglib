@@ -50,8 +50,6 @@ theorem getLastD_destutter' (a : α) (l : List α) (x y : α) :
   obtain ⟨t, ht⟩ := destutter'_eq_cons (R := R) a l
   rw [ht, getLastD_cons, getLastD_cons]
 
-/-- Destuttering `l ++ m` from `a` destutters `l` from `a`, then `m` from the last element
-kept. -/
 theorem destutter'_append (a : α) (l m : List α) :
     (l ++ m).destutter' R a =
       l.destutter' R a ++ (m.destutter' R ((l.destutter' R a).getLastD a)).tail := by
@@ -87,8 +85,6 @@ theorem destutter_replicate (h : ¬R a a) (n : ℕ) : (replicate (n + 1) a).dest
 section IsEquiv
 variable [IsEquiv α Rᶜ]
 
-/-- `List.destutter'` on a relation like `≠`, whose negation is an equivalence, keeps the same
-elements after the first if the first elements are not related. -/
 theorem tail_destutter'_congr (hab : ¬R a b) (l : List α) :
     (l.destutter' R a).tail = (l.destutter' R b).tail := by
   induction l with
@@ -147,8 +143,6 @@ private theorem tail_destutter'_ne_of_isChain {z : α} (h : m.IsChain (· ≠ ·
     · rw [destutter'_cons_pos (h := hzb), hbm]
       simp [hzb]
 
-/-- Destuttering two concatenated chains merges at most the seam, dropping the head of `m`
-exactly when it repeats the last element of `l`. -/
 theorem IsChain.destutter_ne_append (h1 : l.IsChain (· ≠ ·)) (h2 : m.IsChain (· ≠ ·)) :
     (l ++ m).destutter (· ≠ ·) = if l.getLast? = m.head? then l ++ m.tail else l ++ m := by
   cases l with

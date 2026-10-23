@@ -53,8 +53,6 @@ def Licit (g : Grammar) (s : Scenario Person) : Prop :=
 
 instance (g : Grammar) : DecidablePred (Licit g) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- The two algorithms agree on every combination exactly when the grammar has a satisfaction
-condition or does not mark both [SPKR] and [ADDR] for dynamic interaction. -/
 theorem forall_licit_iff_iff (g : Grammar) :
     (∀ s, Licit g s ↔ Deal2024.Licit g s) ↔
       ¬ (g.satisfaction = none ∧ .speaker ∈ g.dynamic ∧ .addressee ∈ g.dynamic) := by

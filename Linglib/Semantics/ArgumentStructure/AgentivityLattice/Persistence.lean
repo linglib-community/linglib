@@ -90,7 +90,6 @@ def Valid (s : Finset Feature) : Prop :=
 
 instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- The five levels are exactly the combinations of features the exclusion principles leave. -/
 theorem range_features : Set.range features = {s | Valid s} :=
   Set.ext <| (by decide : ∀ s, (∃ l, features l = s) ↔ Valid s)
 
@@ -134,7 +133,6 @@ def inf' : PersistenceLevel → PersistenceLevel → PersistenceLevel
   | .exPersBeginning, .exPersEnd | .exPersEnd, .exPersBeginning => .totalNonPersistence
   | .exPersEnd, .quPersBeginning | .quPersBeginning, .exPersEnd => .totalNonPersistence
 
-/-- The features of a join are the union of the features. -/
 theorem features_sup' (l m : PersistenceLevel) : (sup' l m).features = l.features ∪ m.features := by
   revert l m; decide
 

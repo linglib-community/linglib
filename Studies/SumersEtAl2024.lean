@@ -145,8 +145,6 @@ theorem speaker_real_lt_iff (hβ : 0 < βS) :
     ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
 
-/-- The purely truthful speaker is insensitive to the decision problem, since at equal costs it
-puts the same mass on any two true utterances. -/
 theorem speaker_zero_eq_of_mem (c : ℝ) (hu : w ∈ sem u) (hu' : w ∈ sem u') :
     speaker βS 0 (fun _ ↦ c) sem π R w {u} = speaker βS 0 (fun _ ↦ c) sem π R w {u'} := by
   simp only [speaker, Kernel.softmax_apply_singleton, combinedUtility_zero, truthfulness, hu, hu',
@@ -253,9 +251,6 @@ values (10)–(11). -/
 def reward (val : V → ℝ) (feat : A → Finset K) (a : A) (w : K → V) : ℝ :=
   ∑ k ∈ feat a, val (w k)
 
-/-- Among the worlds satisfying a condition on one feature's value, the mean of a function of
-a feature's value is the conditional mean for the conditioned feature and the prior mean for
-every other feature. -/
 theorem sum_ite_div_sum_ite (p : V → Prop) [DecidablePred p] (hp : ∃ x, p x) (f k : K)
     (g : V → ℝ) :
     (∑ w : K → V, if p (w f) then g (w k) else 0) /
@@ -300,15 +295,11 @@ variable [DecidableEq V]
 value. -/
 def sem (u : K × V) : Finset (K → V) := univ.filter fun w ↦ w u.1 = u.2
 
-/-- Truth does not depend on the decision context, since the meaning mentions no actions. -/
 theorem mem_sem_iff (u : K × V) (w : K → V) : w ∈ sem u ↔ w u.1 = u.2 := by simp [sem]
 
 variable [MeasurableSpace (K → V)] [DiscreteMeasurableSpace (K → V)] [Fintype U]
   [MeasurableSpace U] [DiscreteMeasurableSpace U]
 
-/-- After an utterance whose meaning is a condition on one feature's value, the listener at the
-uniform prior expects from an action the conditional mean of the named feature and the prior
-mean of every other feature it carries. -/
 theorem expectedReward_listener_filter {S : U → Finset (K → V)} {u : U} (p : V → Prop)
     [DecidablePred p] (hp : ∃ x, p x) (f : K) (hS : S u = univ.filter fun w ↦ p (w f))
     (val : V → ℝ) (feat : A → Finset K) (a : A) :
@@ -402,8 +393,6 @@ theorem reward_world :
     reward val feat 0 world = 1 ∧ reward val feat 1 world = 0 ∧ reward val feat 2 world = -3 := by
   simp [reward, feat, world, val]; norm_num
 
-/-- The prior policy is uniform over the context, and the utility of acting on the prior alone is
-the mean reward. -/
 theorem actionUtility_prior :
     actionUtility (policy β prior (reward val feat)) (reward val feat) u world = -2 / 3 := by
   obtain ⟨h0, h1, h2⟩ := reward_world
@@ -412,7 +401,6 @@ theorem actionUtility_prior :
   rw [show (fun _ : Fin 3 ↦ (0 : ℝ)) = 0 from rfl, Real.softmax_zero]
   norm_num
 
-/-- Naming the value of green, absent from the context, is true and irrelevant. -/
 theorem green_two_true_irrelevant :
     world ∈ sem (.green, 4) ∧
       actionUtility (policy β listener (reward val feat)) (reward val feat) (.green, 4) world =
@@ -420,8 +408,6 @@ theorem green_two_true_irrelevant :
   ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, feat]⟩
 
-/-- Naming the zero value of red, present in the context, is true and irrelevant, since a zero
-value is the prior mean. -/
 theorem red_zero_true_irrelevant :
     world ∈ sem (.red, 2) ∧
       actionUtility (policy β listener (reward val feat)) (reward val feat) (.red, 2) world =
@@ -429,14 +415,10 @@ theorem red_zero_true_irrelevant :
   ⟨by simp [sem, world], actionUtility_eq_prior_of_expectedReward feat _ (c := 0) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, feat, val]⟩
 
-/-- Naming a value of spots makes the listener expect that value from the spotted mushroom and
-nothing from the others. -/
 theorem expectedReward_spots (v : Value) :
     expectedReward listener (reward val feat) (.spots, v) a = if a = 0 then val v else 0 := by
   fin_cases a <;> simp [expectedReward_listener, feat]
 
-/-- When a value of spots is named, the listener's softmax share of the spotted mushroom earns
-`1` and the rest is spent on the blue striped one. -/
 theorem actionUtility_spots (v : Value) :
     actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, v) world =
       (Real.exp (β * val v) - 3) / (Real.exp (β * val v) + 2) := by
@@ -449,8 +431,6 @@ theorem actionUtility_spots (v : Value) :
   field_simp
   ring
 
-/-- Naming a value of spots is relevant exactly when the value is positive, when it raises the
-listener's expected earnings above acting on the prior. -/
 theorem spots_relevant_iff (hβ : 0 < β) (v : Value) :
     actionUtility (policy β prior (reward val feat)) (reward val feat) (.spots, v) world <
         actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, v) world ↔
@@ -461,8 +441,6 @@ theorem spots_relevant_iff (hβ : 0 < β) (v : Value) :
   rw [actionUtility_prior, actionUtility_spots, ← key, lt_div_iff₀ (by positivity)]
   constructor <;> intro h <;> linarith
 
-/-- The exaggeration ⟨spots, +2⟩ is false where ⟨spots, +1⟩ is true, and is the more relevant of
-the two. -/
 theorem exaggeration_relevant (hβ : 0 < β) :
     world ∈ sem (.spots, 3) ∧ world ∉ sem (.spots, 4) ∧
       actionUtility (policy β listener (reward val feat)) (reward val feat) (.spots, 3) world <
@@ -497,8 +475,6 @@ theorem prefers_truth_iff (hβS : 0 < βS) (lam c : ℝ) :
     Fin.reduceEq, ite_true, ite_false]
   constructor <;> intro h <;> linarith
 
-/-- In the context of three spotted mushrooms naming any value of spots is irrelevant, since it
-shifts every action's expected reward alike. -/
 theorem spots_irrelevant_allSpotted (v : Value) :
     actionUtility (policy β listener (reward val featSpotted)) (reward val featSpotted)
         (.spots, v) world =
@@ -507,8 +483,6 @@ theorem spots_irrelevant_allSpotted (v : Value) :
   actionUtility_eq_prior_of_expectedReward featSpotted _ (c := val v) fun a ↦ by
     fin_cases a <;> simp [expectedReward_listener, featSpotted]
 
-/-- In the same context naming the value of green is relevant, since green is now the deciding
-feature. -/
 theorem green_relevant_allSpotted (hβ : 0 < β) :
     actionUtility (policy β prior (reward val featSpotted)) (reward val featSpotted)
         (.green, 4) world <

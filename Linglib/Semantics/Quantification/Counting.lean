@@ -114,7 +114,6 @@ theorem atLeast_inf_atMost (n : ℕ) :
     NumberTree.atLeast n ⊓ NumberTree.atMost n = NumberTree.exactly n := by
   funext a b; exact propext (show n ≤ b ∧ b ≤ n ↔ b = n by omega)
 
-/-- *More than half* is *most*. -/
 theorem thresholdGt_one_two : thresholdGt 1 2 = NumberTree.most := by
   funext a b; exact propext (show 1 * (a + b) < 2 * b ↔ a < b by omega)
 
@@ -235,19 +234,16 @@ theorem atMost_eq_compl_atLeast_succ (n : ℕ) : (atMost n : GQ α) = (atLeast (
 theorem exactly_eq_atLeast_inf_atMost (n : ℕ) : (exactly n : GQ α) = atLeast n ⊓ atMost n := by
   rw [exactly, atLeast, atMost, ← NumberTree.toGQ_inf, NumberTree.atLeast_inf_atMost]
 
-/-- On a finite universe *every* is the quantifier of the tree's *all*. -/
 theorem every_eq_toGQ_all [Finite α] : (every : GQ α) = NumberTree.all.toGQ := by
   funext A B
   simp only [every, NumberTree.toGQ, NumberTree.all, Set.ncard_eq_zero (Set.toFinite _),
     Set.eq_empty_iff_forall_notMem, Set.mem_ofPred_eq, not_and, not_not]
 
-/-- On a finite universe *no* is the quantifier of the tree's *no*. -/
 theorem no_eq_toGQ_no [Finite α] : (no : GQ α) = NumberTree.no.toGQ := by
   funext A B
   simp only [no, NumberTree.toGQ, NumberTree.no, Set.ncard_eq_zero (Set.toFinite _),
     Set.eq_empty_iff_forall_notMem, Set.mem_ofPred_eq, not_and]
 
-/-- On a finite universe *some* is *at least one*. -/
 theorem some_eq_atLeast_one [Finite α] : (GQ.some : GQ α) = atLeast 1 := by
   funext A B
   simp only [GQ.some, atLeast, NumberTree.toGQ, NumberTree.atLeast, Nat.one_le_iff_ne_zero,
@@ -280,8 +276,6 @@ theorem monotone_atLeast [Finite α] (n : ℕ) (A : α → Prop) : Monotone (atL
 theorem antitone_atMost [Finite α] (n : ℕ) (A : α → Prop) : Antitone (atMost n A) :=
   scopeAntitone_atMost n A
 
-/-- On a nonempty finite universe *most* is not scope antitone, since `most ⊤ ⊤` holds and
-`most ⊤ ⊥` fails. -/
 theorem not_scopeAntitone_most [Finite α] [Nonempty α] : ¬ ScopeAntitone (most : GQ α) :=
   fun h ↦ by
     have := h (fun _ ↦ True) (bot_le (a := fun _ ↦ True))
@@ -346,54 +340,43 @@ there-sentences, although Barwise and Cooper's Table II labels *few* and *half* 
 truth depends on `|A \ B|`, not just on `|A ∩ B|`. *Few* already fails it on one individual,
 *most* and *half* on two. -/
 
-/-- *Most* fails `Existential`, by `A = ⊤` and `B = {0}` on two individuals. -/
 theorem not_existential_most : ¬ Existential (most : GQ (Fin 2)) := fun h ↦ by
   have := h (fun _ ↦ True) (· = 0)
   revert this; decide
 
-/-- *Few* fails `Existential`, by `A = ⊤` and `B = ∅` on one individual. -/
 theorem not_existential_few : ¬ Existential (few : GQ (Fin 1)) := fun h ↦ by
   have := h (fun _ ↦ True) fun _ ↦ False
   revert this; decide
 
-/-- *Half* fails `Existential`, by `A = ⊤` and `B = {0}` on two individuals. -/
 theorem not_existential_half : ¬ Existential (half : GQ (Fin 2)) := fun h ↦ by
   have := h (fun _ ↦ True) (· = 0)
   revert this; decide
 
-/-- *Most* is not persistent: enlarging the restrictor from `{0}` to `{0, 2}` loses the
-majority for `B = {0}`. -/
 theorem not_restrictorMonotone_most : ¬ RestrictorMonotone (most : GQ (Fin 3)) := fun h ↦ by
   have hle : (· = (0 : Fin 3)) ≤ (· ≠ 1) := fun x hx ↦ by subst hx; decide
   have : most (· = (0 : Fin 3)) (· = 0) → most (· ≠ 1) (· = (0 : Fin 3)) := h _ hle
   revert this; decide
 
-/-- *Most* is not symmetric, by `A = {0}` and `B = {0, 1}`. -/
 theorem not_symm_most : ¬ Std.Symm (most : GQ (Fin 3)) := fun h ↦ by
   have := h.symm (· = 0) (fun x ↦ x = 0 ∨ x = 1)
   revert this; decide
 
-/-- *Half* is not scope monotone: with `A = {0, 1}`, `half A {0}` holds and `half A A` fails. -/
 theorem not_scopeMonotone_half : ¬ ScopeMonotone (half : GQ (Fin 3)) := fun h ↦ by
   have hle : (· = (0 : Fin 3)) ≤ fun x ↦ x = 0 ∨ x = 1 := fun _ ↦ Or.inl
   have : half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) (· = 0) →
       half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) fun x ↦ x = 0 ∨ x = 1 := h _ hle
   revert this; decide
 
-/-- *Half* is not scope antitone: with `A = {0, 1}`, `half A {0}` holds and `half A ∅` fails. -/
 theorem not_scopeAntitone_half : ¬ ScopeAntitone (half : GQ (Fin 3)) := fun h ↦ by
   have hle : (fun _ ↦ False) ≤ (· = (0 : Fin 3)) := fun _ ↦ False.elim
   have : half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) (· = 0) →
       half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) fun _ ↦ False := h _ hle
   revert this; decide
 
-/-- *Half* is non-monotone in its scope, neither monotone nor antitone
-([van-de-pol-etal-2023]). -/
 theorem not_monotone_half :
     ¬ ScopeMonotone (half : GQ (Fin 3)) ∧ ¬ ScopeAntitone (half : GQ (Fin 3)) :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩
 
-/-- Over a domain of more than `n` individuals, *exactly `n`* is not monotone in its scope. -/
 theorem not_monotone_exactly [Fintype α] {n : ℕ} (h : n < Fintype.card α) :
     ¬ Monotone (exactly n fun _ : α ↦ True) := fun hq ↦ by
   obtain ⟨t, -, rfl⟩ := Finset.exists_subset_card_eq (s := .univ) (n := n) (by simpa using h.le)
@@ -401,8 +384,6 @@ theorem not_monotone_exactly [Fintype α] {n : ℕ} (h : n < Fintype.card α) :
   simp [exactly_apply, Set.ncard_univ, Nat.card_eq_fintype_card] at this
   omega
 
-/-- Over a domain of at least `n` individuals, `n` positive, *exactly `n`* is not antitone in its
-scope. -/
 theorem not_antitone_exactly [Fintype α] {n : ℕ} (hn : n ≠ 0) (h : n ≤ Fintype.card α) :
     ¬ Antitone (exactly n fun _ : α ↦ True) := fun hq ↦ by
   obtain ⟨t, -, rfl⟩ := Finset.exists_subset_card_eq (s := .univ) (n := n) (by simpa using h)
@@ -410,12 +391,10 @@ theorem not_antitone_exactly [Fintype α] {n : ℕ} (hn : n ≠ 0) (h : n ≤ Fi
   simp [exactly_apply] at this
   omega
 
-/-- *Both* holds of a restrictor of two and fails of one of three. -/
 theorem both_fin2 : both (α := Fin 2) (fun _ ↦ True) fun _ ↦ True := by decide
 
 theorem not_both_fin3 : ¬ both (α := Fin 3) (fun _ ↦ True) fun _ ↦ True := by decide
 
-/-- On a singleton restrictor *most* is the scope's value at the singleton. -/
 theorem most_singleton_iff (j : α) (B : α → Prop) : most (· = j) B ↔ B j := by
   by_cases h : B j
   · rw [most_apply, show {x | x = j ∧ ¬ B x} = ∅ by ext; grind,
@@ -454,14 +433,10 @@ def atLeast (n : ℕ) : Family.{u} := fun _ _ ↦ GQ.atLeast n
 /-- `Family.exactly n` is `exactly n` on every finite domain. -/
 def exactly (n : ℕ) : Family.{u} := fun _ _ ↦ GQ.exactly n
 
-/-- `some` and `every` are different families, since on an empty restrictor `every` holds and
-`some` fails. -/
 theorem some_ne_every : some.{u} ≠ every.{u} := fun h ↦ by
   have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ False) fun _ ↦ False) h
   simp [some, every, GQ.some, GQ.every] at this
 
-/-- `some` and `no` are different families, since on a one-element domain `some ⊤ ⊤` holds and
-`no ⊤ ⊤` fails. -/
 theorem some_ne_no : some.{u} ≠ no.{u} := fun h ↦ by
   have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ True) fun _ ↦ True) h
   simp [some, no, GQ.some, GQ.no] at this

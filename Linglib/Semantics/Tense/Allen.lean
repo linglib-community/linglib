@@ -72,7 +72,6 @@ structure Relation where
 def ofEndpoints {α : Type*} [LinearOrder α] (a b c d : α) : Relation :=
   ⟨compare a c, compare a d, compare b c, compare b d, compare a b, compare c d⟩
 
-/-- Points of two linear orders that compare alike give their intervals the same relations. -/
 theorem ofEndpoints_eq {α β : Type*} [LinearOrder α] [LinearOrder β] {n : ℕ} {f : Fin n → α}
     {g : Fin n → β} (h : ∀ x y, compare (f x) (f y) = compare (g x) (g y)) (a b c d : Fin n) :
     ofEndpoints (f a) (f b) (f c) (f d) = ofEndpoints (g a) (g b) (g c) (g d) := by
@@ -84,9 +83,6 @@ def atoms : Finset Relation :=
       fun x ↦ x.1 ≤ x.2.1 ∧ x.2.2.1 ≤ x.2.2.2).image
     fun x ↦ ofEndpoints x.1 x.2.1 x.2.2.1 x.2.2.2
 
-/-- Twenty-six relations are realizable: Allen's thirteen between proper intervals, five between
-a point and a proper interval, five between a proper interval and a point, and three between
-points. -/
 theorem card_atoms : atoms.card = 26 := by decide +kernel
 
 /-! ### The relation of two intervals -/
@@ -98,7 +94,6 @@ variable {T : Type*} [LinearOrder T]
 /-- The relation of the interval `i` to the interval `j`. -/
 def relation (i j : NonemptyInterval T) : Relation := ofEndpoints i.fst i.snd j.fst j.snd
 
-/-- Every relation of two intervals is realizable. -/
 theorem relation_mem_atoms (i j : NonemptyInterval T) : relation i j ∈ atoms := by
   obtain ⟨g, hg⟩ := Ordering.exists_fin_compare_eq ![i.fst, i.snd, j.fst, j.snd]
   refine Finset.mem_image.2 ⟨(g 0, g 1, g 2, g 3), Finset.mem_filter.2
@@ -122,8 +117,6 @@ theorem toSetRel_mono (h : C ⊆ D) : (toSetRel C : SetRel (NonemptyInterval T) 
 
 end LinearOrder
 
-/-- One cell's relation lies within another's on every linear order exactly when its realizable
-relations lie in the other cell, since each is realized among four points. -/
 theorem forall_toSetRel_subset_iff {C D : Finset Relation} :
     (∀ (T : Type) [LinearOrder T], (toSetRel C : SetRel (NonemptyInterval T) _) ⊆ toSetRel D) ↔
       C ∩ atoms ⊆ D := by
@@ -163,7 +156,6 @@ private theorem swap_compare (a b : T) : (compare a b).swap = compare b a :=
 @[simp] theorem inv_relation (i j : NonemptyInterval T) : (relation i j).inv = relation j i := by
   simp [relation, ofEndpoints, Relation.inv, swap_compare]
 
-/-- The converse of a cell's relation is the relation of its converse. -/
 @[simp] theorem toSetRel_inv (C : Finset Relation) :
     (toSetRel (inv C) : SetRel (NonemptyInterval T) _) = (toSetRel C).inv := by
   ext ⟨i, j⟩
@@ -181,8 +173,6 @@ def comp (C D : Finset Relation) : Finset Relation :=
     ofEndpoints (e 0) (e 1) (e 2) (e 3) ∈ C ∧ ofEndpoints (e 2) (e 3) (e 4) (e 5) ∈ D ∧
     ofEndpoints (e 0) (e 1) (e 4) (e 5) = t
 
-/-- A relation is in the composite of two cells when it is realizable and some configuration of
-three intervals' endpoints among six points realizes it with the two cells. -/
 theorem mem_comp {C D : Finset Relation} {t : Relation} :
     t ∈ comp C D ↔ t ∈ atoms ∧ ∃ e : Fin 6 → Fin 6, e 0 ≤ e 1 ∧ e 2 ≤ e 3 ∧ e 4 ≤ e 5 ∧
       ofEndpoints (e 0) (e 1) (e 2) (e 3) ∈ C ∧ ofEndpoints (e 2) (e 3) (e 4) (e 5) ∈ D ∧
@@ -193,7 +183,6 @@ section LinearOrder
 
 variable {T : Type*} [LinearOrder T] {C D : Finset Relation}
 
-/-- The composite of two cells' relations lies in the relation of their composite. -/
 theorem toSetRel_comp_subset :
     (toSetRel C ○ toSetRel D : SetRel (NonemptyInterval T) _) ⊆ toSetRel (comp C D) := by
   rintro ⟨i, k⟩ ⟨j, hij, hjk⟩
@@ -207,9 +196,6 @@ theorem toSetRel_comp_subset :
   · rw [ofEndpoints_eq hg 2 3 4 5]; exact mem_toSetRel.1 hjk
   · exact ofEndpoints_eq hg 0 1 4 5
 
-/-- On dense time without endpoints, the relation of the composite of two cells is the composite
-of their relations: the second interval of a configuration of endpoints can be placed between
-any two intervals that stand as its first and third do. -/
 theorem toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
     (toSetRel (comp C D) : SetRel (NonemptyInterval T) _) = toSetRel C ○ toSetRel D := by
   refine le_antisymm (fun ⟨i, k⟩ h ↦ ?_) toSetRel_comp_subset
@@ -281,7 +267,6 @@ points is. -/
 def _root_.NonemptyInterval.position (i j : NonemptyInterval T) : Ordering :=
   (relation i j).position
 
-/-- The position of two intervals is read off their relation. -/
 theorem position_relation (i j : NonemptyInterval T) :
     i.position j = (relation i j).position := rfl
 
@@ -309,7 +294,6 @@ theorem _root_.NonemptyInterval.position_eq_ite :
     i.position i = .eq :=
   NonemptyInterval.position_eq_eq.2 (NonemptyInterval.overlaps_refl i)
 
-/-- On point intervals the position is the comparison of the points. -/
 @[simp] theorem _root_.NonemptyInterval.position_pure (a b : T) :
     (NonemptyInterval.pure a).position (.pure b) = compare a b := by
   rcases lt_trichotomy a b with h | rfl | h
@@ -317,7 +301,6 @@ theorem _root_.NonemptyInterval.position_eq_ite :
   · rw [NonemptyInterval.position_self, compare_eq_iff_eq.2 rfl]
   · rw [NonemptyInterval.position_eq_gt.2 (by exact h), compare_gt_iff_gt.2 h]
 
-/-- An interval containing one that overlaps `j` overlaps `j`. -/
 theorem _root_.NonemptyInterval.position_eq_eq_of_le {i' : NonemptyInterval T}
     (h : i.position j = .eq) (hle : i ≤ i') : i'.position j = .eq :=
   NonemptyInterval.position_eq_eq.2 ((NonemptyInterval.position_eq_eq.1 h).mono_left hle)
@@ -327,16 +310,12 @@ end LinearOrder
 /-- The cell of the relations whose position is one of `C`. -/
 def ofPosition (C : Finset Ordering) : Finset Relation := atoms.filter (·.position ∈ C)
 
-/-- Overlap is the position between precedence either way, so that a cell of positions lumps
-abutment with overlap. -/
 theorem ofPosition_eq : ofPosition {.eq} = overlaps := by decide +kernel
 
 section LinearOrder
 
 variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
 
-/-- The relation of two intervals is among the realizable relations satisfying `p` iff it
-satisfies `p`. -/
 theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
     relation i j ∈ atoms.filter p ↔ p (relation i j) := by
   simp [relation_mem_atoms]
@@ -407,7 +386,6 @@ private theorem eq_of_mem_atoms_of_shapes :
       t = ⟨t.fstFst, t.fstFst, t.fstFst, t.fstFst, .eq, .eq⟩ := by
   decide +kernel
 
-/-- On points, Allen composition is the composition of comparison cells. -/
 theorem comp_pure (R S : Finset Ordering) : comp (pure R) (pure S) = pure (Tense.comp R S) := by
   ext t
   simp only [mem_comp, pure, Finset.mem_filter]
@@ -462,7 +440,6 @@ section LinearOrder
 
 variable {T : Type*} [LinearOrder T]
 
-/-- The last time of a chain stands to its first in the chain's composite. -/
 theorem HoldsAlong.mem_compAlong :
     ∀ {cs : List (Finset Relation)} {b : NonemptyInterval T} {tos : List (NonemptyInterval T)},
       HoldsAlong cs b tos → ((b :: tos).getLast (List.cons_ne_nil _ _), b) ∈ toSetRel (compAlong cs)
@@ -471,8 +448,6 @@ theorem HoldsAlong.mem_compAlong :
     rw [compAlong, List.getLast_cons (List.cons_ne_nil _ _)]
     exact toSetRel_comp_subset (SetRel.mem_comp.2 ⟨x, h.mem_compAlong, hx⟩)
 
-/-- On dense time without endpoints, two times stand in a chain's composite exactly when the chain
-can be realized from the first to the second. -/
 theorem mem_compAlong_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
     ∀ {cs : List (Finset Relation)} {b x : NonemptyInterval T},
       (x, b) ∈ toSetRel (compAlong cs) ↔

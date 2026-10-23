@@ -114,8 +114,6 @@ theorem holdsAt_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P
   rw [stack_eq]
   exact Kaplan.holdsAt_shiftyOp _ χ c
 
-/-- (G2): in a complement of any size, an indexical class shifts only if every class below it in
-the sequence shifts as well. -/
 theorem mem_shifted_of_lt {n : ℕ} {k k' : Coord} (hk : k ∈ shifted n) (hk' : k' ∈ sequence)
     (h : rank k' < rank k) : k' ∈ shifted n :=
   mem_shifted_iff.2 ⟨hk', h.trans (mem_shifted_iff.1 hk).2⟩
@@ -201,7 +199,6 @@ theorem apply_complementContext_of_mem_eventShifted (h : k ∈ eventShifted n p)
   rw [Kaplan.Context.apply_overwrite_of_disjoint hf (by simpa using hk),
     Kaplan.Context.apply_overwrite_of_subset hf (by simpa using h)]
 
-/-- An indexical whose class the complement does not shift reads the utterance context. -/
 theorem apply_complementContext_of_notMem (h : k ∉ shifted n) :
     f (overwrite (deSe n p) (overwrite (eventShifted n p) c x) i) = f c := by
   have h₁ : k ∉ deSe n p := fun hk ↦ h (shifted_mono (min_le_right p n) hk)
@@ -243,7 +240,6 @@ bundle overwriting all its coordinates or none (§4.2.2). -/
 def ofBundles (bs : Finset (Finset Coord)) : Finset (Finset Coord) :=
   bs.powerset.image fun t ↦ t.sup id
 
-/-- (G2) for every complement built from sizes. -/
 theorem mem_of_mem_ofSizes {ns : Finset ℕ} {s : Finset Coord} (hs : s ∈ ofSizes ns) {k k' : Coord}
     (hk : k ∈ s) (hk' : k' ∈ sequence) (h : rank k' < rank k) : k' ∈ s := by
   obtain ⟨n, -, rfl⟩ := Finset.mem_image.1 hs
@@ -344,16 +340,11 @@ theorem rows_shift :
         (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ q ∈ p.2.zipIdx, (q.1 ∈ s ↔ q.2 ∈ ps)) := by
   decide +kernel
 
-/-- A judged de se reading of the rows' shifted indexicals is available exactly when a complement
-the verb selects shifts their coordinates. -/
 theorem rows_deSe :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings, x.1 = "de se" →
       (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s) := by
   decide +kernel
 
-/-- (G3) in the rows: a judged non-de se reading of the rows' shifted indexicals is available
-exactly when a complement the verb selects shifts their coordinates with operators above the
-complementizer, `eventShifted n c = shifted n \ shifted c`. -/
 theorem rows_nonDeSe :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ c ∈ p.1.cPosition.toList,
       ∀ x ∈ r.readings, x.1 = "non-de se" →

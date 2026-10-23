@@ -119,8 +119,6 @@ theorem attestations_conjunctive :
     ∀ a ∈ attestations, a.coordinator.role = .conjunctive := by
   decide
 
-/-- A Fragment coordinator bound on a side of its host stands on that side of every noun phrase
-the example marks: the enclitics *-hago*, *-o* and *-que* follow theirs. -/
 theorem attestations_side : ∀ a ∈ attestations, ∀ p ∈ patterns a.datum,
     ∀ s ∈ a.coordinator.morph.kind.side?, ∀ t ∈ [p.1, p.2], t ≠ none → t = some s := by
   decide
@@ -168,26 +166,19 @@ variable {l}
 
 theorem relevant_of_agrees (h : l.Agrees) : l.relevant = ⊤ := by simp [relevant, h]
 
-/-- Where verbs agree, an AND-language is one with the coordinate strategy itself. -/
 theorem isAnd_iff_top_mem (h : l.Agrees) : l.IsAnd ↔ ⊤ ∈ l.encodings := by
   simp [IsAnd, relevant_of_agrees h]
 
 theorem distinctMarker_mem_relevant : .distinctMarker ∈ l.relevant := by
   unfold relevant; split_ifs <;> simp
 
-/-- The paper's guideline for rating. A language whose every encoding links with the comitative
-marker is a WITH-language, however far its hybrids have grammaticalized. -/
 theorem not_isAnd_of_forall_notMem (h : ∀ e ∈ l.encodings, .distinctMarker ∉ e) : ¬ l.IsAnd :=
   fun ⟨e, he, hle⟩ ↦ h e he (hle distinctMarker_mem_relevant)
 
 variable (l) in
-/-- The most advanced hybrid, with every relevant feature but the linker, is one feature short of
-the coordinate strategy. -/
 theorem erase_distinctMarker_covBy : l.relevant.erase .distinctMarker ⋖ l.relevant :=
   Finset.erase_covBy distinctMarker_mem_relevant
 
-/-- Differentiating the linker of a hybrid yields every relevant feature exactly when the hybrid
-is the most advanced one. -/
 theorem relevant_le_insert_iff {e : Finset Feature} (he : e ≤ l.relevant)
     (hm : .distinctMarker ∉ e) :
     l.relevant ≤ insert .distinctMarker e ↔ e = l.relevant.erase .distinctMarker := by
@@ -205,15 +196,11 @@ end Language
 
 /-! ### The linker in the Fragments -/
 
-/-- English, the paper's example of an AND-language, links its coordinate strategy by *and*,
-distinct from its comitative *with*. -/
 theorem english_and_not_isAlsoComitative :
     ¬ English.Coordination.and_.IsAlsoComitative English.Adpositions.with_.morphs
       English.Adpositions.with_.functions := by
   decide
 
-/-- Persian links its noun phrases by *væ* and *-o*, both distinct from its comitative
-preposition *ba* 'with'. -/
 theorem persian_not_isAlsoComitative : ∀ c ∈ [Farsi.Coordination.va, Farsi.Coordination.o],
     ¬ c.IsAlsoComitative Farsi.Adpositions.ba.morphs Farsi.Adpositions.ba.functions := by
   decide
@@ -224,15 +211,11 @@ theorem hausa_da_isAlsoComitative :
       Hausa.Adpositions.da.functions := by
   decide
 
-/-- Japanese, one of the verb-final WITH-languages of the paper, links its noun phrases by the
-comitative postposition *to*. -/
 theorem japanese_to_isAlsoComitative :
     Japanese.Coordination.to_.IsAlsoComitative Japanese.Adpositions.«to».morphs
       Japanese.Adpositions.«to».functions := by
   decide
 
-/-- Yakut, another verb-final WITH-language of the paper, links its noun phrases by the comitative
-suffix *-LĪn*. -/
 theorem yakut_lin_isAlsoComitative :
     Yakut.Coordination.lin.IsAlsoComitative (Yakut.Case.exponents .com)
       {Yakut.Case.label .com} := by
@@ -261,8 +244,6 @@ phrase stands in the canonical position of adverbial phrases, which in these sch
 object's. -/
 def scheme (a : Arrangement Constituent 3) : Arrangement Slot 3 := Slot.equivConstituent.trans a
 
-/-- The subject and the comitative phrase of a scheme are contiguous exactly when the verb is not
-medial. -/
 theorem adjacent_scheme_iff (a : Arrangement Constituent 3) :
     (scheme a).Adjacent .subject .comitative ↔ ¬ a.IsMedial .verb :=
   Arrangement.adjacent_iff_not_isMedial (z := Slot.verb) (by decide) (by decide) (by decide)
@@ -279,8 +260,6 @@ theorem adjacent_scheme_vso : (scheme .vso).Adjacent .subject .comitative := by 
 the comitative phrase, which moves the comitative phrase across a medial verb. -/
 def shift (s : Arrangement Slot 3) : Arrangement Slot 3 := (Equiv.swap .verb .comitative).trans s
 
-/-- Where the verb is medial, the shift makes the subject and the comitative phrase contiguous,
-so that the string can be reanalyzed as a constituent. -/
 theorem adjacent_shift {s : Arrangement Slot 3} (h : s.IsMedial .verb) :
     (shift s).Adjacent .subject .comitative := by
   refine (Arrangement.adjacent_iff_not_isMedial (z := Slot.verb) (by decide) (by decide)

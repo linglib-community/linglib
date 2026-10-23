@@ -165,10 +165,8 @@ instance : PartialOrder (Flat α) where
 theorem coe_le_iff : (a : Flat α) ≤ y ↔ y = ↑a :=
   ⟨fun h => by cases h; rfl, fun h => h ▸ .refl a⟩
 
-/-- A value is maximal: nothing lies above it but itself. -/
 theorem isMax_coe (a : α) : IsMax (a : Flat α) := fun _ hy ↦ (coe_le_iff.1 hy).le
 
-/-- Every value other than `⊥` is maximal. -/
 theorem isMax_of_ne_bot (hx : x ≠ ⊥) : IsMax x := by
   obtain ⟨a, rfl⟩ := ne_bot_iff_exists.1 hx
   exact isMax_coe a
@@ -178,7 +176,6 @@ instance [DecidableEq α] : DecidableLE (Flat α)
   | (a : α), ⊥ => isFalse (not_coe_le_bot a)
   | (a : α), (b : α) => decidable_of_iff' _ coe_le_coe
 
-/-- A flat inequality with no definedness gain is an equality. -/
 theorem eq_of_le (h : x ≤ y) (hyx : y ≠ ⊥ → x ≠ ⊥) : x = y := by
   cases h with
   | bot_le y =>
@@ -189,7 +186,6 @@ theorem eq_of_le (h : x ≤ y) (hyx : y ≠ ⊥ → x ≠ ⊥) : x = y := by
 
 /-! ### Covering -/
 
-/-- The flat order has height one: its covers are the steps from `⊥` to a committed value. -/
 theorem covBy_iff : x ⋖ y ↔ x = ⊥ ∧ y ≠ ⊥ := by
   constructor
   · intro h
@@ -205,7 +201,6 @@ theorem covBy_iff : x ⋖ y ↔ x = ⊥ ∧ y ≠ ⊥ := by
 @[simp] theorem bot_covBy_coe (a : α) : (⊥ : Flat α) ⋖ a :=
   covBy_iff.2 ⟨rfl, coe_ne_bot⟩
 
-/-- The flat order is `Part`'s order, along `Part.ofOption`. -/
 theorem le_iff_ofOption_le :
     x ≤ y ↔ Part.ofOption (x : Option α) ≤ Part.ofOption (y : Option α) := by
   constructor
@@ -270,7 +265,6 @@ theorem inf_def [DecidableEq α] (x y : Flat α) : x ⊓ y = if x = y then x els
     (a : Flat α) ⊓ b = if a = b then (a : Flat α) else ⊥ := by
   simp [inf_def]
 
-/-- Two committed slots are disjoint exactly when they disagree. -/
 @[simp] theorem disjoint_coe_coe : Disjoint (a : Flat α) b ↔ a ≠ b := by
   constructor
   · rintro h rfl
@@ -278,7 +272,6 @@ theorem inf_def [DecidableEq α] (x y : Flat α) : x ⊓ y = if x = y then x els
   · rintro hab x hxa hxb
     cases x <;> simp_all
 
-/-- Two committed slots are compatible exactly when they agree. -/
 @[simp] theorem compat_coe_coe : Compat (a : Flat α) b ↔ a = b :=
   ⟨fun ⟨_, hu⟩ ↦ by
     obtain ⟨ha, hb⟩ := mem_upperBounds_pair.mp hu
@@ -336,8 +329,6 @@ instance [DecidableEq α] : PartialUnify (Flat α) where
       rw [unify_coe_coe, ite_eq_left rfl]
       exact WithTop.coe_ne_top
 
-/-- Two slots are compatible exactly when their committed values coincide;
-an uncommitted slot is a wildcard. -/
 theorem compat_iff : Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑b → a = b := by
   refine ⟨fun ⟨u, hu⟩ a ha b hb ↦ ?_, fun h ↦ ?_⟩
   · have hx := hu (Set.mem_insert x {y})
@@ -353,7 +344,6 @@ theorem compat_iff : Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑
     obtain rfl := h a rfl b rfl
     exact compat_self _
 
-/-- On compatible slots the right slot also lies below the left-biased merge. -/
 theorem le_or_right (h : Compat x y) : y ≤ x.or y := by
   cases x with
   | bot => exact le_rfl

@@ -51,8 +51,6 @@ theorem IsAnalogical.mono {ops ops' : Set (F → F)} (h : IsAnalogical ops p) (h
     IsAnalogical ops' p :=
   fun c c' ↦ (h c c').imp fun _ ⟨hg, hp⟩ ↦ ⟨hops hg, hp⟩
 
-/-- Analogy under arbitrary operations says only that the form at each cell determines the form
-at every other cell. -/
 theorem isAnalogical_univ_iff :
     IsAnalogical Set.univ p ↔ ∀ c c', (p · c').FactorsThrough (p · c) := by
   refine ⟨fun h c c' l l' hl ↦ ?_, fun h c c' ↦

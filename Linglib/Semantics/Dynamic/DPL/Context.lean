@@ -105,12 +105,10 @@ def reset (x : V) : Context V := ⟨∅, {x}, ∅, fun _ _ ↦ Iff.rfl⟩
 
 variable [DecidableEq V]
 
-/-- Coherence in the union form the clauses of the typing use. -/
 theorem coh_mem (c : Context V) {v : V} : v ∈ c.I ∪ c.B ↔ v ∈ c.O ∪ c.B := by
   have := c.coh (v := v)
   grind
 
-/-- The paper's statement of coherence. -/
 theorem union_blocks (c : Context V) : c.I ∪ c.B = c.O ∪ c.B :=
   Finset.ext fun _ ↦ c.coh_mem
 
@@ -204,12 +202,10 @@ theorem hasContext_test (s : Finset V) (p : Set (V → E))
   hasContext_test_iff.mpr ⟨isTest_test _,
     fun _ _ hV hR ↦ ⟨rfl, hp hV.symm hR.2⟩⟩
 
-/-- A condition that depends only on `s` is typed as a test at `s`. -/
 theorem hasContext_test_of_dependsOn {s : Finset V} {p : Set (V → E)}
     (hp : DependsOn (· ∈ p) (↑s : Set V)) : HasContext (test p) (Context.test s) :=
   hasContext_test s p fun _ _ hs hf ↦ (hp fun _ hv ↦ hs hv).to_iff.mp hf
 
-/-- The identity is typed by the unit context. -/
 theorem hasContext_id : HasContext (.id : Update (V → E)) 1 :=
   hasContext_test_iff.mpr ⟨subset_rfl, fun _ _ _ _ ↦ rfl⟩
 
@@ -338,13 +334,10 @@ theorem dependsOn_dom (h : HasContext R c) : DependsOn (· ∈ R.dom) (↑c.I : 
     fun _ _ hI ⟨_, hR⟩ ↦ ⟨_, h.patch hI hR⟩
   exact fun f f' hI ↦ propext ⟨key fun v hv ↦ (hI v hv).symm, key fun v hv ↦ hI v hv⟩
 
-/-- A relation that blocks none of the inputs of another preserves the other's truth. -/
 theorem mem_dom_iff (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d.I)
     (hfg : f ~[R] g) : f ∈ S.dom ↔ g ∈ S.dom :=
   (hS.dependsOn_dom fun _ hv ↦ hR.blocks hfg (Finset.disjoint_right.mp hd hv)).to_iff
 
-/-- A relation that blocks none of the inputs of another commutes with its truth, so the
-sequence is true where both are. -/
 theorem dom_comp (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d.I) :
     (R ○ S).dom = R.dom ∩ S.dom :=
   Set.ext fun _ ↦
@@ -353,7 +346,6 @@ theorem dom_comp (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B 
         let ⟨j, hj⟩ := (hR.mem_dom_iff hS hd hk).mp hf
         ⟨j, k, hk, hj⟩⟩
 
-/-- An implication from a relation that blocks no input of the consequent is material. -/
 theorem impl_eq (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d.I) :
     Update.impl R S = R.domᶜ ∪ S.dom :=
   Set.ext fun f ↦
@@ -396,11 +388,9 @@ def context : Formula L V → Context V
   | ex x φ => .reset x * context φ
   | all x φ => (Context.reset x).impl (context φ)
 
-/-- The blocks of a formula's context are its active quantifier variables. -/
 theorem context_B (φ : Formula L V) : φ.context.B = φ.aqv := by
   induction φ <;> simp_all [context, aqv]
 
-/-- The inputs of a formula's context are its free variables. -/
 theorem context_I (φ : Formula L V) : φ.context.I = φ.fv := by
   induction φ <;> simp_all [context, fv, context_B, Finset.sdiff_singleton_eq_erase]
 

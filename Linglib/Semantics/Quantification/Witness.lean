@@ -47,26 +47,18 @@ variable {α : Type*} {Q : NP α} {A X w : α → Prop}
 ([barwise-cooper-1981] §4.9). -/
 def Witness (Q : NP α) (A w : α → Prop) : Prop := (∀ x, w x → A x) ∧ Q w
 
-/-- A quantifier living on `A` holds of `X` iff `A ∩ X` is a witness set, whatever its
-monotonicity. -/
 theorem LivesOn.apply_iff_witness (h : LivesOn Q A) : Q X ↔ Witness Q A fun x ↦ A x ∧ X x :=
   ⟨fun hX ↦ ⟨fun _ ↦ And.left, (h X).1 hX⟩, fun hw ↦ (h X).2 hw.2⟩
 
-/-- C11(i) says that an increasing quantifier living on `A` holds of `X` iff some witness set
-is contained in `X`. -/
 theorem LivesOn.monotone_apply_iff (h : LivesOn Q A) (hm : Monotone Q) :
     Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
   ⟨fun hX ↦ ⟨_, h.apply_iff_witness.1 hX, fun _ ↦ And.right⟩, fun ⟨_, hw, hwX⟩ ↦ hm hwX hw.2⟩
 
-/-- C11(ii) says that a decreasing quantifier living on `A` holds of `X` iff `X ∩ A` is
-contained in some witness set. -/
 theorem LivesOn.antitone_apply_iff (h : LivesOn Q A) (hm : Antitone Q) :
     Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, X x ∧ A x → w x :=
   ⟨fun hX ↦ ⟨_, h.apply_iff_witness.1 hX, fun _ ↦ And.symm⟩,
     fun ⟨_, hw, hXw⟩ ↦ (h X).2 (hm (fun x hx ↦ hXw x hx.symm) hw.2)⟩
 
-/-- The minimal witness sets of a quantifier living on `A` are its minimal sets, since a
-minimal set in `Q` lies inside `A`, `Q` holding also of its intersection with `A`. -/
 theorem LivesOn.minimal_witness_iff (h : LivesOn Q A) :
     Minimal (Witness Q A) w ↔ Minimal Q w :=
   ⟨fun hm ↦ ⟨hm.1.2, fun _ hy hyw ↦ hm.2 ⟨fun x hx ↦ hm.1.1 x (hyw x hx), hy⟩ hyw⟩,

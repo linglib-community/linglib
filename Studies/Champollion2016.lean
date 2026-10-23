@@ -127,21 +127,17 @@ theorem existentialRaising_eq_upperClosure (N : Set α) :
     existentialRaising N = upperClosure ((fun x ↦ ({x} : Set α)) '' N) := by
   ext P; simp
 
-/-- Existential Raising preserves unions. -/
 theorem existentialRaising_union (N N' : Set α) :
     existentialRaising (N ∪ N') = existentialRaising N ∪ existentialRaising N' := by
   ext P; simp [or_and_right, exists_or]
 
-/-- The Montague lift of `x` is the principal filter of `{x}`. -/
 theorem setOf_individual (x : E) : {P : Set E | individual x P} = Ici {x} := by
   ext P; exact (singleton_subset_iff (a := x) (s := P)).symm
 
-/-- Choice Raising is the principal filter of the singleton of the choice. -/
 theorem choiceRaising_eq_Ici (f : ChoiceFunction E) (N : Set E) :
     choiceRaising f N = Ici {f N} :=
   setOf_individual (f N)
 
-/-- Distributive Choice Raising is the principal filter of the chosen plurality. -/
 theorem distributiveChoiceRaising_eq_Ici (f : ChoiceFunction (Set E)) (N : Set (Set E)) :
     distributiveChoiceRaising f N = Ici (f N) :=
   rfl
@@ -155,7 +151,6 @@ theorem distributiveChoiceRaising_eq_setOf (f : ChoiceFunction (Set E)) {N : Set
 
 /-! ### Raising, Intersection, Minimization -/
 
-/-- The pairs drawn from `N` and `N'` are the set product of their singletons. -/
 theorem image_singleton_sups (N N' : Set E) :
     (fun x ↦ ({x} : Set E)) '' N ⊻ (fun x ↦ ({x} : Set E)) '' N' =
       {P | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} := by
@@ -274,8 +269,6 @@ theorem predicateDistributivity_mem_existentialRaising_minimization_iff {N N' : 
 
 /-! ### Choice Raising -/
 
-/-- Minimization of the meet of two principal filters keeps only their join. This is how
-Intersection and Minimization form a collective individual. -/
 theorem minimization_and_Ici (a b : Set E) :
     minimization (and_.denote {Ici a, Ici b}) = {a ∪ b} := by
   rw [and_denote, sInf_pair]

@@ -65,15 +65,12 @@ def selects : VerbClass → List Complementizer
   | .perception => [kemzi, ki]
   | .directive | .desire | .modal | .emotiveFactive | .control | .ecm => [ki]
 
-/-- Every class takes one of the two prefixal typers. -/
 theorem kemzi_or_ki (c : VerbClass) : kemzi ∈ selects c ∨ ki ∈ selects c := by
   cases c <;> decide
 
-/-- *ʔɨlu* occurs only where *kɛmzɨ-* does. -/
 theorem kemzi_of_ilu {c : VerbClass} (h : ilu ∈ selects c) : kemzi ∈ selects c := by
   revert h; cases c <;> decide
 
-/-- The two prefixes overlap exactly on fiction and perception verbs. -/
 theorem kemzi_and_ki_iff (c : VerbClass) :
     kemzi ∈ selects c ∧ ki ∈ selects c ↔ c = .fiction ∨ c = .perception := by
   cases c <;> decide
@@ -115,11 +112,9 @@ def selectionDatum (e : Datum) : Option SelectionDatum := do
 /-- The attested (verb class, typer) pairs of the thesis's examples. -/
 def selectionData : List SelectionDatum := Examples.all.filterMap selectionDatum
 
-/-- The selection table admits every attested pairing. -/
 theorem selects_covers_data : ∀ d ∈ selectionData, d.typer ∈ selects d.verbClass := by
   decide
 
-/-- All three typers are attested, so the coverage check has something to check. -/
 theorem each_typer_attested :
     (∃ d ∈ selectionData, d.typer = kemzi) ∧ (∃ d ∈ selectionData, d.typer = ki) ∧
       (∃ d ∈ selectionData, d.typer = ilu) := by decide
@@ -183,8 +178,6 @@ def negationDatum (e : Datum) : Option NegationDatum := do
 /-- The negated clauses of the thesis's examples. -/
 def negationData : List NegationDatum := Examples.all.filterMap negationDatum
 
-/-- The suffix appears exactly in the clauses that carry PolP, every example classified by its
-clause having a negative word, so that none drops out of `negationData`. -/
 theorem suffix_iff_polP :
     (∀ e ∈ Examples.all, (e.paperFeatures.lookup "clause").isSome → (negationDatum e).isSome) ∧
       ∀ d ∈ negationData, d.HasSuffix ↔ HasPolP d.clause := by
@@ -205,9 +198,6 @@ theorem variants_ungrammatical :
       ∀ v ∈ variantData, v.2 = .ungrammatical ∧ (v.1.HasSuffix ↔ ¬ HasPolP v.1.clause) := by
   decide +kernel
 
-/-- Every clause type the analysis gives a polarity projection is attested with the suffix, and a
-clause without the projection is attested without it, so the generalization is confirmed on both
-sides rather than by the absence of counterexamples. -/
 theorem polP_clauses_attested :
     (∃ d ∈ negationData, d.clause = .root ∧ d.HasSuffix) ∧
     (∃ d ∈ negationData, d.clause = .ilu ∧ d.HasSuffix) ∧

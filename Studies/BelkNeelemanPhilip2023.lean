@@ -158,7 +158,6 @@ def leftNodeE : Derivation := ⟨likesDislikes opera opera', [], [(⟨[1, 1, 1]�
 theorem phon_rnrMD : rnrMD.phon = ["John", "likes", "Mary", "dislikes", "opera"] := by decide
 theorem phon_rnrE : rnrE.phon = rnrMD.phon := by decide
 
-/-- Both derivations of right-node raising are licensed. -/
 theorem licensed_rnrMD : rnrMD.Licensed := by decide
 theorem licensed_rnrE : rnrE.Licensed := by decide
 
@@ -209,8 +208,6 @@ def twoPivotsMD : Derivation :=
   ⟨flatteredDisparaged john excessively john excessively,
     [(⟨[0, 1, 1]⟩, ⟨[1, 1, 1]⟩), (⟨[0, 1, 0, 1]⟩, ⟨[1, 1, 0, 1]⟩)], []⟩
 
-/-- Both derive *Mary flattered, and Bill disparaged, John excessively*; pruning the object first
-is not licensed, since the adverb would still follow it in the first conjunct. -/
 theorem licensed_twoPivots :
     twoPivotsE.phon = ["Mary", "flattered", "Bill", "disparaged", "John", "excessively"] ∧
       twoPivotsMD.phon = twoPivotsE.phon ∧ twoPivotsE.Licensed ∧ twoPivotsMD.Licensed ∧
@@ -258,8 +255,6 @@ prosodic break before it. -/
 theorem licensed_pieBeforePim :
     pieBeforePim.Licensed ∧ pieBeforePim.pivotOnset = some "the same paper" := by decide
 
-/-- But not before material of the elided pivot, since forced pruning comes first, while the direct
-object still follows the indirect one in the first conjunct. -/
 theorem not_licensed_pimBeforePie :
     ¬ pimBeforePie.Licensed ∧
       ¬ MayPrune pimBeforePie.input [] ⟨[0, 1, 1, 1, 0]⟩ ⟨[1, 1, 1, 1, 0]⟩ := by

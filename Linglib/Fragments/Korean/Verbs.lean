@@ -95,7 +95,6 @@ variable {w : Voice} {v : Verb}
 
 @[simp] theorem frames_derive : (derive w v).valency.frames = [w.derived.toArgumentFrame] := rfl
 
-/-- The causative voice of a verb whose frames are intransitive or transitive applies to it. -/
 theorem applies_causativeVoice (hv : ∀ fr ∈ v.valency.frames, fr = .intransitive ∨ fr = .np)
     (hne : v.valency.frames ≠ []) (sfx : causativeSuffixes) :
     Applies (causativeVoice v sfx) v := by
@@ -110,7 +109,6 @@ theorem applies_causativeVoice (hv : ∀ fr ∈ v.valency.frames, fr = .intransi
     · exact ⟨_, hfr, le_rfl⟩
     · exact absurd ⟨_, hfr, by decide⟩ h
 
-/-- The passive applies to a transitive verb. -/
 theorem applies_passive (h : ArgumentFrame.np ∈ v.valency.frames) (sfx : passiveSuffixes) :
     Applies (passive sfx) v :=
   ⟨_, h, le_rfl⟩
@@ -265,8 +263,6 @@ example : Morph.wordsAt .affix (shortCausative cwuk ⟨"i", by decide⟩).morphs
     [(shortCausative cwuk ⟨"i", by decide⟩).morphs] :=
   wordsAt_derive rfl (by decide)
 
-/-- *ilk-hi-ta* 'be read' and *ilk-hi-ta* 'cause to read' share a form and differ in
-valency. -/
 theorem form_ilk_hi_passive : ilk_hi_passive.form = ilk_hi_causative.form ∧
     ilk_hi_passive.valency.frames ≠ ilk_hi_causative.valency.frames := by
   decide

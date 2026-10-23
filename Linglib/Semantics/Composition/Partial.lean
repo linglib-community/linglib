@@ -118,23 +118,18 @@ variable {E W : Type} {S : Sorts}
 These are rewriting lemmas rather than `simp` lemmas, since the reducible `Ty.PDomain` keys a
 concrete domain and a variable one differently for `simp`'s index. -/
 
-/-- A binary node whose left daughter is a defined function over the right daughter's type
-applies it forward. -/
 theorem Mode.combine?_evalPartial_fn_left {σ τ : Ty} (f : Ty.PDomain E W (σ ⇒ τ) S)
     (a : Ty.PDomain E W σ S) :
     Mode.combine? Mode.evalPartial (⟨σ ⇒ τ, Part.some f⟩ : PDenotation E W S) ⟨σ, Part.some a⟩ =
       some ⟨τ, f a⟩ := by
   rw [Mode.combine?_fn_left]; simp [Mode.evalPartial]
 
-/-- A binary node whose right daughter is a defined function over the left daughter's type
-applies it backward. -/
 theorem Mode.combine?_evalPartial_fn_right {σ τ : Ty} (a : Ty.PDomain E W σ S)
     (f : Ty.PDomain E W (σ ⇒ τ) S) :
     Mode.combine? Mode.evalPartial (⟨σ, Part.some a⟩ : PDenotation E W S) ⟨σ ⇒ τ, Part.some f⟩ =
       some ⟨τ, f a⟩ := by
   rw [Mode.combine?_fn_right]; simp [Mode.evalPartial]
 
-/-- Two defined predicates compose by predicate modification, conjoined pointwise. -/
 theorem Mode.combine?_evalPartial_predicateModification (P Q : Ty.PDomain E W (.e ⇒ .t) S) :
     Mode.combine? Mode.evalPartial (⟨.e ⇒ .t, Part.some P⟩ : PDenotation E W S)
         ⟨.e ⇒ .t, Part.some Q⟩ =
@@ -184,8 +179,6 @@ theorem Ty.lifts_fn {a b : Ty} {f : Ty.Domain E W (a ⇒ b) S} {f' : Ty.PDomain 
       ∀ x y, Ty.Lifts a x y → ∃ z, f' y = Part.some z ∧ Ty.Lifts b (f x) z :=
   Iff.rfl
 
-/-- A total function of individuals lifts to the everywhere-defined partial function whose
-values lift its values. -/
 theorem Ty.lifts_lift {b : Ty} {f : E → Ty.Domain E W b S} {f' : E → Ty.PDomain E W b S}
     (h : ∀ x, Ty.Lifts b (f x) (f' x)) : Ty.Lifts (.e ⇒ b) f (PFun.lift f') :=
   fun x _ hxy ↦ ⟨f' x, hxy ▸ rfl, h x⟩
@@ -223,7 +216,6 @@ def Ty.Domain.toPartial : (ty : Ty) → Ty.Domain E W ty S → Ty.PDomain E W ty
   | .fn _ _, _ => fun _ ↦ Part.none
   | .intens a, f => PFun.lift fun w ↦ toPartial a (f w)
 
-/-- At a first-order type, the lift of a total denotation lifts it. -/
 theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty S) :
     Ty.Lifts ty x (Ty.Domain.toPartial ty x) := by
   induction h with
@@ -235,14 +227,11 @@ theorem Ty.lifts_toPartial {ty : Ty} (h : ty.FirstOrder) (x : Ty.Domain E W ty S
 def Denotation.toPartial (d : Denotation E W Id S) : PDenotation E W S :=
   ⟨d.1, Part.some (Ty.Domain.toPartial d.1 d.2)⟩
 
-/-- A first-order total denotation is lifted by its partial counterpart. -/
 theorem Denotation.lifts_toPartial {d : Denotation E W Id S} (h : d.1.FirstOrder) :
     d.Lifts d.toPartial := by
   obtain ⟨ty, x⟩ := d
   exact .mk (Ty.lifts_toPartial h x)
 
-/-- Every mode preserves the lift, since on defined daughters that lift total ones a mode's
-partial value is defined and lifts its total value. -/
 theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {a : Ty.Domain E W σ₁ S}
     {b : Ty.Domain E W σ₂ S} {a' : Ty.PDomain E W σ₁ S} {b' : Ty.PDomain E W σ₂ S}
     (ha : Ty.Lifts σ₁ a a') (hb : Ty.Lifts σ₂ b b') :
@@ -288,8 +277,6 @@ theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {
 def LiftsConst (ty : Ty) (c : Id (Ty.Domain E W ty S)) (c' : Part (Ty.PDomain E W ty S)) : Prop :=
   ∃ y, c' = Part.some y ∧ Ty.Lifts ty c y
 
-/-- Terms of the same shape whose partial constants lift the total ones have a defined partial
-denotation lifting the total one, under every assignment. -/
 theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty S)) ty}
     {u' : Term (fun ty ↦ Part (Ty.PDomain E W ty S)) ty} (h : Term.Rel LiftsConst u u')
     (g : Assignment E) :
@@ -307,7 +294,6 @@ theorem Term.Rel.lifts {ty : Ty} {u : Term (fun ty ↦ Id (Ty.Domain E W ty S)) 
 
 variable {L : Type*} {lex : L → Option (Denotation E W Id S)}
 
-/-- The entrywise lift of a first-order lexicon lifts it. -/
 theorem lifts_map_toPartial (h : ∀ w d, lex w = some d → d.1.FirstOrder) (w : L)
     (d' : PDenotation E W S) (h' : (lex w).map Denotation.toPartial = some d') :
     ∃ d, lex w = some d ∧ d.Lifts d' := by
@@ -385,7 +371,6 @@ variable (lex lex' : L → Option (PDenotation E W S)) (g g' : Assignment E)
   · rfl
   · simp [Term.evalPartial, valueAtPartial]
 
-/-- A node whose daughters its label does not license denotes nothing. -/
 theorem interpPartial_junk {l : PhraseStructure.Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ PhraseStructure.Tree.Label.Licenses l (cs.map RoseTree.value)) :
     interpPartial lex g (RoseTree.node l cs) = none := by
@@ -399,15 +384,12 @@ def Uninterpretable (t : Tree C L) : Prop := interpPartial lex g t = none
 /-- A tree is a presupposition failure when its denotation is undefined. -/
 def PresupFailure (t : Tree C L) : Prop := ∃ d, interpPartial lex g t = some d ∧ ¬ d.2.Dom
 
-/-- Whether a tree is interpretable, and at which type, depends only on the types of its
-leaves, [heim-kratzer-1998]'s characterization of uninterpretability. -/
 theorem interpPartial_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1))
     (t : Tree C L) :
     (interpPartial lex g t).map (·.1) = (interpPartial lex' g' t).map (·.1) := by
   simp only [interpPartial, Option.map_map, Function.comp_def]
   exact translate_map_fst lex h t
 
-/-- Uninterpretability is decided by the leaves' types alone. -/
 theorem uninterpretable_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
     Uninterpretable lex g t ↔ Uninterpretable lex' g' t := by
   have := interpPartial_map_fst_congr lex lex' g g' h t
@@ -422,8 +404,6 @@ section Total
 variable {C : Type} {L : Type*} {lex : L → Option (Denotation E W Id S)}
   {lex' : L → Option (PDenotation E W S)}
 
-/-- On a lexicon lifting a total one, every value of the partial engine is defined and lifts the
-pure engine's value at that node. -/
 theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d')
     (g : Assignment E) (t : Tree C L) {d' : PDenotation E W S}
     (h : interpPartial lex' g t = some d') :
@@ -440,7 +420,6 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
   · simp only [hz]
     exact .mk hl
 
-/-- A lexicon lifting a total one has no presupposition failures. -/
 theorem not_presupFailure_of_lifts
     (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d') (g : Assignment E)
     (t : Tree C L) : ¬ PresupFailure lex' g t := by
@@ -449,7 +428,6 @@ theorem not_presupFailure_of_lifts
   cases hl
   exact hdom trivial
 
-/-- The entrywise lift of a first-order lexicon has no presupposition failures. -/
 theorem not_presupFailure_map_toPartial (h : ∀ w d, lex w = some d → d.1.FirstOrder)
     (g : Assignment E) (t : Tree C L) :
     ¬ PresupFailure (fun w ↦ (lex w).map Denotation.toPartial) g t :=

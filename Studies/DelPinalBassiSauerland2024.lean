@@ -146,8 +146,6 @@ theorem free_choice : pexPossOr R a b w = 1 ↔ w ∈ R.preimage a ∧ w ∈ R.p
   grind
 
 open Classical in
-/-- `pex^{IE+II}[◇(a ∨ b)]` is the plural predication that `a` and `b` are permitted, true where
-both are, false where neither is, and undefined in between. -/
 theorem pexPossOr_eq_barePlural :
     pexPossOr R a b = barePlural (fun x w ↦ w ∈ R.preimage x) {a, b} := by
   funext w
@@ -175,7 +173,6 @@ theorem homogeneity_gap_neg :
   ext w
   simp
 
-/-- A world permitting only `a` lies in the gap of `pex^{IE+II}[◇(a ∨ b)]`. -/
 theorem gapExt_pexPossOr_nonempty : (Trivalent.gapExt (pexPossOr R a b)).Nonempty := by
   obtain ⟨w, hwa, hwb⟩ := hF.only_left
   exact ⟨w, by rw [homogeneity_gap hF]; exact .inl ⟨hwa, hwb⟩⟩
@@ -240,7 +237,6 @@ noncomputable def pexNecAnd : W → SignType :=
 
 variable {R T B}
 
-/-- `□(T ∧ B)` entails each of its alternatives. -/
 theorem subset_of_mem_necAlts {q : Set W} (hq : q ∈ necAlts R T B) : R.core (T ∩ B) ⊆ q := by
   simp only [necAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hq
   rcases hq with rfl | rfl | rfl | rfl
@@ -252,7 +248,6 @@ theorem exhIEII_necAlts (h : (R.core (T ∩ B)).Nonempty) :
     exhIEII (necAlts R T B) (R.core (T ∩ B)) = R.core (T ∩ B) :=
   exhIEII_eq_self_of_forall_subset (fun _ ↦ subset_of_mem_necAlts) h
 
-/-- No alternative of `□(T ∧ B)` is excludable. -/
 theorem not_isInnocentlyExcludable_necAlts (h : (R.core (T ∩ B)).Nonempty) (q : Set W) :
     ¬ IsInnocentlyExcludable (necAlts R T B) (R.core (T ∩ B)) q := fun hq ↦
   not_isInnocentlyExcludable_of_phi_subset
@@ -329,7 +324,6 @@ at-issue content, which it reads apart from the presupposition. -/
 def pexPossOrTwoDim : TwoDim W (W → Prop) :=
   ⟨(· ∈ R.preimage (a ∪ b)), (pexPossOr R a b · ≠ 0)⟩
 
-/-- The two-dimensional meaning collapses to `pexPossOr`. -/
 theorem toTrivalent_pexPossOrTwoDim : (pexPossOrTwoDim R a b).toTrivalent = pexPossOr R a b := by
   funext w
   refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>

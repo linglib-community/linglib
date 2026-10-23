@@ -141,7 +141,6 @@ open IsOrthologic
 
 variable {F : Type*} [Preorder F]
 
-/-- `⟦φ⟧ ≤ ⟦ψ⟧` in the Lindenbaum–Tarski algebra iff `φ ≤ ψ`. -/
 theorem mk_le_mk {φ ψ : F} :
     toAntisymmetrization (· ≤ ·) φ ≤ toAntisymmetrization (· ≤ ·) ψ ↔ φ ≤ ψ :=
   toAntisymmetrization_le_toAntisymmetrization_iff
@@ -279,7 +278,6 @@ theorem sound [IsOrtholattice L] {φ ψ : Formula Var} (h : φ ⊢ ψ) (v : Var 
 def Formula.canonicalVal : Var → LindenbaumTarski (Formula Var) :=
   fun p ↦ toAntisymmetrization (· ≤ ·) (var p)
 
-/-- Under the canonical valuation every formula evaluates to its own class. -/
 theorem Formula.eval_canonicalVal (φ : Formula Var) :
     eval canonicalVal φ = toAntisymmetrization (· ≤ ·) φ := by
   induction φ with

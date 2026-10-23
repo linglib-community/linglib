@@ -100,7 +100,6 @@ instance : SetLike (Question W) (Set W) where
 @[simp, norm_cast] theorem coe_mk (s : Set (Set W)) (h₁ h₂) :
     ((⟨s, h₁, h₂⟩ : Question W) : Set (Set W)) = s := rfl
 
-/-- Two `Question`s are equal when their `props` agree. -/
 @[ext]
 theorem ext {P Q : Question W} (h : ∀ q, q ∈ P ↔ q ∈ Q) : P = Q :=
   SetLike.ext h
@@ -109,7 +108,6 @@ theorem ext {P Q : Question W} (h : ∀ q, q ∈ P ↔ q ∈ Q) : P = Q :=
 def alt (P : Question W) : Set (Set W) :=
   {p ∈ P.props | ∀ q ∈ P.props, p ⊆ q → p = q}
 
-/-- An alternative is in particular a resolving state. -/
 theorem mem_of_mem_alt {P : Question W} {p : Set W} (h : p ∈ alt P) : p ∈ P := h.1
 
 /-- The informative content of a question is the union of its resolving states. -/
@@ -136,8 +134,6 @@ theorem info_mem_iff_not_isInquisitive (P : Question W) :
     P.info ∈ P ↔ ¬ P.IsInquisitive :=
   not_not.symm
 
-/-- A world lies in the informative content of a question iff its singleton resolves the
-question, so truth at a world is support by the singleton state. -/
 theorem mem_info_iff_singleton_mem (P : Question W) (w : W) :
     w ∈ P.info ↔ ({w} : Set W) ∈ P := by
   constructor
@@ -146,7 +142,6 @@ theorem mem_info_iff_singleton_mem (P : Question W) (w : W) :
   · intro h
     exact ⟨{w}, h, rfl⟩
 
-/-- A resolving state lies within the informative content. -/
 theorem subset_info_of_mem {P : Question W} {q : Set W} (h : q ∈ P) : q ⊆ P.info :=
   Set.subset_sUnion_of_mem h
 
@@ -171,7 +166,6 @@ def ofLowerSet (s : Set (Set W)) (empty_mem : ∅ ∈ s) (lower : IsLowerSet s) 
     {lower : IsLowerSet s} {q : Set W} :
     q ∈ ofLowerSet s empty_mem lower ↔ q ∈ s := Iff.rfl
 
-/-- The resolving states of a question form a lower set, the inverse of `ofLowerSet`. -/
 protected theorem isLowerSet (P : Question W) : IsLowerSet (P : Set (Set W)) :=
   fun _ _ hba ha ↦ P.downward_closed _ ha _ hba
 
@@ -319,7 +313,6 @@ def query (P : Question W) : Question W := P ⊔ ofSet P.infoᶜ
   · exact ⟨{w}, Or.inl ((mem_info_iff_singleton_mem P w).1 hw), rfl⟩
   · exact ⟨{w}, Or.inr (Set.singleton_subset_iff.2 hw), rfl⟩
 
-/-- A non-informative content is its own non-informative projection. -/
 theorem query_eq_self_of_info_eq_univ {P : Question W} (h : P.info = Set.univ) : P.query = P :=
   ext fun q => ⟨fun hq => hq.elim id fun hq =>
     P.downward_closed _ P.contains_empty q (by simpa [h] using hq), Or.inl⟩
@@ -327,7 +320,6 @@ theorem query_eq_self_of_info_eq_univ {P : Question W} (h : P.info = Set.univ) :
 @[simp] theorem query_query (P : Question W) : P.query.query = P.query :=
   query_eq_self_of_info_eq_univ (info_query P)
 
-/-- `?P` raises a genuine issue unless `P` is a tautology or a contradiction. -/
 theorem isInquisitive_query {P : Question W} (h₁ : P.info ≠ Set.univ) (h₂ : P.info ≠ ∅) :
     P.query.IsInquisitive := by
   rw [IsInquisitive, info_query]
@@ -335,12 +327,9 @@ theorem isInquisitive_query {P : Question W} (h₁ : P.info ≠ Set.univ) (h₂ 
   · exact h₁ (Set.univ_subset_iff.1 (subset_info_of_mem h))
   · exact h₂ (Set.eq_empty_of_forall_notMem fun w hw => h (Set.mem_univ w) hw)
 
-/-- Two contents are disjoint iff the inconsistent state is the only state they share. -/
 theorem disjoint_iff {P Q : Question W} : Disjoint P Q ↔ ∀ q, q ∈ P → q ∈ Q → q = ∅ :=
   disjoint_iff_inf_le.trans ⟨fun h _ hP hQ ↦ h ⟨hP, hQ⟩, fun h q hq ↦ h q hq.1 hq.2⟩
 
-/-- A content is the tautology iff it contains the universal state
-([ciardelli-groenendijk-roelofsen-2018]). -/
 theorem eq_top_iff_univ_mem {P : Question W} :
     P = ⊤ ↔ Set.univ ∈ P := by
   constructor
@@ -349,15 +338,12 @@ theorem eq_top_iff_univ_mem {P : Question W} :
     refine le_antisymm le_top fun q _ => ?_
     exact P.downward_closed Set.univ hUniv q (Set.subset_univ _)
 
-/-- A state lies in `X` iff its principal ideal entails `X`: `ofSet s`
-is the smallest `Question` containing `s`. -/
 theorem mem_iff_ofSet_le {X : Question W} {s : Set W} :
     s ∈ X ↔ ofSet s ≤ X := by
   rw [le_def]
   refine ⟨fun hs _r hr => X.downward_closed s hs _ (mem_ofSet.mp hr), fun h => h ?_⟩
   exact mem_ofSet.mpr subset_rfl
 
-/-- A state resolves `P ⇨ Q` iff every substate resolving `P` resolves `Q`. -/
 theorem mem_himp {P Q : Question W} {s : Set W} :
     s ∈ (P ⇨ Q) ↔ ∀ r ⊆ s, r ∈ P → r ∈ Q := by
   rw [mem_iff_ofSet_le, le_himp_iff, le_def]
@@ -378,7 +364,6 @@ def relativeTo (Q : Question W) (C : Set W) : Question W := ofSet C ⇨ Q
 
 theorem le_relativeTo (Q : Question W) (C : Set W) : Q ≤ Q.relativeTo C := le_himp
 
-/-- A state resolves an indexed join iff it is empty or resolves some member. -/
 theorem mem_iSup_iff {ι : Sort*} {f : ι → Question W} {q : Set W} :
     q ∈ (⨆ i, f i) ↔ q = ∅ ∨ ∃ i, q ∈ f i := by
   change q ∈ sSup (Set.range f) ↔ _
@@ -388,9 +373,6 @@ theorem mem_iSup_iff {ι : Sort*} {f : ι → Question W} {q : Set W} :
   · rintro ⟨P, ⟨i, hPi⟩, hqP⟩; exact ⟨i, hPi ▸ hqP⟩
   · rintro ⟨i, hi⟩; exact ⟨f i, ⟨i, rfl⟩, hi⟩
 
-/-- Membership in a bounded indexed `iSup`. Used pervasively for
-Hamblin-style wh-question alternatives (`which`) and for any
-`⨆ i ∈ I, ofSet (P i)` construction. -/
 theorem mem_biSup_iff {ι : Type*} {I : Set ι} {f : ι → Question W}
     {q : Set W} :
     q ∈ (⨆ i ∈ I, f i) ↔ q = ∅ ∨ ∃ i ∈ I, q ∈ f i := by
@@ -435,10 +417,6 @@ theorem info_mono {P Q : Question W} (h : P ≤ Q) :
     info (P ⊔ Q) = info P ∪ info Q :=
   Set.sUnion_union P.props Q.props
 
-/-- `info` commutes with the meet: singleton states witness the reverse
-inclusion, so no non-inquisitiveness assumption is needed
-(strengthening the declarative case of
-[ciardelli-groenendijk-roelofsen-2018]'s update fact). -/
 @[simp] theorem info_inf (P Q : Question W) :
     info (P ⊓ Q) = info P ∩ info Q := by
   refine le_antisymm ?_ ?_
@@ -450,8 +428,6 @@ inclusion, so no non-inquisitiveness assumption is needed
 
 /-! ### The `info ⊣ ofSet` adjunction -/
 
-/-- `info` is left adjoint to `ofSet`: a content's information lies
-inside `p` iff the content entails the principal content of `p`. -/
 theorem gc_info_ofSet :
     GaloisConnection (info : Question W → Set W) ofSet :=
   fun _ _ => ⟨fun h _q hq _w hw => h ⟨_, hq, hw⟩, fun h _w ⟨_, hq, hw⟩ => h hq hw⟩
@@ -460,23 +436,18 @@ theorem gc_info_ofSet :
 def gi_info_ofSet : GaloisInsertion (info : Question W → Set W) ofSet :=
   gc_info_ofSet.toGaloisInsertion fun p => (info_ofSet p).ge
 
-/-- `info` turns joins into unions. -/
 theorem info_iSup {ι : Sort*} (f : ι → Question W) :
     info (⨆ i, f i) = ⋃ i, info (f i) := by
   rw [gc_info_ofSet.l_iSup]; rfl
 
-/-- `ofSet` turns intersections into meets. -/
 theorem ofSet_iInf {ι : Sort*} (p : ι → Set W) :
     ofSet (⋂ i, p i) = ⨅ i, ofSet (p i) :=
   gc_info_ofSet.u_iInf
 
-/-- `info` turns arbitrary meets into intersections: a world is in the informative
-content of every member exactly when its singleton supports each of them. -/
 theorem info_sInf (S : Set (Question W)) : info (sInf S) = ⋂ P ∈ S, info P := by
   ext w
   simp only [mem_info_iff_singleton_mem, mem_sInf, Set.mem_iInter]
 
-/-- `info` turns meets into intersections. -/
 theorem info_iInf {ι : Sort*} (f : ι → Question W) :
     info (⨅ i, f i) = ⋂ i, info (f i) := by
   rw [iInf, info_sInf, Set.biInter_range]
@@ -515,7 +486,6 @@ theorem sUnion_alt_subset_info (P : Question W) :
   rintro w ⟨q, hq, hwq⟩
   exact ⟨q, alt_subset_props P hq, hwq⟩
 
-/-- The alternatives are the `Maximal` resolving states. -/
 @[simp] theorem mem_alt_iff_maximal {P : Question W} {p : Set W} :
     p ∈ alt P ↔ Maximal (· ∈ P.props) p := by
   refine ⟨?_, ?_⟩
@@ -528,14 +498,9 @@ theorem sUnion_alt_subset_info (P : Question W) :
     intro q hq hpq
     exact Set.Subset.antisymm hpq (hmax hq hpq)
 
-/-- The alternatives of `P` form an antichain under `⊆`: no alternative
-is properly contained in another. -/
 theorem alt_isAntichain (P : Question W) : IsAntichain (· ⊆ ·) (alt P) :=
   fun _ hp _ hq hne hpq => hne (hp.2 _ hq.1 hpq)
 
-/-- An alt of `P` that is not contained in any *strictly larger* alt of
-`Q` survives in `alt (P ⊔ Q)`. The convenient direction for
-constructing alts of an inquisitive disjunction. -/
 theorem mem_alt_sup_of_alt_left {P Q : Question W} {p : Set W}
     (hP : p ∈ alt P) (hQ : ∀ q ∈ Q.props, p ⊆ q → p = q) :
     p ∈ alt (P ⊔ Q) := by
@@ -545,8 +510,6 @@ theorem mem_alt_sup_of_alt_left {P Q : Question W} {p : Set W}
   · exact hP.2 r hrP hpr
   · exact hQ r hrQ hpr
 
-/-- An alt of `Q` that is not contained in any *strictly larger* alt of
-`P` survives in `alt (P ⊔ Q)`. Mirror of `mem_alt_sup_of_alt_left`. -/
 theorem mem_alt_sup_of_alt_right {P Q : Question W} {q : Set W}
     (hQ : q ∈ alt Q) (hP : ∀ p ∈ P.props, q ⊆ p → q = p) :
     q ∈ alt (P ⊔ Q) := by
@@ -556,8 +519,6 @@ theorem mem_alt_sup_of_alt_right {P Q : Question W} {q : Set W}
   · exact hP r hrP hqr
   · exact hQ.2 r hrQ hqr
 
-/-- An alt of `P ⊔ Q` is necessarily an alt of one of the summands —
-when restricted to that summand's `props`. -/
 theorem alt_sup_subset_union (P Q : Question W) :
     alt (P ⊔ Q) ⊆ alt P ∪ alt Q := by
   intro q hq
@@ -568,15 +529,12 @@ theorem alt_sup_subset_union (P Q : Question W) :
   · right
     exact ⟨hqQ, fun r hrQ hqr => hmax r (Or.inr hrQ) hqr⟩
 
-/-- The meet of two declaratives is the declarative of the intersection. -/
 @[simp] theorem ofSet_inf (A B : Set W) :
     ofSet A ⊓ ofSet B = ofSet (A ∩ B) := by
   ext q
   show q ⊆ A ∧ q ⊆ B ↔ q ⊆ A ∩ B
   rw [Set.subset_inter_iff]
 
-/-- A `ofSet p` content has exactly one alternative — `p`
-itself, the unique maximal subset of `p`. -/
 @[simp] theorem alt_ofSet (p : Set W) : alt (ofSet p) = {p} := by
   ext q
   refine ⟨?_, ?_⟩
@@ -589,11 +547,9 @@ itself, the unique maximal subset of `p`. -/
     intro r hr hpr
     exact Set.Subset.antisymm hpr hr
 
-/-- `p` is the alternative of the content it generates. -/
 theorem self_mem_alt_ofSet (p : Set W) : p ∈ alt (ofSet p) := by
   rw [alt_ofSet]; rfl
 
-/-- The unique alternative of `⊤` is `Set.univ`. -/
 @[simp] theorem alt_top : alt (⊤ : Question W) = {Set.univ} := by
   ext q
   simp only [mem_alt_iff_maximal, Set.mem_singleton_iff]
@@ -607,7 +563,6 @@ theorem self_mem_alt_ofSet (p : Set W) : p ∈ alt (ofSet p) := by
     intro q _ _
     exact fun _ _ => Set.mem_univ _
 
-/-- The unique alternative of `⊥` is `∅`. -/
 @[simp] theorem alt_bot : alt (⊥ : Question W) = {∅} := by
   ext q
   simp only [mem_alt_iff_maximal, Set.mem_singleton_iff]
@@ -623,8 +578,6 @@ theorem self_mem_alt_ofSet (p : Set W) : p ∈ alt (ofSet p) := by
     rw [Set.mem_singleton_iff] at hr
     exact hr.le
 
-/-- If `P` has two distinct alternatives, then `P` is inquisitive: no
-single proposition (in particular, not `info P`) can equal both. -/
 theorem isInquisitive_of_two_alternatives (P : Question W)
     {p₁ p₂ : Set W} (h₁ : p₁ ∈ alt P) (h₂ : p₂ ∈ alt P) (hne : p₁ ≠ p₂) :
     P.IsInquisitive := by
@@ -645,8 +598,6 @@ question has such a basis exactly when it is normal. Finitely many resolving sta
 normal questions; but normality fails in general: on an infinite `W` the finite states form a
 question with no alternatives at all, although its informative content is all of `W`. -/
 
-/-- When there are finitely many resolving states, every resolving state extends to an
-alternative. The hypothesis bounds the resolving states, not `W`. -/
 theorem exists_alt_above (P : Question W) (hP : P.props.Finite)
     {p : Set W} (hp : p ∈ P.props) : ∃ q ∈ alt P, p ⊆ q := by
   obtain ⟨q, hpq, hmax⟩ := hP.exists_le_maximal hp
@@ -656,11 +607,9 @@ theorem exists_alt_above (P : Question W) (hP : P.props.Finite)
 def IsNormal (P : Question W) : Prop :=
   ∀ s ∈ P, ∃ a ∈ alt P, s ⊆ a
 
-/-- A question with finitely many resolving states is normal. -/
 theorem isNormal_of_finite {P : Question W} (hP : P.props.Finite) : P.IsNormal :=
   fun _ ↦ exists_alt_above P hP
 
-/-- A question is normal iff its resolving states are the lower closure of its alternatives. -/
 theorem isNormal_iff_coe_eq_lowerClosure {P : Question W} :
     P.IsNormal ↔ (P : Set (Set W)) = lowerClosure (alt P) := by
   refine ⟨fun h ↦ Set.Subset.antisymm (fun s hs ↦ h s hs) ?_, fun h s hs ↦ ?_⟩
@@ -670,8 +619,6 @@ theorem isNormal_iff_coe_eq_lowerClosure {P : Question W} :
 
 alias ⟨IsNormal.coe_eq_lowerClosure, _⟩ := isNormal_iff_coe_eq_lowerClosure
 
-/-- An antichain generating `P` is its set of alternatives: the alternatives of a normal
-question are its unique basis ([ciardelli-2022]). -/
 theorem alt_eq_of_coe_eq_lowerClosure {P : Question W} {T : Set (Set W)}
     (hT : IsAntichain (· ⊆ ·) T) (h : (P : Set (Set W)) = lowerClosure T) : alt P = T := by
   ext a
@@ -680,14 +627,11 @@ theorem alt_eq_of_coe_eq_lowerClosure {P : Question W} {T : Set (Set W)}
   rw [h]
   exact hT.maximal_mem_lowerClosure_iff_mem
 
-/-- A question generated by an antichain is normal, so that a question has a basis exactly
-when it is normal ([ciardelli-2022]). -/
 theorem isNormal_of_coe_eq_lowerClosure {P : Question W} {T : Set (Set W)}
     (hT : IsAntichain (· ⊆ ·) T) (h : (P : Set (Set W)) = lowerClosure T) : P.IsNormal := by
   rw [isNormal_iff_coe_eq_lowerClosure, alt_eq_of_coe_eq_lowerClosure hT h]
   exact h
 
-/-- The informative content of a normal question is the union of its alternatives. -/
 theorem IsNormal.info_eq_sUnion_alt {P : Question W} (hP : P.IsNormal) :
     info P = ⋃₀ alt P := by
   refine Set.Subset.antisymm ?_ (sUnion_alt_subset_info P)
@@ -695,16 +639,12 @@ theorem IsNormal.info_eq_sUnion_alt {P : Question W} (hP : P.IsNormal) :
   obtain ⟨q, hq, hpq⟩ := hP p hp
   exact ⟨q, hq, hpq hwp⟩
 
-/-- A normal question has an alternative, the one above `∅`. -/
 theorem IsNormal.alt_nonempty {P : Question W} (hP : P.IsNormal) : (alt P).Nonempty :=
   (hP ∅ P.contains_empty).imp fun _ h ↦ h.1
 
-/-- A declarative is normal: its one alternative covers it. -/
 theorem isNormal_ofSet (p : Set W) : (ofSet p).IsNormal :=
   fun _ hs ↦ ⟨p, self_mem_alt_ofSet p, hs⟩
 
-/-- An alternative of `P` lies under an alternative of `P ⊔ Q` when `Q` is normal: if it is
-not maximal in the join, the alternative of `Q` above a larger state is. -/
 private theorem exists_mem_alt_sup_of_mem_alt {P Q : Question W} (hQ : Q.IsNormal)
     {a : Set W} (ha : a ∈ alt P) : ∃ b ∈ alt (P ⊔ Q), a ⊆ b := by
   by_cases h : ∀ q ∈ Q.props, a ⊆ q → a = q
@@ -716,7 +656,6 @@ private theorem exists_mem_alt_sup_of_mem_alt {P Q : Question W} (hQ : Q.IsNorma
   obtain rfl := ha.2 p hp (haq.trans (hqb.trans hbp))
   exact hbp.antisymm (haq.trans hqb)
 
-/-- The inquisitive disjunction of normal questions is normal. -/
 theorem IsNormal.sup {P Q : Question W} (hP : P.IsNormal) (hQ : Q.IsNormal) :
     (P ⊔ Q).IsNormal := by
   intro s hs
@@ -739,7 +678,6 @@ question whose alternatives are among its members, and the meet of two generated
 generated by the pairwise intersections, so finitely generated questions are closed under the
 connectives. -/
 
-/-- A nonempty family generates the join of its declaratives. -/
 theorem coe_biSup_ofSet {S : Set (Set W)} (hS : S.Nonempty) :
     ((⨆ a ∈ S, ofSet a : Question W) : Set (Set W)) = lowerClosure S := by
   ext q
@@ -750,32 +688,23 @@ theorem coe_biSup_ofSet {S : Set (Set W)} (hS : S.Nonempty) :
     exact ⟨a, ha, Set.empty_subset a⟩
   · exact h
 
-/-- The join of the declaratives of a family entails exactly the questions every member
-resolves. -/
 theorem biSup_ofSet_le_iff {S : Set (Set W)} {Q : Question W} :
     ⨆ a ∈ S, ofSet a ≤ Q ↔ ∀ a ∈ S, a ∈ Q := by
   simp only [iSup₂_le_iff, ← mem_iff_ofSet_le]
 
-/-- The alternatives of the join of the declaratives of a nonempty antichain are its
-members. -/
 theorem alt_biSup_ofSet {S : Set (Set W)} (hS : S.Nonempty) (hA : IsAntichain (· ⊆ ·) S) :
     alt (⨆ a ∈ S, ofSet a) = S :=
   alt_eq_of_coe_eq_lowerClosure hA (coe_biSup_ofSet hS)
 
-/-- The alternatives of the join of two incomparable declaratives are the two sets. -/
 theorem alt_ofSet_sup_ofSet {A B : Set W} (hAB : ¬ A ⊆ B) (hBA : ¬ B ⊆ A) :
     alt (ofSet A ⊔ ofSet B) = {A, B} := by
   rw [← iSup_pair]
   exact alt_biSup_ofSet (Set.insert_nonempty _ _) (Set.pairwise_pair.2 fun _ ↦ ⟨hAB, hBA⟩)
 
-/-- A state resolves the join of the declaratives of a family iff it is `∅` or lies in a
-member. -/
 theorem mem_biSup_ofSet {S : Set (Set W)} {q : Set W} :
     q ∈ (⨆ a ∈ S, ofSet a) ↔ q = ∅ ∨ ∃ a ∈ S, q ⊆ a := by
   simp only [mem_biSup_iff, mem_ofSet]
 
-/-- The alternatives of the join of the declaratives of a family lie in the family, or are `∅`
-when the family is empty. -/
 theorem alt_biSup_ofSet_subset (S : Set (Set W)) :
     alt (⨆ a ∈ S, ofSet a) ⊆ insert ∅ S := by
   rintro q ⟨hq, hmax⟩
@@ -783,7 +712,6 @@ theorem alt_biSup_ofSet_subset (S : Set (Set W)) :
   · exact Set.mem_insert _ _
   · exact Set.mem_insert_of_mem _ (hmax a (mem_biSup_ofSet.2 (.inr ⟨a, ha, subset_rfl⟩)) hqa ▸ ha)
 
-/-- The declaratives of a finite family generate a normal question. -/
 theorem isNormal_biSup_ofSet {S : Set (Set W)} (hS : S.Finite) :
     (⨆ a ∈ S, ofSet a).IsNormal := by
   intro s hs
@@ -800,8 +728,6 @@ theorem isNormal_biSup_ofSet {S : Set (Set W)} (hS : S.Finite) :
   · exact Set.subset_empty_iff.1 hmt
   · exact hmt.antisymm (htb.trans (hm.2 hb (hmt.trans htb)))
 
-/-- The meet of the questions two families generate is generated by their pairwise
-intersections. -/
 theorem biSup_ofSet_inf_biSup_ofSet (S T : Set (Set W)) :
     (⨆ a ∈ S, ofSet a) ⊓ (⨆ b ∈ T, ofSet b) = ⨆ c ∈ Set.image2 (· ∩ ·) S T, ofSet c := by
   refine le_antisymm (fun q hq ↦ ?_) (biSup_ofSet_le_iff.2 ?_)
@@ -820,13 +746,10 @@ A normal question is the join of the declaratives of its alternatives, the inqui
 of disjunctive normal form. Off normal questions only the inequality
 `⨆ p ∈ alt P, ofSet p ≤ P` holds. -/
 
-/-- The join of the declaratives of the alternatives of `P` entails `P`. -/
 theorem iSup_ofSet_alt_le (P : Question W) :
     ⨆ p ∈ alt P, ofSet p ≤ P :=
   biSup_ofSet_le_iff.mpr fun _ ↦ mem_of_mem_alt
 
-/-- A normal question is the join of the declaratives of its alternatives, the resolutions
-theorem. -/
 theorem IsNormal.eq_iSup_ofSet_alt {P : Question W} (hP : P.IsNormal) :
     P = ⨆ p ∈ alt P, ofSet p :=
   SetLike.coe_injective <| hP.coe_eq_lowerClosure.trans
@@ -860,8 +783,6 @@ theorem FG.finite_alt {P : Question W} (hP : P.FG) : (alt P).Finite := by
   obtain ⟨S, hS, rfl⟩ := hP
   exact (hS.insert ∅).subset (alt_biSup_ofSet_subset S)
 
-/-- A question is finitely generated exactly when it has finitely many alternatives and is
-generated by them. -/
 theorem fg_iff_finite_alt_and_isNormal {P : Question W} :
     P.FG ↔ (alt P).Finite ∧ P.IsNormal :=
   ⟨fun h ↦ ⟨h.finite_alt, h.isNormal⟩, fun ⟨hf, hn⟩ ↦ ⟨alt P, hf, hn.eq_iSup_ofSet_alt.symm⟩⟩
@@ -875,14 +796,10 @@ principal ideal generated by `info P`. We also prove the equivalent
 characterization via alternatives: `P` is declarative iff
 `alt P = {info P}`. -/
 
-/-- A question resolved by its own informative content is resolved by exactly the states
-included in it. -/
 theorem mem_iff_subset_info {P : Question W} (h : P.info ∈ P) {s : Set W} :
     s ∈ P ↔ s ⊆ P.info :=
   ⟨fun hs _ hw => ⟨s, hs, hw⟩, fun hsub => P.downward_closed P.info h s hsub⟩
 
-/-- A question is resolved by its informative content iff it is the declarative of its
-informative content. -/
 theorem info_mem_iff_eq_ofSet_info (P : Question W) :
     P.info ∈ P ↔ P = ofSet P.info := by
   constructor
@@ -899,7 +816,6 @@ theorem info_mem_iff_eq_ofSet_info (P : Question W) :
     rw [h]
     exact info_mem_ofSet P.info
 
-/-- A question is resolved by its informative content iff that is its only alternative. -/
 theorem info_mem_iff_alt_eq_singleton (P : Question W) :
     P.info ∈ P ↔ alt P = {P.info} := by
   constructor
@@ -920,9 +836,6 @@ theorem info_mem_iff_alt_eq_singleton (P : Question W) :
     have hinfo : P.info ∈ alt P := by rw [halt]; rfl
     exact hinfo.1
 
-/-- A normal content has a single alternative iff it is declarative: its alternatives
-generate it, so a lone alternative is its informative content. Normality is needed, since
-over an infinite `W` a content can have one alternative and resolving states beyond it. -/
 theorem IsNormal.exists_alt_eq_singleton_iff {P : Question W} (hP : P.IsNormal) :
     (∃ p, alt P = {p}) ↔ P.info ∈ P := by
   refine ⟨fun ⟨p, hp⟩ ↦ ?_, fun h ↦ ⟨_, (info_mem_iff_alt_eq_singleton P).mp h⟩⟩
@@ -939,8 +852,6 @@ are the regular elements (`isRegular_iff_not_isInquisitive`); the non-informativ
 `?P = P ⊔ Pᶜ` (`query_eq_sup_compl`); and the division law `!P ⊓ ?P = P`
 (`compl_compl_inf_query`). -/
 
-/-- The pseudo-complement of a question is the declarative of the complement of its
-informative content. -/
 theorem compl_eq (P : Question W) : Pᶜ = ofSet (P.info)ᶜ := by
   refine le_antisymm (fun q hq ↦ ?_)
     (le_compl_iff_disjoint_right.2 (disjoint_iff.2 fun q hq hqP ↦ ?_))
@@ -949,14 +860,10 @@ theorem compl_eq (P : Question W) : Pᶜ = ofSet (P.info)ᶜ := by
     exact (subset_info_of_mem hq).trans h.le_compl_left
   · exact Set.subset_empty_iff.1 fun w hw ↦ mem_ofSet.1 hq hw (subset_info_of_mem hqP hw)
 
-/-- The informative content of the pseudo-complement is the complement of the informative
-content. -/
 @[simp] theorem info_compl (P : Question W) :
     info Pᶜ = (info P)ᶜ := by
   rw [compl_eq, info_ofSet]
 
-/-- The non-inquisitive projection `!P = Pᶜᶜ` consists of the states within the informative
-content of `P` ([ciardelli-groenendijk-roelofsen-2018]). -/
 theorem compl_compl_eq (P : Question W) : Pᶜᶜ = ofSet P.info := by
   rw [compl_eq Pᶜ, info_compl, compl_compl]
 
@@ -966,13 +873,10 @@ theorem compl_compl_eq (P : Question W) : Pᶜᶜ = ofSet P.info := by
 @[simp] theorem info_compl_compl (P : Question W) : Pᶜᶜ.info = P.info := by
   rw [info_compl, info_compl, compl_compl]
 
-/-- A complement is never inquisitive. -/
 theorem not_isInquisitive_compl (P : Question W) : ¬ Pᶜ.IsInquisitive := by
   rw [compl_eq]
   exact not_isInquisitive_ofSet _
 
-/-- The non-inquisitive contents are the regular elements of the Heyting algebra of contents,
-the fixed points of the non-inquisitive projection. -/
 theorem isRegular_iff_not_isInquisitive {P : Question W} :
     Heyting.IsRegular P ↔ ¬ P.IsInquisitive := by
   rw [Heyting.IsRegular, compl_compl_eq, ← info_mem_iff_not_isInquisitive,
@@ -984,12 +888,9 @@ theorem isRegular_ofSet (p : Set W) : Heyting.IsRegular (ofSet p) :=
 @[simp] theorem compl_compl_ofSet (p : Set W) : (ofSet p)ᶜᶜ = ofSet p :=
   (isRegular_ofSet p).eq
 
-/-- The non-informative projection `?P` is `P ⊔ Pᶜ` ([ciardelli-groenendijk-roelofsen-2018]). -/
 theorem query_eq_sup_compl (P : Question W) : P.query = P ⊔ Pᶜ := by
   rw [query, compl_eq]
 
-/-- Every question is the meet of its non-inquisitive and its non-informative projection, the
-division law. -/
 theorem compl_compl_inf_query (P : Question W) : Pᶜᶜ ⊓ P.query = P := by
   ext q
   simp only [mem_inf, mem_compl_compl, mem_query]
@@ -1003,7 +904,6 @@ The lattice is Heyting but not Boolean: the join of a declarative and its comple
 question, inquisitive unless the declarative is the tautology or the contradiction, and so not
 `⊤`. -/
 
-/-- The join of two incomparable declaratives is inquisitive. -/
 theorem isInquisitive_ofSet_sup_ofSet {A B : Set W} (hAB : ¬ A ⊆ B) (hBA : ¬ B ⊆ A) :
     (ofSet A ⊔ ofSet B).IsInquisitive := by
   have h := alt_ofSet_sup_ofSet hAB hBA
@@ -1013,8 +913,6 @@ theorem isInquisitive_ofSet_sup_ofSet {A B : Set W} (hAB : ¬ A ⊆ B) (hBA : ¬
   · rintro rfl
     exact hAB subset_rfl
 
-/-- Excluded middle fails for every declarative other than the tautology and the
-contradiction. -/
 theorem ofSet_sup_compl_ne_top {p : Set W} (h₁ : p.Nonempty) (h₂ : pᶜ.Nonempty) :
     ofSet p ⊔ (ofSet p)ᶜ ≠ ⊤ := by
   rw [compl_eq, info_ofSet]
@@ -1037,7 +935,6 @@ embedding. -/
 @[simp] theorem ofSet_univ : ofSet (Set.univ : Set W) = ⊤ := by
   ext q; simp
 
-/-- The principal content of `∅` is `⊥`. -/
 theorem ofSet_empty : ofSet (∅ : Set W) = ⊥ := by
   ext q; simp [Set.subset_empty_iff]
 
@@ -1050,7 +947,6 @@ theorem mem_biInf_iff {ι : Type*} {I : Set ι} {f : ι → Question W} {q : Set
     q ∈ (⨅ i ∈ I, f i) ↔ ∀ i ∈ I, q ∈ f i := by
   simp [mem_iInf_iff]
 
-/-- The coercion of `ofSet p` is the interval `Set.Iic p`. -/
 theorem coe_ofSet (p : Set W) : (ofSet p : Set (Set W)) = Set.Iic p := rfl
 
 theorem ofSet_le_ofSet_iff {A B : Set W} :
@@ -1061,7 +957,6 @@ theorem ofSet_injective :
     Function.Injective (ofSet : Set W → Question W) := fun A B h => by
   rw [← info_ofSet A, ← info_ofSet B, h]
 
-/-- Declaratives are disjoint exactly when their informative contents are. -/
 theorem disjoint_ofSet_iff {A B : Set W} : Disjoint (ofSet A) (ofSet B) ↔ Disjoint A B := by
   rw [_root_.disjoint_iff, _root_.disjoint_iff, ofSet_inf, ← ofSet_empty, ofSet_injective.eq_iff]
   rfl
@@ -1078,8 +973,6 @@ def ofSetHom : InfTopHom (Set W) (Question W) where
   map_inf' A B := (ofSet_inf A B).symm
   map_top' := ofSet_univ
 
-/-- `ofSet` does not preserve joins: the join of two incomparable declaratives is inquisitive,
-and the declarative of their union is not. -/
 theorem ofSet_sup_ofSet_ne {A B : Set W} (hAB : ¬ A ⊆ B) (hBA : ¬ B ⊆ A) :
     ofSet A ⊔ ofSet B ≠ ofSet (A ∪ B) :=
   fun h ↦ not_isInquisitive_ofSet _ (h ▸ isInquisitive_ofSet_sup_ofSet hAB hBA)

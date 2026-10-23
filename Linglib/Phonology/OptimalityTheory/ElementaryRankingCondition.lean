@@ -130,7 +130,6 @@ theorem satisfiedBy_iff_exists_dominant [NeZero n] :
     Pi.toLex_comp_le_iff_exists_forall]
   simp only [Pi.zero_apply, ERCVal.lt_zero_iff, ERCVal.zero_lt_iff, Ranking.Dominates]
 
-/-- A trivial ERC is satisfied by every ranking. -/
 theorem trivial_satisfiedBy {α : ERC ι} (htriv : α.IsTrivial) (r : Ranking ι n) :
     α.SatisfiedBy r :=
   (satisfiedBy_iff_dominance r α).mpr fun l hl => absurd hl (htriv l)
@@ -206,7 +205,6 @@ def linearExtensions (E : Finset (ERC (Fin n))) : Finset (Ranking (Fin n) n) :=
     r ∈ linearExtensions E ↔ ∀ α ∈ E, ERC.SatisfiedBy r α := by
   simp [linearExtensions]
 
-/-- The empty set constrains nothing: every ranking is a linear extension. -/
 @[simp] theorem linearExtensions_empty :
     linearExtensions (∅ : Finset (ERC (Fin n))) = Finset.univ := by
   ext r; simp
@@ -224,12 +222,10 @@ section Simple
 
 variable [DecidableEq ι] {i j : ι}
 
-/-- The only `W` of `simpleERC i j` is at `i`. -/
 theorem simpleERC_eq_W_iff (k : ι) :
     simpleERC i j k = .W ↔ k = i := by
   simp only [simpleERC]; split_ifs with h₁ h₂ <;> simp_all
 
-/-- The only `L` of `simpleERC i j` (with `i ≠ j`) is at `j`. -/
 theorem simpleERC_eq_L_iff (hij : i ≠ j) (k : ι) :
     simpleERC i j k = .L ↔ k = j := by
   simp only [simpleERC]; split_ifs with h₁ h₂ <;> simp_all
@@ -240,12 +236,9 @@ theorem simpleERC_eq_L_iff (hij : i ≠ j) (k : ι) :
 theorem simpleERC_apply_L (hij : i ≠ j) : simpleERC i j j = .L :=
   (simpleERC_eq_L_iff hij j).mpr rfl
 
-/-- The diagonal simple ERC `i ≫ i` has no `L`, hence is trivial. -/
 theorem simpleERC_self_isTrivial (i : ι) : (simpleERC i i).IsTrivial := fun k => by
   simp only [simpleERC]; split_ifs <;> decide
 
-/-- A simple ERC `i ≫ j` (with `i ≠ j`) is satisfied by `r` iff `i` dominates
-`j` under `r`. -/
 theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking ι n) :
     (simpleERC i j).SatisfiedBy r ↔ r.Dominates i j := by
   rw [ERC.satisfiedBy_iff_dominance]
@@ -257,27 +250,21 @@ theorem simpleERC_satisfiedBy_iff (hij : i ≠ j) (r : Ranking ι n) :
     rw [(simpleERC_eq_L_iff hij l).mp hl]
     exact ⟨i, simpleERC_apply_W, hdom⟩
 
-/-- Side-condition-free form: `simpleERC i j` is satisfied by `r` iff `i` is
-ranked at least as high as `j` (`Ranking.toRel`). On the diagonal the ERC is
-trivial and the relation reflexive, so no `i ≠ j` guard is needed. -/
 theorem simpleERC_satisfiedBy_toRel_iff (i j : ι) (r : Ranking ι n) :
     (simpleERC i j).SatisfiedBy r ↔ r.toRel i j := by
   rcases eq_or_ne i j with rfl | hij
   · exact iff_of_true (ERC.trivial_satisfiedBy (simpleERC_self_isTrivial i) r) (le_refl _)
   · rw [simpleERC_satisfiedBy_iff hij, r.toRel_iff_dominates hij]
 
-/-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent. -/
 theorem simpleERC_consistent {i j : Fin n} (hij : i ≠ j) :
     (ERC.linearExtensions {simpleERC i j}).Nonempty :=
   have ⟨r, hr⟩ := Ranking.exists_dominates hij
   ⟨r, by simp [(simpleERC_satisfiedBy_iff hij r).mpr hr]⟩
 
-/-- `simpleERC i j` (with `i ≠ j`) is a simple ERC. -/
 theorem simpleERC_isSimple (hij : i ≠ j) : (simpleERC i j).IsSimple :=
   ⟨⟨i, simpleERC_apply_W, fun y hy => (simpleERC_eq_W_iff y).mp hy⟩,
    ⟨j, simpleERC_apply_L hij, fun y hy => (simpleERC_eq_L_iff hij y).mp hy⟩⟩
 
-/-- Every `simpleERC` is simple or (on the diagonal) trivial. -/
 theorem simpleERC_isSimple_or_isTrivial (i j : ι) :
     (simpleERC i j).IsSimple ∨ (simpleERC i j).IsTrivial := by
   rcases eq_or_ne i j with rfl | hij
@@ -292,19 +279,14 @@ the violation difference ([prince-2002] §0; [riggle-2009a] Def. 3). -/
 def ercOfProfiles (winner loser : ι → ℕ) : ERC ι :=
   fun k => SignType.sign ((loser k : ℤ) - (winner k : ℤ))
 
-/-- `ercOfProfiles` is `W` exactly where the winner has strictly fewer
-violations. -/
 theorem ercOfProfiles_eq_W_iff (w l : ι → ℕ) (k : ι) :
     ercOfProfiles w l k = .W ↔ w k < l k := by
   simp only [ercOfProfiles, SignType.pos_eq_one, sign_eq_one_iff]; omega
 
-/-- `ercOfProfiles` is `L` exactly where the winner has strictly more
-violations. -/
 theorem ercOfProfiles_eq_L_iff (w l : ι → ℕ) (k : ι) :
     ercOfProfiles w l k = .L ↔ l k < w k := by
   simp only [ercOfProfiles, SignType.neg_eq_neg_one, sign_eq_neg_one_iff]; omega
 
-/-- `ercOfProfiles` is `e` exactly where violations are equal. -/
 theorem ercOfProfiles_eq_e_iff (w l : ι → ℕ) (k : ι) :
     ercOfProfiles w l k = .e ↔ w k = l k := by
   simp only [ercOfProfiles, SignType.zero_eq_zero, sign_eq_zero_iff]; omega
@@ -320,8 +302,6 @@ theorem ercOfProfiles_swap (w l : ι → ℕ) :
 def ercOfList (vs : List ERCVal) (h : vs.length = n := by decide) : ERC (Fin n) :=
   fun i => vs[i.val]'(by omega)
 
-/-- Lex-nonnegativity of the sign vector is lex-comparison of the profiles: the sign
-of the first difference decides both. -/
 theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
     toLex (fun _ => (0 : ERCVal)) ≤ toLex (ercOfProfiles (ofLex w) (ofLex l)) ↔ w ≤ l :=
   (Pi.lex_le_iff_forall _ _).trans <|
@@ -331,10 +311,6 @@ theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
         (ERCVal.zero_lt_iff _).trans (ercOfProfiles_eq_W_iff w l q))).trans
     (Pi.lex_le_iff_forall (ofLex w) (ofLex l)).symm
 
-/-- ERC satisfaction *is* lexicographic domination: `r` satisfies the ERC of a
-winner/loser pair iff the winner's violations, read in `r`'s priority order, are lex-≤
-the loser's ([prince-2002]). Precomposition with the ranking is absorbed by
-instantiating `lex_nonneg_ercOfProfiles_iff` at the ranked readings. -/
 theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking ι n) (w l : ι → ℕ) :
     (ercOfProfiles w l).SatisfiedBy r ↔ toLex (w ∘ r) ≤ toLex (l ∘ r) :=
   lex_nonneg_ercOfProfiles_iff (toLex (w ∘ r)) (toLex (l ∘ r))
@@ -350,14 +326,10 @@ theorem tableauERC_satisfiedBy_iff {C : Type*} (t : Tableau C n) (r : Ranking (F
     (w l : C) : (tableauERC t w l).SatisfiedBy r ↔ r • t.profile w ≤ r • t.profile l :=
   satisfiedBy_ercOfProfiles_iff_le r (t.constraints · w) (t.constraints · l)
 
-/-- At the identity ranking, ERC satisfaction is exactly the tableau's own lex
-comparison — connecting ERC inference to the tableau's winner set. -/
 theorem tableauERC_satisfiedBy_id_iff {C : Type*} (t : Tableau C n) (w l : C) :
     (tableauERC t w l).SatisfiedBy (1 : Ranking (Fin n) n) ↔ t.profile w ≤ t.profile l := by
   rw [tableauERC_satisfiedBy_iff]; exact Iff.rfl
 
-/-- A candidate is the tableau's optimum iff, under the identity ranking, its ERC
-against every competitor is satisfied — ERC consistency *is* optimality. -/
 theorem mem_optimal_iff_forall_satisfiedBy {C : Type*} (t : Tableau C n) (w : C) :
     w ∈ t.optimal ↔
       w ∈ t.candidates ∧

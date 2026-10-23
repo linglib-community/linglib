@@ -136,14 +136,12 @@ theorem longEnding_animate_acc_eq_gen_iff (g : Gender.Value) (n : Gender.numberS
   revert g n
   decide
 
-/-- The inanimate accusative is the nominative except in the feminine singular. -/
 theorem longEnding_inanimate_acc_eq_nom_iff (g : Gender.Value) (n : Gender.numberSystem.values) :
     longEnding g .inanimate n .acc = longEnding g .inanimate n .nom ↔
       g ≠ .fem ∨ n.1 = .plural := by
   revert g n
   decide
 
-/-- The nominative singular distinguishes the three genders. -/
 theorem injective_longEnding_nom (a : Gender.Animacy) :
     Injective (longEnding · a (Gender.numberSystem.value .singular) .nom) := by
   cases a <;> decide
@@ -264,7 +262,6 @@ def pastVerb : Target Value PastEnding :=
       exact ⟨⟨base, (.fem, .inanimate), by decide⟩,
         ⟨base, Gender.numberSystem.value .plural, by decide⟩⟩)
 
-/-- The singular of the past tense distinguishes the three genders. -/
 theorem injective_pastEnding : Injective (pastEnding · (Gender.numberSystem.value .singular)) := by
   decide
 

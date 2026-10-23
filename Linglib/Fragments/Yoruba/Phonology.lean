@@ -71,11 +71,9 @@ def u : Segment := vowel .«u»
 /-- The seven oral vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, e, epsilon, a, openO, o, u], by decide⟩
 
-/-- The vowels are those of PHOIBLE's Yoruba inventory. -/
 theorem subset_yor : vowels ⊆ Inventories.Yoruba.yor.featureMatrices.image vowel :=
   Inventory.subset_image_featureMatrices_iff.2 (by decide)
 
-/-- The advanced vowels are /i e o u/. -/
 theorem hasValue_atr_iff :
     ∀ x ∈ vowels, x.HasValue .atr true ↔ x ∈ ({i, e, o, u} : Finset Segment) := by
   decide

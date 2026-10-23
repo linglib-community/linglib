@@ -118,7 +118,6 @@ def consonants : Finset Segment :=
 /-- The vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, e, a, o, u], by decide⟩
 
-/-- The phonemes are segments of PHOIBLE's Tagalog inventory. -/
 theorem subset_tgl : consonants ∪ vowels ⊆ Inventories.Tagalog.tgl.segments :=
   Inventory.subset_segments_iff.2 (by decide)
 
@@ -148,44 +147,31 @@ def substituted (pre : List Segment) : List Segment → List Segment
   | [] => pre ++ [ŋ]
   | x :: rest => pre ++ substitute x ++ rest
 
-/-- Each obstruent substitutes to the nasal of its place, and the glottal stop, which has no
-place, to the velar nasal. -/
 theorem substitute_eq :
     substitute p = [m] ∧ substitute b = [m] ∧ substitute t = [n] ∧ substitute d = [n] ∧
       substitute s = [n] ∧ substitute k = [ŋ] ∧ substitute g = [ŋ] ∧ substitute «ʔ» = [ŋ] := by
   decide
 
-/-- The prefix nasal is unchanged before a nasal, a glide, `h` or a vowel. -/
 theorem cluster_of_not_trigger :
     ∀ x ∈ consonants ∪ vowels, ¬ trigger ≤ x → cluster [] [x] = [ŋ, x] := by
   decide
 
-/-- The prefix nasal is a phoneme before every consonant, the nasal of the consonant's place
-before an oral consonant and the velar nasal otherwise. -/
 theorem cluster_head_mem :
     ∀ x ∈ consonants, ∀ N ∈ (cluster [] [x]).head?, N ∈ ({m, n, ŋ} : Finset Segment) := by
   decide
 
 /-! ### Examples -/
 
-/-- *mamigáj* 'to distribute' from *bigáj*, with substitution. -/
 theorem mamigaj : substituted [m, a] [b, i, g, a, j] = [m, a, m, i, g, a, j] := by decide
 
-/-- *pantabój* 'to goad' from *tabój*, with assimilation alone. -/
 theorem pantaboj : cluster [p, a] [t, a, b, o, j] = [p, a, n, t, a, b, o, j] := by decide
 
-/-- *pansúlat* 'writing instrument' from *súlat*, with an alveolar nasal before `s`. -/
 theorem pansulat : cluster [p, a] [s, u, l, a, t] = [p, a, n, s, u, l, a, t] := by decide
 
-/-- *panlabás* 'external' from *labás*, with assimilation to the lateral. -/
 theorem panlabas : cluster [p, a] [l, a, b, a, s] = [p, a, n, l, a, b, a, s] := by decide
 
-/-- *maŋulól* 'to fool someone' from *ʔulól*, with substitution of the glottal stop. -/
 theorem mangulol : substituted [m, a] [«ʔ», u, l, o, l] = [m, a, ŋ, u, l, o, l] := by decide
 
-/-- *mapaŋamkám* 'rapacious' from *kamkám*. Substitution takes the stem-initial `k` and leaves
-the cluster inside the stem, which is not homorganic, so that assimilation is confined to the
-prefix as well. -/
 theorem mapangamkam :
     substituted [m, a, p, a] [k, a, m, k, a, m] = [m, a, p, a, ŋ, a, m, k, a, m] ∧
       assimilate [k, a, m, k, a, m] ≠ [k, a, m, k, a, m] := by

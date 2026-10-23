@@ -172,26 +172,20 @@ def mostStr (θ : ℝ≥0∞) (φ : Set W) (a : E) : Prop := φ ∈ (Pr a) ⁻¹
 
 variable {Θ Pr}
 
-/-- Knowledge entails belief. -/
 theorem knowsThat_believes {a : E} {φ : Set W} {w : W} (h : knowsThat Θ Pr a φ w) :
     believes Θ Pr a φ := h.1
 
-/-- Knowledge is veridical. -/
 theorem knowsThat_mem {a : E} {φ : Set W} {w : W} (h : knowsThat Θ Pr a φ w) : w ∈ φ := h.2
 
-/-- Knowing that answers the question. -/
 theorem knowsIf_of_knowsThat {a : E} {φ : Set W} {w : W} (h : knowsThat Θ Pr a φ w) :
     knowsIf Θ Pr a φ w := Or.inl h
 
-/-- Belief and not knowing exclude one another. -/
 theorem not_notKnowsThat_of_believes {a : E} {φ : Set W} {w : W} (h : believes Θ Pr a φ) :
     ¬ notKnowsThat Θ Pr a φ w := fun hn ↦ hn.1 h
 
-/-- A modal under *believes* is lowered to the modal's own threshold. -/
 theorem believesModal_might (a : E) (φ : Set W) :
     believesModal (E := E) a (might Θ Pr φ) ↔ φ ∈ (Pr a) ⁻¹' Set.Ici Θ.might := Iff.rfl
 
-/-- *must* entails *should*, *likely*, *may*, *might* and *could* under the ordering. -/
 theorem must_entails_might (h : Θ.Ordered) {φ : Set W} {a : E} (hm : must Θ Pr φ a) :
     might Θ Pr φ a := by
   have := h.might_may; have := h.may_likely; have := h.likely_believes
@@ -210,24 +204,20 @@ theorem might_entails_could (h : Θ.Ordered) {φ : Set W} {a : E} (hm : might Θ
     could Θ Pr φ a :=
   le_trans h.could_might hm
 
-/-- Certainty entails belief. -/
 theorem certainThat_believes (h : Θ.Ordered) {a : E} {φ : Set W} (hc : certainThat Θ Pr a φ) :
     believes Θ Pr a φ :=
   le_trans (h.believes_should.trans (h.should_must.trans h.must_certain)) hc
 
-/-- Certainty about supplies a believed witness. -/
 theorem certainAbout_believes (h : Θ.Ordered) {a : E} {C : X → Prop} {φ : X → Set W}
     (hc : certainAbout Θ Pr a C φ) : ∃ x, C x ∧ believes Θ Pr a (φ x) :=
   let ⟨x, hC, hx⟩ := hc
   ⟨x, hC, certainThat_believes h hx⟩
 
-/-- Uncertainty about and certainty about are incompatible. -/
 theorem uncertainAbout_certainAbout (h : Θ.Ordered) {a : E} {C : X → Prop} {φ : X → Set W}
     (hu : uncertainAbout Θ Pr a C φ) (hc : certainAbout Θ Pr a C φ) : False :=
   let ⟨x, hC, hx⟩ := hc
   (h.uncertain_certain.trans hx).not_gt (hu x hC)
 
-/-- The strengthened superlative entails the plain threshold reading. -/
 theorem mostStr_meets (h : Θ.Ordered) {θ : ℝ≥0∞} {φ : Set W} {a : E}
     (hm : mostStr Θ Pr θ φ a) : φ ∈ (Pr a) ⁻¹' Set.Ici θ :=
   le_trans (le_mul_of_one_le_left zero_le h.one_le_most) hm
@@ -268,8 +258,6 @@ theorem forces_must : ModalVerb.must.forces = {.necessity} := by decide
 
 theorem forces_should : ModalVerb.should.forces = {.weakNecessity} := by decide
 
-/-- Under the ordering, a possibility modal never carries a higher threshold than a modal of
-necessity or weak necessity. -/
 theorem force_threshold_le (h : Θ.Ordered) {v v' : ModalVerb}
     (hv : v.forces = {.possibility}) (hv' : v'.forces ≠ {.possibility}) :
     v.threshold Θ ≤ v'.threshold Θ := by

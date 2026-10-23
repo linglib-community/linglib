@@ -80,30 +80,24 @@ def attributive (a : Adjective) (d : Definiteness) (g : Gender.Value) (n : Numbe
   | some f => if TakesEnding d g n then f else a.form
   | none => a.form
 
-/-- An adjective that does not decline keeps its form. -/
 theorem attributive_of_not_declines {a : Adjective} (h : ¬ a.Declines) (d g n) :
     attributive a d g n = a.form := by
   rcases ha : a.inflected with _ | f
   · simp [attributive, ha]
   · exact absurd (by simp [Adjective.Declines, ha]) h
 
-/-- In a definite noun phrase the ending is always present. -/
 @[simp] theorem attributive_definite (a : Adjective) (g n) :
     attributive a .definite g n = a.inflected.getD a.form := by
   rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding]
 
-/-- Before a noun of common gender the ending is always present. -/
 @[simp] theorem attributive_common (a : Adjective) (d n) :
     attributive a d .common n = a.inflected.getD a.form := by
   rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding]
 
-/-- Before a plural noun the ending is always present. -/
 @[simp] theorem attributive_plural (a : Adjective) (d g) :
     attributive a d g .plural = a.inflected.getD a.form := by
   rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding]
 
-/-- Before a neuter singular or non-count noun in an indefinite noun phrase the ending is
-absent. -/
 @[simp] theorem attributive_indefinite_neuter_singular (a : Adjective) :
     attributive a .indefinite .neuter .singular = a.form := by
   rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding]
@@ -140,30 +134,23 @@ def houten : Adjective := { form := "houten" }
 /-- *gouden* 'golden' is a substance adjective like *houten*. -/
 def gouden : Adjective := { form := "gouden" }
 
-/-- The neuter *paard* takes the bare form in an indefinite singular phrase only, *een oud paard*,
-*het oude paard*, *oude paarden*. -/
 theorem oud_paard :
     attributive oud .indefinite Nouns.paard.gender .singular = "oud" ∧
       attributive oud .definite Nouns.paard.gender .singular = "oude" ∧
       attributive oud .indefinite Nouns.paard.gender .plural = "oude" := by
   decide
 
-/-- The common-gender *stoel* always takes the ending, *een oude stoel*, *de oude stoel*. -/
 theorem oud_stoel :
     attributive oud .indefinite Nouns.stoel.gender .singular = "oude" ∧
       attributive oud .definite Nouns.stoel.gender .singular = "oude" := by
   decide
 
-/-- A non-count noun patterns with the singular, *lekker bier*, *het lekkere bier*, *lekkere
-rijst*. -/
 theorem lekker_bier_rijst :
     attributive lekker .indefinite Nouns.bier.gender .singular = "lekker" ∧
       attributive lekker .definite Nouns.bier.gender .singular = "lekkere" ∧
       attributive lekker .indefinite Nouns.rijst.gender .singular = "lekkere" := by
   decide
 
-/-- The exceptions keep their form before a common-gender noun, *een oranje jas*, *de gouden
-ring*. -/
 theorem oranje_jas_gouden_ring :
     attributive oranje .indefinite Nouns.jas.gender .singular = "oranje" ∧
       attributive gouden .definite Nouns.ring.gender .singular = "gouden" := by
@@ -248,8 +235,6 @@ def inventory : List Adjective :=
    rood, wit, groen, geel, blauw, zwart, roze, mauve, lila,
    bitter, zoet, zuur, zout, vreemd, gezond, leuk, bijzonder, dicht]
 
-/-- The entries that do not decline are exactly those ending in a schwa, in the long vowel
-written *a*, *o* or *i*, or in *-en* after a consonant. -/
 theorem not_declines_iff :
     ∀ a ∈ inventory, ¬ a.Declines ↔
       a.form.toList.getLast? ∈ [some 'e', some 'a', some 'o', some 'i'] ∨
@@ -257,7 +242,6 @@ theorem not_declines_iff :
           ¬ ∃ v ∈ ['a', 'e', 'i', 'o', 'u'], [v, 'e', 'n'] <:+ a.form.toList := by
   decide
 
-/-- *roodheid* 'redness'. -/
 theorem heid_rood : heid rood = "roodheid" := rfl
 
 end Dutch.Adjectives

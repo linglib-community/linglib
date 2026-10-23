@@ -102,7 +102,6 @@ structure CauseConcepts (E : Type*) where
 
 variable {E : Type*} (C : CauseConcepts E) {s o : E}
 
-/-- A non-physical relatum, an absence, a fact or a degree, produces nothing. -/
 theorem CauseConcepts.not_produces_of_not_physical (h : ¬C.Physical s) : ¬C.Produces s o :=
   fun hp ↦ h (C.physical_of_produces hp)
 
@@ -154,37 +153,28 @@ def transitivePairs : Finset (Form × Reading) :=
 def anticausativePairs : Finset (Form × Reading) :=
   {(.anticausative, .production), (.anticausative, .dependence)}
 
-/-- The production constraint. When a thick causative in its physical sense promotes
-production, the lexical form takes it and periphrastic *cause* is left with dependence. -/
 theorem production_constraint :
     superoptimal transitivePairs (tableau true) =
       {(.lexical, .production), (.periphrastic, .dependence)} := by
   decide
 
-/-- Under the production constraint the lexical form has only the production reading. -/
 theorem reading_eq_production_of_lexical :
     ∀ r, (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true) → r = .production := by
   decide
 
-/-- Under the production constraint periphrastic *cause* has only the dependence reading. -/
 theorem reading_eq_dependence_of_periphrastic :
     ∀ r, (Form.periphrastic, r) ∈ superoptimal transitivePairs (tableau true) →
       r = .dependence := by
   decide
 
-/-- Where nothing promotes production, in the abstract sense or with a thin verb, the lexical
-form keeps the dependence reading. -/
 theorem lexical_dependence_of_not_promoted :
     (Form.lexical, Reading.dependence) ∈ superoptimal transitivePairs (tableau false) := by
   decide
 
-/-- The anticausative with a causer phrase has both readings. -/
 theorem anticausative_readings :
     superoptimal anticausativePairs (tableau false) = anticausativePairs := by
   decide
 
-/-- Under the production constraint a subject with abstract reference falsifies the lexical
-causative. -/
 theorem not_holds_of_not_physical {r : Reading}
     (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true))
     (h : ¬C.Physical s) : ¬r.holds C s o := by
@@ -209,17 +199,13 @@ def sunburn : CauseConcepts Sunburn where
   depends_of_produces h := ⟨.inl h.1, h.2⟩
   physical_of_produces h := by rintro rfl; cases h.1
 
-/-- *The sun burned her skin* holds under the production reading. -/
 theorem sunburn_sun : Reading.production.holds sunburn .sun .skin := ⟨rfl, rfl⟩
 
-/-- *The lack of sunscreen burned her skin* fails under every reading the production constraint
-leaves the lexical form. -/
 theorem sunburn_lexical (r : Reading)
     (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true)) :
     ¬r.holds sunburn .lackOfSunscreen .skin :=
   not_holds_of_not_physical sunburn hr fun h ↦ h rfl
 
-/-- *The lack of sunscreen caused her skin to burn* holds under the reading left to *cause*. -/
 theorem sunburn_periphrastic (r : Reading)
     (hr : (Form.periphrastic, r) ∈ superoptimal transitivePairs (tableau true)) :
     r.holds sunburn .lackOfSunscreen .skin := by
@@ -242,14 +228,10 @@ def axle : CauseConcepts Axle where
   depends_of_produces h := ⟨.inl h.1, h.2⟩
   physical_of_produces _ := trivial
 
-/-- *The driving cracked the axle* holds, since a production cause satisfies both readings. -/
 theorem axle_driving : Reading.production.holds axle .driving .axle := ⟨rfl, rfl⟩
 
-/-- *The flat tire damaged the axle* holds under the thin verb's dependence reading. -/
 theorem axle_tire_dependence : Reading.dependence.holds axle .tire .axle := ⟨.inr rfl, rfl⟩
 
-/-- *The flat tire cracked the axle* fails, since the tire is physical but produces nothing;
-this is Wolff's directness constraint in its positive form as production. -/
 theorem axle_tire_not_production : ¬Reading.production.holds axle .tire .axle :=
   fun h ↦ Axle.noConfusion h.1
 
@@ -338,25 +320,18 @@ def causativeMannerVerbs : Finset Sample := strongResultative \ resultless
 /-- The thick verbs that are not causative manner verbs, thick through their result state. -/
 def thickState : Finset Sample := thick \ causativeMannerVerbs
 
-/-- Every causative manner verb is thick. -/
 theorem causativeMannerVerbs_subset_thick : causativeMannerVerbs ⊆ thick := by decide
 
-/-- *Bury* is the one thick verb that is not a causative manner verb. -/
 theorem thickState_eq : thickState = {.bury} := by decide
 
-/-- The thin verbs found with strong resultatives are exactly the resultless ones. -/
 theorem strongResultative_sdiff_thick : strongResultative \ thick = resultless := by decide
 
-/-- *Close* and *lower* are the thin verbs not found with an omission or quality subject. -/
 theorem thin_without_omission : thickᶜ \ omissionSubject = {.close, .lower} := by decide
 
-/-- The thick verbs found with an omission subject, each under a reinterpretation of the
-subject as a productive cause. -/
 theorem thick_inter_omissionSubject :
     thick ∩ omissionSubject = {.burn, .lift, .lock, .melt} := by
   decide
 
-/-- The alternation column agrees with the fragment's diatheses except on *cool*. -/
 theorem alternating_iff_hasCausativeAlternation :
     ∀ s, s ≠ .cool → (s ∈ alternating ↔ s.entry.valency.HasCausativeAlternation) := by
   decide
@@ -367,7 +342,6 @@ result state in the complement of `v`. -/
 def rootPosition (s : Sample) : Semantics.Root.Position :=
   if s ∈ causativeMannerVerbs then .adjoined else .complement
 
-/-- Only a thick verb has an adjoined root. -/
 theorem mem_thick_of_rootPosition {s : Sample} (h : s.rootPosition = .adjoined) : s ∈ thick := by
   unfold rootPosition at h
   split_ifs at h with hs

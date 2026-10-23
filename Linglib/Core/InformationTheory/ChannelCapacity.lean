@@ -110,8 +110,6 @@ private theorem freeEnergy_uniformOn [Nonempty C] (ν : Measure C) [IsProbabilit
 
 variable (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C) [IsProbabilityMeasure μ]
 
-/-- The conditional entropy of a channel's output given its input is the input average of the
-entropies of the rows. -/
 theorem condEntropy_snd_fst_compProd :
     H[Prod.snd | Prod.fst ; μ ⊗ₘ κ] = ∑ c, μ.real {c} * Hm[κ c] := by
   rw [condEntropy_eq_sum _ measurable_fst]
@@ -137,9 +135,6 @@ private theorem measureMutualInfo_compProd_eq_sum :
   · simp [hc]
   · rw [mul_div_mul_left _ _ hc, mul_assoc]
 
-/-- The compensation identity. Averaging the divergence of the rows of a channel from a
-reference measure overshoots the mutual information by the divergence of the output marginal
-from that reference. -/
 theorem sum_mul_toReal_klDiv (q : Measure W) [IsProbabilityMeasure q]
     (hq : ∀ c, μ {c} ≠ 0 → κ c ≪ q) :
     ∑ c, μ.real {c} * (klDiv (κ c) q).toReal = Im[μ ⊗ₘ κ] + (klDiv (κ ∘ₘ μ) q).toReal := by
@@ -174,18 +169,14 @@ theorem sum_mul_toReal_klDiv (q : Measure W) [IsProbabilityMeasure q]
           * log ((κ ∘ₘ μ).real {w} / q.real {w}))]
         simp_rw [← Finset.sum_mul, ← Measure.comp_real_singleton]
 
-/-- Mutual information across a channel is the input average of the divergence of each row from
-the output marginal. -/
 theorem measureMutualInfo_compProd :
     Im[μ ⊗ₘ κ] = ∑ c, μ.real {c} * (klDiv (κ c) (κ ∘ₘ μ)).toReal := by
   rw [sum_mul_toReal_klDiv κ μ _ fun c hc ↦ κ.absolutelyContinuous_comp μ hc, klDiv_self,
     ENNReal.toReal_zero, add_zero]
 
-/-- Mutual information across a channel is at most the log of the number of outputs. -/
 theorem measureMutualInfo_compProd_le_log_card : Im[μ ⊗ₘ κ] ≤ log (Fintype.card W) :=
   (measureMutualInfo_le_measureEntropy_snd _).trans (measureEntropy_le_log_card _)
 
-/-- The capacity of a channel is at most the log of the number of outputs. -/
 theorem channelCapacity_le_log_card : channelCapacity κ ≤ log (Fintype.card W) :=
   Real.iSup_le (fun μ ↦ measureMutualInfo_compProd_le_log_card κ μ) (log_natCast_nonneg _)
 
@@ -198,8 +189,6 @@ theorem measureMutualInfo_compProd_le_channelCapacity : Im[μ ⊗ₘ κ] ≤ cha
       rintro _ ⟨μ, rfl⟩
       exact measureMutualInfo_compProd_le_log_card κ μ⟩ ⟨μ, inferInstance⟩
 
-/-- An input distribution achieves capacity when no row of the channel lies farther from the
-output marginal than the information conveyed. -/
 theorem measureMutualInfo_compProd_eq_channelCapacity
     (h : ∀ c, klDiv (κ c) (κ ∘ₘ μ) ≤ ENNReal.ofReal (Im[μ ⊗ₘ κ])) :
     Im[μ ⊗ₘ κ] = channelCapacity κ := by
@@ -218,8 +207,6 @@ theorem measureMutualInfo_compProd_eq_channelCapacity
     _ = Im[μ ⊗ₘ κ] := by
         rw [← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul]
 
-/-- The divergence of a row from the output marginal is the row's expected log posterior of its
-input, less the input's log prior. -/
 theorem toReal_klDiv_eq_integral_log_sub [Nonempty C] {c : C} (hc : μ {c} ≠ 0) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal = ∫ w, log (((κ†μ) w).real {c}) ∂(κ c) - log (μ.real {c}) := by
   have hpc : μ.real {c} ≠ 0 := by rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
@@ -241,8 +228,6 @@ theorem toReal_klDiv_eq_integral_log_sub [Nonempty C] {c : C} (hc : μ {c} ≠ 0
     log_mul hpc hk, log_div hk hw']
   ring
 
-/-- The Bayesian decoder maximizes the expected log score of the input. No decoder that charges
-every input the posterior charges does better, even one that gives no guess at some outputs. -/
 theorem sum_mul_integral_log_le [Nonempty C] (φ : W → Measure C)
     [∀ w, IsZeroOrProbabilityMeasure (φ w)] (hφ : ∀ w, (κ ∘ₘ μ) {w} ≠ 0 → (κ†μ) w ≪ φ w) :
     ∑ c, μ.real {c} * ∫ w, log ((φ w).real {c}) ∂(κ c)
@@ -294,8 +279,6 @@ private theorem measureMutualInfo_compProd_eq_sum_log :
   · simp [measureReal_def, hc]
   rw [toReal_klDiv_eq_integral_log_sub κ μ hc]
 
-/-- At a fixed point of the Blahut–Arimoto update, every row lies at the same divergence from the
-output marginal, the log partition function of the update. -/
 private theorem toReal_klDiv_of_eq_blahutArimoto (h : μ = blahutArimoto κ μ) (c : C) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal
       = log (∑ c', exp (∫ w, log (((κ†μ) w).real {c'}) ∂(κ c'))) := by
@@ -308,9 +291,6 @@ private theorem toReal_klDiv_of_eq_blahutArimoto (h : μ = blahutArimoto κ μ) 
   rw [toReal_klDiv_eq_integral_log_sub κ μ hc, hreal, log_softmax]
   ring
 
-/-- An input distribution achieves capacity with positive mass everywhere exactly when it is
-the uniform distribution tilted by each input's expected log posterior, a fixed point of the
-Blahut–Arimoto update ([blahut-1972], [arimoto-1972]). -/
 theorem eq_blahutArimoto_iff :
     (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔ μ = blahutArimoto κ μ := by
   have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty
@@ -363,8 +343,6 @@ theorem eq_blahutArimoto_iff :
     rw [hI, ← hD c, ENNReal.ofReal_toReal]
     exact klDiv_ne_top (κ.absolutelyContinuous_comp μ (hμ c)) .of_finite
 
-/-- An input distribution of positive mass everywhere that achieves capacity puts every row of
-the channel at divergence exactly the capacity from the output marginal. -/
 theorem toReal_klDiv_eq_channelCapacity (hμ : ∀ c, μ {c} ≠ 0)
     (h : Im[μ ⊗ₘ κ] = channelCapacity κ) (c : C) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal = channelCapacity κ := by

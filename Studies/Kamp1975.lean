@@ -69,16 +69,12 @@ section Bridge
 
 variable {W E : Type*}
 
-/-- At a fixed world an intersective modifier of intensional properties is an intersective
-modifier of predicates, `N ↦ adj (fun _ ↦ N) w`. -/
 theorem intersective_at_world {adj : Modifier (Property W E)}
     (h : IsIntersective adj) (w : W) :
     IsIntersective (fun N : E → Prop ↦ adj (fun _ ↦ N) w) := by
   obtain ⟨Q, hQ⟩ := h
   exact ⟨Q w, fun N ↦ congrFun (hQ fun _ ↦ N) w⟩
 
-/-- At a fixed world a subsective modifier of intensional properties is a subsective modifier
-of predicates. -/
 theorem subsective_at_world {adj : Modifier (Property W E)}
     (h : IsSubsective adj) (w : W) :
     IsSubsective (fun N : E → Prop ↦ adj (fun _ ↦ N) w) :=
@@ -120,8 +116,6 @@ reads *at least as A as*. Kamp credits (12) to [lewis-1970], who attributes it t
   le_refl _ := fun _ _ h ↦ h
   le_trans _ _ _ hab hbc := fun c hc h ↦ hab c hc (hbc c hc h)
 
-/-- The completion comparative is antitone in the set of completions, since more completions
-make `≤` harder to satisfy. -/
 theorem kampPreorder_antitone {E C : Type*} (ext : C → E → Prop) (u₁ u₂ : E) :
     Antitone (fun S ↦ (kampPreorder ext S).le u₁ u₂) :=
   fun _ _ hle hall c hc ↦ hall c (hle hc)
@@ -151,7 +145,6 @@ theorem kampMeasureLe_total (u₁ u₂ : E) :
     kampMeasureLe ext S p u₁ u₂ ∨ kampMeasureLe ext S p u₂ u₁ :=
   le_total _ _
 
-/-- For nonnegative weights the completion comparative implies the measured one. -/
 theorem kampMeasureLe_of_kampPreorder_le (hp : ∀ c ∈ S, 0 ≤ p c) {u₁ u₂ : E}
     (h : (kampPreorder ext (S : Set C)).le u₁ u₂) :
     kampMeasureLe ext S p u₁ u₂ := by
@@ -183,8 +176,6 @@ def cleverExt : Crit → P2 → Prop
   | .quickWit,       .jones => True
   | _,               _      => False
 
-/-- By the completion comparative Smith and Jones are incomparable in cleverness, which Kamp
-takes to capture the comparative correctly for adjectives with several criteria. -/
 theorem clever_incomparable :
     ¬ (kampPreorder cleverExt Set.univ).le .smith .jones ∧
     ¬ (kampPreorder cleverExt Set.univ).le .jones .smith :=
@@ -297,17 +288,13 @@ alleged thief is a thief* is no logical truth. -/
 def allegedAdj : Modifier (Property W2 E3) := fun _N _ x ↦
   match x with | .a => True | _ => False
 
-/-- *alleged* ignores the noun, so it is extensional; with `skillful_not_extensional` this
-shows that extensionality is independent of subsectivity. -/
 theorem alleged_extensional : ModalLogic.IsExtensional allegedAdj :=
   fun _ _ _ _ ↦ rfl
 
-/-- *alleged N* does not entail *N*. -/
 theorem alleged_not_subsective : ¬ IsSubsective allegedAdj := by
   intro h
   exact h (fun _ _ ↦ False) .w₁ .a trivial
 
-/-- *alleged N* does not entail *not N*. -/
 theorem alleged_not_privative : ¬ IsPrivative allegedAdj := by
   intro h
   exact isPrivative_iff.mp h (fun _ _ ↦ True) .w₁ .a trivial trivial

@@ -195,7 +195,6 @@ def Adds (p : Pair) : Prop :=
 instance : DecidablePred Adds := fun p ↦
   inferInstanceAs (Decidable (∃ x ∈ p.negative, x ∉ p.markerForms ∧ x ∉ p.affirmative))
 
-/-- A construction that adds an element is asymmetric. -/
 theorem not_isSymmetric_of_adds {p : Pair} (h : Adds p) : ¬ IsSymmetric p := by
   obtain ⟨x, hx, hm, ha⟩ := h
   exact fun hs ↦ by simpa [ha, hm] using hs.2.subset hx
@@ -251,7 +250,6 @@ theorem languageType_eq_symmetric_iff :
   unfold languageType
   split_ifs <;> simp_all
 
-/-- A language with only asymmetric constructions is of type Asy whatever its paradigms. -/
 theorem languageType_eq_asymmetric_iff (hne : cs ≠ []) :
     languageType cs sym P = .asymmetric ↔ ∀ c ∈ cs, ¬ sym c := by
   obtain ⟨c, cs, rfl⟩ := List.exists_cons_of_ne_nil hne
@@ -261,7 +259,6 @@ theorem languageType_eq_asymmetric_iff (hne : cs ≠ []) :
   · exact iff_of_true rfl h₂
   · exact iff_of_false (by simp) h₂
 
-/-- Type SymAsy has a symmetric construction by definition, together with some asymmetry. -/
 theorem languageType_eq_both_iff :
     languageType cs sym P = .both ↔ (∃ c ∈ cs, sym c) ∧ ((∃ c ∈ cs, ¬ sym c) ∨ P) := by
   unfold languageType
@@ -286,7 +283,6 @@ theorem tunica_displaces :
       Displaces (pairs "tuni1252") ∧ ¬ Neutralizes (pairs "tuni1252") := by
   decide +kernel
 
-/-- Paradigmatic asymmetry does not always lead to neutralization. -/
 theorem exists_paradigmAsymmetric_not_neutralizes :
     ∃ ps, ParadigmAsymmetric ps ∧ ¬ Neutralizes ps :=
   ⟨_, .inr tunica_displaces.2.2.1, tunica_displaces.2.2.2⟩
@@ -302,7 +298,6 @@ theorem german_symmetric : Formed "stan1295" ∧ pairsType (pairs "stan1295") = 
 theorem italian_symmetric : Formed "ital1282" ∧ pairsType (pairs "ital1282") = .symmetric := by
   decide +kernel
 
-/-- Both members of the French double marker are removed. -/
 theorem french_symmetric : Formed "stan1290" ∧ pairsType (pairs "stan1290") = .symmetric := by
   decide +kernel
 
@@ -311,19 +306,12 @@ theorem russian_symmetric : Formed "russ1263" ∧ pairsType (pairs "russ1263") =
 
 /-! ### Finiteness asymmetry: Finnish, Japanese, Maori, Hixkaryana -/
 
-/-- The Finnish negative auxiliary has an ending for every person and number, and in the
-negative of a stem with its ending the auxiliary takes the ending and the stem follows bare:
-the negative verb is the finite element of the clause, and the language is of type Asy. -/
 theorem finnish_negVerb :
     Finnish.Negation.ending.cells = Agreement.Bundle.personNumberCells ∧ Formed "finn1318" ∧
     (∀ p ∈ pairs "finn1318", p.negative = p.markerForms ++ p.affirmative.reverse) ∧
     pairsType (pairs "finn1318") = .asymmetric := by
   decide +kernel
 
-/-- The plain Japanese negative is the verb root, the negator *-na-* and an adjectival tense
-ending, where the affirmative has a verbal one: the verb becomes an adjective, less finite than
-the verb, which the book files, as an atypical member, under the finiteness asymmetry with a
-nonfinite lexical verb. -/
 theorem japanese_negative_adjectival :
     Formed "nucl1643" ∧ ∀ p ∈ pairs "nucl1643", p.marker = Japanese.Negation.na →
       ∃ e ∈ Japanese.Negation.adjectivalEndings.map (toForm ·.form),
@@ -332,20 +320,14 @@ theorem japanese_negative_adjectival :
             m ∉ Japanese.Negation.adjectivalEndings.map (toForm ·.form) := by
   decide +kernel
 
-/-- The plain and the polite negatives are asymmetric, the polite past adding the copula, while
-the paradigm shows no asymmetry. -/
 theorem japanese_asymmetric :
     (∃ p ∈ pairs "nucl1643", p.marker = Japanese.Negation.en ∧ Adds p) ∧
     ¬ ParadigmAsymmetric (pairs "nucl1643") ∧ pairsType (pairs "nucl1643") = .asymmetric := by
   decide +kernel
 
-/-- Maori negates only with the initial negative verb, after which the subject precedes the
-tense particle and the verb, so it is of type Asy. -/
 theorem maori_asymmetric : Formed "maor1246" ∧ pairsType (pairs "maor1246") = .asymmetric := by
   decide +kernel
 
-/-- Hixkaryana negates only by deverbalizing the lexical verb under an added copula, so it is
-of type Asy. -/
 theorem hixkaryana_asymmetric :
     Formed "hixk1239" ∧ (∀ p ∈ pairs "hixk1239", Adds p) ∧
       pairsType (pairs "hixk1239") = .asymmetric := by
@@ -360,17 +342,11 @@ def IsSymmetricNegator (n : Mandarin.Negation.Negator) : Prop := n.verb = none �
 instance : DecidablePred IsSymmetricNegator := fun n ↦
   inferInstanceAs (Decidable (n.verb = none ∧ n.excludes = []))
 
-/-- Mandarin negates non-perfectives symmetrically with *bù* and perfectives with *méi*, which
-brings in the existential verb *yǒu* as the finite element of the negative clause, or is itself
-the negative existential verb, and loses the perfective *le*: a finiteness asymmetry, so the
-language is of type SymAsy. -/
 theorem mandarin_both :
     IsSymmetricNegator Mandarin.Negation.bu ∧ ¬ IsSymmetricNegator Mandarin.Negation.mei ∧
       languageType Mandarin.Negation.negators IsSymmetricNegator False = .both := by
   decide +kernel
 
-/-- Turkish negation is symmetric except in the aorist, whose marker *-ir* changes or drops in
-the negative, a category asymmetry; the paradigm shows no asymmetry. -/
 theorem turkish_both :
     Formed "nucl1301" ∧ (∀ p ∈ pairs "nucl1301", IsSymmetric p ↔ toForm "ir" ∉ p.affirmative) ∧
     ¬ ParadigmAsymmetric (pairs "nucl1301") ∧ pairsType (pairs "nucl1301") = .both := by
@@ -378,16 +354,11 @@ theorem turkish_both :
 
 /-! ### Paradigmatic neutralization: Burmese and English -/
 
-/-- The Burmese negative suffix replaces the postverbal tense–aspect markers, so the
-construction is asymmetric and one negative form corresponds to three affirmative forms. -/
 theorem burmese_neutralizes :
     Formed "nucl1310" ∧ Neutralizes (pairs "nucl1310") ∧
       pairsType (pairs "nucl1310") = .asymmetric := by
   decide +kernel
 
-/-- The English negative is symmetric with the compound tenses and with the emphatic
-affirmatives of the simple tenses, while to the plain simple tenses it adds *do*; the plain and
-the emphatic affirmative of a simple tense share one negative, so English is of type SymAsy. -/
 theorem english_both :
     Formed "stan1293" ∧ (∀ p ∈ pairs "stan1293", ¬ IsSymmetric p → Adds p) ∧
     Neutralizes (pairs "stan1293") ∧

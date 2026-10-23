@@ -96,13 +96,10 @@ def KoreanRefForm.surface : KoreanRefForm → Option String
   | .overt => some Korean.Pronouns.gyae.form
   | .fullNP => some "ku chinkwu"
 
-/-- More accessible forms are more phonologically attenuated. -/
 theorem attenuation_strictMono :
     StrictMono (λ f : KoreanRefForm => f.toAccessibility.attenuation) := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
 
-/-- More accessible forms are no more informative; the null and the overt pronoun both carry
-no lexical information. -/
 theorem informativity_antitone :
     Antitone (λ f : KoreanRefForm => f.toAccessibility.informativity) := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
@@ -140,20 +137,15 @@ def exp3_fullNP : AntecedentChoice := ⟨.fullNP, 35, 65⟩
   | .overt => exp3_overt.objectPercent
   | .fullNP => exp3_fullNP.objectPercent
 
-/-- The forced choice partitions the responses. -/
 theorem exp3_partitions (f : KoreanRefForm) : subjectBias f + objectBias f = 100 := by
   cases f <;> decide
 
-/-- Subject-antecedent bias increases strictly with accessibility: the form–function
-correlation of Accessibility Theory. -/
 theorem subjectBias_strictMono : StrictMono subjectBias := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
 
-/-- Object-antecedent bias decreases strictly with accessibility. -/
 theorem objectBias_strictAnti : StrictAnti objectBias := by
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
 
-/-- The three forms are three distinct markers, not a null-versus-non-null contrast. -/
 theorem three_way_split : Function.Injective subjectBias :=
   subjectBias_strictMono.injective
 
@@ -163,8 +155,6 @@ def exp3_naturalness : KoreanRefForm → ℚ
   | .overt => 53/10
   | .fullNP => 54/10
 
-/-- Under global ambiguity the three forms are equally natural: the accessibility distinction
-shows in interpretation, not in acceptability. -/
 theorem exp3_naturalness_flat (f g : KoreanRefForm) :
     exp3_naturalness f - exp3_naturalness g ≤ 1/10 := by
   cases f <;> cases g <;> norm_num [exp3_naturalness]
@@ -177,14 +167,11 @@ def exp1_naturalness : KoreanRefForm → ℚ
   | .overt => 618/100
   | .fullNP => 623/100
 
-/-- The null pronoun is the most natural way to refer to the sole, hence maximally accessible,
-antecedent. -/
 theorem exp1_null_most_natural :
     exp1_naturalness .overt < exp1_naturalness .nullPro ∧
       exp1_naturalness .fullNP < exp1_naturalness .nullPro := by
   norm_num [exp1_naturalness]
 
-/-- The overt pronoun and the full NP do not differ, against a strict reading of the scale. -/
 theorem exp1_overt_fullNP_close :
     exp1_naturalness .fullNP - exp1_naturalness .overt ≤ 1/10 := by
   norm_num [exp1_naturalness]
@@ -229,8 +216,6 @@ theorem exp2_only_null_context_sensitive :
     30 < exp2_pro.accuracyGap ∧ exp2_overt.accuracyGap ≤ 5 ∧ exp2_fullNP.accuracyGap ≤ 5 := by
   decide
 
-/-- The naturalness ratings show the same asymmetry: only the null pronoun is rated more than
-half a point lower under the object-biased context. -/
 theorem exp2_naturalness_only_null_asymmetric :
     1/2 < exp2_pro.naturalnessGap ∧ exp2_overt.naturalnessGap ≤ 1/4 ∧
       exp2_fullNP.naturalnessGap ≤ 1/4 := by
@@ -240,7 +225,6 @@ theorem exp2_naturalness_only_null_asymmetric :
 def correctTrialNaturalness : ℚ := 440/100
 def incorrectTrialNaturalness : ℚ := 405/100
 
-/-- Trials interpreted as intended are rated more natural: the form–function match is felt. -/
 theorem correct_trials_more_natural : incorrectTrialNaturalness < correctTrialNaturalness := by
   norm_num [correctTrialNaturalness, incorrectTrialNaturalness]
 
@@ -282,22 +266,17 @@ def koreanChoe : CrossLingProfile := ⟨"Korean (Choe 2021)", 91, 73⟩
 def profiles : List CrossLingProfile :=
   [italian, spanish, chinese, korean, koreanKweon, koreanChoe]
 
-/-- The relative ordering is universal: in every study the null pronoun is more subject-biased
-than the overt one. -/
 theorem null_gt_overt_universally : ∀ p ∈ profiles, p.overtSubject < p.nullSubject := by
   decide
 
 /-- The spread between the two pronouns. -/
 def CrossLingProfile.spread (p : CrossLingProfile) : ℕ := p.nullSubject - p.overtSubject
 
-/-- Italian divides the labour most sharply; Spanish, Chinese, and Korean calibrate the same
-ordering with a smaller spread. -/
 theorem italian_widest_spread :
     spanish.spread < italian.spread ∧ chinese.spread < italian.spread ∧
       korean.spread < italian.spread := by
   decide
 
-/-- The overt pronoun is object-biased, as in [kweon-2011] and unlike [choe-2021]. -/
 theorem overt_object_biased_as_kweon :
     korean.overtSubject < 50 ∧ koreanKweon.overtSubject < 50 ∧ 50 < koreanChoe.overtSubject := by
   decide
@@ -306,8 +285,6 @@ theorem overt_object_biased_as_kweon :
 def biasSpread (a b : AntecedentChoice) : ℕ :=
   max a.subjectPercent b.subjectPercent - min a.subjectPercent b.subjectPercent
 
-/-- The primary contrast is between null and non-null forms: the null-versus-overt step in
-subject bias is more than three times the overt-versus-full-NP step. -/
 theorem null_nonnull_cliff :
     3 * biasSpread exp3_overt exp3_fullNP < biasSpread exp3_pro exp3_overt := by
   decide

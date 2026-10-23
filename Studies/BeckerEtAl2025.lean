@@ -114,8 +114,6 @@ def weFell : Tree :=
 def annatto : Tree :=
   .om [.ft true [.σ 1, .σ 2 true], .σ 1]
 
-/-- The grid puts secondary stress on every foot head and primary stress on the head of the head
-    foot ([liberman-prince-1977]). -/
 theorem columns_words :
     Tree.columns fell = [1, 2, 1, 3, 1] ∧ Tree.columns weFell = [1, 2, 1, 2, 3, 1] ∧
       Tree.columns annatto = [1, 3, 1] := by

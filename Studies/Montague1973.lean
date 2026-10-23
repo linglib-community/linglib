@@ -230,9 +230,6 @@ namespace Interp.LogicallyPossible
 variable {M : Interp E W} (h : M.LogicallyPossible)
 include h
 
-/-- An ordinary common noun is definable from its `*`-counterpart on constant concepts,
-`□[δ(x) ↔ ∨u[x = ^u] ∧ δ*(ˇx)]`. The paper's `□[δ(x) ↔ δ*(ˇx)]` holds only for intransitive
-verbs, as the editors note, since an ordinary noun fails of every non-constant concept. -/
 theorem rigidCN_starIV {α : Basic .CN} (h₁ : α ≠ .price) (h₂ : α ≠ .temperature) :
     rigidCN (fun i ↦ starIV (M.const α i)) = M.const α := by
   refine funext fun i ↦ funext fun x ↦ propext ⟨fun ⟨hr, hx⟩ ↦ ?_, fun hx ↦ ?_⟩
@@ -241,16 +238,12 @@ theorem rigidCN_starIV {α : Basic .CN} (h₁ : α ≠ .price) (h₂ : α ≠ .t
     rw [hr.eq_const i] at hx
     exact ⟨hr, hx⟩
 
-/-- An intransitive verb other than *rise* is definable from its `*`-counterpart,
-`□[δ(x) ↔ δ*(ˇx)]`. -/
 theorem extIV_starIV {α : Basic .IV} (hα : α ≠ .rise) :
     extIV (fun i ↦ starIV (M.const α i)) = M.const α := by
   obtain ⟨m, hm⟩ := h.iv_ext α hα
   rw [← hm]
   rfl
 
-/-- A transitive verb other than *seek* is definable from its `*`-counterpart,
-`□[δ(x, 𝒫) ↔ 𝒫{ŷ δ*(ˇx, ˇy)}]`. -/
 theorem extTV_starTV {α : Basic .TV} (hα : α ≠ .seek) :
     extTV (fun i ↦ starTV (M.const α i)) = M.const α := by
   obtain ⟨S, hS⟩ := h.tv_ext α hα
@@ -308,33 +301,28 @@ section Extensional
 variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (i : W)
 include h
 
-/-- *Bill walks* translates to `walk'*(b)`. -/
 theorem bill_walks_iff :
     (f4 (name bill) (basic walk)).realize M g i ↔ starIV (M.const walk i) (M.name bill i) :=
   iff_of_eq (congrArg (M.const walk i) ((h.name_rigid bill).eq_const i))
 
-/-- *a man walks* translates to `∨u[man'*(u) ∧ walk'*(u)]`. -/
 theorem a_man_walks_iff :
     (f4 (a (basic man)) (basic walk)).realize M g i ↔
       GQ.some (starIV (M.const man i)) (starIV (M.const walk i)) :=
   have := Nonempty.intro i
   some_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
-/-- *every man walks* translates to `∧u[man'*(u) → walk'*(u)]`. -/
 theorem every_man_walks_iff :
     (f4 (every (basic man)) (basic walk)).realize M g i ↔
       GQ.every (starIV (M.const man i)) (starIV (M.const walk i)) :=
   have := Nonempty.intro i
   every_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
-/-- *the man walks* translates to `∨v∧u[[man'*(u) ↔ u = v] ∧ walk'*(v)]`. -/
 theorem the_man_walks_iff :
     (f4 (the (basic man)) (basic walk)).realize M g i ↔
       GQ.the (starIV (M.const man i)) (starIV (M.const walk i)) :=
   have := Nonempty.intro i
   the_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
-/-- *John finds a unicorn* translates to `∨u[unicorn'*(u) ∧ find'*(j, u)]`. -/
 theorem john_finds_a_unicorn_iff :
     (f4 (name john) (f5 (basic find) (a (basic unicorn)))).realize M g i ↔
       GQ.some (starIV (M.const unicorn i)) (starTV (M.const find i) · (M.name john i)) := by
@@ -345,12 +333,10 @@ theorem john_finds_a_unicorn_iff :
   exact some_iff_of_rigid (h.noun_rigid unicorn nofun nofun i)
 
 omit h in
-/-- *Bill is Mary* translates to `b = m`. -/
 theorem bill_is_mary_iff :
     (f4 (name bill) (f5 be (name mary))).realize M g i ↔ M.name bill i = M.name mary i :=
   Iff.rfl
 
-/-- *Bill is a man* translates to `man'*(b)`. -/
 theorem bill_is_a_man_iff :
     (f4 (name bill) (f5 be (a (basic man)))).realize M g i ↔
       starIV (M.const man i) (M.name bill i) := by
@@ -380,8 +366,6 @@ section
 variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (i : W)
 include h
 
-/-- The direct analysis translates to `∨u[woman'*(u) ∧ ∧v[man'*(v) → love'*(u, v)]]`, on which
-the existential scopes over the universal. -/
 theorem direct_iff :
     direct.realize M g i ↔ surfaceScope GQ.some GQ.every (starIV (M.const woman i))
       (starIV (M.const man i)) (flip (starTV (M.const love i))) := by
@@ -392,8 +376,6 @@ theorem direct_iff :
     exists_congr fun _ ↦ and_congr_right fun _ ↦
       every_iff_of_rigid (h.noun_rigid man nofun nofun i)
 
-/-- The quantifying-in analysis translates to `∧v[man'*(v) → ∨u[woman'*(u) ∧ love'*(u, v)]]`,
-on which the universal scopes over the existential. -/
 theorem quantifiedIn_iff :
     quantifiedIn.realize M g i ↔ inverseScope GQ.some GQ.every (starIV (M.const woman i))
       (starIV (M.const man i)) (flip (starTV (M.const love i))) := by
@@ -438,8 +420,6 @@ theorem staticInterp_logicallyPossible : staticInterp.LogicallyPossible where
     | .find, _ => ⟨fun _ _ _ ↦ False, rfl⟩
   seek_ext _ := ⟨fun _ _ ↦ True, rfl⟩
 
-/-- *A woman loves every man* is ambiguous, since its quantifying-in reading does not entail its
-direct one. -/
 theorem aWomanLovesEveryMan.not_entails : ¬ Entails {quantifiedIn} direct := fun H ↦ by
   have h := staticInterp_logicallyPossible
   have hd := H staticInterp h () (fun φ hφ g ↦ by
@@ -471,7 +451,6 @@ section
 variable {M : Interp E W} (h : M.LogicallyPossible) (g : Assignment (W → E)) (i : W)
 include h
 
-/-- The de dicto analysis translates to `seek'(^j, P̂ ∨u[unicorn'*(u) ∧ P{^u}])`. -/
 theorem deDicto_iff :
     deDicto.realize M g i ↔ M.const seek i (fun j P ↦ GQ.some (starIV (M.const unicorn j))
       (starIV (P j))) (M.name john) :=
@@ -479,7 +458,6 @@ theorem deDicto_iff :
   iff_of_eq <| congrArg (M.const seek i · _) <| funext fun j ↦ funext fun _ ↦
     propext (some_iff_of_rigid (h.noun_rigid unicorn nofun nofun j))
 
-/-- The de re analysis translates to `∨u[unicorn'*(u) ∧ seek'*(j, u)]`. -/
 theorem deRe_iff :
     deRe.realize M g i ↔
       GQ.some (starIV (M.const unicorn i)) (starTV (M.const seek i) · (M.name john i)) := by
@@ -488,19 +466,15 @@ theorem deRe_iff :
   rw [(h.name_rigid john).eq_const i]
   exact some_iff_of_rigid (h.noun_rigid unicorn nofun nofun i)
 
-/-- The de re reading entails that there are unicorns. -/
 theorem exists_unicorn_of_deRe (H : deRe.realize M g i) : ∃ u, starIV (M.const unicorn i) u :=
   ((deRe_iff h g i).1 H).imp fun _ ↦ And.left
 
 end
 
-/-- The de dicto reading is true in `staticInterp`, where there are no unicorns. -/
 theorem deDicto_without_unicorns (g : Assignment (Unit → ℕ)) :
     deDicto.realize staticInterp g () ∧ ∀ u, ¬ starIV (staticInterp.const unicorn ()) u :=
   ⟨trivial, fun _ h ↦ h.2⟩
 
-/-- *John seeks a unicorn* is ambiguous, since its de dicto reading does not entail its de re
-one. -/
 theorem not_entails : ¬ Entails {deDicto} deRe := fun H ↦ by
   have h := staticInterp_logicallyPossible
   obtain ⟨u, hu⟩ := exists_unicorn_of_deRe h _ _ <| H staticInterp h ()
@@ -525,23 +499,18 @@ section Symbolizations
 
 variable (M : Interp E W) (g : Assignment (W → E)) (i : W)
 
-/-- *the temperature is ninety* translates to `∨y[∧x[temperature'(x) ↔ x = y] ∧ [ˇy] = n]`. -/
 theorem theTemperatureIsNinety_iff :
     theTemperatureIsNinety.realize M g i ↔
       GQ.the (M.const temperature i) fun y ↦ y i = M.name ninety i :=
   Iff.rfl
 
-/-- *the temperature rises* translates to `∨y[∧x[temperature'(x) ↔ x = y] ∧ rise'(y)]`. -/
 theorem theTemperatureRises_iff :
     theTemperatureRises.realize M g i ↔ GQ.the (M.const temperature i) (M.const rise i) :=
   Iff.rfl
 
-/-- *ninety rises* translates to `rise'(^n)`. -/
 theorem ninetyRises_iff : ninetyRises.realize M g i ↔ M.const rise i (M.name ninety) :=
   Iff.rfl
 
-/-- *a price rises* translates to `∨x[price'(x) ∧ rise'(x)]`, with an individual-concept
-variable. -/
 theorem a_price_rises_iff :
     (f4 (a (basic price)) (basic rise)).realize M g i ↔
       GQ.some (M.const price i) (M.const rise i) :=
@@ -577,8 +546,6 @@ theorem temperatureInterp_logicallyPossible : temperatureInterp.LogicallyPossibl
     | .love, _ | .find, _ => ⟨fun _ _ _ ↦ False, rfl⟩
   seek_ext Q := ⟨fun i _ ↦ Q i fun _ _ ↦ False, rfl⟩
 
-/-- Partee's argument is invalid, since at the first moment of `temperatureInterp` *the
-temperature is ninety* and *the temperature rises* are true and *ninety rises* is false. -/
 theorem not_entails_ninetyRises :
     ¬ Entails {theTemperatureIsNinety, theTemperatureRises} ninetyRises := fun H ↦ by
   obtain ⟨_, _, hlt⟩ := H temperatureInterp temperatureInterp_logicallyPossible 0 (by
@@ -587,9 +554,6 @@ theorem not_entails_ninetyRises :
     · exact ⟨_, fun _ ↦ Iff.rfl, 1, by decide, by decide⟩) fun _ _ ↦ 0
   exact lt_irrefl _ hlt
 
-/-- *a price rises* is true at the first moment of `temperatureInterp` while its
-individual-variable symbolization `∨u[price'*(u) ∧ rise'*(u)]` is false, so unlike *a man walks*
-it needs individual-concept variables. -/
 theorem a_price_rises_needs_concepts (g : Assignment (Fin 2 → ℕ)) :
     (f4 (a (basic price)) (basic rise)).realize temperatureInterp g 0 ∧
       ¬ GQ.some (starIV (temperatureInterp.const price 0))

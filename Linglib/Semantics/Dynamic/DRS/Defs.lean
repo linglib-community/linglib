@@ -103,8 +103,6 @@ def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
 
 end DRS
 
-/-- Induction on conditions descends into sub-boxes, handling each constructor given the motive
-for every condition of its sub-boxes. -/
 @[induction_eliminator] theorem Condition.induction {motive : Condition L V → Prop}
     (atom : ∀ a, motive (.atom a))
     (eq : ∀ u v, motive (.eq u v))
@@ -150,7 +148,6 @@ abbrev Subordinate : DRS L V → DRS L V → Prop :=
 abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate
 
-/-- A directly subordinate DRS is a structurally smaller value. -/
 theorem DirectlySubordinate.sizeOf_lt {K' K : DRS L V} (h : DirectlySubordinate K' K) :
     sizeOf K' < sizeOf K := by
   obtain ⟨U, conds⟩ := K
@@ -160,7 +157,6 @@ theorem DirectlySubordinate.sizeOf_lt {K' K : DRS L V} (h : DirectlySubordinate 
     simp_all
     omega
 
-/-- Subordinate DRSs are structurally smaller; subordination chains terminate. -/
 theorem Subordinate.sizeOf_lt {K' K : DRS L V} (h : Subordinate K' K) :
     sizeOf K' < sizeOf K := by
   induction h with
@@ -170,7 +166,6 @@ theorem Subordinate.sizeOf_lt {K' K : DRS L V} (h : Subordinate K' K) :
 theorem Subordinate.irrefl (K : DRS L V) : ¬ Subordinate K K :=
   fun h => absurd h.sizeOf_lt (lt_irrefl _)
 
-/-- Weak subordination is a partial order on DRS values. -/
 theorem WeakSubordinate.antisymm {K' K : DRS L V} (h : WeakSubordinate K' K)
     (h' : WeakSubordinate K K') : K' = K := by
   rcases Relation.reflTransGen_iff_eq_or_transGen.mp h with rfl | h₁

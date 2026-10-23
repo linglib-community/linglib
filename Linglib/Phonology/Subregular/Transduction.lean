@@ -109,8 +109,6 @@ def apply (w : List α) : List β :=
 
 variable {T} {w : List α} {n : ℕ}
 
-/-- A clause whose guard holds emits its block when every clause whose guard holds emits the
-same block. -/
 theorem emitAt_eq_of_mem {cl : WindowFormula α × List β} (hcl : cl ∈ T.clauses)
     (h : cl.1.Realize w n) (huniq : ∀ cl' ∈ T.clauses, cl'.1.Realize w n → cl'.2 = cl.2) :
     T.emitAt w n = cl.2 := by
@@ -127,22 +125,17 @@ namespace LeftLocal
 variable {r : ℕ} (hT : T.LeftLocal r)
 include hT
 
-/-- A left-local transduction emits the same block at positions whose bounded left contexts
-agree. -/
 theorem emitAt_congr {w w' : List α} {n n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
     (hlbl : ∀ j ≤ r, w[n - j]? = w'[n' - j]?) (hedge : ∀ j ≤ r, (j ≤ n ↔ j ≤ n')) :
     T.emitAt w n = T.emitAt w' n' :=
   congrArg (fun o ↦ (o.map Prod.snd).getD []) <| List.find?_congr fun cl hcl ↦
     decide_eq_decide.2 <| WindowFormula.BackBounded.realize_congr hn hn' hlbl hedge (hT cl hcl)
 
-/-- Extending the input leaves a left-local transduction's blocks at the old positions. -/
 theorem emitAt_append {u : List α} (v : List α) {p : ℕ} (hp : p < u.length) :
     T.emitAt (u ++ v) p = T.emitAt u p :=
   hT.emitAt_congr (by simp; omega) hp (fun _ _ ↦ List.getElem?_append_left (by omega))
     fun _ _ ↦ Iff.rfl
 
-/-- The block a left-local transduction emits at position `p` is the block it emits at the end
-of the `r + 1` input symbols ending at `p`. -/
 theorem emitAt_eq_emitAt_rtake {w : List α} {p : ℕ} (hp : p < w.length) :
     T.emitAt w p = T.emitAt ((w.take (p + 1)).rtake (r + 1)) (min r p) := by
   have hlen : (w.take (p + 1)).length = p + 1 := by simp; omega
@@ -151,17 +144,12 @@ theorem emitAt_eq_emitAt_rtake {w : List α} {p : ℕ} (hp : p < w.length) :
   congr 1
   omega
 
-/-- Appending a symbol to the input of a left-local transduction appends the block at its
-end. -/
 theorem apply_append_singleton (u : List α) (x : α) :
     T.apply (u ++ [x]) = T.apply u ++ T.emitAt (u ++ [x]) u.length := by
   rw [apply, List.length_append, List.length_singleton, List.range_succ, List.flatMap_append,
     List.flatMap_singleton, apply, List.flatMap_congr fun p hp ↦
       hT.emitAt_append [x] (List.mem_range.1 hp)]
 
-/-- A transduction left-local with radius `r` is `(r + 1)`-left input strictly local: the rule
-emitting, after a window of `r` symbols, the block the transduction emits at the end of the
-window followed by the symbol computes it. -/
 theorem isLeftInputStrictlyLocal : IsLeftInputStrictlyLocal (r + 1) T.apply := by
   refine ⟨⟨fun window x ↦ T.emitAt (window ++ [x]) window.length⟩, funext fun w ↦ ?_⟩
   induction w using List.reverseRecOn with
@@ -211,8 +199,6 @@ theorem leftLocal_toTransduction : (ρ.toTransduction alphabet).LeftLocal r := b
 
 variable [DecidableEq α]
 
-/-- At an in-range position of a word over the alphabet, the transduction of an ISL rule emits the
-block the rule emits after the window there. -/
 theorem emitAt_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) {p : ℕ}
     (hp : p < w.length) :
     (ρ.toTransduction alphabet).emitAt w p = ρ.windowOutput ((w.take p).rtake r) w[p] := by
@@ -234,7 +220,6 @@ theorem emitAt_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) {
   obtain ⟨rfl, rfl⟩ := (hguard hu a).1 h
   rfl
 
-/-- Over the alphabet, the transduction of an ISL rule computes the rule. -/
 theorem apply_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) :
     (ρ.toTransduction alphabet).apply w = ρ.apply w := by
   induction w using List.reverseRecOn with
@@ -247,8 +232,6 @@ theorem apply_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) :
 
 end ISLRule
 
-/-- Over a finite alphabet, the `(r + 1)`-left input strictly local functions are exactly the
-functions of the transductions left-local with radius `r`. -/
 theorem isLeftInputStrictlyLocal_iff_exists_leftLocal [DecidableEq α] [Fintype α] {r : ℕ}
     {f : List α → List β} :
     IsLeftInputStrictlyLocal (r + 1) f ↔ ∃ T : Transduction α β, T.LeftLocal r ∧ T.apply = f := by
@@ -276,7 +259,6 @@ private theorem flatMap_range_toList_eq_mapIdx {γ δ : Type*} (f : ℕ → γ �
       List.mapIdx_cons, ← flatMap_range_toList_eq_mapIdx (fun i ↦ f (i + 1)) l]
     simp
 
-/-- On a word over the alphabet, the relabelling transduction computes the docking map. -/
 theorem apply_relabel {φ : WindowFormula α} {dock : α → α} {alphabet : List α} {w : List α}
     (hw : ∀ a ∈ w, a ∈ alphabet) :
     (relabel φ dock alphabet).apply w = (Docking.ofQF φ dock).map w := by

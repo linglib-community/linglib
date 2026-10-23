@@ -150,7 +150,6 @@ theorem agreeingGender_cons_of_eq_none (hh : gender h = none) :
 theorem agreeingGender_singleton : agreeingGender gender default [h] = (gender h).getD default := by
   cases hg : gender h <;> simp [agreeingGender, genderProbe, Probe.search, hg]
 
-/-- Heads bearing no gender are invisible to the probe. -/
 theorem agreeingGender_append_of_forall_eq_none {l l' : List H}
     (hl : ∀ a ∈ l, gender a = none) :
     agreeingGender gender default (l ++ l') = agreeingGender gender default l' := by
@@ -162,8 +161,6 @@ theorem agreeingGender_append_of_forall_eq_none {l l' : List H}
 
 variable {cyclic : H → Prop} [DecidablePred cyclic]
 
-/-- The Highest Gender Hypothesis. A probe above a word whose highest cyclic head is `h`, with only
-noncyclic heads bearing no gender over it, agrees in the gender `h` gives alone. -/
 theorem agreeingGender_lastCycle {r : R} {above : List H} (hc : cyclic h)
     (ha : ∀ a ∈ above, ¬ cyclic a ∧ gender a = none) :
     agreeingGender gender default ((⟨r, hs ++ h :: above⟩ : ComplexHead R H).lastCycle cyclic) =
@@ -172,8 +169,6 @@ theorem agreeingGender_lastCycle {r : R} {above : List H} (hc : cyclic h)
     agreeingGender_append_of_forall_eq_none fun a ha' ↦ (ha a (by simpa using ha')).2,
     agreeingGender_singleton]
 
-/-- A plain highest n over an n of gender `g` gives the default, where a probe searching every
-head would find `g`. -/
 theorem agreeingGender_lastCycle_plain {r : R} (hc : cyclic h) (hh : gender h = none)
     (hg : gender h' = some g) :
     agreeingGender gender default ((⟨r, hs ++ [h', h]⟩ : ComplexHead R H).lastCycle cyclic) =

@@ -106,14 +106,12 @@ variable {P} {B : Set W}
 theorem Consistent.mono {H : Set W} (hC : P.Consistent B) (h : B ⊆ H) : P.Consistent H :=
   fun X hX hXH ↦ hC X hX (Set.subset_eq_empty (Set.inter_subset_inter_left _ h) hXH)
 
-/-- Consistency entails realism, by the singleton subfamilies and irreflexivity. -/
 theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := by
   intro p hp hpB
   obtain ⟨_, rfl, _, rfl, hqr⟩ := hC {p} (Set.singleton_subset_iff.2 hp)
     (by rw [Set.sInter_singleton, Set.inter_comm]; exact hpB)
   exact irrefl_of P.prec _ hqr
 
-/-- A consistent structure has a nonempty information state, as the empty subfamily shows. -/
 theorem Consistent.nonempty (hC : P.Consistent B) : B.Nonempty :=
   Set.nonempty_iff_ne_empty.2 fun h ↦
     let ⟨_, hp, _⟩ := hC ∅ (Set.empty_subset _) (by rw [Set.sInter_empty, Set.inter_univ]; exact h)
@@ -238,7 +236,6 @@ theorem Want.wantSufficient (h : Want P a φ w) : WantSufficient P a φ w := ⟨
 
 theorem Want.wantNecessary (h : Want P a φ w) : WantNecessary P a φ w := ⟨φ, h, subset_rfl⟩
 
-/-- Over a consistent background a proposition and its negation are not both wanted. -/
 theorem Want.not_compl {B : Set W} (hC : (P a w).Consistent B) (h : Want P a φ w) :
     ¬ Want P a φᶜ w := fun hn ↦
   (hC.inter_inter_nonempty_of_mem_maxElts h hn).ne_empty <| by

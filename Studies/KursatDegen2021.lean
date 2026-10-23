@@ -97,8 +97,6 @@ private theorem sum_object (f : Object → ℝ) :
     Finset.sum_singleton]
   ring
 
-/-- The speaker's probability of the redundant expression for the target is a logistic function
-of the log of the gain of the redundant adjective, less the extra cost. -/
 theorem redundant_eq_sigmoid (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr)
     (hr1 : xr ≤ 1) :
     (S1 α C (meaning xs xr) .target).real {.redundant} =
@@ -118,16 +116,12 @@ theorem redundant_eq_sigmoid (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0
   field_simp
   ring
 
-/-- Beside a Boolean sufficient adjective the redundant one adds no information, and the
-probability of the redundant expression does not depend on its noise. -/
 theorem redundant_of_boolean_sufficient (hα : 0 < α) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
     (S1 α C (meaning 1 xr) .target).real {.redundant} =
       Real.sigmoid (-(α * (C .redundant - C .sufficient))) := by
   rw [redundant_eq_sigmoid hα one_pos le_rfl hr0 hr1, gain_one_left hr0.ne', Real.log_one,
     zero_sub, mul_neg]
 
-/-- Beside one sufficient adjective short of Boolean, the redundant expression is the likelier
-the less noisy the redundant adjective. -/
 theorem redundant_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr)
     (hr1 : xr ≤ 1) (hr0' : 0 < xr') (hr1' : xr' ≤ 1) :
     (S1 α C (meaning xs xr) .target).real {.redundant} <
@@ -137,8 +131,6 @@ theorem redundant_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 <
     Real.log_lt_log_iff (gain_pos hs0 hs1.le hr0 hr1) (gain_pos hs0 hs1.le hr0' hr1'),
     gain_lt_gain_iff two_pos hs0 hs1 hr0 hr1 hr0' hr1']
 
-/-- When two adjectives trade the sufficient and the redundant role, the redundant expression is
-the likelier on the trial whose redundant adjective is the less noisy of the two. -/
 theorem redundant_swap_lt_iff {x₁ x₂ : ℝ} (hα : 0 < α) (h₁0 : 0 < x₁) (h₁1 : x₁ ≤ 1)
     (h₂0 : 0 < x₂) (h₂1 : x₂ ≤ 1) :
     (S1 α C (meaning x₂ x₁) .target).real {.redundant} <
@@ -159,8 +151,6 @@ section Hypothesis
 
 variable {D : Type*} [LinearOrder D] {x : D → ℝ} {α : ℝ} {C : Utterance → ℝ}
 
-/-- Of two properties that trade the sufficient and the redundant role, the harder to verify is
-mentioned redundantly less. -/
 theorem harder_property_less_redundant (hx : StrictAnti x) (hx01 : ∀ d, x d ∈ Set.Ioo 0 1)
     (hα : 0 < α) (d d' : D) :
     (S1 α C (meaning (x d) (x d')) .target).real {.redundant} <
@@ -192,14 +182,11 @@ instance : ∀ b p, Decidable (Bound.Significant b p)
   | .below, _ => inferInstanceAs (Decidable (_ ≤ _))
   | .exact, _ => inferInstanceAs (Decidable (_ < _))
 
-/-- Material was harder to verify than colour. In both norming experiments it raised the error
-rate and the response time. -/
 theorem material_harder (e : Norming) (m : DifficultyMeasure) :
     0 < (verification e m).beta.toRat ∧
       (verification e m).bound.Significant (verification e m).p := by
   revert e m; decide +kernel
 
-/-- Colour was mentioned redundantly more often than material. -/
 theorem color_more_redundant :
     0 < (redundantUse .redundantProperty).beta.toRat ∧
       (redundantUse .redundantProperty).bound.Significant (redundantUse .redundantProperty).p := by

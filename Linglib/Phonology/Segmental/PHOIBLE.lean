@@ -116,8 +116,6 @@ theorem toSegment_apply_of_ne_round (m : FeatureMatrix) {f : Phonology.Feature}
     m.toSegment .round = ((m .round).unbotD false : Bool) :=
   Function.update_self ..
 
-/-- The segments of feature matrices are exactly those specified for [round], since each other
-feature of `Phonology.Feature` is a column of its own. -/
 theorem range_toSegment : Set.range toSegment = {s : Segment | s .round ≠ ⊥} := by
   refine Set.ext fun s ↦ ⟨by rintro ⟨m, rfl⟩; simp, fun hs ↦ ?_⟩
   refine ⟨Function.extend Phonology.Feature.toPHOIBLE s ⊥, funext fun f ↦ ?_⟩
@@ -146,7 +144,6 @@ def tenseAsATR (m : FeatureMatrix) : FeatureMatrix :=
   rw [toSegment_apply_of_ne_round _ (by decide), Phonology.Feature.toPHOIBLE, tenseAsATR,
     Function.update_self]
 
-/-- Off [ATR] and [tense], the tongue-root reading has the matrix's values. -/
 theorem toSegment_tenseAsATR_of_ne (m : FeatureMatrix) {f : Phonology.Feature} (ha : f ≠ .atr)
     (ht : f ≠ .tense) : m.tenseAsATR.toSegment f = m.toSegment f := by
   have ht' : f.toPHOIBLE ≠ .tense := Phonology.Feature.toPHOIBLE_injective.ne ht
@@ -194,8 +191,6 @@ def segments (I : Inventory) : Finset Segment := I.featureMatrices.image Feature
     s ∈ I.segments ↔ ∃ y ∈ I.phonemes, y.features.toSegment = s := by
   simp [segments]
 
-/-- A set of segments lies among those of an inventory when each is the segment of one of its
-phonemes, a condition `decide` checks without deduplicating the inventory. -/
 theorem subset_segments_iff {I : Inventory} {S : Finset Segment} :
     S ⊆ I.segments ↔ ∀ x ∈ S, ∃ y ∈ I.phonemes, y.features.toSegment = x :=
   subset_image_featureMatrices_iff
@@ -217,7 +212,6 @@ theorem ofChart_apply {m : FeatureMatrix} {departure : Segment} {contrastive : F
     ofChart m departure contrastive f = m.toSegment f := by
   rw [ofChart, Segment.restrict, Finset.piecewise_eq_of_mem _ _ _ hf, hd, Flat.bot_or]
 
-/-- With no departure and every feature contrastive, a chart entry's segment is its matrix's. -/
 @[simp] theorem ofChart_eq_toSegment (m : FeatureMatrix) : ofChart m = m.toSegment :=
   funext fun f ↦ ofChart_apply (Finset.mem_univ f) rfl
 

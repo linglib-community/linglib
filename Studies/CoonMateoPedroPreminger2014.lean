@@ -465,8 +465,6 @@ theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) {r :
   cases L <;> first | exact (h₁ rfl).elim | exact (h₂ rfl).elim |
     rcases hr with rfl | rfl | rfl <;> decide
 
-/-- Tsotsil, low absolutive by its template, still marks the extraction of a transitive subject
-that the regular derivation allows, with its optional Agent Focus. -/
 theorem tsotsil_marks_free_extraction :
     Language.tsotsil.MarksExtraction .A ∧
       Converges ⟨Language.tsotsil.licenser, true, .transitive agentive .dp, some .A, false⟩ := by
@@ -515,12 +513,10 @@ def Clause.ofRow (row : Datum) : Option Clause := do
     row.parse? "extracted" [("S", ArgumentRole.S), ("A", .A), ("P", .P)],
     decide (row.feature? "separated" = some "yes")⟩
 
-/-- Every analysed example is grammatical exactly when its clause converges. -/
 theorem analysed_rows : ∀ row ∈ Examples.all, (row.feature? "predicate").isSome = true →
     ∃ c ∈ Clause.ofRow row, (row.judgment = .acceptable ↔ Converges c) := by
   decide
 
-/-- The rows' classification of a registered language agrees with its verbal complex. -/
 theorem rows_match_fragments : ∀ row ∈ Examples.all, ∀ L : Language,
     L.glottocode = row.language →
       row.parse? "absPosition" absPositions = some L.absPosition := by

@@ -64,7 +64,6 @@ variable {W : Type*}
 of every stronger alternative. -/
 def so (φ : Set W) (A : Set (Set W)) : Set W := {w | w ∈ φ ∧ ∀ ψ ∈ A, ψ ⊂ φ → w ∉ ψ}
 
-/-- Against the two-membered scale of *some* and *all*, the operator returns *some but not all*. -/
 theorem so_pair {φ ψ : Set W} (h : ψ ⊂ φ) : so φ {φ, ψ} = φ \ ψ := by
   ext w
   simp only [so, Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -72,24 +71,16 @@ theorem so_pair {φ ψ : Set W} (h : ψ ⊂ φ) : so φ {φ, ψ} = φ \ ψ := by
   exact ⟨fun ⟨hw, _, hψ⟩ ↦ ⟨hw, hψ h⟩,
     fun ⟨hw, hψ⟩ ↦ ⟨hw, fun hφ ↦ absurd hφ (lt_irrefl φ), fun _ ↦ hψ⟩⟩
 
-/-- The parse with the operator below the belief verb, on which the agent believes *some* and
-believes *not all*. -/
 theorem local_reading (R : SetRel W W) {some all : Set W} (h : all ⊂ some) :
     R.core (so some {some, all}) = R.core some ∩ R.core allᶜ := by
   rw [so_pair h, Set.sdiff_eq, core_inter]
 
-/-- The Gricean derivation of a seemingly local inference, on which the parse with the operator
-above the belief verb says the agent believes *some* and does not believe *all*, and an agent
-opinionated on *all* then believes *not all*, which is the local reading. -/
 theorem local_of_global_of_opinionated (R : SetRel W W) {some all : Set W} (h : all ⊂ some)
     {w : W} (h₃₁ : w ∈ R.core some) (h₃₂ : w ∉ R.core all)
     (h₃₃ : w ∈ R.core all ∨ w ∈ R.core allᶜ) : w ∈ R.core (so some {some, all}) := by
   rw [local_reading R h]
   exact ⟨h₃₁, h₃₃.resolve_left h₃₂⟩
 
-/-- The same derivation for a universal quantifier, where the global implicature that not every
-customer shot at every salesman yields that none did only under the uniformity assumption that
-either all or none did. -/
 theorem all_not_all_of_uniform {C S : Type*} (Shot : C → S → Prop) (h₃₆ : ¬ ∀ c s, Shot c s)
     (h₃₈ : (∀ c s, Shot c s) ∨ ∀ c, ¬ ∀ s, Shot c s) : ∀ c, ¬ ∀ s, Shot c s :=
   h₃₈.resolve_left h₃₆
@@ -270,7 +261,6 @@ theorem rows_eq : rows = [⟨.all, .none, true, false⟩, ⟨.moreThanOne, .none
     ⟨.notMoreThanOne, .none, false, false⟩] := by
   decide
 
-/-- Each item's situation makes its two construals conflict. -/
 theorem rows_construals_conflict :
     ∀ r ∈ rows, (Classical r.quant r.trial ↔ ¬ Local r.quant r.trial) := by
   simp only [rows_eq, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true]
@@ -281,7 +271,6 @@ theorem rows_construals_conflict :
     iff_of_false not_classical_notAll (not_not.mpr local_notAll),
     iff_of_false not_classical_notMoreThanOne (not_not.mpr local_notMoreThanOne)⟩
 
-/-- Participants' verification responses track the classical construal throughout. -/
 theorem rows_observed_classical :
     ∀ r ∈ rows, (r.observed = true ↔ Classical r.quant r.trial) := by
   simp only [rows_eq, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true, and_true,

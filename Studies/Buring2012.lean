@@ -42,56 +42,40 @@ open English.Pronouns
 variable {E P T : Type*} [PartialOrder E] [Gendered E] (e : PersonalPronoun) (g : Assignment E)
   (n : ℕ) (c : Kaplan.Context PUnit E P T) (scope : E → PUnit → Prop)
 
-/-- A pronoun denotes the value of its index under the assignment. Its selector is the canonical
-variable lookup, the same one for the bound, anaphoric and deictic uses. -/
 theorem selector_eq_assignment :
     (e.denote n c).selector g ⟨⟩
       = some (g n) := rfl
 
-/-- A feminine pronoun is undefined of a referent gendered masculine. The feature does not assert
-the referent's gender but presupposes it, so the denotation has no value at all when it fails. -/
 theorem undefined_of_masculine (hfem : e.gender = some .feminine) (h : g n ∈ Gendered.masculine) :
     (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
   simp [hfem, h]
 
-/-- *She* is undefined of a referent gendered masculine. -/
 theorem she_undefined_of_masculine (h : g n ∈ Gendered.masculine) :
     (she.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
   undefined_of_masculine she g n c scope rfl h
 
-/-- A first-person pronoun is undefined of a referent that does not include the agent. -/
 theorem undefined_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ c.agent ≤ g n) :
     (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
   simp [hp, h]
 
-/-- *I* is undefined of a referent that does not include the agent. -/
 theorem i_undefined_of_not_agent (h : ¬ c.agent ≤ g n) :
     (i.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
   undefined_of_not_agent i g n c scope (by decide) h
 
-/-- An entry carrying only unmarked values — third person, plural, no gender — restricts the
-referent to nothing, so it is defined wherever any pronoun is. Unmarked values are the absence of
-a feature rather than a feature of their own, which is why the underspecified form can be used to
-avoid a gender specification. -/
 theorem defined_of_unmarked_features (hp : e.referentialPerson = some .third)
     (hn : e.referentialNumber = some .plural) (hg : e.gender = none) :
     (e.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 := by
   simp [hp, hn, hg]
 
-/-- *They* is defined of a referent of any gender. -/
 theorem they_defined_regardless_of_gender :
     (they.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 :=
   defined_of_unmarked_features they g n c scope (by decide) (by decide) rfl
 
-/-- The two entries come apart exactly at the referents the gender feature excludes, where *she*
-has no value and *they* has one. -/
 theorem they_defined_where_she_undefined (h : g n ∈ Gendered.masculine) :
     (she.denote n c).toTrivalent scope g ⟨⟩ = 0 ∧ (they.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 :=
   ⟨she_undefined_of_masculine g n c scope h,
     they_defined_regardless_of_gender g n c scope⟩
 
-/-- Binding leaves the pronoun alone. The binding operator updates the assignment at the pronoun's
-index, and the unchanged denotation then returns the binder. There is no bound-pronoun lexeme. -/
 theorem bound_reading (b : E) :
     (e.denote n c).selector (Function.update g n b) ⟨⟩ = some b := by
   simp

@@ -169,7 +169,6 @@ instance {K : Type*} [DecidableEq K] (π : Row → K) (rows : List Row) :
     Decidable (Determines π rows) :=
   inferInstanceAs (Decidable (∀ d ∈ rows, ∀ d' ∈ rows, _ → _))
 
-/-- A coordinate that factors through a finer one determines whatever the coarser does. -/
 theorem Determines.of_factorsThrough {K K' : Type*} {π : Row → K} {π' : Row → K'}
     (h : Function.FactorsThrough π π') {rows : List Row} (hπ : Determines π rows) :
     Determines π' rows :=
@@ -231,11 +230,8 @@ theorem tpl_not_categoryDetermined : ¬ CategoryDetermined (rows .tpl) := by dec
 /-- √ʃpʕ selects *al* in hiXYiZ and suppresses it in the passive huXYaZ (18). -/
 theorem shps_not_categoryDetermined : ¬ CategoryDetermined (rows .shps) := by decide
 
-/-- The root, its category and the template together determine the preposition throughout
-the data, which is the fixing point of l-selection. -/
 theorem data_templateDetermined : TemplateDetermined data := by decide
 
-/-- The data are not determined below the template. -/
 theorem data_not_categoryDetermined : ¬ CategoryDetermined data := by decide
 
 /-! ### Joint selection via Activate (23) -/
@@ -293,27 +289,20 @@ instance : DecidablePred IsActive := λ f => inferInstanceAs (Decidable f.activa
 
 variable (p : Prep) (t : Template)
 
-/-- A dormant feature is inactive, a derivational time bomb ([preminger-2014]). -/
 theorem not_isActive_dormant : ¬ (dormant p t).IsActive := by
   revert p t; decide
 
-/-- The categorizing head alone leaves the template key. -/
 theorem not_isActive_activate_V : ¬ ((dormant p t).activate (.inl .V)).IsActive := by
   revert p t; decide
 
-/-- The template before the categorizing head strips nothing, since only the leftmost key can
-be matched. -/
 theorem activate_template_first :
     ((dormant p t).activate (.inr t)).activation.remaining = [.inl .V, .inr t] := by
   revert p t; decide
 
-/-- The categorizing head and then the matching template activate the feature. -/
 theorem isActive_activate_V_template :
     (((dormant p t).activate (.inl .V)).activate (.inr t)).IsActive := by
   revert p t; decide
 
-/-- Another template leaves the feature inactive, so the features of one root for different
-templates are mutually exclusive. -/
 theorem not_isActive_activate_V_other {t' : Template} (h : t' ≠ t) :
     ¬ (((dormant p t).activate (.inl .V)).activate (.inr t')).IsActive := by
   revert p t t'; decide
@@ -341,8 +330,6 @@ theorem dwr_XaYaZ : selected .dwr .XaYaZ = [.b] := by decide
 /-- In XaYYaZ it is the feature for *ʕala* that is activated (25). -/
 theorem dwr_XaYYaZ : selected .dwr .XaYYaZ = [.Eala] := by decide
 
-/-- Joint selection reproduces the data. In every attested root–template pairing the active
-features select exactly the attested preposition, and none where none is selected. -/
 theorem selected_eq :
     ∀ d ∈ data, ∀ t, d.template = some t → selected d.root t = d.prep.toList := by
   decide

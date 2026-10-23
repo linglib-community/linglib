@@ -139,7 +139,6 @@ theorem runFrom_append :
     T.runFrom s (xs ++ ys) = T.runFrom s xs ++ T.runFrom (T.evalFrom s xs) ys := by
   induction xs generalizing s <;> simp [*]
 
-/-- The run is length-preserving (one output symbol per input symbol). -/
 @[simp] theorem length_runFrom : (T.runFrom s xs).length = xs.length := by
   induction xs generalizing s <;> simp [*]
 
@@ -152,34 +151,23 @@ theorem runFrom_append :
 
 @[simp] theorem runRight_nil : T.runRight [] = [] := rfl
 
-/-- The right-to-left pass emits the head output at the state reached over the entire
-reversed tail, so the right scan reads the future. -/
 @[simp] theorem runRight_cons :
     T.runRight (x :: xs) = T.output (T.eval xs.reverse) x :: T.runRight xs := by
   simp [runRight, run, eval, runFrom_append]
 
-/-- Output coordinate `i` of the run is the output at the state reached after the
-first `i` input symbols. -/
 theorem getElem?_runFrom (i : ℕ) :
     (T.runFrom s xs)[i]? = xs[i]?.map (T.output (T.evalFrom s (xs.take i))) := by
   induction xs generalizing s i <;> cases i <;> simp [*]
 
-/-- Output coordinate `i` of `T.run` is the output at the state reached after the
-first `i` input symbols. -/
 theorem getElem?_run (i : ℕ) :
     (T.run xs)[i]? = xs[i]?.map (T.output (T.eval (xs.take i))) :=
   T.getElem?_runFrom T.start xs i
 
-/-- From any state, the run of a prefix is the prefix of the run. -/
 theorem runFrom_take (n : ℕ) : T.runFrom s (xs.take n) = (T.runFrom s xs).take n := by
   induction xs generalizing s n <;> cases n <;> simp [*]
 
-/-- The run of a prefix is the prefix of the run, so output coordinate `i` reads only the input
-through `i`. -/
 theorem run_take (n : ℕ) : T.run (xs.take n) = (T.run xs).take n := T.runFrom_take T.start xs n
 
-/-- Output coordinate `i` of `T.runRight` is the output at the state reached over the reversed
-strict suffix. -/
 theorem getElem?_runRight (i : ℕ) :
     (T.runRight xs)[i]? =
       xs[i]?.map (T.output (T.eval (xs.drop (i + 1)).reverse)) := by
@@ -253,13 +241,10 @@ def ofFlag : Mealy Bool α β where
 @[simp] theorem ofFlag_eval (xs : List α) : (ofFlag p out).eval xs = xs.any p := by
   simp [eval]
 
-/-- Each coordinate of a flag machine sees the flag over its strict prefix. -/
 theorem getElem?_ofFlag_run (xs : List α) (i : ℕ) :
     ((ofFlag p out).run xs)[i]? = xs[i]?.map (out ((xs.take i).any p)) := by
   simp [getElem?_run]
 
-/-- Each coordinate of a flag machine run right-to-left sees the flag over its strict
-suffix. -/
 theorem getElem?_ofFlag_runRight (xs : List α) (i : ℕ) :
     ((ofFlag p out).runRight xs)[i]? = xs[i]?.map (out ((xs.drop (i + 1)).any p)) := by
   simp [getElem?_runRight]
@@ -301,13 +286,10 @@ end Mealy
 def IsMealyComputable (f : List α → List β) : Prop :=
   ∃ (σ : Type) (_ : Fintype σ) (T : Mealy σ α β), T.run = f
 
-/-- Every finite-state `Mealy` computes a Mealy-computable function, whatever the
-universe of its state type. -/
 theorem Mealy.isMealyComputable {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsMealyComputable T.run :=
   ⟨Shrink σ, inferInstance, T.map (equivShrink.{0} σ), T.run_map _⟩
 
-/-- Mealy-computable functions are closed under composition (`Mealy.comp`). -/
 theorem IsMealyComputable.comp {γ : Type*} {g : List β → List γ} {f : List α → List β}
     (hg : IsMealyComputable g) (hf : IsMealyComputable f) :
     IsMealyComputable (g ∘ f) := by

@@ -83,7 +83,6 @@ def Derivation.replayWithCopies? (d : Derivation)
 
 variable {τ : SyntacticObject → Option LexicalItem.Token}
 
-/-- Contracting the copies of a step with copies gives the step with traces. -/
 theorem Step.map_contract_replayWithCopies? (step : Step) (c : Cfg Marked) :
     (step.replayWithCopies? c τ).map (Cfg.map Marked.contract) =
       step.replay? (c.map Marked.contract) τ := by
@@ -105,7 +104,6 @@ theorem Step.map_contract_replayWithCopies? (step : Step) (c : Cfg Marked) :
   | remerge side =>
     rcases st with _ | ⟨m, st⟩ <;> simp [Step.replayWithCopies?, Step.replay?, Cfg.map]
 
-/-- Contracting the copies of the replay with copies gives the replay with traces. -/
 theorem Derivation.map_contract_replayWithCopies? (d : Derivation) :
     (d.replayWithCopies? τ).map (Cfg.map Marked.contract) = d.replay? τ := by
   rw [replayWithCopies?, replay?, Option.map_bind]
@@ -115,19 +113,15 @@ theorem Derivation.map_contract_replayWithCopies? (d : Derivation) :
     (fun c step ↦ Step.map_contract_replayWithCopies? step c)]
   simp [Cfg.map]
 
-/-- The externalized object is the contraction of the copy object. -/
 theorem Derivation.externalize?_eq_map_replayWithCopies? (d : Derivation) :
     d.externalize? τ = (d.replayWithCopies? τ).map (·.current.contract) := by
   rw [externalize?, ← d.map_contract_replayWithCopies?, Option.map_map]
   rfl
 
-/-- The replay with copies fails exactly when the replay with traces does. -/
 theorem Derivation.isSome_replayWithCopies? (d : Derivation) :
     (d.replayWithCopies? τ).isSome = (d.replay? τ).isSome := by
   rw [← d.map_contract_replayWithCopies?, Option.isSome_map]
 
-/-- Internal Merge with copies merges a copy of a subtree of the copy object onto the object
-unchanged: Extension and No Tampering. -/
 theorem Step.unmark_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
     ∃ s : Marked, IsSubtree s.unmark.val c.current.unmark.val ∧
@@ -160,7 +154,6 @@ theorem Derivation.replayWithCopies?_append_singleton (d : Derivation) (step : S
   simp only [List.foldlM_cons, List.foldlM_nil]
   cases step.replayWithCopies? c <;> rfl
 
-/-- External Merge merges the copy object with the item. -/
 theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge}
     {item : LinearizedSyntacticObject} {c c' : Cfg Marked}
     (h : (Step.em side item).replayWithCopies? c τ = some c') :
@@ -169,7 +162,6 @@ theorem Step.toSyntacticObject_replayWithCopies?_em {side : Edge}
   obtain rfl := Option.some.inj h
   simp
 
-/-- Internal Merge merges the copy object with one of its own terms. -/
 theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {side : Edge}
     {c c' : Cfg Marked} (h : (Step.im mover side).replayWithCopies? c τ = some c') :
     ∃ u ∈ c.current.unmark.toSyntacticObject.terms,
@@ -179,7 +171,6 @@ theorem Step.toSyntacticObject_replayWithCopies?_im {mover : SyntacticObject} {s
     by rw [he, LinearizedSyntacticObject.toSyntacticObject_attach]⟩
   exact LinearizedSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 hs, rfl⟩
 
-/-- Each step keeps the copy object as a term of the next. -/
 theorem Step.mem_terms_replayWithCopies? {step : Step} {c c' : Cfg Marked}
     (h : step.replayWithCopies? c τ = some c') :
     c.current.unmark.toSyntacticObject ∈ c'.current.unmark.toSyntacticObject.terms := by
@@ -213,8 +204,6 @@ private theorem mem_terms_foldlM_replayWithCopies? :
     exact terms_subset_terms (mem_terms.1 (mem_terms_foldlM_replayWithCopies? h))
       (Step.mem_terms_replayWithCopies? h₁)
 
-/-- Preservation of terms: the terms of the copy object at a stage are terms of the copy object at
-every later stage. -/
 theorem Derivation.terms_subset_copyObject?_append {d : Derivation} {steps : List Step}
     {C' : SyntacticObject} (h : (d.append steps).copyObject? τ = some C') :
     ∃ C ∈ d.copyObject? τ, C.terms ⊆ C'.terms := by
@@ -224,15 +213,12 @@ theorem Derivation.terms_subset_copyObject?_append {d : Derivation} {steps : Lis
   exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
     terms_subset_terms (mem_terms.1 (mem_terms_foldlM_replayWithCopies? hc'))⟩
 
-/-- External Merge merges the copy object with the item, built outside. -/
 theorem Derivation.copyObject?_append_em (d : Derivation) (side : Edge)
     (item : LinearizedSyntacticObject) :
     (d.append [.em side item]).copyObject? τ = (d.copyObject? τ).map (merge item) := by
   simp only [copyObject?, replayWithCopies?_append]
   cases d.replayWithCopies? τ <;> simp [Step.replayWithCopies?]
 
-/-- Internal Merge merges the copy object with one of its own terms, so Internal and External
-Merge are one operation, differing in where its object comes from. -/
 theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObject} {side : Edge}
     {C' : SyntacticObject} (h : (d.append [.im mover side]).copyObject? τ = some C') :
     ∃ C ∈ d.copyObject? τ, ∃ u ∈ C.terms, C' = merge u C := by
@@ -242,8 +228,6 @@ theorem Derivation.copyObject?_append_im {d : Derivation} {mover : SyntacticObje
   exact ⟨_, Option.map_eq_some_iff.2 ⟨c, hc, rfl⟩,
     Step.toSyntacticObject_replayWithCopies?_im (by simpa using hc')⟩
 
-/-- The occurrence Internal Merge leaves is a copy of the one it merges, in the sense of Form Copy,
-unless the whole object moves. -/
 theorem Derivation.copyRel_copyObject?_append_im {d : Derivation} {mover : SyntacticObject}
     {side : Edge} {C' : SyntacticObject} (h : (d.append [.im mover side]).copyObject? τ = some C') :
     ∃ C ∈ d.copyObject? τ, ∃ u ∈ C.terms, C' = merge u C ∧ ((u, u) ∈ C'.copyRel ↔ u ≠ C) := by
@@ -306,7 +290,6 @@ private theorem mem_yield_map_foldlM_replayWithCopies? : ∀ {steps : List Step}
       · exact .inr (.inl ht)
     · exact .inr (.inr ht)
 
-/-- Inclusiveness: the copy object pronounces only tokens the derivation merges. -/
 theorem Derivation.mem_lexTokens_of_mem_yield_copyObject? {d : Derivation} {C : SyntacticObject}
     {tok : LexicalItem.Token} (h : d.copyObject? τ = some C) (ht : tok ∈ C.yield) :
     tok ∈ d.lexTokens := by

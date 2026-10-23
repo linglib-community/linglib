@@ -76,7 +76,6 @@ theorem disjoint_posSupport_negSupport (v : W → SignType) :
   Set.disjoint_left.mpr fun i h₁ h₂ ↦
     absurd ((mem_posSupport.mp h₁).symm.trans (mem_negSupport.mp h₂)) (by decide)
 
-/-- The integer value of a sign is the difference of its membership indicators. -/
 private theorem signCast_eq_ite (s : SignType) :
     (s : ℤ) = (if s = 1 then 1 else 0) - (if s = -1 then 1 else 0) := by
   cases s <;> rfl
@@ -107,7 +106,6 @@ def Cancellation (ge : Set W → Set W → Prop) : Prop :=
   ∀ M : Multiset (W → SignType), (∀ v ∈ M, ge (posSupport v) (negSupport v)) →
     comparisonSum M = 0 → ∀ v ∈ M, ge (negSupport v) (posSupport v)
 
-/-- Cancellation pulls back along an equivalence of carriers. -/
 theorem Cancellation.transport {α : Type*} (e : W ≃ α) {r : Set W → Set W → Prop}
     (h : Cancellation r) : Cancellation (Set.preimage e ⁻¹'o r) := by
   intro M hvalid hsum v hv
@@ -122,8 +120,6 @@ section Bridge
 
 open scoped Classical
 
-/-- The integer sum of a list of sign vectors is the difference of the
-    membership counts of its two supports. -/
 private theorem comparisonSum_eq_seqCount (L : List (W → SignType)) (i : W) :
     comparisonSum (L : Multiset (W → SignType)) i =
       seqCount i (L.map posSupport) - seqCount i (L.map negSupport) := by
@@ -135,7 +131,6 @@ private theorem comparisonSum_eq_seqCount (L : List (W → SignType)) (i : W) :
     push_cast
     split_ifs <;> ring
 
-/-- The balanced-sequence form implies the sign-vector form. -/
 theorem FiniteCancellation.cancellation {ge : Set W → Set W → Prop}
     (h : FiniteCancellation ge) : Cancellation ge := by
   intro M hge hsum v hv
@@ -153,8 +148,6 @@ theorem FiniteCancellation.cancellation {ge : Set W → Set W → Prop}
   · obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hp
     exact hge w (Multiset.mem_of_mem_erase (Multiset.mem_toList.1 hw))
 
-/-- Membership counts on the two sides of a list of set pairs differ by the
-    sum of the indicator differences. -/
 private theorem seqCount_sub_seqCount (P : List (Set W × Set W)) (i : W) :
     (seqCount i (P.map Prod.fst) : ℤ) - seqCount i (P.map Prod.snd) =
       (P.map fun p ↦ ((if i ∈ p.1 then 1 else 0) - (if i ∈ p.2 then 1 else 0) : ℤ)).sum := by
@@ -187,8 +180,6 @@ private theorem negSupport_normalize (p : Set W × Set W) :
   simp only [mem_negSupport, normalize, sign_eq_neg_one_iff, Set.mem_sdiff]
   split_ifs <;> simp_all
 
-/-- For a qualitative probability the sign-vector form implies the balanced-sequence form, by
-    normalizing every comparison with additivity. -/
 theorem Cancellation.finiteCancellation (r : Set W → Set W → Prop) [IsQualitativeProbability r]
     (h : Cancellation r) : FiniteCancellation r := by
   intro prem X Y hbal hprem
@@ -211,7 +202,6 @@ theorem Cancellation.finiteCancellation (r : Set W → Set W → Prop) [IsQualit
       Pi.zero_apply, List.sum_cons]
     omega
 
-/-- The two forms of Scott's condition agree on a qualitative probability. -/
 theorem cancellation_iff_finiteCancellation (r : Set W → Set W → Prop)
     [IsQualitativeProbability r] : Cancellation r ↔ FiniteCancellation r :=
   ⟨Cancellation.finiteCancellation r, FiniteCancellation.cancellation⟩
@@ -227,8 +217,6 @@ section Weighted
 
 variable {n : ℕ}
 
-/-- Nonnegative rationals over a finite index have a common positive
-    denominator `D`, with `D • w` natural-valued. -/
 private theorem exists_nat_mul {ι : Type*} [Fintype ι] (w : ι → ℚ) (hw : ∀ i, 0 ≤ w i) :
     ∃ (D : ℕ) (m : ι → ℕ), 0 < D ∧ ∀ i, (m i : ℚ) = D * w i := by
   obtain ⟨b, hb⟩ := IsLocalization.exist_integer_multiples (nonZeroDivisors ℤ) Finset.univ w
@@ -239,8 +227,6 @@ private theorem exists_nat_mul {ι : Type*} [Fintype ι] (w : ι → ℚ) (hw : 
   rw [Nat.cast_natAbs, Nat.cast_natAbs, Int.cast_abs, Int.cast_abs, this, abs_mul,
     abs_of_nonneg (hw i)]
 
-/-- Cancellation extends to rational weightings, so a nonnegative weighting of valid
-    comparisons that sums to zero reverses every comparison it weights. -/
 private theorem Cancellation.weighted {ge : Set (Fin n) → Set (Fin n) → Prop}
     (h : Cancellation ge) (w : (Fin n → SignType) → ℚ) (hw : ∀ v, 0 ≤ w v)
     (hvalid : ∀ v, 0 < w v → ge (posSupport v) (negSupport v))
@@ -319,7 +305,6 @@ private theorem sum_ofSets_mul {A B : Set (Fin n)} (h : Disjoint A B) (x : Fin n
   · exact absurd hB (Set.disjoint_left.mp h hA)
   all_goals simp [ofSets, hA, hB]
 
-/-- A solution of the system, normalized, is a representing measure. -/
 private theorem representable_of_feasible [IsQualitativeProbability r] {x : Fin n → ℚ}
     (hx : coeffs r *ᵥ x ≤ bound r) : Representable r := by
   have hsets : ∀ A B : Set (Fin n), Disjoint A B → r A B →
@@ -365,8 +350,6 @@ private theorem representable_of_feasible [IsQualitativeProbability r] {x : Fin 
     rw [ite_eq_right hCD'] at this
     linarith
 
-/-- A Farkas certificate for the system is a nonnegative neutral weighting with positive weight
-    on a strict comparison. -/
 private theorem not_cancellation_of_certificate {y : (Fin n → SignType) → ℚ} (hy : 0 ≤ y)
     (hyA : y ᵥ* coeffs r = 0) (hyb : y ⬝ᵥ bound r < 0) : ¬Cancellation r := by
   intro hcancel
@@ -411,25 +394,19 @@ section Scott
 variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
   (r : Set W → Set W → Prop) [IsQualitativeProbability r]
 
-/-- **Scott's theorem**, hard direction. A qualitative probability on a finite carrier
-    satisfying cancellation is represented by a probability measure. -/
 theorem cancellation_implies_representable (h : Cancellation r) : Representable r := by
   classical
   exact perm_repr (Fintype.equivFin W) r
     (representable_of_cancellation_fin _ (h.transport (Fintype.equivFin W)))
 
-/-- **Scott's theorem** in sign-vector form. -/
 theorem representable_iff_cancellation : Representable r ↔ Cancellation r :=
   ⟨fun h ↦ h.finiteCancellation.cancellation, cancellation_implies_representable r⟩
 
-/-- **Scott's theorem** in balanced-sequence form. -/
 theorem representable_iff_finiteCancellation : Representable r ↔ FiniteCancellation r :=
   (representable_iff_cancellation r).trans (cancellation_iff_finiteCancellation r)
 
 end Scott
 
-/-- A null atom and representability one cardinality down yield cancellation, by swapping the
-    null atom to position 0 and applying `null_elem_reduce`. -/
 theorem cancellation_of_null_atom {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) → Prop)
     [IsQualitativeProbability r] {j : Fin (n + 2)} (hj : r ∅ {j})
     (sub : ∀ r' : Set (Fin (n + 1)) → Set (Fin (n + 1)) → Prop,

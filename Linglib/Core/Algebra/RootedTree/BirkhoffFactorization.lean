@@ -121,8 +121,6 @@ noncomputable def birkhoffPlus : ConnesKreimer R (UnorderedTree α) →ₐ[R] �
 
 /-! ### The factorization `φ₊ = φ₋ ⋆ φ` -/
 
-/-- For a unital `φ`, `φ₊ = φ₋ ⋆ φ` on trees, since the term `T ⊗ 1` of the coproduct contributes
-`φ₋(T)` and the cuts contribute the preparation `φ̃(T)`. -/
 theorem convMul_birkhoffMinus_apply_ofTree (hφ : φ 1 = 1) (T : UnorderedTree α) :
     (toConv (birkhoffMinus φ P).toLinearMap * toConv φ) (ofTree T) = birkhoffPlusTree φ P T := by
   rw [LinearMap.convMul_apply, coalgebra_comul_apply, comulAlgHomN_apply_ofTree, comulTreeN,
@@ -132,7 +130,6 @@ theorem convMul_birkhoffMinus_apply_ofTree (hφ : φ 1 = 1) (T : UnorderedTree �
     birkhoffMinus_apply_ofTree, birkhoffMinus_apply_of', hφ, mul_one]
   rw [← birkhoffPrepTree, birkhoffPlusTree, add_comm]
 
-/-- `φ₊ = φ₋ ⋆ φ` for a character `φ`, both sides being characters that agree on trees. -/
 theorem birkhoffPlus_eq_convMul (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
     toConv (birkhoffMinus φ.toLinearMap P) * toConv φ
       = toConv (birkhoffPlus φ.toLinearMap P) := by
@@ -144,7 +141,6 @@ theorem birkhoffPlus_eq_convMul (φ : ConnesKreimer R (UnorderedTree α) →ₐ[
 
 variable {φ P}
 
-/-- For `P` of weight `+1`, the negative part sends every nonempty forest into the range of `P`. -/
 theorem birkhoffMinus_of'_mem_range (hP : IsRotaBaxter (1 : ℕ) ⇑P)
     {F : Forest (UnorderedTree α)} (hF : F ≠ 0) : birkhoffMinus φ P (of' F) ∈ Set.range P := by
   rw [birkhoffMinus_apply_of']
@@ -153,8 +149,6 @@ theorem birkhoffMinus_of'_mem_range (hP : IsRotaBaxter (1 : ℕ) ⇑P)
   rintro _ ⟨T, -, rfl⟩
   exact ⟨_, (birkhoffMinusTree_eq φ P T).symm⟩
 
-/-- For `P` of weight `+1`, the renormalized part sends every nonempty forest into the range of
-`id + P`. -/
 theorem birkhoffPlus_of'_mem_range (hP : IsRotaBaxter (1 : ℕ) ⇑P)
     {F : Forest (UnorderedTree α)} (hF : F ≠ 0) :
     birkhoffPlus φ P (of' F) ∈ Set.range fun x ↦ x + P x := by
@@ -166,8 +160,6 @@ theorem birkhoffPlus_of'_mem_range (hP : IsRotaBaxter (1 : ℕ) ⇑P)
   rintro _ ⟨T, -, rfl⟩
   exact ⟨_, by rw [birkhoffPlusTree, birkhoffMinusTree_eq]⟩
 
-/-- If `P` kills `φ` on every tree, the negative part vanishes: the empty cut contributes
-`P (φ T) = 0`, and every other cut has a crown tree, where `φ₋` vanishes by recursion. -/
 theorem birkhoffMinusTree_eq_zero (h : ∀ T, P (φ (ofTree T)) = 0) (T : UnorderedTree α) :
     birkhoffMinusTree φ P T = 0 := by
   rw [birkhoffMinusTree_eq, birkhoffPrepTree, map_multiset_sum]
@@ -183,7 +175,6 @@ theorem birkhoffMinusTree_eq_zero (h : ∀ T, P (φ (ofTree T)) = 0) (T : Unorde
 termination_by T.numNodes
 decreasing_by exact cutSummandsN_crown_numNodes_lt hp ht
 
-/-- If `P` kills `φ` on every tree, the renormalized part on a tree is the value of `φ`. -/
 theorem birkhoffPlusTree_eq_of_forall (h : ∀ T, P (φ (ofTree T)) = 0) (T : UnorderedTree α) :
     birkhoffPlusTree φ P T = φ (ofTree T) := by
   rw [birkhoffPlusTree, birkhoffMinusTree_eq_zero h, add_zero, birkhoffPrepTree,
@@ -197,7 +188,6 @@ theorem birkhoffPlusTree_eq_of_forall (h : ∀ T, P (φ (ofTree T)) = 0) (T : Un
   rw [Multiset.prod_eq_zero (Multiset.mem_map.mpr ⟨t, ht, birkhoffMinusTree_eq_zero h t⟩),
     zero_mul]
 
-/-- A character that `P` kills on every tree is its own renormalized part. -/
 theorem birkhoffPlus_eq_self {φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ}
     (h : ∀ T, P (φ (ofTree T)) = 0) : birkhoffPlus φ.toLinearMap P = φ :=
   algHom_ext_ofTree fun T ↦ by
@@ -211,13 +201,11 @@ section NegId
 
 variable {R ℛ : Type*} [CommSemiring R] [CommRing ℛ] [Algebra R ℛ] {α : Type*}
 
-/-- At `P = -id` the renormalized part vanishes on every tree, `φ₊(T) = φ̃(T) - φ̃(T)`. -/
 theorem birkhoffPlusTree_neg_id (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ)
     (T : UnorderedTree α) : birkhoffPlusTree φ (-AddMonoidHom.id ℛ) T = 0 := by
   rw [birkhoffPlusTree, birkhoffMinusTree_eq, AddMonoidHom.neg_apply, AddMonoidHom.id_apply,
     add_neg_cancel]
 
-/-- At `P = -id` the negative part of a character is its left convolution inverse. -/
 theorem birkhoffMinus_neg_id_convMul (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
     toConv (birkhoffMinus φ.toLinearMap (-AddMonoidHom.id ℛ)) * toConv φ = 1 := by
   rw [birkhoffPlus_eq_convMul]

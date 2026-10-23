@@ -109,9 +109,6 @@ private theorem posSupport_eq_coe_filter (v : Fin 5 → SignType) :
 private theorem negSupport_eq_coe_filter (v : Fin 5 → SignType) :
     negSupport v = ↑(Finset.univ.filter fun i ↦ v i = -1) := by ext; simp
 
-/-- **The Kraft–Pratt–Seidenberg order is not representable.** Its four comparisons
-    `kpsFamily` hold strictly and their sign vectors cancel, so Scott's theorem
-    (`representable_iff_cancellation`) would force `qs ≿ p`. -/
 theorem kps_not_representable : ¬Representable kpsGe := fun h ↦ by
   have key := (representable_iff_cancellation kpsGe).mp h kpsFamily (fun v hv ↦ ?_)
     (by decide) ![1, -1, 0, -1, 0] (by simp [kpsFamily])
@@ -130,9 +127,6 @@ end KPSSystem
 
 /-! ### Padding with null atoms -/
 
-/-- Padding reflects representability. Pulling `r` back along the preimage of `Fin.castSucc`
-    adds a null atom `Fin.last n`; a measure for the padded relation gives that atom measure
-    zero, and its restriction along `Fin.castSucc` represents `r`. -/
 theorem representable_of_pad {n : ℕ} {r : Set (Fin n) → Set (Fin n) → Prop} [Std.Refl r]
     (h : Representable (Set.preimage Fin.castSucc ⁻¹'o r)) : Representable r := by
   obtain ⟨μ, hμ, hm⟩ := h
@@ -163,8 +157,6 @@ theorem representable_of_pad {n : ℕ} {r : Set (Fin n) → Set (Fin n) → Prop
   simp only [Order.Preimage, Set.preimage_image_eq _ hinj] at key
   exact key
 
-/-- For every `n ≥ 5` some qualitative probability on `Fin n` is not representable, as the
-    Kraft–Pratt–Seidenberg counterexample padded with null atoms shows. -/
 theorem exists_nonrepresentable_fin {n : ℕ} (h : 5 ≤ n) :
     ∃ r : Set (Fin n) → Set (Fin n) → Prop, IsQualitativeProbability r ∧ ¬Representable r := by
   induction n, h using Nat.le_induction with
@@ -175,16 +167,12 @@ theorem exists_nonrepresentable_fin {n : ℕ} (h : 5 ≤ n) :
 
 /-! ### The Kraft–Pratt–Seidenberg theorems -/
 
-/-- **Kraft–Pratt–Seidenberg below five atoms.** Every qualitative probability on fewer than
-    five atoms is representable by a probability measure. -/
 theorem representable_of_card_lt_five {W : Type*} [Fintype W] [MeasurableSpace W]
     [DiscreteMeasurableSpace W] (r : Set W → Set W → Prop) [IsQualitativeProbability r]
     (hcard : Fintype.card W < 5) : Representable r := by
   classical
   exact perm_repr (Fintype.equivFin W) r (representable_of_le_four (by omega) _)
 
-/-- **Kraft–Pratt–Seidenberg from five atoms on.** Some qualitative probability is not
-    representable by any probability measure. -/
 theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W] [MeasurableSpace W]
     [DiscreteMeasurableSpace W] (hcard : 5 ≤ Fintype.card W) :
     ∃ r : Set W → Set W → Prop, IsQualitativeProbability r ∧ ¬Representable r := by
@@ -229,10 +217,6 @@ private theorem belowCount_le_iff (A B : Set W) : belowCount r B ≤ belowCount 
   ⟨fun hcount ↦ by_contra fun hng ↦ by have := belowCount_strict r hng; omega,
     belowCount_mono r⟩
 
-/-- **Qualitatively additive representation.** Every qualitative probability on a finite
-    carrier is represented by a qualitatively additive measure: the count of dominated sets,
-    affinely renormalised so that `μ(∅) = 0` and `μ(Ω) = 1`, is a normalized numerical
-    representation (`QualAddMeasure.ofRepr`). -/
 theorem exists_qualAddMeasure_repr :
     ∃ m : QualAddMeasure ℚ W, ∀ A B, r A B ↔ m.inducedGe A B := by
   classical
@@ -256,8 +240,6 @@ end Repr
 
 /-! ### Qualitative and finite additivity -/
 
-/-- Adding a set `C` disjoint from `A` to both sides of a difference leaves `A \ B`
-    unchanged, `(A ∪ C) \ (B ∪ C) = A \ B`. -/
 private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
     (hAC : ∀ x, x ∈ A → x ∉ C) : (A ∪ C) \ (B ∪ C) = A \ B := by
   ext x; simp only [Set.mem_sdiff, Set.mem_union]
@@ -265,8 +247,6 @@ private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
     (fun hx ↦ absurd (Or.inr hx) h.2), fun ⟨hxA, hxnB⟩ ↦
     ⟨Or.inl hxA, fun h ↦ h.elim hxnB (hAC x hxA)⟩⟩
 
-/-- For any comparison on sets, qualitative additivity is equivalent to finite additivity in
-    the form that adding a disjoint set to both sides preserves the comparison. -/
 theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
     (∀ A B : Set W, ge A B ↔ ge (A \ B) (B \ A)) ↔
     (∀ A B C : Set W, (∀ x, x ∈ A → x ∉ C) → (∀ x, x ∈ B → x ∉ C) →

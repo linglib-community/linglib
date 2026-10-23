@@ -73,8 +73,6 @@ theorem IsMinCover.subset_sUnion {C : Set (Set W)} {S : Set W} (h : IsMinCover C
     S ⊆ ⋃₀ C :=
   h.prop
 
-/-- A cover is minimal exactly when each member is needed: dropping it leaves part of `S`
-uncovered. -/
 theorem isMinCover_iff {C : Set (Set W)} {S : Set W} :
     IsMinCover C S ↔ S ⊆ ⋃₀ C ∧ ∀ c ∈ C, ¬ S ⊆ ⋃₀ (C \ {c}) := by
   refine ⟨fun h ↦ ⟨h.prop, fun c hc hcov ↦ (h.le_of_le hcov Set.sdiff_subset hc).2 rfl⟩,
@@ -83,17 +81,14 @@ theorem isMinCover_iff {C : Set (Set W)} {S : Set W} :
   obtain ⟨c, hcC, hcY⟩ := Set.not_subset.1 hCY
   exact hmin c hcC (hY.trans (Set.sUnion_mono fun d hd ↦ ⟨hYC hd, fun hdc ↦ hcY (hdc ▸ hd)⟩))
 
-/-- Only the empty family minimally covers `∅`. -/
 theorem isMinCover_empty_iff {C : Set (Set W)} : IsMinCover C ∅ ↔ C = ∅ := by
   refine ⟨fun h ↦ Set.subset_empty_iff.1 (h.le_of_le (Set.empty_subset _) (Set.empty_subset _)),
     fun h ↦ h ▸ ⟨Set.empty_subset _, fun _ _ _ ↦ Set.empty_subset _⟩⟩
 
-/-- A nonempty family minimally covers only nonempty sets. -/
 theorem IsMinCover.nonempty {C : Set (Set W)} {S : Set W} (h : IsMinCover C S)
     (hC : C.Nonempty) : S.Nonempty :=
   Set.nonempty_iff_ne_empty.2 fun hS ↦ hC.ne_empty (isMinCover_empty_iff.1 (hS ▸ h))
 
-/-- A single set minimally covers a nonempty `S` exactly when it contains it. -/
 theorem isMinCover_singleton_iff {X S : Set W} (hS : S.Nonempty) :
     IsMinCover {X} S ↔ S ⊆ X := by
   refine ⟨fun h ↦ by simpa using h.subset_sUnion, fun h ↦ ⟨by simpa using h, fun Y hY hYX ↦ ?_⟩⟩
@@ -101,13 +96,11 @@ theorem isMinCover_singleton_iff {X S : Set W} (hS : S.Nonempty) :
   obtain ⟨Z, hZY, -⟩ := hY hv
   exact Set.singleton_subset_iff.2 (Set.mem_singleton_iff.1 (hYX hZY) ▸ hZY)
 
-/-- A single set minimally covers `S` exactly when `S` is nonempty and inside it. -/
 theorem isMinCover_singleton_iff' {X S : Set W} :
     IsMinCover {X} S ↔ S.Nonempty ∧ S ⊆ X :=
   ⟨fun h ↦ ⟨h.nonempty (Set.singleton_nonempty X), by simpa using h.subset_sUnion⟩,
     fun ⟨hS, h⟩ ↦ (isMinCover_singleton_iff hS).2 h⟩
 
-/-- A pair minimally covers `S` exactly when it covers `S` and neither member covers it alone. -/
 theorem isMinCover_pair_iff {A B S : Set W} (hAB : A ≠ B) :
     IsMinCover {A, B} S ↔ S ⊆ A ∪ B ∧ ¬ S ⊆ A ∧ ¬ S ⊆ B := by
   refine ⟨fun h ↦ ⟨by simpa using h.subset_sUnion, fun hA ↦ ?_, fun hB ↦ ?_⟩, ?_⟩
@@ -130,8 +123,6 @@ theorem isMinCover_pair_iff {A B S : Set W} (hAB : A ≠ B) :
     · exact absurd hvZ hvA
     · exact Set.singleton_subset_iff.2 hZY
 
-/-- `{A, B}` minimally covers `S` exactly when it covers `S` and `S` meets both relative
-complements: the Independence inferences. -/
 theorem isMinCover_pair_iff_inter_sdiff {A B S : Set W} (hAB : A ≠ B) :
     IsMinCover {A, B} S ↔ S ⊆ A ∪ B ∧ (S ∩ (A \ B)).Nonempty ∧ (S ∩ (B \ A)).Nonempty := by
   rw [isMinCover_pair_iff hAB]
@@ -146,13 +137,10 @@ theorem isMinCover_pair_iff_inter_sdiff {A B S : Set W} (hAB : A ≠ B) :
 def IsSuperCover (C : Set (Set W)) (S : Set W) : Prop :=
   S ⊆ ⋃₀ C ∧ ∀ c ∈ C, (c ∩ S).Nonempty
 
-/-- `{A, B}` super covers `S` exactly when it covers `S` and `S` meets both `A` and `B`: the
-Diversity inferences. -/
 theorem isSuperCover_pair_iff {A B S : Set W} :
     IsSuperCover {A, B} S ↔ S ⊆ A ∪ B ∧ (A ∩ S).Nonempty ∧ (B ∩ S).Nonempty := by
   simp [IsSuperCover]
 
-/-- A minimal cover is a super cover, since a member missing `S` could be dropped. -/
 theorem IsMinCover.isSuperCover {C : Set (Set W)} {S : Set W} (h : IsMinCover C S) :
     IsSuperCover C S := by
   refine ⟨h.subset_sUnion, fun c hc ↦ Set.nonempty_iff_ne_empty.2 fun hcS ↦ ?_⟩
@@ -182,9 +170,6 @@ def dia (R : W → Set W) (P : Question W) : Question W :=
     (dia R P).info = {w | ∃ R' ⊆ R w, R'.Nonempty ∧ IsMinCover (alt P) R'} :=
   info_ofSet _
 
-/-- A proposition and its would-be falsifier with disjoint informative contents: the relevant
-worlds cannot both be minimally covered by the alternatives of the first and have a nonempty part
-minimally covered by those of the second. -/
 theorem disjoint_box_dia (R : W → Set W) {P Q : Question W} (h : Disjoint P.info Q.info) :
     Disjoint (box R P) (dia R Q) := by
   rw [box, dia, disjoint_ofSet_iff]
@@ -225,7 +210,6 @@ theorem mem_truth_iff {w : W} : w ∈ truth φ ↔ {w} ∈ φ.pro :=
 theorem mem_falsity_iff {w : W} : w ∈ falsity φ ↔ {w} ∈ φ.con :=
   mem_info_iff_singleton_mem _ _
 
-/-- No sentence is both true and false. -/
 theorem disjoint_truth_falsity : Disjoint (truth φ) (falsity φ) :=
   (info φ).disjoint_pro_con
 
@@ -249,23 +233,19 @@ def atom (V : Set W) : BilatInqProp W :=
 @[simp] theorem truth_atom (V : Set W) : truth (atom V) = V := info_ofSet V
 @[simp] theorem falsity_atom (V : Set W) : falsity (atom V) = Vᶜ := info_ofSet Vᶜ
 
-/-- The negation of an atom is the atom of the complement. -/
 theorem compl_atom (V : Set W) : (atom V)ᶜ = atom Vᶜ :=
   Kalman.ext rfl (by simp)
 
 theorem alt_atom_pro (V : Set W) : alt (atom V).pro = {V} := alt_ofSet V
 theorem alt_atom_con (V : Set W) : alt (atom V).con = {Vᶜ} := alt_ofSet Vᶜ
 
-/-- For incomparable atoms, the positive alternatives of `p ∨ q` are the two truth sets. -/
 theorem alt_sup_atom {Vp Vq : Set W} (h : IncompRel (· ⊆ ·) Vp Vq) :
     alt (atom Vp ⊔ atom Vq).pro = {Vp, Vq} :=
   alt_ofSet_sup_ofSet h.1 h.2
 
-/-- The negative alternative of `p ∨ q` is the set where both are false. -/
 theorem alt_sup_atom_con (Vp Vq : Set W) : alt (atom Vp ⊔ atom Vq).con = {Vpᶜ ∩ Vqᶜ} := by
   rw [Kalman.con_sup, con_atom, con_atom, ofSet_inf, alt_ofSet]
 
-/-- The positive alternative of `p ∧ ¬q` is the set of `p`-without-`q` worlds. -/
 theorem alt_inf_compl_atom (Vp Vq : Set W) : alt (atom Vp ⊓ (atom Vq)ᶜ).pro = {Vp ∩ Vqᶜ} := by
   rw [Kalman.pro_inf, Kalman.pro_compl, pro_atom, con_atom, ofSet_inf, alt_ofSet]
 
@@ -282,7 +262,6 @@ def bang (φ : BilatInqProp W) : BilatInqProp W :=
 @[simp] theorem falsity_bang (φ : BilatInqProp W) : falsity (bang φ) = falsity φ :=
   info_compl_compl _
 
-/-- `!φ` offers the single alternative `info ⟦φ⟧⁺`. -/
 theorem alt_bang_pro (φ : BilatInqProp W) : alt (bang φ).pro = {truth φ} := by
   change alt φ.proᶜᶜ = _
   rw [compl_compl_eq, alt_ofSet]
@@ -304,10 +283,8 @@ def possibility (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
 
 variable (R : W → Set W) (φ : BilatInqProp W)
 
-/-- The duality of the modals: `◇φ = ¬□¬φ`. -/
 theorem possibility_eq_compl_necessity_compl : possibility R φ = (necessity R φᶜ)ᶜ := rfl
 
-/-- The duality of the modals: `□φ = ¬◇¬φ`. -/
 theorem necessity_eq_compl_possibility_compl : necessity R φ = (possibility R φᶜ)ᶜ := rfl
 
 @[simp] theorem truth_necessity :
@@ -326,15 +303,11 @@ theorem necessity_eq_compl_possibility_compl : necessity R φ = (possibility R �
     falsity (possibility R φ) = {w | IsMinCover (alt φ.con) (R w)} :=
   info_box R _
 
-/-- Over a single alternative `A`, necessity is orthodox: true where the relevant worlds are
-nonempty and inside `A`. -/
 theorem truth_necessity_of_alt_eq_singleton {A : Set W} (h : alt φ.pro = {A}) :
     truth (necessity R φ) = {w | (R w).Nonempty ∧ R w ⊆ A} := by
   ext w
   simp [h, isMinCover_singleton_iff']
 
-/-- Over a single alternative `A`, possibility is orthodox: true where some relevant world lies
-in `A`. -/
 theorem truth_possibility_of_alt_eq_singleton {A : Set W} (h : alt φ.pro = {A}) :
     truth (possibility R φ) = {w | (R w ∩ A).Nonempty} := by
   ext w
@@ -343,14 +316,10 @@ theorem truth_possibility_of_alt_eq_singleton {A : Set W} (h : alt φ.pro = {A})
   exact ⟨{v}, Set.singleton_subset_iff.2 hvR, Set.singleton_nonempty v,
     Set.singleton_nonempty v, Set.singleton_subset_iff.2 hvA⟩
 
-/-- Over a single negative alternative `B`, necessity is false where some relevant world lies
-in `B`. -/
 theorem falsity_necessity_of_alt_eq_singleton {B : Set W} (h : alt φ.con = {B}) :
     falsity (necessity R φ) = {w | (R w ∩ B).Nonempty} :=
   truth_possibility_of_alt_eq_singleton R φᶜ h
 
-/-- Over a single negative alternative `B`, possibility is false where the relevant worlds are
-nonempty and inside `B`. -/
 theorem falsity_possibility_of_alt_eq_singleton {B : Set W} (h : alt φ.con = {B}) :
     falsity (possibility R φ) = {w | (R w).Nonempty ∧ R w ⊆ B} :=
   truth_necessity_of_alt_eq_singleton R φᶜ h

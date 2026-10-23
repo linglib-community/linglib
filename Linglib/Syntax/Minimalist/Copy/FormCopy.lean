@@ -112,13 +112,11 @@ theorem StructurallyIdentical.trans (h : StructurallyIdentical x y)
     (h' : StructurallyIdentical y t) : StructurallyIdentical x t :=
   Eq.trans h h'
 
-/-- Structural identity is a congruence for Merge. -/
 theorem StructurallyIdentical.merge (hl : StructurallyIdentical l l')
     (hr : StructurallyIdentical r r') : StructurallyIdentical (merge l r) (merge l' r') := by
   simp only [StructurallyIdentical, erase_merge] at *
   rw [hl, hr]
 
-/-- Structurally identical inscriptions have the same size. -/
 theorem StructurallyIdentical.numNodes_eq (h : StructurallyIdentical x y) :
     x.val.numNodes = y.val.numNodes := by
   simpa [erase] using congrArg UnorderedTree.numNodes h
@@ -170,7 +168,6 @@ theorem mapTokens_merge (l r : SyntacticObject) :
     (merge l r).mapTokens f = merge (l.mapTokens f) (r.mapTokens f) :=
   Subtype.ext (by simp [mapTokens, map_node, Vertex.mapToken])
 
-/-- Renaming tokens within their lexical items leaves the inscribed tree in place. -/
 theorem erase_mapTokens (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject) :
     (s.mapTokens f).erase = s.erase := by
   simp only [erase, mapTokens, map_map]
@@ -183,7 +180,6 @@ introduces a second inscription of an object. -/
 def renumber (k : ℕ) : SyntacticObject → SyntacticObject :=
   mapTokens fun t ↦ ⟨t.item, t.id + k⟩
 
-/-- A renumbered inscription is structurally identical to the original. -/
 theorem structurallyIdentical_renumber (k : ℕ) (s : SyntacticObject) :
     StructurallyIdentical s (s.renumber k) :=
   (erase_mapTokens (f := fun t ↦ ⟨t.item, t.id + k⟩) (fun _ ↦ rfl) s).symm
@@ -203,21 +199,15 @@ instance (s : SyntacticObject) (p : SyntacticObject × SyntacticObject) :
     Decidable (p ∈ s.copyRel) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Form Copy relates an object merged with a term to every structurally identical inscription
-inside that term: the configuration of control, where the lower inscription is a repetition. -/
 theorem mk_mem_copyRel_merge (h : Contains t y) (hxy : StructurallyIdentical x y) :
     (x, y) ∈ (merge x t).copyRel := by
   refine ⟨cCommands_merge_left ?_ (mem_terms.2 (Relation.TransGen.to_reflTransGen h)), hxy⟩
   rintro rfl
   exact (numNodes_lt_of_contains h).ne hxy.numNodes_eq.symm
 
-/-- The copy Internal Merge leaves is related to its antecedent: an object merged with a term
-containing it c-commands its own lower occurrence. -/
 theorem self_mem_copyRel_merge (h : Contains t x) : (x, x) ∈ (merge x t).copyRel :=
   mk_mem_copyRel_merge h rfl
 
-/-- A term merged with the object it is a term of is related to itself exactly when it is a proper
-term: an object merged with itself c-commands nothing. -/
 theorem self_mem_copyRel_merge_iff (hx : x ∈ t.terms) : (x, x) ∈ (merge x t).copyRel ↔ x ≠ t := by
   refine ⟨?_, fun hne ↦ self_mem_copyRel_merge
     ((containsOrEq_iff_eq_or_contains.1 (mem_terms.1 hx)).resolve_left hne)⟩
@@ -235,8 +225,6 @@ def HasDistinctItems (s : SyntacticObject) : Prop :=
   ∀ ⦃a b : LexicalItem.Token⦄, (leaf a ∈ s.terms ∨ traceOf a ∈ s.terms) →
     (leaf b ∈ s.terms ∨ traceOf b ∈ s.terms) → a.item = b.item → a = b
 
-/-- In an object whose tokens inscribe distinct items, structurally identical terms are equal, so
-no inscription repeats another. -/
 theorem StructurallyIdentical.eq_of_mem_terms (hs : s.HasDistinctItems) (hx : x ∈ s.terms)
     (hy : y ∈ s.terms) (h : StructurallyIdentical x y) : x = y := by
   induction x using ind generalizing y with
@@ -263,8 +251,6 @@ theorem StructurallyIdentical.eq_of_mem_terms (hs : s.HasDistinctItems) (hx : x 
     · rw [ihl hl hl' h₁, ihr hr hr' h₂]
     · rw [ihl hl hr' h₁, ihr hr hl' h₂, SyntacticObject.merge_comm]
 
-/-- In such an object Form Copy relates each inscription only to itself: its copies are those
-Internal Merge leaves. -/
 theorem copyRel_subset_id (hs : s.HasDistinctItems) : s.copyRel ⊆ .id :=
   fun ⟨_, _⟩ ⟨hc, h⟩ ↦ h.eq_of_mem_terms hs hc.left_mem_terms hc.mem_terms
 

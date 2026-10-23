@@ -119,12 +119,8 @@ instance (i : Scope) (D : NumberTree) [DecidableRel D] : DecidableRel (i.negatio
   | .surface => inferInstanceAs (DecidableRel D.innerNeg)
   | .inverse => inferInstanceAs (DecidableRel Dᶜ)
 
-/-- On its surface interpretation *every horse didn't jump* is *no horse jumped*, the paper's
-"none" reading. -/
 theorem negation_surface_all : Scope.surface.negation NumberTree.all = NumberTree.no := rfl
 
-/-- On its inverse interpretation *every horse didn't jump* is *not all horses jumped*, the
-paper's "not-all" reading. -/
 theorem negation_inverse_all : Scope.inverse.negation NumberTree.all = NumberTree.notAll := rfl
 
 /-- A numeral is the cardinal quantifier of the interval that the comparison `c` selects at `k`.
@@ -179,8 +175,6 @@ theorem mem_ext_numeral_inverse :
     w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.Rel (w : ℕ) k := by
   simp only [mem_ext_inverse, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
 
-/-- The extension sees a determiner only at counts that sum to the number of horses, a row of
-the tree of numbers, so determiners that agree there have the same extensions. -/
 theorem ext_congr {D' : NumberTree} [DecidableRel D']
     (h : ∀ a b, a + b = n → (D a b ↔ D' a b)) (i : Scope) (u : Utt) :
     ext D n i u = ext D' n i u := by
@@ -191,16 +185,12 @@ theorem ext_congr {D' : NumberTree} [DecidableRel D']
     · rw [mem_ext_surface, mem_ext_surface, h _ _ (Nat.add_sub_of_le w.is_le)]
     · rw [mem_ext_inverse, mem_ext_inverse, h _ _ (Nat.sub_add_cancel w.is_le)]
 
-/-- Among `n` restrictor members, exactly `n` lie inside the scope just in case none lies
-outside. -/
 theorem numeral_eq_iff_all {a b : ℕ} (h : a + b = n) :
     numeral .eq n a b ↔ NumberTree.all a b := by
   simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
     Degree.Comparison.Rel]
   omega
 
-/-- Among `n` restrictor members, at least `n` lie inside the scope just in case none lies
-outside. -/
 theorem numeral_ge_iff_all {a b : ℕ} (h : a + b = n) :
     numeral .ge n a b ↔ NumberTree.all a b := by
   simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
@@ -259,11 +249,9 @@ theorem mem_cell_all {n : ℕ} {w w' : World n} :
     w' ∈ cell n .all w ↔ (w' = Fin.last n ↔ w = Fin.last n) := by
   simp [mem_cell, project]
 
-/-- With two horses, *exactly two?* asks whether all jumped. -/
 theorem cell_exactlyTwo_two (w : World 2) : cell 2 .exactlyTwo w = cell 2 .all w := by
   revert w; decide
 
-/-- With two horses, *at least two?* asks whether all jumped. -/
 theorem cell_atLeastTwo_two (w : World 2) : cell 2 .atLeastTwo w = cell 2 .all w := by
   revert w; decide
 
@@ -281,8 +269,6 @@ noncomputable def L0 (i : Scope) : Kernel Utt (World n) :=
 instance (i : Scope) : IsFiniteKernel (L0 D n i) :=
   inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
-/-- The literal listener of a scope interpretation gives a world's answer to a question the
-fraction of the extension lying in the world's cell. -/
 theorem map_L0_apply (i : Scope) (q : QUD) (u : Utt) (w : World n) :
     (L0 D n i).map (project n q) u {project n q w}
       = uniformOn ↑(ext D n i u) (↑(cell n q w) : Set (World n)) := by
@@ -395,7 +381,6 @@ theorem share_lt_one (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) : share D
   rw [div_lt_one (add_pos_of_nonneg_of_pos hx hy)]
   linarith
 
-/-- The test sentence is produced at a world at which it is true. -/
 theorem share_pos (hα : 0 ≤ α) {l : Scope × QUD} {w : World n} (h : w ∈ ext D n l.1 .amb) :
     0 < share D n α l w := by
   rw [share_eq D n α hα]
@@ -406,7 +391,6 @@ theorem share_pos (hα : 0 ≤ α) {l : Scope × QUD} {w : World n} (h : w ∈ e
   refine div_pos (Nat.cast_pos.mpr (Finset.card_pos.mpr ⟨w, Finset.mem_inter.mpr
     ⟨h, mem_cell_self l.2 w⟩⟩)) (Nat.cast_pos.mpr (Finset.card_pos.mpr ⟨w, h⟩))
 
-/-- The null utterance takes the rest of the speaker's mass. -/
 theorem S1_real_null (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
     (S1 D n α (w, l)).real {.null} = 1 - share D n α l w := by
   have := isMarkovKernel_S1 D n α hα
@@ -435,10 +419,6 @@ private theorem cellMass_mul_cellMass_le_iff {D' : NumberTree} [DecidableRel D']
   exact ⟨fun h ↦ by exact_mod_cast le_of_mul_le_mul_right h hN,
     fun h ↦ mul_le_mul_of_nonneg_right (by exact_mod_cast h) hN.le⟩
 
-/-- In comparing production probabilities across worlds, interpretations, questions and
-determiners, the rationality cancels, leaving a comparison of the odds of the test sentence
-against silence, each the fraction of the sentence's extension in the world's cell over the
-fraction of all worlds in it. -/
 theorem share_le_share_iff (hα : 0 < α) {D' : NumberTree} [DecidableRel D']
     {l l' : Scope × QUD} {w w' : World n} (hS : 0 < (ext D n l.1 .amb).card)
     (hS' : 0 < (ext D' n l'.1 .amb).card) :
@@ -508,8 +488,6 @@ theorem production_lt_one (hα : 0 ≤ α) (w : World n) : production D n α ν 
   exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
     (share_lt_one D n α hα l w)
 
-/-- The test sentence is produced with positive probability at a world at which it is true on
-both interpretations. -/
 theorem production_pos (hα : 0 ≤ α) {w : World n} (h : ∀ l : Scope × QUD, w ∈ ext D n l.1 .amb) :
     0 < production D n α ν w := by
   obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
@@ -550,7 +528,6 @@ theorem endorse_denom_pos (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hz0 : 0 < z) (hz1 : z
   · rw [one_mul, sub_self, mul_zero, add_zero]
     linarith
 
-/-- Endorsement rises with the production probability at the observed world. -/
 theorem endorse_le_endorse (hm0 : 0 ≤ m) (hm1 : m' ≤ 1) (hz0 : 0 < z) (hz1 : z < 1)
     (h : m ≤ m') : endorse m z ≤ endorse m' z := by
   unfold endorse
@@ -558,7 +535,6 @@ theorem endorse_le_endorse (hm0 : 0 ≤ m) (hm1 : m' ≤ 1) (hz0 : 0 < z) (hz1 :
     (endorse_denom_pos (hm0.trans h) hm1 hz0 hz1)]
   nlinarith [mul_nonneg (mul_nonneg hz0.le (sub_nonneg.2 hz1.le)) (sub_nonneg.2 h)]
 
-/-- Endorsement falls with the expected production probability. -/
 theorem endorse_antitone (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hz0 : 0 < z) (hz1 : z' < 1)
     (h : z ≤ z') : endorse m z' ≤ endorse m z := by
   unfold endorse
@@ -566,8 +542,6 @@ theorem endorse_antitone (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hz0 : 0 < z) (hz1 : z'
     (endorse_denom_pos hm0 hm1 hz0 (h.trans_lt hz1))]
   nlinarith [mul_nonneg (mul_nonneg hm0 (sub_nonneg.2 hm1)) (sub_nonneg.2 h)]
 
-/-- The sentence is endorsed more often than not exactly when it is produced at the observed
-world more often than on average. -/
 theorem one_half_lt_endorse_iff (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hz0 : 0 < z) (hz1 : z < 1) :
     1 / 2 < endorse m z ↔ z < m := by
   unfold endorse
@@ -639,8 +613,6 @@ variable (α : ℝ) {n : ℕ}
 private theorem zero_ne_last (hn : 0 < n) : (0 : World n) ≠ Fin.last n := fun h ↦
   hn.ne (by simpa [Fin.ext_iff] using h)
 
-/-- The sentence *every horse didn't jump* is true at the no-success world on both
-interpretations. -/
 theorem zero_mem_ext_every (hn : 0 < n) (i : Scope) :
     (0 : World n) ∈ ext NumberTree.all n i .amb := by
   cases i
@@ -650,9 +622,6 @@ theorem zero_mem_ext_every (hn : 0 < n) (i : Scope) :
 theorem ext_every_amb_card_pos (hn : 0 < n) (i : Scope) : 0 < (ext NumberTree.all n i .amb).card :=
   Finset.card_pos.mpr ⟨0, zero_mem_ext_every hn i⟩
 
-/-- Under the question *all?* the sentence *every horse didn't jump* fully resolves the question
-in the negative on either interpretation, as its literal listener is certain of the answer at
-every world short of total success. -/
 theorem map_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
     (L0 NumberTree.all n i).map (project n .all) .amb {project n .all w}
       = if w = Fin.last n then 0 else 1 := by
@@ -691,8 +660,6 @@ theorem share_all_scope (hn : 0 < n) (w : World n) :
 
 variable (ρ : Measure Scope) [IsProbabilityMeasure ρ]
 
-/-- With the question settled as *all?*, the production of the sentence at a world does not
-depend on the scope prior. -/
 theorem production_all (hn : 0 < n) (w : World n) :
     production NumberTree.all n α (ρ.prod (Measure.dirac .all)) w
       = share NumberTree.all n α (.surface, .all) w := by
@@ -747,21 +714,15 @@ theorem share_none_le_share (hα : 0 < α) (i : Scope) (q : QUD) :
   (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
     (by revert i q; decide)
 
-/-- On the surface interpretation the sentence is false at the not-all world, so *how many?* has
-it produced less often than *all?*, under which it is nonetheless a full answer. -/
 theorem share_howMany_lt_share_all (hα : 0 < α) :
     share NumberTree.all 2 α (.surface, .howMany) 1 < share NumberTree.all 2 α (.surface, .all) 1 :=
   (share_lt_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by decide)
 
-/-- On the inverse interpretation, *none?* has the sentence produced less often than
-*how many?*, since the sentence, *not all jumped*, leaves *none?* open. -/
 theorem share_none_lt_share_howMany (hα : 0 < α) :
     share NumberTree.all 2 α (.inverse, .none) 1
       < share NumberTree.all 2 α (.inverse, .howMany) 1 :=
   (share_lt_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by decide)
 
-/-- Production of the sentence falls with the number of jumpers, under every interpretation and
-question. -/
 theorem share_antitone (hα : 0 < α) (l : Scope × QUD) : Antitone (share NumberTree.all 2 α l) :=
   Fin.antitone_iff_succ_le.mpr <| Fin.forall_fin_two.mpr
     ⟨(share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
@@ -828,8 +789,6 @@ theorem share_twoAtLeast_le_share_twoExact (hα : 0 < α) (q : QUD) :
     (show 0 < (ext twoAtLeast 4 .surface .amb).card by decide)
     (show 0 < (ext twoExact 4 .surface .amb).card by decide)).mpr (by revert q; decide)
 
-/-- The advantage of the exact reading is strict under every question but *all?*, which the
-surface interpretation answers fully on either reading. -/
 theorem share_twoAtLeast_lt_share_twoExact (hα : 0 < α) {q : QUD} (hq : q ≠ .all) :
     share twoAtLeast 4 α (.surface, q) 2 < share twoExact 4 α (.surface, q) 2 :=
   (share_lt_share_iff twoAtLeast 4 α hα

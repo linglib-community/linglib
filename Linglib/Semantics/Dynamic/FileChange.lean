@@ -86,22 +86,13 @@ def ofState (A : State W V M) : FCP W V M := fun F : State W V M ↦ Part.some (
 
 theorem mem_ofState : F' ∈ ofState A F ↔ F' = F * A := Part.mem_some_iff
 
-/-- Updating by the initial state changes nothing. -/
 theorem ofState_one : ofState (1 : State W V M) = PFun.id _ := funext fun _ ↦ by simp
 
-/-- Assertive update is the regular action of the merge monoid: updating by
-`A` and then by `B` is updating by `A * B`. -/
 theorem ofState_mul : ofState (A * B) = (ofState A).seq (ofState B) :=
   funext fun _ ↦ by simp [PartialUpdate.seq, PFun.comp_apply, mul_assoc]
 
-/-- Principle (A) at an assertive update: merging only adds information. -/
 theorem ofState_le (h : F' ∈ ofState A F) : F' ≤ F := mem_ofState.mp h ▸ State.mul_le_left
 
-/-- Up to informational equivalence, assertion is additive in the sense of
-`Semantics/Dynamic/Consequence.lean`: on the upper sets of possibilities it meets the file with
-the content of `A` (`isAdditive_inf_right`). Merging need not be literally idempotent, since two
-compatible points of a file merge into a third, so literal fixed points of assertion are finer
-than informational acceptance. -/
 theorem semiconj_ofState (A : State W V M) :
     Function.Semiconj
       (OrderDual.toDual ∘ upperClosure : State W V M → (UpperSet (Possibility W V (Flat M)))ᵒᵈ)
@@ -119,7 +110,6 @@ def atomW (pred : W → Prop) : FCP W V M :=
 stratum `{x}`. -/
 def atomVar (pred : M → Prop) (x : V) : FCP W V M := ofState (State.atomAt x fun _ ↦ pred)
 
-/-- The world atom filters the file by its predicate. -/
 theorem atomW_eq (pred : W → Prop) : atomW pred F = Part.some {p ∈ F | pred p.world} := by
   rw [atomW, ofState_apply, State.mul_eq_sep_of_uniformAt fun _ h ↦ h.1, State.mul_stratum_empty]
   congr 1
@@ -129,21 +119,15 @@ theorem atomW_eq (pred : W → Prop) : atomW pred F = Part.some {p ∈ F | pred 
   rw [Possibility.domain_restrict, Set.empty_inter]
   exact and_iff_right rfl
 
-/-- The card atom extends the file along its card, then filters by its
-predicate: the satisfaction clause and the domain clause of [heim-1982]'s
-atomic rule, per point. -/
 theorem atomVar_eq (pred : M → Prop) (x : V) :
     atomVar pred x F =
       Part.some {p ∈ F * State.stratum {x} | ∃ m : M, p.assignment x = ↑m ∧ pred m} := by
   rw [atomVar, ofState_apply, State.mul_atomAt]
 
-/-- At an established card the atom filters. -/
 theorem atomVar_eq_of_familiar (pred : M → Prop) (hfam : State.Familiar F x) :
     atomVar pred x F = Part.some {p ∈ F | ∃ m : M, p.assignment x = ↑m ∧ pred m} := by
   rw [atomVar_eq, hfam.mul_stratum_singleton]
 
-/-- At a novel card the atom is random assignment followed by filtering, so
-the indefinite adds only the Novelty guard. -/
 theorem atomVar_eq_of_novel [DecidableEq V] (pred : M → Prop) (hnov : State.Novel F x) :
     atomVar pred x F =
       Part.some {p ∈ F.randomAssign x | ∃ m : M, p.assignment x = ↑m ∧ pred m} := by
@@ -176,12 +160,9 @@ def def_ (x : V) (N : FCP W V M) : FCP W V M :=
 
 @[simp] theorem admits_neg : (neg φ).Admits F ↔ φ.Admits F := Iff.rfl
 
-/-- The conditional admits a file iff its antecedent does and its consequent
-admits the antecedent's update. -/
 theorem admits_cond :
     (cond φ ψ).Admits F ↔ ∃ h : φ.Admits F, ψ.Admits ((φ F).get h) := Iff.rfl
 
-/-- The Novelty Condition is definedness. -/
 theorem admits_indef [DecidableEq V] (body : FCP W V M) :
     (indef x body).Admits F ↔ ∃ _ : State.Novel F x, (body (F.randomAssign x)).Dom :=
   Iff.rfl
@@ -189,7 +170,6 @@ theorem admits_indef [DecidableEq V] (body : FCP W V M) :
 theorem indef_apply [DecidableEq V] (body : FCP W V M) (h : State.Novel F x) :
     indef x body F = body (F.randomAssign x) := Part.assert_pos h
 
-/-- The Extended Familiarity Condition is definedness. -/
 theorem admits_def_ (N : FCP W V M) :
     (def_ x N).Admits F ↔ State.Familiar F x ∧ N.supports F :=
   ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, trivial⟩⟩
@@ -197,7 +177,6 @@ theorem admits_def_ (N : FCP W V M) :
 theorem def_apply (N : FCP W V M) (h : State.Familiar F x ∧ N.supports F) :
     def_ x N F = Part.some F := Part.assert_pos h
 
-/-- Negation only discards points. -/
 theorem subset_of_mem_neg (h : F' ∈ neg φ F) : F' ⊆ F := by
   obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact fun _ hp ↦ hp.1
@@ -226,12 +205,10 @@ theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.indef [DecidableEq V
 theorem isEliminative_def_ (x : V) (N : FCP W V M) : (def_ x N).IsEliminative :=
   fun _ _ hF' ↦ let ⟨_, hF'⟩ := Part.mem_assert_iff.mp hF'; le_of_eq (Part.mem_some_iff.mp hF')
 
-/-- Once false, always false: an eliminative update of the absurd file is absurd. -/
 theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.eq_empty_of_mem
     (h : φ.IsEliminative) (hF' : F' ∈ φ ∅) : F' = ∅ :=
   State.eq_empty_of_le_bot (h ∅ F' hF')
 
-/-- A card, once established, stays established. -/
 theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.familiar (h : φ.IsEliminative)
     (hx : State.Familiar F x) (hF' : F' ∈ φ F) : State.Familiar F' x :=
   hx.of_le (h F F' hF')
@@ -243,21 +220,16 @@ defined and consistent. Existential quantification is built into truth, so
 indefinites need no existential closure. -/
 def trueIn (F : State W V M) (φ : FCP W V M) : Prop := ∃ F' ∈ φ F, F'.Nonempty
 
-/-- Truth implies definedness. -/
 theorem trueIn_admits (h : trueIn F φ) : φ.Admits F :=
   let ⟨F', hF', _⟩ := h
   Part.dom_iff_mem.mpr ⟨F', hF'⟩
 
-/-- A consistent file is true at what it supports. -/
 theorem trueIn_of_supports (hsup : φ.supports F) (hcons : F.Nonempty) :
     trueIn F φ :=
   ⟨F, hsup, hcons⟩
 
 /-! ### The uniform shadow -/
 
-/-- On a uniform stratum, non-subsistence negation is [heim-1983]'s
-set-difference negation (`CCP.Partial.neg`): with every referent shared, a
-point subsists in the update exactly when it survives into it. -/
 theorem neg_eq_partial_neg [DecidableEq V] {X : Finset V} (hF : State.UniformAt X F)
     (hφ : ∀ F' ∈ φ F, State.UniformAt X F') :
     neg φ F = CCP.Partial.neg φ F := by

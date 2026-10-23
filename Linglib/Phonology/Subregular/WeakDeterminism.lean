@@ -53,18 +53,14 @@ def IsWeaklyDeterministic (f : List α → List α) : Prop :=
   ∃ L R : List α → List α, IsLeftSubsequential L ∧ (∀ x, (L x).length ≤ x.length) ∧
     IsRightSubsequential R ∧ R ∘ L = f
 
-/-- A right-subsequential function is weakly deterministic, after the identity. -/
 theorem IsRightSubsequential.isWeaklyDeterministic (hf : IsRightSubsequential f) :
     IsWeaklyDeterministic f :=
   ⟨id, f, isLeftSubsequential_id, fun _ ↦ le_rfl, hf, rfl⟩
 
-/-- A left-subsequential function that does not lengthen its input is weakly deterministic, before
-the identity. -/
 theorem IsLeftSubsequential.isWeaklyDeterministic (hf : IsLeftSubsequential f)
     (hlen : ∀ x, (f x).length ≤ x.length) : IsWeaklyDeterministic f :=
   ⟨f, id, hf, hlen, isRightSubsequential_id, rfl⟩
 
-/-- A weakly deterministic function that preserves the empty word is computed by a bimachine. -/
 theorem IsWeaklyDeterministic.isBimachineComputable (hf : IsWeaklyDeterministic f)
     (hnil : f [] = []) : IsBimachineComputable f := by
   obtain ⟨L, R, hL, -, hR, rfl⟩ := hf

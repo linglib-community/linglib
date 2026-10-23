@@ -59,8 +59,6 @@ def lambdaAbsG (n : ℕ) (body : Assignment E → α) : Assignment E → E → �
 theorem lambdaAbsG_apply (body : Assignment E → α) (g : Assignment E) (x : E) :
     lambdaAbsG n body g x = body (g[n ↦ x]) := rfl
 
-/-- Abstraction over `n` binds `n`, so the abstract depends only on the indices other than `n`
-that its body depends on. -/
 theorem dependsOn_lambdaAbsG {s : Set ℕ} {body : Assignment E → α} (h : DependsOn body s)
     (n : ℕ) : DependsOn (lambdaAbsG n body) (s \ {n}) := by
   refine fun g g' hg ↦ funext fun x ↦ h fun i hi ↦ ?_
@@ -68,8 +66,6 @@ theorem dependsOn_lambdaAbsG {s : Set ℕ} {body : Assignment E → α} (h : Dep
   · simp
   · simp [update_of_ne hin, hg i ⟨hi, hin⟩]
 
-/-- Abstraction over `n` is vacuous, the constant function at the body's value at every
-assignment, exactly when the body does not depend on `n`. -/
 theorem lambdaAbsG_eq_const_iff {body : Assignment E → α} :
     (∀ g, lambdaAbsG n body g = const E (body g)) ↔ DependsOn body {n}ᶜ := by
   refine ⟨fun h g g' hg ↦ ?_, fun h g ↦ funext fun x ↦ h fun i hi ↦ update_of_ne hi ..⟩

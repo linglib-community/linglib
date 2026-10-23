@@ -48,7 +48,6 @@ def LicensedAt (d : Derivation) (n : ℕ) : Prop :=
 instance [DecidableEq β] (d : Derivation) (n : ℕ) : Decidable (d.LicensedAt φ n) := by
   unfold LicensedAt; infer_instance
 
-/-- The stage licensing looks at is the derivation's own. -/
 theorem LicensedAt.map_stageAt_ne_zero (h : d.LicensedAt φ n) :
     φ (d.stageAt n (head ∘ φ)) ≠ 0 := by
   obtain ⟨c, hc, hall⟩ := h

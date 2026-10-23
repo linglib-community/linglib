@@ -139,8 +139,6 @@ theorem InsensitiveToCol.interaction_eq_zero {f : X → R} (h : sq.InsensitiveTo
   rw [interaction_apply, h.1, h.2]
   ring
 
-/-- Under independence, a sum of per-constraint terms, each reading only its constraint's
-violations of the candidates of a form, has zero interaction. -/
 theorem Independent.interaction_sum_eq_zero {con : ConstraintSet (X × Y) (Fin n)}
     (h : sq.Independent con)
     (φ : Fin n → (Y → ℕ) → R) : sq.interaction (fun x ↦ ∑ k, φ k (curry (con k) x)) = 0 := by
@@ -149,8 +147,6 @@ theorem Independent.interaction_sum_eq_zero {con : ConstraintSet (X × Y) (Fin n
   exact Finset.sum_eq_zero fun k _ ↦ (h k).elim (·.comp _ |>.interaction_eq_zero)
     (·.comp _ |>.interaction_eq_zero)
 
-/-- Under independence, the harmony difference between two candidates has zero interaction, for
-every weighting. -/
 theorem Independent.interaction_harmonyScore_sub {con : ConstraintSet (X × Y) (Fin n)}
     (h : sq.Independent con) (w : Fin n → R) (a b : Y) :
     sq.interaction (fun x ↦ harmonyScore con w (x, a) - harmonyScore con w (x, b)) = 0 := by

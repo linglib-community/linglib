@@ -50,15 +50,11 @@ def rootSite : Semantics.Root.Position → ClauseSpine.Site
   | .adjoined => .adjunct .V
 
 
-/-- The core prediction is that vVPE tolerates both voice and transitivity mismatches while
-    blocking lexical verb mismatches. -/
 theorem vVPE_mismatch_pattern :
     vStrandingVPE.Tolerates .voice ∧
     vStrandingVPE.Tolerates .transitivity ∧
     ¬ vStrandingVPE.Tolerates .lexical := by decide
 
-/-- English VPE has a strictly more restrictive profile than vVPE, since it also blocks
-transitivity mismatches. -/
 theorem vpEllipsis_more_restrictive :
     ¬ vpEllipsis.Tolerates .transitivity ∧
     vStrandingVPE.Tolerates .transitivity := by decide
@@ -77,19 +73,14 @@ def causative : List LittleV := [.vDO, .vBE]
 /-- The inchoative alternant is the same state under `vGO`. -/
 def inchoative : List LittleV := [.vGO, .vBE]
 
-/-- The alternants differ in the light verb and share its complement, the VP. -/
 theorem alternants_share_vp :
     LittleV.Causative causative ∧ LittleV.Inchoative inchoative ∧
       causative.tail = inchoative.tail ∧ causative ≠ inchoative := by
   decide
 
-/-- The causative alternation is tolerated under vVPE because transitivity mismatches are
-    allowed. -/
 theorem causative_alternation_ok_under_vVPE :
     vStrandingVPE.Tolerates .transitivity := by decide
 
-/-- The causative alternation is blocked under English VPE because transitivity mismatches are
-    blocked. -/
 theorem causative_alternation_blocked_english :
     ¬ vpEllipsis.Tolerates .transitivity := by decide
 
@@ -99,13 +90,10 @@ theorem causative_alternation_blocked_english :
     so they cannot be elided (§5). -/
 theorem antipassive_blocks_vVPE : vStrandingVPE.Spares (rootSite .adjoined) := by decide
 
-/-- Change-of-state roots, merged with the direct object, lie inside vVPE's deletion domain and
-    can be elided. -/
 theorem change_of_state_allows_vVPE : vStrandingVPE.Deletes (rootSite .complement) := by decide
 
 /-! ### Cross-linguistic predictions -/
 
-/-- Sluicing tolerates fewer mismatches than English VPE, which tolerates fewer than vVPE. -/
 theorem mismatch_hierarchy :
     -- Sluicing: blocks both voice and transitivity
     ¬ sluicing.Tolerates .voice ∧
@@ -118,23 +106,16 @@ theorem mismatch_hierarchy :
     vStrandingVPE.Tolerates .transitivity := by
   decide
 
-/-- vVPE's [E] position, v, is strictly below English VPE's, Voice, so by Sailor's generalization
-    any mismatch tolerated by English VPE is tolerated by vVPE. -/
 theorem vVPE_below_vpEllipsis :
     vStrandingVPE.ePosition ∈ clausalSpine.below vpEllipsis.ePosition := by decide
 
 /-! ### The causative chain -/
 
-/-- The alternants share their VP under distinct light verbs ([cuervo-2003]) and vVPE with [E]
-on v elides the VP alone ([merchant-2013]), so the alternation is tolerated under vVPE. -/
 theorem end_to_end_causative_chain :
     causative.tail = inchoative.tail ∧ causative ≠ inchoative ∧
       vStrandingVPE.Deletes (rootSite .complement) ∧ vStrandingVPE.Tolerates .transitivity := by
   decide
 
-/-- Sluicing, with [E] on C, blocks voice mismatches under Merchant's theory too, since Voice
-is inside TP, its deletion domain, as the Santa Cruz sluicing data set of Anand, Hardt and
-McCloskey confirms independently. -/
 theorem sluicing_voice_blocked_convergent :
     ¬ sluicing.Tolerates .voice := by decide
 
@@ -147,13 +128,10 @@ theorem vVPE_both_again :
     vStrandingVPE.Spares AgainReading.repetitive.site ∧
       vStrandingVPE.Spares AgainReading.restitutive.site := by decide
 
-/-- English VPE deletes restitutive *again*, so only the repetitive reading survives
-([merchant-2013]). -/
 theorem vpEllipsis_only_repetitive :
     vpEllipsis.Spares AgainReading.repetitive.site ∧
       ¬ vpEllipsis.Spares AgainReading.restitutive.site := by decide
 
-/-- The *again* test separates vVPE from English VPE, whose deletion domains differ. -/
 theorem again_distinguishes_vVPE_from_vpEllipsis :
     vStrandingVPE.Spares AgainReading.restitutive.site ∧
       ¬ vpEllipsis.Spares AgainReading.restitutive.site := by decide
@@ -193,8 +171,6 @@ attaches to v, one describing an end state merges with the direct object. -/
 def position (r : Root) : Root.Position :=
   if .manner ∈ r.kinds then .adjoined else .complement
 
-/-- A root lies in vVPE's deletion domain exactly when it entails no manner. The roots merged
-with the direct object are elided with it, the v-adjoined ones never. -/
 theorem deletes_rootSite_position_iff (r : Root) :
     vStrandingVPE.Deletes (rootSite (position r)) ↔ .manner ∉ r.kinds := by
   unfold position
@@ -237,21 +213,16 @@ def Language.respectsVIR? : Language → Option Bool
   | .muiraDargwa => some false
   | _ => none
 
-/-- Every language but Bangla elides the complement of v. -/
 theorem ellipsis_eq_vStrandingVPE_iff (l : Language) :
     l.ellipsis = vStrandingVPE ↔ l ≠ .bangla := by
   cases l <;> decide
 
-/-- Persian and Muira Dargwa share the [E] position but differ on the Verbal Identity Requirement,
-so languages with [E] on v may respect or disregard it. -/
 theorem persian_stricter_than_dargwa :
     Language.persian.ellipsis = Language.muiraDargwa.ellipsis ∧
       Language.persian.respectsVIR? = some true ∧
       Language.muiraDargwa.respectsVIR? = some false :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Bangla's ellipsis is the larger one, and the *again* test shows it, since restitutive
-*again* is deleted in Bangla but survives in Muira Dargwa. -/
 theorem bangla_larger_domain :
     Language.muiraDargwa.ellipsis.ePosition ∈
         clausalSpine.below Language.bangla.ellipsis.ePosition ∧

@@ -80,7 +80,6 @@ theorem claim_iff_witnesses_nonempty (v : W) :
     claim Q D v ↔ (witnesses D Q v).Nonempty := by
   simp [claim, witnesses, Finset.Nonempty]
 
-/-- Two distinct possibilities give Modal Variation under uniqueness. -/
 theorem modalVariation_of_two (hU : Uniqueness R w D Q) {a b : E} (ha : a ∈ D) (hb : b ∈ D)
     (hab : a ≠ b) (pa : ◇[R] (Q · a) w) (pb : ◇[R] (Q · b) w) : ModalVariation R w D Q := by
   obtain ⟨v, hv, hqa⟩ := pa
@@ -89,13 +88,11 @@ theorem modalVariation_of_two (hU : Uniqueness R w D Q) {a b : E} (ha : a ∈ D)
   have hb' : b ∈ witnesses D Q v := h ▸ Finset.mem_filter.2 ⟨hb, hqb⟩
   exact hab (Finset.card_le_one.1 (hU v hv) a (Finset.mem_filter.2 ⟨ha, hqa⟩) b hb')
 
-/-- Under uniqueness, Free Choice on a domain with two members entails Modal Variation. -/
 theorem modalVariation_of_freeChoice (hU : Uniqueness R w D Q) (hD : 1 < D.card)
     (h : FreeChoice R w D Q) : ModalVariation R w D Q :=
   let ⟨a, ha, b, hb, hab⟩ := Finset.one_lt_card.1 hD
   modalVariation_of_two R w D Q hU ha hb hab (h a ha) (h b hb)
 
-/-- Modal Variation fails when no accessible world has a witness. -/
 theorem not_modalVariation_of_box_empty (h : □[R] (fun v => witnesses D Q v = ∅) w) :
     ¬ ModalVariation R w D Q :=
   fun ⟨v, hv, v', hv', hne⟩ => hne ((h v hv).trans (h v' hv').symm)
@@ -119,7 +116,6 @@ section Witnessing
 
 variable {R D Q}
 
-/-- Possibility of the claim is possibility of one of its witnesses. -/
 theorem diamond_claim_iff {S : Finset E} {v : W} :
     ◇[R] (claim Q S) v ↔ ∃ x ∈ S, ◇[R] (Q · x) v :=
   ⟨fun ⟨u, hu, x, hx, hq⟩ ↦ ⟨x, hx, u, hu, hq⟩, fun ⟨x, hx, u, hu, hq⟩ ↦ ⟨u, hu, x, hx, hq⟩⟩
@@ -129,9 +125,6 @@ private theorem exists_single_witness (h : RealizesWitnessSets R D Q) {x : E} (h
   (h {x} (Finset.singleton_subset_iff.2 hx) ⟨x, by simp⟩).imp fun _ hv y hy ↦
     (hv y hy).trans Finset.mem_singleton
 
-/-- Against the possibility of each member of the domain, the minimal verified sets of the
-possibility of the claim are those of the single-witness worlds, and together they contain every
-alternative. -/
 theorem sUnion_minimal_singletons (h : RealizesWitnessSets R D Q) :
     ⋃₀ {M | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) ''
       {v | ◇[R] (claim Q D) v}) M} = (fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D := by
@@ -147,8 +140,6 @@ theorem sUnion_minimal_singletons (h : RealizesWitnessSets R D Q) :
   obtain rfl := (hv t ht).1 hva
   exact ⟨⟨t, ht, rfl⟩, hyu⟩
 
-/-- Against the possibility of each member, innocent exclusion leaves the possibility of the claim
-as it is. -/
 theorem exhIE_singletons_eq (h : RealizesWitnessSets R D Q) :
     exhIE ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {v | ◇[R] (claim Q D) v} := by
@@ -156,8 +147,6 @@ theorem exhIE_singletons_eq (h : RealizesWitnessSets R D Q) :
   rw [mem_exhIE_iff_subset_sUnion, sUnion_minimal_singletons h]
   exact ⟨And.left, fun hw ↦ ⟨hw, fun a ha ↦ ha.1⟩⟩
 
-/-- Against the possibility of each member, innocent exclusion and inclusion strengthens the
-possibility of the claim exactly to free choice, without pre-exhaustification. -/
 theorem exhIEII_singletons_eq_freeChoice (h : RealizesWitnessSets R D Q) (hD : D.Nonempty) :
     exhIEII ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {w | FreeChoice R w D Q} := by
@@ -197,7 +186,6 @@ def subdomainAlternatives : Subdomains → Finset E → Finset (Finset E)
   | .singletons, D => D.image ({·})
   | .proper, D => Finset.Ioo ∅ D
 
-/-- The singleton alternatives are among the proper ones. -/
 theorem subdomainAlternatives_singletons_subset (hD : 1 < D.card) :
     subdomainAlternatives .singletons D ⊆ subdomainAlternatives .proper D := by
   intro S hS
@@ -211,8 +199,6 @@ of the domain. -/
 def AntiExhaustivity (S : Finset E) : Prop :=
   ◇[R] (claim Q S) w → ◇[R] (claim Q (D \ S)) w
 
-/-- For a singleton, anti-exhaustivity negates the possibility of its member exhaustified against
-the possibility of each other member of the domain. -/
 theorem antiExhaustivity_singleton_iff {a : E} (ha : a ∈ D) :
     AntiExhaustivity R w D Q {a} ↔ ¬ exhAgainst (· ≠ ·) (fun x : D ↦ ◇[R] (Q · x) w) ⟨a, ha⟩ := by
   simp only [AntiExhaustivity, exhAgainst, claim, Diamond, Finset.mem_singleton, exists_eq_left,
@@ -220,14 +206,11 @@ theorem antiExhaustivity_singleton_iff {a : E} (ha : a ∈ D) :
   exact ⟨fun h hv ↦ let ⟨v, hv', x, ⟨hx, hxa⟩, hq⟩ := h hv; ⟨x, hx, fun h ↦ hxa h.symm, v, hv', hq⟩,
     fun h hv ↦ let ⟨x, hx, hxa, v, hv', hq⟩ := h hv; ⟨v, hv', x, ⟨hx, fun h ↦ hxa h.symm⟩, hq⟩⟩
 
-/-- Under a possibility modal the claim entails one of its singleton alternatives. -/
 theorem exists_singleton_of_diamond (h : ◇[R] (claim Q D) w) :
     ∃ S ∈ subdomainAlternatives .singletons D, ◇[R] (claim Q S) w :=
   let ⟨v, hv, a, ha, hqa⟩ := h
   ⟨{a}, Finset.mem_image_of_mem _ ha, v, hv, a, Finset.mem_singleton_self a, hqa⟩
 
-/-- Negating the pre-exhaustified singleton alternatives makes at least two members
-possibilities. -/
 theorem two_of_singletons (h : ◇[R] (claim Q D) w)
     (hs : ∀ S ∈ subdomainAlternatives .singletons D, AntiExhaustivity R w D Q S) :
     ∃ a ∈ D, ∃ b ∈ D, a ≠ b ∧ ◇[R] (Q · a) w ∧ ◇[R] (Q · b) w := by
@@ -238,8 +221,6 @@ theorem two_of_singletons (h : ◇[R] (claim Q D) w)
   exact ⟨a, ha, b, hbD, fun h => hba (h ▸ Finset.mem_singleton_self a), ⟨v, hv, hqa⟩,
     ⟨v', hv', hqb⟩⟩
 
-/-- Under uniqueness, negating the pre-exhaustified singleton alternatives yields Modal
-Variation. -/
 theorem modalVariation_of_singletons [∀ v, DecidablePred (Q v)] (hU : Uniqueness R w D Q)
     (h : ◇[R] (claim Q D) w)
     (hs : ∀ S ∈ subdomainAlternatives .singletons D, AntiExhaustivity R w D Q S) :
@@ -247,8 +228,6 @@ theorem modalVariation_of_singletons [∀ v, DecidablePred (Q v)] (hU : Uniquene
   let ⟨_, ha, _, hb, hab, pa, pb⟩ := two_of_singletons R w D Q h hs
   modalVariation_of_two R w D Q hU ha hb hab pa pb
 
-/-- Under a necessity modal, a true claim whose singleton alternatives are all false shows
-Modal Variation. -/
 theorem modalVariation_of_box [∀ v, DecidablePred (Q v)] (hw : ∃ v, w ~[R] v)
     (h : □[R] (claim Q D) w)
     (hc : ∀ S ∈ subdomainAlternatives .singletons D, ¬ □[R] (claim Q S) w) :
@@ -261,7 +240,6 @@ theorem modalVariation_of_box [∀ v, DecidablePred (Q v)] (hw : ∃ v, w ~[R] v
   exact ⟨v, hv, v', hv', fun h =>
     hna (Finset.mem_filter.1 (h ▸ Finset.mem_filter.2 ⟨ha, hqa⟩ : a ∈ witnesses D Q v')).2⟩
 
-/-- Negating every pre-exhaustified proper alternative yields Free Choice. -/
 theorem freeChoice_of_proper (h : ◇[R] (claim Q D) w)
     (hs : ∀ S ∈ subdomainAlternatives .proper D, AntiExhaustivity R w D Q S) :
     FreeChoice R w D Q := by
@@ -295,8 +273,6 @@ theorem mem_subdomainAlternatives_proper {S : Finset E} :
   rw [subdomainAlternatives, Finset.mem_Ioo, Finset.empty_ssubset, Finset.ssubset_iff_subset_ne]
   tauto
 
-/-- A domain with a proper nonempty subdomain has each of its singletons as a subdomain
-alternative. -/
 theorem singleton_mem_subdomainAlternatives_proper (hS₀ : S₀ ∈ subdomainAlternatives .proper D)
     {y : E} (hy : y ∈ D) : {y} ∈ subdomainAlternatives .proper D := by
   obtain ⟨hsub, ⟨x, hx⟩, hne⟩ := mem_subdomainAlternatives_proper.1 hS₀
@@ -305,9 +281,6 @@ theorem singleton_mem_subdomainAlternatives_proper (hS₀ : S₀ ∈ subdomainAl
   exact hne (Finset.Subset.antisymm hsub (Finset.singleton_subset_iff.2
     ((Finset.mem_singleton.1 (hsub hx)) ▸ hx)))
 
-/-- Innocently exhaustifying the possibility of a proper subdomain against every subdomain
-alternative denies the possibility of the rest of the domain, in a model realizing every set of
-witnesses. -/
 theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
     w ∈ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
@@ -365,8 +338,6 @@ theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     exact ⟨z, hzT, not_not.1 fun hz ↦
       hw (diamond_claim_iff.2 ⟨z, Finset.mem_sdiff.2 ⟨hP hT hzT, hz⟩, hzw⟩)⟩
 
-/-- Negating the innocent pre-exhaustification of a proper subdomain is its anti-exhaustivity,
-in a model realizing every set of witnesses. -/
 theorem notMem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
     w ∉ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
@@ -374,7 +345,6 @@ theorem notMem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
   rw [mem_exhIE_subdomain_iff h hS₀, AntiExhaustivity]
   tauto
 
-/-- Negating the innocently pre-exhaustified subdomain alternatives yields free choice. -/
 theorem freeChoice_of_forall_notMem_exhIE (h : RealizesWitnessSets R D Q)
     (hw : ◇[R] (claim Q D) w)
     (hs : ∀ S ∈ subdomainAlternatives .proper D,
@@ -383,9 +353,6 @@ theorem freeChoice_of_forall_notMem_exhIE (h : RealizesWitnessSets R D Q)
     FreeChoice R w D Q :=
   freeChoice_of_proper R w D Q hw fun S hS ↦ (notMem_exhIE_subdomain_iff h hS).1 (hs S hS)
 
-/-- Exhaustifying the possibility of a subdomain with two members against every subdomain
-alternative without innocent exclusion is contradictory, in a model realizing every set of
-witnesses. -/
 theorem exh_subdomain_eq_empty (h : RealizesWitnessSets R D Q)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) (h2 : 1 < S₀.card) :
     exh ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))

@@ -165,9 +165,6 @@ def DetoComplement (v : Verb) : Prop :=
 instance (v : Verb) : Decidable (DetoComplement v) :=
   inferInstanceAs (Decidable ((∃ a ∈ v.attitude, _) ∧ _ ∧ ∃ fr ∈ v.valency.frames, _))
 
-/-- The double requirement picks out exactly the predicates Krapova lists as *deto*-takers, and
-neither condition suffices, since *văzmuštavam se* 'resent' is emotive without a *za* phrase and
-*razbiram* 'comprehend' is factive without being emotive. -/
 theorem detoComplement_iff :
     (∀ v ∈ Bulgarian.verbs, DetoComplement v ↔ v.form ∈ Bulgarian.detoTakers.map (·.form)) ∧
       ¬ DetoComplement Bulgarian.vazmushtavamSe ∧ ¬ DetoComplement Bulgarian.razbiram := by
@@ -256,9 +253,6 @@ theorem table80 :
 
 /-! ### The D-inflection diagnostic (21) -/
 
-/-- The relative pronoun *yox̂* ~ *ko* inflects for case, in that cells of the paradigm with
-distinct cases share no forms. This is the case half of the diagnostic that *yox̂* ~ *ko* is a D
-while the invariant *ke* is a C. -/
 theorem paradigm_case_discriminates :
     ∀ p ∈ relativePronounParadigm, ∀ q ∈ relativePronounParadigm,
       p.case ≠ q.case → ∀ f ∈ p.forms, f ∉ q.forms := by

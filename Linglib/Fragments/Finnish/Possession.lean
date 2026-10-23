@@ -40,8 +40,6 @@ def endings : Paradigm (List Segment) :=
     (.personNumber .third .singular, [n, s, A]), (.personNumber .first .plural, [m, m, e]),
     (.personNumber .second .plural, [n, n, e]), (.personNumber .third .plural, [n, s, A])]
 
-/-- Two cells share an ending exactly when they are the same cell or both are third
-person. -/
 theorem realize_eq_realize_iff :
     ∀ p ∈ Bundle.personNumberCells, ∀ q ∈ Bundle.personNumberCells,
       endings.realize p = endings.realize q ↔ p = q ∨ p.person = .third ∧ q.person = .third := by

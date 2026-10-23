@@ -62,7 +62,6 @@ theorem CompositionRule.override_eq_of_eq_some [DecidableEq D]
     (h : r ds = some d) : r.override shifts ds = [d] := by
   simp [CompositionRule.override, h]
 
-/-- With no reconciliation operators, a mismatch has no readings. -/
 @[simp]
 theorem CompositionRule.override_nil [DecidableEq D]
     (r : CompositionRule D) (ds : List D) :

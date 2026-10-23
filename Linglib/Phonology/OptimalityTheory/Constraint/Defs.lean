@@ -64,17 +64,14 @@ def Constraint.binary (P : C → Prop) [DecidablePred P] : Constraint C :=
 @[simp] theorem Constraint.binary_apply (P : C → Prop) [DecidablePred P] (c : C) :
     Constraint.binary P c = if P c then 1 else 0 := rfl
 
-/-- A binary constraint never assigns more than one violation. -/
 theorem Constraint.binary_le_one (P : C → Prop) [DecidablePred P] (c : C) :
     Constraint.binary P c ≤ 1 := by
   simp only [Constraint.binary]; split <;> omega
 
-/-- A binary constraint is satisfied exactly when its predicate fails. -/
 theorem Constraint.binary_eq_zero_iff (P : C → Prop) [DecidablePred P] (c : C) :
     Constraint.binary P c = 0 ↔ ¬P c := by
   simp [Constraint.binary]
 
-/-- A binary constraint is violated exactly when its predicate holds. -/
 theorem Constraint.binary_eq_one_iff (P : C → Prop) [DecidablePred P] (c : C) :
     Constraint.binary P c = 1 ↔ P c := by
   simp [Constraint.binary]

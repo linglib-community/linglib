@@ -95,8 +95,6 @@ def reflexes (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
       ∪ if a.focus = subject then {.morpheme (toDual subject) [.free Yoruba.Pronouns.«ó».form]}
         else ∅
 
-/-- *rín* heads the focus phrase whose specifier holds the fronted focus, so every reflex is
-hosted by the focus itself. -/
 theorem exactlyTargets_reflexes : ExactlyTargets a.reflexes (toDual a.focus) := by
   intro ρ hρ
   cases h : a.strategy <;> simp only [reflexes, h] at hρ
@@ -127,7 +125,6 @@ end Answer
 
 open Answer
 
-/-- A focus in place has no reflex in any channel, as *Adé rí Tolú* 'Adé saw TOLÚ' has none. -/
 theorem not_perceptible : ¬ Perceptible fun a : {a : Answer // a.Licensed} ↦ a.1.reflexes :=
   fun h ↦ Finset.not_nonempty_empty (h ⟨⟨object, .inSitu⟩, by decide⟩)
 
@@ -165,13 +162,10 @@ instance (a : Answer) (r : Datum) : Decidable (Accepts a r) :=
 /-- The Ìkálẹ̀ rows. -/
 def ikaleRows : List Datum := Examples.all.filter (·.language = "ikal1241")
 
-/-- Every Ìkálẹ̀ row records an answer, which the model accepts exactly when the chapter judges
-the row felicitous. -/
 theorem judgedFelicitous_iff :
     ∀ r ∈ ikaleRows, ∃ a ∈ Answer.ofRow? r, (Accepts a r ↔ r.JudgedFelicitous) := by
   decide
 
-/-- *rín* is the last word of every clause it marks, whatever has been fronted. -/
 theorem rin_last :
     ∀ r ∈ ikaleRows, Marked r → r.feature? "continuation" = none →
       r.surfaceTokens.getLast? = some Yoruba.rin.form := by

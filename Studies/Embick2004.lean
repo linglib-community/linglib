@@ -100,17 +100,13 @@ def rootComplement (r : Root) : Tree Cat Word :=
 def directMerge (r : Root) : Tree Cat Word :=
   .adjoin .v [.terminal .root (.root r), .terminal .v .fient]
 
-/-- The Root and v[FIENT] are sisters in both structures. -/
 theorem children_perm (r : Root) : (rootComplement r).children.Perm (directMerge r).children :=
   List.Perm.swap _ _ []
 
-/-- v[FIENT] heads both structures, as the daughter of their category. -/
 theorem headIndex?_rootComplement (r : Root) : (rootComplement r).headIndex? = some 0 := rfl
 
 theorem headIndex?_directMerge (r : Root) : (directMerge r).headIndex? = some 1 := rfl
 
-/-- What tells the structures apart is how v[FIENT] heads them: a Root complement is projected
-over, while a directly merged Root makes the mother a further segment of v[FIENT]. -/
 theorem isSegment_directMerge (r : Root) :
     ¬ (rootComplement r).value.IsSegment ∧ (directMerge r).value.IsSegment :=
   ⟨id, trivial⟩
@@ -127,7 +123,6 @@ def moveRoot : Tree Cat Word → Tree Cat Word
 def headDaughter? (t : Tree Cat Word) : Option (Tree Cat Word) :=
   t.headIndex?.bind (t.children[·]?)
 
-/-- Head movement of a Root complement builds exactly the complex head of Direct Merge. -/
 theorem headDaughter?_moveRoot (r : Root) :
     headDaughter? (moveRoot (rootComplement r)) = some (directMerge r) := rfl
 
@@ -155,8 +150,6 @@ theorem realize_flat : realize vocabulary ⟨.flat, [.fient]⟩ = some "-en" := 
 
 theorem realize_hammer : realize vocabulary ⟨.hammer, [.fient]⟩ = some "" := by decide
 
-/-- Every vocabulary realizes v[FIENT] alike whether its Root moved from complement position or
-was directly merged, so *hammer-ed* has the null v[FIENT] of *hammer-ed flat*. -/
 theorem realize_moveRoot (vocab : List (VocabularyItem Feature String)) (r : Root) :
     ((headDaughter? (moveRoot (rootComplement r))).bind complexHead?).map (realize vocab) =
       (complexHead? (directMerge r)).map (realize vocab) := by
@@ -237,7 +230,6 @@ theorem isSome_interp_iff (p : FientP) : (p.interp M).isSome ↔ p.Interpretable
   rcases p with ⟨_ | x, _ | m, _ | _ | _, _ | _ | _⟩ <;>
     simp only [interp, Interpretable] <;> (try split_ifs) <;> simp_all
 
-/-- An interpretable structure satisfies the condition on v[FIENT]. -/
 theorem Interpretable.satisfiesFient {p : FientP} (h : p.Interpretable) : p.SatisfiesFient := by
   rcases p with ⟨_ | x, _ | m, _ | _ | _, _ | _ | _⟩ <;> simp_all [Interpretable, SatisfiesFient]
 
@@ -303,12 +295,8 @@ def FientP.ofDatum (d : Datum) : Option FientP := do
 def data : List (FientP × Judgment) :=
   Examples.all.filterMap fun d ↦ (FientP.ofDatum d).map (·, d.judgment)
 
-/-- Every example has its analysis. -/
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
-/-- An example is acceptable exactly when its analysis is interpretable: *The metal is hammered*
-and *John laughed himself hoarse* are, *John is laughed*, *John laughed hoarse* and *John kicked
-the door opened* are not. -/
 theorem acceptable_iff_interpretable :
     ∀ p ∈ data, p.2 = .acceptable ↔ p.1.Interpretable := by
   decide +kernel

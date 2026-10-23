@@ -78,7 +78,6 @@ def CIItem.utter (o : Orientation Person) (K : State (Orientation Person) W) :
 
 variable (K : State (Orientation Person) W)
 
-/-- A speaker-oriented reading commits the speaker to both tiers. -/
 theorem contextSet_utter_speaker :
     contextSet (ofCommitter (item.utter .speaker K) .speaker) =
       {w | item.atIssue w} ∩
@@ -93,8 +92,6 @@ theorem contextSet_utter_speaker_other (p : Person) :
       {w | item.atIssue w} ∩ contextSet (ofCommitter K .speaker) := by
   ext w; simp [CIItem.utter, ofCommitter, contextSet, contents, commit]
 
-/-- The participant the item is oriented to is committed to the implicature and to nothing
-at-issue. -/
 theorem contextSet_utter_other (p : Person) :
     contextSet (ofCommitter (item.utter (.other p) K) (.other p)) =
       {w | item.ciFor (.other p) w} ∩ contextSet (ofCommitter K (.other p)) := by

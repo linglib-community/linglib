@@ -100,8 +100,6 @@ def PEntails (s : Finset ι) (X : ι → Formula Ω) (d : Formula Ω) : Prop :=
 theorem pEntails_of_mem {X : ι → Formula Ω} {i : ι} (hi : i ∈ s) : PEntails s X (X i) :=
   fun ε hε ↦ ⟨ε, hε, fun _ _ _ _ hp ↦ hp i hi⟩
 
-/-- A conditional is probable within `δ` iff its antecedent's falsifying part has at most `δ` of
-its antecedent's mass. -/
 theorem one_sub_le_cond_iff {μ : Measure Ω} [IsProbabilityMeasure μ] {A B : Set Ω} {δ : ℝ≥0∞}
     (hA : MeasurableSet A) (hB : MeasurableSet B) (h0 : μ A ≠ 0) :
     1 - δ ≤ μ[B | A] ↔ μ (A ∩ Bᶜ) ≤ δ * μ A := by
@@ -138,17 +136,12 @@ theorem uncertainty_le_sum (h : ⋂ i ∈ s, A i ⊆ B) (μ : Measure Ω) :
         exact hw (h (Set.mem_iInter₂.mpr hw'))
     _ ≤ ∑ i ∈ s, μ (A i)ᶜ := measure_biUnion_finset_le s _
 
-/-- A state where the premises hold and the conclusion fails gives a probability measure, its
-point mass, that makes the premises certain and the conclusion certainly false. -/
 theorem exists_dirac_of_not_subset (hB : MeasurableSet B) (h : ¬ ⋂ i ∈ s, A i ⊆ B) :
     ∃ w, (∀ i ∈ s, Measure.dirac w (A i) = 1) ∧ Measure.dirac w B = 0 := by
   obtain ⟨w, hw, hwB⟩ := Set.not_subset.mp h
   exact ⟨w, fun i hi ↦ Measure.dirac_apply_of_mem (Set.mem_iInter₂.mp hw i hi), by
     rw [Measure.dirac_apply' _ hB, Set.indicator_of_notMem hwB]⟩
 
-/-- **Theorems 3.1, 3.3 and 3.4, for factual formulas.** Logical consequence, p-entailment, the
-uncertainty bound under every probability, and the preservation of certainty coincide; for
-factual premises 3.3 needs no consistency assumption. -/
 theorem tfae_pEntails (hA : ∀ i ∈ s, MeasurableSet (A i)) (hB : MeasurableSet B) :
     [⋂ i ∈ s, A i ⊆ B,
       PEntails s (fun i ↦ .fact (A i)) (.fact B),
@@ -195,8 +188,6 @@ theorem exists_of_not_pEntails (hA : ∀ i ∈ s, MeasurableSet (A i)) (hB : Mea
 
 end Factual
 
-/-- **The lottery.** Each of `n + 1` tickets loses with uncertainty `1 / (n + 1)`, yet that every
-ticket loses is certainly false, so the uncertainty bound holds with equality. -/
 theorem lottery_attains_bound (n : ℕ) :
     let μ := uniformOn (Set.univ : Set (Fin (n + 1)))
     μ (⋂ i ∈ Finset.univ, ({i}ᶜ : Set (Fin (n + 1))))ᶜ = 1 ∧
@@ -210,8 +201,6 @@ section Conditional
 
 variable [DiscreteMeasurableSpace Ω] {X : ι → Formula Ω}
 
-/-- P-entailment of *if `φ` then `ψ`* bounds the mass of the states falsifying it by a fraction
-of its antecedent's, under every probability proper for the premises. -/
 theorem pEntails_iff_mass {φ ψ : Set Ω} : PEntails s X ⟨φ, ψ⟩ ↔ ∀ ε > 0, ∃ δ > 0,
     ∀ μ : Measure Ω, IsProbabilityMeasure μ → (∀ i ∈ s, μ (X i).ante ≠ 0) →
       (∀ i ∈ s, 1 - δ ≤ μ[(X i).cons | (X i).ante]) → μ (φ ∩ ψᶜ) ≤ ε * μ φ := by
@@ -278,10 +267,6 @@ theorem isPreferential_pEntails (s : Finset ι) (X : ι → Formula Ω) :
       _ ≤ ε / 2 * (2 * μ (φ ∩ ψ)) := by gcongr
       _ = ε * μ (φ ∩ ψ) := by rw [← mul_assoc, ENNReal.div_mul_cancel two_ne_zero ofNat_ne_top]
 
-/-- Two states give a probabilistic counterexample when one, `v`, falsifies the conclusion,
-whose antecedent the other, `w`, misses, and each premise is verified by `w`, or misses `w` and is
-verified by `v`: weighting `v` lightly makes every premise probable and the conclusion
-improbable, as Adams's Venn diagrams depict. -/
 theorem not_pEntails_of_falsify {d : Formula Ω} {v w : Ω} (hv : v ∈ d.ante) (hvd : v ∉ d.cons)
     (hw : w ∉ d.ante) (hX : ∀ i ∈ s, w ∈ (X i).ante ∧ w ∈ (X i).cons ∨
       w ∉ (X i).ante ∧ v ∈ (X i).ante ∧ v ∈ (X i).cons) :
@@ -411,8 +396,6 @@ theorem materially_valid_not_pEntailed (π : Pattern) : π.MateriallyValid ∧ �
     cases π <;> simp [Pattern.witnesses, Pattern.premises, Pattern.conclusion, atom, Formula.fact,
       Fin.forall_fin_succ]
 
-/-- **The printed inferences.** Each English inference Adams prints is unacceptable and
-instantiates a pattern valid for the material conditional but not p-entailed. -/
 theorem printed_inferences : ∀ e ∈ Examples.all, e.judgment = .unacceptable ∧
     ∃ π : Pattern, e.feature? "pattern" = some π.name ∧ π.MateriallyValid ∧ ¬ π.PEntailed := by
   intro e he
@@ -421,9 +404,6 @@ theorem printed_inferences : ∀ e ∈ Examples.all, e.judgment = .unacceptable 
   obtain ⟨hj, π, hπ⟩ := hname
   exact ⟨hj, π, hπ, materially_valid_not_pEntailed π⟩
 
-/-- **P-entailment is not rational.** `B ⇒ C` p-entails neither `B ⇒ −A` nor, by Antecedent
-Restriction's counterexample, `(B & A) ⇒ C`, so rational monotonicity fails, which the
-closest-worlds conditional on a total order satisfies (`Conditional.isRational_closestImp`). -/
 theorem not_isRational_pEntails :
     ¬ Nonmonotonic.IsRational fun φ ψ : Set Assignment ↦
       PEntails Finset.univ ![(⟨atom 1, atom 2⟩ : Formula Assignment)] ⟨φ, ψ⟩ := fun h ↦

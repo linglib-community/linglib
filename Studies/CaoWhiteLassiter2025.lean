@@ -105,7 +105,6 @@ positive probability other than the one taken. -/
 noncomputable def altCount [MeasurableSpace A] (μ : MeasureTheory.Measure A) : ℕ :=
   ({a | μ {a} ≠ 0} \ {taken}).ncard
 
-/-- The causee had no alternative exactly when every other action had probability zero. -/
 theorem altCount_eq_zero_iff [MeasurableSpace A] (μ : MeasureTheory.Measure A) :
     altCount taken μ = 0 ↔ ∀ a ≠ taken, μ {a} = 0 := by
   rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty,
@@ -139,13 +138,11 @@ variable (pr : A → ℝ≥0∞) (w : A → ℝ≥0) (a : A)
 noncomputable def intentionDegree : ℝ≥0∞ :=
   (pr a * w a) / ∑ a', pr a' * w a'
 
-/-- INT is a share, so it never exceeds 1. -/
 theorem intentionDegree_le_one : intentionDegree pr w a ≤ 1 :=
   ENNReal.div_le_of_le_mul <| by
     simpa using Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
       (Finset.mem_univ a)
 
-/-- An action that is the only goal-conducive one carries the whole normalized weight. -/
 theorem intentionDegree_eq_one_of_no_alternatives
     (h : ∀ a ≠ taken, pr a = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0)
     (htop : pr taken ≠ ∞) :
@@ -155,9 +152,6 @@ theorem intentionDegree_eq_one_of_no_alternatives
   exact ENNReal.div_self (mul_ne_zero h0 (ENNReal.coe_ne_zero.mpr hw))
     (ENNReal.mul_ne_top htop ENNReal.coe_ne_top)
 
-/-- An agent who could not have done otherwise comes out maximally intentional, since the
-simplified INT does not carry the alternative-possibilities condition; ALT is what separates
-*made* from *forced*. -/
 theorem intentionDegree_eq_one_of_altCount_eq_zero [MeasurableSpace A]
     (μ : MeasureTheory.Measure A) [MeasureTheory.IsFiniteMeasure μ]
     (hle : ∀ a, pr a ≤ μ {a}) (h : altCount taken μ = 0) (h0 : pr taken ≠ 0)
@@ -190,7 +184,6 @@ noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Flat (α v)) 
 
 variable {M}
 
-/-- With nothing observed, SUF is the probability that the intervention yields the effect. -/
 theorem suf_bot (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν] (c : V)
     (x : α c) (e : V) (y : α e) :
     suf M ν ⊥ c x e y = ν {u | M.solve [c ← x] u e = y} := by
@@ -205,15 +198,12 @@ the effect being settled by the strict development, so the categorical *make* se
 strictly stronger than maximal graded SUF. -/
 
 open Classical in
-/-- With a certain context, SUF is the indicator of the counterfactual outcome there. -/
 theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) (c : V) (x : α c) (e : V) (y : α e) :
     suf M (MeasureTheory.Measure.dirac u₀) ⊥ c x e y =
       if M.solve [c ← x] u₀ e = y then 1 else 0 := by
   rw [suf_bot, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
   simp only [Set.mem_ofPred_eq, Pi.one_apply]
 
-/-- Nadathur and Lauer's *make* entails maximal SUF. Whenever *make* holds of the empty
-background, SUF is 1 under every distribution over contexts. -/
 theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν]
     {u₀ : U} {c e : V} {x : α c} {y : α e} (h : NadathurLauer2020.Make M ⊥ u₀ c x e y) :
     suf M ν ⊥ c x e y = 1 := by
@@ -233,7 +223,6 @@ structure TimeIndex {U V : Type*} {α : V → Type*} (M : CausalModel U V α) wh
   /-- Parents immediately precede their children. -/
   parent_succ : ∀ {w v : V}, M.graph.Adj w v → time w + 1 = time v
 
-/-- A time-indexed model is acyclic. -/
 theorem TimeIndex.isAcyclic {U V : Type*} {α : V → Type*} {M : CausalModel U V α}
     (ti : TimeIndex M) : M.IsAcyclic :=
   .of_depth _ ti.time fun h ↦ by have := ti.parent_succ h; omega
@@ -298,12 +287,10 @@ instance : model.IsAcyclic := timeIndex.isAcyclic
 noncomputable def background (p : ℝ≥0∞) : MeasureTheory.Measure Bool :=
   p • MeasureTheory.Measure.dirac true + (1 - p) • MeasureTheory.Measure.dirac false
 
-/-- Setting the cause, the effect holds exactly when the noise is true. -/
 theorem effect_iff (b : Bool) :
     model.solve [.cause ← true] b .effect = true ↔ b = true := by
   cases b <;> decide
 
-/-- SUF is the probability of the noise, graded as the paper's measure requires. -/
 theorem suf_eq {p : ℝ≥0∞} (hp : p ≤ 1) :
     suf model (background p) ⊥ .cause true .effect true = p := by
   have : MeasureTheory.IsProbabilityMeasure (background p) :=

@@ -104,7 +104,6 @@ variable {κ P} {s : Finset F} {es : List α}
 @[simp] theorem licensed_cons {e : α} :
     Licensed κ P s (e :: es) ↔ (s ∩ κ e).Nonempty ∧ Licensed κ P (s \ (κ e \ P)) es := Iff.rfl
 
-/-- Every element of a licensed sequence can check one of the head's features. -/
 theorem Licensed.nonempty_of_mem (h : Licensed κ P s es) {b : α} (hb : b ∈ es) :
     (s ∩ κ b).Nonempty := by
   induction es generalizing s with
@@ -115,8 +114,6 @@ theorem Licensed.nonempty_of_mem (h : Licensed κ P s es) {b : α} (hb : b ∈ e
     · exact h₁
     · exact (ih h₂ hb).mono (Finset.inter_subset_inter Finset.sdiff_subset subset_rfl)
 
-/-- If `b` can check only features of the head that `a` checks and uses up, `b` cannot merge
-after `a`. -/
 theorem Licensed.not_sublist (h : Licensed κ P s es) {a b : α} (hab : s ∩ κ b ⊆ κ a \ P) :
     ¬ [a, b] <+ es := by
   induction es generalizing s with
@@ -131,8 +128,6 @@ theorem Licensed.not_sublist (h : Licensed κ P s es) {a b : α} (hab : s ∩ κ
       rw [Finset.mem_inter, Finset.mem_sdiff] at hx
       exact hx.1.2 (hab (Finset.mem_inter.2 ⟨hx.1.1, hx.2⟩))
 
-/-- If every element can check and use up whatever `b` can check among the head's features, `b`
-merges first. -/
 theorem Licensed.head?_eq (h : Licensed κ P s es) {b : α} (hb : b ∈ es)
     (hsub : ∀ a ∈ es, s ∩ κ b ⊆ κ a \ P) : es.head? = some b := by
   cases es with
@@ -143,11 +138,9 @@ theorem Licensed.head?_eq (h : Licensed κ P s es) {b : α} (hb : b ∈ es)
     · exact absurd (List.cons_sublist_cons.2 (List.singleton_sublist.2 hb))
         (h.not_sublist (hsub e List.mem_cons_self))
 
-/-- When no feature stays active, no element merges twice. -/
 theorem Licensed.nodup (h : Licensed κ ∅ s es) : es.Nodup :=
   List.nodup_iff_sublist.2 fun _ ↦ h.not_sublist (by simp)
 
-/-- When no feature stays active, a head licenses at most as many merges as it has features. -/
 theorem Licensed.length_le (h : Licensed κ ∅ s es) : es.length ≤ s.card := by
   induction es generalizing s with
   | nil => simp
@@ -162,7 +155,6 @@ theorem Licensed.length_le (h : Licensed κ ∅ s es) : es.length ≤ s.card := 
 
 end Merge
 
-/-- If no two elements satisfying `p` occur in order in `l`, at most one does. -/
 private theorem length_filter_le_one {α : Type*} {l : List α} {p : α → Bool}
     (h : ∀ a b, p a → p b → ¬ [a, b] <+ l) : (l.filter p).length ≤ 1 := by
   match hl : l.filter p with
@@ -247,16 +239,13 @@ def whDP : Phrase := ⟨.D, {.wh}⟩
 /-- `vp` is a VP. -/
 def vp : Phrase := ⟨.V, ∅⟩
 
-/-- A phrase that is neither a DP nor a VP and bears nothing checks only `[·X·]`. -/
 theorem checks_eq_X {p : Phrase} (hD : p.cat ≠ .D) (hV : p.cat ≠ .V) (hb : p.bears = ∅) :
     p.checks = {.X} := by
   ext f; simp [hD, hV, hb]
 
-/-- A wh-DP checks everything a DP checks. -/
 theorem checks_dp_subset_whDP : dp.checks ⊆ whDP.checks := by
   intro f; simp [dp, whDP]; tauto
 
-/-- A DP checks everything a phrase that is not a VP and bears nothing checks. -/
 theorem checks_subset_dp {p : Phrase} (hV : p.cat ≠ .V) (hb : p.bears = ∅) :
     p.checks ⊆ dp.checks := by
   intro f; simp [dp, hV, hb]; tauto
@@ -275,22 +264,18 @@ section Distribution
 
 variable {α : Type*} {f : α → Phrase} {s : Finset Feature} {es : List α}
 
-/-- **The non-DP first theorem.** A phrase that checks nothing but `[·X·]` merges first with any
-head it merges with, so it is that head's complement. -/
 theorem nonDP_first (h : Licensed (Phrase.checks ∘ f) ∅ s es) {b : α} (hb : b ∈ es)
     (hD : (f b).cat ≠ .D) (hV : (f b).cat ≠ .V) (hbears : (f b).bears = ∅) :
     es.head? = some b :=
   h.head?_eq hb fun a _ ↦ Finset.inter_subset_right.trans <| by
     simp [Function.comp_apply, Phrase.checks_eq_X hD hV hbears]
 
-/-- A non-DP argument of v makes VP a specifier rather than v's complement. -/
 theorem vp_specifier (h : Licensed (Phrase.checks ∘ f) ∅ bundlev es) {b vp : α} (hb : b ∈ es)
     (hD : (f b).cat ≠ .D) (hV : (f b).cat ≠ .V) (hbears : (f b).bears = ∅) (hne : vp ≠ b) :
     es.head? ≠ some vp := by
   rw [nonDP_first h hb hD hV hbears]
   simpa using hne.symm
 
-/-- **One DP per head.** A DP cannot merge after another DP bearing everything it bears. -/
 theorem not_dp_after_dp (h : Licensed (Phrase.checks ∘ f) ∅ s es) {a b : α}
     (ha : (f a).cat = .D) (hb : (f b).cat = .D) (hbears : (f b).bears ⊆ (f a).bears) :
     ¬ [a, b] <+ es :=
@@ -302,14 +287,12 @@ theorem not_dp_after_dp (h : Licensed (Phrase.checks ∘ f) ∅ s es) {a b : α}
     · exact Or.inr (Or.inr (Or.inl hx))
     · exact Or.inr (Or.inr (Or.inr (hbears hx)))
 
-/-- A head introduces at most one DP bearing nothing further. -/
 theorem length_filter_dp_le_one (h : Licensed (Phrase.checks ∘ f) ∅ s es) :
     (es.filter fun a ↦ (f a).cat = .D ∧ (f a).bears = ∅).length ≤ 1 :=
   length_filter_le_one fun _ _ ha hb ↦ by
     simp only [decide_eq_true_eq] at ha hb
     exact not_dp_after_dp h ha.1 hb.1 (hb.2 ▸ Finset.empty_subset _)
 
-/-- A head introduces at most one argument that is neither a DP nor a VP and bears nothing. -/
 theorem length_filter_nonDP_le_one (h : Licensed (Phrase.checks ∘ f) ∅ s es) :
     (es.filter fun a ↦ (f a).cat ≠ .D ∧ (f a).cat ≠ .V ∧ (f a).bears = ∅).length ≤ 1 :=
   length_filter_le_one fun a _ _ hb ↦ by
@@ -390,8 +373,6 @@ def highXPRight : XTree :=
 /-- `ditransitives` lists the three ditransitive vPs. -/
 def ditransitives : List XTree := [lowXP, highXP, highXPRight]
 
-/-- Both structures come from licensed derivations, and VP cannot be v's complement when the
-phrase containing the indirect object merges with v. -/
 theorem ditransitives_licensed :
     Licensed XTree.checks ∅ bundleV [iobjP, dobjP] ∧
       Licensed XTree.checks ∅ bundlev [project .V VHead [iobjP, dobjP], subjP] ∧
@@ -428,21 +409,16 @@ def Precedes (t : XTree) (x y : Leaf) : Prop :=
 instance (t : XTree) (x y : Leaf) : Decidable (Precedes t x y) :=
   inferInstanceAs (Decidable (∃ a ∈ _, _))
 
-/-- With the indirect object in V's complement, the direct object binds it and not conversely;
-with it in v's complement, the converse holds, however VP is linearized. -/
 theorem canBind_dobj_iobj :
     CanBind lowXP .dobj .iobj ∧ ¬ CanBind lowXP .iobj .dobj ∧
       ∀ t ∈ [highXP, highXPRight], CanBind t .iobj .dobj ∧ ¬ CanBind t .dobj .iobj := by
   decide
 
-/-- With the indirect object in v's complement neither object c-commands the other. -/
 theorem highXP_not_cCommands :
     ∃ a ∈ (leafPaths highXP).lookup .dobj, ∃ b ∈ (leafPaths highXP).lookup .iobj,
       ¬ RoseTree.CCommands highXP a b ∧ ¬ RoseTree.CCommands highXP b a := by
   decide
 
-/-- **Word order and binding.** When the indirect object precedes the direct object, the direct
-object cannot bind it; when it follows, either can bind the other. -/
 theorem wordOrder_binding :
     (∀ t ∈ ditransitives, Precedes t .iobj .dobj → ¬ CanBind t .dobj .iobj) ∧
       (∃ t ∈ ditransitives, Precedes t .dobj .iobj ∧ CanBind t .dobj .iobj) ∧
@@ -480,10 +456,6 @@ private theorem TransitiveDerivation.nodup {obj : Cat} {whs es : List Transitive
     (h : TransitiveDerivation ∅ obj whs es) : es.Nodup :=
   (List.nodup_cons.1 (Licensed.nodup h)).2
 
-/-- **Subject and object questions.** With an external argument and the wh-phrase passing
-through the edge of vP, a subject question has two derivations, the subject checking `[·D·]` and
-`[·wh·]` at once or the object checking `[·D·]` first; an object question has one, the subject
-merging before the wh-object. -/
 theorem transitive_derivations {es : List Transitive} :
     (TransitiveDerivation ∅ .D [.subj] es ∧ .subj ∈ es ↔ es = [.subj] ∨ es = [.obj, .subj]) ∧
       (TransitiveDerivation ∅ .D [.obj] es ∧ .subj ∈ es ∧ .obj ∈ es ↔ es = [.subj, .obj]) := by
@@ -537,9 +509,6 @@ example :
       caseOf [.obj, .subj] .subj = some .abs ∧ caseOf [.obj, .subj] .obj = some .abs := by
   decide
 
-/-- **Agent focus.** Whichever phrases are wh-phrases, in a transitive derivation with an external
-argument Voice and T cross-reference the same argument exactly when the object checks `[·D·]`
-before the subject merges. -/
 theorem agentFocus_iff {whs : List Transitive}
     (hw : whs ∈ ([[], [.subj], [.obj], [.subj, .obj]] : List (List Transitive)))
     {es : List Transitive} (h : TransitiveDerivation ∅ .D whs es) (hs : .subj ∈ es) :
@@ -548,9 +517,6 @@ theorem agentFocus_iff {whs : List Transitive}
   revert h hs; revert hm; revert es; revert whs
   decide
 
-/-- **NP objects obviate agent focus.** An NP object cannot check `[·D·]`, so a subject question
-has only the derivation in which the subject checks `[·D·]` and `[·wh·]` at once; Set A
-cross-references the subject and Set B the object, as in a transitive clause. -/
 theorem npObject_no_agentFocus {es : List Transitive}
     (h : TransitiveDerivation ∅ .N [.subj] es) (hs : .subj ∈ es) :
     es = [.subj] ∧ setA es = some .subj ∧ setB es = some .obj ∧ ¬ AgentFocus es := by
@@ -561,17 +527,12 @@ theorem npObject_no_agentFocus {es : List Transitive}
 /-- The subject question with an NP object is licensed. -/
 example : TransitiveDerivation ∅ .N [.subj] [.subj] := by decide
 
-/-- When `[·wh·]` is checked once, a wh-subject and a wh-object cannot both become specifiers of
-v, whichever merges first. -/
 theorem multipleFronting_blocked {es : List Transitive}
     (h : TransitiveDerivation ∅ .D [.subj, .obj] es) : ¬ (.subj ∈ es ∧ .obj ∈ es) := by
   have hm := Transitive.mem_arrangements h.nodup
   revert h; revert hm; revert es
   decide
 
-/-- **Multiple fronting.** When `[·wh·]` stays active, a wh-subject and a plain object merge
-object first, a wh-object and a plain subject subject first, and two wh-phrases in either order;
-agent focus arises exactly when the object is the outer specifier. -/
 theorem multipleFronting {es : List Transitive} (hnd : es.Nodup) (hs : .subj ∈ es)
     (ho : .obj ∈ es) :
     (TransitiveDerivation {.wh} .D [.subj] es ↔ es = [.obj, .subj]) ∧
@@ -692,7 +653,6 @@ theorem derivation_cons {E : Finset Feature → List ι → ι → ι → Prop} 
   Iff.rfl
 
 omit [DecidableEq ι] in
-/-- The operations of a derivation are distinct, drawn from the system, and new. -/
 theorem Derivation.nodup {E : Finset Feature → List ι → ι → ι → Prop} {s : Finset Feature}
     {done es : List ι} (h : S.Derivation E s done es) :
     es.Nodup ∧ es ⊆ S.ops ∧ ∀ e ∈ es, e ∉ done := by
@@ -707,9 +667,6 @@ theorem Derivation.nodup {E : Finset Feature → List ι → ι → ι → Prop}
     · exact hd
     · exact fun hxd ↦ hnot x hx (List.mem_append_left _ hxd)
 
-/-- Weak Economy never blocks every operation. The possible operation checking the most features
-is always permitted, so from any state some derivation runs to completion, whatever the
-exemptions. -/
 theorem exists_derivation (E : Finset Feature → List ι → ι → ι → Prop) (s : Finset Feature)
     (done : List ι) : ∃ es, S.Derivation E s done es := by
   induction s using Finset.strongInduction generalizing done with
@@ -729,7 +686,6 @@ theorem exists_derivation (E : Finset Feature → List ι → ι → ι → Prop
       exact ⟨[], hpos⟩
 
 omit [DecidableEq ι] in
-/-- Every derivation is licensed, since Weak Economy only restricts the order of operations. -/
 theorem Derivation.licensed {E : Finset Feature → List ι → ι → ι → Prop} {s : Finset Feature}
     {done es : List ι} (h : S.Derivation E s done es) : Licensed S.checks ∅ s es := by
   induction es generalizing s done with
@@ -738,7 +694,6 @@ theorem Derivation.licensed {E : Finset Feature → List ι → ι → ι → Pr
     obtain ⟨_, ⟨_, _, f, hf, _⟩, _, h⟩ := derivation_cons.1 h
     exact licensed_cons.2 ⟨⟨f, hf⟩, by rw [Finset.sdiff_empty]; exact ih h⟩
 
-/-- A derivation is one of the arrangements of the operations. -/
 private theorem Derivation.mem_arrangements {E : Finset Feature → List ι → ι → ι → Prop}
     {s : Finset Feature} {es : List ι} (h : S.Derivation E s [] es) :
     es ∈ arrangements S.ops S.ops.length :=
@@ -783,8 +738,6 @@ def lowPassive (io dobj : Phrase) : System Passive where
 checked `[·X·]`. -/
 def afterXP : Finset Feature := bundlev \ Phrase.checks ⟨.P, ∅⟩
 
-/-- **Symmetric passives.** With plain objects either one can become the subject of a double
-object passive. -/
 theorem symmetric_passive :
     (∃ es, (highPassive .dp .dp).Economical afterXP es ∧
       (highPassive .dp .dp).subject es = some .iobj) ∧
@@ -792,8 +745,6 @@ theorem symmetric_passive :
       (highPassive .dp .dp).subject es = some .dobj :=
   ⟨⟨[.iobj, .vp], by decide⟩, ⟨[.vp, .dobj], by decide⟩⟩
 
-/-- **The double object movement asymmetry.** A wh indirect object checks `[·D·]` and `[·wh·]`
-at once, so Weak Economy raises it before VP merges, and it is the subject of every passive. -/
 theorem doma {es : List Passive} (h : (highPassive .whDP .dp).Economical afterXP es) :
     (highPassive .whDP .dp).subject es = some .iobj := by
   have hm := System.Derivation.mem_arrangements h
@@ -806,8 +757,6 @@ example : (highPassive .whDP .dp).Economical afterXP [.iobj, .vp] ∧
     Licensed (highPassive .whDP .dp).checks ∅ afterXP [.vp, .dobj] ∧
     ¬ (highPassive .whDP .dp).Economical afterXP [.vp, .dobj] := by decide
 
-/-- A wh direct object becomes accessible only after VP merges, too late to force the order, so
-either object can still become the subject. -/
 theorem whDobj_symmetric :
     (∃ es, (highPassive .dp .whDP).Economical afterXP es ∧
       (highPassive .dp .whDP).subject es = some .iobj) ∧
@@ -815,8 +764,6 @@ theorem whDobj_symmetric :
       (highPassive .dp .whDP).subject es = some .dobj :=
   ⟨⟨[.iobj, .vp, .dobj], by decide⟩, ⟨[.vp, .dobj], by decide⟩⟩
 
-/-- In a prepositional passive only the direct object can become the subject, even when the
-indirect object is a wh-phrase. -/
 theorem lowPassive_subject {io : Phrase} (hio : io ∈ [Phrase.dp, .whDP]) {es : List Passive}
     (h : (lowPassive io .dp).Economical bundlev es) :
     (lowPassive io .dp).subject es = some .dobj := by
@@ -829,8 +776,6 @@ theorem lowPassive_subject {io : Phrase} (hio : io ∈ [Phrase.dp, .whDP]) {es :
 example : (lowPassive .dp .dp).Economical bundlev [.vp, .dobj] ∧
     (lowPassive .whDP .dp).Economical bundlev [.vp, .dobj, .iobj] := by decide
 
-/-- **No indirect object passives with inherent case.** An indirect object with an inherent-case
-shell cannot check `[·D·]`, so it is never the passive subject. -/
 theorem iobj_kp_not_subject {bears : Finset Feature} (hD : Feature.D ∉ bears) (dobj : Phrase)
     (es : List Passive) : (highPassive ⟨.K, bears⟩ dobj).subject es ≠ some .iobj := by
   intro h
@@ -849,8 +794,6 @@ def afterXPOM : Finset Feature := bundlevOM \ Phrase.checks ⟨.P, ∅⟩
 /-- `omDP` is a DP controlling object marking. -/
 def omDP : Phrase := ⟨.D, {.om}⟩
 
-/-- An indirect object controlling object marking checks `[·D·]` and the object-marking feature
-at once, so it is the subject of every passive. -/
 theorem om_iobj_subject {es : List Passive}
     (h : (highPassive omDP .dp).Economical afterXPOM es) :
     (highPassive omDP .dp).subject es = some .iobj := by
@@ -862,8 +805,6 @@ theorem om_iobj_subject {es : List Passive}
 example : (highPassive omDP .dp).Economical afterXPOM [.iobj, .vp] ∧
     ¬ (highPassive omDP .dp).Economical afterXPOM [.vp, .dobj] := by decide
 
-/-- A direct object can control object marking in a passive whose subject is the indirect
-object. -/
 theorem om_dobj_recipientPassive :
     ∃ es, (highPassive .dp omDP).Economical afterXPOM es ∧
       (highPassive .dp omDP).subject es = some .iobj ∧ .dobj ∈ es :=
@@ -912,8 +853,6 @@ def greekPassive : List Greek := [.clitic, .kp, .vp, .dobj]
 /-- `greekActive` lists the operations of a Greek active. -/
 def greekActive : List Greek := [.clitic, .kp, .vp, .dobj, .subj]
 
-/-- **Dative intervention.** In a Greek passive, clitic doubling checks two features and merging
-VP one, so the indirect object is clitic doubled before the direct object can raise. -/
 theorem greek_passive {es : List Greek}
     (h : (greek ⟨.K, ∅⟩ greekPassive).Economical afterXPGreek es) :
     es.head? = some .clitic ∧ (greek ⟨.K, ∅⟩ greekPassive).subject es = some .dobj := by
@@ -926,9 +865,6 @@ licensed but not economical. -/
 example : (greek ⟨.K, ∅⟩ greekPassive).Economical afterXPGreek [.clitic, .vp, .dobj] ∧
     ¬ (greek ⟨.K, ∅⟩ greekPassive).Economical afterXPGreek [.vp, .clitic, .dobj] := by decide
 
-/-- A wh indirect object makes clitic doubling optional. Wh-moving the KP out of v's complement
-bleeds clitic doubling, so Weak Economy does not compare the two, and the direct object is the
-subject either way. -/
 theorem greek_whPassive :
     (∀ es, (greek ⟨.K, {.wh}⟩ greekPassive).Economical afterXPGreek es →
       (greek ⟨.K, {.wh}⟩ greekPassive).subject es = some .dobj) ∧
@@ -940,8 +876,6 @@ theorem greek_whPassive :
     decide,
     ⟨[.kp, .vp, .dobj], by decide⟩, ⟨[.clitic, .kp, .vp, .dobj], by decide⟩⟩
 
-/-- In a Greek active clitic doubling is optional. The external argument checks `[·D·]` and
-`[·Dweak·]`, as many features as clitic doubling, and bleeds it by checking `[·Dweak·]`. -/
 theorem greek_active :
     (∃ es, (greek ⟨.K, ∅⟩ greekActive).Economical afterXPGreek es ∧ .subj ∈ es ∧
       .clitic ∈ es) ∧
@@ -961,9 +895,6 @@ def greekFlat (kp : Phrase) (ops : List Greek) : System Greek where
   Available done a := a = .dobj → .vp ∈ done
   decAvailable _ _ := inferInstanceAs (Decidable (_ → _))
 
-/-- Without the structural bleeding, Weak Economy would force clitic doubling in wh passives, so
-the optionality of Greek clitic doubling depends on wh-movement removing the KP from v's
-complement. -/
 theorem greekFlat_whPassive {es : List Greek}
     (h : (greekFlat ⟨.K, {.wh}⟩ greekPassive).Economical afterXPGreek es) : .clitic ∈ es := by
   have hm := System.Derivation.mem_arrangements h
@@ -974,11 +905,6 @@ theorem greekFlat_whPassive {es : List Greek}
 example : (greekFlat ⟨.K, {.wh}⟩ greekPassive).Economical afterXPGreek [.clitic, .kp, .vp, .dobj] :=
   by decide
 
-/-- **The wording of Weak Economy.** Read as worded, Weak Economy exempts an operation only when
-the operation checking more features would bleed it. Clitic doubling checks more features than
-wh-movement of the KP and does not bleed it, so under that reading clitic doubling would be
-obligatory in Greek wh passives, contrary to the passives without a clitic that Newman cites; her
-analysis needs the bleeding of either operation by the other to exempt them. -/
 theorem literal_greek_whPassive {es : List Greek}
     (h : (greek ⟨.K, {.wh}⟩ greekPassive).Derivation
       (greek ⟨.K, {.wh}⟩ greekPassive).ExemptLiteral afterXPGreek [] es) : .clitic ∈ es := by
@@ -1003,9 +929,6 @@ def transitiveSystem (whs : List Transitive) : System Transitive where
   Available done a := a = .obj → .vp ∈ done
   decAvailable _ _ := inferInstanceAs (Decidable (_ → _))
 
-/-- **Weak Economy makes a wh-subject v's complement.** The wh-subject checks `[·D·]`, `[·X·]` and
-`[·wh·]`, VP only `[·X·]` and `[·V·]`, and neither bleeds the other, so Weak Economy merges the
-subject first, ruling out both subject-question derivations with VP as v's complement. -/
 theorem whSubject_complement {es : List Transitive}
     (h : (transitiveSystem [.subj]).Economical bundlev es) : es.head? = some .subj := by
   have hm := System.Derivation.mem_arrangements h
@@ -1018,25 +941,17 @@ example : (transitiveSystem [.subj]).Economical bundlev [.subj, .vp] ∧
     TransitiveDerivation ∅ .D [.subj] [.subj] ∧
     ¬ (transitiveSystem [.subj]).Economical bundlev [.vp, .subj] := by decide
 
-/-- With a plain subject, VP and the subject check two features each, so either can be v's
-complement. -/
 theorem plainSubject_either :
     (∃ es, (transitiveSystem []).Economical bundlev es ∧ es.head? = some .vp) ∧
     ∃ es, (transitiveSystem []).Economical bundlev es ∧ es.head? = some .subj :=
   ⟨⟨[.vp, .subj], by decide⟩, ⟨[.subj, .vp], by decide⟩⟩
 
-/-- **Newman's conjecture restores the subject-question derivations.** When operations checking a
-common feature are exempt, VP and a wh-subject, which share `[·X·]`, are not compared, and both
-subject-question derivations and the object-question derivation are economical. -/
 theorem overlap_subjectQuestions :
     (transitiveSystem [.subj]).OverlapEconomical bundlev [.vp, .subj] ∧
       (transitiveSystem [.subj]).OverlapEconomical bundlev [.vp, .obj, .subj] ∧
       (transitiveSystem [.obj]).OverlapEconomical bundlev [.vp, .subj, .obj] := by
   decide
 
-/-- The conjecture leaves the passive results intact. The wh indirect object is still the
-subject of every double object passive, and Greek clitic doubling is still obligatory in plain
-passives and optional in wh passives and actives. -/
 theorem overlap_passives :
     (∀ es, (highPassive .whDP .dp).OverlapEconomical afterXP es →
       (highPassive .whDP .dp).subject es = some .iobj) ∧

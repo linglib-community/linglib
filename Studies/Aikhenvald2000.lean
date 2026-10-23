@@ -153,40 +153,28 @@ open Language
 
 /-! ### Definitional properties -/
 
-/-- A noun class system is defined by agreement outside the noun and is a closed obligatory
-grammatical system. -/
 theorem nounClass_agreement_obligatory :
     ∀ l : Language, l.device = some .nounClass → l.Agreement ∧ l.Obligatory := by
   decide
 
-/-- Noun classes are realized with affixes or clitics, never with free lexemes. -/
 theorem nounClass_bound :
     ∀ l : Language, l.device = some .nounClass → .morph .free ∉ l.realizations := by
   decide
 
-/-- Numeral classifiers expressed as free morphemes do not participate in agreement. -/
 theorem free_numeralClassifier_no_agreement :
     ∀ l : Language, l.device = some .numeralClassifier → .morph .free ∈ l.realizations →
       ¬ l.Agreement := by
   decide
 
-/-- The numeral classifiers of the sample are obligatory, since no noun of the Mandarin or
-Japanese fragment that takes a classifier is counted without one, though Mandarin *tiān* 'day',
-which takes none, is counted directly. -/
 theorem numeralClassifier_obligatory :
     (∀ l : Language, l.device = some .numeralClassifier → l.Obligatory) ∧
       Mandarin.Nouns.tian.IsBareCount := by
   decide
 
-/-- Every kind of device other than noun class is assigned on purely semantic grounds; noun
-class assignment may be only partially semantic. -/
 theorem classifier_assignment_semantic :
     ∀ l : Language, l.device ≠ some .nounClass → l.SemanticAssignment := by
   decide
 
-/-- Both numeral-classifier systems have a general classifier that can replace the specific
-ones, the analogue of a functionally unmarked noun class. In Mandarin it is *gè*, which every noun
-that takes a classifier can take, and in Japanese *-tsu*. -/
 theorem numeralClassifier_general :
     ∀ l : Language, l.device = some .numeralClassifier → l.HasUnmarkedMember
   | .mandarin, _ =>
@@ -196,23 +184,19 @@ theorem numeralClassifier_general :
 
 /-! ### Preferred semantics -/
 
-/-- Animacy, humanness or sex is basic to noun classes and numeral classifiers. -/
 theorem animacy_basic :
     ∀ l : Language, l.device = some .nounClass ∨ l.device = some .numeralClassifier →
       ∃ p ∈ l.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex := by
   decide
 
-/-- Physical properties such as shape are typical of numeral classifiers. -/
 theorem numeralClassifier_shape :
     ∀ l : Language, l.device = some .numeralClassifier → .shape ∈ l.semantics := by
   decide
 
-/-- Colour is never a basis for noun categorization. -/
 theorem colour_never : ∀ l : Language, .colour ∉ l.semantics := by decide
 
 /-! ### Classifiers and number -/
 
-/-- Numeral-classifier languages usually lack compulsory number marking. -/
 theorem numeralClassifier_no_obligatory_number :
     ∀ l : Language, l.device = some .numeralClassifier → ¬ l.ObligatoryNumber := by
   decide

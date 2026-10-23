@@ -163,9 +163,6 @@ abbrev oneSome : Stmt := (.exactlyOne, .some_)
 /-- *No player hit some of his shots*. -/
 abbrev noSome : Stmt := (.no, .some_)
 
-/-- The lexica agree off *some*, and the refinement narrows the extension of *some* under
-*every* while widening it under *no*, the source of the asymmetry; under *exactly one* the
-refinement admits the locally enriched states NSA and SAA. -/
 theorem refinement_facts :
     (∀ q : PlayerQ, stmtSem .weak (q, .every) = stmtSem .strong (q, .every) ∧
       stmtSem .weak (q, .no) = stmtSem .strong (q, .no)) ∧
@@ -226,25 +223,18 @@ include hα
 
 /-! ### Support: local enrichment (§6.3) -/
 
-/-- The uncertainty listener assigns mass to a state exactly when some lexicon makes the
-message true there. -/
 theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
     (L1 α k m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m := by
   rw [L1, listener_fst_apply_singleton_ne_zero_iff]
   exact exists_congr fun l ↦ (and_iff_right (uniformOn_univ_singleton_ne_zero _)).trans
     (speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (sem l) hα (cost k) w m)
 
-/-- The fixed-lexicon listener assigns mass to a state exactly when the base lexicon makes the
-message true there. -/
 theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     L1fixed α k m {w} ≠ 0 ↔ w ∈ sem .weak m := by
   rw [L1fixed, listener_apply_singleton_ne_zero_iff,
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
   exact speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w m
 
-/-- Hearing *exactly one player hit some of his shots*, the uncertainty listener gives mass to
-the locally enriched states NSA and SAA, false on the literal construal, and the fixed-lexicon
-listener none. -/
 theorem one_some_local :
     ∀ w ∈ ({.NSA, .SAA} : Finset World),
       (L1 α k (some oneSome)).fst {w} ≠ 0 ∧ L1fixed α k (some oneSome) {w} = 0 := by
@@ -253,8 +243,6 @@ theorem one_some_local :
   simp only [Finset.mem_insert, Finset.mem_singleton] at hw
   rcases hw with rfl | rfl <;> decide
 
-/-- Hearing *no player hit some of his shots*, the uncertainty listener gives mass to the locally
-enriched states NNA, NAA and AAA, and the fixed-lexicon listener none. -/
 theorem no_some_local :
     ∀ w ∈ ({.NNA, .NAA, .AAA} : Finset World),
       (L1 α k (some noSome)).fst {w} ≠ 0 ∧ L1fixed α k (some noSome) {w} = 0 := by
@@ -265,8 +253,6 @@ theorem no_some_local :
 
 /-! ### Preference orderings (§6.2, §6.3) -/
 
-/-- The speaker's share of a statement is its informativity weight over the weights of the
-statements true at the state plus the null message's weight. -/
 theorem S1_real (l : Lex) (w : World) (s : Stmt) :
     (S1 α k l w).real {some s}
       = (if w ∈ stmtSem l s then (((stmtSem l s).card : ℝ))⁻¹ ^ α else 0)
@@ -325,7 +311,6 @@ theorem ShotQ.sum_univ {M : Type*} [AddCommMonoid M] (f : ShotQ → M) :
     Fin.sum_univ_three]
   rfl
 
-/-- The extension sizes of the statements. -/
 private theorem cards :
     (stmtSem .weak (.every, .every)).card = 1 ∧ (stmtSem .strong (.every, .every)).card = 1 ∧
     (stmtSem .weak (.every, .no)).card = 1 ∧ (stmtSem .strong (.every, .no)).card = 1 ∧
@@ -344,8 +329,6 @@ section Findings
 variable {α : ℝ} (hα : 0 < α) {k : ℝ}
 include hα
 
-/-- The informativity weights `4^{-α} < 3^{-α} < 2^{-α} < 1`, positive, and the null message's
-nonnegative weight. -/
 private theorem weights :
     0 < (4 : ℝ)⁻¹ ^ α ∧ (4 : ℝ)⁻¹ ^ α < (3 : ℝ)⁻¹ ^ α ∧ (3 : ℝ)⁻¹ ^ α < (2 : ℝ)⁻¹ ^ α ∧
       (2 : ℝ)⁻¹ ^ α < 1 ∧ 0 ≤ Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α :=
@@ -353,9 +336,6 @@ private theorem weights :
     Real.rpow_lt_rpow (by norm_num) (by norm_num) hα,
     Real.rpow_lt_one (by norm_num) (by norm_num) hα, by positivity⟩
 
-/-- Hearing *every player hit some of his shots*, the uncertainty listener ranks the locally
-enriched SSS above the other true states and AAA below the two remaining ones, the ordering of
-the human responses. -/
 theorem every_some_ordering :
     (L1 α k (some everySome)).fst.real {.SSA} < (L1 α k (some everySome)).fst.real {.SSS} ∧
     (L1 α k (some everySome)).fst.real {.SAA} < (L1 α k (some everySome)).fst.real {.SSS} ∧

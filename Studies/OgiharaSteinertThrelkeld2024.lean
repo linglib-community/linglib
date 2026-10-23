@@ -91,9 +91,6 @@ theorem not_before_of_settled {F : TWFrame W T} (a : Alternatives F B)
   exact (hAB v t e ((hA t ht w (Set.mem_singleton w) v (a.subset_alternatives _ hv)).1 ht)
     he).asymm hte
 
-/-- Beaver and Condoravdi's Mozart model makes the counterfactual *before* true only by leaving
-the death unsettled at its time, Mozart living on in an alternative that agrees with the world
-before it. -/
 theorem not_settled_mozart :
     ¬ frame.alternatives.settled {World.early} 1 fun v ↦ (v, 1) ∈ dies := by
   intro h
@@ -208,7 +205,6 @@ def before (w₀ : W) (I₀ : NonemptyInterval T) (e₀ : E) : Prop :=
 
 variable {a A B} {w₀ : W} {I₀ I₁ : NonemptyInterval T} {e₀ : E}
 
-/-- An interval at which a counterpart causes a `B`-eventuality is a `B`-interval. -/
 theorem exists_mem_of_mem_causedTimes (h : I₁ ∈ a.causedTimes B w₀ I₀) : ∃ v e, (v, I₁, e) ∈ B :=
   let ⟨_, _, _, w₁, _, _, _, _, e₃, _, hB⟩ := h
   ⟨w₁, e₃, hB⟩
@@ -314,14 +310,10 @@ theorem before_dies_finishes : alternatives.before dies finishes .actual (.pure 
     rfl
   · decide
 
-/-- The reading is counterfactual, Mozart finishing the Requiem in no interval of the actual
-world. -/
 theorem not_mem_finishes (I : NonemptyInterval ℤ) (e : Eventuality) :
     (World.actual, I, e) ∉ finishes := by
   simp [finishes]
 
-/-- The alternative is no historical alternative of the actual world at the death, as Beaver and
-Condoravdi's initial branch point condition requires. -/
 theorem healthy_not_mem_alternatives : World.healthy ∉ history.alternatives (.actual, 1) :=
   fun h ↦ nomatch (h () le_rfl).2 rfl
 

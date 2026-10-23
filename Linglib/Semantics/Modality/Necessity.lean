@@ -82,7 +82,6 @@ def Background.ofRel (R : SetRel W W) : Background W := fun w ↦ {(w ~[R] ·)}
   ext
   simp [Background.ofRel]
 
-/-- The background of a relation makes accessible exactly the relation's successors. -/
 @[simp] theorem Background.accessible_ofRel (R : SetRel W W) :
     (Background.ofRel R).accessible = R := by
   ext ⟨w, v⟩
@@ -91,7 +90,6 @@ def Background.ofRel (R : SetRel W W) : Background W := fun w ↦ {(w ~[R] ·)}
 @[simp] theorem mem_bestAccessible {f g : Background W} {w w' : W} :
     w ~[bestAccessible f g] w' ↔ w' ∈ bestWorlds f g w := .rfl
 
-/-- With the empty ordering source, best-world accessibility is base accessibility. -/
 @[simp] theorem bestAccessible_bot (f : Background W) : bestAccessible f ⊥ = f.accessible :=
   congrArg ofSuccessors (funext (bestWorlds_bot f))
 
@@ -118,24 +116,18 @@ def necessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
 def possibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   ◇[bestAccessible f g] p w
 
-/-- Necessity is monotone in the prejacent, so Kratzer's *must* is closed under entailment
-(`box_mono` over the best accessible worlds). -/
 theorem necessity_mono {f g : Background W} {p q : W → Prop} {w : W}
     (hpq : p ≤ q) (h : necessity f g p w) : necessity f g q w :=
   box_mono (bestAccessible f g) hpq w h
 
-/-- Possibility is monotone in the prejacent. -/
 theorem possibility_mono {f g : Background W} {p q : W → Prop} {w : W}
     (hpq : p ≤ q) (h : possibility f g p w) : possibility f g q w :=
   diamond_mono (bestAccessible f g) hpq w h
 
-/-- Necessity of a conjunction is the conjunction of necessities, `box_inf` over the best
-accessible worlds. -/
 theorem necessity_and {f g : Background W} {p q : W → Prop} {w : W} :
     necessity f g (fun v ↦ p v ∧ q v) w ↔ necessity f g p w ∧ necessity f g q w :=
   iff_of_eq (congrFun (box_inf (bestAccessible f g)) w)
 
-/-- Kratzer's *must* eliminates conjunction. -/
 theorem necessity_and_left {f g : Background W} {p q : W → Prop} {w : W}
     (h : necessity f g (fun v ↦ p v ∧ q v) w) : necessity f g p w :=
   (necessity_and.mp h).1
@@ -157,7 +149,6 @@ theorem humanNecessity_iff {f g : Background W} {p : W → Prop} {w : W} :
       (v ≤[g w] u) ∧ ∀ z ∈ f.accessibleWorlds w, (z ≤[g w] v) → p z :=
   Iff.rfl
 
-/-- Human necessity implies best-worlds necessity, unconditionally. -/
 theorem necessity_of_humanNecessity {f g : Background W} {p : W → Prop}
     {w : W} (h : humanNecessity f g p w) : necessity f g p w :=
   fun _ hv ↦ h.minimals_subset hv
@@ -167,20 +158,15 @@ good. -/
 def LimitAssumption (f g : Background W) (w : W) : Prop :=
   ∀ u ∈ f.accessibleWorlds w, ∃ v ∈ bestWorlds f g w, (v ≤[g w] u)
 
-/-- The Limit Assumption holds on a finite frame, where every accessible world lies above a best
-one. -/
 theorem LimitAssumption.of_finite [Finite W] (f g : Background W) (w : W) :
     LimitAssumption f g w := fun _ hu ↦
   Preorder.exists_le_mem_minimals (letI := premisePreorder (g w); wellFounded_lt) hu
 
-/-- Under the Limit Assumption, best-worlds necessity implies human necessity. -/
 theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) (h : necessity f g p w) :
     humanNecessity f g p w :=
   OrderingSemantics.isNecessity_of_minimals_subset hlim fun _ hv ↦ h _ hv
 
-/-- Under the Limit Assumption, [kratzer-1981]'s human necessity is exactly universal
-quantification over the best worlds. -/
 theorem humanNecessity_iff_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) :
     humanNecessity f g p w ↔ necessity f g p w :=
@@ -191,16 +177,12 @@ necessity ([kratzer-2012]). -/
 def humanPossibility (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   ¬ humanNecessity f g (fun v ↦ ¬ p v) w
 
-/-- Under the Limit Assumption, human possibility is existential quantification over the best
-worlds. -/
 theorem humanPossibility_iff_possibility {f g : Background W}
     {p : W → Prop} {w : W} (hlim : LimitAssumption f g w) :
     humanPossibility f g p w ↔ possibility f g p w := by
   rw [humanPossibility, humanNecessity_iff_necessity hlim, necessity, possibility, not_box]
   simp [Diamond]
 
-/-- With the empty ordering source, human necessity is simple necessity, [kratzer-1981]'s
-equivalence for arbitrary `f` and empty `g`. -/
 theorem humanNecessity_bot_iff (f : Background W) (p : W → Prop) (w : W) :
     humanNecessity f ⊥ p w ↔ simpleNecessity f p w := by
   constructor
@@ -229,13 +211,10 @@ theorem goodPossibility_mono (h : ∀ v, p v → q v) :
     goodPossibility f g p w → goodPossibility f g q w :=
   fun hp ↦ hp.mono fun v ↦ h v
 
-/-- Over a modal base with an accessible world, human necessity implies good possibility. -/
 theorem goodPossibility_of_humanNecessity (hne : (f.accessibleWorlds w).Nonempty)
     (h : humanNecessity f g p w) : goodPossibility f g p w :=
   h.isGoodPossibility hne
 
-/-- With the empty ordering source, good possibility is simple necessity over a modal base with
-an accessible world. -/
 theorem goodPossibility_bot_iff (f : Background W) (p : W → Prop) (w : W) :
     goodPossibility f ⊥ p w ↔ (f.accessibleWorlds w).Nonempty ∧ simpleNecessity f p w :=
   ⟨fun ⟨u, hu, h⟩ ↦ ⟨⟨u, hu⟩, fun v hv ↦ h v hv fun _ h ↦ h.elim⟩,
@@ -248,7 +227,6 @@ as every accessible world, the worlds at least as good as it are those accessibl
 unified background `f ⊔ g`, and the forces that read the ordering collapse to simple necessity
 over the unified background. -/
 
-/-- Good possibility implies simple necessity over the unified backgrounds. -/
 theorem simpleNecessity_sup_of_goodPossibility (h : goodPossibility f g p w) :
     simpleNecessity (f ⊔ g) p w := by
   obtain ⟨u, -, hp⟩ := h
@@ -257,7 +235,6 @@ theorem simpleNecessity_sup_of_goodPossibility (h : goodPossibility f g p w) :
   rw [Background.accessibleWorlds_sup] at hv
   exact hp v hv.1 ((Preorder.ofCriteria_le_iff _ _ _ _).2 fun r hr _ ↦ hv.2 r hr)
 
-/-- Human necessity implies simple necessity over the unified backgrounds. -/
 theorem simpleNecessity_sup_of_humanNecessity (h : humanNecessity f g p w) :
     simpleNecessity (f ⊔ g) p w := by
   show ∀ v ∈ (f ⊔ g).accessibleWorlds w, p v
@@ -291,24 +268,18 @@ end Unified
 variable (h : ((f ⊔ g).accessibleWorlds w).Nonempty)
 include h
 
-/-- When the ordering source is consistent with the modal base, good possibility is simple
-necessity over the unified backgrounds. -/
 theorem goodPossibility_iff_simpleNecessity_sup :
     goodPossibility f g p w ↔ simpleNecessity (f ⊔ g) p w :=
   let ⟨_, hb⟩ := h
   (OrderingSemantics.isGoodPossibility_iff_of_least (mem_of_mem_sup hb)
     fun v _ ↦ le_of_mem_sup hb v).trans (simpleNecessity_sup_iff_of_mem hb).symm
 
-/-- When the ordering source is consistent with the modal base, human necessity is simple
-necessity over the unified backgrounds. -/
 theorem humanNecessity_iff_simpleNecessity_sup :
     humanNecessity f g p w ↔ simpleNecessity (f ⊔ g) p w :=
   let ⟨_, hb⟩ := h
   (OrderingSemantics.isNecessity_iff_of_least (mem_of_mem_sup hb)
     fun v _ ↦ le_of_mem_sup hb v).trans (simpleNecessity_sup_iff_of_mem hb).symm
 
-/-- When the ordering source is consistent with the modal base, good possibility is human
-necessity. -/
 theorem goodPossibility_iff_humanNecessity :
     goodPossibility f g p w ↔ humanNecessity f g p w :=
   (goodPossibility_iff_simpleNecessity_sup h).trans (humanNecessity_iff_simpleNecessity_sup h).symm
@@ -344,24 +315,16 @@ theorem simplePossibility_iff_not_disjoint (f : Background W) (p : W → Prop) (
     simplePossibility f p w ↔ ¬ Disjoint (sInf (f w)) p := by
   simp [simplePossibility_iff, Pi.disjoint_iff, Prop.disjoint_iff, not_forall]
 
-/-- Necessity with the empty ordering source is simple necessity. -/
 @[simp] theorem necessity_bot_iff (f : Background W) (p : W → Prop) (w : W) :
     necessity f ⊥ p w ↔ simpleNecessity f p w := by
   simp only [necessity_iff, simpleNecessity_iff, bestWorlds_bot]
 
 /-! ### Monotonicity in the modal base -/
 
-/-- Premise growth preserves simple necessity, since more evidence leaves fewer accessible
-worlds and so at least as many necessities. This is [kratzer-2012]'s point about epistemic
-change over time, the approaching-man dialogue, where one conversational background represents
-evidence that grows as time goes by, and what *must* hold on the earlier evidence still must on
-the later. -/
 theorem simpleNecessity_mono {f f' : Background W} {p : W → Prop} {w : W} (h : f w ⊆ f' w)
     (hNec : simpleNecessity f p w) : simpleNecessity f' p w :=
   fun w' hw' ↦ hNec w' (Background.accessibleWorlds_anti h hw')
 
-/-- Adding `p` to an ordering source that holds a proposition incompatible with `p` makes nothing
-necessary that a best world verifying the latter fails. -/
 theorem not_necessity_insert {f g : Background W} {p q r : W → Prop} {w u : W}
     (hq : q ∈ g w) (hpq : ∀ v, q v → ¬ p v) (hu : u ∈ bestWorlds f g w) (huq : q u)
     (hur : ¬ r u) : ¬ necessity f (fun v ↦ insert p (g v)) r w :=
@@ -374,48 +337,35 @@ theorem Background.IsRealistic.refl {f : Background W} (h : f.IsRealistic) :
     f.accessible.IsRefl :=
   ⟨fun w ↦ h w⟩
 
-/-- A realistic base gives serial accessibility. -/
 theorem Background.IsRealistic.isSerial {f : Background W} (h : f.IsRealistic) :
     IsSerial f.accessible :=
   ⟨fun w ↦ ⟨w, h.refl.refl w⟩⟩
 
-/-- A modal base is realistic exactly when its accessibility relation is reflexive. -/
 theorem isRealistic_iff_refl {f : Background W} : f.IsRealistic ↔ f.accessible.IsRefl :=
   ⟨Background.IsRealistic.refl, fun h w ↦ h.refl w⟩
 
-/-- A modal base is realistic exactly when simple necessity over it is veridical, what must be
-the case being the case, so **T** defines realism. -/
 theorem isRealistic_iff_simpleNecessity_le_id {f : Background W} :
     f.IsRealistic ↔ simpleNecessity f ≤ id :=
   isRealistic_iff_refl.trans box_T_iff.symm
 
-/-- A modal base is realistic exactly when what is actual is possible over it. Read
-epistemically, an asserted fact can be a *might*; read deontically, everything actual is
-permitted. -/
 theorem isRealistic_iff_id_le_simplePossibility {f : Background W} :
     f.IsRealistic ↔ id ≤ simplePossibility f :=
   isRealistic_iff_refl.trans diamond_T_iff.symm
 
-/-- Under the empty modal base, every world is accessible. -/
 theorem accessible_bot (w w' : W) : w ~[(⊥ : Background W).accessible] w' := by simp
 
 /-! ### Modal axioms -/
 
-/-- Modal duality, `□p ↔ ¬◇¬p`, is the box-diamond duality (`ModalLogic.not_diamond`), since
-`necessity` is `□[bestAccessible f g]`. -/
 theorem duality (f g : Background W) (p : W → Prop) (w : W) :
     necessity f g p w ↔ ¬ possibility f g (fun w' ↦ ¬ p w') w := by
   rw [necessity, possibility, not_diamond]
   simp [Box]
 
-/-- Necessity distributes over implication, the K axiom `□(p → q) → □p → □q`. -/
 theorem necessity_K (f g : Background W) (p q : W → Prop) (w : W)
     (hImpl : necessity f g (fun w' ↦ p w' → q w') w) (hP : necessity f g p w) :
     necessity f g q w :=
   box_K hImpl hP
 
-/-- Over a totally realistic base, necessity is veridical whatever the ordering source, the T
-axiom for full necessity. -/
 theorem Background.IsTotallyRealistic.necessity_le_id {f : Background W}
     (hTotal : f.IsTotallyRealistic) (g : Background W) : necessity f g ≤ id := by
   intro p w hNec

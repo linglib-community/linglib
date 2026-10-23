@@ -241,13 +241,10 @@ nominative objects of the dative-subject verbs beside the accusative, dative and
 objects of (4.56) to (4.58). The triadic verbs of its table (4.62) all have nominative
 subjects. -/
 
-/-- Each of the four cases is the case of some subject. -/
 theorem subject_cases : (verbs.map (·.subject)).toFinset = Finset.univ := by decide
 
-/-- Each of the four cases is the case of some object. -/
 theorem object_cases : (verbs.flatMap (·.objects)).toFinset = Finset.univ := by decide
 
-/-- A verb with two objects has a nominative subject. -/
 theorem subject_eq_nom_of_ditransitive :
     ∀ v ∈ verbs, v.objects.length = 2 → v.subject = .nom := by
   decide

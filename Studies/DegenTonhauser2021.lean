@@ -62,10 +62,6 @@ open MeasureTheory ProbabilityTheory unitInterval
 
 variable {𝓤 : Type*} [MeasurableSpace 𝓤] [MeasurableSingletonClass 𝓤]
 
-/-- Bayes' rule makes projection prior-sensitive: for any speaker who can produce the utterance
-whether or not the content holds, the listener's posterior credence in the content is strictly
-increasing in the prior, so a content that is more likely a priori is more likely a
-posteriori. -/
 theorem projection_strictMono (κ : Kernel Bool 𝓤) [IsFiniteKernel κ] {u : 𝓤}
     (htrue : κ true {u} ≠ 0) (hfalse : κ false {u} ≠ 0) :
     StrictMono fun p : I ↦ ((κ†Ber(true, false, p)) u).real {true} :=
@@ -125,8 +121,6 @@ def entry : Predicate → Verb
   | .suggest => suggest.toVerb
   | .think => think.toVerb
 
-/-- Every predicate takes a finite clause complement, as the polar questions of the stimuli
-require. -/
 theorem all_predicates_take_clause_complement (p : Predicate) :
     ∃ fr ∈ (entry p).valency.frames, fr.HasFinite := by
   cases p <;> decide

@@ -112,7 +112,6 @@ def SlotFiller.level {Lex : Type*} : SlotFiller Lex → RepresentationLevel
   | .open_ _ | .phrasal => .syn
   | .semantic _ => .sem
 
-/-- A filler is open exactly when it is not lexical. -/
 theorem SlotFiller.isOpen_iff_level_ne_lex {Lex : Type*} (f : SlotFiller Lex) :
     f.IsOpen ↔ f.level ≠ .lex := by
   cases f <;> simp [SlotFiller.IsOpen, SlotFiller.level]
@@ -208,13 +207,10 @@ def refGroupCount (form : TypedForm Lex) : Nat :=
 
 /-! ### Characterization lemmas -/
 
-/-- A form is fully abstract exactly when every slot is open (vacuously so for the empty
-form). -/
 theorem derivedSpecificity_eq_fullyAbstract_iff (form : TypedForm Lex) :
     derivedSpecificity form = .fullyAbstract ↔ ∀ s ∈ form, s.filler.IsOpen := by
   unfold derivedSpecificity; split_ifs <;> simp_all
 
-/-- A form is lexically specified exactly when it is nonempty and no slot is open. -/
 theorem derivedSpecificity_eq_lexicallySpecified_iff (form : TypedForm Lex) :
     derivedSpecificity form = .lexicallySpecified ↔
       form ≠ [] ∧ ∀ s ∈ form, ¬ s.filler.IsOpen := by

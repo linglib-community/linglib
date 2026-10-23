@@ -113,8 +113,6 @@ def parCausal : Rel Entity S ⟨.f, .s⟩ := fun f s ↦ ∃ s₀, net s₀ = f 
 the causing situation, whose net force maps it to the situation. -/
 def deCausal : Rel Entity S ⟨.s, .s⟩ := fun s s' ↦ net s s = s'
 
-/-- A cause *de* names as a situation is, through its net force, a cause *par* names as a
-force, so both prepositions describe the same causal event. -/
 theorem parCausal_net_of_deCausal {s s' : S} (h : deCausal (Entity := Entity) net s s') :
     parCausal (Entity := Entity) net (net s) s' :=
   ⟨s, rfl, h⟩
@@ -157,14 +155,11 @@ noncomputable def deAgentive (init : Entity → E → Prop) (High : Entity → E
 
 variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 
-/-- The two prepositions share their at-issue content, each being the initiator relation
-wherever it is defined. -/
 theorem agentive_eq_one_iff_of_ne_zero (e : E) :
     (parAgentive init High x e ≠ 0 → (parAgentive init High x e = 1 ↔ init x e)) ∧
       (deAgentive init High x e ≠ 0 → (deAgentive init High x e = 1 ↔ init x e)) := by
   simp_all [parAgentive, deAgentive]
 
-/-- Their presuppositions are complementary. -/
 theorem parAgentive_ne_zero_iff (e : E) :
     parAgentive init High x e ≠ 0 ↔ deAgentive init High x e = 0 := by
   simp [parAgentive, deAgentive]
@@ -289,9 +284,6 @@ def DependsOnDistal (p : P) (q : Q) (x : X) : Prop := ∃ x', h q (g p x') ≠ h
 effect. -/
 def DependsOnProximate (p : P) (q : Q) (x : X) : Prop := ∃ y', h q y' ≠ h q (g p x)
 
-/-- The cases in which the effect depends on the distal cause are among those in which it
-depends on the proximate cause. Greater causal distance means less dependency, which the
-paper offers as a reason the ablative *de* marks low proto-agentivity. -/
 theorem dependsOnProximate_of_dependsOnDistal {p : P} {q : Q} {x : X}
     (hd : DependsOnDistal g h p q x) : DependsOnProximate g h p q x :=
   let ⟨x', hx⟩ := hd; ⟨g p x', hx⟩

@@ -80,13 +80,10 @@ def Feature.Positive (f : Feature) (s : Finset Role) : Prop := (s ∩ f.denotati
 instance (f : Feature) : DecidablePred f.Positive := fun _ ↦ by
   unfold Feature.Positive; infer_instance
 
-/-- [Author] is the author feature of `Person.Bears`. -/
 theorem Feature.positive_author_iff (s : Finset Role) :
     Feature.author.Positive s ↔ Person.Bears s .author := by
   revert s; decide
 
-/-- [Participant] is the participant feature of `Person.Bears`, since every role is a speech-act
-participant. -/
 theorem Feature.positive_participant_iff (s : Finset Role) :
     Feature.participant.Positive s ↔ Person.Bears s .participant := by
   revert s; decide
@@ -163,7 +160,6 @@ inclusive with second person (60). -/
 theorem not_admissible_participant_participantStar :
     ¬ Admissible [.participant, .participantStar] := by decide
 
-/-- Narrowing is not licensed at the top, where the wide feature divides the space. -/
 theorem not_admissible_participantStar : ¬ Admissible [.participantStar] := by decide
 
 /-- The admissible hierarchies derive exactly the partitions that Harbour's bivalent geometry (9)

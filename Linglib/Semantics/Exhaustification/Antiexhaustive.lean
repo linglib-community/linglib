@@ -52,20 +52,15 @@ theorem oMinus_subset : oMinus F D ⊆ F D := Set.inter_subset_left
 theorem oMinus_eq_self (h : ∀ T ⊆ D, T.Nonempty → F D ⊆ F T) : oMinus F D = F D :=
   Set.inter_eq_left.2 fun _ hw _ _ T hT _ hT' _ _ ↦ h T hT hT' hw
 
-/-- A world where the statement holds and no proper subdomain's variant does satisfies the
-antiexhaustive enrichment vacuously. -/
 theorem mem_oMinus_of_forall_ne {w : W} (hD : w ∈ F D)
     (h : ∀ S ∈ D.powerset, S ≠ D → S.Nonempty → w ∉ F S) : w ∈ oMinus F D :=
   ⟨hD, fun S hS _ hT hS' ⟨_, ht⟩ hST hwS ↦ absurd hwS <| h S (Finset.mem_powerset.2 hS)
     (fun h ↦ Finset.disjoint_left.1 hST (h ▸ hT ht) ht) hS'⟩
 
-/-- A world where every variant holds satisfies the antiexhaustive enrichment. -/
 theorem mem_oMinus_of_forall_subset {w : W} (h : ∀ T ⊆ D, T.Nonempty → w ∈ F T)
     (hD : w ∈ F D) : w ∈ oMinus F D :=
   ⟨hD, fun _ _ T hT _ hT' _ _ ↦ h T hT hT'⟩
 
-/-- A world where the variant over one subdomain holds and the variant over a disjoint one fails
-falsifies the antiexhaustive enrichment. -/
 theorem notMem_oMinus {w : W} {S T : Finset E} (hS : S ⊆ D) (hT : T ⊆ D) (hS' : S.Nonempty)
     (hT' : T.Nonempty) (hST : Disjoint S T) (hwS : w ∈ F S) (hwT : w ∉ F T) : w ∉ oMinus F D :=
   fun h ↦ hwT (h.2 S hS T hT hS' hT' hST hwS)

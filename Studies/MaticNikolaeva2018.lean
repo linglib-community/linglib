@@ -100,7 +100,6 @@ def Structure.device : Structure → Device
   | .germanTruthAdverbs | .englishAdverbs => .adverb
   | .germanDiscourseMarkers | .serbianDiscourseMarkers => .discourseMarker
 
-/-- Every device the chapter names is attested in its lists. -/
 theorem every_device_attested (d : Device) : ∃ s : Structure, s.device = d := by
   cases d
   · exact ⟨.germanAccentOnAuxiliary, rfl⟩
@@ -110,8 +109,6 @@ theorem every_device_attested (d : Device) : ∃ s : Structure, s.device = d := 
   · exact ⟨.germanTruthAdverbs, rfl⟩
   · exact ⟨.germanDiscourseMarkers, rfl⟩
 
-/-- No single device covers the inventory: the structures ascribed to salient polarity do not
-form a form class. -/
 theorem no_device_covers (d : Device) : ∃ s : Structure, s.device ≠ d := by
   cases d
   · exact ⟨.germanEmphaticTun, by decide⟩

@@ -53,14 +53,10 @@ def mittieFedTheDog (agent feed : Entity → E → Prop) (mittie dog : Entity) :
     E → Prop :=
   eventIdentification agent (feed dog) mittie
 
-/-- The sentence holds of an event iff Mittie is its agent and it is a feeding of the dog;
-the verb contributes no agent. -/
 theorem mittieFedTheDog_iff (agent feed : Entity → E → Prop) (mittie dog : Entity)
     (e : E) : mittieFedTheDog agent feed mittie dog e ↔ agent mittie e ∧ feed dog e :=
   Iff.rfl
 
-/-- Two verb phrases with the same events are indistinguishable once Voice adds the external
-argument, whatever the agent relation: the agent is severed from the verb. -/
 theorem mittieFedTheDog_congr (agent feed feed' : Entity → E → Prop) (mittie dog : Entity)
     (h : ∀ e, feed dog e ↔ feed' dog e) (e : E) :
     mittieFedTheDog agent feed mittie dog e ↔ mittieFedTheDog agent feed' mittie dog e :=
@@ -104,19 +100,15 @@ def theDog : LexicalItem.Token := ⟨.of .D [] "the dog", 204⟩
 /-- The tree of the sentence is `[VoiceP Mittie [Voice' Voice [vP v [VP fed [DP the dog]]]]]`. -/
 def tree : LinearizedSyntacticObject := mittie * (voice * (little_v * (fed * theDog)))
 
-/-- The external argument c-commands the internal argument, and not conversely. -/
 theorem mittie_cCommands_theDog :
     CCommands tree (leaf mittie) (leaf theDog) ∧
       ¬ CCommands tree (leaf theDog) (leaf mittie) := by
   constructor <;> decide
 
-/-- Voice c-commands the verb phrase, and the external argument c-commands Voice, so the external
-argument sits above the head that introduces it. -/
 theorem voice_between :
     CCommands tree (leaf voice) (leaf fed) ∧ CCommands tree (leaf mittie) (leaf voice) := by
   constructor <;> decide
 
-/-- Agentive Voice assigns the external θ-role. -/
 theorem agentive_assignsTheta : Voice.agentive.AssignsTheta := by decide
 
 end Syntax

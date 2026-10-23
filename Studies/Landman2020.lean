@@ -104,7 +104,6 @@ theorem sSup_sumClosure (X : Set B) : sSup (sumClosure X) = sSup X := by
   rintro _ ⟨Y, hY, rfl⟩
   exact sSup_le_sSup hY
 
-/-- Discarding `⊥` from the generators does not change their sums. -/
 theorem sumClosure_sdiff_bot (X : Set B) : sumClosure (X \ {⊥}) = sumClosure X := by
   refine le_antisymm (sumClosure.monotone sdiff_subset) ?_
   rintro _ ⟨Y, hY, rfl⟩
@@ -121,11 +120,9 @@ theorem generates_self (X : Set B) : Generates X X := ⟨sumClosure.le_closure X
 theorem generates_sumClosure (X : Set B) : Generates X (sumClosure X) :=
   ⟨le_rfl, sSup_sumClosure X⟩
 
-/-- A subset of `Y` that generates every element of `Y` generates `Y`. -/
 theorem Generates.of_subset (hXY : X ⊆ Y) (hY : Y ⊆ sumClosure X) : Generates X Y :=
   ⟨hY, ((sSup_le_sSup hY).trans (sSup_sumClosure X).le).antisymm (sSup_le_sSup hXY)⟩
 
-/-- Sums of elements of `X` are sums of elements of any set that generates `X`. -/
 theorem Generates.sumClosure_subset (h : Generates X Y) : sumClosure Y ⊆ sumClosure X :=
   sumClosure.le_closure_iff.1 h.subset_sumClosure
 
@@ -134,11 +131,9 @@ theorem Generates.sumClosure_subset (h : Generates X Y) : sumClosure Y ⊆ sumCl
 /-- The `Z`-atoms are the minimal elements of `Z \ {⊥}`, the objects of `Z`. -/
 def atomsIn (Z : Set B) : Set B := {a | Minimal (· ∈ Z \ {⊥}) a}
 
-/-- An atom of the algebra that lies in `Z` is a `Z`-atom. -/
 theorem mem_atomsIn_of_isAtom (ha : IsAtom b) (h : b ∈ Z) : b ∈ atomsIn Z :=
   ⟨⟨h, ha.1⟩, fun _ hy hyb ↦ ((ha.le_iff.1 hyb).resolve_left hy.2).ge⟩
 
-/-- Relative to the whole algebra, the `Z`-atoms are the atoms. -/
 @[simp]
 theorem atomsIn_univ : atomsIn (univ : Set B) = {a | IsAtom a} := by
   ext a
@@ -156,7 +151,6 @@ def Atomless (Z : Set B) : Prop := atomsIn Z = ∅
 theorem Atomistic.atomic (h : Atomistic Z) : Atomic Z := fun b hb ↦
   nonempty_iff_ne_empty.2 fun he ↦ hb.2 (by rw [← h b hb.1, he, sSup_empty]; rfl)
 
-/-- `Z` is atomistic iff its atoms generate it. -/
 theorem atomistic_iff_generates : Atomistic Z ↔ Generates (atomsIn Z) Z := by
   refine ⟨fun h ↦ .of_subset (fun _ ha ↦ ha.1.1) fun b hb ↦ ?_, fun h b hb ↦ ?_⟩
   · exact ⟨_, inter_subset_right, h b hb⟩
@@ -164,7 +158,6 @@ theorem atomistic_iff_generates : Atomistic Z ↔ Generates (atomsIn Z) Z := by
     exact (sSup_le fun _ ha ↦ ha.1).antisymm
       (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
 
-/-- A disjoint set has its objects as atoms. -/
 theorem atomsIn_eq_of_pairwiseDisjoint (hZ : Z.PairwiseDisjoint id) : atomsIn Z = Z \ {⊥} :=
   Set.ext fun _ ↦ ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun _ hy hyz ↦ (hZ.eq_of_le hy.1 h.1 hy.2 hyz).ge⟩⟩
 
@@ -176,8 +169,6 @@ private theorem exists_mem_le_of_mem_sumClosure (hb : b ∈ sumClosure A) (hb0 :
     exact hb0 (sSup_eq_bot.2 h)
   exact ⟨a, hYA ha, ha0, le_sSup ha⟩
 
-/-- A disjoint set of objects of `Z` that generates every element of `Z` is the set of
-`Z`-atoms. -/
 theorem atomsIn_eq_of_subset_sumClosure (hAZ : A ⊆ Z) (hA : A.PairwiseDisjoint id)
     (hbot : ⊥ ∉ A) (hZA : Z ⊆ sumClosure A) : atomsIn Z = A := by
   ext z
@@ -188,7 +179,6 @@ theorem atomsIn_eq_of_subset_sumClosure (hAZ : A ⊆ Z) (hA : A.PairwiseDisjoint
     obtain ⟨a, ha, ha0, hay⟩ := exists_mem_le_of_mem_sumClosure (hZA hy) hy0
     exact hA.eq_of_le ha hz ha0 (hay.trans hyz) ▸ hay
 
-/-- Restricting `Z` to the parts of `c` keeps exactly the `Z`-atoms below `c`. -/
 theorem atomsIn_Iic_inter : atomsIn (Iic c ∩ Z) = Iic c ∩ atomsIn Z := by
   ext z
   refine ⟨fun ⟨⟨⟨hzc, hz⟩, hz0⟩, hmin⟩ ↦ ⟨hzc, ⟨hz, hz0⟩, fun y ⟨hy, hy0⟩ hyz ↦ ?_⟩,
@@ -198,7 +188,6 @@ theorem atomsIn_Iic_inter : atomsIn (Iic c ∩ Z) = Iic c ∩ atomsIn Z := by
 theorem Atomistic.Iic_inter (h : Atomistic Z) : Atomistic (Iic c ∩ Z) := fun b ⟨hbc, hb⟩ ↦ by
   rw [atomsIn_Iic_inter, ← inter_assoc, inter_eq_left.2 (Iic_subset_Iic.2 hbc), h b hb]
 
-/-- An atomless set with an object is not disjoint. -/
 theorem Atomless.not_pairwiseDisjoint (h : Atomless Z) (hb : b ∈ Z) (hb0 : b ≠ ⊥) :
     ¬Z.PairwiseDisjoint id := fun hZ ↦
   notMem_empty b (h ▸ (atomsIn_eq_of_pairwiseDisjoint hZ).ge ⟨hb, hb0⟩)
@@ -207,7 +196,6 @@ theorem Atomless.not_pairwiseDisjoint (h : Atomless Z) (hb : b ∈ Z) (hb0 : b �
 
 The distribution set of `x` relative to `Z` is `Iic x ∩ Z`, the book's `(x] ∩ Z`. -/
 
-/-- Every sum of elements of `Z` is the sum of its distribution set. -/
 theorem sSup_Iic_inter (hx : x ∈ sumClosure Z) : sSup (Iic x ∩ Z) = x := by
   obtain ⟨Y, hY, rfl⟩ := hx
   exact (sSup_le fun _ h ↦ h.1).antisymm (sSup_le_sSup fun y hy ↦ ⟨le_sSup hy, hY hy⟩)
@@ -222,8 +210,6 @@ section Frame
 variable [Order.Frame B] {Y Z : Set B} {x z : B} (hZ : Z.PairwiseDisjoint id) (hbot : ⊥ ∉ Z)
 include hZ
 
-/-- Over a disjoint base, a base object lies below a sum of base elements only if it is one of
-them. -/
 theorem le_sSup_iff_mem (hz : z ∈ Z) (hz0 : z ≠ ⊥) (hY : Y ⊆ Z) : z ≤ sSup Y ↔ z ∈ Y := by
   refine ⟨fun h ↦ ?_, le_sSup⟩
   by_contra hzY
@@ -231,13 +217,10 @@ theorem le_sSup_iff_mem (hz : z ∈ Z) (hz0 : z ≠ ⊥) (hY : Y ⊆ Z) : z ≤ 
 
 include hbot
 
-/-- Over a disjoint base without `⊥`, the distribution set of a sum of base elements is the set
-summed. -/
 theorem Iic_sSup_inter (hY : Y ⊆ Z) : Iic (sSup Y) ∩ Z = Y :=
   Set.ext fun _ ↦ ⟨fun ⟨h, hz⟩ ↦ (le_sSup_iff_mem hZ hz (fun h0 ↦ hbot (h0 ▸ hz)) hY).1 h,
     fun h ↦ ⟨le_sSup h, hY h⟩⟩
 
-/-- Over a disjoint base without `⊥`, a sum determines its summands. -/
 theorem sSup_injOn : InjOn sSup (𝒫 Z) :=
   fun Y hY Y' hY' h ↦ by rw [← Iic_sSup_inter hZ hbot hY, h, Iic_sSup_inter hZ hbot hY']
 
@@ -255,11 +238,9 @@ def sumClosureOrderIso : sumClosure Z ≃o 𝒫 Z where
     rw [← sSup_Iic_inter x.2, ← sSup_Iic_inter x'.2]
     exact sSup_le_sSup h
 
-/-- Over a disjoint base without `⊥`, a sum counts as many as the base elements it sums. -/
 theorem card_sSup (hY : Y ⊆ Z) : card Z (sSup Y) = Y.ncard := by
   rw [card, Iic_sSup_inter hZ hbot hY]
 
-/-- A base element counts as one. -/
 theorem card_of_mem (hz : z ∈ Z) : card Z z = 1 := by
   simpa using card_sSup hZ hbot (singleton_subset_iff.2 hz)
 
@@ -305,8 +286,6 @@ def IsNeat (X : ISet B) : Prop := Atomistic X.base ∧ (atomsIn X.base).Pairwise
 /-- An i-set is mess if it is neat only when null. -/
 def IsMess (X : ISet B) : Prop := ¬X.IsNull → ¬X.IsNeat
 
-/-- The null i-sets are the singular null i-set `⟨∅, ∅⟩` and the plural null i-set
-`⟨{⊥}, ∅⟩`. -/
 theorem isNull_iff : X.IsNull ↔ X = singular ∅ ∨ X = ofBase ∅ := by
   refine ⟨fun h ↦ ?_, by rintro (rfl | rfl) <;> rfl⟩
   have hsub := X.body_subset
@@ -315,18 +294,14 @@ theorem isNull_iff : X.IsNull ↔ X = singular ∅ ∨ X = ofBase ∅ := by
   · exact .inl (ISet.ext hb h)
   · exact .inr (ISet.ext (hb.trans sumClosure_empty.symm) h)
 
-/-- Null i-sets are count, and they are mass by definition. -/
 theorem IsNull.isCount (h : X.IsNull) : X.IsCount := by
   rw [IsCount, h]
   exact pairwiseDisjoint_empty
 
-/-- Null i-sets are neat, and they are mess by definition. -/
 theorem IsNull.isNeat (h : X.IsNull) : X.IsNeat := by
   rw [IsNeat, h]
   exact ⟨fun _ hb ↦ hb.elim, pairwiseDisjoint_empty.subset fun _ hz ↦ hz.1.1⟩
 
-/-- An i-set is neat iff its base is generated by a disjoint set of its objects, which are then
-its base-atoms. -/
 theorem isNeat_iff :
     X.IsNeat ↔ ∃ A ⊆ X.base, ⊥ ∉ A ∧ A.PairwiseDisjoint id ∧ Generates A X.base := by
   refine ⟨fun ⟨hat, hd⟩ ↦ ⟨atomsIn X.base, fun _ h ↦ h.1.1, fun h ↦ h.1.2 rfl, hd,
@@ -335,20 +310,16 @@ theorem isNeat_iff :
     atomsIn_eq_of_subset_sumClosure hAZ hA hbot hgen.subset_sumClosure]
   exact ⟨hgen, hA⟩
 
-/-- Count i-sets are neat. -/
 theorem IsCount.isNeat (h : X.IsCount) : X.IsNeat :=
   isNeat_iff.2 ⟨X.base \ {⊥}, sdiff_subset, fun h ↦ h.2 rfl, h.subset sdiff_subset,
     .of_subset sdiff_subset ((sumClosure_sdiff_bot X.base).ge.trans' (sumClosure.le_closure _))⟩
 
-/-- Mess i-sets are mass. -/
 theorem IsMess.isMass (h : X.IsMess) : X.IsMass := fun hX hc ↦ h hX hc.isNeat
 
-/-- The body of a neat i-set consists of sums of base-atoms. -/
 theorem IsNeat.body_subset_sumClosure_atomsIn (h : X.IsNeat) :
     X.body ⊆ sumClosure (atomsIn X.base) :=
   X.body_subset.trans (atomistic_iff_generates.1 h.1).sumClosure_subset
 
-/-- An i-set whose base is atomless but has an object is not neat, so it is mess mass. -/
 theorem not_isNeat_of_atomless (h : Atomless X.base) (hb : b ∈ X.base) (hb0 : b ≠ ⊥) :
     ¬X.IsNeat := fun hn ↦ hb0 (by rw [← hn.1 b hb, h, inter_empty, sSup_empty])
 
@@ -370,12 +341,10 @@ def restrict (H : ISet B) (C : Set B) (hC : C ⊆ sumClosure H.base) : ISet B wh
 theorem restrict_base (hC : C ⊆ sumClosure H.base) :
     (H.restrict C hC).base = Iic (sSup C) ∩ H.base := rfl
 
-/-- The Head principle preserves count. -/
 theorem IsCount.restrict (h : H.IsCount) (hC : C ⊆ sumClosure H.base) :
     (H.restrict C hC).IsCount :=
   h.subset inter_subset_right
 
-/-- The Head principle preserves neat. -/
 theorem IsNeat.restrict (h : H.IsNeat) (hC : C ⊆ sumClosure H.base) :
     (H.restrict C hC).IsNeat := by
   refine ⟨h.1.Iic_inter, ?_⟩
@@ -390,7 +359,6 @@ def sep (P : ISet B) (p : B → Prop) : ISet B :=
 def plur (P : ISet B) : ISet B :=
   P.restrict (sumClosure P.body) P.generates.sumClosure_subset
 
-/-- Pluralization keeps the base. -/
 @[simp]
 theorem plur_base (P : ISet B) : P.plur.base = P.base := by
   refine Set.ext fun b ↦ ⟨fun h ↦ h.2, fun hb ↦ ⟨?_, hb⟩⟩
@@ -398,8 +366,6 @@ theorem plur_base (P : ISet B) : P.plur.base = P.base := by
   rw [sSup_sumClosure, P.generates.sSup_eq]
   exact le_sSup hb
 
-/-- Pluralizing a singular noun gives the i-set its base generates, as `plur ⟨CAT, CAT⟩` is
-`⟨*CAT, CAT⟩`. -/
 theorem plur_singular (Z : Set B) : (singular Z).plur = ofBase Z :=
   ISet.ext rfl (plur_base _)
 
@@ -415,13 +381,9 @@ section Frame
 variable [Order.Frame B] {Z : Set B} {x : B} (hZ : Z.PairwiseDisjoint id) (hbot : ⊥ ∉ Z)
 include hZ hbot
 
-/-- Modifying a singular count noun restricts its base, so *white cat* denotes
-`⟨CAT ∩ WHITE, CAT ∩ WHITE⟩`. -/
 theorem sep_singular (p : B → Prop) : (singular Z).sep p = singular {z ∈ Z | p z} :=
   ISet.ext rfl (Iic_sSup_inter hZ hbot (sep_subset _ _))
 
-/-- A numeral counts the base elements of a count i-set generated by its base, so *three cats*
-denotes the sums of three cats. -/
 theorem mem_number_ofBase (N : ℕ → Prop) :
     x ∈ (number N (ofBase Z)).body ↔ ∃ Y ⊆ Z, N Y.ncard ∧ sSup Y = x := by
   refine ⟨fun ⟨⟨Y, hY, hx⟩, hN⟩ ↦ ⟨Y, hY, ?_, hx⟩, fun ⟨Y, hY, hN, hx⟩ ↦ ⟨⟨Y, hY, hx⟩, ?_⟩⟩
@@ -451,15 +413,12 @@ def sumNeutral (X₀ : Set B) : ISet B := singular (sumClosure X₀)
 /-- An i-set is sum neutral, like *poultry*, if it is `⟨*X₀, *X₀⟩` for a disjoint set `X₀`. -/
 def IsSumNeutral (X : ISet B) : Prop := ∃ X₀ : Set B, X₀.PairwiseDisjoint id ∧ X = sumNeutral X₀
 
-/-- Sum neutral i-sets are neat. -/
 theorem IsSumNeutral.isNeat (h : X.IsSumNeutral) : X.IsNeat := by
   obtain ⟨X₀, hX₀, rfl⟩ := h
   have hsub : X₀ \ {⊥} ⊆ sumClosure X₀ := sdiff_subset.trans (sumClosure.le_closure X₀)
   exact isNeat_iff.2 ⟨X₀ \ {⊥}, hsub, fun h ↦ h.2 rfl, hX₀.subset sdiff_subset,
     .of_subset hsub (sumClosure_sdiff_bot X₀).ge⟩
 
-/-- An i-set `⟨*X₀, *X₀⟩` with two distinct objects in `X₀` is not count, since its base
-contains both objects and their sum. -/
 theorem not_isCount_sumNeutral (hx : x ∈ X₀) (hy : y ∈ X₀) (hxy : x ≠ y) (hx0 : x ≠ ⊥)
     (hy0 : y ≠ ⊥) : ¬(sumNeutral X₀).IsCount := fun h ↦ by
   have hle := sumClosure.le_closure X₀
@@ -511,7 +470,6 @@ theorem isNeat : pottery.IsNeat := by
   · rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ hij
     exact disjoint_singleton.2 fun h ↦ hij (h ▸ rfl)
 
-/-- The teaset overlaps the teapot. -/
 theorem not_isCount : ¬pottery.IsCount := fun h ↦ by
   have := h (Or.inr (Or.inl rfl) : cup ⊔ saucer ⊔ teapot ∈ base) (Or.inr (Or.inr ⟨0, rfl⟩))
     (by simp [cup, saucer, teapot, Set.ext_iff]) le_sup_right le_rfl
@@ -519,7 +477,6 @@ theorem not_isCount : ¬pottery.IsCount := fun h ↦ by
 
 theorem isMass : pottery.IsMass := fun _ ↦ not_isCount
 
-/-- Pottery is not sum neutral, since the teapot and the fruit bowl are not sold as one. -/
 theorem not_isSumNeutral : ¬pottery.IsSumNeutral := by
   rintro ⟨X₀, -, h⟩
   have hb : base = sumClosure X₀ := congrArg ISet.base h
@@ -559,7 +516,6 @@ theorem atomsIn_base : atomsIn base = {pliers, hammerhead} := by
   · exact absurd (hmin ⟨.inr (.inl rfl), (isAtom_singleton 1).1⟩ hammerhead_lt_hammer.le)
       hammerhead_lt_hammer.not_ge
 
-/-- Every ironware item has a base-atom below it. -/
 theorem atomic : Atomic ironware.base := by
   have h : ∀ a ∈ ({pliers, hammerhead} : Set _), a ∈ atomsIn ironware.base :=
     fun _ ha ↦ atomsIn_base.ge ha
@@ -573,7 +529,6 @@ theorem pairwiseDisjoint_atomsIn : (atomsIn ironware.base).PairwiseDisjoint id :
   rw [atomsIn_base]
   exact (pairwiseDisjoint_singleton _ _).insert fun _ hj _ ↦ by simp_all [pliers, hammerhead]
 
-/-- The hammer is not the sum of the base-atoms below it. -/
 theorem not_atomistic : ¬Atomistic ironware.base := fun h ↦ by
   have hp : Iic hammer ∩ atomsIn base = {hammerhead} := by
     rw [atomsIn_base, insert_eq, inter_union_distrib_left,

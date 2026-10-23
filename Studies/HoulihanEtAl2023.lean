@@ -88,7 +88,6 @@ def payoff (pot : ℝ) : Action → Action → ℝ
   | .defect, .cooperate => pot
   | .defect, .defect => 0
 
-/-- Stealing weakly dominates in money. -/
 theorem payoff_cooperate_le_defect {pot : ℝ} (hpot : 0 ≤ pot) (a₂ : Action) :
     payoff pot .cooperate a₂ ≤ payoff pot .defect a₂ := by
   (cases a₂ <;> simp [payoff]); linarith
@@ -206,8 +205,6 @@ def baseUtility (q : Player) (a₁ a₂ : Action) : ℝ := ∑ d, S.domainUtilit
 def expectedBaseUtility (q : Player) (a₁ : Action) : ℝ :=
   ∑ a₂, q.beliefOn a₂ * S.baseUtility q a₁ a₂
 
-/-- In the expected-utility gap in favour of cooperating, cooperation forgoes money and risks
-disadvantageous inequity, and avoids advantageous inequity. -/
 theorem expectedBaseUtility_cooperate_sub_defect (q : Player) :
     S.expectedBaseUtility q .cooperate - S.expectedBaseUtility q .defect =
       q.belief * (q.base .money * (S.ν (S.pot / 2 - q.reference) - S.ν (S.pot - q.reference)) +
@@ -225,7 +222,6 @@ def policy (U : Player → Action → ℝ) (q : Player) : Action → ℝ :=
 
 variable (U : Player → Action → ℝ) (q : Player)
 
-/-- With two actions the softmax is the logistic function of the scaled utility gap. -/
 theorem policy_eq_sigmoid (a : Action) :
     S.policy U q a = Real.sigmoid (S.lam * (U q a - U q a.other)) := by
   rw [policy, Real.softmax_eq_sigmoid_of_univ_eq_pair (i := a) (j := a.other)
@@ -307,9 +303,6 @@ variable (S : Setting) (U : Player → Action → ℝ) {Ω : Type*} [MeasurableS
   [MeasurableSingletonClass Ω] [Fintype Ω] [Nonempty Ω] (p : Ω → Player) (μ : Measure Ω)
   [IsProbabilityMeasure μ] {f : Player → ℝ}
 
-/-- Observing cooperation raises the expectation of any statistic that monovaries with the utility
-gap in favour of cooperating, since Bayes' rule reweights the prior by the policy, which is
-increasing in the gap. -/
 theorem priorExpectation_le_expectation_cooperate
     (hf : Monovary (f ∘ p) fun ω ↦ U (p ω) .cooperate - U (p ω) .defect) :
     priorExpectation μ p f ≤ S.expectation U p μ f .cooperate := by
@@ -318,7 +311,6 @@ theorem priorExpectation_le_expectation_cooperate
   simp only [plan_real, policy_eq_sigmoid, Action.other_cooperate] at hij
   exact hf ((mul_lt_mul_iff_of_pos_left S.lam_pos).1 (Real.sigmoid_lt_iff.1 hij))
 
-/-- Observing defection lowers it. -/
 theorem expectation_defect_le_priorExpectation
     (hf : Monovary (f ∘ p) fun ω ↦ U (p ω) .cooperate - U (p ω) .defect) :
     S.expectation U p μ f .defect ≤ priorExpectation μ p f := by
@@ -401,9 +393,6 @@ def expectedPublicUtility (q : Player) (a₁ : Action) : ℝ :=
   S.expectedBaseUtility q a₁ +
     ∑ d, d.repuSign * q.repu d * S.ν (S.reputation p μ d a₁ * S.pot)
 
-/-- A player whose reputation concern is to be seen as averse to advantageous inequity
-cooperates at least as often in public as in private, since cooperating is inferred to
-reflect more of that aversion. -/
 theorem policy_cooperate_le_policy_public (q : Player) (hm : q.repu .money = 0)
     (hd : q.repu .dia = 0) (ha : 0 ≤ q.repu .aia)
     (hrep : S.reputation p μ .aia .defect ≤ S.reputation p μ .aia .cooperate) :
@@ -415,8 +404,6 @@ theorem policy_cooperate_le_policy_public (q : Player) (hm : q.repu .money = 0)
   have := S.ν_strictMono.monotone (mul_le_mul_of_nonneg_right hrep S.pot_pos.le)
   nlinarith [mul_nonneg ha (sub_nonneg.2 this)]
 
-/-- A player whose reputation concern is to be seen as averse to disadvantageous inequity
-cooperates at most as often in public, since stealing is inferred to reflect more of it. -/
 theorem policy_public_le_policy_cooperate (q : Player) (hm : q.repu .money = 0)
     (ha : q.repu .aia = 0) (hd : 0 ≤ q.repu .dia)
     (hrep : S.reputation p μ .dia .cooperate ≤ S.reputation p μ .dia .defect) :
@@ -484,14 +471,11 @@ theorem opponentCounterfactual_dia_cooperate_defect_nonneg (hd : 0 ≤ q.base .d
     Player.beliefOn, feature_dia_cooperate_cooperate, feature_dia_cooperate_defect hpot, S.ν_zero]
   nlinarith [mul_nonneg hb (mul_nonneg hd S.ν_pot_nonneg)]
 
-/-- Stealing from a splitter costs advantageous-inequity utility, a structural condition of guilt.
--/
 theorem domainUtility_aia_defect_cooperate_nonpos (ha : 0 ≤ q.base .aia) :
     S.domainUtility q .defect .cooperate .aia ≤ 0 := by
   simp only [domainUtility, Domain.sign, feature_aia_defect_cooperate S.pot_pos.le]
   nlinarith [S.ν_pot_nonneg]
 
-/-- Splitting would have spared that cost, the other structural condition of guilt. -/
 theorem agentCounterfactual_aia_defect_cooperate_nonneg (U : Player → Action → ℝ)
     (ha : 0 ≤ q.base .aia) : 0 ≤ S.agentCounterfactual q U .defect .cooperate .aia := by
   have hpot := S.pot_pos.le
@@ -500,8 +484,6 @@ theorem agentCounterfactual_aia_defect_cooperate_nonneg (U : Player → Action �
   nlinarith [mul_nonneg (S.policy_pos U (q.knowing .cooperate) .cooperate).le
     (mul_nonneg ha S.ν_pot_nonneg)]
 
-/-- Had the opponent stolen from a splitter, the money would have been worse, the structural
-condition of gratitude. -/
 theorem opponentCounterfactual_money_cooperate_cooperate_nonpos (hm : 0 ≤ q.base .money)
     (hb : q.belief ≤ 1) : S.opponentCounterfactual q .cooperate .cooperate .money ≤ 0 := by
   simp only [opponentCounterfactual, Action.other_cooperate, domainUtility, Domain.sign,
@@ -510,9 +492,6 @@ theorem opponentCounterfactual_money_cooperate_cooperate_nonpos (hm : 0 ≤ q.ba
     linarith [S.pot_pos])
   nlinarith [mul_nonneg (sub_nonneg.2 hb) (mul_nonneg hm (sub_nonneg.2 this))]
 
-/-- When both steal, a defector who had split would have been left with nothing against a full pot.
-The base agent counterfactual is then relief rather than regret in the disadvantageous domain, so
-regret after mutual stealing must come from reputation. -/
 theorem agentCounterfactual_dia_defect_defect_nonpos (U : Player → Action → ℝ)
     (hd : 0 ≤ q.base .dia) : S.agentCounterfactual q U .defect .defect .dia ≤ 0 := by
   have hpot := S.pot_pos.le
@@ -531,8 +510,6 @@ def reputationAgentCounterfactual (U : Player → Action → ℝ) (a₁ a₂ : A
   S.policy U (q.knowing a₂) a₁.other *
     (S.reputationUtility p μ q a₁.other d - S.reputationUtility p μ q a₁ d)
 
-/-- Whatever the opponent did, a defector who cares to be seen as averse to advantageous inequity
-would have been seen as more so had they split, which grounds regret and guilt over reputation. -/
 theorem reputationAgentCounterfactual_aia_defect_nonneg (U : Player → Action → ℝ)
     (ha : 0 ≤ q.repu .aia)
     (hrep : S.reputation p μ .aia .defect ≤ S.reputation p μ .aia .cooperate) (a₂ : Action) :
@@ -545,9 +522,6 @@ theorem reputationAgentCounterfactual_aia_defect_nonneg (U : Player → Action �
 
 /-! ### Lesions (Section 5) -/
 
-/-- The social lesion keeps only the money appraisals; a reader of monetary achieved utility
-then ranks stealing from a splitter above splitting with one, whereas observers predict
-similar joy for both. -/
 theorem domainUtility_money_cooperate_lt_defect (hm : 0 < q.base .money) :
     S.domainUtility q .cooperate .cooperate .money <
       S.domainUtility q .defect .cooperate .money := by

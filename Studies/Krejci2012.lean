@@ -103,7 +103,6 @@ def Repetitive (P : Entity → E → Prop) (x : Entity) (e : E) : Prop :=
 
 variable {M manip S} {x y z : Entity} {e : E}
 
-/-- The simple form is the derived inchoative of `KoontzGarboden2009`. -/
 theorem eat_eq_anticausative : eat M manip S = anticausative M manip S := rfl
 
 /-- The eater manipulates food ((39a)). -/
@@ -282,7 +281,6 @@ instance : DecidablePred RespectsHierarchy := fun _ ↦ inferInstanceAs (Decidab
 /-- The type of a process, (1) to (4) of Table 2.8, is the last tier it reaches. -/
 def type (c : Causative) : WithBot Tier := c.reach.max
 
-/-- A process that respects the hierarchy reaches exactly the tiers up to its type. -/
 theorem mem_reach_iff {c : Causative} (h : c.RespectsHierarchy) (t : Tier) :
     t ∈ c.reach ↔ ↑t ≤ c.type :=
   h.mem_iff_le_max
@@ -308,8 +306,6 @@ def table : List Causative :=
 /-- The survey as a formal context, a surveyed process bearing the tiers it reaches. -/
 def Reaches (c : {c // c ∈ table}) (t : Tier) : Prop := t ∈ c.1.reach
 
-/-- The hierarchy is the order of implication among the tiers in the survey, one tier coming
-before another exactly when every surveyed process that reaches the second reaches the first. -/
 theorem ofAttribute_reaches_le_iff {t t' : Tier} :
     Concept.ofAttribute Reaches t' ≤ Concept.ofAttribute Reaches t ↔ t ≤ t' := by
   rw [Concept.ofAttribute_le_ofAttribute_iff]
@@ -317,7 +313,6 @@ theorem ofAttribute_reaches_le_iff {t t' : Tier} :
   revert t t'
   decide
 
-/-- No surveyed language skips a tier. -/
 theorem table_respectsHierarchy : ∀ c ∈ table, c.RespectsHierarchy := fun c hc ↦
   Concept.antitone_ofAttribute_iff.1 (fun _ _ h ↦ ofAttribute_reaches_le_iff.2 h) ⟨c, hc⟩
 

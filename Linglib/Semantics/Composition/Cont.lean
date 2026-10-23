@@ -56,25 +56,19 @@ instance. -/
 def reset {r' : Type u} [Monad m] (c : ContT r m r) : ContT r' m r :=
   monadLift (eval c)
 
-/-- `reset` is transparent to lifted effects, so effects escape islands where scope-takers do
-not. -/
 theorem reset_monadLift {r' : Type u} [Monad m] [LawfulMonad m] (x : m r) :
     reset (monadLift x : ContT r m r) = (monadLift x : ContT r' m r) :=
   congrArg monadLift (eval_monadLift x)
 
-/-- Evaluating a reset computation is evaluating the computation. -/
 @[simp] theorem eval_reset [Monad m] [LawfulMonad m] (c : ContT r m r) :
     eval (reset c : ContT r m r) = eval c :=
   eval_monadLift _
 
-/-- A pure value passes through `reset`. -/
 @[simp] theorem reset_pure {r' : Type u} [Monad m] [LawfulMonad m] (a : r) :
     reset (pure a : ContT r m r) = (pure a : ContT r' m r) := by
   ext k
   simp only [reset, eval_pure, run_monadLift, pure_bind, run_pure]
 
-/-- Lifting, combining and evaluating is combining in `m`, so scopal combination subsumes
-applicative combination. -/
 theorem eval_seq_monadLift [Monad m] [LawfulMonad m]
     (f : α → β → r) (x : m α) (y : m β) :
     eval (f <$> (monadLift x : ContT r m α) <*> monadLift y) =
@@ -82,7 +76,6 @@ theorem eval_seq_monadLift [Monad m] [LawfulMonad m]
   simp only [eval, seq_eq_bind_map, bind_map_left, run_bind, run_map,
     run_monadLift, Function.comp_def, bind_pure_comp]
 
-/-- Evaluating a lifted computation under a value-level map is mapping in `m`. -/
 theorem eval_map_monadLift [Monad m] [LawfulMonad m] (f : α → r) (x : m α) :
     eval (f <$> (monadLift x : ContT r m α)) = f <$> x := by
   simp only [eval_map, run_monadLift, bind_pure_comp]
@@ -93,7 +86,6 @@ theorem reset_map_monadLift {r' : Type u} [Monad m] [LawfulMonad m] (f : α → 
     reset (f <$> (monadLift x : ContT r m α)) = (monadLift (f <$> x) : ContT r' m r) :=
   congrArg monadLift (eval_map_monadLift f x)
 
-/-- Resetting a combination of lifted computations is lifting their combination in `m`. -/
 theorem reset_seq_monadLift {r' : Type u} [Monad m] [LawfulMonad m]
     (f : α → β → r) (x : m α) (y : m β) :
     reset (f <$> (monadLift x : ContT r m α) <*> monadLift y) =

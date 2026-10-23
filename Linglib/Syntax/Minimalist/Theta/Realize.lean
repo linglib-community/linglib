@@ -58,14 +58,11 @@ theorem realize_node_some_some {l r : Bud.Tree (Color LexicalItem.Token)}
     realize (.node c l r) = some (L.merge R) := by
   simp [realize, hl, hr]
 
-/-- The unit law `M(T, 1) = T`: a movement landing site realizes to its host unchanged, the
-empty-tree marker existing only for the coloring. -/
 @[simp] theorem realize_node_emptyTree_right {x : Bud.Tree (Color LexicalItem.Token)}
     {c : Color LexicalItem.Token} :
     realize (.node c x (.leaf .emptyTree)) = realize x := by
   cases h : realize x <;> simp [realize, h]
 
-/-- A tree with a lexically anchored input realizes to a syntactic object. -/
 theorem realize_isSome {x : Bud.Tree (Color LexicalItem.Token)}
     (h : ∃ tok g, Color.lex tok g ∈ x.inputs) : (realize x).isSome := by
   induction x with

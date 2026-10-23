@@ -57,10 +57,6 @@ variable {S X D : Type*} [Preorder S] [Preorder D] {ρ : S → X} {μ : S → D}
 
 /-! ### Upward monotonicity -/
 
-/-- If `b` has the property and `a` has more of it than `b`, then `a` has the property. The
-comparative supplies a state of `a`'s measuring above a state of `b`'s with the property, an
-admissible measure on a total background places it above that state, and the threshold is upward
-closed. -/
 theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet T)
     (hμ : StrictMono μ) {a b : X} (hb : b ∈ ρ '' T)
     (h : MaxComparative .gt (ρ · = a) (ρ · = b) μ) : a ∈ ρ '' T :=
@@ -77,9 +73,6 @@ example :
   rintro ⟨u, hu, rfl⟩
   exact absurd (mem_Ici.1 hu) (by decide)
 
-/-- Without totality upward monotonicity fails. When `s` and `t` are the only states of their
-holders, `s` is not below `t` but measures below it, and the property is the one of lying above
-`s`, the holder of `s` has the property and the holder of `t` has more of it without having it. -/
 theorem not_mem_image_Ici_of_not_le {s t : S} (hst : ¬ s ≤ t) (hlt : μ s < μ t)
     (hs : ∀ u, ρ u = ρ s → u = s) (ht : ∀ u, ρ u = ρ t → u = t) :
     ρ s ∈ ρ '' Ici s ∧ MaxComparative .gt (ρ · = ρ t) (ρ · = ρ s) μ ∧ ρ t ∉ ρ '' Ici s :=
@@ -98,9 +91,6 @@ example :
 /-! ### The comparative and the positive form -/
 
 omit [Preorder S] in
-/-- The comparative does not entail the positive form. When `s` and `t` are the only states of
-their holders and `s` measures above `t` without the property, the holder of `s` has more of it
-than the holder of `t` without having it. -/
 theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s ∉ T)
     (hs : ∀ u, ρ u = ρ s → u = s) (ht : ∀ u, ρ u = ρ t → u = t) :
     MaxComparative .gt (ρ · = ρ s) (ρ · = ρ t) μ ∧ ρ s ∉ ρ '' T :=
@@ -111,8 +101,6 @@ theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s 
 
 section Thresholds
 
-/-- The upper sets of a background, as extensions, form a monotone delineation iff the
-background is total. Two incomparable states give the cycle of a nonlinear delineation. -/
 theorem isMonotoneOn_upperSets_iff :
     (⟨id⟩ : Delineation S).IsMonotoneOn {C | IsUpperSet C} ↔ ∀ s t : S, s ≤ t ∨ t ≤ s := by
   refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ h₁ C₂ h₂ a b ha hb hb₂ ↦ ?_⟩
@@ -120,8 +108,6 @@ theorem isMonotoneOn_upperSets_iff :
     exact hts (h (Ici s) (isUpperSet_Ici s) (Ici t) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
   · exact (htot a b).elim (fun hab ↦ absurd (h₁ hab ha) hb) fun hba ↦ h₂ hba hb₂
 
-/-- With a monotone measure, if `a` has more than `b` then some threshold property holds of `a`
-and not of `b`. -/
 theorem exists_isUpperSet_of_maxComparative (hm : Monotone μ) {a b : X}
     (h : MaxComparative .gt (ρ · = a) (ρ · = b) μ) :
     ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T := by
@@ -140,8 +126,6 @@ example :
   ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), (maxComparative_eq_iff _ _ _).2 Nat.zero_lt_one,
     fun _ hT ht ↦ hT trivial ht⟩
 
-/-- On a total background with an admissible measure a separating threshold yields the
-comparative, when the degrees of `b`'s states have a greatest element. -/
 theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     {a b : X} (hb : ∃ δ, IsGreatest (μ '' {s | ρ s = b}) δ)
     (h : ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T) :
@@ -152,15 +136,11 @@ theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : St
   have hst : ¬ s ≤ t := fun hst ↦ hbT ⟨t, hT hst hsT, htb⟩
   exact ⟨_, hδ, s, hsa, hμ (lt_of_le_not_ge ((total_of (· ≤ ·) t s).resolve_right hst) hst)⟩
 
-/-- On a total background with a monotone admissible measure, `a` has more than `b` iff some
-threshold property holds of `a` and not of `b`, as in Klein's comparative. -/
 theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (μ '' {s | ρ s = b}) δ) :
     MaxComparative .gt (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
   ⟨exists_isUpperSet_of_maxComparative hm, maxComparative_of_exists_isUpperSet hμ hb⟩
 
-/-- Every threshold property of the background is a degree threshold pulled back along the
-measure iff the measure reflects the background. -/
 theorem forall_isUpperSet_exists_preimage_iff :
     (∀ T : Set S, IsUpperSet T → ∃ U : Set D, IsUpperSet U ∧ T = μ ⁻¹' U) ↔
       ∀ a b, μ a ≤ μ b → a ≤ b := by
@@ -171,13 +151,10 @@ theorem forall_isUpperSet_exists_preimage_iff :
     rintro ⟨_, ⟨t, ht, rfl⟩, hts⟩
     exact hT (h t s hts) ht
 
-/-- A measure into a linear scale that reflects the background makes it total. -/
 theorem total_of_reflect_le {D : Type*} [LinearOrder D] {μ : S → D}
     (h : ∀ a b, μ a ≤ μ b → a ≤ b) (s t : S) : s ≤ t ∨ t ≤ s :=
   (le_total (μ s) (μ t)).imp (h s t) (h t s)
 
-/-- On a non-total background some threshold property is no degree threshold pulled back along
-any measure into a linear scale. -/
 theorem exists_isUpperSet_forall_ne_preimage {D : Type*} [LinearOrder D] (μ : S → D) {s t : S}
     (hst : ¬ s ≤ t) (hts : ¬ t ≤ s) :
     ∃ T : Set S, IsUpperSet T ∧ ∀ U : Set D, IsUpperSet U → T ≠ μ ⁻¹' U := by
@@ -186,8 +163,6 @@ theorem exists_isUpperSet_forall_ne_preimage {D : Type*} [LinearOrder D] (μ : S
   obtain h | h := total_of_reflect_le (forall_isUpperSet_exists_preimage_iff.1 h) s t
   exacts [hst h, hts h]
 
-/-- When the measure reflects the background and respects ties, the threshold above a contrast
-state `c` is the degree-threshold positive form at the degree of `c`. -/
 theorem preimage_Ici_apply_eq_Ici (h : ∀ a b, μ a ≤ μ b → a ≤ b) (hm : Monotone μ) (c : S) :
     μ ⁻¹' Set.Ici (μ c) = Ici c :=
   Set.ext fun s ↦ ⟨h c s, fun hs ↦ hm hs⟩

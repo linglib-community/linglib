@@ -92,13 +92,11 @@ theorem mem_apply {u : Transition W M X Y}
     {T : Set (W × (X → M))} {w : W} {g : Y → M} :
     (w, g) ∈ u.apply T ↔ ∃ e, (w, e) ∈ T ∧ u.rel w e g := Iff.rfl
 
-/-- Applying the identity transition is the identity. -/
 @[simp] theorem apply_id (T : Set (W × (X → M))) :
     (id X).apply T = T := by
   ext ⟨w, e⟩
   exact ⟨fun ⟨k, hk, hke⟩ => (show k = e from hke) ▸ hk, fun h => ⟨e, h, rfl⟩⟩
 
-/-- `apply` is functorial: sequencing then applying is applying twice. -/
 theorem apply_comp (u : Transition W M X Y) (v : Transition W M Y Z)
     (T : Set (W × (X → M))) :
     (u.comp v).apply T = v.apply (u.apply T) := by
@@ -126,7 +124,6 @@ def applyState (u : Transition W M X Y) (I : State W V M) :
       (∀ v : Y, q.assignment v.1 = ↑(e' v)) ∧
       u.rel q.world e e'}
 
-/-- Application lands in the target stratum. -/
 theorem uniformAt_applyState (u : Transition W M X Y) (I : State W V M) :
     State.UniformAt Y (u.applyState I) := fun _ hq => hq.1
 
@@ -141,7 +138,6 @@ private theorem ptOf_assignment (Y : Set V) (w : W) (e : Y → M) (v : Y) :
     (ptOf Y w e).assignment v.1 = ↑(e v) := by
   simp [ptOf, Possibility.domainEquiv, v.2]
 
-/-- Root application is functorial. -/
 theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
     (I : State W V M) :
     (u.comp v).applyState I = v.applyState (u.applyState I) := by
@@ -160,10 +156,6 @@ theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
     · rw [hkk']
       exact hvk
 
-/-- Root and fiber semantics agree under the classification: on the
-`X`-stratum, the regular CCP `applyState` is `apply`, transported along
-`State.uniformEquiv` — the relational collapse computes the root-state
-update. -/
 theorem uniformEquiv_applyState (u : Transition W M X Y)
     {I : State W V M} (hI : State.UniformAt X I) :
     State.uniformEquiv Y ⟨u.applyState I, uniformAt_applyState u I⟩ =
@@ -234,8 +226,6 @@ def ofTotal (h : X ⊆ Y) (R : W → (V → M) → (V → M) → Prop) :
     Y.domRestrict g = e' ∧ R w f g
   grow := h
 
-/-- Under the support hypotheses, the typing is faithful: related
-assignments are exactly the restrictions of related assignments. -/
 theorem ofTotal_rel_restrict {h : X ⊆ Y} (hR : ReadsAt X R)
     (hW : WritesAt Y R) {w : W} {f g : V → M} :
     (ofTotal h R).rel w (X.domRestrict f)
@@ -248,8 +238,6 @@ theorem ofTotal_rel_restrict {h : X ⊆ Y} (hR : ReadsAt X R)
   · intro hfg
     exact ⟨f, g, rfl, rfl, hfg⟩
 
-/-- Typing is functorial on composition, given read-support of the second
-relation: the mid-assignments stitch. -/
 theorem ofTotal_comp {h₁ : X ⊆ Y} {h₂ : Y ⊆ Z} (hS : ReadsAt Y S) :
     (ofTotal h₁ R).comp (ofTotal h₂ S) =
       ofTotal (h₁.trans h₂) (fun w => Relation.Comp (R w) (S w)) := by
@@ -286,34 +274,29 @@ def copy (u : Transition W M X Y) {X' Y' : Set V} (hX : X = X')
   subst hX hY hX' hY'
   rfl
 
-/-- Typing respects relation equality; the growth proof is irrelevant. -/
 theorem ofTotal_congr {R R' : W → (V → M) → (V → M) → Prop}
     (h h' : X ⊆ Y) (hR : R = R') : ofTotal h R = ofTotal h' R' := by
   subst hR
   rfl
 
-/-- Typed relations repackage by re-proving the growth. -/
 theorem ofTotal_copy {R : W → (V → M) → (V → M) → Prop} {h : X ⊆ Y}
     {Y' : Set V} (hY : Y = Y') :
     (ofTotal h R).copy rfl hY = ofTotal (hY ▸ h) R := by
   subst hY
   rfl
 
-/-- Repackaged transitions compose to the repackaged composite. -/
 theorem copy_comp_copy (u : Transition W M X Y) (v : Transition W M Y Z)
     {X' Y' Z' : Set V} (hX : X = X') (hY : Y = Y') (hZ : Z = Z') :
     (u.copy hX hY).comp (v.copy hY hZ) = (u.comp v).copy hX hZ := by
   subst hX hY hZ
   rfl
 
-/-- Application is invariant under repackaging. -/
 @[simp] theorem apply_copy (u : Transition W M X Y) {X' Y' : Set V}
     (hX : X = X') (hY : Y = Y') (T : Set (W × ((↑X' : Set V) → M))) :
     (u.copy hX hY).apply T = (by subst hX hY; exact u.apply T) := by
   subst hX hY
   rfl
 
-/-- Root application is invariant under repackaging. -/
 @[simp] theorem applyState_copy (u : Transition W M X Y)
     {X' Y' : Set V} (hX : X = X') (hY : Y = Y') (I : State W V M) :
     (u.copy hX hY).applyState I = u.applyState I := by
@@ -327,11 +310,9 @@ established referents persist, only new ones are assigned. -/
 def IsExtension (u : Transition W M X Y) : Prop :=
   ∀ ⦃w e e'⦄, u.rel w e e' → e = fun v => e' ⟨v.1, u.grow v.2⟩
 
-/-- The identity is an extension. -/
 theorem isExtension_id : (id X : Transition W M X X).IsExtension :=
   fun _ _ _ h => h
 
-/-- Extensions compose. -/
 theorem IsExtension.comp {u : Transition W M X Y} {v : Transition W M Y Z}
     (hu : u.IsExtension) (hv : v.IsExtension) : (u.comp v).IsExtension := by
   rintro w e e' ⟨k, hek, hke⟩

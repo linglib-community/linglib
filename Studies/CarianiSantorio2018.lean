@@ -92,7 +92,6 @@ theorem will_eq_core : will s f A = (Function.graph fun w ↦ s.sel w f).core A 
 /-- *Will* commutes with negation, which is Negation Swap (§7). -/
 theorem will_compl : will s f Aᶜ = (will s f A)ᶜ := map_compl' _ A
 
-/-- At a world of the modal parameter, *will A* is true exactly when `A` is. -/
 theorem mem_will_of_mem (hw : w ∈ f) : w ∈ will s f A ↔ w ∈ A := by
   rw [mem_will, s.centering w f hw]
 
@@ -101,8 +100,6 @@ theorem mem_will_of_mem (hw : w ∈ f) : w ∈ will s f A ↔ w ∈ A := by
 theorem will_inter_self : will s f A ∩ f = A ∩ f :=
   SelectionFunction.modal_inter_refl A
 
-/-- On a possible modal parameter, *will A* is the selection conditional of [stalnaker-1968] with
-the modal parameter as antecedent. -/
 theorem will_eq_selectionConditional (hf : f.Nonempty) : will s f A = selectionConditional s f A :=
   (selectionConditional_eq_modal hf A).symm
 
@@ -123,7 +120,6 @@ theorem Valid2.valid1 {φ : SelectionFunction W → Set W → Set W} (h : Valid2
 theorem will_excluded_middle : Valid2 fun s f ↦ will s f A ∪ will s f Aᶜ := fun s _ ↦ by
   simp only [will_compl, Set.union_compl_self]
 
-/-- Every context at which *will A* is true verifies `A`. -/
 theorem valid1_materialImp_will : Valid1 fun s f ↦ materialImp (will s f A) A :=
   fun s _ _ hw ↦ (mem_will_of_mem s hw).1
 
@@ -149,8 +145,6 @@ restricted parameter is *if A, will (B and C)*, (24) of §5.3.1. -/
 theorem willIf_inter : willIf s f A B ∩ willIf s f A C = willIf s f A (B ∩ C) :=
   (map_inf _ B C).symm
 
-/-- When the restricted parameter is possible, *if A, will B* is the selection conditional with
-the restricted parameter as antecedent. -/
 theorem willIf_eq_selectionConditional (h : (f ∩ A).Nonempty) :
     willIf s f A B = selectionConditional s (f ∩ A) B :=
   will_eq_selectionConditional s h
@@ -244,8 +238,6 @@ inductive W where
 worlds are historical alternatives up to a time when they agree on it or it is not yet dated. -/
 def frame : Temporal.TWFrame W ℕ := .ofDatedFacts (fun _ ↦ 1) (· = ·)
 
-/-- Today, at time `0`, nothing is settled, and every world is a historical alternative to every
-other. -/
 @[simp] theorem alternatives_today (w : W) : frame.alternatives (w, 0) = Set.univ :=
   Set.eq_univ_of_forall fun _ _ h ↦ (Nat.not_succ_le_zero 0 h).elim
 
@@ -264,8 +256,6 @@ theorem will_warriorsCap_indeterminate (s : SelectionFunction W) :
   rw [mem_will_alternatives_iff s, mem_will_alternatives_iff s]
   simp [warriorsCap]
 
-/-- *Will A* does not valid₂-entail `A`. At the Warriors-cap world, with the no-cap world as the
-only modal parameter, *Cynthia will wear no cap* is true and its prejacent false. -/
 theorem not_valid2_materialImp_will :
     ¬ Valid2 fun s f ↦ materialImp (will s f {W.cn}) {W.cn} := fun h ↦ by
   obtain ⟨s, hs⟩ := SelectionFunction.exists_sel_eq (w := W.cw) (Set.mem_singleton W.cn) (by simp)
@@ -312,9 +302,6 @@ theorem not_necessity_warriorsCap_or_compl (w : W) :
   not_necessity_or_necessity_compl (v := .cw) (v' := .cg) (by simp) (by simp)
     (by simp [warriorsCap]) (by simp [warriorsCap])
 
-/-- The universal reading of *if Cynthia wears a cap, she will wear a Warriors cap* is the
-restrictor conditional, and it refutes Conditional Excluded Middle, since the restricted base
-holds both cap worlds. -/
 theorem not_conditionalNecessity_wearsCap_or_compl (w : W) :
     ¬ (Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCap) w ∨
       Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCapᶜ) w) :=
@@ -354,16 +341,12 @@ theorem credence_willIf_wearsCap (s : SelectionFunction W) (w : W) :
       Set.ncard_singleton]
     norm_num
 
-/-- The probability of a Warriors cap conditional on some cap is 1/2. -/
 theorem cond_wearsCap_warriorsCap : cynthiaCredence[|wearsCap].real warriorsCap = 1 / 2 := by
   rw [cynthiaCredence, uniformOn_univ_cond, uniformOn_real_apply,
     show wearsCap ∩ warriorsCap = {.cw} by ext v; cases v <;> simp [wearsCap, warriorsCap],
     Set.ncard_singleton, wearsCap, Set.ncard_pair (by decide)]
   norm_num
 
-/-- No proposition over the Sports Fan model has credence 1/2, since every credence is a multiple
-of 1/3, so no reading of the cap-conditional has its conditional probability. It is an instance
-of the point of [hajek-1989] that conditional probabilities outnumber unconditional ones. -/
 theorem no_unconditional_one_half (S : Set W) : cynthiaCredence.real S ≠ 1 / 2 := by
   rw [cynthiaCredence_real]
   intro h

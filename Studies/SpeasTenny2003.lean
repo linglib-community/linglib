@@ -91,18 +91,14 @@ otherwise. -/
 def SAFeatures.controller (f : SAFeatures) : SAArgument :=
   if f.hearerPromoted then .hearer else .speaker
 
-/-- The controller c-commands the content. -/
 theorem SAFeatures.controller_cCommands (f : SAFeatures) : f.CCommands f.controller .content := by
   rcases f with ⟨_ | _, _ | _⟩ <;> decide
 
-/-- The controller is the closest c-commander of the content, since any other argument c-commanding
-the content c-commands the controller. -/
 theorem SAFeatures.controller_closest (f : SAFeatures) {a : SAArgument}
     (h : f.CCommands a .content) (ha : a ≠ f.controller) : f.CCommands a f.controller := by
   rcases f with ⟨_ | _, _⟩ <;> cases a <;> simp_all [SAFeatures.CCommands, SAFeatures.height,
     SAFeatures.controller]
 
-/-- The hearer controls the seat exactly when promoted above the content. -/
 theorem SAFeatures.controller_eq_hearer_iff (f : SAFeatures) :
     f.controller = .hearer ↔ f.CCommands .hearer .content := by
   rcases f with ⟨_ | _, _ | _⟩ <;> decide
@@ -175,14 +171,10 @@ theorem Mood.seatOfKnowledge_eq :
     Mood.imperative.seatOfKnowledge = .hearer ∧ Mood.subjunctive.seatOfKnowledge = .speaker := by
   decide
 
-/-- The seat is the hearer exactly in the moods where the hearer is promoted above the
-content, so the discourse-oriented adverbs of a question, *evidently*, *unfortunately*,
-*honestly*, report the hearer's attitude. -/
 theorem Mood.seatOfKnowledge_eq_hearer_iff (m : Mood) :
     m.seatOfKnowledge = .hearer ↔ m.features.hearerPromoted = true := by
   cases m <;> decide
 
-/-- The seat is never the content, since it is a sentient argument. -/
 theorem Mood.seatOfKnowledge_ne_content (m : Mood) : m.seatOfKnowledge ≠ .content := by
   cases m <;> decide
 
@@ -195,8 +187,6 @@ def target : LogophoricRole → PRole
   | .self => .seatOfKnowledge
   | .pivot => .seatOfKnowledge
 
-/-- No logophoric role is a role of its own, since each is a coindexing with the speaker or the
-seat. -/
 theorem target_ne_hearer (r : LogophoricRole) : target r ≠ .hearer := by
   cases r <;> decide
 

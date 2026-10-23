@@ -75,10 +75,8 @@ theorem wxdy_coinstantiation :
         wxdyConstruction.form.getLast?.bind (·.refIdx) := by
   decide
 
-/-- WXDY is a formal idiom: the `X` and `Y` slots are open. -/
 theorem wxdy_formal_idiom : wxdyConstruction.IsFormalIdiom := by decide
 
-/-- It is properly partial: BE, *doing* and *what* are fixed while `X` and `Y` are open. -/
 theorem wxdy_partially_open : wxdyConstruction.specificity = .partiallyOpen := rfl
 
 /-! ### The grammatical evidence (Section 2.3)
@@ -189,12 +187,9 @@ def coinstantiationForm : TypedForm String :=
   , { filler := .open_ .VERB, isHead := true }
   , { filler := .open_ .VERB, gf := some .comp, subjIdx := some 1 } ]
 
-/-- Coinstantiation is fully abstract: every slot is open. -/
 theorem coinstantiation_specificity :
     derivedSpecificity coinstantiationForm = .fullyAbstract := by decide
 
-/-- It carries one index, shared by the predicator's subject and its complement's subject
-requirement. -/
 theorem coinstantiation_coreference : refGroupCount coinstantiationForm = 1 := by decide
 
 end KayFillmore1999

@@ -131,8 +131,6 @@ private theorem extendOn_restrict [DecidableEq V] (U : Finset V) (v v' : V → M
   · simp [hx]
   · simp [hx, h x hx]
 
-/-- The `∃` over an assignment to the universe-subtype `{x // x ∈ U}` is the `∃`
-over embeddings extending `v` on `U`. -/
 private theorem exists_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
     (P : (V → M) → Prop) :
     (∃ i : {x // x ∈ U} → M, P (extendOn U v i)) ↔
@@ -144,7 +142,6 @@ private theorem exists_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
     refine ⟨fun s => v' s.val, ?_⟩
     rw [extendOn_restrict U v v' hagree]; exact hv'
 
-/-- The `∀` analogue of `exists_extend_iff`. -/
 private theorem forall_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
     (P : (V → M) → Prop) :
     (∀ i : {x // x ∈ U} → M, P (extendOn U v i)) ↔
@@ -156,16 +153,12 @@ private theorem forall_extend_iff [DecidableEq V] (U : Finset V) (v : V → M)
   · intro hv' i
     exact hv' (extendOn U v i) (extendOn_agrees U v i)
 
-/-- `closeExists` realizes as existential quantification over embeddings that
-extend `v` on `U`. -/
 theorem realize_closeExists [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v : V → M) :
     (closeExists U φ).Realize v ↔ ∃ v', (∀ x ∉ U, v' x = v x) ∧ φ.Realize v' := by
   rw [closeExists, Formula.realize_iExs]
   simp only [Formula.realize_relabel, elim_comp_splitOn]
   exact exists_extend_iff U v (Formula.Realize φ)
 
-/-- `closeForall` realizes as universal quantification over embeddings that extend
-`v` on `U`. -/
 theorem realize_closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v : V → M) :
     (closeForall U φ).Realize v ↔ ∀ v', (∀ x ∉ U, v' x = v x) → φ.Realize v' := by
   rw [closeForall, Formula.realize_iAlls]
@@ -191,7 +184,6 @@ private theorem DRS.realize_toFormula_of_forall [DecidableEq V] {K : DRS L V}
   exact exists_congr fun v' => and_congr_right fun _ =>
     Condition.realize_toFormulaAll_of_forall fun c hc => ih c hc v'
 
-/-- A single condition's translation realizes as `VerifiesCondition`. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
     (Condition.toFormula c).Realize v ↔ VerifiesCondition v c := by
   induction c generalizing v with
@@ -209,8 +201,6 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V �
     rw [Condition.toFormula_dis, Formula.realize_sup, verifies_dis,
       DRS.realize_toFormula_of_forall ihl, DRS.realize_toFormula_of_forall ihr]
 
-/-- A list of conditions' conjoined translation realizes as the conjunction of
-their realizations. -/
 theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V))
     (v : V → M) :
     (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, VerifiesCondition v c :=

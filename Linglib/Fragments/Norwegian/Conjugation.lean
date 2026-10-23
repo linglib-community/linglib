@@ -125,13 +125,10 @@ def weak2c (inf : String) : Stem :=
 
 /-! ### The forms across the classes -/
 
-/-- The verbs of the first class have the same form in the preterite and the participle, in
-both standards. -/
 theorem weak1_preterite_eq_participle (s : Standard) (inf : String) :
     (weak1 s inf).preterite = (weak1 s inf).participle := by
   cases s <;> rfl
 
-/-- In the second class the dental of the participle is that of the preterite. -/
 theorem dental_preterite (d inf : String) :
     (dental d inf).preterite = (dental d inf).participle ++ "e" := rfl
 
@@ -139,11 +136,9 @@ theorem weak2c_preterite (inf : String) :
     (weak2c inf).preterite = (weak2c inf).participle ++ "e" := by
   rw [weak2c, String.append_assoc]; rfl
 
-/-- The present of a Bokmål first-class verb is *-er* on its root. -/
 theorem weak1_present (s : String) : (weak1 .bokmaal (s ++ "e")).present = s ++ "er" := by
   rw [weak1, String.append_assoc]; rfl
 
-/-- The present of a second-class verb with an infinitive in *-e* is *-er* on its root. -/
 theorem dental_present (d s : String) : (dental d (s ++ "e")).present = s ++ "er" := by
   rw [dental, String.append_assoc]; rfl
 

@@ -86,20 +86,14 @@ def boolToFin3 : Bool → Fin 3 := fun b ↦ if b then 2 else 0
 /-- The embedding of `FOUR` into `PRESUP`, onto the definite values. -/
 def embed (x : FOUR) : PRESUP := .mk (boolToFin3 x.pro) (boolToFin3 x.con)
 
-/-- `FOUR` is a sub-bilattice of `PRESUP` in the truth order: the embedding preserves and
-reflects `≤`. -/
 theorem embed_le (x y : FOUR) : x ≤ y ↔ embed x ≤ embed y := by
   obtain ⟨xa, xb⟩ := x; obtain ⟨ya, yb⟩ := y
   cases xa <;> cases xb <;> cases ya <;> cases yb <;> decide
 
-/-- `FOUR` is a sub-bilattice of `PRESUP` in the knowledge order: the embedding preserves and
-reflects `≤ₖ`. -/
 theorem embed_kLE (x y : FOUR) : x ≤ₖ y ↔ embed x ≤ₖ embed y := by
   obtain ⟨xa, xb⟩ := x; obtain ⟨ya, yb⟩ := y
   cases xa <;> cases xb <;> cases ya <;> cases yb <;> decide
 
-/-- A presupposition gap and a defeasible presumption are both consistent; only the overdefined
-glut is excluded, so `PRESUP` keeps the gap-based logic and layers defeasible values on it. -/
 theorem gap_and_presumption_consistent :
     IsConsistent PRESUP.U ∧ IsConsistent PRESUP.Pplus ∧ ¬ IsConsistent PRESUP.I := by
   decide
@@ -163,8 +157,6 @@ theorem four_consistent_closed :
       IsConsistent xᶜ ∧ IsConsistent (x ⊓ y) ∧ IsConsistent (x ⊔ y) ∧ IsConsistent (x ⊓ₖ y) :=
   fun _ y hx hy ↦ ⟨hx.compl, hx.inf hy, hx.sup hy, hx.kInf y⟩
 
-/-- The consistent fragment is not closed under gullibility `⊔ₖ`: credulously combining
-consistent evidence can produce the glut, so paraconsistency is localized rather than absent. -/
 theorem four_consistent_not_closed_kSup :
     ¬ ∀ x y : FOUR, IsConsistent x → IsConsistent y → IsConsistent (x ⊔ₖ y) :=
   fun h ↦ absurd (h FOUR.T FOUR.F (by decide) (by decide)) (by decide)
@@ -202,8 +194,6 @@ def presumably (v : S ⊙ S) : S ⊙ S :=
   (guard (semiDesignation v) (.mk ⊤ ⊥) ⊔ₖ
     guard (semiDesignation vᶜ) (.mk ⊥ ⊤))
 
-/-- `presumably` fixes the definite values and the gap, and raises a presumption to
-definite truth. -/
 theorem presumably_table :
     presumably PRESUP.Pplus = PRESUP.T ∧ presumably PRESUP.T = PRESUP.T ∧
       presumably PRESUP.F = PRESUP.F ∧ presumably PRESUP.U = PRESUP.U ∧
@@ -215,11 +205,8 @@ that only the dominant evidence figures in evaluation. -/
 def weight (x : S ⊙ S) : S ⊙ S :=
   if x.con < x.pro then .mk x.pro ⊥ else if x.pro < x.con then .mk ⊥ x.con else x
 
-/-- Weighting evaluates a defeated default as the definite value that defeated it:
-`f⋆(D⁺) = T`. -/
 theorem weight_dplus : weight PRESUP.Dplus = PRESUP.T := by decide
 
-/-- `f⋆(D⁻) = F`. -/
 theorem weight_dminus : weight PRESUP.Dminus = PRESUP.F := by decide
 
 /-- `f⋆` maps `PRESUP` onto the seven constants of [ginsberg-1988]'s default bilattice

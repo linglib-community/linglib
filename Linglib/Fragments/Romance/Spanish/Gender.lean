@@ -174,7 +174,6 @@ def Value.definiteArticle (g : Value) : numberSystem.values → String :=
   numberSystem.elim (match g with | .masc => "el" | .fem => "la")
     (match g with | .masc => "los" | .fem => "las")
 
-/-- The definite article distinguishes the two genders. -/
 theorem faithful_definiteArticle : Gender.Faithful Value.definiteArticle := by decide
 
 end Spanish.Gender

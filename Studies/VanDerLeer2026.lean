@@ -79,17 +79,14 @@ section States
 
 variable (c : Frame W A) (a b : A) (π : Set W) (w : W)
 
-/-- Commitment is positively introspective, `C_{a,b} π → C_{a,b} C_{a,b} π`. -/
 theorem committed_committed (h : c.Committed a b π w) :
     c.Committed a b {v | c.Committed a b π v} w :=
   box_four h
 
-/-- Commitment is negatively introspective, `¬ C_{a,b} π → C_{a,b} ¬ C_{a,b} π`. -/
 theorem committed_not_committed (h : ¬ c.Committed a b π w) :
     c.Committed a b {v | ¬ c.Committed a b π v} w :=
   fun v hv ↦ not_box.2 (box_five (not_box.1 h) v hv)
 
-/-- Belief is consistent, in that no agent believes `⊥`. -/
 theorem not_believes_empty : ¬ c.Believes a ∅ w :=
   fun h ↦ let ⟨_, _, hv⟩ := box_D h; hv
 
@@ -147,7 +144,6 @@ theorem sincere_sincereRestrict (hs : c.Sincere)
     · exact ⟨hs _ _ hb, fun h ↦ absurd h.2 hyb⟩
   · exact ⟨hs _ _ hb, fun h ↦ absurd h.1 hxa⟩
 
-/-- After the sincere update the speaker believes what was asserted. -/
 theorem believes_sincereRestrict
     (h : ∀ w, ∃ v, w ~[c.belief a] v ∧ w ~[c.commitment a b] v ∧ v ∈ π) :
     (sincereRestrict c a b π h).Believes a π w :=
@@ -207,7 +203,6 @@ variable {c c' d : Frame W A}
 theorem ne (h : c ⊏ c') : c ≠ c' :=
   fun e ↦ let ⟨_, _, _, _, h₁, h₂⟩ := h.commitment_lt; h₂ (e ▸ h₁)
 
-/-- Whatever `c` is below, any state above `c` in belief and commitment is below too. -/
 theorem of_le (h : c ⊏ c') (hb : ∀ a, c.belief a ≤ d.belief a)
     (hc : ∀ a b, c.commitment a b ≤ d.commitment a b) : d ⊏ c' where
   belief_le a := (h.belief_le a).trans (hb a)
@@ -260,8 +255,6 @@ scoped instance : PartialOrder (Frame W A) where
 
 variable (C : Space (Frame W A)) {c : Frame W A} (a b : A) (π : Set W) (w : W)
 
-/-- A restriction `x⌈σ⌉_{d,e}` that belongs to `C` lies above `x` — unless it is the root and
-differs from `x`, since the root need not have non-empty commitment relations. -/
 theorem le_restrictCommitment_of_mem {x : Frame W A} {d e : A} {σ : Set W}
     (hmem : x.restrictCommitment d e σ ∈ C)
     (hroot : x.restrictCommitment d e σ = C.root → x.restrictCommitment d e σ = x) :
@@ -359,13 +352,11 @@ theorem committed_update (h : C.root.Committed a b π w) : (update α C).root.Co
 theorem committed_assert : (update (.assert a b π) C).root.Committed a b π w :=
   C.root.committed_restrictCommitment a b π w
 
-/-- After `assert_{a,b}(π)`, everyone believes that the commitment was made. -/
 theorem believes_committed_assert (x : A) :
     (update (.assert a b π) C).root.Believes x
       {v | (update (.assert a b π) C).root.Committed a b π v} w :=
   fun _ _ ↦ C.root.committed_restrictCommitment a b π _
 
-/-- After `assert_{a,b}(π)`, everyone is committed to the commitment having been made. -/
 theorem committed_committed_assert (x y : A) :
     (update (.assert a b π) C).root.Committed x y
       {v | (update (.assert a b π) C).root.Committed a b π v} w :=

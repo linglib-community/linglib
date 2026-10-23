@@ -133,7 +133,6 @@ def gap : Set D := Set.Icc tp.neg tp.pos
 
 theorem mem_gap {d : D} : d ∈ tp.gap ↔ tp.neg ≤ d ∧ d ≤ tp.pos := Iff.rfl
 
-/-- A pair leaves a gap exactly when its lower threshold does not exceed its upper one. -/
 theorem gap_nonempty_iff : tp.gap.Nonempty ↔ tp.neg ≤ tp.pos := Set.nonempty_Icc
 
 end ThresholdPair
@@ -205,39 +204,30 @@ def strengthenedDenotation [Preorder D] (tp : ThresholdPair D) : AntonymForm →
 
 variable [LinearOrder D] (θ : D) (tp : ThresholdPair D)
 
-/-- Under the contradictory denotation *unhappy* is *not happy* and *not unhappy* is *happy*. -/
 theorem contradictoryDenotation_synonymy :
     contradictoryDenotation θ .negative = contradictoryDenotation θ .notPositive ∧
       contradictoryDenotation θ .notNegative = contradictoryDenotation θ .positive :=
   ⟨rfl, rfl⟩
 
-/-- Contradictory negation is the complement of the positive form, so double negation
-eliminates and *not unhappy* is *happy*, the puzzle Krifka solves pragmatically. -/
 theorem contradictoryDenotation_notPositive :
     contradictoryDenotation θ .notPositive = (contradictoryDenotation θ .positive)ᶜ :=
   Set.compl_Ioi.symm
 
-/-- What *not unhappy* adds to *happy* under the strengthened denotation is the gap. -/
 theorem strengthenedDenotation_notNegative_diff_positive :
     strengthenedDenotation tp .notNegative \ strengthenedDenotation tp .positive = tp.gap := by
   rw [strengthenedDenotation, strengthenedDenotation, Set.sdiff_eq, Set.compl_Ioi,
     Set.Ici_inter_Iic, ThresholdPair.gap]
 
-/-- What *not happy* adds to *unhappy* under the strengthened denotation is the gap too. -/
 theorem strengthenedDenotation_notPositive_diff_negative :
     strengthenedDenotation tp .notPositive \ strengthenedDenotation tp .negative = tp.gap := by
   rw [strengthenedDenotation, strengthenedDenotation, Set.sdiff_eq, Set.compl_Iio, Set.inter_comm,
     Set.Ici_inter_Iic, ThresholdPair.gap]
 
-/-- With one threshold the negative form is the complement of the positive form, so the pair is
-contradictory. -/
 theorem isCompl_contradictoryDenotation :
     IsCompl (contradictoryDenotation θ .positive) (contradictoryDenotation θ .negative) :=
   contradictoryDenotation_notPositive θ ▸ isCompl_compl
 
 open Aristotelian in
-/-- With a pair that leaves a gap the positive and negative forms are disjoint but not
-exhaustive, so the pair is contrary. -/
 theorem isContrary_strengthenedDenotation (h : tp.neg ≤ tp.pos) :
     IsContrary (strengthenedDenotation tp .positive) (strengthenedDenotation tp .negative) :=
   ⟨Set.Ioi_disjoint_Iio_of_le h, fun hco ↦ by

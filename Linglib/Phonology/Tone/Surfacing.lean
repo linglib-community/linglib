@@ -104,19 +104,14 @@ theorem map_getElem?_lo_iff :
     exact P.hi_ne_lo hout
   · exact fun ⟨hj, hs⟩ => ⟨w[j], List.getElem?_eq_getElem hj, ite_eq_right hs⟩
 
-/-- Faithfulness at the map level: an underlying marked tone survives. -/
 theorem map_getElem?_hi_of_getElem?_hi (h : w[i]? = some P.hi) :
     (P.map w)[i]? = some P.hi :=
   P.map_getElem?_hi_iff.mpr (P.surfaces_of_hi h)
 
-/-- Hypothesis-dot form of the in-domain law: `h.lt_length` for `h : P.Surfaces w i`. -/
 theorem Surfaces.lt_length {P : Surfacing α} {w : List α} {i : ℕ}
     (h : P.Surfaces w i) : i < w.length :=
   P.lt_length h
 
-/-- **The flank-witness template, at the surfacing level**: a process whose surfacing at
-a `d`-margined target in a flank word is switched on by the base flanks and off by
-either single flip requires both sides — supply only the three surfacing facts. -/
 theorem requiresBothSides_of_flanks {xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
     (hon : ∀ d, P.Surfaces (flankWord xOn P.lo yOn (n d)) (t d))
@@ -132,9 +127,6 @@ theorem requiresBothSides_of_flanks {xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (fun d => P.map_getElem?_lo_iff.mpr ⟨by simpa using hlen d, hoffL d⟩)
     (fun d => P.map_getElem?_lo_iff.mpr ⟨hlen d, hoffR d⟩)
 
-/-- **Conjunctive two-sided triggers require both sides**: a process that surfaces the
-marked tone exactly where one occurrence lies at-or-before and one at-or-after needs
-unboundedly distant information on both sides — the flank witness family is generic. -/
 theorem requiresBothSides_of_surfaces_iff
     (hiff : ∀ w i, P.Surfaces w i ↔ P.hi ∈ w.take (i + 1) ∧ P.hi ∈ w.drop i) :
     RequiresBothSides P.map :=
@@ -157,7 +149,6 @@ def support (w : List α) : Finset ℕ := (Finset.range w.length).filter (P.Surf
   simp only [support, Finset.mem_filter, Finset.mem_range, and_iff_right_iff_imp]
   exact P.lt_length
 
-/-- The map writes the indicator word of its support. -/
 theorem map_eq_indicator :
     P.map w = (List.range w.length).map fun i => if i ∈ P.support w then P.hi else P.lo :=
   List.ext_getElem (by simp [map]) fun i h₁ h₂ => by simp [map, mem_support]
@@ -172,8 +163,6 @@ def Surfacing.toDocking {α : Type*} (P : Surfacing α) : Subregular.Docking α 
   lt_length := P.lt_length
   decDocks := P.decSurfaces
 
-/-- On a two-letter word the two rewrites agree: a non-surfacing position holds the default,
-the marked tone being faithful. -/
 theorem Surfacing.toDocking_map {α : Type*} (P : Surfacing α) {w : List α}
     (hw : ∀ a ∈ w, a = P.hi ∨ a = P.lo) : P.toDocking.map w = P.map w := by
   refine List.ext_getElem? fun i => ?_

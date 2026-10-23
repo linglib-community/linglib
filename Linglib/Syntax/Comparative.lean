@@ -121,7 +121,6 @@ def type (c : Comparative) : ComparativeType :=
 
 /-! ### Counts over the sample of the atlas -/
 
-/-- The four types exhaust the sample. -/
 theorem ch121_counts_sum :
     (ch121.filter (·.2 == .locational)).length +
     (ch121.filter (·.2 == .exceed)).length +
@@ -129,7 +128,6 @@ theorem ch121_counts_sum :
     (ch121.filter (·.2 == .particle)).length =
     ch121.length := by decide +kernel
 
-/-- Locational comparatives are the most common type in the sample. -/
 theorem locational_most_common :
     let loc := (ch121.filter (·.2 == .locational)).length
     let exc := (ch121.filter (·.2 == .exceed)).length
@@ -137,7 +135,6 @@ theorem locational_most_common :
     let par := (ch121.filter (·.2 == .particle)).length
     loc > exc ∧ loc > con ∧ loc > par := by decide +kernel
 
-/-- Particle comparatives are the rarest type in the sample. -/
 theorem particle_rarest :
     let loc := (ch121.filter (·.2 == .locational)).length
     let exc := (ch121.filter (·.2 == .exceed)).length
@@ -145,7 +142,6 @@ theorem particle_rarest :
     let par := (ch121.filter (·.2 == .particle)).length
     par < loc ∧ par < exc ∧ par < con := by decide +kernel
 
-/-- Locational and particle comparatives together are more than half the sample. -/
 theorem locational_and_particle_dominant :
     let loc := (ch121.filter (·.2 == .locational)).length
     let par := (ch121.filter (·.2 == .particle)).length

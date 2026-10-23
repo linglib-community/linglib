@@ -98,7 +98,6 @@ theorem ranked_perm : u.ranked.Perm u.realizations := List.perm_insertionSort _ 
 @[simp] theorem mem_ranked {r : Realization E R} : r ∈ u.ranked ↔ r ∈ u.realizations :=
   List.mem_insertionSort _
 
-/-- The rank order is descending by role. -/
 theorem ranked_pairwise : u.ranked.Pairwise fun a b ↦ b.role ≤ a.role :=
   @List.pairwise_insertionSort _ _ _ (Order.Preimage.instTotal (r := (· ≥ ·)))
     (Order.Preimage.instIsTrans (r := (· ≥ ·))) _
@@ -113,7 +112,6 @@ def cp : Option E := u.cf.head?
 
 @[simp] theorem cp_mk_nil : (⟨[]⟩ : Utterance E R).cp = none := by simp [cp]
 
-/-- The forward-looking centers of `u` are the entities it realizes. -/
 @[simp] theorem mem_cf : e ∈ u.cf ↔ e ∈ u := by simp [cf, mem_iff]
 
 theorem cp_mem_cf (h : u.cp = some e) : e ∈ u.cf := List.mem_of_mem_head? (Option.mem_def.mpr h)
@@ -138,27 +136,18 @@ variable {prev : Utterance E R} {cur : U} {e : E}
 
 @[simp] theorem cb_mk_nil (cur : U) : cb (⟨[]⟩ : Utterance E R) cur = none := by simp [cb]
 
-/-- The backward-looking center is a forward-looking center of the previous utterance. -/
 theorem cb_mem_cf (h : cb prev cur = some e) : e ∈ prev.cf := List.mem_of_find?_eq_some h
 
-/-- The backward-looking center is realized in the current utterance. -/
 theorem mem_of_cb (h : cb prev cur = some e) : e ∈ cur :=
   decide_eq_true_eq.mp (List.find?_eq_some_iff_append.mp h).1
 
-/-- `cur` has `e` as backward-looking center after `prev` iff `e` is a forward-looking center of
-`prev` realized in `cur` with no higher-ranked forward-looking center realized in `cur`. -/
 theorem cb_eq_some_iff : cb prev cur = some e ↔
     e ∈ cur ∧ ∃ l₁ l₂, prev.cf = l₁ ++ e :: l₂ ∧ ∀ e' ∈ l₁, e' ∉ cur := by
   simp [cb, List.find?_eq_some_iff_append]
 
-/-- `cur` has no backward-looking center after `prev` iff it realizes no forward-looking center
-of `prev`. -/
 theorem cb_eq_none_iff : cb prev cur = none ↔ ∀ e ∈ prev.cf, e ∉ cur := by
   simp [cb, List.find?_eq_none]
 
-/-- No forward-looking center of `prev` realized in `cur` outranks the backward-looking center:
-every realization in `prev` of an entity realized in `cur` is ranked at or below some
-realization of the center. -/
 theorem role_le_of_cb (h : cb prev cur = some e) {r : Realization E R}
     (hr : r ∈ prev.realizations) (hcur : r.entity ∈ cur) :
     ∃ r' ∈ prev.realizations, r'.entity = e ∧ r.role ≤ r'.role := by

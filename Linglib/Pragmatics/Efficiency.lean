@@ -76,8 +76,6 @@ theorem weightedCost_mono_β (c : CostPair) {β₁ β₂ : ℝ}
     weightedCost c β₁ ≤ weightedCost c β₂ :=
   add_le_add (le_refl _) (mul_le_mul_of_nonneg_right hβ hc)
 
-/-- Optimal cost pairs move along the frontier as the tradeoff parameter grows, so the pair optimal
-at the larger `β` has the smaller `cost₁` and the larger `cost₂`. -/
 theorem frontier_antitone {a b : CostPair} {β₁ β₂ : ℝ} (hβ₁ : 0 ≤ β₁) (hβ : β₁ < β₂)
     (h₁ : weightedCost a β₁ ≤ weightedCost b β₁)
     (h₂ : weightedCost b β₂ ≤ weightedCost a β₂) :
@@ -88,13 +86,11 @@ theorem frontier_antitone {a b : CostPair} {β₁ β₂ : ℝ} (hβ₁ : 0 ≤ �
     nlinarith [mul_pos (sub_pos.2 hβ) (sub_pos.2 (not_le.mp hc))]
   exact ⟨hb, by nlinarith [mul_nonneg hβ₁ (sub_nonneg.2 hb)]⟩
 
-/-- The deviation from an encoding optimal at `β` is nonnegative. -/
 theorem efficiencyLossAt_nonneg {attested optimal : CostPair} {β : ℝ}
     (h : weightedCost optimal β ≤ weightedCost attested β) :
     0 ≤ efficiencyLossAt attested optimal β :=
   sub_nonneg.2 h
 
-/-- The efficiency loss against encodings optimal at each listed `β` is nonnegative. -/
 theorem efficiencyLoss_nonneg {attested : CostPair} {optimalAt : ℝ → CostPair} {βs : List ℝ}
     (h : ∀ β ∈ βs, weightedCost (optimalAt β) β ≤ weightedCost attested β) :
     0 ≤ efficiencyLoss attested optimalAt βs := by

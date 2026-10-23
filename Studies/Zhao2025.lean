@@ -83,14 +83,10 @@ subinterval `i'` of `i`. -/
 def AtomDist (τ : E → NonemptyInterval α) (V : EvQuant E) : Prop :=
   ∀ i, V (τ · = i) → ∀ i' ≤ i, V (τ · = i')
 
-/-- An existential quantifier is atomically distributive exactly when the traces of the described
-events form a lower set. -/
 theorem atomDist_ofPred_iff : AtomDist τ (.ofPred P) ↔ IsLowerSet (τ '' {e | P e}) :=
   ⟨fun h _ _ hba ⟨e, he, hi⟩ ↦ h _ ⟨e, he, hi⟩ _ hba, fun h _ ⟨e, he, hi⟩ _ hi' ↦
     h hi' ⟨e, he, hi⟩⟩
 
-/-- Where every interval is a trace, a description by a lower set of traces is atomically
-distributive. -/
 theorem atomDist_ofPred_mem (hτ : Function.Surjective τ) {S : Set (NonemptyInterval α)}
     (hS : IsLowerSet S) : AtomDist τ (.ofPred (τ · ∈ S)) := by
   rw [atomDist_ofPred_iff, ← preimage, image_preimage_eq S hτ]
@@ -131,8 +127,6 @@ theorem not_atomDist_ofPred_surpasses {θ : E → α} (hne : ∃ e, P e)
 
 end Preorder
 
-/-- A predicate of events in time has the subinterval property exactly when its
-existential quantifier is atomically distributive over time at every world. -/
 theorem hasSubintervalProperty_iff_forall_atomDist {W T : Type*} [LinearOrder T]
     [Event.TemporalTrace E T] {P : W → E → Prop} :
     Aspect.HasSubintervalProperty P ↔ ∀ w, AtomDist τ (.ofPred (P w)) :=
@@ -197,8 +191,6 @@ theorem le_dom_of_length [AddCommGroup α] [PartialOrder α] [IsOrderedAddMonoid
     (le τ (.ofPred fun e ↦ P e ∧ (τ e).length = d) p).Dom :=
   not_atomDist_ofPred_length hd hne
 
-/-- The temporal content of *le* is precedence, the relation of the perfect between a topic time
-`p` and the time of the event. -/
 theorem le_get_iff_perfect {T : Type*} [LinearOrder T] {τ : E → NonemptyInterval T}
     {V : EvQuant E} {p : T} (h : (le τ V p).Dom) :
     (le τ V p).get h ↔

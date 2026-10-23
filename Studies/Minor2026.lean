@@ -169,7 +169,6 @@ end Denotation
 variable {R S E : Type*} [RegisterStructure R S E] {u u' w w' x y : R} {H I J : Set S} {i k : S}
   {C : Condition (Set S)} {D : Update (Set S)}
 
-/-- Introducing a referent other than `w` keeps `w` telling the assignments apart. -/
 theorem injOn_of_mem_intro (hwy : w ≠ y) (hH : Set.InjOn (val w) H) (h : H ~[intro y] J) :
     Set.InjOn (val w) J := by
   obtain ⟨f, hf, rfl⟩ := h
@@ -196,7 +195,6 @@ theorem notMem_dom_intro_test_singleton (hwy : w ≠ y) (hC : C ⊆ (Team.dep (v
 
 variable {P : E → Prop} {M : Model E}
 
-/-- From a single assignment a VP leads to a single assignment. -/
 theorem subsingleton_of_mem_vp (hI : I.Subsingleton) (h : I ~[vp u u' M] J) : J.Subsingleton := by
   obtain ⟨K, ⟨f, -, rfl⟩, rfl, -⟩ := h
   exact hI.image f
@@ -204,7 +202,6 @@ theorem subsingleton_of_mem_vp (hI : I.Subsingleton) (h : I ~[vp u u' M] J) : J.
 variable [PartialOrder E]
 
 variable (u u') in
-/-- Two assignments differing at `u` can give an atomic plural object two atomic values. -/
 theorem exists_mem_vp_atomic_not_unique {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b)
     (i : S) : ∃ I J : Set S, (I, J) ∈ vp u u' ⟨fun _ ↦ True, fun _ _ ↦ True⟩ ○ test (atomic u') ∧
       J ∉ unique u' := by
@@ -265,8 +262,6 @@ theorem notMem_dom_sentence_atomicPlural (huu' : u ≠ u') :
   rw [singleton_mem_dom_sentence_iff]
   simp [singleton_mem_dom_vp_iff huu', unique]
 
-/-- Under a strongly distributive licensor an atomic plural is contradictory too, since every
-singleton state makes it unique. -/
 theorem notMem_dom_sentence_distS_atomicPlural (huu' : u ≠ u') :
     {i} ∉ (sentence u u' P (distS u) M (atomic u' ∩ (unique u')ᶜ)).dom := by
   rw [singleton_mem_dom_sentence_iff]
@@ -301,7 +296,6 @@ complement. -/
 def want (bul : E → E → E) (D : Update (Set S)) : Update (Set S) :=
   intro w' ○ test {I | Set.EqOn (val w') (fun i ↦ bul (val w i) (val x i)) I} ○ distW w' D
 
-/-- A split tells its assignments apart by the referent it splits. -/
 theorem injOn_val_split : Set.InjOn (val u) (split u {k}) := by
   rw [split_singleton]
   rintro _ ⟨a, -, rfl⟩ _ ⟨b, -, rfl⟩ h
@@ -316,8 +310,6 @@ theorem notMem_dom_want_atomicPlural (hw'y : w' ≠ y) (hC : C ⊆ (Team.dep (va
   obtain ⟨e, rfl⟩ := singleton_mem_intro_iff.1 hK
   exact notMem_dom_intro_test_of_injOn hw'y injOn_val_split hC ⟨out, mem_distW.1 hD⟩
 
-/-- With a flat complement *want* is Hintikka's, holding of a state exactly when the complement
-holds at every world compatible with each experiencer's wishes. -/
 theorem mem_dom_want_test_iff (hxw' : x ≠ w') (hww' : w ≠ w') {Q : Set S} :
     J ∈ (want w w' x bul (test (𝒫 Q))).dom ↔
       ∀ j ∈ J, ∀ v ∈ atomsBelow (bul (val w j) (val x j)), extend j w' v ∈ Q := by

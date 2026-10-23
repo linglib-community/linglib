@@ -186,25 +186,18 @@ def Reading.binaryPattern (r : Reading) : Bool × Bool :=
 
 variable {x} {w : Finset Atom}
 
-/-- In a GAP context the existential holds of the property and of its negation and the
-universal of neither, so a construal holds exactly when it is existential at the positive
-polarity or over negation. -/
 theorem Construal.holds_of_isGap (hw : IsGap x w) (c : Construal) (p : Polarity) :
     c.Holds x p w ↔ (c.force = .existential ↔ p = .positive ∨ c.scope = .wide) := by
   obtain ⟨⟨a, ha, haw⟩, b, hb, hbw⟩ := hw
   obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
     simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
 
-/-- Where every object has the property, every construal makes the positive sentence true and
-the negative one false. -/
 theorem Construal.holds_of_subset (hx : x.Nonempty) (hw : x ⊆ w) (c : Construal)
     (p : Polarity) : c.Holds x p w ↔ p = .positive := by
   obtain ⟨b, hb⟩ := hx
   obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
     simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
 
-/-- Where no object has the property, every construal makes the positive sentence false and the
-negative one true. -/
 theorem Construal.holds_of_disjoint (hx : x.Nonempty) (hw : Disjoint x w) (c : Construal)
     (p : Polarity) : c.Holds x p w ↔ p = .negative := by
   obtain ⟨b, hb⟩ := hx
@@ -222,37 +215,28 @@ theorem value_of_isGap (hw : IsGap x w) (r : Reading) :
   simp only [Reading.value, Construal.holds_of_isGap hw]
   rcases r with ⟨_ | _, _ | _⟩ | _ | _ <;> decide
 
-/-- Where every object has the property all readings make the positive sentence true and the
-negative one false, as the clearly true and clearly false controls of both experiments require.
--/
 theorem value_of_subset (hx : x.Nonempty) (hw : x ⊆ w) (r : Reading) :
     (r.value x .positive w, r.value x .negative w) = (1, -1) := by
   simp only [Reading.value, Construal.holds_of_subset hx hw,
     SignType.supervaluation_const r.construals_nonempty]
   simp
 
-/-- Where no object has the property all readings make the positive sentence false and the
-negative one true. -/
 theorem value_of_disjoint (hx : x.Nonempty) (hw : Disjoint x w) (r : Reading) :
     (r.value x .positive w, r.value x .negative w) = (-1, 1) := by
   simp only [Reading.value, Construal.holds_of_disjoint hx hw,
     SignType.supervaluation_const r.construals_nonempty]
   simp
 
-/-- A quantified reading is classical. -/
 @[simp] theorem value_quantified (c : Construal) (p : Polarity) (w : Finset Atom) :
     (Reading.quantified c).value x p w = .ofProp (c.Holds x p w) :=
   SignType.supervaluation_singleton _ c
 
-/-- A reading whose construals all scope under negation negates by strong Kleene negation. -/
 theorem value_negative_of_low {r : Reading} (h : ∀ c ∈ r.construals, c.scope = .low)
     (w : Finset Atom) : r.value x .negative w = -r.value x .positive w := by
   rw [Reading.value, Reading.value, ← SignType.supervaluation_not _ r.construals_nonempty]
   refine SignType.supervaluation_congr fun c hc ↦ ?_
   obtain ⟨_ | _, _⟩ := c <;> cases h _ hc <;> rfl
 
-/-- The homogeneous reading is the trivalent plural `barePlural`, the supervaluation over the
-objects of the plurality. -/
 theorem value_homogeneous (hx : x.Nonempty) :
     Reading.homogeneous.value x .positive = barePlural (· ∈ ·) x := by
   funext w
@@ -276,8 +260,6 @@ theorem isGap_iff_not_homogeneous (hx : x.Nonempty) :
 
 variable [DecidableEq Atom]
 
-/-- A participant who reads the definite homogeneously but reverses the positive judgment to
-obtain the negative one, weak negation (fn 23), responds as a universal participant. -/
 theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
     -SignType.ofProp (Reading.homogeneous.value x .positive w = 1) =
       (Reading.quantified ⟨.universal, .low⟩).value x .negative w := by
@@ -301,7 +283,6 @@ theorem domainRestriction_of_isGap (hw : IsGap x w) :
 
 /-! ### Binary and ternary judgments -/
 
-/-- Ternary judgments separate all readings in a GAP context, Experiment 2's design. -/
 theorem gapPattern_injective : Function.Injective Reading.gapPattern := by decide
 
 /-- The four quantified readings give the four possible pairs of binary judgments in a GAP
@@ -309,8 +290,6 @@ context, the three of Figure 2 and the wide-scope existential of the empty fourt
 theorem binaryPattern_quantified_bijective :
     Function.Bijective fun c : Construal ↦ (Reading.quantified c).binaryPattern := by decide
 
-/-- Binary judgments conflate the homogeneous reading and the scope-ambiguous universal with the
-wide-scope universal, all three rejecting both sentences in a GAP context. -/
 theorem binaryPattern_eq_wideScopeUniversal :
     ∀ r ∈ ({.homogeneous, .scopeAmbiguous} : Finset Reading),
       r.binaryPattern = (Reading.quantified ⟨.universal, .wide⟩).binaryPattern := by decide
@@ -346,7 +325,6 @@ private theorem exh_mates_weak_of_forall (h : ∀ i ∈ A, wk ⊆ primal wk st i
     obtain ⟨i, hi, rfl⟩ := Finset.mem_image.1 ha
     exact h i hi
 
-/-- Without *all* among its alternatives, *some* excludes nothing. -/
 theorem exh_mates_weak_of_notMem (hA : .strong ∉ A) : exh (mates A) (primal wk st) .weak = wk :=
   exh_mates_weak_of_forall fun i hi ↦ by
     cases i <;> first | exact subset_rfl | exact absurd hi hA
@@ -377,7 +355,6 @@ theorem strengthened_mates_mystery :
     (exh (mates A) (primal wk st) .mystery) = _
   rw [Finset.image_singleton, exh_mates_mystery]
 
-/-- Without *all* among the alternatives the definite keeps its existential meaning. -/
 theorem strengthened_mates_mystery_of_notMem (hA : .strong ∉ A) :
     strengthened (mates A) (primal wk st) .mystery = wk := by
   rw [strengthened_mates_mystery, exh_mates_weak_of_notMem hA]
@@ -397,8 +374,6 @@ theorem strengthened_mates_mystery_of_mem (hA : .strong ∈ A) (h : st ⊆ wk) (
     rw [exh_mates_weak_of_mem hA h₁, innocent_exh_singleton h₂, sdiff_sdiff_right_self,
       Finset.inf_eq_inter, Finset.inter_eq_right.2 h]
 
-/-- Under negation nothing is strengthened and the definite means *none*, whatever the
-alternatives. -/
 theorem strengthened_mates_not_mystery (h : st ⊆ wk) :
     strengthened (mates A) (compl ∘ primal wk st) .mystery = wkᶜ := by
   rw [compl_comp_primal, strengthened_mates_mystery,
@@ -426,14 +401,9 @@ def allWorlds : Finset (Finset Atom) := Finset.univ.filter (x ⊆ ·)
 theorem allWorlds_subset_someWorlds (hx : x.Nonempty) : allWorlds x ⊆ someWorlds x :=
   fun _ hw ↦ mem_someWorlds.2 (hx.elim fun a ha ↦ ⟨a, ha, mem_allWorlds.1 hw ha⟩)
 
-/-- A GAP context is where the weak pole holds without the strong, the account's gap. -/
 theorem isGap_iff_mem_sdiff : IsGap x w ↔ w ∈ someWorlds x \ allWorlds x := by
   simp [IsGap, Finset.subset_iff]
 
-/-- Since the *not all* implicature is a sub-computation of homogeneity, a participant accepts
-the positive definite in a GAP context exactly when they accept *some* where every object has the
-property, whatever their alternatives. The homogeneous participants of both experiments who
-accept *some* there contradict the account. -/
 theorem definite_in_gap_iff_some_in_all (hw : IsGap x w) (hw' : x ⊆ w') :
     w ∈ strengthened (mates A) (primal (someWorlds x) (allWorlds x)) .mystery ↔
       w' ∈ exh (mates A) (primal (someWorlds x) (allWorlds x)) .weak := by

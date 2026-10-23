@@ -41,7 +41,6 @@ namespace Function
 
 variable {α : Type*} {β : Type*} {γ : Type*} {g : α → γ} {f : α → β}
 
-/-- A function factors through an idempotent `f` exactly when it is invariant under `f`. -/
 theorem factorsThrough_iff_of_idempotent {f : α → α} (hf : ∀ a, f (f a) = f a) :
     FactorsThrough g f ↔ ∀ a, g a = g (f a) :=
   ⟨fun h a ↦ h (hf a).symm, fun h a b hab ↦ (h a).trans ((congrArg g hab).trans (h b).symm)⟩
@@ -49,14 +48,12 @@ theorem factorsThrough_iff_of_idempotent {f : α → α} (hf : ∀ a, f (f a) = 
 instance [Fintype α] [DecidableEq β] [DecidableEq γ] : Decidable (FactorsThrough g f) := by
   unfold FactorsThrough; infer_instance
 
-/-- A function that factors through another takes no more values. -/
 theorem FactorsThrough.card_range_le [Finite α] (h : FactorsThrough g f) :
     Nat.card (Set.range g) ≤ Nat.card (Set.range f) := by
   refine Nat.card_le_card_of_surjective (fun b ↦ ⟨g b.2.choose, b.2.choose, rfl⟩) ?_
   rintro ⟨_, a, rfl⟩
   exact ⟨⟨f a, a, rfl⟩, Subtype.ext (h (⟨a, rfl⟩ : ∃ a', f a' = f a).choose_spec)⟩
 
-/-- A function that factors through a function with finite range has finite range. -/
 theorem FactorsThrough.finite_range (h : FactorsThrough g f) (hf : (Set.range f).Finite) :
     (Set.range g).Finite := by
   have := hf.to_subtype
@@ -70,17 +67,14 @@ namespace Set
 
 variable {α β γ : Type*} {s : Set α} {f : α → β} {g : α → γ}
 
-/-- On a subsingleton every function factors through every other. -/
 theorem Subsingleton.factorsThrough_domRestrict (hs : s.Subsingleton) :
     (s.domRestrict g).FactorsThrough (s.domRestrict f) :=
   fun a b _ ↦ congrArg (s.domRestrict g) (Subtype.ext (hs a.2 b.2))
 
-/-- Where `f` is injective every function factors through `f`. -/
 theorem InjOn.factorsThrough_domRestrict (hf : s.InjOn f) :
     (s.domRestrict g).FactorsThrough (s.domRestrict f) :=
   fun a b hab ↦ congrArg (s.domRestrict g) (Subtype.ext (hf a.2 b.2 hab))
 
-/-- Where `f` is constant, a function factors through `f` exactly when it is constant too. -/
 theorem factorsThrough_domRestrict_iff_of_subsingleton (hf : (f '' s).Subsingleton) :
     (s.domRestrict g).FactorsThrough (s.domRestrict f) ↔ (g '' s).Subsingleton := by
   refine ⟨fun h ↦ ?_, fun h a b _ ↦ h (mem_image_of_mem g a.2) (mem_image_of_mem g b.2)⟩

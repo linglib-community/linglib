@@ -48,34 +48,26 @@ variable (μ : Measure ℝ) [IsProbabilityMeasure μ] {x : ℝ}
 
 /-! ### Continuity -/
 
-/-- The cdf is continuous at `x` iff `x` is not an atom. -/
 theorem continuousAt_cdf_iff : ContinuousAt (cdf μ) x ↔ μ {x} = 0 := by
   rw [StieltjesFunction.continuousAt_iff_measure_singleton_eq_zero, measure_cdf]
 
-/-- The cdf of a measure without atoms is continuous. -/
 theorem continuous_cdf [NullSingletonClass μ] : Continuous (cdf μ) :=
   (cdf μ).continuous_iff_nullSingletonClass.2 (by rw [measure_cdf]; infer_instance)
 
 /-! ### Reflection -/
 
-/-- The upper tail of a negation-invariant measure at a point that is not an atom is the cdf at
-the reflected point. -/
 theorem measureReal_Ioi_eq_cdf_neg [μ.IsNegInvariant] (hx : μ {x} = 0) :
     μ.real (Ioi x) = cdf μ (-x) := by
   rw [cdf_eq_real, ← neg_Ici, measureReal_congr (Ioi_ae_eq_Ici' hx), measureReal_def,
     measureReal_def, μ.measure_neg]
 
-/-- The reflection formula for the cdf of a negation-invariant measure, away from atoms. -/
 theorem cdf_neg [μ.IsNegInvariant] (hx : μ {x} = 0) : cdf μ (-x) = 1 - cdf μ x := by
   rw [← measureReal_Ioi_eq_cdf_neg μ hx, ← compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic,
     cdf_eq_real]
 
-/-- A negation-invariant measure with no atom at `0` has median `0`. -/
 theorem cdf_zero [μ.IsNegInvariant] (h : μ {0} = 0) : cdf μ 0 = 2⁻¹ := by
   linarith [cdf_neg μ h, congrArg (cdf μ) neg_zero]
 
-/-- A measure without atoms is invariant under negation iff its cdf satisfies the reflection
-formula. -/
 theorem isNegInvariant_iff_cdf_neg [NullSingletonClass μ] :
     μ.IsNegInvariant ↔ ∀ x, cdf μ (-x) = 1 - cdf μ x := by
   refine ⟨fun _ x ↦ cdf_neg μ (measure_singleton x), fun h ↦ ⟨?_⟩⟩
@@ -91,7 +83,6 @@ section IsOpenPosMeasure
 
 variable [μ.IsOpenPosMeasure]
 
-/-- The cdf of a measure that charges every nonempty open set is strictly monotone. -/
 theorem strictMono_cdf : StrictMono (cdf μ) :=
   (cdf μ).strictMono_iff_isOpenPosMeasure.2 (by rw [measure_cdf]; infer_instance)
 

@@ -183,7 +183,6 @@ the canonical ι, p. 442. -/
 def german : Lexicalization :=
   ⟨{.down, .iota}, {.iota}, by decide, by decide, by decide, by decide⟩
 
-/-- The principles admit exactly the four attested types. -/
 theorem classification (l : Lexicalization) :
     l = articleless ∨ l = english ∨ l = romance ∨ l = german := by
   obtain ⟨L, B, h₁, h₂, h₃, h₄⟩ := l
@@ -207,7 +206,6 @@ instance : Decidable (l.DefiniteKind num) := by unfold DefiniteKind; infer_insta
 
 instance : Decidable (l.BareKind num) := by unfold BareKind; infer_instance
 
-/-- Every kind term has a form, since a shift the Blocking Principle bars is lexicalized. -/
 theorem bareKind_or_definiteKind : l.BareKind num ∨ l.DefiniteKind num :=
   (em _).imp_right fun h ↦ l.blocked_subset (not_not.1 h)
 
@@ -251,7 +249,6 @@ def lexicalizationOf : Glottocode → Option Lexicalization
   | _ => none
 
 open Lexicalization in
-/-- ι is lexicalized exactly in the sampled languages whose fragment has a definite article. -/
 theorem iota_mem_lexicalized_iff :
     (.iota ∈ english.lexicalized ↔ English.Determiners.inventory.Blocks .iota) ∧
       (.iota ∈ romance.lexicalized ↔ Italian.Determiners.inventory.Blocks .iota) ∧
@@ -303,8 +300,6 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 theorem ofDatum_isSome : ∀ d ∈ Examples.all, (Row.ofDatum d).isSome := by
   decide
 
-/-- Each kind term is judged acceptable exactly where its language's lexicalization licenses its
-form. -/
 theorem rows_agree :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.lexicalization.Licit r.num r.form) := by
   decide

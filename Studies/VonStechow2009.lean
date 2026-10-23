@@ -118,7 +118,6 @@ from the left by a stretch where it fails. -/
 def Achievement (φ : T → Prop) (m : T) : Prop :=
   (∃ n₁ < m, ¬ φ n₁ ∧ ∀ n₂, n₁ < n₂ → n₂ < m → ¬ φ n₂) ∧ φ m
 
-/-- Von Stechow's semantics is satisfiable in the rationals. -/
 theorem achievement_rat : Achievement (fun q : ℚ ↦ 0 ≤ q) 0 :=
   ⟨⟨-1, by norm_num, by norm_num, fun _ _ h ↦ not_le.2 h⟩, le_rfl⟩
 
@@ -165,9 +164,6 @@ theorem xn_iff_perf {W : Type*} (p : W → Set (NonemptyInterval T)) (w : W) :
     .pure s ∈ perfect p w ↔ (w, s) ∈ PERF p := by
   rw [perf_eq_atPoint_perfect]; rfl
 
-/-- In *John has called yesterday* (42, `Examples.ex_42`) *yesterday* modifies the extended-now
-interval, which ends at the speech time, so the sentence is contradictory unless the speech time
-is on yesterday. -/
 theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T))
     (yesterday : NonemptyInterval T) (w : W) (hs : s ∉ yesterday) :
     (w, s) ∉ PERF (Set.Iic yesterday ∩ call ·) := fun h ↦
@@ -184,8 +180,6 @@ theorem reference_time_reading_not_event_time_reading :
           (fun t ↦ ◇[toSetRel ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s :=
   ⟨10, 6, (· = 5), by simp, by simp⟩
 
-/-- With the leaving at six, the second reading of *Mary had left at six* holds and the first
-fails. -/
 theorem event_time_reading_not_reference_time_reading :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
       ◇[toSetRel ⟦past⟧]
@@ -320,7 +314,6 @@ theorem forall_past_of_past_forall
     ∀ x, boot x → ◇[toSetRel ⟦past⟧] (polish x) s :=
   fun x hx ↦ let ⟨t, hts, h⟩ := h; ⟨t, hts, h x hx⟩
 
-/-- The converse fails when the boots are polished at different past times. -/
 theorem exists_forall_past_not_past_forall :
     ∃ (s : ℤ) (boot : Bool → Prop) (polish : Bool → ℤ → Prop),
       (∀ x, boot x → ◇[toSetRel ⟦past⟧] (polish x) s) ∧
@@ -330,8 +323,6 @@ theorem exists_forall_past_not_past_forall :
     fun ⟨t, _, h⟩ ↦ by have := h true trivial; have := h false trivial; simp_all⟩
 
 omit [LinearOrder T] in
-/-- Without the Perfective, a referential Past predicates the polishing of every boot of the one
-reference time, which boots polished one at a time exclude. -/
 theorem not_forall_referential {t₅ : T} {x y : X} (hx : boot x) (hy : boot y)
     (hsep : ∀ t, polish x t → ¬ polish y t) : ¬ ∀ z, boot z → polish z t₅ :=
   fun h ↦ hsep t₅ (h x hx) (h y hy)
@@ -354,14 +345,12 @@ now. -/
 def Deictic (s : T) : Prop :=
   ◇[toSetRel ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x s ∧ buy x t) s
 
-/-- The simultaneous reading does not entail the deictic one. -/
 theorem exists_simultaneous_not_deictic :
     ∃ (s : ℤ) (fish : Unit → Prop) (alive buy : Unit → ℤ → Prop),
       Simultaneous fish alive buy s ∧ ¬ Deictic fish alive buy s :=
   ⟨0, fun _ ↦ True, fun _ t ↦ t = 1, fun _ t ↦ t = 1, ⟨1, by decide, (), trivial, rfl, rfl⟩,
     fun ⟨_, _, _, _, h, _⟩ ↦ by simp at h⟩
 
-/-- The deictic reading does not entail the simultaneous one. -/
 theorem exists_deictic_not_simultaneous :
     ∃ (s : ℤ) (fish : Unit → Prop) (alive buy : Unit → ℤ → Prop),
       Deictic fish alive buy s ∧ ¬ Simultaneous fish alive buy s :=
@@ -438,8 +427,6 @@ theorem not_exists_earliest_will [DenselyOrdered T] :
   obtain ⟨c, hsc, hcm⟩ := exists_between hsm
   exact absurd (hmin ⟨hsc, t', hcm.trans hmt, hl⟩) (not_le.2 hcm)
 
-/-- When the clause has an earliest time, *before* the earliest time is the *before ever* of
-[anscombe-1964], the universal *before* that von Stechow attributes to her. -/
 theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) :
     (∃ t ∈ A, t < m) ↔ Tense.beforeEver (NonemptyInterval.pure '' A)
       (NonemptyInterval.pure '' B) := by
@@ -447,7 +434,6 @@ theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) 
   · simp [Tense.timeTrace_image]
   · simpa [Tense.timeTrace_image] using hm
 
-/-- And *after* the earliest time is the existential *after* of [anscombe-1964]. -/
 theorem after_earliest_iff_after {A B : Set T} {m : T} (hm : IsLeast B m) :
     (∃ t ∈ A, m < t) ↔
       Anscombe1964.Anscombe.after (NonemptyInterval.pure '' A) (NonemptyInterval.pure '' B) := by

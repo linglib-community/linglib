@@ -119,19 +119,16 @@ theorem Antimatroid.ground_finite {α : Type*} (A : Antimatroid α)
 
 variable {α : Type*}
 
-/-- Antimatroids with the same ground set and the same feasible sets are equal. -/
 @[ext] theorem Antimatroid.ext {A B : Antimatroid α} (hE : A.E = B.E)
     (hF : A.IsFeasible = B.IsFeasible) : A = B := by
   obtain ⟨⟨⟨E, F, _, _⟩, _, _, _⟩, _⟩ := A
   obtain ⟨⟨⟨E', F', _, _⟩, _, _, _⟩, _⟩ := B
   cases hE; cases hF; rfl
 
-/-- The ground set of an antimatroid is feasible. -/
 theorem Antimatroid.ground_isFeasible (A : Antimatroid α) :
     A.IsFeasible A.E :=
   A.ground_feasible
 
-/-- The empty set is feasible in any antimatroid. -/
 theorem Antimatroid.empty_isFeasible (A : Antimatroid α) :
     A.IsFeasible ∅ :=
   A.empty_feasible
@@ -183,7 +180,6 @@ def Antimatroid.free (E : Set α) : Antimatroid α where
     exact ⟨x, hx, Set.sdiff_subset.trans hS⟩
   union_closed := fun _ _ hS hT => Set.union_subset hS hT
 
-/-- The free antimatroid on `E` has `IsFeasible S ↔ S ⊆ E`. -/
 theorem Antimatroid.free_isFeasible (E : Set α) (S : Set α) :
     (Antimatroid.free E).IsFeasible S ↔ S ⊆ E :=
   Iff.rfl
@@ -240,8 +236,6 @@ structure Antimatroid.RootedCircuit (A : Antimatroid α) where
 
 /-! ### Rooted-circuit extraction ([dietrich-1987]) -/
 
-/-- Every element of a finite feasible set enters it at some step: some feasible subset without
-    the element stays feasible when the element is added. Repeated `removal` finds the step. -/
 theorem Antimatroid.exists_insert_step (A : Antimatroid α) {G : Set α}
     (hfin : G.Finite) (hG : A.IsFeasible G) {x : α} (hx : x ∈ G) :
     ∃ H, A.IsFeasible H ∧ H ⊆ G ∧ x ∉ H ∧ A.IsFeasible (insert x H) := by

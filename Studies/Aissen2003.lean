@@ -120,8 +120,6 @@ abbrev catalanDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .
 /-- Pitjantjatjara case-marks only pronoun and proper-name objects (Figure 2). -/
 abbrev pitjantjatjaraDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .properName)
 
-/-- Catalan's and Pitjantjatjara's cuts lie in the nominality the scale puts above the
-definites. Catalan marks exactly the pronouns, and Pitjantjatjara the pronouns and names. -/
 theorem catalan_pitjantjatjara_nominality (a : Animacy) (d : DefinitenessScale) :
     ((a, d) ∈ catalanDOM ↔ d.nominality = .pronoun) ∧
       ((a, d) ∈ pitjantjatjaraDOM ↔ .properName ≤ d.nominality) := by
@@ -131,8 +129,6 @@ theorem catalan_pitjantjatjara_nominality (a : Animacy) (d : DefinitenessScale) 
 §4.1). -/
 abbrev hebrewDOM : Set (Animacy × DefinitenessScale) := Set.Ici (.inanimate, .definite)
 
-/-- Hebrew's DOM distinguishes definites from indefinites, marking an object just when it is
-definite, pronouns and names included. -/
 theorem hebrew_marks_definites (a : Animacy) (d : DefinitenessScale) :
     (a, d) ∈ hebrewDOM ↔ d.definiteness = .definite := by
   revert a d; decide
@@ -222,13 +218,9 @@ theorem dom_obligatory_zone_upperSet : ∀ z ∈ allDOMZones, IsUpperSet z := by
     | exact (isUpperSet_Ici _).union (isUpperSet_Ici _)
     | exact (isUpperSet_Ici _).preimage (DefinitenessScale.degree_monotone.comp monotone_snd)
 
-/-- Every attested system fits the prominence order, so no language obligatorily marks a less
-prominent object while leaving a more prominent one unmarked. -/
 theorem dom_fits : ∀ z ∈ allDOMZones, Fits (marking z) :=
   fun z hz ↦ (fits_marking_iff z).2 (dom_obligatory_zone_upperSet z hz)
 
-/-- On a finite scale the upper sets are the empty set and the cones above each position, so
-each of the n + 1 interpolation points of an n-level subhierarchy is a cutoff type. -/
 theorem isUpperSet_iff_eq_empty_or_Ici {α : Type*} [LinearOrder α] [WellFoundedLT α]
     {s : Set α} : IsUpperSet s ↔ s = ∅ ∨ ∃ a, s = Set.Ici a :=
   ⟨IsUpperSet.eq_empty_or_Ici, by
@@ -356,9 +348,6 @@ theorem figure3_languages :
     (∀ a d, (a, d) ∈ writtenJapaneseDOM ↔ markedWins (interpolation Animacy.all 3) a) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- "This account predicts that the reverse is not found, e.g., languages in which only
-inanimates are case-marked", since every interpolation grammar marks an upward-closed
-segment of the scale. -/
 theorem no_reversed_system :
     ∀ k < 4, ∀ a a' : Animacy, a ≤ a' →
       markedWins (interpolation Animacy.all k) a = true →

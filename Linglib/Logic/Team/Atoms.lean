@@ -90,15 +90,10 @@ theorem supClosed_incl (f g : α → β) : SupClosed (incl f g) := by
   · obtain ⟨b, hb, h⟩ := ht a ha
     exact ⟨b, Or.inr hb, h⟩
 
-/-- Dependence is not union-closed. Two points agreeing on `f` and differing on `g` each form a
-team satisfying the atom, but their union does not. -/
 theorem not_supClosed_dep {a b : α} (hf : f a = f b) (hg : g a ≠ g b) :
     ¬ SupClosed (dep f g) := fun h ↦
   hg <| mem_dep.1 (h (singleton_mem_dep a) (singleton_mem_dep b)) a (.inl rfl) b (.inr rfl) hf
 
-/-- Inclusion is not downward-closed. If `b` supplies the `g`-value both of its own `f`-value
-and of `a`'s, but `a` does not supply its own, then `{a, b}` satisfies the atom and `{a}` does
-not. -/
 theorem not_isLowerSet_incl {f g : α → β} {a b : α} (hab : f a = g b) (hb : f b = g b)
     (ha : f a ≠ g a) : ¬ IsLowerSet (incl f g) := by
   intro h
@@ -126,7 +121,6 @@ private theorem domRestrict_eq_iff {i j : V → E} :
     (Z : Set V).domRestrict i = (Z : Set V).domRestrict j ↔ ∀ z ∈ Z, i z = j z :=
   Set.domRestrict_eq_domRestrict_iff
 
-/-- Assignments of the team agreeing on every variable of `Z` agree on `u`. -/
 theorem dep_iff : Dep T Z u ↔ ∀ i ∈ T, ∀ j ∈ T, (∀ z ∈ Z, i z = j z) → i u = j u := by
   simp only [Dep, mem_dep, Finset.mem_coe, domRestrict_eq_iff]
 
@@ -138,44 +132,33 @@ instance [DecidableEq E] (T : Finset (V → E)) (Z : Finset V) (u : V) : Decidab
 instance [DecidableEq E] (T : Finset (V → E)) (Z : Finset V) (u : V) : Decidable (Var T Z u) :=
   inferInstanceAs (Decidable (∃ i ∈ T, ∃ j ∈ T, _))
 
-/-- Dependence holds exactly when, on the team, some function takes the values of the variables
-of `Z` to the value of `u`. -/
 theorem dep_iff_exists [Nonempty E] :
     Dep T Z u ↔ ∃ h : (Z → E) → E, ∀ i ∈ T, i u = h ((Z : Set V).domRestrict i) :=
   (Function.factorsThrough_iff _).trans <| exists_congr fun _ ↦ funext_iff.trans Subtype.forall
 
-/-- Variation is the failure of dependence. -/
 @[simp] theorem not_dep : ¬ Dep T Z u ↔ Var T Z u := by
   simp only [dep_iff, Var, not_forall, exists_prop]
 
 @[simp] theorem not_var : ¬ Var T Z u ↔ Dep T Z u := by rw [← not_dep, not_not]
 
-/-- The constancy atom `=(u)`, dependence on no variables, holds when `u` takes at most one value
-on the team. -/
 theorem dep_empty_iff : Dep T ∅ u ↔ ((· u) '' (T : Set (V → E))).Subsingleton :=
   Set.factorsThrough_domRestrict_iff_of_subsingleton fun _ _ _ _ ↦
     funext fun z ↦ absurd (Finset.mem_coe.1 z.2) (Finset.notMem_empty _)
 
-/-- Variation on no variables holds when `u` takes two values on the team. -/
 theorem var_empty_iff : Var T ∅ u ↔ ((· u) '' (T : Set (V → E))).Nontrivial := by
   rw [← not_dep, dep_empty_iff, Set.not_subsingleton_iff]
 
-/-- Dependence excludes variation on the same parameters. -/
 theorem Dep.not_var (h : Dep T Z u) : ¬ Var T Z u := Team.not_var.2 h
 
-/-- A parameter depends on the parameters. -/
 theorem dep_of_mem (h : u ∈ Z) : Dep T Z u := dep_iff.2 fun _ _ _ _ hZ ↦ hZ u h
 
-/-- Every dependence holds on a team of one assignment. -/
 theorem dep_singleton (i : V → E) : Dep {i} Z u := by
   rw [Dep, Finset.coe_singleton]
   exact singleton_mem_dep i
 
-/-- Dependence on fewer parameters is dependence on more. -/
 theorem Dep.mono (hZ : Z ⊆ Z') (h : Dep T Z u) : Dep T Z' u :=
   dep_iff.2 fun i hi j hj hagree ↦ dep_iff.1 h i hi j hj fun z hz ↦ hagree z (hZ hz)
 
-/-- Variation on more parameters is variation on fewer. -/
 theorem Var.anti (hZ : Z ⊆ Z') (h : Var T Z' u) : Var T Z u :=
   let ⟨i, hi, j, hj, hagree, hne⟩ := h
   ⟨i, hi, j, hj, fun z hz ↦ hagree z (hZ hz), hne⟩
@@ -186,11 +169,9 @@ theorem Dep.trans (hZ : ∀ z ∈ Z', Dep T Z z) (h : Dep T Z' u) : Dep T Z u :=
   dep_iff.2 fun i hi j hj hagree ↦
     dep_iff.1 h i hi j hj fun z hz ↦ dep_iff.1 (hZ z hz) i hi j hj hagree
 
-/-- Dependence is inherited by subteams. -/
 theorem Dep.subset (hT : T' ⊆ T) (h : Dep T Z u) : Dep T' Z u :=
   isLowerSet_dep _ _ (Finset.coe_subset.2 hT) h
 
-/-- Variation is inherited by superteams. -/
 theorem Var.superset (hT : T ⊆ T') (h : Var T Z u) : Var T' Z u :=
   let ⟨i, hi, j, hj, hagree, hne⟩ := h
   ⟨i, hT hi, j, hT hj, hagree, hne⟩

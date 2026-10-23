@@ -89,7 +89,6 @@ theorem transparency_table :
       row whLicensing = [false, true, true] ∧ row ābarProbe = [true, true, true] := by
   decide
 
-/-- Selective opacity is not binary, since the table has three locality types. -/
 theorem three_locality_types :
     row phiProbe ≠ row whLicensing ∧ row whLicensing ≠ row ābarProbe ∧
       row phiProbe ≠ row ābarProbe := by
@@ -126,8 +125,6 @@ theorem hyperraising_blocked :
       ¬ extrapositionProbe.TransparentTo tpLabel := by
   decide
 
-/-- Hyperraising is a horizon parameter. An A-probe on T⁰ enters finite clauses exactly when its
-horizon is none of the categories a finite clause inherits, as in the languages that allow it. -/
 theorem hyperraising_iff (h : Option Cat) :
     (⟨.T, h⟩ : Probe.Profile).TransparentTo cpLabel ↔ ∀ c ∈ cpLabel, h ≠ some c := by
   simp only [Probe.Profile.TransparentTo, Option.mem_def, ne_eq]
@@ -153,8 +150,6 @@ theorem locality_to_height :
       (⟨.C, some .v⟩ : Probe.Profile).IsVacuous := by
   decide
 
-/-- A nonvacuous probe on C⁰ searches into TP and vP clauses, and one on T⁰ into vP clauses,
-whatever their horizons, which is the Height-Locality Connection for the two positions. -/
 theorem nonvacuous_transparent (h : Option Cat) :
     (¬ (⟨.C, h⟩ : Probe.Profile).IsVacuous →
         (⟨.C, h⟩ : Probe.Profile).TransparentTo tpLabel ∧

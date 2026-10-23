@@ -89,12 +89,8 @@ scoped macro "decide_worlds" : tactic =>
       Set.mem_singleton_iff, forall_eq, false_implies, implies_true, and_true]) <;>
       decide))
 
-/-- The evidence-of-things background is realistic, since every world has the rumor's status
-it has. -/
 theorem evidence_realistic : evidence.IsRealistic := by decide_worlds
 
-/-- The informational background is not realistic, since at a world where the rumor is a lie
-the world itself is not among those compatible with the rumor's content. -/
 theorem content_not_realistic : ¬ content.IsRealistic := by decide_worlds
 
 /-- The reportative reading of (8b) holds at every world, a lie included, because it reports
@@ -107,7 +103,6 @@ of it include one where Roger was not elected, so Roger need not have been elect
 theorem not_must_chief (w : World) : ¬ simpleNecessity evidence chief w := by
   revert w; decide_worlds
 
-/-- Yet the rumor leaves Roger's election possible wherever it exists. -/
 theorem can_chief (w : World) (h : rumor w) : simplePossibility evidence chief w := by
   revert h w; decide_worlds
 
@@ -144,8 +139,6 @@ variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
 together. -/
 def Superincreasing [Preorder α] (μ : Measure α) : Prop := ∀ a, μ (Set.Iio a) < μ {a}
 
-/-- Under a superincreasing measure one proposition outweighs another disjoint from it exactly
-when some world of it is better than every world of the other. -/
 theorem Superincreasing.measure_lt_iff [LinearOrder α] [Finite α] (hμ : Superincreasing μ)
     {D E : Set α} (hDE : Disjoint D E) : μ D < μ E ↔ ∃ b ∈ E, ∀ a ∈ D, a < b := by
   refine ⟨fun h ↦ ?_, fun ⟨b, hb, hD⟩ ↦ ?_⟩
@@ -189,8 +182,6 @@ private theorem measure_le_iff_diff (A B : Set α) : μ B ≤ μ A ↔ μ (B \ A
     ← measure_inter_add_sdiff A (Set.toFinite B).measurableSet, Set.inter_comm,
     ENNReal.add_le_add_iff_left (measure_ne_top μ _)]
 
-/-- The measures that preserve comparative possibility along a ranking without ties are the
-superincreasing ones. -/
 theorem kratzerLift_iff_measure_le_iff [LinearOrder α] :
     (∀ A B : Set α, KratzerLift (· ≥ ·) A B ↔ μ B ≤ μ A) ↔ Superincreasing μ := by
   refine ⟨fun h a ↦ not_le.1 fun hle ↦
@@ -228,8 +219,6 @@ abbrev World := Fin 4
 induces the ranking `O₁` of §2.5. -/
 def ideal : Background World := fun _ ↦ {(3 ≤ ·), (2 ≤ ·), (1 ≤ ·)}
 
-/-- The ranking `w₃ < w₂ < w₁ < w₀` is connected and has no ties, one world being at least as
-good as another exactly when its index is at least the other's. -/
 theorem atLeastAsGoodAs_ideal_iff (v w z : World) : (w ≤[ideal v] z) ↔ z ≤ w := by
   simp only [Preorder.ofCriteria_le_iff, ideal, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp,
@@ -256,7 +245,6 @@ instance : IsProbabilityMeasure prob where
     rw [← Finset.coe_univ, prob_coe, show (∑ i : World, 2 ^ (i : ℕ) : ℕ) = 15 from rfl]
     exact ENNReal.div_self (by norm_num) (by norm_num)
 
-/-- Each world outweighs all worse worlds together under Kratzer's measure. -/
 theorem superincreasing_prob : Superincreasing prob := by
   intro a
   rw [← Finset.coe_Iio, ← Finset.coe_singleton, prob_coe, prob_coe,
@@ -282,7 +270,6 @@ def swapped : Background World := fun _ ↦ {(· = 2), (2 ≤ ·), (1 ≤ ·)}
 `w₂, w₃ < w₁ < w₀`, with a tie. -/
 def tied : Background World := fun _ ↦ {(2 ≤ ·), (1 ≤ ·)}
 
-/-- `w₃` is the best world under `O₁`. -/
 theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
   ext x
   simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
@@ -290,7 +277,6 @@ theorem bestWorlds_ideal : bestWorlds ⊥ ideal 0 = {3} := by
   revert x
   decide
 
-/-- `w₂` is the best world under `O₂`. -/
 theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
   ext x
   simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,
@@ -300,7 +286,6 @@ theorem bestWorlds_swapped : bestWorlds ⊥ swapped 0 = {2} := by
   revert x
   decide
 
-/-- `w₂` and `w₃` are the best worlds under `O₃`. -/
 theorem bestWorlds_tied : bestWorlds ⊥ tied 0 = {2, 3} := by
   ext x
   simp only [mem_bestWorlds, Background.accessibleWorlds_bot, Set.mem_univ, true_and,

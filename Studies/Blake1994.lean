@@ -154,8 +154,6 @@ theorem mem_gaps : q ∈ gaps inv ↔ q ∉ positions inv ∧ ∃ p ∈ position
 instance : Decidable (Conforms inv) :=
   inferInstanceAs (Decidable (∀ a b : Position, b ≤ a → a ∈ positions inv → b ∈ positions inv))
 
-/-- Conformity in Blake's own wording, that a language with a case at some position has a case at
-each position to its left. -/
 theorem conforms_iff :
     Conforms inv ↔
       ∀ c ∈ inv, ∀ p, position c = some p → ∀ q < p, ∃ d ∈ inv, position d = some q := by
@@ -178,19 +176,13 @@ theorem conforms_iff_gaps_eq_empty : Conforms inv ↔ gaps inv = ∅ := by
 theorem positions_mono (h : inv ⊆ inv') : positions inv ⊆ positions inv' :=
   Finset.biUnion_subset_biUnion_of_subset_left _ h
 
-/-- Conforming systems lie along one line of growth, since of any two one fills every position
-the other fills. -/
 theorem Conforms.total (h : Conforms inv) (h' : Conforms inv') :
     positions inv ⊆ positions inv' ∨ positions inv' ⊆ positions inv := by
   simpa using IsLowerSet.total h h'
 
-/-- The vocative is off the hierarchy, so adding it changes nothing. -/
 theorem positions_insert_voc : positions (insert .voc inv) = positions inv := by
   simp [positions, Finset.biUnion_insert, position]
 
-/-- Labelling a case for the highest of its functions leaves only apparent gaps. When the case
-functions of a language conform, each gap among its case labels is a position that some case
-fills with a function it is not labelled for. -/
 theorem gaps_subset_of_conforms (h : inv ⊆ inv') (h' : Conforms inv') :
     gaps inv ⊆ positions inv' \ positions inv := fun q hq ↦ by
   obtain ⟨hq, p, hp, hqp⟩ := mem_gaps.1 hq
@@ -224,10 +216,8 @@ theorem systems_conform : ∀ inv ∈ systems, Conforms inv := by
     implies_true, and_true]
   decide
 
-/-- Nanai has every position down to the last but the genitive. -/
 theorem gaps_nanai : gaps nanai = {.gen} := by decide
 
-/-- Tarascan has every position down to the last but the dative. -/
 theorem gaps_tarascan : gaps tarascan = {.dat} := by decide
 
 /-! ### Latin
@@ -235,10 +225,8 @@ theorem gaps_tarascan : gaps tarascan = {.dat} := by decide
 Blake gives Latin as the five-case stage, nominative, accusative, genitive, dative and a last case
 of many functions whose label is somewhat arbitrary. -/
 
-/-- The Latin case labels skip the locative. -/
 theorem gaps_latin_labels : gaps (Finset.univ.image Latin.Case.label) = {.loc} := by decide
 
-/-- The functions the Latin cases express fill every position. -/
 theorem positions_latin_functions :
     positions (Finset.univ.biUnion Latin.Case.functions) = Finset.univ := by
   decide
@@ -246,7 +234,6 @@ theorem positions_latin_functions :
 theorem conforms_latin_functions : Conforms (Finset.univ.biUnion Latin.Case.functions) := by
   decide
 
-/-- The Latin gap is apparent, the locative being a function of a case labelled for another. -/
 theorem gaps_latin_labels_subset :
     gaps (Finset.univ.image Latin.Case.label) ⊆
       positions (Finset.univ.biUnion Latin.Case.functions) \
@@ -263,15 +250,12 @@ functions they cover and not by their labels. Greek has no ablative, and the fun
 Latin ablative fall to the Greek genitive, which expresses source, and to the Greek dative, which
 expresses location and instrument, so that the Greek dative is the more comprehensive case. -/
 
-/-- Greek has no ablative, and the functions of the Latin ablative fall to its genitive and
-dative. -/
 theorem latin_abl_functions_ancient_greek :
     .abl ∉ Finset.univ.image Greek.Ancient.Case.label ∧
       Latin.Case.abl.functions ⊆
         Greek.Ancient.Case.gen.functions ∪ Greek.Ancient.Case.dat.functions := by
   decide
 
-/-- The Greek dative is a more comprehensive case than the Latin dative. -/
 theorem latin_dat_functions_ssubset_ancient_greek :
     Latin.Case.dat.functions ⊂ Greek.Ancient.Case.dat.functions := by decide
 
@@ -293,25 +277,17 @@ theorem fragments_conform :
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide
 
-/-- Finnish has no dative, the allative marking the recipient. -/
 theorem gaps_finnish : gaps (Finset.univ.image Finnish.Case.label) = {.dat} := by decide
 
-/-- Hungarian has no genitive, the dative marking the possessor, as in the Pama-Nyungan languages
-Blake mentions. -/
 theorem gaps_hungarian : gaps (Finset.univ.image Hungarian.Case.label) = {.gen} := by decide
 
-/-- The grammatical cases of Dargwa skip the locative and the ablative, which belong to its
-separate series of local cases. -/
 theorem gaps_dargwa : gaps (Finset.univ.image Dargwa.Tanti.Case.label) = {.loc, .ablInst} := by
   decide
 
-/-- Mongolian has no locative, which postpositions express. -/
 theorem gaps_mongolian : gaps (Finset.univ.image Mongolian.Case.label) = {.loc} := by decide
 
-/-- Yakut has no locative. -/
 theorem gaps_yakut : gaps (Finset.univ.image Yakut.Case.label) = {.loc} := by decide
 
-/-- Basel German has no genitive, its possessor a dative construction. -/
 theorem gaps_basel : gaps (Finset.univ.image German.Basel.Case.label) = {.gen} := by decide
 
 end Blake1994

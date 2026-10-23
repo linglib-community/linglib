@@ -84,20 +84,15 @@ the minimal acceptable agent of *kill*, a natural force such as electricity or t
 ([grimm-2011] §2.3). -/
 def minimalInstigator : ParticipantType := ({.instigation}, ⊤)
 
-/-- The nominative or ergative region is the up-set of the minimal instigator. -/
 theorem ParticipantType.toCaseRegion_eq_nomErg_iff (n : ParticipantType) :
     n.toCaseRegion = .nomErg ↔ minimalInstigator ≤ n := by
   revert n; decide
 
-/-- The accusative or absolutive region runs from the maximal patient to the patient of a contact
-verb. -/
 theorem ParticipantType.toCaseRegion_eq_accAbs_iff (n : ParticipantType) :
     n.toCaseRegion = .accAbs ↔
       maximalPatient ≤ n ∧ n ≤ TransitivityRank.contact.patientType := by
   revert n; decide
 
-/-- The dative region runs from sentience without instigation up to volition, sentience and
-motion, all at qualitative persistence (beginning). -/
 theorem ParticipantType.toCaseRegion_eq_dative_iff (n : ParticipantType) :
     n.toCaseRegion = .dative ↔
       sentientNonInstigator ≤ n ∧ n ≤ ({.volition, .sentience, .motion}, .quPersBeginning) := by
@@ -131,9 +126,6 @@ theorem ordConnected_dative :
     {n : ParticipantType | n.toCaseRegion = .dative}.OrdConnected := by
   rw [setOf_dative_eq_Icc]; exact Set.ordConnected_Icc
 
-/-- The oblique region is not connected: motion and motion with sentience and instigation, both
-at qualitative persistence (beginning), are oblique, while motion with sentience between them is
-dative. -/
 theorem not_ordConnected_oblique :
     ¬ {n : ParticipantType | n.toCaseRegion = .oblique}.OrdConnected := fun h ↦ by
   have := h.out (x := ({.motion}, .quPersBeginning)) (by decide)

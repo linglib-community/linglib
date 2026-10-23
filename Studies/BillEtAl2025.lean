@@ -71,7 +71,6 @@ def Sentence.pronounced : Sentence → Finset Head
   | .mu => {.mu 0, .mu 1}
   | .jMu => Finset.univ
 
-/-- Each sentence type pronounces heads in a way that Mitrović and Sauerland's examples attest. -/
 theorem pronounced_mem_attested (s : Sentence) : s.pronounced ∈ attested := by
   rw [mem_attested_iff]; cases s <;> decide
 
@@ -90,13 +89,10 @@ def additiveParticle : Language → AdditiveParticle
   | .georgian => Georgian.FocusParticles.c
   | .hungarian => Hungarian.FocusParticles.is_
 
-/-- The μ particle of each test language is also its additive particle, as Mitrović and Sauerland
-predict of μ. -/
 theorem muParticle_isAlsoAdditive (l : Language) :
     (muParticle l).IsAlsoAdditive (additiveParticle l) := by
   cases l <;> rfl
 
-/-- The J particle of neither test language is its additive particle. -/
 theorem not_jParticle_isAlsoAdditive (l : Language) :
     ¬ (jParticle l).IsAlsoAdditive (additiveParticle l) := by
   cases l <;> decide
@@ -145,21 +141,15 @@ end Account
 
 /-! ### The predictions -/
 
-/-- The decomposition with the Transparency Principle predicts J-μ, which pronounces every head,
-easier than either other sentence type. -/
 theorem transparency_prediction (s : Sentence) (h : s ≠ .jMu) :
     Account.universal.covert .jMu < Account.universal.covert s := by
   revert s; decide
 
-/-- If the more complex is the harder, the rival predicts J expressions easier than J-μ
-expressions. -/
 theorem bareJ_prediction : Account.bareJ.complexity .j < Account.bareJ.complexity .jMu := by
   decide
 
-/-- The rival gives μ and J-μ expressions one structure. -/
 theorem bareJ_underlying_mu : Account.bareJ.underlying .mu = Account.bareJ.underlying .jMu := rfl
 
-/-- On the rival structures μ expressions are the more opaque of μ and J-μ. -/
 theorem bareJ_mu_opaque : Account.bareJ.covert .jMu < Account.bareJ.covert .mu := by
   decide
 
@@ -183,17 +173,13 @@ def PlayedMore (g : Group) (s t : Sentence) : Prop :=
 instance (g : Group) : DecidableRel (PlayedMore g) := fun _ _ ↦
   inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
-/-- Georgian children replayed J-μ sentences more than J and than μ sentences, and J and μ
-sentences did not differ. -/
 theorem playedMore_child_iff (s t : Sentence) :
     PlayedMore .child s t ↔ s = .jMu ∧ t ≠ .jMu := by
   revert s t; decide
 
-/-- Georgian adults replayed no sentence type more than another. -/
 theorem not_playedMore_adult (s t : Sentence) : ¬ PlayedMore .adult s t := by
   revert s t; decide
 
-/-- The observed differences run against the decomposition's prediction. -/
 theorem playedMore_child_contradicts_transparency {s t : Sentence}
     (h : PlayedMore .child s t) : Account.universal.covert s < Account.universal.covert t := by
   obtain ⟨rfl, ht⟩ := (playedMore_child_iff s t).1 h
@@ -206,12 +192,9 @@ def SentenceEffect (l : Language) (m : Measure) : Prop := (lrt l m .sentence).ma
 instance (l : Language) (m : Measure) : Decidable (SentenceEffect l m) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- Hungarian showed no difference between the sentence types on either measure. -/
 theorem not_sentenceEffect_hungarian (m : Measure) : ¬ SentenceEffect .hungarian m := by
   revert m; decide
 
-/-- Georgian showed a difference between the sentence types only in how often they were
-replayed, not in accuracy. -/
 theorem georgian_sentenceEffect_iff (m : Measure) : SentenceEffect .georgian m ↔ m = .playedN := by
   revert m; decide
 
@@ -223,8 +206,6 @@ def Desiderata (c : Sentence → ℕ) : Prop :=
 instance (c : Sentence → ℕ) : Decidable (Desiderata c) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- The conditions say that the order a measure predicts is the one the Georgian children
-showed. -/
 theorem desiderata_iff (c : Sentence → ℕ) :
     Desiderata c ↔ ∀ s t, c s < c t ↔ PlayedMore .child t s := by
   simp only [playedMore_child_iff]
@@ -243,9 +224,6 @@ theorem not_desiderata_bareJ_complexity : ¬ Desiderata Account.bareJ.complexity
 
 theorem not_desiderata_bareJ_covert : ¬ Desiderata Account.bareJ.covert := by decide
 
-/-- The paper's third condition asks for Hungarian μ to be less complex than Georgian μ, and its
-morphological route is that Georgian *-c* is a bound clitic where Hungarian *is* is free
-([clark-2017]). -/
 theorem mu_kind_differs :
     (muParticle .georgian).morph.kind = .bound .after .clitic ∧
       (muParticle .hungarian).morph.kind = .free :=
@@ -279,8 +257,6 @@ instance : DecidablePred BasicTrue := fun st ↦ inferInstanceAs (Decidable (_ �
 
 theorem not_basicTrue_singleton : ¬ BasicTrue {0} := by decide
 
-/-- The decomposition, a conjunctive J over the μ phrases of the shifted conjuncts, computes the
-basic truth conditions of *is on the table*. -/
 theorem basicTrue_iff_conjunction {j : Coordinator} (hj : j.role = .conjunctive)
     (st : EndState) : BasicTrue st ↔ j.denote {mu (shift (0 : Object)), mu (shift 1)} (· ∈ st) := by
   rw [conjunction_apply hj]; simp [BasicTrue, mentioned, Finset.insert_subset_iff]
@@ -289,7 +265,6 @@ theorem basicTrue_iff_conjunction {j : Coordinator} (hj : j.role = .conjunctive)
 conditions with every innocently excludable alternative naming one object denied. -/
 def Accurate (st : EndState) : Prop := st ∈ exhIE (Set.range onTable) {st | BasicTrue st}
 
-/-- The accurate end state has the mentioned objects and nothing else on the table. -/
 theorem accurate_iff (st : EndState) : Accurate st ↔ st = mentioned := by
   have h : (exh (Set.range onTable) {st | BasicTrue st}).Nonempty := ⟨mentioned, by decide⟩
   rw [Accurate, exhIE_eq_exh_of_nonempty _ _ h]
@@ -307,14 +282,11 @@ def errorKind (st : EndState) : ErrorKind :=
   else if (st ∩ mentioned).card = 1 then .oneMentioned
   else .neitherMentioned
 
-/-- An error of the third kind has an empty table, since nothing unmentioned is there, nor
-exactly one mentioned object, and the state is not the accurate one. -/
 theorem errorKind_eq_neitherMentioned_iff {st : EndState} (h : ¬ Accurate st) :
     errorKind st = .neitherMentioned ↔ st = ∅ := by
   rw [accurate_iff] at h
   revert st; decide
 
-/-- Each kind of error is the kind of some inaccurate end state. -/
 theorem errorKind_surjOn : Set.SurjOn errorKind {st | ¬ Accurate st} Set.univ := by
   rintro (_ | _ | _) -
   · exact ⟨{2}, by decide, by decide⟩

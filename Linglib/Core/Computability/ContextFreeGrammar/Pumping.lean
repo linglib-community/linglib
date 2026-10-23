@@ -77,7 +77,6 @@ theorem length_output_le_maxBranch {r : ContextFreeRule T g.NT} (hr : r ∈ g.ru
 
 variable {g}
 
-/-- A licensed tree of height `h` has at most `maxBranch ^ (h - 1)` terminals. -/
 theorem _root_.RoseTree.Licensed.length_yield_le {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) : t.yield.length ≤ g.maxBranch ^ (t.height - 1) := by
   induction ht using RoseTree.Licensed.grammar_induction with
@@ -109,7 +108,6 @@ private theorem flatten_replicate_succ (l : List T) (n : ℕ) :
   rw [List.replicate_succ', List.flatten_append, List.flatten_cons, List.flatten_nil,
     List.append_nil]
 
-/-- A licensed tree from the start symbol whose yield reaches the pumping constant pumps. -/
 theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses)
     (hroot : t.value = .nonterminal g.initial) (hlong : g.pumpingConstant ≤ t.yield.length) :
     ∃ u v x y z : List T, t.yield = u ++ v ++ x ++ y ++ z ∧
@@ -205,7 +203,6 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g
 
 end ContextFreeGrammar
 
-/-- **The pumping lemma for context-free languages.** -/
 theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T}
     (hcf : L.IsContextFree) : L.HasCFLPumpingProperty := by
   obtain ⟨g, rfl⟩ := hcf

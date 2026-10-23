@@ -73,7 +73,6 @@ instance (ℓ : Level) (t : Tree) : Decidable (IsConstituent ℓ t) :=
     these are flat feet, the sibling of `IsWord`'s Layeredness. -/
 abbrev IsFoot : Tree → Prop := IsConstituent .ft
 
-/-- The daughters of a well-formed foot are σ-leaves. -/
 theorem IsFoot.syl_leaf {t : Tree} (h : IsFoot t) {c : Tree} (hc : c ∈ t.children) :
     c.value.level = .syl ∧ c.children = [] := by
   rcases t with ⟨a, cs⟩
@@ -131,8 +130,6 @@ instance (f : Foot S) : Decidable f.IsIambic := by unfold IsIambic; infer_instan
 instance (f : Foot S) : Decidable f.IsBinary := by unfold IsBinary; infer_instance
 instance (f : Foot S) : Decidable f.IsDegenerate := by unfold IsDegenerate; infer_instance
 
-/-- Above the monosyllable headedness is exclusive, so a foot is not both trochaic and iambic
-    (at length 1 the sole σ is both head-initial and head-final). -/
 theorem not_trochaic_and_iambic (f : Foot S) (h : 1 < f.syllables.length) :
     ¬ (f.IsTrochaic ∧ f.IsIambic) := by
   rintro ⟨ht, hi⟩
@@ -165,10 +162,6 @@ instance (w : S → ℕ) (f : Foot S) : Decidable (IsMoraicTrochee w f) := by
 instance (w : S → ℕ) (f : Foot S) : Decidable (IsCanonicalIamb w f) := by
   unfold IsCanonicalIamb; infer_instance
 
-/-- By **the Iambic/Trochaic Law** ([hayes-1985], after Bolton 1894) a binary iamb is not
-    characterizable weight-blind, since the head-final binary cell admits the left-heavy `(H L̗)`
-    that Hayes' canonical inventory excludes, whereas a binary trochee is exactly
-    `IsSyllabicTrochee` (weight-blind). The witness is `(H L̗)`. -/
 theorem itl_gap : ∃ f : Foot ℕ, (f.IsIambic ∧ f.IsBinary) ∧ ¬ IsCanonicalIamb id f :=
   ⟨Foot.iamb 2 1, by decide⟩
 
@@ -198,16 +191,10 @@ def childHeadFlags : Tree → List Bool
 @[simp] theorem toGrid_length (f : Foot S) :
     (toGrid f).length = f.syllables.length := by simp [toGrid]
 
-/-- The two re-representations carry the **same head profile**, since the prosodic tree's σ-leaf
-    head flags are exactly `headFlags f`, so both recover the foot's head. -/
 theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     childHeadFlags (toProsTree w f) = headFlags f := by
   simp [childHeadFlags, toProsTree, headFlags, List.map_map, Function.comp, Constituent.isHead]
 
-/-- A `Foot` record's prosodic-tree re-representation is always a well-formed foot tree, since
-    `toProsTree` lands in the depth-1 f/σ band that `IsFoot` carves out. With `headFlags_toProsTree`
-    (head-preservation) this is the load-bearing half of the `Foot S ≃ {t // IsFoot t}`
-    embedding that bridges footing-on-`Foot` to OT-on-`Tree`. -/
 theorem isFoot_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     IsFoot (f.toProsTree w) := by
   have hpos : 0 < f.syllables.length := f.head.pos

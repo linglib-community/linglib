@@ -141,8 +141,6 @@ def remainderNouns : List Noun :=
 def allNouns : List Noun :=
   semanticCoreNouns ++ remainderNouns ++ [vrač]
 
-/-- The declension class does not fix the gender, since *znamja* and *kost'* share a class and
-differ in gender. -/
 theorem declClass_ne_gender :
     znamja.declClass = kost'.declClass ∧ znamja.gender ≠ kost'.gender := ⟨rfl, by decide⟩
 

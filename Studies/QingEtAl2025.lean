@@ -100,14 +100,10 @@ def presupposition : Degree.EvaluativeValence →
   | .positive => fun μ θ x Q w ↦ Degree.ThresholdSignificant (μ x w) θ Q
   | .negative | .neutral => fun _ _ _ Q _ ↦ Q.Nonempty
 
-/-- A distributive positive predicate composed with a question is trivial, as Uegaki and Sudo
-show. -/
 theorem trivial_positive :
     Trivial (W := W) (E := E) degreeComparison (presupposition .positive) :=
   fun μ θ x _ w h ↦ (UegakiSudo2019.hope_question_iff_significance μ θ subset_rfl x w).2 h
 
-/-- Without threshold significance, *x fears Q* says only that some answer is feared, which a
-model falsifies. -/
 theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : Degree.EvaluativeValence}
     (hv : v ≠ .positive) : ¬ Trivial (W := W) (E := E) degreeComparison (presupposition v) :=
   fun h ↦ by
@@ -115,8 +111,6 @@ theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : Degree.EvaluativeV
       cases v <;> simp_all [presupposition]
     simp at hp
 
-/-- A relational predicate is not trivial even under threshold significance, since some agent
-does not stand in the relation to a question an answer of which clears the threshold. -/
 theorem not_trivial_relational (v : Degree.EvaluativeValence) (R : E → Set (Set W) → W → Prop)
     (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
     ¬ Trivial (fun _ _ _ ↦ R) (presupposition v) := fun h ↦ by
@@ -219,14 +213,11 @@ def Argument (r : Datum) : Prop :=
 
 instance (r : Datum) : Decidable (Argument r) := by unfold Argument; infer_instance
 
-/-- Every acceptable interrogative complement is under a class 1 or class 2 predicate. -/
 theorem responsive_rows :
     ∀ r ∈ Examples.all, Argument r → r.judgment = .acceptable →
       ∀ c ∈ class? r, c ≠ .distributivePositive := by
   decide +kernel
 
-/-- Under canonical composition a class 3 predicate takes no question: the paper marks every
-such example, *hope whether* and its counterparts in the four other languages. -/
 theorem anti_rogative_rows :
     ∀ r ∈ Examples.all, Argument r → class? r = some .distributivePositive →
       r.judgment ≠ .acceptable := by
@@ -273,9 +264,6 @@ def turkishInflections : List (List (Σ σ, Turkish.Verb.Exponent σ)) :=
     [⟨_, .iyor⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.personNumber .first .singular)⟩],
     [⟨_, .di⟩, ⟨_, .person .one (.personNumber .first .singular)⟩]]
 
-/-- The finite verb of every Turkish row is its predicate's Fragment entry under one of the
-paper's inflections. The finite-verb template licenses the suffix string, and the Fragment's
-phonology derives its surface form, *korkmuyor* and *umuyordum* among them. -/
 theorem turkish_forms :
     ∀ r ∈ Examples.all, r.language = "nucl1301" →
       ∃ v ∈ (r.feature? "predicate").bind turkishVerb?, ∃ sfx ∈ turkishInflections,
@@ -304,9 +292,6 @@ variable {V : Type*} {p Bp Bnp : V → Prop} {v₁ v₂ : V}
 (89). -/
 def HopefulGoals (φ Bφ : V → Prop) (G : Set (V → Prop)) : Prop := ∀ g ∈ G, g = φ ∨ g = Bφ
 
-/-- When the agent hopes for the radical, with the goal of believing `p`, the outcome in which
-they come to believe `p` is strictly better than the one in which they do not, so the
-wondering meets Tabatowski's convention on asking whether `p`. -/
 theorem hopes_radical (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) : v₁ <[{Bp}] v₂ := by
   simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
     Set.mem_singleton_iff, forall_eq]

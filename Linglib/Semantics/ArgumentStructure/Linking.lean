@@ -167,8 +167,6 @@ theorem mem_contributed_iff {t : Slot} :
     t ∈ contributed V C σ ↔ t ∈ C.frame.slots ∧ ∀ s ∈ V.frame.slots, σ s ≠ some t := by
   simp [contributed]
 
-/-- `IsFusionOn` is `IsFusion` for a correspondence that sends no slot outside the verb's frame
-anywhere. -/
 theorem isFusionOn_iff_isFusion (hσ : ∀ s, s ∉ V.frame.slots → σ s = none) :
     IsFusionOn V C σ ↔ IsFusion V C σ := by
   constructor
@@ -191,8 +189,6 @@ theorem IsFusion.exists_fused (h : IsFusion V C σ) (ha : C.obligatory ≠ []) :
   let ⟨s, _, hs⟩ := h.obligatory_target t ht
   ⟨s, t, hs⟩
 
-/-- The identity correspondence fuses a well-formed argument structure whose slots all admit some
-role with itself, the case in which a verb's own argument structure is the clause's. -/
 theorem isFusion_refl (hV : V.WF) (hne : ∀ s ∈ V.frame.slots, (V.admits s).Nonempty) :
     IsFusion V V fun s ↦ if s ∈ V.frame.slots then some s else none where
   coherent s t hst := by

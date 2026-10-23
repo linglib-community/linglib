@@ -100,7 +100,6 @@ def dom : Option Person → Set E
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
   simp [dom]
 
-/-- The inclusive lies inside the first person. -/
 theorem dom_firstInclusive_subset_dom_first :
     dom c (some .firstInclusive) ⊆ dom c (some .first) :=
   fun _ hx ↦ (mem_dom_first c _).2 hx.1
@@ -130,11 +129,9 @@ namespace Person
 
 variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (x : E)
 
-/-- A person feature's domain holds the referents whose participants bear the feature. -/
 theorem mem_dom_feature_iff (f : Feature) : x ∈ Feature.dom c f ↔ Bears (c.participants x) f := by
   cases f <;> simp [Feature.dom, Bears, Finset.Nonempty, Discourse.Role.exists_role]
 
-/-- The first person denotes the referents in its domain. -/
 theorem participants_mem_participantSets_first :
     c.participants x ∈ Person.first.participantSets ↔ x ∈ dom c (some .first) := by
   simp only [mem_dom_first, participantSets, Finset.mem_insert, Finset.mem_singleton,
@@ -142,7 +139,6 @@ theorem participants_mem_participantSets_first :
     Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
-/-- The second person denotes the referents in its domain and not in the first person's. -/
 theorem participants_mem_participantSets_second :
     c.participants x ∈ Person.second.participantSets ↔
       x ∈ dom c (some .second) ∧ x ∉ dom c (some .first) := by
@@ -151,8 +147,6 @@ theorem participants_mem_participantSets_second :
     Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
-/-- The third person denotes the referents outside the second person's domain, which contains
-the first person's. -/
 theorem participants_mem_participantSets_third :
     c.participants x ∈ Person.third.participantSets ↔ x ∉ dom c (some .second) := by
   simp only [mem_dom_second, participantSets, Finset.mem_singleton, Finset.ext_iff,
@@ -233,8 +227,6 @@ def dom (g : Option Gender) : Set E :=
 @[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := by
   simp [dom, Features.fromGender, Features.masculine]
 
-/-- The neuter domain lies inside the feminine one, the containment `[+neuter] → [+feminine]` of
-the decomposition as a fact about referents. -/
 theorem dom_neuter_subset_dom_feminine :
     dom (E := E) (some .neuter) ⊆ dom (some .feminine) :=
   Finset.inf_mono (by decide : Features.feminine ⊆ Features.neuter)

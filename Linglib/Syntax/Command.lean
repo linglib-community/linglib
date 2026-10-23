@@ -99,25 +99,20 @@ abbrev commandRelation (P : Set α) : SetRel α α := upperPolar Admits P
 
 theorem mem_commandRelation : a ~[commandRelation P] b ↔ ∀ x ∈ P, x < a → x ≤ b := Iff.rfl
 
-/-- The nodes `a` commands are the upper bounds of the `P`-nodes properly dominating `a`. -/
 theorem mem_commandRelation_iff_mem_upperBounds :
     a ~[commandRelation P] b ↔ b ∈ upperBounds (P ∩ Iio a) :=
   ⟨fun h _ hx ↦ h hx.1 hx.2, fun h _ hx hxa ↦ h ⟨hx, hxa⟩⟩
 
 instance : (commandRelation P).IsRefl := ⟨fun _ _ _ hxa ↦ hxa.le⟩
 
-/-- A node commands everything below what it commands. -/
 theorem mem_commandRelation_of_le (h : a ~[commandRelation P] b) (hbc : b ≤ c) :
     a ~[commandRelation P] c :=
   fun _ hx hxa ↦ (h hx hxa).trans hbc
 
-/-- What a node commands depends only on the generators properly dominating it. -/
 theorem mem_commandRelation_congr (h : ∀ x < a, x ∈ P ↔ x ∈ Q) :
     a ~[commandRelation P] b ↔ a ~[commandRelation Q] b :=
   ⟨fun hP _ hx hxa ↦ hP ((h _ hxa).2 hx) hxa, fun hQ _ hx hxa ↦ hQ ((h _ hxa).1 hx) hxa⟩
 
-/-- When the `P`-nodes properly dominating `a` have a greatest member `m`, the lowest of them in
-the tree, `a` commands exactly what `m` dominates. -/
 theorem mem_commandRelation_iff_le (h : IsGreatest (P ∩ Iio a) m) :
     a ~[commandRelation P] b ↔ m ≤ b := by
   rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
@@ -133,32 +128,24 @@ section LeftLinear
 
 variable [PartialOrder α] [IsLeftLinear α] {P : Set α} {a b c m : α}
 
-/-- In a tree order a node commands a node below `c` exactly when it commands `c`, unless `c`
-properly dominates it. -/
 theorem mem_commandRelation_iff_of_le (hcb : c ≤ b) (hca : ¬ c < a) :
     a ~[commandRelation P] b ↔ a ~[commandRelation P] c :=
   ⟨fun h _ hx hxa ↦ (IsLeftLinear.comparable_of_le_common (h hx hxa) hcb).resolve_right
       fun hcx ↦ hca (hcx.trans_lt hxa),
     fun h ↦ mem_commandRelation_of_le h hcb⟩
 
-/-- A node commands whatever its mother dominates, whatever the generator. -/
 theorem mem_commandRelation_of_covBy (ha : m ⋖ a) (hb : m ≤ b) : a ~[commandRelation P] b :=
   fun _ _ hxa ↦ (IsLeftLinear.le_of_lt_of_covBy ha hxa).trans hb
 
-/-- A node whose mother is a generator commands exactly what its mother dominates. -/
 theorem mem_commandRelation_iff_le_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
     a ~[commandRelation P] b ↔ m ≤ b :=
   mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsLeftLinear.le_of_lt_of_covBy ha hx.2⟩
 
-/-- A node whose mother is not a generator commands exactly what its mother commands. -/
 theorem mem_commandRelation_iff_of_covBy (ha : m ⋖ a) (hm : m ∉ P) :
     a ~[commandRelation P] b ↔ m ~[commandRelation P] b :=
   ⟨fun h _ hx hxm ↦ h hx (hxm.trans ha.lt), fun h _ hx hxa ↦
     h hx ((IsLeftLinear.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
 
-/-- The command relation of `P` is the only relation in which the root commands every node and a
-node commands what its mother dominates or what its mother commands, according as the mother is
-in `P` or not. -/
 theorem eq_commandRelation_of_forall_covBy [OrderBot α] [WellFoundedLT α] [IsStronglyCoatomic α]
     {R : SetRel α α} (hbot : ∀ b, ⊥ ~[R] b)
     (hmem : ∀ ⦃m a⦄, m ⋖ a → m ∈ P → ∀ b, a ~[R] b ↔ m ≤ b)
@@ -209,17 +196,14 @@ def ancestors (P : Set α) (a : α) : Set α := P ∩ Iio a
 
 theorem mem_ancestors : x ∈ ancestors P a ↔ x ∈ P ∧ x < a := Iff.rfl
 
-/-- A node is at least as close as the nodes it dominates. -/
 theorem ancestors_subset_ancestors_of_le (h : a ≤ b) : ancestors P a ⊆ ancestors P b :=
   fun _ hx ↦ ⟨hx.1, hx.2.trans_le h⟩
 
-/-- A node is strictly closer than a node it dominates through a generator. -/
 theorem ancestors_ssubset_ancestors_of_le_of_lt (hax : a ≤ x) (hxb : x < b) (hx : x ∈ P) :
     ancestors P a ⊂ ancestors P b :=
   (ssubset_iff_of_subset (ancestors_subset_ancestors_of_le (hax.trans hxb.le))).2
     ⟨x, ⟨hx, hxb⟩, fun h ↦ lt_irrefl x (h.2.trans_le hax)⟩
 
-/-- Between nodes neither of which dominates the other, closeness is command. -/
 theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors P a ⊆ ancestors P b ↔ a ~[commandRelation P] b := by
   refine ⟨fun h x hx hxa ↦ (h ⟨hx, hxa⟩).2.le, fun h x hx ↦ ⟨hx.1, ?_⟩⟩
@@ -227,20 +211,15 @@ theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
   rintro rfl
   exact hba hx.2.le
 
-/-- Between nodes neither of which dominates the other, strict closeness is asymmetric
-command. -/
 theorem ancestors_ssubset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors P a ⊂ ancestors P b ↔ a ~[commandRelation P] b ∧ ¬ b ~[commandRelation P] a := by
   rw [ssubset_def, ancestors_subset_ancestors_iff hab hba, ancestors_subset_ancestors_iff hba hab]
 
-/-- Between nodes neither of which dominates the other, equidistance is mateship. -/
 theorem ancestors_eq_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors P a = ancestors P b ↔ a ~[mateRelation P] b := by
   rw [Subset.antisymm_iff, ancestors_subset_ancestors_iff hab hba,
     ancestors_subset_ancestors_iff hba hab, mem_mateRelation]
 
-/-- Among nodes none of which dominates another, the closest are those that no node of the set
-asymmetrically commands, the Minimal Link Condition. -/
 theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
     MinimalFor (· ∈ S) (ancestors P) a ↔
       a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) :=
@@ -267,14 +246,12 @@ theorem mem_dominanceImage : a ~[dominanceImage A] b ↔ ∃ x ≤ a, ∃ y ≤ 
   simp only [SetLike.mem_coe, mem_upperClosure, Prod.exists, Prod.mk_le_mk]
   exact ⟨fun ⟨x, y, h, hx, hy⟩ ↦ ⟨x, hx, y, hy, h⟩, fun ⟨x, hx, y, hy, h⟩ ↦ ⟨x, y, h, hx, hy⟩⟩
 
-/-- The dominance image is the composite of the relation with dominance on either side. -/
 theorem dominanceImage_eq_comp (A : SetRel α α) :
     dominanceImage A = {p : α × α | p.2 ≤ p.1} ○ A ○ {p : α × α | p.1 ≤ p.2} := by
   ext ⟨a, b⟩
   rw [mem_dominanceImage]
   exact ⟨fun ⟨x, hx, y, hy, h⟩ ↦ ⟨y, ⟨x, hx, h⟩, hy⟩, fun ⟨y, ⟨x, hx, h⟩, hy⟩ ↦ ⟨x, hx, y, hy, h⟩⟩
 
-/-- An order isomorphism carries the dominance image of a relation to that of its image. -/
 theorem mem_dominanceImage_image {β : Type*} [Preorder β] (e : α ≃o β) :
     e a ~[dominanceImage (Prod.map e e '' A)] e b ↔ a ~[dominanceImage A] b := by
   simp only [mem_dominanceImage]
@@ -291,8 +268,6 @@ section DominanceImageTree
 
 variable [PartialOrder α] [IsLeftLinear α] {R : SetRel α α} {a b m : α}
 
-/-- Two daughters of one node are not related by the dominance image of the asymmetric part of a
-relation between disconnected nodes that relates them both ways. -/
 theorem not_mem_dominanceImage_asymmetrize_of_covBy
     (hR : ∀ ⦃x y⦄, x ~[R] y → ¬ x ≤ y ∧ ¬ y ≤ x) (hab : a ~[R] b → b ~[R] a)
     (ha : m ⋖ a) (hb : m ⋖ b) : ¬ a ~[dominanceImage R.asymmetrize] b := by
@@ -319,7 +294,6 @@ section Positions
 
 open Core.Order RoseTree
 
-/-- The nodes properly dominating a position are its proper prefixes. -/
 theorem mem_commandRelation_iff_inits (P : Set TreePath) (a b : TreePath) :
     a ~[commandRelation P] b ↔
       ∀ x ∈ a.toList.inits.map TreePath.mk, x ≠ a → x ∈ P → x ≤ b := by
@@ -386,8 +360,6 @@ def cCommandDomain (t : RoseTree β) (a : TreePath) : Set TreePath := {b | t.CCo
 instance (t : RoseTree β) (a b : TreePath) : Decidable (b ∈ t.cCommandDomain a) :=
   inferInstanceAs (Decidable (t.CCommands a b))
 
-/-- C-command is sisterhood plus dominance: a position whose parent branches c-commands exactly
-the positions properly below its parent and not below itself. -/
 theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ ⊥)
     (hp : IsBranchingAt t a.parent) : CCommands t a b ↔ a.parent < b ∧ ¬ a ≤ b := by
   have hcov : a.parent ⋖ a := by
@@ -399,15 +371,11 @@ theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ �
     fun ⟨hpb, hab⟩ ↦ ⟨hpb.le, hab, fun hba ↦ hab ?_⟩⟩
   exact ((hcov.eq_or_eq hpb.le hba).resolve_left hpb.ne').ge
 
-/-- A daughter of a branching position c-commands exactly the positions properly below its mother
-and not below itself. -/
 theorem cCommands_iff_of_covBy {t : RoseTree β} {m c q : TreePath} (hc : m ⋖ c)
     (hm : IsBranchingAt t m) : CCommands t c q ↔ m < q ∧ ¬ c ≤ q := by
   have hpar : c.parent = m := by rw [← TreePath.pred_eq_parent, Order.pred_eq_of_covBy hc]
   rw [cCommands_iff_parent_lt (ne_bot_of_gt hc.lt) (hpar ▸ hm), hpar]
 
-/-- Between positions neither of which dominates the other, strict closeness under the branching
-positions is asymmetric c-command. -/
 theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : TreePath}
     (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors {p | t.IsBranchingAt p} a ⊂ ancestors {p | t.IsBranchingAt p} b ↔
@@ -415,12 +383,10 @@ theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : TreeP
   rw [ancestors_ssubset_ancestors_iff hab hba, cCommands_iff, cCommands_iff]
   tauto
 
-/-- Relabelling preserves the branching positions. -/
 theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : TreePath) :
     IsBranchingAt (t.map f) p ↔ IsBranchingAt t p := by
   simp [IsBranchingAt, positionsWhere_map]
 
-/-- Relabelling preserves c-command. -/
 theorem cCommand_map {γ : Type*} (f : β → γ) (t : RoseTree β) :
     cCommand (t.map f) = cCommand t := by
   simp only [cCommand, isBranchingAt_map]
@@ -429,19 +395,14 @@ section Replace
 
 variable {t new : RoseTree β} {a b c : TreePath}
 
-/-- Replacing the subtree at `c` leaves the branching positions outside it as they were. -/
 theorem isBranchingAt_replaceAt {x : TreePath} (h : ¬ c ≤ x) :
     IsBranchingAt (t.replaceAt c.toList new) x ↔ IsBranchingAt t x :=
   mem_positionsWhere_replaceAt (fun _ _ _ _ ↦ by simp [arity]) h new
 
-/-- Unless `c` lies properly above `a`, what `a` c-commands is unchanged by replacing the subtree
-at `c`. -/
 theorem mem_cCommand_replaceAt (h : ¬ c < a) :
     a ~[cCommand (t.replaceAt c.toList new)] b ↔ a ~[cCommand t] b :=
   mem_commandRelation_congr fun _ hxa ↦ isBranchingAt_replaceAt fun hcx ↦ h (hcx.trans_lt hxa)
 
-/-- A position outside the subtree at `c` c-commands a position of its replacement exactly when it
-c-commands `c`. -/
 theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a ≤ c) :
     CCommands (t.replaceAt c.toList new) a b ↔ CCommands t a c := by
   have hlt : ¬ c < a := fun h ↦ hca h.le
@@ -450,7 +411,6 @@ theorem cCommands_replaceAt_of_le (hcb : c ≤ b) (hca : ¬ c ≤ a) (hac : ¬ a
   simp only [CCommands, mem_commandRelation_iff_of_le hcb hlt, mem_cCommand_replaceAt hlt, hab,
     hba, hac, hca, not_false_eq_true, and_true]
 
-/-- The root of the replacement c-commands what the replaced subtree c-commanded. -/
 theorem cCommands_replaceAt_self : CCommands (t.replaceAt c.toList new) c a ↔ CCommands t c a := by
   simp only [CCommands, mem_cCommand_replaceAt (lt_irrefl c)]
 

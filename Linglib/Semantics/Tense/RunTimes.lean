@@ -70,7 +70,6 @@ theorem mem_timeTrace_pure {a t : T} :
     t ∈ timeTrace {NonemptyInterval.pure a} ↔ t = a := by
   simp
 
-/-- A stative clause covers the times of the interval it holds throughout. -/
 @[simp] theorem timeTrace_Iic (i : NonemptyInterval T) : timeTrace (Set.Iic i) = (i : Set T) :=
   Set.ext fun _ ↦ ⟨fun ⟨_, hj, ht⟩ ↦ NonemptyInterval.coe_subset_coe.2 hj ht,
     fun ht ↦ ⟨i, Set.mem_Iic.2 le_rfl, ht⟩⟩
@@ -96,14 +95,10 @@ theorem beforeEver_iff :
     beforeEver A B ↔ (timeTrace A ∩ strictLowerBounds (timeTrace B)).Nonempty :=
   .rfl
 
-/-- *Before* is *not yet*. `A` is before ever `B` exactly when some time of `A` lies outside the
-upward closure of `B`'s times, the times at which `B` holds or has held. -/
 theorem beforeEver_iff_not_subset_upperClosure :
     beforeEver A B ↔ ¬ timeTrace A ⊆ upperClosure (timeTrace B) := by
   rw [beforeEver_iff, strictLowerBounds_eq_compl_upperClosure, Set.inter_compl_nonempty_iff]
 
-/-- *Before ever* is anti-additive in its temporal clause, since the times before every time of a
-clause form a lower set and the lower sets of a linear order are nested. -/
 theorem beforeEver_union_right : beforeEver A (B ∪ C) ↔ beforeEver A B ∧ beforeEver A C := by
   simp only [beforeEver_iff, timeTrace_union, strictLowerBounds_union]
   refine ⟨fun h ↦ ⟨h.mono (Set.inter_subset_inter_right _ Set.inter_subset_left),

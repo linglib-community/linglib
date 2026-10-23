@@ -127,7 +127,6 @@ theorem AntagonismFree.subset {s t : Finset Element} (ht : AntagonismFree t) (h 
     AntagonismFree s :=
   Set.InjOn.mono (Finset.coe_subset.2 h) ht
 
-/-- A set of at most one element is antagonism-free. -/
 theorem AntagonismFree.of_card_le_one {s : Finset Element} (h : s.card ≤ 1) : AntagonismFree s :=
   fun a ha b hb _ ↦ Finset.card_le_one.1 h a ha b hb
 
@@ -209,14 +208,11 @@ def headedSimplex (e : Element) : MR := ⟨{e}, {e}, subset_rfl⟩
 
 @[simp] theorem headedSimplex_heads (e : Element) : (headedSimplex e).heads = {e} := rfl
 
-/-- An expression contains |e| just when `e` is one of its elements. -/
 @[simp] theorem simplex_le_iff : simplex e ≤ m ↔ e ∈ m.elements := by simp [le_def]
 
-/-- An expression contains headed |e| just when `e` is one of its heads. -/
 @[simp] theorem headedSimplex_le_iff : headedSimplex e ≤ m ↔ e ∈ m.heads := by
   simpa [le_def] using fun h ↦ m.heads_subset h
 
-/-- A headed element properly contains its unheaded self. -/
 theorem simplex_lt_headedSimplex (e : Element) : simplex e < headedSimplex e :=
   ⟨by simp, by simp [le_def]⟩
 
@@ -305,7 +301,6 @@ instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (_ �
 
 theorem wellFormed_bot : WellFormed ⊥ := by simp [WellFormed]
 
-/-- Docking preserves well-formedness. -/
 theorem WellFormed.sup (h₁ : s₁.WellFormed) (h₂ : s₂.WellFormed) : (s₁ ⊔ s₂).WellFormed :=
   ⟨Finset.union_subset h₁.1 h₂.1, Finset.union_subset h₁.2.1 h₂.2.1,
     Finset.union_subset h₁.2.2 h₂.2.2⟩

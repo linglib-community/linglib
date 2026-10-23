@@ -98,8 +98,6 @@ when the space is exhausted. -/
 theorem kratzerLift_univ_iff (A : Set W) : KratzerLift r A Set.univ ↔ A = Set.univ :=
   kratzerLift_univ_iff' r A
 
-/-- Over two indiscriminate worlds `{0}` is as likely as its complement but not as
-everything. -/
 theorem revised_escapes_collapse :
     ¬EquiprobabilityCollapse (KratzerLift fun _ _ : Fin 2 ↦ True) := by
   intro h
@@ -144,8 +142,6 @@ end Revised
 
 /-! ### §1.5 The m-lifting under Kratzer's *must* -/
 
-/-- A proposition holding at fewer worlds than its complement cannot be probable under the
-m-lifting, since no injection matches its complement into it. -/
 theorem best_not_probably_of_ncard_lt [Finite W] (r : W → W → Prop) {A : Set W}
     (h : A.ncard < Aᶜ.ncard) : ¬Probably (MatchingLift r) A :=
   fun hp ↦ absurd hp.1.ncard_le (not_le.2 h)
@@ -156,7 +152,6 @@ def bestFirst : Set (Fin 3 → Prop) := {(· = 0)}
 theorem bestFirst_le (v u : Fin 3) : (v ≤[bestFirst] u) ↔ (u = 0 → v = 0) := by
   simp [bestFirst, Preorder.ofCriteria_le_iff]
 
-/-- Kratzer's *must* of the sole best world holds. -/
 theorem must_best : Yalcin2010.must bestFirst {0} 0 :=
   (Yalcin2010.must_iff _ _ _).2 fun _ ↦ ⟨0, (bestFirst_le _ _).2 fun _ ↦ rfl,
     fun _ hz ↦ (bestFirst_le _ _).1 hz rfl⟩
@@ -201,8 +196,6 @@ section Probability
 
 variable [MeasurableSpace W] [DiscreteMeasurableSpace W] (P : Measure W) [IsProbabilityMeasure P]
 
-/-- The premises are compatible with the conclusion, since when the first proposition holds at
-least half the mass, any alternatives outside it together weigh no more. -/
 theorem prob_rightUnion_of_half {A B C : Set W} (hA : 1 / 2 ≤ P.real A) (hB : B ⊆ Aᶜ)
     (hC : C ⊆ Aᶜ) : P.real (B ∪ C) ≤ P.real A := by
   have h1 := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
@@ -211,8 +204,6 @@ theorem prob_rightUnion_of_half {A B C : Set W} (hA : 1 / 2 ≤ P.real A) (hB : 
 
 end Probability
 
-/-- In the fair lottery a holder of at most `k` of `n` tickets wins with probability at most
-`k / n` and loses with probability at least `(n - k) / n`. -/
 theorem lottery_bound {n k : ℕ} [NeZero n] {A : Set (Fin n)} (h : A.ncard ≤ k) :
     (uniformOn (Set.univ : Set (Fin n))).real A ≤ k / n ∧
       ((n : ℝ) - k) / n ≤ (uniformOn (Set.univ : Set (Fin n))).real Aᶜ := by
@@ -324,8 +315,6 @@ theorem bridge2_refutes_V6 :
     simp [Measure.inducedGe_iff_real, skewed_real, Fin.sum_univ_three, Set.indicator_apply] at h
     norm_num at h
 
-/-- The same model satisfies BR3, since the order agrees with the measure on singletons, so
-BR3 too allows a necessary proposition to be less likely than its negation. -/
 theorem bridge3_refutes_V6 :
     Bridge3 (premisePreorder bestFirst).le skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) :=
@@ -354,8 +343,6 @@ theorem thin_real (A : Set (Fin 2)) :
 /-- `bestFirst₂` makes the first of two worlds the best. -/
 def bestFirst₂ : Set (Fin 2 → Prop) := {(· = 0)}
 
-/-- In `thin` BR1 holds and the sole best world is necessary, yet it is only barely likelier
-than its negation, so BR1 cannot deliver *much more likely*. -/
 theorem bridge1_thin_margin :
     Bridge1 (premisePreorder bestFirst₂).le thin ∧ Yalcin2010.must bestFirst₂ {0} 0 ∧
       thin.real {0} < 5002 / 10000 := by
@@ -400,11 +387,9 @@ largest possible margin over its negation, as (56) requires. -/
 theorem quantMust_prob {A : Set W} (h : quantMust A) : P A = 1 ∧ P Aᶜ = 0 := by
   subst h; simp
 
-/-- The strong probabilistic *must* agrees with the quantificational one on the mass. -/
 theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P.real A = 1 :=
   ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
-/-- *Might* is the dual of *must*, since `A` might hold iff its complement is not a must. -/
 theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) (A : Set W) :
     probMight P θ A ↔ ¬ probMust P θ Aᶜ := by
   change 1 - θ < P.real A ↔ ¬ θ ≤ P.real Aᶜ

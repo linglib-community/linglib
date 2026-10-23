@@ -89,37 +89,26 @@ def pointLocatives : List Dutch.Adposition := [naar, tot, van]
 def extendedLocatives : List Dutch.Adposition :=
   [door, langs, om, over₁, rond, uit, via]
 
-/-- The classified adpositions are the spatial ones. -/
 theorem classes_spatial :
     ∀ a ∈ narrowLocatives ++ pointLocatives ++ extendedLocatives, a.IsSpatial := by
   decide
 
-/-- The two core adpositions that do not fit the classification are non-spatial. -/
 theorem met_zonder_not_spatial : ¬ met.IsSpatial ∧ ¬ zonder.IsSpatial := by
   decide
 
-/-- A point locative is one of the grammar's directional prepositions. -/
 theorem pointLocative_directional : ∀ a ∈ pointLocatives, a.direction .pre ≠ .place := by
   decide
 
-/-- A narrow locative is locational before its complement. -/
 theorem narrowLocative_locational : ∀ a ∈ narrowLocatives, a.direction .pre = .place := by
   decide
 
-/-- A point locative is a preposition only: an inherently directional adposition checks the
-directionality itself and never raises its complement. -/
 theorem pointLocative_linearization : ∀ a ∈ pointLocatives, a.linearization = {.pre} := by
   decide
 
-/-- The postposition of a narrow locative denotes a goal path, *de berg op* 'up the mountain':
-the complement is read as the path and the location the preposition denotes as its endpoint,
-which is why a length modifier can measure it. -/
 theorem narrowLocative_direction_post :
     ∀ a ∈ narrowLocatives, a.IsPostposition → a.direction .post = .goal := by
   decide
 
-/-- The postposition of an extended locative denotes a route or a source path, *het bos door*
-'through the woods', never a goal: the complement already extends along the path. -/
 theorem extendedLocative_direction_post :
     ∀ a ∈ extendedLocatives, a.IsPostposition → a.direction .post ≠ .goal := by
   decide
@@ -144,25 +133,15 @@ def linearization : Adposition.Linearization :=
 
 variable {dirP inherent}
 
-/-- The postpositional order is a directional phrase whose adposition is not inherently
-directional, so the postpositional order is derived from the prepositional one and the
-postpositions are a subset of the prepositions. -/
 theorem linearization_eq_post_iff : linearization dirP inherent = .post ↔ dirP ∧ ¬ inherent := by
   unfold linearization DPRaises; split <;> simp [*]
 
-/-- An inherently directional adposition is a preposition. -/
 theorem linearization_eq_pre_of_inherent (h : inherent) : linearization dirP inherent = .pre := by
   unfold linearization DPRaises; split <;> simp_all
 
-/-- A phrase in the postpositional order is directional. -/
 theorem dirP_of_linearization_eq_post (h : linearization dirP inherent = .post) : dirP :=
   (linearization_eq_post_iff.1 h).1
 
-/-- The complement sits in the specifier of the directionality phrase exactly in the
-postpositional order. That specifier is the one position from which an element leaves the
-phrase, the escape hatch Van Riemsdijk's Head Constraint allows, and the position in which the
-complement is read as the path travelled; so the complement of a postpositional phrase is
-extractable and a path, and the complement of a prepositional phrase is neither. -/
 theorem dpRaises_iff_linearization_eq_post :
     DPRaises dirP inherent ↔ linearization dirP inherent = .post :=
   linearization_eq_post_iff.symm

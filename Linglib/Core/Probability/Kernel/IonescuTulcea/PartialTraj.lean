@@ -26,7 +26,6 @@ namespace ProbabilityTheory.Kernel
 variable {X : ℕ → Type*} {mX : ∀ n, MeasurableSpace (X n)}
   {κ : (n : ℕ) → Kernel (Π i : Iic n, X i) (X (n + 1))} [∀ n, IsMarkovKernel (κ n)]
 
-/-- The one-step trajectory from `x` is `κ a x` pushed forward by appending its value to `x`. -/
 theorem partialTraj_succ_self_apply (a : ℕ) (x : Π i : Iic a, X i) :
     partialTraj κ a (a + 1) x
       = (κ a x).map fun y ↦ IicProdIoc a (a + 1) (x, MeasurableEquiv.piSingleton a y) := by
@@ -35,8 +34,6 @@ theorem partialTraj_succ_self_apply (a : ℕ) (x : Π i : Iic a, X i) :
     Measure.map_map (by fun_prop) (by fun_prop)]
   rfl
 
-/-- A trajectory up to time `b + 1` is obtained by appending exactly one point to exactly one
-trajectory up to time `b`. -/
 theorem IicProdIoc_piSingleton_eq_iff {b : ℕ} {z : Π i : Iic b, X i} {w : X (b + 1)}
     {y : Π i : Iic (b + 1), X i} :
     IicProdIoc b (b + 1) (z, MeasurableEquiv.piSingleton b w) = y ↔
@@ -45,8 +42,6 @@ theorem IicProdIoc_piSingleton_eq_iff {b : ℕ} {z : Π i : Iic b, X i} {w : X (
     MeasurableEquiv.coe_IicProdIoc_symm, Prod.mk.injEq]
   exact and_congr_right' (MeasurableEquiv.piSingleton b).eq_symm_apply.symm
 
-/-- In discrete state spaces, the mass of a trajectory up to time `b + 1` is the mass of its
-restriction to time `b` times the probability of its last step. -/
 theorem partialTraj_succ_apply_singleton [∀ n, Countable (X n)]
     [∀ n, MeasurableSingletonClass (X n)] {a b : ℕ} (hab : a ≤ b) (x : Π i : Iic a, X i)
     (y : Π i : Iic (b + 1), X i) :

@@ -166,7 +166,6 @@ def role : Option Role := hierarchy.find? (λ r => decide (b.Available r))
 
 theorem one_le_arguments : 1 ≤ b.arguments := Nat.le_add_right 1 _
 
-/-- The hierarchy read as a case split on the base's arguments. -/
 theorem role_eq :
     b.role = if b.arguments = 1 then some .agent else if b.arguments = 2 then
       if b.Promotable then some .promoted else some .beneficiary else none := by
@@ -189,8 +188,6 @@ theorem role_eq_beneficiary_iff :
     b.role = some .beneficiary ↔ b.arguments = 2 ∧ ¬ b.Promotable := by
   rw [role_eq]; split_ifs <;> simp_all
 
-/-- The hypertransitivity ban: a base takes no applicative exactly when the applied form would
-exceed three arguments. -/
 theorem role_eq_none_iff : b.role = none ↔ maxArguments ≤ b.arguments := by
   have h1 := b.one_le_arguments
   rw [role_eq]; split_ifs <;> simp_all [maxArguments]
@@ -202,8 +199,6 @@ theorem role_eq_agent_of_nondistinct (h : b.verbClass.Nondistinct) (ho : b.objec
   rw [role_eq_agent_iff]
   cases hc : b.verbClass <;> simp_all [arguments, Class.Nondistinct]
 
-/-- A denominal verb of creation with no co-referenced object and no entailed participant
-gains a beneficiary, not an agent: the incorporated nominal is its second argument. -/
 theorem role_eq_beneficiary_of_denominal (h : b.verbClass = .denominal) (ho : b.objects = 0)
     (he : b.entailed = none) : b.role = some .beneficiary := by
   rw [role_eq_beneficiary_iff]
@@ -262,8 +257,6 @@ def Row.Host (r : Row) : Prop := ∀ p ∈ r.paradigm, paradigmMax p ≤ r.base.
 
 instance : DecidablePred Row.Host := λ r => by unfold Row.Host; infer_instance
 
-/-- Every verb's attested function is the role the hierarchy assigns to its base, and a
-suppletive alternant takes no applicative when a paradigm-mate has more arguments. -/
 theorem rows_role : ∀ r ∈ rows, r.observed = if r.Host then r.base.role else none := by
   decide +kernel
 
@@ -285,7 +278,6 @@ def causativizability : Krejci2012.Causative where
   morpheme := "-dha, -tuda"
   reach := (rows.filterMap λ r => if r.observed = some .agent then r.base.tier else none).toFinset
 
-/-- The applicatives reach unergatives but not simple transitives, Krejci's third type. -/
 theorem causativizability_type : causativizability.type = some .unergative := by
   decide +kernel
 

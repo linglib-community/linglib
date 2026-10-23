@@ -53,7 +53,6 @@ def semanticSupport : MeaningVector d →ₗ[ℝ] FormVector n →ₗ[ℝ] ℝ :
     semanticSupport G s c = (s ᵥ* G) ⬝ᵥ c := by
   rw [semanticSupport, toLinearMap₂'_apply', dotProduct_mulVec]
 
-/-- The support for a single form coordinate is the predicted value there. -/
 theorem semanticSupport_single (s : MeaningVector d) (j : Fin n) :
     semanticSupport G s (Pi.single j 1) = (s ᵥ* G) j := by
   simp

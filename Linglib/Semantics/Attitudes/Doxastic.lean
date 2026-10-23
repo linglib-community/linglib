@@ -77,8 +77,6 @@ theorem holdsAt_iff :
       □[V.access agent] p w := by
   simp [HoldsAt, sentence]
 
-/-- A factive predicate is defined exactly where its complement is true, and a non-factive one
-everywhere. -/
 theorem support_sentence :
     Function.support (V.sentence agent p) = {w | ∀ _ ∈ V.factivity, p w} := by
   ext w
@@ -90,14 +88,11 @@ instance [Fintype W] [∀ v, Decidable (w ~[V.access agent] v)] [DecidablePred p
 
 variable {V agent p w}
 
-/-- A veridical predicate entails its complement, so if `x` knows `p` at `w`, then `p w`. -/
 theorem veridical_entails_complement (hV : V.veridicality = .veridical)
     (h : V.HoldsAt agent p w) : p w := by
   rw [holdsAt_iff, hV] at h
   exact h.2.1
 
-/-- Over reflexive accessibility the veridicality and factivity requirements are redundant, and
-the predicate holds exactly when its complement is true at every accessible world. -/
 theorem holdsAt_iff_box [(V.access agent).IsRefl] :
     V.HoldsAt agent p w ↔ □[V.access agent] p w := by
   rw [holdsAt_iff]

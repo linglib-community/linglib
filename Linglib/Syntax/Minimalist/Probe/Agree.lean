@@ -130,8 +130,6 @@ theorem agree_cons (a : α) (as : List α) :
         let r := P.agree copy update (update a (if (P s).int a then copy a s else s)) as
         ⟨r.state, (if (P s).int a then [a] else []) ++ r.interacted, r.satisfier⟩ := rfl
 
-/-- When satisfaction does not depend on the state, the satisfier is the first goal that
-satisfies the probe. -/
 theorem agree_satisfier {q : Probe α} (h : ∀ s, (P s).sat = q.sat) :
     (P.agree copy update s goals).satisfier = q.search goals := by
   induction goals generalizing s with
@@ -162,11 +160,9 @@ theorem agree_cons (a : α) (as : List α) :
         let r := p.agree copy (if p.int a then copy a s else s) as
         ⟨r.state, (if p.int a then [a] else []) ++ r.interacted, r.satisfier⟩ := rfl
 
-/-- The satisfier is the goal the search finds. -/
 @[simp] theorem agree_satisfier : (p.agree copy s goals).satisfier = p.search goals :=
   Dynamic.agree_satisfier (q := p) fun _ ↦ rfl
 
-/-- The goals flagged as interacting are the inspected goals that interact. -/
 @[simp] theorem agree_interacted :
     (p.agree copy s goals).interacted = (p.inspected goals).filter (p.int ·) := by
   induction goals generalizing s with
@@ -176,7 +172,6 @@ theorem agree_cons (a : α) (as : List α) :
     by_cases hs : p.sat a <;> by_cases hi : p.int a <;>
       simp [inspected, search, hs, hi, ih]
 
-/-- The state is the fold of `copy` over the goals flagged as interacting. -/
 theorem agree_state :
     (p.agree copy s goals).state =
       (p.agree copy s goals).interacted.foldl (fun s a ↦ copy a s) s := by
@@ -186,7 +181,6 @@ theorem agree_state :
     rw [agree_cons]
     by_cases hs : p.sat a <;> by_cases hi : p.int a <;> simp [hs, hi, ih]
 
-/-- An inspected goal is a member of the sequence. -/
 theorem mem_of_mem_inspected {a : α} (ha : a ∈ p.inspected goals) : a ∈ goals := by
   rcases List.mem_append.mp ha with h | h
   · exact List.takeWhile_subset _ h
@@ -196,15 +190,12 @@ theorem mem_of_mem_inspected {a : α} (ha : a ∈ p.inspected goals) : a ∈ goa
       simp only [hs, Option.toList_some, List.mem_singleton] at h
       exact h ▸ mem_of_search_eq_some hs
 
-/-- A probe that interacts with no goal leaves the state unchanged. -/
 theorem agree_state_eq_of_forall_not_int (h : ∀ a ∈ goals, ¬ p.int a) :
     (p.agree copy s goals).state = s := by
   rw [agree_state, agree_interacted, List.filter_eq_nil_iff.mpr]
   · rfl
   · exact fun a ha hi ↦ h a (mem_of_mem_inspected ha) (of_decide_eq_true hi)
 
-/-- When every interacting goal satisfies the probe, the only inspected goal that interacts is the
-goal of the probe. -/
 theorem inspected_filter_int_eq_goal (h : ∀ a, p.int a → p.sat a) :
     (p.inspected goals).filter (p.int ·) = (p.goal goals).toList := by
   rw [inspected, List.filter_append, List.filter_eq_nil_iff.mpr, List.nil_append]
@@ -215,18 +206,14 @@ theorem inspected_filter_int_eq_goal (h : ∀ a, p.int a → p.sat a) :
   · intro a ha hi
     exact absurd (h a (of_decide_eq_true hi)) (by simpa using List.mem_takeWhile_imp ha)
 
-/-- When every interacting goal satisfies the probe, the only goal flagged as interacting is the
-goal of the probe. -/
 theorem agree_interacted_eq_goal (h : ∀ a, p.int a → p.sat a) :
     (p.agree copy s goals).interacted = (p.goal goals).toList := by
   rw [agree_interacted, inspected_filter_int_eq_goal h]
 
-/-- A relativized probe flags the goal it finds. -/
 theorem relativized_agree_interacted (f : α → Prop) [DecidablePred f] :
     ((relativized f).agree copy s goals).interacted = ((relativized f).search goals).toList := by
   rw [agree_interacted_eq_goal (fun _ h ↦ h), relativized_goal]
 
-/-- An insatiable probe flags every interacting goal, Multiple Agree ([hiraiwa-2001]). -/
 theorem insatiable_agree_interacted (f : α → Prop) [DecidablePred f] :
     ((insatiable f).agree copy s goals).interacted = goals.filter (f ·) := by
   rw [agree_interacted, inspected, List.takeWhile_eq_self_iff.mpr (by simp),
@@ -316,12 +303,10 @@ def toProbe : Probe α where
 
 variable {sp feats}
 
-/-- The join interacts with a goal iff either specification does. -/
 theorem sup_toProbe_int {sp' : Spec F} {a : α} :
     ((sp ⊔ sp').toProbe feats).int a ↔ (sp.toProbe feats).int a ∨ (sp'.toProbe feats).int a := by
   simp [or_and_right, exists_or]
 
-/-- The join is satisfied by a goal iff either specification is. -/
 theorem sup_toProbe_sat {sp' : Spec F} {a : α} :
     ((sp ⊔ sp').toProbe feats).sat a ↔ (sp.toProbe feats).sat a ∨ (sp'.toProbe feats).sat a := by
   simp [or_and_right, exists_or]
@@ -358,13 +343,10 @@ abbrev relativized (f : F) : Spec F := ofGeometry f f
 
 variable {f g : F}
 
-/-- Interaction copies `f` and the features it dominates. -/
 @[simp] theorem ofGeometry_intFeatures :
     (ofGeometry f g).intFeatures feats a = feats a ∩ Finset.Ici f :=
   ofFeatures_intFeatures
 
-/-- When a goal bears every feature dominating one it bears, as in a privative geometry, it
-interacts with `[INT:f]` exactly when it bears `f`. -/
 theorem ofGeometry_toProbe_int_iff (hc : ∀ x ∈ feats a, ∀ y ≤ x, y ∈ feats a) :
     ((ofGeometry f g).toProbe feats).int a ↔ f ∈ feats a := by
   rw [ofGeometry, ofFeatures_toProbe_int]
@@ -393,14 +375,10 @@ def agree (goals : List α) : Result α (State F) :=
     (fun a st ↦ ⟨st.copied ∪ (feats a ∩ st.int.sup id), st.int⟩)
     (fun a st ↦ ⟨st.copied, dynamicUpdate feats dyn a st.int⟩) ⟨∅, sp.int⟩ goals
 
-/-- A specification halts on the first goal bearing a satisfaction feature, whatever the dynamic
-interaction. -/
 theorem agree_satisfier (goals : List α) :
     (sp.agree feats dyn goals).satisfier = (sp.toProbe feats).search goals :=
   Dynamic.agree_satisfier (q := sp.toProbe feats) fun _ ↦ rfl
 
-/-- Dynamic interaction narrows the interaction condition to the features that a dynamic feature
-of the goal dominates. -/
 theorem subset_Ici_of_mem_dynamicUpdate {a : α} {x : F} (hx : x ∈ feats a ∩ dyn)
     {int : Finset (Finset F)} {m : Finset F} (hm : m ∈ dynamicUpdate feats dyn a int) :
     m ⊆ Finset.Ici x := by
@@ -413,8 +391,6 @@ theorem subset_Ici_of_mem_dynamicUpdate {a : α} {x : F} (hx : x ∈ feats a ∩
     dynamicUpdate feats ∅ a int = int := by
   simp [dynamicUpdate]
 
-/-- Without dynamic interaction, a specification Agrees as the probe it denotes, copying the
-interaction-specified features of each interacting goal. -/
 theorem agree_empty (goals : List α) :
     sp.agree feats ∅ goals =
       let r := (sp.toProbe feats).agree (fun a c ↦ c ∪ sp.intFeatures feats a) ∅ goals
@@ -428,8 +404,6 @@ theorem agree_empty (goals : List α) :
     dsimp only [toProbe, intFeatures, satFeatures] at ih ⊢
     split_ifs <;> dsimp only <;> rw [ih]
 
-/-- A goal bearing a feature marked for dynamic interaction resets the interaction condition,
-whatever it was. -/
 theorem dynamicUpdate_eq_of_nonempty {a : α} (h : (feats a ∩ dyn).Nonempty)
     (int int' : Finset (Finset F)) :
     dynamicUpdate feats dyn a int = dynamicUpdate feats dyn a int' := by
@@ -439,8 +413,6 @@ theorem dynamicUpdate_eq_self {a : α} (h : ¬ (feats a ∩ dyn).Nonempty) (int 
     dynamicUpdate feats dyn a int = int := by
   simp [dynamicUpdate, h]
 
-/-- After a sequence of goals the interaction condition is the one the last goal bearing a dynamic
-feature sets, and the initial condition if no goal bears one. -/
 theorem foldl_dynamicUpdate (int : Finset (Finset F)) (l : List α) :
     l.foldl (fun i a ↦ dynamicUpdate feats dyn a i) int =
       ((l.filter fun a ↦ (feats a ∩ dyn).Nonempty).getLast?).elim int
@@ -511,9 +483,6 @@ private theorem mem_interacted_iff {a : α} (st : State F) (goals : List α) :
           convert ha using 3
           split_ifs <;> rfl
 
-/-- Agree with dynamic interaction flags a goal iff no goal before it satisfies the probe and it
-bears a feature of the interaction condition the goals before it leave, which
-`foldl_dynamicUpdate` reads off the last of them bearing a dynamic feature. -/
 theorem mem_agree_interacted_iff {a : α} (goals : List α) :
     a ∈ (sp.agree feats dyn goals).interacted ↔
       ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ (∀ b ∈ l₁, ¬ (sp.toProbe feats).sat b) ∧

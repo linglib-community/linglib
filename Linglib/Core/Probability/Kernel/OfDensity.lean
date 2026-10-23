@@ -58,27 +58,21 @@ instance (μ : Measure β) (f : α → β → ℝ≥0∞) (a : α) :
 instance (μ : Measure β) (f : α → β → ℝ≥0∞) : IsFiniteKernel (ofDensity μ f) :=
   ⟨⟨1, ENNReal.one_lt_top, fun a ↦ by rw [ofDensity_apply]; exact prob_le_one⟩⟩
 
-/-- At the indicator of a measurable set the row is the base measure conditioned on the set. -/
 theorem ofDensity_indicator_one_apply (μ : Measure β) (s : α → Set β) (a : α)
     (hs : MeasurableSet (s a)) : ofDensity μ (fun a ↦ (s a).indicator 1) a = μ[|s a] := by
   rw [ofDensity_apply, withDensity_indicator_one hs]
   simp only [ProbabilityTheory.cond, Measure.restrict_univ, Measure.restrict_apply_univ]
 
-/-- A row depends on its density only up to a positive finite scalar, which the normalization
-absorbs. -/
 theorem ofDensity_apply_eq_of_eq_mul (μ : Measure β) {f f' : α → β → ℝ≥0∞} {a : α} {c : ℝ≥0∞}
     (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ b, f' a b = c * f a b) :
     ofDensity μ f' a = ofDensity μ f a := by
   rw [ofDensity_apply, ofDensity_apply, show f' a = c • f a from funext h,
     withDensity_smul' c (f a) hc, cond_smul hc0 hc]
 
-/-- The kernel depends on the density only up to a positive finite scalar. -/
 theorem ofDensity_const_mul (μ : Measure β) (f : α → β → ℝ≥0∞) {c : ℝ≥0∞} (hc0 : c ≠ 0)
     (hc : c ≠ ∞) : ofDensity μ (fun a b ↦ c * f a b) = ofDensity μ f :=
   Kernel.ext fun _ ↦ ofDensity_apply_eq_of_eq_mul μ hc0 hc fun _ ↦ rfl
 
-/-- Dividing each row's density by its supremum, which puts the density in the unit interval,
-leaves the kernel unchanged. -/
 theorem ofDensity_div_iSup (μ : Measure β) (f : α → β → ℝ≥0∞) (hf : ∀ a, ⨆ b, f a b ≠ ∞) :
     ofDensity μ (fun a b ↦ f a b / ⨆ b', f a b') = ofDensity μ f := by
   ext a : 1
@@ -89,8 +83,6 @@ theorem ofDensity_div_iSup (μ : Measure β) (f : α → β → ℝ≥0∞) (hf 
   · exact ofDensity_apply_eq_of_eq_mul μ (ENNReal.inv_ne_zero.mpr (hf a))
       (ENNReal.inv_ne_top.mpr h0) fun b ↦ by rw [div_eq_mul_inv, mul_comm]
 
-/-- Every finite measure on a countable discrete space is a row of the density kernel at a base
-of positive mass everywhere, with the measure's density against the base as the density. -/
 theorem ofDensity_div [Countable β] [MeasurableSingletonClass β] (μ : Measure β)
     [IsFiniteMeasure μ] (hμ : ∀ b, μ {b} ≠ 0) (ν : α → Measure β) (a : α) :
     ofDensity μ (fun a b ↦ ν a {b} / μ {b}) a = (ν a)[|Set.univ] := by
@@ -112,8 +104,6 @@ theorem ofDensity_apply_singleton [Fintype β] [MeasurableSingletonClass β] (μ
     ofDensity μ f a {b} = f a b * μ {b} / ∑ b', f a b' * μ {b'} := by
   rw [ofDensity_apply_singleton', lintegral_fintype]
 
-/-- An atom has positive mass in a row of finite density exactly when its density and its base
-mass are positive. -/
 theorem ofDensity_apply_singleton_ne_zero_iff [Fintype β] [MeasurableSingletonClass β]
     (μ : Measure β) [IsFiniteMeasure μ] {f : α → β → ℝ≥0∞} {a : α} (hf : ∀ b, f a b ≠ ∞) (b : β) :
     ofDensity μ f a {b} ≠ 0 ↔ f a b ≠ 0 ∧ μ {b} ≠ 0 := by
@@ -121,8 +111,6 @@ theorem ofDensity_apply_singleton_ne_zero_iff [Fintype β] [MeasurableSingletonC
   exact and_iff_left (ENNReal.sum_ne_top.mpr fun b' _ ↦
     ENNReal.mul_ne_top (hf b') (measure_ne_top _ _))
 
-/-- A relabelling of the target that carries one base and density to another carries the density
-kernel along. -/
 theorem ofDensity_apply_singleton_of_equiv {α' β' : Type*} [MeasurableSpace α']
     [MeasurableSpace β'] [Countable α'] [MeasurableSingletonClass α'] [Fintype β]
     [MeasurableSingletonClass β] [Fintype β'] [MeasurableSingletonClass β'] (e : β ≃ β')
@@ -132,7 +120,6 @@ theorem ofDensity_apply_singleton_of_equiv {α' β' : Type*} [MeasurableSpace α
   rw [ofDensity_apply_singleton, ofDensity_apply_singleton, hf, hμ, ← e.sum_comp]
   simp only [hf, hμ]
 
-/-- A row whose density has positive finite mass under the base is a probability measure. -/
 theorem isProbabilityMeasure_ofDensity (μ : Measure β) (f : α → β → ℝ≥0∞) (a : α)
     (h0 : ∫⁻ b, f a b ∂μ ≠ 0) (htop : ∫⁻ b, f a b ∂μ ≠ ∞) :
     IsProbabilityMeasure (ofDensity μ f a) := by
@@ -140,9 +127,6 @@ theorem isProbabilityMeasure_ofDensity (μ : Measure β) (f : α → β → ℝ�
   refine cond_isProbabilityMeasure_of_finite ?_ ?_ <;>
     rwa [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
 
-/-- Pushing a row forward along a map through which its density factors gives the row on the
-pushed-forward base. With a projection as the map, marginalizing a row whose density ignores a
-coordinate gives the row on the marginal base. -/
 theorem ofDensity_map {γ : Type*} [MeasurableSpace γ] (μ : Measure β) {f : α → γ → ℝ≥0∞}
     {g : β → γ} {a : α} (hf : AEMeasurable (f a) (μ.map g)) (hg : AEMeasurable g μ) :
     (ofDensity μ (fun a ↦ f a ∘ g) a).map g = ofDensity (μ.map g) f a := by
@@ -150,8 +134,6 @@ theorem ofDensity_map {γ : Type*} [MeasurableSpace γ] (μ : Measure β) {f : �
     cond_map (hg.mono_ac (MeasureTheory.withDensity_absolutelyContinuous _ _)) .univ,
     Set.preimage_univ]
 
-/-- On natural-number weights and densities the mass of an atom is its weighted density over the
-total. -/
 theorem ofDensity_natCast_real_singleton [Fintype β] [MeasurableSingletonClass β]
     (w : β → ℕ) (lik : α → β → ℕ) (a : α) (x : β) :
     (ofDensity (Measure.ofWeights (w ·)) (fun a x ↦ (lik a x : ℝ≥0∞)) a).real {x}
@@ -160,8 +142,6 @@ theorem ofDensity_natCast_real_singleton [Fintype β] [MeasurableSingletonClass 
     ENNReal.toReal_sum fun _ _ ↦ ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (measure_ne_top _ _)]
   simp [ENNReal.toReal_mul]
 
-/-- Against the uniform measure a density normalizes to its share of the row sum, since the base
-cancels. -/
 theorem ofDensity_uniformOn_apply_singleton [Fintype β] [MeasurableSingletonClass β] [Nonempty β]
     (f : α → β → ℝ≥0∞) (a : α) (b : β) :
     ofDensity (uniformOn Set.univ) f a {b} = f a b / ∑ b', f a b' := by
@@ -173,7 +153,6 @@ theorem ofDensity_uniformOn_apply_singleton [Fintype β] [MeasurableSingletonCla
   simp_rw [uniformOn_univ_apply_singleton, ← Finset.sum_mul]
   exact ENNReal.mul_div_mul_right _ _ hc hc'
 
-/-- With a real-valued density the share is the real ratio of the row. -/
 theorem ofDensity_uniformOn_ofReal_apply_singleton [Fintype β] [MeasurableSingletonClass β]
     [Nonempty β] (f : α → β → ℝ) (a : α) (b : β) (hf : ∀ b', 0 ≤ f a b')
     (hpos : 0 < ∑ b', f a b') :
@@ -182,7 +161,6 @@ theorem ofDensity_uniformOn_ofReal_apply_singleton [Fintype β] [MeasurableSingl
   rw [ofDensity_uniformOn_apply_singleton, ← ENNReal.ofReal_sum_of_nonneg fun b' _ ↦ hf b',
     ← ENNReal.ofReal_div_of_pos hpos]
 
-/-- Against the counting measure the density kernel is the weight kernel. -/
 theorem ofDensity_count [Fintype β] [MeasurableSingletonClass β] (w : α → β → ℝ≥0∞) :
     ofDensity Measure.count w = ofWeights w := by
   ext a : 1
@@ -190,8 +168,6 @@ theorem ofDensity_count [Fintype β] [MeasurableSingletonClass β] (w : α → �
   rw [ofDensity_apply_singleton, ofWeights_apply_singleton]
   simp
 
-/-- Bayes' rule. With a kernel's likelihood of the observation as density against the prior, the
-row at an observation of positive marginal is the posterior. -/
 theorem ofDensity_apply_eq_posterior [Countable β] [MeasurableSingletonClass β]
     [StandardBorelSpace β] [Nonempty β] (κ : Kernel β α) [IsFiniteKernel κ] (μ : Measure β)
     [IsFiniteMeasure μ] {a : α} (ha : (κ ∘ₘ μ) {a} ≠ 0) :

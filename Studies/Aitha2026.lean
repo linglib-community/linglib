@@ -139,8 +139,6 @@ instance : Preorder ParadigmCell := Preorder.lift ParadigmCell.label
 
 instance : DecidableLE ParadigmCell := fun a b ↦ inferInstanceAs (Decidable (a.label ≤ b.label))
 
-/-- Every nonnominative cell takes the accusative's exponent, the nominative–nonnominative cut
-of the paradigm, by the Elsewhere Condition over [ACC]. -/
 theorem strongN_nonnom :
     ∀ r : Root, ∀ c : ParadigmCell, c.label.IsNonnominative →
       strongN r c.label = strongN r .acc := by
@@ -203,7 +201,6 @@ def Cell.ofDatum (ex : Datum) : Option Cell := do
   pure ⟨noun, strongRoot, number = "pl", caseOfLabel case, following, n,
     (fs.lookup "form").map (· = "long")⟩
 
-/-- Every row recording an n exponent is a cell. -/
 theorem cell_ofDatum_isSome :
     ∀ ex ∈ Examples.all, (ex.feature? "n").isSome → (Cell.ofDatum ex).isSome := by decide
 
@@ -421,9 +418,6 @@ def WordCandDat.nExponent : WordCandDat → String
   | .deleteMLengthen => "āni"
   | .deleteNLengthen => "āmi"
 
-/-- The two Word-level winners are the two forms of the generalization `weakN`, the same
-underlying *-am-ni* surfacing short before nothing and long before a word-internal light
-syllable. -/
 theorem word_level_derives_weakN :
     WordCandNom.deleteNi.nExponent = weakN (caseSuffix (.case .nom)) ∧
       WordCandDat.deleteMLengthen.nExponent = weakN (caseSuffix (.case .dat)) := by
@@ -477,16 +471,11 @@ theorem phraseQ_optimal :
 
 open OptimalityTheory.Stratal
 
-/-- *DIST-0 and ALIGN-RIGHT outrank MAX at the Word level and are outranked by it at the
-Phrase level, so consonants delete at the Word level and are kept and resyllabified at the
-Phrase level. -/
 theorem distZero_alignR_max_reranked :
     Reranked Con.distZero .max wordOrder phraseOrder ∧
       Reranked Con.alignR .max wordOrder phraseOrder := by
   decide
 
-/-- Prosodic faithfulness (IDENT-STRESS, MAX-μ) outranks segmental faithfulness (MAX,
-IDENT-LENGTH) at the Word level and is outranked by it at the Phrase level. -/
 theorem prosodic_segmental_reranked :
     Reranked Con.identStress .max wordOrder phraseOrder ∧
       Reranked Con.maxMora .identLength wordOrder phraseOrder := by

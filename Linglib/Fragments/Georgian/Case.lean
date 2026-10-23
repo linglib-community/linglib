@@ -95,15 +95,12 @@ def kaci.oldPlural : Case → Option String :=
   Case.forms (some "k'ac-n-i") (some "k'ac-n-o") (some "k'ac-t(a)") (some "k'ac-t(a)")
     (some "k'ac-t(a)") none none
 
-/-- The modern singular keeps the seven cases apart. -/
 theorem singular_kaci_injective : Function.Injective kaci.singular := by
   decide
 
-/-- The modern plural keeps the seven cases apart. -/
 theorem plural_kaci_injective : Function.Injective kaci.plural := by
   decide
 
-/-- The older plural has one form for the dative, ergative and genitive. -/
 theorem oldPlural_kaci_oblique :
     kaci.oldPlural .dat = kaci.oldPlural .erg ∧ kaci.oldPlural .erg = kaci.oldPlural .gen := by
   decide

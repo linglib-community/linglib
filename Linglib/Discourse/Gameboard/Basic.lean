@@ -210,7 +210,6 @@ theorem length_qud_downdateQud_le : (d.downdateQud R).qud.length ≤ d.qud.lengt
 theorem nonResolveCond_downdateQud : (d.downdateQud R).NonResolveCond R :=
   fun _ h ↦ ((d.mem_qud_downdateQud R).1 h).2
 
-/-- Downdate is idle exactly on gameboards satisfying `non-resolve-cond`. -/
 theorem downdateQud_eq_self_iff : d.downdateQud R = d ↔ d.NonResolveCond R := by
   cases d
   simp [downdateQud, NonResolveCond, List.filter_eq_self]
@@ -225,8 +224,6 @@ variable {W : Type*} [HasCommonGround D.Fact W]
 instance : HasCommonGround (Gameboard D) W where
   commonGround d := ⨅ p ∈ d.facts, commonGround p
 
-/-- Adding a fact to FACTS meets the common ground with the fact's, Stalnakerian assertion when
-facts are sets of worlds. -/
 theorem commonGround_addFact (p : D.Fact) :
     commonGround (d.addFact p) = commonGround p ⊓ commonGround d :=
   Finset.iInf_insert p d.facts _

@@ -94,8 +94,6 @@ variable (empty : ω) (append : ω → ω → ω)
     letI := WriterT.monad (M := Id) empty append
     (pure a : Writer ω A).log = empty := rfl
 
-/-- The value of `m >>= f` is the value of `f` at the value of `m`, so the log of `m` never
-reaches it. -/
 @[simp] theorem val_bind (m : Writer ω A) (f : A → Writer ω B) :
     letI := WriterT.monad (M := Id) empty append
     (m >>= f).val = (f m.val).val := rfl
@@ -122,8 +120,6 @@ reaches it. -/
 
 end Monad
 
-/-- The log of `m >>= f` extends the log of `m`, so composition is isotone for the prefix order
-on list logs. -/
 theorem log_prefix_bind {P : Type u} (m : Writer (List P) A) (f : A → Writer (List P) B) :
     m.log <+: (m >>= f).log :=
   ⟨(f m.val).log, rfl⟩

@@ -70,8 +70,6 @@ structure IsDomain (F : Set (Set W)) (S : Set W) (A : Set (Set W)) : Prop where
   self_mem : S ∈ A
   closed : ∀ S' ∈ F, S' ∈ BooleanSubalgebra.closure A → S' ∈ A
 
-/-- A proposition in the Boolean closure of `A` separates no two worlds that agree on every
-member of `A`. -/
 theorem mem_iff_of_mem_closure {A : Set (Set W)} {p : Set W}
     (hp : p ∈ BooleanSubalgebra.closure A) {w v : W} (h : ∀ a ∈ A, w ∈ a ↔ v ∈ a) :
     w ∈ p ↔ v ∈ p := by
@@ -82,7 +80,6 @@ theorem mem_iff_of_mem_closure {A : Set (Set W)} {p : Set W}
   · show w ∈ xᶜ ↔ v ∈ xᶜ
     simp [hx]
 
-/-- Two worlds agreeing on `A` but not on `p` witness that `p` is outside the closure. -/
 theorem notMem_closure_of_separates {A : Set (Set W)} {p : Set W} {w v : W}
     (h : ∀ a ∈ A, w ∈ a ↔ v ∈ a) (hw : w ∈ p) (hv : v ∉ p) :
     p ∉ BooleanSubalgebra.closure A :=
@@ -90,16 +87,11 @@ theorem notMem_closure_of_separates {A : Set (Set W)} {p : Set W} {w v : W}
 
 variable {F A : Set (Set W)} {S S₁ S₂ : Set W}
 
-/-- The formal alternatives are a domain for any of their members. -/
 theorem isDomain_self (hS : S ∈ F) : IsDomain F S F := ⟨subset_rfl, hS, fun _ h _ ↦ h⟩
 
-/-- The negation of a member of a domain is in the domain whenever it is a formal
-alternative. -/
 theorem IsDomain.compl_mem (hA : IsDomain F S A) (h₁ : S₁ ∈ A) (h₂ : S₁ᶜ ∈ F) : S₁ᶜ ∈ A :=
   hA.closed _ h₂ (BooleanSubalgebra.compl_mem (BooleanSubalgebra.subset_closure h₁))
 
-/-- The partner of a symmetric alternative in a domain is in the domain's Boolean closure, so
-the domain contains it too whenever it is a formal alternative. -/
 theorem IsDomain.mem_of_isSymmetric (hA : IsDomain F S A) (h : IsSymmetric S S₁ S₂)
     (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ F) : S₂ ∈ A :=
   hA.closed S₂ h₂ (h.sdiff_eq ▸ BooleanSubalgebra.sdiff_mem
@@ -234,7 +226,6 @@ theorem atomsList_ofTreeList : ∀ cs : List (Tree C V), atoms.atomsList (ofTree
 
 end
 
-/-- Replacing one child adds only that child's atomic expressions. -/
 theorem mem_atomsList_set : ∀ (cs : List (ATree C V)) (i : Fin cs.length) (ψ : ATree C V)
     {a : Tree C V}, a ∈ atoms.atomsList (cs.set i ψ) →
       a ∈ ψ.atoms ∨ a ∈ atoms.atomsList cs
@@ -249,7 +240,6 @@ theorem mem_atomsList_set : ∀ (cs : List (ATree C V)) (i : Fin cs.length) (ψ 
       · exact Or.inl h'
       · exact Or.inr (Or.inr h')
 
-/-- A child's atomic expressions are among the tree's. -/
 theorem mem_atomsList_of_getElem : ∀ (cs : List (ATree C V)) (i : Fin cs.length) {a : Tree C V},
     a ∈ (cs[i]).atoms → a ∈ atoms.atomsList cs
   | _ :: _, ⟨0, _⟩, a, h => by
@@ -281,7 +271,6 @@ derivable from it. -/
 def formalAlternatives (source : List (Tree C V)) (φ : Tree C V) : Set (Tree C V) :=
   {ψ | ∃ t, Derivable source (ATree.ofTree φ) t ∧ t.expand = ψ}
 
-/-- A substitution adds one atomic expression, from the source. -/
 theorem Subst.atoms_mem_source {source : List (Tree C V)} {φ ψ : ATree C V}
     (h : Subst source φ ψ) (hφ : ∀ a ∈ φ.atoms, a ∈ source) :
     ∀ a ∈ ψ.atoms, a ∈ source := by

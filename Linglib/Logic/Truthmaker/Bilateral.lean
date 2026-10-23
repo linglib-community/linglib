@@ -162,8 +162,6 @@ theorem Exhaustive.disj (hA : A.Exhaustive P) (hB : B.Exhaustive P) :
     (A.disj B).Exhaustive P :=
   (hA.neg.conj hB.neg).neg
 
-/-- A proposition is exclusive exactly when no possible state contains both a verifier and a
-falsifier of it. -/
 theorem exclusive_iff :
     A.Exclusive P ↔ ∀ s ∈ P, s ∈ upperClosure A.ver → s ∉ upperClosure A.fal := by
   refine ⟨fun h s hs hv hf ↦ ?_, fun h a ha b hb hab ↦ ?_⟩
@@ -173,15 +171,12 @@ theorem exclusive_iff :
   · exact h _ hab (mem_upperClosure.2 ⟨a, ha, le_sup_left⟩)
       (mem_upperClosure.2 ⟨b, hb, le_sup_right⟩)
 
-/-- An exhaustive proposition is true or false at every world, a maximal possible state. -/
 theorem Exhaustive.mem_upperClosure (h : A.Exhaustive P) {w : S} (hw : Maximal (· ∈ P) w) :
     w ∈ upperClosure A.ver ∨ w ∈ upperClosure A.fal := by
   obtain ⟨t, ht, hwt⟩ | ⟨t, ht, hwt⟩ := h hw.prop
   · exact .inl ⟨t, ht, le_sup_right.trans (hw.le_of_ge hwt le_sup_left)⟩
   · exact .inr ⟨t, ht, le_sup_right.trans (hw.le_of_ge hwt le_sup_left)⟩
 
-/-- When every possible state is part of a world, a proposition is exhaustive exactly when it is
-true or false at every world. -/
 theorem exhaustive_iff (hP : ∀ s ∈ P, ∃ w, s ≤ w ∧ Maximal (· ∈ P) w) :
     A.Exhaustive P ↔
       ∀ w, Maximal (· ∈ P) w → w ∈ upperClosure A.ver ∨ w ∈ upperClosure A.fal := by
@@ -191,7 +186,6 @@ theorem exhaustive_iff (hP : ∀ s ∈ P, ∃ w, s ≤ w ∧ Maximal (· ∈ P) 
   · exact .inl ⟨t, ht, P.lower (sup_le hsw htw) hw.prop⟩
   · exact .inr ⟨t, ht, P.lower (sup_le hsw htw) hw.prop⟩
 
-/-- The excluded middle of an exhaustive proposition is true at every world. -/
 theorem Exhaustive.mem_upperClosure_disj_neg (h : A.Exhaustive P) {w : S}
     (hw : Maximal (· ∈ P) w) : w ∈ upperClosure (A.disj (-A)).ver := by
   simpa [upperClosure_union] using h.mem_upperClosure hw
@@ -210,22 +204,16 @@ def subjectMatter (A : BilProp S) : S :=
 @[simp] theorem subjectMatter_neg (A : BilProp S) : (-A).subjectMatter = A.subjectMatter :=
   sup_comm _ _
 
-/-- The subject-matter of a conjunction of propositions with verifiers fuses their
-subject-matters. -/
 theorem subjectMatter_conj (hA : A.ver.Nonempty) (hB : B.ver.Nonempty) :
     (A.conj B).subjectMatter = A.subjectMatter ⊔ B.subjectMatter := by
   simp only [subjectMatter, ver_conj, fal_conj, Set.sSup_sups hA hB, sSup_union]
   exact sup_sup_sup_comm _ _ _ _
 
-/-- The subject-matter of a disjunction of propositions with falsifiers fuses their
-subject-matters. -/
 theorem subjectMatter_disj (hA : A.fal.Nonempty) (hB : B.fal.Nonempty) :
     (A.disj B).subjectMatter = A.subjectMatter ⊔ B.subjectMatter := by
   simp only [subjectMatter, ver_disj, fal_disj, Set.sSup_sups hA hB, sSup_union]
   exact sup_sup_sup_comm _ _ _ _
 
-/-- The excluded middle of a proposition with a verifier and a falsifier has the subject-matter of
-the proposition. -/
 theorem subjectMatter_disj_neg (hv : A.ver.Nonempty) (hf : A.fal.Nonempty) :
     (A.disj (-A)).subjectMatter = A.subjectMatter := by
   rw [subjectMatter_disj hf hv, subjectMatter_neg, sup_idem]
@@ -268,8 +256,6 @@ def possible : LowerSet (Set (α × Bool)) where
 theorem mem_possible {L : Set (α × Bool)} : L ∈ possible ↔ ∀ x ∈ L, mirror x ∉ L :=
   Iff.rfl
 
-/-- The worlds of the canonical space are the sets of literals that contain exactly one of each
-literal and its mirror image. -/
 theorem maximal_possible_iff {w : Set (α × Bool)} :
     Maximal (· ∈ possible) w ↔ ∀ x, x ∈ w ↔ mirror x ∉ w := by
   refine ⟨fun hw x ↦ ⟨hw.prop x, fun hx ↦ ?_⟩, fun h ↦ ⟨fun x hx ↦ (h x).1 hx, ?_⟩⟩
@@ -283,12 +269,10 @@ theorem maximal_possible_iff {w : Set (α × Bool)} :
     by_contra hyw
     exact hs y hy (hws (not_not.1 (mt (h y).2 hyw)))
 
-/-- A world of the canonical space contains every literal or its mirror image. -/
 theorem mem_or_mirror_mem_of_maximal {w : Set (α × Bool)} (hw : Maximal (· ∈ possible) w)
     (x : α × Bool) : x ∈ w ∨ mirror x ∈ w :=
   or_iff_not_imp_left.2 fun hx ↦ not_not.1 (mt (maximal_possible_iff.1 hw x).2 hx)
 
-/-- Every consistent set of literals is part of a world, so the canonical space is a W-space. -/
 theorem exists_le_maximal_possible {L : Set (α × Bool)} (hL : L ∈ possible) :
     ∃ w, L ≤ w ∧ Maximal (· ∈ possible) w := by
   refine ⟨{x | x ∈ L ∨ x.2 = true ∧ mirror x ∉ L}, fun x hx ↦ .inl hx,
@@ -321,7 +305,6 @@ theorem exhaustive_atom (a : α) : (atom a).Exhaustive possible :=
 theorem subjectMatter_atom (a : α) : (atom a).subjectMatter = {(a, true), (a, false)} := by
   simpa [subjectMatter, atom] using Set.pair_comm _ _
 
-/-- The excluded middle of an atom is true at every world of the canonical space. -/
 theorem mem_upperClosure_disj_neg_atom (a : α) {w : Set (α × Bool)}
     (hw : Maximal (· ∈ possible) w) : w ∈ upperClosure ((atom a).disj (-atom a)).ver :=
   (exhaustive_atom a).mem_upperClosure_disj_neg hw
@@ -330,13 +313,11 @@ theorem subjectMatter_disj_neg_atom (a : α) :
     ((atom a).disj (-atom a)).subjectMatter = {(a, true), (a, false)} := by
   rw [subjectMatter_disj_neg ⟨_, rfl⟩ ⟨_, rfl⟩, subjectMatter_atom]
 
-/-- The subject-matter of the excluded middle of an atom is an impossible state. -/
 theorem subjectMatter_disj_neg_atom_not_mem (a : α) :
     ((atom a).disj (-atom a)).subjectMatter ∉ possible := by
   rw [subjectMatter_disj_neg_atom]
   exact fun h ↦ h (a, true) (.inl rfl) (.inr rfl)
 
-/-- Excluded middles of distinct atoms have distinct subject-matters. -/
 theorem subjectMatter_disj_neg_atom_injective :
     Function.Injective fun a : α ↦ ((atom a).disj (-atom a)).subjectMatter := by
   intro a b h

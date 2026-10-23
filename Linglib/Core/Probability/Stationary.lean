@@ -44,7 +44,6 @@ variable {Ω α β : Type*} {X : ℕ → Ω → α}
 /-- `block X a n` is the block of `n` consecutive values of `X` starting at time `a`. -/
 def block (X : ℕ → Ω → α) (a n : ℕ) (ω : Ω) : Fin n → α := fun i ↦ X (i + a) ω
 
-/-- A block from time `0` grows by the next value appended at its end. -/
 theorem block_zero_succ (t : ℕ) :
     block X 0 (t + 1) = (Fin.snocEquiv fun _ ↦ α) ∘ fun ω ↦ (X t ω, block X 0 t ω) :=
   funext fun _ ↦ (Fin.snoc_init_self _).symm
@@ -58,18 +57,15 @@ theorem measurable_block (hX : ∀ t, Measurable (X t)) (a n : ℕ) : Measurable
 def IsStationary (X : ℕ → Ω → α) (μ : Measure Ω) : Prop :=
   ∀ a n, IdentDistrib (block X a n) (block X 0 n) μ μ
 
-/-- A measurable function of a stationary process is stationary. -/
 theorem IsStationary.comp (hs : IsStationary X μ) {f : α → β} (hf : Measurable f) :
     IsStationary (fun t ω ↦ f (X t ω)) μ :=
   fun a n ↦ (hs a n).comp (u := fun (v : Fin n → α) i ↦ f (v i)) (by fun_prop)
 
-/-- A measurable function has the same law after a measure-preserving map. -/
 theorem _root_.MeasureTheory.MeasurePreserving.identDistrib_comp {T : Ω → Ω}
     (hT : MeasurePreserving T μ μ) {f : Ω → β} (hf : Measurable f) : IdentDistrib (f ∘ T) f μ μ :=
   ⟨(hf.comp hT.measurable).aemeasurable, hf.aemeasurable,
     by rw [← Measure.map_map hf hT.measurable, hT.map_eq]⟩
 
-/-- A process that advances by a measure-preserving map of the sample space is stationary. -/
 theorem IsStationary.of_measurePreserving {T : Ω → Ω} (hT : MeasurePreserving T μ μ)
     (hX : ∀ t, Measurable (X t)) (h : ∀ t, X (t + 1) = X t ∘ T) : IsStationary X μ := by
   have hblock (a n : ℕ) : block X a n = block X 0 n ∘ T^[a] := by

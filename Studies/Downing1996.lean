@@ -161,7 +161,6 @@ def params : Row → List Classifier.Parameter
   | .kyaku => [.function]
   | .rin => [.shape, .boundedness]
 
-/-- *-tsu* is the one classifier whose category has no parameter. -/
 theorem params_eq_nil_iff (r : Row) : r.params = [] ↔ r = .tsu := by cases r <;> decide
 
 end Row
@@ -223,8 +222,6 @@ def cohesion (r : Row) : Cohesion :=
   | false, true => .quality
   | true, true => .mixed
 
-/-- The shape-based classifiers are quality-classifiers, the human and building classifiers
-kind-classifiers, and `tsu` is the general classifier. -/
 theorem cohesion_shape_kind :
     cohesion .hon = .quality ∧ cohesion .mai = .quality ∧ cohesion .ko = .quality ∧
       cohesion .tsubu = .quality ∧ cohesion .nin = .kind ∧ cohesion .kenBuilding = .kind ∧
@@ -236,8 +233,6 @@ def sizeSplits : List (Row × Row) :=
   (Row.core.product Row.core).filter fun (r, r') ↦
     r ≠ r' ∧ cohesion r = .mixed ∧ r.params = r'.params ∧ .size ∈ r.params
 
-/-- The animal and boat categories, inductively given, are the categories the system splits
-by the deductive parameter of size: `hiki` and `tou`, `seki` and `soo`. -/
 theorem sizeSplits_eq :
     sizeSplits = [(.hiki, .tou), (.tou, .hiki), (.seki, .soo), (.soo, .seki)] := by
   decide
@@ -273,12 +268,8 @@ def relation : Row → Option MorphemeRelation
   | .zen => some .metonymic -- 'tray', (4a)
   | _ => none
 
-/-- The seventh pattern, a morpheme naming a quality the category's members share, is absent
-from Japanese. -/
 theorem relation_ne_sharedQuality : ∀ c, relation c ≠ some .sharedQuality := by decide
 
-/-- Only the first pattern makes a classifier a clone of a noun category, and no
-quality-classifier is one: the deductive categories crosscut the noun system. -/
 theorem quality_not_clone : ∀ c, cohesion c = .quality → relation c ≠ some .identicalClass := by
   decide
 
@@ -355,12 +346,10 @@ theorem pluralMarking_inanimate (h : NPHead) (hh : h ≠ .pronoun) :
     pluralMarking .inanimate h = .impossible := by
   cases h <;> first | rfl | exact absurd rfl hh
 
-/-- Plural marking is more available the higher the referent on the animacy hierarchy. -/
 theorem pluralMarking_mono_referent (h : NPHead) : Monotone (pluralMarking · h) := by
   unfold Monotone
   decide +revert
 
-/-- Plural marking is more available the more referential the head of the noun phrase. -/
 theorem pluralMarking_mono_head (r : ReferentType) : Monotone (pluralMarking r) := by
   unfold Monotone
   decide +revert
@@ -376,8 +365,6 @@ def numberSystem : NPHead → NumberSystem
   | .commonNoun => .transnumeral
   | _ => .singularPlural
 
-/-- For human referents, a plural marker is required exactly on the inherently singular
-heads: the singular/plural subsystem within a transnumeral language. -/
 theorem required_iff_singularPlural (h : NPHead) :
     pluralMarking .human h = .required ↔ numberSystem h = .singularPlural := by
   cases h <;> decide
@@ -395,8 +382,6 @@ def reading : NPHead → PluralReading
   | .commonNoun => .classPlural
   | _ => .associative
 
-/-- The class plural arises exactly on the transnumeral heads, which context converts into
-singular expressions. -/
 theorem reading_classPlural_iff (h : NPHead) :
     reading h = .classPlural ↔ numberSystem h = .transnumeral := by
   cases h <;> decide

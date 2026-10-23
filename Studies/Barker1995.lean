@@ -55,8 +55,6 @@ possessor–possessee pairs agrees with counting possessors. -/
 
 variable {α : Type*}
 
-/-- With at most one possessee per possessor, the possessor–possessee pairs with a property
-are as many as the possessors with such a possessee. -/
 private theorem ncard_pair_eq (C A : α → Prop) (R : α → α → Prop)
     (huniq : ∀ x y y', A y → R x y → A y' → R x y' → y = y') (P : α → α → Prop) :
     {p : α × α | (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ P p.1 p.2}.ncard =
@@ -109,14 +107,10 @@ abbrev hasRing : Fin 12 → Fin 12 → Prop := fun x y ↦
 
 abbrev isIcy : Fin 12 → Prop := fun y ↦ y = 9 ∨ y = 10
 
-/-- *Most planets' rings are made of ice* is true: `Poss` narrows the domain
-to the three ringed planets, two of which have icy rings. -/
 theorem most_planets_rings_icy :
     Poss most isPlanet GQ.some hasRing isRing isIcy := by
   unfold Poss dom; decide
 
-/-- Without narrowing, the quantification is false: only two of the nine
-planets have an icy ring. -/
 theorem not_unnarrowed :
     ¬ most isPlanet
       (fun x ↦ GQ.some (fun y ↦ isRing y ∧ hasRing x y) isIcy) := by
@@ -138,7 +132,6 @@ abbrev favors : Fin 8 → Fin 8 → Prop := fun x y ↦
 
 abbrev isBlue : Fin 8 → Prop := fun y ↦ y = 7
 
-/-- *Most people's favorite color is blue*, counting people, is true, with 3 of 5. -/
 theorem favorite_color_possessor_dominant :
     Poss most isPerson GQ.some favors isColor isBlue := by
   unfold Poss dom; decide
@@ -149,13 +142,10 @@ theorem not_favorite_color_possessee_dominant :
     ¬ most (fun c ↦ isColor c ∧ ∃ p, isPerson p ∧ favors p c) isBlue := by
   decide
 
-/-- Each person favors at most one color. -/
 theorem favors_unique :
     ∀ x y y' : Fin 8, isColor y → favors x y → isColor y' → favors x y' →
       y = y' := by decide
 
-/-- The symmetric construal of the favorite-color sentence, derived from the
-possessor-dominant one through `symmetric_iff_possessor_dominant`. -/
 theorem favorite_color_symmetric :
     most (fun p : Fin 8 × Fin 8 ↦ isPerson p.1 ∧ isColor p.2 ∧ favors p.1 p.2)
       (fun p ↦ isBlue p.2) :=

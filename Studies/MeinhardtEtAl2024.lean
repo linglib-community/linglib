@@ -148,8 +148,6 @@ example : rightwardATR_osl.apply [.dom, .a, .recL] = [.recH, .a, .recL] := by
 /-- Without a dominant trigger, a string of recessive vowels passes through unchanged. -/
 example : rightwardATR_osl.apply [.recL, .recL] = [.recL, .recL] := by decide
 
-/-- **Rightward [+ATR] spreading is Left-Output-Strictly-Local**, witnessed by
-`rightwardATR_osl`. -/
 theorem rightwardATR_osl_isLeftOutputStrictlyLocal :
     IsLeftOutputStrictlyLocal 2 rightwardATR_osl.apply :=
   rightwardATR_osl.isLeftOutputStrictlyLocal_apply
@@ -176,9 +174,6 @@ private theorem rightwardATR_osl_apply_replicate (n : ℕ) :
       rw [List.replicate_succ', List.rtake_concat_succ, List.rtake_zero, List.nil_append]
       rfl
 
-/-- **Rightward [+ATR] spreading is not Input-Strictly-Local** for any window, since a
-dominant vowel followed by `k - 1` recessive ones and `k` recessive vowels end in the same
-`k - 1` input segments while a further recessive vowel raises only after the first. -/
 theorem rightwardATR_osl_not_isLeftInputStrictlyLocal (k : ℕ) :
     ¬ IsLeftInputStrictlyLocal k rightwardATR_osl.apply := fun h ↦ by
   have hw : ∀ s : Seg, (s :: List.replicate (k - 1) .recL).rtake (k - 1) =
@@ -193,8 +188,6 @@ theorem rightwardATR_osl_not_isLeftInputStrictlyLocal (k : ℕ) :
     Nat.add_sub_cancel_left] at e
   exact absurd e (by decide)
 
-/-- **Rightward [+ATR] spreading is also Left-Subsequential**, through OSL ⊆
-Left-Subsequential (`IsLeftOutputStrictlyLocal.isLeftSubsequential`). -/
 theorem rightwardATR_osl_isLeftSubsequential :
     IsLeftSubsequential rightwardATR_osl.apply :=
   rightwardATR_osl_isLeftOutputStrictlyLocal.isLeftSubsequential
@@ -227,7 +220,6 @@ side, raising a recessive if *either* side has one as a union of one-sided rules
 def maasaiBM : Bimachine Bool Bool Seg Seg :=
   .ofFlags (· == .dom) (· == .dom) fun l s r ↦ if (l || r) && s == .recL then .recH else s
 
-/-- `maasaiBM`'s cell output is a `unite` of one-sided raise-rules. -/
 theorem maasaiBM_isNonInteracting : maasaiBM.IsNonInteracting :=
   ⟨⟨fun l s ↦ if l && s == .recL then .recH else s,
     fun r s ↦ if r && s == .recL then .recH else s,
@@ -251,7 +243,6 @@ private theorem maasaiBM_cell_eq (xs : List Seg) (i : ℕ) (hi : i < xs.length) 
   rw [hasDom_split xs i hi]
   cases xs[i] <;> simp [hasDom]
 
-/-- The bimachine computes `maasai`. -/
 theorem maasaiBM_run : maasaiBM.run = maasai := by
   funext xs
   apply List.ext_getElem?
@@ -264,8 +255,6 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
     simp only [maasai, List.getElem?_map, List.getElem?_eq_none (by simpa using hi),
       Option.map_none]
 
-/-- Maasai ATR harmony is weakly deterministic in the paper's sense, the bidirectional
-dominant-recessive spread being a non-interacting bimachine. -/
 theorem maasai_isNonInteractingBimachineComputable : IsNonInteractingBimachineComputable maasai :=
   maasaiBM_run ▸ maasaiBM.isNonInteractingBimachineComputable maasaiBM_isNonInteracting
 
@@ -292,26 +281,15 @@ theorem maasai_twoSidedUnboundedDependence : TwoSidedUnboundedDependence maasai 
       hb, hp, hp']
     decide
 
-/-- **Maasai is semiambient**, the paper's positive classification, with every harmonised
-cell licensed by one side alone, the far dominant that triggers it. -/
 theorem maasai_semiambient : OneSidedChanges maasai :=
   maasai_isNonInteractingBimachineComputable.oneSidedChanges
 
-/-- Hence Maasai does **not** require both sides — it escapes the teeth, unlike Tutrugbu.
-Covariation (both languages) and interaction (Tutrugbu only) come apart. -/
 theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h ↦
   h.not_isNonInteractingBimachineComputable maasai_isNonInteractingBimachineComputable
 
-/-- Maasai ATR harmony is not Mealy-computable, since a Mealy-computable map depends boundedly
-on the right (`IsMealyComputable.boundedDependence_right`) and Maasai's bidirectional spread
-does not (`maasai_twoSidedUnboundedDependence`). -/
 theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h ↦
   maasai_twoSidedUnboundedDependence.unboundedDependence .right h.boundedDependence_right
 
-/-- **Maasai is not left-subsequential**, excluding the *block* class too, since `maasai`
-is length-preserving, so a left-subsequential computer's delay bound would cap its
-right dependence (`IsLeftSubsequential.boundedDependence_right`), but the spread's
-right dependence is unbounded. -/
 theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai :=
   maasai_twoSidedUnboundedDependence.not_isSubsequential (fun _ ↦ by simp [maasai]) .left
 
@@ -326,7 +304,6 @@ by neither side alone. -/
 theorem tutrugbu_not_semiambient : ¬ OneSidedChanges McCollumEtAl2020.tutrugbu.map :=
   McCollumEtAl2020.tutrugbu_requiresBothSides.not_oneSidedChanges
 
-/-- Tutrugbu ATR harmony is computed by no non-interacting bimachine. -/
 theorem tutrugbu_not_isNonInteractingBimachineComputable :
     ¬ IsNonInteractingBimachineComputable McCollumEtAl2020.tutrugbu.map :=
   McCollumEtAl2020.tutrugbu_requiresBothSides.not_isNonInteractingBimachineComputable
@@ -339,13 +316,10 @@ by the phonotactic code of Lamont, O'Hara and Smith that §5.2 and Fig. 12 take 
 pass is length- and alphabet-preserving and still tells the second pass what lies beyond its
 reach. -/
 
-/-- Unbounded tonal plateauing is not computed by any non-interacting bimachine. -/
 theorem utp_not_isNonInteractingBimachineComputable :
     ¬ IsNonInteractingBimachineComputable Tone.utp.map :=
   Tone.utp.requiresBothSides.not_isNonInteractingBimachineComputable
 
-/-- Heinz and Lai's weakly deterministic functions are not all computed by non-interacting
-bimachines. -/
 theorem exists_isWeaklyDeterministic_not_isNonInteractingBimachineComputable :
     ∃ f : List Tone.TBU → List Tone.TBU,
       IsWeaklyDeterministic f ∧ ¬ IsNonInteractingBimachineComputable f :=

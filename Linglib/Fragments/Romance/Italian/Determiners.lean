@@ -108,7 +108,6 @@ def toQuantifier (w : QuantityWord) : Quantifier :=
 def toList : List QuantityWord :=
   [.ogni, .qualche, .nessuno, .tutti, .alcuni, .molti, .pochi]
 
-/-- Every word distinguishes its two forms or has one for both genders. -/
 theorem feminine_eq_form_iff (w : QuantityWord) :
     w.feminine = w.form ↔ w = .ogni ∨ w = .qualche := by
   cases w <;> decide
@@ -134,7 +133,6 @@ end QuantityWord
 def inventory : Determiner.Inventory :=
   allArticles.map .article ++ QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-/-- A single article marks both strengths. -/
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Italian.Determiners

@@ -91,9 +91,6 @@ theorem Relation.isLeast_join (R S : Relation) :
 
 /-! ### Why seven relations -/
 
-/-- Completeness half of the classification: a conjunction of atomic
-constraints satisfied by a nondegenerate pair, in any bounded lattice,
-is the constraint set of one of the seven relations. -/
 theorem Relation.mem_range_constraints_of_holds {α : Type*} [Lattice α]
     [BoundedOrder α] {s : Finset Relation.Atom} {x y : α}
     (h : ∀ a ∈ s, a.Holds x y) (hx : x ≠ ⊥) (hx' : x ≠ ⊤)
@@ -192,9 +189,6 @@ theorem Signature.le_iff_holdsFor {σ τ : Signature} :
 /-! ### Tightness of signature composition -/
 
 set_option synthInstance.maxSize 400 in
-/-- Function classes compose along `Signature.compose`: a ψ-function
-after a φ-function is a `ψ * φ`-function, on the two-element Boolean
-algebra. -/
 theorem Signature.holdsFor_comp :
     ∀ (ψ φ : Signature) (f g : Finset (Fin 1) → Finset (Fin 1)),
       ψ.HoldsFor f → φ.HoldsFor g → (ψ * φ).HoldsFor (f ∘ g) := by decide

@@ -138,18 +138,13 @@ instance : DecidablePred iPast₂ := fun _ ↦ inferInstanceAs (Decidable (_ ∨
 example : IsUpwardGoalIn twoOps was opPast₂ iPast₂ ∧ ¬ IsUpwardGoalIn twoOps was opPast iPast₂ := by
   decide
 
-/-- Both past morphemes Agree upward with the single past operator. -/
 theorem sot_multipleAgree : MultipleAgree sot opPast [said, was] iPast := by decide
 
-/-- Neither verb c-commands the operator, so no downward-probing Agree relates them. -/
 theorem sot_not_downward :
     ¬ CCommands sot said (opPast : SyntacticObject) ∧
       ¬ CCommands sot was (opPast : SyntacticObject) := by
   decide
 
-/-- Sequence of Tense crosses the clause boundary: the subordinate verb sits in the interior of
-the phase headed by the complementizer, which itself carries an uninterpretable tense feature
-and so lies in the participating edge. -/
 theorem sot_licit :
     (sot : SyntacticObject).WithinComplement ⟨.of .C [.V] "that", 4⟩ was ∧
       ¬ (sot : SyntacticObject).WithinProjection ⟨.of .C [.V] "that", 4⟩ opPast ∧
@@ -190,16 +185,12 @@ def uNeg (s : SyntacticObject) : Prop := s = niente ∨ s = nessuno
 
 instance : DecidablePred uNeg := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Both n-words Agree upward with the negative marker. -/
 theorem nc_clausemate_multipleAgree : MultipleAgree ncClausemate non [niente, nessuno] iNeg := by
   decide
 
-/-- Within the clause no complementizer heads a phase, so no phase edge intervenes. -/
 theorem nc_clausemate_licit :
     ∀ x ∈ (ncClausemate : SyntacticObject).terms, x.cat? ≠ some .C := by decide
 
-/-- Across the embedded clause the complementizer carries no negative feature, so the phase
-edge does not participate and the concord relation is blocked. -/
 theorem nc_across_cp_illicit :
     ¬ EdgeParticipates ncAcrossCP nessuno non uNeg ⟨.of .C [.T] "che", 19⟩ := by decide
 

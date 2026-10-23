@@ -123,8 +123,6 @@ instance (p q : TreePath) : Decidable (MustCorefer t p q) := inferInstanceAs (De
 
 /-! ### Principle A without exemption -/
 
-/-- An anaphor that nothing in its clause c-commands violates Principle A under every indexing,
-so the tree is out. -/
 theorem not_grammatical_of_not_locallyCommanded {b : Nominal t} {c : BindingClass}
     (hb : classOf b = some c) (hc : c.IsAnaphor)
     (hl : ¬ (configuration t).LocallyCommanded b) : ¬ Grammatical t :=

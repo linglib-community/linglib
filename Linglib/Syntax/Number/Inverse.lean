@@ -74,7 +74,6 @@ def category (v : Valuation) : Option Category :=
   else if v = ofNumber .plural then some .plural
   else none
 
-/-- A natural number alone shows itself. -/
 theorem category_ofNumber_singular : (ofNumber .singular).category = some .singular := by decide
 
 theorem category_ofNumber_dual : (ofNumber .dual).category = some .dual := by decide

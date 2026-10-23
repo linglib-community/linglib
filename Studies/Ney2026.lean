@@ -189,7 +189,6 @@ theorem not_commonKnowledge_mem_intends
 
 end Model
 
-/-- When hearers are the sets of referents they would recognise, every conception is closed. -/
 theorem isIntent_mem {E : Type*} (C : Set E) : IsIntent (fun (h : Set E) e ↦ e ∈ h) C :=
   isIntent_iff.2 <| ext fun _ ↦ ⟨fun h ↦ h fun _ hb ↦ hb, fun he _ hC ↦ hC he⟩
 
@@ -237,7 +236,6 @@ namespace insinuation
 theorem mem_conception (a : Role) : hispanicImmigrants ∈ insinuation.conception a .univ := by
   simp [insinuation]
 
-/-- Claim (i): the unavowed referent is a semantic value. -/
 theorem mem_semanticValues : hispanicImmigrants ∈ insinuation.semanticValues .univ := by
   simp [insinuation]
 
@@ -277,22 +275,18 @@ theorem commonKnowledge_two :
   fun _ _ ↦ mem_iUnion.2 ⟨.addressee, fun _ he ↦ by
     rcases he with he | he <;> simp [insinuation, he]⟩
 
-/-- (iia): it is not common ground that the unavowed referent is a semantic value. -/
 theorem not_commonKnowledge_mem_semanticValues :
     ¬ CommonKnowledge insinuation.belief univ (hispanicImmigrants ∈ insinuation.semanticValues ·)
       .univ :=
   Model.not_commonKnowledge_mem_semanticValues _ .addressee <|
     mt (box_of_commonKnowledge (mem_univ .speaker)) not_knows_speaker
 
-/-- (iib): it is not common ground that the speaker intended it. -/
 theorem not_commonKnowledge_mem_intends :
     ¬ CommonKnowledge insinuation.belief univ (hispanicImmigrants ∈ insinuation.intends ·)
       .univ :=
   Model.not_commonKnowledge_mem_intends _ <|
     mt (box_of_commonKnowledge (mem_univ .addressee)) not_knows_addressee
 
-/-- (iib) for any `Filter` common ground grounded in the interlocutors' common knowledge whose
-context set contains the actual world. -/
 theorem not_mem_of_groundedIn {cg : Filter World} (h : cg.GroundedIn insinuation.belief univ)
     (hw : Finset.univ ∈ cg.ker) : {v | hispanicImmigrants ∈ insinuation.intends v} ∉ cg :=
   fun hp ↦ not_commonKnowledge_mem_intends (h.commonKnowledge hw hp)

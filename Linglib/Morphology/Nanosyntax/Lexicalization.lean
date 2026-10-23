@@ -103,7 +103,6 @@ theorem root_concat {d : Derivation F} (hd : d ≠ []) (t : RoseTree (Option F))
   obtain ⟨s, ts, rfl⟩ := List.exists_cons_of_ne_nil hd
   simp [root]
 
-/-- The root of a row of two or more constituents is unlabelled. -/
 theorem value_eq_none_of_root {d : Derivation F} {t : RoseTree (Option F)} (h : root d = some t)
     (hd : 2 ≤ d.length) : t.value = none := by
   induction d using List.reverseRecOn with
@@ -136,14 +135,11 @@ theorem mem_mergeOptions {d d' : Derivation F} :
   exact ⟨fun ⟨j, hj, x, hx, h⟩ ↦ ⟨j, hj, ⟨x, hx⟩, h.symm⟩,
     fun ⟨j, hj, ⟨x, hx⟩, h⟩ ↦ ⟨j, hj, x, hx, h.symm⟩⟩
 
-/-- The first feature is lexicalized as a phrase of its own. -/
 theorem mergeOptions_nil (L : RuleSet (LexicalEntry (Option F) α)) (f : F) :
     mergeOptions L [] f =
       ((treeSpellout L (leaf (some f))).map fun _ ↦ [leaf (some f)]).toList := by
   cases h : treeSpellout L (leaf (some f)) <;> simp [mergeOptions, h]
 
-/-- A feature merged with a single constituent is lexicalized together with it, or else the
-constituent evacuates and the feature is lexicalized alone, as a suffix. -/
 theorem mergeOptions_singleton (L : RuleSet (LexicalEntry (Option F) α))
     (t : RoseTree (Option F)) (f : F) :
     mergeOptions L [t] f =
@@ -152,9 +148,6 @@ theorem mergeOptions_singleton (L : RuleSet (LexicalEntry (Option F) α))
   cases h : treeSpellout L (merge f t) <;> cases h' : treeSpellout L (leaf (some f)) <;>
     simp [mergeOptions, List.range_succ, h, h']
 
-/-- On a lexicon whose stored trees have no unlabelled node a merger never fuses constituents.
-It grows the last one, everything before it evacuating, or adds one, everything evacuating,
-which are the specifier-to-specifier and complement movements of Starke's original steps. -/
 theorem length_le_of_mem_mergeOptions
     (hL : ∀ e ∈ L, ∀ t, IsSubtree t e.tree → t.value ≠ none) {d d' : Derivation F}
     (h : d' ∈ mergeOptions L d f) : d.length ≤ d'.length := by
@@ -191,8 +184,6 @@ def derivations (L : RuleSet (LexicalEntry (Option F) α)) :
 theorem derivations_singleton (d : Derivation F) (f : F) :
     derivations L d [f] = mergeOptions L d f := by simp
 
-/-- Deriving a sequence is deriving its first part and then the rest from each result in turn,
-so a failure in the rest returns to the latest merger of the first part with an option left. -/
 theorem derivations_append (d : Derivation F) (fs gs : List F) :
     derivations L d (fs ++ gs) = (derivations L d fs).flatMap (derivations L · gs) := by
   induction fs generalizing d with
@@ -234,7 +225,6 @@ theorem spell_concat (d : Derivation F) (t : RoseTree (Option F)) :
     spell L [t] = (treeSpellout L t).map fun x ↦ [x] := by
   cases h : treeSpellout L t <;> simp [spell, spellAux, h]
 
-/-- A row is pronounced as soon as each of its constituents is lexicalized. -/
 theorem spell_isSome {d : Derivation F} (h : ∀ t ∈ d, (treeSpellout L t).isSome) :
     (spell L d).isSome := by
   induction d using List.reverseRecOn with
@@ -264,7 +254,6 @@ private theorem isSome_of_mem_derivations {d d' : Derivation F} {fs : List F}
     · exact hd t (List.mem_of_mem_take ht)
     · exact List.mem_singleton.1 ht ▸ hx
 
-/-- Every constituent of the derivation the algorithm returns is matched by an entry. -/
 theorem exists_matches_of_mem_lexicalize {d : Derivation F} {fs : List F}
     (h : lexicalize L fs = some d) {t : RoseTree (Option F)} (ht : t ∈ d) :
     ∃ e ∈ L, e.Matches t := by
@@ -274,7 +263,6 @@ theorem exists_matches_of_mem_lexicalize {d : Derivation F} {fs : List F}
   exact absurd (treeSpellout_eq_none_iff.2 fun e he hm ↦ hne ⟨e, he, hm⟩) (by
     rw [← Option.not_isSome_iff_eq_none]; exact not_not.2 this)
 
-/-- A sequence the algorithm derives is pronounced. -/
 theorem exponents_eq_none_iff {fs : List F} : exponents L fs = none ↔ lexicalize L fs = none := by
   rcases h : lexicalize L fs with - | d
   · simp [exponents, h]
@@ -290,9 +278,6 @@ theorem exponents_singleton (L : RuleSet (LexicalEntry (Option F) α)) (f : F) :
   simp only [exponents, lexicalize, derivations_singleton, mergeOptions_nil]
   cases h : treeSpellout L (leaf (some f)) <;> simp [h]
 
-/-- A sequence of two features gets one exponent for its whole phrase, or else the exponent
-of its first feature followed by a suffix for the second, unless an entry matches the two
-phrases together. -/
 theorem exponents_pair (L : RuleSet (LexicalEntry (Option F) α)) (f₁ f₂ : F) :
     exponents L [f₁, f₂] = (treeSpellout L (leaf (some f₁))).bind fun x ↦
       ((treeSpellout L (merge f₂ (leaf (some f₁)))).map fun y ↦ [y]) <|>
@@ -314,15 +299,11 @@ theorem exponents_pair (L : RuleSet (LexicalEntry (Option F) α)) (f₁ f₂ : F
 
 /-! ### Lexicons without suffixes -/
 
-/-- Where no entry lexicalizes a feature alone, merging it with a single constituent can only
-grow the constituent. -/
 theorem mergeOptions_singleton_of_leaf (h : treeSpellout L (leaf (some f)) = none)
     (t : RoseTree (Option F)) :
     mergeOptions L [t] f = ((treeSpellout L (merge f t)).map fun _ ↦ [merge f t]).toList := by
   simp [mergeOptions_singleton, h]
 
-/-- Where no entry lexicalizes a feature above the bottom alone, the algorithm never evacuates,
-and the sequence has at most one derivation, its one phrase lexicalized whole. -/
 theorem derivations_cons_of_forall_leaf (f₀ : F) {fs : List F}
     (h : ∀ f ∈ fs, treeSpellout L (leaf (some f)) = none) :
     derivations L [] (f₀ :: fs) =
@@ -337,8 +318,6 @@ theorem derivations_cons_of_forall_leaf (f₀ : F) {fs : List F}
         (.of_mem_children (t := merge f (spine f₀ fs)) (List.mem_singleton_self _)) hx]
     · simp [mergeOptions_singleton_of_leaf (h f (by simp))]
 
-/-- Where no entry lexicalizes a feature above the bottom alone, the sequence gets a single
-exponent, that of its one phrase, or none. -/
 theorem exponents_cons_of_forall_leaf (f₀ : F) {fs : List F}
     (h : ∀ f ∈ fs, treeSpellout L (leaf (some f)) = none) :
     exponents L (f₀ :: fs) = (treeSpellout L (spine f₀ fs)).map fun x ↦ [x] := by
@@ -349,8 +328,6 @@ section Containment
 
 variable {n : ℕ} {feat : ℕ → F}
 
-/-- On a lexicon of containment entries the algorithm never evacuates, and it gives each grade
-the single exponent the containment engine spells out there. -/
 theorem exponents_ofSupersetRule (hf : feat.Injective)
     (v : RuleSet (Containment.SupersetRule n α)) (g : Fin n) :
     exponents (v.map (LexicalEntry.ofSupersetRule (some ∘ feat)))

@@ -50,7 +50,6 @@ variable {E : Type*}
 
 /-! ### Individuals -/
 
-/-- The sets of a principal ultrafilter intersect to the singleton of its generator. -/
 theorem sInter_individual (a : E) : ⋂₀ (individual a : Set (Set E)) = {a} :=
   Set.ext fun _ ↦ ⟨fun h ↦ h {a} rfl, fun h _ hs ↦ h ▸ hs⟩
 
@@ -77,18 +76,14 @@ theorem no_eq_iInf_compl_individual (R : E → Prop) :
     no R = ⨅ (x) (_ : R x), (individual x)ᶜ :=
   funext fun _ ↦ by simp [no, individual]
 
-/-- *Every `R` and no non-`R`* is the quantifier true of `R` alone. -/
 theorem every_inf_no_compl_apply {R S : E → Prop} : (every R ⊓ no Rᶜ) S ↔ S = R :=
   ⟨fun ⟨h₁, h₂⟩ ↦ funext fun x ↦ propext ⟨fun hS ↦ by_contra (h₂ x · hS), h₁ x⟩,
     fun h ↦ h ▸ ⟨fun _ ↦ id, fun _ h h' ↦ h h'⟩⟩
 
-/-- Every quantifier is the join of the quantifiers true of one of its properties alone. -/
 theorem eq_iSup_every_inf_no (Q : NP E) : Q = ⨆ (R) (_ : Q R), every R ⊓ no Rᶜ :=
   funext fun _ ↦ by
     simp only [iSup_apply, iSup_Prop_eq, every_inf_no_compl_apply, exists_prop, exists_eq_right']
 
-/-- Complete homomorphisms out of `NP E` that agree on the individuals are equal, the
-individuals being complete generators. -/
 theorem completeLatticeHom_ext {β : Type*} [CompleteBooleanAlgebra β]
     {f g : CompleteLatticeHom (NP E) β} (h : ∀ x, f (individual x) = g (individual x)) :
     f = g := by
@@ -108,33 +103,27 @@ def BE : CompleteLatticeHom (NP E) (E → Prop) where
 
 @[simp] theorem BE_apply (Q : NP E) (x : E) : BE Q x = Q (ident x) := rfl
 
-/-- `BE ∘ individual = ident`. -/
 @[simp] theorem BE_individual (j : E) : BE (individual j) = ident j :=
   funext fun _ ↦ propext eq_comm
 
-/-- `A ∘ ident = individual`. -/
 @[simp] theorem some_ident (j : E) : GQ.some (ident j) = individual j :=
   funext fun _ ↦ propext ⟨fun ⟨_, h, hP⟩ ↦ h ▸ hP, fun hP ↦ ⟨j, rfl, hP⟩⟩
 
-/-- `BE ∘ A` is the identity: *be a man* is *man*. -/
 @[simp] theorem BE_some (P : E → Prop) : BE (GQ.some P) = P :=
   funext fun _ ↦ propext ⟨fun ⟨_, hP, h⟩ ↦ h ▸ hP, fun hP ↦ ⟨_, hP, rfl⟩⟩
 
 theorem some_injective : Function.Injective (GQ.some : GQ E) :=
   Function.LeftInverse.injective BE_some
 
-/-- An existential is a Montagovian individual exactly when its restrictor is a singleton. -/
 theorem some_eq_individual_iff {N : E → Prop} {a : E} :
     GQ.some N = individual a ↔ N = ident a := by
   rw [← some_ident, some_injective.eq_iff]
 
-/-- A quantifier survives the round trip through `BE` and `A` exactly when it is existential. -/
 theorem some_BE_eq_self_iff {Q : NP E} : GQ.some (BE Q) = Q ↔ ∃ P, GQ.some P = Q :=
   ⟨fun h ↦ ⟨_, h⟩, fun ⟨P, h⟩ ↦ h ▸ congrArg GQ.some (BE_some P)⟩
 
 /-! ### The Galois coinsertion on monotone quantifiers -/
 
-/-- A monotone quantifier lies above the lift of `x` exactly when it holds of `x`'s singleton. -/
 theorem individual_le_iff {Q : NP E} (hQ : Monotone Q) {x : E} : individual x ≤ Q ↔ BE Q x :=
   ⟨fun h ↦ h _ rfl, fun h _ hR ↦ hQ (fun y (hy : y = x) ↦ hy ▸ hR) h⟩
 

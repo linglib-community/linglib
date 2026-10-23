@@ -137,7 +137,6 @@ def snoresGluing : Theory snoresCtx :=
 theorem isGluing_snores : snoresCover.IsGluing (presheaf lang Var) snoresSections snoresGluing := by
   decide +kernel
 
-/-- Every literal over `{z}` renames a literal of a part, so the gluing is unique. -/
 theorem snores_unique {s : Theory snoresCtx}
     (hs : snoresCover.IsGluing (presheaf lang Var) snoresSections s) : s = snoresGluing :=
   hs.unique (by decide +kernel) isGluing_snores
@@ -213,7 +212,6 @@ def mergedCover : Cover greyCtx (Fin 3) where
   exists_map_eq := by decide +kernel
   exists_mem_vocab := by decide +kernel
 
-/-- Merging `x` and `y` makes the candidate hold `Man` and `¬Man` of one referent. -/
 theorem not_exists_isGluing_merged :
     ¬ ∃ s, mergedCover.IsGluing (presheaf lang Var) greySections s :=
   fun h => absurd (Cover.exists_isGluing_iff.1 h).1 (by decide +kernel)
@@ -289,7 +287,6 @@ def brokeGluing (b : Broken) : Theory brokeCtx :=
     lit .broke ![.x, b.var] (h := Fin.forall_fin_two.2 ⟨by cases b <;> decide +kernel, b.var_mem⟩)},
     by cases b <;> decide +kernel⟩
 
-/-- Either choice of antecedent yields a gluing. -/
 theorem isGluing_broke :
     ∀ b, (brokeCover b).IsGluing (presheaf lang Var) brokeSections (brokeGluing b) := by
   decide +kernel
@@ -321,8 +318,6 @@ def overlapSections : ∀ i, Theory (overlapCover.part i)
   | 0 => ⟨{lit .R (fun _ => .x), lit .S (fun _ => .u)}, by decide +kernel⟩
   | 1 => ⟨{lit .S (fun _ => .y), lit .R (fun _ => .v)}, by decide +kernel⟩
 
-/-- The sections do not glue, since the candidate `{R(z), S(w), S(z), R(w)}` restricts along the
-first map to `{R(x), S(x), R(u), S(u)} ≠ s₁`. -/
 theorem not_exists_isGluing_overlap :
     ¬ ∃ s, overlapCover.IsGluing (presheaf lang Var) overlapSections s := by
   rw [Cover.exists_isGluing_iff]
@@ -361,8 +356,6 @@ instance {L : Language} {V : Type*} (c : Context L V) : DiscreteMeasurableSpace 
 variable {L : Language} {V : Type*} [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
   {c : Context L V} {ι : Type*} {C : Cover c ι} {x : ∀ i, Theory (C.part i)}
 
-/-- A probability measure on global theories glues the point masses `δ_{sᵢ}` in `D ∘ F` iff it
-is carried by the gluings of the `sᵢ`. -/
 theorem map_restrict_eq_dirac_iff [Countable ι] (d : Measure (Theory c))
     [IsProbabilityMeasure d] :
     (∀ i, d.map (Theory.restrict (C.map i)) = Measure.dirac (x i)) ↔
@@ -455,7 +448,6 @@ theorem gluingMeasure_apply (c : Noun × Noun) :
     Measure.smul_apply, smul_eq_mul, Measure.ofWeights_apply_singleton, ← Nat.cast_sum,
     show ∑ c : Noun × Noun, score c = 48 from rfl, Nat.cast_ofNat, ENNReal.div_eq_inv_mul]
 
-/-- *Ripe bananas, cheeky monkeys* (`t₂`) is the most likely resolution, with probability `1/2`. -/
 theorem gluingMeasure_le :
     gluingMeasure {ripeGluing (.banana, .monkey)} = 1 / 2 ∧
       ∀ t, gluingMeasure {t} ≤ gluingMeasure {ripeGluing (.banana, .monkey)} := by
@@ -470,7 +462,6 @@ theorem gluingMeasure_le :
       Set.preimage_singleton_eq_empty.2 ht, measure_empty]
     exact zero_le
 
-/-- The printed `d(t_c)` is `score c / 48` rounded, except `d(t₄) = 0.205` for `10/48`. -/
 theorem gluingProbability_rounds_iff (c : Noun × Noun) :
     (gluingProbability c.1 c.2).probability.Rounds (score c) 48 ↔ c ≠ (.monkey, .monkey) := by
   obtain ⟨a, b⟩ := c

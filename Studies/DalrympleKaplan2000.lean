@@ -277,8 +277,6 @@ def markers (p : Person) : PersonSet := p.participantSets.sup id
 @[simp] theorem markers_sup (p q : Person) : markers (p ⊔ q) = markers p ∪ markers q := by
   revert p q; decide
 
-/-- The marker set of a coordination, the union of its conjuncts', is the marker set of the join
-of their persons. -/
 theorem markers_finset_sup (s : Finset Person) : markers (s.sup id) = s.sup markers :=
   Finset.apply_sup_eq_sup_comp markers markers_sup markers_bot
 
@@ -352,9 +350,6 @@ section Union
 
 variable {G : Type*} [DecidableEq G] {rs : List (Agreement.ResolutionRule G G)}
 
-/-- A claim reading only a coordination's resolved gender and which genders occur in it holds
-of every coordination of a language's genders once it holds of the sublists of an
-enumeration of them. -/
 private theorem of_sublists {univ : List G} {P : Option G → Finset G → Prop}
     (h : ∀ l ∈ univ.sublists, l ≠ [] → P (resolve rs l) l.toFinset) {cs : List G}
     (hcs : cs ≠ []) (hu : ∀ c ∈ cs, c ∈ univ) : P (resolve rs cs) cs.toFinset := by

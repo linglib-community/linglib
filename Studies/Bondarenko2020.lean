@@ -78,16 +78,13 @@ section ExistsStrong
 
 variable {ι : Sort*} {f : ι → SignType}
 
-/-- A strong Kleene existential over defined instances is defined. -/
 private theorem existsStrong_ne_zero_of_forall (h : ∀ i, f i ≠ 0) :
     Trivalent.existsStrong f ≠ 0 := by
   simp_all
 
-/-- A strong Kleene existential over an empty domain is defined. -/
 private theorem existsStrong_ne_zero_of_isEmpty [IsEmpty ι] : Trivalent.existsStrong f ≠ 0 := by
   simp
 
-/-- A defined strong Kleene existential over a nonempty domain has a defined instance. -/
 private theorem exists_ne_zero_of_existsStrong_ne_zero [Nonempty ι]
     (h : Trivalent.existsStrong f ≠ 0) : ∃ i, f i ≠ 0 := by
   by_contra! h'

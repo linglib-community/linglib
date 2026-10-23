@@ -61,7 +61,6 @@ entailment, so the relation is not transitive in general. -/
 def IsSubquestionOf (C : Set W) (P Q : Question W) : Prop :=
   ∀ a ∈ alt P, PartiallyAnsweredBy Q (C ∩ a)
 
-/-- A question whose alternatives are among another's is its subquestion in every context. -/
 theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (h : alt P ⊆ alt Q) :
     IsSubquestionOf C P Q :=
   fun a ha ↦ ⟨a, h ha, Or.inl Set.inter_subset_right⟩
@@ -69,19 +68,16 @@ theorem isSubquestionOf_of_alt_subset (C : Set W) {P Q : Question W} (h : alt P 
 theorem IsSubquestionOf.refl (C : Set W) (P : Question W) : IsSubquestionOf C P P :=
   isSubquestionOf_of_alt_subset C subset_rfl
 
-/-- Entailment of a normal question gives subquestionhood in every context. -/
 theorem isSubquestionOf_of_le (C : Set W) {P Q : Question W} (hQ : Q.IsNormal)
     (h : P ≤ Q) : IsSubquestionOf C P Q := fun _ ha ↦
   let ⟨q, hq, haq⟩ := hQ _ (le_def.mp h (alt_subset_props P ha))
   ⟨q, hq, Or.inl (Set.inter_subset_right.trans haq)⟩
 
-/-- Contextual partial answerhood is partial answerhood of the relativized alternatives. -/
 theorem partiallyAnsweredBy_inter_iff {Q : Question W} {C σ : Set W} :
     PartiallyAnsweredBy Q (C ∩ σ) ↔
       ∃ p ∈ alt Q, σ ∈ (ofSet p).relativeTo C ∨ σ ∈ (ofSet pᶜ).relativeTo C := by
   simp only [PartiallyAnsweredBy, mem_relativeTo, mem_ofSet]
 
-/-- Subquestionhood in `C` is partial answerhood of the relativized alternatives. -/
 theorem isSubquestionOf_iff {C : Set W} {P Q : Question W} :
     IsSubquestionOf C P Q ↔
       ∀ a ∈ alt P, ∃ p ∈ alt Q, a ∈ (ofSet p).relativeTo C ∨ a ∈ (ofSet pᶜ).relativeTo C := by
@@ -91,35 +87,28 @@ variable {σ : Set W} {Q : Question W}
 
 /-! ### Basic relationships -/
 
-/-- A state under an alternative resolves the question, by downward closure. -/
 theorem mem_of_exists_alt_subset (h : ∃ p ∈ alt Q, σ ⊆ p) : σ ∈ Q :=
   let ⟨p, hp, hsub⟩ := h
   Q.downward_closed p (alt_subset_props _ hp) σ hsub
 
-/-- Resolving a normal question is settling one of its alternatives. -/
 theorem mem_iff_exists_alt_subset (hQ : Q.IsNormal) : σ ∈ Q ↔ ∃ p ∈ alt Q, σ ⊆ p :=
   ⟨hQ σ, mem_of_exists_alt_subset⟩
 
-/-- Resolving a normal question partially answers it: the positive disjunct fires. -/
 theorem partiallyAnsweredBy_of_mem (hQ : Q.IsNormal) (h : σ ∈ Q) :
     PartiallyAnsweredBy Q σ :=
   let ⟨p, hp, hsub⟩ := hQ σ h
   ⟨p, hp, Or.inl hsub⟩
 
-/-- Every alternative partially answers its own question. -/
 theorem partiallyAnsweredBy_of_mem_alt {p : Set W} (h : p ∈ alt Q) :
     PartiallyAnsweredBy Q p :=
   ⟨p, h, Or.inl subset_rfl⟩
 
-/-- The complement of an alternative partially answers the question by
-ruling that alternative out. -/
 theorem partiallyAnsweredBy_compl_of_mem_alt {p : Set W} (h : p ∈ alt Q) :
     PartiallyAnsweredBy Q pᶜ :=
   ⟨p, h, Or.inr subset_rfl⟩
 
 /-! ### Answerhood transmission -/
 
-/-- `CompletelyAnsweredBy` is antitone in the alternative set. -/
 theorem CompletelyAnsweredBy.mono {P : Question W} (h : CompletelyAnsweredBy Q σ)
     (hsub : alt P ⊆ alt Q) : CompletelyAnsweredBy P σ :=
   fun p hp => h p (hsub hp)
@@ -134,13 +123,10 @@ def completeAnswers (Q : Question W) : Set (Set W) := {σ | CompletelyAnsweredBy
 @[simp] theorem mem_completeAnswers {Q : Question W} :
     σ ∈ completeAnswers Q ↔ CompletelyAnsweredBy Q σ := Iff.rfl
 
-/-- `completeAnswers` is antitone in the alternative set. -/
 theorem completeAnswers_anti {P Q : Question W} (h : alt Q ⊆ alt P) :
     completeAnswers P ⊆ completeAnswers Q :=
   fun _ hσ => CompletelyAnsweredBy.mono hσ h
 
-/-- With the alternatives enumerated as a range, `CompletelyAnsweredBy`
-quantifies over the index. -/
 theorem completelyAnsweredBy_iff_of_alt_eq_range {ι : Type*} {P : ι → Set W}
     (h : alt Q = Set.range P) :
     CompletelyAnsweredBy Q σ ↔ ∀ i, σ ⊆ P i ∨ σ ⊆ (P i)ᶜ := by
@@ -160,7 +146,6 @@ theorem completelyAnsweredBy_iff_of_alt_eq_range {ι : Type*} {P : ι → Set W}
   rintro p rfl
   exact Or.inr (by simp)
 
-/-- A state settles a single-alternative content iff it decides it. -/
 theorem completelyAnsweredBy_ofSet_iff {p : Set W} :
     CompletelyAnsweredBy (ofSet p) σ ↔ σ ⊆ p ∨ σ ⊆ pᶜ := by
   unfold CompletelyAnsweredBy
@@ -231,8 +216,6 @@ for the fidelity discussion). -/
 def IsRelevantTo (den : Question W) (qs : Set (Question W)) : Prop :=
   ∃ a ∈ alt den, ∃ q ∈ qs, PartiallyAnsweredBy q a
 
-/-- Polar reduction of `IsRelevantTo` to partial answerhood of `p` and
-`pᶜ`. -/
 theorem isRelevantTo_polar_iff {p : Set W} {qs : Set (Question W)}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     (polar p).IsRelevantTo qs ↔

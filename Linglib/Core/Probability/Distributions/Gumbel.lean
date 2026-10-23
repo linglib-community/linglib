@@ -66,7 +66,6 @@ lemma continuous_gumbelPDFReal (μ : ℝ) (β : ℝ≥0) : Continuous (gumbelPDF
 lemma measurable_gumbelPDFReal (μ : ℝ) (β : ℝ≥0) : Measurable (gumbelPDFReal μ β) :=
   (continuous_gumbelPDFReal μ β).measurable
 
-/-- The Gumbel cdf `exp (-exp (-((x - μ) / β)))` is an antiderivative of the pdf. -/
 private lemma hasDerivAt_gumbelCDF (μ : ℝ) (β : ℝ≥0) (x : ℝ) :
     HasDerivAt (fun y ↦ exp (-exp (-((y - μ) / β)))) (gumbelPDFReal μ β x) x :=
   (((hasDerivAt_id x).sub_const μ).div_const (β : ℝ)).neg.exp.neg.exp.congr_deriv <| by
@@ -103,7 +102,6 @@ lemma integrable_gumbelPDFReal (μ : ℝ) (β : ℝ≥0) : Integrable (gumbelPDF
   simpa using (tendsto_gumbelCDF_atTop μ hβ).sub
     ((tendsto_gumbelCDF_atBot μ hβ).comp tendsto_neg_atTop_atBot)
 
-/-- The pdf of the Gumbel distribution integrates to `1`. -/
 lemma integral_gumbelPDFReal_eq_one (μ : ℝ) (hβ : β ≠ 0) : ∫ x, gumbelPDFReal μ β x = 1 := by
   simpa using integral_of_hasDerivAt_of_tendsto (hasDerivAt_gumbelCDF μ β)
     (integrable_gumbelPDFReal μ β) (tendsto_gumbelCDF_atBot μ hβ) (tendsto_gumbelCDF_atTop μ hβ)
@@ -116,7 +114,6 @@ noncomputable def gumbelPDF (μ : ℝ) (β : ℝ≥0) (x : ℝ) : ℝ≥0∞ :=
 lemma measurable_gumbelPDF (μ : ℝ) (β : ℝ≥0) : Measurable (gumbelPDF μ β) :=
   (measurable_gumbelPDFReal μ β).ennreal_ofReal
 
-/-- The pdf of the Gumbel distribution integrates to `1`. -/
 @[simp]
 lemma lintegral_gumbelPDF_eq_one (μ : ℝ) (hβ : β ≠ 0) : ∫⁻ x, gumbelPDF μ β x = 1 := by
   unfold gumbelPDF
@@ -145,7 +142,6 @@ lemma nullSingletonClass_gumbelMeasure (μ : ℝ) (hβ : β ≠ 0) :
     NullSingletonClass (gumbelMeasure μ β) := by
   rw [gumbelMeasure_of_scale_ne_zero μ hβ]; infer_instance
 
-/-- The cdf of the Gumbel distribution is `exp (-exp (-((x - μ) / β)))`. -/
 lemma cdf_gumbelMeasure_eq (μ : ℝ) (hβ : β ≠ 0) (x : ℝ) :
     cdf (gumbelMeasure μ β) x = exp (-exp (-((x - μ) / β))) := by
   have h : cdf (gumbelMeasure μ β) x = ∫ y in Iic x, gumbelPDFReal μ β y := by
@@ -156,15 +152,10 @@ lemma cdf_gumbelMeasure_eq (μ : ℝ) (hβ : β ≠ 0) (x : ℝ) :
   rw [h, integral_Iic_of_hasDerivAt_of_tendsto' (fun y _ ↦ hasDerivAt_gumbelCDF μ β y)
     (integrable_gumbelPDFReal μ β).integrableOn (tendsto_gumbelCDF_atBot μ hβ), sub_zero]
 
-/-- The pdf of the Gumbel distribution is its cdf times the reverse hazard rate
-`β⁻¹ * exp (-((x - μ) / β))`. -/
 lemma gumbelPDFReal_eq_mul_cdf (μ : ℝ) (hβ : β ≠ 0) (x : ℝ) :
     gumbelPDFReal μ β x = (β : ℝ)⁻¹ * exp (-((x - μ) / β)) * cdf (gumbelMeasure μ β) x := by
   rw [cdf_gumbelMeasure_eq μ hβ, gumbelPDFReal]
 
-/-- **Max-stability** of the Gumbel family. The product of the cdfs of Gumbel distributions with
-locations `u j` and a common scale `β` is the cdf of the Gumbel distribution with location
-`β * log (∑ j ∈ s, exp (u j / β))` and scale `β`. -/
 theorem prod_cdf_gumbelMeasure {ι : Type*} {s : Finset ι} (hs : s.Nonempty) (u : ι → ℝ)
     (hβ : β ≠ 0) (x : ℝ) :
     ∏ j ∈ s, cdf (gumbelMeasure (u j) β) x =

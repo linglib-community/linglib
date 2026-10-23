@@ -24,7 +24,6 @@ namespace Kiche
 found. -/
 def clauseOrders : Finset (WordOrder.Arrangement WordOrder.Constituent 3) := {.vos, .vso}
 
-/-- Every order is verb-initial. -/
 theorem verb_initial : ∀ a ∈ clauseOrders, a.IsInitial .verb := by
   decide
 

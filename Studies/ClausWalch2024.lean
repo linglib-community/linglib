@@ -105,8 +105,6 @@ def outcomes (m : _root_.Modifier (Set ℕ)) (N p q : ℕ) : Frame → Set ℕ
   | .positive => {k | k ≤ N ∧ k ∈ m {p}}
   | .negative => {k | k ≤ N ∧ N - k ∈ m {q}}
 
-/-- A comparison of the rest is the dual comparison of the goal-consistent count: *at least 400
-will die* leaves open what *at most 200 will be saved* does. -/
 theorem outcomes_negative (c : Comparison) (h : p + q = N) :
     outcomes c.modifier N p q .negative = outcomes c.dual.modifier N p q .positive := by
   ext k
@@ -248,8 +246,6 @@ theorem salience_bisZu (hn : 1 ≤ n) : salience (Modifier.bisZu.raise n) = 1 :=
 theorem salience_hoechstens : salience (Modifier.hoechstens.raise n) = -1 := by
   simp [salience, Modifier.raise, Blok2015.sUnion_atMost]
 
-/-- The salience and valence account predicts every framing effect, standard under *genau* and
-*bis zu* and reversed under *höchstens*, in both scenarios. -/
 theorem salienceEffect_eq_framingEffect (s : Scenario) :
     salienceEffect (raised genau) s.number = framingEffect s.genau ∧
       ∀ m, salienceEffect m.raise s.number = framingEffect (s.upper m) := by
@@ -271,8 +267,6 @@ theorem salience_raised (hn : 0 < n) :
     rcases hw with rfl | rfl | rfl <;>
       simp [salience, raised, moreThan, atLeast, exactly, fewerThan, atMost] <;> omega
 
-/-- The Fragment's reading of *bis zu* carries the upper bound Blok takes to be implicated, and
-would make the complement set salient, against the paper's list and `salience_bisZu`. -/
 theorem salience_raised_bisZu : salience (raised bisZu n) = -1 := by
   simp [salience, raised, German.NumeralModifiers.bisZu]
 

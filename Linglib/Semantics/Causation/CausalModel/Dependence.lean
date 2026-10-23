@@ -77,15 +77,11 @@ def IsExogenousSettlement (s s' : ∀ v, Flat (α v)) : Prop :=
 
 variable {M}
 
-/-- A cause sufficient for an effect is an ancestor of it: without a path from the cause, adding
-it leaves the effect as the background left it. -/
 theorem CausallySufficient.reflTransGen {s : ∀ v, Flat (α v)} {c : V} {x : α c} {e : V}
     {y : α e} (h : M.CausallySufficient s c x e y) : Relation.ReflTransGen M.graph.Adj c e :=
   Classical.byContradiction fun hce ↦ h.1 ((causallyEntails_update_of_not_reflTransGen hce _).1 h.2)
 
 omit [DecidableEq V] in
-/-- Settling exogenous variables settles no less. What the strict development of an observation
-settles, that of any exogenous settlement of it settles too. -/
 theorem CausallyEntails.of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
     (hs : M.IsExogenousSettlement s s') {v : V} {x : α v} (h : M.CausallyEntails s v x) :
     M.CausallyEntails s' v x := by
@@ -101,7 +97,6 @@ theorem CausallyEntails.of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
         exact ⟨z, ih w hw hz⟩
       · exact heq u y fun w hw z hz ↦ hy w hw z (ih w hw hz)
 
-/-- Settling an open exogenous variable is an exogenous settlement. -/
 theorem isExogenousSettlement_update {s : ∀ v, Flat (α v)} {p : V}
     (hroot : ∀ w, ¬ M.graph.Adj w p) (hopen : ∀ x, ¬ M.CausallyEntails s p x) (x : α p) :
     M.IsExogenousSettlement s (Function.update s p ↑x) := by
@@ -123,8 +118,6 @@ theorem IsExogenousSettlement.refl (s : ∀ v, Flat (α v)) : M.IsExogenousSettl
   ⟨le_rfl, fun _ hv hne ↦ absurd hv hne⟩
 
 omit [DecidableEq V] in
-/-- An exogenous settlement leaves open every variable with a parent that the observation leaves
-open. -/
 theorem IsExogenousSettlement.eq_bot {s s' : ∀ v, Flat (α v)} (h : M.IsExogenousSettlement s s')
     {v : V} (hv : s v = ⊥) (hpar : ∃ w, M.graph.Adj w v) : s' v = ⊥ := by
   by_contra hne
@@ -151,16 +144,10 @@ context where the background holds. -/
 variable [∀ v, Nonempty (α v)] {s : ∀ v, Flat (α v)} {c : V} {x : α c} {e : V} {y : α e}
   {u : U}
 
-/-- A cause sufficient for an effect relative to a background brings the effect about in every
-context where the background and the cause hold. -/
 theorem CausallySufficient.solve_eq (h : M.CausallySufficient s c x e y) (hu : u ∈ M.contexts s)
     (hc : M.solve ⊥ u c = x) : M.solve ⊥ u e = y :=
   h.2.solve_bot_eq (mem_contexts_update hu hc)
 
-/-- When the context reaches the model only at its roots, a cause necessary for an effect over the
-exogenous settlements of a background holds in every context where the background and the effect
-hold. Settling every open and unsettled root at its value in the context develops to the
-context's actual world, so it settles the effect, and necessity makes it settle the cause. -/
 theorem CausallyNecessary.solve_eq [M.ContextAtRoots]
     (h : M.CausallyNecessary M.IsExogenousSettlement s c x e y) (hu : u ∈ M.contexts s)
     (he : M.solve ⊥ u e = y) : M.solve ⊥ u c = x := by

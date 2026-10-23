@@ -243,7 +243,6 @@ theorem realize_literals (M : KripkeModel W Atom) (a : Fin n → Bool) (w : W) :
   rw [literals, realize_bigConj, funext_iff]
   simp [realize_literal]
 
-/-- The Hintikka formula of `τ` holds at a world exactly when the world has type `τ`. -/
 theorem realize_hintikka_iff (M : KripkeModel W Atom) :
     ∀ (k : ℕ) (τ : WorldType n k) (w : W), Realize M (hintikka e k τ) w ↔ worldType e M k w = τ
   | 0, a, w => realize_literals M a w
@@ -260,8 +259,6 @@ theorem realize_hintikka_iff (M : KripkeModel W Atom) :
     exact hσ ▸ hx
 
 omit [Inhabited Atom] in
-/-- Two worlds have the same type exactly when they are `k`-bisimilar, once `e` enumerates every
-    atom. -/
 theorem worldType_eq_iff_worldBisim (he : Function.Surjective e) {M : KripkeModel W Atom}
     {M' : KripkeModel W' Atom} :
     ∀ (k : ℕ) (w : W) (w' : W'), worldType e M k w = worldType e M' k w' ↔ WorldBisim k M w M' w'
@@ -313,8 +310,6 @@ theorem support_bigConj_iff (M : KripkeModel W Atom) (l : List (Formula Atom)) (
   | cons φ rest ih =>
     simp only [bigConj, support_conj, ih, List.forall_mem_cons]
 
-/-- A team supports a disjunction of Hintikka formulas iff each of its worlds has one of their
-    types. -/
 theorem support_bigDisj_hintikka_iff (M : KripkeModel W Atom) {k : ℕ} (L : List (WorldType n k))
     (t : Finset W) :
     support M (bigDisj (L.map (hintikka e k))) t ↔ ∀ w ∈ t, worldType e M k w ∈ L := by

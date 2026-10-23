@@ -98,7 +98,6 @@ def much (μ : E → Quantity ℝ) (q : Quantity ℝ) (x : E) : Prop := μ x = q
 theorem much_quantity_iff : much (w.quantity D) q x ↔ w D x = q.1 ∧ q.2 = D := by
   simp [much, Prod.ext_iff, eq_comm]
 
-/-- A measure of dimension `D` never equates with a quantity of another dimension. -/
 theorem not_much_quantity_of_snd_ne (h : q.2 ≠ D) : ¬ much (w.quantity D) q x := by
   simp [much_quantity_iff, h]
 
@@ -205,7 +204,6 @@ theorem divisionMP_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity
 theorem divisionMP_kilogram_liter : divisionMP n kilogram liter = divisionMP n gram milliliter :=
   divisionMP_scales (by norm_num) kilogram_quantity liter_quantity
 
-/-- So does the anaphoric theory. -/
 theorem anaphoricMP_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity)
     (hr : r'.quantity = pure k * r.quantity) :
     anaphoricMP w n u' r' y = anaphoricMP w n u r y := by
@@ -257,8 +255,6 @@ def perSentence (r : MeasureTerm) (y : E) (φ : World E → Quantity ℝ → Pro
 
 variable {φ : World E → Quantity ℝ → Prop}
 
-/-- A *per*-sentence asserts its truth conditions where it presupposes that the pronoun's
-referent measures at least one unit. -/
 theorem perSentence_eq_res : perSentence r y φ =
     PFun.res (fun w ↦ φ w (anaphoricPer w r y)) {w | (r.magnitude : ℝ) ≤ w r.dimension y} := rfl
 
@@ -275,8 +271,6 @@ def containsPer (salt : E → Prop) (contain : E → E → Prop) (n : ℝ) (u r 
   perSentence r m fun w a ↦
     contains salt contain (w.quantity (.of .mass)) (pure n * u.quantity * a) m
 
-/-- Scaling the units by `k` keeps a *per*-sentence's assertion and raises the bound its
-presupposition sets from one unit to `k` units. -/
 theorem weighs_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity)
     (hr : r'.quantity = pure k * r.quantity) :
     weighs n u' r' y =
@@ -365,8 +359,6 @@ theorem rows_unit_sensitivity : ∀ e ∈ Examples.all, ∀ s ∈ scenario? e,
     (s.per.magnitude ≤ s.subjectMeasure ↔ e.judgment = .acceptable) := by
   decide +kernel
 
-/-- At a world where its subject measures as the example states, a *per*-sentence is defined
-exactly when the example is felicitous. -/
 theorem acceptable_iff_mem_dom {e : Datum} (he : e ∈ Examples.all)
     {s : Scenario} (hs : s ∈ scenario? e) (hy : w s.per.dimension y = s.subjectMeasure) :
     e.judgment = .acceptable ↔ w ∈ (perSentence s.per y φ).Dom := by

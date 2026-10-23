@@ -83,13 +83,9 @@ inductive ResponsibilityGoal where
   | conveyResponsibility
   deriving DecidableEq
 
-/-- The control level is not derivable from the entailment profile, since the limited-control
-*rougir* and the in-control *refroidir* share one. -/
 theorem control_level_not_from_entailments :
     rougir.slotProfile? .external = refroidir.slotProfile? .external := by decide
 
-/-- Movement entailments suffice for in-control status, *approcher*, but are not necessary,
-*refroidir* being in-control without them. -/
 theorem movement_sufficient_not_necessary :
     approcher.slotProfile? .external = some movingUndergoer ∧
       refroidir.slotProfile? .external = some undergoer ∧
@@ -112,7 +108,6 @@ def Form.voiceOptions : Form → List Head
   | .bare => [Minimalist.Voice.anticausative]
   | .se => [Minimalist.Voice.anticausative, Minimalist.Voice.reflexive]
 
-/-- Both forms share the anticausative parse, and only the *se* form has the reflexive one. -/
 theorem se_ambiguous :
     (∀ f : Form, Minimalist.Voice.anticausative ∈ f.voiceOptions) ∧
       Minimalist.Voice.reflexive ∈ Form.se.voiceOptions ∧
@@ -184,8 +179,6 @@ def PredictsUnaccusative (p : EntailmentProfile) : Prop :=
 instance : DecidablePred PredictsUnaccusative := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- The entailments of the anticausatives' sole argument predict unaccusativity, since they
-impose no volition and no causation and include a patient entailment. -/
 theorem cos_profiles_unaccusative :
     PredictsUnaccusative undergoer ∧ PredictsUnaccusative movingUndergoer := by
   decide

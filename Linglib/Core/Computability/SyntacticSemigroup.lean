@@ -111,8 +111,6 @@ theorem syntacticSemigroupToMonoid_injective (L : Language α) :
 instance [Finite L.SyntacticMonoid] : Finite L.SyntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective
 
-/-- Every element of the syntactic monoid is the class of the empty word or the image of an
-element of the syntactic semigroup. -/
 theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (L : Language α) (s : L.SyntacticMonoid) :
     s = 1 ∨ s ∈ Set.range L.syntacticSemigroupToMonoid := by
   obtain ⟨x, rfl⟩ := Con.mk'_surjective s
@@ -133,7 +131,6 @@ theorem IsRegular.finite_syntacticSemigroup (h : L.IsRegular) : Finite L.Syntact
 theorem IsRegular.of_finite_syntacticSemigroup (h : Finite L.SyntacticSemigroup) : L.IsRegular :=
   IsRegular.of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup
 
-/-- A language is regular exactly when its syntactic semigroup is finite. -/
 theorem isRegular_iff_finite_syntacticSemigroup :
     L.IsRegular ↔ Finite L.SyntacticSemigroup :=
   ⟨IsRegular.finite_syntacticSemigroup, IsRegular.of_finite_syntacticSemigroup⟩
@@ -157,15 +154,12 @@ theorem syntacticSemigroupCon_le_rightQuotient (L : Language α) (u : List α) :
     L.syntacticSemigroupCon ≤ (L.rightQuotient u).syntacticSemigroupCon :=
   fun {_ _} h ↦ L.syntacticCon_le_rightQuotient u h
 
-/-- The syntactic congruence on nonempty words depends on `L` only through its nonempty words. -/
 theorem syntacticSemigroupCon_congr {L' : Language α}
     (h : ∀ w : List α, w ≠ [] → (w ∈ L ↔ w ∈ L')) :
     L.syntacticSemigroupCon = L'.syntacticSemigroupCon :=
   Con.ext fun u v ↦ forall_congr' fun x ↦ forall_congr' fun y ↦
     iff_congr (h _ (by simp)) (h _ (by simp))
 
-/-- Adjoining the empty word leaves the syntactic congruence unchanged, since the congruence
-quantifies only over nonempty words. -/
 theorem syntacticSemigroupCon_insert_nil :
     (insert [] L).syntacticSemigroupCon = L.syntacticSemigroupCon :=
   syntacticSemigroupCon_congr fun _ hw ↦ Set.mem_insert_iff.trans (or_iff_right hw)
@@ -199,7 +193,6 @@ theorem recognizesSemigroup_iff :
     · rw [FreeMonoid.mapWithOne_ofList_cons]
       simpa [toFreeMonoid_mk_eq_cons] using hP ⟨c, l⟩
 
-/-- If `η` recognizes `L`, then `η.comp ψ` recognizes the inverse image of `L` under `ψ`. -/
 theorem RecognizesSemigroup.comap {β : Type*} (hrec : L.RecognizesSemigroup η)
     (ψ : FreeSemigroup β →ₙ* FreeSemigroup α) :
     RecognizesSemigroup (η.comp ψ) {w : List β | ∃ u : FreeSemigroup β,

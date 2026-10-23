@@ -94,12 +94,9 @@ theorem IsEarliest.le_of_mem (h : IsEarliest C P m) (ht : t ∈ P) (htC : t ≤ 
     (ha : a ∈ t) : m ≤ a :=
   h.2 ⟨t, ⟨ht, htC⟩, ha⟩
 
-/-- Where the interval `C` itself is among the times of the clause, the earliest moment is the
-start of `C`. -/
 theorem IsEarliest.eq_fst_of_mem (h : IsEarliest C P m) (hC : C ∈ P) : m = C.fst :=
   le_antisymm (h.le_of_mem hC le_rfl ⟨le_rfl, C.fst_le_snd⟩) h.fst_le
 
-/-- A clause with one time `d`, within `C`, has the start of `d` as its earliest moment. -/
 theorem isEarliest_fst_of_subset_singleton (hd : d ∈ P) (hP : P ⊆ {d}) (hdC : d ≤ C) :
     IsEarliest C P d.fst :=
   ⟨⟨d, ⟨hd, hdC⟩, le_rfl, d.fst_le_snd⟩, fun _ ⟨_, ⟨ht, _⟩, ha⟩ ↦ hP ht ▸ ha.1⟩
@@ -110,10 +107,6 @@ def BeforeDefined (C : NonemptyInterval M) (P : Set (NonemptyInterval M)) : Prop
   ∃ m, IsEarliest C P m ∧ C.fst < m
 
 
-/-- On dense time, the earliest moment of a clause with an existentially quantified tense is the
-start of the contextually relevant interval, whatever the cell of the tense. A clause time that
-follows a time of the predicate can be started later, one that overlaps it can be widened to the
-whole interval, and one that precedes it can be started at the start of the interval. -/
 theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
     (h : IsEarliest C {t | ◇[Perspective.toSetRel c] (· ∈ q) t} m) : m = C.fst := by
   refine h.fst_le.eq_of_not_lt' fun hlt ↦ ?_
@@ -183,22 +176,17 @@ def clause (τ : Embedded) (j k : ℕ) (q : Set (NonemptyInterval M)) :
 
 variable {τ : Embedded} {j k : ℕ} {g : Assignment (NonemptyInterval M)}
 
-/-- Abstraction over the referential index gives the pronominal reading at the time of the
-evaluation index. -/
 theorem lambdaAbsG_clause (hjk : j ≠ k) :
     {t | lambdaAbsG k (clause τ j k q) g t} = (Reading.pronominal τ).denote (g j) q := by
   ext t
   simp [clause, Reading.denote, Function.update_of_ne hjk]
 
-/-- Existential closure of the referential index under abstraction over the evaluation index
-gives the existential reading. -/
 theorem lambdaAbsG_exists_clause (hjk : j ≠ k) :
     {t | lambdaAbsG j (fun g ↦ ∃ t', lambdaAbsG k (clause τ j k q) g t') g t} =
       (Reading.existential τ).denote SP q := by
   ext t
   simp [clause, Reading.denote, Diamond, Function.update_of_ne hjk]
 
-/-- A present with both indices bound by one binder has no meaning of its own. -/
 theorem lambdaAbsG_clause_self :
     {t | lambdaAbsG k (clause .present k k q) g t} = Reading.null.denote SP q := by
   ext t
@@ -224,7 +212,6 @@ def NoPShiftability (r : Reading) : Prop :=
   ∀ (M : Type) [LinearOrder M] (C SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) (m : M),
     IsEarliest C (r.denote SP q) m → m < SP.fst
 
-/-- The existential readings are the ones that fail. -/
 theorem fails_iff {r : Reading} : r.Fails ↔ ∃ τ, r = .existential τ := by
   refine ⟨fun h ↦ ?_, fun ⟨τ, hτ⟩ M _ _ C SP q ↦ hτ ▸ not_beforeDefined_diamond⟩
   have key : ∀ (SP : NonemptyInterval ℚ) (r : Reading),
@@ -240,7 +227,6 @@ theorem fails_iff {r : Reading} : r.Fails ↔ ∃ τ, r = .existential τ := by
   · exact ⟨τ, rfl⟩
   · exact absurd h (key (.pure 0) _ rfl subset_rfl)
 
-/-- The pronominal present is the reading with the Stump effect. -/
 theorem stumpEffect_iff {r : Reading} : r.StumpEffect ↔ r = .pronominal .present := by
   refine ⟨fun h ↦ ?_, fun hr M _ SP t d q ht hd ↦ ?_⟩
   · have key : ∀ r : Reading, (NonemptyInterval.pure 1 : NonemptyInterval ℤ) ∈
@@ -270,7 +256,6 @@ theorem not_noPShiftability_null : ¬ null.NoPShiftability := fun h ↦
 /-- A reading is felicitous when it neither fails nor has the Stump effect. -/
 def Felicitous (r : Reading) : Prop := ¬ r.Fails ∧ ¬ r.StumpEffect
 
-/-- The felicitous readings are the pronominal past and the tense with no meaning. -/
 theorem felicitous_iff {r : Reading} : r.Felicitous ↔ r = .pronominal .past ∨ r = .null := by
   rw [Felicitous, fails_iff, stumpEffect_iff]
   rcases r with (_ | _) | τ | _ <;> simp
@@ -361,7 +346,6 @@ instance : Decidable (L.WellFormed τ) := decidable_of_iff _ wellFormed_iff.symm
 
 instance : Decidable (L.PShiftable τ) := decidable_of_iff _ pShiftable_iff.symm
 
-/-- A well-formed clause has no p-shiftability exactly when it is not p-shiftable. -/
 theorem noPShiftability_iff : L.NoPShiftability τ ↔ L.WellFormed τ ∧ ¬ L.PShiftable τ :=
   and_congr_right fun _ ↦
     ⟨fun h ⟨r, ha, hf, hn⟩ ↦ hn (h r ha hf), fun h r ha hf ↦ by_contra fun hn ↦ h ⟨r, ha, hf, hn⟩⟩
@@ -400,8 +384,6 @@ def japanese : Language := ⟨false, .full, false, true⟩
 /-- Polish has no sequence-of-tense rule, a semi-shiftable present, and pronominal tenses. -/
 def polish : Language := ⟨false, .semi, true, false⟩
 
-/-- In attitude reports English is the first type of the earlier typology, and Japanese and
-Polish the second, with Hebrew. -/
 theorem toSharvit2003_eq : english.toSharvit2003 = Sharvit2003.english ∧
     japanese.toSharvit2003 = Sharvit2003.hebrew ∧ polish.toSharvit2003 = Sharvit2003.hebrew :=
   ⟨rfl, rfl, rfl⟩
@@ -439,8 +421,6 @@ def languages : List (String × Language) :=
 /-- The embedded tenses of the example rows. -/
 def tenses : List (String × Embedded) := [("past", .past), ("present", .present)]
 
-/-- A tense in a *before*-clause under a past is acceptable exactly where the language's
-parameters make it well-formed. -/
 theorem judgment_iff :
     ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "before" →
       e.feature? "clauseTime" ≠ some "after speech" →
@@ -448,16 +428,12 @@ theorem judgment_iff :
         (e.judgment = .acceptable ↔ L.WellFormed τ) := by
   decide
 
-/-- A *before*-clause whose time follows the speech time is acceptable exactly where the
-language's parameters make the clause p-shiftable. -/
 theorem clauseTime_iff :
     ∀ e ∈ Examples.all, e.feature? "clauseTime" = some "after speech" →
       ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
         (e.judgment = .acceptable ↔ L.PShiftable τ) := by
   decide
 
-/-- A tense under a past attitude verb has a simultaneous reading exactly where the language's
-parameters give it one. -/
 theorem simultaneous_iff :
     ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "attitude" →
       ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,
@@ -486,12 +462,10 @@ def row : ℕ :=
   1 + (if L.sot then 0 else 8) + (if L.present = .non then 4 else 0) +
     (if L.pronominal then 0 else 2) + (if L.quantificational then 0 else 1)
 
-/-- The permissible types are six of the sixteen. -/
 theorem permissible_iff : L.Permissible ↔ L.row ∈ ({2, 3, 6, 7, 10, 11} : Finset ℕ) := by
   revert L
   decide
 
-/-- A language that may have tenses of both kinds is of one of nine types. -/
 theorem permissible_without_economy_iff :
     (L.pronominal ∨ L.quantificational) ∧ Sharvit2003.EmbeddabilityPrinciple L.toSharvit2003 ↔
       L.row ∈ ({1, 2, 3, 5, 6, 7, 9, 10, 11} : Finset ℕ) := by
@@ -500,9 +474,6 @@ theorem permissible_without_economy_iff :
 
 variable {L}
 
-/-- By the Embeddability Principle for *before*, some tense is well-formed in a *before*-clause
-under a past, which holds unless the language has only quantificational tenses, no sequence-of-tense
-rule and no fully shiftable present. -/
 theorem wellFormed_past_or_present_iff :
     L.WellFormed .past ∨ L.WellFormed .present ↔
       L.pronominal ∨ L.quantificational ∧ (L.sot ∨ L.present = .full) := by
@@ -511,12 +482,8 @@ theorem wellFormed_past_or_present_iff :
 
 end Language
 
-/-- English, Polish and Japanese are of the sixth, tenth and eleventh type. -/
 theorem row_eq : english.row = 6 ∧ polish.row = 10 ∧ japanese.row = 11 := by decide
 
-/-- A language like Japanese but with a semi-shiftable present is of a permissible type and has
-no well-formed tense in a *before*-clause under a past, so a quantificational present is fully
-shiftable. -/
 theorem semiShiftable_quantificational :
     ({ japanese with present := .semi } : Language).Permissible ∧
       ¬ ({ japanese with present := .semi } : Language).WellFormed .past ∧

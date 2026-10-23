@@ -101,7 +101,6 @@ instance (p : W → SignType) : DecidablePred (· ∈ negExt p) :=
 instance (p : W → SignType) : DecidablePred (· ∈ gapExt p) :=
   fun w ↦ inferInstanceAs (Decidable (p w = 0))
 
-/-- A proposition is defined where it is true or false. -/
 theorem posExt_union_negExt (p : W → SignType) : posExt p ∪ negExt p = Function.support p := by
   ext w; cases h : p w <;> simp [h]
 
@@ -111,12 +110,10 @@ theorem posExt_subset_support (p : W → SignType) : posExt p ⊆ Function.suppo
 theorem negExt_subset_support (p : W → SignType) : negExt p ⊆ Function.support p :=
   fun w (h : p w = -1) ↦ by simp [Function.mem_support, h]
 
-/-- Where a proposition is defined and not true, it is false. -/
 theorem support_inter_compl_posExt (p : W → SignType) :
     Function.support p ∩ (posExt p)ᶜ = negExt p := by
   ext w; cases h : p w <;> simp [h]
 
-/-- The three extensions cover the world space. -/
 theorem posExt_union_negExt_union_gapExt (p : W → SignType) :
     posExt p ∪ negExt p ∪ gapExt p = Set.univ := by
   ext w
@@ -124,7 +121,6 @@ theorem posExt_union_negExt_union_gapExt (p : W → SignType) :
     iff_true]
   cases p w <;> simp
 
-/-- The positive and negative extensions are disjoint. -/
 theorem disjoint_posExt_negExt (p : W → SignType) :
     Disjoint (posExt p) (negExt p) := by
   rw [Set.disjoint_left]
@@ -160,8 +156,6 @@ section Indicator
 
 variable {s : Set W} {f : W → SignType} {w : W}
 
-/-- A classical proposition is defined everywhere, so by `Set.support_indicator` an assertion
-restricted to `s` is defined exactly on `s`. -/
 @[simp] theorem support_ofProp (B : W → Prop) [DecidablePred B] :
     Function.support (fun w ↦ SignType.ofProp (B w)) = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ SignType.ofProp_ne_zero
@@ -172,7 +166,6 @@ restricted to `s` is defined exactly on `s`. -/
 @[simp] theorem indicator_apply_eq_neg_one_iff : s.indicator f w = -1 ↔ w ∈ s ∧ f w = -1 := by
   by_cases h : w ∈ s <;> simp [h]
 
-/-- The defined region of a proposition is the complement of its gap. -/
 theorem support_eq_compl_gapExt (p : W → SignType) : Function.support p = (gapExt p)ᶜ := rfl
 
 end Indicator
@@ -187,7 +180,6 @@ same condition and agree on it. -/
 
 section ConditionalEvent
 
-/-- Every trivalent proposition is the conditional event of its truth on its definedness. -/
 theorem indicator_support_ofProp_eq_one (p : W → SignType) :
     (Function.support p).indicator (fun w ↦ ofProp (p w = 1)) = p := by
   funext w
@@ -196,7 +188,6 @@ theorem indicator_support_ofProp_eq_one (p : W → SignType) :
   · rw [Set.indicator_of_mem h]
     cases hp : p w <;> simp_all
 
-/-- Two conditional events coincide exactly when they have the same condition and agree on it. -/
 theorem indicator_ofProp_eq_indicator_ofProp_iff {A A' : Set W} {B B' : W → Prop}
     [DecidablePred B] [DecidablePred B'] :
     (A.indicator fun w ↦ ofProp (B w)) = A'.indicator (fun w ↦ ofProp (B' w)) ↔
@@ -235,7 +226,6 @@ moves its gap into the negative extension. -/
     gapExt (fun w ↦ ofProp (p w = 1)) = ∅ := by
   ext w; simp
 
-/-- Asserting a proposition pointwise makes it bivalent. -/
 theorem isBivalent_ofProp_eq_one (p : W → SignType) : IsBivalent fun w ↦ ofProp (p w = 1) :=
   fun w ↦ by by_cases h : p w = 1 <;> simp [h]
 
@@ -287,7 +277,6 @@ theorem existsWith_eq_one_iff : existsWith D p = 1 ↔ D ∧ ∃ i, p i = 1 := b
 theorem existsWith_eq_neg_one_iff : existsWith D p = -1 ↔ D ∧ ∀ i, p i ≠ 1 := by
   simp [existsWith, neg_eq_iff_eq_neg, forallWith_eq_one_iff]
 
-/-- Any two families agree wherever both are defined, since they share one truth rule. -/
 theorem forallWith_eq_forallWith_of_defined (hD : D) (hD' : D') :
     forallWith D p = forallWith D' p := by
   unfold forallWith
@@ -491,14 +480,11 @@ theorem existsStrong_pair :
       (or_congr (Bool.exists_bool.trans or_comm) (Bool.forall_bool.trans and_comm))).trans
     ((existsWith_pair a b).trans (sup_eq_joinWith a b).symm)
 
-/-- Haug's universal quantifier restricted to a pair of instances is the conjunction of
-[belnap-1970], which skips undefined operands. -/
 theorem forallHaug_pair :
     forallHaug (fun i : Bool => bif i then a else b) = meetBelnap a b :=
   (forallWith_congr (Bool.exists_bool.trans or_comm)).trans
     ((forallWith_pair a b).trans (meetBelnap_eq_meetWith a b).symm)
 
-/-- Dually, Haug's existential restricted to a pair is Belnap disjunction. -/
 theorem existsHaug_pair :
     existsHaug (fun i : Bool => bif i then a else b) = joinBelnap a b :=
   (existsWith_congr (Bool.exists_bool.trans or_comm)).trans
@@ -506,14 +492,10 @@ theorem existsHaug_pair :
 
 end Pairs
 
-/-- An existentially quantified presupposition is true or undefined, never false. -/
 theorem existsHaug_presuppose_ne_neg_one (p : W → SignType) :
     existsHaug (fun w => (p w ⊔ 0)) ≠ -1 := by
   simp
 
-/-- Quantifier Projection ([coppock-beaver-2015]'s appendix) lets a presupposition under the
-existential project as an existentially quantified presupposition, over bivalent `φ` and
-`ψ`. -/
 theorem existsHaug_meetWeak_presuppose {φ ψ : W → SignType} (hφ : IsBivalent φ)
     (hψ : IsBivalent ψ) :
     existsHaug (fun w => meetWeak (φ w ⊔ 0) (ψ w)) =

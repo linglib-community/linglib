@@ -113,11 +113,9 @@ theorem isUpperSet_complementDomain : IsUpperSet (complementDomain hd t deleted 
 
 theorem isUpperSet_wholePhaseDomain : IsUpperSet (wholePhaseDomain hd t h) := isUpperSet_Ioi _
 
-/-- Sealed positions dominate only sealed positions. -/
 theorem isUpperSet_sealed (hD : ∀ h, IsUpperSet (D h)) : IsUpperSet (sealed Φ D σ s) :=
   fun _ _ hab ⟨h, hΦ, hσ, hq⟩ ↦ ⟨h, hΦ, hσ, hD h hab hq⟩
 
-/-- A schedule under which a domain stays transferred seals more at every later stage. -/
 theorem sealed_anti (hσ : ∀ h, Antitone (σ Φ h)) : Antitone (sealed Φ D σ) :=
   fun _ _ hs _ ⟨h, hΦ, hσh, hq⟩ ↦ ⟨h, hΦ, hσ h hs hσh, hq⟩
 
@@ -126,13 +124,10 @@ theorem antitone_pic1 : Antitone (Pic1 hd t Φ h) := fun _ _ hs h ↦ lt_of_le_o
 theorem antitone_pic2 : Antitone (Pic2 hd t Φ h) :=
   fun _ _ hs ⟨z, hz, hzs, hc⟩ ↦ ⟨z, hz, hs.trans hzs, hc⟩
 
-/-- What is transferred once the next phase head merges is transferred once its phase is complete.
--/
 theorem pic1_of_pic2 (hp : Pic2 hd t Φ h s) : Pic1 hd t Φ h s :=
   let ⟨z, _, hs, hc⟩ := hp
   hs.trans_lt ((parent_covBy_complement z).lt.trans_le hc)
 
-/-- [chomsky-2001]'s condition seals less than [chomsky-2000]'s. -/
 theorem sealed_pic2_subset_pic1 : sealed Φ D (Pic2 hd t) s ⊆ sealed Φ D (Pic1 hd t) s :=
   fun _ ⟨h, hΦ, hσ, hq⟩ ↦ ⟨h, hΦ, pic1_of_pic2 hσ, hq⟩
 
@@ -149,14 +144,12 @@ def phaseLevel (Φ : Finset TreePath) (q : t.val.Positions) : t.val.Positions :=
 theorem phaseLevel_le (q : t.val.Positions) : phaseLevel hd t Φ q ≤ q :=
   Subtype.coe_le_coe.1 (TreePath.le_def.2 (List.take_prefix _ _))
 
-/-- The phase of a phase head whose complement contains a position lies above its phase level. -/
 theorem projectionAt_le_phaseLevel {q : t.val.Positions} (hΦ : h ∈ Φ) (hc : complement h ≤ q.val)
     (hp : projectionAt hd t h ≤ h.parent) : projectionAt hd t h ≤ (phaseLevel hd t Φ q).val := by
   have hq := hp.trans ((parent_covBy_complement h).le.trans hc)
   exact TreePath.le_def.2 (List.prefix_take_iff.2 ⟨TreePath.le_def.1 hq,
     Finset.le_sup (f := (projectionAt hd t · |>.toList.length)) (Finset.mem_filter.2 ⟨hΦ, hc⟩)⟩)
 
-/-- A position no phase head's complement contains reaches its phase level at the root. -/
 theorem phaseLevel_eq_bot {q : t.val.Positions} (hq : ∀ h ∈ Φ, ¬ complement h ≤ q.val) :
     phaseLevel hd t Φ q = ⊥ := by
   have : Φ.filter (complement · ≤ q.val) = ∅ := Finset.filter_eq_empty_iff.2 hq
@@ -191,7 +184,6 @@ theorem mem_validPaths_of_mem_chain {tok : LexicalItem.Token} {p : TreePath}
   obtain ⟨s, hs, -⟩ := mem_positions_iff.1 hpb
   simp [validPaths, hs]
 
-/-- A link lands above the mother of the phrase that lands, and outside the copy it links. -/
 theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : TreePath × TreePath}
     (hx : x ∈ links hd t tok) : x.1.parent < x.2 ∧ ¬ x.1 ≤ x.2 := by
   obtain ⟨q, -, p, hp, hl, rfl⟩ := mem_links.1 hx
@@ -202,8 +194,6 @@ theorem parent_lt_of_mem_links {tok : LexicalItem.Token} {x : TreePath × TreePa
     (a := ⟨projectionAt hd t p, hv⟩) fun h ↦ h0 (congrArg Subtype.val h)
   exact (cCommands_iff_parent_lt h0 hb).1 hl.1
 
-/-- Above a link's landed phrase and below its lower copy, a position lies outside the landed
-phrase exactly when it lies strictly below the landing stage. -/
 theorem not_le_fst_iff {tok : LexicalItem.Token} {x : TreePath × TreePath} {D : TreePath}
     (hx : x ∈ links hd t tok) (hD : D ≤ x.2) : ¬ D ≤ x.1 ↔ x.1.parent < D := by
   obtain ⟨hpx, hnx⟩ := parent_lt_of_mem_links hx
@@ -219,8 +209,6 @@ theorem not_le_fst_iff {tok : LexicalItem.Token} {x : TreePath × TreePath} {D :
   · intro hlt hDx
     exact hnx (((hcov.eq_or_eq hlt.le hDx).resolve_left hlt.ne') ▸ hD)
 
-/-- An island is a cut: a link escapes the domain at `D` exactly when it leaves the positions `D`
-dominates, sealed at every stage above `D`. -/
 theorem escapes_iff {tok : LexicalItem.Token} {D : TreePath} :
     Escapes hd t tok D ↔ LinkLeaves hd t tok (sealed {D} Set.Ici fun _ h s ↦ s < h) := by
   unfold Escapes LinkLeaves
@@ -229,8 +217,6 @@ theorem escapes_iff {tok : LexicalItem.Token} {D : TreePath} :
   exact ⟨fun ⟨hD, hDx⟩ ↦ ⟨(not_le_fst_iff hx hD).1 hDx, hD⟩,
     fun ⟨hlt, hD⟩ ↦ ⟨hD, (not_le_fst_iff hx hD).2 hlt⟩⟩
 
-/-- The condition on chain links is a cut: a link leaves the phase of `h` exactly when it leaves the
-complement of `h`, sealed at every stage above the phase. -/
 theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.val.validPaths)
     (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) :
     Crosses hd t tok h ↔

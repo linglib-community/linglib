@@ -510,7 +510,6 @@ private theorem prior_toReal :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> intros <;>
     simp [Utterance.prior]
 
-/-- The share of *did not stop smoking* at a cell, expanded over the utterances. -/
 private theorem share_expand (q : QUD) (C : Finset World) (w : World) {α : ℝ} (hα : 0 < α)
     (tbl : Utterance → ℕ × ℕ) (htbl : ∀ u, l0 C q u w = tbl u) :
     share q C w α =
@@ -537,8 +536,6 @@ section Cells
 variable {α : ℝ} (hα : 0 < α)
 include hα
 
-/-- Within the context set that John smoked, *did not stop smoking* identifies the world in which
-he still smokes; *smoked*, silence, and the two other negations are half as informative. -/
 private theorem share_A : share .now pastT .TT α = 1 / (4 * (1 + 2 * (1 / 2 : ℝ) ^ α)) := by
   rw [share_expand _ _ _ hα tblA l0_A]
   dsimp only [tblA]
@@ -546,16 +543,12 @@ private theorem share_A : share .now pastT .TT α = 1 / (4 * (1 + 2 * (1 / 2 : �
   norm_num [Real.zero_rpow hα.ne']
   ring
 
-/-- Within the context set that John does not smoke, every compatible utterance, silence
-included, answers the question, so the share is a sixteenth. -/
 private theorem share_B : share .now nowF .FF α = 1 / 16 := by
   rw [share_expand _ _ _ hα tblB l0_B]
   dsimp only [tblB]
   rw [div_eq_div_iff (by positivity) (by positivity)]
   norm_num [Real.zero_rpow hα.ne']
 
-/-- Within *change*, the world in which John started smoking is identified by *did not stop
-smoking* among competitors that identify it as well. -/
 private theorem share_C : share .now change .FT α = 1 / (6 * (1 + (1 / 2 : ℝ) ^ α)) := by
   rw [share_expand _ _ _ hα tblC l0_C]
   dsimp only [tblC]
@@ -563,7 +556,6 @@ private theorem share_C : share .now change .FT α = 1 / (6 * (1 + (1 / 2 : ℝ)
   norm_num [Real.zero_rpow hα.ne']
   ring
 
-/-- In the universe, *did not stop smoking* leaves two chances in three of the answer. -/
 private theorem share_D :
     share .now Finset.univ .TT α =
       (2 / 3 : ℝ) ^ α /
@@ -574,8 +566,6 @@ private theorem share_D :
   norm_num [Real.zero_rpow hα.ne']
   ring
 
-/-- Within the context set that John smokes, as within the one that he does not, the question
-is settled and the share is a sixteenth. -/
 private theorem share_E : share .now nowT .TT α = 1 / 16 := by
   rw [share_expand _ _ _ hα tblE l0_E]
   dsimp only [tblE]
@@ -603,8 +593,6 @@ private theorem share_H : share .max change .FT α = 1 / (6 * (1 + (1 / 2 : ℝ)
   norm_num [Real.zero_rpow hα.ne']
   ring
 
-/-- In the universe under the maximal question the three worlds compatible with *did not stop
-smoking* face the same competition. -/
 private theorem share_IJK :
     share .max Finset.univ .TT α = share .max Finset.univ .FT α ∧
       share .max Finset.univ .FT α = share .max Finset.univ .FF α := by
@@ -618,7 +606,6 @@ end Cells
 
 /-! ### Listener comparisons -/
 
-/-- The prior mass of a pair, on reals. -/
 private theorem pairPrior_real (π : Finset World → ℕ) (w : World) (C : Finset World)
     (h : w ∈ C) : (pairPrior π).real {(w, C)} = π C := by
   rw [measureReal_def, pairPrior_singleton, ite_eq_left h, ENNReal.toReal_natCast]
@@ -632,7 +619,6 @@ private theorem listener_lt_iff (q : QUD) (π : Finset World → ℕ) {α : ℝ}
     pairPrior_real π _ _ h₂]
   rfl
 
-/-- Listener equality between two pairs of equal prior and equal share. -/
 private theorem listener_eq (q : QUD) (π : Finset World → ℕ) {α : ℝ} (w₁ w₂ : World)
     (C₁ C₂ : Finset World)
     (hprior : pairPrior π {(w₁, C₁)} = pairPrior π {(w₂, C₂)})
@@ -649,9 +635,6 @@ prior, the first column of Table 2. -/
 noncomputable def standard (α : ℝ) : Kernel Utterance World :=
   RSA.listener (uniformOn Set.univ) (speaker .max Finset.univ α)
 
-/-- The standard model puts the three worlds compatible with *did not stop smoking* on a par at
-every rationality, since the utterance is equally under-informative at each, so nothing
-projects. -/
 theorem standard_uniform {α : ℝ} (hα : 0 < α) :
     standard α notStopped {.TT} = standard α notStopped {.FT} ∧
       standard α notStopped {.FT} = standard α notStopped {.FF} := by
@@ -668,9 +651,6 @@ theorem standard_uniform {α : ℝ} (hα : 0 < α) :
 
 /-! ### Context sets under the maximal question (Figures 1b, 2a) -/
 
-/-- With every context set equally likely, the world in which John still smokes taken with the
-context set that he smoked ties with the world in which he never smoked taken with the context
-set that he does not smoke, since *did not stop smoking* identifies the world within either. -/
 theorem uniform_tie {α : ℝ} (hα : 0 < α) :
     listener .max (fun _ ↦ 1) α notStopped {(.TT, pastT)}
       = listener .max (fun _ ↦ 1) α notStopped {(.FF, nowF)} :=
@@ -683,8 +663,6 @@ theorem uniform_tie {α : ℝ} (hα : 0 < α) :
 private theorem half_rpow_lt_one {α : ℝ} (hα : 0 < α) : (1 / 2 : ℝ) ^ α < 1 :=
   Real.rpow_lt_one (by norm_num) (by norm_num) hα
 
-/-- The changed world with the *change* context set trails, since *did not stop smoking*
-identifies it there too, but against more informative competitors. -/
 theorem uniform_change_lt {α : ℝ} (hα : 0 < α) :
     (listener .max (fun _ ↦ 1) α notStopped).real {(.FT, change)}
       < (listener .max (fun _ ↦ 1) α notStopped).real {(.TT, pastT)} := by
@@ -698,10 +676,6 @@ theorem uniform_change_lt {α : ℝ} (hα : 0 < α) :
 
 /-! ### The question whether John smokes now (Figures 1d, 3) -/
 
-/-- A context set that already settles the question, that he does not smoke or that he does,
-has made silence maximally informative and cannot explain the utterance. Either loses to the
-world in which he still smokes with the context set that he smoked, under any prior weighting
-that context set at least as much. -/
 theorem now_settled_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0) (hF : π nowF ≤ π pastT)
     (hT : π nowT ≤ π pastT) {α : ℝ} (hα : 0 < α) :
     (listener .now π α notStopped).real {(.FF, nowF)}
@@ -735,9 +709,6 @@ theorem now_change_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0) (h : π
     mul_one_div, mul_one_div, div_lt_div_iff₀ (by positivity) (by positivity)]
   nlinarith
 
-/-- The universe is outrun at every rationality of at least one under any prior weighting it
-under three halves of the context set that John smoked, since there the utterance leaves a third
-of the answer open. -/
 theorem now_universe_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0)
     (h : 2 * π Finset.univ ≤ 3 * π pastT) {α : ℝ} (hα : 1 ≤ α) :
     (listener .now π α notStopped).real {(.TT, Finset.univ)}

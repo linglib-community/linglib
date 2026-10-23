@@ -89,7 +89,6 @@ private lemma eq_zero_of_ne_one_of_ne_neg_one (a : SignType) (h₁ : a ≠ 1) (h
     a = 0 := by
   revert h₁ h₂; revert a; decide
 
-/-- A merge of mergeable vectors is their sum. -/
 private lemma coe_merge {n : ℕ} {v w : Fin n → SignType} (h : Mergeable v w) (i : Fin n) :
     (merge v w i : ℤ) = v i + w i :=
   merge_apply_aux _ _ (h.apply i)
@@ -108,7 +107,6 @@ private lemma negSupport_merge {n : ℕ} {v w : Fin n → SignType} (h : Mergeab
 
 variable {n : ℕ} {r : Set (Fin n) → Set (Fin n) → Prop}
 
-/-- The merge of two valid mergeable comparisons is valid (`rel_sup_sup`, then `qadd`). -/
 private lemma merge_valid [IsQualitativeProbability r] {v w : Fin n → SignType}
     (hv : r (posSupport v) (negSupport v)) (hw : r (posSupport w) (negSupport w))
     (h : Mergeable v w) : r (posSupport (merge v w)) (negSupport (merge v w)) := by
@@ -116,10 +114,6 @@ private lemma merge_valid [IsQualitativeProbability r] {v w : Fin n → SignType
   rw [qadd (r := r)] at hmerge
   rwa [posSupport_merge h, negSupport_merge h]
 
-/-- If two valid comparisons sum to `≤ 0` everywhere with a strict negative coordinate, some
-    atom is null (`ge ∅ {i}`). The sum forces `posSupport v ⊆ negSupport w` and
-    `posSupport w ⊆ negSupport v`; then `ge C A → ge C B → ge ∅ (B \ C)` by additivity, and
-    symmetrically, and the strict coordinate lies in one of the two differences. -/
 private lemma null_from_pair [IsQualitativeProbability r] {v w : Fin n → SignType}
     (hv : r (posSupport v) (negSupport v)) (hw : r (posSupport w) (negSupport w))
     (hle : ∀ i, (v i : ℤ) + w i ≤ 0) (i₀ : Fin n) (hlt : (v i₀ : ℤ) + w i₀ < 0) :
@@ -156,7 +150,6 @@ private lemma eq_zero_of_add_eq_zero_of_eq (a b : SignType) (h : (a : ℤ) + b =
     a = 0 := by
   revert h hab; revert a b; decide
 
-/-- Zero vectors contribute nothing to the sum. -/
 private lemma comparisonSum_filter_ne_zero {n : ℕ} (M : Multiset (Fin n → SignType)) (i : Fin n) :
     comparisonSum (M.filter (· ≠ 0)) i = comparisonSum M i := by
   induction M using Multiset.induction_on with
@@ -167,15 +160,6 @@ private lemma comparisonSum_filter_ne_zero {n : ℕ} (M : Multiset (Fin n → Si
     · rw [Multiset.filter_cons_of_pos _ (by simpa using hv), comparisonSum_cons,
         comparisonSum_cons, ih]
 
-/-- A stuck family of comparisons, with no mergeable pair and no mono-dominating member,
-    summing to a target `t` with nonempty negative support either contains a *null pair* (two
-    members whose sum is `≤ 0` with a strict negative coordinate) or has a member mergeable
-    with the reversed target `-t`.
-
-    The family `-t ::ₘ M` sums to zero, so `exists_antiDominating` yields an anti-dominating
-    pair unless some member is mergeable with `-t`. An anti-dominating
-    pair inside `L` is a null pair; one involving `-t` is a mono-domination, which is
-    excluded. -/
 private lemma v1_tailored (M : Multiset (Fin 4 → SignType)) {t : Fin 4 → SignType}
     (hsum : ∀ i, comparisonSum M i = t i) (hne : (negSupport t).Nonempty)
     (hnotdom : ∀ v ∈ M, posSupport v ⊆ posSupport t → ¬ negSupport t ⊆ negSupport v)
@@ -241,8 +225,6 @@ private lemma v1_tailored (M : Multiset (Fin 4 → SignType)) {t : Fin 4 → Sig
     exact hmerge x hxS y hyS hxy <| mergeable_of_apply fun i hxyi ↦
       eq_zero_of_add_eq_zero_of_eq (x i) (y i) ((hle i).antisymm (hge i)) hxyi
 
-/-- When `-t` and `v` are mergeable, `t` is the merge of the residual `merge t (-v)` with `v`;
-    this is the coordinatewise arithmetic of the peel rule. -/
 private lemma merge_residual_aux (a b : SignType) (h : -a = b → -a = 0) :
     SignType.sign ((SignType.sign ((a : ℤ) + (-b : SignType)) : ℤ) + b) = a := by
   revert h; revert a b; decide
@@ -252,9 +234,6 @@ private lemma mergeable_residual_aux (a b : SignType) (h : -a = b → -a = 0) :
       SignType.sign ((a : ℤ) + (-b : SignType)) = 0 := by
   revert h; revert a b; decide
 
-/-- If `v` is valid and mergeable with the reversed target `-t`, and the residual target
-    `merge t (-v)` is provable, then so is `t`, the merge of the residual with `v`. This is the
-    last case of the merge recursion. -/
 private lemma recombine [IsQualitativeProbability r] {t v : Fin n → SignType}
     (hm : Mergeable (-t) v) (hv : r (posSupport v) (negSupport v))
     (hX : r (posSupport (merge t (-v))) (negSupport (merge t (-v)))) :
@@ -270,11 +249,6 @@ private lemma recombine [IsQualitativeProbability r] {t v : Fin n → SignType}
     exact merge_residual_aux (t i) (v i) this
   rwa [e] at this
 
-/-- For a qualitative probability on `Fin 4` with no null atoms, a valid family of comparisons
-    whose integer sum is a single sign vector `t` proves `posSupport t ≿ negSupport t`. The
-    recursion has four rules: a trivial target (`negSupport t = ∅`), mono-domination, merging a
-    mergeable pair, and otherwise `v1_tailored`, whose null pair contradicts `hnull` and whose
-    member mergeable with `-t` is peeled off before recursing on the residual (`recombine`). -/
 private theorem merge_to_single (r : Set (Fin 4) → Set (Fin 4) → Prop)
     [IsQualitativeProbability r] (hnull : ∀ i : Fin 4, ¬ r ∅ {i})
     (M : Multiset (Fin 4 → SignType)) (hvalid : ∀ v ∈ M, r (posSupport v) (negSupport v))
@@ -325,8 +299,6 @@ decreasing_by
     | exact Multiset.card_erase_lt_of_mem ‹_›
     | (rw [‹M = _›]; simp)
 
-/-- A qualitative probability on `Fin 4` with no null atom satisfies cancellation, by the merge
-    reduction `merge_to_single`. -/
 theorem no_null_cancellation (r : Set (Fin 4) → Set (Fin 4) → Prop) [IsQualitativeProbability r]
     (hnull : ∀ i : Fin 4, ¬ r ∅ {i}) : Cancellation r := by
   intro M hvalid hsum v hv
@@ -416,7 +388,6 @@ instance [IsQualitativeProbability r] : IsQualitativeProbability (extendLex r) w
 
 section Extend
 
-/-- The extension preserves the absence of null atoms. -/
 private lemma extendLex_no_null (hnull : ∀ i, ¬r ∅ {i}) : ∀ j, ¬extendLex r ∅ {j} := by
   refine Fin.lastCases ?_ fun i ↦ ?_
   · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
@@ -450,7 +421,6 @@ private lemma last_notMem_negSupport_embed (v : Fin n → SignType) :
   show ¬embed v (Fin.last n) = -1
   rw [embed, Fin.snoc_last]; decide
 
-/-- Cancellation transfers back along the lexicographic extension. -/
 private theorem cancellation_extendLex (h : Cancellation (extendLex r)) : Cancellation r := by
   intro M hvalid hsum v hv
   have key := h (M.map embed) ?_ ?_ (embed v) (Multiset.mem_map_of_mem _ hv)
@@ -474,8 +444,6 @@ private theorem cancellation_extendLex (h : Cancellation (extendLex r)) : Cancel
       rw [embed, Fin.snoc_last]; rfl
     · simpa [comparisonSum, Multiset.map_map, Function.comp_def, embed] using congrFun hsum i
 
-/-- A qualitative probability on at most four atoms with no null atom satisfies cancellation,
-    since its lexicographic extension to `Fin 4` falls to `no_null_cancellation`. -/
 private theorem no_null_cancellation_of_le_four (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
     [IsQualitativeProbability r] (hnull : ∀ i, ¬r ∅ {i}) : Cancellation r := by
   induction h : 4 - n generalizing n with
@@ -487,9 +455,6 @@ private theorem no_null_cancellation_of_le_four (hn : n ≤ 4) (r : Set (Fin n) 
 
 end Extend
 
-/-- Every qualitative probability on at most four atoms satisfies cancellation. A null atom
-    reduces to one atom fewer (`cancellation_of_null_atom`); otherwise the lexicographic
-    extension to `Fin 4` applies. -/
 theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
     ∀ (r : Set (Fin n) → Set (Fin n) → Prop) [IsQualitativeProbability r], Cancellation r
   | 0, _, r, hr => (not_isQualitativeProbability_of_isEmpty r hr).elim
@@ -504,8 +469,6 @@ theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
       · push Not at h
         exact no_null_cancellation_of_le_four hn r h
 
-/-- Every qualitative probability on at most four atoms is representable, by Scott
-    cancellation. -/
 theorem representable_of_le_four {n : ℕ} (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
     [IsQualitativeProbability r] : Representable r :=
   cancellation_implies_representable r (cancellation_of_le_four hn r)

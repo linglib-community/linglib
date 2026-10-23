@@ -492,8 +492,6 @@ theorem derivable_wohl_iff (ct : ClauseType) :
   · exact ⟨fun _ ↦ trivial, fun _ ↦ hpos _ (by simp) (by simp [ClauseType.moodTypes])⟩
   · exact ⟨not_derivable_deonticOnly, False.elim⟩
 
-/-- The *wohl* rows of sections 6.2.3 and 6.5.1: a sentence with *wohl* is acceptable exactly
-when *wohl* finds the epistemic modifier's type among its clause type's mood items. -/
 theorem wohl_rows :
     ∀ row ∈ Examples.all, row.feature? "particle" = some "wohl" →
       ∀ c ∈ cellOf row, ∀ ct ∈ ClauseType.ofCell c.1 c.2,
@@ -502,8 +500,6 @@ theorem wohl_rows :
   simp only [derivable_wohl_iff]
   decide
 
-/-- Where Durrell excludes a modal particle from a cell, the book's row in that cell is
-unacceptable. -/
 theorem excluded_rows :
     ∀ row ∈ Examples.all, ∀ p ∈ German.Particles.modalParticles,
       row.feature? "particle" = some p.form → ∀ c ∈ cellOf row,

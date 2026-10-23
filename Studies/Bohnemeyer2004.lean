@@ -239,8 +239,6 @@ def markerOf : TermRole → Option MarkerSet
   | .P => some .setB
   | .S | .X => none
 
-/-- The marker assignment respects the hierarchy: the participant of the earlier subevent is
-realized as A and takes set A, the participant of the later one as P and takes set B. -/
 theorem markerOf_termRole_of_lt {a b : Subevent} (h : a < b) :
     markerOf (termRole a) = some .setA ∧ markerOf (termRole b) = some .setB := by
   revert a b; decide
@@ -318,15 +316,10 @@ theorem predictLinking_roles (c : CausationType) :
       addedRole (predictLinking c) = some (termRole c.baseSubevent.other) := by
   cases c <;> decide
 
-/-- Applicative and causative linking are mirror images, and not by stipulation: each alternation
-adds a participant in the role the other leaves to the base's S, so the marker one assigns to the
-added argument is the marker the other assigns to the original S. -/
 theorem linking_patterns_swap_roles :
     addedRole applicativeLinking = originalRole causativeLinking ∧
     originalRole applicativeLinking = addedRole causativeLinking := by decide
 
-/-- The marker each participant receives follows from its role by `markerOf`: the applicative adds
-a set-B argument and keeps the base's S as set A, the causative the reverse. -/
 theorem linking_markers :
     (addedRole applicativeLinking).bind markerOf = some .setB ∧
     (originalRole applicativeLinking).bind markerOf = some .setA ∧
@@ -377,7 +370,6 @@ properties competing accounts appeal to do not: each of lexical aspect (which is
 [kraemer-wunderlich-1999]'s rule (14) reads), stem class, and the overt suffix leaves the linking
 open, witnessed by a minimal pair of documented verbs. -/
 
-/-- Causation type settles the alternation. -/
 theorem causation_determines_linking (v w : Verb)
     (h : v.causationType = w.causationType) : verbLinking v = verbLinking w := by
   simp [verbLinking, h]
@@ -408,8 +400,6 @@ theorem suffix_not_predictable :
     balak'.stemClass = péek.stemClass ∧ balak'.causationType = péek.causationType ∧
     transitivizerSuffix balak' ≠ transitivizerSuffix péek := ⟨rfl, rfl, by decide⟩
 
-/-- Every documented verb links by its causation type: those with internally-caused bases add a P,
-the rest an A. -/
 theorem documented_linking :
     documented.all (fun v ↦
       addedTermRole v == some (if v.causationType == .internal then .P else .A)) = true := by
@@ -472,9 +462,6 @@ theorem detransitivizations_decrease_valency :
     (DetransitivizationType.toVoice .anticausative).IsValencyDecreasing ∧
     (DetransitivizationType.toVoice .passive).IsValencyDecreasing := by decide
 
-/-- The fate of the initial A separates the passive from the anticausative, a distinction the
-coarser intransitivization typology collapses. The passive denucleativizes A, which stays in
-participant structure, and the anticausative suppresses it. -/
 theorem passive_anticausative_distinct_by_A_fate :
     (DetransitivizationType.toVoice .passive).fateOfRole .A = .denucleativized ∧
     (DetransitivizationType.toVoice .anticausative).fateOfRole .A = .suppressed := by
@@ -536,22 +523,16 @@ sound-emission actives, the positionals ((25)) and the inactive degree achieveme
 def externallyCaused : List Verb :=
   [chíik, háarax, húuy, mosòon, pirix, walak', chiltal, xoltal, la'b, t'íil, ts'u'k, ka'n, na'k]
 
-/-- Each of them is externally caused whatever its stem class, and so adds an instigator as A:
-stem class varies across the list while the linking does not. -/
 theorem externally_caused_causativize :
     externallyCaused.all (fun v ↦
       v.causationType == .external && addedTermRole v == some .A) = true := by decide
 
 /-! ### Bridge to split ergativity -/
 
-/-- The linking-by-viewpoint mechanism derives the alignment the fragment records for each
-status category. -/
 theorem linking_consistent_with_split :
     Yukatek.alignment .completive = .ergative ∧ Yukatek.alignment .incompletive = .accusative :=
   ⟨rfl, rfl⟩
 
-/-- Yukatek's split is aspect-conditioned like that of Hindi-Urdu, the completive aligning as the
-Hindi-Urdu perfective does. -/
 theorem aspect_conditioned_split_family :
     Yukatek.alignment .completive = HindiUrdu.alignment .perfective := rfl
 
@@ -575,8 +556,6 @@ def salienceClassOf : VerbStemClass → Option ArgumentStructure.SalienceClass
   | .inchoative => none
   | .positional => none
 
-/-- Where the two samples share a lexeme, stem class and Lucy's derived root class agree, for
-*kim* ~ *kíim* 'die', *lúub* ~ *lúub'* 'fall' and *na'k* ~ *ná'ak* 'ascend'. -/
 theorem salience_agrees_on_shared_roots :
     salienceClassOf kim.stemClass = Lucy1994.predictedClass Lucy1994.kiim ∧
     salienceClassOf lúub.stemClass = Lucy1994.predictedClass Lucy1994.luub ∧

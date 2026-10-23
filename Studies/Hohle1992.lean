@@ -207,8 +207,6 @@ has its background among the propositions `known` from the context. -/
 def Appropriate (known : Set (Set W)) (c : Configuration) (p : Set W) : Prop :=
   ∃ s : Scoping, s.Admissible c ∧ (s.focusBackground p).background ∈ known
 
-/-- Verum focus on the fronted verb is appropriate whenever the thought or its negation is
-known. -/
 theorem appropriate_negatedF_iff (known : Set (Set W)) (p : Set W) :
     Appropriate known negatedF p ↔ p ∈ known ∨ pᶜ ∈ known := by
   constructor
@@ -220,7 +218,6 @@ theorem appropriate_negatedF_iff (known : Set (Set W)) (p : Set W) :
     · exact ⟨.negOverVerum, negOverVerum_admissible_negatedF, h⟩
     · exact ⟨.verumOverNeg, verumOverNeg_admissible_negatedF, h⟩
 
-/-- Verum focus on the complementizer is appropriate only if the negated thought is known. -/
 theorem appropriate_negatedC_iff (known : Set (Set W)) (p : Set W) :
     Appropriate known negatedC p ↔ pᶜ ∈ known := by
   constructor

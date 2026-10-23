@@ -79,8 +79,6 @@ def gapVerb (d : Dependency) : NonemptyInterval ℕ := span d.gap d.verb
 /-- The filler–verb association of the gap-free analysis. -/
 def fillerVerb (d : Dependency) : NonemptyInterval ℕ := span d.filler d.verb
 
-/-- The filler–verb association does not depend on where an empty category would sit, so heavy
-shift, extraposition and word-order freedom relocate the gap and leave it unchanged. -/
 theorem fillerVerb_gap (f g g' v : ℕ) :
     (⟨f, g, v⟩ : Dependency).fillerVerb = (⟨f, g', v⟩ : Dependency).fillerVerb := rfl
 
@@ -99,7 +97,6 @@ def Disjoint (L : List (NonemptyInterval ℕ)) : Prop :=
 instance (L : List (NonemptyInterval ℕ)) : Decidable (Disjoint L) :=
   inferInstanceAs (Decidable (∀ _ ∈ L, ∀ _ ∈ L, _ → _))
 
-/-- A disjoint pattern is not nested. -/
 theorem Disjoint.not_nested {L : List (NonemptyInterval ℕ)} (h : Disjoint L) : ¬ Nested L :=
   fun ⟨a, ha, b, hb, hab⟩ ↦ (h a ha b hb fun e ↦ NonemptyInterval.during_irrefl b (e ▸ hab)).elim
     (NonemptyInterval.not_precedes_of_during hab).1 (NonemptyInterval.not_precedes_of_during hab).2
@@ -174,13 +171,9 @@ def Hard (e : Datum) : Prop := e.feature? "difficulty" = some "hard"
 
 instance : DecidablePred Hard := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- Processing difficulty is nesting of the filler–verb associations: the sentences that are
-hard to process are exactly those whose gap-free pattern is nested. -/
 theorem difficulty : ∀ p ∈ rows, Hard p.1 ↔ Nested p.2.fillerVerb := by
   decide
 
-/-- The trace analysis predicts difficulty for the multiple pied-piping sentence, whose
-filler–gap and gap–verb associations are both nested, yet it is easy. -/
 theorem trace_prediction_fails :
     Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧ ¬ Hard ex42 := by
   decide
@@ -218,8 +211,6 @@ before its gap and then the verbs in reverse order. -/
 def verbFinal (n : ℕ) : List Dependency :=
   (List.range n).map fun k ↦ ⟨2 + 4 * k, 3 + 4 * k, 2 + 4 * n + (n - 1 - k)⟩
 
-/-- Without empty categories, extending the pied-piping or the passive construction keeps the
-pattern disjoint, so there is never an unfinished association to remember. -/
 theorem peripheralGaps_fillerVerb_disjoint (a n : ℕ) :
     Disjoint ((peripheralGaps a n).map Dependency.fillerVerb) := by
   simp only [Disjoint, peripheralGaps, List.map_map, List.mem_map, List.mem_range,
@@ -230,8 +221,6 @@ theorem peripheralGaps_fillerVerb_disjoint (a n : ℕ) :
   · exact absurd rfl hne
   · exact Or.inr (by simp [NonemptyInterval.Precedes, Dependency.fillerVerb]; omega)
 
-/-- With empty categories, every filler of the extended construction is held until the first
-gap, the position `a + 5n` common to all `n` filler–gap associations. -/
 theorem peripheralGaps_fillerGap_common (a n : ℕ) :
     ∀ d ∈ peripheralGaps a n, a + 5 * n ∈ d.fillerGap := by
   simp only [peripheralGaps, List.mem_map, List.mem_range, forall_exists_index, and_imp,
@@ -239,8 +228,6 @@ theorem peripheralGaps_fillerGap_common (a n : ℕ) :
   intro k hk
   omega
 
-/-- With empty categories, the extended construction's filler–gap and gap–verb associations are
-nested as soon as there are two clauses. -/
 theorem peripheralGaps_nested (a n : ℕ) (hn : 2 ≤ n) :
     Nested ((peripheralGaps a n).map Dependency.fillerGap) ∧
       Nested ((peripheralGaps a n).map Dependency.gapVerb) := by
@@ -249,8 +236,6 @@ theorem peripheralGaps_nested (a n : ℕ) (hn : 2 ≤ n) :
     span_fst, span_snd]
   exact ⟨⟨1, by omega, 0, by omega, by omega⟩, ⟨1, by omega, 0, by omega, by omega⟩⟩
 
-/-- The multiple subject relative stays disjoint on every analysis, however far it is
-extended. -/
 theorem localGaps_disjoint (n : ℕ) :
     Disjoint ((localGaps n).map Dependency.fillerGap) ∧
       Disjoint ((localGaps n).map Dependency.gapVerb) ∧
@@ -266,8 +251,6 @@ theorem localGaps_disjoint (n : ℕ) :
     · exact Or.inr (by simp [NonemptyInterval.Precedes, Dependency.fillerGap, Dependency.gapVerb,
         Dependency.fillerVerb]; omega)
 
-/-- In the multiple object relative every filler is held until the innermost verb, on either
-analysis: the associations are nested and difficulty grows with every clause. -/
 theorem centreEmbedded_common (n : ℕ) :
     ∀ d ∈ centreEmbedded n, 2 + 3 * n ∈ d.fillerVerb ∧ 2 + 3 * n ∈ d.fillerGap := by
   simp only [centreEmbedded, List.mem_map, List.mem_range, forall_exists_index, and_imp,

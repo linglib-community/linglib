@@ -56,33 +56,27 @@ def autCard : UnorderedTree α → ℕ :=
 def forestAutCard (F : Multiset (UnorderedTree α)) : ℕ :=
   F.toFinset.prod fun t => (F.count t).factorial * autCard t ^ F.count t
 
-/-- The empty forest has trivial aut group. -/
 @[simp] theorem forestAutCard_zero :
     forestAutCard (0 : Multiset (UnorderedTree α)) = 1 := by
   simp [forestAutCard]
 
-/-- A singleton forest has the aut group of its tree. -/
 @[simp] theorem forestAutCard_singleton (T : UnorderedTree α) :
     forestAutCard ({T} : Multiset (UnorderedTree α)) = autCard T := by
   simp [forestAutCard]
 
-/-- `forestAutCard` as the `autCard`-product over all members times the symmetry factor. -/
 theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree α)) :
     forestAutCard F = (F.map autCard).prod * multinomialFactor F := by
   unfold forestAutCard multinomialFactor
   rw [Finset.prod_multiset_map_count, ← Finset.prod_mul_distrib]
   exact Finset.prod_congr rfl fun t _ => mul_comm _ _
 
-/-- `autCard` at a node is `forestAutCard` of the children: the recursive formula. -/
 @[simp] theorem autCard_node (a : α) (F : Multiset (UnorderedTree α)) :
     autCard (UnorderedTree.node a F) = forestAutCard F := by
   simp [autCard, forestAutCard_eq_prod_mul_multinomialFactor]
 
-/-- A leaf has trivial aut group. -/
 @[simp] theorem autCard_leaf (a : α) : autCard (UnorderedTree.leaf a : UnorderedTree α) = 1 := by
   rw [← node_zero, autCard_node, forestAutCard_zero]
 
-/-- `autCard` is positive: the automorphism group contains the identity. -/
 theorem autCard_pos (t : UnorderedTree α) : 0 < autCard t := by
   induction t with
   | node a F ih =>
@@ -90,7 +84,6 @@ theorem autCard_pos (t : UnorderedTree α) : 0 < autCard t := by
     exact Finset.prod_pos fun t ht ↦
       Nat.mul_pos (Nat.factorial_pos _) (pow_pos (ih t (Multiset.mem_toFinset.1 ht)) _)
 
-/-- `forestAutCard` is positive. -/
 theorem forestAutCard_pos (F : Multiset (UnorderedTree α)) : 0 < forestAutCard F :=
   Finset.prod_pos fun t _ ↦ Nat.mul_pos (Nat.factorial_pos _) (pow_pos (autCard_pos t) _)
 
@@ -101,8 +94,6 @@ compute the split multiplicity; `Nat.add_choose_mul_factorial_mul_factorial` rec
 it with the factorials per distinct tree. This identity is the combinatorial core of the
 pairing's product-coproduct adjunction (`GrossmanLarson.pairing_of'_mul_of'`). -/
 
-/-- **Multinomial split identity** for `forestAutCard`:
-    `|Aut (F+G)| = count (F,G) (antidiagonal (F+G)) · |Aut F| · |Aut G|`. -/
 theorem forestAutCard_add (F G : Multiset (UnorderedTree α)) :
     forestAutCard (F + G) = (Multiset.antidiagonal (F + G)).count (F, G) *
       (forestAutCard F * forestAutCard G) := by

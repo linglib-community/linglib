@@ -207,11 +207,9 @@ instance : ∀ (q : AltQuant) (w : World) (sat : Triangle → Prop) [DecidablePr
   | .all, _, _, _ => inferInstanceAs (Decidable (∀ _ ∈ _, _))
   | .notAll, _, _, _ => inferInstanceAs (Decidable (¬ ∀ _ ∈ _, _))
 
-/-- *not all* is the negation of *all*, definitionally. -/
 theorem eval_notAll_iff (w : World) (sat : Triangle → Prop) :
     AltQuant.eval .notAll w sat ↔ ¬ AltQuant.eval .all w sat := Iff.rfl
 
-/-- *none* is the negation of *some*. -/
 theorem eval_none_iff (w : World) (sat : Triangle → Prop) :
     AltQuant.eval .none w sat ↔ ¬ AltQuant.eval .some w sat := by
   simp [AltQuant.eval]
@@ -338,7 +336,6 @@ theorem table1_as : ∀ (p : Parse) (w : World),
 /-- In Table 1, AA holds at wA alone under every parse. -/
 theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA := by decide +kernel
 
-/-- Literal meaning is the empty parse's exhaustified meaning. -/
 theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
     literalMeaning u w ↔ exhMeaning ∅ u w := by decide +kernel
 
@@ -358,7 +355,6 @@ theorem moi_ss_ne_innocent_exclusion :
             fun w ↦ decide (exhMeaning {.outer, .inner} .ss w)) :=
   ⟨by decide +kernel, by decide +kernel⟩
 
-/-- Every `(world, parse)` state has a true utterance. -/
 theorem exists_true : ∀ (w : World) (p : Parse), ∃ u, exhMeaning p u w := by decide +kernel
 
 /-! ## The models -/
@@ -431,7 +427,6 @@ def LIParse.toParse : LIParse → Parse
   | .o => {.outer}
   | .oi => {.outer, .inner}
 
-/-- LI cannot access matrix EXH, since no LI parse includes M. -/
 theorem li_excludes_matrix : ∀ l : LIParse, .matrix ∉ l.toParse := by decide +kernel
 
 /-- The LI choice space (eq. 18a) consists of pairs over the matrix-free parses. -/
@@ -463,7 +458,6 @@ def LULex.toParse : LULex → Parse
   | .lit => ∅
   | .oi => {.outer, .inner}
 
-/-- LU cannot access matrix EXH, since neither lexicon includes M. -/
 theorem lu_excludes_matrix : ∀ l : LULex, .matrix ∉ l.toParse := by decide +kernel
 
 /-- The LU listener (eqs. 12–13) inverts the speaker of eq. 11, who has a fixed lexicon, at a
@@ -484,32 +478,21 @@ noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse
 
 /-! ### Exhaustified interpretation -/
 
-/-- Hearing "some of the aliens drank some of their water", the pooled
-listener favors the world where no alien drank all of its water over the one
-where some did (inner exhaustification). -/
 theorem ss_inner_exh :
     (giListener 5 .ss).real {wNSA} < (giListener 5 .ss).real {wNS} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_divPowSum giSem Prod.fst (k := 5)
     (D := 12) (by decide +kernel) (by decide +kernel) (by decide +kernel)
 
-/-- Hearing "some of the aliens drank some of their water", the pooled
-listener favors a world where some alien drank nothing (outer
-exhaustification). -/
 theorem ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (giListener α .ss).real {wS} < (giListener α .ss).real {wNS} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates giSem Prod.fst hα
     (by decide +kernel)
 
-/-- Hearing "all of the aliens drank all of their water", the pooled
-listener favors the unique world where every alien did just that. -/
 theorem aa_identifies {α : ℝ} (hα : 0 < α) :
     (giListener α .aa).real {wSA} < (giListener α .aa).real {wA} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates giSem Prod.fst hα
     (by decide +kernel)
 
-/-- Hearing "all of the aliens drank some of their water", the pooled
-listener favors the world where every alien drank some but not all (inner
-exhaustification). -/
 theorem as_inner_exh {α : ℝ} (hα : 0 < α) :
     (giListener α .as).real {wA} < (giListener α .as).real {wS} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates giSem Prod.fst hα
@@ -525,31 +508,21 @@ theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
   RSA.listener_speaker_uniformOn_real_singleton_lt_of_strictDominates (ext ∅) hα
     (by decide +kernel)
 
-/-- Hearing "some of the aliens drank some of their water", the pooled
-listener favors some-but-not-all drinkers over all-drinkers, as attested. -/
 theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (giListener α .ss).real {wNA} < (giListener α .ss).real {wNS} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates giSem Prod.fst hα
     (by decide +kernel)
 
-/-- Hearing "some of the aliens drank some of their water", the matrix-free
-pooled listener still favors a world where some alien drank nothing (outer
-exhaustification). -/
 theorem li_ss_outer_exh {α : ℝ} (hα : 0 < α) :
     (liListener α .ss).real {wS} < (liListener α .ss).real {wNS} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates liSem Prod.fst hα
     (by decide +kernel)
 
-/-- Hearing "some of the aliens drank some of their water", the matrix-free
-pooled listener favors some-but-not-all drinkers over all-drinkers. -/
 theorem li_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (liListener α .ss).real {wNA} < (liListener α .ss).real {wNS} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates liSem Prod.fst hα
     (by decide +kernel)
 
-/-- Hearing "some of the aliens drank some of their water", the
-lexical-uncertainty listener favors some-but-not-all drinkers over
-all-drinkers. -/
 theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
   rw [luListener, RSA.listener_fst_real_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
@@ -582,18 +555,12 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
 
 /-! ### The position of the latent parameter -/
 
-/-- Hearing "some of the aliens drank some of their water", the pooled
-listener's parse posterior peaks at exhaustification of the whole
-sentence. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     (giParsePosterior 5 .ss).real {(.ss, p)} < (giParsePosterior 5 .ss).real {(.ss, pM)} :=
   fun p _ ↦
   RSA.listener_compProd_speaker_uniformOn_snd_real_lt_of_divPowSum giSem Prod.fst (k := 5)
     (D := 12) (by decide +kernel) rfl rfl (by revert p; decide +kernel)
 
-/-- Hearing "some of the aliens drank some of their water", the per-parse
-listener favors exhaustifying the outer quantifier over exhaustifying the
-whole sentence. -/
 theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
     (perParseListener α .ss).snd.real {pM} < (perParseListener α .ss).snd.real {pO} := by
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),

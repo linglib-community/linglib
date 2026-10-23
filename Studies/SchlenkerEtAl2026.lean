@@ -85,21 +85,15 @@ def IsStill (proj : E → V → T → W → S) (d : E) (w : W) : Prop :=
 variable {proj : E → V → T → W → S} {d : E} {w : W} {clock : ι → T} {cl : ι → S}
   {vp : T → W → V}
 
-/-- A still object projects to the same position at two moments seen from the same static
-viewpoint. -/
 theorem DynProj.eq_of_isStill (h : DynProj proj d vp w clock cl) (hd : IsStill proj d w) {i j : ι}
     (hv : vp (clock i) w = vp (clock j) w) : cl i = cl j := by
   rw [← h i, ← h j, projAt, projAt, hv]
   exact hd _ _ _
 
-/-- The traveling shot: when a still object projects to a classifier that moves, the viewpoint
-has moved between the two moments. -/
 theorem DynProj.viewpoint_ne (h : DynProj proj d vp w clock cl) (hd : IsStill proj d w) {i j : ι}
     (hij : cl i ≠ cl j) : vp (clock i) w ≠ vp (clock j) w :=
   mt (h.eq_of_isStill hd) hij
 
-/-- From a static viewpoint a still object projects to a classifier that does not move: the
-traveling shot is unavailable in [schlenker-lamberton-2024]. -/
 theorem DynProj.eq_of_isStatic (h : DynProj proj d vp w clock cl) (hd : IsStill proj d w)
     (hs : IsStatic vp) (i j : ι) : cl i = cl j := by
   obtain ⟨v, rfl⟩ := hs
@@ -147,15 +141,11 @@ theorem roleShift_classifierIcon_iff (c : Context W E P T) (x : E) (t : T) (w : 
       DynProj proj d (agentVP x) w (clock' t) cl := by
   simp [roleShift, classifierIcon, ViewpointVar.denote]
 
-/-- Under the restrictive theory a classifier with a free viewpoint variable cannot show a
-still object moving: a traveling shot needs Role Shift. -/
 theorem Restrictive.eq_of_free (hs : Restrictive s) (hd : IsStill proj d w) (c : Context W E P T)
     {i : ℕ} (h : DynProj proj d ((ViewpointVar.free i).denote s agentVP c) w clock cl)
     (j k : ι) : cl j = cl k :=
   h.eq_of_isStatic hd (hs i) j k
 
-/-- Under Role Shift the movement of a classifier for a still object is the character's own
-movement between the two moments. -/
 theorem roleShift_viewpoint_ne (c : Context W E P T) (x : E) (t : T) (hd : IsStill proj d w)
     (h : roleShift (classifierIcon s agentVP .contextBound proj d clock' cl) c x t w) {i j : ι}
     (hij : cl i ≠ cl j) : agentVP x (clock' t i) w ≠ agentVP x (clock' t j) w :=

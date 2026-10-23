@@ -66,7 +66,6 @@ def rowsWith (p : Pronoun) : Set Datum := {e | e ∈ all ∧ HasAnaphor e p}
 instance (p : Pronoun) : DecidablePred (· ∈ rowsWith p) := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Every anaphor a row names is *egymás* or a reflexive of the paradigm. -/
 theorem hasAnaphor_of_feature :
     ∀ e ∈ all, ∀ f ∈ e.feature? "anaphor",
       HasAnaphor e egymas.toPronoun ∨ ∃ r ∈ reflexives, HasAnaphor e r.toPronoun := by
@@ -108,7 +107,6 @@ theorem not_factorsThrough_semanticNumber :
 
 /-! ### The reciprocal -/
 
-/-- The reciprocal is acceptable exactly when its antecedent is semantically plural. -/
 theorem reciprocal_acceptable_iff :
     ∀ e ∈ all, HasAnaphor e egymas.toPronoun →
       (e.judgment = .acceptable ↔ semanticNumber? e = some .plural) := by

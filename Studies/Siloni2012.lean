@@ -192,7 +192,6 @@ the two directions. -/
 def SubEventReading (V : Set E) (ag th : E → D) (d₁ d₂ : D) (e : E) : Prop :=
   ∃ e₁ e₂, e₁ < e ∧ e₂ < e ∧ e = e₁ ⊔ e₂ ∧ CrossedPair V ag th d₁ d₂ e₁ e₂
 
-/-- An event with the sub-event reading has proper parts, so it is not atomic. -/
 theorem SubEventReading.not_atom :
     SubEventReading V ag th d₁ d₂ e → ¬ Mereology.Atom e := by
   rintro ⟨e₁, e₂, h₁, h₂, h₃, -⟩ ha
@@ -247,8 +246,6 @@ theorem exists_underlyingReading (h : IsSymmetricVerb GD GE V ag th Vsym agTh) (
   obtain ⟨d₁, d₂, h₁, h₂, hne, hrole⟩ := h.exists_pair e he
   exact ⟨d₁, d₂, hne, h.underlyingReading e he h₁ h₂ hrole⟩
 
-/-- A symmetric verb's events admit no sub-event reading for any predicate and roles
-whatsoever: the underlying events are invisible to counting and modification (section 2.2). -/
 theorem not_subEventReading (h : IsSymmetricVerb GD GE V ag th Vsym agTh) (he : e ∈ Vsym)
     {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} : ¬ SubEventReading V' ag' th' d₁' d₂' e :=
   fun hs ↦ hs.not_atom (h.atom e he)
@@ -277,7 +274,6 @@ def reciprocalize (r : RoleList) : RoleList where
     | some o => r.subjectProfile ∪ o
     | none => r.subjectProfile
 
-/-- Reciprocalization leaves no internal argument. -/
 theorem reciprocalize_objectProfile (r : RoleList) :
     (reciprocalize r).objectProfile = none := rfl
 
@@ -285,9 +281,6 @@ theorem reciprocalize_subjectProfile (ho : r.objectProfile = some o) :
     (reciprocalize r).subjectProfile = r.subjectProfile ∪ o := by
   simp [reciprocalize, ho]
 
-/-- The reciprocalized subject retains the base subject's Proto-Agent entailments and inherits
-the object's Proto-Patient entailments, the Czech depictive (section 3.1) and
-comparative-ellipsis (section 3.2) diagnostics. -/
 theorem reciprocalize_dominates (ho : r.objectProfile = some o) :
     r.subjectProfile.protoAgent ⊆ (reciprocalize r).subjectProfile.protoAgent ∧
       o.protoPatient ⊆ (reciprocalize r).subjectProfile.protoPatient := by
@@ -295,8 +288,6 @@ theorem reciprocalize_dominates (ho : r.objectProfile = some o) :
   exact ⟨EntailmentProfile.protoAgent_mono Finset.subset_union_left,
     EntailmentProfile.protoPatient_mono Finset.subset_union_right⟩
 
-/-- For any transitive base with an agentive subject and an affected object, the reciprocalized
-subject bears a complex role (section 4.1). -/
 theorem reciprocalize_isComplexRole (ho : r.objectProfile = some o)
     (ha : r.subjectProfile.protoAgent.Nonempty) (hp : o.protoPatient.Nonempty) :
     ((reciprocalize r).subjectProfile).IsComplexRole := by
@@ -386,8 +377,6 @@ section Merger
 
 variable {m : Bool} {before assigned after : List ThetaRole}
 
-/-- Without the morphology there is no parasitic assignment, so no argument receives two roles:
-the marking requirement rules out the sole potential case of overgeneration (section 5.2). -/
 theorem Merger.length_le_one (h : Merger false before assigned after) :
     assigned.length ≤ 1 := by
   cases h <;> simp
@@ -445,19 +434,14 @@ def Property.Holds : Property → Formation → Prop
 instance (p : Property) (f : Formation) : Decidable (p.Holds f) := by
   cases p <;> unfold Property.Holds <;> infer_instance
 
-/-- The concluding table, listing the properties of lexical reciprocal verbs. -/
 theorem lexical_properties : Finset.univ.filter (Property.Holds · .lexical) =
     {.singularEvent, .frozenInput, .semanticDrift, .phrasalIdioms, .eventNominals,
       .discontinuous} := by
   decide
 
-/-- The two clusters are complementary on every property: the loci differ on every affordance
-and every property is a literal of one affordance. -/
 theorem holds_syntactic_iff (p : Property) : p.Holds .syntactic ↔ ¬ p.Holds .lexical := by
   cases p <;> decide
 
-/-- The discontinuous construction is a property of symmetric verbs, those whose reciprocity is
-a singular event (section 7.5): both are the absence of plural events at the locus. -/
 theorem holds_discontinuous_iff_singularEvent (f : Formation) :
     Property.discontinuous.Holds f ↔ Property.singularEvent.Holds f :=
   Iff.rfl
@@ -485,43 +469,32 @@ available and the subject to bear a sole role, a profile that is not complex. -/
 def Construction.AllowsIReading (r : RoleList) (c : Construction) : Prop :=
   c.AllowsSubEventReading ∧ ¬ (c.subjectProfile r).IsComplexRole
 
-/-- Sub-event availability is necessary for the "I" reading. -/
 theorem subevents_necessary_for_I (h : ¬ c.AllowsSubEventReading) : ¬ c.AllowsIReading r :=
   fun hc ↦ h hc.1
 
-/-- A sole θ-role on the subject is necessary for the "I" reading. -/
 theorem complex_role_blocks_I (h : (c.subjectProfile r).IsComplexRole) :
     ¬ c.AllowsIReading r :=
   fun hc ↦ hc.2 h
 
-/-- A periphrastic reciprocal over a non-complex subject role allows the "I" reading:
-sub-events from the anaphor's plural operator and a sole role on the subject. -/
 theorem periphrastic_allows_I (hs : ¬ r.subjectProfile.IsComplexRole) :
     Construction.periphrastic.AllowsIReading r :=
   ⟨rfl, hs⟩
 
-/-- No plural events in the lexicon, so no sub-events and no "I" reading, for any base. -/
 theorem lexical_no_I_reading (r : RoleList) :
     ¬ (Construction.ofFormation .lexical).AllowsIReading r :=
   subevents_necessary_for_I (by decide)
 
-/-- In the syntax the bundled subject is a complex role, so there is no "I" reading though the
-sub-event reading is available. -/
 theorem syntactic_no_I_reading (ho : r.objectProfile = some o)
     (ha : r.subjectProfile.protoAgent.Nonempty) (hp : o.protoPatient.Nonempty) :
     ¬ (Construction.ofFormation .syntactic).AllowsIReading r :=
   complex_role_blocks_I (reciprocalize_isComplexRole ho ha hp)
 
-/-- Neither reciprocal verb type allows the "I" reading, over any transitive base with an
-agentive subject and an affected object. -/
 theorem no_I_reading_either_formation (f : Formation) (ho : r.objectProfile = some o)
     (ha : r.subjectProfile.protoAgent.Nonempty) (hp : o.protoPatient.Nonempty) :
     ¬ (Construction.ofFormation f).AllowsIReading r := by
   cases f
   exacts [lexical_no_I_reading r, syntactic_no_I_reading ho ha hp]
 
-/-- Over any transitive base whose subject role is agentive but not complex and whose object is
-affected, the "I" reading is available in the periphrastic construction and only there. -/
 theorem I_reading_iff_periphrastic (hs : ¬ r.subjectProfile.IsComplexRole)
     (ho : r.objectProfile = some o) (ha : r.subjectProfile.protoAgent.Nonempty)
     (hp : o.protoPatient.Nonempty) : c.AllowsIReading r ↔ c = .periphrastic := by
@@ -530,8 +503,6 @@ theorem I_reading_iff_periphrastic (hs : ¬ r.subjectProfile.IsComplexRole)
   · exact iff_of_false (subevents_necessary_for_I (by decide)) (by decide)
   · exact iff_of_false (complex_role_blocks_I (reciprocalize_isComplexRole ho ha hp)) (by decide)
 
-/-- Singular-event verbs lack the sub-event reading: both are the availability of plural events
-at the composition locus (sections 2.2 to 2.3). -/
 theorem singular_event_no_subevents (f : Formation) (h : Property.singularEvent.Holds f) :
     ¬ (Construction.ofFormation f).AllowsSubEventReading := by
   rw [Construction.AllowsSubEventReading, compositionLocus_ofFormation]
@@ -550,16 +521,11 @@ section Periphrastic
 variable {D E : Type*} [SemilatticeSup E] [DecidableEq D] {V : Set E} {ag th : E → D}
   {d₁ d₂ : D}
 
-/-- On a pair antecedent, the each-other LF is the crossed directional pattern: strong
-reciprocity at two members. -/
 theorem eachOtherLF_pair (R : D → D → Prop) (hne : d₁ ≠ d₂) :
     HeimLasnikMay1991.eachOtherLF {d₁, d₂} R ↔ R d₁ d₂ ∧ R d₂ d₁ := by
   rw [HeimLasnikMay1991.eachOtherLF_iff_strongReciprocity (by simp [Finset.card_pair hne]),
     strongReciprocity_pair, and_iff_right hne]
 
-/-- The periphrastic construction has the accumulation reading: the LF's two directional
-relations, read off the base verb's events, sum to a plural reciprocal event (sections 2.1 to
-2.2). -/
 theorem accumulation_of_eachOtherLF (hne : d₁ ≠ d₂)
     (h : HeimLasnikMay1991.eachOtherLF {d₁, d₂} (fun a b ↦ ∃ e ∈ V, ag e = a ∧ th e = b)) :
     ∃ e, AccumulationReading V ag th d₁ d₂ e := by
@@ -635,7 +601,6 @@ def kissAg (e : KissEvent) : Individual := if IsDansKissing e then dan else rina
 /-- The theme of a directional kissing, Rina for the even events. -/
 def kissTh (e : KissEvent) : Individual := if IsDansKissing e then rina else dan
 
-/-- Round `j`'s two directional events form a crossed pair. -/
 theorem crossedPair_round {j : ℕ} (hj : j < 5) :
     CrossedPair kiss kissAg kissTh dan rina (directional (2 * j)) (directional (2 * j + 1)) := by
   have hodd : ¬ IsDansKissing (directional (2 * j + 1)) := by
@@ -675,12 +640,10 @@ theorem card_mutualEvent : (Finset.univ.image mutualEvent).card = 5 := by
   rw [Finset.card_image_of_injective _ mutualEvent_injective]
   simp
 
-/-- Ten directional kissing events underlie them. -/
 theorem card_directional : ((Finset.range 10).image directional).card = 10 := by
   rw [Finset.card_image_of_injective _ directional_injective]
   simp
 
-/-- Each mutual event dissolves to its round's directional events. -/
 theorem mutualEvent_down (j : Fin 5) :
     kissGroups.down (mutualEvent j) = directional (2 * j) ⊔ directional (2 * j + 1) :=
   kissGroups.down_up _
@@ -746,7 +709,6 @@ theorem accumulated_subEventReading (j : Fin 5) :
   subEventReading_of_crossedPair (directional_not_le (by omega)) (directional_not_le (by omega))
     (crossedPair_round j.isLt)
 
-/-- Both directional events are proper parts of the accumulation event. -/
 theorem directional_lt_accumulated (j : Fin 5) :
     directional (2 * j) < accumulated j ∧ directional (2 * j + 1) < accumulated j :=
   ⟨left_lt_sup.mpr (directional_not_le (by omega)),
@@ -797,8 +759,6 @@ theorem underlyingReading_of_discontinuous (h : IsDyadicSymmetricVerb GE V ag th
   obtain ⟨e, he, rfl, rfl⟩ := hd
   exact ⟨e, h.underlyingReading e he, (h.underlyingReading e he).symm⟩
 
-/-- Modification of the dyadic entry by a count adverbial counts its singular events: the
-underlying events stay invisible (section 7.5). -/
 theorem not_subEventReading (h : IsDyadicSymmetricVerb GE V ag th Vsym agTh obl) (he : e ∈ Vsym)
     {V' : Set E} {ag' th' : E → D} {d₁' d₂' : D} : ¬ SubEventReading V' ag' th' d₁' d₂' e :=
   fun hs ↦ hs.not_atom (h.atom e he)

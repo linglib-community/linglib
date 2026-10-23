@@ -162,7 +162,6 @@ theorem step_23i : (murinbata 4).stepOptimum (strays 4) = {[troch, stray, stray]
 theorem step_23m : (murinbata 4).stepOptimum [troch, stray, stray] = {[troch, troch]} := by
   decide +kernel
 
-/-- The even-parity derivation converges without a monosyllabic foot. -/
 theorem converged_23 : (murinbata 4).Converged [troch, troch] := by decide +kernel
 
 /-- The monosyllabic-foot parses of `/σσσσ/` ((23b–e)). -/
@@ -206,7 +205,6 @@ def macedonian (n : ℕ) : HSDerivation (Footing Unit) :=
 theorem step_29f : (macedonian 4).stepOptimum (strays 4) = {[stray, troch, stray]} := by
   decide +kernel
 
-/-- No further foot is parsed, `Trochee` and `Iamb` dominating `Parse(σ)`. -/
 theorem converged_29 : (macedonian 4).Converged [stray, troch, stray] := by decide +kernel
 
 /-! ### Bidirectional and ternary footing (§2.2)
@@ -248,7 +246,6 @@ theorem step_36q :
       {[troch, stray, troch, stray, troch, stray]} := by
   decide +kernel
 
-/-- The stray syllables cannot be footed without violating `NonFinality` or `*FootFoot`. -/
 theorem converged_36 : (cayuvava 9).Converged [troch, stray, troch, stray, troch, stray] := by
   decide +kernel
 

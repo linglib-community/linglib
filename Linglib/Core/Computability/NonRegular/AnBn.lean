@@ -71,8 +71,6 @@ theorem replicate_append_replicate_mem_anbn (n : ℕ) :
   simp [count_replicate, hab, hab.symm] at ha hb
   omega
 
-/-- For distinct letters, `{aⁿbⁿ}` is not regular: the left quotients by the words `aⁿ` are
-pairwise distinct, since `bⁿ` is in the one by `aᵐ` exactly when `m = n`. -/
 theorem not_isRegular_anbn (hab : a ≠ b) : ¬ (anbn a b).IsRegular := fun h ↦
   Finite.false <| h.finite_of_injective_leftQuotient (ι := ℕ) fun _ n hmn ↦
     (replicate_append_replicate_mem_anbn_iff hab).1 <|
@@ -103,7 +101,6 @@ theorem derives_anbn (n : ℕ) : (anbn a b).Derives [nonterminal ()]
     rw [replicate_succ', replicate_succ]
     simp
 
-/-- The sentential forms of `anbn` are `aⁿ S bⁿ` and `aⁿbⁿ`. -/
 theorem derives_anbn_iff {v : List (Symbol α (anbn a b).NT)} :
     (anbn a b).Derives [nonterminal ()] v ↔ ∃ n,
       v = (replicate n a).map terminal ++ [nonterminal ()] ++ (replicate n b).map terminal ∨
@@ -139,8 +136,6 @@ end ContextFreeGrammar
 theorem Language.isContextFree_anbn (a b : α) : (anbn a b).IsContextFree :=
   ⟨_, ContextFreeGrammar.language_anbn⟩
 
-/-- Over a finite alphabet with two distinct letters `a` and `b`, the regular languages are a
-proper subclass of the context-free languages, as `{aⁿbⁿ}` witnesses. -/
 theorem Language.setOf_isRegular_ssubset_setOf_isContextFree [Finite α] [Nontrivial α] :
     {L : Language α | L.IsRegular} ⊂ {L | L.IsContextFree} := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne α

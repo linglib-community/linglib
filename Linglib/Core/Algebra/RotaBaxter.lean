@@ -61,7 +61,6 @@ def IsRotaBaxter (θ : k) (P : A → A) : Prop :=
 
 variable {θ : k} {P : A → A} {a b : A}
 
-/-- The range of a Rota–Baxter operator is closed under multiplication. -/
 theorem IsRotaBaxter.mul_mem_range (h : IsRotaBaxter θ P) (ha : a ∈ Set.range P)
     (hb : b ∈ Set.range P) : a * b ∈ Set.range P := by
   obtain ⟨x, rfl⟩ := ha
@@ -79,8 +78,6 @@ section Semiring
 variable [Monoid k] [NonUnitalNonAssocSemiring A] [DistribMulAction k A] [IsScalarTower k A A]
   [SMulCommClass k A A] {θ : k} {P : A → A} {a b : A}
 
-/-- The range of `θ • id + P` is closed under multiplication when `P` has weight `θ`: the product
-of the values at `x` and `y` is the value at `P x * y + x * P y + θ • (x * y)`. -/
 theorem IsRotaBaxter.mul_mem_range_smul_add (h : IsRotaBaxter θ P)
     (ha : a ∈ Set.range fun x ↦ θ • x + P x) (hb : b ∈ Set.range fun x ↦ θ • x + P x) :
     a * b ∈ Set.range fun x ↦ θ • x + P x := by

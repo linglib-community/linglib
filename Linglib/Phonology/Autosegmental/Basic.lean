@@ -104,7 +104,6 @@ theorem Link.ne {i j : ι} {p q : ℕ} (h : X.Link i j p q) : i ≠ j := fst_ne_
 
 theorem link_comm {i j : ι} {p q : ℕ} : X.Link i j p q ↔ X.Link j i q p := ⟨.symm, .symm⟩
 
-/-- Representations with the same words and graphs are equal. -/
 theorem mk_inj {w : ∀ i, List (τ i)} {G G' : SimpleGraph ((i : ι) × Fin (w i).length)}
     {hG hG'} {d : DecidableRel G.Adj} {d' : DecidableRel G'.Adj} :
     (⟨w, G, hG, d⟩ : AR τ) = ⟨w, G', hG', d'⟩ ↔ G = G' := by
@@ -113,7 +112,6 @@ theorem mk_inj {w : ∀ i, List (τ i)} {G G' : SimpleGraph ((i : ι) × Fin (w 
   congr
   exact Subsingleton.elim _ _
 
-/-- Representations with the same words and the same lines are equal. -/
 @[ext] theorem ext (hw : X.word = Y.word) (hl : ∀ i j p q, X.Link i j p q ↔ Y.Link i j p q) :
     X = Y := by
   cases X
@@ -122,7 +120,6 @@ theorem mk_inj {w : ∀ i, List (τ i)} {G G' : SimpleGraph ((i : ι) × Fin (w 
   exact mk_inj.2 <| SimpleGraph.ext <| funext₂ fun v v' ↦ propext <|
     link_iff_adj.symm.trans <| (hl v.1 v'.1 v.2 v'.2).trans link_iff_adj
 
-/-- Equality is checked on words and on in-bounds positions. -/
 theorem ext_iff_bounded : X = Y ↔ (∀ i, X.word i = Y.word i) ∧
     ∀ i j, ∀ p < (X.word i).length, ∀ q < (X.word j).length, X.Link i j p q ↔ Y.Link i j p q := by
   refine ⟨by rintro rfl; exact ⟨fun _ ↦ rfl, fun _ _ _ _ _ _ ↦ .rfl⟩, fun ⟨hw, hl⟩ ↦
@@ -250,7 +247,6 @@ def wordHom (i : ι) : AR τ →* FreeMonoid (τ i) where
 
 @[simp] theorem wordHom_apply (i : ι) : wordHom i X = .ofList (X.word i) := rfl
 
-/-- The word of a realization on each tier is the realization of the words. -/
 theorem wordHom_comp_lift {S : Type*} (g₀ : S → AR τ) (i : ι) :
     (wordHom i).comp (FreeMonoid.lift g₀) = FreeMonoid.lift fun s ↦ wordHom i (g₀ s) :=
   FreeMonoid.hom_eq fun _ ↦ rfl
@@ -280,22 +276,17 @@ instance [Fintype ι] : Decidable X.NoCrossing :=
 
 @[simp] theorem NoCrossing.one : (1 : AR τ).NoCrossing := fun _ _ _ h ↦ h.elim
 
-/-- The lines between two tiers are non-crossing iff no two links between them cross, in
-`ℕ` coordinates. -/
 theorem isNonCrossing_lines_iff {i j : ι} : IsNonCrossing (X.lines i j) ↔
     ∀ ⦃p q p' q'⦄, X.Link i j p q → X.Link i j p' q' → p < p' → q ≤ q' :=
   ⟨fun h _ _ _ _ ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦
       @h (⟨_, hp⟩, ⟨_, hq⟩) h₁ (⟨_, hp'⟩, ⟨_, hq'⟩) h₂ hlt,
     fun h a ha b hb hlt ↦ h ⟨a.1.2, a.2.2, ha⟩ ⟨b.1.2, b.2.2, hb⟩ hlt⟩
 
-/-- The lines between two tiers are non-crossing iff the links between them, as a relation on
-`ℕ`, are non-crossing. -/
 theorem isNonCrossing_lines_iff_link {i j : ι} :
     IsNonCrossing (X.lines i j) ↔ IsNonCrossing {x : ℕ × ℕ | X.Link i j x.1 x.2} :=
   isNonCrossing_lines_iff.trans
     ⟨fun h _ ha _ hb ↦ h ha hb, fun h _ _ _ _ h₁ h₂ ↦ @h (_, _) h₁ (_, _) h₂⟩
 
-/-- No line joins a tier to itself. -/
 theorem isNonCrossing_lines_self (i : ι) : IsNonCrossing (X.lines i i) :=
   isNonCrossing_lines_iff.2 fun _ _ _ _ h ↦ absurd rfl h.ne
 
@@ -335,7 +326,6 @@ def map : AR τ where
     rintro _ _ ⟨-, v, v', h, rfl, rfl⟩
     exact X.assoc_le h
 
-/-- The lines of a moved representation are the moved lines. -/
 theorem lines_map (i j : ι) : (X.map w f).lines i j = Prod.map (f i) (f j) '' X.lines i j := by
   ext ⟨p, q⟩
   simp only [lines, map, Set.mem_ofPred_eq, SimpleGraph.map_adj', Set.mem_image, Prod.exists,
@@ -349,7 +339,6 @@ theorem lines_map (i j : ι) : (X.map w f).lines i j = Prod.map (f i) (f j) '' X
   · rintro ⟨p', q', h, rfl, rfl⟩
     exact ⟨fun he ↦ fst_ne_of_adj h (Sigma.mk.inj_iff.1 he).1, ⟨i, p'⟩, ⟨j, q'⟩, h, rfl, rfl⟩
 
-/-- The lines of a moved representation in `ℕ` coordinates. -/
 theorem link_map {i j : ι} {r s : ℕ} :
     (X.map w f).Link i j r s ↔ ∃ x ∈ X.lines i j, (f i x.1 : ℕ) = r ∧ (f j x.2 : ℕ) = s := by
   constructor

@@ -79,13 +79,11 @@ def pureChomsky : CaseAssigners where
   domains := [(.D, {}), (.v, {}), (.C, {})]
   agree := [(.T, .nom), (.v, .acc), (.D, .gen)]
 
-/-- Sakha values nothing as unmarked: an NP no rule and no head reaches stays caseless. -/
 theorem no_elsewhere_case {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     {xs : List α} {i : ℕ} {x : α} {c : Case} {m : Mechanism}
     (h : (grammar.assign np probes xs)[i]? = some (x, some (c, m))) : m ≠ .unmarked :=
   CaseAssigners.mechanism_ne_unmarked (by decide) h
 
-/-- The Agree-based grammar values nothing dative: a dative NP brought it from the lexicon. -/
 theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hx : xs[i]? = some x)
     (h : (pureChomsky.assign np probes xs)[i]? = some (x, some (.dat, m))) :
@@ -97,8 +95,6 @@ theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List
     simp only [Option.some.injEq, Prod.mk.injEq, true_and] at h
     rw [h.1]
 
-/-- The Agree-based grammar values an NP accusative only where a `v` probes: in a derivation
-    without one, an accusative NP brought its case from the lexicon. -/
 theorem pureChomsky_v_of_acc {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
     {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hlex : (np x).lexicalCase = none)
     (h : (pureChomsky.assign np probes xs)[i]? = some (x, some (.acc, m))) :
@@ -141,24 +137,16 @@ attribute [local simp] cases CaseAssigners.assign domainPass probePass
   possessor pro finite
 
 
-/-- In differential object marking a shifted object is accusative and an unshifted one
-    caseless, the subject nominative from T either way. -/
 theorem dom (shifted : Bool) :
     cases grammar finite [subject, internal shifted] =
       [some .nom, if shifted then some .acc else none] := by
   cases shifted <;> simp
 
-/-- In a ditransitive the goal is dative on the verb-phrase cycle whether or not the theme
-    shifts, and the theme accusative exactly when it does; a causative of a transitive base
-    is the same configuration, with the causee the higher of the two. -/
 theorem ditransitive (shifted : Bool) :
     cases grammar finite [subject, internal false, internal shifted] =
       [some .nom, some .dat, if shifted then some .acc else none] := by
   cases shifted <;> simp
 
-/-- In a causative the causee of a transitive base is dative, c-commanding the theme in the
-    verb phrase, and the causee of an intransitive base, alone there, is accusative once it
-    shifts and never dative. -/
 theorem causative (shifted : Bool) :
     cases grammar finite [subject, internal false, internal shifted] =
       [some .nom, some .dat, if shifted then some .acc else none] ∧
@@ -166,8 +154,6 @@ theorem causative (shifted : Bool) :
       [some .nom, if shifted then some .acc else none] :=
   ⟨ditransitive shifted, dom shifted⟩
 
-/-- In a passive the shifted theme is accusative exactly when a covert agent is present, and
-    nominative from T otherwise; a goal is dative either way. -/
 theorem passive :
     cases grammar finite [pro, internal true] = [some .nom, some .acc] ∧
     cases grammar finite [internal true] = [some .nom] ∧
@@ -176,8 +162,6 @@ theorem passive :
     cases grammar finite [internal false, internal true] = [some .dat, some .nom] := by
   simp
 
-/-- An agentive nominalization has no T, but its covert agent makes the shifted object
-    accusative; without the agent the object is caseless. -/
 theorem agentive_nominal :
     cases grammar [] [pro, internal true] = [none, some .acc] ∧
     cases grammar [] [internal true] = [none] := by
@@ -190,23 +174,17 @@ theorem raising :
     cases grammar finite [internal true] = [some .nom] := by
   simp
 
-/-- Under *promise* the goal is dative once the raised subject is below it in the verb phrase,
-    and accusative when nothing is. -/
 theorem promise :
     cases grammar finite [subject, internal false, internal true] =
       [some .nom, some .dat, some .acc] ∧
     cases grammar finite [subject, internal true] = [some .nom, some .acc] := by
   simp
 
-/-- A possessor is genitive from its D, and invisible to the clause. -/
 theorem possessed :
     cases grammar (finite ++ [(.D, .D)]) [subject, possessor, internal true] =
       [some .nom, some .gen, some .acc] := by
   simp
 
-/-- Without an elsewhere case, a caseless NP left in the verb phrase or a subject without an
-    agreeing head stays caseless — the Case filter's bite — where the configurational grammar
-    values both. -/
 theorem elsewhere_contrast :
     cases grammar finite [subject, internal false] = [some .nom, none] ∧
     cases grammar [] [subject] = [none] ∧
@@ -373,17 +351,10 @@ instance (g : CaseAssigners) (chomskian : Bool) (r : Datum) :
     Decidable (Derivable g chomskian r) := by
   unfold Derivable; infer_instance
 
-/-- Each of the paper's Sakha examples is acceptable exactly when some structure derives the
-    cases it shows under the two-modality grammar with the Case filter and the
-    case–agreement link. -/
 theorem rows_case :
     ∀ r ∈ Examples.all, r.judgment = .acceptable ↔ Derivable grammar true r := by
   decide
 
-/-- Without the Case filter and the case–agreement link, the configurational grammar derives
-    a rejected example — a bare object separated from the verb, an unagreed-with subject of a
-    participial clause, a passive whose verb agrees with nothing though its theme is
-    nominative. -/
 theorem pure_marantz_overgenerates :
     ∃ r ∈ Examples.all, r.judgment ≠ .acceptable ∧ Derivable pureMarantz false r := by
   decide

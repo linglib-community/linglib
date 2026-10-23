@@ -85,7 +85,6 @@ noncomputable def obs (a : Access) : Kernel State Obs := hypergeometric 10 a
 instance (a : Access) : IsFiniteKernel (obs a) :=
   inferInstanceAs (IsFiniteKernel (hypergeometric 10 a))
 
-/-- An observation is possible at a state exactly when some draw yields it. -/
 theorem obs_apply_singleton_ne_zero_iff (a : Access) (s : State) (o : Obs) :
     obs a s {o} ≠ 0 ↔ hypergeometricCount 10 s a o ≠ 0 :=
   hypergeometric_apply_singleton_ne_zero_iff s o
@@ -100,14 +99,12 @@ noncomputable def belief (a : Access) : Kernel Obs State := (obs a)†P
 
 instance (a : Access) : IsMarkovKernel (belief P a) := inferInstanceAs (IsMarkovKernel ((obs a)†P))
 
-/-- A state of positive prior at which the observation is possible keeps positive belief. -/
 theorem belief_apply_singleton_ne_zero {a : Access} {o : Obs} {s : State} (hP : P {s} ≠ 0)
     (h : hypergeometricCount 10 s a o ≠ 0) : belief P a o {s} ≠ 0 :=
   have ho := (obs_apply_singleton_ne_zero_iff a s o).2 h
   (posterior_apply_singleton_ne_zero_iff _ _ (Measure.comp_apply_singleton_ne_zero _ _ hP ho) s).2
     ⟨hP, ho⟩
 
-/-- With complete access the belief is the point mass at the observed state. -/
 theorem belief_full {o : Obs} (hP : P {o} ≠ 0) : belief P 10 o = Measure.dirac o :=
   posterior_hypergeometric_self o P hP
 
@@ -153,15 +150,12 @@ def meaning : SimpleExpr → State → Prop
 /-- The extension of a simple expression. -/
 def ext (m : SimpleExpr) : Set State := {s | θ.meaning m s}
 
-/-- *Certainly* entails *probably* when its threshold is the higher. -/
 theorem ext_certainly_subset (h : θ.probably ≤ θ.certainly) :
     θ.ext .certainly ⊆ θ.ext .probably := fun _ hs ↦ lt_of_le_of_lt h hs
 
-/-- *Probably* entails *possibly* when its threshold is the higher. -/
 theorem ext_probably_subset (h : θ.possibly ≤ θ.probably) :
     θ.ext .probably ⊆ θ.ext .possibly := fun _ hs ↦ lt_of_le_of_lt h hs
 
-/-- *Certainly not* entails *probably not* when the threshold of *certainly* is the higher. -/
 theorem ext_certainlyNot_subset (h : θ.probably ≤ θ.certainly) :
     θ.ext .certainlyNot ⊆ θ.ext .probablyNot := fun s hs ↦ by
   simp only [ext, meaning, Set.mem_ofPred_eq] at hs ⊢
@@ -181,8 +175,6 @@ instance : IsFiniteKernel (L0 θ P) := inferInstanceAs (IsFiniteKernel (RSA.list
 instance (m : SimpleExpr) : IsZeroOrProbabilityMeasure (L0 θ P m) :=
   inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.listener _ (truthful _) m))
 
-/-- The literal listener is a probability measure at a message whose extension has positive prior
-mass. -/
 theorem isProbabilityMeasure_L0 [IsFiniteMeasure P] {m : SimpleExpr} (h : P (θ.ext m) ≠ 0) :
     IsProbabilityMeasure (L0 θ P m) :=
   ⟨listener_truthful_apply_univ P θ.ext h⟩
@@ -218,7 +210,6 @@ theorem utility_eq (x : Obs × Access) (m : SimpleExpr) :
       √2) := by
   simp [utility, hellingerDist, EuclideanSpace.dist_eq, Real.dist_eq]
 
-/-- The utility of a message is at least minus one. -/
 theorem neg_one_le_utility (x : Obs × Access) (m : SimpleExpr) : -1 ≤ utility θ P x m :=
   neg_le_neg (hellingerDist_le_one _ _)
 
@@ -226,8 +217,6 @@ theorem neg_one_le_utility (x : Obs × Access) (m : SimpleExpr) : -1 ≤ utility
 noncomputable def speaker : Kernel (Obs × Access) SimpleExpr :=
   Kernel.softmax fun x m ↦ ((lam * utility θ P x m : ℝ) : EReal)
 
-/-- The Hellinger utility is finite, so every message is used with positive probability at
-every observation, and pragmatically true-enough messages can be sent. -/
 theorem speaker_apply_singleton_ne_zero (x : Obs × Access) (m : SimpleExpr) :
     speaker lam θ P x {m} ≠ 0 :=
   Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
@@ -248,8 +237,6 @@ of the Hellinger distance (the paper's footnote on utilities). -/
 noncomputable def klSpeaker : Kernel (Obs × Access) SimpleExpr :=
   RSA.speaker lam 0 (L0 θ P) fun x ↦ belief P x.2 x.1
 
-/-- In the paper's example, after three red balls of four, *probably* excludes a state of three
-red balls that keeps positive belief, so the Kullback–Leibler speaker never says it. -/
 theorem klSpeaker_probably_eq_zero (hlam : 0 < lam) (hθ : 3 / 10 ≤ θ.probably)
     (hP : P {3} ≠ 0) : klSpeaker lam θ P (3, 4) {.probably} = 0 := by
   refine (speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 fun hac ↦ ?_
@@ -265,28 +252,20 @@ section FullAccess
 
 variable {lam : ℝ} (θ : Thresholds) (P : Measure State) [IsFiniteMeasure P] {s : State}
 
-/-- With complete access the utility of a message whose extension has positive prior mass is
-minus the Hellinger distance of the point mass at the state from the literal listener. -/
 theorem utility_full (hP : P {s} ≠ 0) {m : SimpleExpr} (hm : P (θ.ext m) ≠ 0) :
     utility θ P (s, 10) m = -√(1 - √((L0 θ P m).real {s})) := by
   have := isProbabilityMeasure_L0 θ P hm
   rw [utility, belief_full P hP, hellingerDist_dirac_left]
 
-/-- With complete access a false message whose extension has positive prior mass has the least
-utility, minus one. -/
 theorem utility_full_of_notMem (hP : P {s} ≠ 0) {m : SimpleExpr} (hm : P (θ.ext m) ≠ 0)
     (h : s ∉ θ.ext m) : utility θ P (s, 10) m = -1 := by
   rw [utility_full θ P hP hm, L0_real_of_notMem θ P h, Real.sqrt_zero, sub_zero, Real.sqrt_one]
 
-/-- With complete access the utility of a true message is fixed by the state's share of the prior
-mass of the extension. -/
 theorem utility_full_of_mem (hP : P {s} ≠ 0) {m : SimpleExpr} (h : s ∈ θ.ext m) :
     utility θ P (s, 10) m = -√(1 - √(P.real {s} / P.real (θ.ext m))) := by
   rw [utility_full θ P hP (measure_pos_of_superset (Set.singleton_subset_iff.2 h) hP).ne',
     L0_real_of_mem θ P h]
 
-/-- With complete access a true message beats a false one whose extension has positive prior
-mass. -/
 theorem speaker_full_lt_of_notMem_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : SimpleExpr}
     (hm : P (θ.ext m) ≠ 0) (h : s ∉ θ.ext m) (h' : s ∈ θ.ext m') :
     (speaker lam θ P (s, 10)).real {m} < (speaker lam θ P (s, 10)).real {m'} := by
@@ -371,8 +350,6 @@ marginal is the state listener of (19), its second the observation listener of (
 noncomputable def listener : Kernel SimpleExpr (State × (Obs × Access)) :=
   RSA.listener (joint P A) (jointSpeaker lam θ P)
 
-/-- No message rules out a state. A state of positive prior keeps positive posterior whenever
-drawing nothing has positive prior, since the speaker who drew nothing may send any message. -/
 theorem listener_fst_apply_singleton_ne_zero {s : State} (hP : P {s} ≠ 0) (hA : A {0} ≠ 0)
     (m : SimpleExpr) : (listener lam θ P A m).fst {s} ≠ 0 := by
   have hj : joint P A {(s, (0, 0))} ≠ 0 := by
@@ -445,8 +422,6 @@ threshold. -/
 def complex (Y : Outer) (X : Inner) : Set (Obs × Access) :=
   {x | θ.outer Y < (belief P x.2 x.1).real (θ.innerExt X)}
 
-/-- With complete access the belief is a point mass, so an outer modifier of threshold below
-one is vacuous and the complex expression holds exactly where the inner one does. -/
 theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ θ.outer Y)
     (X : Inner) : (s, 10) ∈ θ.complex P Y X ↔ s ∈ θ.innerExt X ∧ θ.outer Y < 1 := by
   classical

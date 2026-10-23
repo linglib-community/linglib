@@ -62,8 +62,6 @@ open Degree Numerals NeoGricean Quantifier Quantifier.GQ Set
 (29), (41), (42): the numeral form `c m` is true of a degree property when its greatest degree
 stands in the relation `c` to `m`, the substrate's `MaxIn (c.interval m)`. -/
 
-/-- On the degrees a count reaches, the de-Fregean form is the comparison of the count itself,
-the substrate's meaning of the numeral, two-sided bare content with no Horn scale. -/
 theorem maxIn_interval_Iic (c : Comparison) (m n : ℕ) :
     MaxIn (c.interval m) (Iic n) ↔ n ∈ c.interval m :=
   maxIn_Iic
@@ -102,7 +100,6 @@ theorem narrow_scope_two_sided (Q : NP W) :
     LowScope (MaxIn {m}) Q (Iic ∘ count) ↔ Q fun w ↦ count w = m :=
   lowScope_maxIn
 
-/-- In `ℕ` an infimum is attained. -/
 private theorem isGLB_iff_isLeast {s : Set ℕ} : IsGLB s m ↔ IsLeast s m :=
   ⟨fun h ↦ h.isLeast <| by_contra fun hm ↦ absurd
       (h.2 (show m + 1 ∈ lowerBounds s from
@@ -134,8 +131,6 @@ primary implicatures as their negated knowledge. -/
 def stronger (m : ℕ) (c : Comparison) : Set Comparison :=
   {c' | c'.interval m ⊂ c.interval m}
 
-/-- Inclusion between two forms of a positive numeral is decided at three counts, one below,
-at, and above the number. -/
 private theorem interval_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
     c.interval m ⊆ c'.interval m ↔
       (c.Rel 0 m → c'.Rel 0 m) ∧ (c.Rel m m → c'.Rel m m) ∧
@@ -146,8 +141,6 @@ private theorem interval_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
     simp only [Comparison.Rel, imp_iff_not_or, not_true_eq_false, false_or] at h0 hm' h1 hx ⊢ <;>
     omega
 
-/-- Among the forms of a positive numeral, the bare numeral asymmetrically entails both
-Class B forms and each Class A form entails the Class B form on its side, and nothing else. -/
 theorem interval_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
     c.interval m ⊂ c'.interval m ↔
       (c, c') ∈ [(Comparison.eq, Comparison.ge), (.eq, .le), (.gt, .ge), (.lt, .le)] := by
@@ -167,21 +160,16 @@ theorem stronger_le {m : ℕ} (hm : 0 < m) : stronger m .le = {.eq, .lt} := by
   simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
   cases c <;> simp
 
-/-- The bare numeral is entailed by none of its alternatives, so it has no primary implicatures
-and none of the upper-bounding secondary ones a Horn scale would give. -/
 theorem stronger_eq {m : ℕ} (hm : 0 < m) : stronger m .eq = ∅ := by
   ext c
   simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
   cases c <;> simp
 
-/-- The Class A *more than m* is entailed by no alternative, so it carries no ignorance
-implicature. -/
 theorem stronger_gt {m : ℕ} (hm : 0 < m) : stronger m .gt = ∅ := by
   ext c
   simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
   cases c <;> simp
 
-/-- The Class A *fewer than m* is entailed by no alternative. -/
 theorem stronger_lt {m : ℕ} (hm : 0 < m) : stronger m .lt = ∅ := by
   ext c
   simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]

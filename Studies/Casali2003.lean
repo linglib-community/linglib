@@ -220,8 +220,6 @@ def dominant : Tableau Word 4 :=
 /-- A dominant system assigns the specified value when either input carries it. -/
 def Word.dominantValue : Bool := if w.root = s ∨ w.affix = s then s else !s
 
-/-- Under the dominant ranking the specified value spreads from root or affix alike, the
-classic dominant–recessive pattern. -/
 theorem dominant_optimal :
     (dominant s w).optimal = {⟨w.dominantValue s, w.dominantValue s⟩} := by
   obtain ⟨r, a⟩ := w
@@ -238,13 +236,9 @@ def isolated : Tableau Bool 2 :=
 def isolatedDominant : Tableau Bool 2 :=
   Tableau.ofList {true, false} [.binary fun o ↦ a = s ∧ o ≠ s, .binary (· = s)]
 
-/-- Outside harmony a root-control system strips an affix of its specification, so
-harmonizing affixes surface with the value opposite to the dominant one: weak assimilatory
-dominance of `s`. -/
 theorem isolated_optimal : (isolated s a).optimal = {!s} := by
   cases s <;> cases a <;> decide
 
-/-- Under the dominant order an isolated affix keeps its value. -/
 theorem isolatedDominant_optimal : (isolatedDominant s a).optimal = {a} := by
   cases s <;> cases a <;> decide
 
@@ -267,8 +261,6 @@ def reversal : Tableau LowSuffixCand 4 :=
     [.binary fun c ↦ c.suffixAtr ∧ c.suffixLow, .binary fun c ↦ ¬ c.suffixLow,
       .binary fun c ↦ c.root ≠ c.suffixAtr, .binary fun c ↦ ¬ c.root]
 
-/-- The root loses its [+ATR] to the low suffix, [tɔla], which is indirect [−ATR] dominance in
-a language whose specified value is [+ATR]. -/
 theorem reversal_optimal : reversal.optimal = {⟨false, false, true⟩} := by decide
 
 end Casali2003

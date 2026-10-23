@@ -94,7 +94,6 @@ theorem isSubquotient_prod_right (T S : Type*) [Monoid T] [Monoid S] :
     IsSubquotient T (S × T) :=
   IsSubquotient.of_injective (MonoidHom.inr S T) (Prod.mk_right_injective 1)
 
-/-- Subquotients are closed under componentwise products. -/
 @[to_additive IsSubquotient.prod /-- Subquotients are closed under componentwise
 products. -/]
 theorem IsSubquotient.prod {T' S' : Type*} [Monoid T'] [Monoid S']
@@ -117,7 +116,6 @@ theorem IsSubquotient.card_le [Finite S] (h : IsSubquotient T S) :
   exact (Nat.card_le_card_of_surjective f hf).trans
     (Nat.card_le_card_of_injective N.subtype N.subtype_injective)
 
-/-- A subquotient of maximal cardinality is an isomorph. -/
 @[to_additive /-- A subquotient of maximal cardinality is an isomorph. -/]
 theorem IsSubquotient.nonempty_mulEquiv_of_card_le [Finite S] (hTS : IsSubquotient T S)
     (hle : Nat.card S ≤ Nat.card T) : Nonempty (T ≃* S) := by
@@ -127,7 +125,6 @@ theorem IsSubquotient.nonempty_mulEquiv_of_card_le [Finite S] (hTS : IsSubquotie
   exact ⟨(MulEquiv.ofBijective f (hf.bijective_of_nat_card_le (hNS.trans hle))).symm.trans
     (MulEquiv.ofBijective N.subtype (N.subtype_injective.bijective_of_nat_card_le hSN))⟩
 
-/-- Finite monoids that are subquotients of each other are isomorphic. -/
 @[to_additive /-- Finite additive monoids that are subquotients of each other are
 isomorphic. -/]
 theorem IsSubquotient.nonempty_mulEquiv [Finite S] (hTS : IsSubquotient T S)

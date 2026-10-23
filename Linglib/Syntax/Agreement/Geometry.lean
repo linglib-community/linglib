@@ -134,7 +134,6 @@ instance : PredOrder Node where
 
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
-/-- Dominance is dependence. -/
 theorem le_iff {a b : Node} : a ≤ b ↔ a = b ∨ a ∈ b.ancestors := Iff.rfl
 
 /-- The nodes a node depends on, itself included and the root excluded, from the root down:
@@ -145,7 +144,6 @@ theorem mem_below : ∀ {a n : Node}, a ∈ below n ↔ ⊥ < a ∧ a ≤ n := b
 
 theorem toFinset_below : ∀ n : Node, (below n).toFinset = Finset.Ioc ⊥ n := by decide
 
-/-- A dependent brings more than what it depends on. -/
 theorem below_subset_below : ∀ {a b : Node}, a ≤ b → below a ⊆ below b := by decide
 
 /-- The default daughters of the organizing nodes are Speaker, Minimal, and Inanimate. -/
@@ -237,7 +235,6 @@ theorem numberNodes_isLowerSet {active : Finset Node} {n : Number} {ns : Finset 
     (h : numberNodes active n = some ns) : IsLowerSet (↑(insert ⊥ ns) : Set Node) := by
   cases n <;> simp [numberNodes] at h <;> (try split_ifs at h) <;> subst h <;> decide
 
-/-- Every assigned geometry is a lower set. -/
 theorem cell_isLowerSet {active : Finset Node} {p : Person} {n : Number} {g : Finset Node}
     (h : cell active p n = some g) : IsLowerSet (↑g : Set Node) := by
   simp only [cell, Option.bind_eq_bind, Option.pure_def] at h

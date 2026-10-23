@@ -126,7 +126,6 @@ variable {σ : α} {ψs χs : List (α → α)} {φ f : α → α}
 
 theorem Entails.entailsFrom (h : Entails ψs φ) (σ : α) : EntailsFrom σ ψs φ := h σ
 
-/-- A single premise entails `φ` exactly when `φ` absorbs it. -/
 theorem entails_singleton_iff : Entails [f] φ ↔ φ ∘ f = f :=
   ⟨fun h ↦ funext h, fun h σ ↦ congrFun h σ⟩
 
@@ -141,22 +140,17 @@ theorem preservesAcceptance_iff :
     PreservesAcceptance ψs φ ↔ (⋂ ψ ∈ ψs, fixedPoints ψ) ⊆ fixedPoints φ := by
   simp only [PreservesAcceptance, Set.subset_def, Set.mem_iInter₂, mem_fixedPoints]
 
-/-- Acceptance preservation is monotone: adding premises preserves it. -/
 theorem PreservesAcceptance.mono (h : PreservesAcceptance ψs φ) (hsub : ψs ⊆ χs) :
     PreservesAcceptance χs φ :=
   fun σ hσ ↦ h σ fun ψ hψ ↦ hσ ψ (hsub hψ)
 
-/-- Entailment is left monotone: adding premises in front preserves it. -/
 theorem Entails.append_left (h : Entails ψs φ) (χs : List (α → α)) : Entails (χs ++ ψs) φ :=
   fun σ ↦ by rw [EntailsFrom, text_append]; exact h _
 
-/-- Inserting a conclusion drawn from `σ` right after its premises changes nothing. From right to
-left this is Sequential Monotony, and from left to right Sequential Cut. -/
 theorem EntailsFrom.insert_iff (h : EntailsFrom σ ψs φ) {θs : List (α → α)} {χ : α → α} :
     EntailsFrom σ (ψs ++ φ :: θs) χ ↔ EntailsFrom σ (ψs ++ θs) χ := by
   simp only [EntailsFrom, text_append, text_cons, h.eq]
 
-/-- Under Idempotence entailment is reflexive: a sentence follows from any premises ending in it. -/
 theorem entailsFrom_append_self (hφ : ∀ σ, IsFixedPt φ (φ σ)) : EntailsFrom σ (ψs ++ [φ]) φ := by
   simpa [EntailsFrom] using hφ _
 
@@ -174,8 +168,6 @@ theorem text_le (h : ∀ ψ ∈ ψs, ∀ σ, ψ σ ≤ σ) (σ : α) : text ψs 
   | cons ψ ψs ih =>
     exact (ih (fun χ hχ ↦ h χ (List.mem_cons_of_mem ψ hχ)) (ψ σ)).trans (h ψ (by simp) σ)
 
-/-- Along updates that never add possibilities, a state accepts a text exactly when it accepts
-each of its sentences. -/
 theorem isFixedPt_text_iff (h : ∀ ψ ∈ ψs, ∀ σ, ψ σ ≤ σ) {σ : α} :
     IsFixedPt (text ψs) σ ↔ ∀ ψ ∈ ψs, IsFixedPt ψ σ := by
   induction ψs with
@@ -202,29 +194,22 @@ def IsAdditive (f : α → α) : Prop := ∀ σ, f σ = σ ⊓ f ⊤
 
 theorem IsAdditive.le (hf : IsAdditive f) (σ : α) : f σ ≤ σ := (hf σ).trans_le inf_le_left
 
-/-- A state accepts an additive update exactly when it lies below the update's content. -/
 theorem IsAdditive.isFixedPt_iff (hf : IsAdditive f) : IsFixedPt f σ ↔ σ ≤ f ⊤ := by
   rw [IsFixedPt, hf σ, inf_eq_left]
 
 theorem isAdditive_id : IsAdditive (id : α → α) := fun _ ↦ inf_top_eq _ |>.symm
 
-/-- Meeting with a fixed content is additive. -/
 theorem isAdditive_inf_right (a : α) : IsAdditive (· ⊓ a) := fun _ ↦ by simp
 
 theorem IsAdditive.comp (hg : IsAdditive g) (hf : IsAdditive f) : IsAdditive (g ∘ f) := fun σ ↦ by
   show g (f σ) = σ ⊓ g (f ⊤)
   rw [hg (f σ), hf σ, hg (f ⊤), inf_assoc]
 
-/-- A text of additive updates is additive. -/
 theorem isAdditive_text (h : ∀ ψ ∈ ψs, IsAdditive ψ) : IsAdditive (text ψs) := by
   induction ψs with
   | nil => exact isAdditive_id
   | cons ψ ψs ih => exact (ih fun χ hχ ↦ h χ (List.mem_cons_of_mem ψ hχ)).comp (h ψ (by simp))
 
-/-- An update is additive exactly when it satisfies Strengthening, never adding possibilities,
-Monotony, Idempotence, and Persistence, the states that accept it being closed downward. The four
-constraints make the update a closure operator on the reversed order whose closed elements form
-an upper set, and such an operator is principal. -/
 theorem isAdditive_iff : IsAdditive f ↔
     (∀ σ, f σ ≤ σ) ∧ Monotone f ∧ (∀ σ, IsFixedPt f (f σ)) ∧ IsLowerSet (fixedPoints f) := by
   refine ⟨fun h ↦ ⟨h.le, fun σ τ hστ ↦ ?_, fun σ ↦ ?_, fun σ τ hτσ hσ ↦ ?_⟩,
@@ -239,7 +224,6 @@ theorem isAdditive_iff : IsAdditive f ↔
       c.isClosed_iff.2 (hpers hxy (c.isClosed_iff.1 hx))
     exact DFunLike.congr_fun hc (toDual σ)
 
-/-- For additive updates the three consequence relations coincide. -/
 theorem tfae_entails (hψs : ∀ ψ ∈ ψs, IsAdditive ψ) (hφ : IsAdditive φ) :
     [EntailsFrom ⊤ ψs φ, Entails ψs φ, PreservesAcceptance ψs φ].TFAE := by
   have hF := isAdditive_text hψs
@@ -260,8 +244,6 @@ section Effects
 
 variable {m : Type _ → Type _} [Monad m] [LawfulMonad m]
 
-/-- A state accepts a Kleisli arrow, read as an update through the monad's bind, exactly when the
-arrow returns it unchanged. -/
 theorem isFixedPt_bind_pure_iff {φ : α → m α} {σ : α} :
     IsFixedPt (· >>= φ) (pure σ : m α) ↔ φ σ = pure σ := by
   rw [IsFixedPt, pure_bind]
@@ -274,25 +256,19 @@ section CCP
 
 variable {S : Type*} {u : CCP S} {c d s : Set S}
 
-/-- The static update with a content is additive. -/
 theorem CCP.isAdditive_up (c : Set S) : IsAdditive (CCP.up c) := fun s ↦ by simp [CCP.up]
 
-/-- A state accepts a static update exactly when it lies inside the content. -/
 theorem CCP.isFixedPt_up_iff : IsFixedPt (CCP.up c) s ↔ s ⊆ c := Set.inter_eq_left
 
-/-- On sets of possibilities the additive updates are the classical ones, eliminative and
-distributive. -/
 theorem CCP.isAdditive_iff_isClassical : IsAdditive u ↔ u.IsClassical := by
   rw [CCP.isClassical_iff_up_down_eq]
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ CCP.isAdditive_up _⟩
   rw [show u = CCP.up (u ⊤) from funext h, CCP.down_up]
 
-/-- Entailment between static updates is inclusion of their contents. -/
 theorem CCP.entails_up_iff : Entails [CCP.up c] (CCP.up d) ↔ c ⊆ d :=
   ⟨fun h ↦ by simpa [CCP.up] using CCP.isFixedPt_up_iff.1 (h Set.univ),
     fun h _ ↦ CCP.isFixedPt_up_iff.2 (Set.inter_subset_right.trans h)⟩
 
-/-- A relational update entails a test exactly when its outputs satisfy the test's condition. -/
 theorem Update.entails_image_test_iff (R : Update S) (C : Condition S) :
     Entails [R.image] (Update.test C).image ↔ R.cod ⊆ C := by
   rw [← CCP.up_eq_image_test]

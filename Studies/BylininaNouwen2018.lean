@@ -117,8 +117,6 @@ theorem isLowerSet_countDegrees_plural (A B : Set α) : IsLowerSet (countDegrees
   obtain ⟨y, hyx, rfl⟩ := Finset.exists_subset_card_eq hed
   exact ⟨y, mem_plural.2 ((Finset.coe_subset.2 hyx).trans (mem_plural.1 hx)), rfl⟩
 
-/-- With a collective predicate true of the plurality `s` alone, the degree property holds at `#s`
-alone, so the numeral has no at least reading. -/
 theorem countDegrees_singleton {A : Set α} {s : Finset α} (hs : ↑s ⊆ A) :
     countDegrees A {s} = {s.card} := by
   rw [countDegrees, inter_eq_right.2 (singleton_subset_iff.2 (mem_plural.2 hs)), image_singleton]
@@ -144,8 +142,6 @@ theorem zero_notMem_countDegrees_sdiff (A B : Set α) :
 theorem zero_mem_countDegrees (A B : Set α) : 0 ∈ countDegrees A (plural B) :=
   ⟨∅, ⟨mem_plural.2 (by simp), mem_plural.2 (by simp)⟩, Finset.card_empty⟩
 
-/-- Kennedy's quantifier holds of a degree property when the lower bound, exhaustified against the
-higher numerals, does: both say that `n` is its greatest degree. -/
 theorem maxIn_singleton_iff_exhAgainst {D : Type*} [LinearOrder D] {P : Set D} {n : D} :
     MaxIn {n} P ↔ exhAgainst (· < ·) (· ∈ P) n :=
   maxIn_singleton.trans <| and_congr_right' ⟨fun h _ hm hmP ↦ (h hmP).not_gt hm,
@@ -202,7 +198,6 @@ theorem exhaustified_zero : zero.exhaustified = nobody.licenser := by
 theorem isStrawsonUE_zero : zero.IsStrawsonUE :=
   fun p _ B _ _ ↦ zero_mem_countDegrees p.A B
 
-/-- So *zero* licenses no negative polarity item, weak or strong. -/
 @[simp] theorem not_licenses_zero (e : PolarityItem) : ¬ zero.Licenses e := by
   rintro (⟨_, _, h⟩ | ⟨h, _⟩ | ⟨h, _⟩)
   exacts [h.weak.2 isStrawsonUE_zero, h.elim, h.elim]
@@ -257,8 +252,6 @@ def Row.ofDatum (ex : Datum) : List Row :=
 
 def rows : List Row := Examples.all.flatMap Row.ofDatum
 
-/-- Every judgment is the library's verdict, a sentence being acceptable exactly when its licenser
-licenses its item. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.licenser.denote.Licenses r.item) := by
   decide
@@ -276,7 +269,6 @@ theorem antitone_maxIn_countDegrees {U : Set ℕ} (hU : IsLowerSet U) {A : Set �
   rw [countDegrees_plural_eq_Iic (hA.inter_of_left _), maxIn_Iic] at h ⊢
   exact hU (ncard_le_ncard (inter_subset_inter_right A hB) (hA.inter_of_left _)) h
 
-/-- Under `*`, *fewer than ten students passed* is false when no student passed. -/
 theorem not_antitone_maxIn_countDegrees_sdiff :
     ¬ Antitone fun B : Set Unit ↦ MaxIn (Iio 10) (countDegrees univ (plural B \ {∅})) := by
   intro h
@@ -295,22 +287,16 @@ section Scope
 
 variable {ι : Type*} {Q : NP ι} {P : ι → Set ℕ} {n : ℕ}
 
-/-- Exhaustification above `Q` is the numeral raised over `Q`. -/
 theorem exhAgainst_iff_highScope :
     exhAgainst (· < ·) (fun m ↦ Q fun x ↦ m ∈ P x) n ↔ HighScope (MaxIn {n}) Q P :=
   maxIn_singleton_iff_exhAgainst.symm
 
-/-- Exhaustification below `Q` is the numeral in situ under `Q`. -/
 theorem exhAgainst_iff_lowScope :
     (Q fun x ↦ exhAgainst (· < ·) (· ∈ P x) n) ↔ LowScope (MaxIn {n}) Q P := by
   simp only [LowScope, maxIn_singleton_iff_exhAgainst]
 
 end Scope
 
-/-- A count's measured degree property is that of its full pluralities. With finitely many members
-of each `A ∩ B i`, the pluralities of `A` that are `B i` have the degrees `Iic` of their number,
-so `Degree.LowScope` and `Degree.HighScope` at `Iic ∘` the count are the readings of the plural
-model. -/
 theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Set α}
     (h : ∀ i, (A ∩ B i).Finite) :
     (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=

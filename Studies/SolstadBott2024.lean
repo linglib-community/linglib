@@ -106,8 +106,6 @@ def Felicity.Licenses (f : Felicity) (k : Context) : Prop :=
 
 variable {f : Felicity} {k : Context} {m : Set W}
 
-/-- The strong constraint is met in an anaphoric context only, and the weak one in an anaphoric
-or a cataphoric context. -/
 theorem Felicity.licenses_iff :
     f.Licenses k ↔ f = .free ∨ f = .strong ∧ k = .anaphoric ∨ f = .weak ∧ k ≠ .neutral := by
   refine ⟨fun h ↦ ?_, fun h W m p hp ↦ ?_⟩
@@ -118,10 +116,6 @@ theorem Felicity.licenses_iff :
 instance (f : Felicity) (k : Context) : Decidable (f.Licenses k) :=
   decidable_of_iff' _ Felicity.licenses_iff
 
-/-- Take a sentence acceptable wherever some continuation meets its constraint. It is acceptable
-only in contexts that entail the content, the strong contextual felicity of Tonhauser and
-colleagues, exactly when the constraint is the strong one or the content is trivial. The
-constraint of occasion verbs is therefore not one. -/
 theorem strongContextualFelicity_iff :
     TonhauserEtAl2013.StrongContextualFelicity m (fun b ↦ ∃ a, f.Satisfied m b a) ↔
       f = .strong ∨ m = Set.univ := by
@@ -147,22 +141,16 @@ def TriggerTwo.felicity : TriggerTwo → Felicity
   | too => .strong
   | _ => .free
 
-/-- In both experiments a supported context differs reliably from the neutral one exactly where
-the trigger's constraint is met. A following sentence helps occasion verbs and does not help
-pronouns, demonstratives or *auch*. -/
 theorem contextTests_iff_licenses :
     (∀ r ∈ contextTestsExp1, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context) ∧
       ∀ r ∈ contextTestsExp2, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context := by
   decide +kernel
 
-/-- The weak constraint is the only one of the three that the tests on occasion verbs fit. -/
 theorem weak_of_occasion_tests (f : Felicity) :
     (∀ r ∈ contextTestsExp1, r.trigger = .occasion →
       (r.p.toRat < 1 / 20 ↔ f.Licenses r.context ∧ ¬ f.Licenses .neutral)) ↔ f = .weak := by
   revert f; decide +kernel
 
-/-- Where a trigger's constraint is met only with a supporting sentence, the supported sentence
-is rated above the unsupported one. -/
 theorem neutral_lt_of_licenses :
     (∀ t k, ¬ t.felicity.Licenses .neutral → t.felicity.Licenses k →
       (blockOneExp1 t .neutral).mean.toRat < (blockOneExp1 t k).mean.toRat) ∧
@@ -204,9 +192,6 @@ def Account.Filters (a : Account) (x : Antecedent) : Prop :=
   ∀ (Atom W : Type) (I : Atom → Set W) (p p' q : Atom), I q ⊆ I p →
     ∀ C, a.Accepts I C (x.formula p p' q)
 
-/-- Incremental local contexts and limited symmetry filter the implication only after the clause
-entailing it, symmetric local contexts on either side of it, and local accommodation
-everywhere. -/
 theorem Account.filters_iff {a : Account} {x : Antecedent} :
     a.Filters x ↔ a = .localAccommodation ∨ a = .symmetric ∧ x ≠ .triggerOnly ∨
       (a = .incremental ∨ a = .limitedSymmetry) ∧ x = .triggerLast := by
@@ -242,8 +227,6 @@ def Reliable (g : TriggerGroup) (y : Antecedent) : Prop :=
 instance (g : TriggerGroup) (y : Antecedent) : Decidable (Reliable g y) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The criterion agrees with the tests the paper reports for the trigger-first against the
-trigger-last antecedent. -/
 theorem reliable_triggerLast_iff (g : TriggerGroup) :
     Reliable g .triggerLast ↔ (orderTests g).p.toRat < 1 / 20 := by
   revert g; decide +kernel
@@ -260,9 +243,6 @@ def Account.Fits (a : Account) (g : TriggerGroup) : Prop :=
 instance (a : Account) (g : TriggerGroup) : Decidable (a.Fits g) :=
   inferInstanceAs (Decidable (∀ y : Antecedent, y ≠ .triggerFirst → _))
 
-/-- Only symmetric local contexts fit the occasion verbs, and only the two asymmetric accounts
-the factive and aspectual triggers. Local accommodation fits neither, since it makes the trigger
-alone as little projective as the trigger after the clause entailing its content. -/
 theorem fits_iff (a : Account) (g : TriggerGroup) :
     a.Fits g ↔ g = .occasion ∧ a = .symmetric ∨
       g = .factiveAspectual ∧ (a = .incremental ∨ a = .limitedSymmetry) := by
@@ -270,8 +250,6 @@ theorem fits_iff (a : Account) (g : TriggerGroup) :
 
 /-! ### Projectivity and at-issueness (Block 2) -/
 
-/-- The occasion implication is more projective and less at issue than the implications of the
-two classes of psychological verbs. -/
 theorem occasion_set_apart_from_psych :
     ∀ o ∈ blockTwo, ∀ r ∈ blockTwo, o.experiment = .exp2 → r.experiment = .exp2 →
       o.trigger = .occasion → r.trigger ≠ .occasion →
@@ -279,16 +257,11 @@ theorem occasion_set_apart_from_psych :
           o.atIssueness.toRat < r.atIssueness.toRat := by
   decide +kernel
 
-/-- Across trigger types projectivity falls as at-issueness rises in both experiments, the
-correlation of Tonhauser, Beaver and Degen. -/
 theorem negative_correlation_replicates :
     ∀ r ∈ correlations, r.level = .triggerTypes → r.r.toRat < 0 := by
   decide +kernel
 
 open SolstadBott2022 in
-/-- Occasion verbs and experiencer-stimulus verbs share the object bias of implicit causality,
-yet the implication of the latter is the less projective, so the bias does not come from
-projective content alone. -/
 theorem shared_bias_distinct_projectivity :
     VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias ∧
       ∀ o ∈ blockTwo, ∀ e ∈ blockTwo, o.experiment = .exp2 → e.experiment = .exp2 →
@@ -298,8 +271,6 @@ theorem shared_bias_distinct_projectivity :
 
 /-! ### The occasion verbs -/
 
-/-- The sixteen occasion verbs of the experiments are triggers in the German lexicon by their
-occasion sense alone, being neither factive nor phasal nor implicative. -/
 theorem occasion_isTrigger :
     ∀ v ∈ German.Verbs.allVerbs, v.senseTag = .occasion →
       v.toVerb.IsTrigger ∧ ¬ v.toVerb.IsFactive ∧ v.phasal = none ∧ v.implicative = ⊥ := by

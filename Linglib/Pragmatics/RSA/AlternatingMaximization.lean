@@ -72,7 +72,6 @@ variable [Fintype W] [Fintype U] [MeasurableSingletonClass U] [Countable O]
   [∀ u, IsFiniteMeasure (L u)] {b : O → Measure W} {o : O} {q : Measure U}
   [IsProbabilityMeasure q]
 
-/-- A speaker row that dominates a probability measure is a probability measure. -/
 theorem isProbabilityMeasure_speaker_of_absolutelyContinuous (hα : 0 ≤ α)
     (hq : q ≪ speaker α C L b o) : IsProbabilityMeasure (speaker α C L b o) := by
   refine Kernel.isProbabilityMeasure_ofWeights_of_absolutelyContinuous (fun _ ↦ ?_) hq
@@ -81,9 +80,6 @@ theorem isProbabilityMeasure_speaker_of_absolutelyContinuous (hα : 0 ≤ α)
 
 variable [MeasurableSingletonClass W] [IsFiniteMeasure (b o)]
 
-/-- Gibbs' variational identity for a speaker row. The divergence of a distribution over
-utterances from the row and its entropy add up to the log partition function less `α` times its
-expected utility under the speaker's belief. -/
 theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ speaker α C L b o) :
     (klDiv q (speaker α C L b o)).toReal + Hm[q] =
       log (∑ u, ((b o).geomMean (fun w ↦ L u {w}) ^ α).toReal * exp (-(α * C u))) -
@@ -113,8 +109,6 @@ theorem toReal_klDiv_speaker_add_measureEntropy (hα : 0 ≤ α) (hq : q ≪ spe
   simp only [smul_eq_mul]
   exact key
 
-/-- Among the distributions it dominates, a speaker row has the greatest entropy plus `α` times
-expected utility under her belief. -/
 theorem measureEntropy_add_utility_le_speaker (hα : 0 ≤ α) (hq : q ≪ speaker α C L b o) :
     Hm[q] + α * ∫ u, (∫ w, log ((L u).real {w}) ∂(b o) - C u) ∂q ≤
       Hm[speaker α C L b o] +
@@ -149,7 +143,6 @@ the speaker's observation plus `α` times the expected utility. -/
 noncomputable def freeEnergy (S : Kernel O U) (L : Kernel U W) : ℝ :=
   ∑ o, (κ ∘ₘ μ).real {o} * Hm[S o] + α * expectedUtility μ κ C S L
 
-/-- For a speaker who observes the state itself the free energy averages over the states alone. -/
 theorem freeEnergy_id (S : Kernel W U) (L : Kernel U W) :
     freeEnergy μ Kernel.id C α S L =
       ∑ w, μ.real {w} * Hm[S w] +
@@ -164,8 +157,6 @@ variable [Fintype W] [Fintype O] [Fintype U] [MeasurableSingletonClass W]
   [MeasurableSingletonClass O] [MeasurableSingletonClass U] [IsProbabilityMeasure μ]
   [IsMarkovKernel κ]
 
-/-- The free energy is bounded above, by the log of the number of utterances when there is no
-cost. -/
 theorem freeEnergy_le {α : ℝ} (hα : 0 ≤ α) (S : Kernel O U) [IsMarkovKernel S] (L : Kernel U W)
     [∀ u, IsZeroOrProbabilityMeasure (L u)] :
     freeEnergy μ κ C α S L ≤ log (Fintype.card U) + α * ∑ u, |C u| := by
@@ -201,8 +192,6 @@ variable [Fintype W] [Fintype O] [Fintype U] [MeasurableSingletonClass W]
   (hb : ∀ o w, (κ ∘ₘ μ).real {o} * (b o).real {w} = μ.real {w} * (κ w).real {o})
 include hb
 
-/-- The expected utility as the speaker sees it averages, over her observations and utterances,
-the listener's log-probability of the state expected under her belief, less the cost. -/
 theorem expectedUtility_eq_sum_comp (S : Kernel O U) [IsFiniteKernel S] (L : Kernel U W) :
     expectedUtility μ κ C S L =
       ∑ o, (κ ∘ₘ μ).real {o} * ∫ u, (∫ w, log ((L u).real {w}) ∂(b o) - C u) ∂(S o) := by
@@ -238,8 +227,6 @@ variable (hα : 0 ≤ α) (L : Kernel U W) [IsFiniteKernel L]
   (S : Kernel O U) [IsMarkovKernel S] (hS : ∀ o, (κ ∘ₘ μ) {o} ≠ 0 → S o ≪ speaker α C L b o)
 include hα hS
 
-/-- Against a fixed listener, the free energy of a speaker and her expected divergence from the RSA
-speaker add up to the expected log partition function. -/
 theorem freeEnergy_add_sum_klDiv :
     freeEnergy μ κ C α S L +
         ∑ o, (κ ∘ₘ μ).real {o} * (klDiv (S o) (speaker α C L b o)).toReal =
@@ -253,7 +240,6 @@ theorem freeEnergy_add_sum_klDiv :
   · linear_combination
       (κ ∘ₘ μ).real {o} * toReal_klDiv_speaker_add_measureEntropy (C := C) hα (hS o h)
 
-/-- Against a fixed listener the speaker at the Bayesian belief maximizes the free energy. -/
 theorem freeEnergy_le_freeEnergy_speaker :
     freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α (speaker α C L b) L := by
   rw [freeEnergy, freeEnergy, expectedUtility_eq_sum_comp hb S L,
@@ -276,8 +262,6 @@ section Listener
 variable [Fintype W] [Fintype U] [MeasurableSingletonClass W] [MeasurableSingletonClass U]
   [Nonempty W] [IsProbabilityMeasure μ] [IsMarkovKernel κ] (S : Kernel O U) [IsMarkovKernel S]
 
-/-- The expected utility of a speaker against her listener is her expected utility against the
-posterior, since the two agree wherever she is heard. -/
 theorem expectedUtility_listener_eq_posterior :
     expectedUtility μ κ C S (listener μ (S ∘ₖ κ)) = expectedUtility μ κ C S ((S ∘ₖ κ)†μ) := by
   simp_rw [expectedUtility, integral_fintype (.of_finite), smul_eq_mul]
@@ -294,7 +278,6 @@ variable (L : Kernel U W) [∀ u, IsZeroOrProbabilityMeasure (L u)]
   (hL : ∀ u, ((S ∘ₖ κ) ∘ₘ μ) {u} ≠ 0 → listener μ (S ∘ₖ κ) u ≪ L u)
 include hL
 
-/-- Against a fixed speaker her Bayesian listener maximizes the expected utility. -/
 theorem expectedUtility_le_listener :
     expectedUtility μ κ C S L ≤ expectedUtility μ κ C S (listener μ (S ∘ₖ κ)) := by
   rw [expectedUtility_listener_eq_posterior]
@@ -307,7 +290,6 @@ theorem expectedUtility_le_listener :
 
 variable [Fintype O]
 
-/-- Against a fixed speaker her Bayesian listener maximizes the free energy. -/
 theorem freeEnergy_le_freeEnergy_listener (hα : 0 ≤ α) :
     freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α S (listener μ (S ∘ₖ κ)) :=
   add_le_add_right
@@ -353,8 +335,6 @@ variable [Fintype W] [Fintype O] [Fintype U] [MeasurableSingletonClass W]
   (hb : ∀ o w, (κ ∘ₘ μ).real {o} * (b o).real {w} = μ.real {w} * (κ w).real {o}) (hα : 0 ≤ α)
 include hb hα
 
-/-- An utterance a speaker might say at an observation that can occur is one the best response
-to her listener might say there too. -/
 theorem speaker_listener_apply_singleton_ne_zero {S : Kernel O U} [IsFiniteKernel S]
     {o : O} {u : U} (ho : (κ ∘ₘ μ) {o} ≠ 0) (hS : S o {u} ≠ 0) :
     speaker α C (listener μ (S ∘ₖ κ)) b o {u} ≠ 0 := by
@@ -364,15 +344,12 @@ theorem speaker_listener_apply_singleton_ne_zero {S : Kernel O U} [IsFiniteKerne
   rw [Kernel.comp_apply_singleton]
   exact fun h ↦ mul_ne_zero hκ hS (Finset.sum_eq_zero_iff.1 h o (Finset.mem_univ o))
 
-/-- When every observation can occur, the best response to the listener of a speaker is again a
-probability kernel. -/
 theorem isMarkovKernel_speaker_listener (hκ : ∀ o, (κ ∘ₘ μ) {o} ≠ 0) (S : Kernel O U)
     [IsMarkovKernel S] : IsMarkovKernel (speaker α C (listener μ (S ∘ₖ κ)) b) :=
   ⟨fun o ↦ isProbabilityMeasure_speaker_of_absolutelyContinuous hα (q := S o)
     (Measure.absolutelyContinuous_of_forall_singleton fun _ hu ↦ of_not_not fun hS ↦
       speaker_listener_apply_singleton_ne_zero hb hα (hκ o) hS hu)⟩
 
-/-- The speaker's best response to the listener of any speaker raises the free energy. -/
 theorem freeEnergy_listener_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKernel S] :
     freeEnergy μ κ C α S (listener μ (S ∘ₖ κ)) ≤
       freeEnergy μ κ C α (speaker α C (listener μ (S ∘ₖ κ)) b) (listener μ (S ∘ₖ κ)) :=
@@ -382,7 +359,6 @@ theorem freeEnergy_listener_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKern
 
 variable [Nonempty W]
 
-/-- The listener's update to the speaker who answers her raises the free energy. -/
 theorem freeEnergy_speaker_le_freeEnergy_listener (L : Kernel U W)
     [∀ u, IsZeroOrProbabilityMeasure (L u)] [IsMarkovKernel (speaker α C L b)] :
     freeEnergy μ κ C α (speaker α C L b) L ≤
@@ -401,7 +377,6 @@ end Round
 
 /-! ### The speaker who knows the state -/
 
-/-- A speaker who observes the state itself believes the point mass there. -/
 theorem id_comp_real_mul_dirac_real [MeasurableSingletonClass W] (o w : W) :
     ((Kernel.id : Kernel W W) ∘ₘ μ).real {o} * (Measure.dirac o).real {w} =
       μ.real {w} * ((Kernel.id : Kernel W W) w).real {o} := by

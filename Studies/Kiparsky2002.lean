@@ -130,26 +130,20 @@ variable {s : Perfect T} {d : TemporalDecomposition T}
 theorem existential_of_universal (h : universal.mapping s d) : existential.mapping s d :=
   le_of_eq h
 
-/-- The resultative configuration is the present state one with the change of state assigned. -/
 theorem presentState_of_resultative (h : resultative.mapping s d) :
     presentState.mapping s d := by
   cases d with
   | simple _ => exact (h : False).elim
   | complex _ _ _ _ => obtain ⟨_, _, h⟩ := h; exact h
 
-/-- The result-state readings are confined to telic predicates, [11] and [13]: a simple
-decomposition has no result phase to place R in. -/
 theorem isComplex_of_presentState (h : presentState.mapping s d) : d.isComplex := by
   cases d with
   | simple _ => exact (h : False).elim
   | complex _ _ _ _ => trivial
 
-/-- Under the existential reading the event precedes R, [6]. -/
 theorem precedes_of_existential (h : existential.mapping s d) : d.runtime.Precedes s.R :=
   lt_of_le_of_lt (NonemptyInterval.le_def.mp h).2 s.perfect
 
-/-- Under the present state reading the result state, and with it the event, extends through
-R, [13]. -/
 theorem le_runtime_of_presentState (h : presentState.mapping s d) : s.R ≤ d.runtime := by
   cases d with
   | simple _ => exact (h : False).elim
@@ -164,16 +158,10 @@ theorem not_existential_of_presentState (h : presentState.mapping s d) :
 
 /-! ### The sequence of tense puzzle, §2 -/
 
-/-- Under the existential and universal readings the main-clause event lies in E, which
-precedes R, so a subordinate perspective time anchored to it, [16a], precedes the main one in
-the present and past perfects: sequence of tense, [16c], applies, [27]. -/
 theorem sequenceOfTense_of_existential (h : existential.mapping s d)
     (hRP : s.R.fst ≤ s.P.fst) : d.runtime.Precedes s.P :=
   lt_of_lt_of_le (precedes_of_existential h) hRP
 
-/-- Under the resultative reading the result state holds through R, which includes P in the
-present perfect, so the subordinate perspective time includes the main one and [16c] is
-inapplicable, [26]. -/
 theorem no_sequenceOfTense_of_resultative (h : resultative.mapping s d) (hP : s.Present) :
     s.P ≤ d.runtime ∧ ¬ d.runtime.Precedes s.P :=
   have hPd : s.P ≤ d.runtime :=
@@ -182,10 +170,6 @@ theorem no_sequenceOfTense_of_resultative (h : resultative.mapping s d) (hP : s.
 
 /-! ### The present perfect puzzle, §3 -/
 
-/-- Adverbs specify R, so an adverb denoting a time anterior to P makes R precede P, which the
-present perfect's inclusion of P in R excludes, [12b] and [32a]; the past perfect admits it, and
-its two readings with such an adverb, [33], are the existential configuration, the event before
-R, and the resultative one, the result state through R. -/
 theorem present_perfect_puzzle (hP : s.Present) : ¬ s.Past :=
   λ hpast => precedes_not_overlaps hpast (overlaps_symm (overlaps_of_le hP))
 
@@ -194,16 +178,10 @@ theorem present_perfect_puzzle (hP : s.Present) : ¬ s.Past :=
 variable {rt : NonemptyInterval T} {p : SubeventPhases T} {ha : p.activityTrace ≤ rt}
   {hr : p.resultTrace ≤ rt}
 
-/-- Under the existential and universal readings both subevents of a telic predicate lie in E:
-only the whole event can be asserted or presupposed. -/
 theorem phases_le_of_existential (h : existential.mapping s (.complex rt p ha hr)) :
     p.activityTrace ≤ s.E ∧ p.resultTrace ≤ s.E :=
   ⟨le_trans ha h, le_trans hr h⟩
 
-/-- The resultative reading alone assigns the activity and the result state to different
-parameters, the activity to E and the result state, holding through R, outside E: the activity
-can be presupposed and the change of state asserted, and questioning the activity is questioning
-a presupposition, [39]. -/
 theorem resultative_distinguishes (h : resultative.mapping s (.complex rt p ha hr)) :
     p.activityTrace ≤ s.E ∧ ¬ p.resultTrace ≤ s.E :=
   have ⟨h₁, _, h₃⟩ := h

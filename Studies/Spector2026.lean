@@ -93,14 +93,10 @@ variable {W D P R : Type*} (M : Model W D P R)
 
 /-! ### The simplified system: partial assignments -/
 
-/-- Whenever the first conjunct's truth guarantees the presupposition, the presupposition can be
-dropped from the second conjunct, the parametric core of Transparency for conjunction. -/
 theorem conj_transparency_parametric (E presup φ : SignType) (hw : E = 1 → presup = 1) :
     meetMiddle E (meetMiddle presup φ) = meetMiddle E φ :=
   SignType.meetMiddle_congr_right fun h ↦ by rw [hw h, SignType.meetMiddle_one_left]
 
-/-- Whenever the first disjunct's falsity guarantees the presupposition, the presupposition can be
-dropped from the second disjunct, the parametric core of Transparency for disjunction. -/
 theorem disj_transparency_parametric (negE presup φ : SignType)
     (hw : negE = -1 → presup = 1) :
     joinMiddle negE (meetMiddle presup φ) = joinMiddle negE φ :=
@@ -180,21 +176,17 @@ theorem eval_and {φ ψ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
 theorem eval_or {φ ψ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
     eval M (.or φ ψ) w g = joinMiddle (eval M φ w g) (eval M ψ w g) := rfl
 
-/-- The existential is true exactly when its scope is, since the assignment supplies the witness. -/
 theorem eval_ex_eq_true_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
     eval M (.ex x φ) w g = 1 ↔ eval M φ w g = 1 := by
   simp only [eval]
   split_ifs with h h' <;> simp [h]
 
-/-- The existential is false exactly when its scope is not true and every value falsifies
-it, the classical falsity condition. -/
 theorem eval_ex_eq_false_iff {x : ℕ} {φ : Formula P R} {w : W} {g : PartialAssign ℕ D} :
     eval M (.ex x φ) w g = -1 ↔
       eval M φ w g ≠ 1 ∧ ∀ a, eval M φ w (g.update x a) = -1 := by
   simp only [eval]
   split_ifs <;> simp [*]
 
-/-- A true existential over a predicate values its variable. -/
 theorem ne_bot_of_eval_ex_pred {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ D}
     (h : eval M (.ex x (.pred p x)) w g = 1) : g x ≠ ⊥ := by
   obtain ⟨d, hd, -⟩ := eval_pred_eq_true_iff.1 (eval_ex_eq_true_iff.1 h)
@@ -202,8 +194,6 @@ theorem ne_bot_of_eval_ex_pred {p : P} {x : ℕ} {w : W} {g : PartialAssign ℕ 
 
 /-! ### Truth conditions -/
 
-/-- *A table is in the room and it is purple* is true at a world exactly when some individual
-is both, the classical reading of *∃x(T(x) ∧ P(x))*. -/
 theorem trueAt_conj_iff (T Q : P) (x : ℕ) (w : W) :
     TrueAt M (.and (.ex x (.pred T x)) (.pred Q x)) w ↔
       ∃ d, d ∈ M.pred T w ∧ d ∈ M.pred Q w := by
@@ -223,9 +213,6 @@ theorem trueAt_conj_iff (T Q : P) (x : ℕ) (w : W) :
       SignType.meetMiddle_one_left]
     exact eval_pred_eq_true_iff.2 ⟨d, by simp, hQ⟩
 
-/-- The bathroom sentence *¬∃xB(x) ∨ F(x)* is true at a world exactly when either no
-individual is a bathroom or some bathroom is upstairs, the classical reading of
-*¬∃xB(x) ∨ ∃x(B(x) ∧ F(x))*. -/
 theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
     TrueAt M (.or (.not (.ex x (.pred B x))) (.pred F x)) w ↔
       (∀ d, d ∉ M.pred B w) ∨ ∃ d, d ∈ M.pred B w ∧ d ∈ M.pred F w := by
@@ -275,8 +262,6 @@ def nullCtx : Set (W × A) := Set.univ
 /-- Stalnakerian update keeps the pairs of the context at which the accepted sentence is true. -/
 def update (C : Set (W × A)) (φ : Formula P R) : Set (W × A) := {p ∈ C | ev φ p.1 p.2 = 1}
 
-/-- Update intersects the context with the sentence's truth set, so it eliminates points and does
-so point by point. -/
 theorem isClassical_update (φ : Formula P R) :
     DynamicSemantics.CCP.IsClassical (update ev · φ) :=
   DynamicSemantics.CCP.isClassical_up {p : W × A | ev φ p.1 p.2 = 1}
@@ -292,8 +277,6 @@ def Transparent (C : Set (W × A)) (F : Frame P R) (π : Formula P R) : Prop :=
 
 end Contexts
 
-/-- A bare pronoun is not transparent in the null context, since where the variable is unvalued
-*valued(x) ∧ φ* is false while *φ* may be true. -/
 theorem not_transparent_id_null [Nonempty W] (x : ℕ) :
     ¬ Transparent (eval M) nullCtx id (.valued x) := by
   intro h
@@ -301,32 +284,25 @@ theorem not_transparent_id_null [Nonempty W] (x : ℕ) :
   simp only [id, eval_and, eval_not, eval_valued_bot] at this
   exact absurd this (by decide)
 
-/-- A bare pronoun is transparent wherever the context values its variable. -/
 theorem transparent_id_of_valued {C : Set (W × PartialAssign ℕ D)} {x : ℕ}
     (hC : ∀ p ∈ C, p.2 x ≠ ⊥) :
     Transparent (eval M) C id (.valued x) := fun _ p hp ↦ by
   simp only [id, eval_and, eval_valued_of_ne_bot (hC p hp), SignType.meetMiddle_one_left]
 
-/-- Accepting *∃xT(x)* leaves `x` valued throughout the updated context. -/
 theorem ne_bot_of_mem_update_ex {C : Set (W × PartialAssign ℕ D)} {T : P} {x : ℕ}
     {p : W × PartialAssign ℕ D}
     (hp : p ∈ update (eval M) C (.ex x (.pred T x))) : p.2 x ≠ ⊥ :=
   ne_bot_of_eval_ex_pred hp.2
 
-/-- In *A table is in the room. It is purple.* the pronoun is transparent after the accepted
-existential. -/
 theorem transparent_id_of_update_ex (C : Set (W × PartialAssign ℕ D)) (T : P) (x : ℕ) :
     Transparent (eval M) (update (eval M) C (.ex x (.pred T x))) id (.valued x) :=
   transparent_id_of_valued fun _ hp ↦ ne_bot_of_mem_update_ex hp
 
-/-- *∃xT(x) ∧ P(x)* is transparent in every context, because a true first conjunct values `x`. -/
 theorem transparent_forward_conj (C : Set (W × PartialAssign ℕ D)) (T : P) (x : ℕ) :
     Transparent (eval M) C (fun ψ ↦ .and (.ex x (.pred T x)) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [eval_and]
   exact conj_transparency_parametric _ _ _ fun h ↦ eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred h)
 
-/-- *P(x) ∧ ∃xT(x)* is not transparent in the null context, because with *φ = P(x)* at an unvalued
-variable the plain sentence is undefined and the presuppositional one false. -/
 theorem not_transparent_reverse_conj [Nonempty W] (T : P) (x : ℕ) :
     ¬ Transparent (eval M) nullCtx (fun ψ ↦ .and ψ (.ex x (.pred T x))) (.valued x) := by
   intro h
@@ -335,17 +311,12 @@ theorem not_transparent_reverse_conj [Nonempty W] (T : P) (x : ℕ) :
     SignType.meetMiddle_neg_one_left, SignType.meetMiddle_zero_left] at this
   exact absurd this (by decide)
 
-/-- The bathroom sentence *¬∃xB(x) ∨ H(x)* is transparent in every context, because a false first
-disjunct is a true existential, which values `x`. -/
 theorem transparent_bathroom (C : Set (W × PartialAssign ℕ D)) (B : P) (x : ℕ) :
     Transparent (eval M) C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [eval_or, eval_not]
   exact disj_transparency_parametric _ _ _ fun h ↦
     eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred (SignType.neg_eq_neg_one_iff.1 h))
 
-/-- The reversed bathroom sentence *H(x) ∨ ¬∃xB(x)* is not transparent in the null context,
-since with a tautological *φ* and an unvalued variable, at a world with a bathroom the plain
-sentence is true and the presuppositional one undefined. -/
 theorem not_transparent_reverse_bathroom (B : P) (x : ℕ) (hw : ∃ w d, d ∈ M.pred B w) :
     ¬ Transparent (eval M) nullCtx (fun ψ ↦ .or ψ (.not (.ex x (.pred B x)))) (.valued x) := by
   intro h
@@ -454,8 +425,6 @@ theorem not_felicitous_reverse_bathroom (B H : P) (x : ℕ) (hw : ∃ w d, d ∈
 
 /-! ### Novelty -/
 
-/-- A repeated existential means the same as one existential over the conjunction, which is
-never the reading of *someone smokes; someone drinks*. -/
 theorem eval_and_ex_ex_eq_true_iff (p q : P) (x : ℕ) (w : W) (g : PartialAssign ℕ D) :
     eval M (.and (.ex x (.pred p x)) (.ex x (.pred q x))) w g = 1 ↔
       eval M (.ex x (.and (.pred p x) (.pred q x))) w g = 1 := by
@@ -472,17 +441,14 @@ theorem eval_and_ex_ex_eq_true_iff (p q : P) (x : ℕ) (w : W) (g : PartialAssig
     rw [h1, SignType.meetMiddle_one_left] at h
     rw [eval_ex_eq_true_iff.2 h1, SignType.meetMiddle_one_left, eval_ex_eq_true_iff.2 h]
 
-/-- The Novelty Condition rules the repeated existential out. -/
 theorem not_novel_repeat (p q : P) (x : ℕ) :
     ¬ Novel [(Formula.ex x (.pred p x) : Formula P R), .ex x (.pred q x)] := by
   simp [Novel, Formula.binders]
 
-/-- Existentials over fresh variables satisfy the Novelty Condition. -/
 theorem novel_fresh (p q : P) {x y : ℕ} (hxy : x ≠ y) :
     Novel [(Formula.ex x (.pred p x) : Formula P R), .ex y (.pred q y)] := by
   simp [Novel, Formula.binders, hxy]
 
-/-- A variable bound by an existential in two sentences of a discourse violates Novelty. -/
 theorem not_novel_of_mem_binders {S₁ S₂ : Formula P R} {x : ℕ} (h₁ : x ∈ S₁.binders)
     (h₂ : x ∈ S₂.binders) : ¬ Novel [S₁, S₂] := by
   intro h
@@ -502,8 +468,6 @@ theorem not_novel_stone (T A E : P) (x : ℕ) :
 
 /-! ### The failure of covariation -/
 
-/-- In the simplified system *¬∃x¬∃yS(x, y)* is true at a world exactly when some one individual is
-spoken to by everyone, so the embedded existential takes wide scope. -/
 theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     TrueAt M (.not (.ex x (.not (.ex y (.rel S x y))))) w ↔
       ∃ b, ∀ a, (a, b) ∈ M.rel S w := by
@@ -677,7 +641,6 @@ theorem evalP_strong_eq_true_iff :
   simp only [evalP]
   split_ifs <;> simp [*]
 
-/-- A true existential over a predicate makes its variable atomic. -/
 theorem singular_of_evalP_ex_pred (h : evalP M (.ex x (.pred p x)) w G = 1) :
     ∃ d, G.value x = {d} :=
   (evalP_pred_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h)).elim fun _ h ↦ ⟨_, h.1⟩
@@ -692,22 +655,18 @@ end Lemmas
 
 /-! ### Transparency in the full system -/
 
-/-- *∃xT(x) ∧ P(x)* is transparent in every context of the full system. -/
 theorem transparentP_forward_conj (C : Set (W × PluralAssign ℕ D)) (T : P) (x : ℕ) :
     Transparent (evalP M) C (fun ψ ↦ .and (.ex x (.pred T x)) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [evalP_and]
   exact conj_transparency_parametric _ _ _ fun h ↦
     evalP_valued_eq_true_iff.2 (singular_of_evalP_ex_pred h)
 
-/-- The bathroom sentence is transparent in every context of the full system. -/
 theorem transparentP_bathroom (C : Set (W × PluralAssign ℕ D)) (B : P) (x : ℕ) :
     Transparent (evalP M) C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [evalP_or, evalP_not]
   exact disj_transparency_parametric _ _ _ fun h ↦
     evalP_valued_eq_true_iff.2 (singular_of_evalP_ex_pred (SignType.neg_eq_neg_one_iff.1 h))
 
-/-- A plural assignment covering a domain with two individuals is not atomic at the covered
-variable. -/
 theorem not_singular_of_covers {G : PluralAssign ℕ D} {x : ℕ} {a b : D} (hab : a ≠ b)
     (hcov : ∀ a, (G.restrict x a).Nonempty) : ¬ ∃ d, G.value x = {d} := by
   rintro ⟨d, hd⟩
@@ -716,10 +675,6 @@ theorem not_singular_of_covers {G : PluralAssign ℕ D} {x : ℕ} {a b : D} (hab
   exact hab ((PluralAssign.eq_of_mem_restrict hd hga).trans
     (PluralAssign.eq_of_mem_restrict hd hgb).symm)
 
-/-- A universal does not license a singular pronoun in *∀xP(x) ∧ Q(x)*. In a context containing a
-pair at which *∀xP(x)* is true, over a domain with two individuals, the occurrence *Q(x)* is not
-transparent, because *∀xP(x) ∧ (atomic(x) ∧ φ)* is never true there while *∀xP(x) ∧ φ* is for a
-tautological *φ*. -/
 theorem not_transparentP_forall_conj {a b : D} (hab : a ≠ b)
     {C : Set (W × PluralAssign ℕ D)} {P₀ : P} {x : ℕ}
     {w : W} {G : PluralAssign ℕ D} (hC : (w, G) ∈ C)
@@ -741,7 +696,6 @@ def covering (x : ℕ) : PluralAssign ℕ D := Set.range (PartialAssign.single x
 theorem restrict_covering_nonempty (x : ℕ) (a : D) : ((covering D x).restrict x a).Nonempty :=
   ⟨PartialAssign.single x a, ⟨a, rfl⟩, by simp⟩
 
-/-- The null context contains such a pair whenever some world makes the universal true. -/
 theorem not_transparentP_forall_conj_univ {a b : D} (hab : a ≠ b) {P₀ : P} (x : ℕ)
     (hw : ∃ w, ∀ d, d ∈ M.pred P₀ w) :
     ¬ Transparent (evalP M) Set.univ (fun ψ ↦ .and (.all x (.pred P₀ x)) ψ) (.valued x) := by
@@ -751,8 +705,6 @@ theorem not_transparentP_forall_conj_univ {a b : D} (hab : a ≠ b) {P₀ : P} (
   exact evalP_pred_eq_true_iff.2
     ⟨a, PluralAssign.value_restrict (restrict_covering_nonempty x a), hw a⟩
 
-/-- *∃xP(x) ∧ ∀xQ(x)* is never true over a domain with two individuals, because the existential
-makes the variable atomic and the universal requires it to cover the domain. -/
 theorem evalP_ex_and_all_ne_true {a b : D} (hab : a ≠ b) (P₀ Q : P) (x : ℕ) (w : W)
     (G : PluralAssign ℕ D) :
     evalP M (.and (.ex x (.pred P₀ x)) (.all x (.pred Q x))) w G ≠ 1 := by
@@ -763,7 +715,6 @@ theorem evalP_ex_and_all_ne_true {a b : D} (hab : a ≠ b) (P₀ Q : P) (x : ℕ
 
 /-! ### Truth conditions in the full system -/
 
-/-- The bathroom sentence keeps its classical truth conditions in the full system. -/
 theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
     TrueAtP M (.or (.not (.ex x (.pred B x))) (.pred F x)) w ↔
       (∀ d, d ∉ M.pred B w) ∨ ∃ d, d ∈ M.pred B w ∧ d ∈ M.pred F w := by
@@ -805,7 +756,6 @@ theorem trueAtP_bathroom_iff (B F : P) (x : ℕ) (w : W) :
 def pairing (x y : ℕ) (f : D → D) : PluralAssign ℕ D :=
   Set.range fun a ↦ (PartialAssign.single x a).update y (f a)
 
-/-- A restriction of the pairing to `x = a` is nonempty and atomic at `y` with value `f a`. -/
 theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
     ((pairing x y f).restrict x a).Nonempty ∧
       ((pairing x y f).restrict x a).value y = {f a} := by
@@ -823,8 +773,6 @@ theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
   rw [(hmem a').1 ⟨⟨a', rfl⟩, hga⟩]
   simp
 
-/-- In the full system *¬∃x¬∃yS(x, y)* is true exactly when everyone spoke to someone, because the
-embedded existential is evaluated at each restriction, which restores covariation. -/
 theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     TrueAtP M (.not (.ex x (.not (.ex y (.rel S x y))))) w ↔
       ∀ a, ∃ b, (a, b) ∈ M.rel S w := by
@@ -859,7 +807,6 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
       rw [evalP_not, SignType.neg_eq_neg_one_iff, evalP_ex_eq_true_iff, evalP_rel_eq_true_iff]
       exact ⟨a, f a, PluralAssign.value_restrict hne, hsing, hf a⟩
 
-/-- *∀x∃yS(x, y)* is true exactly when everyone spoke to someone. -/
 theorem trueAtP_allEx_iff (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     TrueAtP M (.all x (.ex y (.rel S x y))) w ↔ ∀ a, ∃ b, (a, b) ∈ M.rel S w := by
   constructor
@@ -875,8 +822,6 @@ theorem trueAtP_allEx_iff (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     exact ⟨hne, evalP_ex_eq_true_iff.2 (evalP_rel_eq_true_iff.2
       ⟨a, f a, PluralAssign.value_restrict hne, hsing, hf a⟩)⟩
 
-/-- *Everybody spoke to someone* and *not a single person failed to speak to someone* are
-true at the same worlds. -/
 theorem trueAtP_allEx_iff_notExNotEx [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     TrueAtP M (.all x (.ex y (.rel S x y))) w ↔
       TrueAtP M (.not (.ex x (.not (.ex y (.rel S x y))))) w := by
@@ -884,7 +829,6 @@ theorem trueAtP_allEx_iff_notExNotEx [Nonempty D] (S : R) {x y : ℕ} (hxy : x �
 
 /-! ### Weak and strong truth -/
 
-/-- On a simple existential, strong truth and weak truth coincide. -/
 theorem stronglyTrueAt_ex_iff (P₀ : P) (x : ℕ) (w : W) :
     StronglyTrueAt M (.ex x (.pred P₀ x)) w ↔ TrueAtP M (.ex x (.pred P₀ x)) w := by
   refine ⟨StronglyTrueAt.trueAtP, fun h ↦ ⟨h, fun G' hG' ↦ ?_⟩⟩
@@ -895,8 +839,6 @@ theorem stronglyTrueAt_ex_iff (P₀ : P) (x : ℕ) (w : W) :
   obtain ⟨d', hd', hn⟩ := evalP_pred_eq_false_iff.1 hfalse
   exact hn (by rw [(PluralAssign.value_restrict_eq_singleton_iff.1 hd').2]; exact hd)
 
-/-- *There is a bathroom and it is upstairs* is weakly but not strongly true at a world with
-a bathroom upstairs and a bathroom that is not. -/
 theorem trueAtP_not_stronglyTrueAt_conj (B F : P) (x : ℕ) (w : W) {b₁ b₂ : D}
     (h₁ : b₁ ∈ M.pred B w) (h₂ : b₂ ∈ M.pred B w) (hF₁ : b₁ ∈ M.pred F w)
     (hF₂ : b₂ ∉ M.pred F w) :
@@ -913,7 +855,6 @@ theorem trueAtP_not_stronglyTrueAt_conj (B F : P) (x : ℕ) (w : W) {b₁ b₂ :
       SignType.meetMiddle_one_left]
     exact evalP_pred_eq_false_iff.2 ⟨b₂, hs b₂, hF₂⟩
 
-/-- Weak truth of *O(S)* is strong truth of *S*. -/
 theorem trueAtP_strong_iff (φ : Formula P R) (w : W) :
     TrueAtP M (.strong φ) w ↔ StronglyTrueAt M φ w := by
   constructor
@@ -923,15 +864,12 @@ theorem trueAtP_strong_iff (φ : Formula P R) (w : W) :
   · rintro ⟨⟨G, hG⟩, h⟩
     exact ⟨G, evalP_strong_eq_true_iff.2 ⟨hG, h⟩⟩
 
-/-- Logically equivalent sentences stay equivalent under *O*. -/
 theorem evalP_strong_congr {φ ψ : Formula P R} {w : W}
     (h : ∀ G, evalP M φ w G = evalP M ψ w G) (G : PluralAssign ℕ D) :
     evalP M (.strong φ) w G = evalP M (.strong ψ) w G := by
   simp only [evalP]
   rw [funext h]
 
-/-- *O(atomic(x))* is undefined everywhere, since a singleton plural assignment makes *atomic(x)*
-true and the empty one makes it false. -/
 theorem evalP_strong_valued [Nonempty D] (x : ℕ) (w : W) (G : PluralAssign ℕ D) :
     evalP M (.strong (.valued x)) w G = 0 := by
   obtain ⟨d⟩ := ‹Nonempty D›
@@ -944,7 +882,6 @@ theorem evalP_strong_valued [Nonempty D] (x : ℕ) (w : W) (G : PluralAssign ℕ
   | pos => exact absurd hf ((evalP_strong_eq_true_iff.1 h).2 _)
   | neg => exact absurd ht ((evalP_strong_eq_false_iff.1 h).2 _)
 
-/-- *∃xS(x) ∧ O(H(x))* means that something is an *S* and everything is an *H*. -/
 theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
     TrueAtP M (.and (.ex x (.pred S x)) (.strong (.pred H x))) w ↔
       (∃ d, d ∈ M.pred S w) ∧ ∀ d, d ∈ M.pred H w := by
@@ -967,8 +904,6 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
     obtain ⟨d', -, hn⟩ := evalP_pred_eq_false_iff.1 hG'
     exact hn (hall d')
 
-/-- *∃xS(x) ∧ O(H(x))* violates Transparency, since at a pair where *∃xS(x)* is true a tautological
-*φ* makes *∃xS(x) ∧ O(φ)* true but *∃xS(x) ∧ O(atomic(x) ∧ φ)* undefined. -/
 theorem not_transparentP_ex_and_strong {C : Set (W × PluralAssign ℕ D)} {S : P} {x : ℕ} {w : W}
     {G : PluralAssign ℕ D} (hC : (w, G) ∈ C) (hS : evalP M (.ex x (.pred S x)) w G = 1) :
     ¬ Transparent (evalP M) C (fun ψ ↦ .and (.ex x (.pred S x)) (.strong ψ)) (.valued x) := by
@@ -997,7 +932,6 @@ section Full
 variable {x y : ℕ} {w : W}
 
 open Classical in
-/-- A universal is fixed by the values of its scope at the restrictions. -/
 theorem evalP_all_congr {φ ψ : Formula P R} {G : PluralAssign ℕ D}
     (h : ∀ a, evalP M φ w (G.restrict x a) = evalP M ψ w (G.restrict x a)) :
     evalP M (.all x φ) w G = evalP M (.all x ψ) w G := by
@@ -1112,8 +1046,6 @@ section Rows
 
 variable {x y : ℕ} {w : W}
 
-/-- Restricting a union of rows, the rows of `e` all sending `x` to `e`, to `x = e` gives the
-rows of `e`. -/
 theorem restrict_iUnion_rows {rows : D → PluralAssign ℕ D} (h : ∀ e, ∀ g ∈ rows e, g x = ↑e)
     (e : D) : PluralAssign.restrict (⋃ e, rows e) x e = rows e := by
   ext g

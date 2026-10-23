@@ -48,7 +48,6 @@ def realize (c : Mayan.VerbClass) : Mayan.ExtractionSite → Finset (Reflex Maya
       {.morpheme .verbalComplex [wi]}
   | _ => ∅
 
-/-- *wi* marks the extraction of exactly the recipient and the low adjuncts. -/
 theorem wi_mem_realize_iff (c : Mayan.VerbClass) (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verbalComplex [wi] ∈ realize c s ↔
       s = .argument .R ∨ s = .adjunct .instrument ∨ s = .adjunct .benefactive ∨

@@ -63,15 +63,12 @@ def AscribesUnder (A : Set C) (p : C) (k : C → Option α) (y : α) (P : α →
 theorem relatum_eq_some_iff : relatum R p = some y ↔ R y p ∧ ∀ z, R z p → z = y :=
   iota_eq_some_iff _
 
-/-- A concept is the partial concept of the relation each center bears to its value there. -/
 theorem relatum_eq (c : C → α) : relatum (fun y p ↦ y = c p) = some ∘ c :=
   funext fun p ↦ iota_ident (c p)
 
 theorem mem_deRe_iff_of_eq_some (h : k p = some y) : p ∈ deRe k P ↔ p ∈ P y :=
   ⟨fun ⟨_, hz, hP⟩ ↦ Option.some_inj.1 (h.symm.trans hz) ▸ hP, fun hP ↦ ⟨y, h, hP⟩⟩
 
-/-- The de re property of a relation is the property of bearing it uniquely to something that
-has the property. -/
 theorem mem_deRe_relatum_iff :
     p ∈ deRe (relatum R) P ↔ ∃ y, (R y p ∧ ∀ z, R z p → z = y) ∧ p ∈ P y :=
   exists_congr fun _ ↦ and_congr_left' relatum_eq_some_iff
@@ -84,9 +81,6 @@ theorem ascribesUnder_comp_some :
   and_congr (Option.some_inj.trans eq_comm)
     ⟨fun h _ hq ↦ mem_deRe_comp_some.1 (h hq), fun h _ hq ↦ mem_deRe_comp_some.2 (h _ hq)⟩
 
-/-- Ascribing `P` under a concept to its value at the subject's own center is self-ascribing the
-property of the concept's value. With the self of each center as the concept, identity, this is
-Lewis's reduction of belief de se to belief de re. -/
 theorem ascribesUnder_comp_some_apply :
     AscribesUnder A p (some ∘ c) (c p) P ↔ ∀ q ∈ A, q ∈ P (c q) := by
   simp [ascribesUnder_comp_some]

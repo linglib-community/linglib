@@ -55,8 +55,6 @@ namespace InformationTheory
 
 variable {α : Type*} {mα : MeasurableSpace α}
 
-/-- For probability measures `q ≪ μ`, the Kullback–Leibler divergence from the Gibbs measure
-`μ.tilted f` splits as `KL(q ‖ μ.tilted f) = KL(q ‖ μ) - 𝔼_q[f] + cgf f μ 1`. -/
 theorem toReal_klDiv_tilted_right (μ q : Measure α) [IsProbabilityMeasure μ]
     [IsProbabilityMeasure q] {f : α → ℝ} (hqμ : q ≪ μ)
     (h_int_llr : Integrable (llr q μ) q) (h_int_f : Integrable f q)
@@ -69,8 +67,6 @@ theorem toReal_klDiv_tilted_right (μ q : Measure α) [IsProbabilityMeasure μ]
       integral_llr_tilted_right hqμ h_int_f h_exp h_int_llr]
   simp only [cgf, mgf, one_mul]
 
-/-- The free energy of a probability measure `q ≪ μ` is at most the cumulant generating
-function `cgf f μ 1`, since the divergence from the Gibbs measure is nonnegative. -/
 theorem freeEnergy_le_cgf (μ q : Measure α) [IsProbabilityMeasure μ]
     [IsProbabilityMeasure q] {f : α → ℝ} (hqμ : q ≪ μ)
     (h_int_llr : Integrable (llr q μ) q) (h_int_f : Integrable f q)
@@ -81,8 +77,6 @@ theorem freeEnergy_le_cgf (μ q : Measure α) [IsProbabilityMeasure μ]
   rw [Measure.freeEnergy]
   linarith
 
-/-- The Gibbs measure `μ.tilted f` attains the bound `cgf f μ 1`, since its divergence from
-itself vanishes. -/
 theorem freeEnergy_tilted (μ : Measure α) [IsProbabilityMeasure μ] {f : α → ℝ}
     (h_int_f : Integrable f (μ.tilted f))
     (h_int_llr : Integrable (llr (μ.tilted f) μ) (μ.tilted f))
@@ -95,8 +89,6 @@ theorem freeEnergy_tilted (μ : Measure α) [IsProbabilityMeasure μ] {f : α �
   rw [Measure.freeEnergy]
   linarith
 
-/-- A probability measure `q ≪ μ` whose free energy is `cgf f μ 1` is the Gibbs measure
-`μ.tilted f`, since its divergence from `μ.tilted f` then vanishes. -/
 theorem eq_tilted_of_freeEnergy_eq_cgf (μ q : Measure α) [IsProbabilityMeasure μ]
     [IsProbabilityMeasure q] {f : α → ℝ} (hqμ : q ≪ μ)
     (h_int_llr : Integrable (llr q μ) q) (h_int_f : Integrable f q)
@@ -112,8 +104,6 @@ theorem eq_tilted_of_freeEnergy_eq_cgf (μ q : Measure α) [IsProbabilityMeasure
       integrable_llr_tilted_right hqμ h_int_f h_int_llr h_exp⟩
   exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hkl).resolve_right hne)
 
-/-- The cumulant generating function `cgf f μ 1` is the greatest free energy of a probability
-measure `q ≪ μ` with integrable log-likelihood ratio and `f`, attained at `μ.tilted f`. -/
 theorem isGreatest_cgf (μ : Measure α) [IsProbabilityMeasure μ] {f : α → ℝ}
     (h_int_f : Integrable f (μ.tilted f))
     (h_int_llr : Integrable (llr (μ.tilted f) μ) (μ.tilted f))

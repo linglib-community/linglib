@@ -76,7 +76,6 @@ def ofForbidden (forbidden : Set (Augmented α)) : StrictlyLocalGrammar α := fo
       ↔ ∀ f ∈ List.kFactors k (boundary k w), f ∉ forbidden :=
   Iff.rfl
 
-/-- A string is in an SL language iff every window over `[1 - k, w.length)` is permitted. -/
 theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : List α} (hk : 1 ≤ k) :
     w ∈ G.language k ↔ ∀ i : ℤ, 1 - k ≤ i → i < w.length → window k w i ∈ G := by
   rw [mem_language]
@@ -96,7 +95,6 @@ linearly detectable on the factor-count (cue) representation. -/
 
 variable [DecidableEq α]
 
-/-- SL membership is the vanishing of the forbidden-factor count. -/
 theorem mem_ofForbidden_language_iff_sum_count_eq_zero
     (F : Finset (Augmented α)) (k : ℕ) (w : List α) :
     w ∈ (ofForbidden ↑F).language k
@@ -105,8 +103,6 @@ theorem mem_ofForbidden_language_iff_sum_count_eq_zero
              List.count_eq_zero]
   exact ⟨fun h f hf hmem ↦ h f hmem hf, fun h f hmem hf ↦ h f hf hmem⟩
 
-/-- Nonmembers score at least `1` on the forbidden-factor count: the linear
-    detector has unit margin. -/
 theorem one_le_sum_count_of_not_mem_ofForbidden_language
     {F : Finset (Augmented α)} {k : ℕ} {w : List α}
     (h : w ∉ (ofForbidden ↑F).language k) :
@@ -135,9 +131,6 @@ def SuffixSubstitutionClosed (L : Language α) (k : ℕ) : Prop :=
   ∀ u₁ v₁ u₂ v₂ x : List α, x.length = k - 1 →
     u₁ ++ x ++ v₁ ∈ L → u₂ ++ x ++ v₂ ∈ L → u₁ ++ x ++ v₂ ∈ L
 
-/-- A strictly local language is closed under suffix substitution, since every `k`-factor of
-the crossover lies in the shared left part, a factor of the first member, or in the shared
-window-and-right part, a factor of the second. -/
 theorem IsStrictlyLocal.suffixSubstitutionClosed {L : Language α} {k : ℕ}
     (h : L.IsStrictlyLocal k) : L.SuffixSubstitutionClosed k := by
   obtain ⟨G, rfl⟩ := h
@@ -172,9 +165,6 @@ theorem IsStrictlyLocal.suffixSubstitutionClosed {L : Language α} {k : ℕ}
       omega
     exact (List.prefix_append f t).isInfix.trans hft.isInfix
 
-/-- A suffix-substitution-closed language is strictly local: the canonical grammar of
-all licensed member-factors regenerates it, stitching a member left-to-right through
-the shared windows. -/
 theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk : 2 ≤ k)
     (h : L.SuffixSubstitutionClosed k) : L.IsStrictlyLocal k := by
   refine ⟨{f | ∃ z ∈ L, f ∈ List.kFactors k (boundary k z)}, ?_⟩
@@ -388,24 +378,18 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
       (by rw [List.append_nil]; exact hyfin ▸ hy)
     rwa [List.take_append_drop, List.append_nil] at hnew
 
-/-- For widths `k ≥ 2`, a language is strictly `k`-local if and only if it is closed under
-suffix substitution at `k`. -/
 theorem isStrictlyLocal_iff_suffixSubstitutionClosed {L : Language α} {k : ℕ}
     (hk : 2 ≤ k) : L.IsStrictlyLocal k ↔ L.SuffixSubstitutionClosed k :=
   ⟨IsStrictlyLocal.suffixSubstitutionClosed, fun hL ↦ hL.isStrictlyLocal hk⟩
 
 /-! ### Local testability -/
 
-/-- A strictly `k`-local language is locally `k`-testable. Padding a word with boundary markers
-pulls it back from the words over the augmented alphabet whose factors of length `k` are all
-permitted, and that language is locally `k`-testable outright. -/
 theorem IsStrictlyLocal.toIsLocallyTestable {L : Language α} {k : ℕ} (h : L.IsStrictlyLocal k) :
     L.IsLocallyTestable k := by
   obtain ⟨G, rfl⟩ := h
   exact (((isLocallyTestable_setOf_kFactors k {S | S ⊆ G}).rightQuotient
     (List.replicate (k - 1) none)).leftQuotient (List.replicate (k - 1) none)).preimage_map some
 
-/-- Over a finite alphabet strictly local languages are star-free. -/
 theorem IsStrictlyLocal.isStarFree [Finite α] {L : Language α} {k : ℕ}
     (h : L.IsStrictlyLocal k) : L.IsStarFree :=
   h.toIsLocallyTestable.isStarFree

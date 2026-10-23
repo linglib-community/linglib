@@ -59,8 +59,6 @@ section Intervals
 
 variable {ι κ T : Type*} [Preorder ι] [LinearOrder κ] [LinearOrder T] {R : SetRel ι κ}
 
-/-- A relation whose pairs are overlaps of intervals placed in tier order is non-crossing
-([sagey-1988]'s derivation of the No-Crossing Constraint). -/
 theorem IsNonCrossing.of_intervals {I : ι → NonemptyInterval T} {J : κ → NonemptyInterval T}
     (hI : ∀ ⦃a b⦄, a < b → (I a).Precedes (I b)) (hJ : ∀ ⦃a b⦄, a < b → (J a).Precedes (J b))
     (hR : ∀ x ∈ R, (I x.1).Overlaps (J x.2)) : IsNonCrossing R := by
@@ -87,16 +85,12 @@ def HasIntervalOrder : Prop :=
 
 variable {X : AR τ}
 
-/-- Intervals placing each tier in order, with associated positions overlapping, give a
-representation an interval order: the precedence of the intervals. -/
 theorem hasIntervalOrder_of_intervals {T : Type*} [LinearOrder T] (I : X.Pos → NonemptyInterval T)
     (hI : ∀ i ⦃p q : Fin (X.word i).length⦄, p < q → (I ⟨i, p⟩).Precedes (I ⟨i, q⟩))
     (hA : ∀ ⦃v w⦄, X.assoc.Adj v w → (I v).Overlaps (I w)) : X.HasIntervalOrder :=
   ⟨InvImage Precedes I, isIntervalOrder_precedes.invImage I, hI,
     fun _ _ h hp ↦ precedes_not_overlaps hp (hA h)⟩
 
-/-- A representation with an interval order obeys the No-Crossing Constraint: two crossing
-lines would make the order of their tiers a `2 + 2`. -/
 theorem HasIntervalOrder.noCrossing (h : X.HasIntervalOrder) : X.NoCrossing := by
   obtain ⟨r, hr, htier, hadj⟩ := h
   refine fun i j ↦ isNonCrossing_lines_iff.2 fun p q p' q' ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦ ?_
@@ -112,9 +106,6 @@ private def Placed (X : AR τ) (s : Set ι) : Prop :=
     (∀ i ∈ s, ∀ ⦃p q : Fin (X.word i).length⦄, p < q → (I ⟨i, p⟩).Precedes (I ⟨i, q⟩)) ∧
       ∀ ⦃v w⦄, v.1 ∈ s → w.1 ∈ s → X.assoc.Adj v w → (I v).Overlaps (I w)
 
-/-- A tier with at most one neighbour among the placed tiers can be placed too. In the
-lexicographic product with `ℕ`, its position `q` spans from the last start linked before `q` to
-the last start linked up to `q`, and the old intervals widen to make room. -/
 private theorem Placed.insert [Fintype ι] {G : SimpleGraph ι} (hX : X.assoc ≤ G.comap Sigma.fst)
     (hNC : X.NoCrossing) {s : Set ι} {ℓ : ι}
     (hℓ : ∀ ⦃i j⦄, i ∈ s → j ∈ s → G.Adj ℓ i → G.Adj ℓ j → i = j) (h : Placed X s) :
@@ -166,8 +157,6 @@ private theorem Placed.insert [Fintype ι] {G : SimpleGraph ι} (hX : X.assoc �
     exact ⟨lex_le (WithBot.coe_le_coe.2 h₁) (Nat.zero_le _),
       lex_le (WithBot.coe_le_coe.2 h₂) (Nat.zero_le _)⟩
 
-/-- If lines join only tiers adjacent in a forest, a representation obeys the No-Crossing
-Constraint iff it has an interval order. The tiers are placed one leaf at a time. -/
 theorem noCrossing_iff_hasIntervalOrder_of_isAcyclic [Finite ι] {G : SimpleGraph ι}
     (hG : G.IsAcyclic) (hX : X.assoc ≤ G.comap Sigma.fst) :
     X.NoCrossing ↔ X.HasIntervalOrder := by
@@ -188,16 +177,11 @@ theorem noCrossing_iff_hasIntervalOrder_of_isAcyclic [Finite ι] {G : SimpleGrap
       @hleaf ⟨i, Finset.mem_of_mem_erase hi⟩ hi' ⟨j, Finset.mem_of_mem_erase hj⟩ hj'
   rwa [Finset.coe_erase, Set.insert_sdiff_singleton, Set.insert_eq_of_mem hℓ] at this
 
-/-- On two tiers, which always form a forest, a representation obeys the No-Crossing
-Constraint iff it has an interval order. -/
 theorem noCrossing_iff_hasIntervalOrder {τ : Bool → Type*} {X : AR τ} :
     X.NoCrossing ↔ X.HasIntervalOrder :=
   noCrossing_iff_hasIntervalOrder_of_isAcyclic (G := ⊤) (.of_card_le_two (by simp))
     fun _ _ ↦ fst_ne_of_adj
 
-/-- On a cycle of three tiers the converse fails: with each tier's first position linked to the
-next tier's second, no two lines cross, yet the precedences chain from the last tier's first
-position to the first tier's second, to which it is linked. -/
 theorem exists_noCrossing_not_hasIntervalOrder :
     ∃ X : AR fun _ : Fin 3 ↦ Unit, X.NoCrossing ∧ ¬ X.HasIntervalOrder := by
   refine ⟨fromRel (fun _ ↦ [(), ()]) fun i j p q ↦ p = 0 ∧ q = 1 ∧ j = i + 1, by decide, ?_⟩

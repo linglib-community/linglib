@@ -93,11 +93,9 @@ def agree : Stage α := { s with registered := s.registered ++ s.subjects }
 
 @[simp] theorem subjects_agree : s.agree.subjects = s.subjects := rfl
 
-/-- Agreement before a voice registers the subject before the voice applied. -/
 theorem registered_agree_apply (v : Voice) (a : Option α) :
     (s.agree.apply v a).registered = s.registered ++ s.subjects := rfl
 
-/-- Agreement after a voice registers the subject after it applied. -/
 theorem registered_apply_agree (v : Voice) (a : Option α) :
     (s.apply v a).agree.registered = s.registered ++ (s.apply v a).subjects := rfl
 

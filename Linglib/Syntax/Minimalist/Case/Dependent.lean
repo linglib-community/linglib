@@ -81,7 +81,6 @@ def agreeValue (P : α → Bool) (v : β) : Valuation α β → Valuation α β
     agreeValue P v (p :: s) =
       if p.2.isNone && P p.1 then (p.1, some v) :: s else p :: agreeValue P v s := rfl
 
-/-- Agree is `List.lookmap` of the update that values an unvalued NP in the domain. -/
 theorem agreeValue_eq_lookmap (s : Valuation α β) :
     agreeValue P v s =
       s.lookmap fun p ↦ if p.2.isNone && P p.1 then some (p.1, some v) else none := by
@@ -92,8 +91,6 @@ theorem agreeValue_eq_lookmap (s : Valuation α β) :
     · rw [List.lookmap_cons_some (b := (p.1, some v)) _ _ (by simp [h])]; simp [h]
     · rw [List.lookmap_cons_none _ _ (by simp [h])]; simp [h, ih]
 
-/-- Agree values nothing iff the probe seeking an unvalued NP in its domain finds no goal, the
-    failed Agree of [preminger-2014]. -/
 theorem agreeValue_eq_self_iff : agreeValue P v s = s ↔
     (Probe.relativized fun p : α × Option β ↦ p.2.isNone && P p.1).search s = none := by
   induction s with
@@ -101,8 +98,6 @@ theorem agreeValue_eq_self_iff : agreeValue P v s = s ↔
   | cons p s ih =>
     obtain ⟨x, _ | a⟩ := p <;> cases hx : P x <;> simp_all [Probe.search]
 
-/-- Agree values the NP that the probe seeking an unvalued NP in its domain finds, its goal
-(`Probe.search_eq_some_iff_finds`), and leaves the others as they are. -/
 theorem agreeValue_eq_map [DecidableEq α] [DecidableEq β] (hs : s.Nodup) :
     agreeValue P v s = s.map fun p ↦
       if (Probe.relativized fun q : α × Option β ↦ q.2.isNone && P q.1).search s = some p then
@@ -121,8 +116,6 @@ theorem agreeValue_eq_map [DecidableEq α] [DecidableEq β] (hs : s.Nodup) :
         List.find?_cons_of_neg (by simpa using h), List.map_cons, ← Probe.search, ih hs,
         ite_eq_right fun he ↦ hq (Probe.mem_of_search_eq_some he)]
 
-/-- Agree leaves every NP as it was except at most one, an unvalued NP in its domain, which it
-    values. -/
 theorem agreeValue_getElem? (s : Valuation α β) (i : ℕ) :
     (agreeValue P v s)[i]? = s[i]? ∨
       ∃ x, s[i]? = some (x, none) ∧ P x ∧ (agreeValue P v s)[i]? = some (x, some v) := by
@@ -140,7 +133,6 @@ theorem agreeValue_getElem? (s : Valuation α β) (i : ℕ) :
       · simp [h]
       · simpa [h] using ih i
 
-/-- Agree extends the valuation by its value. -/
 theorem extends_agreeValue {p : β → Prop} (hv : p v) :
     ∀ s : Valuation α β, s.Extends p (agreeValue P v s)
   | [] => .nil
@@ -157,11 +149,9 @@ theorem extends_agreeValue {p : β → Prop} (hv : p v) :
 @[simp] theorem length_agreeValue : (agreeValue P v s).length = s.length :=
   ((extends_agreeValue (p := fun _ ↦ True) trivial s).length_eq).symm
 
-/-- Agree only adds values. -/
 theorem valuedLE_agreeValue (s : Valuation α β) : s.ValuedLE (agreeValue P v s) :=
   (extends_agreeValue (p := fun _ ↦ True) trivial s).valuedLE
 
-/-- Agree preserves which of two derivations values more nominals. -/
 theorem _root_.Case.Valuation.ValuedLE.agreeValue (h : s.ValuedLE t) :
     (agreeValue P v s).ValuedLE (agreeValue P v t) := by
   induction h with
@@ -182,8 +172,6 @@ theorem _root_.Case.Valuation.ValuedLE.agreeValue (h : s.ValuedLE t) :
     · exact .cons ⟨rfl, by simp⟩ ih
     · exact .cons ⟨rfl, by simp⟩ ih
 
-/-- Agree commutes with relabelling the NPs and the values, provided the relabelling keeps what
-    is in the domain and what is valued. -/
 theorem agreeValue_map {α' β' : Type*} {P' : α' → Bool} {v' : β'} (f : α → α') (g : β → β')
     (hP : ∀ x, P' (f x) = P x) (hv : g v = v') (s : List (α × Option β)) :
     agreeValue P' v' (s.map (Prod.map f (Option.map g))) =
@@ -317,32 +305,27 @@ theorem extends_domainPass (probes : List (Cat × Cat)) (c : Cat)
       extends_probePass g np (List.mem_of_mem_filter hmem) c) _).trans <|
       ((g.rules c).extends_unmarkedPass _ _).mono fun _ h ↦ g.rules_valuations_subset probes c h
 
-/-- A derivation extends the valuation by what the assigners value. -/
 theorem CaseAssigners.extends_derive (probes : List (Cat × Cat))
     (s : Valuation α (Case × Mechanism)) :
     s.Extends (· ∈ g.valuations probes) (g.derive np probes s) :=
   Valuation.Extends.foldl _ (fun c _ st ↦ extends_domainPass g np probes c st) s
 
-/-- Assignment extends the lexical valuation by what the assigners value. -/
 theorem CaseAssigners.extends_assign (probes : List (Cat × Cat)) (xs : List α) :
     (lexicalValuation (fun x ↦ (np x).lexicalCase) xs).Extends (· ∈ g.valuations probes)
       (g.assign np probes xs) :=
   g.extends_derive np probes _
 
-/-- Assignment is total: one valuation per NP. -/
 @[simp] theorem CaseAssigners.assign_length (probes : List (Cat × Cat)) (xs : List α) :
     (g.assign np probes xs).length = xs.length := by
   simp [← (g.extends_assign np probes xs).length_eq, lexicalValuation]
 
 variable {g np} {probes : List (Cat × Cat)} {xs : List α} {i : ℕ} {x : α}
 
-/-- Lexical case is kept through every domain. -/
 theorem CaseAssigners.assign_getElem?_of_some {c : Case} (hx : xs[i]? = some x)
     (hc : (np x).lexicalCase = some c) :
     (g.assign np probes xs)[i]? = some (x, some (c, .lexical)) :=
   (g.extends_assign np probes xs).getElem?_of_some (lexicalValuation_getElem?_of_some _ hx hc)
 
-/-- A caseless NP is valued only with a case the assigners mention. -/
 theorem CaseAssigners.case_mem_cases {c : Case} {m : Mechanism}
     (hlex : (np x).lexicalCase = none) (h : (g.assign np probes xs)[i]? = some (x, some (c, m))) :
     c ∈ g.cases := by
@@ -350,8 +333,6 @@ theorem CaseAssigners.case_mem_cases {c : Case} {m : Mechanism}
   · exact absurd (lexicalValuation_getElem? h).1 (by simp [hlex])
   · exact CaseAssigners.fst_mem_cases h
 
-/-- Assigners with no elsewhere case in any domain never value an NP as unmarked: an NP that
-    no rule and no head reaches stays caseless. -/
 theorem CaseAssigners.mechanism_ne_unmarked (hg : ∀ d ∈ g.domains, d.2.unmarked = none)
     {c : Case} {m : Mechanism} (h : (g.assign np probes xs)[i]? = some (x, some (c, m))) :
     m ≠ .unmarked := by
@@ -363,7 +344,6 @@ theorem CaseAssigners.mechanism_ne_unmarked (hg : ∀ d ∈ g.domains, d.2.unmar
     · simp [hg d hd] at hu
     · cases hm
 
-/-- A case valued under Agree is the case of a head that probes in the derivation. -/
 theorem CaseAssigners.exists_probe_of_agree {c : Case}
     (h : (g.assign np probes xs)[i]? = some (x, some (c, .agree))) :
     ∃ hp ∈ probes, g.agreeCase hp.1 = some c := by
@@ -374,8 +354,6 @@ theorem CaseAssigners.exists_probe_of_agree {c : Case}
     · cases hm
     · exact h
 
-/-- Assigners with no dependent and no elsewhere case in any domain value a caseless NP under
-    Agree alone. -/
 theorem CaseAssigners.mechanism_eq_agree (hg : ∀ d ∈ g.domains, d.2 = {}) {c : Case}
     {m : Mechanism} (hlex : (np x).lexicalCase = none)
     (h : (g.assign np probes xs)[i]? = some (x, some (c, m))) : m = .agree := by

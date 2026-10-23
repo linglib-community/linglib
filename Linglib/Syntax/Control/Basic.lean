@@ -39,30 +39,23 @@ variable {Pos Ref : Type*} {val : Pos → Ref} {ante bind pred d : SetRel Pos Po
 theorem IsExhaustive.eq (hs : IsExhaustive val ante) (h : a ~[ante] b) : val a = val b :=
   hs h
 
-/-- A refinement of an exhaustive dependency is exhaustive. -/
 theorem IsExhaustive.mono (hs : IsExhaustive val bind) (h : ante ⊆ bind) :
     IsExhaustive val ante :=
   h.trans hs
 
-/-- The identity relation is exhaustive at every valuation. -/
 theorem isExhaustive_id : IsExhaustive val (.id : SetRel Pos Pos) :=
   fun _ h ↦ congrArg val h
 
-/-- A dependency inside the identity relation is exhaustive at every valuation. -/
 theorem IsExhaustive.of_subset_id (h : d ⊆ .id) : IsExhaustive val d :=
   isExhaustive_id.mono h
 
-/-- Exhaustive control excludes partial readings ([landau-2000]): no referent grows strictly
-along the dependency. -/
 theorem IsExhaustive.not_lt [Preorder Ref] (hs : IsExhaustive val ante) (h : a ~[ante] b) :
     ¬ val a < val b :=
   fun hlt ↦ hlt.ne (hs.eq h)
 
-/-- An exhaustive dependency admits no partial reading. -/
 theorem IsExhaustive.not_isPartial [Preorder Ref] (h : IsExhaustive val d) : ¬ IsPartial val d :=
   fun ⟨_, _, hab, hlt⟩ ↦ h.not_lt hab hlt
 
-/-- A partial reading of a composite whose second leg is exhaustive sits on the first leg. -/
 theorem IsPartial.of_comp [Preorder Ref] (h : IsPartial val (bind ○ pred))
     (hp : IsExhaustive val pred) : IsPartial val bind :=
   let ⟨a, _, ⟨m, ham, hmc⟩, hlt⟩ := h
@@ -70,16 +63,13 @@ theorem IsPartial.of_comp [Preorder Ref] (h : IsPartial val (bind ○ pred))
 
 /-! ### Saturation -/
 
-/-- A saturating dependency admits no partial reading. -/
 theorem IsSaturating.not_isPartial [Preorder Ref] (h : IsSaturating val d) : ¬ IsPartial val d :=
   h.exhaustive.not_isPartial
 
-/-- A dependent of a saturating dependency has a single controller. -/
 theorem IsSaturating.eq_of_controllers (h : IsSaturating val d) (ha : a ~[d] p)
     (hb : b ~[d] p) : a = b :=
   h.biUnique.1 ha hb
 
-/-- A saturating dependency admits no split antecedents. -/
 theorem IsSaturating.not_isSplit (h : IsSaturating val d) : ¬ IsSplit d :=
   not_not_intro h.biUnique.1
 
@@ -102,14 +92,10 @@ theorem IsExhaustive.map (hs : IsExhaustive occ ante) (f : Item → Ref) :
     IsExhaustive (f ∘ occ) ante :=
   fun _ h ↦ congrArg f (hs h)
 
-/-- Under a shared assignment, every property of the assigned value transports across the
-dependency, so copies are indistinguishable. -/
 theorem IsExhaustive.iff_of_rel (hs : IsExhaustive occ ante) (h : a ~[ante] b) (P : Item → Prop) :
     P (occ a) ↔ P (occ b) :=
   iff_of_eq ((hs.map P).eq h)
 
-/-- One observed mismatch refutes a shared assignment, the argument of the copy-control
-diagnostics. -/
 theorem not_isExhaustive_of_mismatch {P : Item → Prop} (h : a ~[ante] b) (hPa : P (occ a))
     (hPb : ¬ P (occ b)) : ¬ IsExhaustive occ ante :=
   fun hs ↦ hPb ((hs.iff_of_rel h P).1 hPa)

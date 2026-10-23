@@ -103,7 +103,6 @@ def g (s : Sym) : AR (TwoTier TRN TBUKind) := AR.ofWords s.melody [μ] (s.lines)
 primitives (Definition 5). -/
 def realize (w : List Sym) : MergeAR true (TwoTier TRN TBUKind) := (w.map fun s ↦ ofAR (g s)).prod
 
-/-- `g(γ₂)` violates the OCP. -/
 theorem not_isCleanAt_g_γ₂ : ¬ (g .γ₂).IsCleanAt true := by
   simp [AR.IsCleanAt, g, Sym.melody]
 
@@ -124,8 +123,6 @@ theorem realize_γ₁_γ₂ : toAR (realize [.γ₁, .γ₂]) = sheep := by deci
 spread graph of Figure 12a instead. -/
 theorem collapse_prod_γ₁_γ₂ : ([Sym.γ₁, .γ₂].map g).prod.collapse true = snake := by decide
 
-/-- Once a primitive violates the OCP, collapsing after concatenation does not compute
-merging concatenation: the two realizations of `γ₁γ₂` differ. -/
 theorem realize_γ₁_γ₂_ne_collapse :
     toAR (realize [.γ₁, .γ₂]) ≠ ([Sym.γ₁, .γ₂].map g).prod.collapse true := by
   rw [realize_γ₁_γ₂, collapse_prod_γ₁_γ₂]

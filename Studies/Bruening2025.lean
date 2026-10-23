@@ -283,7 +283,6 @@ def modifierList? (e : Datum) : Option (List Modifier) :=
 def host? (e : Datum) : Option Site :=
   e.parse? "host" [("N", nounSite), ("CMPR", .degree .cmpr), ("equative", .degree .eq)]
 
-/-- Every row is one of the five constructions below. -/
 theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" ∈
     [some "argument", some "semantic", some "selection", some "modifiers", some "stacked"] := by
   decide
@@ -346,7 +345,6 @@ def Exp1aCondition.modifiers : Exp1aCondition → Option (List Modifier)
   | .adverb => some [.adverb]
   | _ => none
 
-/-- The analysis admits the adjectives of Experiment 1a and not the adverbs. -/
 theorem exp1a_predictions : ∀ c : Exp1aCondition, ∀ ms ∈ c.modifiers,
     (MergesWith ms nounSite ↔ c = .adjective) := by
   decide
@@ -358,7 +356,6 @@ def Exp2Condition.modifiers : Exp2Condition → Option (List Modifier)
   | .adverb => some [.adverb]
   | _ => none
 
-/-- The analysis admits the adjectives of Experiment 2 and not the adverbs. -/
 theorem exp2_predictions : ∀ c : Exp2Condition, ∀ ms ∈ c.modifiers,
     (MergesWith ms nounSite ↔ c = .adjective) := by
   decide
@@ -370,7 +367,6 @@ def Exp1bCondition.phrases : Exp1bCondition → Option (List Cat)
   | .simple => some [.C]
   | _ => none
 
-/-- The revision admits the coordinations of Experiment 1b and not the bare clauses. -/
 theorem exp1b_predictions : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
     (Admits (Satisfies (checkedOnce .headInitial) {N}) ps ↔ c = .coordination) := by
   decide

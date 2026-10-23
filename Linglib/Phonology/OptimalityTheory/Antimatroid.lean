@@ -65,31 +65,24 @@ constraints of a ranking that satisfies all of them. -/
 def IsFeasible (E : Set (ERC (Fin n))) (S : Set (Fin n)) : Prop :=
   ∃ r : Ranking (Fin n) n, (∀ α ∈ E, SatisfiedBy r α) ∧ ∃ k, ↑(r.take k) = S
 
-/-- The top segments of a ranking that satisfies a set of ERCs are feasible for it. -/
 theorem isFeasible_take {r : Ranking (Fin n) n} (hr : ∀ α ∈ E, SatisfiedBy r α)
     (k : Fin (n + 1)) : IsFeasible E ↑(r.take k) :=
   ⟨r, hr, k, rfl⟩
 
-/-- For finite sets the feasibility of a set is decided by the linear extensions. -/
 theorem isFeasible_coe_iff (E : Finset (ERC (Fin n))) (S : Finset (Fin n)) :
     IsFeasible (E : Set (ERC (Fin n))) (S : Set (Fin n)) ↔
       ∃ r ∈ linearExtensions E, ∃ k, r.take k = S := by
   simp [IsFeasible]
 
-/-- A finite set of ERCs has a linear extension exactly when some ranking satisfies all of its
-ERCs. -/
 theorem linearExtensions_nonempty_iff (E : Finset (ERC (Fin n))) :
     (linearExtensions E).Nonempty ↔ ∃ r : Ranking (Fin n) n, ∀ α ∈ (E : Set _), SatisfiedBy r α :=
   by simp [Finset.Nonempty]
 
-/-- Entailment between sets of ERCs carries over to their feasible sets. -/
 theorem IsFeasible.mono (h : ∀ r : Ranking (Fin n) n, (∀ α ∈ E, SatisfiedBy r α) →
     ∀ α ∈ F, SatisfiedBy r α) (hS : IsFeasible E S) : IsFeasible F S := by
   obtain ⟨r, hr, k, hk⟩ := hS
   exact ⟨r, h r hr, k, hk⟩
 
-/-- A ranking satisfies a set of ERCs exactly when each of its top segments is feasible, since
-the ranking witnessing the segment through a loser puts a winner of the ERC in it. -/
 theorem satisfiedBy_iff_forall_isFeasible_take (r : Ranking (Fin n) n) :
     (∀ α ∈ E, SatisfiedBy r α) ↔ ∀ k, IsFeasible E ↑(r.take k) := by
   refine ⟨fun h k ↦ isFeasible_take h k, fun h α hα ↦ ?_⟩
@@ -106,8 +99,6 @@ theorem satisfiedBy_iff_forall_isFeasible_take (r : Ranking (Fin n) n) :
   simp only [Ranking.mem_take, Fin.val_succ] at hw
   omega
 
-/-- A set is feasible for a single satisfiable ERC exactly when it holds a winner of the ERC
-whenever it holds a loser. -/
 theorem isFeasible_singleton_iff {α : ERC (Fin n)} (hα : ∃ r : Ranking (Fin n) n, SatisfiedBy r α)
     (S : Finset (Fin n)) :
     IsFeasible {α} ↑S ↔ ((∃ l ∈ S, α l = .L) → ∃ w ∈ S, α w = .W) := by
@@ -141,10 +132,6 @@ theorem isFeasible_singleton_iff {α : ERC (Fin n)} (hα : ∃ r : Ranking (Fin 
 
 /-! ### Union closure -/
 
-/-- The feasible sets of a set of ERCs are closed under union. The union of the top segment
-`S` of `r₁` and the top segment `T` of `r₂` is a top segment of the ranking that lists `S` in
-the order of `r₁`, then the rest of `T` in the order of `r₂`, then the remaining constraints in
-the order of `r₁`. -/
 theorem IsFeasible.union (hS : IsFeasible E S) (hT : IsFeasible E T) :
     IsFeasible E (S ∪ T) := by
   classical
@@ -249,10 +236,6 @@ When every ERC ranks a single winner over a single loser, or imposes nothing, th
 partial order, and the feasible sets are its order ideals: the sets feasible for each ERC alone.
 In general that intersection is strictly larger. -/
 
-/-- For ERCs that each rank one constraint over one other, a set is feasible exactly when it is
-feasible for each of them. A set feasible for each is a top segment of the ranking that lists
-it first and the rest after, each in the order of a ranking satisfying all the ERCs, since each
-ERC's loser in the set has its unique winner in the set. -/
 theorem isFeasible_iff_forall_singleton_of_simple
     (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α)
     (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial) (S : Finset (Fin n)) :
@@ -281,9 +264,6 @@ theorem isFeasible_iff_forall_singleton_of_simple
     · exact Or.inl (by simp [key, hwS, hlS])
     · exact Or.inr ⟨by simp [key, hwS, hlS], hdom⟩
 
-/-- In general a set feasible for each of a consistent set of ERCs need not be feasible for all
-of them: two ERCs over four constraints, each with two winners, admit a set that holds a winner
-of each ERC whose loser it holds without being a top segment of a ranking satisfying both. -/
 theorem exists_forall_isFeasible_singleton_not_isFeasible :
     ∃ (E : Finset (ERC (Fin 4))) (S : Finset (Fin 4)), (linearExtensions E).Nonempty ∧
       (∀ α ∈ E, IsFeasible {α} (S : Set (Fin 4))) ∧
@@ -321,8 +301,6 @@ variable {A B : Antimatroid (Fin n)}
     ofRootedCircuit rc k = .W ↔ k ∈ rc.carrier ∧ k ≠ rc.root := by
   unfold ofRootedCircuit; grind
 
-/-- A rooted circuit with two members gives a simple ERC, ranking the other member over the
-root; larger carriers give ERCs with several winners. -/
 theorem ofRootedCircuit_eq_simpleERC (rc : A.RootedCircuit) {w l : Fin n}
     (hcarrier : rc.carrier = {w, l}) (hroot : rc.root = l) (hwl : w ≠ l) :
     ofRootedCircuit rc = simpleERC w l := by
@@ -333,10 +311,6 @@ theorem ofRootedCircuit_eq_simpleERC (rc : A.RootedCircuit) {w l : Fin n}
 
 /-! ### Dietrich's characterization -/
 
-/-- A ranking satisfies the ERCs of an antimatroid exactly when each of its top segments is
-feasible ([dietrich-1987]). Satisfaction gives each next segment by union closure, since a
-failure would yield a rooted circuit whose root no winner outranks; feasibility of the segment
-through a root puts one of its winners above it. -/
 theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking (Fin n) n) :
     (∀ α ∈ ofAntimatroid A, SatisfiedBy r α) ↔ ∀ k, A.IsFeasible ↑(r.take k) := by
   classical
@@ -396,7 +370,6 @@ theorem satisfiedBy_ofAntimatroid_iff (hE : A.E = Set.univ) (r : Ranking (Fin n)
 
 /-! ### The inverse laws -/
 
-/-- A feasible set of an antimatroid lists as a chain of feasible sets, by removal. -/
 private theorem exists_feasible_enum_list {S : Set (Fin n)} (hS : A.IsFeasible S) :
     ∃ l : List (Fin n), l.Nodup ∧ {x | x ∈ l} = S ∧ ∀ i, A.IsFeasible {x | x ∈ l.take i} := by
   induction hcard : S.ncard using Nat.strong_induction_on generalizing S with
@@ -424,8 +397,6 @@ private theorem exists_feasible_enum_list {S : Set (Fin n)} (hS : A.IsFeasible S
       · rw [List.take_append, Nat.sub_eq_zero_of_le h]
         simpa using hfeas' i
 
-/-- A feasible set of an antimatroid on its whole type extends to the whole type through a chain
-of feasible sets, by augmentation. -/
 private theorem exists_feasible_ext_list (hE : A.E = Set.univ) {S : Set (Fin n)}
     (hS : A.IsFeasible S) :
     ∃ l : List (Fin n), l.Nodup ∧ (∀ x ∈ l, x ∉ S) ∧ {x | x ∈ l} = Set.univ \ S ∧
@@ -467,9 +438,6 @@ private theorem exists_feasible_ext_list (hE : A.E = Set.univ) {S : Set (Fin n)}
           rw [heq]
           exact hfeas' j
 
-/-- The feasible sets of an antimatroid are those of its ERCs. A feasible set extends to a
-chain of feasible sets, by removal below it and augmentation above it, which is the sequence of
-top segments of a ranking; that ranking satisfies the ERCs by Dietrich's characterization. -/
 theorem isFeasible_ofAntimatroid_iff (hE : A.E = Set.univ) (S : Set (Fin n)) :
     IsFeasible (ofAntimatroid A) S ↔ A.IsFeasible S := by
   classical
@@ -519,25 +487,20 @@ theorem isFeasible_ofAntimatroid_iff (hE : A.E = Set.univ) (S : Set (Fin n)) :
     rw [hchain S.ncard (by omega), hlen₀, hldef, List.take_left]
     exact hset₀
 
-/-- The ERCs of an antimatroid are consistent. -/
 theorem exists_satisfiedBy_ofAntimatroid (hE : A.E = Set.univ) :
     ∃ r : Ranking (Fin n) n, ∀ α ∈ ofAntimatroid A, SatisfiedBy r α := by
   obtain ⟨r, hr, -⟩ := (isFeasible_ofAntimatroid_iff hE _).mpr A.ground_feasible
   exact ⟨r, hr⟩
 
-/-- An antimatroid is the antimatroid of its ERCs. -/
 theorem toAntimatroid_ofAntimatroid (hE : A.E = Set.univ) :
     toAntimatroid (ofAntimatroid A) (exists_satisfiedBy_ofAntimatroid hE) = A :=
   Antimatroid.ext hE.symm (funext fun S ↦ propext (isFeasible_ofAntimatroid_iff hE S))
 
-/-- The ERCs of the antimatroid of `E` are satisfied by exactly the rankings that satisfy
-`E`. -/
 theorem satisfiedBy_ofAntimatroid_toAntimatroid_iff
     (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α) (r : Ranking (Fin n) n) :
     (∀ α ∈ ofAntimatroid (toAntimatroid E hcons), SatisfiedBy r α) ↔ ∀ α ∈ E, SatisfiedBy r α :=
   by rw [satisfiedBy_ofAntimatroid_iff rfl, satisfiedBy_iff_forall_isFeasible_take]; rfl
 
-/-- Containment of antimatroids carries over to entailment of their ERCs. -/
 theorem satisfiedBy_ofAntimatroid_mono (hA : A.E = Set.univ) (hB : B.E = Set.univ)
     (h : ∀ S, A.IsFeasible S → B.IsFeasible S) (r : Ranking (Fin n) n)
     (hr : ∀ α ∈ ofAntimatroid A, SatisfiedBy r α) : ∀ α ∈ ofAntimatroid B, SatisfiedBy r α :=

@@ -90,7 +90,6 @@ theorem subset_of_mem_truthmakers {alts : List (Finset W)} {S p : Finset W}
     (h : p ∈ truthmakers alts S) : p ⊆ S := by
   simpa using (List.mem_filter.1 h).2
 
-/-- The union of the truthmakers is at most the antecedent. -/
 theorem sup_truthmakers_subset (alts : List (Finset W)) (S : Finset W) :
     (truthmakers alts S).toFinset.sup id ⊆ S :=
   Finset.sup_le fun _ hp ↦ subset_of_mem_truthmakers (List.mem_toFinset.1 hp)

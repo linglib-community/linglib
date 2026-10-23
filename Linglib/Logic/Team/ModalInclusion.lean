@@ -180,8 +180,6 @@ def Formula.modalDepth : Formula Atom → ℕ
 
 /-! ### Union closure -/
 
-/-- Every MIL formula has union-closed support. Each case is the closure lemma of its connective
-    in `Team/Operations.lean`, and an inclusion witness in either team is one in the union. -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } := by
   induction φ with
@@ -215,9 +213,6 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-! ### Inclusion breaks downward closure (the defining feature) -/
 
-/-- The inclusion atom is not downward closed. If `w₂` supplies the `b`-value matching both its
-    own and `w₁`'s `a`-value but `w₁` does not match itself, then `{w₁, w₂}` supports `a ⊆ b`
-    and `{w₁}` does not. -/
 theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
     (hpair : M.val a w₁ ↔ M.val b w₂) (hself : M.val a w₂ ↔ M.val b w₂)
     (hwit : ¬ (M.val a w₁ ↔ M.val b w₁)) :
@@ -263,7 +258,6 @@ theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) 
     · exact absurd hd (Nat.not_succ_le_zero _)
     exact (ih (Nat.le_of_succ_le_succ hd)).necImage fun _ _ h ↦ h.2
 
-/-- The support of a formula is closed under bisimulation at its modal depth. -/
 theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     BisimClosed M {t | support M φ t} :=
   ⟨φ.modalDepth, invariant_eval φ le_rfl⟩
@@ -289,7 +283,6 @@ section Classical
 
 variable {M : KripkeModel W Atom} {φ : Formula Atom} {w : W} {t : Finset W}
 
-/-- On `incl`-free formulas, support is pointwise classical truth. -/
 theorem support_iff_forall_realize (hI : φ.InclFree) (t : Finset W) :
     support M φ t ↔ ∀ w ∈ t, Realize M φ w := by
   induction φ generalizing t with

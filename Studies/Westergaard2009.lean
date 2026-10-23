@@ -113,7 +113,6 @@ theorem danish_table_3_1 :
     Danish.verbSecond.required ⊆ danish ∧ danish ⊆ Danish.verbSecond.possible := by
   refine ⟨?_, ?_⟩ <;> intro c <;> revert c <;> decide
 
-/-- Nordmøre Norwegian is the mirror image of Standard English on Decl⁰ and Int⁰. -/
 theorem nordmore_english_mirror :
     root .declarative ∈ Norwegian.Nordmore.verbSecond.required ∧
       root .constituent ∉ Norwegian.Nordmore.verbSecond.required ∧
@@ -121,8 +120,6 @@ theorem nordmore_english_mirror :
       root .constituent ∈ English.V2.verbSecond.required := by
   decide
 
-/-- Only German requires verb second in an embedded declarative, and every variety requires it
-in a root yes/no-question. -/
 theorem embedded_german_polar_all :
     (.declarative, .quasiSubordinated) ∈ German.verbSecond.required ∧
       (.declarative, .quasiSubordinated) ∉ Norwegian.verbSecond.required ∧
@@ -183,7 +180,6 @@ instance (lang : V2Grammar) (c : MicroCue) [Decidable (c.target ∈ lang)] :
     Decidable (Expresses lang c) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
-/-- A cue and the cue for its absence are never both expressed. -/
 theorem not_expresses_both (lang : V2Grammar) {c c' : MicroCue} (ht : c.target = c'.target)
     (hv : c.verbInHead ≠ c'.verbInHead) : ¬ (Expresses lang c ∧ Expresses lang c') :=
   fun ⟨h, h'⟩ ↦ hv (by
@@ -203,7 +199,6 @@ theorem table_3_2 :
       ∃ c ∈ tableCues, ¬ (Expresses g c ↔ Expresses g' c) := by
   simp [tableGrammars, tableCues, Expresses, cueIntV2, cueDeclV2, cueExclV2, cueWhV2]
 
-/-- The Norwegian children hear the cues for non-V2 in exclamatives and embedded questions. -/
 theorem norwegian_nonV2_cues :
     Expresses stdNorwegian cueExclNonV2 ∧ Expresses stdNorwegian cueWhNonV2 := by
   simp [Expresses, cueExclNonV2, cueWhNonV2]
@@ -260,8 +255,6 @@ instance (d : Distribution) (c : SentenceType × EmbeddingContext) :
   | .unmoved => inferInstanceAs (Decidable (_ ∉ _))
   | .either => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Every judged word order in the data is consistent with the fragment of its variety, apart
-from the *kanskje* rows, which the chapter treats as a lexical exception. -/
 theorem rows_consistent :
     ∀ r ∈ Examples.all, r.feature? "adverb" = none →
       ∀ d ∈ grammarOf r, ∀ c ∈ cellOf r, ∀ o ∈ orderOf r, o.Consistent d c := by
@@ -298,8 +291,6 @@ def TromsøWh.syllables : TromsøWh → ℕ
 /-- The status of each *wh*-word, by its syllable count. -/
 def TromsøWh.status (w : TromsøWh) : WhStatus := .ofSyllables w.syllables
 
-/-- *ka*, *kem* and *kor* are heads and block verb movement to Int⁰; the others are phrases
-and block nothing. -/
 theorem tromsøWh_blocking :
     ∀ w : TromsøWh, w.status.Blocks (root .constituent) ↔ w.syllables = 1 := by
   decide
@@ -332,7 +323,6 @@ def IsV2 (l : List Word) : Prop := l[1]? = some .verb
 
 instance (l : List Word) : Decidable (IsV2 l) := inferInstanceAs (Decidable (_ = _))
 
-/-- A monosyllabic *wh*-question is V2 exactly when its subject is new information. -/
 theorem isV2_order_iff (subjectFoc : Focus.Mark) :
     IsV2 (order subjectFoc) ↔ subjectFoc = .focused := by
   cases subjectFoc <;> decide

@@ -82,7 +82,6 @@ structure IsGranularity (γ : D → Set D) (w : D) : Prop where
   /-- Every cell is an interval of width `w`, whichever of its endpoints it contains. -/
   exists_Ioo_subset_subset_Icc (s : D) : ∃ a, Ioo a (a + w) ⊆ γ s ∧ γ s ⊆ Icc a (a + w)
 
-/-- The cells of a granularity function are convex. -/
 theorem IsGranularity.ordConnected (h : IsGranularity γ w) (s : D) : (γ s).OrdConnected := by
   obtain ⟨a, h₁, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
   refine ⟨fun x hx y hy z ⟨hxz, hzy⟩ ↦ ?_⟩
@@ -92,7 +91,6 @@ theorem IsGranularity.ordConnected (h : IsGranularity γ w) (s : D) : (γ s).Ord
   · exact le_antisymm (h₂ hy).2 hzy ▸ hy
   exact h₁ ⟨hlt, hlt'⟩
 
-/-- The granularity function of width zero is the exact reading, every cell a single degree. -/
 theorem isGranularity_zero_iff : IsGranularity γ 0 ↔ γ = fun s ↦ {s} := by
   refine ⟨fun h ↦ funext fun s ↦ ?_, by rintro rfl; exact ⟨fun s ↦ rfl, fun s ↦ ⟨s, by simp⟩⟩⟩
   obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
@@ -107,7 +105,6 @@ theorem IsGranularity.nonneg (h : IsGranularity γ w) : 0 ≤ w := by
   obtain ⟨h₃, h₄⟩ := h₂ (h.mem_self 0)
   exact le_of_add_le_add_left (a := a) (by simpa using h₃.trans h₄)
 
-/-- A cell of a wider granularity function never lies inside a cell of a narrower one. -/
 theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ w₁)
     (h₂ : IsGranularity γ₂ w₂) (hlt : w₁ < w₂) (s t : D) : ¬ γ₂ t ⊆ γ₁ s := fun hsub ↦ by
   obtain ⟨a, ha, -⟩ := h₂.exists_Ioo_subset_subset_Icc t
@@ -134,7 +131,6 @@ theorem grain_iff : grain ε d d' ↔ round (d / ε) = round (d' / ε) := Iff.rf
 theorem representative_mem_zmultiples (ε d : α) : representative ε d ∈ AddSubgroup.zmultiples ε :=
   AddSubgroup.mem_zmultiples_iff.2 ⟨_, rfl⟩
 
-/-- Only scale points are reported. -/
 theorem preimage_representative_of_notMem {d : α} (hd : d ∉ AddSubgroup.zmultiples ε) :
     representative ε ⁻¹' {d} = ∅ :=
   eq_empty_of_forall_notMem fun v hv ↦ hd (hv ▸ representative_mem_zmultiples ε v)
@@ -155,20 +151,16 @@ theorem grain_iff_representative (hε : ε ≠ 0) :
 theorem abs_sub_representative_le (hε : 0 < ε) (d : α) : |d - representative ε d| ≤ ε / 2 :=
   abs_sub_round_div_zsmul_le hε d
 
-/-- The representative of `d` is the multiple of `ε` nearest to `d`. -/
 theorem abs_sub_representative_le_abs_sub (hε : ε ≠ 0) (d : α) (n : ℤ) :
     |d - representative ε d| ≤ |d - n • ε| :=
   abs_sub_round_div_zsmul_le_abs_sub_zsmul hε d n
 
-/-- The cell of `d` is the half-open interval of width `ε` centred on its representative. -/
 theorem cell_grain (hε : 0 < ε) (d : α) :
     (grain ε).cell d = Ico (representative ε d - ε / 2) (representative ε d + ε / 2) := by
   ext x
   rw [Setoid.mem_cell, grain_iff, round_eq_iff, mem_Ico, mem_Ico, le_div_iff₀ hε,
     div_lt_iff₀ hε, representative, zsmul_eq_mul, sub_mul, add_mul, one_div_mul_eq_div]
 
-/-- The grain moves a degree by exactly half its width at the points that halving the width adds
-to the scale. -/
 theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) {d : α} :
     |d - representative ε d| = ε / 2 ↔
       d ∈ AddSubgroup.zmultiples (ε / 2) ∧ d ∉ AddSubgroup.zmultiples ε := by
@@ -197,8 +189,6 @@ theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) {d : α} :
       push_cast
       ring
 
-/-- The degrees reported as a scale point are its cell, the half-open interval of the grain's
-width centred on it. -/
 theorem preimage_representative (hε : 0 < ε) {d : α} (hd : d ∈ AddSubgroup.zmultiples ε) :
     representative ε ⁻¹' {d} = Ico (d - ε / 2) (d + ε / 2) := by
   have hrep := representative_eq_self_of_mem_zmultiples hε.ne' hd
@@ -206,7 +196,6 @@ theorem preimage_representative (hε : 0 < ε) {d : α} (hd : d ∈ AddSubgroup.
   ext v
   rw [mem_preimage, mem_singleton_iff, Setoid.mem_cell, grain_iff_representative hε.ne', hrep]
 
-/-- Two degrees the grain of width `ε` identifies are less than `ε` apart. -/
 theorem abs_sub_lt_of_grain (hε : 0 < ε) (h : grain ε d d') : |d - d'| < ε := by
   have hd : d ∈ (grain ε).cell d' := h
   have hd' := (grain ε).mem_cell_self d'
@@ -220,8 +209,6 @@ theorem isGranularity_cell (hε : 0 < ε) : IsGranularity (grain ε).cell ε whe
     rw [cell_grain hε, show representative ε d - ε / 2 + ε = representative ε d + ε / 2 by ring]
     exact ⟨Ioo_subset_Ico_self, Ico_subset_Icc_self⟩⟩
 
-/-- Around a common multiple of two widths, the cell of the finer grain lies inside the cell of
-the coarser one. -/
 theorem cell_grain_subset_cell_grain (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂)
     (h₁ : d ∈ AddSubgroup.zmultiples ε₁) (h₂ : d ∈ AddSubgroup.zmultiples ε₂) :
     (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
@@ -230,7 +217,6 @@ theorem cell_grain_subset_cell_grain (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂)
     representative_eq_self_of_mem_zmultiples hε₂.ne' h₂]
   exact Ico_subset_Ico (by linarith) (by linarith)
 
-/-- The grain of width `ε` refines the grain of any odd multiple of its width. -/
 theorem grain_le_grain_of_odd (j : ℕ) : grain ε ≤ grain ((2 * j + 1 : ℕ) * ε) := by
   have : (fun d : α ↦ round (d / ((2 * j + 1 : ℕ) * ε))) =
       (fun n : ℤ ↦ (n + j) / (2 * j + 1 : ℕ)) ∘ fun d ↦ round (d / ε) := by
@@ -239,8 +225,6 @@ theorem grain_le_grain_of_odd (j : ℕ) : grain ε ≤ grain ((2 * j + 1 : ℕ) 
   rw [grain, grain, this]
   exact Setoid.ker_le_ker_comp _ _
 
-/-- The grain of width `ε` refines no grain of an even multiple of its width, since the boundary
-`j * ε` of the coarser grain is the centre of a cell of the finer one. -/
 theorem not_grain_le_grain_of_even (hε : 0 < ε) {j : ℕ} (hj : 0 < j) :
     ¬ grain ε ≤ grain ((2 * j : ℕ) * ε) := fun h ↦ by
   set K : α := (2 * j : ℕ) * ε with hK
@@ -259,7 +243,6 @@ theorem not_grain_le_grain_of_even (hε : 0 < ε) {j : ℕ} (hj : 0 < j) :
   rw [hcoarse] at h1
   exact absurd h1.2 (by linarith)
 
-/-- The grain of width `ε` refines the grain of width `k * ε` exactly when `k` is odd. -/
 theorem grain_le_grain_iff_odd (hε : 0 < ε) {k : ℕ} (hk : 0 < k) :
     grain ε ≤ grain (k * ε) ↔ Odd k := by
   rcases Nat.even_or_odd' k with ⟨j, rfl | rfl⟩

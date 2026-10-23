@@ -44,7 +44,6 @@ instance sufficientlyTrue.instDecidable [Fintype W] (q : Setoid W) [DecidableRel
     (p : W → SignType) (w : W) : Decidable (sufficientlyTrue q p w) :=
   inferInstanceAs (Decidable (∃ w', q w w' ∧ p w' = 1))
 
-/-- Literal truth implies sufficient truth, for any issue. -/
 theorem literal_imp_sufficient (q : Setoid W) (p : W → SignType) (w : W)
     (h : p w = 1) : sufficientlyTrue q p w :=
   ⟨w, q.refl' w, h⟩
@@ -69,8 +68,6 @@ instance usable.instDecidable [Fintype W] (q : Setoid W) [DecidableRel q] (p : W
   inferInstanceAs
     (Decidable (p w ≠ -1 ∧ sufficientlyTrue q p w ∧ addressesIssue q p))
 
-/-- For a bivalent proposition, usability is literal truth plus addressing, since sufficient
-truth adds nothing without gap-worlds. -/
 theorem usable_iff_of_isBivalent {p : W → SignType} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (w : W) :
     usable q p w ↔ p w = 1 ∧ addressesIssue q p := by
@@ -82,16 +79,12 @@ theorem usable_iff_of_isBivalent {p : W → SignType} (hbiv : Trivalent.IsBivale
 
 /-! ### Usability at gap-worlds -/
 
-/-- The gap enables non-maximal use — a gapped world whose cell contains a true-world is
-usable, given addressing. -/
 theorem gap_enables_nonmax (q : Setoid W) (p : W → SignType) (w w' : W)
     (hGap : p w = 0) (hEquiv : q w w') (hTrue : p w' = 1)
     (hAddr : addressesIssue q p) :
     usable q p w :=
   ⟨by simp [hGap], ⟨w', hEquiv, hTrue⟩, hAddr⟩
 
-/-- Gap removal forces literal truth for usability, the general form of the result that
-homogeneity removers prevent non-maximal use. -/
 theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → SignType) (w : W)
     (h : usable q ((fun v ↦ SignType.ofProp (v = 1)) ∘ p) w) : SignType.ofProp (p w = 1) = 1 :=
   ((usable_iff_of_isBivalent (Trivalent.isBivalent_ofProp_eq_one p) q w).mp h).1
@@ -122,13 +115,10 @@ instance communicatedContent.instDecidableMem [Fintype W] (q : Setoid W) [Decida
     (p : W → SignType) (w : W) : Decidable (w ∈ communicatedContent q p) :=
   inferInstanceAs (Decidable (sufficientlyTrue q p w))
 
-/-- Literal truth is always communicated. -/
 theorem posExt_subset_communicated (q : Setoid W) (p : W → SignType) :
     Trivalent.posExt p ⊆ communicatedContent q p :=
   fun _ hw ↦ literal_imp_sufficient q p _ hw
 
-/-- For a bivalent proposition that addresses the issue, communicated content is exactly the
-positive extension, with no pragmatic weakening. -/
 theorem communicatedContent_eq_posExt {p : W → SignType} (hbiv : Trivalent.IsBivalent p)
     (q : Setoid W) (hAddr : addressesIssue q p) :
     communicatedContent q p = Trivalent.posExt p := by
@@ -141,9 +131,6 @@ theorem communicatedContent_eq_posExt {p : W → SignType} (hbiv : Trivalent.IsB
       exact absurd ⟨w', w, q.symm' hEq, hTrue, hFalse⟩ hAddr
   · exact literal_imp_sufficient q p w
 
-/-- Coarser issues communicate more — if `q'` refines `q`, everything communicated under `q'`
-is communicated under `q`. This is [kriz-2016]'s key prediction that coarse issues enable
-non-maximal use. -/
 theorem communicatedContent_antitone {q q' : Setoid W} (p : W → SignType) (hRef : q' ≤ q) :
     communicatedContent q' p ⊆ communicatedContent q p :=
   fun _ ⟨w', hEq, hTrue⟩ ↦ ⟨w', Setoid.le_def.1 hRef hEq, hTrue⟩
@@ -162,15 +149,12 @@ abbrev isStronglyRelevantProp (q : Setoid W) (p : W → Prop) : Prop := q.Decide
 def stronglyRelevantSet (q : Setoid W) (candidates : Set (W → Prop)) : Set (W → Prop) :=
   { p ∈ candidates | isStronglyRelevantProp q p }
 
-/-- With the trivial issue, strong relevance is constancy on `W`. -/
 theorem trivial_relevant_iff_constant (p : W → Prop) :
     isStronglyRelevantProp ⊤ p ↔ ∀ w₁ w₂ : W, p w₁ ↔ p w₂ :=
   Setoid.top_decides_iff
 
-/-- With the finest issue, every proposition is strongly relevant. -/
 theorem exact_all_relevant (p : W → Prop) : isStronglyRelevantProp ⊥ p := Setoid.bot_decides
 
-/-- With the finest issue, the strongly-relevant filter is the identity. -/
 theorem exact_stronglyRelevantSet_eq (candidates : Set (W → Prop)) :
     stronglyRelevantSet ⊥ candidates = candidates :=
   Set.sep_eq_self_iff_mem_true.2 fun p _ ↦ exact_all_relevant p

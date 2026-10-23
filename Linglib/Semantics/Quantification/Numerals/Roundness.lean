@@ -76,7 +76,6 @@ variable {D ι : Type*} {r : D → ι → Prop} {d e f : D}
 /-- `e` is at least as round as `d` when it has every roundness property that `d` has. -/
 def AtLeastAsRound (r : D → ι → Prop) (d e : D) : Prop := ∀ ⦃i⦄, r d i → r e i
 
-/-- Being at least as round is the criteria-derived preorder with every scale as a criterion. -/
 theorem atLeastAsRound_iff_ofCriteria :
     AtLeastAsRound r d e ↔ (Preorder.ofCriteria r Set.univ).le e d :=
   ⟨fun h _ _ hi ↦ h hi, fun h _ hi ↦ h _ trivial hi⟩
@@ -91,7 +90,6 @@ theorem atLeastAsRound_iff_upperPolar_subset :
     AtLeastAsRound r d e ↔ upperPolar r {d} ⊆ upperPolar r {e} := by
   simp only [AtLeastAsRound, Set.subset_def, mem_upperPolar_singleton]
 
-/-- The numbers at least as round as `d` are the extent closure of `d`. -/
 theorem atLeastAsRound_iff_mem_extentClosure : AtLeastAsRound r d e ↔ e ∈ extentClosure r {d} := by
   simp only [extentClosure_apply, mem_lowerPolar_iff, mem_upperPolar_singleton]
   exact Iff.rfl
@@ -103,7 +101,6 @@ def profile (r : D → ι → Prop) [∀ d, DecidablePred (r d)] (d : D) : Finse
 
 @[simp] theorem mem_profile {i : ι} : i ∈ profile r d ↔ r d i := by simp [profile]
 
-/-- The roundness properties of a number are the criteria it satisfies, as a finite set. -/
 theorem coe_profile : (profile r d : Set ι) = Preorder.satisfied r Set.univ d := by
   ext i
   simp
@@ -149,15 +146,12 @@ theorem atLeastAsRound_onScale_iff_scaleLcm_dvd :
 theorem scaleLcm_dvd (W : Finset ℤ) (d : ℤ) : scaleLcm W d ∣ d :=
   atLeastAsRound_onScale_iff_scaleLcm_dvd.1 (.refl _ d)
 
-/-- On scales of multiples, the numbers at least as round as `d` are the meet of the scales
-through `d`, the scale of multiples of their lcm. -/
 theorem extentClosure_onScale :
     extentClosure (OnScale W) {d} = AddSubgroup.zmultiples (scaleLcm W d) := by
   ext e
   rw [← atLeastAsRound_iff_mem_extentClosure, SetLike.mem_coe, Int.mem_zmultiples_iff,
     atLeastAsRound_onScale_iff_scaleLcm_dvd]
 
-/-- On scales of multiples, roundness is divisibility of the lcms of the widths. -/
 theorem atLeastAsRound_onScale_iff_dvd :
     AtLeastAsRound (OnScale W) d e ↔ scaleLcm W d ∣ scaleLcm W e := by
   refine ⟨fun h ↦ Finset.lcm_mono fun w hw ↦ ?_, fun h ↦ ?_⟩
@@ -174,8 +168,6 @@ theorem AtLeastAsRound.scaleLcm_dvd_sub (h : AtLeastAsRound (OnScale W) d e) :
     scaleLcm W d ∣ e - d :=
   dvd_sub (atLeastAsRound_onScale_iff_scaleLcm_dvd.1 h) (scaleLcm_dvd W d)
 
-/-- A number other than `d` at least as round as `d` lies at least the lcm of the widths through
-`d` away from it. -/
 theorem AtLeastAsRound.scaleLcm_le_abs_sub (h : AtLeastAsRound (OnScale W) d e) (hne : e ≠ d) :
     scaleLcm W d ≤ |e - d| :=
   Int.le_of_dvd (abs_pos.2 (sub_ne_zero.2 hne)) ((dvd_abs _ _).2 h.scaleLcm_dvd_sub)
@@ -184,15 +176,11 @@ theorem atLeastAsRound_add_scaleLcm (W : Finset ℤ) (d : ℤ) :
     AtLeastAsRound (OnScale W) d (d + scaleLcm W d) :=
   atLeastAsRound_onScale_iff_scaleLcm_dvd.2 (dvd_add (scaleLcm_dvd W d) dvd_rfl)
 
-/-- On scales of multiples, the least number above `d` at least as round as `d` is the next point
-of the scale of multiples of `scaleLcm W d`. -/
 theorem isLeast_atLeastAsRound_onScale (hW : 0 ∉ W) (d : ℤ) :
     IsLeast {e | d < e ∧ AtLeastAsRound (OnScale W) d e} (d + scaleLcm W d) :=
   ⟨⟨lt_add_of_pos_right d (scaleLcm_pos hW d), atLeastAsRound_add_scaleLcm W d⟩,
     fun _ ⟨hde, he⟩ ↦ by have := Int.le_of_dvd (sub_pos.2 hde) he.scaleLcm_dvd_sub; omega⟩
 
-/-- On positive aligned widths, each pair comparable by divisibility, the lcm of the widths
-through `d` is the widest width dividing `d` ([krifka-2007]'s aligned granularity levels). -/
 theorem scaleLcm_eq_of_aligned (hpos : ∀ w ∈ W, 0 < w)
     (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a) {m : ℤ} (hm : m ∈ W) (hmd : m ∣ d)
     (hmax : ∀ w ∈ W, w ∣ d → w ≤ m) : scaleLcm W d = m := by
@@ -205,8 +193,6 @@ theorem scaleLcm_eq_of_aligned (hpos : ∀ w ∈ W, 0 < w)
   · obtain rfl := le_antisymm (hmax w hwW hwd) (Int.le_of_dvd (hpos w hwW) h)
     exact dvd_rfl
 
-/-- On positive aligned widths, a number on some scale has a widest scale, the lcm of the
-widths through it. -/
 theorem scaleLcm_mem_of_aligned (hpos : ∀ w ∈ W, 0 < w)
     (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a) (hne : (W.filter (· ∣ d)).Nonempty) :
     scaleLcm W d ∈ W ∧ scaleLcm W d ∣ d ∧ ∀ w ∈ W, w ∣ d → w ≤ scaleLcm W d := by
@@ -224,7 +210,6 @@ end Scale
 is `n ∈ k × {1, …, 9} × 10^ℕ` ([jansen-pollmann-2001]). -/
 def HasKness (k n : ℕ) : Prop := ∃ b m, 1 ≤ m ∧ m ≤ 9 ∧ n = m * k * 10 ^ b
 
-/-- The exponent of a `k`-ness witness is at most `log₁₀ n`, so `k`-ness is decidable. -/
 theorem hasKness_iff_exists_le_log {k n : ℕ} :
     HasKness k n ↔ ∃ b ≤ Nat.log 10 n, ∃ m < 10, 1 ≤ m ∧ n = m * k * 10 ^ b := by
   constructor
@@ -239,12 +224,10 @@ theorem hasKness_iff_exists_le_log {k n : ℕ} :
 instance (k n : ℕ) : Decidable (HasKness k n) :=
   decidable_of_iff _ hasKness_iff_exists_le_log.symm
 
-/-- `k`-ness forces divisibility by `k`. -/
 theorem HasKness.dvd {k n : ℕ} (h : HasKness k n) : k ∣ n := by
   obtain ⟨b, m, -, -, rfl⟩ := h
   exact Nat.dvd_mul_right_of_dvd (Nat.dvd_mul_left k m) _
 
-/-- `k × 10^b₀`-ness is `k`-ness with an exponent of at least `b₀`. -/
 theorem hasKness_mul_pow_iff {k b₀ n : ℕ} :
     HasKness (k * 10 ^ b₀) n ↔ ∃ b ≥ b₀, ∃ m, 1 ≤ m ∧ m ≤ 9 ∧ n = m * k * 10 ^ b := by
   constructor

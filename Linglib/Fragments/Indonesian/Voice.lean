@@ -74,20 +74,14 @@ def di : DiReading → Voice
 /-- The three voices under a reading of *di-*. -/
 def voices (r : DiReading) : Voice.System := {subjectVoice, objectVoice, di r}
 
-/-- *meN-* and *di-* form a binary symmetrical system exactly when *di-* is read as a patient
-voice ([creissels-2024]). -/
 theorem isSymmetrical_pair_iff (r : DiReading) :
     ({subjectVoice, di r} : Voice.System).IsSymmetrical ↔ r = .patientVoice := by
   cases r <;> decide
 
-/-- The subject and object voices select the agent and the patient whatever *di-* is, so
-Indonesian has a symmetrical system on either reading ([erlewine-levin-van-urk-2017]). -/
 theorem isSymmetrical_voices (r : DiReading) : (voices r).IsSymmetrical :=
   Voice.System.IsSymmetrical.mono (S := {subjectVoice, objectVoice}) (by decide) <|
     Finset.insert_subset_insert _ <| Finset.singleton_subset_iff.2 <| Finset.mem_insert_self _ _
 
-/-- No voice selects an oblique, an applicative making it an object first
-([erlewine-levin-van-urk-2017]), so the system is binary. -/
 theorem not_isMultiple_voices (r : DiReading) : ¬ (voices r).IsMultiple := by
   cases r <;> decide
 
@@ -114,13 +108,10 @@ def objectVoiceAgents : Finset Agent := Finset.univ.filter Agent.IsPronoun
 /-- The *di-* voice takes a third-person pronoun, a noun, or no agent. -/
 def diAgents : Finset Agent := {.pronoun .third, .noun, .absent}
 
-/-- The third-person pronouns *dia* and *mereka* alone take both patient-subject voices
-([sneddon-1996]). -/
 theorem objectVoiceAgents_inter_diAgents :
     objectVoiceAgents ∩ diAgents = {.pronoun .third} := by
   decide
 
-/-- Every agent, expressed or not, has a patient-subject voice. -/
 theorem objectVoiceAgents_union_diAgents : objectVoiceAgents ∪ diAgents = Finset.univ := by
   decide
 

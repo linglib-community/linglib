@@ -121,14 +121,10 @@ def RightUnion {β : Type*} [SemilatticeSup β] (r : β → β → Prop) : Prop 
 
 variable {r : α → α → Prop} {a b : α}
 
-/-- Every event is at least as likely as `⊥`. -/
 theorem rel_bot [IsLikelihoodMono r] (a : α) : r a ⊥ := mono _ _ bot_le
 
-/-- `⊤` is at least as likely as every event. -/
 theorem top_rel [IsLikelihoodMono r] (a : α) : r ⊤ a := mono _ _ le_top
 
-/-- *Probably* is upward closed over a monotone transitive order, since a larger event is at
-least as likely and its complement at most as likely. -/
 theorem Probably.mono [IsLikelihoodMono r] [IsTrans α r] (hab : a ≤ b) (ha : Probably r a) :
     Probably r b :=
   strict_of_strict_of_rel (strict_of_rel_of_strict (IsLikelihoodMono.mono _ _ hab) ha)

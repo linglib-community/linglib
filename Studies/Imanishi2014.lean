@@ -122,8 +122,6 @@ theorem caseOf_chol :
     ∀ r ∈ ArgumentRole.core, chol.caseOf r = some (extendedErgative r) := by
   decide
 
-/-- Q'anjob'al's accusative side is the extended ergative alignment, its object Case coming
-from the suffix rather than from Voice. -/
 theorem caseOf_qanjobal :
     ∀ r ∈ ArgumentRole.core, qanjobal.caseOf r = some (extendedErgative r) := by
   decide
@@ -134,7 +132,6 @@ theorem caseOf_tojolabal :
     ∀ r ∈ ArgumentRole.core, tojolabal.caseOf r = some (invertedErgative r) := by
   decide
 
-/-- The fragment's progressive entries are the mechanism's outputs. -/
 theorem caseKaqchikel_prog (r : ArgumentRole) (h : r ∈ ArgumentRole.core) :
     kaqchikel.caseOf r = some (Kaqchikel.assignCase .Prog r) :=
   caseOf_kaqchikel r h
@@ -149,8 +146,6 @@ theorem caseOf_P_eq_gen_iff : L.caseOf .P = some .gen ↔ L.urn = .required := b
   rcases L with ⟨urn, absPos, suffix⟩
   cases urn <;> simp [caseOf, phaseHead, caseless, VerbAssignsAbs]
 
-/-- Without the requirement the object needs a Case assigner: a high absolutive language
-lacking the suffix leaves it Case-less. -/
 theorem caseOf_P_eq_none_iff :
     L.caseOf .P = none ↔ L.urn = .optional ∧ L.absPos = .high ∧ ¬ L.suffix := by
   rcases L with ⟨urn, absPos, suffix⟩

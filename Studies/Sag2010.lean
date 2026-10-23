@@ -183,16 +183,12 @@ abbrev FGClause.construct (c : FGClause) (semSort : Srt) (rest : Ent) : Interpre
   Sag2010.construct (c.cxtSort .fin) .NP .S (if c = .whInterrogative then .plus else .minus)
     (if c = .whRelative then .minus else .plus) .fin semSort rest
 
-/-- A construct of the clause's sort satisfies the grammar exactly when its mother has the
-clause's semantic type. -/
 theorem models_construct_iff (c : FGClause) (σ : Srt)
     (hσ : σ ∈ [Srt.question, .fact, .modifier, .austinean]) :
     (c.construct σ .nil).Models grammar ↔ σ = c.sem := by
   revert c σ
   decide +kernel
 
-/-- The constructs of each clause, with one gap or two, are well-typed, so the grammar's verdict
-on them is a verdict of its constructions and not of the appropriateness conditions. -/
 theorem isWellTyped_constructs (c : FGClause) :
     (c.construct c.sem .nil).IsWellTyped ∧ (c.construct c.sem .g2).IsWellTyped := by
   cases c <;> decide +kernel
@@ -216,8 +212,6 @@ def FGClause.IsIsland (c : FGClause) : Prop :=
 
 variable {U : Type*} {I : Interpretation sig U} {u : U}
 
-/-- In a model of the grammar, the head daughter of a topicalized clause, a wh-exclamative or a
-the-clause has a single gap. -/
 theorem satisfies_gapRest_elist (hI : I.Models grammar) {c : FGClause}
     (hc : c = .topicalized ∨ c = .whExclamative ∨ c = .theClause) (hu : I.S u ≤ c.sort) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) .elist) := by
@@ -226,9 +220,6 @@ theorem satisfies_gapRest_elist (hI : I.Models grammar) {c : FGClause}
   · exact (satisfies_body hI (c := whExclPrinciple) (by simp [constraints]) hu).2.2.2
   · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).2.2
 
-/-- Exactly topicalized clauses, wh-exclamatives and the-clauses are absolute islands. Their
-constructions give the head daughter a single gap, which the filler discharges, while a
-wh-interrogative or a wh-relative construct may pass a second gap to its mother. -/
 theorem isIsland_iff (c : FGClause) :
     c.IsIsland ↔ c = .topicalized ∨ c = .whExclamative ∨ c = .theClause := by
   refine ⟨fun h ↦ ?_, fun hc U I hI u hu ↦ ?_⟩
@@ -248,7 +239,6 @@ theorem isIsland_iff (c : FGClause) :
 The constructions fix the parameters of variation (6) in every model of the grammar, not only
 in the worked constructs. -/
 
-/-- A wh-relative of a sort-resolved interpretation is finite or infinitival. -/
 private theorem le_finWhRelCl_or_le_infWhRelCl (hs : I.IsSortResolved) (hu : I.S u ≤ .whRelCl) :
     I.S u ≤ .finWhRelCl ∨ I.S u ≤ .infWhRelCl :=
   (by decide +kernel : ∀ σ : Srt, σ ≤ .whRelCl → IsSpecies σ →
@@ -313,8 +303,6 @@ theorem satisfies_head_fin (hI : I.Models grammar)
   · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.VFORM] .fin).1
       (satisfies_body hI (c := finWhRelPrinciple) (by simp [constraints]) hu).1
 
-/-- The head daughter of a topicalized clause is independent and that of a wh-relative is not.
-A wh-relative inherits this from the relative construction on its mother. -/
 theorem satisfies_head_ic (hI : I.Models grammar) :
     (I.S u ≤ .topCl → I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .IC]) .plus)) ∧
       (I.S u ≤ .whRelCl →
@@ -446,8 +434,6 @@ def occurs (f : WhForm) (cat : WhCategory) (c : FGClause) : Option Judgment :=
 /-- The three wh-constructions. -/
 def whClauses : List FGClause := [.whInterrogative, .whExclamative, .whRelative]
 
-/-- No wh-form of any category occurs in all three wh-constructions: there is no unitary
-category of English wh-expression. -/
 theorem no_universal_wh_word :
     ∀ x ∈ probing .inventory, ∀ w ∈ whWord? x,
       ∃ c ∈ whClauses, occurs w.1 w.2 c ≠ some .acceptable := by
@@ -465,8 +451,6 @@ def fillerMarkers (x : Datum) : List Marker :=
   | some (f, cat) => markers f cat
   | none => if (x.parse? "the" bools).getD false then [.the] else [.none]
 
-/-- The rows probing the distinguished element are acceptable exactly when the filler can bear
-the construction's marker. -/
 theorem distinguished :
     ∀ x ∈ probing .distinguished, ∀ c, clause? x = some c →
       (x.judgment = .acceptable ↔ c.marker ∈ fillerMarkers x) := by
@@ -481,15 +465,11 @@ theorem judgments :
         (x.judgment = .acceptable ↔ (rowConstruct c x).Models grammar) := by
   decide +kernel
 
-/-- The constructs that the rows describe are well-typed, so each verdict of `judgments` is one
-of the constructions. -/
 theorem isWellTyped_rowConstruct :
     ∀ p ∈ [Parameter.fillerCategory, .headCategory, .inversion, .finiteness, .independence],
       ∀ x ∈ probing p, ∀ c, clause? x = some c → (rowConstruct c x).IsWellTyped := by
   decide +kernel
 
-/-- The rows extracting a second gap from a clause are acceptable only when the clause is not
-an island. -/
 theorem island_rows :
     ∀ x ∈ probing .island, ∀ c, clause? x = some c → x.judgment = .acceptable → ¬ c.IsIsland := by
   simp only [isIsland_iff]

@@ -62,12 +62,10 @@ open IoninMatushansky2006 (cardMod cardMod_atoms_iff)
 
 /-! ### The two strategies, in the morphology -/
 
-/-- Ch'ol classifiers are suffixes on the numeral, as the fragment's entries record. -/
 theorem chol_classifiers_suffixed :
     ∀ c ∈ Chol.Classifiers.classifiers, c.kind = .bound .after .affix := by
   decide
 
-/-- Shan classifiers are free morphemes, as the fragment's entries record. -/
 theorem shan_classifiers_free : ∀ c ∈ Shan.Classifiers.classifiers, c.kind = .free := by
   decide
 
@@ -178,8 +176,6 @@ theorem shan_numClf_fails :
 
 /-! ### One denotation for *two dogs* -/
 
-/-- Measure modification by the atom count is quantized, since `Finset.card` is strictly
-monotone. -/
 theorem qmod_dogs_qua (n : ℕ) : QUA (QMOD (dogs dog) Finset.card n) :=
   qmod_qua (Finset.card_strictMono.strictMonoOn _) n
 

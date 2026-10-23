@@ -82,8 +82,6 @@ theorem canInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
   refine ⟨fun ⟨B, hB, hAll⟩ ↦ hAll (f i) ⟨subset_rfl, h⟩ hB.1,
     fun hc ↦ ⟨f i, ⟨subset_rfl, h⟩, fun C hC _ hd ↦ hc (hd.mono_left (sInf_le_sInf hC.1))⟩⟩
 
-/-- *Can* is the negation of *must not*, since compatibility with a premise set is the failure
-of the negation to follow from it. -/
 theorem canInView_iff_not_mustInView_not (f : Background W) (φ : W → Prop) (i : W) :
     CanInView f φ i ↔ ¬ MustInView f (fun j ↦ ¬ φ j) i := by
   have h (C : Set (W → Prop)) : (sInf C ≤ fun j ↦ ¬ φ j) ↔ Disjoint (sInf C) φ :=
@@ -131,8 +129,6 @@ def p : World → Prop := (·.1 = true)
 /-- The second issue holds. -/
 def q : World → Prop := (·.2 = true)
 
-/-- A world verifying a subset of `A` still does after the coordinate `π` ignores is changed,
-when every member of `A` other than `r` looks only at `π`, provided the new world verifies `r`. -/
 private theorem forall_mem_of_eq {A B : Set (World → Prop)} {r : World → Prop}
     {π : World → Bool} (hA : ∀ x ∈ A, x ≠ r → ∀ u v, π u = π v → (x u ↔ x v)) (hB : B ⊆ A)
     {w₀ v : World} (hw₀ : ∀ x ∈ B, x w₀) (hv : π v = π w₀) (hr : r ∈ B → r v) :
@@ -166,7 +162,6 @@ theorem not_simplePossibility_q (w : World) :
   rw [simplePossibility_iff_not_disjoint, Function.const_apply, judgments_inconsistent, not_not]
   exact disjoint_bot_left
 
-/-- Every judgment but `p` looks only at the second issue. -/
 private theorem judgments_snd : ∀ x ∈ judgments, x ≠ p → ∀ u v : World, u.2 = v.2 →
     (x u ↔ x v) := by
   simp only [judgments, Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -234,7 +229,6 @@ theorem not_must_q (w : World) :
   exact absurd (hle (false, false) (by simpa using fun x hx ↦ hC' x hx ▸ by simp [p]))
     (by simp [q])
 
-/-- Every recommendation but `q` looks only at the first issue. -/
 private theorem recommendations'_fst : ∀ x ∈ recommendations', x ≠ q → ∀ u v : World,
     u.1 = v.1 → (x u ↔ x v) := by
   simp only [recommendations', Set.mem_insert_iff, Set.mem_singleton_iff]

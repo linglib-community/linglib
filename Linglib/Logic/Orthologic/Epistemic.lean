@@ -61,8 +61,6 @@ variable {box : InfTopHom L L}
 
 @[simp] theorem diamondHom_apply (a : L) : diamondHom box a = (box aᶜ)ᶜ := rfl
 
-/-- Iterated possibility of a complement is the complement of iterated necessity,
-`◇ⁿ¬a = ¬□ⁿa`. -/
 theorem diamondHom_iterate_compl (n : ℕ) (a : L) : (diamondHom box)^[n] aᶜ = (box^[n] a)ᶜ := by
   induction n generalizing a with
   | zero => rfl
@@ -163,8 +161,6 @@ theorem wittgensteinLaw_iff_diamondHom_compl_le [IsOrtholattice L] :
   · simpa only [diamondHom_apply, InvolutiveCompl.compl_compl] using
       (IsOrtholattice.disjoint_compl_right a).mono_right h
 
-/-- When `ᶜ` is a pseudocomplement, with T Wittgenstein's Law makes `□` the identity, so a Boolean
-algebra has no non-trivial epistemic modality. -/
 theorem WittgensteinLaw.eq_id (hW : WittgensteinLaw box) (hT : ∀ a, box a ≤ a) :
     box = InfTopHom.id L :=
   InfTopHom.ext fun a ↦ (hT a).antisymm <|

@@ -53,8 +53,6 @@ variable [IsFiniteMeasure μ] (hX : Integrable X μ) (hY : Integrable Y μ)
   (hXY : Integrable (X * Y) μ)
 include hX hY hXY
 
-/-- **Chebyshev's integral inequality**: when `X` and `Y` monovary, the product of their
-integrals is at most the total mass times the integral of their product. -/
 theorem Monovary.integral_mul_integral_le_measureReal_univ_mul_integral (h : Monovary X Y) :
     (∫ ω, X ω ∂μ) * ∫ ω, Y ω ∂μ ≤ μ.real Set.univ * ∫ ω, X ω * Y ω ∂μ := by
   have h₁ := hXY.mul_prod (μ := μ) (ν := μ) (integrable_const (1 : ℝ))
@@ -75,8 +73,6 @@ theorem Monovary.integral_mul_integral_le_measureReal_univ_mul_integral (h : Mon
     integral_nonneg fun z ↦ h.sub_mul_sub_nonneg z.2 z.1
   linarith
 
-/-- **Chebyshev's integral inequality**: when `X` and `Y` antivary, the product of their
-integrals is at least the total mass times the integral of their product. -/
 theorem Antivary.measureReal_univ_mul_integral_le_integral_mul_integral (h : Antivary X Y) :
     μ.real Set.univ * ∫ ω, X ω * Y ω ∂μ ≤ (∫ ω, X ω ∂μ) * ∫ ω, Y ω ∂μ := by
   have := (monovary_neg_left.2 h).integral_mul_integral_le_measureReal_univ_mul_integral
@@ -92,13 +88,11 @@ open ProbabilityTheory
 variable [IsProbabilityMeasure μ] (hX : MemLp X 2 μ) (hY : MemLp Y 2 μ)
 include hX hY
 
-/-- Random variables that monovary have nonnegative covariance. -/
 theorem Monovary.covariance_nonneg (h : Monovary X Y) : 0 ≤ cov[X, Y; μ] := by
   rw [covariance_eq_sub hX hY, sub_nonneg]
   simpa [probReal_univ] using h.integral_mul_integral_le_measureReal_univ_mul_integral
     (hX.integrable one_le_two) (hY.integrable one_le_two) (hX.integrable_mul hY)
 
-/-- Random variables that antivary have nonpositive covariance. -/
 theorem Antivary.covariance_nonpos (h : Antivary X Y) : cov[X, Y; μ] ≤ 0 := by
   rw [covariance_eq_sub hX hY, sub_nonpos]
   simpa [probReal_univ] using h.measureReal_univ_mul_integral_le_integral_mul_integral
@@ -112,7 +106,6 @@ section UniformOn
 
 variable [MeasurableSingletonClass Ω] [Fintype Ω]
 
-/-- The integral under the uniform measure on a finite type is the sample mean. -/
 theorem integral_uniformOn_univ (f : Ω → ℝ) :
     ∫ ω, f ω ∂(uniformOn Set.univ) = (∑ ω, f ω) / Fintype.card Ω := by
   rw [integral_fintype .of_finite, div_eq_inv_mul, Finset.mul_sum]
@@ -120,7 +113,6 @@ theorem integral_uniformOn_univ (f : Ω → ℝ) :
 
 variable [Nonempty Ω] (X Y)
 
-/-- The covariance under the uniform measure on a finite type is the sample covariance. -/
 theorem covariance_uniformOn_univ :
     cov[X, Y; uniformOn Set.univ] = (∑ ω, X ω * Y ω) / Fintype.card Ω
       - (∑ ω, X ω) / Fintype.card Ω * ((∑ ω, Y ω) / Fintype.card Ω) := by
@@ -128,8 +120,6 @@ theorem covariance_uniformOn_univ :
     integral_uniformOn_univ, integral_uniformOn_univ]
   rfl
 
-/-- The sample covariance is positive exactly when the product of the sums is less than the
-sample size times the sum of the products. -/
 theorem covariance_uniformOn_univ_pos_iff :
     0 < cov[X, Y; uniformOn Set.univ] ↔
       (∑ ω, X ω) * ∑ ω, Y ω < Fintype.card Ω * ∑ ω, X ω * Y ω := by

@@ -56,8 +56,6 @@ noncomputable def actionUtility (π : Kernel U A) (R : A → W → ℝ) (u : U) 
 
 variable [DiscreteMeasurableSpace A] (R : A → W → ℝ) (π : Kernel U A) {u : U} {a a' : A} {w : W}
 
-/-- With two actions, utility is the reward of the first weighted by its share and of the second
-by the rest. -/
 theorem actionUtility_of_pair [IsMarkovKernel π] (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     actionUtility π R u w = (π u).real {a} * R a w + (1 - (π u).real {a}) * R a' w := by
   rw [actionUtility, Fintype.sum_eq_add a a' haa' (fun c hc ↦ absurd (hall c) (not_or.mpr hc)),
@@ -75,8 +73,6 @@ the belief. -/
 noncomputable def expectedReward (L : Kernel U W) (R : A → W → ℝ) (u : U) (a : A) : ℝ :=
   ∑ w, (L u).real {w} * R a w
 
-/-- In a signaling game an action is a guess of the state, rewarded when right, so the expected
-reward of a guess is the belief's mass on it. -/
 theorem expectedReward_single [DecidableEq W] (L : Kernel U W) (u : U) (w : W) :
     expectedReward L (fun a ↦ Pi.single a 1) u w = (L u).real {w} := by
   simp [expectedReward, Pi.single_apply]
@@ -103,7 +99,6 @@ instance [Nonempty A] : IsMarkovKernel (policy β L R) :=
 
 variable {β} {u : U} {a a' : A} {w : W}
 
-/-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
 theorem policy_real_singleton :
     (policy β L R u).real {a} = Real.softmax (fun a ↦ β * expectedReward L R u a) a :=
   Kernel.softmax_coe_real_singleton (fun u a ↦ β * expectedReward L R u a) u a
@@ -123,8 +118,6 @@ theorem policy_single_real_lt_iff [DecidableEq W] [DiscreteMeasurableSpace W] (h
         (policy β L (fun a ↦ Pi.single a 1) u).real {w'} ↔ (L u).real {w} < (L u).real {w'} := by
   rw [policy_real_lt_iff _ _ hβ, expectedReward_single, expectedReward_single]
 
-/-- With two actions, the policy's share of one is the logistic function of the scaled
-difference in expected reward. -/
 theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     (policy β L R u).real {a} =
       Real.sigmoid (β * (expectedReward L R u a - expectedReward L R u a')) := by
@@ -133,8 +126,6 @@ theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     policyScore, policyScore, EReal.toReal_coe, EReal.toReal_coe]
   ring_nf
 
-/-- Two utterances after which the listener's expected rewards agree up to a constant shift
-leave the policy, and so the utility at every state, the same; the listeners may differ. -/
 theorem actionUtility_policy_eq_of_expectedReward_eq_add {L' : Kernel U W} {u' : U} {c : ℝ}
     (h : ∀ a, expectedReward L R u a = expectedReward L' R u' a + c) :
     actionUtility (policy β L R) R u w = actionUtility (policy β L' R) R u' w := by

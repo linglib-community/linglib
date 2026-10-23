@@ -23,7 +23,6 @@ Upstream home: `Mathlib/Order/Monotone/Basic.lean`, beside `Monotone.reflect_lt`
 
 @[expose] public section
 
-/-- A strictly monotone map out of a total preorder reflects `≤`. -/
 theorem StrictMono.reflect_le {α β : Type*} [Preorder α] [@Std.Total α (· ≤ ·)] [Preorder β]
     {f : α → β} (hf : StrictMono f) {a b : α} (h : f a ≤ f b) : a ≤ b :=
   (total_of (· ≤ ·) a b).elim id fun hba ↦

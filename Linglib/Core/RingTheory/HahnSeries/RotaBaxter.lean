@@ -83,7 +83,6 @@ section Ring
 
 variable [AddCommMonoid Γ] [LinearOrder Γ] [IsOrderedCancelAddMonoid Γ] [Ring R]
 
-/-- A product of polar parts is polar. -/
 private theorem truncLT_truncLT_mul_truncLT (x y : R⟦Γ⟧) :
     truncLT 0 (truncLT 0 x * truncLT 0 y) = truncLT (0 : Γ) x * truncLT 0 y := by
   ext i
@@ -93,7 +92,6 @@ private theorem truncLT_truncLT_mul_truncLT (x y : R⟦Γ⟧) :
   rw [support_truncLT] at hj hl
   exact (add_neg hj.2 hl.2).not_ge hi
 
-/-- A product of nonpolar parts is nonpolar. -/
 private theorem truncLT_sub_truncLT_mul (x y : R⟦Γ⟧) :
     truncLT (0 : Γ) ((x - truncLT 0 x) * (y - truncLT 0 y)) = 0 := by
   have hnonneg (z : R⟦Γ⟧) {j : Γ} (hj : j ∈ (z - truncLT 0 z).support) : 0 ≤ j := by
@@ -105,9 +103,6 @@ private theorem truncLT_sub_truncLT_mul (x y : R⟦Γ⟧) :
   obtain ⟨j, hj, l, hl, rfl⟩ := support_mul_subset ((mem_support _ _).mpr hne)
   exact (add_nonneg (hnonneg x hj) (hnonneg y hl)).not_gt hi
 
-/-- The projection onto the polar part is a Rota–Baxter operator of weight `-1`, from the ring
-identity `R a * b + a * R b - a * b = R a * R b - (a - R a) * (b - R b)`: `R` fixes the first
-term, a product of polar parts, and kills the second, a product of nonpolar parts. -/
 theorem isRotaBaxter_truncLT (k : Type*) [Ring k] [Module k R⟦Γ⟧] :
     IsRotaBaxter (-1 : k) ⇑(truncLT (0 : Γ) : ZeroHom R⟦Γ⟧ R⟦Γ⟧) := by
   refine isRotaBaxter_neg_one_iff.2 fun a b ↦ ?_

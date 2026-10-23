@@ -33,7 +33,6 @@ def als : Comparative :=
 /-- The superlative is marked by the ending *-st*, as in *das tiefste*. -/
 def superlative : SuperlativeStrategy := .morphological
 
-/-- The *als*-comparative is a particle comparative. -/
 theorem als_type : als.type = .particle := rfl
 
 end German.Comparison

@@ -140,20 +140,15 @@ theorem causativeChamorro_intransitive : causativeChamorro .intransitive = Voice
 theorem causativeQuechua_intransitive : causativeQuechua .intransitive = Voice.causative := by
   decide
 
-/-- Of a transitive, reflexive-reciprocal formation cumulates the A and the P as
-[creissels-2024]'s reflexive and reciprocal do, though it links both to the subject where they
-leave the object implicit. -/
 theorem reciprocalOf_np_fateOfRole (r : Voice.TermRole) :
     ∀ v ∈ reciprocalOf .np, v.fateOfRole r = Voice.reflexive.fateOfRole r ∧
       v.fateOfRole r = Voice.reciprocal.fateOfRole r := by
   cases r <;> decide
 
-/-- Baker's passive and [creissels-2024]'s agree on the fate of every core term. -/
 theorem passiveAt_fateOfRole (r : Voice.TermRole) :
     ∀ v ∈ passiveAt 0 .np, v.fateOfRole r = Voice.passive.fateOfRole r := by
   cases r <;> decide
 
-/-- Baker's applicative is valency-increasing, as [creissels-2024]'s. -/
 theorem applicativeOf_isValencyIncreasing :
     ∀ v ∈ applicativeOf .np_pp, v.IsValencyIncreasing := by
   decide
@@ -254,7 +249,6 @@ theorem applied_subject_needs_applicative_first (g : Grammar) (transitive applie
   rcases g with ⟨c, ps⟩
   cases c <;> cases ps <;> cases transitive <;> cases applied <;> decide +kernel
 
-/-- With the applied affix inside the passive affix, the applied argument is the subject. -/
 theorem applied_subject_of_applicative_first (g : Grammar) :
     ∃ st ∈ outcomes g [.applicative, .passive] (initial true true),
       st.subjects = [.applied] := by
@@ -345,8 +339,6 @@ def grammar? (r : Datum) : Option Grammar :=
   | "kiny1244" => some ⟨.chamorro, true⟩
   | _ => none
 
-/-- The word a row's derivation builds linearizes to its process-marking morphs around the root
-in the row's order. -/
 theorem rows_word :
     ∀ r ∈ Examples.all, (word (rootMorph r) (derivation r)).toList.Sublist (morphs r) := by
   decide +kernel
@@ -372,9 +364,6 @@ def level (start final : Stage) : Option Level :=
       else if a ∈ start.subjects then .semantic else .intermediate)
   | _ => none
 
-/-- Every Chamorro row's *fan-* registers the subject the paper says it does: the surface
-subject outside the passive, the semantic subject inside the causative, and the subject
-between passive and causative in their combination. -/
 theorem rows_agreement :
     ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ w ∈ level? r,
       ∀ st ∈ outcomes g (processes r) (initialOf r), level (initialOf r) st = some w := by
@@ -385,8 +374,6 @@ def links? (r : Datum) : Option (Arg × Arg) :=
   r.parse? "links" [("agent-patient", (.agent, .patient)), ("causer-patient", (.causer, .patient)),
     ("causer-agent", (.causer, .agent))]
 
-/-- Reciprocal formation links the root's agent and patient when it applies before the
-causative, and the causer to the patient (Quechua) or the agent (Bemba) when after. -/
 theorem rows_links :
     ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ l ∈ links? r,
       ∀ st ∈ outcomes g (processes r) (initialOf r), st.links = [l] := by
@@ -396,9 +383,6 @@ theorem rows_links :
 def surfaceSubject? (r : Datum) : Option Arg :=
   r.parse? "surfaceSubject" [("applied object", .applied), ("patient", .patient)]
 
-/-- A passive of an applicative is acceptable exactly when some run of the affix order makes
-the reported argument the subject: the applied object everywhere, the patient only in
-Kinyarwanda. -/
 theorem rows_subject :
     ∀ r ∈ Examples.all, ∀ g ∈ grammar? r, ∀ a ∈ surfaceSubject? r,
       (r.judgment = .acceptable ↔

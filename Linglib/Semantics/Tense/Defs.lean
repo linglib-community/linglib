@@ -70,12 +70,10 @@ theorem denote_future : ⟦future⟧ = ({.gt} : Finset Ordering) := rfl
 /-- The nonpast is the cell of a reference time at or after the perspective time. -/
 def nonpast : Finset Ordering := {.eq, .gt}
 
-/-- The nonpast is the join of the present and the future, not a fourth tense. -/
 theorem nonpast_eq_present_sup_future : nonpast = ⟦present⟧ ⊔ ⟦future⟧ := by decide
 
 theorem nonpast_eq_compl_past : nonpast = ⟦past⟧ᶜ := by decide
 
-/-- The nonfuture is the join of the past and the present. -/
 theorem past_sup_present : ⟦past⟧ ⊔ ⟦present⟧ = ⟦future⟧ᶜ := by decide
 
 /-- The composition of two cells collects the orderings of `a` to `c` compatible with `a` to
@@ -112,13 +110,10 @@ theorem comp_sup_right (R S S' : Finset Ordering) : comp R (S ⊔ S') = comp R S
 
 @[simp] theorem comp_future_future : comp ⟦future⟧ ⟦future⟧ = ⟦future⟧ := by decide
 
-/-- A past followed by a future leaves the relation of the outer times open. -/
 @[simp] theorem comp_past_future : comp ⟦past⟧ ⟦future⟧ = ⊤ := by decide
 
-/-- A future followed by a past leaves the relation of the outer times open. -/
 @[simp] theorem comp_future_past : comp ⟦future⟧ ⟦past⟧ = ⊤ := by decide
 
-/-- A nonfuture followed by a nonfuture is a nonfuture. -/
 @[simp] theorem comp_compl_future_compl_future : comp ⟦future⟧ᶜ ⟦future⟧ᶜ = ⟦future⟧ᶜ := by
   decide
 
@@ -149,8 +144,6 @@ theorem compare_mem_comp {R S : Finset Ordering} {a b c : T} (h₁ : compare a b
     (h₂ : compare b c ∈ S) : compare a c ∈ comp R S :=
   Finset.mem_filter.2 ⟨Finset.mem_univ _, _, h₁, _, h₂, Ordering.compare_mem_comp a b c⟩
 
-/-- On dense time without endpoints a cell composition is realized through an intermediate
-time. -/
 theorem compare_mem_comp_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] {a c : T} :
     compare a c ∈ comp C D ↔ ∃ b, compare a b ∈ C ∧ compare b c ∈ D := by
   refine ⟨fun h ↦ ?_, fun ⟨_, h₁, h₂⟩ ↦ compare_mem_comp h₁ h₂⟩
@@ -192,8 +185,6 @@ theorem toSetRel_sup (C D : Finset Ordering) :
 @[gcongr] theorem toSetRel_subset_toSetRel (h : C ⊆ D) : (toSetRel C : SetRel T T) ⊆ toSetRel D :=
   fun _ ⟨o, ho, hc⟩ ↦ ⟨o, h ho, hc⟩
 
-/-- The converse of a cell's relation is the relation of its mirror image, which exchanges the
-past with the future. -/
 theorem inv_toSetRel (C : Finset Ordering) :
     (toSetRel C : SetRel T T).inv = toSetRel (C.image .swap) := by
   ext ⟨r, p⟩
@@ -208,14 +199,10 @@ theorem inv_toSetRel (C : Finset Ordering) :
 
 end LT
 
-/-- On linear time a cell relates a perspective time to a reference time exactly when the
-position of the reference time is in the cell. -/
 theorem mem_toSetRel_iff_compare [LinearOrder T] {C : Finset Ordering} {p r : T} :
     p ~[toSetRel C] r ↔ compare r p ∈ C :=
   ⟨fun ⟨_, ho, hc⟩ ↦ (compare_iff _ _).2 hc ▸ ho, fun h ↦ ⟨_, h, (compare_iff _ _).1 rfl⟩⟩
 
-/-- On dense time the past relation composed with itself is the past relation, since a time
-before an earlier time is earlier and an earlier time has a time between. -/
 theorem toSetRel_past_comp_self [Preorder T] [DenselyOrdered T] :
     (toSetRel ⟦past⟧ ○ toSetRel ⟦past⟧ : SetRel T T) = toSetRel ⟦past⟧ := by
   ext ⟨p, r⟩
@@ -227,7 +214,6 @@ section LinearOrder
 
 variable [LinearOrder T]
 
-/-- On linear time the relation of a cell is the constraint the cell imposes. -/
 @[simp] theorem mem_toSetRel_iff : p ~[toSetRel C] r ↔ compare r p ∈ C :=
   ⟨fun ⟨_, ho, hc⟩ ↦ (compare_iff r p).2 hc ▸ ho, fun h ↦ ⟨_, h, (compare_iff r p).1 rfl⟩⟩
 
@@ -245,8 +231,6 @@ theorem toSetRel_comp_subset (C D : Finset Ordering) :
   fun _ ⟨_, h₁, h₂⟩ ↦
     mem_toSetRel_iff.2 (compare_mem_comp (mem_toSetRel_iff.1 h₂) (mem_toSetRel_iff.1 h₁))
 
-/-- On dense time without endpoints the composite of two cells' relations is the relation of
-the composed cell. -/
 theorem toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] (C D : Finset Ordering) :
     toSetRel C ○ toSetRel D = (toSetRel (comp D C) : SetRel T T) := by
   ext ⟨p, r⟩

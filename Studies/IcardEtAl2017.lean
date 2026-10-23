@@ -161,8 +161,6 @@ private theorem strength_toReal (hc : p c < 1) (ha : p a < 1) :
 
 /-! ### The four effects (§3.2, §5, Table 5) -/
 
-/-- When the causes are conjoined a less normal focal cause is more causal, provided `P(A) < 1`
-(abnormal inflation). -/
 theorem abnormal_inflation (h : p₂ c < p₁ c) (hc : p₁ c < 1) (ha : p₁ a = p₂ a) (ha' : p₁ a < 1) :
     strength p₁ .conjunctive < strength p₂ .conjunctive := by
   rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top, (strength_toReal hc ha').1,
@@ -171,8 +169,6 @@ theorem abnormal_inflation (h : p₂ c < p₁ c) (hc : p₁ c < 1) (ha : p₁ a 
   have : (p₁ a : ℝ) < 1 := ha'
   nlinarith
 
-/-- When the causes are conjoined a less normal alternative makes the focal cause less causal,
-provided `0 < P(C)` (supersession). -/
 theorem supersession (h : p₂ a < p₁ a) (ha : p₁ a < 1) (hc : p₁ c = p₂ c) (hc₀ : 0 < p₁ c)
     (hc₁ : p₁ c < 1) : strength p₂ .conjunctive < strength p₁ .conjunctive := by
   rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top, (strength_toReal hc₁ ha).1,
@@ -181,8 +177,6 @@ theorem supersession (h : p₂ a < p₁ a) (ha : p₁ a < 1) (hc : p₁ c = p₂
   have : (0 : ℝ) < p₁ c := hc₀
   nlinarith
 
-/-- When the causes are disjoined the alternative's normality does not affect the focal cause (no
-supersession with disjunction). -/
 theorem no_supersession (hc : p₁ c = p₂ c) (hc₁ : p₁ c < 1) (ha₁ : p₁ a < 1) (ha₂ : p₂ a < 1) :
     strength p₁ .disjunctive = strength p₂ .disjunctive := by
   rw [(strength_collider hc₁ ha₁).2, (strength_collider (hc ▸ hc₁) ha₂).2, hc]
@@ -203,7 +197,6 @@ noncomputable def resampleSufficiency {ι : Type*} [DecidableEq ι] (μ : Measur
     (w₀ : ι → Bool) (E : Set (ι → Bool)) (S : Finset ι) : ℝ≥0∞ :=
   μ {w | S.piecewise w₀ w ∈ E}
 
-/-- On the collider the two candidates for sufficiency agree. -/
 theorem resampleSufficiency_eq_sufficiency (s : CausalStructure) (hc : p c < 1) (ha : p a < 1) :
     resampleSufficiency (prior p) (fun _ ↦ true) (effect s) {c} =
       sufficiency (prior p) (fun _ ↦ true) (effect s) {c} := by
@@ -245,7 +238,6 @@ noncomputable def PNS (μ : Measure (ι → Bool)) (X : ι) (E : Set (ι → Boo
 
 variable {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)] {X : ι} {E : Set (ι → Bool)}
 
-/-- Under a product measure, conditioning on a variable's value is setting it. -/
 private theorem cond_real_pi_cause_singleton {b : Bool} {B : Set (ι → Bool)} (hb : ν X {b} ≠ 0) :
     ((Measure.pi ν)[|cause (fun _ ↦ b) {X}]).real B =
       (Measure.pi ν).real ((Function.update · X b) ⁻¹' B) := by
@@ -269,7 +261,6 @@ private theorem measureReal_mul_cond_real {μ : Measure (ι → Bool)} [IsFinite
   rw [measureReal_def, measureReal_def, measureReal_def, ← ENNReal.toReal_mul, mul_comm,
     cond_mul_eq_inter .of_discrete]
 
-/-- PNS is the probability that the cause makes the difference, on either side of the cause. -/
 private theorem PNS_eq {μ : Measure (ι → Bool)} [IsFiniteMeasure μ] :
     PNS μ X E = μ.real (cause (fun _ ↦ true) {X} ∩ ((Function.update · X true) ⁻¹' E \
         (Function.update · X false) ⁻¹' E)) +
@@ -412,8 +403,6 @@ instance : IsFiniteKernel (test μ w₀ E S) :=
 instance [IsFiniteMeasure μ] : IsFiniteMeasure (step μ w₀ E S) := by unfold step; infer_instance
 
 omit [Fintype ι] [DecidableEq ι] in
-/-- When the cause can fail, and fail together with the outcome, a step is a probability
-measure. -/
 theorem isProbabilityMeasure_step [IsProbabilityMeasure μ] (h₀ : μ (cause w₀ S)ᶜ ≠ 0)
     (h₁ : μ ((cause w₀ S)ᶜ ∩ Eᶜ) ≠ 0) : IsProbabilityMeasure (step μ w₀ E S) := by
   have : IsMarkovKernel (test μ w₀ E S) := ⟨fun x ↦ by

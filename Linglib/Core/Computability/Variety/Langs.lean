@@ -65,12 +65,10 @@ theorem langs_iff : V.langs L ↔ L.IsRegular ∧ V.mem L.SyntacticMonoid :=
   ⟨fun h ↦ ⟨V.langs_isRegular h, h⟩, And.right⟩
 
 variable {V} in
-/-- The languages of `V` are upward closed in the order of syntactic congruences. -/
 theorem langs_of_syntacticCon_le (h : V.langs L) (hle : L.syntacticCon ≤ M.syntacticCon) :
     V.langs M :=
   V.mem_quotient_of_le hle h
 
-/-- A language recognized by a member of `V` lies in `V.langs`. -/
 theorem langs_of_recognizes {N : Type u} [Monoid N] (hN : V.mem N) {η : FreeMonoid α →* N}
     (h : Recognizes η L) : V.langs L :=
   V.mem_quotient_of_le (ker_le_syntacticCon_of_recognizes h) (V.mem_quotient_ker η hN)
@@ -91,7 +89,6 @@ theorem langs_univ : V.langs (⊤ : Language α) :=
 theorem langs_bot : V.langs (⊥ : Language α) := by
   simpa using V.langs_compl V.langs_univ
 
-/-- The languages of `V` are closed under inverse homomorphisms of free monoids. -/
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeMonoid α →* FreeMonoid β) :
     V.langs {w : List α | φ (FreeMonoid.ofList w) ∈ Lb} :=
@@ -134,12 +131,10 @@ theorem langs_iff : V.langs L ↔ L.IsRegular ∧ V.mem L.SyntacticSemigroup :=
   ⟨fun h ↦ ⟨V.langs_isRegular h, h⟩, And.right⟩
 
 variable {V} in
-/-- The languages of `V` are upward closed in the order of syntactic congruences. -/
 theorem langs_of_syntacticSemigroupCon_le (h : V.langs L)
     (hle : L.syntacticSemigroupCon ≤ M.syntacticSemigroupCon) : V.langs M :=
   V.mem_quotient_of_le hle h
 
-/-- A language recognized by a member of `V` lies in `V.langs`. -/
 theorem langs_of_recognizes {T : Type u} [Semigroup T] (hT : V.mem T)
     {η : FreeSemigroup α →ₙ* T} (h : L.RecognizesSemigroup η) : V.langs L :=
   V.mem_quotient_of_le (ker_le_syntacticSemigroupCon_of_recognizes h) (V.mem_quotient_ker η hT)
@@ -162,8 +157,6 @@ theorem langs_univ : V.langs (⊤ : Language α) :=
 theorem langs_bot : V.langs (⊥ : Language α) := by
   simpa using V.langs_compl V.langs_univ
 
-/-- The languages of `V` are closed under inverse homomorphisms of free semigroups. A free
-semigroup has no erasing homomorphisms, which is the difference from the monoid case. -/
 theorem langs_comap {β : Type u} {Lb : Language β} (h : V.langs Lb)
     (φ : FreeSemigroup α →ₙ* FreeSemigroup β) :
     V.langs {w : List α | ∃ u : FreeSemigroup α,

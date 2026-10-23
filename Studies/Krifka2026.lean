@@ -167,8 +167,6 @@ determiner does (40c), and leaves its restriction to `body`. -/
 def entityIntro (n : ℕ) (body : Update (HAssign World E)) : Update (HAssign World E) :=
   {(g, h) | ∃ x : E, Function.update g n (.entity x) ~[body] h}
 
-/-- A test returns its input assignment, so it preserves every referent: negation,
-implication and disjunction all re-enter the update algebra through `test`. -/
 theorem test_apply_eq {C : Condition (HAssign World E)} {g h : HAssign World E}
     (hTest : g ~[test C] h) (n : ℕ) : h n = g n :=
   congrFun hTest.1.symm n
@@ -252,7 +250,6 @@ def ownADog : Update (HAssign Unit (Individual Ent)) :=
 /-- *John₁ doesn't own [a₃ [dog]₂]* (44e) is the VP negation, the test of the negated update. -/
 def doesntOwnADog : Update (HAssign Unit (Individual Ent)) := test (neg ownADog)
 
-/-- The negated sentence holds in the model, there being no dogs, and returns the input. -/
 theorem doesntOwnADog_g₀ : g₀ ~[doesntOwnADog] g₀ :=
   ⟨rfl, fun ⟨_, _, rfl, _, _, _, h₂, _, hy⟩ ↦ by
     rw [Function.update_of_ne (by decide : (2 : ℕ) ≠ 3)] at h₂

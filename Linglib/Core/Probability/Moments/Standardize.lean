@@ -68,7 +68,6 @@ theorem standardize_neg_iff : standardize X μ ω < 0 ↔ X ω < μ[X] := by
 
 end Order
 
-/-- Standardization is invariant under a positive affine change of units. -/
 theorem standardize_const_mul_add_const [IsProbabilityMeasure μ] (hX : MemLp X 2 μ) {a : ℝ}
     (ha : 0 < a) (b : ℝ) : standardize (fun ω ↦ a * X ω + b) μ = standardize X μ := by
   ext ω
@@ -78,8 +77,6 @@ theorem standardize_const_mul_add_const [IsProbabilityMeasure μ] (hX : MemLp X 
     Real.sqrt_mul' _ (variance_nonneg _ _), Real.sqrt_sq ha.le,
     show a * X ω + b - (a * μ[X] + b) = a * (X ω - μ[X]) by ring, mul_div_mul_left _ _ ha.ne']
 
-/-- The mean of the standardized values under a probability measure `ν` is the standardized
-mean under `ν`. -/
 theorem integral_standardize_eq [IsProbabilityMeasure ν] (hX : Integrable X ν) :
     ν[standardize X μ] = (ν[X] - μ[X]) / √Var[X; μ] := by
   simp only [standardize_apply]
@@ -88,18 +85,15 @@ theorem integral_standardize_eq [IsProbabilityMeasure ν] (hX : Integrable X ν)
 variable [IsProbabilityMeasure μ] (hX : MemLp X 2 μ)
 include hX
 
-/-- Standardized values average to `0`. -/
 theorem integral_standardize : μ[standardize X μ] = 0 := by
   rw [integral_standardize_eq (hX.integrable one_le_two), sub_self, zero_div]
 
-/-- Standardized values have unit variance. -/
 theorem variance_standardize (h : 0 < Var[X; μ]) : Var[standardize X μ; μ] = 1 := by
   have : standardize X μ = fun ω ↦ (√Var[X; μ])⁻¹ * (X ω - μ[X]) := by
     ext ω; rw [standardize, div_eq_inv_mul]
   rw [this, variance_const_mul, variance_sub_const hX.aestronglyMeasurable, inv_pow,
     Real.sq_sqrt (variance_nonneg _ _), inv_mul_cancel₀ h.ne']
 
-/-- Under a measure `ν ≪ μ` the mean standardized value has the sign of `ν[X] - μ[X]`. -/
 theorem sign_integral_standardize [IsProbabilityMeasure ν] (hνμ : ν ≪ μ) (hXν : Integrable X ν) :
     SignType.sign ν[standardize X μ] = SignType.sign (ν[X] - μ[X]) := by
   rw [integral_standardize_eq hXν]

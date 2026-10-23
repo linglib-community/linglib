@@ -82,14 +82,10 @@ section Branching
 
 variable {M : Type*} [PartialOrder M] [IsLeftLinear M] {now t t' : M}
 
-/-- From an epistemic alternative the past is determinate, in that a time the upper limit constraint
-admits lies on every history through the now. -/
 theorem histories_subset_of_upperLimit (h : now ~[toSetRel upperLimitConstraint] t) :
     histories now ⊆ histories t :=
   histories_antitone (mem_toSetRel_upperLimitConstraint.1 h)
 
-/-- The future is not determinate, in that where two later times lie on different branches, neither
-lies on every history through the now. -/
 theorem not_histories_subset_of_branching (ht' : now ≤ t') (h : ¬ t ≤ t') (h' : ¬ t' ≤ t) :
     ¬ histories now ⊆ histories t := fun hsub ↦
   let ⟨f, hf⟩ := histories_nonempty t'
@@ -145,7 +141,6 @@ def PresentConstraint [LT T] (ρ : ℕ → T → T → Prop) (acc : Finset ℕ) 
 theorem pastConstraint_singleton [LT T] : PastConstraint ρ {r} ↔ ρ r = (· < ·) := by
   simp [PastConstraint]
 
-/-- A relation under a present constraint that holds somewhere is not temporal precedence. -/
 theorem PresentConstraint.ne_lt [LT T] (hq : PresentConstraint ρ acc) (hr : r ∈ acc) {t t' : T}
     (h : ρ r t t') : ρ r ≠ (· < ·) :=
   fun hρ ↦ hq r hr t t' h ((congrFun (congrFun hρ t) t').mp h)
@@ -154,13 +149,11 @@ section Preorder
 
 variable [Preorder T]
 
-/-- A temporal argument coindexed with its local evaluation time is not locally licensed. -/
 theorem TemporalArgument.not_locallyLicensed_of_coindexed (hcon : a.Con ρ g)
     (h : a.index = a.evalIndex) : ¬ a.LocallyLicensed ρ := fun hl ↦ by
   rw [Con, hl, h] at hcon
   exact lt_irrefl _ hcon
 
-/-- A past coindexed with its local evaluation time is licensed by a transmitted relation. -/
 theorem PastConstraint.nonLocallyLicensed_of_coindexed (hp : PastConstraint ρ acc)
     (hcon : a.Con ρ g) (h : a.index = a.evalIndex) : a.NonLocallyLicensed ρ acc :=
   let ⟨r, hr, hρ⟩ := hp
@@ -178,9 +171,6 @@ def matrix : TemporalArgument := ⟨1, 1, 0⟩
 the relation `R²(t₂, t₂)`. -/
 def embeddedPast : TemporalArgument := ⟨2, 2, 2⟩
 
-/-- The simultaneous reading of *Mary believed it was raining* is licensed non-locally, since the
-embedded relation holds of the now and itself, so the matrix relation is the one that is precedence,
-and the believing precedes the utterance time. -/
 theorem simultaneous_nonLocal [Preorder T] (h₁ : matrix.Con ρ g) (h₂ : embeddedPast.Con ρ g)
     (hp₁ : PastConstraint ρ {1}) (hp₂ : PastConstraint ρ {1, 2}) :
     g 1 < g 0 ∧ embeddedPast.NonLocallyLicensed ρ {1, 2} :=
@@ -201,9 +191,6 @@ theorem narrowScope_forward (k : ℕ) (hk : k ≠ 1) :
     pastConstraint_singleton.2 rfl, ⟨1, by simp, rfl⟩,
     (compare_mem_upperLimitConstraint _ _).2 le_rfl, by show (0 : ℤ) < 10; decide⟩
 
-/-- On the wide-scope reading the relative clause is outside the attitude, so its past has
-access only to its own relation, evaluated at the utterance time, and the interest precedes the
-utterance. -/
 theorem wideScope_precedes [Preorder T] {k i : ℕ}
     (hcon : (⟨k, i, 0⟩ : TemporalArgument).Con ρ g) (hp : PastConstraint ρ {k}) : g i < g 0 := by
   simpa [TemporalArgument.Con, pastConstraint_singleton.1 hp] using hcon
@@ -239,11 +226,6 @@ theorem presentUnderPast_false [Preorder T] (h₁ : matrix.Con ρ g) (hp : PastC
     (hq : PresentConstraint ρ {1, 3}) : False :=
   hq.ne_lt (r := 1) (Finset.mem_insert_self _ _) h₁ (pastConstraint_singleton.1 hp)
 
-/-- On the double access reading the scoped present denotes an interval `I` overlapping the
-utterance time, and its trace denotes `J` in the belief world, bounded by the upper limit constraint
-at the believer's now. The counterpart correspondence, on which `I` follows the believing time iff
-`J` follows the now and `I` overlaps it iff `J` overlaps the now, leaves only the reading where `I`
-overlaps the believing time as well. -/
 theorem doubleAccess_of_counterpart [LinearOrder T] {I J : Set T} (hI : I.OrdConnected)
     {believing utterance now : T} (hlt : believing < utterance) (hU : utterance ∈ I)
     (hulc : ∃ s ∈ J, s ≤ now)

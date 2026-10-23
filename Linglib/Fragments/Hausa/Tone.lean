@@ -77,7 +77,6 @@ theorem simplifyRising_mem {prev : Option TRN} {σ : List TRN}
   unfold simplifyRising
   split_ifs with h₁ <;> simp_all [syllableTones]
 
-/-- A word whose syllables carry surface tones or a rise surfaces with surface tones only. -/
 theorem simplifyRisingWord_mem (prev : Option TRN) (w : List (List TRN))
     (h : ∀ σ ∈ w, σ ∈ syllableTones ∨ σ = [.L, .H]) :
     ∀ σ ∈ simplifyRisingWord prev w, σ ∈ syllableTones := by
@@ -103,10 +102,8 @@ example : simplifyRisingWord none [[.L, .H]] = [[.H]] := by decide
 attaches vacuously. -/
 def dockLow (σ : List TRN) : List TRN := if σ.getLast? = some .H then σ ++ [.L] else σ
 
-/-- Docking the low on a surface tone gives a surface tone. -/
 theorem dockLow_mem : ∀ σ ∈ syllableTones, dockLow σ ∈ syllableTones := by decide
 
-/-- A syllable with a surface tone ends low once the low has docked. -/
 theorem getLast?_dockLow : ∀ σ ∈ syllableTones, (dockLow σ).getLast? = some .L := by decide
 
 /-- The last syllable of *bàkā* 'bow' is high and falls in *bàkân* 'the bow'. -/
@@ -125,14 +122,11 @@ def polarOf : TRN → TRN
   | .H => .L
   | _ => .H
 
-/-- Polarity is an involution on high and low. -/
 theorem polarOf_polarOf : ∀ t ∈ [TRN.H, TRN.L], polarOf (polarOf t) = t := by decide
 
 /-- The polar tone after a syllable, opposite to its last tone. -/
 def polarAfter (σ : List TRN) : Option TRN := σ.getLast?.map polarOf
 
-/-- After a fall a polar tone is high, as after a low: *nân nē* 'it's here' with *zōbè nē* 'it's a
-ring', against *nan nè* 'it's there'. -/
 theorem polarAfter_fall : polarAfter [.H, .L] = polarAfter [.L] := rfl
 
 /-! ### Tone-integrating plurals -/

@@ -85,7 +85,6 @@ def IsLosslessFor (L : Kernel C W) : Prop :=
 
 variable {mp}
 
-/-- A deterministic encoder realizes the language model that reads the predictor through it. -/
 theorem isLosslessFor_comap {f : C → R} {hf : Measurable f}
     (h : mp.encode = Kernel.deterministic f hf) : mp.IsLosslessFor (mp.predict.comap f hf) :=
   ⟨f, hf, h, rfl⟩
@@ -96,8 +95,6 @@ theorem expectedSurprisal_of_dirac {r : R} (h : mp.encode c = Measure.dirac r) (
     mp.expectedSurprisal c w = mp.perStateSurprisal r w := by
   rw [expectedSurprisal, h, integral_dirac]
 
-/-- Expected surprisal under a Bernoulli encoder, which produces `r₁` with probability `p` and
-`r₂` otherwise. -/
 theorem expectedSurprisal_of_bernoulli {r₁ r₂ : R} {p : I} (h : mp.encode c = Ber(r₁, r₂, p))
     (w : W) : mp.expectedSurprisal c w
       = p * mp.perStateSurprisal r₁ w + (1 - p) * mp.perStateSurprisal r₂ w := by
@@ -108,8 +105,6 @@ theorem expectedSurprisal_of_deterministic {f : C → R} {hf : Measurable f}
     mp.expectedSurprisal c w = mp.perStateSurprisal (f c) w :=
   expectedSurprisal_of_dirac (h ▸ Kernel.deterministic_apply hf c) w
 
-/-- A lossless process has the surprisal of the language model it realizes: surprisal theory is
-the lossless special case of lossy-context surprisal. -/
 theorem expectedSurprisal_eq_surprisal_of_lossless {L : Kernel C W} (h : mp.IsLosslessFor L)
     (c : C) (w : W) : mp.expectedSurprisal c w = surprisal (L c) w := by
   obtain ⟨f, hf, he, hp⟩ := h

@@ -35,7 +35,6 @@ def piPis : PolarityItem :=
 
 /-! ### Verification -/
 
-/-- Every attested context admits the item. -/
 theorem piPis_licensing_sound :
     ∀ c ∈ piPis.licensingContexts, c.licenser.Admits piPis := by
   decide

@@ -185,24 +185,20 @@ theorem emit_of_isTarget {s : α} (h : r.IsTarget s) (w : Option α) :
     r.emit w s = (r.copied s w).elim s (r.write · s) :=
   ite_eq_left h
 
-/-- Where the targets are visible, an invisible segment is emitted unchanged. -/
 theorem emit_of_not_tier (h : ∀ s, r.IsTarget s → r.tier s) {s : α} (hs : ¬ r.tier s)
     (w : Option α) : r.emit w s = s :=
   r.emit_of_not_isTarget (mt (h s) hs) w
 
-/-- A target whose search finds nothing is left unchanged when there is no default. -/
 theorem emit_of_found_eq_none (hd : r.default = none) {s : α} {w : Option α}
     (hf : r.found s w = none) : r.emit w s = s := by
   unfold emit copied; rw [hf, hd]; split_ifs <;> rfl
 
-/-- A target already carrying the value its search finds is emitted unchanged. -/
 theorem emit_eq_self {s : α} {w : Option α} {v : Bool} (hf : r.found s w = some v)
     (h : r.value s = some (r.relation.act v)) : r.emit w s = s := by
   unfold emit copied; rw [hf]; split_ifs with ht
   · simp [r.write_value _ s ht h]
   · rfl
 
-/-- When writes preserve visibility, a segment is emitted as visible as it was read. -/
 theorem tier_emit_iff (hw : r.PreservesTier) (w : Option α) (s : α) :
     r.tier (r.emit w s) ↔ r.tier s := by
   unfold emit; split_ifs with ht
@@ -268,8 +264,6 @@ def sourceValue (w : List α) : Option Bool := (r.sourceAfter w).bind r.value
 theorem scan_isMealyComputable [Fintype α] : IsMealyComputable r.scan :=
   r.toMealy.isMealyComputable
 
-/-- The rule's string function is subsequential in the rule's direction over a finite
-alphabet. -/
 theorem apply_isSubsequential [Fintype α] : IsSubsequential r.direction r.apply := by
   cases h : r.direction
   · exact r.apply_eq_scan h ▸ r.toMealy.isLeftSubsequential
@@ -286,9 +280,6 @@ def toOSLRule : Subregular.OSLRule 2 α α where
     r.toOSLRule.windowOutput window s = [r.emit window.getLast? s] :=
   rfl
 
-/-- When writes preserve visibility, the OSL rule run with its window over the visible output
-([burness-mcmullin-2019]) is the Mealy run, the last visible output segment being the machine's
-state. -/
 theorem toOSLRule_applyOnTier (hw : r.PreservesTier) :
     r.toOSLRule.applyOnTier r.tier = r.scan := by
   funext w
@@ -311,8 +302,6 @@ theorem toOSLRule_applyOnTier (hw : r.PreservesTier) :
     rw [scan_eq_runFrom, scan_eq_runFrom, Mealy.runFrom_append]
     simp
 
-/-- When writes preserve visibility, the run restricted to the visible segments is the 2-OSL
-rule on their projection, Belth's composition of a local rule with a tier projection. -/
 theorem filter_scan (hw : r.PreservesTier) (w : List α) :
     (r.scan w).filter (decide <| r.tier ·) = r.toOSLRule.apply (w.filter (decide <| r.tier ·)) := by
   rw [← toOSLRule_applyOnTier r hw]
@@ -330,8 +319,6 @@ def toISLRule : Subregular.ISLRule 2 α α where
     r.toISLRule.windowOutput window s = [r.emit window.getLast? s] :=
   rfl
 
-/-- When the targets are invisible, the ISL rule run with its window over the visible input
-([andersson-dolatian-hao-2020]) is the Mealy run, a visible segment being emitted as read. -/
 theorem toISLRule_applyOnTier (h : ∀ s, r.IsTarget s → ¬ r.tier s) :
     r.toISLRule.applyOnTier r.tier = r.scan := by
   have he : ∀ w s, r.tier s → r.emit w s = s := fun w s hs ↦

@@ -53,7 +53,6 @@ theorem Extends.refl (K : Box V C) (f : V → M) : K.Extends f f := fun _ _ => r
 
 variable [DecidableEq V]
 
-/-- `f` extends to the embedding taking `g`'s values on the universe. -/
 theorem extends_piecewise (K : Box V C) (f g : V → M) :
     K.Extends f (K.referents.piecewise g f) :=
   fun _ hx => Finset.piecewise_eq_of_notMem _ _ _ hx
@@ -62,8 +61,6 @@ theorem eqOn_piecewise_of_extends (h₁ : K.Extends f₁ g) {S : Set V}
     (h : Set.EqOn f₁ f₂ (S \ ↑K.referents)) : Set.EqOn g (K.referents.piecewise g f₂) S :=
   fun x _ => by grind [Extends, Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
 
-/-- Some `K`-extension of the input satisfies `P` whenever one of another input does, if the
-inputs agree off the universe wherever `P` looks. -/
 theorem exists_extends_imp (K : Box V C) {S : Set V} {P : (V → M) → Prop}
     (hP : ∀ g g', Set.EqOn g g' S → P g → P g') (h : Set.EqOn f₁ f₂ (S \ ↑K.referents)) :
     (∃ g, K.Extends f₁ g ∧ P g) → ∃ g, K.Extends f₂ g ∧ P g := fun ⟨g, hg, hPg⟩ =>
@@ -74,8 +71,6 @@ theorem exists_extends_congr (K : Box V C) {S : Set V} {P : (V → M) → Prop}
     (∃ g, K.Extends f₁ g ∧ P g) ↔ ∃ g, K.Extends f₂ g ∧ P g :=
   ⟨exists_extends_imp K hP h, exists_extends_imp K hP h.symm⟩
 
-/-- Every `K`-extension of the input satisfies `P` whenever every one of another input does, if
-the inputs agree off the universe wherever `P` looks. -/
 theorem forall_extends_imp (K : Box V C) {S : Set V} {P : (V → M) → Prop}
     (hP : ∀ g g', Set.EqOn g g' S → P g → P g') (h : Set.EqOn f₁ f₂ (S \ ↑K.referents)) :
     (∀ g, K.Extends f₁ g → P g) → ∀ g, K.Extends f₂ g → P g := fun H g hg =>

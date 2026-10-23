@@ -82,7 +82,6 @@ noncomputable def bMinusBasis (a : α) (F : Forest (UnorderedTree α)) :
       of' F := by
   simp [bMinusBasis]
 
-/-- `bMinusBasis a` vanishes on basis forests other than a single tree with root `a`. -/
 theorem bMinusBasis_eq_zero_of_not_singleton_a (a : α)
     (F : Forest (UnorderedTree α))
     (h : ¬ ∃ G' : Forest (UnorderedTree α), F = ({UnorderedTree.node a G'} : Forest _)) :
@@ -109,8 +108,6 @@ noncomputable def bMinusLin (a : α) :
 
 /-! ### Transpose of `B⁺_a` -/
 
-/-- On basis forests, `⟨B⁻_a (of' F), of' G⟩ = ⟨of' F, B⁺_a (of' G)⟩`; both sides count the
-symmetries of `F` when `F = {node a G}`. -/
 theorem bMinusLin_pairing_adjoint_basis (a : α)
     (F G : Forest (UnorderedTree α)) :
     pairing (R := R) (bMinusLin (R := R) a (of' F)) (of' G) =
@@ -138,7 +135,6 @@ theorem bMinusLin_pairing_adjoint_basis (a : α)
   · rw [bMinusBasis_eq_zero_of_not_singleton_a a F hF,
         ite_eq_right fun h => hF ⟨G, h⟩, pairing_zero_left]
 
-/-- `B⁻_a` and `B⁺_a` are an adjoint pair for the symmetry-weighted pairing. -/
 theorem isAdjointPair_bMinusLin_bPlusLin (a : α) :
     LinearMap.IsAdjointPair (pairing (R := R)) (pairing (R := R))
       (bMinusLin (R := R) a) (ConnesKreimer.bPlusLin (R := R) a) := by
@@ -147,7 +143,6 @@ theorem isAdjointPair_bMinusLin_bPlusLin (a : α) :
   refine ConnesKreimer.lhom_ext' fun G => ?_
   exact bMinusLin_pairing_adjoint_basis a F G
 
-/-- `⟨B⁻_a x, y⟩ = ⟨x, B⁺_a y⟩`. -/
 theorem bMinusLin_pairing_adjoint (a : α)
     (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (bMinusLin (R := R) a x) y =
@@ -162,8 +157,6 @@ If `A` is not a single tree with root `a`, both sides vanish or agree by countin
 (`UnorderedTree.insertionMultiset_singleton_node`). -/
 
 omit [DecidableEq α] in
-/-- Grafting `of' B` into the single tree `node a A` is `B⁺_a` of the Grossman–Larson product
-`of' A ⋆ of' B`: each guest is either a new child of the root or grafted into a tree of `A`. -/
 theorem insertion_of'_singleton_node (a : α) (A B : Forest (UnorderedTree α)) :
     insertion (of' {UnorderedTree.node a A}) (of' B) =
       bPlusLin (R := R) a (product (of' A) (of' B)) := by
@@ -194,7 +187,6 @@ private theorem bMinusLin_bPlusLin_mul_of' (a : α)
     rw [bPlusLin_of', ← of'_singleton, ← of'_add, bMinusLin_of', bMinusBasis_singleton_node_add]
     split_ifs <;> simp
 
-/-- Only the split with no bystanders survives an indicator on the bystanders. -/
 private theorem sum_antidiagonal_ite_fst_eq_zero {β : Type*} [AddCommMonoid β]
     (B : Forest (UnorderedTree α)) (f : Forest (UnorderedTree α) → β) :
     (B.antidiagonal.map fun p ↦ if p.1 = 0 then f p.2 else 0).sum = f B := by
@@ -253,7 +245,6 @@ private theorem bMinusLin_gl_mul_basis (a : α) (A B : Forest (UnorderedTree α)
       rw [Function.comp_apply, bMinusLin_of']
       exact bMinusBasis_insertionMultiset_add_eq_zero a A p.2 p.1 X hA0 hA hX
 
-/-- `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y`. -/
 theorem bMinusLin_gl_mul (a : α) (x y : ConnesKreimer R (UnorderedTree α)) :
     bMinusLin (R := R) a (product x y) =
       counit x • bMinusLin (R := R) a y + product (bMinusLin (R := R) a x) y := by
@@ -263,7 +254,6 @@ theorem bMinusLin_gl_mul (a : α) (x y : ConnesKreimer R (UnorderedTree α)) :
     lhom_ext' fun A ↦ lhom_ext' fun B ↦ bMinusLin_gl_mul_basis a A B
   exact LinearMap.congr_fun (LinearMap.congr_fun h x) y
 
-/-- `⟨X ⋆ Y, B⁺_a z⟩ = ε(X) · ⟨B⁻_a Y, z⟩ + ⟨B⁻_a X ⋆ Y, z⟩`. -/
 theorem pairing_apply_bPlus_gl_mul (a : α)
     (X Y z : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (product X Y) (bPlusLin (R := R) a z) =

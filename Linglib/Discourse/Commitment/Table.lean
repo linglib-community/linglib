@@ -97,18 +97,14 @@ def DecidedBy (P : Question W) (f : Filter W) : Prop := ∃ q ∈ alt P, q ∈ f
 theorem DecidedBy.mono (h : f ≤ g) : P.DecidedBy g → P.DecidedBy f :=
   Exists.imp fun _ ⟨hq, hg⟩ ↦ ⟨hq, h hg⟩
 
-/-- A common ground deciding an issue has a context set resolving it. -/
 theorem DecidedBy.ker_mem (h : P.DecidedBy f) : f.ker ∈ P :=
   let ⟨q, hq, hf⟩ := h
   P.downward_closed q (mem_of_mem_alt hq) _ (Set.sInter_subset_of_mem hf)
 
-/-- The trivial issue is decided by every common ground. -/
 @[simp] theorem decidedBy_top : (⊤ : Question W).DecidedBy f := ⟨_, by simp, univ_mem⟩
 
 @[simp] theorem decidedBy_ofSet : (ofSet p).DecidedBy f ↔ p ∈ f := by simp [DecidedBy]
 
-/-- A proposition is decided relative to a common ground when it or its negation follows from
-it; that is the polar question of `p` being decided. -/
 @[simp] theorem decidedBy_polar : (polar p).DecidedBy f ↔ p ∈ f ∨ pᶜ ∈ f := by
   by_cases h : p = ∅ ∨ p = Set.univ
   · rcases h with rfl | rfl <;> simp [polar_empty, polar_univ]
@@ -154,17 +150,14 @@ theorem exists_le_of_mem_project (h : f ∈ project ps P) : ∃ g ∈ ps, f ≤ 
   let ⟨g, hg, _, _, e⟩ := h.1
   ⟨g, hg, e ▸ inf_le_left⟩
 
-/-- Every projected common ground decides the issue it was projected from. -/
 theorem decidedBy_of_mem_project (h : f ∈ project ps P) : P.DecidedBy f :=
   let ⟨_, _, q, hq, e⟩ := h.1
   ⟨q, hq, e ▸ mem_inf_of_right (mem_principal_self q)⟩
 
-/-- A single common ground consistent with `p` projects the one common ground with `p`. -/
 theorem project_singleton_ofSet (h : f ⊓ 𝓟 p ≠ ⊥) : project {f} (ofSet p) = {f ⊓ 𝓟 p} := by
   rw [project, Set.image2_singleton_left, alt_ofSet, Set.image_singleton,
     Set.sdiff_singleton_eq_self (Set.notMem_singleton_iff.2 h.symm)]
 
-/-- A single common ground consistent with `p` and with `¬p` projects both resolutions. -/
 theorem project_singleton_polar (hp : f ⊓ 𝓟 p ≠ ⊥) (hnp : f ⊓ 𝓟 pᶜ ≠ ⊥) :
     project {f} (polar p) = {f ⊓ 𝓟 p, f ⊓ 𝓟 pᶜ} := by
   rw [project, Set.image2_singleton_left,
@@ -292,7 +285,6 @@ open scoped Classical in
 theorem not_isStable_push : ¬ (K.push P).IsStable := List.cons_ne_nil _ _
 
 variable {K} in
-/-- A stable conversation has no issue. -/
 theorem toIssue_eq_top_of_isStable (h : K.IsStable) : Discourse.HasIssue.toIssue K = ⊤ :=
   congrArg (List.headD · ⊤) h
 
@@ -345,11 +337,9 @@ theorem discourseCommitments_assert_of_ne {b : A} (h : b ≠ a) :
     (K.assert a p).discourseCommitments b = K.discourseCommitments b :=
   discourseCommitments_commit_of_ne h
 
-/-- The asserted proposition enters the author's commitments. -/
 theorem mem_discourseCommitments_assert :
     p ∈ (K.assert a p).discourseCommitments a := mem_discourseCommitments_commit_self K a p _ _
 
-/-- M' strips the shared proposition from every commitment list. -/
 theorem discourseCommitments_settle :
     (K.settle p).discourseCommitments a = K.discourseCommitments a \ {p} := by
   ext q
@@ -371,22 +361,18 @@ theorem settle_push_of_decidedBy (h : P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
   Table.ext (by simp [h]) rfl rfl
 
 variable {K p P} in
-/-- M' stops at the first undecided issue. -/
 theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :
     ((K.push P).settle p).stack = P :: K.stack := by
   simp [h]
 
-/-- The commitment that triggers M' is stripped along with the rest. -/
 theorem settle_commit_self (force source) : (K.commit a p force source).settle p = K.settle p :=
   Table.ext rfl (Set.insert_inter_of_notMem (not_not.2 rfl)) rfl
 
-/-- M' with the asserted proposition pops the assertion and strips its commitment. -/
 theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
   (settle_push_of_decidedBy
     (decidedBy_ofSet.2 (mem_inf_of_right (mem_principal_self p)))).trans
     (settle_commit_self K a p _ _)
 
-/-- M' with the sentence radical of a polar question pops the question. -/
 theorem settle_polarQuestion_self : (K.polarQuestion p).settle p = K.settle p :=
   settle_push_of_decidedBy (decidedBy_polar.2 (.inl (mem_inf_of_right (mem_principal_self p))))
 
@@ -395,7 +381,6 @@ Table and the common ground as before them, with both commitments recorded. -/
 theorem agreeToDisagree_assert_assert (b : A) (q : Set W) :
     ((K.assert a p).assert b q).agreeToDisagree = (K.commit a p).commit b q := rfl
 
-/-- Agreeing to disagree restores the crisis status of the context before the assertions. -/
 theorem inCrisis_agreeToDisagree_assert_assert (b : A) (q : Set W) :
     ((K.assert a p).assert b q).agreeToDisagree.InCrisis ↔ K.InCrisis := Iff.rfl
 
@@ -405,11 +390,9 @@ section
 
 variable {K a p P} {f : Filter W}
 
-/-- A stable conversation projects only its common ground. -/
 theorem projectedSet_of_isStable (h : K.IsStable) : K.projectedSet = {K.commonGround} := by
   rw [projectedSet, show K.stack = [] from h, List.foldr_nil]
 
-/-- A projected common ground refines the current one. -/
 theorem le_commonGround_of_mem_projectedSet (h : f ∈ K.projectedSet) : f ≤ K.commonGround := by
   obtain ⟨T, C, cg⟩ := K
   induction T generalizing f with
@@ -430,7 +413,6 @@ theorem decidedBy_of_mem_projectedSet_of_mem_stack (hf : f ∈ K.projectedSet) (
     · obtain ⟨g, hg, hfg⟩ := exists_le_of_mem_project hf
       exact (ih hg hP).mono hfg
 
-/-- Every projected common ground settles the current issue. -/
 theorem settles_of_mem_projectedSet (hf : f ∈ K.projectedSet) :
     Discourse.HasIssue.settles f.ker K := by
   change f.ker ∈ K.stack.headD ⊤
@@ -439,11 +421,9 @@ theorem settles_of_mem_projectedSet (hf : f ∈ K.projectedSet) :
   | cons P T =>
     exact (decidedBy_of_mem_projectedSet_of_mem_stack (P := P) hf (h ▸ List.mem_cons_self)).ker_mem
 
-/-- The asserted proposition holds in every projected common ground. -/
 theorem mem_of_mem_projectedSet_assert (h : f ∈ (K.assert a p).projectedSet) : p ∈ f :=
   decidedBy_ofSet.1 (decidedBy_of_mem_project h)
 
-/-- The sentence radical of a polar question is decided in every projected common ground. -/
 theorem mem_or_compl_mem_of_mem_projectedSet_polarQuestion
     (h : f ∈ (K.polarQuestion p).projectedSet) : p ∈ f ∨ pᶜ ∈ f :=
   decidedBy_polar.1 (decidedBy_of_mem_project h)
@@ -458,17 +438,12 @@ end
     (K.commit a p force source).projectedSet = K.projectedSet :=
   rfl
 
-/-- An assertion projects confirmation: its content is added to each projected common ground. -/
 @[simp] theorem projectedSet_assert :
     (K.assert a p).projectedSet = project K.projectedSet (ofSet p) := rfl
 
-/-- A polar question projects resolution: each alternative is added to each projected common
-ground. -/
 @[simp] theorem projectedSet_polarQuestion :
     (K.polarQuestion p).projectedSet = project K.projectedSet (polar p) := rfl
 
-/-- With the projected set derived, a conversation is in crisis exactly when no projected common
-ground is consistent. -/
 theorem inCrisis_iff : K.InCrisis ↔ ∀ f ∈ K.projectedSet, f = ⊥ :=
   or_iff_right_of_imp fun hcg _ hf ↦
     le_bot_iff.1 ((le_commonGround_of_mem_projectedSet hf).trans_eq hcg)
@@ -482,7 +457,6 @@ theorem projectedSet_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ
     rw [compl_compl]
     exact mem_of_mem_projectedSet_assert hg
 
-/-- A denied assertion leaves the conversation in crisis. -/
 theorem inCrisis_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).InCrisis :=
   (inCrisis_iff _).2 fun f hf ↦
     absurd (projectedSet_assert_assert_compl K a p b ▸ hf) (Set.notMem_empty f)

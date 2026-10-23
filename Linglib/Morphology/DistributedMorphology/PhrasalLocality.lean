@@ -79,7 +79,6 @@ instance [DecidableEq C] (t : Tree C W) (α β : TreePath) : Decidable (MayCondi
 instance (t : Tree C W) (α β : TreePath) : Decidable (MayCondition' t α β) :=
   List.decidableBAll _ _
 
-/-- The refined formulation is the stricter one. -/
 theorem MayCondition'.mayCondition [DecidableEq C] {t : Tree C W} {α β : TreePath}
     (h : MayCondition' t α β) : MayCondition t α β :=
   fun p hp ↦ .inl (h p hp)
@@ -112,8 +111,6 @@ theorem not_replaceable_of_isHeadAt {X : C} {t : Tree C W} {p : TreePath} (h : I
   rintro ⟨s, hs, hh, -⟩
   simp [IsHeadAt, Option.mem_def.mp hs, hh] at h
 
-/-- **Locality is the absence of stranding.** A trigger may condition a head under the refined
-formulation exactly when no proform strands it from the head. -/
 theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : TreePath} :
     MayCondition' t α β ↔ ∀ X, ¬ Strands X t α β := by
   refine ⟨fun h X ⟨p, hp, hr⟩ ↦ not_replaceable_of_isHeadAt (h p hp) hr, fun h p hp ↦ ?_⟩
@@ -168,7 +165,6 @@ theorem isHeadAt_replaceAt_append (hE : (E.subtreeAt h).isSome) (q : List ℕ) :
     IsHeadAt (E.replaceAt h t) ⟨h ++ q⟩ ↔ IsHeadAt t ⟨q⟩ := by
   simp only [IsHeadAt, RoseTree.subtreeAt_replaceAt_append hE]
 
-/-- Within an embedded phrase, locality is what it was in the phrase. -/
 theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : List ℕ) :
     MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ ⟨h ++ γ⟩ ↔ MayCondition' t ⟨α⟩ ⟨γ⟩ := by
   simp only [mayCondition'_iff]
@@ -182,7 +178,6 @@ theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : Li
     · exact (isHeadAt_replaceAt_append hE p).mpr (hm ⟨p⟩ (TreePath.le_def.mpr hp)
         (fun h' ↦ hγ (by simpa [TreePath.le_def] using TreePath.le_def.mp h')))
 
-/-- Nothing outside an embedded phrase with a phrasal root may condition a head within it. -/
 theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
     (α : List ℕ) {β : TreePath} (hβ : ¬ (⟨h⟩ : TreePath) ≤ β) :
     ¬ MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ β := fun hm ↦ by
@@ -191,7 +186,6 @@ theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t
   simp only [List.append_nil] at h0
   simp [IsHeadAt, h0, ht] at this
 
-/-- Embedding a phrase with a phrasal root leaves the labels local to its heads unchanged. -/
 theorem localSet_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
     (α : List ℕ) : localSet (E.replaceAt h t) ⟨h ++ α⟩ = localSet t ⟨α⟩ := by
   ext l
@@ -220,7 +214,6 @@ private theorem all_isHead_replaceAt_of_prefix (hE : (E.subtreeAt h).isSome)
   · rfl
   · exact absurd (isHead_of_isHead_replaceAt s d t hsd hh) (by simp [ht])
 
-/-- Embedding a phrase with a phrasal root leaves the complex heads of its nodes unchanged. -/
 theorem x0At_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false) (α : List ℕ) :
     x0At (E.replaceAt h t) ⟨h ++ α⟩ = x0At t ⟨α⟩ := by
   simp only [x0At]
@@ -258,8 +251,6 @@ private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : (E.subtreeA
   | nil => simp [hv]
   | cons i d => simp
 
-/-- Two phrases with phrasal roots of one label and the same nodes along the path to `α` are
-stranded alike from `α`, wherever they are embedded. -/
 theorem strands_replaceAt_congr {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
     (h₁ : isHead t₁ = false) (h₂ : isHead t₂ = false) (hv : t₁.value = t₂.value) {α : List ℕ}
     (hα : ∀ p, p <+: α → p ≠ [] → t₁.subtreeAt p = t₂.subtreeAt p) (X : C) (β : TreePath) :

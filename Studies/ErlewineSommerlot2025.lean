@@ -228,16 +228,13 @@ def WellFormed : Prop :=
 
 instance : Decidable c.WellFormed := by unfold WellFormed; infer_instance
 
-/-- Every well-formed clause's derivation spells out the paper's VoiceP and CP snapshots. -/
 theorem spellouts_eq : ∀ c : Clause, c.WellFormed → c.spellouts = [c.voiceP, c.cP] := by
   decide +kernel
 
-/-- The phase of Voice is complete when VoiceP is built, and that of C at the end. -/
 theorem schedule_eq : ∀ c : Clause, c.WellFormed → c.schedule =
     [(c.voicePSteps.length, c.voicePSteps.length), (c.derivation.length, c.derivation.length)] := by
   decide +kernel
 
-/-- Voice and v are adjacent exactly when the agent does not stay between them. -/
 theorem adjacent_iff : ∀ c : Clause, c.Adjacent ↔ ¬ c.AgentInSitu := by
   decide +kernel
 
@@ -268,8 +265,6 @@ def Exponence.prune (e : Exponence) (l : List Term) : List Term :=
 def Clause.phases (c : Clause) (e : Exponence) : List (List Term) :=
   [e.prune c.voiceP, e.prune c.cP]
 
-/-- The two Spell-outs cohere exactly when the VoiceP order survives at CP, since everything
-spelled out at VoiceP is spelled out again at CP. -/
 theorem Clause.consistent_phases_iff (c : Clause) (e : Exponence) :
     Consistent (c.phases e) ↔ e.prune c.voiceP <+ e.prune c.cP := by
   unfold Clause.phases Exponence.prune
@@ -463,7 +458,6 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 /-- The rows of the six grammars. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every example is acceptable exactly when its grammar generates its construction. -/
 theorem rows_grammatical :
     ∀ r ∈ rows, r.judgment = .acceptable ↔ r.grammar.Generates r.extracted r.order r.affix := by
   decide +kernel

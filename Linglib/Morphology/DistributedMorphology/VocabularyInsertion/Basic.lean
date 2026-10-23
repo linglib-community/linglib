@@ -124,34 +124,26 @@ theorem applies_iff : Applies i n ↔ ∀ x ∈ i.site, x ∈ n := Iff.rfl
 theorem applies_iff_subset_toFinset [DecidableEq F] : Applies i n ↔ i.site ⊆ n.toFinset := by
   simp [applies_iff, Finset.subset_iff]
 
-/-- An item applies exactly in the neighborhoods containing the least one bearing its site. -/
 theorem applies_iff_ofFinset_subset [DecidableEq F] :
     Applies i n ↔ Neighborhood.ofFinset i.site ⊆ n := by
   rw [applies_iff_subset_toFinset]
   exact (Neighborhood.gc_ofFinset_toFinset _ _).symm
 
-/-- The neighborhoods an item applies in are the principal up-set of the least neighborhood
-bearing its site. -/
 theorem applySet_eq [DecidableEq F] : applySet i = Set.Ici (Neighborhood.ofFinset i.site) :=
   Set.ext fun _ ↦ applies_iff_ofFinset_subset
 
-/-- A context-free item applies where its features are on the focus. -/
 @[simp] theorem applies_ofFeatures {fs : Finset F} {e : E} :
     Applies (fs ⟷ e) n ↔ fs ⊆ n.focus := by
   simp [applies_iff, Neighborhood.mem_def, Finset.subset_iff]
 
-/-- The Elsewhere item applies at every neighborhood. -/
 theorem elsewhere_applies (e : E) (n : Neighborhood (Finset F)) :
     Applies ((∅ : Finset F) ⟷ e) n := by
   simp [applies_iff]
 
-/-- An item applying in a neighborhood applies in every larger one. -/
 theorem applies_mono {n' : Neighborhood (Finset F)} (h : Applies i n) (hn : n ⊆ n') :
     Applies i n' :=
   fun _ hx ↦ Neighborhood.mem_of_subset hn (h _ hx)
 
-/-- Specificity is reverse inclusion of sites: an item applies in fewer neighborhoods exactly when
-its site is larger, since principal up-sets are ordered reversely to their generators. -/
 theorem applySet_subset_iff : applySet i ⊆ applySet j ↔ j.site ⊆ i.site := by
   classical
   rw [applySet_eq, applySet_eq, Set.Ici_subset_Ici, Neighborhood.ofFinset_subset_ofFinset]
@@ -165,7 +157,6 @@ matching most of them ([halle-1997]), and context breaks ties ([mcginnis-2013]).
 def specificity (i : VocabularyItem F E) : ℕ ×ₗ ℕ :=
   toLex ((i.site.filter (·.1 = 0)).card, (i.site.filter (·.1 ≠ 0)).card)
 
-/-- A strictly more specific item has a strictly greater specificity. -/
 theorem specificity_lt_of_applySet_ssubset (hij : applySet i ⊂ applySet j) :
     j.specificity < i.specificity := by
   classical
@@ -179,7 +170,6 @@ theorem specificity_lt_of_applySet_ssubset (hij : applySet i ⊂ applySet j) :
     Finset.eq_of_subset_of_card_le h₀ heq.ge]
   exact congrArg (_ ∪ ·) h₂
 
-/-- No item is less specific than an Elsewhere item. -/
 @[simp] theorem not_specificity_lt_elsewhere (i : VocabularyItem F E) (e : E) :
     ¬ i.specificity < ((∅ : Finset F) ⟷ e).specificity := by
   simp [specificity, Prod.Lex.toLex_lt_toLex]
@@ -213,8 +203,6 @@ def subsetPrinciple (items : RuleSet (VocabularyItem F E)) (n : Neighborhood (Fi
     Option E :=
   items.realize VocabularyItem.specificity n
 
-/-- The Subset Principle's exponent comes from an applicable item, so the selection never draws on
-features the neighborhood does not bear. -/
 theorem subsetPrinciple_winner_mem (h : subsetPrinciple items n = some e) :
     ∃ i ∈ items, i.exponent = e ∧ Applies i n := by
   obtain ⟨i, hi, rfl⟩ := Option.map_eq_some_iff.mp h
@@ -223,8 +211,6 @@ theorem subsetPrinciple_winner_mem (h : subsetPrinciple items n = some e) :
 theorem winner?_isSome_iff : (winner? items n).isSome ↔ ∃ i ∈ items, Applies i n :=
   RuleSet.selectBy_isSome_iff
 
-/-- On a vocabulary listed by non-increasing specificity, the winner is the first applicable
-item. -/
 theorem winner?_eq_head?_applicable (h : items.Pairwise fun i j ↦ j.specificity ≤ i.specificity) :
     winner? items n = (items.applicable n).head? :=
   RuleSet.selectBy_eq_head?_applicable h
@@ -232,15 +218,11 @@ theorem winner?_eq_head?_applicable (h : items.Pairwise fun i j ↦ j.specificit
 theorem subsetPrinciple_eq_map_winner? :
     subsetPrinciple items n = (winner? items n).map (·.exponent) := rfl
 
-/-- On a vocabulary listed by non-increasing specificity, the exponent is that of the first
-applicable item. -/
 theorem subsetPrinciple_eq_head?_applicable
     (h : items.Pairwise fun i j ↦ j.specificity ≤ i.specificity) :
     subsetPrinciple items n = ((items.applicable n).head?).map (·.exponent) := by
   rw [subsetPrinciple_eq_map_winner?, winner?_eq_head?_applicable h]
 
-/-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
-`VocabularyItem.specificity` is strictly antitone outright. -/
 theorem winner?_isElsewhereWinner (h : winner? items n = some i) :
     items.IsElsewhereWinner applySet n i :=
   RuleSet.selectBy_isElsewhereWinner
@@ -250,15 +232,10 @@ theorem subsetPrinciple_realizes (h : subsetPrinciple items n = some e) :
     items.Realizes applySet n e :=
   RuleSet.realize_realizes (fun _ _ _ _ h ↦ VocabularyItem.specificity_lt_of_applySet_ssubset h) h
 
-/-- Impoverishment that deletes only features the winning item does not mention leaves the winner
-in place, since every item applicable after the deletion was applicable before it. -/
 theorem winner?_eq_of_subset (hsub : n' ⊆ n) (h : winner? items n = some i) (hi : Applies i n') :
     winner? items n' = some i :=
   RuleSet.selectBy_eq_some_of_applies (fun _ _ hs ↦ VocabularyItem.applies_mono hs hsub) h hi
 
-/-- **Retreat to the general case.** Shrinking the neighborhood, deleting features by
-Impoverishment, can only make the winner weakly less specific, which is why impoverishment yields
-syncretism with a more general exponent rather than a different specific one. -/
 theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
     ∃ i, winner? items n = some i ∧ i'.specificity ≤ i.specificity := by
   have hi' : Applies i' n := VocabularyItem.applies_mono (RuleSet.selectBy_applies h') hsub
@@ -266,9 +243,6 @@ theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
     (winner?_isSome_iff.mpr ⟨i', RuleSet.selectBy_mem h', hi'⟩)
   exact ⟨i, hi, RuleSet.le_of_selectBy_eq_some hi (RuleSet.selectBy_mem h') hi'⟩
 
-/-- An antihomophonous vocabulary realizes no ABA pattern over neighborhoods ordered by inclusion:
-an exponent inserted at two nested neighborhoods is inserted at every neighborhood between
-them. -/
 theorem isContiguous_subsetPrinciple (hv : items.Antihomophonous) :
     IsContiguous (subsetPrinciple items) :=
   RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ VocabularyItem.applies_mono hs hn

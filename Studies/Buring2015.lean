@@ -74,7 +74,6 @@ theorem alternatives_vp_strong : (vp .strong).alternatives = {Rel.ordered}ᶜ ×
   ext ⟨r, o⟩
   simp [vp, alternatives_node bijective_uncurry_mk, alternatives_map₂, eq_comm]
 
-/-- Default and reversed weights on the VP divide its focal targets between them. -/
 theorem isCompl_alternatives_vp : IsCompl (vp .weak).alternatives (vp .strong).alternatives :=
   ⟨disjoint_alternatives_node_weak_strong, codisjoint_iff.2 <| by
     change _ ∪ _ = univ
@@ -92,8 +91,6 @@ def target (F : Finset Word) : Ent × Rel × Obj :=
   (if .subj ∈ F then .jones else .smith, if .verb ∈ F then .paidFor else .ordered,
     if .obj ∈ F then .lunch else .breakfast)
 
-/-- Default weights keep the literal meaning of *Smith ordered breakfast*, which is why Büring's
-Weak Restriction subtracts the weak daughter's ordinary value. -/
 theorem wellFormed_clause_weak_weak : (clause .weak .weak).WellFormed :=
   .node_weak injective2_mk (.focused _) (.node_weak injective2_mk (.focused _) (.focused _))
 

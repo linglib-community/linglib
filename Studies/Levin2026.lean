@@ -66,8 +66,6 @@ variable {T : Type*} [LinearOrder T] {act change : NonemptyInterval T}
 causing act. -/
 def CauseRequired (act change : NonemptyInterval T) : Prop := change < act
 
-/-- A change that outlasts the causing act, as the swing of a door outlasts the push, is not
-contained in it, so the cause may go unexpressed. -/
 theorem not_causeRequired_of_outlasts (h : act.snd < change.snd) :
     ¬ CauseRequired act change :=
   fun hlt ↦ absurd (NonemptyInterval.le_def.1 hlt.le).2 h.not_ge
@@ -226,20 +224,15 @@ def Row.ofDatum (e : Datum) : Option Row := do
          frame := ← e.parse? "frame" Frame.labels
          judgment := e.judgment }
 
-/-- Every example is read. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide +kernel
 
 /-- The paper's examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- An intransitive of the paper, with or without a result phrase, is acceptable exactly when
-it is licensed. -/
 theorem acceptable_iff_licensed :
     ∀ d ∈ data, d.frame = .intransitive → (d.judgment = .acceptable ↔ d.Licensed) := by
   decide +kernel
 
-/-- The verb does not suffice, since a verb that applies a force is unacceptable without a result
-phrase and with a result that is not spatially instantiated. -/
 theorem exists_unacceptable_appliesForce :
     (∃ d ∈ data, d.verb.AppliesForce ∧ d.frame = .intransitive ∧ d.result = none ∧
       d.judgment ≠ .acceptable) ∧
@@ -247,15 +240,11 @@ theorem exists_unacceptable_appliesForce :
       d.judgment ≠ .acceptable := by
   decide +kernel
 
-/-- The adjective does not suffice, since a spatially instantiated result is unacceptable with a
-verb outside the two classes. -/
 theorem exists_unacceptable_spatial :
     ∃ d ∈ data, d.frame = .intransitive ∧ (∃ r ∈ d.result, r.IsSpatial) ∧
       d.judgment ≠ .acceptable := by
   decide +kernel
 
-/-- The verbs of exerting force and the verbs of hitting are attested in both variants, the
-transitive resultative and the intransitive one. -/
 theorem causative_variants :
     ∀ k ∈ [VerbKind.exertingForce, .hitting],
       (∃ d ∈ data, d.verb = k ∧ d.frame = .transitive ∧ d.result.isSome ∧
@@ -264,15 +253,11 @@ theorem causative_variants :
         d.judgment = .acceptable := by
   decide +kernel
 
-/-- The subjects of the directed motion descriptions with verbs of surface contact are
-self-energetic, as the subjects of the intransitive resultatives are. -/
 theorem directedMotion_selfEnergetic :
     ∀ d ∈ data, d.frame = .directedMotion →
       d.verb.IsSurfaceContact ∧ ∃ t ∈ d.theme, t.SelfEnergetic := by
   decide +kernel
 
-/-- An entity that must be manipulated throughout is never the subject of a licensed
-intransitive resultative with a verb that applies a force. -/
 theorem not_licensed_of_manipulated {d : Row} (hv : d.verb ≠ .changeOfState)
     (ht : d.theme = some .manipulated) : ¬ d.Licensed := by
   rintro (h | ⟨-, -, t, ht', hs⟩)
@@ -282,16 +267,12 @@ theorem not_licensed_of_manipulated {d : Row} (hv : d.verb ≠ .changeOfState)
 
 /-! ### The construction does not restrict the alternation -/
 
-/-- The classes of verbs of exerting force and of hitting lack the causative alternation in
-[levin-1993], and the verbs of change of state have it. -/
 theorem participates_causativeInchoative :
     ¬ LevinClass.pushPull.Participates .causativeInchoative ∧
     ¬ LevinClass.hit.Participates .causativeInchoative ∧
     LevinClass.otherChangeOfState.Participates .causativeInchoative := by
   decide
 
-/-- The paper's verbs of exerting force are not all verbs of pushing and pulling in
-[levin-1993]: *fling* is there a verb of throwing. -/
 theorem exertingForce_not_all_pushPull :
     ∃ v ∈ exertingForceVerbs, "fling" = v ∧ v ∉ LevinClass.members .pushPull ∧
       v ∈ LevinClass.members .throw := by

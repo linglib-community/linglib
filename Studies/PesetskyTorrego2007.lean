@@ -85,14 +85,12 @@ def assign (α β : L) : Option (State L V) :=
 
 variable {s} {α β : L} {s' : State L V}
 
-/-- Agree makes the probe and the goal share a feature. -/
 theorem shares_of_agree (h : s.agree α β = some s') : s'.Shares α β := by
   unfold agree at h
   split at h
   · cases h; simp [Setoid.ker_def]
   · cases h
 
-/-- Features shared before Agree stay shared. -/
 theorem Shares.agree {x y : L} (hxy : s.Shares x y) (h : s.agree α β = some s') :
     s'.Shares x y := by
   unfold State.agree at h
@@ -102,7 +100,6 @@ theorem Shares.agree {x y : L} (hxy : s.Shares x y) (h : s.agree α β = some s'
     simp [hxy]
   · cases h
 
-/-- Every instance of the probe's feature takes the value of the goal's. -/
 theorem valueAt_agree {x : L} (hx : s.Shares x α) (h : s.agree α β = some s') :
     s'.valueAt x = s.valueAt β := by
   unfold agree at h

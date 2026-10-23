@@ -126,8 +126,6 @@ theorem bir_apply_singleton (x : X) :
     · rintro ⟨rfl, h⟩
       exact ⟨h, rfl⟩
 
-/-- By eq. (BIR), the information state after "around" is the literal listener at the graded
-meaning, `P(x = k | around n) ∝ P(x = k) · P(y ≥ |n − k|)`. -/
 theorem bir_eq_ofDensity {U : Type*} [MeasurableSpace U] [Countable U]
     [MeasurableSingletonClass U] {m : U → X → ℝ≥0∞} {u : U} (hm : m u = aroundWeight ν d) :
     bir μ ν d = Kernel.ofDensity μ m u :=
@@ -166,7 +164,6 @@ theorem aroundWeight_unif (n k : ℕ) :
     aroundWeight (unif n) (Nat.dist n) k = (n + 1 - Nat.dist n k : ℕ) :=
   unif_apply_Ici n _
 
-/-- The triangle normalizes as `∑_{k ≤ 2n} (n + 1 − |n − k|) = (n + 1)²`. -/
 theorem sum_range_sub_dist (n : ℕ) :
     ∑ k ∈ Finset.range (2 * n + 1), (n + 1 - Nat.dist n k) = (n + 1) ^ 2 := by
   induction n with
@@ -216,7 +213,6 @@ theorem bir_unif_antitone {n k k' : ℕ} (h : Nat.dist n k ≤ Nat.dist n k') :
 /-- "Between a and b", the crisp interval meaning (§3.1), as a message indexed by its endpoints. -/
 noncomputable def betweenMeaning (p : ℕ × ℕ) : ℕ → ℝ≥0∞ := (Set.Icc p.1 p.2).indicator 1
 
-/-- "Between" is crisp, so its graded literal listener conditions on the interval. -/
 theorem ofDensity_betweenMeaning (μ : Measure ℕ) :
     Kernel.ofDensity μ betweenMeaning =
       RSA.listener μ (RSA.truthful (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)) :=
@@ -245,9 +241,6 @@ theorem lintegral_aroundWeight_ne_top : ∫⁻ x, aroundWeight ν (Nat.dist n) x
   ne_top_of_le_ne_top (ENNReal.mul_ne_top (measure_ne_top ν _) (measure_ne_top μ _))
     ((lintegral_mono fun _ ↦ measure_mono (Set.subset_univ _)).trans (lintegral_const _).le)
 
-/-- For `k₁ < k₂`, hearing "around n" raises the odds of `n − k₁` against `n − k₂` above their
-prior odds, whatever the priors, as soon as the radii between `k₁` and `k₂` have positive prior
-mass (the ratio inequality). -/
 theorem ratio_inequality {k₁ k₂ : ℕ} (h : k₁ < k₂) (hk : k₂ ≤ n) (hμ₁ : μ {n - k₁} ≠ 0)
     (hμ₂ : μ {n - k₂} ≠ 0) (hν : ν (Set.Ico k₁ k₂) ≠ 0) (hν₂ : ν (Set.Ici k₂) ≠ 0) :
     μ.real {n - k₁} / μ.real {n - k₂} <
@@ -322,7 +315,6 @@ noncomputable def L0 : Kernel Msg (Fin 9) :=
 instance (m : Msg) : IsZeroOrProbabilityMeasure (L0 m) :=
   inferInstanceAs (IsZeroOrProbabilityMeasure (Kernel.ofDensity _ _ m))
 
-/-- The "around 4" column is the Bayesian interpretation rule. -/
 theorem L0_around4 : L0 .around4 = bir Measure.count radiusPrior (fun x : Fin 9 ↦ Nat.dist 4 x) :=
   (bir_eq_ofDensity _ _ _ rfl).symm
 
@@ -419,7 +411,6 @@ theorem L0_between1_7_real_singleton (x : Fin 9) :
   rw [measureReal_def, L0_between1_7_apply_singleton]
   split_ifs <;> simp
 
-/-- "Around 4" excludes no value, so Quality holds for every belief. -/
 theorem table1_ac_around4 : table1 ≪ L0 .around4 :=
   Measure.absolutelyContinuous_of_forall_singleton fun x hx ↦ by
     rw [L0_around4_apply_singleton] at hx
@@ -537,14 +528,12 @@ variable (sem : I → M → Set W)
 the observation leaves possible. -/
 def Quality (o : O) (i : I) (m : M) : Prop := ∀ w, P {(w, o)} ≠ 0 → w ∈ sem i m
 
-/-- Quality is a property of the support (A-1). -/
 theorem quality_iff_of_sameSupport {o₁ o₂ : O} (hs : SameSupport P o₁ o₂) {i : I} {m : M} :
     Quality P sem o₁ i m ↔ Quality P sem o₂ i m :=
   forall_congr' fun w ↦ imp_congr_left (not_congr (hs w))
 
 variable [Fintype W] [Fintype O]
 
-/-- Quality is almost-sure entailment of the message by the observation. -/
 theorem snd_preimage_ae_le_iff_quality {o : O} {i : I} {m : M} :
     Prod.snd ⁻¹' {o} ≤ᵐ[P] sem i m ×ˢ Set.univ ↔ Quality P sem o i m := by
   refine ae_iff_of_countable.trans ⟨fun h w hw ↦ (h (w, o) hw rfl).1, ?_⟩
@@ -565,14 +554,11 @@ noncomputable def luS1 (i : I) : Kernel O M :=
   RSA.speaker lam cost (RSA.listener P (RSA.truthful fun m ↦ sem i m ×ˢ Set.univ)) fun o ↦
     P[|Prod.snd ⁻¹' {o}]
 
-/-- The level-1 speaker uses exactly the messages that satisfy Quality (A-2a). -/
 theorem luS1_apply_singleton_eq_zero_iff (hlam : 0 < lam) {o : O} {i : I} {m : M} :
     luS1 P sem cost lam i o {m} = 0 ↔ ¬ Quality P sem o i m := by
   rw [luS1, RSA.speaker_cond_listener_truthful_apply_singleton_eq_zero_iff hlam,
     snd_preimage_ae_le_iff_quality]
 
-/-- The interpretation-relativized level-1 speaker treats same-support observations alike
-(A-7). -/
 theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSupport P o₁ o₂)
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (i : I) :
     luS1 P sem cost lam i o₂ = luS1 P sem cost lam i o₁ :=
@@ -580,10 +566,6 @@ theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSuppor
     rw [snd_preimage_ae_le_iff_quality, snd_preimage_ae_le_iff_quality,
       quality_iff_of_sameSupport P sem hs]
 
-/-- The listeners of level `n + 1` and the level-1 listener are the joint prior reweighted by a
-term in the message and the observation. The speaker answering such a listener treats two
-observations alike whenever that term does, the prior cancelling from her choice ((A-6), (A-9),
-(A-10)). -/
 theorem speaker_ofDensity_snd_eq (hlam : 0 ≤ lam) {o₁ o₂ : O}
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (G : O → M → ℝ≥0∞)
     (hG : ∀ m, G o₂ m = G o₁ m) :
@@ -660,9 +642,6 @@ theorem within_dist (n y : ℕ) : within (Nat.dist n) y = Set.Icc (n - y) (n + y
 
 variable [IsFiniteMeasure μ]
 
-/-- The Bayesian rule is the weighted rule with the posterior over radii in place of the prior
-(BIR′), so the two rules differ exactly in which distribution over radii weights the
-intervals. -/
 theorem bir_eq_bind_radiusPosterior :
     bir μ ν d = (radiusPosterior μ ν d).bind fun y ↦ μ[|within d y] :=
   Measure.ext_of_singleton fun x ↦ by

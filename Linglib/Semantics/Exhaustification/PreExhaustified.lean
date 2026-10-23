@@ -45,7 +45,6 @@ variable [Fintype W] [DecidableEq W]
 def Excluder.preExhaustify (E : Excluder W) (ALT : Finset (Finset W)) : Finset (Finset W) :=
   ALT.image (E.exh ALT)
 
-/-- Pre-exhaustifying by the innocent excluder is pre-exhaustifying by innocent exclusion. -/
 theorem asSetOfSets_preExhaustify_innocent (ALT : Finset (Finset W)) :
     asSetOfSets (innocent.preExhaustify ALT) = preExhaustify exhIE (asSetOfSets ALT) := by
   ext s

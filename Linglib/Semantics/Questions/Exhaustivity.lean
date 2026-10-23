@@ -124,14 +124,10 @@ variable {H} in
 theorem partition_iff {v w : W} : partition H v w ↔ ∀ p ∈ H, (v ∈ p ↔ w ∈ p) := by
   simp only [Setoid.ker_def, Set.ext_iff, mem_trueAnswers, and_congr_right_iff]
 
-/-- The partition is the meet of the polar questions of the members. -/
 theorem partition_eq_iInf : partition H = ⨅ p ∈ H, Setoid.polar p := by
   ext v w
   simp only [partition_iff, Setoid.iInf_iff, Setoid.polar_iff]
 
-/-- The weak answer determines the true members: a world lies in each one's weak answer and
-each one's weak answer lies in all of its true members, so [heim-1994]'s Ans₂ on a Hamblin
-set, the proposition that the weak answer is what it is, is the cell of the partition. -/
 theorem ker_weakAnswer : Setoid.ker (weakAnswer H) = partition H := by
   ext v w
   rw [Setoid.ker_def, partition_iff]
@@ -145,7 +141,6 @@ theorem ker_weakAnswer : Setoid.ker (weakAnswer H) = partition H := by
     simp only [mem_weakAnswer]
     exact ⟨fun hu p hp hw ↦ hu p hp ((h p hp).2 hw), fun hu p hp hv ↦ hu p hp ((h p hp).1 hv)⟩
 
-/-- The strong answer at `w` is the cell of `w`. -/
 theorem strongAnswer_eq_cell : strongAnswer H w = (partition H).cell w := by
   ext v
   simp only [mem_strongAnswer, Setoid.mem_cell, partition_iff]
@@ -156,17 +151,13 @@ theorem classes_partition : (partition H).classes = Set.range (strongAnswer H) :
   simp only [Setoid.classes, Set.mem_ofPred_eq, Set.mem_range, strongAnswer_eq_cell, eq_comm]
   rfl
 
-/-- Two strong answers are equal or disjoint. -/
 theorem strongAnswer_eq_or_disjoint (w v : W) :
     strongAnswer H w = strongAnswer H v ∨ Disjoint (strongAnswer H w) (strongAnswer H v) := by
   simpa only [strongAnswer_eq_cell] using (partition H).cell_eq_or_disjoint w v
 
-/-- As an inquisitive question, the partition is the meet of the polar questions of the members:
-a state resolves it iff it resolves whether each member holds. -/
 theorem fromSetoid_partition : fromSetoid (partition H) = ⨅ p ∈ H, polar p := by
   simp only [partition_eq_iInf, fromSetoid_iInf, fromSetoid_polar]
 
-/-- The strongly exhaustive answer to an inquisitive question mention-all answers it. -/
 theorem completelyAnsweredBy_strongAnswer (Q : Question W) :
     CompletelyAnsweredBy Q (strongAnswer (alt Q) w) := by
   intro p hp
@@ -192,7 +183,6 @@ theorem isStrongestTrueAnswer_iff {p : Set W} :
   · rintro ⟨hp, rfl⟩
     exact ⟨⟨hp, self_mem_weakAnswer H w⟩, fun _ hq => Set.sInter_subset_of_mem hq⟩
 
-/-- The presupposition holds exactly when the weak answer is itself a member. -/
 theorem isExhaustivelyResolvable_iff : IsExhaustivelyResolvable H w ↔ weakAnswer H w ∈ H :=
   ⟨fun ⟨_, h⟩ =>
     have h' := (isStrongestTrueAnswer_iff H w).1 h
@@ -222,8 +212,6 @@ theorem trueAnswers_range (P : α → Set W) (w : W) :
   · rintro ⟨a, hw, rfl⟩
     exact ⟨⟨a, rfl⟩, hw⟩
 
-/-- On a topical property, Dayal's presupposition asks for a true short answer whose proposition
-entails every true one. -/
 theorem isExhaustivelyResolvable_range_iff (P : α → Set W) (w : W) :
     IsExhaustivelyResolvable (Set.range P) w ↔
       ∃ a, w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b := by
@@ -233,15 +221,11 @@ theorem isExhaustivelyResolvable_range_iff (P : α → Set W) (w : W) :
   · rintro ⟨a, hw, hmin⟩
     exact ⟨P a, ⟨⟨a, rfl⟩, hw⟩, by rintro q ⟨⟨b, rfl⟩, hb⟩; exact hmin b hb⟩
 
-/-- The proposition of a short answer is the strongest true answer of a topical property when it
-is true and entails every true one. -/
 theorem isStrongestTrueAnswer_range_iff {P : α → Set W} {a : α} {w : W} :
     IsStrongestTrueAnswer (Set.range P) w (P a) ↔ w ∈ P a ∧ ∀ b, w ∈ P b → P a ⊆ P b := by
   rw [IsStrongestTrueAnswer, trueAnswers_range]
   exact and_congr ⟨fun ⟨_, hb, h⟩ => h ▸ hb, fun h => ⟨a, h, rfl⟩⟩ Set.forall_mem_image
 
-/-- A topical property has a strongest true answer exactly when the proposition of some short
-answer is one. -/
 theorem isExhaustivelyResolvable_range_iff_exists {P : α → Set W} {w : W} :
     IsExhaustivelyResolvable (Set.range P) w ↔
       ∃ a, IsStrongestTrueAnswer (Set.range P) w (P a) := by
@@ -253,16 +237,12 @@ section LinearOrder
 
 variable [LinearOrder α] {φ : α → Set W} {w : W}
 
-/-- On a strictly antitone topical property Dayal's presupposition holds exactly when some degree
-is the greatest true one. -/
 theorem isExhaustivelyResolvable_range_iff_isGreatest (hφ : StrictAnti φ) :
     IsExhaustivelyResolvable (Set.range φ) w ↔ ∃ m, IsGreatest {d | w ∈ φ d} m := by
   rw [isExhaustivelyResolvable_range_iff]
   exact ⟨fun ⟨x, hxw, hent⟩ => ⟨x, hxw, fun y hy => not_lt.1 fun hxy => (hφ hxy).2 (hent y hy)⟩,
     fun ⟨m, hm⟩ => ⟨m, hm.1, fun _ hb => hφ.antitone (hm.2 hb)⟩⟩
 
-/-- On a strictly monotone topical property Dayal's presupposition holds exactly when some degree
-is the least true one. -/
 theorem isExhaustivelyResolvable_range_iff_isLeast (hφ : StrictMono φ) :
     IsExhaustivelyResolvable (Set.range φ) w ↔ ∃ m, IsLeast {d | w ∈ φ d} m :=
   isExhaustivelyResolvable_range_iff_isGreatest (φ := fun d : αᵒᵈ => φ (OrderDual.ofDual d))
@@ -275,7 +255,6 @@ end Range
 theorem isLeast_singleton (p : Set W) : IsLeast {p} p :=
   ⟨Set.mem_singleton p, fun _ hq => le_of_eq (Set.mem_singleton_iff.1 hq).symm⟩
 
-/-- Over an antichain the least true member is the only true member. -/
 theorem isStrongestTrueAnswer_iff_of_antichain (hH : IsAntichain (· ⊆ ·) H) {p : Set W} :
     IsStrongestTrueAnswer H w p ↔ trueAnswers H w = {p} := by
   constructor
@@ -291,7 +270,6 @@ theorem isExhaustivelyResolvable_iff_of_antichain (hH : IsAntichain (· ⊆ ·) 
     IsExhaustivelyResolvable H w ↔ ∃ p, trueAnswers H w = {p} :=
   exists_congr fun _ => isStrongestTrueAnswer_iff_of_antichain H w hH
 
-/-- Over inquisitive alternatives the strongest true answer is the only true alternative. -/
 theorem isStrongestTrueAnswer_alt_iff (Q : Question W) {p : Set W} :
     IsStrongestTrueAnswer (alt Q) w p ↔ trueAnswers (alt Q) w = {p} :=
   isStrongestTrueAnswer_iff_of_antichain _ w (alt_isAntichain Q)
@@ -312,29 +290,22 @@ def PossiblyIgnorant (c : Set W) (Dox : SetRel W W) : Prop := ∃ w ∈ c, ¬ Kn
 
 variable {H} {w}
 
-/-- Asserting content that entails the center's knowledge of the answer leaves no
-world where the requirement holds. -/
 theorem not_possiblyIgnorant_inter_of_subset (hA : A ⊆ {w | KnowsAnswer H w Dox}) :
     ¬ PossiblyIgnorant H (c ∩ A) Dox :=
   fun ⟨_, ⟨_, hw⟩, hk⟩ => hk (hA hw)
 
-/-- Asserting that the center does not know the answer leaves the requirement to the
-context. -/
 theorem possiblyIgnorant_inter_compl_iff :
     PossiblyIgnorant H (c ∩ {w | KnowsAnswer H w Dox}ᶜ) Dox ↔ PossiblyIgnorant H c Dox :=
   ⟨fun ⟨w, ⟨hc, _⟩, hk⟩ => ⟨w, hc, hk⟩, fun ⟨w, hc, hk⟩ => ⟨w, ⟨hc, hk⟩, hk⟩⟩
 
-/-- Asking whether some content holds leaves the requirement to the context. -/
 theorem possiblyIgnorant_inter_union_compl_iff :
     PossiblyIgnorant H (c ∩ (A ∪ Aᶜ)) Dox ↔ PossiblyIgnorant H c Dox := by
   rw [Set.union_compl_self, Set.inter_univ]
 
-/-- A center whose only doxastic alternative is the actual world knows every answer. -/
 theorem knowsAnswer_id : KnowsAnswer H w .id := by
   rw [KnowsAnswer, SetRel.core_id]
   exact self_mem_weakAnswer H w
 
-/-- A center with every world open knows only trivial answers. -/
 theorem knowsAnswer_univ_iff :
     KnowsAnswer H w Set.univ ↔ weakAnswer H w = Set.univ :=
   ⟨fun h => Set.eq_univ_of_forall fun _ => h trivial, fun h _ _ => h ▸ Set.mem_univ _⟩
@@ -396,8 +367,6 @@ def box {W' : Type*} (R : SetRel W' W) : Set (Set W') := R.core '' H
 theorem mem_box {W' : Type*} {R : SetRel W' W} {q : Set W'} :
     q ∈ box H R ↔ ∃ p ∈ H, R.core p = q := Iff.rfl
 
-/-- Necessity lifts the presupposition: `□Q` is resolvable at `x` iff `Q` is resolvable on the
-worlds accessible from `x`, provided every world is the sole world accessible from some `x`. -/
 theorem isExhaustivelyResolvable_box_iff {W' : Type*} {R : SetRel W' W}
     (hR : ∀ v, ∃ x, ∀ u, x ~[R] u ↔ u = v) {x : W'} {s : Set W} (hs : ∀ v, x ~[R] v ↔ v ∈ s) :
     IsExhaustivelyResolvable (box H R) x ↔ IsExhaustivelyResolvableOn H s := by
@@ -426,12 +395,10 @@ def exhCell (p : Set W) : Set W := {w | IsStrongestTrueAnswer H w p}
 
 theorem exhCell_subset (p : Set W) : exhCell H p ⊆ p := fun _ h => h.1.2
 
-/-- Where `p` is the strongest true member, the true members are those `p` entails. -/
 theorem trueAnswers_eq_of_isStrongestTrueAnswer {p : Set W}
     (h : IsStrongestTrueAnswer H w p) : trueAnswers H w = {q ∈ H | p ⊆ q} :=
   Set.ext fun _ => ⟨fun hq => ⟨hq.1, h.2 hq⟩, fun ⟨hq, hpq⟩ => ⟨hq, hpq h.1.2⟩⟩
 
-/-- The cell of the strongest true member at `w` is the strong answer at `w`. -/
 theorem exhCell_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
     exhCell H p = strongAnswer H w := by
   ext v
@@ -446,7 +413,6 @@ theorem exhCell_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
 the same strongest true member as `w`. -/
 noncomputable def dayalStrongAns : Option (Set W) := (dayalAns H w).map (exhCell H)
 
-/-- Where defined, Dayal's strong operator is the Groenendijk–Stokhof answer. -/
 theorem dayalStrongAns_eq_some_iff {A : Set W} :
     dayalStrongAns H w = some A ↔ IsExhaustivelyResolvable H w ∧ A = strongAnswer H w := by
   simp only [dayalStrongAns, Option.map_eq_some_iff, dayalAns_eq_some_iff]
@@ -567,7 +533,6 @@ theorem isStrongestTrueAnswer_polar_of_neg (hwp : w ∉ p) :
   rw [IsStrongestTrueAnswer, trueAnswers_polar_of_neg hne hnu hwp]
   exact isLeast_singleton pᶜ
 
-/-- A non-trivial polar question always satisfies Dayal's presupposition. -/
 theorem isExhaustivelyResolvable_polar_of_nontrivial (w : W) :
     IsExhaustivelyResolvable (alt (polar p)) w := by
   by_cases hwp : w ∈ p

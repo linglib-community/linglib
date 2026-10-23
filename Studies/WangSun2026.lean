@@ -132,7 +132,6 @@ theorem clVisible_modNumClN : ClVisible modNumClN := by decide +kernel
 invisible. -/
 theorem not_clVisible_numClDeN : ¬ ClVisible numClDeN := by decide +kernel
 
-/-- The noun is visible from D with or without *de*. -/
 theorem nVisible : numClN.NPart .one .N .D ∧ numClDeN.NPart .one .N .D := by decide +kernel
 
 /-- A classifier denotes a concrete object or an abstract unit. -/

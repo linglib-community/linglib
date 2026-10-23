@@ -240,8 +240,6 @@ theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) �
     · exact Iff.rfl
   · exact Iff.rfl
 
-/-- The intruder's line never crosses a root line, so intrusion keeps the merged melody
-non-crossing. -/
 theorem isNonCrossing_melodyLinks_intrude (m : TemplateMatch String)
     (h : IsNonCrossing (melodyLinks m : SetRel ℕ ℕ)) :
     IsNonCrossing (melodyLinks (intrude m) : SetRel ℕ ℕ) := by
@@ -560,8 +558,6 @@ def segment : Lang → String → Phonology.Segment
   | .amharic, "i" => Amharic.Phonology.i
   | _, _ => ⊥
 
-/-- The squib's roots, read as segments, are the fragments' roots, the Hebrew alternating stops
-of √kl and √skt realized as the stops the squib writes. -/
 theorem fragment_roots :
     [Hebrew.klt, Hebrew.kl, Hebrew.klj, Hebrew.dmj, Hebrew.glj, Hebrew.rmj, Hebrew.skt].map
         (·.map (Arad2005.fillContinuant false)) =

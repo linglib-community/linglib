@@ -103,8 +103,6 @@ def features : LogophoricCenter → Finset Feature
   | empathyLocus => {.B, .C}
   | discourseParticipant => {.A, .B}
 
-/-- Two centers share a feature exactly when they are identical or adjacent on the hierarchy,
-which is what the features are chosen for. -/
 theorem not_disjoint_features_iff {x y : LogophoricCenter} :
     ¬ Disjoint x.features y.features ↔ x ⩿ y ∨ y ⩿ x := by
   cases x <;> cases y <;> decide
@@ -233,9 +231,6 @@ def Result.ViolatesBinding (r : Result) : Prop :=
 instance : DecidablePred Result.ViolatesBinding := fun _ ↦
   inferInstanceAs (Decidable (_ < _))
 
-/-- The binding account mispredicts conditions 3, 4 and 6. A bound dative does not rescue a bound
-accusative, a bound accusative with a non-logophoric antecedent is fine, and an accusative with a
-logophoric antecedent that does not bind it is not. -/
 theorem filter_violatesBinding :
     (results.filter fun r ↦ r.ViolatesBinding ↔ r.grammaticality = .ok).map (·.condition) =
       [3, 4, 6] := by

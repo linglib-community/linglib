@@ -113,10 +113,8 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The null adjunct reading is available exactly where verb-stranding ellipsis derives it. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.available = true ↔ NullAdjunct r.config) := by decide
 
-/-- Adjuncts can be null, which argument ellipsis alone never derives. -/
 theorem rows_exists_available : ∃ r ∈ rows, r.available = true := by decide
 
 /-- Oblique movement undergenerates the intransitive (39) and overgenerates the null-subject

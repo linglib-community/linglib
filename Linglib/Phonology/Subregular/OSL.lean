@@ -105,7 +105,6 @@ def apply (input : List α) : List β :=
 @[simp] lemma apply_singleton (x : α) : r.apply [x] = r.windowOutput [] x :=
   List.append_nil _
 
-/-- The window before each symbol is the last `k - 1` symbols of the output so far. -/
 theorem apply_append_singleton (u : List α) (x : α) :
     r.apply (u ++ [x]) = r.apply u ++ r.windowOutput ((r.apply u).rtake (k - 1)) x := by
   have h := windowRun_append_singleton (out := r.windowOutput) (upd := r.windowOutput)
@@ -139,8 +138,6 @@ theorem IsLeftOutputStrictlyLocal.isPrefix (hf : IsLeftOutputStrictlyLocal k f) 
   exact isPrefix_append_of_append_singleton (fun u x ↦ ⟨_, (r.apply_append_singleton u x).symm⟩)
     u v
 
-/-- The residuals of a `k`-OSL function factor through the last `k - 1` output symbols, so inputs
-whose outputs end alike have the same continuations. -/
 theorem IsLeftOutputStrictlyLocal.factorsThrough_residual (hf : IsLeftOutputStrictlyLocal k f) :
     f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) := by
   obtain ⟨r, rfl⟩ := hf
@@ -159,8 +156,6 @@ theorem IsLeftOutputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
   | nil => exact h₀.symm
   | append_singleton u x ih => rw [OSLRule.apply_append_singleton, hg, ih]
 
-/-- A function is `k`-OSL if and only if it fixes `[]`, is prefix-preserving, and has residuals
-factoring through the last `k - 1` output symbols. -/
 theorem isLeftOutputStrictlyLocal_iff_factorsThrough_residual :
     IsLeftOutputStrictlyLocal k f ↔ f [] = [] ∧ (∀ u v, f u <+: f (u ++ v)) ∧
       f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) :=
@@ -169,7 +164,6 @@ theorem isLeftOutputStrictlyLocal_iff_factorsThrough_residual :
 
 /-! ### The hierarchy in `k` -/
 
-/-- A `k`-OSL function is `k'`-OSL for every `k' ≥ k`. -/
 protected theorem IsLeftOutputStrictlyLocal.weaken (hf : IsLeftOutputStrictlyLocal k f)
     (hk : k ≤ k') : IsLeftOutputStrictlyLocal k' f :=
   .of_factorsThrough_residual hf.map_nil hf.isPrefix fun u₁ u₂ h ↦
@@ -181,8 +175,6 @@ protected theorem IsRightOutputStrictlyLocal.weaken (hf : IsRightOutputStrictlyL
     (hk : k ≤ k') : IsRightOutputStrictlyLocal k' f :=
   IsLeftOutputStrictlyLocal.weaken hf hk
 
-/-- The `1`-OSL functions are the letterwise homomorphisms `List.flatMap h`, which are also the
-`1`-ISL functions. -/
 theorem isLeftOutputStrictlyLocal_one_iff :
     IsLeftOutputStrictlyLocal 1 f ↔ ∃ h : α → List β, List.flatMap h = f := by
   refine ⟨fun ⟨r, hr⟩ ↦ ⟨fun x ↦ r.windowOutput [] x, funext fun u ↦ ?_⟩,
@@ -200,19 +192,15 @@ theorem isLeftOutputStrictlyLocal_one_iff :
 An OSL rule is a window recursion accumulating its own output, so over a finite output alphabet
 the bounded output window is a finite state space (`isLeftSubsequential_windowRun`). -/
 
-/-- Over a finite output alphabet, left-OSL functions are left-subsequential. -/
 theorem IsLeftOutputStrictlyLocal.isLeftSubsequential [Fintype β]
     (hf : IsLeftOutputStrictlyLocal k f) : IsLeftSubsequential f := by
   obtain ⟨r, rfl⟩ := hf
   exact isLeftSubsequential_windowRun _ _ _
 
-/-- A rule emitting one symbol per input symbol is Mealy-computable, the bounded output window
-being the state. -/
 theorem OSLRule.isMealyComputable_apply [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
   isMealyComputable_windowRun _ _ _ hs
 
-/-- Over a finite output alphabet, right-OSL functions are right-subsequential. -/
 theorem IsRightOutputStrictlyLocal.isRightSubsequential [Fintype β]
     (hf : IsRightOutputStrictlyLocal k f) : IsRightSubsequential f :=
   IsLeftOutputStrictlyLocal.isLeftSubsequential hf
@@ -237,7 +225,6 @@ private lemma windowRun_filter {n : ℕ} {out : List β → α → List β} (w :
 
 @[simp] lemma applyOnTier_nil : r.applyOnTier p [] = [] := rfl
 
-/-- The window before each symbol is the last `k - 1` on-tier symbols of the output so far. -/
 theorem applyOnTier_append_singleton (u : List α) (x : α) :
     r.applyOnTier p (u ++ [x]) = r.applyOnTier p u
       ++ r.windowOutput (((r.applyOnTier p u).filter (p ·)).rtake (k - 1)) x := by
@@ -245,13 +232,10 @@ theorem applyOnTier_append_singleton (u : List α) (x : α) :
     (upd := fun w x ↦ (r.windowOutput w x).filter (p ·)) (w := []) (Nat.zero_le (k - 1)) u x
   rwa [windowRun_filter, List.nil_append] at h
 
-/-- Over the total tier, `applyOnTier` is `apply`. -/
 theorem applyOnTier_true : r.applyOnTier (fun _ ↦ True) = r.apply := by
   simp [applyOnTier]
   rfl
 
-/-- Restricted to the tier, `applyOnTier` is `apply` on the tier projection of the input,
-provided each block stays on the tier exactly when its input symbol is on it. -/
 theorem filter_applyOnTier (r : OSLRule k α α) {p : α → Prop} [DecidablePred p]
     (hr : ∀ w x, ∀ y ∈ r.windowOutput w x, p y ↔ p x) (l : List α) :
     (r.applyOnTier p l).filter (p ·) = r.apply (l.filter (p ·)) := by
@@ -268,8 +252,6 @@ theorem filter_applyOnTier (r : OSLRule k α α) {p : α → Prop} [DecidablePre
         by simpa using mt (hr W x y hy).1 hx, List.filter_singleton, decide_eq_false hx,
         Bool.cond_false, List.append_nil, List.append_nil]
 
-/-- Over a finite output alphabet the rule run over a tier is left-subsequential, the bounded
-tier window being the state. -/
 theorem isLeftSubsequential_applyOnTier [Fintype β] :
     IsLeftSubsequential (r.applyOnTier p) :=
   isLeftSubsequential_windowRun _ _ _
@@ -295,8 +277,6 @@ variable [DecidableEq α] {a b c : α}
 def ISLRule.dissimilate (a b : α) : ISLRule 2 α α where
   windowOutput w x := if w = [a] ∧ x = a then [b] else [x]
 
-/-- Dissimilation is not OSL, since `aa` and `ab` have the same output `ab` but continue
-differently on `a`. -/
 theorem ISLRule.dissimilate_not_isLeftOutputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     ¬ IsLeftOutputStrictlyLocal k (dissimilate a b).apply := fun h ↦ by
   have e := congrFun (h.factorsThrough_residual (a := [a, a]) (b := [a, b])
@@ -329,8 +309,6 @@ private theorem spread_apply_replicate (hab : a ≠ b) (n : ℕ) :
       List.eq_of_mem_replicate ((List.rtake_suffix _ _).subset (h ▸ List.mem_singleton_self a))
     simp [OSLRule.spread, this]
 
-/-- Spreading is not ISL, since `a bᵏ⁻¹` and `bᵏ` end in the same `k - 1` input symbols while a
-further `b` surfaces as `a` after the first and as `b` after the second. -/
 theorem OSLRule.spread_not_isLeftInputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     ¬ IsLeftInputStrictlyLocal k (spread a).apply := fun h ↦ by
   have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) b)
@@ -341,8 +319,6 @@ theorem OSLRule.spread_not_isLeftInputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     List.drop_replicate, Nat.add_sub_cancel_left] at e
   exact hab (List.singleton_inj.mp e)
 
-/-- Spreading is not right-OSL, since scanned right to left its output on `b` is not a prefix of
-its output on `ba`. -/
 theorem OSLRule.spread_not_isRightOutputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     ¬ IsRightOutputStrictlyLocal k (spread a).apply := fun h ↦ by
   have e := IsLeftOutputStrictlyLocal.isPrefix h [b] [a]
@@ -367,8 +343,6 @@ private theorem longDistanceAgree_run_cons_replicate (hcb : c ≠ b) (x : α) (n
   rw [Mealy.run, Mealy.runFrom_cons, longDistanceAgree_runFrom_replicate hcb]
   simp [longDistanceAgree]
 
-/-- Long-distance assimilation is not ISL, since `acᵏ⁻¹` and `bcᵏ⁻¹` end alike while a further
-`b` surfaces as `a` only after the first. -/
 theorem longDistanceAgree_not_isLeftInputStrictlyLocal (hab : a ≠ b) (hca : c ≠ a) (k : ℕ) :
     ¬ IsLeftInputStrictlyLocal k (longDistanceAgree a b).run := fun h ↦ by
   have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) c)
@@ -376,8 +350,6 @@ theorem longDistanceAgree_not_isLeftInputStrictlyLocal (hab : a ≠ b) (hca : c 
   simp [Mealy.residual_run, longDistanceAgree, List.any_replicate, hca, hab.symm] at e
   exact hab e
 
-/-- Long-distance assimilation is not OSL, since `acᵏ⁻¹` and `bcᵏ⁻¹` are output unchanged and
-end alike while a further `b` surfaces as `a` only after the first. -/
 theorem longDistanceAgree_not_isLeftOutputStrictlyLocal (hab : a ≠ b) (hca : c ≠ a)
     (hcb : c ≠ b) (k : ℕ) : ¬ IsLeftOutputStrictlyLocal k (longDistanceAgree a b).run := by
   intro h

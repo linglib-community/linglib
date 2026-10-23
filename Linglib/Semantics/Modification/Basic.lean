@@ -58,7 +58,6 @@ surgeon. -/
 def IsSubsective [LE α] (m : Modifier α) : Prop :=
   ∀ x, m x ≤ x
 
-/-- A modifier is subsective if and only if it lies below the identity. -/
 theorem isSubsective_iff_le_id [LE α] {m : Modifier α} :
     IsSubsective m ↔ m ≤ id :=
   Iff.rfl
@@ -68,7 +67,6 @@ not a gun. -/
 def IsPrivative [PartialOrder α] [OrderBot α] (m : Modifier α) : Prop :=
   ∀ x, Disjoint (m x) x
 
-/-- A modifier that is both privative and subsective sends everything to `⊥`. -/
 theorem IsPrivative.eq_bot [PartialOrder α] [OrderBot α] {m : Modifier α}
     (hp : IsPrivative m) (hs : IsSubsective m) (x : α) : m x = ⊥ :=
   le_bot_iff.mp (hp x le_rfl (hs x))
@@ -81,7 +79,6 @@ variable [SemilatticeInf α]
 def IsIntersective (m : Modifier α) : Prop :=
   ∃ q, ∀ x, m x = q ⊓ x
 
-/-- Intersective modifiers are subsective. -/
 theorem IsIntersective.isSubsective {m : Modifier α} (h : IsIntersective m) :
     IsSubsective m :=
   fun x ↦ h.elim fun _ hq ↦ (hq x).trans_le inf_le_right
@@ -93,7 +90,6 @@ def intersective (q : α) : Modifier α := (q ⊓ ·)
 @[simp] theorem intersective_apply {β : Type*} (P Q : β → Prop) (x : β) :
     intersective P Q x = (P x ∧ Q x) := rfl
 
-/-- The meet with `q` applied to `r` is the meet with `r` applied to `q`. -/
 theorem intersective_comm (q r : α) : intersective q r = intersective r q :=
   inf_comm q r
 
@@ -135,7 +131,6 @@ variable {r : α → Set β} {s : Set α} {b : β}
 @[simp] theorem pointwise_singleton (r : α → Set β) (a : α) : pointwise r {a} = r a :=
   Set.biUnion_singleton a r
 
-/-- A pointwise modifier is the image under the relation its map is. -/
 theorem pointwise_eq_image (r : α → Set β) (s : Set α) :
     pointwise r s = SetRel.image {p | p.2 ∈ r p.1} s := by
   ext b; simp [SetRel.image]
@@ -153,8 +148,6 @@ theorem isSubsective_pointwise_iff : IsSubsective (pointwise r) ↔ ∀ a, r a �
   obtain ⟨a, ha, hba⟩ := mem_pointwise.1 hb
   exact (h a hba).symm ▸ ha
 
-/-- A pointwise modifier is privative only when its map is empty everywhere, since an argument
-`{a, b}` with `b ∈ r a` meets its own value. -/
 theorem isPrivative_pointwise_iff : IsPrivative (pointwise r) ↔ ∀ a, r a = ∅ := by
   refine ⟨fun h a ↦ Set.eq_empty_iff_forall_notMem.2 fun b hb ↦ ?_, fun h s ↦ ?_⟩
   · exact Set.disjoint_left.1 (h {a, b}) (mem_pointwise.2 ⟨a, by simp, hb⟩) (by simp)
@@ -162,8 +155,6 @@ theorem isPrivative_pointwise_iff : IsPrivative (pointwise r) ↔ ∀ a, r a = �
     obtain ⟨a, _, hba⟩ := mem_pointwise.1 hb
     simp [h a] at hba
 
-/-- A pointwise modifier is disjoint from every singleton argument just in case no point is in
-its own value. -/
 theorem disjoint_pointwise_singleton_iff :
     (∀ a, Disjoint (pointwise r {a}) {a}) ↔ ∀ a, a ∉ r a := by
   simp [Set.disjoint_singleton_right]

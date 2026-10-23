@@ -174,7 +174,6 @@ def inventory : Determiner.Inventory :=
   allArticles.map .article ++ allDemonstratives.map .demonstrative ++
     allQuantifiers.map .quantifier ++ allPossessives.map .possessive
 
-/-- A single article marks both strengths. -/
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end English.Determiners

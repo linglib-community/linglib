@@ -86,16 +86,12 @@ def Perfective (e r : NonemptyInterval T) : Prop := e ≤ r
 /-- Imperfective aspect includes the reference time in the event time. -/
 def Imperfective (e r : NonemptyInterval T) : Prop := r ≤ e
 
-/-- An extended event time cannot be included in an instant: perfective aspect fails at a
-point reference time, the present, an attitude holder's NOW, or a reference time an adverbial
-restricts to an instant. -/
 theorem not_perfective_of_isPoint {e r : NonemptyInterval T} (he : ¬ e.IsPoint)
     (hr : r.IsPoint) : ¬ Perfective e r := by
   intro h
   rw [Perfective, NonemptyInterval.le_def] at h
   exact he (le_antisymm e.fst_le_snd (h.2.trans (hr.symm.le.trans h.1)))
 
-/-- Imperfective aspect, the progressive, is available at any instant within the event. -/
 theorem imperfective_pure_of_mem {e : NonemptyInterval T} {t : T} (h : t ∈ e) :
     Imperfective e (NonemptyInterval.pure t) := by
   rw [Imperfective, NonemptyInterval.le_def]
@@ -120,21 +116,15 @@ def Episodic (c : InfinitivalTenseClass) : Prop :=
   ∃ r, ReferenceTime matrixR now c r ∧
     ∃ e : NonemptyInterval T, ¬ e.IsPoint ∧ Perfective e r
 
-/-- A future infinitive always has an episodic reading: *woll* supplies an unrestricted
-interval. -/
 theorem episodic_futureIrrealis [NoMaxOrder T] : Episodic matrixR now .futureIrrealis := by
   obtain ⟨a, ha⟩ := exists_gt now
   obtain ⟨b, hb⟩ := exists_gt a
   exact ⟨⟨(a, b), hb.le⟩, ha, ⟨(a, b), hb.le⟩, hb.ne, le_rfl⟩
 
-/-- A propositional attitude infinitive never has one: the holder's NOW is an instant. -/
 theorem not_episodic_propositional : ¬ Episodic matrixR now .propositional := by
   rintro ⟨r, rfl, e, he, h⟩
   exact not_perfective_of_isPoint he (show (NonemptyInterval.pure now).IsPoint from rfl) h
 
-/-- A tenseless simultaneous infinitive has one exactly when the matrix reference time is
-extended: under past tense, but not under present, nor under an adverbial restricting it to
-an instant. -/
 theorem episodic_restructuring_iff :
     Episodic matrixR now .restructuring ↔ ¬ matrixR.IsPoint := by
   constructor
@@ -171,14 +161,11 @@ def Verb.classes : Verb → List InfinitivalTenseClass
 def Verb.Episodic (v : Verb) : Prop :=
   ∃ c ∈ v.classes, Wurmbrand2014.Episodic matrixR now c
 
-/-- *believe* never allows a bare episodic complement. -/
 theorem believe_not_episodic : ¬ Verb.believe.Episodic matrixR now := by
   rintro ⟨c, hc, h⟩
   simp only [Verb.classes, List.mem_singleton] at hc
   exact not_episodic_propositional matrixR now (hc ▸ h)
 
-/-- *seem* allows one exactly when the matrix reference time is extended: its propositional
-option adds nothing. -/
 theorem seem_episodic_iff : Verb.seem.Episodic matrixR now ↔ ¬ matrixR.IsPoint := by
   constructor
   · rintro ⟨c, hc, h⟩
@@ -189,7 +176,6 @@ theorem seem_episodic_iff : Verb.seem.Episodic matrixR now ↔ ¬ matrixR.IsPoin
   · exact fun h ↦ ⟨.restructuring, by simp [Verb.classes],
       (episodic_restructuring_iff matrixR now).mpr h⟩
 
-/-- *decide* always allows one. -/
 theorem decide_episodic [NoMaxOrder T] : Verb.decide.Episodic matrixR now :=
   ⟨.futureIrrealis, by simp [Verb.classes], episodic_futureIrrealis matrixR now⟩
 
@@ -218,8 +204,6 @@ def composition : InfinitivalTenseClass → Composition
   | .futureIrrealis => infinitive true
   | .propositional | .restructuring => infinitive false
 
-/-- *woll* projects the modal layer: a class has *woll* exactly when its complement is a
-ModP. -/
 theorem woll_iff_modP (c : InfinitivalTenseClass) :
     (composition c).woll = true ↔ c.complementSize = .modP := by
   cases c <;> decide
@@ -233,13 +217,10 @@ present and after the evaluation time otherwise. -/
 def Composition.Locates (c : Composition) (utterance eval e : T) : Prop :=
   c.woll = true ∧ if c.tense = some ⟦present⟧ then utterance < e else eval < e
 
-/-- Finite future is absolute: the event follows the utterance time. -/
 theorem will_absolute {utterance eval e : T} (h : will.Locates utterance eval e) :
     utterance < e := by
   simpa [will, Composition.Locates] using h.2
 
-/-- Infinitival future is relative: the event may precede the utterance time so long as it
-follows the matrix evaluation time. -/
 theorem infinitival_relative [DenselyOrdered T] {utterance eval : T} (h : eval < utterance) :
     ∃ e, (infinitive true).Locates utterance eval e ∧ e < utterance := by
   obtain ⟨e, h₁, h₂⟩ := exists_between h
@@ -263,23 +244,17 @@ def sotApplies (above : List (Option (Finset Ordering))) (embedded : Finset Orde
   | some m => decide (m = embedded)
   | none => false
 
-/-- The present of *will* intervenes between two pasts, blocking deletion. -/
 theorem sot_will_blocks : sotApplies [will.tense, some ⟦past⟧] ⟦past⟧ = false := by decide
 
-/-- A tenseless infinitive does not intervene, so the lower past deletes. -/
 theorem sot_infinitive_transparent :
     sotApplies [(infinitive true).tense, some ⟦past⟧] ⟦past⟧ = true := by
   decide
 
-/-- The past of *would* licenses deletion below it. -/
 theorem sot_would : sotApplies [would.tense, some ⟦past⟧] ⟦past⟧ = true := by decide
 
-/-- Under a *will* matrix, a past below an infinitive finds no past above it. -/
 theorem sot_will_infinitive : sotApplies [(infinitive true).tense, will.tense] ⟦past⟧ = false := by
   decide
 
-/-- A silent *would* in the infinitive would license deletion under a *will* matrix, contrary
-to the judgment. -/
 theorem silent_would_wrong : sotApplies [would.tense, will.tense] ⟦past⟧ = true := by decide
 
 /-- *would*'s past must delete: it is licensed only below a past. -/
@@ -287,7 +262,6 @@ def WouldLicensed (above : List (Option (Finset Ordering))) : Prop := sotApplies
 
 instance : DecidablePred WouldLicensed := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
-/-- Temporal *would* under *will* is out, under a past matrix in. -/
 theorem would_licensing : ¬ WouldLicensed [will.tense] ∧ WouldLicensed [some ⟦past⟧] := by decide
 
 end Wurmbrand2014

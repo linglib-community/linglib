@@ -109,16 +109,12 @@ theorem attenAssert_eq_empty_of_isStrongest (h : IsStrongest c p alts) :
   simp only [attenAssert, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
   exact fun ⟨_, _, p', hp', _, hi⟩ ↦ hi (h p' hp')
 
-/-- When every context world of the assertion falls under some informative alternative, scalar
-assertion is contradictory: the unlicensed case of a strengthening item. -/
 theorem scalAssert_eq_empty_of_cover
     (h : ∀ w ∈ c ∩ p, ∃ p' ∈ alts, w ∈ p' ∧ Informative c p p') : scalAssert c p alts = ∅ := by
   ext w
   simp only [scalAssert, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
   exact fun ⟨hc, hp, hn⟩ ↦ hn (h w ⟨hc, hp⟩)
 
-/-- One compatible informative alternative licenses an attenuating item: the condition is the
-plain update. -/
 theorem attenAssert_eq_of_exists (h : ∃ p' ∈ alts, (c ∩ p').Nonempty ∧ Informative c p p') :
     attenAssert c p alts = c ∩ p := by
   ext w
@@ -137,8 +133,6 @@ def ever : Set W := ⋃ t, at' t
 /-- The alternatives of `ever`. -/
 def everAlts : Set (Set W) := Set.range at'
 
-/-- Under negation the existential is the strongest of its alternatives: not ever entails not
-at any specific time. -/
 theorem isStrongest_not_ever (c : Set W) :
     IsStrongest c (ever at')ᶜ (compl '' everAlts at') := by
   rintro _ ⟨_, ⟨t, rfl⟩, rfl⟩ w ⟨_, hw⟩ ht
@@ -166,10 +160,6 @@ theorem atLeast_antitone : Antitone (atLeast μ) := fun _ _ h _ hw ↦ h.trans h
 ([israel-1996]). -/
 def lowerAlts (d : D) : Set (Set W) := {p | ∃ d' < d, p = atLeast μ d'}
 
-/-- In the affirmative a degree modifier entails its lower alternatives, so the attenuating
-condition fails and the item is unlicensed, although the assertion is the most informative
-of the scale, which the paper takes to explain the higher acceptance of the unlicensed
-baseline with *so recht*. -/
 theorem isStrongest_atLeast (c : Set W) (d : D) : IsStrongest c (atLeast μ d) (lowerAlts μ d) := by
   rintro _ ⟨d', hd', rfl⟩ w ⟨_, hw⟩
   exact atLeast_antitone μ hd'.le hw
@@ -185,9 +175,6 @@ end Scales
 
 /-! ### The illusion (§4) -/
 
-/-- The scalar account of the illusion: fed the relative clause's proposition, a negative
-quantifier at the strongest point of its Horn scale, the strengthening mechanism accepts it as
-the plain update while the attenuating one rejects it, whatever the main clause. -/
 theorem illusion_asymmetry (hq : IsStrongest c q alts) :
     scalAssert c q alts = c ∩ q ∧ attenAssert c q alts = ∅ :=
   ⟨scalAssert_eq_of_isStrongest hq, attenAssert_eq_empty_of_isStrongest hq⟩
@@ -218,15 +205,10 @@ def Attested (e : Experiment) (f : Effect) : Prop :=
 instance (e : Experiment) (f : Effect) : Decidable (Attested e f) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- The asymmetry `illusion_asymmetry` derives: the strengthening *jemals* is illusorily licensed
-in both experiments, the attenuating *so recht* in neither. -/
 theorem illusion_attested (e : Experiment) :
     Attested e .illusionJemals ∧ ¬Attested e .illusionSoRecht := by
   cases e <;> decide
 
-/-- The difference between the two illusions is attested in the second experiment only, whose
-object-extracted relative clauses and faster presentation the paper introduced after the first
-was inconclusive. -/
 theorem interaction_attested_iff (e : Experiment) : Attested e .interaction ↔ e = .exp2 := by
   cases e <;> decide
 

@@ -286,13 +286,10 @@ def palatalize (s : List String) : List String :=
     else s
   | none => s
 
-/-- The second palatalization leaves a stem that is not velar as it is. -/
 theorem palatalize_of_not_isVelar {s : List String} (h : ¬ IsVelar s) : palatalize s = s := by
   unfold palatalize
   split <;> simp_all [IsVelar]
 
-/-- A letter of the alphabet is a velar stem exactly when it is *k*, *g*, *h* or *ch*, and the
-second palatalization replaces these by *c*, *z*, *z* and *š*. -/
 theorem isVelar_singleton_iff :
     (∀ l ∈ Phonology.alphabet, IsVelar [l] ↔ l ∈ ["k", "g", "h", "ch"]) ∧
       palatalize ["k"] = ["c"] ∧ palatalize ["g"] = ["z"] ∧ palatalize ["h"] = ["z"] ∧

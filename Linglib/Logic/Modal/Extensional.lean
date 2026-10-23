@@ -51,8 +51,6 @@ theorem not_isExtensionalAt_iff_exists_witness {O : (W → α) → W → β} {w 
     ¬ IsExtensionalAt O w ↔ ∃ p q, p w = q w ∧ O p w ≠ O q w := by
   simp only [IsExtensionalAt, not_forall, exists_prop]
 
-/-- An operator is extensional at `w` exactly when it cannot tell an argument whose index it
-binds, `fun v ↦ g v v`, from the same argument with the index fixed at `w`, `g w`. -/
 theorem isExtensionalAt_iff_forall_diag {O : (W → α) → W → β} {w : W} :
     IsExtensionalAt O w ↔ ∀ g : W → W → α, O (fun v ↦ g v v) w = O (g w) w := by
   classical
@@ -67,7 +65,6 @@ theorem isExtensionalAt_iff_forall_diag {O : (W → α) → W → β} {w : W} :
   rwa [e₁, e₂] at h'
 
 open SetRel in
-/-- The box along `R` is extensional at `w` exactly when `w` reaches no index but itself. -/
 theorem isExtensionalAt_box_iff {R : SetRel W W} {w : W} :
     IsExtensionalAt (Box R) w ↔ ∀ v, w ~[R] v → v = w := by
   refine ⟨fun h v hv ↦ ?_, fun h p q hpq ↦ propext ⟨fun hp v hv ↦ ?_, fun hq v hv ↦ ?_⟩⟩
@@ -104,7 +101,6 @@ theorem not {O : (W → α) → W → Prop} (h : IsExtensionalAt O w) :
     IsExtensionalAt (fun p w' => ¬ O p w') w :=
   fun p q hpq => congrArg Not (h p q hpq)
 
-/-- Extensional operators compose, so scope-inertness lifts through a stack of them. -/
 theorem comp {O₁ : (W → α) → W → β} {O₂ : (W → β) → W → Prop}
     (h₂ : IsExtensionalAt O₂ w) (h₁ : IsExtensionalAt O₁ w) :
     IsExtensionalAt (fun p w' => O₂ (fun s => O₁ p s) w') w :=

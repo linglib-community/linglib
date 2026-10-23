@@ -89,8 +89,6 @@ theorem literal_positive_or_negative (θ d : D) :
     d ∈ literal θ .positive ∨ d ∈ literal θ .negative :=
   lt_or_ge θ d
 
-/-- Two admissible borders open a gap, since a degree between them is safely neither *happy* nor
-*unhappy*, which is how *neither happy nor unhappy* comes to be sayable. -/
 theorem not_safe_of_between (h₂ : θ₂ ∈ Θ) (h₁ : θ₁ ∈ Θ) (hd : θ₁ < d) (hd' : d ≤ θ₂) :
     ¬ Safe Θ .positive d ∧ ¬ Safe Θ .negative d :=
   ⟨fun h ↦ absurd (h θ₂ h₂) (not_lt.2 hd'), fun h ↦ absurd (h θ₁ h₁) (not_le.2 hd)⟩

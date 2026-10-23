@@ -103,8 +103,6 @@ variable {cond p q} {w : W}
 @[simp] theorem denote_premise_eq_one_iff : premise.denote cond p q w = 1 ↔ w ∈ p ∧ w ∈ q := by
   simp [denote]
 
-/-- Where the antecedent holds, the hypothetical reading of the material conditional and the
-premise reading agree. -/
 theorem denote_hypothetical_materialImp_eq_premise (hw : w ∈ p) :
     hypothetical.denote materialImp p q w = premise.denote materialImp p q w := by
   refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;> simp [denote, hw, mem_materialImp]
@@ -128,15 +126,12 @@ def Felicitous (K : Commitment.Table A W) (p : Set W) : Reading → Prop
   | .hypothetical => ¬ (Question.polar p).DecidedBy K.commonGround
   | .premise => (∃ a, p ∈ K.discourseCommitments a) ∨ p ∈ K.commonGround
 
-/-- An antecedent the common ground entails is read as a premise. -/
 theorem felicitous_iff_of_mem_commonGround (h : p ∈ K.commonGround) {ct : Reading} :
     ct.Felicitous K p ↔ ct = .premise := by
   cases ct
   · exact iff_of_false (fun h' ↦ h' (Question.decidedBy_polar.2 (.inl h))) (by decide)
   · exact iff_of_true (.inr h) rfl
 
-/-- An antecedent nobody has committed to and whose polar question is open is read
-hypothetically. -/
 theorem felicitous_iff_of_not_decidedBy (h₁ : ∀ a, p ∉ K.discourseCommitments a)
     (h₂ : ¬ (Question.polar p).DecidedBy K.commonGround) {ct : Reading} :
     ct.Felicitous K p ↔ ct = .hypothetical := by
@@ -175,18 +170,15 @@ def clauseMap (ct : Reading) : Clause → Set W → Set W
 
 variable {cond p q}
 
-/-- The hypothetical antecedent is antitone over a domain that grows with the antecedent. -/
 theorem antitone_posExt_hypothetical (hD : ∀ w, Monotone (D w)) (q : Set W) :
     Antitone fun p ↦ Trivalent.posExt (hypothetical.denote (ofDomain D) p q) :=
   fun _ _ h _ hw ↦ denote_hypothetical_eq_one_iff.2
     (ofDomain_anti_left (fun i ↦ hD i h) (denote_hypothetical_eq_one_iff.1 hw))
 
-/-- The premise antecedent is monotone for every operator. -/
 theorem monotone_posExt_premise (cond : Set W → Set W → Set W) (q : Set W) :
     Monotone fun p ↦ Trivalent.posExt (premise.denote cond p q) :=
   fun _ _ h _ hw ↦ denote_premise_eq_one_iff.2 ((denote_premise_eq_one_iff.1 hw).imp_left (h ·))
 
-/-- The consequent is monotone on either reading of a conditional over a domain. -/
 theorem monotone_posExt_consequent (ct : Reading) (p : Set W) :
     Monotone fun q ↦ Trivalent.posExt (ct.denote (ofDomain D) p q) := by
   cases ct
@@ -195,8 +187,6 @@ theorem monotone_posExt_consequent (ct : Reading) (p : Set W) :
   · exact fun _ _ h _ hw ↦
       denote_premise_eq_one_iff.2 ((denote_premise_eq_one_iff.1 hw).imp_right (h ·))
 
-/-- Over a domain that grows with the antecedent, each clause's signature is sound for the
-clause's function. -/
 theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct : Reading)
     (c : Clause) : (clauseSignature ct c).SoundFor (clauseMap (ofDomain D) p q ct c) := by
   cases ct <;> cases c
@@ -205,9 +195,6 @@ theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct 
   · exact soundFor_mono_iff.2 (monotone_posExt_premise _ q)
   · exact soundFor_mono_iff.2 (monotone_posExt_consequent .premise p)
 
-/-- Over the closest antecedent-worlds the hypothetical antecedent is not antitone — with three
-worlds ranked `0 < 1 < 2` from `0`, *if 1 or 2, then 1* holds at `0` while *if 2, then 1* does
-not. -/
 theorem exists_not_antitone_hypothetical_closestImp :
     ∃ (ord : Fin 3 → Preorder (Fin 3)) (q : Set (Fin 3)),
       ¬ Antitone fun p ↦ Trivalent.posExt (hypothetical.denote (closestImp ord) p q) := by

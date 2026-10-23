@@ -85,8 +85,6 @@ def RootType.ofShape : Shape → RootType
   | .suffixed => .quality
   | .prefixed => .relation
 
-/-- The two meanings are distinguished within Washo, the existence proof against a universal
-root meaning. -/
 theorem exists_rootType_ne :
     ∃ e₁ ∈ propertyConcepts, ∃ e₂ ∈ propertyConcepts,
       RootType.ofShape e₁.shape ≠ RootType.ofShape e₂.shape :=
@@ -157,20 +155,14 @@ def derivation : Shape → List Head
 
 theorem derivation_verbalizes : ∀ sh, Verbalizes sh (derivation sh) := by decide
 
-/-- *-iʔ* composes directly with a root only if the root is a suffixed one, whose meaning is a
-quality. -/
 theorem wellTyped_possess_iff (sh : Shape) :
     WellTyped (RootType.ofShape sh).ty [.possess] ↔ sh = .suffixed := by
   cases sh <;> decide
 
-/-- The change-of-state head of a bipartite verb composes with a root iff the root is not a
-suffixed one, the gap in the resultative bipartite verbs. -/
 theorem wellTyped_become_iff (sh : Shape) :
     WellTyped (RootType.ofShape sh).ty [.become] ↔ sh ≠ .suffixed := by
   cases sh <;> decide
 
-/-- Each shape's morphology is a shortest verbalization of its root. The prefixed roots need
-two heads, being bound relations that neither zero categorization nor *-iʔ* alone can take. -/
 theorem derivation_minimal (sh : Shape) (hs : List Head) (h : Verbalizes sh hs) :
     (derivation sh).length ≤ hs.length := by
   cases sh
@@ -205,9 +197,6 @@ theorem vHave_nabla_self (P : E → St → Prop) (x : E) : vHave (nabla P) P x �
 
 variable {Event : Type*} (M : ArgumentStructure.EventStructure.Interpretation E St Event)
 
-/-- A resultative bipartite verb, the causative head over the initial's manner and the
-change-of-state head over the final's root, entails the result state of its theme, the bare
-predication of the final's root. -/
 theorem exists_state_of_vCause {P : E → St → Prop} {manner : Event → Prop} {x : E} {v : Event}
     (h : M.vCause (fun e ↦ manner e ∧ M.vBecome P x e) v) : ∃ s, P x s :=
   let ⟨_, _, _, s, _, hs⟩ := h
@@ -223,25 +212,20 @@ motion (74). -/
 theorem category_ne_speed : ∀ e ∈ propertyConcepts, e.category ≠ .speed := by
   decide
 
-/-- A stem's category does not predict its meaning, since the antonyms *MiLe* 'old', a relation,
-and *ešlut’* 'young', a quality, are both of age. -/
 theorem not_factorsThrough_rootType :
     ¬ (sample.domRestrict fun e ↦ RootType.ofShape e.shape).FactorsThrough
       (sample.domRestrict (·.category)) := fun h ↦
   absurd (@h ⟨MiLe, by simp [sample, propertyConcepts]⟩
     ⟨ešlut, by simp [sample, propertyConcepts]⟩ rfl) (by decide)
 
-/-- Nor, then, does it predict its class. -/
 theorem not_factorsThrough_shape :
     ¬ (sample.domRestrict PropertyConcept.shape).FactorsThrough
       (sample.domRestrict (·.category)) :=
   fun h ↦ not_factorsThrough_rootType fun _ _ hab ↦ congrArg RootType.ofShape (h hab)
 
-/-- Every stem of color is of Class 3. -/
 theorem color_prefixed : ∀ e ∈ propertyConcepts, e.category = .color → e.shape = .prefixed := by
   decide
 
-/-- Color is the only category whose stems share a class. -/
 theorem exists_shape_iff {c : PropertyConcept.Class} (hc : c ≠ .speed) :
     (∃ s, ∀ e ∈ propertyConcepts, e.category = c → e.shape = s) ↔ c = .color := by
   revert hc

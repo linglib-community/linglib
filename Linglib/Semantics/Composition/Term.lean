@@ -111,14 +111,10 @@ def eval (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) :
   | _, lam n b => fun x ↦ eval I (g[n ↦ x]) b
   | _, comp m l r => m.eval (eval I g l) (eval I g r)
 
-/-- A variable denotes the value of its index under the assignment, by the Traces and Pronouns
-Rule. -/
 theorem eval_var (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) (n : ℕ) :
     (var n : Term K .e).eval I g = g n :=
   rfl
 
-/-- An abstraction denotes the abstraction of its body over its variable, by Predicate
-Abstraction. -/
 theorem eval_lam (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E) (n : ℕ)
     {τ : Ty} (b : Term K τ) : (lam n b).eval I g = lambdaAbsG n (fun g' ↦ b.eval I g') g :=
   rfl
@@ -136,7 +132,6 @@ def evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
       (evalM I g b).map fun probe ↦ dist _ fun x ↦ (evalM I (g[n ↦ x]) b).getD probe
   | _, comp m l r => (evalM I g l).bind fun a ↦ (evalM I g r).map fun b ↦ m.evalM a b
 
-/-- At the identity effect, evaluation is the pure denotation. -/
 @[simp] theorem evalM_id (I : ∀ {ty : Ty}, K ty → Ty.Domain E W ty S) (g : Assignment E)
     {ty : Ty} (t : Term K ty) : t.evalM (M := Id) I g = some (t.eval I g) := by
   induction t generalizing g with
@@ -145,7 +140,6 @@ def evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
   | lam n b ih => simp [evalM, ih, eval]
   | comp m l r ihl ihr => simp only [evalM, ihl, ihr, Option.bind_some, Option.map_some]; rfl
 
-/-- The denotation of a renamed term interprets the renamed constants. -/
 theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : Assignment E) {ty : Ty} (t : Term K ty) :
     (t.map f).eval I g = t.eval (fun c ↦ I (f c)) g := by
@@ -155,7 +149,6 @@ theorem eval_map (I : ∀ {ty : Ty}, K' ty → Ty.Domain E W ty S) (f : ∀ {ty 
   | lam n b ih => funext x; exact ih _
   | comp m l r ihl ihr => simp only [map, eval, ihl, ihr]
 
-/-- Evaluating a renamed term interprets the renamed constants. -/
 theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W S]
     (I : ∀ {ty : Ty}, K' ty → M (Ty.Domain E W ty S)) (f : ∀ {ty : Ty}, K ty → K' ty)
     (g : Assignment E) {ty : Ty} (t : Term K ty) :
@@ -166,8 +159,6 @@ theorem evalM_map {M : Type → Type} [Applicative M] [PredAbs M E W S]
   | lam n b ih => simp only [map, evalM, ih]
   | comp m l r ihl ihr => simp only [map, evalM, ihl, ihr]
 
-/-- Whether a term has a denotation under an effect, and at which type, does not depend on the
-assignment. -/
 theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) (g g' : Assignment E) {ty : Ty}
     (t : Term K ty) : (t.evalM I g).isSome = (t.evalM I g').isSome := by
@@ -184,7 +175,6 @@ theorem isSome_evalM {M : Type → Type} [Applicative M] [PredAbs M E W S]
     cases h₁ : l.evalM I g <;> cases h₂ : l.evalM I g' <;> cases h₃ : r.evalM I g <;>
       cases h₄ : r.evalM I g' <;> simp_all
 
-/-- A term's denotation depends on the assignment only at its free variables. -/
 theorem evalM_congr_of_agree {M : Type → Type} [Applicative M] [PredAbs M E W S]
     (I : ∀ {ty : Ty}, K ty → M (Ty.Domain E W ty S)) {ty : Ty} (t : Term K ty)
     {g g' : Assignment E} (h : ∀ n ∈ t.freeVars, g n = g' n) : t.evalM I g = t.evalM I g' := by

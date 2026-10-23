@@ -219,8 +219,6 @@ def featureMatrices (I : Inventory) : Finset FeatureMatrix :=
     m ∈ I.featureMatrices ↔ ∃ y ∈ I.phonemes, y.features = m := by
   simp [featureMatrices]
 
-/-- A set lies in an image of the feature matrices when each of its elements is the image of a
-phoneme's matrix, a condition `decide` checks without deduplicating the inventory. -/
 theorem subset_image_featureMatrices_iff {β : Type*} [DecidableEq β] {I : Inventory}
     {f : FeatureMatrix → β} {S : Finset β} :
     S ⊆ I.featureMatrices.image f ↔ ∀ x ∈ S, ∃ y ∈ I.phonemes, f y.features = x := by

@@ -109,8 +109,6 @@ theorem nandaoQFelicitous_singleton (k : Kernel W) (u : Set (W → Prop)) (φ : 
     nandaoQFelicitous k u {φ} ↔ nandaoFelicitous k u φ := by
   simp [nandaoQFelicitous, nandaoFelicitous, evidenceSupports]
 
-/-- A question one of whose instantiations no evidence in the kernel supports, such as *what
-is the weather outside?* with its sunny instantiation, is infelicitous with *nandao*. -/
 theorem not_nandaoQFelicitous_of_unsupported {k : Kernel W} {u : Set (W → Prop)}
     {f : Set (W → Prop)} {φ : W → Prop} (hφ : φ ∈ f)
     (h : ∀ p ∈ k.props, ¬ evidenceRaises p φ) : ¬ nandaoQFelicitous k u f := by
@@ -203,9 +201,6 @@ doxastic state `dox`. -/
 def Closed (issue : Set (Set W)) (cg dox : Set W) : Prop :=
   ∀ p ∈ issue, ¬ cg ⊆ p → Disjoint (cg ∩ p) dox
 
-/-- A closed polar question is resolved in the common ground, provided the speaker's beliefs
-are consistent with it: if neither alternative were entailed, both would be inconsistent, and
-so would the common ground itself. -/
 theorem resolved_of_closed_polar {p cg dox : Set W} (hcons : (cg ∩ dox).Nonempty)
     (h : Closed {p, pᶜ} cg dox) : cg ⊆ p ∨ cg ⊆ pᶜ := by
   by_contra hn

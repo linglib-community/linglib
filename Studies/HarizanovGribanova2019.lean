@@ -134,24 +134,17 @@ private theorem flatMap_members_amalgamate {below : List (Amalgam H)}
       simp only [amalgamate, ha] at h <;>
       first | simpa [List.append_assoc, Amalgam.members] using ih h | simp at h
 
-/-- The complex heads partition the spine in the order of syntactic composition: the affixes of
-a complex head mirror that order, and no head gains or loses an occurrence. -/
 theorem flatMap_members_amalgamateSpine {spine out : List (Amalgam H)}
     (h : amalgamateSpine spine = some out) :
     out.flatMap Amalgam.members = spine.flatMap Amalgam.members := by
   obtain ⟨out', h', rfl⟩ := Option.map_eq_some_iff.mp h
   simpa using flatMap_members_amalgamate h'
 
-/-- Each complex head is a contiguous stretch of the spine, which is the Head Movement Constraint
-and the ban on excorporation. -/
 theorem members_infix_of_mem_amalgamateSpine {spine out : List (Amalgam H)}
     (h : amalgamateSpine spine = some out) {a : Amalgam H} (ha : a ∈ out) :
     a.members <:+: spine.flatMap Amalgam.members :=
   flatMap_members_amalgamateSpine h ▸ List.infix_of_mem_flatten (List.mem_map_of_mem ha)
 
-/-- Without syntactic movement no head is skipped. A head of the spine that lies between two
-members of a complex head is a member of it, so a complex head that skips a head shows that one
-of its heads has a second occurrence. -/
 theorem mem_of_mem_amalgamateSpine_of_nodup [DecidableEq H] {spine out : List (Amalgam H)}
     (h : amalgamateSpine spine = some out) (hnd : (spine.flatMap Amalgam.members).Nodup)
     {a : Amalgam H} (ha : a ∈ out) {x y z : H} (hx : x ∈ a.members) (hy : y ∈ a.members)
@@ -171,8 +164,6 @@ theorem amalgamate_append {below : List (Amalgam H)} {pending : Option (FreeMagm
     rcases ha : a.m with _ | _ | _ <;> cases below <;>
       simp only [List.cons_append, amalgamate, ha] at h ⊢ <;> first | exact ih h | simp at h
 
-/-- Syntactic movement leaves the derivation below the root as it was. The high occurrence of
-the moved head is one more complex head, containing that head alone. -/
 theorem amalgamateSpine_moveToRoot {spine out : List (Amalgam H)} (y : H)
     (h : amalgamateSpine spine = some out) :
     amalgamateSpine (moveToRoot spine y) = some (out ++ [Amalgam.single y none]) := by
@@ -202,8 +193,6 @@ private theorem exists_site_eq_of_amalgamate {below : List (Amalgam H)}
         exact ⟨r, hr, hs, (List.prefix_append _ _).trans (by simpa [Amalgam.members] using hm)⟩
       · exact ih h (List.mem_cons_of_mem _ hb)
 
-/-- Amalgamation proceeds bottom-up: heads added above a spine leave each of its complex heads
-in the same position with the same members, to which a Lowering head may add. -/
 theorem exists_site_eq_of_append {spine extra out out' : List (Amalgam H)}
     (h : amalgamateSpine spine = some out) (h' : amalgamateSpine (spine ++ extra) = some out')
     {a : Amalgam H} (ha : a ∈ out) : ∃ a' ∈ out', a'.site = a.site ∧ a.members <+: a'.members := by
@@ -212,8 +201,6 @@ theorem exists_site_eq_of_append {spine extra out out' : List (Amalgam H)}
   rw [amalgamate_append extra hr] at hr'
   simpa using exists_site_eq_of_amalgamate hr' (List.mem_reverse.mp ha)
 
-/-- Where no head repeats, the heads added above a spine do not change the position in which a
-head of the spine is pronounced: a higher position takes syntactic movement. -/
 theorem site_eq_of_append {spine extra out out' : List (Amalgam H)}
     (h : amalgamateSpine spine = some out) (h' : amalgamateSpine (spine ++ extra) = some out')
     (hnd : ((spine ++ extra).flatMap Amalgam.members).Nodup) {a a' : Amalgam H} (ha : a ∈ out)
@@ -227,21 +214,16 @@ theorem site_eq_of_append {spine extra out out' : List (Amalgam H)}
 
 open Amalgam
 
-/-- A head that Raises and a head that Lowers meet in the head between them. -/
 theorem raising_and_lowering (x y z : H) :
     amalgamateSpine [single z (some .raising), single y none, single x (some .lowering)] =
       some [⟨y, of z * of y * of x, none⟩] :=
   rfl
 
-/-- A head Lowers past the position of a head that has itself Lowered, into a head that is not
-the head of its complement. -/
 theorem lowering_twice (x y z : H) :
     amalgamateSpine [single z none, single y (some .lowering), single x (some .lowering)] =
       some [⟨z, of z * of y * of x, none⟩] :=
   rfl
 
-/-- Once the lowest head has Raised into a Lowering head, the complex head has no head below it
-to Lower into, and the derivation does not converge. -/
 theorem lowering_without_target (x y z : H) :
     amalgamateSpine [single z (some .raising), single y (some .lowering), single x none] = none :=
   rfl
@@ -274,9 +256,6 @@ private theorem foldl_raising (p : FreeMagma H) (lo : List H) :
   | nil => rfl
   | cons h lo ih => simpa using ih _
 
-/-- The complex head of a spine can sit at any of its heads. With the heads below Raising and
-the heads above Lowering, all the heads form one complex head there, each added to the complex
-head of the heads below it. -/
 theorem amalgamateSpine_raising_lowering {lo hi rest : List H} {s b : H}
     (h : lo ++ s :: hi = b :: rest) :
     amalgamateSpine (lo.map (single · (some .raising)) ++ single s none ::
@@ -309,9 +288,6 @@ private theorem forall_isLeftComb_amalgamate {below : List (Amalgam H)}
         | (rw [ih h]; rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;>
             simp [List.isChain_cons_cons] <;> tauto)
 
-/-- Every complex head of a convergent derivation adds one head at a time, the bracketing that
-mirrors the order of syntactic composition, exactly when no head Lowers right after a head has
-Raised into it. -/
 theorem forall_isLeftComb_iff {hs : List (H × Option Direction)} {out : List (Amalgam H)}
     (h : amalgamateSpine (hs.map fun p ↦ single p.1 p.2) = some out) :
     (∀ a ∈ out, a.complex.IsLeftComb) ↔
@@ -361,52 +337,37 @@ def german : List (Amalgam ClausalHead) := [single V (some .raising), single T n
 def hebrew : List (Amalgam ClausalHead) :=
   [single V (some .raising), single T none, single Top none]
 
-/-- The Russian verbal complex is pronounced in Neg, above V and below T. -/
 theorem russian_amalgamateSpine :
     amalgamateSpine russian = some [⟨.Neg, of V * of v * of Asp * of .Neg * of T, none⟩] :=
   rfl
 
-/-- The Danish verbal complex is pronounced in V. -/
 theorem danish_amalgamateSpine : amalgamateSpine danish = some [⟨V, of V * of v * of T, none⟩] :=
   rfl
 
-/-- The French verbal complex is pronounced in T. -/
 theorem french_amalgamateSpine :
     amalgamateSpine french = some [⟨T, of V * of v * of .Neg * of T, none⟩] :=
   rfl
 
 /-! ### Syntactic movement of a head -/
 
-/-- In a German root clause T moves to the C domain and V Raises into its low occurrence, so the
-complex head T pronounced at the root contains V. -/
 theorem german_root :
     amalgamateSpine (moveToRoot german T) = some [⟨T, of V * of T, none⟩, single T none] :=
   rfl
 
-/-- In a Danish root clause V moves to the C domain and v and T Lower into its low occurrence,
-so the complex head V pronounced at the root contains them. -/
 theorem danish_root :
     amalgamateSpine (moveToRoot danish V) = some [⟨V, of V * of v * of T, none⟩, single V none] :=
   amalgamateSpine_moveToRoot V danish_amalgamateSpine
 
-/-- In a Russian clause with polarity focus Neg moves to Pol and the verbal complex forms at its
-low occurrence, so the whole complex is pronounced before the subject. -/
 theorem russian_polarity_focus :
     amalgamateSpine (moveToRoot russian .Neg) =
       some [⟨.Neg, of V * of v * of Asp * of .Neg * of T, none⟩, single .Neg none] :=
   amalgamateSpine_moveToRoot .Neg russian_amalgamateSpine
 
-/-- In Hebrew bare-infinitive fronting V moves to the topic position and its low occurrence
-Raises into T, so the fronted occurrence is the verb alone, an infinitive, and the verb with
-tense and agreement is in T. -/
 theorem hebrew_fronting :
     amalgamateSpine (moveToRoot hebrew V) =
       some [⟨T, of V * of T, none⟩, single .Top none, single V none] :=
   rfl
 
-/-- With H1 to H6 as `0` to `5`, the moved H1 occupies the bottom and the top of the spine. H6
-Lowers into its low occurrence and the complex of H3 and H2 Raises into its high one, so H1 has
-gained three heads across the inert H4 and H5. -/
 theorem skipping :
     amalgamateSpine [single (0 : Fin 6) none, single 5 (some .lowering), single 4 none,
         single 3 none, single 2 (some .raising), single 1 (some .raising), single 0 none] =
@@ -425,10 +386,6 @@ def spine? (r : Datum) : Option (List (Amalgam ClausalHead)) :=
   | "dani1285", some "root" => some (moveToRoot danish V)
   | _, _ => none
 
-/-- The canonical tests for verb movement place a finite verb before a low adverb, sentential
-negation or a floating quantifier exactly when it is pronounced in T or above. The paper's
-examples of French, Danish and Russian finite clauses are acceptable in exactly the order that
-the position of the verbal complex predicts. -/
 theorem verb_placement :
     ∀ r ∈ Examples.all, r.feature? "phenomenon" = some "finiteVerbPlacement" →
       r.feature? "diagnostic" ≠ some "coordination" →

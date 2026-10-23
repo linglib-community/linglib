@@ -117,10 +117,8 @@ def Value.plMarker : Value → Person.Class → Marker
   | _, .participant => .d
   | _, .nonParticipant => .b
 
-/-- The singular markers distinguish the three genders. -/
 theorem Value.sgMarker_injective : Function.Injective Value.sgMarker := by decide
 
-/-- The plural markers do not distinguish men from women. -/
 theorem Value.plMarker_masc_eq_fem : Value.masc.plMarker = Value.fem.plMarker := by
   funext c; cases c <;> rfl
 
@@ -159,7 +157,6 @@ def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
      (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "a"]),
      (.personNumber .second .plural, [.suff "a"]), (.personNumber .third .plural, [])]
 
-/-- In every set, a cell is unmarked exactly when it is not a speech-act participant's. -/
 theorem PersonSet.realize_eq_nil_iff :
     ∀ s : PersonSet, ∀ c ∈ Bundle.personNumberCells,
       s.paradigm.realize c = some [] ↔ ¬ c.IsSAP := by
@@ -168,7 +165,6 @@ theorem PersonSet.realize_eq_nil_iff :
 /-- The past tense clitic bears no person. -/
 def pastClitic : Morph := .encl "de"
 
-/-- The second person singular clitic is the past tense clitic. -/
 theorem clitic_second_singular :
     PersonSet.clitic.paradigm.realize (.personNumber .second .singular) = some [pastClitic] := rfl
 
@@ -186,7 +182,6 @@ theorem isDargic_clitic : IsDargic PersonSet.clitic.paradigm := by decide
 
 theorem isDargic_optative : IsDargic PersonSet.optative.paradigm := by decide
 
-/-- The irrealis set has a first person plural marker of its own. -/
 theorem not_isDargic_irrealis : ¬ IsDargic PersonSet.irrealis.paradigm := by decide
 
 /-! ### Transitive clauses -/
@@ -207,7 +202,6 @@ or *-an* otherwise. -/
 def intransitiveThematic (p : Person) : List Morph :=
   if p.IsSAP then [.suff "u"] else [.suff "ar", .suff "an"]
 
-/-- The thematic suffix is *-i* exactly when A controls person agreement. -/
 theorem thematic_eq_i_iff (s : Scenario Person) :
     thematic s = .suff "i" ↔ personController s = .A := by
   simp only [thematic, personController, Person.kind_map_toClass_eq_downstream_iff]
@@ -219,9 +213,6 @@ def transitiveClitic (a p : Person × Number) : Option (List Morph) :=
   let c := if personController ⟨a.1, p.1⟩ = .A then a else p
   PersonSet.clitic.paradigm.realize (.personNumber c.1 c.2)
 
-/-- 'I caught you' takes *=de*, 'you caught me' *=da*, 'I caught him' *=da*, 'you caught him'
-*=de* and 'Rasul caught you' *=de*, since the verb agrees with the absolutive when both
-arguments are speech-act participants and with the participant when one is. -/
 theorem transitiveClitic_caught :
     transitiveClitic (.first, .singular) (.second, .singular) = some [.encl "de"] ∧
     transitiveClitic (.second, .singular) (.first, .singular) = some [.encl "da"] ∧

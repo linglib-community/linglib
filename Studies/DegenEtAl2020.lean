@@ -88,8 +88,6 @@ theorem gain_pos (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr) (hr1 : xr ≤ 1)
     0 < gain b xs xr :=
   div_pos (mul_pos hr0 (gain_num_pos hs0 hs1)) (gain_den_pos hs1 hr0 hr1)
 
-/-- With one distractor the gain is the ratio of the listener's probabilities of the target under
-the redundant and under the sufficient expression. -/
 theorem div_div_eq_gain_one (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr) :
     xs * xr / (1 - xs + xs * xr) / (xs / (2 - xs)) = gain 1 xs xr := by
   have h1 : 0 < 1 - xs + xs * xr := by nlinarith
@@ -97,12 +95,9 @@ theorem div_div_eq_gain_one (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hr0 : 0 < xr) :
   rw [gain, Nat.cast_one, div_div_div_eq, div_eq_div_iff (mul_pos h1 hs0).ne' h2.ne']
   ring
 
-/-- Beside a Boolean sufficient adjective the redundant one adds nothing. -/
 theorem gain_one_left (hr : xr ≠ 0) : gain b 1 xr = 1 := by
   simp [gain, hr]
 
-/-- Beside a sufficient adjective short of Boolean, the redundant one adds information exactly
-when its semantic value exceeds one half. -/
 theorem one_lt_gain_iff (hb : 0 < b) (hs1 : xs < 1) (hr0 : 0 < xr) (hr1 : xr ≤ 1) :
     1 < gain b xs xr ↔ 1/2 < xr := by
   rw [gain, one_lt_div (gain_den_pos hs1.le hr0 hr1), ← sub_pos,
@@ -111,8 +106,6 @@ theorem one_lt_gain_iff (hb : 0 < b) (hs1 : xs < 1) (hr0 : 0 < xr) (hr1 : xr ≤
     mul_pos_iff_of_pos_right (mul_pos (Nat.cast_pos.2 hb) (sub_pos.2 hs1))]
   constructor <;> intro h <;> linarith
 
-/-- Beside one sufficient adjective short of Boolean, the gain grows with the semantic value of
-the redundant adjective. -/
 theorem gain_lt_gain_iff (hb : 0 < b) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr)
     (hr1 : xr ≤ 1) (hr0' : 0 < xr') (hr1' : xr' ≤ 1) :
     gain b xs xr < gain b xs xr' ↔ xr < xr' := by
@@ -125,8 +118,6 @@ theorem gain_lt_gain_iff (hb : 0 < b) (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < x
     mul_pos_iff_of_pos_right (mul_pos (gain_num_pos hs0 hs1.le) (mul_pos hb' (sub_pos.2 hs1))),
     sub_pos]
 
-/-- When two adjectives trade the sufficient and the redundant role, the gain is greater on the
-side where the redundant adjective is the less noisy of the two. -/
 theorem gain_swap_lt_iff (hb : 0 < b) (h₁0 : 0 < x₁) (h₁1 : x₁ ≤ 1) (h₂0 : 0 < x₂)
     (h₂1 : x₂ ≤ 1) : gain b x₂ x₁ < gain b x₁ x₂ ↔ x₁ < x₂ := by
   have hb' : (0 : ℝ) < b := Nat.cast_pos.2 hb
@@ -173,7 +164,6 @@ instance (α : ℝ) (C : U → ℝ) (m : U → E → ℝ) : IsFiniteKernel (S1 �
 
 variable {m : U → E → ℝ} {α : ℝ} {C : U → ℝ} {u u' : U} {o : E}
 
-/-- Relabelling the expressions carries the speaker along, with the cost relabelled with them. -/
 theorem S1_apply_singleton_of_equiv {U' : Type*} [Fintype U'] [MeasurableSpace U']
     [MeasurableSingletonClass U'] (τ : U ≃ U') (α : ℝ) (C : U' → ℝ) {m' : U' → E → ℝ}
     (h : ∀ v, m' (τ v) = m v) (o : E) (u : U) :
@@ -183,7 +173,6 @@ theorem S1_apply_singleton_of_equiv {U' : Type*} [Fintype U'] [MeasurableSpace U
 
 variable [Nonempty E]
 
-/-- The listener's probability of an object is the share of its degree in the row. -/
 theorem L0_apply (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (o : E) :
     L0 m u {o} = ENNReal.ofReal (m u o / ∑ o', m u o') :=
   Kernel.ofDensity_uniformOn_ofReal_apply_singleton _ u o hm hpos
@@ -199,8 +188,6 @@ private theorem L0_ne_zero (hm : ∀ v o', 0 ≤ m v o') (h : 0 < m u o) : L0 m 
 private theorem L0_eq_zero (h : m u o = 0) : L0 m u {o} = 0 := by
   rw [L0, Kernel.ofDensity_uniformOn_apply_singleton, h, ENNReal.ofReal_zero, ENNReal.zero_div]
 
-/-- The odds of one expression against another for an object are the ratio of the listener's
-probabilities of the object to the power `α`, discounted by the difference in cost. -/
 theorem S1_real_div (hα : 0 ≤ α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o) (hu' : 0 < m u' o) :
     (S1 α C m o).real {u'} / (S1 α C m o).real {u} =
       ((m u' o / ∑ o', m u' o') / (m u o / ∑ o', m u o')) ^ α *
@@ -218,8 +205,6 @@ theorem S1_real_lt_iff (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m 
     ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
     L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
-/-- When two expressions alone hold of an object to a positive degree, the probability of one is
-the logistic function of its advantage in utility over the other, scaled by the rationality. -/
 theorem S1_real_of_pair (hα : 0 < α) (huu' : u ≠ u') (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
     (hu' : 0 < m u' o) (hsupp : ∀ v, 0 < m v o → v = u ∨ v = u') :
     (S1 α C m o).real {u} = Real.sigmoid (α * ((Real.log (m u o / ∑ o', m u o') - C u) -
@@ -229,15 +214,11 @@ theorem S1_real_of_pair (hα : 0 < α) (huu' : u ≠ u') (hm : ∀ v o', 0 ≤ m
     ← measureReal_def, ← measureReal_def, L0_real_singleton (hm u) (sum_pos_of_pos hm hu),
     L0_real_singleton (hm u') (sum_pos_of_pos hm hu')]
 
-/-- An expression that alone holds of an object to a positive degree is produced for it with
-certainty. -/
 theorem S1_real_eq_one (hα : 0 < α) (hm : ∀ v o', 0 ≤ m v o') (hu : 0 < m u o)
     (hother : ∀ v, v ≠ u → m v o = 0) : (S1 α C m o).real {u} = 1 := by
   rw [measureReal_def, S1, speaker_dirac_apply_singleton_eq_one hα (L0_ne_zero hm hu)
     fun v hv ↦ L0_eq_zero (hother v hv), ENNReal.toReal_one]
 
-/-- A description distinguishes an object under the literal listener, so that the object is the
-listener's best guess, exactly when it does under the meaning. -/
 theorem distinguishes_L0_iff (hm : ∀ o', 0 ≤ m u o') (hpos : 0 < ∑ o', m u o') (D : Finset E)
     (r : E) :
     Distinguishes (fun u o ↦ L0 m u {o}) D r u ↔ Distinguishes m D r u :=
@@ -358,16 +339,12 @@ private theorem meaning_red : meaning xs xc .red .bigRed = xc := by
 private theorem meaning_bigRed : meaning xs xc .bigRed .bigRed = xs * xc := by
   simp [meaning, noisy, Utterance.size, Utterance.color, Pin.size, Pin.color]
 
-/-- Adding the redundant colour to the sufficient size multiplies the listener's probability of
-the small blue pin by the gain of the display. -/
 theorem gain_smallBlue (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc) :
     (meaning xs xc .smallBlue .smallBlue / ∑ o, meaning xs xc .smallBlue o) /
       (meaning xs xc .small .smallBlue / ∑ o, meaning xs xc .small o) = gain 1 xs xc := by
   rw [row_small, row_smallBlue, meaning_small, meaning_smallBlue]
   exact div_div_eq_gain_one hs0 hs1 hc0
 
-/-- Adding the redundant size to the sufficient colour multiplies the listener's probability of
-the big red pin by the gain of the display with the two semantic values exchanged. -/
 theorem gain_bigRed (hs0 : 0 < xs) (hc0 : 0 < xc) (hc1 : xc ≤ 1) :
     (meaning xs xc .bigRed .bigRed / ∑ o, meaning xs xc .bigRed o) /
       (meaning xs xc .red .bigRed / ∑ o, meaning xs xc .red o) = gain 1 xc xs := by
@@ -409,10 +386,6 @@ theorem size_overmodification_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1)
     Real.log_lt_log_iff h h', ← one_lt_div h, gain_bigRed hs0 hc0 hc1.le,
     one_lt_gain_iff one_pos hc1 hs0 hs1]
 
-/-- The odds of the redundant *small blue* against *small* for the small blue pin exceed the odds
-of the redundant *big red* against *red* for the big red pin exactly when size is noisier than
-colour, at every positive rationality and when the two redundant adjectives cost the same. This is
-the paper's asymmetry, more redundant use of colour than of size. -/
 theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc)
     (hc1 : xc ≤ 1) (hC : C .smallBlue - C .small = C .bigRed - C .red) :
     (S1 α C (meaning xs xc) .bigRed).real {.bigRed} /
@@ -427,17 +400,11 @@ theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤
     Real.rpow_lt_rpow_iff (gain_pos hc0 hc1 hs0 hs1).le (gain_pos hs0 hs1 hc0 hc1).le hα,
     gain_swap_lt_iff one_pos hs0 hs1 hc0 hc1]
 
-/-- The sufficient *small* distinguishes the small blue pin from the big ones, so that the
-listener's best guess is the target, exactly when the semantic value of size beats chance. -/
 theorem small_distinguishes_iff :
     Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .small ↔ 1/2 < xs := by
   simp [Distinguishes, meaning, noisy, Utterance.size, Utterance.color, Pin.size]
   constructor <;> intro h <;> linarith
 
-/-- The redundant *small blue* distinguishes the pin exactly when the semantic value of size
-beats chance and the two values together exceed one, so a noisy colour can cost the
-identification that the sufficient description had. With Boolean values both descriptions
-distinguish. -/
 theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
     Distinguishes (meaning xs xc) {.bigBlue, .bigRed} .smallBlue .smallBlue ↔
       1/2 < xs ∧ 1 < xs + xc := by
@@ -449,8 +416,6 @@ theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
   · rintro ⟨h1, h2⟩
     exact ⟨by nlinarith, by nlinarith⟩
 
-/-- With Boolean values the redundant modifier adds nothing, since *small* and *small blue* both
-identify the small blue pin with certainty and are produced alike. -/
 theorem boolean_no_preference (α : ℝ) :
     (S1 α 0 (meaning 1 1) .smallBlue).real {.small} =
       (S1 α 0 (meaning 1 1) .smallBlue).real {.smallBlue} := by

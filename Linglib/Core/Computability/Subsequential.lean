@@ -271,8 +271,6 @@ theorem runFrom_ofWindow (w : {l : List γ // l.length ≤ n}) (xs : List α) :
 theorem run_ofWindow : (ofWindow n out upd).run = windowRun n out upd [] :=
   funext fun xs ↦ runFrom_ofWindow ⟨[], Nat.zero_le _⟩ xs
 
-/-- The window after reading `u` is the last `n` symbols of the update stream, so a window
-recursion extends by one block per letter. -/
 theorem windowRun_append_singleton {w : List γ} (hw : w.length ≤ n) (u : List α) (x : α) :
     windowRun n out upd w (u ++ [x]) =
       windowRun n out upd w u ++ out ((w ++ windowRun n upd upd w u).rtake n) x := by
@@ -346,15 +344,11 @@ theorem run_toMealy (w : T.LetterToLetter) (hf : ∀ s, T.finalOutput s = []) :
     w.toMealy.run = T.run :=
   funext fun xs ↦ w.runFrom_toMealy hf T.start xs
 
-/-- A letter-to-letter transducer with no final flush is the block form of its Mealy
-view. -/
 theorem toSubsequentialTransducer_toMealy (w : T.LetterToLetter)
     (hf : ∀ s, T.finalOutput s = []) : w.toMealy.toSubsequentialTransducer = T :=
   SubsequentialTransducer.ext rfl rfl
     (funext₂ fun s x ↦ (w.output_eq s x).symm) (funext fun s ↦ (hf s).symm)
 
-/-- A finite-state letter-to-letter transducer with no final flush computes a
-Mealy-computable function. -/
 theorem isMealyComputable [Fintype σ] (w : T.LetterToLetter)
     (hf : ∀ s, T.finalOutput s = []) : IsMealyComputable T.run :=
   w.run_toMealy hf ▸ w.toMealy.isMealyComputable
@@ -398,15 +392,11 @@ def IsSubsequential (d : Edge) (f : List α → List β) : Prop :=
 @[simp] theorem isSubsequential_right_iff :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
-/-- `f` is right-subsequential exactly when a finite-state transducer computes it right to
-left. -/
 theorem isRightSubsequential_iff :
     IsRightSubsequential f
       ↔ ∃ (σ : Type) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
   exists₃_congr fun _ _ T ↦ by rw [T.runRight_eq_revConj_run, List.revConj_eq_iff]
 
-/-- Every finite-state transducer computes a left-subsequential function, whatever the
-universe of its state type. -/
 theorem SubsequentialTransducer.isLeftSubsequential {σ : Type*} [Fintype σ]
     (T : SubsequentialTransducer σ α β) :
     IsLeftSubsequential T.run :=
@@ -414,12 +404,9 @@ theorem SubsequentialTransducer.isLeftSubsequential {σ : Type*} [Fintype σ]
 
 /-! ### Reverse conjugation -/
 
-/-- The reverse-conjugate of a right-subsequential function is left-subsequential,
-by definition. -/
 theorem IsRightSubsequential.revConj (hf : IsRightSubsequential f) :
     IsLeftSubsequential (List.revConj f) := hf
 
-/-- The reverse-conjugate of a left-subsequential function is right-subsequential. -/
 theorem IsLeftSubsequential.revConj (hf : IsLeftSubsequential f) :
     IsRightSubsequential (List.revConj f) :=
   show IsLeftSubsequential _ from (List.revConj_revConj f).symm ▸ hf
@@ -431,8 +418,6 @@ theorem isLeftSubsequential_revConj_iff :
     IsRightSubsequential (List.revConj f) ↔ IsLeftSubsequential f :=
   ⟨fun h ↦ List.revConj_revConj f ▸ h.revConj, IsLeftSubsequential.revConj⟩
 
-/-- Every finite-state transducer computes a right-subsequential function via
-`runRight`. -/
 theorem SubsequentialTransducer.isRightSubsequential {σ : Type*} [Fintype σ]
     (T : SubsequentialTransducer σ α β) :
     IsRightSubsequential T.runRight :=
@@ -440,20 +425,15 @@ theorem SubsequentialTransducer.isRightSubsequential {σ : Type*} [Fintype σ]
 
 /-! ### Mealy-computable functions -/
 
-/-- A Mealy-computable function is left-subsequential, since
-`Mealy.toSubsequentialTransducer` presents a Mealy machine as a block transducer emitting
-singleton blocks. -/
 theorem IsMealyComputable.isLeftSubsequential (hf : IsMealyComputable f) :
     IsLeftSubsequential f := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   exact T.toSubsequentialTransducer_run ▸ T.toSubsequentialTransducer.isLeftSubsequential
 
-/-- A finite Mealy machine computes a left-subsequential function. -/
 theorem Mealy.isLeftSubsequential {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsLeftSubsequential T.run :=
   T.isMealyComputable.isLeftSubsequential
 
-/-- A finite Mealy machine run right-to-left computes a right-subsequential function. -/
 theorem Mealy.isRightSubsequential {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsRightSubsequential T.runRight :=
   T.isLeftSubsequential.revConj
@@ -491,13 +471,9 @@ open SubsequentialTransducer
 variable {δ : Type*} [Fintype δ] (n : ℕ) (out : List δ → α → List β)
   (upd : List δ → α → List δ)
 
-/-- A window recursion over a finite window alphabet is left-subsequential, the bounded window
-being the state of `SubsequentialTransducer.ofWindow`. -/
 theorem isLeftSubsequential_windowRun : IsLeftSubsequential (windowRun n out upd []) :=
   run_ofWindow (n := n) (out := out) (upd := upd) ▸ (ofWindow n out upd).isLeftSubsequential
 
-/-- A window recursion emitting exactly one symbol per step is Mealy-computable, with
-the bounded window as the synchronous state. -/
 theorem isMealyComputable_windowRun (hs : ∀ w x, (out w x).length = 1) :
     IsMealyComputable (windowRun n out upd []) :=
   run_ofWindow (n := n) (out := out) (upd := upd) ▸
@@ -507,23 +483,18 @@ end WindowRun
 
 /-! ### Closure under composition -/
 
-/-- Left-subsequential functions are closed under composition, by
-`SubsequentialTransducer.comp` [mohri-1997]. -/
 theorem IsLeftSubsequential.comp (hg : IsLeftSubsequential g)
     (hf : IsLeftSubsequential f) : IsLeftSubsequential (g ∘ f) := by
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf
   obtain ⟨σ₂, _, T₂, rfl⟩ := hg
   exact ⟨σ₂ × σ₁, inferInstance, T₂.comp T₁, T₂.run_comp T₁⟩
 
-/-- Right-subsequential functions are closed under composition, by conjugating the left
-closure. -/
 theorem IsRightSubsequential.comp (hg : IsRightSubsequential g)
     (hf : IsRightSubsequential f) : IsRightSubsequential (g ∘ f) := by
   show IsLeftSubsequential (List.revConj (g ∘ f))
   rw [List.revConj_comp]
   exact IsLeftSubsequential.comp hg hf
 
-/-- Subsequential functions are closed under composition in either scan direction. -/
 theorem IsSubsequential.comp {d : Edge} (hg : IsSubsequential d g)
     (hf : IsSubsequential d f) : IsSubsequential d (g ∘ f) :=
   match d, hg, hf with
@@ -532,21 +503,17 @@ theorem IsSubsequential.comp {d : Edge} (hg : IsSubsequential d g)
 
 /-! ### Regular preimages -/
 
-/-- Left-subsequential functions pull back regular languages (`DFA.comapSubsequential`). -/
 theorem IsLeftSubsequential.isRegular_preimage (hf : IsLeftSubsequential f)
     {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   obtain ⟨τ, _, M, rfl⟩ := hL
   exact ⟨σ × τ, inferInstance, M.comapSubsequential T, M.accepts_comapSubsequential T⟩
 
-/-- Right-subsequential functions pull back regular languages, by conjugating the left case
-through the closure of the regular languages under reversal. -/
 theorem IsRightSubsequential.isRegular_preimage (hf : IsRightSubsequential f)
     {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) := by
   have h := (hf.revConj.isRegular_preimage hL.reverse).reverse
   rwa [← List.preimage_revConj, List.revConj_revConj] at h
 
-/-- Subsequential functions pull back regular languages in either scan direction. -/
 theorem IsSubsequential.isRegular_preimage {d : Edge} (hf : IsSubsequential d f)
     {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) :=
   match d, hf with
@@ -569,8 +536,6 @@ theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
     List.append_nil]
   exact (List.rdrop_prefix _ _).trans (List.prefix_append _ _)
 
-/-- For a right-subsequential `f`, all but the first `N` symbols of `f u` are a suffix of
-`f (v ++ u)`. -/
 theorem IsRightSubsequential.bounded_delay (hf : IsRightSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, (f u).drop N <:+ f (v ++ u) := by
   obtain ⟨N, hN⟩ := IsLeftSubsequential.bounded_delay hf
@@ -578,8 +543,6 @@ theorem IsRightSubsequential.bounded_delay (hf : IsRightSubsequential f) :
   simpa [List.revConj, List.rdrop_eq_reverse_drop_reverse] using
     (hN u.reverse v.reverse).reverse
 
-/-- Coordinates of `f u` more than `N` positions before its end are stable under extending the
-input, for a left-subsequential `f`. -/
 theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v i, i + N < (f u).length → (f u)[i]? = (f (u ++ v))[i]? := by
   obtain ⟨N, hN⟩ := hf.bounded_delay
@@ -588,9 +551,6 @@ theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential 
     List.getElem?_eq_getElem (by omega)]
   simp [List.rdrop]
 
-/-- A length-preserving left-subsequential function reads output coordinate `i` off the input
-prefix through `i + N`, for a fixed margin `N`: the delay bound of `exists_getElem?_append_eq`
-caps how far to the right an output coordinate can look. -/
 theorem IsLeftSubsequential.exists_getElem?_take_eq
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
     ∃ N, ∀ i w, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := by
@@ -601,8 +561,6 @@ theorem IsLeftSubsequential.exists_getElem?_take_eq
   · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
     exact hN _ _ i (by rw [hlen, List.length_take]; omega)
 
-/-- Coordinates of `f u` at least `N` positions from its start are stable under extending the
-input on the left, for a length-preserving right-subsequential `f`. -/
 theorem IsRightSubsequential.exists_getElem?_append_eq (hlen : ∀ w, (f w).length = w.length)
     (hf : IsRightSubsequential f) :
     ∃ N : ℕ, ∀ u v i, N ≤ i → (f u)[i]? = (f (v ++ u))[v.length + i]? := by
@@ -618,8 +576,6 @@ theorem IsRightSubsequential.exists_getElem?_append_eq (hlen : ∀ w, (f w).leng
   · rw [List.getElem?_eq_none (by rw [hlen]; omega),
       List.getElem?_eq_none (by rw [hlen, List.length_append]; omega)]
 
-/-- A length-preserving right-subsequential function reads output coordinate `i` off the input
-suffix from `i - N`, for a fixed margin `N`, where it sits at coordinate `N`. -/
 theorem IsRightSubsequential.exists_getElem?_drop_eq
     (hlen : ∀ w, (f w).length = w.length) (hf : IsRightSubsequential f) :
     ∃ N, ∀ i w, N ≤ i → (f (w.drop (i - N)))[N]? = (f w)[i]? := by
@@ -631,9 +587,6 @@ theorem IsRightSubsequential.exists_getElem?_drop_eq
   · rw [List.drop_of_length_le h.le, List.getElem?_eq_none (by simp [hlen]),
       List.getElem?_eq_none (by rw [hlen]; omega)]
 
-/-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
-disagree more than `N` positions before the end of `f u` — the contrapositive of
-`bounded_delay`. -/
 theorem not_isLeftSubsequential_of_diverging
     (h : ∀ N, ∃ (u v : List α) (i : ℕ),
       i + N < (f u).length ∧ (f u)[i]? ≠ (f (u ++ v))[i]?) :

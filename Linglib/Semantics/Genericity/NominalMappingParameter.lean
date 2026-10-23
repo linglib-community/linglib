@@ -134,14 +134,11 @@ def Blocks (ds : Inventory) : CovertShift → Prop
 instance (ds : Inventory) : DecidablePred ds.Blocks := fun τ ↦ by
   cases τ <;> unfold Blocks <;> infer_instance
 
-/-- Kind formation is never blocked. -/
 theorem not_blocks_down (ds : Inventory) : ¬ ds.Blocks .down := nofun
 
-/-- ∃ is blocked exactly when the inventory realizes indefinites. -/
 theorem blocks_exists_iff (ds : Inventory) : ds.Blocks .exists ↔ ds.Realizes .indefinite :=
   Iff.rfl
 
-/-- ι^x is blocked exactly when the inventory realizes anaphoric definites. -/
 theorem blocks_iotaAnaphoric_iff (ds : Inventory) :
     ds.Blocks .iotaAnaphoric ↔ ds.Realizes .anaphoric :=
   Iff.rfl
@@ -165,19 +162,14 @@ instance (m : NominalMapping) (ds : Determiner.Inventory) (down : Prop) [Decidab
 
 variable {m : NominalMapping} {ds : Determiner.Inventory} {down : Prop}
 
-/-- With ι and ∃ blocked, a [+arg, +pred] language admits exactly the bare nominals ∩ is
-defined for. -/
 theorem argAndPred_licensesBare_iff (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
     argAndPred.LicensesBare ds down ↔ down := by
   simp [LicensesBare, hι, hex]
 
-/-- A [+arg, +pred] language admits a bare nominal without a kind, such as a singular count
-noun, iff it lacks a definite or an indefinite article. -/
 theorem argAndPred_licensesBare_false_iff :
     argAndPred.LicensesBare ds False ↔ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists := by
   simp [LicensesBare]
 
-/-- A language admits a bare nominal with a kind iff it is [+arg]. -/
 theorem licensesBare_true_iff : m.LicensesBare ds True ↔ .kind ∈ m := by
   simp [LicensesBare]
 

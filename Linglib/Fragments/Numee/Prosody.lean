@@ -163,7 +163,6 @@ def stems : List (Registered Syllable) :=
 /-- The affixes. -/
 def affixes : List (Registered Syllable) := [eProx, aLoc]
 
-/-- Every stem's tier has one entry per mora. -/
 theorem stems_aligned : ∀ s ∈ stems, s.IsAligned Prosody.Syllable.pnatMoraCount := by decide
 
 theorem affixes_aligned : ∀ s ∈ affixes, s.IsAligned Prosody.Syllable.pnatMoraCount := by decide

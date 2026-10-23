@@ -42,7 +42,6 @@ def bi : Article :=
 /-- The determiners. -/
 def inventory : Determiner.Inventory := [.article no, .article bi]
 
-/-- Only familiarity is marked. -/
 theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Akan.Determiners

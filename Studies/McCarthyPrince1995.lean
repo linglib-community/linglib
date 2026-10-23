@@ -185,7 +185,6 @@ theorem optimal_eq (r : Ranking (Fin 3) 3) : (tableau r).optimal = {violator (r 
   rw [Equiv.symm_apply_apply]
   omega
 
-/-- A constraint that two others dominate is ranked last. -/
 private theorem apply_two_eq {r : Ranking (Fin 3) 3} {i j k : Fin 3} (hij : i ≠ j)
     (hi : r.Dominates i k) (hj : r.Dominates j k) : r 2 = k := by
   have hne : r.symm i ≠ r.symm j := fun h ↦ hij (r.symm.injective h)
@@ -194,19 +193,14 @@ private theorem apply_two_eq {r : Ranking (Fin 3) 3} {i j k : Fin 3} (hij : i �
     omega
   rw [← this, Equiv.apply_symm_apply]
 
-/-- With MAX-BR and *VhV above MAX-IO, the paper's skeletal ranking for overapplication, *h* is
-lost from both copies. -/
 theorem overapplication {r : Ranking (Fin 3) 3} (h₁ : r.Dominates 0 2) (h₂ : r.Dominates 1 2) :
     (tableau r).optimal = {.overapplication} := by
   rw [optimal_eq, apply_two_eq (by decide) h₁ h₂]; rfl
 
-/-- With *VhV above MAX-IO and MAX-IO above MAX-BR, application is normal. -/
 theorem normalApplication {r : Ranking (Fin 3) 3} (h₁ : r.Dominates 1 2) (h₂ : r.Dominates 2 0) :
     (tableau r).optimal = {.normalApplication} := by
   rw [optimal_eq, apply_two_eq (by decide) (lt_trans h₁ h₂) h₂]; rfl
 
-/-- Underapplication is out of reach. While *VhV dominates MAX-IO, as *h*-deletion in
-unreduplicated words requires, no ranking selects the candidate that keeps both *h*s. -/
 theorem underapplication_notMem {r : Ranking (Fin 3) 3} (h : r.Dominates 1 2) :
     .underapplication ∉ (tableau r).optimal := by
   rw [optimal_eq, Finset.mem_singleton]
@@ -290,8 +284,6 @@ theorem con_apply :
 def tableau (r : Ranking (Fin 3) 3) : Tableau Candidate 3 :=
   .ofRanking con r {.unfaithfulBase, .exactCopy, .codalessReduplicant}
 
-/-- The coda-sparing reduplicant wins exactly under MAX-IO ≫ NO-CODA ≫ MAX-BR, the paper's
-instance of the ranking for emergence of the unmarked. -/
 theorem optimal_iff (r : Ranking (Fin 3) 3) :
     (tableau r).optimal = {.codalessReduplicant} ↔ r.Dominates 0 1 ∧ r.Dominates 1 2 := by
   obtain ⟨ha, hb, hc⟩ := con_apply
@@ -419,9 +411,6 @@ theorem con_apply :
 def tableau (r : Ranking (Fin 4) 4) : Tableau Candidate 4 :=
   .ofRanking con r {.overapplication, .normalApplication, .underapplication}
 
-/-- While PAL dominates IDENT-IO(−cor), as palatalization in unreduplicated words requires, the
-unpalatalized *kɪ–ka* wins exactly when OCP(+cor) and IDENT-BR(−cor) both dominate PAL. The
-blocking constraint rules out overapplication and identity rules out normal application. -/
 theorem optimal_iff {r : Ranking (Fin 4) 4} (h : r.Dominates 2 3) :
     (tableau r).optimal = {.underapplication} ↔ r.Dominates 0 2 ∧ r.Dominates 1 2 := by
   obtain ⟨ha, hb, hc⟩ := con_apply

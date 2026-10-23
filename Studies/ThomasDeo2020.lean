@@ -198,7 +198,6 @@ theorem just.not_comparative (h : just (comparative · dc) G εf μx) (hε : ε 
     (hlt : εf < ε) : ¬ comparative ε dc μx :=
   fun hc ↦ lt_irrefl (dc + ε) (h.2 ε hε hc (dc + ε) (add_lt_add_of_le_of_lt le_rfl hlt))
 
-/-- *Just older than* holds when the comparative holds at the finest grain and at no coarser one. -/
 theorem just_comparative_iff (hG : ∀ ε ∈ G, εf ≤ ε) :
     just (comparative · dc) G εf μx ↔
       dc + εf < μx ∧ ∀ ε ∈ G, εf < ε → μx ≤ dc + ε := by
@@ -233,8 +232,6 @@ theorem just_comparative_Ici_iff :
     ⟨fun h ↦ ⟨h.1, fun ε hε ↦ not_lt.2 (h.2 ε (le_of_lt hε) hε)⟩,
       fun h ↦ ⟨h.1, fun ε _ hε ↦ not_lt.1 (h.2 ε hε)⟩⟩
 
-/-- With a next grain above the finest, *just older than* places the subject within that grain
-above the standard: Fafen's age is Siri's plus the finest grain, section 4.2. -/
 theorem just_comparative_iff_succ {ε' : D} (his : εf < ε') (hleast : ∀ ε, εf < ε → ε' ≤ ε) :
     just (comparative · dc) (Set.Ici εf) εf μx ↔ dc + εf < μx ∧ μx ≤ dc + ε' := by
   rw [just_comparative_Ici_iff, exhAgainst_lt_iff_succ (A := (comparative · dc μx))

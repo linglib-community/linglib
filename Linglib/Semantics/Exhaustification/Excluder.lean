@@ -75,25 +75,19 @@ theorem exh_subset (C : Set (Set W)) (p : Set W) : exh C p ⊆ p := fun _ h ↦ 
 theorem exh_subset_excludes (C : Set (Set W)) (p : Set W) : exh C p ⊆ excludes C p :=
   fun _ h ↦ h.2
 
-/-- A true alternative the prejacent does not entail is excluded. -/
 theorem notMem_excludes (hq : q ∈ C) (hw : w ∈ q) (h : ¬ p ⊆ q) : w ∉ excludes C p :=
   fun he ↦ h (he q hq hw)
 
 theorem notMem_exh (hq : q ∈ C) (hw : w ∈ q) (h : ¬ p ⊆ q) : w ∉ exh C p :=
   fun he ↦ notMem_excludes hq hw h he.2
 
-/-- Exhaustification denies every alternative the prejacent does not entail. -/
 theorem exh_subset_compl (hq : q ∈ C) (h : ¬ p ⊆ q) : exh C p ⊆ qᶜ :=
   fun _ hw hwq ↦ notMem_exh hq hwq h hw
 
-/-- Against the image of an indexed family, exhaustification denies the members the prejacent
-does not entail. -/
 theorem mem_exh_image_iff {ι : Type*} {f : ι → Set W} {A : Set ι} :
     w ∈ exh (f '' A) p ↔ w ∈ p ∧ ∀ i ∈ A, w ∈ f i → p ⊆ f i := by
   simp only [mem_exh, Set.forall_mem_image]
 
-/-- Against the range of an indexed family, exhaustification denies the members the prejacent
-does not entail. -/
 theorem mem_exh_range_iff {ι : Type*} {f : ι → Set W} :
     w ∈ exh (Set.range f) p ↔ w ∈ p ∧ ∀ i, w ∈ f i → p ⊆ f i := by
   simp only [mem_exh, Set.forall_mem_range]
@@ -108,11 +102,9 @@ instance [Fintype W] {ι : Type*} [Fintype ι] {f : ι → Set W} [∀ i, Decida
     {p : Set W} [DecidablePred (· ∈ p)] : DecidablePred (· ∈ exh (Set.range f) p) := fun w ↦
   decidable_of_iff (w ∈ p ∧ ∀ i, w ∈ f i → ∀ x, x ∈ p → x ∈ f i) mem_exh_range_iff.symm
 
-/-- Exclusion from refuting every alternative the prejacent does not entail. -/
 theorem mem_excludes_of_forall_notMem (h : ∀ q ∈ C, ¬ p ⊆ q → w ∉ q) : w ∈ excludes C p :=
   fun q hq hwq ↦ not_not.mp fun hne ↦ h q hq hne hwq
 
-/-- Exclusion denies the union of the alternatives the prejacent does not entail. -/
 theorem excludes_eq_compl_sUnion (C : Set (Set W)) (p : Set W) :
     excludes C p = (⋃₀ {q ∈ C | ¬ p ⊆ q})ᶜ := by
   ext w
@@ -123,35 +115,27 @@ theorem excludes_eq_compl_sUnion (C : Set (Set W)) (p : Set W) :
 theorem exh_eq_sdiff (C : Set (Set W)) (p : Set W) : exh C p = p \ ⋃₀ {q ∈ C | ¬ p ⊆ q} := by
   rw [exh, excludes_eq_compl_sUnion, Set.sdiff_eq]
 
-/-- Exhaustification is vacuous exactly when every alternative compatible with the prejacent is
-entailed by it. -/
 theorem exh_eq_self_iff : exh C p = p ↔ ∀ q ∈ C, (p ∩ q).Nonempty → p ⊆ q :=
   ⟨fun h q hq ⟨w, hw, hwq⟩ ↦ by rw [← h] at hw; exact hw.2 q hq hwq,
     fun h ↦ (exh_subset C p).antisymm fun w hw ↦ ⟨hw, fun q hq hwq ↦ h q hq ⟨w, hw, hwq⟩⟩⟩
 
-/-- Exhaustification cannot exhaustify away entailments. -/
 theorem exh_eq_self (h : ∀ q ∈ C, p ⊆ q) : exh C p = p :=
   exh_eq_self_iff.2 fun q hq _ ↦ h q hq
 
-/-- Narrowing the alternatives weakens the exclusion. -/
 theorem excludes_antitone (h : C ⊆ C') (p : Set W) : excludes C' p ⊆ excludes C p :=
   fun _ hw q hq ↦ hw q (h hq)
 
 theorem exh_antitone (h : C ⊆ C') (p : Set W) : exh C' p ⊆ exh C p :=
   Set.inter_subset_inter_right _ (excludes_antitone h p)
 
-/-- Strengthening the prejacent strengthens the exclusion. -/
 theorem antitone_excludes (C : Set (Set W)) : Antitone (excludes C) :=
   fun _ _ hpq _ hw r hr hwr ↦ hpq.trans (hw r hr hwr)
 
-/-- Exclusion is anti-additive in the prejacent. -/
 theorem excludes_union (C : Set (Set W)) (p q : Set W) :
     excludes C (p ∪ q) = excludes C p ∩ excludes C q := by
   ext w
   simp only [mem_excludes, Set.union_subset_iff, Set.mem_inter_iff, imp_and, forall_and]
 
-/-- When the prejacent is maximal among the alternatives, exclusion asks that every true
-alternative be the prejacent itself, [rooth-1992]'s semantics of *only*. -/
 theorem mem_excludes_iff_forall_eq (h : ∀ q ∈ C, p ⊆ q → q = p) :
     w ∈ excludes C p ↔ ∀ q ∈ C, w ∈ q → q = p :=
   forall₂_congr fun q hq ↦ imp_congr_right fun _ ↦ ⟨h q hq, fun hqp ↦ hqp ▸ subset_rfl⟩
@@ -170,20 +154,15 @@ exclusivity of partition semantics (`irredundant_of_pairwise_disjoint`). -/
 def Irredundant (f : ι → Set W) : Prop :=
   ∀ i, ∃ w ∈ f i, ∀ j, j ≠ i → w ∉ f j
 
-/-- Pairwise-disjoint nonempty alternatives are irredundant. -/
 theorem irredundant_of_pairwise_disjoint (hd : Pairwise fun i j ↦ Disjoint (f i) (f j))
     (hne : ∀ i, (f i).Nonempty) : Irredundant f := fun i ↦
   let ⟨w, hw⟩ := hne i
   ⟨w, hw, fun _ hj hwj ↦ Set.disjoint_left.mp (hd hj) hwj hw⟩
 
-/-- No member of an irredundant family entails another. -/
 theorem Irredundant.not_subset (hf : Irredundant f) {i j : ι} (hij : i ≠ j) : ¬ f i ⊆ f j :=
   let ⟨_, hw, hother⟩ := hf i
   fun h ↦ hother j hij.symm (h hw)
 
-/-- Over an irredundant family, resolving the exclusion to alternative sets that differ beyond
-the prejacent yields distinct propositions, since the alternative present in one resolution and
-absent from the other separates them. -/
 theorem Irredundant.excludes_ne (hf : Irredundant f) {i₀ j : ι} {s₁ s₂ : Finset ι}
     (hj₂ : j ∈ s₂) (hj₁ : j ∉ s₁) (hji : j ≠ i₀) :
     excludes (f '' ↑s₁) (f i₀) ≠ excludes (f '' ↑s₂) (f i₀) := by
@@ -193,8 +172,6 @@ theorem Irredundant.excludes_ne (hf : Irredundant f) {i₀ j : ι} {s₁ s₂ : 
   rintro q ⟨k, hk, rfl⟩ _
   exact hother k fun h ↦ hj₁ (h ▸ hk)
 
-/-- Over an irredundant family, exclusion is injective in the resolved alternative set, on
-resolutions containing the prejacent. -/
 theorem Irredundant.excludes_injOn (hf : Irredundant f) (i₀ : ι) :
     Set.InjOn (fun s : Finset ι ↦ excludes (f '' ↑s) (f i₀)) {s | i₀ ∈ s} := by
   intro s₁ h₁ s₂ h₂ heq
@@ -209,16 +186,12 @@ theorem Irredundant.excludes_injOn (hf : Irredundant f) (i₀ : ι) :
     exact hf.excludes_ne h₂j hmem (fun h ↦ hmem (h ▸ h₁)) heq
 
 
-/-- Exhaustifying a member of a family against the family denies exactly the members it does not
-entail. -/
 theorem mem_exh_range_iff_exhAgainst (f : ι → Set W) (i : ι) (w : W) :
     w ∈ exh (Set.range f) (f i) ↔ exhAgainst (fun i j ↦ ¬ f i ⊆ f j) (w ∈ f ·) i := by
   simp only [mem_exh, Set.forall_mem_range, exhAgainst]
   exact and_congr_right fun _ ↦ forall_congr' fun j ↦
     ⟨fun h hn hw ↦ hn (h hw), fun h hw ↦ not_not.1 fun hn ↦ h hn hw⟩
 
-/-- Over an irredundant family a member entails no other, so exhaustifying against the family is
-exhaustifying against independent rivals. -/
 theorem Irredundant.mem_exh_range_iff {f : ι → Set W} (hf : Irredundant f) (i : ι) (w : W) :
     w ∈ exh (Set.range f) (f i) ↔ exhAgainst (· ≠ ·) (w ∈ f ·) i := by
   rw [mem_exh_range_iff_exhAgainst]
@@ -237,7 +210,6 @@ def predToFinset (p : W → Bool) : Finset W :=
 def altsFromPreds (alts : List (W → Bool)) : Finset (Finset W) :=
   (alts.map predToFinset).toFinset
 
-/-- `altsFromPreds [p]` is the singleton `{predToFinset p}`. -/
 @[simp] theorem altsFromPreds_singleton (p : W → Bool) :
     altsFromPreds [p] = ({predToFinset p} : Finset (Finset W)) := by
   simp [altsFromPreds]
@@ -258,10 +230,8 @@ variable (E : Excluder W) (ALT : Finset (Finset W)) (φ : Finset W)
 def exh : Finset W :=
   φ \ (E.excluded ALT φ).biUnion id
 
-/-- The exhaustified meaning is contained in the prejacent. -/
 theorem exh_subset_phi : E.exh ALT φ ⊆ φ := Finset.sdiff_subset
 
-/-- Membership characterization for `exh`. -/
 theorem mem_exh_iff {w : W} :
     w ∈ E.exh ALT φ ↔ w ∈ φ ∧ ∀ a ∈ E.excluded ALT φ, w ∉ a := by
   simp only [exh, Finset.mem_sdiff, Finset.mem_biUnion, id_eq, not_exists, not_and]
@@ -285,14 +255,12 @@ def restrict (E : Excluder W) (R : Finset W → Bool) : Excluder W where
     (E.restrict R).excluded ALT φ
       = (E.excluded ALT φ).filter (fun a => R a) := rfl
 
-/-- A constantly-true relevance predicate leaves the excluder unchanged. -/
 theorem restrict_const_true (E : Excluder W) :
     E.restrict (fun _ => true) = E := by
   cases E with
   | mk excluded excluded_subset =>
     simp [restrict]
 
-/-- Restriction weakens the exhaustification. -/
 theorem exh_subset_restrict_exh (E : Excluder W) (R : Finset W → Bool)
     (ALT : Finset (Finset W)) (φ : Finset W) :
     E.exh ALT φ ⊆ (E.restrict R).exh ALT φ := by
@@ -303,8 +271,6 @@ theorem exh_subset_restrict_exh (E : Excluder W) (R : Finset W → Bool)
   rw [restrict_excluded, Finset.mem_filter] at ha
   exact hw.2 a ha.1
 
-/-- Restriction licenses no implicature the excluder does not ([fox-katzir-2011]'s
-contextual restriction cannot break symmetry). -/
 theorem restrict_preserves_no_implicature (E : Excluder W)
     (R : Finset W → Bool) (ALT : Finset (Finset W)) (φ ψ : Finset W)
     (h : ¬ E.exh ALT φ ⊆ ψ) :
@@ -324,7 +290,6 @@ def preFilter (E : Excluder W) (P : Finset W → Bool) : Excluder W where
     (E.preFilter P).excluded ALT φ
       = E.excluded (ALT.filter (fun a => P a)) φ := rfl
 
-/-- A constantly-true pre-filter leaves the excluder unchanged. -/
 theorem preFilter_const_true (E : Excluder W) :
     E.preFilter (fun _ => true) = E := by
   cases E with
@@ -347,14 +312,12 @@ theorem mem_tolerant_excluded {ALT : Finset (Finset W)} {φ a : Finset W} :
     a ∈ tolerant.excluded ALT φ ↔ a ∈ ALT ∧ ¬ φ ⊆ a := by
   simp [tolerant_excluded, Finset.mem_filter]
 
-/-- Membership in the tolerant exhaustification. -/
 theorem mem_tolerant_exh_iff (ALT : Finset (Finset W)) (φ : Finset W) {w : W} :
     w ∈ tolerant.exh ALT φ ↔ w ∈ φ ∧ ∀ a ∈ ALT, ¬ φ ⊆ a → w ∉ a := by
   rw [Excluder.mem_exh_iff]
   refine and_congr_right (fun _ => ?_)
   simp [tolerant_excluded, Finset.mem_filter, and_imp]
 
-/-- Alternatives entailed by the prejacent are kept, never negated. -/
 theorem entailed_not_excluded {ALT : Finset (Finset W)} {φ a : Finset W}
     (h : φ ⊆ a) : a ∉ tolerant.excluded ALT φ := by
   simp [h]

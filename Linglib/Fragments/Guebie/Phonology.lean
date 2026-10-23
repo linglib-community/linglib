@@ -83,7 +83,6 @@ def vowels : Finset Segment :=
 /-- A segment's [ATR] value, `true` for [+ATR]. -/
 def atr (x : Segment) : Bool := decide (x.HasValue .atr true)
 
-/-- The advanced vowels are /i e ə o u/. -/
 theorem atr_iff : ∀ x ∈ vowels, atr x = true ↔ x ∈ ({i, e, schwa, o, u} : Finset Segment) := by
   decide
 

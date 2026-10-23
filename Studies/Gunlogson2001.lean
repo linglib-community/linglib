@@ -64,7 +64,6 @@ def IsBiasedR (K : State Role W) (p : Set W) : Prop :=
   (∃ K', Accessible K K' ∧ ∀ x, commitmentSet K' x ⊆ p) ∧
     ¬ ∃ K', Accessible K K' ∧ ∀ x, commitmentSet K' x ⊆ pᶜ
 
-/-- Some accessible context settles `q` iff `q` meets every commitment set. -/
 theorem exists_accessible_iff (K : State Role W) (q : Set W) :
     (∃ K', Accessible K K' ∧ ∀ x, commitmentSet K' x ⊆ q) ↔
       ∀ x, (commitmentSet K x ∩ q).Nonempty := by
@@ -82,8 +81,6 @@ theorem exists_accessible_iff (K : State Role W) (q : Set W) :
     · rw [Set.inter_comm]; exact h x
     · exact Set.inter_subset_left
 
-/-- The reduction-set bias unfolds to: `p` meets every commitment set, and some participant is
-committed to it. -/
 theorem isBiasedR_iff :
     IsBiasedR K p ↔ (∀ x, (commitmentSet K x ∩ p).Nonempty) ∧ ∃ x, commitmentSet K x ⊆ p := by
   simp only [IsBiasedR, exists_accessible_iff, not_forall, Set.inter_compl_nonempty_iff, not_not]
@@ -217,7 +214,6 @@ theorem isNeutralIn_fallingDecl (ha : IsCommitmentOf K .addressee p)
   · rw [IsCommitmentOf, (commitmentSet_falling K p).2]
     exact ha
 
-/-- A declarative in a neutral, unresolved, nonempty context is biasing. -/
 theorem isBiasingIn_of_decl (hL : L.sentenceType = .decl) (h : IsNeutral K p)
     (hu : ¬ IsResolved K p) (hne : ∀ x, (commitmentSet K x).Nonempty) : L.IsBiasingIn K p := by
   refine ⟨h, ?_⟩
@@ -236,8 +232,6 @@ neutral. -/
 def ExpressesCommitment (p : Set W) : Prop :=
   ∀ K : State Role W, L.Consistent K p → ¬ L.IsNeutralIn K p
 
-/-- An interrogative does not express commitment: the empty context is neutral toward any
-contingent proposition and stays so. -/
 theorem not_expressesCommitment_risingInterr (h₀ : p.Nonempty) (h₁ : pᶜ.Nonempty) :
     ¬ risingInterr.ExpressesCommitment p := by
   intro h
@@ -274,7 +268,6 @@ theorem not_expressesCommitment_fallingDecl (h₀ : p.Nonempty) :
 def Entails (K : State Role W) (p : Set W) : Prop :=
   ∀ x, commitmentSet (L.update p K) x = commitmentSet K x
 
-/-- A context entails a locution iff the targeted commitment set entails its sentence. -/
 theorem entails_iff : L.Entails K p ↔ L.sentenceType.Entails (commitmentSet K L.target) p := by
   constructor
   · intro h
@@ -298,10 +291,8 @@ def UninformativeIn (K : State Role W) (p : Set W) : Prop := ∀ x, L.Uninformat
 /-- (98): informative with respect to some commitment set. -/
 def InformativeIn (K : State Role W) (p : Set W) : Prop := ∃ x, ¬ L.Uninformative K x p
 
-/-- An interrogative is uninformative with respect to every commitment set. -/
 theorem uninformative_risingInterr (x : Role) : risingInterr.Uninformative K x p := rfl
 
-/-- A declarative is uninformative with respect to a commitment set already within its content. -/
 theorem uninformative_iff_of_decl (hL : L.sentenceType = .decl) {x : Role} :
     L.Uninformative K x p ↔ commitmentSet K x ⊆ p := by
   rw [Uninformative, hL]
@@ -356,7 +347,6 @@ to. -/
 def IsReiterativeQuestion (K : State Role W) (p : Set W) : Prop :=
   L.IsPolarQuestion K p ∧ IsCommitmentOf K .addressee p
 
-/-- Every rising declarative polar question is reiterative, given a nonempty addressee set. -/
 theorem isReiterativeQuestion_risingDecl (hne : (commitmentSet K .addressee).Nonempty)
     (h : risingDecl.IsPolarQuestion K p) : risingDecl.IsReiterativeQuestion K p :=
   ⟨h, hne, (isPolarQuestion_iff_of_decl _ rfl).1 h⟩
@@ -366,8 +356,6 @@ joint commitment. -/
 def IsResolvingQuestion (K : State Role W) (p : Set W) : Prop :=
   L.IsReiterativeQuestion K p ∧ ¬ IsResolved K p ∧ IsJoint (L.update p K) p
 
-/-- Only a falling declarative can be a resolving question: the others leave the speaker's
-commitment set alone, so the content was already joint. -/
 theorem eq_fallingDecl_of_isResolvingQuestion (h : L.IsResolvingQuestion K p) :
     L = .fallingDecl := by
   by_contra hL
@@ -379,8 +367,6 @@ theorem eq_fallingDecl_of_isResolvingQuestion (h : L.IsResolvingQuestion K p) :
     exact hs
   · exact ha
 
-/-- A falling declarative question has the effect of the interrogative only when it is vacuous:
-entailed and a polar question, its content is a joint commitment. -/
 theorem isJoint_of_entails_of_isPolarQuestion_fallingDecl
     (hne : ∀ x, (commitmentSet K x).Nonempty) (he : fallingDecl.Entails K p)
     (hq : fallingDecl.IsPolarQuestion K p) : IsJoint K p := by

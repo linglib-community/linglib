@@ -166,8 +166,6 @@ def AllowsModal (c : Converb) : Prop :=
 instance : DecidablePred AllowsModal :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _ ∨ _))
 
-/-- A converb admitting the modal admits the past, since the clauses that exclude the past
-exclude every mood suffix. -/
 theorem allowsModal_imp_allowsTense (c : Converb) : c.AllowsModal → c.AllowsTense := by
   revert c; decide
 

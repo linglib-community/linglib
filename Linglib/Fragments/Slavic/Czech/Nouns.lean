@@ -234,23 +234,17 @@ def nouns : List Noun :=
   [chlap, hrad, muz, stroj, mesto, srdce, uceni, zena, hrdina, duse, pani, kost, jehne, kluk, den,
     koren, pramen, pokoj, most, predseda, sluha, filosof, filolog]
 
-/-- Every entry's citation form is its stem followed by the nominative singular ending of its
-class, so each is declined in a class whose nominative singular it has. -/
 theorem stem_append_nomSg : ∀ n ∈ nouns, n.stem ++ n.cls.nomSg = segments n.form := by
   decide +kernel
 
-/-- The velar stems among the entries are those of *kluk*, *sluha* and *filolog*, ending in *k*,
-*h* and *g*. -/
 theorem isVelar_stem_iff :
     ∀ n ∈ nouns, IsVelar n.stem ↔ n = kluk ∨ n = sluha ∨ n = filolog := by
   decide +kernel
 
-/-- Every form of every entry is written in Czech letters, and so has phonemes. -/
 theorem isSome_ofChars_forms :
     ∀ n ∈ nouns, ∀ σ, ∀ w ∈ n.forms σ, (Phonology.ofChars (w.flatMap String.toList)).isSome := by
   decide +kernel
 
-/-- Every entry has the gender of its class's table. -/
 theorem gender_eq_cls_gender : ∀ n ∈ nouns, n.gender = n.cls.gender := by decide
 
 /-- The entries give Stump's nouns the forms that *Mluvnice češtiny* states where these depart

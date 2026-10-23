@@ -80,7 +80,6 @@ instance : PartialOrder Node :=
 instance : DecidableLE Node :=
   decidableLEOfCovers (covers := fun a b : Node ↦ a.parent = some b) [.s, .vp] (by decide)
 
-/-- The constituents containing a focus form a chain, since each node has one parent. -/
 theorem isChain_Ici (f : Node) : IsChain (· ≤ ·) (Set.Ici f) := fun _ hx _ hy _ ↦
   Relation.ReflTransGen.total_of_right_unique (fun _ _ _ h h' ↦ Option.some_injective _
     (h.symm.trans h')) hx hy
@@ -103,12 +102,9 @@ theorem usable_iff : Usable inv m f ↔ m ∈ inv ∧ f ≤ m ∧ ∀ c ∈ inv,
 instance [DecidableEq C] [DecidableLE C] : Decidable (Usable inv m f) :=
   decidable_of_iff _ usable_iff.symm
 
-/-- A marking usable for a focus is usable for every focus between it and the marked
-constituent, so the foci a marking is syncretic for form a continuous stretch of the tree. -/
 theorem Usable.of_le (h : Usable inv m f) (hfg : f ≤ g) (hgm : g ≤ m) : Usable inv m g :=
   h.mono (fun _ hc ↦ ⟨hc.1, hfg.trans hc.2⟩) ⟨h.prop.1, hgm⟩
 
-/-- When the constituents containing a focus form a chain, its usable marking is unique. -/
 theorem Usable.unique (hchain : IsChain (· ≤ ·) (Set.Ici f)) (h : Usable inv m f)
     (h' : Usable inv m' f) : m = m' :=
   (hchain.total h.prop.2 h'.prop.2).elim (fun hle ↦ (h'.eq_of_ge h.prop hle).symm)
@@ -122,7 +118,6 @@ end Usable
 def marking (inv : List Node) (f : Node) : Option Node :=
   inv.find? fun m ↦ decide (Usable inv m f)
 
-/-- The usable marking is the one `marking` finds, since on a tree there is only one. -/
 theorem marking_eq_some {inv : List Node} {m f : Node} (h : Usable inv m f) :
     marking inv f = some m := by
   have hsome : (inv.find? fun m ↦ decide (Usable inv m f)).isSome :=
@@ -155,34 +150,27 @@ def aymara : List Node := [.sbj, .obj, .s]
 /-- Awing has no marking but that of the unmarked clause. -/
 def awing : List Node := [.s]
 
-/-- Verb, object and VP focus share the VP marking; the clausal marking serves clausal focus
-only. -/
 theorem marking_guruntum :
     ∀ f, marking guruntum f = some (match f with | .sbj => .sbj | .s => .s | _ => .vp) := by
   decide
 
-/-- Subject focus is syncretic with clausal focus, object focus with VP focus. -/
 theorem marking_buli :
     ∀ f, marking buli f =
       some (match f with | .s | .sbj => .s | .vp | .obj => .vp | .v => .v) := by
   decide
 
-/-- Only subject focus has to be marked; the default serves every other focus. -/
 theorem marking_hausa : ∀ f, marking hausa f = some (match f with | .sbj => .sbj | _ => .s) := by
   decide
 
-/-- Verb and VP focus are syncretic; subject, object and clause each have their marking. -/
 theorem marking_wolof :
     ∀ f, marking wolof f =
       some (match f with | .sbj => .sbj | .obj => .obj | .s => .s | _ => .vp) := by
   decide
 
-/-- Verb, VP and clausal focus are syncretic. -/
 theorem marking_aymara :
     ∀ f, marking aymara f = some (match f with | .sbj => .sbj | .obj => .obj | _ => .s) := by
   decide
 
-/-- Anything can be the focus of the unmarked clause. -/
 theorem marking_awing : ∀ f, marking awing f = some .s := by decide
 
 /-! ### Exocentric and disjunctive foci -/
@@ -201,17 +189,12 @@ def Disjunctive (inv : List Node) (m : Node) : Prop :=
 instance (inv : List Node) (m : Node) : Decidable (Disjunctive inv m) := by
   unfold Disjunctive; infer_instance
 
-/-- Gùrùntùm's clausal marking is exocentric and its VP marking disjunctive. -/
 theorem guruntum_exocentric_disjunctive : Exocentric guruntum .s ∧ Disjunctive guruntum .vp := by
   decide
 
-/-- Downward Syncretism, that every marking of a phrase is syncretic with focus on some word,
-fails on Gùrùntùm. -/
 theorem not_downward_syncretism : ¬ ∀ m ∈ guruntum, ∃ f, IsMin f ∧ Usable guruntum m f := by
   decide
 
-/-- A marking that realizes narrow verb focus and reaches the VP realizes VP focus too, so the
-disjunctive syncretism predicts the broad focus. -/
 theorem usable_vp_of_v {inv : List Node} {m : Node} (h : Usable inv m .v) (hm : Node.vp ≤ m) :
     Usable inv m .vp :=
   h.of_le (by decide) hm
@@ -234,8 +217,6 @@ def focusNode : Focused → Node
   | .vp => .vp
   | .object => .obj
 
-/-- A configuration has an overt reflex on the reflex analysis exactly when its marking here is
-not the default clausal one. -/
 theorem overt_iff_marking_ne_default :
     ∀ c : Config, c.WF → ∀ inv ∈ tangale c.tam,
       ((realize c).Nonempty ↔ marking inv (focusNode c.focused) ≠ some .s) := by
@@ -277,10 +258,6 @@ private theorem mem_excluded_left_mk {α β : Type*} {a : α} {b : β} {t : α �
   · simp only [excluded_strong, narrow_left, Set.mem_compl_iff, Set.mem_image2_iff injective2_mk,
       Set.mem_singleton_iff, reduceCtorEq, iff_false]
 
-/-- In an English domain, whose inventory is the node and its default-weak daughter, the
-restriction of each metrical pattern excludes exactly the targets whose focus Blocking takes from
-the marking the pattern provides. The literal meaning, which focuses nothing, survives only
-default weights. -/
 theorem notMem_excluded_iff {α β : Type*} [DecidableEq α] [DecidableEq β] {n w w' : Node}
     (h : n.daughters = some (w, w')) (a : α) (b : β) (t : α × β) (ρ : Restriction) :
     t ∉ excluded Prod.mk a b .left ρ ↔
@@ -311,8 +288,6 @@ private theorem bijective_uncurry_mk {α β : Type*} :
 def kimAteTheYogurt (ρ ρ' : Restriction) : WithAlternatives (Ent × Rel × Obj) :=
   .node Prod.mk .left ρ (.focused .kim) (.node Prod.mk .left ρ' (.focused .ate) (.focused .yogurt))
 
-/-- Under default weights in the clause and reversal in the VP, *Kim ATE the yogurt* allows the
-propositions in which anyone stands in a relation other than eating to the yogurt. -/
 theorem alternatives_kimAteTheYogurt :
     (kimAteTheYogurt .weak .strong).alternatives = Set.univ ×ˢ ({Rel.ate}ᶜ ×ˢ {Obj.yogurt}) := by
   rw [kimAteTheYogurt, alternatives_node bijective_uncurry_mk, alternatives_map₂,
@@ -381,16 +356,11 @@ def englishMarked? (r : Datum) : Option (Node × Node) :=
   | "stan1293", some "nuclear stress on verb" => some (.s, .v)
   | _, _ => none
 
-/-- Every reading of a row is realized by the marking the row shows, which is the marking the
-inventory predicts for that focus. -/
 theorem rows_marking :
     ∀ r ∈ Examples.all, ∀ inv ∈ inventory? r, ∀ m ∈ marked? r, ∀ x ∈ r.readings,
       ∀ f ∈ Node.parse? x.1, x.2 = .acceptable ∧ marking inv f = some m := by
   decide
 
-/-- With the clause marked by default weights and the verb by reversal, a reading of the English
-row is acceptable exactly when its focal target survives the restrictions of
-*Kim ATE the yogurt*. -/
 theorem rows_english :
     ∀ r ∈ Examples.all, englishMarked? r = some (.s, .v) → ∀ x ∈ r.readings, ∀ F ∈ focus? x.1,
       (x.2 = .acceptable ↔ englishTarget F ∈ (kimAteTheYogurt .weak .strong).alternatives) := by

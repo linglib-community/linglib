@@ -137,10 +137,8 @@ theorem mem_dP : ∀ x : Poss, x ∈ dP ↔ x = x1 ∨ x = x2 ∨ x = x3 := by d
 
 theorem mem_dnP : ∀ x : Poss, x ∈ dnP ↔ x = x3 ∨ x = x4 ∨ x = x5 := by decide
 
-/-- `◇p ∧ ◇¬p` holds only at the point of full uncertainty. -/
 theorem mem_dP_inter_dnP : ∀ x : Poss, x ∈ dP ∩ dnP ↔ x = x3 := by decide
 
-/-- `□p ∨ □¬p` holds exactly where something is known. -/
 theorem mem_bP_disj_bnP : ∀ x : Poss, x ∈ disj frame bP bnP ↔ x = x1 ∨ x = x5 := by decide
 
 instance (s : Finset Poss) : DecidablePred (· ∈ (↑s : Set Poss)) :=
@@ -314,7 +312,6 @@ instance : ∀ l : Level1, DecidablePred (· ∈ l.set)
   | .uncertain => inferInstanceAs (DecidablePred (· ∈ dP ∩ dnP))
   | .top => inferInstanceAs (DecidablePred (· ∈ (Set.univ : Set Poss)))
 
-/-- `B1` is closed under orthonegation and meet, and its members are regular. -/
 theorem level1_closed :
     (∀ l : Level1, IsRegular frame l.set) ∧
     (∀ l : Level1, ∃ m : Level1, ∀ x, x ∈ orthoNeg frame l.set ↔ x ∈ m.set) ∧
@@ -335,8 +332,6 @@ theorem stratified_level1 :
       ∃ z, z ∈ l.set ∧ z ∈ m.set := by
   decide
 
-/-- Across levels the criterion fails, since `x2` settles `p`, `x3` settles `◇¬p`, the two
-are compatible, and nothing settles both. -/
 theorem not_stratified_across_levels :
     x2 ∈ P ∧ x3 ∈ dnP ∧ frame.compat x2 x3 ∧ ∀ z : Poss, z ∉ P ∩ dnP := by
   decide

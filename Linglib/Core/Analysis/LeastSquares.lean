@@ -44,13 +44,11 @@ def IsLeastSquares (x : E) : Prop := IsMinOn (fun y => ‖b - A y‖) Set.univ x
 
 variable {A b} {x x' : E}
 
-/-- An interpolating point is a least-squares solution. -/
 theorem isLeastSquares_of_map_eq (h : A x = b) : IsLeastSquares A b x :=
   isMinOn_univ_iff.mpr fun y => by simp [h]
 
 variable [FiniteDimensional ℝ E] [FiniteDimensional ℝ F]
 
-/-- The normal equations in adjoint form: `x` solves iff the adjoint kills the residual. -/
 theorem isLeastSquares_iff_adjoint_eq_zero :
     IsLeastSquares A b x ↔ LinearMap.adjoint A (b - A x) = 0 := by
   have := FiniteDimensional.complete ℝ E
@@ -59,7 +57,6 @@ theorem isLeastSquares_iff_adjoint_eq_zero :
   simpa using
     (LinearMap.toContinuousLinearMap A).forall_norm_sub_apply_le_iff_adjoint_apply_sub_eq_zero b x
 
-/-- The normal equations in inner-product form: the residual is orthogonal to the range. -/
 theorem isLeastSquares_iff_inner_eq_zero :
     IsLeastSquares A b x ↔ ∀ y, ⟪b - A x, A y⟫ = 0 := by
   rw [isLeastSquares_iff_adjoint_eq_zero]
@@ -67,14 +64,12 @@ theorem isLeastSquares_iff_inner_eq_zero :
   · rw [← LinearMap.adjoint_inner_left, h, inner_zero_left]
   · rw [LinearMap.adjoint_inner_left, h, inner_zero_left]
 
-/-- Least-squares solutions exist. -/
 theorem exists_isLeastSquares : ∃ x, IsLeastSquares A b x := by
   have : CompleteSpace (LinearMap.range A) := FiniteDimensional.complete ℝ _
   obtain ⟨x, hx⟩ := LinearMap.mem_range.mp ((LinearMap.range A).starProjection_apply_mem b)
   exact ⟨x, isLeastSquares_iff_inner_eq_zero.mpr fun y => hx ▸
     Submodule.starProjection_inner_eq_zero b (A y) (LinearMap.mem_range_self A y)⟩
 
-/-- Fitted values are unique: any two least-squares solutions map to the same point. -/
 theorem IsLeastSquares.map_eq (hx : IsLeastSquares A b x) (hx' : IsLeastSquares A b x') :
     A x = A x' := by
   rw [isLeastSquares_iff_adjoint_eq_zero] at hx hx'
@@ -84,12 +79,10 @@ theorem IsLeastSquares.map_eq (hx : IsLeastSquares A b x) (hx' : IsLeastSquares 
   nth_rewrite 1 [← map_sub]
   rw [← LinearMap.adjoint_inner_right, h, inner_zero_right]
 
-/-- The least-squares solutions are exactly the preimages of the fitted value. -/
 theorem IsLeastSquares.iff_map_eq (hx : IsLeastSquares A b x) :
     IsLeastSquares A b x' ↔ A x' = A x :=
   ⟨fun hx' => hx'.map_eq hx, fun h => isMinOn_univ_iff.mpr fun y => h ▸ isMinOn_univ_iff.mp hx y⟩
 
-/-- Under an injective design map the least-squares solution is unique. -/
 theorem IsLeastSquares.eq_of_injective (hA : Function.Injective A) (hx : IsLeastSquares A b x)
     (hx' : IsLeastSquares A b x') : x = x' :=
   hA (hx.map_eq hx')

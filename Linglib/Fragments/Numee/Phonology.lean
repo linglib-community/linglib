@@ -64,10 +64,8 @@ def vowels : Finset Segment :=
 /-- The phonemes. -/
 def inventory : Finset Segment := consonants ∪ vowels
 
-/-- The consonants are Drubea's with /ŋw/ for /gw/. -/
 theorem consonants_eq : consonants = insert ŋw (Drubea.consonants.erase gw) := by decide
 
-/-- The vowels are Drubea's with the three front rounded qualities. -/
 theorem vowels_eq : vowels = Drubea.vowels ∪ {ü, ø, øNasal} := by decide
 
 end Numee

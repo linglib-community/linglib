@@ -35,7 +35,6 @@ open Function Set
 
 variable {ι : Type*} {α : ι → Type*} {β : Type*} {f : (Π i, α i) → β} {s t : Set ι}
 
-/-- A function that depends on `s` and on `t` depends on `s ∩ t`. -/
 theorem DependsOn.inter (hs : DependsOn f s) (ht : DependsOn f t) : DependsOn f (s ∩ t) := by
   classical
   intro x y h
@@ -45,7 +44,6 @@ theorem DependsOn.inter (hs : DependsOn f s) (ht : DependsOn f t) : DependsOn f 
   · simp [his, h i ⟨his, hi⟩]
   · simp [his]
 
-/-- A function that depends on each of finitely many sets depends on their intersection. -/
 theorem DependsOn.biInter {κ : Type*} {u : Set κ} (hu : u.Finite) {t : κ → Set ι}
     (h : ∀ k ∈ u, DependsOn f (t k)) : DependsOn f (⋂ k ∈ u, t k) := by
   induction u, hu using Set.Finite.induction_on with
@@ -54,7 +52,6 @@ theorem DependsOn.biInter {κ : Type*} {u : Set κ} (hu : u.Finite) {t : κ → 
     rw [biInter_insert]
     exact (h _ (mem_insert _ _)).inter (ih fun k hk ↦ h k (mem_insert_of_mem _ hk))
 
-/-- A function ignores the coordinate `i` when updating it never changes the value. -/
 theorem dependsOn_compl_singleton_iff [DecidableEq ι] {i : ι} :
     DependsOn f {i}ᶜ ↔ ∀ x (a : α i), f (update x i a) = f x := by
   refine ⟨fun h x a ↦ h fun j hj ↦ update_of_ne hj a x, fun h x y hxy ↦ ?_⟩
@@ -65,8 +62,6 @@ theorem dependsOn_compl_singleton_iff [DecidableEq ι] {i : ι} :
   · subst hj; simp
   · simp [update_of_ne hj, hxy j hj]
 
-/-- A function that depends on a finite set depends on the coordinates it does not ignore, and
-every set it depends on contains them. -/
 theorem isLeast_dependsOn (hs : s.Finite) (hf : DependsOn f s) :
     IsLeast {t | DependsOn f t} {i | ¬ DependsOn f {i}ᶜ} := by
   refine ⟨(hf.inter (DependsOn.biInter (hs.inter_of_left {i | DependsOn f {i}ᶜ})
@@ -75,8 +70,6 @@ theorem isLeast_dependsOn (hs : s.Finite) (hf : DependsOn f s) :
     exact (mem_iInter₂.1 hi i ⟨his, hdep⟩) rfl
   · simpa using hit
 
-/-- A function of finitely many coordinates depends on the coordinates it does not ignore, and
-every set it depends on contains them. -/
 theorem isLeast_dependsOn_of_finite [Finite ι] (f : (Π i, α i) → β) :
     IsLeast {t | DependsOn f t} {i | ¬ DependsOn f {i}ᶜ} :=
   isLeast_dependsOn finite_univ (dependsOn_univ f)

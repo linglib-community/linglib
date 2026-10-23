@@ -61,19 +61,16 @@ variable [LT T]
 @[simp] theorem box_toSetRel_future : □[toSetRel ⟦future⟧] P t ↔ ∀ t' > t, P t' := by
   simp [Box]
 
-/-- Sometime in the past is left adjoint to always in the future. -/
 theorem diamond_past_box_future_gc :
     GaloisConnection (◇[toSetRel ⟦past⟧] : (T → Prop) → T → Prop) □[toSetRel ⟦future⟧] :=
   inv_toSetRel_past (T := T) ▸ diamond_box_gc _
 
-/-- Sometime in the future is left adjoint to always in the past. -/
 theorem diamond_future_box_past_gc :
     GaloisConnection (◇[toSetRel ⟦future⟧] : (T → Prop) → T → Prop) □[toSetRel ⟦past⟧] :=
   inv_toSetRel_future (T := T) ▸ diamond_box_gc _
 
 end LT
 
-/-- On dense time the past of a past is a past, the density law of tense logic. -/
 theorem diamond_past_diamond_past [Preorder T] [DenselyOrdered T] (P : T → Prop) :
     ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] P) = ◇[toSetRel ⟦past⟧] P := by
   rw [← diamond_comp, toSetRel_past_comp_self]
@@ -82,14 +79,10 @@ section LinearOrder
 
 variable [LinearOrder T]
 
-/-- A quantificational tense under another entails the quantificational tense of the composed
-cell. -/
 theorem diamond_diamond_toSetRel (h : ◇[toSetRel C] (◇[toSetRel D] P) t) :
     ◇[toSetRel (comp D C)] P t :=
   diamond_restrict P (toSetRel_comp_subset C D) t ((congrFun (diamond_comp _ _ P) t).mpr h)
 
-/-- On dense time without endpoints, the quantificational tense of a composed cell is one
-quantificational tense under the other. -/
 theorem diamond_toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T]
     (C D : Finset Ordering) (P : T → Prop) :
     ◇[toSetRel (comp D C)] P = ◇[toSetRel C] (◇[toSetRel D] P) := by
@@ -105,7 +98,6 @@ variable [LinearOrder T] {π : NonemptyInterval T} {Q : NonemptyInterval T → P
     ◇[toSetRel ⟦past⟧] Q π ↔ ∃ r, r.Precedes π ∧ Q r := by
   simp [Diamond]
 
-/-- On dense time the past of a past is a past on intervals too. -/
 theorem diamond_past_diamond_past [DenselyOrdered T] (Q : NonemptyInterval T → Prop) :
     ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] Q) = ◇[toSetRel ⟦past⟧] Q := by
   rw [← diamond_comp, toSetRel_past_comp_self]

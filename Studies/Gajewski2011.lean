@@ -61,7 +61,6 @@ variable {α : Type*}
 
 /-! ### Enriched meanings -/
 
-/-- Exhaustified *not every* is *some but not every* once the restrictor has two elements. -/
 theorem exhaustified_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y) (hxy : x ≠ y) :
     exhaustified (everyᶜ) {no} A = fun P ↦ GQ.some A P ∧ everyᶜ A P := by
   funext P
@@ -72,8 +71,6 @@ theorem exhaustified_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y)
       (fun hall ↦ hxy (hall y hy).symm) x hx rfl
   · exact ((Set.mem_singleton_iff.mp hQ' ▸ hno) z hz hPz).elim
 
-/-- An enriched meaning satisfiable at a restrictor but excluded at the empty scope is not
-downward entailing in its scope. -/
 theorem not_scopeAntitone_exhaustified {Q : GQ α} {C : Set (GQ α)} {A P : α → Prop}
     (hP : exhaustified Q C A P) (h : ¬ exhaustified Q C A (fun _ ↦ False)) :
     ¬ ScopeAntitone (exhaustified Q C) :=
@@ -81,7 +78,6 @@ theorem not_scopeAntitone_exhaustified {Q : GQ α} {C : Set (GQ α)} {A P : α �
 
 /-! ### The licensing principles -/
 
-/-- Exhaustified *no* is downward entailing, so *no* licenses strong items. -/
 theorem no_strong : ScopeAntitone (exhaustified (no : GQ α) {everyᶜ}) := by
   rw [exhaustified_no]; exact scopeAntitone_no
 
@@ -96,8 +92,6 @@ theorem notEvery_not_strong [Nontrivial α] :
     (not_exhaustified_of_not_le (Set.mem_singleton _) (fun _ _ hf ↦ hf)
       fun hle ↦ hle (· = x) (fun h ↦ hxy (h y trivial).symm) x trivial rfl)
 
-/-- Exhaustified *some* is not downward entailing, since *some* itself fails at the empty
-scope. -/
 theorem some_not_strong [Nontrivial α] :
     ¬ ScopeAntitone (exhaustified (GQ.some : GQ α) {every}) := by
   obtain ⟨x, y, hxy⟩ := exists_pair_ne α
@@ -106,8 +100,6 @@ theorem some_not_strong [Nontrivial α] :
       (hxy ((Set.mem_singleton_iff.mp hQ' ▸ hev) y trivial).symm).elim⟩)
     fun h ↦ (exhaustified_iff.1 h).1.elim fun _ h ↦ h.2
 
-/-- *At most five* sits above *at most four* on its scale; excluding the scale-mate leaves
-*exactly five*, which is not downward entailing. -/
 theorem atMostFive_not_strong :
     ¬ ScopeAntitone (exhaustified (atMost 5 : GQ (Fin 6)) {atMost 4}) := by
   have h4 : ¬ atMost 4 (fun _ : Fin 6 ↦ True) (· ≠ 0) := by
@@ -218,8 +210,6 @@ def Strength.item : Strength → PolarityItem
   | .weak => English.PolarityItems.ever
   | .strong => English.PolarityItems.inYears
 
-/-- The two principles agree with the library's licensing on every licenser it has a context
-for. -/
 theorem licensed_iff_licenses (L : Licenser) (s : Strength) {c : PolarityItem.LicensingContext}
     (hc : L.context = some c) : Licensed L s ↔ c.licenser.Licenses s.item := by
   rw [licensed_iff]
@@ -236,7 +226,6 @@ def IsTrivial (f : Set α → Prop) : Prop := (∀ x, f x) ∨ ∀ x, ¬ f x
 its complement, as the items above the midpoint of their scale do ([horn-1989]). -/
 def IsIntolerant (f : Set α → Prop) : Prop := ¬ IsTrivial f → ∀ x, ¬ f x ∨ ¬ f xᶜ
 
-/-- Anti-additivity implies Intolerance, since accepting `x` and `xᶜ` means accepting everything. -/
 theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive f) :
     IsIntolerant f := fun hnt x ↦ by
   by_contra hx
@@ -245,8 +234,6 @@ theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive
   rw [Set.union_compl_self] at huniv
   exact hnt (Or.inl fun y ↦ h.antitone (Set.subset_univ y) huniv)
 
-/-- Proportional *few* is Intolerant, since fewer than half in and fewer than half out is
-impossible. -/
 theorem few_isIntolerant (A : α → Prop) : IsIntolerant (few A) := fun _ x ↦ by
   by_contra hx
   rw [not_or, not_not, not_not, few_apply, few_apply] at hx
@@ -255,8 +242,6 @@ theorem few_isIntolerant (A : α → Prop) : IsIntolerant (few A) := fun _ x ↦
   rw [e] at h₂
   exact absurd (h₁.trans h₂) (lt_irrefl _)
 
-/-- Cardinal *fewer than four* is not Intolerant, since with six elements three are in and three
-out. -/
 theorem atMostThree_not_isIntolerant :
     ¬ IsIntolerant (atMost 3 (fun _ : Fin 6 ↦ True)) := fun h ↦ by
   let _ : DecidablePred (fun x : Fin 6 ↦ x < 3)ᶜ := fun z ↦ inferInstanceAs (Decidable (¬ z < 3))
@@ -265,8 +250,6 @@ theorem atMostThree_not_isIntolerant :
       fun h ↦ h (fun _ ↦ False) (by decide)) (· < 3)).elim
     (· (by decide)) (· (by decide))
 
-/-- Proportional *few* is downward entailing and Intolerant but not anti-additive, so
-Intolerance is a proper intermediate between anti-additivity and downward entailment. -/
 theorem few_not_rightAntiAdditive : ¬ RightAntiAdditive (few : GQ (Fin 4)) := fun h ↦
   absurd ((h (fun _ ↦ True) (· = 0) (· = 1)).mpr
       ⟨by decide, by decide⟩)
@@ -290,7 +273,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every judgment in the paper follows from the two licensing principles. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ Licensed r.licenser r.strength) := by
   simp only [licensed_iff]

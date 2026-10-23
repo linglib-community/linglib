@@ -111,8 +111,6 @@ def tenseForms : List Tense.Form :=
   [Tense.present, .past].flatMap fun t ↦
     [Tense.Form.Nonfinite.pastParticiple, .presentParticiple].sublists.map (⟨t, ·⟩)
 
-/-- A tense form is a present or a preterite whose nonfinite forms are a sublist of the past
-participle of the perfect followed by the gerund-participle of the progressive. -/
 theorem mem_tenseForms {f : Tense.Form} :
     f ∈ tenseForms ↔
       f.finite ≠ .future ∧ f.nonfinite <+ [.pastParticiple, .presentParticiple] := by
@@ -126,9 +124,6 @@ example : tenseForms.Perm
       .pastPerfect, Tense.Form.presentProgressive.perfect, Tense.Form.pastProgressive.perfect] := by
   decide
 
-/-- The chains English builds over a lexical verb are the empty one, the perfect, the
-progressive, and the perfect of the progressive, and each leaves the lexical verb, *have*, *be*
-and *have* to be inflected. -/
 theorem chain_eq_some {c : Cell} {v : Verbs.Verb} :
     ∀ {ns : List Tense.Form.Nonfinite} {ws : List String} {u : TenseVerb},
       (periphrasis c).chain (.lexical v) ns = some (ws, u) →
@@ -159,7 +154,6 @@ def Verb.tenseForm (v : Verbs.Verb) (c : Auxiliaries.Cell) (f : Tense.Form) :
     Option (List String) :=
   ((periphrasis c).realize (.lexical v) f).map fun x ↦ x.1 :: x.2.reverse
 
-/-- The tense forms are exactly the forms that English realizes. -/
 theorem Verb.tenseForm_isSome_iff (v : Verbs.Verb) (c : Auxiliaries.Cell) (f : Tense.Form) :
     (v.tenseForm c f).isSome ↔ f ∈ tenseForms := by
   constructor

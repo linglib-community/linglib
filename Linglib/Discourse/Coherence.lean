@@ -95,7 +95,6 @@ def causalDirection : Relation → Option Direction
   | .explanation | .denialOfPreventer => some .backward
   | _ => none
 
-/-- A relation has a direction exactly when it is a cause–effect relation. -/
 theorem causalDirection_isSome_iff (r : Relation) :
     r.causalDirection.isSome ↔ r.toClass = .causeEffect := by
   cases r <;> decide

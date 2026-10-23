@@ -218,8 +218,6 @@ def matchTheory : ConstraintSystem Input Candidate Con where
     | .word => (Constraint.align Eq).comap fun xc ↦ (xc.2.spans xc.1 .om, xc.1.lex.map (·.1))
     | i => correspondence.con i
 
-/-- MAX-XP asks no more than MATCH-PHRASE of any candidate, `Prosody.deficiency_corresponds_le` on
-terminal spans. -/
 theorem phrase_le (x : Input) (c : Candidate) :
     correspondence.con .phrase (x, c) ≤ matchTheory.con .phrase (x, c) := by
   have hx : (x.phrases.map (·.1)).Nodup ∧ ∀ a ∈ x.phrases, a.2 ∈ Set.Ico a.1.1 a.1.2 := by
@@ -291,8 +289,6 @@ theorem matchTheory_enclitic_final_of_medial (r : Ranking Con 6)
   exact Finset.mem_image.2 ⟨d, Tableau.ofRanking_mem_optimal_of_forall_le hc hd hdc
     medial_le_final, hde⟩
 
-/-- Existential correspondence draws the line: under `priorityFirst` an enclitic wins in
-*Kim 's leaving* and none in *Kim 's*, against the implication exact Match obeys. -/
 theorem correspondence_not_enclitic_final_of_medial :
     ¬ ∀ r : Ranking Con 6,
       Form.enclitic ∈ (correspondence.language r kimIsLeaving).image (·.form) →

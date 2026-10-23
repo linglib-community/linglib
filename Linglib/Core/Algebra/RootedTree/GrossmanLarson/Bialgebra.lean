@@ -75,8 +75,6 @@ theorem comul_apply (x : GrossmanLarson R α) :
 @[simp] theorem counit_apply (x : GrossmanLarson R α) :
     counit (R := R) x = ConnesKreimer.counit x.toConnesKreimer := rfl
 
-/-- The comultiplication sums `A ⊗ B` over the splittings `F = A + B`, counted with
-multiplicity. -/
 theorem comul_of (F : Forest (UnorderedTree α)) :
     comul (R := R) (of F) =
       (F.antidiagonal.map fun p ↦ (of p.1 : GrossmanLarson R α) ⊗ₜ[R] (of p.2 : _)).sum := by
@@ -124,7 +122,6 @@ noncomputable instance instBialgebra : Bialgebra R (GrossmanLarson R α) :=
 
 /-! ### Primitive elements -/
 
-/-- A one-tree forest is primitive. -/
 theorem isPrimitiveElem_of_singleton (T : UnorderedTree α) :
     Bialgebra.IsPrimitiveElem R (of {T} : GrossmanLarson R α) where
   counit_eq_zero := by simp
@@ -132,7 +129,6 @@ theorem isPrimitiveElem_of_singleton (T : UnorderedTree α) :
     rw [comul_apply, toConnesKreimer_of, of'_singleton, comulPrim_ofTree, add_comm]
     rfl
 
-/-- The pre-Lie algebra of trees lies in the primitive elements. -/
 theorem isPrimitiveElem_ι (x : ChapotonLivernet R α) : Bialgebra.IsPrimitiveElem R (ι x) := by
   induction x using ChapotonLivernet.induction_linear with
   | zero => simp
@@ -143,9 +139,6 @@ theorem isPrimitiveElem_ι (x : ChapotonLivernet R α) : Bialgebra.IsPrimitiveEl
 
 /-! ### The pairing -/
 
-/-- The pairing transposes the product of the Connes–Kreimer algebra to the comultiplication of
-the Grossman–Larson bialgebra: pairing with `z * w` is the convolution product of pairing with
-`z` and pairing with `w`. -/
 theorem toConv_pairing_mul [DecidableEq α] (z w : ConnesKreimer R (UnorderedTree α)) :
     toConv (pairing (R := R) (z * w) ∘ₗ linearEquiv.toLinearMap) =
       toConv (pairing z ∘ₗ linearEquiv.toLinearMap) *

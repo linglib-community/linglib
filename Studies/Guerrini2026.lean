@@ -73,8 +73,6 @@ theorem bonaFideGeneric_iff :
     bonaFideGeneric R k P w ↔ ∀ v, w ~[R] v → distributiveKindPred k P v :=
   Iff.rfl
 
-/-- A law-like generalization holds of the actual members: under a reflexive accessibility the
-generic parse entails Distributive Kind Predication. -/
 theorem distributiveKindPred_of_bonaFideGeneric [R.IsRefl]
     (h : bonaFideGeneric R k P w) : distributiveKindPred k P w :=
   h w (R.refl w)
@@ -117,7 +115,6 @@ theorem forall_of_cumulativeBelowGen [R.IsRefl] (h : cumulativeBelowGen R k S lo
     (Finset.singleton_nonempty a)).2 l hl
   rwa [Finset.mem_singleton.1 hb] at hab
 
-/-- The strong reading entails Cumulative Kind Predication, the salient weak one. -/
 theorem cumulativeKindPred_of_cumulativeBelowGen [R.IsRefl] (hne : (k w).Nonempty)
     (h : cumulativeBelowGen R k S locs w) : cumulativeKindPred k S locs w :=
   h w (R.refl w) (k w) subset_rfl hne

@@ -562,7 +562,6 @@ variable {γ : ℝ≥0} {tgt : Target} {ν : Measure ℝ} [IsProbabilityMeasure 
   (hν : MemLp id 2 ν) (hν0 : ∫ x, x ∂ν = 0)
 include hν hν0
 
-/-- The expected memory-weighted spread after `n` productions. -/
 theorem integral_memorySpread (n : ℕ) :
     ∫ e, memorySpread γ e ∂seqLaw (rule γ tgt ν bias seed) (n + 1) =
       (Var[id; ν] + bias ^ 2) * spreadGrowth γ tgt n := by
@@ -633,8 +632,6 @@ theorem lenition_blurs (hγ0 : 0 < γ) (hbias : bias ≠ 0) (n : ℕ) :
   exact mul_lt_mul_of_pos_right (by simpa using sq_pos_of_ne_zero hbias)
     (spreadGrowth_pos γ hγ0 tgt n)
 
-/-- Without entrenchment the expected spread stays below the noise and bias of all but one
-memory's worth of productions, `totalWeight γ (n + 1) - 1`, which tends to `γ / (1 - γ)`. -/
 theorem integral_memorySpread_le (hγ : γ ≤ 1) (n : ℕ) :
     ∫ e, memorySpread γ e ∂seqLaw (rule γ .exemplar ν bias seed) (n + 1) ≤
       (Var[id; ν] + bias ^ 2) * (totalWeight γ (n + 1) - 1) := by

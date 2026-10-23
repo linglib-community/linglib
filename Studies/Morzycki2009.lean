@@ -75,18 +75,13 @@ theorem mem_pos : x ∈ pos g s ↔ s ≤ g x := Iff.rfl
 theorem mem_meas_iff (hd : IsLeast m d) : x ∈ meas g m ↔ d ≤ g x :=
   ⟨fun ⟨_, hd', h⟩ ↦ (hd.2 hd'.1).trans h, fun h ↦ ⟨d, hd, h⟩⟩
 
-/-- The least degree can be dispensed with when the measure phrase is itself an 'at least'
-property of degrees. -/
 theorem meas_eq_preimage (hm : IsUpperSet m) (hd : IsLeast m d) : meas g m = g ⁻¹' m :=
   Set.ext fun _ ↦ (mem_meas_iff hd).trans ⟨fun h ↦ hm h hd.1, fun h ↦ hd.2 h⟩
 
-/-- A big idiot is an idiot. -/
 theorem measN_subset_pos : measN g s m ⊆ pos g s := Set.inter_subset_right
 
-/-- Whoever is at the maximum of the scale reaches every standard. -/
 theorem complete_subset_pos : complete g ⊆ pos g s := fun _ h ↦ h s
 
-/-- The degree head *complete* combines only with nouns whose scales have a maximum. -/
 theorem hasMax_of_complete_nonempty (h : (complete g).Nonempty) :
     (Boundedness.ofOrder D).HasMax :=
   Boundedness.hasMax_ofOrder.2 <| h.elim fun x hx ↦ ⟨g x, hx⟩
@@ -98,27 +93,19 @@ end Preorder
 section Sup
 variable [SemilatticeSup D] {g : E → D} {s d : D} {m : Set D}
 
-/-- A size adjective in a degree reading raises the noun's standard to the least degree the
-adjective is true of. -/
 theorem measN_eq_pos_sup (hd : IsLeast m d) : measN g s m = pos g (s ⊔ d) :=
   Set.ext fun _ ↦ by
     rw [measN, Set.mem_inter_iff, mem_meas_iff hd, mem_pos, mem_pos, sup_le_iff, and_comm]
 
-/-- The size adjective is vacuous when the bottom of the scale satisfies it. -/
 theorem measN_eq_pos_of_bot_mem [OrderBot D] (h : ⊥ ∈ m) : measN g s m = pos g s := by
   rw [measN_eq_pos_sup ⟨h, fun _ _ ↦ bot_le⟩, sup_bot_eq]
 
-/-- Smallness is vacuous. An adjective of smallness measures along the reverse of the order its
-antonym `big` measures along, so if any degree counts as small then the bottom of the scale
-does, and *small idiot* is *idiot* wherever the standard `θ` of smallness lies. -/
 theorem measN_small [OrderBot D] [Preorder S] {big : D → S} (hbig : Monotone big) {θ : Sᵒᵈ}
     (h : (pos (OrderDual.toDual ∘ big) θ).Nonempty) :
     measN g s (pos (OrderDual.toDual ∘ big) θ) = pos g s :=
   measN_eq_pos_of_bot_mem <| h.elim fun _ hd ↦
     show θ ≤ _ from le_trans hd (hbig.dual_right bot_le)
 
-/-- Bigness restricts. When the least big degree lies above the noun's standard, an individual
-just at the standard is an idiot and not a big idiot. -/
 theorem measN_ssubset_pos (hd : IsLeast m d) (hsd : s < d) {x : E} (hx : g x = s) :
     measN g s m ⊂ pos g s :=
   ⟨measN_subset_pos, fun h ↦ by

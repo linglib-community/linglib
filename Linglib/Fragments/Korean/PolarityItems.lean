@@ -49,13 +49,10 @@ def nwukwuNa : PolarityItem :=
   , freeChoice := true
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
-/-- *Nwukwu-to* needs clausemate negation, so it is licensed exactly by the contexts carrying
-anti-morphic strength, which among the named contexts is clausal negation alone. -/
 theorem nwukwuTo_licensing_characterized (c : LicensingContext) :
     c.licenser.Licenses nwukwuTo ↔ c.licenser.Carries .antiMorphic :=
   Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
-/-- Every attested environment of every item admits it. -/
 theorem korean_licensing_sound :
     ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
   decide

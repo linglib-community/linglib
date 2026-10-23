@@ -61,7 +61,6 @@ def endings : Case → List (List Segment)
 /-- The ending of a case after a stem in a short vowel. -/
 def ending (c : Case) : Option (List Segment) := (endings c).head?
 
-/-- Every case has an ending. -/
 theorem isSome_ending (c : Case) : (ending c).isSome := by
   cases c <;> decide
 

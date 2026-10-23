@@ -43,7 +43,6 @@ section LinearOrder
 
 variable {α : Type*} [LinearOrder α] {s : Finset α} {a : α}
 
-/-- A lower finset of a linear order is the initial segment up to its maximum. [UPSTREAM] -/
 theorem IsLowerSet.mem_iff_le_max (h : IsLowerSet (↑s : Set α)) : a ∈ s ↔ ↑a ≤ s.max := by
   refine ⟨le_max, fun ha ↦ ?_⟩
   obtain ⟨m, hm⟩ := WithBot.ne_bot_iff_exists.1 (ne_bot_of_le_ne_bot WithBot.coe_ne_bot ha)
@@ -51,7 +50,6 @@ theorem IsLowerSet.mem_iff_le_max (h : IsLowerSet (↑s : Set α)) : a ∈ s ↔
 
 variable {t : Finset α}
 
-/-- Lower finsets of a linear order are nested. [UPSTREAM] -/
 theorem IsLowerSet.subset_or_subset (hs : IsLowerSet (↑s : Set α))
     (ht : IsLowerSet (↑t : Set α)) : s ⊆ t ∨ t ⊆ s := by
   simpa using hs.total ht
@@ -89,12 +87,10 @@ theorem isLowerSet_coe_Iic (a : α) : IsLowerSet (↑(Iic a) : Set α) := by
   le_antisymm (Finset.max_le fun _ hb ↦ WithBot.coe_le_coe.2 (mem_Iic.1 hb))
     (le_max (mem_Iic.2 le_rfl))
 
-/-- A lower finset of a linear order is the initial segment of its maximum. -/
 theorem IsLowerSet.eq_Iic_of_max_eq (h : IsLowerSet (↑s : Set α)) (ha : s.max = a) :
     s = Iic a := by
   ext x; rw [h.mem_iff_le_max, ha, mem_Iic, WithBot.coe_le_coe]
 
-/-- A lower finset of a linear order is empty or an initial segment. -/
 theorem IsLowerSet.eq_empty_or_eq_Iic (h : IsLowerSet (↑s : Set α)) :
     s = ∅ ∨ ∃ a, s = Iic a := by
   rcases hm : s.max with _ | a
@@ -126,7 +122,6 @@ def IsLowerSet.orderIsoWithBot : {s : Finset α // IsLowerSet (↑s : Set α)} �
 @[simp] theorem IsLowerSet.orderIsoWithBot_symm_coe (a : α) :
     IsLowerSet.orderIsoWithBot.symm ↑a = ⟨Iic a, isLowerSet_coe_Iic a⟩ := rfl
 
-/-- A finite chain of `n` elements has `n + 1` lower finsets. [UPSTREAM] -/
 theorem Fintype.card_subtype_isLowerSet [Fintype α]
     [Fintype {s : Finset α // IsLowerSet (↑s : Set α)}] :
     Fintype.card {s : Finset α // IsLowerSet (↑s : Set α)} = Fintype.card α + 1 :=

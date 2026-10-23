@@ -72,21 +72,16 @@ variable {C B : E → Prop}
 
 /-! ### Assertiveness and content -/
 
-/-- ∀x(Cx/Bx) is nonassertive exactly when nothing satisfies `C`. This is the existential
-presupposition of universals, which Strawson stipulated and Belnap derives. -/
 @[simp] theorem restrictedForall_eq_zero_iff : restrictedForall C B = 0 ↔ ∀ x, ¬ C x := by
   simp [restrictedForall]
 
-/-- ∀x(Cx/Bx) is true when something satisfies `C` and every such thing satisfies `B`. -/
 @[simp] theorem restrictedForall_eq_one_iff :
     restrictedForall C B = 1 ↔ (∃ x, C x) ∧ every C B := by
   simp [restrictedForall, every]
 
-/-- ∀x(Cx/Bx) is false when something satisfying `C` fails `B`. -/
 @[simp] theorem restrictedForall_eq_neg_one_iff : restrictedForall C B = -1 ↔ ¬ every C B := by
   simp [restrictedForall, every]
 
-/-- ∃x(Cx/Bx) is nonassertive exactly when nothing satisfies `C`. -/
 @[simp] theorem restrictedExists_eq_zero_iff : restrictedExists C B = 0 ↔ ∀ x, ¬ C x := by
   simp [restrictedExists]
 
@@ -95,7 +90,6 @@ when assertive, is exactly `GQ.some`. -/
 @[simp] theorem restrictedExists_eq_one_iff : restrictedExists C B = 1 ↔ GQ.some C B := by
   simp [restrictedExists, GQ.some]
 
-/-- ∃x(Cx/Bx) is false when something satisfies `C` and nothing satisfies both. -/
 @[simp] theorem restrictedExists_eq_neg_one_iff :
     restrictedExists C B = -1 ↔ (∃ x, C x) ∧ ¬ GQ.some C B := by
   simp [restrictedExists, GQ.some]
@@ -132,15 +126,10 @@ def contentSquare (C : E → Prop) : Square ((E → Prop) → Prop) where
   I B := (belnapSquare C B).I = 1
   O B := (belnapSquare C B).O = 1
 
-/-- Where the forms are assertive, a form is true exactly when what it asserts is, and the
-content square is the square of `every`, `no`, `some` and `not every` at the restrictor `C`. -/
 theorem contentSquare_eq_square (hC : ∃ x, C x) : contentSquare C = GQ.square C := by
   simp only [contentSquare, GQ.square, Square.mk.injEq]
   refine ⟨?_, ?_, ?_, ?_⟩ <;> funext B <;> simp [belnapSquare, hC, every, no, GQ.some, compl_apply]
 
-/-- The content square satisfies `SquareRelations` when the restrictor is non-empty, which is
-Belnap's assertiveness condition, so the relations hold exactly where the forms are
-assertive. -/
 theorem content_square_relations (hR : ∃ x : E, C x) :
     SquareRelations (contentSquare C) :=
   contentSquare_eq_square hR ▸ GQ.square_relations hR

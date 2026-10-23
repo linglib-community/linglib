@@ -47,16 +47,10 @@ def IsCancellable (φ content : W → Prop) : Prop :=
     (∃ w, φ w ∧ cancel w) ∧
     (∀ w, cancel w → ¬ content w)
 
-/-- Cancellation by the negation of the content itself: if some
-assertion-world falsifies the content, `¬content` witnesses
-cancellability. The most common cancellation form. -/
 theorem IsCancellable.of_assertion_compatible_with_negation
     (h : ∃ w, φ w ∧ ¬ content w) : IsCancellable φ content :=
   ⟨fun w => ¬ content w, h, fun _ hw => hw⟩
 
-/-- The load-bearing non-cancellability principle: if every
-assertion-world satisfies the content, no continuation cancels it. Fires
-for pex outputs from `holds → presup`. -/
 theorem IsCancellable.false_of_assertion_implies_content
     (h : ∀ w, φ w → content w) : ¬ IsCancellable φ content :=
   fun ⟨_, ⟨w, hφ, hc⟩, hcontra⟩ => hcontra w hc (h w hφ)
@@ -68,9 +62,6 @@ all" is non-redundant iff *some passed* does not entail *not all*.
 def IsReinforceable (φ content : W → Prop) : Prop :=
   ∃ w, φ w ∧ ¬ content w
 
-/-- Reinforceable ⇒ cancellable: the same witness works, so
-reinforceability is the stricter diagnostic. The converse may fail
-([hirschberg-1985]). -/
 theorem IsReinforceable.toCancellable
     (h : IsReinforceable φ content) : IsCancellable φ content :=
   IsCancellable.of_assertion_compatible_with_negation h

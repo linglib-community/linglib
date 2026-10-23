@@ -67,11 +67,6 @@ open DisjWorld
 conjunction. -/
 def orAlts : Set (Set DisjWorld) := {propA, propB, conj}
 
-/-- **The secondary implicature that arises**: K¬(A∧B) is consistent with
-the assertion and all primary implicatures — witnessed by the
-strengthened meaning `disj \ conj`, the state considering exactly
-`onlyA` and `onlyB` possible. This is the "not both" inference of
-*A or B*. -/
 theorem conj_secondary : IsSecondaryImplicature disj orAlts conj := by
   rw [isSecondaryImplicature_iff]
   refine ⟨⟨.onlyA, by simp [disj, conj]⟩, ?_⟩
@@ -79,23 +74,14 @@ theorem conj_secondary : IsSecondaryImplicature disj orAlts conj := by
     Set.mem_sdiff, disj, conj, propA, propB]
   decide
 
-/-- **The blocked secondary implicature**: K¬A is inconsistent with the
-commitments. The strengthened meaning `disj \ propA` entails B, so K¬A
-together with K(A∨B) forces KB — contradicting the primary implicature
-¬KB (`isSecondaryImplicature_iff`: the single primary ¬KB blocks K¬A).
-The disjuncts therefore yield only ignorance inferences, never "not A". -/
 theorem disjunct_blocked : ¬ IsSecondaryImplicature disj orAlts propA := λ h =>
   (isSecondaryImplicature_iff.1 h).2 propB (by simp [orAlts])
     (by simp only [Set.subset_def, Set.mem_sdiff, disj, propA, propB]; decide)
 
-/-- By the A↔B symmetry of the model, K¬B is blocked identically, by ¬KA. -/
 theorem disjunct_blocked' : ¬ IsSecondaryImplicature disj orAlts propB := λ h =>
   (isSecondaryImplicature_iff.1 h).2 propA (by simp [orAlts])
     (by simp only [Set.subset_def, Set.mem_sdiff, disj, propA, propB]; decide)
 
-/-- The strengthened reading of *A or B* the algorithm predicts:
-assertion plus the licensed "not both", realizable at exactly the
-one-disjunct worlds. -/
 theorem strengthened_or_realizable : (disj \ conj).Nonempty :=
   ⟨.onlyA, by simp [disj, conj]⟩
 

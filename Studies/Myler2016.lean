@@ -77,13 +77,10 @@ items. -/
 def spellout (items : List (VocabularyItem Feature String)) (c : Context) : Option String :=
   subsetPrinciple items c.features
 
-/-- *have* is *be* plus transitivity. -/
 theorem have_iff_transitive :
     ∀ c : Context, spellout englishItems c = some "have" ↔ c.Transitive := by
   decide
 
-/-- *hafa* is the transitive spell-out over a PredP; the rule is conditioned
-from both sides of v. -/
 theorem hafa_iff_predP :
     ∀ c : Context,
       spellout icelandicItems c = some "hafa" ↔ c.Transitive ∧ c.predComplement = true := by
@@ -170,7 +167,6 @@ def clausalRows : List ClausalRow := Examples.all.filterMap ClausalRow.ofDatum
 
 def ppRows : List PPRow := Examples.all.filterMap PPRow.ofDatum
 
-/-- Every example is a clausal row or an attributive row. -/
 theorem rows_cover :
     ∀ ex ∈ Examples.all,
       (ClausalRow.ofDatum ex).isSome ∨

@@ -69,20 +69,15 @@ noncomputable def entropyRate (X : ℕ → Ω → S) (μ : Measure Ω) : ℝ :=
 variable (hX : ∀ t, Measurable (X t))
 include hX
 
-/-- With no past, the conditional entropy is the entropy of the first value. -/
 theorem pastCondEntropy_zero : pastCondEntropy X μ 0 = H[X 0 ; μ] := by
   rw [pastCondEntropy, condEntropy_eq_sum _ (measurable_block hX 0 0), Fintype.sum_unique,
     show block X 0 0 ⁻¹' {default} = Set.univ from
       Set.eq_univ_of_forall fun _ ↦ Subsingleton.elim _ _]
   simp
 
-/-- Conditioning on a further value of the past never adds entropy, so `distanceInfo X μ (t + 1)`
-is nonnegative. -/
 theorem distanceInfo_succ_nonneg (t : ℕ) : 0 ≤ distanceInfo X μ (t + 1) :=
   sub_nonneg.mpr <| condEntropy_le_condEntropy_comp μ (hX _) (measurable_block hX 0 _) Fin.tail
 
-/-- The entropy of a block is the sum of the conditional entropies of its values given their
-predecessors. -/
 theorem entropy_block (T : ℕ) : H[block X 0 T ; μ] = ∑ t ∈ range T, pastCondEntropy X μ t := by
   induction T with
   | zero => simp [entropy_of_subsingleton]
@@ -94,8 +89,6 @@ theorem entropy_block (T : ℕ) : H[block X 0 T ; μ] = ∑ t ∈ range T, pastC
 variable (hs : IsStationary X μ)
 include hs
 
-/-- Under stationarity, `distanceInfo X μ (t + 1)` is the drop in conditional entropy as the past
-grows from `t` values to `t + 1`. -/
 theorem distanceInfo_succ (t : ℕ) :
     distanceInfo X μ (t + 1) = pastCondEntropy X μ t - pastCondEntropy X μ (t + 1) :=
   congrArg (· - _) <| ((hs 1 (t + 1)).comp
@@ -107,7 +100,6 @@ theorem pastCondEntropy_antitone : Antitone (pastCondEntropy X μ) :=
   antitone_nat_of_succ_le fun t ↦ by
     linarith [distanceInfo_succ hX hs t, distanceInfo_succ_nonneg (μ := μ) hX t]
 
-/-- The weighted sum of the information at distances up to `T`, by summation by parts. -/
 theorem sum_Icc_mul_distanceInfo (T : ℕ) :
     ∑ t ∈ Icc 1 T, t * distanceInfo X μ t
       = ∑ t ∈ range T, pastCondEntropy X μ t - T * pastCondEntropy X μ T := by
@@ -123,8 +115,6 @@ theorem tendsto_pastCondEntropy :
   tendsto_atTop_ciInf (pastCondEntropy_antitone hX hs)
     ⟨0, Set.forall_mem_range.mpr fun _ ↦ condEntropy_nonneg _ _ _⟩
 
-/-- The entropy rate plus the information at distances beyond `T` is the conditional entropy of
-a value given the `T` values before it. -/
 theorem entropyRate_add_tsum (T : ℕ) :
     entropyRate X μ + ∑' t, distanceInfo X μ (T + t + 1) = pastCondEntropy X μ T := by
   have htel (n : ℕ) :

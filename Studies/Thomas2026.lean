@@ -113,7 +113,6 @@ variable {μ} {Q rq : Question W} {𝒜 : Set (Set W)} {A R R' π ant : Set W}
 
 /-! ### Consequences -/
 
-/-- Evidence for a resolution has positive prior probability. -/
 theorem IsResolutionOf.ne_zero (h : IsResolutionOf μ Q 𝒜 R) : μ R ≠ 0 := by
   intro h0
   have := h.raises
@@ -124,8 +123,6 @@ theorem Answers.ne_zero (h : Answers μ R Q) : μ R ≠ 0 :=
   let ⟨_, h⟩ := h
   h.ne_zero
 
-/-- Two resolutions evidenced by the same proposition are nested: the dominance clause
-waives only resolutions containing the candidate. -/
 theorem IsResolutionOf.subset_or_subset {𝒜' : Set (Set W)} (h : IsResolutionOf μ Q 𝒜 R)
     (h' : IsResolutionOf μ Q 𝒜' R) : ⋂₀ 𝒜 ⊆ ⋂₀ 𝒜' ∨ ⋂₀ 𝒜' ⊆ ⋂₀ 𝒜 := by
   by_contra hcon
@@ -167,8 +164,6 @@ theorem not_answers_of_impact_eq {c : ℝ≥0∞}
   rw [hc 𝒜 h.subset_alt h.nonempty, hc 𝒜' hsub hne] at this
   exact lt_irrefl _ this
 
-/-- The conjunction of a felicitous *too* answers the question and has positive prior
-probability. -/
 theorem TooFelicitous.answers_inter (h : TooFelicitous μ π ant rq) :
     Answers μ (ant ∩ π) rq ∧ μ (ant ∩ π) ≠ 0 :=
   let ⟨_, 𝒜, hres, _⟩ := h
@@ -179,7 +174,6 @@ variable [IsProbabilityMeasure μ]
 theorem cond_univ_apply : μ[A | Set.univ] = μ A := by
   rw [cond_apply MeasurableSet.univ, measure_univ, inv_one, one_mul, Set.univ_inter]
 
-/-- Trivial evidence raises nothing and so answers no question. -/
 theorem not_answers_univ : ¬ Answers μ Set.univ Q := by
   rintro ⟨𝒜, h⟩
   have := h.raises
@@ -188,7 +182,6 @@ theorem not_answers_univ : ¬ Answers μ Set.univ Q := by
 
 variable [DiscreteMeasurableSpace W]
 
-/-- A proposition entailing another gives it probability one. -/
 theorem cond_eq_one_of_subset (h : R ⊆ A) (h0 : μ R ≠ 0) : μ[A | R] = 1 := by
   rw [cond_apply .of_discrete, Set.inter_eq_left.2 h,
     ENNReal.inv_mul_cancel h0 (measure_ne_top _ _)]

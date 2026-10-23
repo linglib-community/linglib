@@ -135,7 +135,6 @@ def RelationalDistributiveReferenceUniv {Entity α : Type*} [PartialOrder Entity
     [SemilatticeSup α] (R : Entity → α → Prop) (P : α → Prop) : Prop :=
   ∀ x, P x → RelationalDistributiveReference R P x
 
-/-- Relational distributive reference is monotone in the predicate. -/
 theorem relationalDistributiveReference_mono {Entity α : Type*}
     [PartialOrder Entity] [SemilatticeSup α]
     {R : Entity → α → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
@@ -144,8 +143,6 @@ theorem relationalDistributiveReference_mono {Entity α : Type*}
   intro x hx
   exact algClosure_mono (fun y ⟨hp, ha⟩ ↦ ⟨h y hp, ha⟩) x hx
 
-/-- Along the graph of a functional role, relational distributive reference is the functional
-`DistributiveReference`. -/
 theorem relationalDistributiveReference_graph {Entity α : Type*}
     [PartialOrder Entity] [SemilatticeSup α]
     {θ : α → Entity} {P : α → Prop} {x : α} :
@@ -235,21 +232,17 @@ abbrev forConstr {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### Key Theorems -/
 
-/-- `StratifiedReferenceUniv` entails `StratifiedReference` for any specific element. -/
 theorem stratifiedReferenceUniv_entails_restricted {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} {P : α → Prop}
     (h : StratifiedReferenceUniv d γ P) {x : α} (hx : P x) : StratifiedReference d γ P x :=
   h x hx
 
-/-- Predicates have stratified reference for trivial granularity, since every `P x` is its own
-    base-case stratum when γ is vacuously true. -/
 theorem stratifiedReference_trivial_granularity {α β : Type*} [SemilatticeSup α]
     {d : α → β} {P : α → Prop} :
     StratifiedReferenceUniv d (fun _ _ ↦ True) P := by
   intro x hx
   exact AlgClosure.base ⟨hx, trivial⟩
 
-/-- Distributive reference is monotone in the predicate. -/
 theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
     [PartialOrder β]
     {θ : α → β} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
@@ -257,21 +250,17 @@ theorem distributiveReference_mono {α β : Type*} [SemilatticeSup α]
   intro x hx
   exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
 
-/-- Stratified reference is monotone in the predicate, for any dimension and granularity. -/
 theorem stratifiedReference_mono {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} {P Q : α → Prop} (h : ∀ x, P x → Q x) :
     ∀ x, StratifiedReference d γ P x → StratifiedReference d γ Q x := by
   intro x hx
   exact algClosure_mono (fun y ⟨hp, hg⟩ ↦ ⟨h y hp, hg⟩) x hx
 
-/-- Under a reflexive granularity every `P`-element has stratified reference, by the base case. -/
 theorem stratifiedReference_of_refl_granularity {α β : Type*} [SemilatticeSup α]
     {d : α → β} {γ : β → β → Prop} (hRefl : ∀ b, γ b b)
     {P : α → Prop} {x : α} (hx : P x) : StratifiedReference d γ P x :=
   AlgClosure.base ⟨hx, hRefl (d x)⟩
 
-/-- Stratified reference is closed under join when the dimension preserves sums and the granularity
-is monotone in its outer argument. -/
 theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (d : SupHom α β)
     {γ : β → β → Prop}
@@ -296,8 +285,6 @@ theorem stratifiedReference_join {α β : Type*} [SemilatticeSup α] [Semilattic
 
 /-! ### Aspect Bridge (subinterval reference ↔ atelicity) -/
 
-/-- A *for*-adverbial requires subinterval reference, so *John ran for an hour* is felicitous and
-*John arrived for an hour* is not. -/
 theorem forAdverbial_requires_subintervalReference
     {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
@@ -306,8 +293,6 @@ theorem forAdverbial_requires_subintervalReference
     ∀ e, P e → SubintervalReference P e :=
   h_for_ok
 
-/-- Quantization and subinterval reference are incompatible, since an event with subinterval
-reference has a proper part in the predicate. -/
 theorem qua_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
@@ -330,7 +315,6 @@ def forAdverbialMeaning {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     (V : E → Prop) (duration : NonemptyInterval T) (e : E) : Prop :=
   V e ∧ τ e = duration ∧ SubintervalReference V e
 
-/-- An *in*-adverbial, which requires quantization, is incompatible with subinterval reference. -/
 theorem in_adverbial_incompatible_with_subintervalReference
     {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E]
@@ -378,7 +362,6 @@ operator. -/
 def LexicallyCumulative {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   ∀ x, AlgClosure P x ↔ P x
 
-/-- Lexical cumulativity entails Krifka's `CUM` (closure under binary join). -/
 theorem lexicallyCumulative_imp_cum {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (h : LexicallyCumulative P) : CUM P := by
   intro x hPx y hPy
@@ -410,9 +393,6 @@ end Distributivity
 
 /-! ### Atelicity as a Schwarzschild cover (§5.4) -/
 
-/-- A predicate `P` has stratified subinterval reference at `e` iff `e` is the sum of a finite
-Schwarzschild cover into proper-subinterval `P`-parts, the book's theorem at the runtime
-dimension. -/
 theorem subintervalReference_iff_cover {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E] {P : E → Prop} {e : E} :
     SubintervalReference P e ↔
@@ -437,10 +417,6 @@ def SubregionPresup (e : α) : Prop :=
 
 variable {τ P}
 
-/-- On an event that splits into two parts with non-overlapping, non-null runtimes, the
-divisiveness clause of the subregion presupposition yields stratified reference along the
-runtime: the two parts are each other's temporal siblings, so both fall under the predicate,
-and each has a properly smaller runtime. -/
 theorem stratifiedReference_of_divisiveness (hτ : Monotone τ) {a b : α}
     (hov : ¬ Overlap (τ a) (τ b)) (ha : ¬ IsBot (τ a)) (hb : ¬ IsBot (τ b))
     (hdiv : ∀ e', IsTemporalPart τ e' (a ⊔ b) → P e') :

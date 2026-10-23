@@ -110,8 +110,6 @@ theorem afTarget_eq (s o : Bundle) :
 /-- The rank of a cell on the hierarchy (23) puts [participant] above [plural] above the rest. -/
 def rank (c : Bundle) : ℕ := if c.IsSAP then 2 else if c.IsPlural then 1 else 0
 
-/-- The probes derive the hierarchy, since the slot reflects the higher-ranked argument, the
-subject at a tie, and nothing when both rank lowest. -/
 theorem afTarget_eq_rank (s o : Bundle) :
     afTarget s o = if rank s = 0 ∧ rank o = 0 then none
       else if rank o ≤ rank s then some s else some o := by
@@ -169,8 +167,6 @@ theorem participant_marker (s o : Bundle) (h : ¬ (s.IsSAP ∧ o.IsSAP)) :
 
 /-! ### Obligatory operations (chapter 5) -/
 
-/-- The slot is empty exactly when both probes' searches fail, so failed Agree at the level of
-the probes and at the level of the slot are one fact. -/
 theorem afTarget_eq_none_iff (s o : Bundle) :
     afTarget s o = none ↔ piProbe.search [s, o] = none ∧ numProbe.search [s, o] = none := by
   rw [afTarget, Probe.cascade_eq_none_iff, Probe.search_eq_none_iff, Probe.search_eq_none_iff]

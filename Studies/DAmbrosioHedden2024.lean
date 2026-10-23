@@ -97,20 +97,16 @@ theorem incoherent_or_sharp_or_vague : c.Incoherent ∨ c.Sharp ∨ c.Vague :=
   (Set.subsingleton_or_nontrivial c.adm).elim
     (fun h ↦ h.eq_empty_or_singleton.imp id Or.inl) (fun h ↦ Or.inr (Or.inr h))
 
-/-- A sharp comparative settles every question. -/
 theorem Sharp.determinately_or (h : c.Sharp) (P : Rule ι O K → Prop) :
     c.Determinately P ∨ c.DeterminatelyNot P := by
   obtain ⟨a, ha⟩ := h
   simp only [Determinately, DeterminatelyNot, ha, Set.mem_singleton_iff, forall_eq]
   exact em (P a)
 
-/-- Two admissible rules that disagree on `P` make `P` indeterminate. -/
 theorem indeterminate_of_disagree {a b : Rule ι O K} (ha : a ∈ c.adm) (hb : b ∈ c.adm)
     (hPa : P a) (hPb : ¬ P b) : c.Indeterminate P :=
   ⟨fun h ↦ hPb (h b hb), fun h ↦ h a ha hPa⟩
 
-/-- Indeterminacy needs two admissible rules, so it is comparative vagueness, whether it shows
-in the comparative or in the positive form. -/
 theorem Indeterminate.vague (h : c.Indeterminate P) : c.Vague := by
   obtain ⟨h₁, h₂⟩ := h
   simp only [Determinately, DeterminatelyNot, not_forall, not_not, exists_prop] at h₁ h₂
@@ -118,8 +114,6 @@ theorem Indeterminate.vague (h : c.Indeterminate P) : c.Vague := by
   obtain ⟨b, hb, hPb⟩ := h₂
   exact ⟨b, hb, a, ha, fun e ↦ hPa (e ▸ hPb)⟩
 
-/-- With complete admissible rules, that one of two objects is at least as F as the other is
-determinate, however indeterminate it is which. -/
 theorem determinately_or_of_complete (h : c.Determinately Complete) (v : Profile ι O K)
     (x y : O) : c.Determinately fun a ↦ a v x y ∨ a v y x :=
   fun a ha ↦ (h a ha v).total x y
@@ -132,9 +126,6 @@ standard fixed, makes `x` at least as F as `y` iff every admissible rule that ma
 abbrev delineation (c : Context ι O K) (v : Profile ι O K) : Preorder O :=
   Kamp1975.kampPreorder (fun (a : Rule ι O K) x ↦ a v x c.standard) c.adm
 
-/-- Admissible rules that disagree on which of two objects meets the standard leave the two
-incomparable under the delineation comparative, so what the paper treats as vagueness the
-delineation approach turns into incompleteness. -/
 theorem delineation_incomparable (c : Context ι O K) {v : Profile ι O K} {x y : O}
     {a b : Rule ι O K} (ha : a ∈ c.adm) (hb : b ∈ c.adm) (hax : a v x c.standard)
     (hay : ¬ a v y c.standard) (hby : b v y c.standard) (hbx : ¬ b v x c.standard) :
@@ -174,8 +165,6 @@ section Sorites
 
 variable [Field K] [LinearOrder K] [IsStrictOrderedRing K] {w w' : Health → K} {mS mB cB t t' : K}
 
-/-- Suzy is at least as healthy as Bill under weights `w` iff her cardiovascular health reaches
-Bill's plus the weighted musculoskeletal deficit. -/
 theorem health_utilitarian_iff (hw : 0 < w .cardiovascular) :
     utilitarian w (health mS mB cB t) .suzy .bill ↔
       cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t := by
@@ -183,8 +172,6 @@ theorem health_utilitarian_iff (hw : 0 < w .cardiovascular) :
   simp only [utilitarian, dotProduct, sum_health, health]
   constructor <;> intro h <;> linarith
 
-/-- The inductive premise of the sorites holds, since better cardiovascular health keeps Suzy at
-least as healthy as Bill. -/
 theorem health_mono (hw : 0 ≤ w .cardiovascular) (h : t ≤ t') :
     utilitarian w (health mS mB cB t) .suzy .bill →
       utilitarian w (health mS mB cB t') .suzy .bill := by
@@ -192,15 +179,11 @@ theorem health_mono (hw : 0 ≤ w .cardiovascular) (h : t ≤ t') :
   intro h'
   linarith [mul_le_mul_of_nonneg_left h hw]
 
-/-- The first Suzy, worse than Bill on both dimensions, is not at least as healthy as Bill
-under any positive weighting. -/
 theorem not_health_of_lt (hm : mS < mB) (ht : t < cB) (hw : ∀ i, 0 ≤ w i)
     (hpos : ∃ i, 0 < w i) : ¬ utilitarian w (health mS mB cB t) .suzy .bill :=
   (utilitarian_weakPareto w hw hpos (health mS mB cB t) Patient.bill Patient.suzy fun i ↦ by
     cases i <;> [exact hm; exact ht]).2
 
-/-- In a context admitting two weightings with different cut-offs, every Suzy between the
-cut-offs is a borderline case of *at least as healthy as Bill*. -/
 theorem health_indeterminate (c : Context Health Patient K) (hw : utilitarian w ∈ c.adm)
     (hw' : utilitarian w' ∈ c.adm) (hc : 0 < w .cardiovascular) (hc' : 0 < w' .cardiovascular)
     (ht : cB + w .musculoskeletal / w .cardiovascular * (mB - mS) ≤ t)
@@ -209,7 +192,6 @@ theorem health_indeterminate (c : Context Health Patient K) (hw : utilitarian w 
   c.indeterminate_of_disagree hw hw' ((health_utilitarian_iff hc).2 ht)
     fun h ↦ ((health_utilitarian_iff hc').1 h).not_gt ht'
 
-/-- Two admissible weightings with different cut-offs make *at least as healthy as* vague. -/
 theorem vague_of_cutoff_lt (c : Context Health Patient K) (hw : utilitarian w ∈ c.adm)
     (hw' : utilitarian w' ∈ c.adm) (hc : 0 < w .cardiovascular) (hc' : 0 < w' .cardiovascular)
     (h : cB + w .musculoskeletal / w .cardiovascular * (mB - mS) <
@@ -219,8 +201,6 @@ theorem vague_of_cutoff_lt (c : Context Health Patient K) (hw : utilitarian w �
 
 /-! ### Vagueness against structure -/
 
-/-- With two utilitarian weightings of different cut-offs, the comparative is vague, yet
-determinately a weak ordering. -/
 theorem vague_determinately_weakOrderValued (c : Context Health Patient K)
     (hadm : c.adm = {utilitarian w, utilitarian w'}) (hc : 0 < w .cardiovascular)
     (hc' : 0 < w' .cardiovascular)
@@ -232,9 +212,6 @@ theorem vague_determinately_weakOrderValued (c : Context Health Patient K)
   rcases ha with rfl | rfl <;> exact utilitarian_weakOrderValued _
 
 omit [IsStrictOrderedRing K] in
-/-- With a utilitarian weighting beside the Pareto rule, on a profile where Suzy trades
-musculoskeletal for cardiovascular health, it is indeterminate whether the comparative is
-complete. -/
 theorem indeterminate_complete (c : Context Health Patient K) (hu : utilitarian w ∈ c.adm)
     (hp : paretoRule ∈ c.adm) (hm : mS < mB) (ht : cB < t) : c.Indeterminate Complete :=
   c.indeterminate_of_disagree hu hp (utilitarian_weakOrderValued w).2 fun h ↦
@@ -250,13 +227,10 @@ end Sorites
 def Arrovian [Preorder K] (a : Rule ι O K) : Prop :=
   Invariant ordinal a ∧ WeakOrderValued a ∧ WeakPareto a ∧ Independent a ∧ NonDictatorial a
 
-/-- By Arrow's impossibility theorem, with finitely many dimensions and at least three objects no
-rule meets all of Arrow's conditions. -/
 theorem arrow [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O) (a : Rule ι O ℝ) :
     ¬ Arrovian a :=
   SocialChoice.arrow h₃ a
 
-/-- An adjective whose admissible rules are all Arrovian is incoherent. -/
 theorem Context.incoherent_of_arrovian [Fintype ι] [Fintype O] (h₃ : 3 ≤ Fintype.card O)
     (c : Context ι O ℝ) (h : c.Determinately Arrovian) : c.Incoherent :=
   Set.eq_empty_iff_forall_notMem.2 fun a ha ↦ arrow h₃ a (h a ha)
@@ -269,13 +243,11 @@ def Acyclic (r : O → O → Prop) : Prop := ∀ x y z, AsymmRel r x y → Asymm
 /-- Condorcet's profile has three dimensions ranking three objects cyclically. -/
 def condorcet : Profile (Fin 3) (Fin 3) ℕ := ![![2, 0, 1], ![1, 2, 0], ![0, 1, 2]]
 
-/-- Condorcet's paradox is that majority rule ranks the three objects in a strict cycle. -/
 theorem majority_condorcet :
     AsymmRel (majority condorcet) 0 1 ∧ AsymmRel (majority condorcet) 1 2 ∧
       AsymmRel (majority condorcet) 2 0 := by
   decide
 
-/-- Majority rule violates even acyclicity, by Condorcet's cycle. -/
 theorem not_acyclic_majority_condorcet : ¬ Acyclic (majority condorcet) :=
   fun h ↦ majority_condorcet.2.2.2 (h 0 1 2 majority_condorcet.1 majority_condorcet.2.1)
 
@@ -294,11 +266,8 @@ def sassoon : Degree.DimensionBindingType → Rule ι O K
   | .disjunctive => fun v x y ↦ ∃ i, v y i ≤ v x i
   | .mixed => fun v x y ↦ #{i | θ i ≤ v y i} ≤ #{i | θ i ≤ v x i}
 
-/-- The universal comparative is the Pareto rule, and inherits its incomparable trade-offs. -/
 theorem sassoon_conjunctive : sassoon θ .conjunctive = (paretoRule : Rule ι O K) := rfl
 
-/-- The existential comparative violates strong Pareto, since an object tied with another on one
-dimension and below it on all others counts as at least as F. -/
 theorem not_strongPareto_sassoon_disjunctive [Nontrivial ι] [Nontrivial O] [Nontrivial K] :
     ¬ StrongPareto (sassoon θ .disjunctive : Rule ι O K) := by
   intro h
@@ -316,8 +285,6 @@ theorem not_strongPareto_sassoon_disjunctive [Nontrivial ι] [Nontrivial O] [Non
   have hxy' : sassoon θ .disjunctive v x y := ⟨i, by simp [v, hxy]⟩
   exact ((h v y x hle).2 hlt).2 hxy'
 
-/-- Dimension counting violates weak Pareto, since two objects meeting the thresholds on the same
-dimensions are tied, even when one is strictly above the other on every dimension. -/
 theorem not_weakPareto_sassoon_mixed [Nonempty ι] [Nontrivial O] [NoMaxOrder K] :
     ¬ WeakPareto (sassoon θ .mixed : Rule ι O K) := by
   intro h

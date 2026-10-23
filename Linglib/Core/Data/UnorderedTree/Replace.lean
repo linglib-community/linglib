@@ -99,11 +99,9 @@ theorem replace_node_pair (target replacement : UnorderedTree α) (a : α) (l r 
         else node a {replace target replacement l, replace target replacement r} := by
   simp [replace_node]
 
-/-- Replacing the whole tree yields the replacement. -/
 theorem replace_self (t r : UnorderedTree α) : replace t r t = r := by
   simpa [node_eta] using replace_node t r t.value t.children
 
-/-- Replacing the planar subtrees in the class `target` is replacing `target` in the class. -/
 theorem mk_replaceIf (target : UnorderedTree α) (r t : RoseTree α) :
     mk (replaceIf (mk · = target) r t) = replace target (mk r) (mk t) := by
   induction t with

@@ -71,7 +71,6 @@ structure IsConnection (C : α → α → Prop) : Prop where
 
 variable {C : α → α → Prop} {x y : α}
 
-/-- Parthood entails connection. -/
 theorem IsConnection.of_le (hC : IsConnection C) (hx : ¬ IsBot x) (h : x ≤ y) : C x y :=
   hC.mono x h (hC.refl hx)
 
@@ -96,7 +95,6 @@ each connected to the next. -/
 def connectionGraph (C : α → α → Prop) (P : α → Prop) : SimpleGraph α :=
   SimpleGraph.fromRel fun a b ↦ P a ∧ P b ∧ C a b
 
-/-- Two connected `P`-entities are transitively connected. -/
 theorem connectionGraph_reachable {C : α → α → Prop} {P : α → Prop} {a b : α} (ha : P a)
     (hb : P b) (h : C a b) : (connectionGraph C P).Reachable a b := by
   by_cases hab : a = b
@@ -122,8 +120,6 @@ def IsMaxCluster (x : α) : Prop :=
 
 variable {C P}
 
-/-- A cluster is the sum of a nonempty finite set of `P`-entities any two of which are
-transitively connected. -/
 theorem isCluster_iff {x : α} :
     IsCluster C P x ↔ ∃ Z : Finset α, Z.Nonempty ∧ (∀ z ∈ Z, P z) ∧
       (∀ z ∈ Z, ∀ z' ∈ Z, (connectionGraph C P).Reachable z z') ∧ IsLUB (Z : Set α) x := by
@@ -135,14 +131,12 @@ theorem isCluster_iff {x : α} :
     exact ⟨_, Z, ⟨z₀, hz₀⟩,
       fun z hz ↦ ⟨hP z hz, SimpleGraph.ConnectedComponent.sound (hR z hz z₀ hz₀)⟩, hx⟩
 
-/-- Maximal clusters do not overlap, since each would contain the other. -/
 theorem disjointPred_isMaxCluster : DisjointPred Overlap {x | IsMaxCluster C P x} := by
   rintro ⟨x, hx, y, hy, hne, hov⟩
   exact hne (le_antisymm (hy.2 x hx.1 hov) (hx.2 y hy.1 hov.symm))
 
 end Cluster
 
-/-- The clusters of a connected component are cumulative. -/
 theorem cum_isClusterIn [SemilatticeSup α] (C : α → α → Prop) (P : α → Prop)
     (c : (connectionGraph C P).ConnectedComponent) : CUM (IsClusterIn C P c) := by
   classical

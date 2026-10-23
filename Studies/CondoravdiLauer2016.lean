@@ -310,7 +310,6 @@ private theorem mem_fHist {u v : World} :
     u ∈ fHist.accessibleWorlds v ↔ u.goal = v.goal ∧ u.harlemTrain = v.harlemTrain := by
   simp [fHist]
 
-/-- Every goal is reachable among the historical alternatives. -/
 theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessibleWorlds v) := by
   refine PreferenceStructure.consistent_single ?_
   obtain ⟨g, t, h⟩ := v
@@ -320,13 +319,11 @@ theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessibleWorlds
     ⟨⟨.hoboken, .path, .aTrain⟩, nofun, mem_fHist.2 ⟨rfl, rfl⟩⟩,
     ⟨⟨.hoboken, .aTrain, .path⟩, nofun, mem_fHist.2 ⟨rfl, rfl⟩⟩]
 
-/-- The best continuations of a world are its historical alternatives that reach the goal. -/
 theorem bestWorlds_fHist (v : World) :
     bestWorlds fHist (orderingSource ep ()) v = fHist.accessibleWorlds v ∩ v.goal.dest := by
   rw [bestWorlds_orderingSource (consistent_ep v)]
   simp [ep]
 
-/-- Nobody reaches both Harlem and Hoboken. -/
 theorem harlem_inter_hoboken : harlem ∩ hoboken = ∅ := by
   ext
   simp [harlem, hoboken]
@@ -340,15 +337,11 @@ theorem w₀_excluded :
   ⟨mem_fBelS.2 rfl, fun h ↦ not_want_of_mem_restricted (q := hoboken) consistent_ep
     (fun _ ↦ by rw [harlem_inter_hoboken, Set.inter_empty]) h ⟨rfl, fun _ _ h ↦ h⟩⟩
 
-/-- A world where the A train goes to Harlem is a best world of the outer modal base the
-antecedent restricts, as long as it verifies the antecedent. -/
 private theorem mem_bestWorlds_fBelS {α : World → Prop} {v : World}
     (hv : v.harlemTrain = .aTrain) (hα : α v) : v ∈ bestWorlds (fBelS.restrict α) ⊥ w := by
   rw [bestWorlds_bot, Background.mem_accessibleWorlds_restrict]
   exact ⟨mem_fBelS.2 hv, hα⟩
 
-/-- An anankastic whose destination is reached exactly by one train, when the A train goes to
-Harlem, is true at every world, the Hoboken world included. -/
 private theorem anankastic_dest {d t : Set World}
     (hd : ∀ u : World, u.harlemTrain = .aTrain → (u ∈ d ↔ u ∈ t)) :
     conditionalNecessity fBelS ⊥ (Want ep () d) (necessity fHist (orderingSource ep ()) (· ∈ t))
@@ -393,7 +386,6 @@ theorem not_anankastic_desire :
   nomatch h w₀ (mem_bestWorlds_fBelS rfl ⟨.inl rfl, fun _ _ h ↦ h⟩) w₀
     (by rw [mem_bestAccessible, bestWorlds_fHist]; exact ⟨mem_fHist.2 ⟨rfl, rfl⟩, nofun⟩)
 
-/-- The Hoboken world is a best world under the addressee's actual goal alone. -/
 private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource ep ()) w₀ := by
   rw [bestWorlds_orderingSource
     ((consistent_ep w₀).mono fun _ hu ↦ mem_fBelS.2 (mem_fHist.1 hu).2)]

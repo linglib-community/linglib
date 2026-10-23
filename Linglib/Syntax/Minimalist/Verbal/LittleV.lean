@@ -90,11 +90,9 @@ def IsWellFormed (l : List LittleV) : Prop := l ≠ [] ∧ l.IsChain Embeds
 
 instance : DecidablePred IsWellFormed := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Nothing is embedded under `vBE`. -/
 theorem IsWellFormed.not_infix_vBE (hw : IsWellFormed l) (w : LittleV) : ¬ [.vBE, w] <:+: l :=
   fun h => not_vBE_embeds w (List.isChain_pair.1 (hw.2.infix h))
 
-/-- `vGO` embeds only a state. -/
 theorem IsWellFormed.eq_vBE_of_infix_vGO (hw : IsWellFormed l) (h : [.vGO, w] <:+: l) :
     w = .vBE :=
   vGO_embeds_iff.1 (List.isChain_pair.1 (hw.2.infix h))
@@ -141,7 +139,6 @@ theorem Causative.licensesVoice (h : Causative l) : LicensesVoice l := h.1
 theorem Inchoative.not_licensesVoice (h : Inchoative l) : ¬ LicensesVoice l :=
   fun h' => by simp [LicensesVoice, h.1] at h'
 
-/-- Causatives do not include inchoatives: the two differ in the higher head. -/
 theorem Causative.not_inchoative (h : Causative l) : ¬ Inchoative l :=
   fun h' => by simp [Inchoative, h.1] at h'
 
@@ -151,8 +148,6 @@ theorem Change.not_licensesVoice (h : Change l) : ¬ LicensesVoice l := by
 theorem State.not_licensesVoice (h : State l) : ¬ LicensesVoice l := by
   subst h; decide
 
-/-- A well-formed inchoative is exactly `[vGO, vBE]`: `vGO` embeds only a state, under which
-    nothing is embedded. -/
 theorem Inchoative.eq_of_isWellFormed (hi : Inchoative l) (hw : IsWellFormed l) :
     l = [.vGO, .vBE] := by
   obtain ⟨hd, hl⟩ := hi

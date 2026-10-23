@@ -69,13 +69,10 @@ theorem inner_sqrtMass_nonneg (μ ν : Measure α) : 0 ≤ ⟪μ.sqrtMass, ν.sq
 
 variable [MeasurableSingletonClass α]
 
-/-- The squared norm of the square-root mass vector of a finite measure is its total mass. -/
 theorem norm_sqrtMass_sq (μ : Measure α) [IsFiniteMeasure μ] :
     ‖μ.sqrtMass‖ ^ 2 = μ.real univ := by
   simp [EuclideanSpace.real_norm_sq_eq, sq_sqrt measureReal_nonneg]
 
-/-- Against a Dirac mass the inner product is the square root of the other measure's mass at the
-atom. -/
 theorem inner_sqrtMass_dirac_left (a : α) (ν : Measure α) :
     ⟪(dirac a).sqrtMass, ν.sqrtMass⟫_ℝ = √(ν.real {a}) := by
   rw [EuclideanSpace.inner_eq_star_dotProduct, dotProduct,
@@ -98,24 +95,18 @@ theorem hellingerDist_nonneg : 0 ≤ hellingerDist μ ν := div_nonneg dist_nonn
 
 variable [MeasurableSingletonClass α]
 
-/-- The squared Hellinger distance of two finite measures is the mean of their total masses less
-the Bhattacharyya coefficient. -/
 theorem hellingerDist_sq [IsFiniteMeasure μ] [IsFiniteMeasure ν] :
     hellingerDist μ ν ^ 2 = (μ.real univ + ν.real univ) / 2 - ⟪μ.sqrtMass, ν.sqrtMass⟫_ℝ := by
   rw [hellingerDist, div_pow, sq_sqrt zero_le_two, dist_eq_norm, norm_sub_sq_real,
     norm_sqrtMass_sq, norm_sqrtMass_sq]
   ring
 
-/-- Probability measures, and the zero measure, lie within Hellinger distance one of each
-other. -/
 theorem hellingerDist_le_one [IsZeroOrProbabilityMeasure μ] [IsZeroOrProbabilityMeasure ν] :
     hellingerDist μ ν ≤ 1 := by
   refine (pow_le_one_iff_of_nonneg (hellingerDist_nonneg μ ν) two_ne_zero).1 ?_
   linarith [hellingerDist_sq μ ν, inner_sqrtMass_nonneg μ ν,
     measureReal_le_one (μ := μ) (s := univ), measureReal_le_one (μ := ν) (s := univ)]
 
-/-- The Hellinger distance from a Dirac mass to a probability measure is fixed by the measure's
-mass at the atom, and is one where that mass vanishes. -/
 theorem hellingerDist_dirac_left [IsProbabilityMeasure ν] (a : α) :
     hellingerDist (dirac a) ν = √(1 - √(ν.real {a})) := by
   rw [← sqrt_sq (hellingerDist_nonneg _ ν), hellingerDist_sq, inner_sqrtMass_dirac_left, probReal_univ, probReal_univ]

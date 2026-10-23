@@ -138,8 +138,6 @@ def localNumbers (t : T) (α : TreePath) : List Number :=
     | .dp n => if MayCondition' t α x.1 then some n else none
     | _ => none
 
-/-- **Only the internal argument is local to the Root.** Whatever arguments a Hiaki clause has, the
-numbers that may condition its Root are exactly that of its internal argument. -/
 theorem localNumbers_clause (c : Arguments Number) :
     localNumbers (clause c) (rootPos c) = (c .internal).toList := by
   rcases hi : c .internal with _ | n <;> rcases he : c .external with _ | e <;>
@@ -156,8 +154,6 @@ def structuralSite (c : Arguments Number) (r : DistributedMorphology.Root) :
     DistributedMorphology.Neighborhood (Finset Harley2014.SiteFeature) :=
   ⟨{.root r}, (localNumbers (clause c) (rootPos c)).map fun n ↦ {.internal n}, []⟩
 
-/-- The context locality gives a Root is the one Harley's site stipulates, so Hiaki suppletion is
-spelled out over the context that (1′) delivers. -/
 theorem structuralSite_eq_site (c : Arguments Number) (r : DistributedMorphology.Root) :
     structuralSite c r = Harley2014.site c r := by
   rw [structuralSite, localNumbers_clause, Harley2014.site]
@@ -254,7 +250,6 @@ def Configuration.rootPos : Configuration → TreePath
   | .sister => ⟨[1]⟩
   | .specifier | .lowAdjunct => ⟨[1, 1]⟩
 
-/-- Under (1′) the internal argument may condition the Root only as its sister. -/
 theorem mayCondition'_iff_configuration (n : Number) (k : Configuration) :
     MayCondition' (k.tree n) k.rootPos ⟨[0]⟩ ↔ k = .sister := by
   cases n <;> cases k <;> decide

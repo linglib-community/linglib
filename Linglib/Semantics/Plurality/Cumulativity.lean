@@ -70,7 +70,6 @@ theorem Cumulation.mono (hRS : ∀ x y, R x y → S x y) (h : Cumulation R x y) 
     Cumulation S x y :=
   algClosure_mono (P := Function.uncurry R) (fun p ↦ hRS p.1 p.2) _ h
 
-/-- A cumulative relation is its own cumulation. -/
 theorem cumulation_iff_of_cum (hR : CUM (Function.uncurry R)) : Cumulation R x y ↔ R x y :=
   algClosure_of_cum hR
 
@@ -84,9 +83,6 @@ open Mereology
 
 variable {A B : Type*} [DecidableEq A] [DecidableEq B]
 
-/-- On finite sets, `**` of a relation between individuals, taken as singletons, is
-bidirectional coverage of a nonempty pair: the closure form of [krifka-1986] and the coverage
-form of [beck-sauerland-2000] agree away from the empty pair. -/
 theorem cumulation_map_singleton (R : A → B → Prop) (x : Finset A) (y : Finset B) :
     Cumulation (Relation.Map R ({·}) ({·})) x y ↔ x.Nonempty ∧ Set.LiftRel R ↑x ↑y := by
   constructor

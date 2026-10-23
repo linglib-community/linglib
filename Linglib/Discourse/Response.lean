@@ -105,13 +105,10 @@ section Smul
 
 variable {X : Type*} [MulAction Polarity X] {r : Polarity}
 
-/-- The relative polarity of a response takes the antecedent's proposition to the response's. -/
 @[simp] theorem relative_smul_antecedent_smul (x : Response) (a : X) :
     x.relative • x.antecedent • a = x.polarity • a := by
   rw [smul_smul, relative, div_mul_cancel]
 
-/-- Under a free action, the relative polarity of a response is the only polarity taking the
-antecedent's proposition to the response's. -/
 theorem eq_relative_iff_smul_eq [IsCancelSMul Polarity X] (a : X) :
     r = x.relative ↔ r • x.antecedent • a = x.polarity • a := by
   rw [← x.relative_smul_antecedent_smul a]
@@ -164,7 +161,6 @@ instance (x : Response) : DecidablePred x.HasFeature
   | .relative _ => inferInstanceAs (Decidable (_ = _))
   | .absolute _ => inferInstanceAs (Decidable (_ = _))
 
-/-- A response bears a feature of value `v` iff its relative or its absolute polarity is `v`. -/
 theorem exists_value_eq_and_hasFeature_iff {v : Polarity} :
     (∃ f : Feature, f.value = v ∧ x.HasFeature f) ↔ x.relative = v ∨ x.polarity = v := by
   constructor

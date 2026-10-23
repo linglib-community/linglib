@@ -67,8 +67,6 @@ theorem leafIndex_cons_of_getElem? {c : RoseTree α} {i : ℕ} (hc : t.children[
     t.leafIndex (i :: p) = ((t.children.take i).map numLeaves).sum + c.leafIndex p := by
   rw [leafIndex_cons, hc, Option.elim_some]
 
-/-- The index of a position below `p` is the index of `p` plus its index in the subtree at
-`p`. -/
 theorem leafIndex_append (h : t.subtreeAt p = some s) (q : List ℕ) :
     t.leafIndex (p ++ q) = t.leafIndex p + s.leafIndex q := by
   induction p generalizing t with
@@ -121,7 +119,6 @@ private theorem take_drop_leafList (h : t.subtreeAt p = some s) :
     rw [hy, ← hlen, ← length_leafList, ← List.length_append, List.drop_left]
   exact ⟨by rw [h₁, h₂, ← hy], fun new ↦ by rw [h₁, h₂, hy']⟩
 
-/-- The frontier of a subtree ends inside the frontier of the tree. -/
 theorem leafIndex_add_numLeaves_le (h : t.subtreeAt p = some s) :
     t.leafIndex p + s.numLeaves ≤ t.numLeaves := by
   obtain ⟨pre, post, hlen, hy, -⟩ := exists_leafList_eq h
@@ -129,33 +126,26 @@ theorem leafIndex_add_numLeaves_le (h : t.subtreeAt p = some s) :
   simp only [List.length_append, length_leafList, hlen] at this
   omega
 
-/-- The frontier of a tree is the leaves left of a subtree, the frontier of the subtree, and the
-leaves to its right. -/
 theorem take_append_leafList_append_drop (h : t.subtreeAt p = some s) :
     t.leafList.take (t.leafIndex p) ++ s.leafList ++
       t.leafList.drop (t.leafIndex p + s.numLeaves) = t.leafList :=
   (take_drop_leafList h).1
 
-/-- The frontier of the subtree at `p` is the slice of the frontier of the tree that begins at
-`t.leafIndex p`. -/
 theorem drop_take_leafList (h : t.subtreeAt p = some s) :
     (t.leafList.take (t.leafIndex p + s.numLeaves)).drop (t.leafIndex p) = s.leafList := by
   obtain ⟨pre, post, hlen, hy, -⟩ := exists_leafList_eq h
   rw [hy, ← hlen, ← length_leafList, ← List.length_append, List.take_left, List.drop_left]
 
-/-- Replacing the subtree at `p` replaces its slice of the frontier. -/
 theorem leafList_replaceAt (h : t.subtreeAt p = some s) (new : RoseTree α) :
     (t.replaceAt p new).leafList = t.leafList.take (t.leafIndex p) ++ new.leafList ++
       t.leafList.drop (t.leafIndex p + s.numLeaves) :=
   (take_drop_leafList h).2 new
 
-/-- A leaf sits in the frontier at its index. -/
 theorem getElem?_leafList_leafIndex {a : α} (h : t.subtreeAt p = some (leaf a)) :
     t.leafList[t.leafIndex p]? = some a := by
   obtain ⟨pre, post, hlen, hy, -⟩ := exists_leafList_eq h
   simp [hy, ← hlen]
 
-/-- The frontier of a subtree is an infix of the frontier of the tree. -/
 theorem IsSubtree.leafList_isInfix (h : IsSubtree s t) : s.leafList <:+: t.leafList :=
   let ⟨_, hp⟩ := isSubtree_iff_exists_subtreeAt.1 h
   let ⟨pre, post, _, hy, _⟩ := exists_leafList_eq hp
@@ -177,12 +167,10 @@ theorem IsSubtree.leafList_isInfix (h : IsSubtree s t) : s.leafList <:+: t.leafL
 
 /-! ### Dominance and precedence -/
 
-/-- A position below `p` begins no earlier than `p`. -/
 theorem leafIndex_le_leafIndex_append (h : t.subtreeAt p = some s) (q : List ℕ) :
     t.leafIndex p ≤ t.leafIndex (p ++ q) :=
   leafIndex_append h q ▸ Nat.le_add_right _ _
 
-/-- A position below `p` ends no later than `p`. -/
 theorem leafIndex_append_add_numLeaves_le {u : RoseTree α} (h : t.subtreeAt p = some s)
     (hu : s.subtreeAt q = some u) :
     t.leafIndex (p ++ q) + u.numLeaves ≤ t.leafIndex p + s.numLeaves := by
@@ -199,7 +187,6 @@ private theorem sum_take_add_numLeaves_le {cs : List (RoseTree α)} {i j : ℕ} 
   exact ((List.take_sublist_take_left (Nat.succ_le_of_lt hij)).map numLeaves).sum_le_sum
     fun _ _ ↦ Nat.zero_le _
 
-/-- The frontier of a subtree ends before the frontier of any subtree it precedes begins. -/
 theorem leafIndex_add_numLeaves_le_of_precedes {p q : TreePath} (hpq : p.Precedes q)
     (hp : t.subtreeAt p.toList = some s) (hq : (t.subtreeAt q.toList).isSome) :
     t.leafIndex p.toList + s.numLeaves ≤ t.leafIndex q.toList := by
@@ -230,7 +217,6 @@ theorem leafIndex_replicate_zero (t : RoseTree α) (k : ℕ) :
     | none => rfl
     | some c => simpa using ih c
 
-/-- A position begins where the tree does exactly when it is reached through first daughters. -/
 theorem leafIndex_eq_zero_iff (h : (t.subtreeAt p).isSome) :
     t.leafIndex p = 0 ↔ ∀ i ∈ p, i = 0 := by
   refine ⟨fun h0 ↦ ?_, fun h0 ↦ List.eq_replicate_iff.2 ⟨rfl, h0⟩ ▸ leafIndex_replicate_zero t _⟩
@@ -247,8 +233,6 @@ theorem leafIndex_eq_zero_iff (h : (t.subtreeAt p).isSome) :
       rwa [List.length_map, List.length_take_of_le (List.getElem?_eq_some_iff.mp hc).1.le] at this
     exact List.forall_mem_cons.2 ⟨by omega, ih (by rw [hcs]; rfl) h0.2⟩
 
-/-- Two positions of a tree are left-aligned exactly when their frontiers begin at the same
-leaf. -/
 theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : (t.subtreeAt p.toList).isSome)
     (hq : (t.subtreeAt q.toList).isSome) :
     p.LeftAligned q ↔ t.leafIndex p.toList = t.leafIndex q.toList := by
@@ -334,8 +318,6 @@ private theorem filterMap_verticesList (a : α) (cs : List (RoseTree α)) :
     | none => rfl
     | some s => by_cases hP : P s <;> simp [hP, Nat.add_assoc]
 
-/-- The spans of a node are its own, if it satisfies `P`, and those of its forest of
-children. -/
 @[simp] theorem spans_node (a : α) (cs : List (RoseTree α)) :
     (node a cs).spans P =
       (if P (node a cs) then [(0, (node a cs).numLeaves)] else []) ++ spansList P cs := by
@@ -349,7 +331,6 @@ theorem spansList_append (l₁ l₂ : List (RoseTree α)) :
   | nil => simp
   | cons c l ih => simp [ih, Nat.add_assoc]
 
-/-- A forest of copies of a tree with no span has none. -/
 theorem spansList_replicate (n : ℕ) (h : t.spans P = []) : spansList P (.replicate n t) = [] := by
   induction n with
   | zero => rfl

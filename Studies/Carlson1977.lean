@@ -131,15 +131,11 @@ theorem not_some_everywhere [Nontrivial Place] {N : Ind → Prop}
 
 variable {inst : SetRel Ind Ind}
 
-/-- A state that holds of an instance of a kind holds of the kind, when a stage of an instance
-is a stage of its kind. -/
 theorem image_image_subset (h : M.R ○ inst ⊆ M.R) (P : Set Stage) :
     inst.image (M.R.image P) ⊆ M.R.image P := by
   rw [← image_comp]
   exact image_subset_image_left h
 
-/-- A state holds of a kind exactly when it holds of one of its instances, when the stages of the
-kind are those of its instances: *Dogs are sick* is true when some dog is sick. -/
 theorem mem_image_iff (h : M.R ○ inst ⊆ M.R) (hk : ∀ ⦃s⦄, s ~[M.R] k → s ~[M.R ○ inst] k)
     (P : Set Stage) : k ∈ M.R.image P ↔ k ∈ inst.image (M.R.image P) := by
   rw [← image_comp]
@@ -173,9 +169,6 @@ tomorrow, and will burn in Boston the day after*, (59), means (58) because the n
 the conjunction of two states, each with its own existential over stages: the predicate is
 `R.image P ∩ R.image Q`, which only contains `R.image (P ∩ Q)`. -/
 
-/-- The scope diagnostics separate the bare plural from an existential: `λP ∃x[N(x) ∧ P(x)]`
-commutes with negation and with universal quantification exactly when `N` has one member, as a
-proper name does. -/
 theorem some_scopeless_iff {E : Type*} {N : E → Prop} :
     ((∀ P, GQ.some N Pᶜ ↔ ¬ GQ.some N P) ∧
       ∀ S : Set (E → Prop), GQ.some N (sInf S) ↔ ∀ P ∈ S, GQ.some N P) ↔

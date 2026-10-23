@@ -142,8 +142,6 @@ variable {X Y}
   rw [toAR_mul]
   exact AR.word_repoint_of_ne _ _ _ _ h
 
-/-- A line of a merging concatenation is a line of the first factor, or a line of the second
-shifted to where that factor starts. -/
 theorem link_toAR_mul {i j : ι} {r s : ℕ} :
     (toAR (X * Y)).Link i j r s ↔ (toAR X).Link i j r s ∨
       ∃ p q, (toAR Y).Link i j p q ∧ offset X Y i + p = r ∧ offset X Y j + q = s := by
@@ -273,7 +271,6 @@ private theorem repointIdx_runIdx_append_right {i : ι} {p : ℕ} (hp : p < (Y.w
   · simp [offset, hi]
 
 variable (X Y) in
-/-- The collapse of a bridging concatenation is the merging concatenation of the collapses. -/
 theorem collapse_mul :
     ofAR ((X * Y).collapse m) = (ofAR (X.collapse m) * ofAR (Y.collapse m) : MergeAR m τ) := by
   refine toAR.injective <| AR.ext (funext fun i ↦ ?_) fun i j r s ↦ ?_
@@ -311,8 +308,6 @@ theorem collapseHom_of_isCleanAt {X : AR τ} (h : X.IsCleanAt m) :
     collapseHom m X = (ofAR X : MergeAR m τ) :=
   h.collapse_eq
 
-/-- Over OCP-clean primitives, the realization by merging concatenation is the collapsed
-realization. -/
 theorem prod_map_ofAR {S : Type*} {g₀ : S → AR τ} (hg : ∀ s, (g₀ s).IsCleanAt m) (w : List S) :
     (w.map fun s ↦ (ofAR (g₀ s) : MergeAR m τ)).prod = ofAR ((w.map g₀).prod.collapse m) := by
   rw [← toAR_collapseHom, ofAR_toAR, map_list_prod, List.map_map]

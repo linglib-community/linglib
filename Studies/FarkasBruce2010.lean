@@ -155,8 +155,6 @@ theorem discourseCommitments_agreeToDisagree :
 
 /-! ### Reacting to a polar question -/
 
-/-- A resolving answer to a polar question projects the single common ground with the answer,
-the projected resolution inconsistent with it being discarded. -/
 theorem projectedSet_polarQuestion_assert (hK : K.IsStable) (b : Discourse.Role) {q : Set W}
     (hq : q ∈ ({p, pᶜ} : Set (Set W))) (hc : K.commonGround ⊓ 𝓟 q ≠ ⊥) :
     ((K.polarQuestion p).assert b q).projectedSet = {K.commonGround ⊓ 𝓟 q} := by
@@ -231,13 +229,11 @@ theorem Confirming.iff_relative_eq_positive [Nonempty W] {s t : Sentence W}
   rw [Confirming, Sentence.prop, Sentence.prop, h]
   exact Response.polarity_smul_eq_antecedent_smul_iff (x := ⟨m, s.polarity, t.polarity⟩) _
 
-/-- A [reverse] response to an assertion is a denial, which puts the conversation in crisis. -/
 theorem inCrisis_reversing_assert {s t : Sentence W} (h : Reversing s t) (a b : Discourse.Role) :
     ((K.assert a s.prop).assert b t.prop).InCrisis := by
   rw [h]
   exact K.inCrisis_assert_assert_compl a s.prop b
 
-/-- The same [reverse] response to the polar question is a reverse answer, which is no crisis. -/
 theorem not_inCrisis_reversing_polarQuestion {s t : Sentence W} (h : Reversing s t)
     (hK : K.IsStable) (b : Discourse.Role) (hc : K.commonGround ⊓ 𝓟 s.propᶜ ≠ ⊥) :
     ¬ ((K.polarQuestion s.prop).assert b t.prop).InCrisis := by
@@ -284,8 +280,6 @@ theorem english_confirmsNegativeQuestion (p : English.PolarityParticle) :
     Response.ConfirmsNegativeQuestion (english p) := by
   cases p <;> decide
 
-/-- Of the Romanian particles only the absolute *nu* confirms a negative; *da* marks [+] and
-*ba* [reverse]. -/
 theorem romanian_confirmsNegativeQuestion_iff (p : Romanian.PolarityParticle) :
     Response.ConfirmsNegativeQuestion (romanian p) ↔ p = .nu := by
   cases p <;> decide
@@ -333,30 +327,23 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every acceptable response is one its English particles mark. -/
 theorem english_mem : ∀ r ∈ rows, r.judgment = .acceptable →
     ∀ p : English.PolarityParticle, .en p ∈ r.particles → r.response ∈ english p := by
   decide
 
-/-- Every acceptable response is one its Romanian particles mark. -/
 theorem romanian_mem : ∀ r ∈ rows, r.judgment = .acceptable →
     ∀ p : Romanian.PolarityParticle, .ro p ∈ r.particles → r.response ∈ romanian p := by
   decide
 
-/-- *ba* is possible in every denial. -/
 theorem ba_denial : ∀ r ∈ rows, r.response.reactsTo = .assertion →
     r.response.relative = .negative → .ro .ba ∈ r.particles → r.judgment = .acceptable := by
   decide
 
-/-- In a Romanian [reverse, −] answer to a question, *ba* is impossible and its absence
-acceptable. -/
 theorem ba_not_reverse_answer_neg : ∀ r ∈ rows, (∃ p, .ro p ∈ r.particles) →
     r.response.reactsTo = .polarQuestion → r.response.relative = .negative →
     r.response.polarity = .negative → (r.judgment = .acceptable ↔ .ro .ba ∉ r.particles) := by
   decide
 
-/-- French *si* and German *doch* mark the combination [reverse, +], after assertions and
-questions alike. -/
 theorem si_doch_mem_reversePositive : ∀ r ∈ rows, .fr .si ∈ r.particles ∨ .de .doch ∈ r.particles →
     r.response ∈ reversePositive ∧ r.judgment = .acceptable := by
   decide

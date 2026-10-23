@@ -61,7 +61,6 @@ def Property.Holds (n : ℕ) : Property → Prop
 instance (n : ℕ) : DecidablePred (Property.Holds n) := fun p ↦ by
   cases p <;> unfold Property.Holds <;> infer_instance
 
-/-- 10-ness, 2-ness and 5-ness make a number a multiple of ten. -/
 theorem dvd_ten_of_holds {κ : Kness} {n : ℕ} (hκ : κ ≠ .twoAndAHalf) (h : κ.Holds 1 n) :
     10 ∣ n := by
   cases κ with
@@ -70,7 +69,6 @@ theorem dvd_ten_of_holds {κ : Kness} {n : ℕ} (hκ : κ ≠ .twoAndAHalf) (h :
   | five => exact Nat.dvd_trans (by norm_num) h.dvd
   | twoAndAHalf => exact absurd rfl hκ
 
-/-- Every roundness property makes a number a multiple of five. -/
 theorem dvd_five_of_holds {p : Property} {n : ℕ} (h : p.Holds n) : 5 ∣ n := by
   cases p with
   | multipleOf5 => exact h
@@ -99,14 +97,11 @@ variable (M : Model)
 noncomputable def predicted (n : ℕ) : ℝ :=
   M.magnitude * Real.logb 10 n + ∑ p ∈ profile Property.Holds n, M.weight p
 
-/-- With non-negative weights, the roundness term is monotone in the roundness ordering. -/
 theorem sum_weight_le_of_atLeastAsRound (hw : ∀ p, 0 ≤ M.weight p) {n m : ℕ}
     (h : AtLeastAsRound Property.Holds n m) :
     ∑ p ∈ profile Property.Holds n, M.weight p ≤ ∑ p ∈ profile Property.Holds m, M.weight p :=
   sum_le_sum_of_subset_of_nonneg (profile_subset_profile.2 h) fun p _ _ ↦ hw p
 
-/-- At equal roundness, a negative magnitude coefficient predicts the smaller number more
-frequent. -/
 theorem predicted_anti (hM : M.magnitude ≤ 0) {n m : ℕ} (hn : 0 < n) (hnm : n ≤ m)
     (h : profile Property.Holds n = profile Property.Holds m) : M.predicted m ≤ M.predicted n := by
   unfold predicted
@@ -116,8 +111,6 @@ theorem predicted_anti (hM : M.magnitude ≤ 0) {n m : ℕ} (hn : 0 < n) (hnm : 
       (Nat.cast_le.mpr hnm)) hM
   linarith
 
-/-- A rounder number is predicted at least as frequent as a less round one exactly when the
-weights of its extra properties make up the magnitude difference. -/
 theorem predicted_le_iff {n m : ℕ} (h : AtLeastAsRound Property.Holds n m) :
     M.predicted n ≤ M.predicted m ↔
       -M.magnitude * (Real.logb 10 m - Real.logb 10 n) ≤
@@ -126,8 +119,6 @@ theorem predicted_le_iff {n m : ℕ} (h : AtLeastAsRound Property.Holds n m) :
   rw [← sum_sdiff (profile_subset_profile.2 h)]
   constructor <;> intro h' <;> linarith
 
-/-- In the study's illustration 100 has every property and 99 none, so 100 is predicted more
-frequent exactly when the summed weights make up the magnitude penalty of one part in a hundred. -/
 theorem predicted_99_le_100_iff :
     M.predicted 99 ≤ M.predicted 100 ↔
       -M.magnitude * Real.logb 10 (100 / 99) ≤ ∑ p, M.weight p := by

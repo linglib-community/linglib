@@ -74,8 +74,6 @@ theorem flat_makeReferringExpression_type (kb : KB E A V) (t : A) (r : E) (C : F
   · simp [hCne, htype]
   · simp [htype', Finset.not_nonempty_iff_eq_empty.mp hCne]
 
-/-- Two scenes with the same types produce the same expression: the algorithm is blind to
-the colors. -/
 theorem makeReferringExpression_congr_type (kb₁ kb₂ : KB E A V) (t : A) (r : E) (C : Finset E)
     (rest : List A) (h : ∀ x, kb₁ x t = kb₂ x t) {v : V} (hr : kb₁ r t = some v)
     (hC : ∀ c ∈ C, ∃ w, kb₁ c t = some w ∧ w ≠ v) :
@@ -109,8 +107,6 @@ def scene (tomatoColor : ObjectValue) : KB Object Attr ObjectValue
   | .cucumber, .property .color => some .green
   | _, _ => none
 
-/-- Color first or type first, the algorithm says *the tomato* of the yellow tomato as of
-the red one. -/
 theorem tomato_bare (tomatoColor : ObjectValue) :
     (flat (scene tomatoColor) .type).makeReferringExpression .tomato {.pineapple, .cucumber}
         [.type, .property .color] = some {(.type, .tomato)} :=
@@ -124,7 +120,6 @@ theorem tomato_bare (tomatoColor : ObjectValue) :
 typicality score for the object. -/
 def DecisionRule (rate : ℚ → ℚ) : Prop := StrictAnti rate
 
-/-- A constant rate, the Incremental Algorithm's, does not follow the rule. -/
 theorem decision_rule_not_ia (c : ℚ) : ¬ DecisionRule λ _ => c :=
   λ h => lt_irrefl c (h zero_lt_one)
 

@@ -89,7 +89,6 @@ theorem paradigmatic_ofFocus (p : Bundle → Prop) [DecidablePred p] (target : T
 
 /-! ### Impoverishment only deletes -/
 
-/-- A rule whose deletion shrinks bundles leaves a bundle below the focus. -/
 theorem apply_le [Preorder Bundle] {delete : Bundle → Target → Bundle}
     (h : ∀ b t, delete b t ≤ b) (rule : ImpoverishmentRule Bundle Target)
     (n : Neighborhood Bundle) : rule.apply delete n ≤ n.focus := by
@@ -98,7 +97,6 @@ theorem apply_le [Preorder Bundle] {delete : Bundle → Target → Bundle}
   · exact h _ _
   · exact le_rfl
 
-/-- On bundles of features, a rule erases its target from the focus where its condition holds. -/
 theorem apply_erase_subset {α : Type*} [DecidableEq α] (rule : ImpoverishmentRule (Finset α) α)
     (n : Neighborhood (Finset α)) : rule.apply Finset.erase n ⊆ n.focus :=
   apply_le (fun _ _ ↦ Finset.erase_subset _ _) rule n
@@ -113,14 +111,12 @@ def runChain {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
     (rules : List R) (n : Neighborhood Bundle) : Bundle :=
   rules.foldl (init := n.focus) fun focus rule ↦ apply rule { n with focus }
 
-/-- Concatenated chains run sequentially, the second chain starting where the first left off. -/
 theorem runChain_append {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
     (rs₁ rs₂ : List R) (n : Neighborhood Bundle) :
     runChain apply (rs₁ ++ rs₂) n =
       runChain apply rs₂ { n with focus := runChain apply rs₁ n } := by
   simp only [runChain, List.foldl_append]
 
-/-- The empty chain is the identity on the focus. -/
 @[simp] theorem runChain_nil {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
     (n : Neighborhood Bundle) : runChain apply [] n = n.focus := rfl
 

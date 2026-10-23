@@ -75,8 +75,6 @@ def superlocal : Parthood Obj where
   onePart | .a => some .b | _ => none
   twoPart _ := none
 
-/-- The complement `b` cannot resubjoin to `a`, since the only object `b` is a part of is `a`, and
-parthood is irreflexive. -/
 theorem antilocality : ¬ superlocal.CanSubjoin .b .a :=
   not_canSubjoin_of_imm_one (by decide) rfl
 
@@ -85,7 +83,6 @@ def parallel : Parthood Obj where
   onePart | .d => some .e | .b => some .c | _ => none
   twoPart | .b => some .a | _ => none
 
-/-- `a` cannot subjoin to the unattached `d`. -/
 theorem parallel_blocked : ¬ parallel.CanSubjoin .a .d := by decide +kernel
 
 /-- `c` with 2-part `b` and 1-part `a`, (31a). -/
@@ -93,7 +90,6 @@ def sideward : Parthood Obj where
   onePart | .c => some .a | _ => none
   twoPart | .c => some .b | _ => none
 
-/-- Neither part of `c` ever subjoins to the other. -/
 theorem sideward_blocked {Q : Parthood Obj} (h : sideward.Derives Q) :
     ¬ Q.CanSubjoin .a .b ∧ ¬ Q.CanSubjoin .b .a :=
   ⟨h.not_canSubjoin_of_not_descendant (by decide +kernel) (by decide +kernel),
@@ -105,7 +101,6 @@ def lowering : Parthood Obj where
   onePart | .e => some .f | .a => some .b | .b => some .c | .c => some .g | _ => none
   twoPart | .e => some .a | .a => some .d | _ => none
 
-/-- `d` never subjoins downward to `c`. -/
 theorem lowering_blocked {Q : Parthood Obj} (h : lowering.Derives Q) :
     ¬ Q.CanSubjoin .d .c :=
   h.not_canSubjoin_of_not_descendant (by decide +kernel) (by decide +kernel)
@@ -116,7 +111,6 @@ def angle : Parthood Obj where
   onePart | .y => some .e | .e => some .w | .u => some .x | _ => none
   twoPart | .e => some .u | .u => some .z | _ => none
 
-/-- `z`, a 2-part of the 2-part `u` of `e`, subjoins to `y`; `x`, the 1-part of `u`, does not. -/
 theorem angle_turns_once : angle.CanSubjoin .z .y ∧ ¬ angle.CanSubjoin .x .y := by
   decide +kernel
 
@@ -168,8 +162,6 @@ def said : Parthood Node where
 /-- `said` after `who` subjoins to the embedded `C'`. -/
 def said' : Parthood Node := said.addPart .two .who .C'
 
-/-- `who` cannot reach the matrix `C` directly; it subjoins to the embedded `C'`, and from there
-subjoins to `C`. -/
 theorem said_fell :
     ¬ said.CanSubjoin .who .C ∧ said.Subjoins .who .C' said' ∧
       said'.Subjoins .who .C (said'.addPart .two .who .C) := by
@@ -178,8 +170,6 @@ theorem said_fell :
 /-- The embedded clause of (44). -/
 abbrev embedded : Set Node := {.C', .T', .v', .O', .V', .who}
 
-/-- In every derivation, `who` leaves the embedded clause only as a 2-part of its `C'`, which is
-successive cyclicity. -/
 theorem said_successive_cyclic {Q : Parthood Node} (h : said.Derives Q) {β : Node} {n : Dim}
     (hβ : β ∉ embedded) (hwho : Q.Imm n .who β) : Q.NPart .two .who .C' :=
   (IsDomain.eq_or_nPart_two_of_derives (by decide +kernel) h (by decide +kernel) hβ
@@ -217,8 +207,6 @@ def statue : Parthood Node where
 /-- *Who did you buy the statue of*, (33): `Det` has subjoined to `D`. -/
 def theStatue : Parthood Node := statue.addPart .two .Det .D
 
-/-- `who` is a 2-part of `rel` and cannot reach `C` from there, but it subjoins to the indefinite
-`D`, becoming a 2-part of `O`, and then subjoins to `C`. -/
 theorem statue_indefinite :
     ¬ statue.CanSubjoin .who .C ∧ statue.Subjoins .who .D (statue.addPart .two .who .D) ∧
       (statue.addPart .two .who .D).Subjoins .who .C
@@ -228,8 +216,6 @@ theorem statue_indefinite :
 /-- The objects inside `D` of the statue nominal. -/
 abbrev nominal : Set Node := {.D, .rel, .N, .P, .D', .rel', .N', .who}
 
-/-- With `Det` in `D`'s 2-part, Angular Locality still admits `who` at `D` but Dimensionality
-refuses it, and no derivation makes `who` a part of `C`. -/
 theorem statue_definite :
     theStatue.CanSubjoin .who .D ∧ theStatue.subjoin .who .D = none ∧
       ¬ theStatue.Reaches .who .C :=
@@ -265,13 +251,10 @@ def FamChecked (P : Parthood Node) : Prop := ∃ y, P.NPart .two y .T ∧ Fam y
 instance (P : Parthood Node) : Decidable (FamChecked P) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-/-- Under `T[uD]`, `who` subjoins to `D` and then to `C`. -/
 theorem subject_thetic :
     subject.Subjoins .who .D thetic ∧ thetic.Subjoins .who .C (thetic.addPart .two .who .C) := by
   decide +kernel
 
-/-- `T[uFam]` is checked once `Det` subjoins to `D`, and then no derivation makes `who` a part of
-`C`. -/
 theorem subject_topic :
     ¬ FamChecked subject ∧ subject.Subjoins .Det .D topic ∧ FamChecked topic ∧
       ¬ topic.Reaches .who .C :=
@@ -280,8 +263,6 @@ theorem subject_topic :
       (by decide +kernel) rfl (by decide) (by decide) (by decide) (by decide +kernel)
       (by decide)⟩
 
-/-- Once `who` holds the 2-part of `D`, no derivation checks `T[uFam]`: the only path from a
-[Fam]-bearer to `T` would run through `who`, which has no parts. -/
 theorem thetic_not_topic {Q : Parthood Node} (h : thetic.Derives Q) : ¬ FamChecked Q := by
   have leaf : ∀ y, ¬ thetic.Descendant y .who := by decide +kernel
   rintro ⟨y, hyT, hy⟩
@@ -293,8 +274,6 @@ theorem thetic_not_topic {Q : Parthood Node} (h : thetic.Derives Q) : ¬ FamChec
 
 /-! ### Well-formedness -/
 
-/-- Every structure is one Subjoin could build: nothing is a part of itself, and only an object
-with a 1-part has a 2-part. -/
 theorem wellFormed :
     (∀ P ∈ [superlocal, parallel, sideward, lowering, angle, escape, escape'],
       P.Acyclic ∧ P.Dimensional) ∧
@@ -304,7 +283,6 @@ theorem wellFormed :
 
 /-! ### The data -/
 
-/-- `γ` reaches `C` by subjoining to `D` and then to `C`. -/
 theorem reaches_of_cycle {P : Parthood Node} {γ : Node}
     (h₁ : P.Subjoins γ .D (P.addPart .two γ .D))
     (h₂ : (P.addPart .two γ .D).Subjoins γ .C ((P.addPart .two γ .D).addPart .two γ .C)) :
@@ -345,8 +323,6 @@ def cases : List (Parthood Node × Node) :=
 private theorem mem_cases : ∀ e ∈ Examples.all, ∀ P ∈ structureOf e, (P, moverOf e) ∈ cases := by
   decide +kernel
 
-/-- In each case the mover reaches `C` exactly when D's 2-part is free: it subjoins to `D` and on
-to `C`, or the filler of `D` traps it. -/
 private theorem reaches_iff : ∀ p ∈ cases, p.1.Reaches p.2 .C ↔ p.1.twoPart .D = none := by
   have trapped (f γ : Node) (hf : f = .Det ∨ f = .Dem ∨ f = .Poss) (hγ : γ = .who ∨ γ = .P) :
       ¬ (statue.addPart .two f .D).Reaches γ .C := by

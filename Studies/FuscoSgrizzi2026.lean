@@ -118,8 +118,6 @@ def beliefReport : Prop := F.convincere (fun s ↦ diP content (closure P) s w) 
 def intentionReport : Prop :=
   F.convincere (fun s ↦ aP circumstances inertia causeStar P s w) x y e w
 
-/-- Causal self-referentiality: an intention report puts the attitude state in a causal chain to
-the intended event throughout the state's inertia worlds. -/
 theorem intention_causal (h : intentionReport F circumstances inertia causeStar P x y e w) :
     ∃ s, F.cause e s ∧
       ∀ w', w ~[bestAccessible (circumstances s) (inertia s)] w' → causedClosure causeStar s P w' :=
@@ -225,7 +223,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The paper's sentences are grammatical exactly where complement size predicts. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.grammatical = true ↔ r.diagnostic.Predicted r.size) := by
   decide
 

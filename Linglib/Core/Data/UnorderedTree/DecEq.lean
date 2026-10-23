@@ -66,8 +66,6 @@ where
       | some i => go cs (ds.eraseIdx i)
       | none => false
 
-/-- If `eqv` computes `mk`-equality on the pairs `eqv.go` compares, then `eqv.go` decides
-permutation of the `mk`-images. -/
 private theorem go_iff : ∀ {cs ds : List (RoseTree α)},
     (∀ c ∈ cs, ∀ d ∈ ds, eqv c d ↔ mk c = mk d) →
       (eqv.go cs ds ↔ (cs.map mk).Perm (ds.map mk))
@@ -87,8 +85,6 @@ private theorem go_iff : ∀ {cs ds : List (RoseTree α)},
       obtain ⟨d, hd, hcd⟩ := List.mem_map.1 (hp.subset List.mem_cons_self)
       simpa [(h c List.mem_cons_self d hd).2 hcd.symm] using List.findIdx?_eq_none_iff.1 hi d hd
 
-/-- Two ordered trees are `eqv`-related iff they are equal up to reordering the children of
-every vertex. -/
 theorem eqv_iff_perm : eqv t s ↔ Perm t s := by
   rw [← mk_eq_mk_iff]
   induction t generalizing s with

@@ -89,7 +89,6 @@ inductive Categorizer where
   | a
   deriving DecidableEq, Repr, Fintype
 
-/-- There are exactly three categorizers, unlike the infinitely many roots. -/
 theorem card_categorizer : Fintype.card Categorizer = 3 := rfl
 
 /-! ### Morphemes -/
@@ -144,7 +143,6 @@ def word (k : ℕ) : ComplexHead R H := ⟨s.root, s.heads.take k⟩
 
 theorem heads_word_isPrefix (k : ℕ) : (s.word k).heads <+: s.heads := List.take_prefix k s.heads
 
-/-- Merger skips no head, so a head in the word brings every head below it. -/
 theorem mem_word_of_le {k : ℕ} {i j : Fin s.heads.length} (hji : j ≤ i)
     (hi : (i : ℕ) < k) : (j : ℕ) < k := lt_of_le_of_lt hji hi
 
@@ -155,9 +153,6 @@ def toTree (side : H → Morph.Side) : Morphology.Word.Tree (R ⊕ H) :=
 /-- The surface order of root and heads. -/
 def surface (side : H → Morph.Side) : List (R ⊕ H) := (s.toTree side).toList
 
-/-- **The Mirror Principle.** The surface is the prefixal heads outermost first, the root, and the
-suffixal heads innermost first, so on each side the surface order outward from the root is the
-order of merger. -/
 theorem surface_eq (side : H → Morph.Side) :
     s.surface side =
       ((s.heads.filter fun h => side h = .before).map Sum.inr).reverse ++

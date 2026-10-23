@@ -93,7 +93,6 @@ instance (S : Finset (Fin 4)) : DecidablePred (· ∈ (↑S : Set (Fin 4))) :=
 instance (S : Set (Fin 4)) [DecidablePred (· ∈ S)] : Decidable (S ∈ competent all) :=
   decidable_of_iff (S ⊆ all ∨ S ⊆ allᶜ) Iff.rfl
 
-/-- The speaker is competent about *all* exactly when he looked into the third box. -/
 theorem competent_iff_looked (a w : Fin 4) (hw : w ∈ seen) :
     speakerState a w ∈ competent all ↔ a = 3 := by
   revert a w; decide
@@ -166,20 +165,15 @@ and no if in none. -/
 def answer (worlds : Set (Fin 4)) [DecidablePred (· ∈ worlds)] : Answer :=
   if worlds ⊆ all then .yes else if worlds ⊆ allᶜ then .no else .dontKnow
 
-/-- With integration the default is cancelled exactly where the context contradicts it, so the
-two hypotheses agree. -/
 theorem competenceDefault_eq_contextual (a : Fin 4) (q : QUtt) :
     competenceDefault a q = contextual a q := by
   revert a q; decide
 
-/-- Without integration the default yields the strong implicature from the ignorant speaker,
-where contextual licensing leaves the third box open. -/
 theorem load_diverges :
     answer (competenceDefaultLoad .some_) = .no ∧
       answer (contextual 2 .some_) = .dontKnow := by
   decide
 
-/-- For the knowledgeable speaker the blocked default changes nothing. -/
 theorem load_agrees_of_knowledgeable (q : QUtt) :
     answer (competenceDefaultLoad q) = answer (contextual 3 q) := by
   revert q; decide
@@ -208,7 +202,6 @@ def expected? (r : Datum) : Option Answer :=
   | some "dontKnow" => some .dontKnow
   | _ => none
 
-/-- The expected response in each trial type is the contextual-licensing answer. -/
 theorem rows_expected :
     ∀ r ∈ Examples.all, ∀ a ∈ access? r, ∀ q ∈ quantifier? r, ∀ e ∈ expected? r,
       answer (contextual a q) = e := by

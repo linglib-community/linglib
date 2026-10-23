@@ -93,12 +93,10 @@ instance [DecidableLE α] : DecidablePred (· ∈ specifiers att a) :=
 instance [Fintype α] [DecidableLE α] [DecidableEq β] : DecidablePred (· ∈ inherited att a) :=
   fun _ ↦ inferInstanceAs (Decidable (∃ _, _))
 
-/-- An inherited value is the value of some node above. -/
 theorem exists_le_of_mem_inherited (h : v ∈ inherited att a) : ∃ m, a ≤ m ∧ att m = some v :=
   let ⟨m, hm, hv⟩ := h
   ⟨m, hm.prop.1, hv⟩
 
-/-- The value of a least specifier is the only value inherited. -/
 theorem inherited_eq_singleton_of_isLeast (h : IsLeast (specifiers att a) m)
     (hm : att m = some v) : inherited att a = {v} := by
   ext w
@@ -106,12 +104,9 @@ theorem inherited_eq_singleton_of_isLeast (h : IsLeast (specifiers att a) m)
   rw [h.minimal_iff.1 hm', hm, Option.some_inj] at hw
   exact hw.symm
 
-/-- A node's own value overrides every value above it. -/
 theorem inherited_eq_singleton_of_eq_some (h : att a = some v) : inherited att a = {v} :=
   inherited_eq_singleton_of_isLeast ⟨⟨le_rfl, by simp [h]⟩, fun _ hm ↦ hm.1⟩ h
 
-/-- A node inherits at most one value when its specifiers form a chain, as in a single-parent
-hierarchy. -/
 theorem subsingleton_inherited_of_isChain (h : IsChain (· ≤ ·) (specifiers att a)) :
     (inherited att a).Subsingleton := by
   rintro v ⟨m, hm, hv⟩ w ⟨m', hm', hw⟩
@@ -123,8 +118,6 @@ theorem subsingleton_inherited_of_isChain (h : IsChain (· ≤ ·) (specifiers a
     · exact (hm.eq_of_le hm'.prop hle).symm
   exact Option.some_injective _ (hv.symm.trans hw)
 
-/-- No node inherits two values when no node lies below two specifiers, as when the specifiers
-are members of one choice set. -/
 theorem subsingleton_inherited_of_pairwiseDisjoint
     (h : {m | (att m).isSome}.PairwiseDisjoint Set.Iic) : (inherited att a).Subsingleton := by
   refine subsingleton_inherited_of_isChain fun m hm m' hm' hne ↦ ?_
@@ -134,9 +127,6 @@ section Search
 
 variable [DecidableLE α] {l : List α}
 
-/-- A search that climbs from `a` through `l` and takes the value of the first specifier it
-meets returns an inherited value. The climb may be in any order that never visits a node
-before a node below it, and `l` must hold every specifier. -/
 theorem mem_inherited_of_find?_eq_some (hl : l.Pairwise fun x y ↦ ¬ y < x)
     (hs : ∀ m ∈ specifiers att a, m ∈ l) (hm : l.find? (· ∈ specifiers att a) = some m)
     (hv : att m = some v) : v ∈ inherited att a := by
@@ -150,7 +140,6 @@ theorem mem_inherited_of_find?_eq_some (hl : l.Pairwise fun x y ↦ ¬ y < x)
     · exact lt_irrefl _ hlt
     · exact (List.pairwise_cons.1 (List.pairwise_append.1 hl).2.1).1 y hyb hlt
 
-/-- When a node inherits exactly one value, every bottom-up search returns it. -/
 theorem find?_bind_eq_of_inherited_eq_singleton (hl : l.Pairwise fun x y ↦ ¬ y < x)
     (hs : ∀ m ∈ specifiers att a, m ∈ l) (h : inherited att a = {v}) :
     (l.find? (· ∈ specifiers att a)).bind att = some v := by

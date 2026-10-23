@@ -159,13 +159,10 @@ def fakeME (N : DualContent W E) : Property W E :=
 
 variable {made} {r : QualeRole} {g : Property W E}
 
-/-- A privative N is not an N. -/
 theorem disjoint_privativeE (N : DualContent W E) :
     Disjoint (privativeE made r g N) N.extension :=
   disjoint_compl_left.mono_left (inf_le_left.trans inf_le_left)
 
-/-- A privative N lacks the quale its E-structure negates, a fake N an N's origin and a fake_m N
-an N's constitution. -/
 theorem privativeE_le_compl (N : DualContent W E) : privativeE made r g N ≤ (N.quale r)ᶜ :=
   inf_le_left.trans inf_le_right
 
@@ -182,15 +179,12 @@ end Entries
 def typicalE (N : DualContent W E) : Property W E :=
   N.extension ⊓ N.cStructure
 
-/-- *typical* is subsective. -/
 theorem typicalE_le (N : DualContent W E) : typicalE N ≤ N.extension :=
   inf_le_left
 
-/-- A typical N has each quale of an N. -/
 theorem typicalE_le_quale (N : DualContent W E) (r : QualeRole) : typicalE N ≤ N.quale r :=
   inf_le_right.trans (iInf_le _ r)
 
-/-- *typical* is the meet of the restructuring operators `C`, `F`, `T` and `A`. -/
 theorem typicalE_eq_iInf_withQuale (N : DualContent W E) :
     typicalE N = ⨅ r, withQuale r N := by
   have : Nonempty QualeRole := ⟨.telic⟩
@@ -278,15 +272,11 @@ theorem fake_brand_made_by_brand_reading {B N : DualContent W E} {w : W} {x : E}
 
 /-! ### Against shifting heads -/
 
-/-- On E-structures *fake* is privative in the sense of [kamp-1975], over any lexicon whose
-E-structures are the properties themselves. -/
 theorem fake_isPrivative {lex : Property W E → DualContent W E}
     (hlex : Function.LeftInverse DualContent.extension lex) :
     IsPrivative (DualContent.extension ∘ fake made ∘ lex) :=
   fun P ↦ (disjoint_privativeE (lex P)).mono_right (hlex P).ge
 
-/-- Hence the literal *fake N* is vacuous within its head, the local domain of head primacy,
-which is what triggers the head shift of [partee-2010]. -/
 theorem fake_vacuous_in_head {lex : Property W E → DualContent W E}
     (hlex : Function.LeftInverse DualContent.extension lex) (P : Property W E) (w : W) :
     ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P) w (P w) :=

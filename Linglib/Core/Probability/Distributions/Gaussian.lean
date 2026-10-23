@@ -59,7 +59,6 @@ variable {μ : ℝ} {v : ℝ≥0}
 instance [NeZero v] : NullSingletonClass (gaussianReal μ v) :=
   nullSingletonClass_gaussianReal (NeZero.ne v)
 
-/-- A nondegenerate Gaussian charges every nonempty open set. -/
 lemma isOpenPosMeasure_gaussianReal (hv : v ≠ 0) : (gaussianReal μ v).IsOpenPosMeasure :=
   (gaussianReal_absolutelyContinuous' μ hv).isOpenPosMeasure
 
@@ -99,7 +98,6 @@ theorem continuous_normalCDF : Continuous normalCDF := continuous_cdf _
 @[simp]
 theorem range_normalCDF : range normalCDF = Ioo 0 1 := range_cdf _
 
-/-- The reflection formula `Φ (-x) = 1 - Φ x`. -/
 theorem normalCDF_neg (x : ℝ) : normalCDF (-x) = 1 - normalCDF x :=
   cdf_neg _ (measure_singleton x)
 
@@ -114,7 +112,6 @@ theorem normalCDF_lt_inv_two_iff : normalCDF x < 2⁻¹ ↔ x < 0 := by
 
 /-! ### Standardization -/
 
-/-- The cdf of a nondegenerate Gaussian is `Φ` at the standard score. -/
 theorem cdf_gaussianReal_eq (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
     cdf (gaussianReal μ v) x = normalCDF ((x - μ) / √v) := by
   have hs : 0 < √(v : ℝ) := Real.sqrt_pos.2 (NNReal.coe_pos.2 hv.bot_lt)
@@ -131,7 +128,6 @@ theorem cdf_gaussianReal_eq (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
   ext y
   simp [div_le_div_iff_of_pos_right hs]
 
-/-- The upper tail of a nondegenerate Gaussian `X ~ N(μ, v)` is `P(X > x) = Φ ((μ - x) / √v)`. -/
 theorem gaussianReal_real_Ioi (μ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
     (gaussianReal μ v).real (Ioi x) = normalCDF ((μ - x) / √v) := by
   rw [← compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic, ← cdf_eq_real,
@@ -183,8 +179,6 @@ theorem probit_one_sub (p : ℝ) : probit (1 - p) = -probit p := by
 
 /-! ### Densities -/
 
-/-- The ratio of two Gaussian densities of a common nonzero variance is the exponential of an affine
-function, zero midway between the means. -/
 theorem gaussianPDFReal_div_gaussianPDFReal (μ₁ μ₀ : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : ℝ) :
     gaussianPDFReal μ₁ v x / gaussianPDFReal μ₀ v x =
       Real.exp ((μ₁ - μ₀) * (x - (μ₀ + μ₁) / 2) / v) := by
@@ -200,7 +194,6 @@ section LinearCombination
 
 variable {ι : Type*} [Fintype ι] (m : ι → ℝ) (v : ι → ℝ≥0)
 
-/-- A linear combination of independent Gaussians is Gaussian. -/
 theorem map_pi_gaussianReal_sum_mul (d : ι → ℝ) :
     (Measure.pi fun i ↦ gaussianReal (m i) (v i)).map (fun η ↦ ∑ i, d i * η i) =
       gaussianReal (∑ i, d i * m i) (∑ i, .mk (d i ^ 2) (sq_nonneg _) * v i) := by
@@ -225,7 +218,6 @@ theorem map_pi_gaussianReal_sum_mul (d : ι → ℝ) :
     push_cast
     exact Finset.sum_congr rfl fun i _ ↦ by rw [variance_const_mul, variance_fun_id_gaussianReal]
 
-/-- The variance of a linear combination of independent Gaussians. -/
 theorem variance_pi_gaussianReal_sum_mul (d : ι → ℝ) :
     Var[fun η ↦ ∑ i, d i * η i; Measure.pi fun i ↦ gaussianReal (m i) (v i)] =
       ∑ i, d i ^ 2 * v i := by
@@ -233,7 +225,6 @@ theorem variance_pi_gaussianReal_sum_mul (d : ι → ℝ) :
     variance_sum_pi (X := fun i x ↦ d i * x) fun i ↦ (memLp_id_gaussianReal 2).const_mul _]
   exact Finset.sum_congr rfl fun i _ ↦ by rw [variance_const_mul, variance_fun_id_gaussianReal]
 
-/-- The covariance of two linear combinations of independent Gaussians. -/
 theorem covariance_pi_gaussianReal_sum_mul (d e : ι → ℝ) :
     cov[fun η ↦ ∑ i, d i * η i, fun η ↦ ∑ i, e i * η i;
       Measure.pi fun i ↦ gaussianReal (m i) (v i)] = ∑ i, d i * e i * v i := by

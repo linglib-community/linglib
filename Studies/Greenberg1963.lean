@@ -73,8 +73,6 @@ def _root_.Data.WordOrder.VerbPosition.arrangement : VerbPosition → Arrangemen
   | .medial => .svo
   | .final => .sov
 
-/-- The arrangements of subject, object and verb in which the subject precedes the object, the
-three Universal 1 leaves, are exactly those of the types I, II and III. -/
 theorem subjectFirst_iff_mem_range (a : Arrangement Constituent 3) :
     a.Precedes .subject .object ↔ a ∈ Set.range VerbPosition.arrangement := by
   revert a
@@ -117,16 +115,11 @@ instance (P Q : SampleRow → Prop) (exceptions : List String) [DecidablePred P]
     [DecidablePred Q] : Decidable (UniversalExcept P Q exceptions) :=
   inferInstanceAs (Decidable (∀ r ∈ sample, P r → Q r ∨ r.language ∈ exceptions))
 
-/-- The noun precedes its genitive in a prepositional language and follows it in a postpositional
-one, a head in the adposition's direction, in 29 of the 30 languages (Universal 2). Norwegian,
-the exception of the text, has both orders by the paper's additional note. -/
 theorem universal_2 :
     UniversalExcept (fun _ ↦ True)
       (fun r ↦ r.genitive.headDirection? = some r.adposition.headDirection) ["Norwegian"] := by
   decide
 
-/-- A verb-initial language of the sample is prepositional and a verb-final one postpositional,
-its adposition a head in the direction of the verb (Universals 3 and 4). -/
 theorem universal_3_4 (d : HeadDirection) :
     Universal (·.basicOrder.IsEnd .verb d) (·.adposition.headDirection = d) := by
   cases d <;> decide
@@ -140,8 +133,6 @@ theorem universal_9 :
         (·.adposition = .postpositions) ["Thai", "Yoruba"] := by
   decide
 
-/-- A question particle placed by reference to a word follows it, Yoruba excepted, and no
-verb-initial language has one (Universal 10). -/
 theorem universal_10 :
     UniversalExcept (·.questionParticleWord ≠ none) (·.questionParticleWord = some .follows)
         ["Yoruba"] ∧
@@ -191,8 +182,6 @@ theorem universal_22 :
         (·.adposition = .prepositions) ["Songhai"] := by
   decide
 
-/-- Universal 23 as printed fails on the data, since every language that puts the proper noun first
-puts the genitive before the noun, Norwegian having both orders. -/
 theorem not_universal_23_as_printed :
     ¬ Universal (·.apposition = some .properCommon) (·.genitive = .nounFirst) := by
   decide
@@ -233,8 +222,6 @@ instance (P Q : OrderType → Prop) [DecidablePred P] [DecidablePred Q] :
     Decidable (TypeUniversal P Q) :=
   inferInstanceAs (Decidable (∀ t ∈ attested, P t → Q t))
 
-/-- The prepositional types with a preposed genitive are the paper's 3, 11, 12, and 19, and the
-postpositional types with a postposed genitive its 14 and 21, the exceptions to Universal 2. -/
 theorem universal_2_types :
     TypeUniversal (fun t ↦ t.adposition = .prepositions ∧ t.genitive = .dependentFirst)
         (·.index ∈ [3, 11, 12, 19]) ∧
@@ -242,28 +229,20 @@ theorem universal_2_types :
         (·.index ∈ [14, 21]) := by
   decide
 
-/-- No postpositional verb-initial type is attested (Universal 3). The paper's additional note
-records Papago as the one exception it learned of. -/
 theorem universal_3_types :
     TypeUniversal (·.basicOrder.IsInitial .verb) (·.adposition = .prepositions) := by
   decide
 
-/-- The prepositional verb-final types, the exceptions to Universal 4, are 17, Persian's, and 19,
-Amharic's. -/
 theorem universal_4_types :
     TypeUniversal (fun t ↦ t.basicOrder.IsFinal .verb ∧ t.adposition = .prepositions)
       (·.index ∈ [17, 19]) := by
   decide
 
-/-- A verb-final type with a postposed genitive has the adjective after the noun, the types 18
-and 22 being empty (Universal 5). -/
 theorem universal_5_types :
     TypeUniversal (fun t ↦ t.basicOrder.IsFinal .verb ∧ t.genitive = .nounFirst)
       (·.adjective = .nounFirst) := by
   decide
 
-/-- The verb-initial types with the adjective before the noun, the exceptions to Universal 17,
-are 2 and 3. -/
 theorem universal_17_types :
     TypeUniversal (fun t ↦ t.basicOrder.IsInitial .verb ∧ t.adjective = .dependentFirst)
       (·.index ∈ [2, 3]) := by

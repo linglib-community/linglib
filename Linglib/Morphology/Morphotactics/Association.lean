@@ -126,7 +126,6 @@ theorem spread_map : (m.map f).spread s = (m.spread s).map f := by
   rw [freeBearers_map]
   rfl
 
-/-- The conventions never look at the melodic elements. -/
 theorem associate_map : (m.map f).associate s = (m.associate s).map f := by
   rw [associate, associateOneToOne_map, associateRemaining_map, spread_map, associate]
 

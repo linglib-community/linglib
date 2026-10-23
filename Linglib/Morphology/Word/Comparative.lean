@@ -103,8 +103,6 @@ theorem Reaches.mem {A : Set M} {v : List M} {y : M} (hv : Reaches A v y) : y �
   | nil => exact hv.elim
   | cons z v ih => rcases hv with rfl | hv; exacts [List.mem_cons_self, .tail _ (ih hv.2)]
 
-/-- Through morphs none of which satisfy `p`, a morph satisfying `p` that `v` reaches is the
-first one in `v`. -/
 theorem Reaches.find?_eq {A : Set M} {p : M → Prop} [DecidablePred p] (hA : ∀ z ∈ A, ¬ p z)
     {v : List M} {y : M} (hv : Reaches A v y) (hy : p y) : v.find? (p ·) = some y := by
   induction v with
@@ -199,8 +197,6 @@ theorem AffixStep.mem_flatten {A : Set M} {x : M} (h : L.AffixStep root A x) :
   obtain ⟨w, hw, hx⟩ := h.2.2.1
   exact List.mem_flatten.2 ⟨w, hw, hx⟩
 
-/-- The candidate sets can be restricted to sublists of the bound morphs of the inventory that
-are not roots. -/
 theorem isAffix_iff_sublists [DecidableEq M] [DecidablePred root] {x : M} :
     L.IsAffix root x ↔
       ∃ A ∈ (L.forms.flatten.dedup.filter fun y ↦ L.IsBound y ∧ ¬ root y).sublists,
@@ -227,8 +223,6 @@ instance [DecidableEq M] [DecidablePred root] (x : M) : Decidable (L.IsAffix roo
 
 /-! ### The greatest solution -/
 
-/-- When roots are contiguous in every free form, the step is monotone among sets of morphs that
-are not roots. -/
 theorem AffixStep.mono (hF : ∀ w ∈ L.forms, RootsContiguous root w) {A B : Set M} (hAB : A ⊆ B)
     (hB : ∀ z ∈ B, ¬ root z) {x : M} (h : L.AffixStep root A x) : L.AffixStep root B x := by
   classical
@@ -257,8 +251,6 @@ def affixStep (hF : ∀ w ∈ L.forms, RootsContiguous root w) : Set M →o Set 
   toFun A := {x | L.AffixStep root (A ∩ {z | ¬ root z}) x}
   monotone' _ _ h _ hx := hx.mono hF (Set.inter_subset_inter_left _ h) fun _ hz ↦ hz.2
 
-/-- When roots are contiguous in every free form, the affixes are the greatest fixed point of the
-step. -/
 theorem setOf_isAffix_eq_gfp (hF : ∀ w ∈ L.forms, RootsContiguous root w) :
     {x | L.IsAffix root x} = (L.affixStep root hF).gfp := by
   have key {A : Set M} (hA : ∀ z ∈ A, ¬ root z) : A ∩ {z | ¬ root z} = A :=

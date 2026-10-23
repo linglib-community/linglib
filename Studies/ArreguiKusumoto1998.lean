@@ -139,7 +139,6 @@ def Interpretable (lf : LF) : Prop := (ty? (fun w ↦ some w.ty) true lf).isSome
 
 instance : DecidablePred Interpretable := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
-/-- An interpretable logical form is one with a denotation, in any model. -/
 theorem interpretable_iff (M : Model T) (g : Assignment (NonemptyInterval T)) (lf : LF) :
     Interpretable lf ↔ (interp M.lex g lf).isSome :=
   Bool.eq_iff_iff.1 (isSome_interp (lex := M.lex) (fun _ ↦ rfl) g lf).symm
@@ -156,8 +155,6 @@ def Model.extension (M : Model T) (lf : LF) : NonemptyInterval T → Prop :=
 
 /-! ### Before and after -/
 
-/-- A time is before a clause exactly when no time of the clause precedes or overlaps it, which
-sharpens the paper's gloss of *before* as the times that are not after a time of the clause. -/
 theorem before_iff_not_diamond : before X t ↔ ¬ ◇[Perspective.toSetRel ⟦future⟧ᶜ] X t := by
   simp only [before, Diamond, Perspective.mem_toSetRel, Perspective.Presup, Finset.mem_compl,
     not_exists, not_and, not_imp_not]
@@ -167,8 +164,6 @@ theorem before_iff_not_diamond : before X t ↔ ¬ ◇[Perspective.toSetRel ⟦f
 theorem before_of_forall_not (h : ∀ t', ¬ X t') (t : NonemptyInterval T) : before X t :=
   fun t' ht' ↦ absurd ht' (h t')
 
-/-- A time of one clause before another clause puts the first before ever the second, the
-universal *before* of Anscombe. -/
 theorem beforeEver_of_before {A B : Set (NonemptyInterval T)} (ht : t ∈ A)
     (h : before (· ∈ B) t) : beforeEver A B :=
   ⟨t.snd, ⟨t, ht, t.fst_le_snd, le_rfl⟩, fun _ ⟨t', ht', h'⟩ ↦ (h t' ht').trans_le h'.1⟩
@@ -208,7 +203,6 @@ theorem holds_past :
     M.Holds (clause pastOperator (.leaf (.vp k))) ↔ ∃ t, t.Precedes M.speechTime ∧ M.vp k t :=
   Perspective.diamond_toSetRel_past
 
-/-- The speech time does not combine with a present clause, which is a truth value. -/
 theorem not_interpretable_speechTime_present :
     ¬ Interpretable (.bin (.leaf .speechTime) (.bin presentVariable (.leaf (.vp k)))) :=
   Bool.false_ne_true
@@ -284,8 +278,6 @@ theorem not_holds_present_relative :
       ¬ M.Holds (matrix (.leaf (.vp k)) (relative presentVariable (atTrace (.leaf (.vp l))))) := by
   simp +contextual [Diamond, NonemptyInterval.precedes_asymm, NonemptyInterval.precedes_irrefl]
 
-/-- A present *before*-clause adds nothing to a past matrix, every past time preceding the
-speech time. -/
 theorem holds_before_present_relative :
     M.Holds (matrix (.leaf (.vp k))
         (.bin (.leaf .before) (relative presentVariable (atTrace (.leaf (.vp l)))))) ↔
@@ -302,8 +294,6 @@ theorem extension_after_past [DenselyOrdered T] :
       ∃ t', t'.Precedes t ∧ M.vp k t' := by
   simp [↓Perspective.diamond_past_diamond_past]
 
-/-- On discrete time *after* does not absorb the past operator, since no time lies between an
-event and the next moment. -/
 theorem not_extension_after_past_int :
     ∃ (M : Model ℤ) (t : NonemptyInterval ℤ), (∃ t', t'.Precedes t ∧ M.vp 0 t') ∧
       ¬ M.extension (.bin (.leaf .after) (.bin pastOperator (.leaf (.vp 0)))) t := by
@@ -379,7 +369,6 @@ theorem extension_upstairs_downstairs :
       amherst.extension downstairs (.pure 10) ∧ ¬ amherst.extension downstairs (.pure 15) := by
   simp [amherst, Diamond, NonemptyInterval.Precedes]
 
-/-- In a clause that a connective selects, the trace of a relative pronoun is free. -/
 theorem mem_freeIndices_selected :
     1 ∈ Tree.freeIndices (.bin (.leaf .after) (.bin pastOperator
       (.bin (.leaf (.attitude k)) (.bin pastOperator (atTrace (.leaf (.vp l))))))) := by

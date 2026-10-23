@@ -108,8 +108,6 @@ theorem Kernel.directlySettles_singleton (p : W → Prop) :
       {w | p w} ⊆ {w | φ w} ∨ Disjoint {w | p w} {w | φ w} := by
   simp [Kernel.directlySettles]
 
-/-- Settling is symmetric under negation, since a proposition entails `φ` iff it is incompatible
-with `¬φ`. -/
 @[simp]
 theorem Kernel.directlySettles_not : k.directlySettles (fun w' ↦ ¬ φ w') ↔ k.directlySettles φ := by
   simp [Kernel.directlySettles, Set.disjoint_left, Set.subset_def, or_comm]
@@ -160,35 +158,27 @@ variable {k φ w}
 
 variable (k φ w)
 
-/-- The assertion of *must* `φ`, `B_K ⊆ ⟦φ⟧`, entails `φ` when `B_K` is realistic (the T
-axiom). -/
 theorem must_entails_prejacent (hReal : w ∈ k.base) (hTrue : k.FollowsFrom φ) : φ w :=
   hTrue w hReal
 
-/-- The assertion of *might* `φ` is the negation of the assertion of *must* `¬φ`. -/
 theorem Kernel.compatibleWith_iff_not_followsFrom_not :
     k.compatibleWith φ ↔ ¬ k.FollowsFrom fun w' ↦ ¬ φ w' := by
   simp [Kernel.compatibleWith, Kernel.FollowsFrom, Pi.le_def]
 
-/-- *Might* `φ` is the negation of *can't* `φ`, with the same presupposition and the negated
-assertion. -/
 theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = -kernelCant k φ := by
   ext w
   refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
     simp [kernelCant, Kernel.compatibleWith_iff_not_followsFrom_not]
 
-/-- The empty kernel settles nothing, so *must* is always defined. -/
 theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ 0 := by
   simp [Kernel.directlySettles]
 
 /-! ### Bridge to Kratzer necessity -/
 
-/-- The assertion of kernel *must* is Kratzer simple necessity over the induced modal base. -/
 theorem Kernel.followsFrom_iff_simpleNecessity :
     k.FollowsFrom φ ↔ simpleNecessity k.toBackground φ w :=
   Iff.rfl
 
-/-- The assertion of kernel *must* is Kratzer necessity with the empty ordering source. -/
 theorem Kernel.followsFrom_iff_necessity : k.FollowsFrom φ ↔ necessity k.toBackground ⊥ φ w :=
   (k.followsFrom_iff_simpleNecessity φ w).trans (necessity_bot_iff k.toBackground φ w).symm
 

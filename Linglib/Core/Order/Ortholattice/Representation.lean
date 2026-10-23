@@ -68,7 +68,6 @@ def represent (V : Set L) (a : L) : Concept (Point V) (Point V) (Orthogonal V) :
 
 variable {V : Set L}
 
-/-- The upper polar of `{c | c ≤ x}` is `{d | x ≤ dᶜ}` (uses join-density at `x`). -/
 theorem upperPolar_Iic (hV : JoinDense V) (x : L) :
     upperPolar (Orthogonal V) {c : Point V | c.1 ≤ x} = {d | x ≤ d.1ᶜ} := by
   ext d
@@ -83,7 +82,6 @@ theorem upperPolar_Iic (hV : JoinDense V) (x : L) :
   · intro h c hc
     exact hc.trans h
 
-/-- `{b ∈ V\{0} | b ≤ a}` is a concept extent (uses join-density). -/
 theorem isExtent_Iic (hV : JoinDense V) (a : L) :
     IsExtent (Orthogonal V) {b : Point V | b.1 ≤ a} := by
   have key : {d : Point V | a ≤ d.1ᶜ} = {d : Point V | d.1 ≤ aᶜ} := by
@@ -94,14 +92,12 @@ theorem isExtent_Iic (hV : JoinDense V) (a : L) :
   rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq, InvolutiveCompl.le_compl_comm,
       InvolutiveCompl.compl_compl]
 
-/-- The representation map's extent is exactly `{b ∈ V\{0} | b ≤ a}` (Thm 4.13). -/
 theorem represent_extent (hV : JoinDense V) (a : L) :
     (represent V a).extent = {b : Point V | b.1 ≤ a} :=
   Concept.extent_ofObjects_of_isExtent (isExtent_Iic hV a)
 
 /-! ### The representation is an order-embedding preserving the lattice operations -/
 
-/-- `represent V` preserves and reflects the order. -/
 theorem represent_le_iff (hV : JoinDense V) {a a' : L} :
     represent V a ≤ represent V a' ↔ a ≤ a' := by
   rw [← Concept.extent_subset_extent_iff]
@@ -116,7 +112,6 @@ theorem represent_le_iff (hV : JoinDense V) {a a' : L} :
   · intro h b hb
     exact hb.trans h
 
-/-- `represent` preserves meets (`Concept` inf is extent intersection). -/
 theorem represent_inf (hV : JoinDense V) (a a' : L) :
     represent V (a ⊓ a') = represent V a ⊓ represent V a' := by
   apply Concept.ext
@@ -124,12 +119,10 @@ theorem represent_inf (hV : JoinDense V) (a a' : L) :
   ext b
   simp only [Set.mem_ofPred_eq, Set.mem_inter_iff, le_inf_iff]
 
-/-- `represent` preserves the top. -/
 theorem represent_top (hV : JoinDense V) : represent V (⊤ : L) = ⊤ :=
   top_le_iff.mp <| by
     rw [← Concept.extent_subset_extent_iff, represent_extent hV]; exact fun b _ ↦ le_top
 
-/-- `represent` preserves the bottom (the zero is excluded from the carrier). -/
 theorem represent_bot (hV : JoinDense V) : represent V (⊥ : L) = ⊥ :=
   le_bot_iff.mp <| by
     rw [← Concept.extent_subset_extent_iff, represent_extent hV]
@@ -146,7 +139,6 @@ theorem represent_compl (hV : JoinDense V) (a : L) :
   ext b
   exact InvolutiveCompl.le_compl_comm
 
-/-- `represent` preserves joins (from `⊓`- and `ᶜ`-preservation via De Morgan). -/
 theorem represent_sup (hV : JoinDense V) (a a' : L) :
     represent V (a ⊔ a') = represent V a ⊔ represent V a' := by
   rw [show a ⊔ a' = (aᶜ ⊓ a'ᶜ)ᶜ by

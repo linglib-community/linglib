@@ -63,7 +63,6 @@ def prodMeaning (lex : U → W → R) (us : List U) (w : W) : R :=
     prodMeaning lex (u :: us) w = lex u w * prodMeaning lex us w := by
   simp [prodMeaning]
 
-/-- The value of a word sequence does not depend on the order of its words. -/
 theorem prodMeaning_perm {lex : U → W → R} {us us' : List U} (h : us.Perm us') (w : W) :
     prodMeaning lex us w = prodMeaning lex us' w :=
   (h.map _).prod_eq
@@ -114,7 +113,6 @@ theorem stringMeaning_nonneg {r : W} (hm : ∀ u ∈ utts, 0 ≤ m u r) :
     obtain ⟨u, hu, rfl⟩ := List.mem_map.1 hx
     exact hm u (List.mem_filter.1 hu).1) (Nat.cast_nonneg _)
 
-/-- A prefix that some continuation gives a positive meaning has a positive meaning. -/
 theorem stringMeaning_pos {r : W} (hm : ∀ u ∈ utts, 0 ≤ m u r) (hu : u ∈ continuations utts pfx)
     (h : 0 < m u r) : 0 < stringMeaning utts m pfx r :=
   div_pos (h.trans_le (List.single_le_sum (fun x hx ↦ by
@@ -126,14 +124,10 @@ theorem stringMeaning_of_continuations_eq_nil (h : continuations utts pfx = []) 
     stringMeaning utts m pfx r = 0 := by
   simp [stringMeaning, h]
 
-/-- A prefix with one continuation means what the continuation means. -/
 theorem stringMeaning_of_continuations_eq_singleton (h : continuations utts pfx = [u]) (r : W) :
     stringMeaning utts m pfx r = m u r := by
   simp [stringMeaning, h]
 
-/-- Relabelling the utterances carries the string meaning along. If a second closed set is, up to
-order, the image of the first under a map that respects the two prefixes and the two meanings,
-the prefixes have the same string meaning. -/
 theorem stringMeaning_eq_of_perm_map {U' W' : Type*} [DecidableEq U'] {utts' : List (List U')}
     {m' : List U' → W' → ℝ} {pfx' : List U'} {r : W} {r' : W'} (φ : List U → List U')
     (hperm : utts'.Perm (utts.map φ)) (hpfx : ∀ u ∈ utts, pfx' <+: φ u ↔ pfx <+: u)

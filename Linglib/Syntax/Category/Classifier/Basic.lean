@@ -197,18 +197,14 @@ def Device.ofScope : Scope → Constituent → Option Device
   | .attributiveNP, .headNoun => some .deicticClassifier
   | _, _ => none
 
-/-- Every kind of device is the classification of some locus and constituent. -/
 theorem Device.ofScope_surjective (d : Device) : ∃ s c, ofScope s c = some d := by
   decide +revert
 
-/-- Noun class has two loci, agreement with the head noun inside a head-modifier NP and agreement
-with an argument outside the NP. -/
 theorem Device.ofScope_eq_some_nounClass_iff {s : Scope} {c : Constituent} :
     ofScope s c = some .nounClass ↔
       s = .headModifierNP ∧ c = .headNoun ∨ s = .predicateArgument ∧ c = .argument := by
   decide +revert
 
-/-- Every kind other than noun class has a single locus. -/
 theorem Device.existsUnique_ofScope_eq_some {d : Device} (hd : d ≠ .nounClass) :
     ∃! p : Scope × Constituent, ofScope p.1 p.2 = some d := by
   rw [Fintype.existsUnique_iff_card_one]

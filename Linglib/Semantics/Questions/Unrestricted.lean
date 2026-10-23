@@ -56,7 +56,6 @@ def IsInformative : Prop := ⋃₀ P ≠ univ
 /-- A proposition is attentive when it has a non-maximal possibility. -/
 def IsAttentive : Prop := ∃ p ∈ P, ¬ Maximal (· ∈ P) p
 
-/-- A proposition has more than one possibility just in case it is inquisitive or attentive. -/
 theorem nontrivial_iff : P.Nontrivial ↔ IsInquisitive P ∨ IsAttentive P := by
   constructor
   · rintro ⟨p, hp, q, hq, hne⟩

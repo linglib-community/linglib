@@ -130,7 +130,6 @@ def MoodHead.denote {W Ev : Type*} (m : MoodHead) (P : W → Ev → Prop) :
     (W → Prop) ⊕ (W → Ev → Prop) :=
   if m.Opens then .inr P else .inl (closure P)
 
-/-- A head's clause offers an open predicate of eventualities exactly when the head opens. -/
 theorem MoodHead.isRight_denote {W Ev : Type*} {m : MoodHead} {P : W → Ev → Prop} :
     (m.denote P).isRight ↔ m.Opens := by
   unfold MoodHead.denote; split <;> simp [*]
@@ -139,11 +138,9 @@ theorem MoodHead.isRight_denote {W Ev : Type*} {m : MoodHead} {P : W → Ev → 
 theorem MoodHead.denote_indic_eq_sbjv₁ {W Ev : Type*} (P : W → Ev → Prop) :
     MoodHead.indic.denote P = MoodHead.sbjv₁.denote P := rfl
 
-/-- Premise 3, one direction: a clause with an open eventuality argument is not indicative. -/
 theorem MoodHead.mood_of_opens {m : MoodHead} (h : m.Opens) : m.mood = .subjunctive := by
   rw [h]; rfl
 
-/-- The other direction fails: the first subjunctive closes the argument as the indicative does. -/
 theorem MoodHead.not_opens_sbjv₁ : ¬ MoodHead.sbjv₁.Opens := by decide
 
 /-- The mood heads a complement type may carry. -/
@@ -210,7 +207,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- The paper's judged complements, sections 2, 3, 6, and 7. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every example of the paper is a row. -/
 theorem rows_length : rows.length = Examples.all.length := by decide +kernel
 
 /-! ### Premises 1 and 2 and the conclusion, over the pool -/
@@ -238,7 +234,6 @@ theorem abstraction_rejects_indicative :
       r.judgment ≠ .acceptable := by
   decide +kernel
 
-/-- Each class that requires abstraction has an acceptable open complement in the pool. -/
 theorem abstraction_accepts_open :
     ∀ c : Class, c.RequiresAbstraction →
       ∃ r ∈ rows, r.cls = c ∧ r.complement.Abstracts ∧ r.judgment = .acceptable := by
@@ -249,7 +244,6 @@ theorem want_rejects_indicative :
     ∀ r ∈ rows, r.cls = .want → r.complement = .indicative → r.judgment ≠ .acceptable := by
   decide +kernel
 
-/-- 'hope' varies: Spanish rejects the indicative, the other languages accept it. -/
 theorem hope_varies :
     (∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .acceptable) ∧
       ∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .ungrammatical := by
@@ -293,20 +287,14 @@ def cells : List (Glottocode × Class) :=
     [(l, .want), (l, .hope), (l, .intend), (l, .causative)]) ++
   [("stan1288", .want), ("stan1288", .hope), ("stan1288", .causative)]
 
-/-- Every cell has its verb. -/
 theorem verbOf_isSome : ∀ c ∈ cells, (verbOf c.1 c.2).isSome := by decide
 
-/-- The fragment entries record the paper's judgments: in each cell the verb has a finite
-complement in a mood exactly when the pool has an acceptable complement in that mood, outside the
-rows that test a diagnostic or a second reading. -/
 theorem fragments_match_pool :
     ∀ c ∈ cells, ∀ v ∈ verbOf c.1 c.2, ∀ m : Complement, ∀ k ∈ m.coding?,
       (k ∈ v.codings ↔ ∃ r ∈ rows, r.language = c.1 ∧ r.cls = c.2 ∧ r.complement = m ∧
         r.diagnostic = none ∧ r.reading = none ∧ r.judgment = .acceptable) := by
   decide +kernel
 
-/-- The variation of 'hope' in two entries with one form: Portuguese *esperar* takes the
-indicative and Spanish *esperar* does not. -/
 theorem esperar_varies :
     .indicative ∈ Portuguese.Verbs.esperar.codings ∧
       .indicative ∉ Spanish.Verbs.esperar.codings := by
@@ -321,10 +309,6 @@ def Class.Fails (c : Class) (d : Diagnostic) : Prop :=
 instance (c : Class) (d : Diagnostic) : Decidable (c.Fails d) := by
   unfold Class.Fails; infer_instance
 
-/-- On realism, consistency, and monotonicity 'intend' patterns with 'hope' and against 'want',
-yet on mood with 'want': the theories that license the indicative under 'hope' by that profile,
-[portner-rubinstein-2020]'s simplification of consistent backgrounds and
-[giannakidou-mari-2021]'s optional nonveridicality, predict it under 'intend' as well. -/
 theorem intend_like_hope_in_logic :
     (∀ d, Class.hope.Fails d ∧ Class.intend.Fails d ∧ ¬ Class.want.Fails d) ∧
       (∃ r ∈ rows, r.cls = .hope ∧ r.complement = .indicative ∧ r.judgment = .acceptable) ∧
@@ -345,17 +329,13 @@ open ModalLogic SetRel
 
 variable {W : Type*} {int dox : SetRel W W} {p q : W → Prop} {w : W}
 
-/-- Realism: what is intended is believed possible. -/
 theorem realism (h : ◇[int] (w ~[dox] ·) w) (hp : □[int] p w) : ◇[dox] p w :=
   diamond_of_box h hp
 
-/-- Consistency: two intentions are believed jointly possible, by realism for their
-conjunction. -/
 theorem consistency (h : ◇[int] (w ~[dox] ·) w) (hp : □[int] p w) (hq : □[int] q w) :
     ◇[dox] (fun v ↦ p v ∧ q v) w :=
   realism h ((box_and int q).2 ⟨hp, hq⟩)
 
-/-- Monotonicity: intending the narrower prejacent is intending the wider. -/
 theorem monotonicity (hpq : p ≤ q) (hp : □[int] p w) : □[int] q w :=
   box_mono int hpq w hp
 
@@ -388,15 +368,12 @@ def Report (x : E) (P : E → T → W → Ev → Prop) (w : W) : Prop :=
 
 variable {F} {x : E} {P : E → T → W → Ev → Prop} {w : W}
 
-/-- Monotonicity survives the causal self-reference: a report of the narrower complement is a
-report of the wider. -/
 theorem Report.mono {Q : E → T → W → Ev → Prop} (hPQ : ∀ y t w e, P y t w e → Q y t w e)
     (h : F.Report x P w) : F.Report x Q w :=
   let ⟨s, hs, hx, hc⟩ := h
   ⟨s, hs, hx, fun c hcs ↦
     causedClosure_mono (fun _ _ ⟨t, ht, hP⟩ ↦ ⟨t, ht, hPQ _ _ _ _ hP⟩) (hc c hcs)⟩
 
-/-- The causally self-referential report entails the report of the closed complement. -/
 theorem Report.report₃ (h : F.Report x P w) : F.Report₃ x (fun y t ↦ closure (P y t)) w :=
   let ⟨s, hs, hx, hc⟩ := h
   ⟨s, hs, hx, fun c hcs ↦ let ⟨e, _, t, ht, hP⟩ := hc c hcs; ⟨t, ht, e, hP⟩⟩
@@ -442,8 +419,6 @@ def Class.IndicativePossible (c : Class) : Prop :=
 instance : DecidablePred Class.IndicativePossible := fun c ↦ by
   unfold Class.IndicativePossible; infer_instance
 
-/-- For the four classes of sections 2 and 3, the indicative is possible exactly when the pool
-has an acceptable indicative complement for the class. -/
 theorem indicative_possible_iff :
     ∀ c ∈ [Class.want, .hope, .intend, .causative],
       (c.IndicativePossible ↔

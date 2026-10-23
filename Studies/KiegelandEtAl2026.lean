@@ -87,8 +87,6 @@ private theorem eq_and_isPrefix_of_block {xs ys : List Ξ} {r r' : List (Option 
 
 variable {ξ}
 
-/-- The prefix identity: under the completion convention, the spelling of a unit string is a
-prefix of the spelling of another exactly when the unit string is a prefix of it. -/
 theorem encode_isPrefix_encode_iff (hξ : Function.Injective ξ) {us vs : List U} :
     encode ξ us <+: encode ξ vs ↔ us <+: vs := by
   refine ⟨fun h ↦ ?_, fun ⟨t, ht⟩ ↦ ⟨encode ξ t, by rw [← encode_append, ht]⟩⟩
@@ -102,7 +100,6 @@ theorem encode_isPrefix_encode_iff (hξ : Function.Injective ξ) {us vs : List U
       obtain ⟨huv, h⟩ := eq_and_isPrefix_of_block h
       exact List.cons_prefix_cons.2 ⟨hξ huv, ih h⟩
 
-/-- The unit strings whose spelling extends the spelling of `us` are those extending `us`. -/
 theorem encode_preimage_setOf_prefix (hξ : Function.Injective ξ) (us : List U) :
     encode ξ ⁻¹' {l | encode ξ us <+: l} = {l | us <+: l} := by
   ext l
@@ -110,16 +107,12 @@ theorem encode_preimage_setOf_prefix (hξ : Function.Injective ξ) (us : List U)
 
 variable (ν : Measure (List U))
 
-/-- The unit model's conditional prefix probability of a continuation is the spelled model's
-conditional prefix probability of its spelling. -/
 theorem cond_map_encode (hξ : Function.Injective ξ) (cs us : List U) :
     (ν.map (encode ξ))[{l | encode ξ cs ++ encode ξ us <+: l} | {l | encode ξ cs <+: l}] =
       ν[{l | cs ++ us <+: l} | {l | cs <+: l}] := by
   rw [cond_map .of_discrete .of_discrete, Measure.map_apply .of_discrete .of_discrete,
     ← encode_append, encode_preimage_setOf_prefix hξ, encode_preimage_setOf_prefix hξ]
 
-/-- A unit's conditional probability is the conditional probability of its underlying string
-times that of the separator after it. -/
 theorem cond_map_encode_singleton (hξ : Function.Injective ξ) (cs : List U) (u : U) :
     ν[{l | cs ++ [u] <+: l} | {l | cs <+: l}] =
       (ν.map (encode ξ))[{l | encode ξ cs ++ (ξ u).map some <+: l} | {l | encode ξ cs <+: l}] *
@@ -145,8 +138,6 @@ def parse (s : List Char) : List Bool :=
 noncomputable def source : Measure (List Char) :=
   (2⁻¹ : ℝ≥0∞) • Measure.dirac ['a'] + (2⁻¹ : ℝ≥0∞) • Measure.dirac ['a', 'b']
 
-/-- Under the onset convention the prefix identity fails, although the spelling is injective:
-the onset spelling of `a` is a prefix of that of `ab`. -/
 theorem not_forall_encodeOnset_isPrefix_iff :
     ¬ ∀ us vs : List Bool, encodeOnset spell us <+: encodeOnset spell vs ↔ us <+: vs :=
   fun h ↦ absurd ((h [false] [true]).1 (by decide)) (by decide)

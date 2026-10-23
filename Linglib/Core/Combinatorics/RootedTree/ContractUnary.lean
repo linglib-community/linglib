@@ -77,14 +77,11 @@ def numUnary : RoseTree α → ℕ :=
 
 /-! ### Vertex-count conservation -/
 
-/-- The unary tick exactly compensates the root count: at a unary node the root is
-    contracted away and the tick is `1`; otherwise the root survives and the tick is `0`. -/
 theorem numNodes_contractUnary_node :
     (contractUnary (node a cs)).numNodes + (if cs.length = 1 then 1 else 0)
       = 1 + (cs.map fun c => (contractUnary c).numNodes).sum := by
   rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [Nat.add_comm, Function.comp_def]
 
-/-- Each contracted unary vertex removes exactly one vertex. -/
 theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
     (contractUnary t).numNodes + t.numUnary = t.numNodes := by
   induction t with
@@ -95,13 +92,10 @@ theorem numNodes_contractUnary_add_numUnary (t : RoseTree α) :
 
 /-! ### `contractUnary` normalizes: no unary vertices remain -/
 
-/-- Contraction never creates a unary root: a unary root collapses away, and any other
-    root keeps its arity, so the unary count at a node is the children's total. -/
 theorem numUnary_contractUnary_node :
     (contractUnary (node a cs)).numUnary = (cs.map fun c => (contractUnary c).numUnary).sum := by
   rcases cs with _ | ⟨c, _ | ⟨d, rest⟩⟩ <;> simp [Function.comp_def]
 
-/-- After contraction no unary vertices remain. -/
 @[simp] theorem numUnary_contractUnary (t : RoseTree α) : (contractUnary t).numUnary = 0 := by
   induction t with
   | node a cs ih =>
@@ -115,7 +109,6 @@ private theorem eq_zero_of_sum_eq_zero {l : List ℕ} (h : l.sum = 0) : ∀ n �
     rw [List.sum_cons, Nat.add_eq_zero_iff] at h
     exact List.forall_mem_cons.mpr ⟨h.1, ih h.2⟩
 
-/-- The fixed points of `contractUnary` are exactly the unary-free trees. -/
 theorem contractUnary_eq_self_iff {t : RoseTree α} :
     contractUnary t = t ↔ t.numUnary = 0 := by
   refine ⟨fun h => h ▸ numUnary_contractUnary t, fun h => ?_⟩
@@ -128,19 +121,15 @@ theorem contractUnary_eq_self_iff {t : RoseTree α} :
       rw [contractUnary_node_cons₂, List.map_congr_left fun x hx =>
           ih x hx (eq_zero_of_sum_eq_zero h _ (List.mem_map_of_mem hx)), List.map_id']
 
-/-- `contractUnary` is idempotent. -/
 @[simp] theorem contractUnary_idem (t : RoseTree α) :
     contractUnary (contractUnary t) = contractUnary t :=
   contractUnary_eq_self_iff.mpr (numUnary_contractUnary t)
 
 /-! ### `Perm` invariance -/
 
-/-- `numUnary` is a `Perm`-invariant. -/
 theorem numUnary_perm {t s : RoseTree α} (h : Perm t s) : t.numUnary = s.numUnary :=
   fold_perm (fun _ _ _ h' => by rw [h'.length_eq, h'.sum_eq]) h
 
-/-- `contractUnary` respects `Perm`: contraction descends to the nonplanar quotient
-    (`fold_rel` at `S := Perm`; the algebra congruence is the inline match). -/
 theorem Perm.contractUnary {t s : RoseTree α} (h : Perm t s) :
     Perm t.contractUnary s.contractUnary :=
   fold_rel (fun a {L₁ L₂} h' =>
@@ -172,16 +161,13 @@ def contractUnary : UnorderedTree α → UnorderedTree α :=
 @[simp] theorem contractUnary_mk (t : RoseTree α) :
     contractUnary (mk t) = mk t.contractUnary := rfl
 
-/-- Each contracted unary vertex removes exactly one vertex. -/
 theorem numNodes_contractUnary_add_numUnary (t : UnorderedTree α) :
     (contractUnary t).numNodes + t.numUnary = t.numNodes :=
   Quotient.inductionOn t fun p => RoseTree.numNodes_contractUnary_add_numUnary p
 
-/-- After contraction no unary vertices remain. -/
 @[simp] theorem numUnary_contractUnary (t : UnorderedTree α) : (contractUnary t).numUnary = 0 :=
   Quotient.inductionOn t fun p => RoseTree.numUnary_contractUnary p
 
-/-- `contractUnary` is idempotent. -/
 @[simp] theorem contractUnary_idem (t : UnorderedTree α) :
     contractUnary (contractUnary t) = contractUnary t :=
   Quotient.inductionOn t fun p => congrArg mk (RoseTree.contractUnary_idem p)

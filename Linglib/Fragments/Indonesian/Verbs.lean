@@ -213,31 +213,23 @@ def verbs : List Verb :=
 
 /-! ### Derived forms -/
 
-/-- *memecah* and *terpecah*. The root-initial `p` is substituted in the active alone. -/
 theorem pecah_forms :
     pecah.meN = [m, e, m, e, c, a, h] ∧ pecah.ter? = some [t, e, r, p, e, c, a, h] := by
   decide
 
-/-- *menambat* and *bertambat*. Substitution takes the root-initial `t` and leaves the cluster
-inside the root. -/
 theorem tambat_forms :
     tambat.meN = [m, e, n, a, m, b, a, t] ∧
       tambat.ber? = some [b, e, r, t, a, m, b, a, t] := by
   decide
 
-/-- *menyisir*, with the palatal nasal for the root-initial `s` and the second `s` kept. -/
 theorem sisir_meN : sisir.meN = [m, e, ny, i, s, i, r] := by decide
 
-/-- *memasak*, with the prefix nasal lost before a nasal. -/
 theorem masak_meN : masak.meN = [m, e, m, a, s, a, k] := by decide
 
-/-- *mendengar* and *didengar*, with assimilation alone before a voiced stop. -/
 theorem dengar_forms :
     dengar.meN = [m, e, n, d, e, ng, a, r] ∧ dengar.di = [d, i, d, e, ng, a, r] := by
   decide
 
-/-- The active keeps the whole root after a root-initial segment that is not substituted, and
-loses exactly that segment otherwise. -/
 theorem meN_suffix :
     ∀ v ∈ verbs, ∀ x ∈ v.rootSegments.head?,
       if x ∈ substituting then v.rootSegments.tail <:+ v.meN ∧ ¬ v.rootSegments <:+ v.meN

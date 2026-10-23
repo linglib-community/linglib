@@ -95,8 +95,6 @@ theorem bumperCrop_lewis_true :
     .actual ∈ variablyStrictImp cropSim (goodWeather ∪ sunCold) bumperCrop := by
   rw [holds]; decide
 
-/-- The conjunction regimentation is FALSE: "if the sun grew cold, we'd have a bumper crop" is
-    false. This matches the English judgment that S is false. -/
 theorem bumperCrop_conjunction_false :
     ¬ (.actual ∈ variablyStrictImp cropSim goodWeather bumperCrop ∧
        .actual ∈ variablyStrictImp cropSim sunCold bumperCrop) := by
@@ -151,22 +149,14 @@ abbrev foughtAxis : Set SpainWorld := {.axis}
 /-- The worlds where Spain fought with the Allies. -/
 abbrev foughtAllies : Set SpainWorld := {.allies}
 
-/-- Lewis's disjunctive-closure reading is TRUE: the closest (Axis ∨ Allies)-world is the
-    Axis-world. The English sentence "if she had fought on one side or the other, it would
-    have been the Axis" is acceptable. -/
 theorem spain_lewis_true :
     .actual ∈ variablyStrictImp spainSim (foughtAxis ∪ foughtAllies) foughtAxis := by
   rw [holds]; decide
 
-/-- The absurd SDA simplification: "If Spain had fought on the Allied side, Spain would have
-    fought on the Axis side" is false. This is what the SDA schema would derive from
-    `spain_lewis_true`. -/
 theorem allies_implies_axis_false :
     .actual ∉ variablyStrictImp spainSim foughtAllies foughtAxis := by
   rw [holds]; decide
 
-/-- **SDA is not a valid schema for counterfactuals.** The Spain example: (Axis ∨ Allies) > Axis
-    is true, but Allies > Axis is false. -/
 theorem sda_invalid :
     ∃ (W : Type) (ord : W → Preorder W) (A B C : Set W) (w : W),
       w ∈ variablyStrictImp ord (A ∪ B) C ∧ w ∉ variablyStrictImp ord B C :=

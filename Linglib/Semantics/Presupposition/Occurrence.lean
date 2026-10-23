@@ -53,7 +53,6 @@ namespace Occurrence
 
 variable {W α : Type*} (o : Occurrence W α)
 
-/-- Every parsing point consults the sentence's own continuation. -/
 theorem truth_mem_continuations (n : ℕ∞) : o.truth ∈ o.continuations n :=
   o.antitone_continuations le_top (o.continuations_top ▸ rfl)
 
@@ -74,7 +73,6 @@ protected def StablyTransparent : Prop :=
 
 variable {o n C}
 
-/-- Transparency at a parsing point holds at every later one. -/
 theorem Transparent.mono {m : ℕ∞} (h : o.Transparent n C) (hnm : n ≤ m) : o.Transparent m C :=
   Presupposition.Transparent.anti (o.antitone_continuations hnm) h
 
@@ -84,8 +82,6 @@ theorem Satisfied.transparent (h : o.Satisfied n C) : o.Transparent n C :=
 theorem Transparent.stablyTransparent (h : o.Transparent n C) : o.StablyTransparent n C :=
   Presupposition.Transparent.stablyTransparent h
 
-/-- At the last parsing point, where only the sentence itself is consulted, stable transparency is
-transparency. -/
 theorem stablyTransparent_top_iff : o.StablyTransparent ⊤ C ↔ o.Transparent ⊤ C := by
   rw [Occurrence.StablyTransparent, Occurrence.Transparent, o.continuations_top]
   exact stablyTransparent_singleton_iff

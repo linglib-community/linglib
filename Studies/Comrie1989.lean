@@ -139,7 +139,6 @@ private theorem exhaustive_bool : ∀ sa sp ap : Bool, (sa → sp → ap) → (s
     (sp → ap → sa) → ∃ c : CaseSystem, ∀ x y, rel sa sp ap x y ↔ c.Same x y := by
   decide
 
-/-- Every equivalence relation on the primitives is one of the five systems. -/
 theorem caseSystem_of_equivalence (r : Primitive → Primitive → Prop) (h : Equivalence r) :
     ∃ c : CaseSystem, ∀ x y, r x y ↔ c.Same x y := by
   classical
@@ -150,15 +149,10 @@ theorem caseSystem_of_equivalence (r : Primitive → Primitive → Prop) (h : Eq
   refine ⟨c, fun x y ↦ (?_ : r x y ↔ _).trans (hc x y)⟩
   cases x <;> cases y <;> simp [rel, h.refl _, hs .A .S, hs .P .S, hs .P .A]
 
-/-- The systems that discriminate A from P are all but the neutral and the A/P-against-S
-ones. -/
 theorem CaseSystem.discriminates_iff (c : CaseSystem) :
     c.Discriminates ↔ c ≠ .neutral ∧ c ≠ .apAgainstS := by
   cases c <;> decide
 
-/-- The systems discriminating A from P with two cases are the nominative–accusative and the
-ergative–absolutive ones, the widespread systems; the tripartite system marks S apart for no
-discriminatory gain. -/
 theorem CaseSystem.discriminates_two_case_iff (c : CaseSystem) :
     c.Discriminates ∧ c.caseCount = 2 ↔ c = .nominativeAccusative ∨ c = .ergativeAbsolutive := by
   cases c <;> decide
@@ -239,8 +233,6 @@ theorem marking_monotone : ∀ r₁ ∈ acceptable, ∀ m₁ ∈ Marking.ofRow r
         (m₁.role = .P → m₁.marked ≤ m₂.marked) ∧ (m₁.role = .A → m₂.marked ≤ m₁.marked) := by
   decide
 
-/-- The prediction has content in both directions, since some P is outranked by another of its
-language and carries less marking, and some A is outranked and carries more. -/
 theorem marking_contrast : ∀ role : Primitive, role ≠ .S →
     ∃ r₁ ∈ acceptable, ∃ r₂ ∈ acceptable, r₁.language = r₂.language ∧
       ∃ m₁ ∈ Marking.ofRow r₁, ∃ m₂ ∈ Marking.ofRow r₂, m₁.role = role ∧ m₁.AtMost m₂ ∧
@@ -417,9 +409,6 @@ def Grouped.ofRow (row : Datum) : Option Grouped := do
       ("infinitive", .infinitive)],
     ← row.parse? "grouping" [("withA", Grouping.withA), ("withP", .withP), ("neither", .neither)]⟩
 
-/-- The imperative groups S with A in every language with rows, Dyirbal included, the Nivkh
-resultative groups S with P, and yet each bias is a tendency: the English resultative keeps
-its A, and Dyirbal's indirect commands, agent-tied like its imperatives, keep S with P. -/
 theorem bias_rows :
     (∀ row ∈ Examples.all, ∀ g ∈ Grouped.ofRow row, g.test = .imperative →
       g.grouping = .withA) ∧
@@ -429,14 +418,10 @@ theorem bias_rows :
         g.test.bias = some b ∧ g.grouping ≠ b := by
   decide
 
-/-- Coordination, tied to neither prototype property, realizes every grouping, S with A in
-English, S with P in Dyirbal, and neither in Chukchi. -/
 theorem coordination_rows : ∀ gr : Grouping, ∃ row ∈ Examples.all, ∃ g ∈ Grouped.ofRow row,
     g.test = .coordination ∧ g.grouping = gr := by
   decide
 
-/-- A language can be mixed, as Chukchi's coordination restricts nothing while its infinitive
-construction groups S with A. -/
 theorem mixed_rows : ∃ r₁ ∈ Examples.all, ∃ r₂ ∈ Examples.all, r₁.language = r₂.language ∧
     ∃ g₁ ∈ Grouped.ofRow r₁, ∃ g₂ ∈ Grouped.ofRow r₂, g₁.grouping ≠ g₂.grouping := by
   decide

@@ -193,8 +193,6 @@ theorem standard_cons (x : Nucleus) (l : List Nucleus) :
 @[simp] theorem length_standard (l : List Nucleus) : (standard p l).length = l.length := by
   rw [← List.length_map (f := Prod.fst), map_fst_standard]
 
-/-- The realization of the last nuclei of a domain is computed from them alone, since lateral
-relations are discharged from right to left. -/
 theorem standard_drop (k : ℕ) (l : List Nucleus) :
     standard p (l.drop k) = (standard p l).drop k := by
   induction l generalizing k with
@@ -205,7 +203,6 @@ theorem standard_drop (k : ℕ) (l : List Nucleus) :
     | succ k => rw [List.drop_succ_cons, ih, standard_cons, List.drop_succ_cons]
 
 variable (p) in
-/-- The standard realization satisfies the Empty Category Principle. -/
 theorem satisfiesECP_standard (l : List Nucleus) : SatisfiesECP p (standard p l) := by
   induction l with
   | nil => trivial
@@ -238,8 +235,6 @@ theorem governs_cons_iff (h : ¬ Enclosed y r) :
     Governs p ((y, b) :: r) ↔ Acts p ((y, b) :: r) := by
   simp only [Governs, h, false_and, or_false]
 
-/-- The silence of a floating melody is licensed exactly when the nuclei after it govern it or it
-ends a domain whose final nucleus may be empty. -/
 theorem silenceLicensed_of_floating (hx : x.melody = .floating) :
     SilenceLicensed p x r ↔ Governs p r ∨ (r = [] ∧ p.empty = true) := by
   have he : ¬ Enclosed x r := fun h ↦ by rw [h.melody_eq_empty] at hx; cases hx

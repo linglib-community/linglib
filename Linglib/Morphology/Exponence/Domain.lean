@@ -58,17 +58,12 @@ instance : Rule (DomainRule Ctx E) Ctx E := ⟨DomainRule.exponent, fun r c ↦ 
 
 @[simp] theorem rule_exponent : Rule.exponent r = r.exponent := rfl
 
-/-- A rule's domain is the set of contexts it applies in. -/
 theorem coe_dom : (r.dom : Set Ctx) = applySet r := rfl
 
-/-- A domain rule's applicability factors through `A` exactly when its domain is a union of
-fibers of `A`. -/
 theorem factorsThrough_applies_iff {V : Type*} {A : Ctx → V} :
     (Applies r).FactorsThrough A ↔ ∀ c c', A c = A c' → (c ∈ r.dom ↔ c' ∈ r.dom) :=
   ⟨fun h _ _ hA ↦ Iff.of_eq (h hA), fun h _ _ hA ↦ propext (h _ _ hA)⟩
 
-/-- Rules whose overlapping domains are nested satisfy Pāṇinian Determinism, their Elsewhere
-winners at any context forming a chain. -/
 theorem isChain_of_nested {v : RuleSet (DomainRule Ctx E)}
     (h : ∀ r ∈ v, ∀ s ∈ v, ¬ Disjoint r.dom s.dom → r.dom ⊆ s.dom ∨ s.dom ⊆ r.dom) (c : Ctx) :
     IsChain (fun r s ↦ r.dom ≤ s.dom) {r | v.IsElsewhereWinner (·.dom) c r} :=
@@ -84,11 +79,6 @@ instance [Fintype Ctx] {V : Type*} [DecidableEq V] (r : DomainRule Ctx E) (A : C
     Decidable ((Applies r).FactorsThrough A) :=
   decidable_of_iff _ factorsThrough_applies_iff.symm
 
-/-- Without Pāṇinian Determinism, minimal selection realizes ABA. Over feature bundles ordered by
-inclusion, a rule `S` for feature `1`, a rule `R` for feature `0`, and a rule `T` for features
-`1` and `2` each apply on an upper set, and listed in that order they realize `R`, `S`, `R` on the
-chain `{0} ⊆ {0, 1} ⊆ {0, 1, 2}`: at `{0, 1}` the winners `S` and `R` are incomparable, and the
-list order picks `S`. -/
 theorem exists_not_isContiguous_realizeMinimal :
     ∃ v : RuleSet (DomainRule (Finset (Fin 3)) String), v.Antihomophonous ∧
       (∀ r ∈ v, IsUpperSet (r.dom : Set (Finset (Fin 3)))) ∧

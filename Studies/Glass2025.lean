@@ -79,22 +79,17 @@ theorem not_entailsNot_of_compatibleNot :
   ⟨Set.univ, (· = true), ⟨false, Set.mem_univ _, Bool.false_ne_true⟩,
     fun h ↦ h true (Set.mem_univ _) rfl⟩
 
-/-- *know* and *contra* are complementary on a nonempty Common Ground. -/
 theorem not_entailsP_and_entailsNot (hc : c.Nonempty) : ¬ (EntailsP c p ∧ EntailsNot c p) :=
   fun ⟨h, h'⟩ ↦ let ⟨w, hw⟩ := hc; h' w hw (h w hw)
 
-/-- A Common Ground on which `p` is unsettled satisfies neither the *know* nor the *contra*
-requirement, the gap between them. -/
 theorem know_contra_gap :
     ∃ (c : Set Bool) (p : Bool → Prop), ¬ EntailsP c p ∧ ¬ EntailsNot c p :=
   ⟨Set.univ, (· = true), fun h ↦ Bool.false_ne_true (h false (Set.mem_univ _)),
     fun h ↦ h true (Set.mem_univ _) rfl⟩
 
-/-- *know* and yǐwéi are complementary. -/
 theorem not_entailsP_and_compatibleNot : ¬ (EntailsP c p ∧ CompatibleNot c p) :=
   fun ⟨h, h'⟩ ↦ compatibleNot_iff.1 h' h
 
-/-- *know* and yǐwéi exhaust the space, since `p` is Common Ground or it is not. -/
 theorem know_yiwei_exhaustive : EntailsP c p ∨ CompatibleNot c p :=
   (em _).imp_right compatibleNot_iff.2
 
@@ -104,9 +99,6 @@ theorem know_yiwei_exhaustive : EntailsP c p ∨ CompatibleNot c p :=
 if the result is compatible with not-`p`, a postsupposition in the sense of [brasoveanu-2009]. -/
 def yiweiDefined (c belief : Set W) (p : W → Prop) : Prop := CompatibleNot (c ∩ belief) p
 
-/-- A speaker with an opinion about `p`, whose Common Ground entails it or its negation, and who
-signals that the Common Ground is compatible with not-`p`, holds that not-`p`, which is why
-*x yǐwéi p* usually conveys that `p` is false. -/
 theorem entailsNot_of_opinionated (h : EntailsP c p ∨ EntailsNot c p) (hy : CompatibleNot c p) :
     EntailsNot c p :=
   h.resolve_left (compatibleNot_iff.1 hy)
@@ -196,7 +188,6 @@ theorem know_profile : Profile.ofFactivity know.factivity = .factive := rfl
 
 theorem think_profile : Profile.ofFactivity think.factivity = .nonfactive := rfl
 
-/-- The fragment's factivity alone makes yǐwéi nonfactive. -/
 theorem yiwei_profile_ofFactivity : Profile.ofFactivity Mandarin.yiwei.factivity = .nonfactive :=
   rfl
 
@@ -222,7 +213,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- The nine reports of (1), (2), (4), (5) and (7). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The reports are judged acceptable exactly in the states their profiles admit. -/
 theorem rows_admits : ∀ r ∈ rows, r.judgment = .acceptable ↔ r.profile.Admits r.state := by
   decide
 

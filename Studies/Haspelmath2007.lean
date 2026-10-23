@@ -115,8 +115,6 @@ instance : DecidablePred Harmonic
   | .comitative adposition modifier => inferInstanceAs (Decidable (adposition ≠ modifier))
   | .focusParticle _ => inferInstanceAs (Decidable True)
 
-/-- The only source with the pattern co-A B is a prepositional comitative phrase before its
-noun. -/
 theorem pattern_eq_coAB_iff {s : DiachronicSource} :
     s.pattern = (some .before, none) ↔ s = .comitative .before .before := by
   rcases s with ⟨_ | _, _ | _⟩ | (_ | _) <;> decide
@@ -186,8 +184,6 @@ theorem pattern?_isSome :
     ∀ d ∈ Examples.all, (d.feature? "pattern").isSome → (pattern? d).isSome := by
   decide
 
-/-- The pattern co-A B is absent from the chapter's examples, as from Stassen's sample,
-`Stassen2000.coAB_not_mem_patterns`. -/
 theorem pattern?_ne_coAB : ∀ d ∈ Examples.all, pattern? d ≠ some (some .before, none) := by
   decide
 
@@ -288,14 +284,11 @@ def attestations : List Attestation :=
     ⟨ex85b, .plain (co (.suff "sou"))⟩,
     ⟨ex86, .plain (co (.suff "wan"))⟩ ]
 
-/-- The attestations are the rows with a coordinator, in order. -/
 theorem attestations_label : attestations.map (·.datum.source.paperLabel) =
     (Examples.all.filter fun d ↦ (pattern? d).any (·.syndesis ≠ 0)).map
       (·.source.paperLabel) := by
   decide
 
-/-- The patterns agree with the morphology of the coordinators, since a coordinator that
-attaches on a side of its host marks its coordinand on that side. -/
 theorem marking_agrees_with_side : ∀ a ∈ attestations, ∀ p ∈ pattern? a.datum,
     ∀ m ∈ a.coordinators.marking p, ∀ s ∈ m.2.kind.side?, m.1 = some s := by
   decide
@@ -313,8 +306,6 @@ theorem normal_bisyndetic_postpositive : ∀ a ∈ attestations, ¬ a.coordinato
     ∀ p ∈ pattern? a.datum, p.syndesis = 2 → p = (some .after, some .after) := by
   decide
 
-/-- The comitative-sourced coordinators with Fragment entries, Hausa *dà* and Lango *kèdè*, are
-still the comitative prepositions of their languages. -/
 theorem comitative_source_isAlsoComitative :
     Hausa.Coordination.da.IsAlsoComitative Hausa.Adpositions.da.morphs
         Hausa.Adpositions.da.functions ∧
@@ -420,8 +411,6 @@ instance : DecidablePred Contiguous := fun _ ↦ by unfold Contiguous; infer_ins
 *-ıp*, (58): two contiguous ranges. -/
 theorem np_event_contiguous : Contiguous {.np} ∧ Contiguous {.vp, .s} := by decide
 
-/-- Tinrin *mê* coordinates sentences and NPs but not VPs, the counterexample to the sequence
-the chapter notes. -/
 theorem tinrin_not_contiguous : ¬ Contiguous {.s, .np} := by decide
 
 end Haspelmath2007

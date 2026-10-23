@@ -82,7 +82,6 @@ def IsOrdinary (p : PersonalPronoun) : Prop := p.referential = p.categories
 
 instance : Decidable p.IsOrdinary := inferInstanceAs (Decidable (_ = _))
 
-/-- An ordinary pronoun's referential person is its agreement person. -/
 theorem referentialPerson_eq_person (h : p.IsOrdinary) (hne : p.referential.Nonempty) :
     p.referentialPerson = p.person := by
   unfold referentialPerson
@@ -135,7 +134,6 @@ end Table
 /-- A personal pronoun's token is of UD pronoun type `Prs`. -/
 def toWord (p : PersonalPronoun) : Morphology.Word := p.toPronoun.toWord (some .Prs)
 
-/-- A personal pronoun is a pronominal. -/
 @[simp]
 theorem bindingClassOf_toWord (p : PersonalPronoun) :
     Binding.bindingClassOf p.toWord = some .pronoun :=

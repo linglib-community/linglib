@@ -68,14 +68,11 @@ instance : Decidable (p.TransparentTo L) := Option.decidableForallMem _
 
 variable {p}
 
-/-- Upward Entailment. A label containing every head of a label opaque to `p` is opaque to `p`. -/
 theorem TransparentTo.anti (h : L₁ ⊆ L₂) (hL : p.TransparentTo L₂) : p.TransparentTo L₁ :=
   fun c hc hm ↦ hL c hc (h hm)
 
 variable (p)
 
-/-- Upward Entailment. Transparency is antitone in the extension order of clause spines, since a
-spine's label contains the horizon whenever a spine below it does. -/
 theorem transparentTo_label_antitone : Antitone fun s : ClauseSpine ↦ p.TransparentTo s.label :=
   fun _ _ h ht ↦ ht.anti h
 
@@ -96,7 +93,6 @@ def IsVacuous : Prop := ¬ p.TransparentTo (sisterLabel p.probeHead)
 
 instance : Decidable p.IsVacuous := inferInstanceAs (Decidable (¬ _))
 
-/-- A probe without horizon is never vacuous. -/
 @[simp] theorem not_isVacuous_mk_none (head : Cat) : ¬ (Probe.Profile.mk head none).IsVacuous :=
   not_not_intro (transparentTo_mk_none head _)
 

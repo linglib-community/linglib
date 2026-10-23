@@ -45,7 +45,6 @@ theorem isUpperSet_strictUpperBounds (s : Set α) : IsUpperSet (strictUpperBound
 theorem IsGreatest.strictUpperBounds_eq (h : IsGreatest s a) : strictUpperBounds s = Set.Ioi a :=
   Set.ext fun _ ↦ ⟨fun hx ↦ hx h.1, fun hx _ hb ↦ (h.2 hb).trans_lt hx⟩
 
-/-- In a linear order the points strictly above a set are those outside its lower closure. -/
 @[to_dual /-- In a linear order the points strictly below a set are those outside its upper
 closure. -/]
 theorem strictUpperBounds_eq_compl_lowerClosure {α : Type*} [LinearOrder α] (s : Set α) :

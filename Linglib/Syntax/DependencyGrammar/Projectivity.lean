@@ -81,7 +81,6 @@ roots always dominating the other ([kuhlmann-nivre-2006], Definition 8). -/
 def Graph.IsWellNested : Prop :=
   ∀ v w : Fin n, g.Interleave v w → Dominates g v w ∨ Dominates g w v
 
-/-- Projectivity, unfolded: nothing between two dominated positions escapes. -/
 theorem Graph.isProjective_iff :
     g.IsProjective ↔ ∀ v x, Dominates g v x → ∀ y, Dominates g v y →
       ∀ z, x ≤ z → z ≤ y → Dominates g v z := by
@@ -95,8 +94,6 @@ its head. -/
 def Graph.IsArcProjective : Prop :=
   ∀ ⦃h d⦄, g.Adj h d → ∀ w ∈ Set.uIcc h d, Dominates g h w
 
-/-- Under the arc form, everything between a position and one it dominates is dominated
-by it. -/
 theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph n} (hA : g.IsArcProjective)
     {v x : Fin n} (hx : Dominates g v x) {w : Fin n} (hw : w ∈ Set.uIcc v x) :
     Dominates g v w := by
@@ -107,8 +104,6 @@ theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph n} (hA : g.IsArcP
     · exact ih h₁
     · exact hvc.trans (hA hcx w h₂)
 
-/-- The two formulations of projectivity agree: every yield is an interval iff every arc
-spans only positions dominated by its head. -/
 theorem Graph.isProjective_iff_isArcProjective : g.IsProjective ↔ g.IsArcProjective := by
   constructor
   · intro hP h d hd w hw
@@ -127,7 +122,6 @@ instance : Decidable g.IsWellNested := inferInstanceAs (Decidable (∀ _, _))
 
 /-! ### Gap degree -/
 
-/-- The projection is strictly increasing. -/
 theorem Graph.projection_pairwise_lt (v : Fin n) :
     (g.projection v).Pairwise (· < ·) := (List.pairwise_lt_finRange n).filter _
 
@@ -154,8 +148,6 @@ variable {g}
 
 /-! ### Projectivity as gap degree zero -/
 
-/-- Planarity is having no crossings — the binary constraint as the least
-value of the count. -/
 theorem Graph.isPlanar_iff_crossings_eq_zero : g.IsPlanar ↔ g.crossings = 0 := by
   rw [Graph.crossings, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   constructor
@@ -164,8 +156,6 @@ theorem Graph.isPlanar_iff_crossings_eq_zero : g.IsPlanar ↔ g.crossings = 0 :=
   · exact fun h a b c d h1 h2 h3 ↦ h (Finset.mem_univ (a, b, c, d)) ⟨h1, h2, h3⟩
 
 
-/-- A strictly increasing list of naturals has no gaps exactly when its
-members form an order-convex set. -/
 private theorem gapfree_iff_ordConnected {l : List ℕ} (h : l.IsChain (· < ·)) :
     (∀ q ∈ l.zip l.tail, q.2 - q.1 ≤ 1) ↔ Set.OrdConnected {x | x ∈ l} := by
   rw [Set.ordConnected_iff]
@@ -211,8 +201,6 @@ private theorem mem_projection_map {v : Fin n} {k : ℕ} :
     k ∈ (g.projection v).map (·.val) ↔ ∃ x : Fin n, Dominates g v x ∧ x.val = k := by
   simp [List.mem_map]
 
-/-- A position has gap degree zero exactly when what it dominates is
-order-convex. -/
 theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
     g.gapDegreeAt v = 0 ↔ (g.yield v).OrdConnected := by
   have hmap : g.gapDegreeAt v =
@@ -235,8 +223,6 @@ theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
   · rintro h k ⟨x, hx, rfl⟩ m ⟨y, hy, rfl⟩ hxy z hxz hzy
     exact ⟨⟨z, lt_of_le_of_lt hzy y.isLt⟩, h x hx y hy hxy ⟨z, _⟩ hxz hzy, rfl⟩
 
-/-- **Projectivity is gap degree zero**: the parametric constraint at its
-least value is the binary one. -/
 theorem Graph.isProjective_iff_gapDegree_eq_zero :
     g.IsProjective ↔ g.gapDegree = 0 := by
   rw [Graph.gapDegree, ← Nat.bot_eq_zero, Finset.sup_eq_bot_iff]
@@ -244,13 +230,10 @@ theorem Graph.isProjective_iff_gapDegree_eq_zero :
 
 /-! ### The hierarchy on forests -/
 
-/-- In a projective graph the head of an arc dominates every position the arc
-spans, since the head dominates both endpoints and is order-convex. -/
 theorem Graph.IsProjective.dominates_of_mem_uIcc (hP : g.IsProjective)
     {p t x : Fin n} (h : g.Adj p t) (hx : x ∈ Set.uIcc p t) : Dominates g p x :=
   (hP p).uIcc_subset .refl (.single h) hx
 
-/-- Every projective forest is planar. -/
 theorem Graph.IsProjective.isPlanar (hF : g.IsForest) (hP : g.IsProjective) :
     g.IsPlanar := by
   rintro a b c d hL1 hL2 ⟨hac, hcb, hbd⟩
@@ -274,8 +257,6 @@ theorem Graph.IsProjective.isPlanar (hF : g.IsForest) (hP : g.IsProjective) :
   · exact hbd.ne (hF.dominates_antisymm
       (step h1 h2 hba (.inr rfl) hcb.ne') (step h2 h1 hdc (.inl rfl) hbd.ne'))
 
-/-- In a planar graph, a link with one endpoint strictly inside the span of
-another link has its other endpoint inside that span too. -/
 theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
     (hL : g.Linked lo hi) (hL' : g.Linked p q)
     (hlp : lo < p) (hph : p < hi) : q ∈ Set.uIcc lo hi := by
@@ -286,8 +267,6 @@ theorem Graph.IsPlanar.mem_uIcc_of_linked (hPl : g.IsPlanar) {lo hi p q : Fin n}
   · exact hPl hL'.symm hL ⟨h, hlp, hph⟩
   · exact hPl hL hL' ⟨hlp, hph, h⟩
 
-/-- Planarity forbids a link with one endpoint strictly inside another link's
-span and the other endpoint outside it. -/
 theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
     (hL : g.Linked p q) (hL' : g.Linked p' q') (hin : p' ∈ Set.uIcc p q)
     (hne1 : p' ≠ p) (hne2 : p' ≠ q) (hout : q' ∉ Set.uIcc p q) : False := by
@@ -298,8 +277,6 @@ theorem Graph.IsPlanar.no_strict_straddle (hPl : g.IsPlanar) {p q p' q' : Fin n}
   · rw [Set.uIcc_comm] at hout
     exact hout (hPl.mem_uIcc_of_linked hL.symm hL' (by omega) (by omega))
 
-/-- Every planar forest is well-nested: interleaved subtrees would force a link
-below one of them to straddle a link below the other. -/
 theorem Graph.IsPlanar.isWellNested (hF : g.IsForest) (hPl : g.IsPlanar) :
     g.IsWellNested := by
   rintro v w ⟨a, hva, b, hvb, c, hwc, d, hwd, hac, hcb, hbd⟩
@@ -331,11 +308,6 @@ theorem Graph.IsPlanar.isWellNested (hF : g.IsForest) (hPl : g.IsPlanar) :
   · exact main hvb hva (by simp [Set.mem_uIcc]; omega)
       (by simp [Set.mem_uIcc]; omega)
 
-/-- In a planar tree every gap contains the root: if `v` dominates `i` and `j`
-but skips a position between them, the root lies strictly between `i` and
-`j`. So a planar tree rooted at a sentence boundary is projective, which
-is why planarity buys nothing once the root is given a boundary
-position. -/
 theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
     {v i j k : Fin n} (hi : Dominates g v i) (hj : Dominates g v j)
     (hik : i < k) (hkj : k < j) (hk : ¬ Dominates g v k) :
@@ -375,8 +347,6 @@ theorem Graph.IsPlanar.root_mem_gap (hT : g.IsTree) (hPl : g.IsPlanar)
   · exact main hi hj (by simp [Set.mem_uIcc]; omega) (by simp [Set.mem_uIcc]; omega)
   · exact main hj hi (by simp [Set.mem_uIcc]; omega) (by simp [Set.mem_uIcc]; omega)
 
-/-- A planar tree whose root precedes every position is projective: a gap
-would have to contain the root, and nothing lies to its left. -/
 theorem Graph.IsPlanar.isProjective_of_isBot (hT : g.IsTree) (hPl : g.IsPlanar)
     (hr : IsBot g.root) : g.IsProjective := by
   rw [g.isProjective_iff]
@@ -386,7 +356,6 @@ theorem Graph.IsPlanar.isProjective_of_isBot (hT : g.IsTree) (hPl : g.IsPlanar)
   have hzy' : z < y := lt_of_le_of_ne hzy (fun h ↦ hz (h ▸ hy))
   exact absurd (hPl.root_mem_gap hT hx hy hxz' hzy' hz).1 (not_lt.mpr (hr x))
 
-/-- Every projective forest is well-nested, via planarity. -/
 theorem Graph.IsProjective.isWellNested (hF : g.IsForest) (hP : g.IsProjective) :
     g.IsWellNested := (hP.isPlanar hF).isWellNested hF
 

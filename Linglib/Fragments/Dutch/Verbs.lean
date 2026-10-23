@@ -129,15 +129,12 @@ def prefixVerb (p : String) (v : Verb) : Verb :=
   let w : Verb := { v with formation := .prefix p }
   { w with morphs := [.root w.infinitive] }
 
-/-- A particle precedes the *ge-* of the past participle. -/
 theorem pastParticiple_particle (p : String) (v : Verb) :
     (particleVerb p v).pastParticiple = p ++ "ge" ++ v.participle := rfl
 
-/-- A prefix replaces the *ge-* of the past participle. -/
 theorem pastParticiple_prefix (p : String) (v : Verb) :
     (prefixVerb p v).pastParticiple = p ++ v.participle := rfl
 
-/-- A verb formed with a particle is separable and one formed with a prefix is not. -/
 theorem isSeparable_particleVerb_not_prefixVerb (p : String) (v : Verb) :
     (particleVerb p v).IsSeparable ∧ ¬ (prefixVerb p v).IsSeparable :=
   ⟨⟨p, rfl⟩, fun ⟨_, h⟩ ↦ by simp [prefixVerb] at h⟩
@@ -342,32 +339,24 @@ def inventory : List Verb :=
    komen, sterven, groeien, stijgen, blijven, overblijven, duren, staan, bestaan, blazen, werken,
    lopen, wandelen, rollen]
 
-/-- The rule gives every entry on its basic frame an auxiliary its perfect takes. -/
 theorem perfectAuxiliary_mem : ∀ v ∈ inventory, v.perfectAuxiliaries.Nonempty →
     perfectAuxiliary v (v.valency.frames.headD .intransitive) ∈ v.perfectAuxiliaries := by
   decide
 
-/-- Every entry is cited by its infinitive. -/
 theorem form_eq_infinitive : ∀ v ∈ inventory, v.form = v.infinitive := by decide
 
-/-- Every verb of manner of motion selects a directional phrase, so that all of them take *zijn*
-under one that bounds the path. -/
 theorem takesSpatial_of_direction_eq_place :
     ∀ v ∈ inventory, v.direction = some .place → v.TakesSpatial := by
   decide
 
-/-- *opgebeld* and *uitgevoerd*, with the particle before *ge-*. -/
 theorem opgebeld :
     opbellen.pastParticiple = "opgebeld" ∧ uitvoeren.pastParticiple = "uitgevoerd" := by
   decide
 
-/-- *ontdekt* and *verdiend*, without *ge-*. -/
 theorem ontdekt :
     ontdekken.pastParticiple = "ontdekt" ∧ verdienen.pastParticiple = "verdiend" := by
   decide
 
-/-- An entry's participle has *ge-* after its particle or prefix exactly when the entry is
-separable or simplex. -/
 theorem ge_after_formation_iff :
     ∀ v ∈ inventory,
       (['g', 'e'] <+: (v.pastParticiple.toList.drop v.formation.form.length) ↔

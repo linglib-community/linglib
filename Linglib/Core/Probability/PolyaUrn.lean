@@ -86,7 +86,6 @@ def countVec (s : Fin n → α) (c : α) : ℕ :=
 theorem countVec_zero (s : Fin 0 → α) : countVec s = 0 := by
   funext c; simp [countVec]
 
-/-- Prepending a draw increments its colour's count. -/
 theorem countVec_cons (c : α) (s : Fin n → α) :
     countVec (Fin.cons c s : Fin (n + 1) → α) =
       Function.update (countVec s) c (countVec s c + 1) := by
@@ -96,7 +95,6 @@ theorem countVec_cons (c : α) (s : Fin n → α) :
   · simp [add_comm]
   · simp [Function.update_of_ne hd, Ne.symm hd, countVec]
 
-/-- Appending a draw increments its colour's count. -/
 theorem countVec_snoc (c : α) (s : Fin n → α) :
     countVec (Fin.snoc s c : Fin (n + 1) → α) =
       Function.update (countVec s) c (countVec s c + 1) := by
@@ -106,14 +104,12 @@ theorem countVec_snoc (c : α) (s : Fin n → α) :
   · simp
   · simp [Function.update_of_ne hd, Ne.symm hd, countVec]
 
-/-- Permuting a sequence does not change its counts. -/
 theorem countVec_comp_perm (s : Fin n → α) (σ : Equiv.Perm (Fin n)) :
     countVec (s ∘ σ) = countVec s := by
   funext c
   exact card_bij (fun i _ ↦ σ i) (by simp) (fun _ _ _ _ h ↦ σ.injective h)
     (fun j hj ↦ ⟨σ.symm j, by simpa using hj, by simp⟩)
 
-/-- The counts of a sequence of `n` draws add up to `n`. -/
 theorem sum_countVec [Fintype α] (s : Fin n → α) : ∑ c, countVec s c = n := by
   simp only [countVec]
   rw [← card_eq_sum_card_fiberwise (f := s) (t := univ) fun _ _ ↦ mem_univ _, card_univ,
@@ -138,12 +134,9 @@ noncomputable def polyaUrnProb (x : α → ℕ) : ℝ :=
 theorem polyaUrnProb_zero : polyaUrnProb θ 0 = 1 := by
   simp [polyaUrnProb]
 
-/-- The first draw is proportional to the weights. -/
 theorem polyaUrnPredictive_zero (c : α) : polyaUrnPredictive θ 0 c = θ c / ∑ i, θ i := by
   simp [polyaUrnPredictive]
 
-/-- Drawing colour `c` multiplies the probability of the sequence by the probability of drawing
-`c`: the rising-factorial recursion `(a)_{m + 1} = (a)_m (a + m)` at `c` and at the total. -/
 theorem polyaUrnProb_update_succ [DecidableEq α] (x : α → ℕ) (c : α) :
     polyaUrnProb θ (Function.update x c (x c + 1)) =
       polyaUrnProb θ x * polyaUrnPredictive θ x c := by
@@ -160,22 +153,16 @@ theorem polyaUrnProb_update_succ [DecidableEq α] (x : α → ℕ) (c : α) :
   rw [polyaUrnProb, polyaUrnProb, polyaUrnPredictive, hsum, hprod, ascPochhammer_succ_eval,
     div_mul_div_comm, Nat.cast_sum]
 
-/-- Appending colour `c` to a sequence multiplies its probability by the probability of drawing
-`c`. -/
 theorem polyaUrnProb_countVec_snoc [DecidableEq α] (c : α) {n : ℕ} (s : Fin n → α) :
     polyaUrnProb θ (countVec (Fin.snoc s c : Fin (n + 1) → α)) =
       polyaUrnProb θ (countVec s) * polyaUrnPredictive θ (countVec s) c := by
   rw [countVec_snoc, polyaUrnProb_update_succ]
 
-/-- Prepending colour `c` to a sequence multiplies its probability by the probability of drawing
-`c` first given the rest; the counts do not see the order. -/
 theorem polyaUrnProb_countVec_cons [DecidableEq α] (c : α) {n : ℕ} (s : Fin n → α) :
     polyaUrnProb θ (countVec (Fin.cons c s : Fin (n + 1) → α)) =
       polyaUrnProb θ (countVec s) * polyaUrnPredictive θ (countVec s) c := by
   rw [countVec_cons, polyaUrnProb_update_succ]
 
-/-- **Conjugacy.** The probability of counts `x + y` is the probability of `x` times the
-probability of `y` under the urn whose weights are raised by `x`. -/
 theorem polyaUrnProb_add (x y : α → ℕ) :
     polyaUrnProb θ (x + y) = polyaUrnProb θ x * polyaUrnProb (θ + fun c ↦ (x c : ℝ)) y := by
   have hasc (a : ℝ) (m k : ℕ) : (ascPochhammer ℝ (m + k)).eval a =
@@ -185,15 +172,11 @@ theorem polyaUrnProb_add (x y : α → ℕ) :
   simp only [polyaUrnProb, Pi.add_apply, sum_add_distrib, hasc, prod_mul_distrib, Nat.cast_sum]
   rw [div_mul_div_comm]
 
-/-- **Conjugacy of the prediction rule.** After the counts `x`, the urn with weights `θ + x`
-predicts as the original urn does after the counts `x + y`. -/
 theorem polyaUrnPredictive_add (x y : α → ℕ) :
     polyaUrnPredictive (θ + fun c ↦ (x c : ℝ)) y = polyaUrnPredictive θ (x + y) := by
   funext c
   simp only [polyaUrnPredictive, Pi.add_apply, sum_add_distrib, Nat.cast_add, add_assoc]
 
-/-- With at most one draw made, the probability of the counts `x` is the product of the
-first-draw probabilities raised to the counts. -/
 theorem polyaUrnProb_eq_prod_pow_of_sum_le_one {x : α → ℕ} (hx : ∑ c, x c ≤ 1) :
     polyaUrnProb θ x = ∏ c, polyaUrnPredictive θ 0 c ^ x c := by
   have hpow (a : ℝ) {m : ℕ} (hm : m ≤ 1) : (ascPochhammer ℝ m).eval a = a ^ m := by
@@ -219,15 +202,12 @@ theorem polyaUrnPredictive_pos (hθ : ∀ i, 0 < θ i) (x : α → ℕ) (c : α)
   have : Nonempty α := ⟨c⟩
   div_pos (add_pos_of_pos_of_nonneg (hθ c) (Nat.cast_nonneg _)) (sum_add_sum_pos hθ x)
 
-/-- After the same draws, the urn predicts colour `c` less often than `c'` exactly when `c` has
-the smaller weight plus count. -/
 theorem polyaUrnPredictive_lt_polyaUrnPredictive_iff (hθ : ∀ i, 0 < θ i) {x : α → ℕ}
     {c c' : α} :
     polyaUrnPredictive θ x c < polyaUrnPredictive θ x c' ↔ θ c + x c < θ c' + x c' :=
   have : Nonempty α := ⟨c⟩
   div_lt_div_iff_of_pos_right (sum_add_sum_pos hθ x)
 
-/-- The prediction rule is a probability on the colours. -/
 theorem sum_polyaUrnPredictive [Nonempty α] (hθ : ∀ i, 0 < θ i) (x : α → ℕ) :
     ∑ c, polyaUrnPredictive θ x c = 1 := by
   simp only [polyaUrnPredictive, ← sum_div, sum_add_distrib]

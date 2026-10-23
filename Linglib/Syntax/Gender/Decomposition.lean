@@ -83,13 +83,10 @@ theorem Features.neuter_eq : Features.neuter = {.feminine, .neuter} := by decide
 
 theorem Features.feminine_eq : Features.feminine = {.feminine} := by decide
 
-/-- The bundle with the neuter feature alone violates containment. -/
 theorem Features.not_wellFormed_singleton_neuter :
     ¬ IsLowerSet (↑({.neuter} : Features) : Set Feature) := by
   decide
 
-/-- Exactly three bundles pass the containment filter, the three genders. The bound is a claim
-about the presentation and not about gender systems. -/
 theorem Features.card_wellFormed :
     Fintype.card {gf : Features // IsLowerSet (↑gf : Set Feature)} = 3 := by
   rw [Fintype.card_subtype_isLowerSet]; rfl
@@ -107,7 +104,6 @@ def Features.fromGender : Gender → Option Features
   | .masculine => some Features.masculine
   | _          => none
 
-/-- A bundle passing the containment filter survives the round trip through its label. -/
 theorem Features.fromGender_toGender {f : Features} (h : IsLowerSet (↑f : Set Feature)) :
     f.toGender.bind Features.fromGender = some f := by
   revert f; decide

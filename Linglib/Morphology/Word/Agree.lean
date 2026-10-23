@@ -27,8 +27,6 @@ namespace Morphology
 /-- A word bears the agreement dimensions of its features. -/
 instance Word.instHasPhi : HasPhi Word := ⟨fun w ↦ phi w.features⟩
 
-/-- Agreement between words is not transitive: underspecified *they* agrees with both *she* and
-*he*, which disagree. -/
 theorem Word.not_isTrans_agree : ¬ IsTrans Word HasPhi.Agree := fun ⟨h⟩ ↦
   absurd
     (h ⟨"she", .PRON, Features.of (person := some .third) (number := some .singular)

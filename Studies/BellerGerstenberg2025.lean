@@ -102,7 +102,6 @@ theorem caused_implies_affected (cw : CausalWorld) :
     expressionMeaning cw .caused → expressionMeaning cw .affected :=
   enabled_implies_affected cw ∘ caused_implies_enabled cw
 
-/-- "Made no difference" is the negation of "affected". -/
 theorem madeNoDifference_iff_not_affected (cw : CausalWorld) :
     expressionMeaning cw .madeNoDifference ↔ ¬ expressionMeaning cw .affected := by
   simp only [expressionMeaning, not_or]
@@ -116,7 +115,6 @@ def gradedMeaning (cw : CausalWorld) (ν : ℚ) : CausalExpression → ℚ
   | .madeNoDifference =>
     (if cw.whether then 0 else 1) * (if cw.how then ν else 1) * (if cw.sufficient then 0 else 1)
 
-/-- Without softening, the graded semantics is the indicator of the Boolean core. -/
 theorem gradedMeaning_zero (cw : CausalWorld) (u : CausalExpression) :
     gradedMeaning cw 0 u = if expressionMeaning cw u then 1 else 0 := by
   obtain ⟨w, h, s⟩ := cw
@@ -226,14 +224,10 @@ theorem speaker_prefers_enabled {α : ℝ} (hα : 0 < α) :
     (speaker α .s2).real {.affected} < (speaker α .s2).real {.enabled} :=
   speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem hα (by decide) (by decide) (by decide)
 
-/-- Hearing "caused", the pragmatic listener favours Michottean launching over double
-prevention, where the expression is false. -/
 theorem listener_caused_identifies {α : ℝ} (hα : 0 < α) :
     (listener α .caused).real {.s2} < (listener α .caused).real {.s1} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
 
-/-- Hearing "enabled", the pragmatic listener favours double prevention over Michottean
-launching, where the speaker would have said "caused". This is the scalar implicature. -/
 theorem listener_enabled_implicature {α : ℝ} (hα : 0 < α) :
     (listener α .enabled).real {.s1} < (listener α .enabled).real {.s2} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
@@ -246,8 +240,6 @@ theorem listener_affected_prefers_howOnly {α : ℝ} (hα : 0 < α) :
     (listener α .affected).real {.s1} < (listener α .affected).real {.s3} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
 
-/-- Hearing "made no difference", the pragmatic listener favours the no-interaction scenario
-over the how-cause-only one. -/
 theorem listener_noDifference_identifies {α : ℝ} (hα : 0 < α) :
     (listener α .madeNoDifference).real {.s3} < (listener α .madeNoDifference).real {.s4} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
@@ -318,9 +310,6 @@ noncomputable def CausalWorld.ofModel (M : CausalModel U V fun _ ↦ Bool) [M.Is
   how := decide (M.graph.Adj cause effect)
   sufficient := decide (M.solve (Function.update removed cause ↑false) u effect ≠ true)
 
-/-- Michottean launching, in the context where the cause occurs, computes the profile of the
-first scenario, since with no alternative causes to remove sufficient-causation is
-whether-causation. -/
 theorem launch_ofModel :
     CausalWorld.ofModel launch ⊥ ⟨true⟩ .cause .effect = Scenario.s1.aspects := by
   decide

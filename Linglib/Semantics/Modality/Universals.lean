@@ -76,7 +76,6 @@ instance : Decidable (PathConnected m) :=
 
 variable {m}
 
-/-- The universal as the paper states it, closure under recombining two pairs into a third. -/
 theorem forceFlavorIndependent_iff :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m := by
   refine ⟨fun h x hx y hy ↦ ?_, fun h ↦ Finset.subset_product.antisymm fun ⟨a, b⟩ hz ↦ ?_⟩
@@ -90,9 +89,6 @@ theorem forceFlavorIndependent_iff :
 alias ⟨ForceFlavorIndependent.mk_mem, ForceFlavorIndependent.of_mk_mem⟩ :=
   forceFlavorIndependent_iff
 
-/-- A meaning is independent exactly when it contains the rectangle spanned by any two of its
-pairs, the pairs between them for the grid betweenness on the force-flavor space, so
-independence is convexity in that sense. -/
 theorem forceFlavorIndependent_iff_pair_product_subset :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m,
       ({x.1, y.1} : Finset α) ×ˢ ({x.2, y.2} : Finset β) ⊆ m := by
@@ -117,8 +113,6 @@ theorem ForceFlavorIndependent.pathConnected (h : ForceFlavorIndependent m) : Pa
 theorem ForceFlavorIndependent.singleton (x : α × β) : ForceFlavorIndependent {x} := by
   simp [ForceFlavorIndependent]
 
-/-- A modal item varies on a single axis exactly when it does not vary in both force and
-flavor. -/
 theorem ModalItem.singleAxis_meaning_iff {i : ModalItem} :
     SingleAxis i.meaning ↔ ¬ (i.VariesForce ∧ i.VariesFlavor) := by
   unfold SingleAxis ModalItem.VariesForce ModalItem.VariesFlavor ModalItem.forces ModalItem.flavors
@@ -134,11 +128,9 @@ theorem forceFlavorIndependent_product : ForceFlavorIndependent (F ×ˢ Φ) :=
   .of_mk_mem fun _ hx _ hy ↦
     Finset.mk_mem_product (Finset.mem_product.1 hx).1 (Finset.mem_product.1 hy).2
 
-/-- A fixed-force modal ranging over flavors varies on a single axis. -/
 theorem singleAxis_singleton_product (fo : α) : SingleAxis ({fo} ×ˢ Φ) :=
   Or.inl ((Finset.card_le_card Finset.subset_product_image_fst).trans_eq (Finset.card_singleton fo))
 
-/-- A variable-force modal of one flavor varies on a single axis. -/
 theorem singleAxis_product_singleton (fl : β) : SingleAxis (F ×ˢ {fl}) :=
   Or.inr ((Finset.card_le_card Finset.subset_product_image_snd).trans_eq (Finset.card_singleton fl))
 

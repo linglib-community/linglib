@@ -65,7 +65,6 @@ variable {R S E : Type*} [RegisterStructure R S (Flat E)] {u u' v : R} {I J : Se
 /-- The values of `u` in `I`, `uI` ([brasoveanu-2010] (16), (38)); ★ is not a value. -/
 def value (u : R) (I : Set S) : Set E := {x | ∃ i ∈ I, RegisterStructure.val u i = ↑x}
 
-/-- The values of `u` are the defined part of the image of its register. -/
 theorem value_eq_preimage_image (u : R) (I : Set S) :
     value u I = (↑) ⁻¹' (RegisterStructure.val u '' I) :=
   rfl
@@ -104,28 +103,22 @@ theorem value_mono (h : I ⊆ J) : value u I ⊆ value u J :=
 theorem dep_mono (h : I ⊆ J) : dep u v I ⊆ dep u v J :=
   fun _ ⟨i, hi, hu, hv⟩ ↦ ⟨i, h hi, hu, hv⟩
 
-/-- Where every row valuing `u` also values `v`, the values of `u` are the domain of the
-dependency between them. -/
 theorem dom_dep (h : ∀ i ∈ I, RegisterStructure.val u i ≠ ⊥ → RegisterStructure.val v i ≠ ⊥) :
     (dep u v I).dom = value u I := by
   refine Set.ext fun x ↦ ⟨fun ⟨y, hp⟩ ↦ fst_mem_value_of_mem_dep hp, fun ⟨i, hi, hx⟩ ↦ ?_⟩
   obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hx ▸ Flat.coe_ne_bot))
   exact ⟨y, i, hi, hx, hy⟩
 
-/-- Where every row valuing `v` also values `u`, the values of `v` are the codomain of the
-dependency between them. -/
 theorem cod_dep (h : ∀ i ∈ I, RegisterStructure.val v i ≠ ⊥ → RegisterStructure.val u i ≠ ⊥) :
     (dep u v I).cod = value v I := by
   refine Set.ext fun y ↦ ⟨fun ⟨x, hp⟩ ↦ snd_mem_value_of_mem_dep hp, fun ⟨i, hi, hy⟩ ↦ ?_⟩
   obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hy ▸ Flat.coe_ne_bot))
   exact ⟨x, i, hi, hx, hy⟩
 
-/-- On plural partial assignments, a cell is [spector-2026]'s restriction `G_{x=a}`. -/
 theorem cell_eq_restrict {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D) (x : Var)
     (a : D) : cell x a G = G.restrict x a :=
   rfl
 
-/-- On plural partial assignments, a dref's values are `PluralAssign.value`. -/
 theorem value_eq_pluralAssign_value {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D)
     (x : Var) : value x G = G.value x :=
   rfl
@@ -136,12 +129,10 @@ theorem value_eq_pluralAssign_value {Var D : Type*} [DecidableEq Var] (G : Plura
 assignment. -/
 def intro (u : R) : Update (Set S) := cumul (randomAssign u)
 
-/-- Introducing `u` at a one-row state can give it any value. -/
 theorem singleton_mem_intro (i : S) (u : R) (e : Flat E) :
     {i} ~[intro u] {RegisterStructure.extend i u e} :=
   ⟨fun _ hi ↦ ⟨_, rfl, e, by rw [hi]⟩, fun _ hj ↦ ⟨i, rfl, e, by rw [hj]⟩⟩
 
-/-- The lift of an update that fixes `v` leaves `v`'s values alone. -/
 theorem value_eq_of_fixes {D : Update S} (h : Fixes v D) (hIJ : I ~[cumul D] J) :
     value v J = value v I := by
   ext x
@@ -153,7 +144,6 @@ theorem value_eq_of_fixes {D : Update S} (h : Fixes v D) (hIJ : I ~[cumul D] J) 
     obtain ⟨j, hj, hij⟩ := hIJ.1 i hi
     exact ⟨j, hj, (h i j hij).symm ▸ hx⟩
 
-/-- Introducing `u` leaves every other dref's values alone. -/
 theorem value_intro_of_ne (h : v ≠ u) (hIJ : I ~[intro u] J) : value v J = value v I :=
   value_eq_of_fixes (fixes_randomAssign_of_ne h) hIJ
 
@@ -170,8 +160,6 @@ def atom₂ (P : E → E → Prop) (u v : R) : Condition (Set S) :=
 /-- Singular number `sing(u)` ((39)) holds when `u` has exactly one value. -/
 def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
 
-/-- On plural partial assignments, singular number is [spector-2026]'s `atomic(x)`, a single
-value. -/
 theorem mem_sing_iff {Var D : Type*} [DecidableEq Var] {G : PluralAssign Var D} {x : Var} :
     G ∈ sing x ↔ ∃ d, G.value x = {d} :=
   Iff.rfl

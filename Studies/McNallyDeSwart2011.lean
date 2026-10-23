@@ -65,7 +65,6 @@ the complement's entity. -/
 def ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) : Modifier (Set Shade) :=
   Modifier.intersective {x | R x s}
 
-/-- A prepositional modifier restricts a kind to a subkind. -/
 theorem isSubsective_ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) :
     (ppModifier R s).IsSubsective :=
   (Modifier.intersective_isIntersective _).isSubsective
@@ -137,7 +136,6 @@ instance : DecidablePred Form.AdmitsOtherDeterminers :=
   fun _ ↦ inferInstanceAs (Decidable (_ = _))
 instance : DecidablePred Form.AdmitsGeneric := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- The inflected form fails all three diagnostics, and the two nominal forms pass them. -/
 theorem inflected_diagnostics :
     (¬ inflected.AdmitsAdjectivalModification ∧ ¬ inflected.AdmitsOtherDeterminers ∧
       ¬ inflected.AdmitsGeneric) ∧
@@ -145,8 +143,6 @@ theorem inflected_diagnostics :
       f.AdmitsAdjectivalModification ∧ f.AdmitsOtherDeterminers ∧ f.AdmitsGeneric := by
   decide
 
-/-- Among the three forms, failing any diagnostic is being the inflected form: the
-distributional restrictions are the trope semantics. -/
 theorem fails_iff_inflected (f : Form) (hf : f ∈ [uninflected, derived, inflected]) :
     (¬ f.AdmitsAdjectivalModification ∨ ¬ f.AdmitsOtherDeterminers ∨ ¬ f.AdmitsGeneric) ↔
       f = inflected := by

@@ -75,7 +75,6 @@ def StatusSuffix.ofVerbForm : Mayan.VerbForm → StatusSuffix
   | .transitive => .tv
   | .agentFocus => .itv
 
-/-- A form takes the intransitive status suffix exactly when it lacks Set A. -/
 theorem StatusSuffix.ofVerbForm_eq_itv_iff (f : Mayan.VerbForm) :
     ofVerbForm f = .itv ↔ ¬ f.HasSetA := by
   decide +revert
@@ -97,11 +96,9 @@ theorem verbForm_eq_agentFocus_iff (finite : Bool) (extracted : Option ArgumentR
   unfold verbForm
   split_ifs with h <;> simp [h]
 
-/-- A non-finite transitive takes the Agent Focus form whoever its agent is. -/
 theorem verbForm_false (extracted : Option ArgumentRole) (agent : Person) :
     verbForm false extracted agent = .agentFocus := rfl
 
-/-- A speech-act-participant agent never takes the Agent Focus form in a finite clause. -/
 theorem verbForm_true_of_isSAP {agent : Person} (h : agent.IsSAP)
     (extracted : Option ArgumentRole) : verbForm true extracted agent = .transitive := by
   simp [verbForm, h]
@@ -123,14 +120,11 @@ def realize (agent : Person) : Mayan.ExtractionSite → Option (Finset (Reflex M
   | .adjunct .temporal => some ∅
   | .adjunct _ => none
 
-/-- The Agent Focus reflex appears exactly under the extraction of a third-person transitive
-subject. -/
 theorem agentFocus_mem_realize_iff (agent : Person) (s : Mayan.ExtractionSite) :
     (∃ m ∈ realize agent s, Reflex.morpheme .verb (suffixes .agentFocus) ∈ m) ↔
       s = .argument .A ∧ ¬ agent.IsSAP := by
   decide +revert
 
-/-- Every extraction recorded with a speech-act-participant agent is unmarked. -/
 theorem eq_empty_of_mem_realize_of_isSAP {agent : Person} (h : agent.IsSAP)
     {s : Mayan.ExtractionSite} {m : Finset (Reflex Mayan.Host)} (hm : m ∈ realize agent s) :
     m = ∅ := by

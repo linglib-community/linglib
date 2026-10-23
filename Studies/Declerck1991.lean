@@ -79,8 +79,6 @@ def cell : Link → Finset Allen.Relation
   | .posterior => Allen.inv Allen.isBefore
   | .around => Allen.inv Allen.le
 
-/-- Anteriority is the relation of the perfect viewpoint read from the situation's side: the
-situation-TO lies wholly before the TO before it or up to it. -/
 theorem anterior_cell : anterior.cell = Allen.inv Aspect.ViewpointType.perfect.cell := by
   simp [cell, Aspect.ViewpointType.cell]
 
@@ -108,8 +106,6 @@ def chain (f : Form) : List Link :=
   | [] => [.around]
   | ls => ls
 
-/-- The progressive adds no link: a progressive form has the chain of the form it is built
-on. -/
 theorem chain_progressive (f : Form) : chain f.progressive = chain f := by
   simp [chain, Form.progressive, Form.under, Link.ofNonfinite]
 
@@ -161,7 +157,6 @@ example :
       chain conditionalPerfect = [.past, .posterior, .anterior] := by
   decide
 
-/-- Each absolute sector has exactly one absolute tense to locate a situation in it. -/
 theorem absolute_sector_bijective :
     (∀ s : Sector, ∃ f ∈ tenses, IsAbsolute f ∧ sector f = s) ∧
       ∀ f ∈ tenses, ∀ g ∈ tenses, IsAbsolute f → IsAbsolute g → sector f = sector g → f = g := by
@@ -185,22 +180,18 @@ instance (f : Form) (b : NonemptyInterval T) (tos : List (NonemptyInterval T)) :
 
 variable {t₀ : T} {x : NonemptyInterval T}
 
-/-- The preterit places its situation-TO wholly before t₀. -/
 theorem realizes_simplePast_iff : Realizes .simplePast (.pure t₀) [x] ↔ x.snd < t₀ := by
   simp [Realizes, show chain .simplePast = [.past] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.Precedes]
 
-/-- The present perfect places its situation-TO wholly before t₀ or up to it. -/
 theorem realizes_presentPerfect_iff : Realizes .presentPerfect (.pure t₀) [x] ↔ x.snd ≤ t₀ := by
   simp [Realizes, show chain .presentPerfect = [.anterior] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.IsBefore]
 
-/-- The present tense places its situation-TO around t₀. -/
 theorem realizes_simplePresent_iff : Realizes .simplePresent (.pure t₀) [x] ↔ t₀ ∈ x := by
   simp [Realizes, show chain .simplePresent = [.around] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.le_def, NonemptyInterval.mem_def]
 
-/-- The future tense places its situation-TO wholly after t₀ or from it onwards. -/
 theorem realizes_future_iff : Realizes .future (.pure t₀) [x] ↔ t₀ ≤ x.fst := by
   simp [Realizes, show chain .future = [.posterior] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.IsBefore]
@@ -212,8 +203,6 @@ theorem realizes_presentPerfect_not_simplePast (h : x.snd = t₀) :
   rw [realizes_presentPerfect_iff, realizes_simplePast_iff, h]
   exact ⟨le_rfl, lt_irrefl _⟩
 
-/-- Two anteriorities fix the situation against the basic TO: a past perfect places its
-situation-TO wholly before it. -/
 theorem Realizes.precedes_of_pastPerfect {b to₂ ts : NonemptyInterval T}
     (h : Realizes .pastPerfect b [to₂, ts]) : ts.Precedes b := by
   simp only [Realizes, show chain .pastPerfect = [.past, .anterior] from rfl, List.map,

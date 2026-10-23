@@ -112,18 +112,14 @@ def addresseePl : Grade → PersonalPronoun
 def pronouns : Finset PersonalPronoun :=
   {ich, du, sie_formal, er, sie_sg, es, wir, ihr, sie_pl}
 
-/-- *Sie* is the pronoun of the polite grade and of no other, for one addressee or several. -/
 theorem addresseeSg_eq_sie_formal_iff (g : Grade) :
     (addresseeSg g = sie_formal ↔ g = .polite) ∧ (addresseePl g = sie_formal ↔ g = .polite) := by
   cases g <;> decide
 
-/-- The familiar grade distinguishes one addressee from several, and the polite grade does not. -/
 theorem addressee_number :
     addresseeSg .familiar ≠ addresseePl .familiar ∧ addresseeSg .polite = addresseePl .polite := by
   decide
 
-/-- The polite form denotes exactly what the two familiar forms denote between them: *Sie* is
-number-neutral where the familiar level distinguishes *du* from *ihr*. -/
 theorem sie_formal_referential : sie_formal.referential = du.referential ∪ ihr.referential := by
   decide
 
@@ -160,11 +156,9 @@ def was : Case → Finset String
   | .gen => {"wessen"}
   | .dat => ∅
 
-/-- *wer* has a form for every case. -/
 theorem wer_nonempty (c : Case) : (wer c).Nonempty := by
   cases c <;> decide
 
-/-- *was* has a form for every case but the dative. -/
 theorem was_nonempty_iff (c : Case) : (was c).Nonempty ↔ c ≠ .dat := by
   cases c <;> decide
 

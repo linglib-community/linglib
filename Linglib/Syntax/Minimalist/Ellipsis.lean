@@ -93,12 +93,9 @@ instance (s : ClauseSpine) (p : Cat) : ∀ x, Decidable (s.Deletes p x)
   | .head _ => inferInstanceAs (Decidable (_ ∈ _))
   | .adjunct _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The [E]-bearing head survives its own ellipsis, which is the core of X-stranding: a head that
-has moved to the [E]-bearing position is pronounced while its base position is deleted. -/
 theorem not_deletes_head_self (s : ClauseSpine) (p : Cat) : ¬ s.Deletes p (.head p) :=
   s.notMem_below_self p
 
-/-- Sailor's generalization. What [E] on a head deletes, [E] on any head above it deletes too. -/
 theorem Deletes.of_mem_below (h : s.Deletes q x) (hq : q ∈ s.below p) : s.Deletes p x := by
   have hpre := (s.below_prefix hq).subset
   cases x with
@@ -143,8 +140,6 @@ instance : Decidable (e.Spares x) := inferInstanceAs (Decidable (¬ _))
 theorem spares_ePosition (e : Ellipsis s) : e.Spares (.head e.ePosition) :=
   s.not_deletes_head_self _
 
-/-- Sailor's generalization. What an ellipsis spares, every ellipsis whose [E] sits lower
-spares. -/
 theorem Spares.of_mem_below (h : e.Spares x) (hle : e'.ePosition ∈ s.below e.ePosition) :
     e'.Spares x :=
   fun h' ↦ h (h'.of_mem_below hle)
@@ -193,8 +188,6 @@ def Tolerates (e : Ellipsis clausalSpine) (m : Mismatch) : Prop := e.Spares (.he
 instance (e : Ellipsis clausalSpine) (m : Mismatch) : Decidable (e.Tolerates m) :=
   inferInstanceAs (Decidable (e.Spares _))
 
-/-- Sailor's generalization. A mismatch tolerated by an ellipsis is tolerated by every ellipsis
-whose [E] sits lower. -/
 theorem Tolerates.of_mem_below {m : Mismatch} (h : e.Tolerates m)
     (hle : e'.ePosition ∈ clausalSpine.below e.ePosition) : e'.Tolerates m :=
   Spares.of_mem_below h hle
@@ -244,8 +237,6 @@ instance : ∀ (n : NullSite s) (x : ClauseSpine.Site), Decidable (n.Silences x)
 @[simp] theorem silences_elided {e : Ellipsis s} {h : ∃ x, e.Deletes x} {x : ClauseSpine.Site} :
     (elided e h).Silences x ↔ e.Deletes x := .rfl
 
-/-- The head that bears [E] lies outside the site it silences, which is what lets a head moved
-there strand. -/
 theorem not_silences_ePosition {e : Ellipsis s} (h : ∃ x, e.Deletes x) :
     ¬ (elided e h).Silences (.head e.ePosition) :=
   e.spares_ePosition

@@ -78,7 +78,6 @@ pairwise semantically independent. -/
 def WellFormedAlts (alts : Set (Set W)) (integ : Set W) : Prop :=
   CommonIntegrator alts integ ∧ alts.Pairwise SemanticallyIndependent
 
-/-- An alternative subsuming another is not independent of it. -/
 theorem not_semanticallyIndependent_of_subset {a b : Set W} (h : a ⊆ b) :
     ¬ SemanticallyIndependent a b :=
   λ hi => hi.1 h
@@ -129,7 +128,6 @@ def inAddition : Exclusion W where
 
 variable {P A a}
 
-/-- The two exclusions convey the same content: the focused alternative and no other. -/
 theorem instead_content_eq_inAddition_content (ha : a ∈ A) :
     (instead P A a).content = (inAddition P A a).content := by
   ext w
@@ -146,8 +144,6 @@ theorem instead_content_eq_inAddition_content (ha : a ∈ A) :
   · rintro ⟨hwa, hno⟩
     exact ⟨⟨a, ha, hwa, hno⟩, hwa⟩
 
-/-- The *only*-phrase presupposes what the contrastive focus asserts, that the focused
-alternative satisfies the predicate. -/
 theorem presupposition_inAddition_eq_assertion_instead :
     (inAddition P A a).presupposition = (instead P A a).assertion := rfl
 
@@ -197,8 +193,6 @@ def contrastBut (P : α → Set W) (a b : α) : Exclusion W := inAddition P {a, 
 excludes the first alternative instead of the second. -/
 def correctionBut (P : α → Set W) (a b : α) : Exclusion W := instead P {a, b} a
 
-/-- Contrast and correction convey the same assertion, that John did not go to Berlin and did go
-to Paris. -/
 theorem contrastBut_content_eq_correctionBut_content {a b : α} :
     (contrastBut P a b).content = (correctionBut P a b).content :=
   (instead_content_eq_inAddition_content (Set.mem_insert a {b})).symm

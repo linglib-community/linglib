@@ -96,7 +96,6 @@ def moraCount (σ : Syllable) : Nat := σ.morae.length
 /-- The syllable's weight (= its mora count). -/
 abbrev weight (σ : Syllable) : Weight := σ.moraCount
 
-/-- A syllable has at least its nucleus mora. -/
 theorem moraCount_pos (σ : Syllable) : 0 < σ.moraCount := Nat.succ_pos _
 
 /-- The mora count as a positive natural is the weight a `Tone.Registered` word reads. -/
@@ -167,8 +166,6 @@ structure OnsetRime where
 /-- Passing from σ to onset-rime structure, the rime is the moraic spine ([selkirk-1982]). -/
 def Syllable.toOnsetRime (σ : Syllable) : OnsetRime := ⟨σ.onset, σ.morae⟩
 
-/-- By **weight correspondence**, the onset-rime rime's mora count equals σ's weight, so the
-    moraic and onset-rime theories agree on weight ([selkirk-1982]; [hayes-1989]). -/
 theorem Syllable.toOnsetRime_weight (σ : Syllable) :
     σ.toOnsetRime.rime.length = σ.moraCount := rfl
 

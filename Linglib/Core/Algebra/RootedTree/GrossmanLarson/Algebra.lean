@@ -55,7 +55,6 @@ open ConnesKreimer
 
 variable {α : Type*}
 
-/-- Associativity over `ℤ`, from the pairing duality and the separation of points. -/
 private theorem product_assoc_int [DecidableEq α] (x y z : ConnesKreimer ℤ (UnorderedTree α)) :
     product (product x y) z = product x (product y z) :=
   ext_pairing_right fun w ↦ congr($(pairing_product_assoc x y z) w)
@@ -81,7 +80,6 @@ namespace UnorderedTree
 
 variable {α : Type*}
 
-/-- The Grossman–Larson product is associative on basis forests, multiplicities included. -/
 theorem productMultiset_assoc (F G H : Multiset (UnorderedTree α)) :
     (productMultiset F G).bind (productMultiset · H) =
       (productMultiset G H).bind (productMultiset F ·) := by
@@ -99,7 +97,6 @@ open ConnesKreimer
 
 variable {R : Type*} [CommSemiring R] {α : Type*}
 
-/-- The Grossman–Larson product is associative. -/
 theorem product_assoc (x y z : ConnesKreimer R (UnorderedTree α)) :
     product (product x y) z = product x (product y z) := by
   have h₁ (F G : Forest (UnorderedTree α)) :

@@ -129,22 +129,18 @@ theorem themeLast_iff (wH wN : ℝ) (p : Pair) :
 
 /-! ### Independence -/
 
-/-- Heaviness alone places the heavier constituent last. -/
 theorem heaviness_alone {wH : ℝ} (hH : 0 < wH) (p : Pair) :
     harmonyDominates con (weights wH 0) (p, .themeLast) (p, .goalLast) ↔
       p.2.words < p.1.words := by
   rw [themeLast_iff, zero_mul, add_zero, mul_pos_iff_of_pos_left hH, heavyDiff, sub_pos,
     Nat.cast_lt]
 
-/-- Newness alone places the new constituent after the given one. -/
 theorem newness_alone {wN : ℝ} (hN : 0 < wN) (p : Pair) :
     harmonyDominates con (weights 0 wN) (p, .themeLast) (p, .goalLast) ↔
       p.1.discourse = .new ∧ p.2.discourse = .given := by
   rw [themeLast_iff, zero_mul, zero_add, mul_pos_iff_of_pos_left hN, newDiff]
   split_ifs <;> simp_all
 
-/-- Weight effects are graded: lengthening the theme raises the harmony of the theme-last
-order by the heaviness weight per word. -/
 theorem score_diff_add_word (wH wN : ℝ) (th gl : Phrase) :
     harmonyScore con (weights wH wN) (({ th with words := th.words + 1 }, gl), .themeLast) -
         harmonyScore con (weights wH wN) (({ th with words := th.words + 1 }, gl), .goalLast) =
@@ -155,7 +151,6 @@ theorem score_diff_add_word (wH wN : ℝ) (th gl : Phrase) :
   push_cast
   ring
 
-/-- When newness is neutral, heaviness decides; when weight is neutral, newness decides. -/
 theorem one_factor_decides (wH wN : ℝ) (p : Pair) :
     (newDiff p = 0 → (harmonyDominates con (weights wH wN) (p, .themeLast) (p, .goalLast) ↔
       0 < wH * heavyDiff p)) ∧
@@ -175,8 +170,6 @@ def constituents (r : Datum) : Option (ℕ × ℕ) := do
   let b ← r.feature? "second"
   pure (words a, words b)
 
-/-- In every corpus and text example the paper offers as ordered by weight, the heavier
-constituent comes last. -/
 theorem rows_heavier_last :
     ∀ r ∈ Examples.all, r.feature? "exception" = none →
       ∀ c ∈ (constituents r).toList, c.1 ≤ c.2 := by

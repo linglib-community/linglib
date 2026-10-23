@@ -28,7 +28,6 @@ open Finset
 
 variable {α ι : Type*} [DecidableEq α] {x : Flat α} {s : Finset α} {a : α}
 
-/-- Two distinct values have no common flat value but `⊥`. -/
 theorem inf'_coe_eq_bot (hs : s.Nontrivial) : s.inf' hs.nonempty (↑) = (⊥ : Flat α) := by
   obtain ⟨a, ha, b, hb, hab⟩ := hs
   refine le_bot_iff.1 (le_of_le_of_eq (le_inf (inf'_le _ ha) (inf'_le _ hb)) ?_)
@@ -53,7 +52,6 @@ def extensions (x : Flat α) : Finset α := univ.filter (x ≤ ↑·)
 @[simp] theorem extensions_coe (a : α) : (a : Flat α).extensions = {a} := by
   ext; simp [coe_le_iff, eq_comm]
 
-/-- The meet of a nonempty finset of values is the greatest flat value extending to all of them. -/
 theorem le_inf'_iff_subset_extensions (hs : s.Nonempty) :
     x ≤ s.inf' hs (↑) ↔ s ⊆ x.extensions := by
   simp [Finset.le_inf'_iff, subset_iff]

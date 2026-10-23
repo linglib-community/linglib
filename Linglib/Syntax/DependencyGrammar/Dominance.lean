@@ -86,13 +86,10 @@ def Graph.projection (g : Graph n) (v : Fin n) : List (Fin n) :=
 @[simp] theorem Graph.mem_projection : x ∈ g.projection v ↔ Dominates g v x := by
   simp [Graph.projection]
 
-/-- A position in the yield of `v` other than `v` is in the yield of a dependent of `v`. -/
 theorem Graph.exists_adj_mem_yield (hx : x ∈ g.yield v) (hne : x ≠ v) :
     ∃ u, g.Adj v u ∧ x ∈ g.yield u :=
   (ReflTransGen.cases_head hx).resolve_left hne.symm
 
-/-- If `v` dominates a position inside `S` and one outside it, some link below `v` crosses the
-boundary of `S`. -/
 theorem exists_link_across {S : Set (Fin n)} (hx : Dominates g v x) (hy : Dominates g v y)
     (hxS : x ∈ S) (hyS : y ∉ S) :
     ∃ p q, g.Linked p q ∧ Dominates g v p ∧ Dominates g v q ∧ p ∈ S ∧ q ∉ S := by
@@ -102,8 +99,6 @@ theorem exists_link_across {S : Set (Fin n)} (hx : Dominates g v x) (hy : Domina
   · obtain ⟨p, q, hpq, hpS, hqS, hvp, -⟩ := hx.exists_boundary (S := Sᶜ) hv (not_not_intro hxS)
     exact ⟨q, p, .inr hpq, hvp.tail hpq, hvp, not_not.1 hqS, hpS⟩
 
-/-- Positions under a common dominator, neither of which dominates the other, lie under distinct
-dependents of one position, their lowest common governor. -/
 theorem exists_adj_adj_of_not_dominates (hu : Dominates g x u) (hv : Dominates g x v)
     (huv : ¬ Dominates g u v) (hvu : ¬ Dominates g v u) :
     ∃ p u' v', g.Adj p u' ∧ g.Adj p v' ∧ u' ≠ v' ∧ Dominates g u' u ∧ Dominates g v' v := by
@@ -141,7 +136,6 @@ include hF
 
 theorem not_adj_self : ¬ g.Adj v v := fun h ↦ hF.not_dominates_of_adj h .refl
 
-/-- No position of a forest lies on a cycle. -/
 theorem acyclic (v : Fin n) : ¬ TransGen g.Adj v v := fun h ↦
   have ⟨_, hvw, hwv⟩ := TransGen.head'_iff.1 h
   hF.not_dominates_of_adj hvw hwv
@@ -151,24 +145,20 @@ theorem dominates_antisymm (hvw : Dominates g v w) (hwv : Dominates g w v) : v =
   · rfl
   · exact absurd (huw.trans hwv) (hF.not_dominates_of_adj hvu)
 
-/-- A position dominating `w` and distinct from it dominates the head of `w`. -/
 theorem dominates_head (hvw : Dominates g v w) (hne : v ≠ w) (hu : g.Adj u w) :
     Dominates g v u := by
   obtain rfl | ⟨z, hvz, hzw⟩ := ReflTransGen.cases_tail hvw
   · exact absurd rfl hne
   · exact hF.leftUnique_adj hzw hu ▸ hvz
 
-/-- The dominators of a position of a forest form a chain. -/
 theorem dominates_total (hv : Dominates g v x) (hw : Dominates g w x) :
     Dominates g v w ∨ Dominates g w v :=
   ReflTransGen.total_of_left_unique hF.leftUnique_adj hv hw
 
-/-- Positions of a forest neither of which dominates the other have disjoint yields. -/
 theorem disjoint_yield (hvw : ¬ Dominates g v w) (hwv : ¬ Dominates g w v) :
     Disjoint (g.yield v) (g.yield w) :=
   Set.disjoint_left.2 fun _ hv hw ↦ (hF.dominates_total hv hw).elim hvw hwv
 
-/-- Two dependents of one head in a forest have disjoint yields. -/
 theorem disjoint_yield_of_adj (hw : g.Adj v w) (hu : g.Adj v u) (hne : w ≠ u) :
     Disjoint (g.yield w) (g.yield u) :=
   hF.disjoint_yield (fun hd ↦ hF.not_dominates_of_adj hw (hF.dominates_head hd hne hu))
@@ -176,8 +166,6 @@ theorem disjoint_yield_of_adj (hw : g.Adj v w) (hu : g.Adj v u) (hne : w ≠ u) 
 
 end Graph.IsForest
 
-/-- A graph in which enhancement gives a position a second head is not a forest, as when the
-embedded verb of a control or raising structure gains the matrix subject. -/
 theorem Graph.not_isForest_enhance (hv : g.Adj v w) (hx : x ≠ v) (r : UD.DepRel)
     (extra : List (Fin n × Fin n × UD.DepRel)) (hmem : (x, w, r) ∈ extra) :
     ¬ (g.enhance extra).IsForest := fun hF ↦
@@ -207,8 +195,6 @@ theorem Graph.isTree_iff_forall_not_adj_iff :
   · by_contra hno
     exact hw ((h w).1 fun v hv ↦ hno ⟨v, hv⟩)
 
-/-- A graph is a tree when no position has two heads, the root has none, and the root dominates
-every position: a cycle would have to be entered from the root's side through a second head. -/
 theorem Graph.isTree_iff_leftUnique_adj :
     g.IsTree ↔
       Relator.LeftUnique g.Adj ∧ (∀ v, ¬ g.Adj v g.root) ∧ ∀ v, Dominates g g.root v := by

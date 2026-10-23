@@ -22,7 +22,6 @@ variable {α : Type*}
 section PartialOrder
 variable [PartialOrder α] {s : Set α} {x : α}
 
-/-- The minimal elements of the upper closure of `s` are those of `s`. -/
 @[to_dual /-- The maximal elements of the lower closure of `s` are those of `s`. -/]
 theorem minimal_mem_upperClosure_iff : Minimal (· ∈ upperClosure s) x ↔ Minimal (· ∈ s) x := by
   refine ⟨fun h ↦ ?_, fun h ↦ ⟨subset_upperClosure h.prop, fun y ⟨a, has, hay⟩ hyx ↦
@@ -31,7 +30,6 @@ theorem minimal_mem_upperClosure_iff : Minimal (· ∈ upperClosure s) x ↔ Min
   obtain rfl := h.eq_of_ge (subset_upperClosure has) hax
   exact h.mono (fun _ ↦ (subset_upperClosure ·)) has
 
-/-- A set and its upper closure have the same least element. -/
 @[to_dual /-- A set and its lower closure have the same greatest element. -/]
 theorem isLeast_upperClosure_iff : IsLeast (upperClosure s : Set α) x ↔ IsLeast s x := by
   refine ⟨fun ⟨⟨a, has, hax⟩, hx⟩ ↦ ?_, fun ⟨hx, hlb⟩ ↦ ⟨subset_upperClosure hx, ?_⟩⟩

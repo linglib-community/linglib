@@ -60,7 +60,6 @@ def no {α : Type*} : GQ α := fun R S ↦ ∀ x : α, R x → ¬ S x
 `λR λS. ∃x. ∀y. (R(y) ↔ y = x) ∧ S(x)`. -/
 def the {α : Type*} : GQ α := fun R S ↦ ∃ x : α, (∀ y, R y ↔ y = x) ∧ S x
 
-/-- The definite asserts a unique restrictor element and applies the scope to it. -/
 theorem the_iff {α : Type*} (R S : α → Prop) :
     the R S ↔ (∃! x, R x) ∧ ∀ x, R x → S x := by
   constructor
@@ -71,13 +70,10 @@ theorem the_iff {α : Type*} (R S : α → Prop) :
 
 /-! ### The order on predicates -/
 
-/-- *Every* is the pointwise order on predicates, the standard formulation `R ⊆ S`. -/
 theorem every_iff_le {α : Type*} {R S : α → Prop} : every R S ↔ R ≤ S := Iff.rfl
 
-/-- *No* is inclusion in the complement. -/
 theorem no_iff_le_compl {α : Type*} {R S : α → Prop} : no R S ↔ R ≤ Sᶜ := Iff.rfl
 
-/-- *No* is disjointness of restrictor and scope. -/
 theorem no_iff_disjoint {α : Type*} {R S : α → Prop} : no R S ↔ Disjoint R S :=
   no_iff_le_compl.trans le_compl_iff_disjoint_right
 
@@ -131,7 +127,6 @@ theorem conservative_no : Conservative (no : GQ α) := by
 
 /-! ### Quantity invariance -/
 
-/-- `every` is quantity invariant, since a bijection preserves `∀`. -/
 theorem quantityInvariant_every : QuantityInvariant (every : GQ α) := by
   intro A B A' B' f hBij hA hB
   simp only [every]
@@ -153,28 +148,21 @@ theorem scopeAntitone_no : ScopeAntitone (no : GQ α) := by
 theorem scopeMonotone_the : ScopeMonotone (the : GQ α) := by
   intro R S S' hSS' ⟨x, hR, hS⟩; exact ⟨x, hR, hSS' x hS⟩
 
-/-- On a nonempty domain `some` is not scope antitone, since `some ⊤ ⊤` holds and `some ⊤ ⊥`
-fails. -/
 theorem not_scopeAntitone_some [Nonempty α] : ¬ ScopeAntitone (GQ.some : GQ α) := fun h ↦
   let ⟨x⟩ := ‹Nonempty α›
   let ⟨_, _, hb⟩ := h (fun _ ↦ True) (bot_le (a := fun _ ↦ True)) ⟨x, trivial, trivial⟩
   hb
 
-/-- On a nonempty domain `every` is not scope antitone, since `every ⊤ ⊤` holds and `every ⊤ ⊥`
-fails. -/
 theorem not_scopeAntitone_every [Nonempty α] : ¬ ScopeAntitone (every : GQ α) := fun h ↦
   let ⟨x⟩ := ‹Nonempty α›
   h (fun _ ↦ True) (bot_le (a := fun _ ↦ True)) (fun _ _ ↦ trivial) x trivial
 
-/-- `every R` is a monotone quantifier. -/
 theorem monotone_every (R : α → Prop) : Monotone (every R) :=
   scopeMonotone_every R
 
-/-- `some R` is a monotone quantifier. -/
 theorem monotone_some (R : α → Prop) : Monotone (GQ.some R) :=
   scopeMonotone_some R
 
-/-- `no R` is an antitone quantifier. -/
 theorem antitone_no (R : α → Prop) : Antitone (no R) :=
   scopeAntitone_no R
 
@@ -218,19 +206,16 @@ theorem rightAntiAdditive_no : RightAntiAdditive (no : GQ α) := by
 
 /-! ### Duality square (B&C §4.11) -/
 
-/-- Inner negation maps `every` to `no`, since *every ... not* is *no*. -/
 theorem innerNeg_every :
     (innerNeg (every : GQ α) : GQ α) = (no : GQ α) := by
   funext R S; simp only [innerNeg, every, no]
 
-/-- The dual of `every` is `some`. -/
 theorem dual_every :
     (dual (every : GQ α) : GQ α) = (GQ.some : GQ α) := by
   funext R S; simp only [dual, compl_apply, innerNeg, every, GQ.some]
   exact propext ⟨fun h ↦ by push Not at h; exact h,
                  fun ⟨x, hR, hS⟩ h ↦ h x hR hS⟩
 
-/-- The outer negation of `some` is `no`, since negating existence gives universal negation. -/
 theorem compl_some :
     ((GQ.some : GQ α)ᶜ : GQ α) = (no : GQ α) := by
   funext R S; simp only [compl_apply, GQ.some, no]
@@ -242,8 +227,6 @@ theorem compl_some :
 theorem positiveStrong_every : PositiveStrong (every : GQ α) := by
   intro R x hR; exact hR
 
-/-- `(no : GQ α)` is negative strong on non-empty restrictors, `no(A,A)` being false for every
-    non-empty `A`. -/
 theorem no_negative_strong_nonempty (R : α → Prop)
     (hR : ∃ x : α, R x) :
     ¬ (no : GQ α) R R := by
@@ -276,8 +259,6 @@ theorem quasiUniversal_no : QuasiUniversal (no : GQ α) := by
 
 /-! ### Double monotonicity classification ([van-benthem-1984] §4.2) -/
 
-/-- `(every : GQ α)` is restrictor-↓ (anti-persistent), by Zwarts's bridge from reflexivity,
-    transitivity and conservativity to ↓MON. -/
 theorem restrictorAntitone_every : RestrictorAntitone (every : GQ α) :=
   zwarts_refl_trans_restrictorDown _ conservative_every positiveStrong_every
     isTrans_every
@@ -309,7 +290,6 @@ theorem doubleMono_compl_every :
   ⟨RestrictorAntitone.compl _ restrictorAntitone_every,
    ScopeMonotone.compl _ scopeMonotone_every⟩
 
-/-- *Every* is scope-intersective, and so filtrating. -/
 theorem scopeIntersective_every : ScopeIntersective (every : GQ α) :=
   fun _ _ _ hAB hAC x hA ↦ ⟨hAB x hA, hAC x hA⟩
 
@@ -332,30 +312,25 @@ def square (R : α → Prop) : Aristotelian.Square ((α → Prop) → Prop) wher
   I := GQ.some R
   O := (every : GQ α)ᶜ R
 
-/-- The A-form and the O-form are contradictories. -/
 theorem every_contradicts_notEvery (R S : α → Prop) :
     (every : GQ α) R S ↔ ¬ ((every : GQ α)ᶜ R S) := by
   simp [compl_apply, Classical.not_not]
 
-/-- The E-form and the I-form are contradictories. -/
 theorem no_contradicts_some (R S : α → Prop) :
     (no : GQ α) R S ↔ ¬ ((GQ.some : GQ α) R S) := by
   simp only [no, GQ.some]; push Not; rfl
 
-/-- The A-form and the E-form both hold only when the restrictor is empty. -/
 theorem a_e_contrary (R S : α → Prop) :
     (every : GQ α) R S → (no : GQ α) R S →
     ∀ x : α, ¬ R x := by
   intro hA hE x hR; exact hE x hR (hA x hR)
 
-/-- With a non-empty restrictor the four determiners stand in all six relations of the square. -/
 theorem square_relations {R : α → Prop} (hR : ∃ x : α, R x) :
     Aristotelian.SquareRelations (square R) :=
   .of_disjoint (funext fun S ↦ propext <| iff_not_comm.mp (no_contradicts_some R S)) rfl <|
     Pi.disjoint_iff.mpr fun S ↦ Prop.disjoint_iff.mpr fun ⟨hA, hE⟩ ↦
       let ⟨x, hx⟩ := hR; a_e_contrary R S hA hE x hx
 
-/-- The A-form entails the I-form when the restrictor is nonempty. -/
 theorem subalternation_a_i (R S : α → Prop) (hR : ∃ x : α, R x) :
     (every : GQ α) R S → (GQ.some : GQ α) R S :=
   (square_relations hR).subalternAI S
@@ -382,7 +357,6 @@ theorem downNE_no : DownNEMon (no : GQ α) :=
 
 /-! ### Smooth quantifiers ([peters-westerstahl-2006] §5.6) -/
 
-/-- `(GQ.some : GQ α)` is ↓_NE Mon (direct proof). -/
 theorem downNE_some : DownNEMon (GQ.some : GQ α) := by
   intro R S R' _ hKeep ⟨x, hR, hS⟩
   exact ⟨x, hKeep x hR hS, hS⟩
@@ -390,7 +364,6 @@ theorem downNE_some : DownNEMon (GQ.some : GQ α) := by
 theorem smooth_some : Smooth (GQ.some : GQ α) :=
   ⟨downNE_some, RestrictorMonotone.upSE _ restrictorMonotone_some⟩
 
-/-- `(every : GQ α)` is ↑_SE Mon (direct proof). -/
 theorem upSE_every : UpSEMon (every : GQ α) := by
   intro R S R' _ hDiff hQ x hR'
   by_cases hS : S x

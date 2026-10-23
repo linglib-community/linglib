@@ -158,9 +158,6 @@ abbrev system : Bud.System (Color L) :=
 
 variable {hier} {g₀ : List PolarizedRole} {c a b : Color L}
 
-/-- The local conservation law: at every generator, either one child receives the last role of
-the other child's giver grid while the root keeps the residue, or the node is an adjunct
-attachment, or a movement landing under a non-theta root. -/
 theorem IsGen.conservation (h : IsGen (L := L) hier g₀ a b) :
     (∃ ρ g, a.Matches [.down ρ] ∧ b.Matches (upGrid g ++ [.up ρ]) ∧
       (g₀ = upGrid g ∨ g = [])) ∨
@@ -180,8 +177,6 @@ theorem IsGen.eq_nil_of_emptyTree (h : IsGen hier g₀ a b)
   | adjunct => simp at he
   | move => rfl
 
-/-- Movement lands only in non-theta positions: a generator with an empty-tree child has the
-non-theta root. The External/Internal Merge dichotomy of theta theory, at generator level. -/
 theorem ThetaLocal.eq_nontheta (h : ThetaLocal hier c a b)
     (he : a = .emptyTree ∨ b = .emptyTree) : c = .nontheta := by
   obtain ⟨g₀, rfl, hg | hg⟩ := h
@@ -223,9 +218,6 @@ theorem combSpine_nodeLocal {g : List ThetaRole} (hg : g ≠ []) {rest : List Th
     exact ⟨⟨_, rfl, .inl (.discharge g ρ hg hstep (by simp) (by simp))⟩, trivial,
       ih (by simp) (by simpa using hchain)⟩
 
-/-- The bare theta combs are derivable in the complete system, provided the internal roles
-descend the hierarchy: the generator half of [marcolli-larson-2025]'s reduction of the bare
-system to the complete one. -/
 theorem comb_derivable (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : List ThetaRole)
     (hchain : ρIs.IsChain hier) :
     (system (L := L) hier).Derives (.leaf (.free g₀)) (comb g₀ ρE ρIs) :=
@@ -233,8 +225,6 @@ theorem comb_derivable (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : Lis
     ⟨rfl, ⟨_, rfl, .inl (.close g₀ ρE (by simp) (by simp [upGrid]))⟩, trivial,
       combSpine_nodeLocal (by simp) (by simpa using hchain)⟩
 
-/-- The inputs of a comb spine: one receiver per internal role, then the head carrying the
-accumulated grid. -/
 theorem combSpine_inputs (g rest : List ThetaRole) :
     (combSpine (L := L) g rest).inputs =
       rest.map (fun ρ ↦ Color.free [.down ρ]) ++ [.free (upGrid (g ++ rest))] := by
@@ -242,8 +232,6 @@ theorem combSpine_inputs (g rest : List ThetaRole) :
   | nil => simp [combSpine]
   | cons ρ rest ih => simp [combSpine, ih (g ++ [ρ])]
 
-/-- The inputs of a comb: the external receiver, one receiver per internal role, and the head
-carrying the complete grid. -/
 theorem comb_inputs (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : List ThetaRole) :
     (comb (L := L) g₀ ρE ρIs).inputs =
       .free [.down ρE] :: ρIs.map (fun ρ ↦ Color.free [.down ρ]) ++
@@ -271,7 +259,6 @@ def SatisfiesCriterion (x : Bud.Tree (Color L)) : Prop :=
     (↑((x.inputs.eraseIdx i).map Color.receiver?) : Multiset (Option ThetaRole))
       = ↑(g.map some)
 
-/-- The bare theta combs satisfy the theta criterion. -/
 theorem comb_satisfiesCriterion (g₀ : List PolarizedRole) (ρE : ThetaRole)
     (ρIs : List ThetaRole) :
     SatisfiesCriterion (comb (L := L) g₀ ρE ρIs) := by
@@ -318,8 +305,6 @@ section SoleRole
 variable {hier : ThetaRole → ThetaRole → Prop} {g₀ : List PolarizedRole} {c a b : Color L}
   {x : Bud.Tree (Color L)}
 
-/-- A generator passes a sole receiver at its root down to its children, unless the second child
-is a movement landing site. -/
 theorem IsGen.soleReceiver (h : IsGen hier g₀ a b)
     (hc : (Color.free g₀ : Color L).SoleReceiver) (hb : b ≠ .emptyTree) :
     a.SoleReceiver ∧ b.SoleReceiver := by
@@ -339,7 +324,6 @@ theorem ThetaLocal.soleReceiver (h : ThetaLocal hier c a b) (hc : c.SoleReceiver
   obtain ⟨g₀, rfl, hg | hg⟩ := h
   exacts [hg.soleReceiver hc hb, (hg.soleReceiver hc ha).symm]
 
-/-- In a theta structure, only a leaf can carry the empty-tree marker. -/
 theorem out_ne_emptyTree (hx : x.NodeLocal (ThetaLocal hier))
     (hmove : Color.emptyTree ∉ x.inputs) : x.out ≠ .emptyTree := by
   cases x with
@@ -348,9 +332,6 @@ theorem out_ne_emptyTree (hx : x.NodeLocal (ThetaLocal hier))
     obtain ⟨⟨g₀, rfl, -⟩, -⟩ := hx
     simp
 
-/-- The sole-role invariant: in a movement-free derivable structure whose root color receives at
-most one role, every argument position receives at most one role. Adding a dual-receiver
-generator, as *se*-marked parasitic assignment does, is the only way to violate it. -/
 theorem derives_soleReceiver (h : (system (L := L) hier).Derives (.leaf c) x)
     (hroot : c.SoleReceiver) (hmove : Color.emptyTree ∉ x.inputs) :
     ∀ d ∈ x.inputs, d.SoleReceiver := by

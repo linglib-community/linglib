@@ -75,18 +75,12 @@ def compareWith (m : Set D → Set D) (thanClause matrix : Set D) : Prop :=
   m thanClause ⊂ m matrix
 
 omit [LinearOrder D] in
-/-- LITTLE turns a more-comparative into a less-comparative by inverting both intervals compared:
-*less* is *LITTLE -er* ([heim-2006]). -/
 theorem compareWith_little (i j : Set D) : compareWith compl i j ↔ j ⊂ i :=
   compl_lt_compl_iff_lt
 
-/-- A positive extent is never properly included in a negative one, so the literal reading of *Mary
-is taller than John is short* is true on no scale ([kennedy-2001]). -/
 theorem not_crossPolar (a b : D) : ¬ compareWith id (Set.Iic a) (Set.Ioi b) :=
   fun h ↦ Set.not_Iic_subset_Ioi a b h.subset
 
-/-- The other order fails too whenever the scale has no greatest degree: *John is shorter than Mary
-is tall* read literally would need every degree above John's height to lie below Mary's. -/
 theorem not_crossPolar' [NoMaxOrder D] (a b : D) :
     ¬ compareWith id (Set.Ioi a) (Set.Iic b) := by
   intro h
@@ -94,9 +88,6 @@ theorem not_crossPolar' [NoMaxOrder D] (a b : D) :
   exact absurd (h.subset ((le_max_left a b).trans_lt hd))
     (not_le.mpr ((le_max_right a b).trans_lt hd))
 
-/-- Under the reinterpretation, with the negation in the degree phrase, both intervals compared are
-positive extents, and the comparison is the subcomparative of [schwarzschild-wilkinson-2002], the
-ladder's length against the house's height. -/
 theorem metamorphosis_iff_subcomparative (μ₁ μ₂ : Entity → D) (a b : Entity) :
     compareWith compl (Set.Iic (μ₁ a)) (Set.Iic (μ₂ b)) ↔ μ₂ b < μ₁ a :=
   (compareWith_little _ _).trans Set.Iic_ssubset_Iic
@@ -172,28 +163,19 @@ def nomaly : Comparative := ⟨⟨.length, .negative⟩, ⟨.height, .positive�
 the than-clause. -/
 def inverseNomaly : Comparative := ⟨⟨.height, .positive⟩, ⟨.length, .negative⟩⟩
 
-/-- All four configurations are cross-polar, so the acceptability condition applies to each. -/
 theorem configurations_crossPolar :
     anomaly.CrossPolar ∧ reverseAnomaly.CrossPolar ∧ nomaly.CrossPolar ∧
       inverseNomaly.CrossPolar := by decide
 
-/-- The nomaly is reinterpretable and has no deletion competitor. -/
 theorem nomaly_acceptable : nomaly.Acceptable := by decide
 
-/-- The anomaly, its reverse and the inverse nomaly are all blocked. -/
 theorem others_unacceptable :
     ¬ anomaly.Acceptable ∧ ¬ reverseAnomaly.Acceptable ∧ ¬ inverseNomaly.Acceptable := by decide
 
-/-- Neither condition derives the pattern alone: the anomaly is reinterpretable and blocked only by
-its competitor, the inverse nomaly has no competitor and is blocked only by the position of the
-negation. -/
 theorem blocked_for_different_reasons :
     anomaly.Metamorphosis ∧ anomaly.Deletion ∧
       ¬ inverseNomaly.Metamorphosis ∧ ¬ inverseNomaly.Deletion := by decide
 
-/-- Comparative deletion competes only where it is synonymous: on one dimension the reinterpreted
-reading is exactly the plain comparative the deletion form expresses, which is why the anomaly
-loses to it while the nomaly — whose deletion form makes a different claim — does not. -/
 theorem reading_of_deletion {Entity D : Type*} [LinearOrder D] (m : Dimension → Entity → D)
     (c : Comparative) (h : c.Deletion) (subject standard : Entity) :
     c.reading m subject standard ↔
@@ -201,8 +183,6 @@ theorem reading_of_deletion {Entity D : Type*} [LinearOrder D] (m : Dimension �
   have h' : c.matrix.dimension = c.thanClause.dimension := h
   simp only [Comparative.reading, ← h']
 
-/-- With two dimensions the deletion form is not a paraphrase, so it does not compete: a 12-foot
-ladder is shorter than a 15-foot-high house without being shorter than the house is long. -/
 theorem reading_not_synonymous :
     ∃ (m : Dimension → Bool → ℕ) (subject standard : Bool),
       nomaly.reading m subject standard ∧
@@ -230,14 +210,10 @@ the subject. -/
 def negationInside (Q : (W → Prop) → Prop) (μ : W → D) (c : D) : Prop :=
   {d | Q fun v => μ v < d} ⊆ Set.Ioi c
 
-/-- The outside reading holds exactly when the modal claims the standard reaches the subject's
-degree. -/
 theorem negationOutside_iff (hQ : Monotone Q) :
     negationOutside Q μ c ↔ Q fun v => c ≤ μ v := by
   refine ⟨fun h => h le_rfl, fun h d hd => hQ (fun v hv => hd.trans hv) h⟩
 
-/-- The inside reading holds exactly when the modal fails to claim the standard falls below the
-subject's degree. -/
 theorem negationInside_iff (hQ : Monotone Q) :
     negationInside Q μ c ↔ ¬ Q fun v => μ v < c := by
   refine ⟨fun h hc => absurd (h hc) (lt_irrefl c), fun h d hd => ?_⟩
@@ -251,15 +227,10 @@ theorem monotone_diamond (R : SetRel W W) (w : W) :
     Monotone fun p : W → Prop => ◇[R] p w :=
   fun _ _ h hp => hp.imp fun _ hv => ⟨hv.1, h _ hv.2⟩
 
-/-- Under a universal than-clause modal the outside reading is that the standard reaches the
-subject's degree in every accessible world — the minimum required width of the moat exceeds the
-drawbridge's length. -/
 theorem negationOutside_box :
     negationOutside (fun p => □[R] p w) μ c ↔ □[R] (fun v => c ≤ μ v) w :=
   negationOutside_iff (monotone_box R w)
 
-/-- The inside reading of the same sentence is that the standard reaches it in some accessible
-world — the maximum permitted width does. -/
 theorem negationInside_box :
     negationInside (fun p => □[R] p w) μ c ↔ ◇[R] (fun v => c ≤ μ v) w := by
   rw [negationInside_iff (monotone_box R w), not_box]
@@ -277,20 +248,16 @@ theorem negationInside_diamond :
   rw [negationInside_iff (monotone_diamond R w), not_diamond]
   simp [not_lt]
 
-/-- Under a universal modal the outside reading entails the inside one. -/
 theorem outside_entails_inside_box [IsSerial R] :
     negationOutside (fun p => □[R] p w) μ c → negationInside (fun p => □[R] p w) μ c := by
   rw [negationOutside_box, negationInside_box]
   exact box_D
 
-/-- Under an existential modal the entailment runs the other way. -/
 theorem inside_entails_outside_diamond [IsSerial R] :
     negationInside (fun p => ◇[R] p w) μ c → negationOutside (fun p => ◇[R] p w) μ c := by
   rw [negationOutside_diamond, negationInside_diamond]
   exact box_D
 
-/-- The entailment is strict: where a regulation permits moats of 30 and of 40 feet, a 35-foot
-drawbridge is shorter than a permitted moat is wide without being shorter than every one. -/
 theorem inside_not_entails_outside :
     ∃ (μ : Bool → ℕ) (c : ℕ),
       negationInside (fun p => □[.univ] p true) μ c ∧
@@ -301,8 +268,6 @@ theorem inside_not_entails_outside :
   · rw [negationOutside_box]
     exact fun h => absurd (h false trivial) (by decide)
 
-/-- The two readings coincide when the accessible worlds agree on the standard's degree, which is
-why a than-clause without a modal cannot tell the analyses apart. -/
 theorem analyses_agree_of_uniform [IsSerial R] (h : ∀ v u, w ~[R] v → w ~[R] u → μ v = μ u) :
     negationOutside (fun p => □[R] p w) μ c ↔ negationInside (fun p => □[R] p w) μ c := by
   rw [negationOutside_box, negationInside_box]

@@ -54,12 +54,10 @@ def F : FOUR := mk false true
 /-- The glut `⊤`, told both true and false. -/
 def I : FOUR := mk true true
 
-/-- The consistent values of `FOUR` are those other than the glut `I`. -/
 @[simp] theorem isConsistent_iff (x : FOUR) : IsConsistent x ↔ x ≠ I := by
   obtain ⟨a, b⟩ := x
   cases a <;> cases b <;> decide
 
-/-- The exact values of `FOUR` are the classical values `F` and `T` ([fitting-1994]). -/
 @[simp] theorem isExact_iff (x : FOUR) : IsExact x ↔ x = F ∨ x = T := by
   obtain ⟨a, b⟩ := x
   cases a <;> cases b <;> decide
@@ -116,11 +114,9 @@ def orderIsoConsistent : SignType ≃o {x : FOUR | IsConsistent x} where
 theorem isExact_toFour (a : SignType) : IsExact (toFour a) ↔ a ≠ 0 := by
   cases a <;> decide
 
-/-- The knowledge order of `SignType` is `FOUR`'s on Kleene's values. -/
 theorem toFour_kLE_toFour {a b : SignType} : toFour a ≤ₖ toFour b ↔ toFlat a ≤ toFlat b := by
   cases a <;> cases b <;> decide
 
-/-- Strong Kleene negation is `FOUR`'s negation on Kleene's values. -/
 @[simp] theorem toFour_neg (a : SignType) : toFour (-a) = (toFour a)ᶜ := by
   cases a <;> rfl
 

@@ -113,14 +113,10 @@ def domainAlternatives (p : V → Set (NonemptyInterval T)) (τ : NonemptyInterv
     Set (Set V) :=
   (fun τ' ↦ {v | τ' ∈ p v}) '' Set.Iic τ
 
-/-- A claim with the subinterval property entails its domain alternatives, so exhaustifying them
-is vacuous. -/
 theorem exh_domainAlternatives_eq_self (hp : ∀ v, IsLowerSet (p v)) :
     exh (domainAlternatives p τ) {v | τ ∈ p v} = {v | τ ∈ p v} :=
   exh_eq_self <| by rintro _ ⟨τ', hτ', rfl⟩ v hv; exact hp v hτ' hv
 
-/-- When the claim at one span entails it at another exactly when the second contains the first,
-exhaustification negates the claim at every proper subinterval. -/
 theorem mem_exh_domainAlternatives_iff
     (hp : ∀ τ₁ τ₂, {v | τ₁ ∈ p v} ⊆ {v | τ₂ ∈ p v} ↔ τ₁ ≤ τ₂) {v : V} :
     v ∈ exh (domainAlternatives p τ) {v | τ ∈ p v} ↔ τ ∈ p v ∧ ∀ τ' < τ, τ' ∉ p v := by
@@ -149,8 +145,6 @@ section Perfective
 
 variable {V : Type*} {P : V → E → Prop} {τ : NonemptyInterval T}
 
-/-- Where every extension is available and the event domain is rich, the perfective claim at one
-span entails it at another exactly when the second contains the first. -/
 theorem prfv_subset_prfv_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
     {v | τ₁ ∈ PRFV P v} ⊆ {v | τ₂ ∈ PRFV P v} ↔ τ₁ ≤ τ₂ := by
@@ -160,8 +154,6 @@ theorem prfv_subset_prfv_iff (hP : Function.Surjective P)
   obtain ⟨e, he, heq⟩ := h (a := v) ⟨e₀, he₀.le, (congrFun hv e₀).mpr he₀⟩
   exact (congrFun hv e).mp heq ▸ he
 
-/-- Exhaustified, the positive perfective claim requires an event filling the span and none
-inside a proper subinterval. -/
 theorem mem_exh_prfv_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
     v ∈ exh (domainAlternatives (PRFV P) τ) {v | τ ∈ PRFV P v} ↔
@@ -189,7 +181,6 @@ theorem negated_perfective_exh_vacuous :
 
 end Perfective
 
-/-- Negating the extension of the event predicate reaches every extension. -/
 theorem surjective_not : Function.Surjective fun (v : E → Prop) e ↦ ¬ v e :=
   fun u ↦ ⟨fun e ↦ ¬ u e, funext fun _ ↦ propext not_not⟩
 
@@ -214,22 +205,18 @@ def Widened (F : Set (NonemptyInterval T)) (P : W → E → Prop) (w : W)
 
 variable {F : Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {τ τ' : NonemptyInterval T}
 
-/-- Spans ending at the same time are nested. -/
 theorem isChain_rb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | τ.snd = t} := by
   intro τ₁ h₁ τ₂ h₂ _
   rcases le_total τ₂.fst τ₁.fst with h | h
   · exact .inl (le_def.2 ⟨h, (h₁.trans h₂.symm).le⟩)
   · exact .inr (le_def.2 ⟨h, (h₂.trans h₁.symm).le⟩)
 
-/-- Spans starting at the same time are nested. -/
 theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | τ.fst = t} := by
   intro τ₁ h₁ τ₂ h₂ _
   rcases le_total τ₁.snd τ₂.snd with h | h
   · exact .inl (le_def.2 ⟨(h₂.trans h₁.symm).le, h⟩)
   · exact .inr (le_def.2 ⟨(h₁.trans h₂.symm).le, h⟩)
 
-/-- On a chain of spans sharing the fixed boundary, the widened span is the maximal event-free
-one, the boundary stretched until the sentence would become false. -/
 theorem widened_iff_maximal (hF : IsChain (· ≤ ·) F) :
     Widened F P w τ ↔ Maximal (· ∈ F \ PRFV P w) τ := by
   refine ⟨fun h ↦ ⟨h.1, fun _ hτ' _ ↦ h.2 hτ'⟩, fun h ↦ ⟨h.1, fun τ' hτ' ↦ ?_⟩⟩
@@ -237,7 +224,6 @@ theorem widened_iff_maximal (hF : IsChain (· ≤ ·) F) :
   · exact le_rfl
   · exact (hF hτ'.1 h.1.1 hne).elim id (h.2 hτ')
 
-/-- Every wider span with the fixed boundary contains an event. -/
 theorem Widened.prfv (h : Widened F P w τ) (hτ' : τ' ∈ F) (hlt : τ < τ') : τ' ∈ PRFV P w :=
   by_contra fun hfree ↦ hlt.not_ge (h.2 ⟨hτ', hfree⟩)
 
@@ -283,8 +269,6 @@ example : Widened (W := Unit) (E := NonemptyInterval ℤ) {τ | τ.snd = 10}
   · simp at hlt ⊢; omega
   · simp at hrb ⊢; omega
 
-/-- In dense time a perfect time span is widened only past infinitely many events, since with
-finitely many an event-free span can always be stretched a little further. -/
 theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
     (hfin : {e | P w e}.Finite) : ¬ Widened {τ | τ.snd = t} P w τ := fun h ↦ by
   obtain ⟨s, hs, hsF⟩ :
@@ -347,8 +331,6 @@ theorem not_unbounded_subset_iff (hP : Function.Surjective P)
   exact h (a := v) (fun ⟨e, he, heq⟩ ↦ hle ((congrFun hv e).mp heq ▸ he))
     ⟨e₀, he₀.ge, (congrFun hv e₀).mpr he₀⟩
 
-/-- Exhaustifying the not-throughout claim makes the predicate hold throughout every proper
-subinterval. -/
 theorem mem_exh_not_unbounded_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
     v ∈ exh (domainAlternatives (fun v ↦ (UNBOUNDED P v)ᶜ) τ) {v | τ ∉ UNBOUNDED P v} ↔
@@ -356,8 +338,6 @@ theorem mem_exh_not_unbounded_iff (hP : Function.Surjective P)
   (mem_exh_domainAlternatives_iff (p := fun v ↦ (UNBOUNDED P v)ᶜ)
     fun _ _ ↦ not_unbounded_subset_iff hP hrich).trans <| by simp
 
-/-- Where overlapping events sum to an event and the span has an interior point, a predicate
-holding throughout every proper subinterval holds throughout the span. -/
 theorem unbounded_of_forall_lt {v : V}
     (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).Overlaps (Event.τ e₂) →
       ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
@@ -400,16 +380,11 @@ section Ambiguity
 
 variable {P : W → E → Prop} {w : W}
 
-/-- The durative *until* of [giannakidou-2002] accepts a negated perfective, which has the
-subinterval property, in a model with no relevant event at all. -/
 theorem two_until_overgenerates (hP : ∀ e, ¬ P w e) {s t : T} (h : s < t) :
     Giannakidou2002.durativeUntil (fun w ↦ (PRFV P w)ᶜ) w t :=
   (Giannakidou2002.durativeUntil_iff_of_isLowerSet (isLowerSet_compl_prfv P w) t).2
     ⟨⟨(s, t), h.le⟩, fun ⟨e, _, he⟩ ↦ hP e he, h, rfl⟩
 
-/-- *No time but `t₀` is a time of a `P`-event*, the exceptive of *dhen … para mono* with a
-temporal argument on the least-exception semantics, says that `t₀` is the only such time, which
-entails the punctual *until* of [giannakidou-2002], the event at `t₀` included. -/
 theorem eventiveUntil_of_exceptive {t₀ : T}
     (h : Quantifier.Exceptive.IsExceptionSet .no ⊤ (· = t₀) fun t ↦ ∃ e, P w e ∧ t ∈ Event.τ e) :
     Giannakidou2002.eventiveUntil P w t₀ := by
@@ -433,14 +408,12 @@ section RightBoundary
 
 variable {Q : W → E → Prop} {w : W} {e : E}
 
-/-- A perfective argument clause sets the right boundary at the completion of its first event. -/
 theorem isLeast_rightBoundaries_prfv (he : Q w e)
     (hfirst : ∀ e', Q w e' → (Event.τ e).snd ≤ (Event.τ e').snd) :
     IsLeast ((·.snd) '' PRFV Q w) (Event.τ e).snd :=
   ⟨⟨Event.τ e, ⟨e, le_rfl, he⟩, rfl⟩,
     fun _ ⟨_, ⟨e', hle, he'⟩, hτ⟩ ↦ hτ ▸ (hfirst e' he').trans (le_def.1 hle).2⟩
 
-/-- An imperfective argument clause sets the right boundary at the onset of its first event. -/
 theorem isLeast_rightBoundaries_unbounded (he : Q w e)
     (hfirst : ∀ e', Q w e' → (Event.τ e).fst ≤ (Event.τ e').fst) :
     IsLeast ((·.snd) '' UNBOUNDED Q w) (Event.τ e).fst :=

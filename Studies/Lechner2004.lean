@@ -151,8 +151,6 @@ def Resolution.Permits (r : Resolution) (c : CDComparative) : Prop :=
 instance (r : Resolution) (c : CDComparative) : Decidable (r.Permits c) :=
   inferInstanceAs (Decidable (MayCorefer _ _ _ _))
 
-/-- Reconstruction puts the copy of the name in the c-command domain of whatever c-commands the
-deletion site. -/
 theorem cCommands_copy_iff (c : CDComparative) {p : TreePath} (hsp : ¬ c.site ≤ p)
     (hps : ¬ p ≤ c.site) : CCommands c.reconstructed p c.copy ↔ CCommands c.thanClause p c.site :=
   cCommands_replaceAt_of_le (TreePath.le_def.2 (List.prefix_append _ _)) hsp hps
@@ -181,8 +179,6 @@ def cd25 : CDComparative where
 def cdData : List (CDComparative × Datum) :=
   [(cd24, Examples.ch2_24), (cd25, Examples.ch2_25)]
 
-/-- The pronoun is a nominal of each *than*-clause, and the copy of the name is a nominal of the
-reconstructed clause and absent from the unresolved one. -/
 theorem copy_present : ∀ d ∈ cdData, d.1.thanClause.subtreeAt d.1.pronoun.toList = some np ∧
     d.1.reconstructed.subtreeAt d.1.copy.toList = some np ∧
       d.1.thanClause.subtreeAt d.1.copy.toList = none := by
@@ -248,27 +244,20 @@ def direct : Tree Cat Unit :=
     (e.sentence.replaceAt (e.thanPhrase.toList ++ [1]) (Tree.trace 1 .N)).replaceAt
       e.correlate.toList (Tree.trace 0 .N)]]
 
-/-- In the Gapped clause the remnant c-commands a matrix term exactly when the correlate
-c-commands it in the matrix clause (Prediction V). -/
 theorem gapped_cCommands_iff (m : TreePath) :
     CCommands e.gapped e.correlate m ↔ CCommands e.matrix e.correlate m :=
   cCommands_replaceAt_self
 
-/-- A matrix term outside the correlate c-commands a position of the remnant in the Gapped clause
-exactly when it c-commands the correlate in the matrix clause. -/
 theorem cCommands_gapped_iff {m : TreePath} (hcm : ¬ e.correlate ≤ m) (hmc : ¬ m ≤ e.correlate)
     (q : List ℕ) :
     CCommands e.gapped m ⟨e.correlate.toList ++ q⟩ ↔ CCommands e.matrix m e.correlate :=
   cCommands_replaceAt_of_le (TreePath.le_def.2 (List.prefix_append _ _)) hcm hmc
 
-/-- In the sentence a matrix term outside the *than*-phrase c-commands a position of the remnant
-exactly when it c-commands the *than*-phrase, wherever the correlate sits. -/
 theorem cCommands_sentence_iff {m : TreePath} (htm : ¬ e.thanPhrase ≤ m)
     (hmt : ¬ m ≤ e.thanPhrase) (q : List ℕ) :
     CCommands e.sentence m ⟨e.thanPhrase.toList ++ q⟩ ↔ CCommands e.matrix m e.thanPhrase :=
   cCommands_replaceAt_of_le (TreePath.le_def.2 (List.prefix_append _ _)) htm hmt
 
-/-- At the raised position of the direct analysis no term of the clause c-commands the remnant. -/
 theorem not_cCommands_direct (m q : List ℕ) :
     ¬ CCommands e.direct ⟨1 :: 1 :: m⟩ ⟨0 :: q⟩ := by
   rintro ⟨h, -, -⟩
@@ -277,8 +266,6 @@ theorem not_cCommands_direct (m q : List ℕ) :
     lt_of_le_of_ne (TreePath.le_def.2 ⟨1 :: m, rfl⟩) (by simp)
   simpa [TreePath.le_def] using h hb hlt
 
-/-- At the raised position of the direct analysis the remnant c-commands every term of the
-clause. -/
 theorem direct_cCommands (m : List ℕ) : CCommands e.direct ⟨[0]⟩ ⟨1 :: m⟩ := by
   refine ⟨fun ⟨l⟩ _ hx ↦ ?_, by simp [TreePath.le_def], by simp [TreePath.le_def]⟩
   obtain rfl : l = [] := List.length_eq_zero_iff.1 (by simpa using TreePath.length_strictMono hx)
@@ -400,18 +387,15 @@ def phrasalData : List (PhrasalComparative × Datum) :=
   [(ex83, Examples.ch4_83a), (ex85, Examples.ch4_85a), (ex87a, Examples.ch4_87a),
     (ex87b, Examples.ch4_87b), (ex90, Examples.ch4_90a), (ex91, Examples.ch4_91a)]
 
-/-- The matrix term and the remnant's nominal are nominals of every representation. -/
 theorem rep_nominals (a : Analysis) : ∀ d ∈ phrasalData,
     (a.rep d.1).1.subtreeAt (a.rep d.1).2.1.toList = some np ∧
       (a.rep d.1).1.subtreeAt (a.rep d.1).2.2.toList = some np := by
   revert a; decide
 
-/-- Of the three analyses only the Gapped clause predicts the judgments of the minimal pairs. -/
 theorem analysis_fits_iff (a : Analysis) :
     (∀ d ∈ phrasalData, a.Permits d.1 ↔ Attested d.2) ↔ a = .reduction := by
   revert a; decide
 
-/-- Each minimal pair receives a single verdict from each reading of the direct analysis. -/
 theorem direct_same (a : Analysis) (ha : a ≠ .reduction) :
     (a.Permits ex83 ↔ a.Permits ex85) ∧ (a.Permits ex87a ↔ a.Permits ex87b) ∧
       (a.Permits ex90 ↔ a.Permits ex91) := by

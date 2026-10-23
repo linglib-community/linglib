@@ -21,7 +21,6 @@ namespace Multiset
 
 variable {α : Type*} {a b c d : α}
 
-/-- Two two-element multisets are equal exactly when their elements agree in some order. -/
 theorem pair_eq_pair_iff : ({a, b} : Multiset α) = {c, d} ↔ a = c ∧ b = d ∨ a = d ∧ b = c := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · simp only [insert_eq_cons] at h

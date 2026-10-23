@@ -57,8 +57,6 @@ variable {α : Type*} (R : α → α → Prop)
 def forbiddenPairs : Set (Augmented α) :=
   { f | ∃ a b, R a b ∧ f = [some a, some b] }
 
-/-- A list has no forbidden 2-factor iff each adjacent pair is permitted, a boundary `none`
-permitting anything. -/
 private lemma forbiddenPairFree_iff_isChain (xs : Augmented α) :
     (∀ f ∈ List.kFactors 2 xs, f ∉ forbiddenPairs R) ↔
       xs.IsChain (fun u v ↦ ∀ a ∈ u, ∀ b ∈ v, ¬ R a b) := by
@@ -81,8 +79,6 @@ namespace TierStrictlyLocalGrammar
 
 variable {R}
 
-/-- Membership in `ofForbiddenPairs R p` reduces to an `IsChain (¬ R · ·)` check on the
-tier-projected string, the characterization all forbidden-pair constraints inherit. -/
 lemma mem_ofForbiddenPairs_language_iff {p : α → Prop} [DecidablePred p] {w : List α} :
     w ∈ (ofForbiddenPairs R p).language ↔
       (w.filter (fun x ↦ decide (p x))).IsChain (fun a b ↦ ¬ R a b) := by
@@ -97,7 +93,6 @@ instance decidableMemOfForbiddenPairsLanguage [DecidableRel R] (p : α → Prop)
     [DecidablePred p] (w : List α) : Decidable (w ∈ (ofForbiddenPairs R p).language) :=
   decidable_of_iff _ mem_ofForbiddenPairs_language_iff.symm
 
-/-- The language depends only on which symbols project and on `R` between on-tier symbols. -/
 lemma ofForbiddenPairs_language_congr {R' : α → α → Prop} {p p' : α → Prop} [DecidablePred p]
     [DecidablePred p'] (hp : ∀ a, p a ↔ p' a) (hR : ∀ a b, p a → p b → (R a b ↔ R' a b)) :
     (ofForbiddenPairs R p).language = (ofForbiddenPairs R' p').language := by
@@ -108,8 +103,6 @@ lemma ofForbiddenPairs_language_congr {R' : α → α → Prop} {p p' : α → P
     (hp a).2 (of_decide_eq_true (List.mem_filter.1 ha).2)
   exact List.IsChain.iff_of_mem_imp fun a b ha hb ↦ (hR a b (h a ha) (h b hb)).not
 
-/-- A word's image under a letter-to-letter map is in a forbidden-pair language exactly when
-the word is in the language of the grammar with the pulled-back relation and tier. -/
 lemma map_mem_ofForbiddenPairs_language_iff {β : Type*} {f : β → α} {p : α → Prop}
     [DecidablePred p] {w : List β} :
     w.map f ∈ (ofForbiddenPairs R p).language ↔
@@ -117,8 +110,6 @@ lemma map_mem_ofForbiddenPairs_language_iff {β : Type*} {f : β → α} {p : α
   simp only [mem_ofForbiddenPairs_language_iff, List.filter_map, List.isChain_map]
   rfl
 
-/-- Forbidding `R₁ ∨ R₂` on one tier is conjunctive membership in the two languages.
-Cross-tier composition needs MTSL, not this constructor. -/
 lemma mem_ofForbiddenPairs_or_language_iff {R₁ R₂ : α → α → Prop} {p : α → Prop}
     [DecidablePred p] {w : List α} :
     w ∈ (ofForbiddenPairs (fun a b ↦ R₁ a b ∨ R₂ a b) p).language ↔

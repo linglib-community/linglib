@@ -51,8 +51,6 @@ variable {W : Type*} [DecidableEq W] {A : Type*} {M : KripkeModel W A} {α β φ
 
 /-! ### Free-choice facts -/
 
-/-- An enriched split disjunction has a non-empty witness subteam for each disjunct,
-`[α ∨ β]⁺ ⊨ (α ∧ NE) ∨ (β ∧ NE)`. -/
 theorem witnesses_of_enrich_disj (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.disj α β)) t) :
     (∃ s ⊆ t, s.Nonempty ∧ support M α s) ∧ ∃ s ⊆ t, s.Nonempty ∧ support M β s :=
@@ -81,8 +79,6 @@ theorem narrowScopeFC (hα : α.NEFree) (hβ : β.NEFree)
     have ⟨_, hs, _, h'⟩ := h.1 w hw
     (witnesses_of_enrich_disj hα hβ h').2.imp fun _ ⟨hs', hne, h₂⟩ ↦ ⟨hs'.trans hs, hne, h₂⟩⟩
 
-/-- Free choice for logically dependent disjuncts is
-`[◇(α ∨ (α ∧ β))]⁺ ⊨ ◇α ∧ ◇(α ∧ β)`. -/
 theorem narrowScopeFC_dependent (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.poss (.disj α (.conj α β)))) t) :
     support M (.poss α) t ∧ support M (.poss (.conj α β)) t :=
@@ -243,7 +239,6 @@ theorem not_negativeFC_poss :
   fun h ↦ (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {{.a}})
     (h fig5b {{.a}} (by decide))
 
-/-- The `□` form follows from the `◇` form by the duality `□φ := ¬◇¬φ`. -/
 theorem not_negativeFC_nec :
     ¬ ConsequencePlus (W := Finset Atom) (Atom := Atom)
       (.neg (Formula.nec (.conj (.atom .a) (.atom .b)))) (.neg (Formula.nec (.atom .a))) :=
@@ -259,7 +254,6 @@ The BSML∅ failure of Positive FC is Figure 4(a); the BSML⁺ failures are refu
 Figure 5(a)'s frame and on the arrow-free model, the failing contrapositive being that
 of Positive FC itself. -/
 
-/-- Positive FC holds in BSML⁺, `◇(α ∨ β) ⊨⁺ ◇α ∧ ◇β`. -/
 theorem positiveFC_plus :
     ConsequencePlus (W := W) (.poss (.disj α β)) (.conj (.poss α) (.poss β)) :=
   fun M t h ↦
@@ -276,18 +270,14 @@ theorem not_positiveFC :
   fun h ↦ (by decide : ¬ support fig4a (.conj mayA mayB) {{.a, .b}})
     (h fig4a {{.a, .b}} (by decide))
 
-/-- Addition holds in BSML∅, `α ⊨ α ∨ β` for `NE`-free `α β`, classically. -/
 theorem addition (hα : α.NEFree) (hβ : β.NEFree) : Consequence (W := W) α (.disj α β) :=
   (consequence_iff_classicalConsequence (ψ := .disj α β) hα ⟨hα, hβ⟩).mpr fun _ _ ↦ Or.inl
 
-/-- Addition fails in BSML⁺, `[a]⁺ ⊭ [a ∨ b]⁺` at the zero-model `{w_a}`, where `b` has
-no non-empty witness. -/
 theorem not_addition_plus :
     ¬ ConsequencePlus (W := Finset Atom) (.atom Atom.a) aOrB :=
   fun h ↦ (by decide : ¬ support propositional (enrich aOrB) {{.a}})
     (h propositional {{.a}} (by decide))
 
-/-- Contraposition holds in BSML∅, so for `NE`-free `α β`, `α ⊨ β` gives `¬β ⊨ ¬α`. -/
 theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : Consequence (W := W) α β) :
     Consequence (W := W) (.neg β) (.neg α) :=
   (consequence_iff_classicalConsequence (φ := .neg β) (ψ := .neg α) hβ hα).mpr

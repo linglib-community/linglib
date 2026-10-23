@@ -102,16 +102,12 @@ section Speaker
 
 variable (μ : Measure Meaning) (α : ℝ) (g : Goal) (m : Meaning)
 
-/-- The speaker's odds for naming the animal rather than the person are the `α`-th power of the
-odds of the goal's feature value under the animal against the person. -/
 theorem speaker_odds :
     S1 μ α (m, g) {.animal} * (L0 μ).map (project g) .person {project g m} ^ α
       = S1 μ α (m, g) {.person} * (L0 μ).map (project g) .animal {project g m} ^ α := by
   simp only [S1, speaker_dirac_zero_apply_singleton, ENNReal.div_eq_inv_mul]
   ring
 
-/-- The speaker names the animal rather than the person exactly when the goal's feature value
-is likelier under the animal than under the person. -/
 theorem names_animal_iff (hα : 0 < α)
     (h0 : ∃ u, (L0 μ).map (project g) u {project g m} ≠ 0) :
     (S1 μ α (m, g)).real {.person} < (S1 μ α (m, g)).real {.animal}
@@ -128,9 +124,6 @@ section Listener
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
   [IsProbabilityMeasure ν] (α : ℝ)
 
-/-- A meaning is a possible interpretation of an utterance exactly when it has positive prior
-and some goal of positive prior has a feature value it shares with a meaning of positive prior
-bearing the category named. -/
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Cat) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ g, ν {g} ≠ 0 ∧ ∃ m', g.feature m'.2 = g.feature m.2 ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
@@ -140,17 +133,12 @@ theorem listener_ne_zero_iff (hα : 0 < α) (u : Cat) (m : Meaning) :
   simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
   rfl
 
-/-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's
-name whenever some animal of positive prior shares the value. -/
 theorem nonliteral (hα : 0 < α) {g : Goal} (hν : ν {g} ≠ 0) {f f' : Features}
     (hp : μ {(.person, f)} ≠ 0) (ha : μ {(.animal, f')} ≠ 0)
     (hf : g.feature f' = g.feature f) : (L1 μ ν α .animal).fst {(.person, f)} ≠ 0 := by
   rw [listener_ne_zero_iff μ ν α hα]
   exact ⟨hp, g, hν, (.animal, f'), hf, rfl, ha⟩
 
-/-- Category inference is prior-driven. Since a goal projects the category away, the speaker
-behaves alike at the animal and at the person with the same features, and the listener's
-posterior odds between the two categories at a feature vector are their prior odds. -/
 theorem category_odds (u : Cat) (c c' : Cat) (f : Features) :
     (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} := by
   have key : ∀ c, (L1 μ ν α u).fst {(c, f)}

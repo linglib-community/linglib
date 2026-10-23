@@ -165,7 +165,6 @@ theorem rejects_imprecise_iff (r : Range) (hr : r ≠ .exact) :
       cell_grain_200 10 (by norm_num) (by norm_num)]
     norm_num
 
-/-- At the exact reading every screen but the matching one is rejected. -/
 theorem exact_rejects {γ : ℝ → Set ℝ} (hγ : IsGranularity γ 0) (f : ScreenFit) :
     ((screens f).displayed.toRat : ℝ) ∉ γ uttered ↔ f ≠ .match := by
   rw [isGranularity_zero_iff] at hγ
@@ -223,7 +222,6 @@ structure PrejudicialAccount (r : Task → Option Persona → ℝ) : Prop where
   charitable : ∀ c, r .truthValueJudgment c < r .coveredScreen c
   offset : r .truthValueJudgment (some .nerdy) = r .truthValueJudgment none
 
-/-- The account's offset matches the Nerdy result of the Truth Value Judgment task. -/
 theorem PrejudicialAccount.sign_nerdy {r : Task → Option Persona → ℝ} (h : PrejudicialAccount r) :
     SignType.sign (r .truthValueJudgment (some .nerdy) - r .truthValueJudgment none) =
       observed .truthValueJudgment .nerdy := by

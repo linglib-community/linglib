@@ -101,15 +101,12 @@ theorem triviality_tests :
 def forceTable : List (String × ModalForce) :=
   [("strong", .necessity), ("weak", .weakNecessity)]
 
-/-- Every row of a test names the forces of its conjuncts, or the force of its modal. -/
 theorem tests_covered :
     ∀ e ∈ Examples.all, (e.feature? "test").isSome →
       ((e.feature? "first").isSome ∧ (e.feature? "second").isSome) ∨
         (e.feature? "force").isSome := by
   decide
 
-/-- In the chapter's English tests, `□₁ φ ∧ ¬□₂ φ` is contradictory and `□₁ φ ∧ □₂ φ` trivial
-exactly when the first force entails the second. -/
 theorem tests_predicted :
     ∀ e ∈ Examples.all, ∀ f₁ ∈ e.parse? "first" forceTable, ∀ f₂ ∈ e.parse? "second" forceTable,
       (e.feature? "test" = some "contradiction" →
@@ -141,20 +138,17 @@ theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
 
 /-! ### Scope under negation ((18)–(20)) -/
 
-/-- A weak necessity modal never takes scope below negation. -/
 theorem weak_never_narrow :
     ∀ e ∈ Examples.all, e.feature? "force" = some "weak" → (e.feature? "negation").isSome →
       e.readings.lookup "wide" = some .acceptable ∧
         e.readings.lookup "narrow" = some .unacceptable := by
   decide
 
-/-- *Must* takes scope below negation exactly when the negation is in a higher clause. -/
 theorem must_narrow_iff_higher :
     ∀ e ∈ Examples.all, e.feature? "modal" = some "must" →
       (e.readings.lookup "narrow" = some .acceptable ↔ e.feature? "negation" = some "higher") := by
   decide
 
-/-- *Have to* takes scope below negation wherever the negation is. -/
 theorem haveTo_always_narrow :
     ∀ e ∈ Examples.all, e.feature? "modal" = some "have to" →
       e.readings.lookup "narrow" = some .acceptable ∧
@@ -239,15 +233,12 @@ def forceKey : ModalForce → String
   | .necessity => "necessity"
   | .weakNecessity => "weak necessity"
 
-/-- The projections license exactly the readings the chapter's table records. -/
 theorem projection_matches_table :
     ∀ e ∈ Examples.all, e.feature? "table" = some "true" →
       ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
         (e.readings.lookup (forceKey r) = some .acceptable ↔ Available π env r) := by
   decide
 
-/-- Every reading the chapter's examples record is licensed, and every reading they exclude is
-not. -/
 theorem readings_licensed :
     ∀ e ∈ Examples.all, ∀ π ∈ projection? e, ∀ env ∈ environment? e, ∀ r,
       (e.readings.lookup (forceKey r) = some .acceptable → Available π env r) ∧

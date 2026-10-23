@@ -105,8 +105,6 @@ def resolve [DecidableEq F] (a b : Bundle F) : Finset F := a.interp ∩ b.interp
 theorem resolve_comm [DecidableEq F] (a b : Bundle F) : resolve a b = resolve b a :=
   Finset.inter_comm _ _
 
-/-- Single-feature conjuncts resolve to their feature exactly when both are interpretable and
-match. -/
 @[simp] theorem resolve_single [DecidableEq F] (x y : F) (i j : Interpretability) :
     resolve (.single x i) (.single y j) =
       if i = .interpretable ∧ j = .interpretable ∧ x = y then {x} else ∅ := by

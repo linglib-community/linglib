@@ -70,10 +70,8 @@ def singular : Gender.Value → Target → String
 /-- The plural form of each agreeing determiner is its common-gender singular form. -/
 def plural (t : Target) : String := singular .common t
 
-/-- Each agreeing determiner distinguishes the two genders in the singular. -/
 theorem injective_singular : ∀ t, Function.Injective (singular · t) := by decide
 
-/-- The two genders are faithful to the determiner evidence. -/
 theorem faithful : Gender.Faithful singular :=
   fun _ _ h ↦ injective_singular .definite (congrFun h _)
 
@@ -106,7 +104,6 @@ def die : DemonstrativeDeterminer :=
 def inventory : Determiner.Inventory :=
   [.article de, .article een, .quantifier geen, .demonstrative deze, .demonstrative die]
 
-/-- A single article marks both strengths. -/
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Dutch.Determiners

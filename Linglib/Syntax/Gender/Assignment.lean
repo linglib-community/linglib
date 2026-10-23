@@ -71,7 +71,6 @@ theorem assign_of_semantic {n : N} {g : G} (h : A.semantic (sem n) = some g) :
     A.assign sem form n = g := by
   simp [assign, h]
 
-/-- Semantic rules take precedence, so a formal rule decides only in the semantic residue. -/
 theorem assign_of_formal {n : N} {g : G} (h₁ : A.semantic (sem n) = none)
     (h₂ : A.formal (form n) = some g) : A.assign sem form n = g := by
   simp [assign, h₁, h₂]
@@ -83,7 +82,6 @@ theorem assign_of_residue {n : N} (h₁ : A.semantic (sem n) = none)
 /-- A strict semantic system has no formal rules. -/
 def IsStrictSemantic : Prop := ∀ x, A.formal x = none
 
-/-- In a strict semantic system the gender is a function of the meaning. -/
 theorem factorsThrough_of_isStrictSemantic (h : A.IsStrictSemantic) :
     Function.FactorsThrough (A.assign sem form) sem := fun a b hab ↦ by
   simp [assign, hab, h (form a), h (form b)]
@@ -91,7 +89,6 @@ theorem factorsThrough_of_isStrictSemantic (h : A.IsStrictSemantic) :
 /-- The semantic core is the set of nouns the semantic rules cover. -/
 def semanticCore : Set N := {n | (A.semantic (sem n)).isSome}
 
-/-- On the semantic core, gender is a function of meaning. -/
 theorem factorsThrough_semanticCore :
     ((A.semanticCore sem).domRestrict (A.assign sem form)).FactorsThrough
       ((A.semanticCore sem).domRestrict sem) :=

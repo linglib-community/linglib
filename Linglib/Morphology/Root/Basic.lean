@@ -60,14 +60,11 @@ def Morph.IsTypicalAffixIn (m : Morph)
     (words freeForms : List (List Morph)) : Prop :=
   ∀ w ∈ words, m ∈ w → ¬ IsPrimaryWord freeForms w
 
-/-- A singleton word is primary when the free-form inventory has no empty
-form. -/
 theorem isPrimaryWord_singleton {freeForms : List (List Morph)}
     (h : [] ∉ freeForms) (m : Morph) : IsPrimaryWord freeForms [m] := by
   intro f hf hlen _
   exact h (List.length_eq_zero_iff.mp (Nat.lt_one_iff.mp hlen) ▸ hf)
 
-/-- A free morpheme standing as a word is a morphological core. -/
 theorem Morph.isCoreIn_of_free_word {words freeForms : List (List Morph)}
     {m : Morph} (hw : [m] ∈ words) (h : [] ∉ freeForms) :
     m.IsCoreIn words freeForms :=
@@ -79,8 +76,6 @@ def IsMinimalFreeForm (freeForms : List (List Morph)) (w : List Morph) : Prop :=
   w ∈ freeForms ∧ ∀ ps : List (List Morph), ps.flatten = w → [] ∉ ps →
     (∀ p ∈ ps, p ∈ freeForms) → ps.length ≤ 1
 
-/-- A free form none of whose proper nonempty beginnings is free is a minimum free form, since
-the first of two or more parts would be one. -/
 theorem isMinimalFreeForm_of_take {freeForms : List (List Morph)} {w : List Morph}
     (hw : w ∈ freeForms) (h : ∀ i < w.length, 0 < i → w.take i ∉ freeForms) :
     IsMinimalFreeForm freeForms w := by

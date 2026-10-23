@@ -77,8 +77,6 @@ def interp : Grammatical → State W → (W → Prop) → Prop
 @[simp] theorem interp_subjunctive (c : State W) (p : W → Prop) :
     subjunctive.interp c p = c.toExpState.localNecessity p := rfl
 
-/-- When the context set has a world at least as normal as all of its worlds, each mood is the
-necessity modal of the component it targets. -/
 theorem interp_iff_boxOn {c : State W} {b : W} (hb : b ∈ c.info)
     (hleast : ∀ v ∈ c.info, c.order.le b v) (m : Grammatical) (p : W → Prop) :
     m.interp c p ↔ m.target.boxOn c p := by
@@ -91,14 +89,11 @@ world. -/
 def sepState : State Bool :=
   State.ofExpState ⟨Set.univ, ExpState.crit State.sepProp⟩
 
-/-- The indicative and the subjunctive disagree on some state and proposition. -/
 theorem indicative_ne_subjunctive :
     ∃ (c : State Bool) (p : Bool → Prop), subjunctive.interp c p ∧ ¬ indicative.interp c p :=
   ⟨sepState, State.sepProp, ⟨false, Set.mem_univ false, fun _ _ hv ↦ hv rfl⟩,
     fun h ↦ Bool.noConfusion (h true (Set.mem_univ true))⟩
 
-/-- Targeting is injective. Portner states his principles from the modal to the form; the
-injectivity here reflects only that two moods go to two components. -/
 theorem target_injective : Function.Injective target := by decide
 
 end Grammatical

@@ -134,13 +134,11 @@ theorem graft_node {l r : Tree Ω} :
       if i < l.numInputs then node c (l.graft i s) r
       else node c l (r.graft (i - l.numInputs) s) := rfl
 
-/-- Grafting at a leaf of the matching color keeps the output color. -/
 theorem out_graft (h : x.inputs[i]? = some s.out) : (x.graft i s).out = x.out := by
   cases x with
   | leaf c => cases i <;> simp_all
   | node c l r => rw [graft_node]; split <;> rfl
 
-/-- Grafting the unit of the color at a leaf changes nothing. -/
 theorem graft_unit (h : x.inputs[i]? = some d) : x.graft i (leaf d) = x := by
   induction x generalizing i with
   | leaf c => cases i <;> simp_all
@@ -151,7 +149,6 @@ theorem graft_unit (h : x.inputs[i]? = some d) : x.graft i (leaf d) = x := by
     · rw [ihl h]
     · rw [ihr h]
 
-/-- Grafting splices the inserted tree's inputs into the host's. -/
 theorem inputs_graft (h : i < x.numInputs) :
     (x.graft i s).inputs = x.inputs.take i ++ s.inputs ++ x.inputs.drop (i + 1) := by
   induction x generalizing i with
@@ -175,7 +172,6 @@ theorem numInputs_graft (h : i < x.numInputs) :
   simp only [length_inputs, List.length_append, List.length_take, List.length_drop] at this
   omega
 
-/-- The inserted tree's inputs sit at offset `i` in the grafted tree. -/
 theorem getElem?_inputs_graft (hi : i < x.numInputs) (hj : j < s.numInputs) :
     (x.graft i s).inputs[i + j]? = s.inputs[j]? := by
   have hA : (x.inputs.take i).length = i := by simp; omega
@@ -183,8 +179,6 @@ theorem getElem?_inputs_graft (hi : i < x.numInputs) (hj : j < s.numInputs) :
     List.getElem?_append_right (by omega), hA]
   simp
 
-/-- Nested insertions compose, the inner index offset by the outer insertion point: the
-sequential composition axiom of the operad. -/
 theorem graft_graft (hi : i < x.numInputs) (hj : j < s.numInputs) :
     (x.graft i s).graft (i + j) y = x.graft i (s.graft j y) := by
   induction x generalizing i with
@@ -213,8 +207,6 @@ variable {P : Ω → Ω → Ω → Prop}
 
 @[simp] theorem nodeLocal_cherry : (cherry c a b).NodeLocal P ↔ P c a b := by simp [cherry]
 
-/-- Grafting at a leaf of the matching color preserves vertex-local properties: the host's
-vertices keep their colors, and the inserted tree brings its own. -/
 theorem NodeLocal.graft (hx : x.NodeLocal P) (hs : s.NodeLocal P)
     (h : x.inputs[i]? = some s.out) : (x.graft i s).NodeLocal P := by
   induction x generalizing i with
@@ -275,7 +267,6 @@ theorem Produces.graft (hi : i < x.numInputs) (h : B.Produces s t) :
   have hj' := lt_numInputs_of_getElem?_eq_some hj
   exact ⟨r, hr, i + j, (getElem?_inputs_graft hi hj').trans hj, graft_graft hi hj'⟩
 
-/-- A derivation can be carried out at any input of a larger tree. -/
 theorem Derives.graft (hi : i < x.numInputs) (h : B.Derives s t) :
     B.Derives (x.graft i s) (x.graft i t) :=
   h.lift (x.graft i) fun _ _ ↦ Produces.graft hi
@@ -288,13 +279,10 @@ theorem Derives.node_right (h : B.Derives s t) (c : Ω) (l : Tree Ω) :
     B.Derives (node c l s) (node c l t) := by
   simpa [graft_node] using h.graft (x := node c l (leaf c)) (i := l.numInputs) (by simp)
 
-/-- Joining derivable trees under a cherry rule is derivable: derivability is closed under the
-colored Merge of the cherry's colors. -/
 theorem Derives.node (hc : cherry c a b ∈ B.rules) (hl : B.Derives (leaf a) l)
     (hr : B.Derives (leaf b) r) : B.Derives (leaf c) (node c l r) :=
   (Produces.single ⟨_, hc, 0, rfl, rfl⟩).trans ((hl.node_left c _).trans (hr.node_right c l))
 
-/-- A vertex-local property of every rule is preserved by derivation. -/
 theorem Derives.nodeLocal (hB : ∀ r ∈ B.rules, r.NodeLocal P) (h : B.Derives x y)
     (hx : x.NodeLocal P) : y.NodeLocal P := by
   induction h with
@@ -303,8 +291,6 @@ theorem Derives.nodeLocal (hB : ∀ r ∈ B.rules, r.NodeLocal P) (h : B.Derives
     obtain ⟨r, hr, i, hi, rfl⟩ := hyz
     exact ih.graft (hB r hr) hi
 
-/-- A tree whose every vertex and its children form a cherry rule is derivable from the unit of
-its root color. -/
 theorem derives_leaf_of_nodeLocal (hP : ∀ c a b, P c a b → cherry c a b ∈ B.rules)
     (h : x.NodeLocal P) : B.Derives (leaf x.out) x := by
   induction x with
@@ -323,8 +309,6 @@ variable {R : Ω → Ω → Ω → Prop} {I T : Set Ω}
 @[simp] theorem cherry_mem_ofCherries : cherry c a b ∈ (ofCherries R I T).rules ↔ R c a b := by
   simp [ofCherries]
 
-/-- In a system of cherries, a tree is derivable from the unit of `c` iff `c` is its root color
-and every vertex and its two children form a rule. -/
 theorem ofCherries_derives_leaf_iff :
     (ofCherries R I T).Derives (leaf c) x ↔ x.out = c ∧ x.NodeLocal R := by
   refine ⟨fun h ↦ ⟨h.out_eq, h.nodeLocal ?_ trivial⟩, ?_⟩
@@ -333,8 +317,6 @@ theorem ofCherries_derives_leaf_iff :
   · rintro ⟨rfl, h⟩
     exact derives_leaf_of_nodeLocal (fun _ _ _ ↦ cherry_mem_ofCherries.2) h
 
-/-- The language of a system of cherries consists of the trees with an initial root color,
-terminal input colors, and every vertex and its two children forming a rule. -/
 theorem mem_ofCherries_language_iff :
     x ∈ (ofCherries R I T).language ↔ x.out ∈ I ∧ x.NodeLocal R ∧ ∀ c ∈ x.inputs, c ∈ T := by
   change _ ∧ _ ∧ _ ↔ _

@@ -92,12 +92,10 @@ def WillDeletion [LinearOrder T] (f : Perspective T) : Prop :=
 instance [LinearOrder T] (f : Perspective T) : Decidable (WillDeletion f) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A false past is a false use of the past cell. -/
 theorem falsePast_not_trueUse [LinearOrder T] {f : Perspective T} (h : FalsePast f) :
     ¬ IsTrueUse ⟦past⟧ f := by
   simp only [IsTrueUse, compare_mem_past, h.1, lt_self_iff_false, not_false_eq_true]
 
-/-- Will-deletion is a false use of the present cell. -/
 theorem willDeletion_not_trueUse [LinearOrder T] {f : Perspective T} (h : WillDeletion f) :
     ¬ IsTrueUse ⟦present⟧ f := by
   simp only [IsTrueUse, compare_mem_present]; exact h.1.ne'
@@ -165,7 +163,6 @@ def rows : List Judgment :=
   , ⟨simplePresent, frame 1 True, .acceptable⟩
   , ⟨simplePresent, frame 1 False, .ungrammatical⟩ ]
 
-/-- The account predicts exactly the acceptable judgments. -/
 theorem predicted_iff_acceptable : ∀ j ∈ rows, j.Predicted ↔ j.verdict = .acceptable := by
   decide
 

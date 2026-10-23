@@ -180,7 +180,6 @@ def depViolFeature (P : α → Prop) [DecidablePred P] (c : Correspondence Role 
     ℕ :=
   ((c.edge r₁ r₂).filter fun p => ¬ P (c.form r₁)[p.1] ∧ P (c.form r₂)[p.2]).card
 
-/-- `maxViolFeature` is positive exactly when some correspondent loses `P`. -/
 theorem maxViolFeature_pos_iff (P : α → Prop) [DecidablePred P] (c : Correspondence Role α)
     (r₁ r₂ : Role) :
     0 < maxViolFeature P c r₁ r₂ ↔
@@ -475,14 +474,12 @@ theorem card_image_snd_diagonal (m n : ℕ) :
   rintro ⟨a, b⟩ hab ⟨a', b'⟩ hab' (rfl : b = b')
   exact Prod.ext (Fin.ext (((mem_diagonal _ _).1 hab).trans ((mem_diagonal _ _).1 hab').symm)) rfl
 
-/-- On a diagonal edge MAX counts the truncated tail of the first string. -/
 theorem maxViol_of_diagonal
     (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.maxViol r₁ r₂ = (c.form r₁).length - (c.form r₂).length := by
   rw [maxViol, hedge, Finset.card_univ_sdiff, card_image_fst_diagonal, Fintype.card_fin]
   omega
 
-/-- On a diagonal edge DEP counts the tail of the second string beyond the first. -/
 theorem depViol_of_diagonal
     (hedge : c.edge r₁ r₂ = diagonal (c.form r₁).length (c.form r₂).length) :
     c.depViol r₁ r₂ = (c.form r₂).length - (c.form r₁).length := by
@@ -538,8 +535,6 @@ private theorem lt_of_lt_length_zip {β : Type*} {l₁ : List α} {l₂ : List �
     (h : i < (l₁.zip l₂).length) : i < l₁.length ∧ i < l₂.length := by
   simpa [List.length_zip] using h
 
-/-- The diagonal pairs of two strings that satisfy `q` number as many as the pairs of their zip
-that satisfy it. -/
 theorem card_filter_diagonal {β : Type*} (l₁ : List α) (l₂ : List β) (q : α × β → Prop)
     [DecidablePred q] :
     ((diagonal l₁.length l₂.length).filter fun p ↦ q (l₁[p.1], l₂[p.2])).card =
@@ -679,7 +674,6 @@ structure IsFaithful : Prop where
   uniformity : c.uniformityViol r₁ r₂ = 0
   linearity : c.linearityViol r₁ r₂ = 0
 
-/-- Without MAX or INTEGRITY violations the edge is the graph of a function. -/
 theorem exists_fun_mem_edge_iff (hmax : c.maxViol r₁ r₂ = 0)
     (hint : c.integrityViol r₁ r₂ = 0) :
     ∃ f : Fin (c.form r₁).length → Fin (c.form r₂).length,
@@ -693,8 +687,6 @@ theorem exists_fun_mem_edge_iff (hmax : c.maxViol r₁ r₂ = 0)
   choose f hf huniq using hexU
   exact ⟨f, fun i j => ⟨fun h => (huniq i j h).symm, fun h => h ▸ hf i⟩⟩
 
-/-- Without MAX, INTEGRITY, UNIFORMITY or LINEARITY violations the edge is the graph of an order
-embedding. -/
 theorem exists_orderEmbedding_mem_edge_iff (hmax : c.maxViol r₁ r₂ = 0)
     (hint : c.integrityViol r₁ r₂ = 0) (huni : c.uniformityViol r₁ r₂ = 0)
     (hlin : c.linearityViol r₁ r₂ = 0) :
@@ -732,7 +724,6 @@ theorem isFaithful_iff_exists_orderIso :
     rw [← depViolAt_true, depViolAt_of_graph he, Finset.image_univ_of_surjective e.surjective]
     simp
 
-/-- A faithful edge joins strings of equal length. -/
 theorem length_eq_of_isFaithful (h : c.IsFaithful r₁ r₂) :
     (c.form r₁).length = (c.form r₂).length := by
   obtain ⟨e, _⟩ := (isFaithful_iff_exists_orderIso c r₁ r₂).1 h
@@ -754,13 +745,10 @@ def IsFaithfulness (k : Constraint (Correspondence BinaryRole α)) : Prop :=
 def IsMarkedness (out : Role) (k : Constraint (Correspondence Role α)) : Prop :=
   k.FactorsThrough (·.form out)
 
-/-- A constraint on strings pulled back along the output form is markedness. -/
 theorem isMarkedness_comap (out : Role) (m : Constraint (List α)) :
     IsMarkedness out (m.comap (·.form out)) :=
   Function.FactorsThrough.rfl.comp_left m
 
-/-- A constraint is markedness for the role `out` exactly when it is a constraint on strings
-pulled back along `form out`. -/
 theorem isMarkedness_iff_exists_comap (out : Role) (k : Constraint (Correspondence Role α)) :
     IsMarkedness out k ↔ ∃ m : Constraint (List α), k = m.comap (·.form out) :=
   Function.factorsThrough_iff k
@@ -775,8 +763,6 @@ theorem isFaithfulness_identViol [DecidableEq α] :
     IsFaithfulness (α := α) (identViol · .lhs .rhs) :=
   identViol_identity
 
-/-- The anti-faithfulness constraint of a faithfulness constraint is not faithfulness, since the
-fully faithful candidate violates it. -/
 theorem IsFaithfulness.not_antifaithful {k : Constraint (Correspondence BinaryRole α)}
     (hk : IsFaithfulness k) : ¬ IsFaithfulness k.antifaithful := fun h ↦ by
   simpa [Constraint.antifaithful_eq_zero_iff, hk []] using h []

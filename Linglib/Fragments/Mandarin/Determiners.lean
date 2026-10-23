@@ -124,14 +124,12 @@ instance : DecidablePred RequiresClassifier := fun _ ↦ inferInstanceAs (Decida
 
 instance : DecidablePred ExcludesClassifier := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Every word combines with a noun one way or the other. -/
 theorem takesClassifier_or_takesBareNoun (w : QuantityWord) :
     w.TakesClassifier ∨ w.TakesBareNoun := by decide +revert
 
 theorem requiresClassifier_iff {w : QuantityWord} : w.RequiresClassifier ↔ w = .mei := by
   decide +revert
 
-/-- *Hěnduō* alone takes both a classifier and a bare noun. -/
 theorem takesClassifier_and_takesBareNoun_iff {w : QuantityWord} :
     w.TakesClassifier ∧ w.TakesBareNoun ↔ w = .henduo := by decide +revert
 
@@ -189,7 +187,6 @@ def inventory : Determiner.Inventory :=
   [.demonstrative zhe, .demonstrative na] ++
     QuantityWord.toList.map (.quantifier ·.toQuantifier) ++ [.possessive de]
 
-/-- Only familiarity is marked. -/
 theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Mandarin.Determiners

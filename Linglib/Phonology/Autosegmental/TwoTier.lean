@@ -98,7 +98,6 @@ theorem not_link_ofWords_false (i j : Bool) (p q : ℕ) :
     ¬ (ofWords as bs fun _ _ ↦ False).Link i j p q := by
   simp [ofWords, TwoTier.Links]
 
-/-- Two-tier lines are determined by the melody-to-timing case. -/
 theorem link_iff_of_true_false {τ : Bool → Type*} {X Y : AR τ}
     (h : ∀ p q, X.Link true false p q ↔ Y.Link true false p q) (i j : Bool) (p q : ℕ) :
     X.Link i j p q ↔ Y.Link i j p q := by
@@ -108,7 +107,6 @@ theorem link_iff_of_true_false {τ : Bool → Type*} {X Y : AR τ}
   · exact h p q
   · exact iff_of_false (fun h ↦ h.ne rfl) (fun h ↦ h.ne rfl)
 
-/-- Two-tier representations are equal when their words and melody-to-timing lines are. -/
 theorem ext_of_true_false {τ : Bool → Type*} {X Y : AR τ} (ht : X.word true = Y.word true)
     (hf : X.word false = Y.word false)
     (h : ∀ p q, X.Link true false p q ↔ Y.Link true false p q) : X = Y :=
@@ -122,7 +120,6 @@ abbrev primitive (b : β) : AR (TwoTier α β) :=
 
 /-! ### The No-Crossing Constraint on two tiers -/
 
-/-- On two tiers, the NCC is order-respecting association from melody to timing. -/
 theorem noCrossing_iff_two_tier {τ : Bool → Type*} {X : AR τ} :
     X.NoCrossing ↔ IsNonCrossing (X.lines true false) := by
   refine ⟨fun h ↦ h true false, fun h i j ↦ ?_⟩
@@ -133,7 +130,6 @@ theorem noCrossing_ofWords_iff : (ofWords as bs L).NoCrossing ↔
     IsNonCrossing {x : ℕ × ℕ | x.1 < as.length ∧ x.2 < bs.length ∧ L x.1 x.2} := by
   simp only [noCrossing_iff_two_tier, isNonCrossing_lines_iff_link, link_ofWords]
 
-/-- A two-tier representation with at most one timing slot obeys the NCC. -/
 theorem noCrossing_of_length_false_le_one {τ : Bool → Type*} {X : AR τ}
     (h : (X.word false).length ≤ 1) : X.NoCrossing :=
   noCrossing_iff_two_tier.2 <| isNonCrossing_lines_iff.2 fun _ _ _ _ h₁ h₂ _ ↦ by
@@ -154,8 +150,6 @@ private theorem forall_getElem?_add_iff_prefix_drop {γ : Type*} {l l' : List γ
   · rw [List.getElem?_drop, Nat.add_comm o p, h hp, List.getElem?_eq_getElem hp]
   · rw [Nat.add_comm p o, ← List.getElem?_drop, h hp, List.getElem?_eq_getElem hp]
 
-/-- One presentation embeds in another as a factor iff its words occur in the host's at a pair
-of bounded offsets and its lines transport there. -/
 theorem factorEmbeds_ofWords_iff :
     (ofWords as bs L).FactorEmbeds (ofWords as' bs' L') ↔
       ∃ ot ≤ as'.length, ∃ of ≤ bs'.length, as <+: as'.drop ot ∧ bs <+: bs'.drop of ∧
@@ -239,7 +233,6 @@ theorem link_prod_ofWords (w : List S) (p q : ℕ) :
     rw [List.map_cons, List.prod_cons, link_mul, ih]
     simp [BlockLinks]
 
-/-- A realized string of presentations is one presentation. -/
 theorem prod_ofWords (w : List S) :
     (w.map fun s ↦ ofWords (as s) (bs s) (L s)).prod =
       ofWords (w.map as).flatten (w.map bs).flatten (BlockLinks as bs L w) :=

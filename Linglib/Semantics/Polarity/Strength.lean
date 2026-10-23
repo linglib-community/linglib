@@ -99,12 +99,9 @@ example : negationStrength .antiMult = Negation.Strength.weak := rfl
 example : negationStrength .antiAddMult = Negation.Strength.antiMorphic := rfl
 example : negationStrength .mono = ⊥ := rfl
 
-/-- A signature realizes a strength of negation exactly when it is downward entailing
-([ladusaw-1979]). -/
 theorem negationStrength_ne_bot_iff (σ : Signature) : σ.negationStrength ≠ ⊥ ↔ σ.sign = -1 := by
   cases σ <;> decide
 
-/-- A strength is the one its signature realizes. -/
 theorem negationStrength_toSignature (s : Negation.Strength) :
     s.toSignature.negationStrength = s := by
   cases s <;> rfl

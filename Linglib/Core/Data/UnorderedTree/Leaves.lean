@@ -48,21 +48,16 @@ def leaves (t : UnorderedTree α) : Multiset α := t.leavesWithDepth.map Prod.fs
 
 @[simp] theorem leaves_leaf : (leaf a : UnorderedTree α).leaves = {a} := rfl
 
-/-- The projection has one element per leaf. -/
 theorem card_leavesWithDepth (t : UnorderedTree α) :
     Multiset.card t.leavesWithDepth = t.numLeaves :=
   Quotient.inductionOn t fun p => RoseTree.card_leavesWithDepth p
 
-/-- The number of leaf labels is the number of leaves. -/
 theorem card_leaves (t : UnorderedTree α) : Multiset.card t.leaves = t.numLeaves := by
   rw [leaves, Multiset.card_map, card_leavesWithDepth]
 
-/-- A leaf is a vertex. -/
 theorem numLeaves_le_numNodes (t : UnorderedTree α) : t.numLeaves ≤ t.numNodes :=
   Quotient.inductionOn t fun p => RoseTree.numLeaves_le_numNodes p
 
-/-- The leaf labels of a branching node are the concatenation of its children's, as in
-`RoseTree.leaves_node_cons`. -/
 theorem leaves_node_cons (T : UnorderedTree α) (cs : Multiset (UnorderedTree α)) :
     (node a (T ::ₘ cs)).leaves = T.leaves + (cs.map leaves).sum := by
   refine forest_inductionOn cs fun ps => ?_
@@ -81,7 +76,6 @@ theorem countP_leaves_leaf (a : α) :
     (leaf a : UnorderedTree α).leaves.countP p = if p a then 1 else 0 :=
   RoseTree.countP_leaves_leaf p a
 
-/-- A root failing `p` contributes nothing, so the count is the children's total. -/
 theorem countP_leaves_node_of_not (a : α) (F : Multiset (UnorderedTree α)) (h : ¬p a) :
     (node a F).leaves.countP p = (F.map fun T => T.leaves.countP p).sum := by
   induction F using forest_inductionOn with
@@ -90,7 +84,6 @@ theorem countP_leaves_node_of_not (a : α) (F : Multiset (UnorderedTree α)) (h 
       Multiset.map_coe, Multiset.sum_coe, List.map_map]
     rfl
 
-/-- A root failing `p` is an uncounted vertex, so the count is strict. -/
 theorem countP_leaves_lt_numNodes_of_not_root (t : UnorderedTree α) (h : ¬p t.value) :
     t.leaves.countP p < t.numNodes := by
   induction t using Quotient.inductionOn with

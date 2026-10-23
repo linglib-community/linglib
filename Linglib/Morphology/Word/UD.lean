@@ -55,14 +55,12 @@ def fromUD : UD.Person → Option Person
   | .third => some .third
   | .zero => none
 
-/-- Realization is a partial inverse of ingestion up to clusivity, which has no tag. -/
 theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> decide
 
 @[simp] theorem toUD_fromUD {u : UD.Person} {p : Person} (h : fromUD u = some p) :
     p.toUD = u := by
   cases u <;> simp only [fromUD, Option.some.injEq, reduceCtorEq] at h <;> subst h <;> rfl
 
-/-- The annotation conflates the clusivity values. -/
 theorem ud_conflates_clusivity : Person.firstInclusive.toUD = Person.firstExclusive.toUD := rfl
 
 end Person
@@ -129,14 +127,12 @@ def fromUD : UD.Gender → Gender
   | .Neut => .neuter
   | .Com => .common
 
-/-- Realization is a partial inverse of ingestion. -/
 theorem isPartialInv_fromUD_toUD : Function.IsPartialInv fromUD toUD :=
   fun x y ↦ by cases x <;> cases y <;> decide
 
 @[simp] theorem toUD_fromUD (u : UD.Gender) : (fromUD u).toUD = some u :=
   isPartialInv_fromUD_toUD.eq u
 
-/-- The labels with a tag round-trip. -/
 theorem fromUD_of_toUD_eq_some {g : Gender} {u : UD.Gender} (h : g.toUD = some u) :
     fromUD u = g :=
   (isPartialInv_fromUD_toUD u g).1 h
@@ -210,9 +206,6 @@ def fromUD : UD.Case → Case
   | .Per => .perl
   | .Abe => .abess
 
-/-- Ingestion after realization is the identity but on the oblique, which realizes as `Acc`, the
-tag UD's guidelines give the oblique of a language with a direct and an oblique case only, and
-ingests as the accusative. -/
 theorem fromUD_toUD (c : Case) : fromUD c.toUD = if c = .obl then .acc else c := by
   cases c <;> rfl
 

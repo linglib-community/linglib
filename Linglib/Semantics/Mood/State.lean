@@ -171,7 +171,6 @@ theorem isAdditive_promote (p : W → Prop) : IsAdditive (promote · p) := fun c
 theorem isAdditive_inquire (q : Setoid W) : IsAdditive (inquire · q) := fun c ↦
   congrArg₂ State.mk (inf_top_eq _).symm (congrArg (c.inquiry ⊓ ·) (top_inf_eq q).symm)
 
-/-- A state accepts the question `q` exactly when its inquiry already refines `q`. -/
 theorem le_inquire_iff (c : State W) (q : Setoid W) :
     c ≤ c.inquire q ↔ c.inquiry ≤ q :=
   ⟨fun h ↦ h.2.trans inf_le_right, fun h ↦ ⟨le_rfl, le_inf le_rfl h⟩⟩
@@ -207,8 +206,6 @@ context set. Unlike `boxCs` and `boxLe` it is not upward monotone in `p`. -/
 def boxAns (c : State W) (p : W → Prop) : Prop :=
   ∀ w v, w ∈ c.info → v ∈ c.info → c.inquiry w v → (p w ↔ p v)
 
-/-- A state settles `p` exactly when its issue entails the polar question whether `p` relative to
-the context set. -/
 theorem boxAns_iff_le_relativeTo (c : State W) (p : W → Prop) :
     c.boxAns p ↔ Question.fromSetoid c.inquiry ≤ (Question.polar {w | p w}).relativeTo c.info := by
   rw [Question.le_def]
@@ -229,17 +226,14 @@ theorem boxAns_iff_le_relativeTo (c : State W) (p : W → Prop) :
     · exact iff_of_true (hsub ⟨hw, Or.inl rfl⟩) (hsub ⟨hv, Or.inr rfl⟩)
     · exact iff_of_false (hsub ⟨hw, Or.inl rfl⟩) (hsub ⟨hv, Or.inr rfl⟩)
 
-/-- An inquiry that decides `p` settles it. -/
 theorem boxAns_of_decides (c : State W) {p : W → Prop} (h : c.inquiry.Decides {w | p w}) :
     c.boxAns p :=
   fun _ _ _ _ hwv ↦ h.iff hwv
 
-/-- With every world in the context set, answerhood is deciding. -/
 theorem boxAns_iff_decides {c : State W} (h : c.info = Set.univ) (p : W → Prop) :
     c.boxAns p ↔ c.inquiry.Decides {w | p w} := by
   rw [boxAns_iff_le_relativeTo, h, Question.relativeTo_univ, Question.decides_iff_fromSetoid_le]
 
-/-- Refining the state strengthens answerhood, as `ExpState.boxCs_anti` does for `boxCs`. -/
 theorem boxAns_anti {c₁ c₂ : State W} (h : c₁ ≤ c₂) (p : W → Prop) :
     c₂.boxAns p → c₁.boxAns p :=
   fun hbox w v hw hv hwv ↦ hbox w v (h.1.1 hw) (h.1.1 hv) (h.2 hwv)
@@ -273,8 +267,6 @@ def sepInquiry : State Bool where
 /-- The proposition true at `false` alone. -/
 def sepProp : Bool → Prop := fun w ↦ w = false
 
-/-- Some state settles a proposition that is not informationally necessary, so the inquiry
-coordinate does work of its own. -/
 theorem boxAns_not_reducible_to_boxCs :
     ∃ (c : State Bool) (p : Bool → Prop), c.boxAns p ∧ ¬ c.toExpState.boxCs p :=
   ⟨sepInquiry, sepProp, fun w v _ _ hwv ↦ by rw [show w = v from hwv],
@@ -345,12 +337,10 @@ theorem goodPossibility_iff_localNecessity (p : W → Prop) (w : W) :
     goodPossibility f g p w ↔ (stateAt f g w).localNecessity p :=
   Iff.rfl
 
-/-- The induced state accepts the assertion of `p` exactly when `p` is a simple necessity. -/
 theorem le_assert_iff_simpleNecessity (p : W → Prop) (w : W) :
     stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
   (stateAt f g w).le_assert_iff p
 
-/-- A modal base is realistic exactly when every world lies in its own induced context set. -/
 theorem isRealistic_iff_mem_stateAt_info : f.IsRealistic ↔ ∀ w, w ∈ (stateAt f g w).info :=
   Iff.rfl
 

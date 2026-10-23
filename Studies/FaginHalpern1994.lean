@@ -91,8 +91,6 @@ variable {E W : Type*} [MeasurableSpace W] {M : KripkeProb E W} {i : E} {s t : W
 instance (M : KripkeProb E W) (i : E) (s : W) : IsProbabilityMeasure (M.prob i s) :=
   M.isProbabilityMeasure i s
 
-/-- `μ_{i,s}(S_{i,s}(φ)) = μ_{i,s}(φ)`: cutting a proposition down to the sample space changes
-nothing. -/
 theorem prob_inter_sample (M : KripkeProb E W) (i : E) (s : W) (φ : Set W) :
     M.prob i s (φ ∩ M.sample i s) = M.prob i s φ :=
   measure_inter_conull (M.prob_compl_sample i s)
@@ -121,11 +119,9 @@ def SDP (M : KripkeProb E W) : Prop :=
 def UNIF (M : KripkeProb E W) : Prop :=
   ∀ i s t, t ∈ M.sample i s → M.sample i s = M.sample i t ∧ M.prob i s = M.prob i t
 
-/-- CONS and SDP together imply UNIF. -/
 theorem UNIF.of_cons_sdp (hc : M.CONS) (hs : M.SDP) : M.UNIF :=
   λ i s t ht => hs i s t (hc i s ht)
 
-/-- A superset of the sample space has probability one. -/
 theorem real_eq_one_of_sample_subset (h : M.sample i s ⊆ φ) : (M.prob i s).real φ = 1 := by
   have : M.prob i s φ = 1 := le_antisymm prob_le_one <| calc
     (1 : ℝ≥0∞) = M.prob i s Set.univ := measure_univ.symm
@@ -134,27 +130,22 @@ theorem real_eq_one_of_sample_subset (h : M.sample i s ⊆ φ) : (M.prob i s).re
     _ ≤ M.prob i s φ := measure_mono h
   simp [measureReal_def, this]
 
-/-- A set missing the sample space has probability zero. -/
 theorem real_eq_zero_of_subset_compl_sample (h : φ ⊆ (M.sample i s)ᶜ) :
     (M.prob i s).real φ = 0 := by
   simp [measureReal_def, measure_mono_null h (M.prob_compl_sample i s)]
 
-/-- Axiom W7, `K_i φ ⇒ (w_i(φ) = 1)`, sound under CONS. -/
 theorem real_eq_one_of_knows (hc : M.CONS) (h : s ∈ (M.access i).core φ) :
     (M.prob i s).real φ = 1 :=
   real_eq_one_of_sample_subset fun _ ht ↦ h (hc i s ht)
 
-/-- Under UNIF an `i`-probability formula has one truth value across `S_{i,s}`. -/
 theorem UNIF.mem_atLeast_iff (hu : M.UNIF) (ht : t ∈ M.sample i s) :
     t ∈ M.AtLeast b i φ ↔ s ∈ M.AtLeast b i φ := by
   simp only [AtLeast, Set.mem_ofPred_eq, (hu i s t ht).2]
 
-/-- Axiom W9 for a positive `i`-probability formula, sound under UNIF. -/
 theorem UNIF.real_atLeast_eq_one (hu : M.UNIF) (hs : s ∈ M.AtLeast b i φ) :
     (M.prob i s).real (M.AtLeast b i φ) = 1 :=
   real_eq_one_of_sample_subset λ _ ht => (hu.mem_atLeast_iff ht).2 hs
 
-/-- Axiom W9 for the negation of an `i`-probability formula, sound under UNIF. -/
 theorem UNIF.real_compl_atLeast_eq_one (hu : M.UNIF) (hs : s ∉ M.AtLeast b i φ) :
     (M.prob i s).real (M.AtLeast b i φ)ᶜ = 1 :=
   real_eq_one_of_sample_subset λ _ ht h => hs ((hu.mem_atLeast_iff ht).1 h)
@@ -163,22 +154,18 @@ theorem UNIF.real_atLeast_eq_zero (hu : M.UNIF) (hs : s ∉ M.AtLeast b i φ) :
     (M.prob i s).real (M.AtLeast b i φ) = 0 :=
   real_eq_zero_of_subset_compl_sample λ _ ht hts => hs ((hu.mem_atLeast_iff hts).1 ht)
 
-/-- Under SDP an `i`-probability formula has one truth value across `𝒦_i(s)`. -/
 theorem SDP.mem_atLeast_iff (hs : M.SDP) (h : s ~[M.access i] t) :
     t ∈ M.AtLeast b i φ ↔ s ∈ M.AtLeast b i φ := by
   simp only [AtLeast, Set.mem_ofPred_eq, (hs i s t h).2]
 
-/-- Axiom W10 for a positive `i`-probability formula, sound under SDP. -/
 theorem SDP.knows_atLeast (hsdp : M.SDP) (h : s ∈ M.AtLeast b i φ) :
     s ∈ (M.access i).core (M.AtLeast b i φ) :=
   λ _ ht => (hsdp.mem_atLeast_iff ht).2 h
 
-/-- Axiom W10 for the negation of an `i`-probability formula, sound under SDP. -/
 theorem SDP.knows_compl_atLeast (hsdp : M.SDP) (h : s ∉ M.AtLeast b i φ) :
     s ∈ (M.access i).core (M.AtLeast b i φ)ᶜ :=
   λ _ ht h' => h ((hsdp.mem_atLeast_iff ht).1 h')
 
-/-- Miller's principle `w_i(φ) ≥ b · w_i(w_i(φ) ≥ b)`, which UNIF validates. -/
 theorem UNIF.miller (hu : M.UNIF) (b : ℝ) (i : E) (φ : Set W) (s : W) :
     b * (M.prob i s).real (M.AtLeast b i φ) ≤ (M.prob i s).real φ := by
   by_cases hs : s ∈ M.AtLeast b i φ
@@ -194,8 +181,6 @@ def EveryoneProb (M : KripkeProb E W) (G : Set E) (b : ℝ) (φ : Set W) : Set W
 theorem EveryoneProb.mono (h : φ ⊆ ψ) : M.EveryoneProb G b φ ⊆ M.EveryoneProb G b ψ :=
   fun _ hs i hi _ ht ↦ AtLeast.mono h (hs i hi ht)
 
-/-- With a reflexive accessibility and a positive threshold nobody assigns `∅` probability
-`b`. -/
 theorem everyoneProb_empty [∀ i, (M.access i).IsRefl] (hG : G.Nonempty) (hb : 0 < b) :
     M.EveryoneProb G b ∅ = ∅ := by
   obtain ⟨i, hi⟩ := hG
@@ -234,7 +219,6 @@ theorem commonProb_subset_F (M : KripkeProb E W) (G : Set E) (b : ℝ) (φ : Set
     M.CommonProb G b φ ⊆ M.F G b φ k :=
   (Set.iInter_subset _ k).trans (M.F_antitone G b φ (Nat.le_succ k))
 
-/-- Any solution of `X ⊆ E_G^b(φ ∧ X)` lies below `C_G^b φ`. -/
 theorem subset_commonProb {X : Set W} (h : X ⊆ M.EveryoneProb G b (φ ∩ X)) :
     X ⊆ M.CommonProb G b φ := by
   refine Set.subset_iInter λ k => ?_
@@ -247,8 +231,6 @@ theorem everyoneProb_inter_commonProb_subset :
   Set.subset_iInter λ k =>
     EveryoneProb.mono (Set.inter_subset_inter_right _ (M.commonProb_subset_F G b φ k))
 
-/-- `C_G^b φ` solves `X ⊆ E_G^b(φ ∧ X)`: continuity from above turns the threshold on every
-`φ ∧ (F_G^b)^k φ` into the threshold on their intersection. -/
 theorem commonProb_subset_everyoneProb_inter [DiscreteMeasurableSpace W] :
     M.CommonProb G b φ ⊆ M.EveryoneProb G b (φ ∩ M.CommonProb G b φ) := by
   intro s hs i hi t ht
@@ -327,7 +309,6 @@ noncomputable def fig1 : KripkeProb (Fin 2) (Fin 4) where
 
 instance (i : Fin 2) : (fig1.access i).IsRefl := ⟨fun _ ↦ rfl⟩
 
-/-- Every threshold comparison in `fig1` is an inequality between weight sums. -/
 theorem fig1_atLeast_iff (i : Fin 2) (t : Fin 4) (p : Fin 4 → Prop) [DecidablePred p] :
     t ∈ fig1.AtLeast (1 / 2) i {u | p u} ↔
       ∑ u, fig1Weight i t u ≤ 2 * ∑ u with p u, fig1Weight i t u := by
@@ -338,7 +319,6 @@ theorem fig1_atLeast_iff (i : Fin 2) (t : Fin 4) (p : Fin 4 → Prop) [Decidable
   rw [le_div_iff₀ hpos, one_div, inv_mul_le_iff₀ two_pos]
   exact_mod_cast Iff.rfl
 
-/-- `E_G^{1/2} p` holds at `s₁` alone: (b) and (c) of the paper's check. -/
 theorem fig1_everyoneProb : fig1.EveryoneProb Set.univ (1 / 2) fig1P = {0} := by
   ext s
   simp only [EveryoneProb, Set.mem_ofPred_eq, Set.mem_univ, true_implies, mem_core, fig1P,
@@ -359,7 +339,6 @@ private theorem fig1P_inter_singleton : fig1P ∩ {0} = ∅ :=
     simp only [fig1P, Set.mem_inter_iff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
     revert t; decide
 
-/-- (a): the naive conjunction `E_G^{1/2} p ∧ (E_G^{1/2})² p ∧ ⋯` holds exactly at `s₁`. -/
 theorem fig1_naive : fig1.Naive Set.univ (1 / 2) fig1P = {0} := by
   have h : ∀ k, (fig1.EveryoneProb Set.univ (1 / 2))^[k + 1] fig1P = {0} := by
     intro k
@@ -369,14 +348,12 @@ theorem fig1_naive : fig1.Naive Set.univ (1 / 2) fig1P = {0} := by
   unfold Naive
   rw [Set.iInter_congr h, Set.iInter_const]
 
-/-- The naive conjunction is not a solution of `X ⇔ E_G^{1/2}(p ∧ X)`. -/
 theorem fig1_naive_not_fixedPoint :
     ¬ fig1.Naive Set.univ (1 / 2) fig1P ⊆
       fig1.EveryoneProb Set.univ (1 / 2) (fig1P ∩ fig1.Naive Set.univ (1 / 2) fig1P) := by
   rw [fig1_naive, fig1P_inter_singleton, everyoneProb_empty Set.univ_nonempty one_half_pos]
   simp
 
-/-- `C_G^{1/2} p` is empty: `(F_G^{1/2})² p = E_G^{1/2}(p ∧ E_G^{1/2} p) = ∅`. -/
 theorem fig1_commonProb : fig1.CommonProb Set.univ (1 / 2) fig1P = ∅ := by
   refine Set.eq_empty_of_subset_empty ((fig1.commonProb_subset_F _ _ _ 2).trans ?_)
   show fig1.EveryoneProb _ _ (fig1P ∩ fig1.EveryoneProb _ _ (fig1P ∩ Set.univ)) ⊆ ∅

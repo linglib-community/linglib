@@ -97,11 +97,9 @@ def Holds (c : Cover) (D : Set W) (p : W → Prop) : Prop :=
 
 variable {D : Set W} {p q : W → Prop}
 
-/-- On the identity cover the quantification is universal over the domain. -/
 theorem holds_identity_iff : Holds .identity D p ↔ ∀ v ∈ D, p v :=
   ⟨fun ⟨f, (hf : f D = D), h⟩ v hv ↦ h v (by rwa [hf]), fun h ↦ ⟨id, rfl, h⟩⟩
 
-/-- On the full cover it is existential, a selection function picking out a single witness. -/
 theorem holds_all_iff : Holds .all D p ↔ ∃ v ∈ D, p v :=
   ⟨fun ⟨_, ⟨hsub, v, hv⟩, h⟩ ↦ ⟨v, hsub hv, h v hv⟩, fun ⟨v, hv, hp⟩ ↦
     ⟨fun _ ↦ {v}, ⟨Set.singleton_subset_iff.2 hv, v, rfl⟩, fun _ hu ↦ hu ▸ hp⟩⟩
@@ -135,16 +133,12 @@ def ivek (F : Frame W E) (φ : Flavor) (c : Cover) (p : W → Prop) (x : E) (w :
 
 variable {F : Frame W E} {φ : Flavor} {x : E} {w : W}
 
-/-- On the identity cover *ivək* is the box over the flavor's accessibility relation. -/
 theorem ivek_identity_iff : F.ivek φ .identity p x w ↔ □[F.access φ x] p w :=
   holds_identity_iff
 
-/-- On the full cover *ivək* is the diamond. -/
 theorem ivek_all_iff : F.ivek φ .all p x w ↔ ◇[F.access φ x] p w :=
   holds_all_iff
 
-/-- On the doxastic flavor and the identity cover *ivək* is the non-veridical *believe* of
-[hintikka-1962]. -/
 theorem ivek_doxastic_identity_iff_holdsAt :
     F.ivek .doxastic .identity p x w ↔
       (⟨F.belief, .nonVeridical, none⟩ : Doxastic.DoxasticPredicate W E).HoldsAt x p w := by
@@ -224,8 +218,6 @@ and each flavor. -/
 def meaning : Finset (ModalForce × Flavor) :=
   (Finset.univ : Finset (Cover × Flavor)).image fun r ↦ (r.1.force, r.2)
 
-/-- The cover and the flavor are independent parameters, so the pairs are the product of two
-forces and the two flavors. -/
 theorem meaning_eq : meaning = {.necessity, .possibility} ×ˢ Finset.univ := by
   decide
 
@@ -238,12 +230,10 @@ theorem not_singleAxis_meaning : ¬ SingleAxis meaning := by
 def attested : Finset (ModalForce × Flavor) :=
   {(.necessity, .doxastic), (.possibility, .doxastic), (.necessity, .assertive)}
 
-/-- The entry predicts the existential 'say' that the paper could not confirm. -/
 theorem attested_ssubset_meaning :
     attested ⊂ meaning ∧ (.possibility, .assertive) ∈ meaning \ attested := by
   decide
 
-/-- The attested pairs alone vary on both axes. -/
 theorem not_singleAxis_attested : ¬ SingleAxis attested := by
   decide
 

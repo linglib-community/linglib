@@ -57,30 +57,23 @@ variable {W E : Type*} {adj : Modifier (Property W E)}
     intersective Q N w x ↔ Q w x ∧ N w x :=
   Iff.rfl
 
-/-- A modifier of intensional properties is intersective if and only if it conjoins every noun
-with one fixed property, as *gray* does. -/
 theorem isIntersective_iff :
     IsIntersective adj ↔
       ∃ (Q : Property W E), ∀ (N : Property W E) (w : W) (x : E),
         adj N w x ↔ (Q w x ∧ N w x) := by
   simp only [IsIntersective, funext_iff, Pi.inf_apply, inf_Prop_eq, eq_iff_iff]
 
-/-- A modifier of intensional properties is privative if and only if nothing it yields from a
-noun falls under the noun, as with *fake*. -/
 theorem isPrivative_iff :
     IsPrivative adj ↔
       ∀ (N : Property W E) (w : W) (x : E), adj N w x → ¬ N w x := by
   simp only [IsPrivative, Pi.disjoint_iff, Prop.disjoint_iff, not_and]
 
-/-- Intersective modifiers are extensional, since the meet with a fixed property reads the noun
-only through its extension at each world. -/
 theorem isExtensional_of_isIntersective (h : IsIntersective adj) :
     ModalLogic.IsExtensional adj := by
   obtain ⟨Q, hQ⟩ := h
   intro w N₁ N₂ hN
   simp only [hQ, Pi.inf_apply, hN]
 
-/-- A privative modifier that holds of something is not subsective. -/
 theorem not_isSubsective_of_isPrivative (hp : IsPrivative adj)
     (hne : ∃ N w x, adj N w x) : ¬ IsSubsective adj := by
   intro hs

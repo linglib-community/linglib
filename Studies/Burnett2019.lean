@@ -132,12 +132,10 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] {prior : M
   {α : ℝ} (hα : 0 < α)
 include hα
 
-/-- The persona only the second variant conveys never produces the first. -/
 theorem S1_symm_persona_real_singleton : (S1 F α prior h.symm.persona).real {v} = 0 :=
   speaker_listener_truthful_dirac_real_singleton_eq_zero hα 0 prior _
     (Finset.mem_coe.not.2 h.symm_persona_notMem_personae)
 
-/-- Hearing the first variant rules out the persona the second indexes. -/
 theorem L1_real_singleton_symm_persona : (L1 F α prior v).real {h.symm.persona} = 0 := by
   rw [measureReal_def, listener_speaker_listener_truthful_apply_singleton_of_notMem hα 0 prior
     (fun u ↦ ↑(F.personae u)) (w := h.symm.persona)
@@ -154,7 +152,6 @@ noncomputable def share (prior : Measure (Persona G)) (α : ℝ) : ℝ :=
     ((prior.real Set.univ - prior.real {h.symm.persona}) ^ α +
       (prior.real Set.univ - prior.real {h.persona}) ^ α)
 
-/-- Under integer weights the share is computed from the weights. -/
 theorem share_ofWeights (wt : Persona G → ℕ) :
     share h (Measure.ofWeights (wt ·)) α =
       (((∑ p, wt p : ℕ) : ℝ) - wt h.persona) ^ α /
@@ -175,8 +172,6 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] (hvw : ∀
   (hα : 0 < α)
 include hvw hα
 
-/-- Every persona both variants convey is produced alike, so speakers constructing different
-personae shift between the variants together. -/
 theorem S1_eq {p p' : Persona G} (hp : prior {p} ≠ 0) (hp' : prior {p'} ≠ 0)
     (hl : p ≠ h.persona) (hr : p ≠ h.symm.persona) (hl' : p' ≠ h.persona)
     (hr' : p' ≠ h.symm.persona) : S1 F α prior p' = S1 F α prior p :=
@@ -188,8 +183,6 @@ end Consensus
 
 variable [Nonempty P]
 
-/-- When the two personae the variants index are equally likely, either variant's share of the
-personae both convey is one half, at every rationality. -/
 theorem share_eq_half (hp : prior {h.persona} ≠ 0)
     (hpr : prior {h.persona} = prior {h.symm.persona}) : share h prior α = 1 / 2 := by
   have hlr : prior.real {h.persona} = prior.real {h.symm.persona} := by
@@ -230,15 +223,12 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] (hvw : ∀
   (hα : 0 < α)
 include hvw hα
 
-/-- A persona both variants convey produces the first in its share, each extension being every
-persona but the one its rival indexes. -/
 theorem S1_real_singleton_of_ne {p : Persona G} (hp : prior {p} ≠ 0) (hl : p ≠ h.persona)
     (hr : p ≠ h.symm.persona) : (S1 F α prior p).real {v} = share h prior α := by
   rw [speaker_listener_truthful_dirac_zero_real_singleton_of_pair hα prior _ hp h.ne
     (h.mem_personae_of_ne hl hr (.inl rfl)) (h.mem_personae_of_ne hl hr (.inr rfl))
     fun u _ ↦ hvw u, measureReal_personae h, measureReal_personae h.symm, share]
 
-/-- The persona only the first variant conveys produces it with certainty. -/
 theorem S1_persona_real_singleton (hp : prior {h.persona} ≠ 0) :
     (S1 F α prior h.persona).real {v} = 1 := by
   rw [measureReal_def, speaker_listener_truthful_dirac_eq_one (u := v) hα 0 prior
@@ -250,8 +240,6 @@ theorem S1_persona_real_singleton (hp : prior {h.persona} ≠ 0) :
 variable (hprior : ∀ p, prior {p} ≠ 0)
 include hprior
 
-/-- Mixed over a measure on personae, the speaker produces the first variant with the mass of
-the persona only it conveys and its share of the personae both convey. -/
 theorem comp_real_singleton (ρ : Measure (Persona G)) [IsFiniteMeasure ρ] :
     (S1 F α prior ∘ₘ ρ).real {v} = ρ.real {h.persona} +
       share h prior α * (ρ.real Set.univ - ρ.real {h.persona} - ρ.real {h.symm.persona}) := by
@@ -275,8 +263,6 @@ theorem comp_real_singleton (ρ : Measure (Persona G)) [IsFiniteMeasure ρ] :
     ite_eq_left (Finset.mem_univ _)]
   ring
 
-/-- By Bayes' rule the first variant's marginal times the naive listener's posterior is the prior
-times the speaker's row. -/
 theorem mul_L1_real_singleton (p : Persona G) :
     (prior.real {h.persona} + share h prior α *
         (prior.real Set.univ - prior.real {h.persona} - prior.real {h.symm.persona})) *
@@ -295,9 +281,6 @@ private theorem mul_L1_real_singleton_of_eq (p : Persona G) :
   rw [← mul_L1_real_singleton h hvw hα hprior, share_eq_half h (hprior _) hpr, hlr]
   ring
 
-/-- When the two personae the variants index are equally likely, hearing the first variant leaves
-every persona both convey at its prior, so a listener already sure of such a persona stays sure
-whatever the speaker says. -/
 theorem L1_real_singleton_of_ne {p : Persona G} (hl : p ≠ h.persona) (hr : p ≠ h.symm.persona) :
     (L1 F α prior v).real {p} = prior.real {p} / prior.real Set.univ := by
   have key := mul_L1_real_singleton_of_eq h hvw hα hprior hpr p
@@ -307,8 +290,6 @@ theorem L1_real_singleton_of_ne {p : Persona G} (hl : p ≠ h.persona) (hr : p �
   field_simp at key ⊢
   linarith
 
-/-- When the two personae the variants index are equally likely, hearing the first variant
-doubles the probability of the persona only it conveys. -/
 theorem L1_real_singleton_persona :
     (L1 F α prior v).real {h.persona} = 2 * prior.real {h.persona} / prior.real Set.univ := by
   have key := mul_L1_real_singleton_of_eq h hvw hα hprior hpr h.persona
@@ -381,7 +362,6 @@ instance : MeasurableSingletonClass INGVariant :=
 private theorem apical_or_velar (u : INGVariant) : u = .apical ∨ u = .velar :=
   u.eq_velar_or_eq_apical.symm
 
-/-- The variants of (ING) index complementary personae, the stern leader and the doofus. -/
 theorem ing : ingField.Complementary .velar .apical where
   left_mem := by decide +kernel
   right_mem := by decide +kernel
@@ -443,7 +423,6 @@ theorem careful_apical :
     show carefulWeight sternLeader = 2 by decide +kernel]
   norm_num
 
-/-- The asshole, whom both variants convey too, is produced exactly as the cool guy is. -/
 theorem S1_asshole {prior : Measure Persona} [IsFiniteMeasure prior] {α : ℝ} (hα : 0 < α)
     (hprior : ∀ π, prior {π} ≠ 0) : S1 ingField α prior asshole = S1 ingField α prior coolGuy :=
   S1_eq ing INGVariant.eq_velar_or_eq_apical hα (hprior _) (hprior _) (by decide) (by decide)
@@ -471,8 +450,6 @@ noncomputable def occasionPrior (formal : Measure Persona) : Labov2012.Style →
 noncomputable def apicalRate (formal : Measure Persona) (s : Labov2012.Style) : ℝ :=
   (S1 ingField 6 (occasionPrior formal s) (occasionPersona s)).real {.apical}
 
-/-- The rate of *-in'* falls strictly with the formality of the style, from about 69% at the
-barbecue through about 31% with the journalists to nothing at the convention. -/
 theorem apicalRate_strictAnti (formal : Measure Persona) : StrictAnti (apicalRate formal) := by
   have hcasual : apicalRate formal .casual = 8 ^ 6 / (7 ^ 6 + 8 ^ 6) := casual_apical
   have hcareful : apicalRate formal .careful = 7 ^ 6 / (7 ^ 6 + 8 ^ 6) := careful_apical
@@ -481,8 +458,6 @@ theorem apicalRate_strictAnti (formal : Measure Persona) : StrictAnti (apicalRat
   intro s t h
   cases s <;> cases t <;> first | exact absurd h (by decide) | (simp only [*]; norm_num)
 
-/-- The model orders Labov's styles as Obama's observed rates of *-in'* do, whatever the prior
-at the convention. -/
 theorem apicalRate_lt_iff (formal : Measure Persona) {s t : Labov2012.Style} :
     apicalRate formal s < apicalRate formal t
       ↔ (Labov2012.ingByStyle s).percent < (Labov2012.ingByStyle t).percent :=
@@ -557,8 +532,6 @@ and choosing variants at rationality `α` against the uniform prior (15). -/
 noncomputable def classRate (α α' : ℝ) (c : ValuedClass) : ℝ :=
   (S1 ingField α uniform ∘ₘ select α' (classValue c)).real {.apical}
 
-/-- A class's rate of *-in'* is one half plus half the difference between how often it selects
-the doofus and the stern leader. -/
 theorem classRate_eq {α : ℝ} (hα : 0 < α) (α' : ℝ) (c : ValuedClass) :
     classRate α α' c = 1 / 2 + ((select α' (classValue c)).real {doofus} -
       (select α' (classValue c)).real {sternLeader}) / 2 := by
@@ -573,8 +546,6 @@ private theorem strictMono_of_lt_half_eq_half_lt {f : ValuedClass → ℝ}
   rintro ⟨c, hc⟩ ⟨c', hc'⟩ h
   cases c <;> cases c' <;> first | contradiction | linarith
 
-/-- The class value functions order the classes as Labov's rates do, for every pair of
-rationalities. -/
 theorem classRate_strictMono {α α' : ℝ} (hα : 0 < α) (hα' : 0 < α') :
     StrictMono (classRate α α') := by
   have hsel (c : ValuedClass) (π π' : Persona) : (select α' (classValue c)).real {π} <
@@ -671,7 +642,6 @@ def field : GroundedField Variant (dimensionalIncompatibility Trait.dimension) w
     | .flapped => {.inarticulate, .friendly}
   isIndepSet := by intro v; cases v <;> decide
 
-/-- The variants of /t/ index complementary personae. -/
 theorem release : field.Complementary .released .flapped where
   left_mem := by decide +kernel
   right_mem := by decide +kernel
@@ -779,8 +749,6 @@ private theorem pelosi_if : pelosi.real {inarticulateFriendly} = 9 := by
   rw [ofWeights_real_singleton, show pelosiWeight inarticulateFriendly = 9 by decide +kernel]
   norm_num
 
-/-- At rationality 6 Pelosi's speaker releases /t/ for a persona both variants convey with
-probability `19 ^ 6 / (11 ^ 6 + 19 ^ 6)`, released /t/ ruling out the likelier persona. -/
 theorem pelosi_share : share release pelosi 6 = 19 ^ 6 / (11 ^ 6 + 19 ^ 6) := by
   rw [share_ofWeights, release_persona, release_symm_persona,
     show ∑ π, pelosiWeight π = 20 by decide +kernel,

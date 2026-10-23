@@ -80,26 +80,20 @@ def Conjunctivitis : Prop := ∀ a b : α, Probably r a → Probably r b → Pro
 
 variable {r}
 
-/-- V1 holds for **any** relation, by the logic of `Strict` and double complement. -/
 theorem probablyToNotProbablyNot : ProbablyToNotProbablyNot r := by
   rintro a ⟨_, hanot⟩ ⟨hac, _⟩
   rw [compl_compl] at hac; exact hanot hac
 
-/-- V9 is V8 by contraposition, for any conditional. -/
 theorem chancyModusTollens_iff {ifThen : α → α → Prop} :
     ChancyModusTollens r ifThen ↔ ChancyModusPonens r ifThen :=
   ⟨fun h a b hab ha ↦ by_contra (h a b hab · ha), fun h a b hab hb ha ↦ hb (h a b hab ha)⟩
 
-/-- V6 for the necessity modal `a = ⊤` says exactly that the tautology is probable. -/
 theorem mustToProbably_eq_top_iff : MustToProbably r (· = ⊤) ↔ Probably r ⊤ :=
   ⟨fun h ↦ h ⊤ rfl, fun h _ ha ↦ ha ▸ h⟩
 
-/-- V7 for the possibility modal `a ≠ ⊥` says exactly that the contradiction is not
-probable. -/
 theorem probablyToMight_ne_bot_iff : ProbablyToMight r (· ≠ ⊥) ↔ ¬ Probably r ⊥ :=
   ⟨fun h hb ↦ h ⊥ hb rfl, fun h _ ha hb ↦ h (hb ▸ ha)⟩
 
-/-- I3 is I2 with a strict premise. -/
 theorem hamblinCollapse_of_equiprobabilityCollapse (h : EquiprobabilityCollapse r) :
     HamblinCollapse r := fun a b ha ↦ h a b ha.1
 
@@ -125,15 +119,12 @@ theorem probablyDistribInf [IsTrans α r] : ProbablyDistribInf r :=
 theorem chancyDisjunctionIntro [IsTrans α r] : ChancyDisjunctionIntro r :=
   fun _ _ h ↦ h.mono le_sup_left
 
-/-- V8 holds for the conditional read as entailment, since *probably* is upward closed. -/
 theorem chancyModusPonens_le [IsTrans α r] : ChancyModusPonens r (· ≤ ·) :=
   fun _ _ ↦ Probably.mono
 
 theorem chancyModusTollens_le [IsTrans α r] : ChancyModusTollens r (· ≤ ·) :=
   chancyModusTollens_iff.2 chancyModusPonens_le
 
-/-- Over a monotone order, V13 says that a proposition at least as likely as a disjunction it
-is part of leaves the rest of the disjunction no more likely than `⊥`. -/
 theorem strictDisjunctionIntro_iff :
     StrictDisjunctionIntro r ↔ ∀ a b, r b (a ⊔ b) → r ⊥ (a \ b) := by
   refine ⟨fun h a b hb ↦ by_contra fun hne ↦ (h a b ⟨mono _ _ bot_le, hne⟩).2 hb, ?_⟩
@@ -157,13 +148,10 @@ theorem positiveFormTransfer [IsComplementReversing r] : PositiveFormTransfer r 
 theorem complementTransfer [IsComplementReversing r] : ComplementTransfer r :=
   fun _ _ hba ha ↦ _root_.trans (_root_.trans hba ha) (complRev _ _ hba)
 
-/-- I2 makes V12 trivial, since `a ≽ aᶜ` already gives `a ≽ bᶜ`. -/
 theorem complementTransfer_of_equiprobabilityCollapse (h : EquiprobabilityCollapse r) :
     ComplementTransfer r :=
   fun a b hba ha ↦ _root_.trans hba (h a bᶜ ha)
 
-/-- The union property gives I2, as Yalcin derives it, since I1 for `a`, `a` and `aᶜ` gives
-`a ≽ ⊤` and V5 does the rest. -/
 theorem equiprobabilityCollapse_of_rightUnion [IsLikelihoodMono r] (hJ : RightUnion r) :
     EquiprobabilityCollapse r := fun a _ ha ↦
   _root_.trans (sup_compl_eq_top (x := a) ▸ hJ a a aᶜ (mono _ _ le_rfl) ha) (mono _ _ le_top)

@@ -111,12 +111,9 @@ noncomputable def score (μ : Measure (ι → Bool)) (w₀ : ι → Bool) (E : S
   μ (cause w₀ S) * sufficiency μ w₀ E S + μ (cause w₀ S)ᶜ * necessity μ w₀ E S
 
 omit [Fintype ι] in
-/-- A cause whose absence never removes the outcome, the other urns keeping their actual draws, is
-not necessary at all. -/
 theorem necessity_eq_zero (h : ∀ w, S.piecewise w w₀ ∈ E) : necessity μ w₀ E S = 0 := by
   simp [necessity, h]
 
-/-- A cause whose absence always removes the outcome is fully necessary. -/
 theorem necessity_eq_one [IsFiniteMeasure μ] (h : ∀ w ∉ cause w₀ S, S.piecewise w w₀ ∉ E)
     (hc : μ (cause w₀ S)ᶜ ≠ 0) : necessity μ w₀ E S = 1 := by
   have : (cause w₀ S)ᶜ ∩ {w | S.piecewise w w₀ ∉ E} = (cause w₀ S)ᶜ :=
@@ -124,7 +121,6 @@ theorem necessity_eq_one [IsFiniteMeasure μ] (h : ∀ w ∉ cause w₀ S, S.pie
   rw [necessity, cond_apply .of_discrete, this, ENNReal.inv_mul_cancel hc (measure_ne_top _ _)]
 
 omit [Fintype ι] in
-/-- A cause that produces the outcome whenever it is forced on is fully sufficient. -/
 theorem sufficiency_eq_one [IsFiniteMeasure μ] (h : ∀ w, S.piecewise w₀ w ∈ E)
     (hc : μ ((cause w₀ S)ᶜ ∩ Eᶜ) ≠ 0) : sufficiency μ w₀ E S = 1 := by
   have := cond_isProbabilityMeasure (μ := μ) hc
@@ -142,7 +138,6 @@ theorem score_le_one [IsProbabilityMeasure μ] : score μ w₀ E S ≤ 1 := by
 theorem score_ne_top [IsProbabilityMeasure μ] : score μ w₀ E S ≠ ∞ :=
   ne_top_of_le_ne_top ENNReal.one_ne_top score_le_one
 
-/-- A cause that is fully sufficient and fully necessary scores one. -/
 theorem score_eq_one [IsProbabilityMeasure μ] (hsuf : ∀ w, S.piecewise w₀ w ∈ E)
     (hnec : ∀ w ∉ cause w₀ S, S.piecewise w w₀ ∉ E) (hc : μ ((cause w₀ S)ᶜ ∩ Eᶜ) ≠ 0) :
     score μ w₀ E S = 1 := by
@@ -150,8 +145,6 @@ theorem score_eq_one [IsProbabilityMeasure μ] (hsuf : ∀ w, S.piecewise w₀ w
   rw [score, sufficiency_eq_one hsuf hc, necessity_eq_one hnec hc', mul_one, mul_one,
     measure_add_measure_compl .of_discrete, measure_univ]
 
-/-- A single cause is necessary exactly when flipping it in the actual round, the other urns kept,
-removes the outcome. -/
 theorem necessity_singleton [IsFiniteMeasure μ] [DecidablePred (· ∈ E)] {X : ι}
     (hc : μ (cause w₀ {X})ᶜ ≠ 0) :
     necessity μ w₀ E {X} = if Function.update w₀ X (!w₀ X) ∈ E then 0 else 1 := by
@@ -197,7 +190,6 @@ theorem measure_pi_compl_cause_singleton (X : ι) :
     Measure.pi ν (cause v {X})ᶜ = ν X {!v X} := by
   rw [compl_cause_singleton, measure_pi_cause, Finset.prod_singleton]
 
-/-- Under a product measure, events that depend on disjoint sets of urns are independent. -/
 theorem measure_pi_inter_of_dependsOn {A B : Set (ι → Bool)} (hA : DependsOn (· ∈ A) S)
     (hB : DependsOn (· ∈ B) T) (h : Disjoint S T) :
     Measure.pi ν (A ∩ B) = Measure.pi ν A * Measure.pi ν B := by
@@ -215,7 +207,6 @@ theorem measure_pi_inter_of_dependsOn {A B : Set (ι → Bool)} (hA : DependsOn 
 
 variable [DecidableEq ι]
 
-/-- An urn's draw is independent of any event that changing the urn cannot affect. -/
 theorem measure_pi_cause_singleton_inter {X : ι} {B : Set (ι → Bool)}
     (hB : ∀ w b, Function.update w X b ∈ B ↔ w ∈ B) :
     Measure.pi ν (cause v {X} ∩ B) = ν X {v X} * Measure.pi ν B := by
@@ -237,8 +228,6 @@ theorem update_mem_cause_iff {X : ι} (hX : X ∉ S) (w : ι → Bool) (b : Bool
   simp only [mem_cause]
   exact forall₂_congr fun i hi ↦ by rw [Function.update_of_ne (ne_of_mem_of_not_mem hi hX)]
 
-/-- The sufficiency of a single cause is the probability, over the other urns, that the outcome
-holds with the cause and fails without it, given that it fails without it. -/
 theorem sufficiency_singleton {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
     sufficiency (Measure.pi ν) w₀ E {X} =
       Measure.pi ν ((Function.update · X (w₀ X)) ⁻¹' E \ (Function.update · X (!w₀ X)) ⁻¹' E) /
@@ -262,8 +251,6 @@ theorem sufficiency_singleton {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
   rw [sufficiency, compl_cause_singleton, h₁, cond_apply .of_discrete, h₂, hnum, hden,
     ← ENNReal.div_eq_inv_mul, ENNReal.mul_div_mul_left _ _ hX (measure_ne_top _ _)]
 
-/-- The score of a single cause is its probability times its sufficiency, plus the probability of
-its absence when flipping it in the actual round removes the outcome. -/
 theorem score_singleton [DecidablePred (· ∈ E)] {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
     score (Measure.pi ν) w₀ E {X} = ν X {w₀ X} * sufficiency (Measure.pi ν) w₀ E {X} +
       if Function.update w₀ X (!w₀ X) ∈ E then 0 else ν X {!w₀ X} := by
@@ -271,8 +258,6 @@ theorem score_singleton [DecidablePred (· ∈ E)] {X : ι} (hX : ν X {!w₀ X}
     measure_pi_cause, Finset.prod_singleton, measure_pi_compl_cause_singleton]
   split_ifs <;> simp
 
-/-- When the outcome is that the urns `T` all show their actual draws, the score of a part `S` of
-`T` is the probability that `S` is absent plus the probability of the outcome. -/
 theorem score_pi_cause (hST : S ⊆ T) (hc : Measure.pi ν (cause w₀ S)ᶜ ≠ 0) :
     score (Measure.pi ν) w₀ (cause w₀ T) S =
       Measure.pi ν (cause w₀ S)ᶜ + Measure.pi ν (cause w₀ T) := by
@@ -293,8 +278,6 @@ theorem score_pi_cause (hST : S ⊆ T) (hc : Measure.pi ν (cause w₀ S)ᶜ ≠
     one_mul, hT, measure_pi_inter_of_dependsOn dependsOn_cause dependsOn_cause
       Finset.disjoint_sdiff, add_comm]
 
-/-- When the outcome is that the urns `T` all show their actual draws, of two parts of `T` the less
-likely scores higher. -/
 theorem score_pi_cause_lt_iff {S' : Finset ι} (hS : S ⊆ T) (hS' : S' ⊆ T)
     (hc : Measure.pi ν (cause w₀ S)ᶜ ≠ 0) (hc' : Measure.pi ν (cause w₀ S')ᶜ ≠ 0) :
     score (Measure.pi ν) w₀ (cause w₀ T) S < score (Measure.pi ν) w₀ (cause w₀ T) S' ↔

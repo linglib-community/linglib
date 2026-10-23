@@ -160,7 +160,6 @@ variable {s}
 @[simp] theorem resolve_unspecified : unspecified.resolve s φ ↔ ∃ z, φ z := by
   simp [resolve, values]
 
-/-- Every resolution entails the unspecified one. -/
 theorem resolve_unspecified_of_resolve {r : Reading} (h : r.resolve s φ) :
     unspecified.resolve s φ :=
   let ⟨z, _, hz⟩ := h; ⟨z, trivial, hz⟩
@@ -224,15 +223,12 @@ it (53). -/
 theorem denote_incorporationReflexive : incorporationReflexive.denote V P s ↔ V s s ∧ P s :=
   Reading.resolve_coreferent
 
-/-- An anticausative says that something, perhaps the subject itself, acted on the subject. -/
 theorem denote_anticausative : anticausative.denote V P s ↔ ∃ z, V s z :=
   Reading.resolve_unspecified
 
 /-- As an incorporated noun *diri* 'self' is semantically vacuous. -/
 def diri : E → Prop := fun x ↦ ∃ y, y = x
 
-/-- With *diri* incorporated, the reflexive incorporation middle has the truth conditions of an
-inherent reflexive. -/
 theorem denote_incorporationReflexive_iff_reflexive :
     incorporationReflexive.denote V diri s ↔ reflexive.denote V P s := by
   simp [denote_incorporationReflexive, denote_reflexive, diri]
@@ -253,23 +249,18 @@ open BeaversZubair2013 (CauserSort causerSuppress)
 variable {E : Type} {c : CauserSort} (h : CauserSort.individual ≤ c) (V : E → E → Prop)
   (P : E → Prop) (s : E)
 
-/-- Causer suppression is *ber-* under a condition on the sort of the causer. -/
 theorem causerSuppress_eq_ber {α : Type} (z : E) (vp : E → α) :
     causerSuppress c h z vp = ber z vp :=
   rfl
 
-/-- An inherent reflexive is the reflexive resolution of a suppressed causer. -/
 theorem denote_reflexive_iff_resolve :
     reflexive.denote V P s ↔ BeaversZubair2013.Reading.reflexive.resolve h (flip V) s :=
   denote_reflexive V P s
 
-/-- An anticausative is the existential resolution of a suppressed causer. -/
 theorem denote_anticausative_iff_resolve :
     anticausative.denote V P s ↔ BeaversZubair2013.Reading.existential.resolve h (flip V) s :=
   denote_anticausative V P s
 
-/-- A dispositional middle entails the existential resolution of a suppressed causer, to which
-it adds that the causer is not the subject. -/
 theorem resolve_existential_of_dispositional (hs : dispositional.denote V P s) :
     BeaversZubair2013.Reading.existential.resolve h (flip V) s :=
   (denote_anticausative_iff_resolve h V P s).1 (Reading.resolve_unspecified_of_resolve hs)
@@ -309,7 +300,6 @@ def EntailsExternalCauser (f : Form) : Prop :=
 def EntailsAgentSubject (f : Form) : Prop :=
   ∀ (E : Type) (V : E → E → Prop) (P : E → Prop) (o s : E), f.denote V P o s → ∃ x, V x s
 
-/-- The passive and the dispositional middle alone entail an external causer. -/
 theorem entailsExternalCauser_iff (f : Form) :
     f.EntailsExternalCauser ↔ f = .di ∨ f = .middle dispositional := by
   refine ⟨fun hf ↦ ?_, ?_⟩
@@ -318,8 +308,6 @@ theorem entailsExternalCauser_iff (f : Form) :
     rcases f with _ | _ | ⟨_ | _, _ | _ | _⟩ <;> simp_all [dispositional]
   · rintro (rfl | rfl) _ _ _ _ _ h <;> simpa [dispositional] using h
 
-/-- The subject is the agent in the active and in the middles that keep the agent in place, with
-an incorporated object or the coreferent reading. -/
 theorem entailsAgentSubject_iff (f : Form) :
     f.EntailsAgentSubject ↔
       f = .meN ∨ ∃ m, f = .middle m ∧ (m.object = .incorporated ∨ m.reading = .coreferent) := by
@@ -417,7 +405,6 @@ def middles : RootClass → Allomorph → Finset MiddleType
 /-- The forms that a plain middle of a root of the class denotes in an allomorph. -/
 def forms (c : RootClass) (a : Allomorph) : Finset Form := (c.middles a).image .middle
 
-/-- Every form of the paper's roots in the fragment has a reading. -/
 theorem middles_nonempty (c : RootClass) (a : Allomorph) :
     ∀ v ∈ c.roots, (a.form? v).isSome → (c.middles a).Nonempty := by
   cases c <;> cases a <;> decide
@@ -499,10 +486,8 @@ The heads of *ber-* realize thematic active and thematic non-active Voice. -/
 cells. -/
 def berParams : Params := berHeads.inf' ⟨berActive, by simp [berHeads]⟩ Head.params
 
-/-- *ber-* is thematic and leaves open whether it projects a specifier. -/
 theorem berParams_eq : berParams = (⊥, (true : Flat Bool)) := by decide
 
-/-- *ber-* is compatible with the thematic Voice heads alone. -/
 theorem compat_berParams_iff (v : Head) : Compat berParams v.params ↔ v.IsThematic := by
   simp [berParams_eq, Head.params, Head.IsThematic, compat_prod_iff, bot_compat]
 

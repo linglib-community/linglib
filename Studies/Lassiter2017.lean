@@ -137,12 +137,10 @@ endpoint and a contextual standard fits any scale. Interpretive Economy, `Bounde
 is (4.59), which confines the contextual standard to open scales. -/
 def Coherent (b : Boundedness) (s : PositiveStandard) : Prop := s = .contextual ∨ b.Admits s
 
-/-- What Interpretive Economy admits is coherent. -/
 theorem coherent_of_admits {b : Boundedness} {s : PositiveStandard} (h : b.Admits s) :
     Coherent b s :=
   .inr h
 
-/-- The two typologies part exactly at a contextual standard on a scale with an endpoint. -/
 theorem coherent_and_not_admits_contextual {b : Boundedness} (hb : b ≠ .open_) :
     Coherent b .contextual ∧ ¬ b.Admits .contextual :=
   ⟨.inl rfl, Boundedness.not_admits_contextual_of_ne_open hb⟩
@@ -170,8 +168,6 @@ instance : ∀ m s, Decidable (LicensesPos m s)
   | .maximizer, s => inferInstanceAs (Decidable (s = .maxEndpoint))
   | .minimizer, s => inferInstanceAs (Decidable (s = .minEndpoint))
 
-/-- [kennedy-2007]'s licensing by the scale is the book's licensing by the positive form,
-quantified over the standards Interpretive Economy admits on the scale. -/
 theorem licenses_iff_exists_admits (m : EndpointModifier) (b : Boundedness) :
     b.Licenses m ↔ ∃ s, b.Admits s ∧ LicensesPos m s := by
   cases m <;> cases b <;> simp [Boundedness.Licenses, LicensesPos, Boundedness.Admits,
@@ -218,18 +214,15 @@ variable [IsProbabilityMeasure P]
 theorem mem_certain_iff : A ∈ certain P ↔ P.real A = 1 :=
   ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
-/-- *Likely* is [kennedy-2007]'s relative positive form on the probability scale. -/
 theorem mem_likely_iff_relativePos (θ : Probability) :
     A ∈ likely P θ ↔ RelativePos (likelihood P) θ A :=
   Iff.rfl
 
-/-- *Certain* is Kennedy's maximum-standard positive form on the probability scale. -/
 theorem mem_certain_iff_maxStandardPos :
     A ∈ certain P ↔ MaxStandardPos (likelihood P) A := by
   rw [mem_certain_iff, MaxStandardPos, Subtype.ext_iff, coe_likelihood,
     Set.Icc.coe_top]
 
-/-- *Possible* is Kennedy's minimum-standard positive form on the probability scale. -/
 theorem mem_possible_iff_minStandardPos :
     A ∈ possible P ↔ MinStandardPos (likelihood P) A := by
   rw [mem_possible_iff, MinStandardPos, ← Subtype.coe_lt_coe, coe_likelihood,
@@ -317,11 +310,9 @@ theorem mem_pos_might_iff [DiscreteMeasurableSpace W] [IsProbabilityMeasure P]
   rw [Lassiter2015.probMight, ← hdual] at h
   exact h
 
-/-- At threshold one *certain* is its positive form. -/
 theorem pos_certain (h : θ .certain = 1) : pos P θ .certain = certain P := by
   simp [pos, EpistemicItem.comparison, certain, h]
 
-/-- At threshold zero *possible* is its positive form. -/
 theorem pos_possible (h : θ .possible = 0) : pos P θ .possible = possible P := by
   simp [pos, EpistemicItem.comparison, possible, h]
 
@@ -403,14 +394,10 @@ structure Constraints (μ : Set W → ℝ) (ought : Set W → Prop) (alt : Set W
 variable [Nonempty W] (h : Constraints μ ought alt) {φ ψ : Set W}
 include h
 
-/-- A proposition and its negation, each an alternative to the other, cannot both be
-obligatory. -/
 theorem Constraints.not_compl (hφ : φᶜ ∈ alt φ) (hφ' : φ ∈ alt φᶜ) (h₁ : ought φ) :
     ¬ ought φᶜ := fun h₂ ↦
   lt_asymm (h.sloman h₁ _ hφ ne_compl_self.symm) (h.sloman h₂ _ hφ' ne_compl_self)
 
-/-- Weakening carries a failure of Sloman's Principle at a disjunction, one no better than
-its negation, back to the disjuncts. -/
 theorem Constraints.not_and_of_le (hne : (φ ∪ ψ)ᶜ ∈ alt (φ ∪ ψ))
     (hle : μ (φ ∪ ψ) ≤ μ (φ ∪ ψ)ᶜ) : ¬ (ought φ ∧ ought ψ) := fun ⟨h₁, h₂⟩ ↦
   (h.sloman (h.weakening h₁ h₂) _ hne ne_compl_self.symm).not_ge hle
@@ -464,16 +451,12 @@ private theorem card_eq : Fintype.card Smith = 3 := rfl
 
 attribute [local simp] M S value card_eq Finset.univ Fintype.elems Finset.sum_insert
 
-/-- The sample model meets the Sloman requirements of the premises `ought (M ∨ S)` and
-`ought ¬M` and of the conclusion `ought S`. -/
 theorem sloman :
     goodness prior value (M ∪ S)ᶜ < goodness prior value (M ∪ S) ∧
       goodness prior value M < goodness prior value Mᶜ ∧
       goodness prior value Sᶜ < goodness prior value S := by
   classical norm_num [-Finset.sum_const]
 
-/-- In the Smith argument, the Smith Principle agglomerates the exhaustive premises to
-`ought S`. -/
 theorem ought_S {μ : Set Smith → ℝ} {ought : Set Smith → Prop} {alt : Set Smith → Set (Set Smith)}
     (h : Constraints μ ought alt) (h₁ : ought (M ∪ S)) (h₂ : ought Mᶜ) : ought S :=
   have : (M ∪ S) ∩ Mᶜ = S := by ext w; cases w <;> simp
@@ -524,14 +507,11 @@ theorem goodness_union : goodness prior value (A ∪ B) = 0 := by
 theorem goodness_compl_union : goodness prior value (A ∪ B)ᶜ = 0 := by
   classical norm_num [-Finset.sum_const]
 
-/-- `A` and `B` each satisfy Sloman's Principle against their negations. -/
 theorem sloman :
     goodness prior value Aᶜ < goodness prior value A ∧
       goodness prior value Bᶜ < goodness prior value B := by
   rw [goodness_A, goodness_compl_A, goodness_B, goodness_compl_B]; norm_num
 
-/-- Sloman's Principle and Weakening make `ought A` and `ought B` incompatible, since the
-disjunction ties with its negation. -/
 theorem not_ought_and {ought : Set World → Prop} {alt : Set World → Set (Set World)}
     (h : Constraints (goodness prior value) ought alt) (halt : (A ∪ B)ᶜ ∈ alt (A ∪ B)) :
     ¬ (ought A ∧ ought B) :=

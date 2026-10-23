@@ -53,9 +53,6 @@ variable {α : Type*}
 An assignment of `n` guests to the vertices `xs` is a section of `replicate n xs`, a word of
 length `n` over `xs`. -/
 
-/-- A sum over assignments of the guests `gs` to `xs`, viewed through the two classes of a
-predicate `P` on `xs`, is a sum over the splittings `gs.sublists'.revzip` of independent
-assignments to `xs.filter P` and to its complement. -/
 private theorem bind_sections_filter {β γ δ : Type*} (P : β → Prop) [DecidablePred P]
     (xs : List β) (gs : List γ) (G : List (β × γ) → List (β × γ) → Multiset δ) :
     ((List.replicate gs.length xs).sections : Multiset (List β)).bind (fun ch =>
@@ -141,27 +138,22 @@ theorem insertionForest_nil_guests (F : List (RoseTree α)) :
   · exact insertionForest_nil_nil
   · exact insertionForest_cons_host_nil_guests _ _
 
-/-- Zipping a mapped list and undoing the map on the first components. -/
 private theorem map_zip_map_left {β β' γ : Type*} {f : β → β'} {f' : β' → β}
     (h : ∀ x, f' (f x) = x) (l : List β) (r : List γ) :
     ((l.map f).zip r).map (Prod.map f' id) = l.zip r := by
   rw [List.zip_map_left, List.map_map]
   exact (List.map_congr_left fun ⟨x, y⟩ _ => by simp [h]).trans (List.map_id _)
 
-/-- Every output of `insertion T gs` has the root value of `T`. -/
 theorem value_of_mem_insertion {T T' : RoseTree α} {gs : List (RoseTree α)}
     (h : T' ∈ insertion T gs) : T'.value = T.value := by
   obtain ⟨ch, -, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.mp h)
   exact value_multiGraft T _
 
-/-- Every output of `insertionForest cs gs` has as many trees as `cs`. -/
 theorem length_of_mem_insertionForest {cs gs L : List (RoseTree α)}
     (h : L ∈ insertionForest cs gs) : L.length = cs.length := by
   obtain ⟨ch, -, rfl⟩ := List.mem_map.mp (Multiset.mem_coe.mp h)
   exact multiGraftChildren_length cs _
 
-/-- In a forest host, the first tree takes a sublist of the guests and the other trees take the
-complement. -/
 theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
     insertionForest (T :: F) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
@@ -213,7 +205,6 @@ theorem insertionForest_cons (T : RoseTree α) (F gs : List (RoseTree α)) :
   rw [map_zip_map_left fun _ => rfl, map_zip_map_left fun q => by cases q <;> simp]
   rfl
 
-/-- Only the split assigning no guest to the empty forest contributes. -/
 private theorem bind_revzip_insertionForest_nil {δ : Type*} (gs : List (RoseTree α))
     (H : List (RoseTree α) → List (RoseTree α) → Multiset δ) :
     (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind
@@ -227,8 +218,6 @@ private theorem bind_revzip_insertionForest_nil {δ : Type*} (gs : List (RoseTre
       add_zero]
     exact ih fun A s => H A (g :: s)
 
-/-- In a concatenated host, the guests split into a sublist for the left forest and its
-complement for the right one. -/
 theorem insertionForest_append (xs ys gs : List (RoseTree α)) :
     insertionForest (xs ++ ys) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
@@ -247,8 +236,6 @@ theorem insertionForest_append (xs ys gs : List (RoseTree α)) :
         (insertionForest ys s).map ((T' :: A) ++ ·)]
     exact Multiset.bind_congr fun p _ => Multiset.bind_bind _ _
 
-/-- Splits of an output list are splits of the hosts and of the guests, each guest following its
-host. Stated in continuation form over a function `K` of the two parts. -/
 theorem insertionForest_bind_revzip_sublists' {δ : Type*} (hs gs : List (RoseTree α))
     (K : List (RoseTree α) → List (RoseTree α) → Multiset δ) :
     (insertionForest hs gs).bind (fun L =>
@@ -306,8 +293,6 @@ theorem insertionForest_bind_revzip_sublists' {δ : Type*} (hs gs : List (RoseTr
           K (T' :: L₁) L₂]
       exact Multiset.bind_congr fun q _ => Multiset.bind_bind_bind_comm _ _ _ _
 
-/-- In a node host, the guests split into a sublist prepended at the root, in guest order, and its
-complement grafted into the child forest. -/
 theorem insertion_node (a : α) (cs gs : List (RoseTree α)) :
     insertion (RoseTree.node a cs) gs =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
@@ -350,7 +335,6 @@ private theorem msform_cons (T : RoseTree α) (L : List (RoseTree α)) :
     (↑((T :: L).map UnorderedTree.mk) : Multiset (UnorderedTree α)) =
       UnorderedTree.mk T ::ₘ ↑(L.map UnorderedTree.mk) := rfl
 
-/-- The host-forest recursion under `mk`. -/
 theorem insertionForest_cons_msform (T : RoseTree α) (F gs : List (RoseTree α)) :
     (insertionForest (T :: F) gs).map
         (fun L => (↑(L.map UnorderedTree.mk) : Multiset (UnorderedTree α))) =
@@ -366,7 +350,6 @@ theorem insertionForest_cons_msform (T : RoseTree α) (F gs : List (RoseTree α)
   rw [Multiset.map_map, Multiset.map_map]
   exact Multiset.map_congr rfl fun L _ => msform_cons T' L
 
-/-- The node-host decomposition under `mk`. -/
 theorem insertion_node_msform (a : α) (cs gs : List (RoseTree α)) :
     (insertion (RoseTree.node a cs) gs).map UnorderedTree.mk =
       (gs.sublists'.revzip : Multiset (List (RoseTree α) × List (RoseTree α))).bind fun p =>
@@ -383,7 +366,6 @@ theorem insertion_node_msform (a : α) (cs gs : List (RoseTree α)) :
 
 /-! ## Singleton hosts and empty guest lists -/
 
-/-- Inserting no guests leaves the host unchanged. -/
 theorem insertion_nil_guests (T : RoseTree α) :
     insertion T ([] : List (RoseTree α)) = ({T} : Multiset (RoseTree α)) := by
   rw [insertion_def]
@@ -391,7 +373,6 @@ theorem insertion_nil_guests (T : RoseTree α) :
              multiGraft_nil, List.map_cons, List.map_nil,
              Multiset.coe_singleton]
 
-/-- Inserting into a one-tree forest is inserting into that tree. -/
 theorem insertionForest_singleton (T : RoseTree α) (gs : List (RoseTree α)) :
     insertionForest [T] gs = (insertion T gs).map (fun T' => [T']) := by
   rw [insertionForest_def, insertion_def, verticesList_cons, verticesList_nil, List.map_nil,

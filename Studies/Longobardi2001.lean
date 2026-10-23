@@ -204,7 +204,6 @@ def SpeciesReading (dp : DPParameter) : ArgumentType → Prop
 instance (dp : DPParameter) : DecidablePred (SpeciesReading dp) := λ t => by
   cases t <;> unfold SpeciesReading <;> infer_instance
 
-/-- A bare noun licenses the species reading exactly when it may be referential. -/
 theorem species_iff (dp : DPParameter) :
     (∃ t ∈ bnArgumentTypes dp, SpeciesReading dp t) ↔ BnCanBeReferential dp := by
   cases h : dp.strongD <;> simp [bnArgumentTypes, SpeciesReading, BnCanBeReferential, h]
@@ -241,8 +240,6 @@ def predictedOf (e : Datum) : Option (Finset Reading) := do
   | some "overtIndefinite" => some (quantReadings env)
   | _ => none
 
-/-- Every bare-noun and overt-indefinite row, Italian, English, and Greek, subject and object,
-records exactly the readings the parameter predicts. -/
 theorem readings_predicted :
     ∀ e ∈ Examples.all, ∀ p ∈ predictedOf e,
       (Available e "Ex" ↔ .ex ∈ p) ∧ (Available e "Gen" ↔ .gen ∈ p) := by
@@ -277,8 +274,6 @@ predicates needing D for argumenthood, with weak D they may be arguments on thei
 def toNominalMapping (dp : DPParameter) : NominalMapping :=
   if dp.strongD then .predOnly else .argAndPred
 
-/-- The Romance and English parameters yield the mappings [chierchia-1998] gives Italian and
-English. -/
 theorem chierchia_mappings :
     toNominalMapping romance = Chierchia1998.Language.nominalMapping .italian ∧
       toNominalMapping english = Chierchia1998.Language.nominalMapping .english := ⟨rfl, rfl⟩

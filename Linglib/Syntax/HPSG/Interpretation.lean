@@ -94,7 +94,6 @@ variable {I} {g g' : ℕ → U} {u v : U}
 @[simp] theorem termDenot_feat (t : Term Sig) (α : Sig.Attr) :
     I.termDenot g (t.feat α) u = (I.termDenot g t u).bind (I.A α) := rfl
 
-/-- A term denotation depends only on the values of the variables that occur in the term. -/
 theorem termDenot_congr {t : Term Sig} (h : ∀ x ∈ t.freeVars, g x = g' x) :
     I.termDenot g t u = I.termDenot g' t u := by
   induction t with
@@ -102,7 +101,6 @@ theorem termDenot_congr {t : Term Sig} (h : ∀ x ∈ t.freeVars, g x = g' x) :
   | var n => simp [h n (Finset.mem_singleton_self n)]
   | feat t α ih => rw [termDenot_feat, termDenot_feat, ih h]
 
-/-- The denotation of a path does not depend on the assignment. -/
 theorem termDenot_path (g g' : ℕ → U) (p : Path Sig) :
     I.termDenot g (.path p) u = I.termDenot g' (.path p) u :=
   termDenot_congr (by simp)
@@ -181,8 +179,6 @@ instance [DecidableLE Srt] [Fintype U] [Fintype Sig.Attr] : Decidable I.IsTotall
       ∀ (α : Sig.Attr) (u : U), (Sig.approp (I.S u) α).isSome → (I.A α u).isSome)
     ⟨fun ⟨a, b⟩ ↦ ⟨a, b⟩, fun ⟨a, b⟩ ↦ ⟨a, b⟩⟩
 
-/-- The denotation of a path that starts with `α` is the denotation of the rest at the value
-of `α`. -/
 theorem termDenot_path_cons (α : Sig.Attr) (p : Path Sig) :
     I.termDenot g (.path (α :: p)) u = (I.A α u).bind (I.termDenot g (.path p)) := by
   induction p using List.reverseRecOn with
@@ -192,7 +188,6 @@ theorem termDenot_path_cons (α : Sig.Attr) (p : Path Sig) :
       Option.bind_assoc]
     rfl
 
-/-- The denotation of a path `p ++ q` is the denotation of `q` at the end of `p`. -/
 theorem termDenot_path_append (p q : Path Sig) :
     I.termDenot g (.path (p ++ q)) u =
       (I.termDenot g (.path p) u).bind (I.termDenot g (.path q)) := by
@@ -202,8 +197,6 @@ theorem termDenot_path_append (p q : Path Sig) :
     rw [List.cons_append, termDenot_path_cons, termDenot_path_cons, Option.bind_assoc]
     simp only [ih]
 
-/-- In a well-typed interpretation the signature admits every path that is defined, from the
-sort of the entity it starts at to the sort of the entity it reaches. -/
 theorem IsWellTyped.admits (hI : I.IsWellTyped) {p : Path Sig}
     (h : I.termDenot g (.path p) u = some v) : Sig.Admits (I.S u) p (I.S v) := by
   induction p generalizing u with

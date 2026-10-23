@@ -154,8 +154,6 @@ def ClosedUnderLumping (F A : Set (Set S)) (w : S) : Prop := ∀ p ∈ A, ∀ q 
 of `A` logically implies is in `A`. -/
 def ClosedUnderConsequence (F A : Set (Set S)) : Prop := ∀ B ⊆ A, ∀ q ∈ F, Follows B q → q ∈ A
 
-/-- Since consequence is monotone in the premises, strong closure under logical consequence is
-closure under the consequences of the whole set. -/
 theorem closedUnderConsequence_iff : ClosedUnderConsequence F A ↔ ∀ q ∈ F, Follows A q → q ∈ A :=
   ⟨fun h q hq ↦ h A subset_rfl q hq, fun h _ hB q hq hBq ↦ h q hq (hBq.mono hB)⟩
 
@@ -254,7 +252,6 @@ in the actual world, but a part of it supports the first without the second. -/
 theorem not_lumps_notAd_pa : ¬ Lumps notAd pa Sit.actual := fun h ↦
   (by decide_sit : Sit.calm ∉ pa) (h.localImpl (by decide) (by decide_sit))
 
-/-- Nor does the calm lump the disjunction. -/
 theorem not_lumps_notAd_paOrAd : ¬ Lumps notAd paOrAd Sit.actual := fun h ↦
   (by decide_sit : Sit.calm ∉ paOrAd) (h.localImpl (by decide) (by decide_sit))
 
@@ -277,7 +274,6 @@ theorem might_consistentPremiseSets_atlantic : Might (consistentPremiseSets fact
 
 /-! ### The repair (§4.4) -/
 
-/-- The antecedent together with the Atlantic's calm is in the crucial set. -/
 theorem isCrucial_notPa_notAd : IsCrucial facts Sit.actual notPa {notPa, notAd} where
   subset := by simp [facts, insert_subset_iff]
   consistent := ⟨.noApples, by decide_sit⟩
@@ -327,8 +323,6 @@ theorem not_might_crucialSet_atlantic : ¬ Might (crucialSet facts Sit.actual no
   have h₂ := hs notAd (by simp)
   revert h₁ h₂; clear hs hw; revert s; decide_sit
 
-/-- The dual: under lumping, if Paula weren't buying apples the Atlantic would not be drying
-up. -/
 theorem would_crucialSet_compl_ad : Would (crucialSet facts Sit.actual notPa) adᶜ :=
   not_not.mp (might_iff_not_would_compl.not.mp not_might_crucialSet_atlantic)
 

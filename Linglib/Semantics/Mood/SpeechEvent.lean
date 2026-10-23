@@ -117,8 +117,6 @@ def SpeechEvent.toState (sa : SpeechEvent W) (w₀ : W) : ExpState W :=
     (SpeechEvent.imperative todo).toState w₀ =
       (todo w₀).foldl ExpState.promote ExpState.init := rfl
 
-/-- A declarative's information state is the worlds compatible with
-every belief in `CON(e*)`. -/
 theorem SpeechEvent.mem_toState_declarative_info
     (beliefs : W → List (W → Prop)) (w₀ v : W) :
     v ∈ ((SpeechEvent.declarative beliefs).toState w₀).info ↔
@@ -126,8 +124,6 @@ theorem SpeechEvent.mem_toState_declarative_info
   rw [SpeechEvent.toState_declarative, ExpState.mem_foldl_assert_info]
   simp [ExpState.init]
 
-/-- An imperative ranks `w` at least as high as `v` when `w` complies with every item on the
-To-Do List that `v` complies with, the ordering source of [kratzer-1981] reached by promotion. -/
 theorem SpeechEvent.toState_imperative_le
     (todo : W → List (W → Prop)) (w₀ w v : W) :
     ((SpeechEvent.imperative todo).toState w₀).order.le w v ↔
@@ -135,7 +131,6 @@ theorem SpeechEvent.toState_imperative_le
   rw [SpeechEvent.toState_imperative, ExpState.foldl_promote_order_le]
   exact ⟨And.right, fun h ↦ ⟨trivial, h⟩⟩
 
-/-- The To-Do List ranks worlds; it does not eliminate them. -/
 theorem SpeechEvent.toState_imperative_info
     (todo : W → List (W → Prop)) (w₀ : W) :
     ((SpeechEvent.imperative todo).toState w₀).info = Set.univ := by
@@ -162,8 +157,6 @@ def SpeechEvent.modal (sa : SpeechEvent W) (w₀ : W) (p : W → Prop) : Prop :=
       ((SpeechEvent.imperative todo).toState w₀).boxLe p := by
   simp [SpeechEvent.modal, SpeechEvent.imperative, Force.target]
 
-/-- The declarative modal quantifies over exactly the
-belief-compatible worlds. -/
 theorem SpeechEvent.modal_declarative_iff
     (beliefs : W → List (W → Prop)) (w₀ : W) (p : W → Prop) :
     (SpeechEvent.declarative beliefs).modal w₀ p ↔
@@ -199,7 +192,6 @@ def Component.flavor : Component → Option ModalFlavor
 def _root_.Discourse.SpeechAct.Force.primaryFlavor (f : Force) : Option ModalFlavor :=
   f.target.bind Component.flavor
 
-/-- The flavor a component licenses targets that component back. -/
 theorem Component.target_of_mem_flavor {c : Component} {φ : ModalFlavor} (h : φ ∈ c.flavor) :
     φ.target = c := by
   cases c <;> cases h <;> rfl
@@ -210,8 +202,6 @@ theorem Component.target_of_mem_flavor {c : Component} {φ : ModalFlavor} (h : �
 @[simp] theorem primaryFlavor_imperative :
     Force.imperative.primaryFlavor = some .deontic := rfl
 
-/-- The declarative and the imperative license different flavors, so *must* varies in flavor
-without being lexically ambiguous. -/
 theorem speech_act_determines_flavor :
     Force.declarative.primaryFlavor ≠ Force.imperative.primaryFlavor := by decide
 
@@ -233,15 +223,12 @@ def declarativeEvidence : SpeechEvent LeaveWorld :=
 def imperativePermission : SpeechEvent LeaveWorld :=
   .imperative (fun _ ↦ [(· = .leave)])
 
-/-- Under the declarative, the speaker's evidence leaves staying
-open. -/
 theorem declarative_leave_not_necessary :
     ¬ declarativeEvidence.modal .leave (· = .leave) := by
   intro h
   exact LeaveWorld.noConfusion ((SpeechEvent.modal_declarative _ _ _).mp h .stay
     ((SpeechEvent.mem_toState_declarative_info _ _ _).mpr (by simp)))
 
-/-- Under the imperative, every TDL-best world is a leave-world. -/
 theorem imperative_leave_required :
     imperativePermission.modal .leave (· = .leave) := by
   have hchar : ∀ v ∈ (imperativePermission.toState LeaveWorld.leave).optimal,

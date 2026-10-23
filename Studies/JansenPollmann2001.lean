@@ -151,8 +151,6 @@ theorem exists_natCast_eq_halfAgain :
   · rintro ⟨n, rfl⟩
     exact ⟨n + 2, by push_cast; rw [pow_succ, pow_succ]; ring⟩
 
-/-- The natural ratios of the rules are `10ⁿ`, `2 × 10ⁿ`, `5 × 10ⁿ`, and under the original rule
-`25 × 10ⁿ`. -/
 theorem isRatio_natCast_iff (rule : Rule) : rule.IsRatio r ↔
     (∃ n, r = 10 ^ n) ∨ (∃ n, r = 2 * 10 ^ n) ∨ (∃ n, r = 5 * 10 ^ n) ∨
       (rule = .original ∧ ∃ n, r = 25 * 10 ^ n) := by
@@ -173,7 +171,6 @@ theorem isRatio_natCast_iff (rule : Rule) : rule.IsRatio r ↔
     · exact ⟨.half, by cases rule <;> simp [Rule.Allows], h⟩
     · exact ⟨.halfAgain, trivial, h⟩
 
-/-- A power-of-ten family member is bounded by its exponent, so ratios are decidable. -/
 theorem exists_pow_iff_le_log (c : ℕ) (hc : 0 < c) :
     (∃ n, r = c * 10 ^ n) ↔ ∃ n ≤ Nat.log 10 r, r = c * 10 ^ n := by
   refine ⟨fun ⟨n, hn⟩ ↦ ⟨n, Nat.le_log_of_pow_le (by decide) ?_, hn⟩, fun ⟨n, _, hn⟩ ↦ ⟨n, hn⟩⟩
@@ -198,7 +195,6 @@ theorem isRatio_pos {rule : Rule} {q : ℚ} (h : rule.IsRatio q) : 0 < q := by
   obtain ⟨op, -, n, rfl⟩ := h
   cases op <;> simp only [QuantityOp.apply] <;> positivity
 
-/-- A pair of the rule is a pair whose difference is a ratio dividing the first member. -/
 theorem seqPair_iff {rule : Rule} {a b : ℕ} :
     SeqPair rule a b ↔ 0 < a ∧ a < b ∧ (b - a) ∣ a ∧ rule.IsRatio ((b - a : ℕ) : ℚ) := by
   constructor
@@ -258,7 +254,6 @@ theorem exists_double_iff :
   rw [show (m : ℚ) * (2 * 10 ^ b) = ((m * 2 * 10 ^ b : ℕ) : ℚ) by push_cast; ring]
   exact Nat.cast_inj
 
-/-- Halving a power of ten gives the 5-family, or below ten the halves of even digits. -/
 theorem hasKness_of_half (h : ∃ b m : ℕ, 1 ≤ m ∧ m ≤ 9 ∧
     (n : ℚ) = m * QuantityOp.half.apply (10 ^ b)) : HasKness 5 n ∨ HasKness 1 n := by
   obtain ⟨b, m, h1, h9, h⟩ := h
@@ -274,8 +269,6 @@ theorem half_of_hasKness (h : HasKness 5 n) :
   obtain ⟨b, m, h1, h9, rfl⟩ := h
   exact ⟨b + 1, m, h1, h9, by simp only [QuantityOp.apply]; push_cast; rw [pow_succ]; ring⟩
 
-/-- Quartering a power of ten gives 2½-ness, `2n` having 5-ness, or a number already with
-10-ness or 5-ness. -/
 theorem hasKness_of_halfAgain (h : ∃ b m : ℕ, 1 ≤ m ∧ m ≤ 9 ∧
     (n : ℚ) = m * QuantityOp.halfAgain.apply (10 ^ b)) :
     HasKness 5 (2 * n) ∨ HasKness 5 n ∨ HasKness 1 n := by

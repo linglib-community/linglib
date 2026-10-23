@@ -78,8 +78,6 @@ def embeddedBinder : ModalPosition → EventBinder
   | aboveAsp => .attitude
   | belowAsp => .vpEvent
 
-/-- Aspect intervenes between a low modal and any higher binder, so embedding leaves its binder
-unchanged. -/
 @[simp]
 theorem embeddedBinder_belowAsp : belowAsp.embeddedBinder = belowAsp.matrixBinder := rfl
 
@@ -124,11 +122,9 @@ theorem isSome_of_contentPossibility (h : contentPossibility con q e) : (con e).
   let ⟨_, hC, _⟩ := h
   Option.isSome_of_mem hC
 
-/-- An event without content licenses no necessity over content. -/
 theorem not_contentNecessity_of_eq_none (h : con e = none) : ¬ contentNecessity con q e := by
   simp [contentNecessity, h]
 
-/-- An event without content licenses no possibility over content. -/
 theorem not_contentPossibility_of_eq_none (h : con e = none) : ¬ contentPossibility con q e := by
   simp [contentPossibility, h]
 
@@ -142,31 +138,23 @@ theorem contentPossibility.mono (hpq : ∀ w, p w → q w) (h : contentPossibili
   let ⟨C, hC, w, hw, hp⟩ := h
   ⟨C, hC, w, hw, hpq w hp⟩
 
-/-- Necessity over a consistent content entails possibility. -/
 theorem contentNecessity.contentPossibility (hC : con e = some C) (hne : C.Nonempty)
     (h : contentNecessity con q e) : contentPossibility con q e :=
   let ⟨w, hw⟩ := hne
   (contentPossibility_iff_of_eq_some hC).2 ⟨w, hw, (contentNecessity_iff_of_eq_some hC).1 h w hw⟩
 
-/-- The two quantifiers are dual wherever the event has content. -/
 theorem contentPossibility_iff_not_contentNecessity_not (hC : con e = some C) :
     contentPossibility con q e ↔ ¬ contentNecessity con (fun w ↦ ¬ q w) e := by
   simp [contentPossibility_iff_of_eq_some hC, contentNecessity_iff_of_eq_some hC]
 
-/-- Necessity of a proposition that does not vary with the world holds when the content is
-inconsistent or the proposition is true. -/
 theorem contentNecessity_const (hC : con e = some C) :
     contentNecessity con (fun _ ↦ r) e ↔ (C.Nonempty → r) := by
   simp [contentNecessity_iff_of_eq_some hC, Set.Nonempty]
 
-/-- Possibility of a proposition that does not vary with the world holds when the content is
-consistent and the proposition is true. -/
 theorem contentPossibility_const (hC : con e = some C) :
     contentPossibility con (fun _ ↦ r) e ↔ C.Nonempty ∧ r := by
   simp [contentPossibility_iff_of_eq_some hC, Set.Nonempty]
 
-/-- A necessity modal anchored to the event that embeds it is vacuous, since necessity over a
-content of necessity over the same content is that necessity. -/
 theorem contentNecessity_contentNecessity :
     contentNecessity con (fun _ ↦ contentNecessity con q e) e ↔ contentNecessity con q e := by
   refine ⟨fun h ↦ ?_, fun h ↦ h.imp fun _ hC ↦ ⟨hC.1, fun _ _ ↦ h⟩⟩
@@ -174,8 +162,6 @@ theorem contentNecessity_contentNecessity :
   rcases C.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
   exacts [⟨∅, hC, fun _ hw ↦ hw.elim⟩, hall w hw]
 
-/-- A possibility modal over a necessity anchored to the same event is that necessity over a
-consistent content. -/
 theorem contentPossibility_contentNecessity :
     contentPossibility con (fun _ ↦ contentNecessity con q e) e ↔
       ∃ C ∈ con e, C.Nonempty ∧ ∀ w ∈ C, q w :=

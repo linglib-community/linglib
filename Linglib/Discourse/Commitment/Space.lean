@@ -140,13 +140,11 @@ def restrict (D : Set S) : Space S :=
 theorem coe_restrict_of_root_mem (h : C.root ∈ D) : (C.restrict D : Set S) = ↑C ∩ D :=
   Set.insert_eq_of_mem ⟨C.root_mem, h⟩
 
-/-- Restricting to a union is the disjunction of the restrictions. -/
 theorem coe_restrict_union (D E : Set S) :
     (C.restrict (D ∪ E) : Set S) = ↑(C.restrict D) ∪ ↑(C.restrict E) := by
   rw [coe_restrict, coe_restrict, coe_restrict, Set.inter_union_distrib_left,
     Set.insert_union_distrib]
 
-/-- Restricting to an intersection is the conjunction of the restrictions. -/
 theorem coe_restrict_inter (D E : Set S) :
     (C.restrict (D ∩ E) : Set S) = ↑(C.restrict D) ∩ ↑(C.restrict E) := by
   rw [coe_restrict, coe_restrict, coe_restrict, Set.inter_inter_distrib_left,
@@ -160,7 +158,6 @@ def denegate (D : Set S) : Space S := C.restrict Dᶜ
 
 @[simp] theorem mem_denegate : d ∈ C.denegate D ↔ d = C.root ∨ d ∈ C ∧ d ∉ D := Iff.rfl
 
-/-- Denegating an act that moves the root leaves the relative complement. -/
 theorem coe_denegate_of_root_notMem (h : C.root ∉ D) : (C.denegate D : Set S) = ↑C \ D :=
   C.coe_restrict_of_root_mem h
 
@@ -203,18 +200,14 @@ theorem le_root_update (k : S) : k ≤ (C.update k).root := le_sInf fun _ hd ↦
 theorem root_le_root_update (k : S) : C.root ≤ (C.update k).root :=
   le_sInf fun _ hd ↦ C.root_le hd.1
 
-/-- The space admits an update, in that the new root is one of its states, iff its states above
-`k` have a least member. -/
 theorem root_update_mem_iff : (C.update k).root ∈ C ↔ ∃ r, IsLeast (↑C ∩ Set.Ici k) r := by
   refine ⟨fun h ↦ ⟨_, ⟨h, C.le_root_update k⟩, fun _ hd ↦ sInf_le hd⟩, fun ⟨r, hr⟩ ↦ ?_⟩
   rw [root_update, hr.csInf_eq]
   exact hr.1.1
 
-/-- When the space projects the root joined with `k`, that state is the root of the update. -/
 theorem root_update_of_mem (h : k ⊔ C.root ∈ C) : (C.update k).root = k ⊔ C.root :=
   IsLeast.csInf_eq ⟨⟨h, le_sup_left⟩, fun _ hd ↦ sup_le hd.2 (C.root_le hd.1)⟩
 
-/-- An update the space admits is its restriction to the states above `k`. -/
 theorem coe_update_of_root_mem (h : (C.update k).root ∈ C) :
     (C.update k : Set S) = ↑C ∩ Set.Ici k :=
   Set.insert_eq_of_mem ⟨h, C.le_root_update k⟩
@@ -223,7 +216,6 @@ theorem update_le (h : (C.update k).root ∈ C) : C.update k ≤ C := by
   rintro d (rfl | hd)
   exacts [h, hd.1]
 
-/-- The root survives an update iff the update is redundant. -/
 theorem root_mem_update_iff : C.root ∈ C.update k ↔ k ≤ C.root :=
   ⟨fun h ↦ h.elim (fun e ↦ e ▸ C.le_root_update k) And.right, fun h ↦ Or.inr ⟨C.root_mem, h⟩⟩
 
@@ -233,12 +225,10 @@ theorem update_le_update (hkl : k ≤ l) (h : (C.update l).root ∈ C) :
   rintro d (rfl | hd)
   exacts [Or.inr ⟨h, hkl.trans (C.le_root_update l)⟩, Or.inr ⟨hd.1, hkl.trans hd.2⟩]
 
-/-- Updates agree when the same states carry them. -/
 theorem update_congr {C' : Space S} (h : (↑C ∩ Set.Ici k : Set S) = ↑C' ∩ Set.Ici l) :
     C.update k = C'.update l :=
   SetLike.coe_injective (congrArg (fun R ↦ insert (sInf R) R) h)
 
-/-- Consecutive updates are the update by the join, when the space admits the first. -/
 theorem update_update (h : (C.update k).root ∈ C) (l : S) :
     (C.update k).update l = C.update (l ⊔ k) :=
   update_congr _ <| by
@@ -249,14 +239,12 @@ theorem update_comm (hk : (C.update k).root ∈ C) (hl : (C.update l).root ∈ C
     (C.update k).update l = (C.update l).update k := by
   rw [C.update_update hk, C.update_update hl, sup_comm]
 
-/-- Restricting to an update keeps the members above `k`, admitted or not. -/
 theorem restrict_coe_update (k : S) : C.restrict (C.update k) = C.restrict (Set.Ici k) := by
   ext d
   simp only [mem_restrict, SetLike.mem_coe, mem_update, Set.mem_Ici]
   refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h ↦ ?_, fun h ↦ Or.inr ⟨hd, h⟩⟩)
   exact h.elim (fun e ↦ e ▸ C.le_root_update k) And.right
 
-/-- A restriction that keeps the states above `k` leaves the update by `k` as it was. -/
 theorem update_restrict_of_subset (h : ↑C ∩ Set.Ici k ⊆ D) :
     (C.restrict D).update k = C.update k :=
   update_congr _ <| Set.ext fun _ ↦
@@ -304,13 +292,10 @@ theorem mem_assert :
 theorem commit_mem_root_assert : commit a φ force ∈ (C.assert a φ force).root :=
   Set.singleton_subset_iff.1 (C.le_root_update _)
 
-/-- When the space projects the root with the new commitment, that state is the root of the
-assertion. -/
 theorem root_assert_of_mem (h : insert (commit a φ force) C.root ∈ C) :
     (C.assert a φ force).root = insert (commit a φ force) C.root :=
   C.root_update_of_mem h
 
-/-- The root survives an assertion iff the assertion is redundant. -/
 theorem root_mem_assert_iff : C.root ∈ C.assert a φ force ↔ commit a φ force ∈ C.root :=
   C.root_mem_update_iff.trans Set.singleton_subset_iff
 

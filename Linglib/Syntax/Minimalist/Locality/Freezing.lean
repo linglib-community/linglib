@@ -59,17 +59,14 @@ def Frozen (d : Derivation) (x : SyntacticObject) : Prop := ∃ m ∈ d.movedIte
 instance (d : Derivation) (x : SyntacticObject) : Decidable (d.Frozen x) :=
   inferInstanceAs (Decidable (∃ m ∈ d.movedItems, Contains m x))
 
-/-- Extending a derivation freezes what its new movers contain and nothing else. -/
 theorem frozen_append_iff :
     (d.append steps).Frozen x ↔
       d.Frozen x ∨ ∃ m ∈ steps.filterMap Step.mover?, Contains m x := by
   simp [Frozen, movedItems_append, or_and_right, exists_or]
 
-/-- Freezing is monotone under extension. -/
 theorem Frozen.append (h : d.Frozen x) : (d.append steps).Frozen x :=
   frozen_append_iff.2 (Or.inl h)
 
-/-- Freezing is blind to the sides of External Merge. -/
 @[simp] theorem frozen_leftward_iff : d.leftward.Frozen x ↔ d.Frozen x := by
   rw [Frozen, Frozen, movedItems_leftward]
 
@@ -88,12 +85,10 @@ theorem obeysFreezing_append_iff :
   simp only [ObeysFreezing, movedItems_append, List.pairwise_append, Frozen]
   grind
 
-/-- A further movement obeys Freezing exactly when its mover is not frozen. -/
 @[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject} {side : Edge} :
     (d.append [.im m side]).ObeysFreezing ↔ d.ObeysFreezing ∧ ¬ d.Frozen m := by
   simp [obeysFreezing_append_iff]
 
-/-- A further External Merge obeys Freezing exactly when the derivation does. -/
 @[simp] theorem obeysFreezing_append_em_iff {item : LinearizedSyntacticObject} {side : Edge} :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
@@ -116,7 +111,6 @@ theorem ObeysUIC.mono {L' : LinearizedSyntacticObject → SyntacticObject → Pr
     (hL : ∀ p x, L p x → L' p x) (h : d.ObeysUIC L) : d.ObeysUIC L' :=
   fun i hi m hm ↦ (h i hi m hm).imp fun p ⟨hp, hpm⟩ ↦ ⟨hp, hL p m hpm⟩
 
-/-- Extending a derivation by one step keeps the condition on its earlier movers. -/
 theorem obeysUIC_append_singleton_iff {step : Step} :
     (d.append [step]).ObeysUIC L ↔ d.ObeysUIC L ∧
       ∀ m ∈ step.mover?, ∃ p ∈ d.externalize?, L p m := by
@@ -137,14 +131,10 @@ theorem obeysUIC_append_singleton_iff {step : Step} :
       rw [take_length_append]
       exact hs m (by rwa [hlast] at hm)
 
-/-- A further movement obeys the Unlabeled Immobility Condition exactly when its mover is labeled
-in the object built so far. -/
 @[simp] theorem obeysUIC_append_im_iff {m : SyntacticObject} {side : Edge} :
     (d.append [.im m side]).ObeysUIC L ↔ d.ObeysUIC L ∧ ∃ p ∈ d.externalize?, L p m := by
   simp [obeysUIC_append_singleton_iff]
 
-/-- A further External Merge obeys the Unlabeled Immobility Condition exactly when the derivation
-does. -/
 @[simp] theorem obeysUIC_append_em_iff {item : LinearizedSyntacticObject} {side : Edge} :
     (d.append [.em side item]).ObeysUIC L ↔ d.ObeysUIC L := by
   simp [obeysUIC_append_singleton_iff]

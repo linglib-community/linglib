@@ -167,21 +167,16 @@ def Derivable (p : Placement) : Prop := ∃ s, Licensed k overt weak modified s 
 
 variable {overt weak modified}
 
-/-- The outer order is always derivable, by raising. -/
 theorem derivable_outer : Derivable k overt weak modified .outer := ⟨.raising, trivial, rfl⟩
 
-/-- The inner order is derivable iff reanalysis is licensed, which requires that the complement
-be no barrier and that neither a weak pronoun nor a modifier block it. -/
 theorem derivable_inner_iff :
     Derivable k overt weak modified .inner ↔ ¬ k.IsBarrier ∧ ¬ weak ∧ ¬ modified :=
   ⟨fun ⟨s, hs, hp⟩ ↦ by cases s <;> simp_all [Strategy.placement, Licensed],
     fun h ↦ ⟨.reanalysis, h, rfl⟩⟩
 
-/-- Clause-final placement is never derivable. -/
 theorem not_derivable_final : ¬ Derivable k overt weak modified .final :=
   fun ⟨s, _, hp⟩ ↦ by cases s <;> cases hp
 
-/-- The prefixed order is derivable iff the particle incorporates overtly. -/
 theorem derivable_prefixed_iff : Derivable k overt weak modified .prefixed ↔ overt :=
   ⟨fun ⟨s, hs, hp⟩ ↦ by cases s <;> simp_all [Strategy.placement, Licensed],
     fun h ↦ ⟨.incorporation, h, rfl⟩⟩
@@ -318,8 +313,6 @@ instance : ∀ L : Language, DecidablePred (· ∈ L.incorporates)
   | .swedish => fun v ↦ inferInstanceAs (Decidable (v = Voice.passive))
   | .danish => fun _ ↦ isTrue trivial
 
-/-- Norwegian incorporates in the passive only, as the chapter states, because the grammar's
-compound participle follows *bli* and *være* and not *ha*. -/
 theorem norwegian_incorporates : Language.incorporates .norwegian = {Voice.passive} := by
   ext v
   by_cases h : v = Voice.passive <;>
@@ -412,9 +405,6 @@ def verbOf (r : Datum) : Option Norwegian.Verb :=
   | some ⟨_, "(134a)"⟩ | some ⟨_, "(135a)"⟩ => some Norwegian.Verbs.Nynorsk.sparkeUt
   | _ => none
 
-/-- Where the participle of the verb phrase is contiguous, in the inner and prefixed rows, a row
-is judged acceptable exactly when it shows the participle the grammar gives for its auxiliary,
-*sparka ut* after *har* and *utsparka* after *vart*. -/
 theorem rows_participle :
     ∀ r ∈ Examples.all, ∀ v ∈ verbOf r, placementOf r ≠ some .outer →
       (r.judgment = .acceptable ↔

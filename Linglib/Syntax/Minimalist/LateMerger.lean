@@ -40,22 +40,18 @@ instance [DecidablePred admissible] :
     Decidable (LateMergerBleeds admissible height chain binder) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- An admissible position above the binder bleeds Condition C. -/
 theorem lateMergerBleeds_cons_of (p : α) (hp : admissible p) (hgt : binder < height p) :
     LateMergerBleeds admissible height (p :: chain) binder :=
   ⟨p, List.mem_cons_self .., hp, hgt⟩
 
-/-- Adding a chain position never removes bleeding. -/
 theorem LateMergerBleeds.cons (p : α) (h : LateMergerBleeds admissible height chain binder) :
     LateMergerBleeds admissible height (p :: chain) binder :=
   let ⟨q, hq, hpq⟩ := h; ⟨q, List.mem_cons_of_mem p hq, hpq⟩
 
-/-- A chain at or below the binder forces reconstruction, whatever is admissible. -/
 theorem not_lateMergerBleeds_of_le (h : ∀ p ∈ chain, height p ≤ binder) :
     ¬ LateMergerBleeds admissible height chain binder :=
   λ ⟨p, hp, _, hgt⟩ => absurd hgt (Nat.not_lt.mpr (h p hp))
 
-/-- A chain without an admissible position forces reconstruction, whatever the heights. -/
 theorem not_lateMergerBleeds_of_none (h : ∀ p ∈ chain, ¬ admissible p) :
     ¬ LateMergerBleeds admissible height chain binder :=
   λ ⟨p, hp, hadm, _⟩ => h p hp hadm
@@ -75,12 +71,10 @@ def WLMBleedsCondC (chain : List ChainPosition) (binder : ℕ) : Prop :=
 instance (chain : List ChainPosition) (binder : ℕ) : Decidable (WLMBleedsCondC chain binder) :=
   inferInstanceAs (Decidable (LateMergerBleeds _ _ _ _))
 
-/-- A case position above the binder bleeds Condition C. -/
 theorem wlmBleedsCondC_cons_of {chain : List ChainPosition} {binder h : ℕ} (hgt : binder < h) :
     WLMBleedsCondC (⟨h, true⟩ :: chain) binder :=
   lateMergerBleeds_cons_of _ rfl hgt
 
-/-- A chain without a case position forces reconstruction. -/
 theorem not_wlmBleedsCondC_of_none {chain : List ChainPosition} {binder : ℕ}
     (h : ∀ p ∈ chain, p.admissible = false) : ¬ WLMBleedsCondC chain binder :=
   not_lateMergerBleeds_of_none λ p hp => by simp [h p hp]

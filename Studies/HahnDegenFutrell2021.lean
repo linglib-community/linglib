@@ -94,17 +94,11 @@ def shifted : Graph 11 :=
     1 [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
       (9, 8, .advmod), (10, 9, .amod), (4, 2, .case_), (4, 3, .det), (1, 4, .obl)]
 
-/-- The unshifted order is the shifted one with the prepositional phrase and the object swapped,
-each moving as a block. -/
 theorem longObjectFirst_eq_reorderDependents :
     longObjectFirst = shifted.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩) :=
   Graph.ext (funext (by decide +kernel : ∀ x, _)) (funext₂ (by decide +kernel : ∀ x y, _))
     (by decide +kernel)
 
-/-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
-raises its distance to the object from six to nine, so the total dependency length falls: by
-Behaghel's law at the verb, the phrases after it grow outward in the shifted order and not in the
-unshifted one. -/
 theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by
   rw [longObjectFirst_eq_reorderDependents]
   exact (Graph.totalLength_lt_reorderDependents_iff (by decide +kernel) (by decide +kernel)
@@ -127,7 +121,6 @@ def memoryState (M : Mem → W → Mem) (m₀ : Ω → Mem) (w : ℕ → Ω → 
 
 variable {w : ℕ → Ω → W} {M : Mem → W → Mem} {m₀ : Ω → Mem}
 
-/-- A memory state is a function of the initial state and the words heard since. -/
 theorem exists_memoryState_eq_comp (t : ℕ) : ∃ g : (Fin t → W) × Mem → Mem,
     memoryState M m₀ w t = g ∘ fun ω ↦ (block w 0 t ω, m₀ ω) := by
   induction t with
@@ -147,8 +140,6 @@ theorem measurable_memoryState (hw : ∀ t, Measurable (w t)) (hm₀ : Measurabl
   | t + 1 => (measurable_of_finite (Function.uncurry M)).comp
       ((measurable_memoryState hw hm₀ t).prodMk (hw t))
 
-/-- Over a block of `T` words, a listener's summed surprisal is at least the entropy of the
-block given the initial memory state. -/
 theorem condEntropy_block_le_sum (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀) (T : ℕ) :
     H[block w 0 T | m₀ ; μ] ≤ ∑ t ∈ range T, H[w t | memoryState M m₀ w t ; μ] := by
   suffices h : H[fun ω ↦ (block w 0 T ω, m₀ ω) ; μ]
@@ -171,7 +162,6 @@ theorem condEntropy_block_le_sum (hw : ∀ t, Measurable (w t)) (hm₀ : Measura
       chain_rule μ (hw T) hZ, sum_range_succ, hg]
     linarith [condEntropy_le_condEntropy_comp μ (hw T) hZ g]
 
-/-- Under joint stationarity, the average surprisal does not depend on the time. -/
 theorem condEntropy_memoryState_eq (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀)
     (hs : IsStationary (fun t ω ↦ (w t ω, memoryState M m₀ w t ω)) μ) (t : ℕ) :
     H[w t | memoryState M m₀ w t ; μ] = H[w 0 | m₀ ; μ] := by
@@ -184,8 +174,6 @@ variable (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀)
   (hmem : H[m₀ ; μ] ≤ ∑ t ∈ Icc 1 T, t * distanceInfo w μ t)
 include hw hm₀ hs hT hmem
 
-/-- A listener whose memory entropy is at most `∑ t ∈ Icc 1 T, t * I t` does no better than one
-who remembers exactly the last `T` words. -/
 theorem pastCondEntropy_le_condEntropy : pastCondEntropy w μ T ≤ H[w 0 | m₀ ; μ] := by
   have hblock := condEntropy_block_le_sum (μ := μ) (M := M) hw hm₀ T
   simp_rw [condEntropy_memoryState_eq hw hm₀ hs, sum_const, card_range, nsmul_eq_mul] at hblock
@@ -231,8 +219,6 @@ def japaneseSuffixes (r : Datum) : List (Σ σ, Japanese.Verb.Exponent σ) :=
 def japaneseForms : List Datum :=
   Examples.all.filter (·.language = "nucl1643")
 
-/-- Every gloss after the stem of each of the supplement's Japanese forms names a suffix of
-the Fragment, and the suffixes of the form are licensed by `Japanese.Verb.template`. -/
 theorem japanese_forms_licensed :
     ∀ r ∈ japaneseForms, (japaneseSuffixes r).length + 1 = r.glossLine.length ∧
       Japanese.Verb.template.Licensed (japaneseSuffixes r) := by
@@ -275,8 +261,6 @@ def sesothoAffixes (r : Datum) : List (Σ σ, Sesotho.Verb.Exponent σ) :=
 def sesothoForms : List Datum :=
   Examples.all.filter (·.language = "sout2807")
 
-/-- In each Sesotho form exactly one gloss, the stem's, names no affix, and the affixes of the
-form are licensed by `Sesotho.Verb.template`. -/
 theorem sesotho_forms_licensed :
     ∀ r ∈ sesothoForms, (r.glossLine.filter fun g ↦ (sesothoAffix g).isEmpty).length = 1 ∧
       Sesotho.Verb.template.Licensed (sesothoAffixes r) := by
@@ -338,34 +322,20 @@ def japaneseCategory? : Japanese.Verb.Slot → Option RelevanceHierarchy
 def japaneseCategories : List RelevanceHierarchy :=
   Japanese.Verb.template.suffixSlots.filterMap japaneseCategory?
 
-/-- The paper's Sesotho suffix order, the extensions, the passive, the perfect and the mood
-vowel, is sorted by the relevance hierarchy, which on the surveyed categories is
-[bybee-1985]'s order, `Bybee1985.survey_order_iso_relevance`. -/
 theorem paper_sesotho_suffixes_respect_relevance :
     (paperSesothoTemplate.suffixSlots.filterMap sesothoCategory?).SortedLE := by decide
 
-/-- The Fragment's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
-before voice, and is not sorted by the hierarchy: the paper's agreement rests on its order. -/
 theorem sesotho_suffixes_violate_relevance : ¬ sesothoSuffixCategories.SortedLE := by decide
 
-/-- The paper's claim for the prefixes is that subject agreement lies farther from the stem
-than the tense and aspect prefix, which holds; but the object marker lies inside it, so the
-prefix order read stem-outward is not sorted by the hierarchy. -/
 theorem sesotho_prefixes_violate_relevance :
     (∀ a ∈ sesothoCategory? .tam, ∀ b ∈ sesothoCategory? .subject, a < b) ∧
       ¬ sesothoPrefixCategories.SortedLE := by
   decide
 
-/-- The paper claims for Japanese that no tense, aspect or mood suffix lies closer to the stem
-than a valence or voice suffix. -/
 theorem japanese_valence_voice_inside :
     japaneseCategories.Pairwise fun a b ↦ b ≤ .voice → a ≤ .voice := by
   decide
 
-/-- The Japanese suffix order is nonetheless not sorted by the hierarchy: [bybee-1985]'s survey
-ranks tense closer to the stem than mood, `Bybee1985.SurveyedCloser`, and the desiderative, a
-mood suffix, precedes the final inflection, read as tense. The paper claims no order of mood
-and tense. -/
 theorem japanese_violates_surveyed_relevance :
     Bybee1985.SurveyedCloser .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
   decide

@@ -98,13 +98,10 @@ theorem resolve_first : resolve c .first = c.elideV1 := c.elideV1_eq_eraseIdx.sy
 
 theorem resolve_second : resolve c .second = c.elideV2 := c.elideV2_eq_eraseIdx.symm
 
-/-- Each constraint counts the input segments it protects that have no correspondent in the
-output. -/
 theorem con_eq_maxViolAt (i : Option Prominence) (e : ElidedVowel) :
     con c i e = (corr c e).maxViolAt (protects c i) .lhs .rhs :=
   maxAt_singleton_eq_maxViolAt _ ⟨position c e, position_lt_length_input c e⟩
 
-/-- General MAX counts the input segments that have no correspondent in the output. -/
 theorem con_none (e : ElidedVowel) : con c none e = (corr c e).maxViol .lhs .rhs :=
   (con_eq_maxViolAt c none e).trans (Correspondence.maxViolAt_true _ _ _)
 
@@ -124,8 +121,6 @@ variable {c}
 @[simp] theorem some_mem_violations_second {p : Prominence} :
     some p ∈ violations c .second ↔ c.Protects p c.v2Idx := Iff.rfl
 
-/-- The second vowel occupies a morph of one segment exactly when eliding it leaves the bare
-stem, so that no segment of the second morph remains. -/
 theorem soleSegment_mem_violations_second_iff :
     some .soleSegment ∈ violations c .second ↔ resolve c .second = c.stem := by
   rw [resolve_second, c.elideV2_eq_stem_iff]
@@ -147,35 +142,26 @@ private theorem candidates_eq_pair {e e' : ElidedVowel} (hne : e ≠ e') :
 
 variable {c}
 
-/-- An elision is optimal under some ranking exactly when the constraints it violates are not a
-proper superset of those the other elision violates. -/
 theorem exists_mem_optimal_iff {e e' : ElidedVowel} (hne : e ≠ e') :
     (∃ r, e ∈ (tableau c r).optimal) ↔ ¬ violations c e' ⊂ violations c e :=
   exists_mem_optimal_positionalMax_iff card_option_prominence (candidates_eq_pair hne) rfl rfl
 
-/-- An elision is the sole optimum under some ranking exactly when the other elision violates a
-constraint it does not. -/
 theorem exists_optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') :
     (∃ r, (tableau c r).optimal = {e}) ↔ ¬ violations c e' ⊆ violations c e :=
   exists_optimal_eq_singleton_positionalMax_iff card_option_prominence (candidates_eq_pair hne)
     hne rfl rfl
 
-/-- One elision is the sole optimum under a ranking exactly when some constraint violated only by
-the other outranks every constraint violated only by it. -/
 theorem optimal_eq_singleton_iff {e e' : ElidedVowel} (hne : e ≠ e') (r) :
     (tableau c r).optimal = {e} ↔ ∃ i ∈ violations c e', i ∉ violations c e ∧
       ∀ j ∈ violations c e, j ∉ violations c e' → r.Dominates i j :=
   optimal_eq_singleton_positionalMax_iff (candidates_eq_pair hne) hne rfl rfl r
 
-/-- A constraint violated only by the other elision and ranked on top makes an elision the sole
-optimum. -/
 theorem optimal_eq_singleton_of_forall_dominates {e e' : ElidedVowel} (hne : e ≠ e')
     {r : Ranking (Option Prominence) 5} {i : Option Prominence} (hi : i ∉ violations c e)
     (hi' : i ∈ violations c e') (hr : ∀ j, j ≠ i → r.Dominates i j) :
     (tableau c r).optimal = {e} :=
   (optimal_eq_singleton_iff hne r).2 ⟨i, hi', hi, fun j hj _ ↦ hr j fun h ↦ hi (h ▸ hj)⟩
 
-/-- The first vowel can elide alone in every context where it begins no morph. -/
 theorem exists_optimal_eq_first (h : c.stemBody ≠ []) : ∃ r, (tableau c r).optimal = {.first} :=
   (exists_optimal_eq_singleton_iff (e' := .second) (by decide)).2 fun hs ↦ by
     simpa [h] using hs (show some .morphemeInitial ∈ violations c .second by simp)
@@ -186,10 +172,6 @@ private theorem forall_option_prominence {P : Option Prominence → Prop} :
   ⟨fun h ↦ ⟨h _, h _, h _, h _, h _⟩,
     by rintro ⟨h₀, h₁, h₂, h₃, h₄⟩ (_ | _ | _ | _ | _) <;> assumption⟩
 
-/-- Where the first vowel begins no morph, the second vowel elides under some ranking exactly
-when the first morph is a root and the second is not. This covers the boundary between two
-lexical words, between a lexical and a function word in either order, between a prefix of more
-than one segment and a root, between a root and a suffix, and between two affixes or clitics. -/
 theorem exists_mem_optimal_second_iff (h : c.stemBody ≠ []) :
     (∃ r, .second ∈ (tableau c r).optimal) ↔ c.left = .root ∧ c.right ≠ .root := by
   rw [exists_mem_optimal_iff (e' := .first) (by decide), Set.ssubset_def, Set.subset_def,
@@ -249,8 +231,6 @@ def schematic (k : Data.Hiatus.Juncture) : Context where
 theorem isOfKind_schematic (k : Data.Hiatus.Juncture) : IsOfKind (schematic k) k :=
   ⟨List.cons_ne_nil _ _, rfl, rfl⟩
 
-/-- At a juncture of the survey's kind `k`, the first vowel can always elide, and the second
-exactly when the first morph is a root and the second is not. -/
 theorem exists_mem_optimal_iff_of_isOfKind {k : Data.Hiatus.Juncture} (hc : IsOfKind c k)
     {e : ElidedVowel} : (∃ r, e ∈ (tableau c r).optimal) ↔
       e = .first ∨ (kinds k).1 = .root ∧ (kinds k).2 ≠ .root := by
@@ -268,9 +248,6 @@ theorem schematic_second :
   simp only [exists_mem_optimal_iff_of_isOfKind (isOfKind_schematic _)]
   decide
 
-/-- With the constraint on lexical material on top, the first vowel elides after a prefix and
-the second before a suffix of any length, the asymmetry within one language that the paper
-reports for Chichewa. -/
 theorem lexical_on_top {r : Ranking (Option Prominence) 5}
     (hr : ∀ j, j ≠ some .lexical → r.Dominates (some .lexical) j) {c c' : Context}
     (hc : IsOfKind c .prefixRoot) (hc' : IsOfKind c' .rootSuffix) :
@@ -299,8 +276,6 @@ theorem soleSegment_over_lexical {r : Ranking (Option Prominence) 5}
 
 /-! ### The survey -/
 
-/-- Every elision the survey reports is one the analysis allows, in that some ranking elides the
-reported vowel at a juncture of the reported kind. -/
 theorem survey_allowed :
     ∀ row ∈ Data.Hiatus.Casali1997.rows, ∀ c : Context, IsOfKind c row.juncture →
       ∃ r, row.elided ∈ (tableau c r).optimal := by
@@ -309,8 +284,6 @@ theorem survey_allowed :
     decide
   exact fun row hrow _ hc ↦ (exists_mem_optimal_iff_of_isOfKind hc).2 (key row hrow)
 
-/-- The survey reports an elision of the second vowel at exactly the kinds of juncture where the
-analysis allows one, before a function word and before a suffix. -/
 theorem survey_second_iff {k : Data.Hiatus.Juncture} (hc : IsOfKind c k) :
     (∃ row ∈ Data.Hiatus.Casali1997.rows, row.juncture = k ∧ row.elided = .second) ↔
       ∃ r, .second ∈ (tableau c r).optimal := by

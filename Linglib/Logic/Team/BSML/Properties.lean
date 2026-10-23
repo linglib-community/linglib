@@ -54,7 +54,6 @@ variable {W : Type*} [DecidableEq W] {Atom : Type*}
 Each case is the closure lemma of its connective from `Team/Operations.lean`, and
 negation swaps the two polarities. -/
 
-/-- Joint union closure for both polarities (Anttila 2.2.8 part 2). -/
 private theorem support_and_antiSupport_supClosed (φ : Formula Atom) (M : KripkeModel W Atom) :
     SupClosed {t | support M φ t} ∧ SupClosed {t | antiSupport M φ t} := by
   induction φ with
@@ -72,7 +71,6 @@ theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } :=
   (support_and_antiSupport_supClosed φ M).1
 
-/-- Joint empty-team property for NE-free formulas (Anttila 2.2.8 part 1). -/
 private theorem support_and_antiSupport_empty_of_neFree
     (φ : Formula Atom) (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     support M φ ∅ ∧ antiSupport M φ ∅ := by
@@ -86,13 +84,10 @@ private theorem support_and_antiSupport_empty_of_neFree
     exact ⟨empty_mem_tensor (ih₁ hNE.1).1 (ih₂ hNE.2).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | poss ψ _ => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
 
-/-- NE-free BSML formulas are supported on the empty team. The only
-    obstruction is NE itself, which fails on ∅ by definition. -/
 theorem support_empty_of_neFree {φ : Formula Atom}
     (hNE : φ.NEFree) (M : KripkeModel W Atom) : support M φ ∅ :=
   (support_and_antiSupport_empty_of_neFree φ hNE M).1
 
-/-- Joint downward closure for NE-free formulas (Anttila 2.2.8 part 1). -/
 private theorem support_and_antiSupport_isLowerSet_of_neFree
     (φ : Formula Atom) (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     IsLowerSet {t | support M φ t} ∧ IsLowerSet {t | antiSupport M φ t} := by
@@ -106,8 +101,6 @@ private theorem support_and_antiSupport_isLowerSet_of_neFree
     exact ⟨(ih₁ hNE.1).1.tensor (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
   | poss ψ _ => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
 
-/-- An `NE`-free BSML formula is downward closed, so its support survives passing to a
-    subteam. -/
 theorem isLowerSet_support_of_neFree {φ : Formula Atom}
     (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=

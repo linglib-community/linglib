@@ -44,16 +44,12 @@ section Univ
 
 variable {α : Type*} [Preorder α] [TopologicalSpace α] [Topology.IsLowerSet α] {t : Set α}
 
-/-- In the lower-set topology the interior of `t` is the set of points all of whose predecessors
-are in `t`. -/
 theorem interior_eq_setOf_forall_le : interior t = {a | ∀ b ≤ a, b ∈ t} := by
   ext a
   conv_lhs => rw [← compl_compl t, interior_compl, Topology.IsLowerSet.closure_eq_upperClosure]
   simp only [mem_compl_iff, SetLike.mem_coe, mem_upperClosure, not_exists, not_and, mem_ofPred_eq]
   exact ⟨fun h b hb ↦ by_contra fun hbt ↦ h b hbt hb, fun h b hbt hb ↦ hbt (h b hb)⟩
 
-/-- In the lower-set topology a set is dense exactly when every point has one of its points below
-it. -/
 theorem dense_iff_forall_exists_le {D : Set α} : Dense D ↔ ∀ a, ∃ d ∈ D, d ≤ a := by
   rw [dense_iff_closure_eq, Topology.IsLowerSet.closure_eq_upperClosure, eq_univ_iff_forall]
   simp only [SetLike.mem_coe, mem_upperClosure]
@@ -77,7 +73,6 @@ section Domain
 
 variable {W : Type*} (p : Preorder W) (s t : Set W)
 
-/-- The necessities over a domain are the necessities over the domain as a preordered type. -/
 theorem isNecessity_iff_subtype :
     IsNecessity p s t ↔ IsNecessity (@Preorder.lift s W p Subtype.val) univ (Subtype.val ⁻¹' t) :=
   ⟨fun h ⟨u, hu⟩ _ ↦
@@ -87,16 +82,12 @@ theorem isNecessity_iff_subtype :
       let ⟨⟨v, hv⟩, _, hvu, hvt⟩ := h ⟨u, hu⟩ trivial
       ⟨v, hv, hvu, fun w hw hwv ↦ hvt ⟨w, hw⟩ trivial hwv⟩⟩
 
-/-- The good possibilities over a domain are the good possibilities over the domain as a
-preordered type. -/
 theorem isGoodPossibility_iff_subtype :
     IsGoodPossibility p s t ↔
       IsGoodPossibility (@Preorder.lift s W p Subtype.val) univ (Subtype.val ⁻¹' t) :=
   ⟨fun ⟨v, hv, hvt⟩ ↦ ⟨⟨v, hv⟩, trivial, fun ⟨w, hw⟩ _ hwv ↦ hvt w hw hwv⟩,
     fun ⟨⟨v, hv⟩, _, hvt⟩ ↦ ⟨v, hv, fun w hw hwv ↦ hvt ⟨w, hw⟩ trivial hwv⟩⟩
 
-/-- `t` is a necessity over `s` exactly when its interior in the lower-set topology of `s` is
-dense. -/
 theorem isNecessity_iff_dense_interior :
     letI : Preorder s := @Preorder.lift s W p Subtype.val
     IsNecessity p s t ↔ Dense (interior (Subtype.val ⁻¹' t : Set (WithLowerSet s))) := by
@@ -104,8 +95,6 @@ theorem isNecessity_iff_dense_interior :
   exact (isNecessity_iff_subtype p s t).trans
     (isNecessity_univ_iff_dense_interior (α := WithLowerSet s))
 
-/-- `t` is a good possibility over `s` exactly when its interior in the lower-set topology of `s`
-is nonempty. -/
 theorem isGoodPossibility_iff_nonempty_interior :
     letI : Preorder s := @Preorder.lift s W p Subtype.val
     IsGoodPossibility p s t ↔ (interior (Subtype.val ⁻¹' t : Set (WithLowerSet s))).Nonempty := by

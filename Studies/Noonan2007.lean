@@ -207,8 +207,6 @@ theorem indicative_mem_codings_of_independent : ∀ k : PredicateClass,
       .indicative ∈ v.codings := by
   decide +kernel
 
-/-- The desiderative *want* takes only a reduced complement and the desiderative *wish* an
-indicative, so the class has no one time reference. -/
 theorem want_wish_codings : want.toVerb ∈ PredicateClass.desiderative ∧
     wish.toVerb ∈ PredicateClass.desiderative ∧ (∀ c ∈ want.codings, ¬ c.IsSentenceLike) ∧
       .indicative ∈ wish.codings := by

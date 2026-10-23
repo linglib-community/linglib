@@ -121,16 +121,13 @@ def features : Bool × Bool := (E.objectFn, E.perspective.isSome)
 
 variable {E}
 
-/-- A `[+S]` entry is count: its perspective is disjoint. -/
 theorem isCount_of_perspective {D : Set α} (h : E.perspective = some D) : E.IsCount := by
   rw [IsCount, cbase, h, Option.getD_some]
   exact (E.perspective_max D h).2.1
 
-/-- Under the null schema the counting base is the predicate the schema applies to. -/
 theorem cbase_of_null (h : E.perspective = none) : E.cbase = E.base := by
   rw [cbase, h, Option.getD_none, nullSchema_eq]
 
-/-- A `[−S]` entry is count exactly when the predicate its schema applies to is disjoint. -/
 theorem isCount_iff_of_null (h : E.perspective = none) :
     E.IsCount ↔ DisjointPred Overlap E.base := by
   rw [IsCount, cbase_of_null h]
@@ -161,7 +158,6 @@ theorem features_unitShift (E : Entry α) (D : Set α)
     (h : IsMaxDisjointIn Overlap D E.frame.objects) :
     (unitShift E D h).features = (true, true) := rfl
 
-/-- The unit shift makes every entry count. -/
 theorem isCount_unitShift (E : Entry α) (D : Set α)
     (h : IsMaxDisjointIn Overlap D E.frame.objects) : (unitShift E D h).IsCount :=
   Entry.isCount_of_perspective rfl
@@ -178,8 +174,6 @@ theorem cum_extn_of_sumClosed {E : Entry α} (h : E.sumClosed = true) : CUM (· 
   simp only [Entry.extn, h, ite_true]
   exact algClosure_cum
 
-/-- A singular count extension with two distinct units is not cumulative: the sum of two units
-is not a unit, so *#a bowl of an apple*. -/
 theorem not_cum_extn_of_singular {E : Entry α} (hs : E.sumClosed = false) (hc : E.IsCount)
     {u v : α} (hu : u ∈ E.cbase) (hv : v ∈ E.cbase) (hne : u ≠ v) (hu0 : ¬ IsBot u)
     (hv0 : ¬ IsBot v) : ¬ CUM (· ∈ E.extn) := by
@@ -192,8 +186,6 @@ theorem not_cum_extn_of_singular {E : Entry α} (hs : E.sumClosed = false) (hc :
 
 /-! ### Granular frames -/
 
-/-- A frame of units and their sums overlaps as soon as it has two distinct non-null units:
-a unit and its sum with another share the unit. -/
 theorem overlapPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units)
     (hne : u ≠ v) (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) :
     OverlapPred Overlap (Frame.ofUnits units).extn := by
@@ -202,8 +194,6 @@ theorem overlapPred_extn_ofUnits {units : Set α} {u v : α} (hu : u ∈ units) 
   · exact ⟨u, .base hu, u ⊔ v, .sum (.base hu) (.base hv), Ne.symm huv, u, hu0, le_rfl,
       le_sup_left⟩
 
-/-- A `[−O,−S]` entry over a frame of units and their sums with two distinct non-null units is
-mass: the grains of *rice* and *čočka* are in the basic predicate, not in the counting base. -/
 theorem rice_mass {units : Set α} {u v : α} (hu : u ∈ units) (hv : v ∈ units) (hne : u ≠ v)
     (hu0 : ¬ IsBot u) (hv0 : ¬ IsBot v) (E : Entry α) (hF : E.frame = Frame.ofUnits units)
     (hO : E.objectFn = false) (hS : E.perspective = none) : ¬ E.IsCount := by
@@ -217,7 +207,6 @@ def lentil (units : Set α) (hd : DisjointPred Overlap units) (sumClosed : Bool)
   ⟨Frame.ofUnits units, true, sumClosed, some units,
     fun _ hD ↦ Option.some_inj.1 hD ▸ isMaxDisjointIn_self _ hd⟩
 
-/-- *lentil* is count, with the units as its counting base. -/
 theorem lentil_count {units : Set α} (hd : DisjointPred Overlap units) (sumClosed : Bool) :
     (lentil units hd sumClosed).IsCount ∧ (lentil units hd sumClosed).cbase = units :=
   ⟨Entry.isCount_of_perspective rfl, rfl⟩
@@ -273,14 +262,11 @@ instance : DecidablePred (· ∈ vanityPerspective) := fun s ↦ decidable_of_if
 def furniture : Entry Part :=
   ⟨Frame.ofUnits furnitureUnits, true, true, none, fun _ h ↦ by simp at h⟩
 
-/-- The functional units overlap, so *furniture* is mass although its units are identified. -/
 theorem furniture_mass : ¬ furniture.IsCount := by
   rw [Entry.isCount_iff_of_null rfl]
   show ¬ DisjointPred Overlap furnitureUnits
   exact fun h ↦ h (by decide)
 
-/-- Two perspectives on the furniture units, the pieces and the vanity, are both maximal and
-differ, which is why the null schema's base overlaps. -/
 theorem furniture_two_perspectives :
     IsMaxDisjointIn Overlap piecePerspective furnitureUnits ∧
       IsMaxDisjointIn Overlap vanityPerspective furnitureUnits ∧
@@ -334,8 +320,6 @@ theorem mud_mass : ¬ mud.IsCount := by
   show ¬ DisjointPred Overlap {s : Part | s.Nonempty}
   exact fun h ↦ h ⟨{0}, by decide, {0, 1}, by decide, by decide, {0}, by decide, le_rfl, by decide⟩
 
-/-- The categorization agrees with the English lexicon: a numeral counts *lentil* and neither
-*furniture* nor *rice*. -/
 theorem isCount_iff_english :
     (furniture.IsCount ↔ English.Nouns.furniture.IsCount) ∧
       (rice.IsCount ↔ English.Nouns.rice.IsCount) ∧

@@ -68,7 +68,6 @@ theorem isProbabilityMeasure_polyaUrn (n : ℕ) : IsProbabilityMeasure (polyaUrn
   have := isMarkovKernel_polyaUrnRule hθ
   isProbabilityMeasure_seqLaw n
 
-/-- The probability that the urn draws the sequence `s` is `polyaUrnProb θ (countVec s)`. -/
 theorem polyaUrn_singleton : ∀ {n : ℕ} (s : Fin n → α),
     polyaUrn θ n {s} = ENNReal.ofReal (polyaUrnProb θ (countVec s))
   | 0, s => by simp [polyaUrn, Subsingleton.elim s default]
@@ -82,7 +81,6 @@ theorem polyaUrn_real_singleton {n : ℕ} (s : Fin n → α) :
     (polyaUrn θ n).real {s} = polyaUrnProb θ (countVec s) := by
   rw [measureReal_def, polyaUrn_singleton hθ, ENNReal.toReal_ofReal (polyaUrnProb_pos hθ _).le]
 
-/-- The sequence drawn from a Pólya urn is exchangeable ([pitman-2006] Exercise 2.2.2). -/
 theorem exchangeable_polyaUrn (n : ℕ) : Exchangeable (polyaUrn θ n) :=
   exchangeable_of_measure_singleton fun s σ ↦ by
     rw [polyaUrn_singleton hθ, polyaUrn_singleton hθ, countVec_comp_perm]

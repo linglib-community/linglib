@@ -111,14 +111,11 @@ def EmbeddabilityPrinciple (L : Language) : Prop := ∃ z, L.Provides z
 instance (L : Language) : Decidable (EmbeddabilityPrinciple L) :=
   inferInstanceAs (Decidable (∃ z, L.Provides z))
 
-/-- Exactly type 4 violates the Embeddability Principle. -/
 theorem embeddabilityPrinciple_iff (L : Language) :
     EmbeddabilityPrinciple L ↔ L ≠ type4 := by
   obtain ⟨s, p⟩ := L
   cases s <;> cases p <;> decide
 
-/-- English embeds *Mary is pregnant* by deleting a tense, Hebrew by binding its present, and
-Modern Greek either way. -/
 theorem attested_types :
     english.Provides .deleted ∧ hebrew.Provides .boundPresent ∧
       greek.Provides .deleted ∧ greek.Provides .boundPresent := by
@@ -145,8 +142,6 @@ instance (L : Language) : DecidablePred (NonpastAvailable L)
   | .past => inferInstanceAs (Decidable (_ ∈ _))
   | .present => inferInstanceAs (Decidable (L.Provides .boundPresent))
 
-/-- The simultaneous reading of a deleted tense is available exactly in languages with the SOT
-rule, since the two parameters of the typology are the two sources of zero tense. -/
 theorem nonpastAvailable_past_iff (L : Language) :
     NonpastAvailable L .past ↔ L.Provides .deleted :=
   eq_mem_pastUnderPast_iff
@@ -242,7 +237,6 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The rows of (1)–(6) and (12). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every example carries the three features. -/
 theorem rows_complete : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome = true := by decide
 
 /-- The typology (11) predicts the paper's judgments, the nonpast reading being available exactly

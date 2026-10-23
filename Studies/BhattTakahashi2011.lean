@@ -223,8 +223,6 @@ def headAvailability : Language → HeadAvailability
   | .hindiUrdu => headAvailabilityFromBinding hindiUrduBindingPairs
   | .japanese => ⟨true, true⟩
 
-/-- English realizes reduction alone and Hindi-Urdu the direct analysis alone, so the three
-languages occupy three cells of the grid. -/
 theorem three_cells :
     headAvailability .english = ⟨true, false⟩ ∧ headAvailability .hindiUrdu = ⟨false, true⟩ ∧
       ∀ l l' : Language, headAvailability l = headAvailability l' → l = l' := by

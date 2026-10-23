@@ -143,7 +143,6 @@ theorem pair_mem_sups_singular {X : Finset Ind} {x : Ind} (hx : x ∈ X) (y : In
     (mem_filter.2
       ⟨mem_Ioc.2 ⟨empty_ssubset.2 (singleton_nonempty y), subset_univ _⟩, card_singleton y⟩)
 
-/-- So person and animacy must compose before number. -/
 theorem exists_plural_sups_singular {X : Finset Ind} {x y : Ind} (hx : x ∈ X) (hxy : x ≠ y) :
     ∃ s ∈ Ioc ∅ X ⊻ singular piDen, s.card ≠ 1 :=
   ⟨{x, y}, pair_mem_sups_singular hx y, by rw [card_pair hxy]; decide⟩
@@ -230,7 +229,6 @@ instance : LinearOrder Pronoun := LinearOrder.lift' (fun p ↦ OrderDual.toDual 
 
 theorem Pronoun.le_iff_top_le {p q : Pronoun} : p ≤ q ↔ q.top ≤ p.top := Iff.rfl
 
-/-- A pronoun is at least as high as another exactly when it has all of the other's features. -/
 theorem Pronoun.le_iff_features_subset {p q : Pronoun} : p ≤ q ↔ p.features ⊆ q.features :=
   ⟨fun h _ hf ↦ mem_filter.2 ⟨mem_univ _, (le_iff_top_le.1 h).trans (mem_filter.1 hf).2⟩,
     fun h ↦ le_iff_top_le.2 (mem_filter.1 (h (mem_filter.2 ⟨mem_univ _, le_refl _⟩))).2⟩
@@ -239,8 +237,6 @@ theorem Pronoun.le_iff_features_subset {p q : Pronoun} : p ≤ q ↔ p.features 
 specific feature (62), its specification by `specification_eq_containing`. -/
 def Pronoun.denotation (p : Pronoun) : Finset (Finset Atom) := containing p.top.atoms univ
 
-/-- A pronoun is at least as high as another exactly when its denotation lies inside the other's,
-so the hierarchy of featural specification is one of semantic specificity. -/
 theorem Pronoun.le_iff_denotation_subset {p q : Pronoun} :
     p ≤ q ↔ q.denotation ⊆ p.denotation := by
   rw [le_iff_top_le, Feature.le_iff_atoms_subset, denotation, denotation,
@@ -282,8 +278,6 @@ theorem laxopa_human_elder :
       ¬ Agrees ⟨.thirdHuman, .thirdElder⟩ := by
   decide
 
-/-- The Zoogocho probe sees only *animate* among the animacy features, so any animate
-clitics combine. -/
 theorem zoogocho_animal_elder :
     AgreesUnder {.speaker, .participant, .animate, .pi} ⟨.thirdAnimal, .thirdElder⟩ := by
   decide
@@ -302,8 +296,6 @@ def scenario? (e : Datum) : Option (Scenario Pronoun) := do
 /-- The Yalálag rows. -/
 def yalalag : List Datum := Examples.all.filter (·.language = "yala1267")
 
-/-- Every Yalálag example is grammatical exactly when its head Agrees with both pronouns, so
-the object clitic is blocked in the upstream scenarios and only there. -/
 theorem yalalag_rows :
     yalalag ≠ [] ∧ ∀ e ∈ yalalag, ∃ s ∈ scenario? e, (e.judgment = .acceptable ↔ Agrees s) := by
   decide +kernel

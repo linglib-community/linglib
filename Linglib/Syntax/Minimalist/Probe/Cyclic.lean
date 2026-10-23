@@ -71,7 +71,6 @@ def PersonGeometry.nodes : PersonGeometry → List PersonSegment
 def personSpec (geom : PersonGeometry) (p : Person) : List PersonSegment :=
   geom.nodes.filter (· ∈ PersonSegment.spec p)
 
-/-- Every person bears `π` under every geometry. -/
 theorem pi_mem_personSpec (geom : PersonGeometry) (p : Person) :
     PersonSegment.pi ∈ personSpec geom p := by
   cases geom <;> simp [personSpec, PersonGeometry.nodes]
@@ -176,25 +175,20 @@ def EALicensed : Prop :=
 
 instance : DecidablePred sys.EALicensed := fun _ ↦ List.decidableBEx _ _
 
-/-- The core probe licenses the external argument exactly in direct contexts. -/
 theorem eaLicensed_iff_isDirect : sys.EALicensed s ↔ sys.IsDirect s := by
   simp only [EALicensed, IsDirect, segProbe, Probe.ofInt_goal_eq_some_iff, List.head?_cons,
     true_and, decide_eq_true_eq]
 
-/-- Arguments of the same person make an inverse context. -/
 theorem isInverse_self (p : Person) : sys.IsInverse ⟨p, p⟩ := fun h ↦
   let ⟨_, _, hn, hm⟩ := (sys.isDirect_iff ⟨p, p⟩).1 h
   hn hm
 
-/-- A probe with more segments has more direct contexts. -/
 theorem IsDirect.mono {sys' : AgreementSystem} (hg : sys'.geometry = sys.geometry)
     (hp : sys.probe ⊆ sys'.probe) (h : sys.IsDirect s) : sys'.IsDirect s := by
   rw [isDirect_iff] at h ⊢
   obtain ⟨x, hx, h⟩ := h
   exact ⟨x, hp hx, by simpa [spec, hg] using h⟩
 
-/-- A flat probe leaves no residue, since every internal argument bears `π`, so every context is
-inverse. -/
 theorem flat_isInverse (geom : PersonGeometry) :
     (⟨geom, flatProbe⟩ : AgreementSystem).IsInverse s := by
   rintro ⟨x, hx, -⟩
@@ -206,8 +200,6 @@ theorem spec_subset_or_subset {geom : PersonGeometry} (h : geom.IsChain) (p q : 
   · exact Or.inl (hpq ▸ List.Subset.refl _)
   · exact h (Set.mem_range_self p) (Set.mem_range_self q) hpq
 
-/-- Under a chain geometry a context is direct iff the external argument bears more of the
-probe than the internal one does. -/
 theorem isDirect_iff_rank_lt (h : sys.geometry.IsChain) :
     sys.IsDirect s ↔ sys.rank s.low < sys.rank s.high := by
   rcases spec_subset_or_subset h s.low s.high with hsub | hsub
@@ -232,8 +224,6 @@ theorem isDirect_iff_rank_lt (h : sys.geometry.IsChain) :
       simp only [List.countP_eq_length_filter] at this
       exact absurd this (not_le.2 hlt)
 
-/-- Under a chain geometry a context is direct iff it is downstream on the system's rank, so the
-inverse contexts are the balanced and upstream scenarios. -/
 theorem isDirect_iff_kind_eq_downstream (h : sys.geometry.IsChain) :
     sys.IsDirect s ↔ (s.map sys.rank).kind = .downstream :=
   (sys.isDirect_iff_rank_lt s h).trans (Scenario.kind_eq_downstream_iff (s := s.map sys.rank)).symm

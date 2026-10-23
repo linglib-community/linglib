@@ -120,7 +120,6 @@ theorem participle_eq_compoundParticiple {c : ParticipleContext} (h : c.IsCompou
     v.participle c = v.compoundParticiple := by
   cases c <;> first | exact absurd rfl h | rfl
 
-/-- A simplex verb has one participle in every context. -/
 theorem participle_of_simplex (h : v.formation = .simplex) (c : ParticipleContext) :
     v.participle c = v.stem.participle := by
   cases c <;> simp [participle, phraseParticiple, compoundParticiple, h]
@@ -133,11 +132,9 @@ def transitive (s : Stem) : Verb :=
 def withParticle (v : Verb) (p : String) : Verb :=
   { v with morphs := v.morphs ++ [.free p], formation := .particle p }
 
-/-- The compound participle puts the particle before the participle of the simplex verb. -/
 theorem compoundParticiple_withParticle (v : Verb) (p : String) :
     (v.withParticle p).compoundParticiple = p ++ v.stem.participle := rfl
 
-/-- The participle of a verb phrase is that of the simplex verb followed by the particle. -/
 theorem phraseParticiple_withParticle (v : Verb) (p : String) :
     (v.withParticle p).phraseParticiple = v.stem.participle ++ " " ++ p := rfl
 
@@ -219,16 +216,11 @@ def allVerbs : List Verb :=
   [kaste, sparke, klippe, kjoere, sende, sette, gjoere, bygge, leie, kle, kasteBort, sparkeUt,
     klippeAv, kjoereBort, sendeUt, setteNed, setteSammen, gjoereOpp, byggeUt, leieUt, klePaa]
 
-/-- The compound participles the grammar lists for *gjøre opp*, *kle på*, *sette sammen*,
-*bygge ut*, *leie ut* and *kaste bort* come out of the rule, the last in the *-et* form of the
-grammar's *en bortkastet dag*. -/
 theorem grammar_compound_participles :
     [gjoereOpp, klePaa, setteSammen, byggeUt, leieUt, kasteBort].map Verb.compoundParticiple =
       ["oppgjort", "påkledd", "sammensatt", "utbygd", "utleid", "bortkastet"] := by
   decide
 
-/-- *gjøre opp* has the grammar's two participles, *Vi har gjort opp saka* after *ha* and *Saka
-er oppgjort* after *være*. -/
 theorem gjoereOpp_participle :
     gjoereOpp.participle .perfect = "gjort opp" ∧ gjoereOpp.participle .copular = "oppgjort" := by
   decide

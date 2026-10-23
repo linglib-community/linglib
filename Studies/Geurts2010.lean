@@ -28,8 +28,6 @@ namespace Geurts2010
 
 open Quantifier Quantifier.GQ GeurtsPouscoulous2009
 
-/-- *Exactly two* is not upward entailing in its scope: two of three squares connected with some
-circle, all three with some circle or other. -/
 theorem exactlyTwo_not_scopeUp : ¬ ScopeMonotone (Quant.exactlyTwo.sem : GQ (Fin 3)) := by
   intro h
   have key : Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (fun s ↦ s = 0 ∨ s = 1) →
@@ -40,7 +38,6 @@ theorem exactlyTwo_not_scopeUp : ¬ ScopeMonotone (Quant.exactlyTwo.sem : GQ (Fi
   revert key
   decide
 
-/-- *Not all* is not upward entailing in its scope. -/
 theorem notAll_not_scopeUp : ¬ ScopeMonotone (Quant.notAll.sem : GQ (Fin 3)) := fun h ↦
   h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
     fun _ hf ↦ hf.elim) (fun hall ↦ hall 0 trivial) (fun _ _ ↦ trivial)

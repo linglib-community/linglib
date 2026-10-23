@@ -198,8 +198,6 @@ def Stacked.ofDatum (e : Datum) : Option Stacked := do
 /-- The recursive possessives of Section 5. -/
 def stacked : List Stacked := Examples.all.filterMap Stacked.ofDatum
 
-/-- Only the innermost possessor alternates: the phrase is acceptable exactly when the outer
-possessor keeps its genitive. -/
 theorem innermost_alternates : ∀ s ∈ stacked, Acceptable s.judgment ↔ s.outer = .genitive := by
   decide
 
@@ -242,7 +240,6 @@ def WellFormed (n : Nominal) : Prop := n.SingleArgument ∧ (n.aspectual → n.I
 
 instance : DecidablePred WellFormed := λ _ => inferInstanceAs (Decidable (_ ∧ (_ → _)))
 
-/-- An apo theme forces the result reading. -/
 theorem not_isComplexEvent_of_theme_apo {n : Nominal} (h : n.theme = some .apo) :
     ¬ n.IsComplexEvent := by
   simp [IsComplexEvent, h]

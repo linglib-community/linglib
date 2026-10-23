@@ -110,12 +110,9 @@ theorem mem_category {s : Spec} {x : Primitive} :
   refine forall₂_congr fun p b ↦ imp_congr_right fun _ ↦ ?_
   cases b <;> simp [value, feature]
 
-/-- Feature-definable categories are order-convex. -/
 theorem category_ordConnected (s : Spec) : (category s).OrdConnected :=
   Set.ordConnected_iInter fun p ↦ Set.ordConnected_biInter fun b _ ↦ value_ordConnected p b
 
-/-- No category encompasses non-interlocutor humans and natural forces to the exclusion of
-animals, the impossible conflation of section 2. -/
 theorem animal_mem_category {s : Spec} (h₁ : .human ∈ category s)
     (h₂ : .force ∈ category s) : .animal ∈ category s :=
   (category_ordConnected s).out h₁ h₂ ⟨by decide, by decide⟩
@@ -161,7 +158,6 @@ def spec (af : AnimacyFeatures) : Spec := fun q ↦
   if q = .animal then some (decide (.animate ∈ af))
   else if q = .human then some (decide (.human ∈ af)) else none
 
-/-- The incoherent combination is the one denoting no primitive at all. -/
 theorem category_spec_eq_empty_iff (af : AnimacyFeatures) :
     category af.spec = ∅ ↔ ¬ af.WellFormed := by
   simp only [Set.eq_empty_iff_forall_notMem, mem_category]
@@ -235,8 +231,6 @@ inductive FinalVowel where
 /-- By (22) the core n is spelled out as -i when [+Human] and as -o otherwise. -/
 def finalVowel (c : Core) : FinalVowel := if .human ∈ c.1 then .i else .o
 
-/-- At the core, -i is exactly class 1/2, so the 73% of Chichewa -i nouns in class 1 reported in
-section 4.1 are the aligned nominals and the rest are stacked. -/
 theorem finalVowel_eq_i_iff (c : Core) : c.finalVowel = .i ↔ c.gender = .genderA := by
   revert c; decide
 
@@ -246,7 +240,6 @@ theorem eq_of_factorsThrough_animate {β : Type*} {f : Core → β}
     (hf : Function.FactorsThrough f (decide <| .animate ∈ ·.1)) : f human = f animal :=
   hf (a := human) (b := animal) (by decide)
 
-/-- Xhosa's core genders distinguish [±Human] within [+Animate]. -/
 theorem not_factorsThrough_gender :
     ¬ Function.FactorsThrough gender (decide <| .animate ∈ ·.1) :=
   fun h ↦ absurd (h (a := human) (b := animal) (by decide)) (by decide)
@@ -297,7 +290,6 @@ is undefined for the genders whose features the paper leaves open. -/
 def ofEntry (e : Xhosa.Noun) : Option (Nominal Core) :=
   (Core.ofGender e.gender).map (.stack (Core.ofAnimacy e.animacy))
 
-/-- The prefix class of a nominal is the noun's gender. -/
 theorem prefixGender_eq_gender {e : Xhosa.Noun} {n : Nominal Core} (h : ofEntry e = some n) :
     prefixGender n = e.gender := by
   obtain ⟨s, hs, rfl⟩ := Option.map_eq_some_iff.mp h

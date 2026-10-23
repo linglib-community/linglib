@@ -176,7 +176,6 @@ abbrev Base := {A : Finset World // A.Nonempty}
 /-- The accessibility of *must*, relating a deontic world to the buy-worlds it permits. -/
 def permits : SetRel Base World := .ofSuccessors fun A ↦ ↑A.1
 
-/-- Every buy-world is the sole world some deontic world permits. -/
 theorem permits_singleton (v : World) : ∃ A : Base, ∀ u, A ~[permits] u ↔ u = v :=
   ⟨⟨{v}, Finset.singleton_nonempty v⟩, fun _ => Finset.mem_singleton⟩
 
@@ -237,7 +236,6 @@ def observed (row : Datum) : Bool × Bool :=
   (row.readings.any fun r => "singular".toList <+: r.1.toList ∧ r.2 = .acceptable,
     row.readings.any fun r => "plural".toList <+: r.1.toList ∧ r.2 = .acceptable)
 
-/-- Every derived interrogative's answers are those the paper reports. -/
 theorem rows_agree :
     ∀ row ∈ Examples.all, ∀ b, predicted row = some b →
       (row.readings.any fun r => "singular".toList <+: r.1.toList) = true → observed row = b := by

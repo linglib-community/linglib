@@ -116,7 +116,6 @@ def State.toUD : State → UD.Definite
   | .construct => .Cons
   | .indefinite => .Ind
 
-/-- Distinct states have distinct tags. -/
 theorem State.toUD_injective : Function.Injective State.toUD := by
   decide
 
@@ -200,7 +199,6 @@ def form (n : Noun) (s : State) (c : Case) : String :=
 
 variable {n : Noun} {s : State} {c c' : Case}
 
-/-- A noun merges the cases its declension's endings merge. -/
 @[simp]
 theorem form_eq_form_iff : n.form s c = n.form s c' ↔ n.declension s c = n.declension s c' :=
   String.append_right_inj _

@@ -142,7 +142,6 @@ theorem complement_eq_D_iff : s.complement = .D ↔ s.Low := by
 theorem selector_eq_none_iff : s.selector = none ↔ s.High := by
   simp [selector, High]
 
-/-- The type read off the site Merges with the category the site gives it. -/
 theorem applType_complement (r : LowRelation) : (s.applType r).complement = s.complement := by
   unfold applType complement
   split_ifs <;> rfl
@@ -153,7 +152,6 @@ theorem applType_eq_low_iff (r : LowRelation) : s.applType r = .low r ↔ s.Low 
 theorem applType_eq_affected_iff (r : LowRelation) : s.applType r = .affected ↔ s.Affected := by
   unfold applType Affected; split_ifs <;> simp_all
 
-/-- The three types partition the sites in a nonempty structure. -/
 theorem low_or_affected_or_high (h : s.heads ≠ []) : s.Low ∨ s.Affected ∨ s.High := by
   by_cases hb : s.below = [] <;> by_cases ha : s.above = [] <;>
     simp_all [heads, Low, Affected, High]
@@ -162,7 +160,6 @@ theorem Affected.not_low (h : s.Affected) : ¬ s.Low := h.2
 
 theorem Affected.not_high (h : s.Affected) : ¬ s.High := h.1
 
-/-- An affected applicative requires two events. -/
 theorem Affected.biEventive (h : s.Affected) : LittleV.BiEventive s.heads := by
   obtain ⟨ha, hb⟩ := h
   unfold LittleV.BiEventive heads
@@ -171,8 +168,6 @@ theorem Affected.biEventive (h : s.Affected) : LittleV.BiEventive s.heads := by
   have := List.length_pos_iff.2 hb
   omega
 
-/-- The head an affected applicative is the complement of is dynamic: it embeds the eventuality
-below the applicative. -/
 theorem Affected.selector_dynamic (hw : LittleV.IsWellFormed s.heads) (h : s.Affected) :
     ∀ v ∈ s.selector, v.Dynamic := by
   intro v hv
@@ -183,7 +178,6 @@ theorem Affected.selector_dynamic (hw : LittleV.IsWellFormed s.heads) (h : s.Aff
   refine LittleV.Embeds.dynamic (w := w) (List.isChain_pair.1 (hw.2.infix ⟨l, t, ?_⟩))
   simp [heads, hl, hb']
 
-/-- No affected applicative is applied under a state. -/
 theorem not_affected_of_state (hw : LittleV.IsWellFormed s.heads)
     (h : s.selector = some .vBE) : ¬ s.Affected :=
   fun ha ↦ (ha.selector_dynamic s hw _ h) rfl
@@ -241,20 +235,14 @@ instance (appl : ApplHead) (voice : Voice.Head) : Decidable (appl.Licensed voice
 
 variable (v : Voice.Head)
 
-/-- Low applicatives are licensed under any Voice head ([pylkkanen-2008]). -/
 theorem low_licensed_with_any (r : LowRelation) : ApplHead.Licensed { applType := .low r } v :=
   fun h ↦ absurd h (by simp)
 
-/-- Affected applicatives are licensed under any Voice head: the head that selects them is the
-dynamic v below Voice ([cuervo-2003]). -/
 theorem affected_licensed_with_any : applAffected.Licensed v := fun h ↦ absurd h (by decide)
 
-/-- θ-assigning Voice licenses high applicatives (θ-assignment entails event semantics). -/
 theorem high_licensed_of_assignsTheta (h : v.AssignsTheta) : applHigh.Licensed v :=
   fun _ ↦ h.isThematic
 
-/-- High Appl is blocked with middle Voice, which has no event semantics, while a possessive
-dative survives there ([pylkkanen-2008]). -/
 theorem ethical_possessive_middle_asymmetry :
     ¬ applHigh.Licensed Voice.middle ∧ applLowPossessor.Licensed Voice.middle := by decide
 

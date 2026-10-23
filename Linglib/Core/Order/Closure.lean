@@ -42,8 +42,6 @@ theorem isUpperSet_setOf_isClosed_supRight (a : α) :
     IsUpperSet {x | (supRight a).IsClosed x} := fun _ _ hxy hx ↦
   isClosed_supRight_iff.2 ((isClosed_supRight_iff.1 hx).trans hxy)
 
-/-- A closure operator joins its argument with the closure of `⊥` exactly when its closed
-elements form an upper set. -/
 theorem eq_supRight_iff [OrderBot α] (c : ClosureOperator α) :
     c = supRight (c ⊥) ↔ IsUpperSet {x | c.IsClosed x} := by
   refine ⟨fun h ↦ h ▸ isUpperSet_setOf_isClosed_supRight _, fun h ↦ ext _ _ fun x ↦ ?_⟩

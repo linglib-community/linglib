@@ -56,7 +56,6 @@ universe u
 
 variable {Obj : Type u}
 
-/-- A coercion commutes with the embeddings of the two nouns. -/
 @[simp]
 theorem over_w_apply {A B : Over Obj} (s : A ⟶ B) (a : A.left) : B.hom (s.left a) = A.hom a :=
   types_congr_hom (Over.w s) a
@@ -129,7 +128,6 @@ theorem not_human_not_man (s : Man ⟶ Human) (c : Obj) (h : N.not Human (p Huma
     N.not Man (p Man) c :=
   N.l2 s c h
 
-/-- "John walks" entails "some man walks", for John a man. -/
 theorem some_man_walks (s : Man ⟶ Human) (walk : Human.left → Prop) (j : Man.left)
     (h : walk (s.left j)) : ∃ x : Man.left, walk (s.left x) :=
   ⟨j, h⟩
@@ -176,7 +174,6 @@ structure Idiot (Human : Idiocy → Type*) (STND : Idiocy) where
   /-- The degree exceeds the standard. -/
   above : STND < degree
 
-/-- No degree is both above and below the standard, so *small idiot* is contradictory. -/
 theorem small_idiot_contradictory (STND : Idiocy) : ¬ ∃ i : Idiocy, STND < i ∧ i < STND :=
   fun ⟨_, h1, h2⟩ ↦ lt_asymm h1 h2
 

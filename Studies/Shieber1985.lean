@@ -117,8 +117,6 @@ theorem clause_mem_schema (p q r u : ℕ) : clause p q r u ∈ schema :=
     by simp +contextual [mem_replicate, or_imp], by simp +contextual [mem_replicate, or_imp],
     by simp [clause]⟩
 
-/-- A word is in `r` iff it is sorted with one `w`, one `x`, one `y` and no `z`, since a sorted
-word is determined by its letter counts. -/
 theorem mem_caseSorted_iff {l : List Letter} :
     l ∈ caseSorted ↔
       l.SortedLE ∧ l.count w = 1 ∧ l.count x = 1 ∧ l.count y = 1 ∧ l.count z = 0 := by
@@ -162,7 +160,6 @@ theorem stringMap_eraseFrame_crossSerial :
   · rintro ⟨m, n, rfl⟩
     exact ⟨_, ⟨m, n, rfl⟩, flatMap_eraseFrame_clause m n m n⟩
 
-/-- `w aᵐ bⁿ x cᵐ dⁿ y` is not context-free, since erasing the frame leaves `aᵐ bⁿ cᵐ dⁿ`. -/
 theorem not_isContextFree_crossSerial : ¬ crossSerial.IsContextFree := fun h ↦
   not_isContextFree_ambncmdn (by decide) (stringMap_eraseFrame_crossSerial ▸ h.stringMap eraseFrame)
 
@@ -181,7 +178,6 @@ structure Claims : Prop where
   count_eq : ∀ s ∈ L, s.map f ∈ schema →
     (s.map f).count a = (s.map f).count c ∧ (s.map f).count b = (s.map f).count d
 
-/-- The image of a language meeting the claims, intersected with `r`, is `w aᵐ bⁿ x cᵐ dⁿ y`. -/
 theorem Claims.map_inf_caseSorted (h : Claims f L) : L.map f ⊓ caseSorted = crossSerial := by
   ext l
   refine ⟨?_, fun ⟨m, n, hl⟩ ↦ ?_⟩
@@ -193,14 +189,10 @@ theorem Claims.map_inf_caseSorted (h : Claims f L) : L.map f ⊓ caseSorted = cr
   · obtain ⟨s, hs, he⟩ := h.exists_mem m n
     exact ⟨⟨s, hs, he.trans hl.symm⟩, m, n, m, n, hl⟩
 
-/-- A language meeting the four claims is not context-free. -/
 theorem Claims.not_isContextFree (h : Claims f L) : ¬ L.IsContextFree := fun hL ↦
   not_isContextFree_crossSerial <|
     h.map_inf_caseSorted ▸ (hL.map f).inf_isRegular isRegular_caseSorted
 
-/-- A language is not context-free if every clause `w aⁿ bⁿ x cⁿ dⁿ y` is grammatical and every
-object noun phrase of a clause of the schema has a verb requiring its case, objects being
-optional. -/
 theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clause n n n n)
     (hle : ∀ s ∈ L, s.map f ∈ schema →
       (s.map f).count a ≤ (s.map f).count c ∧ (s.map f).count b ≤ (s.map f).count d) :
@@ -220,7 +212,6 @@ theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clau
 def countMatched : Language Letter :=
   {l | l ∈ schema → l.count a = l.count c ∧ l.count b = l.count d}
 
-/-- The claims are consistent, since `countMatched` meets them. -/
 theorem claims_countMatched : Claims id countMatched where
   exists_mem m n := ⟨clause m n m n, fun _ ↦ by simp [count_clause], by simp⟩
   count_eq s hs hsch := by simpa using hs (by simpa using hsch)
@@ -248,7 +239,6 @@ def objectCases (e : Datum) : List German.Zurich.Case :=
 def requiredCases (e : Datum) : List German.Zurich.Case :=
   e.glossedTokens.flatMap fun t ↦ (verbs.find? (t.1 ∈ ·.forms)).elim [] (·.objects)
 
-/-- As note 4 observes, every clause of the paper has as many objects as its verbs require. -/
 theorem length_objectCases_eq :
     ∀ e ∈ Examples.all, (objectCases e).length = (requiredCases e).length := by
   decide

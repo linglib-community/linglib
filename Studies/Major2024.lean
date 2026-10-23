@@ -79,9 +79,6 @@ def linker? (r : Datum) : Option Complementizer :=
 
 /-! ### 'Say' inside the converb clause -/
 
-/-- A verb is acceptable with or without a complement exactly when it has a frame for it,
-whether it is finite or under the converb suffix: *de-* needs its complement in a *dep* clause as
-*oyla-* 'think' does in its converb clause, and *warqira-* 'scream' takes none. -/
 theorem subcategorization :
     ∀ r ∈ Examples.all, ∀ fr ∈ r.parse? "complement"
         [("none", ArgumentFrame.intransitive), ("dp", .np), ("participial", .typedBy lik)],
@@ -90,39 +87,30 @@ theorem subcategorization :
 
 /-! ### No argument -/
 
-/-- No verb takes a converb clause. -/
 theorem not_takes_ip (v : Verb) : ¬ v.Takes ip := Verb.not_takes_of_blank rfl rfl
 
-/-- A *dep* clause is acceptable with a verb that takes no clause at all. -/
 theorem dep_unselected :
     ∃ r ∈ Examples.all, r.judgment = .acceptable ∧ r.feature? "clause" = some "dep" ∧
       ∃ v ∈ verb? "matrixVerb" r, ¬ v.TakesClausal := by
   decide
 
-/-- A clause is acceptable as a subject exactly when some argument position takes its linker,
-as one takes a participial clause and none a *dep* clause. -/
 theorem clausal_subject :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = some "subject" → ∃ z ∈ linker? r,
       (r.judgment = .acceptable ↔ ∃ p : ArgumentFrame.Position, p.Takes z) := by
   simp only [ArgumentFrame.Position.exists_takes_iff]
   decide
 
-/-- Denying the content of a clause is contradictory exactly when a factive verb takes the
-clause: under *bil-* 'know' a participial clause is presupposed and a *dep* clause is not. -/
 theorem factive_denial :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = some "denial" →
       ∃ v ∈ verb? "matrixVerb" r, ∃ z ∈ linker? r,
         (r.judgment = .acceptable ↔ ¬ (v.IsFactive ∧ v.Takes z)) := by
   decide
 
-/-- *unut-* 'forget' is read 'forget that' exactly with a clause it takes. -/
 theorem forget_that :
     ∀ r ∈ Examples.all, ∀ j ∈ r.readings.lookup "forgot that",
       ∃ v ∈ verb? "matrixVerb" r, ∃ z ∈ linker? r, (j = .acceptable ↔ v.Takes z) := by
   decide
 
-/-- The dependent mood of Washo, the linker of a modifier clause, is likewise a linker no verb
-takes, and the nominalizer of either language one that some argument position takes. -/
 theorem washo_parallel :
     (∀ v : Verb, ¬ v.Takes Washo.aq) ∧
       (∃ p : ArgumentFrame.Position, p.Takes Washo.ge) ∧
@@ -132,15 +120,10 @@ theorem washo_parallel :
 
 /-! ### Two heights -/
 
-/-- A clause adjoined to VP is below `v`, aspect, negation and tense, and one adjoined to TP is
-below none of them. -/
 theorem adjoined_below :
     ∀ h ∈ [Cat.v, .Asp, .Neg, .T], Cat.V.fValue < h.fValue ∧ ¬ Cat.T.fValue < h.fValue := by
   decide
 
-/-- A converb clause passes a diagnostic exactly when it adjoins below the head the diagnostic
-turns on, and a *dep* clause does as any other: negation licenses a negative concord item in its
-clause, and the pro-form *shundaq ~ undaq* 'like this' stands in the verb phrase of `v`. -/
 theorem height_diagnostics :
     ∀ r ∈ Examples.all, ∀ s ∈ r.parse? "height" [("VP", Cat.V), ("TP", .T)],
       ∃ h ∈ r.parse? "diagnostic" [("nci", Cat.Neg), ("proform", .v)],
@@ -158,17 +141,11 @@ under none. -/
 def vP (g : CaseAssigners) (tensed active : Bool) : List (Option Case) :=
   cases g ((if tensed then finite else []) ++ vProbe active) [subject, internal active]
 
-/-- Whether case is valued by the dependent rule or by `v`, the lower NP is accusative exactly
-when `v` bears the feature. -/
 theorem vP_eq (tensed active : Bool) : ∀ g ∈ [grammar, pureChomsky],
     vP g tensed active =
       [if tensed then some .nom else none, if active then some .acc else none] := by
   cases tensed <;> cases active <;> decide
 
-/-- The modalities come apart on an NP that has shifted with no `v` to attract it, which the
-dependent rule values accusative below another NP and Agree leaves caseless. The subject of a
-*dep* clause beside an unaccusative verb would be such an NP if *dep* were a complementizer, and
-a predicate nominal would be one if shifting were free. -/
 theorem shifted_without_v :
     cases grammar finite [subject, internal true] = [some .nom, some .acc] ∧
       cases pureChomsky finite [subject, internal true] = [some .nom, none] := by
@@ -186,10 +163,6 @@ def voice? (r : Datum) : Option VoiceType :=
     [("animate", .agentive), ("inanimate", .nonThematic), ("none", .nonThematic)]).orElse
     fun _ ↦ (verb? "verb" r).bind (·.voiceType)
 
-/-- An object, or the subject of the complement of *de-*, is acceptable in a case exactly when
-some setting of `[+ACC/SPEC]` gives it that case, the feature being borne only by a θ-assigning
-`v` and shown by the NP's place before an adverb: so a predicate nominal under *bol-* 'become'
-and the subject below a saying with no agent stay bare, under either modality. -/
 theorem case_below_v :
     ∀ g ∈ [grammar, pureChomsky], ∀ r ∈ Examples.all, ∀ c ∈ case? r,
       r.feature? "clause" ≠ some "participial" → ∃ vt ∈ voice? r,
@@ -199,8 +172,6 @@ theorem case_below_v :
           (vP g (r.feature? "clause" != some "dep") active)[1]? = some c) := by
   decide
 
-/-- The subject of a participial clause is genitive, valued by the D of the nominalization
-under either modality, and never accusative. -/
 theorem participial_subject_genitive :
     ∀ g ∈ [grammar, pureChomsky], ∀ r ∈ Examples.all, ∀ c ∈ case? r,
       r.feature? "clause" = some "participial" →
@@ -221,20 +192,12 @@ def complementizerCases (g : CaseAssigners) (r : Datum) : List (Option Case) :=
       then [subject] else []) ++
       (if r.feature? "matrixObject" = some "ACC" then [internal true] else []) ++ [internal true])
 
-/-- With a complementizer and Agree alone the raised subject is caseless where the examples have
-it accusative: beside unaccusative *ket-* 'leave', beside a passive, and beside *éyt-* 'tell',
-whose one `v` has an object of its own. By `pureChomsky_v_of_acc` nothing but a `v` could value
-it, which is the argument for the dependent rule that the verb inside *dep* answers. -/
 theorem complementizer_agree :
     ∀ r ∈ [Examples.ex_123, Examples.ex_122, Examples.ex_124],
       r.judgment = .acceptable ∧ case? r = some (some .acc) ∧
         (complementizerCases pureChomsky r).getLast? = some none := by
   decide
 
-/-- With a complementizer the dependent rule values the raised subject accusative wherever the
-matrix clause has an argument: so beside the inanimate subject 'this news', where the accusative
-is out, and not when the news is a locative whose source is inside a relative clause, where the
-accusative is in. -/
 theorem complementizer_dependent :
     Examples.ex_128_acc.judgment = .ungrammatical ∧
       (complementizerCases grammar Examples.ex_128_acc).getLast? = some (some .acc) ∧

@@ -46,8 +46,6 @@ theorem scenario3 [DecidableEq α] (hnd : [X, Y, a, Z].Nodup) :
     Consistent [[X, Y, Z], [X, Y, a, Z]] :=
   consistent_of_forall_sublist (by simp) hnd
 
-/-- An ordering cycle through several Spell-outs crashes as well: the crash condition is the
-acyclicity of the accumulated order, not a directly contradicted pair. -/
 theorem cycle {b c : α} : ¬ Consistent [[a, b], [b, c], [c, a]] := fun h ↦
   h a (.tail (.tail (.single ⟨[a, b], by simp, .refl _⟩) ⟨[b, c], by simp, .refl _⟩)
     ⟨[c, a], by simp, .refl _⟩)
@@ -177,7 +175,6 @@ def phases : Sketch → List (List Terminal)
   | intervener => [[V, XP, O], [S, V, O, adv, XP]]
   | intervenerFronted => [[XP, V, O], [XP, V, S, O, adv]]
 
-/-- The derivations spell out the snapshots the paper draws. -/
 theorem spellouts_eq_phases (s : Sketch) :
     s.schedule.map (fun p ↦ (s.derivation.spellout p.1 p.2).filterMap Terminal.ofToken?) =
       s.phases := by
@@ -190,7 +187,6 @@ def table : List (String × Sketch) :=
 
 end Sketch
 
-/-- The paper's Swedish sentences are acceptable exactly when their derivations linearize. -/
 theorem rows_predicted : ∀ ex ∈ Examples.all, ∀ s ∈ ex.parse? "sketch" Sketch.table,
     (ex.judgment = .acceptable ↔ s.derivation.Linearizes s.schedule) := by
   decide

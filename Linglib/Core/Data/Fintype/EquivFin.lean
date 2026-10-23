@@ -21,8 +21,6 @@ equal cardinalities differ by a permutation of the domain, the fibrewise equival
 
 namespace Equiv
 
-/-- Two maps on a finite type whose fibres have equal cardinalities differ by a permutation of
-the domain. [UPSTREAM] -/
 theorem exists_comp_eq_of_card_fiber_eq {α β : Type*} [Finite α] {f g : α → β}
     (h : ∀ b, Nat.card {x // g x = b} = Nat.card {x // f x = b}) : ∃ e : α ≃ α, f ∘ e = g := by
   have := Fintype.ofFinite α

@@ -70,8 +70,6 @@ variable {N T F : Type*}
 every target in every morphosyntactic form. -/
 abbrev agreementClasses (agr : N → T → F) : Setoid N := Setoid.ker agr
 
-/-- The controller genders, being the agreement classes, are as many as the agreement map
-has values. -/
 theorem card_quotient_agreementClasses (agr : N → T → F) :
     Nat.card (Quotient (agreementClasses agr)) = Nat.card (Set.range agr) :=
   Nat.card_congr (Setoid.quotientKerEquivRange agr)
@@ -79,15 +77,12 @@ theorem card_quotient_agreementClasses (agr : N → T → F) :
 /-- The target genders of a target are the forms it shows. -/
 abbrev targetGenders (agr : N → T → F) (t : T) : Set F := Set.range (agr · t)
 
-/-- The controller genders are at most the product of the target genders over the targets. -/
 theorem card_range_le_prod [Finite N] [Fintype T] (agr : N → T → F) :
     Nat.card (Set.range agr) ≤ ∏ t, Nat.card (targetGenders agr t) := by
   rw [← Nat.card_pi]
   exact Nat.card_le_card_of_injective (fun f t ↦ ⟨f.1 t, f.2.imp fun n hn ↦ congrFun hn t⟩)
     fun f g h ↦ Subtype.ext (funext fun t ↦ congrArg Subtype.val (congrFun h t))
 
-/-- When noun-level agreement is the per-gender behaviour of a faithful carrier, the
-agreement classes are the fibres of the assignment, so the genders are the agreement classes. -/
 theorem agreementClasses_eq_ker_of_faithful {G : Type*} {assign : N → G}
     {nounAgr : N → T → F} {agr : G → T → F} (med : nounAgr = agr ∘ assign)
     (faith : Faithful agr) : agreementClasses nounAgr = Setoid.ker assign :=
@@ -112,12 +107,10 @@ def Convergent (sg : N → F) (pl : N → F') : Prop :=
 def Crossed (sg : N → F) (pl : N → F') : Prop :=
   ¬ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl
 
-/-- Parallel target genders have the same kernel. -/
 theorem parallel_iff_ker_eq {sg : N → F} {pl : N → F'} :
     Parallel sg pl ↔ Setoid.ker sg = Setoid.ker pl :=
   (le_antisymm_iff (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
 
-/-- Convergent target genders have strictly ordered kernels. -/
 theorem convergent_iff_ker_lt {sg : N → F} {pl : N → F'} :
     Convergent sg pl ↔ Setoid.ker sg < Setoid.ker pl :=
   (lt_iff_le_not_ge (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
@@ -158,20 +151,15 @@ instance [Fintype G] [Fintype T] [DecidableEq G] [DecidableEq T] [DecidableEq F]
     Decidable (Polar f) := by
   unfold Polar; infer_instance
 
-/-- Polarity is symmetric in the two features. -/
 theorem Polar.flip (h : Polar f) : Polar (flip f) :=
   fun t t' g g' ↦ (h g g' t t').trans Iff.comm
 
-/-- Within one value of the other feature, a polar exponent keeps every distinction. -/
 theorem Polar.injective (h : Polar f) (t : T) : Function.Injective (f · t) :=
   fun _ _ e ↦ ((h _ _ t t).mp e).mpr rfl
 
-/-- A polar exponent is faithful to its first feature. -/
 theorem Polar.faithful [Nonempty T] (h : Polar f) : Faithful f :=
   fun _ _ e ↦ h.injective (Classical.arbitrary T) (congrFun e _)
 
-/-- A polar exponent admits at most two values of either feature, since with three values of
-one feature two of them would share a form. -/
 theorem Polar.card_le_two [Fintype G] [Nontrivial T] (h : Polar f) :
     Fintype.card G ≤ 2 := by
   by_contra hc
@@ -181,16 +169,13 @@ theorem Polar.card_le_two [Fintype G] [Nontrivial T] (h : Polar f) :
   have e₃ : f g₃ t = f g₂ t' := (h g₃ g₂ t t').mpr (iff_of_false h₂₃.symm ht)
   exact h₁₃ (h.injective t (e₁.trans e₃.symm))
 
-/-- The other feature likewise. -/
 theorem Polar.card_le_two' [Fintype T] [Nontrivial G] (h : Polar f) : Fintype.card T ≤ 2 :=
   h.flip.card_le_two
 
-/-- Polar features are two-valued. -/
 theorem Polar.card_eq_two [Fintype G] [Nontrivial G] [Nontrivial T] (h : Polar f) :
     Fintype.card G = 2 :=
   le_antisymm h.card_le_two Fintype.one_lt_card
 
-/-- A polar exponent is a parallel system. -/
 theorem Polar.parallel (h : Polar f) (t t' : T) : Parallel (f · t) (f · t') :=
   ⟨fun _ _ e ↦ congrArg (f · t') (h.injective t e),
     fun _ _ e ↦ congrArg (f · t) (h.injective t' e)⟩

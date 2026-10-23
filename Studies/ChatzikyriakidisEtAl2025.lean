@@ -90,7 +90,6 @@ theorem mem_extension_recTypes :
     r ∈ (recTypes S).extension T p ↔ letI := S p; ∀ a ∈ T, a.Realize r :=
   .rfl
 
-/-- Merging record types intersects their witnesses. -/
 theorem extension_recTypes_union : (recTypes S).extension (T₁ ∪ T₂) p =
     (recTypes S).extension T₁ p ∩ (recTypes S).extension T₂ p :=
   letI := S p; Atom.realizers_union T₁ T₂
@@ -99,17 +98,13 @@ theorem mem_extension_recTypes_smul (σ : Equiv.Perm α) :
     r ∈ (recTypes S).extension (σ • T) p ↔ r ∘ σ ∈ (recTypes S).extension T p :=
   letI := S p; Atom.mem_realizers_smul
 
-/-- A record type with more fields is a subtype, since its witnesses realize the fields of the
-other. -/
 theorem subtypeR_recTypes_of_subset (h : T₂ ⊆ T₁) : (recTypes S).SubtypeR T₁ T₂ :=
   fun p ↦ letI := S p; Atom.realizers_anti h
 
-/-- A belief type that contains the fields of a relabelling of a type believes it. -/
 theorem subtypeRelabel_of_smul_subset (σ : Equiv.Perm α) (h : σ • T ⊆ B) :
     (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B T :=
   ⟨σ • T, ⟨σ⁻¹, inv_smul_smul σ T⟩, (subtypeR_recTypes_of_subset h).subtypeI⟩
 
-/-- Belief is blind to the labels of the believed type. -/
 theorem subtypeRelabel_smul (σ : Equiv.Perm α) :
     (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B (σ • T) ↔
       (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B T :=
@@ -127,16 +122,12 @@ section ActualBelief
 
 variable {L : Language.{0, 0}} [L.IsRelational] {α : Type} {T T₁ T₂ B : Set (L.Atom α)}
 
-/-- A record type is a subtype of another in every modal system exactly when it has all of its
-fields. -/
 theorem forall_subtypeR_recTypes_iff :
     (∀ (M E : Type) (S : M → L.Structure E), (recTypes S).SubtypeR T₁ T₂) ↔ T₂ ⊆ T₁ := by
   refine ⟨fun h ↦ ?_, fun h _ _ _ ↦ subtypeR_recTypes_of_subset h⟩
   simpa using Atom.forall_realizers_subset_preimage_iff (T := T₂) (B := T₁) (f := id).1
     fun E inst ↦ h Unit E (fun _ ↦ inst) ()
 
-/-- A belief type believes a type in every modal system exactly when it contains the fields of some
-relabelling of it, as an actual belief. -/
 theorem forall_subtypeRelabel_recTypes_iff :
     (∀ (M E : Type) (S : M → L.Structure E),
       (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B T) ↔
@@ -255,18 +246,14 @@ abbrev system (p : Possib) : lang.Structure Obj where
     @Structure.RelMap lang Obj (system p) n R xs ↔ holds p R xs :=
   .rfl
 
-/-- No witch exists. -/
 theorem extension_witch_actual : (recTypes system).extension witch .actual = ∅ := by
   ext r
   simp [mem_extension_recTypes, Atom.Realize, witch, holds]
 
-/-- Hob believes that there is a witch. -/
 theorem believes_witch :
     (recTypes system).SubtypeRelabel (orbitRel (Equiv.Perm Label) _) hob witch :=
   subtypeRelabel_of_smul_subset 1 (by simp [hob])
 
-/-- Nob, whose belief type is that there is a witch, does not believe that she blighted Bob's
-mare. -/
 theorem not_believes_blighted :
     ¬ (recTypes system).SubtypeRelabel (orbitRel (Equiv.Perm Label) _) witch hob := by
   rintro ⟨T, ⟨σ, hσ : σ • T = hob⟩, h⟩
@@ -359,8 +346,6 @@ theorem isGluing_sameGlue : sameCover.IsGluing (presheaf lang Label) sections sa
 theorem isGluing_apartGlue : apartCover.IsGluing (presheaf lang Label) sections apartGlue := by
   decide +kernel
 
-/-- Gluing along the aligning cover merges Hob's belief and the content of Nob's question as
-record types. -/
 theorem atom_image_sameGlue :
     Literal.atom '' (sameGlue.lits : Set (Literal sameCtx)) = hob ∪ nob := by
   have : sameGlue.lits = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
@@ -370,7 +355,6 @@ theorem atom_image_sameGlue :
   simp [hob, nob, witch]
   tauto
 
-/-- Gluing along the other cover merges them with Nob's witch relabelled. -/
 theorem atom_image_apartGlue :
     Literal.atom '' (apartGlue.lits : Set (Literal apartCtx)) =
       hob ∪ Equiv.swap Label.x .y • nob := by
@@ -382,9 +366,6 @@ theorem atom_image_apartGlue :
     Matrix.comp_vecEmpty, Equiv.swap_apply_def]
   tauto
 
-/-- *She (the same witch)*. Aligned on the witch, Hob's belief and the content of Nob's question
-are not both true where different witches blighted the mare and killed the sow, since their
-witnesses are the compatible pairs of local witnesses and compatibility gives both one witch. -/
 theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅ := by
   let _ := system .twoWitches
   refine Set.eq_empty_of_forall_notMem fun r hr ↦ ?_
@@ -397,8 +378,6 @@ theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅
   simp [Literal.Holds, lit, holds] at h₀ h₁
   simp_all
 
-/-- Keeping the witches apart, which leaves Nob's beliefs as they are, makes Hob's belief and the
-content of Nob's question true together. -/
 theorem other_witch :
     ((recTypes system).extension (hob ∪ Equiv.swap Label.x .y • nob) .twoWitches).Nonempty := by
   let _ := system .twoWitches

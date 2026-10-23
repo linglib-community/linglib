@@ -92,7 +92,6 @@ inner variables are truth functions of their parents. -/
 class ContextAtRoots : Prop where
   eqn_eq_of_adj {v w : V} : M.graph.Adj w v → ∀ u u' y, M.eqn v u y = M.eqn v u' y
 
-/-- A model is acyclic when every edge climbs in depth. -/
 theorem IsAcyclic.of_depth (depth : V → ℕ) (h : ∀ {w v}, M.graph.Adj w v → depth w < depth v) :
     M.IsAcyclic :=
   RelHomClass.wellFounded (⟨depth, h⟩ : M.graph.Adj →r (· < ·)) wellFounded_lt
@@ -117,13 +116,10 @@ variable {M}
 theorem step_apply (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) (v : V) :
     M.step I u x v = (I v).unbotD (M.eqn v u x) := rfl
 
-/-- Each round computes a variable from its parents. -/
 theorem dependsOn_step (I : ∀ v, Flat (α v)) (u : U) (v : V) :
     DependsOn (M.step I u · v) {w | M.graph.Adj w v} :=
   fun _ _ h ↦ congrArg (Flat.unbotD · (I v)) (M.dependsOn_eqn v u h)
 
-/-- After `k` rounds of the equations, a variable of rank below `k` no longer depends on the
-assignment the rounds started from. -/
 theorem iterate_step_apply_eq (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop))
     (I : ∀ v, Flat (α v)) (u : U) {k : ℕ} {v : V} (hv : r v < k) (x y : ∀ v, α v) :
     (M.step I u)^[k] x v = (M.step I u)^[k] y v :=
@@ -138,14 +134,12 @@ point of `step`. -/
 noncomputable def solve (I : ∀ v, Flat (α v)) (u : U) : ∀ v, α v :=
   hM.fixedPoint (M.step I u)
 
-/-- The solution satisfies the equations. -/
 theorem isFixedPt_solve (I : ∀ v, Flat (α v)) (u : U) :
     Function.IsFixedPt (M.step I u) (M.solve I u) :=
   hM.isFixedPt_fixedPoint (dependsOn_step I u)
 
 variable {M}
 
-/-- An assignment satisfying the equations is the solution. -/
 theorem eq_solve_of_isFixedPt {I : ∀ v, Flat (α v)} {u : U} {x : ∀ v, α v}
     (hx : Function.IsFixedPt (M.step I u) x) : x = M.solve I u :=
   WellFounded.eq_fixedPoint_of_isFixedPt (dependsOn_step I u) hx
@@ -158,24 +152,19 @@ theorem solve_apply (I : ∀ v, Flat (α v)) (u : U) (v : V) :
     M.solve I u v = (I v).unbotD (M.eqn v u (M.solve I u)) :=
   WellFounded.fixedPoint_apply (dependsOn_step I u) v
 
-/-- An intervened variable takes its intervened value. -/
 theorem solve_of_eq_coe {I : ∀ v, Flat (α v)} {v : V} {x : α v} (h : I v = ↑x) (u : U) :
     M.solve I u v = x := by
   rw [solve_apply, h, Flat.unbotD_coe]
 
-/-- A variable the intervention leaves alone obeys its equation. -/
 theorem solve_of_eq_bot {I : ∀ v, Flat (α v)} {v : V} (h : I v = ⊥) (u : U) :
     M.solve I u v = M.eqn v u (M.solve I u) := by
   rw [solve_apply, h, Flat.unbotD_bot]
 
-/-- Iterating the equations from any assignment past a ranking of the graph reaches the
-solution. -/
 theorem solve_eq_iterate (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop)) {n : ℕ}
     (hn : ∀ v, r v < n) (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
     M.solve I u = (M.step I u)^[n] x :=
   WellFounded.fixedPoint_eq_iterate (dependsOn_step I u) r hn x
 
-/-- In a finite model, iterating the equations once per variable reaches the solution. -/
 theorem solve_eq_iterate_card [Fintype V] (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
     M.solve I u = (M.step I u)^[Fintype.card V] x :=
   WellFounded.fixedPoint_eq_iterate_card (dependsOn_step I u) x

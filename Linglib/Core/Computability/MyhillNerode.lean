@@ -38,15 +38,12 @@ namespace Language
 
 variable {α β : Type*} {L : Language α}
 
-/-- A language is regular when membership factors through a map `g` with finite range such that
-words with equal `g`-values still have equal `g`-values after appending the same word. -/
 theorem IsRegular.of_factorsThrough {g : List α → β} (hL : Function.FactorsThrough (· ∈ L) g)
     (hg : ∀ ⦃u v⦄ (x : List α), g u = g v → g (u ++ x) = g (v ++ x))
     (hfin : (Set.range g).Finite) : L.IsRegular :=
   .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
     (fun _ _ e ↦ Set.ext fun x ↦ iff_of_eq (hL (hg x e))) hfin
 
-/-- A family of words with pairwise distinct left quotients by a regular language is finite. -/
 theorem IsRegular.finite_of_injective_leftQuotient (h : L.IsRegular) {ι : Type*}
     {f : ι → List α} (hf : (L.leftQuotient ∘ f).Injective) : Finite ι :=
   have := (h.finite_range_leftQuotient.subset (Set.range_comp_subset_range f _)).to_subtype

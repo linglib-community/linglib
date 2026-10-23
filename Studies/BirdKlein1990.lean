@@ -84,7 +84,6 @@ structure IsEventStructure (prec ov : E → E → Prop) : Prop where
 
 variable {prec ov : E → E → Prop}
 
-/-- Precedence is transitive, overlap being reflexive. -/
 theorem IsEventStructure.prec_trans (h : IsEventStructure prec ov) {x y z : E}
     (hxy : prec x y) (hyz : prec y z) : prec x z :=
   h.prec_of_prec_of_ov hxy (h.ov_refl y) hyz
@@ -95,8 +94,6 @@ theorem IsEventStructure.not_crossing (h : IsEventStructure prec ov) {w x y z : 
     (hwx : prec w x) (hyz : prec y z) (hwz : ov w z) (hxy : ov x y) : False :=
   h.not_ov_of_prec (h.prec_of_prec_of_ov hwx hxy hyz) hwz
 
-/-- With overlap the incomparability, the axioms say exactly that precedence is an interval
-order. -/
 theorem isEventStructure_iff_isIntervalOrder :
     IsEventStructure prec (fun x y ↦ ¬ prec x y ∧ ¬ prec y x) ↔ IsIntervalOrder E prec := by
   constructor
@@ -165,7 +162,6 @@ structure IsEventStructureOf (X : AR τ) (prec ov : X.Pos → X.Pos → Prop) : 
 
 variable {X : AR τ} {prec ov : X.Pos → X.Pos → Prop}
 
-/-- A representation with an event structure obeys the No-Crossing Constraint. -/
 theorem IsEventStructureOf.noCrossing (h : IsEventStructureOf X prec ov) : X.NoCrossing :=
   fun i j ↦ AR.isNonCrossing_lines_iff.2 fun p q p' q' ⟨hp, hq, h₁⟩ ⟨hp', hq', h₂⟩ hlt ↦ by
     by_contra! hgt
@@ -173,8 +169,6 @@ theorem IsEventStructureOf.noCrossing (h : IsEventStructureOf X prec ov) : X.NoC
       (h.prec_of_lt j (show (⟨q', hq'⟩ : Fin _) < ⟨q, hq⟩ from hgt)) (h.ov_of_adj h₁)
       (h.ov_of_adj h₂)
 
-/-- A representation with an interval order has an event structure: its interval order, with
-overlap the incomparability. -/
 theorem exists_isEventStructureOf_of_hasIntervalOrder (h : X.HasIntervalOrder) :
     ∃ prec ov, IsEventStructureOf X prec ov := by
   obtain ⟨r, hr, htier, hadj⟩ := h
@@ -210,11 +204,8 @@ of tiers. -/
 abbrev cycle : AR fun _ : Fin 3 ↦ Unit :=
   AR.fromRel (fun _ ↦ [(), ()]) fun i j p q ↦ p = 0 ∧ q = 1 ∧ j = i + 1
 
-/-- No two lines of the cycle cross. -/
 theorem cycle_noCrossing : cycle.NoCrossing := by decide
 
-/-- Yet the cycle has no event structure: the precedences chain through the overlaps from the
-last tier's first position to the first tier's second, which it overlaps. -/
 theorem not_isEventStructureOf_cycle (prec ov : cycle.Pos → cycle.Pos → Prop) :
     ¬ IsEventStructureOf cycle prec ov := by
   intro h

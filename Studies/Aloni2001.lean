@@ -86,8 +86,6 @@ theorem isCover_iff_existsUnique : IsCover C ↔ ∀ w d, ∃! c ∈ C, c w = d 
   · obtain ⟨c, ⟨hc, e⟩, -⟩ := h d
     exact ⟨c, hc, e⟩
 
-/-- Two concepts of a cover that coincide in one world coincide everywhere, so that they are
-identical or separated. -/
 theorem IsCover.eq_of_apply_eq (h : IsCover C) (hc : c ∈ C) (hc' : c' ∈ C) {w : W}
     (e : c w = c' w) : c = c' :=
   (h w).injOn hc hc' e
@@ -99,8 +97,6 @@ noncomputable def IsCover.equiv (h : IsCover C) (w : W) : C ≃ D :=
 
 @[simp] theorem IsCover.equiv_apply (h : IsCover C) (w : W) (c : C) : h.equiv w c = c.1 w := rfl
 
-/-- A cover restricts to a cover of any set of worlds, the information state that remains when
-the others are excluded. -/
 theorem IsCover.image_domRestrict (h : IsCover C) (s : Set W) : IsCover (s.domRestrict '' C) := by
   intro w
   refine ⟨mapsTo_univ _ _, ?_, fun d _ ↦ ?_⟩
@@ -149,7 +145,6 @@ theorem isCover_ofPerm (σ : W → Equiv.Perm D) : IsCover (ofPerm σ) := fun w 
     by rintro _ ⟨d, rfl⟩ _ ⟨d', rfl⟩ (e : σ w d = σ w d'); rw [(σ w).injective e],
     fun d _ ↦ ⟨_, ⟨(σ w).symm d, rfl⟩, (σ w).apply_symm_apply d⟩⟩
 
-/-- The name cover follows each individual through the identity permutations. -/
 theorem ofPerm_one : ofPerm (1 : W → Equiv.Perm D) = names := rfl
 
 /-- Relative to a base world `w₀`, a cover is the family of permutations taking the individual each
@@ -205,8 +200,6 @@ theorem card_covers [Finite W] [Finite D] [Nonempty W] :
 `w'` when some concept of the set picks out `d` in `w` and `d'` in `w'`. -/
 def crossId (S : Set (W → D)) (x x' : W × D) : Prop := ∃ c ∈ S, c x.1 = x.2 ∧ c x'.1 = x'.2
 
-/-- The name cover identifies each individual of a world with itself in every other world, the
-rigid method of cross-identification. -/
 theorem crossId_names {x x' : W × D} : crossId names x x' ↔ x.2 = x'.2 :=
   ⟨fun ⟨_, ⟨_, rfl⟩, e, e'⟩ ↦ e.symm.trans e', fun h ↦ ⟨_, ⟨x.2, rfl⟩, rfl, h⟩⟩
 
@@ -215,7 +208,6 @@ relation on world-individual pairs that identifies each individual of a world wi
 individual of each world. -/
 def IsProper (R : Setoid (W × D)) : Prop := ∀ w w' d, ∃! d', R (w, d) (w', d')
 
-/-- The method of cross-identification of a cover is an equivalence relation. -/
 theorem IsCover.equivalence_crossId (h : IsCover C) : Equivalence (crossId C) where
   refl x := let ⟨c, hc, e⟩ := (h x.1).surjOn (mem_univ x.2); ⟨c, hc, e, e⟩
   symm := fun ⟨c, hc, e, e'⟩ ↦ ⟨c, hc, e', e⟩
@@ -308,8 +300,6 @@ theorem whoUnder_iff {P : D → Set W} {v w : W} :
     whoUnder C P v w ↔ ∀ c ∈ C, (v ∈ P (c v) ↔ w ∈ P (c w)) :=
   GroenendijkStokhof1984.who_iff.trans Subtype.forall
 
-/-- Under the name cover, a question under cover is the question of [groenendijk-stokhof-1984],
-the name cover being a copy of the individuals. -/
 theorem whoUnder_names (P : D → Set W) : whoUnder names P = GroenendijkStokhof1984.who P :=
   (GroenendijkStokhof1984.who_comp_of_surjective
     (f := fun d ↦ (⟨_, d, rfl⟩ : (names : Set (W → D)))) (fun ⟨_, d, rfl⟩ ↦ ⟨d, rfl⟩) _).symm
@@ -322,8 +312,6 @@ belief world. -/
 def DeReUnder (C : Set (W → D)) (R : Set W) (y : D) (P : D → Set W) (w : W) : Prop :=
   ∃ c ∈ C, c w = y ∧ ∀ v ∈ R, v ∈ P (c v)
 
-/-- A de re report under a cover holds when the believer ascribes the property to the res under
-one of the cover's concepts, in the sense of [lewis-1979-attitudes] with worlds as centers. -/
 theorem deReUnder_iff_exists_ascribesUnder {R : Set W} {y : D} {P : D → Set W} {w : W} :
     DeReUnder C R y P w ↔ ∃ c ∈ C, AscribesUnder R w (some ∘ c) y P := by
   unfold DeReUnder
@@ -376,8 +364,6 @@ theorem left_notMem_names : left ∉ (names : Set (World → Card)) := by
   rintro ⟨d, e⟩
   exact absurd ((congrFun e w₁).symm.trans (congrFun e w₂)) (by decide : left w₁ ≠ left w₂)
 
-/-- The set `C` of the card on the left and the Ace of Hearts is not a cover, since in `w₁` no
-concept of it picks out the Ace of Spades and the Ace of Hearts is counted twice. -/
 theorem not_isCover_mixed : ¬ IsCover {left, Function.const World hearts} := fun h ↦ by
   obtain ⟨c, hc | hc, e⟩ := (h w₁).surjOn (mem_univ spades) <;> subst hc <;> cases e
 
@@ -397,8 +383,6 @@ theorem isCover_iff {C : Set (World → Card)} : IsCover C ↔ C = byPosition �
   rw [this]
   exact .inl rfl
 
-/-- The two covers cross-identify the cards differently: by position the Ace of Hearts in `w₁` is
-the Ace of Spades in `w₂`, the card on the left in both, while by suit it is only itself. -/
 theorem crossId_byPosition : crossId byPosition (w₁, hearts) (w₂, spades) :=
   ⟨left, .inl rfl, rfl, rfl⟩
 

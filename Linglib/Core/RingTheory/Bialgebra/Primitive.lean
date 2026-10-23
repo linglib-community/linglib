@@ -85,13 +85,10 @@ theorem smul (hf : IsDualPrimitive R f) (r : R) : IsDualPrimitive R (r • f) wh
   map_one_eq_zero := by simp [hf.map_one_eq_zero]
   leibniz a b := by simp [hf.leibniz, mul_add, mul_assoc, mul_left_comm]
 
-/-- A dual primitive vanishes on the product of two elements of counit zero. -/
 theorem map_mul_eq_zero (hf : IsDualPrimitive R f) (ha : counit (R := R) a = 0)
     (hb : counit (R := R) b = 0) : f (a * b) = 0 := by
   simp [hf.leibniz, ha, hb]
 
-/-- The convolution product of two dual primitives obeys a second-order product rule. Its cross
-terms `f a * g b + g a * f b` are symmetric in `f` and `g`, so they cancel in the commutator. -/
 theorem convMul_apply_mul (hf : IsDualPrimitive R f) (hg : IsDualPrimitive R g) (a b : A) :
     (toConv f * toConv g) (a * b) =
       (toConv f * toConv g) a * counit b + f a * g b + g a * f b +
@@ -108,13 +105,10 @@ theorem convMul_apply_mul (hf : IsDualPrimitive R f) (hg : IsDualPrimitive R g) 
 
 end IsDualPrimitive
 
-/-- When addition on `R` cancels, the product rule alone makes a functional a dual primitive. -/
 theorem isDualPrimitive_iff_leibniz [IsCancelAdd R] :
     IsDualPrimitive R f ↔ ∀ a b, f (a * b) = f a * counit b + counit a * f b :=
   ⟨fun hf ↦ hf.leibniz, fun h ↦ ⟨by simpa using h 1 1, h⟩⟩
 
-/-- A pairing of bialgebras that transposes the product of `A` to the comultiplication of `B`, and
-the units to the counits, sends the primitive elements of `B` to dual primitives of `A`. -/
 theorem IsPrimitiveElem.isDualPrimitive {B : Type*} [Semiring B] [Bialgebra R B] {b : B}
     (hb : IsPrimitiveElem R b) {p : B →ₗ[R] A →ₗ[R] R} (h_one : ∀ a, p 1 a = counit a)
     (h_counit : ∀ b, p b 1 = counit b)
@@ -132,7 +126,6 @@ variable [CommRing R] [Semiring A] [Bialgebra R A] {f g : A →ₗ[R] R}
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-/-- The commutator of two dual primitives under the convolution product is a dual primitive. -/
 theorem IsDualPrimitive.lie (hf : IsDualPrimitive R f) (hg : IsDualPrimitive R g) :
     IsDualPrimitive R (⁅toConv f, toConv g⁆ : WithConv (A →ₗ[R] R)).ofConv where
   map_one_eq_zero := by

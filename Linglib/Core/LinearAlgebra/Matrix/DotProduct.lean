@@ -26,16 +26,12 @@ A weighted sum therefore respects a Pareto improvement on any positively weighte
 variable {n R : Type*} [Fintype n] [Semiring R] [PartialOrder R] [IsStrictOrderedRing R]
   {u v w : n → R}
 
-/-- The dot product with a nonnegative vector `w` is strictly monotone in the other argument
-when the increase is strict at a coordinate where `w` is positive. -/
 lemma dotProduct_lt_dotProduct_of_nonneg_left (huv : u ≤ v) (hw : 0 ≤ w)
     (h : ∃ i, 0 < w i ∧ u i < v i) : w ⬝ᵥ u < w ⬝ᵥ v := by
   obtain ⟨i, hwi, hi⟩ := h
   exact Finset.sum_lt_sum (fun j _ ↦ mul_le_mul_of_nonneg_left (huv j) (hw j))
     ⟨i, Finset.mem_univ i, mul_lt_mul_of_pos_left hi hwi⟩
 
-/-- The dot product with a nonnegative vector `w` on the right is strictly monotone in the left
-argument when the increase is strict at a coordinate where `w` is positive. -/
 lemma dotProduct_lt_dotProduct_of_nonneg_right (huv : u ≤ v) (hw : 0 ≤ w)
     (h : ∃ i, 0 < w i ∧ u i < v i) : u ⬝ᵥ w < v ⬝ᵥ w := by
   obtain ⟨i, hwi, hi⟩ := h

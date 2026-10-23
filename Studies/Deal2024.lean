@@ -155,13 +155,10 @@ instance : (t : PCCType) → DecidablePred t.Licit
   | .aDescending, _ => inferInstanceAs (Decidable (_ < _))
   | .none, _ => inferInstanceAs (Decidable True)
 
-/-- The strictly descending PCC holds of an IO–DO combination exactly when the scenario is
-downstream on 1 > 2 > 3. -/
 theorem strictlyDescending_iff_downstream (s : Scenario Person) :
     PCCType.Licit .strictlyDescending s ↔ (s.map Person.prominence).kind = .downstream :=
   (Scenario.kind_eq_downstream_iff (s := s.map Person.prominence)).symm
 
-/-- The A-descending PCC holds exactly when the scenario is downstream on 2 > 1 > 3. -/
 theorem aDescending_iff_downstream (s : Scenario Person) :
     PCCType.Licit .aDescending s ↔ (s.map addresseeRank).kind = .downstream :=
   (Scenario.kind_eq_downstream_iff (s := s.map addresseeRank)).symm
@@ -189,16 +186,11 @@ theorem universal5_prominence (t : PCCType) :
       t ∈ [PCCType.strong, .weak, .meFirst, .strictlyDescending, .none] := by
   revert t; decide +kernel
 
-/-- Under the ranking 2 > 1 > 3 it is the strong, weak, you-first and A-descending varieties
-that obey the scenario universal; me-first and strictly descending ban the then-downstream
-`2 > 1`. -/
 theorem universal5_addressee (t : PCCType) :
     Haspelmath2021.RoleReferenceUniversal (MoreUsualOn addresseeRank) t.coding ↔
       t ∈ [PCCType.strong, .weak, .youFirst, .aDescending, .none] := by
   revert t; decide +kernel
 
-/-- Every variety allows a participant IO with a third-person DO, the `⟨⊤, ⊥⟩` of the binary
-person scale, as the person-role universal 9b of [haspelmath-2021] requires. -/
 theorem participant_third_licit (t : PCCType) (io : Person) (h : io.IsSAP) :
     t.Licit ⟨io, .third⟩ := by
   revert h; cases t <;> cases io <;> decide
@@ -243,16 +235,11 @@ theorem typology (g : Grammar) : g.pattern = table57 g := by
   revert g
   decide +kernel
 
-/-- Satisfaction by [PART] absorbs dynamic interaction. A direct object bearing a dynamic
-feature bears [PART] and satisfies the probe first, so every column-one grammar of the table
-licenses exactly what the strong PCC does, for every pair of persons. -/
 theorem licit_of_sat_part (d : Finset PersonSegment) (s : Scenario Person) :
     Licit ⟨some .participant, d⟩ s ↔ Licit strong s := by
   revert d s
   decide +kernel
 
-/-- Off the diagonal, for objects of distinct person, the strictly descending PCC requires the
-indirect object to outrank the direct object on 1 > 2 > 3. -/
 theorem sd_off_diagonal_iff_outranks (s : Scenario Person)
     (h : s.high.prominence ≠ s.low.prominence) :
     Licit strictlyDescending s ↔ s.low.prominence < s.high.prominence := by
@@ -271,9 +258,6 @@ theorem agrees_with_pConstraint :
         (Licit strictlyDescending s ↔ PCC.IsLicit PCC.ultraStrongGrammar s) := by
   decide +kernel
 
-/-- On the six cells the four varieties coincide with the gluttony probes of
-[coon-keine-2021], so a probe that stops too early and one that agrees too much draw the same
-lines there. -/
 theorem agrees_with_gluttony :
     ∀ s ∈ PCC.distinctPairs,
       (Licit strong s ↔ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe true s) ∧

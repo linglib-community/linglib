@@ -194,8 +194,6 @@ theorem kind_le_balanced_iff : s.kind ≤ .balanced ↔ s.high ≤ s.low := by
 theorem balanced_le_kind_iff : .balanced ≤ s.kind ↔ s.low ≤ s.high := by
   rw [Kind.balanced_le_iff, Ne, kind_eq_upstream_iff, not_lt]
 
-/-- Raising the higher-ranked argument or lowering the lower-ranked one never lowers the
-kind. -/
 theorem kind_mono : Monotone (kind : Scenario α → Kind) := fun s t h ↦ by
   rcases lt_trichotomy t.high t.low with ht | ht | ht
   · rw [kind_eq_upstream_iff.2 ((h.1.trans_lt ht).trans_le h.2), kind_eq_upstream_iff.2 ht]
@@ -205,7 +203,6 @@ theorem kind_mono : Monotone (kind : Scenario α → Kind) := fun s t h ↦ by
 
 variable [LinearOrder β] {f : α → β}
 
-/-- A strictly monotone map of the scale preserves the kind. -/
 theorem kind_map (hf : StrictMono f) (s : Scenario α) : (s.map f).kind = s.kind := by
   simp only [kind, map_high, map_low, ← cmp_eq_compare, hf.cmp_map_eq]
 
@@ -219,14 +216,11 @@ theorem map_lt_map_iff (hf : StrictMono f) : s.map f < t.map f ↔ s < t := by
 
 variable [BoundedOrder α] [IsSimpleOrder α]
 
-/-- On a two-element scale a scenario's kind is below another's exactly when the scenario is
-below the other, since such a scale is `Bool`. -/
 theorem kind_lt_kind_iff : s.kind < t.kind ↔ s < t := by
   have he := (IsSimpleOrder.orderIsoBool (α := α)).strictMono
   have key : ∀ s t : Scenario Bool, s.kind < t.kind ↔ s < t := by decide
   rw [← kind_map he s, ← kind_map he t, key, map_lt_map_iff he]
 
-/-- On a two-element scale the downstream scenario is `⊤ = ⟨⊤, ⊥⟩` alone. -/
 theorem kind_eq_downstream_iff_eq_top : s.kind = .downstream ↔ s = ⊤ := by
   rw [kind_eq_downstream_iff, IsSimpleOrder.lt_iff_eq_bot_and_eq_top, Scenario.ext_iff, top_high,
     top_low, and_comm]

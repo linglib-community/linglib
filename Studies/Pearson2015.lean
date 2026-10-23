@@ -130,10 +130,6 @@ theorem AcquaintanceBased.eqOn_of_mem_epiAlt (h : AcquaintanceBased Acq alts G x
   obtain ⟨R, -, hR⟩ := h u hu
   exact fun p hp ↦ Option.some_inj.1 ((hR p hp).1.symm.trans ((hR p hp).2 he))
 
-/-- The de se reading is the de re reading through the self concept, whose relation is identity,
-Lewis's relation of acquaintance par excellence. When identity is among the holder's acquaintance
-relations and every res in the domain is the holder or one of her epistemic alternatives, the de
-se reading entails the de re reading. -/
 theorem sayDeRe_of_sayDeSe (hself : (fun y p ↦ y = selfConcept p) ∈ Acq)
     (hdom : ∀ u ∈ dom, u = x ∨ u ∈ epiAlt alts) (h : SayDeSe alts P) :
     SayDeRe Acq alts P x w dom :=
@@ -143,9 +139,6 @@ theorem sayDeRe_of_sayDeSe (hself : (fun y p ↦ y = selfConcept p) ∈ Acq)
         ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
     h⟩
 
-/-- A de re claim about a res in the domain that is not an epistemic alternative of the holder
-needs an acquaintance relation she bears uniquely to the res in the actual world, the base
-condition of [lewis-1979-attitudes]. -/
 theorem ClaimDeRe.exists_relatum_eq (h : ClaimDeRe Acq alts P res x w dom) (hres : res ∈ dom)
     (hne : res ∉ epiAlt alts) : ∃ R ∈ Acq, relatum R (w, x) = some res := by
   obtain ⟨G, ⟨hrel, hacq⟩, -⟩ := h
@@ -186,19 +179,14 @@ def authorGen : ConceptGenerator Wld Ind := fun _ ↦ authorConcept
 /-- John's salient acquaintance relation is reading the paper of its author. -/
 def s1Acq : Set (Ind → Centered Wld Ind → Prop) := {fun y p ↦ y = authorConcept p}
 
-/-- The de se reading is false, since at John's alternative the center, John, is not clever. -/
 theorem deSe_false : ¬ SayDeSe sayAlts cleverP := by
   simp [SayDeSe, sayAlts, cleverP, john, auth]
 
-/-- The author generator is suitable for John, being reliable, as it returns John in the actual
-world, and acquainted through reading the paper. -/
 theorem authorGen_suitable : Suitable s1Acq sayAlts authorGen john actual {john} :=
   ⟨by simp [Reliable, authorGen, authorConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
       ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩
 
-/-- The de re reading is true, since through the author concept the individual picked at John's
-alternative is clever. -/
 theorem deRe_true : SayDeRe s1Acq sayAlts cleverP john actual {john} :=
   ⟨authorGen, authorGen_suitable, by
     simp [sayAlts, cleverP, authorGen, authorConcept, actual, bel, auth]⟩
@@ -249,17 +237,12 @@ def patientGen : ConceptGenerator Wld Ind := fun _ ↦ patientConcept
 bears to himself. -/
 def johnAcq : Set (Ind → Centered Wld Ind → Prop) := {fun y p ↦ y = patientConcept p}
 
-/-- *John claims he is delusional* is true de re, since the center, John, fed to the patient
-generator, is the delusional patient at the alternative. -/
 theorem claimsHe_true : SayDeRe johnAcq claimAlts delusionalP john actualN {john} :=
   ⟨patientGen, ⟨by simp [Reliable, patientGen, patientConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
       ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
     by simp [claimAlts, delusionalP, patientGen, patientConcept, actualN, belN, patient]⟩
 
-/-- *John claims Napoleon is delusional* is false, since Napoleon is not an epistemic alternative
-of John and the only relation of acquaintance John bears, seeing on television, he bears in the
-actual world to himself. -/
 theorem claimsNapoleon_false :
     ¬ ClaimDeRe johnAcq claimAlts delusionalP napoleon john actualN {napoleon} := by
   intro h
@@ -269,7 +252,6 @@ theorem claimsNapoleon_false :
   rw [relatum_eq] at hb
   exact absurd (Option.some_inj.1 hb) (by decide)
 
-/-- In the Napoleon contrast the bound-pronoun reading is true and the name reading false. -/
 theorem napoleon_contrast :
     SayDeRe johnAcq claimAlts delusionalP john actualN {john} ∧
       ¬ ClaimDeRe johnAcq claimAlts delusionalP napoleon john actualN {napoleon} :=

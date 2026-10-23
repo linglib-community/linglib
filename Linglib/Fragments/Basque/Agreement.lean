@@ -117,17 +117,14 @@ def HasPersonPrefix (c : Bundle) : Prop := (absolutive.realize c).isSome
 
 instance : DecidablePred HasPersonPrefix := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
-/-- The absolutive prefixes are those of the first and second persons. -/
 theorem hasPersonPrefix_iff_isSAP :
     ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
   decide
 
-/-- Every personal pronoun but the third person ones has an absolutive prefix. -/
 theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.pronouns,
     HasPersonPrefix (HasPhi.phi p) ↔ p.person ≠ some .third := by
   decide
 
-/-- The dative and ergative markers of the first and second persons coincide. -/
 theorem dative_eq_ergative {c : Bundle} (h : c.IsSAP) : dative.realize c = ergative.realize c := by
   have h3 (n : Number) : (c == Bundle.personNumber .third n) = false := by
     rw [beq_eq_false_iff_ne]
@@ -135,16 +132,11 @@ theorem dative_eq_ergative {c : Bundle} (h : c.IsSAP) : dative.realize c = ergat
     exact absurd h (by simp only [Bundle.IsSAP, Bundle.person_personNumber]; decide)
   simp [dative, ergative, Paradigm.realize, List.lookup_append, List.lookup_cons, h3]
 
-/-- A displaced ergative begins with what would fill the absolutive slot for its own person and
-number in the past: the absolutive prefix of a first or second person, the past filler of a
-third. -/
 theorem displacedErgative_head : ∀ c ∈ Bundle.personNumberCells,
     (displacedErgative.realize c).bind (·.head?) =
       ((absolutive.realize c).bind (·.head?)).or (thirdAbsolutive .past) := by
   decide
 
-/-- The allocutive suffix of a familiar addressee is, for each gender, the ergative suffix of
-*hi*. -/
 theorem allocutive_eq_ergative (g : Gender) :
     (Pronouns.allocutive .familiar g).map ([·]) = ergative.realize (familiar g) := by
   cases g <;> decide +kernel

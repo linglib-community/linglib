@@ -89,7 +89,6 @@ grammatical. -/
 def harmonyScore [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) : R :=
   -(w ⬝ᵥ fun j ↦ (con j c : R))
 
-/-- `harmonyScore` is a negated `Finset.sum`. -/
 theorem harmonyScore_eq_neg_sum [Ring R] (con : ConstraintSet C ι) (w : ι → R) (c : C) :
     harmonyScore con w c = -∑ j, w j * (con j c : R) := rfl
 
@@ -101,7 +100,6 @@ def harmony [Ring R] (T : C → ι → R) (w : ι → R) (c : C) : R :=
 @[simp] theorem harmony_violations [Ring R] (con : ConstraintSet C ι) (w : ι → R) :
     harmony con.violations w = harmonyScore con w := rfl
 
-/-- Harmony is linear in the weights. -/
 theorem harmony_add [Ring R] (T : C → ι → R) (w w' : ι → R) :
     harmony T (w + w') = harmony T w + harmony T w' := by
   funext c
@@ -112,7 +110,6 @@ theorem harmony_smul [CommRing R] (T : C → ι → R) (r : R) (w : ι → R) :
   funext c
   simp [harmony, smul_dotProduct]
 
-/-- The harmony of a sum of violation vectors is the sum of their harmonies. -/
 theorem harmony_sum [Ring R] {κ D : Type*} [Fintype κ] (T : κ → D → ι → R) (w : ι → R)
     (f : κ → D) : harmony (fun f ↦ ∑ k, T k (f k)) w f = ∑ k, harmony (T k) w (f k) := by
   simp [harmony, dotProduct_sum]
@@ -123,8 +120,6 @@ def _root_.OptimalityTheory.ConstraintSet.violationDiff [Ring R] (con : Constrai
     (a b : C) : ι → R :=
   fun j ↦ (con j a : R) - con j b
 
-/-- The harmony difference of two candidates is the weight vector against their violation
-difference. -/
 theorem harmonyScore_sub [Ring R] (con : ConstraintSet C ι) (w : ι → R) (a b : C) :
     harmonyScore con w a - harmonyScore con w b = -(w ⬝ᵥ con.violationDiff a b) := by
   rw [show con.violationDiff a b = (fun j ↦ (con j a : R)) - fun j ↦ (con j b : R) from rfl,
@@ -160,22 +155,18 @@ def harmonyDominates [Ring R] [LT R] (con : ConstraintSet C ι) (w : ι → R) :
     harmonyScore con (0 : ι → ℝ) x = 0 := by
   simp [harmonyScore]
 
-/-- Harmony depends only on the violation vector. -/
 theorem harmonyScore_congr {con : ConstraintSet C ι} {w : ι → ℝ} {a b : C}
     (h : ∀ j, con j a = con j b) : harmonyScore con w a = harmonyScore con w b := by
   simp [harmonyScore, h]
 
 /-! ### Concatenated and jointly evaluated constraint sets -/
 
-/-- Harmony is additive over a concatenated constraint set and weight vector. -/
 theorem harmonyScore_append {m : ℕ} (c₁ : ConstraintSet C (Fin n))
     (c₂ : ConstraintSet C (Fin m)) (w₁ : Fin n → ℝ) (w₂ : Fin m → ℝ) (x : C) :
     harmonyScore (Fin.append c₁ c₂) (Fin.append w₁ w₂) x =
       harmonyScore c₁ w₁ x + harmonyScore c₂ w₂ x := by
   simp [harmonyScore, dotProduct, Fin.sum_univ_add, add_comm]
 
-/-- The harmony of a jointly evaluated constraint set is the sum of the mappings'
-harmonies — constraint summation is innocuous for harmony ([magri-storme-2021]). -/
 theorem harmonyScore_joint {κ I O : Type*} [Fintype κ] (inputs : κ → I)
     (con : ConstraintSet (I × O) ι) (w : ι → ℝ) (f : κ → O) :
     harmonyScore (con.joint inputs) w f = ∑ i, harmonyScore con w (inputs i, f i) := by
@@ -187,14 +178,10 @@ theorem harmonyScore_joint {κ I O : Type*} [Fintype κ] (inputs : κ → I)
 
 variable {con : ConstraintSet C ι} {w : ι → ℝ} {a b : C}
 
-/-- With non-negative weights, a candidate incurring no more violations than `b` on every
-constraint has at least `b`'s harmony, which is harmonic bounding ([prince-smolensky-1993]). -/
 theorem harmonyScore_le_of_forall_le (hw : 0 ≤ w) (h : ∀ i, con i a ≤ con i b) :
     harmonyScore con w b ≤ harmonyScore con w a :=
   neg_le_neg (dotProduct_le_dotProduct_of_nonneg_left (fun i ↦ Nat.cast_le.2 (h i)) hw)
 
-/-- Strictly fewer violations on some positively weighted constraint give strictly greater
-harmony. -/
 theorem harmonyDominates_of_lt (hw : 0 ≤ w) (hle : ∀ i, con i a ≤ con i b)
     (hlt : ∃ i, 0 < w i ∧ con i a < con i b) :
     harmonyDominates con w a b :=
@@ -212,8 +199,6 @@ def _root_.OptimalityTheory.ConstraintSystem.hgLanguage [Ring R] [Preorder R] [D
     (S : ConstraintSystem I O ι) (w : ι → R) (i : I) : Finset O :=
   (S.gen i).argmax (harmonyScore (S.conAt i) w)
 
-/-- The HG language of the joint system is the product of the system's HG languages, so that one
-HG tableau suffices as one OT tableau does ([magri-2015]). -/
 theorem _root_.OptimalityTheory.ConstraintSystem.hgLanguage_joint [Fintype I] [DecidableEq I]
     (S : ConstraintSystem I O ι) (w : ι → ℝ) :
     S.joint.hgLanguage w () = Fintype.piFinset (S.hgLanguage w) := by

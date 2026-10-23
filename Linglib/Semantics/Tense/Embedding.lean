@@ -55,7 +55,6 @@ open scoped SetRel
 against its local evaluation time, before it or at it and never after it. -/
 def upperLimitConstraint : Finset Ordering := ⟦future⟧ᶜ
 
-/-- The Upper Limit Constraint admits the past and the present positions. -/
 theorem upperLimitConstraint_eq_past_sup_present : upperLimitConstraint = ⟦past⟧ ⊔ ⟦present⟧ :=
   past_sup_present.symm
 
@@ -66,8 +65,6 @@ theorem mem_upperLimitConstraint {o : Ordering} : o ∈ upperLimitConstraint ↔
     compare r p ∈ upperLimitConstraint ↔ r ≤ p :=
   compare_mem_compl_future r p
 
-/-- On any partial order of times, branching ones among them, the upper limit constraint relates
-a time to the times at or before it. -/
 @[simp] theorem mem_toSetRel_upperLimitConstraint {T : Type*} [PartialOrder T] {p r : T} :
     p ~[toSetRel upperLimitConstraint] r ↔ r ≤ p := by
   rw [upperLimitConstraint_eq_past_sup_present, toSetRel_sup, Set.mem_union, mem_toSetRel_past,
@@ -84,12 +81,9 @@ variable {sot : Prop} [Decidable sot]
 theorem mem_pastUnderPast {o : Ordering} : o ∈ pastUnderPast sot ↔ o = .lt ∨ sot ∧ o = .eq := by
   by_cases h : sot <;> simp [pastUnderPast, h, Denotes.denote, denote]
 
-/-- The shifted reading of a past under a past is always available. -/
 theorem lt_mem_pastUnderPast : .lt ∈ pastUnderPast sot :=
   mem_pastUnderPast.2 (.inl rfl)
 
-/-- The simultaneous reading of a past under a past is available exactly where the Sequence of
-Tense rule applies. -/
 @[simp] theorem eq_mem_pastUnderPast_iff : .eq ∈ pastUnderPast sot ↔ sot := by
   simp [mem_pastUnderPast]
 
@@ -99,15 +93,12 @@ theorem pastUnderPast_pos (h : sot) : pastUnderPast sot = upperLimitConstraint :
 theorem pastUnderPast_neg (h : ¬ sot) : pastUnderPast sot = ⟦past⟧ := by
   simp [pastUnderPast, h]
 
-/-- Every reading of a past under a past obeys the Upper Limit Constraint. -/
 theorem pastUnderPast_le_upperLimitConstraint : pastUnderPast sot ≤ upperLimitConstraint := by
   by_cases h : sot
   · exact (pastUnderPast_pos h).le
   · rw [pastUnderPast_neg h, upperLimitConstraint_eq_past_sup_present]
     exact le_sup_left
 
-/-- The readings of a past under a past exhaust the Upper Limit Constraint exactly where the
-Sequence of Tense rule applies. -/
 theorem pastUnderPast_eq_upperLimitConstraint_iff :
     pastUnderPast sot = upperLimitConstraint ↔ sot :=
   ⟨fun h ↦ eq_mem_pastUnderPast_iff.1 (h ▸ mem_upperLimitConstraint.2 (by decide)),

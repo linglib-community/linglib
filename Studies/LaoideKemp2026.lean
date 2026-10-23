@@ -258,8 +258,6 @@ theorem mem_links_of_fOn_eq_some {i : Fin u.lower.length} (h : fOn c i = some j)
 theorem isSurface_iff_forall_not_step : IsSurface c ↔ ∀ c', ¬ Step c c' :=
   ⟨fun h _ hs ↦ by cases hs with | dock hk => exact h _ hk, fun h _ hk ↦ h _ (.dock hk)⟩
 
-/-- Docking floats nothing, so an object floats after a step exactly when it floated before and
-is not the one that docked. -/
 theorem isFloating_dock (hk : CanDock c k) : (dock c k).IsFloating j ↔ j ≠ k ∧ c.IsFloating j := by
   obtain ⟨-, i, hi : nextSlot c k = some i, -⟩ := hk
   simp only [dock, hi]
@@ -290,7 +288,6 @@ variable (c) in
 /-- The number of floating objects. -/
 def floatingCount : ℕ := #{k | c.IsFloating k}
 
-/-- Each step docks a floating object and floats none. -/
 theorem Step.floatingCount_lt (h : Step c c') : floatingCount c' < floatingCount c := by
   obtain ⟨hk⟩ := h
   refine Finset.card_lt_card <| (Finset.ssubset_iff_of_subset fun j hj ↦ ?_).2
@@ -324,12 +321,10 @@ def surfaces : Finset (Candidate u) := (derived c).filter IsSurface
 theorem mem_surfaces : c' ∈ surfaces c ↔ ReflTransGen Step c c' ∧ IsSurface c' := by
   rw [surfaces, Finset.mem_filter, mem_derived]
 
-/-- Derivations terminate, since each step lowers the number of floating objects. -/
 theorem wellFounded_flip_step : WellFounded (flip (Step (u := u))) :=
   Subrelation.wf (fun h ↦ h.floatingCount_lt) (InvImage.wf floatingCount wellFounded_lt)
 
 variable (c) in
-/-- Every candidate derives a surface form. -/
 theorem surfaces_nonempty : (surfaces c).Nonempty := by
   obtain ⟨b, hb, hmin⟩ := wellFounded_flip_step.has_min {b | ReflTransGen Step c b} ⟨c, .refl⟩
   exact ⟨b, mem_surfaces.2 ⟨hb, isSurface_iff_forall_not_step.2 fun b' h ↦ hmin b' (hb.tail h) h⟩⟩
@@ -346,9 +341,6 @@ section EmptyCV
 
 variable {M : Type*} {u : Form M} {c : Candidate u}
 
-/-- A CV unit whose slots host no segment and which no domain of infrasegmental government spans
-is no docking site for anything. `{L}` finds no consonant on its onset, and a segment finds its
-nucleus empty and not enclosed. -/
 theorem not_isDockingSite_onset {j : Fin (StrictCV.units u)}
     (hc : ¬ HostsSegment c (StrictCV.onset u j)) (hv : ¬ HostsSegment c (StrictCV.nucleus u j))
     (hcl : j ∉ domains u) :
@@ -376,8 +368,6 @@ private theorem le_of_mem_links {p} (hp : p ∈ (floating m objs * (emptyCV m' *
     List.length_cons, List.length_nil] at h₁ h₂ h₄
   omega
 
-/-- No domain of infrasegmental government spans an empty CV unit, whose onset hosts no
-consonant. -/
 private theorem zero_notMem_domains
     (h0 : 0 < StrictCV.units (floating m objs * (emptyCV m' * s))) :
     (⟨0, h0⟩ : Fin _) ∉ domains (floating m objs * (emptyCV m' * s)) := by
@@ -457,14 +447,10 @@ theorem isFloating_of_emptyCV (hc : ReflTransGen Step (.input _) c) {k : Fin _}
     (hk : k.val < objs.length) : c.IsFloating k :=
   (blocked hc).1 k hk
 
-/-- Whatever the stem, an empty CV unit after a floating exponent hosts no segment in any
-candidate derived. -/
 theorem not_hostsSegment_of_emptyCV (hc : ReflTransGen Step (.input _) c) {i : Fin _}
     (hi : i.val < 2) : ¬ HostsSegment c i :=
   (blocked hc).2 i hi
 
-/-- Whatever the stem, a form that begins with an empty CV unit begins with an empty consonantal
-slot in every candidate derived, so under the morphosyntactic analysis it would take *d'*. -/
 theorem beginsWithEmptyC_of_emptyCV (hc : ReflTransGen Step (.input _) c) : BeginsWithEmptyC c :=
   ⟨⟨0, by simp [emptyCV]⟩, rfl, rfl, not_hostsSegment_of_emptyCV hc (by simp)⟩
 

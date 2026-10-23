@@ -124,7 +124,6 @@ theorem issue_singleton (ctx : Context) (v v' : SignType) :
     ctx.issue [v] [v'] ↔ (ctx.designation.threshold ≤ v ↔ ctx.designation.threshold ≤ v') := by
   simp [Setoid.ker_def, resolve]
 
-/-- A resolution, read back as a display, resolves to itself at every standard. -/
 private theorem resolve_map_ofProp (δ : Designation) (c : List Bool) :
     resolve δ (c.map (fun b : Bool ↦ SignType.ofProp b)) = c := by
   simp [resolve, List.map_map, Function.comp_def, Trivalent.Designation.threshold_le_ofProp_iff]
@@ -135,10 +134,6 @@ section NonImplicature
 
 variable (q : NumberTree)
 
-/-- Under any question at least as fine as the polar question on the reading at `δ` and at most
-as fine as the resolution at `δ`, a trivalent sentence true only where that reading holds, false
-only where it fails, and true on a resolution read back as a display where the quantifier holds
-of it, is usable exactly where that reading holds. -/
 theorem usable_iff_reading_of {S : Display → SignType} {δ : Designation}
     (htrue : ∀ d, S d = 1 → reading q d δ) (hfalse : ∀ d, S d = -1 → ¬ reading q d δ)
     (hres : ∀ c, KrizChemla2015.holds q c → S (c.map fun b : Bool ↦ SignType.ofProp b) = 1)
@@ -152,9 +147,6 @@ theorem usable_iff_reading_of {S : Display → SignType} {δ : Designation}
 
 variable [DecidableRel q]
 
-/-- Under any question at least as fine as the polar question on the reading at `δ` and at most
-as fine as the resolution at `δ`, the trivalent sentence is usable exactly where that reading
-holds. -/
 theorem usable_iff_reading {Q : Setoid Display} {δ : Designation}
     (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ}) (d : Display) :
     Homogeneity.usable Q (supervaluation q) d ↔ reading q d δ := by
@@ -173,7 +165,6 @@ to the question the context raises. -/
 def nonImplicature (ctx : Context) (d : Display) : Prop :=
   Homogeneity.usable ctx.issue (supervaluation q) d
 
-/-- The non-implicature verdict is truth at the resolution the context makes. -/
 theorem nonImplicature_iff (ctx : Context) (d : Display) :
     nonImplicature q ctx d ↔ reading q d ctx.designation :=
   usable_iff_reading q le_rfl (fun _ _ h ↦ Setoid.polar_iff.2 <|
@@ -182,7 +173,6 @@ theorem nonImplicature_iff (ctx : Context) (d : Display) :
 instance (ctx : Context) (d : Display) : Decidable (nonImplicature q ctx d) :=
   decidable_of_iff _ (nonImplicature_iff q ctx d).symm
 
-/-- Under the outer negation of a quantifier the verdict is negated in every context. -/
 theorem nonImplicature_compl (ctx : Context) (d : Display) :
     nonImplicature qᶜ ctx d ↔ ¬ nonImplicature q ctx d := by
   rw [nonImplicature_iff, nonImplicature_iff]
@@ -190,8 +180,6 @@ theorem nonImplicature_compl (ctx : Context) (d : Display) :
 
 variable {q} {d : Display}
 
-/-- A mixed picture for a scope-monotone quantifier is accepted exactly in the existential
-context. -/
 theorem nonImplicature_existential_of_scopeMonotone (hq : q.ScopeMonotone)
     (hd : supervaluation q d = 0) (ctx : Context) :
     nonImplicature q ctx d ↔ ctx = .existential := by
@@ -200,8 +188,6 @@ theorem nonImplicature_existential_of_scopeMonotone (hq : q.ScopeMonotone)
   rw [nonImplicature_iff]
   cases ctx <;> simp only [Context.designation, reduceCtorEq, iff_true, iff_false] <;> tauto
 
-/-- A mixed picture for a scope-antitone quantifier is accepted exactly in the universal
-context. -/
 theorem nonImplicature_universal_of_scopeAntitone (hq : q.ScopeAntitone)
     (hd : supervaluation q d = 0) (ctx : Context) :
     nonImplicature q ctx d ↔ ctx = .universal := by
@@ -252,7 +238,6 @@ instance (ctx : Context) (d : Display) : Decidable (implicature q ctx d) := by
 
 variable {q} {d : Display}
 
-/-- Wherever implicatures arise the two approaches agree. -/
 theorem implicature_iff_nonImplicature (h : ¬ q.ScopeAntitone) (ctx : Context) :
     implicature q ctx d ↔ nonImplicature q ctx d := by
   rw [nonImplicature_iff]; simp [implicature, h]
@@ -261,7 +246,6 @@ end
 
 variable {q} {d : Display}
 
-/-- Under a downward-entailing quantifier the implicature verdict ignores the context. -/
 theorem implicature_context_free (h : q.ScopeAntitone) (ctx ctx' : Context) :
     implicature q ctx d ↔ implicature q ctx' d := by
   simp [implicature, h]
@@ -276,7 +260,6 @@ theorem implicature_existential_iff :
   rw [nonImplicature_iff]
   by_cases h : q.ScopeAntitone <;> simp [implicature, h, Context.designation]
 
-/-- The implicature approach rejects every mixed picture of a downward-entailing quantifier. -/
 theorem not_implicature_of_scopeAntitone (hq : q.ScopeAntitone)
     (hd : supervaluation q d = 0) (ctx : Context) : ¬ implicature q ctx d := by
   have h := supervaluation_eq_zero_iff.1 hd
@@ -284,8 +267,6 @@ theorem not_implicature_of_scopeAntitone (hq : q.ScopeAntitone)
   simp only [implicature, hq, ite_true]
   tauto
 
-/-- The implicature approach accepts a mixed picture of a scope-monotone quantifier exactly in
-the existential context. -/
 theorem implicature_existential_of_scopeMonotone (hq : q.ScopeMonotone)
     (hd : supervaluation q d = 0) (ctx : Context) :
     implicature q ctx d ↔ ctx = .existential := by
@@ -350,14 +331,10 @@ theorem table1 (ctx : Context) :
 
 /-! ### Križ and Chemla's asymmetry under an accommodated existential context (§2) -/
 
-/-- The faulty items of Križ and Chemla were coded FALSE. -/
 private theorem krizChemla_faulty_clearlyFalse :
     ∀ i ∈ KrizChemla2015.items, i.status = .faulty → i.condition = .clearlyFalse := by
   decide
 
-/-- With an existential context accommodated throughout, the non-implicature approach accepts
-every GAP item of *every* and rejects every GAP item of *no* in Križ and Chemla's experiments,
-the asymmetry they found. -/
 theorem krizChemla_asymmetry_of_existential :
     ∀ i ∈ KrizChemla2015.items, i.condition = .gap → i.embedding = .all ∨ i.embedding = .no →
       (nonImplicature i.embedding.tree .existential i.display ↔ i.embedding = .all) := by
@@ -412,8 +389,6 @@ private theorem threshold_le (hx : x.Nonempty) (ctx : Context) : ctx.threshold x
 
 variable [DecidableEq α]
 
-/-- The context's question selects, in the sense of pruning, the threshold reading at the
-number of presents it asks about. -/
 theorem isReading_question (hx : x.Nonempty) (ctx : Context) :
     IsReading x x BarLev2021.holds (ctx.question x)
       (atLeast x x BarLev2021.holds (ctx.threshold x)) :=
@@ -423,8 +398,6 @@ theorem isReading_question (hx : x.Nonempty) (ctx : Context) :
 /-- A boy's nine presents, the objects of a cell. -/
 def nine : Finset ℕ := Finset.range 9
 
-/-- The resolution a context makes of a boy's cell is the threshold its question selects for his
-nine presents. -/
 theorem designated_cell (ctx : Context) (n : ℕ) :
     ctx.designation.threshold ≤ cell n ↔ ctx.threshold nine ≤ n := by
   cases ctx
@@ -432,16 +405,12 @@ theorem designated_cell (ctx : Context) (n : ℕ) :
   · rw [Context.threshold, nine, Finset.card_range]
     exact SignType.one_le_iff.trans (KrizChemla2015.designated_k3_cell n)
 
-/-- The reading pruning selects for a boy's presents under the context's question holds of the
-presents he opened exactly when the context's standard designates his cell. -/
 theorem mem_reading_iff_designated_cell (ctx : Context) {r : Set (Finset ℕ)}
     (hr : IsReading nine nine BarLev2021.holds (ctx.question nine) r) (w : Finset ℕ) :
     w ∈ r ↔ ctx.designation.threshold ≤ (cell (nine ∩ w).card) := by
   rw [hr.unique (isReading_question ⟨0, by simp [nine]⟩ ctx), BarLev2021.mem_atLeast,
     BarLev2021.count_holds, Finset.inter_self, designated_cell]
 
-/-- A boy's trivalent value in the model whose worlds are the sets of presents opened is his
-cell at the number he opened. -/
 theorem barePlural_holds_eq_cell (w : Finset ℕ) :
     Homogeneity.barePlural BarLev2021.holds nine w = cell (nine ∩ w).card := by
   have h1 : Homogeneity.barePlural BarLev2021.holds nine w = 1 ↔

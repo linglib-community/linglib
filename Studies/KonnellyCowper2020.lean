@@ -119,15 +119,11 @@ theorem items_eq :
 /-- The exponent of a feature bundle under the Subset Principle. -/
 def spellout (b : Finset Feature) : Option String := subsetPrinciple items b
 
-/-- Each English third-person nominative pronoun spells out its own features, singular *they* by
-the Elsewhere item. -/
 theorem spellout_pronounFeatures :
     ∀ p ∈ English.Pronouns.pronouns, p.person = some .third → .nom ∈ p.cases →
       spellout (pronounFeatures p) = some p.form := by
   decide
 
-/-- Singular and plural *they* are a syncretism of the Elsewhere item, so an item of singular
-*they*'s own would change no exponent. -/
 theorem subsetPrinciple_append_they_sg (b : Finset Feature) :
     subsetPrinciple (items ++ [vocabularyItem English.Pronouns.they_sg]) b = spellout b := by
   revert b
@@ -227,8 +223,6 @@ theorem lexical_forces_gender {g : Gender} (h : s.genderContrastivity = .contras
     (hl : a.lexical = some (.gender g)) : s.genders a = [some g] := by
   simp [Stage.genders, Antecedent.Inanimate, Antecedent.lexicalGender, h, hl]
 
-/-- *They* is available whenever the pronoun may omit the gender feature and the antecedent is
-not inanimate. -/
 theorem they_mem_forms (h : none ∈ s.genders a ∨ a.det = .quantifier) (hi : ¬ a.Inanimate) :
     "they" ∈ forms s a := by
   refine List.mem_filterMap.2 ⟨a.numFeatures, List.mem_map.2 ⟨none, ?_, by simp⟩, ?_⟩
@@ -237,8 +231,6 @@ theorem they_mem_forms (h : none ∈ s.genders a ∨ a.det = .quantifier) (hi : 
     · simp [h]
   · by_cases hs : a.number = .singular <;> simp [Antecedent.numFeatures, hs, hi] <;> decide
 
-/-- A singular animate antecedent takes *they* exactly when the pronoun may lack a gender
-feature, under a quantifier or where n may bear none. -/
 theorem they_mem_forms_iff (hs : a.number = .singular) (hi : ¬ a.Inanimate) :
     "they" ∈ forms s a ↔ a.det = .quantifier ∨ none ∈ s.genders a := by
   refine ⟨fun h ↦ ?_, fun h ↦ they_mem_forms h.symm hi⟩
@@ -272,7 +264,6 @@ theorem none_mem_genders_two_iff (hi : ¬ a.Inanimate) :
     simp_all [Stage.genders, Antecedent.Inanimate, Antecedent.lexicalGender,
       Stage.genderContrastivity]
 
-/-- At Stage 3, n of an animate antecedent may always lack a gender. -/
 theorem none_mem_genders_three (hi : ¬ a.Inanimate) : none ∈ Stage.three.genders a := by
   simp [Stage.genders, Stage.genderContrastivity, hi]
 
@@ -343,15 +334,11 @@ def Antecedent.ofRow (g : Gender) (e : Datum) : Option Antecedent := do
 def Stage.ofRow? (key : String) (e : Datum) : Option Stage :=
   e.parse? key [("1", .one), ("2", .two), ("3", .three)]
 
-/-- Every row describes an antecedent and a pronoun, and records the stage whose speakers judge it
-or, where speakers differ, the stage from which it is grammatical. -/
 theorem rows_described :
     ∀ e ∈ Examples.all, ∀ g, (Antecedent.ofRow g e).isSome ∧ (e.feature? "pronoun").isSome ∧
       ((Stage.ofRow? "stage" e).isSome ∨ (Stage.ofRow? "firstStage" e).isSome) := by
   decide +kernel
 
-/-- An example's pronoun is available to its antecedent at the stage whose speakers judge it
-exactly when they accept it, for either gender of a referent the example says only is known. -/
 theorem rows_judgment :
     ∀ e ∈ Examples.all, ∀ g, ∀ a ∈ Antecedent.ofRow g e, ∀ p ∈ e.feature? "pronoun",
       ∀ s ∈ Stage.ofRow? "stage" e, (p ∈ forms s a ↔ e.judgment = .acceptable) := by

@@ -430,7 +430,6 @@ def allVerbs : List Verb :=
    beenden, streichen, uebereilen, entwickeln, veranlassen, vergessen, erwarten, beschliessen,
    laufen, ankommen, tanzen, arbeiten, bleiben, liegen]
 
-/-- Every entry is cited by the infinitive of its stem. -/
 theorem form_eq_infinitive : ∀ v ∈ allVerbs, v.form = v.stem.infinitive := by decide
 
 /-- `kaufen` gives the present tense of *kaufen* 'buy'. -/

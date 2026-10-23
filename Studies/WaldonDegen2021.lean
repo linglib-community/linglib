@@ -161,13 +161,10 @@ theorem meaning_nonneg (hs0 : 0 ≤ vs) (hs1 : vs ≤ 1) (hc0 : 0 ≤ vc) (hc1 :
   prodMeaning_nonneg (fun w r ↦ by
     cases w <;> exact noisy_nonneg (by simp [value, *]) (by simp [value, *]) _) u (s i)
 
-/-- The meaning of an utterance does not depend on the order of its words. -/
 theorem meaning_perm (s : Scene) {u u' : List Word} (h : u.Perm u') :
     meaning vs vc s u = meaning vs vc s u' :=
   funext fun i ↦ prodMeaning_perm h (s i)
 
-/-- With both semantic values one the continuous meaning is truth, so the incremental model with
-Boolean meanings is the continuous one at these values. -/
 theorem meaning_one_one (s : Scene) (u : List Word) (i : Fin 3) :
     meaning 1 1 s u i = if ∀ w ∈ u, w.Holds (s i) then 1 else 0 := by
   induction u with
@@ -219,18 +216,13 @@ the adjectives after it. -/
 def mirrorUtterance (u : List Word) : List Word :=
   .pin :: u.dropLast.dropLast.map mirror ++ [.stop]
 
-/-- Each scene is the counterpart of the other. -/
 theorem cs_eq_swap_ss (i : Fin 3) : cs i = swap (ss i) := by revert i; decide
 
 theorem ss_eq_swap_cs (i : Fin 3) : ss i = swap (cs i) := by revert i; decide
 
-/-- The Spanish alternatives in the colour-sufficient scene are the counterparts of the English
-alternatives in the size-sufficient scene. -/
 theorem alternatives_spanish_cs :
     (alternatives spanish cs).Perm ((alternatives english ss).map mirrorUtterance) := by decide
 
-/-- The Spanish alternatives in the size-sufficient scene are the counterparts of the English
-alternatives in the colour-sufficient scene. -/
 theorem alternatives_spanish_ss :
     (alternatives spanish ss).Perm ((alternatives english cs).map mirrorUtterance) := by decide
 
@@ -242,8 +234,6 @@ theorem lexicon_mirror (w : Word) (r : Size × Color) :
     lexicon vs vc (mirror w) (swap r) = lexicon vc vs w r := by
   obtain ⟨_ | _, _ | _⟩ := r <;> cases w <;> simp [lexicon, value, Word.Holds, mirror, swap]
 
-/-- An English utterance means at a pin, with the semantic values exchanged, what its Spanish
-counterpart means at the counterpart of the pin. -/
 theorem meaning_mirror (hs : ∀ i, s' i = swap (s i)) {u : List Word} (hu : u ∈ english)
     (i : Fin 3) : meaning vs vc s' (mirrorUtterance u) i = meaning vc vs s u i := by
   have hpin (a b : ℝ) (r : Size × Color) : lexicon a b .pin r = 1 := by
@@ -276,7 +266,6 @@ private theorem stringMeaning_nonneg' (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 <
     0 ≤ stringMeaning (alternatives L s) (meaning vs vc s) (ctx ++ [v]) i :=
   stringMeaning_nonneg fun u _ ↦ meaning_nonneg hs0.le hs1 hc0.le hc1 s u i
 
-/-- A word that alone continues the context is produced with certainty. -/
 private theorem step_real_eq_one (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) {L : List (List Word)} {ctx u : List Word} {w : Word}
     (h : ∀ v, v ≠ w → continuations (alternatives L s) (ctx ++ [v]) = [])
@@ -294,10 +283,6 @@ private theorem meaning_pin_blue_small (ht : s target = (.small, .blue)) :
     meaning vs vc s [.pin, .blue, .small, .stop] target = vc * vs := by
   simp [meaning, prodMeaning, lexicon, value, Word.Holds, noisy, ht]
 
-/-- When a Spanish scene is the counterpart of an English one, with the small blue pin the target
-of both, *pin blue small* is as likely in the first as *small blue pin* in the second with the
-semantic values exchanged. The two utterances share their two choices and are otherwise
-forced. -/
 private theorem production_mirror (hα : 0 < α) (hcost : ∀ w, cost (mirror w) = cost w)
     (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc) (hc1 : vc ≤ 1) (hs : ∀ i, s' i = swap (s i))
     (ht : s target = (.small, .blue)) (ht' : s' target = (.small, .blue))
@@ -344,10 +329,6 @@ private theorem production_mirror (hα : 0 < α) (hcost : ∀ w, cost (mirror w)
     ← measureReal_def]
   ring
 
-/-- For the small blue pin, *pin blue small* in the colour-sufficient scene of Spanish is as
-likely as *small blue pin* in the size-sufficient scene of English with the semantic values of
-size and colour exchanged. With equal values, and so with Boolean meanings, redundant size in
-Spanish is as likely as redundant colour in English. -/
 theorem spanish_cs_production_eq_english_ss (hα : 0 < α)
     (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :
@@ -357,9 +338,6 @@ theorem spanish_cs_production_eq_english_ss (hα : 0 < α)
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
     (by decide) (by decide) (by decide)
 
-/-- For the small blue pin, *pin blue small* in the size-sufficient scene of Spanish is as likely
-as *small blue pin* in the colour-sufficient scene of English with the semantic values exchanged.
-With equal values redundant colour in Spanish is as likely as redundant size in English. -/
 theorem spanish_ss_production_eq_english_cs (hα : 0 < α)
     (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :
@@ -371,9 +349,6 @@ theorem spanish_ss_production_eq_english_cs (hα : 0 < α)
 
 /-! ### The redundancy step -/
 
-/-- After *small*, the English speaker in the size-sufficient scene adds the redundant *blue*
-with a probability that is a logistic function of the log of the gain of the redundant adjective,
-less its cost over the noun's. -/
 theorem english_step_eq_sigmoid (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :
     (step α cost vs vc english ss [.small] target).real {.blue} =
@@ -406,17 +381,12 @@ theorem english_step_eq_sigmoid (hα : 0 < α) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (
   rw [sub_sub_sub_comm, ← Real.log_div (div_pos (by positivity) h1).ne'
     (div_pos hs0 (by linarith)).ne', div_div_eq_gain_one hs0 hs1 hc0]
 
-/-- With Boolean meanings the redundant adjective adds no information, and the speaker adds it
-only as far as its cost allows. -/
 theorem boolean_english_step (hα : 0 < α) :
     (step α cost 1 1 english ss [.small] target).real {.blue} =
       Real.sigmoid (-(α * (cost .blue - cost .pin))) := by
   rw [english_step_eq_sigmoid hα one_pos le_rfl one_pos le_rfl, gain_one_left one_ne_zero,
     Real.log_one, zero_sub, mul_neg]
 
-/-- The Spanish speaker adds the redundant size after *pin blue* less readily than the English
-speaker adds the redundant colour after *small* exactly when size is noisier than colour. With
-equal values, and so with Boolean meanings, the two steps are equally likely. -/
 theorem spanish_size_step_lt_english_color_step_iff (hα : 0 < α)
     (hcost : ∀ w, cost (mirror w) = cost w) (hs0 : 0 < vs) (hs1 : vs ≤ 1) (hc0 : 0 < vc)
     (hc1 : vc ≤ 1) :

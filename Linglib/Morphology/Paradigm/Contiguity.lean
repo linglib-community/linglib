@@ -80,8 +80,6 @@ theorem isContiguous_fin_three_iff (p : Paradigm 3 F) :
     | exact absurd hij (by decide)
     | exact absurd hjk (by decide)
 
-/-- A three-cell paradigm has the ABA pattern iff its outer cells agree and
-its middle cell differs. -/
 theorem ker_eq_ker_aba_iff (p : Paradigm 3 F) :
     Setoid.ker p = Setoid.ker Paradigm.aba ↔ p 0 = p 2 ∧ p 0 ≠ p 1 := by
   simp only [Setoid.ext_iff, Setoid.ker_def]
@@ -98,8 +96,6 @@ theorem ker_eq_ker_aba_iff (p : Paradigm 3 F) :
     | exact iff_of_false h12 (by decide)
     | exact iff_of_false h12.symm (by decide)
 
-/-- A three-cell paradigm has the AAB pattern iff its lower cells agree and its highest cell
-differs. -/
 theorem ker_eq_ker_aab_iff (p : Paradigm 3 F) :
     Setoid.ker p = Setoid.ker Paradigm.aab ↔ p 0 = p 1 ∧ p 1 ≠ p 2 := by
   simp only [Setoid.ext_iff, Setoid.ker_def]
@@ -116,7 +112,6 @@ theorem ker_eq_ker_aab_iff (p : Paradigm 3 F) :
     | exact iff_of_false h02 (by decide)
     | exact iff_of_false h02.symm (by decide)
 
-/-- A three-cell paradigm has the ABC pattern iff its cells differ pairwise. -/
 theorem ker_eq_ker_abc_iff (p : Paradigm 3 F) :
     Setoid.ker p = Setoid.ker Paradigm.abc ↔ p 0 ≠ p 1 ∧ p 1 ≠ p 2 ∧ p 0 ≠ p 2 := by
   simp only [Setoid.ext_iff, Setoid.ker_def]
@@ -149,7 +144,6 @@ theorem ker_eq_ker_iff_fin_three {G : Type*} (p : Paradigm 3 F) (q : Paradigm 3 
     | exact (eq_comm.trans h12).trans eq_comm
     | exact (eq_comm.trans h02).trans eq_comm
 
-/-- ABA is the only three-cell pattern contiguity excludes. -/
 theorem isContiguous_iff_ker_ne_ker_aba (p : Paradigm 3 F) :
     IsContiguous p ↔ Setoid.ker p ≠ Setoid.ker Paradigm.aba := by
   rw [isContiguous_fin_three_iff, ne_eq, ker_eq_ker_aba_iff, not_and, not_not]

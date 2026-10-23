@@ -159,8 +159,6 @@ private theorem harmonizes_flankWord_mid (x y : Seg) (d : ℕ) :
   rw [Harmonizes, mem_drop_flankWord_iff (by simp) (by omega), drop_flankWord (by omega)]
   simp [InitialHigh, show 2 * d + 1 - d = d + 1 by omega, List.replicate_succ, eq_comm]
 
-/-- Tutrugbu ATR harmony requires both sides. At every distance a medial `[−high]` vowel
-harmonizes, and changing either the initial vowel or the root alone undoes it. -/
 theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbu.map :=
   tutrugbu.requiresBothSides_of_flanks (fill := .pfx false false) (xOn := .pfx false false)
     (yOn := .root true) (xOff := .pfx true false) (yOff := .root false)
@@ -240,12 +238,10 @@ private theorem resolveLeft_eval (xs : List Mark) :
     | nil => rfl
     | cons y ys ih => simpa [resolveLeft] using ih x
 
-/-- The first pass keeps every vowel's height. -/
 private theorem isHigh_markRight_output (p : Bool × Bool) (s : Seg) :
     (markRight.output p s).isHigh = s.isHigh := by
   rcases s with ⟨h, _ | _⟩ | a <;> simp only [markRight] <;> (try split_ifs) <;> rfl
 
-/-- So the second pass reads the height of the initial vowel of the input. -/
 private theorem head?_take_markRight_runRight (w : List Seg) (i : ℕ) :
     ((markRight.runRight w).take i).head?.map Mark.isHigh = (w.take i).head?.map Seg.isHigh := by
   rcases i with _ | i
@@ -255,8 +251,6 @@ private theorem head?_take_markRight_runRight (w : List Seg) (i : ℕ) :
     List.head?_eq_getElem?, List.head?_eq_getElem?, Mealy.getElem?_runRight, Option.map_map]
   exact Option.map_congr fun s _ ↦ isHigh_markRight_output _ s
 
-/-- The mark-up analysis computes Tutrugbu ATR harmony, marking right to left and then
-resolving left to right. -/
 theorem tutrugbu_map_eq_resolve_mark (w : List Seg) :
     tutrugbu.map w = resolveLeft.run (markRight.runRight w) := by
   refine List.ext_getElem? fun i ↦ ?_
@@ -286,8 +280,6 @@ theorem tutrugbu_map_eq_resolve_mark (w : List Seg) :
     rcases w[i] with ⟨_ | _, _ | _⟩ | _ <;> cases IH <;> by_cases i = 0 <;>
     simp_all [resolveLeft, markRight, Seg.raise, Seg.isHigh] <;> tauto
 
-/-- Tutrugbu ATR harmony is regular. The mark-up analysis is a left-to-right Mealy pass after a
-right-to-left one, and a bimachine computes such a composite. -/
 theorem tutrugbu_isBimachineComputable : IsBimachineComputable tutrugbu.map := by
   rw [show tutrugbu.map = resolveLeft.run ∘ markRight.runRight from
     funext tutrugbu_map_eq_resolve_mark]

@@ -55,13 +55,11 @@ the last one that the composition of the first two allows. -/
 def structures : Finset (Ordering × Ordering × Ordering) :=
   Finset.univ.filter fun x ↦ x.2.2 ∈ x.2.1.comp x.1
 
-/-- The frame of three points has one of the orders. -/
 theorem mem_structures {T : Type*} [LinearOrder T] (s r e : T) :
     ((ReichenbachFrame.root s r e).referencePosition, (ReichenbachFrame.root s r e).eventPosition,
       compare e s) ∈ structures := by
   simpa [structures] using (ReichenbachFrame.root s r e).compare_eventTime_perspectiveTime_mem
 
-/-- Three points realize every order. -/
 theorem exists_points :
     ∀ x ∈ structures, ∃ s r e : Fin 3, (compare r s, compare e r, compare e s) = x := by
   decide
@@ -72,8 +70,6 @@ theorem card_structures : structures.card = 13 := by decide
 /-- There are nine fundamental forms (p. 296). -/
 theorem card_fundamentalForms : (structures.image fun x ↦ (x.1, x.2.1)).card = 9 := by decide
 
-/-- A fundamental form groups as many orders as the composition of its two positions has
-elements. -/
 theorem card_filter_form (a b : Ordering) :
     (structures.filter fun x ↦ x.1 = a ∧ x.2.1 = b).card = (b.comp a).card := by
   revert a b; decide

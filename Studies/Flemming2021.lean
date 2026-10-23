@@ -229,18 +229,14 @@ private theorem harmonyDiff_closed (u : Underlying) (o : Onset) (f : Following) 
 
 /-! ### MaxEnt predicts uniform logit differences (§7.1) -/
 
-/-- Adding the \*Clash violation, `–sś` to `–ś`, raises the harmony difference by the weight of
-\*Clash whatever the other features. -/
 theorem harmonyDiff_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) :
     harmonyDiff ⟨u, o, .monosyllable⟩ w - harmonyDiff ⟨u, o, .disyllable⟩ w = w 2 := by
   rw [harmonyDiff_closed, harmonyDiff_closed]; simp
 
-/-- Two preceding consonants add a \*CCC and remove a \*Cluster violation difference. -/
 theorem harmonyDiff_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) :
     harmonyDiff ⟨u, .cc, f⟩ w - harmonyDiff ⟨u, .c, f⟩ w = w 1 - w 5 := by
   rw [harmonyDiff_closed, harmonyDiff_closed]; simp; ring
 
-/-- An underlying schwa adds a Max and removes a Dep violation difference. -/
 theorem harmonyDiff_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
     harmonyDiff ⟨.schwa, o, f⟩ w - harmonyDiff ⟨.zero, o, f⟩ w = w 3 + w 4 := by
   rw [harmonyDiff_closed, harmonyDiff_closed]; simp
@@ -253,19 +249,15 @@ theorem logit_maxEntProb (x : Context) (w : Fin 6 → ℝ) :
     logit (maxEntProb x w) = harmonyDiff x w := by
   rw [maxEntProb, maxEnt_real_singleton, logit_softmax_fin_two]; rfl
 
-/-- MaxEnt predicts the same logit difference, the weight of \*Clash, across the four pairs
-1-2, 3-4, 5-6, 7-8. -/
 theorem logit_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) :
     logit (maxEntProb ⟨u, o, .monosyllable⟩ w) - logit (maxEntProb ⟨u, o, .disyllable⟩ w) =
       w 2 := by
   rw [logit_maxEntProb, logit_maxEntProb, harmonyDiff_following]
 
-/-- … and the same logit difference across the pairs 1-3, 2-4, 5-7, 6-8. -/
 theorem logit_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) :
     logit (maxEntProb ⟨u, .cc, f⟩ w) - logit (maxEntProb ⟨u, .c, f⟩ w) = w 1 - w 5 := by
   rw [logit_maxEntProb, logit_maxEntProb, harmonyDiff_onset]
 
-/-- … and across the pairs 1-5, 2-6, 3-7, 4-8. -/
 theorem logit_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
     logit (maxEntProb ⟨.schwa, o, f⟩ w) - logit (maxEntProb ⟨.zero, o, f⟩ w) = w 3 + w 4 := by
   rw [logit_maxEntProb, logit_maxEntProb, harmonyDiff_underlying]
@@ -349,13 +341,10 @@ theorem probit_gain_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) {
 def observedRate (x : Context) : ℕ :=
   (schwaRates x.underlying x.onset x.following).observed.hundredths.toNat
 
-/-- The schwa is pronounced more often before a monosyllable in every pair, as every model with a
-positive \*Clash weight predicts. -/
 theorem observedRate_following :
     ∀ u o, observedRate ⟨u, o, .disyllable⟩ < observedRate ⟨u, o, .monosyllable⟩ := by
   decide
 
-/-- In MaxEnt a positive \*Clash weight raises the schwa's probability. -/
 theorem maxEntProb_following_lt (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) (hw : 0 < w 2) :
     maxEntProb ⟨u, o, .disyllable⟩ w < maxEntProb ⟨u, o, .monosyllable⟩ w := by
   simp only [maxEntProb, maxEnt_real_singleton, harmony_violations, softmax_fin_two]
@@ -429,7 +418,6 @@ noncomputable def tableW : Fin 3 → ℝ
   | 1 => 8
   | 2 => 8
 
-/-- Candidates `b` and `c` have equal harmony, `−16`. -/
 theorem table45_harmony :
     harmonyScore tableCon tableW 0 = -15 ∧ harmonyScore tableCon tableW 1 = -16 ∧
       harmonyScore tableCon tableW 2 = -16 := by

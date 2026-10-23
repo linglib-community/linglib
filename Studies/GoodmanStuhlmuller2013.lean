@@ -81,8 +81,6 @@ def compatible (n : ℕ) (k : Fin (N + 1)) : Finset (Fin (N + 1)) :=
     s ∈ compatible n k ↔ hypergeometricCount N s n k ≠ 0 := by
   simp [compatible]
 
-/-- After a possible observation the posterior under the uniform prior charges exactly the states
-compatible with it. -/
 theorem posterior_ne_zero_iff_mem_compatible (hk : (compatible n k).Nonempty)
     (s : Fin (N + 1)) :
     ((hypergeometric N n)†(uniformOn Set.univ)) k {s} ≠ 0 ↔ s ∈ compatible n k := by
@@ -126,8 +124,6 @@ noncomputable def listener : Kernel U (Fin (N + 1)) :=
 
 variable {sem α n} {u : U}
 
-/-- The speaker says only what holds at every state her observation leaves possible, and weights
-such an utterance by the inverse size of its extension to the power `α`. -/
 theorem speaker_real_singleton (hα : 0 < α) (s : Fin (N + 1)) (u : U) :
     (speaker sem α n s).real {u} = ∑ k, (hypergeometric N n s).real {k} *
       ((if compatible n k ⊆ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
@@ -152,15 +148,11 @@ theorem speaker_real_singleton_le_one (s : Fin (N + 1)) (u : U) :
   rw [measureReal_def, ← ENNReal.toReal_one]
   exact ENNReal.toReal_mono ENNReal.one_ne_top h
 
-/-- With complete access the speaker knows the state. -/
 theorem speaker_full : speaker sem α N = informed sem α := by
   rw [speaker, show ⇑((hypergeometric N N)†(uniformOn Set.univ)) = Measure.dirac from
     funext fun k ↦ posterior_hypergeometric_self k _ (uniformOn_univ_singleton_ne_zero k),
     hypergeometric_self, Kernel.comp_id]
 
-/-- When every object has the property the speaker sees it of each object she looks at. If the
-utterances true at every state this leaves possible are those true at `s`, she speaks as one who
-knows the state is `s`. -/
 theorem speaker_last (hα : 0 < α) (hn : n ≤ N) {s : Fin (N + 1)}
     (h : ∀ u, compatible n (⟨n, Nat.lt_succ_of_le hn⟩ : Fin (N + 1)) ⊆ sem u ↔ s ∈ sem u) :
     speaker sem α n (Fin.last N) = informed sem α s := by
@@ -169,9 +161,6 @@ theorem speaker_last (hα : 0 < α) (hn : n ≤ N) {s : Fin (N + 1)}
     (posterior_ne_zero_iff_mem_compatible
       ⟨Fin.last N, by simp [hypergeometricCount_ne_zero_iff, hn]⟩) h
 
-/-- When every meaning is upward closed, as the lower-bounded numerals are, the speaker draws her
-observation and speaks as one who knows it to be the state, what she has seen being her lower
-bound. -/
 theorem speaker_of_isUpperSet (hα : 0 < α) (hsem : ∀ u, IsUpperSet (sem u : Set (Fin (N + 1))))
     (hn : n ≤ N) : speaker sem α n = informed sem α ∘ₖ hypergeometric N n :=
   Kernel.ext fun s ↦ Measure.ext_of_singleton fun u ↦ by
@@ -187,8 +176,6 @@ theorem speaker_of_isUpperSet (hα : 0 < α) (hsem : ∀ u, IsUpperSet (sem u : 
         (posterior_ne_zero_iff_mem_compatible ⟨k, hk⟩) fun u ↦ ⟨fun h ↦ h hk, fun h t ht ↦
           hsem u (Fin.le_def.2 (hypergeometricCount_ne_zero_iff.1 (mem_compatible.1 ht)).2.1) h⟩]
 
-/-- With complete access, of two states at which an utterance is true the listener favours the
-one at which fewer alternatives are true, since the speaker's choice is spread over them. -/
 theorem listener_full_lt (hα : 0 < α) {s s' : Fin (N + 1)} (hu : s ∈ sem u)
     (h : Finset.univ.filter (s ∈ sem ·) ⊂ Finset.univ.filter (s' ∈ sem ·)) :
     (listener sem α N u).real {s'} < (listener sem α N u).real {s} := by
@@ -249,7 +236,6 @@ section Findings
 
 variable {α : ℝ}
 
-/-- The fully informed speaker at two objects says *one* or *two*. -/
 private theorem informed_two_add_le :
     (informed NumUtt.extension α 2).real {.one} +
       (informed NumUtt.extension α 2).real {.two} ≤ 1 := by
@@ -259,8 +245,6 @@ private theorem informed_two_add_le :
 variable (hα : 0 < α)
 include hα
 
-/-- With complete access *some* is read as *some but not all*; the state with two objects is more
-probable than the state with three, where the speaker could have said *all*. -/
 theorem some_full :
     (listener QUtt.extension α 3 .some_).real {3} <
       (listener QUtt.extension α 3 .some_).real {2} :=
@@ -285,33 +269,25 @@ theorem some_partial {n : ℕ} (hn : n = 1 ∨ n = 2) :
     measureReal_def (speaker QUtt.extension α n 3), h3, ENNReal.toReal_one]
   exact speaker_real_singleton_le_one _ _
 
-/-- With complete access *two* is read as *exactly two*; the state with two objects is more
-probable than the state with three, where the speaker could have said *three*. -/
 theorem two_full :
     (listener NumUtt.extension α 3 .two).real {3} <
       (listener NumUtt.extension α 3 .two).real {2} :=
   listener_full_lt hα (by decide) (by decide)
 
-/-- With complete access *one* is read as *exactly one*; the state with one object is more
-probable than a state with more. -/
 theorem one_full {s : Fin 4} (hs : 1 < s) :
     (listener NumUtt.extension α 3 .one).real {s} <
       (listener NumUtt.extension α 3 .one).real {1} :=
   listener_full_lt hα (by decide) (by revert s; decide)
 
-/-- With partial access the numeral speaker draws her observation and speaks as one who knows
-it to be the state. -/
 private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : NumUtt) :
     (speaker NumUtt.extension α n s).real {u} = ∑ k, (hypergeometric 3 n s).real {k} *
       (informed NumUtt.extension α k).real {u} := by
   rw [speaker_of_isUpperSet hα NumUtt.isUpperSet_extension hn, Kernel.comp_real_singleton]
 
-/-- The fully informed speaker at no objects has no numeral to use. -/
 private theorem informed_zero (u : NumUtt) :
     (informed NumUtt.extension α 0).real {u} = 0 :=
   RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ (by cases u <;> decide)
 
-/-- The fully informed speaker at one object says *one*. -/
 private theorem informed_one_one : (informed NumUtt.extension α 1).real {.one} = 1 := by
   rw [measureReal_def, RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
     (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide), ENNReal.toReal_one]
@@ -327,9 +303,6 @@ private theorem informed_two_lt :
   RSA.speaker_uniformOn_dirac_real_singleton_lt_of_card_lt _ hα (by decide) (by decide)
     (by decide)
 
-/-- After one object *one* carries no implicature; a state with more objects with the property is
-at least as probable, since the speaker says *one* exactly when the object she looks at has the
-property. -/
 theorem one_minimal {s s' : Fin 4} (h : s ≤ s') :
     (listener NumUtt.extension α 1 .one).real {s} ≤
       (listener NumUtt.extension α 1 .one).real {s'} := by
@@ -340,9 +313,6 @@ theorem one_minimal {s s' : Fin 4} (h : s ≤ s') :
   gcongr
   exact_mod_cast h
 
-/-- After two objects *two* carries no implicature; the state with two objects is no more
-probable than the state with three, since the speaker says *two* only when both objects she
-looks at have the property. -/
 theorem two_partial :
     (listener NumUtt.extension α 2 .two).real {2} ≤
       (listener NumUtt.extension α 2 .two).real {3} := by
@@ -351,9 +321,6 @@ theorem two_partial :
     hypergeometricCount, informed_zero hα, informed_one_two hα]
   linarith [measureReal_nonneg (μ := informed NumUtt.extension α 2) (s := {.two})]
 
-/-- After two objects *one* keeps its implicature against three; the state with one object is
-more probable than the state with three, where the speaker saw two objects with the property and
-would rather have said *two*. -/
 theorem one_partial_three :
     (listener NumUtt.extension α 2 .one).real {3} <
       (listener NumUtt.extension α 2 .one).real {1} := by
@@ -362,9 +329,6 @@ theorem one_partial_three :
     hypergeometricCount, informed_zero hα, informed_one_one hα]
   linarith [informed_two_lt hα, informed_two_add_le (α := α)]
 
-/-- After two objects *one* loses its implicature against two; the state with one object is no
-more probable than the state with two, where the speaker may have seen only one object with the
-property. -/
 theorem one_partial_two :
     (listener NumUtt.extension α 2 .one).real {1} ≤
       (listener NumUtt.extension α 2 .one).real {2} := by

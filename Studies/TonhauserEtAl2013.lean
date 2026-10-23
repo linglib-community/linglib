@@ -106,8 +106,6 @@ section
 
 variable {R : SetRel W W} {m : Set W} {Acc Acc' : Set W → Prop}
 
-/-- A content has obligatory local effect when the local context of the complement, the image
-of the context under the holder's doxastic accessibility, entails it. -/
 theorem obligatoryLocalEffect_iff :
     ObligatoryLocalEffect R m Acc ↔ ∀ c, Acc c → R.image c ⊆ m :=
   forall₂_congr fun _ _ ↦ SetRel.image_subset_iff.symm
@@ -149,7 +147,6 @@ instance : DecidablePred StrongContextualFelicity := fun _ ↦ inferInstanceAs (
 
 instance : DecidablePred ObligatoryLocalEffect := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The two properties determine the class. -/
 theorem eq_of_iff {k k' : ProjectiveClass}
     (hs : k.StrongContextualFelicity ↔ k'.StrongContextualFelicity)
     (ho : k.ObligatoryLocalEffect ↔ k'.ObligatoryLocalEffect) : k = k' := by
@@ -222,8 +219,6 @@ instance (k : ProjectiveClass) : DecidablePred (Excludes k)
   | .matrix _ _ => decidable_of_iff' _ excludes_matrix_iff
   | .belief _ => decidable_of_iff' _ excludes_belief_iff
 
-/-- The two diagnostics separate the four classes, in that classes excluding the same utterances
-in a neutral context and the same belief reports are one class. -/
 theorem eq_of_excludes_iff {k' : ProjectiveClass} (hs : s ≠ .positive)
     (hm : Excludes k (.matrix e .neutral) ↔ Excludes k' (.matrix e .neutral))
     (hb : Excludes k (.belief s) ↔ Excludes k' (.belief s)) : k = k' :=
@@ -232,11 +227,6 @@ theorem eq_of_excludes_iff {k' : ProjectiveClass} (hs : s ≠ .positive)
 
 /-! ### Local satisfaction -/
 
-/-- If a sentence is acceptable exactly where its local context entails its presupposition, as
-for Karttunen, Heim and Schlenker, the presupposition has the two properties of class A, so no
-instance of a test that class A excludes is acceptable. The local context of a family member is
-the image of the utterance context under the member's relation, and that of the complement of a
-belief report its image under the holder's doxastic accessibility. -/
 theorem Excludes.not_accepted_admits {W : Type} {t : Test} (h : Excludes .A t)
     (p : W → SignType) (M R : SetRel W W) [M.IsRefl] :
     ¬ t.Accepted (Function.support p) R (fun e c ↦ (e.rel M).image c ⊆ Function.support p)
@@ -267,8 +257,6 @@ theorem judgment_rows :
       (r.judgment = .unacceptable ↔ Excludes k t) := by
   decide
 
-/-- Each of the four classes has an example in a neutral context and an example of a belief
-report whose holder does not believe the content, the two judgments that fix a class. -/
 theorem exists_rows_of_class :
     ∀ k : ProjectiveClass,
       (∃ r ∈ Examples.all, class? r = some k ∧ ∃ e, test? r = some (.matrix e .neutral)) ∧
@@ -276,9 +264,6 @@ theorem exists_rows_of_class :
           test? r = some (.belief s) := by
   decide
 
-/-- Each class other than A has an acceptable example in a configuration that class A excludes,
-so a theory of projection on which every projective content must be satisfied in its local
-context does not extend to it (section 8). -/
 theorem acceptable_rows_of_ne_A :
     ∀ k ≠ ProjectiveClass.A, ∃ r ∈ Examples.all, class? r = some k ∧ r.judgment = .acceptable ∧
       ∃ t ∈ test? r, Excludes .A t := by

@@ -114,7 +114,6 @@ def head : CopyState → Option LexicalItem.Token
   | sel x => x.head
   | copy _ => none
 
-/-- A copy state never combines with itself. -/
 @[simp] theorem mul_self (l : CopyState) : l * l = 0 := by
   rcases l with x | a
   · show sel (x * x) = sel 0
@@ -236,7 +235,6 @@ theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
     (hlr : (merge l r).raisingHead = some h) : l.raisingHead = some h ∨ r.raisingHead = some h :=
   mem_head_or_mem_head_of_mem_head_map_mul raisingCheckHom (x := l) (y := r) hlr
 
-/-- An object merged with itself has no raising head. -/
 @[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
   rw [raisingHead, raisingCheck_merge, RaisingState.mul_def]
   simp only [RaisingState.raise, CopyState.mul_self, ne_eq, not_true_eq_false, ↓reduceIte]
@@ -280,8 +278,6 @@ head function by the drawing convention: the head daughter of the subtree at eac
 `none` off the object. -/
 def HeadFunction.raising : HeadFunction := fun t q ↦ (t.val.subtreeAt q.toList).bind headIndex?
 
-/-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
-it. -/
 theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
     (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
     (h : treeRaisingHead s = some ℓ) :

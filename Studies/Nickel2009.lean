@@ -136,8 +136,6 @@ end Bears
 
 /-! ### Key Theorems -/
 
-/-- Nickel's view succeeds for the elephant conjunction, with Africa witnessed by the African
-way and Asia by the Asian way. -/
 theorem nickel_handles_elephant_conjunction :
     nickelConjunctiveGEN elephantNormalIn ways isElephant livesInAfrica livesInAsia := by
   decide
@@ -150,7 +148,6 @@ theorem bears_nickel_succeeds :
     nickelGEN bearNormalIn bearWays isBear bearAS := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- Normality ways are pairwise incompatible in both toy models. -/
 theorem ways_incompatible :
     WaysIncompatible elephantNormalIn ways ∧ WaysIncompatible bearNormalIn bearWays := by
   decide
@@ -161,13 +158,10 @@ The headline contrast is a theorem over a shared model citing the `gen` of [cohe
 directly, with the habitats as the alternative set. The majority view fails on the conjunction
 because the Asia conjunct has prevalence 4/10 < 1/2, while Nickel's view succeeds. -/
 
-/-- Cohen's majority GEN is false for *elephants live in Asia* (prevalence 4/10). -/
 theorem cohen_fails_elephant_asia :
     ¬ Cohen1999.gen .univ isElephant (fun e ↦ livesInAfrica e ∨ livesInAsia e) livesInAsia := by
   decide
 
-/-- On the conjunctive generic over one shared model the majority view fails, Asia being a
-minority habitat, while Nickel's way-indexed view succeeds. -/
 theorem cohen_fails_nickel_succeeds_on_conjunction :
     ¬ Cohen1999.gen .univ isElephant (fun e ↦ livesInAfrica e ∨ livesInAsia e) livesInAsia ∧
     nickelConjunctiveGEN elephantNormalIn ways isElephant livesInAfrica livesInAsia :=
@@ -184,8 +178,6 @@ theorem cohen_fails_all_bear_habitats :
 
 /-! ### Connection to Traditional GEN -/
 
-/-- Nickel's GEN with a single normality way is the restricted universal of traditional GEN,
-`∀ x, restrictor x ∧ normalIn x w → scope x`. -/
 theorem nickelGEN_singleton_iff {α : Type*} (normalIn : α → NormalcyWay → Prop)
     (w : NormalcyWay) (restrictor scope : α → Prop) :
     nickelGEN normalIn {w} restrictor scope ↔

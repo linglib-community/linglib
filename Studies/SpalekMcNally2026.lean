@@ -77,35 +77,24 @@ def silence : Situation := { lenses with force := .low, patientRobustness := .in
 /-- A ball tearing through the rough (23) moves with considerable energy. -/
 def rough : Situation := { lenses with force := .high }
 
-/-- The contact lenses lie in both roots' regions. -/
 theorem lenses_admitted : lenses ∈ tear_.root.content ∧ lenses ∈ rasgar.root.content := by
   decide
 
-/-- The two roots overlap, the contact lenses witnessing the zone where the verbs translate each
-other. -/
 theorem roots_overlap : tear_.root.content.Overlaps rasgar.root.content :=
   overlaps_iff_exists_mem.2 ⟨lenses, lenses_admitted⟩
 
-/-- *Tear* takes the robust bread as its patient and *rasgar* does not. -/
 theorem bread_contrast : bread ∈ tear_.root.content ∧ bread ∉ rasgar.root.content := by
   decide
 
-/-- The engraved cement, a gash without contrary separation, is a *rasgar* result and not a
-*tear* one. -/
 theorem cement_contrast : cement ∉ tear_.root.content ∧ cement ∈ rasgar.root.content := by
   decide
 
-/-- The careful tearing of the foil is compatible with *tear* and not with *rasgar*. -/
 theorem foil_contrast : foil ∈ tear_.root.content ∧ foil ∉ rasgar.root.content := by
   decide
 
-/-- *Rasgar* tears the silence, a fragile state disturbed without force, while *tear* wants more
-force and a patient of some substance. -/
 theorem silence_contrast : silence ∉ tear_.root.content ∧ silence ∈ rasgar.root.content := by
   decide
 
-/-- Energetic motion through the rough is a *tear* extension and not a *rasgar* one, whose flimsy
-patients call for no such force. -/
 theorem rough_contrast : rough ∈ tear_.root.content ∧ rough ∉ rasgar.root.content := by
   decide
 

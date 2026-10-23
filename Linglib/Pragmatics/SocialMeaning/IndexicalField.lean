@@ -99,11 +99,9 @@ section AddGroup
 
 variable [AddGroup R] [Preorder R] [AddLeftStrictMono R] {M : AssociationField Variant Trait R}
 
-/-- An antipodal pair index a trait in opposite directions. -/
 theorem Antipodal.indexes_iff (h : M.Antipodal v₁ v₂) : M.Indexes v₁ t ↔ M v₂ t < 0 := by
   rw [Indexes, h, Pi.neg_apply, neg_pos]
 
-/-- An antipodal pair index no trait in common. -/
 theorem Antipodal.disjoint_support [Fintype Trait] [DecidableLT R] (h : M.Antipodal v₁ v₂) :
     Disjoint (M.support v₁) (M.support v₂) :=
   Finset.disjoint_left.2 fun _ h₁ h₂ ↦
@@ -134,7 +132,6 @@ def signs [Zero R] [Preorder R] [DecidableLT R] (M : AssociationField Variant Tr
 variable [AddCommGroup R] [LinearOrder R] [IsOrderedAddMonoid R]
   {M : AssociationField Variant Trait R} {v₀ : Variant}
 
-/-- The signs of contrasts order two variants on a trait only as the field does. -/
 theorem lt_of_signs_contrast_lt (h : (M.contrast v₀).signs v t < (M.contrast v₀).signs w t) :
     M v t < M w t :=
   lt_of_not_ge fun hwv ↦ h.not_ge (SignType.sign.monotone (sub_le_sub_right hwv _))

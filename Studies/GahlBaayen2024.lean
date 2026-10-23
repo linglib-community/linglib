@@ -321,12 +321,9 @@ private theorem W_eq : W = (71 : ℝ)⁻¹ • intW.map (Int.castRingHom ℝ) :=
 theorem U_mul_W : U * W = U := by
   rw [W_eq_conjTranspose]; exact mul_conjTranspose_mul_inv_mul isUnit_det_gramU
 
-/-- `W` is symmetric and idempotent, the orthogonal projection onto the row space of `U`. -/
 theorem isStarProjection_W : IsStarProjection W := by
   rw [W_eq_conjTranspose]; exact isStarProjection_conjTranspose_mul_inv_mul isUnit_det_gramU
 
-/-- Regressing the words of each utterance on themselves, as the paper does for the toy corpus,
-does not determine `W`, since the identity, the "ideal solution" of (A9), is trained as well. -/
 theorem not_existsUnique_isELTrained :
     ¬ ∃! G, IsELTrained (⟨U, U⟩ : TrainingExperience 5 9 9) G := by
   rintro ⟨G, -, hG⟩

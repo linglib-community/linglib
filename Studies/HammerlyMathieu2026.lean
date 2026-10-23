@@ -357,7 +357,6 @@ theorem derivation_30 :
       (inflP .plain ⟨bare .prox, bare .part⟩).moved = none := by
   decide +kernel
 
-/-- Plain Voice moves the patient iff it is a local person, the relativized EPP. -/
 theorem voiceP_moved_iff :
     ∀ (e f : PhiFeature) (δ : Bool), e ≠ .anim →
       ((voiceP .plain ⟨bare e, ⟨f, δ⟩⟩).moved = some patient ↔ .part ≤ f) := by
@@ -370,7 +369,6 @@ is. -/
 theorem target_direct : ∀ δe δi, target cEpp (clause .prox .anim δe δi) = some .ea := by
   decide +kernel
 
-/-- (19a-ii): in the deep inverse LDA targets the proximate patient, wherever δ is. -/
 theorem target_inverse : ∀ δe δi, target cEpp (clause .anim .prox δe δi) = some .ia := by
   decide +kernel
 
@@ -384,7 +382,6 @@ theorem canTarget_localAgent :
     ∀ ea, .part ≤ ea → ∀ r, (CanTarget cEpp ea .prox r ↔ r = .ea) := by
   decide +kernel
 
-/-- (19c-ii): a proximate agent acting on a local patient leaves LDA free. -/
 theorem canTarget_localPatient : ∀ ia, .part ≤ ia → ∀ r, CanTarget cEpp .prox ia r := by
   decide +kernel
 
@@ -400,9 +397,6 @@ theorem argumentOrder_nonlocal :
         argumentOrder (cP cEpp .ergative (clause .anim .prox δe δi)).obj = [patient, agent] := by
   decide +kernel
 
-/-- With plain Voice the deep inverse yields the same target and order: Infl skips the obviative
-agent, which lacks [PROX], and moves the patient. So LDA does not need ergative Voice; its theme
-sign does, since plain Voice copies the patient's features. -/
 theorem target_inverse_plain :
     ∀ δe δi, (cP cEpp .plain (clause .anim .prox δe δi)).moved = some patient ∧
       argumentOrder (cP cEpp .plain (clause .anim .prox δe δi)).obj = [patient, agent] ∧
@@ -483,7 +477,6 @@ theorem not_fitsRows_phiEpp : ¬ FitsRows phiEpp := by decide +kernel
 patient that (10) excludes. -/
 theorem not_fitsRows_deltaEpp : ¬ FitsRows deltaEpp := by decide +kernel
 
-/-- With δ on the obviative patient, a δ-probe on C moves it past the proximate agent. -/
 theorem canTarget_deltaEpp_obviative : CanTarget deltaEpp .prox .anim .ia := by decide +kernel
 
 /-- The category and role of a row's LDA target. -/
@@ -501,8 +494,6 @@ theorem target_eq_ex_11a_ex_16b :
       Examples.ex_11a.judgment ≠ Examples.ex_16b.judgment := by
   decide +kernel
 
-/-- The model derives the asymmetry: LDA with an argument is not a function of its category and
-role. -/
 theorem not_factorsThrough_category_role :
     ¬ Function.FactorsThrough
       (fun q : PhiFeature × PhiFeature × Role ↦ CanTarget cEpp q.1 q.2.1 q.2.2)

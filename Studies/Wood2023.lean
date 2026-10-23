@@ -139,7 +139,6 @@ def realize (w : ComplexHead (Morpheme Feature Morph) (Morpheme Feature Morph)) 
   (w.insertAll (· = zero) vocab .concatenation expFeatures .nondeletion).exponents.filter
     (· ≠ zero)
 
-/-- Every nominal of the fragment is the root's spell-out, with its preposition prefixed. -/
 theorem fragment_realize :
     ∀ w ∈ Icelandic.Nouns.deverbals,
       (w.preposition.map Morph.pref).toList ++ realize (word w.root none) = w.morphs := by
@@ -192,7 +191,6 @@ theorem insertAt_word_one :
   cases h : winner? vocab (nContext r e) <;>
     simp [h, word, subsetPrinciple_eq_map_winner?, Morpheme.IsRealized]
 
-/-- v always receives an exponent, since zero is its elsewhere item. -/
 theorem subsetPrinciple_vContext_isSome : (subsetPrinciple vocab (vContext r)).isSome := by
   rw [subsetPrinciple_eq_map_winner?, Option.isSome_map, winner?_isSome_iff]
   exact ⟨{Feature.cat .v} ⟷ zero, by decide, by simp [vContext]⟩
@@ -205,7 +203,6 @@ def nominalizer : Option Morph :=
   ((word r none).insertAll (· = zero) vocab .concatenation expFeatures .nondeletion).heads[1]? >>=
     (·.exp)
 
-/-- The nominalizer is selected in the context v presents once realized. -/
 theorem nominalizer_eq : nominalizer r = subsetPrinciple vocab (nContext r (verbalizer r)) := by
   obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp (subsetPrinciple_vContext_isSome r)
   unfold nominalizer
@@ -214,28 +211,22 @@ theorem nominalizer_eq : nominalizer r = subsetPrinciple vocab (nContext r (verb
   change (insertAt (insertAt (word r none) 0) 1).heads[1]? >>= _ = _
   rw [insertAt_word_zero, he, insertAt_word_one, verbalizer, he, Option.getD_some]
 
-/-- An overt verbalizer hides the root, so the nominalizer is chosen by the verbalizer alone. -/
 theorem nominalizer_of_ne_zero (h : verbalizer r ≠ zero) :
     nominalizer r = subsetPrinciple vocab
       ⟨{(cat .n : Feature)}, [{(cat .v : Feature), exp (verbalizer r)}], []⟩ := by
   simp [nominalizer_eq, nContext, h]
 
-/-- A zero verbalizer is pruned, so the nominalizer is chosen by the root. -/
 theorem nominalizer_of_eq_zero (h : verbalizer r = zero) :
     nominalizer r = subsetPrinciple vocab ⟨{(cat .n : Feature)}, [{exp (.root r)}], []⟩ := by
   simp [nominalizer_eq, nContext, h]
 
-/-- After *-k* the nominalizer is *-un*, whatever the root. -/
 theorem nominalizer_of_k (h : verbalizer r = .suff "k") : nominalizer r = some (.suff "un") := by
   rw [nominalizer_of_ne_zero r (h ▸ by decide), h]; decide
 
-/-- After *-er* the nominalizer is *-ing*, whatever the root. -/
 theorem nominalizer_of_er (h : verbalizer r = .suff "er") :
     nominalizer r = some (.suff "ing") := by
   rw [nominalizer_of_ne_zero r (h ▸ by decide), h]; decide
 
-/-- With no elsewhere item for n, a root with a zero verbalizer that no item lists has no
-nominalization. -/
 theorem nominalizer_eq_none (h : verbalizer r = zero) (hr : r ∉ listed) :
     nominalizer r = none := by
   rw [nominalizer_of_eq_zero r h, subsetPrinciple, RuleSet.realize_eq_none_iff]
@@ -244,7 +235,6 @@ theorem nominalizer_eq_none (h : verbalizer r = zero) (hr : r ∉ listed) :
     Morph.root, Morph.suff, zero, or_and_right, exists_or]
   simpa [eq_comm] using hr
 
-/-- *borða* 'eat' has no nominalization (*\*borð-un*). -/
 theorem borda : nominalizer "borð" = none := nominalizer_eq_none _ (by decide) (by decide)
 
 end Allomorphy
@@ -301,11 +291,9 @@ def Eventive (d : Derivation) : Prop := d.v = .eventive ∧ d.n = .zero
 
 instance : DecidablePred Eventive := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The complex event reading is exactly the eventive nP. -/
 theorem eventive_iff (d : Derivation) : d.Eventive ↔ d.reading = some .complexEvent := by
   revert d; decide
 
-/-- Every reading is derived by some choice of allosemes. -/
 theorem exists_reading (rd : NominalizationReading) : ∃ d : Derivation, d.reading = some rd := by
   cases rd
   exacts [⟨cen, rfl⟩, ⟨sen, rfl⟩, ⟨result, rfl⟩, ⟨⟨.zero, .state⟩, rfl⟩, ⟨simpleEntity, rfl⟩,
@@ -331,15 +319,11 @@ def vaedaNominal (r : Root) (a c : Nominalizer.Alloseme) : ComplexHead Root Head
 
 /-! ### Borer's Generalization -/
 
-/-- The n of a nominalization is not in the root's domain, since category change closes it. -/
 theorem nominal_n_not_rootLocal (r : Root) (d : Derivation) :
     ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
   ComplexHead.not_rootLocal_of_cyclic_of_cyclic (j := ⟨0, Nat.two_pos⟩)
     (Fin.mk_lt_mk.2 Nat.zero_lt_one) trivial trivial
 
-/-- By Borer's Generalization a complex event nominal contains the eventive v of the verb and its
-n cannot condition suppletion of the root, so the nominal is built on a verb with the same root
-exponent and the same meaning. -/
 theorem borers_generalization (r : Root) {d : Derivation}
     (h : d.reading = some .complexEvent) :
     d.v = .eventive ∧ ¬ (nominal r d).RootLocal Head.Cyclic ⟨1, Nat.one_lt_two⟩ :=
@@ -377,7 +361,6 @@ def IStar.alloseme (fs : Finset Feature) : IStar.Alloseme :=
 def Derivation.features (d : Derivation) : Finset Feature :=
   if d.Eventive then {.cat .n, .eventive} else {.cat .n}
 
-/-- The possessor of a nominal is its agent exactly on the complex event reading. -/
 theorem iStar_agent_iff (d : Derivation) :
     IStar.alloseme d.features = .agent ↔ d.reading = some .complexEvent := by
   rw [← Derivation.eventive_iff]
@@ -405,39 +388,28 @@ def interveners (s : ComplexHead Root Head) : Attachment → List Head
   | .complement => s.heads
   | .adjunct => s.heads.dropLast
 
-/-- Adjunction is at least as local as complementation. -/
 theorem Local.adjunct_of_complement {s : ComplexHead Root Head}
     (h : Local (interveners s .complement)) : Local (interveners s .adjunct) := by
   simp only [Local, interveners, List.length_dropLast] at h ⊢; omega
 
-/-- A preposition may condition the root of a verb whether adjoined or in its complement. -/
 theorem verb_local (r : Root) (a : Attachment) : Local (interveners (verb r) a) := by
   cases a <;> simp [Local, interveners, verb]
 
-/-- A preposition heading the complement of a nominal cannot condition its root, since v and n
-intervene. A preposition that conditions the root's meaning must therefore be prefixed. -/
 theorem nominal_complement_not_local (r : Root) (d : Derivation) :
     ¬ Local (interveners (nominal r d) .complement) := by
   simp [Local, interveners, nominal, Derivation.heads]
 
-/-- A preposition adjoined to the complex n head may condition the root, since only v
-intervenes. -/
 theorem nominal_adjunct_local (r : Root) (d : Derivation) :
     Local (interveners (nominal r d) .adjunct) := by
   simp [Local, interveners, nominal, Derivation.heads]
 
-/-- The n of a nominalization may condition an idiosyncratic meaning of the root across v. -/
 theorem nominal_n_local (r : Root) (d : Derivation) : Local ((nominal r d).heads.take 1) := by
   simp [Local, nominal, Derivation.heads]
 
-/-- The outer n of a *-væðing* nominal cannot condition the root, since the inner n and v
-intervene, so the nominal has no idiosyncratic referring reading. -/
 theorem vaeda_n_not_local (r : Root) (a c : Nominalizer.Alloseme) :
     ¬ Local ((vaedaNominal r a c).heads.take 2) := by
   simp [Local, vaedaNominal, vaedaVerb]
 
-/-- A PP complement of a *-væða* verb cannot condition its root, so its interpretation is
-compositional. -/
 theorem vaeda_complement_not_local (r : Root) (a : Nominalizer.Alloseme) :
     ¬ Local (interveners (vaedaVerb r a) .complement) := by
   simp [Local, interveners, vaedaVerb]
@@ -467,16 +439,13 @@ event variable. -/
 def Licensed (p : Prefix) (d : Derivation) : Prop :=
   ∃ h ∈ d.heads, p.AdjoinsTo h ∧ h.HasEvent
 
-/-- *marg-* is licensed exactly when v is eventive. -/
 theorem licensed_marg_iff (d : Derivation) : Licensed .marg d ↔ d.v = .eventive := by
   simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
 
-/-- *endur-* is licensed exactly when v or n carries an event variable. -/
 theorem licensed_endur_iff (d : Derivation) :
     Licensed .endur d ↔ d.v = .eventive ∨ d.n = .simpleEvent ∨ d.n = .result := by
   simp [Licensed, Derivation.heads, Prefix.AdjoinsTo, Head.HasEvent]
 
-/-- *marg-* is stricter than *endur-*. -/
 theorem Licensed.endur {d : Derivation} (h : Licensed .marg d) : Licensed .endur d :=
   (licensed_endur_iff d).2 (Or.inl ((licensed_marg_iff d).1 h))
 
@@ -499,8 +468,6 @@ def ofRow (ex : Datum) : Option (Prefix × Derivation) := do
   let d ← ex.parse? "reading" readingTable
   pure (p, d)
 
-/-- By the book's judgments on *marg-* and *endur-*, a prefixed nominal is acceptable on a
-reading exactly when the prefix is licensed on that reading's derivation. -/
 theorem rows_licensed :
     ∀ ex ∈ Examples.all, ∀ pd ∈ ofRow ex,
       (ex.judgment = .acceptable ↔ Licensed pd.1 pd.2) := by
@@ -514,8 +481,6 @@ def judgments (w : Deverbal) (reading : String) : List Judgment :=
     ex.feature? "nominal" = some (Morph.surface w.morphs) ∧
       ex.feature? "reading" = some reading).map (·.judgment)
 
-/-- The reading is not a function of the nominalizer, since *aðdáun* and *viðvörun* share *-un*
-and only *viðvörun* is a concrete entity. -/
 theorem reading_not_by_nominalizer :
     addaun.nominalizer = vidvorun.nominalizer ∧
       judgments addaun "RN" = [.ungrammatical] ∧ judgments vidvorun "RN" = [.acceptable] := by

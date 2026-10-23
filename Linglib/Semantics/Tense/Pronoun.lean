@@ -61,8 +61,6 @@ def pronoun (C : Finset Ordering) (k j : ℕ) : Nominal (Assignment T) W T where
 @[simp] theorem pronoun_selector :
     (pronoun C k j : Nominal (Assignment T) W T).selector g w = some (g k) := rfl
 
-/-- A pronominal tense with its referential index bound by an existential quantifier is the
-quantificational tense of its cell at the evaluation time. -/
 theorem exists_pronoun_iff_diamond (hkj : k ≠ j) (P : T → Prop) :
     (∃ t, lambdaAbsG k (fun g ↦ (pronoun C k j).presup g w ∧ P (g k)) g t) ↔
       ◇[toSetRel C] P (g j) := by
@@ -77,8 +75,6 @@ variable [LinearOrder T]
 instance : Decidable ((pronoun C k j).presup g w) :=
   inferInstanceAs (Decidable (g j ~[toSetRel C] g k))
 
-/-- With every index at one time, a pronominal tense is defined iff its cell admits
-coincidence. -/
 @[simp] theorem pronoun_presup_const (t₀ : T) :
     (pronoun C k j).presup (Function.const ℕ t₀) w ↔ .eq ∈ C := by
   simp

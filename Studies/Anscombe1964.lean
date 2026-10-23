@@ -51,39 +51,31 @@ def Instantaneous (A : Set (NonemptyInterval T)) : Prop := ∃ t, timeTrace A = 
 
 /-! ### The logical properties (§II) -/
 
-/-- Repetition is excluded exactly when the clause holds over an order-connected set. -/
 theorem not_repetition_iff_ordConnected : ¬ Repetition A ↔ (timeTrace A).OrdConnected :=
   ⟨fun h => ⟨fun _ hx _ hy _ hz => by_contra fun hz' => h ⟨_, hx, _, hz', _, hy,
       lt_of_le_of_ne hz.1 fun e => hz' (e ▸ hx), lt_of_le_of_ne hz.2 fun e => hz' (e ▸ hy)⟩⟩,
     fun h ⟨_, h₁, _, h₂, _, h₃, h₁₂, h₂₃⟩ => h₂ (h.out h₁ h₃ ⟨h₁₂.le, h₂₃.le⟩)⟩
 
-/-- *Before* is asymmetric when repetition is excluded. -/
 theorem before_asymm (hA : (timeTrace A).OrdConnected) (hB : (timeTrace B).OrdConnected) :
     Anscombe.before A B → ¬ Anscombe.before B A := by
   rintro ⟨a, ⟨ha, haB⟩, b, hb, hab⟩ ⟨b', ⟨hb', hb'A⟩, a', ha', hb'a'⟩
   have hab' : a < b' := lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)
   exact hb'A (hA.out ha ha' ⟨hab'.le, hb'a'.le⟩)
 
-/-- *Before* is transitive when repetition is excluded. -/
 theorem before_trans (hB : (timeTrace B).OrdConnected) (hC : (timeTrace C).OrdConnected) :
     Anscombe.before A B → Anscombe.before B C → Anscombe.before A C := by
   rintro ⟨a, ⟨ha, haB⟩, b, hb, hab⟩ ⟨b', ⟨hb', hb'C⟩, c, hc, hb'c⟩
   have hab' : a < b' := lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)
   exact ⟨a, ⟨ha, fun haC => hb'C (hC.out haC hc ⟨hab'.le, hb'c.le⟩)⟩, c, hc, hab'.trans hb'c⟩
 
-/-- With repetition admitted, *before* is not asymmetric, as in *it was night before it was day, and
-day before it was night*. -/
 theorem before_not_asymm :
     ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ Anscombe.before B A :=
   ⟨{pure 0, pure 2}, {pure 1, pure 3},
     ⟨0, by simp, 1, by simp, by decide⟩, ⟨1, by simp, 2, by simp, by decide⟩⟩
 
-/-- *p before q* entails *q after p*. -/
 theorem after_of_before : Anscombe.before A B → Anscombe.after B A :=
   fun ⟨a, ⟨ha, _⟩, b, hb, hab⟩ => ⟨b, hb, a, ha, hab⟩
 
-/-- *After* is not asymmetric, as the overlapping existences of the Parthenon and St. Peter's show.
--/
 theorem after_not_asymm :
     ∃ A B : Set (NonemptyInterval ℤ), Anscombe.after A B ∧ Anscombe.after B A :=
   ⟨Set.Iic ⟨(0, 10), by decide⟩, Set.Iic ⟨(5, 15), by decide⟩,
@@ -92,8 +84,6 @@ theorem after_not_asymm :
     ⟨15, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩,
       0, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by decide⟩⟩
 
-/-- *The Parthenon was there after the Parthenon was there* might pass and *I was born after I was
-born* does not, since a clause is after itself iff it holds at two times. -/
 theorem after_self_iff : Anscombe.after A A ↔ (timeTrace A).Nontrivial :=
   ⟨fun ⟨t, ht, t', ht', h⟩ => ⟨t', ht', t, ht, h.ne⟩, fun h =>
     let ⟨x, hx, y, hy, hxy⟩ := Set.nontrivial_iff_exists_lt.1 h; ⟨y, hy, x, hx, hxy⟩⟩
@@ -102,8 +92,6 @@ theorem not_after_self_of_instantaneous (hA : Instantaneous A) : ¬ Anscombe.aft
   fun h => let ⟨_, ht⟩ := hA
     Set.not_nontrivial_iff.2 (ht ▸ Set.subsingleton_singleton) (after_self_iff.1 h)
 
-/-- *After* is not transitive, as in *I was born after the Parthenon was there; the Parthenon was
-there after I was born; ergo, I was born after I was born*. -/
 theorem after_not_trans :
     ∃ A B : Set (NonemptyInterval ℤ),
       Anscombe.after A B ∧ Anscombe.after B A ∧ ¬ Anscombe.after A A :=
@@ -114,7 +102,6 @@ theorem after_not_trans :
 
 /-! ### Quantification over times (§IV–§V) -/
 
-/-- *Before ever* is *before*, provided *q* held at all. -/
 theorem before_of_beforeEver (hB : (timeTrace B).Nonempty) :
     Tense.beforeEver A B → Anscombe.before A B :=
   fun ⟨a, ha, h⟩ => let ⟨b, hb⟩ := hB
@@ -127,14 +114,11 @@ theorem before_iff_beforeEver (hB : (timeTrace B).OrdConnected) :
     ⟨⟨a, ha, fun _ hb' => lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)⟩, b, hb⟩,
     fun ⟨h, hne⟩ => before_of_beforeEver hne h⟩
 
-/-- *He studied his appearance in the glass before he used the telephone* does not say he did so
-before he ever used it, so *before* does not entail *before ever*. -/
 theorem before_not_beforeEver :
     ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ ¬ Tense.beforeEver A B :=
   ⟨{pure 5}, {pure 1, pure 9}, ⟨5, by simp, 9, by simp, by decide⟩,
     fun ⟨t, ht, h⟩ => absurd (h 1 (by simp)) (by simp at ht; subst ht; decide)⟩
 
-/-- When *q* has a first time, *p before ever q* holds iff a time of *p* precedes it. -/
 theorem beforeEver_iff_lt_least {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     Tense.beforeEver A B ↔ ∃ t ∈ timeTrace A, t < lb :=
   ⟨fun ⟨a, ha, h⟩ => ⟨a, ha, h lb hlb.1⟩,
@@ -170,11 +154,9 @@ theorem after_and_before_of_extended :
 
 /-! ### Beginnings and endings (§IX–§X) -/
 
-/-- *p before q* implies that *q* began. -/
 theorem nonempty_of_before : Anscombe.before A B → (timeTrace B).Nonempty :=
   fun ⟨_, _, b, hb, _⟩ => ⟨b, hb⟩
 
-/-- For a non-repeating *q* with a first time, *p before q* is *p before q began*. -/
 theorem before_iff_lt_least {lb : T} (hB : (timeTrace B).OrdConnected)
     (hlb : IsLeast (timeTrace B) lb) : Anscombe.before A B ↔ ∃ t ∈ timeTrace A, t < lb := by
   rw [before_iff_beforeEver hB, beforeEver_iff_lt_least hlb, and_iff_left ⟨lb, hlb.1⟩]

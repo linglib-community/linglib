@@ -51,8 +51,6 @@ universe u
 
 variable {P : Type u} {D : Type*} {dim : P → D} {G : SimpleGraph P}
 
-/-- When the compatibility graph is complete multipartite, the personae are the sets with exactly
-one property of each class of mutually incompatible properties. -/
 theorem mem_maximalIndepSets_iff_of_isCompleteMultipartite_compl [Fintype P] [DecidableEq P]
     [DecidableRel G.Adj] (h : Gᶜ.IsCompleteMultipartite) {s : Finset P} :
     s ∈ G.maximalIndepSets ↔ ∀ p, (s.filter fun q ↦ q = p ∨ G.Adj q p).card = 1 := by
@@ -90,7 +88,6 @@ def dimensionalIncompatibility (dim : P → D) : SimpleGraph P where
 instance [DecidableEq P] [DecidableEq D] : DecidableRel (dimensionalIncompatibility dim).Adj :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Two properties are compatible exactly when they are values of different dimensions. -/
 theorem compl_dimensionalIncompatibility :
     (dimensionalIncompatibility dim)ᶜ = (⊤ : SimpleGraph D).comap dim := by
   ext p q
@@ -98,14 +95,11 @@ theorem compl_dimensionalIncompatibility :
     SimpleGraph.top_adj]
   exact ⟨fun ⟨hne, h⟩ hd ↦ h ⟨hne, hd⟩, fun hd ↦ ⟨fun e ↦ hd (congrArg dim e), fun h ↦ hd h.2⟩⟩
 
-/-- The compatibility graph of a family of dimensions is complete multipartite. -/
 theorem isCompleteMultipartite_compl_dimensionalIncompatibility :
     (dimensionalIncompatibility dim)ᶜ.IsCompleteMultipartite := by
   rw [compl_dimensionalIncompatibility]
   exact ⟨fun _ _ _ hab hbc ↦ by simp_all⟩
 
-/-- An incompatibility graph comes from dimensions exactly when its compatibility graph is
-complete multipartite; the dimensions are then the parts. -/
 theorem isCompleteMultipartite_compl_iff :
     Gᶜ.IsCompleteMultipartite ↔
       ∃ (D : Type u) (dim : P → D), dimensionalIncompatibility dim = G := by
@@ -118,8 +112,6 @@ theorem isCompleteMultipartite_compl_iff :
   · rintro ⟨D, dim, rfl⟩
     exact isCompleteMultipartite_compl_dimensionalIncompatibility
 
-/-- The personae of a family of dimensions are the sets with exactly one value of each dimension
-that has values. -/
 theorem mem_maximalIndepSets_dimensionalIncompatibility_iff [Fintype P] [DecidableEq P]
     [DecidableEq D] {s : Finset P} :
     s ∈ (dimensionalIncompatibility dim).maximalIndepSets ↔
@@ -169,7 +161,6 @@ def Pole.polarity : Pole → SignType
   | .competent | .warm | .antiSolidary => 1
   | .incompetent | .cold | .solidary => -1
 
-/-- A pole is determined by its dimension and polarity. -/
 theorem Pole.eq_iff {p q : Pole} :
     p = q ↔ p.dimension = q.dimension ∧ p.polarity = q.polarity := by
   revert p q; decide
@@ -203,12 +194,10 @@ theorem Pole.dimension_surjective : Function.Surjective Pole.dimension
   | .warmth => ⟨.warm, rfl⟩
   | .antiSolidarity => ⟨.solidary, rfl⟩
 
-/-- Two poles are incompatible when one is opposite the other. -/
 theorem Pole.incompatible_adj_iff {p q : Pole} :
     (dimensionalIncompatibility Pole.dimension).Adj p q ↔ q = p.opposite := by
   revert p q; decide
 
-/-- The personae are the sets with exactly one pole of each dimension. -/
 theorem Pole.mem_maximalIndepSets_iff (s : Finset Pole) :
     s ∈ (dimensionalIncompatibility Pole.dimension).maximalIndepSets ↔
       ∀ d, (s.filter (·.dimension = d)).card = 1 :=

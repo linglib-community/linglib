@@ -75,8 +75,6 @@ noncomputable def expectedRegret (a : A) : ℝ := ∫ w, regret U w a ∂μ
 variable {U μ} [Finite W] [MeasurableSingletonClass W] [StandardBorelSpace W] [Nonempty W]
   [IsFiniteMeasure μ]
 
-/-- The expected regret of a best action is the value of observing the world, the expected value
-of perfect information. -/
 theorem valueOfInformation_id_eq_expectedRegret {a : A}
     (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
     valueOfInformation (decisionValue U) Kernel.id μ = expectedRegret U μ a := by
@@ -160,8 +158,6 @@ theorem valueOfInformation_id_utility (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ 
   rw [valueOfInformation_id, decisionValue_utility hε]
   simp [hbest]
 
-/-- The clarification question asks which goal the questioner has, the finest question about the
-goal, so its value as a question in the sense of [van-rooy-2003] is `min ε δ`. -/
 theorem questionUtility_bot (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ δ) :
     Question.utility (utility δ) (prior ε) ⊥ = min (ε : ℝ) δ := by
   rw [Question.utility_bot, valueOfInformation_id_utility hε hδ]
@@ -178,8 +174,6 @@ theorem coe_clarifyProb (τ c : ℝ) (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ �
     (clarifyProb τ c ε δ : ℝ) = sigmoid (τ * (min (ε : ℝ) δ - c)) := by
   rw [clarifyProb, unitInterval.sigmoid, Subtype.coind_coe, valueOfInformation_id_utility hε hδ]
 
-/-- With a costly exhaustive answer, higher uncertainty means more clarification, the paper's
-TL;JustAsk. -/
 theorem tl_justAsk {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hδ : 0 ≤ δ) (hε : εL < εH)
     (hH : (εH : ℝ) ≤ 1 / 2) (hL : (εL : ℝ) < δ) : clarifyProb τ c εL δ < clarifyProb τ c εH δ := by
   have hLH : (εL : ℝ) < εH := hε
@@ -187,16 +181,12 @@ theorem tl_justAsk {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hδ : 0 ≤ δ) (hε : �
   rw [coe_clarifyProb τ c (hLH.le.trans hH) hδ, coe_clarifyProb τ c hH hδ, min_eq_left hL.le]
   exact sigmoid_lt (mul_lt_mul_of_pos_left (by linarith [lt_min hLH hL]) hτ)
 
-/-- With an exhaustive answer cheaper than either uncertainty, uncertainty makes no difference to
-clarification, the paper's NoNeedToAsk. -/
 theorem noNeedToAsk (τ c : ℝ) (hδ : 0 ≤ δ) (hL : δ ≤ εL) (hH : δ ≤ εH)
     (hεL : (εL : ℝ) ≤ 1 / 2) (hεH : (εH : ℝ) ≤ 1 / 2) :
     clarifyProb τ c εL δ = clarifyProb τ c εH δ :=
   Subtype.ext <| by
     rw [coe_clarifyProb τ c hεL hδ, coe_clarifyProb τ c hεH hδ, min_eq_right hL, min_eq_right hH]
 
-/-- Once uncertainty exceeds the smaller cost, a costlier exhaustive answer means more
-clarification, the main effect of option-space size on clarification in Experiment 1. -/
 theorem clarification_rises_with_cost {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hε : (ε : ℝ) ≤ 1 / 2)
     (hS : 0 ≤ δS) (hεS : δS < ε) (hδ : δS < δL) :
     clarifyProb τ c ε δS < clarifyProb τ c ε δL := by
@@ -204,8 +194,6 @@ theorem clarification_rises_with_cost {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hε :
   rw [coe_clarifyProb τ c hε hS, coe_clarifyProb τ c hε (hS.trans hδ.le), min_eq_right hεS.le]
   exact sigmoid_lt (mul_lt_mul_of_pos_left (by linarith [lt_min hεS hδ]) hτ)
 
-/-- Uncertainty raises clarification when the exhaustive answer is costly and leaves it unchanged
-when it is cheap, the interaction the paper tests. -/
 theorem uncertainty_matters_most_when_costly {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hS : 0 ≤ δS)
     (hSL : δS ≤ εL) (hε : εL < εH) (hH : (εH : ℝ) ≤ 1 / 2) (hL : (εL : ℝ) < δL) :
     clarifyProb τ c εL δS = clarifyProb τ c εH δS ∧
@@ -214,8 +202,6 @@ theorem uncertainty_matters_most_when_costly {τ : ℝ} (hτ : 0 < τ) (c : ℝ)
   exact ⟨noNeedToAsk τ c hS hSL (hSL.trans hLH.le) (hLH.le.trans hH) hH,
     tl_justAsk hτ c (hS.trans (hSL.trans hL.le)) hε hH hL⟩
 
-/-- Without cost or without uncertainty, the ablated models of the model comparison, the gate is
-the same in every condition. -/
 theorem clarifyProb_of_ablated (τ c : ℝ) (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ δ)
     (h : (ε : ℝ) = 0 ∨ δ = 0) : (clarifyProb τ c ε δ : ℝ) = sigmoid (τ * (0 - c)) := by
   rw [coe_clarifyProb τ c hε hδ]
@@ -280,8 +266,6 @@ theorem reaction_real_act (τ c α : ℝ) (ε : I) (δ : ℝ) (r : Response) :
   have : Reaction.act ⁻¹' {.act r} = {r} := by ext; simp
   simp [reaction, measureReal_def, Measure.map_apply .of_discrete (.singleton _), this]
 
-/-- With an exhaustive answer cheaper than either uncertainty, higher uncertainty means more
-exhaustive answers, the paper's JustListThemAll. -/
 theorem justListThemAll (τ c : ℝ) {α : ℝ} (hα : 0 < α) (hS : 0 ≤ δS) (hSL : δS ≤ εL)
     (hε : εL < εH) (hH : (εH : ℝ) ≤ 1 / 2) :
     (reaction τ c α εL δS).real {.act .exh} < (reaction τ c α εH δS).real {.act .exh} := by
@@ -293,9 +277,6 @@ theorem justListThemAll (τ c : ℝ) {α : ℝ} (hα : 0 < α) (hS : 0 ≤ δS) 
 
 /-! ### The gate as a softened clarify-or-commit rule -/
 
-/-- The clarification question reveals the goal, so as a question of [dong-etal-2026] it is the
-identity kernel, and the gate exceeds one half exactly when their agent, with asking cost `c`,
-clarifies. -/
 theorem half_lt_clarifyProb_iff {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (ε : I) (δ : ℝ) :
     1 / 2 < (clarifyProb τ c ε δ : ℝ) ↔
       DongEtAl2026.Clarifies (utility δ) (prior ε) (fun _ : Unit ↦ Kernel.id) c {()} := by

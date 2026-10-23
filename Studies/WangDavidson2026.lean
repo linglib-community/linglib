@@ -118,15 +118,12 @@ def george (f : Bool → Bool → Bool) (a b : SignType) : SignType :=
     else 0
   else 0
 
-/-- On inclusive disjunction George's algorithm is Strong Kleene. -/
 theorem george_or : george (· || ·) = (· ⊔ ·) := by
   funext a b; revert a b; decide
 
-/-- On exclusive disjunction George's algorithm is Strong Kleene too. -/
 theorem george_xor : george (· ^^ ·) = fun a b ↦ -(a * b) := by
   funext a b; revert a b; decide
 
-/-- George's algorithm filters conjunction from left to right only. -/
 theorem filtersLR_george_and : FiltersLR (george (· && ·)) := ⟨-1, by decide⟩
 
 theorem not_filtersRL_george_and : ¬ FiltersRL (george (· && ·)) := by
@@ -168,15 +165,12 @@ def xorCCPs : List (CCP.Partial W) :=
    diff (chain true α true β) (chain false α false β),
    diff (chain true β true α) (chain false β false α)]
 
-/-- A presupposition satisfied on `C[α]` and on `C[¬α]` is satisfied on `C`. -/
 theorem subset_support_of_split (h₁ : {w ∈ s | α w = 1} ⊆ Function.support β)
     (h₂ : s \ {w ∈ s | α w = 1} ⊆ Function.support β) : s ⊆ Function.support β := fun w hw ↦ by
   by_cases ha : α w = 1
   · exact h₁ ⟨hw, ha⟩
   · exact h₂ ⟨hw, fun h ↦ ha h.2⟩
 
-/-- Every context change potential for exclusive disjunction is admitted only by a context
-satisfying both presuppositions, so exclusive disjunction does not filter. -/
 theorem xorCCPs_admits :
     ∀ u ∈ xorCCPs α β, u.Admits s →
       s ⊆ Function.support α ∧ s ⊆ Function.support β := by
@@ -191,8 +185,6 @@ theorem xorCCPs_admits :
   · exact ⟨h₁, subset_support_of_split α β h₂ h₄⟩
   · exact ⟨subset_support_of_split β α h₂ h₄, h₁⟩
 
-/-- Inclusive dynamic disjunction, by contrast, filters, since a context can admit `α ∨ β`
-without satisfying `β`'s presupposition. -/
 theorem exists_disj_admits_not_admits :
     ∃ α β : Bool → SignType, (disj (ofTrivalent α) (ofTrivalent β)).Admits Set.univ ∧
       ¬ Set.univ ⊆ Function.support β := by
@@ -226,12 +218,8 @@ def bathAlts : List (Val → SignType) :=
 /-- The inclusive bathroom disjunction. -/
 def bathOr : Val → SignType := fun v ↦ bathLeft v ⊔ bathRight v
 
-/-- EXH¹ keeps the filtering — where the left disjunct is true and the right undefined, the
-exhaustified disjunction is true. -/
 theorem exh1_bathOr : exh1 bathAlts bathOr (true, false) = 1 := by decide
 
-/-- EXH² undoes it — the undefined conjunction alternative makes the exhaustified disjunction
-undefined there. -/
 theorem exh2_bathOr : exh2 bathAlts bathOr (true, false) = 0 := by decide
 
 end WangDavidson2026

@@ -159,8 +159,6 @@ def «ɨ» : Segment := .ofChart .«ɨ»
 /-- The vowels of Amharic. -/
 def vowels : Finset Segment := ⟨↑[a, e, i, o, u, «ə», «ɨ»], by decide +kernel⟩
 
-/-- The consonants and vowels, in the order of PHOIBLE's inventory 131, are the segments of its
-phonemes other than the geminates, which are [+long]. -/
 theorem amh_phonemes_map :
     ((Inventories.Amharic.amh.phonemes.filter (·.features .long ≠ some true)).map
         (Segment.ofChart ·.features)) =

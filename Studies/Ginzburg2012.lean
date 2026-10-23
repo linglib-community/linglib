@@ -297,8 +297,6 @@ The Question Introduction Appropriateness Condition (52) p. 89 lets a question
 enter QUD only if no fact resolves it; (53) builds it into the gameboard type
 as `non-resolve-cond`, here the predicate `Gameboard.NonResolveCond`. -/
 
-/-- Ask QUD-incrementation keeps `non-resolve-cond` exactly when no fact
-resolves the question asked. -/
 theorem askQud_nonResolveCond_iff {d d' : Board P Fact Q} {q : Q}
     (hm : d.latestContent = some (.ask q)) (h : Rule.askQud.apply d = some d') :
     d'.NonResolveCond Content.Resolves ↔
@@ -306,14 +304,12 @@ theorem askQud_nonResolveCond_iff {d d' : Board P Fact Q} {q : Q}
   simp only [Rule.apply, hm, Option.some.injEq] at h
   exact h ▸ d.nonResolveCond_pushQud_iff _
 
-/-- Fact update/QUD-downdate restores `non-resolve-cond`. -/
 theorem factUpdate_nonResolveCond {d d' : Board P Fact Q}
     (h : Rule.factUpdate.apply d = some d') : d'.NonResolveCond Content.Resolves := by
   unfold Rule.apply at h
   split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h <;>
     exact Option.some.inj h.2 ▸ Gameboard.nonResolveCond_downdateQud _ _
 
-/-- Accepting `p` downdates `p?`. -/
 theorem factUpdate_polar {d d' : Board P Fact Q} {p : Fact}
     (hm : d.latestContent = some (.accept p))
     (h : Rule.factUpdate.apply d = some d') : ∀ i ∈ d'.qud, i.question ≠ Content.polar p := by
@@ -341,7 +337,6 @@ def GenreRelevant (G : Set (Board P Fact Q)) (d : Board P Fact Q) (u : Utterance
 def IsInitiating (G : Set (Board P Fact Q)) (d : Board P Fact Q) (u : Utterance Fact Q) : Prop :=
   d.qud = [] ∧ GenreRelevant G d u
 
-/-- Every initiating move is coherent by Free Speech. -/
 theorem coherent_of_isInitiating {G : Set (Board P Fact Q)} {d : Board P Fact Q}
     {u : Utterance Fact Q} (h : IsInitiating G d u) : Coherent d u :=
   ⟨.freeSpeech u .keep, d.recordMove u, by simp [Rule.apply, h.1, Turn.act], by simp⟩
@@ -353,7 +348,6 @@ Identification (ex. 70 p. 192) without the turn change: the speaker of a
 pending utterance accommodates the issue of what they meant by one of its
 constituents and continues co-propositionally with it. -/
 
-/-- Parameter Identification is repair followed by a turn change. -/
 theorem parameterIdentification_eq_repair_swapTurn (u : SubUtterance grammar)
     (cr : Utterance Fact Q) (d : Board P Fact Q) :
     (Rule.parameterIdentification u cr).apply d =
@@ -555,8 +549,6 @@ def casualChat : Set (Board Agent Fact Q) :=
 
 instance : DecidablePred (· ∈ casualChat) := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- After A's greeting, "I'm off" is an initiating move relative to CasualChat:
-B's assertion, accepted by A, resolves how B is. -/
 theorem initiating_off :
     IsInitiating casualChat ((initial {.here}).recordMove (ofMove IllocutionaryAct.greet))
       (ofMove (.assert .off)) :=
@@ -633,8 +625,6 @@ theorem dgb_B : run traceB initial = some
     { speaker := .B, addressee := .A, pending := [u₀], qud := [⟨.whoAsked, {george}⟩],
       moves := [u₁] } := by decide
 
-/-- The two participants have processed the same utterances and disagree on
-QUD and on PENDING. -/
 theorem differ : ∀ dA ∈ run traceA initial, ∀ dB ∈ run traceB initial,
     dA.qud ≠ dB.qud ∧ dA.pending ≠ dB.pending := by
   simp only [dgb_A, dgb_B, Option.mem_def, Option.some.injEq]
@@ -663,7 +653,6 @@ section Turn
 variable {P Fact Q : Type} [DecidableEq P] [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
   [Clarifiable P Fact Q] {d d' : Board P Fact Q}
 
-/-- Parameter Identification passes the turn to the clarifier. -/
 theorem speaker_parameterIdentification {u : SubUtterance grammar} {cr : Utterance Fact Q}
     (h : (Rule.parameterIdentification u cr).apply d = some d') : d'.speaker = d.addressee := by
   unfold Rule.apply at h
@@ -672,7 +661,6 @@ theorem speaker_parameterIdentification {u : SubUtterance grammar} {cr : Utteran
   cases h
   rfl
 
-/-- Parameter Focussing passes the turn to the clarifier. -/
 theorem speaker_parameterFocussing {u : SubUtterance grammar} {cr : Utterance Fact Q}
     (h : (Rule.parameterFocussing u cr).apply d = some d') : d'.speaker = d.addressee := by
   unfold Rule.apply at h
@@ -681,7 +669,6 @@ theorem speaker_parameterFocussing {u : SubUtterance grammar} {cr : Utterance Fa
   cases h
   rfl
 
-/-- Repair keeps the turn. -/
 theorem speaker_repair {u : SubUtterance grammar} {cr : Utterance Fact Q}
     (h : (Rule.repair u cr).apply d = some d') : d'.speaker = d.speaker := by
   unfold Rule.apply at h
@@ -690,7 +677,6 @@ theorem speaker_repair {u : SubUtterance grammar} {cr : Utterance Fact Q}
   cases h
   rfl
 
-/-- QSPEC leaves the turn to its argument. -/
 theorem speaker_qspec {u : Utterance Fact Q} {t : Turn} (h : (Rule.qspec u t).apply d = some d') :
     d'.speaker = (t.act d).speaker := by
   unfold Rule.apply at h
@@ -778,7 +764,6 @@ def Row.rule (r : Row) : Rule Agent Fact Q :=
 /-- The seven rows of exx. 22–24. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Each row's rule applies to its gameboard and leaves the turn where the book records it. -/
 theorem rows_turn :
     ∀ r ∈ rows, (r.rule.apply r.board).map (·.speaker) = some (r.turn.act r.board).speaker := by
   decide

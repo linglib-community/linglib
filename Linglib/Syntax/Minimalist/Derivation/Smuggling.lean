@@ -53,7 +53,6 @@ instance (d : Derivation) (i : Nat) (xp w : SyntacticObject) :
     Decidable (d.IsSmugglingStep i xp w) := by
   unfold IsSmugglingStep; infer_instance
 
-/-- A smuggling step of a derivation is one of every extension. -/
 theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
     (d.append steps).IsSmugglingStep i xp w := by
   obtain ⟨m, hm, hc, h₁, h₂, h₃⟩ := h
@@ -61,12 +60,10 @@ theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
   exact ⟨m, by rwa [mover?_append_of_lt hi], hc, (cCommandsAt_append_of_le hi.le).2 h₁,
     (cCommandsAt_append_of_le hi).2 h₂, fun h ↦ h₃ ((cCommandsAt_append_of_le hi).1 h)⟩
 
-/-- What a step smuggles is frozen, since the smuggler contains it. -/
 theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=
   let ⟨m, hm, hc, _⟩ := h
   ⟨m, mem_movedItems_of_mem_mover? hm, hc⟩
 
-/-- Moving the smuggled phrase on violates Freezing. -/
 theorem IsSmugglingStep.not_obeysFreezing_append_im (h : d.IsSmugglingStep i xp w)
     (side : Edge) : ¬ (d.append [.im xp side]).ObeysFreezing :=
   fun h' ↦ (obeysFreezing_append_im_iff.1 h').2 h.frozen

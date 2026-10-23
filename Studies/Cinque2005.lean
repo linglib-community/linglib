@@ -159,8 +159,6 @@ def Stage.order (st : Stage) : List Cat := st.derivation.surfaceCats
 /-- The orders some derivation reaches. -/
 def reachableOrders : List (List Cat) := (stages.map Stage.order).eraseDups
 
-/-- Universal 20 is derived, an order being reachable iff it is attested, so the 14 attested
-orders have derivations and the 10 unattested do not. -/
 theorem u20_reachable_iff_attested :
     table.all fun r => decide (r.order ∈ reachableOrders) = decide r.Attested := by decide +kernel
 
@@ -219,8 +217,6 @@ theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by deci
 extraction of the noun past Dem. -/
 theorem markedOptions_p : markedOptions [.N, .Dem, .A, .Num] = some 1 := by decide +kernel
 
-/-- Marked options predict the extremes of frequency. An attested order has no marked option iff
-it is found in very many languages, and an order with two is found in few or very few. -/
 theorem markedness_extremes :
     (table.filter fun r => decide r.Attested).all fun r =>
       decide ((markedOptions r.order = some 0 ↔ r.freq = .veryMany) ∧

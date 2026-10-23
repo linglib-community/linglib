@@ -88,10 +88,6 @@ def ofTotal (φ : α → α) : PartialUpdate α := fun s ↦ Part.some (φ s)
     composition law of partial functions. -/
 def seq (φ ψ : PartialUpdate α) : PartialUpdate α := ψ.comp φ
 
-/-- Sequencing is Kleisli composition for the `Part` monad, since a partial update is
-    definitionally a Kleisli arrow `α → Part α`. This is the partiality column of the effect
-    view of dynamic semantics, beside the powerset column in `Collapse.lean` ([moggi-1991],
-    [shan-2001]). -/
 theorem seq_eq_kleisliComp (φ ψ : α → Part α) :
     (seq φ ψ : α → Part α) = φ >=> ψ := rfl
 
@@ -119,20 +115,13 @@ theorem supports_iff_mem : supports s φ ↔ s ∈ φ s := Iff.rfl
 
 theorem supports_iff_eq_some : supports s φ ↔ φ s = Part.some s := Part.eq_some_iff.symm
 
-/-- After a supported update, sequencing continues from the same state. -/
 theorem supports.seq_apply (h : supports s φ) (ψ : PartialUpdate α) : seq φ ψ s = ψ s := by
   rw [seq, PFun.comp_apply, supports_iff_eq_some.1 h, Part.bind_some]
 
-/-- Support is acceptance, `s` supporting `φ` exactly when `s` is a fixed point of the
-extension of `φ` along `Part.bind`. -/
 theorem supports_iff_isFixedPt :
     supports s φ ↔ Function.IsFixedPt (· >>= φ) (pure s : Part α) :=
   supports_iff_eq_some.trans isFixedPt_bind_pure_iff.symm
 
-/-- Dynamic entailment between partial updates, every defined update with `φ` supporting `ψ`
-([veltman-1996]'s acceptance consequence; [heim-1982]'s entailment between file change
-potentials), is `Entails` of their extensions along `Part.bind`. It is absorption, sequencing
-`ψ` after `φ` changing nothing. -/
 theorem entails_bind_iff_seq_eq : Entails [(· >>= φ)] (· >>= ψ) ↔ seq φ ψ = φ := by
   rw [entails_singleton_iff, seq_eq_kleisliComp]
   refine ⟨fun h ↦ funext fun s ↦ ?_, fun h ↦ funext fun x ↦ ?_⟩
@@ -140,8 +129,6 @@ theorem entails_bind_iff_seq_eq : Entails [(· >>= φ)] (· >>= ψ) ↔ seq φ �
   · simp only [Function.comp_apply, bind_assoc]
     exact congrArg (x >>= ·) h
 
-/-- Entailment between partial updates holds exactly when every defined update with `φ` supports
-`ψ`. -/
 theorem entails_bind_iff : Entails [(· >>= φ)] (· >>= ψ) ↔ ∀ s, ∀ s' ∈ φ s, supports s' ψ := by
   rw [entails_bind_iff_seq_eq]
   refine ⟨fun h s s' hs' ↦ ?_, fun h ↦ funext fun s ↦ Part.ext fun t ↦ ?_⟩
@@ -166,27 +153,20 @@ theorem supports.admits (h : supports s φ) : φ.Admits s := Part.dom_iff_mem.2 
 theorem Presupposes.trans (h₁ : Presupposes φ ψ) (h₂ : Presupposes ψ χ) : Presupposes φ χ :=
   fun s hs ↦ h₂ s (h₁ s hs).admits
 
-/-- A sequence presupposes what its first update presupposes. -/
 theorem Presupposes.seq_left (h : Presupposes φ ψ) : Presupposes (seq φ χ) ψ :=
   fun s ⟨hs, _⟩ ↦ h s hs
 
 /-! ### The satisfaction law -/
 
-/-- The Karttunen satisfaction law ([karttunen-1974-presupposition]), that `s` admits `φ ∧ ψ`
-    iff `s` admits `φ` and `s[φ]` admits `ψ`, holds by construction as the domain condition of
-    `Part.bind`. -/
 theorem admits_seq (φ ψ : PartialUpdate α) (s : α) :
     (seq φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
   Iff.rfl
 
-/-- The satisfaction law, with admittance of the first conjunct given. -/
 theorem admits_seq_iff (φ ψ : PartialUpdate α) (s : α)
     (h : φ.Admits s) :
     (seq φ ψ).Admits s ↔ ψ.Admits ((φ s).get h) :=
   ⟨fun ⟨_, hb⟩ ↦ hb, fun hb ↦ ⟨h, hb⟩⟩
 
-/-- Images along a composite of partial functions compute in stages. [UPSTREAM] candidate, as
-mathlib has `PFun.preimage_comp` but no image counterpart. -/
 theorem _root_.PFun.image_comp {α β γ : Type*} (f : α →. β) (g : β →. γ) (s : Set α) :
     (g.comp f).image s = g.image (f.image s) := by
   ext c
@@ -231,7 +211,6 @@ def ofTrivalent (p : W → SignType) : CCP.Partial W :=
 theorem admits_ofTrivalent (p : W → SignType) (s : Set W) :
     (ofTrivalent p).Admits s ↔ s ⊆ Function.support p := Iff.rfl
 
-/-- Admittance of a trivalent proposition is disjointness from its extension gap. -/
 theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → SignType) (s : Set W) :
     (ofTrivalent p).Admits s ↔ Disjoint s (Trivalent.gapExt p) := by
   rw [admits_ofTrivalent, Trivalent.support_eq_compl_gapExt, Set.subset_compl_iff_disjoint_right]
@@ -239,21 +218,16 @@ theorem admits_ofTrivalent_iff_disjoint_gapExt (p : W → SignType) (s : Set W) 
 @[simp] theorem ofTrivalent_get (p : W → SignType) (s : Set W) (h : (ofTrivalent p s).Dom) :
     (ofTrivalent p s).get h = {w ∈ s | p w = 1} := rfl
 
-/-- `t` is the update of `s` exactly when `s` lies in the proposition's domain and `t` is
-its positive extension within `s`. -/
 theorem mem_ofTrivalent (p : W → SignType) (s t : Set W) :
     t ∈ ofTrivalent p s ↔ s ⊆ Function.support p ∧ t = {w ∈ s | p w = 1} :=
   ⟨fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩, fun ⟨h, e⟩ ↦ ⟨h, e.symm⟩⟩
 
-/-- A context is a fixed point of the update of a trivalent proposition iff the proposition is
-true throughout it ([heim-1992]'s `c + φ = same`). -/
 theorem mem_ofTrivalent_self (p : W → SignType) (s : Set W) :
     s ∈ ofTrivalent p s ↔ ∀ w ∈ s, p w = 1 := by
   refine ⟨fun ⟨_, e⟩ ↦ Set.sep_eq_self_iff_mem_true.1 e, fun h ↦ ⟨fun w hw ↦ ?_, ?_⟩⟩
   · simp [Function.mem_support, h w hw]
   · exact Set.sep_eq_self_iff_mem_true.2 h
 
-/-- Propositions that agree on the context update it alike. -/
 theorem ofTrivalent_congr {p q : W → SignType} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
     ofTrivalent p s = ofTrivalent q s :=
   Part.ext' (forall₂_congr fun w hw ↦ by simp [h w hw])
@@ -275,8 +249,6 @@ second disjunct in the ¬φ local context. -/
 def disj (φ ψ : CCP.Partial P) : CCP.Partial P :=
   fun s ↦ (φ s).bind fun sφ ↦ (ψ (s \ sφ)).map fun sψ ↦ sφ ∪ sψ
 
-/-- The Heim conditional `if φ, ψ` is `not (φ and not ψ)`, the equivalence by which
-[beaver-2001] defines *implies*. -/
 theorem cond_eq_neg_seq_neg (φ ψ : CCP.Partial P) :
     cond φ ψ = neg (PartialUpdate.seq φ (neg ψ)) := by
   funext s
@@ -297,19 +269,14 @@ theorem isEliminative_cond (φ ψ : CCP.Partial P) : (cond φ ψ).IsEliminative 
   obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact Set.sdiff_subset
 
-/-- Negation projects, `s` admitting `¬φ` iff it admits `φ`. -/
 @[simp] theorem admits_neg (φ : CCP.Partial P) (s : Set P) :
     (neg φ).Admits s ↔ φ.Admits s :=
   Iff.rfl
 
-/-- The conditional admits `s` iff `s` admits `φ` and `s[φ]` admits `ψ` — the same
-    condition as conjunction ([karttunen-1974-presupposition]). -/
 theorem admits_cond (φ ψ : CCP.Partial P) (s : Set P) :
     (cond φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
   Iff.rfl
 
-/-- The disjunction admits `s` iff `s` admits `φ` and the ¬φ local context `s \ s[φ]`
-    admits `ψ`. -/
 theorem admits_disj (φ ψ : CCP.Partial P) (s : Set P) :
     (disj φ ψ).Admits s ↔
       ∃ h : φ.Admits s, ψ.Admits (s \ (φ s).get h) :=
@@ -323,22 +290,16 @@ context updated with the first argument, disjunction in the context updated with
 
 open Presupposition (Connective)
 
-/-- Dynamic conjunction admits `s` iff `s` admits the first conjunct and the second conjunct's
-local context admits the second. -/
 theorem admits_seq_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) ψ).Admits s ↔
       s ⊆ Function.support p ∧ ψ.Admits (Connective.conj.localContext s (Trivalent.posExt p)) :=
   ⟨fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩, fun ⟨h, hψ⟩ ↦ ⟨h, hψ⟩⟩
 
-/-- The conditional admits `s` iff `s` admits the antecedent and the consequent's local context
-admits the consequent. -/
 theorem admits_cond_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
     (cond (ofTrivalent p) ψ).Admits s ↔
       s ⊆ Function.support p ∧ ψ.Admits (Connective.cond.localContext s (Trivalent.posExt p)) :=
   admits_seq_ofTrivalent_iff p ψ s
 
-/-- Disjunction admits `s` iff `s` admits the first disjunct and the second disjunct's local
-context admits the second. -/
 theorem admits_disj_ofTrivalent_iff (p : W → SignType) (ψ : CCP.Partial W) (s : Set W) :
     (disj (ofTrivalent p) ψ).Admits s ↔
       s ⊆ Function.support p ∧ ψ.Admits (Connective.disj.localContext s (Trivalent.posExt p)) := by
@@ -356,21 +317,16 @@ satisfaction in the local contexts (`Presupposition.subset_support_meetMiddle_if
 siblings), so Karttunen filtering is the composition law of partial updates, not a
 stipulation. -/
 
-/-- Dynamic conjunction admits `s` iff the Middle Kleene conjunction is defined throughout it. -/
 theorem admits_seq_ofTrivalent (p q : W → SignType) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (p w).meetMiddle (q w) :=
   (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_support_meetMiddle_iff.symm
 
-/-- The dynamic conditional admits `s` iff the Middle Kleene conditional is defined throughout
-it. -/
 theorem admits_cond_ofTrivalent (p q : W → SignType) (s : Set W) :
     (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (-p w).joinMiddle (q w) :=
   (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_neg_joinMiddle_iff.symm
 
-/-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
-the ¬φ local context being Karttunen's negative-antecedent filtering. -/
 theorem admits_disj_ofTrivalent (p q : W → SignType) (s : Set W) :
     (disj (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (p w).joinMiddle (q w) :=
@@ -378,14 +334,11 @@ theorem admits_disj_ofTrivalent (p q : W → SignType) (s : Set W) :
 
 /-! ### Presupposition -/
 
-/-- An update presupposes a plain proposition iff every context admitting it entails the
-proposition, [heim-1983]'s definition of presupposition. -/
 theorem presupposes_ofProp_iff (φ : CCP.Partial W) (p : W → Prop) [DecidablePred p] :
     PartialUpdate.Presupposes φ (ofTrivalent fun w ↦ SignType.ofProp (p w)) ↔
       ∀ c, φ.Admits c → ∀ w ∈ c, p w := by
   simp only [PartialUpdate.Presupposes, supports, mem_ofTrivalent_self, SignType.ofProp_eq_one_iff]
 
-/-- An update of a trivalent proposition presupposes that the proposition is defined. -/
 theorem presupposes_ofTrivalent (p : W → SignType) :
     PartialUpdate.Presupposes (ofTrivalent p) (ofTrivalent fun w ↦ SignType.ofProp (p w ≠ 0)) :=
   (presupposes_ofProp_iff _ _).2 fun _ h _ hw ↦ (admits_ofTrivalent _ _).1 h hw
@@ -406,12 +359,10 @@ theorem neg (h : Presupposes φ ψ) : Presupposes (CCP.Partial.neg φ) ψ := h
 theorem cond_left (h : Presupposes φ ψ) : Presupposes (CCP.Partial.cond φ χ) ψ :=
   fun s ⟨hs, _⟩ ↦ h s hs
 
-/-- A presupposition of the second conjunct projects conditionalised on the first. -/
 theorem seq_right (h : Presupposes φ ψ) : Presupposes (seq χ φ) (CCP.Partial.cond χ ψ) := by
   rintro s ⟨hχ, hφ⟩
   exact Part.mem_bind_iff.2 ⟨_, Part.get_mem hχ, (Part.mem_map_iff _).2 ⟨_, h _ hφ, by simp⟩⟩
 
-/-- A presupposition of the consequent projects conditionalised on the antecedent. -/
 theorem cond_right (h : Presupposes φ ψ) :
     Presupposes (CCP.Partial.cond χ φ) (CCP.Partial.cond χ ψ) :=
   fun s hs ↦ h.seq_right s hs

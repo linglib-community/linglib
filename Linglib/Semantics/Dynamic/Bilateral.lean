@@ -106,7 +106,6 @@ def neg (φ : BilateralDen W V E) : BilateralDen W V E where
 
 @[inherit_doc] scoped prefix:max "~" => neg
 
-/-- Double negation is the identity, definitionally. -/
 @[simp] theorem neg_neg (φ : BilateralDen W V E) : ~~φ = φ := rfl
 
 instance : InvolutiveNeg (BilateralDen W V E) where
@@ -129,14 +128,12 @@ def assertable (φ : BilateralDen W V E)
     (c : Set (Possibility W V (Flat E))) : Prop :=
   φ.unknownUpdate c = ∅
 
-/-- The unknown update is invariant under negation. -/
 theorem unknownUpdate_neg (φ : BilateralDen W V E) (s) :
     (~φ).unknownUpdate s = φ.unknownUpdate s := by
   ext p
   simp only [unknownUpdate, neg, Set.mem_ofPred_eq,
     and_comm (a := p ∉ lowerClosure (φ.negative s))]
 
-/-- Worldly atoms never gap. -/
 theorem unknownUpdate_atom (pred : W → Prop) (s) :
     (atom pred (V := V) (E := E)).unknownUpdate s = ∅ := by
   ext p
@@ -147,8 +144,6 @@ theorem unknownUpdate_atom (pred : W → Prop) (s) :
   · exact hpos (subset_lowerClosure ⟨hp, h⟩)
   · exact hneg (subset_lowerClosure ⟨hp, h⟩)
 
-/-- Every possibility subsists positively, subsists negatively, or is
-unknown. -/
 theorem partition (φ : BilateralDen W V E) (hp : p ∈ s) :
     p ∈ lowerClosure (φ.positive s) ∨ p ∈ lowerClosure (φ.negative s) ∨ p ∈ φ.unknownUpdate s := by
   by_cases h1 : p ∈ lowerClosure (φ.positive s)
@@ -157,8 +152,6 @@ theorem partition (φ : BilateralDen W V E) (hp : p ∈ s) :
     · exact Or.inr (Or.inl h2)
     · exact Or.inr (Or.inr ⟨hp, h1, h2⟩)
 
-/-- Under assertability, every possibility subsists in one of the
-dimensions. -/
 theorem partition_assertable (h : φ.assertable s) (hp : p ∈ s) :
     p ∈ lowerClosure (φ.positive s) ∨ p ∈ lowerClosure (φ.negative s) := by
   rcases partition φ hp with h1 | h2 | h3
@@ -196,15 +189,12 @@ def disj (φ ψ : BilateralDen W V E) : BilateralDen W V E where
 
 @[inherit_doc] scoped infixl:60 " ⊕ " => disj
 
-/-- Conjunction associates in the positive dimension. -/
 theorem conj_assoc_positive (φ ψ χ : BilateralDen W V E) (s) :
     ((φ ⊙ ψ) ⊙ χ).positive s = (φ ⊙ (ψ ⊙ χ)).positive s := rfl
 
-/-- De Morgan: `¬(φ ∨ ψ)` and `¬φ ∧ ¬ψ` agree positively, definitionally. -/
 theorem de_morgan_disj (φ ψ : BilateralDen W V E) (s) :
     (~(φ ⊕ ψ)).positive s = ((~φ) ⊙ (~ψ)).positive s := rfl
 
-/-- De Morgan: `¬(φ ∧ ψ)` and `¬φ ∨ ¬ψ` agree positively. -/
 theorem de_morgan_conj (φ ψ : BilateralDen W V E) (s) :
     (~(φ ⊙ ψ)).positive s = ((~φ) ⊕ (~ψ)).positive s := by
   have h := unknownUpdate_neg φ s
@@ -238,9 +228,6 @@ def exists_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E where
 def forall_ (x : V) (φ : BilateralDen W V E) : BilateralDen W V E :=
   ~(exists_ x (~φ))
 
-/-- Egli's theorem, definitionally: an existential scoping over a
-conjunction binds into the second conjunct, `(∃x φ) ∧ ψ = ∃x (φ ∧ ψ)` in
-the positive dimension — the key property for cross-sentential anaphora. -/
 theorem egli (x : V) (φ ψ : BilateralDen W V E) (s) :
     ((exists_ x φ) ⊙ ψ).positive s = (exists_ x (φ ⊙ ψ)).positive s := rfl
 

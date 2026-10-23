@@ -72,8 +72,6 @@ def qr : ∀ {n : ℕ}, L.BoundedFormula α n → ℕ
 @[simp] theorem qr_ex (φ : L.BoundedFormula α (n + 1)) : φ.ex.qr = φ.qr + 1 := by
   simp [BoundedFormula.ex]
 
-/-- Quantifier rank is invariant under relabelling free variables along a bijection
-(`relabelEquiv` acts structurally, only on the terms inside atomic formulas). -/
 @[simp] theorem qr_relabelEquiv {β : Type*} (g : α ≃ β) :
     ∀ {n : ℕ} (φ : L.BoundedFormula α n), (relabelEquiv g φ).qr = φ.qr
   | _, .falsum => rfl
@@ -103,11 +101,9 @@ theorem qr_iSup_le {β : Type*} [Finite β] {f : β → L.BoundedFormula α n} {
     (h : ∀ b, (f b).qr ≤ k) : (iSup f).qr ≤ k :=
   qr_foldr_le qr_sup qr_bot fun φ hφ => by obtain ⟨b, -, rfl⟩ := List.mem_map.1 hφ; exact h b
 
-/-- An atomic formula has quantifier rank `0`. -/
 theorem IsAtomic.qr_eq_zero {φ : L.BoundedFormula α n} (h : φ.IsAtomic) : φ.qr = 0 := by
   cases h <;> rfl
 
-/-- A quantifier-free formula has quantifier rank `0`. -/
 theorem IsQF.qr_eq_zero {φ : L.BoundedFormula α n} (h : φ.IsQF) : φ.qr = 0 := by
   induction h with
   | falsum => rfl

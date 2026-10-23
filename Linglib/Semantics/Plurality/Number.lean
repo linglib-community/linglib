@@ -69,7 +69,6 @@ theorem additiveIn_sup {Q : D → Prop} {x y : D} (hx : additiveIn Q x) (hy : ad
   rw [sup_assoc]
   exact hx.2 (y ⊔ z) (hy.2 z hz)
 
-/-- The additive elements of a region form a cumulative predicate. -/
 theorem additive_subregion_is_cum (Q : D → Prop) : CUM (additiveIn Q) :=
   fun _ hx _ hy => additiveIn_sup hx hy
 
@@ -86,22 +85,16 @@ abbrev nonAtomsOf (P : D → Prop) (x : D) : Prop := P x ∧ ¬ Atom x
 `atomize P`. -/
 abbrev nonMinimalOf (P : D → Prop) (x : D) : Prop := P x ∧ ¬ atomize P x
 
-/-- The minimal elements of a region of minimal elements are all of them, so
-`(−minimal(+minimal(P)))` is empty. -/
 theorem not_nonMinimalOf_atomize (P : D → Prop) (x : D) : ¬ nonMinimalOf (atomize P) x :=
   fun h ↦ h.2 ⟨h.1, fun _ hy hyx ↦ h.1.2 hy.1 hyx⟩
 
 /-- The minimal non-atoms of `P` form the `[−atomic, +minimal]` region, the dual. -/
 abbrev dualOf (P : D → Prop) : D → Prop := atomize (nonAtomsOf P)
 
-/-- An atom of a region excluding the null individual is minimal in it, so
-`[+atomic]` entails `[+minimal]`. -/
 theorem singular_subset_minimal {P : D → Prop} (hP : ∀ y, P y → ¬ IsBot y) {x : D}
     (hx : atomsOf P x) : atomize P x :=
   ⟨hx.1, fun _ hy hle => hx.2.2 (hP _ hy) hle⟩
 
-/-- Over a region of atoms `[+minimal]` selects everything, so `(+minimal(+atomic(P)))` is
-`(+atomic(P))`, the singular. -/
 theorem atomize_eq_of_atoms {P : D → Prop} (hAll : ∀ x, P x → Atom x) : atomize P = P :=
   funext fun x => propext ⟨fun h => h.1, fun hPx =>
     singular_subset_minimal (fun y hy => (hAll y hy).not_isBot) ⟨hPx, hAll x hPx⟩⟩

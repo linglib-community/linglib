@@ -156,7 +156,6 @@ def window (k : ℕ) (n : Neighborhood Bundle) : Neighborhood Bundle :=
     (n.window m).window k = n.window (min k m) := by
   simp [window, List.take_take]
 
-/-- The window of radius `k` agrees with the neighborhood up to offset `k`. -/
 theorem nth_window [Inhabited Bundle] (n : Neighborhood Bundle) {k : ℕ} {i : ℤ}
     (hi : i.natAbs ≤ k) : (n.window k).nth i = n.nth i := by
   obtain ⟨m, rfl | rfl⟩ := Int.eq_nat_or_neg i
@@ -192,11 +191,9 @@ def along : List (Neighborhood Bundle) := d.mapIdx (around d)
 
 @[simp] theorem focus_around : (around d i b).focus = b := rfl
 
-/-- Reassembling the neighborhood of position `i` gives the string with `b` at `i`. -/
 theorem toList_around (h : i < d.length) : (around d i b).toList = d.set i b := by
   simp [toList, around, List.set_eq_take_append_cons_drop, h]
 
-/-- Terminal `k` of the string sits at offset `k - i` from position `i`. -/
 theorem nth_around [Inhabited Bundle] {k : ℕ} (hi : i ≤ d.length) (hk : k ≠ i) :
     (around d i b).nth (k - i) = d.getD k default := by
   rcases Nat.lt_or_gt_of_ne hk with hk | hk
@@ -219,7 +216,6 @@ theorem nth_around [Inhabited Bundle] {k : ℕ} (hi : i ≤ d.length) (hk : k �
 @[simp] theorem map_focus_along : (along d).map focus = d :=
   List.ext_getElem (by simp) fun _ _ _ ↦ by simp
 
-/-- Each neighborhood of a string reassembles to the string. -/
 theorem toList_of_mem_along {n : Neighborhood Bundle} (h : n ∈ along d) : n.toList = d := by
   obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp h
   rw [toList_around _ _ _ hi, List.set_getElem_self]
@@ -264,7 +260,6 @@ theorem subset_iff : s ⊆ n ↔ ∀ ⦃x⦄, x ∈ s → x ∈ n := Iff.rfl
 
 theorem mem_of_subset (h : s ⊆ n) (hx : x ∈ s) : x ∈ n := h hx
 
-/-- Inclusion compares terminal by terminal. -/
 theorem subset_iff_nth : s ⊆ n ↔ ∀ i, s.nth i ⊆ n.nth i :=
   ⟨fun h i _ hf ↦ subset_iff.1 h (x := (i, _)) hf, fun h ↦ subset_iff.2 fun x hx ↦ h x.1 hx⟩
 
@@ -273,7 +268,6 @@ theorem focus_subset_focus (h : s ⊆ n) : s.focus ⊆ n.focus := subset_iff_nth
 @[simp] theorem empty_subset (n : Neighborhood (Finset F)) : ∅ ⊆ n :=
   subset_iff.2 fun _ h ↦ absurd h notMem_empty
 
-/-- A bundle is included in a neighborhood exactly when its features are on the focus. -/
 @[simp] theorem ofBundle_subset_iff {fs : Finset F} :
     (fs : Neighborhood (Finset F)) ⊆ n ↔ fs ⊆ n.focus :=
   ⟨fun h _ hf ↦ subset_iff.1 h (x := (0, _)) (mem_ofBundle.mpr ⟨rfl, hf⟩),
@@ -375,8 +369,6 @@ def ofFinset (t : Finset (ℤ × F)) : Neighborhood (Finset F) :=
 @[simp] theorem toFinset_ofFinset (t : Finset (ℤ × F)) : (ofFinset t).toFinset = t := by
   ext; simp
 
-/-- A neighborhood presents its finite set of positioned features, and `ofFinset` is the least
-neighborhood presenting a given one. -/
 theorem gc_ofFinset_toFinset :
     GaloisConnection (ofFinset : Finset (ℤ × F) → Neighborhood (Finset F)) toFinset :=
   fun _ _ ↦ by simp [subset_iff, Finset.subset_iff]

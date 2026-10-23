@@ -57,9 +57,6 @@ variable {α β : Formula Var Const Pred} {s : Finset (Index W Var Domain)}
 
 /-! ### The diamond split -/
 
-/-- A subset of a modal pairing supporting an enriched formula yields a non-empty world-set
-witness. The proof projects the worlds, pairs them back with the same assignment, and
-discharges the enrichment. -/
 private theorem poss_of_subset_modalLift {X : Finset W}
     {g : PartialAssign Var Domain} {t : Finset (Index W Var Domain)}
     (hα : α.NEFree) (ht : t ⊆ State.modalLift X g)
@@ -69,8 +66,6 @@ private theorem poss_of_subset_modalLift {X : Finset W}
     State.worldProj_nonempty (nonempty_of_support_enrich h),
     (State.modalLift_worldProj_of_subset ht).symm ▸ support_of_support_enrich hα h⟩
 
-/-- An enriched split disjunction supported on a modal pairing yields a non-empty world-set
-witness for each disjunct. This is the shared core of the free-choice facts. -/
 theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
     (hα : α.NEFree) (hβ : β.NEFree)
     (hsupp : support M (Formula.disj α β).enrich (State.modalLift X g)) :
@@ -80,7 +75,6 @@ theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
   exact ⟨poss_of_subset_modalLift M hα (le_sup_left.trans_eq hsplit) h₁,
     poss_of_subset_modalLift M hβ (le_sup_right.trans_eq hsplit) h₂⟩
 
-/-- A state whose every index sees an enriched split disjunction supports both diamonds. -/
 private theorem possFC_on (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (.poss (Formula.disj α β).enrich) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
@@ -122,9 +116,6 @@ theorem boxFC (hα : α.NEFree) (hβ : β.NEFree)
 `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` is the composite of Fact 7 with an existential under the
 modal, the form Yan's Asher and Heim solutions invoke (see `Studies/Yan2023.lean`). -/
 
-/-- A non-empty subset `t` of a functional extension of a modal lift that supports `γ` yields
-a `◇∃xγ` witness. The proof projects the worlds of `t`, pairs them back with the original
-assignment, and reconstructs `t` by update closure. -/
 private theorem poss_exi_of_subset_extendFunctional
     {γ : Formula Var Const Pred} {X₀ : Finset W}
     {g : PartialAssign Var Domain} {x : Var}
@@ -160,9 +151,6 @@ private theorem poss_exi_of_subset_extendFunctional
   rw [Index.world_update]
   exact (State.mem_modalLift.mp hi).1
 
-/-- Quantified box free choice is `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` for `NE`-free `α`, `β`.
-The enriched premise puts the enriched split disjunction on the functional extension of each
-index's full accessible lift, and each non-empty half yields a `◇∃x` witness. -/
 theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M
       (Formula.enrich (Formula.nec (.exi x (.disj α β)))) s) :
@@ -182,9 +170,6 @@ theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
 
 /-! ### Ignorance (Fact 3) -/
 
-/-- A non-empty substate supporting a constant atom yields the diamond on the whole state
-when `R` is state-based, by transplanting the substate's worlds to every index. This is sound
-only because constant atoms are assignment-invariant. -/
 private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
     {t : Finset (Index W Var Domain)} (hSB : IsStateBased M.access (State.worldProj s))
     (hts : t ⊆ s)
@@ -228,8 +213,6 @@ theorem negationStrip (hα : α.NEFree) (hβ : β.NEFree)
 
 /-! ### Distribution (Facts 5 and 6) -/
 
-/-- A non-empty subset `t` of the universal extension of a singleton state that supports `γ`
-yields an existential witness on the singleton. -/
 private theorem exi_of_subset_extendUniversal_singleton
     {γ : Formula Var Const Pred}
     {i : Index W Var Domain} {x : Var} {t : Finset (Index W Var Domain)}
@@ -264,10 +247,6 @@ theorem distribution {x : Var} {i : Index W Var Domain}
     exi_of_subset_extendUniversal_singleton M (le_sup_right.trans_eq hsplit)
       (nonempty_of_support_enrich h₂) (support_of_support_enrich hβ h₂)⟩
 
-/-- A non-empty subset `t` of `s[x]` supporting the atom `Px` yields `∃x◇Px` on `s` when `R`
-is state-based. Some index of `t` is `i₀[x/d]` with `d` in the extension of `P` at `i₀.world`;
-the constant functional extension `s[x/d]` witnesses the existential, and state-basedness puts
-`i₀.world` in every index's accessible set, so `{i₀.world}` witnesses each diamond. -/
 private theorem exi_poss_atom_of_subset_extendUniversal
     {P : Pred} {x : Var} {t : Finset (Index W Var Domain)}
     (hSB : IsStateBased M.access (State.worldProj s))

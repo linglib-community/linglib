@@ -95,8 +95,6 @@ section ScalarModel
 
 variable {D S : Type*} [PartialOrder D] {P : D → S → Prop} {a b : D}
 
-/-- In a product of linear orders, `a` is lower than `b` iff no coordinate of `a` is higher than
-that of `b` and at least one is lower, which is the strict product order (A2). -/
 theorem lower_iff {ι : Type*} {δ : ι → Type*} [∀ i, LinearOrder (δ i)] (a b : ∀ i, δ i) :
     a < b ↔ (∀ i, a i ≤ b i) ∧ ∃ i, a i < b i := by
   rw [Pi.lt_def, Pi.le_def]
@@ -106,22 +104,17 @@ theorem lower_iff {ι : Type*} {δ : ι → Type*} [∀ i, LinearOrder (δ i)] (
 order on `S → Prop`. -/
 def IsScalarModel (P : D → S → Prop) : Prop := ∀ ⦃a b : D⦄, a ≠ b → (P b ≤ P a ↔ a < b)
 
-/-- By (A4), `¬ P a` entails `¬ P b` just in case `a` is lower than `b`. -/
 theorem IsScalarModel.not_le_not_iff (h : IsScalarModel P) (hab : a ≠ b) :
     (¬ P a ·) ≤ (¬ P b ·) ↔ a < b := by
   rw [← h hab, Pi.le_def, Pi.le_def]
   exact forall_congr' fun _ ↦ not_imp_not
 
-/-- By (A5), `P b` is more informative than `P a`, entailing it and not conversely, just in case
-`a` is lower than `b`. -/
 theorem IsScalarModel.lt_iff (h : IsScalarModel P) : P b < P a ↔ a < b := by
   rcases eq_or_ne a b with rfl | hab
   · simp
   · rw [lt_iff_le_not_ge, h hab, h hab.symm]
     exact and_iff_left_of_imp lt_asymm
 
-/-- By (A5) for the negated propositions, `¬ P a` is more informative than `¬ P b` just in case
-`a` is lower than `b`. -/
 theorem IsScalarModel.not_lt_not_iff (h : IsScalarModel P) :
     (¬ P a ·) < (¬ P b ·) ↔ a < b := by
   rcases eq_or_ne a b with rfl | hab
@@ -457,7 +450,6 @@ theorem focusRows_predicted : ∀ r ∈ focusRows, (r.judgment = .acceptable ↔
   simp only [Row.predicted_iff isScalarModel_mem]
   decide
 
-/-- Every example that names a conjunction is read into one of the two models. -/
 theorem featured_rows_parse : ∀ ex ∈ Examples.all, (ex.feature? "conjunction").isSome →
     (Row.ofDatum rankFoci? ex).isSome ∨ (Row.ofDatum focusFoci? ex).isSome := by
   decide

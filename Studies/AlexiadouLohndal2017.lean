@@ -120,8 +120,6 @@ def View.LicensesResultative (v : View) (c : RootClass) : Prop := v.attach c = s
 instance (v : View) (c : RootClass) : Decidable (v.LicensesResultative c) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- In Embick's analysis of v[FIENT] an aP complement has an interpretation exactly when a Root is
-directly merged with v[FIENT]. -/
 theorem interpretable_aP_iff (x : Embick2004.DP) (m : Option Embick2004.Root)
     (a : Embick2004.Root) (μ : Embick2004.MeansRule) :
     (⟨some x, m, .aP a, some μ⟩ : Embick2004.FientP).Interpretable ↔ m.isSome := by
@@ -189,9 +187,6 @@ end Deverbal
 
 /-! ### Roots inserted after syntax -/
 
-/-- **A Root need not be categorized.** Primary Merge pairs the null derivation with whichever item
-it selects first, and that item labels the result, so the derivation of *the books* builds a Root
-from its definite and plural features alone, labelled by the definite feature. -/
 theorem root_without_categorizer :
     ∃ o : DeBelderVanCraenenbroeck2015.Obj DeBelderVanCraenenbroeck2015.Feature,
       Relation.ReflTransGen DeBelderVanCraenenbroeck2015.Step (.init [{.definite}, {.plural}])

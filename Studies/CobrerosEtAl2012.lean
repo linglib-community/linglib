@@ -206,14 +206,12 @@ variable (M : TModel Pred C D)
 @[simp] theorem realize_cond (m : Mode) (φ ψ : Formula Pred C) :
     M.Realize m (φ.cond ψ) ↔ (M.Realize m.dual φ → M.Realize m ψ) := Iff.rfl
 
-/-- The conjunction `⋀(φ, Γ)` of a nonempty list. -/
 @[simp] theorem realize_foldr_conj (m : Mode) (φ : Formula Pred C) (Γ : List (Formula Pred C)) :
     M.Realize m (Γ.foldr .conj φ) ↔ (∀ γ ∈ Γ, M.Realize m γ) ∧ M.Realize m φ := by
   induction Γ with
   | nil => simp
   | cons γ Γ ih => simp [ih, and_assoc]
 
-/-- The disjunction `⋁(φ, Δ)` of a nonempty list. -/
 @[simp] theorem realize_foldr_disj (m : Mode) (φ : Formula Pred C) (Δ : List (Formula Pred C)) :
     M.Realize m (Δ.foldr .disj φ) ↔ (∃ δ ∈ Δ, M.Realize m δ) ∨ M.Realize m φ := by
   induction Δ with
@@ -384,15 +382,11 @@ theorem consequence_iff_dual_self (h : m = n.dual) :
   subst h
   simpa using consequence_iff_dual (m := n.dual) (n := n) (Γ := Γ) (Δ := Δ)
 
-/-- In sequent form, the deduction theorem for self-dual relations moves a premise into the
-antecedent of a conclusion when `m = d(n)`. -/
 theorem Consequence.cons_cons_iff (h : m = n.dual) :
     Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Consequence m n Γ (φ.cond ψ :: Δ) := by
   subst h
   exact mixedConsequence_cons_cons_iff fun M ↦ M.2.realize_cond n φ ψ
 
-/-- Premises are read conjunctively and conclusions disjunctively, so `φ, Γ ⊨ᵐⁿ ψ, Δ` iff
-`⋀(φ, Γ) ⊨ᵐⁿ ⋁(ψ, Δ)`. -/
 theorem consequence_cons_cons_iff_foldr :
     Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Consequence m n [Γ.foldr .conj φ] [Δ.foldr .disj ψ] := by
   simp [MixedConsequence, Consequence.Satisfies, and_comm, or_comm]
@@ -488,7 +482,6 @@ theorem identity_realize (m : Mode) (φ : Formula Pred C) :
   | neg ψ ih => simp [ih]
   | conj ψ χ ihψ ihχ | disj ψ χ ihψ ihχ | cond ψ χ ihψ ihχ => simp [ihψ, ihχ]
 
-/-- The identity model agrees classically with `M` on the restricted vocabulary. -/
 theorem identity_realize_classical {φ : Formula Pred C} (hφ : IsRestricted φ) :
     M.identity.Realize .classical φ ↔ M.Realize .classical φ := by
   induction φ with
@@ -769,7 +762,6 @@ theorem series_realize_strict (hin : i < n) (x : Fin n) :
   · have := h x ⟨Nat.le_succ _, Nat.le_succ _⟩
     omega
 
-/-- In a series with a cut the borderline cases are the two individuals either side of it. -/
 theorem series_borderline (hi : 0 < i) (hin : i < n) (x : Fin n) :
     (series n i).Borderline () x ↔ x.val + 1 = i ∨ x.val = i := by
   rw [TModel.Borderline, show ◇[(series n i).sim ()] ((series n i).interp ()) x ↔ x.val ≤ i from
@@ -913,9 +905,6 @@ def steps (n : ℕ) : List (Formula Unit (Fin (n + 1))) :=
 def tolerances (n : ℕ) : List (Formula Unit (Fin (n + 1))) :=
   (List.finRange n).map fun k ↦ tolerance () k.castSucc k.succ
 
-/-- Version 1 of the sorites is `st`-invalid for every series of at least four members, the
-four-element model being a countermodel, although each of its steps is `st`-valid
-(`st_one_step`). Below four members it is valid by Facts 2 and 3. -/
 theorem not_st_version1 (hn : 3 ≤ n) :
     ¬ Consequence .strict .tolerant (.atom (.pred () 0) :: steps n)
       [.atom (.pred () (Fin.last n))] := by
@@ -930,8 +919,6 @@ theorem not_st_version1 (hn : 3 ≤ n) :
   · exact (series_realize_strict (by omega) _).2 (by simp)
   · exact ⟨by simp [series]; omega, by simp [series]⟩
 
-/-- Version 2 of the sorites, with tolerance as a premise, is `st`-valid, since it is classically
-valid and `st` extends classical consequence. -/
 theorem st_version2 (n : ℕ) :
     Consequence .strict .tolerant (.atom (.pred () 0) :: steps n ++ tolerances n)
       [.atom (.pred () (Fin.last n))] := by

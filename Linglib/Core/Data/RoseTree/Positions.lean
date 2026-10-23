@@ -84,8 +84,6 @@ instance : PredOrder (Positions t) where
 @[simp] theorem pred_val (p : Positions t) :
     ((Order.pred p : Positions t) : TreePath) = p.val.parent := rfl
 
-/-- Covering in the positions of `t` is covering in `TreePath`, so the daughters of a position
-are its valid daughters. -/
 theorem covBy_iff {p q : Positions t} : p ⋖ q ↔ p.val ⋖ q.val := by
   constructor
   · intro h
@@ -112,7 +110,6 @@ theorem subtreeAt_eq (p : Positions t) : t.subtreeAt p.val.toList = some p.subtr
 theorem subtree_eq_iff : p.subtree = s ↔ t.subtreeAt p.val.toList = some s := by
   rw [subtreeAt_eq, Option.some_inj]
 
-/-- The subtrees of the subtree at a position are the subtrees at the positions below it. -/
 theorem isSubtree_subtree : IsSubtree s p.subtree ↔ ∃ q, p ≤ q ∧ q.subtree = s := by
   rw [isSubtree_iff_exists_subtreeAt]
   constructor
@@ -127,7 +124,6 @@ theorem isSubtree_subtree : IsSubtree s p.subtree ↔ ∃ q, p ≤ q ∧ q.subtr
     have := q.subtreeAt_eq
     rwa [← hr, subtreeAt_append, subtreeAt_eq, Option.bind_some] at this
 
-/-- The daughters of the subtree at a position are the subtrees at its covers. -/
 theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q.subtree = c := by
   simp only [covBy_iff, TreePath.covBy_iff]
   constructor
@@ -141,7 +137,6 @@ theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q
     rw [hi, subtreeAt_append, subtreeAt_eq, Option.bind_some] at this
     exact List.mem_of_getElem? (by simpa using this)
 
-/-- A position is maximal exactly when its subtree is a leaf. -/
 theorem isMax_iff : IsMax p ↔ p.subtree.children = [] := by
   refine ⟨fun h ↦ List.eq_nil_iff_forall_not_mem.2 fun c hc ↦ ?_, fun h q hpq ↦ ?_⟩
   · obtain ⟨q, hq, -⟩ := mem_children_subtree.1 hc
@@ -192,14 +187,11 @@ theorem positionsWhere_and (P Q : RoseTree α → Prop) (t : RoseTree α) :
   simp only [positionsWhere, Set.mem_ofPred_eq, Set.mem_inter_iff, Option.mem_def]
   grind
 
-/-- Relabelling moves the predicate onto the relabelled subtrees. -/
 theorem positionsWhere_map {β : Type*} (f : α → β) (P : RoseTree β → Prop) (t : RoseTree α) :
     positionsWhere P (t.map f) = positionsWhere (fun s ↦ P (s.map f)) t := by
   ext p
   simp [positionsWhere, subtreeAt_map, Option.mem_def]
 
-/-- Outside the replaced subtree, a position satisfies a predicate that ignores what lies below
-the root exactly as before the replacement. -/
 theorem mem_positionsWhere_replaceAt
     (hP : ∀ s i q (new : RoseTree α), P (s.replaceAt (i :: q) new) ↔ P s) {c : TreePath}
     (h : ¬ c ≤ p) (new : RoseTree α) :

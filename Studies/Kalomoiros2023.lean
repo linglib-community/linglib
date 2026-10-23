@@ -108,9 +108,6 @@ theorem limitedSymmetryAt_iff_forall_le {C : Set W} {K : SyntacticEnvironment At
     · exact h n hn
     · rwa [continuations_eq_top_of_le I hn.le]
 
-/-- The constraint is checked world by world. At a world where the presupposition fails, whenever
-every good final at a parsing point makes the sentence true (false) with a false gap, every good
-final makes it true (false) with a true gap. -/
 theorem limitedSymmetryAt_iff (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) :
     LimitedSymmetryAt I C K p ↔ ∀ w ∈ C, w ∉ I p → ∀ n ≤ K.rightItems,
       ((∀ K', AgreeUpTo n K K' → w ∈ K'.truth I ∅) →
@@ -185,7 +182,6 @@ noncomputable def funs (w : W) : ℕ → SyntacticEnvironment Atom → List (Boo
   | _, [] => [id]
   | n, s :: K => (stepFuns I w n s).flatMap fun f ↦ (funs w (n - s.rightItems) K).map (· ∘ f)
 
-/-- A formula can be true or false at any world. -/
 theorem forall_formula_iff [Nonempty Atom] (w : W) (Q : Prop → Prop) :
     (∀ G : Formula Atom, Q (w ∈ G.truth I)) ↔ Q True ∧ Q False := by
   let a := Classical.arbitrary Atom
@@ -225,7 +221,6 @@ theorem forall_stepAgree_iff [Nonempty Atom] (w : W) (n : ℕ) (s : SyntacticEnv
       exact ⟨fun h ↦ (key c).1 fun G' ↦ h _ G' rfl, fun h _ G' he ↦ he ▸ (key c).2 h G'⟩
     · simp [SyntacticEnvironment.Step.truth, decide_eval, val]
 
-/-- The good finals at a parsing point realize, at each world, the truth functions `funs`. -/
 theorem forall_agreeUpTo_iff [Nonempty Atom] (w : W) (n : ℕ) (K : SyntacticEnvironment Atom)
     (X : Set W) (R : Bool → Prop) :
     (∀ K', AgreeUpTo n K K' → R (decide (w ∈ K'.truth I X))) ↔
@@ -266,7 +261,6 @@ theorem limitedSymmetry_of_triggers {F : Formula Atom} {K : SyntacticEnvironment
     LimitedSymmetry C (Formula.occurrences I F) ↔ LimitedSymmetryAt I C K p := by
   simp [limitedSymmetry_occurrences_iff, h]
 
-/-- A trigger standing alone requires the context to entail its presupposition. -/
 theorem limitedSymmetry_trigger :
     LimitedSymmetry C (Formula.occurrences I (.trigger p a)) ↔ C ⊆ I p := by
   rw [limitedSymmetry_of_triggers I (K := []) (a := a) rfl, limitedSymmetryAt_iff]

@@ -144,7 +144,6 @@ def parameterIdentification (σ : LocutionaryProposition grammar Cont) (u : SubU
     Option (Clarification Cont) :=
   if u ∈ σ.constituents ∧ u.denotation ∈ σ.parameters then some ⟨.meaning u, {u}⟩ else none
 
-/-- The two operations differ only in MAX-QUD: they make the same sub-utterance salient. -/
 theorem focusEstablishing_parameterFocussing (σ : LocutionaryProposition grammar Cont)
     (u : SubUtterance grammar) :
     (parameterFocussing σ u).map (·.focusEstablishing) =
@@ -158,7 +157,6 @@ def existentialGeneralization (bind : String → Cont → Cont)
     (σ : LocutionaryProposition grammar Cont) (i : String) : LocutionaryProposition grammar Cont :=
   { σ.instantiate {i} with content := bind i σ.content }
 
-/-- An assignment resolving every parameter but `i` grounds the generalized sign. -/
 theorem grounds_existentialGeneralization {bind : String → Cont → Cont}
     {σ : LocutionaryProposition grammar Cont} {i : String} {f : Assignment V}
     (h : ∀ c ∈ σ.parameters, c ≠ i → f.Resolves c) :
@@ -241,8 +239,6 @@ def IS.backtrack (s : IS V Cont) (coe : Coercion Cont) (u : SubUtterance grammar
   s.latestMove.bind fun m ↦
     (coe m.1 u).map fun c ↦ { s with maxQud := some c.question, salUtt := c.focusEstablishing }
 
-/-- A coercion reads only the sign, so the speaker backtracking over her latest move and the
-addressee clarifying the same sign, pending for him, reach the same clarification context. -/
 theorem backtrack_eq_clarify {s s' : IS V Cont} {σ : LocutionaryProposition grammar Cont}
     (coe : Coercion Cont) (u : SubUtterance grammar) (hs : s.latestMove.map Prod.fst = some σ)
     (hs' : s'.pending.head? = some σ) :
@@ -307,14 +303,12 @@ def initial : IS String String := { pending := [σ] }
 theorem speaker : initial.ground fA =
     some { latestMove := some (σ, fA), maxQud := some (.posed σ.content) } := by decide
 
-/-- B cannot ground it. -/
 theorem addressee_ground : initial.ground fB = none := by decide
 
 /-- B clarifies by parameter focussing (82c). -/
 theorem addressee : initial.clarify parameterFocussing bo =
     some { pending := [σ], maxQud := some (.focus "b" σ.content), salUtt := {bo} } := by decide
 
-/-- The same utterance leaves the two participants with distinct MAX-QUD and SAL-UTT. -/
 theorem differ :
     (initial.ground fA).map (·.maxQud) ≠ (initial.clarify parameterFocussing bo).map (·.maxQud) ∧
     (initial.ground fA).map (·.salUtt) ≠
@@ -408,14 +402,10 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = 19 := by decide
 
-/-- The clausal reading is judged available exactly when the fragment resolves against the
-focussing context with shared content. -/
 theorem rows_clausal : ∀ r ∈ rows, r.clausal = none ∨
     (r.clausal = some .acceptable ↔ Clausal r.sign r.antecedent r.fragment r.access) := by
   decide
 
-/-- The constituent reading is judged available exactly when the fragment resolves against the
-identification context. -/
 theorem rows_constituent : ∀ r ∈ rows, r.constituent = none ∨
     (r.constituent = some .acceptable ↔ Constituent r.sign r.antecedent r.fragment) := by
   decide

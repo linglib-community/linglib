@@ -88,7 +88,6 @@ def thresholdMeaning : Utterance → ℝ → ℝ → Prop
   | .short, θ, x => x < θ
   | .silent, _, _ => True
 
-/-- The uniform threshold prior's mass above a degree in the unit interval. -/
 theorem uniformThreshold_Ioi {p : ℝ} (h0 : 0 ≤ p) :
     uniformThreshold (Set.Ioi p) = ENNReal.ofReal (1 - p) := by
   rw [uniformThreshold, Measure.restrict_apply measurableSet_Ioi,
@@ -190,7 +189,6 @@ private theorem sum_utterance (f : Utterance → ℝ) : ∑ u, f u = f .tall + f
   rw [show (Finset.univ : Finset Utterance) = {.tall, .short, .silent} from by decide,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton, add_assoc]
 
-/-- A probability measure on a finite type has a positive-mass atom. -/
 private theorem exists_real_pos (μ : Measure X) [IsProbabilityMeasure μ] : ∃ x, 0 < μ.real {x} := by
   by_contra h
   push Not at h
@@ -213,7 +211,6 @@ theorem mean_lt_one (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass
   exact Finset.sum_lt_sum (fun y _ => mul_le_of_le_one_right measureReal_nonneg (hdeg y).2.le)
     ⟨x, Finset.mem_univ _, mul_lt_of_lt_one_right hx (hdeg x).2⟩
 
-/-- The row sum of the negative adjective's meaning is the complement of the mean. -/
 theorem sum_meaning_short (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     ∑ x, meaning deg .short x * classPrior c {x} = ENNReal.ofReal (1 - mean deg classPrior c) := by
   have h1 : ∑ y, (classPrior c).real {y} = 1 := sum_measureReal_singleton_eq_one _
@@ -227,7 +224,6 @@ theorem sum_meaning_short (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : Compariso
   rw [measureReal_def]
   ring
 
-/-- The row sum of the positive adjective's meaning is the mean. -/
 theorem sum_meaning_tall (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     ∑ x, meaning deg .tall x * classPrior c {x} = ENNReal.ofReal (mean deg classPrior c) :=
   expectedMeaning_uniformThreshold deg (classPrior c) fun x => ⟨(hdeg x).1.le, (hdeg x).2.le⟩
@@ -254,7 +250,6 @@ theorem L0_short_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonCla
     ENNReal.toReal_ofReal (by linarith [(hdeg x).2]),
     ENNReal.toReal_ofReal (by linarith [mean_lt_one deg classPrior hdeg c]), measureReal_def]
 
-/-- The speaker's share of *tall* depends on the comparison class only through its mean. -/
 theorem S_tall_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass)
     {x : X} (hx : classPrior c {x} ≠ 0) :
     (S deg α classPrior c x).real {.tall} = share α (deg x) (mean deg classPrior c) := by
@@ -280,8 +275,6 @@ theorem S_tall_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : 
         * (classPrior c).real {x} ^ α by ring,
     mul_div_mul_right _ _ hq.ne']
 
-/-- The speaker's share of *short* is the share of *tall* at the complementary degree and
-mean. -/
 theorem S_short_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass)
     {x : X} (hx : classPrior c {x} ≠ 0) :
     (S deg α classPrior c x).real {.short} =
@@ -309,8 +302,6 @@ theorem S_short_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c :
         * (classPrior c).real {x} ^ α by ring,
     mul_div_mul_right _ _ hq.ne']
 
-/-- The share of the positive adjective falls as the class's mean rises, since the adjective
-is the more informative the lower the expectations it is measured against. -/
 theorem share_lt_share (hα : 0 < α) {a m₁ m₂ : ℝ} (ha : 0 < a) (ha1 : a < 1) (hm₁ : 0 < m₁)
     (h : m₁ < m₂) (hm₂ : m₂ < 1) : share α a m₂ < share α a m₁ := by
   unfold share
@@ -329,7 +320,6 @@ theorem share_lt_share (hα : 0 < α) {a m₁ m₂ : ℝ} (ha : 0 < a) (ha1 : a 
   rw [div_lt_div_iff₀ (by linarith) (by linarith)]
   nlinarith [mul_lt_mul'' hA hB h0.le h0'.le]
 
-/-- At a full-support class prior every utterance has positive literal-listener mass. -/
 theorem L0_apply_ne_zero (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (hsupp : ∀ c x, classPrior c {x} ≠ 0)
     (c : ComparisonClass) (u : Utterance) (x : X) : L0 deg classPrior c u {x} ≠ 0 := by
   rw [L0, Kernel.ofDensity_apply_singleton, ENNReal.div_ne_zero]
@@ -344,9 +334,6 @@ theorem L0_apply_ne_zero (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (hsupp : ∀ c 
 
 variable (κ : Measure X) [IsFiniteMeasure κ]
 
-/-- Hearing *tall*, the listener infers the comparison class with the smaller mean degree,
-against which *tall* is the more informative, polarity by expectations for the positive
-adjective. -/
 theorem tall_infers_smaller_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0) {c₁ c₂ : ComparisonClass}
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
@@ -359,8 +346,6 @@ theorem tall_infers_smaller_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (mean_pos deg classPrior hdeg c₁) h (mean_lt_one deg classPrior hdeg c₂))
     (ENNReal.toReal_pos (hκ x) (measure_ne_top _ _))
 
-/-- Hearing *short*, the listener infers the comparison class with the larger mean degree,
-polarity by expectations for the negative adjective. -/
 theorem short_infers_larger_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0) {c₁ c₂ : ComparisonClass}
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
@@ -388,8 +373,6 @@ theorem expected_tall [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ d
   ⟨tall_infers_smaller_mean deg classPrior κ hα hdeg hsupp hκ h,
     short_infers_larger_mean deg classPrior κ hα hdeg hsupp hκ h⟩
 
-/-- For a kind expected to be short, such as jockeys, *tall* is read against the kind and
-*short* against people. -/
 theorem expected_short [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0)
     (h : mean deg classPrior .subordinate < mean deg classPrior .superordinate) :
@@ -400,7 +383,6 @@ theorem expected_short [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ 
   ⟨tall_infers_smaller_mean deg classPrior κ hα hdeg hsupp hκ h,
     short_infers_larger_mean deg classPrior κ hα hdeg hsupp hκ h⟩
 
-/-- The literal listener's score for *tall* is the class's mean degree. -/
 theorem literalScore_tall (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     literalScore deg classPrior .tall c = mean deg classPrior c := by
   rw [literalScore, mean, expectedPrevalence_eq_sum]

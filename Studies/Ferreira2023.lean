@@ -116,12 +116,10 @@ theorem accessibleWorlds_revise (sim f : Background W) (p : W → Prop)
   ext w'
   simp [Background.mem_accessibleWorlds, revise]
 
-/-- The revision widens the domain. -/
 theorem subset_accessibleWorlds_revise (sim f : Background W)
     (p : W → Prop) (w : W) : f.accessibleWorlds w ⊆ (revise sim f p).accessibleWorlds w := by
   rw [accessibleWorlds_revise]; exact Set.subset_union_left
 
-/-- Every world the revision adds is a `p`-world. -/
 theorem prop_of_mem_accessibleWorlds_revise {w' : W}
     (h : w' ∈ (revise sim f p).accessibleWorlds w) (hn : w' ∉ f.accessibleWorlds w) : p w' := by
   rw [accessibleWorlds_revise] at h
@@ -129,8 +127,6 @@ theorem prop_of_mem_accessibleWorlds_revise {w' : W}
   · exact absurd h hn
   · exact Preorder.minimals_subset _ _ h
 
-/-- A best world of a domain is a `p`-world when nothing adds to it: the ∗-revision for the
-prejacent preserves strong necessity. -/
 theorem strongNecessity_revise (sim : Background W) (h : strongNecessity f g q w) :
     strongNecessity (revise sim f q) g q w := by
   intro w' hw'
@@ -209,7 +205,6 @@ better one of them. -/
 /-- The ordering source of the three-world frame. -/
 abbrev g₃ : Background (Fin 3) := fun _ ↦ {(· = 0), fun x ↦ x = 1 ∨ x = 2, (· = 2)}
 
-/-- Both worlds of the pair are best in it. -/
 theorem minimals_pair_g₃ : (premisePreorder (g₃ 0)).minimals ({0, 1} : Set (Fin 3)) = {0, 1} := by
   ext u
   simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
@@ -219,7 +214,6 @@ theorem minimals_pair_g₃ : (premisePreorder (g₃ 0)).minimals ({0, 1} : Set (
   revert u
   decide
 
-/-- Over the whole frame `2` betters `1`. -/
 theorem minimals_univ_g₃ : (premisePreorder (g₃ 0)).minimals Set.univ = {0, 2} := by
   ext u
   simp only [Preorder.mem_minimals_iff, Preorder.ofCriteria_le_iff,
@@ -240,7 +234,6 @@ theorem not_domainIndependent_starstar : ¬ DomainIndependent (starstar g₃ (·
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h₁
   exact absurd h₁.1 (by decide)
 
-/-- In the paper's terms, no ordering source is a ∗∗-revision of `g₃` for `(· = 1)`. -/
 theorem not_exists_starstar_orderingSource :
     ¬ ∃ g' : Background (Fin 3), ∀ (D : Set (Fin 3)) (u v : Fin 3), u ∈ D → v ∈ D →
       ((u <[g' 0] v) ↔ starstar g₃ (· = 1) 0 D u v) :=
@@ -282,15 +275,12 @@ def Vertex.necessity (v : Vertex) (sim f : Background W)
   let D := (v.base sim f q).accessibleWorlds w
   ∀ w' ∈ bestOf (if v.xg then starstar g p w D else fun u v ↦ u <[g w] v) D, q w'
 
-/-- Without X-marking of the ordering source, a vertex is strong necessity over its base. -/
 theorem Vertex.necessity_xg_false (xf : Bool) :
     Vertex.necessity ⟨xf, false⟩ sim f g p q w ↔
       strongNecessity (Vertex.base ⟨xf, false⟩ sim f q) g q w := by
   simp only [Vertex.necessity, Bool.false_eq_true, ite_false, bestOf_strictlyBetter,
     strongNecessity, necessity_iff, bestWorlds]
 
-/-- With X-marking of the ordering source, a vertex is weak necessity over its base, the
-secondary ordering source `[p]`. -/
 theorem Vertex.necessity_xg_true (xf : Bool) :
     Vertex.necessity ⟨xf, true⟩ sim f g p q w ↔
       weakNecessity (Vertex.base ⟨xf, true⟩ sim f q) g (fun _ ↦ {p}) q w := by
@@ -316,12 +306,10 @@ theorem Vertex.entails_xg (xf : Bool) : Vertex.Entails ⟨xf, false⟩ ⟨xf, tr
   fun _ _ _ _ _ _ _ _ h ↦ (Vertex.necessity_xg_true xf).2
     (strong_entails_weak _ _ _ _ _ ((Vertex.necessity_xg_false xf).1 h))
 
-/-- X-marking the modal base preserves strong necessity. -/
 theorem Vertex.entails_xf : Vertex.Entails ⟨false, false⟩ ⟨true, false⟩ :=
   fun _ sim _ _ _ _ _ _ h ↦ (Vertex.necessity_xg_false true).2
     (strongNecessity_revise sim ((Vertex.necessity_xg_false false).1 h))
 
-/-- Strong necessity entails every vertex. -/
 theorem Vertex.entails_of_sn : ∀ v, Vertex.Entails ⟨false, false⟩ v
   | ⟨false, false⟩ => .refl _
   | ⟨false, true⟩ => entails_xg false
@@ -345,7 +333,6 @@ private theorem minimals_eq_singleton {S : Set W} {b : W} (hb : b ∈ S) :
   rintro rfl
   exact hb
 
-/-- The similarity ordering that singles each world out by identity. -/
 private theorem isTotallyRealistic_eq :
     Background.IsTotallyRealistic (fun w ↦ {(· = w)} : Background W) := by
   intro w; ext v; simp
@@ -625,7 +612,6 @@ instance : DecidablePred Profile.Valid := fun π ↦
   inferInstanceAs (Decidable ((π.topQ = true ∨ π.topNotQ = true) ∧
     (π.topQ = true → π.bestQ = true) ∧ (π.topNotQ = true → π.bestNotQ = true)))
 
-/-- The `p`-best of a nonempty set are nonempty: a `p`-member if there is one, else all. -/
 theorem minimals_singleton_nonempty {S : Set W} (hS : S.Nonempty) (p : W → Prop) :
     ((premisePreorder {p}).minimals S).Nonempty := by
   by_cases hp : ∃ v ∈ S, p v
@@ -656,7 +642,6 @@ def Conjunct.evalP (π : Profile) (c : Conjunct) : Bool :=
     | .necessity => !someNotQ
   if c.negModal then !m else m
 
-/-- A conjunct's truth depends on the model only through its profile. -/
 theorem Conjunct.holds_iff_evalP (c : Conjunct) (f g : Background W)
     (p q : W → Prop) (w : W) : c.holds f g p q w ↔ c.evalP (profile f g p q w) = true := by
   obtain ⟨φ, m, n⟩ := c
@@ -718,7 +703,6 @@ private theorem bestWorlds_ofAcc_nonempty (acc : Option Bool) (w : Bool) :
   · exact ⟨true, by simp [accList]⟩
   · exact ⟨_, List.mem_singleton_self _⟩
 
-/-- Every valid profile is the profile of a two-world model. -/
 theorem Profile.Valid.exists_model {π : Profile} (hπ : π.Valid) :
     ∃ (f g : Background Bool) (p q : Bool → Prop),
       (bestWorlds f g true).Nonempty ∧ profile f g p q true = π :=
@@ -728,7 +712,6 @@ theorem Profile.Valid.exists_model {π : Profile} (hπ : π.Valid) :
 
 end twoWorlds
 
-/-- A conjunction is contradictory exactly when no valid profile satisfies both conjuncts. -/
 theorem Pattern.contradictory_iff (pat : Pattern) :
     pat.Contradictory ↔ ∀ π : Profile, π.Valid →
       ¬ (pat.first.evalP π = true ∧ pat.second.evalP π = true) := by
@@ -741,7 +724,6 @@ theorem Pattern.contradictory_iff (pat : Pattern) :
     rw [Conjunct.holds_iff_evalP] at h₁ h₂
     exact h _ (profile_valid hne) ⟨h₁, h₂⟩
 
-/-- A conjunction is consistent exactly when some valid profile satisfies both conjuncts. -/
 theorem Pattern.consistent_iff (pat : Pattern) :
     pat.Consistent ↔ ∃ π : Profile, π.Valid ∧
       pat.first.evalP π = true ∧ pat.second.evalP π = true := by
@@ -754,7 +736,6 @@ theorem Pattern.consistent_iff (pat : Pattern) :
     exact ⟨Bool, f, g, p, q, true, hne, (Conjunct.holds_iff_evalP _ _ _ _ _ _).2 h₁,
       (Conjunct.holds_iff_evalP _ _ _ _ _ _).2 h₂⟩
 
-/-- A conjunct entails another exactly when it does on every valid profile. -/
 theorem Conjunct.entails_iff (c₁ c₂ : Conjunct) :
     c₁.Entails c₂ ↔ ∀ π : Profile, π.Valid → c₁.evalP π = true → c₂.evalP π = true := by
   constructor
@@ -819,7 +800,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
   let second ← ex.parse? "second" conjunctTable
   pure ⟨⟨first, second⟩, ex.judgment⟩
 
-/-- Every example tagged with a first conjunct parses. -/
 theorem row_ofDatum_isSome :
     ∀ ex ∈ Examples.all, (ex.feature? "first").isSome → (Row.ofDatum ex).isSome := by
   decide
@@ -893,7 +873,6 @@ private theorem accessibleWorlds_holidayInfo (w : Day) :
     Set.mem_singleton_iff, forall_eq,
     ]
 
-/-- The office-world most similar to a world keeps its holiday value. -/
 private theorem minimals_atOffice_sim (w : Day) :
     (premisePreorder (sim w)).minimals {v | atOffice v} = {⟨true, w.holiday⟩} := by
   ext ⟨o, h⟩
@@ -904,7 +883,6 @@ private theorem minimals_atOffice_sim (w : Day) :
     ]
   cases o <;> cases h <;> cases o' <;> cases h' <;> decide
 
-/-- The workday-world most similar to a world keeps its office value. -/
 private theorem minimals_workday_sim (w : Day) :
     (premisePreorder (sim w)).minimals {v | workday v} = {⟨w.office, false⟩} := by
   ext ⟨o, h⟩
@@ -941,7 +919,6 @@ private theorem accessibleWorlds_revise_workday (w : Day) :
     Set.mem_univ, iff_true]
   cases o <;> cases h <;> decide
 
-/-- The most normal worlds are the office-workday and the holiday away from the office. -/
 private theorem minimals_normal_univ (w : Day) :
     (premisePreorder (normal w)).minimals Set.univ = {⟨true, false⟩, ⟨false, true⟩} := by
   ext ⟨o, h⟩
@@ -950,7 +927,6 @@ private theorem minimals_normal_univ (w : Day) :
     ]
   cases o <;> cases h <;> decide
 
-/-- The most normal world where Peter is away is the holiday. -/
 private theorem minimals_normal_away (w : Day) :
     (premisePreorder (normal w)).minimals {v | v.office = false} = {⟨false, true⟩} := by
   rw [Preorder.minimals_ofCriteria_eq (s := ({v | v.office = false} : Set Day))
@@ -962,7 +938,6 @@ private theorem minimals_normal_away (w : Day) :
     ]
   cases o <;> cases h <;> decide
 
-/-- The most normal holiday world is the one away from the office. -/
 private theorem minimals_normal_holiday (w : Day) :
     (premisePreorder (normal w)).minimals {v | v.holiday = true} = {⟨false, true⟩} := by
   rw [Preorder.minimals_ofCriteria_eq (s := ({v | v.holiday = true} : Set Day))
@@ -974,7 +949,6 @@ private theorem minimals_normal_holiday (w : Day) :
     ]
   cases o <;> cases h <;> decide
 
-/-- The workday tie-breaker keeps the office-workday. -/
 private theorem minimals_workday_pair :
     (premisePreorder {workday}).minimals ({⟨true, false⟩, ⟨false, true⟩} : Set Day) =
       {⟨true, false⟩} := by
@@ -985,7 +959,6 @@ private theorem minimals_workday_pair :
     ]
   cases o <;> cases h <;> decide
 
-/-- B guesses that, with nothing known, normality on a workday puts Peter in his office. -/
 theorem deve_guess (w : Day) :
     Vertex.necessity ⟨false, true⟩ sim ⊥ normal workday atOffice w := by
   rw [Vertex.necessity_xg_true, weakNecessity, bestWorlds]

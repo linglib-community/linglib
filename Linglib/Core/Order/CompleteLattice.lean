@@ -17,7 +17,6 @@ A supremum over two indices of a family monotone in both is the supremum along t
 
 @[expose] public section
 
-/-- For a family monotone in both indices, the double supremum is the diagonal supremum. -/
 theorem iSup_iSup_eq_iSup_diag {L : Type*} [CompleteLattice L] {g : ℕ → ℕ → L}
     (hg : ∀ m n m' n', m ≤ m' → n ≤ n' → g m n ≤ g m' n') : ⨆ m, ⨆ n, g m n = ⨆ n, g n n :=
   le_antisymm (iSup₂_le fun m n => (hg m n _ _ (le_max_left m n) (le_max_right m n)).trans

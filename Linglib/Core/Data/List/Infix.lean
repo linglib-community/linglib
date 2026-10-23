@@ -45,7 +45,6 @@ namespace List
 
 variable {α : Type*} {l u m v : List α} {x y : α}
 
-/-- An infix of `u ++ m ++ v` is an infix of `u ++ m`, an infix of `m ++ v`, or contains `m`. -/
 theorem IsInfix.infix_append_or_infix_append_or_infix (hl : l <:+: u ++ m ++ v) :
     l <:+: u ++ m ∨ l <:+: m ++ v ∨ m <:+: l := by
   obtain ⟨s, t, h⟩ := hl
@@ -57,8 +56,6 @@ theorem IsInfix.infix_append_or_infix_append_or_infix (hl : l <:+: u ++ m ++ v) 
     · exact .inr (.inr ⟨a', c, rfl⟩)
   · exact .inr (.inl ⟨c', t, by rw [append_assoc, h₁]⟩)
 
-/-- An infix of `u ++ m ++ v` no longer than `m` misses an element that occurs only in `u` or an
-element that occurs only in `v`. -/
 theorem IsInfix.notMem_or_notMem_of_length_le (hl : l <:+: u ++ m ++ v)
     (hlen : l.length ≤ m.length) (hx : x ∉ m ++ v) (hy : y ∉ u ++ m) : x ∉ l ∨ y ∉ l := by
   rcases hl.infix_append_or_infix_append_or_infix with h | h | h
@@ -95,7 +92,6 @@ theorem prefix_commonPrefix : ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: 
   | _ :: rs, _, _, ⟨_, rfl⟩, ⟨_, rfl⟩ => by
     simpa [commonPrefix] using prefix_commonPrefix (r := rs) (prefix_append _ _) (prefix_append _ _)
 
-/-- An element before the first `d` cuts off a prefix of what comes before the first `d`. -/
 theorem takeWhile_bne_prefix_of_mem {c d : α} :
     ∀ {l : List α}, c ∈ l.takeWhile (· != d) → l.takeWhile (· != c) <+: l.takeWhile (· != d)
   | [], _ => by simp
@@ -113,7 +109,6 @@ theorem takeWhile_bne_prefix_of_mem {c d : α} :
 
 end DecidableEq
 
-/-- The prefixes of a list, as `inits` lists them, ascend in the prefix order. -/
 theorem pairwise_inits : ∀ l : List α, l.inits.Pairwise (· <+: ·)
   | [] => by simp
   | a :: l => by

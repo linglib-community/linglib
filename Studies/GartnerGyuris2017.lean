@@ -76,8 +76,6 @@ def Choice.toFinset : Choice → BiasValue
   | .negNeut => {-1, 0}
   | .all => Finset.univ
 
-/-- Five of the seven choices are the bias values of [sudo-2013]: [+positive], [+negative],
-[neutral], [−negative] and [−positive]. -/
 theorem Choice.toFinset_sudo :
     Choice.pos.toFinset = .plus .positive ∧ Choice.neg.toFinset = .plus .negative ∧
       Choice.neut.toFinset = .neutral ∧ Choice.posNeut.toFinset = .minus .negative ∧
@@ -133,7 +131,6 @@ theorem card_profile : Fintype.card Profile = 117649 := by
 /-- A principle that constrains each cell on its own. -/
 abbrev Cellwise (A : Cell → Choice → Prop) (p : Profile) : Prop := ∀ c, A c (p c)
 
-/-- A cellwise principle leaves the product over cells of the choices it allows there. -/
 theorem card_cellwise (A : Cell → Choice → Prop) [∀ c, DecidablePred (A c)] :
     Fintype.card {p : Profile // Cellwise A p} = ∏ c, Fintype.card {x // A c x} :=
   (Fintype.card_congr (Equiv.subtypePiEquivPi (p := A))).trans Fintype.card_pi
@@ -173,7 +170,6 @@ def dimEquiv : Profile ≃ (Dimension → Option Polarity → Choice) where
   left_inv p := funext λ c => by cases c <;> rfl
   right_inv f := funext λ d => funext λ q => by cases d <;> rcases q with _ | _ | _ <;> rfl
 
-/-- A principle imposed within each dimension counts as the square of the per-dimension count. -/
 theorem card_perDim (Q : (Option Polarity → Choice) → Prop) [DecidablePred Q] :
     Fintype.card {p : Profile // ∀ d, Q (byDim p d)} = Fintype.card {g // Q g} ^ 2 :=
   (Fintype.card_congr ((Equiv.subtypeEquiv dimEquiv λ _ => Iff.rfl).trans
@@ -187,7 +183,6 @@ def readingsEquiv : Profile ≃ (Option Polarity → Choice × Choice) where
   left_inv p := funext λ c => by cases c <;> rfl
   right_inv f := funext λ q => by rcases q with _ | _ | _ <;> rfl
 
-/-- A principle relating each negative question's pair of choices to the positive question's. -/
 theorem card_byReading (R : Choice × Choice → Choice × Choice → Prop) [DecidableRel R] :
     Fintype.card {p : Profile //
         R (pair p none) (pair p (some .negative)) ∧ R (pair p none) (pair p (some .positive))} =
@@ -313,7 +308,6 @@ theorem card_staticComplementarity_convexity :
 
 /-! ### Relations among the principles (section 3.1.2) -/
 
-/-- Avoid Disagreement entails Convexity: a cell without one of the poles cannot be {+, −}. -/
 theorem Convexity_of_avoidDisagreement {p : Profile} (h : AvoidDisagreement p) : Convexity p := by
   intro c hc
   obtain ⟨h₁, h₂⟩ := h c
@@ -322,8 +316,6 @@ theorem Convexity_of_avoidDisagreement {p : Profile} (h : AvoidDisagreement p) :
   · exact h₁ hq (by decide)
   · exact h₂ hq (by decide)
 
-/-- Narrow Epistemic Choice gives every negative question the positive epistemic value, which
-Avoid Disagreement forbids; Polarity Match can only be meant evidentially. -/
 theorem not_avoidDisagreement_of_narrowEpistemic {p : Profile} (h : NarrowEpistemic p) :
     ¬ AvoidDisagreement p := by
   intro had
@@ -367,7 +359,6 @@ def hungarianE : Cell → Option Choice
 def sample : List Profile :=
   [englishV1, japaneseNull, japaneseNo, japaneseDesho, hungarianFallRise]
 
-/-- The Hungarian fall-rise interrogative shares the English profile. -/
 theorem hungarianFallRise_eq_englishV1 : hungarianFallRise = englishV1 := rfl
 
 private theorem mem_sample {p : Profile} (h : p ∈ sample) :
@@ -375,34 +366,23 @@ private theorem mem_sample {p : Profile} (h : p ∈ sample) :
       p = hungarianFallRise := by
   simpa [sample] using h
 
-/-- No Uniformity and collective Quantitative Markedness hold throughout the sample. -/
 theorem sample_noUniformity_markednessCollective :
     ∀ p ∈ sample, NoUniformity p ∧ MarkednessCollective p := by
   intro p hp; rcases mem_sample hp with rfl | rfl | rfl | rfl | rfl <;> decide
 
-/-- Distributive Quantitative Markedness fails for the Japanese ∅- and *no*-interrogatives, whose
-outside-negation questions have more evidential options than their positive questions. -/
 theorem sample_markednessDistributive :
     ∀ p ∈ sample, MarkednessDistributive p ↔ p ≠ japaneseNull ∧ p ≠ japaneseNo := by
   intro p hp; rcases mem_sample hp with rfl | rfl | rfl | rfl | rfl <;> decide
 
-/-- PPQ ≠ NPQ fails within the sample for the Japanese ∅- and *desho*-interrogatives, whose
-inside-negation question shares a choice with the positive question, and the paper's own
-counterexample is the Hungarian *e*-interrogative, whose positive and outside-negation questions
-share the evidential anti-bias {%}. -/
 theorem sample_ppqNeqNpq :
     (∀ p ∈ sample, PPQNeqNPQ p ↔ p ≠ japaneseNull ∧ p ≠ japaneseDesho) ∧
       hungarianE .ppqEv = hungarianE .onEv :=
   ⟨λ p hp => by rcases mem_sample hp with rfl | rfl | rfl | rfl | rfl <;> decide, rfl⟩
 
-/-- Avoid Disagreement fails throughout the sample, while Don't Rule Out Agreement holds only for
-the *desho*-interrogative. -/
 theorem sample_polarityMatch :
     ∀ p ∈ sample, ¬ AvoidDisagreement p ∧ (DontRuleOutAgreement p ↔ p = japaneseDesho) := by
   intro p hp; rcases mem_sample hp with rfl | rfl | rfl | rfl | rfl <;> decide
 
-/-- Convexity holds throughout the sample; Narrow Epistemic Choice fails only for the
-*desho*-interrogative, whose negative questions carry {−}. -/
 theorem sample_convexity_narrowEpistemic :
     ∀ p ∈ sample, Convexity p ∧ (NarrowEpistemic p ↔ p ≠ japaneseDesho) := by
   intro p hp; rcases mem_sample hp with rfl | rfl | rfl | rfl | rfl <;> decide
@@ -450,8 +430,6 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 
-/-- An example is felicitous exactly when the scenario's bias value is among the clause type's
-options for that cell: the judgments follow from the profiles. -/
 theorem rows_felicity :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
       ∃ x ∈ r.construction.cell (.of r.reading r.dimension), r.value ∈ x.toFinset := by

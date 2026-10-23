@@ -155,8 +155,6 @@ example : nsal (bare 17) = 4 := by decide
 def granularityLevel (n : ℕ) : ℕ :=
   if n = 0 then 0 else if 1000 ∣ n then 3 else if 100 ∣ n then 2 else if 10 ∣ n then 1 else 0
 
-/-- The granularity level of a nonzero numeral indexes the coarsest decimal scale through it,
-up to thousands, the scale [krifka-2009b]'s hearer reads it at. -/
 theorem pow_granularityLevel_eq_scaleLcm {n : ℕ} (hn : n ≠ 0) :
     (10 : ℤ) ^ granularityLevel n = scaleLcm {1000, 100, 10, 1} (n : ℤ) := by
   symm
@@ -390,16 +388,11 @@ theorem corrOn_atLeast {n : ℕ} (hn : 1 ≤ n) :
     simp [corrOn, corr, table3_10, Matrix.cons_val_two, Matrix.cons_val_three, correctionContext,
       Correction.candidate, qpri, npri, qsimp, info, Form.complexity, Nat.add_assoc]
 
-/-- After *more than n*, *more than n − 1* bounds *at most n + 1* and *fewer than n + 2*, and
-wins when quantifier priming or simplicity dominates numeral priming, *at least n* winning
-when numeral priming dominates both. -/
 theorem moreThan_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
     (Tableau.ofRanking (corrOn (correctionContext n .moreThan n) n) r Correction.all).optimal =
       if r.Dominates 0 1 ∨ r.Dominates 2 1 then {.moreThan} else {.atLeast} := by
   rw [corrOn_moreThan hn]; revert r; decide +kernel
 
-/-- After *at least n − 1*, *more than n − 1* wins when numeral priming or simplicity
-dominates quantifier priming, *at least n* when quantifier priming dominates both. -/
 theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4) 4) :
     (Tableau.ofRanking (corrOn (correctionContext n .atLeast (n - 1)) n) r
       Correction.all).optimal =
@@ -408,8 +401,6 @@ theorem atLeast_correction_optimal {n : ℕ} (hn : 1 ≤ n) (r : Ranking (Fin 4)
 
 /-! ### The hearer, and the implicature of *more than n* (§3.4, §5.3, §5.4) -/
 
-/-- *About 100* is never optimal for a speaker who knows the value to be exactly 100, so its
-use signals imprecision. -/
 theorem about100_notMem_optimal_of_exact (r : Ranking (Fin 3) 3) :
     about 100 ∉ (Tableau.ofRanking (approx (.exact 100)) r {bare 100, about 100}).optimal := by
   revert r; decide

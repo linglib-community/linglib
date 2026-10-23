@@ -77,7 +77,6 @@ def iterateOthers (Q₁ Q₂ : GQ A) (P : A → Prop) (R : A → A → Prop) : P
   Q₁ P fun x ↦ Q₂ (fun y ↦ P y ∧ x ≠ y) (R x)
 
 open Fin.NatCast in
-/-- A relation containing the successor step joins any two elements of `Fin n`. -/
 theorem intermediate_of_succ {n : ℕ} [NeZero n] (hn : 2 ≤ n) {R : Fin n → Fin n → Prop}
     (hR : ∀ x, R x (x + 1)) : IntermediateReciprocity R Finset.univ := by
   have step (x : Fin n) :
@@ -124,9 +123,6 @@ theorem not_intermediate_twoTriangles : ¬ IntermediateReciprocity twoTriangles 
   exact absurd (hblock ((intermediateReciprocity_iff.1 h).2 (Finset.mem_univ 0)
     (Finset.mem_univ 3) (by decide))) (by decide)
 
-/-- With a permutation-invariant inner quantifier the iteration has the same value on both
-models, since a bijection fixing each individual carries its neighbours in the cycle of six to
-its neighbours in its cycle of three. -/
 theorem iterateOthers_hexagon_iff (Q₁ Q₂ : GQ (Fin 6)) (hQ₂ : Q₂.QuantityInvariant) :
     iterateOthers Q₁ Q₂ (fun _ ↦ True) hexagon ↔
       iterateOthers Q₁ Q₂ (fun _ ↦ True) twoTriangles := by
@@ -180,8 +176,6 @@ theorem nonempty_inter_of_le {q q' : Coverage × Direction} (hq : q ≤ q')
     (h : (interpretation X q' ∩ I).Nonempty) : (interpretation X q ∩ I).Nonempty :=
   h.mono (Set.inter_subset_inter_left _ (interpretation_antitone hq))
 
-/-- The hypothesis expresses the interpretation at the strongest setting consistent with the
-context. -/
 theorem isLeast_of_isGreatest {q : Coverage × Direction}
     (h : IsGreatest {q | (interpretation X q ∩ I).Nonempty} q) :
     IsLeast (candidates X I) (interpretation X q) :=
@@ -220,8 +214,6 @@ theorem not_oneWayWeak_of_measles (hR : R ∈ measles) : ¬ OneWayWeakReciprocit
   let ⟨x, hx⟩ := exists_transGen_of_oneWayWeak h
   hR.2 x hx
 
-/-- With three or more students, Strong Alternative Reciprocity is false of measles, since the
-last to catch it would have caught it from each of the others. -/
 theorem not_strongAlternative_of_measles (hR : R ∈ measles) (hX : 3 ≤ X.card) :
     ¬ Recip (.ful, .alternative) R X := by
   classical
@@ -242,8 +234,6 @@ theorem not_strongAlternative_of_measles (hR : R ∈ measles) (hX : 3 ≤ X.card
   obtain ⟨hy'z, hy'X⟩ := Finset.mem_erase.1 hy'
   exact hy'y (hR.1 _ _ _ (hin hy'X hy'z) (hin hy hyz))
 
-/-- One student giving measles to all the others is a measles situation in which Intermediate
-Alternative Reciprocity holds. -/
 theorem exists_intermediateAlternative_measles (hX : X.Nontrivial) {s : A} (hs : s ∈ X) :
     ∃ R ∈ measles, Recip (.lin, .alternative) R X := by
   refine ⟨fun x y ↦ x = s ∧ y ≠ s, ⟨fun x x' y hx hx' ↦ hx.1.trans hx'.1.symm, fun x hx ↦ ?_⟩, ?_⟩
@@ -289,8 +279,6 @@ def asymmetric : Set (A → A → Prop) :=
 private theorem mem_pair (a b : A) {y : A} : y ∈ ({a, b} : Finset A) ↔ y = a ∨ y = b := by
   simp
 
-/-- On two members the three alternative quantifiers agree, each saying that one member bears the
-relation to the other. -/
 theorem interpretation_pair_alternative {a b : A} (hab : a ≠ b) :
     interpretation {a, b} (.tot, .alternative) = interpretation {a, b} (.ful, .alternative) := by
   ext R
@@ -347,8 +335,6 @@ other. -/
 def singleValued : Set (A → A → Prop) :=
   {R | ∀ x y y', R x y → R x y' → y = y'}
 
-/-- A single-valued relation is strongly alternative-reciprocal on at most three members, since
-each pair of members needs an arrow of its own. -/
 theorem card_le_three_of_singleValued (hR : R ∈ singleValued)
     (h : Recip (.ful, .alternative) R X) : X.card ≤ 3 := by
   classical
@@ -373,9 +359,6 @@ theorem card_le_three_of_singleValued (hR : R ∈ singleValued)
   generalize X.card * X.card = m at *
   omega
 
-/-- With a single-valued relation, Intermediate Reciprocity over three or more members leaves no
-two members bearing the relation to each other. A pirate who stares back at one staring at him
-leaves some pirate out of the loop. -/
 theorem not_mutual_of_intermediate (hR : R ∈ singleValued) (h : IntermediateReciprocity R X)
     (hX : 3 ≤ X.card) {a b : A} (ha : a ∈ X) (hab : R a b) (hba : R b a) : False := by
   classical

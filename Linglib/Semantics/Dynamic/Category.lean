@@ -126,7 +126,6 @@ open Opposite
 
 variable {W M V : Type*} {X Y : Set V}
 
-/-- The action of `possibilities` on a lattice inequality, elementwise. -/
 @[simp] theorem possibilities_map_apply (h : X ≤ Y)
     (p : (possibilities W M V).obj (op Y)) :
     (possibilities W M V).map (homOfLE h).op p =
@@ -134,11 +133,6 @@ variable {W M V : Type*} {X Y : Set V}
 
 variable [∀ v, Decidable (v ∈ X)]
 
-/-- Possibilities glue, since a pair of possibilities over `X` and `Y` whose
-weakenings to `X ⊓ Y` agree is jointly the weakening of a unique
-possibility over `X ⊔ Y` — `possibilities` sends the lattice square to a
-pullback of types. The piecewise witness is `Possibility.union` in the charts of
-`Possibility.domainEquiv`. -/
 theorem possibilities_glue
     (a : (possibilities W M V).obj (op X)) (b : (possibilities W M V).obj (op Y))
     (hab : (possibilities W M V).map (homOfLE inf_le_left).op a =
@@ -161,11 +155,6 @@ theorem possibilities_glue
   · obtain ⟨rfl, rfl⟩ := hc'
     exact Prod.ext rfl (funext fun v => by by_cases h : v.1 ∈ X <;> simp [h])
 
-/-- Beck–Chevalley for the context-lattice square: existential image
-along `X ⊓ Y ≤ X` then weakening to `Y` is weakening to `X ⊔ Y` then
-existential image along `Y ≤ X ⊔ Y` — quantifying and reindexing
-commute. The image legs are `State.presheaf`'s own action on the
-square's arrows. -/
 theorem possibilities_beck_chevalley
     (S : Set ((possibilities W M V).obj (op X))) :
     (possibilities W M V).map (homOfLE (inf_le_right : X ⊓ Y ≤ Y)).op ⁻¹'

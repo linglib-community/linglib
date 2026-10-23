@@ -106,7 +106,6 @@ instance : LawfulMonad WithAlternatives := LawfulMonad.mk'
   (bind_assoc := fun m f g => by
     cases m; simp [bind])
 
-/-- The ordinary dimension is a monad morphism onto `Id`. -/
 @[simp] theorem ordinary_pure (x : α) : (pure x : WithAlternatives α).ordinary = x := rfl
 
 @[simp] theorem ordinary_bind (m : WithAlternatives α) (f : α → WithAlternatives β) :
@@ -118,18 +117,15 @@ instance : LawfulMonad WithAlternatives := LawfulMonad.mk'
 @[simp] theorem ordinary_seq (mf : WithAlternatives (α → β)) (ma : WithAlternatives α) :
     (mf <*> ma).ordinary = mf.ordinary ma.ordinary := rfl
 
-/-- The alternatives of `f <$> m` are the images of `m`'s alternatives. -/
 @[simp] theorem mem_alternatives_map {f : α → β} {m : WithAlternatives α} {b : β} :
     b ∈ (f <$> m).alternatives ↔ ∃ a ∈ m.alternatives, f a = b := by
   simp [Functor.map, unfeatured, eq_comm]
 
-/-- In Hamblin functional application alternative functions apply to alternative arguments. -/
 @[simp] theorem mem_alternatives_seq {mf : WithAlternatives (α → β)} {ma : WithAlternatives α}
     {b : β} :
     b ∈ (mf <*> ma).alternatives ↔ ∃ g ∈ mf.alternatives, ∃ a ∈ ma.alternatives, g a = b := by
   simp [Seq.seq, unfeatured, eq_comm]
 
-/-- Mapping over an F-marked constituent evokes the whole range of the function. -/
 theorem alternatives_map_focused (f : α → β) (x : α) :
     (f <$> focused x).alternatives = Set.range f := by
   ext b; simp [focused]
@@ -162,8 +158,6 @@ instance : CommApplicative WithAlternatives where
     · rintro ⟨_, ⟨y, hy, rfl⟩, x, hx, rfl⟩
       exact ⟨_, ⟨x, hx, rfl⟩, y, hy, rfl⟩
 
-/-- By commutativity an application can run its argument first, binding the argument into the
-function applied to it. -/
 theorem seq_eq_bind_seq_pure (mf : WithAlternatives (α → β)) (mx : WithAlternatives α) :
     mf <*> mx = mx >>= fun x ↦ mf <*> pure x := by
   have h := CommApplicative.commutative_map mf mx (f := fun g x ↦ g x)
@@ -198,20 +192,15 @@ theorem WellFormed.seq {mf : WithAlternatives (α → β)} {ma : WithAlternative
 /-- A meaning is Given with respect to `a` when its alternatives have collapsed to `{a}`. -/
 def Given (m : WithAlternatives α) (a : α) : Prop := m.alternatives = {a}
 
-/-- Unfeatured meanings are Given with respect to their value. -/
 theorem Given.unfeatured (x : α) : (unfeatured x).Given x :=
   unfeatured_alternatives x
 
-/-- A function evoking every function, applied to an argument that evokes something, evokes every
-value. -/
 theorem alternatives_seq_eq_univ {mf : WithAlternatives (α → β)} {ma : WithAlternatives α}
     (hf : mf.alternatives = Set.univ) (ha : ma.alternatives.Nonempty) :
     (mf <*> ma).alternatives = Set.univ :=
   let ⟨a, ha⟩ := ha
   Set.eq_univ_of_forall fun b ↦ mem_alternatives_seq.2 ⟨fun _ ↦ b, hf ▸ Set.mem_univ _, a, ha, rfl⟩
 
-/-- A Given function collapses Hamblin composition to application on the argument's alternatives:
-deaccented material contributes exactly its ordinary value. -/
 theorem Given.alternatives_seq {mf : WithAlternatives (α → β)} {f : α → β}
     (h : mf.Given f) (ma : WithAlternatives α) :
     (mf <*> ma).alternatives = f '' ma.alternatives := by
@@ -232,7 +221,6 @@ namespace WithAlternatives
 
 variable {α β γ : Type*} {f : α → β → γ} {a : WithAlternatives α} {b : WithAlternatives β}
 
-/-- A meaning whose alternatives are nontrivial is Given with respect to nothing. -/
 theorem not_given_of_nontrivial {m : WithAlternatives α} (h : m.alternatives.Nontrivial)
     (x : α) : ¬ m.Given x :=
   h.ne_singleton
@@ -254,7 +242,6 @@ theorem WellFormed.map₂ (ha : a.WellFormed) (hb : b.WellFormed) : (map₂ f a 
   Set.mem_image2_of_mem ha hb
 
 universe u in
-/-- Within a universe, binary composition is the monad's `f <$> a <*> b`. -/
 theorem map₂_eq_seq {α β γ : Type u} (f : α → β → γ) (a : WithAlternatives α)
     (b : WithAlternatives β) : map₂ f a b = f <$> a <*> b := by
   refine WithAlternatives.ext rfl (Set.ext fun c ↦ ?_)

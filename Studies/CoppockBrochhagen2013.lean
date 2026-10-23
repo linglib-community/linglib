@@ -160,7 +160,6 @@ theorem twoSided_ssubset_atLeast (hμ : Function.Surjective μ) {a b : α} (hab 
   obtain ⟨w, rfl⟩ := hμ b
   exact ⟨preimage_mono (singleton_subset_iff.2 le_rfl), fun h ↦ hab.ne' (h (hab.le : μ w ∈ Ici a))⟩
 
-/-- On answers ranked by entailment *at least* leaves its prejacent as it is. -/
 theorem atLeast_oneSided_eq (hμ : Function.Surjective μ) (a : α) :
     atLeast (ranking (oneSided μ)) (range (oneSided μ)) (oneSided μ a) = oneSided μ a :=
   atLeast_oneSided hμ a
@@ -173,8 +172,6 @@ open Semantics
 
 variable {W : Type*} {μ : W → ℕ}
 
-/-- On the question of how many, *at least* is the Fragment's reading of the numeral it modifies,
-pulled back along the count. -/
 theorem atLeast_fragment (hμ : Function.Surjective μ) (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atLeast⟧,
       Focus.Particles.atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =
@@ -182,8 +179,6 @@ theorem atLeast_fragment (hμ : Function.Surjective μ) (n : ℕ) :
   rintro m (rfl : m = _)
   rw [atLeast_twoSided hμ, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_ge]
 
-/-- On the question of how many, *at most* is the Fragment's reading of the numeral it modifies,
-pulled back along the count. -/
 theorem atMost_fragment (hμ : Function.Surjective μ) (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atMost⟧,
       Focus.Particles.atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =
@@ -333,8 +328,6 @@ theorem restrict_atLeastInq_eq_singleton (hP : Function.Injective P) {a b : α} 
     rcases hsplit i hij with h | h <;> simp [h]
 
 omit [Preorder α] in
-/-- An information set inside one two-sided answer meets each two-sided answer wholly or not at
-all. -/
 theorem split_twoSided {μ : W → α} {b : α} {k : Set W} (hkb : k ⊆ μ ⁻¹' {b}) (i : α) :
     k ∩ μ ⁻¹' {i} = k ∨ k ∩ μ ⁻¹' {i} = ∅ := by
   by_cases h : i = b
@@ -344,8 +337,6 @@ theorem split_twoSided {μ : W → α} {b : α} {k : Set W} (hkb : k ⊆ μ ⁻�
 
 end Ignorance
 
-/-- An information set inside one two-sided answer meets each one-sided answer wholly or not at
-all. -/
 theorem split_oneSided {W α : Type*} [LinearOrder α] {μ : W → α} {b : α} {k : Set W}
     (hkb : k ⊆ μ ⁻¹' {b}) (i : α) : k ∩ μ ⁻¹' Ici i = k ∨ k ∩ μ ⁻¹' Ici i = ∅ := by
   rcases le_or_gt i b with h | h

@@ -17,8 +17,6 @@ namespace Set
 
 variable {α : Type*} [LinearOrder α]
 
-/-- A ray closed above is never inside a ray open below: `min a b` lies in the first and not in
-the second. -/
 theorem not_Iic_subset_Ioi (a b : α) : ¬ Iic a ⊆ Ioi b :=
   fun h ↦ lt_irrefl b ((h (min_le_left a b)).trans_le (min_le_right a b))
 

@@ -78,7 +78,6 @@ def FrameConsequence (φ ψ : Formula Var) : Prop :=
 
 @[inherit_doc] scoped infix:50 " ⊨ᶠ " => FrameConsequence
 
-/-- Frame consequence is the algebraic inequality in every frame algebra. -/
 theorem frameConsequence_iff_eval {φ ψ : Formula Var} :
     (φ ⊨ᶠ ψ) ↔ ∀ {S : Type u} (F : CompatFrame S) (V : Var → F.Regular),
       Formula.eval V φ ≤ Formula.eval V ψ := by
@@ -108,7 +107,6 @@ def CompatFrame.ofOrtholattice {L : Type*} [Lattice L] [BoundedOrder L] [Involut
     [InvolutiveCompl L] [IsOrtholattice L] {V : Set L} {a b : Point V} :
     (CompatFrame.ofOrtholattice V).compat a b ↔ ¬ a.1 ≤ b.1ᶜ := Iff.rfl
 
-/-- `Formula.eval` commutes with the representation embedding `represent V₀`. -/
 theorem eval_map {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
     [IsOrtholattice L] {V₀ : Set L} (hV : JoinDense V₀) (v : Var → L) (φ : Formula Var) :
     Formula.eval (fun p ↦ represent V₀ (v p)) φ = represent V₀ (Formula.eval v φ) := by

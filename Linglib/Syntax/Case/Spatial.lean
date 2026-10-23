@@ -66,7 +66,6 @@ def shape? : Case → Option Spatial.Path.Shape
   | .ter => some .terminative
   | _ => none
 
-/-- A directional case's shape has the case's direction. -/
 theorem dirOf_eq_of_shape?_eq {c : Case} {s : Spatial.Path.Shape} (h : c.shape? = some s) :
     c.dirOf = some s.direction := by
   cases c <;> simp_all [shape?] <;> subst h <;> rfl
@@ -105,9 +104,6 @@ def spatialDecomp (c : Case) : Option (Localization × Direction) :=
   | some r, some d => some (r, d)
   | _, _ => none
 
-/-- `toCase` and `spatialDecomp` are inverse on the localization-specific
-    cells — the decomposition round-trips where localization is not conflated.
-    (`route` is localization-neutral, hence `none` on both sides.) -/
 theorem spatialDecomp_toCase (r : Localization) (d : Direction) :
     (toCase r d).bind spatialDecomp =
       (toCase r d).map (fun _ => (r, d)) := by

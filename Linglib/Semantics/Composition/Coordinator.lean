@@ -61,19 +61,15 @@ theorem denote_of_disjunctive (h : c.role = .disjunctive) (s : Set α) : c.denot
 theorem denote_of_negative (h : c.role = .negative) (s : Set α) : c.denote s = (sSup s)ᶜ := by
   simp [denote, h]
 
-/-- An adversative coordinator has the truth conditions of conjunction. -/
 theorem denote_of_adversative (h : c.role = .adversative) (s : Set α) : c.denote s = sInf s := by
   simp [denote, h]
 
-/-- Coordinating a constituent alone returns it, except under negative coordination. -/
 theorem denote_singleton (hc : c.role ≠ .negative) (p : α) : c.denote {p} = p := by
   rcases h : c.role <;> simp_all [denote]
 
-/-- Coordinating a constituent with itself returns it, except under negative coordination. -/
 theorem denote_pair_self (hc : c.role ≠ .negative) (p : α) : c.denote {p, p} = p := by
   rw [Set.pair_eq_singleton, denote_singleton hc]
 
-/-- The coordination of functions is computed pointwise. -/
 theorem denote_apply {ι : Type*} (c : Coordinator) (s : Set (ι → α)) (i : ι) :
     c.denote s i = c.denote ((· i) '' s) := by
   rcases h : c.role <;> simp [denote, h, sSup_apply, sInf_apply, sSup_image', sInf_image']

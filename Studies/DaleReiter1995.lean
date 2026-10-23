@@ -119,8 +119,6 @@ abbrev IsShortest : Prop := MinimalFor (Distinguishing kb r C) card L
 
 variable {kb r C L}
 
-/-- A distinguishing description with two pairs is shortest once neither the empty
-description nor any single pair distinguishes. -/
 theorem isShortest_of_card_two (hL : Distinguishing kb r C L) (h2 : L.card = 2)
     (h0 : ¬ Distinguishing kb r C ∅) (h1 : ∀ p, ¬ Distinguishing kb r C {p}) :
     IsShortest kb r C L :=
@@ -149,7 +147,6 @@ instance : Decidable (NoUnnecessary kb r C L) := by unfold NoUnnecessary; infer_
 
 variable {kb r C L}
 
-/-- Reiter's first rule is subset-minimality among distinguishing descriptions. -/
 theorem noUnnecessary_iff_minimal :
     NoUnnecessary kb r C L ↔ Minimal (Distinguishing kb r C) L := by
   refine ⟨fun h ↦ ⟨h.1, fun L' hL' hle ↦ ?_⟩, fun h ↦ ⟨h.1, fun p hp hd ↦ ?_⟩⟩
@@ -166,7 +163,6 @@ unnecessary modifier (§3.2.1). -/
 theorem IsShortest.noUnnecessary (h : IsShortest kb r C L) : NoUnnecessary kb r C L :=
   ⟨h.1, λ _ hp => h.not_prop_of_lt (card_erase_lt_of_mem hp)⟩
 
-/-- A shortest description is locally brief. -/
 theorem IsShortest.locallyBrief (h : IsShortest kb r C L) : LocallyBrief kb r C L :=
   ⟨h.noUnnecessary, λ S hS hS2 p => h.not_prop_of_lt (by
     have h₁ := card_insert_le p (L \ S)
@@ -245,7 +241,6 @@ def flat [DecidableEq V] (kb : KB E A V) (type : A) : Domain E A V where
     | some w => if w = v then .holds else .fails
     | none => .unknown
 
-/-- Under the accuracy user model, what the user knows is what the knowledge base records. -/
 theorem flat_userKnows [DecidableEq V] {kb : KB E A V} {t : A} (x : E) (a : A) (v : V) :
     ((flat kb t).userKnows x a v = .holds ↔ kb x a = some v) ∧
       ((flat kb t).userKnows x a v = .fails ↔ ∃ w, kb x a = some w ∧ w ≠ v) := by
@@ -273,7 +268,6 @@ def findBestValue (r : E) (C : Finset E) (a : A) : ℕ → V → Option V
             if (d.rulesOut C a v).card < (d.rulesOut C a new).card then new else v
     else none
 
-/-- `FindBestValue` returns only values the user knows to hold of the referent. -/
 theorem findBestValue_userKnows (r : E) (C : Finset E) (a : A) :
     ∀ (n : ℕ) (v w : V), d.findBestValue r C a n v = some w → d.userKnows r a w = .holds
   | 0, v, w, h => by
@@ -305,7 +299,6 @@ def withType (r : E) (L : Description A V) : Description A V :=
     | none => L
     | some b => insert (d.type, b) L
 
-/-- The return never retracts a pair. -/
 theorem withType_subset (r : E) (L : Description A V) : L ⊆ d.withType r L := by
   unfold withType
   split_ifs
@@ -314,7 +307,6 @@ theorem withType_subset (r : E) (L : Description A V) : L ⊆ d.withType r L := 
     · exact subset_rfl
     · exact subset_insert _ _
 
-/-- The return adds at most the basic-level head noun. -/
 theorem withType_mem (r : E) (L : Description A V) {p : A × V} (hp : p ∈ d.withType r L) :
     p ∈ L ∨ d.basicLevel r p.1 = some p.2 := by
   unfold withType at hp
@@ -353,7 +345,6 @@ theorem step_subset (r : E) (a : A) (C : Finset E) (L : Description A V) :
       · exact subset_insert _ _
       · exact subset_rfl
 
-/-- A step adds only pairs the user knows to hold of the referent. -/
 theorem step_mem (r : E) (a : A) (C : Finset E) (L : Description A V) {p : A × V}
     (hp : p ∈ (d.step r a C L).2) : p ∈ L ∨ d.userKnows r p.1 p.2 = .holds := by
   unfold step at hp
@@ -369,7 +360,6 @@ theorem step_mem (r : E) (a : A) (C : Finset E) (L : Description A V) {p : A × 
         · exact .inl hp
       · exact .inl hp
 
-/-- Every distractor a step removes is ruled out by the pair the step adds. -/
 theorem step_ruledOut (r : E) (a : A) (C : Finset E) (L : Description A V) {c : E}
     (hc : c ∈ C) (hc' : c ∉ (d.step r a C L).1) :
     ∃ p ∈ (d.step r a C L).2, d.userKnows c p.1 p.2 = .fails := by

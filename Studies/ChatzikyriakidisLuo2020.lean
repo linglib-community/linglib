@@ -102,7 +102,6 @@ variable {A B C : Over Obj}
 theorem subsingleton_hom [Mono B.hom] : Subsingleton (A ⟶ B) :=
   ⟨fun s t ↦ Over.OverMorphism.ext ((cancel_mono B.hom).1 ((Over.w s).trans (Over.w t).symm))⟩
 
-/-- A coercion out of a noun with a monic embedding is monic. -/
 theorem mono_left [Mono A.hom] (s : A ⟶ B) : Mono s.left :=
   mono_of_mono_fac (Over.w s)
 
@@ -205,22 +204,18 @@ theorem forall_does_iff_mono : (∀ (P : A.left → Prop) x, Does P x ↔ P x) �
   rw [does_iff]
   exact ⟨fun ⟨y, hy, hP⟩ ↦ hA hy ▸ hP, fun hP ↦ ⟨x, rfl, hP⟩⟩
 
-/-- If `P` implies `Q`, not doing `Q` implies not doing `P`, which is law (A2). -/
 theorem doesNot_mono {P Q : A.left → Prop} (h : ∀ x, P x → Q x) (y : B.left)
     (hQ : DoesNot A Q B y) : DoesNot A P B y :=
   fun x hx hP ↦ hQ x hx (h x hP)
 
-/-- Along a coercion, not doing `P` as a `B` implies not doing it as an `A`, which is law (A3). -/
 theorem doesNot_comp (s : A ⟶ B) (P : B.left → Prop) (z : C.left)
     (h : DoesNot B P C z) : DoesNot A (P ∘ s.left) C z :=
   fun x hx ↦ h (s.left x) ((over_w_apply s x).trans hx)
 
-/-- What no `B` does, no `A` does, which is law (A4). -/
 theorem forall_doesNot_of_hom (s : A ⟶ B) (P : C.left → Prop)
     (h : ∀ y, DoesNot C P B y) (x : A.left) : DoesNot C P A x :=
   fun w hw ↦ h (s.left x) w (hw.trans (over_w_apply s x).symm)
 
-/-- What some `A` does not do, some `B` does not do, which is law (A5). -/
 theorem exists_doesNot_of_hom (s : A ⟶ B) (P : C.left → Prop)
     (h : ∃ x, DoesNot C P A x) : ∃ y, DoesNot C P B y :=
   let ⟨x, hx⟩ := h
@@ -231,7 +226,6 @@ theorem exists_doesNot_of_hom (s : A ⟶ B) (P : C.left → Prop)
 theorem is_of_hom (s : A ⟶ B) {z : C.left} (h : Is A z) : Is B z :=
   fun hB ↦ h (doesNot_comp s (p B) z hB)
 
-/-- The negation operator of [chatzikyriakidis-luo-2017] is NOT with its object read in `Obj`. -/
 theorem standardNeg_not_iff (P : A.left → Prop) (b : B.left) :
     (standardNeg Obj).not A P (B.hom b) ↔ DoesNot A P B b :=
   Iff.rfl
@@ -271,49 +265,40 @@ section HEq
 /-- The operator NOT defined as in (7.11), with `HEq` for JMeq. -/
 def HDoesNot {A B : Type} (P : A → Prop) (b : B) : Prop := ∀ x : A, HEq x b → ¬ P x
 
-/-- Law (A1) holds for `HDoesNot`. -/
 theorem not_hDoesNot_self_iff {A : Type} {P : A → Prop} {x : A} : ¬ HDoesNot P x ↔ P x := by
   simp only [HDoesNot, not_forall, not_not, exists_prop]
   exact ⟨fun ⟨y, hy, hP⟩ ↦ eq_of_heq hy ▸ hP, fun hP ↦ ⟨x, HEq.rfl, hP⟩⟩
 
-/-- Law (A2) holds for `HDoesNot`. -/
 theorem hDoesNot_mono {A B : Type} {P Q : A → Prop} (h : ∀ x, P x → Q x) {y : B}
     (hQ : HDoesNot Q y) : HDoesNot P y :=
   fun x hx hP ↦ hQ x hx (h x hP)
 
-/-- NOT holds vacuously between distinct types, since `HEq` entails type equality. -/
 theorem hDoesNot_of_ne {A B : Type} (h : A ≠ B) (P : A → Prop) (b : B) : HDoesNot P b :=
   fun _ hx ↦ (h (type_eq_of_heq hx)).elim
 
 variable {α : Type} [Fintype α] {M : α → Prop} [DecidablePred M]
 
-/-- A proper Σ-subtype of a finite type is a different type. -/
 theorem subtype_ne (h : ∃ a, ¬ M a) : {a // M a} ≠ α := fun e ↦ by
   obtain ⟨a, ha⟩ := h
   exact (Fintype.card_subtype_lt ha).ne (Fintype.card_congr (Equiv.cast e))
 
-/-- Law (A3) fails for `HDoesNot` at a proper finite Σ-subtype, such as the men among the humans. -/
 theorem not_doesNot_comp_heq (h : ∃ a, ¬ M a) (m : {a // M a}) :
     ¬ ∀ (P : α → Prop) (C : Type) (z : C),
       HDoesNot P z → HDoesNot (P ∘ Subtype.val : {a // M a} → Prop) z :=
   fun h3 ↦ not_hDoesNot_self_iff.2 trivial
     (h3 (fun _ ↦ True) _ m (hDoesNot_of_ne (subtype_ne h).symm _ m))
 
-/-- Law (A4) fails for `HDoesNot` at a proper finite Σ-subtype. -/
 theorem not_forall_doesNot_of_sub_heq (h : ∃ a, ¬ M a) (m : {a // M a}) :
     ¬ ∀ (C : Type) (P : C → Prop), (∀ y : α, HDoesNot P y) → ∀ x : {a // M a}, HDoesNot P x :=
   fun h4 ↦ not_hDoesNot_self_iff.2 trivial
     (h4 _ (fun _ ↦ True) (hDoesNot_of_ne (subtype_ne h) _) m)
 
-/-- Law (A5) fails for `HDoesNot` at a proper finite Σ-subtype. -/
 theorem not_exists_doesNot_of_sub_heq (h : ∃ a, ¬ M a) (m : {a // M a}) :
     ¬ ∀ (C : Type) (P : C → Prop), (∃ x : {a // M a}, HDoesNot P x) → ∃ y : α, HDoesNot P y :=
   fun h5 ↦
     let ⟨_, hy⟩ := h5 α (fun _ ↦ True) ⟨m, hDoesNot_of_ne (subtype_ne h).symm _ m⟩
     not_hDoesNot_self_iff.2 trivial hy
 
-/-- The axiom of [xue-luo-chatzikyriakidis-2018] identifying an object with its image under a
-coercion fails for `HEq` at a proper finite Σ-subtype. -/
 theorem not_heq_val (h : ∃ a, ¬ M a) (x : {a // M a}) : ¬ HEq x x.1 :=
   fun hx ↦ subtype_ne h (type_eq_of_heq hx)
 

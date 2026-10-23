@@ -151,9 +151,6 @@ theorem answerL0_apply_singleton (u : Message) (i : Interp) (x : (Bool ⊕ World
     ext; simp [hji]
   · simp
 
-/-- The first speaker weighs a message by the geometric mean over interpretations of the literal
-listener's probability of her answer, to the power of the rationality, times the cost weight:
-the exponential of the rationality times the expected utility across interpretations. -/
 theorem S1_apply_singleton (p : World × QUD) (u : Message) :
     S1 μ ρ ν α p {u} =
       ν.geomMean (fun i ↦ (L0 μ ρ i).map answer u {answer p}) ^ α *
@@ -170,8 +167,6 @@ section Support
 variable [IsFiniteMeasure μ] [IsFiniteMeasure ρ] (hμ : ∀ w, μ {w} ≠ 0) (hρ : ∀ Q, ρ {Q} ≠ 0)
 include hμ hρ
 
-/-- Under an interpretation, the literal listener gives no probability to an answer exactly when
-the message is false at every world with that answer. -/
 theorem answerL0_answer_eq_zero_iff (u : Message) (i : Interp) (w : World) (Q : QUD) :
     answerL0 μ ρ u {(i, answer (w, Q))} = 0 ↔
       ∀ v, Q.answer v = Q.answer w → v ∉ meaning i u := by
@@ -191,8 +186,6 @@ theorem answerL0_answer_eq_zero_iff (u : Message) (i : Interp) (w : World) (Q : 
 variable [IsFiniteMeasure ν] (hα : 0 < α)
 include hα
 
-/-- The first speaker never uses a message at a world when, under some interpretation, it is
-false at every world with her answer, the principle of truth on all interpretations. -/
 theorem S1_apply_singleton_eq_zero_iff (w : World) (Q : QUD) (u : Message) :
     S1 μ ρ ν α (w, Q) {u} = 0 ↔
       ∃ i, ν {i} ≠ 0 ∧ ∀ v, Q.answer v = Q.answer w → v ∉ meaning i u := by
@@ -216,8 +209,6 @@ theorem S1_apply_singleton_eq_zero_iff (w : World) (Q : QUD) (u : Message) :
 variable (hν : ∀ i, ν {i} ≠ 0)
 include hν
 
-/-- With every interpretation possible, the first speaker uses a message exactly when, under
-each interpretation, it is true at some world with her answer. -/
 theorem S1_apply_singleton_ne_zero_iff (w : World) (Q : QUD) (u : Message) :
     S1 μ ρ ν α (w, Q) {u} ≠ 0 ↔ ∀ i, ∃ v, Q.answer v = Q.answer w ∧ v ∈ meaning i u := by
   rw [ne_eq, S1_apply_singleton_eq_zero_iff hμ hρ hα]
@@ -231,16 +222,12 @@ theorem homogeneity (w : World) :
   simp only [S1_apply_singleton_ne_zero_iff hμ hρ hα hν]
   revert w; decide
 
-/-- When the question is whether some of the students came, the first speaker uses *the*
-wherever some did and *not the* only where none did, as existential quantifiers. -/
 theorem nonMaximality (w : World) :
     (S1 μ ρ ν α (w, .isSome) {.the} ≠ 0 ↔ w ≠ .none) ∧
       (S1 μ ρ ν α (w, .isSome) {.notThe} ≠ 0 ↔ w = .none) := by
   simp only [S1_apply_singleton_ne_zero_iff hμ hρ hα hν]
   revert w; decide
 
-/-- Hearing *the*, the pragmatic listener takes it to be possible that only some of the students
-came exactly as an answer to whether some of them did. -/
 theorem L1_the_justSome_ne_zero_iff (Q : QUD) :
     L1 μ ρ ν α .the {(.justSome, Q)} ≠ 0 ↔ Q = .isSome := by
   rw [L1, listener_apply_singleton_ne_zero_iff, ← Set.singleton_prod_singleton,

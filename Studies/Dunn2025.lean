@@ -121,14 +121,11 @@ instance (st : Stage) (form : TypedForm Lex) : Decidable (st.Admits form) :=
 
 variable {st : Stage} {form : TypedForm Lex} {s t : Slot Lex}
 
-/-- A construction whose slot-constraints come from two ontologies emerges only in the late
-grammar. -/
 theorem Stage.eq_semPlus_of_admits_of_ne (h : st.Admits form) (hs : s ∈ form) (ht : t ∈ form)
     (hst : s.filler.level ≠ t.filler.level) : st = .semPlus := by
   have := h s hs; have := h t ht
   cases st <;> simp_all [Stage.levels]
 
-/-- A construction with a semantic constraint emerges only in the late grammar. -/
 theorem Stage.eq_semPlus_of_admits_of_sem (h : st.Admits form) (hs : s ∈ form)
     (hsem : s.filler.level = .sem) : st = .semPlus := by
   have := h s hs
@@ -230,8 +227,6 @@ noncomputable def standardizedUsage (freq : S → C → ℝ) (W : K → C → �
 
 variable {freq : S → C → ℝ} {W : K → C → ℝ} {pair : P → S × S}
 
-/-- Rescaling and shifting a construction's frequencies across all the samples changes no
-sample's standardized usage. -/
 theorem standardizedUsage_const_mul_add_const [Finite S] [Nonempty S]
     [MeasurableSingletonClass S] {a : C → ℝ} (ha : ∀ c, 0 < a c) (b : C → ℝ) :
     standardizedUsage (fun s c ↦ a c * freq s c + b c) W = standardizedUsage freq W := by
@@ -257,7 +252,6 @@ noncomputable def sampleDistance (freq : S → C → ℝ) (W : K → C → ℝ) 
     ℝ :=
   cosineDistance (standardizedUsage freq W (pair p).1) (standardizedUsage freq W (pair p).2)
 
-/-- Distances are symmetric, so a comparison does not depend on the order of its samples. -/
 theorem sampleDistance_swap :
     sampleDistance freq W (Prod.swap ∘ pair) = sampleDistance freq W pair := by
   funext p
@@ -271,7 +265,6 @@ noncomputable def standardizedDistance (freq : S → C → ℝ) (W : K → C →
     P → ℝ :=
   standardize (sampleDistance freq W pair) (uniformOn Set.univ)
 
-/-- How frequent a construction is overall does not affect any standardized distance. -/
 theorem standardizedDistance_const_mul_add_const [Finite S] [Nonempty S]
     [MeasurableSingletonClass S] {a : C → ℝ} (ha : ∀ c, 0 < a c) (b : C → ℝ) :
     standardizedDistance (fun s c ↦ a c * freq s c + b c) W pair =
@@ -279,7 +272,6 @@ theorem standardizedDistance_const_mul_add_const [Finite S] [Nonempty S]
   unfold standardizedDistance sampleDistance
   rw [standardizedUsage_const_mul_add_const ha]
 
-/-- Standardizing the distances keeps their ranking, from the most to the least similar pair. -/
 theorem standardizedDistance_le_standardizedDistance_iff
     (h : 0 < Var[sampleDistance freq W pair; uniformOn Set.univ]) {p q : P} :
     standardizedDistance freq W pair p ≤ standardizedDistance freq W pair q ↔
@@ -288,13 +280,10 @@ theorem standardizedDistance_le_standardizedDistance_iff
 
 variable [Finite P] [MeasurableSingletonClass P]
 
-/-- A standardized distance of `0` is the average distance. -/
 theorem integral_standardizedDistance [Nonempty P] :
     (uniformOn Set.univ)[standardizedDistance freq W pair] = 0 :=
   integral_standardize .of_discrete
 
-/-- Comparisons within `T` are more similar than average exactly when their mean standardized
-distance is negative, and more different exactly when it is positive. -/
 theorem sign_integral_standardizedDistance {T : Finset P} (hT : T.Nonempty) :
     SignType.sign (uniformOn ↑T)[standardizedDistance freq W pair] =
       SignType.sign ((uniformOn ↑T)[sampleDistance freq W pair] -

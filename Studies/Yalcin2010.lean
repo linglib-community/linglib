@@ -106,8 +106,6 @@ theorem kratzer_V3 : ChancyDisjunctionIntro (likelihood O) := chancyDisjunctionI
 theorem kratzer_V4 : Minimality (likelihood O) := minimality
 theorem kratzer_V5 : Maximality (likelihood O) := maximality
 
-/-- V6 holds for Kratzer's modals. A necessary proposition is probable, since its complement is
-dominated by the witnesses of necessity and cannot dominate them. -/
 theorem kratzer_V6 [Nonempty W] (w : W) : MustToProbably (likelihood O) (must O · w) := by
   intro A hA
   rw [must_iff] at hA
@@ -119,20 +117,14 @@ theorem kratzer_V6 [Nonempty W] (w : W) : MustToProbably (likelihood O) (must O 
     obtain ⟨u, hu, huv⟩ := h (hv v ((premisePreorder O).le_refl v))
     exact hu (hv u huv)
 
-/-- V7 holds for Kratzer's modals, by V6 and V1. -/
 theorem kratzer_V7 [Nonempty W] (w : W) : ProbablyToMight (likelihood O) (might O · w) :=
   fun A hA hmust ↦ probablyToNotProbablyNot A hA (kratzer_V6 O w Aᶜ hmust)
 
-/-- V10 holds for the restricted necessity, since the antecedent's worlds are matched by the
-witnesses, which are consequent worlds. -/
 theorem kratzer_V10 (w : W) : ConditionalToComparative (likelihood O) (ifThen O · · w) := by
   intro A B hAB u hu
   obtain ⟨v, hvA, hvu, hall⟩ := (ifThen_iff O A B w).1 hAB u hu
   exact ⟨v, hall v hvA ((premisePreorder O).le_refl v), hvu⟩
 
-/-- V8 holds for the restricted necessity. A world outside the consequent is dominated through
-the antecedent, and a consequent world undominated by the complement is found above the
-antecedent world the probability of the antecedent leaves undominated. -/
 theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w) := by
   intro A B hAB ⟨hA, hAnot⟩
   rw [ifThen_iff] at hAB
@@ -158,15 +150,11 @@ theorem kratzer_V8 (w : W) : ChancyModusPonens (likelihood O) (ifThen O · · w)
       exact hnone u huA ((premisePreorder _).le_trans _ _ _ huv hva)
     exact hu (hall u huA huv)
 
-/-- V9 holds for the restricted necessity, as the contrapositive of V8. -/
 theorem kratzer_V9 (w : W) : ChancyModusTollens (likelihood O) (ifThen O · · w) :=
   chancyModusTollens_iff.2 (kratzer_V8 O w)
 
-/-- The union property I1 is the lift's right-union closure. -/
 theorem kratzer_I1 : RightUnion (likelihood O) := rightUnion_lewisLift
 
-/-- I2, the collapse of equiprobability into certainty, follows from I1 as the paper derives
-it. -/
 theorem kratzer_I2 : EquiprobabilityCollapse (likelihood O) :=
   equiprobabilityCollapse_of_rightUnion (kratzer_I1 O)
 
@@ -177,18 +165,11 @@ theorem kratzer_V12 : ComplementTransfer (likelihood O) :=
 
 end Kratzer
 
-/-- Footnote 8's limit-assumption variant refutes V11. With two tied maximal worlds, the empty
-ordering source, `p` the whole space and `q` one world, `p` is probable and `q` as likely as
-`p`, but `q` is not probable, since its complement is as high as it. -/
 theorem kratzer_refutes_V11 : ¬PositiveFormTransfer (likelihood (∅ : Set (Fin 2 → Prop))) := by
   intro h
   exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, (fun _ h ↦ h.elim)⟩) probably_top).2
     fun _ _ ↦ ⟨1, by simp, (fun _ h ↦ h.elim)⟩
 
-/-- Two incomparable tied pairs of worlds refute Conjunctivitis for Kratzer's account, as the
-paper says. `{0, 2, 3}` and `{1, 2, 3}` are each probable, since the one world each lacks is
-tied with a world it has, but their conjunction `{2, 3}` is not, since it dominates neither `0`
-nor `1`. -/
 theorem kratzer_refutes_E1 :
     ¬Conjunctivitis (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))}) := by
   intro h
@@ -293,7 +274,6 @@ theorem measure_singleton (w : W) : m.measure {w} = m.poss w := by
   convert Finset.sup_singleton (f := m.poss) (b := w)
   ext; simp
 
-/-- The measure of a union is the greater measure. -/
 theorem measure_union (A B : Set W) : m.measure (A ∪ B) = m.measure A ⊔ m.measure B := by
   classical
   simp only [measure]
@@ -301,7 +281,6 @@ theorem measure_union (A B : Set W) : m.measure (A ∪ B) = m.measure A ⊔ m.me
   congr 1
   ext; simp
 
-/-- Every proposition or its complement is fully possible. -/
 theorem measure_eq_one_or_compl (A : Set W) : m.measure A = 1 ∨ m.measure Aᶜ = 1 := by
   have h := m.measure_union A Aᶜ
   rw [Set.union_compl_self, m.measure_univ] at h
@@ -318,7 +297,6 @@ instance : Std.Refl m.likelihood := ⟨fun _ ↦ le_rfl⟩
 instance : IsNontrivial m.likelihood :=
   ⟨fun h ↦ absurd (m.measure_univ ▸ m.measure_empty ▸ h : (1 : ℚ≥0) ≤ 0) (not_le.2 one_pos)⟩
 
-/-- A probable proposition is fully possible and its complement is not. -/
 theorem measure_eq_one_of_probably {A : Set W} (h : Probably m.likelihood A) :
     m.measure A = 1 ∧ m.measure Aᶜ < 1 := by
   obtain ⟨hle, hnot⟩ := h
@@ -336,12 +314,9 @@ theorem hamblin_V5 : Maximality m.likelihood := maximality
 /-- V6 holds for the quantificational *must* of §4, simple necessity over the whole space. -/
 theorem hamblin_V6 : MustToProbably m.likelihood (· = Set.univ) := mustToProbably
 
-/-- V7 holds for the quantificational *might*, simple possibility over the whole space. -/
 theorem hamblin_V7 : ProbablyToMight m.likelihood Set.Nonempty :=
   fun A hA ↦ Set.nonempty_iff_ne_empty.2 (probablyToMight A hA)
 
-/-- Conjunctivitis holds, since the fully possible worlds of two probable propositions lie in
-both, and the complement of the conjunction is the join of two complements below `1`. -/
 theorem hamblin_E1 : Conjunctivitis m.likelihood := by
   intro A B hA hB
   obtain ⟨hA1, hAc⟩ := m.measure_eq_one_of_probably hA
@@ -361,20 +336,16 @@ theorem hamblin_E1 : Conjunctivitis m.likelihood := by
   exact ⟨by rw [likelihood, hAB]; exact m.measure_le_one _,
     fun h ↦ absurd (hAB ▸ h) (not_le.2 hABc)⟩
 
-/-- I1, the union property, holds since the measure of a union is the greater measure. -/
 theorem hamblin_I1 : RightUnion m.likelihood := fun A B C hAB hAC ↦ by
   show m.measure (B ∪ C) ≤ m.measure A
   rw [m.measure_union]; exact max_le hAB hAC
 
-/-- I2 holds as a consequence of the union property. -/
 theorem hamblin_I2 : EquiprobabilityCollapse m.likelihood :=
   equiprobabilityCollapse_of_rightUnion m.hamblin_I1
 
-/-- I3, Hamblin's collapse, holds, so a probable proposition is at least as possible as any. -/
 theorem hamblin_I3 : HamblinCollapse m.likelihood :=
   hamblinCollapse_of_equiprobabilityCollapse m.hamblin_I2
 
-/-- V12, which the paper counts in Hamblin's favour, holds since I2 does. -/
 theorem hamblin_V12 : ComplementTransfer m.likelihood :=
   complementTransfer_of_equiprobabilityCollapse m.hamblin_I2
 
@@ -434,10 +405,8 @@ theorem prob_V3 : ChancyDisjunctionIntro P.inducedGe := chancyDisjunctionIntro
 theorem prob_V4 : Minimality P.inducedGe := minimality
 theorem prob_V5 : Maximality P.inducedGe := maximality
 
-/-- V6 holds for the quantificational *must*, since the whole space has probability one. -/
 theorem prob_V6 : MustToProbably P.inducedGe (· = Set.univ) := mustToProbably
 
-/-- V7 holds for the quantificational *might*, since the empty proposition is not probable. -/
 theorem prob_V7 : ProbablyToMight P.inducedGe Set.Nonempty :=
   fun A hA ↦ Set.nonempty_iff_ne_empty.2 (probablyToMight A hA)
 
@@ -449,14 +418,10 @@ theorem prob_V12 : ComplementTransfer P.inducedGe := complementTransfer
 
 end Probability
 
-/-- An equiprobable space of `n` worlds orders propositions by how many worlds they hold in. -/
 private theorem uniform_inducedGe_iff {n : ℕ} [NeZero n] {A B : Set (Fin n)} :
     (uniformOn (Set.univ : Set (Fin n))).inducedGe A B ↔ B.ncard ≤ A.ncard :=
   uniformOn_univ_le_iff
 
-/-- The fair coin refutes I1 and I2. Heads is at least as likely as tails and as heads but not
-as heads or tails, and it is as likely as its complement without being as likely as
-everything. -/
 theorem prob_refutes_I1_I2 :
     ¬RightUnion (uniformOn (Set.univ : Set (Fin 2))).inducedGe ∧
       ¬EquiprobabilityCollapse (uniformOn (Set.univ : Set (Fin 2))).inducedGe := by
@@ -472,8 +437,6 @@ theorem prob_refutes_I1_I2 :
     rw [uniform_inducedGe_iff] at this
     simp at this
 
-/-- Three equiprobable worlds refute Hamblin's collapse I3, since `{0, 1}` is probable but not as
-likely as everything. -/
 theorem prob_refutes_I3 : ¬HamblinCollapse (uniformOn (Set.univ : Set (Fin 3))).inducedGe := by
   intro h
   have hA : ({0, 1} : Set (Fin 3)).ncard = 2 := Set.ncard_pair (by decide)
@@ -520,8 +483,6 @@ variable {W : Type*} [MeasurableSpace W] (P : Measure W)
 probability scale. -/
 def probablyAt (n : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ioi n
 
-/-- With a threshold of at least one half, a proposition and its complement are not both
-probable. -/
 theorem probablyAt_V1 [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {n : ℝ}
     (hn : 1 / 2 ≤ n) (A : Set W) : probablyAt P n A → ¬probablyAt P n Aᶜ := by
   intro hA hAc
@@ -531,8 +492,6 @@ theorem probablyAt_V1 [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {n : 
 
 end Threshold
 
-/-- Below one half the pattern fails. With the threshold one third, the fair coin's heads and
-tails are both probable. -/
 theorem probablyAt_refutes_V1 :
     probablyAt (uniformOn (Set.univ : Set (Fin 2))) (1 / 3) {0} ∧
       probablyAt (uniformOn (Set.univ : Set (Fin 2))) (1 / 3) ({0} : Set (Fin 2))ᶜ := by

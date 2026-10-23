@@ -105,19 +105,15 @@ and stem invariant ([stump-2016] §7.1, characteristics (2a)–(2b)). -/
 theorem parareLinkage_isCanonical : parareLinkage.IsCanonical id :=
   Linkage.canonical_isCanonical Function.injective_id fun _ : LatinVerb ↦ LatinStem.para
 
-/-- The deponent property mapping flips voice on every active cell. -/
 theorem conari_pm_flips_voice (l : LatinVerb) (σ : Cell) :
     (conariLinkage.pm l σ).voice = .passive := rfl
 
-/-- The deponent linkage deviates from the canonical isomorphism on every active
-content cell: its property mapping moves the cell off its own property set. -/
 theorem conari_deviates_on_every_active_cell (l : LatinVerb) (σ : Cell)
     (h : σ.voice = .active) : conariLinkage.pm l σ ≠ σ := by
   intro heq
   have : Voice.passive = Voice.active := h ▸ congrArg Cell.voice heq
   exact absurd this (by decide)
 
-/-- Hence the deponent linkage is not property-preserving, so not canonical. -/
 theorem conariLinkage_not_canonical : ¬ conariLinkage.IsCanonical id := by
   rintro ⟨-, -, -, -, hpp⟩
   exact conari_deviates_on_every_active_cell .conari ⟨.s1, .active⟩ rfl (hpp _ _)
@@ -129,13 +125,9 @@ theorem conari_active_realized_by_passive_form (l : LatinVerb) (σ : Cell) :
     (conariLinkage.corr l σ).image (·.2.voice) = {.passive} := by
   simp [conariLinkage, Linkage.corr]
 
-/-- Every one of *cōnārī*'s six active content cells crosses the voice axis. -/
 theorem conari_all_cells_cross_voice :
     ∀ σ ∈ conariContentCells, conariLinkage.pm .conari σ ≠ σ := by decide
 
-/-- On the *same* active content cell, the regular verb's form correspondent
-stays active while the deponent's becomes passive, a deviation without any
-difference in the content-cell space. -/
 theorem depon_vs_regular (σ : Cell) (h : σ.voice = .active) :
     (parareLinkage.corr .parare σ).image (·.2.voice) = {.active} ∧
       (conariLinkage.corr .conari σ).image (·.2.voice) = {.passive} :=
@@ -250,18 +242,12 @@ theorem kashmiri_inflect_alike :
     (linkII.corr wup {.indefPast, .p1, .sg, .masc}).image Prod.snd
       = (linkIII.corr wuph {.recentPast, .p1, .sg, .masc}).image Prod.snd := by decide
 
-/-- In the second interleaving, WUP's remote past and WUPH's indefinite past share
-the 'past c' correspondent and inflect alike (`-yās`). -/
 theorem kashmiri_inflect_alike_pastC :
     (linkII.corr wup {.remotePast, .p1, .sg, .masc}).image Prod.snd
       = (linkIII.corr wuph {.indefPast, .p1, .sg, .masc}).image Prod.snd := by decide
 
-/-- Conjugation II sends distinct content properties to distinct form properties. -/
 theorem morphomeII_injective : Function.Injective morphomeII := by decide
 
-/-- Within Conjugation II the three preterites keep distinct form correspondents, as WUP's
-`wupus`, `wupyōs` and `wupyās` show, so the linkage is not syncretic: the shared
-correspondents of `kashmiri_inflect_alike` cross the two conjugations. -/
 theorem linkII_not_syncretic : ¬ linkII.IsSyncretic :=
   fun h ↦ linkII.not_isInjective_iff.mpr h <|
     Linkage.isInjective_of_injective_pm fun _ ↦ Finset.image_injective morphomeII_injective

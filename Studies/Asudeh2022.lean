@@ -236,7 +236,6 @@ theorem Term.HypLinear.rename (hf : ∀ n B, Γ[n]? = some B → Γ'[f n]? = som
     · have := lt_length_of_rename hf hx; omega
     · omega
 
-/-- Reordering the premises of a linear proof leaves it linear, so commutativity holds. -/
 theorem Term.Linear.rename_perm {T : GlueTy α} {t : Term Γ T} (ht : t.Linear)
     (σ : Equiv.Perm ℕ) (hσ : ∀ n, Γ.length ≤ n → σ n = n) (hlen : Γ'.length = Γ.length)
     (hf : ∀ n B, Γ[n]? = some B → Γ'[σ n]? = some B) : (t.rename σ hf).Linear := by
@@ -254,8 +253,6 @@ theorem Term.Linear.rename_perm {T : GlueTy α} {t : Term Γ T} (ht : t.Linear)
     σ.injective]
   exact ht.1 _ hsymm
 
-/-- Renaming the premises of a proof, with meanings that agree position by position, does not
-    change what it means. -/
 theorem Term.eval_rename (f : ℕ → ℕ) (hf : ∀ n B, Γ[n]? = some B → Γ'[f n]? = some B)
     {T : GlueTy α} (t : Term Γ T) (ρ : Env D Γ) (ρ' : Env D Γ')
     (hρ : ∀ n B (h : Γ[n]? = some B), ρ'.get (f n) (hf n B h) = ρ.get n h) :
@@ -290,7 +287,6 @@ theorem getElem?_append_left_of_eq_some {A : GlueTy α} {n : ℕ} {B : GlueTy α
 def Term.weaken {T : GlueTy α} (A : GlueTy α) (t : Term Γ T) : Term (Γ ++ [A]) T :=
   t.rename id fun _ _ ↦ getElem?_append_left_of_eq_some
 
-/-- A weakened proof is never linear, since its added premise is left over. -/
 theorem Term.not_linear_weaken {T : GlueTy α} (A : GlueTy α) (t : Term Γ T) :
     ¬ (t.weaken A).Linear := by
   intro h
@@ -322,8 +318,6 @@ private theorem count_map_contract (m : ℕ) : ∀ l : List ℕ,
     simp only [List.map_cons, List.count_cons, count_map_contract m l, liftPos, beq_iff_eq]
     split_ifs <;> omega
 
-/-- Contracting a linear proof never yields a linear one, since the merged premise is used
-    twice. -/
 theorem Term.Linear.not_linear_contract {A T : GlueTy α} {t : Term (Γ ++ [A, A]) T}
     (ht : t.Linear) : ¬ t.contract.Linear := by
   intro h
@@ -389,8 +383,6 @@ theorem Term.count_eq_sum (x : α) {T : GlueTy α} (t : Term Γ T) (ht : t.HypLi
     simp only [uses, GlueTy.count, h]
     push_cast; ring
 
-/-- The conclusion of a linear proof has the total count of its premises, which is count
-    invariance. -/
 theorem Term.Linear.count_eq (x : α) {T : GlueTy α} {t : Term Γ T} (ht : t.Linear) :
     T.count x = (Γ.map (GlueTy.count x)).sum := by
   rw [t.count_eq_sum x ht.2]
@@ -415,7 +407,6 @@ theorem Term.Linear.count_eq (x : α) {T : GlueTy α} {t : Term Γ T} (ht : t.Li
   refine List.ext_getElem (by simp) fun i _ h ↦ ?_
   simp [countAt, List.getElem?_eq_getElem (by simpa using h : i < Γ.length)]
 
-/-- A formula derivable from a multiset has the multiset's total count of every atom. -/
 theorem Derivable.count_eq {M : Multiset (GlueTy α)} {C : GlueTy α} (h : Derivable M C)
     (x : α) : C.count x = (M.map (GlueTy.count x)).sum := by
   obtain ⟨Γ, rfl, t, ht⟩ := h
@@ -557,8 +548,6 @@ theorem connected_iff_reachWithin (v : V) :
     have : Nonempty V := ⟨v⟩
     exact ⟨fun u w ↦ (hr u).symm.trans (hr w)⟩
 
-/-- A finite graph is a tree when everything is reachable from one vertex and it has one edge
-    fewer than vertices. -/
 theorem isTree_iff_reachWithin (v : V) :
     G.IsTree ↔ reachWithin G v (Fintype.card V) = Finset.univ ∧
       ∑ w, G.degree w + 2 = 2 * Fintype.card V := by
@@ -757,7 +746,6 @@ def Linking.equivLabel (L : S.Linking) (x : α) :
   left_inv v := by simp
   right_inv v := by simp
 
-/-- A sequent with a linking has a conclusion with its premises' total count of every atom. -/
 theorem Linking.count_eq {Γ : List (GlueTy α)} {C : GlueTy α} (L : (Sequent.of Γ C).Linking)
     (x : α) : C.count x = (Γ.map (GlueTy.count x)).sum := by
   have h := Fintype.card_congr (L.equivLabel x)
@@ -795,7 +783,6 @@ def Logic.linear : Logic := {.commutativity}
 /-- A resource logic admits neither weakening nor contraction. -/
 def Logic.Resource (l : Logic) : Prop := .weakening ∉ l ∧ .contraction ∉ l
 
-/-- The resource logics are the Lambek calculus and linear logic. -/
 theorem resource_iff (l : Logic) : l.Resource ↔ l = .lambek ∨ l = .linear := by
   rw [Logic.lambek, Logic.linear, ← Finset.subset_singleton_iff, Finset.subset_singleton_iff']
   constructor
@@ -805,7 +792,6 @@ theorem resource_iff (l : Logic) : l.Resource ↔ l = .lambek ∨ l = .linear :=
     exact ⟨fun hw ↦ StructuralRule.noConfusion (h _ hw),
       fun hc ↦ StructuralRule.noConfusion (h _ hc)⟩
 
-/-- Linear logic is the commutative resource logic. -/
 theorem commutative_resource_iff (l : Logic) :
     l.Resource ∧ .commutativity ∈ l ↔ l = .linear := by
   rw [resource_iff]
@@ -834,7 +820,6 @@ def recurry :
 
 theorem recurry_linear : recurry.Linear := by decide
 
-/-- The recurried proof means the same function with its arguments swapped. -/
 theorem recurry_eval {D : Label → Type} (f : D .a → D .b → D .c) :
     recurry.eval (.cons f .nil) = fun u v ↦ f v u :=
   rfl
@@ -864,7 +849,6 @@ def finnish : List (List (GlueTy Label)) :=
 def english : List (List (GlueTy Label)) :=
   [[atom Label.p], [atom Label.w ⊸ atom Label.p ⊸ atom Label.d], [atom Label.w]]
 
-/-- Two words and three words instantiate the same premises. -/
 theorem finnish_english : finnish.flatten = english.flatten ∧ finnish.length ≠ english.length :=
   by decide
 
@@ -900,8 +884,6 @@ theorem surface_linear : surface.Linear := by decide
 
 theorem inverse_linear : inverse.Linear := by decide
 
-/-- *Everybody loves somebody* has exactly two correct proof nets, the two normal-form proofs
-    the paper finds for it. -/
 theorem card_correct_loves :
     Fintype.card {L : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Linking //
       L.Correct} = 2 := by
@@ -916,8 +898,6 @@ private theorem not_correct_of_clause_from_loves :
       ((L.1.symm lovesGoal).1.1 : ℕ) = 1 → ¬ L.Correct := by
   decide +kernel
 
-/-- In a correct net the clause is the result of a quantifier, never of *loves* itself, so one of
-    the two quantifiers takes widest scope. -/
 theorem clause_from_quantifier
     {L : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Linking} (hL : L.Correct) :
     ((L.1.symm lovesGoal).1.1 : ℕ) ≠ 1 :=
@@ -934,13 +914,11 @@ def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) :
     Env (fun x ↦ Montague.Ty.Domain E Unit x.ty) everybodyLovesSomebody.flatten :=
   .cons (every person) (.cons love (.cons (GQ.some person) .nil))
 
-/-- The surface proof means the surface-scope reading, every person loving some person. -/
 theorem surface_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     surface.eval (scopeEnv person love) =
       surfaceScope every GQ.some person person fun x y ↦ love y x :=
   rfl
 
-/-- The inverse proof means the inverse-scope reading, some person loved by every person. -/
 theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     inverse.eval (scopeEnv person love) =
       inverseScope every GQ.some person person fun x y ↦ love y x :=
@@ -948,8 +926,6 @@ theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) 
 
 open HeimKratzer1998.Toy (person sees) in
 open PhraseStructure.Tree (interp) in
-/-- One set of premises yields, by its two proofs, what Heim and Kratzer's engine computes from
-    their two Quantifier Raising trees. -/
 theorem interp_qr_eq_eval :
     interp HeimKratzer1998.lex HeimKratzer1998.g₀ HeimKratzer1998.tree_surface =
         some ⟨.t, surface.eval (scopeEnv person sees)⟩ ∧
@@ -958,8 +934,6 @@ theorem interp_qr_eq_eval :
   ⟨HeimKratzer1998.interp_computes_surface, HeimKratzer1998.interp_computes_inverse⟩
 
 open HeimKratzer1998.Toy (person sees) in
-/-- The two proofs are two readings, since in Heim and Kratzer's model the surface reading holds
-    and the inverse one fails. -/
 theorem readings_differ :
     surface.eval (scopeEnv person sees) ∧ ¬ inverse.eval (scopeEnv person sees) :=
   ⟨HeimKratzer1998.surface_scope_true, HeimKratzer1998.inverse_scope_false⟩
@@ -1042,7 +1016,6 @@ private theorem sum_count_premises (s : Spine) (j : ℕ) :
   have := le_max_right s.objects s.verbs
   split_ifs <;> omega
 
-/-- Premises with a linear proof of the clause come from a complete and coherent spine. -/
 theorem complete_coherent_of_derivable {s : Spine} (hv : 1 ≤ s.verbs)
     (h : Derivable (premises s) (atom (.clause 0))) : s.Complete ∧ s.Coherent := by
   rw [Spine.complete_and_coherent_iff s hv]
@@ -1126,7 +1099,6 @@ theorem build_linear (n : ℕ) : ∀ d i (h : i + d = n), (build n d i h).Linear
     simp only [List.count_append, hmap, List.count_cons, List.count_nil, beq_iff_eq]
     split_ifs <;> omega
 
-/-- A complete and coherent spine instantiates premises with a linear proof of its clause. -/
 theorem derivable_of_complete_coherent {s : Spine} (hv : 1 ≤ s.verbs)
     (h : s.Complete ∧ s.Coherent) : Derivable (premises s) (atom (.clause 0)) := by
   obtain ⟨n, m⟩ := s
@@ -1134,21 +1106,16 @@ theorem derivable_of_complete_coherent {s : Spine} (hv : 1 ≤ s.verbs)
   refine ⟨_, ?_, build n n 0 (by omega), build_linear n n 0 _⟩
   simp [premises, subjOfVerb]
 
-/-- The meaning constructors of a spine have a linear proof of its clause exactly when the
-    spine is complete and coherent. -/
 theorem derivable_iff_complete_coherent (s : Spine) (hv : 1 ≤ s.verbs) :
     Derivable (premises s) (atom (.clause 0)) ↔ s.Complete ∧ s.Coherent :=
   ⟨complete_coherent_of_derivable hv, derivable_of_complete_coherent hv⟩
 
 open BresnanEtAl1982 (dutch tree)
 
-/-- Every clause with its objects matching its non-final verbs composes. -/
 theorem derivable_dutch (n : ℕ) :
     Derivable (premises (Spine.ofTree (dutch n))) (atom (.clause 0)) :=
   derivable_of_complete_coherent (by simp [dutch]) (BresnanEtAl1982.dutch_wellFormed n)
 
-/-- *dat Jan Piet Marie zag helpen laten zwemmen*, with a verb too many, and *dat Jan Piet
-    Marie Hans zag helpen zwemmen*, with a noun phrase too many, do not compose. -/
 theorem not_derivable_extra_verb_or_np :
     ¬ Derivable (premises (Spine.ofTree (tree 1 3))) (atom (.clause 0)) ∧
       ¬ Derivable (premises (Spine.ofTree (tree 2 2))) (atom (.clause 0)) :=
@@ -1169,7 +1136,6 @@ def lexicon? (r : Datum) : Option (List (List (GlueTy Label))) :=
 /-- The number of words of a row's sentence, which are separated by single spaces. -/
 def wordCount (r : Datum) : ℕ := (r.primaryText.toList.filter (· = ' ')).length + 1
 
-/-- Every row has a lexicon, and each of its words contributes meaning constructors. -/
 theorem rows_lexicon : ∀ r ∈ Examples.all, ∃ lex ∈ lexicon? r, wordCount r = lex.length := by
   decide
 

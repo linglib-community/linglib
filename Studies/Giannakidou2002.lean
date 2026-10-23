@@ -77,14 +77,11 @@ the until time, at every one of its subintervals. -/
 def durativeUntil (p : W → Set (NonemptyInterval T)) (w : W) (t' : T) : Prop :=
   ∃ i ∈ durative p w, i.fst < i.snd ∧ i.snd = t'
 
-/-- A homogeneous description need only hold at the until interval itself. -/
 theorem durativeUntil_iff_of_isLowerSet {p : W → Set (NonemptyInterval T)} {w : W}
     (hp : IsLowerSet (p w)) (t' : T) :
     durativeUntil p w t' ↔ ∃ i ∈ p w, i.fst < i.snd ∧ i.snd = t' := by
   simp only [durativeUntil, durative_eq_of_isLowerSet hp]
 
-/-- A perfective description of a single event is incompatible with durative UNTIL, since an
-achievement or accomplishment cannot lie within both endpoints of the until interval. -/
 theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
     (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
   rintro ⟨i, h, hi, -⟩
@@ -123,14 +120,10 @@ theorem eventiveUntil_actualization {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ∃ e, P w e :=
   let ⟨⟨e, he, _⟩, _⟩ := h; ⟨e, he⟩
 
-/-- The wide-scope reading holds when nothing P-like ever happens, so it carries no
-actualization. -/
 theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
     (h : t < t') : wideScope P w t' :=
   ⟨⟨(t, t'), h.le⟩, fun _ _ e he ↦ absurd he (hP e), h, rfl⟩
 
-/-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
-supplies. -/
 theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     eventiveUntil P w t ↔ notUntil (τ '' {e | P w e}) {NonemptyInterval.pure t} ∧
       when_ (τ '' {e | P w e}) {NonemptyInterval.pure t} := by
@@ -151,13 +144,11 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     rw [NonemptyInterval.mem_pure] at ht'
     exact ht' ▸ hle
 
-/-- Eventive UNTIL entails *not before*, one direction of Karttunen's equivalence. -/
 theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ¬ before (τ '' {e | P w e}) t :=
   fun ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ ↦
     absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
 
-/-- *Not before* carries no actualization, since it holds when nothing P-like ever happens. -/
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
     ¬ before (τ '' {e | P w e}) t :=
   fun ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ ↦ hP e he
@@ -287,8 +278,6 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
-homogeneity of the main clause and the licensing of the polarity item. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.acceptable = true ↔ Predicted r) := by
   decide
 
@@ -319,8 +308,6 @@ def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
 
 def diagnostics : List DiagnosticRow := Examples.all.filterMap DiagnosticRow.ofDatum
 
-/-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
-negation playing no role, so negation is no stativizer. -/
 theorem diagnostics_predicted : ∀ r ∈ diagnostics, (r.acceptable = true ↔
     ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
       (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality))) := by

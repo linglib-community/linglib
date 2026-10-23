@@ -91,7 +91,6 @@ def Verb.realize (v : Verb) (c : Verb.Cell) : String := Inflection.spell (v.infl
 @[simp] theorem Verb.realize_plainPresent (v : Verb) :
     v.realize .plainPresent = v.realize .base := rfl
 
-/-- A verb that lists no past participle has the form of its past for one. -/
 theorem Verb.realize_pastParticiple {v : Verb} (h : v.pastPart = none) :
     v.realize .pastParticiple = v.realize .past := by
   simp [realize, inflect, h]

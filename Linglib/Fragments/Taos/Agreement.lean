@@ -392,28 +392,24 @@ def classIII : Valuation := ⟨{false}, {true}⟩
 /-- Class IV, with no inherent number: 'any number'. -/
 def classIV : Valuation := ∅
 
-/-- Class I agrees singular, dual, inverse for one, two, and more referents. -/
 theorem classI_category :
     (classI.agree (.ofNumber .singular)).category = some .singular ∧
       (classI.agree (.ofNumber .dual)).category = some .dual ∧
       (classI.agree (.ofNumber .plural)).category = some .inverse := by
   decide
 
-/-- Class II agrees inverse, dual, plural. -/
 theorem classII_category :
     (classII.agree (.ofNumber .singular)).category = some .inverse ∧
       (classII.agree (.ofNumber .dual)).category = some .dual ∧
       (classII.agree (.ofNumber .plural)).category = some .plural := by
   decide
 
-/-- Class III agrees inverse, dual, inverse. -/
 theorem classIII_category :
     (classIII.agree (.ofNumber .singular)).category = some .inverse ∧
       (classIII.agree (.ofNumber .dual)).category = some .dual ∧
       (classIII.agree (.ofNumber .plural)).category = some .inverse := by
   decide
 
-/-- Class IV agrees as its natural number. -/
 theorem classIV_category :
     (classIV.agree (.ofNumber .singular)).category = some .singular ∧
       (classIV.agree (.ofNumber .dual)).category = some .dual ∧

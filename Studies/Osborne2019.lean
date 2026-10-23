@@ -134,7 +134,6 @@ theorem voiceValency_passive_np_np : voiceValency (Voice.passive .np_np) =
     [⟨.nsubj, .headFinal, true⟩, ⟨.obj, .headInitial, true⟩, ⟨.obl, .headInitial, false⟩] := by
   decide
 
-/-- *Open* alternates by the anticausative, whose valency has no *by*-phrase. -/
 theorem voiceValency_anticausative : English.Verbs.open_.Alternates Voice.anticausative ∧
     voiceValency Voice.anticausative = Valency.intransitive := by
   decide

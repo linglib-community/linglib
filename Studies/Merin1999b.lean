@@ -52,8 +52,6 @@ namespace Merin1999b
 
 /-! ### FACT 1: complement families -/
 
-/-- The complements of the cells of a partition of a nonempty type form a partition exactly
-when it has two cells (FACT 1 of [merin-1999]). -/
 theorem compl_isPartition_iff {W : Type*} [Nonempty W] {F : Set (Set W)}
     (hF : Setoid.IsPartition F) :
     Setoid.IsPartition (compl '' F) ↔ F.encard = 2 := by
@@ -131,8 +129,6 @@ open MeasureTheory
 variable {M : Type*} [MeasurableSpace M] (μ : Measure M) [IsProbabilityMeasure μ]
   {F : Finset (Set M)}
 
-/-- Under a probability measure the probabilities of the complements of the `n` cells of a
-finite partition sum to `n − 1` (FACT 3 of [merin-1999]). -/
 theorem sum_measureReal_compl (hF : Setoid.IsPartition (F : Set (Set M)))
     (hm : ∀ c ∈ F, MeasurableSet c) :
     ∑ c ∈ F, μ.real cᶜ = F.card - 1 := by
@@ -143,8 +139,6 @@ theorem sum_measureReal_compl (hF : Setoid.IsPartition (F : Set (Set M)))
   rw [Finset.sum_congr rfl fun c hc ↦ probReal_compl_eq_one_sub (hm c hc),
     Finset.sum_sub_distrib, hsum, Finset.sum_const, nsmul_eq_mul, mul_one]
 
-/-- The complement probabilities sum to one exactly when the partition has two cells, so for
-more than two cells they are not a distribution (FACTs 2 and 3 of [merin-1999]). -/
 theorem sum_measureReal_compl_eq_one_iff (hF : Setoid.IsPartition (F : Set (Set M)))
     (hm : ∀ c ∈ F, MeasurableSet c) :
     ∑ c ∈ F, μ.real cᶜ = 1 ↔ F.card = 2 := by
@@ -164,8 +158,6 @@ end Probability
 a finite domain means coarsening with strictly fewer cells ([merin-1999]). -/
 def IsProperCoarsening {M : Type*} (q q' : Setoid M) : Prop := q' < q
 
-/-- For a cell `P` of a partition, the partition `{P, ¬P}` is its coarsest coarsening that
-decides `P` (FACT 4 of [merin-1999]). -/
 theorem isGreatest_polar_cell {M : Type*} (q : Setoid M) (w : M) :
     IsGreatest {q' | q ≤ q' ∧ q'.Decides (q.cell w)} (Setoid.polar (q.cell w)) :=
   ⟨⟨Setoid.decides_cell w, Setoid.polar_decides⟩, fun _ h ↦ h.2⟩
@@ -190,13 +182,11 @@ noncomputable def partitionEU (μ : Measure M) (U : M → A → ℝ) (q : Setoid
     (a : A) : ℝ :=
   ∑ cell ∈ (Finpartition.ofSetoid q).parts, μ.real cell * ∫ m, U m a ∂μ[|cell]
 
-/-- Expected utility computed through any partition is the expected utility. -/
 theorem integral_eq_partitionEU (μ : Measure M) [IsProbabilityMeasure μ] (U : M → A → ℝ)
     (q : Setoid M) [DecidableRel q] (a : A) : ∫ m, U m a ∂μ = partitionEU μ U q a := by
   rw [partitionEU, (Finpartition.ofSetoid q).sum_parts_eq_sum_preimage_part
     (F := fun c ↦ μ.real c * ∫ m, U m a ∂μ[|c]) (by simp), sum_measureReal_mul_integral_cond]
 
-/-- Expected utility computed through a partition does not depend on the partition. -/
 theorem partitionEU_congr (μ : Measure M) [IsProbabilityMeasure μ] (U : M → A → ℝ)
     (q q' : Setoid M) [DecidableRel q] [DecidableRel q'] (a : A) :
     partitionEU μ U q a = partitionEU μ U q' a :=

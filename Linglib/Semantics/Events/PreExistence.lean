@@ -58,7 +58,6 @@ variable {τ : X → NonemptyInterval T} {Q Q' : X → Prop} {a b : T} {t : None
 
 namespace PreExists
 
-/-- Pre-existence entails existence. -/
 theorem «exists» (h : PreExists τ Q a) : ∃ x, Q x :=
   let ⟨x, hx, _⟩ := h
   ⟨x, hx⟩
@@ -67,28 +66,22 @@ theorem mono (hQ : ∀ x, Q x → Q' x) (h : PreExists τ Q a) : PreExists τ Q'
   let ⟨x, hx, hlt⟩ := h
   ⟨x, hQ x hx, hlt⟩
 
-/-- What pre-exists a time pre-exists every later one. -/
 theorem mono_right (hab : a ≤ b) (h : PreExists τ Q a) : PreExists τ Q b :=
   let ⟨x, hx, hlt⟩ := h
   ⟨x, hx, hlt.trans_le hab⟩
 
 end PreExists
 
-/-- A single individual pre-exists a time when its time span starts before it. -/
 @[simp] theorem preExists_eq_iff {x : X} : PreExists τ (· = x) a ↔ (τ x).fst < a :=
   ⟨fun ⟨_, hx, hlt⟩ ↦ hx ▸ hlt, fun h ↦ ⟨x, rfl, h⟩⟩
 
-/-- An individual preceding an interval pre-exists it. -/
 theorem preExists_of_precedes {x : X} (hx : Q x) (h : (τ x).Precedes t) : PreExists τ Q t.fst :=
   ⟨x, hx, (τ x).fst_le_snd.trans_lt h⟩
 
-/-- A description of individuals preceding an interval pre-exists it exactly when it describes
-something. -/
 theorem preExists_iff_exists_of_precedes (h : ∀ x, Q x → (τ x).Precedes t) :
     PreExists τ Q t.fst ↔ ∃ x, Q x :=
   ⟨PreExists.exists, fun ⟨x, hx⟩ ↦ preExists_of_precedes hx (h x hx)⟩
 
-/-- A description of individuals within an interval never pre-exists it. -/
 theorem not_preExists_of_le (h : ∀ x, Q x → τ x ≤ t) : ¬ PreExists τ Q t.fst :=
   fun ⟨x, hx, hlt⟩ ↦ hlt.not_ge (h x hx).1
 

@@ -80,13 +80,10 @@ def adoptedAllosemes : NominalizationReading → Verbalizer.Alloseme × Nominali
   | .simpleEntity => (.zero, .entity)
   | .content      => (.zero, .content)
 
-/-- Each reading is recovered from its adopted alloseme pair. -/
 theorem adopted_roundtrip (r : NominalizationReading) :
     readingFromAllosemes (adoptedAllosemes r).1 (adoptedAllosemes r).2 = some r := by
   cases r <;> rfl
 
-/-- Among derivations in which the two heads are not both contentful, the adopted pair is the
-only one deriving the reading: economy of interpretation pins the analysis. -/
 theorem adopted_unique (r : NominalizationReading) (v : Verbalizer.Alloseme)
     (n : Nominalizer.Alloseme) (hr : readingFromAllosemes v n = some r)
     (h : v.introducesEvent = false ∨ n = .zero) :
@@ -121,15 +118,11 @@ def availableReadings (eventive : Bool) : List NominalizationReading :=
     (licensed Nominalizer.vocabulary (nContext eventive)).filterMap
       (readingFromAllosemes v))
 
-/-- Over an event-entailing root both v allosemes are licensed, the premise of the reading
-ambiguity, while a non-eventive root licenses only vacuous v. -/
 theorem v_allosemes_licensed :
     licensed Verbalizer.vocabulary (vContext true) = [.eventive, .zero] ∧
     licensed Verbalizer.vocabulary (vContext false) = [.zero] := ⟨rfl, rfl⟩
 
 open Morphology.Exponence in
-/-- The canonical v alloseme of the root typology is the engine's Elsewhere winner: the more
-specified eventive entry beats vacuous v exactly when the root entails change. -/
 theorem ofKinds_is_selectBy_winner (s : Semantics.Root.Kinds) :
     (winner? Verbalizer.vocabulary
         (vContext (decide (.result ∈ Semantics.Root.Kinds.close s)))).map (·.exponent) =
@@ -254,10 +247,6 @@ theorem result_options_disagree_on_arguments (m : NominalizationModel E S)
       ∧ ∃ r, denoteN m (denoteV ρ .zero) .result = some r ∧ r.internalArg = none :=
   ⟨⟨_, rfl, rfl⟩, _, rfl, rfl⟩
 
-/-- CENs retain argument structure: the complex event nominal carries
-the Theme position v introduced (*the observation of the sky*), which is
-what separates it from every zero-v reading
-(`zero_v_no_argument_structure`). -/
 theorem cen_retains_argument_structure (m : NominalizationModel E S) (ρ : RootMeaning E S) :
     ∃ r, denoteN m (denoteV ρ .eventive) .zero = some r ∧ r.internalArg.isSome :=
   ⟨_, rfl, rfl⟩
@@ -278,16 +267,12 @@ have the reading with no verbal source at all (§3.5). -/
 theorem content_options_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
     denoteN m (denoteV ρ .eventive) .content = denoteN m (denoteV ρ .zero) .content := rfl
 
-/-- The reading typology tracks denotational definedness: a (v, n) pair
-has a reading exactly when its composed denotation is defined. -/
 theorem readingFromAllosemes_isSome_iff_denote (m : NominalizationModel E S)
     (ρ : RootMeaning E S) (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
     (readingFromAllosemes v n).isSome ↔ (denoteN m (denoteV ρ v) n).isSome := by
   rcases v with _ | cv <;> rcases n with _ | cn <;> (try cases cv) <;> (try cases cn) <;>
     simp [readingFromAllosemes, denoteV, denoteN]
 
-/-- A complex event nominal holds only of event-entities: the ground of
-its event reading (temporal modification, aspectual behavior). -/
 theorem cen_denotes_events (m : NominalizationModel E S) (ρ : RootMeaning E S)
     {r : NominalDenotation E S} (h : denoteN m (denoteV ρ .eventive) .zero = some r) :
     ∀ x, r.pred x → ∃ e, x = m.ev e := by
@@ -373,9 +358,6 @@ instance : Decidable (Allowed outer inner) := inferInstanceAs (Decidable (_ ∧ 
 theorem allowed_iff : Allowed outer inner ↔ outer = .prt ∧ inner = .pfx := by
   revert outer inner; decide
 
-/-- Neither factor alone predicts the paradigm: structure permits prefix over prefix, which
-the constraint excludes, and the constraint permits prefix over particle, which structure
-excludes. -/
 theorem two_factors_needed :
     (StructurallyCompatible .pfx .pfx ∧ ¬ Allowed .pfx .pfx) ∧
       (InterpretivelyCompatible .pfx .prt ∧ ¬ Allowed .pfx .prt) := by
@@ -399,8 +381,6 @@ inductive Blocked : PreverbalElement → PreverbalElement → Prop where
   | bySingleDelimiting {o i : PreverbalElement} :
       o.resultSpec = .specifies → i.resultSpec = .specifies → Blocked o i
 
-/-- The two principles generate exactly the paradigm: a combination has a blocking derivation
-iff it is not allowed. -/
 theorem blocked_iff : Blocked outer inner ↔ ¬ Allowed outer inner := by
   constructor
   · rintro (hi | ⟨ho, hi⟩)
@@ -450,12 +430,10 @@ complex event's Theme to the end state. -/
 def rspRows : List Datum :=
   [Examples.ex89a, Examples.ex89b, Examples.ex115a, Examples.ex115e, Examples.ex115f]
 
-/-- Every resultative row names a means predicate with a fragment entry. -/
 theorem rsp_rows_have_entries :
     ∀ e ∈ rspRows, ((e.feature? "m_predicate").bind entryOf).isSome := by
   decide
 
-/-- The rows' verb-class labels follow the fragment entries of their means predicates. -/
 theorem rsp_verb_classes :
     ∀ e ∈ rspRows, ∀ v ∈ (e.feature? "m_predicate").bind entryOf,
       (e.feature? "verb_class" = some "unaccusative" ↔ v.toVerb.IsUnaccusative) := by
@@ -544,7 +522,6 @@ def Predicted (e : Datum) : Prop :=
 instance (e : Datum) : Decidable (Predicted e) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Every nominalization row names a verb with a fragment entry. -/
 theorem nominalization_rows_have_entries :
     ∀ e ∈ Examples.all, (nominalizationOf e).isSome →
       ((e.feature? "verb").bind entryOf).isSome := by

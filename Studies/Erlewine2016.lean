@@ -227,7 +227,6 @@ def Candidate.AFSuffix (args : List Arg) (c : Candidate) : Prop := ∃ a ∈ arg
 instance (args : List Arg) (c : Candidate) : Decidable (c.AFSuffix args) := by
   unfold Candidate.AFSuffix; infer_instance
 
-/-- The AF suffix marks a violation of XRef. -/
 theorem afSuffix_iff_xref_pos (i : Input) (c : Candidate) :
     c.AFSuffix i.args ↔ 0 < xref i c := by
   simp [Candidate.AFSuffix, xref, List.length_pos_iff_exists_mem, List.mem_filter]
@@ -237,8 +236,6 @@ Spec,TP. -/
 def Candidate.form (args : List Arg) (c : Candidate) : Mayan.VerbForm :=
   if c.AFSuffix args then .agentFocus else .transitive
 
-/-- Among the candidates of a transitive clause, the AF form is exactly the absence of the Set
-A probe: the derivation that skips Spec,TP loses Set A and gains the suffix. -/
 theorem form_hasSetA (o : Bool) :
     ∀ c ∈ candidatesOf true o, ((c.form (argsOf true)).HasSetA ↔ c.aProbe = true) := by
   cases o <;> decide
@@ -303,8 +300,6 @@ theorem extractionTooClose_iff :
         (ExtractionTooClose (r.input.clause c) x.1 ↔ x.1 = .subj ∧ c.aProbe = true ∧ x.2 = 0) := by
   decide
 
-/-- In every row the attested form is grammatical exactly when an optimal derivation realizes
-it. -/
 theorem rows_optimal :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
       ∃ c ∈ (r.grammar.tableau r.input).optimal, c.form r.input.args = r.form := by
@@ -349,8 +344,6 @@ theorem participant_exception :
     (kaqchikel.tableau (subjectExtraction .first .second)).optimal = {⟨true, .obj⟩} := by
   decide
 
-/-- Subject extraction to Spec,CP has an optimal AF derivation exactly when the arguments are not
-both participants, which is when the Kaqchikel fragment records the Agent Focus reflex. -/
 theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
     (∃ d ∈ (kaqchikel.tableau (subjectExtraction s o)).optimal,
         d.form (argsOf true) = .agentFocus) ↔

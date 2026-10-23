@@ -50,7 +50,6 @@ theorem filterMap_map (f : β → Option γ) (g : α → β) (t : RoseTree α) :
     rw [map_node, filterMap_node, filterMap_node, List.filterMap_map,
       List.filterMap_congr (f := filterMap f ∘ map g) ih, Function.comp_apply]
 
-/-- A total map drops nothing. -/
 theorem filterMap_some (g : α → β) (t : RoseTree α) :
     filterMap (fun a ↦ some (g a)) t = some (map g t) := by
   induction t with
@@ -58,7 +57,6 @@ theorem filterMap_some (g : α → β) (t : RoseTree α) :
     rw [filterMap_node, map_node, Option.map_some, List.filterMap_congr ih,
       List.filterMap_eq_map']
 
-/-- Injecting on the left and then keeping the left labels is the identity. -/
 @[simp] theorem filterMap_getLeft?_map_inl (t : RoseTree α) :
     filterMap Sum.getLeft? (map (Sum.inl : α → α ⊕ β) t) = some t := by
   rw [filterMap_map,

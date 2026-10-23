@@ -28,8 +28,6 @@ namespace MeasureTheory
 
 variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
 
-/-- The tail-sum formula: the integral of a function into `ℕ` is the sum over `n` of the measure
-of the set where it exceeds `n`. -/
 theorem lintegral_natCast_eq_tsum_measure_lt {f : α → ℕ} (hf : Measurable f) :
     ∫⁻ x, (f x : ℝ≥0∞) ∂μ = ∑' n, μ {x | n < f x} := by
   have hm (n : ℕ) : MeasurableSet {x | n < f x} := hf measurableSet_Ioi

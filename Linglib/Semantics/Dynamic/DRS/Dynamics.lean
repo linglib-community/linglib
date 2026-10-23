@@ -55,8 +55,6 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M] [Decida
 def DRS.toRel (K : DRS L V) : Update (V → M) :=
   box K.referents {a | Verifies a K}
 
-/-- The box relation relates an input to the outputs that extend it across the universe and
-verify the DRS. -/
 @[simp] theorem DRS.toRel_iff (K : DRS L V) (a a' : V → M) :
     a ~[DRS.toRel K] a' ↔ K.Extends a a' ∧ Verifies a' K :=
   mem_box_iff
@@ -65,48 +63,37 @@ verify the DRS. -/
 related to it, the domain of the box relation. -/
 def DRS.trueRel (K : DRS L V) (a : V → M) : Prop := a ∈ (DRS.toRel K).dom
 
-/-- A DRS is true under an input iff some output embedding is related to it. -/
 theorem DRS.trueRel_iff (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ ∃ a', a ~[DRS.toRel K] a' := Iff.rfl
 
-/-- A DRS is true under an input iff some extension of the input across the universe verifies
-it. -/
 theorem DRS.trueRel_iff_exists_extends (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ ∃ a', K.Extends a a' ∧ Verifies a' K := by
   simp only [DRS.trueRel_iff, DRS.toRel_iff]
 
 /-! ### The spine connectives (SEM1/2) -/
 
-/-- A negated sub-DRS is the spine's `neg` of its box relation. -/
 theorem verifies_neg_toRel (K : DRS L V) (f : V → M) :
     VerifiesCondition f (.neg K) ↔ f ∈ neg (DRS.toRel K) := by
   simp only [verifies_neg, DynamicSemantics.Update.mem_neg, DRS.toRel_iff]
 
-/-- A conditional is the spine's `impl` of the boxes' relations. -/
 theorem verifies_imp_toRel (a c : DRS L V) (f : V → M) :
     VerifiesCondition f (.imp a c) ↔ f ∈ impl (DRS.toRel a) (DRS.toRel c) := by
   simp only [verifies_imp, DynamicSemantics.Update.mem_impl, DRS.toRel_iff, and_imp]
 
-/-- A disjunction is the spine's `disj` of the boxes' relations. -/
 theorem verifies_dis_toRel (l r : DRS L V) (f : V → M) :
     VerifiesCondition f (.dis l r) ↔ f ∈ disj (DRS.toRel l) (DRS.toRel r) := by
   simp only [verifies_dis, DynamicSemantics.Update.mem_disj, DRS.toRel_iff]
 
 /-! ### Truth: the triangle, coincidence, and alphabetic variants -/
 
-/-- The dynamic truth of a DRS equals its first-order translation's `Realize`
-— the third edge of the `Verifies`/`toFormula`/`toRel` triangle. -/
 theorem DRS.trueRel_iff_realize_toFormula (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ (K.toFormula).Realize a :=
   (DRS.trueRel_iff_exists_extends K a).trans (DRS.realize_toFormula K a).symm
 
-/-- Truth reads the input embedding only at the free referents. -/
 theorem DRS.trueRel_congr {K : DRS L V} {a₁ a₂ : V → M}
     (h : Set.EqOn a₁ a₂ ↑K.freeVarFinset) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ := by
   simpa only [DRS.trueRel_iff_exists_extends] using exists_extends_verifies_congr h
 
-/-- Renaming along a bijection transports dynamic truth, so alphabetic variants have the same
-truth conditions. -/
 theorem DRS.trueRel_map {W : Type*} [DecidableEq W] (e : V ≃ W)
     (K : DRS L V) (a : W → M) :
     DRS.trueRel (K.map e) a ↔ DRS.trueRel K (a ∘ e) := by

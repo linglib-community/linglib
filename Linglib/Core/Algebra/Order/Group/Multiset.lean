@@ -33,7 +33,6 @@ def filterMapAddMonoidHom (f : α → Option β) : Multiset α →+ Multiset β 
 @[simp] theorem coe_filterMapAddMonoidHom (f : α → Option β) :
     ⇑(filterMapAddMonoidHom f) = filterMap f := rfl
 
-/-- A multiple of a nonzero multiset without duplicates is at most a single copy. -/
 theorem Nodup.le_one_of_nsmul [DecidableEq α] {n : ℕ} {s : Multiset α} (h : (n • s).Nodup)
     (hs : s ≠ 0) : n ≤ 1 := by
   obtain ⟨a, ha⟩ := exists_mem_of_ne_zero hs

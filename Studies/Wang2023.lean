@@ -75,7 +75,6 @@ constraint it penalizes the shortfall from the maximal strength. -/
 def mpConstraint : Constraint Number.Features :=
   fun c ↦ Fintype.card Number.Feature - c.card
 
-/-- The two maxims order well-formed cells oppositely. -/
 theorem todConstraint_lt_iff (c₁ c₂ : Number.Features) :
     todConstraint c₁ < todConstraint c₂ ↔ mpConstraint c₂ < mpConstraint c₁ := by
   have := Finset.card_le_univ c₁
@@ -83,14 +82,12 @@ theorem todConstraint_lt_iff (c₁ c₂ : Number.Features) :
   simp only [todConstraint, mpConstraint]
   omega
 
-/-- A candidate with violations of the top constraint loses to one without. -/
 theorem not_mem_optimal_of_top_pos {C : Type*} [DecidableEq C] {candidates : Finset C}
     {top : Constraint C} {rest : List (Constraint C)} {c c₀ : C}
     (hc₀ : c₀ ∈ candidates) (h0 : top c₀ = 0) (hc : 0 < top c) :
     c ∉ (Tableau.ofList candidates (top :: rest)).optimal :=
   fun hmem ↦ hc.ne' (Nat.le_zero.1 (h0 ▸ Tableau.constraints_zero_le_of_mem_optimal hmem hc₀))
 
-/-- Under Taboo » MP! every optimal candidate is the least specified cell. -/
 theorem tod_mp_only_minimal (candidates : Finset Number.Features)
     (hWF : ∀ c ∈ candidates, IsLowerSet (↑c : Set Number.Feature))
     (hMin : Number.pluralF ∈ candidates) :
@@ -104,8 +101,6 @@ theorem tod_mp_only_minimal (candidates : Finset Number.Features)
   · rfl
   · cases a <;> exact absurd hZero (by decide)
 
-/-- The least specified cell is optimal under Taboo » MP!, its profile being lexicographically
-least. -/
 theorem tod_mp_minimal_mem_optimal (candidates : Finset Number.Features)
     (hMin : Number.pluralF ∈ candidates) :
     Number.pluralF ∈
@@ -133,8 +128,6 @@ theorem tod_mp_minimal_mem_optimal (candidates : Finset Number.Features)
     rw [hc'_mp] at hlt
     exact lt_irrefl _ hlt
 
-/-- Taboo » MP! selects the least specified cell alone from any well-formed candidate set
-that contains it: the emergence of the semantically unmarked. -/
 theorem tod_mp_general (candidates : Finset Number.Features)
     (hWF : ∀ c ∈ candidates, IsLowerSet (↑c : Set Number.Feature))
     (hMin : Number.pluralF ∈ candidates) :
@@ -163,7 +156,6 @@ def wtodConstraint : Constraint Number.Features :=
 /-- The singular, dual and plural of an articulated number system (80). -/
 def number : Finset Number.Features := {Number.singularF, Number.dualF, Number.pluralF}
 
-/-- The weak taboo alone also excludes the most specified cell. -/
 theorem maximal_not_optimal_of_wtod_top (candidates : Finset Number.Features)
     (rest : List (Constraint Number.Features))
     (hMin : Number.pluralF ∈ candidates) :
@@ -189,7 +181,6 @@ theorem wtod_alone :
       {Number.dualF, Number.pluralF} := by
   decide +kernel
 
-/-- Outside respect contexts MP! on top recruits the singular. -/
 theorem mp_top :
     (Tableau.ofList number [mpConstraint, todConstraint, wtodConstraint]).optimal =
       {Number.singularF} := by

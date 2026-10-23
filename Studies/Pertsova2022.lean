@@ -64,7 +64,6 @@ theorem image_graph_active :
 
 theorem card_image_graph_active : ((univ.filter Active).image graph).card = 4 := by decide
 
-/-- Harbour's author bipartition, which [±author] alone generates, is not among them. -/
 theorem graph_active_ne_authorBipartition (F : Finset ThreeFeature) (hF : Active F) :
     graph F ≠ graph {.author} := by
   revert F; decide

@@ -78,8 +78,6 @@ variable (R : α → α → Prop) [DecidableRel R]
 @[simp] theorem forbidPairs_cons_cons (a b : α) (w : List α) :
     forbidPairs R (a :: b :: w) = (if R a b then 1 else 0) + forbidPairs R (b :: w) := rfl
 
-/-- A string satisfies the forbidden-pair constraint iff no two adjacent elements are
-`R`-related. -/
 theorem forbidPairs_eq_zero_iff (w : List α) :
     forbidPairs R w = 0 ↔ w.IsChain (fun a b ↦ ¬ R a b) := by
   induction w with
@@ -103,12 +101,9 @@ variable [DecidableEq α]
 @[simp] theorem ocp_cons_cons (a b : α) (w : List α) :
     ocp (a :: b :: w) = (if a = b then 1 else 0) + ocp (b :: w) := rfl
 
-/-- A string satisfies the OCP iff no two adjacent elements are identical. -/
 theorem ocp_eq_zero_iff {w : List α} : ocp w = 0 ↔ OCP.IsClean w :=
   forbidPairs_eq_zero_iff (· = ·) w
 
-/-- A string satisfies AGREE iff its adjacent elements are equal, so that all its elements are
-equal. -/
 theorem agree_eq_zero_iff {w : List α} : agree w = 0 ↔ w.IsChain (· = ·) :=
   (forbidPairs_eq_zero_iff (· ≠ ·) w).trans (by simp only [ne_eq, not_not])
 

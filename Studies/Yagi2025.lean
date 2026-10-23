@@ -77,16 +77,12 @@ def Conflict (φ ψ : W → SignType) : Prop := ∀ w, φ w = 0 ∨ ψ w = 0
 
 /-! ### Strong Kleene and two-dimensional disjunction -/
 
-/-- Under conflict the Strong Kleene disjunction is never false, its presupposition entailing its
-assertion. -/
 theorem sup_ne_neg_one (h : Conflict φ ψ) (w : W) : (φ ⊔ ψ) w ≠ -1 := by
   rcases h w with h | h <;> simp [h]
 
-/-- Its negation is never true. -/
 theorem neg_sup_ne_one (h : Conflict φ ψ) (w : W) : (-(φ ⊔ ψ)) w ≠ 1 := by
   simpa using sup_ne_neg_one h w
 
-/-- The symmetric two-dimensional disjunction is never false either. -/
 theorem orKPSymmetric_ne_neg_one (h : Conflict p.toTrivalent q.toTrivalent) (w : W) :
     (p.orKPSymmetric q).toTrivalent w ≠ -1 := fun hn ↦ by
   rw [TwoDim.toTrivalent_eq_neg_one_iff] at hn
@@ -98,7 +94,6 @@ presuppositions, (7). -/
 def orPresupOr (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) :=
   ⟨fun w ↦ p.atIssue w ∨ q.atIssue w, fun w ↦ p.notAtIssue w ∨ q.notAtIssue w⟩
 
-/-- It is false exactly where a presupposition holds and both assertions fail. -/
 theorem orPresupOr_toTrivalent_eq_neg_one_iff (w : W) :
     (orPresupOr p q).toTrivalent w = -1 ↔
       (p.notAtIssue w ∨ q.notAtIssue w) ∧ ¬ p.atIssue w ∧ ¬ q.atIssue w := by
@@ -111,9 +106,6 @@ theorem orPresupOr_notAtIssue_of_left (h : ∀ w, p.notAtIssue w) (w : W) :
 
 /-! ### Update semantics with a designated undefined state -/
 
-/-- Under conflict the update by the disjunction is defined only when the first disjunct
-already holds throughout the input, and then it returns the input, so it is defined only if
-uninformative. -/
 theorem mem_disj_iff (h : Conflict φ ψ) (s t : Set W) :
     t ∈ disj (ofTrivalent φ) (ofTrivalent ψ) s ↔ (∀ w ∈ s, φ w = 1) ∧ t = s := by
   simp only [disj, Part.mem_bind_iff, Part.mem_map_iff, mem_ofTrivalent]
@@ -135,9 +127,6 @@ theorem mem_disj_iff (h : Conflict φ ψ) (s t : Set W) :
 
 /-! ### Local contexts -/
 
-/-- If each disjunct's presupposition is entailed by its local context, the negation of the
-other disjunct within the global context, then under conflict every world of the global
-context makes some disjunct true. -/
 theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
     (h₁ : ∀ w ∈ s, φ w ≠ 1 → ψ w ≠ 0) (h₂ : ∀ w ∈ s, ψ w ≠ 1 → φ w ≠ 0) :
     ∀ w ∈ s, φ w = 1 ∨ ψ w = 1 := fun w hw ↦ by
@@ -147,20 +136,15 @@ theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
 
 /-! ### The meta-assertion operator -/
 
-/-- The disjunction of two meta-asserted disjuncts has no presupposition. -/
 theorem joinWeak_ofProp_eq_one_ne_zero (w : W) :
     (SignType.ofProp (φ w = 1)).joinWeak (SignType.ofProp (ψ w = 1)) ≠ 0 := by
   simp [SignType.joinWeak_eq_zero_iff]
 
-/-- It is false whenever neither disjunct is true, so also where neither presupposition
-holds. -/
 theorem joinWeak_ofProp_eq_one_eq_neg_one_iff (w : W) :
     (SignType.ofProp (φ w = 1)).joinWeak (SignType.ofProp (ψ w = 1)) = -1 ↔
       φ w ≠ 1 ∧ ψ w ≠ 1 := by
   simp [SignType.joinWeak_eq_neg_one_iff]
 
-/-- Meta-asserting one disjunct under Strong Kleene yields the conditional presupposition
-that the first presupposition holds unless the second disjunct is true. -/
 theorem sup_ofProp_eq_one_ne_zero_iff (w : W) :
     φ w ⊔ SignType.ofProp (ψ w = 1) ≠ 0 ↔ (ψ w ≠ 1 → φ w ≠ 0) := by
   by_cases h : ψ w = 1 <;> simp [h]
@@ -183,8 +167,6 @@ that survives the update. -/
 def Genuine (u φ ψ : CCP.Partial W) (s : Set W) : Prop :=
   (∃ w ∈ s, {w} ∈ φ {w} ∧ ∃ t ∈ u s, w ∈ t) ∧ ∃ w ∈ s, {w} ∈ ψ {w} ∧ ∃ t ∈ u s, w ∈ t
 
-/-- The standard update is flexible accommodation of the negation of the first disjunct for
-the second. -/
 theorem flex_univ_eq_disj (ψ : CCP.Partial W) :
     flex Set.univ (Trivalent.posExt φ)ᶜ (ofTrivalent φ) ψ = disj (ofTrivalent φ) ψ := by
   funext s
@@ -208,8 +190,6 @@ theorem admits_flex_univ_iff (s : Set W) :
   generalize φ w = a; generalize ψ w = b
   cases a <;> cases b <;> decide
 
-/-- With tautologies accommodated the update is defined exactly when both presuppositions hold
-throughout, and returns the worlds verifying either disjunct. -/
 theorem mem_flex_univ_univ_iff (s t : Set W) :
     t ∈ flex Set.univ Set.univ (ofTrivalent φ) (ofTrivalent ψ) s ↔
       (∀ w ∈ s, φ w ≠ 0) ∧ (∀ w ∈ s, ψ w ≠ 0) ∧
@@ -259,8 +239,6 @@ theorem mem_flex_rival_iff (h : Conflict φ ψ) (s t : Set W) :
     exact ⟨_, ⟨fun w hw ↦ (hs w hw.1).resolve_right (not_not.2 hw.2), rfl⟩, _,
       ⟨fun w hw ↦ (hs w hw.1).resolve_left (not_not.2 hw.2), rfl⟩, hset⟩
 
-/-- The negation of that update removes exactly the worlds where both disjuncts are true, so the
-disjunction can be false. -/
 theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ w ≠ 0 ∨ ψ w ≠ 0) :
     neg (flex (Trivalent.gapExt ψ) (Trivalent.gapExt φ) (ofTrivalent φ) (ofTrivalent ψ)) s =
       Part.some {w ∈ s | φ w ≠ 1 ∧ ψ w ≠ 1} := by

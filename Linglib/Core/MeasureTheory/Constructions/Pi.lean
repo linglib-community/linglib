@@ -60,9 +60,6 @@ namespace MeasureTheory
 
 variable [Fintype ι]
 
-/-- Splitting one coordinate off a finite product measure is measure preserving: under
-`Measure.pi μ` the `i`-th coordinate is independent of the others. General-index sibling of
-`measurePreserving_piFinSuccAbove`. -/
 theorem measurePreserving_piSplitAt {m : ∀ i, MeasurableSpace (α i)} (μ : ∀ i, Measure (α i))
     [∀ i, SigmaFinite (μ i)] (i : ι) :
     MeasurePreserving (MeasurableEquiv.piSplitAt α i) (Measure.pi μ)
@@ -78,7 +75,6 @@ theorem measurePreserving_piSplitAt {m : ∀ i, MeasurableSpace (α i)} (μ : �
   · subst hj; simpa [e] using h.1
   · simpa [e, hj] using h.2 j hj
 
-/-- `measurePreserving_piSplitAt` for `volume`. -/
 theorem volume_preserving_piSplitAt (α : ι → Type u) [∀ i, MeasureSpace (α i)]
     [∀ i, SigmaFinite (volume : Measure (α i))] (i : ι) :
     MeasurePreserving (MeasurableEquiv.piSplitAt α i) :=
@@ -93,7 +89,6 @@ open Finset
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] {X : Type*} [MeasurableSpace X]
   [MeasurableEq X] (μ : ι → Measure X) [∀ i, SigmaFinite (μ i)]
 
-/-- Two coordinates of a product measure are almost surely distinct when one has no atoms. -/
 theorem pi_setOf_apply_eq_apply {j k : ι} (hjk : j ≠ k) [NullSingletonClass (μ j)] :
     Measure.pi μ {x | x j = x k} = 0 := by
   have hS : {x : ι → X | x j = x k} = MeasurableEquiv.piSplitAt (fun _ ↦ X) k ⁻¹'

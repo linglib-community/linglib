@@ -121,7 +121,6 @@ variable {P : W → E → Prop} {w : W} {t : NonemptyInterval T}
 @[simp] theorem mem_ofRel {R : NonemptyInterval T → NonemptyInterval T → Prop} :
     t ∈ ofRel R P w ↔ ∃ e : E, R t (τ e) ∧ P w e := Iff.rfl
 
-/-- The operator is monotone in the relation. -/
 theorem ofRel_mono {R S : NonemptyInterval T → NonemptyInterval T → Prop}
     (h : ∀ t s, R t s → S t s) (P : W → E → Prop) (w : W) : ofRel R P w ⊆ ofRel S P w :=
   fun _ ⟨e, hR, hP⟩ ↦ ⟨e, h _ _ hR, hP⟩
@@ -161,12 +160,10 @@ theorem mem_unbounded : t ∈ UNBOUNDED P w ↔ ∃ e : E, t ≤ τ e ∧ P w e 
 theorem impf_subset_unbounded (P : W → E → Prop) (w : W) : IMPF P w ⊆ UNBOUNDED P w :=
   ofRel_mono (R := (· < ·)) (S := (· ≤ ·)) (fun _ _ ↦ le_of_lt) P w
 
-/-- The non-strict imperfective holds on the lower closure of the predicate's run times. -/
 theorem unbounded_eq_lowerClosure : UNBOUNDED P w = lowerClosure (τ '' {e | P w e}) :=
   Set.ext fun _ ↦ ⟨fun ⟨e, hle, hP⟩ ↦ ⟨τ e, Set.mem_image_of_mem τ hP, hle⟩,
     fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
 
-/-- The perfective holds on the upper closure of the predicate's run times. -/
 theorem prfv_eq_upperClosure : PRFV P w = upperClosure (τ '' {e | P w e}) :=
   Set.ext fun _ ↦ ⟨fun ⟨e, hle, hP⟩ ↦ ⟨τ e, Set.mem_image_of_mem τ hP, hle⟩,
     fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
@@ -199,7 +196,6 @@ span belonging to `p`, the perfect as an operator on interval properties. -/
 def perfect (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
   fun w ↦ {i | ∃ pts ∈ p w, i.FinalSubinterval pts}
 
-/-- The perfect at a point is the perfect at the degenerate reference interval of that point. -/
 theorem perf_eq_atPoint_perfect (p : W → Set (NonemptyInterval T)) :
     PERF p = atPoint (perfect p) := by
   refine Set.ext fun s ↦ exists_congr fun pts ↦ and_congr_right fun _ ↦ ?_
@@ -222,11 +218,9 @@ of an interval adverbial, *in*. -/
 def inclusive (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
   fun w ↦ {i | ∃ j ∈ p w, j ≤ i}
 
-/-- The inclusive reading is the upper closure of the interval property. -/
 theorem inclusive_eq_upperClosure : inclusive p w = upperClosure (p w) :=
   rfl
 
-/-- On an upper set the inclusive reading is the set itself. -/
 theorem inclusive_eq_of_isUpperSet (hp : IsUpperSet (p w)) : inclusive p w = p w :=
   hp.upperClosure
 

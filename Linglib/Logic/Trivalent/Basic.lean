@@ -73,7 +73,6 @@ namespace SignType
 
 /-! ### Kleene's negation -/
 
-/-- Two values agree once they agree on being `0` and on being `1`. -/
 theorem eq_of_eq_zero_iff_of_eq_one_iff {a b : SignType} (h₀ : a = 0 ↔ b = 0)
     (h₁ : a = 1 ↔ b = 1) : a = b := by
   revert h₀ h₁; cases a <;> cases b <;> decide
@@ -123,15 +122,12 @@ attribute [simp] SignType.neg_eq_zero_iff SignType.nonpos_iff_ne_one SignType.no
     a ⊔ b = 0 ↔ a = 0 ∧ b ≠ 1 ∨ b = 0 ∧ a ≠ 1 := by
   cases a <;> cases b <;> decide
 
-/-- Negation is antitone. -/
 theorem neg_antitone : Antitone (Neg.neg : SignType → SignType) := fun _ _ ↦
   SignType.neg_le_neg_iff.2
 
-/-- Negation sends a meet to the join of the negations. -/
 @[simp] protected theorem neg_inf (a b : SignType) : -(a ⊓ b) = -a ⊔ -b :=
   neg_antitone.map_min
 
-/-- Negation sends a join to the meet of the negations. -/
 @[simp] protected theorem neg_sup (a b : SignType) : -(a ⊔ b) = -a ⊓ -b :=
   neg_antitone.map_max
 
@@ -146,7 +142,6 @@ instance : InvolutiveCompl SignType where
 /-- `SignType` is [kalman-1958]'s three-element Kleene algebra. -/
 instance : IsKleene SignType := ⟨by decide⟩
 
-/-- `SignType` is not Boolean, since `0` meets its complement above `⊥`. -/
 theorem inf_compl_zero_ne_bot : (0 : SignType) ⊓ 0ᶜ ≠ ⊥ := by decide
 
 /-! ### The two-valued fragment -/
@@ -167,16 +162,13 @@ variable {P Q : Prop} [Decidable P] [Decidable Q]
 @[simp] theorem ofProp_ne_zero : ofProp P ≠ 0 := by
   by_cases h : P <;> simp [ofProp, h]
 
-/-- A two-valued proposition is non-false exactly when it holds. -/
 @[simp] theorem zero_le_ofProp_iff : 0 ≤ ofProp P ↔ P := by
   by_cases h : P <;> simp [ofProp, h]
 
-/-- A defined value is the value of its own truth. -/
 theorem ofProp_eq_one_of_ne_zero {a : SignType} [Decidable (a = 1)] (h : a ≠ 0) :
     ofProp (a = 1) = a := by
   revert h; cases a <;> simp
 
-/-- Equivalent propositions have the same value, which lets `simp` rewrite inside `ofProp`. -/
 @[congr] theorem ofProp_congr (h : P ↔ Q) : ofProp P = ofProp Q :=
   eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [h])
 
@@ -233,13 +225,10 @@ def Designation.dual : Designation → Designation
 @[simp] theorem Designation.threshold_k3 : Designation.k3.threshold = 1 := rfl
 @[simp] theorem Designation.threshold_lp : Designation.lp.threshold = 0 := rfl
 
-/-- Negation swaps the designation standards, fixing `0` and exchanging the complements of the
-two principal filters. -/
 theorem Designation.dual_threshold_le_neg_iff (d : Designation) (v : SignType) :
     d.dual.threshold ≤ -v ↔ ¬ d.threshold ≤ v := by
   cases d <;> cases v <;> decide
 
-/-- The standards agree on the two-valued fragment. -/
 theorem Designation.threshold_le_ofProp_iff (d : Designation) (P : Prop) [Decidable P] :
     d.threshold ≤ SignType.ofProp P ↔ P := by
   cases d <;> by_cases h : P <;> simp [SignType.ofProp, h]
@@ -287,12 +276,10 @@ theorem joinWith_eq_one_iff : joinWith D a b = 1 ↔ D ∧ (a = 1 ∨ b = 1) := 
 theorem joinWith_eq_neg_one_iff : joinWith D a b = -1 ↔ D ∧ a ≠ 1 ∧ b ≠ 1 := by
   simp [joinWith, neg_eq_iff_eq_neg, meetWith_eq_one_iff]
 
-/-- Strong Kleene conjunction is `meetWith` defined whenever the operands settle the value. -/
 theorem inf_eq_meetWith (a b : SignType) :
     a ⊓ b = meetWith ((a = -1 ∨ b = -1) ∨ (a = 1 ∧ b = 1)) a b := by
   cases a <;> cases b <;> decide
 
-/-- Strong Kleene disjunction, dually. -/
 theorem sup_eq_joinWith (a b : SignType) :
     a ⊔ b = joinWith ((a = 1 ∨ b = 1) ∨ (a = -1 ∧ b = -1)) a b := by
   cases a <;> cases b <;> decide
@@ -317,12 +304,10 @@ def meetWeak : SignType → SignType → SignType
   | .pos, .neg | .neg, .pos | .neg, .neg => -1
   | _, _ => 0
 
-/-- Weak Kleene conjunction is `meetWith` demanding both operands defined. -/
 theorem meetWeak_eq_meetWith (a b : SignType) :
     meetWeak a b = meetWith (a ≠ 0 ∧ b ≠ 0) a b := by
   cases a <;> cases b <;> decide
 
-/-- Weak Kleene disjunction, dually. -/
 theorem joinWeak_eq_joinWith (a b : SignType) :
     joinWeak a b = joinWith (a ≠ 0 ∧ b ≠ 0) a b := by
   cases a <;> cases b <;> decide
@@ -343,37 +328,30 @@ theorem meetWeak_assoc (a b c : SignType) :
 
 @[simp] theorem meetWeak_zero_right (a : SignType) : meetWeak a 0 = 0 := by cases a <;> rfl
 
-/-- The Weak Kleene conjunction is undefined iff a conjunct is. -/
 @[simp] theorem meetWeak_eq_zero_iff (a b : SignType) :
     meetWeak a b = 0 ↔ a = 0 ∨ b = 0 := by
   cases a <;> cases b <;> decide
 
-/-- The Weak Kleene conjunction is true iff both conjuncts are. -/
 @[simp] theorem meetWeak_eq_one_iff (a b : SignType) :
     meetWeak a b = 1 ↔ a = 1 ∧ b = 1 := by
   cases a <;> cases b <;> decide
 
-/-- The Weak Kleene conjunction is false iff a conjunct is false and the other is defined. -/
 @[simp] theorem meetWeak_eq_neg_one_iff (a b : SignType) :
     meetWeak a b = -1 ↔ (a = -1 ∧ b ≠ 0) ∨ (a ≠ 0 ∧ b = -1) := by
   cases a <;> cases b <;> decide
 
-/-- The Weak Kleene disjunction is undefined iff a disjunct is. -/
 theorem joinWeak_eq_zero_iff (a b : SignType) :
     joinWeak a b = 0 ↔ a = 0 ∨ b = 0 := by
   cases a <;> cases b <;> decide
 
-/-- The Weak Kleene disjunction is false iff both disjuncts are. -/
 theorem joinWeak_eq_neg_one_iff (a b : SignType) :
     joinWeak a b = -1 ↔ a = -1 ∧ b = -1 := by
   cases a <;> cases b <;> decide
 
-/-- The Weak Kleene disjunction is true iff both disjuncts are defined and one is true. -/
 theorem joinWeak_eq_one_iff (a b : SignType) :
     joinWeak a b = 1 ↔ a ≠ 0 ∧ b ≠ 0 ∧ (a = 1 ∨ b = 1) := by
   cases a <;> cases b <;> decide
 
-/-- Negation passes through a Weak Kleene conjunction whose first conjunct is never false. -/
 theorem neg_meetWeak_of_ne_neg_one {a : SignType} (h : a ≠ -1) (b : SignType) :
     -meetWeak a b = meetWeak a (-b) := by
   revert h; cases a <;> cases b <;> decide
@@ -408,31 +386,24 @@ def joinMiddle : SignType → SignType → SignType
   | .zero, _ => 0
   | a, b => a ⊔ b
 
-/-- Middle Kleene conjunction is `meetWith` at the asymmetric condition that the left operand is
-defined and either settles the value or the right operand is defined too. -/
 theorem meetMiddle_eq_meetWith (a b : SignType) :
     meetMiddle a b = meetWith (a ≠ 0 ∧ (a = -1 ∨ b ≠ 0)) a b := by
   cases a <;> cases b <;> decide
 
-/-- Middle Kleene disjunction, dually. -/
 theorem joinMiddle_eq_joinWith (a b : SignType) :
     joinMiddle a b = joinWith (a ≠ 0 ∧ (a = 1 ∨ b ≠ 0)) a b := by
   cases a <;> cases b <;> decide
 
-/-- Middle Kleene conjunction is not commutative. -/
 theorem meetMiddle_not_comm : ¬ ∀ a b : SignType, meetMiddle a b = meetMiddle b a :=
   fun h ↦ absurd (h (-1) 0) (by decide)
 
-/-- Middle Kleene disjunction is not commutative. -/
 theorem joinMiddle_not_comm : ¬ ∀ a b : SignType, joinMiddle a b = joinMiddle b a :=
   fun h ↦ absurd (h 1 0) (by decide)
 
-/-- When the left operand is defined, Middle Kleene conjunction is Strong Kleene's. -/
 theorem meetMiddle_eq_inf_of_left_ne_zero (a b : SignType) (h : a ≠ 0) :
     meetMiddle a b = a ⊓ b := by
   cases a with | zero => exact absurd rfl h | neg => rfl | pos => rfl
 
-/-- When the left operand is defined, Middle Kleene disjunction is Strong Kleene's. -/
 theorem joinMiddle_eq_sup_of_left_ne_zero (a b : SignType) (h : a ≠ 0) :
     joinMiddle a b = a ⊔ b := by
   cases a with | zero => exact absurd rfl h | neg => rfl | pos => rfl
@@ -443,8 +414,6 @@ theorem joinMiddle_eq_sup_of_left_ne_zero (a b : SignType) (h : a ≠ 0) :
 
 @[simp] theorem meetMiddle_one_left (a : SignType) : meetMiddle 1 a = a := by cases a <;> rfl
 
-/-- `-1` is a left zero for Middle Kleene conjunction, against Weak Kleene's
-`meetWeak (-1) 0 = 0`. -/
 @[simp] theorem meetMiddle_neg_one_left (a : SignType) : meetMiddle (-1) a = -1 := by
   cases a <;> rfl
 
@@ -455,7 +424,6 @@ theorem joinMiddle_eq_sup_of_left_ne_zero (a b : SignType) (h : a ≠ 0) :
 
 @[simp] theorem meetMiddle_one_right (a : SignType) : meetMiddle a 1 = a := by cases a <;> rfl
 
-/-- Middle Kleene conjunction reads its right argument only when its left one is true. -/
 theorem meetMiddle_congr_right {a b b' : SignType} (h : a = 1 → b = b') :
     meetMiddle a b = meetMiddle a b' := by
   cases a with
@@ -463,7 +431,6 @@ theorem meetMiddle_congr_right {a b b' : SignType} (h : a = 1 → b = b') :
   | neg => simp only [neg_eq_neg_one, meetMiddle_neg_one_left]
   | pos => rw [h rfl]
 
-/-- Middle Kleene disjunction reads its right argument only when its left one is false. -/
 theorem joinMiddle_congr_right {a b b' : SignType} (h : a = -1 → b = b') :
     joinMiddle a b = joinMiddle a b' := by
   cases a with
@@ -474,8 +441,6 @@ theorem joinMiddle_congr_right {a b b' : SignType} (h : a = -1 → b = b') :
 @[simp] theorem meetMiddle_eq_one_iff {a b : SignType} : meetMiddle a b = 1 ↔ a = 1 ∧ b = 1 := by
   cases a <;> cases b <;> decide
 
-/-- Middle Kleene conjunction is undefined iff its left operand is, or the left operand is true
-and the right one undefined, the first conjunct filtering the second's presupposition. -/
 @[simp] theorem meetMiddle_eq_zero_iff {a b : SignType} :
     meetMiddle a b = 0 ↔ a = 0 ∨ a = 1 ∧ b = 0 := by
   cases a <;> cases b <;> decide
@@ -488,8 +453,6 @@ and the right one undefined, the first conjunct filtering the second's presuppos
     joinMiddle a b = 1 ↔ a = 1 ∨ a = -1 ∧ b = 1 := by
   cases a <;> cases b <;> decide
 
-/-- Middle Kleene disjunction is undefined iff its left operand is, or the left operand is false
-and the right one undefined. -/
 @[simp] theorem joinMiddle_eq_zero_iff {a b : SignType} :
     joinMiddle a b = 0 ↔ a = 0 ∨ a = -1 ∧ b = 0 := by
   cases a <;> cases b <;> decide
@@ -517,12 +480,10 @@ def joinBelnap : SignType → SignType → SignType
   | a, .zero => a
   | a, b => a ⊔ b
 
-/-- Belnap conjunction is `meetWith` demanding one operand defined. -/
 theorem meetBelnap_eq_meetWith (a b : SignType) :
     meetBelnap a b = meetWith (a ≠ 0 ∨ b ≠ 0) a b := by
   cases a <;> cases b <;> decide
 
-/-- Belnap disjunction, dually. -/
 theorem joinBelnap_eq_joinWith (a b : SignType) :
     joinBelnap a b = joinWith (a ≠ 0 ∨ b ≠ 0) a b := by
   cases a <;> cases b <;> decide
@@ -541,12 +502,10 @@ theorem meetBelnap_comm (a b : SignType) : meetBelnap a b = meetBelnap b a := by
 theorem joinBelnap_comm (a b : SignType) : joinBelnap a b = joinBelnap b a := by
   cases a <;> cases b <;> rfl
 
-/-- On defined operands Belnap conjunction is Strong Kleene's. -/
 theorem meetBelnap_eq_inf_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :
     meetBelnap a b = a ⊓ b := by
   revert ha hb; cases a <;> cases b <;> decide
 
-/-- Belnap conjunction is undefined iff both conjuncts are. -/
 @[simp] theorem meetBelnap_eq_zero_iff {a b : SignType} : meetBelnap a b = 0 ↔ a = 0 ∧ b = 0 := by
   cases a <;> cases b <;> decide
 
@@ -558,7 +517,6 @@ theorem meetBelnap_eq_inf_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠
     meetBelnap a b = -1 ↔ a = -1 ∨ b = -1 := by
   cases a <;> cases b <;> decide
 
-/-- Belnap disjunction is undefined iff both disjuncts are. -/
 @[simp] theorem joinBelnap_eq_zero_iff {a b : SignType} : joinBelnap a b = 0 ↔ a = 0 ∧ b = 0 := by
   cases a <;> cases b <;> decide
 
@@ -569,12 +527,10 @@ theorem meetBelnap_eq_inf_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠
     joinBelnap a b = -1 ↔ a ≠ 1 ∧ b ≠ 1 ∧ (a = -1 ∨ b = -1) := by
   cases a <;> cases b <;> decide
 
-/-- On defined operands Belnap disjunction is Strong Kleene's. -/
 theorem joinBelnap_eq_sup_of_ne_zero {a b : SignType} (ha : a ≠ 0) (hb : b ≠ 0) :
     joinBelnap a b = a ⊔ b := by
   revert ha hb; cases a <;> cases b <;> decide
 
-/-- Belnap conjunction is non-false exactly when both conjuncts are. -/
 @[simp] theorem zero_le_meetBelnap_iff {a b : SignType} : 0 ≤ meetBelnap a b ↔ 0 ≤ a ∧ 0 ≤ b := by
   cases a <;> cases b <;> decide
 
@@ -609,10 +565,8 @@ theorem condAssert_of_not_le (h : ¬ d.threshold ≤ a) (b : SignType) : condAss
     condAssert d (-1) b = 0 := by
   cases d <;> rfl
 
-/-- De Finetti's conditional groups a void antecedent with a false one. -/
 @[simp] theorem condAssert_k3_zero_left (b : SignType) : condAssert .k3 0 b = 0 := rfl
 
-/-- Cooper's conditional groups a void antecedent with a true one. -/
 @[simp] theorem condAssert_lp_zero_left (b : SignType) : condAssert .lp 0 b = b := rfl
 
 theorem condAssert_eq_one_iff : condAssert d a b = 1 ↔ d.threshold ≤ a ∧ b = 1 := by
@@ -624,33 +578,25 @@ theorem condAssert_eq_neg_one_iff : condAssert d a b = -1 ↔ d.threshold ≤ a 
 theorem condAssert_eq_zero_iff : condAssert d a b = 0 ↔ (d.threshold ≤ a → b = 0) := by
   unfold condAssert; split_ifs with h <;> simp [h]
 
-/-- On a two-valued antecedent the standards agree: the consequent where the antecedent holds and
-void elsewhere. -/
 @[simp] theorem condAssert_ofProp (P : Prop) [Decidable P] (b : SignType) :
     condAssert d (ofProp P) b = if P then b else 0 := by
   by_cases h : P <;> simp [h]
 
-/-- Antecedents designated alike give the same conditional. -/
 theorem condAssert_congr_left (h : d.threshold ≤ a ↔ d.threshold ≤ a') (b : SignType) :
     condAssert d a b = condAssert d a' b := by
   simp only [condAssert, h]
 
-/-- Negation commutes with the conditional. -/
 @[simp] theorem neg_condAssert : -condAssert d a b = condAssert d a (-b) := by
   unfold condAssert; split_ifs <;> simp
 
-/-- **Import-Export**: a conditional on `a` of a conditional on `b` is the conditional on the
-Strong Kleene conjunction `a ⊓ b`, which is designated exactly when both conjuncts are. -/
 theorem condAssert_condAssert : condAssert d a (condAssert d b c) = condAssert d (a ⊓ b) c := by
   by_cases ha : d.threshold ≤ a <;> by_cases hb : d.threshold ≤ b <;>
     simp [condAssert, le_inf_iff, ha, hb]
 
-/-- Conditional assertion distributes over Belnap conjunction. -/
 theorem condAssert_meetBelnap :
     condAssert d a (meetBelnap b c) = meetBelnap (condAssert d a b) (condAssert d a c) := by
   by_cases h : d.threshold ≤ a <;> simp [condAssert_of_le, condAssert_of_not_le, h]
 
-/-- Conditional assertion distributes over Belnap disjunction. -/
 theorem condAssert_joinBelnap :
     condAssert d a (joinBelnap b c) = joinBelnap (condAssert d a b) (condAssert d a c) := by
   by_cases h : d.threshold ≤ a <;> simp [condAssert_of_le, condAssert_of_not_le, h]
@@ -695,12 +641,10 @@ theorem supervaluation_eq_zero_iff :
 
 @[simp] theorem supervaluation_empty : supervaluation ∅ P = 1 := by simp [supervaluation]
 
-/-- Over a single valuation the supervaluation is classical truth. -/
 @[simp] theorem supervaluation_singleton (a : α) : supervaluation {a} P = ofProp (P a) := by
   by_cases h : P a <;> simp [supervaluation, ofProp, h]
 
 variable {s P} in
-/-- The supervaluation depends only on the predicate's values on the family. -/
 theorem supervaluation_congr {Q : α → Prop} [DecidablePred Q] (h : ∀ a ∈ s, P a ↔ Q a) :
     supervaluation s P = supervaluation s Q := by
   refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
@@ -710,22 +654,18 @@ theorem supervaluation_congr {Q : α → Prop} [DecidablePred Q] (h : ∀ a ∈ 
   · simp only [supervaluation_eq_one_iff]
     exact forall₂_congr h
 
-/-- Supervaluating over the image of a family is supervaluating the composite over the family. -/
 theorem supervaluation_image {β : Type*} [DecidableEq β] (f : α → β) (Q : β → Prop)
     [DecidablePred Q] : supervaluation (s.image f) Q = supervaluation s (Q ∘ f) := by
   refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
     simp [supervaluation_eq_zero_iff, supervaluation_eq_one_iff]
 
 variable {s} in
-/-- Over a nonempty family a constant predicate supervaluates to its classical value. -/
 theorem supervaluation_const (hs : s.Nonempty) (q : Prop) [Decidable q] :
     supervaluation s (fun _ ↦ q) = ofProp q := by
   by_cases h : q <;> simp [supervaluation, ofProp, h]
   exact hs
 
 variable {s} in
-/-- Over a nonempty family, negating the predicate negates the supervaluation, swapping truth
-and falsity and fixing the gap. -/
 theorem supervaluation_not (hs : s.Nonempty) :
     supervaluation s (¬ P ·) = -supervaluation s P := by
   cases h : supervaluation s P

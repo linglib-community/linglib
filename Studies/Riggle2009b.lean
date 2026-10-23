@@ -57,12 +57,9 @@ lexicographically below that of `B`, so `A` has fewer violations of the highest-
 constraint on which the two differ. -/
 def HarmonicLT (r : Ranking (Fin n) n) (A B : ViolationProfile n) : Prop := r • A < r • B
 
-/-- Merge is ranking-independent (section 3): a ranking reads a merged profile as the merge
-of its readings, so one merged constraint set serves every ranking. -/
 theorem smul_add (r : Ranking (Fin n) n) (A B : ViolationProfile n) :
     r • (A + B) = r • A + r • B := rfl
 
-/-- Merging the same profile on both sides preserves harmonic inequality. -/
 theorem HarmonicLT.add_right {r : Ranking (Fin n) n} {A B : ViolationProfile n}
     (h : HarmonicLT r A B) (C : ViolationProfile n) : HarmonicLT r (A + C) (B + C) := by
   unfold HarmonicLT at *
@@ -75,9 +72,6 @@ abbrev Optimal (r : Ranking (Fin n) n) (S : Set (ViolationProfile n))
     (A : ViolationProfile n) : Prop :=
   MinimalFor (· ∈ S) (r • ·) A
 
-/-- Dijkstra's principle for harmonic optimization (section 2): a merge that is optimal among
-the merges of two sets has an optimal first part, so every piece of an optimal mapping is
-itself an optimal mapping. -/
 theorem Optimal.left_of_add {r : Ranking (Fin n) n} {S T : Set (ViolationProfile n)}
     {A B : ViolationProfile n} (h : Optimal r (S + T) (A + B)) (hA : A ∈ S) (hB : B ∈ T) :
     Optimal r S A :=
@@ -97,8 +91,6 @@ the infinitely bad profile `⊤`; tropical addition is the minimum under harmoni
 tropical multiplication is merge, and the commutative semiring structure is mathlib's. -/
 abbrev V (n : ℕ) := MinTropical (WithTop (ViolationProfile n))
 
-/-- Monotonicity (section 2): merging can only make a profile worse, so the semiring is
-monotone in the sense that makes shortest-path optimization sound. -/
 theorem le_mul (a b : V n) : a ≤ a * b := by
   rw [← untrop_le_iff, untrop_mul]
   refine le_add_of_nonneg_right ?_
@@ -106,7 +98,6 @@ theorem le_mul (a b : V n) : a ≤ a * b := by
   | top => exact le_top
   | coe x => exact WithTop.coe_le_coe.mpr bot_le
 
-/-- In semiring terms, the minimum of a profile and any merge extending it is the profile. -/
 theorem add_mul_self (a b : V n) : a + a * b = a := add_eq_left (le_mul a b)
 
 /-! ### Harmonic Grammar -/

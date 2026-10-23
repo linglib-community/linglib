@@ -138,8 +138,6 @@ theorem measure_validities [MeasurableSpace W] [DiscreteMeasurableSpace W] (μ :
 /-- `uniform3` is the uniform measure on three worlds. -/
 local notation "uniform3" => uniformOn (Set.univ : Set (Fin 3))
 
-/-- I1 fails for the uniform measure, since `{0}` is at least as likely as `{1}` and as `{2}`
-but not as `{1, 2}`. -/
 private theorem uniform3_not_I1 : ¬RightUnion (uniform3).inducedGe := fun h ↦ by
   have := h {0} {1} {2} (by simp [Measure.inducedGe, uniformOn_univ_le_iff])
     (by simp [Measure.inducedGe, uniformOn_univ_le_iff])
@@ -148,14 +146,12 @@ private theorem uniform3_not_I1 : ¬RightUnion (uniform3).inducedGe := fun h ↦
   rw [Set.ncard_pair (by decide), Set.ncard_singleton] at this
   omega
 
-/-- `{0, 1}` beats its complement under the uniform measure … -/
 private theorem uniform3_probably_pair : Probably (uniform3).inducedGe {0, 1} := by
   have hc : ({0, 1} : Set (Fin 3))ᶜ = {2} := by ext x; fin_cases x <;> simp
   constructor <;>
     rw [Measure.inducedGe, uniformOn_univ_le_iff, hc, Set.ncard_pair (by decide),
       Set.ncard_singleton] <;> omega
 
-/-- … but is not at least as likely as `W`. -/
 private theorem uniform3_not_pair_univ : ¬(uniform3).inducedGe {0, 1} Set.univ := by
   rw [Measure.inducedGe, uniformOn_univ_le_iff, Set.ncard_pair (by decide), Set.ncard_univ,
     Nat.card_eq_fintype_card, Fintype.card_fin]
@@ -206,9 +202,6 @@ section MLift
 
 variable (ge_w : W → W → Prop) [IsPreorder W ge_w]
 
-/-- The m-lifting validates V13 on a finite domain: `B ⊆ A ∪ B` gives the weak half, and a
-matching of `A ∪ B` into `B` would contradict `|B| < |A ∪ B|`, which holds as `A \ B` is
-nonempty. -/
 theorem mLift_V13 [Finite W] : StrictDisjunctionIntro (MatchingLift ge_w) := by
   rintro A B ⟨-, hne⟩
   have hsub : B ⊂ A ∪ B := Set.ssubset_iff_subset_ne.2 ⟨Set.subset_union_right, fun h ↦ hne ?_⟩
@@ -286,7 +279,6 @@ theorem measure_le_of_matchingLift [Fintype W] [MeasurableSpace W] [MeasurableSi
 
 Worlds are `Fin 4`, with `0` the best; `ge_w u v` is `u ≤ v`. -/
 
-/-- Both liftings make `{a, b}` more likely than `{b, c}`. -/
 theorem chain_pair_gt_pair :
     Strict (MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} ∧
       Strict (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0, 1} {1, 2} := by
@@ -304,8 +296,6 @@ theorem chain_pair_gt_pair :
     rcases ha with rfl | rfl <;> exact absurd hle (by decide)
   exact ⟨⟨hm, fun h ↦ hl h.lewisLift⟩, ⟨hm.lewisLift, hl⟩⟩
 
-/-- Only the l-lifting makes `{a}` more likely than `{b, c}`. The m-lifting leaves the two
-incomparable, since two worlds cannot be matched injectively into one. -/
 theorem chain_singleton_vs_pair :
     Strict (LewisLift (· ≤ · : Fin 4 → Fin 4 → Prop)) {0} {1, 2} ∧
       ¬ MatchingLift (· ≤ · : Fin 4 → Fin 4 → Prop) {0} {1, 2} ∧

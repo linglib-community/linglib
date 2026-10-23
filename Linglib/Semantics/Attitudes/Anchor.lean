@@ -88,8 +88,6 @@ from `i` lies in the anchor's projection. -/
 def ofAccessibility (R : E → SetRel I I) : E → α → I → Prop :=
   fun agent x i ↦ ∀ i', i ~[R agent] i' → proj x i'
 
-/-- For a surjective projection, an existentially closed report with Moulton's doxastic verb is
-Hintikka's universal modal. -/
 theorem existsClosure_ofAccessibility (R : E → SetRel I I) (a : E) (q : I → Prop) (i : I)
     (hp : Function.Surjective (proj : α → I → Prop)) :
     existsClosure (ofAccessibility (α := α) R) a q i ↔ □[R a] q i :=
@@ -117,7 +115,6 @@ variable {W : Type*}
 instance : Anchor (ContentIndividual W) W :=
   ⟨cont⟩
 
-/-- Every proposition is the content of some individual, so the projection is surjective. -/
 theorem cont_surjective : Function.Surjective (cont : ContentIndividual W → W → Prop) :=
   fun p ↦ ⟨⟨p⟩, rfl⟩
 
@@ -125,13 +122,10 @@ theorem cont_surjective : Function.Surjective (cont : ContentIndividual W → W 
 def entails (xc : ContentIndividual W) (p : W → Prop) : Prop :=
   ∀ w, xc.cont w → p w
 
-/-- Identity of content implies entailment. -/
 theorem eq_implies_entails (xc : ContentIndividual W) (p : W → Prop) :
     xc.cont = p → xc.entails p :=
   fun h _ hw ↦ h ▸ hw
 
-/-- Entailment does not imply identity of content, since empty content entails every
-proposition. -/
 theorem entails_not_implies_eq :
     ¬ ∀ (p : Bool → Prop) (xc : ContentIndividual Bool), xc.entails p → xc.cont = p :=
   fun h ↦ (iff_of_eq (congrFun (h (fun _ ↦ True) ⟨fun _ ↦ False⟩ fun _ hw ↦ hw.elim)
@@ -155,7 +149,6 @@ structure SituationIndividual (S : Type*) where
 instance {S : Type*} : Anchor (SituationIndividual S) S :=
   ⟨SituationIndividual.sit⟩
 
-/-- Every situation predicate is that of some individual, so the projection is surjective. -/
 theorem SituationIndividual.sit_surjective {S : Type*} :
     Function.Surjective (SituationIndividual.sit : SituationIndividual S → S → Prop) :=
   fun p ↦ ⟨⟨p⟩, rfl⟩

@@ -84,11 +84,9 @@ variable [DecidableEq A]
 collective holds of their sum. -/
 def symmetricImage (P : Finset A → Prop) : A → A → Prop := fun x y ↦ P {x, y}
 
-/-- The symmetric image is symmetric, by the commutativity of sum formation. -/
 theorem symmetricImage_symm (P : Finset A → Prop) : Std.Symm (symmetricImage P) :=
   ⟨fun x y h ↦ by simpa [symmetricImage, Finset.pair_comm] using h⟩
 
-/-- The symmetric image is in plain reciprocity with its collective. -/
 theorem plainReciprocity_symmetricImage (P : Finset A → Prop) :
     PlainReciprocity P (symmetricImage P) := by
   intro X hX
@@ -96,15 +94,11 @@ theorem plainReciprocity_symmetricImage (P : Finset A → Prop) :
   rw [strongReciprocity_pair, symmetricImage, symmetricImage, Finset.pair_comm y x]
   exact ⟨fun h ↦ ⟨hxy, h, h⟩, fun h ↦ h.2.1⟩
 
-/-- A collective predicate with its symmetric image satisfies the generalization: this is
-how the paper derives it for plain reciprocals. -/
 theorem rsg_symmetricImage (P : Finset A → Prop) : RSG P (symmetricImage P) :=
   iff_of_true (plainReciprocity_symmetricImage P) (symmetricImage_symm P)
 
 end SymmetricImage
 
-/-- The generalization is not logically forced: a one-way binary predicate paired with the
-empty collective is vacuously plain. -/
 theorem exists_plainReciprocity_not_symm :
     ∃ (R : Bool → Bool → Prop) (P : Finset Bool → Prop),
       PlainReciprocity P R ∧ ¬ Std.Symm R := by
@@ -152,7 +146,6 @@ theorem Pr4.pr1 (h : Pr4 P R) : Pr1 P R := fun X hX hR ↦ h X hX (hR.mono fun _
 /-- (Pr₂) is stronger than (Pr₅). -/
 theorem Pr2.pr5 (h : Pr2 P R) : Pr5 P R := fun X hX hP ↦ (h X hX hP).mono fun _ _ ↦ .of_rel
 
-/-- Plain reciprocity is (Pr₁) together with (Pr₂). -/
 theorem plainReciprocity_iff_pr1_pr2 : PlainReciprocity P R ↔ Pr1 P R ∧ Pr2 P R :=
   ⟨fun h ↦ ⟨fun X hX ↦ (h X hX).2, fun X hX ↦ (h X hX).1⟩,
     fun ⟨h₁, h₂⟩ X hX ↦ ⟨h₂ X hX, h₁ X hX⟩⟩
@@ -238,7 +231,6 @@ theorem typ_mono {R' : E → A → A → Prop} [∀ e, DecidableRel (R' e)] {e :
     simp only [Finset.mem_filter] at hp ⊢
     exact ⟨hp.1, hp.2.1, h _ _ hp.2.2⟩
 
-/-- On a pair the typicality counts the two directions. -/
 theorem typ_pair {x y : A} (hxy : x ≠ y) (e : E) :
     typ R e {x, y} = (if R e x y then 1 else 0) + if R e y x then 1 else 0 := by
   unfold typ
@@ -259,7 +251,6 @@ theorem Pr5_of_preferential {θ : ℕ} (hθ : 0 < θ) (e : E) :
     omega
   exact strongReciprocity_pair.mpr ⟨hxy, hR, hR.symm⟩
 
-/-- The threshold of two is plain reciprocity: both directions are required. -/
 theorem plainReciprocity_two_le_typ (e : E) :
     PlainReciprocity (fun s ↦ 2 ≤ typ R e s) (R e) := by
   intro X hX

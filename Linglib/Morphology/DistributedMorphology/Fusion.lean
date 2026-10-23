@@ -74,9 +74,6 @@ section Portmanteau
 
 variable [DecidableEq F]
 
-/-- A portmanteau exponent needs fusion. When every item carrying the exponent draws on features
-missing from each unfused bundle, the Subset Principle selects it at neither unfused node, since
-only the fused bundle contains its item's features (`subsetPrinciple_winner_mem`). -/
 theorem portmanteau_needs_fusion {items : List (VocabularyItem F E)}
     {p q : Neighborhood (Finset F)} {e : E}
     (he : ∀ i ∈ items, i.exponent = e → ¬ Morphology.Exponence.Applies i p ∧

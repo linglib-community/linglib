@@ -61,8 +61,6 @@ instance (w : Verb) : Decidable (DirectPassivizable w) :=
 
 theorem directPassive_isValencyDecreasing : directPassive.IsValencyDecreasing := by decide
 
-/-- The indirect passive introduces an affected subject: the A of a transitive verb's derived
-construction, the S of an intransitive verb's. -/
 theorem newParticipant_indirectPassive :
     (indirectPassive).newParticipant = some .A ∧
       (indirectPassive .intransitive).newParticipant = some .S := by

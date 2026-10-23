@@ -104,7 +104,6 @@ private theorem eq_zero_of_le (v : SignType) (h₁ : toFlat v ≤ toFlat 1)
     (h₂ : toFlat v ≤ toFlat (-1)) : v = 0 := by
   cases v <;> revert h₁ h₂ <;> decide
 
-/-- Fidelity and Stability determine negation as [kleene-1952]'s. -/
 theorem neg_eq_of_faithful_stable (n : SignType → SignType)
     (hF : ∀ x : Bool, n (ofProp x) = ofProp (!x))
     (hS : ∀ a a', toFlat a ≤ toFlat a' → toFlat (n a) ≤ toFlat (n a')) : n = Neg.neg := by
@@ -116,9 +115,6 @@ theorem neg_eq_of_faithful_stable (n : SignType → SignType)
   · exact hFa
   · exact hT
 
-/-- A commutative conjunction satisfying Fidelity and Stability is the maximizing strong Kleene
-`⊓` or the minimizing weak Kleene `meetWeak`, which differ only on an indefinite conjunct beside a
-false one. -/
 theorem conj_eq_inf_or_meetWeak (f : SignType → SignType → SignType) (hF : Faithful f (· && ·))
     (hS : Stable f) (hC : ∀ a b, f a b = f b a) : f = (· ⊓ ·) ∨ f = meetWeak := by
   have hTT : f 1 1 = 1 := hF Bool.true Bool.true
@@ -158,35 +154,25 @@ abbrev pink (hue θ : ℕ) : Prop := θ < hue
 /-- *x is red* when its hue is at or below the boundary. -/
 abbrev red (hue θ : ℕ) : Prop := hue ≤ θ
 
-/-- *The blob is pink* is indefinite. -/
 theorem pink_indet : supervaluation colour (pink 5) = 0 := by decide
 
-/-- *The blob is red* is indefinite. -/
 theorem red_indet : supervaluation colour (red 5) = 0 := by decide
 
-/-- *The blob is pink and red* is false, since the predicates are contraries. -/
 theorem pink_and_red_false : supervaluation colour (fun θ ↦ pink 5 θ ∧ red 5 θ) = -1 := by
   decide
 
-/-- *The blob is pink or red* is true, since the predicates are complementary over the range. -/
 theorem pink_or_red_true : supervaluation colour (fun θ ↦ pink 5 θ ∨ red 5 θ) = 1 := by decide
 
-/-- *If the blob is pink, it is not red* is a penumbral truth, where *if pink, not pink* is not
-true. -/
 theorem pink_imp_not_red_true : supervaluation colour (fun θ ↦ pink 5 θ → ¬ red 5 θ) = 1 := by
   decide
 
 theorem pink_imp_not_pink_indet :
     supervaluation colour (fun θ ↦ pink 5 θ → ¬ pink 5 θ) = 0 := by decide
 
-/-- Even the maximizing account makes *pink and red* indefinite, as both conjuncts are. -/
 theorem maximal_pink_and_red :
     supervaluation colour (pink 5) ⊓ supervaluation colour (red 5) = 0 := by
   decide
 
-/-- No truth-functional conjunction respects penumbral connection, since *pink and pink* and
-*pink and red* have indefinite conjuncts alike, but the first is indefinite and the second
-false. -/
 theorem conj_not_truthFunctional :
     ¬ ∃ f : SignType → SignType → SignType, ∀ (P Q : ℕ → Prop) [DecidablePred P]
       [DecidablePred Q], supervaluation colour (fun θ ↦ P θ ∧ Q θ) = f (supervaluation colour P)
@@ -198,8 +184,6 @@ theorem conj_not_truthFunctional :
   rw [pink_indet, ← h₂, pink_and_red_false] at h₁
   exact absurd h₁ (by decide)
 
-/-- Nor does any truth-functional disjunction, since *pink or pink* is indefinite and *pink or
-red* true. -/
 theorem disj_not_truthFunctional :
     ¬ ∃ f : SignType → SignType → SignType, ∀ (P Q : ℕ → Prop) [DecidablePred P]
       [DecidablePred Q], supervaluation colour (fun θ ↦ P θ ∨ Q θ) = f (supervaluation colour P)
@@ -233,43 +217,35 @@ def SuperTrue (A : Point → Prop) (t : Point) : Prop := ∀ u, t ≤ u → IsMa
 /-- A sentence is super-false at a point when it is false at every complete extension. -/
 def SuperFalse (A : Point → Prop) (t : Point) : Prop := ∀ u, t ≤ u → IsMax u → ¬ A u
 
-/-- At a complete point super-truth is classical truth (Fidelity). -/
 theorem superTrue_iff_of_isMax (ht : IsMax t) : SuperTrue A t ↔ A t :=
   ⟨fun h ↦ h t le_rfl ht, fun h _ htu _ ↦ ht.eq_of_le htu ▸ h⟩
 
-/-- Fidelity for falsity. -/
 theorem superFalse_iff_of_isMax (ht : IsMax t) : SuperFalse A t ↔ ¬ A t :=
   superTrue_iff_of_isMax ht
 
-/-- Super-truth is preserved under extension (Stability). -/
 theorem SuperTrue.mono (h : SuperTrue A t) (htu : t ≤ u) : SuperTrue A u :=
   fun _ huv hv ↦ h _ (htu.trans huv) hv
 
-/-- Stability for falsity. -/
 theorem SuperFalse.mono (h : SuperFalse A t) (htu : t ≤ u) : SuperFalse A u :=
   SuperTrue.mono h htu
 
-/-- A sentence not super-true at a point is super-false at some extension (Resolution). -/
 theorem exists_superFalse_of_not_superTrue (h : ¬ SuperTrue A t) :
     ∃ u, t ≤ u ∧ SuperFalse A u := by
   simp only [SuperTrue, not_forall] at h
   obtain ⟨u, htu, hu, hA⟩ := h
   exact ⟨u, htu, (superFalse_iff_of_isMax hu).2 hA⟩
 
-/-- Resolution for falsity. -/
 theorem exists_superTrue_of_not_superFalse (h : ¬ SuperFalse A t) :
     ∃ u, t ≤ u ∧ SuperTrue A u := by
   simp only [SuperFalse, not_forall, not_not] at h
   obtain ⟨u, htu, hu, hA⟩ := h
   exact ⟨u, htu, (superTrue_iff_of_isMax hu).2 hA⟩
 
-/-- Super-truth of `¬A` is super-falsity of `A`. -/
 theorem superTrue_not_iff : SuperTrue (fun u ↦ ¬ A u) t ↔ SuperFalse A t := Iff.rfl
 
 theorem superFalse_not_iff : SuperFalse (fun u ↦ ¬ A u) t ↔ SuperTrue A t := by
   simp only [SuperFalse, SuperTrue, not_not]
 
-/-- A conjunction is super-true iff both conjuncts are. -/
 theorem superTrue_and_iff :
     SuperTrue (fun u ↦ A u ∧ B u) t ↔ SuperTrue A t ∧ SuperTrue B t :=
   ⟨fun h ↦ ⟨fun u htu hu ↦ (h u htu hu).1, fun u htu hu ↦ (h u htu hu).2⟩,
@@ -287,13 +263,11 @@ theorem completions_nonempty [SpecificationSpace Point] (t : Point) :
   obtain ⟨u, htu, hu⟩ := completable t
   exact ⟨u, by simp [completions, htu, hu]⟩
 
-/-- Super-truth at a point is super-truth over its completions. -/
 theorem superTrue_completions [DecidablePred A] :
     supervaluation (completions t) A = 1 ↔ SuperTrue A t := by
   rw [supervaluation_eq_one_iff]
   simp [completions, SuperTrue]
 
-/-- Extension of points is reverse inclusion of completions. -/
 theorem completions_mono (htu : t ≤ u) : completions u ⊆ completions t := by
   intro v hv
   simp only [completions, Finset.mem_filter, Finset.mem_univ, true_and] at hv ⊢
@@ -303,8 +277,6 @@ end Completions
 
 variable [SpecificationSpace Point]
 
-/-- A conjunction is super-false iff every extension has a further extension at which a
-conjunct is super-false, so that the falsehood pledge is redeemed. -/
 theorem superFalse_and_iff :
     SuperFalse (fun u ↦ A u ∧ B u) t ↔
       ∀ u, t ≤ u → ∃ v, u ≤ v ∧ (SuperFalse A v ∨ SuperFalse B v) := by
@@ -326,7 +298,6 @@ end Space
 the knowledge order, so that `u` extends `t` when it assigns every definite value `t` does. -/
 abbrev Specification (Atom : Type*) := Atom → Flat Bool
 
-/-- A specification is complete, maximal in the extension order, iff it decides every atom. -/
 theorem isMax_iff {Atom : Type*} {t : Specification Atom} : IsMax t ↔ ∀ a, t a ≠ ⊥ := by
   classical
   constructor
@@ -386,10 +357,6 @@ theorem superTruth_resolves (c : Point → Sentence → Prop) (A : Sentence) :
 variable [SpecificationSpace Point] {V : Account Point Sentence} {c : Point → Sentence → Prop}
   {A : Sentence} {t : Point}
 
-/-- Under Fidelity, Stability and Resolution at `A`, truth at a point is super-truth. Stability
-carries truth up to every complete extension, and if some complete extension fails `A` while
-the point does not verify it, Resolution falsifies `A` at an extension, Completability and
-Stability at a complete one, where Fidelity contradicts. -/
 theorem Account.verifies_iff (hF : V.Faithful c) (hS : V.Stable) (hR : V.Resolves A) :
     V.verifies t A ↔ SuperTrue (c · A) t := by
   refine ⟨fun h u htu hu ↦ (hF u A hu).1.1 ((hS t u A htu).1 h), fun h ↦ by_contra fun hn ↦ ?_⟩
@@ -397,7 +364,6 @@ theorem Account.verifies_iff (hF : V.Faithful c) (hS : V.Stable) (hR : V.Resolve
   obtain ⟨v, huv, hv⟩ := completable u
   exact (hF v A hv).2.1 ((hS u v A huv).2 hu) (h v (htu.trans huv) hv)
 
-/-- The falsity half of `Account.verifies_iff`. -/
 theorem Account.falsifies_iff (hF : V.Faithful c) (hS : V.Stable) (hR : V.Resolves A) :
     V.falsifies t A ↔ SuperFalse (c · A) t := by
   refine ⟨fun h u htu hu ↦ (hF u A hu).2.1 ((hS t u A htu).2 h), fun h ↦ by_contra fun hn ↦ ?_⟩
@@ -432,12 +398,10 @@ theorem classical_conj (val : Point → Atom → Bool) (t : Point) (φ ψ : Form
     classical val t (.conj φ ψ) ↔ classical val t φ ∧ classical val t ψ := by
   simp [classical]
 
-/-- Disjunction is classically the abbreviation `¬(¬φ ∧ ¬ψ)`. -/
 theorem classical_disj (val : Point → Atom → Bool) (t : Point) (φ ψ : Formula Atom) :
     classical val t (.disj φ ψ) ↔ classical val t (.neg (.conj (.neg φ) (.neg ψ))) := by
   simp [classical]
 
-/-- The conditional is classically the abbreviation `¬(φ ∧ ¬ψ)`. -/
 theorem classical_cond (val : Point → Atom → Bool) (t : Point) (φ ψ : Formula Atom) :
     classical val t (.cond φ ψ) ↔ classical val t (.neg (.conj φ (.neg ψ))) := by
   simp [classical]
@@ -477,7 +441,6 @@ private theorem AgreesSuper.neg (hA : V.AClauses) {φ : Formula Atom}
 
 variable [SpecificationSpace Point]
 
-/-- The super-truth account satisfies the A-clauses. -/
 theorem superTruth_aClauses (val : Point → Atom → Bool) :
     (superTruth (classical val)).AClauses where
   resolves a := superTruth_resolves (classical val) (Formula.atom a)
@@ -547,13 +510,10 @@ is. -/
 def SuperConsequence : Prop :=
   ∀ S : Finset Spec, supervaluation S A = 1 → supervaluation S B = 1
 
-/-- Validity is classical, since a classically valid sentence is true at every complete
-specification of every space, and a classical model is a degenerate space. -/
 theorem superValid_iff_classical : SuperValid A ↔ ∀ s, A s :=
   ⟨fun h s ↦ by simpa using h {s},
     fun h S ↦ (supervaluation_eq_one_iff ..).2 fun s _ ↦ h s⟩
 
-/-- Consequence is classical, by the same argument. -/
 theorem superConsequence_iff_classical : SuperConsequence A B ↔ ∀ s, A s → B s := by
   refine ⟨fun h s hA ↦ by simpa using h {s} (by simp [hA]), fun h S hA ↦ ?_⟩
   rw [supervaluation_eq_one_iff] at hA ⊢
@@ -570,35 +530,24 @@ def baldness : Finset ℕ := Finset.Icc 40 60
 /-- *A man with `n` hairs is bald* at threshold `θ`. -/
 abbrev bald (n θ : ℕ) : Prop := n < θ
 
-/-- Yul Brynner is bald. -/
 theorem yulBrynner_bald : supervaluation baldness (bald 0) = 1 := by decide
 
-/-- Mick Jagger is not. -/
 theorem mickJagger_not_bald : supervaluation baldness (bald 100000) = -1 := by decide
 
-/-- Herbert, with fifty hairs, is a borderline case of a bald man. -/
 theorem herbert_indet : supervaluation baldness (bald 50) = 0 := by decide
 
-/-- The law of excluded middle holds of Herbert though bivalence fails, *Herbert is bald or not
-bald* being true while neither disjunct is. -/
 theorem herbert_lem : supervaluation baldness (fun θ ↦ bald 50 θ ∨ ¬ bald 50 θ) = 1 :=
   (supervaluation_eq_one_iff ..).2 fun _ _ ↦ Decidable.em _
 
-/-- By the internal penumbral connection, if Herbert is to be bald, so is the man with fewer
-hairs. -/
 theorem bald_superConsequence {m n : ℕ} (h : m ≤ n) : SuperConsequence (bald n) (bald m) :=
   (superConsequence_iff_classical _ _).2 fun _ hn ↦ lt_of_le_of_lt h hn
 
-/-- The sorites' tolerance premise is false, since a hair-splitting number exists in every
-complete and admissible specification. -/
 theorem tolerance_superFalse :
     supervaluation baldness (fun θ ↦ ∀ n, bald n θ → bald (n + 1) θ) = -1 :=
   (supervaluation_eq_neg_one_iff ..).2 ⟨⟨40, by simp [baldness]⟩, fun θ hθ h ↦ by
     have := Finset.mem_Icc.1 hθ
     exact absurd (h (θ - 1) (by unfold bald; omega)) (by unfold bald; omega)⟩
 
-/-- In the sorites, the first premise is true, the tolerance premise false, and the conclusion
-false. -/
 theorem sorites :
     supervaluation baldness (bald 0) = 1 ∧
       supervaluation baldness (fun θ ↦ ∀ n, bald n θ → bald (n + 1) θ) = -1 ∧
@@ -607,9 +556,6 @@ theorem sorites :
 
 /-! ### Higher-order vagueness (§5) -/
 
-/-- On the truth-value approach `D` is the assertion `ofProp (a = 1)`, true of the true and
-false of the rest, and Stability fails, since `DA` is false for `A` indefinite but true for `A`
-true. -/
 theorem metaAssert_not_stable :
     ¬ ∀ a b, toFlat a ≤ toFlat b → toFlat (ofProp (a = 1)) ≤ toFlat (ofProp (b = 1)) :=
   fun h ↦ absurd (h 0 1 bot_le) (by decide)
@@ -635,19 +581,15 @@ variable [DecidablePred A]
 
 instance : Decidable (definitely A S) := inferInstanceAs (Decidable (∀ s ∈ _, _))
 
-/-- `DA ⊃ A` is valid (Axiom T). -/
 theorem definitely_imp_valid :
     supervaluation S (fun s ↦ ¬ definitely A S ∨ A s) = 1 :=
   (supervaluation_eq_one_iff ..).2 fun s hs ↦
     (Decidable.em (definitely A S)).symm.imp_right (· s hs)
 
-/-- `DA` is a consequence of `A`, since to assert `A` is to assert `DA`. -/
 theorem superTrue_definitely_of_superTrue (h : supervaluation S A = 1) :
     supervaluation S (fun _ : Spec ↦ definitely A S) = 1 :=
   (supervaluation_eq_one_iff ..).2 fun _ _ ↦ (supervaluation_eq_one_iff ..).1 h
 
-/-- Yet `A ⊃ DA` is not valid, since where `A` is indefinite `DA` fails and `A ⊃ DA` inherits the
-indefiniteness of `¬A`. -/
 theorem superTrue_imp_definitely_of_indet (h : supervaluation S A = 0) :
     supervaluation S (fun s ↦ ¬ A s ∨ definitely A S) = 0 := by
   have hD : ¬ definitely A S := fun hD ↦ by simp [(supervaluation_eq_one_iff ..).2 hD] at h
@@ -656,8 +598,6 @@ theorem superTrue_imp_definitely_of_indet (h : supervaluation S A = 0) :
   rw [supervaluation_not _ ⟨s, hs⟩, h]
   rfl
 
-/-- So *if Herbert is bald, he is definitely bald* is not true, and the Deduction Theorem
-fails. -/
 theorem herbert_not_imp_definitely :
     supervaluation baldness (fun θ ↦ ¬ bald 50 θ ∨ definitely (bald 50) baldness) ≠ 1 := by
   rw [superTrue_imp_definitely_of_indet _ _ herbert_indet]
@@ -676,8 +616,6 @@ theorem superConsequence_iff_definitely_imp {B : Spec → Prop} [DecidablePred B
 
 end Definitely
 
-/-- External Stability fails for `D`, as *definitely Herbert is bald* is false over the admissible
-thresholds but true once the threshold is fixed at 60, a more precise space. -/
 theorem not_definitely_antitone :
     {60} ⊆ baldness ∧ ¬ definitely (bald 50) baldness ∧ definitely (bald 50) {60} :=
   ⟨by simp [baldness], by decide, by decide⟩
@@ -701,13 +639,11 @@ variable {Spec : Type*}
 of `b`. -/
 def R (b c : Boundary Spec) : Prop := ∀ i, c.s i ∈ b.s (i + 1)
 
-/-- Accessibility is reflexive. -/
 theorem R_refl (b : Boundary Spec) : b.R b := b.mem
 
 /-- `D φ` holds at a boundary when `φ` holds at every admissible boundary. -/
 def Definitely (φ : Boundary Spec → Prop) (b : Boundary Spec) : Prop := ∀ c, b.R c → φ c
 
-/-- What is definitely the case is the case (Axiom T). -/
 theorem definitely_self {φ : Boundary Spec → Prop} {b : Boundary Spec} (h : Definitely φ b) :
     φ b :=
   h b b.R_refl
@@ -732,9 +668,6 @@ private noncomputable def ofHead (x : Bool) (s : Set Bool) (hx : x ∈ s) (hs : 
     | 1 => hs
     | n + 2 => Set.mem_singleton (tower n)
 
-/-- Accessibility is not transitive, so the logic of `D` is T and not S4. From the boundary
-that fixes `true` and `{true}`, the one fixing `true` and `{true, false}` is admissible, and
-from it the one fixing `false` and `{true, false}`, which is not admissible from the first. -/
 theorem R_not_trans : ¬ ∀ b c d : Boundary Bool, b.R c → c.R d → b.R d := by
   intro h
   have := h (ofHead Bool.true {Bool.true} rfl (by simp [tower]))

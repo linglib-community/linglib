@@ -49,38 +49,28 @@ noncomputable def pexIEII (ALT : Set (Set World)) (φ : Set World) (Rc : Set (Se
 
 variable {ALT : Set (Set World)} {φ : Set World} {Rc : Set (Set World)} {w : World}
 
-/-- `pex^{IE+II}` is defined where the excludable alternatives in `Rc` are false and the
-includable ones in it other than the prejacent are homogeneous. -/
 theorem pexIEII_ne_zero_iff :
     pexIEII ALT φ Rc w ≠ 0 ↔ (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ) ∧
       Homogeneous (II ALT φ \ {φ} ∩ Rc) w := by
   simp [pexIEII]
 
-/-- `pex^{IE+II}` asserts its prejacent. -/
 theorem pexIEII_eq_one_iff : pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ w ∈ φ := by
   simp [pexIEII]
 
-/-- Negated, `pex^{IE+II}` denies its prejacent and keeps its presupposition. -/
 theorem pexIEII_eq_neg_one_iff : pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ w ∉ φ := by
   simp [pexIEII]
 
-/-- A prejacent between the meet and the join of its relevant includable alternatives is true
-under `pex` exactly where the presupposition holds and all of them are true. -/
 theorem pexIEII_eq_one_iff_forall_mem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
     (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
     pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∈ α :=
   pexIEII_eq_one_iff.trans <| and_congr_right fun h ↦ (pexIEII_ne_zero_iff.1 h).2.mem_iff hl hu
 
-/-- A prejacent between the meet and the join of its relevant includable alternatives is false
-under `pex` exactly where the presupposition holds and all of them are false. -/
 theorem pexIEII_eq_neg_one_iff_forall_notMem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
     (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
     pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∉ α :=
   pexIEII_eq_neg_one_iff.trans <| and_congr_right fun h ↦
     (pexIEII_ne_zero_iff.1 h).2.notMem_iff hl hu
 
-/-- With no relevant includable alternative besides the prejacent, as for a basic scalar
-sentence, the presupposition is that the relevant excludable alternatives are false. -/
 theorem pexIEII_ne_zero_iff_of_inter_eq_empty (h : II ALT φ \ {φ} ∩ Rc = ∅) :
     pexIEII ALT φ Rc w ≠ 0 ↔ ∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → w ∉ ψ := by
   simp [pexIEII_ne_zero_iff, h]

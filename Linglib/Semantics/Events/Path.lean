@@ -117,7 +117,6 @@ theorem IsConcat.points_eq {p q r : Path Loc} (h : IsConcat p q r) :
     r.points = p.points ++ q.steps := by
   rw [h.2]; simp [points]
 
-/-- A constant path concatenates with itself to itself. -/
 theorem isConcat_const (l : Loc) : IsConcat (const l) (const l) (const l) :=
   ⟨rfl, rfl⟩
 
@@ -125,7 +124,6 @@ theorem isConcat_const (l : Loc) : IsConcat (const l) (const l) (const l) :=
 def Subpath (p q : Path Loc) : Prop :=
   ∃ r r' m, IsConcat r p m ∧ IsConcat m r' q
 
-/-- Subpath-hood is infix-hood of point sequences. -/
 theorem subpath_iff_infix {p q : Path Loc} :
     Subpath p q ↔ p.points <:+: q.points := by
   constructor
@@ -173,7 +171,6 @@ scoped instance instSubpathOrder : PartialOrder (Path Loc) where
   le_antisymm _ _ hab hba := points_injective
     (List.infix_antisymm (subpath_iff_infix.mp hab) (subpath_iff_infix.mp hba))
 
-/-- Constant paths are least in the subpath order. -/
 theorem const_source_le (p : Path Loc) : const p.source ≤ p :=
   subpath_iff_infix.mpr ⟨[], p.steps, rfl⟩
 
@@ -184,18 +181,15 @@ adjacency. -/
 def adjacent (p1 p2 : Path Loc) : Prop :=
   p1.goal = p2.source ∨ p2.goal = p1.source
 
-/-- Path adjacency is symmetric. -/
 theorem adjacent_comm {p1 p2 : Path Loc} :
     p1.adjacent p2 ↔ p2.adjacent p1 :=
   or_comm
 
-/-- A path is adjacent to itself iff it is a loop. -/
 @[simp]
 theorem adjacent_self {p : Path Loc} :
     p.adjacent p ↔ p.goal = p.source :=
   or_self_iff
 
-/-- Concatenable paths are adjacent. -/
 theorem IsConcat.adjacent {p q r : Path Loc} (h : IsConcat p q r) :
     p.adjacent q :=
   Or.inl h.1
@@ -251,7 +245,6 @@ def rank : Direction → Fin 4
 /-- The heads a direction contains, a downward-closed stack. -/
 def shells (d : Direction) : Finset (Fin 4) := Finset.Iic d.rank
 
-/-- Strict rank is strict inclusion of head stacks. -/
 theorem lt_iff_shells_ssubset (d₁ d₂ : Direction) :
     d₁.rank < d₂.rank ↔ d₁.shells ⊂ d₂.shells := by
   simp [shells]
@@ -313,14 +306,11 @@ def transition : Shape → Transition
   | terminative | egressive => .delimited
   | approximative | recessive | prolative => .nonTransitional
 
-/-- A shape is its direction and its transition. -/
 theorem direction_transition_injective :
     Function.Injective fun s : Shape ↦ (s.direction, s.transition) := by
   intro a b h
   cases a <;> cases b <;> simp_all [direction, transition]
 
-/-- A direction and a transition make a shape exactly when the direction is not Place and a
-Route is not delimited. -/
 theorem exists_direction_transition_iff (d : Direction) (t : Transition) :
     (∃ s : Shape, s.direction = d ∧ s.transition = t) ↔
       d ≠ .place ∧ (d = .route → t ≠ .delimited) := by
@@ -407,7 +397,6 @@ def HasShape [Preorder β] (d : α → β) : Shape → Prop
 
 variable {R γ}
 
-/-- A terminative path is cofinal. -/
 theorem IsTerminative.isCofinal (h : IsTerminative R γ) : IsCofinal R γ := by
   obtain ⟨hS, hne⟩ := h
   refine ⟨?_, fun h ↦ ?_, ?_⟩
@@ -417,11 +406,9 @@ theorem IsTerminative.isCofinal (h : IsTerminative R γ) : IsCofinal R γ := by
     exact hne this
   · show ⊤ ∈ γ ⁻¹' R; rw [hS]; rfl
 
-/-- No path is both cofinal and coinitial. -/
 theorem IsCofinal.not_isCoinitial (h : IsCofinal R γ) : ¬ IsCoinitial R γ :=
   fun h' ↦ h'.2.2 h.2.2
 
-/-- A path keeps its shape under reparametrization by an order isomorphism. -/
 theorem HasShape.comp [Preorder β] {d : α → β} {s : Shape} (h : HasShape R γ d s)
     (e : κ ≃o ι) : HasShape R (γ ∘ e) d s := by
   have hpre : (γ ∘ e) ⁻¹' R = e ⁻¹' (γ ⁻¹' R) := rfl
@@ -448,12 +435,10 @@ theorem HasShape.comp [Preorder β] {d : α → β} {s : Shape} (h : HasShape R 
   | approximative => exact ⟨fun k ↦ h.1 (e k), h.2.comp_strictMono e.strictMono⟩
   | recessive => exact ⟨fun k ↦ h.1 (e k), h.2.comp e.strictMono⟩
 
-/-- Reparametrizing a path by an order isomorphism keeps its shape. -/
 theorem hasShape_comp [Preorder β] {d : α → β} (e : κ ≃o ι) {s : Shape} :
     HasShape R (γ ∘ e) d s ↔ HasShape R γ d s :=
   ⟨fun h ↦ by simpa [Function.comp_def] using h.comp e.symm, fun h ↦ h.comp e⟩
 
-/-- Traversing a path the other way, on the dual order of positions, reverses its shape. -/
 theorem hasShape_comp_ofDual [Preorder β] {d : α → β} {s : Shape} :
     HasShape R (γ ∘ ofDual) d s ↔ HasShape R γ d s.reverse := by
   have hpre : (γ ∘ ofDual) ⁻¹' R = ofDual ⁻¹' (γ ⁻¹' R) := rfl
@@ -522,7 +507,6 @@ theorem length_steps_reverse : p.reverse.steps.length = p.steps.length := by
 def revIso : Fin (p.reverse.steps.length + 1) ≃o (Fin (p.steps.length + 1))ᵒᵈ :=
   (Fin.castOrderIso (by rw [length_steps_reverse])).trans Fin.revOrderIso.symm
 
-/-- A reversed path is the path read on the dual order of positions. -/
 theorem coe_reverse : ⇑p.reverse = (p ∘ OrderDual.ofDual) ∘ p.revIso := by
   funext i
   have h := points_reverse p
@@ -533,7 +517,6 @@ theorem coe_reverse : ⇑p.reverse = (p ∘ OrderDual.ofDual) ∘ p.revIso := by
   congr 1
   simp [points]
 
-/-- Reversing a path reverses its shape. -/
 theorem hasShape_reverse {β : Type*} [Preorder β] {d : Loc → β} {R : Set Loc} {s : Shape} :
     HasShape R p.reverse d s ↔ HasShape R p d s.reverse := by
   rw [coe_reverse, hasShape_comp, hasShape_comp_ofDual]

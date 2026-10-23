@@ -120,8 +120,6 @@ def toFlat : FeatureSlot α → Flat α := WithBot.recBotCoe ⊥ id
 @[simp] theorem toFlat_ofFlat (x : Flat α) : toFlat (ofFlat x) = x := by
   induction x using Flat.recBotCoe <;> rfl
 
-/-- The checking slot refines the flat slot: `ofFlat` embeds, `toFlat` retracts, and the two
-unspecified states sit below every specified one. -/
 theorem gc_ofFlat_toFlat : GaloisConnection (ofFlat : Flat α → FeatureSlot α) toFlat := by
   intro x s
   cases s with
@@ -179,28 +177,22 @@ variable [DecidableEq α] {v w : α} {s s' : FeatureSlot α}
     exact Flat.coe_inj.1 ((Flat.coe_le_iff.1 hf).symm.trans
       (Flat.coe_le_iff.1 (WithBot.coe_le_coe.1 h2)))
 
-/-- On a slot the item bears, a successful valuation is the least slot above both the slot and
-the value. -/
 theorem isLUB_of_valueWith_eq_coe (hs : s ≠ absent) (h : valueWith v s = s') :
     IsLUB {s, valued v} s' := by
   simp only [valueWith, hs, ↓reduceIte] at h
   exact PartialUnify.isLUB_of_unify_eq_coe h
 
-/-- On a slot the item bears, valuation clashes exactly when no slot is above both the slot and
-the value. -/
 theorem valueWith_eq_top_iff_not_bddAbove (hs : s ≠ absent) :
     valueWith v s = ⊤ ↔ ¬ BddAbove ({s, valued v} : Set (FeatureSlot α)) := by
   simp only [valueWith, hs, ↓reduceIte]
   exact PartialUnify.unify_eq_top_iff
 
-/-- Valuation clashes exactly on a slot valued otherwise. -/
 theorem valueWith_eq_top_iff : valueWith v s = ⊤ ↔ ∃ w, w ≠ v ∧ s = valued w := by
   cases s with
   | absent => simp
   | unvalued => simp
   | valued w => by_cases h : w = v <;> simp [h]
 
-/-- Valuation only adds information. -/
 theorem le_of_valueWith_eq_coe (h : valueWith v s = s') : s ≤ s' := by
   cases s with
   | absent => exact bot_le
@@ -214,8 +206,6 @@ theorem le_of_valueWith_eq_coe (h : valueWith v s = s') : s ≤ s' := by
       exact le_rfl
     · simp [hw] at h
 
-/-- Valuation is monotone: a slot carrying more information values to one carrying at least as
-much, a clash carrying the most. -/
 theorem valueWith_mono (v : α) :
     Monotone (valueWith v : FeatureSlot α → WithTop (FeatureSlot α)) := by
   intro s s' h
@@ -236,8 +226,6 @@ theorem valueWith_mono (v : α) :
       obtain rfl : u = w := Flat.coe_le_coe.1 (WithBot.coe_le_coe.1 h)
       exact le_rfl
 
-/-- On a borne slot, valuation restricts to flat unification: the `WithBot` refinement adds
-exactly the absence guard. -/
 theorem map_toFlat_valueWith (hs : s ≠ absent) :
     (valueWith v s).map toFlat = PartialUnify.unify s.toFlat (v : Flat α) := by
   cases s with

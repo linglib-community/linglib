@@ -170,8 +170,6 @@ noncomputable def expectedPayoff (P : Measure Θ) (ν : Measure 𝓨) : ℝ :=
 def MaximizesPayoff (P : Measure Θ) (ν : Measure 𝓨) : Prop :=
   ∀ ν' : Measure 𝓨, IsProbabilityMeasure ν' → expectedPayoff U P ν' ≤ expectedPayoff U P ν
 
-/-- Without data, a randomized action is a Bayes estimator for `π` iff no randomized action has
-smaller average risk. -/
 theorem isBayesEstimator_discard_const_iff {ℓ : Θ → 𝓨 → ℝ≥0∞} {ν : Measure 𝓨}
     [IsProbabilityMeasure ν] {π : Measure Θ} :
     IsBayesEstimator ℓ (Kernel.discard Θ) (Kernel.const Unit ν) π ↔
@@ -207,8 +205,6 @@ theorem expectedPayoff_eq_sum (P : Measure Θ) [IsFiniteMeasure P] (ν : Measure
     expectedPayoff U P ν = ∑ θ, P.real {θ} * mixedPayoff U ν θ := by
   simp [expectedPayoff, integral_fintype .of_finite]
 
-/-- A randomized action that pays more at every parameter has a larger expected payoff under every
-belief. -/
 theorem expectedPayoff_lt_of_forall_lt (P : Measure Θ) [IsProbabilityMeasure P]
     {ν ν' : Measure 𝓨} (h : ∀ θ, mixedPayoff U ν θ < mixedPayoff U ν' θ) :
     expectedPayoff U P ν < expectedPayoff U P ν' := by
@@ -229,8 +225,6 @@ section Loss
 variable {ℓ : Θ → 𝓨 → ℝ≥0∞} (hℓ : ∀ θ y, ℓ θ y ≠ ∞)
 
 include hℓ in
-/-- A Bayes action for some prior is not strictly dominated, since a dominating action would
-have smaller average risk. -/
 private theorem not_isStrictlyDominated_of_bayes {ν : Measure 𝓨} [IsProbabilityMeasure ν]
     {π : Measure Θ} [IsProbabilityMeasure π]
     (hπ : ∀ ν' : Measure 𝓨, IsProbabilityMeasure ν' →
@@ -250,8 +244,6 @@ private theorem not_isStrictlyDominated_of_bayes {ν : Measure 𝓨} [IsProbabil
     ⟨θ₀, Finset.mem_univ _, mul_lt_mul_of_pos_left (hlt' θ₀) hθ₀⟩
 
 include hℓ in
-/-- If no pure action has smaller average risk than `ν` under real weights `x`, then `ν` is a
-Bayes action for the prior with those weights. -/
 private theorem bayes_of_real {ν : Measure 𝓨} [IsProbabilityMeasure ν] {x : Θ → ℝ}
     (hx : ∀ θ, 0 ≤ x θ) (hx1 : ∑ θ, x θ = 1)
     (hD : ∀ y, ∑ θ, x θ * ((∫⁻ y, ℓ θ y ∂ν).toReal - (ℓ θ y).toReal) ≤ 0) :
@@ -277,8 +269,6 @@ private theorem bayes_of_real {ν : Measure 𝓨} [IsProbabilityMeasure ν] {x :
         exact Finset.sum_congr rfl fun θ _ ↦ Finset.sum_congr rfl fun y _ ↦ by ring
 
 include hℓ in
-/-- In a finite decision problem, a randomized action is a Bayes estimator for some prior iff no
-randomized action has smaller risk at every parameter. This is **Pearce's lemma**. -/
 theorem exists_isBayesEstimator_iff_not_isStrictlyDominated (ν : Measure 𝓨)
     [IsProbabilityMeasure ν] :
     (∃ π : Measure Θ, IsProbabilityMeasure π ∧
@@ -319,8 +309,6 @@ theorem exists_isBayesEstimator_iff_not_isStrictlyDominated (ν : Measure 𝓨)
 /-! ### Admissibility and the complete class theorem -/
 
 include hℓ in
-/-- **Complete class theorem.** In a finite decision problem, a randomized action is admissible
-iff it is a Bayes estimator for a prior that charges every parameter. -/
 theorem isAdmissible_iff_exists_isBayesEstimator [Nonempty Θ] (ν : Measure 𝓨)
     [IsProbabilityMeasure ν] :
     IsAdmissible ℓ ν ↔ ∃ π : Measure Θ, IsProbabilityMeasure π ∧ (∀ θ, π {θ} ≠ 0) ∧
@@ -443,8 +431,6 @@ private theorem maximizesPayoff_iff_regret {C : ℝ} (hC : ∀ y θ, U y θ ≤ 
     (avg_ne_top (risk_ne_top (regret_ne_top U C) ν') P), toReal_avg_regret U hC,
     toReal_avg_regret U hC, sub_le_sub_iff_left]
 
-/-- A randomized action maximizes the expected payoff under some belief iff no randomized action
-pays more at every parameter. This is **Pearce's lemma** for payoffs. -/
 theorem exists_maximizesPayoff_iff_not_isStrictlyPayoffDominated (ν : Measure 𝓨)
     [IsProbabilityMeasure ν] :
     (∃ P : Measure Θ, IsProbabilityMeasure P ∧ MaximizesPayoff U P ν) ↔
@@ -459,9 +445,6 @@ theorem exists_maximizesPayoff_iff_not_isStrictlyPayoffDominated (ν : Measure �
       ⟨fun ⟨hν', hlt⟩ ↦ ⟨hν', fun θ ↦ (risk_regret_lt_iff U hC θ).1 (hlt θ)⟩,
         fun ⟨hν', hlt⟩ ↦ ⟨hν', fun θ ↦ (risk_regret_lt_iff U hC θ).2 (hlt θ)⟩⟩
 
-/-- A randomized action that no randomized action weakly dominates in payoff maximizes the
-expected payoff under a belief of full support, and conversely. This is **Pearce's lemma** for
-weak dominance. -/
 theorem not_isWeaklyPayoffDominated_iff_exists_maximizesPayoff [Nonempty Θ] (ν : Measure 𝓨)
     [IsProbabilityMeasure ν] :
     ¬ IsWeaklyPayoffDominated U ν ↔

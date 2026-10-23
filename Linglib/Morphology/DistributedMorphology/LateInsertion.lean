@@ -65,8 +65,6 @@ def earlySpellout (toks : List LexicalItem.Token) :
     Spellout (Finset LexicalItem.Token) String :=
   ⟨[], fun n ↦ (subsetPrinciple (earlyItems toks) n).toList⟩
 
-/-- At a position whose focus is the singleton of a listed token, the only applicable early item
-is that token's own. -/
 theorem applicable_earlyItems {toks : List LexicalItem.Token} (hnd : toks.Nodup)
     {tok : LexicalItem.Token} (h : tok ∈ toks) {n : Neighborhood (Finset LexicalItem.Token)}
     (hfoc : n.focus = {tok}) :
@@ -81,7 +79,6 @@ theorem applicable_earlyItems {toks : List LexicalItem.Token} (hnd : toks.Nodup)
       = fun tok' ↦ decide (Applies ({tok'} ⟷ tok'.item.phonForm) n) from rfl, hf,
     List.filter_beq, List.count_eq_one_of_mem hnd h, List.replicate_one, List.map_singleton]
 
-/-- The early pipeline realizes, at each position, the token's lexically listed form. -/
 theorem pf_earlySpellout {toks : List LexicalItem.Token} (hnd : toks.Nodup) :
     (earlySpellout toks).pf (toks.map ({·})) = toks.map fun tok ↦ [tok.item.phonForm] := by
   refine List.ext_getElem
@@ -96,9 +93,6 @@ theorem pf_earlySpellout {toks : List LexicalItem.Token} (hnd : toks.Nodup) :
     List.argmax_singleton, Option.map_some, Option.toList_some]
   rfl
 
-/-- `pfPhon` is the early-insertion pipeline: handing the pronounced terminals over as atomic
-features and inserting each token's lexically listed form returns the carrier's own
-pronunciation, silent tokens dropped. -/
 theorem pfPhon_eq_earlyInsertion (t : LinearizedSyntacticObject) :
     pfPhon t = ((earlySpellout (pfYield t)).pf
       (SpelloutDomain.ofLinearized ({·}) t)).flatten.filter (· ≠ "") := by

@@ -52,8 +52,6 @@ invariance under reordering of children is needed.
 
 open RoseTree
 
-/-- Splitting a multiset in three, first part and then the rest, is symmetric in the first two
-parts. -/
 private theorem Multiset.bind_antidiagonal_bind_antidiagonal_comm {γ β : Type*} (s : Multiset γ)
     (K : Multiset γ → Multiset γ → Multiset γ → Multiset β) :
     s.antidiagonal.bind (fun p ↦ p.2.antidiagonal.bind fun q ↦ K p.1 q.1 q.2) =
@@ -106,8 +104,6 @@ of `F`, of the forests obtained by grafting each tree at its vertex. -/
 def insertionMultiset (F G : Multiset (UnorderedTree α)) : Multiset (Multiset (UnorderedTree α)) :=
   (F.map insertion).foldr insertionStep (fun G ↦ if Multiset.card G = 0 then {0} else 0) G
 
-/-- Grafting into a node places some guests under the root and grafts the rest into its
-children. -/
 theorem insertion_node (a : α) (A G : Multiset (UnorderedTree α)) :
     insertion (node a A) G =
       G.antidiagonal.bind fun p ↦ (insertionMultiset A p.2).map fun X ↦ node a (p.1 + X) := by
@@ -117,7 +113,6 @@ theorem insertion_node (a : α) (A G : Multiset (UnorderedTree α)) :
 theorem insertionMultiset_zero (G : Multiset (UnorderedTree α)) :
     insertionMultiset 0 G = if Multiset.card G = 0 then {0} else 0 := rfl
 
-/-- Grafting into a forest splits the guests between its first tree and the rest. -/
 theorem insertionMultiset_cons (T : UnorderedTree α) (A G : Multiset (UnorderedTree α)) :
     insertionMultiset (T ::ₘ A) G = G.antidiagonal.bind fun p ↦
       (insertion T p.1).bind fun T' ↦ (insertionMultiset A p.2).map (T' ::ₘ ·) := by
@@ -145,7 +140,6 @@ private theorem insertionMultiset_mk_of {hs : List (RoseTree α)}
     refine Multiset.bind_congr fun p _ ↦ ?_
     rw [ih h List.mem_cons_self, ihs fun h hh ↦ ih h (List.mem_cons_of_mem _ hh)]
 
-/-- `insertion` computes `RoseTree.insertion` on planar representatives. -/
 theorem insertion_mk (t : RoseTree α) (gs : List (RoseTree α)) :
     insertion (mk t) ↑(gs.map mk) = (RoseTree.insertion t gs).map mk := by
   induction t generalizing gs with
@@ -154,7 +148,6 @@ theorem insertion_mk (t : RoseTree α) (gs : List (RoseTree α)) :
       Multiset.bind_map]
     exact Multiset.bind_congr fun p _ ↦ by rw [insertionMultiset_mk_of ih]
 
-/-- `insertionMultiset` computes `RoseTree.insertionForest` on planar representatives. -/
 theorem insertionMultiset_mk (hs gs : List (RoseTree α)) :
     insertionMultiset ↑(hs.map mk) ↑(gs.map mk) =
       (insertionForest hs gs).map fun L => (↑(L.map mk) : Multiset (UnorderedTree α)) :=
@@ -171,7 +164,6 @@ theorem insertionMultiset_zero_left_of_ne_zero (G : Multiset (UnorderedTree α))
     insertionMultiset 0 G = 0 := by
   simp [insertionMultiset_zero, h]
 
-/-- Grafting into a one-tree forest is grafting into that tree. -/
 theorem insertionMultiset_singleton (T : UnorderedTree α) (G : Multiset (UnorderedTree α)) :
     insertionMultiset {T} G = (insertion T G).map ({·}) := by
   induction T using Quotient.inductionOn with | h t =>
@@ -180,7 +172,6 @@ theorem insertionMultiset_singleton (T : UnorderedTree α) (G : Multiset (Unorde
     insertionForest_singleton, insertion_mk, Multiset.map_map, Multiset.map_map]
   rfl
 
-/-- Every output forest of `insertionMultiset A B` has as many trees as `A`. -/
 theorem insertionMultiset_card_eq (A B : Multiset (UnorderedTree α))
     {F : Multiset (UnorderedTree α)} (h : F ∈ insertionMultiset A B) : F.card = A.card := by
   induction A using forest_inductionOn with | h hs =>
@@ -189,7 +180,6 @@ theorem insertionMultiset_card_eq (A B : Multiset (UnorderedTree α))
   obtain ⟨L, hL, rfl⟩ := h
   simp [length_of_mem_insertionForest hL]
 
-/-- Grafting into one tree gives one tree with the same root value. -/
 theorem insertionMultiset_singleton_value (T : UnorderedTree α) (B : Multiset (UnorderedTree α))
     {F : Multiset (UnorderedTree α)} (h : F ∈ insertionMultiset {T} B) :
     ∃ T', F = {T'} ∧ T'.value = T.value := by
@@ -200,8 +190,6 @@ theorem insertionMultiset_singleton_value (T : UnorderedTree α) (B : Multiset (
   obtain ⟨T', hT', rfl⟩ := h
   exact ⟨mk T', rfl, value_of_mem_insertion hT'⟩
 
-/-- Splits of an output forest are splits of the host and of the guests, each guest following
-its host. -/
 theorem insertionMultiset_antidiagonal (A G : Multiset (UnorderedTree α)) :
     (insertionMultiset A G).bind Multiset.antidiagonal =
       A.antidiagonal.bind fun pa => G.antidiagonal.bind fun pg =>
@@ -223,7 +211,6 @@ theorem insertionMultiset_antidiagonal (A G : Multiset (UnorderedTree α)) :
   simp only [SProd.sprod, Multiset.product, Multiset.bind_map, Multiset.map_map]
   exact Multiset.bind_congr fun L₁ _ => Multiset.bind_singleton _ _
 
-/-- Grafting into a disjoint union splits the guests between the two parts. -/
 theorem insertionMultiset_add_host (A B C : Multiset (UnorderedTree α)) :
     insertionMultiset (A + B) C =
       C.antidiagonal.bind fun p =>
@@ -264,15 +251,12 @@ def productMultiset (F G : Multiset (UnorderedTree α)) :
     simpa [Multiset.map_bind, Multiset.map_map, Function.comp_def] using
       congrArg (Multiset.map (a ::ₘ ·)) ih
 
-/-- Every forest of `F ⋆ G` has at least as many trees as `F`. -/
 theorem card_le_of_mem_productMultiset {F G W : Multiset (UnorderedTree α)}
     (h : W ∈ productMultiset F G) : F.card ≤ W.card := by
   obtain ⟨p, -, h⟩ := Multiset.mem_bind.mp h
   obtain ⟨X, hX, rfl⟩ := Multiset.mem_map.mp h
   simp [insertionMultiset_card_eq F p.2 hX]
 
-/-- Grafting into a single node `node a A` puts the forests of `A ⋆ B` under the root: each guest
-is a new child of the root or grafted into `A`. -/
 theorem insertionMultiset_singleton_node (a : α) (A B : Multiset (UnorderedTree α)) :
     insertionMultiset {node a A} B = (productMultiset A B).map fun F => {node a F} := by
   rw [insertionMultiset_singleton, insertion_node, productMultiset, Multiset.map_bind,
@@ -285,31 +269,26 @@ Splitting the forests of `F ⋆ G` is splitting `F` and `G` and multiplying the 
 multiset form of the compatibility between the Grossman–Larson product and the coproduct of the
 symmetric algebra, Oudom and Guin's Lemma 3.11. -/
 
-/-- `(s ×ˢ t).bind F = s.bind (a ↦ t.bind (b ↦ F (a, b)))`. -/
 private theorem product_bind {β γ δ : Type*} (s : Multiset β) (t : Multiset γ)
     (F : β × γ → Multiset δ) :
     (s ×ˢ t).bind F = s.bind (fun a => t.bind (fun b => F (a, b))) := by
   simp [SProd.sprod, Multiset.product, Multiset.bind_assoc, Multiset.bind_map]
 
-/-- `(s.bind f) ×ˢ t = s.bind (a ↦ f a ×ˢ t)`. -/
 private theorem bind_product_left {β γ δ : Type*} (s : Multiset β)
     (f : β → Multiset γ) (t : Multiset δ) :
     (s.bind f) ×ˢ t = s.bind (fun a => f a ×ˢ t) := by
   simp [SProd.sprod, Multiset.product, Multiset.bind_assoc]
 
-/-- `s ×ˢ (t.bind g) = t.bind (b ↦ s ×ˢ g b)`. -/
 private theorem product_bind_right {β γ δ : Type*} (s : Multiset β)
     (t : Multiset γ) (g : γ → Multiset δ) :
     s ×ˢ (t.bind g) = t.bind (fun b => s ×ˢ g b) := by
   simp [SProd.sprod, Multiset.product, Multiset.map_bind, Multiset.bind_bind s t]
 
-/-- `(s.map f) ×ˢ (t.map g) = (s ×ˢ t).map (Prod.map f g)`. -/
 private theorem map_product_map {β γ β' γ' : Type*} (s : Multiset β) (t : Multiset γ)
     (f : β → β') (g : γ → γ') :
     (s.map f) ×ˢ (t.map g) = (s ×ˢ t).map (Prod.map f g) := by
   simp [SProd.sprod, Multiset.product, Multiset.map_bind, Multiset.bind_map, Multiset.map_map]
 
-/-- Splitting each half of a split is symmetric in the two middle parts. -/
 private theorem bind_antidiagonal_middle_swap {β γ : Type*} (B : Multiset β)
     (g : Multiset β → Multiset β → Multiset β → Multiset β → Multiset γ) :
     B.antidiagonal.bind (fun p ↦ p.1.antidiagonal.bind fun u ↦ p.2.antidiagonal.bind fun v ↦
@@ -325,7 +304,6 @@ private theorem bind_antidiagonal_middle_swap {β γ : Type*} (B : Multiset β)
       ih fun x y z w ↦ g x (a ::ₘ y) z w, ih fun x y z w ↦ g (a ::ₘ x) y z w]
     abel
 
-/-- Splitting the forests of `A ⋆ B` is splitting `A` and `B` and multiplying the parts. -/
 theorem productMultiset_bind_antidiagonal (A B : Multiset (UnorderedTree α)) :
     (productMultiset A B).bind Multiset.antidiagonal =
       (Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).bind (fun pq =>

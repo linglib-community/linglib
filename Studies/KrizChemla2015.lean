@@ -86,12 +86,10 @@ bare plural over the nine, true when all are, false when none are, and a gap oth
 def cell (n : ℕ) : SignType :=
   Homogeneity.barePlural (fun j m ↦ j < m) (Finset.range 9) n
 
-/-- A cell is true, designated at K3, when all nine objects are found. -/
 theorem designated_k3_cell (n : ℕ) : cell n = 1 ↔ 9 ≤ n := by
   rw [cell, Homogeneity.barePlural, SignType.supervaluation_eq_one_iff]
   exact ⟨fun h ↦ h 8 (by simp), fun h j hj ↦ by simp at hj; omega⟩
 
-/-- A cell is non-false, designated at LP, when at least one object is found. -/
 theorem designated_lp_cell (n : ℕ) : 0 ≤ cell n ↔ 1 ≤ n := by
   rw [SignType.nonneg_iff_ne_neg_one, Ne, cell, Homogeneity.barePlural,
     SignType.supervaluation_eq_neg_one_iff]
@@ -106,7 +104,6 @@ def holds (q : NumberTree) (c : List Bool) : Prop := q (c.count false) (c.count 
 instance (q : NumberTree) [DecidableRel q] (c : List Bool) : Decidable (holds q c) :=
   inferInstanceAs (Decidable (q _ _))
 
-/-- Reversing every boy's resolution evaluates the inner negation. -/
 theorem holds_map_not (q : NumberTree) (c : List Bool) :
     holds q (c.map not) ↔ holds q.innerNeg c := by
   have h (b : Bool) : (c.map not).count b = c.count (!b) := by
@@ -119,7 +116,6 @@ theorem holds_map_not (q : NumberTree) (c : List Bool) :
 when his value is designated. -/
 def resolve (δ : Designation) (d : Display) : List Bool := d.map fun v ↦ decide (δ.threshold ≤ v)
 
-/-- Negating every cell resolves at the dual standard and reverses the result. -/
 theorem resolve_map_neg (δ : Designation) (d : Display) :
     resolve δ (d.map Neg.neg) = (resolve δ.dual d).map not := by
   simp only [resolve, List.map_map]
@@ -138,7 +134,6 @@ theorem resolve_mem_resolutions (δ : Designation) (d : Display) :
     List.forall₂_same.2 fun v _ ↦ ?_
   cases δ <;> simp
 
-/-- The K3 resolution is least and the LP resolution greatest among the resolutions. -/
 theorem resolve_le_of_mem_resolutions {d : Display} {c : List Bool} (hc : c ∈ resolutions d) :
     List.Forall₂ (· ≤ ·) (resolve .k3 d) c ∧ List.Forall₂ (· ≤ ·) c (resolve .lp d) := by
   have h := List.forall₂_map_right_iff.1 (List.mem_sections.1 hc)
@@ -146,12 +141,10 @@ theorem resolve_le_of_mem_resolutions {d : Display} {c : List Bool} (hc : c ∈ 
     List.forall₂_map_right_iff.2 (h.imp fun b v hb ↦ ?_)⟩ <;>
   cases v <;> cases b <;> simp_all
 
-/-- A display without partial cells has a single resolution. -/
 theorem resolve_lp_eq_resolve_k3 {d : Display} (h : ∀ v ∈ d, v ≠ 0) :
     resolve .lp d = resolve .k3 d :=
   List.map_congr_left fun v hv ↦ by cases v <;> first | rfl | exact absurd rfl (h _ hv)
 
-/-- Moving boys into the scope preserves a scope-monotone quantifier. -/
 theorem holds_of_forall₂_le {q : NumberTree} (hq : q.ScopeMonotone) {c c' : List Bool}
     (h : List.Forall₂ (· ≤ ·) c c') (hc : holds q c) : holds q c' := by
   obtain ⟨j, h₁, h₂⟩ : ∃ j, c'.count true = c.count true + j ∧
@@ -200,30 +193,23 @@ instance [DecidableRel q] (δ : Designation) : Decidable (reading q d δ) :=
 
 variable {q d}
 
-/-- The universal quantifier holds of a resolution when every boy is in the scope. -/
 theorem reading_all (δ : Designation) : reading NumberTree.all d δ ↔ ∀ v ∈ d, δ.threshold ≤ v := by
   simp [reading, holds, resolve, NumberTree.all, List.count_eq_zero]
 
-/-- The negative quantifier holds of a resolution when no boy is in the scope. -/
 theorem reading_no (δ : Designation) : reading NumberTree.no d δ ↔ ∀ v ∈ d, ¬ δ.threshold ≤ v := by
   simp [reading, holds, resolve, NumberTree.no, List.count_eq_zero]
 
-/-- Negating the predicate in every cell evaluates the inner negation of the quantifier at the
-dual standard, so it exchanges the some- and all-substituted readings. -/
 theorem reading_map_neg (δ : Designation) :
     reading q (d.map Neg.neg) δ ↔ reading q.innerNeg d δ.dual := by
   rw [reading, reading, resolve_map_neg, holds_map_not]
 
-/-- On a display without partial cells the two resolutions coincide. -/
 theorem someReading_iff_allReading (h : ∀ v ∈ d, v ≠ 0) :
     someReading q d ↔ allReading q d := by
   rw [someReading, allReading, reading, reading, resolve_lp_eq_resolve_k3 h]
 
-/-- Under a scope-monotone quantifier the universal variant entails the existential one. -/
 theorem allReading_imp_someReading (hq : q.ScopeMonotone) : allReading q d → someReading q d :=
   holds_of_forall₂_le hq (resolve_le_of_mem_resolutions (resolve_mem_resolutions .lp d)).1
 
-/-- Under a scope-antitone quantifier the existential variant entails the universal one. -/
 theorem someReading_imp_allReading (hq : q.ScopeAntitone) : someReading q d → allReading q d :=
   fun hs ↦ not_not.1 fun ha ↦ allReading_imp_someReading (q := qᶜ) hq.compl ha hs
 
@@ -251,7 +237,6 @@ variable {p q : Prop} [Decidable p] [Decidable q]
     Bool.exists_bool, Bool.false_eq_true, ite_false, ite_true]
   tauto
 
-/-- Two components that agree yield a bivalent verdict. -/
 theorem gapValue_ne_zero (h : p ↔ q) : gapValue p q ≠ 0 := by simp [h]
 
 end GapValue
@@ -269,7 +254,6 @@ and the conjunction is then the literal meaning (`globalExh_iff_of_scopeAntitone
 def globalExh : Prop := someReading q d ∧ allReading q d
 
 variable {q d} in
-/-- Under a downward-entailing quantifier global exhaustification is vacuous. -/
 theorem globalExh_iff_of_scopeAntitone (hq : q.ScopeAntitone) :
     globalExh q d ↔ someReading q d :=
   ⟨And.left, fun h ↦ ⟨h, someReading_imp_allReading hq h⟩⟩
@@ -306,7 +290,6 @@ def pointwise : SignType := SignType.supervaluation (resolutions d).toFinset (ho
 
 variable {q d}
 
-/-- The supervaluation ranges over the two designation standards. -/
 theorem supervaluation_eq_designations :
     supervaluation q d = SignType.supervaluation Finset.univ (reading q d) :=
   rfl
@@ -314,17 +297,14 @@ theorem supervaluation_eq_designations :
 private theorem forall_designation {P : Designation → Prop} : (∀ δ, P δ) ↔ P .lp ∧ P .k3 :=
   ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨h₁, h₂⟩ δ ↦ by cases δ <;> assumption⟩
 
-/-- The supervaluation is true when both variants are. -/
 theorem supervaluation_eq_one_iff :
     supervaluation q d = 1 ↔ someReading q d ∧ allReading q d := by
   simp [supervaluation, SignType.supervaluation_eq_one_iff, forall_designation]
 
-/-- The supervaluation is false when neither variant is true. -/
 theorem supervaluation_eq_neg_one_iff :
     supervaluation q d = -1 ↔ ¬ someReading q d ∧ ¬ allReading q d := by
   simp [supervaluation, SignType.supervaluation_eq_neg_one_iff, forall_designation]
 
-/-- The supervaluation gaps when the variants differ. -/
 theorem supervaluation_eq_zero_iff :
     supervaluation q d = 0 ↔ ¬ (someReading q d ↔ allReading q d) := by
   have h {P : Designation → Prop} : (∃ δ, P δ) ↔ P .lp ∨ P .k3 :=
@@ -332,12 +312,9 @@ theorem supervaluation_eq_zero_iff :
   simp only [supervaluation, SignType.supervaluation_eq_zero_iff, Finset.mem_univ, true_and, h]
   tauto
 
-/-- A display without partial cells gets a bivalent verdict, whatever the quantifier. -/
 theorem supervaluation_ne_zero (h : ∀ v ∈ d, v ≠ 0) : supervaluation q d ≠ 0 := by
   simp [supervaluation_eq_zero_iff, someReading_iff_allReading h]
 
-/-- The supervaluation does not see the scope of the definite relative to a negation inside the
-cells, since negating every cell gives the supervaluation of the inner negation. -/
 theorem supervaluation_map_neg :
     supervaluation q (d.map Neg.neg) = supervaluation q.innerNeg d := by
   have h : (Finset.univ : Finset Designation).image Designation.dual = Finset.univ := by decide
@@ -345,19 +322,15 @@ theorem supervaluation_map_neg :
   conv_rhs => rw [← h, SignType.supervaluation_image]
   exact SignType.supervaluation_congr fun δ _ ↦ reading_map_neg δ
 
-/-- The outer negation of the quantifier negates the supervaluation. -/
 theorem supervaluation_compl : supervaluation qᶜ d = -supervaluation q d := by
   rw [supervaluation, supervaluation, ← SignType.supervaluation_not _ Finset.univ_nonempty]
   rfl
 
-/-- The global construal gaps where the literal meaning holds and the all-substituted one fails. -/
 theorem globalConstrual_eq_zero_iff :
     globalConstrual q d = 0 ↔ someReading q d ∧ ¬ allReading q d := by
   rw [globalConstrual, gapValue_eq_zero_iff, globalExh]
   tauto
 
-/-- The global construals depart from supervaluation exactly where the literal meaning is false
-and the locally exhaustified meaning true. -/
 theorem globalConstrual_ne_supervaluation_iff :
     globalConstrual q d ≠ supervaluation q d ↔ ¬ someReading q d ∧ allReading q d := by
   rcases h₁ : globalConstrual q d with _ | _ | _ <;>
@@ -373,14 +346,10 @@ theorem globalConstrual_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone
   not_not.1 fun h ↦ (globalConstrual_ne_supervaluation_iff.1 h).elim fun hs ha ↦
     hs (allReading_imp_someReading hq ha)
 
-/-- Without local exhaustification no gap can arise in the scope of a downward-entailing
-quantifier such as *no*, since exhaustification is vacuous there and the literal and globally
-exhaustified meanings never conflict. -/
 theorem globalConstrual_ne_zero_of_scopeAntitone (hq : q.ScopeAntitone) :
     globalConstrual q d ≠ 0 :=
   gapValue_ne_zero (globalExh_iff_of_scopeAntitone hq).symm
 
-/-- Universal projection fails exactly on the displays with a partial cell. -/
 theorem universalPresupposition_eq_zero_iff :
     universalPresupposition q d = 0 ↔ 0 ∈ d := by
   rw [universalPresupposition, SignType.meetWeak_eq_zero_iff]
@@ -391,12 +360,9 @@ end Approaches
 
 /-! ### Negation and the wide-scope parse (§6.1.3) -/
 
-/-- Over one cell the unembedded sentence takes the cell's value. -/
 theorem supervaluation_all_singleton (v : SignType) : supervaluation NumberTree.all [v] = v := by
   cases v <;> decide
 
-/-- The literal-against-global construal never gaps under plain negation, which is downward
-entailing. -/
 theorem globalConstrual_notAll_ne_zero (v : SignType) :
     globalConstrual NumberTree.notAll [v] ≠ 0 :=
   globalConstrual_ne_zero_of_scopeAntitone NumberTree.scopeAntitone_notAll
@@ -454,15 +420,12 @@ section Pointwise
 
 variable {q : NumberTree} [DecidableRel q] {d : Display}
 
-/-- The two-candidate supervaluation ranges over the uniform resolutions. -/
 theorem supervaluation_eq_image :
     supervaluation q d =
       SignType.supervaluation (Finset.univ.image fun δ ↦ resolve δ d) (holds q) := by
   rw [supervaluation, SignType.supervaluation_image]
   rfl
 
-/-- Richer candidates can only add gaps, since whatever the quantifier the per-boy supervaluation
-is at most as informative as the two-candidate one. -/
 theorem toFlat_pointwise_le :
     SignType.toFlat (pointwise q d) ≤ SignType.toFlat (supervaluation q d) := by
   rw [supervaluation_eq_image]
@@ -470,8 +433,6 @@ theorem toFlat_pointwise_le :
   obtain ⟨δ, -, rfl⟩ := Finset.mem_image.1 hc
   exact List.mem_toFinset.2 (resolve_mem_resolutions δ d)
 
-/-- Under a scope-monotone quantifier the per-boy resolutions add no gap, the uniform ones being
-their extremes. -/
 theorem pointwise_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
     pointwise q d = supervaluation q d := by
   have hk3 := List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)
@@ -492,11 +453,9 @@ theorem pointwise_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
       fun c hc hq' ↦ (supervaluation_eq_neg_one_iff.1 h).1 (hex.1 ⟨c, hc, hq'⟩)⟩
   · exact (SignType.supervaluation_eq_one_iff ..).2 (hall.2 (supervaluation_eq_one_iff.1 h).2)
 
-/-- The outer negation of the quantifier negates the per-boy supervaluation. -/
 theorem pointwise_compl : pointwise qᶜ d = -pointwise q d :=
   SignType.supervaluation_not _ ⟨_, List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)⟩
 
-/-- Under a scope-antitone quantifier, likewise. -/
 theorem pointwise_eq_supervaluation_of_scopeAntitone (hq : q.ScopeAntitone) :
     pointwise q d = supervaluation q d := by
   have := pointwise_eq_supervaluation_of_scopeMonotone (d := d) hq.compl
@@ -504,8 +463,6 @@ theorem pointwise_eq_supervaluation_of_scopeAntitone (hq : q.ScopeAntitone) :
 
 variable {c : List Bool}
 
-/-- A resolution of a display puts in the scope every boy whose cell is true and some of those
-whose cell is a gap. -/
 theorem count_true_mem_resolutions (hc : c ∈ resolutions d) :
     d.count 1 ≤ c.count true ∧ c.count true ≤ d.count 1 + d.count 0 := by
   have h := List.forall₂_map_right_iff.1 (List.mem_sections.1 hc)
@@ -516,8 +473,6 @@ theorem count_true_mem_resolutions (hc : c ∈ resolutions d) :
     rcases (by decide : ∀ v : SignType, v = 0 ∨ v = -1 ∨ v = 1) v with rfl | rfl | rfl <;>
       cases b <;> simp_all <;> omega
 
-/-- Every number between the boys whose cell is true and those whose cell is not false is the
-number some resolution puts in the scope. -/
 theorem exists_mem_resolutions_count_true {k : ℕ} (h₁ : d.count 1 ≤ k)
     (h₂ : k ≤ d.count 1 + d.count 0) : ∃ c ∈ resolutions d, c.count true = k := by
   induction d generalizing k with
@@ -538,8 +493,6 @@ theorem exists_mem_resolutions_count_true {k : ℕ} (h₁ : d.count 1 ≤ k)
     · obtain ⟨c, hc, hck⟩ := ih (k := k - 1) (by omega) (by omega)
       exact ⟨true :: c, hcons true (by simp) hc, by simp [hck]; omega⟩
 
-/-- Under a cardinal quantifier the per-boy supervaluation is true when every number between the
-true and the non-false cells is in the quantifier's set. -/
 theorem pointwise_cardinal_eq_one_iff {s : Set ℕ} [DecidablePred (· ∈ s)] :
     pointwise (NumberTree.cardinal s) d = 1 ↔
       ∀ k, d.count 1 ≤ k → k ≤ d.count 1 + d.count 0 → k ∈ s := by
@@ -550,8 +503,6 @@ theorem pointwise_cardinal_eq_one_iff {s : Set ℕ} [DecidablePred (· ∈ s)] :
   · have := count_true_mem_resolutions (List.mem_toFinset.1 hc)
     exact h _ this.1 this.2
 
-/-- Under a cardinal quantifier the per-boy supervaluation is false when no number between the
-true and the non-false cells is in the quantifier's set. -/
 theorem pointwise_cardinal_eq_neg_one_iff {s : Set ℕ} [DecidablePred (· ∈ s)] :
     pointwise (NumberTree.cardinal s) d = -1 ↔
       ∀ k, d.count 1 ≤ k → k ≤ d.count 1 + d.count 0 → k ∉ s := by
@@ -563,7 +514,6 @@ theorem pointwise_cardinal_eq_neg_one_iff {s : Set ℕ} [DecidablePred (· ∈ s
   · have := count_true_mem_resolutions (List.mem_toFinset.1 hc)
     exact h _ this.1 this.2
 
-/-- A display without gaps, read off a resolution, has that resolution alone. -/
 theorem mem_resolutions_map_ofProp {c' : List Bool} :
     c' ∈ resolutions (c.map fun b : Bool ↦ SignType.ofProp b) ↔ c' = c := by
   rw [resolutions, List.map_map, List.mem_sections, List.forall₂_map_right_iff]
@@ -573,7 +523,6 @@ theorem mem_resolutions_map_ofProp {c' : List Bool} :
   · rintro rfl
     exact List.forall₂_same.2 fun b _ ↦ by cases b <;> simp
 
-/-- The per-boy supervaluation of a display without gaps is the quantifier's value at it. -/
 theorem pointwise_map_ofProp :
     pointwise q (c.map fun b : Bool ↦ SignType.ofProp b) = SignType.ofProp (holds q c) := by
   have : (resolutions (c.map fun b : Bool ↦ SignType.ofProp b)).toFinset = {c} := by
@@ -645,7 +594,6 @@ def misprinted : Item := ⟨.exactly, .gapQ, [5, 5, 9, 9], .used⟩
 /-- The item is printed in Table 13. -/
 theorem misprinted_mem : misprinted ∈ items := by decide
 
-/-- The item realizes the GAP?? pattern, its all-variant true and its some-variant false. -/
 theorem misprinted_gapQQ :
     ¬ weak .exactly misprinted.display ∧ strong .exactly misprinted.display := by
   decide
@@ -678,19 +626,16 @@ theorem found_iff : ∀ t ∈ gapTests, (t.found = .yes ↔ t.condition ≠ .gap
 /-- Table 2 tests only the gap conditions. -/
 theorem gapTests_condition : ∀ t ∈ gapTests, t.condition ∈ [.gap, .gapQ, .gapQQ] := by decide
 
-/-- The supervaluation is true exactly on the variants' agreement in truth. -/
 theorem supervaluation_eq_one_iff_weak (e : Embedding) (d : Display) :
     supervaluation e.tree d = 1 ↔ weak e d ∧ strong e d := by
   unfold weak strong
   split_ifs <;> simp [supervaluation_eq_one_iff, and_comm]
 
-/-- The supervaluation gaps exactly where the variants differ. -/
 theorem supervaluation_eq_zero_iff_weak (e : Embedding) (d : Display) :
     supervaluation e.tree d = 0 ↔ ¬ (weak e d ↔ strong e d) := by
   unfold weak strong
   split_ifs <;> simp [supervaluation_eq_zero_iff, Iff.comm]
 
-/-- The supervaluation is true exactly on the items designed true. -/
 theorem supervaluation_eq_one_iff_condition : ∀ i ∈ tested, i.status ≠ .faulty →
     i ≠ misprinted → (supervaluation i.embedding.tree i.display = 1 ↔
       i.condition = .clearlyTrue) := by
@@ -699,8 +644,6 @@ theorem supervaluation_eq_one_iff_condition : ∀ i ∈ tested, i.status ≠ .fa
   rw [supervaluation_eq_one_iff_weak, h₁, h₂]
   cases i.condition <;> simp
 
-/-- The supervaluation gaps on an item exactly when its environment and condition were found to
-gap, outside the discounted tests. -/
 theorem supervaluation_eq_zero_iff_found : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     ∀ t ∈ gapTests, ¬ t.Discounted → t.embedding = i.embedding → t.condition = i.condition →
       (supervaluation i.embedding.tree i.display = 0 ↔ t.found = .yes) := by
@@ -728,7 +671,6 @@ theorem universalPresupposition_false_item :
       universalPresupposition i.embedding.tree i.display = 0 := by
   decide
 
-/-- The per-boy supervaluation departs from the two-candidate one on exactly the GAP? items. -/
 theorem pointwise_ne_iff : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     (pointwise i.embedding.tree i.display ≠ supervaluation i.embedding.tree i.display ↔
       i.condition = .gapQ) := by
@@ -739,7 +681,6 @@ def atLeastTwo : NumberTree := NumberTree.cardinal {b | 2 ≤ b}
 
 instance : DecidableRel atLeastTwo := fun _ b ↦ inferInstanceAs (Decidable (2 ≤ b))
 
-/-- On the at-least reading the GAP? items are gap items. -/
 theorem atLeastTwo_gapQ : ∀ i ∈ items, i.condition = .gapQ → i ≠ misprinted →
     supervaluation atLeastTwo i.display = 0 := by
   decide

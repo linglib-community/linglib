@@ -118,7 +118,6 @@ and (69). -/
 theorem not_erThan_of_fst_ne (h : ∀ a ∈ ω, ∀ b ∈ ω', a.1 ≠ b.1) : ¬ ErThan ω ω' :=
   fun he ↦ let ⟨a, ha⟩ := he.1; let ⟨b, hb⟩ := he.2.1; h a ha b hb (he.fst_eq ha hb)
 
-/-- On one scale the comparative is the scale's. -/
 theorem erThan_image_sigmaMk {i : ι} {ω ω' : Set (P i)} :
     ErThan (Sigma.mk i '' ω) (Sigma.mk i '' ω') ↔ ErThan ω ω' := by
   simp only [ErThan, Set.image_nonempty, Set.forall_mem_image, Sigma.mk_lt_mk_iff]
@@ -163,11 +162,9 @@ def datum (e : Datum) :
 def data : List (DirectedScale × DirectedScale × Judgment) :=
   Examples.all.filterMap datum
 
-/-- The starred comparatives compare distinct scales. -/
 theorem scale_ne_of_unacceptable : ∀ d ∈ data, d.2.2 = .unacceptable → d.1 ≠ d.2.1 := by
   decide
 
-/-- Every starred comparative is unsatisfiable, whatever the points of its scales. -/
 theorem not_erThan_of_unacceptable {P : DirectedScale → Type*} [∀ s, LT (P s)] {d}
     (hd : d ∈ data) (hj : d.2.2 = .unacceptable) {ω ω' : Set (Σ s, P s)}
     (hω : ∀ a ∈ ω, a.1 = d.1) (hω' : ∀ b ∈ ω', b.1 = d.2.1) : ¬ ErThan ω ω' :=
@@ -272,8 +269,6 @@ theorem erThan_sel :
       height (s.sel w smokes) < height w :=
   erThan_singleton_toDual
 
-/-- A smoker would not be shorter than he is, since the nearest world where he smokes is the
-actual one. -/
 theorem not_erThan_sel_of_mem (hw : w ∈ smokes) :
     ¬ ErThan {toDual (height (s.sel w smokes))} {toDual (height w)} := by
   rw [erThan_sel, s.centering w smokes hw]

@@ -60,8 +60,6 @@ def FocusesPreliminaryStages (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
     v.ttTSitRelation tt tsit → tt < tsit
 
-/-- A visibility property of a viewpoint, that every topic time and situation time it relates
-stand in the cell `D`, is the inclusion of the viewpoint's realizable relations in `D`. -/
 private theorem forall_imp_iff {D : Finset Allen.Relation}
     {P : ∀ {T : Type} [LinearOrder T], NonemptyInterval T → NonemptyInterval T → Prop}
     (hP : ∀ {T : Type} [LinearOrder T] (tt tsit : NonemptyInterval T),
@@ -72,14 +70,12 @@ private theorem forall_imp_iff {D : Finset Allen.Relation}
   exact ⟨fun h T _ ⟨tt, tsit⟩ hv ↦ (hP tt tsit).1 (h ((v.ttTSitRelation_iff tt tsit).2 hv)),
     fun h T _ tt tsit hv ↦ (hP tt tsit).2 (h T ((v.ttTSitRelation_iff tt tsit).1 hv))⟩
 
-/-- The initial point: the perfective and the neutral viewpoint assert it. -/
 theorem showsInitialPoint_iff (v : ViewpointType) :
     ShowsInitialPoint v ↔ v = .perfective ∨ v = .neutral := by
   refine (forall_imp_iff (D := Allen.inv Allen.startsWithin)
     (P := @fun _ _ tt tsit ↦ tsit.fst ∈ tt) (fun _ _ ↦ by simp) v).trans ?_
   cases v <;> decide +kernel
 
-/-- The final point: only the perfective asserts it. -/
 theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .perfective := by
   refine (forall_imp_iff
     (D := Allen.atoms.filter fun r ↦ r.fstSnd ≠ .gt ∧ r.sndSnd ≠ .lt)
@@ -89,7 +85,6 @@ theorem showsFinalPoint_iff (v : ViewpointType) : ShowsFinalPoint v ↔ v = .per
       compare_ge_iff_ge]
   · cases v <;> decide +kernel
 
-/-- Closure: the perfective and the perfect present the situation as closed. -/
 theorem presentsClosed_iff (v : ViewpointType) :
     PresentsClosed v ↔ v = .perfective ∨ v = .perfect := by
   refine (forall_imp_iff (D := Allen.atoms.filter (·.sndSnd ≠ .lt))
@@ -98,30 +93,23 @@ theorem presentsClosed_iff (v : ViewpointType) :
     simp [Allen.relation, Allen.ofEndpoints, compare_ge_iff_ge]
   · cases v <;> decide +kernel
 
-/-- Preliminary stages: only the imperfective places the topic time strictly inside the
-situation. -/
 theorem focusesPreliminaryStages_iff (v : ViewpointType) :
     FocusesPreliminaryStages v ↔ v = .imperfective := by
   refine (forall_imp_iff (D := Allen.lt) (P := @fun _ _ tt tsit ↦ tt < tsit)
     (fun _ _ ↦ by simp) v).trans ?_
   cases v <;> decide +kernel
 
-/-- The perfective makes both endpoints visible and presents the situation as closed,
-section 4.2.1. -/
 theorem perfective_closed :
     ShowsInitialPoint .perfective ∧ ShowsFinalPoint .perfective ∧ PresentsClosed .perfective :=
   ⟨(showsInitialPoint_iff _).mpr (Or.inl rfl), (showsFinalPoint_iff _).mpr rfl,
     (presentsClosed_iff _).mpr (Or.inl rfl)⟩
 
-/-- The imperfective makes neither endpoint visible and is open, section 4.2.2. -/
 theorem imperfective_open :
     ¬ ShowsInitialPoint .imperfective ∧ ¬ ShowsFinalPoint .imperfective ∧
       ¬ PresentsClosed .imperfective := by
   rw [showsInitialPoint_iff, showsFinalPoint_iff, presentsClosed_iff]
   decide
 
-/-- The neutral viewpoint is intermediate, section 4.2.3: the initial point visible as under the
-perfective, the final point unasserted as under the imperfective, and open. -/
 theorem neutral_intermediate :
     ShowsInitialPoint .neutral ∧ ¬ ShowsFinalPoint .neutral ∧ ¬ PresentsClosed .neutral := by
   refine ⟨(showsInitialPoint_iff _).mpr (Or.inr rfl), ?_, ?_⟩
@@ -135,8 +123,6 @@ theorem neutral_no_preliminary_stages :
   refine ⟨?_, (focusesPreliminaryStages_iff _).mpr rfl⟩
   rw [focusesPreliminaryStages_iff]; decide
 
-/-- The neutral viewpoint sides with the perfective on the initial point and with the
-imperfective on the final point. -/
 theorem neutral_between_perf_imperf :
     (ShowsInitialPoint .neutral ↔ ShowsInitialPoint .perfective) ∧
       (ShowsFinalPoint .neutral ↔ ShowsFinalPoint .imperfective) :=
@@ -157,8 +143,6 @@ viewpoint that does not show the final point. -/
 def CompletionInvisible (ai : AspectualInterpretation) : Prop :=
   ai.situationType.telicity = .telic ∧ ¬ ShowsFinalPoint ai.viewpoint
 
-/-- Completion is invisible exactly for telic situation types under a non-perfective
-viewpoint. -/
 theorem completionInvisible_iff (ai : AspectualInterpretation) :
     CompletionInvisible ai ↔ ai.situationType.telicity = .telic ∧ ai.viewpoint ≠ .perfective := by
   rw [CompletionInvisible, showsFinalPoint_iff]
@@ -184,12 +168,10 @@ def perfectiveEffect (ai : AspectualInterpretation) : PerfectiveEffect :=
   | .perfective => if ai.situationType.telicity = .telic then .completion else .termination
   | _ => .noEffect
 
-/-- Under the perfective, completion is conveyed exactly by the telic situation types. -/
 theorem completion_iff_telic (c : VendlerClass) :
     perfectiveEffect ⟨c, .perfective⟩ = .completion ↔ c.telicity = .telic := by
   cases c <;> decide
 
-/-- The imperfective conveys neither completion nor termination. -/
 theorem imperfective_noEffect (c : VendlerClass) :
     perfectiveEffect ⟨c, .imperfective⟩ = .noEffect := rfl
 
@@ -236,8 +218,6 @@ def Language.system : Language → AspectualSystem
   | .mandarin => ⟨[.perfective, .imperfective, .neutral], .nonStativeOnly, .excluded⟩
   | .navajo => ⟨[.perfective, .imperfective, .neutral], .nonStativeOnly, .excluded⟩
 
-/-- A language whose perfective does not apply to statives keeps them outside its viewpoint
-system, and conversely. -/
 theorem excluded_iff_nonStativeOnly (l : Language) :
     l.system.perfectiveStative = .excluded ↔ l.system.interaction = .nonStativeOnly := by
   cases l <;> decide

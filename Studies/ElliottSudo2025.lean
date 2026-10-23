@@ -85,14 +85,12 @@ section Atoms
 
 variable (Q : E → W → Prop)
 
-/-- Where the referent is novel, an atomic predication of it survives in neither dimension. -/
 theorem pred1_positive_of_novel (hx : State.Novel s x) : (pred1 Q x).positive s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, _, he, _⟩ ↦ Flat.coe_ne_bot (he.symm.trans (hx p hp))
 
 theorem pred1_negative_of_novel (hx : State.Novel s x) : (pred1 Q x).negative s = ∅ :=
   Set.eq_empty_of_forall_notMem fun p ⟨hp, _, he, _⟩ ↦ Flat.coe_ne_bot (he.symm.trans (hx p hp))
 
-/-- Where the referent is novel, every possibility is unknown for the predication. -/
 theorem pred1_unknownUpdate_of_novel (hx : State.Novel s x) :
     (pred1 Q x).unknownUpdate s = s := by
   ext p
@@ -105,8 +103,6 @@ theorem pred1_negative_empty : (pred1 Q x (W := W)).negative ∅ = ∅ := Set.se
 theorem exists_negative_subset (φ : BUSDen W E) : (exists_ x φ).negative s ⊆ s :=
   Set.sep_subset _ _
 
-/-- The negative update of an existential introduces no anaphoric information: the referent
-stays novel. -/
 theorem novel_exists_negative (hx : State.Novel s x) (φ : BUSDen W E) :
     State.Novel ((exists_ x φ).negative s) x :=
   hx.mono (exists_negative_subset φ)
@@ -219,8 +215,6 @@ noncomputable def disjModal (φ ψ : BUSDen W E) : BUSDen W E where
 
 @[inherit_doc] notation:60 φ " ∨ᶠᶜ " ψ => disjModal φ ψ
 
-/-- The preconditions of modal disjunction: a possible modal disjunction has both parts
-consistent. -/
 theorem fc_preconditions (φ ψ : BUSDen W E) (h : Possible (φ ∨ᶠᶜ ψ) s) :
     (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty := by
   unfold Possible disjModal at h
@@ -233,12 +227,9 @@ section Atomic
 
 variable (c t : W → Prop)
 
-/-- For worldly atoms the first part is the first disjunct's positive update: the second disjunct
-partitions it. -/
 theorem disjPos1_atom : disjPos1 (atom c) (atom t) s = (atom c (V := ℕ) (E := E)).positive s := by
   rw [disjPos1, unknownUpdate_atom, Set.union_empty, atom_complementary]
 
-/-- For worldly atoms the second part is the second disjunct's positive update. -/
 theorem disjPos2_atom : disjPos2 (atom c) (atom t) s = (atom t (V := ℕ) (E := E)).positive s := by
   rw [disjPos2, unknownUpdate_atom]
   ext p
@@ -263,8 +254,6 @@ theorem possible_disjModal_atom_iff :
     rw [ite_eq_left (key.mpr ⟨hc, ht⟩), disj_positive_eq, disjPos1_atom]
     exact hc.mono Set.subset_union_left
 
-/-- Subsistence into a worldly restriction of the state is that restriction's holding throughout,
-since descendants share their world. -/
 theorem lowerClosure_le_sep_iff (pred : W → Prop) :
     lowerClosure s ≤ lowerClosure {p ∈ s | pred p.world} ↔ ∀ p ∈ s, pred p.world := by
   rw [lowerClosure_le]

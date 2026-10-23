@@ -65,16 +65,12 @@ variable [Preorder β] {f : S → β}
 def Blocked (alts : S → Set S) (f : S → β) (φ : S) : Prop :=
   ∃ φ' ∈ alts φ, f φ' < f φ
 
-/-- Blocking is monotone in the alternative source. -/
 theorem Blocked.mono (h : alts ≤ alts') (hb : Blocked alts f φ) : Blocked alts' f φ :=
   let ⟨φ', hφ', hlt⟩ := hb; ⟨φ', h φ hφ', hlt⟩
 
-/-- An expression at least as good as each of its alternatives is not blocked. -/
 theorem not_blocked_of_forall_le (h : ∀ φ' ∈ alts φ, f φ ≤ f φ') : ¬ Blocked alts f φ :=
   fun ⟨φ', hφ', hlt⟩ ↦ hlt.not_ge (h φ' hφ')
 
-/-- An expression is unblocked exactly when it is minimal under `f` among itself and its
-alternatives. -/
 theorem not_blocked_iff_minimalFor :
     ¬ Blocked alts f φ ↔ MinimalFor (· ∈ insert φ (alts φ)) f φ := by
   simp only [Blocked, MinimalFor, Set.mem_insert_iff, true_or, true_and, not_exists, not_and,
@@ -120,8 +116,6 @@ theorem unblocked_subset (alts : S → Set S) (content : S → Set W) (φ : S) :
     unblocked alts content φ ⊆ content φ :=
   sdiff_le
 
-/-- `φ` is unblocked at `w` exactly when it is a most specific competitor whose content holds at
-`w`, among itself and its alternatives. -/
 theorem mem_unblocked_iff_minimalFor :
     w ∈ unblocked alts content φ ↔
       MinimalFor (fun ψ ↦ ψ ∈ insert φ (alts φ) ∧ w ∈ content ψ) content φ := by
@@ -135,7 +129,6 @@ theorem mem_unblocked_iff_minimalFor :
   · rintro ⟨hw, h⟩
     exact ⟨hw, fun ψ hψ hwψ hle ↦ le_antisymm hle (h ⟨Or.inr hψ, hwψ⟩ hle)⟩
 
-/-- An expression blocked by no alternative is unblocked wherever its content holds. -/
 theorem unblocked_eq_self (h : ¬ Blocked alts content φ) : unblocked alts content φ = content φ :=
   sdiff_eq_left.2 <| Set.disjoint_left.2 fun _ _ ⟨_, ⟨⟨ψ, hψ, rfl⟩, hss⟩, _⟩ ↦ h ⟨ψ, hψ, hss⟩
 
@@ -155,7 +148,6 @@ theorem disjoint_unblocked_of_ssubset (hψ : ψ ∈ alts φ) (h : content ψ ⊂
   disjoint_sdiff_self_right.mono_left
     (le_sSup (s := content '' alts φ ∩ Set.Iio (content φ)) ⟨⟨ψ, hψ, rfl⟩, h⟩)
 
-/-- Two competitors with strictly nested contents are never unblocked at the same point. -/
 theorem disjoint_unblocked (hψ : ψ ∈ alts φ) (h : content ψ ⊂ content φ) :
     Disjoint (unblocked alts content ψ) (unblocked alts content φ) :=
   (disjoint_unblocked_of_ssubset hψ h).mono_left (unblocked_subset _ _ _)
@@ -173,8 +165,6 @@ theorem unblocked_ssubset_iff :
   · exact (unblocked_subset _ _ _).ssubset_of_ne fun heq ↦
       Set.disjoint_left.1 (disjoint_unblocked_of_ssubset hψ hss) hw (heq ▸ hss.1 hw)
 
-/-- Enlarging the alternatives shrinks the unblocked points, so an expression blocked by an
-independent factor widens the use of its competitors. -/
 theorem unblocked_anti (h : alts ≤ alts') :
     unblocked alts' content φ ⊆ unblocked alts content φ :=
   sdiff_le_sdiff_left <| sSup_le_sSup <| Set.inter_subset_inter_left _ (Set.image_mono (h φ))

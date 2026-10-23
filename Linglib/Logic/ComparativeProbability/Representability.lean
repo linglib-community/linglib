@@ -38,8 +38,6 @@ attribute [local instance] Classical.propDecidable
 
 /-! ### Reductions -/
 
-/-- Agreement on disjoint pairs suffices for full representability, since additivity reduces
-    every comparison to a disjoint one. -/
 theorem reduce_to_disjoint {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
     {r : Set W → Set W → Prop} [IsQualitativeAdditive r] (μ : Measure W) [IsFiniteMeasure μ]
     (h : ∀ C D : Set W, Disjoint C D → (r C D ↔ μ D ≤ μ C)) :
@@ -48,8 +46,6 @@ theorem reduce_to_disjoint {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSp
   rw [qadd (r := r) A B]
   exact (h _ _ disjoint_sdiff_sdiff).trans (Measure.measure_le_iff_sdiff_le μ B A).symm
 
-/-- Removing a null element (`r ∅ {j}`) from both sides of a disjoint comparison preserves
-    it. -/
 theorem null_removal_disjoint {W : Type*} {r : Set W → Set W → Prop}
     [IsQualitativeProbability r] (j : W) (hj : r ∅ {j}) (C D : Set W) (hdisj : Disjoint C D) :
     r C D ↔ r (C \ {j}) (D \ {j}) := by
@@ -68,15 +64,12 @@ theorem null_removal_disjoint {W : Type*} {r : Set W → Set W → Prop}
     · exact ⟨fun h ↦ trans_of r h (mono _ _ Set.sdiff_subset), fun h ↦ trans_of r h (null_sub D)⟩
     · rw [Set.sdiff_singleton_eq_self hjD]
 
-/-- `Fin.succ '' (Fin.succ ⁻¹' S) = S \ {0}` for `S : Set (Fin (n+1))`. -/
 private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
     Fin.succ '' (Fin.succ ⁻¹' S) = S \ {(0 : Fin (n + 1))} := by
   rw [Set.image_preimage_eq_range_inter, Fin.range_succ]
   ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
     Set.mem_sdiff]; exact And.comm
 
-/-- If atom `0` is null in a qualitative probability on `Fin (n+2)` and some atom is not,
-    representability reduces along `Fin.succ` to `Fin (n+1)`. -/
 theorem null_elem_reduce {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) → Prop)
     [IsQualitativeProbability r] (hn0 : r ∅ {0}) (hnn : ∃ i : Fin (n + 1), ¬r ∅ {Fin.succ i})
     (sub_repr : ∀ r' : Set (Fin (n + 1)) → Set (Fin (n + 1)) → Prop,
@@ -107,13 +100,11 @@ theorem transfer_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpac
     Measure.map_apply (.of_discrete) (.of_discrete), ← Equiv.image_eq_preimage_symm,
     ← Equiv.image_eq_preimage_symm]
 
-/-- `j` is null in the transport of `r` along `σ` exactly when `σ.symm j` is null in `r`. -/
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n) (r : Set (Fin n) → Set (Fin n) → Prop)
     (j : Fin n) : (Set.preimage σ ⁻¹'o r) ∅ {j} ↔ r ∅ {σ.symm j} := by
   show r (σ ⁻¹' ∅) (σ ⁻¹' {j}) ↔ _
   rw [Set.preimage_empty, show σ ⁻¹' {j} = {σ.symm j} by ext; simp [Equiv.eq_symm_apply]]
 
-/-- Representability transports backward along any equivalence. -/
 theorem perm_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
     [MeasurableSpace α] [DiscreteMeasurableSpace α] (σ : W ≃ α) (r : Set W → Set W → Prop)
     (h : Representable (Set.preimage σ ⁻¹'o r)) : Representable r := by

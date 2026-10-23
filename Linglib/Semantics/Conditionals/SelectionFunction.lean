@@ -61,8 +61,6 @@ structure SelectionFunction (W : Type*) where
   /-- A world at which the proposition holds selects itself. -/
   centering : ∀ (w : W) (A : Set W), w ∈ A → sel w A = w
 
-/-- Inclusion and centering are the only constraints on a selection function, so at a world
-outside a proposition any world of the proposition is selected by some selection function. -/
 theorem SelectionFunction.exists_sel_eq {W : Type*} {w v : W} {A : Set W} (hv : v ∈ A)
     (hw : w ∉ A) : ∃ s : SelectionFunction W, s.sel w A = v := by
   classical
@@ -112,7 +110,6 @@ theorem mem_selectionConditional_of_nonempty (hp : p.Nonempty) :
     w ∈ selectionConditional s p q ↔ s.sel w p ∈ q := by
   simp [mem_selectionConditional, hp]
 
-/-- At an antecedent-world the selection conditional reduces to its consequent, by centering. -/
 theorem mem_selectionConditional_of_mem (hw : w ∈ p) :
     w ∈ selectionConditional s p q ↔ w ∈ q := by
   rw [mem_selectionConditional_of_nonempty s ⟨w, hw⟩, s.centering w p hw]
@@ -120,19 +117,14 @@ theorem mem_selectionConditional_of_mem (hw : w ∈ p) :
 theorem selectionConditional_inter_self : selectionConditional s p q ∩ p = q ∩ p :=
   Set.ext fun _ ↦ and_congr_left (mem_selectionConditional_of_mem s)
 
-/-- The selection conditional satisfies Conditional Excluded Middle, since a single selected world
-settles every consequent. -/
 theorem selectionConditional_cem :
     w ∈ selectionConditional s p q ∨ w ∈ selectionConditional s p qᶜ :=
   mem_ofDomain_or_compl s.subsingleton_domain
 
-/-- The selection conditional distributes over a disjunctive consequent. -/
 theorem selectionConditional_or (h : w ∈ selectionConditional s p (q ∪ r)) :
     w ∈ selectionConditional s p q ∨ w ∈ selectionConditional s p r :=
   mem_ofDomain_or s.subsingleton_domain h
 
-/-- The selection conditional entails the material conditional, since by centering an
-antecedent-world selects itself. -/
 theorem selectionConditional_subset_materialImp : selectionConditional s p q ⊆ materialImp p q :=
   fun _ h hp ↦ (mem_selectionConditional_of_mem s hp).1 h
 
@@ -164,23 +156,18 @@ variable {s R}
 
 @[simp] theorem mem_modal : w ∈ s.modal R A ↔ s.along R w ∈ A := Iff.rfl
 
-/-- The selectional modal is necessity along the graph of the selection. -/
 theorem modal_eq_core (A : Set W) : s.modal R A = (Function.graph (s.along R)).core A :=
   Set.preimage_eq_core _ A
 
-/-- A world that accesses itself selects itself. -/
 theorem along_eq_self (h : w ~[R] w) : s.along R w = w := s.centering w _ h
 
-/-- A world with a successor selects one of its successors. -/
 theorem rel_along (h : ∃ v, w ~[R] v) : w ~[R] s.along R w := s.inclusion w {v | w ~[R] v} h
 
-/-- At the worlds that access themselves, the selectional modal of `A` holds where `A` does. -/
 theorem modal_inter_refl (A : Set W) : s.modal R A ∩ {w | w ~[R] w} = A ∩ {w | w ~[R] w} :=
   Set.ext fun w ↦ and_congr_left fun h ↦ by
     change s.along R w ∈ A ↔ w ∈ A
     rw [along_eq_self (R := R) h]
 
-/-- Along a reflexive relation selection is idle, so the selectional modal is the identity. -/
 theorem modal_eq_id [R.IsRefl] : s.modal R = CompleteLatticeHom.id (Set W) := by
   ext A w
   change s.along R w ∈ A ↔ w ∈ A
@@ -190,8 +177,6 @@ end SelectionFunction
 
 variable {s}
 
-/-- On a possible antecedent, the selection conditional is the selectional modal along the
-constant relation to the antecedent-worlds. -/
 theorem selectionConditional_eq_modal {p : Set W} (hp : p.Nonempty) (q : Set W) :
     selectionConditional s p q = s.modal (SetRel.ofSuccessors fun _ ↦ p) q :=
   Set.ext fun _ ↦ mem_selectionConditional_of_nonempty s hp
@@ -276,7 +261,6 @@ theorem SelectionFunction.Compatible.isCSO (hs : s.Compatible ord) : s.IsCSO := 
   obtain ⟨c, hc⟩ := hs
   exact (c.order w).le_antisymm _ _ (hc w p hp _ h₁) (hc w p' hp' _ h₂)
 
-/-- A compatible selection function selects a closest antecedent-world. -/
 theorem SelectionFunction.Compatible.sel_mem_minimals (hs : s.Compatible ord) (hp : p.Nonempty) :
     s.sel w p ∈ (ord w).minimals p := by
   obtain ⟨c, hc⟩ := hs
@@ -291,15 +275,10 @@ theorem SelectionFunction.Compatible.domain_subset (hs : s.Compatible ord) :
   rintro v ⟨rfl, hv⟩
   exact hs.sel_mem_minimals ⟨_, hv⟩
 
-/-- Every compatible selection function makes true what the closest worlds make true. -/
 theorem SelectionFunction.Compatible.closestImp_subset (hs : s.Compatible ord) :
     closestImp ord p q ⊆ selectionConditional s p q :=
   fun _ h ↦ hs.domain_subset.trans h
 
-/-- Any closest antecedent-world comes first among the antecedent-worlds in some completion. At
-its center the completion orders the worlds strictly closer than it, then it, then the rest, and
-within each group as a linear extension of the strict order; elsewhere it is a linear extension
-of the strict order. -/
 theorem exists_completion (hv : v ∈ (ord w).minimals p) :
     ∃ c : Completion ord, ∀ u ∈ p, (c.order w).le v u := by
   classical
@@ -337,8 +316,6 @@ theorem exists_completion (hv : v ∈ (ord w).minimals p) :
         (((ord w).lt_iff_le_not_ge _ _).1 h).2 (hv.2 hu (((ord w).lt_iff_le_not_ge _ _).1 h).1)
       exact Prod.Lex.left _ _ (by simp [key, h0, huv])
 
-/-- On a finite, strongly centered family of preorders, any closest antecedent-world is selected
-by some compatible selection function. -/
 theorem SelectionFunction.exists_compatible [Finite W] (hc : IsCentered ord)
     (hv : v ∈ (ord w).minimals p) :
     ∃ s : SelectionFunction W, s.Compatible ord ∧ s.sel w p = v := by
@@ -366,9 +343,6 @@ theorem SelectionFunction.exists_compatible [Finite W] (hc : IsCentered ord)
     simp only [hp, ↓reduceDIte]
     exact (c.order w).le_antisymm _ _ (hmle w p hp v hv.1) (hcv _ (hm w p hp))
 
-/-- On a finite, strongly centered family of preorders, the conditional of the closest worlds
-holds iff the selection conditional is true on every completion, [stalnaker-1981]'s
-supervaluation for a single conditional. -/
 theorem mem_closestImp_iff_forall_compatible [Finite W] (hc : IsCentered ord) :
     w ∈ closestImp ord p q ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q := by

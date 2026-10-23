@@ -33,7 +33,6 @@ namespace Minimalist
 
 open RoseTree UnorderedTree SyntacticObject
 
-/-- Substitution preserves well-formedness. -/
 theorem isSyntacticObject_replace (target replacement s : SyntacticObject) :
     IsSyntacticObject (UnorderedTree.replace target.val replacement.val s.val) := by
   induction s using ind with
@@ -75,7 +74,6 @@ noncomputable def replace (s target replacement : SyntacticObject) : SyntacticOb
     replace target target replacement = replacement :=
   Subtype.ext (by rw [replace_val, UnorderedTree.replace_self])
 
-/-- At a node other than the target, substitution recurses into both daughters. -/
 theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merge l r ≠ target) :
     replace (merge l r) target replacement
       = merge (replace l target replacement) (replace r target replacement) := by
@@ -85,7 +83,6 @@ theorem replace_merge_of_ne {l r target replacement : SyntacticObject} (h : merg
   rw [← merge_val]
   exact fun heq => h (Subtype.ext heq)
 
-/-- A leaf other than the target is kept. -/
 theorem replace_of_val_eq_leaf {s target replacement : SyntacticObject} {a : Vertex}
     (hs : s.val = UnorderedTree.leaf a) (h : s ≠ target) : s.replace target replacement = s := by
   apply Subtype.ext
@@ -112,7 +109,6 @@ def SyntacticObject.toLinearizedLeaf? (s : SyntacticObject) : Option LinearizedS
   | .inr none => some .trace
   | .inr (some tok) => some (.traceOf tok)
 
-/-- A linearized leaf forgets to the object it came from. -/
 theorem SyntacticObject.toSyntacticObject_of_toLinearizedLeaf? {s : SyntacticObject}
     {p : LinearizedSyntacticObject} (h : s.toLinearizedLeaf? = some p) :
     p.toSyntacticObject = s := by
@@ -141,32 +137,27 @@ def replace (p : LinearizedSyntacticObject) (target : SyntacticObject)
     rw [mk_replaceIf]
     exact isSyntacticObject_replace target rep.toSyntacticObject p.toSyntacticObject⟩
 
-/-- Replacement forgets to substitution in the syntactic object. -/
 @[simp] theorem toSyntacticObject_replace (p : LinearizedSyntacticObject) (target : SyntacticObject)
     (rep : LinearizedSyntacticObject) :
     (p.replace target rep).toSyntacticObject
       = p.toSyntacticObject.replace target rep.toSyntacticObject :=
   Subtype.ext (mk_replaceIf _ _ _)
 
-/-- The terms of a linearized object's object are the projections of its subtrees. -/
 theorem mem_terms_toSyntacticObject {p : LinearizedSyntacticObject} {m : SyntacticObject} :
     m ∈ p.toSyntacticObject.terms ↔ ∃ q ∈ p.val.subtrees, mk q = m.val := by
   rw [← val_mem_subtrees, toSyntacticObject_val, subtrees_mk, unorderedSubtrees_eq_map,
     Multiset.mem_coe, List.mem_map]
 
-/-- An occurrence is found exactly when the target is a term. -/
 theorem isSome_find?_iff {p : LinearizedSyntacticObject} {m : SyntacticObject} :
     (p.find? m).isSome ↔ m ∈ p.toSyntacticObject.terms := by
   rw [mem_terms_toSyntacticObject, find?, Option.isSome_pmap, List.find?_isSome]
   simp
 
-/-- The occurrence found is a subtree. -/
 theorem mem_subtrees_of_find? {p s : LinearizedSyntacticObject} {m : SyntacticObject}
     (h : p.find? m = some s) : s.val ∈ p.val.subtrees := by
   obtain ⟨t, -, ht, rfl⟩ := Option.pmap_eq_some_iff.1 (by rwa [find?] at h)
   exact List.mem_of_find?_eq_some ht
 
-/-- Replacing at the root yields the replacement. -/
 theorem replace_of_toSyntacticObject_eq {p r : LinearizedSyntacticObject} {target : SyntacticObject}
     (h : p.toSyntacticObject = target) : p.replace target r = r := by
   obtain ⟨⟨a, cs⟩, hp⟩ := p
@@ -176,7 +167,6 @@ theorem replace_of_toSyntacticObject_eq {p r : LinearizedSyntacticObject} {targe
   · rfl
   · exact absurd (congrArg Subtype.val h) hc
 
-/-- Away from the root, replacement recurses into the daughters. -/
 theorem replace_attach {p d r : LinearizedSyntacticObject} {target : SyntacticObject} {e : Edge}
     (h : SyntacticObject.merge d.toSyntacticObject p.toSyntacticObject ≠ target) :
     (p.attach e d).replace target r = (p.replace target r).attach e (d.replace target r) := by
@@ -185,7 +175,6 @@ theorem replace_attach {p d r : LinearizedSyntacticObject} {target : SyntacticOb
   cases e <;> simp only [replace, attach, merge_val, replaceIf_node, List.map_cons,
     List.map_nil] <;> split_ifs with hc <;> first | rfl | exact (h' (Subtype.ext hc)).elim
 
-/-- A leaf other than the target is kept. -/
 theorem replace_of_val_eq_leaf {p r : LinearizedSyntacticObject} {target : SyntacticObject}
     {a : Vertex} (hp : p.val = RoseTree.leaf a) (h : p.toSyntacticObject ≠ target) :
     p.replace target r = p := by
@@ -202,14 +191,11 @@ def SyntacticObject.traceLinearized (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token := selHead) : LinearizedSyntacticObject :=
   (τ s).elim LinearizedSyntacticObject.trace LinearizedSyntacticObject.traceOf
 
-/-- The linearized trace of `s` is the trace leaf of its label. -/
 theorem SyntacticObject.traceLinearized_val (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :
     (s.traceLinearized τ).val = .node (.inr (τ s)) [] := by
   unfold traceLinearized; cases τ s <;> rfl
 
-/-- Raising the occurrence of `m` that `find?` locates, with its occurrences replaced by its trace,
-keeps the pronounced tokens when none is pronounced twice. -/
 theorem LinearizedSyntacticObject.yield_replace_add_yield {p s : LinearizedSyntacticObject}
     {m : SyntacticObject} (τ : SyntacticObject → Option LexicalItem.Token)
     (hp : p.toSyntacticObject.yield.Nodup) (hs : p.find? m = some s) :
@@ -223,7 +209,6 @@ theorem LinearizedSyntacticObject.yield_replace_add_yield {p s : LinearizedSynta
   · rw [SyntacticObject.traceLinearized_val]
     rfl
 
-/-- A lexical leaf or trace has no sisters inside it. -/
 theorem SyntacticObject.not_sisters_of_toLinearizedLeaf? {s x z : SyntacticObject}
     {p : LinearizedSyntacticObject} (hs : s.toLinearizedLeaf? = some p) : ¬ Sisters s x z := by
   rintro ⟨w, hw, hwx, -, -⟩

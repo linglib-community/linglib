@@ -82,8 +82,6 @@ theorem lift_of_eq_toFreeMonoid (x : FreeMagma α) :
     lift FreeMonoid.of x = (toFreeSemigroup x).toFreeMonoid :=
   lift_eq_lift_toFreeSemigroup _ x
 
-/-- A homomorphism from a free magma to a semigroup does not see the bracketing: it takes two
-elements with the same generators in the same order to the same value. -/
 theorem lift_eq_lift_of_lift_of_eq (f : α → β) {x y : FreeMagma α}
     (h : lift FreeMonoid.of x = lift FreeMonoid.of y) : lift f x = lift f y := by
   have : toFreeSemigroup x = toFreeSemigroup y :=

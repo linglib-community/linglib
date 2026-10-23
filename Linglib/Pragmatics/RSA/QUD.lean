@@ -44,8 +44,6 @@ namespace RSA
 variable {W U X G : Type*} [MeasurableSpace W] [MeasurableSpace U] [MeasurableSingletonClass U]
   [MeasurableSpace X] [MeasurableSingletonClass X]
 
-/-- A literal listener's probability of an answer is the prior mass of the states with that
-answer where the utterance is true, over the prior mass of the states where it is true. -/
 theorem listener_truthful_map_apply_singleton [Countable W] [DiscreteMeasurableSpace W]
     [Countable U] (μ : Measure W) (sem : U → Set W) (q : W → X) (u : U) (x : X) :
     (listener μ (truthful sem)).map q u {x} = μ (sem u ∩ q ⁻¹' {x}) / μ (sem u) := by
@@ -54,8 +52,6 @@ theorem listener_truthful_map_apply_singleton [Countable W] [DiscreteMeasurableS
 
 variable [Fintype W] [MeasurableSingletonClass W] [Fintype U] [Fintype X] {α : ℝ}
 
-/-- The speaker who addresses a question produces an utterance exactly when its listener gives
-mass to a state with the same answer as hers. -/
 theorem speaker_map_dirac_apply_singleton_ne_zero_iff (hα : 0 < α) (C : U → ℝ) (L : Kernel U W)
     [IsFiniteKernel L] (q : W → X) (w : W) (u : U) :
     speaker α C (L.map q) Measure.dirac (q w) {u} ≠ 0 ↔ ∃ w', q w' = q w ∧ L u {w'} ≠ 0 := by
@@ -63,9 +59,6 @@ theorem speaker_map_dirac_apply_singleton_ne_zero_iff (hα : 0 < α) (C : U → 
 
 variable [Fintype G] [MeasurableSpace G] [MeasurableSingletonClass G]
 
-/-- The listener who does not know which question the speaker addresses takes a state to be
-possible exactly when it has positive prior and, under some question of positive prior, shares
-its answer with a state the literal listener gives mass. -/
 theorem listener_prod_speaker_map_dirac_fst_apply_singleton_ne_zero_iff (hα : 0 < α)
     (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] (q : G → W → X) (μ : Measure W)
     [IsFiniteMeasure μ] (ν : Measure G) [IsFiniteMeasure ν] (u : U) (w : W) :

@@ -72,8 +72,6 @@ end Determiner.Inventory
 
 namespace Genericity.CovertShift
 
-/-- An index is maximal for a predicate `T`, ordered by implication, among those satisfying `P`
-exactly when it satisfies `T` or none of them does. -/
 private theorem maximalFor_prop_iff {ι : Type*} {P T : ι → Prop} {i : ι} :
     MaximalFor P T i ↔ P i ∧ (T i ∨ ∀ j, P j → ¬ T j) :=
   ⟨fun ⟨hi, h⟩ ↦ ⟨hi, or_iff_not_imp_left.2 fun hT _ hj hTj ↦ hT (h hj (fun _ ↦ hTj) hTj)⟩,
@@ -81,14 +79,12 @@ private theorem maximalFor_prop_iff {ι : Type*} {P T : ι → Prop} {i : ι} :
 
 variable {A : CovertShift → Prop} {τ : CovertShift}
 
-/-- Under Chierchia's ranking an available shift applies when it is ∩ or ∩ is unavailable. -/
 theorem maximalFor_eq_down_iff :
     MaximalFor A (· = .down) τ ↔ A τ ∧ (τ = .down ∨ ¬ A .down) := by
   rw [maximalFor_prop_iff]
   exact and_congr_right fun _ ↦ or_congr_right
     ⟨fun h hd ↦ h _ hd rfl, fun h _ hj hd ↦ h (hd ▸ hj)⟩
 
-/-- Under Dayal's ranking an available shift applies when it is not ∃ or only ∃ is available. -/
 theorem maximalFor_ne_exists_iff :
     MaximalFor A (· ≠ .exists) τ ↔ A τ ∧ (τ ≠ .exists ∨ ∀ σ, A σ → σ = .exists) := by
   simp [maximalFor_prop_iff]
@@ -103,18 +99,14 @@ open Determiner.Inventory
 
 variable {ds : Determiner.Inventory} {down : Prop}
 
-/-- Under Dayal's ranking ∩ applies wherever it is defined, since no determiner blocks it. -/
 @[simp] theorem maximalFor_available_ne_exists_down :
     MaximalFor (ds.Available down) (· ≠ .exists) .down ↔ down := by
   simp [maximalFor_ne_exists_iff, Available, not_blocks_down]
 
-/-- Under Dayal's ranking ι applies wherever it is unblocked, whether or not ∩ is defined. -/
 @[simp] theorem maximalFor_available_ne_exists_iota :
     MaximalFor (ds.Available down) (· ≠ .exists) .iota ↔ ¬ ds.Blocks .iota := by
   simp [maximalFor_ne_exists_iff, Available]
 
-/-- Under Dayal's ranking ∃ is a last resort, applying only where ∩ is undefined and ι and ι^x
-are blocked. -/
 @[simp] theorem maximalFor_available_ne_exists_exists :
     MaximalFor (ds.Available down) (· ≠ .exists) .exists ↔
       ¬ ds.Blocks .exists ∧ ¬ down ∧ ds.Blocks .iota ∧ ds.Blocks .iotaAnaphoric := by
@@ -126,25 +118,18 @@ are blocked. -/
   · exact absurd (h' .iotaAnaphoric ⟨nofun, hx⟩) nofun
   · cases σ <;> simp_all
 
-/-- Under Chierchia's ranking, too, ∩ applies wherever it is defined. -/
 @[simp] theorem maximalFor_available_eq_down_down :
     MaximalFor (ds.Available down) (· = .down) .down ↔ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
 
-/-- Under Chierchia's ranking ι applies only where it is unblocked and ∩ undefined, so kind
-formation pre-empts the definite. -/
 @[simp] theorem maximalFor_available_eq_down_iota :
     MaximalFor (ds.Available down) (· = .down) .iota ↔ ¬ ds.Blocks .iota ∧ ¬ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
 
-/-- Under Chierchia's ranking ∃ applies wherever it is unblocked and ∩ undefined, whether or not
-ι is available. -/
 @[simp] theorem maximalFor_available_eq_down_exists :
     MaximalFor (ds.Available down) (· = .down) .exists ↔ ¬ ds.Blocks .exists ∧ ¬ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
 
-/-- Where the determiners block ι and ι^x, as a definite article used anaphorically does, the two
-rankings select the same shifts. -/
 theorem maximalFor_available_eq_down_iff_ne_exists (hι : ds.Blocks .iota)
     (hx : ds.Blocks .iotaAnaphoric) :
     MaximalFor (ds.Available down) (· = .down) τ ↔

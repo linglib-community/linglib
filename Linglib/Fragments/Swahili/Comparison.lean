@@ -60,10 +60,8 @@ def kuliko : Comparative :=
 /-- The conjoined comparative juxtaposes two clauses with antonymous predicates. -/
 def conjoined : Comparative := { caseAssignment := .derived }
 
-/-- The exceed construction is an exceed comparative. -/
 theorem type_kushinda : kushinda.type = .exceed := rfl
 
-/-- The juxtaposed construction is a conjoined comparative. -/
 theorem type_conjoined : conjoined.type = .conjoined := rfl
 
 end Swahili.Comparison

@@ -161,7 +161,6 @@ noncomputable def afterP (A B : Set (W × T)) : W → SignType :=
   {w | ∃ e, IsLeast {t | (w, t) ∈ B} e}.indicator
     fun w ↦ SignType.ofProp (uniform (· > ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
 
-/-- The uniform *before* is Strawson downward entailing in its temporal clause. -/
 theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
   intro _ _ hB w hq hp
   simp only [beforeP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
@@ -171,7 +170,6 @@ theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
   obtain ⟨-, t, ht, _, he', hlt⟩ := hq
   exact ⟨⟨e, he⟩, t, ht, e, he, hlt.trans_le (he'.2 (hB he.1))⟩
 
-/-- The uniform *after* is Strawson upward entailing in its temporal clause. -/
 theorem isStrawsonUE_after (A : Set (W × T)) : IsStrawsonUE (afterP A) := by
   intro _ _ hB w hp hq
   simp only [afterP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
@@ -383,8 +381,6 @@ def frame : Temporal.TWFrame World ℕ :=
 theorem respectsHistory_finishes : RespectsHistory frame finishes :=
   fun _ _ _ t' ht h ↦ by simpa [finishes] using h (t', false) ht
 
-/-- No fact is dated at time `0`, so up to time `1` every world is a historical alternative to
-every other. -/
 theorem mem_alternatives_of_le_one {t : ℕ} (ht : t ≤ 1) (w v : World) :
     v ∈ frame.alternatives (w, t) := by
   have hd (u : World) : u.death ≠ 0 := by cases u <;> decide
@@ -416,8 +412,6 @@ def alternatives : Alternatives frame finishes where
 /-- The context in which (40) is uttered, one world of each kind. -/
 def context : Set World := {.finish, .early, .idle}
 
-/-- Updating the context with *Mozart died before he finished the Requiem* keeps exactly the
-`early` world. -/
 theorem mozart_update : context ∩ {w | before dies finishes alt w} = {.early} := by
   ext w
   simp only [context, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -441,7 +435,6 @@ theorem mozart_update : context ∩ {w | before dies finishes alt w} = {.early} 
     simp only [alt, le_refl, ite_true, Set.mem_insert_iff, Set.mem_singleton_iff] at hv
     rcases hv with rfl | rfl <;> simp_all [finishes, World.completion]
 
-/-- The updated context is counterfactual, Mozart finishing the Requiem in none of its worlds. -/
 theorem counterfactual_mozart :
     Counterfactual finishes (context ∩ {w | before dies finishes alt w}) := by
   rw [mozart_update]
@@ -459,8 +452,6 @@ def readingOf : String → Option BeforeReading
   | "non-committal" => some .nonCommittal
   | _ => none
 
-/-- Every row reporting a non-veridical reading is a *before* sentence, as the veridicality of
-*after*, `veridical_inter_after`, predicts. -/
 theorem rows_nonVeridical_before :
     ∀ e ∈ Examples.all, ∀ r ∈ (e.feature? "reading" >>= readingOf).toList, r ≠ .veridical →
       e.feature? "connective" = some "before" := by

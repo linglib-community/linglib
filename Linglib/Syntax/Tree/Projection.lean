@@ -70,8 +70,6 @@ abbrev ProjectsAt (t : Tree C W) : TreePath → TreePath → Prop :=
 abbrev AdjoinsAt (t : Tree C W) : TreePath → TreePath → Prop :=
   headDaughterRel (adjunctionIndex t.headIndexAt (IsSegmentAt t))
 
-/-- The head daughter of a node is the daughter it projects from or the host it is a segment
-above. -/
 theorem headDaughterAt_eq_sup (t : Tree C W) : HeadDaughterAt t = ProjectsAt t ⊔ AdjoinsAt t :=
   headDaughterRel_eq_sup _ _
 
@@ -79,8 +77,6 @@ theorem headDaughterAt_eq_sup (t : Tree C W) : HeadDaughterAt t = ProjectsAt t �
 abbrev maximalProjectionsAt (t : Tree C W) : Set TreePath :=
   maximalProjections (ProjectsAt t) (AdjoinsAt t)
 
-/-- On a tree without adjunction the maximal projections are the nodes that are no node's head
-daughter. -/
 theorem maximalProjectionsAt_eq_of_forall_not_isSegmentAt {t : Tree C W}
     (h : ∀ p, ¬ IsSegmentAt t p) :
     maximalProjectionsAt t = {p | IsMaximalProjection (HeadDaughterAt t) p} := by
@@ -98,7 +94,6 @@ abbrev maxCommand (t : Tree C W) : SetRel TreePath TreePath :=
 
 @[simp] theorem headIndex?_terminal (c : C) (w : W) : (terminal c w).headIndex? = none := rfl
 
-/-- The head daughter has its mother's category. -/
 theorem cat_eq_of_headIndex? {t : Tree C W} {i : ℕ} (h : headIndex? t = some i) :
     ∃ d, t.children[i]? = some d ∧ Tree.cat d = t.cat := by
   unfold headIndex? at h
@@ -111,7 +106,6 @@ theorem cat_eq_of_headIndex? {t : Tree C W} {i : ℕ} (h : headIndex? t = some i
     exact ⟨x.1, List.mem_zipIdx_iff_getElem?.mp hz, by simpa using hc⟩
   · cases h
 
-/-- A projection has the category of what it projects from. -/
 theorem cat_eq_of_isProjectionOf {t : Tree C W} {h p : TreePath}
     (hp : IsProjectionOf (HeadDaughterAt t) h p) {s s' : Tree C W}
     (hs : t.subtreeAt p.toList = some s) (hs' : t.subtreeAt h.toList = some s') :
@@ -156,8 +150,6 @@ theorem allHeads_iff : ∀ l : List (Tree C W), allHeads l = true ↔ ∀ x ∈ 
   | [] => by simp [allHeads]
   | t :: ts => by simp [allHeads, allHeads_iff ts]
 
-/-- What a head-level node contains is head-level: a head-level tree with `t` inside has `t`
-head-level. -/
 theorem isHead_of_isHead_replaceAt : ∀ (s : Tree C W) (q : List ℕ) (t : Tree C W),
     (s.subtreeAt q).isSome → isHead (s.replaceAt q t) = true → isHead t = true
   | _, [], t, _, h => by simpa using h

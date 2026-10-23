@@ -95,29 +95,22 @@ def Dependency.Decides (d : Dependency) : Prop :=
 
 variable {s : Site} {d d' : Dependency}
 
-/-- A site that hosts any dependency is a surface anaphor: the success of a test is always
-conclusive. -/
 theorem Site.Hosts.depth_eq_surface (h : s.Hosts d) : s.depth = .surface := h.1
 
-/-- A dependency exposed to fewer confounds is hosted wherever one exposed to more is. -/
 theorem Site.Hosts.mono (h : s.Hosts d) (hle : d'.exposure ⊆ d.exposure) : s.Hosts d' :=
   ⟨h.1, h.2.mono_left hle⟩
 
-/-- Resumption succeeds wherever any dependency does. -/
 theorem Site.Hosts.resumption (h : s.Hosts d) : s.Hosts .resumption :=
   h.mono (Finset.empty_subset _)
 
 theorem Site.hosts_resumption_iff : s.Hosts .resumption ↔ s.depth = .surface := by
   simp [Site.Hosts, Dependency.exposure, Depth.HasInternalStructure]
 
-/-- Whatever confounds a site contains, the outcome of resumption into it fixes its depth. -/
 theorem Site.depth_eq_of_iff_hosts_resumption {p : Prop} [Decidable p]
     (h : p ↔ s.Hosts .resumption) : s.depth = if p then .surface else .deep := by
   rw [Site.hosts_resumption_iff] at h
   cases hd : s.depth <;> simp_all
 
-/-- A dependency decides depth exactly when it is exposed to no confound. Otherwise a deep site
-and a surface site where a confound blocks the dependency both fail it. -/
 theorem Dependency.decides_iff : d.Decides ↔ d.exposure = ∅ := by
   refine ⟨fun h ↦ ?_, fun h a b hab ↦ ?_⟩
   · by_contra hne
@@ -127,14 +120,9 @@ theorem Dependency.decides_iff : d.Decides ↔ d.exposure = ∅ := by
   · rcases a with ⟨_ | _, _⟩ <;> rcases b with ⟨_ | _, _⟩ <;>
       simp_all [Site.Hosts, Depth.HasInternalStructure]
 
-/-- Of the three dependencies, only resumption decides depth: a failed extraction or a failed
-agreement is compatible with a surface site, a failed resumption is not. -/
 theorem Dependency.decides_iff_eq_resumption : d.Decides ↔ d = .resumption := by
   cases d <;> simp [decides_iff, exposure]
 
-/-- The analysis predicts surface sites where ellipsis bleeds extraction but a resumptive pronoun
-is hosted; the paper reports no such case yet. The Hebrew rows show the same split with an island
-in place of timing (`hebrew_extraction_fails`, `eir_matches`). -/
 theorem exists_hosts_resumption_not_movement :
     ∃ s : Site, s.Hosts .resumption ∧ ¬ s.Hosts .movement :=
   ⟨⟨.surface, {.timing}⟩, by decide⟩
@@ -168,25 +156,16 @@ def hebrewData : List Datum :=
 def mixedAnaphorData : List Datum :=
   [Examples.englishDoSo, Examples.dutchDatDoen, Examples.danishDet, Examples.koreanNullObj]
 
-/-- Every row records a depth and whether its domain is an island, so each theorem below speaks
-about all the rows. -/
 theorem site?_isSome : ∀ e ∈ Examples.all, (site? e).isSome := by decide +kernel
 
-/-- The judgments are the predictions of the EIR test: binding a resumptive pronoun inside the
-null site is acceptable exactly when the site hosts the dependency. -/
 theorem eir_matches : ∀ e ∈ Examples.all, ∀ s, site? e = some s →
     (e.judgment = .acceptable ↔ s.Hosts .resumption) := by
   decide +kernel
 
-/-- Every Hebrew domain tested is an island, so extraction fails on every Hebrew row, surface or
-deep, and cannot diagnose ellipsis there. -/
 theorem hebrew_extraction_fails :
     ∀ e ∈ hebrewData, ∀ s, site? e = some s → ¬ s.Hosts .movement := by
   decide +kernel
 
-/-- Hebrew has both a deep anaphor and ellipsis in each of the nP, DP and PP domains: for each
-domain and depth, some row's resumption judgment is accounted for only by a site of that
-depth. -/
 theorem hebrew_domains : ∀ c ∈ [Minimalist.Cat.n, .D, .P], ∀ δ : Depth, ∃ e ∈ hebrewData,
     e.parse? "domain" domains = some c ∧
       ∀ s : Site, (e.judgment = .acceptable ↔ s.Hosts .resumption) → s.depth = δ := by
@@ -196,9 +175,6 @@ theorem hebrew_domains : ∀ c ∈ [Minimalist.Cat.n, .D, .P], ∀ δ : Depth, �
     revert c δ; decide +kernel
   exact ⟨e, he, hd, fun s h ↦ (Site.depth_eq_of_iff_hosts_resumption h).trans hj⟩
 
-/-- The mixed anaphors *do so*, *dat doen*, *det* and the Korean null object are deep: their
-resumption is unacceptable, so any site that accounts for the judgment is deep, whatever
-confounds it contains. -/
 theorem mixed_anaphors_deep : ∀ e ∈ mixedAnaphorData, ∀ s : Site,
     (e.judgment = .acceptable ↔ s.Hosts .resumption) → s.depth = .deep := by
   intro e he s h

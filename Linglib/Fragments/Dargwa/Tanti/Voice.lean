@@ -72,35 +72,26 @@ P-labile verb, and the two causatives. -/
 def alternations : Finset Voice :=
   {.antipassive, .anticausative, causativeOfIntransitive, causativeOfTransitive}
 
-/-- The causative is the only alternation coded on the verb. -/
 theorem isCoded_iff {v : Voice} (hv : v ∈ alternations) :
     v.IsCoded ↔ v = causativeOfIntransitive ∨ v = causativeOfTransitive := by
   simp only [alternations, Finset.mem_insert, Finset.mem_singleton] at hv
   rcases hv with rfl | rfl | rfl | rfl <;> decide
 
-/-- The causee of an intransitive base stays a core term, the P of the derived construction. -/
 theorem causativeOfIntransitive_fateOfRole_S :
     causativeOfIntransitive.fateOfRole .S = .maintained := by decide
 
-/-- The causative of a transitive base introduces the causer as it demotes the causee, so the
-derived construction has the valency of the initial one. -/
 theorem causativeOfTransitive_valency :
     causativeOfTransitive.Nucleativizes ∧
       causativeOfTransitive.fateOfRole .A = .denucleativized ∧
       causativeOfTransitive.derived.valency = causativeOfTransitive.initial.valency := by
   decide
 
-/-- The causee form is an elative without a direction marker, which no spatial elative is. -/
 theorem not_isSpatial_causeeForm : ¬ causeeForm.IsSpatial :=
   LocativeForm.not_isSpatial_elative_none _
 
-/-- The causee *durʜaˁ-li-cːe-r* 'the boy' takes *-cːe-r* after the oblique stem. -/
 theorem causeeForm_morphs (g : Gender.Marker) :
     causeeForm.morphs g = [.suff "cːe", .suff "r"] := rfl
 
-/-- The future forms of a P-labile verb with third-person arguments are told apart by the
-thematic suffix, *-u* for *če-b-alsː-u* '(he) will glue it' and *-ar* for *če-b-alsː-ar* 'it
-will stick'. -/
 theorem labile_future_thematic :
     thematic ⟨.third, .third⟩ = .suff "u" ∧ .suff "ar" ∈ intransitiveThematic .third := by
   decide

@@ -98,8 +98,6 @@ theorem bumperCrop_alternatives :
 
 /-! ### Universal quantifier or sum (§2.2.3) -/
 
-/-- A sum analysis falsifies a disjunctive counterfactual only when every disjunct's
-counterfactual fails. -/
 theorem homogeneity_ne_false [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ C)]
     {A : Finset W} (hA : A ∈ S)
     (h : w ∈ closestImp ord ↑A C) : homogeneousImp ord S C w ≠ -1 :=
@@ -329,7 +327,6 @@ def predicted (row : Datum) : Option Bool :=
     some (decide (.actual ∈ disjunctiveImp budgetSim {defense, education} ↑defense))
   | _, _, _ => none
 
-/-- Every row with a stated verdict that the models cover carries the predicted one. -/
 theorem rows_agree :
     ∀ row ∈ Examples.all, ∀ v, row.feature? "verdict" = some v →
       ∀ b, predicted row = some b → v = if b then "true" else "false" := by

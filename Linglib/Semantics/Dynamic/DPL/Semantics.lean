@@ -82,8 +82,6 @@ open scoped DPL
 @[simp] theorem eval_equal (t₁ t₂ : L.Term V) :
     (t₁ ≐ t₂).eval M = test {g | t₁.realize g = t₂.realize g} := rfl
 
-/-- An existential closure runs its scope from an assignment that differs from the input at most
-on the closed variables. -/
 theorem mem_eval_exs {xs : List V} {g h : V → M} :
     g ~[(exs xs φ).eval M] h ↔ ∃ k, (∀ y ∉ xs, k y = g y) ∧ k ~[φ.eval M] h := by
   induction xs generalizing g with
@@ -104,7 +102,6 @@ theorem mem_eval_exs {xs : List V} {g h : V → M} :
       · rw [Function.update_self]
       · rw [Function.update_of_ne hyx, hk y (by simp [hyx, hy])]
 
-/-- A conjunction of tests is the test of their conditions together. -/
 theorem eval_conjs_map {α : Type*} (t : α → Formula L V) (C : α → Set (V → M)) (as : List α)
     (h : ∀ a ∈ as, (t a).eval M = test (C a)) :
     (conjs (as.map t)).eval M = test {f | ∀ a ∈ as, f ∈ C a} := by
@@ -116,8 +113,6 @@ theorem eval_conjs_map {α : Type*} (t : α → Formula L V) (C : α → Set (V 
     exact congrArg test (Set.ext fun f ↦ by simp)
 
 variable {φ} in
-/-- A formula with no active quantifier variable is a test, since atoms, negations,
-disjunctions, implications and universals are and conjunction preserves it. -/
 theorem isTest_eval (h : φ.aqv = ∅) : IsTest (φ.eval M) := by
   induction φ with
   | top => exact subset_rfl

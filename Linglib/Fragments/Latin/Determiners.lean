@@ -29,7 +29,6 @@ universe u
 /-- *Quisque* is 'each'. -/
 def quisque : IndeterminateQuantifier := ⟨Pronouns.quis, Coordination.que, none⟩
 
-/-- *Quisque* reads as `every`. -/
 theorem denote_quisque : ⟦quisque⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
   rw [← IndeterminateQuantifier.reading_of_conjunctive (q := quisque) rfl]; rfl
 

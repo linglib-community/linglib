@@ -107,7 +107,6 @@ instance [Std.Refl r] : IsLikelihoodMono (LewisLift r) := ⟨fun _ _ h ↦ lewis
 instance [Nonempty α] : IsNontrivial (LewisLift r) :=
   ⟨fun h ↦ Set.univ_nonempty.ne_empty (lewisLift_empty_left_iff.1 h)⟩
 
-/-- The l-lifting is right-union closed, Halpern's axiom `J`. -/
 theorem rightUnion_lewisLift : RightUnion (LewisLift r) :=
   fun _ _ _ h₁ h₂ ↦ Set.union_subset h₁ h₂
 
@@ -116,8 +115,6 @@ theorem determinedBySingletons_lewisLift : DeterminedBySingletons (LewisLift r) 
     let ⟨a, ha, hab⟩ := hAb rfl
     ⟨a, ha, lewisLift_singleton_iff.2 ⟨a, rfl, hab⟩⟩
 
-/-- Over a **total** relation, the strict l-lifting collapses to Lewis's ∃∀ comparative
-possibility: some `A`-world strictly dominates every `B`-world. -/
 theorem strict_lewisLift_iff (hTotal : ∀ a b, r a b ∨ r b a) (A B : Set α) :
     Strict (LewisLift r) A B ↔ ∃ a ∈ A, ∀ b ∈ B, r a b ∧ ¬ r b a := by
   constructor
@@ -194,14 +191,12 @@ section Compl
 
 variable {f : α → α}
 
-/-- After at least one step inside `A`, an `f`-chain lies in `B`. -/
 private theorem iterate_mem_of_ne_zero (hfB : Set.MapsTo f A B) {p : α} {n : ℕ} (hn : n ≠ 0)
     (hA : ∀ m < n, f^[m] p ∈ A) : f^[n] p ∈ B := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn
   rw [Function.iterate_succ_apply']
   exact hfB (hA m m.lt_succ_self)
 
-/-- Two chains that stay in `A` for `n` steps and meet after `n` steps share their origin. -/
 private theorem eq_of_iterate_eq (hinj : Set.InjOn f A) {x y : α} {n : ℕ}
     (hx : ∀ m < n, f^[m] x ∈ A) (hy : ∀ m < n, f^[m] y ∈ A) (h : f^[n] x = f^[n] y) : x = y := by
   induction n with
@@ -211,8 +206,6 @@ private theorem eq_of_iterate_eq (hinj : Set.InjOn f A) {x y : α} {n : ℕ}
     exact ih (fun m hm ↦ hx m (by omega)) (fun m hm ↦ hy m (by omega))
       (hinj (hx n (by omega)) (hy n (by omega)) h)
 
-/-- A chain from outside `B` cannot stay in `A` forever: over a finite type it would repeat,
-and peeling the common prefix would put its origin in `B`. -/
 private theorem exists_iterate_notMem [Finite α] (hfB : Set.MapsTo f A B) (hinj : Set.InjOn f A)
     {p : α} (hp : p ∉ B) : ∃ n, f^[n] p ∉ A := by
   by_contra h
@@ -228,7 +221,6 @@ private theorem exists_iterate_notMem [Finite α] (hfB : Set.MapsTo f A B) (hinj
   rw [← hpd] at this
   exact hp this
 
-/-- Chains from two origins outside `B` that stay in `A` and meet share their origin. -/
 private theorem chain_origin_eq (hfB : Set.MapsTo f A B) (hinj : Set.InjOn f A) {p₁ p₂ : α}
     {k₁ k₂ : ℕ} (hp₁ : p₁ ∉ B) (hp₂ : p₂ ∉ B) (hk₁ : ∀ m < k₁, f^[m] p₁ ∈ A)
     (hk₂ : ∀ m < k₂, f^[m] p₂ ∈ A) (h : f^[k₁] p₁ = f^[k₂] p₂) : p₁ = p₂ := by
@@ -244,7 +236,6 @@ private theorem chain_origin_eq (hfB : Set.MapsTo f A B) (hinj : Set.InjOn f A) 
     rw [← hpd] at this
     exact absurd this hp₁
 
-/-- Along a chain inside `A` the dominating injection only moves up. -/
 private theorem chain_dominance [IsPreorder α r] (hfr : ∀ a ∈ A, r (f a) a) {p : α} {n : ℕ}
     (hA : ∀ m < n, f^[m] p ∈ A) : r (f^[n] p) p := by
   induction n with
@@ -253,8 +244,6 @@ private theorem chain_dominance [IsPreorder α r] (hfr : ∀ a ∈ A, r (f a) a)
     rw [Function.iterate_succ_apply']
     exact _root_.trans (hfr _ (hA n n.lt_succ_self)) (ih fun m hm ↦ hA m (by omega))
 
-/-- A dominating matching `A ↪ B` yields one `Bᶜ ↪ Aᶜ`, which sends each point of `A \ B` to
-the first point outside `A` on its `f`-chain and fixes `Aᶜ ∩ Bᶜ`. -/
 theorem MatchingLift.compl [Finite α] [IsPreorder α r] (h : MatchingLift r B A) :
     MatchingLift r Aᶜ Bᶜ := by
   classical
@@ -291,7 +280,6 @@ section Representation
 
 variable {W : Type*} [Fintype W] {ge : Set W → Set W → Prop}
 
-/-- If `ge A {b}` for every `b ∈ B` then `ge A B`, given monotonicity and right-union. -/
 private lemma ge_of_forall_singleton (hT : ∀ A B : Set W, A ⊆ B → ge B A) (hJ : RightUnion ge)
     (A B : Set W) (h : ∀ b ∈ B, ge A {b}) : ge A B := by
   classical
@@ -330,9 +318,6 @@ theorem exists_lewisLift_repr (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     have hAa : ge A {a} := hMono {a} A (Set.singleton_subset_iff.mpr haA)
     exact hTran A {a} {b} hAa hab
 
-/-- A monotone, transitive comparison relation is the l-lifting of a reflexive world relation
-**iff** it satisfies right-union and determination by singletons, the model-theoretic form of
-soundness and completeness for WJR. -/
 theorem lewisLift_repr_iff (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     (hTran : ∀ A B C : Set W, ge A B → ge B C → ge A C) :
     (∃ ge_w : W → W → Prop, (∀ w, ge_w w w) ∧ ∀ A B, ge A B ↔ LewisLift ge_w A B) ↔
@@ -361,7 +346,6 @@ theorem kratzerLift_iff : KratzerLift r A B ↔ ∀ b ∈ B \ A, ∃ a ∈ A \ B
   simp only [KratzerLift, not_exists, not_and, not_forall]
   exact forall₂_congr fun _ _ ↦ by simp
 
-/-- A proposition is at least as likely as the whole space only when it is the whole space. -/
 theorem kratzerLift_univ_iff' (r : α → α → Prop) (A : Set α) :
     KratzerLift r A Set.univ ↔ A = Set.univ := by
   rw [kratzerLift_iff]
@@ -374,8 +358,6 @@ theorem kratzerLift_univ_iff' (r : α → α → Prop) (A : Set α) :
   · rintro rfl b hb
     exact absurd hb.1 hb.2
 
-/-- When `A` is disjoint from both alternatives the revised lift is right-union closed, so the
-disjunction puzzle survives it. -/
 theorem kratzerLift_rightUnion_of_disjoint (r : α → α → Prop) {A B C : Set α}
     (hB : Disjoint A B) (hC : Disjoint A C) (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) :
     KratzerLift r A (B ∪ C) := by
@@ -385,7 +367,6 @@ theorem kratzerLift_rightUnion_of_disjoint (r : α → α → Prop) {A B C : Set
   · exact hAC ⟨b, ⟨hb, hbA⟩, fun a ha ↦
       hall a ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
 
-/-- Right-union closure extends to finite unions. -/
 theorem RightUnion.biUnion {r : Set α → Set α → Prop} (hJ : RightUnion r) {ι : Type*}
     {s : Finset ι} (hs : s.Nonempty) {A : Set α} {B : ι → Set α} (h : ∀ i ∈ s, r A (B i)) :
     r A (⋃ i ∈ s, B i) := by

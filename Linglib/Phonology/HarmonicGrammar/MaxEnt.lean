@@ -98,8 +98,6 @@ distribution. -/
 noncomputable def logPartition : ℝ :=
   log (∑ c, exp (harmony T w c))
 
-/-- The log-partition function is convex in the weights, a log-sum-exp of harmonies linear in
-them. -/
 theorem convexOn_logPartition [Nonempty C] : ConvexOn ℝ Set.univ (logPartition T) := by
   refine ⟨convex_univ, fun x _ y _ a b ha hb hab ↦ ?_⟩
   have := convexOn_log_sum_exp.2 (Set.mem_univ (harmony T x)) (Set.mem_univ (harmony T y))
@@ -115,7 +113,6 @@ candidate by the exponential of its harmony. -/
 noncomputable def maxEnt (T : C → ι → ℝ) (w : ι → ℝ) : Measure C :=
   Measure.count.tilted (harmony T w)
 
-/-- A MaxEnt distribution depends on the violations and weights only through the harmonies. -/
 theorem maxEnt_congr {ι' : Type*} [Fintype ι'] {T : C → ι → ℝ} {w : ι → ℝ} {T' : C → ι' → ℝ}
     {w' : ι' → ℝ} (h : harmony T w = harmony T' w') : maxEnt T w = maxEnt T' w' := by
   simp only [maxEnt, h]
@@ -125,7 +122,6 @@ log-probability of the candidates drawn from `p`. -/
 noncomputable def logLikelihood (T : C → ι → ℝ) (p : Measure C) (w : ι → ℝ) : ℝ :=
   ∫ c, log ((maxEnt T w).real {c}) ∂p
 
-/-- The log-likelihood of a single observation is its log-probability. -/
 @[simp] theorem logLikelihood_dirac [MeasurableSingletonClass C] (T : C → ι → ℝ) (w : ι → ℝ)
     (c : C) : logLikelihood T (Measure.dirac c) w = log ((maxEnt T w).real {c}) := by
   simp [logLikelihood]
@@ -138,7 +134,6 @@ instance : IsZeroOrProbabilityMeasure (maxEnt T w) := by
 instance [Nonempty C] : IsProbabilityMeasure (maxEnt T w) :=
   isProbabilityMeasure_tilted .of_finite
 
-/-- On finitely many candidates the expected violation vector is a weighted sum. -/
 theorem integral_eq_sum (q : Measure C) [IsFiniteMeasure q] :
     ∫ c, T c ∂q = ∑ c, q.real {c} • T c :=
   integral_fintype .of_finite
@@ -157,8 +152,6 @@ theorem maxEnt_real_singleton_pos (c : C) : 0 < (maxEnt T w).real {c} := by
   rw [maxEnt_real_singleton]
   exact softmax_pos _ c
 
-/-- Every candidate has positive probability, so every distribution of the candidates is
-absolutely continuous with respect to the MaxEnt distribution. -/
 theorem absolutelyContinuous_maxEnt (q : Measure C) : q ≪ maxEnt T w := by
   refine Measure.AbsolutelyContinuous.mk fun s _ hs ↦ ?_
   rcases s.eq_empty_or_nonempty with rfl | ⟨c, hc⟩
@@ -166,14 +159,11 @@ theorem absolutelyContinuous_maxEnt (q : Measure C) : q ≪ maxEnt T w := by
   · exact absurd (measure_mono_null (Set.singleton_subset_iff.2 hc) hs) fun h0 ↦
       (maxEnt_real_singleton_pos T w c).ne' (by simp [measureReal_def, h0])
 
-/-- Harmony is log-probability up to the log of the normalizing constant. -/
 theorem log_maxEnt_real_singleton (c : C) :
     log ((maxEnt T w).real {c}) = harmony T w c - logPartition T w := by
   have : Nonempty C := ⟨c⟩
   rw [maxEnt_real_singleton, log_softmax, logPartition]
 
-/-- The log-odds of two candidates are their harmony difference, `-(w ⬝ᵥ (T a - T b))`, linear
-in the weights. -/
 theorem log_maxEnt_real_singleton_div (a b : C) :
     log ((maxEnt T w).real {a} / (maxEnt T w).real {b}) = harmony T w a - harmony T w b := by
   have : Nonempty C := ⟨a⟩
@@ -189,14 +179,11 @@ theorem maxEnt_real_singleton_le_iff {a b : C} :
   have : Nonempty C := ⟨a⟩
   rw [maxEnt_real_singleton, maxEnt_real_singleton, softmax_le_softmax_iff]
 
-/-- Of exactly two candidates, one has the sigmoid of its harmony advantage over the other. -/
 theorem maxEnt_real_singleton_of_pair [DecidableEq C] {a b : C} (hab : a ≠ b)
     (h : (univ : Finset C) = {a, b}) :
     (maxEnt T w).real {a} = sigmoid (harmony T w a - harmony T w b) := by
   rw [maxEnt_real_singleton, softmax_eq_sigmoid_of_univ_eq_pair hab h]
 
-/-- Scaling the weights scales the harmonies, so the MaxEnt distribution concentrates on the sole
-candidate of greatest harmony. -/
 theorem tendsto_maxEnt_smul_atTop {c : C} (h : univ.argmax (harmony T w) = {c}) :
     Tendsto (fun α : ℝ ↦ (maxEnt T (α • w)).real {c}) atTop (𝓝 1) := by
   simpa [maxEnt_real_singleton, harmony_smul] using tendsto_softmax_atTop fun c' hc' ↦
@@ -204,8 +191,6 @@ theorem tendsto_maxEnt_smul_atTop {c : C} (h : univ.argmax (harmony T w) = {c}) 
 
 /-! ### Expected log-probability -/
 
-/-- The expected log-probability of the candidates under a distribution `q` depends on `q` only
-through its expected violations. -/
 theorem integral_log_maxEnt_real_singleton (q : Measure C) [IsProbabilityMeasure q] :
     ∫ c, log ((maxEnt T w).real {c}) ∂q =
       -(w ⬝ᵥ ∫ c, T c ∂q) - logPartition T w := by
@@ -224,8 +209,6 @@ variable [Nonempty C]
 
 /-! ### The maximum entropy principle -/
 
-/-- The divergence of `q` from the MaxEnt distribution and the entropy of `q` add up to the
-expected penalty `w ⬝ᵥ ∫ c, T c ∂q` plus the log of the normalizing constant. -/
 theorem toReal_klDiv_maxEnt_add_measureEntropy (q : Measure C) [IsProbabilityMeasure q] :
     (klDiv q (maxEnt T w)).toReal + Hm[q] =
       w ⬝ᵥ (∫ c, T c ∂q) + logPartition T w := by
@@ -239,22 +222,16 @@ theorem measureEntropy_maxEnt :
     Hm[maxEnt T w] = w ⬝ᵥ (∫ c, T c ∂maxEnt T w) + logPartition T w := by
   simpa using toReal_klDiv_maxEnt_add_measureEntropy T w (maxEnt T w)
 
-/-- A distribution with the expected violations of a MaxEnt distribution falls short of its
-entropy by its divergence from it. -/
 theorem measureEntropy_add_toReal_klDiv_maxEnt {q : Measure C} [IsProbabilityMeasure q]
     (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) :
     Hm[q] + (klDiv q (maxEnt T w)).toReal = Hm[maxEnt T w] := by
   rw [measureEntropy_maxEnt, ← hq, ← toReal_klDiv_maxEnt_add_measureEntropy, add_comm]
 
-/-- The maximum entropy principle. No distribution with the expected violations of a MaxEnt
-distribution has more entropy. -/
 theorem measureEntropy_le_maxEnt {q : Measure C} [IsProbabilityMeasure q]
     (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) : Hm[q] ≤ Hm[maxEnt T w] := by
   rw [← measureEntropy_add_toReal_klDiv_maxEnt T w hq]
   exact le_add_of_nonneg_right ENNReal.toReal_nonneg
 
-/-- The MaxEnt distribution is the only distribution with its expected violations and its
-entropy. -/
 theorem eq_maxEnt_of_measureEntropy_eq {q : Measure C} [IsProbabilityMeasure q]
     (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) (h : Hm[q] = Hm[maxEnt T w]) :
     q = maxEnt T w := by
@@ -263,8 +240,6 @@ theorem eq_maxEnt_of_measureEntropy_eq {q : Measure C} [IsProbabilityMeasure q]
   exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hkl).resolve_right
     (klDiv_ne_top (absolutelyContinuous_maxEnt T w q) .of_finite))
 
-/-- The MaxEnt distribution has the greatest entropy among the distributions with its expected
-violations. -/
 theorem isGreatest_measureEntropy_maxEnt :
     IsGreatest (measureEntropy '' {q | IsProbabilityMeasure q ∧
       ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w}) (Hm[maxEnt T w]) :=
@@ -274,7 +249,6 @@ theorem isGreatest_measureEntropy_maxEnt :
 
 /-! ### Learning -/
 
-/-- The gradient of the log-partition function is minus the expected violation vector. -/
 theorem hasFDerivAt_logPartition :
     HasFDerivAt (logPartition T)
       (-LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ (∫ c, T c ∂maxEnt T w))) w := by
@@ -289,15 +263,12 @@ theorem hasFDerivAt_logPartition :
     LinearMap.coe_toContinuousLinearMap', dotProductBilin, LinearMap.coe_mk, AddHom.coe_mk,
     integral_eq_sum, maxEnt_real_singleton, sum_dotProduct, smul_dotProduct, smul_eq_mul]
 
-/-- The log-likelihood is concave in the weights: it is linear in them less the log-partition
-function. -/
 theorem concaveOn_logLikelihood : ConcaveOn ℝ Set.univ (logLikelihood T p) := by
   have hlin : ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ ∫ c, T c ∂p) :=
     (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip (∫ c, T c ∂p))) convex_univ).congr
       fun w _ ↦ by simp
   exact (hlin.sub (convexOn_logPartition T)).congr fun w _ ↦ (logLikelihood_eq T w p).symm
 
-/-- The gradient of the log-likelihood is the expected less the observed violation vector. -/
 theorem hasFDerivAt_logLikelihood :
     HasFDerivAt (logLikelihood T p)
       (LinearMap.toContinuousLinearMap
@@ -314,8 +285,6 @@ theorem hasFDerivAt_logLikelihood :
     LinearMap.coe_mk, AddHom.coe_mk, sub_dotProduct]
   ring
 
-/-- The partial derivative of the log-likelihood in the weight of constraint `j` is that
-constraint's expected violations less its observed ones. -/
 theorem hasDerivAt_logLikelihood_update [DecidableEq ι] (j : ι) :
     HasDerivAt (fun t ↦ logLikelihood T p (Function.update w j t))
       ((∫ c, T c ∂maxEnt T w) j - (∫ c, T c ∂p) j) (w j) := by
@@ -323,8 +292,6 @@ theorem hasDerivAt_logLikelihood_update [DecidableEq ι] (j : ι) :
     (hasDerivAt_update w j (w j)) (Function.update_eq_self j w).symm
   exact this.congr_deriv (by simp [dotProductBilin, dotProduct_single])
 
-/-- Weights maximize the log-likelihood exactly when their MaxEnt distribution has the observed
-expected violations. -/
 theorem isMaxOn_logLikelihood_iff :
     IsMaxOn (logLikelihood T p) Set.univ w ↔ ∫ c, T c ∂maxEnt T w = ∫ c, T c ∂p := by
   classical
@@ -341,8 +308,6 @@ theorem isMaxOn_logLikelihood_iff :
     rw [logLikelihood_eq, logLikelihood_eq, ← h]
     linarith [ENNReal.toReal_nonneg (a := klDiv (maxEnt T w) (maxEnt T w'))]
 
-/-- The most likely MaxEnt grammar of an empirical distribution gives the maximum-entropy
-distribution among those with the observed expected violations. -/
 theorem isGreatest_measureEntropy_of_isMaxOn (h : IsMaxOn (logLikelihood T p) Set.univ w) :
     IsGreatest (measureEntropy '' {q | IsProbabilityMeasure q ∧
       ∫ c, T c ∂q = ∫ c, T c ∂p}) (Hm[maxEnt T w]) := by
@@ -355,9 +320,6 @@ section Joint
 variable {κ O : Type*} [Fintype κ] [DecidableEq κ] [Fintype O] [MeasurableSpace O]
   [MeasurableSingletonClass O] [Nonempty O] (T : κ → O → ι → ℝ)
 
-/-- When the violations of an output tuple add up its coordinates' violations, the MaxEnt
-distribution of the tuples is the product of the coordinates' MaxEnt distributions, so the
-coordinates are independent. -/
 theorem maxEnt_sum :
     maxEnt (fun f : κ → O ↦ ∑ k, T k (f k)) w = Measure.pi fun k ↦ maxEnt (T k) w := by
   refine Measure.ext_iff_singleton.2 fun f ↦ ?_
@@ -365,8 +327,6 @@ theorem maxEnt_sum :
   rw [← ENNReal.ofReal_prod_of_nonneg fun k _ ↦ softmax_nonneg _ _, funext (harmony_sum T w),
     softmax_sum_apply (fun k ↦ harmony (T k) w) f]
 
-/-- The marginal of such a distribution at a coordinate is that coordinate's MaxEnt
-distribution. -/
 theorem map_eval_maxEnt_sum (k : κ) :
     (maxEnt (fun f : κ → O ↦ ∑ k, T k (f k)) w).map (Function.eval k) = maxEnt (T k) w := by
   simp [maxEnt_sum, Measure.pi_map_eval]
@@ -411,9 +371,6 @@ instance : IsMarkovKernel (condMaxEnt T w) :=
 
 variable (ν : Measure X) [IsProbabilityMeasure ν]
 
-/-- Averaged over inputs drawn from `ν`, the divergence of a conditional model `q` from the
-conditional MaxEnt grammar and the conditional entropy of `q` add up to the expected penalty
-plus the average log-partition function. -/
 theorem sum_toReal_klDiv_condMaxEnt_add_condEntropy (q : Kernel X Y) [IsMarkovKernel q] :
     ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal + H[Prod.snd | Prod.fst ; ν ⊗ₘ q] =
       w ⬝ᵥ (∫ z, T z ∂(ν ⊗ₘ q)) + ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by
@@ -423,24 +380,18 @@ theorem sum_toReal_klDiv_condMaxEnt_add_condEntropy (q : Kernel X Y) [IsMarkovKe
   rw [dotProduct_smul, smul_eq_mul, ← mul_add, ← mul_add, condMaxEnt_apply,
     toReal_klDiv_maxEnt_add_measureEntropy]
 
-/-- The conditional entropy of the conditional MaxEnt grammar. -/
 theorem condEntropy_condMaxEnt :
     H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] =
       w ⬝ᵥ (∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) +
         ∑ x, ν.real {x} * logPartition (fun y ↦ T (x, y)) w := by
   simpa using sum_toReal_klDiv_condMaxEnt_add_condEntropy T w ν (condMaxEnt T w)
 
-/-- A conditional model with the expected violations of a conditional MaxEnt grammar falls short
-of its conditional entropy by its average divergence from it. -/
 theorem condEntropy_add_sum_toReal_klDiv {q : Kernel X Y} [IsMarkovKernel q]
     (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) :
     H[Prod.snd | Prod.fst ; ν ⊗ₘ q] + ∑ x, ν.real {x} * (klDiv (q x) (condMaxEnt T w x)).toReal =
       H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] := by
   rw [condEntropy_condMaxEnt, ← hq, ← sum_toReal_klDiv_condMaxEnt_add_condEntropy, add_comm]
 
-/-- The conditional maximum entropy principle. No conditional model whose expected violations,
-averaged over the inputs, are those of a conditional MaxEnt grammar has more conditional
-entropy. -/
 theorem condEntropy_le_condMaxEnt {q : Kernel X Y} [IsMarkovKernel q]
     (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)) :
     H[Prod.snd | Prod.fst ; ν ⊗ₘ q] ≤ H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w] := by
@@ -448,8 +399,6 @@ theorem condEntropy_le_condMaxEnt {q : Kernel X Y} [IsMarkovKernel q]
   exact le_add_of_nonneg_right <| sum_nonneg fun x _ ↦
     mul_nonneg measureReal_nonneg ENNReal.toReal_nonneg
 
-/-- A conditional model with those expected violations and that conditional entropy is the
-conditional MaxEnt grammar at every input of positive mass. -/
 theorem eq_condMaxEnt_of_condEntropy_eq {q : Kernel X Y} [IsMarkovKernel q]
     (hq : ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w))
     (h : H[Prod.snd | Prod.fst ; ν ⊗ₘ q] = H[Prod.snd | Prod.fst ; ν ⊗ₘ condMaxEnt T w]) {x : X}
@@ -463,8 +412,6 @@ theorem eq_condMaxEnt_of_condEntropy_eq {q : Kernel X Y} [IsMarkovKernel q]
   exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hx').resolve_right
     (klDiv_ne_top (absolutelyContinuous_maxEnt _ w (q x)) .of_finite))
 
-/-- The conditional MaxEnt grammar has the greatest conditional entropy among the conditional
-models with its average expected violations. -/
 theorem isGreatest_condEntropy_condMaxEnt :
     IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; ν ⊗ₘ q]) ''
       {q | IsMarkovKernel q ∧ ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)})
@@ -474,7 +421,6 @@ theorem isGreatest_condEntropy_condMaxEnt :
     exact condEntropy_le_condMaxEnt T w ν hv⟩
 
 
-/-- The conditional log-likelihood is concave in the weights. -/
 theorem concaveOn_condLogLikelihood : ConcaveOn ℝ Set.univ (condLogLikelihood T p) := by
   have hlin : ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ ∫ z, T z ∂p) :=
     (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip (∫ z, T z ∂p))) convex_univ).congr
@@ -492,8 +438,6 @@ theorem concaveOn_condLogLikelihood : ConcaveOn ℝ Set.univ (condLogLikelihood 
       _ = _ := by ring
   exact (hlin.sub hZ).congr fun w _ ↦ (condLogLikelihood_eq T w p).symm
 
-/-- The gradient of the conditional log-likelihood is the expected less the observed violation
-vector, the expectation taken over the observed inputs. -/
 theorem hasFDerivAt_condLogLikelihood :
     HasFDerivAt (condLogLikelihood T p)
       (LinearMap.toContinuousLinearMap (dotProductBilin ℝ ℝ
@@ -514,8 +458,6 @@ theorem hasFDerivAt_condLogLikelihood :
     smul_dotProduct, mul_neg, sum_neg_distrib]
   ring
 
-/-- Weights maximize the conditional log-likelihood exactly when the expected violations of their
-grammar, over the observed inputs, are the observed ones. -/
 theorem isMaxOn_condLogLikelihood_iff :
     IsMaxOn (condLogLikelihood T p) Set.univ w ↔
       ∫ z, T z ∂(p.fst ⊗ₘ condMaxEnt T w) = ∫ z, T z ∂p := by
@@ -536,16 +478,12 @@ theorem isMaxOn_condLogLikelihood_iff :
     rw [condLogLikelihood_eq, condLogLikelihood_eq, ← h]
     linarith
 
-/-- At weights matching the observed violations the conditional log-likelihood is minus the
-conditional entropy of the grammar, the common value of the two dual problems. -/
 theorem condLogLikelihood_eq_neg_condEntropy
     (h : ∫ z, T z ∂(p.fst ⊗ₘ condMaxEnt T w) = ∫ z, T z ∂p) :
     condLogLikelihood T p w = -H[Prod.snd | Prod.fst ; p.fst ⊗ₘ condMaxEnt T w] := by
   rw [condLogLikelihood_eq, condEntropy_condMaxEnt, h]
   ring
 
-/-- The most likely conditional MaxEnt grammar of an empirical distribution has the greatest
-conditional entropy among the conditional models with the observed expected violations. -/
 theorem isGreatest_condEntropy_of_isMaxOn (h : IsMaxOn (condLogLikelihood T p) Set.univ w) :
     IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q]) ''
       {q | IsMarkovKernel q ∧ ∫ z, T z ∂(p.fst ⊗ₘ q) = ∫ z, T z ∂p})

@@ -56,28 +56,21 @@ def Meets : Threshold → ℕ → ℕ → Prop
 instance (t : Threshold) (k n : ℕ) : Decidable (Meets t k n) := by
   unfold Meets; cases t <;> infer_instance
 
-/-- All is most, when there are neighbors. -/
 theorem meets_most_of_universal {k n : ℕ} (hn : 0 < n) (h : Meets .universal k n) :
     Meets .most k n := by
   simp only [Meets] at h ⊢; omega
 
-/-- Most is at least one. -/
 theorem meets_existential_of_most {k n : ℕ} (h : Meets .most k n) : Meets .existential k n := by
   simp only [Meets] at h ⊢; omega
 
-/-- Bennett's counterexample: surpassing exactly one of several neighbors, as Albert's passing
-surpasses Marie's, meets the existential threshold but not the majority. -/
 theorem not_meets_most_of_one {n : ℕ} (hn : 2 ≤ n) :
     Meets .existential 1 n ∧ ¬ Meets .most 1 n := by
   simp only [Meets]; omega
 
-/-- The failing scenario: surpassing all but one neighbor, everyone but Marie, meets the majority
-but not the universal threshold. -/
 theorem meets_most_of_all_but_one {n : ℕ} (hn : 3 ≤ n) :
     Meets .most (n - 1) n ∧ ¬ Meets .universal (n - 1) n := by
   simp only [Meets]; omega
 
-/-- Exactly half is not most: Andre barely in the taller half. -/
 theorem not_meets_most_of_half {k : ℕ} : ¬ Meets .most k (2 * k) := by
   simp only [Meets]; omega
 
@@ -96,19 +89,16 @@ def Felicitous (t : Threshold) : Prop :=
 theorem surpassed_le : surpassed prejacent neighbors moreSurprising ≤ neighbors.length :=
   List.countP_le_length
 
-/-- The existential threshold is Bennett's condition. -/
 theorem felicitous_existential_iff :
     Felicitous prejacent neighbors moreSurprising .existential ↔
       ∃ a ∈ neighbors, moreSurprising prejacent a := by
   simp [Felicitous, Meets, surpassed, List.countP_pos_iff]
 
-/-- The universal threshold is Karttunen and Peters' condition. -/
 theorem felicitous_universal_iff :
     Felicitous prejacent neighbors moreSurprising .universal ↔
       ∀ a ∈ neighbors, moreSurprising prejacent a := by
   simp [Felicitous, Meets, surpassed, List.countP_eq_length]
 
-/-- The universal threshold is the scalar presupposition of *even*. -/
 theorem evenPresup_iff_universal {W α : Type*} [PartialOrder α]
     [DecidableRel (α := α) (· < ·)] (μ : Set W → α) (p : Set W) (alts : List (Set W)) :
     evenPresup μ p {q | q ∈ alts} ↔ Felicitous p alts (μ · < μ ·) .universal :=
@@ -134,16 +124,13 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The majority threshold fits every scenario. -/
 theorem rows_most : ∀ r ∈ rows, (r.felicitous = true ↔ Meets .most r.surpassed r.neighbors) := by
   decide
 
-/-- Bennett's threshold does not: it licenses *Even Albert passed the exam*. -/
 theorem rows_not_existential :
     ¬ ∀ r ∈ rows, (r.felicitous = true ↔ Meets .existential r.surpassed r.neighbors) := by
   decide
 
-/-- Karttunen and Peters' threshold does not: it blocks *Even Albert failed the exam*. -/
 theorem rows_not_universal :
     ¬ ∀ r ∈ rows, (r.felicitous = true ↔ Meets .universal r.surpassed r.neighbors) := by
   decide

@@ -137,7 +137,6 @@ def weightedLoss : ℝ :=
 theorem weightedLoss_nonneg : 0 ≤ weightedLoss data q G :=
   Finset.sum_nonneg fun i _ ↦ mul_nonneg (q i).2 (Finset.sum_nonneg fun _ _ ↦ mul_self_nonneg _)
 
-/-- Under positive weights the loss vanishes exactly on interpolating maps. -/
 theorem weightedLoss_eq_zero_iff (hq : ∀ i, 0 < q i) :
     weightedLoss data q G = 0 ↔ data.S * G = data.C := by
   constructor
@@ -163,18 +162,15 @@ theorem weightedLoss_smul (c : ℝ≥0) :
     weightedLoss data (c • q) G = c * weightedLoss data q G := by
   simp [weightedLoss, Finset.mul_sum, mul_assoc]
 
-/-- A mapping matrix that solves `SG = C` exactly is trained under any weights. -/
 theorem isTrained_of_mul_eq (h : data.S * G = data.C) : IsTrained data q G :=
   isMinOn_univ_iff.2 fun G' ↦ by
     simpa [weightedLoss, h, dotProduct] using weightedLoss_nonneg data q G'
 
-/-- Only relative frequencies matter. -/
 theorem isTrained_smul_iff {c : ℝ≥0} (hc : 0 < c) :
     IsTrained data (c • q) G ↔ IsTrained data q G := by
   simp only [IsTrained, isMinOn_univ_iff, weightedLoss_smul,
     mul_le_mul_iff_right₀ (NNReal.coe_pos.2 hc)]
 
-/-- The uniform-weight loss on the `√Q`-premultiplied experience is the `q`-weighted loss. -/
 theorem weightedLoss_sqrtScale :
     weightedLoss (data.sqrtScale q) 1 G = weightedLoss data q G := by
   unfold weightedLoss
@@ -187,8 +183,6 @@ theorem weightedLoss_sqrtScale :
   rw [hrow, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul]
   simp [← mul_assoc, Real.mul_self_sqrt (q i).coe_nonneg]
 
-/-- FIL under `q` is exactly EL on the `√Q`-premultiplied experience, which is the FIL–EL
-equivalence of [heitmeier-2024] without any invertibility assumption. -/
 theorem isELTrained_sqrtScale_iff : IsELTrained (data.sqrtScale q) G ↔ IsTrained data q G := by
   have h : weightedLoss (data.sqrtScale q) 1 = weightedLoss data q :=
     funext fun G ↦ weightedLoss_sqrtScale data q G
@@ -199,7 +193,6 @@ theorem isELTrained_sqrtScale_iff : IsELTrained (data.sqrtScale q) G ↔ IsTrain
 The loss separates over form coordinates, so column `j` of `G` is a least-squares solution of
 the `√Q`-scaled regression of column `j` of `C` on `S`, a vector problem in Euclidean space. -/
 
-/-- The weighted loss is the sum over form coordinates of the columns' squared residuals. -/
 theorem weightedLoss_eq_sum_norm_sq :
     weightedLoss data q G = ∑ j, ‖WithLp.toLp 2 ((q.sqrtQ * data.C).col j) -
       toEuclideanLin (q.sqrtQ * data.S) (WithLp.toLp 2 (G.col j))‖ ^ 2 := by
@@ -214,7 +207,6 @@ theorem weightedLoss_eq_sum_norm_sq :
   rw [Matrix.sub_apply]
   linear_combination -(data.C i j - (data.S * G) i j) ^ 2 * Real.mul_self_sqrt (q i).coe_nonneg
 
-/-- Minimising a separable finite sum over a product is minimising each term. -/
 private theorem sum_min_iff {ι : Type*} [Fintype ι] [DecidableEq ι] {β : ι → Type*}
     (g : ∀ i, β i → ℝ) (x : ∀ i, β i) :
     (∀ y : ∀ i, β i, ∑ i, g i (x i) ≤ ∑ i, g i (y i)) ↔ ∀ i, ∀ b : β i, g i (x i) ≤ g i b := by
@@ -225,8 +217,6 @@ private theorem sum_min_iff {ι : Type*} [Fintype ι] [DecidableEq ι] {β : ι 
     ← Finset.add_sum_erase Finset.univ _ (Finset.mem_univ i), Finset.erase_eq] at hy
   linarith
 
-/-- `G` is trained iff each of its columns is a least-squares solution of the corresponding
-scaled regression. -/
 theorem isTrained_iff_forall_isLeastSquares :
     IsTrained data q G ↔ ∀ j, Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
       (WithLp.toLp 2 ((q.sqrtQ * data.C).col j)) (WithLp.toLp 2 (G.col j)) := by
@@ -238,7 +228,6 @@ theorem isTrained_iff_forall_isLeastSquares :
   have := key.1 (fun y ↦ h (of y)ᵀ) j z.ofLp
   simpa using (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).1 this
 
-/-- Trained mapping matrices exist. -/
 theorem exists_isTrained : ∃ G, IsTrained data q G := by
   choose x hx using fun j ↦ Core.exists_isLeastSquares (A := toEuclideanLin (q.sqrtQ * data.S))
     (b := WithLp.toLp 2 ((q.sqrtQ * data.C).col j))
@@ -246,9 +235,6 @@ theorem exists_isTrained : ∃ G, IsTrained data q G := by
 
 /-! ### The normal equations -/
 
-/-- `G` is trained iff it satisfies the **normal equations** `SᵀQ(SG − C) = 0`
-([gahl-baayen-2024] (A2), (A4)), by Mathlib's adjoint characterisation of least squares applied
-column by column. -/
 theorem isTrained_iff : IsTrained data q G ↔ data.Sᵀ * q.Q * (data.S * G - data.C) = 0 := by
   have hcol : ∀ j, Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
       (WithLp.toLp 2 ((q.sqrtQ * data.C).col j)) (WithLp.toLp 2 (G.col j)) ↔
@@ -269,15 +255,11 @@ theorem isTrained_iff : IsTrained data q G ↔ data.Sᵀ * q.Q * (data.S * G - d
   rw [hX, ← neg_eq_zero (a := data.Sᵀ * q.Q * (data.S * G - data.C)), ← transpose_eq_zero]
   exact ⟨funext, fun h j ↦ congrFun h j⟩
 
-/-- When `SᵀQS` is invertible, the **closed form** `G = (SᵀQS)⁻¹SᵀQC` is trained
-([gahl-baayen-2024] (A2), (A4)). -/
 theorem isTrained_closedForm (hS : IsUnit (data.Sᵀ * q.Q * data.S)) :
     IsTrained data q ((data.Sᵀ * q.Q * data.S)⁻¹ * (data.Sᵀ * q.Q * data.C)) := by
   rw [isTrained_iff, Matrix.mul_sub, ← Matrix.mul_assoc,
     Matrix.mul_nonsing_inv_cancel_left _ _ ((Matrix.isUnit_iff_isUnit_det _).1 hS), sub_self]
 
-/-- When `SᵀS` is invertible, the endstate closed form `G = (SᵀS)⁻¹SᵀC` is trained under
-uniform weights ([gahl-baayen-2024] (A2)). -/
 theorem isELTrained_closedForm (hS : IsUnit (data.Sᵀ * data.S)) :
     IsELTrained data ((data.Sᵀ * data.S)⁻¹ * (data.Sᵀ * data.C)) := by
   simpa only [FrequencyVector.Q_one, Matrix.mul_one] using
@@ -285,8 +267,6 @@ theorem isELTrained_closedForm (hS : IsUnit (data.Sᵀ * data.S)) :
 
 variable {data q G}
 
-/-- In vector form the normal equations say that the `q`-weighted residual rows, weighted further
-by any linear functional of the meanings, sum to zero. -/
 theorem IsTrained.sum_smul_sub_eq_zero (hG : IsTrained data q G) (w : MeaningVector d →ₗ[ℝ] ℝ) :
     ∑ i, (q i * w (data.S i)) • ((data.S * G) i - data.C i) = 0 := by
   obtain ⟨v, rfl⟩ := (dotProductEquiv ℝ (Fin d)).surjective w
@@ -298,8 +278,6 @@ theorem IsTrained.sum_smul_sub_eq_zero (hG : IsTrained data q G) (w : MeaningVec
   exact Finset.sum_congr rfl fun i _ ↦ by
     rw [mul_comm, dotProductEquiv_apply_apply, dotProduct_comm]; rfl
 
-/-- Whenever membership in a set `P` of usage events is a linear functional of the meanings, the
-`q`-weighted sums of the fitted and of the observed forms over `P` agree. -/
 theorem IsTrained.sum_smul_mul_eq_of_decodable (hG : IsTrained data q G) {P : Finset (Fin m)}
     {w : MeaningVector d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :
     ∑ i ∈ P, (q i : ℝ) • (data.S * G) i = ∑ i ∈ P, (q i : ℝ) • data.C i := by
@@ -309,8 +287,6 @@ theorem IsTrained.sum_smul_mul_eq_of_decodable (hG : IsTrained data q G) {P : Fi
 
 /-! ### Fitted values -/
 
-/-- All trained matrices under positive weights produce the same predicted forms `SG` on the
-training events, so fitted values are unique even when `G` is not. -/
 theorem IsTrained.mul_eq (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
     (hG : IsTrained data q G) (hG' : IsTrained data q G') : data.S * G = data.S * G' := by
   rw [isTrained_iff_forall_isLeastSquares] at hG hG'
@@ -320,7 +296,6 @@ theorem IsTrained.mul_eq (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
     Matrix.mul_assoc, FrequencyVector.sqrtQ, diagonal_mul] at h
   exact mul_left_cancel₀ (Real.sqrt_pos.2 (NNReal.coe_pos.2 (hq i))).ne' h
 
-/-- Trained matrices agree at every meaning in the span of the experienced ones. -/
 theorem IsTrained.vecMul_eq_of_mem_span (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
     (hG : IsTrained data q G) (hG' : IsTrained data q G') {s : MeaningVector d}
     (hs : s ∈ Submodule.span ℝ (Set.range data.S.row)) : s ᵥ* G = s ᵥ* G' := by
@@ -333,15 +308,12 @@ theorem IsTrained.vecMul_eq_of_mem_span (hq : ∀ i, 0 < q i) {G' : Matrix (Fin 
   rw [LinearMap.mem_ker, toLin'_apply, mulVec_transpose, Matrix.vecMul_sub, sub_eq_zero] at h0
   exact h0
 
-/-- Adding a matrix that annihilates every training meaning preserves training. -/
 theorem IsTrained.add_of_mul_eq_zero (hG : IsTrained data q G) {H : Matrix (Fin d) (Fin n) ℝ}
     (hH : data.S * H = 0) : IsTrained data q (G + H) := by
   have : weightedLoss data q (G + H) = weightedLoss data q G := by
     simp [weightedLoss, Matrix.mul_add, hH]
   simpa only [IsTrained, isMinOn_univ_iff, this] using hG
 
-/-- Off the span of experienced meanings training is underdetermined, since any trained matrix
-can be modified into another with a different prediction at an unexperienced meaning. -/
 theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : MeaningVector d}
     (hs : s ∉ Submodule.span ℝ (Set.range data.S.row)) :
     ∃ G' : Matrix (Fin d) (Fin n) ℝ, IsTrained data q G' ∧ s ᵥ* G ≠ s ᵥ* G' := by
@@ -358,9 +330,6 @@ theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : Mea
   exact ⟨G + vecMulVec v (Pi.single 0 1), hG.add_of_mul_eq_zero hSH,
     fun h ↦ hφs (by simpa [Matrix.vecMul_add, hvec] using h.symm)⟩
 
-/-- The trained matrix is uniquely determined exactly when the experienced meanings span the
-meaning space, which is the coordinate-free form of the papers' full-column-rank condition on
-the closed-form solution ([gahl-baayen-2024] appendix; [heitmeier-2024]). -/
 theorem existsUnique_isTrained_iff [NeZero n] (hq : ∀ i, 0 < q i) :
     (∃! G : Matrix (Fin d) (Fin n) ℝ, IsTrained data q G) ↔
       Submodule.span ℝ (Set.range data.S.row) = ⊤ := by
@@ -372,8 +341,6 @@ theorem existsUnique_isTrained_iff [NeZero n] (hq : ∀ i, 0 < q i) :
     refine ⟨G, hG, fun G' hG' ↦ ext_row fun k ↦ ?_⟩
     simpa using hG'.vecMul_eq_of_mem_span hq hG (Submodule.eq_top_iff'.mp htop (Pi.single k 1))
 
-/-- If some linear functional of the meanings reproduces column `j₀` of the observed forms
-exactly, so does every trained matrix under positive weights, on every training event. -/
 theorem IsTrained.mul_apply_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsTrained data q G)
     {j₀ : Fin n} {w : MeaningVector d →ₗ[ℝ] ℝ} (hw : ∀ i, w (data.S i) = data.C i j₀) (i : Fin m) :
     (data.S * G) i j₀ = data.C i j₀ := by
@@ -393,9 +360,6 @@ theorem IsTrained.mul_apply_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsTraine
 
 /-! ### Centres of mass -/
 
-/-- Whenever membership in a set `P` of usage events is a linear functional of the meanings, a
-mapping matrix trained under `q` sends the `q`-weighted centre of mass of `P`'s meanings to the
-`q`-weighted centre of mass of `P`'s observed forms. -/
 theorem IsTrained.centerMass_vecMul_eq_of_decodable (hG : IsTrained data q G)
     {P : Finset (Fin m)} {w : MeaningVector d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :

@@ -227,7 +227,6 @@ theorem span_delete (n : Node) (i : ℕ) : (f.delete i).span n = (f.span n).eras
   simp only [span, delete, Finset.mem_image, Finset.mem_filter, Finset.mem_erase]
   grind
 
-/-- Deleting slot `i` strands exactly the morae whose only segment was at `i`. -/
 theorem stranded_delete (i : ℕ) :
     (f.delete i).stranded =
       f.stranded ∪ f.nodes.filter (fun n ↦ n.tier = .mora ∧ f.span n = {i}) := by
@@ -248,7 +247,6 @@ theorem stranded_delete_of_isOnset {i : ℕ} (h : f.IsOnset i) :
   obtain ⟨hp, hpn⟩ := Finset.mem_filter.1 hp
   exact absurd (h p hp rfl) (by rw [hpn, hm]; decide)
 
-/-- A form with no stranded mora is untouched by CL. -/
 theorem cl_eq_self (h : f.stranded = ∅) (c : Convention) : f.cl c = f := by
   cases c <;> simp [cl, fills, h]
 
@@ -292,15 +290,12 @@ theorem mem_fills_fromRight {p : Node × ℕ} :
   rintro ⟨m, hm, hp⟩
   cases hb : rightBound f.links m <;> simp_all
 
-/-- The lines CL draws from stranded morae to the nearest segment on one side cross neither one
-    another nor the lines of a form without crossings. -/
 theorem NoCrossing.cl (h : f.NoCrossing) (c : Convention) : (f.cl c).NoCrossing := by
   refine ⟨?_, h.2⟩
   cases c
   · exact h.1.union_of_leftBound fun p hp ↦ (mem_fills_fromLeft.1 hp).2
   · exact h.1.union_of_rightBound fun p hp ↦ (mem_fills_fromRight.1 hp).2
 
-/-- Drawing a line keeps a form free of crossings iff its slot lies in the node's window. -/
 theorem noCrossing_link_iff :
     (f.link m i).NoCrossing ↔ f.NoCrossing ∧ i ∈ window (f.links : SetRel Node ℕ) m := by
   simp only [Form.NoCrossing, link, Finset.coe_insert, isNonCrossing_insert_iff_mem_window,
@@ -478,7 +473,6 @@ theorem odwos_delete_stranded : (odwos.delete 2).stranded = ∅ :=
 
 theorem odwos_flop_stranded : odwos_flop.stranded = {μ 1} := by decide
 
-/-- In nonlocal CL the vowel that lengthens is not adjacent to the consonant that deleted. -/
 theorem oodos_surface :
     (odwos_flop.cl fromLeft).surface = [(o, 2), (d, 1), (o, 1), (s, 1)] := by decide
 
@@ -516,7 +510,6 @@ def la_free : Form Seg := (ala.delete 0).parasitic
 
 theorem la_free_stranded : la_free.stranded = {μ 0} := by decide
 
-/-- Rightward vowel lengthening crosses the onset line, so *#laː* cannot arise. -/
 theorem no_rightward_vowel_loss : ¬ (la_free.link (μ 0) 2).NoCrossing :=
   Form.not_noCrossing_link_of_onset (c := 1) (by decide) (by decide) (by decide)
 
@@ -533,7 +526,6 @@ def talpa : Form Seg := Underlying.syllabify [C t, V a, C l, C p, V a] true
 
 def talp_free : Form Seg := (talpa.delete 4).parasitic
 
-/-- The vowel cannot lengthen across its coda's line. -/
 theorem talp_no_vowel_lengthening : ¬ (talp_free.link (μ 4) 1).NoCrossing :=
   Form.not_noCrossing_link_of_coda (c := 2) (by decide) (by decide) (by decide)
 
@@ -623,7 +615,6 @@ def pas_light : Form Seg := Underlying.syllabify [C p, V a, C s] false
 /-- *pas* in a language with Weight by Position. -/
 def pas_heavy : Form Seg := Underlying.syllabify [C p, V a, C s] true
 
-/-- Without a weight distinction, coda deletion strands no mora and CL cannot occur. -/
 theorem pas_light_no_cl : (pas_light.delete 2).stranded = ∅ := by decide
 
 theorem pas_heavy_cl : (pas_heavy.delete 2).stranded = {μ 2} := by decide
@@ -638,7 +629,6 @@ theorem pas_heavy_weight : pas_heavy.weight (σ 1) = 2 := by decide
     syllable share the *l*'s mora. -/
 def sultni : Form Seg := Underlying.syllabify [C s, V u, C l, C t, C n, V i] true
 
-/-- Deleting the *l* strands nothing, giving [sutni] with no CL. -/
 theorem sutni_no_cl : (sultni.delete 2).stranded = ∅ := by decide
 
 /-- In Komi *sul.ta.li* 'I stood up', the *l* alone closes its syllable and bears a mora. -/
@@ -658,7 +648,6 @@ theorem θaaxta_surface :
     ((θangxta.delete 2).cl fromLeft).surface =
       [(θ, 1), (a, 2), (x, 1), (t, 1), (a, 1)] := by decide
 
-/-- Under the two-mora limit the same change is underivable. -/
 theorem θangxta_limit_two_no_cl :
     ((Underlying.syllabify [C θ, V a, C ng, C x, C t, V a] true).delete 2).stranded = ∅ := by
   decide

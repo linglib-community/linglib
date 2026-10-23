@@ -54,7 +54,6 @@ noncomputable instance instModule {R : Type*} [Semiring R] [Module R ℝ≥0∞]
 
 end Kernel
 
-/-- A finite multiple of a finite kernel is a finite kernel. -/
 theorem IsFiniteKernel.smul_of_ne_top (κ : Kernel α β) [IsFiniteKernel κ] {c : ℝ≥0∞}
     (hc : c ≠ ∞) : IsFiniteKernel (c • κ) :=
   ⟨⟨c * κ.bound, ENNReal.mul_lt_top hc.lt_top κ.bound_lt_top, fun a ↦

@@ -51,21 +51,15 @@ variable {S : Set (Set W)} {φ : Set W} {w : W}
 @[simp] theorem homogeneous_pair {p q : Set W} : Homogeneous {p, q} w ↔ (w ∈ p ↔ w ∈ q) := by
   grind [Homogeneous]
 
-/-- On a finite family, homogeneity at `w` is definedness at `w` of the supervaluation of truth
-over the family. -/
 theorem homogeneous_coe_iff (s : Finset (Set W)) [DecidablePred fun α : Set W ↦ w ∈ α] :
     Homogeneous (s : Set (Set W)) w ↔ SignType.supervaluation s (w ∈ ·) ≠ 0 := by
   rw [Ne, SignType.supervaluation_eq_zero_iff]
   grind [Homogeneous]
 
-/-- Under homogeneity, a proposition between the meet and the join of `S` is true where every
-member of `S` is. -/
 theorem Homogeneous.mem_iff (h : Homogeneous S w) (hl : ⋂₀ S ⊆ φ) (hu : φ ⊆ ⋃₀ S) :
     w ∈ φ ↔ ∀ α ∈ S, w ∈ α := by
   grind [Homogeneous]
 
-/-- Under homogeneity, a proposition between the meet and the join of `S` is false where every
-member of `S` is. -/
 theorem Homogeneous.notMem_iff (h : Homogeneous S w) (hl : ⋂₀ S ⊆ φ) (hu : φ ⊆ ⋃₀ S) :
     w ∉ φ ↔ ∀ α ∈ S, w ∉ α := by
   grind [Homogeneous]

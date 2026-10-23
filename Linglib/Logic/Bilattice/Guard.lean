@@ -46,19 +46,16 @@ def guard (x y : L ⊙ L) : L ⊙ L := mk (x.pro ⊓ y.pro) (x.pro ⊓ y.con)
 @[simp] theorem pro_guard (x y : L ⊙ L) : (guard x y).pro = x.pro ⊓ y.pro := rfl
 @[simp] theorem con_guard (x y : L ⊙ L) : (guard x y).con = x.pro ⊓ y.con := rfl
 
-/-- The guard is monotone in the knowledge order in both arguments ([schoter-1996b] Def 4). -/
 theorem guard_kLE_guard {x x' y y' : L ⊙ L} (hx : x ≤ₖ x') (hy : y ≤ₖ y') :
     guard x y ≤ₖ guard x' y' :=
   ⟨inf_le_inf hx.1 hy.1, inf_le_inf hx.1 hy.2⟩
 
 variable [BoundedOrder L]
 
-/-- A first argument that is at least true passes the second through ([schoter-1996b] Def 4). -/
 theorem guard_of_top_kLE {x : L ⊙ L} (h : (⊤ : L ⊙ L) ≤ₖ x) (y : L ⊙ L) : guard x y = y := by
   have hp : x.pro = ⊤ := le_antisymm le_top h.1
   simp [guard, hp]
 
-/-- A first argument with no evidence for it gives `⊥ₖ = ⟨⊥, ⊥⟩` ([schoter-1996b] Def 4). -/
 theorem guard_of_pro_bot {x : L ⊙ L} (h : x.pro = ⊥) (y : L ⊙ L) : guard x y = mk ⊥ ⊥ := by
   simp [guard, h]
 

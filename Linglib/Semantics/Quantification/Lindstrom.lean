@@ -68,9 +68,6 @@ def toGQ (Q : Det.{u}) (α : Type u) : GQ α :=
   fun A B => (⟨α, monadicStructure α ![A, B]⟩ : Bundled.{u} (Language.monadic (Fin 2)).Structure)
     ∈ Q.holds
 
-/-- Every realized Lindström quantifier satisfies `QuantityInvariant`, so `q A B` is invariant
-under a bijective relabelling of the domain. This is the type-`⟨1,1⟩` form of Mostowski's
-permutation invariance, derived from `iso_inv` rather than stipulated on the denotation. -/
 theorem realize_quantityInvariant (Q : Det.{u}) {α : Type u} :
     Quantifier.GQ.QuantityInvariant (Q.toGQ α) := by
   intro A B A' B' f hBij hA hB
@@ -123,25 +120,18 @@ structure to the GQ duality operators. Outer negation is the complement of the c
 (`noDet_toGQ_eq_innerNeg`, `someDet_toGQ_eq_dual`), and the contradictory diagonal between `no`
 and `some` is the class-level fact `some = ¬ no` (`someDet_holds_eq_compl`). -/
 
-/-- As iso-invariant classes, `some` is the complement of `no`, since `∃x. Ux ∧ Vx` is the
-negation of `∀x. Ux → ¬Vx`. Its image under `toGQ` is `Quantifier.GQ.no_contradicts_some`. -/
 theorem someDet_holds_eq_compl : (someDet.{u}).holds = (noDet.{u}).holdsᶜ := by
   ext M
   simp [someDet, noDet, Sentence.Realize, Formula.Realize]
 
-/-- Realization carries the complement of an iso-invariant class to GQ outer negation. With
-`everyDet` this realizes the contradictory diagonal between `A` and `O` as
-`Quantifier.GQ.every_contradicts_notEvery`. -/
 theorem toGQ_compl (Q : Det.{u}) (α : Type u) : Det.toGQ Qᶜ α = (Q.toGQ α)ᶜ := by
   funext A B
   simp only [Det.toGQ, LindstromQuantifier.holds_compl, Set.mem_compl_iff, compl_apply]
 
-/-- At the `E` corner, `no` realizes the inner negation of `every`. -/
 theorem noDet_toGQ_eq_innerNeg (α : Type u) :
     noDet.toGQ α = innerNeg (everyDet.toGQ α) := by
   rw [noDet_toGQ, everyDet_toGQ, innerNeg_every]
 
-/-- At the `I` corner, `some` realizes the dual of `every`. -/
 theorem someDet_toGQ_eq_dual (α : Type u) :
     someDet.toGQ α = dual (everyDet.toGQ α) := by
   rw [someDet_toGQ, everyDet_toGQ, dual_every]

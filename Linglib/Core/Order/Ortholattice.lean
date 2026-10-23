@@ -75,7 +75,6 @@ variable [Lattice α] [BoundedOrder α] [InvolutiveCompl α] [IsOrtholattice α]
 protected theorem inf_compl_eq_bot (a : α) : a ⊓ aᶜ = ⊥ :=
   le_bot_iff.1 (IsOrtholattice.inf_compl_le_bot a)
 
-/-- Excluded middle, the De Morgan dual of non-contradiction. -/
 protected theorem top_le_sup_compl (a : α) : ⊤ ≤ a ⊔ aᶜ := by
   rw [← InvolutiveCompl.compl_le_compl_iff_le, InvolutiveCompl.compl_sup,
     InvolutiveCompl.compl_compl, InvolutiveCompl.compl_top, inf_comm]

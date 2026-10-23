@@ -60,7 +60,6 @@ def inventory : Determiner.Inventory :=
   [.article n, .article din, .article wani, .quantifier kowane, .quantifier kowace,
     .quantifier duk]
 
-/-- Both strengths are marked, by distinct articles. -/
 theorem strengths_inventory : inventory.strengths = Finset.univ := by decide
 
 theorem not_isSyncretic_inventory : ¬ inventory.IsSyncretic := by decide

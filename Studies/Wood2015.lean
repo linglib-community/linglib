@@ -87,7 +87,6 @@ instance : DecidablePred Position.AdmitsCaseless := fun p ↦ by
 
 instance : DecidablePred Position.AdmitsSt := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- *-st* merges in SpecVoiceP and SpecpP, not in SpecApplP nor as a direct object. -/
 theorem admitsSt_iff (p : Position) : p.AdmitsSt ↔ p = .specVoice ∨ p = .specP := by
   cases p <;> decide
 
@@ -132,30 +131,22 @@ instance : Decidable V.Anticausative := inferInstanceAs (Decidable (_ ≠ _))
 
 variable {V}
 
-/-- With *-st* in its specifier, Voice must be expletive. -/
 theorem expletive_of_st (h : V.Interpretable) (hs : V.spec = .st) : V.Expletive :=
   fun ht ↦ by simp [h ht] at hs
 
-/-- Specifierless Voice is expletive. -/
 theorem expletive_of_none (h : V.Interpretable) (hs : V.spec = .none) : V.Expletive :=
   fun ht ↦ by simp [h ht] at hs
 
-/-- An agentive vP, like *murder*, has no *-st* anticausative. -/
 theorem no_st_of_thematic (h : V.Interpretable) (ht : V.head.IsThematic) : V.spec ≠ .st := by
   rw [h ht]; decide
 
-/-- An anticausative is formed with specifierless Voice, or with Voice whose D feature is checked by
-*-st*. -/
 theorem anticausative_iff : V.Anticausative ↔ V.spec = .none ∨ V.spec = .st := by
   cases hs : V.spec <;> simp [Anticausative, hs]
 
-/-- Either way, Voice is expletive: the VoiceP denotes what the vP denotes. -/
 theorem expletive_of_anticausative (h : V.Interpretable) (ha : V.Anticausative) :
     V.Expletive :=
   fun ht ↦ ha (h ht)
 
-/-- An *-st* anticausative is the substrate's expletive active cell, `Voice.anticausative`, and
-a specifierless one its expletive non-active cell, `Voice.middle`: Voice{D} and Voice{∅}. -/
 theorem cell_of_anticausative (h : V.Interpretable) (hc : V.Coherent) :
     (V.spec = .st → V.head.params = Voice.anticausative.params) ∧
       (V.spec = .none → V.head.params = Voice.middle.params) := by
@@ -175,7 +166,6 @@ structure StClause where
   /-- *-st* is in SpecVoiceP exactly when it is Voice's specifier. -/
   site_voice : site = .specVoice ↔ voice.spec = .st
 
-/-- Under thematic Voice, *-st* merges in SpecpP: the figure reflexive. -/
 theorem st_specP_of_thematic (C : StClause) (h : C.voice.Interpretable)
     (ht : C.voice.head.IsThematic) : C.site = .specP := by
   rcases (admitsSt_iff C.site).mp C.siteAdmits with hv | hp
@@ -189,15 +179,11 @@ thematic against expletive; for [cuervo-2003] they differ in v, `vDO` against `v
 same state, and the inchoative has no Voice to vary. The two accounts are incompatible on the
 locus of the alternation, and the substrate lets each be stated. -/
 
-/-- For Wood, the active and the *-st* anticausative are one verb under two Voice heads, the
-thematic active cell and the expletive active cell. -/
 theorem alternation_in_voice :
     Voice.agentive.IsThematic ∧ ¬ Voice.anticausative.IsThematic ∧
       Voice.agentive.HasD ∧ Voice.anticausative.HasD := by
   decide
 
-/-- For Cuervo, the causative and the inchoative differ in the head over the state, and the
-inchoative admits no Voice at all. -/
 theorem alternation_in_v :
     LittleV.Causative [.vDO, .vBE] ∧ LittleV.Inchoative [.vGO, .vBE] ∧
       [LittleV.vDO, .vBE].tail = [LittleV.vGO, .vBE].tail ∧
@@ -236,7 +222,6 @@ def verb (r : Root) (ka hasD : Bool) : ComplexHead Root Head := ⟨r, [.v ka, .v
 def voiceIdx (r : Root) (ka hasD : Bool) : Fin (verb r ka hasD).heads.length :=
   ⟨1, by simp [verb]⟩
 
-/-- Voice is in the root's cycle: v is the only cyclic head. -/
 theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
     (verb r ka hasD).RootLocal Head.Cyclic (voiceIdx r ka hasD) := by
   unfold ComplexHead.RootLocal ComplexHead.cycle
@@ -250,7 +235,6 @@ theorem rootLocal_voice (r : Root) (ka hasD : Bool) :
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha hb
   rw [key a ha, key b hb]
 
-/-- Voice sees the root exactly when v is phonologically zero. -/
 theorem seesRoot_voice_iff (r : Root) (ka hasD : Bool) :
     (verb r ka hasD).SeesRoot Head.Cyclic Head.Null (voiceIdx r ka hasD) ↔ ka = false := by
   constructor
@@ -275,21 +259,16 @@ instance (naRoots : Set Root) [DecidablePred (· ∈ naRoots)] (r : Root) (ka ha
 
 variable {naRoots : Set Root}
 
-/-- *-na* requires v to be zero: an overt v breaks Voice's adjacency to the root. -/
 theorem na_only_if_v_zero {r : Root} {ka hasD : Bool} (h : Na naRoots r ka hasD) :
     ka = false :=
   (seesRoot_voice_iff r ka hasD).mp h.2.2
 
-/-- *-na* and *-ka* never co-occur. -/
 theorem na_ka_exclusive {r : Root} {hasD : Bool} : ¬ Na naRoots r true hasD :=
   fun h ↦ Bool.noConfusion (na_only_if_v_zero h)
 
-/-- *-na* never marks an *-st* verb: *-st* checks the D feature of Voice, and *-na* spells out
-Voice without one. -/
 theorem na_st_exclusive {r : Root} {ka : Bool} : ¬ Na naRoots r ka true :=
   fun h ↦ Bool.noConfusion h.1
 
-/-- A listed root with zero v and specifierless Voice takes *-na*. -/
 theorem na_of_listed {r : Root} (h : r ∈ naRoots) : Na naRoots r false false :=
   ⟨rfl, h, (seesRoot_voice_iff r false false).mpr rfl⟩
 
@@ -305,13 +284,10 @@ variable (naRoots) [DecidablePred (· ∈ naRoots)]
 def voiceExponent (r : Root) (ka hasD : Bool) : VoiceExponent :=
   if Na naRoots r ka hasD then .na else .zero
 
-/-- A *-ka* verb has zero Voice whether or not Voice carries a D feature: *-ka* is compatible
-with specifierless Voice and with *-st*. -/
 theorem voiceExponent_ka (r : Root) (hasD : Bool) :
     voiceExponent naRoots r true hasD = .zero := by
   simp [voiceExponent, na_ka_exclusive]
 
-/-- An *-st* verb has zero Voice whether or not v is *-ka*. -/
 theorem voiceExponent_st (r : Root) (ka : Bool) :
     voiceExponent naRoots r ka true = .zero := by
   simp [voiceExponent, na_st_exclusive]

@@ -63,22 +63,18 @@ variable {node} {a b : N} {f : F}
 theorem mem_featureClass : f ∈ featureClass node a ↔ ∃ m ∈ node f, a ≤ m := by
   simp [featureClass]
 
-/-- A node whose class contains a feature lies at or above the feature's own node. -/
 theorem le_of_mem_featureClass {m : N} (h : f ∈ featureClass node a) (hf : node f = some m) :
     a ≤ m := by
   simpa [mem_featureClass, hf] using h
 
-/-- The root's class is every placed feature, so spreading the root is total assimilation. -/
 theorem mem_featureClass_bot [OrderBot N] : f ∈ featureClass node ⊥ ↔ (node f).isSome := by
   simp [mem_featureClass, Option.isSome_iff_exists]
 
-/-- Feature classes shrink along dominance. -/
 theorem antitone_featureClass : Antitone (featureClass node) := fun _ _ h _ hg ↦ by
   rw [mem_featureClass] at hg ⊢
   obtain ⟨m, hm, hbm⟩ := hg
   exact ⟨m, hm, h.trans hbm⟩
 
-/-- Incomparable nodes have disjoint feature classes, since their subtrees are disjoint. -/
 theorem disjoint_featureClass [PredOrder N] [IsPredArchimedean N] (h : IncompRel (· ≤ ·) a b) :
     Disjoint (featureClass node a) (featureClass node b) := by
   rw [Finset.disjoint_left]
@@ -95,12 +91,10 @@ theorem disjoint_featureClass [PredOrder N] [IsPredArchimedean N] (h : IncompRel
 
 variable [DecidableEq F] {β : Type*} (src tgt : F → β)
 
-/-- Spreading node `a` from `src` onto `tgt` carries every class `a` dominates. -/
 theorem eqOn_piecewise_of_le (h : a ≤ b) :
     Set.EqOn ((featureClass node a).piecewise src tgt) src ↑(featureClass node b) :=
   fun _ hg ↦ Finset.piecewise_eq_of_mem _ _ _ (antitone_featureClass h hg)
 
-/-- Spreading node `a` leaves every class incomparable with `a` untouched. -/
 theorem eqOn_piecewise_of_incompRel [PredOrder N] [IsPredArchimedean N]
     (h : IncompRel (· ≤ ·) a b) :
     Set.EqOn ((featureClass node a).piecewise src tgt) tgt ↑(featureClass node b) :=

@@ -131,8 +131,6 @@ theorem gc_toPseudovariety_toLanguageVariety :
   refine fun 𝒱 V ↦ ⟨fun h α L hL ↦ h _ (𝒱.syntacticMonoid_mem_toPseudovariety hL), fun h ↦ ?_⟩
   exact Pseudovariety.generated_le fun N _ _ ⟨α, L, hL, ⟨e⟩⟩ ↦ V.mem_of_mulEquiv e.symm (h α hL)
 
-/-- Every fibre of the syntactic morphism of a member is a member, since it is a finite Boolean
-combination of two-sided quotients of the member. -/
 theorem setOf_syntacticClass_eq_mem {L : Language α} (hL : L ∈ 𝒱 α) (x : L.SyntacticMonoid) :
     {w | L.syntacticClass w = x} ∈ 𝒱 α := by
   have : Finite L.SyntacticMonoid := (𝒱.isRegular hL).finite_syntacticMonoid
@@ -162,7 +160,6 @@ theorem setOf_syntacticClass_eq_mem {L : Language α} (hL : L ∈ 𝒱 α) (x : 
   rw [heq]
   exact (𝒱 α).infClosed.iInf_mem (𝒱 α).top_mem hQ
 
-/-- The words sent into a set of values are the union of the fibres over those values. -/
 private theorem setOf_mem_eq_iSup {M : Type*} [Monoid M] (φ : FreeMonoid α →* M) (P : Set M) :
     {w : List α | φ (FreeMonoid.ofList w) ∈ P} =
       ⨆ m : P, {w : List α | φ (FreeMonoid.ofList w) = m} := by
@@ -207,8 +204,6 @@ private def recognizerPseudovariety : Pseudovariety.{u} where
     · have e : {w : List α | φ (.ofList w) ∈ P} = ⊥ := by ext w; simpa using h
       rw [e]; exact (𝒱 α).bot_mem
 
-/-- The syntactic monoid of a member recognizes only members, since a language it recognizes is a
-finite union of inverse images of fibres of the syntactic morphism. -/
 private theorem syntacticMonoid_mem_recognizerPseudovariety {β : Type u} {L : Language β}
     (hL : L ∈ 𝒱 β) : 𝒱.recognizerPseudovariety.mem L.SyntacticMonoid := by
   have : Finite L.SyntacticMonoid := (𝒱.isRegular hL).finite_syntacticMonoid
@@ -221,7 +216,6 @@ private theorem syntacticMonoid_mem_recognizerPseudovariety {β : Type u} {L : L
   exact (𝒱 α).supClosed.iSup_mem (𝒱 α).bot_mem fun m ↦
     𝒱.comap_mem ψ (𝒱.setOf_syntacticClass_eq_mem hL m)
 
-/-- A variety of languages is recovered from the pseudovariety it generates. -/
 theorem toPseudovariety_toLanguageVariety : 𝒱.toPseudovariety.toLanguageVariety = 𝒱 := by
   refine le_antisymm (fun α L hL ↦ ?_) (gc_toPseudovariety_toLanguageVariety.le_u_l 𝒱)
   have hle : 𝒱.toPseudovariety ≤ 𝒱.recognizerPseudovariety :=
@@ -237,8 +231,6 @@ end LanguageVariety
 
 namespace Pseudovariety
 
-/-- A member of `V` embeds in the finite product of the syntactic monoids of its fibre languages,
-so `V` is recovered from its variety of languages. -/
 theorem toLanguageVariety_toPseudovariety (V : Pseudovariety.{u}) :
     V.toLanguageVariety.toPseudovariety = V := by
   refine le_antisymm (LanguageVariety.gc_toPseudovariety_toLanguageVariety.l_u_le V) ?_

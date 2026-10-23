@@ -105,7 +105,6 @@ theorem Meaning.mem_strengthen_strong :
       w ∈ sm.strong ∧ ∀ a ∈ sm.alternatives, a ⊂ sm.plain → w ∉ a := by
   simp [Meaning.strengthen]
 
-/-- Strengthening preserves the Strength Condition. -/
 theorem Meaning.StrengthCondition.strengthen (h : sm.StrengthCondition) :
     sm.strengthen.StrengthCondition :=
   λ _ hw => h hw.1

@@ -58,20 +58,15 @@ open Data.Experiments Set.Icc
 /-- By (7), content projects to the extent that it is not at-issue. -/
 def gppProjection : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1 := Set.Icc.symm
 
-/-- More not-at-issue content is more projective. -/
 theorem gppProjection_antitone : Antitone gppProjection := antitone_symm
 
-/-- The principle's order prediction, strictly. -/
 theorem gppProjection_lt_iff {a b : Set.Icc (0 : ℚ) 1} :
     gppProjection a < gppProjection b ↔ b < a :=
   symm_lt_symm
 
-/-- Restricted to binary at-issueness, the principle is the Projection Principle: content
-projects fully iff it is not at-issue at all. -/
 theorem gppProjection_eq_one_iff {ai : Set.Icc (0 : ℚ) 1} : gppProjection ai = 1 ↔ ai = 0 :=
   symm_eq_one
 
-/-- Fully at-issue content does not project. -/
 theorem gppProjection_eq_zero_iff {ai : Set.Icc (0 : ℚ) 1} : gppProjection ai = 0 ↔ ai = 1 :=
   symm_eq_zero
 
@@ -85,7 +80,6 @@ def ceilingProjection (_ : Set.Icc (0 : ℚ) 1) : Set.Icc (0 : ℚ) 1 := 1
 @[simp] theorem ceilingProjection_val (ai : Set.Icc (0 : ℚ) 1) :
     (ceilingProjection ai).val = 1 := rfl
 
-/-- The principle and the ceiling agree exactly on fully not-at-issue content. -/
 theorem gppProjection_eq_ceiling_iff {ai : Set.Icc (0 : ℚ) 1} :
     gppProjection ai = ceilingProjection ai ↔ ai = 0 :=
   symm_eq_one
@@ -128,7 +122,6 @@ def Predicate.notAtIssueness (p : Predicate) : Set.Icc (0 : ℚ) 1 := ⟨_, (pre
 def Predicate.atIssueness (p : Predicate) : Set.Icc (0 : ℚ) 1 :=
   Set.Icc.symm p.notAtIssueness
 
-/-- On observed at-issueness the principle predicts exactly the observed not-at-issueness. -/
 theorem gppProjection_atIssueness (e : Expression) :
     gppProjection e.atIssueness = e.notAtIssueness :=
   symm_symm _
@@ -140,8 +133,6 @@ projectivity `p`. -/
 def error (f : Set.Icc (0 : ℚ) 1 → Set.Icc (0 : ℚ) 1) (a p : Set.Icc (0 : ℚ) 1) : ℚ :=
   |(f a : ℚ) - p|
 
-/-- The principle beats the ceiling exactly on content observed below the midpoint between
-its not-at-issueness and the ceiling; on fully not-at-issue content the two coincide. -/
 theorem gpp_closer_iff (a p : Set.Icc (0 : ℚ) 1) :
     error gppProjection a p < error ceilingProjection a p ↔
       (Set.Icc.symm a : ℚ) < 1 ∧ 2 * (p : ℚ) < 1 + Set.Icc.symm a := by
@@ -154,8 +145,6 @@ theorem gpp_closer_iff (a p : Set.Icc (0 : ℚ) 1) :
   · rw [abs_of_neg (by linarith), abs_of_nonneg (by linarith)]
     exact ⟨fun h' => ⟨by linarith, by linarith⟩, fun h' => by linarith [h'.2]⟩
 
-/-- On the paper's worked prediction, the content of an NRRC is more not-at-issue than the
-complement of *discover*, so the principle predicts it more projective, and it is. -/
 theorem nrrc_more_projective_than_discover :
     Expression.nrrc.atIssueness < Expression.discover.atIssueness ∧
       gppProjection Expression.discover.atIssueness <
@@ -163,15 +152,11 @@ theorem nrrc_more_projective_than_discover :
       Expression.discover.projectivity < Expression.nrrc.projectivity := by
   decide +kernel
 
-/-- The principle is the closer account on every Experiment 1a expression but *stop*. -/
 theorem gpp_closer_than_ceiling (e : Expression) (h : e ≠ .stop) :
     error gppProjection e.atIssueness e.projectivity <
       error ceilingProjection e.atIssueness e.projectivity := by
   revert e; decide +kernel
 
-/-- The pre-state of *stop*, the least not-at-issue content on the asking-whether diagnostic
-yet highly projective: its projectivity .87 exceeds the midpoint .855 of `gpp_closer_iff`,
-and the ceiling is the closer account. -/
 theorem ceiling_closer_on_stop :
     error ceilingProjection Expression.stop.atIssueness Expression.stop.projectivity <
       error gppProjection Expression.stop.atIssueness Expression.stop.projectivity := by
@@ -183,14 +168,11 @@ example : ¬ ∀ e : Expression,
       error ceilingProjection e.atIssueness e.projectivity := by
   decide +kernel
 
-/-- On the twelve predicates of Experiment 1b the principle is closer throughout. -/
 theorem gpp_closer_than_ceiling_predicates (p : Predicate) :
     error gppProjection p.atIssueness p.projectivity <
       error ceilingProjection p.atIssueness p.projectivity := by
   revert p; decide +kernel
 
-/-- The at-issueness coefficient is positive in all four experiments, the direction the
-principle predicts; the paper reports it significant in all but Experiment 2b. -/
 theorem atIssuenessEffect_beta_pos (x : Experiment) : 0 < (atIssuenessEffect x).beta.toRat := by
   revert x; decide +kernel
 
@@ -213,8 +195,6 @@ def Predicate.Distinguished (a b : Predicate) : Prop :=
 instance : DecidableRel Predicate.Distinguished :=
   fun _ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The projective contents fall into more than two projectivity classes: the content of
-NRRCs, the pre-state of *stop* and the prejacent of *only* are pairwise distinguished. -/
 theorem three_classes :
     Expression.Distinguished .nrrc .stop ∧ Expression.Distinguished .stop .only ∧
       Expression.Distinguished .nrrc .only := by
@@ -223,8 +203,6 @@ theorem three_classes :
 /-- `Distinguished` rejects a pair the table marks `n.s`. -/
 example : ¬ Expression.Distinguished .nrrc .know := by decide +kernel
 
-/-- The complement of *know* is statistically indistinguishable in projectivity from that of
-the hard-triggering factive *be annoyed*. -/
 theorem know_indistinguishable_from_annoyed : ¬ Expression.Distinguished .know .annoyed := by
   decide +kernel
 
@@ -236,29 +214,21 @@ def Expression.hardness? : Expression → Option Presupposition.Hardness
   | .discover | .stop | .only => some .soft
   | _ => none
 
-/-- Some observed differences align with the classification: *discover* and *stop* are each
-less projective than the hard-triggering *be annoyed*. -/
 theorem some_differences_align :
     Expression.Distinguished .discover .annoyed ∧ Expression.Distinguished .stop .annoyed := by
   decide +kernel
 
-/-- The soft triggers are not a projectivity class: the prejacent of *only* is distinguished
-from the pre-state of *stop*. -/
 theorem soft_not_a_class :
     ∃ a b, a.hardness? = some .soft ∧ b.hardness? = some .soft ∧
       Expression.Distinguished a b :=
   ⟨.stop, .only, rfl, rfl, by decide +kernel⟩
 
-/-- Nor are the hard triggers a class apart in Experiment 1b: the hard-triggering emotive
-factives are indistinguishable from the soft-triggering semi-factives. -/
 theorem hard_soft_indistinguishable :
     ∀ h ∈ [Predicate.annoyed, .amused],
       ∀ s ∈ [Predicate.notice, .aware, .realize, .see, .findOut, .learn],
         ¬ h.Distinguished s := by
   decide +kernel
 
-/-- The complement of *establish* is the least projective content, distinguished from every
-other Experiment 1b complement. -/
 theorem establish_least_projective (p : Predicate) (h : p ≠ .establish) :
     Predicate.Distinguished .establish p := by
   revert p; decide +kernel

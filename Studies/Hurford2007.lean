@@ -69,7 +69,6 @@ decreasing_by
   · exact Nat.div_lt_self (by omega) this
   · exact (Nat.mod_lt _ (by omega)).trans_le hm
 
-/-- Counting reaches a packed numeral for every positive number. -/
 theorem packed_count (L : List M) {v : ℕ} (hv : 0 < v) :
     (count L v).Packed {m | m ∈ L} ∧ (count L v).value = v := by
   induction v using Nat.strong_induction_on with
@@ -95,14 +94,11 @@ theorem packed_count (L : List M) {v : ℕ} (hv : 0 < v) :
     · have ihr := ih (v % m.value) ((Nat.mod_lt _ (by omega)).trans_le hmv) (by omega)
       exact packed_phraseAnd hm ihn.1 ihn.2 ihr.1 ihr.2
 
-/-- Over bases with distinct values, the numerals the Packing Strategy admits are exactly the ones
-counting produces. -/
 theorem packed_iff_eq_count {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) {e : Number} :
     e.Packed {m | m ∈ L} ↔ e = count L e.value := by
   obtain ⟨hc, hcv⟩ := packed_count L e.value_pos
   exact ⟨fun he ↦ he.eq_of_value_eq hL hc hcv.symm, fun he ↦ he ▸ hc⟩
 
-/-- Counting reaches every packed numeral, over bases with distinct values. -/
 theorem count_eq_of_packed {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) {e : Number} {v : ℕ}
     (he : e.Packed {m | m ∈ L}) (hv : e.value = v) : count L v = e :=
   hv ▸ ((packed_iff_eq_count hL).1 he).symm
@@ -157,7 +153,6 @@ def twoThousandOneHundred : Number :=
 def twentyOneHundred : Number :=
   .phrase (.mk (.phraseAnd (.mk (digit 2) .ten) (digit 1)) hundred)
 
-/-- In additive constructions the higher-valued PHRASEs are packed nearer the top. -/
 theorem count_eq_fiveMillionTwoThousandSixHundred :
     count bases 5002600 = fiveMillionTwoThousandSixHundred :=
   count_eq_of_packed injOn_bases (by decide) rfl
@@ -167,7 +162,6 @@ example : sixHundredTwoThousandFiveMillion.value = fiveMillionTwoThousandSixHund
 theorem not_packed_sixHundredTwoThousandFiveMillion :
     ¬ sixHundredTwoThousandFiveMillion.Packed {m | m ∈ bases} := by decide
 
-/-- In multiplicative constructions the higher-valued bases are packed nearer the top. -/
 theorem count_eq_sixHundredThousand : count bases 600000 = sixHundredThousand :=
   count_eq_of_packed injOn_bases (by decide) rfl
 
@@ -180,8 +174,6 @@ theorem count_eq_twoThousandOneHundred : count bases 2100 = twoThousandOneHundre
 
 example : twentyOneHundred.value = twoThousandOneHundred.value := rfl
 
-/-- The Packing Strategy rejects *twenty one hundred*, which English allows, one of the rare
-counterexamples to its prediction that each number has a single numeral. -/
 theorem not_packed_twentyOneHundred : ¬ twentyOneHundred.Packed {m | m ∈ bases} := by decide
 
 end English
@@ -217,14 +209,11 @@ def numeral7999 : Number :=
 def transposed : Number :=
   .phraseAnd (.mk nineteen twenty) (.phraseAnd (.mk nineteen fourHundred) nineteen)
 
-/-- The sisters of the recursive NUMBERs are the highest-valued the lexicon allows below the
-value of the dominating node. -/
 theorem count_eq_numeral7999 : count bases 7999 = numeral7999 :=
   count_eq_of_packed injOn_bases (by decide) rfl
 
 example : transposed.value = numeral7999.value := rfl
 
-/-- Transposing the two Ms loses well-formedness. -/
 theorem not_packed_transposed : ¬ transposed.Packed {m | m ∈ bases} := by decide
 
 end Mixtec

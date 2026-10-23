@@ -129,7 +129,6 @@ of the complete utterances, the fraction of the viable extensions of `pfx` that 
 noncomputable def incSem (pfx : List U) (r : W) : ℝ≥0∞ :=
   ENNReal.ofReal (stringMeaning g.viable (fun u r ↦ if g.sem u r then 1 else 0) pfx r)
 
-/-- The incremental semantics is the share of true extensions among the viable ones. -/
 theorem incSem_eq_div {r : W} (hr : r ∈ g.worlds) (pfx : List U) :
     g.incSem pfx r = (g.trueExts pfx r : ℝ≥0∞) / (g.viableExts pfx : ℝ≥0∞) := by
   have hp (u : List U) : decide (pfx <+: u) = pfx.isPrefixOf u := by
@@ -212,8 +211,6 @@ noncomputable def l0 (ctx : List U) : Kernel U W :=
 instance (ctx : List U) : IsFiniteKernel (g.l0 ctx) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
-/-- The uniform prior and the viable-extension denominator cancel in the listener, so each
-cell is the referent's share of the true-extension counts. -/
 theorem l0_apply (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
     g.l0 ctx u {r}
       = (g.trueExts (ctx ++ [u]) r : ℝ≥0∞) / (∑ r', (g.trueExts (ctx ++ [u]) r' : ℕ) : ℕ) := by
@@ -275,7 +272,6 @@ word-level speaker's choices along the utterance. -/
 noncomputable def s1Utt (cost : U → ℝ) (r : W) (u : List U) : ℝ :=
   chain (g.s1 cost) r [] u
 
-/-- On reals, the speaker's share is the weighted listener value over the row sum. -/
 theorem s1_real_singleton {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ}
     (u : U) :
     (g.s1 cost ctx r).real {u}
@@ -295,7 +291,6 @@ theorem l0_apply_eq_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {u : U}
     (ht : g.trueExts (ctx ++ [u]) r = 0) : g.l0 ctx u {r} = 0 := by
   rw [l0_apply g hw, ht, Nat.cast_zero, ENNReal.zero_div]
 
-/-- On reals, a listener cell is the referent's share of the true-extension counts. -/
 theorem l0_real (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
     (g.l0 ctx u {r}).toReal
       = (g.trueExts (ctx ++ [u]) r : ℝ) / (∑ r', g.trueExts (ctx ++ [u]) r' : ℕ) := by
@@ -316,14 +311,12 @@ theorem s1_apply_ne_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W}
   rw [s1_apply g hnd]
   exact speaker_dirac_apply_singleton_ne_zero zero_le_one (g.l0_apply_ne_zero hw ht)
 
-/-- A word with no true continuation is never chosen off a dead end. -/
 theorem s1_apply_eq_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
     (hnd : ¬ g.DeadEnd ctx r) (cost : U → ℝ)
     (ht : g.trueExts (ctx ++ [u]) r = 0) : g.s1 cost ctx r {u} = 0 := by
   rw [s1_apply g hnd]
   exact speaker_dirac_apply_singleton_eq_zero one_pos (g.l0_apply_eq_zero hw ht)
 
-/-- A referent whose only true continuation is `u` is signalled with certainty. -/
 theorem s1_apply_eq_one (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
     (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ} (ht : g.trueExts (ctx ++ [u]) r ≠ 0)
     (hother : ∀ u' ≠ u, g.trueExts (ctx ++ [u']) r = 0) :
@@ -339,14 +332,12 @@ theorem l1_real_lt_iff {cost : U → ℝ} {ctx : List U} {u : U} {r r' : W} :
       (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r').real {u} :=
   RSA.listener_uniformOn_real_lt_iff _ u r r'
 
-/-- Exact Bayes for the incremental listener. -/
 theorem l1_real_singleton {cost : U → ℝ} {ctx : List U} {u : U} (r : W) :
     (g.l1 cost ctx u).real {r}
       = (g.s1 cost ctx r).real {u} / ∑ r', (g.s1 cost ctx r').real {u} := by
   have : Nonempty W := ⟨r⟩
   simpa [l1] using RSA.listener_uniformOn_univ_real_finset (g.s1 cost ctx) u {r}
 
-/-- At no cost, the speaker's share is a double ratio of extension counts. -/
 theorem s1_real_counts (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W}
     (hnd : ¬ g.DeadEnd ctx r) (u : U) :
     (g.s1 0 ctx r).real {u}
@@ -553,11 +544,9 @@ def greedyUnroll : Referent → List Word
   | .blueDress => [.dress]
   | .redHat => [.red, .object]
 
-/-- Greedy unrolling lands in the utterance set. -/
 theorem greedyUnroll_complete (r : Referent) : greedyUnroll r ∈ figureOne.utterances := by
   cases r <;> decide
 
-/-- Greedy unrolling produces a true utterance. -/
 theorem greedyUnroll_true (r : Referent) : figureOne.sem (greedyUnroll r) r = true := by
   cases r <;> decide
 
@@ -686,13 +675,11 @@ def game : ReferenceGame Word Referent :=
     [[.dress, .stop], [.red, .dress, .stop], [.hat, .stop], [.blue, .hat, .stop]]
     [.redDress, .blueHat]
 
-/-- STOP is semantically inert, since appending it changes no utterance's truth value. -/
 theorem sem_append_stop (u : List Word) (r : Referent) :
     game.sem (u ++ [.stop]) r = game.sem u r := by
   simp only [game, ReferenceGame.ofLexicon, List.all_append, List.all_cons, List.all_nil,
     Bool.and_true]
 
-/-- Every complete utterance is STOP-terminated. -/
 theorem utterances_stop_terminated :
     ∀ u ∈ game.utterances, u.getLast? = some Word.stop := by decide
 
@@ -918,8 +905,6 @@ private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Word → M) :
   repeat rw [Finset.sum_insert (by decide)]
   rw [Finset.sum_singleton]
 
-/-- The speaker uses *tall* as a first word half the time for the tall cup, a third of the time
-for the tall pitcher, and never for the others. -/
 theorem s1_tall_values :
     (game.s1 0 [] .tallCup).real {Word.tall} = 1 / 2 ∧
     (game.s1 0 [] .tallPitcher).real {Word.tall} = 1 / 3 ∧
@@ -973,9 +958,6 @@ word-level speaker at context *tall* against the updated prior. -/
 noncomputable def afterTallPitcher : Measure Referent :=
   RSA.listener (game.l1 0 [] .tall) (game.s1 0 [.tall]) .pitcher
 
-/-- The implicature cancels, since after *tall pitcher* every referent but the pitcher is
-excluded. The tall cup's speaker never continues *tall* with *pitcher*, and the other two
-referents already had no posterior mass. -/
 theorem afterTallPitcher_eq_one : afterTallPitcher {Referent.tallPitcher} = 1 := by
   have hcup : game.s1 0 [.tall] .tallCup {Word.pitcher} = 0 :=
     game.s1_apply_eq_zero hw (by decide) 0 (by decide)

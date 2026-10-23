@@ -179,8 +179,6 @@ theorem L0_apply (h : w ∈ sem u) :
     Measure.ofWeights_apply_finset]
   simp only [weight, ite_eq_left h, Nat.cast_sum]
 
-/-- At a context-set world of positive prior where the utterance is true, the literal listener is
-certain of the answer exactly when the two components of the weight agree. -/
 theorem L0_apply_eq_one_iff (h : w ∈ sem u) (hC : w ∈ C) (hP : P w ≠ 0) :
     L0 P cell sem C q u {cell q w} = 1
       ↔ (weight P cell sem C q u w).1 = (weight P cell sem C q u w).2 := by
@@ -190,8 +188,6 @@ theorem L0_apply_eq_one_iff (h : w ∈ sem u) (hC : w ∈ C) (hP : P w ≠ 0) :
   rw [L0_apply h, ENNReal.div_eq_one_iff (Nat.cast_ne_zero.mpr h2) (ENNReal.natCast_ne_top _),
     Nat.cast_inj]
 
-/-- The share of an utterance is its weight, raised to the rationality, among those of all
-utterances. -/
 theorem share_eq {α : ℝ} (hα : 0 < α) :
     share P cell sem C q u w α
       = (((weight P cell sem C q u w).1 : ℝ) / (weight P cell sem C q u w).2) ^ α
@@ -280,16 +276,11 @@ def usSets : List (Finset World) :=
 /-- The uniform world prior. -/
 def uniform : World → ℕ := fun _ ↦ 1
 
-/-- *Not green card* settles the free-drink question in every context set, since at a world
-where it is true the literal listener is certain of the answer. -/
 theorem freeDrink_exhaustive {C : Finset World} {w : World} (hC : w ∈ C)
     (h : w ∈ Utterance.notGC.sem) :
     L0 uniform QUD.cell Utterance.sem C .freeDrink .notGC {QUD.cell .freeDrink w} = 1 :=
   (L0_apply_eq_one_iff h hC one_ne_zero).mpr (by revert C w; decide)
 
-/-- It does not settle the visa question. In the universe the literal listener gives the
-US-citizen world's answer probability one half, while within the context set that Tom is not a
-US citizen he is certain of the non-US world's answer. -/
 theorem needVisa_not_exhaustive :
     L0 uniform QUD.cell Utterance.sem {.usCitizen, .gcHolder, .nonUS} .needVisa .notGC
         {QUD.cell .needVisa .usCitizen} = 1 / 2 ∧
@@ -311,7 +302,6 @@ private theorem sum_utterance {M : Type*} [AddCommMonoid M] (f : Utterance → M
     Finset.sum_insert (by decide), Finset.sum_singleton]
   simp only [add_assoc]
 
-/-- The share of *not green card* at a cell, expanded over the utterances. -/
 private theorem share_expand (C : Finset World) (q : QUD) (w : World) {α : ℝ} (hα : 0 < α)
     (tbl : Utterance → ℕ × ℕ)
     (htbl : ∀ u, weight uniform QUD.cell Utterance.sem C q u w = tbl u) :
@@ -666,9 +656,6 @@ def which (_ : Unit) (w : Hobby) : Finset Hobby := {w}
 /-- The universe of hobbies. -/
 def hobbies : Finset Hobby := {.sprinter, .runner, .athlete, .other}
 
-/-- *Not an Olympic sprinter* settles the question at the runner world exactly within context
-sets that exclude the athlete and the non-athlete world, so the accommodation the paper
-describes is of a common ground in which Tom is a runner or a sprinter. -/
 theorem notSprinter_exhaustive_iff {C : Finset Hobby} (hC : .runner ∈ C) :
     L0 hobbyWeight which HobbyUtterance.sem C () .notSprinter {which () .runner} = 1
       ↔ .athlete ∉ C ∧ .other ∉ C := by
@@ -676,8 +663,6 @@ theorem notSprinter_exhaustive_iff {C : Finset Hobby} (hC : .runner ∈ C) :
   revert C
   decide
 
-/-- *Not a runner* settles the question at the athlete world exactly within context sets that
-exclude the non-athlete world. -/
 theorem notRunner_exhaustive_iff {C : Finset Hobby} (hC : .athlete ∈ C) :
     L0 hobbyWeight which HobbyUtterance.sem C () .notRunner {which () .athlete} = 1
       ↔ .other ∉ C := by
@@ -704,7 +689,6 @@ private theorem weight_O : ∀ u,
     weight hobbyWeight which HobbyUtterance.sem hobbies () u .other = tblO u := by
   decide
 
-/-- The share of an utterance at the non-athlete world in the universe, expanded. -/
 private theorem share_other {α : ℝ} (hα : 0 < α) (u : HobbyUtterance) :
     share hobbyWeight which HobbyUtterance.sem hobbies () u .other α =
       (((tblO u).1 : ℝ) / (tblO u).2) ^ α /

@@ -23,7 +23,6 @@ open Set
 
 variable {α β : Type*} {f : α → β}
 
-/-- The image of a set under an injective function is a singleton iff the set is. [UPSTREAM] -/
 theorem exists_image_eq_singleton_iff (hf : Injective f) {s : Set α} :
     (∃ b, f '' s = {b}) ↔ ∃ a, s = {a} := by
   simp only [exists_eq_singleton_iff_nonempty_subsingleton, image_nonempty,

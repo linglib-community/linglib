@@ -87,8 +87,6 @@ def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
 instance (c : Case) : Decidable (IsNonnominative c) :=
   inferInstanceAs (Decidable ((.acc : Case) ≤ c))
 
-/-- A nonnominative case is on the containment hierarchy, so that the ergative, the absolutive and
-the oblique of a direct–oblique system are not nonnominative. -/
 theorem IsNonnominative.mem_containment (h : IsNonnominative c) : c ∈ containment := by
   rcases h with rfl | h
   · decide

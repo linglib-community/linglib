@@ -160,7 +160,6 @@ section Again
 
 variable {Entity Ev : Type*} {M : Model Entity Ev} {R : SetRel Ev Ev} {P : Ev → Prop} {v : Ev}
 
-/-- *Again* on a predicate of events presupposes an earlier event. -/
 theorem diamond_compl_of_again_ne_zero (hP : P ≤ M.IsStateᶜ) (h : again R P v ≠ 0) :
     ◇[R] M.IsStateᶜ v :=
   diamond_mono R hP v (again_ne_zero_iff.1 h)
@@ -279,8 +278,6 @@ private theorem available_of {r : Reading}
     Available a c r :=
   ⟨Scene, scene, fun _ ↦ scene.IsState, (· = .result), h⟩
 
-/-- A state that no change gave rise to is available exactly for a property concept root, on
-both analyses. -/
 theorem available_restitutive_iff : Available a c .restitutive ↔ c = .propertyConcept := by
   refine ⟨fun ⟨_, M, B, L, h⟩ ↦ ?_, fun hc ↦ available_of ?_⟩
   · cases c
@@ -292,7 +289,6 @@ theorem available_restitutive_iff : Available a c .restitutive ↔ c = .property
   · subst hc
     exact ⟨.prior, by cases a <;> simp [Analysis.denote, diamond_iff, scene]⟩
 
-/-- The internal reading needs a root that describes states. -/
 theorem available_internal_iff : Available a c .internal ↔ a.DescribesStates c := by
   refine ⟨fun ⟨_, M, B, L, h⟩ ↦ by_contra fun hd ↦
     not_realized_internal (Analysis.denote_le_compl hd B ()) h, fun h ↦ available_of ⟨.result, ?_⟩⟩
@@ -300,7 +296,6 @@ theorem available_internal_iff : Available a c .internal ↔ a.DescribesStates c
     simp_all [Analysis.DescribesStates, Analysis.denote, BeaversEtAl2021.resultStative, diamond_iff,
       scene]
 
-/-- The modifier needs a root that describes events. -/
 theorem available_modifier_iff : Available a c .modifier ↔ ¬ a.DescribesStates c := by
   refine ⟨fun ⟨_, M, B, L, h⟩ hd ↦ not_realized_modifier (Analysis.denote_le_isState hd B) h,
     fun hd ↦ available_of ?_⟩
@@ -318,7 +313,6 @@ theorem available_durative : Available a c .durative := by
     · exact ⟨.change, .inl ⟨rfl, .inl rfl⟩, ⟨.result, ⟨rfl, rfl⟩, .inl rfl⟩, by simp [scene]⟩
     · exact ⟨.result, .inl ⟨rfl, .inr rfl⟩, ⟨.inl rfl, .change, ⟨rfl, rfl⟩, trivial⟩, .inl rfl⟩
 
-/-- Availability is the prediction of the sort of the root. -/
 theorem available_iff : ∀ r, Available a c r ↔ a.Predicts c r
   | .restitutive => available_restitutive_iff
   | .repetitive => iff_of_true available_durative trivial
@@ -373,14 +367,11 @@ theorem not_vBecome_relativize_inl {s : State} :
     ¬ (relativize N).vBecome (liftState P) x (.inl s) := by
   simp [Interpretation.vBecome_iff, relativize, liftState]
 
-/-- Through relativization a property concept root is its state predicate. -/
 theorem denote_relativize_propertyConcept (a : Analysis) :
     a.denote (relativize N) .propertyConcept (liftState P) = liftState P := by
   funext x v
   rcases v with s | e <;> cases a <;> simp [Analysis.denote, liftState, relativize]
 
-/-- Through relativization Beavers and Koontz-Garboden's change-of-state root is their deverbal
-stative. -/
 theorem denote_relativize_beaversKoontzGarboden :
     Analysis.beaversKoontzGarboden.denote (relativize N) .changeOfState (liftState P) =
       liftState (BeaversEtAl2021.resultStative N P) := by
@@ -390,8 +381,6 @@ theorem denote_relativize_beaversKoontzGarboden :
       fun ⟨hp, hd⟩ ↦ ⟨⟨hp, diamond_relativize_become_inl.2 hd⟩, rfl⟩⟩
   · exact propext ⟨fun h ↦ h.1.1, False.elim⟩
 
-/-- Through relativization this paper's change-of-state root is Beavers and Koontz-Garboden's
-change-of-state head, on the event side. -/
 theorem denote_relativize_yuAusensiSmith :
     Analysis.yuAusensiSmith.denote (relativize N) .changeOfState (liftState P) =
       fun x ↦ Sum.elim ⊥ (N.vBecome P x) := by
@@ -403,8 +392,6 @@ theorem denote_relativize_yuAusensiSmith :
 
 variable {L : State ⊕ Event → Prop} {Q : Entity → State → Prop}
 
-/-- A restitutive reading of a state predicate is one of its states that survives the denial of
-change. -/
 theorem realized_restitutive_liftState_iff :
     Reading.restitutive.Realized (relativize N) L (liftState Q) x ↔
       ∃ s, BeaversEtAl2021.DeniesChange N Q x s := by
@@ -415,22 +402,17 @@ theorem realized_restitutive_liftState_iff :
   · rintro ⟨s, hq, hn⟩
     exact ⟨.inl s, hq, rfl, fun h ↦ hn (diamond_relativize_become_inl.1 h)⟩
 
-/-- An internal reading of a state predicate is one of its states. -/
 theorem realized_internal_liftState_iff :
     Reading.internal.Realized (relativize N) L (liftState Q) x ↔ ∃ s, Q x s :=
   ⟨fun ⟨v, hq, _⟩ ↦ match v, hq with | .inl s, hq => ⟨s, hq⟩,
     fun ⟨s, hq⟩ ↦ ⟨.inl s, hq, rfl⟩⟩
 
-/-- In their own interpretations Beavers and Koontz-Garboden's change-of-state root has no
-restitutive reading, since a deverbal stative never survives the denial of change. -/
 theorem not_realized_restitutive_relativize :
     ¬ Reading.restitutive.Realized (relativize N) L
       (Analysis.beaversKoontzGarboden.denote (relativize N) .changeOfState (liftState P)) x := by
   rw [denote_relativize_beaversKoontzGarboden, realized_restitutive_liftState_iff]
   exact fun ⟨_, h⟩ ↦ BeaversEtAl2021.not_deniesChange_resultStative N h
 
-/-- In their own interpretations Beavers and Koontz-Garboden's change-of-state root has an
-internal reading wherever a change has given rise to a state of its description. -/
 theorem realized_internal_relativize_iff :
     Reading.internal.Realized (relativize N) L
         (Analysis.beaversKoontzGarboden.denote (relativize N) .changeOfState (liftState P)) x ↔
@@ -511,7 +493,6 @@ def broken (x : Participant) (s : Eventuality) : Prop := holder x s ∧ s = .bro
 /-- *The corpse loose from the deck*. -/
 def looseFromDeck (s : Eventuality) : Prop := holder .corpse s ∧ s = .loose
 
-/-- Each state of the scene has one holder. -/
 theorem up_holder : Mereology.UP holder := by
   rintro x y v (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) (⟨rfl, hv⟩ | ⟨rfl, hv⟩) <;> first | rfl | cases hv
 
@@ -547,7 +528,6 @@ def tests (d : Datum) : List (Reading × Judgment) :=
     ([("restitutive", Reading.restitutive), ("repetitive", .repetitive),
       ("durative", .durative), ("internal", .internal)].lookup r.1).map (·, r.2)
 
-/-- No reading the account cannot derive is accepted in the examples. -/
 theorem rows_unavailable : ∀ d ∈ Examples.all, ∀ c ∈ rootClass? d, ∀ t ∈ tests d,
     ¬ Available .yuAusensiSmith c t.1 → t.2 ≠ .acceptable := by
   simp only [available_iff]

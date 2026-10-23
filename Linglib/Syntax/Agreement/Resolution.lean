@@ -92,7 +92,6 @@ variable {p q : α → Prop} [DecidablePred p] [DecidablePred q] {g : G} {cs ds 
 @[simp] theorem applies_otherwise : (otherwise g : ResolutionRule α G).Applies cs :=
   fun _ _ ↦ trivial
 
-/-- Whether a rule applies depends only on which descriptors occur among the conjuncts. -/
 theorem applies_congr (r : ResolutionRule α G) (h : ∀ c, c ∈ cs ↔ c ∈ ds) :
     r.Applies cs ↔ r.Applies ds := by
   cases r <;> simp [h]
@@ -126,16 +125,13 @@ theorem resolve_append : resolve (rs ++ rs') cs = (resolve rs cs).or (resolve rs
 @[simp] theorem resolve_isSome_iff : (resolve rs cs).isSome ↔ ∃ r ∈ rs, r.Applies cs := by
   simp [resolve]
 
-/-- A resolved form is the form of one of the rules. -/
 theorem mem_map_out_of_resolve_eq_some (h : resolve rs cs = some g) : g ∈ rs.map out := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact List.mem_map_of_mem (List.mem_of_find?_eq_some hr)
 
-/-- Rules ending in an unconditional rule resolve every coordination. -/
 theorem resolve_append_otherwise_isSome : (resolve (rs ++ [otherwise g]) cs).isSome :=
   resolve_isSome_iff.mpr ⟨otherwise g, by simp, applies_otherwise⟩
 
-/-- Rules applying alike to two coordinations resolve them alike. -/
 theorem resolve_congr_of_applies_iff (h : ∀ r ∈ rs, r.Applies cs ↔ r.Applies ds) :
     resolve rs cs = resolve rs ds := by
   induction rs with
@@ -144,20 +140,14 @@ theorem resolve_congr_of_applies_iff (h : ∀ r ∈ rs, r.Applies cs ↔ r.Appli
     simp only [List.forall_mem_cons] at h
     simp [resolve_cons, h.1, ih h.2]
 
-/-- Resolution depends only on which descriptors occur among the conjuncts, so rules cannot
-count them. -/
 theorem resolve_congr (rs : List (ResolutionRule α G)) (h : ∀ c, c ∈ cs ↔ c ∈ ds) :
     resolve rs cs = resolve rs ds :=
   resolve_congr_of_applies_iff fun r _ ↦ r.applies_congr h
 
-/-- A type-A rule with its default is the type-B rule for the complementary sort with the
-default swapped. -/
 theorem resolve_any_otherwise {a b : G} (h : ∀ c, q c ↔ ¬ p c) :
     resolve [any p a, otherwise b] cs = resolve [all q b, otherwise a] cs := by
   by_cases hp : ∀ c ∈ cs, ¬ p c <;> simp +contextual [resolve_cons, h, hp]
 
-/-- Rules whose sorts read the conjuncts through `f` give a resolution reading them through
-`f`. -/
 theorem resolve_factorsThrough {f : α → β} (h : ∀ r ∈ rs, Function.FactorsThrough r.pred f) :
     Function.FactorsThrough (resolve rs) (List.map f) := fun cs ds hcd ↦
   resolve_congr_of_applies_iff fun r hr ↦ by

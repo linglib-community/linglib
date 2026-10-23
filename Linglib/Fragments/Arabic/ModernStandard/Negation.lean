@@ -74,7 +74,6 @@ def laysaStem (s : Morph) : Morph :=
 def laysaForms : Agreement.Paradigm (List Morph) :=
   pastSuffix.map fun (c, s) ↦ (c, [laysaStem s, s])
 
-/-- *lays-a* has a form in exactly the cells of the past tense. -/
 theorem cells_laysaForms : laysaForms.cells = pastSuffix.cells := by
   simp [laysaForms, Agreement.Paradigm.cells]
 

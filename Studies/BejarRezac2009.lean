@@ -236,7 +236,6 @@ Case is unvalued and it bears the segment. -/
 def segmentProbe (geom : PersonGeometry) (s : PersonSegment) : Probe BejarRezac2003.Nominal :=
   .ofInt fun n ↦ n.isActive && decide (s ∈ personSpec geom n.cell.person)
 
-/-- The root segment `π` is the person probe of [bejar-rezac-2003]. -/
 theorem segmentProbe_pi (geom : PersonGeometry) :
     segmentProbe geom .pi = BejarRezac2003.phiProbe := by
   unfold segmentProbe BejarRezac2003.phiProbe

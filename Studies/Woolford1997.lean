@@ -91,9 +91,6 @@ instance : DecidablePred WCase.TriggersSubjectAgreement :=
 instance : DecidablePred WCase.TriggersObjectAgreement :=
   λ _ => inferInstanceAs (Decidable (_ = _))
 
-/-- The agreement system is nominative–accusative though the case system is ergative: both
-subject cases trigger subject agreement, and of the two structural object cases only
-objective triggers object agreement. -/
 theorem agreement_pattern :
     WCase.erg.TriggersSubjectAgreement ∧ WCase.nom.TriggersSubjectAgreement ∧
       WCase.obj.TriggersObjectAgreement ∧ ¬ WCase.acc.TriggersObjectAgreement := by
@@ -151,16 +148,12 @@ def patternStrong : Option (List WCase) :=
     some ((f.subject.map Lexical.toCase).getD .nom :: assignObjects f.deniedStrong f.objects)
   else none
 
-/-- The formula as a count over the objects: their number minus the lexical cases. -/
 theorem maxAcc_eq : f.maxAcc = f.objects.length - f.lexicalCount := by
   unfold maxAcc; omega
 
-/-- A verb with one argument assigns no accusative, whether its argument is external or
-internal: Burzio's generalization. -/
 theorem maxAcc_intransitive (s : Option Lexical) : (Frame.mk s []).maxAcc = 0 := by
   cases s <;> rfl
 
-/-- A transitive verb with a lexically cased subject assigns no accusative. -/
 theorem maxAcc_lexical_subject (l : Lexical) (o : Option Lexical) :
     (Frame.mk (some l) [o]).maxAcc = 0 := by
   cases o <;> rfl
@@ -169,21 +162,16 @@ end Frame
 
 /-! ### Nez Perce patterns -/
 
-/-- The transitive patterns: a nominative subject takes an accusative object, an ergative
-subject an objective one. -/
 theorem patterns_transitive :
     (Frame.mk none [none]).pattern = some [.nom, .acc] ∧
       (Frame.mk (some .erg) [none]).pattern = some [.erg, .obj] := by
   decide
 
-/-- Neither nominative–objective nor ergative–accusative is derivable. -/
 theorem patterns_transitive_prohibited (s o : Option Lexical) :
     (Frame.mk s [o]).pattern ≠ some [.nom, .obj] ∧
       (Frame.mk s [o]).pattern ≠ some [.erg, .acc] := by
   revert s o; decide
 
-/-- The four attested ditransitive patterns, one per choice of lexical case on the subject and
-the goal. -/
 theorem patterns_22A :
     (Frame.mk none [none, none]).pattern = some [.nom, .acc, .acc] ∧
       (Frame.mk none [some .dat, none]).pattern = some [.nom, .dat, .acc] ∧
@@ -191,16 +179,12 @@ theorem patterns_22A :
       (Frame.mk (some .erg) [some .dat, none]).pattern = some [.erg, .dat, .obj] := by
   decide
 
-/-- The eight prohibited ditransitive patterns are derivable from no frame. -/
 theorem patterns_22B (s g t : Option Lexical) :
     (Frame.mk s [g, t]).pattern ∉ ([[.nom, .obj, .obj], [.nom, .obj, .acc], [.nom, .acc, .obj],
       [.nom, .dat, .obj], [.erg, .acc, .acc], [.erg, .acc, .obj], [.erg, .obj, .obj],
       [.erg, .dat, .acc]] : List (List WCase)).map some := by
   revert s g t; decide
 
-/-- Under the strong reading, the ergative double-object clause has two objects competing
-for the one Spec Agr-O and is underivable; the weak reading derives the attested
-ergative–objective–accusative. -/
 theorem strong_underivable :
     (Frame.mk (some .erg) [none, none]).patternStrong = none ∧
       (Frame.mk (some .erg) [none, none]).pattern = some [.erg, .obj, .acc] := by
@@ -248,18 +232,13 @@ def thangu : Params := ⟨.obligatory, .obligatory⟩
 /-- Kalkatungu assigns ergative obligatorily and dative optionally. -/
 def kalkatungu : Params := ⟨.obligatory, .optional⟩
 
-/-- Nez Perce derives the two transitive and four ditransitive patterns. -/
 theorem nezPerce_patterns :
     nezPerce.patterns = [[.nom], [.nom, .acc], [.erg, .obj], [.nom, .acc, .acc],
       [.nom, .dat, .acc], [.erg, .obj, .acc], [.erg, .dat, .obj]] := by
   decide
 
-/-- Thangu has a three-way system: with both lexical cases obligatory, no accusative is ever
-assigned. -/
 theorem thangu_no_accusative : ∀ p ∈ thangu.patterns, WCase.acc ∉ p := by decide
 
-/-- Kalkatungu has no nominative–accusative pattern, but its double-object construction
-without a dative shows accusative. -/
 theorem kalkatungu_patterns :
     kalkatungu.patterns = [[.nom], [.erg, .obj], [.erg, .obj, .acc], [.erg, .dat, .obj]] := by
   decide

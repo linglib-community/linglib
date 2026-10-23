@@ -44,15 +44,12 @@ theorem leftAntiAdditive_iff_isAntiAdditive (q : GQ α) :
     LeftAntiAdditive q ↔ ∀ S, IsAntiAdditive (fun R => q R S) :=
   ⟨fun h S R R' => propext (h R R' S), fun h R R' S => iff_of_eq (h S R R')⟩
 
-/-- `RightAntiAdditive` is sectionwise anti-additivity in the scope. -/
 theorem rightAntiAdditive_iff_isAntiAdditive (q : GQ α) :
     RightAntiAdditive q ↔ ∀ R, IsAntiAdditive (q R) :=
   ⟨fun h R S S' => propext (h R S S'), fun h R S S' => iff_of_eq (h R S S')⟩
 
 /-! ### Certified determiner profiles -/
 
-/-- *Every* realizes ↓MON↑ as a certified profile, the restrictor side
-derived from left anti-additivity (`leftAntiAdditive_every`). -/
 theorem soundFor_every :
     Signature₂.SoundFor ⟨.anti, .mono⟩ (every (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr
@@ -60,8 +57,6 @@ theorem soundFor_every :
    fun R => soundFor_mono_iff.mpr
       (scopeMonotone_every R)⟩
 
-/-- *No* realizes ↓MON↓, both positions via anti-additivity (`leftAntiAdditive_no`,
-`rightAntiAdditive_no`). -/
 theorem soundFor_no :
     Signature₂.SoundFor ⟨.anti, .anti⟩ (no (α := α)) :=
   ⟨fun S => soundFor_anti_iff.mpr

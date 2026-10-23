@@ -74,7 +74,6 @@ box with no referents. -/
 def Literal.toCondition {c : Context L V} (l : Literal c) : Condition L V :=
   if l.pos then .atom l.atom else .neg ⟨∅, [.atom l.atom]⟩
 
-/-- Renaming a literal is `Condition.map` along the extended referent map. -/
 theorem Literal.toCondition_map [DecidableEq V] {c c' : Context L V} (f : c ⟶ c')
     (l : Literal c) : (l.map f).toCondition = l.toCondition.map f.extend := by
   cases hp : l.pos <;>

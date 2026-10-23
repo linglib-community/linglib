@@ -162,10 +162,8 @@ def segment : Consonant → Segment
   | .ayin => «ʕ» | .h => h | .glottal => «ʔ» | .l => l | .r => r | .n => n | .w => w
   | .j => j
 
-/-- The columns are the fragment's consonants. -/
 theorem columns_toFinset : columns.toFinset = consonants := by decide +kernel
 
-/-- The data's consonants are the columns in order. -/
 theorem col_segment : ∀ c : Consonant, col (segment c) = c.ctorIdx := by decide +kernel
 
 local notation "⊕" => (some true : Option Bool)
@@ -382,14 +380,11 @@ def labialClasses : List Mask :=
 /-- The set of the columns of some consonants. -/
 def cl (xs : List Segment) : Mask := ⟨(xs.map (2 ^ col ·)).sum⟩
 
-/-- The labial classes containing /f/ or /m/ are the nine the paper lists. -/
 theorem labialClasses_f_m : (labialClasses.filter fun s ↦ col f ∈ s ∨ col m ∈ s).toFinset =
     {cl [b, f, m, w], cl [b, f, m], cl [b, f], cl [f, w], cl [f], cl [b, m, w], cl [b, m],
       cl [m, w], cl [m]} := by
   decide +kernel
 
-/-- The labial classes containing /b/ or /f/ are the eight the paper lists, with {f} for the
-printed {b, w}, which no description over the matrix picks out. -/
 theorem labialClasses_b_f : (labialClasses.filter fun s ↦ col b ∈ s ∨ col f ∈ s).toFinset =
     insert (cl [f]) (({cl [b, f, m, w], cl [b, f, m], cl [b, f], cl [f, w], cl [b, m, w],
       cl [b, m], cl [b, w], cl [b]} : Finset Mask).erase (cl [b, w])) := by
@@ -403,7 +398,6 @@ theorem similarity_b_f : similarity b f = 3 / 8 := by
   rw [similarity, either_eq, shared_eq]
   decide +kernel
 
-/-- The coronals /s, n/ are less similar than the labials /f, m/. -/
 theorem similarity_s_n_lt_f_m : similarity s n < similarity f m := by
   rw [similarity, similarity, either_eq, either_eq, shared_eq, shared_eq]
   decide +kernel
@@ -429,8 +423,6 @@ theorem expandedLabials_restrict : ∀ g ∈ Feature.all,
 def expandedClasses : List Mask :=
   Broe1993.naturalClasses (.ofList (List.replicate 6 true)) (attributesOf expandedLabials)
 
-/-- In the expanded inventory /f, m/ share 2 of the 13 classes containing either, where they
-shared 2 of 9: the new classes are {f, v}, {p, f}, {p, b, m} and {b, v, m}. -/
 theorem expandedSimilarity_f_m :
     expandedClasses.countP (fun s ↦ 2 ∈ s ∧ 4 ∈ s) = 2 ∧
       expandedClasses.countP (fun s ↦ 2 ∈ s ∨ 4 ∈ s) = 13 := by

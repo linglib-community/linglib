@@ -96,15 +96,11 @@ theorem mono (hkn : k ≤ n) (h : M ≅[L, n] N) : M ≅[L, k] N :=
 
 end ElementarilyEquivalentUpTo
 
-/-- `ElementarilyEquivalent` is `n`-equivalence at every rank. -/
 theorem elementarilyEquivalent_iff_forall_elementarilyEquivalentUpTo :
     M ≅[L] N ↔ ∀ n, M ≅[L, n] N :=
   ⟨fun h _ φ _ => h.realize_sentence φ,
     fun h => elementarilyEquivalent_iff.2 fun φ => h φ.qr φ le_rfl⟩
 
-/-- **The Ehrenfeucht–Fraïssé method.** If for every rank `n` some structure in `K` with
-property `P` is `n`-equivalent to one in `K` without it, then `P` is not definable within `K`,
-since a defining sentence would be fooled at its own quantifier rank. -/
 theorem not_foDefinable_of_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.Structure)}
     (h : ∀ n, ∃ M ∈ K, ∃ N ∈ K, (M ≅[L, n] N) ∧ M ∈ P ∧ N ∉ P) : ¬ L.FODefinable K P := by
   rintro ⟨φ, hφ⟩
@@ -157,9 +153,6 @@ theorem antitone (v : Fin n → M) (w : Fin n → N) : Antitone (L.DuplicatorWin
 theorem mono (hkl : k ≤ l) (h : L.DuplicatorWins l v w) : L.DuplicatorWins k v w :=
   DuplicatorWins.antitone v w hkl h
 
-/-- Tuples from which duplicator wins `k` rounds satisfy the same formulas of quantifier rank
-`≤ k`. Atomic formulas agree by the atomic condition, and quantified ones by the *back* and
-*forth* moves. -/
 theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n → M} {w : Fin n → N},
     L.DuplicatorWins k v w → φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w)
   | _, .falsum, _, _, _, _, _ => Iff.rfl
@@ -174,7 +167,6 @@ theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n →
       exact ⟨fun hv b => (h.back b).elim fun a hab => (realize_iff hab hφ).1 (hv a),
         fun hw a => (h.forth a).elim fun b hab => (realize_iff hab hφ).2 (hw b)⟩
 
-/-- On the empty tuples, the rank-`k` relation gives `k`-equivalence. -/
 theorem elementarilyEquivalentUpTo
     (h : L.DuplicatorWins k (default : Fin 0 → M) (default : Fin 0 → N)) :
     M ≅[L, k] N :=
@@ -195,8 +187,6 @@ theorem trans : ∀ {k n} {u : Fin n → M} {v : Fin n → N} {w : Fin n → P},
 
 end DuplicatorWins
 
-/-- An isomorphism is a winning strategy at every rank, answering `a` by `f a` and `b` by
-`f.symm b`. -/
 theorem Equiv.duplicatorWins (f : M ≃[L] N) :
     ∀ (k : ℕ) {n} (v : Fin n → M), L.DuplicatorWins k v (f ∘ v)
   | 0, _, v => fun φ _ => by
@@ -247,7 +237,6 @@ theorem atom_isAtomic (i : L.AtomIndex n) : (L.atom i).IsAtomic := by
   | inr p => exact .rel _ _
 
 variable {L} in
-/-- In a relational language every atomic formula on bound variables is an `atom`. -/
 theorem BoundedFormula.IsAtomic.exists_eq_atom [L.IsRelational] {φ : L.BoundedFormula Empty n}
     (hφ : φ.IsAtomic) : ∃ i, φ = L.atom i := by
   have hvar : ∀ t : L.Term (Empty ⊕ Fin n), ∃ i, t = &i := by

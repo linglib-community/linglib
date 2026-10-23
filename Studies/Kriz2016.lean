@@ -138,32 +138,25 @@ theorem bare_noneSmiled :
 
 /-! #### End-to-end predictions -/
 
-/-- The bare plural is usable at `smithNeutral` under the coarse QUD, the
-    non-maximal reading. -/
 theorem smithNeutral_usable_coarse :
     usable coarseQ (barePlural smiled profs) .smithNeutral := by decide
 
-/-- The bare plural is not usable at `smithNeutral` under the fine QUD. -/
 theorem smithNeutral_not_usable_fine :
     ¬usable fineQ (barePlural smiled profs) .smithNeutral := by decide
 
-/-- The *all*-sentence is not usable at `smithNeutral` under any QUD. -/
 theorem all_not_usable_smithNeutral (q : Setoid ProfWorld)
     (h : usable q (allPlural smiled profs) .smithNeutral) : False :=
   absurd (allPlural_prevents_nonmax smiled profs q .smithNeutral h) (by decide)
 
-/-- Wherever the *all*-sentence is usable, Smith smiled. -/
 theorem smith_exception_unmentionable (q : Setoid ProfWorld) (w : ProfWorld)
     (h : usable q (allPlural smiled profs) w) :
     smiled .smith w :=
   allPlural_exceptions_unmentionable smiled profs q w .smith (by decide) h
 
-/-- The coarse QUD communicates the gap-world `smithNeutral`. -/
 theorem coarse_communicates_gap :
     .smithNeutral ∈ communicatedContent coarseQ (barePlural smiled profs) :=
   ⟨.allSmiled, by decide, by decide⟩
 
-/-- The fine QUD does not communicate `smithNeutral`. -/
 theorem fine_does_not_communicate_gap :
     .smithNeutral ∉ communicatedContent fineQ (barePlural smiled profs) := by
   intro ⟨w', hEq, hTrue⟩
@@ -201,9 +194,6 @@ the other — a contrast unavailable to accounts without an issue parameter
 theorem bare_smithAngry :
     barePlural smiled profs .smithAngry = 0 := by decide
 
-/-- The bare plural is not usable at `smithAngry` under the coarse QUD, since
-    `smithAngry` shares its cell with `onlyLeeSmiled` and neither is in the
-    positive extension. -/
 theorem bare_smithAngry_not_usable_coarse :
     ¬ usable coarseQ (barePlural smiled profs) .smithAngry := by decide
 
@@ -268,9 +258,6 @@ abbrev coarseConjQ : Setoid ConjWorld := Setoid.ker someWentPartition
 theorem conj_dorasMissing_gap :
     barePlural wentThere threeCoworkers .dorasMissing = 0 := by decide
 
-/-- Modelled as a plural over {Bert, Claire, Dora}, the conjunction is
-    predicted usable at the gap-world `dorasMissing` under the coarse issue —
-    the overgenerated non-maximal reading. -/
 theorem conj_modeled_as_plural_predicts_nonmax :
     usable coarseConjQ (barePlural wentThere threeCoworkers) .dorasMissing := by
   decide
@@ -289,8 +276,6 @@ def generalisedTruthValue (P : Finset Atom → Prop) [DecidablePred P]
     (domain : Finset (Finset Atom)) (a : Finset Atom) : SignType :=
   if P a then 1 else if ∃ b ∈ domain, ¬ Disjoint a b ∧ P b then 0 else -1
 
-/-- On a distributive predicate the generalised value is supervaluation over the atoms, given a
-domain that contains every atom. -/
 theorem generalisedTruthValue_distributive (pred : Atom → Prop) [DecidablePred pred]
     {a : Finset Atom} (hne : a.Nonempty) {domain : Finset (Finset Atom)}
     (hdomain : ∀ x ∈ a, {x} ∈ domain) :

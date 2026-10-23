@@ -126,16 +126,12 @@ private theorem utility_eq (Q : Finpartition (Finset.univ : Finset W)) :
     hmass, one_mul]
   rw [Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp)]
 
-/-- The expected utility value of a question is the value of information of the experiment that
-reveals its answer. -/
 theorem utility_eq_valueOfInformation [Nonempty W] [MeasurableSpace (Finset W)]
     [MeasurableSingletonClass (Finset W)] (Q : Finpartition (Finset.univ : Finset W)) :
     utility U μ Q =
       valueOfInformation (decisionValue U) (Kernel.deterministic Q.part .of_discrete) μ := by
   rw [utility_eq, valueOfInformation_deterministic]
 
-/-- A question whose answer settles the utility of every action is worth as much as perfect
-information. -/
 theorem utility_eq_valueOfInformation_id [Nonempty W]
     (Q : Finpartition (Finset.univ : Finset W)) (hQ : U.FactorsThrough Q.part) :
     utility U μ Q = valueOfInformation (decisionValue U) Kernel.id μ := by
@@ -149,8 +145,6 @@ theorem utility_eq_valueOfInformation_id [Nonempty W]
   obtain ⟨w₀, hw₀⟩ := nonempty_of_measure_ne_zero h
   rw [decisionValue_cond_eq_integral U μ (fun w hw ↦ hQ (hw.trans hw₀.symm)) .of_discrete h]
 
-/-- The finest question, what the world is like, is worth the expected value of perfect
-information of [raiffa-schlaifer-1961]. -/
 theorem utility_bot [Nonempty W] :
     utility U μ ⊥ = valueOfInformation (decisionValue U) Kernel.id μ :=
   utility_eq_valueOfInformation_id U μ ⊥ fun w v h ↦ by
@@ -158,7 +152,6 @@ theorem utility_bot [Nonempty W] :
       Finset.singleton_inj] at h
     rw [h]
 
-/-- A question is never worth less than nothing. -/
 theorem utility_nonneg [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : Finset W)) :
     0 ≤ utility U μ Q := by
   let _ : MeasurableSpace (Finset W) := ⊤
@@ -166,8 +159,6 @@ theorem utility_nonneg [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : 
   rw [utility_eq_valueOfInformation]
   exact valueOfInformation_decisionValue_nonneg U _ μ
 
-/-- A finer question is worth at least as much as a coarser one, since revealing the coarser
-answer garbles the finer. -/
 theorem utility_anti [Finite A] [Nonempty W] {P Q : Finpartition (Finset.univ : Finset W)}
     (h : P ≤ Q) : utility U μ Q ≤ utility U μ P := by
   let _ : MeasurableSpace (Finset W) := ⊤
@@ -176,14 +167,11 @@ theorem utility_anti [Finite A] [Nonempty W] {P Q : Finpartition (Finset.univ : 
   exact valueOfInformation_decisionValue_le_of_factorsThrough U _ _
     (Finpartition.le_iff_factorsThrough_part.1 h) μ
 
-/-- No question is worth more than the finest one, what the world is like. -/
 theorem utility_le_bot [Finite A] [Nonempty W]
     (Q : Finpartition (Finset.univ : Finset W)) :
     utility U μ Q ≤ utility U μ ⊥ :=
   utility_anti U μ bot_le
 
-/-- When `a` is the best action now, the expected utility value of a question is its expected
-value of sample information. -/
 theorem utility_eq_sum_valueSampleInfo [Nonempty W]
     (Q : Finpartition (Finset.univ : Finset W)) {a : A}
     (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
@@ -194,8 +182,6 @@ theorem utility_eq_sum_valueSampleInfo [Nonempty W]
     Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * ∫ w, U w a ∂μ[|c]) (by simp),
     sum_measureReal_mul_integral_cond, ha]
 
-/-- A question is worthless exactly when the action that is best now stays best whatever the
-answer. -/
 theorem utility_eq_zero_iff [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : Finset W))
     {a : A} (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
     utility U μ Q = 0 ↔
@@ -234,8 +220,6 @@ predicate's extension agrees on the domain. -/
 def wh (P : W → Finset D) (dom : Finset D) : Finpartition (Finset.univ : Finset W) :=
   Finpartition.ofFun fun w ↦ dom ∩ P w
 
-/-- Enlarging the domain refines the question, since more individuals give more specific
-answers. -/
 theorem wh_anti (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom') :
     wh P dom' ≤ wh P dom :=
   Finpartition.ofFun_le_ofFun_iff.2 fun w v hwv ↦ by
@@ -254,15 +238,11 @@ theorem better_wh (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom')
 
 variable [DiscreteMeasurableSpace W] [IsProbabilityMeasure μ]
 
-/-- Enlarging the domain cannot lower the value of the question, so the domain should contain
-every individual that could matter. -/
 theorem utility_wh_mono [Finite A] [Nonempty W] (P : W → Finset D)
     {dom dom' : Finset D} (h : dom ⊆ dom') :
     utility U μ (wh P dom) ≤ utility U μ (wh P dom') :=
   utility_anti U μ (wh_anti P h)
 
-/-- When the utilities depend only on which individuals of `dom` satisfy `P`, every larger domain
-yielding a different question gives a worse one. -/
 theorem better_wh_of_factorsThrough [Nonempty W] (P : W → Finset D) {dom dom' : Finset D}
     (h : dom ⊆ dom') (hU : U.FactorsThrough (wh P dom).part) (hne : wh P dom' ≠ wh P dom) :
     Better U μ (wh P dom) (wh P dom') := by

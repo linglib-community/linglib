@@ -33,27 +33,21 @@ variable {α C : Type*}
   le_refl _ _ _ h := h
   le_trans _ _ _ hab hbc c hc h := hab c hc (hbc c hc h)
 
-/-- The criteria-derived order unfolds to its definition. The lemma is not tagged `simp`, so
-unfolding is opt-in. -/
 theorem ofCriteria_le_iff (sat : α → C → Prop) (criteria : Set C) (a b : α) :
     (ofCriteria sat criteria).le a b ↔ ∀ c ∈ criteria, sat b c → sat a c :=
   Iff.rfl
 
-/-- The strict criteria-derived order unfolds to the order and the failure of its converse. -/
 theorem ofCriteria_lt_iff (sat : α → C → Prop) (criteria : Set C) (a b : α) :
     (ofCriteria sat criteria).lt a b ↔
       (ofCriteria sat criteria).le a b ∧ ¬ (ofCriteria sat criteria).le b a :=
   Iff.rfl
 
-/-- The criteria-derived order is the pullback of `⊇` along the map sending `a` to the set of
-criteria it satisfies, with target `(Set C)ᵒᵈ`. -/
 theorem ofCriteria_le_iff_subset (sat : α → C → Prop) (criteria : Set C)
     (a b : α) :
     (ofCriteria sat criteria).le a b ↔
       {c ∈ criteria | sat b c} ⊆ {c ∈ criteria | sat a c} :=
   ⟨fun h _ hc ↦ ⟨hc.1, h _ hc.1 hc.2⟩, fun h _ hc hb ↦ (h ⟨hc, hb⟩).2⟩
 
-/-- No criteria give the order relating every two elements. -/
 @[simp] theorem ofCriteria_empty (sat : α → C → Prop) : ofCriteria sat ∅ = ⊤ :=
   top_unique fun _ _ _ _ h ↦ h.elim
 

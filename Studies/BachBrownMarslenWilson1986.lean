@@ -72,7 +72,6 @@ private theorem countP_dite_lt_range (n k : ℕ) :
       simp [show i < m from hi, show i < m + 1 from by omega]
     rw [this, ih]; by_cases h : m < k <;> simp [h] <;> omega
 
-/-- Crossed integration: `min k n` NPs are integrated after `k` verbs. -/
 theorem integratedCount_refl (k : ℕ) :
     integratedCount (Equiv.refl (Fin n)) k = min k n := by
   cases n with
@@ -83,7 +82,6 @@ theorem integratedCount_refl (k : ℕ) :
 private theorem rev_max_eq (m i k : ℕ) (hi : i < m + 1) :
     (max (m + 1 - (0 + 1)) (m + 1 - (i + 1)) < k) ↔ m < k := by omega
 
-/-- Nested integration: nothing integrates until all `n` verbs are heard. -/
 theorem integratedCount_revPerm (k : ℕ) :
     integratedCount (Fin.revPerm : Equiv.Perm (Fin n)) k = if k ≥ n then n else 0 := by
   cases n with
@@ -118,7 +116,6 @@ theorem unintegratedCount_revPerm (k : ℕ) :
 def totalIntegrationCost (σ : Equiv.Perm (Fin n)) : ℕ :=
   ∑ k ∈ Finset.range n, unintegratedCount σ (k + 1)
 
-/-- The crossed (Dutch) cluster costs `n(n−1)/2`: one NP integrates per verb. -/
 theorem totalIntegrationCost_refl (n : ℕ) :
     totalIntegrationCost (Equiv.refl (Fin n)) = n * (n - 1) / 2 := by
   unfold totalIntegrationCost
@@ -132,8 +129,6 @@ theorem totalIntegrationCost_refl (n : ℕ) :
   have h2 := Finset.sum_range_id_mul_two n
   omega
 
-/-- The nested (German) cluster costs `n(n−1)`: all `n` NPs float until the last
-verb. -/
 theorem totalIntegrationCost_revPerm (n : ℕ) :
     totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) = n * (n - 1) := by
   unfold totalIntegrationCost
@@ -151,7 +146,6 @@ theorem totalIntegrationCost_revPerm (n : ℕ) :
     simp only [Nat.add_sub_cancel]
     omega
 
-/-- Nested costs exactly twice crossed, at every cluster size. -/
 theorem totalIntegrationCost_revPerm_eq_two_mul (n : ℕ) :
     totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) =
       2 * totalIntegrationCost (Equiv.refl (Fin n)) := by
@@ -159,7 +153,6 @@ theorem totalIntegrationCost_revPerm_eq_two_mul (n : ℕ) :
   have h2 := Finset.sum_range_id_mul_two n
   omega
 
-/-- Crossed is strictly cheaper as soon as the cluster has two verbs. -/
 theorem crossed_lt_nested (hn : 2 ≤ n) :
     totalIntegrationCost (Equiv.refl (Fin n)) <
       totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) := by
@@ -167,14 +160,12 @@ theorem crossed_lt_nested (hn : 2 ≤ n) :
   have h : 0 < n * (n - 1) := Nat.mul_pos (by omega) (by omega)
   omega
 
-/-- The gap equals the whole crossed cost `n(n−1)/2`. -/
 theorem cost_gap (n : ℕ) :
     totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) -
         totalIntegrationCost (Equiv.refl (Fin n)) =
       totalIntegrationCost (Equiv.refl (Fin n)) := by
   rw [totalIntegrationCost_revPerm_eq_two_mul]; omega
 
-/-- Levels 2–4 (clusters of 2–4 verbs): crossed costs 1, 3, 6; nested 2, 6, 12. -/
 theorem level_costs :
     (totalIntegrationCost (Equiv.refl (Fin 2)),
       totalIntegrationCost (Equiv.refl (Fin 3)),
@@ -184,9 +175,6 @@ theorem level_costs :
       totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin 4))) = (2, 6, 12) := by
   simp [totalIntegrationCost_refl, totalIntegrationCost_revPerm]
 
-/-- The nested binding is antitone — the projective, stack-parsable pattern
-([bresnan-etal-1982]) — and the crossed one is not; the costs run the other way,
-so parsing difficulty does not track stack-parsability. -/
 theorem nonprojective_is_cheaper (hn : 2 ≤ n) :
     ¬Antitone ⇑(Equiv.refl (Fin n)) ∧ Antitone ⇑(Fin.revPerm : Equiv.Perm (Fin n)) ∧
       totalIntegrationCost (Equiv.refl (Fin n)) <

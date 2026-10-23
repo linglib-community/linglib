@@ -311,13 +311,11 @@ theorem value_aRedDogBarked (M : Model Sym (Atom W E)) (g : Var → Set (Atom W 
       Matrix.cons_val_zero, Matrix.cons_val_succ, IsEmpty.forall_iff, Term.felicitous_var,
       Term.felicitous_bvar, and_self, implies_true]
 
-/-- `DOG([d])` and `DOG(d)` are truth-equivalent. -/
 theorem realize_bvar_iff_var (M : Model Sym (Atom W E)) (g : Var → Set (Atom W E)) (c : Lex 1)
     (v : Var) : (pred₁ c (.bvar v)).Realize M g ↔ (pred₁ c (.var v)).Realize M g := by
   simp only [pred₁, Formula.realize_atom, Matrix.comp_vecCons, Matrix.comp_vecEmpty,
     Term.realize_var, Term.realize_bvar]
 
-/-- `DOG([d])` and `DOG(d)` are not intersubstitutable: their local variables differ. -/
 theorem value_bvar_ne_var (M : Model Sym (Atom W E)) (g : Var → Set (Atom W E)) (c : Lex 1)
     (v : Var) : (pred₁ c (.bvar v)).value M g ≠ (pred₁ c (.var v)).value M g :=
   fun h => List.cons_ne_nil v [] (congrArg Value.locals h)
@@ -455,13 +453,11 @@ theorem felicitous_pred₂ (c : Lex 2) (s t : Tm) :
   simp only [pred₂, Formula.felicitous_atom, Term.felicitous_var, Fin.forall_fin_two,
     Matrix.cons_val_zero, Matrix.cons_val_one, true_and]
 
-/-- `w ∈ τ` at the world `w₀`. -/
 theorem realize_mem_world (hw : h .w = world w₀) (t : Tm) :
     Formula.Realize S.model h (.mem (.var .w) t) ↔ Sum.inl w₀ ∈ t.realize S.model h := by
   simp only [Formula.realize_mem, Term.realize_var, hw, world, Set.singleton_eq_singleton_iff,
     exists_eq_left']
 
-/-- The modal base at the world `w₀`: the worlds accessible from it. -/
 theorem realize_modalBase (hw : h .w = world w₀) :
     modalBase.realize S.model h = Sum.inl '' {u | S.acc w₀ u} := by
   rw [modalBase]
@@ -531,7 +527,6 @@ theorem realize_sgIndefWith_world (c c' : Lex 1) (v : Var) (hw : h .w = world w�
   rw [realize_sgIndefWith S h c c' v, hw]
   simp only [world_inj, exists_eq_left']
 
-/-- The summation over a singular indefinite at `w₀`: the entities of its kind there. -/
 theorem realize_sigma_sgIndef (c : Lex 1) {v : Var} (hv : v ≠ .w) (hw : h .w = world w₀) :
     Term.realize S.model h (.sigma v (sgIndef c v)) = Sum.inr '' {e | S.rel₁ c w₀ e} :=
   Term.realize_sigma_eq_image S.model h fun g' hg => realize_sgIndef_world S g' c v (by
@@ -592,8 +587,6 @@ theorem realize_sigma_indefOwned (hw : h .w = world w₀) (hx : h .x = {Sum.inr 
       hg ⟨fun hm => hyw (List.mem_singleton.1 hm).symm, hyw.symm⟩, hw]
     simp only [world_inj, exists_eq_left']
 
-/-- The summation over worlds of the indefinite's description: the worlds where `x` has
-such a thing. -/
 theorem realize_sigmaW_indefOwned (hx : h .x = {Sum.inr x₀}) (hyw : y ≠ .w) (hyx : y ≠ .x) :
     Term.realize S.model h (.sigma .w (indefOwned c₁ c₂ y)) =
       Sum.inl '' {w | ∃ e, S.rel₁ c₁ w e ∧ S.rel₂ c₂ w x₀ e} := by
@@ -957,7 +950,6 @@ theorem realize_monarchK :
     Term.realize_var, Term.realize_bvar, Scenario.model, Model.intensional_apply₂, Scenario.rel,
     Matrix.cons_val_zero, Matrix.cons_val_one]
 
-/-- "Its monarch" at a singular `m₀`: the monarchs of `m₀`. -/
 theorem realize_sigmaK_monarchK {m₀ : E} (hw : h .w = world w₀) (hm : h .m = {Sum.inr m₀}) :
     Term.realize S.model h (.sigma .k monarchK) = Sum.inr '' {e | S.rel₂ .monarchOf w₀ e m₀} :=
   Term.realize_sigma_eq_of_distributive S.model h fun g' hg => by
@@ -976,8 +968,6 @@ theorem felicitous_sgPronoun_monarchK_iff {m₀ : E} (hw : h .w = world w₀)
     Sum.inr_injective.exists_image_eq_singleton_iff, Set.singleton_iff_unique_mem]
   exact and_iff_right (Term.felicitous_sigma_of_forall _ _ (felicitous_monarchK S))
 
-/-- Felicity of the nuclear-scope summation over a restriction `ρ` true exactly of the
-singular `m` satisfying `Q`: the pronoun's presupposition, for each of them. -/
 theorem felicitous_sigmaM_cherishBody'_iff {ρ : Fm} {Q : E → Prop} (hw : h .w = world w₀)
     (hlw : Var.w ∉ ρ.locals) (hρf : ∀ g, ρ.Felicitous S.model g)
     (hρ : ∀ g : Var → Set (Atom W E), g .w = world w₀ →

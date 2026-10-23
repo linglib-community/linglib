@@ -92,14 +92,10 @@ what it depends on, and the further features `extra`. -/
 def site (ns : List Node) (extra : Finset Feature) : Finset Feature :=
   ((ns.flatMap Node.below).map Feature.node).toFinset ∪ extra
 
-/-- A site bears a node iff the node lies below a mentioned one, the root aside, or is among the
-further features: sites are closed downward. -/
 theorem node_mem_site {a : Node} {ns : List Node} {extra : Finset Feature} :
     .node a ∈ site ns extra ↔ (∃ n ∈ ns, ⊥ < a ∧ a ≤ n) ∨ .node a ∈ extra := by
   simp [site, Node.mem_below]
 
-/-- A dependent node's site contains its dominator's, so geometric dependence is site inclusion
-and hence engine ranking (`VocabularyItem.le_iff`). -/
 theorem site_subset_site {a b : Node} (h : a ≤ b) (extra : Finset Feature) :
     site [a] extra ⊆ site [b] extra := by
   intro x hx
@@ -264,9 +260,6 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 /-- The rows are the forms of (2)–(6), (12), (15), (21)–(23), (26). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- **Agree and Fission.** A form is grammatical iff its prefix is the Subset Principle's winner
-and its suffixes are what scansion inserts, so a clause has one Group, no *-t* after *-es*, no
-*-s* beside *-t*, and no *-t* for a dative first-person plural. -/
 theorem rows_realized :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
       personPrefix r.subj r.obj = some r.prefix_ ∧
@@ -335,14 +328,11 @@ def agreementAffixes (subj obj : Argument) : List Morph :=
   ((personPrefix subj obj).filter (· ≠ "")).toList.map .pref ++
     if plural ∈ suffixItems .aorist subj obj then [.suff plural.exponent] else []
 
-/-- With a third-person singular subject each object receives its Set B affixes ([hewitt-1995]),
-*gv-* without *-t* for the first person plural. -/
 theorem setB_realize :
     ∀ p ∈ [Person.first, .second, .third], ∀ n ∈ [Number.singular, .plural],
       setB.realize (.personNumber p n) = some (agreementAffixes ⟨.third, .singular⟩ ⟨p, n⟩) := by
   decide
 
-/-- With a third-person singular object each participant subject receives its Set A affixes. -/
 theorem setA_realize :
     ∀ p ∈ [Person.first, .second], ∀ n ∈ [Number.singular, .plural],
       setA.realize (.personNumber p n) = some (agreementAffixes ⟨p, n⟩ ⟨.third, .singular⟩) := by

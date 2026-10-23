@@ -50,24 +50,18 @@ def consistent (ws : List W) : Set T := str ⁻¹' {l | ws <+: l}
 @[simp] theorem consistent_nil : consistent str ([] : List W) = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ List.nil_prefix
 
-/-- Longer prefixes select fewer structures. -/
 theorem consistent_anti {ws ws' : List W} (h : ws <+: ws') :
     consistent str ws' ⊆ consistent str ws :=
   fun _ ht ↦ h.trans ht
 
 variable [MeasurableSpace T] [DiscreteMeasurableSpace T] (P : Measure T)
 
-/-- The language model of a process gives the strings extending a prefix the mass of the
-structures consistent with it. -/
 theorem map_apply_setOf_prefix (ws : List W) :
     P.map str {l | ws <+: l} = P (consistent str ws) :=
   Measure.map_apply .of_discrete .of_discrete
 
 variable [MeasurableSpace W] [MeasurableSingletonClass W]
 
-/-- After a prefix of positive probability, the autoregressive model of a process continues with
-`xs` with the ratio of the masses of the structures consistent with the extended prefix and with
-the prefix. -/
 theorem condPrefixProb_ofMeasure_map [IsProbabilityMeasure P] {ws : List W}
     (hws : P (consistent str ws) ≠ 0) (xs : List W) :
     (ofMeasure (P.map str)).condPrefixProb ws xs =
@@ -77,8 +71,6 @@ theorem condPrefixProb_ofMeasure_map [IsProbabilityMeasure P] {ws : List W}
   rw [condPrefixProb_ofMeasure (by rwa [map_apply_setOf_prefix]),
     cond_apply_of_subset .of_discrete hsub, map_apply_setOf_prefix, map_apply_setOf_prefix]
 
-/-- The probability of the next word `w` after the prefix `ws` is the process conditioned on the
-prefix, at the structures consistent with the extended prefix. -/
 theorem next_ofMeasure_map_apply_some (ws : List W) (w : W) :
     (ofMeasure (P.map str)).next ws {some w} =
       P[consistent str (ws ++ [w]) | consistent str ws] := by

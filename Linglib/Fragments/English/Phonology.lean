@@ -127,22 +127,16 @@ def inventory : Finset Segment :=
 
 /-! ### Natural classes -/
 
-/-- The nasals are the complete set of [+nasal] sounds. -/
 theorem naturalClass_nasal :
     (Segment.ofSpecs [(.nasal, true)]).naturalClass inventory = {m, n, ŋ} := by
   decide
 
-/-- The voiceless stops /p t k/ are a natural class. -/
 theorem isNaturalClass_voicelessStops : IsNaturalClass inventory {p, t, k} := by decide
 
-/-- The glides, liquids and nasals, contiguous on the sonority hierarchy, are a natural
-class. -/
 theorem isNaturalClass_sonorantConsonants :
     IsNaturalClass inventory {w, l, turnedR, m, n, ŋ} := by
   decide
 
-/-- The stops and the liquids, which are not contiguous on the sonority hierarchy, are not a
-natural class. -/
 theorem not_isNaturalClass_stops_liquids :
     ¬ IsNaturalClass inventory {p, t, k, b, d, g, l, turnedR} := by
   decide

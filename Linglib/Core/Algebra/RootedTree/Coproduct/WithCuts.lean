@@ -112,7 +112,6 @@ noncomputable def cutTensor (p : Forest (UnorderedTree α) × Forest (UnorderedT
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   of' (R := R) p.1 ⊗ₜ[R] of' p.2
 
-/-- `cutTensor` is multiplicative over the cut convolution `combinerProjG`. -/
 theorem cutTensor_combinerProjG (p q : Forest (UnorderedTree α) × Forest (UnorderedTree α)) :
     cutTensor (R := R) (combinerProjG (p, q)) = cutTensor p * cutTensor q := by
   obtain ⟨F1, m1⟩ := p
@@ -121,7 +120,6 @@ theorem cutTensor_combinerProjG (p q : Forest (UnorderedTree α) × Forest (Unor
   unfold cutTensor
   simp only [of'_add, Algebra.TensorProduct.tmul_mul_tmul]
 
-/-- `comulTreeNG` as a single multiset sum over `treeCutsG`. -/
 theorem comulTreeNG_eq_sum
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
     (T : UnorderedTree α) :
@@ -131,7 +129,6 @@ theorem comulTreeNG_eq_sum
   rw [Multiset.map_cons, Multiset.sum_cons, Multiset.map_map]
   congr 1
 
-/-- `comulForestNG` as a single multiset sum over `forestCutsG`. -/
 theorem comulForestNG_eq_sum
     (cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α))
     (F : Forest (UnorderedTree α)) :

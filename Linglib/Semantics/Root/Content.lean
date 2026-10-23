@@ -179,8 +179,6 @@ def Overlaps (p q : Content) : Prop :=
 
 instance (p q : Content) : Decidable (p.Overlaps q) := by unfold Overlaps; infer_instance
 
-/-- Two contents overlap exactly when some situation lies in both, as two boxes meet exactly
-when their sides meet on every axis. -/
 theorem overlaps_iff_exists_mem : p.Overlaps q ↔ ∃ s, s ∈ p ∧ s ∈ q := by
   simp only [Overlaps, mem_iff, Finset.not_disjoint_iff]
   constructor

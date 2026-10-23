@@ -78,7 +78,6 @@ the number exceed one. -/
 def pluralize (den : CountNoun World Atom) : World → Set (Set Atom) :=
   fun w ↦ {x | ∃ n, x ∈ den w n}
 
-/-- The semantic plural is true of a single instance, so *Yes, one* answers *Do you have dogs?*. -/
 theorem mem_pluralize_of_withNumber {den : CountNoun World Atom} {n : ℕ} {w : World}
     {x : Set Atom} (h : x ∈ withNumber n den w) : x ∈ pluralize den w :=
   ⟨n, h⟩
@@ -93,13 +92,11 @@ theorem isExtensiveMeasure_ofAtoms (D : World → Set Atom) : IsExtensiveMeasure
     fun _ _ _ _ _ ⟨hx, hfx, hnx⟩ ⟨hy, hfy, hny⟩ hd ↦
       ⟨Set.union_subset hx hy, hfx.union hfy, by rw [Set.ncard_union_eq hd hfx hfy, hnx, hny]⟩⟩
 
-/-- Numeral phrases are quantized: a proper part of `n` dogs is not `n` dogs. -/
 theorem qua_withNumber_ofAtoms (D : World → Set Atom) (n : ℕ) (w : World) :
     QUA (· ∈ withNumber n (ofAtoms D) w) :=
   qua_of_forall fun _ _ ⟨_, hf, hn⟩ hlt ⟨_, _, hn'⟩ ↦
     (Set.ncard_lt_ncard hlt hf).ne (hn'.trans hn.symm)
 
-/-- The semantic plural of an atom-counting noun is cumulative. -/
 theorem cum_pluralize_ofAtoms (D : World → Set Atom) (w : World) :
     CUM (· ∈ pluralize (ofAtoms D) w) :=
   fun _ ⟨_, hx, hfx, _⟩ _ ⟨_, hy, hfy, _⟩ ↦ ⟨_, Set.union_subset hx hy, hfx.union hfy, rfl⟩
@@ -159,17 +156,11 @@ since the shift applies at the trace. -/
 theorem movedNeutral_pred (P V : E → Prop) :
     movedNeutral (pred P) V = some (tv (¬ ∃ x, P x ∧ V x)) := rfl
 
-/-- A property cannot bind an entity variable: there is no wide-scope derivation for a bare
-noun phrase. -/
 theorem movedEntity_pred (P V : E → Prop) : movedEntity (pred P) V = none := rfl
 
-/-- In *A dog isn't barking* with a quantifier variable (71.c.ii), negation scopes over the
-quantifier. -/
 theorem movedNeutral_quant (Q : (E → Prop) → Prop) (V : E → Prop) :
     movedNeutral (quant Q) V = some (tv (¬ Q V)) := rfl
 
-/-- In *A dog isn't barking* with an entity variable (71.c.i), the quantifier scopes over
-negation. -/
 theorem movedEntity_quant (Q : (E → Prop) → Prop) (V : E → Prop) :
     movedEntity (quant Q) V = some (tv (Q fun x ↦ ¬ V x)) := rfl
 
@@ -188,7 +179,6 @@ def indefinite (n : ℕ) (den : CountNoun World Atom) (w : World) : Den (Set Ato
 def numeral (n : ℕ) (den : CountNoun World Atom) (w : World) : Den (Set Atom) :=
   .pred (· ∈ den w n)
 
-/-- Bare plurals scope below negation whether moved or not, and cannot scope above it. -/
 theorem bare_narrow (den : CountNoun World Atom) (w : World) (V : Set Atom → Prop) :
     (bare den w).movedNeutral V = some (.tv (¬ ∃ x, (∃ n, x ∈ den w n) ∧ V x)) ∧
       (bare den w).movedEntity V = none :=

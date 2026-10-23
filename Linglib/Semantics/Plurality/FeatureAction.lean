@@ -92,8 +92,6 @@ theorem containing_mono {X X' Y : Finset α} (h : X ⊆ X') :
   mem_containing_iff.2 ⟨(mem_containing_iff.1 hs).1,
     (mem_containing_iff.1 hs).2.mono (inter_subset_inter (Subset.refl _) h)⟩
 
-/-- For `X ⊆ Y`, the groups of `Y` containing an atom of `X` lie among those containing an atom of
-`X'` exactly when `X ⊆ X'`. -/
 theorem containing_subset_containing_iff {X X' Y : Finset α} (h : X ⊆ Y) :
     containing X Y ⊆ containing X' Y ↔ X ⊆ X' := by
   refine ⟨fun hc x hx ↦ ?_, containing_mono⟩
@@ -102,8 +100,6 @@ theorem containing_subset_containing_iff {X X' Y : Finset α} (h : X ⊆ Y) :
   rw [mem_inter, mem_singleton] at hy
   exact hy.1 ▸ hy.2
 
-/-- Adding the lattice of `X` to the lattice of `Y ⊇ X` gives the groups of `Y` containing an
-atom of `X`. -/
 theorem Ioc_sups_Ioc {X Y : Finset α} (h : X ⊆ Y) :
     Ioc ∅ X ⊻ Ioc ∅ Y = containing X Y := by
   ext s
@@ -117,8 +113,6 @@ theorem Ioc_sups_Ioc {X Y : Finset α} (h : X ⊆ Y) :
       mem_Ioc.2 ⟨empty_ssubset.2 (hX.mono inter_subset_left), hs⟩,
       union_eq_right.2 inter_subset_left⟩
 
-/-- Along an entailment chain `X ⊆ Y ⊆ Z`, adding the lattice of `X` to the groups of `Z`
-containing a `Y`-atom gives the groups containing an `X`-atom. -/
 theorem Ioc_sups_containing {X Y Z : Finset α} (hXY : X ⊆ Y) (hYZ : Y ⊆ Z) :
     Ioc ∅ X ⊻ containing Y Z = containing X Z := by
   ext s
@@ -134,15 +128,12 @@ theorem Ioc_sups_containing {X Y Z : Finset α} (hXY : X ⊆ Y) (hYZ : Y ⊆ Z) 
       mem_containing_iff.2 ⟨hs, hX.mono (inter_subset_inter (Subset.refl _) hXY)⟩,
       union_eq_right.2 inter_subset_left⟩
 
-/-- Lexical Complementarity against a more specified sibling leaves the groups containing a
-`Y`-atom but no `X`-atom. -/
 theorem mem_containing_sdiff_containing_iff {X Y Z s : Finset α} :
     s ∈ containing Y Z \ containing X Z ↔ s ⊆ Z ∧ (s ∩ Y).Nonempty ∧ ¬ (s ∩ X).Nonempty := by
   rw [mem_sdiff, mem_containing_iff, mem_containing_iff]
   exact ⟨fun h ↦ ⟨h.1.1, h.1.2, fun hX ↦ h.2 ⟨h.1.1, hX⟩⟩,
     fun h ↦ ⟨⟨h.1, h.2.1⟩, fun h' ↦ h.2.2 h'.2⟩⟩
 
-/-- Disjoint atom sets give incomparable denotations, neither more specified than the other. -/
 theorem containing_not_subset_of_disjoint {X Y Z : Finset α} (hd : Disjoint X Y)
     (hX : X.Nonempty) (hXZ : X ⊆ Z) :
     ¬ containing X Z ⊆ containing Y Z := by

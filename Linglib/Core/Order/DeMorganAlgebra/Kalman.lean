@@ -91,7 +91,6 @@ theorem disjoint_pro_con (x : Kalman L) : Disjoint x.pro x.con := x.2
 @[ext] theorem ext {x y : Kalman L} (h₁ : x.pro = y.pro) (h₂ : x.con = y.con) : x = y :=
   Subtype.ext (Product.ext h₁ h₂)
 
-/-- A pair lies higher with more evidence for and less against. -/
 theorem le_def {x y : Kalman L} : x ≤ y ↔ x.pro ≤ y.pro ∧ y.con ≤ x.con := .rfl
 
 @[simp] theorem mk_le_mk {a₁ b₁ a₂ b₂ : L} {h₁ : Disjoint a₁ b₁} {h₂ : Disjoint a₂ b₂} :
@@ -192,7 +191,6 @@ variable (f : BoundedLatticeHom L M) (g : BoundedLatticeHom M N) (x : Kalman L)
 @[simp] theorem map_mk (a b : L) (h : Disjoint a b) : map f (mk a b h) = mk (f a) (f b) (h.map f) :=
   rfl
 
-/-- `map f` commutes with the involution. -/
 @[simp] protected theorem map_compl : map f xᶜ = (map f x)ᶜ := rfl
 
 @[simp] theorem map_id : map (BoundedLatticeHom.id L) = BoundedLatticeHom.id (Kalman L) := rfl

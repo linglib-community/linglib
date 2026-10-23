@@ -78,8 +78,6 @@ theorem closeness_embedded_iff (o : Order) :
     Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases ↔ o = .cpFirst := by
   cases o <;> decide
 
-/-- The analyses differ before the verb only, which is what makes German the test case, since
-after it the closeness analyses check the first conjunct too. -/
 theorem accounts_diverge_embedded :
     (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {N}) o.phrases ↔
         Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧
@@ -138,7 +136,6 @@ theorem exp1_rows : ∀ e ∈ Examples.all, ∃ v ∈ (e.feature? "verb").bind e
         e.judgment = .acceptable) := by
   decide
 
-/-- Each row's selection value is that of its predicate's entry. -/
 theorem rows_selectsCP :
     ∀ e ∈ Examples.all, ∀ v ∈ (e.feature? "verb").bind entryOf,
       (e.feature? "selectsCP" = some "yes" ↔ v.toVerb.TakesClausal) := by

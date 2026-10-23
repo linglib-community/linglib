@@ -121,7 +121,6 @@ theorem coordinate_eq (X α β : Category) :
     simp [CGType.apply]
   · simp [CGType.apply, hβ]
 
-/-- The coordination projects `X` exactly when both coordinands are of category `X`. -/
 theorem coordinate_eq_some_iff (X α β : Category) :
     coordinate X α β = some (.of X) ↔ α = X ∧ β = X := by
   rw [coordinate_eq]
@@ -301,8 +300,6 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The paper's judgments are those of the three-factor decomposition, a coordination being
-ungrammatical exactly when one of the factors applies. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.judgment = .acceptable ↔ ¬ IllFormed r) := by
   decide
 

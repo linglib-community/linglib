@@ -68,21 +68,14 @@ assertion is true there under some context available there, so a world is elimin
 the disjunction of the propositions the assertion expresses at it is false there. -/
 def disjunctiveDiagonal : Set W := {w | ∃ c ∈ I w, sem c w}
 
-/-- Updating a context set is Stalnakerian assertion of the diagonal proposition
-([stalnaker-1978]), on either account: the accounts differ in the proposition asserted, not in
-the rule that consumes it. -/
 theorem contextSet_assert_disjunctiveDiagonal :
     contextSet (assert (𝓟 cs) (disjunctiveDiagonal I sem)) = cs ∩ disjunctiveDiagonal I sem := by
   simp [contextSet]
 
-/-- Where a unique context interprets the assertion, the disjunction collapses to the diagonal:
-Disjunctive Updating is Standard Updating shorn of the uniqueness assumption. -/
 theorem disjunctiveDiagonal_singleton :
     disjunctiveDiagonal (fun w => {interp w}) sem = diagonal interp sem := by
   ext w; simp [disjunctiveDiagonal, diagonal]
 
-/-- Standard Updating eliminates at least as much as Disjunctive Updating, whenever the context
-it selects is one of the available ones. -/
 theorem diagonal_subset_disjunctiveDiagonal (h : ∀ w, interp w ∈ I w) :
     diagonal interp sem ⊆ disjunctiveDiagonal I sem :=
   fun w hw => ⟨interp w, h w, hw⟩
@@ -91,8 +84,6 @@ theorem diagonal_subset_disjunctiveDiagonal (h : ∀ w, interp w ∈ I w) :
 at a world, the context that interprets it there is one that does. -/
 def Charitable : Prop := ∀ w, (∃ c, sem c w) → sem (interp w) w
 
-/-- A charitable interpretation eliminates no world at which any context makes the assertion
-true. -/
 theorem inter_diagonal_of_charitable (hch : Charitable interp sem) (h : ∀ w ∈ cs, ∃ c, sem c w) :
     cs ∩ diagonal interp sem = cs :=
   inter_eq_left.2 fun w hw => hch w (h w hw)
@@ -103,9 +94,6 @@ theorem inter_diagonal_of_charitable (hch : Charitable interp sem) (h : ∀ w �
 world are those that made this one true there. -/
 def prune : W → Set C := fun w => {c ∈ I w | sem c w}
 
-/-- Pruning leaves a context available exactly at the worlds the assertion does not eliminate,
-so the paper's proviso — that pruning applies only where some context survives — holds at every
-world of the updated context set. -/
 theorem prune_nonempty_iff (w : W) :
     (prune I sem w).Nonempty ↔ w ∈ disjunctiveDiagonal I sem := Iff.rfl
 
@@ -127,9 +115,6 @@ def fragments : Set (C × W) := {f | f.2 ∈ cs ∧ f.1 ∈ I f.2}
 false at its world. -/
 def updateFragments (X : Set (C × W)) : Set (C × W) := {f ∈ X | sem f.1 f.2}
 
-/-- One filtration of the fragment set does the work of both parts of an update step: the
-fragments of the updated context set under the pruned interpretations are exactly the fragments
-that survive the assertion. -/
 theorem fragments_prune :
     fragments (cs ∩ disjunctiveDiagonal I sem) (prune I sem)
       = updateFragments sem (fragments cs I) := by
@@ -137,7 +122,6 @@ theorem fragments_prune :
   exact ⟨fun ⟨⟨hcs, _⟩, hc, hs⟩ => ⟨⟨hcs, hc⟩, hs⟩,
     fun ⟨⟨hcs, hc⟩, hs⟩ => ⟨⟨hcs, c, hc, hs⟩, hc, hs⟩⟩
 
-/-- The updated context set is the world components of the surviving fragments. -/
 theorem snd_image_updateFragments :
     Prod.snd '' updateFragments sem (fragments cs I) = cs ∩ disjunctiveDiagonal I sem := by
   ext w
@@ -153,9 +137,6 @@ def run : Set W → (W → Set C) → List (C → W → Prop) → Set W
   | cs, _, [] => cs
   | cs, I, sem :: rest => run (cs ∩ disjunctiveDiagonal I sem) (prune I sem) rest
 
-/-- A discourse eliminates a world exactly when no context available there at the outset makes
-all of its sentences true: pruning makes a discourse update on the conjunction of its sentences
-under a single interpretation. -/
 theorem run_eq_inter (ss : List (C → W → Prop)) (h : ∀ w ∈ cs, (I w).Nonempty) :
     run cs I ss = cs ∩ disjunctiveDiagonal I fun c w => ∀ s ∈ ss, s c w := by
   induction ss generalizing cs I with
@@ -243,8 +224,6 @@ theorem preservation_drops_fact_world (c : Pairing) :
     ¬(facts ⊆ diagonal (fun _ => c) likesBoth ∧ facts ⊆ diagonal (fun _ => c) dislikesBoth) :=
   fun ⟨h₁, h₂⟩ => h₂ rfl (h₁ rfl)
 
-/-- Every sentence of either discourse is true at every world under some dressing intension, so
-Uniform Charity governs the interpretation of each of them. -/
 theorem exists_true_intension (w : Pairing) :
     (∃ c, likesBoth c w) ∧ (∃ c, dislikesBoth c w) ∧ (∃ c, bothMatching c w) ∧
       (∃ c, bothMixed c w) := by

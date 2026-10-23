@@ -128,7 +128,6 @@ def presupVal (a : SignType) : SignType := ofProp (a = 1) ⊔ metaDeny a
 theorem presupVal_eq_one_iff (a : SignType) : presupVal a = 1 ↔ a ≠ 0 := by
   cases a <;> decide
 
-/-- The maximal presupposition is a classical value. -/
 theorem presupVal_ne_zero (a : SignType) : presupVal a ≠ 0 := by cases a <;> decide
 
 /-! ### The three Kleene logics
@@ -172,32 +171,26 @@ theorem Kleene.connectives_strong : Kleene.strong.connectives = .strongKleene :=
 theorem Kleene.connectives_middle : Kleene.middle.connectives = .middleKleene := rfl
 theorem Kleene.connectives_weak : Kleene.weak.connectives = .weakKleene := rfl
 
-/-- The middle conjunction in strong Kleene terms. -/
 theorem meetMiddle_eq (a b : SignType) :
     meetMiddle a b = (a ⊓ b) ⊔ (a ⊓ -a) := by
   cases a <;> cases b <;> decide
 
-/-- The middle disjunction in strong Kleene terms. -/
 theorem joinMiddle_eq (a b : SignType) :
     joinMiddle a b = (a ⊔ b) ⊓ (a ⊔ -a) := by
   cases a <;> cases b <;> decide
 
-/-- The middle conditional in strong Kleene terms. -/
 theorem impMiddle_eq (a b : SignType) :
     Connective.eval .imp .middle a b = (-a ⊔ b) ⊓ (a ⊔ -a) := by
   cases a <;> cases b <;> decide
 
-/-- The weak conjunction in strong Kleene terms. -/
 theorem meetWeak_eq (a b : SignType) :
     meetWeak a b = (a ⊓ b) ⊔ (a ⊓ -a) ⊔ (b ⊓ -b) := by
   cases a <;> cases b <;> decide
 
-/-- The weak disjunction in strong Kleene terms. -/
 theorem joinWeak_eq (a b : SignType) :
     joinWeak a b = (a ⊔ b) ⊓ (a ⊔ -a) ⊓ (b ⊔ -b) := by
   cases a <;> cases b <;> decide
 
-/-- The weak conditional in strong Kleene terms. -/
 theorem impWeak_eq (a b : SignType) :
     Connective.eval .imp .weak a b =
       (-a ⊔ b) ⊓ (a ⊔ -a) ⊓ (b ⊔ -b) := by
@@ -205,12 +198,9 @@ theorem impWeak_eq (a b : SignType) :
 
 /-! ### Projection at the value level -/
 
-/-- Negation projects presuppositions unchanged, `P¬φ = Pφ`. -/
 theorem presupVal_neg (a : SignType) : presupVal (-a) = presupVal a := by
   cases a <;> decide
 
-/-- A transplication presupposes its subscript and whatever its body presupposes,
-`P(φ⟨π⟩) = Aπ ∧ Pφ`. -/
 theorem presupVal_transplicate (a p : SignType) :
     presupVal (transplicate a p) = ofProp (p = 1) ⊓ presupVal a := by
   cases a <;> cases p <;> decide
@@ -229,18 +219,15 @@ theorem presupVal_imp_weak (a b : SignType) :
     presupVal (Connective.eval .imp .weak a b) = presupVal a ⊓ presupVal b := by
   cases a <;> cases b <;> decide
 
-/-- The strong disjunction projects conditionalized presuppositions. -/
 theorem presupVal_join_strong (a b : SignType) :
     presupVal (a ⊔ b) =
       (presupVal a ⊔ ofProp (b = 1)) ⊓ (presupVal b ⊔ ofProp (a = 1)) := by
   cases a <;> cases b <;> decide
 
-/-- The middle disjunction projects the left disjunct's presupposition. -/
 theorem presupVal_join_middle (a b : SignType) :
     presupVal (joinMiddle a b) = presupVal a ⊓ (ofProp (a = 1) ⊔ presupVal b) := by
   cases a <;> cases b <;> decide
 
-/-- The weak disjunction projects every presupposition. -/
 theorem presupVal_join_weak (a b : SignType) :
     presupVal (joinWeak a b) = presupVal a ⊓ presupVal b := by
   cases a <;> cases b <;> decide
@@ -251,14 +238,10 @@ def cancelNeg : SignType → SignType
   | .neg => 1
   | .zero => 1
 
-/-- Cancelling negation is ordinary negation over an assertion, `∼φ = ¬Aφ`. -/
 theorem cancelNeg_eq_neg_metaAssert (a : SignType) :
     cancelNeg a = -ofProp (a = 1) := by
   cases a <;> rfl
 
-/-- No single trivalent disjunction both projects the left disjunct's presupposition and
-cancels it against a denying right disjunct, on the paper's own schema for the Soames
-disjunctions. -/
 theorem no_disjunction_table_projects_and_cancels :
     ¬ ∃ f : SignType → SignType → SignType,
       (∀ π γ δ : Bool,
@@ -317,8 +300,6 @@ def ofFormula (k : Kleene) : Trivalent.Formula Atom → Formula Atom
   | .disj φ ψ => conn .disj k (ofFormula k φ) (ofFormula k ψ)
   | .cond φ ψ => conn .imp k (ofFormula k φ) (ofFormula k ψ)
 
-/-- On a bivalent valuation, a formula whose connectives are all read in one logic evaluates as
-the substrate does under that logic's connectives. -/
 theorem eval_ofFormula (k : Kleene) (V : Valuation Atom) (φ : Trivalent.Formula Atom) :
     eval V (ofFormula k φ) = Trivalent.Formula.eval k.connectives (Trivalent.Model.ofBool V) φ := by
   induction φ with
@@ -336,8 +317,6 @@ def presup (φ : Formula Atom) : Formula Atom := conn .disj .strong (assert φ) 
 theorem eval_presup (V : Valuation Atom) (φ : Formula Atom) :
     eval V (presup φ) = presupVal (eval V φ) := rfl
 
-/-- The maximal presupposition evaluates classically, so rewriting by the assertion
-algebra yields a transplication-free formula. -/
 theorem presup_ne_zero (V : Valuation Atom) (φ : Formula Atom) :
     eval V (presup φ) ≠ 0 := by
   rw [eval_presup]; exact presupVal_ne_zero _
@@ -361,16 +340,13 @@ instance {φ ψ : Formula Atom} : Decidable (Presupposes φ ψ) :=
 
 end DecidableDefs
 
-/-- Disjunction is derived in the strong logic as `φ ∨ ψ = ¬(¬φ ∧ ¬ψ)`. -/
 theorem disj_strong_eq (φ ψ : Formula Atom) :
     Equiv (conn .disj .strong φ ψ) (neg (conn .conj .strong (neg φ) (neg ψ))) := fun V ↦ by
   simp [Connective.eval, Kleene.join, Kleene.meet]
 
-/-- The conditional of every logic is `¬φ ∨ ψ` in that logic. -/
 theorem imp_eq (k : Kleene) (φ ψ : Formula Atom) :
     Equiv (conn .imp k φ ψ) (conn .disj k (neg φ) ψ) := fun _ ↦ rfl
 
-/-- The middle conjunction is a strong Kleene compound of its arguments. -/
 theorem conj_middle_eq (φ ψ : Formula Atom) :
     Equiv (conn .conj .middle φ ψ)
       (conn .disj .strong (conn .conj .strong φ ψ) (conn .conj .strong φ (neg φ))) :=
@@ -378,7 +354,6 @@ theorem conj_middle_eq (φ ψ : Formula Atom) :
     simp only [eval_conn, eval_neg, Connective.eval, Kleene.meet, Kleene.join]
     exact meetMiddle_eq _ _
 
-/-- The weak conjunction is a strong Kleene compound of its arguments. -/
 theorem conj_weak_eq (φ ψ : Formula Atom) :
     Equiv (conn .conj .weak φ ψ)
       (conn .disj .strong (conn .disj .strong (conn .conj .strong φ ψ)
@@ -386,8 +361,6 @@ theorem conj_weak_eq (φ ψ : Formula Atom) :
   simp only [eval_conn, eval_neg, Connective.eval, Kleene.meet, Kleene.join]
   exact meetWeak_eq _ _
 
-/-- Semantic presupposition is entailment by the disjunction of truth and falsity
-conditions, so `φ` presupposes `π` iff `φ ∨ ¬φ ⊨ π`. -/
 theorem presupposes_iff_entails (φ π : Formula Atom) :
     Presupposes φ π ↔ Entails (conn .disj .strong φ (neg φ)) π := by
   simp only [Presupposes, Entails, eval_neg, eval_conn, Connective.eval, Kleene.join]
@@ -396,12 +369,10 @@ theorem presupposes_iff_entails (φ π : Formula Atom) :
   generalize eval V π = b
   cases a <;> cases b <;> decide
 
-/-- `Pφ` is a presupposition of `φ`. -/
 theorem presupposes_presup (φ : Formula Atom) : Presupposes φ (presup φ) := fun V h ↦ by
   by_contra hne
   exact h ((presupVal_eq_one_iff _).2 hne)
 
-/-- `Pφ` is the maximal presupposition, entailing every presupposition of `φ`. -/
 theorem presup_strongest {φ π : Formula Atom} (h : Presupposes φ π) :
     Entails (presup φ) π := fun V hV ↦ by
   rw [eval_presup, presupVal_eq_one_iff] at hV
@@ -461,25 +432,20 @@ theorem deny_transpl (φ π : Formula Atom) :
     Equiv (deny (transpl φ π)) (conn .conj .strong (assert π) (deny φ)) := fun V ↦ by
   simp [deny, transplicate, Connective.eval, Kleene.meet, inf_comm]
 
-/-- Cancelling negation at formula level is negation over an assertion. -/
 theorem eval_neg_assert (V : Valuation Atom) (φ : Formula Atom) :
     eval V (neg (assert φ)) = cancelNeg (eval V φ) := by
   rw [eval_neg, eval_assert, cancelNeg_eq_neg_metaAssert]
 
 /-! ### Projection at formula level -/
 
-/-- Negation projects presuppositions unchanged. -/
 theorem presup_neg (φ : Formula Atom) : Equiv (presup (neg φ)) (presup φ) := fun V ↦ by
   simp [eval_presup, presupVal_neg]
 
-/-- A transplication presupposes its subscript on top of its body's presupposition. -/
 theorem presup_transpl (φ π : Formula Atom) :
     Equiv (presup (transpl φ π)) (conn .conj .strong (assert π) (presup φ)) := fun V ↦ by
   simp only [eval_presup, eval_transpl, eval_conn, eval_assert, Connective.eval,
     Kleene.meet, presupVal_transplicate]
 
-/-- The strong conditional projects only a disjunctively weakened presupposition, the
-famous too-weak prediction for a presupposing antecedent. -/
 theorem strong_conditional_presupposition (φ ψ : Formula Atom) :
     Equiv (presup (conn .imp .strong φ ψ))
       (conn .conj .strong (conn .disj .strong (presup φ) (assert ψ))
@@ -488,8 +454,6 @@ theorem strong_conditional_presupposition (φ ψ : Formula Atom) :
     eval_assert, deny, eval_neg]
   exact presupVal_imp_strong _ _
 
-/-- The middle conditional filters. The antecedent's presupposition projects intact, and the
-consequent's survives unless the antecedent is denied. -/
 theorem middle_conditional_filters (φ ψ : Formula Atom) :
     Equiv (presup (conn .imp .middle φ ψ))
       (conn .conj .strong (presup φ) (conn .disj .strong (deny φ) (presup ψ))) := fun V ↦ by
@@ -497,8 +461,6 @@ theorem middle_conditional_filters (φ ψ : Formula Atom) :
     eval_assert, deny, eval_neg]
   exact presupVal_imp_middle _ _
 
-/-- The weak conditional is cumulative, projecting every elementary presupposition, which is
-the analysis of [langendoen-savin-1971]. -/
 theorem weak_conditional_cumulative (φ ψ : Formula Atom) :
     Equiv (presup (conn .imp .weak φ ψ)) (conn .conj .strong (presup φ) (presup ψ)) :=
   fun V ↦ by
@@ -650,7 +612,6 @@ def preferred : Formula Atom :=
   conn .disj .weak (assert (transpl (atom .q) (atom .p)))
     (assert (transpl (atom .r) (neg (atom .p))))
 
-/-- The basic translation presupposes a contradiction, so it is nowhere defined. -/
 theorem basic_undefined : ¬ Defined basic := by decide
 
 end StoppedOrStarted
@@ -702,9 +663,6 @@ open DynamicSemantics
 
 variable {W : Type*}
 
-/-- The paper's `update ξ σ τ` says, in its own vocabulary, that `σ` supports the
-presupposition `P ∘ ξ` throughout and that `τ` is `σ` intersected with the asserted
-content `A ∘ ξ`. -/
 theorem update_iff (ξ : (W → SignType)) (σ τ : Set W) :
     (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' ↔
       σ ⊆ {i | presupVal (ξ i) = 1} ∧ τ = σ ∩ {i | ofProp (ξ i = 1) = 1} := by
@@ -716,15 +674,11 @@ theorem update_iff (ξ : (W → SignType)) (σ τ : Set W) :
       Set.ext fun i ↦ by simp
     rw [e]
 
-/-- `update⋆` is the image, so a candidate output common ground is the update of some
-candidate input. -/
 theorem hearer_update (ξ : (W → SignType)) (cgs : Set (Set W)) (τ : Set W) :
     τ ∈ (CCP.Partial.ofTrivalent ξ).image cgs ↔
       ∃ σ ∈ cgs, (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' :=
   PFun.mem_image _ _ _
 
-/-- The two-stage procedure filters out the candidate common grounds incompatible with
-the presuppositions, then updates each remaining one with the assertion. -/
 theorem hearer_update_filters_then_asserts (ξ : (W → SignType)) (cgs : Set (Set W)) :
     (CCP.Partial.ofTrivalent ξ).image cgs =
       (fun σ ↦ σ ∩ Trivalent.posExt ξ) '' {σ ∈ cgs | (CCP.Partial.ofTrivalent ξ).Admits σ} := by
@@ -737,8 +691,6 @@ theorem hearer_update_filters_then_asserts (ξ : (W → SignType)) (cgs : Set (S
   · rintro ⟨σ, ⟨hσ, hd⟩, rfl⟩
     exact ⟨σ, hσ, (CCP.Partial.mem_ofTrivalent ..).2 ⟨hd, rfl⟩⟩
 
-/-- A hearer making no assumptions updates from the full powerset; two sentences compose
-by sequencing the updates. -/
 theorem monologue (ξ₁ ξ₂ : (W → SignType)) :
     (CCP.Partial.ofTrivalent ξ₂).image ((CCP.Partial.ofTrivalent ξ₁).image Set.univ) =
       (PartialUpdate.seq (CCP.Partial.ofTrivalent ξ₁) (CCP.Partial.ofTrivalent ξ₂)).image
@@ -796,24 +748,17 @@ def Kleene.verdictKey : Kleene → String
   | .middle => "middleVerdict"
   | .weak => "weakVerdict"
 
-/-- The presupposition the paper prints for each logic is the maximal presupposition the
-semantics computes. -/
 theorem printed_predictions : ∀ k : Kleene, ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "schema" (schemas k), ∀ π ∈ row.parse? k.predictsKey presups,
       Formula.Equiv (Formula.presup φ) π := by
   decide +kernel
 
-/-- The paper's verdicts compare the predicted with the intuitive presupposition. -/
 theorem printed_verdicts : ∀ k : Kleene, ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "schema" (schemas k), ∀ ι ∈ row.parse? "intuitive" presups,
     ∀ v ∈ row.parse? k.verdictKey verdictTable,
       (v = true ↔ Formula.Equiv (Formula.presup φ) ι) := by
   decide +kernel
 
-/-- No single logic fits the Soames disjunction data, since each of the three mispredicts
-the intuitive presupposition of some printed example ([soames-1979];
-[van-der-sandt-1989]'s conclusion, which the paper accepts before restoring flexibility
-with the floating A). -/
 theorem no_kleene_fits_soames_disjunctions : ∀ k : Kleene, ∃ row ∈ Examples.all,
     ∃ φ ∈ row.parse? "schema" (schemas k), ∃ ι ∈ row.parse? "intuitive" presups,
       ¬ Formula.Equiv (Formula.presup φ) ι := by

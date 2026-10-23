@@ -95,18 +95,12 @@ def domain (r : Datum) : List Arg :=
 def observed? (r : Datum) (np : Arg) : Option Observed :=
   (r.feature? np.feature).bind Observed.parse?
 
-/-- Every clause the book introduces its languages with is derived by the algorithm from the
-    language's alignment type: the ergative and accusative NPs are the dependent-case NPs and
-    the nominative, absolutive and unmarked NPs the leftovers. -/
 theorem rows_case :
     ∀ r ∈ Examples.all, ∀ lang ∈ alignment? r.language, ∀ np ∈ [Arg.subject, .object],
       ∀ o ∈ observed? r np, ∀ v ∈ (assignCases lang (fun _ ↦ none) (domain r)).valueOf np,
         Realizes v.1 v.2 o := by
   decide
 
-/-- Agreement does not enter the algorithm: a subject is ergative in a transitive clause and
-    unmarked in an intransitive one whether or not the verb agrees with it, as in Kewa and
-    Burushaski. -/
 theorem ergative_subject_independent_of_agreement :
     ∀ r ∈ Examples.all, alignment? r.language = some .ergative →
       ((assignCases .ergative (fun _ ↦ none) (domain r)).valueOf .subject).map (·.1) =

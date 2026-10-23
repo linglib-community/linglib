@@ -85,10 +85,8 @@ def AgeGroup.toLevel : AgeGroup → AgeLevel
 positions. -/
 def anyR1 (s : Store) : ℕ := (completeResponses s).allR1 + (completeResponses s).someR1
 
-/-- Constricted [r] rises with the prestige of the store. -/
 theorem anyR1_strictMono : StrictMono anyR1 := by decide
 
-/-- Stops in *fourth* fall with the prestige of the store. -/
 theorem fourthStops_strictAnti : StrictAnti fun s ↦ (fourthStops s).percent := by decide
 
 /-! ### Class and stylistic stratification -/
@@ -108,8 +106,6 @@ def Variable.styles (v : Variable) : Set Style := {s | ∀ g, (cell v g s).isSom
 instance (v : Variable) : DecidablePred (· ∈ v.styles) := fun s ↦
   inferInstanceAs (Decidable (∀ g, (cell v g s).isSome))
 
-/-- (r) was measured in all five styles, the vowels in all but minimal pairs, and the consonants
-in the three styles of connected speech. -/
 theorem mem_styles (s : Style) :
     s ∈ Variable.r.styles ∧ (s ∈ Variable.aeh.styles ↔ s ≤ .wordList) ∧
       (s ∈ Variable.oh.styles ↔ s ≤ .wordList) ∧ (s ∈ Variable.th.styles ↔ s ≤ .reading) ∧
@@ -160,14 +156,10 @@ instance (v : Variable) (g : ClassGroup) : Decidable (ClassDeviant v g) := by
 instance (v : Variable) (g : ClassGroup) : Decidable (StyleDeviant v g) := by
   unfold StyleDeviant; infer_instance
 
-/-- The class groups are differentiated on (r) in every style, and every group's (r) rises with
-formality, at all fifteen points of the table. -/
 theorem r_stratified :
     (∀ s ∈ Variable.r.styles, ClassStratified .r s) ∧ ∀ g, StyleStratified .r g := by
   decide +kernel
 
-/-- Every class group shifts (æh) with style, and the groups are differentiated except that the
-lower and working classes reach the same point in word lists. -/
 theorem aeh_stratified :
     (∀ g, StyleStratified .aeh g) ∧
       (∀ s ∈ Variable.aeh.styles, s ≠ .wordList → ClassStratified .aeh s) ∧
@@ -175,31 +167,24 @@ theorem aeh_stratified :
       standardIndex .aeh .lower .wordList = standardIndex .aeh .working .wordList := by
   decide +kernel
 
-/-- (th) is stratified regularly by class and by style. -/
 theorem th_stratified :
     (∀ s ∈ Variable.th.styles, ClassStratified .th s) ∧ ∀ g, StyleStratified .th g := by
   decide +kernel
 
-/-- (dh) is stratified regularly by class and by style. -/
 theorem dh_stratified :
     (∀ s ∈ Variable.dh.styles, ClassStratified .dh s) ∧ ∀ g, StyleStratified .dh g := by
   decide +kernel
 
-/-- On (oh) the lower class deviates from class and from stylistic stratification, while the
-working and middle classes are stratified against each other and each shifts with style. -/
 theorem oh_double_deviation :
     ClassDeviant .oh .lower ∧ StyleDeviant .oh .lower ∧ (∀ g ≠ .lower, StyleStratified .oh g) ∧
       ∀ s ∈ Variable.oh.styles,
         StrictMonoOn (fun g ↦ standardIndex .oh g s) {g | g ≠ .lower} := by
   decide +kernel
 
-/-- On the table, a class group deviates from class stratification exactly when it deviates from
-stylistic stratification, as Labov's hypothesis has it. -/
 theorem classDeviant_iff_styleDeviant (v : Variable) (g : ClassGroup) :
     ClassDeviant v g ↔ StyleDeviant v g := by
   revert v g; decide +kernel
 
-/-- The lower class on (oh) is the only deviation in the table. -/
 theorem classDeviant_iff (v : Variable) (g : ClassGroup) :
     ClassDeviant v g ↔ v = .oh ∧ g = .lower := by
   revert v g; decide +kernel
@@ -233,7 +218,6 @@ feature more than the older, and that the highest class reverses this. -/
 def ReversesAtTop : Prop := (∀ c < ⊤, f .older c < f .younger c) ∧ f .younger ⊤ < f .older ⊤
 
 variable {f} in
-/-- The two schemes for a stigmatized feature are opposite in the middle-ranking classes. -/
 theorem CaseIA.not_caseIB {c : κ} (hc : c ∈ Set.Ioo ⊥ ⊤) (h : CaseIA f) : ¬ CaseIB f :=
   fun h' ↦ lt_asymm (h.2.2 c hc) (h'.2 c hc)
 
@@ -246,37 +230,25 @@ instance : Decidable (ReversesAtTop f) := by unfold ReversesAtTop; infer_instanc
 
 end Cases
 
-/-- /ʌy/ is distributed as a stigmatized feature in change. -/
 theorem upgliding_caseIB : CaseIB fun a c ↦ (upglidingByAgeAndClass a c).percent := by decide
 
-/-- (r) in casual speech is distributed as a prestige feature in change, in every detail. -/
 theorem r_caseIIB : CaseIIB fun a c ↦ (rCasualByAgeAndClass a.toLevel c).index := by decide
 
-/-- The stratification of (r) sharpens, the upper middle class's lead in using any (r-1) in
-casual speech being wider among the younger speakers. -/
 theorem r_gap_widens :
     ((someRCasualByAge .older).upperMiddle : ℤ) - (someRCasualByAge .older).lowerClasses <
       ((someRCasualByAge .younger).upperMiddle : ℤ) - (someRCasualByAge .younger).lowerClasses := by
   decide
 
-/-- By social class, (æh) is distributed as a prestige feature in change, the corrected low
-vowel. Labov goes on to read it as change from below with a later correction from above,
-since the lower class also raises the vowel (`aeh_lowerClass_monotone`). -/
 theorem aeh_caseIIB : CaseIIB fun a c ↦ (aehByAgeAndClass a c).index := by decide
 
-/-- The lower class raises (æh) steadily, its index falling from the oldest level to the
-youngest. -/
 theorem aeh_lowerClass_monotone : Monotone fun a ↦ (aehLowerClassByAge a).index := by decide
 
-/-- By social class, (oh) shows none of the models' age contrasts. -/
 theorem oh_no_case :
     ¬ CaseIA (fun a c ↦ (ohByAgeAndClass a c).index) ∧
       ¬ CaseIB (fun a c ↦ (ohByAgeAndClass a c).index) ∧
       ¬ CaseIIB (fun a c ↦ (ohByAgeAndClass a c).index) := by
   decide
 
-/-- In each ethnic group of the three lower social classes the oldest speakers have the lowest
-(oh) vowels, and the Italian index falls level by level toward the young. -/
 theorem oh_oldest_lowest :
     (∀ a ≠ .age60, (ohByAgeAndEthnicity a).jews < (ohByAgeAndEthnicity .age60).jews ∧
       (ohByAgeAndEthnicity a).italians < (ohByAgeAndEthnicity .age60).italians ∧
@@ -284,18 +256,12 @@ theorem oh_oldest_lowest :
       Monotone fun a ↦ (ohByAgeAndEthnicity a).italians := by
   decide
 
-/-- (th), (dh) and casual (ing) share one pattern, in which the younger speakers of the three
-lower social classes use more of the stigmatized form and the upper middle class reverses this. -/
 theorem same_pattern :
     ReversesAtTop (fun a c ↦ (thDhByAgeAndClass a c).th) ∧
       ReversesAtTop (fun a c ↦ (thDhByAgeAndClass a c).dh) ∧
       ReversesAtTop (fun a c ↦ (ingByAgeAndClass a c).casual) := by
   decide
 
-/-- Pooling the three lower social classes reverses the age relation for (th) and (dh) but not
-for (r), whose classes below the upper middle already have the older speakers at or above the
-younger. The pooled (r) is by social class and the (r) table by socioeconomic class, a crossing
-the book makes. -/
 theorem pooled_reversal :
     (pooledLowerClasses .younger).th < (pooledLowerClasses .older).th ∧
       (pooledLowerClasses .younger).dh < (pooledLowerClasses .older).dh ∧
@@ -303,18 +269,13 @@ theorem pooled_reversal :
       (pooledLowerClasses .younger).r < (pooledLowerClasses .older).r := by
   decide
 
-/-- The older members of the three lower social classes use less /in/ than the younger, in
-both styles. -/
 theorem ing_older_less : ∀ c < ⊤,
     (ingByAgeAndClass .older c).casual < (ingByAgeAndClass .younger c).casual ∧
       (ingByAgeAndClass .older c).careful < (ingByAgeAndClass .younger c).careful := by
   decide
 
-/-- (ing) in careful speech is distributed as a stable stigmatized feature. -/
 theorem ing_careful_caseIA : CaseIA fun a c ↦ (ingByAgeAndClass a c).careful := by decide
 
-/-- (ing) in casual speech departs from a stable stigmatized feature only in that the older
-upper middle class does not use it least. -/
 theorem ing_casual_departure :
     (∀ a c, (ingByAgeAndClass a c).casual ≤ (ingByAgeAndClass a ⊥).casual) ∧
       (∀ c ∈ Set.Ioo ⊥ ⊤,

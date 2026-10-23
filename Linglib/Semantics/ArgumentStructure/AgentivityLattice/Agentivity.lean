@@ -72,7 +72,6 @@ def lattice : Sublattice Agentivity where
 
 @[simp] theorem mem_lattice {a : Agentivity} : a ∈ lattice ↔ a.Valid := Iff.rfl
 
-/-- Of the sixteen feature sets, twelve are valid. -/
 theorem card_valid : (Finset.univ.filter Valid).card = 12 := by decide
 
 end Agentivity

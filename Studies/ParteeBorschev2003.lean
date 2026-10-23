@@ -46,8 +46,6 @@ variable {E S : Type*}
 
 /-! ### Convergence (15), (16) -/
 
-/-- The coerced noun `π N R` taken as the genitive's argument is the noun modified by the bare
-predicate possessive `R y`, so the accounts differ only in where the free relation enters. -/
 theorem convergence (N : E → S → Prop) (R : E → E → S → Prop) (y : E) : π N R y = N ⊓ R y :=
   rfl
 
@@ -70,24 +68,17 @@ def readingA : E → S → Prop := π (former past N) R y
 Mary's mansion*. -/
 def readingB : E → S → Prop := formerRel past (π N R) y
 
-/-- When the free relation does not change over time the two readings coincide, so the
-position of the relation is undetectable. -/
 theorem readingA_eq_readingB_of_constant (hR : ∀ x s, R y x s ↔ R y x past) :
     readingA past N R y = readingB past N R y := by
   funext x s
   simp only [readingA, readingB, π_apply, Pi.inf_apply, inf_Prop_eq, former, formerRel, hR x s]
   exact propext (by tauto)
 
-/-- Reading B holds and reading A fails of exactly what was the possessor's `N` and is no
-longer the possessor's, whether or not it is still an `N`: the building that is still a
-mansion but no longer Mary's. -/
 theorem readingB_not_readingA_iff :
     readingB past N R y x s ∧ ¬ readingA past N R y x s ↔
       N x past ∧ R y x past ∧ ¬ R y x s := by
   simp only [readingA, readingB, π_apply, Pi.inf_apply, inf_Prop_eq, former, formerRel]; tauto
 
-/-- Reading A holds and reading B fails of exactly a former `N` that is the possessor's now
-and was not when it was an `N`: a ruin Mary has acquired since. -/
 theorem readingA_not_readingB_iff :
     readingA past N R y x s ∧ ¬ readingB past N R y x s ↔
       N x past ∧ ¬ N x s ∧ R y x s ∧ ¬ R y x past := by

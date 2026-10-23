@@ -84,8 +84,6 @@ theorem ci_iff_of_no_belief (h : ∀ q ∈ alt S', ¬ c.dox ⊆ q) :
   ⟨λ ⟨α, hα, h₁, _⟩ => ⟨α, hα, h₁⟩,
     λ ⟨α, hα, h₁⟩ => ⟨α, hα, h₁, Context.not_qSupports_of_no_belief h α⟩⟩
 
-/-- The implicature ensures lack of agreement between the arguments when the left argument
-supports no answer but the implicature's. -/
 theorem not_agree_of_ci {α : Set W} (hS' : ¬ c.QSupports S' α)
     (hS : ∀ r ∈ alt c.qud, c.QSupports S r → r = α) :
     ¬ c.Agree (c.QSupports S) (c.QSupports S') :=
@@ -204,7 +202,6 @@ private theorem relevant_afford : (polar afford).IsRelevantTo ctx₁₇.issues :
 private theorem supports_beautiful : ctx₁₇.QSupports (ofSet beautiful) buy :=
   ⟨beautiful, by simp, Set.inter_subset_left, Or.inl ⟨rfl, rfl⟩⟩
 
-/-- Expense is no evidence for buying. -/
 private theorem not_evidence_expensive_buy : ¬ Evidence expensive buy := by
   rintro (⟨h, -⟩ | ⟨-, h⟩)
   · exact beautiful_ne_expensive h.symm

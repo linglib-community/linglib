@@ -54,8 +54,6 @@ theorem map_singleton_singleton (R : α → β → Prop) (a : α) (b : β) :
     Relation.Map R ({·}) ({·}) ({a} : Finset α) ({b} : Finset β) ↔ R a b := by
   simp [Relation.Map, Finset.singleton_inj]
 
-/-- `*` of a relation between individuals, in its second argument, holds of the nonempty
-pluralities all of whose members are related to the first. -/
 theorem algClosure_map_iff [DecidableEq β] (R : α → β → Prop) (a : α) (B : Finset β) :
     AlgClosure (Relation.Map R ({·}) ({·}) ({a} : Finset α)) B ↔ B.Nonempty ∧ ∀ b ∈ B, R a b := by
   rw [algClosure_iff_of_subset_range_singleton]
@@ -122,7 +120,6 @@ def langendoenModel (x y : Finset (Fin 3)) : Prop :=
 instance : DecidableRel langendoenModel := fun _ _ ↦ by
   unfold langendoenModel; infer_instance
 
-/-- Langendoen's relation is not a relation between individuals. -/
 theorem langendoenModel_ne_map (R : Fin 3 → Fin 3 → Prop) :
     langendoenModel ≠ Relation.Map R ({·}) ({·}) := by
   intro h

@@ -90,8 +90,6 @@ monotonic, so it validates the Ross inference. Booth's is not (`not_monotone_nec
 theorem kratzer_monotone (R : W → Set W) : Monotone fun A : Set W ↦ {w | R w ⊆ A} :=
   fun _ _ hAB _ hw ↦ hw.trans hAB
 
-/-- A Booth necessity is a Kratzerian one (Def 1): the relevant worlds lie in the truth set of
-the prejacent. -/
 theorem truth_necessity_subset (R : W → Set W) (φ : BilatInqProp W) :
     truth (necessity R φ) ⊆ {w | R w ⊆ truth φ} := by
   rw [truth_necessity]
@@ -116,13 +114,10 @@ def NonHurford (φ ψ : BilatInqProp W) : Prop :=
 theorem NonHurford.symm {φ ψ : BilatInqProp W} (h : NonHurford φ ψ) : NonHurford ψ φ :=
   IncompRel.symm h
 
-/-- For atoms, Def 22 is [booth-2022a]'s admissibility: the truth sets are incomparable. -/
 theorem nonHurford_atom_iff {Vp Vq : Set W} :
     NonHurford (atom Vp) (atom Vq) ↔ IncompRel (· ⊆ ·) Vp Vq :=
   and_congr (not_congr ofSet_le_ofSet_iff) (not_congr ofSet_le_ofSet_iff)
 
-/-- When no alternative of either disjunct is a state of the other, the alternatives of the
-disjunction are those of the disjuncts. -/
 theorem alt_sup_pro_eq_union {φ ψ : BilatInqProp W}
     (hφψ : Disjoint (alt φ.pro) ψ.pro) (hψφ : Disjoint (alt ψ.pro) φ.pro) :
     alt (φ ⊔ ψ).pro = alt φ.pro ∪ alt ψ.pro := by

@@ -206,44 +206,34 @@ def starredForm : Candidate fig3Input :=
 theorem fig3_LR_step1 :
     derivationLR.stepOptimum fig3 = {fig3.deleteTierElem 1} := by decide
 
-/-- In LR step 2, H-rī deletes, blocked by *CROWD (right), no-crossing (left) and *TAUTDOCK
-    (own). -/
 theorem fig3_LR_step2 :
     derivationLR.stepOptimum (fig3.deleteTierElem 1) =
       {(fig3.deleteTierElem 1).deleteTierElem 3} := by decide
 
-/-- In LR step 3, H-dō deletes. -/
 theorem fig3_LR_step3 :
     derivationLR.stepOptimum ((fig3.deleteTierElem 1).deleteTierElem 3) =
       {((fig3.deleteTierElem 1).deleteTierElem 3).deleteTierElem 5} := by decide
 
-/-- LR converges on `attestedForm`. -/
 theorem fig3_LR_converged : derivationLR.Converged attestedForm := by decide
 
-/-- In RL step 1, the rightmost floating H (H-dō) deletes. -/
 theorem fig3_RL_step1 :
     derivationRL.stepOptimum fig3 = {fig3.deleteTierElem 5} := by decide +kernel
 
-/-- In RL step 2, the wrong-form seed, H-rī docks onto the now-uncrowded dō. -/
 theorem fig3_RL_step2 :
     derivationRL.stepOptimum (fig3.deleteTierElem 5) =
       {(fig3.deleteTierElem 5).insertLink 3 2} := by decide +kernel
 
-/-- In RL step 3, H-kāk deletes. -/
 theorem fig3_RL_step3 :
     derivationRL.stepOptimum ((fig3.deleteTierElem 5).insertLink 3 2) =
       {((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1} := by decide
 
-/-- In RL step 4, *FALL repairs dō's HM contour and MAX(H) ≫ MAX(M) deletes the M. -/
 theorem fig3_RL_step4 :
     derivationRL.stepOptimum (((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1) =
       {(((fig3.deleteTierElem 5).insertLink 3 2).deleteTierElem 1).deleteTierElem 4} := by
   decide
 
-/-- RL converges on `starredForm`. -/
 theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
 
-/-- LR and RL converge to distinct surface forms. -/
 theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
   intro h
   exact absurd (congrArg Candidate.deleted h) (by decide)
@@ -256,22 +246,17 @@ def derivationParallel : HSDerivation (Candidate fig3Input) where
   gen := Candidate.gen
   ranking := haveTone :: starFloatCount :: rankingTail
 
-/-- The divergent tie ([pruitt-2009]): the three single-deletion candidates all tie.
-    (The paper's "no tie-breaker whatsoever helps" strengthening stays editorial.) -/
 theorem parallel_optimum_three_way_tie :
     derivationParallel.stepOptimum fig3 =
       {fig3.deleteTierElem 1, fig3.deleteTierElem 3, fig3.deleteTierElem 5} := by
   decide
 
-/-- The regular-HS optimum has three elements. -/
 theorem parallel_optimum_card_three :
     (derivationParallel.stepOptimum fig3).card = 3 := by decide
 
-/-- The directional-LR optimum is a singleton. -/
 theorem directional_LR_optimum_card_one :
     (derivationLR.stepOptimum fig3).card = 1 := by decide
 
-/-- Regular HS strictly underdetermines the step that directional HS decides. -/
 theorem only_directional_disambiguates_fig3 :
     (derivationLR.stepOptimum fig3).card <
       (derivationParallel.stepOptimum fig3).card := by decide +kernel
@@ -309,7 +294,6 @@ theorem eq24_step2 :
     derivationLR.stepOptimum (eq24.insertLink 2 2) =
       {(eq24.insertLink 2 2).deleteTierElem 3} := by decide
 
-/-- LR converges on `attestedForm`. -/
 theorem eq24_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq24
@@ -431,7 +415,6 @@ def attestedForm : Candidate eq22Input := eq22.insertLink 2 2
 theorem eq22_step1 :
     derivationLR.stepOptimum eq22 = {eq22.insertLink 2 2} := by decide
 
-/-- LR converges on `attestedForm`. -/
 theorem eq22_converged : derivationLR.Converged attestedForm := by decide
 
 end Eq22
@@ -452,7 +435,6 @@ def Form.ofTBUList {S : Type*} (host : List (TBU S)) (m : Morph) : Form S TRN Mo
   .melody m (host.map TBU.tone) (host.map TBU.seg)
     ((List.range host.length).map fun i ↦ (i, i)).toFinset
 
-/-- The faithful candidate of an embedded form carries at most one surface tone per TBU. -/
 theorem Form.ofTBUList_linksTo_subsingleton {S : Type*} (host : List (TBU S)) (m : Morph)
     (i : Fin (Form.ofTBUList host m).lower.length) :
     ((Candidate.input (Form.ofTBUList host m)).linksTo i).length ≤ 1 := by
@@ -470,8 +452,6 @@ theorem Form.ofTBUList_linksTo_subsingleton {S : Type*} (host : List (TBU S)) (m
   rw [List.length_map] at h_count
   omega
 
-/-- A candidate with two surface tones on one TBU, which no faithful candidate of an
-    `ofTBUList` form has. -/
 theorem Candidate.exists_multi_tone_TBU :
     ∃ u : Form Unit TRN Morph, ∃ c : Candidate u, ∃ i, 2 ≤ (c.linksTo i).length :=
   ⟨.melody (Morph.root "m") [.H, .L] [()] ∅,

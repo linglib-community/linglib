@@ -77,15 +77,12 @@ def terrace (level : Int) (shifts : List Int) : List Int :=
     (terrace level shifts).length = shifts.length := by
   simp [terrace]
 
-/-- A sequence realizes piecewise: the second part continues from the register the first
-part leaves. -/
 theorem terrace_append (level : Int) (ds es : List Int) :
     terrace level (ds ++ es) = terrace level ds ++ terrace (level + ds.sum) es := by
   induction ds generalizing level with
   | nil => simp
   | cons d ds ih => simp only [List.cons_append, terrace_cons, ih, List.sum_cons, Int.add_assoc]
 
-/-- A baseline only shifts the levels. -/
 theorem terrace_add (level d : Int) (shifts : List Int) :
     terrace (level + d) shifts = (terrace level shifts).map (· + d) := by
   induction shifts generalizing level with
@@ -94,10 +91,6 @@ theorem terrace_add (level d : Int) (shifts : List Int) :
     simp only [terrace_cons, List.map_cons]
     rw [show level + d + e = level + e + d by omega, ih]
 
-/-- **Monotonicity**: pointwise lower shifts and a lower baseline give pointwise lower
-levels. Structural basis of catathesis blocking ([beckman-pierrehumbert-1986]): a register
-reset at a phrase boundary leaves everything after it higher than continued compression
-would. -/
 theorem terrace_mono {ds es : List Int} (h : List.Forall₂ (· ≤ ·) ds es) {n m : Int}
     (hnm : n ≤ m) : List.Forall₂ (· ≤ ·) (terrace n ds) (terrace m es) := by
   induction h generalizing n m with
@@ -133,8 +126,6 @@ def realizePitch (level : Int) (ts : List TRN) : List Int :=
     (realizePitch level ts).length = ts.length := by
   simp [realizePitch]
 
-/-- A sequence realizes piecewise: the second part continues from the register the first
-part leaves. -/
 theorem realizePitch_append (level : Int) (ts us : List TRN) :
     realizePitch level (ts ++ us) =
       realizePitch level ts ++ realizePitch (level + (ts.map TRN.pitchEffect).sum) us := by
@@ -143,18 +134,15 @@ theorem realizePitch_append (level : Int) (ts us : List TRN) :
 /-- The register shifts from the start: no privileged pitch, only the differences. -/
 def pitchDeltas (ts : List TRN) : List Int := realizePitch 0 ts
 
-/-- A baseline only shifts the deltas. -/
 theorem realizePitch_eq_pitchDeltas_shift (level : Int) (ts : List TRN) :
     realizePitch level ts = (pitchDeltas ts).map (· + level) := by
   simpa [pitchDeltas, realizePitch] using terrace_add 0 level (ts.map TRN.pitchEffect)
 
-/-- Pointwise lower shifts and a lower baseline give pointwise lower pitch. -/
 theorem realizePitch_mono {ts₁ ts₂ : List TRN}
     (hts : List.Forall₂ ((· ≤ ·) on TRN.pitchEffect) ts₁ ts₂) {n m : Int}
     (hnm : n ≤ m) : List.Forall₂ (· ≤ ·) (realizePitch n ts₁) (realizePitch m ts₂) :=
   terrace_mono (List.forall₂_map_right_iff.2 <| List.forall₂_map_left_iff.2 hts) hnm
 
-/-- A higher baseline gives pointwise higher pitch for a fixed sequence. -/
 theorem realizePitch_baseline_mono (ts : List TRN) {n m : Int} (h : n ≤ m) :
     List.Forall₂ (· ≤ ·) (realizePitch n ts) (realizePitch m ts) :=
   realizePitch_mono (List.forall₂_same.mpr fun _ _ => le_rfl) h
@@ -184,7 +172,6 @@ def realize (level : Int) (tier : RegisterTier) : List Int :=
     (realize level tier).length = tier.length := by
   simp [realize]
 
-/-- A tier with one node per mora realizes as the node sequence. -/
 theorem realize_map_singleton (level : Int) (ts : List TRN) :
     realize level (ts.map ([·])) = realizePitch level ts := by
   simp [realize, realizePitch, List.map_map, Function.comp_def]

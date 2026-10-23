@@ -184,7 +184,6 @@ theorem stateAt_succ_of_getElem? {sp : Spine} {n : ℕ} {h : Head} (hn : sp[n]? 
     stateAt sp (n + 1) = step n h (stateAt sp n) := by
   simp [stateAt, hn]
 
-/-- A frozen subject stays frozen at the same height. -/
 theorem frozen_stateAt_succ {sp : Spine} {n : ℕ} (hf : (stateAt sp n).frozen = true) :
     stateAt sp (n + 1) = stateAt sp n := by
   simp only [stateAt]
@@ -211,7 +210,6 @@ theorem height_le_height_step {i : ℕ} {h : Head} {s : State} (hs : s.height �
   by_cases hf : s.frozen = true <;> by_cases he : h.epp = true <;>
     by_cases hp : h.phase = true <;> simp [hf, he, hp] <;> omega
 
-/-- The subject never sits above the heads merged so far. -/
 theorem height_stateAt_le (sp : Spine) (n : ℕ) : (stateAt sp n).height ≤ n := by
   induction n with
   | zero => exact le_rfl
@@ -221,7 +219,6 @@ theorem height_stateAt_le (sp : Spine) (n : ℕ) : (stateAt sp n).height ≤ n :
     | none => exact ih.trans (Nat.le_succ n)
     | some h => exact height_step_le ih
 
-/-- The subject never moves down. -/
 theorem height_stateAt_mono (sp : Spine) {m n : ℕ} (hmn : m ≤ n) :
     (stateAt sp m).height ≤ (stateAt sp n).height := by
   induction n with
@@ -246,9 +243,6 @@ theorem phase_internal_obligatory {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]?
   calc i + 1 = (stateAt sp (i + 1)).height := by rw [hstep]
     _ ≤ landing sp := height_stateAt_mono sp hlen
 
-/-- Cross-phasal movement needs EPP on the phase head (79ii): a phase head without EPP freezes
-an accessible subject in its complement, so the subject lands below it and no higher head can
-reach it. -/
 theorem cross_phasal_frozen {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = some h)
     (hp : h.phase = true) (he : h.epp = false) (ha : Accessible sp i) :
     landing sp ≤ i ∧ ∀ j, i < j → ¬ Accessible sp j := by

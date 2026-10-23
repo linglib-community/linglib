@@ -134,7 +134,6 @@ theorem uncenter_neg_ego_of_eq (h : t c x = x) :
 theorem uncenter_neg_ego_of_ne (h : t c x ≠ x) : uncenter (-ego V t c) x = ∅ := by
   ext w; simp [uncenter, ego, h]
 
-/-- In a main clause the two accounts propose the same thing for the common ground. -/
 theorem uncenter_egoAuth :
     uncenter (egoAuth V t c) c.authority = uncenter (ego V t c) c.authority := rfl
 
@@ -160,28 +159,20 @@ theorem inCrisis_push_ofSet_empty : (K.push (ofSet (∅ : Set W))).InCrisis := b
   rw [alt_ofSet, Set.mem_singleton_iff] at hq
   simp [hq] at hne
 
-/-- Asserting an egophoric clause whose subject is not the authority leaves the conversation
-with no consistent continuation. -/
 theorem inCrisis_assert_ego (h : t c c.authority ≠ c.authority) :
     (assert K c (ego V t c)).InCrisis := by
   rw [assert, uncenter_ego_of_ne h]
   exact inCrisis_push_ofSet_empty (K := K.commit c.authority ∅)
 
-/-- Asking an egophoric question whose subject is not the authority leaves the conversation
-with no consistent continuation. -/
 theorem inCrisis_ask_ego (h : t c c.authority ≠ c.authority) :
     (ask K c (ego V t c)).InCrisis := by
   rw [ask, uncenter_ego_of_ne h, uncenter_neg_ego_of_ne h, sup_idem]
   exact inCrisis_push_ofSet_empty
 
-/-- When the subject is the authority, asserting an egophoric clause is an ordinary assertion
-that the authority has the property. -/
 theorem assert_ego_of_eq (h : t c c.authority = c.authority) :
     assert K c (ego V t c) = K.assert c.authority {w | V c.authority w} := by
   rw [assert, uncenter_ego_of_eq h]
 
-/-- When the subject is the authority, asking an egophoric question is an ordinary polar
-question about whether the authority has the property. -/
 theorem ask_ego_of_eq (h : t c c.authority = c.authority) :
     ask K c (ego V t c) = K.polarQuestion {w | V c.authority w} := by
   rw [ask, uncenter_ego_of_eq h, uncenter_neg_ego_of_eq h]; rfl
@@ -208,29 +199,22 @@ theorem not_inCrisis_ask_ego (h : t c c.authority = c.authority) (hK : K.IsStabl
 
 /-! ### Which subjects the egophoric form allows -/
 
-/-- A statement with *you* as the subject of an egophoric verb has no consistent
-continuation. -/
 theorem inCrisis_assert_ego_you (hne : c.agent ≠ c.addressee) (hc : c.IsDeclarative) :
     (assert K c (ego V you c)).InCrisis :=
   inCrisis_assert_ego (t := you) fun h ↦ hne (h.trans hc).symm
 
-/-- A question with *I* as the subject of an egophoric verb has no consistent continuation. -/
 theorem inCrisis_ask_ego_I (hne : c.agent ≠ c.addressee) (hc : c.IsInterrogative) :
     (ask K c (ego V I c)).InCrisis :=
   inCrisis_ask_ego (t := I) fun h ↦ hne (h.trans hc)
 
-/-- When an evidential makes someone other than the speaker the authority, a statement with *I*
-as the subject of an egophoric verb has no consistent continuation. -/
 theorem inCrisis_assert_ego_I_of_source (hs : c.agent ≠ c.authority) :
     (assert K c (ego V I c)).InCrisis :=
   inCrisis_assert_ego (t := I) hs
 
-/-- If an egophoric assertion can be continued consistently, its subject is the authority. -/
 theorem eq_authority_of_not_inCrisis_assert (h : ¬ (assert K c (ego V t c)).InCrisis) :
     t c c.authority = c.authority :=
   of_not_not fun hne ↦ h (inCrisis_assert_ego hne)
 
-/-- If an egophoric question can be continued consistently, its subject is the authority. -/
 theorem eq_authority_of_not_inCrisis_ask (h : ¬ (ask K c (ego V t c)).InCrisis) :
     t c c.authority = c.authority :=
   of_not_not fun hne ↦ h (inCrisis_ask_ego hne)
@@ -256,8 +240,6 @@ def context? (r : Datum) (c₀ : Kaplan.Context W E P T) :
   | some "interrogative" => some ⟨c₀, c₀.addressee⟩
   | _ => none
 
-/-- Among the paper's examples with an egophoric verb, the acceptable ones are exactly those
-whose subject is the authority. -/
 theorem ego_acceptable_iff (c₀ : Kaplan.Context W E P T) (hne : c₀.agent ≠ c₀.addressee) :
     ∀ r ∈ Examples.all, r.feature? "marking" = some "ego" →
       ∃ t ∈ subject? r, ∃ c ∈ context? r c₀,
@@ -293,12 +275,9 @@ variable {R : Centered W E → Centered W E → Prop} {φ : CenteredProp W E} {w
 @[simp] theorem report_eq_one_iff {p : Centered W E} : report R x φ p = 1 ↔ Says R x φ p.1 := by
   simp [report]
 
-/-- `Says` is `Pearson2015.SayDeSe` over the alternatives of the say relation. -/
 theorem says_iff_sayDeSe : Says R x φ w ↔ SayDeSe {p | R (w, x) p} fun a w' ↦ φ (w', a) = 1 :=
   Iff.rfl
 
-/-- An egophoric report is true exactly when the reported speaker takes the subject to be
-herself and ascribes the property to herself. -/
 theorem says_ego_iff :
     Says R x (ego V t c) w ↔
       (∀ p, R (w, x) p → t c p.2 = p.2) ∧ Says R x (ego V self c) w := by
@@ -306,7 +285,6 @@ theorem says_ego_iff :
   exact ⟨fun h ↦ ⟨fun p hp ↦ (h p hp).1, fun p hp ↦ (h p hp).1 ▸ (h p hp).2⟩,
     fun h p hp ↦ ⟨h.1 p hp, (h.1 p hp).symm ▸ h.2 p hp⟩⟩
 
-/-- If an egophoric report is true, so is the corresponding plain report. -/
 theorem says_plain_of_says_ego (h : Says R x (ego V t c) w) : Says R x (plain V t c) w :=
   fun p hp ↦ plain_eq_one_iff.2 (ego_eq_one_iff.1 (h p hp)).2
 
@@ -316,8 +294,6 @@ structure SelfAware (R : Centered W E → Centered W E → Prop) (x : E) : Prop 
   serial : ∀ w, ∃ p, R (w, x) p
   center : ∀ w p, R (w, x) p → p.2 = x
 
-/-- When one report is embedded in another, the subject of the egophoric verb is the speaker of
-the inner report, whoever the outer speaker is. -/
 theorem eq_of_says_report_ego (hy : ∀ w, ∃ p, R (w, y) p) (hx : SelfAware R x)
     (h : Says R y (report R x (ego V (name z) c)) w) : z = x := by
   obtain ⟨p, hp⟩ := hy w
@@ -330,16 +306,12 @@ theorem eq_of_says_report_ego (hy : ∀ w, ∃ p, R (w, y) p) (hx : SelfAware R 
 becomes the authority. -/
 def authorityShift (x : E) : Function.End (Context W E P T) := fun c ↦ { c with authority := x }
 
-/-- The shift changes the context, so evaluating a character at the shifted context is a monster
-in Kaplan's sense. -/
 theorem isMonster_authorityShift [Nonempty W] (h : c.authority ≠ x) :
     Kaplan.IsMonster (Kaplan.shift (authorityShift (W := W) (P := P) (T := T) x) :
       Kaplan.Character (Context W E P T) W Prop → _) :=
   (Kaplan.isMonster_shift_iff _).2 <|
     (Kaplan.ne_one_iff_exists_smul_ne _).2 ⟨c, fun e ↦ h (congrArg Context.authority e).symm⟩
 
-/-- On the authority-indexical account a shifted report about a named individual is true exactly
-when the individual is the reported speaker and the plain report is true. -/
 theorem says_egoAuth_name_iff (hR : ∃ p, R (w, x) p) :
     Says R x (egoAuth V (name z) (authorityShift x c)) w ↔
       z = x ∧ Says R x (plain V (name z) c) w := by
@@ -373,9 +345,6 @@ def drank : Person → World → Prop := fun x w ↦ x = .syam ∧ w = .said
 
 variable (c : Context World Person Unit Unit)
 
-/-- In the photograph scenario the plain report is true and the egophoric report is false. The
-authority-indexical account makes the egophoric report true, because it checks only that the
-subject is the reported speaker. -/
 theorem lampshade :
     Says sayAlt .syam (plain drank (name .syam) c) .actual ∧
     ¬ Says sayAlt .syam (ego drank (name .syam) c) .actual ∧

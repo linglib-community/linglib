@@ -88,8 +88,6 @@ private theorem yield_map_foldlM_replay? :
     rw [← e₁] at hn ⊢
     exact yield_map_foldlM_replay? h hn
 
-/-- When no token is merged twice, a derivation pronounces each token it merges once, in its
-object or in a copy left on the stack, however many copies its movements leave. -/
 theorem Derivation.yield_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObject}
     (hd : d.lexTokens.Nodup) (h : d.replay? τ = some c) :
     (c.map toSyntacticObject).yield = d.lexTokens := by
@@ -99,9 +97,6 @@ theorem Derivation.yield_replay? {d : Derivation} {c : Cfg LinearizedSyntacticOb
   have := yield_map_foldlM_replay? h (by rwa [h0])
   rwa [h0] at this
 
-/-- When no token is merged twice and no extracted copy is left on the stack, the externalized
-object pronounces every token the derivation merges exactly once, the outcome [nunes-2004]'s chain
-reduction secures. -/
 theorem Derivation.coe_surfaceTokens {d : Derivation} (hd : d.lexTokens.Nodup)
     (h : d.replay?.map (·.stack) = some []) : (d.surfaceTokens : Multiset _) = d.lexTokens := by
   obtain ⟨c, hc, hst⟩ := Option.map_eq_some_iff.1 h
@@ -110,8 +105,6 @@ theorem Derivation.coe_surfaceTokens {d : Derivation} (hd : d.lexTokens.Nodup)
   rw [surfaceTokens, externalize?, hc, Option.map_some, Option.map_some, Option.getD_some,
     LinearizedSyntacticObject.coe_yield, this]
 
-/-- In a derivation of Merge steps with no token merged twice, every token merged is pronounced in
-its object. -/
 theorem Derivation.mem_yield_of_mem_lexTokens {d : Derivation} {c : Cfg LinearizedSyntacticObject}
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c)
     {tok : LexicalItem.Token} (ht : tok ∈ d.lexTokens) :

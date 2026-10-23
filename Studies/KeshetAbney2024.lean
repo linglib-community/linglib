@@ -185,14 +185,12 @@ theorem realize_descE :
     exact ⟨⟨w, hw, ⟨_, by rw [hb]; exact Set.mem_singleton _⟩,
       fun a ha => ⟨e, he, (by rw [hb] at ha; exact ha : a = _).symm⟩⟩, _, hb⟩
 
-/-- `ΣbE` at `w₀`: the satisfiers of the description there. -/
 theorem realize_sigmaB_descE (hw : h .w = world w₀) :
     Term.realize S.model h (.sigma .b descE) = Sum.inr '' {e | S.desc w₀ e} :=
   Term.realize_sigma_eq_image S.model h fun g' hg => by
     rw [realize_descE, hg (by decide : Var.w ∈ _), hw]
     simp only [world_inj, exists_and_left, exists_eq_left', Set.mem_ofPred_eq]
 
-/-- `ΣwE`: the worlds with a satisfier of the description. -/
 theorem realize_sigmaW_descE :
     Term.realize S.model h (.sigma .w descE) = Sum.inl '' {w | ∃ e, S.desc w e} := by
   rw [Term.realize_sigma_world_eq S.model h (y := .b) (by decide)
@@ -200,7 +198,6 @@ theorem realize_sigmaW_descE :
     (fun g' _ => (realize_descE S g').trans (exists_congr fun _ => exists_and_left)) (by decide)]
   simp
 
-/-- The modal base: the worlds accessible from the world of `w`. -/
 theorem realize_base (hw : h .w = world w₀) :
     base.realize S.model h = Sum.inl '' {u | S.acc w₀ u} :=
   Term.realize_sigma_eq_of_distributive S.model h fun g' hg => by
@@ -209,7 +206,6 @@ theorem realize_base (hw : h .w = world w₀) :
       hg (by decide : Var.w ∈ _), hw, world_inj, exists_eq_left']
     rfl
 
-/-- `might_w(ΣwE)` at `w₀`: some accessible world has a satisfier. -/
 theorem realize_might (hw : h .w = world w₀) :
     (Modal.apply .might base (.sigma .w descE)).Realize S.model h ↔
       ∃ u e, S.acc w₀ u ∧ S.desc u e := by
@@ -217,7 +213,6 @@ theorem realize_might (hw : h .w = world w₀) :
     ← Set.image_inter Sum.inl_injective, Set.image_nonempty]
   simp [Set.Nonempty]
 
-/-- `must_w(ΣwE)` at `w₀`: every accessible world has a satisfier. -/
 theorem realize_must (hw : h .w = world w₀) :
     (Modal.apply .must base (.sigma .w descE)).Realize S.model h ↔
       ∀ u, S.acc w₀ u → ∃ e, S.desc u e := by
@@ -242,8 +237,6 @@ theorem felicitous_continuation_iff (hw : h .w = world w₀) :
   simp only [continuation, Formula.felicitous_atom, Term.felicitous_var, Fin.forall_fin_one,
     Matrix.cons_val_zero, true_and, felicitous_pronoun_iff S h hw]
 
-/-- A modal discourse is felicitous at `w₀` iff the modal claim there implies
-a unique satisfier of the antecedent description at `w₀`. -/
 theorem felicitous_discourse_iff (m : Modal) (hw : h .w = world w₀) :
     (discourse m descE).Felicitous S.model h ↔
       ((m.apply base (.sigma .w descE)).Realize S.model h → ∃! e, S.desc w₀ e) := by

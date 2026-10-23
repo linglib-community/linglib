@@ -61,7 +61,6 @@ def plus : PolarityItem :=
 def items : List PolarityItem :=
   [personne, rien, jamais, plus]
 
-/-- Every attested context of every entry licenses it. -/
 theorem french_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
   decide

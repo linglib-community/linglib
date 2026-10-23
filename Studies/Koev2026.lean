@@ -107,7 +107,6 @@ theorem defaultStandard_eq_maxEndpoint_of_fitsModifierRows {b : Boundedness}
   Boundedness.defaultStandard_eq_maxEndpoint_iff.2
     (Boundedness.eq_upperClosed_iff.1 (fitsModifierRows_iff.1 h)).1
 
-/-- The fragment's *believe* fits the judgments. -/
 theorem fitsModifierRows_believe :
     ∃ b ∈ English.Verbs.believe.boundedness, FitsModifierRows b := by
   decide
@@ -135,14 +134,10 @@ theorem fitsModifierRowsPos_iff {s : PositiveStandard} :
 standard fixed in its lexicon. -/
 def weakBelieve : Verb := { English.Verbs.believe.toVerb with lexicalStandard := some .contextual }
 
-/-- The weak semantics gives *believe* the degree semantics of the fragment's *confident*
-([cariani-santorio-wellwood-2024]). -/
 theorem gradability_weakBelieve :
     weakBelieve.gradability? = English.Adjectives.confident.gradability? := by
   decide
 
-/-- Read off the scale, the judgments leave the weak semantics open: its scale fits them, and
-only Interpretive Economy, which does not admit its standard, excludes it. -/
 theorem weakBelieve_fitsModifierRows :
     ∃ γ ∈ weakBelieve.gradability?,
       FitsModifierRows γ.boundedness ∧ ¬ γ.boundedness.Admits γ.standard := by
@@ -220,7 +215,6 @@ theorem not_complementary_probability :
         (Boundedness.ofOrder Lassiter2017.Probability).dual.defaultStandard := by
   simp [Lassiter2017.ofOrder_probability, Boundedness.complementary_defaultStandard_dual_iff]
 
-/-- On the half-open scale `(0, 1]` the defaults are complementary. -/
 theorem complementary_Ioc :
     (Boundedness.ofOrder (Set.Ioc (0 : ℝ) 1)).defaultStandard.Complementary
       (Boundedness.ofOrder (Set.Ioc (0 : ℝ) 1)).dual.defaultStandard := by

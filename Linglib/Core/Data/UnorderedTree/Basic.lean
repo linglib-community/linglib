@@ -59,12 +59,9 @@ variable {α β γ : Type*}
 /-- The canonical projection from ordered to nonplanar trees. -/
 def mk (t : RoseTree α) : UnorderedTree α := Quotient.mk _ t
 
-/-- Two trees give the same nonplanar tree iff they're `RoseTree.Perm`-related. -/
 theorem mk_eq_mk_iff {t s : RoseTree α} : mk t = mk s ↔ RoseTree.Perm t s :=
   Quotient.eq
 
-/-- The quotient projection in `mk`-form, so that goals produced by `Quotient.inductionOn`
-display `mk` and the `mk`-stated lemmas rewrite. -/
 @[simp] theorem quot_mk_eq_mk (t : RoseTree α) : (⟦t⟧ : UnorderedTree α) = mk t := rfl
 
 /-! ### Leaves and lifted counts -/
@@ -117,7 +114,6 @@ def value : UnorderedTree α → α :=
 
 @[simp] theorem value_mk (t : RoseTree α) : (mk t).value = t.value := rfl
 
-/-- The multiset of `mk`-images of the root children is a `RoseTree.Perm`-invariant. -/
 theorem perm_children_map_mk {t s : RoseTree α} (h : RoseTree.Perm t s) :
     (↑(t.children.map mk) : Multiset (UnorderedTree α)) = ↑(s.children.map mk) := by
   rw [← Multiset.map_coe, ← Multiset.map_coe, ← Multiset.rel_eq, Multiset.rel_map]
@@ -130,8 +126,6 @@ def children : UnorderedTree α → Multiset (UnorderedTree α) :=
 @[simp] theorem children_mk (t : RoseTree α) :
     (mk t).children = ↑(t.children.map mk) := rfl
 
-/-- The `mk`-images of two nodes are equal iff their root values agree and their children agree
-as multisets of nonplanar trees. -/
 theorem mk_node_eq_mk_node_iff {a b : α} {cs ds : List (RoseTree α)} :
     mk (.node a cs) = mk (.node b ds) ↔
       a = b ∧ (↑(cs.map mk) : Multiset (UnorderedTree α)) = ↑(ds.map mk) := by
@@ -165,7 +159,6 @@ instance : LeftCommutative (cons (α := α)) :=
 one at a time to the leaf. -/
 def node (a : α) (F : Multiset (UnorderedTree α)) : UnorderedTree α := F.foldr cons (leaf a)
 
-/-- The empty-forest node is the leaf. -/
 @[simp] theorem node_zero (a : α) : node a (0 : Multiset (UnorderedTree α)) = leaf a := rfl
 
 theorem node_cons (a : α) (c : UnorderedTree α) (F : Multiset (UnorderedTree α)) :
@@ -176,21 +169,16 @@ theorem node_cons (a : α) (c : UnorderedTree α) (F : Multiset (UnorderedTree �
     cons c (node a F) = node a (c ::ₘ F) :=
   (node_cons a c F).symm
 
-/-- `node` on the `mk`-image of a list of planar children is `mk` of the planar node. -/
 theorem node_mk_tree_list (a : α) (ps : List (RoseTree α)) :
     node a (Multiset.ofList (ps.map mk)) = mk (.node a ps) := by
   induction ps with
   | nil => rfl
   | cons p ps ih => rw [List.map_cons, ← Multiset.cons_coe, node_cons, ih]; rfl
 
-/-- The binary case of `node_mk_tree_list` handles a bare pair of `mk`-lifted trees. -/
 theorem node_pair_mk (a : α) (p q : RoseTree α) :
     node a {mk p, mk q} = mk (.node a [p, q]) :=
   node_mk_tree_list a [p, q]
 
-/-- Planar representatives can be chosen for a whole forest at once, since every
-`Multiset (UnorderedTree α)` is the `mk`-image of a list of planar trees. Descent proofs that use
-this eliminator meet `node_mk_tree_list` on the nose. -/
 @[elab_as_elim]
 theorem forest_inductionOn {motive : Multiset (UnorderedTree α) → Prop}
     (F : Multiset (UnorderedTree α))
@@ -210,8 +198,6 @@ An unordered tree is a label over a multiset of unordered trees. `induction_on`,
 `para` are the induction, recursion and paramorphism principles of that description; a function
 defined through them needs no proof of invariance under `RoseTree.Perm`. -/
 
-/-- Induction on an unordered tree proves `motive t` for all `t` from `motive (node a F)` given
-`motive c` for every child `c ∈ F`. -/
 @[elab_as_elim, induction_eliminator]
 theorem induction_on {motive : UnorderedTree α → Prop} (t : UnorderedTree α)
     (node : ∀ (a : α) (F : Multiset (UnorderedTree α)), (∀ c ∈ F, motive c) → motive (node a F)) :
@@ -267,18 +253,15 @@ private theorem fst_fold_para (f : α → Multiset (UnorderedTree α × β) → 
   induction F using forest_inductionOn with
   | h ps => rw [node_mk_tree_list]; rfl
 
-/-- Every tree is the `node` of its root value and children. -/
 theorem node_eta (t : UnorderedTree α) : node (value t) (children t) = t := by
   induction t with
   | node a F => rw [value_node, children_node]
 
 /-! ### Node count of a `node` -/
 
-/-- Every tree has at least one vertex (the root). -/
 theorem numNodes_pos (t : UnorderedTree α) : 0 < t.numNodes :=
   Quotient.inductionOn t RoseTree.numNodes_pos
 
-/-- The node count of `node a F` is one (the root) plus the total node count of `F`. -/
 @[simp] theorem numNodes_node (a : α) (F : Multiset (UnorderedTree α)) :
     (node a F).numNodes = (F.map numNodes).sum + 1 := by
   induction F using forest_inductionOn with
@@ -289,7 +272,6 @@ theorem numNodes_pos (t : UnorderedTree α) : 0 < t.numNodes :=
 
 /-! ### Height of a `node` -/
 
-/-- A child is strictly lower than its parent. -/
 theorem height_lt_of_mem (T : UnorderedTree α) (F : Multiset (UnorderedTree α))
     (hT : T ∈ F) (a : α) : T.height < (node a F).height := by
   induction F using forest_inductionOn with
@@ -320,7 +302,6 @@ theorem map_map (f : α → β) (g : β → γ) (t : UnorderedTree α) :
     map g (map f t) = map (g ∘ f) t :=
   Quotient.inductionOn t fun p ↦ congrArg mk (p.comp_map f g).symm
 
-/-- `map` commutes with `node`, relabelling the root and mapping the children. -/
 theorem map_node (f : α → β) (a : α) (cs : Multiset (UnorderedTree α)) :
     map f (node a cs) = node (f a) (cs.map (map f)) := by
   refine forest_inductionOn cs fun ps ↦ ?_

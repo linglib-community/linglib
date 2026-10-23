@@ -104,8 +104,6 @@ variable {M} {s : Judge} {c : Set Index} {J : Judgement Judge Index} {i : Index}
 theorem informative_subset (c : Set Index) (φ : Index → Prop) : informative c φ ⊆ c :=
   λ _ h => h.1
 
-/-- After an assertion every index records the speaker's commitment: the condition of
-commitment closure holds. -/
 theorem commits_of_mem_assert (h : i ∈ assert M s c J) : M.commits s i (J s) :=
   let ⟨_, _, h⟩ := h; M.succ_holds _ _ _ h
 
@@ -114,8 +112,6 @@ theorem mem_assertClosed_iff :
     i ∈ assertClosed M s c J ↔ (∃ i₀ ∈ c, M.succ i₀ (comP M J s) i) ∧ J s i :=
   Iff.rfl
 
-/-- An assertion is rejected without loss: the commitment stays in the common ground even
-when closure is withheld ([farkas-bruce-2010]). -/
 theorem assertClosed_subset_assert : assertClosed M s c J ⊆ assert M s c J :=
   informative_subset _ _
 
@@ -159,8 +155,6 @@ def steps : Model Unit ℕ where
 /-- *Max snores loudly* from the first step on. -/
 def snores : Judgement Unit ℕ := λ _ i => 0 < i
 
-/-- The assertion from the initial index moves the common ground to the next step, where the
-speaker's commitment is on record, and closure keeps it, since the proposition holds there. -/
 theorem assert_steps :
     assert steps () {0} snores = {1} ∧ assertClosed steps () {0} snores = {1} :=
   have h : assert steps () {0} snores = {1} := Set.ext λ i =>

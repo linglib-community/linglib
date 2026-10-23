@@ -52,7 +52,6 @@ def unorderedSubtreesList : List (RoseTree α) → Multiset (UnorderedTree α)
 end
 
 mutual
-/-- The nonplanar subtrees of a planar tree are the images of its subtrees. -/
 theorem unorderedSubtrees_eq_map (p : RoseTree α) :
     unorderedSubtrees p = (p.subtrees.map UnorderedTree.mk : Multiset (UnorderedTree α)) := by
   obtain ⟨a, cs⟩ := p
@@ -82,8 +81,6 @@ namespace UnorderedTree
 
 variable {α : Type*}
 
-/-- The planar subtrees of a tree are the paramorphism that conses each node onto its children's
-subtrees, so they do not depend on the representative. -/
 private theorem unorderedSubtrees_eq_para (t : RoseTree α) : unorderedSubtrees t =
     para (fun a ps ↦ node a (ps.map Prod.fst) ::ₘ (ps.map Prod.snd).sum) (mk t) := by
   induction t with
@@ -131,7 +128,6 @@ theorem self_mem_subtrees (t : UnorderedTree α) : t ∈ subtrees t := by
   induction t with
   | node a F _ => simp
 
-/-- One subtree per vertex. -/
 theorem card_subtrees (t : UnorderedTree α) : (subtrees t).card = t.numNodes := by
   induction t with
   | node a F ih =>

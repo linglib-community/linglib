@@ -197,8 +197,6 @@ def Formula.modalDepth : Formula Atom → ℕ
 
 /-! ### Lemma 4.2: Downward closure -/
 
-/-- Support and anti-support are downward closed together. Each case is the closure lemma of
-    its connective in `Team/Operations.lean`, and subteams inherit the dependence atom. -/
 private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
     (M : KripkeModel W Atom) :
     IsLowerSet {t | support M φ t} ∧ IsLowerSet {t | antiSupport M φ t} := by
@@ -219,7 +217,6 @@ theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-! ### Empty team property -/
 
-/-- Every MDL formula is supported and anti-supported by the empty team. -/
 private theorem support_and_antiSupport_empty
     (φ : Formula Atom) (M : KripkeModel W Atom) :
     support M φ ∅ ∧ antiSupport M φ ∅ := by
@@ -234,15 +231,12 @@ private theorem support_and_antiSupport_empty
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Team.empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
   | poss ψ ih => exact ⟨Team.empty_mem_possWitness ih.1, Team.empty_mem_necImage ih.2⟩
 
-/-- Every MDL formula is supported on the empty team. -/
 theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     support M φ ∅ :=
   (support_and_antiSupport_empty φ M).1
 
 /-! ### Dep breaks union closure (the defining feature) -/
 
-/-- The dependence atom is not union-closed. When two worlds agree on `p` but not on `q`,
-    each of their singleton teams supports `=(p; q)` but the team of both does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     {M : KripkeModel W Atom} (hp : M.val p w₁ ↔ M.val p w₂) (hq : ¬ (M.val q w₁ ↔ M.val q w₂)) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := fun h ↦ by
@@ -255,8 +249,6 @@ theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
 open Team in
-/-- Every MDL-definable team property is downward closed and contains the empty team. The
-    converse, that every such property is MDL-definable, is not proved here. -/
 theorem definableClass_support_subset (M : KripkeModel W Atom) :
     definableClass (support M) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
   definableClass_subset fun φ ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩
@@ -311,8 +303,6 @@ section Classical
 
 variable {M : KripkeModel W Atom} {φ : Formula Atom} {w : W} {t : Finset W}
 
-/-- On `dep`-free formulas, support is pointwise classical truth and anti-support pointwise
-    classical falsity. -/
 theorem eval_iff_forall_realize (hD : φ.DepFree) (b : Bool) (t : Finset W) :
     eval M b φ t ↔ ∀ w ∈ t, (Realize M φ w ↔ b) := by
   induction φ generalizing b t with

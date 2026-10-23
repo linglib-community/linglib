@@ -164,10 +164,6 @@ def periphrasis : Tense.Periphrasis TenseVerb where
     | .perfect a, .pastParticiple => some (.doublePerfect a)
     | _, _ => none
 
-/-- The chains German builds over a lexical verb are the empty one, the perfect, the future, the
-future of the perfect and the perfect of the perfect, and each leaves the lexical verb, its
-perfect auxiliary, *werden*, *werden* and the auxiliary of a complex pluperfect to be
-inflected. -/
 theorem chain_eq_some {v : PrincipalParts} :
     ∀ {ns : List Tense.Form.Nonfinite} {ws : List String} {u : TenseVerb},
       periphrasis.chain (.lexical v) ns = some (ws, u) →
@@ -193,7 +189,6 @@ before the auxiliaries it stands under. -/
 def PrincipalParts.tenseForm (v : PrincipalParts) (f : Tense.Form) : Option (List String) :=
   (periphrasis.realize (.lexical v) f).map fun x ↦ x.1 :: x.2
 
-/-- A realized tense form has one word for its finite verb and one for each nonfinite form. -/
 theorem PrincipalParts.length_of_mem_tenseForm {v : PrincipalParts} {f : Tense.Form}
     {ws : List String} (h : ws ∈ v.tenseForm f) : ws.length = f.nonfinite.length + 1 := by
   obtain ⟨x, hx, rfl⟩ := Option.mem_map.1 h
@@ -213,8 +208,6 @@ perfect. -/
 def southernTenseForms : List Tense.Form :=
   [.simplePresent, .presentPerfect, .doublePerfect, .future, .futurePerfect]
 
-/-- The standard tense forms and the complex pluperfects are exactly the forms that German
-realizes. -/
 theorem PrincipalParts.tenseForm_isSome_iff (v : PrincipalParts) (f : Tense.Form) :
     (v.tenseForm f).isSome ↔ f ∈ tenseForms ∨ f ∈ complexPluperfects := by
   constructor
@@ -230,8 +223,6 @@ theorem PrincipalParts.tenseForm_isSome_iff (v : PrincipalParts) (f : Tense.Form
   · simp only [tenseForms, complexPluperfects, List.mem_cons, List.not_mem_nil, or_false]
     rintro ((rfl | rfl | rfl | rfl | rfl | rfl) | (rfl | rfl)) <;> rfl
 
-/-- Every form of southern speech is a standard form or a complex pluperfect, and so is
-realized. -/
 theorem southernTenseForms_subset : southernTenseForms ⊆ tenseForms ++ complexPluperfects := by
   decide
 
@@ -241,10 +232,6 @@ def register (f : Tense.Form) : SocialMeaning.Register :=
   if f = .simplePast then .formal else if f ∈ complexPluperfects then .informal else .neutral
 
 open Verbs in
-/-- The rule gives every entry on its basic frame an auxiliary its perfect takes: *sein* for the
-verbs of motion *rennen*, *laufen* and *ankommen*, for *frieren* as a change of state and for
-*bleiben*, and *haben* for *arbeiten* and *tanzen*, which denote an activity as such, and for the
-state *liegen*. -/
 theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty →
     perfectAuxiliary v (v.valency.frames.headD .intransitive) ∈ v.perfectAuxiliaries := by
   decide

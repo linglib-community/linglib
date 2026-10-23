@@ -131,9 +131,6 @@ theorem binding_implies_groupIdentity (h : bindingCond uAnaph uAnt S ∅) :
     change g uAnaph = _ ↔ g uAnt = _
     rw [h g hg]
 
-/-- Reciprocity excludes binding once some state defines the anaphor: distinctness there
-contradicts pointwise equality. Without such a state both drefs may be undefined throughout, and
-binding and reciprocity hold together vacuously. -/
 theorem reciprocity_excludes_binding (hdef : ∃ s ∈ S, ∃ d : E, s uAnaph = ↑d)
     (h : reciprocityCond uAnaph uAnt S Δ) : ¬ bindingCond uAnaph uAnt S Δ := fun hb ↦
   let ⟨s, hs, d, hd⟩ := hdef
@@ -158,9 +155,6 @@ theorem reciprocityCond_empty_iff (hdef : ∀ s ∈ S, s uAnaph ≠ ⊥ ↔ s uA
   rintro h s hs a b ha hb rfl
   exact h.irrefl _ ⟨s, hs, hb, ha⟩
 
-/-- A reciprocal's antecedent denotes a plurality: at a state defining both drefs, the
-anaphor's value lies among the antecedent's by group identity and differs from the antecedent's
-value there. This holds under any distribution. -/
 theorem nontrivial_value_of_reciprocityCond (h : reciprocityCond uAnaph uAnt S Δ)
     {s : PartialAssign ℕ E} (hs : s ∈ S) {a b : E} (ha : s uAnaph = ↑a)
     (hb : s uAnt = ↑b) : (value uAnt S).Nontrivial :=
@@ -182,7 +176,6 @@ def extend (u : Var) : Update (PartialAssign Var D) :=
 theorem mem_extend : i ~[extend u] o ↔ i u = ⊥ ∧ o u ≠ ⊥ ∧ ∀ v ≠ u, i v = o v :=
   Iff.rfl
 
-/-- Introducing `u` is a covering step of the extension order, the one that values `u`. -/
 theorem mem_extend_iff_covBy : i ~[extend u] o ↔ i ⋖ o ∧ i u ≠ o u := by
   refine ⟨fun ⟨hi, ho, h⟩ ↦ ⟨PartialAssign.covBy_iff.2 ⟨u, hi, ho, h⟩,
     fun he ↦ ho (he.symm.trans hi)⟩,
@@ -191,7 +184,6 @@ theorem mem_extend_iff_covBy : i ~[extend u] o ↔ i ⋖ o ∧ i u ≠ o u := by
   obtain rfl : x = u := by_contra fun hxu ↦ hne (h u (Ne.symm hxu))
   exact ⟨hi, ho, h⟩
 
-/-- Partial introduction is a random assignment that genuinely values `u`. -/
 theorem extend_subset_randomAssign [DecidableEq Var] :
     extend u ⊆ Update.randomAssign (S := PartialAssign Var D) u := by
   rintro ⟨i, o⟩ ⟨-, -, h⟩

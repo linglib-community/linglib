@@ -35,7 +35,6 @@ section Smul
 
 variable {α : Type*} {mα : MeasurableSpace α} {μ : Measure α} {f : α → ℝ}
 
-/-- Tilting is invariant under scaling the measure by a finite nonzero constant. -/
 theorem tilted_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) : (c • μ).tilted f = μ.tilted f := by
   rw [Measure.tilted, Measure.tilted, integral_smul_measure, withDensity_smul_measure]
   by_cases hz : ∫ x, Real.exp (f x) ∂μ = 0
@@ -50,7 +49,6 @@ theorem tilted_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) : (c • �
   congr 1
   field_simp
 
-/-- On a finite type, tilting the uniform measure is tilting the counting measure. -/
 theorem uniformOn_univ_tilted [Fintype α] [Nonempty α] :
     (uniformOn Set.univ).tilted f = Measure.count.tilted f := by
   rw [uniformOn, ProbabilityTheory.cond, Measure.restrict_univ, tilted_smul (by simp) (by simp)]
@@ -59,8 +57,6 @@ end Smul
 
 variable {α : Type*} [MeasurableSpace α] [Fintype α] [MeasurableSingletonClass α]
 
-/-- On a finite type, the tilted measure at an atom is the atom's mass reweighted by the
-exponential of `f` and renormalized. -/
 theorem tilted_real_singleton (μ : Measure α) [IsFiniteMeasure μ] (f : α → ℝ) (a : α) :
     (μ.tilted f).real {a} = μ.real {a} * Real.exp (f a) / ∑ b, μ.real {b} * Real.exp (f b) := by
   have hZ : 0 ≤ ∫ x, Real.exp (f x) ∂μ := integral_nonneg fun _ ↦ (Real.exp_pos _).le
@@ -70,8 +66,6 @@ theorem tilted_real_singleton (μ : Measure α) [IsFiniteMeasure μ] (f : α →
   simp only [smul_eq_mul]
   ring
 
-/-- On a finite type, a probability measure is the tilt of `ν` by `f` exactly when its atoms are
-proportional to those of `ν` reweighted by the exponential of `f`. -/
 theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMeasure ν] [NeZero ν]
     (f : α → ℝ) : μ = ν.tilted f ↔ ∃ Z > 0, ∀ a, μ.real {a} = ν.real {a} * Real.exp (f a) / Z := by
   have hZ : 0 < ∑ b, ν.real {b} * Real.exp (f b) := by
@@ -94,8 +88,6 @@ theorem eq_tilted_iff (μ ν : Measure α) [IsProbabilityMeasure μ] [IsFiniteMe
     rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _),
       ← measureReal_def, ← measureReal_def, h, tilted_real_singleton, hZeq]
 
-/-- On a finite type, the counting measure tilted by `f` gives each point its softmax
-probability. -/
 theorem count_tilted_real_singleton (f : α → ℝ) (a : α) :
     (Measure.count.tilted f).real {a} = Real.softmax f a := by
   simp [tilted_real_singleton, Real.softmax_apply]

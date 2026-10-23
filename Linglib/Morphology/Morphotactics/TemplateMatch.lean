@@ -156,7 +156,6 @@ variable {β : Type*} (f : α → β)
 theorem segmentAt_map (a : Association) : (m.map f).segmentAt a = (m.segmentAt a).map f := by
   simp [segmentAt, List.getElem?_map]
 
-/-- Relabeling the melodic elements relabels the surface segments. -/
 theorem spellout_map : (m.map f).spellout = m.spellout.map f := by
   simp only [spellout, associations_map, template_map, List.map_filterMap, segmentAt_map]
   congr 1
@@ -175,9 +174,6 @@ def links (s : AssocSource) : Finset (ℕ × ℕ) :=
     p ∈ m.links s ↔ ∃ a ∈ m.associations, a.source = s ∧ (a.melodyIndex, a.slotIndex) = p := by
   simp [links, and_assoc]
 
-/-- A tier is `OrderedOn` iff its lines are non-crossing and each slot hosts at most one element
-of the tier, which is [goldsmith-1976]'s No-Crossing Constraint plus [mccarthy-1981]'s
-prohibition against many-to-one associations. -/
 theorem orderedOn_iff (s : AssocSource) :
     m.OrderedOn s ↔ IsNonCrossing (m.links s : SetRel ℕ ℕ) ∧
       Set.InjOn Prod.snd (m.links s : Set (ℕ × ℕ)) := by

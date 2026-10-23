@@ -75,7 +75,6 @@ variable {τ}
 
 theorem IsTemporalPart.le {e' e : β} (h : IsTemporalPart τ e' e) : e' ≤ e := h.1
 
-/-- A temporal part with a non-null runtime is a proper part. -/
 theorem IsTemporalPart.ne {e' e : β} (hτ : Monotone τ) (h : IsTemporalPart τ e' e)
     (h₀ : ∀ e'', e'' ≤ e → ¬ IsBot (τ e'')) : e' ≠ e := by
   rintro rfl
@@ -92,8 +91,6 @@ section Eat
 consumes. -/
 def eat (x e : Finset (Fin 3)) : Prop := x = e
 
-/-- The object relation of *eat* is strictly incremental and summative, with unique
-participants. -/
 theorem eat_sinc : SINC eat where
   ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2.symm⟩
   uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2⟩
@@ -103,20 +100,15 @@ theorem eat_sum : SUM eat := sum_graph (SupHom.id _)
 
 theorem eat_up : UP eat := up_graph id
 
-/-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
 theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
   vp_cum eat_sum fun _ hx _ _ ↦ hx.mono Finset.subset_union_left
 
-/-- *eat two apples* is quantized, since a measure phrase is quantized and *eat* is strictly
-incremental. -/
 theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
   vp_qua eat_up eat_sinc.mso
     (qua_pullback (IsExtensiveMeasure.strictMono Finset.card) (singleton_qua 2))
 
 end Eat
 
-/-- With a particular object, as in *eat it*, a strictly incremental verb phrase is
-quantized. -/
 theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
     (y : α) : QUA (VP θ (· = y)) :=
   vp_eq θ y ▸ h.uo.qua_of_mso h.mso y
@@ -160,8 +152,6 @@ def precedes (a b : Finset (Fin 3)) : Prop := ∀ i ∈ a, ∀ j ∈ b, i < j
 
 instance : DecidableRel precedes := fun _ _ ↦ by unfold precedes; infer_instance
 
-/-- *Read the article* is not telic, since the strict reading `{0, 1}` is a part of the reading
-`{0, 1, 2}` that the re-reading `{2}` follows. -/
 theorem not_isTelic_read : ¬ IsTelic precedes (read Finset.univ) := fun h ↦ by
   have hsum : read Finset.univ {0, 1, 2} := by
     have := AlgClosure.sum (P := Function.uncurry readOnce) (x := (Finset.univ, {0, 1}))
@@ -188,30 +178,22 @@ def SEINC : Prop := EXP precedes θ ∧ MO θ
 variable {precedes θ} (h : SEINC precedes θ) (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
 include h h₀
 
-/-- Under a strictly expansive incremental relation, an object's events are initial parts
-of each other. -/
 theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
   ⟨hle, fun ⟨e'', h'', hp⟩ ↦
     let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
 
-/-- Under a strictly expansive incremental relation, an object's events are final parts of
-each other. -/
 theorem isFinalPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
   ⟨hle, fun ⟨e'', h'', hp⟩ ↦
     let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
 
-/-- The events of a fixed object under a strictly expansive incremental relation form a
-telic predicate. -/
 theorem isTelic_of_seinc (x : α) : IsTelic precedes (θ x) :=
   fun _ _ hx hx' hle ↦
     ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
-/-- The verb phrase of a quantized object under a strictly expansive incremental relation with
-unique participants is telic, as *eat two apples* is. -/
 theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
     IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
@@ -260,8 +242,6 @@ def Goal (y x : α) (e : β) : Prop :=
 
 variable {adjα adjβ precedes isPath θ}
 
-/-- A strict movement relation closed under sums of temporally ordered events is a movement
-relation. -/
 theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
     (hClosed : ∀ x₁ x₂ e₁ e₂, θ x₁ e₁ → θ x₂ e₂ → precedes e₁ e₂ → θ (x₁ ⊔ x₂) (e₁ ⊔ e₂)) :
     MR adjα adjβ precedes isPath θ :=
@@ -270,8 +250,6 @@ theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
     | base h => exact h
     | sum _ _ hp ih₁ ih₂ => exact hClosed _ _ _ _ ih₁ ih₂ hp⟩⟩
 
-/-- A movement with a specified source and goal is telic under mapping to objects and
-uniqueness of participants, as *walk from the university to the capitol* is. -/
 theorem isTelic_sourceGoal (hax : NoPartPrecedes precedes) (hMO : MO θ) (hUP : UP θ)
     (u v : α) :
     IsTelic precedes
@@ -373,7 +351,6 @@ theorem not_adj_alcatraz : ¬ ADJ pathAdj eventAdj (Movement alcatraz) := fun h 
 def Connected (x : Finset Seg) : Prop :=
   ∀ y ∈ x.powerset, y.Nonempty → y ≠ x → ∃ s ∈ y, ∃ t ∈ x \ y, s.adj t
 
-/-- The disconnected movement satisfies adjacency but its path is not connected. -/
 theorem adj_disconnected :
     ADJ pathAdj eventAdj (Movement disconnected) ∧ ¬ Connected {.a, .b, .e, .f} :=
   ⟨adj_movement_iff.2 (by decide),

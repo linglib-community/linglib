@@ -90,21 +90,15 @@ def ScopesOver (p q : Position) : Prop := q < p
 
 noncomputable instance : DecidableRel ScopesOver := fun p q ↦ inferInstanceAs (Decidable (q < p))
 
-/-- Only the specifier's item scopes over the head: a dominant trigger targeting a lexical head
-is a dependent, and an object imposes dominant tone on its verb because it sits in specifier
-position. -/
 theorem scopesOver_head_iff (p : Position) : ScopesOver p .head ↔ p = .spec := by
   cases p <;> decide
 
-/-- No item scopes over the specifier's: a lexical head never imposes dominance outward. -/
 theorem not_scopesOver_spec (p : Position) : ¬ ScopesOver p .spec := by
   cases p <;> decide
 
-/-- The complement's item scopes over nothing. -/
 theorem not_scopesOver_of_complement (q : Position) : ¬ ScopesOver .complement q := by
   cases q <;> decide
 
-/-- A trigger that scopes over another item is a dependent or the head over its complement. -/
 theorem isDependent_of_scopesOver_head {p : Position} (h : ScopesOver p .head) :
     p.IsDependent := by
   rw [scopesOver_head_iff] at h
@@ -149,8 +143,6 @@ def Row.DominantAttested : Row → Prop
 instance : DecidablePred Row.DominantAttested := fun r ↦ by
   cases r <;> unfold Row.DominantAttested <;> infer_instance
 
-/-- The typology table falls out of cophonology-scope: dominant tone is attested for a
-trigger–target pair exactly when the trigger's item scopes over the target's. -/
 theorem Row.dominant_iff (r : Row) : r.DominantAttested ↔ ScopesOver r.trigger r.target := by
   cases r <;> decide
 
@@ -173,7 +165,6 @@ def basemapViolations (tier₁ tier₂ : List TRN) : ℕ :=
 theorem basemapViolations_self (t : List TRN) : basemapViolations t t = 0 :=
   Correspondence.identViol_identity t
 
-/-- Tiers of equal length with no identity violation are equal. -/
 theorem eq_of_basemapViolations_eq_zero {t₁ t₂ : List TRN} (hLen : t₁.length = t₂.length)
     (h : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
   unfold basemapViolations Correspondence.identViol at h
@@ -198,9 +189,6 @@ open OptimalityTheory.Cophonology (cophonologicalEval mergeRanking)
 variable {L C : Type} [DecidableEq L] (extractTier : C → List TRN) (l : L)
   (defaultRanking : List (L × Constraint C)) (candidates : Finset C)
 
-/-- Promoting matrix–basemap faithfulness in a cophonology selects exactly the basemap-faithful
-candidates: with a faithful candidate available, every optimal candidate's tonal tier is the
-basemap's. -/
 theorem coph_selects_basemap_faithful (basemapTier : List TRN)
     (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = basemapTier) :
@@ -214,9 +202,6 @@ theorem coph_selects_basemap_faithful (basemapTier : List TRN)
       (by simp [mxbm, he, basemapViolations_self])
   exact eq_of_basemapViolations_eq_zero (hLen c (Tableau.optimal_subset hc)) hZero
 
-/-- Recessive grammatical tone: under a subranking promoting faithfulness to the stem itself,
-every optimal candidate keeps the target's own tones, so the tune does not apply to a valued
-target. -/
 theorem recessive (host : List (TBU S))
     (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = tonalTier host) :
@@ -231,15 +216,10 @@ constraint's similarity condition picks out. -/
 def basemapOutput (host : List (TBU S)) (u : Tune) : List (TBU S) :=
   overwrite (unvalue host) u
 
-/-- For a one-tone tune the basemap output carries the tune on every unit, whatever the
-target's own tones: the locus of erasure. -/
 theorem tonalTier_basemapOutput_singleton (host : List (TBU S)) (t : TRN) :
     tonalTier (basemapOutput host ⟨[t], .left⟩) = host.map fun _ ↦ t := by
   rw [tonalTier_eq_map, basemapOutput, overwrite_unvalue, map_tone_overwrite_singleton]
 
-/-- Dominant grammatical tone: under a subranking promoting faithfulness to the induced
-basemap, every optimal candidate carries the trigger's whole-word tune, whatever the target's
-underlying tones were. -/
 theorem dominant (host : List (TBU S)) (t : TRN)
     (hLen : ∀ c ∈ candidates, (extractTier c).length = host.length)
     (hFaithful : ∃ c ∈ candidates, extractTier c = host.map fun _ ↦ t) :

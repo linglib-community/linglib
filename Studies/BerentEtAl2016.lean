@@ -91,8 +91,6 @@ def morphemes : Parse α → List (List α)
 /-- The surface form of a parse, which does not record its morphemes. -/
 def surface (p : Parse α) : List α := p.morphemes.flatten
 
-/-- A base followed by its copy has the surface form of the simplex double, so doubling is
-structurally ambiguous. -/
 theorem surface_reduplicated (base : List α) :
     (reduplicated base).surface = (simplex (base ++ base)).surface := by
   simp [surface, morphemes]
@@ -136,14 +134,11 @@ def dep (base : Option (List α)) : Constraint (Parse α) := fun p ↦
 
 @[simp] theorem dep_none (p : Parse α) : dep none p = 0 := rfl
 
-/-- A simplex name adds to the base whatever it has beyond the base's length. -/
 @[simp] theorem dep_some_simplex (b form : List α) :
     dep (some b) (.simplex form) = form.length - b.length :=
   Correspondence.depViol_of_diagonal (.reduplication b form []) .input .base
     (Correspondence.reduplication_edge _ _ _ (by decide))
 
-/-- A reduplicated name adds to the taught base whatever its own base has beyond it, and
-its copy adds nothing. -/
 @[simp] theorem dep_some_reduplicated (b base : List α) :
     dep (some b) (.reduplicated base) = base.length - b.length :=
   Correspondence.depViol_of_diagonal (.reduplication b base base) .input .base
@@ -160,7 +155,6 @@ def ocp : Constraint (Parse α) := fun p ↦ (p.morphemes.map Constraint.ocp).su
 @[simp] theorem ocp_simplex_pair (h : x ≠ y) : ocp (.simplex [x, y]) = 0 := by
   simp [ocp, Parse.morphemes, h]
 
-/-- The OCP is inapplicable to a base and its copy, which are separate morphemes. -/
 @[simp] theorem ocp_reduplicated_singleton (x : α) : ocp (.reduplicated [x]) = 0 := by
   simp [ocp, Parse.morphemes]
 
@@ -173,8 +167,6 @@ def con (x : α) (l : Level) : ConstraintSet (Parse α) (Fin 2) := ![ocp, dep (l
 def tableau (x y : α) (l : Level) (r : Ranking (Fin 2) 2) : Tableau (Parse α) 2 :=
   .ofRanking (con x l) r (candidates x y l)
 
-/-- At the phonological level the control wins under either ranking, because doubling is
-identity within a morpheme, which the OCP bans. -/
 theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
     (tableau x y .phonology r).optimal = {.simplex [x, y]} := by
   refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
@@ -183,8 +175,6 @@ theorem optimal_phonology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
   · exact absurd rfl hd
   · simp [Pi.lt_def, Pi.le_def, Fin.forall_fin_two, Fin.exists_fin_two, con, Level.input, h]
 
-/-- At the morphological level the reduplicative parse wins under either ranking, because it
-escapes the OCP and adds nothing to the base, while the control violates DEP. -/
 theorem optimal_morphology (h : x ≠ y) (r : Ranking (Fin 2) 2) :
     (tableau x y .morphology r).optimal = {.reduplicated [x]} := by
   refine Tableau.ofRanking_optimal_eq_singleton_of_forall_lt (by simp [candidates]) ?_
@@ -228,15 +218,11 @@ theorem licenses_iff :
   · rintro (h | ⟨h, hm⟩)
     exacts [⟨l.reduplicated_subset h, fun _ ↦ h⟩, ⟨hm, fun hne ↦ absurd h hne⟩]
 
-/-- Reduplication for a meaning licenses it, which is positive transfer. -/
 theorem licenses_of_mem (h : f ∈ l.reduplicated) : l.Licenses f := licenses_iff.2 (.inl h)
 
-/-- Reduplication for another meaning only withdraws the licence, which is negative
-transfer. -/
 theorem not_licenses_of_mem_of_notMem (hg : g ∈ l.reduplicated) (hf : f ∉ l.reduplicated) :
     ¬ l.Licenses f := fun h ↦ hf (h.2 ⟨g, hg⟩)
 
-/-- A language without reduplication licenses exactly the meanings it marks. -/
 theorem licenses_iff_of_eq_empty (h : l.reduplicated = ∅) : l.Licenses f ↔ f ∈ l.marked := by
   simp [licenses_iff, h]
 
@@ -278,9 +264,6 @@ theorem english_licenses_iff {f : Meaning} : english.Licenses f ↔ f = .plural 
 theorem hebrew_licenses_iff {f : Meaning} : hebrew.Licenses f ↔ f = .diminutive := by
   simp [SpokenLanguage.licenses_iff, hebrew]
 
-/-- Licensing is not monotone in the morphology. Hebrew marks and reduplicates for
-everything English does, yet English speakers alone parse a doubled plural
-morphologically. -/
 theorem licenses_not_monotone :
     english.marked ⊆ hebrew.marked ∧ english.reduplicated ⊆ hebrew.reduplicated ∧
       english.Licenses .plural ∧ ¬ hebrew.Licenses .plural := by

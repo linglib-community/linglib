@@ -122,11 +122,9 @@ def Clause.SentenceType.force : Clause.SentenceType → Discourse.SpeechAct.Forc
   | .exclamative => .exclamative
   | .promissive => .promissive
 
-/-- Every force is the conventional force of some sentence type. -/
 theorem Clause.SentenceType.force_surjective : Function.Surjective Clause.SentenceType.force := by
   decide
 
-/-- A sentence type asks iff it is interrogative. -/
 theorem Clause.SentenceType.force_eq_interrogative_iff (t : Clause.SentenceType) :
     t.force = .interrogative ↔ t.IsInterrogative := by
   cases t <;> simp [Clause.SentenceType.force, Clause.SentenceType.IsInterrogative]

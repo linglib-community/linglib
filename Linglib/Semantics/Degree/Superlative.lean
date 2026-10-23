@@ -66,15 +66,11 @@ variable {μ : α → D} {C : W → Set α} {x : α} {w : W}
     superlative μ C x w = 1 ↔ x ∈ C w ∧ ∀ y ∈ C w, y ≠ x → μ y < μ x := by
   simp [superlative]
 
-/-- The assertion is the set-standard comparative of `x` against the degrees of the other
-members of the class. -/
 theorem superlative_assertion_iff {s : Set α} :
     (∀ y ∈ s, y ≠ x → μ y < μ x) ↔ x ∈ μ ⁻¹' strictUpperBounds (μ '' (s \ {x})) := by
   simp only [mem_gtOverSet_iff_subset_Iio, subset_def, mem_Iio, forall_mem_image, mem_sdiff,
     mem_singleton_iff, and_imp]
 
-/-- The assertion is anti-additive in the comparison class, by the anti-additivity of the
-set-standard comparative ([hoeksema-1983]). -/
 theorem isAntiAdditive_superlative_assertion (μ : α → D) (x : α) :
     NaturalLogic.IsAntiAdditive fun (C : W → Set α) (w : W) ↦ ∀ y ∈ C w, y ≠ x → μ y < μ x :=
   fun C C' ↦ funext fun w ↦ propext <| by
@@ -87,8 +83,6 @@ theorem isAntiAdditive_superlative_assertion (μ : α → D) (x : α) :
 
 end Preorder
 
-/-- At a world the superlative is true exactly when `x` is the absolute superlative of the class
-there ([heim-1999]). -/
 theorem superlative_eq_one_iff_absoluteSuperlative [LinearOrder D] {μ : α → D} {C : W → Set α}
     {x : α} {w : W} : superlative μ C x w = 1 ↔ AbsoluteSuperlative μ (C w) x :=
   superlative_eq_one_iff

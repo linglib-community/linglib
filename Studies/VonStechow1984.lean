@@ -62,8 +62,6 @@ clauses are de dicto self-comparisons, contradictory by `deDicto_absurd`. -/
 def intensionalComparative (μ : W → Entity → D) (w : W) (a b : Entity) : Prop :=
   μ w a > μ w b
 
-/-- A rigid measure reduces `intensionalComparative` to the extensional comparison of the two
-measures. -/
 theorem intensionalComparative_rigid (μe : Entity → D) (w : W) (a b : Entity) :
     intensionalComparative (fun _ ↦ μe) w a b ↔ μe b < μe a :=
   Iff.rfl
@@ -78,7 +76,6 @@ def deReComparative (μ : W → Entity → D) (w₀ wBel : W) (x : Entity) : Pro
 def deDictoComparative (μ : W → Entity → D) (wBel : W) (x : Entity) : Prop :=
   μ wBel x > μ wBel x
 
-/-- The de dicto reading is contradictory. -/
 theorem deDicto_absurd (μ : W → Entity → D) (wBel : W) (x : Entity) :
     ¬ deDictoComparative μ wBel x :=
   lt_irrefl _
@@ -133,25 +130,20 @@ def moreSem [Add D] (μ : Entity → D) (x : Entity) (d₁ d₂ : D) : Prop :=
 def asSem [Mul D] (μ : Entity → D) (x : Entity) (d₁ d₂ : D) : Prop :=
   d₁ * d₂ ≤ μ x
 
-/-- R4 with a positive differential and `d₂ = μ b` yields the bare
-comparative. -/
 theorem moreSem_comparative_bridge [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
     (μ : Entity → D) (a b : Entity) {d₁ : D} (hd₁ : 0 < d₁)
     (h : moreSem μ a d₁ (μ b)) : μ b < μ a :=
   (lt_add_of_pos_left (μ b) hd₁).trans_le h
 
-/-- An exact differential entails R4's at-least semantics. -/
 theorem moreSem_differential_bridge [AddCommGroup D] [IsOrderedAddMonoid D]
     (μ : Entity → D) (a b : Entity) (diff : D)
     (h : DifferentialComparative μ a b diff) : moreSem μ a diff (μ b) :=
   le_of_eq (by rw [← h, sub_add_cancel])
 
-/-- R5 at factor 1 is the equative. -/
 theorem asSem_equative_bridge [MulOneClass D] (μ : Entity → D) (a b : Entity) :
     asSem μ a 1 (μ b) ↔ μ b ≤ μ a := by
   simp [asSem, one_mul]
 
-/-- A tight factor phrase entails R5's at-least semantics. -/
 theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)
     (factor : D) (h : FactorEquative μ a b factor) : asSem μ a factor (μ b) :=
   le_of_eq h.symm

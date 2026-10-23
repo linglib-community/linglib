@@ -81,7 +81,6 @@ def glottalStop : Segment := .ofChart .«ʔ»
 /-- The Persian phonemes of the hiatus data, pairwise distinct. -/
 def inventory : Finset Segment := ⟨↑[i, e, æ, u, o, scriptA, h, tesh, m, n, glottalStop], by decide⟩
 
-/-- The phonemes are segments of PHOIBLE's Persian inventory. -/
 theorem subset_pes : inventory ⊆ Inventories.Persian.pes.segments :=
   Inventory.subset_segments_iff.2 (by decide)
 

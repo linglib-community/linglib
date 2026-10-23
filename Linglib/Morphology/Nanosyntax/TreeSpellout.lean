@@ -90,16 +90,12 @@ instance [DecidableEq F] (e : LexicalEntry F α) (t : RoseTree F) : Decidable (e
 instance : Exponence.Rule (LexicalEntry F α) (RoseTree F) α :=
   ⟨LexicalEntry.exponent, fun e t ↦ e.Matches t⟩
 
-/-- One entry is at least as specific as another exactly when the other's stored tree contains
-its stored tree. -/
 theorem LexicalEntry.applySet_subset_iff {a b : LexicalEntry F α} :
     Exponence.applySet a ⊆ Exponence.applySet b ↔ IsSubtree a.tree b.tree :=
   ⟨fun h ↦ h (.refl a.tree), fun h _ hc ↦ hc.trans h⟩
 
 /-! ### Spellout -/
 
-/-- A strictly more specific entry stores a strictly smaller tree, since a strictly containing
-tree is strictly larger. -/
 private theorem numNodes_lt_of_applySet_ssubset {s r : LexicalEntry F α}
     (hlt : Exponence.applySet s ⊂ Exponence.applySet r) : s.tree.numNodes < r.tree.numNodes := by
   have hcon := LexicalEntry.applySet_subset_iff.mp hlt.le
@@ -122,7 +118,6 @@ def treeSelect (entries : RuleSet (LexicalEntry F α)) (t : RoseTree F) :
 def treeSpellout (entries : RuleSet (LexicalEntry F α)) (t : RoseTree F) : Option α :=
   (treeSelect entries t).map (·.exponent)
 
-/-- Smallest-tree selection picks an Elsewhere winner. -/
 theorem treeSelect_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F}
     {e : LexicalEntry F α} (h : treeSelect entries t = some e) :
     entries.IsElsewhereWinner Exponence.applySet t e :=
@@ -130,21 +125,17 @@ theorem treeSelect_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {t 
     (f := fun e : LexicalEntry F α ↦ OrderDual.toDual e.tree.numNodes)
     (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (numNodes_lt_of_applySet_ssubset h)) h
 
-/-- The spelled-out exponent is the exponent of an Elsewhere winner. -/
 theorem treeSpellout_isElsewhereWinner {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F}
     {x : α} (h : treeSpellout entries t = some x) :
     ∃ e ∈ entries, e.exponent = x ∧ entries.IsElsewhereWinner Exponence.applySet t e := by
   obtain ⟨e, he, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨e, RuleSet.selectBy_mem he, rfl, treeSelect_isElsewhereWinner he⟩
 
-/-- A tree is spelled out exactly when some entry matches it. -/
 theorem treeSpellout_eq_none_iff {entries : RuleSet (LexicalEntry F α)} {t : RoseTree F} :
     treeSpellout entries t = none ↔ ∀ e ∈ entries, ¬ e.Matches t := by
   simp [treeSpellout, treeSelect, RuleSet.selectBy_eq_none_iff, RuleSet.applicable,
     List.filter_eq_nil_iff, Applies]
 
-/-- Spellout gaps propagate to containing trees, since an entry matching a tree matches its
-subtrees. -/
 theorem treeSpellout_eq_none_of_isSubtree {entries : RuleSet (LexicalEntry F α)}
     {s t : RoseTree F} (hst : IsSubtree s t) (h : treeSpellout entries s = none) :
     treeSpellout entries t = none :=
@@ -166,8 +157,6 @@ instance [DecidableEq F] (e : LexicalEntry F α) (t : RoseTree F) :
     Decidable (FootConditionMet e t) :=
   inferInstanceAs (Decidable (_ ∈ _))
 
-/-- The Foot Condition holds of every syntactic tree that shares its foot with the stored
-tree. -/
 theorem footConditionMet_of_foot_eq {e : LexicalEntry F α} {t : RoseTree F}
     (h : foot t = foot e.tree) : FootConditionMet e t := by
   rw [FootConditionMet, ← h]
@@ -196,7 +185,6 @@ theorem foot_chainTree (feat : ℕ → F) (n : ℕ) : foot (chainTree feat n) = 
 theorem chainTree_injective (feat : ℕ → F) : Function.Injective (chainTree feat) :=
   fun n m h ↦ by simpa [chainTree_numNodes] using congrArg numNodes h
 
-/-- On chains, containment is rank comparison, whatever the features. -/
 theorem chainTree_isSubtree_iff (feat : ℕ → F) (r k : ℕ) :
     IsSubtree (chainTree feat r) (chainTree feat k) ↔ r ≤ k := by
   induction k generalizing r with
@@ -206,7 +194,6 @@ theorem chainTree_isSubtree_iff (feat : ℕ → F) (r k : ℕ) :
     simp only [List.mem_singleton, exists_eq_left, ih]
     omega
 
-/-- The subtrees of a chain are its lower segments. -/
 theorem eq_chainTree_of_isSubtree {feat : ℕ → F} {k : ℕ} {t : RoseTree F}
     (h : IsSubtree t (chainTree feat k)) : ∃ r ≤ k, t = chainTree feat r := by
   induction k with
@@ -234,7 +221,6 @@ theorem chainTree_eq_phrase (feat : ℕ → F) (k : ℕ) :
     rw [List.range_succ, List.map_append, List.map_singleton, phrase_concat, ← ih, chainTree]
     rfl
 
-/-- An entry storing a chain meets the Foot Condition wherever it matches. -/
 theorem footConditionMet_of_matches_chainTree {e : LexicalEntry F α} {feat : ℕ → F} {k : ℕ}
     (he : e.tree = chainTree feat k) {t : RoseTree F} (h : e.Matches t) :
     FootConditionMet e t := by
@@ -273,7 +259,6 @@ def Matching (s t : RoseTree F) : Prop := ∃ u, IsSubtree u t ∧ MatchesRoot s
 theorem Matching.of_isSubtree {s t : RoseTree F} (h : IsSubtree s t) : Matching s t :=
   ⟨s, h, .refl s⟩
 
-/-- On chains, root-matching is equality of depths. -/
 theorem matchesRoot_chainTree_iff (feat : ℕ → F) (r k : ℕ) :
     MatchesRoot (chainTree feat r) (chainTree feat k) ↔ r = k := by
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ .refl _⟩
@@ -297,7 +282,6 @@ theorem matchesRoot_chainTree_iff (feat : ℕ → F) (r k : ℕ) :
       rw [List.mem_singleton.1 hd] at hm
       rw [ih k hm]
 
-/-- On chains, Taraldsen's matching is containment. -/
 theorem matching_chainTree_iff (feat : ℕ → F) (r k : ℕ) :
     Matching (chainTree feat r) (chainTree feat k) ↔
       IsSubtree (chainTree feat r) (chainTree feat k) := by
@@ -306,8 +290,6 @@ theorem matching_chainTree_iff (feat : ℕ → F) (r k : ℕ) :
   rw [chainTree_isSubtree_iff, (matchesRoot_chainTree_iff feat r j).1 hm]
   exact hj
 
-/-- Taraldsen's matching ignores the order of daughters, which containment does not. It also
-ignores repeated daughters. -/
 theorem exists_matching_not_isSubtree :
     ∃ s t : RoseTree Bool, Matching s t ∧ ¬ IsSubtree s t := by
   refine ⟨node true [leaf true, leaf false], node true [leaf false, leaf true], ⟨_, .refl _, ?_⟩,
@@ -324,8 +306,6 @@ def LexicalEntry.ofSupersetRule {n : ℕ} (feat : ℕ → F) (e : Containment.Su
     LexicalEntry F α :=
   ⟨chainTree feat e.spans, e.exponent⟩
 
-/-- On chains, tree spellout is the spellout of the containment engine, since containment of
-chains is comparison of their ranks. -/
 theorem treeSpellout_ofSupersetRule [DecidableEq F] {n : ℕ} (feat : ℕ → F)
     (v : RuleSet (Containment.SupersetRule n α)) (g : Fin n) :
     treeSpellout (v.map (LexicalEntry.ofSupersetRule feat)) (chainTree feat g) =

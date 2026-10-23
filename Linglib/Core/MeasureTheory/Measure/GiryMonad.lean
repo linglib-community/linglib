@@ -57,7 +57,6 @@ open scoped ENNReal
 
 namespace ENNReal
 
-/-- A supremum over a monotone sequence commutes with a countable sum. -/
 theorem iSup_tsum_of_monotone {ι : Type*} {g : ℕ → ι → ℝ≥0∞} (hg : Monotone g) :
     ⨆ n, ∑' i, g n i = ∑' i, ⨆ n, g n i := by
   simp_rw [ENNReal.tsum_eq_iSup_sum]
@@ -90,7 +89,6 @@ theorem bind_mono {μ ν : Measure α} {f g : α → Measure β} (hμν : μ ≤
     (hf : AEMeasurable f μ) (hg : AEMeasurable g ν) : μ.bind f ≤ ν.bind g :=
   (bind_mono_right hfg hf (hg.mono_measure hμν)).trans (bind_mono_left hμν hg)
 
-/-- The supremum of a monotone sequence of measures is computed pointwise on measurable sets. -/
 theorem iSup_apply_of_monotone {μ : ℕ → Measure α} (hμ : Monotone μ) {s : Set α}
     (hs : MeasurableSet s) : (⨆ n, μ n) s = ⨆ n, μ n s := by
   let ν : Measure α := ofMeasurable (fun s _ => ⨆ n, μ n s) (by simp) fun f hf hd => by
@@ -106,7 +104,6 @@ theorem iSup_apply_of_monotone {μ : ℕ → Measure α} (hμ : Monotone μ) {s 
 
 end Measure
 
-/-- Simple-function integrals commute with monotone suprema of measures. -/
 theorem SimpleFunc.lintegral_iSup_measure_of_monotone {μ : ℕ → Measure α} (hμ : Monotone μ)
     (g : SimpleFunc α ℝ≥0∞) : g.lintegral (⨆ n, μ n) = ⨆ n, g.lintegral (μ n) := by
   simp only [SimpleFunc.lintegral]
@@ -114,7 +111,6 @@ theorem SimpleFunc.lintegral_iSup_measure_of_monotone {μ : ℕ → Measure α} 
   refine ENNReal.finsetSum_iSup fun i j => ⟨max i j, fun x => ⟨?_, ?_⟩⟩ <;> gcongr
   exacts [hμ (le_max_left i j), hμ (le_max_right i j)]
 
-/-- Lebesgue integrals commute with monotone suprema of measures. -/
 theorem lintegral_iSup_measure_of_monotone {μ : ℕ → Measure α} (hμ : Monotone μ)
     (f : α → ℝ≥0∞) : ∫⁻ a, f a ∂(⨆ n, μ n) = ⨆ n, ∫⁻ a, f a ∂μ n := by
   simp_rw [lintegral_def, SimpleFunc.lintegral_iSup_measure_of_monotone hμ]
@@ -155,7 +151,6 @@ theorem bind_iSup_of_monotone {μ : Measure α} {f : ℕ → α → Measure β}
 
 variable {γ : Type*} [OmegaCompletePartialOrder γ]
 
-/-- `bind` is ω-Scott-continuous jointly in the measure and the kernel. -/
 theorem ωScottContinuous_bind {M : γ → Measure α} {F : γ → α → Measure β}
     (hM : ωScottContinuous M) (hF : ∀ a, ωScottContinuous (F · a))
     (hmeas : ∀ x, Measurable (F x)) : ωScottContinuous fun x => (M x).bind (F x) := by

@@ -115,8 +115,6 @@ inductive Grammar.Derives (G : Grammar T α) : Cat α → List T → Prop where
 def Grammar.language (G : Grammar T α) : Language T :=
   { w | G.Derives (.atom G.start) w }
 
-/-- Every derivable string is nonempty, since a lexical entry is a single token, so grammars are
-ε-free as in the normal form of [schiffer-maletti-2021]. -/
 theorem Grammar.Derives.ne_nil {G : Grammar T α} {c : Cat α} {w : List T}
     (h : G.Derives c w) : w ≠ [] := by
   induction h with
@@ -140,8 +138,6 @@ theorem Derivation.derives {G : Grammar T α} {c : Cat α} (d : Derivation T G.r
     | forward β hr => exact .forward β (ih₁ h.1) (ih₂ h.2) hr
     | backward β hr => exact .backward β (ih₁ h.1) (ih₂ h.2) hr
 
-/-- Derivability is the tree calculus: a grammar derives `w` at `c` iff some derivation in its
-rule system over its lexicon has yield `w`. -/
 theorem Grammar.derives_iff {G : Grammar T α} {c : Cat α} {w : List T} :
     G.Derives c w ↔ ∃ d : Derivation T G.rules c, d.LexIn G.lexicon ∧ d.yield = w := by
   refine ⟨fun h ↦ ?_, fun ⟨d, hl, hy⟩ ↦ hy ▸ d.derives hl⟩

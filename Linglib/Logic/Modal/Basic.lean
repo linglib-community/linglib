@@ -37,12 +37,10 @@ variable {W : Type*}
 
 variable {R : SetRel W W} {p : W → Prop}
 
-/-- Over a serial relation, `□p` and `□¬p` are incompatible. -/
 theorem box_disjoint_compl [IsSerial R] : Disjoint (□[R] p) (□[R] pᶜ) :=
   Pi.disjoint_iff.mpr fun _ ↦ Prop.disjoint_iff.mpr fun ⟨hp, hnp⟩ ↦
     let ⟨v, hwv, hv⟩ := box_D hp; hnp v hwv hv
 
-/-- Box–diamond duality as an equation of predicates: `¬□¬p = ◇p`. -/
 theorem compl_box_compl (R : SetRel W W) (p : W → Prop) : (□[R] pᶜ)ᶜ = ◇[R] p := by
   funext w
   simp [not_box]
@@ -54,7 +52,6 @@ def modalSquare (R : SetRel W W) (p : W → Prop) : Aristotelian.Square (W → P
   I := ◇[R] p
   O := (□[R] p)ᶜ
 
-/-- Over a serial relation the modal square satisfies all six Aristotelian relations. -/
 theorem modalSquare_relations (R : SetRel W W) [IsSerial R] (p : W → Prop) :
     Aristotelian.SquareRelations (modalSquare R p) :=
   .of_disjoint (compl_box_compl R p).symm rfl box_disjoint_compl
@@ -63,11 +60,9 @@ variable (R) {q : W → Prop}
 
 /-! ### Accessibility restriction -/
 
-/-- Restricting accessibility strengthens necessity. -/
 theorem box_restrict (p : W → Prop) : Antitone fun R : SetRel W W ↦ □[R] p :=
   fun _ _ h _ hb v hwv ↦ hb v (h hwv)
 
-/-- Restricting accessibility weakens possibility. -/
 theorem diamond_restrict (p : W → Prop) : Monotone fun R : SetRel W W ↦ ◇[R] p :=
   fun _ _ h _ ⟨v, hwv, hpv⟩ ↦ ⟨v, h hwv, hpv⟩
 
@@ -111,8 +106,6 @@ class IsK45Frame : Prop extends R.IsTrans, IsEuclidean R
 /-- `R` is a **KTB frame** if it is reflexive and symmetric. -/
 class IsKTBFrame : Prop extends R.IsRefl, R.IsSymm
 
-/-- Over a KD45 frame the modalities collapse: `◇□p ↔ □p`. An agent introspective about her
-own beliefs considers it possible that she must do something exactly when she must. -/
 theorem diamond_box_iff [IsKD45Frame R] {p : W → Prop} {w : W} :
     ◇[R] (□[R] p) w ↔ □[R] p w :=
   ⟨box_of_diamond_box, diamond_box_of_box⟩

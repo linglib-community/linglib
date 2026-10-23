@@ -61,8 +61,6 @@ def binding? (x : Datum) : Option DimensionBindingType :=
 def rowOf (form : String) : Option Datum :=
   Examples.all.find? (·.primaryText == form)
 
-/-- The criterion applied to the sample yields the paper's lists of conjunctive, disjunctive and
-mixed adjectives. -/
 theorem typology :
     ∀ x ∈ Examples.all, ∀ b ∈ binding? x,
       (b = .conjunctive ↔
@@ -73,22 +71,16 @@ theorem typology :
 
 /-! ### Antonym polarity -/
 
-/-- The polarity judgments confirm the a priori classification, since the positive adjectives are
-judged above the midpoint of the scale and the negative ones below it. -/
 theorem polarity_judgments :
     ∀ x ∈ Examples.all, ∀ p ∈ x.nat? "polarity",
       (x.feature? "positive" = some "true" ↔ 400 < p) := by
   decide +kernel
 
-/-- The clearly conjunctive adjectives are all judged positive and the clearly disjunctive
-ones negative. -/
 theorem polarity_predicts_binding :
     ∀ x ∈ Examples.all, ∀ b ∈ binding? x, ∀ p ∈ x.nat? "polarity",
       (b = .conjunctive → 400 < p) ∧ (b = .disjunctive → p < 400) := by
   decide +kernel
 
-/-- Within an antonym pair, whenever both members are clearly bound, the negative member's
-binding is the De Morgan dual of the positive member's. -/
 theorem antonyms_negate :
     ∀ x ∈ Examples.all, ∀ a ∈ x.feature? "antonym", ∀ y ∈ rowOf a,
       ∀ b ∈ binding? x, ∀ b' ∈ binding? y, b ≠ .mixed → b' ≠ .mixed → b' = b.negate := by
@@ -100,14 +92,11 @@ theorem antonyms_negate :
 def standards : List (String × PositiveStandard) :=
   [("total", .maxEndpoint), ("partial", .minEndpoint), ("relative", .contextual)]
 
-/-- No total adjective is disjunctive, as the standard-type hypothesis predicts. -/
 theorem total_not_disjunctive :
     ∀ x ∈ Examples.all, ∀ s ∈ x.parse? "standard" standards, ∀ b ∈ binding? x,
       s = .maxEndpoint → b ≠ .disjunctive := by
   decide +kernel
 
-/-- A partial adjective can be conjunctive, against the standard-type hypothesis. *Familiar* and
-the comparative *healthier* are partial by the inference tests yet clearly conjunctive. -/
 theorem partial_conjunctive_exists :
     ∃ x ∈ Examples.all, x.parse? "standard" standards = some .minEndpoint ∧
       binding? x = some .conjunctive ∧ predictedBinding .minEndpoint ≠ .conjunctive := by
@@ -115,9 +104,6 @@ theorem partial_conjunctive_exists :
 
 /-! ### Comparatives -/
 
-/-- A comparative inherits the binding of its base unless the base is clearly disjunctive.
-*Healthier* is conjunctive like *healthy* and *better* mixed like *good*, while *worse* is
-mixed although *bad* is disjunctive, the pair whose difference the paper finds significant. -/
 theorem comparatives_inherit :
     ∀ x ∈ Examples.all, ∀ f ∈ x.feature? "base", ∀ y ∈ rowOf f,
       (binding? y ≠ some .disjunctive → binding? x = binding? y) ∧

@@ -92,7 +92,6 @@ theorem and_right (h : StrawsonPresupposes φ π) :
     StrawsonPresupposes (fun w ↦ ψ w ⊓ φ w) fun w ↦ -ψ w ⊔ π w :=
   h.of_table (fun a b ↦ b ⊓ a) (fun b c ↦ -b ⊔ c) (by decide)
 
-/-- `φ → ψ` presupposes `(¬ψ) → π`, which is `ψ ∨ π`. -/
 theorem imp_left (h : StrawsonPresupposes φ π) :
     StrawsonPresupposes (fun w ↦ -φ w ⊔ ψ w) fun w ↦ ψ w ⊔ π w :=
   h.of_table (fun a b ↦ -a ⊔ b) (· ⊔ ·) (by decide)
@@ -101,7 +100,6 @@ theorem imp_right (h : StrawsonPresupposes φ π) :
     StrawsonPresupposes (fun w ↦ -ψ w ⊔ φ w) fun w ↦ -ψ w ⊔ π w :=
   h.of_table (fun a b ↦ -b ⊔ a) (fun b c ↦ -b ⊔ c) (by decide)
 
-/-- `φ ∨ ψ` presupposes `(¬ψ) → π`, which is `ψ ∨ π`. -/
 theorem or_left (h : StrawsonPresupposes φ π) :
     StrawsonPresupposes (fun w ↦ φ w ⊔ ψ w) fun w ↦ ψ w ⊔ π w :=
   h.of_table (· ⊔ ·) (· ⊔ ·) (by decide)
@@ -196,7 +194,6 @@ theorem eval_eliminative : ∀ (φ : Formula P) {σ τ : Set W}, τ ∈ φ.eval 
   | must _, _, _, h => by obtain ⟨_, -, rfl⟩ := mem_eval_must.1 h; split_ifs <;> simp
   | presup _, _, _, h => (mem_eval_presup.1 h).2 ▸ le_rfl
 
-/-- The absurd state admits every sentence and is its own update. -/
 theorem empty_mem_eval_empty : ∀ φ : Formula P, (∅ : Set W) ∈ φ.eval F ∅
   | atom _ => mem_eval_atom.2 (by ext; simp)
   | not φ => mem_eval_not.2 ⟨∅, empty_mem_eval_empty φ, Set.empty_sdiff _⟩
@@ -213,7 +210,6 @@ theorem presupposes_iff_forall :
 theorem entails_iff_forall : Entails F φ ψ ↔ ∀ σ τ, τ ∈ φ.eval F σ → Satisfies F τ ψ :=
   PartialUpdate.entails_bind_iff
 
-/-- *implies* denotes Heim's conditional. -/
 theorem eval_implies : (implies φ ψ).eval F = CCP.Partial.cond (φ.eval F) (ψ.eval F) :=
   (CCP.Partial.cond_eq_neg_seq_neg _ _).symm
 
@@ -253,7 +249,6 @@ theorem Presupposes.trans (h₁ : Presupposes F φ ψ) (h₂ : Presupposes F ψ 
     Presupposes F φ χ :=
   PartialUpdate.Presupposes.trans h₁ h₂
 
-/-- `∂ψ and χ` presupposes `ψ`. -/
 theorem presup_and_presupposes (ψ χ : Formula P) : Presupposes F (and (presup ψ) χ) ψ :=
   fun _ ⟨hσ, _⟩ ↦ hσ
 
@@ -279,8 +274,6 @@ theorem must_isTest (φ : Formula P) : IsTest F (must φ) := fun _ _ h ↦ by
   obtain ⟨_, -, rfl⟩ := mem_eval_must.1 h
   split_ifs <;> simp
 
-/-- A test admitted by a non-absurd state crashes it exactly when the state does not satisfy
-the test. -/
 theorem IsTest.empty_mem_iff (ht : IsTest F φ) (hσ : σ.Nonempty) (h : (φ.eval F).Admits σ) :
     ∅ ∈ φ.eval F σ ↔ ¬Satisfies F σ φ := by
   have hget := Part.get_mem h
@@ -448,7 +441,6 @@ theorem entails_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
   obtain ⟨-, rfl⟩ := hτ
   exact (satisfies_iff hψ).2 fun w hw ↦ h w ((trueAt_iff hφ).2 hw.2)
 
-/-- For non-modal sentences, entailment is preservation of fixed points (D73). -/
 theorem entails_iff_satisfies (hφ : NonModal φ) (hψ : NonModal ψ) :
     Entails F φ ψ ↔ ∀ σ, Satisfies F σ φ → Satisfies F σ ψ :=
   ⟨fun h σ hs ↦ entails_iff_forall.1 h σ σ hs,
@@ -465,15 +457,12 @@ theorem Presupposes.entails (h : Presupposes F φ ψ) (hψ : NonModal ψ) : Enta
   entails_iff_forall.2 fun σ _ hτ ↦ (satisfies_iff hψ).2 fun w hw ↦
     (satisfies_iff hψ).1 (h σ (admits_of_mem hτ)) w (eval_eliminative φ hτ hw)
 
-/-- On PL+∂ the dynamic presupposition of D31 is the Strawsonian presupposition of D1 under
-Peters' semantics, which is Peters' result. -/
 theorem presupposes_iff_strawsonPresupposes (hφ : NonModal φ) (hψ : NonModal ψ) :
     Presupposes F φ ψ ↔ StrawsonPresupposes (φ.tval F) (ψ.tval F) := by
   rw [presupposes_iff_forall]
   simp only [StrawsonPresupposes, admits_iff hφ, satisfies_iff hψ, trueAt_iff hψ]
   exact ⟨fun h w hw ↦ h {w} (by simpa using hw) w rfl, fun h σ hσ w hw ↦ h w (hσ w hw)⟩
 
-/-- A non-modal sentence presupposes exactly what both it and its negation entail. -/
 theorem presupposes_iff (hφ : NonModal φ) (hψ : NonModal ψ) :
     Presupposes F φ ψ ↔ Entails F φ ψ ∧ Entails F (not φ) ψ := by
   refine ⟨fun h ↦ ⟨h.entails hψ, h.not.entails hψ⟩, fun ⟨h₁, h₂⟩ ↦ ?_⟩
@@ -523,16 +512,11 @@ inductive Atom
 holding at the worlds containing it. -/
 def termModel (P : Type*) : P → Set (Set P) := fun p ↦ {w | p ∈ w}
 
-/-- E154, *if Spaceman Spiff lands on Planet X, he will be bothered by the fact that his weight
-is greater than it would be on Earth*, presupposes that if he lands there his weight is
-greater. -/
 theorem e154 (F : Atom → Set W) :
     Presupposes F (implies (atom .lands) (and (presup (atom .heavier)) (atom .bothered)))
       (implies (atom .lands) (atom .heavier)) :=
   (presup_and_presupposes _ _).implies_right
 
-/-- E154 does not presuppose that Spiff's weight is greater, since a world where he does not
-land makes the sentence true. -/
 theorem e154_not_unconditional :
     ¬Presupposes (termModel Atom)
       (implies (atom .lands) (and (presup (atom .heavier)) (atom .bothered))) (atom .heavier) := by
@@ -542,9 +526,6 @@ theorem e154_not_unconditional :
   have := h ∅ (by simp [tval, implies, termModel])
   simp [tval, termModel] at this
 
-/-- E156, *if Spaceman Spiff lands on Planet X and is bothered by the fact that his weight is
-greater than it would be on Earth, he won't stay long*, carries the same conditional
-presupposition. -/
 theorem e156 (F : Atom → Set W) :
     Presupposes F
       (implies (and (atom .lands) (and (presup (atom .heavier)) (atom .bothered))) (atom .leaves))
@@ -568,8 +549,6 @@ def translations : List (String × Formula Atom) :=
    ("bih IMPLIES (∂bih AND cb_a_bih)", implies (atom .hiding) realises),
    ("MIGHT(bih AND ∂bih AND cb_a_bih)", might (and (atom .hiding) realises))]
 
-/-- The entailments the book prints for its translations (E168c, E169c, E172c, E173c, E174c,
-E175d) hold in every model, each translation presupposing what it entails. -/
 theorem entailed_rows (F : Atom → Set W) : ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "translation" translations, ∀ ψ ∈ row.parse? "entails" translations,
       Entails F φ ψ := by
@@ -590,7 +569,6 @@ theorem entailed_rows (F : Atom → Set W) : ∀ row ∈ Examples.all,
     (presup_and_presupposes _ _).implies_right.entails
       ((NonModal.atom _).not.implies (.atom _))]
 
-/-- The non-entailments it prints (E175c, E176c, E177c) fail in the term model. -/
 theorem unentailed_rows : ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "translation" translations, ∀ ψ ∈ row.parse? "doesNotEntail" translations,
       ¬Entails (termModel Atom) φ ψ := by
@@ -622,8 +600,6 @@ theorem unentailed_rows : ∀ row ∈ Examples.all,
     have := (satisfies_iff (.atom _)).1 hs ∅ (by simp [hσ])
     simp [trueAt_iff (NonModal.atom _), tval, termModel] at this
 
-/-- Every information state admits the translation of E177, so the sentence carries no
-presupposition. -/
 theorem e177_admits (F : Atom → Set W) (σ : Set W) :
     ∀ φ ∈ Examples.e177.parse? "translation" translations, (φ.eval F).Admits σ := by
   intro φ hφ

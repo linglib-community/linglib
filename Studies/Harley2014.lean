@@ -152,14 +152,9 @@ theorem index_local (c : Arguments Number) : spellout c sing = none := by
 
 /-! ### §3.3 Conditioning by the internal argument -/
 
-/-- The external argument's number never conditions the form. -/
 theorem suppletion_ignores_external (obj subj subj' : Number) (r : Root) :
     spellout (transitive obj subj) r = spellout (transitive obj subj') r := rfl
 
-/-- Only an internal argument conditions the form. An intransitive whose sole
-argument is external gets the Elsewhere form whatever its number, so the
-suppletive intransitives must be unaccusative, the paper's prediction from
-locality. -/
 theorem unergative_elsewhere (n : Number) : spellout (unergative n) run = some "tenne" := rfl
 
 /-- Whether the number of an argument conditions Hiaki suppletion, read off `spellout`. That of
@@ -173,7 +168,6 @@ def conditions : ArgumentRole → Bool
     spellout (transitive .plural .singular) kill
   | .R | .T => false
 
-/-- Suppletion follows an ergative–absolutive distribution. -/
 theorem isErgative_conditions : Alignment.IsErgative conditions := by decide
 
 /-- **Suppletion is not agreement.** Hiaki case is nominative–accusative ((29)), and no
@@ -194,9 +188,6 @@ its categorizing head, and no Elsewhere. -/
 def cahootLF : RuleSet (VocabularyItem Allosemy.Feature String) :=
   [⟨(embedding {.cat .n}).toFinset, "a conspiracy"⟩]
 
-/-- Outside its frame the caboodle item has no interpretation. The paper adds
-that no List-3 entry could be a true Elsewhere, since an interpretation must
-compose with its sister's type; caboodle items make the absence visible. -/
 theorem cahoot_no_elsewhere : winner? cahootLF ∅ = none := by decide
 
 /-! ### Both flanks on the `Realization` carrier
@@ -224,9 +215,6 @@ theorem run_isProperlySuppletive : realization.IsProperlySuppletive run := by
     hpl ▸ Finset.singleton_nonempty _, ?_⟩
   rw [hsg, hpl, ne_eq, Finset.singleton_inj]; decide
 
-/-- Under the identity core-extraction, *vuite*/*tenne* alternate at the core
-itself — `Morphology.Root.HasSuppletiveCore`, suppletion proper rather than
-affixal inflection. -/
 theorem run_hasSuppletiveCore : Morphology.Root.HasSuppletiveCore realization (fun s ↦ {s}) run :=
   (Morphology.Root.hasSuppletiveCore_singleton realization run).mpr
     (realization.isSuppletive_iff.mpr (Or.inr run_isProperlySuppletive))

@@ -68,8 +68,6 @@ open Connective
 
 variable {C : Set W} {p q : W → SignType}
 
-/-- A context admits Karttunen's filtering conjunction when it admits the first conjunct and the
-second conjunct's local context admits the second. -/
 theorem subset_support_meetMiddle_iff :
     C ⊆ Function.support (fun w ↦ (p w).meetMiddle (q w)) ↔
       C ⊆ Function.support p ∧ conj.localContext C (posExt p) ⊆ Function.support q := by
@@ -78,8 +76,6 @@ theorem subset_support_meetMiddle_iff :
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
-/-- A context admits Karttunen's filtering conditional when it admits the antecedent and the
-consequent's local context admits the consequent. -/
 theorem subset_support_neg_joinMiddle_iff :
     C ⊆ Function.support (fun w ↦ (-p w).joinMiddle (q w)) ↔
       C ⊆ Function.support p ∧ cond.localContext C (posExt p) ⊆ Function.support q := by
@@ -89,8 +85,6 @@ theorem subset_support_neg_joinMiddle_iff :
   exact ⟨fun h ↦ ⟨fun w hw ↦ (h w hw).1, fun w hw ↦ (h w hw).2⟩,
     fun h w hw ↦ ⟨h.1 w hw, h.2 w hw⟩⟩
 
-/-- A context admits Karttunen's filtering disjunction when it admits the first disjunct and the
-second disjunct's local context admits the second. -/
 theorem subset_support_joinMiddle_iff :
     C ⊆ Function.support (fun w ↦ (p w).joinMiddle (q w)) ↔
       C ⊆ Function.support p ∧ disj.localContext C (posExt p) ⊆ Function.support q := by

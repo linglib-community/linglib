@@ -82,7 +82,6 @@ theorem count_cons_cons (a b : Segment) (fm : List Segment) :
       count (b :: fm) + if a.IsVowel ∧ b.IsVowel then 1 else 0 := by
   simp [count, List.countP_cons]
 
-/-- The categorical ban and the violation count agree. -/
 theorem free_iff_count_eq_zero (fm : List Segment) : Free fm ↔ count fm = 0 := by
   induction fm with
   | nil => simp [Free]
@@ -162,31 +161,23 @@ def coalesce (v : Segment) : List Segment := j.stemBody ++ v :: j.suffixBody
     (j.coalesce v).length = j.stemBody.length + j.suffixBody.length + 1 := by
   simp [coalesce]; omega
 
-/-- Merger into the second vowel is elision of the first. -/
 theorem coalesce_v2 : j.coalesce j.v2 = j.elideV1 := rfl
 
-/-- Merger into the first vowel is elision of the second. -/
 theorem coalesce_v1 : j.coalesce j.v1 = j.elideV2 := by simp [coalesce, elideV2, stem]
 
-/-- The unrepaired concatenation is longer than the bare stem. -/
 theorem input_ne_stem : j.input ≠ j.stem := fun h ↦ by
   have := congrArg List.length h
   simp at this
   omega
 
-/-- The form with an inserted consonant is longer than the bare stem. -/
 theorem epenthesize_ne_stem (c : Segment) : j.epenthesize c ≠ j.stem := fun h ↦ by
   have := congrArg List.length h
   simp at this
   omega
 
-/-- Elision of the second vowel merges the suffixed form with the bare stem exactly when the
-suffix has one segment. -/
 @[simp] theorem elideV2_eq_stem_iff : j.elideV2 = j.stem ↔ j.suffixBody = [] := by
   simp [elideV2]
 
-/-- Elision of the first vowel merges the suffixed form with the bare suffix exactly when the
-stem has one segment. -/
 @[simp] theorem elideV1_eq_suffix_iff : j.elideV1 = j.suffix ↔ j.stemBody = [] := by
   simp [elideV1]
 
@@ -204,11 +195,9 @@ theorem v1Idx_lt_length_input : j.v1Idx < j.input.length := by
 theorem v2Idx_lt_length_input : j.v2Idx < j.input.length := by
   simp only [v2Idx, length_input]; omega
 
-/-- Elision of the first vowel deletes its position from the unrepaired concatenation. -/
 theorem elideV1_eq_eraseIdx : j.elideV1 = j.input.eraseIdx j.v1Idx := by
   simp [elideV1, suffix, input, v1Idx, List.eraseIdx_append_of_length_le]
 
-/-- Elision of the second vowel deletes its position from the unrepaired concatenation. -/
 theorem elideV2_eq_eraseIdx : j.elideV2 = j.input.eraseIdx j.v2Idx := by
   simp [elideV2, stem, input, v2Idx, List.eraseIdx_append_of_length_le]
 
@@ -218,38 +207,28 @@ private theorem insertIdx_append_cons {α : Type*} (l : List α) (x c : α) (r :
   | nil => simp [List.insertIdx_succ_cons]
   | cons a l ih => simp [List.insertIdx_succ_cons, ih]
 
-/-- Insertion of a consonant puts it at the position of the second vowel. -/
 theorem epenthesize_eq_insertIdx (c : Segment) :
     j.epenthesize c = j.input.insertIdx j.v2Idx c :=
   (insertIdx_append_cons _ _ _ _).symm
 
 /-! ### The repairs remove the hiatus -/
 
-/-- The unrepaired concatenation has a hiatus. -/
 theorem not_free_input : ¬ Free j.input := fun h ↦
   (List.isChain_append_cons_cons.1 h).2.1 ⟨j.v1_isVowel, j.v2_isVowel⟩
 
-/-- The form with an inserted consonant is free of hiatus exactly when the stem and the suffix
-are. -/
 theorem free_epenthesize {c : Segment} (hc : ¬ c.IsVowel) :
     Free (j.epenthesize c) ↔ Free j.stem ∧ Free j.suffix := by
   simp only [Free, epenthesize, stem, suffix, List.isChain_append_cons_cons,
     List.isChain_cons_cons]
   tauto
 
-/-- The form without the first vowel is free of hiatus exactly when the stem body followed by
-the second vowel is, and the suffix is. -/
 theorem free_elideV1 : Free j.elideV1 ↔ Free (j.stemBody ++ [j.v2]) ∧ Free j.suffix :=
   List.isChain_split
 
-/-- The form without the second vowel is free of hiatus exactly when the stem is, and the first
-vowel followed by the suffix body is. -/
 theorem free_elideV2 : Free j.elideV2 ↔ Free j.stem ∧ Free (j.v1 :: j.suffixBody) := by
   simp only [Free, elideV2, stem, List.append_assoc, List.singleton_append]
   exact List.isChain_split
 
-/-- The form with the two vowels merged into `v` is free of hiatus exactly when the stem body
-followed by `v` is, and `v` followed by the suffix body is. -/
 theorem free_coalesce (v : Segment) :
     Free (j.coalesce v) ↔ Free (j.stemBody ++ [v]) ∧ Free (v :: j.suffixBody) :=
   List.isChain_split

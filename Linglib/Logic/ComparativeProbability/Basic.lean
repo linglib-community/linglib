@@ -31,7 +31,6 @@ section Context
 
 variable {α : Type*} [BooleanAlgebra α] {r : α → α → Prop}
 
-/-- A common context `c` disjoint from both sides cancels, so `a ⊔ c ≿ b ⊔ c ↔ a ≿ b`. -/
 theorem rel_sup_sup_right_iff [IsQualitativeAdditive r] {a b c : α} (hca : Disjoint c a)
     (hcb : Disjoint c b) : r (a ⊔ c) (b ⊔ c) ↔ r a b := by
   rw [qadd (r := r) a b, qadd (r := r) (a ⊔ c) (b ⊔ c), sup_comm b c, ← sdiff_sdiff_left,
@@ -42,9 +41,6 @@ theorem rel_sup_sup_right [IsQualitativeAdditive r] {a b c : α} (h : r a b)
     (hca : Disjoint c a) (hcb : Disjoint c b) : r (a ⊔ c) (b ⊔ c) :=
   (rel_sup_sup_right_iff hca hcb).mpr h
 
-/-- Two comparisons with disjoint left parts and disjoint right parts merge into their joins,
-    even with cross overlaps. The proof adds context to each side, passes through `b₁ ⊔ a₂`,
-    and restores the pivot `a₂ ⊓ b₁` by additivity. -/
 theorem rel_sup_sup [IsQualitativeAdditive r] [IsTrans α r] {a₁ b₁ a₂ b₂ : α} (h₁ : r a₁ b₁)
     (h₂ : r a₂ b₂) (ha : Disjoint a₁ a₂) (hb : Disjoint b₁ b₂) : r (a₁ ⊔ a₂) (b₁ ⊔ b₂) := by
   have e₁ : (a₂ ⊔ a₁ \ b₂) ⊔ a₁ ⊓ b₂ = a₁ ⊔ a₂ := by
@@ -66,10 +62,8 @@ end Context
 
 variable {α W : Type*} {r : Set W → Set W → Prop}
 
-/-- Every set is at least as likely as `∅`. -/
 theorem rel_empty [IsLikelihoodMono r] (A : Set W) : r A ∅ := rel_bot (r := r) A
 
-/-- The whole space is strictly more likely than `∅`. -/
 theorem not_rel_empty_univ [IsNontrivial r] : ¬r ∅ Set.univ :=
   IsNontrivial.bot_not_ge_top (r := r)
 
@@ -82,8 +76,6 @@ instance [IsQualitativeProbability r] (f : W → α) :
     rw [Set.preimage_sdiff, Set.preimage_sdiff]; exact qadd (r := r) _ _
   bot_not_ge_top := not_rel_empty_univ (r := r)
 
-/-- A qualitative probability pulls back along the image of an injection `f`, comparing sets by
-    their images, when the range of `f` is not null. -/
 theorem isQualitativeProbability_image [IsQualitativeProbability r] {f : α → W}
     (hf : Function.Injective f) (hnt : ¬r ∅ (Set.range f)) :
     IsQualitativeProbability (Set.image f ⁻¹'o r) where
@@ -95,13 +87,10 @@ theorem isQualitativeProbability_image [IsQualitativeProbability r] {f : α → 
     show ¬r (f '' ∅) (f '' Set.univ)
     rwa [Set.image_empty, Set.image_univ]
 
-/-- An empty carrier has no qualitative probability, since there `∅ = Set.univ`. -/
 theorem not_isQualitativeProbability_of_isEmpty [IsEmpty W] (r : Set W → Set W → Prop) :
     ¬IsQualitativeProbability r := fun _ ↦
   not_rel_empty_univ (by rw [Set.eq_empty_of_isEmpty (Set.univ : Set W)]; exact refl_of r ∅)
 
-/-- On a finite carrier some atom is not null, since were every singleton at most as likely
-    as `∅`, so would be `Set.univ`. -/
 theorem exists_not_rel_empty_singleton [Fintype W] (r : Set W → Set W → Prop)
     [IsQualitativeProbability r] : ∃ i, ¬r ∅ {i} := by
   by_contra hall

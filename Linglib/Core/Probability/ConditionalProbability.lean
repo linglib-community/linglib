@@ -29,15 +29,12 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) {s : Set Ω}
 
-/-- Conditioning on a subset that sheds only worlds outside `e` can only raise the conditional
-probability of `e`. -/
 theorem cond_le_cond_of_subset {u₁ u₂ e : Set Ω} (hu₁ : MeasurableSet u₁)
     (hu₂ : MeasurableSet u₂) (hsub : u₂ ⊆ u₁) (hent : e ∩ u₁ ⊆ u₂) : μ[|u₁] e ≤ μ[|u₂] e := by
   have h : e ∩ u₁ = e ∩ u₂ := Set.inter_congr_left (fun _ hw ↦ hsub hw.2) hent
   rw [cond_apply hu₁, cond_apply hu₂, Set.inter_comm u₁, Set.inter_comm u₂, h]
   exact mul_le_mul_left (ENNReal.inv_le_inv.mpr (measure_mono hsub)) _
 
-/-- The conditional as a ratio of real-valued masses. -/
 theorem cond_real_apply (hs : MeasurableSet s) (e : Set Ω) :
     μ[|s].real e = μ.real (s ∩ e) / μ.real s := by
   simp only [measureReal_def, cond_apply hs, ENNReal.toReal_mul, ENNReal.toReal_inv, inv_mul_eq_div]
@@ -50,14 +47,12 @@ namespace ProbabilityTheory
 
 variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {μ : Measure Ω}
 
-/-- Conditioning a pushforward on a set is pushing forward the conditional on its preimage. -/
 theorem cond_map {f : Ω → Ω'} (hf : AEMeasurable f μ) {s : Set Ω'} (hs : MeasurableSet s) :
     (μ.map f)[|s] = (μ[|f ⁻¹' s]).map f := by
   rw [cond, cond, Measure.map_smul _ hf.restrict, Measure.restrict_map_of_aemeasurable hf hs,
     Measure.map_apply_of_aemeasurable hf hs]
 
 variable (μ) in
-/-- Conditioning a product on an event of its first coordinate conditions the first factor. -/
 theorem cond_prod_preimage_fst [SFinite μ] (ν : Measure Ω') [IsProbabilityMeasure ν]
     (s : Set Ω) : (μ.prod ν)[|Prod.fst ⁻¹' s] = μ[|s].prod ν := by
   rw [cond, cond, Measure.prod_smul_left, Measure.restrict_prod_eq_prod_univ, ← Set.prod_univ,
@@ -74,15 +69,12 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω]
 
-/-- Conditioning is invariant under scaling the measure by a positive finite constant. -/
 theorem cond_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (μ : Measure Ω) (s : Set Ω) :
     (c • μ)[|s] = μ[|s] := by
   simp only [cond, Measure.smul_apply, smul_eq_mul, Measure.restrict_smul, smul_smul]
   rw [ENNReal.mul_inv (Or.inl hc0) (Or.inl hc), mul_right_comm, ENNReal.inv_mul_cancel hc0 hc,
     one_mul]
 
-/-- Normalizing after reweighting by `f` and again after reweighting by `g` is normalizing once
-after reweighting by `f * g`, so two Bayesian updates compose. -/
 theorem cond_univ_withDensity_mul (μ : Measure Ω) {f g : Ω → ℝ≥0∞} (hf : Measurable f)
     (hg : Measurable g) (hfin : μ.withDensity f Set.univ ≠ ∞) :
     (((μ.withDensity f)[|Set.univ]).withDensity g)[|Set.univ] =
@@ -111,11 +103,9 @@ namespace ProbabilityTheory
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {r s t : Set Ω}
 
-/-- The conditional of an event given a larger one is the ratio of their masses. -/
 theorem cond_apply_of_subset (hs : MeasurableSet s) (hts : t ⊆ s) : μ[t | s] = μ t / μ s := by
   rw [cond_apply hs, Set.inter_eq_right.2 hts, ENNReal.div_eq_inv_mul]
 
-/-- The chain rule for nested events. -/
 theorem cond_mul_cond_of_subset (hr : MeasurableSet r) (hs : MeasurableSet s) (hsr : s ⊆ r)
     (hts : t ⊆ s) : μ[s | r] * μ[t | s] = μ[t | r] := by
   rw [cond_apply_of_subset hr hsr, cond_apply_of_subset hs hts,
@@ -131,14 +121,11 @@ theorem cond_congr_set (h : s =ᵐ[μ] t) : μ[|s] = μ[|t] := by
 
 variable [IsFiniteMeasure μ]
 
-/-- Conditioning on an event almost contained in another is conditioning the conditional. -/
 theorem cond_cond_of_ae_le (hs : MeasurableSet s) (ht : MeasurableSet t) (hst : s ≤ᵐ[μ] t) :
     μ[|t][|s] = μ[|s] := by
   rw [cond_cond_eq_cond_inter ht hs, Set.inter_comm]
   exact cond_congr_set (Filter.inter_eventuallyEqSet_left.2 hst)
 
-/-- One conditional is absolutely continuous with respect to another exactly when the first
-event is almost contained in the second. -/
 theorem cond_absolutelyContinuous_cond_iff (hs : MeasurableSet s) (ht : MeasurableSet t) :
     μ[|s] ≪ μ[|t] ↔ s ≤ᵐ[μ] t := by
   refine ⟨fun h ↦ ?_, fun h ↦ cond_cond_of_ae_le hs ht h ▸ cond_absolutelyContinuous⟩

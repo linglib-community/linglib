@@ -105,20 +105,16 @@ def verified (b : Backgrounds W) (w u : W) : Set (W → Prop) :=
 
 variable {b : Backgrounds W} {p : W → Prop} {w : W}
 
-/-- A world is at least as good as another under the promoted priorities when it verifies every
-priority the other verifies. -/
 theorem atLeastAsGoodAs_iff_verified_subset {u v : W} :
     (v ≤[b.nonNegotiable w] u) ↔ verified b w u ⊆ verified b w v :=
   (Preorder.satisfied_subset_iff _ _ u v).symm
 
-/-- The priorities a best world verifies form a maximal consistent extension. -/
 theorem verified_mem_extensions {u : W} (hu : u ∈ bestWorlds b.circumstances b.nonNegotiable w) :
     verified b w u ∈ extensions b w :=
   ⟨⟨fun _ hq ↦ hq.1, u, hu.1, fun _ hq ↦ hq.2⟩, fun _ ⟨hYh, _, hv, hvY⟩ hXY q hq ↦
     atLeastAsGoodAs_iff_verified_subset.1 (hu.2 hv (atLeastAsGoodAs_iff_verified_subset.2
       fun q' hq' ↦ ⟨hYh (hXY hq'), hvY q' (hXY hq')⟩)) ⟨hYh hq, hvY q hq⟩⟩
 
-/-- A world verifying a maximal consistent extension is best. -/
 theorem mem_bestWorlds_of_extension {X : Set (W → Prop)} {u : W} (hX : X ∈ extensions b w)
     (hu : u ∈ b.circumstances.accessibleWorlds w) (huX : ∀ q ∈ X, q u) :
     u ∈ bestWorlds b.circumstances b.nonNegotiable w := by
@@ -127,7 +123,6 @@ theorem mem_bestWorlds_of_extension {X : Set (W → Prop)} {u : W} (hX : X ∈ e
   exact hX'.le_of_ge ⟨fun _ hq' ↦ hq'.1, v, hv, fun _ hq' ↦ hq'.2⟩
     (fun q' hq' ↦ atLeastAsGoodAs_iff_verified_subset.1 hvu ⟨hX'.prop.1 hq', huX q' hq'⟩) hq
 
-/-- Frank's union is Kratzer's best worlds under the promoted priorities. -/
 theorem favoredWorlds_eq_bestWorlds (b : Backgrounds W) (w : W) :
     favoredWorlds b w = bestWorlds b.circumstances b.nonNegotiable w := by
   ext u
@@ -146,8 +141,6 @@ ordering source. -/
 def weakNecessity (b : Backgrounds W) (p : W → Prop) (w : W) : Prop :=
   ∀ v ∈ (premisePreorder (b.negotiable w)).minimals (favoredWorlds b w), p v
 
-/-- Strong necessity is [von-fintel-iatridou-2008]'s, with the promoted priorities as the
-ordering source. -/
 theorem strongNecessity_iff :
     strongNecessity b p w ↔
       Modality.Directive.strongNecessity b.circumstances b.nonNegotiable p w := by
@@ -161,19 +154,16 @@ theorem weakNecessity_iff :
       Modality.Directive.weakNecessity b.circumstances b.nonNegotiable b.negotiable p w := by
   rw [weakNecessity, favoredWorlds_eq_bestWorlds]; rfl
 
-/-- Strong necessity entails weak necessity. -/
 theorem strong_entails_weak (h : strongNecessity b p w) : weakNecessity b p w :=
   weakNecessity_iff.2
     (Modality.Directive.strong_entails_weak _ _ _ _ _ (strongNecessity_iff.1 h))
 
-/-- Weak necessity does not entail strong necessity. -/
 theorem weak_not_entails_strong :
     ¬ ∀ (W : Type) (b : Backgrounds W) (p : W → Prop) (w : W),
         weakNecessity b p w → strongNecessity b p w :=
   fun h ↦ Modality.Directive.weak_not_entails_strong fun W f g g' p w hw ↦
     strongNecessity_iff.1 (h W ⟨f, g, g'⟩ p w (weakNecessity_iff.2 hw))
 
-/-- Without negotiable priorities the two necessities coincide. -/
 theorem weakNecessity_iff_strongNecessity (hg : b.negotiable w = ∅) :
     weakNecessity b p w ↔ strongNecessity b p w := by
   simp [weakNecessity, strongNecessity, hg]
@@ -199,8 +189,6 @@ theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = {γ})
   rw [weakNecessity, weakNecessity, hγ, Preorder.minimals_ofCriteria_eq ⟨v, hv, by simpa⟩]
   exact ⟨fun _ h ↦ h.2 γ (Set.mem_singleton _), fun h ↦ h v ⟨hv, by simpa⟩ hγv⟩
 
-/-- The neg-raising inference for the ideal: when the negotiable ideal is `γ` or its negation and
-both are live, *not should γ* yields *should ¬γ*. -/
 theorem weakNecessity_neg_of_not {γ : W → Prop}
     (hchoice : b.negotiable w = {γ} ∨ b.negotiable w = {fun v ↦ ¬ γ v})
     (hγ : ∃ v ∈ favoredWorlds b w, γ v) (hnγ : ∃ v ∈ favoredWorlds b w, ¬ γ v)

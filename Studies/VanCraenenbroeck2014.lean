@@ -145,10 +145,6 @@ def Config.Derives (c : Config) : Prop :=
 
 instance (c : Config) : Decidable c.Derives := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- **Only the severed argument derives the examples.** Where the root takes the argument as its
-complement or modifies the categorizer no proform strands the argument, as
-`RootCategorization.not_strands_argPos` shows in every context; where the argument is in the
-specifier of the categorizer, the verb and the noun merge it with different heads. -/
 theorem derives_iff (c : Config) : c.Derives ↔ c = .severed := by
   cases c <;> decide +kernel
 
@@ -212,16 +208,12 @@ def Fits (i : Idiom) (d : Domain) : Prop :=
 instance (i : Idiom) (d : Domain) : Decidable (Fits i d) :=
   inferInstanceAs (Decidable (∀ r ∈ idiomData, _))
 
-/-- *iemand de bons geven*, which neither passivizes nor nominalizes, is an idiom of VoiceP. -/
 theorem fits_bons_iff (d : Domain) : Fits .bons d ↔ d = .voice := by
   cases d <;> decide +kernel
 
-/-- *iemand de das omdoen*, which passivizes and does not nominalize, is an idiom of vP. -/
 theorem fits_das_iff (d : Domain) : Fits .das d ↔ d = .v := by
   cases d <;> decide +kernel
 
-/-- **No domain fits.** The idioms that passivize and survive as nominalized infinitives should be
-built from the root and its object alone, and then survive the suffixal nominalization too. -/
 theorem not_fits (d : Domain) : ¬ Fits .strijdbijl d ∧ ¬ Fits .ijs d := by
   cases d <;> decide +kernel
 

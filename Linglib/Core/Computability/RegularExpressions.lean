@@ -39,7 +39,6 @@ def sublists (w : List α) : RegularExpression α := w.foldr (fun a P ↦ (char 
 @[simp] theorem sublists_cons (a : α) (w : List α) :
     sublists (a :: w) = (char a + 1) * sublists w := rfl
 
-/-- `sublists w` matches exactly the sublists of `w`. -/
 theorem matches'_sublists (w : List α) : (sublists w).matches' = {v | v <+ w} := by
   induction w with
   | nil =>

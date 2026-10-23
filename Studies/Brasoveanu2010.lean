@@ -206,7 +206,6 @@ theorem structCol_structSubAll : structCol ∈ structSubAll Dref₃.u₃ Dref₃
       simp only [RegisterStructure.val_apply, row, Flat.coe_inj, Flat.bot_ne_coe] at hix hkx ⊢ <;>
       subst_vars <;> simp_all
 
-/-- The structured column keeps the dependency between conventions and women. -/
 theorem structCol_keeps_dep : dep Dref₃.u₃ Dref₃.u₂ structCol ⊆ dep Dref₃.u₁ Dref₃.u₂ structCol :=
   dep_subset_of_structSub structCol_structSubAll.1
 

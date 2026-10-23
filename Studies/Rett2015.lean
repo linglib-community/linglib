@@ -87,18 +87,14 @@ def Evaluative (c : Construction) (p : Polarity) : Prop := implicature c p ≠ n
 instance (c : Construction) (p : Polarity) : Decidable (Evaluative c p) :=
   inferInstanceAs (Decidable (_ ≠ _))
 
-/-- The Marked Meaning Principle makes evaluativity Manner-derived exactly for the marked antonym in
-a polar-invariant construction. -/
 theorem implicature_eq_manner_iff (c : Construction) (p : Polarity) :
     implicature c p = some .manner ↔ IsPolarInvariant c ∧ IsMarked p := by
   cases c <;> cases p <;> decide
 
-/-- Quantity-derived evaluativity is the positive construction's alone. -/
 theorem implicature_eq_quantity_iff (c : Construction) (p : Polarity) :
     implicature c p = some .quantity ↔ c = .positive := by
   cases c <;> cases p <;> decide
 
-/-- Evaluativity is the positive construction or the Marked Meaning Principle. -/
 theorem evaluative_iff (c : Construction) (p : Polarity) :
     Evaluative c p ↔ c = .positive ∨ (IsPolarInvariant c ∧ IsMarked p) := by
   cases c <;> cases p <;> decide
@@ -132,15 +128,11 @@ section PolarVarianceGrounding
 
 variable {Entity D : Type*} [LinearOrder D] (μ : Entity → D) (a b : Entity) (p : Polarity)
 
-/-- The strengthened equative of an adjective of either polarity, *as tall as and not taller
-than* or *as short as and not shorter than*, holds exactly when the two measures are equal. -/
 theorem exact_equative_iff_eq :
     (a ∈ μ ⁻¹' (p • Comparison.ge).interval (μ b) ∧
       a ∉ μ ⁻¹' (p • Comparison.gt).interval (μ b)) ↔ μ a = μ b := by
   cases p <;> simp [eq_iff_le_not_lt, and_comm]
 
-/-- The strengthened equatives of two antonyms, *exactly as tall as* and *exactly as short as*,
-are mutually entailing. -/
 theorem exact_equative_antonym_invariant :
     (a ∈ μ ⁻¹' (p • Comparison.ge).interval (μ b) ∧
         a ∉ μ ⁻¹' (p • Comparison.gt).interval (μ b)) ↔
@@ -148,14 +140,10 @@ theorem exact_equative_antonym_invariant :
         a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b)) := by
   rw [exact_equative_iff_eq, exact_equative_iff_eq]
 
-/-- The antonym comparatives exclude each other, so *A is taller than B* and *A is shorter than
-B* cannot both hold. -/
 theorem comparative_antonyms_exclusive (h : a ∈ μ ⁻¹' (p • Comparison.gt).interval (μ b)) :
     a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b) := by
   cases p <;> simpa using lt_asymm h
 
-/-- Wherever the antonyms could differ, `μ a ≠ μ b`, their comparatives are complementary, so no
-truth-conditionally equivalent unmarked alternative exists. -/
 theorem comparative_antonym_variant (h : μ a ≠ μ b) :
     a ∈ μ ⁻¹' (p • Comparison.gt).interval (μ b) ↔
       a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b) := by

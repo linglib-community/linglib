@@ -105,8 +105,6 @@ section Contrast
 
 variable {R : Restrictor E W} {d : ℕ} {g : Assignment E} {s : W}
 
-/-- Over a restrictor with a satisfier besides the antecedent, the weak article fails uniqueness and
-the strong article returns the antecedent. -/
 theorem weak_eq_none_strong_eq_some {y : E} (hd : R g s (g d)) (hy : R g s y) (hne : y ≠ g d) :
     ⟦DefiniteDescription.unique R⟧ g s = none ∧
       ⟦DefiniteDescription.anaphoric R d⟧ g s = some (g d) :=
@@ -145,8 +143,6 @@ one entity, as *Gewinner* holds at each round of its winner in (48), it denotes 
 theorem weak_covaries : ⟦DefiniteDescription.unique fun _ s x ↦ x = f s⟧ g s = some (f s) :=
   iota_ident (f s)
 
-/-- The strong article does not covary with the situation. At a fixed assignment it is defined over
-the same restrictor only at the situations whose entity is the antecedent. -/
 theorem strong_isSome_iff : (⟦DefiniteDescription.anaphoric (fun _ s x ↦ x = f s) d⟧ g s).isSome ↔
     g d = f s :=
   DefiniteDescription.denote_anaphoric_isSome_iff _ d g s
@@ -164,8 +160,6 @@ variable (R : E → E → W → Prop) (d : ℕ) (g : Assignment E) (s : W)
 whose possessor is the antecedent. -/
 def relational : DefiniteDescription E W := .possessive ⊤ (fun g _ ↦ g d) fun _ s y x ↦ R y x s
 
-/-- In relational anaphora the uniqueness requirement resurfaces, the description being defined iff
-the antecedent has exactly one relatum. -/
 theorem relational_isSome_iff : (⟦relational R d⟧ g s).isSome ↔ ∃! x, R (g d) x s :=
   (DefiniteDescription.denote_possessive_isSome_iff ⊤ (fun g _ ↦ g d) _ g s).trans <| by simp
 
@@ -190,19 +184,14 @@ def IsLocal (R : S → S → S → Prop) : Prop := ∀ y x s, R y x s → x ≤ 
 
 variable {R : S → S → S → Prop} {g : Assignment S} {s x y : S}
 
-/-- Π of a local relational noun picks out only parts of a whole that overlaps the situation. -/
 theorem exists_le_of_shift (hR : IsLocal R) (h : shift R g s x) :
     ∃ y, x ≤ y ∧ R y x y ∧ Overlap s y :=
   let ⟨y, hy, ho⟩ := h
   ⟨y, hR y x y hy, hy, ho⟩
 
-/-- A whole that is part of the situation overlaps it, as the fridge does in part-whole
-bridging. -/
 theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : shift R g s x :=
   ⟨y, hy, (Overlap.of_le hb hys).symm⟩
 
-/-- The weak article over Π of a local relational noun whose referents are not part of their
-relata, as authors are not part of their books, is undefined. -/
 theorem unique_shift_eq_none (hR : IsLocal R) (hpart : ∀ y x s, R y x s → ¬ x ≤ y)
     (g : Assignment S) (s : S) : ⟦DefiniteDescription.unique (shift R)⟧ g s = none :=
   (iota_eq_none_iff _).2 fun ⟨x, ⟨y, hy, _⟩, _⟩ ↦ hpart y x y hy (hR y x y hy)
@@ -250,7 +239,6 @@ def novel : Restrictor Sit Sit := fun _ _ x ↦ x = {.novel} ∨ x = {.coauthore
 
 theorem isLocal_authorOf : IsLocal authorOf := fun _ _ _ h ↦ h.2
 
-/-- An author is not part of what they wrote. -/
 theorem not_le_of_authorOf {y x s : Sit} (h : authorOf y x s) : ¬ x ≤ y := by
   obtain ⟨⟨rfl, rfl⟩ | ⟨rfl, rfl | rfl⟩, -⟩ := h <;> decide
 
@@ -281,8 +269,6 @@ theorem relational_anaphora :
     ⟨⟨trivial, .inl ⟨rfl, rfl⟩, by decide⟩, fun _ ⟨_, h, _⟩ ↦
       h.elim And.right fun ⟨h, _⟩ ↦ absurd h (by decide)⟩
 
-/-- Antecedent to the coauthored novel, *von dem Autor* fails uniqueness, though *von dem Roman*
-picks out the novel. -/
 theorem relational_anaphora_coauthored :
     ⟦relational authorOf 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ = none ∧
       ⟦DefiniteDescription.anaphoric novel 1⟧ (fun _ ↦ {.coauthoredNovel}) Finset.univ =
@@ -417,7 +403,6 @@ def use? (d : Datum) : Option DefiniteDescription.Use :=
     ("immediateSituation", .immediateSituation), ("largerSituation", .largerSituation),
     ("partWholeBridging", .bridging .partWhole), ("producerBridging", .bridging .relational)]
 
-/-- Every form the paper accepts is available in its scenario. -/
 theorem rows_available : ∀ d ∈ Examples.all, ∀ sc ∈ scenario? d, ∀ p ∈ article? d,
     d.judgment = .acceptable → sc.Available p := by
   simp only [Scenario.available_iff]

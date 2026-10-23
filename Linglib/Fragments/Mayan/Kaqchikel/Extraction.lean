@@ -72,8 +72,6 @@ def realize (c : Mayan.VerbClass) (agent patient : Person) :
       {.morpheme .verbalComplex [wi]}
   | _ => ∅
 
-/-- Agent Focus marks the extraction of a transitive subject unless both arguments are speech-act
-participants, and nothing else. -/
 theorem agentFocus_mem_realize_iff (c : Mayan.VerbClass) (agent patient : Person)
     (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verb (agentFocus c).marker ∈ realize c agent patient s ↔

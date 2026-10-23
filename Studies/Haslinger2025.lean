@@ -75,8 +75,6 @@ sentences along the Manner profile. -/
 abbrev Blocked (ψ : S) : Prop :=
   Competition.Blocked (fun ψ ↦ {φ | PotEquiv φ ψ}) (manner complexity potential) ψ
 
-/-- By the form–meaning correlation, an unblocked sentence with more potential for imprecision than
-a potentially p-equivalent competitor is strictly simpler than it. -/
 theorem lt_complexity_of_lt_potential {φ ψ : S} (h : PotEquiv φ ψ)
     (hp : potential φ < potential ψ) (hb : ¬ Blocked complexity potential PotEquiv ψ) :
     complexity ψ < complexity φ := by
@@ -154,8 +152,6 @@ def numeral (n : ℤ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ d = n, fun d ↦
 /-- *More than n* is read with deviation at most `m`, (69b) and (70b). -/
 def moreThan (n : ℤ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ n < d, fun d ↦ (n : ℚ) - m < d⟩
 
-/-- Two distinct bare numerals whose halos meet violate Inference Preservation, being incompatible
-precisely and compatible imprecisely. -/
 theorem numeral_violates_of_le {n n' : ℤ} (h : n ≠ n') {m : ℚ}
     (hd : |(n : ℚ) - n'| ≤ 2 * m) : Violates (numeral n m) (numeral n' m) := by
   refine ⟨false, fun d hd' hn' ↦ ?_, fun hall ↦ ?_, fun hall ↦ ?_⟩
@@ -171,7 +167,6 @@ theorem numeral_violates_of_le {n n' : ℤ} (h : n ≠ n') {m : ℚ}
         abs_of_pos (by norm_num : (0 : ℚ) < 2)]
       linarith
 
-/-- Distinct bare numerals whose halos are apart preserve every inference. -/
 theorem not_numeral_violates_of_lt {n n' : ℤ} (h : n ≠ n') {m : ℚ}
     (hd : 2 * m < |(n : ℚ) - n'|) : ¬ Violates (numeral n m) (numeral n' m) := by
   rintro ⟨p, ha, -, hc⟩
@@ -220,7 +215,6 @@ theorem roundness_depends_on_scales :
       AtLeastAsRound (OnScale decimal) 180 200 ∧ ¬ AtLeastAsRound (OnScale decimal) 200 180 := by
   decide
 
-/-- Roundness is not total, as *25* and *10* lie on different cardinal scales. -/
 theorem twentyFive_ten_incomparable :
     ¬ AtLeastAsRound (OnScale decimal) 25 10 ∧ ¬ AtLeastAsRound (OnScale decimal) 10 25 := by
   decide
@@ -245,9 +239,6 @@ theorem forall_not_violates_iff (hW : 0 ∉ W) {m : ℚ} :
     rw [abs_sub_comm, ← Int.cast_sub, ← Int.cast_abs, Int.cast_le]
     exact h.scaleLcm_le_abs_sub hne
 
-/-- *99* lies only on the scale of units, so its imprecise reading is blocked from half a unit of
-deviation; *100* lies on every cardinal scale, so its alternatives are the multiples of fifty and
-it survives deviations under twenty-five. -/
 theorem ninetyNine_hundred {m : ℚ} :
     ((∀ n' ≠ 99, AtLeastAsRound (OnScale decimal) 99 n' →
         ¬ Violates (numeral 99 m) (numeral n' m)) ↔ m < 1 / 2) ∧
@@ -260,10 +251,6 @@ theorem ninetyNine_hundred {m : ℚ} :
 
 open MeasureTheory in
 open scoped ENNReal in
-/-- Under Krifka's hearer model on aligned salient scales, the deviation a bare numeral
-tolerates under Inference Preservation is half the width of the most probable scale for its
-report: the dissertation's alternative-based bound is the cell of the scale the hearer
-infers. -/
 theorem tolerated_deviation_is_inferred_cell
     {μs : Measure W} {ν : Measure ℝ} [SFinite ν] {r : ℝ≥0∞} {I : Set ℝ} {m : ℚ}
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s)
@@ -304,8 +291,6 @@ def conjunction : Construal (Fin 3 → Bool) :=
 def conjunct (i : Fin 3) : Construal (Fin 3 → Bool) :=
   ⟨fun w ↦ w i = true, fun w ↦ w i = true⟩
 
-/-- The non-maximal construal of the conjunction loses the entailment of each conjunct that the
-precise construal licenses, so only the maximal construal survives Inference Preservation. -/
 theorem conjunction_violates (i : Fin 3) : Violates conjunction (conjunct i) := by
   refine ⟨true, fun w hw ↦ hw i, fun hall ↦ ?_, fun hall ↦ ?_⟩
   · exact Bool.false_ne_true (hall (fun _ ↦ false) (by simp [conjunction]))

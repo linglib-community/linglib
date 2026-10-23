@@ -84,8 +84,6 @@ def languages : List (String × Language) :=
 
 /-! ### The morphosyntax of the marker -/
 
-/-- The markers of the Souletin, Galician and Tamil rows are the Fragments' (exx 1, 7, 9–10, 21,
-31–32). -/
 theorem marker_rows :
     ∀ row ∈ Examples.all, ∀ m ∈ row.feature? "marker",
       (row.language = "soul1243" → ∃ g x, (Basque.Pronouns.allocutive g x).map toString = some m) ∧
@@ -97,16 +95,12 @@ theorem marker_rows :
 def grades : List (String × Magahi.Grade) :=
   [("nh", .nonhonorific), ("h", .honorific), ("hh", .highHonorific)]
 
-/-- Every Magahi row's marker is the Fragment's fused suffix for the grades of its subject and its
-addressee (exx 2–6, 42–43). -/
 theorem magahi_fusion_rows :
     ∀ row ∈ Examples.all, row.language = "maga1260" → ∀ m ∈ row.feature? "marker",
       ∀ s ∈ row.parse? "subject" grades, ∀ a ∈ row.parse? "addressee" grades,
         toString (Magahi.Pronouns.allocutive s a) = m := by
   decide +kernel
 
-/-- The Magahi suffix varies with the subject at a fixed addressee (exx 3, 4), the fusion with
-subject agreement that makes it an agreement morpheme. -/
 theorem magahi_allocutive_fused :
     Magahi.Pronouns.allocutive .nonhonorific .nonhonorific ≠
       Magahi.Pronouns.allocutive .honorific .nonhonorific := by
@@ -144,8 +138,6 @@ def threshold : Language → Context
   | .magahi | .innovativeSouthernBasque => .finiteNonRoot
   | .galician => .nonfinite
 
-/-- A marker in an embedded clause is grammatical exactly where the context is at least its
-language's threshold (exx 9, 12–18, 21, 30–32). -/
 theorem distribution_rows :
     ∀ row ∈ Examples.all, ∀ l ∈ languages.lookup row.language,
       ∀ c ∈ row.parse? "embedding" contexts, row.judgment = .acceptable ↔ threshold l ≤ c := by
@@ -195,12 +187,9 @@ def lowest (l : Language) : Locus → Context
     | .innovativeSouthernBasque => .finiteNonRoot
     | _ => .root
 
-/-- The loci of a language reach every context in which it has the marker. -/
 theorem loci_sound (l : Language) : (loci l).inf' (loci_nonempty l) (lowest l) ≤ threshold l := by
   cases l <;> decide
 
-/-- A language sourced from the speech-act phrase alone marks no context below the embedded root,
-so the review's first two types share their source. -/
 theorem embeddedRoot_le_threshold {l : Language} (h : loci l = {.sa}) :
     .embeddedRoot ≤ threshold l := by
   simpa [h, lowest] using loci_sound l
@@ -259,8 +248,6 @@ def portnerParticle : Status → Register → Option Morph
   | .atLeast, .informal => some (.suff "e")
   | _, _ => none
 
-/-- The Korean rows with status and formality features carry the particle the two realize
-(exx 8a, 8b, 8d). -/
 theorem korean_particle_rows :
     ∀ row ∈ Examples.all, ∀ s ∈ row.parse? "status" statuses,
       ∀ r ∈ row.parse? "formal" formalities,
@@ -290,13 +277,10 @@ instance [Fintype D] [DecidableEq G] {grade : D → G} : Decidable (SingleSource
 
 variable {grade : D → G} {ref : D → E}
 
-/-- Relational grades are the grades of their referents under a grading of individuals,
-⟦iHON⟧ = λx. S ≺ x. -/
 theorem relational_iff_exists [Nonempty G] :
     Relational grade ref ↔ ∃ g : E → G, grade = g ∘ ref :=
   Function.factorsThrough_iff grade
 
-/-- A single source is relational whatever the referents. -/
 theorem SingleSource.relational (h : SingleSource grade) (ref : D → E) : Relational grade ref :=
   fun d d' _ ↦ h d d'
 
@@ -328,8 +312,6 @@ def Phrase.referent : Phrase → Phrase
   | .pronoun2 | .pronoun2Other => .addressee
   | p => p
 
-/-- Phrases denoting the addressee present one grade, so two second person pronouns, or a second
-person pronoun and the marker, agree (exx 41–43). -/
 theorem grade_eq_of_addressee {D G : Type*} {grade : D → G} {ref : D → Phrase}
     (h : Relational grade ref) {d d' : D} (hd : ref d = .addressee) (hd' : ref d' = .addressee) :
     grade d = grade d' :=
@@ -365,8 +347,6 @@ def Phrase.table? : Phrase → Option (Magahi.Case → Magahi.Grade → Personal
   | .pronoun3 | .pronoun3Other => some Magahi.Pronouns.thirdSingular
   | .addressee | .subject => none
 
-/-- Each pronoun of a Magahi row is the Fragment's, in some case, at the grade the row names
-(exx 39–45). -/
 theorem magahi_pronoun_rows :
     ∀ row ∈ Examples.all, row.language = "maga1260" → ∀ p : Phrase, ∀ t ∈ p.table?,
       ∀ g ∈ gradeOf row p, ∃ c,
@@ -398,8 +378,6 @@ def Goal.person : Goal → Person
 addressee. -/
 def kaurProbe : Minimalist.Probe Goal := .relativized fun g ↦ decide g.person.IsSAP
 
-/-- The probe reaches the addressee exactly past a third person subject, so Punjabi allocutivity is
-out with first and second person subjects. -/
 theorem allocutive_iff_third (p : Person) :
     kaurProbe.goal [.subject p, .addressee] = some .addressee ↔ p = .third := by
   cases p <;> decide

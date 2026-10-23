@@ -50,7 +50,6 @@ def felix : Adjective := ⟨"happy", λ _ => "felix"⟩
 /-- The adjectives of Corbett's table. -/
 def allAdjectives : List Adjective := [acer, facilis, felix]
 
-/-- *acer* distinguishes all three genders in the nominative singular. -/
 theorem faithful_acer : Function.Injective acer.nomSg := by decide
 
 end Latin.Gender

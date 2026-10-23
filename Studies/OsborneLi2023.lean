@@ -96,13 +96,10 @@ instance (pred ana ante : Fin n) : Decidable (Violates g pred ana ante) :=
 
 variable {g}
 
-/-- A conjunct valent is not a full valent, so no pair violates the constraint in both
-directions, and the permitted direction is the reverse of the forbidden one. -/
 theorem Violates.not_symm {pred ana ante : Fin n} (h : Violates g pred ana ante) :
     ¬ Violates g pred ante ana :=
   fun h' ↦ h'.2.1.2 h.2.2
 
-/-- Without a coordinate structure the constraint is silent. -/
 theorem not_violates_of_no_conjuncts (h : ∀ c, ¬ HasConjuncts g c) (pred ana ante : Fin n) :
     ¬ Violates g pred ana ante :=
   fun ⟨_, _, c, _, _, _, _, hc, _⟩ ↦ h c hc
@@ -230,11 +227,9 @@ def ex28d : Stimulus :=
 def stimuli : List Stimulus :=
   [ex2a, ex3a, ex5a, ex9a, ex9b, ex11a, ex11e, ex20b, ex24a, ex28d]
 
-/-- A violation of the constraint is never judged acceptable. -/
 theorem violation_degraded : ∀ s ∈ stimuli, s.Violates → s.row.judgment ≠ .acceptable := by
   decide
 
-/-- A coordinate stimulus that does not violate the constraint is judged acceptable. -/
 theorem no_violation_acceptable :
     ∀ s ∈ stimuli, s.Coordinate → ¬ s.Violates → s.row.judgment = .acceptable := by
   decide

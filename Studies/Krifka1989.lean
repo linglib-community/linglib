@@ -58,19 +58,16 @@ def SQUA (P : α → Prop) : Prop := QUA P ∧ ∀ x, P x → ∃ y, y < x
 (D 17). -/
 def ATM (P : α → Prop) : Prop := ∀ x, P x → ∃ y ≤ x, atomize P y
 
-/-- Singular predicates are quantized (T 1). -/
 theorem qua_of_sng {P : α → Prop} (h : SNG P) : QUA P :=
   let ⟨_, _, hx⟩ := h
   qua_of_forall fun a b ha hlt hb ↦ hlt.ne ((hx b hb).symm.trans (hx a ha))
 
-/-- Singular predicates are cumulative (T 2). -/
 theorem cum_of_sng {P : α → Prop} (h : SNG P) : CUM P := by
   obtain ⟨x, hx, huniq⟩ := h
   intro a ha b hb
   rw [← huniq a ha, ← huniq b hb, sup_idem]
   exact hx
 
-/-- A nonempty quantized predicate is not strictly cumulative (T 3). -/
 theorem not_scum_of_qua {P : α → Prop} (hne : ∃ x, P x) (h : QUA P) : ¬ SCUM P := by
   rintro ⟨hcum, hsng⟩
   obtain ⟨x, hx⟩ := hne
@@ -81,22 +78,17 @@ theorem not_scum_of_qua {P : α → Prop} (hne : ∃ x, P x) (h : QUA P) : ¬ SC
   · exact h hy hx (Ne.symm hxy) (hxs ▸ le_sup_right)
   · exact h hx hsup hxs.symm le_sup_left
 
-/-- Quantized reference is atomic (T 4), each instance being its own atom. -/
 theorem atm_of_qua {P : α → Prop} (h : QUA P) : ATM P := fun x hx ↦
   ⟨x, le_rfl, hx, fun z hz hzx ↦ by
     rcases eq_or_lt_of_le hzx with rfl | hlt
     · exact le_rfl
     · exact (h hz hx hlt.ne hlt.le).elim⟩
 
-/-- A predicate restricted by an extensive measure function to a value is quantized (T 6), by
-additivity (D 24), positivity (T 5) and relative complementarity (D 9). -/
 theorem qua_of_isExtensiveMeasure [HasRemainders α] {M : Type*} [AddCommMonoid M]
     [PartialOrder M] [AddLeftStrictMono M] (μ : α → M) [IsExtensiveMeasure μ] (n : M) :
     QUA (μ · = n) :=
   qua_pullback (IsExtensiveMeasure.strictMono μ) (singleton_qua n)
 
-/-- With a well-founded part order every predicate has atomic reference, since the minimal
-instances below any instance are its atoms. -/
 theorem atm_of_wellFoundedLT [WellFoundedLT α] (P : α → Prop) : ATM P := fun x hx ↦ by
   obtain ⟨y, ⟨hy, hyx⟩, hmin⟩ :=
     WellFounded.has_min wellFounded_lt {y | P y ∧ y ≤ x} ⟨x, hx, le_rfl⟩
@@ -112,8 +104,6 @@ variable {α M : Type*} [SemilatticeSup α] [HasRemainders α] [AddCommMonoid M]
   [AddLeftStrictMono M]
 
 omit [HasRemainders α] in
-/-- A bare plural is the algebraic closure of the count noun under join, which is
-cumulative. -/
 theorem barePlural_cum (P : α → Prop) : CUM (AlgClosure P) := algClosure_cum
 
 /-- The measure construction (4) is a quantizing modifier (D 28) on a cumulative noun with two
@@ -154,14 +144,9 @@ def GRAD (θ : O → E → Prop) : Prop := UP θ ∧ MO θ ∧ ME θ
 
 variable {α : E → Prop} {δ : O → Prop} {θ : O → E → Prop}
 
-/-- A cumulative verb, a cumulative nominal predicate, and a summative relation give a
-cumulative verbal predicate (T 7). -/
 theorem cum_ofTheta (hα : CUM α) (hδ : CUM δ) (hθ : SUM θ) : CUM (ofTheta α δ θ) :=
   hα.inter (vp_cum hθ hδ)
 
-/-- A singular nominal predicate, a summative relation, and a strictly cumulative verbal
-predicate force an iterative event (T 8), since two distinct events with the one object
-sum to an event subjecting it twice. -/
 theorem exists_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta α δ θ e)
     (hs : SCUM (ofTheta α δ θ)) : ∃ e x, ITER θ e x := by
   obtain ⟨e₁, hα₁, x₁, hx₁, hθ₁⟩ := hne
@@ -178,37 +163,25 @@ theorem exists_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta α δ θ
   exact ⟨e₁ ⊔ e₂, x, by simpa using hθ hθ₁ hθ₂, e₁, e₂, x, le_sup_left,
     le_sup_right, hne, le_rfl, hθ₁, hθ₂⟩
 
-/-- Without iteration the verbal predicate of a singular nominal predicate is not strictly
-cumulative (T 9). -/
 theorem not_scum_of_not_iter (hδ : SNG δ) (hθ : SUM θ) (hne : ∃ e, ofTheta α δ θ e)
     (hi : ∀ e x, ¬ ITER θ e x) : ¬ SCUM (ofTheta α δ θ) := fun hs ↦
   let ⟨e, x, h⟩ := exists_iter hδ hθ hne hs; hi e x h
 
-/-- Uniqueness of events excludes iteration (T 10). -/
 theorem not_iter_of_gue (h : GUE θ) (e : E) (x : O) : ¬ ITER θ e x :=
   fun ⟨_, _, _, _, _, _, hne, _, h', h''⟩ ↦ hne (h h' h'')
 
-/-- Without iteration, mapping to objects maps proper subevents to proper parts of the object,
-since the whole object, subjected to a proper subevent, would be subjected to two parts of the
-event. -/
 theorem mso_of_not_iter (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) : MSO θ := fun _ _ hxe _ hlt ↦
   let ⟨y, hy, hθ⟩ := hm hxe hlt.le
   ⟨y, lt_of_le_of_ne hy fun h ↦ hi _ _ ⟨hxe, _, _, y, hlt.le, le_rfl, hlt.ne, hy, hθ, h ▸ hxe⟩, hθ⟩
 
-/-- A quantized nominal predicate transfers quantization to the verbal predicate (T 11) when
-the relation has uniqueness of objects, mapping to objects, and no iteration. -/
 theorem qua_ofTheta (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hi : ∀ e x, ¬ ITER θ e x) :
     QUA (ofTheta α δ θ) :=
   (vp_qua hu (mso_of_not_iter hm hi) hδ).subset fun _ h ↦ h.2
 
-/-- Quantization transfers under uniqueness of events (T 12), as for effected and consumed
-objects. -/
 theorem qua_ofTheta_of_gue (hδ : QUA δ) (hu : UP θ) (hm : MO θ) (hg : GUE θ) :
     QUA (ofTheta α δ θ) :=
   qua_ofTheta hδ hu hm (not_iter_of_gue hg)
 
-/-- With a strictly quantized nominal predicate, mapping to events, and uniqueness of objects,
-every verbal event has a part outside the verbal predicate, the step of (T 13). -/
 theorem exists_le_not_ofTheta (hδ : SQUA δ) (hm : ME θ) (hu : UP θ) (e : E)
     (he : ofTheta α δ θ e) : ∃ e' ≤ e, ¬ ofTheta α δ θ e' := by
   obtain ⟨_, x, hx, hθx⟩ := he
@@ -248,16 +221,11 @@ effected and consumed patients. -/
 def ThematicClass.Requires (c : ThematicClass) (θ : O → E → Prop) : Prop :=
   SUM θ ∧ (c.Gradual → GRAD θ) ∧ (c.UniqueEvents → GUE θ)
 
-/-- Effected and consumed patients make a quantized object into a quantized verbal
-predicate (T 12), so *write a letter* and *eat an apple* are telic. -/
 theorem qua_of_uniqueEvents {c : ThematicClass} (hc : c.UniqueEvents) (h : c.Requires θ)
     (hδ : QUA δ) : QUA (ofTheta α δ θ) := by
   have hg : GRAD θ := h.2.1 (by cases c <;> trivial)
   exact qua_ofTheta_of_gue hδ hg.1 hg.2.1 (h.2.2 hc)
 
-/-- A gradual patient transfers cumulativity (T 7) and, with a strictly quantized object,
-leaves every event a part outside the predicate (T 13), the atomicity behind *read a
-letter in an hour* even where the letter may be reread. -/
 theorem gradualPatient_transfer (h : ThematicClass.gradualPatient.Requires θ) :
     (CUM α → CUM δ → CUM (ofTheta α δ θ)) ∧
       (SQUA δ → ∀ e, ofTheta α δ θ e → ∃ e' ≤ e, ¬ ofTheta α δ θ e') :=

@@ -147,9 +147,6 @@ section SSP
 variable (hTh : ∀ e, Atom e → ¬ IsBot (Th e))
 include hTh
 
-/-- (SSP) Sameness of the Singular Participant: a role mapping an event to a singular
-individual maps each of its singular sub-events to it, since roles are sum homomorphisms and
-so monotone. -/
 theorem ssp {x : I} (hx : Atom x) {e e' : E} (h : Th e = x) (he' : AtomicPart e' e) :
     Th e' = x :=
   hx.eq (h ▸ OrderHomClass.monotone Th he'.2) (hTh e' he'.1)
@@ -180,7 +177,6 @@ theorem not_kindIndefinite_of_barePlural :
     by unfold barePlural distributes AtomicPart; decide,
     by unfold kindIndefinite barePlural distributes AtomicPart; decide⟩
 
-/-- Footnote 32: with no `C`-situation, `sempre` requires no event at all. -/
 theorem sempre_of_forall_not {C : S → Prop} (hC : ∀ s, ¬ C s) (R : E → S → Prop)
     (P : E → Prop) (e₀ : E) : sempre C R P e₀ :=
   λ s hs => absurd hs (hC s)

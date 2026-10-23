@@ -55,8 +55,6 @@ variable {T : Type*} [LinearOrder T]
 /-- `t` does not follow `t₀`, the relation `¬>` of (16). -/
 def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.Precedes t
 
-/-- Not following is the library's Upper Limit Constraint as a perspectival presupposition: the
-interval a tense denotes stands to the local evaluation time in the constraint's cell. -/
 theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
     NotAfter t t₀ ↔ Tense.Perspective.Presup Tense.upperLimitConstraint t₀ t := by
   simp [NotAfter, Tense.Perspective.Presup, Tense.upperLimitConstraint, Tense.denote_future]
@@ -225,8 +223,6 @@ theorem overlaps_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAcc
   obtain ⟨_, h₂, _, h₄⟩ := (def_doubleAccess M c x v g w h0).1 h
   exact h₄ ▸ h₂
 
-/-- With (i), the res must outlast the believing time: its end lies strictly after the end of
-the believing time, as the day of a "today" or the duration of a pregnancy does. -/
 theorem snd_lt_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAccess x v) g w) :
     (g 1).snd < (c.concept ⟨w, g 1⟩).snd :=
   lt_of_lt_of_le ((def_doubleAccess M c x v g w h0).1 h).1
@@ -304,8 +300,6 @@ def TLC : Bool → LF V D A → Prop
       TLC (above || decide (a = .past)) φ
   | above, .woll τ a φ => τ.Licensed a above ∧ TLC (above || decide (a = .past)) φ
 
-/-- An unembedded PAST conveys anteriority: the condition forces the `<`-affix, whose
-presupposition is that the event time precedes the utterance time. -/
 theorem precedes_of_tlc {i : Var} {a : Affix} (h : TLC false (.pred v (.PAST i) a : LF V D A))
     (hd : Def' M c (.pred v (.PAST i) a) g w) : (g i).Precedes (g 0) := by
   rcases h with h | h

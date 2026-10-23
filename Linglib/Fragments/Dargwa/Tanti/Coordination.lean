@@ -42,7 +42,6 @@ def ja : Coordinator :=
 def nu : Coordinator :=
   { morph := .encl "nu", gloss := "but; because", role := .adversative }
 
-/-- The coordinator *=ra* is the additive particle *=ra*. -/
 theorem isAlsoAdditive_ra : ra.IsAlsoAdditive FocusParticles.ra := rfl
 
 end Dargwa.Tanti.Coordination

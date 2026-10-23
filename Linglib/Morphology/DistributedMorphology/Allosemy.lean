@@ -175,7 +175,6 @@ over property-concept roots ([beavers-etal-2021]). -/
 def Verbalizer.Alloseme.ofKinds (s : Semantics.Root.Kinds) : Verbalizer.Alloseme :=
   if .result ∈ Semantics.Root.Kinds.close s then .eventive else .zero
 
-/-- v is eventive iff the root entails change. -/
 theorem Verbalizer.ofKinds_introducesEvent_iff (s : Semantics.Root.Kinds) :
     (Verbalizer.Alloseme.ofKinds s).introducesEvent = true ↔
       .result ∈ Semantics.Root.Kinds.close s := by
@@ -287,8 +286,6 @@ def Voice.Alloseme.toHead : Voice.Alloseme → Head
   | .engineer => Minimalist.Voice.agentive
   | .expletive => Minimalist.Voice.anticausative
 
-/-- The bridge respects θ-assignment: an alloseme assigns a thematic
-    role iff its syntactic head does. -/
 theorem Voice.theta_consistent (a : Voice.Alloseme) :
     a.AssignsTheta ↔ a.toHead.AssignsTheta := by
   revert a; decide
@@ -348,8 +345,6 @@ def toInterpreted {Sem : Type} (v : RuleSet (VocabularyItem Feature Sem)) :
   realize _ _ := ∅
   interp _ n := (subsetPrinciple v n).elim ∅ ({·})
 
-/-- The verbal categorizer is allosemous, eventive under an eventive complement and zero
-elsewhere. -/
 theorem Verbalizer.isAllosemous :
     (toInterpreted Verbalizer.vocabulary).IsAllosemous () :=
   ⟨complement {.eventive}, ∅, .eventive, by decide, .zero, by decide, by decide⟩

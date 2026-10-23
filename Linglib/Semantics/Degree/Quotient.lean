@@ -56,8 +56,6 @@ instance {E : Type*} {φ : E → E → Prop} : LT (CresswellDegree φ) :=
     (⟦a⟧ : CresswellDegree φ) < ⟦b⟧ ↔ φ b a :=
   Iff.rfl
 
-/-- On a preorder, φ-indistinguishability under `≤` is `AntisymmRel`, so the Cresswell quotient
-is `Antisymmetrization`. -/
 theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
     (cresswellSetoid (· ≤ ·)).r a b ↔ AntisymmRel (· ≤ ·) a b := by
   constructor
@@ -67,8 +65,6 @@ theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
     exact ⟨fun c => ⟨hba.trans, hab.trans⟩,
            fun c => ⟨(le_trans · hab), (le_trans · hba)⟩⟩
 
-/-- On an equivalence relation, φ-indistinguishability is the relation itself, so the
-construction returns the cells of a partition as well as degrees. -/
 theorem cresswellSetoid_setoid {E : Type*} (s : Setoid E) : cresswellSetoid s = s :=
   Setoid.ext fun _ b ↦ ⟨fun h ↦ (h.1 b).2 (s.refl' b), fun h ↦
     ⟨fun _ ↦ ⟨s.trans' (s.symm' h), s.trans' h⟩,

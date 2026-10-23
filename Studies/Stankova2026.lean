@@ -112,23 +112,18 @@ theorem licensed_injective : Function.Injective licensed := by decide
 
 variable {pos : Position}
 
-/-- Only propositional negation licenses a concord item, by Agree with the operator. -/
 theorem licenses_nciLicensed_iff : Licenses pos .nciLicensed ↔ pos = .inner := by
   cases pos <;> decide
 
-/-- Every non-propositional negation admits a positive polarity item. -/
 theorem licenses_ppiOutscoping_iff : Licenses pos .ppiOutscoping ↔ pos ≠ .inner := by
   cases pos <;> decide
 
-/-- *Náhodou* singles out FALSUM. -/
 theorem licenses_nahodou_iff : Licenses pos .nahodou ↔ pos = .outer := by
   cases pos <;> decide
 
-/-- *Ještě* singles out propositional negation. -/
 theorem licenses_jeste_iff : Licenses pos .jeste ↔ pos = .inner := by
   cases pos <;> decide
 
-/-- *Fakt* is repelled by FALSUM alone. -/
 theorem licenses_fakt_iff : Licenses pos .fakt ↔ pos ≠ .outer := by
   cases pos <;> decide
 
@@ -174,16 +169,12 @@ def Compatible (p : Particle) (pos : Position) : Prop :=
 instance (p : Particle) (pos : Position) : Decidable (Compatible p pos) := by
   unfold Compatible; infer_instance
 
-/-- *náhodou* uniquely identifies outer negation. -/
 theorem nahodou_identifies_outer (pos : Position) : Compatible nahodou pos → pos = .outer := by
   cases pos <;> decide
 
-/-- *ještě* uniquely identifies inner negation. -/
 theorem jeste_identifies_inner (pos : Position) : Compatible jeste pos → pos = .inner := by
   cases pos <;> decide
 
-/-- *fakt* accepted while *ještě* is rejected identifies medial
-negation. -/
 theorem fakt_plus_no_jeste_identifies_medial (pos : Position) :
     Compatible fakt pos ∧ ¬ Compatible jeste pos → pos = .medial := by
   cases pos <;> decide
@@ -235,8 +226,6 @@ instance : DecidablePred Position.RequiresFocus := fun pos ↦ by
 (InterNPQ), and inner and medial negation a declarative one (DeclNPQ). -/
 def Position.toCzechPQForm (pos : Position) : CzechPQForm := ⟨pos.toVerbPosition, .negative⟩
 
-/-- The two form typologies agree, Šimík's grid refining
-Romero's. -/
 theorem czechPQForm_negation (pos : Position) :
     pos.toCzechPQForm.negation = some pos.negationPosition :=
   rfl
@@ -261,8 +250,6 @@ The verb-position API (`availableReadings`, `defaultReading`) is
 [stankova-simik-2025]'s and lives in `StankovaSimik2025`; this paper adds
 the link to evidential bias strength. -/
 
-/-- Context sensitivity tracks evidential bias strength, none for a clause-initial verb and
-outer negation and strong for a verb in situ and inner negation. -/
 theorem context_tracks_bias_strength :
     (Position.ofReading VerbPosition.v1.defaultReading).biasStrength = .none_ ∧
     (Position.ofReading VerbPosition.nonV1.defaultReading).biasStrength = .strong :=
@@ -297,8 +284,6 @@ def biasCheckedExamples :
     List (Datum × SignType × SignType × CzechPQForm) :=
   [ (StankovaSimik2025.Examples.ex14, 1, 0, .interNPQ) ]
 
-/-- The bias profile predicts the positive-evidence stimulus, the form being felicitous iff it
-appears in its evidence × original-bias cell. -/
 theorem bias_examples_match_profile :
     ∀ x ∈ biasCheckedExamples,
       x.1.judgment = .acceptable ↔ x.2.2.2 ∈ czechBiasProfile x.2.1 x.2.2.1 := by

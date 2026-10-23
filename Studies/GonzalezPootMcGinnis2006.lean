@@ -241,8 +241,6 @@ def suffixes' (subj : Argument) (obj : Option Argument) : List String :=
     (privMatrix subj.1 subj.2 .erg :: (obj.map fun o ↦ [privMatrix o.1 o.2 .nom]).getD []))
     |>.filter (· ≠ "Ø")
 
-/-- The privative Agr1 and Agr2 lists (A2) and (A3) recover the auxiliary suffix and the verbal
-prefix of every row. -/
 theorem privative_aux_prefix :
     ∀ r ∈ rows, subsetPrinciple agr1' (privMatrix r.subj.1 r.subj.2 .erg) = aux r.subj ∧
       subsetPrinciple agr2' (privMatrix r.subj.1 r.subj.2 .erg) = verbPrefix r.subj := by

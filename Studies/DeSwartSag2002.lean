@@ -74,8 +74,6 @@ theorem reading_iteration_iff : reading .iteration A B R ↔ iterate every GQ.so
 theorem reading_resumption_iff : reading .resumption A B R ↔ iterate no GQ.some A B R :=
   resume_no_iff
 
-/-- The two readings differ: of one individual who loves no one, *Personne n'aime personne* is
-true on its concord reading and false on its double negation reading. -/
 theorem reading_resumption_and_not_iteration :
     reading .resumption (fun _ : Fin 1 ↦ True) (fun _ ↦ True) (fun _ _ ↦ False) ∧
       ¬ reading .iteration (fun _ : Fin 1 ↦ True) (fun _ ↦ True) (fun _ _ ↦ False) := by
@@ -94,27 +92,20 @@ section AntiAdditive
 
 variable {α : Type u}
 
-/-- *No* is anti-additive in its scope: none of `A` is in `S ∪ S'` iff none is in `S` and none
-in `S'`. -/
 theorem isAntiAdditive_no (A : α → Prop) : IsAntiAdditive (no A) := fun S S' ↦ by
   simp only [no, Pi.sup_apply, sup_Prop_eq, inf_Prop_eq, not_or]
   exact propext ⟨fun h ↦ ⟨fun x hx ↦ (h x hx).1, fun x hx ↦ (h x hx).2⟩,
     fun h x hx ↦ ⟨h.1 x hx, h.2 x hx⟩⟩
 
-/-- *Few* is downward-entailing (`Quantifier.GQ.scopeAntitone_few`) but not anti-additive: of
-three individuals, few are `0` and few are `1`, but not few are `0` or `1`. -/
 theorem not_isAntiAdditive_few : ¬ IsAntiAdditive (few fun _ : Fin 3 ↦ True) := fun h ↦ by
   have : few (fun _ : Fin 3 ↦ True) (fun x ↦ x = 0 ∨ x = 1) ↔
       few (fun _ : Fin 3 ↦ True) (· = 0) ∧ few (fun _ : Fin 3 ↦ True) (· = 1) :=
     eq_iff_iff.mp (h (· = 0) (· = 1))
   revert this; decide
 
-/-- *Some* is not anti-additive: of one individual, some is in `⊤ ∪ ⊥` but none is in `⊥`. -/
 theorem not_isAntiAdditive_some : ¬ IsAntiAdditive (GQ.some fun _ : PUnit.{u + 1} ↦ True) :=
   fun h ↦ by simpa [GQ.some] using eq_iff_iff.mp (h ⊤ ⊥)
 
-/-- Of the readings of *aucun*, the one that is anti-additive on every finite domain, as a
-concord item must be, is the negative quantifier. -/
 theorem mem_aucun_and_isAntiAdditive_iff {d : GQ.Family.{u}} :
     (d ∈ ⟦French.Determiners.QuantityWord.aucun⟧ ∧
       ∀ (β : Type u) [Fintype β] (A : β → Prop), IsAntiAdditive (d β A)) ↔

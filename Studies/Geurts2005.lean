@@ -75,7 +75,6 @@ theorem holds_iff_nonempty (h : d.force = .possibility) :
 theorem holds_iff_subset (h : d.force ≠ .possibility) : d.Holds ↔ d.domain ⊆ d.content := by
   simp [Holds, h]
 
-/-- A universal disjunct that holds entertains exactly its domain. -/
 theorem cell_eq_domain (h : d.force ≠ .possibility) (hd : d.Holds) : d.cell = d.domain :=
   Set.inter_eq_left.mpr ((d.holds_iff_subset h).mp hd)
 
@@ -112,14 +111,10 @@ open Disjunction
 
 variable (C : Set W) {d d' : Disjunct W}
 
-/-- Under default binding each alternative is possible in the background, and free choice is the
-projection of a conjunct (case 1). -/
 theorem holds_defaultBinding (bs : List (Set W)) :
     (defaultBinding C .possibility bs).Holds ↔ ∀ b ∈ bs, (C ∩ b).Nonempty := by
   simp [Holds, defaultBinding, Disjunct.Holds]
 
-/-- In case 1 Exhaustivity places the background within the union of the contents, so "It may be
-here or it may be there" says that it must be here or there. -/
 theorem exhaustive_defaultBinding (f : ModalForce) (bs : List (Set W)) :
     (defaultBinding C f bs).Exhaustive C ↔ C ⊆ ⋃ b ∈ bs, b := by
   simp only [Exhaustive, defaultBinding, Set.subset_def, Set.mem_iUnion, List.mem_map,
@@ -132,8 +127,6 @@ theorem exhaustive_defaultBinding (f : ModalForce) (bs : List (Set W)) :
     obtain ⟨b, hb, hwb⟩ := h w hw
     exact ⟨_, ⟨b, hb, rfl⟩, hw, hwb⟩
 
-/-- Two universal disjuncts cannot both be bound to the background (case 3). With one domain the
-background and the other within it, Disjointness and Non-triviality fail together. -/
 theorem not_disjoint_of_necessity (hf : d.force ≠ .possibility) (hf' : d'.force ≠ .possibility)
     (hd : d.Holds) (hd' : d'.Holds) (hC : d.domain = C) (hC' : d'.domain ⊆ C)
     (hne : d'.domain.Nonempty) : ¬ Disjoint d.cell d'.cell := by
@@ -141,8 +134,6 @@ theorem not_disjoint_of_necessity (hf : d.force ≠ .possibility) (hf' : d'.forc
   obtain ⟨w, hw⟩ := hne
   exact fun h ↦ Set.disjoint_left.mp h (hC' hw) hw
 
-/-- Universal disjuncts that hold, exhaust the background, and have disjoint cells partition the
-background by their domains (case 3). -/
 theorem partition_of_necessity (hf : d.force ≠ .possibility) (hf' : d'.force ≠ .possibility)
     (hd : d.Holds) (hd' : d'.Holds) (hex : Exhaustive C [d, d']) (hdis : Disjoint d.cell d'.cell) :
     C ⊆ d.domain ∪ d'.domain ∧ Disjoint d.domain d'.domain := by
@@ -153,9 +144,6 @@ theorem partition_of_necessity (hf : d.force ≠ .possibility) (hf' : d'.force �
     exists_eq_or_imp, exists_eq_left, d.cell_eq_domain hf hd, d'.cell_eq_domain hf' hd',
     Set.mem_union] using h
 
-/-- In "It may be here or else it must be there" (case 5) the existential disjunct is bound to the
-background and the universal disjunct's domain is the background minus the existential content,
-so the second domain is fixed by the first content. -/
 theorem domain_eq_diff (hf' : d'.force ≠ .possibility) (hd' : d'.Holds) (hC : d.domain = C)
     (hC' : d'.domain ⊆ C) (hex : Exhaustive C [d, d']) (hdis : Disjoint d.cell d'.cell) :
     d'.domain = C \ d.content := by
@@ -178,7 +166,6 @@ theorem conditional_holds_iff (A B : Set W) : (conditional C A B).Holds ↔ C �
 
 variable {A₁ B₁ A₂ B₂ : Set W}
 
-/-- For conditionals that hold, Exhaustivity is exhaustivity of the antecedents. -/
 theorem exhaustive_conditionals_iff (h₁ : (conditional C A₁ B₁).Holds)
     (h₂ : (conditional C A₂ B₂).Holds) :
     Exhaustive C [conditional C A₁ B₁, conditional C A₂ B₂] ↔ C ⊆ A₁ ∪ A₂ := by
@@ -190,10 +177,6 @@ theorem exhaustive_conditionals_iff (h₁ : (conditional C A₁ B₁).Holds)
     ⟨fun h ↦ h.imp (·.1.2) (·.1.2),
      fun h ↦ h.imp (fun ha ↦ ⟨⟨hw, ha⟩, h₁ ⟨hw, ha⟩⟩) (fun ha ↦ ⟨⟨hw, ha⟩, h₂ ⟨hw, ha⟩⟩)⟩
 
-/-- A disjunction of conditionals that holds and exhausts the background entails the disjunction
-of its consequents (section 4). This is [woods-1997]'s intuition about "Either he will stay in
-America if he is offered tenure or he will return to Europe if he isn't", and
-[johnson-laird-savary-1999]'s "illusory inference" to an ace in the hand. -/
 theorem consequents_of_conditionals (h₁ : (conditional C A₁ B₁).Holds)
     (h₂ : (conditional C A₂ B₂).Holds)
     (hex : Exhaustive C [conditional C A₁ B₁, conditional C A₂ B₂]) : C ⊆ B₁ ∪ B₂ := by
@@ -201,10 +184,6 @@ theorem consequents_of_conditionals (h₁ : (conditional C A₁ B₁).Holds)
   rw [conditional_holds_iff] at h₁ h₂
   exact fun w hw ↦ (hex hw).imp (fun ha ↦ h₁ ⟨hw, ha⟩) (fun ha ↦ h₂ ⟨hw, ha⟩)
 
-/-- In "Gray is either a professor of law or a professor of law and a judge" (section 5), with the
-second domain the background and the first within it, Exhaustivity and Disjointness make every
-background world a B-world while B′ splits the background, so Gray must be a law professor and
-may or may not be a judge, an exclusive reading without a scalar implicature. -/
 theorem exclusive_of_disjoint {A B B' : Set W} (hA : A ⊆ C)
     (h : Disjunction.Holds [⟨A, .possibility, B⟩, ⟨C, .possibility, B ∩ B'⟩])
     (hex : Exhaustive C [⟨A, .possibility, B⟩, ⟨C, .possibility, B ∩ B'⟩])

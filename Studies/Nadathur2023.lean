@@ -76,8 +76,6 @@ def IsConsistentSupersituation (s s' : ∀ v, Flat (α v)) : Prop :=
 
 variable {M}
 
-/-- Every exogenous settlement is a consistent supersituation, since it newly settles no variable
-with parents. -/
 theorem isConsistentSupersituation_of_isExogenousSettlement {s s' : ∀ v, Flat (α v)}
     (h : M.IsExogenousSettlement s s') : IsConsistentSupersituation M s s' :=
   ⟨h.1, fun v hv ⟨w, hw⟩ x hx _ _ ↦
@@ -168,7 +166,6 @@ noncomputable def dare (e : V) : dreyfusModel.contexts dreyfusBg → SignType :=
   sentence (causalInterpretation dreyfusModel dreyfusBg) ⟨.some .positive, .some .negative⟩
     (.NRV, true) (e, true)
 
-/-- NRV is causally sufficient for MSG, the background settling neither. -/
 theorem nrv_sufficient_for_msg :
     ¬ dreyfusModel.CausallyEntails dreyfusBg .NRV true ∧
       dreyfusModel.CausallySufficient dreyfusBg .NRV true .MSG true := by
@@ -183,18 +180,15 @@ section Equations
 
 variable {s : V → Flat Bool}
 
-/-- Settling MSG true, unobserved, settles NRV true, since MSG = INT ∧ NRV. -/
 theorem nrv_of_msg (hs : s .MSG = ⊥) (h : dreyfusModel.CausallyEntails s .MSG true) :
     dreyfusModel.CausallyEntails s .NRV true :=
   h.parent_eq hs (by decide) fun _ _ hy ↦ by simpa using (Bool.and_eq_true_iff.1 hy).2
 
-/-- Settling COM true, unobserved, settles MSG true, since COM = MSG ∧ LST ∧ ¬BRK. -/
 theorem msg_of_com (hs : s .COM = ⊥) (h : dreyfusModel.CausallyEntails s .COM true) :
     dreyfusModel.CausallyEntails s .MSG true :=
   h.parent_eq hs (by decide) fun _ _ hy ↦ by
     simpa using (Bool.and_eq_true_iff.1 (Bool.and_eq_true_iff.1 hy).1).1
 
-/-- Settling SPY true, unobserved, settles COM true, since SPY = SEC ∧ COM. -/
 theorem com_of_spy (hs : s .SPY = ⊥) (h : dreyfusModel.CausallyEntails s .SPY true) :
     dreyfusModel.CausallyEntails s .COM true :=
   h.parent_eq hs (by decide) fun _ _ hy ↦ by simpa using (Bool.and_eq_true_iff.1 hy).2
@@ -205,7 +199,6 @@ end Equations
 def resolved : V → Flat Bool :=
   Function.update (Function.update (Function.update dreyfusBg .NRV ↑true) .LST ↑true) .BRK ↑false
 
-/-- NRV is causally necessary for MSG, the background settling neither. -/
 theorem nrv_necessary_for_msg :
     ¬ dreyfusModel.CausallyEntails dreyfusBg .NRV true ∧
       dreyfusModel.CausallyNecessary dreyfusModel.IsExogenousSettlement dreyfusBg .NRV true .MSG
@@ -327,14 +320,12 @@ def Row.ofDatum (e : Datum) : Option Row := do
     [("complement", ↑Polarity.positive), ("negation", ↑Polarity.negative), ("nothing", ⊥)]
   some ⟨k, m, ent⟩
 
-/-- Every example is a row. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by
   decide
 
 /-- The rows of the paper's Finnish minimal pairs. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Each claim implies what its verb's signature says for its matrix polarity. -/
 theorem rows_agree : ∀ r ∈ rows, r.signature.implied r.matrix = r.entails := by
   decide
 
@@ -343,8 +334,6 @@ def complement? (e : Datum) : Option (List Phonology.Segment) := do
   let w ← e.glossedTokens.find? fun w ↦ decide (['I', 'N', 'F'] <:+: w.2.toList)
   (w.1.toList.filter (· ≠ '-')).mapM Finnish.ofChar
 
-/-- The complement of each example is a verb of the Fragment in the infinitive and the case that
-its matrix verb governs. -/
 theorem complement_mem_infinitiveForms : ∀ e ∈ Examples.all, ∃ v ∈ Finnish.verbs,
     e.feature? "verb" = some v.form ∧ ∃ ic ∈ v.complement, ∃ x ∈ complement? e,
       ∃ u ∈ Finnish.verbs, x ∈ u.infinitiveForms ic.1 ic.2 := by

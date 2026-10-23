@@ -97,7 +97,6 @@ theorem ExponentiallySeparated.pos {n M : ℕ} {w : Fin n → ℝ} (hw : Exponen
 def expWeights (n : Nat) (M : Nat) : Fin n → ℝ :=
   fun i ↦ ((M + 1 : ℝ) ^ (n - 1 - i.val))
 
-/-- Exponential weights are positive. -/
 theorem expWeights_pos (n : Nat) (M : Nat) (i : Fin n) :
     0 < expWeights n M i := by
   simp only [expWeights]
@@ -137,7 +136,6 @@ private lemma expWeights_bound (n M : ℕ) (hM : 0 < M) (k : Fin n) :
     rw [expWeights_succ_eq' hlt]
     linarith
 
-/-- Exponential weights are exponentially separated. -/
 theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
     ExponentiallySeparated (expWeights n M) M := fun k ↦ by
   rw [← filter_lt_eq_Ioi]
@@ -153,19 +151,13 @@ def Ganging (w₁ w₂ w₃ : ℝ) : Prop :=
   w₁ < w₃ ∧ w₂ < w₃ ∧
   w₃ < w₁ + w₂
 
-/-- The weights `2`, `2`, and `3` exhibit ganging. -/
 theorem ganging_example : Ganging 2 2 3 := by
   unfold Ganging; norm_num
 
-/-- With exponentially separated weights (M = 1), each constraint
-    outweighs the total of all lower weights. -/
 theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℝ)
     (hw : ExponentiallySeparated w 1) (k : Fin n) : ∑ i ∈ Ioi k, w i < w k := by
   simpa using hw k
 
-/-- With exponentially separated weights (`M = 1`), no two distinct lower-ranked constraints `i`
-    and `j` gang against a higher-ranked `k`, since their combined weight is at most the total
-    lower weight, which `no_ganging_when_separated` bounds strictly below `w k`. -/
 theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
     (hw : ExponentiallySeparated w 1) (k i j : Fin n)
     (hi : k < i) (hj : k < j) (hij : i ≠ j) :
@@ -180,9 +172,6 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
 
 /-! ### HG–OT agreement -/
 
-/-- With exponentially separated weights bounding every violation, a tableau's OT winners are
-its HG winners: the candidates of lexicographically least profile are those of greatest
-harmony. -/
 theorem _root_.OptimalityTheory.Tableau.optimal_eq_argmax_harmonyScore {C : Type*} {n M : ℕ}
     {w : Fin n → ℝ} (t : Tableau C n) (hw : ExponentiallySeparated w M)
     (hM : ∀ c ∈ t.candidates, ∀ p, t.constraints p c ≤ M) :
@@ -276,8 +265,6 @@ theorem mem_ercs [Fintype ι] [DecidableEq Output] {P : RealizationProblem Input
   simp only [ercs, Finset.mem_biUnion, Finset.mem_image, Finset.mem_erase]
   tauto
 
-/-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
-    satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
     {P : RealizationProblem Input Output ι} {σ : Ranking ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
@@ -294,8 +281,6 @@ theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
       (h _ (mem_ercs.mpr ⟨i, hi, o, ho, hone, rfl⟩))) fun heq ↦ hvp i hi o ho hone ?_
     exact funext fun c ↦ by simpa using congrFun (toLex_inj.mp heq) (σ.symm c)
 
-/-- OT-realizability is consistency of the problem's ERC set
-    ([prince-2002]). -/
 theorem isOTRealizable_iff_linearExtensions_nonempty [DecidableEq Output]
     {P : RealizationProblem Input Output (Fin n)}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
@@ -308,9 +293,6 @@ end RealizationProblem
 
 /-! ### Forward containment — OT ⊆ HG -/
 
-/-- Every OT language is an HG language on a finite set of inputs. The weights are exponentially
-    separated weights read off the ranking, with the largest violation count as the separation
-    bound. -/
 theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [Fintype ι]
     (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking ι n) :
     ∃ w : ι → ℝ, 0 ≤ w ∧ ∀ i ∈ X, S.hgLanguage w i = S.language σ i := by
@@ -329,7 +311,6 @@ theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [
   simp only [harmonyScore, comp_equiv_symm_dotProduct]
   rfl
 
-/-- An OT-realizable problem is HG-realizable. -/
 theorem RealizationProblem.IsOTRealizable.isHGRealizable
     {P : RealizationProblem Input Output (Fin n)} (h : P.IsOTRealizable) : P.IsHGRealizable := by
   obtain ⟨σ, hσ⟩ := h
@@ -338,12 +319,6 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
 
 /-! ### Strict containment — the cumulativity gap -/
 
-/-- HG with non-negative weights strictly contains OT. The witness is [coetzee-pater-2011]'s
-    abstract Lyman's Law instance after [ito-mester-1986], in which faithful candidates violate
-    `{M1}`, `{M2}`, and `{M1, M2}` against an unfaithful `{F}` and only the third input targets
-    the unfaithful output. The weights `[3, 2, 2]` realize it, since `2 + 2 > 3` holds on the
-    third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some markedness
-    constraint above `F`" are inconsistent. -/
 theorem hg_strictly_contains_ot :
     ∃ (Input Output : Type) (n : ℕ) (P : RealizationProblem Input Output (Fin n)),
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by
@@ -396,8 +371,6 @@ end RealizationProblem
 
 /-! ### Containments — OT ⊆ POC, POC ⊆ OT (categorical) -/
 
-/-- Every partial-order-realized target is OT-realized, since any single
-    consistent extension realizes it. -/
 theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
     {P : RealizationProblem Input Output (Fin n)}
     (h : P.IsPartialOrderRealizable) : P.IsOTRealizable := by
@@ -406,8 +379,6 @@ theorem RealizationProblem.IsPartialOrderRealizable.isOTRealizable
   obtain ⟨σ, hσ⟩ := exists_isConsistent r
   exact ⟨σ, hreal σ hσ⟩
 
-/-- Every OT-realized target is partial-order-realized — the witness is the
-    σ-induced total ranking, whose unique consistent extension is σ itself. -/
 theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
     {P : RealizationProblem Input Output (Fin n)}
     (h : P.IsOTRealizable) : P.IsPartialOrderRealizable := by
@@ -415,8 +386,6 @@ theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
   exact ⟨σ.toRel, inferInstance,
     fun τ hτ ↦ Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
 
-/-- Under categorical realizability, OT and partial orders coincide; the
-    partial order's advantage is probabilistic, the uniform measure on its linear extensions. -/
 theorem RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable
     (P : RealizationProblem Input Output (Fin n)) :
     P.IsOTRealizable ↔ P.IsPartialOrderRealizable :=

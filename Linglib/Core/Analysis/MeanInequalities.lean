@@ -29,8 +29,6 @@ open Finset
 
 variable {ι : Type*} {s : Finset ι}
 
-/-- **Maximum likelihood of a categorical distribution.** Under weights `w` summing to at most
-`1`, counts `x` have likelihood at most their likelihood under their relative frequencies. -/
 theorem Real.prod_pow_le_prod_div_sum_pow {w : ι → ℝ} (hw : ∀ i ∈ s, 0 ≤ w i)
     (hsum : ∑ i ∈ s, w i ≤ 1) (x : ι → ℕ) :
     ∏ i ∈ s, w i ^ x i ≤ ∏ i ∈ s, ((x i : ℝ) / ∑ j ∈ s, (x j : ℝ)) ^ x i := by
@@ -63,8 +61,6 @@ theorem Real.prod_pow_le_prod_div_sum_pow {w : ι → ℝ} (hw : ∀ i ∈ s, 0 
   rw [prod_congr rfl hsplit, prod_mul_distrib]
   exact mul_le_of_le_one_left (prod_nonneg fun i _ ↦ by positivity) hz1
 
-/-- **Maximum likelihood of a categorical distribution.** Under weights `w` summing to at most
-`1`, counts `x` have likelihood at most their likelihood under their relative frequencies. -/
 theorem ENNReal.prod_pow_le_prod_div_sum_pow {w : ι → ENNReal} (hsum : ∑ i ∈ s, w i ≤ 1)
     (x : ι → ℕ) :
     ∏ i ∈ s, w i ^ x i ≤ ∏ i ∈ s, ((x i : ENNReal) / ∑ j ∈ s, (x j : ENNReal)) ^ x i := by

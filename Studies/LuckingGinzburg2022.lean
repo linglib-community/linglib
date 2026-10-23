@@ -86,7 +86,6 @@ def sieve (q : NumberTree) [DecidableRel q] (S : Finset α) : Finset (Finset α)
 
 @[simp] theorem mem_sieve : R ∈ sieve q S ↔ R ⊆ S ∧ q #(S \ R) #R := by simp [sieve]
 
-/-- The sieve reads only the row of the tree at the size of the noun. -/
 theorem sieve_congr {q' : NumberTree} [DecidableRel q']
     (h : ∀ a b, a + b = #S → (q a b ↔ q' a b)) : sieve q S = sieve q' S := by
   ext R
@@ -112,8 +111,6 @@ def CompsetAccessible (D : Finset (Finset α)) : Prop := ∅ ∈ D
 instance (D : Finset (Finset α)) : Decidable (CompsetAccessible D) :=
   inferInstanceAs (Decidable (∅ ∈ D))
 
-/-- The empty reference set survives the sieve exactly when the condition holds at the point
-`(|S|, 0)` of the tree. -/
 theorem compsetAccessible_sieve : CompsetAccessible (sieve q S) ↔ q #S 0 := by
   simp [CompsetAccessible]
 
@@ -157,8 +154,6 @@ def AntiPredication (B : α → Prop) (S R : Finset α) : Prop :=
 
 variable {B : α → Prop} [DecidablePred B]
 
-/-- A reference set within `S` is anti-predicated exactly when it is the part of `S` where the
-verb phrase holds. -/
 theorem antiPredication_iff (hR : R ⊆ S) : AntiPredication B S R ↔ R = S.filter B := by
   refine ⟨fun ⟨h₁, h₂⟩ ↦ ext fun a ↦ ?_, fun h ↦ h ▸ ⟨fun a ha ↦ (mem_filter.1 ha).2,
     fun a ha hB ↦ (mem_sdiff.1 ha).2 (mem_filter.2 ⟨(mem_sdiff.1 ha).1, hB⟩)⟩⟩
@@ -175,18 +170,14 @@ theorem exists_antiPredication_iff :
       (antiPredication_iff (filter_subset _ _)).2 rfl⟩⟩
 
 omit [DecidableEq α] in
-/-- The members of `S` with a property number as their filter in `S`. -/
 private theorem ncard_mem_and : {x | x ∈ S ∧ B x}.ncard = #(S.filter B) := by
   rw [← Set.ncard_coe_finset, Finset.coe_filter]
 
-/-- Referential transparency has the truth conditions of the tree quantifier of its condition,
-a conservative, permutation-invariant generalized quantifier on the head noun. -/
 theorem exists_antiPredication_iff_toGQ :
     (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q.toGQ (· ∈ S) B := by
   rw [exists_antiPredication_iff, toGQ_apply, ncard_mem_and, ncard_mem_and, filter_not]
 
 omit [DecidableEq α] [DecidableRel q] in
-/-- Conservativity holds by construction: the quantifier lives on the head noun. -/
 theorem livesOn_toGQ : LivesOn (q.toGQ (· ∈ S)) (· ∈ S) :=
   (conservative_toGQ q).livesOn _
 
@@ -208,7 +199,6 @@ instances up to the choice of reference sets. -/
 def row (q : NumberTree) [DecidableRel q] (k : ℕ) : Finset (ℕ × ℕ) :=
   (antidiagonal k).filter fun p ↦ q p.1 p.2
 
-/-- Two conditions sieve a noun alike exactly when they select the same points of its row. -/
 theorem sieve_eq_iff {q' : NumberTree} [DecidableRel q'] :
     sieve q S = sieve q' S ↔ row q #S = row q' #S := by
   refine ⟨fun h ↦ ?_, fun h ↦ sieve_congr fun a b hab ↦ ?_⟩

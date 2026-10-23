@@ -34,9 +34,6 @@ namespace Khoo2015
 /-- The mean rating of a vignette under a question. -/
 def mean (s : Sentence) (r : Response) : ℚ := (ratings s r).mean.toRat
 
-/-- The Difference Observation: the modal claim is rejected above the scale's midpoint yet
-judged false below it, while the control assertion is judged false at least as readily as it
-is rejected. -/
 theorem difference_observation :
     ((midpoint : ℚ) < mean .modal .rejection ∧ mean .modal .judgedFalse < midpoint) ∧
       mean .control .rejection ≤ mean .control .judgedFalse := by

@@ -188,26 +188,20 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
     features := .of (person := p.person) (number := p.number) (gender := p.gender)
       (case_ := p.case) (reflex := reflex) (pronType := pronType) }
 
-/-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type and reflexive
-marking. -/
 @[simp] theorem phi_toWord (pronType : Option UD.PronType) (reflex : Option Unit) :
     HasPhi.phi (p.toWord pronType reflex) = HasPhi.phi p := by
   funext d; cases d <;> rfl
 
-/-- A token marked reflexive classifies as a reflexive anaphor. -/
 @[simp]
 theorem bindingClassOf_toWord_reflex (t : Option UD.PronType) :
     Binding.bindingClassOf (p.toWord t (some ())) = some .reflexive := by
   simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- A token of reciprocal pronoun type classifies as a reciprocal anaphor. -/
 @[simp]
 theorem bindingClassOf_toWord_rcp :
     Binding.bindingClassOf (p.toWord (some .Rcp)) = some .reciprocal := by
   simp [Binding.bindingClassOf, toWord, Morphology.Features.of]
 
-/-- Any other pronoun token classifies as a pronominal, the elsewhere class of
-[chomsky-1981]. -/
 theorem bindingClassOf_toWord {t : Option UD.PronType} (ht : t ≠ some .Rcp) :
     Binding.bindingClassOf (p.toWord t) = some .pronoun := by
   rcases t with _ | t <;> (try cases t) <;>
@@ -222,7 +216,6 @@ instance (w : Morphology.Word) : Decidable (p.CandidateAntecedent w) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 variable {p} in
-/-- A candidate antecedent has the pronoun's number, where both mark one. -/
 theorem CandidateAntecedent.number_eq {w : Morphology.Word} (h : p.CandidateAntecedent w)
     {n m : Number} (hp : p.number = some n) (hw : w.features .number = some m) : n = m :=
   Flat.compat_iff.mp (h.2.apply .number) n hp m hw

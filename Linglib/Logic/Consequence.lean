@@ -100,12 +100,10 @@ theorem mono (hp : p' ≤ p) (hq : q ≤ q') (h : MixedConsequence p q Γ Δ) :
     MixedConsequence p' q' Γ Δ :=
   h.comap id (fun M γ _ ↦ hp M γ) fun M δ _ ↦ hq M δ
 
-/-- Weakening: adding premises or conclusions preserves validity. -/
 theorem weaken (hΓ : Γ ⊆ Γ') (hΔ : Δ ⊆ Δ') (h : MixedConsequence p q Γ Δ) :
     MixedConsequence p q Γ' Δ' := fun M hΓ' ↦
   (h M fun γ hγ ↦ hΓ' γ (hΓ hγ)).imp fun _ ↦ .imp_left (@hΔ _)
 
-/-- A sequent sharing a formula between its sides is valid when `p ≤ q`. -/
 theorem of_mem (hpq : p ≤ q) (hΓ : φ ∈ Γ) (hΔ : φ ∈ Δ) : MixedConsequence p q Γ Δ :=
   fun M h ↦ ⟨φ, hΔ, hpq M φ (h φ hΓ)⟩
 
@@ -117,7 +115,6 @@ theorem cut (hqp : q ≤ p) (h₁ : MixedConsequence p q (φ :: Γ) Δ)
 
 end MixedConsequence
 
-/-- With a single conclusion, mixed consequence is truth preservation from `p` to `q`. -/
 @[simp] theorem mixedConsequence_singleton_right :
     MixedConsequence p q Γ [φ] ↔ ∀ M, (∀ γ ∈ Γ, p M γ) → q M φ := by
   simp [MixedConsequence, Satisfies]
@@ -130,13 +127,11 @@ theorem mixedConsequence_nil_singleton : MixedConsequence p q [] [φ] ↔ ∀ M,
 theorem mixedConsequence_singleton_nil : MixedConsequence p q [φ] [] ↔ ∀ M, ¬ p M φ := by
   simp [MixedConsequence, Satisfies]
 
-/-- The single-premise, single-conclusion relation is reflexive exactly when `p ≤ q`. -/
 theorem stdRefl_mixedConsequence_iff :
     Std.Refl (fun φ ψ ↦ MixedConsequence p q [φ] [ψ]) ↔ p ≤ q :=
   ⟨fun ⟨h⟩ M φ hp ↦ by simpa using h φ M (by simpa using hp),
     fun hpq ↦ ⟨fun _ ↦ .of_mem hpq (List.mem_singleton_self _) (List.mem_singleton_self _)⟩⟩
 
-/-- The single-premise, single-conclusion relation is transitive when `q ≤ p`. -/
 theorem isTrans_mixedConsequence (hqp : q ≤ p) :
     IsTrans Formula fun φ ψ ↦ MixedConsequence p q [φ] [ψ] :=
   ⟨fun _ ψ _ h₁ h₂ ↦ .cut (φ := ψ) hqp (h₂.weaken (by simp) (by simp))

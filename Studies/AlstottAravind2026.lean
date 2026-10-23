@@ -66,7 +66,6 @@ def weakBefore (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∀ j ∈
 fully follows some run-time of the embedded clause. -/
 def weakAfter (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
 
-/-- A stative is weakly *before* an accomplishment iff its onset precedes the telos. -/
 theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval T) :
     weakBefore (Set.Iic a) {b} ↔ a.fst < b.snd := by
   constructor
@@ -76,7 +75,6 @@ theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval T) :
     exact ⟨NonemptyInterval.pure a.fst, Set.mem_Iic.mpr ⟨le_rfl, a.fst_le_snd⟩,
       fun j hj => hj ▸ h⟩
 
-/-- A stative is weakly *after* a stative iff its end follows the other's onset. -/
 theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
     weakAfter (Set.Iic a) (Set.Iic b) ↔ b.fst < a.snd := by
   constructor
@@ -150,7 +148,6 @@ theorem exp4_rett_asymmetric :
   simp only [after_stative_stative_iff, after_stative_inchoative_iff]
   decide
 
-/-- In Exp. 4 the under-specification reading is true in both contexts. -/
 theorem exp4_underspecification_symmetric :
     weakAfter regretfulA fear ∧ weakAfter regretfulB fear := by
   simp only [weakAfter_stative_stative_iff]
@@ -211,15 +208,11 @@ def IsAspectualTrial (row : Datum) : Prop :=
 
 instance : DecidablePred IsAspectualTrial := fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Off the *within*-modifier trials, a sentence was read more slowly than its control
-exactly when Rett's theory inserts an operator (Exps. 1b, 2, 4). -/
 theorem connective_costs_track_rett :
     ∀ row ∈ Examples.all, IsAspectualTrial row → row.feature? "construction" ≠ some "within" →
       ((rettOperator row).isSome ↔ row.feature? "rtCost" = some "yes") := by
   decide +kernel
 
-/-- On the atelic *within*-modifier trials Rett's theory inserts `inchoative` and no cost was
-found (Exps. 1a, 3). -/
 theorem within_disconfirms_inchoat :
     ∀ row ∈ Examples.all, IsAspectualTrial row → row.feature? "construction" = some "within" →
       rettOperator row = some "inchoative" ∧ row.feature? "rtCost" = some "no" := by
@@ -232,8 +225,6 @@ theorem costs_track_revised :
       ((revisedOperator row).isSome ↔ row.feature? "rtCost" = some "yes") := by
   decide +kernel
 
-/-- Coerced sentences are rated less natural than their controls exactly where they are
-read more slowly. -/
 theorem naturalness_tracks_cost :
     ∀ row ∈ Examples.all, IsAspectualTrial row →
       (row.feature? "naturalness" = some "lower" ↔ row.feature? "rtCost" = some "yes") := by

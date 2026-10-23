@@ -37,7 +37,6 @@ variable {W : Type*} [DecidableEq W] {Atom : Type*}
 
 /-! ### Bounded-bisimulation closure -/
 
-/-- The support of a formula is closed under bisimulation at its modal depth. -/
 theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     BisimClosed M {t | support M φ t} :=
   ⟨φ.modalDepth, invariant_eval φ le_rfl true⟩

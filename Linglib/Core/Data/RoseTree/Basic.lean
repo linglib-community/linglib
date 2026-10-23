@@ -106,8 +106,6 @@ end DecidableEq
 
 /-! ### Size -/
 
-/-- A child of a node is strictly smaller than the node in the generated `SizeOf`, the measure
-behind `rec'` and the well-founded recursions over `RoseTree`. -/
 theorem sizeOf_lt_of_mem [SizeOf α] {a : α} {cs : List (RoseTree α)} {c : RoseTree α}
     (hc : c ∈ cs) : sizeOf c < sizeOf (RoseTree.node a cs) := by
   have := List.sizeOf_lt_of_mem hc
@@ -153,8 +151,6 @@ theorem foldList_eq (f : α → List β → β) (cs : List (RoseTree α)) :
     fold f (node a cs) = f a (cs.map (fold f)) := by
   rw [show fold f (node a cs) = f a (foldList f cs) from rfl, foldList_eq]
 
-/-- Postcomposing a fold with `h` gives the fold of the pushed-forward algebra, the `RoseTree`
-sibling of `List.foldr_hom`. -/
 theorem fold_hom (h : β → γ) {f : α → List β → β} {g : α → List γ → γ}
     (hfg : ∀ a ps, h (f a ps) = g a (ps.map h)) (t : RoseTree α) :
     h (fold f t) = fold g t := by
@@ -298,7 +294,6 @@ theorem numLeaves_node_of_ne_nil (a : α) {cs : List (RoseTree α)} (h : cs ≠ 
   have := numLeaves_pos c
   omega
 
-/-- The frontier has one entry for each leaf. -/
 theorem length_leafList (t : RoseTree α) : t.leafList.length = t.numLeaves := by
   induction t with
   | node a cs ih =>

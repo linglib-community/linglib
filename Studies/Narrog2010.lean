@@ -127,8 +127,6 @@ def commonChanges : List Change :=
    ⟨obligation, imperative, 4⟩, ⟨rootPossibility, epistemicPossibility, 4⟩,
    ⟨obligation, certainty, 3⟩, ⟨weakObligation, probability, 2⟩, ⟨future, probability, 2⟩]
 
-/-- Change is attested within the volitive meanings, within the non-volitive ones, and across
-volitivity in both directions, so volitivity does not constrain the direction of change. -/
 theorem volitivity_independent :
     (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsVolitive) ∧
     (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsNonVolitive) ∧
@@ -136,20 +134,14 @@ theorem volitivity_independent :
     (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsNonVolitive) := by
   decide
 
-/-- Every change from non-volitive to volitive meaning is more frequent than every change from
-volitive to non-volitive meaning, the direction a deontic-to-epistemic theory takes as
-representative. -/
 theorem toNonVolitive_lt_toVolitive :
     ∀ c ∈ commonChanges, ∀ d ∈ commonChanges,
       c.source.IsNonVolitive → c.target.IsVolitive →
       d.source.IsVolitive → d.target.IsNonVolitive → d.grams < c.grams := by
   decide
 
-/-- No tabulated change leads out of mood, the one configuration that the meaning labels alone
-would show to run against the claim. -/
 theorem source_not_isMood : ∀ c ∈ commonChanges, ¬ c.source.IsMood := by decide
 
-/-- Mood is fed from both sides of the volitivity dimension. -/
 theorem isMood_of_both_volitivities :
     (∃ c ∈ commonChanges, c.source.IsVolitive ∧ c.target.IsMood) ∧
     (∃ c ∈ commonChanges, c.source.IsNonVolitive ∧ c.target.IsMood) := by

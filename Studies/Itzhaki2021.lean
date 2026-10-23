@@ -158,13 +158,10 @@ structure Sorites {α : Type*} (P : α → Prop) (R : α → α → Prop) (a b :
 
 variable {α : Type*} {P : α → Prop} {R : α → α → Prop} {a b : α}
 
-/-- No chain of steps leads from `a` to `b`, since it would cross from `P` out of `P` in a single
-step. -/
 theorem Sorites.not_reflTransGen (h : Sorites P R a b) : ¬ ReflTransGen R a b := fun hab ↦
   let ⟨_, _, hcd, hc, hd, _⟩ := hab.exists_boundary (S := {x | P x}) h.base h.counter
   hd (h.tolerance hc hcd)
 
-/-- Whatever a chain of steps leads to from `a` has `P`. -/
 theorem Sorites.of_reflTransGen (h : Sorites P R a b) {y : α} (hy : ReflTransGen R a y) : P y :=
   by_contra fun hn ↦ (Sorites.mk h.base h.tolerance hn).not_reflTransGen hy
 
@@ -189,8 +186,6 @@ theorem Sorites.conclusion (h : Sorites P (Step s d) a b) (hs : Function.Injecti
     push_cast
     ring
 
-/-- When the inverse of the size map is total and `b` is reached arithmetically from `a`, the
-premises of a Sorites are inconsistent. -/
 theorem Sorites.false_of_total (h : Sorites P (Step s d) a b) (hs : Function.Injective s)
     (n : ℕ) (htot : ∀ m < n, ∃ x, s x = s a + m * d) (hb : s b = s a + n * d) : False :=
   h.counter (h.conclusion hs n htot b hb)
@@ -237,7 +232,6 @@ theorem natCast_lt_qualSize (hH : mk H < 0) (hpos : 0 < H) (hx : heap x) (n : �
   · exact hn.trans_le (le_add_of_nonneg_right (Nat.cast_nonneg _))
   · exact hn
 
-/-- The qualitative sizes of two heaps are finitely close. -/
 theorem finitelyClose_qualSize (hx : heap x) (hy : heap y) :
     FinitelyClose (qualSize heap known size H x) (qualSize heap known size H y) := by
   have hn (n : ℕ) : (n : ℝ*) ∈ finites := mem_finites.2 (mk_natCast_nonneg n)
@@ -326,7 +320,6 @@ theorem sorites_qs : Sorites (¬ heap ·) (Step qs 1) g₁ g₁₀₀₀₀ :=
 theorem sorites_qs_reverse : Sorites heap (Step qs (-1)) g₁₀₀₀₀ g₁ :=
   sorites_heap archimedeanClassMk_omega_neg (by simp [heap, g₁]) rfl
 
-/-- Under the quantitative size, the premises of the classic paradox are inconsistent. -/
 theorem not_sorites_size : ¬ Sorites (¬ heap ·) (Step (fun x : De ↦ (x.1 : ℝ*)) 1) g₁ g₁₀₀₀₀ :=
   fun h ↦ h.false_of_total (fun _ _ e ↦ Subtype.ext (by simpa using e)) 9999
     (fun m hm ↦ ⟨⟨m + 1, by simp, by omega⟩, by simp [g₁]; ring⟩) (by simp [g₁₀₀₀₀, g₁]; norm_num)
@@ -373,8 +366,6 @@ theorem induction_premise (he : e ∈ infinitesimals) (hU : 1 < U) {x : E}
   rw [show qualUnit U e 1 = e by simp [qualUnit, hU], stdPart_sub_infinitesimal _ he]
   exact hx
 
-/-- With a millimetre below the relevant unit, the conclusion (70.III) holds, since any number
-of qualitative millimetres below two metres is still tall. -/
 theorem conclusion_tall (he : e ∈ infinitesimals) (hU : 1 < U) (hS : S ≤ 2000) (n : ℕ) :
     S ≤ stdPart ((2000 : ℝ*) - n * qualUnit U e 1) := by
   have hne : (n : ℝ*) * e ∈ infinitesimals := by
@@ -419,7 +410,6 @@ instance instIsTransInfinitelyLess : IsTrans ℝ* InfinitelyLess where
       ⟨sub_nonneg.2 hab.1.le, sub_le_sub_right hbc.1.le a⟩
     exact FinitelyClose.symm hba
 
-/-- What is finitely close to something infinitely less than `c` is infinitely less than `c`. -/
 theorem InfinitelyLess.of_finitelyClose {a b c : ℝ*} (hab : FinitelyClose a b)
     (hbc : InfinitelyLess b c) : InfinitelyLess a c := by
   refine ⟨lt_of_not_ge fun hca ↦ hbc.2 ?_, fun hac ↦ hbc.2 (hab.symm.trans hac)⟩
@@ -432,8 +422,6 @@ theorem leUpToFinite_iff_not_infinitelyLess {a b : ℝ*} :
   unfold LeUpToFinite InfinitelyLess
   grind [FinitelyClose.refl]
 
-/-- One grain is negligible for a standard of size (80.II). What is at most the standard up to a
-finite difference stays so after adding a grain. -/
 theorem LeUpToFinite.add_one {a S : ℝ*} (h : LeUpToFinite a S) : LeUpToFinite (a + 1) S := by
   have h1 : (1 : ℝ*) ∈ finites := mem_finites.2 (by simp)
   rcases h with h | ⟨hlt, hn⟩

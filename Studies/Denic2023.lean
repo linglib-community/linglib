@@ -92,8 +92,6 @@ def LeavesOpen (ALT : Set (Set (World n m))) (a : Set (World n m)) : Prop :=
 
 /-! ### Entailment cannot tell the sentences apart, §3.2 -/
 
-/-- With ALT-or every alternative is innocently excludable, for any domain of at least two,
-since a world with two individuals of different properties falsifies them all. -/
 theorem isInnocentlyExcludable_altOr (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
     IsInnocentlyExcludable (altOr n m) Set.univ (allAre i) :=
   IsInnocentlyExcludable.of_full_exclusion_consistent ⟨i, rfl⟩
@@ -131,9 +129,6 @@ theorem exhIE_altOr_subset_someAre (hn : 2 ≤ n) (i : Fin 2) :
   · exact Set.inter_subset_left
   · exact Set.inter_subset_right
 
-/-- With ALT-all-or, the world where everyone is `i` is minimal, since any world verifying fewer
-alternatives would have to falsify *all are i* and *some are i* while verifying no other
-alternative, and there is no such world. -/
 theorem const_mem_exhMW (hn : 1 ≤ n) (i : Fin m) :
     (fun _ ↦ i : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
   refine ⟨trivial, ?_⟩
@@ -151,7 +146,6 @@ theorem const_mem_exhMW (hn : 1 ≤ n) (i : Fin m) :
     obtain ⟨y, hy⟩ := hle _ (Or.inr ⟨v ⟨0, by omega⟩, rfl⟩) ⟨_, rfl⟩
     exact hx hy.symm
 
-/-- With ALT-all-or, the world where one individual is `i` and the rest are `k` is minimal. -/
 theorem split_mem_exhMW (hn : 2 ≤ n) {i k : Fin m} (hik : i ≠ k) :
     (fun x ↦ if x.val = 0 then i else k : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
   refine ⟨trivial, ?_⟩
@@ -197,7 +191,6 @@ theorem not_isInnocentlyExcludable_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) :
     exact (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Or.inr ⟨i, rfl⟩)).1 h
       (split_mem_exhMW hn hk.symm) ⟨⟨0, by omega⟩, by simp⟩
 
-/-- With ALT-all-or exhaustification is vacuous. -/
 theorem exhIE_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) : exhIE (altAllOr n m) Set.univ = Set.univ := by
   ext w
   exact ⟨fun _ ↦ trivial, fun _ ↦ ⟨trivial, fun a ha ↦
@@ -247,7 +240,6 @@ theorem uniformOn_real_someAre (hm : 1 ≤ m) (i : Fin m) :
   rw [Nat.cast_sub hle, Nat.cast_pow, Nat.cast_pow, Nat.cast_sub hm, Nat.cast_one, sub_div,
     div_self (pow_ne_zero n hm'), div_pow]
 
-/-- The probability that all n individuals are `Aᵢ` is `(1/m)^n`. -/
 theorem uniformOn_real_allAre (i : Fin m) :
     (uniformOn (Set.univ : Set (World n m))).real (allAre i) = (1 / m : ℝ) ^ n := by
   rw [uniformOn_real_apply, Set.univ_inter, ncard_allAre, Set.ncard_univ, Nat.card_eq_fintype_card,
@@ -329,8 +321,6 @@ theorem not_singletonDenoting_univ (hn : 2 ≤ n) (i : Fin m) :
     ¬ SingletonDenoting (Set.univ : Set (World n m)) (fun w x ↦ w x = i) :=
   fun h ↦ absurd (h (fun _ ↦ i) trivial ⟨0, by omega⟩ ⟨1, by omega⟩ rfl rfl) (by simp)
 
-/-- Given common knowledge and the utterance, every name is borne by some girl, since an
-injection of the n girls into the n names is a surjection. -/
 theorem distinct_subset_someAre (i : Fin n) : distinct n ⊆ someAre i :=
   fun _ hw ↦ Finite.injective_iff_surjective.1 hw i
 
@@ -356,7 +346,6 @@ theorem non_deviant_called (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
   · exact hk (h (Set.mem_univ (fun _ ↦ k))).choose_spec
   · exact h (Set.mem_univ (fun _ ↦ i)) ⟨⟨0, by omega⟩, rfl⟩
 
-/-- Relative to common knowledge the existential alternatives of deviant-be are certain. -/
 theorem uniformOn_distinct_real_someAre (i : Fin n) :
     (uniformOn (distinct n)).real (someAre i) = 1 := by
   rw [uniformOn_real_apply, Set.inter_eq_left.2 (distinct_subset_someAre i), div_self]

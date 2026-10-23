@@ -45,14 +45,10 @@ def DimensionallyRestricted (α : Type*) [Preorder α] (D : Type := ℝ) [Preord
   ∀ (μ₁ μ₂ : α → D), StrictMono μ₁ → StrictMono μ₂ →
     ∀ (a b : α), μ₁ a < μ₁ b ↔ μ₂ a < μ₂ b
 
-/-- Linear orders are dimensionally restricted, since the ambient order determines the
-comparative ordering whichever admissible measure function is chosen. -/
 theorem linearOrder_dimensionallyRestricted {α : Type*} [LinearOrder α] {D : Type} [Preorder D] :
     DimensionallyRestricted α D :=
   fun _ _ hμ₁ hμ₂ _ _ => hμ₁.lt_iff_lt.trans hμ₂.lt_iff_lt.symm
 
-/-- If two admissible measures disagree on some pair, the domain is NOT
-    dimensionally restricted. -/
 theorem not_restricted_of_disagreement {α : Type*} [Preorder α] {D : Type} [Preorder D]
     {μ₁ μ₂ : α → D} (hμ₁ : StrictMono μ₁) (hμ₂ : StrictMono μ₂)
     {a b : α} (h₁ : μ₁ a < μ₁ b) (h₂ : ¬ μ₂ a < μ₂ b) :

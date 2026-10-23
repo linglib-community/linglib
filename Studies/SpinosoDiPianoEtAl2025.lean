@@ -82,9 +82,6 @@ noncomputable def L0 (μ : Measure M) (f : R → U → M → ℝ≥0∞) (r : R)
 instance (μ : Measure M) (f : R → U → M → ℝ≥0∞) (r : R) : IsFiniteKernel (L0 μ f r) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
-/-- The unit interval is no restriction on rhetorical functions. Dividing a finite function at
-each strategy and utterance by its largest value there bounds it by one and leaves the literal
-listeners unchanged, and with them the speakers and pragmatic listeners. -/
 theorem exists_le_one_and_L0_eq (μ : Measure M) {f : R → U → M → ℝ≥0∞}
     (hf : ∀ r u m, f r u m ≠ ∞) :
     ∃ f' : R → U → M → ℝ≥0∞, (∀ r u m, f' r u m ≤ 1) ∧ L0 μ f' = L0 μ f :=
@@ -131,7 +128,6 @@ theorem S1_eq_ofWeights_prior (hα : α ≠ 0) {π : U → ℝ≥0∞} (hπ0 : �
   rw [mul_div_cancel₀ _ hα, neg_neg, Real.exp_log (ENNReal.toReal_pos (hπ0 u) (hπ u)),
     ENNReal.ofReal_toReal (hπ u)]
 
-/-- A strategy whose rhetorical function is a Boolean meaning runs standard RSA on it. -/
 theorem L1_indicator (sem : U → Set M) {r : R} (hr : f r = fun u ↦ (sem u).indicator 1) :
     L1 μ f α κ r =
       RSA.listener μ (speaker α κ (RSA.listener μ (truthful sem)) Measure.dirac) := by
@@ -154,9 +150,6 @@ theorem listener_apply_singleton [Fintype R] [MeasurableSpace R] [DiscreteMeasur
 
 variable [IsFiniteMeasure μ]
 
-/-- A strategy's pragmatic listener puts positive mass on a meaning exactly when the prior does
-and the strategy's rhetorical function admits the meaning at the utterance, so the framework
-escapes the literal extension. -/
 theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} {u : U} (hf : ∀ m, f r u m ≠ ∞)
     (m : M) : L1 μ f α κ r u {m} ≠ 0 ↔ f r u m ≠ 0 ∧ μ {m} ≠ 0 := by
   rw [L1, RSA.listener_apply_singleton_ne_zero_iff, S1,
@@ -166,8 +159,6 @@ theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} {u : U} (hf : ∀ 
 
 variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
 
-/-- The pragmatic listener interprets an utterance as a meaning exactly when the meaning has
-positive prior and some strategy of positive posterior weight admits it at the utterance. -/
 theorem listener_apply_singleton_ne_zero_iff (hα : 0 < α) {u : U} (hf : ∀ r m, f r u m ≠ ∞)
     (ρ : Kernel U R) (m : M) :
     listener μ f α κ ρ u {m} ≠ 0 ↔ μ {m} ≠ 0 ∧ ∃ r, ρ u {r} ≠ 0 ∧ f r u m ≠ 0 := by
@@ -257,9 +248,6 @@ theorem qudListener_apply_singleton_of_ncard (u : U) (m : M) :
 
 variable [Fintype X] [MeasurableSpace X] [MeasurableSingletonClass X]
 
-/-- At a question whose cells have one size, the speaker who addresses the literal listener of
-question-under-discussion RSA over meanings is the speaker who is informative about the answer,
-`RSA.speaker` at the pushforward of the literal listener along the question. -/
 theorem speaker_qudListener_dirac {α : ℝ} (hα : 0 ≤ α) (κ : U → ℝ) (m : M) :
     speaker α κ (qudListener L q) Measure.dirac m =
       speaker α κ (L.map q) Measure.dirac (q m) := by
@@ -311,8 +299,6 @@ private theorem ncard_project_kaoWuEtAl2014 (g : KaoWuEtAl2014.Goal)
   revert g m
   decide
 
-/-- The question-indexed speaker of Kao and Goodman's irony model is the framework's speaker at
-the rhetorical function of the question, at a prior of positive mass everywhere. -/
 theorem kaoGoodman2015_S1 (μ : Measure KaoGoodman2015.Meaning) [IsFiniteMeasure μ]
     (hμ : ∀ m, μ {m} ≠ 0) {α : ℝ} (hα : 0 ≤ α) (m : KaoGoodman2015.Meaning)
     (q : KaoGoodman2015.QUD) :
@@ -323,8 +309,6 @@ theorem kaoGoodman2015_S1 (μ : Measure KaoGoodman2015.Meaning) [IsFiniteMeasure
   rw [S1, L0_rhetoricalOfQUD μ hμ]
   exact (speaker_qudListener_dirac _ _ (ncard_project_kaoGoodman2015 q) hα 0 m).symm
 
-/-- The goal-indexed speaker of Kao and colleagues' hyperbole model is the framework's speaker
-at the rhetorical function of the goal, at a prior of positive mass everywhere. -/
 theorem kaoWuEtAl2014_S1 (μ : Measure KaoWuEtAl2014.Meaning) [IsFiniteMeasure μ]
     (hμ : ∀ m, μ {m} ≠ 0) (c : ℝ) (m : KaoWuEtAl2014.Meaning) (g : KaoWuEtAl2014.Goal) :
     KaoWuEtAl2014.S1 μ c (m, g) =
@@ -403,8 +387,6 @@ instance : DiscreteMeasurableSpace WeatherStrategy := ⟨fun _ ↦ trivial⟩
 variable (μ : Measure Weather) (f : WeatherStrategy → Weather → Weather → ℝ≥0∞) (α : ℝ)
   (κ : Weather → ℝ)
 
-/-- Under the literal strategy, where an utterance is true of the state it names, *the weather
-is amazing* leaves every other state without mass, the standard RSA prediction. -/
 theorem literal_strategy_apply_eq_zero (hα : 0 < α)
     (hliteral : f .literal = fun u ↦ ({u} : Set Weather).indicator 1) {m : Weather}
     (hm : m ≠ .amazing) : L1 μ f α κ .literal .amazing {m} = 0 :=
@@ -412,9 +394,6 @@ theorem literal_strategy_apply_eq_zero (hα : 0 < α)
 
 variable [IsFiniteMeasure μ] (ρ : Kernel Weather WeatherStrategy)
 
-/-- The listener keeps the literal reading of *the weather is amazing* exactly when the strategy
-posterior gives the literal strategy weight, since the ironic and the hyperbolic strategy both
-exclude amazing weather at this utterance. -/
 theorem literal_reading_iff (hα : 0 < α) (hf : ∀ r m, f r .amazing m ≠ ∞)
     (hliteral : f .literal .amazing .amazing ≠ 0) (hirony : f .irony .amazing .amazing = 0)
     (hhyperbole : f .hyperbole .amazing .amazing = 0) (hμ : μ {.amazing} ≠ 0) :
@@ -427,15 +406,11 @@ theorem literal_reading_iff (hα : 0 < α) (hf : ∀ r m, f r .amazing m ≠ ∞
     · exact absurd hhyperbole hfr
   · exact fun h ↦ ⟨hμ, .literal, h, hliteral⟩
 
-/-- The listener reads *the weather is amazing* as terrible weather once the strategy posterior
-gives weight to irony, which admits terrible weather at this utterance. -/
 theorem ironic_reading (hα : 0 < α) (hf : ∀ r m, f r .amazing m ≠ ∞)
     (hirony : f .irony .amazing .terrible ≠ 0) (hμ : μ {.terrible} ≠ 0)
     (hρ : ρ .amazing {.irony} ≠ 0) : listener μ f α κ ρ .amazing {.terrible} ≠ 0 :=
   (listener_apply_singleton_ne_zero_iff μ f α κ hα hf ρ _).mpr ⟨hμ, .irony, hρ, hirony⟩
 
-/-- The listener reads *the weather is amazing* as good weather once the strategy posterior
-gives weight to hyperbole, which admits good weather at this utterance. -/
 theorem hyperbolic_reading (hα : 0 < α) (hf : ∀ r m, f r .amazing m ≠ ∞)
     (hhyperbole : f .hyperbole .amazing .good ≠ 0) (hμ : μ {.good} ≠ 0)
     (hρ : ρ .amazing {.hyperbole} ≠ 0) : listener μ f α κ ρ .amazing {.good} ≠ 0 :=

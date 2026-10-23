@@ -65,7 +65,6 @@ theorem trueAnswers_pair_of_mem {p : Set W} (h : w ∈ p) : trueAnswers {p, pᶜ
   · rintro rfl
     exact ⟨Or.inl rfl, h⟩
 
-/-- At a world where `p` fails, *whether p* denotes the singleton of the negation. -/
 theorem trueAnswers_pair_of_notMem {p : Set W} (h : w ∉ p) :
     trueAnswers {p, pᶜ} w = {pᶜ} := by
   ext q
@@ -77,8 +76,6 @@ theorem trueAnswers_pair_of_notMem {p : Set W} (h : w ∉ p) :
   · rintro rfl
     exact ⟨Or.inr rfl, h⟩
 
-/-- The substrate's polar question of a non-trivial proposition has the paper's
-alternatives. -/
 theorem trueAnswers_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     trueAnswers (alt (polar p)) w = trueAnswers {p, pᶜ} w := by
   rw [alt_polar_of_nontrivial hne hnu]
@@ -103,8 +100,6 @@ theorem trueAnswers_image_eq_empty_iff :
   simp only [Set.eq_empty_iff_forall_notMem, mem_trueAnswers_image_iff, not_exists, not_and]
   exact ⟨λ h e he hw => h (P e) e he hw rfl, λ h _ e he hw _ => h e he hw⟩
 
-/-- The substrate's wh-question has the paper's alternatives when the answers form an
-antichain. -/
 theorem trueAnswers_alt_which (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D)) :
     trueAnswers (alt (which D P)) w = trueAnswers (P '' D) w := by
   rw [alt_which_of_antichain hD hA]
@@ -130,9 +125,6 @@ theorem knows_pair_iff (p : Set W) :
   · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_mem w h, h]
   · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_notMem w h, h]
 
-/-- A question with no true answer is known exactly when the agent knows that it has none:
-the second conjunct of the postulate, without which the empty question would be known
-trivially. -/
 theorem knows_iff_of_no_witness (h : ∀ e ∈ D, w ∉ P e) :
     Knows w Dox (P '' D) ↔ ∀ v, w ~[Dox] v → ∀ e ∈ D, v ∉ P e := by
   have h0 : trueAnswers (P '' D) w = ∅ := (trueAnswers_image_eq_empty_iff w D P).mpr h

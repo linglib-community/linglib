@@ -59,8 +59,6 @@ variable {α β : Type*} {k : ℕ} {u u' v v' : List α}
 def kTestVector (k : ℕ) (w : List α) : List α × Set (List α) × List α :=
   (Edge.left.takeAt (k - 1) w, {f | f ∈ w.kFactors k}, Edge.right.takeAt (k - 1) w)
 
-/-- Words with the same `k`-test vectors have concatenations with the same `k`-test vector, since
-a factor across the seam lies in the suffix of one word followed by the prefix of the other. -/
 theorem kTestVector_append_congr (hu : u.kTestVector k = u'.kTestVector k)
     (hv : v.kTestVector k = v'.kTestVector k) :
     (u ++ v).kTestVector k = (u' ++ v').kTestVector k := by
@@ -71,14 +69,11 @@ theorem kTestVector_append_congr (hu : u.kTestVector k = u'.kTestVector k)
     fun f ↦ ?_, (Edge.takeAt_append_congr _ hur _).trans (Edge.takeAt_append_congr_right _ hvr _)⟩
   grind [mem_kFactors_append, Edge.takeAt_left, Edge.takeAt_right]
 
-/-- Mapping a function over a word maps it over the `k`-test vector. -/
 theorem kTestVector_map (g : α → β) (w : List α) :
     (w.map g).kTestVector k =
       Prod.map (map g) (Prod.map (Set.image (map g)) (map g)) (w.kTestVector k) := by
   ext <;> simp [kTestVector, Edge.takeAt_map]
 
-/-- `k + 1` copies of a word have the same `k`-test vector as `k` copies, since a factor of length
-`k` reaches across at most `k` consecutive copies. -/
 theorem kTestVector_flatten_replicate_succ (k : ℕ) (w : List α) :
     (replicate (k + 1) w).flatten.kTestVector k = (replicate k w).flatten.kTestVector k := by
   rcases eq_or_ne w [] with rfl | hw
@@ -103,7 +98,6 @@ theorem kTestVector_flatten_replicate_succ (k : ℕ) (w : List α) :
       exact infix_append_iff.mpr (.inr (.inr ⟨_, _, rfl, rtake_suffix _ _, take_prefix _ _⟩))
   · rw [hr, rtake_append_of_le_length ((Nat.le_succ n).trans (hlen _))]
 
-/-- Over a finite alphabet `List.kTestVector k` takes finitely many values. -/
 theorem finite_range_kTestVector [Finite α] (k : ℕ) :
     (Set.range (kTestVector (α := α) k)).Finite :=
   ((Edge.finite_range_takeAt .left (k - 1)).prod <| (List.finite_length_eq α k).finite_subsets.prod
@@ -132,8 +126,6 @@ theorem IsLocallyTestable.union (hL : L.IsLocallyTestable k) (hM : M.IsLocallyTe
     (L ⊔ M).IsLocallyTestable k :=
   fun _ _ e ↦ congrArg₂ Or (hL e) (hM e)
 
-/-- The words whose set of factors of length `k` lies in a given family form a locally
-`k`-testable language. -/
 theorem isLocallyTestable_setOf_kFactors (k : ℕ) (P : Set (Set (List α))) :
     IsLocallyTestable {w | {f | f ∈ w.kFactors k} ∈ P} k :=
   fun _ _ e ↦ congrArg (fun p ↦ p.2.1 ∈ P) e
@@ -146,19 +138,16 @@ theorem IsLocallyTestable.rightQuotient (h : L.IsLocallyTestable k) (u : List α
     (L.rightQuotient u).IsLocallyTestable k :=
   fun _ _ e ↦ h (List.kTestVector_append_congr e rfl)
 
-/-- Locally testable languages are closed under inverse images of letter-to-letter maps. -/
 theorem IsLocallyTestable.preimage_map {L : Language β} (h : L.IsLocallyTestable k) (g : α → β) :
     IsLocallyTestable (List.map g ⁻¹' L) k :=
   fun _ _ e ↦ h (by rw [List.kTestVector_map, List.kTestVector_map, e])
 
-/-- Over a finite alphabet locally testable languages are star-free. -/
 theorem IsLocallyTestable.isStarFree [Finite α] (h : L.IsLocallyTestable k) : L.IsStarFree :=
   .of_factorsThrough h (fun _ _ _ _ ↦ List.kTestVector_append_congr)
     (List.finite_range_kTestVector k) (List.kTestVector_flatten_replicate_succ k)
 
 /-! ### Generalized definite languages -/
 
-/-- A generalized `k`-definite language is locally `(k + 1)`-testable. -/
 theorem IsGeneralizedDefinite.toIsLocallyTestable (h : L.IsGeneralizedDefinite k) :
     L.IsLocallyTestable (k + 1) :=
   fun _ _ e ↦ propext <|
@@ -168,7 +157,6 @@ section Finite
 
 variable [Finite α]
 
-/-- Over a finite alphabet generalized definite languages are star-free. -/
 theorem IsGeneralizedDefinite.isStarFree (h : L.IsGeneralizedDefinite k) : L.IsStarFree :=
   h.toIsLocallyTestable.isStarFree
 
@@ -178,7 +166,6 @@ theorem IsDefinite.isStarFree (h : L.IsDefinite k) : L.IsStarFree :=
 theorem IsReverseDefinite.isStarFree (h : L.IsReverseDefinite k) : L.IsStarFree :=
   h.toIsGeneralizedDefinite.isStarFree
 
-/-- Over a finite alphabet finite and cofinite languages are star-free. -/
 theorem IsFiniteOrCofinite.isStarFree (h : L.IsFiniteOrCofinite) : L.IsStarFree :=
   let ⟨⟨_, hD⟩, _⟩ := h.exists_isDefinite_and_isReverseDefinite
   hD.isStarFree
@@ -187,7 +174,6 @@ end Finite
 
 /-! ### Containing a factor -/
 
-/-- The words containing `c` as a factor form a locally testable language. -/
 theorem isLocallyTestable_setOf_infix (c : List α) :
     IsLocallyTestable {w | c <:+: w} c.length := by
   simpa [List.mem_kFactors] using isLocallyTestable_setOf_kFactors c.length {S | c ∈ S}
@@ -208,8 +194,6 @@ private theorem infix_iff_map_occ (c x : List α) :
   obtain ⟨p, m, rfl, -, hm⟩ := List.map_eq_append_iff.mp hl
   exact eq_of_map_occ_eq hm ▸ ⟨p, q, rfl⟩
 
-/-- The words containing `c` as a factor form a star-free language over any alphabet, finite or
-not. -/
 theorem isStarFree_setOf_infix (c : List α) : IsStarFree {w | c <:+: w} := by
   convert (isLocallyTestable_setOf_infix (c.map (occ c))).isStarFree.comap
     (FreeMonoid.map (occ c)) using 1

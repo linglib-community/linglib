@@ -93,21 +93,16 @@ def Monotonic [PartialOrder E] (x : Entity) : Prop := StrictMonoOn v.μint (stat
 
 variable {v frame} {α β x y : Entity}
 
-/-- The comparative entails the matrix positive. -/
 theorem intensityComparative.exists_matrix (h : intensityComparative v frame α β x y) :
     ∃ e, themed v frame α x e :=
   let ⟨_, _, e, he, _⟩ := h; ⟨e, he⟩
 
-/-- With unique witnesses on both sides the comparative compares the two intensities. -/
 theorem intensityComparative_unique {ea eb : E} (ha : themed v frame α x ea)
     (ha' : ∀ e, themed v frame α x e → e = ea) (hb : themed v frame β y eb)
     (hb' : ∀ e, themed v frame β y e → e = eb) :
     intensityComparative v frame α β x y ↔ v.μint eb < v.μint ea :=
   maxComparative_iff_of_unique ha ha' hb hb'
 
-/-- Under the presupposition on both sides the comparative compares the maximal states, so with
-`ea` Ann's state of hating Bill and `eb` Matt's of hating Jeff the sentence holds iff `ea` is
-the more intense. -/
 theorem intensityComparative_of_greatest [PartialOrder E] {ea eb : E}
     (hx : Monotonic v frame x) (hy : Monotonic v frame y)
     (ha : IsGreatest {e | themed v frame α x e} ea)

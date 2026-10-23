@@ -105,7 +105,6 @@ instance : MulZeroClass (LinearizationState side) where
   zero_mul _ := rfl
   mul_zero x := by rcases x with ⟨_ | _⟩ <;> rfl
 
-/-- `*` on defined states: the canonical accessor. -/
 theorem some_mul_some (s₁ s₂ : LexicalItem.Token × List Cat) (p₁ p₂ : LinearizedSyntacticObject) :
     (⟨some (s₁, p₁)⟩ * ⟨some (s₂, p₂)⟩ : LinearizationState side) =
       ⟨(selCombine ⟨some s₁⟩ ⟨some s₂⟩).map fun d =>
@@ -148,7 +147,6 @@ def linearized? (x : LinearizationState side) : Option LinearizedSyntacticObject
 
 @[simp] theorem linearized?_zero : (0 : LinearizationState side).linearized? = none := rfl
 
-/-- A defined product attaches one factor's linearized object to the other's on the head side. -/
 theorem linearized?_mul_eq_some {x y : LinearizationState side} {p : LinearizedSyntacticObject}
     (h : (x * y).linearized? = some p) :
     ∃ px py, x.linearized? = some px ∧ y.linearized? = some py ∧
@@ -203,13 +201,10 @@ noncomputable def headHom : SyntacticObject →ₙ* LinearizationState side :=
 @[simp] theorem headHom_apply (s : SyntacticObject) :
     headHom side s = s.linearizationState side := rfl
 
-/-- Fusion: the selection component of the head function's value is the selection
-    check — two morphisms agreeing on the leaves (`hom_ext`). -/
 theorem sel_comp_headHom :
     LinearizationState.sel.comp (headHom side) = selCheckHom :=
   hom_ext (fun _ => rfl) rfl (fun _ => rfl)
 
-/-- The selection component of an object's linearization state is its selection check. -/
 @[simp] theorem sel_linearizationState (s : SyntacticObject) :
     LinearizationState.sel (s.linearizationState side) = s.selCheck :=
   DFunLike.congr_fun (sel_comp_headHom side) s
@@ -221,7 +216,6 @@ def linearize? (s : SyntacticObject) : Option LinearizedSyntacticObject :=
 
 variable {side}
 
-/-- The harmonic linearization is a section of forgetting the order on its domain. -/
 theorem toSyntacticObject_of_linearize? {s : SyntacticObject} {p : LinearizedSyntacticObject}
     (h : s.linearize? side = some p) : p.toSyntacticObject = s := by
   induction s using ind generalizing p with
@@ -232,7 +226,6 @@ theorem toSyntacticObject_of_linearize? {s : SyntacticObject} {p : LinearizedSyn
     · rw [LinearizedSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr]
     · rw [LinearizedSyntacticObject.toSyntacticObject_attach, ihl hl, ihr hr, merge_comm]
 
-/-- A defined linearization comes with the selection state it refines. -/
 theorem linearizationState_eq_of_linearize? {s : SyntacticObject} {p : LinearizedSyntacticObject}
     (h : s.linearize? side = some p) :
     ∃ σ, s.selCheck = ⟨some σ⟩ ∧ s.linearizationState side = ⟨some (σ, p)⟩ := by
@@ -243,8 +236,6 @@ theorem linearizationState_eq_of_linearize? {s : SyntacticObject} {p : Linearize
     subst h
     exact ⟨σ, by rw [← sel_linearizationState side s, hx]; rfl, rfl⟩
 
-/-- Merging `d` on edge `e` of `l` is harmonic when `d` projects exactly if `e` is the head
-side. -/
 theorem linearize?_merge {d l : SyntacticObject} {pd pl : LinearizedSyntacticObject} {e : Edge}
     (hd : d.linearize? side = some pd) (hl : l.linearize? side = some pl)
     (h : selSide d.selCheck l.selCheck = some (decide (e = side))) :
@@ -256,8 +247,6 @@ theorem linearize?_merge {d l : SyntacticObject} {pd pl : LinearizedSyntacticObj
   rw [linearize?, linearizationState_node, hsd, hsl, LinearizationState.some_mul_some, hc]
   cases e <;> cases side <;> rfl
 
-/-- The subtrees of a harmonic linearization are the harmonic linearizations of their objects,
-    the head function of a term being the restriction of the whole's. -/
 theorem linearize?_of_mem_subtrees {cur : SyntacticObject} {pc : LinearizedSyntacticObject}
     (hc : cur.linearize? side = some pc) {q : RoseTree Vertex} (hq : q ∈ pc.val.subtrees)
     (hqs : IsSyntacticObject (mk q)) :

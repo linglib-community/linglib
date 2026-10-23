@@ -47,20 +47,16 @@ variable {n : ℕ} {F : Type*}
 
 /-! ### *ABA -/
 
-/-- Elsewhere insertion over an antihomophonous rule set is contiguous ([bobaljik-2012]
-ch. 2). -/
 theorem isContiguous_realize {v : RuleSet (SpanRule n F)} (hv : v.Antihomophonous) :
     IsContiguous (realize v) :=
   RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hg hs ↦ le_trans hs hg
 
-/-- Superset spellout over an antihomophonous lexicon is contiguous ([caha-2009]). -/
 theorem isContiguous_spellout {v : RuleSet (SupersetRule n F)} (hv : v.Antihomophonous) :
     IsContiguous (spellout v) :=
   RuleSet.isContiguous_realize_of_antitone hv fun _ _ _ _ hg hs ↦ le_trans hg hs
 
 /-! ### The plateau: terminal adjacency generates only AAA and ABB -/
 
-/-- Realization is constant above a grade bounding every threshold. -/
 theorem realize_const_of_cap {v : RuleSet (SpanRule n F)} {m g g' : Fin n}
     (hcap : ∀ it ∈ v, it.threshold ≤ m) (hg : m ≤ g) (hg' : m ≤ g') :
     realize v g = realize v g' :=
@@ -74,8 +70,6 @@ private theorem threshold_le_one {it : SpanRule 3 F} (h0 : (it.spans : ℕ) = 0)
   · simp [SpanRule.threshold, hcx, Fin.le_def, h0]
   · simp [SpanRule.threshold, hcx, Fin.le_def, h0, hc c hcx]
 
-/-- Terminal rules with adjacent contexts have thresholds at most the first head, so the
-comparative and superlative cells coincide and only AAA and ABB root patterns are generable. -/
 theorem realize_const_of_terminal_adjacent {v : RuleSet (SpanRule 3 F)}
     (hT : Terminal v) (hA : Adjacent v) : realize v 1 = realize v 2 :=
   realize_const_of_cap (fun it hit ↦ threshold_le_one (hT it hit) (hA it hit)) le_rfl
@@ -83,7 +77,6 @@ theorem realize_const_of_terminal_adjacent {v : RuleSet (SpanRule 3 F)}
 
 /-! ### Completeness: Elsewhere-generable = contiguous -/
 
-/-- A terminal rule conditioned on grade `s` has threshold `s`. -/
 theorem threshold_ofPattern {p : Paradigm n F} {s : Fin n} :
     (⟨p s, ⟨0, s.pos⟩, some s⟩ : SpanRule n F).threshold = s :=
   max_eq_right (Fin.le_def.mpr (Nat.zero_le _))
@@ -167,9 +160,6 @@ theorem isContiguous_iff_generable (p : Paradigm n F) :
 
 /-! ### Three-grade hierarchies: *AAB and the portmanteau prediction -/
 
-/-- Over the three-grade degree hierarchy, a grounded antihomophonous rule set that realizes
-the positive and the comparative alike and realizes the superlative realizes all three alike, so
-*good – gooder – best* is not generable. This is *AAB ([bobaljik-2012] ch. 5). -/
 theorem realize_const_of_grounded {v : RuleSet (SpanRule 3 F)}
     (hv : v.Antihomophonous) (hG : Grounded v)
     (h01 : realize v 0 = realize v 1) (h2 : (realize v 2).isSome) :
@@ -298,8 +288,6 @@ full. -/
 def SupersetSpellable (p : Paradigm n F) : Prop :=
   ∃ v : RuleSet (SupersetRule n F), v.Antihomophonous ∧ ∀ g, spellout v g = some (p g)
 
-/-- A fully realized pattern arises from Superset spellout over an antihomophonous lexicon iff it
-is contiguous, [caha-2009]'s Universal Contiguity sharpened to exact generative capacity. -/
 theorem isContiguous_iff_spelloutGenerable (p : Paradigm n F) :
     IsContiguous p ↔ SupersetSpellable p := by
   classical
@@ -309,9 +297,6 @@ theorem isContiguous_iff_spelloutGenerable (p : Paradigm n F) :
   rw [← isContiguous_comp_iff (Option.some_injective F), ← h]
   exact isContiguous_spellout hv
 
-/-- DM and nanosyntax are equigenerative over linear containment hierarchies. Superset spellout
-and Elsewhere insertion from terminal rule sets generate exactly the same fully realized
-patterns, the contiguous ones. -/
 theorem spelloutGenerable_iff_generable (p : Paradigm n F) :
     SupersetSpellable p ↔ ElsewhereGenerable p :=
   (isContiguous_iff_spelloutGenerable p).symm.trans (isContiguous_iff_generable p)

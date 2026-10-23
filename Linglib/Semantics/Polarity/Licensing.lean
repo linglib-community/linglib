@@ -101,8 +101,6 @@ private theorem licenses_classical {F : OperatorFamily} {s₀ : Negation.Strengt
 private theorem le_weak_iff {s : Negation.Strength} : s ≤ .weak ↔ s = .weak := by
   cases s <;> decide
 
-/-- A licenser that is non-trivially downward entailing modulo presupposition, and not outright
-with its direct implicature factored in, licenses exactly the weak items. -/
 private theorem licenses_weak (hfc : ¬ L.LicensesFreeChoice)
     (hrel : ¬ L.LicensesByRelevance) (hde : L.IsStrawsonDE)
     (hn : ¬ L.IsStrawsonUE) (hx : ¬ L.exhaustified.Holds .anti) :
@@ -138,8 +136,6 @@ instance [DecidablePred L.Licenses] [DecidablePred L.AntiLicenses] : DecidablePr
 
 /-! ### The theory -/
 
-/-- An item needing a strength above weak, and not a free choice item, is licensed exactly by the
-contexts whose licenser carries that strength. -/
 theorem licenses_iff_carries {r : Negation.Strength} (he : e.licensor = some r) (hr : r ≠ .weak)
     (hf : ¬ e.IsFCI) : L.Licenses e ↔ L.Carries r := by
   refine ⟨?_, fun h ↦ .inl ⟨r, he, h⟩⟩

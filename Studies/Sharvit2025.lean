@@ -94,8 +94,6 @@ def ifKP (p q : TwoDim W (W → Prop)) : TwoDim W (W → Prop) where
   atIssue _ := ∀ w' ∈ EP, p.atIssue w' → q.atIssue w'
   notAtIssue w := p.notAtIssue w ∧ (p.atIssue w → q.notAtIssue w)
 
-/-- Where the antecedent is false, the K/P conditional presupposes nothing of its consequent,
-which is why the Proviso Problem finds its conditional presupposition too weak. -/
 theorem ifKP_notAtIssue_of_not_atIssue {p : TwoDim W (W → Prop)} (q : TwoDim W (W → Prop))
     {w : W} (hp : p.notAtIssue w) (h : ¬ p.atIssue w) : (ifKP EP p q).notAtIssue w :=
   ⟨hp, fun ha ↦ absurd ha h⟩
@@ -142,7 +140,6 @@ theorem orKPstar_notAtIssue (p q : TwoDim W (W → Prop)) (w : W) :
           clos EP sim w {w' | q.notAtIssue w' ∧ ¬ q.atIssue w'} ⊆ {w' | p.notAtIssue w'}) := by
   simp [orKPstar, andKPstar, definedFalse]
 
-/-- The K/P* disjunction is symmetric by construction. -/
 theorem orKPstar_comm (p q : TwoDim W (W → Prop)) : orKPstar EP sim p q = orKPstar EP sim q p :=
   TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext (and_congr or_comm and_comm))
 
@@ -239,14 +236,11 @@ theorem forallOverIf_atIssue (α β : Property W E) (x y : E) (w : W)
     · simpa [orProps] using hα
     · simpa [orProps] using hβ
 
-/-- The type-flexible disjunction is symmetric, the K/P* disjunction under it being so. -/
 theorem orProps_comm (α β : Property W E) (x : E) :
     orProps EP sim α β x = orProps EP sim β α x := by
   funext Z
   simp only [orProps, orKPstar_comm EP sim (α x), or_comm (a := Z = α)]
 
-/-- The disjunction being symmetric, *If x is P or Q, then y is* and *If x is Q or P, then y
-is* share their ∀-over-if reading. -/
 theorem forallOverIf_comm (α β : Property W E) (x y : E) :
     forallOverIf EP sim α β x y = forallOverIf EP sim β α x y := by
   rw [forallOverIf, orProps_comm, forallOverIf]
@@ -326,9 +320,6 @@ theorem roothPartee_notAtIssue (mia sue : E) (w : W) :
     exact h
   · exact fun h ↦ ⟨orKPstar_penniless_proud EP sim hasMoney proudOf mia w, fun _ _ ↦ trivial, h⟩
 
-/-- Across the worlds of the epistemic state where Mia has money, if the laws allow Mia to be
-proud of her money while Sue has none, the reading presupposes that Sue has money, that is, *if
-Mia has money, Sue has money* ((146a-II), (135a-iii)). -/
 theorem roothPartee_notAtIssue_strengthens (mia sue : E)
     (hlaw : ∀ w ∈ EP ∩ {w | hasMoney w mia}, ¬ hasMoney w sue →
       ¬ clos EP sim w {w' | proudOf w' mia} ⊆ {w' | hasMoney w' sue})

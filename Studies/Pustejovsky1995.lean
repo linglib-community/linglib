@@ -155,13 +155,10 @@ def Applies (f : SemType × SemType) (α : Entry) : Option Shifter → Prop
 instance (f : SemType × SemType) (α : Entry) : DecidablePred (Applies f α) := λ σ => by
   cases σ <;> unfold Applies <;> infer_instance
 
-/-- A coerced reading exists exactly when an alias of the selected type is available, the
-condition on which the paper makes coercion succeed. -/
 theorem exists_coerced_iff_alias (f : SemType × SemType) (α : Entry) :
     (∃ σ, Applies f α (some σ)) ↔ Alias α f.1 :=
   Iff.rfl
 
-/-- A subtype coercion never leaves the lattice: its result lies above the entry's type. -/
 theorem subtype_within_lattice (α : Entry) {t t' : SemType}
     (h : (Shifter.subtype t).result α = some t') : α.type ≤ t' := by
   by_cases hle : α.type ≤ t
@@ -201,9 +198,6 @@ theorem begin_book_readings (σ : Option Shifter) :
     | subtype t => cases t <;> decide
     | quale r => cases r <;> decide
 
-/-- The qualia projections of *book* leave the type lattice: an event lies above neither book
-nor any of its supertypes, which is what distinguishes true complement coercion from subtype
-coercion. -/
 theorem book_qualia_leave_lattice (r : QualeRole) {t : SemType}
     (h : (Shifter.quale r).result book = some t) : ¬ book.type ≤ t := by
   cases r <;> simp [Shifter.result, book] at h <;> subst h <;> decide
@@ -234,8 +228,6 @@ def Model.telicReading (M : Model) (b : M.Entity) : M.Entity → M.Event → Pro
 def Model.agentiveReading (M : Model) (b : M.Entity) : M.Entity → M.Event → Prop :=
   λ x e => M.write e x b
 
-/-- On a model with an event that is a reading of the book by `x` and not a writing of it, the
-two readings of *began a book* are distinct predicates: the ambiguity is genuine. -/
 theorem telic_ne_agentive (M : Model) {b x : M.Entity} {e : M.Event} (h : M.read e x b)
     (h' : ¬ M.write e x b) : M.telicReading b ≠ M.agentiveReading b := by
   intro heq

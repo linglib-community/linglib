@@ -77,14 +77,11 @@ def juror₂ : Suspect → ℕ
   | .c => 1
   | .b => 2
 
-/-- The jurors share a belief set. -/
 theorem jurors_bel :
     (spohnRevision Suspect).bel juror₁ = (spohnRevision Suspect).bel juror₂ := by
   ext w
   cases w <;> simp [spohnRevision, juror₁, juror₂]
 
-/-- Told that A is innocent, the jurors part, the first blaming B and the second not, so revision
-cannot be a function of the belief set. -/
 theorem jurors_revise :
     Suspect.b ∈
         (spohnRevision Suspect).bel ((spohnRevision Suspect).revise juror₁ {w | w ≠ .a}) ∧
@@ -244,8 +241,6 @@ theorem spohn_table₇ : spohn table₇ μ₇ = table₇' := by
   match w with
   | 0 | 1 | 2 => simp only [spohn, aPart, h]; simp [μ₇, table₇, table₇']
 
-/-- Spohn's revision violates (C6): revising `table₇` by `μ₇` ties the disbelieved `μ`-world `1`
-with the non-`μ`-world `2` that was strictly more plausible. -/
 theorem not_spohnRevision_c6 : ¬ (spohnRevision (Fin 3)).C6 := by
   intro h
   have hlt := spohnRevision_faithful.c6_iff.1 h table₇ μ₇ 2 (by simp) 1

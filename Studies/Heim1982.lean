@@ -120,13 +120,10 @@ theorem unary_eq_atomVar (N : M → Prop) (i : ℕ) : (unary N i : FCP W ℕ M) 
 
 /-! ### The Extended Novelty-Familiarity-Condition -/
 
-/-- An indefinite is defined exactly when its card is novel. -/
 theorem admits_indef (i : ℕ) (N : M → Prop) (F : File W M) :
     (indef i N).fcp.Admits F ↔ State.Novel F i :=
   (FCP.admits_indef _).trans ⟨fun ⟨h, _⟩ ↦ h, fun h ↦ ⟨h, trivial⟩⟩
 
-/-- A definite is defined exactly when its card is familiar and the file
-entails its descriptive content. -/
 theorem admits_defNP (i : ℕ) (N : M → Prop) (F : File W M) :
     (defNP i N).fcp.Admits F ↔
       State.Familiar F i ∧ (unary N i).supports F :=
@@ -138,16 +135,12 @@ theorem supports_unary_true (F : File W M) {i : ℕ} (h : State.Familiar F i) :
   exact congrArg Part.some (Set.sep_eq_self_iff_mem_true.mpr fun p hp ↦
     let ⟨m, hm⟩ := Flat.ne_bot_iff_exists.1 (h p hp); ⟨m, hm, trivial⟩)
 
-/-- A pronoun at a familiar card changes nothing. -/
 theorem fcp_pro (F : File W M) {i : ℕ} (h : State.Familiar F i) : (pro i).fcp F = Part.some F :=
   FCP.def_apply _ ⟨h, supports_unary_true F h⟩
 
-/-- A pronoun is defined exactly when its card is familiar. -/
 theorem admits_pro (F : File W M) (i : ℕ) : (pro i).fcp.Admits F ↔ State.Familiar F i :=
   ⟨fun ⟨h, _⟩ ↦ h.1, fun h ↦ by rw [PartialUpdate.Admits, fcp_pro F h]; trivial⟩
 
-/-- The file change of an indefinite at a novel card: random assignment then
-filtering. -/
 theorem fcp_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel F i) :
     (indef i N).fcp F = Part.some {p ∈ F.randomAssign i | ∃ m : M, p.assignment i = ↑m ∧ N m} := by
   show FCP.indef i (unary N i) F = _
@@ -174,7 +167,6 @@ theorem mem_fcp_every {φ₁ φ₂ : LF M} {F F' : File W M} :
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦ exists_congr fun _ ↦
     and_congr_right fun _ ↦ eq_comm
 
-/-- The universal quantifier tests the file: its output is a subset. -/
 theorem subset_of_mem_fcp_every {φ₁ φ₂ : LF M} {F F' : File W M}
     (h : F' ∈ (every φ₁ φ₂).fcp F) : F' ⊆ F := by
   obtain ⟨_, -, _, -, rfl⟩ := mem_fcp_every.mp h
@@ -206,9 +198,6 @@ theorem every_eq_cond (φ₁ φ₂ : LF M) :
      fun h hq hpq ↦ Classical.byContradiction fun hne ↦
       h ⟨hq, fun r hr hqr ↦ hne ⟨r, hr, hqr⟩⟩ hpq⟩
 
-/-- Felicity conditions of a quantified formula project as those of a
-conditional: the restrictive term must be felicitous in the file, the nuclear
-scope in the file updated with it. -/
 theorem admits_every (φ₁ φ₂ : LF M) (F : File W M) :
     (every φ₁ φ₂).fcp.Admits F ↔ ∃ h : φ₁.fcp.Admits F, φ₂.fcp.Admits ((φ₁.fcp F).get h) := by
   rw [every_eq_cond]; exact FCP.admits_cond
@@ -219,7 +208,6 @@ Every rule only adds information, so a card once established stays
 established; the cards a rule can add are those the logical form introduces,
 so a card it does not introduce stays novel. -/
 
-/-- Principle (A): every rule is eliminative in the informativeness order. -/
 theorem fcp_isEliminative : ∀ φ : LF M, (φ.fcp : FCP W ℕ M).IsEliminative
   | atom _ _ => FCP.isEliminative_ofState _
   | indef i _ => (FCP.isEliminative_ofState _).indef i
@@ -232,23 +220,19 @@ theorem fcp_isEliminative : ∀ φ : LF M, (φ.fcp : FCP W ℕ M).IsEliminative
 theorem fcp_empty (φ : LF M) {F' : File W M} (h : F' ∈ φ.fcp ∅) : F' = ∅ :=
   (fcp_isEliminative φ).eq_empty_of_mem h
 
-/-- A card, once established, stays established. -/
 theorem familiar_of_mem {φ : LF M} {F F' : File W M} {j : ℕ} (hj : State.Familiar F j)
     (h : F' ∈ φ.fcp F) : State.Familiar F' j :=
   (fcp_isEliminative φ).familiar hj h
 
-/-- An indefinite establishes its card. -/
 theorem familiar_of_mem_indef {F F' : File W M} {i : ℕ} {N : M → Prop}
     (h : F' ∈ (indef i N).fcp F) : State.Familiar F' i := by
   obtain ⟨-, rfl⟩ := mem_fcp_indef.mp h
   exact (State.familiar_randomAssign F i).mono fun _ hp ↦ hp.1
 
-/-- A card not among an atom's is novel at its proposition state. -/
 theorem novel_atomState {ζ : (Fin n → M) → Prop} {args : Fin n → ℕ} {j : ℕ}
     (hj : j ∉ Set.range args) : State.Novel (atomState (W := W) ζ args) j :=
   fun _ ⟨hq, _⟩ ↦ by_contra fun hd ↦ hj (hq ▸ Possibility.mem_domain.mpr hd)
 
-/-- A card a logical form does not introduce stays novel. -/
 theorem novel_of_mem : ∀ {φ : LF M} {F F' : File W M} {j : ℕ}, j ∉ φ.cards →
     State.Novel F j → F' ∈ φ.fcp F → State.Novel F' j
   | atom _ _, _, _, _, hj, hF, h => FCP.mem_ofState.mp h ▸ hF.mul (novel_atomState hj)
@@ -272,8 +256,6 @@ file is true, i.e. has a satisfying point (`FCP.trueIn`). No existential
 closure is needed: a novel card ranges over the whole domain, a familiar one
 over the values its card admits. -/
 
-/-- A free indefinite has existential force: "A woman₁ …" is true w.r.t. a
-true file iff some individual is a woman. -/
 theorem trueIn_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel F i) :
     FCP.trueIn F (indef i N).fcp ↔ F.Nonempty ∧ ∃ m, N m := by
   simp only [FCP.trueIn, fcp_indef N h, Part.mem_some_iff, exists_eq_left]
@@ -285,8 +267,6 @@ theorem trueIn_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel 
   · rintro ⟨⟨q, hq⟩, m, hN⟩
     exact ⟨q.update i ↑m, ⟨q, hq, m, rfl⟩, m, by simp [Possibility.update], hN⟩
 
-/-- A definite has the force of its card: "She₁ is a woman" is true w.r.t. a
-file iff some point's value at card 1 is a woman. -/
 theorem trueIn_pro_pred {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Familiar F i) :
     FCP.trueIn F ((pro i).seq (pred₁ N i)).fcp ↔ ∃ p ∈ F, ∃ m : M, p.assignment i = ↑m ∧ N m := by
   have : ((pro i).seq (pred₁ N i)).fcp F = FCP.atomVar N i F := by

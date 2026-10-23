@@ -85,13 +85,10 @@ performance reenacts. -/
 def quoteReport (reenact : E → P → Prop) (prop : P → Prop) (u : P) (e : E) : Prop :=
   speechVerb reenact prop e ∧ quote reenact u e
 
-/-- Quoting a performance that lacks the verb's property is contradictory. -/
 theorem not_quoteReport {reenact : E → P → Prop} {prop : P → Prop} {u : P} (h : ¬ prop u)
     (e : E) : ¬ quoteReport reenact prop u e :=
   λ ⟨hv, hr⟩ => h (hv u hr)
 
-/-- With the reenactment relation free, a quotative report of an event is satisfiable exactly
-when the performance has the verb's property. -/
 theorem exists_reenact_iff (prop : P → Prop) (u : P) (e : E) :
     (∃ reenact : E → P → Prop, quoteReport reenact prop u e) ↔ prop u :=
   ⟨λ ⟨_, hv, hr⟩ => hv u hr, λ h => ⟨λ _ v => v = u, λ _ hv => hv ▸ h, rfl⟩⟩
@@ -101,8 +98,6 @@ sort. -/
 def ContentSort (V : E → Prop) (content : E → δ → Prop) (sort : δ → Prop) : Prop :=
   ∀ e d, V e → content e d → sort d
 
-/-- An ordinary complement of the wrong sort, such as a proposition under *ask*, is contradictory.
--/
 theorem not_thatClause {V : E → Prop} {content : E → δ → Prop} {sort : δ → Prop}
     (hV : ContentSort V content sort) {d : δ} (hd : ¬ sort d) (e : E) :
     ¬ (V e ∧ thatClause content d e) :=
@@ -197,8 +192,6 @@ private theorem not_assertion_of_stack {u : Performance W}
   λ ha => let ⟨q, hi, _⟩ := ha Table.empty
     List.cons_ne_nil (Question.ofSet q) [] ((h _).symm.trans hi).symm
 
-/-- A performance is an asking exactly when it utters a rising declarative or an
-interrogative. -/
 theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.Resp
   | ⟨.none, _⟩ | ⟨.inarticulate, _⟩ => iff_of_false (not_asking_of_stack λ _ => rfl) id
   | ⟨.utterance ⟨.declarative, p, false⟩, _⟩ =>
@@ -220,7 +213,6 @@ theorem Performance.asking_iff : ∀ u : Performance W, u.Asking ↔ u.material.
   | ⟨.utterance ⟨.exclamative, _, _⟩, _⟩ =>
     iff_of_false (not_asking_of_stack λ _ => rfl) (by simp [Material.Resp])
 
-/-- A performance is an assertion exactly when it utters a falling declarative. -/
 theorem Performance.assertion_iff : ∀ u : Performance W, u.Assertion ↔ u.material.Assertive
   | ⟨.none, _⟩ | ⟨.inarticulate, _⟩ => iff_of_false (not_assertion_of_stack λ _ => rfl) id
   | ⟨.utterance ⟨.declarative, p, false⟩, _⟩ =>
@@ -244,7 +236,6 @@ instance (u : Performance W) : Decidable u.Asking := decidable_of_iff _ u.asking
 instance (u : Performance W) : Decidable u.Assertion :=
   decidable_of_iff _ u.assertion_iff.symm
 
-/-- An assertion is not an asking, since it commits its speaker to a resolution of its issue. -/
 theorem Performance.not_asking_of_assertion {u : Performance W} (h : u.Assertion) :
     ¬ u.Asking := by
   rw [assertion_iff] at h
@@ -284,23 +275,17 @@ instance (v : Verb) (u : Performance W) : Decidable (v.property u) := by
 
 variable {reenact : E → Performance W → Prop} {v : Volume} (p : Set W) (e : E)
 
-/-- Karate gestures under *say* are contradictory, since a saying is reenacted only by linguistic
-material. -/
 theorem say_gesture : ¬ quoteReport reenact Verb.say.property ⟨.none, v⟩ e :=
   not_quoteReport id e
 
-/-- A whispered performance under *yell* is contradictory. -/
 theorem yell_whispered (s : Material W) :
     ¬ quoteReport reenact Verb.yell.property ⟨s, .whispered⟩ e :=
   not_quoteReport (by simp [Verb.property]) e
 
-/-- A rising declarative under *assert* is contradictory, since its utterance is no assertion. -/
 theorem assert_risingDeclarative :
     ¬ quoteReport reenact Verb.assert.property ⟨.utterance ⟨.declarative, p, true⟩, v⟩ e :=
   not_quoteReport (λ h => by simpa [Material.Assertive] using (Performance.assertion_iff _).1 h) e
 
-/-- A rising declarative under *ask* is satisfiable, whatever proposition it denotes, since its
-utterance is an asking. -/
 theorem ask_risingDeclarative :
     ∃ reenact : E → Performance W → Prop,
       quoteReport reenact Verb.ask.property ⟨.utterance ⟨.declarative, p, true⟩, v⟩ e :=

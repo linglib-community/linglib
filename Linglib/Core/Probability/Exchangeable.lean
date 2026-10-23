@@ -48,8 +48,6 @@ open MeasureTheory
 
 namespace ProbabilityTheory
 
-/-- On a countable space with measurable singletons, a measure is invariant under a group action
-as soon as moving a point never changes its mass. -/
 theorem smulInvariantMeasure_of_measure_singleton {G X : Type*} [Group G] [MulAction G X]
     [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X] {ν : Measure X}
     (h : ∀ (g : G) (x : X), ν {g • x} = ν {x}) : SMulInvariantMeasure G X ν := by
@@ -67,8 +65,6 @@ acting by precomposition, leaves it unchanged. -/
 abbrev Exchangeable (μ : Measure (ι → α)) : Prop :=
   SMulInvariantMeasure (Equiv.Perm ι)ᵈᵐᵃ (ι → α) μ
 
-/-- On a countable space with measurable singletons, a law is exchangeable as soon as permuting a
-point never changes its mass. -/
 theorem exchangeable_of_measure_singleton [Countable (ι → α)] [MeasurableSingletonClass (ι → α)]
     (h : ∀ (x : ι → α) (σ : Equiv.Perm ι), μ {x ∘ σ} = μ {x}) : Exchangeable μ :=
   smulInvariantMeasure_of_measure_singleton fun c x ↦ h x (DomMulAct.mk.symm c)

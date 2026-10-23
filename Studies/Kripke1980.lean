@@ -41,25 +41,21 @@ def deDicto (P : E → W → Prop) (t : W → E) (w : W) : Prop := P (t w) w
 /-- The de re reading: the designator is evaluated at the actual world `w₀`. -/
 def deRe (P : E → W → Prop) (t : W → E) (w₀ w : W) : Prop := P (t w₀) w
 
-/-- A designator is rigid iff every predication of it reads the same de re and de dicto. -/
 theorem isRigid_iff_deRe_iff_deDicto (t : W → E) (w₀ : W) :
     IsRigid t ↔ ∀ (P : E → W → Prop) (w : W), deRe P t w₀ w ↔ deDicto P t w := by
   refine ⟨λ h P w => by rw [deRe, deDicto, h w₀ w], λ h w₁ w₂ => ?_⟩
   exact ((h (λ e _ => e = t w₀) w₁).1 rfl).trans ((h (λ e _ => e = t w₀) w₂).1 rfl).symm
 
-/-- A designator that varies is separated by the predicate of being its actual referent. -/
 theorem exists_deRe_not_deDicto (h : t w₁ ≠ t w₀) :
     ∃ P : E → W → Prop, deRe P t w₀ w₁ ∧ ¬ deDicto P t w₁ :=
   ⟨λ e _ => e = t w₀, rfl, h⟩
 
-/-- The modal argument: a rigid name is not a description that varies. -/
 theorem modal_argument (h : IsRigid name) (hv : desc w₁ ≠ desc w₂) : name ≠ desc :=
   λ e => hv ((e ▸ h) w₁ w₂)
 
 /-- An essential property of `e` holds of it at every world. -/
 def IsEssential (e : E) (P : E → W → Prop) : Prop := ∀ w, P e w
 
-/-- A rigid designator of `e` carries `e`'s essential properties to every world. -/
 theorem IsEssential.of_isRigid (hP : IsEssential e P) (ht : IsRigid t) (h : t w₀ = e) (w : W) :
     P (t w) w := by
   rw [(ht w w₀).trans h]

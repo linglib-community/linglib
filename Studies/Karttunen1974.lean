@@ -51,14 +51,12 @@ def presupposition : Prop := Tense.beforeEver A B ∨ when_ A B
 theorem until_veridical_complement : until_ A B → ∃ t, t ∈ timeTrace B :=
   fun ⟨t, _, ht⟩ ↦ ⟨t, ht⟩
 
-/-- Every time of `A` is one at which `B` holds or has held. -/
 theorem notUntil_iff : notUntil A B ↔ timeTrace A ⊆ upperClosure (timeTrace B) := by
   rw [notUntil, beforeEver_iff_not_subset_upperClosure, not_not]
 
 /-- Denying *A not until B* is asserting *A before B*, (30)–(31). -/
 theorem not_notUntil_iff : ¬ notUntil A B ↔ Tense.beforeEver A B := not_not
 
-/-- The logical form holds of a clause that never happens. -/
 theorem notUntil_empty : notUntil (∅ : Set (NonemptyInterval T)) B :=
   fun ⟨_, ⟨_, hi, _⟩, _⟩ ↦ hi
 

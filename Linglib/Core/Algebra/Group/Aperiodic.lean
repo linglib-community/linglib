@@ -52,19 +52,16 @@ def IsAperiodic : Prop := ∃ n : ℕ, ∀ x : M, x ^ (n + 1) = x ^ n
 
 variable {M}
 
-/-- A subsingleton monoid is aperiodic (take `n = 0`). -/
 @[to_additive]
 theorem IsAperiodic.of_subsingleton [Subsingleton M] : IsAperiodic M :=
   ⟨0, fun _ ↦ Subsingleton.elim _ _⟩
 
-/-- If `x ^ (n + 1) = x ^ n` then the power stabilizes at every `m ≥ n`. -/
 @[to_additive]
 theorem pow_succ_stabilizes {x : M} {n : ℕ} (h : x ^ (n + 1) = x ^ n) :
     ∀ m, n ≤ m → x ^ (m + 1) = x ^ m := by
   refine fun m hm ↦ Nat.le_induction h (fun k _ hk ↦ ?_) m hm
   rw [pow_succ x (k + 1), hk, ← pow_succ, hk]
 
-/-- A finite monoid is aperiodic exactly when the powers of each element stabilize. -/
 @[to_additive]
 theorem isAperiodic_iff_forall_exists [Finite M] :
     IsAperiodic M ↔ ∀ x : M, ∃ n : ℕ, x ^ (n + 1) = x ^ n := by
@@ -73,7 +70,6 @@ theorem isAperiodic_iff_forall_exists [Finite M] :
   obtain ⟨x₀, hx₀⟩ := Finite.exists_max n
   exact ⟨n x₀, fun x ↦ pow_succ_stabilizes (hn x) _ (hx₀ x)⟩
 
-/-- In an aperiodic monoid, an idempotent positive power of `x` absorbs `x`. -/
 theorem IsAperiodic.pow_mul_eq_of_isIdempotentElem (h : IsAperiodic M) {x : M} {n : ℕ}
     (hn : n ≠ 0) (he : IsIdempotentElem (x ^ n)) : x ^ n * x = x ^ n := by
   obtain ⟨N, hN⟩ := h
@@ -81,7 +77,6 @@ theorem IsAperiodic.pow_mul_eq_of_isIdempotentElem (h : IsAperiodic M) {x : M} {
   exact pow_succ_stabilizes (hN x) _
     (N.le_succ.trans (Nat.le_mul_of_pos_left _ (Nat.pos_of_ne_zero hn)))
 
-/-- Aperiodicity passes along a surjective monoid hom, with the same exponent. -/
 @[to_additive]
 theorem IsAperiodic.of_surjective {N : Type*} [Monoid N] {f : M →* N}
     (hf : Function.Surjective f) (hM : IsAperiodic M) : IsAperiodic N := by
@@ -90,14 +85,12 @@ theorem IsAperiodic.of_surjective {N : Type*} [Monoid N] {f : M →* N}
   obtain ⟨x, rfl⟩ := hf y
   rw [← map_pow, ← map_pow, hn]
 
-/-- Aperiodicity pulls back along an injective monoid hom, with the same exponent. -/
 @[to_additive]
 theorem IsAperiodic.of_injective {N : Type*} [Monoid N] {f : M →* N}
     (hf : Function.Injective f) (hN : IsAperiodic N) : IsAperiodic M := by
   obtain ⟨n, hn⟩ := hN
   exact ⟨n, fun x ↦ hf (by rw [map_pow, map_pow, hn])⟩
 
-/-- A binary product of aperiodic monoids is aperiodic (take the larger exponent). -/
 @[to_additive]
 theorem IsAperiodic.prod {N : Type*} [Monoid N] (hM : IsAperiodic M) (hN : IsAperiodic N) :
     IsAperiodic (M × N) := by
@@ -107,7 +100,6 @@ theorem IsAperiodic.prod {N : Type*} [Monoid N] (hM : IsAperiodic M) (hN : IsApe
   · exact pow_succ_stabilizes (hnM x.1) _ (le_max_left _ _)
   · exact pow_succ_stabilizes (hnN x.2) _ (le_max_right _ _)
 
-/-- Aperiodicity transports across a monoid isomorphism. -/
 @[to_additive]
 theorem IsAperiodic.of_mulEquiv {N : Type*} [Monoid N] (e : M ≃* N) (hM : IsAperiodic M) :
     IsAperiodic N :=

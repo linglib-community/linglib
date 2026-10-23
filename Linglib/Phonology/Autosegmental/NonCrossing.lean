@@ -111,7 +111,6 @@ theorem isNonCrossing_image [Preorder ι] [Preorder κ] {R : SetRel ι' κ'}
 section LinearOrder
 variable [LinearOrder ι] [LinearOrder κ] {R : SetRel ι κ}
 
-/-- On linear tiers, a relation is non-crossing iff it is a chain in the componentwise order. -/
 theorem isNonCrossing_iff_isChain : IsNonCrossing R ↔ IsChain (· ≤ ·) R := by
   refine ⟨fun h a ha b hb _ ↦ ?_, fun h a ha b hb hab ↦ ?_⟩
   · rcases lt_trichotomy a.1 b.1 with hab | hab | hab
@@ -121,7 +120,6 @@ theorem isNonCrossing_iff_isChain : IsNonCrossing R ↔ IsChain (· ≤ ·) R :=
   · exact ((h ha hb fun h ↦ hab.ne (congrArg Prod.fst h)).resolve_right
       fun hba ↦ hba.1.not_gt hab).2
 
-/-- On linear tiers, the inverse of a non-crossing relation is non-crossing. -/
 @[simp] theorem isNonCrossing_inv : IsNonCrossing R.inv ↔ IsNonCrossing R := by
   rw [IsNonCrossing, SetRel.inv, ← image_swap_eq_preimage_swap, monovaryOn_image]
   exact monovaryOn_comm
@@ -155,7 +153,6 @@ theorem notMem_window_of_mem_image_Iio (hx : x ∈ R.image (Iio m)) (h : j < x) 
 theorem notMem_window_of_mem_image_Ioi (hx : x ∈ R.image (Ioi m)) (h : x < j) :
     j ∉ window R m := fun hj ↦ (hj.2 hx).not_gt h
 
-/-- A line can be added iff it ends in its node's window. -/
 theorem isNonCrossing_insert_iff_mem_window :
     IsNonCrossing (insert (m, j) R) ↔ IsNonCrossing R ∧ j ∈ window R m := by
   rw [isNonCrossing_insert_iff, mem_window_iff]
@@ -165,8 +162,6 @@ theorem IsNonCrossing.insert_of_mem_window (h : IsNonCrossing R) (hj : j ∈ win
     IsNonCrossing (insert (m, j) R) :=
   isNonCrossing_insert_iff_mem_window.2 ⟨h, hj⟩
 
-/-- In a non-crossing relation, every position linked from the left of `m` lies at or before
-every position linked from its right. -/
 theorem IsNonCrossing.le_of_mem_image (h : IsNonCrossing R) (hx : x ∈ R.image (Iio m))
     (hy : y ∈ R.image (Ioi m)) : x ≤ y := by
   obtain ⟨n, hn, hx⟩ := hx
@@ -237,8 +232,6 @@ theorem IsNonCrossing.mem_window_of_rightBound_eq (h : IsNonCrossing (links : Se
   · rw [← coe_rightIndices]; exact Finset.mem_of_min hj
   · rwa [← Finset.mem_coe, coe_rightIndices]
 
-/-- Lines from any nodes to the nearest position linked left of each cross neither one another
-nor the lines of a non-crossing set, so spreading to the left never crosses. -/
 theorem IsNonCrossing.union_of_leftBound [DecidableEq ι] (h : IsNonCrossing (links : SetRel ι κ))
     {s : Finset (ι × κ)} (hs : ∀ p ∈ s, leftBound links p.1 = p.2) :
     IsNonCrossing ((links ∪ s : Finset (ι × κ)) : SetRel ι κ) := by
@@ -248,8 +241,6 @@ theorem IsNonCrossing.union_of_leftBound [DecidableEq ι] (h : IsNonCrossing (li
   exact WithBot.coe_le_coe.1
     ((hs p hp).symm.trans_le ((leftBound_mono hpq.le).trans_eq (hs q hq)))
 
-/-- Lines from any nodes to the nearest position linked right of each cross neither one another
-nor the lines of a non-crossing set, so spreading to the right never crosses. -/
 theorem IsNonCrossing.union_of_rightBound [DecidableEq ι]
     (h : IsNonCrossing (links : SetRel ι κ)) {s : Finset (ι × κ)}
     (hs : ∀ p ∈ s, rightBound links p.1 = p.2) :

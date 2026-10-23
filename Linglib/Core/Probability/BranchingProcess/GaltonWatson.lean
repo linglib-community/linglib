@@ -157,8 +157,6 @@ instance [IsMarkovKernel κ] : IsMarkovKernel (fillList κ) :=
     obtain ⟨c, -, rfl⟩ := List.mem_map.mp hμ
     exact isProbabilityMeasure_fill c⟩
 
-/-- A list of subtrees whose root types do not spell out the holes has mass `0`, for any family
-of laws concentrated on trees of the right type. -/
 theorem fillList_map_hole_singleton_of_ne
     (hκ : ∀ i (c : RoseTree ι), c.value ≠ i → κ i {c} = 0) :
     ∀ (js : List ι) (cs : List (RoseTree ι)), cs.map value ≠ js →
@@ -233,7 +231,6 @@ instance [IsMarkovKernel ξ] : IsMarkovKernel (generationList ξ) :=
     obtain ⟨c, -, rfl⟩ := List.mem_map.mp hμ
     exact isProbabilityMeasure_generation ξ c⟩
 
-/-- Filling a list of partial trees after one generation on each. -/
 theorem fillList_comp_generationList {κ : Kernel ι (RoseTree ι)} (ss : List (PartialTree ι)) :
     fillList κ ∘ₘ generationList ξ ss =
       Measure.listProd (ss.map fun s => fill κ ∘ₘ generation ξ s) := by
@@ -274,7 +271,6 @@ theorem expand_apply' (i : ι) (s : Set (RoseTree ι)) :
     lintegral_map (Kernel.measurable_coe _ .of_discrete) .of_discrete]
   simp_rw [fill_inr, Measure.map_apply .of_discrete .of_discrete]
 
-/-- Filling with one more generation is one generation followed by filling. -/
 theorem fill_expand_apply (s : PartialTree ι) : fill (expand ξ κ) s = fill κ ∘ₘ generation ξ s := by
   induction s using RoseTree.rec' with
   | node s cs ih =>
@@ -289,7 +285,6 @@ theorem fill_expand_apply (s : PartialTree ι) : fill (expand ξ κ) s = fill κ
       funext a
       rw [fill_inr]
 
-/-- Filling with one more generation is one generation followed by filling. -/
 theorem fill_expand : fill (expand ξ κ) = fill κ ∘ₖ generation ξ :=
   Kernel.ext fill_expand_apply
 
@@ -355,7 +350,6 @@ theorem coe_iterate_expand : ∀ n : ℕ, ⇑((expand ξ)^[n] 0) = (expandHom ξ
     rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ← coe_iterate_expand n]
     rfl
 
-/-- The law is the supremum of the Kleene iterates of `expand` from the zero kernel. -/
 theorem law_eq_iSup_iterate : ⇑(law ξ) = ⨆ n, ⇑((expand ξ)^[n] 0) := by
   simp_rw [coe_iterate_expand]
   exact OrderHom.lfp_eq_iSup_iterate _ fun c => by
@@ -377,8 +371,6 @@ theorem law_singleton_of_ne {t : RoseTree ι} {i : ι} (h : t.value ≠ i) : law
     exact h rfl
   simp [this]
 
-/-- A list of family trees has probability the product of their weights below the holes it
-spells out, given the singleton law for each of them. -/
 theorem fillList_law_map_hole_singleton {cs : List (RoseTree ι)}
     (h : ∀ c ∈ cs, law ξ c.value {c} = weight ξ c) :
     fillList (law ξ) ((cs.map value).map hole) {cs} = (cs.map (weight ξ)).prod := by
@@ -389,7 +381,6 @@ theorem fillList_law_map_hole_singleton {cs : List (RoseTree ι)}
       Measure.listProd_cons_singleton_cons, fill_hole, h c (List.mem_cons_self ..), List.map_cons,
       List.prod_cons, ← fillList_apply, ih fun d hd => h d (List.mem_cons_of_mem _ hd)]
 
-/-- A family tree of an individual of type `i` has probability `weight` under the law at `i`. -/
 theorem law_singleton_value (t : RoseTree ι) : law ξ t.value {t} = weight ξ t := by
   induction t using RoseTree.rec' with
   | node i cs ih =>
@@ -410,8 +401,6 @@ theorem law_singleton_node (i : ι) (cs : List (RoseTree ι)) :
   law_singleton_value ξ (node i cs)
 
 open scoped Classical in
-/-- Under the law at `i`, a finite tree has probability `weight` when its root has type `i`
-and `0` otherwise. -/
 theorem law_singleton (t : RoseTree ι) (i : ι) :
     law ξ i {t} = if t.value = i then weight ξ t else 0 := by
   split_ifs with h
@@ -438,8 +427,6 @@ theorem iterate_expand_univ_le_one (hξ : ∀ i, ξ i Set.univ ≤ 1) :
     rw [Function.iterate_succ_apply']
     exact expand_univ_le_one hξ (iterate_expand_univ_le_one hξ n) i
 
-/-- With sub-probability offspring, the law on finite family trees is a sub-probability kernel;
-the missing mass is the probability of survival forever. -/
 theorem law_univ_le_one (hξ : ∀ i, ξ i Set.univ ≤ 1) (i : ι) : law ξ i Set.univ ≤ 1 := by
   rw [law_eq_iSup_iterate, iSup_apply,
     Measure.iSup_apply_of_monotone (fun m n h => monotone_iterate_expand ξ h i) .univ]
@@ -453,16 +440,12 @@ noncomputable def extinctionProb (i : ι) : ℝ≥0∞ := law ξ i Set.univ
 
 /-! ### Generations -/
 
-/-- The `n`-th Kleene iterate fills a partial tree exactly as `n` synchronous generations do,
-followed by the completion of what remains. -/
 theorem fill_iterate : ∀ n : ℕ, fill ((expand ξ)^[n] 0) = fill 0 ∘ₖ (generation ξ ^ n)
   | 0 => (comp_id _).symm
   | n + 1 => by
     rw [Function.iterate_succ_apply', fill_expand, fill_iterate n, comp_assoc, pow_succ]
     rfl
 
-/-- The law of the family tree at type `i` is the supremum over `n` of the completed part of
-`n` synchronous generations from a single hole of type `i`. -/
 theorem law_eq_iSup_generation (i : ι) :
     law ξ i = ⨆ n, fill 0 ∘ₘ (generation ξ ^ n) (hole i) := by
   rw [law_eq_iSup_iterate, iSup_apply]
@@ -499,7 +482,6 @@ instance (s : PartialTree ι) : IsProbabilityMeasure (trajectory ξ s) :=
   inferInstanceAs (IsProbabilityMeasure
     (traj (X := fun _ : ℕ => PartialTree ι) (chainKernel ξ) 0 _))
 
-/-- At time `n` the generation chain is distributed as `n` synchronous generations. -/
 theorem trajectory_map_eval (s : PartialTree ι) :
     ∀ n : ℕ, (trajectory ξ s).map (fun ω => ω n) = (generation ξ ^ n) s
   | 0 => by

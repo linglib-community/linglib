@@ -87,9 +87,6 @@ def support (w : List α) : Finset ℕ := (Finset.range w.length).filter (P.Dock
   simp only [support, Finset.mem_filter, Finset.mem_range, and_iff_right_iff_imp]
   exact P.lt_length
 
-/-- The flank-witness template at the docking level. A process that docks a change of the
-filler at a `d`-margined target of a flank word, and does not dock there when either flank
-alone is flipped, requires both sides. -/
 theorem requiresBothSides_of_flanks {fill xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (hfill : P.dock fill ≠ fill) (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
     (hon : ∀ d, P.Docks (flankWord xOn fill yOn (n d)) (t d))
@@ -114,8 +111,6 @@ def ofQF (φ : WindowFormula α) (dock : α → α) : Docking α where
   lt_length h := h.1
   decDocks _ _ := inferInstance
 
-/-- With a guard bounded by `l` back and `r` forward, the output at a position reads only the
-input on that window. -/
 theorem ofQF_map_getElem?_congr {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r) (dock : α → α)
     {w w' : List α} (hag : ∀ j, i - l ≤ j → j ≤ i + r → w[j]? = w'[j]?) :
     ((ofQF φ dock).map w)[i]? = ((ofQF φ dock).map w')[i]? := by
@@ -134,13 +129,11 @@ theorem ofQF_map_getElem?_congr {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bo
     simp [List.getElem?_eq_none (Nat.le_of_not_lt hi),
       List.getElem?_eq_none (Nat.le_of_not_lt hi')]
 
-/-- A quantifier-free docking process with a bounded guard depends boundedly on the left. -/
 theorem ofQF_boundedDependence_left {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r)
     (dock : α → α) : BoundedDependence (ofQF φ dock).map .left :=
   ⟨l, fun _ _ _ h ↦ ofQF_map_getElem?_congr hφ dock fun j h₁ _ ↦
     List.drop_eq_drop_iff_getElem?.mp h j h₁⟩
 
-/-- A quantifier-free docking process with a bounded guard depends boundedly on the right. -/
 theorem ofQF_boundedDependence_right {φ : WindowFormula α} {l r : ℕ} (hφ : φ.Bounded l r)
     (dock : α → α) : BoundedDependence (ofQF φ dock).map .right :=
   ⟨r, fun _ _ _ h ↦ ofQF_map_getElem?_congr hφ dock fun j _ h₂ ↦

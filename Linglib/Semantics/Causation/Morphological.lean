@@ -120,7 +120,6 @@ def causeeDemotion : ℕ → CauseeSlot
   | 2 => .indirectObject
   | _ => .oblique
 
-/-- The higher the base valency, the lower the causee lands. -/
 theorem causeeDemotion_antitoneOn : AntitoneOn causeeDemotion (Set.Ici 1) := by
   rintro (_ | _ | _ | a) ha (_ | _ | _ | b) hb hab <;> simp_all [causeeDemotion] <;> decide
 

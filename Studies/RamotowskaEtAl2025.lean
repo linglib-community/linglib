@@ -122,7 +122,6 @@ structure Mixed : Prop where
   players : ∀ d ∈ D,
     (∃ w' ∈ (ord w).minimals A, w' ∈ B d) ∧ ∃ w' ∈ (ord w).minimals A, w' ∉ B d
 
-/-- Some closest antecedent world exists. -/
 theorem Mixed.closest_nonempty (h : Mixed ord A w D B) : ((ord w).minimals A).Nonempty :=
   let ⟨d, hd⟩ := h.nonempty
   let ⟨⟨w₁, hw₁, _⟩, _⟩ := h.players d hd
@@ -177,8 +176,6 @@ theorem unembedded (h : Mixed ord A w D B) {d : ι} (hd : d ∈ D) :
   exact ⟨hnot, selectionalCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩,
     homogeneityCounterfactual_eq_zero_iff.2 ⟨hnot, hnot'⟩⟩
 
-/-- The universal theory turns on polarity, since every player's counterfactual is false, so the
-positive sentences are false and the negative ones true. -/
 theorem universal_polarity (h : Mixed ord A w D B) (q : Quant) :
     universal ord A w D B q ↔ ¬ q.IsPositive := by
   have hfalse : ∀ d ∈ D, w ∉ closestImp ord A (B d) :=
@@ -211,16 +208,11 @@ theorem selectional_force (h : Mixed ord A w D B) (q : Quant) :
   · exact selectionalCounterfactual_eq_one_iff.2 fun w' hw' ↦ (h.worlds w' hw').1
   · exact selectionalCounterfactual_eq_one_iff.2 fun w' hw' ↦ (h.worlds w' hw').2
 
-/-- No selectional value is a gap, so there is nothing for a question under discussion to
-resolve. -/
 theorem selectional_determinate (h : Mixed ord A w D B) (q : Quant) :
     selectional ord A w D B q ≠ 0 := by
   rw [selectional_force h]
   cases q <;> simp [Quant.force, Force.verdict]
 
-/-- Every player's counterfactual is undefined, so the quantified sentence is undefined under
-either projection algorithm, for every quantifier, and the homogeneity theory leaves the
-sentences to pragmatics. -/
 theorem homogeneity_undefined (h : Mixed ord A w D B) (q : Quant) :
     homogeneity ord A w D B q = 0 := by
   have hv : ∀ d ∈ D, homogeneityCounterfactual ord A (B d) w = 0 := fun d hd ↦
@@ -252,9 +244,6 @@ theorem implicature_notAll (h : Mixed ord A w D B) : ¬ implicature ord A w D B 
 variable [Fintype W] [∀ w, DecidableRel (ord w).le] [DecidablePred (· ∈ A)]
   [∀ d, DecidablePred (· ∈ B d)]
 
-/-- Experiment 2 dissociates the two constructions. At a world where some but not all of the
-players won, the plural definite *the players won* has a gap, while the quantified
-counterfactuals of the same scenario have none. -/
 theorem dissociation (h : Mixed ord A w D B) {v : W}
     (hv : (∃ d ∈ D, v ∈ B d) ∧ ∃ d ∈ D, v ∉ B d) (q : Quant) :
     SignType.supervaluation D (v ∈ B ·) = 0 ∧ selectional ord A w D B q ≠ 0 :=

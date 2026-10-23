@@ -214,8 +214,6 @@ theorem isSubjectOf_iff :
 
 instance : Decidable (r.IsSubjectOf p) := decidable_of_iff' _ isSubjectOf_iff
 
-/-- An argument with no nonspatial source is the subject exactly when subject formation makes it
-a source. -/
 theorem isSubjectOf_iff_isDerivedSourceOf (hr : r ∈ p) (hsrc : ¬ r.HasSourceAt .nonspatial) :
     r.IsSubjectOf p ↔ r.IsDerivedSourceOf p := by
   rw [isSubjectOf_iff, isDerivedSourceOf_iff]
@@ -226,12 +224,10 @@ theorem IsSubjectOf.hasSourceAt_or_isDerivedSourceOf (h : r.IsSubjectOf p) :
   or_iff_not_imp_left.2 fun hsrc ↦
     (isSubjectOf_iff_isDerivedSourceOf (isSubjectOf_iff.1 h).1 hsrc).1 h
 
-/-- Every subject, once formed, bears the nonspatial source, inherent or derived. -/
 theorem IsSubjectOf.hasSourceAt_formSubject (h : r.IsSubjectOf p) :
     (formSubject p r).HasSourceAt .nonspatial :=
   hasSourceAt_formSubject_iff.2 h.hasSourceAt_or_isDerivedSourceOf
 
-/-- A subject is never a nonspatial goal. -/
 theorem IsSubjectOf.not_isGoalAt (h : r.IsSubjectOf p) : ¬ r.IsGoalAt .nonspatial p := fun hg ↦
   h.hasSourceAt_or_isDerivedSourceOf.elim hg.2.1 fun hd ↦ hd.2.2 hg
 
@@ -266,53 +262,40 @@ def subject? (e : Datum) : Option Relation := e.parse? "subject" Relation.labels
 def formedSubject? (e : Datum) : Option Relation := do
   Relation.formSubject (← Predication.ofRow? e) (← subject? e)
 
-/-- The hierarchy selects the subject the book records for each of its examples, and only that
-argument. -/
 theorem rows_subject : ∀ e ∈ Examples.all, e.feature? "subject" ≠ none →
     ∃ p ∈ Predication.ofRow? e, ∃ r ∈ subject? e,
       r.IsSubjectOf p ∧ ∀ s ∈ p, s.IsSubjectOf p → s = r := by
   decide +kernel
 
-/-- The object of *Bill read the book* is a nonspatial goal, so the accusative signals it. -/
 theorem read_object_goal :
     ∃ p ∈ Predication.ofRow? Examples.ex_39a, ∃ r ∈ p, r.IsGoalAt .nonspatial p := by
   decide +kernel
 
-/-- The subject of *Phil suffered (from asthma)* is at once an experiencer and a contactive, and
-its locative is a goal because the ablative is a source. -/
 theorem suffered_subject :
     ∃ p ∈ Predication.ofRow? Examples.ex_34, ∃ r ∈ p, r.IsSubjectOf p ∧
       Relation.experiencer.features ⊆ r.features ∧ Relation.contactive.features ⊆ r.features ∧
         r.IsGoalAt .spatial p := by
   decide +kernel
 
-/-- *À* neutralizes spatial goal and simple location, leaving in common a locative that is not a
-source. -/
 theorem residue_a : ∃ E ∈ relationsOf? Examples.ex_3 "neutralized",
     residue E.toFinset = Relation.locative.cells ∧ ∀ r ∈ E, ¬ r.HasSourceAt .spatial := by
   decide +kernel
 
-/-- The subjects of *Bill read the book*, *flew to China*, *knew the answer*, *acquired a new
-shirt* and *suffered from asthma* leave the ergative in common. -/
 theorem residue_subjects :
     ∃ E ∈ [Examples.ex_39a, Examples.ex_39c, Examples.ex_39h, Examples.ex_39i,
       Examples.ex_39j].mapM subject?, residue E.toFinset = Relation.ergative.cells := by
   decide +kernel
 
-/-- With the subject of *Bill fell to the ground*, the book's subjects share no cell. -/
 theorem residue_subjects_fell :
     ∃ E ∈ [Examples.ex_39a, Examples.ex_39b, Examples.ex_39c, Examples.ex_39h, Examples.ex_39i,
       Examples.ex_39j].mapM subject?, residue E.toFinset = ∅ := by
   decide +kernel
 
-/-- Once formed, the book's subjects share the nonspatial source. -/
 theorem residue_formedSubjects :
     ∃ E ∈ [Examples.ex_39a, Examples.ex_39b, Examples.ex_39c, Examples.ex_39h, Examples.ex_39i,
       Examples.ex_39j].mapM formedSubject?, residue E.toFinset = Relation.ergative.cells := by
   decide +kernel
 
-/-- Subject formation neutralizes agency, since the formed subject of *Bill fell to the ground*
-occupies the cells of the subject of *Bill flew to China* though the two relations differ. -/
 theorem fell_flew_neutralized :
     ∃ r ∈ formedSubject? Examples.ex_39b, ∃ s ∈ subject? Examples.ex_39c,
       r.cells = s.cells ∧ r ≠ s := by

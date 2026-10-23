@@ -139,8 +139,6 @@ namespace SpecificityFunction
 instance : LinearOrder SpecificityFunction :=
   LinearOrder.lift' SpecificityFunction.ctorIdx (by decide)
 
-/-- A set of specificity functions is an interval exactly when it does not have the two ends
-without the middle. -/
 theorem ordConnected_iff {s : Set SpecificityFunction} :
     s.OrdConnected ↔ (specificKnown ∈ s → nonSpecific ∈ s → specificUnknown ∈ s) := by
   refine ⟨fun h hk hn ↦ h.out hk hn ⟨by decide, by decide⟩, fun h ↦ ⟨?_⟩⟩

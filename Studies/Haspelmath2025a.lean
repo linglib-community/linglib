@@ -149,8 +149,6 @@ instance : DecidablePred Predicational
   | attributional => .isTrue trivial
   | hyparctic => .isFalse id
 
-/-- The predicational types are the classificational, attributional, predlocative and
-appertentive ones; the equational, existential, predpossessive and hyparctic types are not. -/
 theorem predicational_iff : t.Predicational ↔
     t = classificational ∨ t = attributional ∨ t = predlocative ∨ t = appertentive := by
   decide +revert
@@ -191,14 +189,9 @@ def IsExistive (S : Set Construction) : Prop := IsCopula S ∧ S ⊆ {existentia
 
 theorem IsCopula.mono (h : S ⊆ T) : IsCopula S → IsCopula T := fun ⟨t, ht, hc⟩ ↦ ⟨t, h ht, hc⟩
 
-/-- A form that occurs in possessional clauses only, as 'have' and 'belong' do, is not a
-copula. -/
 theorem not_isCopula_of_possessional (h : ∀ t ∈ S, t.Possessional) : ¬ IsCopula S :=
   fun ⟨t, ht, hc⟩ ↦ (h t ht).not_copular hc
 
-/-- A form is an existive exactly when it occurs in existential clauses and in no clauses but
-existential and predpossessive ones, since of the two types only the existential defines a
-copula. -/
 theorem isExistive_iff : IsExistive S ↔ existential ∈ S ∧ S ⊆ {existential, predpossessive} := by
   refine ⟨fun ⟨⟨t, ht, hc⟩, h⟩ ↦ ⟨?_, h⟩, fun ⟨h, h'⟩ ↦ ⟨⟨_, h, by decide⟩, h'⟩⟩
   rcases h ht with rfl | rfl
@@ -207,8 +200,6 @@ theorem isExistive_iff : IsExistive S ↔ existential ∈ S ∧ S ⊆ {existenti
 theorem IsExistive.hyparctic_notMem (h : IsExistive S) : hyparctic ∉ S :=
   fun hm ↦ by simpa using h.2 hm
 
-/-- A form that occurs in existential and predpossessive clauses and in no others is an existive,
-and so a copula, also when it is a transitive verb 'have'. -/
 theorem isExistive_pair : IsExistive {existential, predpossessive} :=
   isExistive_iff.2 ⟨by simp, subset_rfl⟩
 
@@ -276,45 +267,32 @@ theorem labels_parse : ∀ row ∈ all,
       ((row.feature? "strategy").isSome → (row.parse? "strategy" strategyNames).isSome) := by
   decide +kernel
 
-/-- Of the seven English examples that introduce the types, the classificational, attributional,
-predlocative and appertentive ones are predicational. -/
 theorem english_predicational :
     [ex1, ex2, ex3, ex4, ex5, ex6, ex7].filter (∃ t ∈ constructions ·, t.Predicational) =
       [ex1, ex3, ex4, ex7] := by
   decide +kernel
 
-/-- Lezgian has one copula in its classificational and its equational clause, Welsh a different
-form of 'be' in each, and Egyptian Arabic a copula in the equational clause alone. -/
 theorem duonominal_coding :
     ex8a.features "bold" = ex8b.features "bold" ∧ ex9a.features "bold" ≠ ex9b.features "bold" ∧
       ex10a.features "bold" = [] ∧ ex10b.features "bold" ≠ [] := by
   decide +kernel
 
-/-- Every example with a form glossed as a copula or a locative copula is of a type that defines
-a copula. -/
 theorem copula_gloss_copular : ∀ row ∈ all,
     (∃ g ∈ row.features "boldGloss", g = "COP" ∨ g = "LCOP") →
       ∀ t ∈ constructions row, t.Copular := by
   decide +kernel
 
-/-- The Mandinka example is predlocative on one of its readings and existential on the other. -/
 theorem mandinka_general_location : constructions ex57 = [predlocative, existential] := by
   decide +kernel
 
-/-- In the Seychelles Creole example a verb glossed 'have' occurs in an existential clause, so by
-`isExistive_pair` it is an existive if its other clauses are predpossessive. -/
 theorem seychelles_have :
     "have" ∈ ex51.features "boldGloss" ∧ constructions ex51 = [existential] := by
   decide +kernel
 
-/-- The forms glossed as existives occur in existential clauses, except in the Hamar example,
-which is hyparctic. -/
 theorem existive_gloss : ∀ row ∈ all, "EXV" ∈ row.features "boldGloss" →
     constructions row = [existential] ∨ row = ex66 ∧ constructions row = [hyparctic] := by
   decide +kernel
 
-/-- The Hamar form glossed as an existive occurs in a hyparctic clause, so whatever other clauses
-it occurs in, it is not an existive as defined. -/
 theorem existive_gloss_hyparctic {S : Set Construction} (h : ∀ t ∈ constructions ex66, t ∈ S) :
     "EXV" ∈ ex66.features "boldGloss" ∧ ¬ IsExistive S :=
   ⟨by decide +kernel, fun hS ↦ hS.hyparctic_notMem (h _ (by decide +kernel))⟩
@@ -325,9 +303,6 @@ section Finnish
 
 open Phonology Finnish Finnish.Nominal Subregular.LocalRewrite
 
-/-- The possessor of the locpossessive example and the location of the existent-postposing one
-are the adessives of *Pekka* and *katto* in the Finnish fragment, after consonant gradation, and
-the adessive is a place case: the locative flag of the locpossessive strategy. -/
 theorem finnish_adessive :
     (realize [p, e, k, k, a] [⟨_, .case .ade⟩]).map (derive consonantGradation) =
         (Finnish.ofString? "pekalla").toList ∧
@@ -342,9 +317,6 @@ section Turkish
 
 open Phonology Turkish Turkish.Phonology
 
-/-- The word of the Turkish example is *satıcı* 'seller' with the past copula and the first
-person singular marker of the Turkish fragment. The affix the paper glosses as the copula is the
-initial consonant of the fragment's past copula. -/
 theorem turkish_affixal_copula :
     ofSegmented? "satıcı-y-dı-m" = some (Turkish.realize [s, a, t, ı, c, ı]
       [Verb.Exponent.pastCopula.form,

@@ -135,7 +135,6 @@ def john_sees_and_mary_eats : Derivation String .multimodal (S / NP) :=
 def john_sees_and_mary_eats_pizza : Derivation String .multimodal S :=
   .fapp john_sees_and_mary_eats (.lex "pizza" NP)
 
-/-- The derivation spells out the full surface string, coordinator included. -/
 theorem john_sees_and_mary_eats_pizza_yield :
     john_sees_and_mary_eats_pizza.yield = ["John", "sees", "and", "Mary", "eats", "pizza"] :=
   rfl
@@ -175,8 +174,6 @@ def john_sees_mary_via_tr : Derivation String .multimodal S :=
 theorem interp_john_sees_mary_via_tr :
     john_sees_mary_via_tr.interp semLexicon = john_sees_mary.interp semLexicon := rfl
 
-/-- At each entity the coordinated `S/NP` predicate is the conjunction of the two conjoined
-predicates. -/
 theorem coord_interp_pointwise (e : ToyEntity) :
     (john_sees_and_mary_eats.interp semLexicon).map (· e) =
       (match john_sees.interp semLexicon, mary_eats.interp semLexicon with
@@ -189,9 +186,6 @@ def john_sees_pizza_and_mary_eats_pizza : Derivation String .multimodal S :=
     (.fapp (.lex "and" (conj S))
       (.bapp (.lex "Mary" NP) (.fapp (.lex "eats" TV) (.lex "pizza" NP))))
 
-/-- The non-constituent coordination and its spelled-out paraphrase receive the same truth
-conditions, since the composed derivation yields the canonical predicate-argument
-structure. -/
 theorem nonConstituentCoord_eq_spelledOut :
     john_sees_and_mary_eats_pizza.interp semLexicon =
       john_sees_pizza_and_mary_eats_pizza.interp semLexicon := rfl
@@ -213,8 +207,6 @@ def pqLex : SemLexicon String atomTy Unit Unit := fun w c ↦
 def dp : Derivation String .multimodal S := .lex "p" S
 def dq : Derivation String .multimodal S := .lex "q" S
 
-/-- With a true and a false conjunct, coordination by `and` and by `or` receive different
-truth values, so the coordinator is part of a derivation's truth conditions. -/
 theorem coord_role_load_bearing :
     (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLex ≠
     (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLex := by
@@ -277,8 +269,6 @@ theorem cluster_sov : cluster sovTV = some (S / sovTV) := by decide
 /-- Over a verb-initial verb the cluster looks leftward (chapter 7 (18b)). -/
 theorem cluster_vso : cluster vsoTV = some (S \ vsoTV) := by decide
 
-/-- A verb-medial verb has no cluster, since its arguments raise in opposite directions and no
-harmonic rule composes them. -/
 theorem cluster_svo : cluster TV = none := by decide
 
 /-- The backward-gapped conjunct "Ken-ga Naomi-o" of chapter 7 (3b), by forward raising and
@@ -377,8 +367,6 @@ def predictedDirection (a : Arrangement Constituent 3) : Option GappingDirection
 /-- The gapping examples of chapter 7. -/
 def gappingData : List Datum := Examples.all.filter (·.feature? "phenomenon" = some "gapping")
 
-/-- In every gapping example of chapter 7, the construction is acceptable exactly when it gaps in
-the direction its clause's basic order predicts. -/
 theorem gapping_acceptable_iff :
     ∀ ex ∈ gappingData, ex.judgment = .acceptable ↔
       ex.parse? "gappingDirection" [("forward", .forward), ("backward", .backward)] =
@@ -408,10 +396,6 @@ def elidedConjunct : EllipsisType → Cat Atom
   | .sluicing => S / (S / NP)
   | .vpEllipsis => S / IV
 
-/-- Gapping and stripping are mediated by the combinatory syntax, since the revealing rule
-decomposes the left conjunct into a residue of their right conjunct's category to coordinate
-with. Sluicing and VP ellipsis are not, since their conjuncts look rightward, and the book
-leaves them to an anaphoric mechanism. -/
 theorem revealedResidue_elidedConjunct_iff (e : EllipsisType) :
     RevealedResidue (elidedConjunct e) ↔ e = .gapping ∨ e = .stripping := by
   cases e <;> decide
@@ -460,7 +444,6 @@ def zagHelpenVoeren : Derivation String dutchRules S :=
         (.lex "zag" (((S \ NP) \ NP) / IV))
         (.fcompx (.lex "helpen" ((IV \ NP) / IV)) (.lex "voeren" (IV \ NP)))))))
 
-/-- Both cross-serial sentences are derived from the lexicon. -/
 theorem crossSerial_derived :
     (zagVoeren.LexIn dutchLexicon ∧
       zagVoeren.yield = ["ik", "Cecilia", "de nijlpaarden", "zag", "voeren"]) ∧
@@ -524,7 +507,6 @@ instance ScopesOver.decidable (q : List String) (v : String) :
     have := ScopesOver.decidable q v d₂
     inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- `ScopesOver q v d` needs both `q` and `v` among the words of `d`. -/
 theorem ScopesOver.mem_yield {q : List String} {v : String} {c : Cat Atom}
     {d : Derivation String R c} (h : ScopesOver q v d) :
     (∀ x ∈ q, x ∈ d.yield) ∧ v ∈ d.yield := by
@@ -571,8 +553,6 @@ def verbProjectionRaisingComposed : Derivation String .multimodal IV :=
   .fapp (.fcomp (.lex "probeert" (IV / IV)) (.lex "veel liederen" (NP.forwardTypeRaise IV)))
     (.lex "te zingen" (IV \ NP))
 
-/-- Composition is not what licenses wide scope, since the composed verb-projection-raising
-derivation has a composition node, yet the object does not take scope over the tensed verb. -/
 theorem verbProjectionRaisingComposed_hasComp_not_outscopes :
     verbProjectionRaisingComposed.LexIn scopeLexicon ∧
       verbProjectionRaisingComposed.yield = orderString .verbProjectionRaising ∧
@@ -585,9 +565,6 @@ private theorem eq_or_eq_of_append_eq {a b c : String} {l₁ l₂ : List String}
     (l₁ = [a] ∧ l₂ = [b, c]) ∨ (l₁ = [a, b] ∧ l₂ = [c]) := by
   rcases l₁ with _ | ⟨x, _ | ⟨y, _ | ⟨z, r⟩⟩⟩ <;> simp_all
 
-/-- In the verb-projection-raising order no derivation, in any rule system, lets the quantified
-object take scope over the tensed verb, because the object can be a functor only over
-"te zingen", its category looking rightward. -/
 theorem not_outscopes_of_verbProjectionRaising {c : Cat Atom} (e : Derivation String R c)
     (hl : e.LexIn scopeLexicon) (hy : e.yield = orderString .verbProjectionRaising) :
     ¬ ObjectOutscopesTense e := by
@@ -618,7 +595,6 @@ theorem not_outscopes_of_verbProjectionRaising {c : Cat Atom} (e : Derivation St
     · simpa [hab.2] using h.mem_yield.2
   · rcases hs with ⟨-, hd₂⟩ | ⟨-, hd₂⟩ <;> simpa [hd₂] using h.mem_yield.2
 
-/-- The inverse reading is available in the verb-raising order and in no other. -/
 theorem inverseAvailable_iff (o : VerbOrder) : InverseAvailable o ↔ o = .verbRaising := by
   cases o
   · exact iff_of_true ⟨verbRaisingDeriv, by decide, rfl, by decide⟩ rfl
@@ -642,8 +618,6 @@ theorem inverse_acceptable_iff_available :
   have key : ∀ d ∈ scopeData, d.2 = .acceptable ↔ d.1 = .verbRaising := by decide
   exact fun d hd ↦ (key d hd).trans (inverseAvailable_iff d.1).symm
 
-/-- The data hold a verb-projection-raising example whose inverse reading is rejected, so the
-account's restriction is tested. -/
 theorem exists_verbProjectionRaising_unacceptable :
     ∃ d ∈ scopeData, d.1 = .verbProjectionRaising ∧ d.2 = .unacceptable := by
   decide
@@ -674,18 +648,13 @@ def annaMannyAccents : AccentAssignment String := fun w ↦
 def anna_married : Derivation String .multimodal (S / NP) :=
   .fcomp (.lex "Anna" (S / (S \ NP))) (.lex "married" TV)
 
-/-- The theme constituent projects `θ`, since the theme accent on "Anna" unifies with
-unaccented "married". -/
 theorem anna_married_theme :
     anna_married.infoFeature annaMannyAccents = some .θ := rfl
 
-/-- The rheme "MANNY" projects `ρ`. -/
 theorem manny_rheme :
     (Derivation.lex (R := .multimodal) "Manny" NP).infoFeature annaMannyAccents = some .ρ :=
   rfl
 
-/-- Folding the rheme into the theme's constituent clashes. The whole sentence projects no
-single marking, so the tune forces the phrasing "[Anna married][Manny]". -/
 theorem theme_rheme_clash :
     (Derivation.fapp anna_married (.lex "Manny" NP)).infoFeature annaMannyAccents
       = none := rfl
@@ -710,8 +679,6 @@ theorem married_manny_theme :
 def annaMannyUtterance : List (ProsodicPhrase String (RuleSystem.multimodal (α := Atom))) :=
   [⟨_, anna_married, themeTune⟩, ⟨_, .lex "Manny" NP, rhemeTune⟩]
 
-/-- The information structure extracted from the utterance has the `S/NP` constituent
-"ANNA married" as theme and "MANNY" as rheme. -/
 theorem annaMannyUtterance_infoStructure :
     (extractInfoStructure annaMannyUtterance).map (fun i ↦ (i.theme.map (·.cat), i.rheme.cat))
       = some (some (S / NP), NP) := rfl
@@ -756,8 +723,6 @@ def declarativeIP : IntonationPhrase :=
 def continuationIP : IntonationPhrase :=
   { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .H }
 
-/-- A declarative intonation phrase with an H* accent is the rheme tune, and a continuation-rise
-phrase with an L+H* accent the theme tune. -/
 theorem ipToTune_eq_tunes :
     ipToTune declarativeIP (.mono .H) = rhemeTune ∧
       ipToTune continuationIP (.leading .L .H) = themeTune := by

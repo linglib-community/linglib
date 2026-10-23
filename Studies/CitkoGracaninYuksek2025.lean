@@ -305,8 +305,6 @@ theorem optimal_iff : Optimal mwf l t ↔ (t ∈ l ∧ Admissible mwf t) ∧
 
 instance : Decidable (Optimal mwf l t) := decidable_of_iff _ optimal_iff.symm
 
-/-- Among candidates none of whose asterisks reaches PF, optimality is the same in every
-language. -/
 theorem optimal_congr (h : ∀ s ∈ l, pfAsterisks s = ∅) : Optimal mwf l t ↔ Optimal mwf' l t := by
   have key (m : Finset Cat) : (fun s ↦ s ∈ l ∧ Competes s t ∧ Admissible m s) =
       fun s ↦ s ∈ l ∧ Competes s t ∧ NoVacuousEllipsis s := by
@@ -330,28 +328,20 @@ theorem cwhNullCSecond_pf : pfPhon cwhNullCSecond = ["what", "should", "when", "
 theorem cwhTwoAux_pf : pfPhon cwhTwoAux = ["what", "should", "when", "will", "you", "teach"] := by
   decide
 
-/-- Each wh-phrase is interpreted in its own conjunct. -/
 theorem cwh_nonpaired : orphanTraces .raising cwh = [] := by decide
-/-- The shared C′ carries a copy of each wh-phrase into the other conjunct. -/
 theorem cwhBulk_paired : ItReading cwhBulk := by decide
 
-/-- Bulk sharing is cheaper than non-bulk sharing. -/
 theorem cwhBulk_lt_cwh : cost cwhBulk < cost cwh := by decide
 
 /-- Of the three phase edges of the bulk-sharing object, the two CP edges host one wh-phrase each
 and the shared vP edge both, and its asterisk reaches PF ((37b)). -/
 theorem pfAsterisks_cwhBulk : pfAsterisks cwhBulk = {.v} := by decide
 
-/-- So bulk sharing crashes wherever the vP edge counts. -/
 theorem convergesIn_cwhBulk_iff {mwf : Finset Cat} : ConvergesIn mwf cwhBulk ↔ .v ∉ mwf := by
   rw [ConvergesIn, pfAsterisks_cwhBulk, Finset.disjoint_singleton_right]
 
-/-- Non-bulk sharing leaves one wh-phrase at each edge, so no asterisk arises. -/
 theorem pfAsterisks_cwh : pfAsterisks cwh = ∅ := by decide
 
-/-- In both English varieties the coordinated wh-question has one optimal derivation, non-bulk
-sharing: the ellipsis analysis and the extra null complementizer cost more, and bulk sharing,
-though cheaper, crashes at the vP edge, so the paired reading is unavailable. -/
 theorem optimal_cwh_iff : ∀ t ∈ cwhCandidates,
     (Optimal englishA cwhCandidates t ↔ t = cwh) ∧
       (Optimal englishB cwhCandidates t ↔ t = cwh) := by
@@ -374,30 +364,19 @@ def csCandidates : List LinearizedSyntacticObject :=
 
 theorem cs_pf : pfPhon cs = ["what", "when"] := by decide
 theorem pfPhon_csCandidates : ∀ t ∈ csCandidates, pfPhon t = pfPhon cs := by decide
-/-- The paired candidates are bulk sharing, its shared-TP rival and the double ellipsis. -/
 theorem paired_csCandidates :
     ∀ t ∈ csCandidates, ItReading t ↔ t = cs ∨ t = csEllipsis ∨ t = csTwoC := by
   decide
 
 /-- The shared vP edge hosts two wh-specifiers, the asterisk of (26b). -/
 theorem v_mem_asterisked_cs : v ∈ asterisked cs := by decide
-/-- Elided, it never reaches PF, and neither does any other candidate's asterisk. -/
 theorem pfAsterisks_csCandidates : ∀ t ∈ csCandidates, pfAsterisks t = ∅ := by decide
 
-/-- With one shared [E] complementizer over two TPs, the second deletion silences nothing new, the
-authors' earlier argument (`CitkoGracaninYuksek2020.csFromCWH_vacuous`). -/
 theorem csSharedC_vacuous : ¬ NoVacuousEllipsis csSharedC := by decide
-/-- Two [E] complementizers are excluded twice over, since they elide the shared material twice
-and sharing the complementizer would be cheaper. -/
 theorem csnrTwoE_excluded :
     ¬ NoVacuousEllipsis csnrTwoE ∧ cost csSharedC < cost csnrTwoE := by
   decide
 
-/-- In every language the coordinated sluice has two optimal derivations. For the paired
-reading, the elided shared C′ is cheaper than eliding two clauses or sharing TP under two
-complementizers. For the nonpaired reading, two complementizers of which only one bears [E] are
-cheaper than eliding two clauses, while a shared [E] complementizer, which draws one token fewer,
-elides vacuously, as does a second [E]. -/
 theorem optimal_cs_iff (mwf : Finset Cat) :
     ∀ t ∈ csCandidates, Optimal mwf csCandidates t ↔ t = cs ∨ t = csnr := by
   intro t ht
@@ -405,8 +384,6 @@ theorem optimal_cs_iff (mwf : Finset Cat) :
   revert t
   decide
 
-/-- The authors' earlier double ellipsis is admissible in every language but not optimal, since
-bulk sharing yields the same string with the same reading more cheaply. -/
 theorem csEllipsis_admissible_not_optimal (mwf : Finset Cat) :
     Admissible mwf csEllipsis ∧ ¬ Optimal mwf csCandidates csEllipsis :=
   ⟨⟨by decide, convergesIn_of_pfAsterisks_eq_empty (pfAsterisks_csCandidates _ (by decide)) _⟩,
@@ -426,19 +403,15 @@ theorem pfAsterisks_multipleQuestion : pfAsterisks (multipleQuestion c) = {.v, .
 /-- Multiple sluicing elides the vP edge but not the CP edge ((29b)). -/
 theorem pfAsterisks_multipleSluice : pfAsterisks (multipleQuestion cE) = {.C} := by decide
 
-/-- A multiple question converges only where neither edge counts. -/
 theorem convergesIn_multipleQuestion_iff {mwf : Finset Cat} :
     ConvergesIn mwf (multipleQuestion c) ↔ .v ∉ mwf ∧ .C ∉ mwf := by
   rw [ConvergesIn, pfAsterisks_multipleQuestion, Finset.disjoint_insert_right,
     Finset.disjoint_singleton_right]
 
-/-- Multiple sluicing converges exactly where the CP edge does not count. -/
 theorem convergesIn_multipleSluice_iff {mwf : Finset Cat} :
     ConvergesIn mwf (multipleQuestion cE) ↔ .C ∉ mwf := by
   rw [ConvergesIn, pfAsterisks_multipleSluice, Finset.disjoint_singleton_right]
 
-/-- So a multiple question crashes in both English varieties and converges in Russian, and
-multiple sluicing converges in variety B, German and Greek but not in variety A. -/
 theorem multipleQuestion_multipleSluice :
     ¬ ConvergesIn englishA (multipleQuestion c) ∧ ¬ ConvergesIn englishB (multipleQuestion c) ∧
       ConvergesIn russian (multipleQuestion c) ∧
@@ -500,7 +473,6 @@ def rnrMatchedMixed : BelkNeelemanPhilip2023.Derivation :=
 
 theorem rnrMixed_phon : rnrMixed.phon =
     ["Alice", "must", "Iris", "ought to be", "working", "on", "different", "topics"] := by decide
-/-- With mismatched verbs, multidominating the pivot beats building it twice. -/
 theorem rnrMixed_lt_elided :
     rnrMixed.Licensed ∧ rnrElided.Licensed ∧ rnrElided.phon = rnrMixed.phon ∧
       rnrCost rnrMixed < rnrCost rnrElided := by
@@ -508,7 +480,6 @@ theorem rnrMixed_lt_elided :
 
 theorem rnrShared_phon : rnrShared.phon =
     ["Alice", "must", "Iris", "should", "work", "on", "different", "topics"] := by decide
-/-- With matching verbs, ellipsis is no longer an option. -/
 theorem rnrShared_lt_mixed :
     rnrShared.Licensed ∧ rnrMatchedMixed.Licensed ∧ rnrMatchedMixed.phon = rnrShared.phon ∧
       rnrCost rnrShared < rnrCost rnrMatchedMixed := by

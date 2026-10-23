@@ -104,9 +104,6 @@ end Premise
 
 variable {H : W → Set (Set W)} {A C : Set W}
 
-/-- A premise frame and the ordering frame it induces, on the worlds where some premise holds,
-evaluate every counterfactual alike. For an antecedent-world `j`, the premises that hold at `j`
-form a nonempty maximal consistent premise set exactly when `j` is a closest antecedent-world. -/
 theorem premiseImp_eq_orderingImp :
     premiseImp H A C = orderingImp (fun i ↦ ⋃₀ H i) (premiseOrder H) A C := by
   ext i
@@ -163,14 +160,12 @@ def tied : Fin 3 → Set (Set (Fin 3)) := fun _ ↦ {{0}, {0, 1, 2}}
 /-- Premises `{0, 1}` and `{0, 2}`. -/
 def split : Fin 3 → Set (Set (Fin 3)) := fun _ ↦ {{0, 1}, {0, 2}}
 
-/-- The two frames order `1` and `2` differently from `0`, as tied and as incomparable. -/
 theorem premiseOrder_tied_ne_split : premiseOrder tied 0 ≠ premiseOrder split 0 := by
   intro h
   have h12 : (premiseOrder tied 0).le 1 2 := by simp [tied, Preorder.ofCriteria_le_iff]
   rw [h] at h12
   simp [split, Preorder.ofCriteria_le_iff] at h12
 
-/-- The two frames evaluate every counterfactual at `0` alike. -/
 theorem premiseImp_tied_iff_split (A C : Set (Fin 3)) :
     0 ∈ premiseImp tied A C ↔ 0 ∈ premiseImp split A C := by
   have hS : ⋃₀ tied 0 = ⋃₀ split 0 := by
@@ -195,11 +190,9 @@ field. -/
 def neutralImp (S : W → Set W) (ord : W → Preorder W) (A C : Set W) : Set W :=
   {i | OrderingSemantics.IsNecessity (ord i) (S i ∩ A) C}
 
-/-- The neutral truth condition entails OF. -/
 theorem neutralImp_subset_orderingImp : neutralImp S ord A C ⊆ orderingImp S ord A C :=
   fun _ hi ↦ OrderingSemantics.IsNecessity.minimals_subset hi
 
-/-- Under the Limit Assumption OF entails the neutral truth condition. -/
 theorem orderingImp_subset_neutralImp {i : W}
     (hlim : ∀ B : Set W, (S i ∩ B).Nonempty → ((ord i).minimals (S i ∩ B)).Nonempty)
     (hi : i ∈ orderingImp S ord A C) : i ∈ neutralImp S ord A C := by
@@ -208,7 +201,6 @@ theorem orderingImp_subset_neutralImp {i : W}
   obtain ⟨j, ⟨hjS, hjA, hjh⟩, hmin⟩ := hlim {g ∈ A | g ≤ h} ⟨h, hh.1, hh.2, le_rfl⟩
   exact ⟨j, ⟨⟨hjS, hjA⟩, fun f hf hfj ↦ hmin ⟨hf.1, hf.2, hfj.trans hjh⟩ hfj⟩, hjh⟩
 
-/-- On a universal frame the neutral truth condition entails [lewis-1973]'s. -/
 theorem neutralImp_univ_subset_variablyStrictImp :
     neutralImp (fun _ ↦ Set.univ) ord A C ⊆ variablyStrictImp ord A C := by
   intro i hi
@@ -217,8 +209,6 @@ theorem neutralImp_univ_subset_variablyStrictImp :
   rcases A.eq_empty_or_nonempty with hA | hA
   exacts [.inl hA, .inr (hi'.isGoodPossibility hA)]
 
-/-- On a universal frame satisfying comparability the neutral truth condition is
-[lewis-1973]'s. -/
 theorem neutralImp_univ_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le) :
     neutralImp (fun _ ↦ Set.univ) ord A C = variablyStrictImp ord A C := by
   refine subset_antisymm neutralImp_univ_subset_variablyStrictImp fun i hi ↦ ?_

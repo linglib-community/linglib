@@ -64,14 +64,11 @@ variable {W Domain : Type*} [DecidableEq W] [DecidableEq Var] [Fintype Var]
   [DecidableEq Domain] [Fintype Domain] {M : Model W Domain Const Pred}
   {φ : Formula Var Const Pred} {s : Finset (Index W Var Domain)} {pol : Bool}
 
-/-- A state supporting an enriched formula is non-empty. -/
 theorem nonempty_of_support_enrich (h : support M φ.enrich s) : s.Nonempty := by
   cases φ with
   | ne => exact h
   | _ => exact h.2
 
-/-- Only the empty state anti-supports `NE`, so anti-support of `φ ∧ NE` reduces to
-anti-support of `φ`. -/
 theorem antiSupport_conj_ne (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) :
     antiSupport M (.conj φ .ne) s ↔ antiSupport M φ s where
@@ -124,20 +121,16 @@ theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol φ.enrich s) : eva
       exact ⟨f, hf, ih h'⟩
     · exact ih h.1
 
-/-- `[α]⁺ ⊨ α` for `NE`-free `α`. -/
 theorem support_of_support_enrich (hNE : φ.NEFree) (h : support M φ.enrich s) :
     support M φ s :=
   eval_of_eval_enrich hNE h
 
-/-- `[α]⁺ ⫤ α` for `NE`-free `α`, the anti-support half of `eval_of_eval_enrich`. -/
 theorem antiSupport_of_antiSupport_enrich (hNE : φ.NEFree) (h : antiSupport M φ.enrich s) :
     antiSupport M φ s :=
   eval_of_eval_enrich hNE h
 
 /-! ### The enriched derived `□` -/
 
-/-- Support of the enriched derived `□φ` is enriched support of `φ` at every index's full
-accessible lift `R(wᵢ)[gᵢ]`, on a non-empty state. -/
 theorem support_enrich_nec_iff (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) :
     support M φ.nec.enrich s ↔

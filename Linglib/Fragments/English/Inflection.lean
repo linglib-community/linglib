@@ -130,7 +130,6 @@ theorem suffix_alternant : suffix <:+ alternant r suffix := by
   unfold alternant; split <;> try split
   all_goals simp [List.suffix_cons]
 
-/-- A suffixed form ends in its suffix. -/
 theorem suffix_attach : suffix <:+ attach b suffix doubling :=
   (suffix_alternant _ _).trans (List.suffix_append _ _)
 
@@ -138,7 +137,6 @@ theorem drop_suffix_baseBefore : r.drop 2 <:+ baseBefore r suffix doubling := by
   unfold baseBefore; split <;> try split_ifs
   all_goals simp [List.suffix_cons_iff, List.tail_suffix, List.drop_suffix]
 
-/-- The alternations reach no further into the base than its last two letters. -/
 theorem rdrop_prefix_attach : b.rdrop 2 <+: attach b suffix doubling := by
   rw [List.rdrop_eq_reverse_drop_reverse]
   exact (List.reverse_prefix.2 (drop_suffix_baseBefore ..)).trans (List.prefix_append _ _)

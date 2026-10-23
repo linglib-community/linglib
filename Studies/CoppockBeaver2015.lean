@@ -124,7 +124,6 @@ theorem not_exclusive_iff {P : (E → SignType)} {x : E} :
     ¬ Exclusive P x ↔ ∃ y, y ≠ x ∧ P y = 1 := by
   simp [Exclusive]
 
-/-- Exclusivity is containment of the positive extension in the singleton. -/
 theorem exclusive_iff_subset_singleton {P : (E → SignType)} {x : E} :
     Exclusive P x ↔ posExt P ⊆ {x} :=
   ⟨fun h y hy ↦ not_not.1 fun hyx ↦ h y hyx hy, fun h _ hyx hy ↦ hyx (h hy)⟩
@@ -151,10 +150,8 @@ theorem only_eq_neg_one_iff : only P x = -1 ↔ P x = 1 ∧ ∃ y, y ≠ x ∧ P
   simp only [only, meetWeak_eq_neg_one_iff, sup_zero_ne_neg_one, sup_zero_eq_zero_iff,
     ofProp_eq_neg_one_iff, not_exclusive_iff, false_and, false_or, ne_eq, not_not]
 
-/-- *Only* presupposes its prejacent. -/
 theorem only_eq_zero_iff : only P x = 0 ↔ P x ≠ 1 := by simp [only, nonpos_iff_ne_one]
 
-/-- An *only* phrase satisfies weak uniqueness, so there is never more than one only `P`. -/
 theorem weakUnique_only (P : (E → SignType)) : WeakUnique (only P) := fun _ hx y hy ↦
   not_not.1 fun h ↦ (only_eq_one_iff.1 hx).2 y (Ne.symm h) (only_eq_one_iff.1 hy).1
 
@@ -173,7 +170,6 @@ theorem the_eq_zero_of_not_weakUnique (h : ¬ WeakUnique P) (x : E) : the P x = 
 theorem the_eq_zero_iff : the P x = 0 ↔ ¬ WeakUnique P ∨ P x = 0 := by
   simp [the, nonpos_iff_ne_one]
 
-/-- The definite is classical exactly on weakly unique restrictors, where the noun is. -/
 theorem the_ne_zero_iff : the P x ≠ 0 ↔ WeakUnique P ∧ P x ≠ 0 := by
   rw [ne_eq, the_eq_zero_iff, not_or, not_not]
 
@@ -304,8 +300,6 @@ section Schema
 include `X`. -/
 def answer (X : Set E) : Set (Set E) := Set.Ici X
 
-/-- Some true answer is at least as strong as the prejacent exactly when the `P`s include
-`x`, so the schema's presupposition is the prejacent. -/
 theorem mem_atLeast_answer {w : Set E} {x : E} :
     w ∈ Focus.Particles.atLeast (· ⊆ ·) (Set.range answer) (answer {x}) ↔ x ∈ w := by
   simp only [Focus.Particles.mem_atLeast]
@@ -354,14 +348,12 @@ def PresupposesUniqueness (D : (E → SignType) → (E → SignType)) : Prop :=
 def PresupposesExistence (D : (E → SignType) → (E → SignType)) : Prop :=
   ∀ P x, D P x ≠ 0 → (posExt P).Nonempty
 
-/-- An entry classical on the full restrictor presupposes no uniqueness. -/
 theorem not_presupposesUniqueness_of_ne_zero [Nontrivial E]
     {D : (E → SignType) → E → SignType} {x : E}
     (h : D (fun _ ↦ 1) x ≠ 0) : ¬ PresupposesUniqueness D := fun hD ↦
   let ⟨_, _, hab⟩ := exists_pair_ne E
   hab (hD _ x h rfl rfl)
 
-/-- An entry classical on the empty restrictor presupposes no existence. -/
 theorem not_presupposesExistence_of_ne_zero {D : (E → SignType) → (E → SignType)} {x : E}
     (h : D (fun _ ↦ -1) x ≠ 0) : ¬ PresupposesExistence D := fun hD ↦ by
   obtain ⟨y, hy⟩ := hD _ x h
@@ -441,7 +433,6 @@ theorem be_theFregeanGQ_ne_zero_iff {P : (E → SignType)} {x : E} :
     be (theFregeanGQ P) x ≠ 0 ↔ ∃! y, P y = 1 := by
   simp [be, theFregeanGQ]
 
-/-- Lowering the Fregean quantifier by `be` presupposes both existence and uniqueness. -/
 theorem presupposesUniqueness_be_theFregeanGQ :
     PresupposesUniqueness (fun P : (E → SignType) ↦ be (theFregeanGQ P)) := fun _ _ h ↦
   (existsUnique_iff_nonempty_subsingleton.1 (be_theFregeanGQ_ne_zero_iff.1 h)).2
@@ -505,7 +496,6 @@ def AtLeastAsStrong (α β : (E → SignType) → (E → SignType)) : Prop :=
 def Dominates (α β : (E → SignType) → (E → SignType)) : Prop :=
   ClassicallyEquivalent α β ∧ AtLeastAsStrong α β ∧ ¬ AtLeastAsStrong β α
 
-/-- The definite article dominates the indefinite. -/
 theorem the_dominates_an [Nontrivial E] [DecidablePred (WeakUnique (E := E))] :
     Dominates (the (E := E)) an := by
   refine ⟨fun P _ x h _ ↦ ?_, fun P hP x _ ↦ ?_, fun h ↦ ?_⟩
@@ -531,16 +521,11 @@ section Derivations
 variable [DecidablePred (WeakUnique (E := E))] {C : Set W} (F : W → (E → SignType) → SignType)
   (π : W → (E → SignType))
 
-/-- Where the restrictor is weakly unique throughout the context, *the* blocks *a* in every
-derivation applying the article to it. -/
 theorem blocks_of_weakUnique [Nontrivial E] (h : ∀ w ∈ C, WeakUnique (π w)) :
     Blocks C (fun α w ↦ F w (α (π w))) the an :=
   ⟨the_dominates_an,
     CCP.Partial.ofTrivalent_congr fun w hw ↦ congrArg (F w) (the_eq_of_weakUnique (h w hw))⟩
 
-/-- Where weak uniqueness fails at a world of the context, *the* fails to block *a* provided
-the indefinite sentence is classical on the context and the material around the description
-is strict in its undefinedness. -/
 theorem not_blocks_of_not_weakUnique (hF : ∀ w, F w (fun _ ↦ 0) = 0) {w : W}
     (hw : w ∈ C) (h : ¬ WeakUnique (π w)) (hdom : ∀ w ∈ C, F w (π w) ≠ 0) :
     ¬ Blocks C (fun α w ↦ F w (α (π w))) the an := by
@@ -556,16 +541,10 @@ theorem an_only_blocked [Nontrivial E] :
     Blocks C (fun α w ↦ F w (α (only (π w)))) the an :=
   blocks_of_weakUnique F (fun w ↦ only (π w)) fun _ _ ↦ weakUnique_only _
 
-/-- The sentence with *the* and the sentence with *a(n)* mean the same whenever the
-description is an *only* phrase, since the article contributes nothing to an inherently
-unique description. -/
 theorem sentence_the_only_eq_an_only :
     (fun w ↦ F w (the (only (π w)))) = fun w ↦ F w (an (only (π w))) := by
   funext w; rw [the_only]; rfl
 
-/-- With the *the*-sentence as the alternative, the *an*-sentence is not blocked at sentence
-level, although `an_only_blocked` blocks it at expression level, so Maximize Presupposition
-must compare expressions rather than sentences. -/
 theorem not_blocked_sentence_an_only :
     ¬ Competition.Blocked
         (Competition.sameAssertion (fun _ ↦ {fun w ↦ F w (the (only (π w)))})
@@ -594,7 +573,6 @@ theorem iota_eq_none_iff (P : (E → SignType)) : iota P = none ↔ ¬ ∃! x, P
 theorem iota_neg_one : iota (fun _ ↦ -1 : (E → SignType)) = none :=
   (iota_eq_none_iff _).2 fun ⟨_, hx, _⟩ ↦ by simp at hx
 
-/-- Under iota the article's presupposition adds nothing, since iota presupposes uniqueness. -/
 theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : (E → SignType)) :
     iota (the P) = iota P := by
   by_cases h : WeakUnique P
@@ -813,7 +791,6 @@ private theorem onlySurvivor_scott : onlySurvivor .scott = 1 :=
 private theorem onlySurvivor_sam : onlySurvivor .sam = 1 :=
   existsHaug_eq_one_iff.2 ⟨.crash₂, by decide⟩
 
-/-- The description holds of as many people as there are crashes with a single survivor. -/
 theorem not_weakUnique_onlySurvivor : ¬ WeakUnique onlySurvivor := fun h ↦
   absurd (h onlySurvivor_scott onlySurvivor_sam) (by decide)
 
@@ -829,23 +806,16 @@ theorem an_only_survivor_not_blocked :
 noncomputable def high (α : (Ind → SignType) → (Ind → SignType)) (_ : Unit) : SignType :=
   existsHaug fun z ↦ meetWeak (crash z) (α (only (survived z)) .scott)
 
-/-- On the high-scope derivation the definite contributes nothing, since each crash has a
-single survivor. -/
 private theorem high_the_eq_high_an : high the = high an := by
   funext u
   simp only [high, the_only]
   rfl
 
-/-- *The only survivor of a plane crash* with the crash scoped high means what *an only
-survivor of a plane crash* means with the crash scoped low. -/
 theorem high_the_eq_low_an : high the = fun _ ↦ an onlySurvivor .scott := by
   funext u
   rw [high_the_eq_high_an]
   rfl
 
-/-- On the high-scope derivation *the* blocks *a*. Together with
-`an_only_survivor_not_blocked`, this shows that blocking compares derivations rather than
-strings, so the surviving surface form owes its life to the low-scope derivation. -/
 theorem the_only_survivor_blocked : Blocks Set.univ high the an :=
   ⟨the_dominates_an, by rw [high_the_eq_high_an]⟩
 
@@ -869,8 +839,6 @@ inductive Item | this | that
 def restrictors : List (String × (Item → SignType)) :=
   [("uniqueIfAny", fun _ ↦ -1), ("multiple", fun _ ↦ 1), ("only", only (fun _ ↦ 1))]
 
-/-- A predicative-definite row is acceptable exactly when the definite of its restrictor is
-classical of the subject. -/
 theorem restrictor_rows : ∀ row ∈ Examples.all, ∀ P ∈ row.parse? "restrictor" restrictors,
     (row.judgment = .acceptable ↔ the P .this ≠ 0) := by
   decide +kernel

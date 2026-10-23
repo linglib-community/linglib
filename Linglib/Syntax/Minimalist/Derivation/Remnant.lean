@@ -62,7 +62,6 @@ def IsRemnantStep (d : Derivation) (i : Nat) : Prop :=
 instance (d : Derivation) (i : Nat) : Decidable (d.IsRemnantStep i) := by
   unfold IsRemnantStep; infer_instance
 
-/-- A remnant step of a derivation is one of every extension. -/
 theorem IsRemnantStep.append (h : d.IsRemnantStep i) : (d.append steps).IsRemnantStep i := by
   obtain ⟨m, hm, x, hx, hc⟩ := h
   have hi := lt_length_of_mem_mover? hm

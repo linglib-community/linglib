@@ -71,12 +71,10 @@ def SelectsFinal (w : ∀ v, Flat (α v)) (time : W → ℕ) (c effect : W) (xE 
 
 variable {M} {effect : W} {xE : α effect}
 
-/-- The change-of-state verb entails *cause*. -/
 theorem SelectsFinal.selectsMember {w : ∀ v, Flat (α v)} {time : W → ℕ} {c : W}
     (h : SelectsFinal M w time c effect xE) : SelectsMember M w c effect xE :=
   let ⟨S, hS, hc, _⟩ := h; ⟨S, hS, hc⟩
 
-/-- Under overdetermination, two completed minimal sufficient sets leave nothing selectable. -/
 theorem not_selectsMember_of_two {w S₁ S₂ : ∀ v, Flat (α v)} {c : W}
     (h₁ : IsMinimalSufficientSet M S₁ effect xE) (h₂ : IsMinimalSufficientSet M S₂ effect xE)
     (hne : S₁ ≠ S₂) (hw₁ : S₁ ≤ w) (hw₂ : S₂ ≤ w) : ¬ SelectsMember M w c effect xE :=
@@ -180,23 +178,18 @@ theorem manual_minimal : IsMinimalSufficientSet model manual .doorOpens true := 
 theorem automatic_minimal : IsMinimalSufficientSet model automatic .doorOpens true := by
   decide +kernel
 
-/-- *John opened the door*, *John caused the door to open*: the handle is the final condition
-of the only completed set. -/
 theorem handle_selectsFinal : SelectsFinal model handleWorld time .handle .doorOpens true := by
   decide +kernel
 
 theorem handle_selectsMember : SelectsMember model handleWorld .handle .doorOpens true :=
   handle_selectsFinal.selectsMember
 
-/-- The converse of Fodor's entailment fails: the unlocked lock is a condition *cause* may
-select but not the final one. -/
 theorem lock_selectsMember : SelectsMember model handleWorld .lock .doorOpens true := by
   decide +kernel
 
 theorem lock_not_selectsFinal : ¬ SelectsFinal model handleWorld time .lock .doorOpens true := by
   decide +kernel
 
-/-- With both sets completed, neither construction can select the handle. -/
 theorem overdetermined : ¬ SelectsMember model bothWorld .handle .doorOpens true :=
   not_selectsMember_of_two manual_minimal automatic_minimal (by decide) (by decide) (by decide)
 

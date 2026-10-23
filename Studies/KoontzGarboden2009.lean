@@ -81,9 +81,6 @@ the underspecified `M.effector` for *romper* and an agent relation for *asesinar
 def causative (y x : Entity) (e : E) : Prop :=
   ∃ w, θ y w ∧ w ~[M.cause] e ∧ M.vBecome P x e
 
-/-- Over the underspecified causer, `causative` and an event of `y` under the head `vCause` over
-`vBecome` have the same existential closure; they differ only in which event is the verb's
-argument. -/
 theorem exists_causative_iff (y x : Entity) :
     (∃ e, causative M M.effector P y x e) ↔
       ∃ w, M.effector y w ∧ M.vCause (M.vBecome P x) w :=
@@ -119,14 +116,10 @@ kind of causative that §3.5 finds the inchoative to entail. -/
 theorem causative_self_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : causative M θ P x x e := h
 
-/-- A derived inchoative retains a causing subevent whose causer is its subject, so CAUSE
-survives reflexivization. -/
 theorem exists_cause_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : ∃ w, θ x w ∧ w ~[M.cause] e :=
   let ⟨w, hθ, hc, _⟩ := h; ⟨w, hθ, hc⟩
 
-/-- Only verbs with a thematically underspecified causer anticausativize, since an
-anticausative reading needs a causer relation satisfied by a non-agent. -/
 theorem exists_nonagent_of_anticausativeReading
     (h : AnticausativeReading M agent (anticausative M θ P)) : ∃ x w, θ x w ∧ ¬ agent x w :=
   let ⟨x, _, ⟨w, hθ, hc, _⟩, hna⟩ := h; ⟨x, w, hθ, hna w hc⟩
@@ -180,22 +173,16 @@ def breakingByBoth : ArgumentStructure.EventStructure.Interpretation Participant
 /-- `e₀` is the one event of the models. -/
 def e₀ : Unit := ()
 
-/-- The causative does not entail the derived inchoative. With Juan the only effector, *Juan
-rompió el vaso* holds and *el vaso se rompió* fails. -/
 theorem not_anticausative_of_causative :
     causative breakingByJuan breakingByJuan.effector broken .juan .vaso e₀ ∧
       ¬ anticausative breakingByJuan breakingByJuan.effector broken .vaso e₀ :=
   ⟨⟨e₀, rfl, trivial, (), trivial, rfl⟩, fun ⟨_, h, _⟩ ↦ Participant.noConfusion h⟩
 
-/-- *El vaso se rompió* has the anticausative reading, the glass being a non-agentive effector
-of its own breaking. -/
 theorem anticausativeReading_romper :
     AnticausativeReading breakingByBoth juanAgent
       (anticausative breakingByBoth breakingByBoth.effector broken) :=
   ⟨.vaso, e₀, ⟨e₀, trivial, trivial, (), trivial, rfl⟩, fun _ _ h ↦ Participant.noConfusion h⟩
 
-/-- A passive does not license *por sí solo*, since its subject need not be an effector of the
-causing subevent. -/
 theorem not_licensesBySelf_passive :
     ¬ LicensesBySelf breakingByJuan (passive breakingByJuan broken) := fun h ↦
   let ⟨_, _, hw⟩ := h .vaso e₀ ⟨.juan, e₀, rfl, trivial, (), trivial, rfl⟩
@@ -225,7 +212,6 @@ exactly to templates with CAUSE and changes no operator. -/
 def reflexivizeTemplate (t : Template .event) : Option (Template .event) :=
   if t.HasCause then some t else none
 
-/-- Anticausativization as reflexivization satisfies the hypothesis. -/
 theorem monotonicityHypothesis_reflexivizeTemplate :
     MonotonicityHypothesis reflexivizeTemplate := by
   intro t t' h

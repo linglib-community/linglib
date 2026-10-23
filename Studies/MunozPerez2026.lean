@@ -110,14 +110,10 @@ def marked (a : Option Category) : Clause := ⟨Minimalist.Voice.anticausative, 
 def unmarked (a : Option Category) : Clause :=
   ⟨Minimalist.Voice.middle, [.vGO], a⟩
 
-/-- The applicative of a marked anticausative is affected, between the change and the state; that
-of an unmarked one is low, the rule's context failing. -/
 theorem site_marked_unmarked (a : Option Category) :
     (marked a).site.Affected ∧ (unmarked a).site.Low := by
   simp [marked, unmarked, Clause.site, ApplSite.Affected, ApplSite.Low]
 
-/-- The Voice head of an anticausative has no meaning, marked or not, so the clitics that spell
-a clause out cannot change what it means. -/
 theorem not_hasSemantics (a : Option Category) :
     ¬ (marked a).voice.IsThematic ∧ ¬ (unmarked a).voice.IsThematic := by
   simp only [marked, unmarked]; decide
@@ -131,8 +127,6 @@ def IsFissionApplicable (c : Category) : Prop :=
 
 instance : DecidablePred IsFissionApplicable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The bundle condition singles out the speaker and the addressee, since a third person lacks
-[+PART] and a group lacks [+SING]. -/
 theorem isFissionApplicable_iff (c : Category) :
     IsFissionApplicable c ↔ c = .speaker ∨ c = .addressee := by
   cases c <;> decide
@@ -190,8 +184,6 @@ def clusters (k : Clause) : Finset (List String) :=
 
 /-! ### The typology of realizations -/
 
-/-- A marked anticausative always has the marker with the plain dative. Where fission applies it
-also has the fissioned dative, with the marker and without it. -/
 theorem clusters_marked (c : Category) :
     clusters (marked (some c)) =
       (datives c).image (["se", ·]) ∪
@@ -200,29 +192,23 @@ theorem clusters_marked (c : Category) :
         else ∅ := by
   cases c <;> decide +kernel
 
-/-- An unmarked anticausative has the plain dative alone. -/
 theorem clusters_unmarked (c : Category) :
     clusters (unmarked (some c)) = (datives c).image ([·]) := by
   cases c <;> decide +kernel
 
-/-- Without a dative, a marked anticausative has the marker and an unmarked one has nothing. -/
 theorem clusters_none : clusters (marked none) = {["se"]} ∧ clusters (unmarked none) = {[]} := by
   decide +kernel
 
-/-- The three clusters of a first person singular dative. -/
 theorem clusters_marked_speaker :
     clusters (marked (some .speaker)) = {["se", "me"], ["se", "me", "le"], ["me", "le"]} := by
   decide +kernel
 
-/-- The marker can be absent from a marked anticausative exactly where fission applies. -/
 theorem marker_optional_iff (c : Category) :
     (∃ l ∈ clusters (marked (some c)), "se" ∉ l) ↔ IsFissionApplicable c := by
   cases c <;> decide +kernel
 
 /-! ### Why fission rescues the clause -/
 
-/-- Outside the third person every dative clitic is a reflexive form, by the syncretism of the
-two series. -/
 theorem isReflexiveForm_of_mem_datives {c : Category} (hc : c.person ≠ .third) {f : String}
     (hf : f ∈ datives c) : IsReflexiveForm f := by
   have hf' := PersonalPronoun.paradigm_mono (Finset.erase_subset _ _) c hf
@@ -230,25 +216,18 @@ theorem isReflexiveForm_of_mem_datives {c : Category} (hc : c.person ≠ .third)
   obtain ⟨p, hp, -, rfl⟩ := ReflexivePronoun.mem_paradigm.mp hf'
   exact ⟨p, hp, rfl⟩
 
-/-- A fissioned head converges without a marker, since its first exponent marks Voice and *le*
-pronounces the head. -/
 theorem converges_of_fission {c : Category} (hc : IsFissionApplicable c) {f : String}
     (hf : f ∈ datives c) : Converges none [f, Spanish.Clitics.le.form] := by
   have hne : c.person ≠ .third := by
     rcases (isFissionApplicable_iff c).mp hc with rfl | rfl <;> decide
   exact .inr ⟨f, by simp, isReflexiveForm_of_mem_datives hne hf, by simp⟩
 
-/-- An unfissioned dative does not converge without a marker, whatever its form. Taken as the
-marker of Voice it leaves the applicative head unpronounced. -/
 theorem not_converges_singleton (f : String) : ¬ Converges none [f] := by
   simp [Converges]
 
-/-- The second exponent *le* is not a reflexive form, so the marking comes from the first. -/
 theorem not_isReflexiveForm_le : ¬ IsReflexiveForm Spanish.Clitics.le.form := by
   decide +kernel
 
-/-- Syncretism with the reflexive does not suffice for a stylistic clitic. The first person
-plural *nos* is syncretic, and fission still skips it for want of [+SING]. -/
 theorem syncretic_not_isFissionApplicable :
     (∀ f ∈ datives .speakerOthers, IsReflexiveForm f) ∧
       ¬ IsFissionApplicable .speakerOthers :=
@@ -271,10 +250,6 @@ def clauses (a : Option Category) : AnticausativeMarking → List Clause
   | .unmarked => [unmarked a]
   | .optional => [marked a, unmarked a]
 
-/-- An anticausative example is accepted exactly when its clitic cluster is one that a clause of
-its verb surfaces with. This covers the three synonymous clusters, the restriction to first and
-second person singular datives, the invariability of *le*, the ban on stylistic *le* with
-unmarked anticausatives, and the marking of anticausatives without a dative. -/
 theorem anticausative_rows : ∀ e ∈ Examples.all,
     e.feature? "construction" = some "anticausative" →
     ∃ v ∈ verb? e, ∃ a ∈ appl? e, ∃ s ∈ e.feature? "cluster",
@@ -290,8 +265,6 @@ def otherClause? (e : Datum) : Option Clause :=
     [("inherent", ⟨Minimalist.Voice.agentive, [.vDO], a⟩),
       ("impersonal", ⟨Minimalist.Voice.impersonal, [.vDO], a⟩)]
 
-/-- Where *se* has another source and the clause is not inchoative, the applicative head has its
-plain exponent alone, so stylistic *le* is out. -/
 theorem other_rows : ∀ e ∈ Examples.all,
     e.feature? "construction" = some "inherent" ∨
       e.feature? "construction" = some "impersonal" →
@@ -300,9 +273,6 @@ theorem other_rows : ∀ e ∈ Examples.all,
         ∃ l ∈ applExponents k, " ".intercalate ("se" :: l) = s) := by
   decide +kernel
 
-/-- An example with the unintentional causer reading has a cluster of the marked clause. The
-cluster *me le* of *hervir* has the reading although it lacks *se*, since only the marked clause
-fissions. -/
 theorem causer_reading_rows : ∀ e ∈ Examples.all,
     e.readings.lookup "unintentional causer" = some .acceptable →
     ∃ a ∈ appl? e, ∃ s ∈ e.feature? "cluster",
@@ -311,8 +281,6 @@ theorem causer_reading_rows : ∀ e ∈ Examples.all,
 
 /-! ### Against a constraint on clitic clusters -/
 
-/-- A person case constraint sees the persons of the two clitics, and *me* and *nos* have the
-same person, so no such constraint separates *me le* from *nos le*. -/
 theorem isLicit_me_iff_nos (g : PCC.Grammar) :
     (∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
         PCC.IsLicit g ⟨io, do_⟩) ↔
@@ -320,14 +288,11 @@ theorem isLicit_me_iff_nos (g : PCC.Grammar) :
         PCC.IsLicit g ⟨io, do_⟩ :=
   Iff.rfl
 
-/-- The weak constraint bans a third-person dative over a first-person accusative, as in the
-ditransitive examples, so it would ban stylistic *me le* as well. -/
 theorem weak_pcc_bans :
     ∃ io ∈ Spanish.Clitics.le.person, ∃ do_ ∈ Spanish.Clitics.me.person,
       ¬ PCC.IsLicit PCC.weakGrammar ⟨io, do_⟩ := by
   decide
 
-/-- The fission rule does separate the two. -/
 theorem fission_separates :
     IsFissionApplicable .speaker ∧ ¬ IsFissionApplicable .speakerOthers := by
   decide
@@ -343,7 +308,6 @@ the clitic. -/
 def seMarkedIfAlternating (v : SpanishVerbEntry) : Prop :=
   v.Alternates → v.anticausativeMarking ≠ some .unmarked
 
-/-- *mejorar* alternates and rejects the clitic, against the prediction. -/
 theorem not_seMarkedIfAlternating_mejorar : ¬ seMarkedIfAlternating mejorar := by
   unfold seMarkedIfAlternating; decide
 

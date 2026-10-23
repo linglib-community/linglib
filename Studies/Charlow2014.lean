@@ -143,8 +143,6 @@ theorem combine_eq_seq (f : α → β → γ) (m : M α) (n : M β) :
     combine f m n = f <$> m <*> n := by
   simp only [combine, seq_eq_bind_map, ← bind_pure_comp, bind_assoc, pure_bind]
 
-/-- Sequencing a combined node is sequencing its daughters in linear order, whatever the
-bracketing, which is Rebracket. -/
 theorem combine_bind (f : α → β → γ) (m : M α) (n : M β) (k : γ → M δ) :
     combine f m n >>= k = m >>= fun x ↦ n >>= fun y ↦ k (f x y) := by
   simp [combine, bind_assoc]
@@ -163,8 +161,6 @@ end Monadic
 
 section TruthValues
 
-/-- Truth values are `Prop`s, so a value pinned by a biconditional substitutes
-away like one pinned by an equation. -/
 theorem forall_iff_imp {q : Prop} {P : Prop → Prop} : (∀ p, (p ↔ q) → P p) ↔ P q :=
   ⟨fun h ↦ h q Iff.rfl, fun h _ hp ↦ (propext hp).symm ▸ h⟩
 
@@ -308,13 +304,11 @@ theorem bind_pro (m : StateSet E E) (π : E → E → StateSet E α) :
     (dref m >>= fun ν ↦ pro >>= fun u ↦ π ν u) = dref m >>= fun ν ↦ π ν ν := by
   funext s; ext q; simp
 
-/-- *A man met Polly* leaves a nondeterministic man on the output stack. -/
 theorem indef_met_name (man : E → Prop) (met : E → E → Prop) (p : E) :
     combine (fun x f ↦ f x) (dref (indef man)) (combine (· ·) (pure met) (pure p)) =
       fun s ↦ {q | ∃ x, man x ∧ q = (met p x, s ++ [x])} := by
   funext s; ext q; simp [combine]
 
-/-- A man left; he was tired — cross-sentential binding with static conjunction. -/
 theorem indef_left_pro_tired (man left tired : E → Prop) :
     combine (fun x f ↦ f x) (combine (fun x f ↦ f x) (dref (indef man)) (pure left))
       (combine (· ·) (pure fun q p ↦ p ∧ q) (combine (fun x f ↦ f x) pro (pure tired))) =
@@ -370,11 +364,8 @@ theorem combine_contT {ρ : Type} {M : Type → Type} [Monad M] {α β γ : Type
     (m : ContT ρ M α) (n : ContT ρ M β) :
     combine f m n = fun k ↦ m.run fun x ↦ n.run fun y ↦ k (f x y) := rfl
 
-/-- Lift into the continuation monad over `Id` is the Montague lift. -/
 theorem monadLift_id {ρ α : Type} (a : Id α) : (monadLift a : ContT ρ Id α) = fun k ↦ k a := rfl
 
-/-- In a static reading of *Polly saw every linguist* a generalized quantifier in object
-position composes by scopal application and Lower discharges it. -/
 theorem static_every {ling : E → Prop} (saw : E → E → Prop) (p : E) :
     ContT.eval (combine (fun x f ↦ f x) (pure p : ContT Prop Id E)
       (combine (· ·) (pure saw) (fun k ↦ ∀ x, ling x → k x))) =
@@ -441,7 +432,6 @@ def bindShift (m : Tower E β E) : Tower E β E := fun k ↦ m.run fun a s ↦ k
 @[simp] theorem run_bindShift (m : Tower E β E) (k : E → StateSet E β) :
     (bindShift m).run k = m.run fun a s ↦ k a (s ++ [a]) := rfl
 
-/-- Bind continues from the value's dref introduction. -/
 theorem run_bindShift_eq_dref (m : Tower E β E) (k : E → StateSet E β) :
     (bindShift m).run k = m.run fun a ↦ dref (pure a) >>= k := by
   simp only [run_bindShift, dref_bind, pure_bind]
@@ -723,7 +713,6 @@ Two indefinites on one island yield three fully evaluated programs: one
 `StateSet E (StateSet E Prop)` layerings. A layered program unfolds back into a
 three-level tower after evaluation, so the indefinites scope separately. -/
 
-/-- A persuasive lawyer visits a relative of mine, agglomerated. -/
 theorem indef_visits_indef (law rel : E → Prop) (visits : E → E → Prop) :
     ContT.eval (combine (fun x f ↦ f x) (monadLift (indef law) : Tower E Prop E)
       (combine (· ·) (liftValue visits) (monadLift (indef rel)))) =
@@ -739,7 +728,6 @@ theorem indef_visits_indef_layered (law rel : E → Prop) (visits : E → E → 
       indef rel >>= fun y ↦ pure (indef law >>= fun x ↦ pure (visits y x)) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
 
-/-- Lifting a layered program twice restores the three-level tower. -/
 theorem monadLift_layered {M : Type u → Type u} [Monad M] [LawfulMonad M] {ρ α β : Type u}
     (m : M α) (f : α → M β) :
     (monadLift <$> (monadLift (m >>= fun y ↦ pure (f y)) : ContT ρ M (M β)) :
@@ -876,8 +864,6 @@ theorem name_dref_inverse (person : E → Prop) (thinks : Prop → E → Prop) (
       dref (pure b) >>= fun y ↦ pure (∀ x, person x → thinks (come y) x) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
 
-/-- In *… we'll have to invite him* the escaped dref binds the consequent's pronoun, so replacing
-BILL by John yields a meaning identical to the antecedent's and Contrast is satisfiable. -/
 theorem name_dref_cond (person : E → Prop) (thinks : Prop → E → Prop) (come invite : E → Prop)
     (b : E) :
     cond (dref (pure b) >>= fun y ↦ pure (∀ x, person x → thinks (come y) x))
@@ -1014,7 +1000,6 @@ theorem fmark_left (alt : E → Set E) (j : E) (left : E → Prop) :
   rw [eval_combine_monadLift, combine_eq_map₂]
   exact WithAlternatives.ext rfl (by ext; simp [fmark, WithAlternatives.alternatives_pure, eq_comm])
 
-/-- *Sharon only met JOHNᶠ* associates with focus at the VP. -/
 theorem only_met_fmark (alt : E → Set E) (j : E) (met : E → E → W → Prop) :
     only (ContT.eval (combine (· ·) (monadLift (pure met : WithAlternatives (E → E → W → Prop)) :
         ContT (E → W → Prop) WithAlternatives _)
@@ -1201,7 +1186,6 @@ theorem bind_pro_append (π : E → ReaderSet E α) (s : Stack E) (a : E) :
     (pro >>= π) (s ++ [a]) = π a (s ++ [a]) := by
   ext; simp
 
-/-- *A linguist rubbed his head* is bound in scope via Bind. -/
 theorem indef_rubbed_pro_head (ling : E → Prop) (rubbed : E → E → Prop) (head : E → E) :
     ContT.eval (combine (fun x f ↦ f x)
       (bindShift (monadLift (indef ling)) : ContT Prop (ReaderSet E) E)
@@ -1210,9 +1194,6 @@ theorem indef_rubbed_pro_head (ling : E → Prop) (rubbed : E → E → Prop) (h
       indef ling >>= fun x ↦ pure (rubbed (head x) x) := by
   funext s; ext; simp [combine, ContT.eval]
 
-/-- In *a man told nobody about a book he wrote*, with the object indefinite scoping over `nobody`
-and its pronoun bound by the subject, the subject and object indefinites take the top level and
-`nobody` the second. -/
 theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → Prop)
     (told : E → E → E → Prop) :
     (combine (combine (fun x f ↦ f x))
@@ -1226,9 +1207,6 @@ theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → 
         pure (¬ ∃ y, person y ∧ told y z x) := by
   funext s; ext; simp [combine, ContT.eval, Function.comp_def]
 
-/-- In Reader.Set, in *a man left; he was tired* the indefinite's nondeterminism survives the
-island and its dref does not, the second sentence's pronoun still reading the input stack.
-Contrast `Charlow2014.exceptional_binding`. -/
 theorem no_exceptional_binding (man left tired : E → Prop) :
     ContT.eval (combine (fun x f ↦ f x)
       (ContT.reset (combine (fun x f ↦ f x)
@@ -1248,8 +1226,6 @@ theorem run_monadLift (m : ReaderSet E α) (k : α → ReaderSet E β) :
 
 end ReaderSet
 
-/-- ... whereas a State.Set continuation is evaluated at the lifted program's
-output stack. -/
 theorem run_monadLift (m : StateSet E α) (k : α → StateSet E β) :
     (monadLift m : Tower E β α).run k = fun s ↦ ⋃ q ∈ m s, k q.1 q.2 := by
   funext s; ext; simp

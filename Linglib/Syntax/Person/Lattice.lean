@@ -47,7 +47,6 @@ open Finset Discourse
 
 /-! ### Participant sets -/
 
-/-- The participant sets of a value are closed under union. -/
 theorem supClosed_participantSets (p : Person) :
     SupClosed (p.participantSets : Set (Finset Role)) := by
   rw [← sups_eq_self]; cases p <;> decide
@@ -63,7 +62,6 @@ instance : Max Person where
     | .first, .firstExclusive | .firstExclusive, .first => .first
     | p, q => if p = q then p else .firstInclusive
 
-/-- The participant sets of a coordination are the unions of its conjuncts'. -/
 @[simp] theorem participantSets_sup (p q : Person) :
     (p ⊔ q).participantSets = p.participantSets ⊻ q.participantSets := by
   revert p q; decide
@@ -87,25 +85,20 @@ instance : OrderBot Person where
 
 @[simp] theorem ofParticipants_empty : ofParticipants ∅ = ⊥ := rfl
 
-/-- The person of a union of participant sets is the join of their persons. -/
 theorem ofParticipants_union (s t : Finset Role) :
     ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t :=
   participantSets_injective <| by simp
 
 /-! ### Coarsening -/
 
-/-- Coarsening a value never loses a participant set. -/
 theorem participantSets_subset_coarsen (p : Person) :
     p.participantSets ⊆ p.coarsen.participantSets := by
   cases p <;> decide
 
-/-- Coarsening sends a value to the tripartition value covering its participant sets. -/
 theorem coarsen_eq_iff (p q : Person) :
     p.coarsen = q ↔ q.coarsen = q ∧ p.participantSets ⊆ q.participantSets := by
   revert p q; decide
 
-/-- The tripartition value of a coordination depends only on the tripartition values of its
-conjuncts. -/
 theorem coarsen_sup (p q : Person) : (p ⊔ q).coarsen = (p.coarsen ⊔ q.coarsen).coarsen := by
   revert p q; decide
 

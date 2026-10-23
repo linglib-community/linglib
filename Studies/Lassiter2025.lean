@@ -94,16 +94,13 @@ instance (s : Shape) (ok : Reading → Prop) [DecidablePred ok] :
     Decidable (Acceptable s ok) := by
   unfold Acceptable; infer_instance
 
-/-- A bare left-nested conditional meets a demand iff the premise reading does. -/
 theorem acceptable_bare_iff (ok : Reading → Prop) :
     Acceptable (.nested .bare) ok ↔ ok .premise := by
   simp [Acceptable, readings]
 
-/-- Every other conditional is open to both readings. -/
 theorem readings_of_ne_bare {s : Shape} (h : s ≠ .nested .bare) : readings s = Finset.univ := by
   rcases s with _ | _ | _ | _ | _ <;> first | exact absurd rfl h | decide
 
-/-- Every other conditional meets a demand iff some reading does. -/
 theorem acceptable_iff_of_ne_bare {s : Shape} (h : s ≠ .nested .bare) (ok : Reading → Prop) :
     Acceptable s ok ↔ ∃ ct, ok ct := by
   simp [Acceptable, readings_of_ne_bare h]
@@ -126,9 +123,6 @@ section Felicity
 
 variable {A W : Type*} {K : Commitment.Table A W} {p : Set W}
 
-/-- `anchoring` is the felicity condition in the two contexts the paper uses: one whose common
-ground entails the antecedent, and one in which nobody has committed to it and its polar
-question is open. -/
 theorem anchoring_iff_felicitous
     (h : p ∈ K.commonGround ∨
       (∀ a, p ∉ K.discourseCommitments a) ∧ ¬ (Question.polar p).DecidedBy K.commonGround)
@@ -212,12 +206,10 @@ def admits (ct : Reading) (pos : Position) (e : PolarityItem) : Prop :=
 instance (ct : Reading) (pos : Position) (e : PolarityItem) : Decidable (admits ct pos e) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- The embedded consequent takes the main antecedent's direction. -/
 theorem polarity_embedded_consequent (ct : Reading) :
     (Position.embedded .consequent).polarity ct = ct.clausePolarity .antecedent := by
   cases ct <;> rfl
 
-/-- The embedded antecedent reverses it. -/
 theorem polarity_embedded_antecedent :
     (Position.embedded .antecedent).polarity .premise = -1 ∧
       (Position.embedded .antecedent).polarity .hypothetical = 1 := ⟨rfl, rfl⟩
@@ -301,15 +293,12 @@ def demand (row : Datum) (ct : Reading) : Prop :=
 instance (row : Datum) (ct : Reading) : Decidable (demand row ct) := by
   unfold demand; infer_instance
 
-/-- Every marker and item a row names resolves to a fragment entry. -/
 theorem adapters_total :
     ∀ row ∈ Examples.all,
       ((row.feature? "marker").isSome → (markerOf row).isSome) ∧
         ((row.feature? "item").isSome → (itemOf row).isSome) := by
   decide
 
-/-- The fragments describe every marker a row names fully, so the row theorems read the
-readings each marker marks, not a bound on them. -/
 theorem markers_described :
     ∀ row ∈ Examples.all, ∀ m ∈ markerOf row, m.readings.fst = m.readings.snd := by
   decide
@@ -332,8 +321,6 @@ def label : Reading → String
   | .hypothetical => "HC"
   | .premise => "PC"
 
-/-- On every felicitous row, the reading the paper attributes is the one reading open to its
-shape that meets its demand. -/
 theorem interpretation_rows :
     ∀ row ∈ Examples.all, row.JudgedFelicitous →
       ∀ ct, row.feature? "interpretation" = some (label ct) →

@@ -70,7 +70,6 @@ def khulumaNga : Verb where
 /-- The predicates with clausal-argument data in the paper. -/
 def verbs : List Verb := [cabanga, funa, zwa, khulumaNga]
 
-/-- Every clausal frame takes *ukuthi*, the one complementizer for both moods. -/
 theorem takes_ukuthi :
     ∀ v ∈ verbs, ∀ fr ∈ v.valency.frames, fr.HasClausal → ArgumentFrame.Takes fr ukuthi := by
   decide

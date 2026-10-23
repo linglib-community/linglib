@@ -99,7 +99,6 @@ def resolveRight : Mealy Bool Mark TBU :=
   .ofFlag (· == .H) fun r a =>
     match a with | .H => .H | .O => .O | .Q => if r then .H else .O
 
-/-- The left pass writes `H` exactly where the input has `H`. -/
 theorem markLeft_run_getElem?_H_iff :
     (markLeft.run w)[j]? = some Mark.H ↔ w[j]? = some TBU.H := by
   rw [markLeft, Mealy.getElem?_ofFlag_run]
@@ -146,7 +145,6 @@ The string representation reads back into autosegmental representations by `TBU.
 plateau, Hyman and Katamba's rule as given in (7). -/
 
 open Autosegmental in
-/-- The merged output's links are the fused `H` over the surfacing positions. -/
 theorem link_collapse_prod_map_toAR_map :
     (((utp.map w).map TBU.toAR).prod.collapse true).Link true false k j ↔
       k = 0 ∧ utp.Surfaces w j := by

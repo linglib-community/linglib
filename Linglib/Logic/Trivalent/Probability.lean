@@ -79,14 +79,11 @@ theorem prob_le_one [IsFiniteMeasure μ] : prob μ p ≤ 1 := by
   · have := cond_isProbabilityMeasure (μ := μ) h
     exact MeasureTheory.prob_le_one
 
-/-- Trivalent probability reads only the relative weights, so it is invariant under rescaling the
-credence. -/
 theorem prob_smul {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) : prob (c • μ) p = prob μ p := by
   unfold prob
   rw [cond_smul hc0 hc, Measure.smul_apply, smul_eq_mul]
   simp only [mul_eq_zero, or_iff_right hc0]
 
-/-- Against the uniform credence on a finite world space, trivalent probability counts worlds. -/
 theorem prob_uniformOn_univ [Fintype W] [Nonempty W] (p : W → SignType) :
     prob (uniformOn Set.univ) p = prob Measure.count p := by
   rw [show (uniformOn Set.univ : Measure W) = (Fintype.card W : ℝ≥0∞)⁻¹ • Measure.count by
@@ -95,7 +92,6 @@ theorem prob_uniformOn_univ [Fintype W] [Nonempty W] (p : W → SignType) :
     prob_smul (ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _))
       (ENNReal.inv_ne_top.2 (Nat.cast_ne_zero.2 Fintype.card_ne_zero))]
 
-/-- On a two-valued proposition, trivalent probability is the probability of truth. -/
 @[simp] theorem prob_ofProp [IsProbabilityMeasure μ] (A : W → Prop) [DecidablePred A] :
     prob μ (fun w ↦ ofProp (A w)) = μ {w | A w} := by
   rw [prob_of_measure_support_ne_zero (by simp), support_ofProp, cond_univ]
@@ -105,21 +101,17 @@ theorem prob_uniformOn_univ [Fintype W] [Nonempty W] (p : W → SignType) :
 
 variable [DiscreteMeasurableSpace W]
 
-/-- Where a proposition is not void almost surely, its probability is the weight of its truth over
-that of its truth and falsity together. -/
 theorem prob_eq_div (h : μ (support p) ≠ 0) :
     prob μ p = μ (posExt p) / (μ (posExt p) + μ (negExt p)) := by
   rw [prob_of_measure_support_ne_zero h,
     cond_apply_of_subset .of_discrete (posExt_subset_support p), ← posExt_union_negExt,
     measure_union (disjoint_posExt_negExt p) .of_discrete]
 
-/-- The weight of truth and falsity together is the weight of the defined region. -/
 theorem prob_eq_div_measure_support (h : μ (support p) ≠ 0) :
     prob μ p = μ (posExt p) / μ (support p) := by
   rw [prob_of_measure_support_ne_zero h,
     cond_apply_of_subset .of_discrete (posExt_subset_support p)]
 
-/-- Against the counting credence, trivalent probability is a ratio of world counts. -/
 theorem prob_count_eq {P S : Finset W} (hpos : ∀ w, p w = 1 ↔ w ∈ P)
     (hsupp : ∀ w, p w ≠ 0 ↔ w ∈ S) (hS : S.Nonempty) :
     prob Measure.count p = P.card / S.card := by
@@ -131,10 +123,6 @@ theorem prob_count_eq {P S : Finset W} (hpos : ∀ w, p w = 1 ↔ w ∈ P)
   rw [prob_eq_div_measure_support h, hpos', hsupp', Measure.count_apply_finset,
     Measure.count_apply_finset]
 
-/-- **Trivalent additivity.** Disjoining propositions that are defined together and never true
-together adds their probabilities, the additivity of [egre-rossi-sprenger-2026a]'s trivalent
-probability; without the properness hypothesis all three probabilities can be `1` by the all-void
-convention. -/
 theorem prob_joinBelnap {q : W → SignType} (hsupp : support p = support q)
     (hdisj : Disjoint (posExt p) (posExt q)) (h : μ (support p) ≠ 0) :
     prob μ (fun w ↦ joinBelnap (p w) (q w)) = prob μ p + prob μ q := by
@@ -150,7 +138,6 @@ theorem prob_joinBelnap {q : W → SignType} (hsupp : support p = support q)
     prob_eq_div_measure_support h, prob_eq_div_measure_support (hsupp ▸ h), hsupp', hpos,
     measure_union hdisj .of_discrete, ← hsupp, ENNReal.div_add_div_same]
 
-/-- Probability `1` is almost sure non-falsity. -/
 theorem prob_eq_one_iff [IsFiniteMeasure μ] : prob μ p = 1 ↔ μ (negExt p) = 0 := by
   by_cases h : μ (support p) = 0
   · exact iff_of_true (prob_of_measure_support_eq_zero h)
@@ -160,12 +147,10 @@ theorem prob_eq_one_iff [IsFiniteMeasure μ] : prob μ p = 1 ↔ μ (negExt p) =
       cond_apply .of_discrete, support_inter_compl_posExt, mul_eq_zero,
       or_iff_right (ENNReal.inv_ne_zero.2 (measure_ne_top _ _))]
 
-/-- Against a point mass, a proposition has probability `1` exactly where it is not false. -/
 @[simp] theorem prob_dirac_eq_one_iff {w : W} : prob (Measure.dirac w) p = 1 ↔ 0 ≤ p w := by
   rw [prob_eq_one_iff, Measure.dirac_apply' _ .of_discrete, Set.indicator_apply_eq_zero]
   cases h : p w <;> simp [h]
 
-/-- Probability `0` is almost sure non-truth where falsity has positive weight. -/
 theorem prob_eq_zero_iff [IsFiniteMeasure μ] :
     prob μ p = 0 ↔ μ (posExt p) = 0 ∧ μ (negExt p) ≠ 0 := by
   by_cases h : μ (support p) = 0
@@ -178,8 +163,6 @@ theorem prob_eq_zero_iff [IsFiniteMeasure μ] :
     rw [← posExt_union_negExt]
     exact measure_union_null h0 h1
 
-/-- **Adams's Thesis.** A conditional assertion of a two-valued consequent on the condition `s` has
-the conditional probability of the consequent given `s`. -/
 theorem prob_indicator_ofProp (s : Set W) (B : W → Prop) [DecidablePred B] (h : μ s ≠ 0) :
     prob μ (s.indicator fun w ↦ ofProp (B w)) = μ[{w | B w} | s] := by
   have hs : support (s.indicator fun w ↦ ofProp (B w)) = s := by simp [Set.support_indicator]
@@ -188,8 +171,6 @@ theorem prob_indicator_ofProp (s : Set W) (B : W → Prop) [DecidablePred B] (h 
   ext w
   by_cases hw : w ∈ s <;> simp [hw]
 
-/-- Negation complements the probability, unless the proposition is void almost surely, when both
-probabilities are `1`. -/
 theorem prob_neg [IsFiniteMeasure μ] (h : μ (support p) ≠ 0) : prob μ (-p) = 1 - prob μ p := by
   have hs : support (-p) = support p := by ext w; simp
   have := cond_isProbabilityMeasure (μ := μ) h

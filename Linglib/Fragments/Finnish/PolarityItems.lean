@@ -68,7 +68,6 @@ def vasta : PolarityItem :=
 /-- The entries. -/
 def items : List PolarityItem := [kukaan, kukaTahansa, vasta]
 
-/-- Every context of every entry licenses it. -/
 theorem finnish_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
   decide

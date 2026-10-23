@@ -115,7 +115,6 @@ theorem invariant_incl {γ : Type*} {f g : α → γ} {f' g' : β → γ} (hf : 
     obtain ⟨a₂, ha₂, h₂⟩ := hs.2 b₂ hb₂
     exact ⟨a₂, ha₂, by rw [hf h₁, hg h₂, hfb]⟩
 
-/-- Invariant properties agree on the singleton teams of related points. -/
 theorem Invariant.singleton (h : Invariant r P P') :
     (r ⇒ Iff) (fun a ↦ {a} ∈ P) fun b ↦ {b} ∈ P' :=
   fun _ _ hab ↦ h (by simpa using hab)
@@ -129,8 +128,6 @@ is bisimilarity at depth `k + 1` and `r` at depth `k`
 
 variable {R : α → Finset α} {R' : β → Finset β}
 
-/-- A sub-team of a team related by the lifting of `r` has a related sub-team on the other
-    side. -/
 theorem _root_.Set.LiftRel.exists_finset_subset {s t : Finset α} {s' : Finset β}
     (hs : Set.LiftRel r ↑s ↑s') (ht : t ⊆ s) : ∃ t' ⊆ s', Set.LiftRel r ↑t ↑t' := by
   classical
@@ -194,9 +191,6 @@ theorem Invariant.necImage (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) �
     (h : Invariant r P P') : Invariant r₁ (necImage R P) (necImage R' P') := fun _ _ hs ↦
   h (by simp only [biUnionHom_apply, Finset.coe_biUnion]; exact hs.biUnion fun a _ b _ ↦ hR a b)
 
-/-- A team `Y` meeting the successor set of each point of `s` has a counterpart meeting the
-    successor set of each point of a related `s'`, related to the part of `Y` reachable
-    from `s`. -/
 private theorem exists_liftRel_witness (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
     {s : Finset α} {s' : Finset β} (hs : Set.LiftRel r₁ ↑s ↑s') {Y : Finset α}
     (hY : ∀ a ∈ s, ∃ y ∈ Y, y ∈ R a) :
@@ -215,8 +209,6 @@ private theorem exists_liftRel_witness (hR : ∀ a b, r₁ a b → Set.LiftRel r
     obtain ⟨y', hy'b, hyy'⟩ := (hR a b hab).1 y hya
     exact ⟨y', Finset.mem_filter.2 ⟨Finset.mem_biUnion.2 ⟨b, hb, hy'b⟩, y, hy, hyy'⟩, hyy'⟩
 
-/-- The single-witness possibility modality preserves invariance between downward-closed
-    properties. -/
 theorem Invariant.possWitness (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
     (hP : IsLowerSet P) (hP' : IsLowerSet P') (h : Invariant r P P') :
     Invariant r₁ (possWitness R P) (possWitness R' P') := by

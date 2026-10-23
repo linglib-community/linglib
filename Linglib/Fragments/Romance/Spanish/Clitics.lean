@@ -195,19 +195,15 @@ theorem table_eq_reflexiveForms_iff (r : Row) (k : Case) :
     table (r, k) = reflexiveForms (r, k) ↔ r.person ≠ .third := by
   cases r <;> cases k <;> decide
 
-/-- By category, the dative and the reflexive have the same forms exactly outside the third
-person, where the dative has *le* or *les* beside *se* and the reflexive *se* alone. -/
 theorem paradigm_dative_eq_paradigm_reflexive_iff (c : Person.Category) :
     PersonalPronoun.paradigm dative c = ReflexivePronoun.paradigm reflexive c ↔
       c.person ≠ .third := by
   cases c <;> decide +kernel
 
-/-- Every category has a reflexive form. -/
 theorem paradigm_reflexive_nonempty (c : Person.Category) :
     (ReflexivePronoun.paradigm reflexive c).Nonempty := by
   cases c <;> decide +kernel
 
-/-- Gender is marked by the third-person accusatives alone. -/
 theorem isSome_gender_iff {p : PersonalPronoun} (hp : p ∈ accusative ∪ dative) :
     p.gender.isSome ↔ p.person = some .third ∧ .acc ∈ p.cases := by
   revert p; decide +kernel

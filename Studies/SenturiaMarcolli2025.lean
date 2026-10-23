@@ -123,9 +123,6 @@ theorem bundle_eq_toFinset_features (S : UnorderedTree (F ⊕ Unit)) :
     bundle S = (features S).toFinset := rfl
 
 omit [DecidableEq F] in
-/-- A structural vertex contributes nothing to the bundle: the leaf
-features of a structural node are the concatenation of its children's,
-whether or not children remain. -/
 theorem leafFeatures_node_inr (cs : List (RoseTree (F ⊕ Unit))) :
     leafFeatures (.node (.inr ()) cs) = (cs.map leafFeatures).sum := by
   cases cs with
@@ -148,8 +145,6 @@ both under a structural root ([senturia-marcolli-2025] Definition 5.2). -/
 noncomputable def fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) : UnorderedTree (F ⊕ Unit) :=
   UnorderedTree.node (.inr ()) {S₁, S₂}
 
-/-- The fused bundle is the union of the input bundles — the labeling
-law itself, so fusion needs nothing beyond the magma. -/
 theorem bundle_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     bundle (fuse S₁ S₂) = bundle S₁ ∪ bundle S₂ := by
   refine Quotient.inductionOn₂ S₁ S₂ fun p q ↦ ?_
@@ -160,8 +155,6 @@ theorem bundle_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
   rfl
 
 omit [DecidableEq F] in
-/-- Fusion is additive on the feature multiset: nothing is lost,
-duplicated, or created. -/
 theorem features_fuse (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     features (fuse S₁ S₂) = features S₁ + features S₂ := by
   refine Quotient.inductionOn₂ S₁ S₂ fun p q ↦ ?_
@@ -258,8 +251,6 @@ theorem bundle_restrict {C : Finset F} {t : RoseTree (F ⊕ Unit)}
     rw [bundle_mk, bundle_mk, key, Multiset.toFinset_filter,
       Finset.filter_mem_eq_inter]
 
-/-- Multiset form of `bundle_restrict`: restriction filters the feature
-multiset, `none` counting as empty. -/
 theorem features_restrict (C : Finset F) {t : RoseTree (F ⊕ Unit)}
     (ht : IsMorphological t) :
     (restrict C (UnorderedTree.mk t)).elim 0 features
@@ -270,9 +261,6 @@ theorem features_restrict (C : Finset F) {t : RoseTree (F ⊕ Unit)}
   | none => rw [hc, Option.elim_none] at key; simpa using key
   | some t' => rw [hc, Option.elim_some] at key; simpa using key
 
-/-- Features copied into both sides of the fission partition survive in
-both outputs: the residue of a discontinuously realized bundle is
-pronounced on both exponents. -/
 theorem restrict_copies_shared {A C₁ C₂ : Finset F}
     (h₁ : A ⊆ C₁) (h₂ : A ⊆ C₂) {t : RoseTree (F ⊕ Unit)}
     (ht : IsMorphological t) {S₁' S₂' : UnorderedTree (F ⊕ Unit)}
@@ -294,8 +282,6 @@ vertex, restoring the bundle without restoring the tree. Obliteration
 replaces a whole morphological object by the unit of the workspace
 algebra, which lives in the second slice. -/
 
-/-- Fission followed by fusion restores the bundle: the trace-maintaining
-impoverishment composite leaves the feature content intact. -/
 theorem bundle_fuse_restrict {C₁ C₂ : Finset F} {t : RoseTree (F ⊕ Unit)}
     (ht : IsMorphological t) (hcover : bundle (UnorderedTree.mk t) ⊆ C₁ ∪ C₂)
     {S₁' S₂' : UnorderedTree (F ⊕ Unit)}
@@ -321,10 +307,6 @@ def exTree : RoseTree (Feat ⊕ Unit) :=
   .node (.inr ()) [.node (.inr ()) [.node (.inl .phi) [], .node (.inl .alpha) []],
     .node (.inr ()) [.node (.inl .beta) [], .node (.inl .gamma) []]]
 
-/-- Restriction to `{φ, γ}` and `{φ, α, β}` followed by fusion yields a
-five-leaf object: `φ` is realized on both sides, so the composite is not
-the original four-leaf tree even though its bundle is
-(`bundle_fuse_restrict`). -/
 theorem fuse_restrict_ne (S₁' S₂' : UnorderedTree (Feat ⊕ Unit))
     (e₁ : restrict {.phi, .gamma} (UnorderedTree.mk exTree) = some S₁')
     (e₂ : restrict {.phi, .alpha, .beta} (UnorderedTree.mk exTree) = some S₂') :
@@ -481,9 +463,6 @@ theorem msFeatures_fuse (lexHead lex₁ lex₂ : Λ)
     msFeatures_fusionSite]
 
 omit [DecidableEq F] in
-/-- Fusion raises the syntax-morphology boundary: the syntactic
-projection collapses from a cherry to a single leaf while the feature
-content stays constant (`msFeatures_fuse`). -/
 theorem toSyntactic_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     toSyntactic (fusionSite lex₁ lex₂ S₁ S₂)
       = UnorderedTree.node (.inr ())
@@ -611,10 +590,6 @@ inductive OblitAt : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop
   | mk (lex : Λ) (mo : Option (UnorderedTree (F ⊕ Unit))) :
       OblitAt (insertion lex mo) (insertion lex none)
 
-/-- Fission duplicates exactly the copied residue: with `B ∖ A`
-partitioned into `B₁ ⊔ B₂` and `A` copied to both sides, the site's
-feature multiset grows by precisely the `A`-part. `A = ∅` recovers
-content invariance (`msFeatures_fission_partition`). -/
 theorem msFeatures_fissionSite_copy (lex₁ lex₂ : Λ) {A B₁ B₂ : Finset F}
     (h₁ : Disjoint A B₁) (h₂ : Disjoint A B₂) (h₁₂ : Disjoint B₁ B₂)
     {t : RoseTree (F ⊕ Unit)} (ht : IsMorphological t)
@@ -695,8 +670,6 @@ theorem OblitAt.msFeatures_le {T T' : Morphosyntactic F Λ} (h : OblitAt T T') :
     exact Multiset.zero_le _
 
 omit [DecidableEq F] in
-/-- A site-level feature-content identity transfers through the
-congruence closure. -/
 theorem Step.msFeatures_eq {R : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop}
     (hR : ∀ {T T' : Morphosyntactic F Λ}, R T T' → msFeatures T' = msFeatures T)
     {T T' : Morphosyntactic F Λ} (h : Step R T T') :
@@ -729,8 +702,6 @@ theorem Step.toFinset_msFeatures_eq
       Multiset.toFinset_add, ih]
 
 omit [DecidableEq F] in
-/-- Fusion moves the boundary up: one syntactic leaf fewer, wherever it
-applies. -/
 theorem Step.numLeaves_fuse {T T' : Morphosyntactic F Λ}
     (h : Step FuseAt T T') : T'.numLeaves + 1 = T.numLeaves := by
   induction h with
@@ -743,8 +714,6 @@ theorem Step.numLeaves_fuse {T T' : Morphosyntactic F Λ}
       rfl
   | congr _ ih => rw [numLeaves_node_cons, numLeaves_node_cons]; omega
 
-/-- Fission moves the boundary down: one syntactic leaf more, wherever
-it applies. -/
 theorem Step.numLeaves_fiss {T T' : Morphosyntactic F Λ}
     (h : Step FissAt T T') : T.numLeaves + 1 = T'.numLeaves := by
   induction h with
@@ -772,10 +741,6 @@ def Derivation : Morphosyntactic F Λ → Morphosyntactic F Λ → Prop :=
     (Step FuseAt T T' ∨ Step FissAt T T') ∨
       (Step ImpovAt T T' ∨ Step OblitAt T T')
 
-/-- The movable boundary, feature side: the post-syntactic semigroup
-never creates or destroys a feature. Any composition of fusions and
-fissions leaves the total feature set invariant — the operations only
-move the boundary between syntax and morphology. -/
 theorem PostSyntactic.toFinset_msFeatures_eq {T T' : Morphosyntactic F Λ}
     (h : PostSyntactic T T') :
     (msFeatures T').toFinset = (msFeatures T).toFinset := by
@@ -786,9 +751,6 @@ theorem PostSyntactic.toFinset_msFeatures_eq {T T' : Morphosyntactic F Λ}
     · rw [Step.msFeatures_eq (fun h ↦ h.msFeatures_eq) hf, ih]
     · rw [Step.toFinset_msFeatures_eq (fun h ↦ h.toFinset_msFeatures_eq) hs, ih]
 
-/-- Along the full Distributed Morphology semigroup the feature set can
-only shrink: fusion and fission preserve it, impoverishment and
-obliteration delete. -/
 theorem Derivation.toFinset_msFeatures_subset {T T' : Morphosyntactic F Λ}
     (h : Derivation T T') :
     (msFeatures T').toFinset ⊆ (msFeatures T).toFinset := by
@@ -811,8 +773,6 @@ three valuations (+, −, unvalued), the bivalent inventory has `n + 3`
 generating objects against the `3 n` features a privative encoding
 needs, strictly fewer for more than one category. -/
 
-/-- The bivalent inventory is the smaller one as soon as there is more
-than one feature category. -/
 theorem bivalent_economy {n : ℕ} (h : 1 < n) : n + 3 < 3 * n := by omega
 
 end SenturiaMarcolli2025

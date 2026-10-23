@@ -70,8 +70,6 @@ private theorem take_append_middle {u : List α} (hu : k ≤ u.length) (t x y : 
 
 /-! #### Definite languages -/
 
-/-- A `k`-definite language is blind to a prefix prepended to a word of length at least `k`, since
-the length-`k` window never reaches past the word. -/
 theorem IsDefinite.syntacticEquiv_append_left (h : L.IsDefinite k) {u : List α}
     (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (t ++ u) u :=
   fun x y ↦ iff_of_eq (h (rtake_append_middle hu t x y))
@@ -82,8 +80,6 @@ theorem IsDefinite.isRightZero_syntacticClass (h : L.IsDefinite k) {u : List α}
   rw [← syntacticClass_append, syntacticClass_eq_iff]
   exact h.syntacticEquiv_append_left hu t
 
-/-- A language is `k`-definite exactly when the syntactic class of every word of length at least
-`k` is a right zero of the syntactic monoid. -/
 theorem isDefinite_iff_forall_isRightZero_syntacticClass :
     L.IsDefinite k ↔ ∀ u : List α, k ≤ u.length → IsRightZero (L.syntacticClass u) := by
   refine ⟨fun h _ ↦ h.isRightZero_syntacticClass, fun h ↦ isDefinite_iff_mem_takeAt.2 fun w ↦ ?_⟩
@@ -96,8 +92,6 @@ theorem isDefinite_iff_forall_isRightZero_syntacticClass :
 
 /-! #### Reverse definite languages -/
 
-/-- A reverse `k`-definite language is blind to a suffix appended to a word of length at
-least `k`. -/
 theorem IsReverseDefinite.syntacticEquiv_append_right (h : L.IsReverseDefinite k) {u : List α}
     (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (u ++ t) u :=
   fun x y ↦ iff_of_eq (h (take_append_middle hu t x y))
@@ -108,8 +102,6 @@ theorem IsReverseDefinite.isLeftZero_syntacticClass (h : L.IsReverseDefinite k) 
   rw [← syntacticClass_append, syntacticClass_eq_iff]
   exact h.syntacticEquiv_append_right hu t
 
-/-- A language is reverse `k`-definite exactly when the syntactic class of every word of length at
-least `k` is a left zero of the syntactic monoid. -/
 theorem isReverseDefinite_iff_forall_isLeftZero_syntacticClass :
     L.IsReverseDefinite k ↔ ∀ u : List α, k ≤ u.length → IsLeftZero (L.syntacticClass u) := by
   refine ⟨fun h _ ↦ h.isLeftZero_syntacticClass,
@@ -122,8 +114,6 @@ theorem isReverseDefinite_iff_forall_isLeftZero_syntacticClass :
 
 /-! #### Generalized definite languages -/
 
-/-- A generalized `k`-definite language is blind to anything placed between two copies of a word
-of length at least `k`. -/
 theorem IsGeneralizedDefinite.syntacticEquiv_append_append (h : L.IsGeneralizedDefinite k)
     {u : List α} (hu : k ≤ u.length) (t : List α) : L.SyntacticEquiv (u ++ t ++ u) u :=
   fun x y ↦ isGeneralizedDefinite_iff_edges.1 h
@@ -138,8 +128,6 @@ theorem IsGeneralizedDefinite.syntacticClass_mul_mul_self (h : L.IsGeneralizedDe
   rw [← syntacticClass_append, ← syntacticClass_append, syntacticClass_eq_iff]
   exact h.syntacticEquiv_append_append hu t
 
-/-- A language is generalized `k`-definite exactly when the syntactic class of every word of length
-at least `k` absorbs anything placed between two copies of it. -/
 theorem isGeneralizedDefinite_iff_forall_syntacticClass_mul_mul_self :
     L.IsGeneralizedDefinite k ↔ ∀ u : List α, k ≤ u.length → ∀ s,
       L.syntacticClass u * s * L.syntacticClass u = L.syntacticClass u := by
@@ -183,22 +171,18 @@ private theorem exists_le_length_syntacticClass_eq {u : List α} (hu : u ≠ [])
     exact n.le_succ.trans (Nat.le_mul_of_pos_right _ (List.length_pos_iff.2 hu))
   · rw [syntacticClass_flatten, List.map_replicate, List.prod_replicate, he.pow_succ_eq]
 
-/-- In a definite language, an idempotent class of a nonempty word is a right zero. -/
 theorem IsDefinite.isRightZero_syntacticClass_of_isIdempotentElem (h : L.IsDefinite k)
     {u : List α} (hu : u ≠ []) (he : IsIdempotentElem (L.syntacticClass u)) :
     IsRightZero (L.syntacticClass u) :=
   have ⟨_, hv, hvu⟩ := exists_le_length_syntacticClass_eq hu he k
   hvu ▸ h.isRightZero_syntacticClass hv
 
-/-- In a reverse definite language, an idempotent class of a nonempty word is a left zero. -/
 theorem IsReverseDefinite.isLeftZero_syntacticClass_of_isIdempotentElem
     (h : L.IsReverseDefinite k) {u : List α} (hu : u ≠ [])
     (he : IsIdempotentElem (L.syntacticClass u)) : IsLeftZero (L.syntacticClass u) :=
   have ⟨_, hv, hvu⟩ := exists_le_length_syntacticClass_eq hu he k
   hvu ▸ h.isLeftZero_syntacticClass hv
 
-/-- In a generalized definite language, an idempotent class of a nonempty word absorbs anything
-placed between two copies of it. -/
 theorem IsGeneralizedDefinite.syntacticClass_mul_mul_self_of_isIdempotentElem
     (h : L.IsGeneralizedDefinite k) {u : List α} (hu : u ≠ [])
     (he : IsIdempotentElem (L.syntacticClass u)) (s : L.SyntacticMonoid) :
@@ -208,8 +192,6 @@ theorem IsGeneralizedDefinite.syntacticClass_mul_mul_self_of_isIdempotentElem
 
 /-! ### The syntactic semigroup -/
 
-/-- An element of the syntactic monoid is a right zero once it absorbs the image of the syntactic
-semigroup, since everything else is the identity. -/
 theorem isRightZero_iff_forall_syntacticSemigroupToMonoid_mul {x : L.SyntacticMonoid} :
     IsRightZero x ↔ ∀ s, L.syntacticSemigroupToMonoid s * x = x := by
   refine ⟨fun h s ↦ h _, fun h m ↦ ?_⟩
@@ -224,7 +206,6 @@ theorem isLeftZero_iff_forall_mul_syntacticSemigroupToMonoid {x : L.SyntacticMon
 
 /-! #### From the language to the semigroup -/
 
-/-- The syntactic semigroup of a definite language is definite. -/
 theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
     Semigroup.IsDefinite L.SyntacticSemigroup :=
   .of_isRightZero_map L.toSyntacticSemigroup_surjective fun w hw ↦ by
@@ -233,7 +214,6 @@ theorem IsDefinite.isDefinite_syntacticSemigroup (h : L.IsDefinite k) :
     rw [syntacticSemigroupToMonoid_mk]
     exact h.isRightZero_syntacticClass hw
 
-/-- The syntactic semigroup of a reverse definite language is reverse definite. -/
 theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseDefinite k) :
     Semigroup.IsReverseDefinite L.SyntacticSemigroup :=
   .of_isLeftZero_map L.toSyntacticSemigroup_surjective fun w hw ↦ by
@@ -242,7 +222,6 @@ theorem IsReverseDefinite.isReverseDefinite_syntacticSemigroup (h : L.IsReverseD
     rw [syntacticSemigroupToMonoid_mk]
     exact h.isLeftZero_syntacticClass hw
 
-/-- The syntactic semigroup of a generalized definite language is locally trivial. -/
 theorem IsGeneralizedDefinite.isLocallyTrivial_syntacticSemigroup
     (h : L.IsGeneralizedDefinite k) : Semigroup.IsLocallyTrivial L.SyntacticSemigroup :=
   .of_map_mul_map_eq L.toSyntacticSemigroup_surjective fun w hw s ↦
@@ -257,12 +236,10 @@ section Converse
 
 variable [Finite L.SyntacticSemigroup]
 
-/-- The empty word has length at least `|S|` only when the syntactic semigroup is empty. -/
 private theorem isEmpty_of_natCard_le_length_nil
     (hu : Nat.card L.SyntacticSemigroup ≤ ([] : List α).length) : IsEmpty L.SyntacticSemigroup :=
   not_nonempty_iff.1 fun _ ↦ (Nat.card_pos (α := L.SyntacticSemigroup)).not_ge hu
 
-/-- A language with a definite syntactic semigroup `S` is `|S|`-definite. -/
 theorem isDefinite_natCard_of_isDefinite_syntacticSemigroup
     (h : Semigroup.IsDefinite L.SyntacticSemigroup) :
     L.IsDefinite (Nat.card L.SyntacticSemigroup) := by
@@ -273,7 +250,6 @@ theorem isDefinite_natCard_of_isDefinite_syntacticSemigroup
   · intro s
     rw [← syntacticSemigroupToMonoid_mk, ← map_mul, h.isRightZero_map _ (w := ⟨a, l⟩) hu s]
 
-/-- A language with a reverse definite syntactic semigroup `S` is reverse `|S|`-definite. -/
 theorem isReverseDefinite_natCard_of_isReverseDefinite_syntacticSemigroup
     (h : Semigroup.IsReverseDefinite L.SyntacticSemigroup) :
     L.IsReverseDefinite (Nat.card L.SyntacticSemigroup) := by
@@ -284,7 +260,6 @@ theorem isReverseDefinite_natCard_of_isReverseDefinite_syntacticSemigroup
   · intro s
     rw [← syntacticSemigroupToMonoid_mk, ← map_mul, h.isLeftZero_map _ (w := ⟨a, l⟩) hu s]
 
-/-- A language with a locally trivial syntactic semigroup `S` is generalized `|S|`-definite. -/
 theorem isGeneralizedDefinite_natCard_of_isLocallyTrivial_syntacticSemigroup
     (h : Semigroup.IsLocallyTrivial L.SyntacticSemigroup) :
     L.IsGeneralizedDefinite (Nat.card L.SyntacticSemigroup) := by
@@ -313,8 +288,6 @@ theorem isLocallyTrivial_syntacticSemigroup_iff :
   ⟨fun h ↦ ⟨_, isGeneralizedDefinite_natCard_of_isLocallyTrivial_syntacticSemigroup h⟩,
     fun ⟨_, h⟩ ↦ h.isLocallyTrivial_syntacticSemigroup⟩
 
-/-- Over a finite alphabet, a language with a finite syntactic semigroup is finite or cofinite
-exactly when its syntactic semigroup is both definite and reverse definite. -/
 theorem isFiniteOrCofinite_iff_syntacticSemigroup [Finite α] :
     L.IsFiniteOrCofinite ↔ Semigroup.IsDefinite L.SyntacticSemigroup ∧
       Semigroup.IsReverseDefinite L.SyntacticSemigroup := by
@@ -325,34 +298,27 @@ end Converse
 
 /-! ### The Eilenberg correspondences -/
 
-/-- A definite language over a finite alphabet lies in the language variety of **D**. -/
 theorem IsDefinite.langs [Finite α] (h : L.IsDefinite k) : Semigroup.definiteVariety.langs L :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isDefinite_syntacticSemigroup⟩
 
-/-- A reverse definite language over a finite alphabet lies in the language variety of **K**. -/
 theorem IsReverseDefinite.langs [Finite α] (h : L.IsReverseDefinite k) :
     Semigroup.reverseDefiniteVariety.langs L :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isReverseDefinite_syntacticSemigroup⟩
 
-/-- A generalized definite language over a finite alphabet lies in the language variety
-of **LI**. -/
 theorem IsGeneralizedDefinite.langs [Finite α] (h : L.IsGeneralizedDefinite k) :
     Semigroup.locallyTrivialVariety.langs L :=
   ⟨h.isRegular.finite_syntacticSemigroup, h.isLocallyTrivial_syntacticSemigroup⟩
 
-/-- The language variety of **D** consists of the definite languages. -/
 theorem langs_definiteVariety_iff [Finite α] :
     Semigroup.definiteVariety.langs L ↔ ∃ k, L.IsDefinite k :=
   ⟨fun h ↦ have := h.1; isDefinite_syntacticSemigroup_iff.1 h.2,
     fun ⟨_, h⟩ ↦ h.langs⟩
 
-/-- The language variety of **K** consists of the reverse definite languages. -/
 theorem langs_reverseDefiniteVariety_iff [Finite α] :
     Semigroup.reverseDefiniteVariety.langs L ↔ ∃ k, L.IsReverseDefinite k :=
   ⟨fun h ↦ have := h.1; isReverseDefinite_syntacticSemigroup_iff.1 h.2,
     fun ⟨_, h⟩ ↦ h.langs⟩
 
-/-- The language variety of **LI** consists of the generalized definite languages. -/
 theorem langs_locallyTrivialVariety_iff [Finite α] :
     Semigroup.locallyTrivialVariety.langs L ↔ ∃ k, L.IsGeneralizedDefinite k :=
   ⟨fun h ↦ have := h.1; isLocallyTrivial_syntacticSemigroup_iff.1 h.2,

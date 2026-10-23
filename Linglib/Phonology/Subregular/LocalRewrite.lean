@@ -138,7 +138,6 @@ def Effect.apply (e : Effect) (w : List Segment) (s : Segment) (d : List Segment
   | .copyRight C => some (d.head?.elim s fun t ↦ C.piecewise t s)
   | .copyLeft C => some (w.getLast?.elim s fun t ↦ C.piecewise t s)
 
-/-- An effect reads at most `leftReach` symbols of the prefix. -/
 theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : List Segment)
     (s : Segment) (d : List Segment) : e.apply (w.rtake n) s d = e.apply w s d := by
   cases e with
@@ -150,7 +149,6 @@ theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : L
     have h1 : 1 ≤ n := by simpa [Effect.leftReach] using h
     simp only [Effect.apply, List.getLast?_rtake, ite_eq_right (Nat.ne_of_gt h1)]
 
-/-- An effect reads at most `rightReach` symbols of the suffix. -/
 theorem Effect.apply_append (e : Effect) (w : List Segment) (s : Segment) (d d' : List Segment)
     (h : e.rightReach ≤ d.length) : e.apply w s (d ++ d') = e.apply w s d := by
   cases e with
@@ -264,13 +262,11 @@ theorem matchesLeft_rtake (ctx : List ContextElem) (left : List Segment) :
     simp [List.rtake_eq_reverse_take_reverse]
   rw [MatchesLeft, h, matchesRight_take, MatchesLeft]
 
-/-- Any window at least as long as the context reads the same. -/
 theorem matchesLeft_rtake_of_le (ctx : List ContextElem) {n : ℕ} (h : ctx.length ≤ n)
     (left : List Segment) : MatchesLeft ctx (left.rtake n) ↔ MatchesLeft ctx left := by
   rw [← matchesLeft_rtake ctx (left.rtake n), List.rtake_rtake, min_eq_left h,
     matchesLeft_rtake]
 
-/-- A suffix at least as long as the context reads the same as its extensions. -/
 theorem matchesRight_append_of_le (ctx : List ContextElem) {d : List Segment}
     (d' : List Segment) (h : ctx.length ≤ d.length) :
     MatchesRight ctx (d ++ d') ↔ MatchesRight ctx d := by
@@ -288,7 +284,6 @@ def Rule.verdict (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) 
     (r.effect.apply w s d).toList
   else [s]
 
-/-- `Rule.apply` emits one `Rule.verdict` per input position. -/
 theorem Rule.apply_go_cons (r : Rule) (left : List Segment) (s : Segment)
     (right : List Segment) :
     Rule.apply.go r left (s :: right)
@@ -297,14 +292,12 @@ theorem Rule.apply_go_cons (r : Rule) (left : List Segment) (s : Segment)
       MatchesRight r.rightContext right <;>
     cases he : r.effect.apply left s right <;> simp [Rule.apply.go, Rule.verdict, hc, he]
 
-/-- The verdict reads only the last `leftReach` symbols of the prefix. -/
 theorem Rule.verdict_rtake (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) :
     r.verdict (w.rtake r.leftReach) s d = r.verdict w s d := by
   simp only [Rule.verdict,
     matchesLeft_rtake_of_le r.leftContext (n := r.leftReach) (le_max_left _ _),
     Effect.apply_rtake r.effect (n := r.leftReach) (le_max_right _ _)]
 
-/-- The verdict reads only the first `rightReach` symbols of the suffix. -/
 theorem Rule.verdict_append (r : Rule) (w : List Segment) (s : Segment) (d e : List Segment)
     (h : r.rightReach ≤ d.length) : r.verdict w s (d ++ e) = r.verdict w s d := by
   simp only [Rule.verdict,
@@ -316,7 +309,6 @@ theorem Rule.verdict_append (r : Rule) (w : List Segment) (s : Segment) (d e : L
 
 A rule whose effect is not deletion rewrites each segment to one segment. -/
 
-/-- An effect other than deletion yields a segment. -/
 theorem Effect.isSome_apply {e : Effect} (h : e ≠ .delete) (w : List Segment) (s : Segment)
     (d : List Segment) : (e.apply w s d).isSome := by
   cases e <;> first | rfl | exact absurd rfl h
@@ -337,12 +329,10 @@ private theorem Rule.length_apply_go {r : Rule} (h : r.effect ≠ .delete)
     rw [Rule.apply_go_cons, List.length_append, Rule.length_verdict h, ih, List.length_cons,
       Nat.add_comm]
 
-/-- A rule that does not delete preserves the length of the word. -/
 theorem Rule.length_apply {r : Rule} (h : r.effect ≠ .delete) (input : List Segment) :
     (r.apply input).length = input.length :=
   Rule.length_apply_go h [] input
 
-/-- A cascade of rules that do not delete preserves the length of the word. -/
 theorem length_derive {rules : List Rule} (h : ∀ r ∈ rules, r.effect ≠ .delete)
     (input : List Segment) : (derive rules input).length = input.length := by
   induction rules generalizing input with
@@ -359,7 +349,6 @@ def Rule.scan (r : Rule) (w : List Segment) : List Segment → List Segment
   | [] => []
   | s :: right => r.verdict w s right ++ r.scan ((w ++ [s]).rtake r.leftReach) right
 
-/-- Truncating the prefix to the rule's left reach loses nothing. -/
 theorem Rule.scan_rtake (r : Rule) (left right : List Segment) :
     r.scan (left.rtake r.leftReach) right = Rule.apply.go r left right := by
   induction right generalizing left with
@@ -367,7 +356,6 @@ theorem Rule.scan_rtake (r : Rule) (left right : List Segment) :
   | cons s right ih =>
     rw [Rule.scan, Rule.verdict_rtake, List.rtake_append_rtake, ih, Rule.apply_go_cons]
 
-/-- `Rule.apply` is the bounded-window scan started from the empty window. -/
 theorem Rule.apply_eq_scan (r : Rule) : r.apply = r.scan [] := by
   funext input
   show Rule.apply.go r [] input = _
@@ -402,8 +390,6 @@ theorem Rule.toISLRule_apply (r : Rule) (h : r.rightReach = 0) :
   show (r.toISLRule h).applyAux [] input = _
   rw [r.applyAux_toISLRule h, Rule.apply_eq_scan]
 
-/-- **A rewrite rule with no right reach is Left-ISL**, with `k` one more than its left
-reach. -/
 theorem Rule.isLeftInputStrictlyLocal (r : Rule) (h : r.rightReach = 0) :
     IsLeftInputStrictlyLocal (r.leftReach + 1) r.apply :=
   ⟨r.toISLRule h, r.toISLRule_apply h⟩
@@ -440,8 +426,6 @@ def Rule.toSubsequentialTransducer (r : Rule) :
       r.verdict s.1.val b ((s.2.val ++ [x]).rtake r.rightReach)
   finalOutput s := r.scan s.1.val s.2.val
 
-/-- From any state the delayed transducer judges the buffer and the remaining input together,
-so the delay is invisible in the total output. -/
 theorem Rule.runFrom_toSubsequentialTransducer (r : Rule) (s : r.State)
     (input : List Segment) :
     r.toSubsequentialTransducer.runFrom s input = r.scan s.1.val (s.2.val ++ input) := by
@@ -465,18 +449,12 @@ theorem Rule.runFrom_toSubsequentialTransducer (r : Rule) (s : r.State)
         List.cons_append, Rule.scan, r.verdict_append w b rest xs hrest.ge]
       simp
 
-/-- The delayed transducer computes the rule. -/
 theorem Rule.run_toSubsequentialTransducer (r : Rule) :
     r.toSubsequentialTransducer.run = r.apply := by
   funext input
   rw [SubsequentialTransducer.run, r.runFrom_toSubsequentialTransducer]
   simp [Rule.apply_eq_scan, Rule.toSubsequentialTransducer]
 
-/-- **Every local rewrite rule is Left-Subsequential.** `Segment` is a partial
-valuation of the 26 features of Hayes, so it is finite but carries no
-`Fintype` instance (its `Flat` slots are deliberately opaque), and the hypothesis
-supplies the finite alphabet Mohri assumes without forcing a
-`3 ^ 26`-element enumeration on every consumer of this file. -/
 theorem Rule.isLeftSubsequential [Fintype Segment] (r : Rule) :
     IsLeftSubsequential r.apply :=
   r.run_toSubsequentialTransducer ▸ r.toSubsequentialTransducer.isLeftSubsequential

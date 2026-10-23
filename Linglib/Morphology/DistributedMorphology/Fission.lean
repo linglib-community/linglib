@@ -105,7 +105,6 @@ theorem scan_cons_of_discharge_eq_none (h : discharge i env ms = none) :
     scan (i :: rest) env ms = scan rest env ms := by
   simp [scan, h]
 
-/-- Discharge subtracts the item's features from the node, the sum of its matrices. -/
 theorem val_add_discharge : ∀ {ms ms' : List (Finset F)}, discharge i env ms = some ms' →
     i.features.val + (ms'.map Finset.val).sum = (ms.map Finset.val).sum
   | [], _, h => by simp at h
@@ -121,8 +120,6 @@ theorem val_add_discharge : ∀ {ms ms' : List (Finset F)}, discharge i env ms =
       rw [List.map_cons, List.map_cons, List.sum_cons, List.sum_cons, add_left_comm,
         val_add_discharge h'']
 
-/-- **Conservation.** In the free commutative monoid on the features, the inserted items'
-features and the residue sum to the node. -/
 theorem bind_insertions_add_residue :
     ∀ (items : RuleSet (VocabularyItem F E)) (ms : List (Finset F)),
     (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.features.val) +
@@ -139,22 +136,17 @@ theorem bind_insertions_add_residue :
       rw [← Multiset.cons_coe, Multiset.cons_bind, add_assoc,
         bind_insertions_add_residue rest ms', val_add_discharge h]
 
-/-- **No multiple exponence.** The inserted items' features fit inside the node, so no feature is
-discharged more often than the node bears it. -/
 theorem bind_insertions_le (items : RuleSet (VocabularyItem F E)) (ms : List (Finset F)) :
     (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.features.val) ≤
       (ms.map Finset.val).sum :=
   bind_insertions_add_residue items ms ▸ Multiset.le_add_right _ _
 
-/-- On a node whose matrices are disjoint the inserted items' features are disjoint, so the items
-partition the features they discharge. -/
 theorem pairwise_disjoint_insertions (h : (ms.map Finset.val).sum.Nodup) :
     (insertions items env ms).Pairwise fun i j ↦ Disjoint i.features j.features := by
   have := Multiset.nodup_of_le (bind_insertions_le (env := env) items ms) h
   rw [Multiset.nodup_bind, Multiset.pairwise_coe_iff_pairwise] at this
   exact this.2.imp (Finset.disjoint_val.mp ·)
 
-/-- A node with no matrix receives nothing. -/
 @[simp] theorem insertions_nil_right :
     ∀ items : RuleSet (VocabularyItem F E), insertions items env [] = []
   | [] => rfl
@@ -162,7 +154,6 @@ theorem pairwise_disjoint_insertions (h : (ms.map Finset.val).sum.Nodup) :
 
 @[simp] theorem scansion_nil : scansion items env [] = [] := by simp [scansion]
 
-/-- Each item is inserted at most once, in Vocabulary order. -/
 theorem insertions_sublist : ∀ (items : RuleSet (VocabularyItem F E)) (ms : List (Finset F)),
     (insertions items env ms).Sublist items
   | [], _ => .slnil
@@ -183,14 +174,12 @@ theorem length_scansion_le (ms : List (Finset F)) :
     (scansion items env ms).length ≤ items.length := by
   simpa using (scansion_sublist (items := items) (env := env) ms).length_le
 
-/-- At a single matrix, an item discharges iff it applies there. -/
 theorem discharge_singleton (i : VocabularyItem F E) (m : Finset F) :
     discharge i env [m] =
       if Applies i ({ env with focus := m } : Neighborhood (Finset F))
         then some [m \ i.features] else none := by
   simp [discharge]
 
-/-- At a single matrix, the first item inserted is the first item that applies there. -/
 theorem head?_insertions_singleton (m : Finset F) : ∀ items : RuleSet (VocabularyItem F E),
     (insertions items env [m]).head? =
       (items.applicable ({ env with focus := m } : Neighborhood (Finset F))).head?
@@ -203,9 +192,6 @@ theorem head?_insertions_singleton (m : Finset F) : ∀ items : RuleSet (Vocabul
       simpa [insertions, RuleSet.applicable, h] using
         head?_insertions_singleton m rest
 
-/-- On a Vocabulary ordered by decreasing specificity, the first insertion at a single matrix is
-the Subset Principle's winner, so scansion agrees with Elsewhere competition where both
-apply. -/
 theorem head?_scansion_singleton (m : Finset F)
     (hsorted : items.Pairwise fun i j => j.specificity ≤ i.specificity) :
     (scansion items env [m]).head? =

@@ -108,7 +108,6 @@ theorem meaning_le_one (hε1 : g.ε ≤ 1) (u : U) (o : O) : g.meaning u o ≤ 1
 theorem mass_pos (hε : 0 < g.ε) {S : Finset O} (hS : S.Nonempty) (u : U) : 0 < g.mass S u :=
   sum_pos (fun o _ => g.meaning_pos hε u o) hS
 
-/-- A more specific utterance has pointwise smaller meaning. -/
 theorem meaning_le_of_specific (hε1 : g.ε ≤ 1) {u₀ u₁ : U}
     (hspec : ∀ o, g.applies u₀ o → g.applies u₁ o) (o : O) :
     g.meaning u₀ o ≤ g.meaning u₁ o := by
@@ -117,7 +116,6 @@ theorem meaning_le_of_specific (hε1 : g.ε ≤ 1) {u₀ u₁ : U}
   · simp [h₀, hspec o h₀]
   · split_ifs <;> linarith
 
-/-- Two utterances true of the same objects of a context have the same mass there. -/
 theorem mass_congr {S : Finset O} {u₀ u₁ : U}
     (h : ∀ o ∈ S, g.applies u₀ o ↔ g.applies u₁ o) : g.mass S u₀ = g.mass S u₁ :=
   sum_congr rfl fun o ho => by simp [meaning, h o ho]
@@ -136,7 +134,6 @@ theorem mass_insert_of_notMem {S : Finset O} {h : O} (hh : h ∉ S) (u : U) :
     g.mass (insert h S) u = g.meaning u h + g.mass S u :=
   sum_insert hh
 
-/-- The literal listener's share of the target drops when an object enters the context. -/
 theorem L0_insert_le (hε : 0 < g.ε) (u : U) (o h : O) (hh : h ∉ g.context)
     (hc : g.context.Nonempty) : g.L0 (insert h g.context) u o ≤ g.L0 g.context u o := by
   unfold L0
@@ -144,7 +141,6 @@ theorem L0_insert_le (hε : 0 < g.ε) (u : U) (o h : O) (hh : h ∉ g.context)
   exact div_le_div_of_nonneg_left (g.meaning_pos hε u o).le (g.mass_pos hε hc u)
     (le_add_of_nonneg_left (g.meaning_pos hε u h).le)
 
-/-- Listener accuracy is monotone in the listener's perspective-taking weight. -/
 theorem mixListener_target_mono (hε : 0 < g.ε) (u : U) (h : O) (hh : h ∉ g.context)
     (hc : g.context.Nonempty) : Monotone fun wL => g.mixListener h wL u g.target := by
   intro a b hab
@@ -281,7 +277,6 @@ hidden object. -/
 noncomputable def accuracy (u : U) (wL : ℝ) : ℝ :=
   ∑ h, g.hidden h * g.mixListener h wL u g.target
 
-/-- Accuracy is affine in the listener weight. -/
 theorem accuracy_eq (u : U) (wL : ℝ) :
     g.accuracy u wL = wL * (∑ h, g.hidden h * g.L0 g.context u g.target) +
       (1 - wL) * ∑ h, g.hidden h * g.L0 (insert h g.context) u g.target := by
@@ -306,8 +301,6 @@ under a listener weight drawn uniformly from the five-point grid, less the linea
 noncomputable def rrSpeakerUtility (β wS : ℝ) : ℝ :=
   (1 / 5 : ℝ) * ∑ k ∈ range 5, g.accuracy (g.best wS) ((k : ℝ) / 4) - β * wS
 
-/-- Accuracy is affine in the listener weight, so its average over the grid is its value at
-the midpoint. -/
 theorem rrSpeakerUtility_eq (β wS : ℝ) :
     g.rrSpeakerUtility β wS = g.accuracy (g.best wS) (1 / 2) - β * wS := by
   simp only [rrSpeakerUtility, accuracy_eq, sum_range_succ, sum_range_zero]
@@ -409,8 +402,6 @@ theorem sum_hiddenPrior : ∑ o : Obj, hiddenPrior o = 1 := by
   simp
   norm_num
 
-/-- In the shared context shape alone identifies the target, so the full description and
-the bare shape have the same mass there. -/
 theorem stimulus_tie (c : ℝ) :
     (stimulus c).mass (stimulus c).context {.shape, .color, .texture} =
       (stimulus c).mass (stimulus c).context {.shape} :=

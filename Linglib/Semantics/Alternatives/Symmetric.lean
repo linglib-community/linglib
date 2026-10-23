@@ -36,11 +36,9 @@ structure IsSymmetric (s s₁ s₂ : Set W) : Prop where
   union : s₁ ∪ s₂ = s
   disjoint : Disjoint s₁ s₂
 
-/-- The assertion without an alternative it entails is that alternative's symmetric partner. -/
 theorem isSymmetric_sdiff {t : Set W} (h : t ⊆ s) : IsSymmetric s t (s \ t) :=
   ⟨Set.union_sdiff_cancel h, Set.disjoint_sdiff_right⟩
 
-/-- Symmetric alternatives of `s` are complements in the lattice of subsets of `s`. -/
 theorem isSymmetric_iff_isCompl (h₁ : s₁ ⊆ s) (h₂ : s₂ ⊆ s) :
     IsSymmetric s s₁ s₂ ↔ IsCompl (⟨s₁, h₁⟩ : Set.Iic s) ⟨s₂, h₂⟩ := by
   rw [isCompl_iff, disjoint_iff, codisjoint_iff]
@@ -60,7 +58,6 @@ theorem subset_left (h : IsSymmetric s s₁ s₂) : s₁ ⊆ s := h.union ▸ Se
 
 theorem subset_right (h : IsSymmetric s s₁ s₂) : s₂ ⊆ s := h.union ▸ Set.subset_union_right
 
-/-- The second symmetric alternative is the assertion without the first. -/
 theorem sdiff_eq (h : IsSymmetric s s₁ s₂) : s \ s₁ = s₂ := by
   rw [← h.union, Set.union_sdiff_left]
   exact h.disjoint.symm.sdiff_eq_left
@@ -71,15 +68,12 @@ theorem not_subset_left (h : IsSymmetric s s₁ s₂) (hne : s₂.Nonempty) : ¬
 theorem ssubset_left (h : IsSymmetric s s₁ s₂) (hne : s₂.Nonempty) : s₁ ⊂ s :=
   h.subset_left.ssubset_of_not_subset (h.not_subset_left hne)
 
-/-- Contextual restriction cannot break symmetry: a set of propositions closed under negation
-and conjunction that contains the assertion and one symmetric alternative contains the other. -/
 theorem mem_of_mem (h : IsSymmetric s s₁ s₂) {R : BooleanSubalgebra (Set W)} (hs : s ∈ R)
     (h₁ : s₁ ∈ R) : s₂ ∈ R :=
   h.sdiff_eq ▸ BooleanSubalgebra.sdiff_mem hs h₁
 
 end IsSymmetric
 
-/-- Symmetry over finite sets is decidable through the underlying finsets. -/
 theorem isSymmetric_coe [DecidableEq W] (A B C : Finset W) :
     IsSymmetric (↑A : Set W) ↑B ↑C ↔ B ∪ C = A ∧ B ∩ C = ∅ := by
   constructor

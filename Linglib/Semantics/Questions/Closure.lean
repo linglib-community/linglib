@@ -30,18 +30,14 @@ namespace Question
 
 variable {W ι : Type*} {a : ι → Set W}
 
-/-- An atom is among those true at a world iff it is true there. -/
 @[simp] theorem mem_satisfied_iff {w : W} {i : ι} :
     i ∈ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w ↔ w ∈ a i :=
   Preorder.mem_satisfied_univ
 
-/-- A world verifies the conjunction of a group iff the group's atoms are true there. -/
 theorem mem_biInter_iff_subset {S : Finset ι} {w : W} :
     w ∈ ⋂ i ∈ S, a i ↔ ↑S ⊆ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w :=
   Set.mem_iInter₂.trans ⟨fun h _ hi ↦ ⟨trivial, h _ hi⟩, fun h _ hi ↦ (h hi).2⟩
 
-/-- Under conjunctive closure, two worlds are in the same cell iff the same atoms are true at
-them. -/
 theorem partition_infClosure_range :
     partition (infClosure (Set.range a)) =
       Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
@@ -56,8 +52,6 @@ theorem partition_infClosure_range :
     obtain ⟨S, -, rfl⟩ := Set.mem_infClosure_range.1 hq
     rw [mem_biInter_iff_subset, mem_biInter_iff_subset, h]
 
-/-- Under disjunctive closure, two worlds are in the same cell iff the same atoms are true at
-them. -/
 theorem partition_supClosure_range :
     partition (supClosure (Set.range a)) =
       Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
@@ -73,7 +67,6 @@ theorem partition_supClosure_range :
     simp only [Set.ext_iff, Preorder.mem_satisfied, Set.mem_univ, true_and] at h
     simp only [Set.mem_iUnion, exists_prop, h]
 
-/-- Both closures induce the same partition. -/
 theorem partition_infClosure_range_eq_supClosure_range :
     partition (infClosure (Set.range a)) = partition (supClosure (Set.range a)) :=
   partition_infClosure_range.trans partition_supClosure_range.symm

@@ -420,7 +420,6 @@ def construction : Node → Construction Sem
   | .resultative => resultative
   | .conative => conative
 
-/-- Every construction of the network has a slot the verb must supply. -/
 theorem obligatory_ne_nil (n : Node) : (construction n).meaning.link.obligatory ≠ [] := by
   revert n; decide
 
@@ -461,11 +460,8 @@ instance : PartialOrder Node := network.partialOrder Node.rank (by decide)
 instance : DecidableLE Node :=
   network.decidableLE [.ditransitive .actual, .causedMotion] (by decide)
 
-/-- Every link respects its type: the extensions of the ditransitive have its form, and
-intransitive motion is a proper subpart of caused motion. -/
 theorem network_wellTyped : network.WellTyped := by decide
 
-/-- The links make caused motion the resultative's only mother. -/
 theorem isMother_resultative_iff (n : Node) :
     network.IsMother .resultative n ↔ n = .causedMotion := by
   revert n; decide
@@ -479,7 +475,6 @@ def statedForm : Node → Option (TypedForm String)
   | .ditransitive _ => none
   | n => some (construction n).form
 
-/-- Each sense of the ditransitive inherits the central sense's form. -/
 theorem inherited_statedForm (m : TransferModality) :
     DefaultInheritance.inherited statedForm (.ditransitive m) = {(ditransitive .actual).form} := by
   cases m <;> exact DefaultInheritance.inherited_eq_singleton_of_isLeast

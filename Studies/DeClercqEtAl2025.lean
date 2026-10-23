@@ -78,25 +78,16 @@ def chytr : RuleSet (LexicalEntry (Option Deg) String) :=
 /-- The sequences of the positive, the comparative and the superlative. -/
 def degrees : List (List Deg) := [[.a, .q], [.a, .q, .cmpr], [.a, .q, .cmpr, .sprl]]
 
-/-- English *tall*, *tall-er*, *tall-est*: the comparative suffix follows the evacuated root
-and the superlative suffix overrides it. With *worse* in the lexicon the comparative needs no
-evacuation, so it is *worse* and not *badd-er*. -/
 theorem english_degrees :
     degrees.map (exponents tall) = [some ["tall"], some ["tall", "er"], some ["tall", "est"]] ∧
       exponents bad [.a, .q, .cmpr] = some ["worse"] := by
   decide
 
-/-- Armenian has the one form in all three degrees, each phrase a subtree of the stored
-one. -/
 theorem armenian_degrees :
     degrees.map (exponents partsrahasag) =
       [some ["partsrahasag"], some ["partsrahasag"], some ["partsrahasag"]] := by
   decide
 
-/-- Czech *inteligent-n-(í)*, *inteligent-n-ějš-(í)* and *chytř-ejš-(í)*: the smaller root takes
-a suffix more. The movement steps do not derive the superlative, no entry storing the
-superlative feature with a unary foot, and the algorithm's last resort builds the prefix
-*nej-*. -/
 theorem czech_degrees :
     degrees.map (exponents inteligent) =
         [some ["inteligent", "n"], some ["inteligent", "n", "ějš"], none] ∧
@@ -125,16 +116,12 @@ def jazyk : RuleSet (LexicalEntry (Option Case) String) :=
 def cases : List (List Case) :=
   [[.n, .sg, .k1], [.n, .sg, .k1, .k2], [.n, .sg, .k1, .k2, .k3]]
 
-/-- *chleb-a* in all three cases, and *jazyk*, *jazyk*, *jazyk-a*. -/
 theorem czech_declension :
     cases.map (exponents chleb) =
         [some ["chleb", "a"], some ["chleb", "a"], some ["chleb", "a"]] ∧
       cases.map (exponents jazyk) = [some ["jazyk"], some ["jazyk"], some ["jazyk", "a"]] := by
   decide
 
-/-- In the genitive the root *jazyk* cannot grow, and no entry lexicalizes the genitive feature
-alone, so the derivation goes back to the merger of the singular and evacuates the noun there.
-Its structure is then that of *chleb-a*, the two classes levelled. -/
 theorem genitive_levels :
     lexicalize jazyk [.n, .sg, .k1, .k2, .k3] = lexicalize chleb [.n, .sg, .k1, .k2, .k3] := by
   decide
@@ -161,18 +148,12 @@ def pata : RuleSet (LexicalEntry (Option Num) String) := ⟨spine .n [], "pata"�
 /-- The sequences of the bare root, the singular and the plural. -/
 def numbers : List (List Num) := [[.n], [.n, .sg], [.n, .sg, .pl]]
 
-/-- *peel*, *peel-yaan*, *peel* and *pata*, *pata-yaan*, *pat-een*. The stored structure of
-*peel* contains the bare noun and no singular phrase over a noun, so the singular needs
-*-yaan*, and the plural, once the noun has evacuated, is that structure again. -/
 theorem kalenjin_number :
     numbers.map (exponents peel) = [some ["peel"], some ["peel", "yaan"], some ["peel"]] ∧
       numbers.map (exponents pata) =
         [some ["pata"], some ["pata", "yaan"], some ["pata", "een"]] := by
   decide
 
-/-- The plural of *peel* has the two constituents of *pat-een*, the noun and a remnant that
-*-een* lexicalizes. The root's entry matches the object they form, and being the larger
-lexicalized constituent it is what is pronounced. -/
 theorem peel_plural_overrides :
     lexicalize peel [.n, .sg, .pl] = lexicalize pata [.n, .sg, .pl] ∧
       (lexicalize peel [.n, .sg, .pl]).map List.length = some 2 := by
@@ -202,16 +183,10 @@ def fin : RuleSet (LexicalEntry (Option Phi) String) :=
 def persons : List (List Phi) :=
   [[.t, .num, .π], [.t, .num, .π, .part], [.t, .num, .π, .part, .spkr]]
 
-/-- *bat*, *bat-s*, *bat*. The root's entry contains the third-person phrase and no participant
-phrase over it, so the second person needs *-s*, and the first person, once the person phrase
-has evacuated, is the stored structure again. -/
 theorem bati_present :
     persons.map (exponents bat) = [some ["bat"], some ["bat", "s"], some ["bat"]] := by
   decide
 
-/-- *fin-iʃ*, *fin-iʃ-s*, *fin-iʃ*. In the first person the verb evacuates alone from under the
-speaker feature, which strands the person and the participant phrases in the shape *-iʃ*
-stores. -/
 theorem fini_present :
     persons.map (exponents fin) =
       [some ["fin", "iʃ"], some ["fin", "iʃ", "s"], some ["fin", "iʃ"]] := by

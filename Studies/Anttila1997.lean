@@ -201,10 +201,8 @@ instance : IsPartialOrder (Fin 20) universalOn where
     · rfl
     exact (hab.asymm hba).elim
 
-/-- Only Set 5 ranks constraints internally. -/
 theorem set_eq_of_universal : ∀ a b, Universal a b → a.set = b.set → a.set = 4 := by decide
 
-/-- Below Set 5 the inner order is trivial. -/
 theorem stratum_triv {k : Fin 5} (hk : k ≠ 4) :
     ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b := by
   rintro a b ha hb (rfl | h)
@@ -339,8 +337,6 @@ def con : ConstraintSet (Motif × Variant) (Fin 20) :=
 def wins (m : Motif) (v : Variant) : Finset (Ranking (Fin 20) 20) :=
   rankings.filter fun σ ↦ PicksAt ⟨fun _ ↦ Finset.univ, con⟩ σ m v
 
-/-- Once the strata above `k` tie, the rankings won by `v` stand to all rankings as stratum
-`k`'s constraints favoring `v` stand to its active ones. -/
 theorem card_wins_mul (m : Motif) (v : Variant) (k : Fin 5)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → con c (m, v) = con c (m, v.other))
@@ -350,7 +346,6 @@ theorem card_wins_mul (m : Motif) (v : Variant) (k : Fin 5)
         (favoring con m v v.other ∩ (active con m v v.other).filter (stratumOf · = k)).card :=
   card_filter_picksAt_stratified_binary (Variant.univ_eq_pair v) v.ne_other h_triv h_tie h_dec
 
-/-- `card_wins_mul` with the two counts evaluated. -/
 theorem card_wins_of_counts (m : Motif) (v : Variant) (k : Fin 5) (n t : ℕ)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → universalOn a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → con c (m, v) = con c (m, v.other))
@@ -374,7 +369,6 @@ def predicted (m : Motif) : Variant → ℕ × ℕ
   | .strong => predictedStrong m
   | .weak => ((predictedStrong m).2 - (predictedStrong m).1, (predictedStrong m).2)
 
-/-- A motif's strong share, from the counts behind the paper's fraction. -/
 theorem card_wins_strong_of {m : Motif} {n t : ℕ} (hp : predictedStrong m = (n, t))
     (h : (wins m .strong).card * t = rankings.card * n) :
     (wins m .strong).card * (predictedStrong m).2 = rankings.card * (predictedStrong m).1 := by
@@ -408,7 +402,6 @@ theorem card_wins_strong : ∀ m : Motif,
       (by decide +kernel) (by decide +kernel) (by decide +kernel) (by decide +kernel)
     omega)
 
-/-- Every consistent ranking picks one of the two variants. -/
 theorem card_wins_add (m : Motif) : (wins m .strong).card + (wins m .weak).card = rankings.card :=
   card_filter_picksAt_binary_add (r := finnishGrammar) (i := m) (Variant.univ_eq_pair .strong)
     (Variant.ne_other .strong) (by obtain ⟨w, s⟩ := m; cases w <;> cases s <;> decide +kernel)
@@ -416,7 +409,6 @@ theorem card_wins_add (m : Motif) : (wins m .strong).card + (wins m .weak).card 
 theorem predictedStrong_le : ∀ m : Motif, (predictedStrong m).1 ≤ (predictedStrong m).2 := by
   decide
 
-/-- The weak variant's share is the complement of the strong one's. -/
 theorem card_wins_weak {m : Motif}
     (h : (wins m .strong).card * (predictedStrong m).2 = rankings.card * (predictedStrong m).1) :
     (wins m .weak).card * (predicted m .weak).2 = rankings.card * (predicted m .weak).1 := by

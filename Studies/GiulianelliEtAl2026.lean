@@ -82,8 +82,6 @@ theorem genSurprisal_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α)
       -Real.log ((ofMeasure μ).condPrefixProb c w).toReal := by
   rw [genSurprisal, integral_prefixIndicator, condPrefixProb_ofMeasure hc]
 
-/-- The surprisal of a target is the sum of the surprisals of its units under the language
-model's next-unit laws, the paper's treatment of words spanning several tokens. -/
 theorem genSurprisal_prefixIndicator_eq_sum (hc : μ {y | c <+: y} ≠ 0) {w : List α}
     (hw : μ {y | c ++ w <+: y} ≠ 0) :
     genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
@@ -95,8 +93,6 @@ theorem genSurprisal_prefixIndicator_eq_sum (hc : μ {y | c <+: y} ≠ 0) {w : L
 
 /-! ### What the indicator conflates -/
 
-/-- The prefix indicator evaluates a continuation by its prefix alone: information value with the
-complementary distance is the probability of error, `1 - p̄(w | c)`. -/
 theorem informationValue_one_sub_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α) :
     informationValue μ.continuation (fun a w c ↦ 1 - prefixIndicator a w c) c w =
       1 - ((ofMeasure μ).condPrefixProb c w).toReal := by
@@ -116,9 +112,6 @@ before the target and the target followed by a continuation sampled after it. -/
 noncomputable def iiv (d : List α → List α → ℝ) (c w : List α) : ℝ :=
   ∫ a, ∫ a', d a (w ++ a') ∂μ.continuation (c ++ w) ∂μ.continuation c
 
-/-- A distance whose forecast horizon `h` does not reach past the target reduces incremental
-information value to information value: the continuation after the target lies beyond the
-horizon. -/
 theorem iiv_eq_informationValue [IsFiniteMeasure μ] {d : List α → List α → ℝ} {h : ℕ}
     (hd : ∀ a b, d a b = d (a.take h) (b.take h)) {c w : List α} (hw : h ≤ w.length)
     (hcw : μ {y | c ++ w <+: y} ≠ 0) :

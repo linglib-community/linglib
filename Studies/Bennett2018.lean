@@ -101,7 +101,6 @@ theorem omegaInitial_nested {ps : List Constituent} {s : Constituent}
     simp only [omegaInitial] at ih
     simp [omegaInitial, nested, leftmost, hps p (List.mem_cons_self ..), ih]
 
-/-- In the flat parse only the first prefix is ω-initial: one locus of [ʔ]-insertion. -/
 theorem omegaInitial_flat {p : Constituent} {ps : List Constituent} {s : Constituent}
     (hp : p.level ≠ .om) (hps : ∀ q ∈ ps, q.level ≠ .om) (hs : s.level ≠ .om) :
     omegaInitial (flat (p :: ps) s) = [p] := by
@@ -133,8 +132,6 @@ frame (30) begins. -/
 def subCat (prefs : List ℕ) : Constraint Tree :=
   (Constraint.align fun (i : ℕ) (x : ℕ × ℕ) ↦ i = x.1).comap fun t ↦ (prefs, t.spans IsFrame)
 
-/-- A high-attaching prefix is parsed recursively: under `SubCat ≫ Match (ω, X⁰)`, with
-`Match (X⁰, ω)` undominated, the recursive parse is the unique optimum. -/
 theorem high_prefix_recursive :
     (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
       [syntaxProsodyMatch word .om, subCat [0], prosodySyntaxMatch .om word]).optimal =
@@ -145,8 +142,6 @@ theorem high_prefix_recursive :
 example : subCat [0, 1] (nested [pref, pref] stem) = 0 := by decide
 example : subCat [0, 1] (flat [pref, pref] stem) = 2 := by decide
 
-/-- A low-attaching prefix, carrying no frame, is parsed flat: `Match (ω, X⁰)` alone rules
-out the extra ω. -/
 theorem low_prefix_flat :
     (Tableau.ofList {nested [pref] stem, flat [pref] stem, phrasal}
       [syntaxProsodyMatch word .om, prosodySyntaxMatch .om word]).optimal =
