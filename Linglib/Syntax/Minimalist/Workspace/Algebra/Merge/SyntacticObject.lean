@@ -211,6 +211,17 @@ theorem mergeOpC_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem.Tok
   conv_lhs => rw [← add_tsub_cancel_of_le hle]
   rw [mergeOpC_node_residual τ S S' hW, Workspace.merge, add_comm]
 
+/-- Internal Merge's output is MERGE of the mover with the member containing it, followed by
+    contracting the mover's lower copy to the trace of its head. -/
+theorem merge_deleteAccessible_add_eq (τ : SyntacticObject → Option LexicalItem.Token)
+    {W : Workspace} (hne : current ≠ mover) (hmW : mover ∉ W) :
+    {merge (deleteAccessible mover current τ) mover} + W =
+      (({current} + W).merge mover current) - {merge mover current} +
+        {merge mover (deleteAccessible mover current τ)} := by
+  rw [Workspace.merge, add_tsub_cancel_right, Multiset.insert_eq_cons, Multiset.sub_cons,
+    Multiset.erase_of_notMem (by simpa [Ne.symm hne] using hmW), add_tsub_cancel_left,
+    merge_comm, add_comm]
+
 /-- Internal Merge ([marcolli-chomsky-berwick-2025] Proposition 1.4.2): the Merge operator at the
     trace cuts computes MERGE of a uniquely accessible mover with the member containing it, with the
     mover's lower copy contracted to its trace. -/
@@ -222,14 +233,8 @@ theorem mergeOpC_im_of'_merge (hm : mover.val.value.isLeft) (h : current.terms.c
           (of' (({current} + W).map Subtype.val)))
       = of' (((({current} + W).merge mover current) - {merge mover current} +
           {merge mover (deleteAccessible mover current)}).map Subtype.val) := by
-  have hmW : mover ∉ W := fun hm' ↦ (hW mover hm').2 (self_mem_terms mover)
-  have hout : (({current} + W).merge mover current) - {merge mover current} +
-      {merge mover (deleteAccessible mover current)} =
-        {merge (deleteAccessible mover current) mover} + W := by
-    rw [Workspace.merge, add_tsub_cancel_right, Multiset.insert_eq_cons, Multiset.sub_cons,
-      Multiset.erase_of_notMem (by simpa [Ne.symm hne] using hmW), add_tsub_cancel_left,
-      merge_comm, add_comm]
-  rw [mergeOpC_im_residual hm h hne hW, hout]
+  rw [mergeOpC_im_residual hm h hne hW,
+    merge_deleteAccessible_add_eq _ hne fun hm' ↦ (hW mover hm').2 (self_mem_terms mover)]
 
 /-- Sideward Merge of type 2(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4): merging a member `T`
     with the only occurrence of a term `S'` of another member `T'`, the Merge operator at the trace
