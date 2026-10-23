@@ -42,8 +42,8 @@ the intensive of /χns/ without the schwa after the geminate (`bend_down_imp_int
 
 ## Implementation notes
 
-Figure 9 ranks voiced stops below voiceless fricatives, against the default of [parker-2002]
-that it cites (`Sonority.Class.parkerRank`). No target cluster pairs the two classes, so the
+Figure 9 ranks voiced stops below voiceless fricatives, the majority view in the literature,
+against the default of [parker-2002] that it cites (`Sonority.Class.parkerRank`). No target cluster pairs the two classes, so the
 profiles are the same on either scale. The book gives the intensive forms, not their derivation:
 the derivation here is McCarthy's for the Arabic second binyan, whose template CVCCVC the
 intensive shares (`intensiveStem_eq`). The regression estimates, the acoustic measurements and
@@ -53,7 +53,7 @@ the perception study have no formal counterpart here.
 
 * [afkir-zellou-2025]
 * [mccarthy-1981]
-* [parker-2002]
+* [parker-2002]: the orders of voiced stops and voiceless fricatives (pp. 68–70)
 * [hall-2006]
 -/
 

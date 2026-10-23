@@ -11,85 +11,104 @@ public import Mathlib.Data.Finset.Piecewise
 public import Linglib.Core.Order.Flat
 
 /-!
-# Segmental representation: definitions
+# Segments and features
 
-The distinctive feature and the segment built over it. A **feature** is one of the
-26 binary distinctive features of Hayes's chart, or one of the tongue-root features
-[ATR] and [RTR] of Halle, Vaux and Wolfe; a **segment** is a partial
-specification of those features — each `+`, `−`, or unspecified — ordered by
-specificity (the unification-grammar subsumption order, inherited as a feature
-bundle), with the unspecified archisegment least and natural-class generalization
-as meet.
+This file defines the distinctive features and the segments built over them. The features are
+the twenty-six of Hayes's charts and the tongue-root features [ATR] and [RTR]. Hayes names
+[ATR] but leaves it off his charts, noting that it is unclear whether it is the same feature as
+[tense]; it is a feature of its own here. [long] and [stress], which Hayes also names, are not
+features here: length is a segment on two timing slots, and stress belongs to syllables. A
+segment gives each feature the value `+`, `−` or none, and segments are ordered by specificity,
+with the unspecified segment least and the meet of two segments the description they share.
 
-This file collects definitions only — the feature inventory, the segment and its
-valuation/construction/change API, the natural-class predicates, and the sonority
-scales. The theorems about them live in `Phonology/Segmental/Basic.lean`.
+The file also defines the sonority hierarchy of Hayes's Table 4.1, whose five classes are cut by
+four features and defined by the descriptions of p. 77, and names the vowels, obstruents and
+nasals by those descriptions. Parker's hierarchy refines it, and is collapsed here to eight
+classes: his four obstruent classes, with the affricates among the stops, and his nasals,
+liquids, glides and vowels, with his several liquid and vowel classes each merged. Parker ranks
+/h/ alone, between the voiced fricatives and the nasals, and here a [−sonorant] /h/ falls among
+the voiceless fricatives. The theorems are in `Phonology/Segmental/Basic.lean`.
 
 ## References
 
-* [hayes-2009]
-* [halle-vaux-wolfe-2000]
-* [chomsky-halle-1968]
-* [clements-1990]
-* [parker-2002]
-* [keating-1988]
-* [archangeli-1988]
-* [kiparsky-1982]
-* [inkelas-orgun-1995]
-* [steriade-1995]
-* [sen-2015]
-* [afkir-zellou-2025]
+* [hayes-2009]: the features of ch. 4 and Table 4.7, the tongue-root feature (p. 83), the
+  sonority hierarchy of Table 4.1 (p. 76) and its manner classes (p. 77)
+* [halle-vaux-wolfe-2000]: [ATR] and [RTR]
+* [parker-2002]: the five classes as the hierarchy cited most often (p. 62), the default order of
+  voiced stops above voiceless fricatives (p. 70), and the sixteen classes of Table 5.28 (p. 240)
 -/
 
 @[expose] public section
 
 namespace Phonology
 
-/-! ### Feature inventory -/
+/-! ### Features -/
 
-/-- A binary distinctive phonological feature, following [hayes-2009]'s segmental
-    inventory. (The stress and length features are excluded: [hayes-2009] treats
-    stress as a syllable-level property, not a segmental feature.) [ATR], the
-    tongue-root feature of the sub-Saharan harmony systems, is the one feature
-    [hayes-2009] names among the vowel features but leaves off his chart, noting
-    that whether it is the same feature as [tense] is unsettled; it is kept
-    distinct here. [RTR], the other tongue-root feature of [halle-vaux-wolfe-2000],
-    distinguishes the pharyngealized consonants, which the PHOIBLE chart codes by it. The
-    grouping of the features into classes is `Phonology.FeatureClass`. -/
+/-- A distinctive feature. -/
 inductive Feature where
-  | syllabic         -- [+syll] = vowels
-  | consonantal      -- [+cons] = oral constriction
-  | sonorant         -- [+son] = spontaneous voicing
-  | approximant      -- [+approx] = no turbulence
-  | continuant       -- [+cont] = airflow continues
-  | delayedRelease   -- [+del.rel.] = affricates
-  | nasal            -- [+nasal] = lowered velum
-  | lateral          -- [+lat] = lateral airflow
-  | strident         -- [+strid] = high-amplitude noise
-  | tap              -- [+tap] = ballistic gesture
-  | trill            -- [+trill] = aerodynamic vibration
-  | voice            -- [+voice] = vocal cord vibration
-  | spreadGlottis    -- [+s.g.] = aspiration
-  | constrGlottis    -- [+c.g.] = glottal constriction
-  | labial           -- [+lab] = lips involved
-  | round            -- [+round] = lip rounding
-  | labiodental      -- [+labiodental] = lower lip to upper teeth
-  | coronal          -- [+cor] = tongue blade/tip
-  | anterior         -- [+ant] = alveolar ridge or forward
-  | distributed      -- [+dist] = laminal contact
-  | dorsal           -- [+dor] = tongue body
-  | high             -- tongue body raised
-  | low              -- tongue body lowered
-  | front            -- tongue body fronted
-  | back             -- tongue body backed
-  | tense            -- tense vowel quality
-  | atr              -- [+ATR] = advanced tongue root
-  | rtr              -- [+RTR] = retracted tongue root
+  /-- [+syllabic] segments are syllable nuclei. -/
+  | syllabic
+  /-- [+consonantal] segments are the liquids, nasals and obstruents. -/
+  | consonantal
+  /-- [−sonorant] segments, the stops, fricatives and affricates, build up air pressure in the
+  vocal tract. -/
+  | sonorant
+  /-- [+approximant] segments are the liquids, glides and vowels. -/
+  | approximant
+  /-- [−continuant] segments, the stops, affricates and nasals, close the oral tract fully. -/
+  | continuant
+  /-- [+delayed release] segments, the affricates and fricatives, have frication noise. -/
+  | delayedRelease
+  /-- [+nasal] segments are the nasal consonants and the nasalized vowels. -/
+  | nasal
+  /-- [+lateral] segments let air pass around the side of the tongue. -/
+  | lateral
+  /-- [+strident] segments are the sibilants, coronal fricatives and affricates whose airstream
+  is channelled through a groove in the tongue blade. -/
+  | strident
+  /-- [+tap] distinguishes taps from the other rhotics. -/
+  | tap
+  /-- [+trill] distinguishes trills from the other rhotics. -/
+  | trill
+  /-- [+voice] segments have vocal cord vibration. -/
+  | voice
+  /-- [+spread glottis] segments, such as [h] and aspirated stops, have a wide glottis. -/
+  | spreadGlottis
+  /-- [+constricted glottis] segments, such as the glottal stop and ejectives, have a narrow or
+  closed glottis. -/
+  | constrGlottis
+  /-- [+labial] segments are articulated with the lips. -/
+  | labial
+  /-- [+round] segments are articulated with rounded lips. -/
+  | round
+  /-- [+labiodental] segments are articulated by touching the lower lip to the upper teeth. -/
+  | labiodental
+  /-- [+coronal] segments are articulated with the tongue blade or tip. -/
+  | coronal
+  /-- [+anterior] coronals are articulated at the alveolar ridge or further forward. -/
+  | anterior
+  /-- [+distributed] coronals are laminal, made with the tongue blade, and [−distributed] ones
+  apical. -/
+  | distributed
+  /-- [+dorsal] segments are articulated with the tongue body. -/
+  | dorsal
+  /-- [+high] vowels and dorsals have the tongue body raised. -/
+  | high
+  /-- [+low] vowels and dorsals have the tongue body lowered. -/
+  | low
+  /-- [+front] vowels and dorsals are front; central ones are [−front, −back]. -/
+  | front
+  /-- [+back] vowels and dorsals are back; central ones are [−front, −back]. -/
+  | back
+  /-- [tense] divides the high and the mid vowels in two, [−tense] ones being lax. -/
+  | tense
+  /-- [+ATR] segments have the tongue root advanced. -/
+  | atr
+  /-- [+RTR] segments have the tongue root retracted. -/
+  | rtr
   deriving DecidableEq, Repr
 
 namespace Feature
-
-/-! ### Enumeration -/
 
 /-- All features, in declaration order. -/
 def allFeatures : List Feature :=
@@ -100,130 +119,69 @@ def allFeatures : List Feature :=
    .coronal, .anterior, .distributed,
    .dorsal, .high, .low, .front, .back, .tense, .atr, .rtr]
 
-/-- `allFeatures` is the canonical enumeration: completeness is the `Fintype` law,
-not a theorem re-proved beside it. -/
 instance : Fintype Feature where
   elems := ⟨allFeatures, by decide⟩
   complete f := by cases f <;> decide
 
 end Feature
 
-/-! ### The segment bundle -/
+/-! ### Segments -/
 
-/-- A **segment**: a partial specification of the distinctive features — each
-    feature is `+`, `−`, or left unspecified. Segments are ordered by specificity:
-    one refines another when it agrees on every feature the other commits to, and
-    possibly more. The fully unspecified segment is least; the most specific class
-    common to two segments is their meet. -/
+/-- A segment: each feature `+`, `−` or unspecified, ordered by specificity. -/
 abbrev Segment := Feature → Flat Bool
 
 namespace Segment
 
 variable (s : Segment)
 
-/-! ### Valuation -/
-
-/-- Does feature `f` have value `v`? -/
+/-- `s.HasValue f v` holds when `s` gives `f` the value `v`. -/
 def HasValue (f : Feature) (v : Bool) : Prop := s f = some v
 
 instance (f : Feature) (v : Bool) : Decidable (s.HasValue f v) :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- A segment is **unspecified** for feature `f` iff its value there is `none`. -/
+/-- `s.Unspecified f` holds when `s` gives `f` no value. -/
 def Unspecified (f : Feature) : Prop := s f = none
 
 instance (f : Feature) : Decidable (s.Unspecified f) := inferInstanceAs (Decidable (_ = none))
 
-/-! ### Construction -/
-
-/-- The segment read off a list of (feature, value) pairs. Unmentioned features are
-    unspecified, giving natural-class semantics:
-    `ofSpecs [(continuant, false)]` lies below every [−cont] segment. -/
+/-- The segment with the values of a list of feature-value pairs, unspecified for the features
+the list omits. -/
 def ofSpecs (specs : List (Feature × Bool)) : Segment := fun f ↦ specs.lookup f
 
-/-! ### Natural-class predicates
+/-! ### Natural classes -/
 
-Language-neutral natural-class membership predicates, by the SPE feature
-decompositions standard since [chomsky-halle-1968] and codified in textbook form
-by [hayes-2009]. Pure substrate: they project information already encoded in a
-segment, consumed by per-language Fragment files rather than redefined locally. -/
-
-/-- A segment is a vowel iff it is [+syllabic]. -/
+/-- A vowel is a [+syllabic] segment. -/
 def IsVowel : Prop := s.HasValue .syllabic true
-instance : Decidable s.IsVowel := by unfold IsVowel; infer_instance
+instance : Decidable s.IsVowel := inferInstanceAs (Decidable (s.HasValue _ _))
 
-/-- A segment is a consonant iff it is [+consonantal]. -/
+/-- A consonant is a [+consonantal] segment. -/
 def IsConsonant : Prop := s.HasValue .consonantal true
-instance : Decidable s.IsConsonant := by unfold IsConsonant; infer_instance
+instance : Decidable s.IsConsonant := inferInstanceAs (Decidable (s.HasValue _ _))
 
-/-- A segment is an obstruent iff it is [+cons, -son]. -/
-def IsObstruent : Prop := s.HasValue .consonantal true ∧ s.HasValue .sonorant false
-instance : Decidable s.IsObstruent := by unfold IsObstruent; infer_instance
+/-- An obstruent is a [−sonorant] segment. -/
+def IsObstruent : Prop := s.HasValue .sonorant false
+instance : Decidable s.IsObstruent := inferInstanceAs (Decidable (s.HasValue _ _))
 
-/-- A segment is an oral stop iff it is [+cons, -son, -cont]. -/
-def IsStop : Prop :=
-  s.HasValue .consonantal true ∧ s.HasValue .sonorant false ∧ s.HasValue .continuant false
-instance : Decidable s.IsStop := by unfold IsStop; infer_instance
+/-- A nasal is a [−approximant, +sonorant] segment. -/
+def IsNasal : Prop := s.HasValue .approximant false ∧ s.HasValue .sonorant true
+instance : Decidable s.IsNasal := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A segment is a fricative iff it is [+cons, -son, +cont]. -/
-def IsFricative : Prop :=
-  s.HasValue .consonantal true ∧ s.HasValue .sonorant false ∧ s.HasValue .continuant true
-instance : Decidable s.IsFricative := by unfold IsFricative; infer_instance
-
-/-- A segment is a nasal iff it is [+nasal]. -/
-def IsNasal : Prop := s.HasValue .nasal true
-instance : Decidable s.IsNasal := by unfold IsNasal; infer_instance
-
-/-- A segment is a liquid iff it is [+cons, +son] and one of [+lateral], [+trill],
-    [+tap] — the lateral /l/, the trill /r/, and the flap /ɾ/ under one class. -/
-def IsLiquid : Prop :=
-  s.HasValue .consonantal true ∧ s.HasValue .sonorant true ∧
-    (s.HasValue .lateral true ∨ s.HasValue .trill true ∨ s.HasValue .tap true)
-instance : Decidable s.IsLiquid := by unfold IsLiquid; infer_instance
-
-/-- A segment is a sibilant iff it is [+strident]. [strident] is a coronal feature, so the
-    sibilants are the strident coronal fricatives and affricates. -/
+/-- A sibilant is a [+strident] segment. -/
 def IsSibilant : Prop := s.HasValue .strident true
 instance : Decidable s.IsSibilant := inferInstanceAs (Decidable (s.HasValue _ _))
 
-/-- A segment is a glide iff it is [-cons, -syllabic, +approximant]. -/
-def IsGlide : Prop :=
-  s.HasValue .consonantal false ∧ s.HasValue .syllabic false ∧ s.HasValue .approximant true
-instance : Decidable s.IsGlide := by unfold IsGlide; infer_instance
+/-! ### Changes -/
 
-/-! ### Feature changes
-
-Three-valued (`+ / − / ∅`) specification is standard in [keating-1988],
-[inkelas-orgun-1995], and [steriade-1995]; `fillFromContext` is default-fill,
-preserving existing values per [kiparsky-1982] [archangeli-1988], while
-`setFeature` overrides. The Latin coda /l/ analysis in [sen-2015] is a worked
-example. -/
-
-/-- Set feature `f` to value `v`, overriding any existing specification. For default-fill
-    semantics that only assign when `f` is currently unspecified, use `fillFromContext`. -/
+/-- The segment with feature `f` set to `v`, whatever its value before. -/
 def setFeature (f : Feature) (v : Bool) : Segment := Function.update s f (some v)
-
-/-- In categorical feature spreading from context, the target `s`, when unspecified
-    for `f`, takes the `f`-value of `ctx`, and already-specified targets and features
-    other than `f` are untouched. When `ctx` is itself unspecified for `f`, the
-    target stays unspecified.
-
-    This is a [keating-1988] *context rule*: the target acquires a categorical
-    feature value from its neighbour and that value blocks further interactions.
-    It is **distinct from** her gradient phonetic interpolation (her unspecified
-    /h/ example), in which an unspecified segment stays unspecified and the
-    phonetics builds a continuous trajectory through it; gradient phonetic
-    interpolation is out of scope at this categorical-featural substrate. -/
-def fillFromContext (f : Feature) (ctx : Segment) : Segment :=
-  fun g ↦ (s g).or (Function.update (⊥ : Segment) f (ctx f) g)
 
 /-- The segment kept on the features in `C` and unspecified on the rest. -/
 def restrict (C : Finset Feature) (s : Segment) : Segment := C.piecewise s ⊥
 
 end Segment
 
-/-- The coarse two-way classification of a segment, the commonest conditioning
-environment for morph-variant selection (pre-consonantal vs pre-vocalic). -/
+/-- The classification of a segment as a consonant or a vowel. -/
 inductive Segment.Class where
   /-- A consonant. -/
   | consonant
@@ -231,107 +189,128 @@ inductive Segment.Class where
   | vowel
   deriving DecidableEq, Repr, Fintype
 
-/-- A segment's coarse class is vowel when it is [+syllabic] and consonant otherwise. -/
+/-- A segment is a vowel when [+syllabic] and a consonant otherwise. -/
 def Segment.toClass (s : Segment) : Segment.Class :=
   if s.IsVowel then .vowel else .consonant
 
 /-! ### Sonority -/
 
-/-- The abstract sonority hierarchy ([clements-1990]): what the synchronic grammar
-    operates on, ordering segments from least to most sonorous.
-
-    | Rank | Class     |
-    |------|-----------|
-    |  0   | Stop      |
-    |  1   | Fricative |
-    |  2   | Nasal     |
-    |  3   | Liquid    |
-    |  4   | Glide     |
-    |  5   | Vowel     |
-
-    For the finer 8-level scale that splits obstruents by voice, see
-    `Sonority.Class`. -/
+/-- The sonority hierarchy, from least to most sonorous. -/
 inductive Sonority where
-  | stop
-  | fricative
+  /-- The obstruents, [−sonorant]. -/
+  | obstruent
+  /-- The nasals, [−approximant, +sonorant]. -/
   | nasal
+  /-- The liquids, [+consonantal, +approximant]. -/
   | liquid
+  /-- The glides, [−syllabic, −consonantal]. -/
   | glide
+  /-- The vowels, [+syllabic]. -/
   | vowel
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace Sonority
 
-/-- Numeric rank (0 = least sonorous). -/
-def rank : Sonority → Nat
-  | .stop => 0 | .fricative => 1 | .nasal => 2
-  | .liquid => 3 | .glide => 4 | .vowel => 5
+/-- The position of a class on the hierarchy, the obstruents at 0. -/
+def rank : Sonority → ℕ
+  | .obstruent => 0 | .nasal => 1 | .liquid => 2 | .glide => 3 | .vowel => 4
 
 instance : LinearOrder Sonority :=
-  LinearOrder.lift' rank fun a b h => by cases a <;> cases b <;> simp_all [rank]
+  LinearOrder.lift' rank fun a b h ↦ by cases a <;> cases b <;> simp_all [rank]
 
-/-- The sonority of a segment, read off its features ([hayes-2009], [clements-1990]). -/
+/-- The column of a class in Table 4.1: its values for [syllabic], [consonantal], [approximant]
+and [sonorant], the four features that cut the hierarchy. -/
+def toSegment : Sonority → Segment
+  | .obstruent =>
+    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, false), (.sonorant, false)]
+  | .nasal =>
+    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, false), (.sonorant, true)]
+  | .liquid =>
+    .ofSpecs [(.syllabic, false), (.consonantal, true), (.approximant, true), (.sonorant, true)]
+  | .glide =>
+    .ofSpecs [(.syllabic, false), (.consonantal, false), (.approximant, true), (.sonorant, true)]
+  | .vowel =>
+    .ofSpecs [(.syllabic, true), (.consonantal, false), (.approximant, true), (.sonorant, true)]
+
+/-- The features that define a class (Hayes p. 77): [−sonorant] for an obstruent, [−approximant,
++sonorant] for a nasal, [+consonantal, +approximant] for a liquid, [−syllabic, −consonantal] for a
+glide and [+syllabic] for a vowel. -/
+def description : Sonority → Segment
+  | .obstruent => .ofSpecs [(.sonorant, false)]
+  | .nasal => .ofSpecs [(.approximant, false), (.sonorant, true)]
+  | .liquid => .ofSpecs [(.consonantal, true), (.approximant, true)]
+  | .glide => .ofSpecs [(.syllabic, false), (.consonantal, false)]
+  | .vowel => .ofSpecs [(.syllabic, true)]
+
+/-- The sonority of a segment: an obstruent if [−sonorant], else a nasal if [−approximant], else
+a liquid if [+consonantal], else a vowel if [+syllabic], and otherwise a glide. A syllabic liquid
+or nasal keeps the sonority of its class. -/
 def ofSegment (s : Segment) : Sonority :=
-  if s.HasValue .sonorant false then
-    if s.HasValue .continuant true then .fricative else .stop
+  if s.HasValue .sonorant false then .obstruent
   else if s.HasValue .approximant false then .nasal
   else if s.HasValue .consonantal true then .liquid
   else if s.HasValue .syllabic true then .vowel
   else .glide
 
-/-! ### The Parker sonority scale -/
+/-! ### Parker's classes -/
 
-/-- The eight sonority classes of [parker-2002], which refine `Sonority` by splitting the
-    obstruents by voicing. Parker's default ranking, `Class.parkerRank`, puts voiced stops above
-    voiceless fricatives, and particular languages may reverse it. -/
+/-- Parker's sonority classes collapsed to eight, which split the obstruents by [continuant] and
+[voice]. -/
 inductive Class where
-  | vls    -- voiceless stops: [−son, −cont, −voice]
-  | vds    -- voiced stops: [−son, −cont, +voice]
-  | vlf    -- voiceless fricatives: [−son, +cont, −voice]
-  | vdf    -- voiced fricatives: [−son, +cont, +voice]
-  | nasal  -- nasals: [+son, −approx]
-  | liquid -- liquids/taps: [+son, +approx, +cons]
-  | glide  -- glides: [+son, +approx, −cons, −syll]
-  | vowel  -- vowels: [+son, +approx, −cons, +syll]
+  /-- The voiceless stops. -/
+  | vls
+  /-- The voiced stops. -/
+  | vds
+  /-- The voiceless fricatives. -/
+  | vlf
+  /-- The voiced fricatives. -/
+  | vdf
+  /-- The nasals. -/
+  | nasal
+  /-- The liquids. -/
+  | liquid
+  /-- The glides. -/
+  | glide
+  /-- The vowels. -/
+  | vowel
   deriving DecidableEq, Repr
 
-/-- Parker's default universal 8-level ranking ([parker-2002]): voiced stops
-    (`vds = 3`) outrank voiceless fricatives (`vlf = 2`). -/
-def Class.parkerRank : Class → Nat
+namespace Class
+
+/-- Parker's ranking of the classes, with voiced stops above voiceless fricatives, his default
+order, which a language may reverse. -/
+def parkerRank : Class → ℕ
   | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
 /-- The voiceless obstruent classes. -/
-def Class.Voiceless : Class → Prop
-  | .vls | .vlf => True
-  | _ => False
+def Voiceless (c : Class) : Prop := c = .vls ∨ c = .vlf
 
-instance : DecidablePred Class.Voiceless := fun c =>
-  match c with
-  | .vls | .vlf => isTrue trivial
-  | .vds | .vdf | .nasal | .liquid | .glide | .vowel => isFalse fun h => h
+instance : DecidablePred Voiceless := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A segment's class on the Parker eight-level scale refines `Sonority.ofSegment` by
-    splitting the obstruents by [±voice] ([parker-2002]). -/
-def Class.ofSegment (s : Segment) : Class :=
-  if s.HasValue .sonorant false then
+/-- The class of a segment: its sonority, with an obstruent split by [continuant] and
+[voice]. -/
+def ofSegment (s : Segment) : Class :=
+  match Sonority.ofSegment s with
+  | .obstruent =>
     if s.HasValue .continuant true then
       if s.HasValue .voice true then .vdf else .vlf
     else
       if s.HasValue .voice true then .vds else .vls
-  else if s.HasValue .approximant false then .nasal
-  else if s.HasValue .consonantal true then .liquid
-  else if s.HasValue .syllabic true then .vowel
-  else .glide
-
-/-- Coarsen to the substance-free `Sonority`, collapsing the voicing split. -/
-def Class.toSonority : Class → Sonority
-  | .vls | .vds => .stop
-  | .vlf | .vdf => .fricative
   | .nasal => .nasal
   | .liquid => .liquid
   | .glide => .glide
   | .vowel => .vowel
+
+/-- The sonority of a class, with the obstruents merged. -/
+def toSonority : Class → Sonority
+  | .vls | .vds | .vlf | .vdf => .obstruent
+  | .nasal => .nasal
+  | .liquid => .liquid
+  | .glide => .glide
+  | .vowel => .vowel
+
+end Class
 
 end Sonority
 
