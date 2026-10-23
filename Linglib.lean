@@ -417,7 +417,6 @@ import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Hausa.Gender
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
-import Linglib.Fragments.Hawaiian.Possession
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.Hebrew.TemporalDeictic
@@ -863,7 +862,6 @@ import Linglib.Semantics.Plurality.Reciprocal.Scope
 import Linglib.Semantics.Polarity.Strength
 import Linglib.Semantics.Polarity.Item
 import Linglib.Semantics.Polarity.Licensing
-import Linglib.Semantics.Possession.Defs
 import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Basic

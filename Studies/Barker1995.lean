@@ -77,13 +77,13 @@ theorem symmetric_iff_possessor_dominant (C A B : α → Prop) (R : α → α �
     most (fun p : α × α ↦ C p.1 ∧ A p.2 ∧ R p.1 p.2) (fun p ↦ B p.2) ↔
       Poss most C GQ.some R A B := by
   have h₁ : {p : α × α | (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ B p.2}.ncard =
-      {x | (C x ∧ dom A R x) ∧ GQ.some (fun y ↦ A y ∧ R x y) B}.ncard :=
+      {x | (C x ∧ dom A R x) ∧ GQ.some (π A R x) B}.ncard :=
     (ncard_pair_eq C A R huniq fun _ y ↦ B y).trans <| congrArg _ <| Set.ext fun x ↦ by
-      simp only [GQ.some, Set.mem_ofPred_eq]; tauto
+      simp only [GQ.some, π_apply, Pi.inf_apply, inf_Prop_eq, Set.mem_ofPred_eq]; tauto
   have h₂ : {p : α × α | (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ ¬ B p.2}.ncard =
-      {x | (C x ∧ dom A R x) ∧ ¬ GQ.some (fun y ↦ A y ∧ R x y) B}.ncard :=
+      {x | (C x ∧ dom A R x) ∧ ¬ GQ.some (π A R x) B}.ncard :=
     (ncard_pair_eq C A R huniq fun _ y ↦ ¬ B y).trans <| congrArg _ <| Set.ext fun x ↦ by
-      simp only [GQ.some, Set.mem_ofPred_eq]
+      simp only [GQ.some, π_apply, Pi.inf_apply, inf_Prop_eq, Set.mem_ofPred_eq]
       constructor
       · rintro ⟨⟨hC, hdom⟩, y, hA, hR, hnB⟩
         exact ⟨⟨hC, hdom⟩, fun ⟨y', ⟨hA', hR'⟩, hB'⟩ ↦
