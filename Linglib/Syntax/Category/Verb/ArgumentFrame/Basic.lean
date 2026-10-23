@@ -360,6 +360,12 @@ def HasClausal : Prop := ∃ p ∈ fr.complements, p.IsClausal
 
 instance : Decidable fr.HasClausal := inferInstanceAs (Decidable (∃ p ∈ _, _))
 
+/-- The external argument of the frame is clausal, as in the clausal-subject frame of an
+object-experiencer psychological verb. -/
+def HasClausalSubject : Prop := ∃ p ∈ fr.external, p.IsClausal
+
+instance : Decidable fr.HasClausalSubject := inferInstanceAs (Decidable (∃ p ∈ _, _))
+
 /-- Some complement of the frame is a finite clause. -/
 def HasFinite : Prop := ∃ p ∈ fr.complements, p.IsFinite
 
@@ -430,6 +436,11 @@ def finiteClause : ArgumentFrame :=
 /-- Finite declarative clause in the subjunctive. -/
 def subjunctiveClause : ArgumentFrame :=
   ⟨some .nominal, [.clausal (coding := some .subjunctive) (types := .only .declarative)]⟩
+
+/-- The clausal-subject frame has a finite declarative clause as its subject and a nominal
+complement, as an object-experiencer psychological verb (*It worried Peti that ...*). -/
+def clausalSubject : ArgumentFrame :=
+  ⟨some (.clausal (coding := some .indicative) (types := .only .declarative)), [.nominal]⟩
 
 /-- Infinitival clause. Who the embedded subject is varies by verb (equi-deletion, raising, or
     adposition-marked overt subjects, [noonan-2007] §1.3.4), so it is recorded on the verb's
