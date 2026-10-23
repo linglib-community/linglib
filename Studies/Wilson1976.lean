@@ -67,14 +67,15 @@ inductive FijianMarker where
 
 namespace Relationship
 
-/-- The Hawaiian particle of a relationship: *a* if it is controlled and not locational. -/
+/-- The Hawaiian particle of a relationship is *a* if the relationship is controlled and not
+locational, and *o* otherwise. -/
 def hawaiian : Relationship → Marker
   | notControlled => .o
   | controlled (some .location) => .o
   | controlled _ => .a
 
-/-- The Fijian prefix of a relationship: *me-* for drink, *no-* if controlled and not food,
-*ke-* otherwise. -/
+/-- The Fijian prefix of a relationship is *me-* for drink, *no-* if the relationship is controlled
+and not food, and *ke-* otherwise. -/
 def fijian : Relationship → FijianMarker
   | notControlled => .ke
   | controlled (some .food) => .ke

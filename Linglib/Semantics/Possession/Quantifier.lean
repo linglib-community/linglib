@@ -51,14 +51,14 @@ variable {α : Type*}
 
 /-! ### Possessive operators -/
 
-/-- The possessive quantifier of a possessor quantifier `Q₁` with restriction `C`: *[Q₁ C]'s A
-are B* holds iff `Q₁` relates the `C`s that possess some `A` to the `x` with `Q₂ (π A R x) B`
+/-- The possessive quantifier of a possessor quantifier `Q₁` with restriction `C`, under which *[Q₁
+C]'s A are B* holds iff `Q₁` relates the `C`s that possess some `A` to the `x` with `Q₂ (π A R x) B`
 ([peters-westerstahl-2006], (7.30)). -/
 def Poss (Q₁ : GQ α) (C : α → Prop) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
   fun A B ↦ Q₁ (fun x ↦ C x ∧ dom A R x) (fun x ↦ Q₂ (π A R x) B)
 
-/-- The possessive quantifier of a possessor noun phrase `Q`: *[Q]'s A are B* holds iff `Q`
-holds of the `x` that possess some `A` and satisfy `Q₂ (π A R x) B` ([peters-westerstahl-2006],
+/-- The possessive quantifier of a possessor noun phrase `Q`, under which *[Q]'s A are B* holds iff
+`Q` holds of the `x` that possess some `A` and satisfy `Q₂ (π A R x) B` ([peters-westerstahl-2006],
 (7.45)). -/
 def PossNP (Q : NP α) (Q₂ : GQ α) (R : α → α → Prop) : GQ α :=
   fun A B ↦ Q (fun a ↦ dom A R a ∧ Q₂ (π A R a) B)

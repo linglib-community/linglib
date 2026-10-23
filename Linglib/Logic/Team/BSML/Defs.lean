@@ -139,9 +139,9 @@ def Formula.strongFalsum [Inhabited Atom] : Formula Atom :=
 
 variable {W : Type*} [DecidableEq W]
 
-/-- Bilateral evaluation: `eval M b φ t` is support (`⊨⁺`) when `b` is `true` and anti-support
-    (`⊨⁻`) when `b` is `false`. The two sets of clauses are dual: `∧` and `∨` swap, `◇` and `□`
-    swap, and atoms flip their truth value. The split clauses are `Team.tensor`.
+/-- The bilateral evaluation `eval M b φ t` is support (`⊨⁺`) when `b` is `true` and anti-support
+    (`⊨⁻`) when `b` is `false`. The two sets of clauses are dual, in that `∧` and `∨` swap, `◇` and
+    `□` swap, and atoms flip their truth value. The split clauses are `Team.tensor`.
 
     | Connective | Support (⊨⁺) | Anti-support (⊨⁻) |
     |-----------|-------------|-------------------|
@@ -229,9 +229,9 @@ def StronglyEquivalent (φ ψ : Formula Atom) : Prop :=
 
 /-! ### BSML* -/
 
-/-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1): as `eval`, except that `∅` is not a
-    possible state, so each part of a split must be non-empty. The same exclusion applies to the
-    team in `ConsequenceStar`; the atom, `ne` and modal clauses are those of BSML. -/
+/-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1) is `eval` except that `∅` is not a possible
+state, so each part of a split must be non-empty. The same exclusion applies to the team in
+`ConsequenceStar`; the atom, `ne` and modal clauses are those of BSML. -/
 def evalStar (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,       t => t ∈ Team.flat (M.val p)
   | false, .atom p,       t => t ∈ Team.flat fun w ↦ ¬ M.val p w

@@ -252,8 +252,8 @@ def fate (i : ι) : ParticipantFate :=
     else .denucleativized
   else .na
 
-/-- Nucleativization is not valency increase: an alternation may nucleativize one participant
-and denucleativize another, keeping the valency ([creissels-2024] §8.1.3). -/
+/-- An alternation may nucleativize one participant and denucleativize another, keeping the valency,
+so nucleativization is not valency increase ([creissels-2024] §8.1.3). -/
 theorem valency_eq_of_nucleativized_of_denucleativized {c d : Construction ι} {i j : ι}
     (hi : c.Nucleativized d i) (hj : c.Denucleativized d j)
     (h : ∀ k, k ≠ i → k ≠ j → ((c k).Nuclear ↔ (d k).Nuclear)) : c.valency = d.valency :=
@@ -269,7 +269,7 @@ end Fintype
 
 end Construction
 
-/-- The status a frame gives the participant of slot `s`: its transitivity-related role if `s` is
+/-- The status a frame gives the participant of slot `s` is its transitivity-related role if `s` is
 a core slot, X if it is an expressed oblique, and absent if it is an expletive or unfilled. An
 implicit slot leaves its participant implied, unless it is understood as the subject itself or as
 its members; then the subject's term cumulates the two roles ([creissels-2024] §8.3.3). Levin's
@@ -318,9 +318,9 @@ structure Voice where
   initial : Diathesis arity
   /-- The derived diathesis, which leaves out the participants the voice suppresses. -/
   derived : Diathesis arity
-  /-- The syntactically privileged term of the derived construction: by default its first core
-      slot (S or A), unless a symmetrical voice selects another, and `none` for an impersonal
-      construction ([creissels-2024] §8.1.7). -/
+  /-- The syntactically privileged term of the derived construction is by default its first core
+  slot (S or A), unless a symmetrical voice selects another, and is `none` for an impersonal
+  construction ([creissels-2024] §8.1.7). -/
   pivot : Option ArgumentFrame.Slot := derived.coreSlots.head?
   /-- The morphs (affixes or an auxiliary) coding the voice on the verb, in surface order; empty
       for a zero-marked or an unmarked voice. -/
@@ -404,7 +404,7 @@ def SelectsOblique : Prop := v.pivotRole = some .X
 an impersonal construction keeps its P. -/
 def IsImpersonal : Prop := v.pivot = none
 
-/-- The coding type of the voice: synthetic if every morph of its marker is bound, analytic if a
+/-- The coding type of the voice is synthetic if every morph of its marker is bound, analytic if a
 free morph (an auxiliary) is among them, and uncoded if the marker is empty ([creissels-2024]
 §1.1.3). -/
 def coding : Coding := .ofMarker v.marker
@@ -469,10 +469,10 @@ def active : Voice := refl .np
 /-- The agent voice of a symmetrical system, with the agent the pivot, is the active. -/
 abbrev agentVoice : Voice := active
 
-/-- The passive of a frame with a complement (by default the transitive frame). It makes the
-first complement the subject and pivot, and denucleativizes the external argument while keeping it
-in participant structure: implied here, expressed as an oblique in a long passive
-([creissels-2024] §8.3.2.1). -/
+/-- The passive of a frame with a complement (by default the transitive frame). It makes the first
+complement the subject and pivot, and denucleativizes the external argument while keeping it in
+participant structure, implied here and expressed as an oblique in a long passive ([creissels-2024]
+§8.3.2.1). -/
 def passive (fr : ArgumentFrame := .np) : Voice :=
   of fr ⟨some .nominal, fr.complements.tail ++ [.implicit]⟩ <|
     some (complement (fr.complements.length - 1)) :: some external ::
@@ -507,11 +507,11 @@ initial S ([creissels-2024] §8.3.1.1). -/
 def causative : Voice := of .intransitive .np [some (complement 0), some external]
 
 /-- The reflexive cumulates the initial A and P in one S, an individual bearing both roles
-([creissels-2024] §8.3.3): the object is left implicit, understood as the subject itself. -/
+([creissels-2024] §8.3.3). The object is left implicit, understood as the subject itself. -/
 def reflexive : Voice := leaveImplicit .np 0 (some .reflexive)
 
 /-- The reciprocal cumulates the initial A and P in one S, a group whose members bear both roles
-toward one another ([creissels-2024] §8.3.3): the object is left implicit, understood as the
+toward one another ([creissels-2024] §8.3.3). The object is left implicit, understood as the
 subject's members. -/
 def reciprocal : Voice := leaveImplicit .np 0 (some .reciprocal)
 

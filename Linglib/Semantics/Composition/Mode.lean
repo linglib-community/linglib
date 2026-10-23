@@ -46,9 +46,9 @@ the mode their types select.
 
 namespace Montague
 
-/-- The composition modes, typed by the two daughters and the mother: functional application;
+/-- The composition modes, typed by the two daughters and the mother, are functional application,
 intensional application of a daughter expecting an intension to the rigid intension of its sister
-([von-fintel-heim-2011]); predicate modification of two predicates of one sort; and event
+([von-fintel-heim-2011]), predicate modification of two predicates of one sort, and event
 identification of a role head with a predicate of eventualities, Kratzer's (23) ([kratzer-1996]).
 All but predicate modification come in both orders. -/
 inductive Mode : Ty → Ty → Ty → Type where
@@ -107,7 +107,7 @@ def eventIdentification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ�
 
 end Mode
 
-/-- The mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose: the
+/-- The mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose is the
 first that applies of functional application (with the left daughter as the function first),
 intensional application, predicate modification and event identification. -/
 def Ty.mode? (σ₁ σ₂ : Ty) : Option (Σ τ, Mode σ₁ σ₂ τ) :=
@@ -149,7 +149,7 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
 
 variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
-/-- The denotation of a mode: application, application to the rigid intension of the argument,
+/-- The denotation of a mode is application, application to the rigid intension of the argument,
 intersection of two predicates, or event identification. -/
 @[simp] def eval : Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ S → Ty.Domain E W σ₂ S → Ty.Domain E W τ S
   | functionalLeft, f, a => f a

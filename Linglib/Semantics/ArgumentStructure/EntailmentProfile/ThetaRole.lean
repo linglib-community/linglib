@@ -93,10 +93,10 @@ end ThetaRole
 
 namespace EntailmentProfile
 
-/-- The label of the profile `p`: agent if volitional; otherwise experiencer if sentient and not
-causing (no label if causing); otherwise instrument or stimulus if causing, as it moves or not;
-otherwise patient if causally affected; otherwise theme if it has some other Proto-Patient
-entailment or movement. -/
+/-- The label of the profile `p` is agent if it is volitional; otherwise experiencer if it is
+sentient and not causing (no label if causing); otherwise instrument or stimulus if it is causing,
+as it moves or not; otherwise patient if it is causally affected; otherwise theme if it has some
+other Proto-Patient entailment or movement. -/
 def toRole (p : EntailmentProfile) : Option ThetaRole :=
   if .volition ∈ p then some .agent
   else if .sentience ∈ p then if .causation ∈ p then none else some .experiencer

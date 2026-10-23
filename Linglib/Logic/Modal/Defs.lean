@@ -119,8 +119,8 @@ theorem diamond_sup : ◇[R] (p ⊔ q) = ◇[R] p ⊔ ◇[R] q :=
 theorem box_top : □[R] ⊤ = ⊤ := by
   simpa using (diamond_box_gc R.inv).u_top
 
-/-- Prior's tense axiom of conversion, `A ⊃ G P A`: over any relation, `p ≤ □_{R⁻¹} ◇_R p`. This
-is the unit of the adjunction. -/
+/-- Over any relation, `p ≤ □_{R⁻¹} ◇_R p`, which is Prior's tense axiom of conversion `A ⊃ G P A`.
+This is the unit of the adjunction. -/
 theorem le_box_inv_diamond (p : W → Prop) : p ≤ □[R.inv] (◇[R] p) :=
   (diamond_box_gc R).le_u_l p
 

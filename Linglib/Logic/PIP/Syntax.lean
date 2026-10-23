@@ -42,12 +42,11 @@ inductive Kind
   | term
   | formula
 
-/-- PIP expressions. Terms: external variables, bracketed local variables `[x]`,
-set abstraction `⋃{x : φ}`, summation `Σxφ`, intersection and the empty
-plurality. Formulas: the constant `⊤`, predication `P_w(τ₁, …, τₙ)`, equality,
-inclusion, membership, the cardinality predicates `SG` and `PL`, negation,
-conjunction, selective existential quantification, label definition `X ≡ φ`
-and label use `X`. An expression of either kind may carry a presupposition,
+/-- PIP expressions. The terms are external variables, bracketed local variables `[x]`, set
+abstraction `⋃{x : φ}`, summation `Σxφ`, intersection and the empty plurality. The formulas are the
+constant `⊤`, predication `P_w(τ₁, …, τₙ)`, equality, inclusion, membership, the cardinality
+predicates `SG` and `PL`, negation, conjunction, selective existential quantification, label
+definition `X ≡ φ` and label use `X`. An expression of either kind may carry a presupposition,
 `e|ψ`. -/
 inductive Expr (V : Type u) (L : Type v) (P : ℕ → Type w) : Kind → Type (max u v w)
   | var (x : V) : Expr V L P .term
@@ -94,7 +93,7 @@ def Formula.forall_ (x : V) (φ : Formula V L P) : Formula V L P := .neg (.exist
 /-- Overlap `some(s, t)`, as `¬(s ∩ t = ∅)`. -/
 def Formula.some_ (s t : Term V L P) : Formula V L P := .neg (.eq (.inter s t) .empty)
 
-/-- `Σxφ | SG(Σxφ)`: a singular summation pronoun over the description `φ`. -/
+/-- The singular summation pronoun `Σxφ | SG(Σxφ)` over the description `φ`. -/
 def Term.sgPronoun (x : V) (φ : Formula V L P) : Term V L P :=
   .presup (.sigma x φ) (.sg (.sigma x φ))
 
@@ -104,8 +103,8 @@ section Syntax
 
 variable [DecidableEq V]
 
-/-- The bracketed variables occurring free in an expression: set abstraction and quantification
-over `x` bind `[x]`, and summation binds all of them. -/
+/-- The bracketed variables occurring free in an expression, where set abstraction and
+quantification over `x` bind `[x]` and summation binds all of them. -/
 def Expr.locals : ∀ {k : Kind}, Expr V L P k → List V
   | _, .var _ => []
   | _, .bvar x => [x]
@@ -127,14 +126,13 @@ def Expr.locals : ∀ {k : Kind}, Expr V L P k → List V
   | _, .label _ => []
   | _, .presup e ψ => e.locals ++ ψ.locals
 
-/-- Bracket a variable: `[x]` for `x`; other terms are unchanged. -/
+/-- Bracket a variable, sending `x` to `[x]` and leaving other terms unchanged. -/
 def Term.bracket : Term V L P → Term V L P
   | .var x => .bvar x
   | t => t
 
-/-- Substitute `t` for the variable `x`, the β-reduction of `λx`: a bracketed
-occurrence `[x]` becomes the bracketed substitute, binders of `x` are skipped,
-and no capture check is made. -/
+/-- Substitute `t` for the variable `x`, as in the β-reduction of `λx`. A bracketed occurrence `[x]`
+becomes the bracketed substitute, binders of `x` are skipped, and no capture check is made. -/
 def Expr.subst (x : V) (t : Term V L P) : ∀ {k : Kind}, Expr V L P k → Expr V L P k
   | _, .var y => if y = x then t else .var y
   | _, .bvar y => if y = x then t.bracket else .bvar y
@@ -259,15 +257,13 @@ def Expr.defs : ∀ {k : Kind}, Expr V L P k → List (L × Formula V L P)
   | _, .label _ => []
   | _, .presup e ψ => e.defs ++ ψ.defs
 
-/-- The label assignment determined by a list of definitions: the first
-definition of each label. -/
+/-- The label assignment that sends each label to its first definition in a list of definitions. -/
 def assignment : List (L × Formula V L P) → L → Option (Formula V L P)
   | [], _ => none
   | (Y, ψ) :: A, X => if Y = X then some ψ else assignment A X
 
-/-- Expand a formula by a list of label definitions: one round of simultaneous
-substitution per definition, which resolves every non-circular chain of
-definitions whatever their order. -/
+/-- Expand a formula by a list of label definitions. One round of simultaneous substitution per
+definition resolves every non-circular chain of definitions, whatever their order. -/
 def Formula.expand (A : List (L × Formula V L P)) (φ : Formula V L P) : Formula V L P :=
   A.foldl (fun ψ _ => ψ.substLabels (assignment A)) φ
 

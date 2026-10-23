@@ -460,8 +460,8 @@ theorem boxLe_mono (σ : ExpState W) (p q : W → Prop)
     (h : ∀ w, p w → q w) : σ.boxLe p → σ.boxLe q :=
   fun hp w hw ↦ h w (hp w hw)
 
-/-- Asserting `p` makes `p` informationally necessary: Stalnaker's principle that an assertion
-becomes common ground. -/
+/-- Asserting `p` makes `p` informationally necessary, which is Stalnaker's principle that an
+assertion becomes common ground. -/
 theorem boxCs_assert_self (σ : ExpState W) (p : W → Prop) :
     (σ.assert p).boxCs p :=
   fun _ hw ↦ hw.2
@@ -486,7 +486,7 @@ theorem localNecessity_mono (σ : ExpState W) (p q : W → Prop)
   fun hp ↦ hp.mono fun w ↦ h w
 
 /-- When the information has a world at least as normal as all of its worlds, local necessity is
-preferential necessity. Without one they come apart: two incomparable optimal worlds can each
+preferential necessity. Without one they come apart, as when two incomparable optimal worlds each
 make a different proposition locally necessary while neither is preferentially necessary. -/
 theorem localNecessity_iff_boxLe {σ : ExpState W} {b : W} (hb : b ∈ σ.info)
     (hleast : ∀ v ∈ σ.info, σ.order.le b v) (p : W → Prop) :

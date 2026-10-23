@@ -126,8 +126,8 @@ section Assignment
 
 variable {N T F : Type*}
 
-/-- Genders are agreement classes: if each noun's agreement `nounAgr` is the agreement `agr` of
-its assigned gender and `agr` is faithful, nouns with the same agreement have the same gender. -/
+/-- If each noun's agreement `nounAgr` is the agreement `agr` of its assigned gender and `agr` is
+faithful, nouns with the same agreement have the same gender, so genders are agreement classes. -/
 theorem factorsThrough_of_faithful {assign : N → G} {nounAgr : N → T → F} {agr : G → T → F}
     (med : nounAgr = agr ∘ assign) (faith : Faithful agr) :
     Function.FactorsThrough assign nounAgr :=
