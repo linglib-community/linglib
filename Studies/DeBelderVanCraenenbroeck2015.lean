@@ -236,8 +236,8 @@ theorem derivation_theChildEatsTheCookie :
     (.merge [_] [_] _ .null) |>.tail (.readmit _ _ _) |>.tail (.merge [_, _] [] _ .null) |>.tail
     (.merge [] [_] _ _) |>.tail (.merge [] [] _ _)
 
-/-- In (41) the subject and the v-V complex are atoms, opaque to extraction, while the direct
-object's feature is open to it, and the clause has three roots. -/
+/-- In (41) the subject and the v-V complex are atoms, the object's feature is open to extraction,
+and the clause has three roots. -/
 theorem atoms_theChildEatsTheCookie :
     theChildEatsTheCookie.atoms = [dp, vV] ∧ theChildEatsTheCookie.bundles = [{.definite}] ∧
       theChildEatsTheCookie.roots = 3 :=
@@ -373,10 +373,8 @@ def Model.Derives (M : Model) : Prop :=
 
 instance (M : Model) : Decidable M.Derives := inferInstanceAs (Decidable (∀ r ∈ data, _))
 
-/-- **Roots are defined structurally, and inserted late.** Only the model that lets any item
-realize a root position and inserts items after syntax derives the examples: the exoskeletal and
-the [Root] feature models exclude the functional items of (2)–(9), and inserting them early would
-give *ik* first person agreement in (10) and *maar* its clause in (11). -/
+/-- Only the model defining roots structurally and inserting items late derives the examples
+((2)–(9), (10), (11)). -/
 theorem derives_iff (M : Model) : M.Derives ↔ M = .primaryMerge := by
   obtain ⟨r, i⟩ := M
   cases r <;> cases i <;> decide +kernel

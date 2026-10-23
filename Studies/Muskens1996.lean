@@ -125,9 +125,7 @@ def text (u₁ u₂ : R) (man woman : Set E) (adores abhors : SetRel E E) : Upda
   indef u₁ (ofStatic man) (ofStatic₂ adores (indef u₂ (ofStatic woman))) ○
     Function.eval (val u₂) (ofStatic₂ abhors (Function.eval (val u₁)))
 
-/-- The text reduces by merging to the box (20),
-`[u₁ u₂ | man u₁, woman u₂, u₁ adores u₂, u₂ abhors u₁]`, since `man u₁` does not mention `u₂`.
--/
+/-- The text reduces by merging to the box (20). -/
 theorem text_eq_box [DecidableEq R] (h : u₁ ≠ u₂) (man woman : Set E) (adores abhors : SetRel E E) :
     (text u₁ u₂ man woman adores abhors : Update S) =
       box {u₁, u₂} (val u₁ ⁻¹' man ∩ (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ∩
@@ -164,8 +162,8 @@ theorem dom_everyNarrow (h : u₁ ≠ u₂) (girl boy : Set E) (adores : SetRel 
   simp [everyNarrow, every, impl, core_comp, core_randomAssign, core_test,
     val_extend_of_ne _ _ _ _ h, or_iff_not_imp_left]
 
-/-- The `∃∀` reading of (33) comes from (35). The indefinite's referent lands at the top of the
-box, where a later pronoun can pick it up ((41)). -/
+/-- The `∃∀` reading of (33) comes from (35), with the indefinite's referent available to a later
+pronoun ((41)). -/
 theorem dom_everyWide (h : u₁ ≠ u₂) (girl boy : Set E) (adores : SetRel E E) :
     (everyWide u₁ u₂ girl boy adores : Update S).dom =
       {_i | ∃ x₂ ∈ boy, ∀ x₁ ∈ girl, x₁ ~[adores] x₂} := by
@@ -233,8 +231,7 @@ theorem dom_npCoord_no (h : u₁ ≠ u₂) (john : E) (girl boy : Set E) (admire
 def reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) : Update S :=
   (name bill * name sue : DynQuant S E) (ofStatic₂ owns (indef u₃ (ofStatic donkey)))
 
-/-- (66) translates as (67), `[u₃ | donkey u₃, Bill owns u₃] ; [u₃ | donkey u₃, Sue owns u₃]`,
-in which the second box reassigns `u₃`. -/
+/-- Sentence (66) translates as (67), whose second box reassigns `u₃`. -/
 theorem reassignment_eq (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
     (reassignment u₃ bill sue donkey owns : Update S) =
       box {u₃} (val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ○
@@ -249,9 +246,7 @@ theorem dom_reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetR
   ext
   simp [reassignment]
 
-/-- The boxes of (67) do not merge. The register `u₃` occurs in the first box's conditions, and
-the merged box, whose universe is `{u₃} ∪ {u₃} = {u₃}`, demands one donkey owned by both, so where
-Bill and Sue own only different donkeys the two differ. -/
+/-- The boxes of (67) do not merge when Bill and Sue own only different donkeys. -/
 theorem reassignment_ne_merge [Nonempty S] {u₃ : R} {bill sue : E} {donkey : Set E}
     {owns : SetRel E E} (hb : ∃ x ∈ donkey, bill ~[owns] x) (hs : ∃ x ∈ donkey, sue ~[owns] x)
     (h : ¬∃ x ∈ donkey, bill ~[owns] x ∧ sue ~[owns] x) :

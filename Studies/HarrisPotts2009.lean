@@ -84,9 +84,8 @@ theorem contextSet_utter_speaker :
         ({w | item.ciFor .speaker w} ∩ contextSet (ofCommitter K .speaker)) := by
   ext w; simp [CIItem.utter, ofCommitter, contextSet, contents, commit]
 
-/-- A non-speaker-oriented reading narrows the speaker's commitment set by the at-issue content
-alone: the appositive of (8) or the expressive of (9) is no commitment of the
-speaker's. -/
+/-- A non-speaker-oriented reading adds only the at-issue content to the speaker's commitments, as
+with the appositive of (8) and the expressive of (9). -/
 theorem contextSet_utter_speaker_other (p : Person) :
     contextSet (ofCommitter (item.utter (.other p) K) .speaker) =
       {w | item.atIssue w} ∩ contextSet (ofCommitter K .speaker) := by
@@ -138,9 +137,8 @@ def Configurational (D : List Reading) : Prop :=
 theorem exists_unembedded_subject :
     ∃ r ∈ readings, r.embedded = false ∧ r.response = .subject := by decide
 
-/-- The configurational hypothesis is refuted by the attested readings; what remains is the
-contextual hypothesis of (10b), on which the orientation variable is resolved by
-pragmatic factors in any syntactic position. -/
+/-- The attested readings refute the configurational hypothesis, leaving the contextual hypothesis
+of (10b). -/
 theorem not_configurational : ¬ Configurational readings := λ h =>
   have ⟨r, hr, he, hs⟩ := exists_unembedded_subject
   by simpa [he, hs] using h r hr

@@ -87,8 +87,8 @@ theorem BE_the_apply (x : E) : BE (the P) x ↔ ∀ y, P y ↔ y = x :=
 theorem BE_the_eq_ident (h : iota P = some j) : BE (the P) = ident j := by
   rw [the_eq_individual j P h, BE_individual]
 
-/-- With at most one king the predicative *the king* is the common noun *king*, the
-equivalence that lets the article drop in *John is (the) president* (12). -/
+/-- With at most one king, the predicative *the king* is the common noun *king*, as in *John is
+(the) president* (12). -/
 theorem BE_the_eq_self (hP : {x | P x}.Subsingleton) : BE (the P) = P :=
   funext fun x ↦ propext <| (BE_the_apply P x).trans
     ⟨fun h ↦ (h x).2 rfl, fun hx _ ↦ ⟨fun hy ↦ hP hy hx, fun e ↦ e ▸ hx⟩⟩

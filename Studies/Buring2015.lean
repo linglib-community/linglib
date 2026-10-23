@@ -154,8 +154,8 @@ theorem target_mem_clause_strong_weak (F : Finset Word) :
 theorem alternatives_clause_strong_strong : (clause .strong .strong).alternatives = ∅ :=
   alternatives_node_left_strong_eq_empty (not_wellFormed_node_strong injective2_mk)
 
-/-- After Focus Reset at the VP, Propagation and the weak restriction on the subject leave the
-clause only its literal meaning, as Büring's condition on root nodes demands (Figure 6). -/
+/-- After Focus Reset at the VP the clause has only its literal meaning as alternative, as Büring's
+root condition requires (Figure 6). -/
 theorem alternatives_reset_vp :
     (node Prod.mk .left .weak (.focused Ent.smith) (.unfeatured (vp .weak).ordinary)).alternatives =
       {(.smith, .ordered, .breakfast)} := by

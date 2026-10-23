@@ -265,9 +265,8 @@ instance : (m : MeasuredDomain) → Preorder m.Model
   | .entity => inferInstanceAs (Preorder (ℝ × ℝ))
   | .event => inferInstanceAs (Preorder (ℝ × ℝ))
 
-/-- Exactly the state domain fixes the comparative ordering for every admissible measure, so
-*hotter* and *more heat* measure intensively because they measure states, *fuller* and *more
-coffee* extensively because they measure entities (82)–(85). -/
+/-- Only the state domain fixes the comparative ordering for every admissible measure, so *hotter*
+measures intensively and *fuller* extensively ((82)–(85)). -/
 theorem model_restricted_iff :
     ∀ m : MeasuredDomain, DimensionallyRestricted m.Model ↔ m = .state
   | .state => iff_of_true (linearOrder_dimensionallyRestricted (α := ℝ)) rfl
@@ -281,8 +280,8 @@ def crossCategorialQP : Bresnan1973.QP := ⟨{ clitic := some .er }, .much⟩
 
 theorem crossCategorialQP_suppletion : crossCategorialQP.suppletion = some .more := rfl
 
-/-- *very* needs *much* before a noun or a verb phrase and forbids it before an adjective
-(117), (118), since *much* deletes exactly before the adjective of its phrase (74). -/
+/-- *Much* deletes exactly before an adjective (74), so *very* needs *much* before a noun or verb
+phrase ((117), (118)). -/
 theorem very_much_deletion :
     Bresnan1973.MuchDeletes ⟨{}, .much⟩ .adjective ∧
       ¬ Bresnan1973.MuchDeletes ⟨{}, .much⟩ .noun ∧

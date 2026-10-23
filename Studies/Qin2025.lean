@@ -96,8 +96,7 @@ instance (r : Row) : Decidable r.IsCanonical := inferInstanceAs (Decidable (r.vi
 /-- The theoretical space of roots has sixteen cells (Fig. 1). -/
 theorem space_card : Fintype.card Row = 16 := by decide
 
-/-- Fig. 1 tiers the cells by the criteria they fail. There are `4.choose k` ways to fail exactly
-`k` criteria, so fifteen ways of being non-canonical against one of being canonical. -/
+/-- In Fig. 1, `4.choose k` cells fail exactly `k` criteria. -/
 theorem tier_card :
     ∀ k : Fin 5, (Finset.univ.filter fun r : Row ↦ r.violations = k).card = Nat.choose 4 k := by
   decide
@@ -148,9 +147,8 @@ theorem deficient_maximal :
     ∀ f ∈ Wordlist.all, ∀ row ∈ interpret f, row.c3 = false → row.violations = 4 := by
   decide +kernel
 
-/-- Each of the five tiers has a member: canonical 厂 *chǎng* (Table 3), 不 *bù* deviating on
-meaning alone, bound and fixed 霸 *bà*, schematic 性 *xìng*, and the toneless 边 *-bian* and
-个 *-ge* meeting no criterion. -/
+/-- Each of the five tiers of Table 3 has a member, from canonical 厂 *chǎng* to 边 *-bian* and 个
+*-ge* meeting no criterion. -/
 theorem mandarin_tiers :
     violations? Wordlist.chang = some 0 ∧ violations? Wordlist.bu_2 = some 1 ∧
       violations? Wordlist.ba_2 = some 2 ∧ violations? Wordlist.xing_4 = some 3 ∧

@@ -196,9 +196,8 @@ example {α : Type} (i : ℕ) (f : ReaderM (Assignment E) α) :
 
 variable (shift : ℕ → E → G → G) (shiftCon : ℕ → ReaderM G E → G → G)
 
-/-- In the paycheck reading (Fig. 6) of *Bill Λ₀ t₀ likes her₁*, `her₁` is anaphoric to an
-intension and flattened by `μ`. If the input assignment gives variable 1 the intension of
-*his₀ mom*, the sentence says that Bill likes Bill's mom. -/
+/-- In the paycheck reading (Fig. 6), if variable 1 holds the intension of *his₀ mom*, *Bill likes
+her₁* says Bill likes Bill's mom. -/
 theorem paycheck (likes : E → E → Prop) (mom : E → E) (b : E) (g : G)
     (hg : con 1 g = pure mom <*> ind 0)
     (hcon : ∀ x g, con 1 (shift 0 x g) = con 1 g) (hind : ∀ x g, ind 0 (shift 0 x g) = x) :
@@ -208,9 +207,8 @@ theorem paycheck (likes : E → E → Prop) (mom : E → E) (b : E) (g : G)
   rw [hcon, hg, hind]
   exact congrArg (likes · b) (congrArg mom (hind b g))
 
-/-- In binding reconstruction (Fig. 7), *[his₀ mom] Λ₁ every boy Λ₀ t₀ likes t₁*, the fronted
-phrase's intension is stored at variable 1, the trace `t₁` is flattened by `μ`, and the sentence
-says that every boy likes his own mom. -/
+/-- In binding reconstruction (Fig. 7), *[his₀ mom] Λ₁ every boy Λ₀ t₀ likes t₁* says every boy
+likes his own mom. -/
 theorem reconstruction (likes : E → E → Prop) (mom : E → E) (everyBoy : (E → Prop) → Prop)
     (g : G) (hstore : ∀ g, con 1 (shiftCon 1 (pure mom <*> ind 0) g) = pure mom <*> ind 0)
     (hcon : ∀ x g, con 1 (shift 0 x g) = con 1 g) (hind : ∀ x g, ind 0 (shift 0 x g) = x) :

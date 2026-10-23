@@ -134,9 +134,8 @@ theorem listener_silent_apply (w : W) : listener μ ν prev .silent {w} = μ {w}
 
 variable [IsFiniteMeasure ν]
 
-/-- The generalization is endorsed exactly when its marginalized meaning at the referent state
-exceeds the prior expectation of that meaning. This is the comparison of Figure 1C, the
-listener's posterior on hearing the generalization against the prior. -/
+/-- The generalization is endorsed iff its marginalized meaning at the referent state exceeds its
+prior expectation, the comparison of Figure 1C. -/
 theorem endorse_iff (hlam : 0 < lam) (hw : μ {w} ≠ 0) (hZ : expectedMeaning μ ν prev ≠ 0) :
     Endorsed lam μ ν prev w ↔ expectedMeaning μ ν prev < meaning ν prev .generic w := by
   rw [Endorsed, endorser, speaker_dirac_real_singleton_lt_iff (L := listener μ ν prev) (w := w)
@@ -189,9 +188,8 @@ noncomputable def expectedPrevalence (μ : Measure W) (prev : W → ℝ) : ℝ :
 
 variable (prev : W → ℝ)
 
-/-- When the prevalence prior is the pushforward of a prior over categories along their
-prevalences, the normalizer of cue validity, the mean prevalence over categories, is the mean of
-the prevalence prior (Appendix A). -/
+/-- For a pushforward prevalence prior, the mean prevalence over categories is the mean of the
+prevalence prior (Appendix A). -/
 theorem expectedPrevalence_map {K : Type*} [MeasurableSpace K] [DiscreteMeasurableSpace K]
     [Countable K] (P : Measure K) (prevK : K → W) (hprev : Measurable prevK)
     (hf : Measurable prev) :

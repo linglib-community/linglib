@@ -106,17 +106,14 @@ variable {α M : Type*} [SemilatticeSup α] [HasRemainders α] [AddCommMonoid M]
 omit [HasRemainders α] in
 theorem barePlural_cum (P : α → Prop) : CUM (AlgClosure P) := algClosure_cum
 
-/-- The measure construction (4) is a quantizing modifier (D 28) on a cumulative noun with two
-distinct instances, since the noun is not quantized and the measure phrase is. Since its output is
-quantized, a measure phrase cannot apply to another (3c). -/
+/-- The measure construction (4) quantizes a cumulative noun with two distinct instances (D 28), so
+measure phrases cannot stack (3c). -/
 theorem measure_qmod {P : α → Prop} (hP : CUM P) {x y : α} (hx : P x) (hy : P y) (hxy : x ≠ y)
     (μ : α → M) [IsExtensiveMeasure μ] (n : M) : ¬ QUA P ∧ QUA (QMOD P μ n) :=
   ⟨fun hQ ↦ qua_cum_incompatible hQ hx hy hxy hP,
     qmod_qua ((IsExtensiveMeasure.strictMono μ).strictMonoOn _) n⟩
 
-/-- A count noun (6) is a classifier construction with the natural unit built in, so it
-denotes the noun's predicate restricted by the natural-unit measure to a number, which is
-quantized. -/
+/-- A count noun (6), a classifier construction with a built-in natural unit, is quantized. -/
 theorem countNoun_qua (P : α → Prop) (NU : α → M) [IsExtensiveMeasure NU] (n : M) :
     QUA (QMOD P NU n) :=
   qmod_qua ((IsExtensiveMeasure.strictMono NU).strictMonoOn _) n
@@ -240,9 +237,8 @@ section Adverbials
 
 variable {E T M : Type*} [SemilatticeSup T]
 
-/-- A durative adverbial (15) is the quantizing modifier on events through the measure of
-the temporal trace (D 41); the result is quantized once that derived measure is
-extensive. -/
+/-- A durative adverbial (15) quantizes events through an extensive measure of the temporal trace (D
+41). -/
 theorem durative_qua [SemilatticeSup E] [HasRemainders E] [AddCommMonoid M] [PartialOrder M]
     [AddLeftStrictMono M] (P : E → Prop) (μ' : E → M) [IsExtensiveMeasure μ'] (n : M) :
     QUA (QMOD P μ' n) :=
@@ -253,9 +249,7 @@ measure. -/
 def inSpan (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) (n : M) : E → Prop :=
   fun e ↦ P e ∧ ∃ t, Conv t ∧ μ t = n ∧ τ e ≤ t
 
-/-- Time-span adverbials are upward entailing in their number (17). If every convex time of
-one measure lies within a convex time of a larger measure, the adverbial with the larger
-number holds of every event the smaller one holds of. -/
+/-- Time-span adverbials are upward entailing in their number (17). -/
 theorem inSpan_mono (P : E → Prop) (τ : E → T) (Conv : T → Prop) (μ : T → M) {n n' : M}
     (h : ∀ t, Conv t → μ t = n → ∃ t', Conv t' ∧ μ t' = n' ∧ t ≤ t') :
     ∀ e, inSpan P τ Conv μ n e → inSpan P τ Conv μ n' e := by

@@ -212,18 +212,16 @@ theorem complex_paradigm (overt : Prop) (c : CatFamily) :
   ⟨derivable_outer _, by rw [derivable_inner_iff]; simp [Complement.IsBarrier],
     not_derivable_final _⟩
 
-/-- In (155), a simplex construction has both orders with a full noun phrase, but *look up it*
-has no derivation, since a weak pronoun cannot be Case-marked through the reanalysis chain; a
-stressed, conjoined or deictic pronoun is not weak and patterns with full noun phrases, (156). -/
+/-- In a simplex construction a weak pronoun takes only the outer order, so *look up it* is
+underivable ((155), (156)). -/
 theorem weak_pronoun_outer_only (overt : Prop) :
     Derivable .np overt False False .inner ∧ Derivable .np overt True False .outer ∧
       ¬ Derivable .np overt True False .inner :=
   ⟨(derivable_inner_iff _).2 (by simp [Complement.IsBarrier]), derivable_outer _,
     fun h ↦ ((derivable_inner_iff _).1 h).2.1 trivial⟩
 
-/-- In (161) and (162), the ban on weak pronouns carries over to the inner order of
-prepositional and infinitival complex constructions, where the same reanalysis licenses the
-in-situ noun phrase. -/
+/-- In (161) and (162), weak pronouns are also barred from the inner order of prepositional and
+infinitival complex constructions. -/
 theorem weak_pronoun_complex (overt : Prop) :
     ¬ Derivable (.sc .adpositional) overt True False .inner :=
   fun h ↦ ((derivable_inner_iff _).1 h).2.1 trivial
@@ -254,9 +252,8 @@ section Extraction
 
 variable (k : Complement) {overt weak modified : Prop}
 
-/-- In a nominal complex particle construction of a language without overt incorporation, (60),
-the predicate cannot be extracted whatever the surface position of the particle, since no
-licensed derivation forms a verb-particle complex. -/
+/-- In a nominal complex particle construction without overt incorporation, the predicate cannot be
+extracted (60). -/
 theorem not_predicateExtractable_of_isBarrier (hk : k.IsBarrier) {s : Strategy}
     (hs : Licensed k overt weak modified s) (ho : ¬ overt) : ¬ PredicateExtractable s := by
   cases s
@@ -269,9 +266,8 @@ and leaves the trace governed. -/
 def PredicateExtractableFrom (overt weak modified : Prop) (p : Placement) : Prop :=
   ∃ s, Licensed k overt weak modified s ∧ s.placement = p ∧ PredicateExtractable s
 
-/-- By (67), the predicate extracts exactly from a derivable placement other than the outer
-one, which only raising yields. Verb-adjacent placement in a prepositional construction renders
-the predicate extractable, (62a) and (64a), and the outer order does not, (62b) and (64b). -/
+/-- By (67), the predicate extracts exactly from a derivable placement other than the outer one
+((62a), (64a), (62b), (64b)). -/
 theorem predicateExtractableFrom_iff (p : Placement) :
     PredicateExtractableFrom k overt weak modified p ↔
       Derivable k overt weak modified p ∧ p ≠ .outer := by
@@ -365,10 +361,8 @@ def Modified (r : Datum) : Prop := r.feature? "modifier" = some "right"
 instance (r : Datum) : Decidable (Weak r) := inferInstanceAs (Decidable (_ = _))
 instance (r : Datum) : Decidable (Modified r) := inferInstanceAs (Decidable (_ = _))
 
-/-- Every English and Norwegian row of the placement paradigms is judged acceptable exactly
-when the calculus derives its placement; the Norwegian rows (70), (73) and (134) pattern with
-the English ones. Danish, whose lack of the inner order (137b) the chapter records without
-deriving, is left out. -/
+/-- Every English and Norwegian placement row, including (70), (73) and (134), is acceptable exactly
+when its placement is derivable, Danish (137b) aside. -/
 theorem rows_derivable :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = none → r.language ≠ "dani1285" →
       ∀ k ∈ complementOf r, ∀ p ∈ placementOf r, ∀ L ∈ languageOf r,
@@ -376,9 +370,8 @@ theorem rows_derivable :
           Derivable k (voiceOf r ∈ L.incorporates) (Weak r) (Modified r) p) := by
   decide +kernel
 
-/-- Every row testing extraction of the predicate of the inner small clause, English (60), (62)
-and (64) and Norwegian (71) and (74), is judged acceptable exactly when the predicate is
-extractable from its placement. -/
+/-- Every row testing predicate extraction, (60), (62), (64), (71) and (74), is acceptable exactly
+when the predicate is extractable from its placement. -/
 theorem rows_predicateExtraction :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = some "predicateExtraction" →
       ∀ k ∈ complementOf r, ∀ p ∈ placementOf r, ∀ L ∈ languageOf r,
@@ -387,17 +380,15 @@ theorem rows_predicateExtraction :
             p) := by
   decide +kernel
 
-/-- Every row testing subextraction from the predicate of the inner small clause, English (61),
-(63) and (65) and Norwegian (72) and (75), is acceptable whatever the particle's position;
-subextraction from the subject of a small clause, (13), is not. -/
+/-- Every row testing subextraction from the predicate, (61), (63), (65), (72) and (75), is
+acceptable whatever the particle's position, unlike (13). -/
 theorem rows_subextraction :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = some "subextraction" →
       (placementOf r).isSome → r.judgment = .acceptable := by
   decide +kernel
 
-/-- Every row with the particle prefixed to the verb, Norwegian (134) and (135), Swedish (136)
-and Danish (138), is judged acceptable exactly when its language incorporates overtly in its
-voice. -/
+/-- Every row with a prefixed particle, (134), (135), (136) and (138), is acceptable exactly when
+its language incorporates overtly in its voice. -/
 theorem rows_prefixed :
     ∀ r ∈ Examples.all, placementOf r = some .prefixed →
       ∀ L ∈ languageOf r,

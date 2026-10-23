@@ -87,8 +87,8 @@ theorem WiderThan.irrefl (P : Question W) : ¬ WiderThan P P :=
 theorem WiderThan.asymm {P Q : Question W} (h : WiderThan P Q) : ¬ WiderThan Q P :=
   fun ⟨_, h', _⟩ ↦ let ⟨p, hp, q, hq, hpq⟩ := h.2.2; h' p hp q hq hpq
 
-/-- The trivial construal, whose one alternative is the common ground, is narrower than any other
-construal of the same common ground; it is the disjunction of all possible causes of §4.4. -/
+/-- The trivial construal, the disjunction of all possible causes of §4.4, is narrower than any
+other construal of the same common ground. -/
 theorem widerThan_ofSet {P : Question W} {s p : Set W} (hs : P.info = s) (hp : p ∈ alt P)
     (hne : p ≠ s) : WiderThan P (ofSet s) := by
   have hsub : ∀ q ∈ alt P, q ⊆ s := fun q hq ↦
@@ -150,8 +150,8 @@ theorem IsOptimal.not_answerable {q' : Question W} (h : c.IsOptimal q) (hq' : q'
     (hw : WiderThan q' q) : ¬ c.Answerable q' :=
   fun ha ↦ h.2.2 q' hq' ha hw
 
-/-- An optimal construal is the widest, or some wider construal fails Quality, or some wider
-construal satisfies Quality and fails Relevance, the three kinds of context of (37). -/
+/-- An optimal construal is the widest, or some wider one fails Quality, or some wider one satisfies
+Quality but fails Relevance (37). -/
 theorem IsOptimal.widest_or_quality_or_relevance (h : c.IsOptimal q) :
     c.IsWidest q ∨ (∃ q' ∈ c.uq, WiderThan q' q ∧ ¬ c.quality q') ∨
       ∃ q' ∈ c.uq, WiderThan q' q ∧ c.quality q' ∧ ¬ c.relevance q' := by
@@ -164,9 +164,8 @@ theorem IsOptimal.widest_or_quality_or_relevance (h : c.IsOptimal q) :
   · exact Or.inr (Or.inr ⟨q', hq', hw', hq, fun hr ↦ h.not_answerable hq' hw' ⟨hq, hr⟩⟩)
   · exact Or.inr (Or.inl ⟨q', hq', hw', hq⟩)
 
-/-- The trivial construal is optimal exactly when it is answerable and no other construal is, as in
-the unexplanatory use, where the others fail Quality, and the unelaboratory use, where they fail
-Relevance, §4.4 and §4.5. -/
+/-- The trivial construal is optimal exactly when it alone is answerable, as in the unexplanatory
+and unelaboratory uses (§4.4 and §4.5). -/
 theorem isOptimal_ofSet_iff (hmem : ofSet c.info ∈ c.uq)
     (hnt : ∀ q ∈ c.uq, q ≠ ofSet c.info → ∃ p ∈ alt q, p ≠ c.info) :
     c.IsOptimal (ofSet c.info) ↔
@@ -225,9 +224,7 @@ open Degree
 
 variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
 
-/-- The finer grain is the wider construal, (23) and §4.7.1, since no cell of the coarser grain is
-properly contained in a cell of the finer one and the finer cell around `0` is properly contained in
-the coarser cell around `0`. -/
+/-- The finer grain is the wider construal ((23), §4.7.1). -/
 theorem widerThan_grain {ε₁ ε₂ : α} (h₁ : 0 < ε₁) (h : ε₁ < ε₂) :
     WiderThan (fromSetoid (grain ε₁)) (fromSetoid (grain ε₂)) := by
   have h₂ := h₁.trans h
@@ -243,9 +240,8 @@ theorem widerThan_grain {ε₁ ε₂ : α} (h₁ : 0 < ε₁) (h : ε₁ < ε₂
   · rw [h0 h₁, h0 h₂, Set.ssubset_iff_of_subset (Set.Ico_subset_Ico (by linarith) (by linarith))]
     exact ⟨ε₁ / 2, ⟨by linarith, by linarith⟩, fun hx ↦ lt_irrefl _ hx.2⟩
 
-/-- In Figure 1, in years, the half-year grain is wider than the year grain but does not refine it,
-since halving the width never refines a grain; so the construals are ordered by width and not by
-[groenendijk-stokhof-1984]'s entailment, fn. 20. -/
+/-- In Figure 1, the half-year grain is wider than the year grain without refining it, so width is
+not [groenendijk-stokhof-1984]'s entailment (fn. 20). -/
 theorem figure1 :
     WiderThan (fromSetoid (grain (1 / 2 : ℝ))) (fromSetoid (grain 1)) ∧
       ¬ grain (1 / 2 : ℝ) ≤ grain 1 ∧ ¬ fromSetoid (grain (1 / 2 : ℝ)) ≤ fromSetoid (grain 1) := by
@@ -262,8 +258,7 @@ end Grain
 distinguishes the degrees below `m` and identifies those from `m` on. -/
 def zone (m : ℕ) : Setoid ℕ := Setoid.ker (min · m)
 
-/-- A construal whose zone of indifference begins later is finer and so wider, Figure 2; the
-emphatic use takes the zone to begin as late as the speaker can conceive. -/
+/-- A construal whose zone of indifference begins later is wider (Figure 2). -/
 theorem widerThan_zone {m m' : ℕ} (h : m < m') :
     WiderThan (fromSetoid (zone m')) (fromSetoid (zone m)) := by
   refine widerThan_fromSetoid
@@ -289,8 +284,8 @@ def mentionAll : Question (Set A) := which {E : Set A | E.Nonempty} fun E ↦ {E
 /-- The mention-some construal has one alternative per individual, the worlds in which it is `P`. -/
 def mentionSome : Question (Set A) := which Set.univ fun a ↦ {E | a ∈ E}
 
-/-- The mention-all construal of a constituent question is wider than the mention-some one, §4.1,
-since none of its alternatives is entailed by an alternative of the mention-some construal. -/
+/-- The mention-all construal of a constituent question is wider than the mention-some one (§4.1).
+-/
 theorem widerThan_mentionAll [Nontrivial A] :
     WiderThan (mentionAll (A := A)) mentionSome := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne A

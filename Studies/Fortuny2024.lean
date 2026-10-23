@@ -137,9 +137,8 @@ theorem coord_apply_single (X : Category) :
 /-- Two constituents are coordinable when some category is projected for them (22). -/
 def Coordinable (α β : Category) : Prop := ∃ X, coordinate X α β = some (.of X)
 
-/-- The Coordinability Condition (22) follows from the categorematic coordinator (10) and
-categorial identity (21), since two constituents are coordinable iff they have the same
-categorial and bar-level features. -/
+/-- Two constituents are coordinable iff they share categorial and bar-level features, the
+Coordinability Condition (22) from (10) and (21). -/
 theorem coordinable_iff (α β : Category) : Coordinable α β ↔ α.cf = β.cf ∧ α.bar = β.bar := by
   rw [← Category.eq_iff]
   constructor
@@ -154,8 +153,8 @@ instance (α β : Category) : Decidable (Coordinable α β) :=
 
 /-! ### Case 1 and Case 2, subcase I (§2.2.1, §2.2.2.1) -/
 
-/-- A coordinand carrying a categorial feature the other lacks, as when it alone is attracted by a
-probe for that feature (23), is not coordinable with it (24). -/
+/-- A coordinand carrying a categorial feature the other lacks, as under attraction (23), is not
+coordinable with it (24). -/
 theorem not_coordinable_of_mem_of_notMem {α β : Category} {φ : CatFeature} (hα : φ ∈ α.cf)
     (hβ : φ ∉ β.cf) : ¬ Coordinable α β :=
   fun h ↦ hβ (((coordinable_iff α β).1 h).1 ▸ hα)
@@ -303,10 +302,7 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 theorem rows_predicted : ∀ r ∈ rows, (r.judgment = .acceptable ↔ ¬ IllFormed r) := by
   decide
 
-/-- Each ill-formed coordination in the data falls under exactly one factor (§2.3). Only the
-coordinator's definition rules out extraction of a single coordinand, only the Integrity Condition
-extraction of identical coordinands, and only the Prohibition against Self-Coordination the
-across-the-board dependency with coordinated positions. -/
+/-- Each ill-formed coordination in the data falls under exactly one factor (§2.3). -/
 theorem rows_factor : ∀ r ∈ rows, ∀ i j, r.Factor i → r.Factor j → i = j := by
   decide
 

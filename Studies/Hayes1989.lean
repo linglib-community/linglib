@@ -250,9 +250,7 @@ theorem stranded_delete_of_isOnset {i : ℕ} (h : f.IsOnset i) :
 theorem cl_eq_self (h : f.stranded = ∅) (c : Convention) : f.cl c = f := by
   cases c <;> simp [cl, fills, h]
 
-/-- CL from onset deletion is impossible ((57), (63)). With nothing stranded, the convention
-    finds nothing to fill, and the mora count could only grow by a mora the representation
-    does not provide. -/
+/-- Compensatory lengthening from onset deletion is impossible ((57), (63)). -/
 theorem cl_delete_of_isOnset {i : ℕ} (h : f.IsOnset i) (h₀ : f.stranded = ∅)
     (c : Convention) : (f.delete i).cl c = f.delete i :=
   (f.delete i).cl_eq_self (by rw [stranded_delete_of_isOnset f h, h₀]) c
@@ -301,16 +299,15 @@ theorem noCrossing_link_iff :
   simp only [Form.NoCrossing, link, Finset.coe_insert, isNonCrossing_insert_iff_mem_window,
     and_right_comm]
 
-/-- A stranded mora to the left of a syllable cannot lengthen its nucleus `v`, which lies past
-    its window because the onset consonant `c` is linked from the syllable node to its right
-    (§5.3.2, (61) and (66)). Rightward CL through vowel loss is unattested. -/
+/-- A stranded mora left of a syllable cannot lengthen its nucleus across the onset, so rightward
+vowel-loss CL is unattested (§5.3.2, (61) and (66)). -/
 theorem not_noCrossing_link_of_onset {v c : ℕ} (hc : (σ v, c) ∈ f.links) (hm : m.slot < v)
     (hcv : c < v) : ¬ (f.link m v).NoCrossing := fun hp ↦
   notMem_window_of_mem_image_Ioi ⟨σ v, hm, hc⟩ hcv
     (noCrossing_link_iff.1 hp).2
 
-/-- A moraic coda `c` between the nucleus `v` and a stranded mora to its right puts `v` before
-    the mora's window, so vowel-loss CL favours open syllables (68). -/
+/-- A moraic coda between the nucleus and a stranded mora to its right blocks lengthening, so
+vowel-loss CL favours open syllables (68). -/
 theorem not_noCrossing_link_of_coda {v c : ℕ} (hc : (μ c, c) ∈ f.links) (hv : v < c)
     (hm : c < m.slot) : ¬ (f.link m v).NoCrossing := fun hp ↦
   notMem_window_of_mem_image_Iio ⟨μ c, hm, hc⟩ hv

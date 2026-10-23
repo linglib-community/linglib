@@ -54,9 +54,8 @@ noncomputable def posterior (P : Measure T) (str : T → List W) (ws : List W) :
 
 variable (P : Measure T) (str : T → List W) (ws : List W) (w : W) [DiscreteMeasurableSpace T]
 
-/-- Incremental update equals direct conditioning (eqs. (5)–(8)): conditioning
-    the current posterior on consistency with the extended prefix is
-    conditioning the prior on the extended prefix directly. -/
+/-- Conditioning the posterior on the extended prefix equals conditioning the prior on it directly
+(eqs. (5)–(8)). -/
 theorem posterior_incremental [IsFiniteMeasure P] :
     (posterior P str ws)[|consistent str (ws ++ [w])] = posterior P str (ws ++ [w]) := by
   rw [posterior, posterior, cond_cond_eq_cond_inter .of_discrete .of_discrete,
@@ -70,9 +69,8 @@ theorem posterior_consistent_append :
 
 variable [IsProbabilityMeasure P]
 
-/-- The paper's eq. (4): the relative entropy of the updated distribution over
-    structures with respect to the pre-update distribution is the surprisal of
-    the word that triggered the update. -/
+/-- The relative entropy of the updated distribution over structures relative to the previous one is
+the word's surprisal (eq. (4)). -/
 theorem klDiv_posterior_eq_surprisal (h : P (consistent str (ws ++ [w])) ≠ 0) :
     klDiv (posterior P str (ws ++ [w])) (posterior P str ws)
       = ENNReal.ofReal (surprisal ((ofMeasure (P.map str)).next ws) (some w)) := by

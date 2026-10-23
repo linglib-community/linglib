@@ -118,8 +118,8 @@ those that select the individuals or the whole domain. -/
 theorem individual_le_iff {s : CauserSort} : individual ≤ s ↔ s = individual ∨ s = any := by
   cases s <;> decide
 
-/-- The volitive (71) applies to a predicate whose subject sort includes the events. These are
-the sorts of *murder*, *destroy* and *break* verbs, the three kinds of causative of §7.3. -/
+/-- The volitive (71) applies to predicates whose subject sort includes events, those of *murder*,
+*destroy* and *break* verbs (§7.3). -/
 theorem event_le_iff {s : CauserSort} :
     event ≤ s ↔ s = event ∨ s = eventuality ∨ s = any := by
   cases s <;> decide
@@ -169,9 +169,8 @@ def caseOfReading : Reading → Case
   | .reflexive   => .nom
   | .existential => .acc
 
-/-- Any causative claim entails the existentially resolved inchoative. Inchoatives are true in
-agentive contexts ((51), §5.3), so the ban on volitive inchoatives is formal rather than
-truth-conditional. -/
+/-- Any causative claim entails the existentially resolved inchoative, so the ban on volitive
+inchoatives is formal ((51), §5.3). -/
 theorem causative_entails_existential {E : Type} {s : CauserSort}
     (h : CauserSort.individual ≤ s) (vp : E → E → Prop) (x y : E)
     (hxy : vp x y) : Reading.existential.resolve h vp y :=

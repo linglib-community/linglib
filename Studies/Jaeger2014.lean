@@ -375,10 +375,7 @@ def IsRationalizable (s : C → W → F) (r : C → F → A) : Prop :=
     (∀ r' ∈ R, ∃ σ q, ↑σ.weights.support ⊆ S ∧ r' ∈ g.receiverBR σ q) ∧
     s ∈ S ∧ r ∈ R
 
-/-- Pragmatically rationalizable strategy pairs are rationalizable (Theorem 1). The sequence runs
-on the finitely many sets of strategies, so it is eventually periodic, and the recurrence sets
-themselves witness rationalizability, since a recurring strategy responds cautiously to a late
-stage of the other player, which lies inside the other recurrence set. -/
+/-- Pragmatically rationalizable strategy pairs are rationalizable (Theorem 1). -/
 theorem prs_rationalizable {s : C → W → F} {r : C → F → A}
     (hs : s ∈ g.prsS) (hr : r ∈ g.prsR) : g.IsRationalizable s r := by
   obtain ⟨a, b, hne, heq⟩ := Finite.exists_ne_map_eq_of_infinite g.icrR
@@ -840,9 +837,8 @@ private theorem receiverStep_stage (b : Fin 2) : game.receiverStep (Stage b) = S
         if f = 0 then b + 1 else b, by fin_cases b <;> fin_cases f <;> simp_all [liar], ?_⟩
       fin_cases b <;> fin_cases f <;> fin_cases a' <;> simp_all [game]
 
-/-- With opposed interests (Example 2) the sequence cycles with period two. The pragmatically
-rationalizable senders are the liar and the truth-teller, and the receivers are those reading `f₁`
-and `f₂` differently, `f₁₂` either way. -/
+/-- With opposed interests (Example 2), the pragmatically rationalizable senders are the liar and
+truth-teller, and the receivers those reading `f₁` and `f₂` differently. -/
 theorem prs_eq : game.prsS = {fun _ w ↦ if w = 0 then 1 else 0, fun _ w ↦ if w = 1 then 1 else 0} ∧
     game.prsR = {r | r () 0 ≠ r () 1} := by
   have h2 : IsPeriodicPt game.receiverStep 2 (game.icrR 0) := by
@@ -1128,9 +1124,8 @@ private theorem icrR_three : game.icrR 3 = game.icrR 2 := by
         norm_num
       · exact (hf _ hs () 1 rfl).elim
 
-/-- Contrary to the claim on p. 683, the no-implicature utilities alone yield the scalar
-implicature. The pragmatically rationalizable sender uses "some" exactly when not all is true and
-never uses "some but not all". -/
+/-- Contrary to p. 683, the no-implicature utilities yield the scalar implicature, the sender using
+*some* exactly when not all holds. -/
 theorem some_still_implicates_not_all :
     game.prsS = {fun _ w ↦ if w = 0 then 0 else 2} ∧
       game.prsR = {fun _ f ↦ if f = 2 then 1 else f} := by
@@ -1263,9 +1258,8 @@ private theorem receiverStep_one : game.receiverStep {r₁} = {r₁} := by
     · exact ⟨_, rfl, s₁, rfl, 0, 1, rfl, by
         fin_cases c <;> fin_cases a' <;> simp_all [game, r₁] <;> norm_num⟩
 
-/-- In Example 4, whatever the context, the pragmatically rationalizable sender uses "some" exactly
-when not all is true and never the costlier "some but not all", and every pragmatically
-rationalizable receiver reads "some" as "not all". -/
+/-- In Example 4, the pragmatically rationalizable sender uses *some* exactly when not all is true,
+and every such receiver reads *some* as *not all*. -/
 theorem some_implicates_not_all : game.prsS = {fun _ w ↦ if w = 0 then 0 else 2} ∧
     game.prsR = {fun _ f ↦ if f = 0 then 0 else 1} := by
   have h1 : game.icrR 1 = {r₁} := by rw [SemanticGame.icrR_succ, icrR_zero, receiverStep_zero]
@@ -1503,8 +1497,8 @@ private theorem icrR_three : game.icrR 3 = game.icrR 2 := by
     have : f ≠ a' := fun h ↦ ha' (h ▸ rfl)
     exact ⟨f, rfl, _, hs, (), f, rfl, by simp [game, this]⟩
 
-/-- Horn's division of pragmatic labor (Example 6). The pragmatically rationalizable strategies are
-the convention on which the cheap form marks the frequent world and the costly form the rare one. -/
+/-- Horn's division of pragmatic labor holds (Example 6), the cheap form marking the frequent world
+and the costly form the rare one. -/
 theorem division_of_pragmatic_labor :
     game.prsS = {fun _ w ↦ w} ∧ game.prsR = {fun _ f ↦ f} := by
   have h : IsFixedPt game.receiverStep (game.icrR 2) := by
@@ -1634,9 +1628,8 @@ private theorem receiverStep_zero : game.receiverStep {r₀} = {r₀} := by
       · exact (receiverEU_two_lt hu c).le
       · exact le_rfl
 
-/-- In Example 8 the sequence never leaves the credulous receiver. The pragmatically rationalizable
-sender says "101 m" only when precision matters and otherwise "100 m", and the receiver reads
-every signal literally. -/
+/-- In Example 8, the pragmatically rationalizable sender says *101 m* only when precision matters,
+and the receiver reads every signal literally. -/
 theorem prs_eq : game.prsS = {fun c w ↦ if c = 0 ∧ w = 1 then 2 else 0} ∧
     game.prsR = {fun _ f ↦ if f = 2 then 1 else 0} := by
   have h : IsFixedPt game.receiverStep (game.icrR 0) := by
@@ -1857,8 +1850,8 @@ private theorem receiverStep_one (hc0 : 0 < c) : (game c).receiverStep {rB} = {r
     · exact ⟨_, rfl, sA, rfl, (), 1, rfl, by fin_cases a' <;> simp_all [game, rB]⟩
     · exact ⟨_, rfl, sA, rfl, (), 0, rfl, by fin_cases a' <;> simp_all [game, rB]⟩
 
-/-- Under iterated cautious response, in Example 10, the pragmatically rationalizable receiver reads
-"some" as "not all", and the sender uses "some" when not all is true. -/
+/-- Under iterated cautious response (Example 10), the receiver reads *some* as *not all* and the
+sender uses *some* when not all is true. -/
 theorem icr_some_implicates_not_all (hc0 : 0 < c) (hc1 : c < 1) :
     (game c).prsS = {fun _ w ↦ if w = 0 then 1 else 0} ∧
       (game c).prsR = {fun _ f ↦ if f = 1 then 0 else 1} := by

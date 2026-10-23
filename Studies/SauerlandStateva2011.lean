@@ -131,9 +131,8 @@ theorem classification_predicts_distribution :
 variable {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
   (𝒢 : Finset α) (h𝒢 : 𝒢.Nonempty) {d ε : α}
 
-/-- At a degree that is a scale point of every available granularity, as *5 meters* is in Figure
-6.1, *exactly* yields the narrowest available reading, (19a), since the cell at the finest width
-lies inside the cell at every available one. -/
+/-- At a degree on every available grain, *exactly* yields the narrowest reading (19a), as for *5
+meters* in Figure 6.1. -/
 theorem exactly_narrowest (hpos : ∀ ε ∈ 𝒢, 0 < ε) (hd : ∀ ε ∈ 𝒢, d ∈ AddSubgroup.zmultiples ε)
     (hε : ε ∈ 𝒢) : (grain (𝒢.min' h𝒢)).cell d ⊆ (grain ε).cell d :=
   cell_grain_subset_cell_grain (hpos _ (𝒢.min'_mem h𝒢)) (𝒢.min'_le ε hε) (hd _ (𝒢.min'_mem h𝒢))

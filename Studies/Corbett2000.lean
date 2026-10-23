@@ -502,8 +502,8 @@ theorem noun_conflates_verb_not :
 
 end Kiowa
 
-/-- In Table 5.15 the Teop articles of the a- and o-classes are polar, like the Somali article of
-Table 5.16. The e-class breaks the polarity, and the three classes take different articles. -/
+/-- The Teop articles of the a- and o-classes are polar (Table 5.15), like the Somali article (Table
+5.16), but the e-class breaks the polarity. -/
 theorem teop_inverse :
     Gender.Polar (fun (c : {c : Teop.NounClass // c ≠ .e}) pl ↦ Teop.headArticle c pl) ∧
       ¬ Gender.Polar Teop.headArticle ∧ Gender.Faithful Teop.headArticle :=
@@ -836,14 +836,13 @@ theorem hebrew_rows : ∀ row ∈ Examples.all, row.language = "hebr1245" →
       ({} : Choices).toSystem.coarsen c = t := by
   decide +kernel
 
-/-- The default number, where the controller has none, is the singular in language after
-language, English included, while Godié and Kiowa use the plural, (12) and (14) of chapter 6. -/
+/-- The default number is singular in English and plural in Kiowa ((12) and (14) of chapter 6). -/
 theorem default_rows : ∀ row ∈ Examples.all, ∀ d ∈ row.parse? "default" numberNames,
     (row.language = "stan1293" → d = .singular) ∧ (row.language = "kiow1266" → d = .plural) := by
   decide +kernel
 
-/-- In Bayso, (1) to (4) of chapter 2 and (4) to (11) of chapter 6, the noun's form in each
-number and the concord it takes are the fragment's. -/
+/-- In Bayso, the noun's form in each number and its concord are the fragment's ((1) to (4) of
+chapter 2, (4) to (11) of chapter 6). -/
 theorem bayso_rows : ∀ row ∈ Examples.all, row.language = "bais1246" →
     ∀ n ∈ row.parse? "noun" (Bayso.allNouns.map fun n ↦ (n.form, n)),
     ∀ v ∈ row.parse? "number" [("general", (⟨.general, by decide⟩ : Bayso.nounNumbers)),

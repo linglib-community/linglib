@@ -82,10 +82,8 @@ open Set Discourse Order ModalLogic SetRel
 
 /-! ### Conceptions of reasonableness -/
 
-/-- The intersection formulation ([ney-2026] p. 326) is at least as strong as "reasonable by the
-lights of at least one" (p. 327), and strictly stronger for conceptions that are not closed
-under recognition: a hearer recognising everything counts as reasonable by either conception
-below, a hearer recognising nothing only by their empty intersection. -/
+/-- The intersection formulation ([ney-2026] p. 326) is strictly stronger than *reasonable by the
+lights of at least one* (p. 327) for conceptions not closed under recognition. -/
 theorem exists_mem_upperPolar_iUnion_not_mem :
     ∃ (r : Bool → Bool → Prop) (K : Role → Set Bool) (e : Bool),
       e ∈ upperPolar r (⋃ a, lowerPolar r (K a)) ∧ e ∉ upperPolar r (lowerPolar r (⋂ a, K a)) := by
@@ -154,9 +152,8 @@ def recognized (w : W) : Set E := M.intends w ∩ {e | M.recognizes (M.addressee
 
 /-! ### The prima facie challenge -/
 
-/-- ⟨TWO⟩ and ⟨TWO*⟩ give ⟨THREE⟩ ([ney-2026] pp. 322, 325): if it is common ground that the
-addressee is reasonable and that `o` is a semantic value, it is common ground that the addressee
-recognises the intention to refer to `o`. -/
+/-- ⟨TWO⟩ and ⟨TWO*⟩ make it common ground that the addressee recognises the intention to refer to
+`o`, which is ⟨THREE⟩ ([ney-2026] pp. 322, 325). -/
 theorem commonKnowledge_mem_recognized
     (two : CommonKnowledge M.belief univ (fun v ↦ M.addressee v ∈ M.reasonable v) w)
     (twoStar : CommonKnowledge M.belief univ (o ∈ M.semanticValues ·) w) :
@@ -172,16 +169,15 @@ theorem commonKnowledge_mem_intends
 
 /-! ### The response -/
 
-/-- If it is not common ground that `a`'s conception licenses `o`, it is not common ground that
-`o` is a semantic value (iia): ⟨TWO*⟩ fails ([ney-2026] pp. 325–326). -/
+/-- If it is not common ground that `a`'s conception licenses `o`, it is not common ground that `o`
+is a semantic value (iia) ([ney-2026] pp. 325–326). -/
 theorem not_commonKnowledge_mem_semanticValues (a : Role)
     (h : ¬ CommonKnowledge M.belief univ (o ∈ M.conception a ·) w) :
     ¬ CommonKnowledge M.belief univ (o ∈ M.semanticValues ·) w :=
   fun hv ↦ h fun v h' ↦ (M.mem_semanticValues.1 (hv v h')).2 a
 
-/-- If it is not common ground that the speaker's conception licenses `o`, it is not common
-ground that she intends `o` (iib): she can deny the intention by denying the conception
-([ney-2026] p. 326). -/
+/-- If it is not common ground that the speaker's conception licenses `o`, it is not common ground
+that she intends `o` (iib) ([ney-2026] p. 326). -/
 theorem not_commonKnowledge_mem_intends
     (h : ¬ CommonKnowledge M.belief univ (o ∈ M.conception .speaker ·) w) :
     ¬ CommonKnowledge M.belief univ (o ∈ M.intends ·) w :=
@@ -291,8 +287,8 @@ theorem not_mem_of_groundedIn {cg : Filter World} (h : cg.GroundedIn insinuation
     (hw : Finset.univ ∈ cg.ker) : {v | hispanicImmigrants ∈ insinuation.intends v} ∉ cg :=
   fun hp ↦ not_commonKnowledge_mem_intends (h.commonKnowledge hw hp)
 
-/-- The eavesdropper ([ney-2026] pp. 325–326): where only the speaker holds the conception, the
-addressee recognises the intention, yet the unavowed referent is not a semantic value. -/
+/-- In the eavesdropper case the addressee recognises the intention, yet the unavowed referent is
+not a semantic value ([ney-2026] pp. 325–326). -/
 theorem eavesdropper :
     hispanicImmigrants ∈ insinuation.recognized {.speaker} ∧
       hispanicImmigrants ∉ insinuation.semanticValues {.speaker} := by
@@ -320,9 +316,8 @@ def lennon : Model World (Set LennonReferent) LennonReferent where
   intends_subset_conception _ := subset_rfl
   addressee _ := {house}
 
-/-- With ⟨TWO⟩ as in example (2), the reference to the house is common ground: denying ⟨TWO*⟩,
-not ⟨TWO⟩, separates insinuative reference from ordinary reliance on a reasonable hearer
-([ney-2026] p. 324). -/
+/-- With ⟨TWO⟩ as in example (2), the reference to the house is common ground ([ney-2026] p. 324).
+-/
 theorem lennon_commonKnowledge_mem_recognized :
     CommonKnowledge lennon.belief univ (house ∈ lennon.recognized ·) .univ :=
   lennon.commonKnowledge_mem_recognized

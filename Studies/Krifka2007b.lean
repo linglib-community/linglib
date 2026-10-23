@@ -112,9 +112,8 @@ theorem lt_of_marked (h₁ : Marked Θ θ .notPositive d₁) (h₂ : Marked Θ �
     d₁ < d₂ :=
   lt_of_le_of_lt h₁.1 h₂.1
 
-/-- Between two admissible borders a degree is *not unhappy* for a speaker with the lower
-border and *not happy* for one with the higher, so the two expressions are not exhaustive and
-have no fixed border between them (20). -/
+/-- Between two admissible borders a degree is *not unhappy* by the lower border and *not happy* by
+the higher, so the two lack a fixed border (20). -/
 theorem marked_both (h₁ : θ₁ ∈ Θ) (h₂ : θ₂ ∈ Θ) (hlt : θ₁ < θ₂) :
     Marked Θ θ₁ .notNegative θ₂ ∧ Marked Θ θ₂ .notPositive θ₂ :=
   ⟨marked_notNegative_iff.2 ⟨hlt, θ₂, h₂, le_rfl⟩, marked_notPositive_iff.2 ⟨le_rfl, θ₁, h₁, hlt⟩⟩
@@ -157,10 +156,8 @@ def mPairing : Form ≃o Interp where
   right_inv b := by cases b <;> rfl
   map_rel_iff' {a b} := by cases a <;> cases b <;> decide
 
-/-- Under weak optimality ((14), (15)) *kill* pairs with direct and *cause to die* with
-indirect killing, the M principle. Two pairs are compared only when they share a form or an
-interpretation, by the preference ordering on the other, so the harmony is the product of the
-two orderings. -/
+/-- Under weak optimality ((14), (15)), *kill* pairs with direct and *cause to die* with indirect
+killing. -/
 theorem superoptimal_mccawley :
     superoptimalSet Set.univ (Prod.map Form.complexity Interp.markedness) =
       {(.killed, .direct), (.causedToDie, .indirect)} := by
@@ -222,9 +219,8 @@ def krifkaQuadruplet : Finset (AntonymForm × Region) :=
 
 local instance : DecidableLT (ℕ × ℕ) := fun _ _ ↦ decidable_of_iff _ Prod.lt_iff.symm
 
-/-- Weak optimality over the quadruplet, comparing pairs by form complexity and region markedness
-as (14) compares McCawley's pairs, yields Krifka's assignment: in each half the simpler form
-takes the safe region and the more complex form the border region ((18)–(20)). -/
+/-- Weak optimality over the quadruplet, as in (14), gives each half's simpler form the safe region
+and the more complex form the border region ((18)–(20)). -/
 theorem superoptimal_quadruplet :
     superoptimal quadrupletPairs (Prod.map AntonymForm.complexity Region.markedness) =
       krifkaQuadruplet := by

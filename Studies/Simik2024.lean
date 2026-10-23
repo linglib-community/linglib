@@ -395,8 +395,8 @@ theorem ex31_markers :
     Examples.ex31d.feature? "particle" = some SerbianPQForm.lnpq.particle.form := by
   decide
 
-/-- In the quiz-versus-information-seeking contrast, *je li* is natural in the neutral cell
-of Table 1 yet infelicitous in the quiz (31b), where *da li* is felicitous (31a). -/
+/-- *Je li* is natural in the neutral cell of Table 1 yet infelicitous in the quiz (31b), where *da
+li* is felicitous (31a). -/
 theorem jeLi_neutral_yet_quiz_infelicitous :
     .jeLiPPQ ∈ serbianBiasProfile 0 0 ∧
       Examples.ex31b.judgment = .unacceptable ∧ Examples.ex31a.judgment = .acceptable := by
@@ -483,10 +483,8 @@ theorem falsumCz_eq_zero_iff (w : W) :
     falsumCz epi cg p w = 0 ↔ ModalLogic.Box epi (· ∉ p) w := by
   simp [falsumCz, ModalLogic.Box, ModalLogic.Diamond]
 
-/-- [repp-2013]'s FALSUM (22b), `□[epi ○ conv] (p ∉ cg ·)`, makes the Czech operator true
-wherever it is defined when the bearer's knowledge-then-goals relation is reflexive, as it is for
-reflexive `epi` and `conv`; reflexive `conv`, every world satisfying the bearer's conversational
-goals, is an idealization. -/
+/-- [repp-2013]'s FALSUM (22b) makes the Czech operator true wherever defined when the
+knowledge-then-goals relation is reflexive. -/
 theorem falsumCz_eq_one_of_falsum [(epi ○ conv).IsRefl] {w : W}
     (h : □[epi ○ conv] (p ∉ cg ·) w) (hw : falsumCz epi cg p w ≠ 0) :
     falsumCz epi cg p w = 1 := by

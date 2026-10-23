@@ -338,9 +338,8 @@ theorem globalConstrual_ne_supervaluation_iff :
     simp_all [globalConstrual, globalExh, supervaluation_eq_one_iff, supervaluation_eq_neg_one_iff,
       supervaluation_eq_zero_iff]
 
-/-- In the scope of a scope-monotone quantifier such as *every* the implicature construals all
-align, since comparing the literal meaning with global exhaustification and with local
-exhaustification comes to the same thing (§6.1.3). -/
+/-- In the scope of a scope-monotone quantifier such as *every*, the literal-against-global
+construal is the supervaluation (§6.1.3). -/
 theorem globalConstrual_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
     globalConstrual q d = supervaluation q d :=
   not_not.1 fun h ↦ (globalConstrual_ne_supervaluation_iff.1 h).elim fun hs ha ↦
@@ -367,10 +366,8 @@ theorem globalConstrual_notAll_ne_zero (v : SignType) :
     globalConstrual NumberTree.notAll [v] ≠ 0 :=
   globalConstrual_ne_zero_of_scopeAntitone NumberTree.scopeAntitone_notAll
 
-/-- On the parse (35) where the definite takes scope over negation, the literal-against-global
-construal of *the shapes are not green* is the supervaluation of its narrow-scope negation, so it
-gaps exactly on the mixed cell. No such parse is available under *no*, whose definite contains a
-variable the quantifier binds. -/
+/-- On the wide-scope parse (35), the literal-against-global construal of *the shapes are not green*
+is the supervaluation of its narrow-scope negation. -/
 theorem globalConstrual_wideScope (v : SignType) :
     globalConstrual NumberTree.all [-v] = supervaluation NumberTree.notAll [v] := by
   rw [globalConstrual_eq_supervaluation_of_scopeMonotone NumberTree.scopeMonotone_all]
@@ -394,9 +391,8 @@ def strongPole : Finset (Fin n → SignType) :=
 
 variable {q n}
 
-/-- Exhaustifying the sentence twice over its some- and all-substituted alternatives, by
-[magri-2014]'s double strengthening, yields `globalExh`, (30) and (39), provided either the strong
-pole is weaker, as in a downward-entailing scope, or the two poles are compatible. -/
+/-- Double strengthening ([magri-2014]) yields `globalExh`, (30) and (39), provided the strong pole
+is weaker or the two poles are compatible. -/
 theorem globalExh_iff_mem_strengthened
     (h : weakPole q n ⊆ strongPole q n ∨ (weakPole q n ∩ strongPole q n).Nonempty)
     (w : Fin n → SignType) :
@@ -599,9 +595,8 @@ theorem misprinted_gapQQ :
     ¬ weak .exactly misprinted.display ∧ strong .exactly misprinted.display := by
   decide
 
-/-- Every tested item realizes its condition by §3's principle, read with the entailment
-direction of its scope, the weak variant holding in the TRUE and GAP conditions and the strong one
-in the TRUE and GAP?? conditions. -/
+/-- Every tested item realizes its condition by §3's principle, with the weak variant true in TRUE
+and GAP and the strong one in TRUE and GAP??. -/
 theorem items_variants : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     (weak i.embedding i.display ↔ i.condition ∈ [.clearlyTrue, .gap]) ∧
       (strong i.embedding i.display ↔ i.condition ∈ [.clearlyTrue, .gapQQ]) := by
@@ -659,17 +654,16 @@ theorem supervaluation_eq_zero_iff_found : ∀ i ∈ tested, i.status ≠ .fault
   revert hg
   cases i.condition <;> simp
 
-/-- The literal-against-global construal misfits exactly the GAP items under a downward-entailing
-scope, sentential negation and *no*, and the GAP?? items, where the all-variant is true and the
-some-variant false (§6.1.3). -/
+/-- The literal-against-global construal misfits exactly the GAP items under sentential negation and
+*no*, and the GAP?? items (§6.1.3). -/
 theorem globalConstrual_misfit_iff : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     ∀ t ∈ gapTests, ¬ t.Discounted → t.embedding = i.embedding → t.condition = i.condition →
       (¬ (globalConstrual i.embedding.tree i.display = 0 ↔ t.found = .yes) ↔
         (i.embedding.tree.ScopeAntitone ∧ i.condition = .gap) ∨ i.condition = .gapQQ) := by
   decide
 
-/-- Universal projection predicts a presupposition failure on a FALSE item of *all*, where the
-sentence was judged false as soon as one cell has no target symbols, the argument from (42). -/
+/-- Universal projection predicts a presupposition failure on a FALSE item of *all*, which subjects
+judged false (42). -/
 theorem universalPresupposition_false_item :
     ∃ i ∈ items, i.embedding = .all ∧ i.condition = .clearlyFalse ∧
       universalPresupposition i.embedding.tree i.display = 0 := by
@@ -691,7 +685,7 @@ theorem atLeastTwo_gapQ : ∀ i ∈ items, i.condition = .gapQ → i ≠ misprin
   decide
 
 /-- On the at-least reading the FALSE items of *exactly* with three or more full cells are true,
-the items with elevated true responses in Fig. 10. -/
+matching the elevated true responses of Fig. 10. -/
 theorem atLeastTwo_false : ∀ i ∈ items, i.embedding = .exactly → i.condition = .clearlyFalse →
     (supervaluation atLeastTwo i.display = 1 ↔ 3 ≤ i.cells.count 9) := by
   decide
@@ -705,9 +699,8 @@ def Share.value : Share → SignType
 /-- The display of a situation of Table 12, Bill's, Mary's and Sue's cells. -/
 def Situation.display (s : Situation) : Display := [s.bill, s.mary, s.sue].map Share.value
 
-/-- Table 12 follows from its situations. The literal and locally exhaustified parses hold as its
-corresponding conditions require, the (si2) and (si4) construals, the supervaluation, gap exactly
-where a gap was found, and the (si1) and (si3) construals miss the GAP?? situation. -/
+/-- Each reading of Table 12 holds in exactly the situations its condition requires, and the
+supervaluation gaps exactly where a gap was found. -/
 theorem situations_variants : ∀ s ∈ situations,
     (someReading Embedding.exactly.tree s.display ↔ s.condition ∈ [.clearlyTrue, .gap]) ∧
       (allReading Embedding.exactly.tree s.display ↔ s.condition ∈ [.clearlyTrue, .gapQQ]) ∧

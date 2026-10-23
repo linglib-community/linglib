@@ -178,8 +178,8 @@ theorem trace_prediction_fails :
     Nested piedPiping.fillerGap ∧ Nested piedPiping.gapVerb ∧ ¬ Hard ex42 := by
   decide
 
-/-- Under pied piping (15) the filler associates with the verb, and under preposition stranding
-(16) with the stranded preposition at the end, a longer association for a harder sentence. -/
+/-- Pied piping (15) associates the filler with the verb and stranding (16) with the final
+preposition, a longer association for the harder sentence. -/
 theorem stranding :
     ¬ Hard ex15 ∧ Hard ex16 ∧
       ((⟨0, 15, 3⟩ : Dependency).fillerVerb).snd
@@ -357,8 +357,8 @@ def npCount : String → ℤ
   | "talked" | "to" | "wonders" => -1
   | _ => 1
 
-/-- *Sue wonders who John saw Mary* (82d) has no derivation, with *who* or with *whom*, in any
-rule system, because the pronoun supplies a noun phrase no verb consumes. -/
+/-- *Sue wonders who John saw Mary* (82d) has no derivation, with *who* or *whom*, in any rule
+system. -/
 theorem no_der82d (R : CCG.RuleSystem Basic) (w : String) (hw : w = "who" ∨ w = "whom") :
     ¬ ∃ d : CCG.Derivation String R sent,
       d.LexIn lexicon ∧ d.yield = ["Sue", "wonders", w, "John", "saw", "Mary"] := by

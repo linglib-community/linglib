@@ -178,9 +178,8 @@ private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step
     · obtain rfl := Option.some.inj h
       simp [Cfg.map, Step.run]
 
-/-- A successful replay forgets to the derivation's configuration, the object and every copy on
-    the stack, forgetting the order being a morphism of magmas
-    ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
+/-- A successful replay forgets to the configuration of the derivation
+([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
 theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg LinearizedSyntacticObject}
     (h : d.replay? τ = some c) :
     c.map LinearizedSyntacticObject.toSyntacticObject = d.run τ := by

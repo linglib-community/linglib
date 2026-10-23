@@ -157,9 +157,8 @@ theorem halt_of_spkr_object (subj obj : Person) (h : .speaker ∈ spec obj) :
       flag strictlyDescending [obj, subj] = none := by
   revert h; cases obj <;> cases subj <;> decide
 
-/-- A second-person object lacks [SPKR] but bears [PART], so the probe is not satisfied but
-    narrows to [INT:PART]; it then reaches the subject exactly when the subject bears [PART]
-    ((17), (19)). -/
+/-- A second-person object narrows the probe to [INT:PART], which then reaches the subject exactly
+when the subject bears [PART] ((17), (19)). -/
 theorem narrow_of_part_object (subj obj : Person) (h₁ : .speaker ∉ spec obj)
     (h₂ : .participant ∈ spec obj) :
     (run strictlyDescending [obj, subj]).state = {.pi, .participant} ∧
@@ -172,9 +171,8 @@ theorem flag_of_third_object (subj obj : Person) (h : .participant ∉ spec obj)
     flag strictlyDescending [obj, subj] = some [obj] := by
   revert h; cases obj <;> cases subj <;> decide
 
-/-- With a low or absent object the probe expands and Agrees with the subject alone (24). The
-    subject is Agreed with but is not a second goal, so its flag is empty and there is no
-    ergative ((25)). -/
+/-- With a low or absent object the probe Agrees with the subject alone, which gets an empty flag
+and no ergative ((24), (25)). -/
 theorem flag_of_low_object (subj : Person) : flag strictlyDescending [subj] = some [] := by
   cases subj <;> decide
 
@@ -229,18 +227,16 @@ def oagrOnS (subj obj : Person) (n : Number) (pos : ObjectPosition) : Option Str
     | [o] => Kawapanan.Shawi.objectMarker o n
     | _ => none
 
-/-- Object agreement appears on the subject only if the subject is ergative (§2, fn. 7), and, off
-the diagonal, is overt only for a first-person subject and a second-person object (§3.3), since a
-third-person object has no exponent and no other pair lets the subject Agree. -/
+/-- Object agreement on the subject requires an ergative subject (§2, fn. 7) and, off the diagonal,
+a first-person subject and second-person object (§3.3). -/
 theorem oagrOnS_isSome {subj obj : Person} {n : Number} {pos : ObjectPosition}
     (hne : subj.prominence ≠ obj.prominence)
     (h : (oagrOnS subj obj n pos).isSome) :
     Ergative subj obj pos ∧ .speaker ∈ spec subj ∧ obj = .second := by
   cases pos <;> revert subj obj n <;> decide +kernel
 
-/-- A first-person exclusive augmented subject with a second-person augmented object bears *-ri*
-    and the object's marker (12), a second-person subject with a first-person object bears
-    neither (11), and a third-person object leaves *-ri* nothing to accompany (23a). -/
+/-- Object agreement on the subject surfaces with a first-person exclusive subject and second-person
+object (12), but not at 2→1 (11) or 1→3 (23a). -/
 theorem oagrOnS_examples :
     oagrOnS .firstExclusive .second .augmented .high = some "-((n)ke)ma'" ∧
     oagrOnS .second .firstExclusive .minimal .high = none ∧
@@ -250,9 +246,8 @@ theorem oagrOnS_examples :
 
 /-! ### Configurational rules (§1, §4.1) -/
 
-/-- Rule (1) ([baker-2015]) values the higher of two caseless NPs in one domain ergative whatever
-    their persons, as `DependentCase.assignCases` does; Shawi withholds ergative at 2→1, 3→1 and 3→2
-    with the object in v's domain ((7a–c)). -/
+/-- Rule (1) ([baker-2015]), like `DependentCase.assignCases`, makes the higher caseless NP ergative
+whatever its person, but Shawi withholds ergative at 2→1, 3→1 and 3→2 ((7a–c)). -/
 theorem rule1_overgenerates :
     ((DependentCase.assignCases .ergative (fun _ : Fin 2 ↦ none) [0, 1]).valueOf 0).map (·.1) =
       some .erg ∧
@@ -260,10 +255,8 @@ theorem rule1_overgenerates :
     ¬ Ergative .third .second .high := by
   decide
 
-/-- No grammar of [deal-2024]'s probe space yields a 1>3>2 hierarchy (§4.1). None makes 3→2 a
-second-goal configuration while 2→3 is not, since a third-person first goal neither satisfies
-nor narrows the probe. Rule (37) of [barany-sheehan-2024]'s kind, whose hierarchy is
-stipulated, has no such limit. -/
+/-- No grammar of [deal-2024]'s probe space yields a 1>3>2 hierarchy (§4.1), unlike a Rule (37) of
+[barany-sheehan-2024]'s kind. -/
 theorem no_1_3_2_hierarchy (g : Deal2024.Grammar) (h : DependentCase g [.second, .third]) :
     DependentCase g [.third, .second] := by
   revert g
@@ -284,16 +277,14 @@ def Locus.goals : Locus → Person → Person → List Person
   | .v, subj, obj => [obj, subj]
   | .T, subj, obj => [subj, obj]
 
-/-- Without a split (§5.1), an insatiable probe with no dynamic interaction Agrees with both
-    arguments whatever their persons, giving ergative on v (Nez Perce [deal-2010], Amahuaca
-    [clem-2019]) and accusative on T (Sakha, [baker-vinokurova-2010]). -/
+/-- Without a split (§5.1), an insatiable probe Agrees with both arguments whatever their persons,
+giving ergative on v ([deal-2010], [clem-2019]) and accusative on T ([baker-vinokurova-2010]). -/
 theorem dependentCase_noPCC (l : Locus) (subj obj : Person) :
     DependentCase noPCC (l.goals subj obj) := by
   cases l <;> cases subj <;> cases obj <;> decide
 
-/-- Under the strong PCC of Table 7 there is dependent case iff the first goal is third person,
-    on the subject when the object is third (Shiwilu, [valenzuela-2011]) and on the object when
-    the subject is third (Yurok). -/
+/-- Under the strong PCC of Table 7 there is dependent case iff the first goal is third person
+(Shiwilu, [valenzuela-2011]; Yurok). -/
 theorem dependentCase_strong_iff (g₁ g₂ : Person) :
     DependentCase strong [g₁, g₂] ↔ .participant ∉ spec g₁ := by
   cases g₁ <;> cases g₂ <;> decide
@@ -302,23 +293,22 @@ theorem dependentCase_strong_iff (g₁ g₂ : Person) :
 example : ¬ DependentCase strong (Locus.v.goals .first .second) ∧
     DependentCase strong (Locus.v.goals .third .third) := by decide
 
-/-- Under the weak PCC of Table 7 there is dependent case unless the first goal is local and the
-    second is third, so on the object except in local→third (Kolyma Yukaghir, [maslova-2003]). -/
+/-- Under the weak PCC of Table 7 there is dependent case except when a local first goal precedes a
+third-person second ([maslova-2003]). -/
 theorem dependentCase_weak_iff (g₁ g₂ : Person) :
     DependentCase weak [g₁, g₂] ↔
       (.participant ∈ spec g₁ → .participant ∈ spec g₂) := by
   cases g₁ <;> cases g₂ <;> decide
 
-/-- Under the strictly descending PCC of Table 7 there is dependent case iff the first goal lacks
-    [SPKR] and the second bears [PART] whenever the first does. -/
+/-- Under the strictly descending PCC of Table 7, dependent case holds iff the first goal lacks
+[SPKR] and, if it bears [PART], so does the second. -/
 theorem dependentCase_sd_iff (g₁ g₂ : Person) :
     DependentCase strictlyDescending [g₁, g₂] ↔
       .speaker ∉ spec g₁ ∧ (.participant ∈ spec g₁ → .participant ∈ spec g₂) := by
   cases g₁ <;> cases g₂ <;> decide
 
-/-- Off the diagonal the strictly descending split is the hierarchy 1>2>3, dependent case holding
-exactly when the second goal outranks the first, the subject over the object with the probe on v
-(Shawi) and the object over the subject with it on T (Kashmiri, fn. 42). -/
+/-- Off the diagonal, the strictly descending split is the hierarchy 1>2>3, with dependent case
+exactly when the second goal outranks the first (Shawi; Kashmiri, fn. 42). -/
 theorem dependentCase_sd_off_diagonal_iff (g₁ g₂ : Person)
     (h : g₁.prominence ≠ g₂.prominence) :
     DependentCase strictlyDescending [g₁, g₂] ↔ g₂.prominence > g₁.prominence :=

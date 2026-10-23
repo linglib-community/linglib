@@ -245,14 +245,13 @@ its person ((16), (17), (25b)). -/
 theorem frenchT_derive (cd cn : Bundle) :
     frenchT.derive [dat cd, caseless cn] = [⟨.valued .nom cn, true⟩, dat cd] := rfl
 
-/-- In Spanish the dative is in Spec,TP, but the nominative's φ-features rise as a head above it
-and the projection of T licenses its person ((25a)). -/
+/-- In Spanish the nominative's φ-features rise as a head above the dative in Spec,TP, and T
+licenses its person ((25a)). -/
 theorem spanishT_derive (cd cn : Bundle) :
     spanishT.derive [dat cd, caseless cn] = [⟨.valued .nom cn, true⟩, dat cd] := rfl
 
-/-- A dative–nominative construction obeys the condition iff its nominative is 3rd person or the
-nominative's φ-features end up above the dative, because the dative cannot satisfy the EPP or the
-φ-features rise as a head (§5, §6). -/
+/-- A dative–nominative construction obeys the condition iff its nominative is 3rd person or its
+φ-features end up above the dative (§5, §6). -/
 theorem dnc_plc_iff (can : Nominal → Bool) (hcan : ∀ c, can (caseless c) = true) (x0 : Bool)
     (cd cn : Bundle) :
     PLC (({ case := .nom, epp := some can, agrX0 := x0 } : Head).derive [dat cd, caseless cn]) ↔

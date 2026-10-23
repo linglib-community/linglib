@@ -263,10 +263,8 @@ instance (d : Derivation) (r : Row) : Decidable (d.Fits r) :=
 theorem rows_predicted : ∀ r ∈ rows, (analysis r.headCase).Fits r := by
   decide
 
-/-- Section 4.4.3: no derivation shared by both kinds of relative fits the data, since one cell
-receives opposite judgments for the two kinds. This rules out the head-external derivation for
-both, with ICA by agreement with the relative pronoun (section 4.4.3.1), and matching for both
-when the two heads differ only at PF (section 4.4.3.3). -/
+/-- No derivation shared by both kinds of relative fits the data, which rules out those of section
+4.4.3.1 and section 4.4.3.3 (Section 4.4.3). -/
 theorem no_uniform_derivation (d : Derivation) : ¬ ∀ r ∈ rows, d.Fits r := by
   intro h
   obtain ⟨r₁, h₁, r₂, h₂, hg, hs, ha₁, ha₂⟩ : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows,
@@ -278,10 +276,8 @@ theorem no_uniform_derivation (d : Derivation) : ¬ ∀ r ∈ rows, d.Fits r := 
   rw [hg, hs] at e₁
   simp_all
 
-/-- Section 4.4.3.2: raising both kinds, the external case valued after movement, fails even with
-wholesale late merger tying connectivity to case: nothing keeps the restrictor of an
-external-case head from being merged below its case position, in the relative clause, where it
-could form an idiom or be bound. -/
+/-- Raising both kinds, with the external case valued after movement, fails even under wholesale
+late merger (Section 4.4.3.2). -/
 theorem raising_only_fails :
     ∃ r ∈ rows, r.headCase = .external ∧ ¬ (Derivation.raising [.mergeCP, .case]).Fits r := by
   decide
@@ -329,9 +325,8 @@ example {t : Minimalist.LinearizedSyntacticObject} {v : Minimalist.LexicalItem.T
     t.IsLabeledBy (.merge (.leaf v) x) v :=
   Minimalist.LinearizedSyntacticObject.isLabeledBy_merge_head hex hx hv
 
-/-- Section 5.2.2: the relative determiner selects the head noun while the noun still selects the
-relative clause, so the two merge with selection pending on both, which triggered Merge never
-licenses: of the factors of a defined selection product one is saturated. -/
+/-- Merging a relative determiner and a head noun that both have selection pending gives a zero
+selection product (Section 5.2.2). -/
 theorem selCheck_merge_eq_zero_of_sel_ne_nil {d n : Minimalist.LexicalItem.Token}
     (hd : d.item.sel ≠ []) (hn : n.item.sel ≠ []) :
     (Minimalist.SyntacticObject.merge (.leaf d) (.leaf n)).selCheck = 0 := by
@@ -486,9 +481,8 @@ def attractions : List (Case × Case) := Examples.all.filterMap fun ex ↦ do
   let int ← ex.parse? "internalCase" caseNames
   pure (ext, int)
 
-/-- Section 3.5: ICA is not governed by a case hierarchy. Attraction runs both ways between the
-nominative and the genitive, so no asymmetric relation, a hierarchy in particular, ranks the
-attracted case above the case it replaces in every accepted relative. -/
+/-- ICA is not governed by a case hierarchy, since attraction runs both ways between the nominative
+and the genitive (Section 3.5). -/
 theorem not_hierarchy (r : Case → Case → Prop) [Std.Asymm r] :
     ¬ ∀ p ∈ attractions, r p.2 p.1 := by
   intro h
@@ -545,8 +539,8 @@ def ReadingsFit (p : Relativization.Placement) (s : Strategy) : Prop :=
 instance (p : Relativization.Placement) (s : Strategy) : Decidable (ReadingsFit p s) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Section 3.3.1: relatives with ICA have appositive and restrictive readings, so of the
-placements only an externally headed one fits them, as it fits regular relatives. -/
+/-- Relatives with ICA fit exactly the externally headed placements, post-nominal and pre-nominal
+(Section 3.3.1). -/
 theorem fits_ica_iff (p : Relativization.Placement) :
     ReadingsFit p .ica ↔ p = .postNominal ∨ p = .preNominal := by
   revert p; decide
@@ -590,9 +584,7 @@ def islandRows : List (Option Strategy × Bool) := Examples.all.filterMap fun ex
 example : islandRows.length = 8 := by decide
 
 attribute [local instance high] List.decidableBAll in
-/-- Section 3.3.2: a plain noun phrase and both kinds of externally headed relative are rejected
-at the left edge when their base position is inside an island, and correlatives are not, so the
-first reach the left edge by movement and correlatives are generated there. -/
+/-- Of the island rows, exactly the correlatives are accepted at the left edge (Section 3.3.2). -/
 theorem islandRows_accepted : ∀ x ∈ islandRows, x.2 = true ↔ x.1 = some .correlative := by
   decide
 

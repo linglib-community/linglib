@@ -167,9 +167,8 @@ theorem raincoat_nandao_felicitous : nandaoFelicitous raincoatK {expectDry} isRa
   ⟨⟨wearingRaincoat, Set.mem_singleton _, by decide⟩,
     raincoat_unexpected_of (by decide), raincoat_not_settled⟩
 
-/-- The question is equally felicitous when A has no belief about the weather and only the
-default expectation that people do not wear raincoats, (3) and context 1 of (5): epistemic
-bias is not necessary. -/
+/-- The question is felicitous with only the default expectation of no raincoats, so epistemic bias
+is not necessary, (3) and context 1 of (5). -/
 theorem raincoat_default_felicitous :
     nandaoFelicitous raincoatK {expectNoRaincoat} isRaining :=
   ⟨⟨wearingRaincoat, Set.mem_singleton _, by decide⟩,

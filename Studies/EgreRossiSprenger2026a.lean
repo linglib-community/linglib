@@ -148,8 +148,7 @@ theorem left_nesting_needs_boolean :
       condAssert .lp (condAssert .lp a b) c = condAssert .lp (joinBelnap (-a) b) c := by
   decide
 
-/-- De Finetti's conditional identifies left with right nesting on classical values, so it cannot
-separate `(A → B) → C` from `A → (B → C)` (footnote 6). -/
+/-- De Finetti's conditional identifies left with right nesting on classical values (footnote 6). -/
 theorem condAssert_k3_left_eq_nested (ha : a ≠ 0) (hb : b ≠ 0) :
     condAssert .k3 (condAssert .k3 a b) c = condAssert .k3 a (condAssert .k3 b c) := by
   revert ha hb; cases a <;> cases b <;> cases c <;> decide
@@ -164,14 +163,14 @@ theorem condAssert_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c �
       condAssert .lp (meetBelnap (joinBelnap (-a) b) c) d := by
   revert ha hb hc hd; cases a <;> cases b <;> cases c <;> cases d <;> decide
 
-/-- Under Strong Kleene disjunction the linearity sentence `(A → B) ∨ (B → A)` is never false, at
-either designation standard, one reason the paper keeps Cooper's disjunction (footnote 3). -/
+/-- Under Strong Kleene disjunction, `(A → B) ∨ (B → A)` is never false at either designation
+standard (footnote 3). -/
 theorem zero_le_sup_condAssert (d : Trivalent.Designation) (a b : SignType) :
     0 ≤ condAssert d a b ⊔ condAssert d b a := by
   cases d <;> cases a <;> cases b <;> decide
 
-/-- When `c` is true and `a` false, `(a → b) ∧ c` is just `c`, which is why McGee's Independence
-Principle fails on this semantics (footnote 11). -/
+/-- When `c` is true and `a` false, `(a → b) ∧ c` is `c`, so McGee's Independence Principle fails
+(footnote 11). -/
 theorem meetBelnap_condAssert_of_false (b : SignType) :
     meetBelnap (condAssert .lp (-1) b) 1 = 1 :=
   rfl
@@ -445,9 +444,8 @@ theorem prob_cond_congr_left {A A' : Formula ι} (h₁ : CEntails [A] A') (h₂ 
       ⟨fun h ↦ h₁ (t w) (by simpa using h), fun h ↦ h₂ (t w) (by simpa using h)⟩ _
   rw [this]
 
-/-- The conditional probability of `B → C` given `A` is the conditional probability of `C` given
-`A ∧ B` (**Stalnaker's Thesis**, Theorem 3), for arbitrary formulas and with no hypotheses,
-since Import-Export is a pointwise identity. -/
+/-- The conditional probability of `B → C` given `A` is that of `C` given `A ∧ B` (Stalnaker's
+Thesis, Theorem 3). -/
 theorem stalnaker_thesis (A B C : Formula ι) :
     Trivalent.prob μ (value t (.cond A (.cond B C))) =
       Trivalent.prob μ (value t (.cond (.conj A B) C)) := by
@@ -490,9 +488,8 @@ def assign : Unit → Fin 4 → Bool := fun _ _ ↦ false
 
 end AllVoid
 
-/-- Axiom 5′ fails as printed. With the credence concentrated where both disjuncts are void, all
-three conditional probabilities are 1 by the All Void convention, although every printed
-hypothesis holds, the designated weight of `C` included. -/
+/-- With credence concentrated where both disjuncts are void, All Void makes all three conditional
+probabilities 1, so Axiom 5′ fails as printed. -/
 theorem additivity_cond_all_void :
     CEntails [AllVoid.C] (.neg (.conj AllVoid.A AllVoid.B)) ∧
       ¬ CEntails [AllVoid.C] (.conj AllVoid.A AllVoid.B) ∧
@@ -708,11 +705,8 @@ def dieVal : Fin 6 → Fin 3 → Bool :=
   ![![false, false, false], ![true, true, false], ![false, false, false],
     ![true, true, false], ![false, false, false], ![true, false, true]]
 
-/-- **Goldstein and Santorio's die** (§5). `A` is *if the die landed even, then if it didn't land
-on two or four, it landed on six*, `B` its inner conditional, `C` *the die landed even*. The
-semantics assigns the probabilities their argument demands, `p(A) = 1`, `p(B) = 1/4` and
-`p(C) = 1/2`, and blocks their triviality step at `p(B ∧ C) = 1/2 ≠ p(B)`: `B ∧ C` is a
-conjunction of a conditional with a factual sentence, and such conjunctions are not classical. -/
+/-- In Goldstein and Santorio's die (§5), `p(A) = 1`, `p(B) = 1/4` and `p(C) = 1/2`, yet `p(B ∧ C) =
+1/2 ≠ p(B)`. -/
 theorem goldstein_santorio_die :
     Trivalent.prob (uniformOn Set.univ)
         (value dieVal (.cond (.atom 0) (.cond (.neg (.atom 1)) (.atom 2)))) = 1 ∧
@@ -745,9 +739,8 @@ def dieVal' : Fin 6 → Fin 3 → Bool :=
   ![![false, false, true], ![true, true, false], ![false, false, false],
     ![true, false, false], ![false, false, false], ![true, false, false]]
 
-/-- In **Santorio and Wellwood's die** (§4, example 3), *if the outcome was even, it was two; and
-if it was odd, it was one* is true exactly when the die landed 1 or 2, so it has probability
-`1/3`, above what classical conjunction would allow. -/
+/-- In Santorio and Wellwood's die (§4, example 3), *if the outcome was even, it was two; and if it
+was odd, it was one* has probability `1/3`. -/
 theorem santorio_wellwood_die :
     Trivalent.prob (uniformOn Set.univ)
       (value dieVal' (.conj (.cond (.atom 0) (.atom 1))
@@ -764,9 +757,7 @@ theorem santorio_wellwood_die :
 def coinVal : Fin 4 → Fin 3 → Bool :=
   ![![true, true, true], ![true, false, false], ![false, true, false], ![false, false, false]]
 
-/-- In **Edgington's coin** (§6), after learning *if the coin was flipped, it landed heads*, the
-probability that it is double-headed is `p((F → H) → D) = 2/3`, not the `1` Edgington's
-intuition demands, which the paper reads pragmatically. -/
+/-- In Edgington's coin, `p((F → H) → D) = 2/3`, not the `1` Edgington's intuition demands (§6). -/
 theorem edgington_coin :
     Trivalent.prob (uniformOn Set.univ)
       (value coinVal (.cond (.cond (.atom 1) (.atom 2)) (.atom 0))) = 2 / 3 := by
@@ -780,8 +771,8 @@ theorem edgington_coin :
 world, the second is true everywhere. -/
 def lawVal : Bool → Fin 2 → Bool := fun w i ↦ if i = 0 then w else true
 
-/-- The standard law `p(X ∧ Y) ≤ p(X)` fails (§2, §4). The bet on `A → ⊥` is lost or called off,
-while the bet on its conjunction with a truth is won at the world where it is called off. -/
+/-- The law `p(X ∧ Y) ≤ p(X)` fails, as `A → ⊥` has probability 0 while its conjunction with a truth
+has positive probability (§2, §4). -/
 theorem prob_conj_gt :
     Trivalent.prob (uniformOn Set.univ) (value lawVal (.cond (.atom 0) (bot 1))) = 0 ∧
       Trivalent.prob (uniformOn Set.univ)

@@ -115,8 +115,8 @@ theorem nestedDomain {pre post : List H} {β : H} (hβ : β ∉ pre) :
     have ha : a ≠ β := fun h ↦ hβ (h ▸ List.mem_cons.2 (Or.inl rfl))
     simpa [ha] using ih fun h ↦ hβ (List.mem_cons_of_mem _ h)
 
-/-- In trees (2)–(3), the alleged intervener `δ`, c-commanded above the goal `β` of the first probe,
-lies outside the domain of every probe nested under `β`. -/
+/-- In trees (2)–(3), an intervener `δ` above the goal `β` of the first probe lies outside the
+domain of every probe nested under `β`. -/
 theorem notMem_nestedDomain {pre post : List H} {β δ : H}
     (hnd : (pre ++ β :: post).Nodup) (hδ : δ ∈ pre) :
     δ ∉ (pre ++ β :: post).dropWhile (fun x ↦ decide (x ≠ β)) := by
@@ -280,15 +280,13 @@ theorem t_targets_subject (p : Person) :
 def standardItalianAux (s : State Head) : PerfectAuxiliary :=
   if (s .perf .person).isValued then .have else .be
 
-/-- As in (4)–(5), the derivation yields exactly the canonical Romance distribution, HAVE with
-transitive and unergative verbs and BE with unaccusative and reflexive ones, for every subject
-person. -/
+/-- As in (4)–(5), the derivation yields HAVE with transitives and unergatives and BE with
+unaccusatives and reflexives, for every subject person. -/
 theorem standardItalian_aux (c : TransitivityClass) (p : Person) :
     standardItalianAux (derive standardItalian ⟨c, none⟩ p) = c.canonicalSelection := by
   revert c p; decide
 
-/-- Under Voice_imp or Voice_pass the auxiliary is BE whatever the verb ((5d), fn. 18), since Perf's
-π-probe, nested under Infl-Agree with Voice, meets an unvalued or absent person feature. -/
+/-- Under Voice_imp or Voice_pass the auxiliary is BE whatever the verb ((5d), fn. 18). -/
 theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
     (hf : f = .impersonal ∨ f = .passive) (p : Person) :
     standardItalianAux (derive standardItalian ⟨c, some f⟩ p) = .be := by
@@ -428,8 +426,7 @@ theorem icelandic_monoclausal_caseFirst :
 theorem icelandic_monoclausal_phiFirst : icelandic .monoclausal .phiFirst = .unvalued := by
   decide
 
-/-- In (29b), with nominative assigned below, matrix T's case probe finds no goal, so ϕ is
-unrestricted and meets the dative under either ordering, giving default agreement only. -/
+/-- In (29b), matrix T's case probe finds no goal, so agreement is default under either ordering. -/
 theorem icelandic_biclausal (o : ProbeOrder) : icelandic .biclausal o = .unvalued := by
   revert o; decide
 

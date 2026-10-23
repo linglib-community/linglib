@@ -128,9 +128,7 @@ private theorem minimal_singleton (a : Atom) : Minimal (¬ IsBot ·) ({a} : Fins
   refine ⟨fun h ↦ Finset.singleton_ne_empty a (isBot_iff_eq_bot.1 h), fun z hz hza ↦ ?_⟩
   grind [isBot_iff_eq_bot]
 
-/-- *each* (21c) applies its predicate to the atoms of its argument, and an atom has no part
-short of itself, so *each* is maximal even over a predicate relativized to a tolerance (§2.3,
-(21d)). -/
+/-- *each* (21c) is maximal even over a predicate relativized to a tolerance (§2.3, (21d)). -/
 theorem each_maximal (hr : IsTolerance r) (Q : Finset Atom → Set W) (x : Finset Atom) :
     {w | ∀ a ∈ x, w ∈ tolerant r Q {a}} = {w | ∀ a ∈ x, w ∈ Q {a}} := by
   have h (a : Atom) : tolerant r Q {a} = Q {a} := by
@@ -245,9 +243,8 @@ instance : DecidablePred hasTwoMagnets := fun b ↦ inferInstanceAs (Decidable (
 theorem jeder_rejects_magnets : ¬ ∀ b ∈ (Finset.univ : Finset Box), hasTwoMagnets b := by
   decide
 
-/-- *jeweils*, (25), under the tolerance the explosion question induces, every part, is true,
-witnessed by the four boxes with two magnets. So is the determiner *jeder\** of (27), which is
-(25) applied to the sum of its restrictor, here all five boxes. -/
+/-- *jeweils* (25) is true under the tolerance the explosion question induces, and so is the
+determiner of (27). -/
 theorem jeweils_accepts_magnets :
     () ∈ tolerant (· ≤ ·) (fun z ↦ {_u | ∀ b ∈ z, hasTwoMagnets b}) (Finset.univ : Finset Box) :=
   ⟨{0, 1, 2, 3}, Finset.subset_univ _, isBot_iff_eq_bot.not.2 (by decide), by decide⟩

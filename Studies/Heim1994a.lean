@@ -157,35 +157,31 @@ def Sat : LF V D A → Assignment T → W → Prop
 
 variable (x : A) (v : V) (d : D) (g : Assignment T) (w : W)
 
-/-- (20): the de dicto past under a past presupposes, at every doxastic alternative of the
-holder, that the described time precedes the utterance time, (i), and does not follow the
-alternative's time, (ii). -/
+/-- The de dicto past under a past (20) presupposes that the described time precedes the utterance
+time and follows no doxastic alternative's time. -/
 theorem def_bind_past :
     Def M c (.believe x (.PAST 1) .past (.bind d 2 (.pred v (.PAST 2) .nonpast))) g w ↔
       (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1),
         (M.desc d s.world).Precedes c.time ∧ NotAfter (M.desc d s.world) s.time := by
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
-/-- (29): with the lower past bound from Comp, the Upper Limit Constraint is innocuous and
-only the lexical presupposition of PAST remains, that every doxastic alternative time precedes
-the utterance time, footnote 23. -/
+/-- (29) presupposes only that every doxastic alternative time precedes the utterance time (footnote
+23). -/
 theorem def_simultaneous :
     Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 0) .nonpast)) g w ↔
       (TenseNode.PAST 1).Def c g ∧ ∀ s ∈ M.dox x w (g 1), s.time.Precedes c.time := by
   simp [Def, TenseNode.Def, TenseNode.var, NotAfter, precedes_irrefl]
 
-/-- (30): with the lower past free and coindexed with the matrix tense, the Upper Limit
-Constraint projects the presupposition that the holder located himself at or after the matrix
-time. -/
+/-- With the lower past coindexed with the matrix tense, (30) presupposes that the holder located
+himself at or after the matrix time. -/
 theorem def_free_coindexed :
     Def M c (.believe x (.PAST 1) .past (.pred v (.PAST 1) .nonpast)) g w ↔
       (TenseNode.PAST 1).Def c g ∧
         ∀ s ∈ M.dox x w (g 1), (g 1).Precedes c.time ∧ NotAfter (g 1) s.time := by
   simp [Def, TenseNode.Def, TenseNode.var, Function.update_of_ne]
 
-/-- (32): res-movement of the lower past. The context's concept yields the res at the
-holder's world and time, and the Upper Limit Constraint on the trace requires the concept to
-imply simultaneity or anteriority across the holder's alternatives. -/
+/-- Under res-movement (32), the concept yields the res at the holder's world and time and follows
+no alternative's time. -/
 theorem def_res :
     Def M c (.believeRes x (.PAST 1) .past (.PAST 2) 3 (.pred v (.trace 3) .nonpast)) g w ↔
       (TenseNode.PAST 1).Def c g ∧ (TenseNode.PAST 2).Def c g ∧ c.concept ⟨w, g 1⟩ = g 2 ∧
@@ -204,9 +200,8 @@ theorem not_def_res_of_precedes {s : Kaplan.Index W (NonemptyInterval T)}
 def doubleAccess : LF V D A :=
   .believeRes x (.PAST 1) .past (.PRES 2) 3 (.pred v (.trace 3) .nonpast)
 
-/-- The four presuppositions of (38): (i) the believing time precedes the utterance time,
-(ii) the res overlaps it, (iii) the concept does not follow the alternative's time at any
-doxastic alternative, and (iv) the concept yields the res at the holder's world and time. -/
+/-- (38) presupposes that the believing time precedes the utterance time, the res overlaps it, and
+the concept yields the res and follows no alternative's time. -/
 theorem def_doubleAccess (h0 : g 0 = c.time) :
     Def M c (doubleAccess x v) g w ↔
       (g 1).Precedes c.time ∧ (g 2).Overlaps c.time ∧
@@ -216,8 +211,7 @@ theorem def_doubleAccess (h0 : g 0 = c.time) :
   exact ⟨λ ⟨⟨h₁, _⟩, ⟨h₂, _⟩, h₄, h₃⟩ => ⟨h₁, h₂, h₃, h₄⟩,
     λ ⟨h₁, h₂, h₃, h₄⟩ => ⟨⟨h₁, notAfter_of_precedes h₁⟩, ⟨h₂, notAfter_of_overlaps h₂⟩, h₄, h₃⟩⟩
 
-/-- (ii) and (iv) together: the concept, at the holder's actual world and time, overlaps the
-utterance time, so that "she is pregnant today" is reportable by (38) on the same day only. -/
+/-- Under (38), the concept at the holder's world and time overlaps the utterance time. -/
 theorem overlaps_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAccess x v) g w) :
     (c.concept ⟨w, g 1⟩).Overlaps c.time := by
   obtain ⟨_, h₂, _, h₄⟩ := (def_doubleAccess M c x v g w h0).1 h
@@ -228,8 +222,7 @@ theorem snd_lt_of_def_doubleAccess (h0 : g 0 = c.time) (h : Def M c (doubleAcces
   lt_of_lt_of_le ((def_doubleAccess M c x v g w h0).1 h).1
     (overlaps_of_def_doubleAccess M c x v g w h0 h).2
 
-/-- A backshifting concept, one whose value precedes its argument as "a year ago" does,
-cannot satisfy (i), (ii) and (iv): (38) can never report such a belief. -/
+/-- (38) cannot report a belief under a backshifting concept such as *a year ago*. -/
 theorem not_def_doubleAccess_of_backshifting (h0 : g 0 = c.time)
     (hf : ∀ s, (c.concept s).Precedes s.time) : ¬ Def M c (doubleAccess x v) g w := λ h =>
   precedes_not_overlaps (precedes_trans (hf ⟨w, g 1⟩) ((def_doubleAccess M c x v g w h0).1 h).1)
@@ -316,8 +309,8 @@ theorem tlc_decide (y : A) (having : V) :
       (.pred having (.PAST 0) .nonpast)) : LF V D A) :=
   ⟨Or.inl rfl, trivial, Or.inr rfl⟩
 
-/-- (52) without its relative clause: *he PAST₁ <-say [λ0 PAST₀ ¬<-woll [λ0 he INF₀ ¬<-buy]]*,
-the PAST of *woll* licensed by *<-say* across the non-past future. -/
+/-- (52) without its relative clause satisfies the TLC, the PAST of *woll* licensed by *<-say*
+across the non-past future. -/
 theorem tlc_say (buy : V) :
     TLC false (.believe x (.PAST 1) .past (.woll (.PAST 0) .nonpast
       (.pred buy (.INF 0) .nonpast)) : LF V D A) :=
@@ -370,10 +363,8 @@ theorem not_tlc_66 : ¬ TLC false (resMoved x v (.PAST 2) .nonpast : LF V D A) :
   · exact absurd hl (by decide)
   · exact Bool.false_ne_true hl
 
-/-- The presuppositions of (63): (i) from the `<` on the matrix verb, (ii) from (64), (iv) from
-(33), and at every doxastic alternative (iii) from the Upper Limit Constraint on the trace and
-(vi) from the `¬<` on the embedded predicate, that the concept neither follows nor precedes
-the alternative's time. -/
+/-- (63) presupposes a past belief, the res overlap (64) and identity (33), and that the concept
+neither follows nor precedes each alternative's time. -/
 theorem def'_63 (h0 : g 0 = c.time) :
     Def' M c (resMoved x v (.PRES 2) .nonpast) g w ↔
       (g 1).Precedes c.time ∧ (g 2).Overlaps c.time ∧ c.concept ⟨w, g 1⟩ = g 2 ∧

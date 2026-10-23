@@ -238,8 +238,8 @@ def causer (v : Verb) : Option Causer :=
   (v.slotProfile? .external).bind fun p ↦
     if .volition ∈ p then some .agent else if .causation ∈ p then some .effector else none
 
-/-- Only causative verbs with underspecified causers have derived inchoatives (§3.1–§3.2), so
-among the fragment's verbs that have a causer, the alternating ones are the EFFECTOR verbs. -/
+/-- Among the fragment's verbs with a causer, the alternating ones are the EFFECTOR verbs
+(§3.1–§3.2). -/
 theorem alternates_iff_effector :
     ∀ v ∈ allVerbs, ∀ c ∈ causer v.toVerb, (v.Alternates ↔ c = .effector) := by
   decide

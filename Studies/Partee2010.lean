@@ -97,9 +97,8 @@ def classTable : List (String × AdjectiveClass) :=
   [("intersective", .intersective), ("subsective", .subsective), ("modal", .nonsubsective),
    ("privative", .privative)]
 
-/-- The meaning postulates do not order the subsective and the privative classes (footnote 1),
-since Kamp's *skillful* is subsective and not privative and his *fake* privative and not
-subsective. -/
+/-- The meaning postulates do not order the subsective and privative classes, as Kamp's *skillful*
+and *fake* show (footnote 1). -/
 theorem postulates_not_linear :
     ¬ (∀ adj : Modifier (Property Kamp1975.W2 Kamp1975.E3),
         AdjectiveClass.subsective.postulate adj → AdjectiveClass.privative.postulate adj) ∧
@@ -132,9 +131,7 @@ theorem nonmodal_split_except_former :
       (e.judgment = .acceptable ↔ e.feature? "adjective" ≠ some "former") := by
   decide
 
-/-- The classes that split are no natural class of the traditional scale (p. 279), since the
-subsective and the privative adjectives split while the non-subsective ones between them do
-not. -/
+/-- The adjective classes that split form no convex region of the traditional scale (p. 279). -/
 theorem splittable_not_ordConnected :
     ¬ ({c | Splittable c} : Set AdjectiveClass).OrdConnected :=
   fun h ↦ (show ¬ Splittable .nonsubsective by decide)
@@ -150,9 +147,8 @@ theorem reanalyse_splittable_iff (c : AdjectiveClass) :
 
 /-! ### *real* and *fake* on the shifted head -/
 
-/-- *real*, the identity modifier, is vacuous on its literal head, and on the head that a
-privative shifts it is non-vacuous exactly when there are both Ns and things in the privative's
-value (p. 280). -/
+/-- *real* is vacuous on its literal head, and on a privatively shifted head non-vacuous iff there
+are both Ns and things in the privative's value (p. 280). -/
 theorem real_isNonVacuous_iff {adj : Modifier (Property W E)} (hp : IsPrivative adj)
     (N : Property W E) (w : W) :
     ¬ IsNonVacuous (id N) w (N w) ∧
@@ -163,8 +159,8 @@ theorem real_isNonVacuous_iff {adj : Modifier (Property W E)} (hp : IsPrivative 
   exact and_congr_right fun _ ↦ exists_congr fun x ↦
     ⟨And.left, fun h ↦ ⟨h, isPrivative_iff.1 hp N w x h⟩⟩
 
-/-- On the head that a privative shifts, everything is real or fake and not both, as the
-question *Is that gun real or fake?* (10b) presupposes. -/
+/-- On the head a privative shifts, everything is real or fake and not both, as *Is that gun real or
+fake?* (10b) presupposes. -/
 theorem real_xor_fake {adj : Modifier (Property W E)} (hp : IsPrivative adj)
     {N : Property W E} {w : W} {x : E} (hx : (N w ⊔ adj N w) x) : Xor (N w x) (adj N w x) := by
   rcases hx with h | h

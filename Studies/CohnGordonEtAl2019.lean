@@ -424,8 +424,8 @@ theorem noun_only_for_r2 : figureOne.s1 0 [] .blueDress {Word.dress} = 1 :=
 theorem adj_only_for_r3 : figureOne.s1 0 [] .redHat {Word.red} = 1 :=
   figureOne.s1_apply_eq_one fig1_hw (by decide) (by decide) (by decide)
 
-/-- For R2 after *red*, the dead end of §2.2, no continuation is true of the blue dress, and
-probability distributes evenly over the words with viable continuations (Figure 1c). -/
+/-- For R2 after *red*, the dead end of §2.2, probability splits evenly over the words with viable
+continuations (Figure 1c). -/
 theorem uniform_after_red_for_r2 :
     (figureOne.s1 0 [.red] .blueDress).real {Word.dress} = 1 / 2 ∧
     (figureOne.s1 0 [.red] .blueDress).real {Word.object} = 1 / 2 ∧
@@ -468,9 +468,8 @@ theorem s1_figureOne_values :
       show figureOne.trueExts [Word.red, Word.red] .redDress = 0 from rfl]
   · rw [measureReal_def, adj_only_for_r3, ENNReal.toReal_one]
 
-/-- Upon hearing *red*, the incremental listener favours the red hat over the red dress,
-since *red* is the hat's only opening while the dress's speaker had alternatives. This is the
-anticipatory implicature of Figure 1d. -/
+/-- On hearing *red*, the incremental listener favours the red hat over the red dress, the
+anticipatory implicature (Figure 1d). -/
 theorem listener_anticipation :
     (figureOne.l1 0 [] .red).real {Referent.redDress}
       < (figureOne.l1 0 [] .red).real {Referent.redHat} := by
@@ -495,9 +494,8 @@ theorem listener_anticipation_value :
 
 /-! ### Figure 1e: the chain-rule wedge -/
 
-/-- For R1 the chain-rule utterance-level speaker (eq. 7) prefers bare *dress* (3/7) to
-*red dress* (4/7 · 2/3 = 8/21) (Figure 1e). This is the architectural wedge against Figure 1b,
-where the global speaker prefers *red dress*. -/
+/-- For R1 the chain-rule speaker (eq. 7) prefers bare *dress* to *red dress*, unlike the global
+speaker of Figure 1b (Figure 1e). -/
 theorem incremental_prefers_bare_noun :
     figureOne.s1Utt 0 .redDress [.red, .dress] < figureOne.s1Utt 0 .redDress [.dress] := by
   obtain ⟨h1, h2, h3, -⟩ := s1_figureOne_values
@@ -619,8 +617,8 @@ theorem figureThree_incremental_prefers_AA :
 theorem fig3_mem_AA : [Letter.A, Letter.A] ∈ figureThree.utterances := by decide
 theorem fig3_mem_BA : [Letter.B, Letter.A] ∈ figureThree.utterances := by decide
 
-/-- For W1 the global speaker is indifferent between AA and BA (Figure 3, green), which are
-both true and equally informative, so only the chain rule separates them. -/
+/-- For W1 the global speaker is indifferent between AA and BA, which are equally true and
+informative (Figure 3, green). -/
 theorem figureThree_global_indifferent :
     figureThree.globalS1 0 .W1 {⟨[.A, .A], fig3_mem_AA⟩}
       = figureThree.globalS1 0 .W1 {⟨[.B, .A], fig3_mem_BA⟩} := by
@@ -727,10 +725,8 @@ private theorem forced_stop_after_red_dress (c : ℝ) :
     game.s1 (cost c) [.red, .dress] .redDress {Word.stop} = 1 :=
   game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
 
-/-- In English (§3.1) the incremental speaker is *indifferent* between bare *dress* and
-over-modified *red dress* at every content-word cost, the paper's 0.5/0.5. The first word
-decides on informativity alone, where *dress* and *red* tie, and after *red* the
-over-modifying *dress* is forced. -/
+/-- In English (§3.1) the incremental speaker is indifferent between *dress* and *red dress* at
+every content-word cost, the paper's 0.5/0.5. -/
 theorem incremental_indifferent (c : ℝ) :
     game.s1Utt (cost c) .redDress [.dress, .stop]
       = game.s1Utt (cost c) .redDress [.red, .dress, .stop] := by
@@ -745,9 +741,8 @@ theorem mem_dress : [Word.dress, Word.stop] ∈ game.utterances := by decide
 theorem mem_redDress : [Word.red, Word.dress, Word.stop] ∈ game.utterances := by
   decide
 
-/-- Globally both English utterances identify the red dress (§3.1), so with any dispreference
-for length the global speaker prefers bare *dress*, the paper's 0.73 against 0.27 at `c = 1`,
-in contrast with the incremental speaker's indifference. -/
+/-- In English (§3.1), with any length cost the global speaker prefers bare *dress*, the paper's
+0.73 against 0.27 at `c = 1`. -/
 theorem global_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
     (game.globalS1 (fun u ↦ ReferenceGame.uttCost (cost c) u.val) .redDress).real
         {⟨[.red, .dress, .stop], mem_redDress⟩}
@@ -836,10 +831,8 @@ private theorem step2 (c : ℝ) :
       rw [div_eq_div_iff (by positivity) hpos.ne']
       ring
 
-/-- In Spanish (§3.1), with any dispreference for longer utterances (`0 < c`), the incremental
-speaker prefers bare *vestido* to *vestido rojo*, at `c = 1` the paper's 0.73 against 0.27. The
-noun alone already settles the referent, so the second step is a pure cost choice between STOP
-and *rojo*. -/
+/-- In Spanish (§3.1), with any length cost the incremental speaker prefers bare *vestido* to
+*vestido rojo*, the paper's 0.73 against 0.27 at `c = 1`. -/
 theorem incremental_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
     game.s1Utt (cost c) .redDress [.vestido, .rojo, .stop]
       < game.s1Utt (cost c) .redDress [.vestido, .stop] := by

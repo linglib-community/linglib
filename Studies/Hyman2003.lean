@@ -339,8 +339,8 @@ theorem licensedBy_iff_templatic {i : Input} {c : Candidate} (hc : c ∈ candida
     (templatic_sortedLT i) fun x ↦
       ⟨fun hx ↦ mem_templatic.mpr (hsub x hx), fun hx ↦ hcov x (mem_templatic.mp hx)⟩
 
-/-- Under a template-only grammar, every input has exactly its templatic realization: Chimwiini
-(19), where "it is not possible to put these extensions in any other order". -/
+/-- Under a template-only grammar every input has exactly its templatic realization, as in Chimwiini
+(19). -/
 theorem chimwiini_outputs (i : Input) : chimwiini.outputs i = {templatic i} := by
   have hrank : chimwiini.rankings = {1} := by decide
   have hord : chimwiini.ranked 1 = [.template] := by decide
@@ -388,8 +388,8 @@ theorem licensedBy_of_mem_optimal {i : Input} {order : List Licensor}
     rw [hTk, hc'] at this
     exact absurd this (by decide)
 
-/-- A doubled suffix in an output is a mirror override repaired by the template: some
-conjunction of the grammar licenses it, the generalization of §2 behind (16). -/
+/-- A doubled suffix in an output is licensed by a mirror override that the template repairs (§2,
+(16)). -/
 theorem doubling_licensed {G : Grammar} (hT : ∃ p, G.licensor p = .template) {i : Input}
     {c : Candidate} (hc : c ∈ G.outputs i) {x : Ext} (hx : 1 < c.count x) :
     ∃ y, (∃ p, G.licensor p = .mirrorTemplate x y) ∧ i.Inside x y := by
@@ -413,9 +413,8 @@ theorem doubling_licensed {G : Grammar} (hT : ∃ p, G.licensor p = .template) {
 
 /-! ### Chichewa (§2) -/
 
-/-- Compositionality is asymmetric (2), (10). A reciprocalized causative surfaces only in the
-templatic order *-its-an-*; a causativized reciprocal surfaces in the templatic order or in the
-mirror order *-an-its-*, so the templatic order is ambiguous and the mirror order is not. -/
+/-- A reciprocalized causative surfaces only as *-its-an-*, a causativized reciprocal as *-its-an-*
+or *-an-its-* ((2), (10)). -/
 theorem asymmetric_compositionality :
     chichewa.outputs [.C, .R] = {[.C, .R]} ∧
       chichewa.outputs [.R, .C] = {[.C, .R], [.R, .C]} := by
@@ -426,17 +425,15 @@ theorem causative_applicative :
     chichewa.outputs [.C, .A] = {[.C, .A]} ∧ chichewa.outputs [.A, .C] = {[.C, .A]} := by
   decide +kernel
 
-/-- A reciprocal inside an applicative inside a causative surfaces in the templatic order, with
-the causative two slots out of its compositional place, and not in the compositional order
-(8). -/
+/-- A reciprocal inside an applicative inside a causative surfaces in the templatic order, not the
+compositional one (8). -/
 theorem reciprocal_applicative_causative :
     [.C, .A, .R] ∈ chichewa.outputs [.R, .A, .C] ∧
       [.R, .A, .C] ∉ chichewa.outputs [.R, .A, .C] := by
   decide +kernel
 
-/-- A reciprocalized applicative surfaces as *-il-an-*, and an applicativized reciprocal as
-*-il-an-* or with the reciprocal doubled, *-an-il-an-*, never as *-an-il-* or *-il-an-il-*
-(13), (14), (16), (17). -/
+/-- A reciprocalized applicative surfaces as *-il-an-*, an applicativized reciprocal as *-il-an-* or
+*-an-il-an-* ((13), (14), (16), (17)). -/
 theorem applicative_reciprocal :
     chichewa.outputs [.A, .R] = {[.A, .R]} ∧
       chichewa.outputs [.R, .A] = {[.A, .R], [.R, .A, .R]} := by
@@ -446,11 +443,8 @@ theorem applicative_reciprocal :
 theorem repeated_morph (G : Grammar) (i : Input) (x : Ext) : [x, x] ∉ G.outputs i :=
   fun h ↦ by simpa using outputs_isChain_ne h
 
-/-- The appendix's table (48) of the six scopes of three extensions. The model derives every
-output Hyman lists but *-an-its-il-an-*, whose doubled reciprocal his tableaux license without
-the conjunction, and derives *-an-its-il-* for the scopes with the reciprocal inside the
-causative, which he stars: its pairs *-an-its-* and *-its-il-* are each licensed, and the paper
-states no constraint on the non-adjacent *-an- … -il-*. -/
+/-- For the six scopes of three extensions in (48), the model derives every listed output but
+*-an-its-il-an-*, and also the starred *-an-its-il-*. -/
 theorem three_suffixes :
     chichewa.outputs [.C, .A, .R] = {[.C, .A, .R]} ∧
     chichewa.outputs [.A, .C, .R] = {[.C, .A, .R]} ∧
@@ -560,9 +554,8 @@ theorem rows_outputs :
       ∀ c ∈ suffixes? r, (r.judgment = .acceptable ↔ c ∈ G.outputs i) := by
   decide +kernel
 
-/-- A passive is acceptable exactly when [baker-1985]'s rules, run in the order of scope, make
-the reported argument the subject, and its affix order is the one output of either scope
-(22)–(23). -/
+/-- A passive is acceptable iff [baker-1985]'s rules, applied in scope order, make the reported
+argument the subject ((22)–(23)). -/
 theorem rows_passive :
     ∀ r ∈ Examples.all, ∀ i ∈ scope? r, ∀ a ∈ subject? r,
       (r.judgment = .acceptable ↔

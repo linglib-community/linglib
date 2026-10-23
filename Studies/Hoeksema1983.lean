@@ -97,8 +97,8 @@ theorem PreservesOrdering.apply_individual {f g : Set (Set Entity) → Set Entit
     f (NP.individual b) = g (NP.individual b) :=
   Set.ext fun a ↦ (hf a b).symm.trans (hg a b)
 
-/-- Two homomorphisms from quantifiers to predicates that preserve the ordering are equal
-(Fact 2). Each is the preimage map of a function, which Fact 1 determines. -/
+/-- Two ordering-preserving homomorphisms from quantifiers to predicates are equal (Fact 2), each
+being the preimage map that Fact 1 determines. -/
 theorem PreservesOrdering.eq {f g : CompleteLatticeHom (Set (Set Entity)) (Set Entity)}
     (hf : PreservesOrdering μ f) (hg : PreservesOrdering μ g) : f = g := by
   obtain ⟨φ, rfl⟩ := setPreimage_surjective f
@@ -122,9 +122,8 @@ anti-additive (Fact 5) and anti-additive maps are monotone decreasing (Fact 4). 
 theorem gtOverSet_antitone : Antitone (μ ⁻¹' strictUpperBounds ·) :=
   (gtOverSet_isAntiAdditive μ).antitone
 
-/-- The NP-comparative of a proper name is the S-comparative of the singleton of its degree
-(§3.9), which accounts for the equivalence of *I am bigger than you* and *I am bigger than you
-are* in (44). -/
+/-- The NP-comparative of a proper name is the S-comparative of its degree's singleton (§3.9), as in
+(44). -/
 theorem npComparative_individual (b : Entity) :
     npComparative μ (NP.individual b) = μ ⁻¹' strictUpperBounds {μ b} := by
   ext a
@@ -142,9 +141,8 @@ Dutchman lacks. -/
 def notEveryDutchman : Set Dutchman → Prop :=
   fun P ↦ ¬ GQ.every (fun _ ↦ True) (· ∈ P)
 
-/-- In (51), Jan walks but is silent and Piet sits and talks. Not every Dutchman walks and not
-every Dutchman talks, yet every Dutchman walks or talks, so *niet iedere Nederlander* is not
-anti-additive and, by Zwarts's hypothesis, cannot trigger *ook maar* (45b). -/
+/-- In the model (51), *niet iedere Nederlander* is not anti-additive, so by Zwarts's hypothesis it
+cannot trigger *ook maar* (45b). -/
 theorem not_isAntiAdditive_notEveryDutchman : ¬ IsAntiAdditive notEveryDutchman := by
   rw [isAntiAdditive_iff_gq]
   intro h

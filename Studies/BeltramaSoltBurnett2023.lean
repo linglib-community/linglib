@@ -84,8 +84,8 @@ section Truth
 
 open Degree
 
-/-- Of a trip that takes the precise duration, the underspecified description is false read
-literally, on the two-sided and on the lower-bounded meaning of the bare numeral (p. 807). -/
+/-- Read literally, the underspecified description is false of a trip taking the precise duration,
+on either meaning of the bare numeral (p. 807). -/
 theorem precise_not_mem_underspecified (e : Experiment) :
     (stimuli e .precise).after ∉ Comparison.eq.interval (stimuli e .underspecified).after ∪
       Comparison.ge.interval (stimuli e .underspecified).after := by
@@ -269,10 +269,8 @@ theorem favors_exp1 {T : Scenario → Variant → Factor → ℚ} (hT : Agrees .
   simp only [Favors, Factor.valence, h1, h2, h3, h4, h5, h6, h7, h8]
   norm_num [Decimal.toRat]
 
-/-- In Experiment 2 the For-the-record scenario favors the precise variant over the
-underspecified one on Solidarity more than the Stranger scenario does, as the hypothesis
-predicts, but the Persuasive scenario favors it on Status more than For-the-record does
-(p. 823), against the hypothesis; the paper leaves this unexplained (p. 830). -/
+/-- In Experiment 2, the For-the-record scenario favors precision on Solidarity as predicted, but
+the Persuasive scenario favors it on Status (p. 823, p. 830). -/
 theorem favors_exp2 {T : Scenario → Variant → Factor → ℚ} (hT : Agrees .exp2 T) :
     Favors T .solidarity .forTheRecord .stranger .precise .underspecified ∧
       Favors T .status .persuasive .forTheRecord .precise .underspecified := by

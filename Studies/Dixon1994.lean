@@ -177,9 +177,8 @@ theorem IsErgative.of_le [Preorder H] (h : Fits (split acc erg))
   rw [isErgative_split_iff] at *
   exact ⟨fun hp ↦ hq.1 (h.1 hpq hp), h.2 hpq hq.2⟩
 
-/-- In a split that fits, an overlap of the two markings and a gap between them exclude each
-other, so a split is of type (d) of the Appendix to Chapter 4 or of the unattested type (g),
-never both. -/
+/-- In a fitting split, an overlap of the markings and a gap between them exclude each other (type
+(d) versus (g), Appendix to Chapter 4). -/
 theorem not_isTripartite_and_isNeutral [LinearOrder H] (h : Fits (split acc erg))
     (ht : IsTripartite (split acc erg · p)) (hn : IsNeutral (split acc erg · q)) : False := by
   rw [fits_split_iff] at h
@@ -291,10 +290,8 @@ theorem not_admits_iff :
       ∀ r ∈ ArgumentRole.core, ¬ Pivot.SO.Admits r ↔ r = .A := by
   decide
 
-/-- Passive alone feeds an S/A pivot for an NP in O function, and antipassive alone feeds an
-S/O pivot for an NP in A function, §6.2.1 and §6.2.2; each derivation demotes the other
-function to the periphery. So a language with a thoroughgoing S/O pivot must have an
-antipassive, §6.2.3. -/
+/-- Only passive feeds an S/A pivot for an O NP and only antipassive an S/O pivot for an A NP
+(§6.2.1, §6.2.2, §6.2.3). -/
 theorem feeds_iff :
     (∀ d, Feeds .SA d .P ↔ d = .passive) ∧ (∀ d, Feeds .SO d .A ↔ d = .antipassive) ∧
       ¬ Feeds .SA .passive .A ∧ ¬ Feeds .SO .antipassive .P :=

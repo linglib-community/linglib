@@ -106,16 +106,14 @@ def shortBeforeLong : Graph 7 :=
 def longBeforeShort : Graph 7 :=
   shortBeforeLong.reorderDependents 0 (.swap ⟨1, by decide⟩ ⟨4, by decide⟩)
 
-/-- (7): short-before-long wins in head-initial contexts, by Behaghel's law at the head *A*: the
-phrases of one, two and three words grow outward in (7a) and not in (7b). -/
+/-- Short-before-long minimizes dependency length in head-initial contexts, so (7a) beats (7b) (7).
+-/
 theorem short_before_long_head_initial :
     shortBeforeLong.totalLength < longBeforeShort.totalLength :=
   (Graph.totalLength_lt_reorderDependents_iff (by decide +kernel) (by decide +kernel)
     (by decide +kernel) (by decide +kernel)).2 (by decide +kernel)
 
-/-- (8): the head-final regime is the mirror image, so long-before-short
-    wins there at exactly the head-initial costs — by the general mirror
-    invariance, no separate fixtures needed. -/
+/-- In head-final contexts, the mirror image, long-before-short minimizes dependency length (8). -/
 theorem long_before_short_head_final :
     shortBeforeLong.mirror.totalLength < longBeforeShort.mirror.totalLength := by
   simpa [Graph.totalLength_mirror] using short_before_long_head_initial

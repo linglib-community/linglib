@@ -385,10 +385,8 @@ theorem IsTrained.centerMass_vecMul_eq_of_decodable (hG : IsTrained data q G)
   simp only [Finset.centerMass, map_smul, map_sum]
   simp only [vecMulLinear_apply, row_apply', ← mul_apply_eq_vecMul, h]
 
-/-- Under endstate learning the centre of mass is the centroid, so an EL-trained mapping matrix
-sends the centroid of the meanings of a nonempty linearly decodable set of usage events to the
-centroid of its observed forms, the similarity that [chuang-bell-tseng-baayen-2026] §3.4 and
-[lu-chuang-baayen-2026] §4.4 report. -/
+/-- An EL-trained mapping sends the centroid of a linearly decodable set's meanings to the centroid
+of its forms ([chuang-bell-tseng-baayen-2026] §3.4, [lu-chuang-baayen-2026] §4.4). -/
 theorem IsELTrained.centroid_vecMul_eq_of_decodable (hG : IsELTrained data G)
     {P : Finset (Fin m)} (hP : P.Nonempty) {w : MeaningVector d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :

@@ -130,13 +130,8 @@ theorem IsFlat.supClosed {T : TeamProperty α} (h : IsFlat T) : SupClosed T :=
 theorem IsFlat.empty_mem {T : TeamProperty α} (h : IsFlat T) : ∅ ∈ T :=
   ((isFlat_iff T).mp h).2.2
 
-/-- [anttila-2021] Proposition 2.2.2 restated via `Order.IsIdeal`: flat
-    team properties are precisely the carriers of order-ideals of `Finset α`.
-
-    Over `SemilatticeSup` + `OrderBot` the three closure-property
-    coordinates of `IsFlat` translate to the three ideal-axiom
-    coordinates: `SupClosed ↔ DirectedOn (·≤·)` (in `SemilatticeSup`)
-    and `∅ ∈ T ↔ T.Nonempty` (in `OrderBot`, for lower sets). -/
+/-- Flat team properties are exactly the order ideals of `Finset α` ([anttila-2021] Proposition
+2.2.2). -/
 theorem isFlat_iff_isIdeal (T : TeamProperty α) :
     IsFlat T ↔ Order.IsIdeal T := by
   rw [isFlat_iff]

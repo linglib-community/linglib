@@ -89,10 +89,8 @@ theorem metaAssert_prevents_nonmax (q : Setoid W) (p : W → SignType) (w : W)
     (h : usable q ((fun v ↦ SignType.ofProp (v = 1)) ∘ p) w) : SignType.ofProp (p w = 1) = 1 :=
   ((usable_iff_of_isBivalent (Trivalent.isBivalent_ofProp_eq_one p) q w).mp h).1
 
-/-- Exceptions are unmentionable ([kriz-2016] §4.1). When `p` is used at `w` under the issue
-`q`, an exception-mentioning sentence `e`, true at `w` but false wherever `p` is literally
-true, cannot address the same issue, since `w`'s cell contains a literally-true world and `e`
-straddles the true/false boundary between `w` and that world. -/
+/-- When `p` is used at `w` under the issue `q`, a sentence mentioning an exception cannot address
+`q` ([kriz-2016] §4.1). -/
 theorem exception_unaddressable (q : Setoid W) (p e : W → SignType) (w : W)
     (hUse : usable q p w) (hEw : e w = 1)
     (hEfalse : ∀ w', p w' = 1 → e w' = -1) :

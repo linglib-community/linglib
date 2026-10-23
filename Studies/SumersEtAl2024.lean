@@ -214,8 +214,8 @@ theorem actionUtility_cellReward (hw : w ∈ c) :
     not_true_eq_false, ite_true, ite_false]
   ring_nf
 
-/-- The cell decision problem ranks utterances as the question's epistemic utility does,
-whenever the cell of the true world is favored, `s < r` (Theorem 2). -/
+/-- If `s < r`, the cell decision problem ranks utterances as the question's epistemic utility does
+(Theorem 2). -/
 theorem actionUtility_lt_iff_qudUtility_lt (hw : w ∈ c) (hrs : s < r) (hβ : 0 < β)
     (hu : 0 < cellMass L c u) (hu' : 0 < cellMass L c u') :
     actionUtility (policy β L (cellReward r s c)) (cellReward r s c) u w <
@@ -227,8 +227,8 @@ theorem actionUtility_lt_iff_qudUtility_lt (hw : w ∈ c) (hrs : s < r) (hβ : 0
     mul_lt_mul_iff_right₀ (mul_pos hβ (sub_pos.2 hrs))]
   constructor <;> intro h <;> linarith
 
-/-- The identity decision problem, the cell of the true world alone, ranks utterances as the log
-of the listener's posterior probability of the true world does (Theorem 1). -/
+/-- The identity decision problem ranks utterances by the listener's log posterior of the true world
+(Theorem 1). -/
 theorem actionUtility_lt_iff_log_lt (hrs : s < r) (hβ : 0 < β) (hu : 0 < (L u).real {w})
     (hu' : 0 < (L u').real {w}) :
     actionUtility (policy β L (cellReward r s {w})) (cellReward r s {w}) u w <

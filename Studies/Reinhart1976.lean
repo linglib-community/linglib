@@ -147,8 +147,8 @@ def domain (R : TreePath → TreePath → Prop) [DecidableRel R] (nodes : List T
     (a : TreePath) : List TreePath :=
   nodes.filter fun b ↦ decide (R a b)
 
-/-- In the precede-and-command domains of (37), table (39a), C has nothing in its domain, and D,
-which precedes and commands C, has C in its domain. -/
+/-- In the precede-and-command domains of (37), table (39a), the domain of C is empty and that of D
+contains C. -/
 theorem domain_precedesAndCommands_tree37 :
     domain (PrecedesAndCommands tree37) nodes37 ⟨[0]⟩ =
         [⟨[1]⟩, ⟨[2]⟩, ⟨[1, 0]⟩, ⟨[1, 1]⟩, ⟨[1, 1, 0]⟩, ⟨[1, 1, 1]⟩] ∧

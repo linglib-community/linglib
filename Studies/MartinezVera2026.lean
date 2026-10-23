@@ -231,9 +231,8 @@ theorem ne_of_exhIE_subset_compl (h : exhIE ALT q ⊆ pᶜ) (hne : (exhIE ALT q)
   obtain ⟨w, hw⟩ := hne
   exact h hw (Exhaustification.exhIE_subset ALT q hw)
 
-/-- When nothing on record addresses the question under discussion, *=mi* is undefined, as out
-of the blue ((7), (28)) and after an unbiased polar question (8) or a constituent question
-(29). -/
+/-- When nothing on record addresses the question under discussion, *=mi* is undefined ((7), (28),
+(8), (29)). -/
 theorem not_miDefined_of_addressers (h : ∀ m ∈ c.moves, m.addressers = ∅) :
     ¬ MiDefined c ALT p := by
   rintro ⟨q, -, ⟨⟨m, hm, hq⟩, -⟩, -⟩
@@ -272,15 +271,13 @@ theorem miDefined_update_assert_iff (S : TwoDim W (Set W)) (hp : S.atIssue.Nonem
   · rintro ⟨q, ⟨hq, hqud⟩, hsub⟩
     exact ⟨q, ⟨.inr hq, hqud⟩, hsub⟩
 
-/-- A highlighted alternative that innocently excludes the scope licenses *=mi* ((45), (46)), as
-exhaustifying "Juan bought a cow" relative to what Juan might have bought denies that he bought a
-pig. -/
+/-- A highlighted alternative that innocently excludes the scope licenses *=mi* ((45), (46)). -/
 theorem miDefined_of_isInnocentlyExcludable (hq : q ∈ ALT) (hh : Highlighted c q)
     (h : IsInnocentlyExcludable ALT q p) : MiDefined c ALT p :=
   ⟨q, hq, hh, h.exhIE_subset_compl⟩
 
-/-- When no highlighted proposition is among the alternatives, *=mi* is undefined, as in a
-correction of the object with *=mi* on the subject or the verb ((27c), (27d)). -/
+/-- When no highlighted proposition is among the alternatives, *=mi* is undefined, as in the
+corrections (27c) and (27d). -/
 theorem not_miDefined_of_disjoint (h : ∀ q, Highlighted c q → q ∉ ALT) :
     ¬ MiDefined c ALT p := by
   rintro ⟨q, hq, hh, -⟩
@@ -301,8 +298,8 @@ theorem contextSetOf_update {m : Move A W} {w : W} :
 
 variable (S : TwoDim W (Set W))
 
-/-- Asserting `p` and then `¬p` is inconsistent (18a), as is the *-rka* counterpart of footnote 9,
-where *=mi* on `¬p` is licensed but the speaker contradicts herself. -/
+/-- Asserting `p` and then `¬p` is inconsistent (18a), as is the *-rka* counterpart of footnote 9.
+-/
 theorem contextSetOf_assert_assert_compl :
     ((c.update (.assert s S)).update (.assert s (pure S.atIssueᶜ))).contextSetOf s = ∅ :=
   contextSetOf_eq_empty (m := .assert s S) (m' := .assert s (pure S.atIssueᶜ)) (p := S.atIssue)

@@ -47,9 +47,8 @@ variable {Entity W D : Type*} [LinearOrder D]
 
 /-! ### Monotone increasing quantifiers -/
 
-/-- On a finite domain the two scopes of an upper-interval DegP under *every girl* coincide, the
-comparative (10) at `Ioi t`, the equative (13a) at `Ici t`, and, at a type of worlds, the
-necessity operator (16) (Section 2.1). -/
+/-- On a finite domain the two scopes of an upper-interval DegP under *every girl* coincide,
+covering (10), (13a) and (16) (Section 2.1). -/
 theorem forall_collapse [Finite Entity] {girl : Entity → Prop} (hg : ∃ x, girl x)
     (μ : Entity → D) {U : Set D} (hU : IsUpperSet U) :
     HighScope (MaxIn U) (every girl) (Iic ∘ μ) ↔ LowScope (MaxIn U) (every girl) (Iic ∘ μ) :=
@@ -74,9 +73,8 @@ theorem atMost_high_undefined [Fintype Entity] [NoMaxOrder D] (girl : Entity →
     (μ : Entity → D) : ¬ ∃ m, IsGreatest (scopeDegrees (atMost 2 girl) (Iic ∘ μ)) m :=
   not_isGreatest_scopeDegrees (antitone_atMost (α := Entity) 2 girl) (fun _ ↦ isLowerSet_Iic _)
 
-/-- The maximal degree to which exactly two girls are tall, when defined, is the maximal degree
-to which at least two are, so the high scope (20c) means *at least two girls are taller than 5
-feet* (20). -/
+/-- The high scope (20c) of *exactly two girls* means *at least two girls are taller than 5 feet*
+(20). -/
 theorem exactly_high_atLeast [Fintype Entity] {girl : Entity → Prop} {μ : Entity → D} {m : D}
     (h : IsGreatest (scopeDegrees (exactly 2 girl) (Iic ∘ μ)) m) :
     IsGreatest (scopeDegrees (atLeast 2 girl) (Iic ∘ μ)) m := by
@@ -85,9 +83,8 @@ theorem exactly_high_atLeast [Fintype Entity] {girl : Entity → Prop} {μ : Ent
 
 /-! ### Exactly-differentials and less -/
 
-/-- Under *every girl* the low scope entails the high one at every interval, the shortest girl
-attaining the maximum, so (22c) is weaker than (22b) at `{t}`, (24c) than (24b) at `Iio t`,
-and at a type of worlds (28c) than (28b) and (30c) than (30b). -/
+/-- Under *every girl* the low scope entails the high scope, so (22c), (24c), (28c) and (30c) are
+weaker than (22b), (24b), (28b) and (30b). -/
 theorem forall_high_of_low [Finite Entity] {girl : Entity → Prop} (hg : ∃ x, girl x)
     (μ : Entity → D) (U : Set D) :
     LowScope (MaxIn U) (every girl) (Iic ∘ μ) → HighScope (MaxIn U) (every girl) (Iic ∘ μ) :=
@@ -95,9 +92,8 @@ theorem forall_high_of_low [Finite Entity] {girl : Entity → Prop} (hg : ∃ x,
   let ⟨⟨x₀, hx₀⟩, hmin⟩ := Finite.exists_min fun x : {x // girl x} ↦ μ x.1
   highScope_every_of_lowScope ⟨x₀, hx₀, fun y hy ↦ hmin ⟨y, hy⟩⟩
 
-/-- Under *some girl* the high scope entails the low one at every interval, the tallest girl
-being a witness, so (21c) is stronger than (21b), and at a type of worlds (29c) than (29b)
-and (31c) than (31b). -/
+/-- Under *some girl* the high scope entails the low scope, so (21c), (29c) and (31c) are stronger
+than (21b), (29b) and (31b). -/
 theorem exists_low_of_high (girl : Entity → Prop) (μ : Entity → D) (U : Set D) :
     HighScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) → LowScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) :=
   lowScope_some_of_highScope
@@ -108,17 +104,16 @@ private theorem scopeDegrees_heights :
   simp [scopeDegrees, every, Fin.forall_fin_two]
   omega
 
-/-- The high scope is true and the low scope false when the shortest girl is exactly 4'1'' and
-another is taller, so *every girl is exactly 1'' taller than that* is false there and (22c) is
-no reading of it (22). -/
+/-- When the shortest girl is exactly 4'1'' and another is taller, the high scope is true and the
+low false, so (22c) is no reading of (22). -/
 theorem exactly_high_not_low :
     HighScope (MaxIn {49}) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) ∧
       ¬ LowScope (MaxIn {49}) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) :=
   ⟨⟨49, rfl, scopeDegrees_heights ▸ isGreatest_Iic⟩,
     fun h ↦ by simpa using lowScope_maxIn.1 h 1 trivial⟩
 
-/-- The high scope of *every girl is less tall than that* says only that the shortest girl is,
-and is true where the sentence is false (24). -/
+/-- The high scope of *every girl is less tall than that* is true where the sentence is false (24).
+-/
 theorem less_high_not_low :
     HighScope (MaxIn (Iio 50)) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) ∧
       ¬ LowScope (MaxIn (Iio 50)) (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) :=
@@ -127,8 +122,8 @@ theorem less_high_not_low :
 
 /-! ### Intensional verbs -/
 
-/-- *The paper is required to be less long than t* with the DegP over *required* says that the
-paper is not required to be as long as *t* (30c). -/
+/-- The high scope of *required to be less long than t* means *not required to be as long as t*
+(30c). -/
 theorem required_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
     HighScope (MaxIn (Iio t)) (every (· ∈ Acc)) (Iic ∘ ℓ) ↔ ¬ every (· ∈ Acc) fun w ↦ t ≤ ℓ w := by
   have : Nonempty W := hAcc.to_type
@@ -136,16 +131,15 @@ theorem required_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W �
   exact highScope_maxIn_Iio_iff (monotone_every _) (fun h ↦ let ⟨w, hw⟩ := hAcc; h w hw)
     ⟨ℓ w₀, fun v _ ↦ hw₀ v⟩
 
-/-- *The paper is allowed to be less long than t* with the DegP over *allowed* says that the
-paper is not allowed to be as long as *t* (31c). -/
+/-- The high scope of *allowed to be less long than t* means *not allowed to be as long as t* (31c).
+-/
 theorem allowed_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
     HighScope (MaxIn (Iio t)) (GQ.some (· ∈ Acc)) (Iic ∘ ℓ) ↔ ¬ GQ.some (· ∈ Acc) fun w ↦ t ≤ ℓ w :=
   highScope_maxIn_Iio_iff (monotone_some _) (fun ⟨_, _, h⟩ ↦ h)
     (let ⟨w, hw⟩ := hAcc; ⟨ℓ w, w, hw, le_rfl⟩)
 
-/-- With the maximum of (35), *I want the paper to be less long than t* with the DegP over
-*want* says that the greatest lower bound of the lengths the paper is desired not to have,
-those no desired world reaches, is below *t*, which is the low-scope reading (36a). -/
+/-- With the maximum of (35), the DegP over *want* in *I want the paper to be less long than t*
+yields the low-scope reading (36a). -/
 theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : Des.Nonempty)
     (ℓ : W → D) (t : D) :
     (∃ m ∈ Iio t, IsGLB (scopeDegrees (no (· ∈ Des)) (Iic ∘ ℓ)) m) ↔

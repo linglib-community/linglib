@@ -254,9 +254,8 @@ def specSpace : List (Finset K) :=
 accusative. -/
 def eastFrisian : List (Cand String) := [⟨{.p0}, "z"⟩, ⟨{.k1}, "h"⟩]
 
-/-- East Frisian ((164), (166)): ranking `Dep(#) ≫ Dep(K)` and
-`Max(K) ≫ Max(#)` yields *h-* in NOM.SG, ACC.SG, ACC.PL and *z-* in NOM.PL —
-ABA along ⟨NOM.SG, NOM.PL, ACC.PL⟩, AAA along ⟨NOM.SG, ACC.SG, ACC.PL⟩. -/
+/-- With `Dep(#) ≫ Dep(K)` and `Max(K) ≫ Max(#)`, East Frisian has *h-* in NOM.SG, ACC.SG, ACC.PL
+and *z-* in NOM.PL ((164), (166)). -/
 theorem eastFrisian_pattern :
     Wins [.depD .num, .depD .kase, .maxD .kase, .maxD .num] eastFrisian
         ⟨.nom, .sg⟩ ⟨{.k1}, "h"⟩ ∧
@@ -272,9 +271,8 @@ theorem eastFrisian_pattern :
 *ñan-* and *enn-*. -/
 def malayalam : List (Cand String) := [⟨{.p0}, "ñan"⟩, ⟨{.k1}, "enn"⟩]
 
-/-- Malayalam ((167), (169)): swapping both relative rankings —
-`Dep(K) ≫ Dep(#)`, `Max(#) ≫ Max(K)` — reverses both diagonals: *ñan-* in
-NOM.SG, NOM.PL, ACC.PL and *enn-* in ACC.SG. -/
+/-- With `Dep(K) ≫ Dep(#)` and `Max(#) ≫ Max(K)`, Malayalam has *ñan-* in NOM.SG, NOM.PL, ACC.PL and
+*enn-* in ACC.SG ((167), (169)). -/
 theorem malayalam_pattern :
     Wins [.depD .kase, .depD .num, .maxD .num, .maxD .kase] malayalam
         ⟨.nom, .sg⟩ ⟨{.p0}, "ñan"⟩ ∧
@@ -296,10 +294,8 @@ theorem checkerboard_excluded :
         Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.nom, .pl⟩ ⟨fa, Ex.A⟩ := by
   decide
 
-/-- Unidimensional *ABA survives the move to violable constraints (§4.1.4):
-down the singular case column, no ranking and no two-candidate vocabulary of
-**well-formed** specs lets one candidate win NOM and DAT while the other takes
-ACC. -/
+/-- With violable constraints, no ranking and two-candidate vocabulary of well-formed specs yields
+ABA down the singular case column (§4.1.4). -/
 theorem unidimensional_ABA_excluded :
     ∀ rk ∈ rankings, ∀ fa ∈ specSpace, ∀ fb ∈ specSpace,
       Wins rk [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩] ⟨.nom, .sg⟩ ⟨fa, Ex.A⟩ →
@@ -321,12 +317,8 @@ theorem illformed_spec_breaks_unidimensional_ABA :
 
 /-! ### The corner rankings: Wolf's mimicry -/
 
-/-- **`Dep ≫ Max` is the Subset Principle with feature counting**
-([wolf-2008] on [halle-1997]; the dissertation's §4.1.1): whenever some
-candidate is subset-applicable, the unique winner under the global corner
-ranking is exactly what `ChristopoulosZompi2023.pattern` — the Elsewhere
-engine the companion study runs — selects. Inviolable-`Max` is the dual,
-nanosyntax's least-specified non-underspecified choice ([starke-2009]). -/
+/-- Whenever some candidate is subset-applicable, the ranking `Dep ≫ Max` selects the Subset
+Principle winner ([wolf-2008] on [halle-1997]; §4.1.1; dual to [starke-2009]). -/
 theorem depTop_eq_subsetPrinciple :
     ∀ fa ∈ featSpace.powerset, ∀ fb ∈ featSpace.powerset, ∀ c : ZCell,
       ∀ r ∈ [(⟨fa, Ex.A⟩ : Cand Ex), ⟨fb, Ex.B⟩],

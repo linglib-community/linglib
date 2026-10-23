@@ -463,8 +463,8 @@ theorem nine_isAnticonsistent_iff : ∀ x : NINE, IsAnticonsistent x ↔ IsExact
     x = mk 0 1 ∨ x = mk 1 1 ∨ x = mk 1 0 := by
   decide
 
-/-- The two prime bifilters of `NINE` are `{t, ot, ⊤}` from `K3` and the six-element
-`{dt, t, d⊤, ot, of, ⊤}` from `LP` ([fitting-2021] Examples 8.7.5 and 8.10.4). -/
+/-- The two prime bifilters of `NINE` come from `K3` and `LP` ([fitting-2021] Examples 8.7.5 and
+8.10.4). -/
 theorem nine_bifilters : (∀ x : NINE, x ∈ k3Filter.prod ↔
       x = mk 1 (-1) ∨ x = mk 1 0 ∨ x = mk 1 1) ∧
     ∀ x : NINE, x ∈ lpFilter.prod ↔ x = mk 0 (-1) ∨ x = mk 1 (-1) ∨

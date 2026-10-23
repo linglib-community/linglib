@@ -163,10 +163,8 @@ theorem not_admissible_participant_participantStar :
 /-- Narrowing is not licensed at the top, where the wide feature divides the space. -/
 theorem not_admissible_participantStar : ¬ Admissible [.participantStar] := by decide
 
-/-- The admissible hierarchies derive exactly the partitions that Harbour's bivalent geometry (9)
-generates, his five (p. 55; [harbour-2016] p. 193). Several hierarchies can derive one partition:
-[Author] over the wide [Participant] gives the tripartition, as Figure 4's [Participant] over
-[Author] does, since under [+Author] the wide feature makes no contrast. -/
+/-- The admissible hierarchies derive exactly the partitions of Harbour's bivalent geometry (9) (p.
+55; [harbour-2016] p. 193; Figure 4). -/
 theorem image_graph_sda_eq_geometry :
     ((hierarchies.filter Admissible).map (cellGraph ∘ sda)).toFinset =
       (univ.filter Harbour2016.Admissible).image Harbour2016.graph := by

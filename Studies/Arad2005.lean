@@ -199,9 +199,8 @@ def Binyan.Intransitive (b : Binyan) : Prop := b = .nvccvc ∨ b = .hitcvccvc
 
 instance : DecidablePred Binyan.Intransitive := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Voice is spelled out in every binyan in the active, and in the passive exactly in the
-binyanim (11) does not mark [−tr.]; the binyan that replaces CVCVC in the passive is one (11)
-marks. -/
+/-- Voice is spelled out in every active binyan and in the passive exactly in the binyanim that (11)
+does not mark [−tr.]. -/
 theorem realizeVoice_isSome :
     (∀ b v, (realizeVoice b v).isSome ↔ v = .active ∨ ¬b.Intransitive) ∧
       ∀ x ∈ realizeVoice .cvcvc .passive, x.1.Intransitive := by
@@ -414,8 +413,8 @@ theorem label_comp_numeralVowel (px : Prefixes α) (v : Vowel → α) (rad : Lis
   funext x
   cases x <;> rfl
 
-/-- In CVCCVC a triliteral root doubles its middle radical, one element on two slots, and a
-quadriliteral root fills the extra slot, as in *tirgem* (p. 28). -/
+/-- In CVCCVC a triliteral root doubles its middle radical and a quadriliteral root fills every
+position, as in *tirgem* (p. 28). -/
 theorem consonantism_cvccvc (px : Prefixes α) (w x y z : α) :
     (consonantism px .cvccvc ⟨[x, y, z]⟩).spellout = [x, y, y, z] ∧
       (consonantism px .cvccvc ⟨[w, x, y, z]⟩).spellout = [w, x, y, z] := by
@@ -434,8 +433,8 @@ theorem consonantism_cvccvc (px : Prefixes α) (w x y z : α) :
   rw [this.1, this.2]
   exact ⟨rfl, rfl⟩
 
-/-- A binyan has two vowel slots that the root leaves empty for Voice, while a mišqal fills its own
-(24), which is the noun–verb asymmetry of §2.5. -/
+/-- A binyan leaves two vowel positions free for Voice, while a mišqal fills its own (24), the
+noun–verb asymmetry of §2.5. -/
 theorem freeBearers_vocalism (px : Prefixes α) (v : Vowel → α) (x y z : α) :
     (∀ b : Binyan, ((consonantism px b ⟨[x, y, z]⟩).freeBearers .vocalism).length = 2) ∧
       ∀ q : Mishqal, (nounStem px v q ⟨[x, y, z]⟩).freeBearers .vocalism = [] := by
@@ -535,8 +534,8 @@ theorem isSome_verbCell? : ∀ a ∈ Wordlist.analyses, a.root.isSome →
     a.form.lexeme.pos = ↑UD.UPOS.VERB → (verbCell? a).isSome := by
   decide +kernel
 
-/-- The derivation produces every root-derived verb of Ch. 2 and Ch. 7 except two. *hexšiv* lowers
-*i* next to the guttural, and *histager* metathesizes *t* and the sibilant. -/
+/-- The derivation yields every root-derived verb of Ch. 2 and Ch. 7 except *hexšiv* and *histager*.
+-/
 theorem verbs_derived :
     (Wordlist.analyses.filter fun a ↦ a.conjugation = none ∧ ∃ x ∈ verbCell? a,
       verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some a.form.segments).map
@@ -613,9 +612,8 @@ def candidates (a : Wordlist.Analysis) : List (Binyan × Voice) :=
   | some x => [x]
   | none => [Binyan.cvcvc, .nvccvc, .cvccvc, .hvccvc, .hitcvccvc].map (·, .active)
 
-/-- Every noun-derived verb of the data is a stem modification of its base except *xoqeq* and
-*qoded* (41a, b), whose {o, e} (25) does not list. None is the verb the root of its base derives in
-its binyan, so *misger* is not *siger*, *musgar* not *sugar* and *mixšev* not *xišev*. -/
+/-- Every noun-derived verb is a stem modification of its base except *xoqeq* and *qoded* (41a, b),
+whose {o, e} (25) does not list. -/
 theorem denominals :
     ((Wordlist.analysisRelations.filter fun rel : CLDF.Wordlist.FormRelation Wordlist.Analysis ↦
         ¬∃ x ∈ candidates rel.target,
@@ -627,9 +625,8 @@ theorem denominals :
           some rel.target.form.segments := by
   decide +kernel
 
-/-- Without its stem boundary the suffix *-et* of *misgeret* would have to be kept, which the
-book leaves unexplained (fn. 2, p. 246); a verb keeping a vowel of its base, \*tilefon, is not
-a stem modification. -/
+/-- Neither *misger* from *misgeret* without its stem boundary (fn. 2, p. 246) nor \*tilefon, which
+keeps a base vowel, is a stem modification. -/
 theorem not_isStemModification :
     ¬IsStemModification isVowel transcribedPx Vowel.transcription .cvccvc .active
       ["m", "i", "s", "g", "e", "r", "e", "t"] ["m", "i", "s", "g", "e", "r"] ∧
@@ -637,9 +634,8 @@ theorem not_isStemModification :
       ["t", "e", "l", "e", "f", "o", "n"] ["t", "i", "l", "e", "f", "o", "n"] := by
   decide +kernel
 
-/-- The borrowed verbs of (39) keep the clusters of their bases, unlike \*tirnsfer, \*stirptez,
-\*snixren, which Hebrew phonology would allow (p. 266); *xarap* breaks the cluster of *xrop*
-(29c), so cluster transfer is not a condition of stem modification. -/
+/-- The borrowed verbs of (39) keep their bases' clusters, unlike phonotactically possible
+\*tirnsfer (p. 266), but *xarap* breaks that of *xrop* (29c). -/
 theorem keepsClusters :
     KeepsClusters isVowel ["t", "r", "a", "n", "s", "f", "e", "r"]
         ["t", "r", "i", "n", "s", "f", "e", "r"] ∧
@@ -675,8 +671,7 @@ instance : DecidablePred cyclic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _
 above the category head of the word it is formed from. -/
 def verbSpine (base : Option Head) : ComplexHead Root Head := ⟨⟨0⟩, base.toList ++ [.v, .voice]⟩
 
-/-- By (8), the v of a verb is local to the root exactly when no category head intervenes, so only a
-root-derived verb's v sees the root and a noun-derived verb's sees the noun. -/
+/-- By (8), the v of a verb is local to the root exactly when the verb is root-derived. -/
 theorem verbSpine_rootLocal : ∀ base : Option Head, (∀ c ∈ base, c = .n ∨ c = .a) →
     ∀ i : Fin (verbSpine base).heads.length, (verbSpine base).heads[i] = .v →
       ((verbSpine base).RootLocal cyclic i ↔ base = none) := by
@@ -713,17 +708,16 @@ def conjugations : List (String × Binyan × Binyan) :=
   (alts.filter (·.2.1)).flatMap fun (c, _, b) ↦
     (alts.filter fun a ↦ a.1 = c ∧ !a.2.1).map fun (_, _, b') ↦ (c, b, b')
 
-/-- The derivation produces the verbs of the conjugation classes except *namas* and *hemes*, the
-biliteral allomorphy of √mss (fn. 33), and *heʔedim*, lowered next to the guttural. -/
+/-- The derivation yields the conjugation-class verbs except *namas* and *hemes*, the biliteral
+allomorphy of √mss (fn. 33), and *heʔedim*. -/
 theorem conjugation_verbs_derived :
     (Wordlist.analyses.filter fun a ↦ a.conjugation ≠ none ∧ ∃ x ∈ verbCell? a,
       verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 ≠ some a.form.segments).map
         (·.form.form) = ["namas", "hemes", "heʔedim", "heʔedim"] := by
   decide +kernel
 
-/-- Conjugations 1–4 are natural and every natural pair is one of them; conjugation 5 crosses
-the gemination border and conjugation 6 conjugates P5 with itself. Wherever (11) marks one
-alternant [−tr.], the causative is the other (p. 226). -/
+/-- Conjugations 1–4 are exactly the natural pairs, and wherever (11) marks one alternant [−tr.],
+the causative is the other (p. 226). -/
 theorem conjugations_natural :
     (∀ x ∈ conjugations, (Natural x.2.1 x.2.2 ↔ x.1 ∈ ["1", "2", "3", "4"]) ∧
       (x.2.1 = x.2.2 ↔ x.1 = "6") ∧ (¬(x.2.1.Geminated ↔ x.2.2.Geminated) ↔ x.1 = "5")) ∧
@@ -904,9 +898,8 @@ def roots : Realization.Interpreted String String String String where
   realize := rootForms
   interp := rootMeanings
 
-/-- √sgr is 'close' in P1 and 'extradite' in P5, √qlt 'input' in CeCeC and 'a record' in
-taCCiC, √xšb 'think' in P1 and 'computer' in maCCeC, √šmn 'oil' in CeCeC and 'cream' in
-CaCCeCet (Ch. 7 (2)–(5)). -/
+/-- The roots √sgr, √qlt, √xšb and √šmn each mean different things in different patterns (Ch. 7
+(2)–(5)). -/
 theorem roots_allosemous :
     roots.IsAllosemous "sgr" ∧ roots.IsAllosemous "qlt" ∧ roots.IsAllosemous "xšb" ∧
       roots.IsAllosemous "šmn" := by

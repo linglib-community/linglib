@@ -70,11 +70,8 @@ theorem persons :
         (some "wa-na", some "ha-wa-na")] := by
   decide
 
-/-- *Kisu hiki kina kipini kifupi* 'this knife has a short handle', *chai hii ina moto* 'this
-tea is hot', *sahani hizi zina taka* 'these plates are dirty', and the negatives *mti huu hauna
-miiba* 'this tree has no thorns', *chai hii haina moto* and *taa hizi hazina mafuta* 'these
-lamps have no oil' (pp. 98–99). Class 3 and the second person singular share *u-na*, but class 3
-keeps its *u-* in the negative (p. 71). -/
+/-- *-na* 'have' takes each class's subject prefix, as in *ki-na*, *i-na*, *zi-na* and the
+negatives, class 3 keeping its *u-* (pp. 98–99, p. 71). -/
 theorem classes :
     [NounClass.cl7, .cl9, .cl10].map (fun c ↦ Morph.surface (present [c.subjPrefix])) =
         ["ki-na", "i-na", "zi-na"] ∧
@@ -93,9 +90,8 @@ theorem third_singular_past :
       Morph.surface (negativePast NounClass.cl1.negSubjPrefix) = "ha-ku-wa na" := by
   decide
 
-/-- The existential of the locative classes 17, 16 and 18 in the present, past and future,
-affirmative and negative: *kuna*, *hakuna*, *kulikuwa na*, *hakukuwa na*, *kutakuwa na*,
-*hakutakuwa na*, and the same on *pa-* and *m-* (p. 213). -/
+/-- The locative classes 17, 16 and 18 form the existential, *kuna*, *hakuna*, *kulikuwa na* and so
+on, in the present, past and future (p. 213). -/
 theorem existential :
     [NounClass.cl17, .cl16, .cl18].map (fun c ↦
         [present [c.subjPrefix], present c.negSubjPrefix, past [c.subjPrefix],

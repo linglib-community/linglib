@@ -128,9 +128,8 @@ theorem IsScalarModel.slice {E : Type*} [PartialOrder E] {P : D × E → S → P
     (h : IsScalarModel P) (d : D) : IsScalarModel fun e ↦ P (d, e) := fun _ _ hne ↦
   (h fun h' ↦ hne (Prod.mk.inj h').2).trans Prod.mk_lt_mk_iff_right
 
-/-- The states of affairs conforming to a scalar model are the lower sets of its argument space —
-truth propagating from the one-corner, falsity from the zero-corner (Tables 1–4) — and with
-membership as the propositional function every lower-set state space is a scalar model. -/
+/-- With membership as propositional function, the lower sets of an argument space form a scalar
+model (Tables 1–4). -/
 theorem isScalarModel_mem : IsScalarModel fun (d : D) (s : LowerSet D) ↦ d ∈ s := fun _ b hab ↦
   ⟨fun hle ↦ lt_of_le_of_ne
       (LowerSet.mem_Iic_iff.1 (hle (LowerSet.Iic b) (LowerSet.mem_Iic_iff.2 le_rfl))) hab,
@@ -155,13 +154,11 @@ didn't make colonel, let alone general*. -/
 theorem felicitous_negative_iff (h : IsScalarModel P) : Felicitous P .negative a b ↔ a < b :=
   h.not_lt_not_iff
 
-/-- Under positive polarity the full clause is the stronger exactly when A is the higher point:
-*you've got enough material for a whole semester, let alone a week* (71). -/
+/-- Under positive polarity, the full clause is the stronger iff A is the higher point (71). -/
 theorem felicitous_positive_iff (h : IsScalarModel P) : Felicitous P .positive a b ↔ b < a :=
   h.lt_iff
 
-/-- A fragment naming the lowest point of the scale is anomalous (107). Nothing is lower than it, so
-the a-fortiori inference from the full clause has no lower point to start from. -/
+/-- A fragment naming the lowest point of the scale is anomalous (107). -/
 theorem not_felicitous_of_isBot (h : IsScalarModel P) (hb : IsBot b) :
     ¬ Felicitous P .negative a b :=
   fun hf ↦ not_lt_of_ge (hb a) ((felicitous_negative_iff h).1 hf)
@@ -186,8 +183,7 @@ def letAloneConstruction : Construction Unit :=
     meaning := ()
     pragmaticPoint := true }
 
-/-- The form of *let alone* is lexically open, since such sentences "must therefore be given
-treatment as the kind of formal idiom or special construction we have been discussing" (§2.1). -/
+/-- *Let alone* is a formal idiom, lexically open in form (§2.1). -/
 theorem letAloneConstruction_isFormalIdiom : letAloneConstruction.IsFormalIdiom := by decide
 
 /-- The incredulity type *Him be a doctor?* (14h), §1.1.4's formal idiom that exists "in the
@@ -366,9 +362,8 @@ abbrev CanRead : Linguist × Lang → LowerSet (Linguist × Lang) → Prop := (�
 def table2c : LowerSet (Linguist × Lang) :=
   .Iic (.apotheosis, .french) ⊔ .Iic (.brilliant, .english)
 
-/-- In the Appendix's illustration, *Brilliant can read English* holds in Table 2c and *Brilliant
-can read Greek* does not, so the first does not entail the second, while the second entails the
-first because (Brilliant, English) is the lower point. -/
+/-- In Table 2c, *Brilliant can read English* holds and *Brilliant can read Greek* does not, so the
+second strictly entails the first (Appendix). -/
 theorem brilliant_english_greek :
     CanRead (.brilliant, .english) table2c ∧ ¬ CanRead (.brilliant, .greek) table2c ∧
       CanRead (.brilliant, .greek) < CanRead (.brilliant, .english) :=
@@ -378,8 +373,8 @@ theorem brilliant_english_greek :
         exact absurd (LowerSet.mem_Iic_iff.1 h) (by decide),
     isScalarModel_mem.lt_iff.2 (by decide)⟩
 
-/-- At the corners of Table 1, *Dimm can read Hittite* entails that every linguist reads every
-language, and *Apotheosis can't read English* that none reads any. -/
+/-- At the corners of Table 1, *Dimm can read Hittite* entails that all read all, and *Apotheosis
+can't read English* that none reads any. -/
 theorem corners (p : Linguist × Lang) :
     CanRead (.dimm, .hittite) ≤ CanRead p ∧
       (¬ CanRead (.apotheosis, .english) ·) ≤ (¬ CanRead p ·) :=
@@ -387,10 +382,7 @@ theorem corners (p : Linguist × Lang) :
   have h₀ : (.apotheosis, .english) ≤ p := by revert p; decide
   ⟨fun s h ↦ s.lower h₁ h, fun s h hp ↦ h (s.lower h₀ hp)⟩
 
-/-- In (109)–(112) each (a) sentence is more informative than its (b) sentence, *Brilliant can read
-Hittite* than *Brilliant can read French*, *Brilliant can't read French* than *Brilliant can't read
-Hittite*, *Competent can read Hittite* than *Brilliant can read French*, and *Brilliant can't read
-French* than *Competent can't read French*. -/
+/-- In (109)–(112) each (a) sentence is strictly more informative than its (b) sentence. -/
 theorem informativeness_109_112 :
     CanRead (.brilliant, .hittite) < CanRead (.brilliant, .french) ∧
       (¬ CanRead (.brilliant, .french) ·) < (¬ CanRead (.brilliant, .hittite) ·) ∧

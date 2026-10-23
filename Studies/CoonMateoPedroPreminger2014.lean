@@ -305,8 +305,8 @@ theorem nonfinite_licensing (l : Licenser) :
       ¬ (Predicate.intransitive .setB).SubjectLicensed false := by
   cases l <;> decide
 
-/-- Agent Focus in a high-abs language frees the extracting subject (67) and licenses the
-object of a non-finite transitive (70); the regular derivation crashes in both. -/
+/-- Agent Focus in a high-abs language frees the extracting subject (67) and licenses the object of
+a non-finite transitive (70), where the regular derivation crashes. -/
 theorem agent_focus :
     Converges ⟨.infl, true, .transitive voiceAF .dp, some .A, false⟩ ∧
     ¬ Converges ⟨.infl, true, .transitive agentive .dp, some .A, false⟩ ∧
@@ -314,9 +314,8 @@ theorem agent_focus :
     ¬ Converges ⟨.infl, false, .transitive agentive .dp, none, false⟩ := by
   decide
 
-/-- The last resort bars Agent Focus where nothing crashes: in a finite clause without subject
-extraction, in a low-abs language, and with a caseless object (75b), which instead lets the
-subject extract from a regular transitive (75a). -/
+/-- Agent Focus is barred without subject extraction in finite clauses, in low-abs languages, and
+with a caseless object (75b), where a regular transitive suffices (75a). -/
 theorem last_resort :
     ¬ Converges ⟨.infl, true, .transitive voiceAF .dp, none, false⟩ ∧
     ¬ Converges ⟨.v, true, .transitive voiceAF .dp, some .A, false⟩ ∧
@@ -450,13 +449,8 @@ theorem thirdSgZero_of_isErgativePerfective {L : Language} (h : L.IsErgativePerf
     L.setB.IsThirdSgZero := by
   cases L <;> first | decide | exact absurd h (by decide)
 
-/-- Tada's generalization over the fragments (19), extended to every core argument. A registered
-language marks the extraction of a core argument from a finite transitive exactly when the
-regular derivation fails, so its subject's extraction is marked when the absolutive is high and
-its object's never. The recipient, an oblique whose extraction the K'ichean languages and Mam
-mark as a low adjunct's, is outside the generalization. Footnote 8 leaves Tsotsil out of table
-(19), its two absolutive series resisting the classification, and calls Yucatec an apparent
-outlier; the Yukatek fragment records no extraction reflexes, so both stay outside. -/
+/-- A registered language other than Tsotsil and Yucatec marks extraction of a core argument from a
+finite transitive iff the regular derivation fails ((19), Footnote 8). -/
 theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) {r : ArgumentRole}
     (hr : r ∈ ArgumentRole.core) :
     L.MarksExtraction r ↔
@@ -470,10 +464,8 @@ theorem tsotsil_marks_free_extraction :
       Converges ⟨Language.tsotsil.licenser, true, .transitive agentive .dp, some .A, false⟩ := by
   decide
 
-/-- The derivation picks out the fragment's verb form (§4.2, §5.1): with a third-person agent
-and a full DP object, a Q'anjob'al clause converges under the Voice of exactly the form
-`Qanjobal.verbForm` records, Agent Focus in every non-finite transitive and under subject
-extraction. -/
+/-- With a third-person agent and a full DP object, a Q'anjob'al clause converges exactly under the
+Voice of the verb form the fragment records (§4.2, §5.1). -/
 theorem converges_iff_verbForm {agent : Person} (ha : ¬ agent.IsSAP) (finite : Bool)
     (e : Option ArgumentRole) (f : VerbForm) :
     Converges ⟨Language.qanjobal.licenser, finite, .transitive (voiceOf f) .dp, e, false⟩ ↔

@@ -98,8 +98,7 @@ def FBCViolation (filler domain : Mark) : Prop :=
 
 instance : DecidableRel FBCViolation := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- On binary marks the categorical constraint is the strict inequality of (11): in a two-element
-scale the only strict pair is the unfocused below the focused. -/
+/-- On binary marks the categorical constraint is the strict inequality of (11). -/
 theorem fbcViolation_iff_lt (filler domain : Mark) : FBCViolation filler domain ↔ domain < filler :=
   (IsSimpleOrder.lt_iff_eq_bot_and_eq_top.trans and_comm).symm
 

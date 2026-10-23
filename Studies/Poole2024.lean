@@ -111,9 +111,8 @@ theorem stack_ne_unlocker {goals : Valuation α (Case × Mechanism)} {g : Goal �
 
 /-! ### Low and high dependent case against the configurational rules -/
 
-/-- Low dependent case (10): a stack on a head above two DPs meets them in c-command order and
-assigns the lower one what the low dependent rule assigns, whatever lexical case either
-carries. -/
+/-- A stack on a head above two DPs assigns the lower one what the low dependent case rule (10)
+assigns, whatever their lexical case. -/
 theorem low_eq_dependentPass (c : Case) (lex : α → Option Case) (a b : α) :
     surface (assignDep c (lexicalValuation lex [a, b]))
       = surface (({ low := some c } : Rules).dependentPass (λ _ => true)
@@ -121,9 +120,8 @@ theorem low_eq_dependentPass (c : Case) (lex : α → Option Case) (a b : α) :
   simp only [lexicalValuation, Valuation.initial, List.map_cons, List.map_nil]
   cases lex a <;> cases lex b <;> rfl
 
-/-- High dependent case (11): a stack on the head introducing the higher DP searches its
-complement first and its specifier last, and assigns the specifier what the high dependent
-rule assigns, whatever lexical case either carries. -/
+/-- A stack on the head introducing the higher DP assigns its specifier what the high dependent case
+rule (11) assigns, whatever their lexical case. -/
 theorem high_eq_dependentPass (c : Case) (lex : α → Option Case) (spec comp : α) :
     (surface (assignDep c (lexicalValuation lex [comp, spec]))).reverse
       = surface (({ high := some c } : Rules).dependentPass (λ _ => true)
@@ -230,9 +228,8 @@ def Predicted (r : Datum) : Prop :=
 instance (r : Datum) : Decidable (Predicted r) := by
   unfold Predicted; split <;> infer_instance
 
-/-- (15), (18), (20): the shifted direct object and the raised embedded subject are accusative
-exactly when another caseless DP unlocks T's stack; the unshifted object and the subject with
-no matrix DP are not. -/
+/-- The shifted object and the raised embedded subject are accusative exactly when another caseless
+DP unlocks T's stack ((15), (18), (20)). -/
 theorem accusative_rows : ∀ r ∈ Examples.all, Predicted r := by
   decide
 

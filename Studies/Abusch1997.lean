@@ -63,11 +63,8 @@ variable {E W T : Type*}
 
 /-! ### De re interpretation across attitude contexts -/
 
-/-- On the simultaneous reading of *Mary believed it was raining* (`Examples.ex2`) the embedded past
-is anaphoric to the matrix past, hence de re, with identity to the now as acquaintance relation:
-Mary ascribes raining to her now under identity with it exactly when it rains at the now of each
-of her alternatives. This is also what the reading licensed by the matrix past ascribes, so the
-sentence has two equivalent logical forms. -/
+/-- On the simultaneous reading of *Mary believed it was raining* (`Examples.ex2`), the embedded
+past is de re under identity with the now. -/
 theorem simultaneous_deRe {C : Type*} (now : C → T) (rain : T → Set C) (A : Set C) (p : C) :
     AscribesUnder A p (some ∘ now) (now p) rain ↔ ∀ q ∈ A, q ∈ rain (now q) :=
   ascribesUnder_comp_some_apply
@@ -98,8 +95,7 @@ theorem not_histories_subset_of_branching (ht' : now ≤ t') (h : ¬ t ≤ t') (
 end Branching
 
 /-- On the forward-shifted reading of *he thought that a burglar attacked him* (`Examples.ex3_ULC`),
-an embedded past anaphoric to the later opening of the door violates the upper limit constraint at
-the thinking time. -/
+the embedded past violates the upper limit constraint. -/
 theorem forwardShifted_not_upperLimit [LinearOrder T] {thinking opening : T}
     (h : thinking < opening) : compare opening thinking ∉ upperLimitConstraint := by
   simpa using h
@@ -183,9 +179,7 @@ theorem simultaneous_nonLocal [Preorder T] (h₁ : matrix.Con ρ g) (h₂ : embe
     hp₂.nonLocallyLicensed_of_coindexed h₂ rfl⟩
 
 /-- On the narrow-scope reading of *John promised to talk about the topic that the participants were
-interested in* (`Examples.ex53`), the past of the relative clause, coindexed with the talking time,
-is licensed by the matrix relation, so the interest may lie after the utterance time, within the
-upper limit constraint. -/
+interested in* (`Examples.ex53`), the interest may follow the utterance time. -/
 theorem narrowScope_forward (k : ℕ) (hk : k ≠ 1) :
     ∃ (ρ : ℕ → ℤ → ℤ → Prop) (g : ℕ → ℤ), matrix.Con ρ g ∧
       (⟨k, 2, 2⟩ : TemporalArgument).Con ρ g ∧ PastConstraint ρ {1} ∧ PastConstraint ρ {1, k} ∧
@@ -200,8 +194,8 @@ theorem wideScope_precedes [Preorder T] {k i : ℕ}
     (hcon : (⟨k, i, 0⟩ : TemporalArgument).Con ρ g) (hp : PastConstraint ρ {k}) : g i < g 0 := by
   simpa [TemporalArgument.Con, pastConstraint_singleton.1 hp] using hcon
 
-/-- A present matrix forces local licensing, so the past of *a man she met recently*
-(`Examples.ex60`) must itself be precedence, and the meeting precedes the marrying. -/
+/-- Under a present matrix, the past of *a man she met recently* (`Examples.ex60`) is local
+precedence, so the meeting precedes the marrying. -/
 theorem expects_local [Preorder T] (h₁ : matrix.Con ρ g) (hq : PresentConstraint ρ {1})
     (hp : PastConstraint ρ {1, 3}) (h₃ : (⟨3, 3, 2⟩ : TemporalArgument).Con ρ g) :
     g 3 < g 2 := by
@@ -211,8 +205,7 @@ theorem expects_local [Preorder T] (h₁ : matrix.Con ρ g) (hq : PresentConstra
   · exact absurd hρ (hq.ne_lt (Finset.mem_singleton_self _) h₁)
   · simpa [TemporalArgument.Con, hρ] using h₃
 
-/-- *Sue expects to marry a man she loved* (`Examples.ex63`) has no simultaneous reading, since
-coindexing the embedded past with the marrying time leaves no relation to license it. -/
+/-- *Sue expects to marry a man she loved* (`Examples.ex63`) has no simultaneous reading. -/
 theorem expects_no_simultaneous [Preorder T] (h₁ : matrix.Con ρ g)
     (hq : PresentConstraint ρ {1}) (hp : PastConstraint ρ {1, 3})
     (h₃ : (⟨3, 2, 2⟩ : TemporalArgument).Con ρ g) : False := by
@@ -225,8 +218,7 @@ theorem expects_no_simultaneous [Preorder T] (h₁ : matrix.Con ρ g)
 /-! ### Present under past -/
 
 /-- *John believed that Mary is pregnant* (`Examples.ex8_doubleAccess`) has no reading with the
-present in place, since the matrix past makes `R¹` precedence, and the embedded present, which has
-access to `R¹`, requires it to exclude precedence. -/
+present in place. -/
 theorem presentUnderPast_false [Preorder T] (h₁ : matrix.Con ρ g) (hp : PastConstraint ρ {1})
     (hq : PresentConstraint ρ {1, 3}) : False :=
   hq.ne_lt (r := 1) (Finset.mem_insert_self _ _) h₁ (pastConstraint_singleton.1 hp)

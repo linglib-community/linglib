@@ -337,9 +337,8 @@ theorem mergeOpEps_zero (lbl : α) (S S' : UnorderedTree α) :
     mergeOpEps (0 : R) lbl S S' = mergeOpG emptyCuts lbl S S' := by
   rw [mergeOpEps, comulEps_zero, ← comulAlgHomNG_emptyCuts]; rfl
 
-/-- At `ε = 0` Merge vanishes on a workspace unless `S` and `S'` are both components of it
-    ([marcolli-chomsky-berwick-2025] Proposition 1.5.1). This covers each form of Sideward Merge,
-    in which `S` or `S'` is an accessible term of a component. -/
+/-- At `ε = 0`, Merge vanishes on a workspace unless `S` and `S'` are both components of it
+([marcolli-chomsky-berwick-2025] Proposition 1.5.1). -/
 theorem mergeOpEps_zero_of'_of_not_le (lbl : α) {S S' : UnorderedTree α}
     {F : Forest (UnorderedTree α)} (h : ¬ ({S, S'} : Forest (UnorderedTree α)) ≤ F) :
     mergeOpEps (0 : R) lbl S S' (of' F) = 0 := by
@@ -383,9 +382,8 @@ theorem mergeOpEps_zero_pair_add (lbl : α) {S S' : UnorderedTree α}
   rw [add_comm, of'_add, mergeOpEps_zero_of'_mul lbl hS hS', mergeOpEps_zero, mergeOpG_pair,
     ← of'_add, add_comm]
 
-/-- Weighted Merge agrees with its value at `ε = 0` modulo `ε`, so External Merge and Internal
-    Merge, which survive at `ε = 0`, are its leading terms ([marcolli-chomsky-berwick-2025]
-    Proposition 1.5.1). -/
+/-- Weighted Merge agrees with its value at `ε = 0` modulo `ε` ([marcolli-chomsky-berwick-2025]
+Proposition 1.5.1). -/
 theorem mergeOpEps_eq_add_smul (ε : R) (lbl : α) (S S' : UnorderedTree α)
     (x : ConnesKreimer R (UnorderedTree α)) :
     ∃ y, mergeOpEps ε lbl S S' x = mergeOpEps 0 lbl S S' x + ε • y := by
@@ -394,9 +392,8 @@ theorem mergeOpEps_eq_add_smul (ε : R) (lbl : α) (S S' : UnorderedTree α)
     rw [mergeOpEps, mergeOpEps, LinearMap.comp_apply, LinearMap.comp_apply,
       AlgHom.toLinearMap_apply, AlgHom.toLinearMap_apply, hy, map_add, map_smul]⟩
 
-/-- Unless `S` and `S'` are both components of the workspace, weighted Merge is a multiple of `ε`,
-    so every form of Sideward Merge costs at least one ([marcolli-chomsky-berwick-2025]
-    Proposition 1.5.1). -/
+/-- Unless `S` and `S'` are both workspace components, weighted Merge is a multiple of `ε`
+([marcolli-chomsky-berwick-2025] Proposition 1.5.1). -/
 theorem mergeOpEps_of'_eq_smul_of_not_le (ε : R) (lbl : α) {S S' : UnorderedTree α}
     {F : Forest (UnorderedTree α)} (h : ¬ ({S, S'} : Forest (UnorderedTree α)) ≤ F) :
     ∃ y, mergeOpEps ε lbl S S' (of' F) = ε • y := by

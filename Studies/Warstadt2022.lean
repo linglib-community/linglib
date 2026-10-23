@@ -558,9 +558,7 @@ private theorem half_rpow_lt_one {α : ℝ} (hα : 0 < α) : (1 / 2 : ℝ) ^ α 
   Real.rpow_lt_one (by norm_num) (by norm_num) hα
 
 /-- With the question whether Tom needs a visa, *not green card* makes the listener favour the
-non-US world over the US-citizen world at every rationality. Within the context set that Tom is
-not a US citizen the utterance answers the question, whereas at the US-citizen world *US
-citizen* always answers it at least as well (Figure 1). -/
+non-US world over the US-citizen world (Figure 1). -/
 theorem needVisa_nonUS_lt {α : ℝ} (hα : 0 < α) :
     (gcListener .needVisa α .notGC).real ↑(worldEvent World.usCitizen)
       < (gcListener .needVisa α .notGC).real ↑(worldEvent World.nonUS) := by
@@ -582,10 +580,8 @@ theorem needVisa_nonUS_lt {α : ℝ} (hα : 0 < α) :
     div_lt_div_of_pos_left hx0 (by positivity) (by linarith)
   linarith
 
-/-- With the question whether Tom gets a free drink, *not green card* is an exhaustive answer
-in every context set, yet the listener still favours the non-US world. At the US-citizen world
-*US citizen* is an equally good answer, so the utterance's share there never exceeds a half
-(Figure 2 reports the two posteriors as nearly equal). -/
+/-- With the question whether Tom gets a free drink, *not green card* still makes the listener
+favour the non-US world (Figure 2). -/
 theorem freeDrink_nonUS_lt {α : ℝ} (hα : 0 < α) :
     (gcListener .freeDrink α .notGC).real ↑(worldEvent World.usCitizen)
       < (gcListener .freeDrink α .notGC).real ↑(worldEvent World.nonUS) := by
@@ -707,9 +703,8 @@ private theorem share_other {α : ℝ} (hα : 0 < α) (u : HobbyUtterance) :
   rw [share_eq hα, sum_hobbyUtterance]
   simp only [weight_O]
 
-/-- At the non-athlete world in the universe, *not an Olympic sprinter* is produced more often
-than silence but less often than *not a runner*, which loses to *not an athlete*. Olympic
-sprinters are rare, so denying that Tom is one says little (4). -/
+/-- At the non-athlete world, *not an Olympic sprinter* is produced more often than silence but less
+often than *not a runner* (4). -/
 theorem other_share_lt {α : ℝ} (hα : 0 < α) :
     share hobbyWeight which HobbyUtterance.sem hobbies () .silence .other α
         < share hobbyWeight which HobbyUtterance.sem hobbies () .notSprinter .other α ∧

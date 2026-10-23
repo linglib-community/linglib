@@ -111,10 +111,8 @@ def Complementizer.ofString? : String → Option Complementizer
   | "pu" => some pu
   | _ => none
 
-/-- Every verb–complementizer pairing in the paper's examples, apart from those testing an
-adverb, a factivity continuation or the ban on a preposition, is acceptable exactly when
-predicted from the verb's sort and Vendler class — including *simveni*, which no complementizer
-fits (fn. 14). -/
+/-- Every unconfounded verb–complementizer pairing is acceptable exactly when predicted from the
+verb's sort and Vendler class, including *simveni* (fn. 14). -/
 theorem rows_track_selection :
     ∀ r ∈ Examples.all, r.feature? "confound" = none →
       ∀ e ∈ ((r.feature? "verb").bind fun name ↦ lexicon.lookup name).toList,
@@ -179,9 +177,8 @@ def ClausePosition.ofString? : String → Option ClausePosition
   | "p_complement" => some .pComplement
   | _ => none
 
-/-- Across the paper's bare clauses, grammaticality in a position is incorporation licensing
-from it: internal arguments and derived subjects in, external arguments and P-complements
-out. Nominalized clauses carry a full noun and are exempt (§5). -/
+/-- Across the bare clauses, grammaticality in a position coincides with incorporation licensing
+from it, nominalized clauses being exempt (§5). -/
 theorem rows_track_licensing :
     ∀ r ∈ Examples.all, r.feature? "nominalized" = none →
       ∀ pos ∈ ((r.feature? "position").bind ClausePosition.ofString?).toList,

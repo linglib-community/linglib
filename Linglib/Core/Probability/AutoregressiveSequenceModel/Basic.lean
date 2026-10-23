@@ -355,9 +355,8 @@ theorem condPrefixProb_ofMeasure {c : List α} (hc : μ {y | c <+: y} ≠ 0) (x 
 
 variable [Countable α]
 
-/-- A model whose conditionals are the next-symbol laws of a probability measure on strings after
-every prefix of positive probability has the measure as its string law ([du-etal-2023],
-footnote 4). -/
+/-- A model whose conditionals are the next-symbol laws of a string measure at every
+positive-probability prefix has that measure as its string law ([du-etal-2023], footnote 4). -/
 theorem stringMeasure_eq_of_next_eq {M : AutoregressiveSequenceModel α}
     (h : ∀ x, μ {y | x <+: y} ≠ 0 → M.next x = (ofMeasure μ).next x) : M.stringMeasure = μ := by
   refine Measure.ext_of_singleton fun x ↦ ?_

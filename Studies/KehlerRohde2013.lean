@@ -141,9 +141,8 @@ private theorem mixture_div (p b : Relation → ℕ) :
   refine sum_congr rfl fun c _ ↦ ?_
   ring
 
-/-- The near-chance overall bias of the perfective continuations is the mixture (9), over the
-five coded relations, of strongly opposed relation-conditioned biases: Occasion, the most common
-relation, favors the Goal and Elaboration the Source. -/
+/-- The near-chance overall perfective bias is the mixture (9) of strongly opposed
+relation-conditioned biases, Occasion favoring the Goal and Elaboration the Source. -/
 theorem perfective_mixture_masks_biases :
     2 / 5 < mixture (fun c ↦ (perfectiveFrequency c : ℚ) / 100)
         (fun c ↦ (perfectiveSourceGiven c : ℚ) / 100) ∧
@@ -174,9 +173,8 @@ def observedSource (i : Instruction) : ℕ :=
 def predictedSource (i : Instruction) : ℚ :=
   mixture (fun c ↦ (frequency i c : ℚ) / 100) (fun c ↦ (sourceGiven c : ℚ) / 100)
 
-/-- The instruction manipulation: the expectations of Table 3, with the conditional biases of
-Table 4 held fixed, put the *Why?* mixture on the Source side of chance and the *What happened
-next?* mixture on the Goal side, where Table 5 finds the interpretations of identical stimuli. -/
+/-- Under the expectations of Table 3 and the biases of Table 4, the *Why?* mixture favors the
+Source and the *What happened next?* mixture the Goal, as in Table 5. -/
 theorem instruction_mixtures :
     (1 / 2 < predictedSource .why ∧ 50 < observedSource .why) ∧
       predictedSource .whatNext < 1 / 2 ∧ observedSource .whatNext < 50 := by
@@ -195,9 +193,8 @@ def promptFrequency (p : Prompt) (c : Relation) : ℕ :=
 /-- The share of first mentions to the Goal by prompt type, in percent. -/
 def goalMention (p : Prompt) : ℕ := (goalFirstMentions p).percent
 
-/-- An ambiguous pronoun is not inert: the prompt draws first mentions from the Goal to the
-Source, the overlaid subject bias, and with them the continuations move from the Goal-biased
-Occasion and Result toward the Source-biased Elaboration and Explanation, as (12) predicts. -/
+/-- The ambiguous pronoun prompt shifts first mentions from Goal to Source and continuations toward
+the Source-biased Elaboration and Explanation, as (12) predicts. -/
 theorem prompt_shifts_relations :
     goalMention .pronoun < goalMention .noPronoun ∧
       promptFrequency .noPronoun .elaboration + promptFrequency .noPronoun .explanation <
@@ -227,10 +224,8 @@ def subjectMention : Voice → ℕ
   | .active => causalMention .active .noPronoun
   | .passive => 100 - causalMention .passive .noPronoun
 
-/-- The voice manipulation with the propositions constant: the pronoun refers to the causally
-implicated referent less once the passive moves it out of subject position (Table 7), and the
-continuations are Explanations less often (Table 8), the shift in coherence mediated by the shift
-in reference. -/
+/-- With the propositions constant, the passive lowers both reference to the causally implicated
+referent (Table 7) and the rate of Explanations (Table 8). -/
 theorem voice_shifts_interpretation_and_coherence :
     causalMention .passive .pronoun < causalMention .active .pronoun ∧
       explanationRate .passive .pronoun < explanationRate .active .pronoun := by
@@ -268,9 +263,8 @@ private theorem bayesSubject_eq :
   rw [posterior_select, posterior_select]
   norm_num
 
-/-- The Bayesian predictions of Table 10: from the next-mention rates without a pronoun (Table 7)
-and the pronominalization rates (Table 9), the pronoun refers to the subject in both voices and
-more strongly in the active, as the interpretations measured with the pronoun prompt show. -/
+/-- The Bayesian predictions of Table 10, from Table 7 and Table 9, favor the subject in both voices
+and more strongly in the active, as observed. -/
 theorem voice_predictions :
     (1 / 2 < bayesSubject .active ∧ 1 / 2 < bayesSubject .passive ∧
         bayesSubject .passive < bayesSubject .active) ∧
@@ -291,10 +285,8 @@ theorem bayesSubject_lt_predicted (v : Voice) :
   · rw [hA]; decide +kernel
   · rw [hP]; decide +kernel
 
-/-- The overlaid subject bias in the voice experiment: in both voices the subject is
-pronominalized above the overall rate, so (13) puts the pronoun's bias toward it above its
-next-mention prior, as the pronoun prompt's rise in subject mentions over the no-pronoun
-condition shows for the active (Table 7). -/
+/-- In both voices (13) puts the pronoun's subject bias above the subject's next-mention prior, and
+the pronoun prompt raises subject mentions in the active (Table 7). -/
 theorem overlaid_subject_bias :
     ((subjectMention .active : ℚ) / 100 < bayesSubject .active ∧
         (subjectMention .passive : ℚ) / 100 < bayesSubject .passive) ∧
@@ -336,9 +328,8 @@ def pronounRate (v : Voice) : GrammaticalRole → ℕ
   | .subject => pronominalized v .subject
   | _ => pronominalized v .nonSubject
 
-/-- Production tracks topichood: across the voices and roles of Table 9 a higher topichood level
-is pronominalized at a higher rate, the passive subject above the active subject above the
-non-subjects, so not all grammatical subjects are equal. -/
+/-- Across the voices and roles of Table 9, the pronominalization rate strictly increases with
+topichood. -/
 theorem pronounRate_strictMono : ∀ (v v' : Voice) r r',
     topichood v.toUD r < topichood v'.toUD r' → pronounRate v r < pronounRate v' r' := by
   decide

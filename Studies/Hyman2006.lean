@@ -100,8 +100,8 @@ theorem culminative_ofRule (units : Word → Finset U) (pos : Word → U)
     (h : ∀ w, pos w ∈ units w) (tbu : TBUKind) : Culminative (Marking.ofRule units pos h tbu) :=
   λ _ => (Finset.card_singleton _).le
 
-/-- Section 4: a word without units of the marked kind, Bella Coola's syllable-less [ktskʷ]
-or Gokana's words, can bear no head, so the language fails OBLHEAD. -/
+/-- A word without units of the marked kind bears no head, so the language fails OBLHEAD (Section
+4). -/
 theorem not_obligatory_of_no_units {m : Marking Word U} {w : Word} (h : m.units w = ∅) :
     ¬ Obligatory m := λ ho =>
   (ho w).ne_empty (Finset.subset_empty.1 (h ▸ m.marked_subset w))

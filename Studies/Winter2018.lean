@@ -168,11 +168,8 @@ variable [DecidableEq A] {D E : Type*} [SemilatticeSup D] [SemilatticeSup E]
   {GD : Plurality.GroupStructure D} {GE : Plurality.GroupStructure E} {V Vsym : Set E}
   {ag th agTh : E → D}
 
-/-- [siloni-2012]'s symmetric verbs validate (Pr₂): for entities that are singular individuals
-`ι x`, with `σ` summing a pair to the sum of its members, a collective sentence entails the
-binary one. The paper reports (Pr₂) failing for hug, fight, collide, divorce and talk (§3.3,
-partly from [kruitwagen-et-al-2017]'s experiments on their Dutch counterparts), so on its
-judgments these reciprocal verbs are not symmetric verbs in Siloni's sense. -/
+/-- [siloni-2012]'s symmetric verbs validate (Pr₂), so the reciprocals of §3.3 that fail it, after
+[kruitwagen-et-al-2017], are not symmetric verbs. -/
 theorem pr2_of_isSymmetricVerb (h : Siloni2012.IsSymmetricVerb GD GE V ag th Vsym agTh)
     {ι : A → D} (hι : ∀ x, Mereology.Atom (ι x)) {σ : Finset A → D}
     (hσ : ∀ x y, σ {x, y} = ι x ⊔ ι y) :
@@ -203,8 +200,8 @@ def Dimitriadis (spec : E → E → Prop) (R : E → A → A → Prop)
   ∀ e (x y : A), x ≠ y →
     (P e {x, y} ↔ ∃ e₁ e₂, spec e₁ e ∧ spec e₂ e ∧ R e₁ x y ∧ R e₂ y x)
 
-/-- The rule does not make (38) entail (37): with a domain of events not closed under a
-common specified event, the two unidirectional hugs belong to no collective hug. -/
+/-- The rule does not make (38) entail (37) when the events are not closed under a common specified
+event. -/
 theorem exists_dimitriadis_not_pr1 :
     ∃ (spec : Bool → Bool → Prop) (R : Bool → Bool → Bool → Prop)
       (P : Bool → Finset Bool → Prop),

@@ -60,9 +60,8 @@ def dubitatives : List ModalItem := [gwál, gíwé, shákdé]
 
 /-! ### The expressed categories -/
 
-/-- §6, Table 1: a force-flavor pair is encoded by some Tlingit modal exactly when it is
-epistemic possibility, circumstantial possibility or circumstantial necessity. No modal encodes
-epistemic necessity or deontic modality of either force. -/
+/-- A force-flavor pair is encoded by some Tlingit modal iff it is epistemic possibility,
+circumstantial possibility or circumstantial necessity (§6, Table 1). -/
 theorem expressed_iff (ff : ForceFlavor) :
     (∃ m ∈ Tlingit.modals, ff ∈ m.meaning) ↔ ff ∈ ({(.possibility, .epistemic),
       (.possibility, .circumstantial), (.necessity, .circumstantial)} : Finset ForceFlavor) := by
@@ -84,10 +83,8 @@ theorem scalemates :
       ∀ m ∈ dubitatives, ¬ HasScalemate lexicalForce Tlingit.modals m := by
   decide
 
-/-- (21)–(24) against (48)–(49): in an upward-entailing context a dubitative serves for
-epistemic necessity, a weak epistemic claim being the strongest Tlingit can make, while the
-potential mode does not serve for circumstantial necessity, the future mode making the stronger
-claim. Nor does the future mode serve for possibility (41). -/
+/-- In upward-entailing contexts the dubitatives serve for necessity ((21)–(24)), but the potential
+mode does not ((48)–(49)), nor the future mode for possibility (41). -/
 theorem servesFor_necessity :
     (∀ m ∈ dubitatives, ServesIn lexicalForce Tlingit.modals .positive m .necessity) ∧
       ¬ ServesIn lexicalForce Tlingit.modals .positive potentialMode .necessity ∧
@@ -95,10 +92,8 @@ theorem servesFor_necessity :
   simp only [ServesIn, servesFor_iff]
   decide
 
-/-- §6: like St'át'imcets *k'a* and Washo *-eʔ*, the dubitatives serve for both forces in an
-upward-entailing context, but their meaning has one force where the meanings of *k'a* and *-eʔ*
-have two. They are possibility modals without a scalemate, as Nez Perce *o'qa* is
-(`Deal2011.oqa_flexible`). -/
+/-- The dubitatives serve for both forces in an upward-entailing context with a single-force
+meaning, unlike St'át'imcets *k'a* and Washo *-eʔ* (§6). -/
 theorem dubitatives_fixed_force :
     (∀ m ∈ dubitatives,
         (∀ g, ServesIn lexicalForce Tlingit.modals .positive m g) ∧ ¬ m.VariesForce) ∧
@@ -106,11 +101,8 @@ theorem dubitatives_fixed_force :
   simp only [ServesIn, flexible_iff]
   decide
 
-/-- (54) and (55): in the restriction of *ldakát* 'all', a downward-entailing context, the past
-potential serves for possibility and not for necessity. *Ldakát ḵwax̱aayi át yax̱ yaysix̱áa* is
-'you ate up everything that I could have eaten', accepted where the addressee ate every food
-the speaker could have eaten and rejected where they ate only those the speaker would have
-eaten, a subset of those the speaker could have. -/
+/-- In the restriction of *ldakát* 'all', the past potential serves for possibility and not for
+necessity ((54) and (55)). -/
 theorem potential_universal_restriction :
     ServesIn lexicalForce Tlingit.modals .negative potentialMode .possibility ∧
       ¬ ServesIn lexicalForce Tlingit.modals .negative potentialMode .necessity := by

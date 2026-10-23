@@ -272,8 +272,8 @@ phrase, so Beck and Rullmann's operator cannot see number. -/
 theorem weakAnswer_hamblin (n : Number) (w : E) : weakAnswer (hamblin n) w = Ici w := by
   rw [hamblin, weakAnswer_image_Ici, sSup_domain_le]
 
-/-- Ans-D is defined at `w` iff the situation lies in the *wh* phrase's domain: exactly one
-atom for a singular *wh* ((49), (65)), at least one for a plural or neutral one ((50), (66)). -/
+/-- Ans-D is defined at `w` iff the situation has exactly one atom for a singular *wh* ((49), (65))
+and at least one otherwise ((50), (66)). -/
 theorem isExhaustivelyResolvable_hamblin_iff (n : Number) (w : E) :
     IsExhaustivelyResolvable (hamblin n) w ↔ w ∈ domain n := by
   rw [isExhaustivelyResolvable_iff, weakAnswer_hamblin, hamblin, Ici_injective.mem_set_image]
@@ -337,17 +337,15 @@ end Number
 
 /-! ### Beck and Rullmann's intersection on scales (53) -/
 
-/-- (53a)–(53b): on an upward scale (*n eggs are sufficient* holds at threshold `t` iff
-`t ≤ n`) the member for the threshold is the strongest true member, and Ans-D agrees with the
-intersection. -/
+/-- On an upward scale, the threshold's member is the strongest true member, agreeing with the
+intersection ((53a)–(53b)). -/
 theorem isStrongestTrueAnswer_range_Iic {α : Type*} [Preorder α] (t : α) :
     IsStrongestTrueAnswer (range (Iic : α → Set α)) t (Iic t) := by
   refine ⟨⟨⟨t, rfl⟩, le_rfl⟩, ?_⟩
   rintro q ⟨⟨n, rfl⟩, ht⟩
   exact Iic_subset_Iic.2 ht
 
-/-- (53c)–(53d): on a downward scale (*n people left* holds at count `c` iff `n ≤ c`) the member
-for the count is the strongest true member. -/
+/-- On a downward scale, the count's member is the strongest true member ((53c)–(53d)). -/
 theorem isStrongestTrueAnswer_range_Ici {α : Type*} [Preorder α] (c : α) :
     IsStrongestTrueAnswer (range (Ici : α → Set α)) c (Ici c) := by
   refine ⟨⟨⟨c, rfl⟩, le_rfl⟩, ?_⟩

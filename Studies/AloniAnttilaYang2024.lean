@@ -182,8 +182,8 @@ theorem support_disj_gdisj :
   · rintro (⟨t₁, h₁, t₂, h₂, h⟩ | ⟨t₁, h₁, t₂, h₂, h⟩)
     exacts [⟨t₁, h₁, t₂, Or.inl h₂, h⟩, ⟨t₁, h₁, t₂, Or.inr h₂, h⟩]
 
-/-- The diamond converts the global disjunction into the tensor one, `◇(φ ⨼ ψ) ≡ ◇φ ∨ ◇ψ`,
-    which makes the rule Conv◇⨼∨ of Theorem 4.3 sound. -/
+/-- The diamond converts global to tensor disjunction, `◇(φ ⨼ ψ) ≡ ◇φ ∨ ◇ψ`, so the rule Conv◇⨼∨ of
+Theorem 4.3 is sound. -/
 theorem support_poss_gdisj :
     support M (.poss (.gdisj φ ψ)) t ↔ support M (.disj (.poss φ) (.poss ψ)) t := by
   classical
@@ -328,9 +328,8 @@ def twoWorlds : KripkeModel Bool Unit where
 def splitProperty (s : Finset Bool) : Prop :=
   support twoWorlds (.disj (.conj (.atom ()) .ne) (.conj (.neg (.atom ())) .ne)) s ∨ s = ∅
 
-/-- No BSML formula expresses `splitProperty` (Fact 3.19). The property holds on `∅` and on
-    `{true, false}`, so a BSML formula expressing it would be downward closed (Lemma 3.18) and
-    hold on `{true}`, where the property fails. -/
+/-- No BSML formula expresses `splitProperty` (Fact 3.19), since it would be downward closed (Lemma
+3.18). -/
 theorem bsml_not_complete_for_unionClosed :
     ¬ ∃ φ : Formula Unit, φ.GDFree ∧ φ.EmptFree ∧
       ∀ s : Finset Bool, support twoWorlds φ s ↔ splitProperty s := by

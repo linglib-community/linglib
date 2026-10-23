@@ -530,9 +530,8 @@ theorem interp_johnSeesT_ne :
 theorem interp_whichJohnSees (g : Assignment ToyEntity) :
     interp toyLexicon g tree_whichJohnSees = some ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ := rfl
 
-/-- The book's proof for *which John abandoned t* (pp. 96-98) is a derivation in its rules, by
-Predicate Abstraction, the vacuous complementizer, Functional Application twice and the Traces
-Rule. -/
+/-- The relative clause *which John sees t* denotes the things John sees, derived as on pp. 96-98.
+-/
 theorem denotes_whichJohnSees (g : Assignment ToyEntity) :
     Denotes toyLexicon g tree_whichJohnSees ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ :=
   .pa (τ := .t) fun x ↦ .nn <|
@@ -555,16 +554,15 @@ theorem Partial.denotes_the_student_who_sleeps :
   rwa [hP, the_lift_eq_some (P := fun x ↦ student x ∧ Toy.sleeps x) (a := .john)
     fun _ ↦ ⟨And.right, fun h ↦ h ▸ ⟨.inl rfl, rfl⟩⟩] at h
 
-/-- *The student who sleeps* denotes John, though *the student* is a presupposition failure
-(`the_student_fails`), since the restrictive relative narrows the article's domain to one student,
-where a nonrestrictive one would leave the article applying to *student* alone (p. 88). -/
+/-- *The student who sleeps* denotes John, though *the student* is a presupposition failure (p. 88).
+-/
 theorem the_student_who_sleeps :
     interpPartial partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps) =
       some ⟨.e, Part.some .john⟩ :=
   Partial.interp_of_denotes Partial.denotes_the_student_who_sleeps
 
-/-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]` that §4.5 rejects, the definite
-denotes a truth value, so a sentence with it as subject is uninterpretable (p. 83). -/
+/-- Under the bracketing `[[the student] [who₁ [t₁ sleeps]]]` that §4.5 rejects, a sentence with the
+definite as subject is uninterpretable (p. 83). -/
 theorem det_noun_modifier_uninterpretable :
     Uninterpretable partialLex g₀
       (.bin (.bin (.bin (.leaf "the") (.leaf "student")) tree_whoSleeps) (.leaf "sleeps")) :=
@@ -728,8 +726,8 @@ theorem object_entry_in_subject_uninterpretable :
       (.bin (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))) (.leaf (.inr "sleeps"))) =
       none := rfl
 
-/-- A basic entry in object position is the type mismatch of §7.1 the rule repairs, `[S John
-[VP sees [DP some person]]]` with every word resolved to its basic entry. -/
+/-- `[S John [VP sees [DP some person]]]` with basic entries is uninterpretable, the type mismatch
+of §7.1. -/
 theorem basic_entry_in_object_uninterpretable :
     interp (resolve fun _ ↦ False) g₀ (.bin (.leaf (.inr "John"))
       (.bin (.leaf (.inr "sees")) (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))))) =

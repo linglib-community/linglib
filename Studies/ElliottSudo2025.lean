@@ -124,9 +124,8 @@ theorem mem_lowerClosure_exists_positive_iff {p : Possibility W ℕ (Flat E)} (h
       exact bot_le
     · simp [Possibility.update, Function.update_of_ne hv]
 
-/-- Bivalence of an existential statement, (55): at a state where its referent is novel, every
-possibility subsists in the positive or the negative update, so the unknown update is empty and
-the statement is assertable. -/
+/-- At a state where its referent is novel, an existential statement has an empty unknown update, so
+it is bivalent (55). -/
 theorem exists_unknownUpdate_of_novel [Nonempty E] (hx : State.Novel s x) :
     (exists_ x (pred1 Q x)).unknownUpdate s = ∅ := by
   ext p
@@ -178,8 +177,8 @@ theorem diamond_neg_exists_positive (B : E → W → Prop) :
       {_i ∈ s | ((exists_ x (pred1 B x)).negative s).Nonempty} :=
   rfl
 
-/-- (76): it passes negatively when the state subsists in the positive update of the existential,
-which at a state where the referent is novel means that every possibility has a bathroom. -/
+/-- Where the referent is novel, a negated existential is settled iff every possibility has a `B`
+(76). -/
 theorem settled_neg_exists_iff (B : E → W → Prop) (hx : State.Novel s x) :
     Settled (~(exists_ x (pred1 B x))) s ↔ ∀ p ∈ s, ∃ e, B e p.world := by
   show lowerClosure s ≤ lowerClosure ((exists_ x (pred1 B x)).positive s) ↔ _
@@ -284,16 +283,16 @@ section Bathroom
 
 variable (P Q : E → W → Prop)
 
-/-- (93): where the referent is novel, the first part of the bathroom disjunction is the negative
-update of the existential, since the second disjunct introduces no anaphoric information. -/
+/-- Where the referent is novel, the first part of the bathroom disjunction is the negative update
+of the existential (93). -/
 theorem disjPos1_bathroom (hx : State.Novel s x) :
     disjPos1 (~(exists_ x (pred1 P x))) (pred1 Q x) s = (exists_ x (pred1 P x)).negative s := by
   have hn := novel_exists_negative hx (pred1 P x)
   simp [disjPos1, neg, pred1_positive_of_novel Q hn, pred1_negative_of_novel Q hn,
     pred1_unknownUpdate_of_novel Q hn]
 
-/-- (94): the second part is the positive update of the existential followed by the second
-disjunct, by DNE at the negative update of the negated existential. -/
+/-- The second part of the bathroom disjunction is the positive update of the existential followed
+by the second disjunct (94). -/
 theorem disjPos2_bathroom [Nonempty E] (hx : State.Novel s x) :
     disjPos2 (~(exists_ x (pred1 P x))) (pred1 Q x) s =
       (pred1 Q x).positive ((exists_ x (pred1 P x)).positive s) := by
@@ -304,24 +303,23 @@ theorem disjPos2_bathroom [Nonempty E] (hx : State.Novel s x) :
   rw [unknownUpdate_neg, exists_unknownUpdate_of_novel P hx, pred1_positive_empty,
     pred1_positive_of_novel Q hn, Set.empty_union, Set.union_empty]
 
-/-- (70): the bathroom disjunction's positive update keeps the possibilities without a `P`, with
-no referent introduced, and those with a `P` that is `Q`, with the referent introduced: existential
-truth conditions. -/
+/-- The bathroom disjunction's positive update keeps the possibilities with no `P` and those with a
+`P` that is `Q`, giving existential truth conditions (70). -/
 theorem bathroom_positive [Nonempty E] (hx : State.Novel s x) :
     ((~(exists_ x (pred1 P x))) ⊕ pred1 Q x).positive s =
       (exists_ x (pred1 P x)).negative s ∪
         (pred1 Q x).positive ((exists_ x (pred1 P x)).positive s) := by
   rw [disj_positive_eq, disjPos1_bathroom P Q hx, disjPos2_bathroom P Q hx]
 
-/-- (66): its negative update is the positive update of the existential followed by the denial of
-the second disjunct, the positive update of `∃x(P(x) ∧ ¬Q(x))`. -/
+/-- The bathroom disjunction's negative update is the positive update of the existential followed by
+the denial of the second disjunct (66). -/
 theorem bathroom_negative :
     ((~(exists_ x (pred1 P x))) ⊕ pred1 Q x).negative s =
       (pred1 Q x).negative ((exists_ x (pred1 P x)).positive s) :=
   rfl
 
-/-- Free choice with anaphora, (24) and (99): a possible modalized bathroom disjunction makes it
-possible that there is no `P` and possible that there is a `P` that is `Q`. -/
+/-- A possible modalized bathroom disjunction makes possible both that there is no `P` and that some
+`P` is `Q` ((24) and (99)). -/
 theorem fc_with_anaphora [Nonempty E] (hx : State.Novel s x)
     (h : Possible ((~(exists_ x (pred1 P x))) ∨ᶠᶜ pred1 Q x) s) :
     ((exists_ x (pred1 P x)).negative s).Nonempty ∧
@@ -350,9 +348,8 @@ theorem dne_bus_not_dpl [Nontrivial E] :
           Update.dexists x φ :=
   ⟨BilateralDen.neg_neg, GroenendijkStokhof1991.dne_fails_anaphora⟩
 
-/-- Egli's positive equivalence (59) is the substrate's `egli`; its negative counterpart (62)
-fails: the negative update of `∃x(P(x) ∧ Q(x))` introduces no referent, while that of
-`∃xP(x) ∧ Q(x)` contains possibilities with the referent defined. -/
+/-- Egli's equivalence (59) fails for negative updates (62), which differ between `∃x(P(x) ∧ Q(x))`
+and `∃xP(x) ∧ Q(x)`. -/
 theorem negative_egli_fails :
     ∃ (W E : Type) (x : ℕ) (P Q : E → W → Prop) (s : BUSState W E),
       (exists_ x (pred1 P x ⊙ pred1 Q x)).negative s ≠
@@ -451,8 +448,8 @@ end PartialFamiliarity
 
 /-! ### Distributive inferences with anaphora (§5.2) -/
 
-/-- (121): a possible universal over a modal disjunction has both parts consistent at the
-random-assignment update, so some individual verifies the first disjunct and some the second. -/
+/-- A possible universal over a modal disjunction has both parts consistent at the random-assignment
+update (121). -/
 theorem distributive_preconditions (φ ψ : BUSDen W E) (y : ℕ)
     (h : Possible (forall_ y (φ ∨ᶠᶜ ψ)) s) :
     (disjPos1 φ ψ (State.randomAssign s y)).Nonempty ∧
@@ -503,9 +500,8 @@ theorem dual_permission (φ ψ : BUSDen W E) (hφ : CCP.IsEliminative φ.positiv
   obtain ⟨p, hp⟩ := h
   exact ⟨⟨p, he _ hp⟩, ⟨p, hm (hφ s) hp⟩⟩
 
-/-- Negative free choice with anaphora, (129): a possible *not required that you include an
-appendix and keep it to a single page* makes it possible that no appendix is included and
-possible that an appendix is included and not kept to a page. -/
+/-- A possible negated modal conjunction makes possible both that there is no `A` and that some `A`
+is not `B` (129). -/
 theorem negative_fc_with_anaphora [Nonempty E] (A B : E → W → Prop) (hx : State.Novel s x)
     (h : Possible (~(conjModal (exists_ x (pred1 A x)) (pred1 B x))) s) :
     ((exists_ x (pred1 A x)).negative s).Nonempty ∧

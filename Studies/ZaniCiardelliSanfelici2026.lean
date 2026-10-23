@@ -97,8 +97,8 @@ theorem minimals_union_of_moreRealistic (htot : ∀ w, Std.Total (ord w).le)
     · obtain ⟨b, hb, hbu⟩ := exists_mem_minimals_le hu
       exact (hAB x ((Preorder.mem_minimals_iff_forall_le (htot w)).2 ⟨hx, hle⟩) b hb).le.trans hbu
 
-/-- In case 1 of §2, when neither disjunct is more realistic than the other, the closest worlds
-of the disjunction are the closest worlds of the disjuncts together. -/
+/-- When neither disjunct is more realistic, the closest worlds of the disjunction are those of the
+disjuncts together (case 1 of §2). -/
 theorem minimals_union_of_equallyRealistic (htot : ∀ w, Std.Total (ord w).le)
     (hAB : ¬ MoreRealistic ord A B w) (hBA : ¬ MoreRealistic ord B A w) :
     (ord w).minimals (A ∪ B) = (ord w).minimals A ∪ (ord w).minimals B := by

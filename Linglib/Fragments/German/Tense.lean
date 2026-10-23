@@ -106,9 +106,7 @@ def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
       (v.vendlerClass.any (·.telicity == .telic) ∨ v.scaleDimension.isSome) then .be
   else .have
 
-/-- A directional phrase gives an intransitive verb *sein*: the verbs of motion that name the
-activity as such, *tanzen* 'dance' and *segeln* 'sail', take *sein* when they express movement
-from one place to another (§12.3.2c). -/
+/-- A directional phrase makes an intransitive verb take *sein* (§12.3.2c). -/
 theorem perfect_withPath_intransitive (v : Verb) {p : Adposition.SpatialReading}
     (hv : v.TakesSpatial) (hp : p.direction ≠ .place) :
     perfectAuxiliary (v.withPath p) .intransitive = .be := by

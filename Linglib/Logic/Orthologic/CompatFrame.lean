@@ -168,9 +168,8 @@ instance [Fintype S] (F : CompatFrame S) [DecidableRel F.compat]
     (y x : S) : Decidable (refines F y x) := by
   unfold refines; infer_instance
 
-/-- Regular sets are closed under refinement, since a refinement settles every proposition
-    its coarsening settles. This is the direction of [holliday-mandelkern-2024] Lemma 4.4 from
-    compatibility to regular sets. -/
+/-- Regular sets are closed under refinement ([holliday-mandelkern-2024] Lemma 4.4, one direction).
+-/
 theorem IsRegular.mem_of_refines {F : CompatFrame S} {A : Set S} (hA : IsRegular F A)
     {z x : S} (h : refines F z x) (hx : x ∈ A) : z ∈ A :=
   (hA z).resolve_right fun ⟨_, hzw, hw⟩ ↦ hw x (h _ hzw).symm hx
@@ -194,13 +193,8 @@ instance [Fintype S] (F : CompatFrame S) [DecidableRel F.compat]
 
 /-! ### Classical collapse -/
 
-/-- When compatibility is identity (every possibility is a world),
-    orthocomplement reduces to Boolean negation and the ortholattice is
-    Boolean. This is the sense in which possible-world semantics is a
-    special case of possibility semantics.
-    [holliday-mandelkern-2024] Remark 4.9 characterizes Boolean
-    collapse as compatibility-implies-compossibility; the identity frame
-    below is the simplest instance of that condition. -/
+/-- When compatibility is identity, orthocomplement is Boolean negation ([holliday-mandelkern-2024]
+Remark 4.9). -/
 theorem orthoNeg_classical
     (F : CompatFrame S)
     (hClassical : ∀ x y, F.compat x y → x = y)

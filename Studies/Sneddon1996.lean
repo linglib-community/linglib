@@ -45,8 +45,7 @@ theorem substituting_subset :
     substituting ⊆ voicelessObstruent.naturalClass consonants := by
   decide +kernel
 
-/-- The voiceless obstruents that do not substitute are `c` and the fricatives of loans. Of *d*,
-*t*, *c*, *j*, *sy* and *z*, "initial *t* is lost" (p. 10). -/
+/-- The voiceless obstruents that do not substitute are `c` and the loan fricatives (p. 10). -/
 theorem voicelessObstruents_sdiff_substituting :
     voicelessObstruent.naturalClass consonants \ substituting = {c, f, sy, kh} := by
   decide +kernel
@@ -71,9 +70,8 @@ theorem juncture_of_obstruent :
     ∀ x ∈ consonants, x.IsObstruent → x ∉ substituting → juncture x = assimilate [ng, x] := by
   decide +kernel
 
-/-- Before every obstruent but `s` the nasal at the juncture is a nasal that agrees with the
-obstruent in every place feature but [strident], *m* with *b*, *p*, *f*, *n* with *d*, *t*, *c*,
-*j*, *sy*, *z*, and *ng* with *g*, *k*, *kh* (pp. 9–10). -/
+/-- Before every obstruent but `s`, the juncture nasal agrees with the obstruent in every place
+feature but [strident] (pp. 9–10). -/
 theorem juncture_head_agrees :
     ∀ x ∈ consonants, x.IsObstruent → x ≠ s →
       ∀ N ∈ (juncture x).head?, N.IsNasal ∧
@@ -122,8 +120,8 @@ def prefixed : String → List Segment → Option (List Segment)
   | "meN- per-", w => some (assimilate ([m, e, ng] ++ [p, e, r] ++ w))
   | _, _ => none
 
-/-- Each derived form is its prefix on its base, as in *mengajar*, *memakai*, *membeli*,
-*menyewa* and *melihat* (pp. 9–10), *penulis* (p. 11) and *memperbesar* 'enlarge' (p. 26). -/
+/-- Each derived form is its prefix on its base, as in *mengajar* (pp. 9–10), *penulis* (p. 11) and
+*memperbesar* (p. 26). -/
 theorem relations_prefixed :
     ∀ r ∈ relations, (segmentsOf r.form).bind (prefixed r.relation) = segmentsOf r.target := by
   decide +kernel

@@ -175,8 +175,8 @@ theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T)
   let ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
   hs (NonemptyInterval.mem_def.2 ⟨h₁.trans (t.fst_le_snd.trans e.le), e ▸ h₂⟩)
 
-/-- *Mary had left at six* (43) modifies the reference time or the event time; with the leaving
-at five, the first reading holds and the second fails. -/
+/-- The sentence *Mary had left at six* (43) has a reference-time reading that can hold while its
+event-time reading fails. -/
 theorem reference_time_reading_not_event_time_reading :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
       ◇[toSetRel ⟦past⟧] (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] leave t) s ∧
@@ -213,10 +213,8 @@ end Quantified
 /-- A Sunday is the day starting at a multiple of seven. -/
 def sunday (t : NonemptyInterval ℕ) : Prop := t.fst % 7 = 0 ∧ t.snd = t.fst + 1
 
-/-- If John works on every Sunday, *John worked on every Sunday* said on day ten is true on the
-reading restricted to past Sundays (45), and false with the quantifier under the Past (44a), two
-Sundays sharing no time, and with the quantifier over the Past (44b), a Sunday being in the
-future. -/
+/-- If John works every Sunday, *John worked on every Sunday* said on day ten is true on reading
+(45) and false on (44a) and (44b). -/
 theorem every_sunday :
     (∀ t', sunday t' ∧ t'.Precedes (.pure 10) →
       ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
@@ -252,10 +250,8 @@ def RestrictedPast (K : Set (NonemptyInterval T)) (Q : NonemptyInterval T → Pr
     (σ : NonemptyInterval T) : Prop :=
   ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ∈ K ∧ Q t) σ
 
-/-- Restricted to the subintervals of a time that the referential Past (47) admits, the
-indefinite Past is the Perfective (50) at that time, so *I didn't turn off the stove* means the
-same on the referential analysis with the Perfective (52) and on the indefinite analysis with a
-restriction (54). -/
+/-- Restricted to subintervals of a time the referential Past (47) admits, the indefinite Past is
+the Perfective (50), so (52) and (54) agree. -/
 theorem restrictedPast_Iic_iff_prfv (h : Perspective.Presup ⟦past⟧ σ t₅) :
     RestrictedPast (Set.Iic t₅) (turnOff w) σ ↔ t₅ ∈ PRFV turnOff w :=
   ⟨fun ⟨t, _, ht, hQ⟩ ↦ ⟨t, ht, hQ⟩, fun ⟨t, ht, hQ⟩ ↦ ⟨t, Perspective.presup_past.2
@@ -275,8 +271,8 @@ theorem exists_not_restrictedPast_past :
   rintro ⟨t, -, hK, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 hK).1 (by decide)
 
-/-- *It didn't rain today*, with negation over the indefinite Past (58), entails its referential
-analysis with the Perfective (59) at any past reference time on today. -/
+/-- The sentence *It didn't rain today* with negation over the indefinite Past (58) entails its
+Perfective analysis (59) at any past reference time today. -/
 theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.toSetRel ⟦past⟧]
       (fun t ↦ t ≤ today ∧ rain w t) σ)
     (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) : t₅ ∉ PRFV rain w :=
@@ -369,9 +365,8 @@ section Attitudes
 
 variable {W : Type*}
 
-/-- On the anaphoric analysis (77), *At five o'clock Mary thought it was six o'clock* says that at
-a past time that is five, every doxastic alternative of Mary's makes that time six; with five not
-six, it holds exactly when Mary has no alternatives at five, believing a contradiction. -/
+/-- On the anaphoric analysis (77), *At five o'clock Mary thought it was six o'clock* holds exactly
+when Mary's beliefs at five are inconsistent. -/
 theorem anaphoric_report_iff (Dox : T → SetRel W W) {five six : T} (hne : five ≠ six) (w : W) :
     ◇[toSetRel ⟦past⟧] (fun t ↦ t = five ∧ □[Dox t] (fun _ ↦ t = six) w) s ↔
       five < s ∧ ∀ w', ¬ w ~[Dox five] w' := by
@@ -389,9 +384,8 @@ theorem exists_lewis_report :
       ◇[toSetRel ⟦past⟧] (fun t ↦ t = 5 ∧ □[Dox] (fun i ↦ i.time = 6) ((), t)) 7 :=
   ⟨{p | p.2.time = 6}, ⟨((), 6), rfl⟩, 5, by decide, rfl, fun _ h ↦ h⟩
 
-/-- In *John thought that he would buy a fish that was still alive* (82) the relative-clause
-tense is bound by *would*, so the fish may be alive only after the speech time, where no deictic
-Past could place it. -/
+/-- In (82) *would* binds the relative-clause tense, so the fish may be alive only after the speech
+time. -/
 theorem exists_bound_relative_after_speech :
     ∃ (Dox : SetRel (Index Unit ℤ) (Index Unit ℤ)) (fish : Unit → Prop)
       (alive buy : Unit → ℤ → Prop),
@@ -411,9 +405,8 @@ section Before
 
 variable {W : Type*} (leave arrive : T → Prop)
 
-/-- *Mary left before John arrived* (92) is the uniform *before* of [beaver-condoravdi-2003] with
-trivial historical alternatives, on which Mary leaves at a past time before the earliest past
-time at which John arrives. -/
+/-- With trivial historical alternatives, the *before* of [beaver-condoravdi-2003] makes *Mary left
+before John arrived* (92) mean that Mary left before John's earliest past arrival. -/
 theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
     (h : ∀ t, alt ⟨w, t⟩ = {w}) :
     BeaverCondoravdi2003.before {i : Index W T | i.time < s ∧ leave i.time}
@@ -422,8 +415,7 @@ theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
   rw [BeaverCondoravdi2003.before, BeaverCondoravdi2003.connective_iff_uniform_of_eq_singleton h]
   simp only [BeaverCondoravdi2003.uniform, Set.mem_ofPred_eq, Kaplan.Index.time_mk]
 
-/-- With *will* in the adjunct of *John will enter the room before Mary will leave* (84e), the
-times after the speech time before some leaving have no earliest member in dense time, so
+/-- With *will* in the adjunct (84e), the relevant times have no earliest member in dense time, so
 EARLIEST is undefined. -/
 theorem not_exists_earliest_will [DenselyOrdered T] :
     ¬ ∃ m, IsLeast {t | s < t ∧ ∃ t', t < t' ∧ leave t'} m := by

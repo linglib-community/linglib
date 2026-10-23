@@ -115,9 +115,8 @@ theorem interp_filter_isNword {es : List (NegElement α)} (hu : ∀ e ∈ es, e.
     · simp only [interp, List.filter_cons, NegElement.isNword, ite_true]
       exact exists_congr fun x ↦ and_congr_right' (ih hes _)
 
-/-- In a strict concord language, where markers and n-words carry `[uNEG]`, every negative
-clause has the single negation of the covert operator over its n-words, wherever the marker
-stands: Czech *Nevolá nikdo* ((20)) and *Nikdo nevolá* ((23)) both mean 'nobody is calling'. -/
+/-- In a strict concord language every negative clause expresses one negation wherever the marker
+stands, as Czech *Nevolá nikdo* ((20)) and *Nikdo nevolá* ((23)). -/
 theorem meaning_of_forall_u {es : List (NegElement α)} (hne : es ≠ [])
     (hu : ∀ e ∈ es, e.feature = .u) (P : List α → Prop) :
     meaning es P ↔ ¬ interp (es.filter NegElement.isNword) P := by
@@ -136,9 +135,8 @@ checks the n-word below it. -/
 theorem meaning_marker_nword : meaning [.marker .i, .nword .u A] P ↔ no A fun x ↦ P [x] := by
   simp [meaning, interp, NegElement.feature, no, GQ.some]
 
-/-- Italian *Nessuno non ha telefonato* 'nobody didn't call' ((36b) of chapter 7): the n-word
-above *non* needs the covert operator, and *non* negates again, so the concord reading
-'nobody called' is out ((66)). -/
+/-- In Italian *Nessuno non ha telefonato* ((36b) of chapter 7), *non* negates again, so the concord
+reading is out ((66)). -/
 theorem meaning_nword_marker : meaning [.nword .u A, .marker .i] P ↔ every A fun x ↦ P [x] := by
   simp [meaning, interp, NegElement.feature, every, GQ.some]
 
@@ -155,10 +153,8 @@ section Comparison
 
 variable [Fintype α] {A B : α → Prop} {P : List α → Prop}
 
-/-- The concord reading of two n-words under the covert operator, Italian *Nessuno ha
-telefonato a nessuno* 'nobody called anybody' ((68)), is de Swart and Sag's resumption of *no*;
-Zeijlstra's objection that this resumption reduces to an iteration ((29) of chapter 7) is
-`Quantifier.Polyadic.resume_no_iff`. -/
+/-- Two n-words under the covert operator mean de Swart and Sag's resumption of *no* ((68)), itself
+an iteration ((29) of chapter 7). -/
 theorem meaning_concord_iff_resumption :
     meaning [.nword .u A, .nword .u B] P ↔
       DeSwartSag2002.reading .resumption A B fun x y ↦ P [x, y] := by

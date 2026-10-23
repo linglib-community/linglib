@@ -143,9 +143,8 @@ theorem orKPstar_notAtIssue (p q : TwoDim W (W → Prop)) (w : W) :
 theorem orKPstar_comm (p q : TwoDim W (W → Prop)) : orKPstar EP sim p q = orKPstar EP sim q p :=
   TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext (and_congr or_comm and_comm))
 
-/-- A closest-worlds presupposition `CLOS_w(P) ⊆ Q` holding throughout `M` strengthens to `Q`
-throughout `M` when the laws in force allow `P` without `Q`, so that from a `¬Q`-world the
-closest `P`-worlds include `¬Q`-worlds (122). This dissolves the Proviso Problem. -/
+/-- A closest-worlds presupposition holding throughout `M` strengthens to `Q` throughout `M` when
+the laws allow `P` without `Q` (122). -/
 theorem presup_strengthens {M P Q : Set W}
     (hlaw : ∀ w ∈ M, w ∉ Q → ¬ clos EP sim w P ⊆ Q) (h : ∀ w ∈ M, clos EP sim w P ⊆ Q) :
     ∀ w ∈ M, w ∈ Q := by
@@ -203,8 +202,8 @@ theorem ifOverExists_atIssue (α β : Property W E) (x y : E) (w : W) :
         {w' | (α y).atIssue w' ∨ (β y).atIssue w'} := by
   simp only [ifOverExists, ifKPstar, exists'_orProps_atIssue]
 
-/-- The ∀-over-if reading presupposes the disjunction of the antecedent and, for each disjoined
-property, that `y`'s having it is defined at the closest worlds where `x` has it (146a). -/
+/-- The ∀-over-if reading presupposes the disjunction of the antecedent and that `y`'s property is
+defined at the closest worlds where `x` has it (146a). -/
 theorem forallOverIf_notAtIssue (α β : Property W E) (x y : E) (w : W) :
     (forallOverIf EP sim α β x y).notAtIssue w ↔
       (orKPstar EP sim (α x) (β x)).notAtIssue w ∧
@@ -245,9 +244,8 @@ theorem forallOverIf_comm (α β : Property W E) (x y : E) :
     forallOverIf EP sim α β x y = forallOverIf EP sim β α x y := by
   rw [forallOverIf, orProps_comm, forallOverIf]
 
-/-- Under a strict conditional, where the closest worlds are all the worlds of the epistemic
-state, the ∀-over-if reading entails the if-over-∃ reading. The responses (33) show that the
-converse fails, (33b) denying only the ∀-over-if reading. -/
+/-- Under a strict conditional the ∀-over-if reading entails the if-over-∃ reading, though not
+conversely by the responses (33), (33b). -/
 theorem forallOverIf_imp_ifOverExists (hstrict : ∀ w Y, clos EP sim w Y = Y ∩ EP)
     (α β : Property W E) (x y : E) (w : W) (h : (orKPstar EP sim (α x) (β x)).notAtIssue w) :
     (forallOverIf EP sim α β x y).atIssue w → (ifOverExists EP sim α β x y).atIssue w := by
@@ -273,10 +271,8 @@ disjunction itself. -/
 def kpstarForallOverIf (α β : Property W E) (x y : E) : TwoDim W (W → Prop) :=
   ifKPstar EP sim (orKPstar EP sim (α x) (β x)) (matched α β x y)
 
-/-- When the closest worlds where `x` has one of the properties are all worlds where `x` has the
-first and not the second, as in Scenario I (141), the conditional over the disjunction
-presupposes nothing about `y` and the second property, which the ∀-over-if reading requires
-(146). -/
+/-- In Scenario I (141), the conditional over the disjunction lacks the presupposition about `y` and
+the second property that the ∀-over-if reading carries (146). -/
 theorem kpstarForallOverIf_notAtIssue_of_closest (α β : Property W E) (x y : E) (w : W)
     (hc : clos EP sim w {w' | (α x).atIssue w' ∨ (β x).atIssue w'} ⊆
       {w' | (α x).atIssue w' ∧ ¬ (β x).atIssue w'}) :
@@ -309,8 +305,7 @@ theorem orKPstar_penniless_proud (x : E) (w : W) :
   simp [orKPstar_notAtIssue, penniless, proudOfMoney, clos_subset]
 
 /-- The ∀-over-if reading of *If Mia is penniless or proud of her money, then Sue is* presupposes
-that Sue has money at the closest worlds where Mia is proud of hers, (146a) for Mia and Sue and
-(135a-iii) before strengthening. -/
+that Sue has money where Mia is proud of hers ((146a); (135a-iii) before strengthening). -/
 theorem roothPartee_notAtIssue (mia sue : E) (w : W) :
     (forallOverIf EP sim (penniless hasMoney) (proudOfMoney hasMoney proudOf) mia sue).notAtIssue
       w ↔ clos EP sim w {w' | proudOf w' mia} ⊆ {w' | hasMoney w' sue} := by

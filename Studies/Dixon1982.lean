@@ -131,18 +131,16 @@ def noClass : List Language := [yurok, samoan]
 def closedClass : List Language :=
   [swahili, luganda, bemba, japanese, sango, hausa, acooli, hua, alamblak, telugu, kiriwinian]
 
-/-- A language with an open adjective class, or with none, has one part of speech that is
-predominant in all seven types, except Tzotzil, most of whose human-propensity items are nouns
-(pp. 43–44). Dixon does not count Tzotzil an exception. -/
+/-- A language with an open adjective class, or none, has one part of speech predominant in all
+seven types, except Tzotzil (pp. 43–44). -/
 theorem exists_predominantly_iff :
     ∀ r ∈ table2, r.language ∈ openClass ++ noClass →
       ((∃ p ∈ [UPOS.ADJ, .VERB], ∀ t, r.Predominantly t p) ↔
         r.language ≠ tzotzil) := by
   decide +kernel
 
-/-- (a) Age, dimension, value and colour have adjectives in every language with a closed
-adjective class, except Bemba and Kiriwinian colour, which are Dixon's exception (3), and Hua
-value, which he does not list. -/
+/-- By (a), in every closed adjective class age, dimension, value and colour have adjectives, except
+Bemba and Kiriwinian colour, Dixon's (3), and Hua value. -/
 theorem takes_adjective_iff :
     ∀ r ∈ table2, r.language ∈ closedClass → ∀ t ∈ [PropertyConcept.Class.age, .dimension,
       .value, .color], (r.Takes t .ADJ ↔
@@ -156,18 +154,15 @@ theorem predominantly_noun_iff :
       (r.Predominantly .humanPropensity .NOUN ↔ r.language ∉ [alamblak, kiriwinian]) := by
   decide +kernel
 
-/-- (c) An adjective class of a given size is more likely to include physical-property adjectives
-than human-propensity ones: every closed class with a human-propensity adjective has a
-physical-property adjective, except in Sango, whose one human-propensity adjunctive is
-*buba* 'foolish' and whose adjunctives include no physical property (pp. 39, 48). -/
+/-- Every closed class with a human-propensity adjective has a physical-property one except in
+Sango, as (c) predicts (pp. 39, 48). -/
 theorem takes_physicalProperty_of_humanPropensity :
     ∀ r ∈ table2, r.language ∈ closedClass → r.Takes .humanPropensity .ADJ →
       (r.Takes .physicalProperty .ADJ ↔ r.language ≠ sango) := by
   decide +kernel
 
-/-- (d) Speed shares a part of speech with what physical property predominantly is, or is an
-adverb where physical property is predominantly verbal, in every language of Table 2, Chinook
-included, but Kiriwinian, which Dixon calls the only real exception (p. 48). -/
+/-- By (d), in every language of Table 2 but Kiriwinian, speed shares physical property's
+predominant part of speech or is an adverb where that is verbal (p. 48). -/
 theorem speed_iff :
     ∀ r ∈ table2,
       ((∃ v ∈ r.speed, ∃ p ∈ v.code.parts, r.Predominantly .physicalProperty p) ∨
@@ -175,9 +170,7 @@ theorem speed_iff :
         r.language ≠ kiriwinian := by
   decide +kernel
 
-/-- The A/V and N/V pairs, an adjective or noun for the unmarked member of an antonym pair and a
-verb for the marked one, occur in Table 2 exactly in Hausa and Alamblak, Dixon's strongly verbal
-languages (p. 51). -/
+/-- In Table 2, A/V and N/V antonym pairs occur exactly in Hausa and Alamblak (p. 51). -/
 theorem pair_iff :
     ∀ r ∈ table2,
       (∃ t, ∃ v ∈ r.cell t, v.code = .adjectiveVerb ∨ v.code = .nounVerb) ↔

@@ -127,9 +127,8 @@ def ex3b : Tree 5 :=
       Word.mk' "bin" .NOUN, Word.mk' "out" .ADP]
     1 [(1, 0, .nsubj), (1, 4, .compound), (1, 3, .obj), (3, 2, .det)])
 
-/-- §3.2: postposing the particle lengthens the dependencies of *threw* by four words with the
-long object of (2) and by one with the short object of (3), the dependency length
-minimization of [temperley-2007] behind the preference for (2a) and its absence in (3). -/
+/-- Postposing the particle lengthens the dependencies of *threw* by four words in (2) and one in
+(3), so [temperley-2007]'s minimization prefers (2a) (§3.2). -/
 theorem particle_shift_length :
     ex2b.totalLength - ex2a.totalLength = 4 ∧ ex3b.totalLength - ex3a.totalLength = 1 := by
   decide
@@ -150,9 +149,8 @@ def ex4b : Tree 9 :=
     6 [(6, 1, .nsubj), (1, 0, .det), (1, 3, .acl), (3, 2, .nsubj), (3, 5, .obj), (5, 4, .det),
       (6, 8, .obj), (8, 7, .det)])
 
-/-- (4): *who* depends on *attacked* in both relatives, three positions away in the object
-relative (4a) and adjacent in the subject relative (4b), the locality of [gibson-1998] behind
-the object-relative penalty. -/
+/-- *Who* is three positions from *attacked* in the object relative (4a) and adjacent in the subject
+relative (4b) of (4), the locality behind [gibson-1998]'s penalty. -/
 theorem relative_filler_distance :
     Nat.dist (ex4a.headOf 2) 2 = 3 ∧ Nat.dist (ex4b.headOf 2) 2 = 1 := by decide
 
@@ -217,9 +215,8 @@ def IsContentSkeleton {m n : ℕ} (t : Fin m → Fin n) (g₁ : Graph m) (g₂ :
   (∀ v w, g₂.label (t v) (t w) = g₁.label v w) ∧ (∀ v, (g₂.words (t v)).cat.isOpenClass) ∧
     ∀ u, (g₂.words u).cat.isOpenClass → ∃ v, t v = u
 
-/-- Figure 7: Finnish, which marks the relations by case, is the content-word skeleton of the
-English sentence, which marks them by function words and word order, and the English function
-words attach below their content words: the core structure is parallel, §4. -/
+/-- In Figure 7, Finnish is the content-word skeleton of the English sentence, whose function words
+attach below its content words (§4). -/
 theorem fig7_parallel :
     IsContentSkeleton ![1, 3, 5, 9] fig7fi.toGraph fig7en.toGraph ∧
       ContentWordsHigher fig7en.toGraph := by
@@ -246,8 +243,8 @@ def fig9Enhanced : Graph 12 :=
     (2, 4, .xcomp), (4, 3, .mark), (5, 10, .obj), (10, 6, .det), (10, 7, .amod),
     (10, 9, .amod), (7, 9, .conj), (9, 8, .cc), (5, 11, .punct)]
 
-/-- §4.4: the enhanced representation is a general graph: *students* has three heads and lies
-on a cycle, heading *forgot* through the relative clause and headed by it as its subject. -/
+/-- The enhanced representation is not a tree, since *students* has three heads and lies on a cycle
+(§4.4). -/
 theorem fig9Enhanced_not_isTree :
     ¬ fig9Enhanced.IsTree ∧ (fig9Enhanced.parents 0).card = 3 ∧
       Relation.TransGen fig9Enhanced.Adj 0 0 := by

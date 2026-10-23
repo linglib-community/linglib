@@ -499,8 +499,8 @@ private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
         add_zero, zero_add, h1, h1', h2, h2', one_add_one_eq_two]
       simp only [ENNReal.ofReal_div_of_pos two_pos, ENNReal.ofReal_ofNat]
 
-/-- By eq. 7, the exponentiated utility of a subject sentence at slip rate `r` for the meaning
-it is true of alone is `exp (-binEntropy r) / 2`. -/
+/-- The exponentiated utility of a subject sentence at slip rate `r` for its unique true meaning is
+`exp (-binEntropy r) / 2` (eq. 7). -/
 theorem rpow_mul_rpow_eq_exp_neg_binEntropy {r : ℝ} (hr₀ : 0 < r) (hr₁ : r < 1) :
     ((1 - r) / 2) ^ (1 - r) * (r / 2) ^ r = exp (-binEntropy r) / 2 := by
   rw [rpow_def_of_pos (div_pos (by linarith) two_pos), rpow_def_of_pos (div_pos hr₀ two_pos),
@@ -539,8 +539,7 @@ theorem channelMix_eq_exp_neg_binEntropy (hε₀ : 0 < ε) (hε₁ : ε < 1) :
       ← ENNReal.ofReal_mul (rpow_nonneg (by linarith) _),
       rpow_mul_rpow_eq_exp_neg_binEntropy (half_pos hε₀) (by linarith)]
 
-/-- A speaker who knows that only Bob went prefers "BOB went" to "Bob went", since halving the
-rate lowers its binary entropy (Fig. 2, right, at depth one). -/
+/-- A speaker who knows only Bob went prefers *BOB went* to *Bob went* (Fig. 2). -/
 theorem S1_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
     (S1 ε .onlyBob).real {.bobWent} < (S1 ε .onlyBob).real {.BOB_went} := by
   obtain ⟨hb, hB⟩ := channelMix_eq_exp_neg_binEntropy hε₀ (by linarith)

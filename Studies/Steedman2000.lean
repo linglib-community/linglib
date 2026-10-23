@@ -318,9 +318,8 @@ def gappingDirection (v : Cat Atom) : Option GappingDirection :=
     | .rslash .. => .backward
     | _ => .forward
 
-/-- Ross's generalization for every basic order. As chapter 7 (77) restates it, the direction of
-gapping follows the direction in which the verb combines, so verb-final orders gap backward and
-verb-initial orders forward, while a verb-medial verb has no argument cluster. -/
+/-- The direction of gapping follows the verb's direction of combination, backward for verb-final
+and forward for verb-initial orders (chapter 7 (77)). -/
 theorem gappingDirection_transitiveCat (a : Arrangement Constituent 3) :
     gappingDirection (transitiveCat a) =
       if a.IsFinal .verb then some .backward else if a.IsInitial .verb then some .forward
@@ -355,9 +354,8 @@ instance : DecidablePred RevealedResidue
   | .lslash x _ y => inferInstanceAs (Decidable (x = S ∧ RightwardInto S y))
   | .rslash .. | .atom _ => isFalse id
 
-/-- The revealing rule exposes exactly the verb-initial transitive verbs, since its revealed
-category is `S/$`. An SVO clause, whose own verb has no argument cluster, therefore gaps over a
-virtual verb-initial verb, as English does in chapter 7 (62). -/
+/-- The revealing rule exposes exactly the verb-initial transitive verbs, so an SVO clause gaps over
+a virtual verb-initial verb (chapter 7 (62)). -/
 theorem rightwardInto_transitiveCat_iff (a : Arrangement Constituent 3) :
     RightwardInto S (transitiveCat a) ↔ a.IsInitial .verb := by
   revert a; decide
@@ -614,10 +612,9 @@ def scopeData : List (VerbOrder × Judgment) :=
       ("verbProjectionRaising", .verbProjectionRaising)]).bind
       fun vo ↦ (ex.readings.lookup "inverse").map (vo, ·)
 
-/-- The inverse reading is acceptable exactly where some derivation lets the quantified object
-combine with a constituent containing the tensed verb, in every judgment of the book's examples
-(96) to (100), credited in the data to [bayer-1996], [kayne-1998],
-[haegeman-van-riemsdijk-1986] and [haegeman-1992]. -/
+/-- The inverse reading is acceptable exactly where the quantified object can combine with a
+constituent containing the tensed verb (examples (96) to (100); [bayer-1996], [kayne-1998],
+[haegeman-van-riemsdijk-1986], [haegeman-1992]). -/
 theorem inverse_acceptable_iff_available :
     ∀ d ∈ scopeData, d.2 = .acceptable ↔ InverseAvailable d.1 := by
   have key : ∀ d ∈ scopeData, d.2 = .acceptable ↔ d.1 = .verbRaising := by decide
@@ -674,8 +671,8 @@ def mannyThemeAccents : AccentAssignment String := fun w ↦
   | "Manny" => some (.leading .L .H)
   | _ => none
 
-/-- Under the mirror tune the theme is the applicative constituent "married MANNY", while the
-composed "ANNA married" of (14) carries the rheme, so the tune selects the derivation. -/
+/-- Under the mirror tune the theme is the applicative constituent *married MANNY*, and the composed
+*ANNA married* of (14) carries the rheme. -/
 theorem married_manny_theme :
     (Derivation.fapp (R := .multimodal) (.lex "married" TV) (.lex "Manny" NP)).infoFeature
         mannyThemeAccents = some .θ ∧

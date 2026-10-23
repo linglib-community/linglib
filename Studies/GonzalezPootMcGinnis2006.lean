@@ -161,15 +161,14 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Under Local Fission, (19) to (24), a row is grammatical iff its overt verbal suffixes are what
-strict scansion of (27) inserts, *-éːš* before *-oʔob* in both (20) and (22) and *-oʔob* once in
-(24). -/
+/-- Under Local Fission, a row of (19) to (24) is grammatical iff its suffixes are what strict
+scansion of (27) inserts, as in (20), (22) and (24). -/
 theorem suffixes_rows :
     ∀ r ∈ rows, r.judgment = .acceptable ↔ suffixes r.subj r.obj = r.suffixes := by
   decide
 
-/-- The template (18) predicts every starred form, *-oʔob-éːš* for (21) and *-oʔob-oʔob* for
-(23), and fails the grammatical (22) and (24), whose orders it reverses or doubles. -/
+/-- The template (18) predicts the starred forms of (21) and (23) but fails the grammatical (22) and
+(24). -/
 theorem template_rows :
     (∀ r ∈ rows, ∀ o ∈ r.obj,
         r.judgment = .ungrammatical → templateSuffixes r.subj o = r.suffixes) ∧
@@ -185,8 +184,8 @@ theorem aux_prefix_rows :
 
 /-! ### Against long-distance Fission, section 5 -/
 
-/-- In the paradigm (39) for second and third person, the auxiliary suffix and the prefix mark
-person alone, and plurality is a verbal suffix, the distribution of (36) to (38). -/
+/-- In the paradigm (39), second and third person mark only person on the auxiliary and prefix and
+plurality by a verbal suffix ((36) to (38)). -/
 theorem ergative_paradigm (p : Person) (h : p = .second ∨ p = .third) :
     aux (p, numberSystem.value .singular) = aux (p, numberSystem.value .plural) ∧
       verbPrefix (p, numberSystem.value .singular) = verbPrefix (p, numberSystem.value .plural) ∧
@@ -194,9 +193,8 @@ theorem ergative_paradigm (p : Person) (h : p = .second ∨ p = .third) :
       suffixes (p, numberSystem.value .plural) none ≠ [] := by
   rcases h with rfl | rfl <;> decide
 
-/-- In the paradigm (39) for first person, the auxiliary distinguishes singular from plural and no
-verbal suffix marks number, since (42) makes first-person number a person distinction, (3) and (4).
--/
+/-- In the paradigm (39), first-person number is marked on the auxiliary and by no verbal suffix, a
+person distinction under (42) ((3), (4)). -/
 theorem first_person_paradigm :
     aux (.first, numberSystem.value .singular) ≠ aux (.first, numberSystem.value .plural) ∧
       ∀ pl, suffixes (.first, pl) none = [] := by
@@ -246,8 +244,8 @@ theorem privative_aux_prefix :
       subsetPrinciple agr2' (privMatrix r.subj.1 r.subj.2 .erg) = verbPrefix r.subj := by
   decide
 
-/-- The privative Agr3 list (A4) fails a grammatical row: in (20) the object's residue after
-*-éːš* is [Participant, NOM], which *-en* matches, where the binary [−Auth] of (27) blocks it. -/
+/-- The privative Agr3 list (A4) wrongly inserts *-en* in the grammatical (20), which the binary
+[−Auth] of (27) blocks. -/
 theorem privative_suffixes :
     suffixes' (.third, numberSystem.value .plural) (some (.second, numberSystem.value .plural)) =
       ["éːš", "en", "oʔob"] ∧

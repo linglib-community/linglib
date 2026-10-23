@@ -137,9 +137,8 @@ theorem not_goodAnswer_of_stronger {w : W} (hc : s.complexity v ≤ s.complexity
     ¬ s.GoodAnswer u w :=
   fun h ↦ h.2.2 ⟨v, ⟨⟨hc, hs.1⟩, fun h' ↦ hs.2 h'.2⟩, hw, hr⟩
 
-/-- A disjunction whose second disjunct entails the first says what the first does at greater
-complexity, so it is a needlessly complex answer (22) where the first disjunct is a true relevant
-one. -/
+/-- A disjunction whose second disjunct entails the first is a needlessly complex answer (22) where
+the first disjunct is true and relevant. -/
 theorem not_goodAnswer_disj {d φ ψ : U} {w : W} (hd : s.meaning d = s.meaning φ ∪ s.meaning ψ)
     (hψ : s.meaning ψ ⊆ s.meaning φ) (hc : s.complexity φ < s.complexity d)
     (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) : ¬ s.GoodAnswer d w := by
@@ -184,16 +183,13 @@ abbrev scalar (context : Set Triangle) : Scenario Triangle Scalar Scalar where
   context := context
   question u := {w | scalarDenotes u w}
 
-/-- Where the context makes *some* and *all* equivalent, as common knowledge that Italy is warm
-or that every father names all his children alike does in (1) and (19), the question they form
-has one live answer and both are odd. -/
+/-- Where the context makes *some* and *all* equivalent, as in (1) and (19), both are odd. -/
 theorem some_all_odd_of_settled :
     (scalar {w | w ≠ .IO}).Settled ∧
       ∀ u w, ¬ (scalar {w | w ≠ .IO}).Felicitous u w := by
   decide
 
-/-- Where the equivalence is the speaker's belief rather than common knowledge (17), the
-question is open, and where the property holds of all *all* is a good answer while *some* is
+/-- Where the equivalence is only the speaker's belief (17), *all* is a good answer and *some* is
 needlessly weak. -/
 theorem all_felicitous_some_odd :
     (scalar Set.univ).Felicitous .all_ .A ∧ ¬ (scalar Set.univ).Felicitous .some_ .A := by

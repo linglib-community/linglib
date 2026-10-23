@@ -139,9 +139,8 @@ def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
   else (v.slotProfile? .external).map fun θ ↦
     if .volition ∈ θ then nonmotionalProcess else uncontrolledProcess
 
-/-- A bounded directional phrase makes a dynamic verb that selects one a change of location, the
-bottom of the hierarchy: the directed motion use in which verbs of manner of motion take *be*
-([sorace-2000] §4.3, [levin-hovav-1995] p. 185). -/
+/-- A bounded directional phrase makes a dynamic verb a change of location, the bottom of the
+hierarchy ([sorace-2000] §4.3, [levin-hovav-1995] p. 185). -/
 theorem ofVerb_withPath_eq_bot {v : Verb} {p : Adposition.SpatialReading} (hv : v.TakesSpatial)
     (hb : p.IsBounded) {c : Aspect.VendlerClass} (hc : v.vendlerClass = some c)
     (hdyn : c.dynamicity = .dynamic) : ofVerb (v.withPath p) = some ⊥ := by

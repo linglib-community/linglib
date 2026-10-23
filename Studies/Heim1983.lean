@@ -90,8 +90,8 @@ noncomputable def ifKingHasSon : CCP.Partial W :=
 
 variable {king son bald}
 
-/-- A context admits (3) iff it entails that there is a king (§2.1), since it must admit (1),
-    and its update by (1) then admits (2) automatically. -/
+/-- A context admits (3) iff it entails there is a king, since it must admit (1) and its update by
+(1) admits (2) (§2.1). -/
 theorem king_admits_iff (c : Set W) :
     (ifKingHasSon king son bald).Admits c ↔ ∀ w ∈ c, king w := by
   simp [ifKingHasSon, admits_cond_ofTrivalent_iff, admits_ofTrivalent, Set.subset_def,
@@ -136,9 +136,7 @@ theorem localNeg_admits {c : Set W} (h : φ.Admits (c ∩ p)) : (localNeg φ p).
 theorem globalNeg_entails {c c' : Set W} (h : c' ∈ globalNeg φ p c) : c' ⊆ p :=
   fun _ hw ↦ (isEliminative_neg φ _ _ h hw).2
 
-/-- The local option's result is the context minus the amended update, so (16) continued
-    with *because France doesn't have a king* entails only that either France has no king or
-    he did not come. -/
+/-- Under the local option, (16) entails only that France has no king or he did not come. -/
 theorem localNeg_entails {came : W → Prop} [DecidablePred came] {c c' : Set W}
     (h : c' ∈ localNeg (ofTrivalent (p.indicator fun w ↦ SignType.ofProp (came w))) p c) :
     c' = {w ∈ c | w ∉ p ∨ ¬ came w} := by
@@ -232,18 +230,14 @@ theorem every_admits_iff (i : ℕ) (A B : CCP.Partial ((ℕ → M) × W)) (c : F
     (every i A B).Admits c ↔ ∃ h : A.Admits c, B.Admits ((A c).get h) :=
   Iff.rfl
 
-/-- With a presupposition-free restrictor `A xᵢ` and a nuclear scope presupposing `pre xᵢ`,
-    the file must satisfy `pre` at the `i`-th member of every pair that survives `A`
-    ((ii) of §3.2). -/
+/-- With restrictor `A xᵢ` and scope presupposing `pre xᵢ`, every pair of the file satisfying `A`
+must satisfy `pre` ((ii) of §3.2). -/
 theorem every_atom_admits_iff (i : ℕ) (A pre B : M → W → Prop) (c : File M W) :
     (every i (atom A i) (atomP pre B i)).Admits c ↔
       ∀ gw ∈ c, A (gw.1 i) gw.2 → pre (gw.1 i) gw.2 :=
   ⟨fun ⟨_, h⟩ gw hgw hA => h gw ⟨hgw, hA⟩, fun h => ⟨trivial, fun gw hgw => h gw hgw.1 hgw.2⟩⟩
 
-/-- (7) presupposes that every nation has a king. Under (22) the condition of
-    `every_atom_admits_iff` holds iff, in every world of the file's proposition, every
-    individual satisfying the restrictor satisfies the presupposition. The novelty
-    stipulation is what makes the universal presupposition necessary, not only sufficient. -/
+/-- For a novel index, (7) presupposes under (22) that every nation has a king. -/
 theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
     (every i (atom nation i) (atomP hasKing cherishes i)).Admits c ↔
@@ -257,9 +251,8 @@ theorem every_nation_presupposes (i : ℕ) (nation hasKing cherishes : M → W �
   · rintro h ⟨g, w⟩ hgw hn
     exact h w ⟨g, hgw⟩ _ hn
 
-/-- A presupposition in the restrictor projects universally too (23). *Everyone who serves
-    his king will be rewarded* presupposes that everyone has a king, where
-    [karttunen-peters-1979] predict no presupposition. -/
+/-- A presupposition in the restrictor projects universally (23), contrary to the prediction of
+[karttunen-peters-1979]. -/
 theorem every_restrictor_presupposes (i : ℕ) (hasKing serves rewarded : M → W → Prop)
     {c : File M W} (hc : c.NovelIn i) :
     (every i (atomP hasKing serves i) (atom rewarded i)).Admits c ↔
@@ -403,9 +396,8 @@ theorem File.toState_sep (hi : i ∈ X) (P : M → W → Prop) :
     obtain ⟨-, rfl⟩ := File.pointAt_assignment_eq_coe_iff.mp hm
     exact ⟨(g, w), ⟨hg, hP⟩, rfl⟩
 
-/-- (19) is the atomic rule of [heim-1982]. The update of a file by an open sentence, read at
-    the cards of the file together with the sentence's, is the merge of the file's state with
-    the atom's proposition state. -/
+/-- Under (19), the atomic rule of [heim-1982], updating a file merges its state with the atom's
+proposition state. -/
 theorem File.toState_atom (hc : c.DeterminedBy X) (P : M → W → Prop) :
     File.toState (insert i X) {gw ∈ c | P (gw.1 i) gw.2} =
       c.toState X * State.atomAt i fun w m ↦ P m w := by
@@ -421,9 +413,8 @@ theorem File.toState_sdiff (hc' : c'.DeterminedBy X) :
   · rintro ⟨⟨gw, h₁, rfl⟩, h₂⟩
     exact ⟨gw, ⟨h₁, fun h ↦ h₂ ((File.pointAt_mem_toState hc' gw).mpr h)⟩, rfl⟩
 
-/-- (15) is non-subsistence negation. On the stratum, a potential that sends the file's state
-    to a determined file's state negates, in the sense of [heim-1982], to the set difference of
-    the files. -/
+/-- The non-subsistence negation (15) of [heim-1982] takes a determined file's state to the set
+difference of the files. -/
 theorem File.neg_toState {φ : FCP W ℕ M} (hφ : φ (c.toState X) = Part.some (c'.toState X))
     (hc' : c'.DeterminedBy X) :
     FCP.neg φ (c.toState X) = Part.some ((c \ c').toState X) := by
@@ -431,9 +422,8 @@ theorem File.neg_toState {φ : FCP W ℕ M} (hφ : φ (c.toState X) = Part.some 
   refine congrArg Part.some (Set.ext fun p ↦ and_congr_right fun hp ↦ ?_)
   exact not_congr (File.uniformAt_toState (c := c').mem_lowerClosure (File.uniformAt_toState p hp))
 
-/-- (21) is rule (III) of [heim-1982]. On files determined by their cards, the clause keeping
-    the pairs each of whose `i`-variants surviving `A` survives `B` is the clause keeping the
-    points each of whose extensions in `F + A` extends into `(F + A) + B`. -/
+/-- On determined files, (21), rule (III) of [heim-1982], keeps the points each of whose extensions
+in `F + A` extends into `(F + A) + B`. -/
 theorem File.toState_everyClause (hi : i ∉ X) (hA : cA.DeterminedBy (insert i X))
     (hB : cAB.DeterminedBy (insert i X)) :
     (File.everyClause i c cA cAB).toState X =
@@ -509,14 +499,8 @@ end Files
 
 /-! ### The conjunction filter of Karttunen (1973) -/
 
-/-- Admittance of the sequenced update is [karttunen-1974-presupposition]'s satisfaction
-    condition for conjunction, that the context satisfies the presuppositions of the first conjunct,
-    and the context incremented with the first conjunct those of the second. [karttunen-1973]'s
-    filter for conjunction, relativized to the context as its assumed facts, requires the same of
-    the context, the equivalence [karttunen-1974-presupposition] proves for the conditional,
-    (8)–(14). The relativized filter leaves out Murphy's restriction that the facts be consistent
-    with the first conjunct, under which a context contradicting the first conjunct would still
-    have to satisfy the presuppositions of the second, though it admits the update. -/
+/-- Admittance of the sequenced update is [karttunen-1974-presupposition]'s satisfaction condition
+for conjunction, equivalent to [karttunen-1973]'s filter relativized to the context ((8)–(14)). -/
 theorem admits_seq_iff_conj {W : Type*} (c : Set W) (p q : W → SignType) :
     (seq (ofTrivalent p) (ofTrivalent q)).Admits c ↔
       ∀ C ∈ (Karttunen1973.conj (fun P C ↦ c ∩ P ⊆ C) (.ofTrivalent p)

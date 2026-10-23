@@ -48,9 +48,8 @@ open Quantifier ModalLogic SetRel
 
 variable {W E : Type*} {R : SetRel W W} {w₀ : W} {VP : E → W → Prop}
 
-/-- Closing a world-skolemized choice function above the negation, with its world argument bound
-by the operator, (44) and (48), makes the sentence true exactly when every accessible world has
-a member of the restrictor that fails the predicate there. -/
+/-- A world-skolemized choice function closed above negation makes the sentence true iff every
+accessible world has a restrictor member failing the predicate ((44), (48)). -/
 theorem skolemized_iff {N : W → E → Prop} (hN : ∀ w, ∃ x, N w x) :
     (∃ F : W → ChoiceFunction E, Box R (fun w ↦ ¬ VP (F w (N w)) w) w₀) ↔
       Box R (fun w ↦ GQ.some (N w) (¬ VP · w)) w₀ := by
@@ -63,9 +62,8 @@ theorem skolemized_iff {N : W → E → Prop} (hN : ∀ w, ∃ x, N w x) :
     exact ⟨x, hx, fun _ ↦ h'⟩
   · exact ⟨b, hb, (absurd · hw)⟩
 
-/-- An intensional choice function applied to a restrictor whose extension is one fixed set `B`
-in every accessible world, (41) with (42), makes the sentence true exactly when one member of `B`
-fails the predicate in every accessible world, the de re reading. -/
+/-- On a restrictor fixed across accessible worlds, an intensional choice function gives the de re
+reading ((41), (42)). -/
 theorem intensional_iff_of_fixed {N : W → E → Prop} {B : E → Prop} (hB : ∃ x, B x)
     (hN : ∀ w, w₀ ~[R] w → N w = B) :
     (∃ f : ChoiceFunction E, Box R (fun w ↦ ¬ VP (f (N w)) w) w₀) ↔
@@ -116,8 +114,7 @@ theorem skolemized :
     simp only [Box, GQ.some, Read, not_not]
     decide
 
-/-- No intensional choice function makes (40) true in its context, since the books are the same
-in every belief world and no book went unread in all of them. -/
+/-- No intensional choice function makes (40) true in its context. -/
 theorem not_intensional :
     ¬ ∃ f : ChoiceFunction Book, Box beliefs (fun w ↦ ¬ Read (f fun _ ↦ True) w) .actual := by
   rw [intensional_iff_of_fixed (N := fun _ _ ↦ True) (B := fun _ ↦ True) ⟨.a, trivial⟩

@@ -172,8 +172,8 @@ theorem globalReading_eq_localReading_of_isSome (i : I) (h : (wetsuit i).isSome)
   simp only [globalReading, localReading, consequent, materialCond_decide]
   cases hw : wetsuit i <;> split_ifs <;> simp_all
 
-/-- By Left Identity, a unit applied outside the trigger's scope reconstructs, giving the local
-reading again rather than the global one, as the paper's footnote on Figure 6 observes. -/
+/-- By Left Identity, a unit applied outside the trigger's scope gives the local reading (footnote
+on Figure 6). -/
 theorem reconstruct (i : I) :
     (pure (consequent wetsuit bring i) >>= fun ψ ↦ materialCond (some (decide (bro i))) ψ) =
       localReading bro wetsuit bring i :=

@@ -85,14 +85,13 @@ the values of the variable that verify it. It is the substrate's abstraction ove
 without movement. -/
 abbrev idxBind (n : ℕ) (φ : Assignment E → Prop) : Assignment E → E → Prop := lambdaAbsG n φ
 
-/-- A familiar DP, D's ι over the restriction modified by the index as a variable ((15), (35b),
-(97) and (106)), is the substrate's anaphoric description, which denotes the antecedent if it
-satisfies the restriction. -/
+/-- A familiar DP is the anaphoric description, denoting the antecedent if it satisfies the
+restriction ((15), (35b), (97) and (106)). -/
 theorem denote_anaphoric_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
     ⟦DefiniteDescription.anaphoric R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) := rfl
 
-/-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) add a deictic presupposition
-and otherwise contribute ι, so a demonstrative refers as the anaphoric DP does. -/
+/-- The demonstrative D heads *hádi* and *wídi* of (34b) and (34c) refer as the anaphoric DP does.
+-/
 theorem denote_demonstrative_eq_iota (R : Restrictor E W) (d : ℕ) (g : Assignment E) (s : W) :
     ⟦DefiniteDescription.demonstrative R d⟧ g s = iota (fun x ↦ R g s x ∧ idxVar d g x) :=
   rfl
@@ -105,25 +104,22 @@ value, and the clause `ψ` says the rest of it. -/
 def openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) : Assignment E → Prop :=
   fun g ↦ P (g n) ∧ ψ g
 
-/-- The property (71) that the index yields by binding the restricted variable in situ is the
-property (59) that an externally headed relative builds by abstracting over the trace and
-intersecting with the head noun. -/
+/-- The property (71) the index yields by binding in situ is the property (59) an externally headed
+relative builds. -/
 theorem idxBind_openClause (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
     idxBind n (openClause n P ψ) g = Modifier.intersective P (lambdaAbsG n ψ g) := by
   funext x
   simp only [idxBind, lambdaAbsG, openClause, Function.update_self, Modifier.intersective_apply]
 
-/-- The silent D over the bound clause, (72), refers to what the definite over the externally
-headed relative, (60), refers to, the same meaning reached by different steps. -/
+/-- The silent D over the bound clause (72) refers to what the definite over the externally headed
+relative (60) refers to. -/
 theorem iota_idxBind (n : ℕ) (P : E → Prop) (ψ : Assignment E → Prop) (g : Assignment E) :
     iota (idxBind n (openClause n P ψ) g) =
       iota (Modifier.intersective P (lambdaAbsG n ψ g)) := by
   rw [idxBind_openClause]
 
-/-- Without a free occurrence of the index, when `φ` depends only on the other indices, the
-binder meaning is constant and binds nothing. The Prohibition against Vacuous Binding (86) then
-leaves only the variable meaning, which is why a perception nominalization (106), a property of
-events with no open variable, is a familiar DP. -/
+/-- If `φ` does not depend on the index, the binder meaning is constant, so by (86) a perception
+nominalization (106) is a familiar DP. -/
 theorem idxBind_eq_const {n : ℕ} {φ : Assignment E → Prop} (h : DependsOn φ {n}ᶜ)
     (g : Assignment E) : idxBind n φ g = fun _ ↦ φ g :=
   lambdaAbsG_eq_const_iff.2 h g
@@ -164,11 +160,9 @@ def idxExponent (n : Neighborhood (Finset Feat)) : Option String :=
 def dExponent (n : Neighborhood (Finset Feat)) : Option String :=
   dItems.realize contextualSpecificity n
 
-/-- The exponent *gi ~ ge* is distributed as in (108) to (115) and (127) to (129). It is overt in
-pronouns, whose NP is elided (113), at the edge of clausal nominalizations (114), and in
-demonstratives, whose complement is RP (129), each alternating for case ((44), (45)). It is null
-before the overt NP of an anaphoric bare definite (115), and still null under dependent case
-(22), where the contextual entry outranks the case entry. -/
+/-- The exponent *gi ~ ge* ((108) to (115), (127) to (129)) is overt in pronouns (113),
+nominalizations (114) and demonstratives, and null before an overt NP (115) even under dependent
+case (22), alternating for case ((44), (45)). -/
 theorem idxExponent_distribution :
     idxExponent ⟨{.idx}, [], [{.elided}]⟩ = some "gi" ∧
       idxExponent ⟨{.idx, .dep}, [], [{.elided}]⟩ = some "ge" ∧
@@ -179,9 +173,8 @@ theorem idxExponent_distribution :
       idxExponent ⟨{.idx, .dep}, [], [{.np}]⟩ = some "" := by
   decide
 
-/-- Under the Elsewhere score alone the case entry and the contextual entry tie on the accusative
-bare definite and vocabulary order decides for *ge*; the paper's ordering (118) is what makes
-the null entry win. -/
+/-- On the accusative bare definite the Subset Principle alone picks *ge* by vocabulary order,
+whereas the ordering (118) makes the null entry win. -/
 theorem subsetPrinciple_accusative_bare :
     subsetPrinciple idxItems ⟨{.idx, .dep}, [], [{.np}]⟩ = some "ge" := by
   decide

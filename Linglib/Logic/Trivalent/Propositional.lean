@@ -203,8 +203,8 @@ open scoped Formula
 
 variable {Atom : Type*}
 
-/-- Negation dualizes consequence, so `Γ ⊨ Δ` at `m, n` iff `¬Δ ⊨ ¬Γ` at the dual standards, and
-K3 and LP are each other's duals ([cobreros-etal-2012], Lemma 6). -/
+/-- Negation dualizes consequence, so K3 and LP are each other's duals ([cobreros-etal-2012], Lemma
+6). -/
 theorem consequence_iff_dual {C : Connectives} {m n : Trivalent.Designation}
     {Γ Δ : List (Formula Atom)} :
     Consequence C m n Γ Δ ↔ Consequence C n.dual m.dual (Δ.map .neg) (Γ.map .neg) :=

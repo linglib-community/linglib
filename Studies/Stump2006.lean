@@ -298,8 +298,7 @@ def Entry.hardMascStem (e : Entry) : Option Stem :=
 hard-masculine stem. -/
 def Entry.softMascCoradical (e : Entry) : Option Stem := e.hardMascStem.bind inferSoftMasc
 
-/-- Rule (18) supplies a soft-masculine coradical to SLUHA, whose hard-masculine stem is a
-coradical, and to FILOLOG, whose hard-masculine stem is its root, and to no other noun. -/
+/-- Rule (18) supplies a soft-masculine coradical to SLUHA and FILOLOG and to no other noun. -/
 theorem softMascCoradical_isSome_iff :
     ∀ l, (entry l).softMascCoradical.isSome ↔ l = .sluha ∨ l = .filolog := by
   decide
@@ -492,9 +491,8 @@ theorem suppliedNomPl_eq_none_iff (l : CzNoun) :
     suppliedNomPl l = none ↔ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
   cases l <;> decide
 
-/-- The fragment's endings alone realize the attested forms at every cell but the nominative and
-vocative plural of PŘEDSEDA, SLUHA and FILOSOF, where Tables 6 and 8 give -ové: MUŽ's and
-FILOLOG's nominative plurals are the fragment's. -/
+/-- The fragment's endings realize every attested form except the nominative and vocative plural
+-ové of PŘEDSEDA, SLUHA and FILOSOF (Tables 6 and 8). -/
 theorem czRealizeTable_stemFor_iff (l : CzNoun) (σ : CzCell) :
     czRealizeTable (stemFor l σ) σ = attested l σ ↔
       σ ∉ nomVocPl ∨ l ≠ .predseda ∧ l ≠ .sluha ∧ l ≠ .filosof := by
@@ -508,25 +506,20 @@ theorem czRealizeTable_stemFor_iff (l : CzNoun) (σ : CzCell) :
     exact miss l σ hc.1 hc.2 h
   · rw [czRealizeTable_eq_czRealize (by rwa [stemFor_lexeme]), czRealize_stemFor]
 
-/-- The hard-masculine coradical of a noun of the PŘEDSEDA subclass realizes the dative and
-locative singular with -ovi alone, the prediction of n. 14 that *předsed* and *sluh* lack the
--u alternant. It agrees with Short's *hrdinovi* (Table 9.5) and his remark that "-ovi is
-specifically associated with animates" (Short, p. 467), and with *Mluvnice češtiny*'s single
-form *předsedovi*, *sluhovi* (p. 292). -/
+/-- The hard-masculine coradical of a PŘEDSEDA-subclass noun takes only -ovi in the dative and
+locative singular (n. 14; Short, Table 9.5, p. 467; *Mluvnice češtiny*, p. 292). -/
 theorem coradical_no_u : ∀ l, (entry l).InPredsedaSubclass → ∀ σ ∈ datLocSg,
     czRealize ⟨l, .hardMasc⟩ σ = {(entry l).segments ++ ["o", "v", "i"]} := by
   decide
 
-/-- PŘEDSEDA's paradigm, derived by rules (14) and (15) from a hard-feminine root and a
-hard-masculine coradical, is Short's paradigm of the masculine a-stems, *hrdina* (Table 9.5),
-on its stem. -/
+/-- PŘEDSEDA's paradigm, derived by rules (14) and (15), is Short's paradigm of *hrdina* on its stem
+(Table 9.5). -/
 theorem predseda_eq_hrdina : ∀ σ, czRealize (stemFor .predseda σ) σ =
     ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset := by
   decide +kernel
 
-/-- Without its own class's nominative plural, PŘEDSEDA's paradigm agrees with *hrdina*'s in
-twelve of its fourteen cells, the nominative and vocative plural of the hard-masculine coradical
-being *chlapi*'s -i (Short, Table 9.2). -/
+/-- PŘEDSEDA's paradigm agrees with *hrdina*'s outside the nominative and vocative plural, which
+take *chlapi*'s -i (Short, Table 9.2). -/
 theorem predseda_table_eq_hrdina_iff (σ : CzCell) : czRealizeTable (stemFor .predseda σ) σ =
     ((Czech.predseda.cls.endings σ).map (Czech.predseda.stem ++ ·)).toFinset ↔ σ ∉ nomVocPl := by
   rw [← predseda_eq_hrdina, czRealize_stemFor, czRealizeTable_stemFor_iff]
@@ -539,29 +532,23 @@ theorem sluha_eq_hrdina_iff : ∀ σ, czRealize (stemFor .sluha σ) σ =
       σ ≠ .of .loc .plural := by
   decide +kernel
 
-/-- Rules (17) and (18), with the second palatalization, give SLUHA's locative plural
-*sluzích*, the form both grammars give (Short, p. 467; *Mluvnice češtiny*, pp. 292, 300). The
-fragment's rule that a velar stem of the hard masculines takes -ích on the palatalized stem gives
-SLUHA's hard-masculine coradical the same form, so the form alone does not decide between Stump's
-route through the soft-masculine coradical and the grammar's rule, which differ in the class the
-cell inflects in and so in the degrees of correlation. -/
+/-- Rules (17) and (18) give SLUHA's locative plural *sluzích*, as does the hard-masculine velar
+rule (Short, p. 467; *Mluvnice češtiny*, pp. 292, 300). -/
 theorem sluha_locPl : czRealize (stemFor .sluha (.of .loc .plural)) (.of .loc .plural) =
       {Czech.Declension.segments "sluzích"} ∧
     czRealize ⟨.sluha, .hardMasc⟩ (.of .loc .plural) = {Czech.Declension.segments "sluzích"} := by
   decide +kernel
 
-/-- Rules (17) and (18), with the second palatalization, give FILOLOG's locative plural
-*filolozích*, as Short gives *geolozích* for *geolog* 'geologist' (Short, p. 462) and *Mluvnice
-češtiny* *filolozích* itself (p. 295). The fragment's velar rule gives FILOLOG's hard-masculine
-root the same form. -/
+/-- Rules (17) and (18) give FILOLOG's locative plural *filolozích*, as does the hard-masculine
+velar rule (Short, p. 462; *Mluvnice češtiny*, p. 295). -/
 theorem filolog_locPl : czRealize (stemFor .filolog (.of .loc .plural)) (.of .loc .plural) =
       {Czech.Declension.segments "filolozích"} ∧
     czRealize ⟨.filolog, .hardMasc⟩ (.of .loc .plural) =
       {Czech.Declension.segments "filolozích"} := by
   decide +kernel
 
-/-- FILOLOG's vocative singular is *filologu*, the -u of a velar hard-masculine stem
-(Short, p. 465; *Mluvnice češtiny*, p. 292), where the table's ending is *chlape*'s -e. -/
+/-- FILOLOG's vocative singular is *filologu*, though the hard-masculine table's ending is -e
+(Short, p. 465; *Mluvnice češtiny*, p. 292). -/
 theorem filologu_voc :
     czRealize (stemFor .filolog (.of .voc .singular)) (.of .voc .singular) =
         {Czech.Declension.segments "filologu"} ∧
@@ -592,10 +579,8 @@ theorem segments_invariant (l : CzNoun) : czLinkage.IsInvariantAlong Stem.segmen
 though phonologically identical, are two stems. -/
 theorem pramen_suppletive : czLinkage.IsSuppletive .pramen := pramen_heteroclite.isSuppletive
 
-/-- PRAMEN's class in each cell, as rule (14) assigns it, is the class the fragment gives
-*kořen* in that cell's number, *stroj* in the singular and *hrady* in the plural (Short, p. 469),
-*Mluvnice češtiny* listing *kořen* and *pramen* together among the masculines in -en- that
-decline soft in the singular and hard in the plural (p. 310). -/
+/-- Rule (14) assigns PRAMEN in each cell the class the fragment gives *kořen* in that number
+(Short, p. 469; *Mluvnice češtiny*, p. 310). -/
 theorem pramen_eq_koren_pattern :
     ∀ σ, (cellClass .pramen σ).toClass (entry .pramen).animate = Czech.koren.clsAt σ.number := by
   decide
@@ -872,25 +857,21 @@ theorem sluha_fractured : IsFractured (cellClass .sluha) := by decide
 /-- FILOLOG's paradigm is fractured. -/
 theorem filolog_fractured : IsFractured (cellClass .filolog) := by decide
 
-/-- Number is a maximal correlate of heteroclisis in the fractured paradigms of PŘEDSEDA and
-SLUHA, as (38) (p. 312) has it: "just as number is the absolute correlate of heteroclisis in
-the cloven paradigm of Czech PRAMEN, it is likewise the maximal correlate of heteroclisis in the
-fractured paradigms of PŘEDSEDA and SLUHA." -/
+/-- Number is a maximal correlate of heteroclisis in the fractured paradigms of PŘEDSEDA and SLUHA
+((38), p. 312). -/
 theorem number_maximal_predseda_sluha :
     IsMaximalCorrelate .number (cellClass .predseda) ∧
       IsMaximalCorrelate .number (cellClass .sluha) := by
   decide
 
-/-- FILOLOG's fractured paradigm has no maximal correlate (p. 313), so (38), by which maximal
-correlates of fractured paradigms "tend to be" the absolute correlates of cloven ones, states a
-tendency. -/
+/-- FILOLOG's fractured paradigm has no maximal correlate, so (38) holds only as a tendency (p.
+313). -/
 theorem filolog_no_maximal : ∀ c, ¬ IsMaximalCorrelate c (cellClass .filolog) := by decide
 
 /-! ### Rules sensitive to a category -/
 
-/-- Rules whose applicability sees only `A` make a noun's class split factor through `A`. So
-by (41a), number "would be an absolute correlate of heteroclisis in the cloven paradigms of
-type-I verbal lexemes" (p. 317). -/
+/-- If every rule's applicability factors through `A`, so does the noun's class split ((41a), p.
+317). -/
 theorem isAbsoluteCorrelate_of_rules {V : Type*} (l : CzNoun) (A : CzCell → V)
     (h : ∀ r ∈ czRules l, (Exponence.Applies r).FactorsThrough A) :
     (fun σ ↦ (stemFor l σ).decl).FactorsThrough A :=
@@ -923,9 +904,7 @@ theorem privileged_number : Privileged cellClass .number :=
 inflectional category among the categories relevant for nominal inflection" (p. 316). -/
 theorem not_privileged_case : ¬ Privileged cellClass .case := by decide +kernel
 
-/-- The Czech rules satisfy (40), since (14) is sensitive to number and (15) and (17), though
-sensitive to case, are "also sensitive to the value of the privileged inflectional category for
-nouns" (p. 316). -/
+/-- The Czech rules (14), (15) and (17) satisfy (40) (p. 316). -/
 theorem pcr : SatisfiesPCR cellClass czRules := by decide +kernel
 
 /-- `genitive` is the set of genitive cells. -/
@@ -943,9 +922,8 @@ def hypothetical (e : Entry) : List CellRule :=
 theorem not_satisfiesPCR_hypothetical : ¬ SatisfiesPCR cellClass (hypothetical ∘ entry) := by
   decide +kernel
 
-/-- Claim (39) (p. 313) holds for Czech nouns, every fractured paradigm having a privileged
-category among its minimal intersective correlates. The claim "is trivially true of fractured
-paradigms in which only two inflectional categories are distinguished" (p. 313), as here. -/
+/-- Every fractured Czech paradigm has a privileged category among its minimal intersective
+correlates, as Claim (39) states (p. 313). -/
 theorem fractured_minimal_intersective_privileged {l : CzNoun}
     (h : IsFractured (cellClass l)) :
     ∃ S, Minimal (IsIntersectiveCorrelate (cellClass l)) S ∧ ∃ c ∈ S, Privileged cellClass c :=
@@ -1063,9 +1041,7 @@ theorem hrd_heteroclite : hrdLinkage.IsHeteroclite SktStem.decl .hrdaya := by de
 unlike PRAMEN's (`segments_invariant`). -/
 theorem hrd_form_suppletive : hrdLinkage.IsHeteroclite SktStem.form .hrdaya := by decide
 
-/-- HṚD(AYA)'s paradigm is cloven, as the paper counts it (p. 313), with case as its absolute
-correlate, for "in Sanskrit, for example, cloven noun paradigms have case as their absolute
-correlate" (p. 310). -/
+/-- HṚD(AYA)'s paradigm is cloven (p. 313), with case as its absolute correlate (p. 310). -/
 theorem hrd_cloven : IsCloven hrdClass ∧ IsAbsoluteCorrelate .case hrdClass := by decide
 
 /-! ### Sanskrit stem grades (§3.2)
@@ -1102,8 +1078,7 @@ def rule19a (g : SktGender) : Exponence.DomainRule SktCell Strength :=
 def rule19b (g : SktGender) : Exponence.DomainRule SktCell Strength :=
   ⟨{σ | g = .masc ∧ σ.1.1 = .acc ∧ σ.2.1 = .plural}, .weak⟩
 
-/-- Clause (19b) is narrower than (19a), for "because 19b is the more narrowly applicable of the
-two clauses, it overrides 19a, in accordance with Pāṇini's principle" (n. 19). -/
+/-- The domain of clause (19b) is a proper subset of that of (19a) (n. 19). -/
 theorem rule19b_lt_rule19a : (rule19b .masc).dom ⊂ (rule19a .masc).dom := by decide
 
 /-- The strength of a property set is given by (19) (p. 294), which reads "Where α is masculine
@@ -1285,8 +1260,8 @@ theorem sktEndings_length : ∀ l σ, ∀ z ∈ (sktEntry l).weakest,
 theorem rule20a_lt_rule20b : ∀ l, ∀ a ∈ rule20a (sktEntry l), ∀ b ∈ rule20b (sktEntry l),
     a.dom ⊂ b.dom := by decide
 
-/-- The rules (19) and (20a,b) give every cell of PRATYAÑC's masculine and neuter paradigms the
-grade that Table 9 (p. 294) shades it with, each cell having one row. -/
+/-- Rules (19) and (20a,b) give each cell of PRATYAÑC's masculine and neuter paradigms the grade
+shaded in Table 9 (p. 294). -/
 theorem rules_match_table9 : ∀ l ∈ [SktLex.pratyancM, .pratyancN], ∀ σ,
     (l.analyses σ).map (·.grade.map gradeOf) = [some (grade l σ)] := by decide
 
@@ -1321,24 +1296,17 @@ theorem not_isHeteroclite_of_stems {l : SktLex} {d : SktDecl}
   rw [Finset.mem_singleton.mp hz, Finset.mem_singleton.mp hz'] at hne
   exact hne ((h _ (sktStem_mem_stems l σ)).trans (h _ (sktStem_mem_stems l σ')).symm)
 
-/-- Neither of PRATYAÑC's paradigms is heteroclite, since "the coradicals pratyac and pratīc
-belong to the same declension as the root pratyañc" (p. 318), so that "all of their forms follow
-the general consonant-stem declension" (p. 294). -/
+/-- Neither of PRATYAÑC's paradigms is heteroclite (p. 294; p. 318). -/
 theorem pratyanc_not_heteroclite :
     ∀ l ∈ [SktLex.pratyancM, .pratyancN], ¬ sktLinkage.IsHeteroclite SktStem.decl l := by
   simp only [List.mem_cons, List.not_mem_nil, or_false]
   rintro _ (rfl | rfl) <;> exact not_isHeteroclite_of_stems (d := .consStem) (by decide)
 
-/-- AHAN is heteroclite, since of the three stems its paradigm is built on, "ahan and its
-zero-grade counterpart ahn inflect according to the neuter an-stem declension, while ahas
-inflects according to the neuter as-stem declension" (p. 295). -/
+/-- AHAN's paradigm, built on two an-stems and an as-stem, is heteroclite (p. 295). -/
 theorem ahan_heteroclite : sktLinkage.IsHeteroclite SktStem.decl .ahan := by decide
 
-/-- AHAN's cells have the grades of neuter PRATYAÑC's, though (20a) tests the an-stem endings for
-the one and the consonant-stem endings for the other: the rules "independently motivated by the
-need to account for the pattern of stem alternation in nonheteroclite paradigms such as the
-masculine and neuter paradigms of PRATYAÑC ... also account for the patterns of
-declension-class alternation exhibited by heteroclite nouns such as AHAN" (p. 295). -/
+/-- AHAN's cells have the grades of neuter PRATYAÑC's, though (20a) tests different endings for each
+(p. 295). -/
 theorem ahan_grade_eq_pratyancN : ∀ σ, grade .ahan σ = grade .pratyancN σ := by decide
 
 /-- Fourteen of AHAN's cells inflect in the neuter an-stem declension and ten in the neuter
@@ -1408,9 +1376,7 @@ theorem not_privileged_number : ¬ Privileged sktClasses .number := by
     case ahan => exact ahan_fractured.2 .number hn
     all_goals exact pratyanc_not_heteroclite _ (by simp) (sktLinkage_isHeteroclite_iff.mpr hcl.1)
 
-/-- Rules (20a,b) are sensitive to case, for "in the inflection of Sanskrit PRATYAÑC, the rules
-20a,b assigning form-correspondents containing the Middle and Weakest coradicals pratyac and
-pratīc are sensitive to case, a privileged inflectional category for Sanskrit nouns" (p. 318). -/
+/-- Every Sanskrit rule, including (20a,b), is sensitive to case (p. 318). -/
 theorem sktRules_sensitiveTo_case : ∀ l, ∀ r ∈ sktRules l, SensitiveTo r .case := by decide
 
 /-- Rules (20a,b) are sensitive to number as well as to case. -/

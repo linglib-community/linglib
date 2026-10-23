@@ -96,8 +96,7 @@ theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (�
   (iota_eq_some_iff _).2 ⟨fun _ hx ↦ hx, fun _ h ↦ let ⟨x, hx⟩ := hn; (h x hx).symm.trans hx⟩
 
 /-- Numbers as classes of equinumerous pluralities ((17)) are faithful exactly when there are
-pluralities of every size: on a finite domain every numeral beyond its size denotes the empty
-property. -/
+pluralities of every size. -/
 theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite α := by
   refine ⟨fun h ↦ not_finite_iff_infinite.1 fun _ ↦ ?_, fun _ ↦ ?_⟩
   · have := Fintype.ofFinite α
@@ -132,9 +131,7 @@ theorem poss_eq_iff_lowScope {W : Type*} {R : W → Prop} {count : W → ℕ} :
   simp only [Spector2013.poss, exists_mem_image, Comparison.interval_eq, lowScope_maxIn]
   rfl
 
-/-- Over *some students* the high reading (39) is strictly stronger than the low one. It entails
-the low one (`Degree.lowScope_some_of_highScope`), and a student answering `n` questions with
-another answering `n + 1` makes the low reading true and (39) false. -/
+/-- Over *some students*, the high reading (39) strictly entails the low one. -/
 theorem lowScope_some_not_highScope (n : ℕ) :
     LowScope (MaxIn {n}) (GQ.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) ∧
       ¬ HighScope (MaxIn {n}) (GQ.some fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ n + i) :=

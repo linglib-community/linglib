@@ -339,8 +339,7 @@ theorem example6 (M : Model E) (g : ℕ → E) (e : Stream' E) :
       M.interp "BG" [e.get 0] ∧ M.interp "S" [e.get 0] := by
   simp [sat, domain, Term.eval]
 
-/-- (9) *A man is walking in the park. There is a dog. It frightens him and he chases it.* means
-the same as its pronoun-free rendering `∃y∃x(((Mx ∧ Wx) ∧ Dy) ∧ (Fyx ∧ Cxy))`. -/
+/-- (9) is equivalent to its pronoun-free rendering `∃y∃x(((Mx ∧ Wx) ∧ Dy) ∧ (Fyx ∧ Cxy))`. -/
 theorem example9 :
     Equiv ((exists_ 0 (atom "M" [.var 0] ⋀ atom "W" [.var 0]) ⋀ exists_ 1 (atom "D" [.var 1])) ⋀
         (atom "F" [.pron 0, .pron 1] ⋀ atom "C" [.pron 1, .pron 0]))
@@ -411,9 +410,7 @@ private def counterModel : Model (Fin 2) where
 /-- The sequence `0, 1, 1, …` of the counterexamples. -/
 private def counterSeq : Stream' (Fin 2) := λ i => if i = 0 then 0 else 1
 
-/-- (14) *She is seeing a woman. She is seeing a woman.* is stronger than the sentence said
-once: in the counter-model the sentence holds of the sequence `0, 1, …` but its repetition
-needs `1` to be a woman. -/
+/-- Repeating (14) *She is seeing a woman* yields a stronger text than saying it once. -/
 theorem not_idempotent :
     let φ := exists_ 1 (atom "W" [.var 1] ⋀ atom "S" [.pron 0, .var 1])
     ¬ Equiv (φ ⋀ φ) φ := by
@@ -475,8 +472,8 @@ theorem entails_conj_iff (φ χ ψ : Formula) : (φ ⋀ χ) ⊨ ψ ↔ φ ⊨ (�
     rw [Stream'.nil_append_stream, sat_impl] at himpl
     exact himpl _ ht hχ
 
-/-- Heim's inference (15): *If a man is from Athens, he is not from Rhodes. There is a man from
-Athens here. So, he is not from Rhodes.* -/
+/-- Heim's inference (15) from *there is a man from Athens here* to *he is not from Rhodes* is
+valid. -/
 theorem heim :
     ((exists_ 0 (atom "M" [.var 0] ⋀ atom "A" [.var 0]) ⟶ ∼(atom "R" [.pron 0])) ⋀
       exists_ 0 (atom "M" [.var 0] ⋀ atom "A" [.var 0])) ⊨ (∼(atom "R" [.pron 0])) := by
@@ -562,9 +559,8 @@ theorem entails_update_self (φ : Formula) : φ ⊨ φ.update φ.domain 0 := by
   rw [Stream'.nil_append_stream, Stream'.nil_append_stream] at this
   exact this.2 hsat
 
-/-- Acute monotonicity, Observation 12: an extra premise keeps a conclusion once the pronouns
-of the conclusion, and of the premises following the new one, are updated for its
-witnesses. -/
+/-- An extra premise preserves a conclusion once later pronouns are updated for its witnesses, which
+is acute monotonicity (Observation 12). -/
 theorem entails_update_of_entails {φ φ' ψ : Formula} (h : (φ ⋀ φ') ⊨ ψ) (χ : Formula) :
     ((φ ⋀ χ) ⋀ φ'.update χ.domain 0) ⊨ ψ.update χ.domain φ'.domain := by
   intro E M g e c hc hsat

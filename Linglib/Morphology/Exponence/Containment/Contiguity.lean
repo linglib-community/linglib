@@ -188,9 +188,8 @@ theorem realize_const_of_grounded {v : RuleSet (SpanRule 3 F)}
   rw [hw₁τ] at h0
   exact absurd h0 (by decide)
 
-/-- ABC requires a portmanteau ([bobaljik-2012] §5.3.1). Under adjacency, a superlative root
-distinct from the comparative one is realized by a rule exponing more than the root, as Latin
-*opt-* and Welsh *gor-* are. -/
+/-- Under adjacency, ABC requires a portmanteau, as with Latin *opt-* and Welsh *gor-*
+([bobaljik-2012] §5.3.1). -/
 theorem exists_portmanteau_of_ne {v : RuleSet (SpanRule 3 F)} (hA : Adjacent v)
     (h12 : realize v 1 ≠ realize v 2) :
     ∃ it ∈ v, v.selectBy SpanRule.threshold 2 = some it ∧ 0 < (it.spans : ℕ) := by

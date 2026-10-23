@@ -277,8 +277,8 @@ theorem none_mem_genders_three (hi : ¬ a.Inanimate) : none ∈ Stage.three.gend
 theorem stage3_they (hi : ¬ a.Inanimate) : "they" ∈ forms .three a :=
   they_mem_forms (.inl (none_mem_genders_three hi)) hi
 
-/-- A singular antecedent outside a quantifier whose noun bears a contrastive gender does not
-take *they*, so Stages 1 and 2 agree on nouns bearing gender (§4.2). -/
+/-- A referential singular antecedent whose noun bears contrastive gender does not take *they*, at
+Stages 1 and 2 alike (§4.2). -/
 theorem they_not_mem_forms_of_lexical {g : Gender} (h : s.genderContrastivity = .contrastive)
     (hs : a.number = .singular) (hq : a.det = .referential) (hl : a.lexical = some (.gender g)) :
     "they" ∉ forms s a := by
@@ -297,8 +297,8 @@ theorem monotone_they_mem_forms (hs : a.number = .singular) (hi : ¬ a.Inanimate
     | exact none_mem_genders_three hi
     | exact (none_mem_genders_two_iff hi).2 ((none_mem_genders_one_iff hi).1 hn).1
 
-/-- At Stage 3 the gender a noun bears lexically has no consequences for the pronouns it
-antecedes, which depend on the gender of its referent alone (§6). -/
+/-- At Stage 3, pronouns depend on the referent's gender alone, not on the gender a noun bears
+lexically (§6). -/
 theorem forms_three_lexical {l : Option Class} (hl : l ≠ some .inanim) (hi : ¬ a.Inanimate) :
     forms .three { a with lexical := l } = forms .three a := by
   rw [Antecedent.Inanimate] at hi
@@ -380,8 +380,8 @@ theorem bjorkman_overgenerates :
     BjorkmanCondition {.sg, .fem} {.fem} ∧ spellout {.sg, .fem} = some "she" := by
   decide
 
-/-- Every example of Stage 3 singular *they*, (4), (7) and (25), fails Bjorkman's condition, since
-its noun bears a gender that *they* lacks, though the Stage 3 grammar admits it (§5.3). -/
+/-- Every Stage 3 example of singular *they*, (4), (7) and (25), fails Bjorkman's condition yet is
+admitted by the Stage 3 grammar (§5.3). -/
 theorem bjorkman_excludes_stage3 :
     ∀ e ∈ Examples.all, ∀ g, ∀ a ∈ Antecedent.ofRow g e, Stage.ofRow? "firstStage" e = some .three →
       ¬ BjorkmanCondition a.numFeatures a.features := by

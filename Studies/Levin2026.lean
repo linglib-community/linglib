@@ -278,10 +278,8 @@ theorem exertingForce_not_all_pushPull :
       v ∈ LevinClass.members .throw := by
   decide +kernel
 
-/-- Neo-constructional approaches "do not take a verb's lexical properties to constrain its
-distribution, so any verb would be expected to appear in all resultative patterns" (footnote 7),
-but a verb outside the paper's lists is unacceptable in the intransitive resultative, as in (16d)
-*The tub scrubbed clean*. -/
+/-- A verb outside the paper's lists is unacceptable in the intransitive resultative (16d), contrary
+to neo-constructional approaches (footnote 7). -/
 theorem exists_unacceptable_intransitive_resultative :
     ∃ d ∈ data, d.verb = .other ∧ d.frame = .intransitive ∧ d.result.isSome ∧
       d.judgment ≠ .acceptable := by

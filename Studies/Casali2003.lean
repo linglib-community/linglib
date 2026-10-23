@@ -151,9 +151,7 @@ instance (dominant : Bool) : Decidable (SystemDependent I dominant) := by
 
 /-! ### Two survey languages -/
 
-/-- Akan's nine vowels form a 5Ht system, and its [+ATR] dominance (Table 2) conforms to
-(20); the [−ATR] spreading from a dominant affix it also shows (Table 5) is the indirect
-kind. -/
+/-- Akan's nine vowels form a 5Ht system whose [+ATR] dominance (Table 2) conforms to (20). -/
 theorem akan_conforms :
     inventoryType? Akan.vowels = some .fiveHeight ∧
       SystemDependent Akan.vowels true := by

@@ -177,8 +177,8 @@ theorem ask_ego_of_eq (h : t c c.authority = c.authority) :
     ask K c (ego V t c) = K.polarQuestion {w | V c.authority w} := by
   rw [ask, uncenter_ego_of_eq h, uncenter_neg_ego_of_eq h]; rfl
 
-/-- When the subject is the authority, an egophoric assertion can be continued consistently,
-provided the Table is empty and the common ground allows that the authority has the property. -/
+/-- With the subject as authority, an egophoric assertion on an empty Table is consistent if the
+common ground allows the property. -/
 theorem not_inCrisis_assert_ego (h : t c c.authority = c.authority) (hK : K.IsStable)
     (hV : K.commonGround ⊓ 𝓟 {w | V c.authority w} ≠ ⊥) :
     ¬ (assert K c (ego V t c)).InCrisis := by
@@ -186,9 +186,8 @@ theorem not_inCrisis_assert_ego (h : t c c.authority = c.authority) (hK : K.IsSt
     Table.projectedSet_of_isStable hK, Table.project_singleton_ofSet hV]
   exact fun hf ↦ hV (hf _ rfl)
 
-/-- When the subject is the authority, an egophoric question can be continued consistently,
-provided the Table is empty and the common ground leaves open whether the authority has the
-property. -/
+/-- With the subject as authority, an egophoric question on an empty Table is consistent if the
+common ground leaves the property open. -/
 theorem not_inCrisis_ask_ego (h : t c c.authority = c.authority) (hK : K.IsStable)
     (hV : K.commonGround ⊓ 𝓟 {w | V c.authority w} ≠ ⊥)
     (hV' : K.commonGround ⊓ 𝓟 {w | V c.authority w}ᶜ ≠ ⊥) :

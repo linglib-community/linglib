@@ -105,9 +105,8 @@ theorem veridicalIndiv_of_accessible {φ φ_DC : PVar} {v : IVar} {j : State W E
     (hdec : j ∈ incl φ_DC φ) (h : Accessible φ v φ_DC j) : VeridicalIndiv φ_DC v j :=
   fun w hw ↦ h.1 w (hdec hw)
 
-/-- A counterfactual antecedent admits no veridical anaphor (§3.4.2, (26)). An extension that
-keeps the commitment set and the antecedent's context, entails the anaphor's context in the
-commitments, and meets the subset requirement (39) empties the commitment set. -/
+/-- A counterfactual antecedent admits no veridical anaphor, since the subset requirement (39)
+empties the commitment set (§3.4.2, (26)). -/
 theorem counterfactual_blocks_veridical (i j : State W E) (φ_DC φ_anaphor φ_neg : PVar)
     (h_extends_DC : j.prop φ_DC = i.prop φ_DC) (h_extends_neg : j.prop φ_neg = i.prop φ_neg)
     (h_disjoint : CounterfactualProp φ_DC φ_neg i) (h_dec : j ∈ incl φ_DC φ_anaphor)
@@ -357,9 +356,8 @@ theorem veridical_accessible : Accessible φ₃ υ φDC j₆ :=
    ⟨w_bu, by simp [j₆, init, State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₃),
      State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₁)]⟩⟩
 
-/-- Under pragmatic maximization (35) the commitment set of Figure 6 is maximal among the
-outputs of the discourse from any initial state, since every output commits the speaker to the
-bathroom being upstairs. -/
+/-- Under pragmatic maximization (35), the commitment set of Figure 6 is maximal among the outputs
+of the discourse. -/
 theorem veridical_maximal (dc : Set World) (h : State World Ent)
     (hrun : init dc ~[veridical] h) : ¬ (j₆.prop φDC ⊂ h.prop φDC) := by
   obtain ⟨h₁, ⟨k₁, hk₁, hmax₁⟩, ⟨k₂, hk₂, hmax₂⟩⟩ := hrun
@@ -454,9 +452,7 @@ theorem negated_counterfactualProp {i j : State World Ent} (h : i ~[negated] j) 
     (thereIsABathroom_fixes φ₂ φ₂).prop_eq hmax]
   exact counterfactualProp_of_mem_eqCompl hc hdec'
 
-/-- No consistent extension of Figure 7 admits the veridical anaphor (30), since a context the
-commitments entail that lies within the prejacent's context empties the commitment set
-(§3.4.2). -/
+/-- No consistent extension of Figure 7 admits the veridical anaphor (30) (§3.4.2). -/
 theorem counterfactual_veridical_impossible (j : State World Ent)
     (hDC : j.prop φDC = j₇.prop φDC) (hφ₂ : j.prop φ₂ = j₇.prop φ₂)
     (hdec : j ∈ incl φDC φ₃) (hsub : j ∈ incl φ₃ φ₂) : ¬ (j.prop φDC).Nonempty :=
@@ -482,8 +478,7 @@ theorem negated_row4 : init Set.univ ~[negated] jRow4 := by
     · simp [jRow4, init, null, State.updateProp_prop_self]
     · simp [jRow4, State.updateProp_prop_self] at hw
 
-/-- Maximizing the prejacent's context over the whole assertion selects Figure 7, since every
-output from the same initial state keeps that context within the bathroom worlds. -/
+/-- Maximizing the prejacent's context over the whole assertion selects Figure 7. -/
 theorem negated_max : init {w_u, w_0} ~[maxAt φ₂ negated] j₇ := by
   refine mem_maxAt_prop.mpr ⟨negated_run, fun k hk hlt ↦ ?_⟩
   obtain ⟨k₁, ⟨_, _⟩, hmax⟩ := hk

@@ -86,9 +86,8 @@ def instantiate : LocutionaryProposition G C :=
 theorem instantiate_instantiate : (u.instantiate s).instantiate t = u.instantiate (s ∪ t) := by
   simp [instantiate, sdiff_sdiff_left]
 
-/-- Contextual instantiation yields exactly the contextual extensions of [ginzburg-2012] (47)
-p. 178: the utterances agreeing on every field but the contextual parameters, of which they
-leave fewer unwitnessed. -/
+/-- Contextual instantiation yields exactly the contextual extensions of [ginzburg-2012] (47) p.
+178. -/
 theorem exists_eq_instantiate_iff :
     (∃ s, w = u.instantiate s) ↔ w.form = u.form ∧ w.category = u.category ∧
       w.content = u.content ∧ w.constituents = u.constituents ∧ w.parameters ⊆ u.parameters := by

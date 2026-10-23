@@ -216,9 +216,8 @@ theorem map_L0_approximate {u p : Price} (hμ : μ (sem u) ≠ 0) (hp : u.round 
       rfl),
     ENNReal.div_self hμ (measure_ne_top _ _)]
 
-/-- At an approximate price goal a sharp price projects with its round neighbour, so the speaker
-prefers the round utterance exactly when sharp numbers cost more, the cost mechanism of the halo
-effect (Fig. 3B). -/
+/-- At an approximate price goal, the speaker prefers the round utterance for a sharp price iff
+sharp numbers cost more (Fig. 3B). -/
 theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (sem p) ≠ 0)
     (h₂ : μ (sem p.round) ≠ 0) (a : Bool) :
     (S1 μ c ((p, a), (.approximate, .price))).real {p}

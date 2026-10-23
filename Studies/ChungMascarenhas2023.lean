@@ -112,8 +112,7 @@ theorem expectedValue_le_card (p : Measure W) (R : ι → Set W) (φ : Set W) :
   calc ∑ i, p[R i | φ] ≤ ∑ _i : ι, (1 : ℝ≥0∞) := Finset.sum_le_sum fun _ _ ↦ prob_le_one
   _ = Fintype.card ι := by simp
 
-/-- A prejacent entailing every piece of evidence has maximal explanatory value: each
-`P(R i ∣ φ)` is the question-begging `P(φ ∣ φ)`, "as high as any probability can get" (§7). -/
+/-- A prejacent entailing every piece of evidence has maximal explanatory value (§7). -/
 theorem expectedValue_eq_card_of_subset (p : Measure W) [IsFiniteMeasure p] (R : ι → Set W)
     (φ : Set W) (hφ : p φ ≠ 0) (h : ∀ i, φ ⊆ R i) : expectedValue p R φ = Fintype.card ι := by
   rw [expectedValue_eq_sum_cond]
@@ -371,9 +370,8 @@ theorem ought_blockNeither (hbn : p (act .blockNeither) ≠ 0)
   · rw [expectedValue_blockA_of_cond p hA, expectedValue_blockNeither_of_ne p hbn]; norm_num
   · rw [expectedValue_blockB_of_cond p hB, expectedValue_blockNeither_of_ne p hbn]; norm_num
 
-/-- *If the miners are in shaft A, we ought to block shaft A* holds for any `θ < 10`, the
-if-clause conditionalizing every expected utility on its antecedent (fn 16, after Lassiter).
-This is (24). -/
+/-- *If the miners are in shaft A, we ought to block shaft A* (24) holds for any `θ < 10` (fn 16,
+after Lassiter). -/
 theorem ought_if_inA_blockA (hbA : p (inShaft .A ∩ act .blockA) ≠ 0)
     (hbn : p (inShaft .A ∩ act .blockNeither) ≠ 0) (hθ : θ < 10) :
     ought p idealsRD (inShaft .A ∩ act .blockA)
@@ -395,8 +393,7 @@ theorem must_blockNeither (hbn : p (act .blockNeither) ≠ 0)
   · exact expectedValue_blockA_of_cond p hA ▸ h5
   · exact expectedValue_blockB_of_cond p hB ▸ h5
 
-/-- Read as *must*, (25b) holds for `9 ≤ θ < 10`, since conditionalized on the miners being in A
-blocking A is the only good-enough option, with blocking neither sitting at 9. -/
+/-- Read as *must*, (25b) holds for `9 ≤ θ < 10`. -/
 theorem must_if_inA_blockA (hbA : p (inShaft .A ∩ act .blockA) ≠ 0)
     (hbn : p (inShaft .A ∩ act .blockNeither) ≠ 0) (h9 : 9 ≤ θ) (h10 : θ < 10) :
     must p idealsRD (inShaft .A ∩ act .blockA)
@@ -406,8 +403,8 @@ theorem must_if_inA_blockA (hbA : p (inShaft .A ∩ act .blockA) ≠ 0)
   · exact expectedValue_inA_blockNeither_of_ne p hbn ▸ h9
   · exact expectedValue_inA_blockB p ▸ bot_le
 
-/-- No single threshold verifies both *must* claims, since (26a) needs `θ < 9` while (25b)
-needs `9 ≤ θ`; positivity of the two block-neither propositions is all it takes. -/
+/-- No single threshold verifies both *must* claims, since (26a) needs `θ < 9` and (25b) needs `9 ≤
+θ`. -/
 theorem must_thresholds_incompatible (hbn : p (act .blockNeither) ≠ 0)
     (hAbn : p (inShaft .A ∩ act .blockNeither) ≠ 0) :
     ¬ ∃ θ, must p idealsRD (act .blockNeither) {act .blockA, act .blockB} θ ∧
@@ -429,8 +426,8 @@ theorem prior_cond_inShaft (s : Shaft) (a : Action) :
     · rw [show (Finset.univ.filter (· ∈ act _ ∩ inShaft _)).card = 1 by decide,
         show (Finset.univ.filter (· ∈ act _)).card = 2 by decide, Nat.cast_one, Nat.cast_ofNat]
 
-/-- Under the uniform prior, indifference given in-A — the union of the three actions,
-footnote 17's comparison point for Lassiter's `must` — has expected utility 19/3. -/
+/-- Under the uniform prior, being in shaft A has expected utility 19/3, the comparison point of
+footnote 17 for Lassiter's `must`. -/
 theorem expectedValue_inA : expectedValue prior idealsRD (inShaft .A) = 19 / 3 := by
   rw [prior, expectedValue_uniformOn_univ,
     show (∑ i : Fin 10, (Finset.univ.filter (· ∈ inShaft .A ∩ idealsRD i)).card) = 19 by decide,
@@ -457,10 +454,8 @@ example :
 /-! The classical account, run on the same scenario. -/
 
 open Modality in
-/-- Following the paper's proof sketch (16), over any modal base whose accessible worlds locate
-the miners in one of the two shafts and any ordering source with best worlds — the paper's limit
-assumption, its fn 1 — the three *ought* claims of (15) are jointly unsatisfiable on Kratzer's
-account [kratzer-1991], the if-clauses restricting the modal base. -/
+/-- Given best worlds (fn 1) and the miners in one of the shafts, the three *ought* claims of (15)
+are unsatisfiable on [kratzer-1991]'s account (16). -/
 theorem kratzer_miners_unsatisfiable {V : Type*} (f g : Background V)
     (w : V) (inA inB bA bB bN : V → Prop)
     (hbest : (bestWorlds f g w).Nonempty)
@@ -485,11 +480,8 @@ end Miners
 
 namespace ModalLinda
 
-/-- In the modal conjunction fallacy ((30)–(34)), for every measure realizing the printed
-conditional probabilities and any threshold in `[0.5, 1.5)`, *Linda must be a feminist bank
-teller* is true and *Linda must be a bank teller* false, although the feminist tellers are a
-subset of the tellers and so no more probable. The expected values are (32) and (33); by
-`Modality.necessity_and_left` no Kratzer reading of *must* can pattern this way. -/
+/-- In the modal conjunction fallacy ((30)–(34)), *must* holds of *feminist bank teller* but not of
+*bank teller*, with expected values (32) and (33). -/
 theorem modal_conjunction_fallacy (p : Measure W) (R : Fin 2 → Set W)
     (teller feministTeller : Set W) (hsub : feministTeller ⊆ teller)
     (h₁ : p[R 0 | teller] = .ofReal 0.3) (h₂ : p[R 1 | teller] = .ofReal 0.2)
@@ -530,10 +522,8 @@ end ModalLinda
 
 namespace ModalLawyers
 
-/-- Modal base-rate neglect ((37)–(41)): for every measure realizing the printed conditional
-probabilities and any threshold in `[0.63, 1.33)`, *Jack must be an engineer* is true and *Jack
-must be a lawyer* false. No hypothesis mentions the prior on `engineer`: explanatory value
-conditions only on the hypotheses, which is the neglect. -/
+/-- In modal base-rate neglect ((37)–(41)), *Jack must be an engineer* is true and *Jack must be a
+lawyer* false, whatever the prior on `engineer`. -/
 theorem base_rate_neglect (p : Measure W) (R : Fin 2 → Set W) (engineer lawyer : Set W)
     (h₁ : p[R 0 | engineer] = .ofReal 0.78) (h₂ : p[R 1 | engineer] = .ofReal 0.55)
     (h₃ : p[R 0 | lawyer] = .ofReal 0.35) (h₄ : p[R 1 | lawyer] = .ofReal 0.28)

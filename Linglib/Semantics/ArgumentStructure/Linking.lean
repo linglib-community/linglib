@@ -181,8 +181,8 @@ theorem isFusionOn_iff_isFusion (hσ : ∀ s, s ∉ V.frame.slots → σ s = non
   · rintro ⟨h₁, h₂, h₃, h₄⟩
     exact ⟨fun s _ t hst ↦ ⟨h₁ s t hst, h₂ s t hst⟩, h₃, h₄⟩
 
-/-- An event structure with a required slot shares a participant with every verb fused with it,
-the Shared Participant Condition [goldberg-1995] adopts from Matsumoto (p. 65). -/
+/-- An event structure with an obligatory role shares a participant with every verb fused with it,
+the Shared Participant Condition of [goldberg-1995] (p. 65). -/
 theorem IsFusion.exists_fused (h : IsFusion V C σ) (ha : C.obligatory ≠ []) :
     ∃ s t, σ s = some t :=
   let ⟨t, ht⟩ := List.exists_mem_of_ne_nil _ ha

@@ -108,8 +108,7 @@ theorem subjoin_numClDeN (x : Node) : numClDeN.subjoin x .D = none :=
 
 /-! ### Spell-out lines, (26b), (45b) -/
 
-/-- The 1-parts of Q are the classifier and the noun, so the classifier lies on Q's complementation
-line and spells out with Q, whose 2-part is the numeral, (26b). -/
+/-- The 1-parts of Q are the classifier and the noun, so the classifier spells out with Q (26b). -/
 theorem nPart_one_q : ∀ x, numClN.NPart .one x .Q ↔ x = .Cl ∨ x = .N := by decide +kernel
 
 /-- Pred, Deg and A spell out together, (45b); the quantity phrase, Deg's 2-part, is off the
@@ -181,15 +180,14 @@ def clauseModClN : Parthood Node := clauseModCl.addPart .two .N .D
 /-- The objects inside D in the clause of (41), other than a modifier in D's 2-part. -/
 abbrev inD : Set Node := {.D, .Q, .Cl, .N, .Num}
 
-/-- A wh-numeral is the 2-part of Q, the 1-part of D, so it subjoins to D; as D's 2-part it is
-part of O, the 1-part of C, and subjoins to C, (41). It cannot reach C directly. -/
+/-- A wh-numeral subjoins to D and then to C, but not directly to C (41). -/
 theorem wh_numeral :
     ¬ clauseModCl.CanSubjoin .Num .C ∧ clauseModCl.Subjoins .Num .D clauseModClNum ∧
       clauseModClNum.Subjoins .Num .C (clauseModClNum.addPart .two .Num .C) := by
   decide +kernel
 
-/-- With a modifier as D's 2-part, Angular Locality still admits the wh-numeral at D but
-Dimensionality refuses it, and no derivation makes the numeral a part of C, (42). -/
+/-- With a modifier as D's 2-part, Dimensionality blocks the wh-numeral at D, and it never becomes a
+part of C (42). -/
 theorem wh_numeral_modifier :
     clauseModD.CanSubjoin .Num .D ∧ clauseModD.subjoin .Num .D = none ∧
       ¬ clauseModD.Reaches .Num .C :=
@@ -200,8 +198,8 @@ theorem wh_numeral_modifier :
 /-- The whole D, the 2-part of O, subjoins to C, (43c). -/
 theorem topic_d : clause.CanSubjoin .D .C := by decide +kernel
 
-/-- The noun, in D's first dimension, is no part of O and cannot reach C; it subjoins to D as
-D's 2-part, becomes part of O, and subjoins to C, stranding the numeral and classifier, (43d). -/
+/-- The noun cannot subjoin directly to C but reaches C through D, stranding the numeral and
+classifier (43d). -/
 theorem topic_n :
     ¬ clause.CanSubjoin .N .C ∧ clause.Subjoins .N .D clauseN ∧
       clauseN.Subjoins .N .C (clauseN.addPart .two .N .C) := by

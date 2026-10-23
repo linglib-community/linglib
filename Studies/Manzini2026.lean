@@ -58,9 +58,8 @@ noncomputable def rootParse : SyntacticObject :=
 noncomputable def epistemicParse : SyntacticObject :=
   merge gianni (merge (leaf ⟨.of .V [.V] "deve", 1⟩) (merge gianni berlo))
 
-/-- The two parses of (31a) coincide at Transfer. They are structurally identical, and Form Copy
-relates the matrix subject to the embedded one in each, a repetition in the root parse and the
-Internal Merge copy in the epistemic one. -/
+/-- The two parses of (31a) are structurally identical at Transfer, with Form Copy relating the
+matrix and embedded subjects in each. -/
 theorem dovere_transfer :
     StructurallyIdentical rootParse epistemicParse ∧ (gianni, gianni') ∈ rootParse.copyRel ∧
       (gianni, gianni) ∈ epistemicParse.copyRel :=
@@ -69,9 +68,8 @@ theorem dovere_transfer :
       (structurallyIdentical_renumber 3 gianni),
     self_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])⟩
 
-/-- A condition on the structure Transfer sees holds of the root parse exactly when it holds of
-the epistemic one, so what separates control from raising, partial control among it, must be read
-off the derivation (§5.2). -/
+/-- A condition on the structure Transfer sees holds of the root parse iff it holds of the epistemic
+one (§5.2). -/
 theorem structural_iff (P : SyntacticObject → Prop)
     (hP : ∀ a b, StructurallyIdentical a b → (P a ↔ P b)) : P rootParse ↔ P epistemicParse :=
   hP _ _ dovere_transfer.1

@@ -167,9 +167,8 @@ theorem rows_agree :
 
 /-! ### Demonstratives are strict (Section 4.3) -/
 
-/-- A demonstrative description denotes the value of its index in every situation where its
-restrictor holds of it, (27) to (30): the demonstrative supplies the index of ι^x, and the
-index, not the situation, fixes the referent. -/
+/-- A demonstrative description denotes the value of its index wherever its restrictor holds of it,
+(27) to (30). -/
 theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
     (s : W) (x : E) :
     ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
@@ -230,9 +229,7 @@ def table2Inventories : List Inventory :=
   [German.Determiners.inventory, Lakhota.Determiners.inventory, Mandarin.Determiners.inventory,
     Akan.Determiners.inventory, Cantonese.Determiners.inventory, English.Determiners.inventory]
 
-/-- In each of Table 2's languages the marked presuppositions form an upper set, so that overt
-marking begins with the anaphoric presupposition, as articles grammaticalize from demonstratives
-(p. 530), and none is marked unique. -/
+/-- In each language of Table 2 the marked presuppositions form an upper set (p. 530). -/
 theorem isUpperSet_strengths :
     ∀ ds ∈ table2Inventories, IsUpperSet (ds.strengths : Set Strength) := by
   simp only [Strength.isUpperSet_iff, Finset.mem_coe]

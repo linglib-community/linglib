@@ -266,8 +266,8 @@ def chainAccessory : W → Flat Bool := [.X ← true]
 theorem causesCauses_causes : EqCauses (composeOne id id) ⊥ .A .C :=
   fun v ↦ by cases v <;> decide
 
-/-- *A allows B*, *B prevents C*, or equally *not B causes C*, compose to `C := ¬(A ∧ X)`, the
-accessory form (4c) of *prevents*: with the accessory present, A prevents C. -/
+/-- *A allows B* and *B prevents C* compose to the accessory form (4c) `C := ¬(A ∧ X)`, so A
+prevents C. -/
 theorem allowsPrevents_prevents : EqPrevents (composeTwo (· && ·) (!·)) chainAccessory .A .C :=
   fun v ↦ by cases v <;> decide
 

@@ -68,16 +68,15 @@ theorem base_dox_cir [LT T] (history : HistoricalAlternatives W T) (s : Index W 
       cir.base history s = futureHistoryBase history s :=
   ⟨by rw [base, orientations, actualHistoryBase, ← past_sup_present]; rfl, rfl⟩
 
-/-- The time of a situation accessible from `s` bears an admitted orientation to the evaluation
-time, since τ(k|t) is defined only for `t` within the history `k`, (53)–(55). -/
+/-- The time of a situation accessible from `s` bears an admitted orientation to the evaluation time
+((53)–(55)). -/
 theorem compare_mem_orientations [LinearOrder T] (m : Background)
     (history : HistoricalAlternatives W T) {s s' : Index W T} (h : s' ∈ m.base history s) :
     compare s'.time s.time ∈ m.orientations :=
   compare_mem_of_mem_orientedBase h
 
-/-- The doxastic modal base admits exactly the orientations the Upper Limit Constraint of
-[abusch-1997] allows, so the constraint is derived from the modal base rather than imposed on
-tense (§4.2). -/
+/-- The doxastic modal base admits exactly the orientations of the Upper Limit Constraint of
+[abusch-1997] (§4.2). -/
 theorem orientations_dox : dox.orientations = upperLimitConstraint := by decide
 
 theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlternatives W T)
@@ -85,9 +84,8 @@ theorem upperLimitConstraint_of_mem_dox [LinearOrder T] (history : HistoricalAlt
     compare s'.time s.time ∈ upperLimitConstraint :=
   orientations_dox ▸ compare_mem_orientations .dox history h
 
-/-- The derivations of §3.3 as the four cells of modal base against tense, (43): `dox` with a
-past is past, `dox` with a non-past is simultaneous, (55), `cir` with a non-past is future,
-(53), and `cir` with a past is empty. -/
+/-- With `dox` a past is past and a non-past simultaneous (55), and with `cir` a non-past is future
+(53) and a past empty (§3.3, (43)). -/
 theorem cells :
     dox.orientations ∩ ⟦past⟧ = ⟦past⟧ ∧ dox.orientations ∩ nonpast = ⟦present⟧ ∧
       cir.orientations ∩ nonpast = ⟦future⟧ ∧ cir.orientations ∩ ⟦past⟧ = ∅ := by
@@ -108,9 +106,8 @@ class `a` are those admitted both by one of the attitude's modal bases and by th
 def readings (a : Attitude) (τ : Finset Ordering) : Finset Ordering :=
   (modalBases a).biUnion (·.orientations ∩ τ)
 
-/-- A past-under-past clause, whose past morphology is agreement with the matrix tense, has an
-underlying past or non-past, so its readings are those of past-under-present and
-present-under-present together, the takeaway of (4)–(7). -/
+/-- The readings of a past-under-past clause are those of past-under-present and
+present-under-present together ((4)–(7)). -/
 theorem readings_union (a : Attitude) (τ₁ τ₂ : Finset Ordering) :
     readings a (τ₁ ∪ τ₂) = readings a τ₁ ∪ readings a τ₂ := by
   ext o
@@ -125,23 +122,21 @@ theorem readings_union (a : Attitude) (τ₁ τ₂ : Finset Ordering) :
 
 theorem past_union_nonpast : ⟦past⟧ ∪ nonpast = Finset.univ := by decide
 
-/-- Under *think* an embedded clause is past or simultaneous, never future, the upper limit,
-and a present under a present is simultaneous only, which the eventive of (7a) cannot be,
-(6) and (7). -/
+/-- Under *think* an embedded clause is past or simultaneous, never future, and a present under a
+present is simultaneous only ((6), (7) and (7a)). -/
 theorem think_readings : ∀ a ∈ think.attitude.toList,
     readings a Finset.univ = ⟦past⟧ ∪ ⟦present⟧ ∧ readings a nonpast = ⟦present⟧ := by
   decide +kernel
 
-/-- Under *hope* every orientation is open to a past-under-past clause, the future one through
-`cir` with an underlying non-past, (48)–(54), and a past under a present is past, (4) and
-(5). -/
+/-- Under *hope* a past-under-past clause has every orientation, the future through `cir`
+((48)–(54)), and a past under a present is past ((4), (5)). -/
 theorem hope_readings : ∀ a ∈ hope.attitude.toList,
     readings a Finset.univ = Finset.univ ∧ readings a nonpast = nonpast ∧
       readings a ⟦past⟧ = ⟦past⟧ := by
   decide +kernel
 
-/-- The covert epistemic necessity of a matrix clause is a `dox` modal, so a matrix non-past has
-present reference only, which rules out (45a) \**It rains tomorrow* (§3.2). -/
+/-- A matrix non-past has present reference only, which rules out (45a) \**It rains tomorrow*
+(§3.2). -/
 theorem matrix_nonpast_present : Background.dox.orientations ∩ nonpast = ⟦present⟧ := by decide
 
 /-! ### The data, (1)–(3) -/
@@ -157,10 +152,8 @@ def verbOf : String → Option English.Verbs.Verb
 def cells : List (String × Finset Ordering) :=
   [("past", ⟦past⟧), ("present", ⟦present⟧), ("future", ⟦future⟧)]
 
-/-- The rows agree with the analysis. An orientation a row reports available under its verb
-lies among the readings of a past-under-past clause under that verb and one reported
-unavailable does not, so (2) and (3) are the attested future readings under *hope* and
-*pray* and (1) the upper limit under *think*. -/
+/-- An orientation a row reports available under its verb is among that verb's past-under-past
+readings, and one reported unavailable is not ((1), (2), (3)). -/
 theorem rows_readings :
     ∀ e ∈ Examples.all, ∀ v ∈ (e.feature? "verb" >>= verbOf).toList, ∀ a ∈ v.attitude.toList,
       ∀ c ∈ cells, ∀ j ∈ (e.feature? c.1).toList,

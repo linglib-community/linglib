@@ -158,8 +158,8 @@ theorem kratzer_I1 : RightUnion (likelihood O) := rightUnion_lewisLift
 theorem kratzer_I2 : EquiprobabilityCollapse (likelihood O) :=
   equiprobabilityCollapse_of_rightUnion (kratzer_I1 O)
 
-/-- Complement transfer holds for the lift of every preorder, since I2 does. The paper lists
-V12 with V11 among Kratzer's failures; its footnote 8 countermodel refutes only V11. -/
+/-- Complement transfer V12 holds for the lift of every preorder, though the paper lists it with
+V11, which its footnote 8 refutes. -/
 theorem kratzer_V12 : ComplementTransfer (likelihood O) :=
   complementTransfer_of_equiprobabilityCollapse (kratzer_I2 O)
 
@@ -446,9 +446,7 @@ theorem prob_refutes_I3 : ¬HamblinCollapse (uniformOn (Set.univ : Set (Fin 3)))
   rw [uniform_inducedGe_iff, hA] at this
   simp at this
 
-/-- The twelve-sided die of §4 refutes Conjunctivitis for the probability space semantics. A
-number below nine and a number above four are each probable, eight faces of twelve, but a
-number above four and below nine is not, four faces. -/
+/-- The twelve-sided die of §4 refutes Conjunctivitis for the probability space semantics. -/
 theorem prob_refutes_E1 : ¬Conjunctivitis (uniformOn (Set.univ : Set (Fin 12))).inducedGe := by
   intro h
   have hcard : ∀ A : Set (Fin 12), A.ncard + Aᶜ.ncard = 12 := fun A ↦ by

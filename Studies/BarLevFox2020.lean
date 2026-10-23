@@ -148,10 +148,8 @@ theorem support_only_fcAlts {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitne
     Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
-/-- Where the prejacent is the only includable alternative and the excludable ones are exactly
-those it does not entail, `only` is true at the same worlds as the exclusive
-`Focus.Particles.only` on the entailment scale, the entry (29b) that Innocent Inclusion
-revises. -/
+/-- Where the prejacent is the only includable alternative and exactly the non-entailed ones are
+excludable, `only` agrees with the exclusive entry (29b) on the entailment scale. -/
 theorem posExt_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
     (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q) (hII : II ALT φ = {φ}) :
     Trivalent.posExt (only ALT φ) =
@@ -222,9 +220,8 @@ def orBothAlts : Set (Set W) :=
   {closestImp ord (p ∪ q) r, closestImp ord (p \ q) r,
     closestImp ord (q \ p) r, closestImp ord (p ∩ q) r}
 
-/-- With the antecedent's cells as alternatives nothing is excludable and, given a world
-verifying each cell's conditional alone and one verifying all three, everything is included,
-so `(p ∨ q) → r` asserts the conjunctive conditional it denied under `sdaAlts` (82). -/
+/-- With the antecedent's cells as alternatives, `(p ∨ q) → r` asserts the conjunctive conditional
+(82). -/
 theorem orBoth (htot : ∀ w, Std.Total (ord w).le)
     (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r ∩ closestImp ord (p \ q) r,
       w ∉ closestImp ord (q \ p) r ∪ closestImp ord (p ∩ q) r)
@@ -315,8 +312,7 @@ abbrev off : Set Switch := {w | w.light w.up₁ w.up₂ = false}
 /-- Both switches up, and the light on exactly when the switches agree. -/
 def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
 
-/-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario,
-since its strengthening asserts both simplifications and denies the conjunctive one. -/
+/-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario. -/
 theorem sda_actual :
     actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
@@ -325,7 +321,7 @@ theorem sda_actual :
   decide
 
 /-- *If switch A or switch B or both were down, the light would be off* (78) is false in the
-scenario, since its strengthening asserts the conjunctive conditional. -/
+scenario. -/
 theorem orBoth_actual :
     actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
@@ -349,10 +345,8 @@ def universalAlts : Set (Set W) :=
 
 variable {P Q B}
 
-/-- Given a world where every individual has `P` and none `Q`, one the other way round, one where
-each has exactly one and both occur, and one where every individual has `P` and `Q` but none
-`B`, `∀x(Px ∨ Qx)` strengthens to `∀x Px ∧ ∀x Qx ∧ ¬∃x Bx`, universal free choice (44). With
-`Px = ◇px` and `Bx = ◇(px ∧ qx)` this is (36). -/
+/-- Given the four witnessing worlds, `∀x(Px ∨ Qx)` strengthens to universal free choice `∀x Px ∧ ∀x
+Qx ∧ ¬∃x Bx` (44), of which (36) is the modal instance. -/
 theorem universalFreeChoice (hB : ∀ x, B x ⊆ P x ∩ Q x)
     (h₁ : ∃ w, (∀ x, w ∈ P x) ∧ ∀ x, w ∉ Q x) (h₂ : ∃ w, (∀ x, w ∈ Q x) ∧ ∀ x, w ∉ P x)
     (h₃ : ∃ w, (∀ x, w ∈ P x ↔ w ∉ Q x) ∧ (∃ x, w ∈ P x) ∧ ∃ x, w ∈ Q x)
@@ -416,9 +410,8 @@ def negativeUniversalAlts : Set (Set W) :=
 
 variable {R p q}
 
-/-- The alternatives of `¬∃x □(px ∧ qx)` stand in the entailment pattern of universal free
-choice, so with the corresponding worlds it strengthens to `¬∃x □px ∧ ¬∃x □qx ∧ ∀x □(px ∨ qx)`,
-negative universal free choice (47). -/
+/-- Given the corresponding worlds, `¬∃x □(px ∧ qx)` strengthens to negative universal free choice
+`¬∃x □px ∧ ¬∃x □qx ∧ ∀x □(px ∨ qx)` (47). -/
 theorem negativeUniversalFreeChoice
     (h₁ : ∃ w, (∀ x, w ∉ R.core (p x)) ∧ ∀ x, w ∈ R.core (q x))
     (h₂ : ∃ w, (∀ x, w ∉ R.core (q x)) ∧ ∀ x, w ∈ R.core (p x))
@@ -491,9 +484,8 @@ def overUniversalAlts : Set (Set W) :=
 
 variable {R p q}
 
-/-- Given the corresponding worlds, free choice with the existential modal over the universal
-(57), [nouwen-2017]'s case, strengthens `◇∀x(px ∨ qx)` to `◇∀x px ∧ ◇∀x qx ∧ ¬◇∃x(px ∧ qx)`,
-although `◇∀` does not distribute over disjunction. -/
+/-- Given the corresponding worlds, `◇∀x(px ∨ qx)` strengthens to `◇∀x px ∧ ◇∀x qx ∧ ¬◇∃x(px ∧ qx)`
+(57), [nouwen-2017]'s case. -/
 theorem freeChoiceOverUniversal
     (h₁ : ∃ w ∈ R.preimage (⋂ x, p x), w ∉ R.preimage (⋃ x, q x))
     (h₂ : ∃ w ∈ R.preimage (⋂ x, q x), w ∉ R.preimage (⋃ x, p x))
@@ -606,10 +598,8 @@ def mostAlts : Set (Set W) :=
 
 variable {P Q S}
 
-/-- Given a world where most of `P ∪ Q` and most of `P` are in `S` but nothing of `Q` is, one the
-other way round, one where most of `P ∪ Q` but of neither `P` nor `Q` is, and one where most of
-each is but nothing of `P ∩ Q`, `most(P ∪ Q)(S)` strengthens to
-`most(P)(S) ∧ most(Q)(S) ∧ ¬some(P ∩ Q)(S)`, simplification with *most* (89). -/
+/-- Given the four witnessing worlds, `most(P ∪ Q)(S)` strengthens to `most(P)(S) ∧ most(Q)(S) ∧
+¬some(P ∩ Q)(S)` (89). -/
 theorem simplificationMost
     (h₁ : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (P w) (S w) ∧ ¬ Overlaps (Q w) (S w))
     (h₂ : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (Q w) (S w) ∧ ¬ Overlaps (P w) (S w))

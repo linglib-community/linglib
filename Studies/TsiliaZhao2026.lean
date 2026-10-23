@@ -85,9 +85,8 @@ The silent *during* places the reference of the tense within that of the adverb.
 def Restricted (tense adv : Finset Ordering) (r th π : NonemptyInterval T) : Prop :=
   Presup tense π r ∧ r ≤ th ∧ Presup adv π th
 
-/-- OP_π rebinds the perspective of PRES and the adverb at once, so a present-tensed clause
-modified by a distal adverb is contradictory whatever the perspective: the root case (75), the
-shifted case (78) and the future cases (81)–(82) alike. -/
+/-- A present-tensed clause modified by a distal adverb is contradictory whatever the perspective
+((75), (78), (81)–(82)). -/
 theorem not_restricted_present {a : DeicticAdverb} (ha : a.IsDistal)
     (r th π : NonemptyInterval T) : ¬ Restricted ⟦present⟧ a.cell r th π :=
   fun ⟨hr, hle, hth⟩ ↦ not_presup_of_presup_present ha hr hle hth
@@ -97,8 +96,7 @@ def thenAdverbs : List DeicticAdverb :=
   [English.TemporalDeictic.then_, Greek.StandardModern.TemporalDeictic.tote,
     Hebrew.TemporalDeictic.az, Russian.TemporalDeictic.togda, Japanese.TemporalDeictic.tooji]
 
-/-- (12), the ⌈then⌉-present puzzle: every adverb of the sample is distal, Japanese *tooji*
-because a past reference is in particular a disjoint one, so none restricts a present tense. -/
+/-- No adverb of the sample restricts a present tense, the ⌈then⌉-present puzzle (12). -/
 theorem not_restricted_present_of_mem {a : DeicticAdverb} (ha : a ∈ thenAdverbs)
     (r th π : NonemptyInterval T) : ¬ Restricted ⟦present⟧ a.cell r th π :=
   not_restricted_present ((by decide : ∀ a ∈ thenAdverbs, a.IsDistal) a ha) r th π
@@ -110,8 +108,8 @@ theorem restricted_present_sejchas (r : NonemptyInterval T) :
   ⟨presup_present.2 (NonemptyInterval.overlaps_refl r), le_rfl,
     presup_present.2 (NonemptyInterval.overlaps_refl r)⟩
 
-/-- (36): with pronominal anchors, PRES and ⌈then⌉ could be anchored to different times and
-the clause would be coherent, which is why the anchor is a parameter. -/
+/-- With pronominal anchors, PRES and ⌈then⌉ could take different times and the clause would be
+coherent (36). -/
 theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.Overlaps π₂) :
     ∃ r th, Presup ⟦present⟧ π₁ r ∧ r ≤ th ∧ Presup ⟦present⟧ᶜ π₂ th :=
   ⟨π₁, π₁, presup_present.2 (NonemptyInterval.overlaps_refl π₁), le_rfl,
@@ -141,8 +139,8 @@ meeting is disjoint, and ⌈then⌉ restricts the deleted past. -/
 theorem restricted_top_of_not_overlaps (h : ¬ r.Overlaps π) : Restricted ⊤ ⟦present⟧ᶜ r r π :=
   restricted_top_iff.2 ⟨le_rfl, presup_compl_present.2 h⟩
 
-/-- (89b): with OP_π shifting the perspective onto the time of the reported speech, within
-which the meeting time lies, a distal adverb can no longer restrict it. -/
+/-- With OP_π shifting the perspective onto the time of the reported speech, a distal adverb cannot
+restrict it (89b). -/
 theorem not_restricted_top_of_le (hC : .eq ∉ C) (hr : r ≤ π) : ¬ Restricted ⊤ C r th π :=
   fun ⟨_, hle, hth⟩ ↦ not_presup_of_presup_present hC
     (presup_present.2 (NonemptyInterval.overlaps_of_le hr)) hle hth
@@ -155,8 +153,7 @@ theorem not_restricted_past_of_le (hth : th ≤ π) : ¬ Restricted ⟦past⟧ C
   fun ⟨hr, hle, _⟩ ↦ NonemptyInterval.precedes_not_overlaps (presup_past.1 hr)
     (NonemptyInterval.overlaps_of_le (hle.trans hth))
 
-/-- The presuppositions (114) and (115) alone do not exclude a past under *sejčas*: a time that
-precedes the perspective can lie within one that overlaps it. -/
+/-- The presuppositions (114) and (115) alone do not exclude a past under *sejčas*. -/
 theorem exists_restricted_past_present {a b : T} (hab : a < b) :
     ∃ r th π : NonemptyInterval T, Restricted ⟦past⟧ ⟦present⟧ r th π :=
   ⟨.pure a, ⟨(a, b), hab.le⟩, .pure b, presup_past.2 (by exact hab),

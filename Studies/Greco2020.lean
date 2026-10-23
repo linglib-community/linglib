@@ -303,9 +303,8 @@ theorem embedded_focus :
       (r.judgment = .acceptable ↔ r.focus ≠ some .T) := by
   decide
 
-/-- Table 2's Sneg row from the derivation: the strong class licenses no polarity class, the
-closed v*P excludes negative-scope elements, and (9a) to (9d) witness the rejection of each
-class. -/
+/-- In Table 2's Sneg row, the strong class licenses no polarity class and the closed v*P excludes
+negative-scope elements ((9a) to (9d)). -/
 theorem table2_snegs {p : LexicalItem.Token} (hp : Closed p) (c : PolarityClass) :
     c ∉ ENEnvironment.snegs.strength.licensed ∧ ¬ Allows p .negScope ∧
       ∃ r ∈ rows, r.polarity = some c ∧ r.requirement = some .negScope ∧

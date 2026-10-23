@@ -484,8 +484,8 @@ theorem canonicalize_guard (φ : Formula Atom) :
     rfl
 
 include hone hid in
-/-- Fact 3, the other inclusion: with a right identity for conjunction, every tagged substrate
-meaning is a lifted meaning, of the guarded formula or its negation. -/
+/-- With a right identity for conjunction, every tagged meaning lifts the guarded formula or its
+negation (Fact 3). -/
 theorem exists_liftInterp_eq (b : Bool) (ψ : Formula Atom) :
     ∃ φ, liftInterp (Δ := Canonical δ) ia ie φ = ⟨b, interp ia ie ψ⟩ := by
   cases b

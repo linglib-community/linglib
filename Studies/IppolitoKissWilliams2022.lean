@@ -128,8 +128,8 @@ theorem not_ma_of_salient_empty (h : c.salient = ∅) : ¬ c.Ma S :=
 theorem not_but_of_salient_empty (h : c.salient = ∅) : ¬ c.But S :=
   λ hb => not_ma_of_salient_empty h (Ma.of_but hb)
 
-/-- With a question the speaker has no belief about, *ma* is licensed by any salient relevant
-proposition: HELP, TWIN SISTERS, NIGHT and KEY, (26), (27), (28) and (35). -/
+/-- With a question the speaker has no belief about, any salient relevant proposition licenses *ma*
+((26), (27), (28), (35)). -/
 theorem ma_of_no_belief (hS : S.IsRelevantTo c.issues) (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) {p : Set W}
     (hp : p ∈ c.salient) (hr : (ofSet p).IsRelevantTo c.issues) : c.Ma S :=
   ⟨hS, p, hp, hr, λ ⟨r, _, _, hq⟩ => not_qSupports_of_no_belief h r hq⟩
@@ -138,15 +138,13 @@ theorem ma_of_no_belief (hS : S.IsRelevantTo c.issues) (h : ∀ q ∈ alt S, ¬ 
 theorem not_but_of_no_belief (h : ∀ q ∈ alt S, ¬ c.dox ⊆ q) : ¬ c.But S :=
   λ ⟨_, _, _, _, _, ⟨r, _, hq⟩, _⟩ => not_qSupports_of_no_belief h r hq
 
-/-- The second argument of Section 3.3, (38): a question biased toward an answer that supports
-what every salient proposition supports agrees with them all, and *ma* is not licensed. -/
+/-- A question agreeing with every salient proposition does not license *ma* (Section 3.3, (38)). -/
 theorem not_ma_of_agree (h : ∀ p ∈ c.salient, c.Agree (c.Supports p) (c.QSupports S)) :
     ¬ c.Ma S :=
   λ ⟨_, p, hp, _, hn⟩ => hn (h p hp)
 
-/-- VEGETARIAN, (25) and (30): with a polar question under discussion, a salient proposition
-supporting one answer and a question whose believed answers support the other disagree, so both
-particles are licensed. -/
+/-- With a polar question under discussion, a salient proposition and a question supporting opposite
+answers license both particles ((25), (30)). -/
 theorem but_of_polar {α : Set W} (hqud : c.qud = polar α) (hne : α ≠ ∅) (hnu : α ≠ Set.univ)
     (hS : S.IsRelevantTo c.issues) {p : Set W} (hp : p ∈ c.salient)
     (hr : (ofSet p).IsRelevantTo c.issues) (hpα : c.Evidence p α) (hpα' : ¬ c.Evidence p αᶜ)

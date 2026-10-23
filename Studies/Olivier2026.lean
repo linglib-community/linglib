@@ -173,9 +173,8 @@ theorem keep_have (ea ia : Person) (r : Restructuring) (h : r.transfer = .keep) 
   refine ⟨?_, fun hc ↦ TransferStyle.noConfusion (h.symm.trans hc.2)⟩
   simp [Restructuring.matrixAux, Restructuring.vAuxPerson, h, insert]
 
-/-- Condition 3 derived: under SHARE, with no prepositional clitic, the modal switches to BE
-exactly when the infinitive is a BE-selecting predicate (71), (76) versus (61) — the
-identity vAux inherits is T's iff Voice probed the subject's bearer. -/
+/-- Under SHARE with no prepositional clitic, the modal switches to BE iff the infinitive selects BE
+(Condition 3; (71), (76) versus (61)). -/
 theorem share_switch_iff_selectsBe (ea ia : Person) (c : TransitivityClass)
     (cl : Option Clitic) (hcl : cl ≠ some .detachedReflexive)
     (hp : (cl.map Clitic.prepositional).getD false = false) (rich : Bool) :
@@ -184,9 +183,8 @@ theorem share_switch_iff_selectsBe (ea ia : Person) (c : TransitivityClass)
   · revert ea ia c rich; decide
   · cases cl <;> first | exact absurd rfl hcl | (revert ea ia c rich; decide) | cases hp
 
-/-- Condition α and Table 1: with a reflexive infinitive, AS obtains exactly when the
-reflexive clitic climbs — (19b)/(20a) against (19a)/(20b) — so there is no AS without
-climbing. -/
+/-- With a reflexive infinitive, auxiliary switch obtains iff the reflexive clitic climbs
+((19b)/(20a) against (19a)/(20b); Condition α, Table 1). -/
 theorem reflexive_switch_iff_climbs (ea ia : Person) (t : TransferStyle) (rich : Bool) :
     Restructuring.Switch ea ia ⟨⟨.reflexive, some .reflexive⟩, t, rich⟩ ↔
       Restructuring.climbs ⟨⟨.reflexive, some .reflexive⟩, t, rich⟩ := by
@@ -199,18 +197,16 @@ theorem unaccusative_optional (ea ia : Person) (rich : Bool) :
       Restructuring.matrixAux ea ia ⟨⟨.unaccusative, none⟩, .keep, rich⟩ = .have := by
   revert ea ia rich; decide
 
-/-- §7.3: a prepositional clitic climbing out of an unaccusative leaves HAVE when vAux
-carries only its P-feature ((25)–(27), (36)), BE when vAux also probes the internal
-argument ((28)–(30), (37a)). -/
+/-- A prepositional clitic climbing from an unaccusative leaves HAVE if vAux has only its P-feature
+((25)–(27), (36)), BE if it also probes the internal argument ((28)–(30), (37a), §7.3). -/
 theorem prepositional_climbing (ea ia : Person) (cl : Clitic) (hcl : cl.prepositional = true)
     (rich : Bool) :
     Restructuring.climbs ⟨⟨.unaccusative, some cl⟩, .share, rich⟩ ∧
       (Restructuring.Switch ea ia ⟨⟨.unaccusative, some cl⟩, .share, rich⟩ ↔ rich = true) := by
   revert ea ia cl rich; decide
 
-/-- (31), [cardinaletti-shlonsky-2004]'s *lo sarei voluto andare a trovare* aside: an
-accusative clitic climbs out of a transitive infinitive without AS — its identity is
-not the subject's. -/
+/-- An accusative clitic climbs out of a transitive infinitive without auxiliary switch ((31),
+[cardinaletti-shlonsky-2004]'s *lo sarei voluto andare a trovare* aside). -/
 theorem accusative_climbing (ea ia : Person) (rich : Bool) :
     Restructuring.climbs ⟨⟨.transitive, some .accusative⟩, .share, rich⟩ ∧
       Restructuring.matrixAux ea ia ⟨⟨.transitive, some .accusative⟩, .share, rich⟩ = .have := by
@@ -243,8 +239,8 @@ theorem sardinian_reflexive (ea ia : Person) (r : Restructuring)
   have he' : e = ⟨.reflexive, some .reflexive⟩ := he
   subst ht he'; revert ea ia rich; decide
 
-/-- Modern French: KEEP alone yields neither climbing nor AS — (2a), (3a); the attested AS
-of §3.3 is the SHARE derivation (71) surfacing in a grammar that does not usually use it. -/
+/-- In Modern French KEEP yields neither climbing nor auxiliary switch ((2a), (3a)), the switch of
+§3.3 being the SHARE derivation (71). -/
 theorem modernFrench_no_switch (ea ia : Person) (r : Restructuring)
     (hv : Variety.modernFrench.admits r.transfer) : ¬ r.climbs ∧ ¬ r.Switch ea ia := by
   have hk : r.transfer = .keep := hv

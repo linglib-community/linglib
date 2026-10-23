@@ -557,24 +557,20 @@ theorem lenition_feeds_linking : Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDo
     (bundle fág) (d fág) (.input (historic Morpheme.hist * fág)) := by
   decide
 
-/-- The linking of `d` does not feed lenition before *ól*, since `{L}` never acts on `d`, which
-precedes it on the melodic tier; the form is *d' ól*, not *dh' ól* (§4.2). -/
+/-- The linking of `d` does not feed lenition before *ól*, giving *d' ól*, not *dh' ól* (§4.2). -/
 theorem not_linking_feeds_lenition : ¬ Feeds (fun k c ↦ dock c k) (fun k c ↦ CanDock c k)
     (d ól) (bundle ól) (.input (historic Morpheme.hist * ól)) := by
   decide
 
 /-! ### Figure 2 -/
 
-/-- In Figure 2b, *freagair* → *d' fhreagair*, `{L}` deletes the *f*, and `d` links to the
-emptied C-slot, which an empty V-slot follows but which stays in the domain of infrasegmental
-government that *r* contracts with it ((12b)). -/
+/-- In Figure 2b, `{L}` deletes the *f* of *freagair* and `d` links to the emptied C-slot, giving
+*d' fhreagair* ((12b)). -/
 theorem historic_freagair : ∀ c ∈ surfaces (.input (historic Morpheme.hist * freagair)),
     Realizes c (.seg .d) ∧ Realizes c .L ∧ ¬ Realizes c (.seg .f) := by
   decide
 
-/-- In Figure 2a, *rith* → *rith*, `{L}` docks on the *r*, which fills the C-slot, so `d` cannot
-link ((13b)). Both forms begin with *r* on the surface, and only the one derived from an
-*f*-initial verb has *d'* (§3). -/
+/-- In Figure 2a, `{L}` docks on the *r* of *rith*, so `d` cannot link ((13b), §3). -/
 theorem historic_rith : ∀ c ∈ surfaces (.input (historic Morpheme.hist * rith)),
     ¬ Realizes c (.seg .d) ∧ Realizes c .L := by
   decide
@@ -596,8 +592,7 @@ theorem historic_pstImpers : ∀ s ∈ [bog, ól, fág],
     isFloating_of_emptyCV (mem_surfaces.1 hc).1 (by simp [bundle])⟩
 
 /-- After the conditional particle a present-tense impersonal is lenited, *má bhogtar*, and a
-past-tense one is not, *má bogadh*. The past-tense impersonal resists lenition from any source,
-not only that of historic tense ((26), §6.2). -/
+past-tense one is not, *má bogadh* ((26), §6.2). -/
 theorem conditional_impersonals : (∀ c ∈ surfaces (.input (má * bog)), Realizes c .L) ∧
     ∀ c ∈ surfaces (.input (má * (emptyCV Morpheme.pstImpers * bog))), ¬ Realizes c .L := by
   decide
@@ -608,27 +603,24 @@ The alternative spells out `{L}` as a prefix on the verb ((22)) and, once the ve
 processed, the historic-tense particle as *d* before an empty consonantal slot and as nothing
 elsewhere ((23)). -/
 
-/-- On the verbs of (11) the two analyses agree. Processed with the prefix `{L}`, a verb begins
-with an empty consonantal slot exactly where the historic-tense marker's `d` is pronounced
-(§5.2). -/
+/-- On the verbs of (11), a verb begins with an empty consonantal position under `{L}` iff the
+historic-tense `d` is pronounced before it (§5.2). -/
 theorem beginsWithEmptyC_iff_realizes_d : ∀ v ∈ [bog, ól, fág],
     (∀ c ∈ surfaces (.input (lenition Morpheme.hist * v)), BeginsWithEmptyC c) ↔
       ∀ c ∈ surfaces (.input (historic Morpheme.hist * v)), Realizes c (.seg .d) := by
   decide
 
-/-- The morphosyntactic analysis predicts *d'* before the vowel-initial past-tense impersonal
-alone, since such a verb resists lenition, and unlenited only a vowel-initial verb begins with an
-empty consonantal slot. (27) has *d'* before none of them (§6.2). With the empty CV unit instead,
-every past-tense impersonal would take *d'* (`beginsWithEmptyC_of_emptyCV`). -/
+/-- Of the unlenited verbs only vowel-initial *ól* begins with an empty consonantal position, so the
+morphosyntactic analysis predicts *d'* before its past-tense impersonal alone, though (27) has none
+(§6.2). -/
 theorem beginsWithEmptyC_pstImpers : BeginsWithEmptyC (.input ól) ∧
     ¬ BeginsWithEmptyC (.input fág) ∧ ¬ BeginsWithEmptyC (.input bog) := by
   decide
 
 /-! ### Munster (§6.1) -/
 
-/-- In Munster the floating `d` accompanies `{L}` after a lenition-triggering particle and is
-pronounced exactly where it is after the historic-tense marker, before a vowel-initial or
-lenited *f*-initial verb (Table 3). -/
+/-- In Munster the floating `d` after a lenition-triggering particle is pronounced exactly where it
+is after the historic-tense marker (Table 3). -/
 theorem munster_iff_historic : ∀ v ∈ [bog, ól, fág],
     (∀ c ∈ surfaces (.input (níMunster * v)), Realizes c (.seg .d)) ↔
       ∀ c ∈ surfaces (.input (historic Morpheme.hist * v)), Realizes c (.seg .d) := by
@@ -644,10 +636,8 @@ theorem table2 : (∀ c ∈ surfaces (.input (ní * fás)), ¬ Realizes c (.seg 
 
 /-! ### Prothesis (§4.3) -/
 
-/-- Without `{L}`, a floating consonant links before a vowel-initial word but not before an
-*f*-initial one, giving *an t-athair* but *an fear*, not *an t-fear*. After the historic-tense
-marker an *f*-initial verb patterns with a vowel-initial one (`historic_fág`), since `{L}` deletes
-the *f*. Radical *f* patterns with consonants and mutated *f* with vowels (fn. 10). -/
+/-- Without `{L}`, a floating consonant links before a vowel-initial word but not an *f*-initial
+one, giving *an t-athair* but *an fear* (fn. 10). -/
 theorem prothesis :
     (∀ c ∈ surfaces (.input (prothetic Morpheme.art .t * athair)), Realizes c (.seg .t)) ∧
       ∀ c ∈ surfaces (.input (prothetic Morpheme.art .t * fear)), ¬ Realizes c (.seg .t) := by

@@ -56,8 +56,8 @@ def empty : Nucleus := { melody := .empty }
 /-- The final nucleus of Common Slavic, Old Czech and Czech may be empty and does not govern. -/
 def slavicFinal : FinalNucleus := ⟨true, false⟩
 
-/-- In a word of yers alone, a yer survives iff its distance to the end of the word is even, so that
-every other yer survives, counting from the right edge of the sequence ((304a)). -/
+/-- In a word of yers alone, a yer survives iff its distance to the end of the word is even
+((304a)). -/
 theorem havlik (n : ℕ) :
     standard slavicFinal (List.replicate n yer) =
       (List.replicate n yer).mapIdx fun i x ↦ (x, decide (Even (n - i))) := by
@@ -65,14 +65,12 @@ theorem havlik (n : ℕ) :
     (ys := []) (fun x hx ↦ by rw [List.eq_of_mem_replicate hx]; exact ⟨rfl, rfl⟩)
     (.inr ⟨rfl, rfl, rfl⟩)
 
-/-- Common Slavic *sъ pьs-ъmь* gives Old Czech *se psem* 'with the dog', in which the second and
-fourth of its four yers from the right survive ((304b)). -/
+/-- Common Slavic *sъ pьs-ъmь* gives Old Czech *se psem* 'with the dog' ((304b)). -/
 theorem se_psem :
     (standard slavicFinal (List.replicate 4 yer)).map Prod.snd = [true, false, true, false] := by
   decide
 
-/-- Common Slavic *sъ šьv-ьc-ьmь* gives Old Czech *s ševcem* 'with the shoemaker', in which the
-second and fourth of its five yers from the right survive ((304b)). -/
+/-- Common Slavic *sъ šьv-ьc-ьmь* gives Old Czech *s ševcem* 'with the shoemaker' ((304b)). -/
 theorem s_sevcem :
     (standard slavicFinal (List.replicate 5 yer)).map Prod.snd =
       [false, true, false, true, false] := by
@@ -89,11 +87,7 @@ def podeBrat : List Nucleus := [vowel, yer, { yer with cluster := true }, vowel,
 the branching onset *br*, *a*, the yer of *-ek*, and the final nucleus. -/
 def podBradek : List Nucleus := [vowel, yer, { empty with cluster := true }, vowel, yer, empty]
 
-/-- Before *brat* the prefix is vocalised: *b* and *r* enclose a yer, a "hidden" zero, which no
-domain of infrasegmental government spans, so the yer needs government from *a*, which therefore
-cannot reach the prefix. Before *bradek* it is not, since the empty nucleus of *br* is enclosed
-in a domain of infrasegmental government, government passes over it, and *a* governs the prefix
-((21), §75). -/
+/-- The prefix is vocalised before *brat* but not before *bradek* ((21), §75). -/
 theorem pode_brat_podbradek :
     (standard slavicFinal podeBrat).map Prod.snd = [true, true, false, true, false] ∧
       (standard slavicFinal podBradek).map Prod.snd = [true, false, false, true, true, false] := by

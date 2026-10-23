@@ -197,10 +197,8 @@ theorem embeddedRoot_le_threshold {l : Language} (h : loci l = {.sa}) :
     .embeddedRoot ≤ threshold l := by
   simpa [h, lowest] using loci_sound l
 
-/-- The loci reach below the threshold exactly in Souletin Basque and Korean, where the speech-act
-phrase reaches embedded-root contexts that are not marked (ex 13), as if it did not embed there
-([dayal-2025]); and in Tamil, whose finiteness locus reaches every finite clause while its marker
-is restricted. -/
+/-- The loci reach below the threshold exactly in Souletin Basque and Korean (ex 13, [dayal-2025])
+and in Tamil. -/
 theorem loci_incomplete :
     {l | (loci l).inf' (loci_nonempty l) (lowest l) ≠ threshold l} =
       {.souletinBasque, .korean, .tamil} := by

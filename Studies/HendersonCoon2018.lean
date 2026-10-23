@@ -191,27 +191,22 @@ def IsExtraction (d : Datum) : Prop := d.feature? "construction" = some "extract
 instance : DecidablePred IsExtraction := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
 /-- Every example is grammatical exactly when one of its parses converges under the case-based
-account (§5): Agent Focus where a subject is extracted in its own clause, the transitive form
-where it is not, past an adverb taking a clause or a caseless object. -/
+account (§5). -/
 theorem rows_fit : ∀ d ∈ Examples.all, IsExtraction d →
     ∃ e ∈ Example.ofDatum d,
       (d.judgment = .acceptable ↔ ∃ p, e.Parses p ∧ Converges (e.clause p)) := by
   decide
 
-/-- Without the biclausal parse the case-based account fails exactly on the examples without
-Agent Focus whose subject seems to cross an adverb that takes a clause, the minimal pairs of §4;
-the examples with an overt complementizer or pronoun have no other parse. -/
+/-- Without the biclausal parse, the case-based account fails exactly on non-AF examples whose
+subject seems to cross a clause-taking adverb, the minimal pairs of §4. -/
 theorem monoclausal_fits_iff : ∀ d ∈ Examples.all, IsExtraction d →
     ∃ e ∈ Example.ofDatum d, e.Parses .monoclausal →
       ((d.judgment = .acceptable ↔ Converges (e.clause .monoclausal)) ↔
         ¬ (e.form = .transitive ∧ e.extracted = .subj ∧ ∃ i ∈ e.intervener, i.TakesClause)) := by
   decide
 
-/-- Erlewine's grammar fits an example read as one clause exactly when its object is a full DP and
-either nothing intervenes or a transitive verb follows an adverb that takes a clause. It misses
-the caseless objects of §3.2, Agent Focus past any adverb, negation, and the adverbs that take no
-clause (§4, §5.3), and since its outcome is fixed by the input it cannot give both forms past the
-same adverb, as (5) and (6) have. -/
+/-- Erlewine's grammar fits a monoclausal example iff its object is a full DP and nothing intervenes
+or a transitive verb follows a clause-taking adverb (§3.2, §4, §5.3, (5), (6)). -/
 theorem antiLocality_fits_iff : ∀ d ∈ Examples.all, IsExtraction d →
     ∃ e ∈ Example.ofDatum d, e.Parses .monoclausal →
       ((d.judgment = .acceptable ↔ e.AntiLocality) ↔

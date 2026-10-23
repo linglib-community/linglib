@@ -163,9 +163,7 @@ theorem mem_exh_prfv_iff (hP : Function.Surjective P)
     fun ⟨⟨e, he, hv⟩, h⟩ ↦ ⟨⟨e, he.le, hv⟩, h⟩⟩
 
 /-- Where every relevant event is shorter than the span, the exhaustified positive claim is
-contradictory, so *in years* is a negative polarity item, (44) and (49). The positive *until*
-sentence (128), the perfect of (152b), the perfective of the negated predicate in (146a) and the
-presupposition of (180) are instances. -/
+contradictory, so *in years* is an NPI ((44), (49); also (128), (146a), (152b), (180)). -/
 theorem in_years_contradictory (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V}
     (hshort : ∀ e, P v e → Event.τ e ≠ τ) :
@@ -242,9 +240,8 @@ theorem beyond_expectation_inference (h : Widened F P w τ) (hτ' : τ' ∈ F)
     (hfree : τ' ∉ PRFV P w) : τ' ≤ τ :=
   h.2 ⟨hτ', hfree⟩
 
-/-- With *in years* the last event starts just before the left boundary of the widened perfect
-time span, (51), since however close to the boundary one looks an event starts there,
-(23)–(24). -/
+/-- With *in years*, events start arbitrarily close before the left boundary of the widened span
+((51), (23)–(24)). -/
 theorem event_near_lb {t : T} (h : Widened {τ | τ.snd = t} P w τ) {s : T} (hs : s < τ.fst) :
     ∃ e, P w e ∧ s ≤ (Event.τ e).fst ∧ (Event.τ e).fst < τ.fst := by
   obtain ⟨e, he, hP⟩ := h.prfv (τ' := ⟨(s, τ.snd), hs.le.trans τ.fst_le_snd⟩) h.1.1
@@ -287,9 +284,8 @@ theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
   obtain ⟨e, hP, hse, hlt⟩ := event_near_lb h hs
   exact (hsF e hP hlt).not_ge hse
 
-/-- A boundary adverbial that names its left boundary `s`, *in (the last) 5 years* or *since 2015*,
-leaves the actuality inference cancelable, since the negated perfect holds with no relevant event
-at all, (11)–(12), and with the last event before the left boundary, (23). -/
+/-- A boundary adverbial naming its left boundary leaves the actuality inference cancelable
+((11)–(12), (23)). -/
 theorem cancelable_of_lb {t : T} (s : T) (hs : s ≤ t) :
     (∃ P : W → E → Prop, ∃ τ : NonemptyInterval T, τ.fst = s ∧ τ.snd = t ∧ τ ∉ PRFV P w ∧
         ∀ e, ¬ P w e) ∧
@@ -323,8 +319,8 @@ theorem throughout_exh_vacuous :
     exh (domainAlternatives (UNBOUNDED P) τ) {v | τ ∈ UNBOUNDED P v} = {v | τ ∈ UNBOUNDED P v} :=
   exh_domainAlternatives_eq_self fun v ↦ isLowerSet_unbounded P v
 
-/-- Where every extension is available and the event domain is rich, the not-throughout claim at
-one span entails it at another exactly when the second contains the first, (142). -/
+/-- With rich events, the not-throughout claim at one span entails it at another iff the first is
+contained in the second (142). -/
 theorem not_unbounded_subset_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
     {v | τ₁ ∉ UNBOUNDED P v} ⊆ {v | τ₂ ∉ UNBOUNDED P v} ↔ τ₁ ≤ τ₂ := by

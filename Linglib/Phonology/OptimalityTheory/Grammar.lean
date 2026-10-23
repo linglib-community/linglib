@@ -209,12 +209,8 @@ theorem legs_nonempty (G : Grammar n) : G.legs.Nonempty := by
 
 /-! ### The ERC face: grammar equality is mutual entailment -/
 
-/-- **The entailment quotient dissolves at the grammar level.** Two consistent ERC
-sets present the same grammar iff they have the same linear extensions — iff each
-entails the other. This is why the leg set, not the ERC set, is the grammar's
-identity: the "logically equivalent, not literally equal" hedge of the ERC
-presentation ([merchant-riggle-2016] Theorem 2) becomes literal `Grammar`
-equality. -/
+/-- Two consistent ERC sets present the same grammar iff they have the same linear extensions
+([merchant-riggle-2016] Theorem 2). -/
 theorem ofERCs_eq_iff {E E' : Finset (ERC (Fin n))}
     (h : (ERC.linearExtensions E).Nonempty) (h' : (ERC.linearExtensions E').Nonempty) :
     ofERCs E h = ofERCs E' h' ↔ ERC.linearExtensions E = ERC.linearExtensions E' :=

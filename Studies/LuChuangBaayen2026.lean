@@ -66,12 +66,9 @@ open DiscriminativeLexicon ChuangEtAl2026 Finset Matrix
 token (§4.1). -/
 abbrev PitchSampleCount : ℕ := 100
 
-/-- The centroid of a tone pattern averages the centroids of its word types `T`, each the mean
-over the tokens of the type (§4.4). The production matrix `G` maps the 768-dimensional CKIP GPT-2
-contextualized embeddings of [chuang-bell-tseng-baayen-2026] to 100-sample pitch vectors
-(§4.2). If every word type of the pattern has a training token and is linearly decodable from
-the embeddings, a least-squares-trained `G` sends the pattern's centroid embedding to the same
-average of its word types' mean target contours (Fig. 9). -/
+/-- If every word type is trained and linearly decodable, a least-squares `G` sends a tone pattern's
+centroid embedding to its types' mean contour average (§4.4, §4.2, Fig. 9,
+[chuang-bell-tseng-baayen-2026]). -/
 theorem production_centroid_centroid_eq_of_decodable {m : ℕ} {W : Type*} [DecidableEq W]
     {data : TrainingExperience m PitchSampleCount CKIPGPT2HiddenDim}
     {G : Matrix (Fin CKIPGPT2HiddenDim) (Fin PitchSampleCount) ℝ} (hG : IsELTrained data G)

@@ -50,8 +50,8 @@ theorem exists_relativePos_of_lt (μ : Entity → D) {a b : Entity} (h : μ b < 
     ∃ θ, RelativePos μ θ a ∧ ¬ RelativePos μ θ b :=
   ⟨μ b, h, lt_irrefl _⟩
 
-/-- In *the full one* (54), a maximum-standard adjective tells two objects apart only when one
-is at the maximum and the other is not, so two partially full jars leave nothing to pick out. -/
+/-- A maximum-standard adjective distinguishes two objects only when exactly one is at the maximum,
+as in *the full one* (54). -/
 theorem maxStandardPos_and_not_iff [OrderTop D] (μ : Entity → D) (a b : Entity) :
     MaxStandardPos μ a ∧ ¬ MaxStandardPos μ b ↔ μ a = ⊤ ∧ μ b ≠ ⊤ :=
   Iff.rfl
@@ -69,9 +69,8 @@ theorem not_minStandardPos_iff [OrderBot D] (μ : Entity → D) (x : Entity) :
     ¬ MinStandardPos μ x ↔ μ x = ⊥ :=
   not_lt.trans le_bot_iff
 
-/-- *The door is not open* entails *the door is closed* (47). A minimum standard and the maximum
-standard of the antonym, which measures on the dual scale, split the domain between them, since
-the minimum of the one is the maximum of the other. -/
+/-- A minimum standard and its antonym's maximum standard on the dual scale partition the domain, so
+*the door is not open* entails *the door is closed* (47). -/
 theorem isCompl_minStandardPos_maxStandardPos_dual [OrderBot D] (μ : Entity → D) :
     IsCompl {x | MinStandardPos μ x} {x | MaxStandardPos (OrderDual.toDual ∘ μ) x} := by
   have : {x | MaxStandardPos (OrderDual.toDual ∘ μ) x} = {x | MinStandardPos μ x}ᶜ := by
@@ -131,9 +130,8 @@ theorem table61_iff_licenses (p : Polarity) (b : Boundedness) (m : EndpointModif
   cases p <;> cases b <;> cases m <;> decide
 
 open English.Adjectives in
-/-- The Fragment's antonym pairs fill table (61) with *completely full/empty*, *slightly wet* but
-*??completely wet*, *completely dry* but *??slightly dry*, *slightly bent* but *??fully bent*,
-*fully straight*, and nothing on the open height scale. -/
+/-- The fragment's antonym pairs fill table (61) by their compatibility with maximizers and
+minimizers. -/
 theorem fragment_pairs_table61 :
     full.boundedness.Licenses .maximizer ∧ empty.boundedness.Licenses .maximizer ∧
     wet.boundedness.Licenses .minimizer ∧ ¬ wet.boundedness.Licenses .maximizer ∧

@@ -686,8 +686,8 @@ theorem rice_S1 (hα : 0 < α) {p : Persona} (hl : p ≠ articulateAloof)
   rw [S1_real_singleton_of_ne release released_or_flapped hα (rice_ne_zero p) hl hr,
     share_eq_half release (rice_ne_zero _) rice_eq]
 
-/-- After released /t/ the listener doubles her belief in the articulate aloof persona, rules out
-the inarticulate friendly one, and leaves the others at their prior (Table 12). -/
+/-- After released /t/ the listener doubles her belief in the articulate aloof persona and rules out
+the inarticulate friendly one (Table 12). -/
 theorem rice_released (hα : 0 < α) :
     (L1 field α rice .released).real {articulateAloof} = 1 / 2 ∧
       (L1 field α rice .released).real {articulateFriendly} = 1 / 4 ∧
@@ -774,9 +774,8 @@ theorem pelosi_symm_share : share release.symm pelosi 6 = 11 ^ 6 / (19 ^ 6 + 11 
     show pelosiWeight inarticulateFriendly = 9 by decide +kernel]
   norm_num
 
-/-- Released /t/ leaves the listener more than 80% sure that Pelosi is inarticulate and aloof and
-the flap more than 95% sure that she is inarticulate and friendly, so that both variants make
-her inarticulate and only her friendliness differs (Table 14, p. 443). -/
+/-- After released /t/ the listener is over 80% sure Pelosi is inarticulate and aloof, and after the
+flap over 95% sure she is inarticulate and friendly (Table 14, p. 443). -/
 theorem pelosi_L1 : 4 / 5 < (L1 field 6 pelosi .released).real {inarticulateAloof} ∧
     19 / 20 < (L1 field 6 pelosi .flapped).real {inarticulateFriendly} := by
   have h₁ := mul_L1_real_singleton release released_or_flapped (by norm_num : (0 : ℝ) < 6)
@@ -807,8 +806,8 @@ private theorem bush_eq : bush {articulateAloof} = bush {inarticulateFriendly} :
   simp only [Measure.ofWeights_apply_singleton, bushWeight]
   rfl
 
-/-- Whatever the rationality and whichever variant he uses, the listener remains 97% sure that
-Bush is inarticulate and aloof, the bulletproofing of Table 16 (p. 444). -/
+/-- The listener remains 97% sure that Bush is inarticulate and aloof whatever variant he uses
+(Table 16, p. 444). -/
 theorem bush_bulletproof (hα : 0 < α) (u : Variant) :
     (L1 field α bush u).real {inarticulateAloof} = 97 / 100 := by
   have hreal : bush.real {inarticulateAloof} / bush.real Set.univ = 97 / 100 := by

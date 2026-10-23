@@ -140,9 +140,8 @@ noncomputable abbrev listener (μ : Measure State) (α : ℝ) : Kernel Utterance
 /-- The uniform prior over the states. -/
 local notation "υ" => uniformOn (Set.univ : Set State)
 
-/-- At an exclusiveness state the speaker prefers the strong parse (34b) of *may any* to the
-weak parse (34a) at every rationality, since the weak parse is true in five states and the
-strong in two. At `α = 100` the ratio is `(5/2)^100`, the paper's "almost 100% of the time". -/
+/-- At an exclusiveness state, the speaker prefers the strong parse (34b) of *may any* to the weak
+parse (34a) at every rationality. -/
 theorem speaker_prefers_strong_parse {α : ℝ} (hα : 0 < α) {s : State} (hs : meaning .anyB s) :
     (speaker υ α s).real {.anyA} < (speaker υ α s).real {.anyB} :=
   speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem hα
@@ -162,9 +161,8 @@ theorem mayEvery_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
   exact hs (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _
     (by revert hp; cases p <;> decide))
 
-/-- Hearing *may any*, the listener prefers each exclusiveness state, Only 1 and Any #, where
-each class may be taken on its own (the paper's 0.50 + 0.50), to each of Only 2, S or 2, and
-P or 2 (each ≈ 0), at every rationality. This is the exclusiveness implicature of Table 3. -/
+/-- Hearing *may any*, the listener prefers each exclusiveness state to each non-exclusive one at
+every rationality, the exclusiveness implicature of Table 3. -/
 theorem exclusiveness_derived {α : ℝ} (hα : 0 < α) :
     ∀ s ∈ ({.only2, .sOr2, .pOr2} : Finset State), ∀ s' ∈ ({.only1, .anyNum} : Finset State),
       (listener υ α .mayAny).fst.real {s} < (listener υ α .mayAny).fst.real {s'} := by
@@ -173,25 +171,22 @@ theorem exclusiveness_derived {α : ℝ} (hα : 0 < α) :
     exact listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates sem Parse.utt hα
       (by decide +kernel)
 
-/-- Hearing *may any* at the paper's α = 100, the listener infers the strong parse (34b) over
-the weak parse (34a), the speaker's near-categorical parse preference pooled over states. -/
+/-- Hearing *may any* at α = 100, the listener infers the strong parse (34b) over the weak parse
+(34a). -/
 theorem listener_infers_strong_parse :
     (listener υ 100 .mayAny).snd.real {.anyA} < (listener υ 100 .mayAny).snd.real {.anyB} :=
   listener_compProd_speaker_uniformOn_snd_real_lt_of_divPowSum sem Parse.utt (k := 100)
     (D := 60) (by decide +kernel) rfl rfl (by decide +kernel)
 
-/-- Hearing *may S*, the listener prefers Only S to S or 2 at every rationality (0.67 against
-0.33 in Table 3), since the doubly exhaustified parse (32c) is available only at Only S. -/
+/-- Hearing *may S*, the listener prefers Only S to S or 2 at every rationality, as the parse (32c)
+is true only at Only S (Table 3). -/
 theorem literal_s_communicates_onlyS {α : ℝ} (hα : 0 < α) :
     (listener υ α .mayS).fst.real {.sOr2} < (listener υ α .mayS).fst.real {.onlyS} :=
   listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates sem Parse.utt hα
     (by decide +kernel)
 
-/-- Hearing *may any*, Only 1 is strictly likelier than Any # at every rationality. Both parses
-of *may any* weigh the same at the two states, but the parse (35b) of *may every* is true at
-Any # and not at Only 1, inflating the speaker's partition there. Table 3 reports 0.50/0.50 (at
-α = 100 the difference is ≈ 2·10⁻³¹); the same asymmetry drives the *not every* implicature under
-an Only-1-favouring prior (Table 6). -/
+/-- Hearing *may any*, the listener finds Only 1 strictly likelier than Any # at every rationality,
+owing to the parse (35b) of *may every* (Table 3, Table 6). -/
 theorem only1_over_anyNum {α : ℝ} (hα : 0 < α) :
     (listener υ α .mayAny).fst.real {.anyNum} < (listener υ α .mayAny).fst.real {.only1} :=
   listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates sem Parse.utt hα
@@ -214,9 +209,8 @@ def observedLiteral (row : Datum) : Bool :=
   | some j => j == .acceptable
   | none => row.judgment == .acceptable
 
-/-- At every scenario with a fixed state, *may any* is literally true exactly where the
-paper judges it so, and the exclusiveness reading holds exactly where Dayal's parse (34b) is
-true, so the all-or-nothing scenarios are true but not exclusive. -/
+/-- In every fixed-state scenario, *may any* is literally true and has the exclusiveness reading
+(34b) exactly where the judgments say. -/
 theorem rows_agree : ∀ row ∈ Examples.all, ∀ s ∈ rowState row,
     (LiterallyTrue s ↔ observedLiteral row = true) ∧
       ∀ j ∈ row.readings.lookup "exclusiveness", (meaning .anyB s ↔ j = .acceptable) := by

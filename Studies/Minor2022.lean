@@ -269,8 +269,8 @@ def cardinal (p : ℕ → Prop) (u : R) : Condition (Set S) :=
 negating the singular. -/
 def bare (u : R) : Condition (Set S) := (atomic u ∩ unique u)ᶜ
 
-/-- The singular (74) is state-level atomicity (§5.1): on a nonempty state whose values of `u`
-are non-null, atomicity and uniqueness hold exactly when the values sum to an atom. -/
+/-- On a nonempty state with non-null values of `u`, atomicity and uniqueness hold iff the values
+sum to an atom, the singular (74) (§5.1). -/
 theorem mem_atomic_inter_unique_iff (hI : I.Nonempty) (hu : ∀ i ∈ I, ¬ IsBot (val u i)) :
     I ∈ atomic u ∩ unique u ↔ ∃ a, Atom a ∧ IsLUB (val u '' I) a := by
   refine ⟨fun ⟨hA, hU⟩ ↦ ?_, fun ⟨a, ha, hlub⟩ ↦ ?_⟩
@@ -372,8 +372,8 @@ theorem singleton_mem_dom_distS_iff :
   simp only [mem_dom, mem_distS, ← mem_dom (R := dist D), dom_dist, Set.mem_ofPred_eq,
     split_singleton, Set.image_nonempty, Set.forall_mem_image]
 
-/-- A singular restrictor under weak distributivity leaves the sum at most one atomic part, the
-global atomicity that rules out a singular quantifier distributing weakly (§6.4.3). -/
+/-- A singular restrictor under weak distributivity leaves the sum at most one atomic part (§6.4.3).
+-/
 theorem singleton_mem_dom_distW_test_iff :
     {k} ∈ (distW u (test (atomic u ∩ unique u))).dom ↔ (atomsBelow (val u k)).Subsingleton := by
   simp only [mem_dom, mem_distW, mem_test_iff_left, exists_eq_left', Set.mem_inter_iff, atomic,
@@ -431,8 +431,8 @@ theorem cumulative_cardinal_iff (huu' : u ≠ u') (p : ℕ → Prop) :
   simp only [id, singleton_mem_dom_vp_iff huu', val_extend_self, cardinal, Set.image_singleton,
     Set.singleton_subset_iff, Set.mem_ofPred_eq]
 
-/-- On the dependent plural reading (129) of *Three students all carried boxes*, every atomic part
-of the subject carried a sum of boxes, and the sums are not one and the same atom. -/
+/-- On the dependent plural reading (129) of *Three students all carried boxes*, each student
+carried some boxes, not all one and the same box. -/
 theorem dependent_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P (distW u) M (bare u')).dom ↔
       ∃ x, P x ∧ ∃ b : E → E, (atomsBelow x).Nonempty ∧
@@ -513,11 +513,8 @@ theorem exists_eq_singleton_of_verb {g : Thing} {y : Finset Thing} (h : hats.ver
 
 variable (i : Dref → Finset Thing)
 
-/-- In the context of the examples the analysis predicts their judgments. *The girls were
-wearing several hats* (4) and *The girls were all wearing hats* (11a) are true, *All the girls
-were wearing several hats* (3) and *The girls were each wearing hats* (13) false. They fill four
-cells of Table 2, showing cumulation, the Ban on Numerals, co-distributivity with the Multiplicity
-Condition, and the Ban on Singular Licensors. -/
+/-- The analysis predicts the judgments of (4), (11a), (3) and (13), which fill four cells of Table
+2. -/
 theorem judgments :
     (Examples.ex_4.judgment = .acceptable ↔
       {i} ∈ (sentence Dref.subj Dref.obj theGirls id hats (cardinal (1 < ·) Dref.obj)).dom) ∧

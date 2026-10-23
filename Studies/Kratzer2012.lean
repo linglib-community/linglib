@@ -98,17 +98,14 @@ the rumor's content. -/
 theorem sollen_holds (w : World) : simpleNecessity content chief w := by
   decide_worlds
 
-/-- On shaky evidence (8a) fails, since where the rumor exists the worlds with a counterpart
-of it include one where Roger was not elected, so Roger need not have been elected chief. -/
+/-- On shaky evidence (8a) fails, so Roger need not have been elected chief. -/
 theorem not_must_chief (w : World) : ¬ simpleNecessity evidence chief w := by
   revert w; decide_worlds
 
 theorem can_chief (w : World) (h : rumor w) : simplePossibility evidence chief w := by
   revert h w; decide_worlds
 
-/-- From a reliable source (8a) holds. If the background also records that the rumor is
-reliable, a proposition entailing its content wherever the rumor exists, then Roger must have
-been elected chief, for any worlds and backgrounds. -/
+/-- If the background records that the rumor is reliable, (8a) holds. -/
 theorem must_of_reliable {W : Type*} (rumor chief reliable : W → Prop) (f : Background W)
     (hf : ∀ w, rumor w → rumor ∈ f w ∧ reliable ∈ f w)
     (hrel : ∀ v, reliable v → rumor v → chief v) (w : W) (hw : rumor w) :
@@ -157,9 +154,8 @@ theorem Superincreasing.measure_lt_iff [LinearOrder α] [Finite α] (hμ : Super
 
 variable [MeasurableSingletonClass α] [IsFiniteMeasure μ]
 
-/-- No measure giving `c` weight preserves comparative possibility when neither of `a` and `b` is
-strictly better than the other and `c` is not strictly better than `a`. The propositions `{a}` and
-`{b, c}` are then equally good possibilities, which leaves `c` no weight (p. 41). -/
+/-- No measure giving `c` positive weight preserves comparative possibility when `a` and `b` are
+tied and `c` is not strictly better than `a` (p. 41). -/
 theorem not_kratzerLift_iff_measure_le {r : α → α → Prop} {a b c : α}
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) (hab' : ¬ (r a b ∧ ¬ r b a))
     (hba : ¬ (r b a ∧ ¬ r a b)) (hca : ¬ (r c a ∧ ¬ r a c)) (hc : μ {c} ≠ 0) :
@@ -192,8 +188,8 @@ theorem kratzerLift_iff_measure_le_iff [LinearOrder α] :
 
 end Measures
 
-/-- Under the Limit Assumption, necessity and possibility coincide when no two accessible worlds
-are tied or incomparable, since there is then a single best world (§2.5). -/
+/-- Under the Limit Assumption, necessity and possibility coincide when the accessible worlds are
+strictly totally ordered (§2.5). -/
 theorem humanNecessity_iff_humanPossibility {W : Type*} {f g : Background W}
     {w : W} (p : W → Prop) (hlim : LimitAssumption f g w) (hne : (f.accessibleWorlds w).Nonempty)
     (htot : ∀ u ∈ f.accessibleWorlds w, ∀ v ∈ f.accessibleWorlds w, (u ≤[g w] v) ∨ (v ≤[g w] u))
@@ -396,8 +392,8 @@ theorem humanPossibility_tied_iff_probTied (p : World → Prop) :
     ← Nat.cast_ofNat (R := ℝ≥0∞) (n := 4), Nat.cast_lt, not_lt, h]
   simp
 
-/-- No measure giving `w₁` weight, the measure of p. 46 among them, preserves the comparative
-possibility of `O₃`, under which `{w₂}` and `{w₁, w₃}` are equally good possibilities. -/
+/-- No measure giving `w₁` positive weight, the measure of p. 46 among them, preserves the
+comparative possibility of `O₃`. -/
 theorem not_kratzerLift_tied_iff (μ : Measure World) [IsFiniteMeasure μ] (h : μ {1} ≠ 0) :
     ¬ ∀ A B : Set World, KratzerLift (premisePreorder (tied 0)).le A B ↔ μ B ≤ μ A := by
   refine not_kratzerLift_iff_measure_le (a := 2) (b := 3) (c := 1) (by decide) (by decide)

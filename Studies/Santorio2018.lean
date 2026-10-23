@@ -167,9 +167,8 @@ theorem karenina_truthmakers :
     (truthmakers readingAlts everyAorW).toFinset = {everyA, everyW, someA ∩ someW} := by
   decide
 
-/-- The mixed truthmaker is realized where no universal alternative is, so
-[alonso-ovalle-2009]'s disjunct alternatives `{∀A, ∀W}` miss the way for (35) to be true that
-makes (39) infelicitous. -/
+/-- The mixed truthmaker realizes neither universal alternative, so [alonso-ovalle-2009]'s
+alternatives miss the way (35) is true that makes (39) infelicitous. -/
 theorem karenina_mixed_not_alonsoOvalle :
     Reading.mixed ∈ someA ∩ someW ∧ Reading.mixed ∉ everyA ∧
       Reading.mixed ∉ everyW := by
@@ -187,8 +186,7 @@ abbrev allies : Finset SpainWorld := Finset.univ.filter (· ∈ foughtAllies)
 /-- The alternatives to *Spain fought with the Axis or the Allies*. -/
 def spainAlts : List (Finset SpainWorld) := [axis ∪ allies, axis, allies, axis ∩ allies]
 
-/-- Collectively, (8) is true, since the closest world where Spain fought with either is the
-Axis world. Strengthening the antecedent to *the Allies* makes it false, so Antecedent
+/-- Collectively (8) is true while its strengthening to *the Allies* is false, so Antecedent
 Strengthening fails. -/
 theorem spain_collective :
     collectiveConditional spainSim spainAlts (axis ∪ allies) foughtAxis .actual ∧
@@ -221,10 +219,8 @@ instance (w : Party) : DecidableRel (partySim w).le := fun _ _ ↦ inferInstance
 /-- *The party was fun* holds only when Anna came alone. -/
 abbrev partyFun : Finset Party := {.annaOnly}
 
-/-- (57) *If Anna came, the party would be fun* and (58) *If Anna, or Otto and Anna, came,
-the party would be fun* have logically equivalent antecedents, yet with the *if*-clauses
-denoting `{Anna came}` and `{Anna came, Otto and Anna came}` the distributive parsing makes
-(57) true and (58) false. -/
+/-- On the distributive parsing, (57) is true and (58) false although their antecedents are
+logically equivalent. -/
 theorem substitution_fails :
     anna = anna ∪ (otto ∩ anna) ∧
       .neither ∈ distributiveImp partySim {anna} ↑partyFun ∧

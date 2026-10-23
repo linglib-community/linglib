@@ -271,17 +271,14 @@ theorem rows_realized :
 
 /-! ### One exponent per feature -/
 
-/-- **No double plural marking** (§3.3.1). T's single number probe makes T one matrix, so the
-suffixes realize disjoint parts of it. At most one realizes [Group], whence *-es* and *-n* exclude
-*-t*, and at most one realizes [#], whence *-t* excludes *-s*. -/
+/-- The suffixes realize pairwise disjoint features of T, so no double plural marking occurs
+(§3.3.1). -/
 theorem one_exponent_per_feature (s : Screeve) (subj obj : Argument) :
     (suffixItems s subj obj).Pairwise fun i j ↦ Disjoint i.features j.features :=
   pairwise_disjoint_insertions (by simpa using (tamNode s subj obj).nodup)
 
-/-- Fission alone does not exclude double plural marking (§3.3.1). Were T to agree in number with
-both a plural third-person subject and a plural second-person object, it would bear two number
-matrices, one for each Agree relation, and scansion would insert *-es* from the one and *-t* from
-the other, the starred (3b); T's single [#] probe is what excludes it. -/
+/-- Fission alone does not exclude double plural marking, since T with two number matrices would
+yield the starred (3b) (§3.3.1). -/
 theorem fission_alone_allows_double_plural :
     let subjNum := Screeve.aorist.features ∪
       (⟨.third, .plural⟩ : Argument).features.filter (·.IsUnder .individuation)
@@ -302,9 +299,8 @@ soon as possible ((10c), (13a)) and *-t* ranks above *-s* ((20)). -/
 theorem vocabulary_ranked (s : Screeve) : s.vocabulary.Pairwise fun i j ↦ rank j < rank i := by
   cases s <;> decide
 
-/-- Intrinsic features lead the ranking, so *-t* (13c) ranks above the null participant suffix
-(13d) though it mentions fewer features, and contextual ones break ties, so (13d) ranks above
-*-s* (13e). -/
+/-- Ranking by intrinsic then contextual features puts *-t* (13c) above the null participant suffix
+(13d), and (13d) above *-s* (13e). -/
 theorem specificity_number :
     participantNumber.specificity < plural.specificity ∧
       defaultNumber.specificity < participantNumber.specificity := by

@@ -189,9 +189,8 @@ theorem IsStrawsonAntiAdditive.isStrawsonDE (h : IsStrawsonAntiAdditive f) : IsS
     · simp_all
     · simp_all
 
-/-- Strawson anti-additivity adds to Strawson downward entailingness the Strawson form of
-[atlas-1996]'s pseudo-anti-additivity, that `f p` and `f q` together entail `f (p ⊔ q)`
-([von-fintel-1999]'s (25); [gajewski-2011], Appendix 1). -/
+/-- Strawson anti-additivity is Strawson downward entailingness plus the Strawson form of
+[atlas-1996]'s pseudo-anti-additivity ([von-fintel-1999]'s (25); [gajewski-2011], Appendix 1). -/
 theorem isStrawsonAntiAdditive_iff :
     IsStrawsonAntiAdditive f ↔
       IsStrawsonDE f ∧ ∀ p q, strawsonEntails (fun w ↦ (f p w).meetWeak (f q w)) (f (p ⊔ q)) := by
@@ -252,9 +251,8 @@ theorem not_isStrawsonUE_only : ¬ IsStrawsonUE (only (W := Unit) true) :=
   not_isStrawsonUE (p := fun y ↦ {_u | y = true}) (q := ⊤) (w := ()) le_top
     (by simp [only]) (by simp [only])
 
-/-- When distinct individuals yield alternatives none of which the prejacent entails, the
-name-based *only* is the propositional exclusive `Focus.Particles.only` applied to the
-predication of `x`, over the alternatives the name generates ([coppock-beaver-2014]'s (93)). -/
+/-- If the prejacent entails no other individual's predication, name-based *only* equals
+`Focus.Particles.only` over the alternatives the name generates ([coppock-beaver-2014]'s (93)). -/
 theorem only_eq_only_range (hP : ∀ y, P x ⊆ P y → y = x) :
     only x P = Focus.Particles.only (· ⊆ ·) (Set.range P) (P x) := by
   funext w
@@ -347,9 +345,8 @@ theorem isStrawsonAntiAdditive_only_subset : IsStrawsonAntiAdditive (only (· �
 theorem isStrawsonDE_only_subset : IsStrawsonDE (only (· ⊆ ·) C) :=
   (isStrawsonAntiAdditive_only_subset C).isStrawsonDE
 
-/-- Applied to the predication of an individual, *only* is Strawson downward entailing in the
-predicate with the alternatives held fixed, so NP-modifying *only* licenses negative polarity
-items in the verb phrase ([coppock-beaver-2014]'s (93)). -/
+/-- *Only* applied to the predication of an individual is Strawson downward entailing in the
+predicate, so it licenses NPIs in the verb phrase ([coppock-beaver-2014]'s (93)). -/
 theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) (x : ι) :
     IsStrawsonDE fun P : ι → Set W ↦ only S C (P x) :=
   .of_antitone (a := fun P w ↦ w ∈ atMost S C (P x)) (fun _ _ hPQ ↦ antitone_atMost hS (hPQ x))
@@ -365,9 +362,8 @@ theorem not_antitone_posExt_only_subset :
       exacts [absurd hw (by simp), subset_rfl]⟩)
     (only_eq_zero_iff.2 fun ⟨_, _, hw, hsub⟩ ↦ by simpa using hsub hw)
 
-/-- On a scale on which a weaker alternative outranks a stronger one, here reverse entailment,
-*only* is not Strawson downward entailing in its prejacent ([coppock-beaver-2014], fn. 22). The
-two-world model is ours; the footnote states the claim without one. -/
+/-- On a scale ranked by reverse entailment, *only* is not Strawson downward entailing in its
+prejacent, as the footnote claims ([coppock-beaver-2014], fn. 22). -/
 theorem not_isStrawsonDE_only_superset :
     ¬ IsStrawsonDE (only (· ⊇ ·) ({{true}, .univ} : Set (Set Bool))) := fun h ↦ by
   have := h (p := {true}) (q := .univ) (Set.subset_univ _) true
@@ -395,9 +391,7 @@ theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
   .of_monotone (a := fun p w ↦ Want (g w) (base w) p) (fun _ _ h _ hw ↦ hw.trans h)
     fun _ _ h ↦ by simp_all [glad]
 
-/-- *Glad* is not Strawson downward entailing, so it licenses no negative polarity item
-([von-fintel-1999], §3.3). The subject believes world `0` and prefers world `1`, so is glad that
-`0` or `1` holds but not that `0` does. -/
+/-- *Glad* is not Strawson downward entailing ([von-fintel-1999], §3.3). -/
 theorem not_isStrawsonDE_glad :
     ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
   have hb : (premisePreorder {(· = 1)}).minimals (Set.univ : Set (Fin 3)) = {1} := by
@@ -423,8 +417,7 @@ theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
   (isStrawsonAntiAdditive_regret dox base g).isStrawsonDE
 
 /-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
-Civic*, whose factive presupposition may fail ([von-fintel-1999]'s (30)). The subject believes
-world `true` and prefers world `false`. -/
+Civic* ([von-fintel-1999]'s (30)). -/
 theorem not_antitone_posExt_regret :
     ¬ Antitone fun p : Set Bool ↦
       posExt (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ {(· = false)}) p) := by
@@ -466,9 +459,8 @@ theorem isStrawsonAntiAdditive_superlative :
 theorem isStrawsonDE_superlative : IsStrawsonDE (superlative (W := W) μ · x) :=
   (isStrawsonAntiAdditive_superlative μ x).isStrawsonDE
 
-/-- *Emma is the tallest girl in her class* does not classically entail *Emma is the tallest girl
-in her class to have learned the alphabet*, whose presupposition may fail ([von-fintel-1999]'s
-(76)). -/
+/-- *Emma is the tallest girl in her class* does not classically entail its restriction to girls who
+have learned the alphabet ([von-fintel-1999]'s (76)). -/
 theorem not_antitone_posExt_superlative :
     ¬ Antitone fun C : Unit → Set Unit ↦ posExt (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()) :=
   not_antitone_posExt (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le (by simp) (by simp)
@@ -490,9 +482,8 @@ open NaturalLogic Trivalent
 
 variable {I W : Type*} (horizon : I → Set W) (q : Set W)
 
-/-- The modal-horizon counterfactual is Strawson anti-additive in its antecedent, since a strict
-conditional with a disjunctive antecedent is the conjunction of the conditionals of the disjuncts
-([gajewski-2011], Appendix 1). -/
+/-- The modal-horizon counterfactual is Strawson anti-additive in its antecedent ([gajewski-2011],
+Appendix 1). -/
 theorem isStrawsonAntiAdditive_horizonCounterfactual :
     IsStrawsonAntiAdditive (horizonCounterfactual horizon · q) :=
   .of_isAntiAdditive (a := fun p i ↦ i ∈ strictImp horizon p q)

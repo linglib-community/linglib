@@ -93,8 +93,7 @@ abbrev denial : Table Discourse.Role W := (K.assert .speaker p).assert .addresse
 
 /-! ### Default assertions and default polar questions -/
 
-/-- A world can survive the assertion of `p` without satisfying `p`, since only the projected set
-moves; `Commitment.Table` is not a `HasAssertion` instance under its own `assert`. -/
+/-- A world can survive the assertion of `p` in a `Commitment.Table` without satisfying `p`. -/
 theorem assert_not_narrowing :
     ∃ (K : Table Discourse.Role Bool) (p : Set Bool) (w : Bool),
       w ∈ HasCommonGround.contextSet (K.assert .speaker p) ∧ w ∉ p :=
@@ -274,8 +273,8 @@ instance (p : Romanian.PolarityParticle) : DecidablePred (· ∈ romanian p) := 
 
 instance : DecidablePred (· ∈ reversePositive) := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Both English particles confirm a negative, *no* as [−], *Is Sam not home?* — *No, he
-isn't* (35), and *yes* as [same], *Sam is not home.* — *Yes. He is not.* (38). -/
+/-- Both English particles confirm a negative question, *no* as [−] (35) and *yes* as [same] (38).
+-/
 theorem english_confirmsNegativeQuestion (p : English.PolarityParticle) :
     Response.ConfirmsNegativeQuestion (english p) := by
   cases p <;> decide

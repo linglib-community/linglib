@@ -358,8 +358,7 @@ theorem plural_both :
   rw [Finset.inter_self] at this
   exact this.trans (Set.ext fun w ↦ ⟨fun h _ ha ↦ h _ ha ha, fun h a ha _ ↦ h ha⟩)
 
-/-- Given the partition (66) — at most one kid laughed, or two or three did — *the kids
-laughed* means that at least two of the kids laughed. -/
+/-- Given the partition (66), *the kids laughed* means that at least two of the kids laughed. -/
 theorem reading_66 :
     IsReading kids kids holds (Setoid.polar (atLeast kids kids holds 2))
       (atLeast kids kids holds 2) :=
@@ -371,9 +370,7 @@ abbrev Book := Fin 10
 /-- The books. -/
 def books : Finset Book := Finset.univ
 
-/-- In the context of (80), where reading any five of the ten books passes the test, *Mary
-read the books* means that she read at least five of them; the paper offers the prediction
-that a fixed partition removes the gap tentatively. -/
+/-- In the context of (80), *Mary read the books* means that she read at least five of them. -/
 theorem reading_80 :
     IsReading books books holds (Setoid.polar (atLeast books books holds 5))
       (atLeast books books holds 5) :=
@@ -402,9 +399,8 @@ private theorem krizChemla_unembedded : ∀ i ∈ items, i.embedding = .unembedd
     ∀ n ∈ i.cells, (0 < n ∧ n < 9 ↔ i.condition = .gap) := by
   decide
 
-/-- On Križ and Chemla's unembedded displays the account makes the positive sentence gappy
-exactly at the GAP displays, and every experiment that tested them found a gap there (Table 2).
--/
+/-- On Križ and Chemla's unembedded displays the positive sentence is gappy exactly at the GAP
+displays, where every experiment found a gap (Table 2). -/
 theorem gappy_iff_krizChemla_gap :
     (∀ i ∈ items, i.embedding = .unembedded → ∀ w : Finset Symbol, i.cells = [w.card] →
       (Gappy Finset.univ Finset.univ holds w ↔ i.condition = .gap)) ∧
@@ -414,9 +410,8 @@ theorem gappy_iff_krizChemla_gap :
   rw [gappy_iff (separating_holds _ _) (exists_count_holds_eq _ _), count_holds]
   simpa using h
 
-/-- Under negation the account, with negation over `∃-PL`, makes every GAP display plainly false
-whatever is pruned, while Table 2 found a gap there in Experiments A1 and B1, the residue the
-paper attributes to the LF with `∃-PL` over negation. -/
+/-- Under negation every GAP display is false whatever is pruned, though Table 2 found a gap there
+in Experiments A1 and B1. -/
 theorem krizChemla_negation_residue :
     (∀ i ∈ items, i.embedding = .unembedded → i.condition = .gap → ∀ w : Finset Symbol,
       i.cells = [w.card] → ∀ C, w ∉ exhIEII C (⋃ b ∈ Finset.univ, atom holds b)ᶜ) ∧

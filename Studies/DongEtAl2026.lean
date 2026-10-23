@@ -191,8 +191,8 @@ theorem voi_reliability (hr : 1 / 2 ≤ r) :
 
 end Reliability
 
-/-- As in Appendix A, at cost `1/20` a question of reliability `27/50` is skipped when a correct
-guess is worth `1` and asked when it is worth `10`. -/
+/-- At cost `1/20` a question of reliability `27/50` is skipped when a correct guess is worth `1`
+and asked when it is worth `10` (Appendix A). -/
 theorem appendixA :
     haveI := isMarkovKernel_question (r := 27 / 50) (by norm_num) (by norm_num)
     ¬ Clarifies correct (uniformOn Set.univ) (fun _ : Unit ↦ question (27 / 50)) (1 / 20) {()} ∧

@@ -332,9 +332,7 @@ theorem tousDual_barred : BarredByAmbiguity strParses meaning strSize .tousV tou
 theorem tousPl_not_barred : ¬ BarredByAmbiguity strParses meaning strSize .tousV tousVerres := by
   decide
 
-/-- Pronounceability is Avoid Ambiguity, since on the strings of the example a parse is
-pronounceable iff (37) does not block it, which derives the predicate the indirect-alternative
-source consumes. -/
+/-- A parse is pronounceable iff Avoid Ambiguity (37) does not block it. -/
 theorem frenchPron_iff_not_barred : ∀ st : Str, ∀ p ∈ strParses st,
     (frenchPron p ↔ ¬ BarredByAmbiguity strParses meaning strSize st p) := by
   decide

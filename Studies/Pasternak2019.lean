@@ -132,9 +132,8 @@ def intensityComparativeZero (α β x y : Entity) : Prop :=
 
 variable {v frame}
 
-/-- The than-clause positive is not entailed (63), since with no `β`-eventuality of positive
-intensity the comparative holds of any `α`-eventuality of positive intensity, *Jack admires the
-chairman more than Jill does; in fact, Jill doesn't admire him at all*. -/
+/-- The than-clause positive is not entailed (63), as the comparative holds when no `β`-eventuality
+has positive intensity. -/
 theorem intensityComparativeZero_of_none {e : E} (he : themed v frame α x e)
     (hpos : 0 < v.μint e) (hβ : ∀ e', themed v frame β y e' → v.μint e' ≤ 0) :
     intensityComparativeZero v frame α β x y :=

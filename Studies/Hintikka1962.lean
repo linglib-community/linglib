@@ -188,9 +188,8 @@ def VirtuallyImplies (p q : Formula V A) : Prop := SelfSustaining (p ⟹ q)
 def VirtuallyEquivalent (p q : Formula V A) : Prop :=
   VirtuallyImplies p q ∧ VirtuallyImplies q p
 
-/-- Section 3.10: an implication is self-sustaining once its antecedent together with the
-negation of its consequent is indefensible, the form in which every reductive argument below
-is run. -/
+/-- An implication is self-sustaining once its antecedent with the negated consequent is
+indefensible (Section 3.10). -/
 theorem virtuallyImplies_of_indefensible {p q : Formula V A} (h : Indefensible {p, ∼q}) :
     VirtuallyImplies p q := by
   rintro ⟨S, μ, hμ⟩
@@ -492,9 +491,7 @@ theorem indefensible_B_moore : Indefensible {B a (p ⋏ ∼B a p)} := by
     S.C_star ν ((S.isModelSet ν).neg_believe ((S.isModelSet ν).and h₁).2)
   exact (S.isModelSet ξ).neg ((S.isModelSet ξ).and (S.B_star hξ h₂)).1 h₃
 
-/-- Section 4.7: the explanation made independent of (C.BB*), the speaker cannot add "and I
-believe what I just said": `(p ⋏ ∼B a p) ⋏ B a (p ⋏ ∼B a p)` is indefensible by (C.&),
-(C.∼B), (C.C*), (C.B*) and (C.∼) alone. -/
+/-- `(p ⋏ ∼B a p) ⋏ B a (p ⋏ ∼B a p)` is indefensible without (C.BB*) (Section 4.7). -/
 theorem indefensible_moore_and_B_moore : Indefensible {(p ⋏ ∼B a p) ⋏ B a (p ⋏ ∼B a p)} := by
   rintro ⟨S, μ, hμ⟩
   obtain ⟨h₁, h₂⟩ := (S.isModelSet μ).and (hμ (Set.mem_singleton _))

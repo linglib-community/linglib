@@ -75,10 +75,8 @@ def PConstraintSatisfied (g : Grammar) (a : ApplDomain) : Prop :=
 instance (g : Grammar) (a : ApplDomain) : Decidable (PConstraintSatisfied g a) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A clitic combination is licit exactly when the domain with the indirect object as
-point-of-view center satisfies the P-Constraint, the parametric clauses being the conditions on
-that selection, the only felicitous derivation being the one in which Appl agrees with the
-argument it introduces (§4.5). -/
+/-- A clitic combination is licit exactly when the domain centered on the indirect object satisfies
+the P-Constraint (§4.5). -/
 theorem isLicit_iff_pConstraint (g : Grammar) (s : Clause.Scenario Person) :
     IsLicit g s ↔ PConstraintSatisfied g ⟨s.high, s.low, s.high⟩ := by
   constructor
@@ -110,17 +108,15 @@ theorem strong_predictions :
     licitFinset strongGrammar = {⟨.first, .third⟩, ⟨.second, .third⟩, ⟨.third, .third⟩} := by
   decide
 
-/-- Under the ultra-strong PCC (14d) P-Primacy lets a first-person indirect object rescue a local
-direct object, so ⟨1, 2⟩ is licit and ⟨2, 1⟩ is not. -/
+/-- Under the ultra-strong PCC (14d), P-Primacy makes ⟨1, 2⟩ licit and ⟨2, 1⟩ not. -/
 theorem ultra_predictions :
     licitFinset ultraStrongGrammar =
       {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .third⟩,
         ⟨.third, .third⟩} := by
   decide
 
-/-- Under the weak PCC (14b), without P-Uniqueness, any local indirect object licenses any
-direct object;
-only a third-person indirect object with a local direct object is banned. -/
+/-- Under the weak PCC (14b), only a third-person indirect object with a local direct object is
+banned. -/
 theorem weak_predictions :
     licitFinset weakGrammar =
       {⟨.first, .first⟩, ⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .first⟩,
@@ -132,10 +128,8 @@ third person. -/
 theorem super_predictions :
     licitFinset superStrongGrammar = {⟨.first, .third⟩, ⟨.second, .third⟩} := by decide
 
-/-- Under the me-first PCC (14c) a first-person direct object needs a first-person indirect
-object,
-and the restricted domain exempts every combination without a first-person argument;
-⟨1, 1⟩ falls to P-Uniqueness. -/
+/-- Under the me-first PCC (14c), a first-person direct object needs a first-person indirect object,
+and ⟨1, 1⟩ falls to P-Uniqueness. -/
 theorem mefirst_predictions :
     licitFinset meFirstGrammar =
       {⟨.first, .second⟩, ⟨.first, .third⟩, ⟨.second, .second⟩, ⟨.second, .third⟩,
@@ -160,10 +154,8 @@ only a first-person indirect object licenses, and P-Uniqueness then excludes ⟨
 theorem pg3_predictions :
     licitFinset pg3Grammar = {⟨.first, .second⟩, ⟨.first, .third⟩} := by decide
 
-/-- Restricting the domain to applicatives with a participant argument while setting the
-threshold to [+participant] yields a grammar whose licit set is the strong PCC's (§4.5); the
-paper locates the residual difference in Clitic Logophoric Restriction effects on
-third-person combinations, outside this model. -/
+/-- Restricting the domain to participant applicatives with a [+participant] threshold yields the
+strong PCC's licit set (§4.5). -/
 theorem restricted_participant_surfaces_as_strong :
     licitFinset { prominence := .participant, restrictedDomain := true } =
       licitFinset strongGrammar := by
@@ -232,9 +224,8 @@ theorem spanish_weak_ledat_meacc_banned :
         ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
-/-- In French (16), a strong-PCC language, a third-person dative with a first-person accusative
-is out, while a second-person dative with a third-person accusative and two third persons are
-in. -/
+/-- In French (16), a third-person dative with a first-person accusative is out, while ⟨2, 3⟩ and
+⟨3, 3⟩ are in. -/
 theorem french_strong_examples :
     ¬ IsLicit strongGrammar ⟨.third, .first⟩ ∧ IsLicit strongGrammar ⟨.second, .third⟩ ∧
       IsLicit strongGrammar ⟨.third, .third⟩ := by

@@ -155,15 +155,14 @@ def SOTRule.Applicable (a : Attachment) (cs : ComplementSize) : Prop := a.level 
 instance (a : Attachment) (cs : ComplementSize) : Decidable (SOTRule.Applicable a cs) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- §3.3 and §4: under size-dependent adjunction the Sequence of Tense Rule obeys the Williams
-Cycle in Agree, reaching the embedded PAST exactly where the cycle lets T search the clause. -/
+/-- Under size-dependent adjunction, the Sequence of Tense Rule applies exactly where the Williams
+Cycle lets T search the clause (§3.3, §4). -/
 theorem applicable_sizeDependent_iff (cs : ComplementSize) :
     SOTRule.Applicable .sizeDependent cs ↔ WilliamsCycle .T cs.highestHead :=
   Iff.rfl
 
-/-- §4: with the embedded clause inside the VP the rule ignores size. English CP complements
-are deleted under Agree although the Williams Cycle would keep T out of a CP, which is why
-English Sequence of Tense is size-insensitive. -/
+/-- With the embedded clause inside the VP, the rule applies to English CP complements, which the
+Williams Cycle would keep from T (§4). -/
 theorem applicable_vpInternal_cP :
     SOTRule.Applicable .vpInternal .cP ∧ ¬ WilliamsCycle .T .C := by
   decide
@@ -260,10 +259,8 @@ def matrixVerb? (e : Datum) : Option Verb :=
   e.parse? "matrixVerb" [("lát", lat), ("hall", hall), ("álmodik", almodik), ("gondol", gondol),
     ("aggaszt", aggaszt), ("mond", mond), ("rikolt", rikolt), ("morog", morog)]
 
-/-- §2.2: the clause type is a property of the clause, not of the matrix verb. *hall* 'hear'
-embeds a non-speech-reporting clause in (5) and the speech-reporting content of a report in
-(13), and *morog* 'growl' a non-speech-reporting reason adjunct in (9) and the speech-reporting
-content of the growl in (11): no assignment of clause types to verbs fits the rows. -/
+/-- No assignment of clause types to matrix verbs fits the rows, since *hall* 'hear' in (5) and (13)
+and *morog* 'growl' in (9) and (11) embed both types (§2.2). -/
 theorem clauseType_not_of_verb :
     ¬ ∃ f : Verb → ClauseType, ∀ e ∈ [ex_5, ex_13, ex_9, ex_11c],
       ∀ v ct, matrixVerb? e = some v → clauseType? e = some ct → f v = ct := by
@@ -324,9 +321,8 @@ theorem doubleRows_predicted : ∀ e ∈ [ex_10, ex_15, ex_16, ex_17], ∀ ct₁
           ((profile .sizeDependent ⟦past⟧ (chain ct₁ ct₂)).getD 1 ⊥)) := by
   decide
 
-/-- (18), [ogihara-1996]: English past under *will* under past. The deepest past has no
-simultaneous reading, the tense immediately above it being a future rather than an agreeing
-past, although English complements attach inside the VP and are otherwise deleted freely. -/
+/-- In English past under *will* under past (18), the deepest past has no simultaneous reading
+([ogihara-1996]). -/
 theorem ex18_profile :
     profile .vpInternal ⟦past⟧ [⟨⟦future⟧, .cP⟩, ⟨⟦past⟧, .cP⟩] = [⊥, ⟦past⟧] := by
   decide
@@ -345,9 +341,8 @@ theorem sotProbe_clauseTypes :
       ¬ sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc, .Say]).label := by
   decide
 
-/-- §4: the horizon account is the less restrictive of the two. A clause whose highest head lies
-strictly between T and Say, such as a FocP, is transparent to the probe yet beyond the reach of
-T under the Williams Cycle, the pattern footnote 9 needs for the complements of *mond*. -/
+/-- A FocP clause is transparent to the horizon probe yet beyond T under the Williams Cycle, so the
+horizon account is less restrictive (§4, footnote 9). -/
 theorem horizon_admits_FocP :
     sotProbe.TransparentTo (ClauseSpine.tP.append [.Foc]).label ∧ ¬ WilliamsCycle .T .Foc := by
   decide

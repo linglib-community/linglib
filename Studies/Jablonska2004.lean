@@ -278,10 +278,8 @@ instance (v : Verbalizer) (ls : List Layer) : Decidable (Perfective v ls) := by
     {a : α} {f : α → Option β} : (if c then some a else none).bind f = if c then f a else none := by
   split_ifs <;> rfl
 
-/-- A well-formed derivation has one of seven shapes: a bare stem; a lexical prefix, (30); *po-* in
-Asp1, (27); a purely perfectivizing prefix, (67); a lexically prefixed or Asp1-delimited stem
-under the Secondary Imperfective, (31a) and (56); and *po-* in Asp3 over a lexically prefixed
-Secondary Imperfective, (34). -/
+/-- A well-formed derivation is a bare stem, lexical prefix (30), Asp1 *po-* (27), perfectivizing
+prefix (67), Secondary Imperfective ((31a), (56)), or Asp3 *po-* over one (34). -/
 theorem wellFormed_iff {v : Verbalizer} {ls : List Layer} :
     WellFormed v ls ↔
       ls = [] ∨
@@ -322,20 +320,20 @@ variable {v : Verbalizer} {ls : List Layer} {m m' : Morph}
 theorem perfective_nil_iff : Perfective v [] ↔ v.IsPunctual := by
   simp [Perfective, profile]
 
-/-- Stacking is contingent on the Secondary Imperfective, Section 5: *po-* in Asp3 stacks only
-over a secondary imperfective, (24) and (42), and never over an attenuative-frequentative, (61). -/
+/-- *po-* in Asp3 stacks only over a secondary imperfective, never over an attenuative-frequentative
+(Section 5; (24), (42), (61)). -/
 theorem si_of_asp3 (h : WellFormed v ls) (hm : .asp3 m ∈ ls) :
     ∃ m', ls = [.lexical m', .si, .asp3 m] := by
   shapes h <;> simp_all
 
-/-- A purely perfectivizing prefix stacks on nothing and nothing stacks on it, (70): it is in
-complementary distribution with the Secondary Imperfective, (67), (69) and (68). -/
+/-- A purely perfectivizing prefix stands alone (70), in complementary distribution with the
+Secondary Imperfective ((67), (69), (68)). -/
 theorem eq_of_perf (h : WellFormed v ls) (hm : .perf m ∈ ls) : ls = [.perf m] := by
   shapes h <;> simp_all
 
-/-- Only the interval-denoting classes, the processual and the non-directed motion stems, form
-Secondary Imperfectives: not the degree achievements, (59) and (74), the inchoatives, (76), the
-semelfactives, (48) and (79b), the directed motion stems, (80), or the statives. -/
+/-- Only the interval-denoting classes form Secondary Imperfectives, unlike degree achievements,
+inchoatives, semelfactives, directed motion stems and statives ((59), (74), (76), (48), (79b),
+(80)). -/
 theorem denotesInterval_of_si (h : WellFormed v ls) (hm : .si ∈ ls) : v.DenotesInterval := by
   shapes h <;> simp_all
 
@@ -371,16 +369,14 @@ section Table2
 
 variable (v : Verbalizer) (m : Morph)
 
-/-- In the Asp2 column of Table 2, a purely perfectivizing prefix needs a telos, (10) and (67),
-which the motion stems and the statives lack, and an unbounded stem, which the semelfactive is
-not, (47), so the cell Table 2 hedges as "yes ???" is closed. -/
+/-- In the Asp2 column of Table 2, a purely perfectivizing prefix forms exactly on the telic,
+unbounded stems ((10), (67), (47)). -/
 theorem wellFormed_perf_iff :
     WellFormed v [.perf m] ↔ v = .processual ∨ v = .degree ∨ v = .inchoative := by
   cases v <;> simp [wellFormed_iff]
 
-/-- In the Secondary Imperfective column of Table 2, the stems that form one are the processual
-and non-directed motion stems, which are also the classes on which *po-* stacks in Asp3, (43)
-and (83). -/
+/-- In Table 2, the processual and non-directed motion stems alone form a Secondary Imperfective, as
+they alone host Asp3 *po-* ((43), (83)). -/
 theorem wellFormed_lexical_si_iff :
     WellFormed v [.lexical m, .si] ↔ v = .processual ∨ v = .nonDirectedMotion := by
   cases v <;> simp [wellFormed_iff]
@@ -440,15 +436,13 @@ def table2Asp1 : Verbalizer → List Reading
   | .nonDirectedMotion => [.delimitative]
   | .stative => [.inceptive, .delimitative]
 
-/-- The derived readings of *po-* in Asp1, with a plural internal argument, are those of
-Table 2: no delimitative reading with the change-of-state stems, Section 5, and the inceptive
-reading only with the statives, Section 2.4. -/
+/-- The readings of *po-* in Asp1 with a plural internal argument are those of Table 2 (Section 5,
+Section 2.4). -/
 theorem asp1Reading_iff_table2 (v : Verbalizer) (r : Reading) :
     Asp1Reading v true r ↔ r ∈ table2Asp1 v := by
   cases v <;> cases r <;> decide
 
-/-- Without a plural internal argument the distributive reading is gone: (28c) has only the
-delimitative reading, the external argument being outside the scope of *po-*, (29). -/
+/-- Without a plural internal argument, *po-* in Asp1 has no distributive reading ((28c), (29)). -/
 theorem not_asp1Reading_distributive (v : Verbalizer) : ¬ Asp1Reading v false .distributive := by
   simp [Asp1Reading]
 
@@ -783,16 +777,15 @@ theorem tests_wellFormed :
     ∀ t ∈ phaseTests ++ presentTests, WellFormed t.verb.stem.verbalizer t.verb.layers := by
   decide
 
-/-- A phase verb with its complement is accepted exactly when the model derives an imperfective
-complement: *po-* in Asp3 and the semelfactive suffix make perfectives, (33a) and (46a). -/
+/-- A phase verb with its complement is accepted exactly when the complement is derived imperfective
+((33a), (46a)). -/
 theorem phaseTests_judgment : ∀ t ∈ phaseTests,
     (t.sentence.judgment = .acceptable ↔
       Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
   decide
 
-/-- A present-tense form has the actual present reading exactly when the model derives an
-imperfective: the perfectives of (33b) and (46b) are read as futures, the Secondary Imperfective
-of (80b) as an actual present. -/
+/-- A present-tense form has the actual present reading exactly when it is derived imperfective
+((33b), (46b), (80b)). -/
 theorem presentTests_reading : ∀ t ∈ presentTests,
     (t.sentence.readings.lookup "actual present" = some .acceptable ↔
       Aspect.viewpointPrediction t.verb.perfectivity = .accept) := by
@@ -812,8 +805,8 @@ def gap56c : Analysis := ⟨Wordlist.f_56c, .chodzic, [.asp1 po, .si], false, []
 processual stem. -/
 def exception60 : Analysis := ⟨Wordlist.f_60_bare, .grac, [.si], false, []⟩
 
-/-- The gap (56c) is a well-formed derivation: attenuative-frequentative formation is not
-productive, (56) to (58), and the paper gives no rule for which stems lack it. -/
+/-- The gap (56c) is a well-formed derivation, since attenuative-frequentative formation is
+unproductive ((56) to (58)). -/
 theorem gap56c_wellFormed :
     gap56c.form.judgment = .ungrammatical ∧ WellFormed gap56c.stem.verbalizer gap56c.layers := by
   decide

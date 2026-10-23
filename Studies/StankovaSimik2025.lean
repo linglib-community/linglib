@@ -99,9 +99,8 @@ def Indefinite.entry : Indefinite → PolarityItem
   | .nci => Czech.PolarityItems.zadny
   | .ppi => Czech.PolarityItems.nejaky
 
-/-- The concord item and the prefix carry [uNeg] and so "do not map to negation" (p. 5), the
-canonical operator being the clause's one negation. Of the readings of *žádný*, exactly the
-indefinite one then yields *no*; the negative-quantifier reading yields double negation. -/
+/-- Of the readings of *žádný*, exactly the indefinite one yields *no* under the one negation of the
+clause (p. 5). -/
 theorem compl_eq_no_iff {d : GQ.Family} (hd : d ∈ ⟦Indefinite.nci.word⟧) :
     dᶜ = GQ.Family.no ↔ d = GQ.Family.some := by
   rcases hd with rfl | rfl <;> simp [GQ.Family.some_ne_no, GQ.Family.some_ne_no.symm]
@@ -173,9 +172,8 @@ theorem nonV1_ppi_iff (ctx : SignType) :
 theorem nonV1_neutral_infelicitous (ind : Indefinite) : ¬ Felicitous .nonV1 ind 0 := by
   cases ind <;> decide
 
-/-- Czech FALSUM is broader than English high negation, since an interrogative question with the
-polarity item is felicitous under positive evidence (the paper's (14)), which the evidence
-condition of [buring-gunlogson-2000] on English outer negation excludes. -/
+/-- Czech FALSUM is broader than English high negation, being felicitous under positive evidence
+(14), unlike outer negation under [buring-gunlogson-2000]. -/
 theorem falsum_broader_than_english_outer :
     ¬ BuringGunlogson2000.Felicitous (some .positive) 1 ∧
       Felicitous .v1 .ppi 1 :=

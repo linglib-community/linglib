@@ -31,12 +31,8 @@ variable [DecidableEq Domain] [Fintype Domain] [Inhabited Domain]
 
 /-! ### Proposition 4.1, composed: QBSML support is first-order realization -/
 
-/-- **NE-free QBSML support is single-structure first-order satisfaction**:
-    [aloni-vanormondt-2023] Proposition 4.1 composed with the standard
-    translation. Support at a singleton state is mathlib `Formula.Realize`
-    of the standard translation over `M.correspondence` — the link along which
-    classical model theory (compactness, Löwenheim–Skolem) transfers to the
-    NE-free fragment. -/
+/-- At a singleton state, NE-free QBSML support is first-order satisfaction of the standard
+translation ([aloni-vanormondt-2023] Proposition 4.1). -/
 theorem support_singleton_iff_st (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var} {k : ℕ}

@@ -249,8 +249,8 @@ variable (V Pr : ℕ) (i : Term PersonFeature) (t : TimeTerm) (w : Term MoodFeat
 the bound context variable, pronounced with the features of the diacritic. -/
 def deSe : Formula := .att V i t w k (.atom Pr (.coord k) (.base (.coord k)) (.coord k))
 
-/-- (13b): a de se report holds iff there is such an attitude and at every compatible context
-its agent satisfies the predicate at its time in its world. -/
+/-- A de se report holds iff some attitude has the agent of every compatible context satisfy the
+predicate at its time and world (13b). -/
 theorem deSe_holds_iff :
     (deSe V Pr i t w k).Holds M s ↔
       ∃ A ∈ attAt M s V i t w, ∀ c ∈ A, M.pred Pr c.agent c.time c.world := by
@@ -260,8 +260,8 @@ theorem deSe_weird_iff [Preorder T] :
     (deSe V Pr i t w k).Weird M c₀ s ↔ ArgsWeird M c₀ s i t w := by
   simp [deSe, Formula.Weird, ArgsWeird, Term.Weird, TimeTerm.Weird]
 
-/-- (17b), (18): interpreting the past feature on the de se time coordinate presupposes, at
-every context compatible with the attitude, that its time precedes the utterance time. -/
+/-- Interpreting the past feature on the de se time coordinate presupposes that every compatible
+context's time precedes the utterance time (17b), (18). -/
 theorem past_coord_weird_iff [Preorder T] :
     (Formula.att V i t w k (.atom Pr (.coord k) (.base (.feat .past (.coord k)))
         (.coord k))).Weird M c₀ s ↔
@@ -269,8 +269,8 @@ theorem past_coord_weird_iff [Preorder T] :
   simp [Formula.Weird, ArgsWeird, Term.Weird, TimeTerm.Weird, Term.value, TenseFeature.Presup,
     Assignment.updateCtx]
 
-/-- (19): when the attitude holder takes the time of her thought to be after the utterance
-time, an interpreted embedded past is weird, although the sentence is fine. -/
+/-- When the attitude holder places her thought after the utterance time, an interpreted embedded
+past is weird, though the sentence is fine (19). -/
 theorem past_coord_weird [Preorder T]
     (h : ∃ A ∈ attAt M s V i t w, A.Nonempty ∧ ∀ c ∈ A, c₀.time < c.time) :
     (Formula.att V i t w k (.atom Pr (.coord k) (.base (.feat .past (.coord k)))
@@ -278,8 +278,8 @@ theorem past_coord_weird [Preorder T]
   obtain ⟨A, hA, ⟨c, hc⟩, hlt⟩ := h
   exact (past_coord_weird_iff M c₀ s V Pr i t w k).2 (Or.inr ⟨A, hA, c, hc, (hlt c hc).not_gt⟩)
 
-/-- (16): interpreting a masculine feature on the de se subject presupposes that the agent of
-every compatible context is male, which the report of a hope to become a woman refutes. -/
+/-- Interpreting a masculine feature on the de se subject presupposes that every compatible agent is
+male, which a hope to become a woman refutes (16). -/
 theorem he_coord_weird [Preorder T]
     (hex : ∀ x, M.female x c₀.time c₀.world → ¬ M.male x c₀.time c₀.world)
     (h : ∃ A ∈ attAt M s V i t w, A.Nonempty ∧ ∀ c ∈ A, M.female c.agent c₀.time c₀.world) :
@@ -289,8 +289,8 @@ theorem he_coord_weird [Preorder T]
   refine Or.inr ⟨A, hA, c, hc, Or.inl (Or.inr ?_)⟩
   simpa [Term.value, PersonFeature.Presup, Assignment.updateCtx] using hex _ (hf c hc)
 
-/-- (21): interpreting the indicative on the de se world coordinate presupposes that the world
-of every compatible context is the actual world, that is, that the agent is omniscient. -/
+/-- Interpreting the indicative on the de se world coordinate presupposes that the agent is
+omniscient (21). -/
 theorem ind_coord_not_weird_iff [Preorder T] (hargs : ¬ ArgsWeird M c₀ s i t w) :
     ¬ (Formula.att V i t w k (.atom Pr (.coord k) (.base (.coord k))
         (.feat .ind (.coord k)))).Weird M c₀ s ↔
@@ -338,10 +338,8 @@ theorem doubleAccess_of_ulc [LinearOrder T] {A : Set (Context W E P T)} {c : Con
   obtain ⟨t, ht, htc⟩ := (ulc_time_iff d c).1 (hiii c hc)
   exact Set.pair_subset (hd.out ht hii ⟨htc, hle⟩) hii
 
-/-- (41): the modal counterpart. An indicative under a subjunctive attitude denotes the actual
-world (i'), the description contains it at the actual context of the thought (ii'), and the
-constraint holds at every compatible context (iii'); when the actual context is compatible with
-the thought, the description is about both the world of the thought and the actual world. -/
+/-- Under (i'), (ii') and (iii') of (41), an indicative under a subjunctive attitude describes both
+the thought's world and the actual world when the actual context is compatible. -/
 theorem worldDoubleAccess_of_ulc {A : Set (Context W E P T)} {c : Context W E P T} (hc : c ∈ A)
     (e : Context W E P T → Set W) (hii : c₀.world ∈ e c)
     (hiii : ∀ c' ∈ A, ULC (· ≠ ·) Context.world e c') :

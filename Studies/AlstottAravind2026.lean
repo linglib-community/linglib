@@ -122,26 +122,22 @@ abbrev fear := Set.Iic laraFears
 abbrev regretfulA := Set.Iic daveRegretfulA
 abbrev regretfulB := Set.Iic daveRegretfulB
 
-/-- In Exp. 2 Rett's default before-start reading is true in the before-start context and false in
-the before-finish context, where `completive` restores truth, so coercion is needed in (29b) only.
--/
+/-- In Exp. 2, Rett's before-start reading needs `completive` coercion in (29b) only. -/
 theorem exp2_rett_asymmetric :
     before irritableA tent ∧ ¬ before irritableB tent ∧
       before irritableB (completive tent) := by
   simp only [before_stative_accomplishment_iff, before_stative_completive_iff]
   decide
 
-/-- In Exp. 2 the under-specification reading is true in both contexts, and so is the overlap a
-*while*-competition implicature would negate, so neither distinguishes (29a) from (29b) (§8.1). -/
+/-- In Exp. 2, the under-specification reading and the overlap are true in both contexts, so neither
+distinguishes (29a) from (29b) (§8.1). -/
 theorem exp2_underspecification_symmetric :
     (weakBefore irritableA tent ∧ weakBefore irritableB tent) ∧
       (when_ irritableA tent ∧ when_ irritableB tent) := by
   simp only [weakBefore_stative_accomplishment_iff, when_stative_accomplishment_iff]
   decide
 
-/-- In Exp. 4 Rett's default after-finish reading is false in the after-start context, where
-`inchoative` restores truth, and true in the after-finish context, so coercion is needed in (31a)
-only. -/
+/-- In Exp. 4, Rett's after-finish reading needs `inchoative` coercion in (31a) only. -/
 theorem exp4_rett_asymmetric :
     ¬ after regretfulA fear ∧ after regretfulA (inchoative fear) ∧
       after regretfulB fear := by
@@ -163,10 +159,8 @@ private theorem mem_stative {i j : NonemptyInterval ℕ} :
 subinterval of `[t, t + d]`. -/
 def within (t d : ℕ) (p : Set (NonemptyInterval ℕ)) : Prop := ∃ i ∈ p, t ≤ i.fst ∧ i.snd ≤ t + d
 
-/-- For a state holding throughout `[s, f]`, *within d* says the state reaches into the
-span, and the negation of the alternative with a shorter span `d'` (35) says it does not
-reach into the shorter span; together they locate the state's onset inside `(t + d', t + d]`
-— the change-of-state reading without any operator. -/
+/-- For a state holding throughout `[s, f]`, *within d* with the negated shorter alternative (35)
+puts the onset in `(t + d', t + d]`. -/
 theorem within_implicature_onset {s f t d d' : ℕ} (hsf : s ≤ f)
     (h : within t d (Set.Iic ⟨⟨s, f⟩, hsf⟩))
     (h' : ¬ within t d' (Set.Iic ⟨⟨s, f⟩, hsf⟩)) : t + d' < s ∧ s ≤ t + d := by
@@ -179,8 +173,8 @@ theorem within_implicature_onset {s f t d d' : ℕ} (hsf : s ≤ f)
   exact h' ⟨⟨⟨max s t, max s t⟩, le_rfl⟩, mem_stative.mpr ⟨by simp, by simp; omega⟩,
     by simp, by simp; omega⟩
 
-/-- For an accomplishment with run-time `i`, *within d* says the whole run-time lies in the span,
-(36), by the same entry and with no operator either. -/
+/-- For an accomplishment with run-time `i`, *within d* says the whole run-time lies in the span
+(36). -/
 theorem within_accomplishment_iff (t d : ℕ) (i : NonemptyInterval ℕ) :
     within t d {i} ↔ t ≤ i.fst ∧ i.snd ≤ t + d := by
   simp [within]

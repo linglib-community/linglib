@@ -273,9 +273,8 @@ theorem not_isMIPLicensed_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T)
     ¬ IsMIPLicensed (gTIA μ P s) :=
   not_isMIPLicensed_of_not_isLeast (gTIA_monotone μ P s) (not_isLeast_gTIA μ P s)
 
-/-- When every `P`-event starts by `l₀`, and one starts exactly at `l₀` and ends before `s`,
-the open span from `l₀` to `s` is the largest excluding every `P`-event (§4.2.2): the greatest
-true numeral of the negated property is its measure. -/
+/-- If every `P`-event starts by `l₀` and one starts at `l₀` and ends before `s`, the greatest true
+numeral of the negated property is `μ (Ioc l₀ s)` (§4.2.2). -/
 theorem isGreatest_gTIANeg {P : W → E → Prop} {s : T} {w : W} {l₀ : T}
     (hall : ∀ e, P w e → (τ e).fst ≤ l₀) (hwit : ∃ e, P w e ∧ (τ e).fst = l₀ ∧ (τ e).snd < s) :
     IsGreatest {n | w ∈ gTIANeg μ P s n} (μ (Ioc l₀ s)) := by
@@ -404,9 +403,7 @@ private instance [NoMaxOrder α] : Nontrivial {n : α // 0 < n} :=
   let ⟨m, hm⟩ := exists_gt n
   ⟨⟨⟨n, hn⟩, ⟨m, hn.trans hm⟩, fun h ↦ hm.ne (congrArg Subtype.val h)⟩⟩
 
-/-- In Table 1 every cell but negated G-TIA under perfective aspect is blocked, the E-TIA
-cells and the imperfective G-TIA cell by information collapse, the positive perfective G-TIA
-by density, and negation preserves collapse. -/
+/-- Every cell of Table 1 except negated G-TIA under perfective aspect is blocked. -/
 theorem table1_blocked [DenselyOrdered T] [NoMaxOrder α] {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) (pol : Polarity) (a : Adverbial) (v : Viewpoint)
     (h : (pol, a, v) ≠ (.negative, .gap, .pfv)) : ¬ IsMIPLicensed (reading μ P s pol a v) := by

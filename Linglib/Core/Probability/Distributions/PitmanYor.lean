@@ -248,8 +248,7 @@ noncomputable def pitmanYorEPPF (α θ : ℝ) (s : Multiset ℕ) : ℝ :=
   (∏ i ∈ Ico 1 s.card, (θ + i * α)) * (s.map fun m : ℕ ↦ ∏ j ∈ Ico 1 m, ((j : ℝ) - α)).prod /
     ∏ i ∈ Ico 1 s.sum, (θ + i)
 
-/-- Opening a new table multiplies the EPPF by the probability of doing so, `(θ + k α) / (n + θ)`
-when `n` customers sit at `k` tables ([pitman-2006] p. 61). -/
+/-- Opening a new table multiplies the EPPF by `(θ + k α) / (n + θ)` ([pitman-2006] p. 61). -/
 theorem pitmanYorEPPF_cons_one {s : Multiset ℕ} (hs : s.sum ≠ 0) :
     pitmanYorEPPF α θ (1 ::ₘ s) = pitmanYorEPPF α θ s * ((θ + s.card * α) / (s.sum + θ)) := by
   have hk : 1 ≤ s.card := Multiset.card_pos.mpr (by rintro rfl; simp at hs)
@@ -258,8 +257,8 @@ theorem pitmanYorEPPF_cons_one {s : Multiset ℕ} (hs : s.sum ≠ 0) :
     add_comm 1, prod_Ico_succ_top (Nat.one_le_iff_ne_zero.mpr hs)]
   congr 1 <;> push_cast <;> ring
 
-/-- Joining a table of `m` customers multiplies the EPPF by the probability of doing so,
-`(m - α) / (n + θ)`: the recursion (3.22) of [pitman-2006]. -/
+/-- Joining a table of `m` customers multiplies the EPPF by `(m - α) / (n + θ)` ([pitman-2006]
+(3.22)). -/
 theorem pitmanYorEPPF_cons_succ_erase {s : Multiset ℕ} {m : ℕ} (hm : m ∈ s) (hm₀ : m ≠ 0) :
     pitmanYorEPPF α θ ((m + 1) ::ₘ s.erase m) = pitmanYorEPPF α θ s * ((m - α) / (s.sum + θ)) := by
   have hm₁ : 1 ≤ m := Nat.one_le_iff_ne_zero.mpr hm₀
@@ -269,9 +268,7 @@ theorem pitmanYorEPPF_cons_succ_erase {s : Multiset ℕ} {m : ℕ} (hm : m ∈ s
     prod_Ico_succ_top (hm₁.trans (Multiset.le_sum_of_mem hm))]
   congr 1 <;> push_cast <;> ring
 
-/-- At `α = 0` the EPPF is the *Ewens sampling formula* `θ ^ k / (θ)_{n↑1} ∏ᵢ (nᵢ - 1)!`
-([pitman-2006] (2.19)), the partition of a sample from a Dirichlet process with parameter `θ`
-([pitman-2006] p. 61). -/
+/-- At `α = 0` the EPPF is the Ewens sampling formula ([pitman-2006] (2.19), p. 61). -/
 theorem pitmanYorEPPF_zero_left {s : Multiset ℕ} (hθ : θ ≠ 0) (hs : s.sum ≠ 0) :
     pitmanYorEPPF 0 θ s =
       θ ^ s.card / (ascPochhammer ℝ s.sum).eval θ * (s.map fun m ↦ ((m - 1)! : ℝ)).prod := by

@@ -173,10 +173,8 @@ theorem not_valid_supersetToSubset {e : Environment} (he : (environments e).mono
   all_goals refine absurd (h (bot_le (a := ⊤)) ?_) ?_ <;>
     simp [denotation, outer, host, thirteen, the_iff, GQ.every, GQ.no, atLeast_apply]
 
-/-- The paper's classification of the ten environments, §3.1.2 and §5, is the one their
-denotations give. Only the subset-to-superset inference is valid in the upward-entailing and
-doubly negative ones, only the converse in the downward-entailing ones, neither in the
-non-monotone ones, and a doubly negative environment hosts the item in an antitone constituent. -/
+/-- The paper's monotonicity classification of the ten environments is the one their denotations
+give (§3.1.2, §5). -/
 theorem classifies_iff (e : Environment) (k : Monotonicity) :
     e.Classifies k ↔ (environments e).monotonicity = k := by
   have hid : ¬ ∀ ι : Type, Antitone (id : (ι → Prop) → (ι → Prop)) := fun h ↦
@@ -204,7 +202,7 @@ def licensingContext : Environment → Option LicensingContext
   | .positive | .every | .many | .exactly12 => none
 
 /-- *Any*, *ever* and *at all* are licensed in the downward-entailing environments, by the inner
-operator in the doubly negative ones (§1, §5), and under *only 12*. -/
+operator in doubly negative ones (§1, §5), and under *only 12*. -/
 theorem licenses_of_mem_licensingContext {e : Environment} {c : LicensingContext}
     (h : c ∈ e.licensingContext) :
     c.licenser.Licenses any ∧ c.licenser.Licenses ever ∧ c.licenser.Licenses atAll := by
@@ -229,9 +227,8 @@ environment, (9). -/
 theorem monotone_wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) :
     Monotone (wideSome f saw) := fun _ _ hN ⟨y, hy, h⟩ ↦ ⟨y, hN hy, h⟩
 
-/-- In an upward-entailing environment the wide-scope reading of *some doves* entails the
-narrow-scope sentence about birds, so the inference from (26a) to (26b) goes through on reading
-(27). -/
+/-- In an upward-entailing environment the wide-scope reading (27) of *some doves* entails the
+narrow-scope sentence about birds, so (26a) entails (26b). -/
 theorem narrow_of_wideSome {f : (ι → Prop) → Prop} (hf : Monotone f) {saw : ε → ι → Prop}
     {N N' : Set ε} (hN : N ⊆ N') (h : wideSome f saw N) :
     f (KadmonLandman1993.existsInDomain N' saw) :=
@@ -284,17 +281,14 @@ theorem cond_eq_zero_of_cond_eq_one {μ : Measure Ω} [IsFiniteMeasure μ] {s e 
     (measure_union_null (null hs h₁) (null hu ((prob_compl_eq_zero_iff he).2 h₂)))
   rw [cond_apply hs, this, mul_zero]
 
-/-- Since *any* widens the domain of the object, (30), seeing doves makes seeing any birds certain
-whenever it makes seeing birds certain, (34). So the bridge premise of the probabilistic downward
-inference (33) from *No aliens saw birds* (`cond_eq_zero_of_cond_eq_one`) gives that of the
-inference from *No aliens saw any birds*. -/
+/-- Since *any* widens the object's domain (30), seeing doves makes seeing any birds certain
+whenever it makes seeing birds certain ((33), (34)). -/
 theorem cond_eq_one_of_widen {μ : Measure Ω} {saw : ε → Set Ω}
     {birds anyBirds : Set ε} {D : Set Ω} (h : birds ⊆ anyBirds)
     (hD : μ[existsInDomain birds saw | D] = 1) : μ[existsInDomain anyBirds saw | D] = 1 :=
   le_antisymm prob_le_one (hD ▸ measure_mono (existsInDomain_mono saw h))
 
-/-- A believer may take an individual to have seen a dove outside the plain domain of birds, so
-that seeing doves makes seeing any birds certain but not seeing birds, the room (34) leaves for
+/-- Seeing doves can make seeing any birds certain but not seeing birds, the room (34) leaves for
 *any* to help. -/
 theorem exists_cond_lt_one_of_widen : ∃ (saw : Fin 2 → Set (Fin 2)) (doves birds anyBirds :
     Set (Fin 2)), birds ⊆ anyBirds ∧

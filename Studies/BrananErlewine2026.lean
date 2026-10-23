@@ -70,9 +70,8 @@ theorem depth_complement {b : TreePath} (hb : b ≠ ⊥) : depth (complement b) 
 variable {t : LinearizedSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
   {a b : t.val.Positions}
 
-/-- A potential goal c-commanding the goal that breadth-first search with unordered sisters
-matches is that goal's sister: the search derives Closest (2) for potential goals at different
-depths. -/
+/-- A satisfying potential goal c-commanding the goal that breadth-first search matches is that
+goal's sister, which derives Closest (2). -/
 theorem eq_complement_of_finds_depth (ha : p.Finds s (depth ·.val) a) (hb : b ∈ s)
     (hsb : p.sat b) (hba : t.val.CCommands b.val a.val) : a.val = complement b.val := by
   have hb0 : b.val ≠ ⊥ := fun h ↦ hba.2.1 (h ▸ bot_le)
@@ -185,9 +184,8 @@ instance {κ : Type*} [Preorder κ] [DecidableRel ((· < ·) : κ → κ → Pro
     (g : LexicalItem.Token) : Decidable (Matches t h key g) := by
   unfold Matches; infer_instance
 
-/-- (9): with PartP smuggled to Spec,VoiceP, depth-first search from Infl matches the theme alone,
-while the theme and the agent are equally deep, so breadth-first search cannot prefer the
-theme. -/
+/-- In (9), depth-first search from Infl matches the smuggled theme alone, while breadth-first
+search cannot prefer it. -/
 theorem ex9 : ∃ t ∈ (Collins2005.ex9.preRaising .partP false).externalize?,
     Matches t Collins2005.infl₀ depthFirst Collins2005.ex9.patient ∧
       ¬ Matches t Collins2005.infl₀ depthFirst Collins2005.ex9.agent ∧

@@ -260,9 +260,8 @@ strong counterfactuality: English (1a) and not Japanese (4a) with *-ta* (§3.2).
 theorem xFelicitous_jones_iff {κ : Counterfactuality} : jones.XFelicitous κ ↔ κ = .weak :=
   Scenario.xFelicitous_iff antecedent_live_jones exists_ssuperset_jones
 
-/-- An O-marked Anderson conditional is felicitous exactly when the X-marking signals strong
-counterfactuality, which leaves the historical-present shift open: Japanese (4a) and not English
-(2) (§3.3, fn. 14). -/
+/-- An O-marked Anderson conditional is felicitous iff the X-marking signals strong
+counterfactuality, as in Japanese (4a) but not English (2) (§3.3, fn. 14). -/
 theorem oFelicitous_jones_iff {κ : Counterfactuality} : jones.OFelicitous κ ↔ κ = .strong := by
   rw [Scenario.oFelicitous_iff_of_subset domain_subset_consequent_jones, xFelicitous_jones_iff]
   cases κ
@@ -277,8 +276,8 @@ theorem oFelicitous_jones_iff_not {κ : Counterfactuality} :
 /-- The Jones scenario once it is established that he took the mimic poison. -/
 def jonesIdentified : Scenario Jones := .ofDatedFacts [(1, {.mimic})] 1 {.arsenic} symptoms
 
-/-- Once the mimic poison is identified, the arsenic antecedent is no longer live, and a strongly
-counterfactual X-marking is felicitous, as §3.2 notes for (4a) with *-ta*. -/
+/-- Once the mimic poison is identified, a strongly counterfactual X-marking is felicitous, as with
+*-ta* in (4a) (§3.2). -/
 theorem xFelicitous_strong_identified : jonesIdentified.XFelicitous .strong := by
   have hD : jonesIdentified.domain = {.mimic} := by
     ext v; simp [jonesIdentified, Scenario.mem_live_ofDatedFacts]
@@ -378,9 +377,8 @@ theorem rows_parsed : ∀ e ∈ Examples.all, (constructionOf e).isSome →
     (strategyOf e).isSome ∧ (counterfactuality e.language).isSome := by
   decide
 
-/-- Every row is judged as predicted, its primary text under its strategy and its alternatives
-under the other: English (1a), (2) and (8), Japanese (4a), (7a) and (9), and Mandarin (11) and
-(13a). -/
+/-- Every row and its alternatives are judged as predicted, in English (1a), (2) and (8), Japanese
+(4a), (7a) and (9), and Mandarin (11) and (13a). -/
 theorem rows_felicity :
     ∀ e ∈ Examples.all, ∀ c ∈ constructionOf e, ∀ m ∈ strategyOf e,
       ∀ κ ∈ counterfactuality e.language,

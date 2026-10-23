@@ -138,12 +138,7 @@ private theorem comulCForestN_mem (τ : UnorderedTree (α ⊕ β) → β)
         Multiset.map_cons, Multiset.sum_cons]
     exact gradedTensorSpan_mul (comulCTreeN_mem τ T) ih
 
-/-- Δ^c preserves the edge-count grading ([marcolli-chomsky-berwick-2025]
-    Lemma 1.2.10, p. 37): the coproduct of a basis forest lies in the span of
-    homogeneous tensors `xi ⊗ yi` with degrees summing to the forest's edge
-    count. With edge-count additivity over the product (disjoint union) and
-    `comulCN_coassoc`, this gives the lemma's graded bialgebra structure on
-    `V^c(𝔉_{SO_0})`. -/
+/-- Δ^c preserves the edge-count grading ([marcolli-chomsky-berwick-2025] Lemma 1.2.10, p. 37). -/
 theorem comulCAlgHomN_of'_mem_gradedSpan
     (τ : UnorderedTree (α ⊕ β) → β) (F : Forest (UnorderedTree (α ⊕ β))) :
     comulCAlgHomN (R := R) τ (ConnesKreimer.of' F) ∈

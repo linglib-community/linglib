@@ -96,17 +96,16 @@ theorem context_proper : context.IsProper := by decide
 
 theorem update_improper : ¬ update.IsProper := by decide
 
-/-- Its free referents are supplied by the context's universe, the condition under which the
-context change potential of Definition 24 is defined on the context's state. -/
+/-- The update's free referents are in the context's universe, so the context change potential of
+Definition 24 is defined. -/
 theorem update_bound : update.freeVarFinset ⊆ context.referents := by
   simp [update, context]; decide
 
 theorem update_fresh : Disjoint update.referents (Condition.varFinsetL context.conditions) := by
   decide
 
-/-- Applying the context change potential of the second sentence to the information state
-expressed by the first yields the information state expressed by their merge, the DRS of the
-whole discourse (43), as the chapter remarks after Definition 24. -/
+/-- Applying the second sentence's context change potential to the first's information state yields
+that of their merge (43) (Definition 24). -/
 theorem ccp_action {W M : Type*} [dLang.Structure M] :
     (update.transition (M := M) W context.referents update_bound).applyState
         (context.state W context_proper) =

@@ -164,8 +164,8 @@ theorem complex_numerals_uncounted :
       (r.operation = .outerCardinal ∨ r.operation = .universal) → r.judgment ≠ .acceptable := by
   decide
 
-/-- *-oje* takes nouns derived by *-í*, pluralia tantum, and nouns of entities that come in
-multiples, (20) to (24), and rejects ordinary countable nouns, (25) and (68). -/
+/-- *-oje* takes derived aggregates, pluralia tantum and nouns of multiples ((20) to (24)) and
+rejects ordinary countable nouns ((25), (68)). -/
 theorem aggregate_numeral_selects :
     (∀ r ∈ rows, r.numeral = .aggregate → r.operation = .none →
       (r.noun = .derivedAggregate ∨ r.noun = .pluraleTantum ∨ r.noun = .multiple) →
@@ -173,9 +173,8 @@ theorem aggregate_numeral_selects :
       ∀ r ∈ rows, r.numeral = .aggregate → r.noun = .ordinary → r.judgment ≠ .acceptable := by
   decide
 
-/-- In section 2.3, grinding is rejected, (34) and (35); the taxonomic reading of a plural or a
-simple cardinal phrase needs a non-episodic context, (36) to (40), while the taxonomic numeral
-is free in both. -/
+/-- Grinding is rejected ((34), (35)), and the taxonomic reading of a plural or cardinal phrase
+needs a non-episodic context ((36) to (40); section 2.3). -/
 theorem taxonomic_plural_nonepisodic :
     (∀ r ∈ rows, r.operation = .grinding → r.judgment ≠ .acceptable) ∧
       (∀ r ∈ rows, r.taxonomic = true → r.numeral ≠ .taxonomic →
@@ -218,8 +217,8 @@ below `x` number `n`. -/
 def ojeSem (n : ℕ) (P : α → Prop) (x : α) : Prop :=
   P x ∧ ∃ Y : Finset α, (∀ z, (z < x ∧ IsMaxCluster C P z) ↔ z ∈ Y) ∧ Y.card = n
 
-/-- The cardinality an aggregate numeral asserts is determinate, the witnessing set being the
-maximal clusters below the argument, so no outer cardinal can re-specify it, (27) and (26). -/
+/-- The cardinality an aggregate numeral asserts is determinate, so no outer cardinal can re-specify
+it ((27) and (26)). -/
 theorem ojeSem_determinate {n m : ℕ} {P : α → Prop} {x : α} (hn : ojeSem C n P x)
     (hm : ojeSem C m P x) : n = m := by
   obtain ⟨-, Y, hY, rfl⟩ := hn

@@ -125,8 +125,8 @@ theorem PreEx.closure (h : PreEx C e w) : C.closure w (τ e) :=
   Event.PreExists.exists h
 
 omit [Event.TemporalTrace E T] in
-/-- (28b) as printed, `∃ e'' t, C w t e'' ∧ (τ e'').fst < (τ e).fst`, binds the complement's
-time, and an existentially bound time absorbs the anterior shift. -/
+/-- As printed, (28b) binds the complement's time, and an existentially bound time absorbs the
+anterior shift. -/
 theorem exists_anterior_iff [NoMaxOrder T] {p : E → Prop} :
     (∃ e t, anterior C w t e ∧ p e) ↔ ∃ e t, C w t e ∧ p e := by
   refine ⟨fun ⟨e, _, ⟨t', _, hC⟩, hp⟩ ↦ ⟨e, t', hC, hp⟩, fun ⟨e, t, hC, hp⟩ ↦ ?_⟩

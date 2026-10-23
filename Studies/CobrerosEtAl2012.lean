@@ -365,8 +365,7 @@ theorem Consequence.mono {m' n' : Mode} (hm : m' ≤ m) (hn : n ≤ n') (h : Con
     Consequence m' n' Γ Δ :=
   MixedConsequence.mono (TModels.realize_monotone hm) (TModels.realize_monotone hn) h
 
-/-- Negation swaps tolerant and strict truth and fixes classical truth, so each notion of truth
-is dual to its image under `d` (Remark 1, Definition 20). -/
+/-- Negation swaps tolerant and strict truth and fixes classical truth (Remark 1, Definition 20). -/
 theorem isDual (m : Mode) :
     IsDual .neg (fun M : TModels Pred C ↦ M.Realize m.dual) (TModels.Realize · m) :=
   fun M φ ↦ by simp [TModels.Realize]
@@ -391,8 +390,8 @@ theorem consequence_cons_cons_iff_foldr :
     Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Consequence m n [Γ.foldr .conj φ] [Δ.foldr .disj ψ] := by
   simp [MixedConsequence, Consequence.Satisfies, and_comm, or_comm]
 
-/-- When `m = d(n)`, `Γ ⊨ᵐⁿ Δ` iff `⊨ᵐⁿ ⋀Γ → ⋁Δ`, for the nonempty finite sides the language
-can conjoin and disjoin (Lemma 10, right to left; footnote 13). -/
+/-- When `m = d(n)`, `Γ ⊨ᵐⁿ Δ` iff `⊨ᵐⁿ ⋀Γ → ⋁Δ`, for nonempty finite sides (Lemma 10, right to
+left; footnote 13). -/
 theorem Consequence.iff_valid_imp (h : m = n.dual) :
     Consequence m n (φ :: Γ) (ψ :: Δ) ↔ Valid n ((Γ.foldr .conj φ).cond (Δ.foldr .disj ψ)) :=
   consequence_cons_cons_iff_foldr.trans <|
@@ -683,10 +682,8 @@ def cutAt (a : C) : TModel Pred C C where
   sim _ := .univ
   sim_ktb _ := { refl := fun _ ↦ trivial, symm := fun _ _ _ ↦ trivial }
 
-/-- The deduction theorem holds for `⊨ᵐⁿ` iff `m = d(n)`, so for `st`, `cc` and `ts` only
-(Lemma 10). Validity depends only on `n`, so the theorem makes `⊨ᵐⁿ` and `⊨^{d(n)n}` agree;
-against the conclusion `¬ a I_P a`, which nothing satisfies, they are `m`- and
-`d(n)`-unsatisfiability, which a contradiction and the negated tolerance principle separate. -/
+/-- The deduction theorem holds for `⊨ᵐⁿ` iff `m = d(n)`, so only for `st`, `cc` and `ts` (Lemma
+10). -/
 theorem deductionTheorem_iff {m n : Mode} [Nonempty Pred] [Nontrivial C] :
     (∀ (φ ψ : Formula Pred C) Γ Δ, Consequence m n (φ :: Γ) (ψ :: Δ) ↔
       Valid n ((Γ.foldr .conj φ).cond (Δ.foldr .disj ψ))) ↔ m = n.dual := by
@@ -769,8 +766,8 @@ theorem series_borderline (hi : 0 < i) (hin : i < n) (x : Fin n) :
     x.val + 1 < i from series_realize_strict hin x]
   omega
 
-/-- In the four-element model of p. 354 the strict, classical and tolerant extensions of `P`
-are `{a}`, `{a, b}` and `{a, b, c}`, so `b` and `c` are borderline. -/
+/-- In the four-element model of p. 354, the strict, classical and tolerant extensions of `P` are
+`{a}`, `{a, b}` and `{a, b, c}`. -/
 theorem series_four_two (x : Fin 4) :
     ((series 4 2).Realize .strict (.atom (.pred () x)) ↔ x = 0) ∧
     ((series 4 2).Realize .classical (.atom (.pred () x)) ↔ x = 0 ∨ x = 1) ∧
@@ -839,9 +836,7 @@ theorem stdRefl_consequence_iff {m n : Mode} [Nonempty Pred] [Nonempty C] :
   obtain ⟨M, hm, hn⟩ := exists_realize_pred_not_realize P a hnm
   exact hn (stdRefl_mixedConsequence_iff.1 h M _ hm)
 
-/-- `ct` is not transitive (§3.4.1), since along `b, c, d` of the four-element model,
-`Pb ∧ b I_P c ∧ c I_P d ⊨ᶜᵗ Pc ∧ c I_P d` and `Pc ∧ c I_P d ⊨ᶜᵗ Pd` but
-`Pb ∧ b I_P c ∧ c I_P d ⊭ᶜᵗ Pd`. -/
+/-- `ct` is not transitive, failing along `b, c, d` of the four-element model (§3.4.1). -/
 theorem not_isTrans_ct :
     ¬ IsTrans (Formula Unit (Fin 4)) fun φ ψ ↦ Consequence .classical .tolerant [φ] [ψ] := by
   rintro ⟨h⟩
@@ -854,9 +849,7 @@ theorem not_isTrans_ct :
   exacts [⟨⟨M.const 1, (M.sim ()).symm h.2.1, h.1⟩, h.2.2⟩,
     ⟨M.const 2, (M.sim ()).symm h.2, h.1⟩]
 
-/-- `sc` is not transitive (§3.4.1), since along `a, b, c` of the four-element model,
-`Pa ∧ a I_P b ∧ b I_P c ⊨ˢᶜ Pb ∧ b I_P c` and `Pb ∧ b I_P c ⊨ˢᶜ Pc` but
-`Pa ∧ a I_P b ∧ b I_P c ⊭ˢᶜ Pc`. -/
+/-- `sc` is not transitive, failing along `a, b, c` of the four-element model (§3.4.1). -/
 theorem not_isTrans_sc :
     ¬ IsTrans (Formula Unit (Fin 4)) fun φ ψ ↦ Consequence .strict .classical [φ] [ψ] := by
   rintro ⟨h⟩
@@ -868,10 +861,7 @@ theorem not_isTrans_sc :
     TModel.realize_strict_pred, TModel.realize_classical_pred, TModel.realize_sim] at h ⊢
   exacts [⟨h.1 _ h.2.1, h.2.2⟩, h.1 _ h.2]
 
-/-- `st` is not transitive (§3.4.1). By Fact 3 a counterexample takes three similarity steps,
-along the whole four-element model, where
-`Pa ∧ a I_P b ∧ b I_P c ∧ c I_P d ⊨ˢᵗ Pb ∧ b I_P c ∧ c I_P d` and
-`Pb ∧ b I_P c ∧ c I_P d ⊨ˢᵗ Pd` but `Pa ∧ a I_P b ∧ b I_P c ∧ c I_P d ⊭ˢᵗ Pd`. -/
+/-- `st` is not transitive, and by Fact 3 a counterexample needs three similarity steps (§3.4.1). -/
 theorem not_isTrans_st :
     ¬ IsTrans (Formula Unit (Fin 4)) fun φ ψ ↦ Consequence .strict .tolerant [φ] [ψ] := by
   rintro ⟨h⟩
@@ -885,9 +875,8 @@ theorem not_isTrans_st :
   exacts [⟨⟨M.const 1, (M.sim ()).refl _, h.1 _ h.2.1⟩, h.2.2⟩,
     ⟨M.const 2, (M.sim ()).symm h.2.2, h.1 _ h.2.1⟩]
 
-/-- On the sorites language the transitive relations among the nine are exactly those whose
-conclusion standard is at most their premise standard, namely `tc`, `cs` and `ts` besides the
-unmixed three (§3.3.2), but not `ct`, `sc` or `st` (§3.4.1). -/
+/-- On the sorites language `⊨ᵐⁿ` is transitive iff `n ≤ m`, as for `tc`, `cs`, `ts` and the unmixed
+three (§3.3.2) but not `ct`, `sc`, `st` (§3.4.1). -/
 theorem isTrans_consequence_iff {m n : Mode} :
     IsTrans (Formula Unit (Fin 4)) (fun φ ψ ↦ Consequence m n [φ] [ψ]) ↔ n ≤ m := by
   refine ⟨fun h ↦ ?_, isTrans_consequence⟩
@@ -956,10 +945,8 @@ theorem not_series_realize_strict_tolerance (hi : 0 < i) (hin : i < n) :
   simp [series]
   omega
 
-/-- [alxatib-pelletier-2011]'s five men are ranked by height (§4.2.3), `#1 < #4 < #2 < #5 < #3`
-as ranks `0` to `4`, with `#1` and `#4` tall and `#5` and `#3` not. Whichever way the median
-man `#2`, rank `2`, is classified, `series 5 2` or `series 5 3`, he is borderline, tolerantly
-tall and tolerantly not tall. -/
+/-- Whichever way [alxatib-pelletier-2011]'s median man is ranked, he is borderline, tolerantly tall
+and tolerantly not tall (§4.2.3). -/
 theorem alxatibPelletier_median_borderline (hi : i = 2 ∨ i = 3) :
     (series 5 i).Borderline () 2 :=
   (series_borderline (by omega) (by omega) 2).2 (by show 2 + 1 = i ∨ 2 = i; omega)

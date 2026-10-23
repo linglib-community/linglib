@@ -85,8 +85,8 @@ conjunction of permissions. -/
 theorem poss_inter_subset_poss_inter : R.preimage (A ∩ B) ⊆ R.preimage A ∩ R.preimage B :=
   preimage_inter_subset R
 
-/-- But not conversely, which is what makes (9b), *you may come with me and you may stay
-here*, absurd on its conjunctive reading: two permissions need not be jointly satisfiable. -/
+/-- Joint permissibility does not follow from two permissions, which makes the conjunctive reading
+of (9b) absurd. -/
 theorem exists_not_poss_inter_subset :
     ∃ A B : Set Bool,
       ¬ universalAccess.preimage A ∩ universalAccess.preimage B ⊆
@@ -163,8 +163,8 @@ theorem not_checks_of_interpretable (op : ModalFeature) {f : ModalFeature}
   have := hc.2.1
   simp [h] at this
 
-/-- The Fragment's modals pair as the paper needs: *may* with *may*, *must* with *must*, *may*
-with *can*, [alonso-ovalle-2006]'s mixed form of footnote 4, and *may* not with *must*. -/
+/-- In the fragment *may* concords with *may* and *can* (footnote 4, [alonso-ovalle-2006]), *must*
+with *must*, and *may* not with *must*. -/
 theorem fragment_concord :
     (∀ f ∈ auxiliaryFeatures may, ∀ g ∈ auxiliaryFeatures may, Concord f g) ∧
       (∀ f ∈ auxiliaryFeatures must, ∀ g ∈ auxiliaryFeatures must, Concord f g) ∧
@@ -174,9 +174,8 @@ theorem fragment_concord :
 
 /-! ### Concord across negation (§4.2) -/
 
-/-- (28), *I need not cook and I need not clean*: the negated feature of *need* is checked by a
-silent possibility operator, (29a), and not by a necessity one, (29c), so the sentence conveys
-a permission to do neither and not an obligation to do neither. -/
+/-- The negated feature of *need* in (28) is checked by a silent possibility operator (29a), not a
+necessity one (29c). -/
 theorem need_not :
     ∀ f ∈ auxiliaryFeatures need,
       ModalFeature.Checks ⟨.possibility, .interpretable⟩ f.negated ∧

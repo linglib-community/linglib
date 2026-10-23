@@ -151,9 +151,8 @@ theorem strongNecessity_iff :
       Modality.Directive.strongNecessity b.circumstances b.nonNegotiable p w := by
   rw [strongNecessity, favoredWorlds_eq_bestWorlds]; rfl
 
-/-- Weak necessity is [von-fintel-iatridou-2008]'s, with the promoted priorities as the primary
-and the negotiable ones as the secondary ordering source: the truth conditions of the two analyses
-coincide, and only the presupposition (50) separates them. -/
+/-- Weak necessity is [von-fintel-iatridou-2008]'s with promoted priorities as primary and
+negotiable ones as secondary ordering source, differing only in presupposition (50). -/
 theorem weakNecessity_iff :
     weakNecessity b p w ↔
       Modality.Directive.weakNecessity b.circumstances b.nonNegotiable b.negotiable p w := by
@@ -185,8 +184,8 @@ instance {ι κ : Type*} [Fintype ι] [DecidableEq κ] (commitment : ι → Fins
     (ideals : List κ) : Decidable (Negotiable commitment ideals) :=
   inferInstanceAs (Decidable (∃ a, ∃ i ∈ ideals, i ∉ commitment a))
 
-/-- A choice of ideal is a choice of weak necessities (§3.4.2): with `γ` the negotiable ideal
-and `γ` live among the favored worlds, *should γ* holds and *should ¬γ* fails. -/
+/-- With `γ` the negotiable ideal and live among the favored worlds, *should γ* holds and *should
+¬γ* fails (§3.4.2). -/
 theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = {γ})
     (hlive : ∃ v ∈ favoredWorlds b w, γ v) :
     weakNecessity b γ w ∧ ¬ weakNecessity b (fun v ↦ ¬ γ v) w := by
@@ -260,9 +259,8 @@ private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
   · rintro q ⟨i, -, rfl⟩
     cases i <;> rfl
 
-/-- In (46) and (51), before the endorsement the international clause is negotiable, *we should
-report all our revenue* holds and *we have to* does not; after it the clause is no longer
-negotiable and *we have to* holds. -/
+/-- In (46) and (51), *we should report all our revenue* holds without *we have to* until the
+endorsement makes the international clause non-negotiable. -/
 theorem tax_shift (w : Revenue) :
     (Negotiable commitmentBefore [Ideal.international] ∧
       weakNecessity (ofIdeals [.domestic] [.international]) reportAll w ∧
@@ -300,9 +298,8 @@ instance : DecidablePred InComparativeClass := fun _ ↦
 def negRaisingRows : List Datum :=
   Examples.all.filter fun e ↦ e.feature? "diagnostic" = some "negRaising"
 
-/-- In (30)–(33), the lower-negation reading of a negated attitude is available exactly for the
-comparative class, the weak necessity verbs and the evaluative comparatives, and not for the
-strong modals, the hybrid *carix* aside. -/
+/-- In (30)–(33), a negated attitude has the lower-negation reading exactly for the comparative
+class, the hybrid *carix* aside. -/
 theorem negRaising_iff_comparative :
     ∀ e ∈ negRaisingRows, e.feature? "hybrid" ≠ some "true" →
       (e.readings.lookup "lowerNeg" = some .acceptable ↔ InComparativeClass e) := by
@@ -331,9 +328,8 @@ def strategy? (e : Datum) : Option Strategy :=
   e.parse? "strategy" [("lexical", Strategy.lexical), ("compositional", .compositional),
     ("evaluativeComparative", .evaluativeComparative)]
 
-/-- The strength tests of (8), (16), (19) and (21), denying strong necessity after the expression
-or opposing it to strong necessity with an exclusive, are felicitous exactly for the items that
-reach weak necessity by some strategy. -/
+/-- The strength tests of (8), (16), (19) and (21) are felicitous exactly for the items reaching
+weak necessity by some strategy. -/
 theorem strength_tests :
     ∀ e ∈ Examples.all, e.feature? "diagnostic" ∈ [some "test1", some "test2"] →
       (e.judgment = .acceptable ↔ (strategy? e).isSome) := by

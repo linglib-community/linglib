@@ -85,8 +85,8 @@ private theorem eq_zero_of_addRight_zero_one_zpow {n : ℕ} {x : ZMod 2 × ZMod 
   rw [addRight_zpow_apply, add_eq_left, Prod.smul_mk, smul_zero, Prod.mk_eq_zero] at h
   exact eq_zero_of_zsmul_one_eq_zero hd h.2
 
-/-- Duplicator wins `r` rounds of the bijective game between one cycle of length `2 ^ (r + 1)`
-and two of length `2 ^ r` (Theorem 7). -/
+/-- Duplicator wins the `r`-round bijective game on one `2 ^ (r + 1)`-cycle versus two `2 ^
+r`-cycles (Theorem 7). -/
 theorem duplicatorWinsBijective_oneCycle_twoCycles (r : ℕ) :
     Language.graph.DuplicatorWinsBijective r (default : Fin 0 → oneCycle r)
       (default : Fin 0 → twoCycles r) := by

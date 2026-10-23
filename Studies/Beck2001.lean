@@ -107,8 +107,8 @@ theorem strongReciprocity_iff_otherOnes (R : α → α → Prop) {A : Finset α}
 def CollectiveReading (R : α → Finset α → Prop) (A : Finset α) : Prop :=
   ∀ x ∈ A, R x (otherOnesAmongThem A x)
 
-/-- On a plural antecedent and with a relation that distributes to members, the collective
-    schema is exactly SR: (81) and (84) differ only in distribution over the definite. -/
+/-- For a plural antecedent and a relation distributing to members, the collective schema is strong
+reciprocity ((81), (84)). -/
 theorem collectiveReading_iff_strong (R : α → α → Prop) {A : Finset α} (hA : 1 < A.card) :
     CollectiveReading (fun x Y => ∀ y ∈ Y, R x y) A ↔ StrongReciprocity R A := by
   rw [strongReciprocity_iff_otherOnes R hA]
@@ -136,10 +136,8 @@ def SituationWeakReciprocity (R : α → α → σ → Prop) (A : Finset α)
     (∀ x ∈ A, ∃ s ∈ subs, ∃ y ∈ A, x ≠ y ∧ R x y s) ∧
       (∀ y ∈ A, ∃ s ∈ subs, ∃ x ∈ A, x ≠ y ∧ R x y s)
 
-/-- Under persistence — what holds in a subsituation holds in the evaluation
-    situation — situation-based WR entails WR at the evaluation situation: the right
-    edge of the entailment chain SR → sitWR → WR that feeds the paper's Strongest
-    Meaning Hypothesis ((219), fn. 15). -/
+/-- Under persistence, situation-based weak reciprocity entails weak reciprocity at the evaluation
+situation ((219), fn. 15). -/
 theorem situationWR_imp_weakReciprocity (R : α → α → σ → Prop) (A : Finset α)
     (subs : Finset σ) (s : σ)
     (hpers : ∀ x y, ∀ s' ∈ subs, R x y s' → R x y s)

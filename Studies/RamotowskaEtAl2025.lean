@@ -164,8 +164,8 @@ variable {ord A w D B}
 
 /-! ### Predictions in mixed scenarios -/
 
-/-- In the unembedded case of Table 1 a player's counterfactual is false on the universal theory,
-indeterminate on the selectional theory, and undefined on the homogeneity theory. -/
+/-- In the unembedded case of Table 1, the counterfactual is false, indeterminate and undefined on
+the universal, selectional and homogeneity theories respectively. -/
 theorem unembedded (h : Mixed ord A w D B) {d : ι} (hd : d ∈ D) :
     w ∉ closestImp ord A (B d) ∧
       selectionalCounterfactual ord A (B d) w = 0 ∧
@@ -190,9 +190,8 @@ theorem universal_polarity (h : Mixed ord A w D B) (q : Quant) :
   · simp only [universal, Quant.eval, Quant.IsPositive, not_false_eq_true, iff_true]
     exact let ⟨d, hd⟩ := h.nonempty; ⟨d, hd, hfalse d hd⟩
 
-/-- In the selectional row of Table 3 the quantified sentence is determinately false for the
-universal quantifiers and determinately true for the existential ones, whatever the polarity,
-because every selected world has a winner and a loser. -/
+/-- On the selectional theory the quantified sentence is false for universal and true for
+existential quantifiers, whatever the polarity (Table 3). -/
 theorem selectional_force (h : Mixed ord A w D B) (q : Quant) :
     selectional ord A w D B q = q.force.verdict := by
   obtain ⟨v, hv⟩ := h.closest_nonempty

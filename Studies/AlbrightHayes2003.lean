@@ -226,16 +226,15 @@ theorem filter_matchesLeft_single (k : Segment) (I : Finset Segment) :
     I.filter (fun x ↦ MatchesLeft [.seg k] [x]) = k.naturalClass I := by
   simp only [matchesLeft_single_iff]; rfl
 
-/-- In (6), *vote* and *need* differ first in their final segments, so the learned `-əd` rule
-keeps what [t] and [d] share, and that featural term characterizes the class [t, d]
-uniquely. -/
+/-- From *vote* and *need* (6) the `-əd` rule learns what [t] and [d] share, a term whose natural
+class is exactly [t, d]. -/
 theorem learned_vote_need :
     learned [vote, need] = [.seg (t ⊓ d)] ∧
       (t ⊓ d).naturalClass English.Phonology.inventory = {t, d} := by
   decide
 
-/-- As footnote 4 observes, whatever [b], [g] and [n] share, [d] has, so the `-d` rule learned
-from *rub*, *sag* and *plan* reaches *need*, and only the phonology keeps *needd* out. -/
+/-- The `-d` rule learned from *rub*, *sag* and *plan* covers [d], so it reaches *need* (footnote
+4). -/
 theorem learned_rub_sag_plan :
     learned [rub, sag, plan] = [.seg (b ⊓ g ⊓ n)] ∧
       d ∈ (b ⊓ g ⊓ n).naturalClass English.Phonology.inventory := by
@@ -247,9 +246,8 @@ def voiced : Segment := Segment.ofSpecs [(.voice, true)]
 /-- The voiceless segments, as a description. -/
 def voiceless : Segment := Segment.ofSpecs [(.voice, false)]
 
-/-- In (7b) the `-d` rule generalizes to [+voice] as the stems come to span the voiced segments.
-From *rub*, *sag*, *plan*, *love* and *flow*, whose final segments are all non-lateral, it
-reaches every voiced segment but /l/, and a stem in /l/ completes it. -/
+/-- The `-d` rule learned from *rub*, *sag*, *plan*, *love* and *flow* covers every voiced segment
+but /l/ (7b). -/
 theorem learned_voiced :
     learned [rub, sag, plan, love, flow] = [.seg (b ⊓ g ⊓ n ⊓ v ⊓ o)] ∧
       (b ⊓ g ⊓ n ⊓ v ⊓ o).naturalClass English.Phonology.inventory =
@@ -258,9 +256,8 @@ theorem learned_voiced :
         voiced.naturalClass English.Phonology.inventory := by
   decide
 
-/-- In (7b) the `-t` rule does likewise. From *jump*, *miss* and *laugh*, whose final segments
-are all non-dorsal, it reaches every voiceless segment but /k/, and a stem in /k/ completes
-it. -/
+/-- The `-t` rule learned from *jump*, *miss* and *laugh* covers every voiceless segment but /k/
+(7b). -/
 theorem learned_voiceless :
     learned [jump, miss, laugh] = [.seg (p ⊓ s ⊓ f)] ∧
       (p ⊓ s ⊓ f).naturalClass English.Phonology.inventory =
@@ -340,8 +337,8 @@ def MeanGT (key : String) (A B : List Datum) : Prop :=
 instance (key : String) (A B : List Datum) : Decidable (MeanGT key A B) :=
   inferInstanceAs (Decidable (_ > _))
 
-/-- Regulars show islands of reliability (Fig. 2), in that novel regular pasts are rated higher, and
-volunteered more often, when the stem occupies an island for the regular change. -/
+/-- Novel regular pasts are rated higher and volunteered more often when the stem lies in an island
+of reliability for the regular change (Fig. 2). -/
 theorem regulars_ior :
     MeanGT "adjustedRating" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) ∧
       MeanGT "production" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by
@@ -370,8 +367,8 @@ theorem tradeoff :
 theorem ruleBased_islands :
     MeanGT "ruleBased" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by decide
 
-/-- In Table 4, on the twelve regular pasts in the best islands the analogical model, unable to
-locate structured similarity, scores below both the participants and the rule-based model. -/
+/-- On the twelve regular pasts in the best islands, the analogical model scores below both the
+participants and the rule-based model (Table 4). -/
 theorem analogical_misses_islands :
     ∀ r ∈ Examples.all, (r.feature? "island").isSome →
       value "analogical" r < value "adjustedRating" r ∧

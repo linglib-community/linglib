@@ -137,8 +137,8 @@ theorem IsResolutionOf.relevant (h : IsResolutionOf μ Q {A} R) : Relevant μ (o
   rw [Set.sInter_singleton] at this
   exact this.ne'
 
-/-- A prejacent that leaves the conditional probability of every resolution unchanged fails
-the conjunction condition: *dogs are mammals*, (72), and *I had pancakes for breakfast*, (25). -/
+/-- A prejacent leaving every resolution's conditional probability unchanged fails the conjunction
+condition ((72), (25)). -/
 theorem not_tooFelicitous_of_cond_eq
     (h : ∀ 𝒜 ⊆ alt rq, μ[⋂₀ 𝒜 | ant ∩ π] = μ[⋂₀ 𝒜 | ant]) : ¬ TooFelicitous μ π ant rq := by
   rintro ⟨-, 𝒜, hres, hmore, -, -⟩
@@ -152,8 +152,8 @@ theorem not_tooFelicitous_of_subset (h : ∀ 𝒜, IsResolutionOf μ rq 𝒜 (an
   rintro ⟨-, 𝒜, hres, -, hnot, -⟩
   exact hnot (h 𝒜 hres)
 
-/-- Evidence raising every candidate resolution by the same factor answers no question whose
-candidates are not all nested: *she invited Bailey* and the mention-two question, (71). -/
+/-- Evidence raising every candidate resolution equally answers no question whose candidates are not
+all nested (71). -/
 theorem not_answers_of_impact_eq {c : ℝ≥0∞}
     (hc : ∀ 𝒜 ⊆ alt Q, 𝒜.Nonempty → impact μ R (⋂₀ 𝒜) = c)
     (hcomp : ∀ 𝒜 ⊆ alt Q, 𝒜.Nonempty → ∃ 𝒜' ⊆ alt Q, 𝒜'.Nonempty ∧ ¬ ⋂₀ 𝒜 ⊆ ⋂₀ 𝒜') :

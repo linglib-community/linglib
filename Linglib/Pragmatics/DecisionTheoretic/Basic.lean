@@ -362,16 +362,13 @@ end Count
 
 /-! ### Sign reversal -/
 
-/-- E is positively relevant to H iff E is negatively relevant to ¬H. This is the qualitative
-sign reversal of Corollary 3, the ordinal content of r_H(E) = −r_{¬H}(E). -/
+/-- E is positively relevant to H iff negatively relevant to ¬H (Corollary 3). -/
 theorem sign_reversal_qual (ctx : Context W) (e : Set W) (hEH : ctx.prior[|ctx.topic] e ≠ 0) :
     posRelevant ctx e ↔ negRelevant (swapIssue ctx) e := by
   rw [posRelevant_iff_cond_lt, negRelevant_iff_cond_lt (by simpa [swapIssue] using hEH)]
   simp [swapIssue]
 
-/-- The Bayes factors of E for H and for ¬H multiply to one, BF_H(E) · BF_{¬H}(E) = 1, the
-quantitative form of Corollary 3. The identity is exact when both conditional probabilities are
-nonzero. -/
+/-- The Bayes factors of E for H and for ¬H multiply to one (Corollary 3). -/
 theorem sign_reversal (ctx : Context W) (e : Set W) (hEH : ctx.prior[|ctx.topic] e ≠ 0)
     (hENotH : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
     bayesFactor ctx e * bayesFactor (swapIssue ctx) e = 1 := by
@@ -380,9 +377,8 @@ theorem sign_reversal (ctx : Context W) (e : Set W) (hEH : ctx.prior[|ctx.topic]
     ENNReal.mul_inv_cancel hENotH (measure_ne_top _ _),
     ENNReal.mul_inv_cancel hEH (measure_ne_top _ _), one_mul]
 
-/-- Relevance is the differential of conditional informativeness (Fact 2):
-log BF_H(E) = inf(E, ¬H) − inf(E, H), where inf(E, X) = −log P(E∣X) is the conditional surprisal
-of E. -/
+/-- The log Bayes factor of E for H is the conditional surprisal of E given ¬H minus that given H
+(Fact 2). -/
 theorem relevance_eq_neg_log_sub_neg_log (ctx : Context W) (e : Set W)
     (hEH : ctx.prior[|ctx.topic] e ≠ 0)
     (hENotH : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
@@ -447,8 +443,8 @@ private lemma max_div_gt_or_div (pAH pBH pAnH pBnH : ℝ)
   · rw [gt_iff_lt, one_lt_div hden_pos]
     nlinarith
 
-/-- The union bounds of Theorem 6a for two probability measures under which A and B are
-independent, each of A and B having ratio above one. -/
+/-- The union bounds of Theorem 6a hold for two probability measures making A and B independent,
+each with ratio above one. -/
 private theorem div_union_bounds {μ ν : Measure W} [IsProbabilityMeasure μ]
     [IsProbabilityMeasure ν] {a b : Set W} (hbm : MeasurableSet b)
     (h₁ : IndepSet a b μ) (h₂ : IndepSet a b ν) (ha : 1 < μ a / ν a) (hb : 1 < μ b / ν b)
@@ -476,9 +472,8 @@ private theorem div_union_bounds {μ ν : Measure W} [IsProbabilityMeasure μ]
       ENNReal.toReal_div, ← measureReal_def, ← measureReal_def, hunion h₁, hunion h₂]
     exact harith.2
 
-/-- Under issue-conditional independence with A and B both positively relevant, their
-disjunction is dominated by the stronger disjunct, the upper bound for disjunction in
-Theorem 6a. -/
+/-- Under issue-conditional independence with A and B positively relevant, the Bayes factor of their
+disjunction is below the larger of theirs (Theorem 6a). -/
 theorem CondIndepIssue.bayesFactor_union_lt_max {ctx : Context W}
     [IsFiniteMeasure ctx.prior] [ctx.Nondegenerate] {a b : Set W}
     (hbm : MeasurableSet b) (h : CondIndepIssue ctx a b)

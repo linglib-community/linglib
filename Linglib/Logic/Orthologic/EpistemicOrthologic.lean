@@ -259,9 +259,8 @@ theorem eval_canonicalVal (φ : ModalFormula Var) :
 
 universe u
 
-/-- EO is sound and complete for epistemic ortholattices: `φ ⊢ ψ` iff the inequality holds in
-    every epistemic ortholattice under every valuation ([holliday-mandelkern-2024]
-    Theorem 3.26). Epistemic ortholattices in `Var`'s universe suffice. -/
+/-- EO is sound and complete for epistemic ortholattices ([holliday-mandelkern-2024] Theorem 3.26).
+-/
 theorem derivable_iff {Var : Type u} {φ ψ : ModalFormula Var} :
     EDerivable φ ψ ↔ ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
       [IsOrtholattice L] (bx : InfTopHom L L), (∀ a, bx a ≤ a) →

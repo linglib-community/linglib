@@ -135,8 +135,8 @@ def det (D : GQ E) (P : Set E) (f : E → Set Prop) : Set Prop := pure (D (· �
 
 variable (rel : Set E) (dies : E → Prop) (house : Prop)
 
-/-- Taking scope over its island, which then takes scope over the conditional, gives the
-indefinite exceptional scope, `{if (dies x) house | rel x}` (33), as in `Examples.ex1`. -/
+/-- Scoping over its island, which scopes over the conditional, gives the indefinite exceptional
+scope ((33), `Examples.ex1`). -/
 theorem exceptional_scope :
     (rel >>= fun x ↦ pure (dies x)) >>= (fun p ↦ closureCond cond (pure p) (pure house)) =
       (fun x ↦ cond (dies x) house) '' rel := by
@@ -309,8 +309,8 @@ theorem lawyer_wide_ne_relative_wide : ¬ ∀ visits : Fin 4 → Fin 4 → Prop,
   rw [lawyer_wide, relative_wide] at h
   simp [-eq_iff_iff] at h
 
-/-- No function of the point-wise island meaning gives the lawyer-wide reading of (43), since two
-visiting relations with the same point-wise island differ on it (section 5.4). -/
+/-- No function of the point-wise island meaning gives the lawyer-wide reading of (43) (section
+5.4). -/
 theorem lawyer_wide_not_pointwise :
     ¬ ∃ F : Set Prop → Prop, ∀ visits : Fin 4 → Fin 4 → Prop,
       F (pure visits <*> {2, 3} <*> {0, 1}) ↔
@@ -391,9 +391,8 @@ def expertCites (exp : Set E) (cites : E → E → Prop) :
   (monadLift exp : ReaderT (Assignment E) Set E) >>= fun x ↦
     pure (pro 0 >>= fun y ↦ pure (cites y x))
 
-/-- Pied-piping the island over *everybody* while its inner layer reconstructs under `β⁰` gives
-the indefinite scope over *everybody* and binds the pronoun, (51) and Figure 13, right, as in
-`Examples.ex51`. -/
+/-- Pied-piping the island over *everybody* while reconstructing its inner layer gives the
+indefinite wide scope and binds the pronoun ((51), Figure 13, `Examples.ex51`). -/
 theorem expert_wide_bound (exp human : Set E) (cites : E → E → Prop)
     (lovesWhen : Prop → E → Prop) :
     expertCites exp cites >>=
@@ -451,9 +450,8 @@ theorem not_dependsOn_paper_wide :
   rw [paper_wide] at h
   simp at h
 
-/-- With a choice function (67), the reading (69) of (53) holds exactly when no candidate
-submitted every paper she wrote, given that every candidate wrote a paper and no two wrote the
-same ones. -/
+/-- With a choice function (67), the reading (69) of (53) holds iff no candidate submitted every
+paper she wrote. -/
 theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, wrote y x)
     (hinj : Set.InjOn (fun x y ↦ y ∈ paper ∧ wrote y x) cand) :
     (∃ f : ChoiceFunction E,
@@ -463,8 +461,7 @@ theorem cf_reading_iff [Nonempty E] (hwrote : ∀ x ∈ cand, ∃ y ∈ paper, w
     (fun x y ↦ y ∈ paper ∧ wrote y x) (fun y x ↦ subm y x)
     (fun x hx ↦ (hwrote x hx).imp fun _ ↦ id) hinj
 
-/-- The reading (69) over-generates, since it does not entail the bound reading of (53), which
-fails when the one candidate wrote two papers and submitted one. -/
+/-- The reading (69) does not entail the bound reading of (53). -/
 theorem cf_reading_not_imp_bound :
     ¬ ∀ (cand paper : Set (Fin 3)) (wrote subm : Fin 3 → Fin 3 → Prop) (g : Assignment (Fin 3)),
     (∃ f : ChoiceFunction (Fin 3),

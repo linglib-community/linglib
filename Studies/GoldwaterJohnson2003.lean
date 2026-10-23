@@ -280,8 +280,8 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 example : rows.length = Examples.all.length := by decide
 
-/-- Two of Table 2's classes differ in their violation vectors but not in their differences
-(Table 3), so a learner that sees only differences treats them as one class. -/
+/-- Two of Table 2's classes differ in their violation vectors but not in their differences (Table
+3). -/
 theorem rows_collapse : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁.winner ≠ r₂.winner ∧ r₁.diff = r₂.diff := by
   decide
 

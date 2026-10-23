@@ -182,8 +182,8 @@ theorem role_eq_agent_iff : b.role = some .agent ↔ b.arguments = 1 := by
 theorem role_eq_promoted_iff : b.role = some .promoted ↔ b.arguments = 2 ∧ b.Promotable := by
   rw [role_eq]; split_ifs <;> simp_all
 
-/-- The elsewhere condition of §5.5: a beneficiary is added only to a basic transitive base
-that lacks an implicit object or entailed location compatible with an animate referent. -/
+/-- A beneficiary is added only to a basic transitive base that is not promotable, the elsewhere
+condition of §5.5. -/
 theorem role_eq_beneficiary_iff :
     b.role = some .beneficiary ↔ b.arguments = 2 ∧ ¬ b.Promotable := by
   rw [role_eq]; split_ifs <;> simp_all

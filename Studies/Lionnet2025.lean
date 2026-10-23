@@ -132,9 +132,8 @@ theorem getElem?_registerless (shape : List ℕ) (i : ℕ) :
   · rfl
   · simpa using mem_registerless (List.mem_of_getElem? h)
 
-/-- The prediction of §4.2: on a stem of two or more syllables, every pattern puts its `l` on
-a syllable-initial mora, a boundary of the syllabification. Syllable-internal downstep is
-confined to monosyllables. -/
+/-- On a stem of two or more syllables, every pattern puts its `l` on a syllable-initial mora
+(§4.2). -/
 theorem associate_syllable_initial (p : StemPattern) {shape : List ℕ} (h : 2 ≤ shape.length)
     {tier : RegisterTier} (ht : p.associate shape = some tier) :
     ∀ i ∈ RegisterTier.bearing .downstep tier, ∃ k, i = (shape.take k).sum := by
@@ -462,10 +461,8 @@ theorem ex30_levels :
   decide
 
 open Drubea in
-/-- (32) vs (33), /goo ꜜmie/ 'wet Hibbertia' vs /ꜜgoo ꜜmie/ 'wet tree' (§3.5, §4.5): before
-a downstep, an initial registerless syllable is raised above the baseline while a
-downstepped one is not, its unrealized `l` blocking h-epenthesis; the following
-downstepped syllable is lower than the initial in both. -/
+/-- Before a downstep, initial registerless /goo/ in (32) is raised above the baseline but
+downstepped /ꜜgoo/ in (33) is not (§3.5, §4.5). -/
 theorem ex32_ex33_contrast :
     (∃ x ∈ realize (derive [raising] [gooHibbertia, mieWet]), baseline < x) ∧
       (∀ x ∈ realize (derive [raising] [gooTree, mieWet]), x ≤ baseline) ∧
@@ -480,9 +477,8 @@ theorem ex32_ex33_tiers :
   decide
 
 open Drubea in
-/-- (53) /koꜜo kwɛ-ɽe/ 'place of dancing' vs /koꜜo ꜜkwe-ɽe/ 'place of eating' (§3.7, §4.6):
-the CVꜜV downstep displaces onto the next syllable, a single downstep on registerless
-/kwɛ/, a double one on downstepped /ꜜkwe/ — [koo5 kwɛ4] vs [koo5 kwe3]. -/
+/-- In (53), the CVꜜV downstep displaces onto the next syllable, single on registerless /kwɛ/ and
+double on downstepped /ꜜkwe/ (§3.7, §4.6). -/
 theorem ex53_displacement :
     (derive [spreadL, delinkL, raising] [kooPlace, kweDance, reAct]).tier =
         [[], [.upstep], [.downstep], []] ∧
@@ -493,8 +489,8 @@ theorem ex53_displacement :
   decide
 
 open Drubea in
-/-- (46) /ɲi beꜜe ŋa-ɽe/ 'he doesn't work': undisplaced, /beꜜe/ raises its own first mora
-and lowers its second, the register of what follows — [ɲi ꜛbeꜜe ŋa-ɽe]. -/
+/-- In (46) /ɲi beꜜe ŋa-ɽe/ 'he doesn't work', undisplaced /beꜜe/ raises its first mora and lowers
+its second. -/
 theorem ex46_undisplaced :
     (derive [raising] [ni3sg, beeNeg, ngaWork, reAct]).tier =
         [[], [.upstep], [.downstep], [], []] ∧
@@ -515,9 +511,8 @@ theorem ex56_copy :
   decide
 
 open Drubea in
-/-- (57) /ko te ʈa-ꜜtie-ɽe/ 'I tear by hand.': the copied downstep raises the preceding
-marker and still drops before the verb — [ko4 te4.5 ʈa4 ti3 e3 -ɽe3], the model's raised
-step a whole one. -/
+/-- In (57) /ko te ʈa-ꜜtie-ɽe/ 'I tear by hand', the copied downstep raises the preceding marker and
+still drops before the verb. -/
 theorem ex57_levels :
     realize (derive [raising] [ko1sg, teDescr, copyPrefix taHand tieTear, tieTear, reAct]) =
       [4, 5, 4, 3, 3, 3] := by
@@ -541,8 +536,8 @@ theorem ex24_levels :
   decide
 
 open Numee in
-/-- (25) /jaa ꜜɲĩ + ꜜ%/ 'breast milk': on a downstepped final, l% stacks a second downstep,
-realized below the registerless final of (24) — [ɟaa5 ɲĩ3.5]. -/
+/-- In (25) 'breast milk', l% stacks a second downstep on a downstepped final, realized below the
+registerless final of (24). -/
 theorem ex25_double :
     (derive [finalLowering, raising] [jaaJuice, niBreast]).tier =
         [[], [.upstep], [.downstep, .downstep]] ∧
@@ -566,25 +561,24 @@ theorem ex28_ex29_after_downstep_blocks :
   decide
 
 open Numee in
-/-- (38) /ꜜcĩĩbu ꜜmwã ꜜku mwoɽo + ꜜ%/ 'The rat escaped safe and sound.': l% on the final,
-h-epenthesis before each downstep — [cĩĩ4 bu5 mwã4 ku3 mwo4 ɽo3]. -/
+/-- In (38) 'The rat escaped safe and sound', l% falls on the final and h-epenthesis precedes each
+downstep. -/
 theorem ex38_levels :
     realize (derive [finalLowering, raising] [ciibuRat, mwaPfv, kuFlee, mworoAlive]) =
       [4, 4, 5, 4, 3, 4, 3] := by
   decide
 
 open Numee in
-/-- (52) /yaꜜa ꜜmẽ geꜜe ꜜmẽ ɲaꜜi/ 'We will not arrive.' (§4.6): both CVꜜV downsteps
-displace onto downstepped /ꜜmẽ/, a double downstep each time, while the disyllable
-/ɲa.ꜜi/ keeps its own. -/
+/-- In (52) 'We will not arrive', both CVꜜV downsteps displace onto downstepped /ꜜmẽ/ as double
+downsteps, while /ɲa.ꜜi/ keeps its own (§4.6). -/
 theorem ex52_double :
     (derive [spreadL, delinkL, raising] [yaaNeg, meThat, gee1plExcl, meFut, nyaiArrive]).tier =
       [[], [.upstep], [.downstep, .downstep], [], [.upstep], [.downstep, .downstep],
         [.upstep], [.downstep]] := by
   decide
 
-/-- (18) /ꜜɳe ꜜmwa ꜜve/ 'They go.' ((63)): h-epenthesis on a downstepped mora makes an `lh`
-contour, the rise after the drop, which lifts the register the next downstep lowers. -/
+/-- In (18) 'They go', h-epenthesis on a downstepped mora makes an `lh` contour that lifts the
+register the next downstep lowers (63). -/
 theorem ex18_contour :
     RegisterTier.realize baseline
         (unmark (neutralization.map

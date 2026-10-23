@@ -371,19 +371,15 @@ theorem not_gwo_crossesComplement (v : Verb) : ¬ Again.gwo.CrossesComplement v 
   cases hf
   exact not_exceptionalScope_inner (vP_le_of_mem_sizes hs) h
 
-/-- *-Faan* in a nonfinite complement is scopally ambiguous (93), since the complement can be a
-TP, whose outer aspect head *-faan* agrees with for narrow scope, or a vP, which has none, so
-that *-faan* agrees with the matrix one for wide scope. -/
+/-- *-Faan* in a nonfinite complement is scopally ambiguous between narrow and wide scope (93). -/
 theorem faan_ambiguous {fr : ArgumentFrame} (hc : fr.HasClausal) (hf : ¬ fr.HasFinite) :
     (∃ s ∈ sizes fr, Contains s .outer) ∧ ∃ s ∈ sizes fr, ExceptionalScope .outer s := by
   simp only [sizes, hf, hc, ↓reduceIte]
   decide
 
 open Cantonese.Verbs in
-/-- By their frames, the fragment's verbs fall into the paper's two lists. An embedded *-faan*
-takes wide scope over the nonfinite clause-taking *soeng* 'want', *hyun* 'urge', *bik* 'force',
-*giu* 'ask' and *daasyun* 'intend' (79), and not over the finite clause-taking *seon*
-'believe', *gong* 'say' and *geidak* 'remember' (80). -/
+/-- An embedded *-faan* scopes over the nonfinite-complement verbs of (79) and not over the
+finite-complement verbs of (80). -/
 theorem faan_lowering :
     (∀ v ∈ [soeng, hyun, bik, giu, daasyun], Again.faan.CrossesComplement v) ∧
       ∀ v ∈ [seon, gong, geidak], ¬ Again.faan.CrossesComplement v := by

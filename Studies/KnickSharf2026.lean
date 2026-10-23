@@ -99,17 +99,15 @@ theorem simplePresent_unfold (V : W → E → Prop) (tc : T) (w : W) :
     ∃ e : E, NonemptyInterval.pure tc < τ e ∧ V w e := by
   rfl
 
-/-- The U-perfect under narrow focus, (39b), holds when some perfect time span with its left
-boundary in `tᵣ` and its right boundary at `tc` falls under the imperfective. -/
+/-- The narrow-focus U-perfect (39b) holds when the imperfective holds of a perfect time span from
+`tᵣ` to `tc`. -/
 theorem presPerfProgXN_iff (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w ↔ ∃ pts ∈ IMPF V w, pts.fst ∈ tᵣ ∧ pts.snd = tc :=
   ⟨fun ⟨pts, ⟨h₁, h₂⟩, h₃⟩ ↦ ⟨pts, h₂, h₁, h₃⟩, fun ⟨pts, h₂, h₁, h₃⟩ ↦ ⟨pts, ⟨h₁, h₂⟩, h₃⟩⟩
 
 /-! ### Results -/
 
-/-- The U-perfect (39b) entails its simple present competitor (39a) whatever the domain `tᵣ`,
-since a perfect time span ending at `tc` inside the run time of an event puts `tc` itself inside
-it. -/
+/-- The U-perfect (39b) entails its simple present competitor (39a) whatever the domain `tᵣ`. -/
 theorem u_perf_entails_simple_present (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w → simplePresent V tc w := fun h ↦
   let ⟨pts, ⟨_, e, hlt, hV⟩, hRB⟩ := mem_perf.1 h
@@ -122,9 +120,8 @@ theorem broad_focus_equiv (V : W → E → Prop) (tc : T) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w :=
   ⟨u_perf_entails_simple_present V Set.univ tc w, fun h ↦ ⟨.pure tc, ⟨Set.mem_univ _, h⟩, rfl⟩⟩
 
-/-- An earlier left boundary is stronger under the imperfective, the ordering of the focus
-alternatives in (33) and (35), since an event whose run time contains the perfect time span from
-`tLB₁` also contains the shorter one from a later `tLB₂`. -/
+/-- Under the imperfective an earlier left boundary is stronger, the ordering of the focus
+alternatives in (33) and (35). -/
 theorem earlier_lb_stronger_impf (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc : T) (w : W)
     (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
     presPerfProgXN V {tLB₁} tc w → presPerfProgXN V {tLB₂} tc w := fun hp ↦
@@ -132,8 +129,7 @@ theorem earlier_lb_stronger_impf (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc 
   ⟨⟨(tLB₂, tc), htc⟩, ⟨rfl, e, lt_of_le_of_lt
     (NonemptyInterval.le_def.2 ⟨(Set.mem_singleton_iff.1 hLB).le.trans h.le, hRB.ge⟩) hlt, hV⟩, rfl⟩
 
-/-- A later left boundary is stronger under the perfective (28), since an event fitting inside
-the shorter span from `tLB₂` also fits inside the longer span from an earlier `tLB₁`. -/
+/-- Under the perfective a later left boundary is stronger (28). -/
 theorem later_lb_stronger_prfv (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc : T) (w : W)
     (h : tLB₁ < tLB₂) :
     ⟨w, tc⟩ ∈ PERF ({pts | pts.fst = tLB₂} ∩ PRFV V ·) →
@@ -143,9 +139,7 @@ theorem later_lb_stronger_prfv (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc : 
   ⟨⟨(tLB₁, tc), (h.le.trans hLB.ge).trans (hRB ▸ pts.fst_le_snd)⟩,
     ⟨rfl, e, hle.trans (NonemptyInterval.le_def.2 ⟨h.le.trans hLB.ge, hRB.le⟩), hV⟩, rfl⟩
 
-/-- The ordering is strict, as the state `s''` of (33) shows, since an event going on since
-`tLB₂` need not have been going on since an earlier `tLB₁`. The counterexample takes the boundaries
-`0` and `2`, speech time `4`, and an event running over `[1, 5]`. -/
+/-- The imperfective ordering is strict, as the state `s''` of (33) shows. -/
 theorem earlier_lb_not_weaker_impf :
     ¬ ∀ (V : Unit → NonemptyInterval ℤ → Prop) (tLB₁ tLB₂ tc : ℤ) (w : Unit),
       tLB₁ < tLB₂ → presPerfProgXN V {tLB₂} tc w → presPerfProgXN V {tLB₁} tc w := fun hall ↦ by

@@ -195,10 +195,8 @@ private theorem profile_lt_iff_last_two {p q : ViolationProfile 6}
         subst this
         exact he
 
-/-- Table (19), in general: for two candidates tied on AGREE, DISJOINT,
-PRO-TOP and FAM-DEF, the COT profile comparison under the canonical ranking
-coincides with the BFP preference between the transitions they realize —
-the core of the equivalence Theorem (20). -/
+/-- For candidates tied on AGREE, DISJOINT, PRO-TOP and FAM-DEF, the COT comparison coincides with
+the BFP preference (Table (19), Theorem (20)). -/
 theorem cot_iff_bfp [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E) (c1 c2 : Candidate E R)
     (h : ∀ i : Fin 6, i.val < 4 →

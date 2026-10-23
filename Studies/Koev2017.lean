@@ -150,9 +150,7 @@ theorem direct_not_distant (loc : Ev → L) (h : loc direct.described = loc dire
   · exact hd (by decide)
   · exact hl h
 
-/-- The two constraints of (74b) are independent. Past tense orders the described event before
-the learning event in the indirect scenario, while the smoke scenario satisfies the distance
-condition with the two events simultaneous. -/
+/-- The two constraints of (74b) are independent, as the indirect and smoke scenarios show. -/
 theorem smoke_no_tense_ordering :
     (τ indirect.described).Precedes (τ indirect.learning) ∧
       ¬ (τ smoke.described).Precedes (τ smoke.learning) ∧

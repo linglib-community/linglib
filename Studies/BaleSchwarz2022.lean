@@ -119,8 +119,8 @@ def divisionMP (n : ℝ) (u r : MeasureTerm) : Quantity ℝ :=
 @[simp] theorem divisionMP_snd : (divisionMP n u r).2 = u.dimension / r.dimension := by
   simp [divisionMP, divisionPer]
 
-/-- The division theory undergenerates ((7)). A measure of dimension `D` never equates with
-*n u per r* for a unit `u` of `D`, since the phrase has `D` divided by the dimension of `r`. -/
+/-- No measure of dimension `D` equals *n u per r* for a unit `u` of `D`, so the division theory
+undergenerates ((7)). -/
 theorem not_much_divisionMP (hu : u.dimension = D) (hr : r.dimension ≠ 1) :
     ¬ much (w.quantity D) (divisionMP n u r) x :=
   not_much_quantity_of_snd_ne (by simpa [hu])
@@ -134,9 +134,8 @@ measures ((12)). -/
 theorem much_quantity_quantity_iff : much (w.quantity D) (w.quantity D y) x ↔ w D x = w D y := by
   simp [much_quantity_iff]
 
-/-- The polysemous *weigh* gives *this cube weighs what that cube weighs* a same-density reading
-((13)) that is true of a one-kilogram and a two-kilogram cube, where the weight reading ((12)) is
-false. -/
+/-- The density reading of *this cube weighs what that cube weighs* ((13)) can be true where the
+weight reading ((12)) is false. -/
 theorem density_reading :
     ∃ w : World (Fin 2), much (density w) (density w 1) 0 ∧
       ¬ much (w.quantity (.of .mass)) (w.quantity (.of .mass) 1) 0 := by
@@ -293,10 +292,8 @@ theorem containsPer_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantit
   funext w
   rw [← anaphoricMP_scales hk hu hr]; rfl
 
-/-- The anaphoric theory is unit sensitive ((27), (36)). *The mixture contains 0.1 grams per
-milliliter of salt* and *the mixture contains 0.1 kilograms per liter of salt* assert the same
-thing, but the first presupposes that the mixture measures at least a milliliter and the second
-at least a liter. -/
+/-- *0.1 grams per milliliter* and *0.1 kilograms per liter* assert the same but presuppose
+different minimal volumes ((27), (36)). -/
 theorem unit_sensitivity :
     ∃ A : World E → Prop,
       containsPer salt contain n gram milliliter m = PFun.res A {w | 1 ≤ w .volume m} ∧
@@ -322,9 +319,8 @@ theorem contains_divisionMP_satisfiable (hu : u.dimension = .of .mass) {v : ℝ}
     field_simp
   · simp [hu]
 
-/-- So the division theory overgenerates ((38b)). Where the sample measures a tenth of a
-milliliter it makes *the 0.1 milliliter sample contained 0.1 grams of salt per milliliter* true,
-while on the anaphoric theory the sentence is undefined there. -/
+/-- The division theory makes *the 0.1 milliliter sample contained 0.1 grams of salt per milliliter*
+true where the anaphoric theory leaves it undefined ((38b)). -/
 theorem division_overgenerates :
     ∃ w : World (Fin 2),
       contains (· = 1) (fun a b ↦ a = 0 ∧ b = 1)

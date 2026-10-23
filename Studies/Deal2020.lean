@@ -101,14 +101,14 @@ theorem stackOf_eq (l : List Coord) (χ : Character (Context W E P T) (Context W
     simp only [stackOf, List.foldl_cons] at ih ⊢
     rw [ih, Kaplan.shiftyOp_shiftyOp, List.toFinset_cons, Finset.insert_eq, Finset.union_comm]
 
-/-- A stack of operators overwrites the union of their coordinates: the operators of (126) make
-noninteracting changes to the context, and a lexical bundle is their composition (172). -/
+/-- A stack of operators overwrites the union of their coordinates, so a lexical bundle of the
+operators of (126) is their composition (172). -/
 theorem stack_eq (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) α) :
     stack n χ = shiftyOp (shifted n) χ :=
   stackOf_eq _ χ
 
-/-- (65): unembedded, a stack of operators is vacuous, since a sentence is true at a context when
-it is true at that context taken as its own index (64). -/
+/-- Unembedded, a stack of operators is vacuous (65), since a sentence's truth at a context is its
+truth at that context as index (64). -/
 theorem holdsAt_stack (n : ℕ) (χ : Character (Context W E P T) (Context W E P T) Prop)
     (c : Context W E P T) : (stack n χ).HoldsAt id c ↔ χ.HoldsAt id c := by
   rw [stack_eq]
@@ -212,9 +212,8 @@ end apply_complementContext
 
 /-! ### Local Determination -/
 
-/-- (83): in *Katie says that I think that I am here*, the medial clause's first person is the
-author of the medial thought, so whatever operators the two complements carry, the lowest first
-person refers as the medial one does: both shifted or neither (77). -/
+/-- In *Katie says that I think that I am here* the lowest first person refers as the medial one
+does, both shifted or neither ((77), (83)). -/
 theorem medial_eq_lowest (s₁ s₂ : Finset Coord) (c j₁ j₂ : Context W E P T)
     (hj₂ : j₂.agent = (overwrite s₁ c j₁).agent) :
     (overwrite s₂ (overwrite s₁ c j₁) j₂).agent = (overwrite s₁ c j₁).agent :=
@@ -247,9 +246,8 @@ theorem mem_of_mem_ofSizes {ns : Finset ℕ} {s : Finset Coord} (hs : s ∈ ofSi
   obtain ⟨n, -, rfl⟩ := Finset.mem_image.1 hs
   exact mem_shifted_of_lt hk hk' h
 
-/-- Classes that belong to the same bundles shift together: (G2) can fail only where a bundle joins
-nonadjacent operators, and such a failure shows as co-shifting, as of Korean locatives and temporals
-in (175) (§4.4). -/
+/-- Coordinates in the same bundles shift together, so (G2) fails only as co-shifting, as of Korean
+locatives and temporals (175) (§4.4). -/
 theorem mem_ofBundles_iff {bs : Finset (Finset Coord)} {k k' : Coord}
     (h : ∀ b ∈ bs, k ∈ b ↔ k' ∈ b) {s : Finset Coord} (hs : s ∈ ofBundles bs) : k ∈ s ↔ k' ∈ s := by
   obtain ⟨t, ht, rfl⟩ := Finset.mem_image.1 hs
@@ -333,9 +331,8 @@ def depth? : String → Option ℕ
 def verbCoords? (r : Datum) : Option (Verb × List Coord) :=
   ((r.feature? "verb").bind verb?).bind fun v ↦ ((r.features "indexical").mapM coord?).map (v, ·)
 
-/-- Every judged reading of the rows' indexicals is available, at worst marginal, exactly when a
-complement the verb selects overwrites the coordinates of the indexicals the reading shifts and no
-others: (G2) and Shift Together (72) in Nez Perce, Uyghur and Slave, and Korean's bundles. -/
+/-- A reading of the rows' indexicals is available iff a complement the verb selects overwrites
+exactly the coordinates it shifts, per (G2) and Shift Together (72). -/
 theorem rows_shift :
     ∀ r ∈ Examples.all, ∀ p ∈ (verbCoords? r).toList, ∀ x ∈ r.readings,
       ∀ ps ∈ (shifted? x.1).toList,
@@ -358,9 +355,8 @@ theorem rows_nonDeSe :
         (.marginal ≤ x.2 ↔ ∃ s ∈ p.1.options, ∀ k ∈ p.2, k ∈ s \ shifted c) := by
   decide +kernel
 
-/-- (87): in the lowest of two reports, a reading of a first person is available exactly when
-complements of the two verbs make it read the context at that depth (Local Determination), the
-lowest complement overwriting the addressee to shift its second person. -/
+/-- In the lowest of two reports, a first-person reading is available iff the two verbs' complements
+make it read the context at that depth (87). -/
 theorem rows_double_report :
     ∀ r ∈ Examples.all, r.feature? "lowest_shift" = some "yes" →
       ∀ p ∈ (verbCoords? r).toList, ∀ v₂ ∈ ((r.feature? "lower_verb").bind verb?).toList,

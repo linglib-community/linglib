@@ -107,9 +107,7 @@ theorem Postulates.commitment_le [R.IsRefl] (h : Postulates c R A s)
   · cases c; exacts [h.semi.1, h.1]
   · cases c; exacts [h.semi.2, h.2]
 
-/-- The possibility of a semi-factive sentence does not necessitate its complement, since from
-the fact that one may discover something it does not follow that it is the case, (26b) and
-(26c). -/
+/-- The possibility of a semi-factive sentence does not entail its complement ((26b), (26c)). -/
 theorem exists_semi_not_diamond_le :
     ∃ (R : SetRel Bool Bool) (_ : R.IsRefl) (A : Bool → SignType) (s : Bool → Prop),
       Postulates .semi R A s ∧ ¬ ◇[R] (A · = 1) ≤ s :=
@@ -136,8 +134,7 @@ theorem Projects.commitment_le [R.IsRefl] (hp : Projects c e) (h : Postulates c 
     commitment R A e ≤ s :=
   h.commitment_le (projects_iff.1 hp)
 
-/-- The postulates apply instance by instance under a quantifier that binds into the complement.
-If *some senators regret that they voted for the SST*, (5), or possibly regret it, (14), then
+/-- If *some senators regret that they voted for the SST*, (5), or possibly regret it, (14), then
 some senators voted for it. -/
 theorem exists_complement {ι : Type*} {S : ι → Prop} {A : ι → W → SignType} {s : ι → W → Prop}
     [R.IsRefl] (hp : Projects c e) (hA : ∀ x, Postulates c R (A x) (s x)) {w : W}
@@ -146,9 +143,8 @@ theorem exists_complement {ι : Type*} {S : ι → Prop} {A : ι → W → SignT
 
 /-! ### The rows -/
 
-/-- The judgments of (2), (22) and (24)–(26) are the predictions of the postulates for the
-English entry of each verb, the complement of *regret* following everywhere and that of *realize*
-and *discover* in assertions and under negation only. -/
+/-- The judgments of (2), (22) and (24)–(26) are the postulates' predictions for each verb's English
+entry. -/
 theorem projection_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "projection" →
       ∀ e ∈ row.environment?, ∀ b ∈ row.projective?,
@@ -158,10 +154,8 @@ theorem projection_rows :
 
 /-! ### The emphatic denial -/
 
-/-- The emphatic denial of a true factive sentence, *it is not true that John regretted that he
-had not told the truth*, is consistent with the falsity of the complement, (23). It is the
-external negation of three-valued logic, from which neither the possibility of the sentence nor
-that of its negation follows (fn. 7). -/
+/-- The emphatic denial of a true factive sentence is consistent with the falsity of its complement
+((23), fn. 7). -/
 theorem emphatic_denial :
     ∃ (R : SetRel Unit Unit) (_ : R.IsRefl) (A : Unit → SignType) (s : Unit → Prop),
       Postulates .full R A s ∧ -SignType.ofProp (A () = 1) = 1 ∧ ¬ ◇[R] (A · ≠ 0) () ∧ ¬ s () :=

@@ -74,18 +74,16 @@ private theorem mergeOpG_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree α}
     Multiset.map_map, mul_assoc, ← Multiset.sum_map_product_mul]
   simp only [Function.comp_def, combinerProjG, of'_add]
 
-/-- Merge on a one-tree workspace grafts `{S, S'}` beside the remainder of each cut with crown
-    `{S, S'}`, which is Sideward Merge of type 3(a) ([marcolli-chomsky-berwick-2025]
-    Lemma 1.4.5). -/
+/-- Merge on a one-tree workspace is Sideward Merge of type 3(a) ([marcolli-chomsky-berwick-2025]
+Lemma 1.4.5). -/
 theorem mergeOpG_sideward_3a (lbl : α) (S S' T : UnorderedTree α) :
     mergeOpG (R := R) cuts lbl S S' (of' {T}) = of' {UnorderedTree.node lbl {S, S'}} *
       (((cuts T).filter (·.1 = {S, S'})).map fun p ↦ ofTree (R := R) p.2).sum := by
   rw [mergeOpG_apply_of', forestCutsG_singleton,
     sum_filter_treeCutsG_of_ne fun h ↦ by simpa using congrArg Multiset.card h]
 
-/-- In Sideward Merge of type 2(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4), a component `T`
-    merged with a term `S'` of another component `T'` sits beside the remainder of each cut of
-    `T'` with crown `{S'}`. -/
+/-- Merging a component `T` with a term `S'` of another component is Sideward Merge of type 2(b)
+([marcolli-chomsky-berwick-2025] Lemma 1.4.4). -/
 theorem mergeOpG_sideward_2b [IsMergeCuts cuts] (lbl : α) {T T' S' : UnorderedTree α}
     (hT : T ∉ T'.subtrees) (hS' : S' ≠ T') :
     mergeOpG (R := R) cuts lbl T S' (of' {T, T'}) = of' {UnorderedTree.node lbl {T, S'}} *
@@ -107,9 +105,8 @@ theorem mergeOpG_sideward_2b [IsMergeCuts cuts] (lbl : α) {T T' S' : UnorderedT
       exact absurd hTa (IsMergeCuts.notMem_crown hp)
   exact ⟨ha1, Multiset.add_right_inj.mp (ha1 ▸ hab)⟩
 
-/-- In Sideward Merge of type 3(b) ([marcolli-chomsky-berwick-2025] Lemma 1.4.4), terms `S` of
-    `T` and `S'` of `T'` are merged beside the remainders of each pair of cuts with crowns `{S}`
-    and `{S'}`. -/
+/-- Merging terms `S` of `T` and `S'` of `T'` is Sideward Merge of type 3(b)
+([marcolli-chomsky-berwick-2025] Lemma 1.4.4). -/
 theorem mergeOpG_sideward_3b [IsMergeCuts cuts] (lbl : α) {T T' S S' : UnorderedTree α}
     (hST : S ≠ T) (hS'T' : S' ≠ T') (hST' : S ∉ T'.subtrees) (hS'T : S' ∉ T.subtrees) :
     mergeOpG (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *

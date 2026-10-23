@@ -116,16 +116,15 @@ theorem not_antitone_want [Nontrivial W] :
     ¬ Antitone (Want (fun (_ : Unit) _ ↦ .single Set.univ) () · w) := fun h ↦
   Set.singleton_ne_univ w (h (Set.subset_univ {w}) ⟨rfl, fun _ _ h ↦ h⟩).1
 
-/-- On a background that need not be consistent, wanting `p` and wanting `q` are compatible even
-when `p` and `q` are not, as on the mere-desire reading of (52) and (53), §2.3 and §5.4. -/
+/-- Wanting `p` and wanting `q` are compatible even when `p` and `q` are not, on the mere-desire
+reading of (52) and (53) (§2.3, §5.4). -/
 theorem want_both (p q : Set W) :
     Want (fun (_ : Unit) _ ↦ .discrete {p, q}) () p w ∧
       Want (fun (_ : Unit) _ ↦ .discrete {p, q}) () q w := by
   simp [Want]
 
-/-- In Levinson's Paris and Rome, (56) and (58), on the effective reading, §5.2, two effective
-preferences leave no room for a third that is incompatible with their conjunction, since the
-maximal elements of a consistent structure are jointly compatible with the agent's beliefs. -/
+/-- Under consistency, three effective wants are jointly compatible with the agent's beliefs, as in
+Paris and Rome (56), (58) (§5.2). -/
 theorem no_third_effective {r : Set W} (hC : (P a w).Consistent (B w)) (hp : Want P a p w)
     (hq : Want P a q w) (hr : Want P a r w) : (B w ∩ (p ∩ q ∩ r)).Nonempty :=
   hC.inter_sInter_maxElts_nonempty.mono <| Set.inter_subset_inter_right _ <|
@@ -151,12 +150,8 @@ theorem threeWay_pairwise_not_consistent :
 
 /-! ### Previous approaches -/
 
-/-- [von-fintel-iatridou-2005]'s *have to* on the reading (26), §3.2.2, is necessity under the
-primary ordering source `g_desG(w) = {p}` of the designated goal. A single proposition has the
-effect of adding it to the modal base, as long as the two are compatible, so this is the
-designated-goal *have to* of that study and the analysis amounts to adding the internal
-antecedent to the modal base; the effective-preference source of (88) instead varies from world
-to world, footnote 46. -/
+/-- Necessity under the designated-goal ordering source `{p}` is [von-fintel-iatridou-2005]'s *have
+to* on reading (26) (§3.2.2), unlike the world-varying source of (88) (footnote 46). -/
 theorem necessity_designatedGoal_iff_haveTo {f : Background W} {p r : W → Prop}
     (h : ((f.restrict p).accessibleWorlds w).Nonempty) :
     necessity f (fun _ ↦ {p}) r w ↔ VonFintelIatridou2005.haveTo f p r w := by
@@ -166,11 +161,8 @@ theorem necessity_designatedGoal_iff_haveTo {f : Background W} {p r : W → Prop
 
 /-! ### Double-modal structure -/
 
-/-- A single necessity modal restricted by the antecedent validates strengthening of the
-antecedent in the form [kaufmann-schwager-2009] reject, §6.2: *if A, must C* and *if A and B,
-must not C* together entail that no best *A*-world is a *B*-world, a preference against *B*
-that (81) to (83) do not carry. The double-modal structure (76b) escapes, since each
-conditional's inner modal is evaluated in its own typical antecedent worlds. -/
+/-- A single necessity modal restricted by the antecedent validates the strengthening that
+[kaufmann-schwager-2009] reject, unlike (81) to (83) and the double-modal (76b) (§6.2). -/
 theorem single_modal_strengthening {f g : Background W} {α β γ : W → Prop}
     (h₁ : conditionalNecessity f g α γ w)
     (h₂ : conditionalNecessity f g (fun v ↦ α v ∧ β v) (fun v ↦ ¬ γ v) w) :
@@ -188,9 +180,8 @@ maximal preferences of `P a v`, so that `orderingSource EP a` is the paper's `g_
 def orderingSource (P : A → W → PreferenceStructure W) (a : A) : Background W :=
   fun v ↦ (P a v).maxElts
 
-/-- Preferences consistent relative to the modal base do not split the best worlds as the
-ordering source of §2.3 does: the best worlds are the accessible ones realizing every maximal
-preference. -/
+/-- Under consistency, the best worlds are the accessible worlds realizing every maximal preference
+(§2.3). -/
 theorem bestWorlds_orderingSource {f : Background W} {v : W}
     (hC : (P a v).Consistent (f.accessibleWorlds v)) :
     bestWorlds f (orderingSource P a) v = f.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts := by
@@ -219,13 +210,8 @@ theorem not_want_of_mem_restricted {f : Background W} (hC : ∀ w, (P a w).Consi
     (hv : v ∈ (f.restrict (Want P a p)).accessibleWorlds w) : ¬ Want P a q v :=
   Set.disjoint_left.1 (want_disjoint hC h) (Background.mem_accessibleWorlds_restrict.1 hv).2
 
-/-- Under consistency the paraphrase (89) is exact: the conditional (88) holds when, at every
-most typical belief world where the antecedent holds, the historical alternatives that realize all
-of the agent's maximal effective preferences are `q`-worlds. With *want* in the antecedent the
-hypothesized preference is among them, since *want* and the modal read the same background, and
-compatible goals such as comfort in (92) stay beside it. Consistency relative to the historical
-alternatives follows from (66) relative to the agent's beliefs whenever those beliefs lie among
-them, `PreferenceStructure.Consistent.mono`. -/
+/-- Under consistency (66), the conditional (88) holds iff its paraphrase (89) does, and compatible
+goals such as comfort in (92) remain. -/
 theorem conditionalNecessity_orderingSource_iff {f₁ g₁ f₂ : Background W} {α : W → Prop}
     (hC : ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, (P a v).Consistent (f₂.accessibleWorlds v)) :
     conditionalNecessity f₁ g₁ α (necessity f₂ (orderingSource P a) (· ∈ q)) w ↔
@@ -328,9 +314,8 @@ theorem harlem_inter_hoboken : harlem ∩ hoboken = ∅ := by
   ext
   simp [harlem, hoboken]
 
-/-- At the Hoboken world the addressee wants Hoboken, so by (90) not Harlem; the world is in
-the speaker's belief state and out of the antecedent's restriction of it, §7.1.1, so the
-actual preference never reaches the priority modal. -/
+/-- By (90), the Hoboken world is in the speaker's belief state but outside the antecedent's
+restriction of it (§7.1.1). -/
 theorem w₀_excluded :
     w₀ ∈ fBelS.accessibleWorlds w₀ ∧
       w₀ ∉ (fBelS.restrict (Want ep () harlem)).accessibleWorlds w₀ :=
@@ -363,9 +348,8 @@ theorem anankastic_hoboken :
       (necessity fHist (orderingSource ep ()) (· ∈ path)) w :=
   anankastic_dest fun ⟨_, t, _⟩ hu ↦ by cases t <;> simp_all [hoboken, path]
 
-/-- (14), *if you want to go to Harlem, you can take the PATH train*, is false at every world,
-§2.3, since the best continuations of every antecedent world reach Harlem, which only the A train
-does. -/
+/-- The conditional (14), *if you want to go to Harlem, you can take the PATH train*, is false at
+every world (§2.3). -/
 theorem not_possibility_path :
     ¬ conditionalNecessity fBelS ⊥ (Want ep () harlem)
       (possibility fHist (orderingSource ep ()) (· ∈ path)) w := fun h ↦ by
@@ -375,11 +359,8 @@ theorem not_possibility_path :
   have := (mem_fHist.1 hu.1).2
   simp_all [Goal.dest, harlem, path]
 
-/-- On the mere-desire construal of (105), with `desire` for *want* and the modal still ordered by
-the effective preferences, the Harlem sentence is false at the Hoboken world, §7.2.1: the
-addressee merely desires Harlem there too, so the antecedent does not exclude the world, and its
-best continuations take the PATH train. The anankastic reading needs the effective construal of
-both. -/
+/-- On the mere-desire construal of (105), the Harlem sentence is false at the Hoboken world
+(§7.2.1). -/
 theorem not_anankastic_desire :
     ¬ conditionalNecessity fBelS ⊥ (Want desire () harlem)
       (necessity fHist (orderingSource ep ()) (· ∈ aTrain)) w₀ := fun h ↦
@@ -391,10 +372,8 @@ private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource 
     ((consistent_ep w₀).mono fun _ hu ↦ mem_fBelS.2 (mem_fHist.1 hu).2)]
   exact ⟨mem_fBelS.2 rfl, by simp [ep, w₀]; exact nofun⟩
 
-/-- Sæbø's analysis, §2.3, adds the internal antecedent to the bouletic ordering source, the
-addressee's actual goals, on the circumstantial base that here coincides with the speaker's
-beliefs. At the Hoboken world the ordering then holds Harlem and Hoboken, which no world realizes
-together, so the best worlds split and the Harlem sentence comes out false. -/
+/-- On Sæbø's analysis (§2.3), adding Harlem to the bouletic ordering source makes the Harlem
+sentence false at the Hoboken world. -/
 theorem saebo_harlem :
     ¬ necessity fBelS ((orderingSource ep ()).restrict (· ∈ harlem)) (· ∈ aTrain) w₀ :=
   not_necessity_insert (q := (· ∈ hoboken)) ⟨rfl, fun _ _ h ↦ h⟩
@@ -665,8 +644,8 @@ private theorem consistent_ep (v : World) : (ep () v).Consistent (fHist.accessib
   exacts [⟨⟨.clear, .train⟩, .inr ⟨rfl, rfl⟩, mem_fHist.2 ⟨rfl, nofun⟩⟩,
     ⟨⟨.repairs, .ride⟩, .inl rfl, mem_fHist.2 ⟨rfl, nofun⟩⟩]
 
-/-- (83a) is true: in the typical worlds the trains run on time, and without a ride the train is
-the only way to be there by noon. -/
+/-- The conditional (83a) is true, since in the typical worlds the train is the only way to be there
+by noon. -/
 theorem should_train :
     conditionalNecessity ⊥ gNorm (Want ep () noon)
       (necessity fHist (orderingSource ep ()) (· ∈ byTrain)) w := by
@@ -695,9 +674,8 @@ theorem should_ride :
   · exact h
   · exact nomatch h.symm.trans ((mem_fHist.1 hu).1.trans hvr)
 
-/-- On a single modal restricted by both antecedents and ordered by the addressee's goals, (83a)
-and (83b) are not both true, since by `single_modal_strengthening` they would leave no best world
-with track repairs, and a ride on repaired tracks is one. -/
+/-- A single modal restricted by both antecedents and ordered by the addressee's goals cannot make
+(83a) and (83b) both true. -/
 theorem not_single_modal :
     ¬ (conditionalNecessity ⊥ (orderingSource ep ()) (Want ep () noon) (· ∈ byTrain) w ∧
       conditionalNecessity ⊥ (orderingSource ep ()) (fun v ↦ Want ep () noon v ∧ v ∈ repairs)
@@ -765,18 +743,15 @@ def Construal.ofRow (row : Datum) : Option Construal := do
       ("nearAnankastic", .nearAnankastic), ("nonAnankastic", .nonAnankastic)],
     ← row.parse? "implication" implications⟩
 
-/-- By §7.2.1, an anankastic interpretation arises only when *want* targets effective preferences
-and the modal is construed teleologically over the same agent's effective preferences, (88); on
-the mere-desire construal the Harlem sentence fails, `HobokenScenario.not_anankastic_desire`. -/
+/-- An anankastic interpretation requires effective *want* and a teleological modal over effective
+preferences (88) (§7.2.1). -/
 theorem anankastic_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "construal" →
     ∃ c ∈ Construal.ofRow row,
       (c.interpretation = .anankastic → c.want = .effective ∧ c.modal = .teleological) := by
   decide
 
-/-- By §7.1.2, with that setting fixed, anankastics and the near-anankastics of §4 differ only in
-the implication the temporal relation of goal and prejacent invites, a means or a precondition
-for the former, a strengthened goal, a consequence or a specialization for the latter. The truth
-conditions are the same, `VaccineScenario.should_vaccine`. -/
+/-- With effective *want* and a teleological modal, a row is anankastic iff it invites a means or a
+precondition, unlike the near-anankastics of §4 (§7.1.2). -/
 theorem implication_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "construal" →
     ∃ c ∈ Construal.ofRow row, c.want = .effective → c.modal = .teleological →
       (c.interpretation = .anankastic ↔
@@ -788,10 +763,8 @@ def WantReading.ofRow (row : Datum) : Option WantReading := do
   guard (row.feature? "construction" = some "incompatibleWants")
   row.parse? "construal" [("mere", WantReading.mere), ("effective", .effective)]
 
-/-- In (52) to (55), two wants the agent knows to be incompatible are coherent on the mere-desire
-reading, `want_both`, and not on the effective one, since maximal elements of a consistent
-structure are jointly compatible with the agent's beliefs,
-`PreferenceStructure.Consistent.inter_inter_nonempty_of_mem_maxElts`. -/
+/-- In (52) to (55), two wants known to be incompatible are felicitous exactly on the mere-desire
+reading. -/
 theorem incompatible_rows : ∀ row ∈ Examples.all,
     row.feature? "construction" = some "incompatibleWants" →
     ∃ r ∈ WantReading.ofRow row, (row.JudgedFelicitous ↔ r = .mere) := by
@@ -802,9 +775,8 @@ def moodOfRow (row : Datum) : Option Mood.Grammatical := do
   guard (row.feature? "construction" = some "mood")
   row.parse? "mood" [("indicative", Mood.Grammatical.indicative), ("subjunctive", .subjunctive)]
 
-/-- In (91) and (98), when the speaker knows the agent lacks the hypothesized preference, the
-antecedent is epistemically impossible, the conditional vacuously true, `vacuous_conditional`,
-and the constraint on indicatives applies, for conditionals and purpose constructions alike. -/
+/-- In (91) and (98), a conditional or purpose construction is acceptable exactly in the
+subjunctive. -/
 theorem mood_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "mood" →
     ∃ m ∈ moodOfRow row, (row.judgment = .acceptable ↔ m = .subjunctive) := by
   decide
@@ -814,9 +786,7 @@ def Implication.ofRow (row : Datum) : Option Implication := do
   guard (row.feature? "construction" = some "purpose")
   row.parse? "implication" implications
 
-/-- By §7.1.3, purpose constructions admit means and preconditions; teleological consequences are
-excluded because the prejacent cannot be subsequent to the goal, and the infelicity with
-specializations is data the paper leaves open. -/
+/-- Purpose constructions are acceptable exactly with means and preconditions (§7.1.3). -/
 theorem purpose_rows : ∀ row ∈ Examples.all, row.feature? "construction" = some "purpose" →
     ∃ i ∈ Implication.ofRow row,
       (row.judgment = .acceptable ↔ i = .means ∨ i = .precondition) := by

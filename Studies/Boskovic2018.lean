@@ -174,9 +174,7 @@ theorem subextraction_surfacePhon (r : Route) :
     (subextraction r).surfacePhon = ["who", "friends", "of", "hired", "Mary"] := by
   cases r <;> decide +kernel
 
-/-- (17): by the edge, *who* leaves the subject unlabeled, so that it cannot move; directly, it
-crosses the subject's phase from its interior. No derivation converges: the ban on movement out of
-moved elements, deduced, though both routes move *who* out of a moved subject. -/
+/-- In (17), no derivation converges, which deduces the ban on movement out of moved elements. -/
 theorem ex17 :
     ¬ (subextraction .edge).ObeysUIC IsLabeled ∧
       ObeysPic .raising IsPhaseHead (subextraction .edge) ∧
@@ -274,9 +272,8 @@ def possessorExtraction : Derivation :=
   ⟨slika, [.em .left slikaN, .em .left possessor, .em .left vidio, .em .left je, .im object,
     .im possessor]⟩
 
-/-- (25a): the possessor agrees with the noun, so the object it is generated at the edge of is
-labeled and moves, and the possessor then leaves it from the edge. The derivation converges though
-it violates the traditional ban. -/
+/-- In (25a), the possessor leaves the labeled object from its edge, so the derivation converges
+despite the traditional ban. -/
 theorem ex25a : ¬ possessorExtraction.ObeysFreezing ∧
     (Examples.ex25a.judgment = .acceptable ↔ Converges IsPhaseHeadNP possessorExtraction) := by
   decide +kernel
@@ -314,8 +311,8 @@ theorem ex42a : ¬ rPronounExtraction.ObeysFreezing ∧
 
 /-! ### Smuggling (Appendix A) -/
 
-/-- (58): in [collins-2005]'s smuggling passive PartP, labeled by its head, moves, and the object
-raises out of it, which the condition allows and the traditional ban excludes. -/
+/-- In [collins-2005]'s smuggling passive (58), the object raises out of moved PartP, which the
+condition allows and the traditional ban excludes. -/
 theorem ex58 : Examples.ex58.judgment = .acceptable ∧
     (Collins2005.ex9.passive .partP false).ObeysUIC IsLabeled ∧
     ¬ (Collins2005.ex9.passive .partP false).ObeysFreezing := by

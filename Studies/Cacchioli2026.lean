@@ -197,9 +197,8 @@ def variantData : List (NegationDatum × Judgment) :=
     let w ← negativeWord (Morphology.Morph.wordsOf f)
     some (⟨c, w⟩, j)
 
-/-- The negated variants the thesis stars are those that break the generalization: in the
-*ʔɨlu*-complement of (25) the negative without the suffix, in the relative clause of (12a) the
-negative with it. -/
+/-- The starred negated variants are exactly those breaking the generalization, as in (25) and
+(12a). -/
 theorem variants_ungrammatical :
     variantData ≠ [] ∧
       ∀ v ∈ variantData, v.2 = .ungrammatical ∧ (v.1.HasSuffix ↔ ¬ HasPolP v.1.clause) := by

@@ -154,8 +154,8 @@ theorem sample_subset_hamblinType (p : Set W) : sample f g p ⊆ hamblinType p :
   rw [hamblinType_eq_univ]
   exact Set.subset_univ _
 
-/-- At a world where Ali had to sleep and slept (34), the strongest true member of the sample
-is the conjunction that he had to sleep and did, the over-informative answer (35b). -/
+/-- At a world where Ali had to sleep and slept (34), the strongest true member of the sample is the
+over-informative answer (35b). -/
 theorem isStrongestTrueAnswer_sample {p : Set W} {w : W} (hw : w ∈ p)
     (hbox : w ∈ Word.deontic.den f g p) :
     IsStrongestTrueAnswer (sample f g p) w (Word.deontic.den f g p ∩ p) := by

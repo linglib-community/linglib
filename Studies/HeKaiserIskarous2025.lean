@@ -462,9 +462,8 @@ theorem speaker_fuzzy_pos_lt_null {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (
 the sigmoid degree at the measured prior of the positive state. -/
 noncomputable def fuzzyMeaning (θ : Sigmoid) (n : ℝ) : Meaning := fuzzy n (θ.eval s.p)
 
-/-- Below the threshold prior, the fuzzy speaker prefers silence to the positive sentence at
-the positive state, since the sigmoid degree disincentivizes the communication of low-prior
-positive states (§4.1). -/
+/-- Below the threshold prior, the fuzzy speaker prefers silence to the positive sentence at the
+positive state (§4.1). -/
 theorem speaker_fuzzyMeaning_pos_lt_null (θ : Sigmoid) {n : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1)
     (hk : 0 < θ.k) (hL : 0 < θ.L) (hc0 : 0 ≤ θ.c) (hc : θ.c < 1 / 2) (hLc : 1 / 2 < θ.L + θ.c)
     (hp : s.p < θ.threshold) (hcost : s.cost .null < s.cost .pos) :
@@ -649,8 +648,8 @@ theorem wonkiness_boolean_pos {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : S
   have := hpos .normal
   positivity
 
-/-- The wonky listener's wonkiness rises above its prior after a state's sentence exactly
-when that state's prior exceeds one half, whatever the costs (§5.3, Figure 6). -/
+/-- After a state's sentence, wonkiness exceeds its prior iff the state's prior exceeds one half
+(§5.3, Figure 6). -/
 theorem lt_wonkiness_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
     ω < s.wonkiness (fun _ ↦ boolean) ω st ↔ 1 / 2 < s.statePrior st := by
   rw [wonkiness_boolean s hω0 hω1,
@@ -669,9 +668,8 @@ theorem lt_wonkiness_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State)
   rw [lt_div_iff₀ hden, key, hSw, hSn, Real.sigmoid_lt_iff, mul_lt_mul_iff_of_pos_left s.α_pos,
     sub_lt_sub_iff_left, Real.log_lt_log_iff (by norm_num) (s.statePrior_pos st)]
 
-/-- After a state's sentence, the Boolean wonky listener's expected typicality of the state
-exceeds its prior exactly when the prior is below one half, giving typicality and atypicality
-inferences in both polarities (§5.3, Figure 5). -/
+/-- After a state's sentence, its expected typicality exceeds its prior iff the prior is below one
+half (§5.3, Figure 5). -/
 theorem statePrior_lt_expectedTypicality_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
     s.statePrior st < s.expectedTypicality (fun _ ↦ boolean) ω st ↔ s.statePrior st < 1 / 2 := by
   have := s.isProbabilityMeasure_wonkyListener_boolean hω0 st

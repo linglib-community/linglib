@@ -65,10 +65,8 @@ def wxdyConstruction : Construction Unit :=
 /-- The form carries the two indices of Figure 12, #1 and #2. -/
 theorem wxdy_refGroupCount : refGroupCount wxdyConstruction.form = 2 := by decide
 
-/-- "When thus unified with the subject requirement of the Y complement, the semantics of the X
-constituent becomes the logical subject argument of the predication, Y(X)" (Section 4.2): `X`,
-the first slot, bears the index of the subject requirement of `Y`, the last, and not the index
-of `Y` itself. -/
+/-- In WXDY the first constituent `X` bears the index of the subject requirement of the last, `Y`,
+not that of `Y` itself (Section 4.2). -/
 theorem wxdy_coinstantiation :
     wxdyConstruction.form.head?.bind (·.refIdx) = wxdyConstruction.form.getLast?.bind (·.subjIdx) ∧
       wxdyConstruction.form.head?.bind (·.refIdx) ≠

@@ -133,9 +133,8 @@ theorem ProjectionMode.veridical_iff [Nonempty W] : μ.Veridical W ↔ μ = .fac
 instance [Nonempty W] : Decidable (μ.Veridical W) :=
   decidable_of_iff _ ProjectionMode.veridical_iff.symm
 
-/-- (23)–(24): the rumor as evidence of things projects factually and rules out *given the rumor,
-Roger must have been elected chief, but he actually wasn't*; the rumor's content allows
-*according to the rumor* to be denied. -/
+/-- In (23)–(24), the rumor as evidence projects factually and cannot be denied, while the rumor's
+content can. -/
 theorem rumor :
     ProjectionMode.factual.Admits Kratzer2012.evidence ∧ ¬ Deniable Kratzer2012.evidence ∧
       Deniable Kratzer2012.content :=
@@ -224,8 +223,8 @@ theorem table18_3 :
 theorem statimcets_full_split : ∀ c : BackgroundClass, ∃ m ∈ modals, statimcetsClass m = c := by
   decide
 
-/-- (25)–(28): a modal survives *but it was the wind* exactly when its mode allows the denial of
-its prejacent, as the content *lákw7a* does and the factual *k'a* does not. -/
+/-- In (25)–(28), a modal survives *but it was the wind* exactly when its mode allows denying the
+prejacent. -/
 theorem deniability_rows (W : Type*) [Nonempty W] :
     ∀ e ∈ Examples.all, e.feature? "test" = some "deniability" →
       ∃ m ∈ e.parse? "modal" modalTable,
@@ -281,9 +280,8 @@ theorem imaa_rows :
 /-- The polarity of a row's context. -/
 def polarityTable : List (String × Polarity) := [("false", .positive), ("true", .negative)]
 
-/-- (39)–(40): *o'qa* takes a possibility translation everywhere and a necessity translation
-only outside a downward-entailing context, as [deal-2011]'s account of a possibility modal
-without a scale predicts. -/
+/-- *O'qa* translates as possibility everywhere and as necessity only outside downward-entailing
+contexts ((39)–(40)), as [deal-2011] predicts. -/
 theorem oqa_rows :
     ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some NezPerce.oqa →
       ∀ π ∈ e.parse? "downwardEntailing" polarityTable, ∀ r ∈ e.readings,
@@ -299,9 +297,8 @@ theorem nsyilxcen_rows :
       ∀ fo ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔ fo ∈ m.forces) := by
   decide
 
-/-- (42)–(43) against the scalar account: no lexical forces for *mat* and *cmay* let
-[deal-2011]'s account predict their uses. A strict possibility *cmay* needs a necessity
-scalemate, and a necessity *mat* serves only for necessity in an upward-entailing context. -/
+/-- No lexical forces for *mat* and *cmay* let the scalar account of [deal-2011] predict their uses
+((42)–(43)). -/
 theorem nsyilxcen_not_scalar :
     ¬ ∃ lex : ModalItem → ModalForce, ∀ m ∈ Nsyilxcen.modals, ∀ g,
       g.classical ∈ m.classical.forces ↔
@@ -333,9 +330,8 @@ theorem gitksan_orientation_rows :
         (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) := by
   decide
 
-/-- English marks past orientation, by the perfect under the modal among [condoravdi-2002]'s
-scopings, and Gitksan future orientation, by *dim* in [matthewson-2013]'s paradigms: the mirror
-image of §18.4.3. -/
+/-- English marks past orientation ([condoravdi-2002]) and Gitksan future orientation
+([matthewson-2013]), the mirror image of §18.4.3. -/
 theorem marking_mirror :
     (∀ s : Condoravdi2002.Scope, s.orientation = .past ↔ s = .modalPerf) ∧
       ∀ e ∈ Matthewson2013.Examples.all,

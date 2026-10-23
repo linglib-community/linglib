@@ -444,10 +444,8 @@ theorem realizeMinimalD_congr (h : v.applicable c = v.applicable c')
     v.realizeMinimalD key fallback c = v.realizeMinimalD key fallback c' := by
   rw [realizeMinimalD, realizeMinimalD, realizeMinimal_congr h, hd]
 
-/-- Rules whose applicability sees only what `A` sees, with a fallback that factors through
-`A`, realize values that factor through `A`. This is the reasoning of Stump 2006 (§5.5), by
-which a rule of paradigm linkage sensitive to number alone makes number an absolute correlate of
-heteroclisis. -/
+/-- Rules whose applicability factors through `A`, with a fallback that does too, realize values
+that factor through `A` (Stump 2006, §5.5). -/
 theorem realizeMinimalD_factorsThrough {V : Type*} {A : Ctx → V}
     (hd : fallback.FactorsThrough A)
     (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :

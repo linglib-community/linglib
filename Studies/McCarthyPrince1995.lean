@@ -358,8 +358,8 @@ def ocpCoronal : List Segment → ℕ
       ocpCoronal (c₂ :: v₂ :: rest)
   | _ => 0
 
-/-- By the paper's verdicts on OCP(+cor) in (127), *kita* obeys it and *tɕita* violates it,
-while a word whose two syllables are both palatal obeys it. -/
+/-- *kita* obeys OCP(+cor) and *tɕita* violates it, while a word with two palatal syllables obeys it
+(127). -/
 theorem ocpCoronal_kita :
     ocpCoronal [k, i, FeatureMatrix.«t».toSegment, a] = 0 ∧
       ocpCoronal [tcCurl, i, FeatureMatrix.«t».toSegment, a] = 1 ∧

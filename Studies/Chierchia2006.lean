@@ -161,9 +161,8 @@ theorem evenEnrich_eq_empty_of_not_subset {C : Set (Set W)} {p q : Set W} (hq : 
     (h : ¬ p ⊆ q) : evenEnrich C p = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hw ↦ h (hw.2 q hq)
 
-/-- A pure negative-polarity item at its existential is deviant, (47)–(48): a world where some
-member of the domain is a witness but no member of the subdomain `S` is shows that the statement
-does not entail the alternative over `S`, so even-like enrichment is a contradiction. -/
+/-- Even-like enrichment of a pure negative-polarity item's existential is a contradiction
+(47)–(48). -/
 theorem evenEnrich_disj_eq_empty {D S : Finset E} {P : E → Set W} {C : Set (Set W)}
     (hS : (⋃ x ∈ S, P x) ∈ C) {a : E} {w : W} (ha : a ∈ D) (hPa : w ∈ P a)
     (hSw : ∀ x ∈ S, w ∉ P x) : evenEnrich C (⋃ x ∈ D, P x) = ∅ :=
@@ -171,16 +170,15 @@ theorem evenEnrich_disj_eq_empty {D S : Finset E} {P : E → Set W} {C : Set (Se
     let ⟨x, hx, hPx⟩ := Set.mem_iUnion₂.1 (h (Set.mem_biUnion ha hPa))
     hSw x hx hPx
 
-/-- Under an antitone embedding, alternatives that each entail the prejacent are entailed by the
-embedded prejacent, so even-like enrichment is vacuous: domain widening comes to fruition in a
-downward-entailing context, (49) and (53). -/
+/-- Under an antitone embedding, even-like enrichment of the embedded prejacent is vacuous, (49) and
+(53). -/
 theorem evenEnrich_image_antitone_eq {C : Set W → Set W} (hC : Antitone C) {A : Set (Set W)}
     {p : Set W} (hA : ∀ q ∈ A, q ⊆ p) : evenEnrich (C '' A) (C p) = C p :=
   Set.Subset.antisymm (evenEnrich_subset _ _)
     fun _ hw ↦ ⟨hw, by rintro _ ⟨q, hq, rfl⟩; exact hC (hA q hq)⟩
 
-/-- An item triggering the even-like implicature can meet the presupposition of the strong σ only
-by a contradiction, so pure negative-polarity items select the plain σ, footnote 33. -/
+/-- If even-like enrichment strictly strengthens a proposition, it yields the contradiction, so pure
+negative-polarity items select the plain σ (footnote 33). -/
 theorem eq_empty_of_evenEnrich_ssubset {C : Set (Set W)} {p : Set W}
     (h : evenEnrich C p ⊂ p) : evenEnrich C p = ∅ :=
   (evenEnrich_eq_or_eq_empty C p).resolve_left fun heq ↦ ssubset_irrefl p (by rwa [heq] at h)
@@ -215,10 +213,8 @@ theorem exh_atLeastTwo_eq_exactlyOne (h : ¬ (⋃ x ∈ S, P x) ⊆ atLeastTwo P
     exact ⟨⟨x, hx, hPx⟩, fun ⟨y, hy, z, hz, hyz, hPy, hPz⟩ ↦
       hyz ((hu y ⟨hy, hPy⟩).trans (hu z ⟨hz, hPz⟩).symm)⟩
 
-/-- With two possible witnesses the uniqueness and free-choice implicatures clash, (82). The
-unique witness of the domain is the unique witness of its singleton, which forces every other
-singleton to have a witness too, so an existential free-choice item in an episodic sentence is
-contradictory. -/
+/-- With two possible witnesses, the uniqueness and free-choice implicatures clash, so an episodic
+existential free-choice item is contradictory (82). -/
 theorem oMinus_exactlyOne_eq_empty (hD : 1 < D.card) : oMinus (exactlyOne P) D = ∅ := by
   classical
   refine Set.eq_empty_of_forall_notMem fun w ⟨⟨x, ⟨_, hPx⟩, hu⟩, h⟩ ↦ ?_
@@ -232,9 +228,8 @@ section Necessity
 
 variable {R : SetRel W W} {w : W}
 
-/-- Under a necessity modal the uniqueness and free-choice implicatures together rule out any
-proper subdomain being necessary, (117c): a necessary subdomain would make its complement
-necessary too, and an accessible world would have two witnesses. -/
+/-- Under a necessity modal, the uniqueness and free-choice implicatures rule out any proper
+subdomain being necessary (117c). -/
 theorem notMem_core_exactlyOne (hw : w ∈ R.dom)
     (h : w ∈ oMinus (fun S ↦ R.core (exactlyOne P S)) D) (hS : S ⊂ D) (hS' : S.Nonempty) :
     w ∉ R.core (exactlyOne P S) := by
@@ -249,8 +244,8 @@ theorem notMem_core_exactlyOne (hw : w ∈ R.dom)
   obtain ⟨hyD, hyS⟩ := Finset.mem_sdiff.1 hy
   exact hyS ((hz x ⟨hS.subset hx, hPx⟩).trans (hz y ⟨hyD, hPy⟩).symm ▸ hx)
 
-/-- Under a necessity modal every member of a domain with two members is a witness in some
-accessible world, the free choice of (117d) and (93d). -/
+/-- Under a necessity modal, every member of a domain of two or more is a witness in some accessible
+world (117d), (93d). -/
 theorem oMinus_core_exactlyOne_subset (hD : 1 < D.card) :
     oMinus (fun S ↦ R.core (exactlyOne P S)) D ∩ R.dom ⊆ ⋂ a ∈ D, R.preimage (P a) := by
   classical
@@ -267,7 +262,7 @@ theorem oMinus_core_exactlyOne_subset (hD : 1 < D.card) :
       fun y hy ↦ hu y ⟨Finset.mem_of_mem_erase hy.1, hy.2⟩⟩ hnot
 
 /-- If every nonempty subdomain is necessarily witnessed by exactly one member, the domain has at
-most one member, which is why the whole domain must not be an antecedent, (118). -/
+most one member (118). -/
 theorem card_le_one_of_forall_mem_core_exactlyOne (hw : w ∈ R.dom)
     (h : ∀ T ⊆ D, T.Nonempty → w ∈ R.core (exactlyOne P T)) : D.card ≤ 1 := by
   refine Finset.card_le_one.2 fun a ha b hb ↦ ?_
@@ -408,8 +403,8 @@ noncomputable def Profile.sentence (p : Profile) (P : E → Set W) (D : Finset E
 def Profile.Felicitous (p : Profile) (P : E → Set W) (D : Finset E) (lf : LF W) : Prop :=
   p.freezer.Admits (p.frozen P D lf) (p.prejacent P lf D) ∧ (p.sentence P D lf).Nonempty
 
-/-- Under an antitone operator below σ the enrichment is vacuous, so the strong σ cannot freeze
-there: no negative-polarity construal for *qualunque* or *uno N qualsiasi*, (70)–(72), (90b). -/
+/-- Under an antitone operator below σ the strong σ cannot freeze, so *qualunque* and *uno N
+qualsiasi* lack a negative-polarity construal (70)–(72), (90b). -/
 theorem not_felicitous_freeze_of_antitone {outer inner : Set W → Set W}
     (hmin : p.alternatives = .min) (hstrong : p.freezer = .strong) (hC : Antitone inner) :
     ¬ p.Felicitous P D (.freeze outer inner) := by
@@ -420,9 +415,8 @@ theorem not_felicitous_freeze_of_antitone {outer inner : Set W → Set W}
     Freezer.Admits] at h
   exact not_oMinus_ssubset_of_antitone P hC h
 
-/-- σ frozen directly over a scalar item's statement yields the clash of (82), which stays a
-contradiction under any operator that preserves it: no universal reading for *irgendwas* under
-*könnte*, footnote 42. -/
+/-- Freezing σ directly over a scalar item's statement is infelicitous by the clash of (82), so
+*irgendwas* under *könnte* has no universal reading (footnote 42). -/
 theorem not_felicitous_freeze_id_of_scalar {outer : Set W → Set W}
     (hmin : p.alternatives = .min) (hs : p.scalar) (hD : 1 < D.card) (hout : outer ∅ = ∅) :
     ¬ p.Felicitous P D (.freeze outer id) := by
@@ -904,8 +898,8 @@ theorem Profile.alternatives_of_ofKey {s : String} {p : Profile} (h : p ∈ Prof
   unfold Profile.ofKey at h
   split at h <;> simp_all <;> subst h <;> rfl
 
-/-- Under a necessity modal the existential reading is available to the items of the rows the
-paper rescues with a covert epistemic modal, (4), (8a) and (89). -/
+/-- Under a necessity modal, the existential reading is available to the items of the covert-modal
+rows (4), (8a), (89). -/
 theorem covertModal_available : ∀ e ∈ Examples.all, e.feature? "device" = some "covertModal" →
     ∀ p ∈ (e.feature? "item").bind Profile.ofKey, Available p .necessity .existential :=
   fun _ _ _ _ hp ↦

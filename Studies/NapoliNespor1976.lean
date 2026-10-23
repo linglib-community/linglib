@@ -311,9 +311,8 @@ def verdict (c : Option Evidence) : Grade := max (s.gradeIn .plain c) (s.gradeIn
 
 variable {s}
 
-/-- Denying the comparison agrees with the belief that *non₂* presupposes, so *non₂* does not
-follow a negated matrix (18), (20); not a surface constraint, since it does after the matrix of an
-indirect question (89). -/
+/-- *Non₂* does not follow a negated declarative matrix ((18), (20)), though it does follow the
+matrix of an indirect question (89). -/
 theorem not_contradicts_of_negative (hf : s.force = .declarative)
     (hc : s.construction ≠ .indirectQuestion) (hm : s.matrix = .negative) : ¬ s.Contradicts := by
   simp [Contradicts, hf, hc, hm]
@@ -323,17 +322,13 @@ theorem contradicts_iff_of_interrogative (hf : s.force = .interrogative) :
     s.Contradicts ↔ s.holder ≠ .addressee := by
   simp [Contradicts, hf]
 
-/-- Precision needs a stated belief and *non₂* an inferred one, so no context makes the abstract
-structure felicitous in a sentence that demands precision: the comparative of equality excludes
-*non₂* through precision, not, as [seuren-1969] and [antinucci-puglielli-1971] have it, through
-linking like things, since a negated equality (25) excludes it too. -/
+/-- No context makes the abstract structure felicitous in a sentence demanding precision, so negated
+equality (25) excludes *non₂*, against [seuren-1969] and [antinucci-puglielli-1971]. -/
 theorem not_felicitous_abstract_of_demandsPrecision (h : s.DemandsPrecision) (e : Evidence) :
     ¬ s.Felicitous .abstract e := fun ⟨hp, _, ha⟩ ↦ by
   simpa [hp h] using (ha rfl).1
 
-/-- *Affatto* is out in every *non₂*-comparative, its polarity requirement met by the negation of
-the clause: it demands the precise knowledge of the listener's belief that *non₂* denies
-(footnote 13). -/
+/-- *Affatto* is out in every *non₂*-comparative (footnote 13). -/
 theorem not_felicitous_abstract_of_affatto (h : .affatto ∈ s.elements) (e : Evidence) :
     ¬ s.Felicitous .abstract e :=
   not_felicitous_abstract_of_demandsPrecision (.inr ⟨_, h, trivial⟩) e
@@ -412,9 +407,8 @@ def Structure.Allows : Structure → Specificity → Prop
 instance (σ : Structure) : DecidablePred σ.Allows := fun r ↦ by
   cases σ <;> unfold Structure.Allows <;> infer_instance
 
-/-- A reading of the second indefinite is acceptable exactly when a structure deriving the
-sentence allows it (45), (62); the paper leaves open whether surface or underlying negation
-decides it. -/
+/-- A reading of the second indefinite is acceptable exactly when some structure deriving the
+sentence allows it ((45), (62)). -/
 theorem rows_readings : ∀ d ∈ Examples.all, ∀ s ∈ sentence? d, ∀ x ∈ d.readings,
     ∀ r ∈ [("specific", Specificity.specific), ("nonspecific", .nonspecific)].lookup x.1,
       (x.2 = .acceptable ↔ ∃ σ : Structure, s.grade σ ≠ .out ∧ σ.Allows r) := by

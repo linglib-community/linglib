@@ -269,9 +269,8 @@ theorem prob_nonneg (X : ContextFreeRule T G.NT → ℕ) (Y : G.NT → Multiset 
 theorem prob_zero : M.prob 0 0 = 1 := by
   simp [prob]
 
-/-- **Full parsing is the adaptor grammar that never reuses.** With discount `1` every use of a
-nonterminal sits at a table of its own (p. 89), and an analysis whose tables are all singletons
-has the probability the DMPCFG gives its rule counts. -/
+/-- With discount `1`, an analysis whose tables are all singletons has its DMPCFG probability, so
+full parsing never reuses (p. 89). -/
 theorem prob_replicate_one (h : ∀ a, M.discount a = 1) (X : ContextFreeRule T G.NT → ℕ)
     (n : G.NT → ℕ) : M.prob X (fun a ↦ Multiset.replicate (n a) 1) = M.countsProb X := by
   refine (congrArg _ (Finset.prod_eq_one fun a _ ↦ ?_)).trans (mul_one _)
@@ -425,11 +424,8 @@ namespace Realizes
 
 variable {D : Corpus ι}
 
-/-- **The DMPCFG ranks *-ion* above *-ness*.** With the book's unit pseudo-counts (§3.5.5) the
-Dirichlet prior is uniform on the simplex, so the DMPCFG's maximum a posteriori grammar is the
-PCFG of greatest likelihood, the relative-frequency PCFG of the treebank, whose weights are
-proportional to rule token counts (§3.3, p. 74). On a corpus with the book's counts it gives
-*-ion* the greater weight. -/
+/-- With unit pseudo-counts, the DMPCFG ranks *-ion* above *-ness* on a corpus with the book's
+counts (§3.5.5, §3.3, p. 74). -/
 theorem dmpcfg_ness_lt_ion (h : Realizes D) :
     (PCFG.relFreq D).weight Suffix.ness.rule < (PCFG.relFreq D).weight Suffix.ion.rule := by
   refine (PCFG.ofCounts_weight_lt_ofCounts_weight_iff (r := ⟨_, Suffix.ness.rule_mem⟩)
@@ -438,10 +434,8 @@ theorem dmpcfg_ness_lt_ion (h : Realizes D) :
   rw [h.tokens_eq, h.tokens_eq]
   decide
 
-/-- **The MAG ranks *-ion* above *-ness*.** With unit pseudo-counts the MAG's base grammar is the
-relative-frequency PCFG of the rule counts of its full-listing analysis (§3.3, p. 75), and since
-`N` is on no right-hand side these counts at `N` are type counts. On a corpus of licensed
-derivations with the book's counts *-ion* has the greater weight. -/
+/-- With unit pseudo-counts, the MAG ranks *-ion* above *-ness* on a corpus of licensed derivations
+with the book's counts (§3.3, p. 75). -/
 theorem mag_ness_lt_ion (hD : ∀ t ∈ D, t.Licensed (suffixGrammar ι).Licenses)
     (h : Realizes D) :
     (PCFG.ofCounts (FullListing.counts D)).weight Suffix.ness.rule <

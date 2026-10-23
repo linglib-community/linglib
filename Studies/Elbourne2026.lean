@@ -74,9 +74,8 @@ variable {I E : Type*}
 
 /-! ### Attributive position -/
 
-/-- Applying the intersective *cute*, `λf⟨e,it⟩.λx.λt.f(x)(t) & cute(x)(t)`, to *donkey* gives
-`λx.λt.donkey(x)(t) & cute(x)(t)` (24)–(26), which at each time is the meet of the two extensions.
-That meet is predicate modification, so the ⟨e,t⟩ theory's rule is not needed. -/
+/-- Applying the intersective *cute* to *donkey* gives at each time the meet of the two extensions
+((24)–(26)). -/
 theorem intersective_apply_time (Q N : Property I E) (t : I) :
     Modifier.intersective Q N t = Modifier.intersective (Q t) (N t) :=
   rfl
@@ -98,9 +97,8 @@ theorem fido_was_cute [LT I] (cute : Property I E) (o : E) (t : I) :
     copula (· < ·) (Modifier.intersective cute) t o ↔ ∃ t' < t, cute t' o := by
   rw [copula_intersective]
 
-/-- In *Fido is a dog* (31)–(33) the second meaning of the indefinite article (32),
-`λf⟨e,it⟩.λg⟨e,it⟩.λx.λt.g(x)(t) & f(x)(t)`, is `Modifier.intersective`, so *a dog* has the type
-of an adjective and the copula can take it. -/
+/-- The second meaning (32) of the indefinite article is `Modifier.intersective`, so the copula
+takes *a dog* in *Fido is a dog* ((31)–(33)). -/
 theorem fido_is_a_dog (R : I → I → Prop) (dog : Property I E) (o : E) (t : I) :
     copula R (Modifier.intersective dog) t o ↔ ∃ t', R t' t ∧ dog t' o := by
   rw [copula_intersective]
@@ -129,8 +127,7 @@ theorem former_not_isSubsective [Preorder I] {t' t : I} (h : t' < t) [Nonempty E
   not_isSubsective_of_isPrivative former_isPrivative
     ⟨fun s _ ↦ s = t', t, Classical.arbitrary E, ⟨t', h, rfl⟩, h.ne'⟩
 
-/-- Predicate modification is intersective, so no property combined with the noun by that rule
-gives the meaning of *former*, and the ⟨e,t⟩ theory cannot express it (§3.3–3.4). -/
+/-- No property combined intersectively with a noun gives the meaning of *former* (§3.3–3.4). -/
 theorem intersective_ne_former [Preorder I] {t' t : I} (h : t' < t) [Nonempty E]
     (Q : Property I E) : Modifier.intersective Q ≠ former :=
   fun e ↦ former_not_isSubsective h
@@ -196,9 +193,8 @@ theorem surface_scope [LT I] (F : Frame I E S) (woman donkey : Property I E)
         ∃ e, inspection e ∧ F.theme e x ∧ F.cul e < t ∧ F.agent e y := by
   simp only [indefinite, every, Frame.littleV, Frame.transitive, and_assoc]
 
-/-- In *Everyone entered a local bar* (55)–(58) the raised *everyone* binds the index on *local*,
-giving `λt.∀x(person(x)(t) → ∃y(bar(y)(t) & local(y)(x)(t) & ∃e(entering(e) & Theme(e)(y) &
-<(CUL(e))(t) & Agent(e)(x))))`. -/
+/-- In *Everyone entered a local bar* ((55)–(58)), the raised *everyone* binds the index on *local*.
+-/
 theorem everyone_entered_a_local_bar [LT I] (F : Frame I E S) (person bar : Property I E)
     (near : I → E → E → Prop) (entering : S → Prop) (t : I) :
     everyone person
@@ -330,8 +326,8 @@ theorem intersective_outer (Y N : Property I E) (M : Modifier (Property I E)) (t
     (h : Modifier.intersective Y (M N) t x) : Y t x :=
   h.1
 
-/-- In *alleged young murderer* (92b) there is no such commitment under a non-subsective
-modifier, so the contrast is one of scope within the type, as *former* shows. -/
+/-- *Former* applied to an intersectively modified noun need not commit to the modifier, as in
+*alleged young murderer* (92b). -/
 theorem exists_inner_not_committed :
     ∃ (Y N : Property Bool Unit) (t : Bool) (x : Unit),
       former (Modifier.intersective Y N) t x ∧ ¬ Y t x :=
@@ -351,8 +347,7 @@ def pos [LT D] (standard : (D → Modifier (Property I E)) → D) (G : D → Mod
     Modifier (Property I E) :=
   fun N t x ↦ ∃ d, standard G < d ∧ G d N t x
 
-/-- A gradable adjective in the positive degree is an intersective adjective of type ⟨eit,eit⟩,
-so with the positive morpheme gradable and non-gradable adjectives share the type (§4.6). -/
+/-- With the positive morpheme, a gradable adjective is intersective of type ⟨eit,eit⟩ (§4.6). -/
 theorem pos_gradable [LT D] (standard : (D → Modifier (Property I E)) → D)
     (P : I → E → D → Prop) :
     pos standard (gradable P) =

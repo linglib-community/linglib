@@ -156,8 +156,8 @@ theorem universal_at_rb (h : i ∈ perfect (UNBOUNDED P) w) : ∃ e, P w e ∧ i
   ⟨e, hP, NonemptyInterval.mem_def.2
     ⟨(NonemptyInterval.le_def.1 hle).1.trans i.fst_le_snd, (NonemptyInterval.le_def.1 hle).2⟩⟩
 
-/-- The neutral experiential, (12), places the beginning of the event time inside the span, so
-the eventuality has begun by the right boundary of the reference interval. -/
+/-- On the neutral experiential (12), the eventuality has begun by the right boundary of the
+reference interval. -/
 theorem neutral_experiential_begun_by_rb (h : i ∈ perfect (NEUTRAL P) w) :
     ∃ e, P w e ∧ (τ e).fst ≤ i.snd :=
   let ⟨_, ⟨e, hrel, hP⟩, hf⟩ := h
@@ -223,8 +223,8 @@ theorem resultative_perfect_iff :
   · obtain ⟨pts, hf, hlt⟩ := exists_span i (τ s).fst
     exact ⟨pts, ⟨e, s, ⟨hlt, hf.2 ▸ h₁, hf.2 ▸ h₂⟩, hQ⟩, hf⟩
 
-/-- The proper containment of footnote 8 makes no difference under the perfect, since the span
-may start earlier, so the bounded aspect and the perfective give the same perfect. -/
+/-- The bounded aspect and the perfective give the same perfect, so the proper containment of
+footnote 8 makes no difference. -/
 theorem bounded_perfect_iff_prfv_perfect : i ∈ perfect (BOUNDED P) w ↔ i ∈ perfect (PRFV P) w := by
   refine ⟨(perfect_mono (bounded_subset_prfv P) w ·), fun ⟨_, ⟨e, hle, hP⟩, hf⟩ ↦ ?_⟩
   exact bounded_experiential_iff.2 ⟨e, hP, hf.2 ▸ (NonemptyInterval.le_def.1 hle).2⟩
@@ -265,9 +265,8 @@ theorem bounded_experiential_not_beyond_rb (h : i ∈ perfect (BOUNDED P) w) :
   let ⟨e, hP, hle⟩ := bounded_experiential_ended_by_rb h
   ⟨e, hP, hle.not_gt⟩
 
-/-- Yet the bounded experiential is true of an eventuality whose last moment is the moment of
-reference, so on closed intervals (16) is compatible with the utterance time lying in the event
-time, against the paper's claim. -/
+/-- The bounded experiential holds of an eventuality ending at the moment of reference, so (16)
+allows the utterance time inside the event time. -/
 theorem bounded_experiential_of_ends_at_rb {e₀ : E} (h : (τ e₀).snd = t) :
     .pure t ∈ perfect (BOUNDED fun (_ : W) e ↦ e = e₀) w ∧ t ∈ τ e₀ :=
   ⟨bounded_experiential_iff.2 ⟨e₀, rfl, h.le⟩,

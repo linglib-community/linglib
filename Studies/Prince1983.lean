@@ -269,8 +269,7 @@ def moveX : Edge → ℕ → Grid → Grid
 def Marks.move (r i k : ℕ) (m : Marks) : Marks :=
   m.modify r fun row ↦ (row.set i false).set k true
 
-/-- Sliding the level-`n` entry out of a column that reaches above level `n` leaves a hole (32),
-so no such move is available on well-formed grids. -/
+/-- Moving the level-`n` entry out of a column reaching above level `n` leaves a hole (32). -/
 theorem Marks.not_isContinuous_move {g : Grid} {n i k : ℕ} (hi : i < g.length) (hn : n < g[i])
     (hn1 : 1 ≤ n) (hk : k ≠ i) : ¬ Marks.IsContinuous (Marks.move (n - 1) i k (rows g)) := by
   intro h
@@ -318,8 +317,7 @@ theorem not_clash_of_peak_le {g : Grid} (hc : IsCulminative g) {n i j : ℕ} (hn
   have := le_peak (List.getElem_mem hj)
   exact hij.ne (hc.eq_of_eq_peak hi hj (by omega) (by omega))
 
-/-- The absolute peak never moves (31), since below the peak Move x leaves taller columns alone
-and at or above it a culminative grid has no clash. -/
+/-- On a culminative grid, Move x never moves the absolute peak (31). -/
 theorem moveXL_getD_peak {g : Grid} (hc : IsCulminative g) {i n : ℕ} (hi : i < g.length)
     (hp : g[i] = peak g) : (moveXL n g).getD i 0 = g[i] := by
   rw [← List.getD_eq_getElem g 0 hi]
@@ -530,9 +528,8 @@ def startDist : Edge → ℕ → ℕ → ℕ
   | .left, _, i => i
   | .right, n, i => n - 1 - i
 
-/-- A sweep over an unstressed word stresses the columns whose distance from the starting edge has
-the parity of the start, a peak stressing the even distances (62). Weri is (62d), sweeping right
-to left from a peak; Warao, (62c); Maranungku, (62b); Southern Paiute, (62a). -/
+/-- A sweep over an unstressed word from a peak stresses even distances from its edge, from a trough
+odd ones ((62), (62a), (62b), (62c), (62d)). -/
 theorem pg_replicate_getD (d : Edge) (a : Altitude) {n i : ℕ} (hi : i < n) :
     (pg d a (List.replicate n 1)).getD i 0 =
       if (startDist d n i % 2 = 0 ↔ a = .peak) then 2 else 1 := by
@@ -852,7 +849,7 @@ with the penultimate stress. -/
 theorem hawaiian_three : hawaiian 3 = [1, 3, 1] := by decide
 
 /-- After the End Rule stresses both edges, the sweep back from the penult leaves an initial dactyl
-when the alternation would stress the second syllable ((64b), (64c)). -/
+((64b), (64c)). -/
 theorem hawaiian_eq {n : ℕ} (hn : 4 ≤ n) :
     hawaiian n = 2 :: 1 :: (alt .trough (n - 4)).reverse ++ [3, 1] := by
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 4 := ⟨n - 4, by omega⟩
@@ -1225,8 +1222,8 @@ theorem koya {w : List Syllable.Weight} (hw : w ≠ []) :
   mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two w))
     (findIdx?_endRule_left_fco (fun _ ↦ mem_qs) (by rwa [Ne, qs_eq_nil_iff]))
 
-/-- In Malayalam (§3.7) the first syllable carries the main stress unless it is light and the
-second heavy, the End Rule being blocked by clash there. -/
+/-- In Malayalam the first syllable carries main stress unless it is light and the second heavy
+(§3.7). -/
 theorem malayalam_first {m : Syllable.Weight} {w : List Syllable.Weight}
     (h : ¬ (m < 2 ∧ ∃ m₁ ∈ w.head?, 2 ≤ m₁)) :
     MainStressAt (fixedStress .left false (m :: w)) 0 := by

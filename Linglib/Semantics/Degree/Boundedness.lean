@@ -170,9 +170,8 @@ theorem dual_involutive : Function.Involutive dual := fun b ↦ by cases b <;> r
 
 @[simp] theorem dual_dual (b : Boundedness) : b.dual.dual = b := dual_involutive b
 
-/-- Reversing the order of the degrees exchanges the ends of the scale, so the negative antonym,
-which measures on the order dual ([kennedy-2007] (60), [kennedy-mcnally-2005]), has the dual
-boundedness. -/
+/-- The negative antonym, measuring on the order dual, has the dual boundedness ([kennedy-2007]
+(60), [kennedy-mcnally-2005]). -/
 @[simp] theorem ofOrder_orderDual {D : Type*} [LE D] : ofOrder Dᵒᵈ = (ofOrder D).dual :=
   ext (by simp [hasMin_ofOrder, hasMax_ofOrder, OrderDual.exists])
     (by simp [hasMin_ofOrder, hasMax_ofOrder, OrderDual.exists])
@@ -438,9 +437,8 @@ def IsRelative (b : Boundedness) : Prop := b.defaultStandard.RequiresComparisonC
 instance : DecidablePred IsRelative :=
   fun b ↦ inferInstanceAs (Decidable b.defaultStandard.RequiresComparisonClass)
 
-/-- A scale with a least degree adjoined, the scale of a difference function or a measure of
-change ([kennedy-levin-2008] (23), (25)), admits the minimum standard, and the maximum exactly
-when the original scale has one. -/
+/-- A scale with a least degree adjoined admits the minimum standard, and the maximum iff the
+original scale has one ([kennedy-levin-2008] (23), (25)). -/
 theorem admits_withMin_iff {b : Boundedness} {s : PositiveStandard} :
     b.withMin.Admits s ↔ s = .minEndpoint ∨ s = .maxEndpoint ∧ b.HasMax := by
   cases b <;> cases s <;> simp [Admits, withMin, HasMin, HasMax]

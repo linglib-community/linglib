@@ -283,8 +283,8 @@ theorem analyses_structured (a : Analysis) (ha : a ∈ analyses) :
     ∃ s : Structure, s.stem = a.stem ∧ s.prefixes = a.prefixes :=
   (Structure.exists_prefixes_eq_iff _ _).2 (by fin_cases ha <;> decide)
 
-/-- The starred reversals (4b) *vy-po-brasyvatj* and (4d) *w-po-chodzili*, the prefixes of (4a)
-and (4c) in the opposite order, are not well-stacked, so no structure linearizes to them. -/
+/-- The starred reversals (4b) and (4d) of the prefixes of (4a) and (4c) are not well-stacked, so no
+structure linearizes to them. -/
 theorem starred_not_structured (a : Analysis) (ha : a ∈ starred) :
     ¬ WellStacked a.prefixes ∧ ¬ ∃ s : Structure, s.stem = a.stem ∧ s.prefixes = a.prefixes := by
   have h : ¬ WellStacked a.prefixes := by fin_cases ha <;> decide
@@ -293,9 +293,8 @@ theorem starred_not_structured (a : Analysis) (ha : a ∈ starred) :
 /-- The starred forms reverse the prefixes of (4a) and (4c). -/
 theorem starred_prefixes : starred.map (·.prefixes) = [a4a, a4c].map (·.prefixes.reverse) := rfl
 
-/-- Outside the past tense, every analysis spells out its form: the morphs of (4a), (4b), (58) and
-(3) are those of the attested word. The past forms of (1) and (4c) inflect a verb that the
-fragment gives only in its citation form. -/
+/-- Outside the past tense, as in (1) and (4c), every analysis spells out its attested form ((4a),
+(4b), (58), (3)). -/
 theorem analyses_spells : ∀ a ∈ analyses ++ starred,
     a.form.cell.tense ≠ ↑UD.Tense.Past → Spells a.morphs a.form.form := by
   decide

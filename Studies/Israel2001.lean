@@ -168,17 +168,16 @@ theorem felicitous_iff_of_strictMonoBy {δ : Polarity} {q : Quantity} (h : δ.St
   · rw [felicitous_iff_of_strictAnti h hx, Quantity.gt_iff_of_rel hq]
     cases d <;> cases q <;> decide
 
-/-- Figures 1 and 3: an item is felicitous exactly in contexts of its licensing direction, for
-any scalar model of its role and any quantity standing to the norm as the item says. -/
+/-- An item is felicitous exactly in contexts of its licensing direction, for any scalar model of
+its role (Figures 1 and 3). -/
 theorem felicitous_iff {P : α → Set W} {f : Set W → Set W} {r : Role} {c : Polarity}
     {d : Force} {q : Quantity} (hr : r.sign.StrictMonoBy P) (hc : c.StrictMonoBy f)
     (hq : q.Rel x n) : Felicitous d (f ∘ P) n x ↔ c = licensingContext d q r := by
   rw [felicitous_iff_of_strictMonoBy (hc.comp hr) hq, licensingContext]
   cases c <;> cases d <;> cases q <;> cases r <;> decide
 
-/-- The pecuniary paradox, (15) and (16): the same small amount is emphatic under negation as a
-resource, *a red cent*, and not as a reward, *for peanuts*, which is emphatic in the affirmative
-instead. -/
+/-- A small amount is emphatic under negation as a resource, *a red cent*, but in the affirmative as
+a reward, *for peanuts* ((15), (16)). -/
 theorem pecuniary_paradox {res rew : α → Set W} {f : Set W → Set W} (hres : StrictAnti res)
     (hrew : StrictMono rew) (hf : StrictAnti f) (hx : x < n) :
     Emphatic (f ∘ res) n x ∧ ¬ Emphatic (f ∘ rew) n x ∧ Emphatic rew n x ∧ ¬ Emphatic res n x :=
@@ -187,9 +186,8 @@ theorem pecuniary_paradox {res rew : α → Set W} {f : Set W → Set W} (hres :
     (emphatic_iff_of_strictMono hrew (ne_of_lt hx)).2 hx,
     λ h => lt_asymm hx ((emphatic_iff_of_strictAnti hres (ne_of_lt hx)).1 h)⟩
 
-/-- Ambiguous superlatives, (22): under negation the same frame is emphatic at the bottom of an
-existential scale, *the faintest noise*, and at the top of a perceptual-ability scale, *the
-loudest noise*, the stimulus impeding its own existence and facilitating its perception. -/
+/-- Under negation the same frame is emphatic at the bottom of an existential scale and at the top
+of a perceptual-ability scale (22). -/
 theorem superlative_ambiguity {exist ability : α → Set W} {f : Set W → Set W}
     (hex : StrictAnti exist) (hab : StrictMono ability) (hf : StrictAnti f) {lo hi : α}
     (hlo : lo < n) (hhi : n < hi) : Emphatic (f ∘ exist) n lo ∧ Emphatic (f ∘ ability) n hi :=

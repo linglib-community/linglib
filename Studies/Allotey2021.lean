@@ -73,9 +73,8 @@ open Binding.MinimalPronoun Control Ga Ga.Pronouns Morphology
 
 /-! ### Pronouns (Table 3) -/
 
-/-- "Except for the second- and third-person nominative-accusative pronominals, the other
-pronominals take an identical phonetic form in nominative, accusative and genitive case"
-(p. 25), the impersonal *a* being "used only in subject position". -/
+/-- All pronominals except the second and third person and the subject-only impersonal *a* have one
+form in nominative, accusative and genitive (p. 25). -/
 theorem exists_syncretic_form_iff (r : Row) :
     (∃ f ∈ table (r, .subjective), ∀ k, f ∈ table (r, k)) ↔ r ≠ .sg2 ∧ r ≠ .sg3 ∧ r ≠ .imp := by
   cases r <;> decide
@@ -113,11 +112,8 @@ theorem no_agreement_rows :
 def pronominalSubjects : Data.WALS.F101A.ExpressionOfPronominalSubjects :=
   .obligatoryPronounsInSubjectPosition
 
-/-- [wals-2013] codes the same markers as subject affixes on the verb, not
-    `pronominalSubjects`: the analysis of [campbell-2017] too, against which an
-    affix would co-occur with a lexical subject (ex 123) and could not be
-    separated from its verb by negation (ex 125). Gã's WALS code is `ga`; `gaa`
-    is Gaagudju. -/
+/-- [wals-2013] codes Gã `ga` as having subject affixes on the verb, the analysis of [campbell-2017]
+that ex 123 and ex 125 argue against. -/
 theorem wals_codes_affixes :
     Data.WALS.F101A.allData.lookup "ga" = some .subjectAffixesOnVerb := by
   decide +kernel
@@ -142,8 +138,7 @@ theorem proposition_iff_finite :
       (s = .proposition ↔ ∃ z ∈ complementizers, r.frame.Takes z ∧ z.IsFinite) := by
   decide
 
-/-- Both subject and object control are in the inventory (Table 2), the controller of some verb
-being its sole core argument, S, and that of another its object, P. -/
+/-- The inventory has both subject and object control (Table 2). -/
 theorem control_rows :
     (∃ v ∈ verbs, ∃ d ∈ v.valency.diatheses, d.controllerRole = some .S) ∧
       ∃ v ∈ verbs, ∃ d ∈ v.valency.diatheses, d.controllerRole = some .P := by
@@ -225,18 +220,17 @@ theorem subject_tone_rows :
 
 /-! ### The irrealis marker -/
 
-/-- The marker appears on the subject of the control frame and nowhere else in
-    the complement data (exx 34, 88–89, 92, 100–103, 106, 109, 112, 117–119,
-    122); it tracks the frame, not the verb — *kai* 'remember' takes it in its
-    `ni`-frame (exx 43, 117a) and lacks it in its realis `akɛ`-frame (ex 89a). -/
+/-- The irrealis marker appears on the subject of the control frame and nowhere else in the
+complement data (exx 34, 88–89, 92, 100–103, 106, 109, 112, 117–119, 122), tracking the frame, not
+the verb (exx 43, 117a; ex 89a). -/
 theorem marker_rows :
     ∀ row ∈ Examples.all, row.feature? "clauseContext" ∈ [none, some "control"] →
       ∀ m ∈ row.feature? "irrealisMarker",
         (m = "present" ↔ (row.feature? "control").isSome) := by
   decide +kernel
 
-/-- In the paper's implicative contrast (ex 89) the marker is absent exactly under the verbs of
-    the Fragment whose affirmed use entails the complement realized ([karttunen-1971]). -/
+/-- In the implicative contrast (ex 89) the marker is absent exactly under the implicative verbs
+([karttunen-1971]). -/
 theorem implicative_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "implicative" →
       ∀ v ∈ verbOf row,
@@ -380,9 +374,8 @@ theorem control_realization_unique (c : IrrealisContext) :
     realization c = realization .embeddedControl → c = .embeddedControl := by
   cases c <;> decide +kernel
 
-/-- The realizations are exact: adding the verb's tone to the control clause
-    (ex 88) or the subject's to the future (ex 96), or dropping the verb's from
-    the subjunctive (ex 87), is ungrammatical. -/
+/-- Adding the verb's tone to the control clause (ex 88) or the subject's to the future (ex 96), or
+dropping the verb's from the subjunctive (ex 87), is ungrammatical. -/
 theorem realization_exact :
     (∃ row ∈ rowsIn .embeddedControl .ungrammatical, shows row .verbTone) ∧
     (∃ row ∈ rowsIn .future .ungrammatical, shows row .subjectTone) ∧

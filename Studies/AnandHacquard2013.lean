@@ -136,8 +136,8 @@ theorem representational_must_eq_one_iff (dox : W → Set W) (p : Set W) (w : W)
   simp only [representational, Trivalent.forallWeak_eq_one_iff, must_eq_one_iff, Subtype.forall]
   exact ⟨fun h v hv ↦ (h v hv).2 hv, fun h v hv ↦ ⟨⟨v, hv⟩, h⟩⟩
 
-/-- The paper's (23b), *imagine that it is raining but it might not be*, is contradictory whenever
-the imagination state is nonempty, since the modal quantifies over that very state. -/
+/-- *Imagine that it is raining but it might not be* (23b) is contradictory whenever the imagination
+state is nonempty. -/
 theorem imagine_epistemic_eq_neg_one (dox : W → Set W) (p : Set W) {w : W}
     (h : (dox w).Nonempty) :
     representational dox (conj (ofSet p) (might pᶜ)) w = -1 := by
@@ -244,9 +244,8 @@ theorem falsifiers_must (p S : Set W) : falsifiers (must p) S = subStates (S ∩
       rw [neg_apply, SignType.neg_eq_one_iff, must_eq_neg_one_iff]
       exact ⟨⟨w, hw⟩, fun hYp => h (hY hw) (hYp hw)⟩⟩) S
 
-/-- By footnote 19, comparing two families of nonempty sub-states under the lifted ordering is
-comparing the states themselves, by upward monotonicity of `Better` in its first argument and
-downward monotonicity in its second. -/
+/-- Comparing families of nonempty sub-states under the lifted ordering is comparing the states
+themselves (footnote 19). -/
 theorem better_subStates_iff {α : Type*} (r : α → α → Prop) (A B : Set α) :
     Better (Better r) (subStates A) (subStates B) ↔ Better r A B := by
   constructor
@@ -319,8 +318,8 @@ theorem doubt_eq_one_iff : doubt r dox φ w = 1 ↔ Uncertain φ (dox w) ∧ Pos
 
 end Values
 
-/-- In (58) with *must*, the doxastic assertion of an embedded necessity epistemic puts the whole
-state inside `p`, leaving no falsifier — it contradicts the uncertainty presupposition. -/
+/-- In (58) with *must*, the doxastic assertion of an embedded necessity epistemic contradicts the
+uncertainty presupposition. -/
 theorem uncertain_must_not_possible {p S : Set W} (hu : Uncertain (must p) S) :
     ¬ Possible (must p) S := by
   intro hp

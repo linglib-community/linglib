@@ -150,13 +150,12 @@ theorem ofRow_isSome : ∀ ex ∈ Examples.all, ex.language = "lati1261" → (of
 def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String) × List String) :=
   (Examples.all.filter (·.language = "lati1261")).filterMap ofRow
 
-/-- In (40) the four tenses derive with T[−past] pruned, so that Agr is concatenated with Asp[perf]
-in the perfect but with the overt T[+past] in the pluperfect (§7.3.2.1). -/
+/-- With T[−past] pruned, the four tenses of (40) derive with Agr adjacent to Asp[perf] in the
+perfect and to T[+past] in the pluperfect (§7.3.2.1). -/
 theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide +kernel
 
-/-- As §4.6.3 argues, were a morpheme's synsem features deleted at its insertion, Agr could
-see neither T[+past] nor Asp[perf], and the first singular of the imperfect and of the perfect
-would fall to the default *-ō*. -/
+/-- If insertion deleted synsem features, the first singular of the imperfect and the perfect would
+wrongly take the default *-ō* (§4.6.3). -/
 theorem rewriting_loses_conditioning :
     morphs .rewriting (word .imperfect true false false) = ["laud", "ā", "bā", "ō"] ∧
       morphs .rewriting (word .perfect true false false) = ["laud", "ā", "vi", "ō"] := by
@@ -209,8 +208,8 @@ def rows : List (ComplexHead (Morpheme Feature String) (Morpheme Feature String)
 /-- The rows of (7) show outward conditioning by the possessive's feature. -/
 theorem rows_plural : ∀ r ∈ rows, plural r.1 = some r.2 := by decide
 
-/-- As (43a, b) state, when the plural is reached, what it sees outward is the features of the
-possessive and nothing of an exponent, the possessive being still bare. -/
+/-- When the plural is reached it sees outward only the features of the still-bare possessive (43a,
+b). -/
 theorem outward_features_only :
     ∀ r ∈ rows, (r.1.contextAt (· = "") .concatenation (fun _ ↦ ∅) 0).rightCtx =
       (r.1.heads.drop 1).map (·.feats) := by

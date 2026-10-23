@@ -91,8 +91,8 @@ def DescribesOccurrence (occurs : E → W → Prop) (Q : E → W → Prop) : Pro
 variable {occurs : E → W → Prop} {τ : E → Set T} {f : E → Set W} {Q : E → W → Prop} {w : W}
   {t : Set T}
 
-/-- A root possibility modal under perfective aspect entails that the actual event is a
-`Q`-event in the actual world, the unmodalized perfective sentence (75), (86), (89a). -/
+/-- A root possibility modal under perfective aspect entails the unmodalized perfective sentence
+((75), (86), (89a)). -/
 theorem actuality_of_rootPossibility (hid : IdentifiesAcrossWorlds occurs Q)
     (hocc : DescribesOccurrence occurs Q) (h : perfective occurs τ w t (rootPossibility f Q)) :
     perfective occurs τ w t (Q · w) := by
@@ -107,9 +107,8 @@ theorem actuality_of_rootNecessity (hid : IdentifiesAcrossWorlds occurs Q)
   obtain ⟨w', hw'⟩ := hne e
   exact ⟨e, hew, ht, hid e w' w (hocc e w' (hall w' hw')) hew (hall w' hw')⟩
 
-/-- Necessity entails possibility (89), so with the entailment in place the two differ in
-whether the accessible worlds leave Jane other options; the desirability inference of (89b) is
-the scalar implicature from not asserting (89c). -/
+/-- Root necessity entails root possibility (89), so the desirability inference of (89b) is a scalar
+implicature from not asserting (89c). -/
 theorem rootPossibility_of_rootNecessity {e : E} (hne : (f e).Nonempty)
     (h : rootNecessity f Q e) : rootPossibility f Q e :=
   let ⟨w', hw'⟩ := hne
@@ -121,9 +120,7 @@ def epistemicPossibility (occurs : E → W → Prop) (τ : E → Set T) (acc : S
     (Q : E → W → Prop) : Prop :=
   ∃ w' ∈ acc, perfective occurs τ w' t (Q · w')
 
-/-- There is no actuality entailment above aspect. An event of an accessible world need not
-occur in the actual one, so the epistemic reading of (1b) holds while the perfective sentence
-fails. -/
+/-- An epistemic possibility modal above aspect has no actuality entailment, as in (1b). -/
 theorem epistemicPossibility_not_actual {acc : Set W} {w' : W} (hw' : w' ∈ acc) {e : E}
     (he : occurs e w') (ht : τ e ⊆ t) (hq : Q e w') (hno : ∀ e, ¬ occurs e w) :
     epistemicPossibility occurs τ acc t Q ∧ ¬ perfective occurs τ w t (Q · w) :=
@@ -140,8 +137,7 @@ def gen (ideal : W → Set T → Set E) (restr : E → Prop) (w : W) (t : Set T)
   (w, t) ∈ (Genericity.Normality.ofAccess fun i : W × Set T ↦ ideal i.1 i.2).gen {e | restr e}
     {e | P e}
 
-/-- A root modal under `GEN` is not implicative (93), (100). Where nothing counts as an
-ideal event the generic holds, and no event of the actual world need be a `Q`-event. -/
+/-- A root modal under `GEN` has no actuality entailment ((93), (100)). -/
 theorem gen_not_actual {ideal : W → Set T → Set E} {restr : E → Prop} (hideal : ideal w t = ∅)
     (hno : ∀ e, ¬ occurs e w) :
     gen ideal restr w t (rootPossibility f Q) ∧ ¬ perfective occurs τ w t (Q · w) :=
@@ -194,9 +190,8 @@ theorem aspectBoundEpistemic_iff :
   exists_congr fun _ ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦
     contentPossibility_contentNecessity
 
-/-- The reading exists only because the thinking event has content (310a). Where the events of
-the actual world have none, as with the train-taking of (246), an aspect-bound modal has no
-epistemic reading. -/
+/-- An aspect-bound modal has no epistemic reading where actual events lack content, as with the
+train-taking of (246), since the reading needs a contentful event (310a). -/
 theorem not_aspectBoundEpistemic_of_eq_none (h : ∀ e, occurs e w → con e = none) :
     ¬ aspectBoundEpistemic occurs τ con think w t P :=
   fun ⟨e, he, _, _, hp⟩ ↦ not_contentPossibility_of_eq_none (h e he) hp

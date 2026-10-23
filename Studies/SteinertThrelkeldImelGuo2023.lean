@@ -88,9 +88,8 @@ def washoAttested : Finset ForceFlavor :=
   (Bochnak2015a.Examples.all.filterMap fun e ↦ (e.parse? "force" forceTable).bind
     fun fo ↦ (e.parse? "flavor" flavorTable).map (fo, ·)).toFinset
 
-/-- As Section 4.1 notes, the uses [bochnak-2015a] reports include both forces with the
-epistemic and the deontic flavor, bouletic necessity and weak necessity but no bouletic
-possibility, and weak necessity with no other flavor. -/
+/-- The Washo uses of [bochnak-2015a] include both forces with epistemic and deontic flavor but no
+bouletic possibility (Section 4.1). -/
 theorem washoAttested_gaps :
     ({.necessity, .possibility} : Finset ModalForce) ×ˢ ({.epistemic, .deontic} : Finset _) ⊆
         washoAttested ∧
@@ -161,8 +160,8 @@ theorem reachable_of_fst_eq_or_snd_eq {m : Finset ForceFlavor} {p q : ForceFlavo
   · exact Or.inr ⟨fun h₂ ↦ hpq (Prod.ext h h₂), h⟩
   · exact Or.inl ⟨fun h₁ ↦ hpq (Prod.ext h₁ h), h⟩
 
-/-- A path-connected meaning induces a connected subgraph of the rook's graph, any two pairs
-being joined through a corner, so the "or" formulation implies the footnote's. -/
+/-- A path-connected meaning induces a connected subgraph of the rook's graph, so the *or*
+formulation implies the footnote's. -/
 theorem PathConnected.connected {m : Finset ForceFlavor} (h : PathConnected m) (hm : m.Nonempty) :
     (rookGraph.induce ↑m).Connected := by
   have := (Finset.coe_nonempty.2 hm).to_subtype

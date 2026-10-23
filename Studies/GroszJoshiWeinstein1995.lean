@@ -118,10 +118,8 @@ theorem d1_continues : transitions D1.all = [.continuation, .continuation, .cont
       PronominalizationConstraint D1.c D1.d := by
   decide
 
-/-- Discourse (2) keeps John as its backward-looking center but makes the store the preferred
-center twice; its pronoun for the store in (2b) violates Rule 1, John being named, and the one
-in (2d) realizes an entity outside the forward-looking centers of (2c), the case section 7
-says needs additional inference. -/
+/-- Discourse (2) keeps John as backward-looking center; its pronoun in (2b) violates Rule 1, and
+that in (2d) lies outside the forward-looking centers of (2c) (section 7). -/
 theorem d2_retains : cbs D2.all = [some .john, some .john, some .john] ∧
     transitions D2.all = [.retaining, .continuation, .retaining] ∧
       ¬ PronominalizationConstraint D1.a D2.b ∧ ¬ ∃ e ∈ D1.c.cf, D2.d.Pronominalizes e := by
@@ -211,8 +209,8 @@ def d : Utt := ⟨[name .tommy .subject, pron .boat .object, name .bear .other]�
 
 end D13
 
-/-- The boat is the backward-looking center of (d): in (13) the silly thing continues it,
-while in (14) the pragmatics that prefers the bear conflicts with it. -/
+/-- The boat is the backward-looking center of (d), continued in (13) and in conflict with
+pragmatics in (14). -/
 theorem boat_cb : cb D13.c D13.d = some .boat := by decide
 
 /-! ### Applications of the rules, section 7 -/
@@ -251,8 +249,8 @@ def all : List Utt := [a, D15.b, c, d]
 
 end D16
 
-/-- The intervening (16c) shifts the center to Mike, whose pronoun in (16d) then satisfies
-Rule 1 where (15c) violated it: the rule is independent of the transition type. -/
+/-- The intervening (16c) shifts the center to Mike, so the pronoun in (16d) satisfies Rule 1, which
+(15c) violated. -/
 theorem d16_repairs : cbs D16.all = [some .john, some .mike, some .mike] ∧
     transitions D16.all = [.continuation, .shifting, .continuation] ∧
       PronominalizationConstraint D16.c D16.d := by
@@ -268,8 +266,7 @@ def c : Utt := ⟨[name .dog .subject]⟩
 
 end D17
 
-/-- Rule 1 does not preclude a description for the center when no pronoun is used: the dog
-is the center of (17c) and the rule holds vacuously. -/
+/-- Rule 1 does not preclude a description for the center, as in (17c), where no pronoun is used. -/
 theorem full_noun_phrase_cb : cb D17.b D17.c = some .dog ∧
     PronominalizationConstraint D17.b D17.c := by
   decide
@@ -295,8 +292,8 @@ def all : List Utt := [a, b, c, d, e]
 
 end D20
 
-/-- The transitions the paper annotates on (20): John continues in (c), is retained in (d),
-and the center shifts to Mike in (e), Rule 1 holding throughout. -/
+/-- In (20), John continues in (c), is retained in (d), and the center shifts to Mike in (e), with
+Rule 1 holding throughout. -/
 theorem d20_transitions :
     transitions D20.all = [.continuation, .continuation, .retaining, .shifting] ∧
       PronominalizationConstraint D20.a D20.b ∧ PronominalizationConstraint D20.b D20.c ∧
@@ -338,16 +335,14 @@ theorem d34_two_pronouns : cb D34.b D34.c' = some .carl ∧
     PronominalizationConstraint D34.b D34.c' := by
   decide
 
-/-- After (34b), Sidner's discourse focus is Jeff and her actor focus is Carl, as the section
-says; the paper's (34a) and (34b) are the first two sentences of her D9. -/
+/-- After (34b), Sidner's discourse focus is Jeff and her actor focus is Carl, and (34a) and (34b)
+open her D9. -/
 theorem d34_sidner_foci : Sidner1979.D9.afterB.discourse = some ⟨.jeff, 1⟩ ∧
     Sidner1979.D9.afterB.actor = some ⟨.carl, 2⟩ := by
   decide
 
-/-- The section takes the actor focus to be preferred for the pronoun of (34c); on Sidner's rule
-for a pronoun in agent position the discourse focus, established in (34a) before the actor
-focus, takes precedence, and the pronoun co-specifies Jeff, the center of the centering
-account. -/
+/-- On Sidner's agent-position rule, the pronoun of (34c) co-specifies Jeff, the discourse focus of
+(34a) and the center on the centering account. -/
 theorem d34_sidner_cospecify :
     Sidner1979.D9.afterB.cospecify .agent (· ∈ [.jeff, .carl]) = cb D34.a D34.b := by
   decide

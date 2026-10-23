@@ -123,9 +123,9 @@ theorem projection_rows :
       (row.projective? = some true ↔ v.IsFactive) := by
   decide
 
-/-- The semi-factive *cuukwe* 'know' projects from a third-person conditional antecedent, (68),
-where the complement does not follow from [karttunen-1971b]'s postulates for a semi-factive. His
-own conditionals, (25), are in the first person. -/
+/-- *cuukwe* 'know' projects from a third-person conditional antecedent (68), which
+[karttunen-1971b]'s semi-factive postulates, built on first-person conditionals (25), do not
+predict. -/
 theorem cuukwe_conditional_projects :
     ¬ Karttunen1971b.Projects .semi .conditionalAntecedent ∧
       (∃ row ∈ Examples.all, row.environment? = some .conditionalAntecedent ∧
@@ -173,8 +173,8 @@ theorem detoComplement_iff :
       ¬ DetoComplement Bulgarian.vazmushtavamSe ∧ ¬ DetoComplement Bulgarian.razbiram := by
   decide
 
-/-- Krapova's *deto* sentences (56) and (58) are grammatical exactly for the predicates that meet
-the double requirement, and their *če* variants are always grammatical (fn. 46). -/
+/-- Krapova's *deto* sentences (56) and (58) are grammatical iff the predicate meets the double
+requirement, and their *če* variants always are (fn. 46). -/
 theorem deto_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "detoSelection" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
@@ -232,10 +232,8 @@ def rows : List Cell :=
   [nezPerce liloy, nezPerce neki, englishThink, adygheRelative, englishNComplementation,
     bulgarianRelative, ndebeleEmbedding, washoFactive]
 
-/-- Every cell of table (79) is filled, each of the three shells over C, none, D N and P D,
-occurring with and without an Ā-dependency in the CP. The internal syntax of a clause does not
-predict its external syntax, the category selected ranging over C, D and P for one CP-internal
-syntax, and not all complementation is relativization. -/
+/-- Every cell of table (79) is filled, so a clause's internal syntax does not predict its external
+syntax. -/
 theorem table79 :
     ∀ shell ∈ [([] : List Cat), [.N, .D], [.D, .P]], ∀ abar ∈ [true, false],
       ∃ c ∈ rows, c.spine.above .C = shell ∧ c.internalAbar = abar := by
@@ -243,10 +241,8 @@ theorem table79 :
 
 /-! ### Table (80): factivity against the Ā axis -/
 
-/-- Every cell of table (80) is filled, by a factive relative embedding, *lilooy* 'be happy', a
-factive simplex embedding, *cuukwe* 'know', a non-factive simplex embedding, *neki* 'think',
-and a non-factive relative embedding, Adyghe 'think', which requires the relative strategy for
-its tensed complement. Factivity and relative-embedding syntax vary independently. -/
+/-- Every cell of table (80) is filled, so factivity and relative-embedding syntax vary
+independently. -/
 theorem table80 :
     (∃ v ∈ verbs, v.IsFactive ∧ strategy v = .relative) ∧
       (∃ v ∈ verbs, v.IsFactive ∧ strategy v = .simplex) ∧

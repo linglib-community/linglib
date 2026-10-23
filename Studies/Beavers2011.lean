@@ -73,9 +73,8 @@ def Result (m : S → α → T → D) (b : D) (x : α) (s : S) (g : D) (e : E) :
 
 variable {m : S → α → T → D} {b : D} {θ : α → S → E → Prop} {φ : α → E → Prop}
 
-/-- A non-quantized change entails that the theme ends the event with more of the property than
-it began with, so that *the soup cooled 5 degrees, but nothing is different about it* is
-contradictory ((59)). -/
+/-- A non-quantized change entails that the theme ends the event with more of the property than it
+began with (59). -/
 theorem exists_lt_of_nonQuantizedChange (h : NonQuantizedChange θ (Result m b) φ) {x : α}
     {e : E} (hx : φ x e) : ∃ s, θ x s e ∧ m s x (τ e).fst < m s x (τ e).snd :=
   let ⟨s, hs, _, h₁, h₂, h₃⟩ := h x e hx
@@ -88,8 +87,8 @@ theorem snd_eq_of_quantizedChange {s₀ : S} {g : D} (hθ : ∀ x s e, θ x s e 
   let ⟨s, hs, _, _, h₃⟩ := h x e hx
   hθ x s e hs ▸ h₃
 
-/-- A predicate on the single scale `s₀` with two events that end at different goals effects no
-quantized change, since a quantized change fixes one goal for all its events (p. 357). -/
+/-- A predicate on a single scale with events ending at different goals effects no quantized change
+(p. 357). -/
 theorem not_quantizedChange_of_snd_ne {s₀ : S} (hθ : ∀ x s e, θ x s e → s = s₀) {x x' : α}
     {e e' : E} (hx : φ x e) (hx' : φ x' e') (hne : m s₀ x (τ e).snd ≠ m s₀ x' (τ e').snd) :
     ¬ ∃ g, QuantizedChange θ (Result m b) φ g := fun ⟨_, h⟩ ↦
@@ -104,9 +103,8 @@ section HayKennedyLevin
 variable [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D] {m : S → α → T → D} {b : D}
   {s₀ : S} {φ : α → E → Prop}
 
-/-- On a predicate whose scale is `s₀`, a quantized change to `b + n` for a positive `n` is the
-reading of [hay-kennedy-levin-1999] with the measure phrase `n` from the source `b`, as in *the
-soup cooled 5 degrees* ((58a)). -/
+/-- On scale `s₀`, a quantized change to `b + n` is the measure-phrase reading of
+[hay-kennedy-levin-1999] from source `b`, as in *the soup cooled 5 degrees* (58a). -/
 theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
     QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ (b + n) ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
@@ -120,9 +118,8 @@ theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
   · rintro ⟨h₁, h₂⟩
     exact ⟨h₁, by rw [← h₂, h₁, add_sub_cancel]⟩
 
-/-- On a predicate whose scale is `s₀`, a non-quantized change is the reading of
-[hay-kennedy-levin-1999] with the difference value "some amount" from the source `b`, as in *the
-soup cooled* ((58b)). -/
+/-- On scale `s₀`, a non-quantized change is the *some amount* reading of [hay-kennedy-levin-1999]
+from source `b`, as in *the soup cooled* (58b). -/
 theorem nonQuantizedChange_iff_describes_someAmount :
     NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
@@ -196,9 +193,8 @@ theorem role_eq_entailments_iff {d : AffectednessDegree} :
       ∀ e : AffectednessEntailment, AffectednessDegree.Holds θ R φ e.1 ↔ e.1 ≤ d := by
   simp [role, Set.ext_iff, AffectednessDegree.coe_entailments]
 
-/-- A set of affectedness entailments is the role of some predicate exactly when it is
-contentful, as the objects of *see*, *hit*, *cut* and *eat* illustrate ([beavers-2010]
-(66)–(67)). -/
+/-- A set of affectedness entailments is the role of some predicate exactly when it is a lower set
+([beavers-2010] (66)–(67)). -/
 theorem exists_role_eq_iff (s : Set AffectednessEntailment) :
     (∃ (θ : Unit → Unit → Bool → Prop) (R : Unit → Unit → Bool → Bool → Prop)
       (φ : Unit → Bool → Prop), role θ R φ = s) ↔ IsLowerSet s := by

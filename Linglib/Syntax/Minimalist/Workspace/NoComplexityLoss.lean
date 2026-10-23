@@ -193,8 +193,7 @@ theorem NoComplexityLoss.map_componentMap_merge_iff (hs : s ∈ forestCutChoices
   NoComplexityLoss.map_componentMap_iff hs hc hpos (deg_le_of_snd_eq_zero hs hK hS hS')
 
 /-- Every term of Sideward Merge loses complexity along its component map
-    ([marcolli-chomsky-berwick-2025] Proposition 1.6.10). If `S` or `S'` is not a component of the
-    workspace, the component it is cut out of goes to a trunk of lower degree. -/
+([marcolli-chomsky-berwick-2025] Proposition 1.6.10). -/
 theorem NoComplexityLoss.not_map_componentMap_merge (hs : s ∈ forestCutChoicesG cuts F)
     (hc : s.HasExtractionCost deg k) (hpos : ∀ T, 0 < deg T) {S S' X : UnorderedTree α}
     (hK : s.crown = {S, S'})

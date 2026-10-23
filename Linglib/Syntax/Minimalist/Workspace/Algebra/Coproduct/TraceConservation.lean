@@ -353,9 +353,7 @@ theorem cutSummandsCN_traceLeafCount (τ : UnorderedTree (α ⊕ β) → β)
         Multiset.map_congr rfl (fun x _ => UnorderedTree.traceLeafCount_mk x)]
   exact hcons
 
-/-- Vertices are conserved by the nonplanar Δ^c cuts up to traces. Crown
-    vertices plus trunk vertices recover the tree vertices plus one
-    replacement trace leaf per cut (MCB Lemma 1.6.3). -/
+/-- The nonplanar Δ^c cuts conserve vertices up to one trace leaf per cut (MCB Lemma 1.6.3). -/
 theorem cutSummandsCN_numNodes (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) :
     ∀ p ∈ cutSummandsCN τ T,

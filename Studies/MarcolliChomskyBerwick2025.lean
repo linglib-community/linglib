@@ -789,8 +789,8 @@ noncomputable def formSet (a : α) (k : ℕ) :
 
 variable [DecidableEq α]
 
-/-- FormSet groups `k` components of a workspace in every way, summing `B(S) ⊔ (F - S)` over
-the `k`-component subworkspaces `S` of `F`, counted with multiplicity (Remark 1.16.4). -/
+/-- FormSet sums `B(S) ⊔ (F - S)` over the `k`-component subworkspaces `S` of `F`, with multiplicity
+(Remark 1.16.4). -/
 theorem formSet_of' (a : α) (k : ℕ) (F : Forest (UnorderedTree α)) :
     formSet (R := R) a k (of' F) =
       ((F.powersetCard k).map fun S ↦ of' (.node a S ::ₘ (F - S))).sum := by
@@ -912,8 +912,8 @@ noncomputable def featureConsistency
     (P : Consistency →+ Consistency) (S : SyntacticObject) : Consistency :=
   birkhoffPlusTree φ P S.val
 
-/-- The feature-consistency map factors as the semiring Birkhoff convolution `φ₊ = φ₋ ⋆ φ` on
-the object's Hopf-algebra image (Definition 3.1.6, Proposition 3.1.9), for a unital `φ`. -/
+/-- For unital `φ`, the feature-consistency map is the Birkhoff convolution `φ₊ = φ₋ ⋆ φ`
+(Definition 3.1.6, Proposition 3.1.9). -/
 theorem featureConsistency_eq_convMul
     (φ : ConnesKreimer ℕ (UnorderedTree Vertex) →ₗ[ℕ] Consistency)
     (P : Consistency →+ Consistency) (hφ : φ 1 = 1) (S : SyntacticObject) :
@@ -1056,9 +1056,8 @@ theorem truncLT_birkhoffMinus_of' (φ : ConnesKreimer R (UnorderedTree α) →�
   rw [← hy]
   simp [truncLT_neg]
 
-/-- The renormalized part of every character into Laurent series is nonpolar, landing in the
-subalgebra `(1 − R)(A[t⁻¹][[t]]) = A[[t]]` of Proposition 3.1.7: the first step of the proof of
-Proposition 3.5.6. -/
+/-- The renormalized part of every Laurent-series character is nonpolar, landing in `A[[t]]`
+(Proposition 3.1.7), the first step toward Proposition 3.5.6. -/
 theorem truncLT_birkhoffPlus_of' (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] LaurentSeries R)
     (F : Forest (UnorderedTree α)) : truncLT 0 (birkhoffPlus φ.toLinearMap (-𝐑) (of' F)) = 0 := by
   rcases eq_or_ne F 0 with rfl | hF

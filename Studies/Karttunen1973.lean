@@ -148,8 +148,8 @@ noncomputable def disj : Presupposing W (Set W) :=
     C ∈ (disj φ A B).log ↔ C ∈ A.log ∨ C ∈ B.log ∧ ¬ φ ((·ᶜ) <$> A).truth C := by
   simp [disj]
 
-/-- The cumulative hypothesis of Langendoen and Savin (§1) is the rule for conjunction with nothing
-filtered, and the Writer monad's own conjunction, which concatenates the presuppositions. -/
+/-- The cumulative hypothesis of Langendoen and Savin (§1) is conjunction filtering nothing, the
+Writer monad's own conjunction. -/
 theorem conj_false : conj (fun _ _ ↦ False) A B = (· ∩ ·) <$> A <*> B := by
   ext <;> simp [conj, seq_eq_bind_map]
 
@@ -186,9 +186,8 @@ section Harman
 variable {S : Type*} {neg : S → S} {cond conj disj : S → S → S} {π : S → Set (Set W)}
   {f : S → Set W → Prop}
 
-/-- In Harman's derivation of (17) from (13) (§8), if internal negation keeps presuppositions, and
-`A ⊃ B` shares them with `¬A ∨ B` and `A & B` with `¬(¬A ∨ ¬B)`, then a conditional that filters
-a presupposition of `B` when `A` filters it makes the conjunction filter it the same way. -/
+/-- Given these presupposition equivalences, the conditional rule (13) yields the conjunction rule
+(17), as in Harman's derivation (§8). -/
 theorem harman_conj (hneg : ∀ A, π (neg A) = π A)
     (hcond : ∀ A B, π (cond A B) = π (disj (neg A) B))
     (hconj : ∀ A B, π (conj A B) = π (neg (disj (neg A) (neg B))))
@@ -196,9 +195,8 @@ theorem harman_conj (hneg : ∀ A, π (neg A) = π A)
     π (conj A B) = π A ∪ {C ∈ π B | ¬ f A C} := by
   rw [hconj, hneg, ← hcond, h13, hneg]
 
-/-- The same reasoning (§8) derives the rule for disjunction (24). With `A ∨ B` sharing its
-presuppositions with `¬A ⊃ B`, the disjunction filters a presupposition of `B` when `¬A` filters
-it. -/
+/-- If `A ∨ B` shares its presuppositions with `¬A ⊃ B`, the conditional rule yields the disjunction
+rule (24) (§8). -/
 theorem harman_disj (hneg : ∀ A, π (neg A) = π A)
     (hdisj : ∀ A B, π (disj A B) = π (cond (neg A) B))
     (h13 : ∀ A B, π (cond A B) = π A ∪ {C ∈ π B | ¬ f A C}) (A B : S) :
@@ -249,9 +247,8 @@ theorem log_disj_22 :
   · have hC : C = {w | w.1} := by simpa [allBald] using hC
     exact h (by rw [Presupposing.compl_map_compl, truth_hasChildren, hC])
 
-/-- The rule for conditionals does not carry over to disjunction (§8). (11a) presupposes nothing,
-but `Either Jack has children or all of Jack's children are bald` presupposes that he has
-children, since his having none does not entail it. -/
+/-- The conditional rule does not carry over to disjunction, since (11a) presupposes nothing but its
+disjunctive counterpart presupposes that Jack has children (§8). -/
 theorem log_cond_11a_disj :
     (cond (· ⊆ ·) hasChildren allBald).log = [] ∧
       {w | w.1} ∈ (disj (· ⊆ ·) hasChildren allBald).log := by
@@ -264,9 +261,8 @@ theorem log_cond_11a_disj :
     rw [truth_compl_hasChildren] at h
     exact absurd (h (show (false, false) ∈ {w : Bool × Bool | w.1 = false} from rfl)) (by simp)
 
-/-- In `Jack has children, and Jack's children regret that baldness is hereditary`, the second
-conjunct presupposes that Jack has children and that baldness is hereditary, and the rule (17)
-filters the first, which the first conjunct entails, and keeps the second. -/
+/-- Rule (17) filters the second conjunct's presupposition that Jack has children and keeps the
+presupposition that baldness is hereditary. -/
 theorem mem_log_conj_regret :
     {w | w.2} ∈ (conj (· ⊆ ·) hasChildren regretHereditary).log ∧
       {w | w.1} ∉ (conj (· ⊆ ·) hasChildren regretHereditary).log := by
@@ -360,8 +356,8 @@ theorem worn_mem_log_geraldine_contrary :
     exact absurd (h (show Geraldine.mormonUnworn ∈ ({.mormonWorn}ᶜ ∩ mormon : Set Geraldine) by
       simp)) (by simp)
 
-/-- By Murphy's first restriction, an assumed fact that contradicts the negated first disjunct,
-`Geraldine is not a Mormon`, filters nothing, so (25) presupposes (27) relative to it. -/
+/-- By Murphy's first restriction, (25) presupposes (27) relative to the assumption `Geraldine is
+not a Mormon`. -/
 theorem worn_mem_log_geraldine_notMormon : worn ∈ (geraldine (Filters {mormonᶜ})).log := by
   rw [mem_log_geraldine]
   rintro ⟨X, hX, h, hc, -⟩
@@ -414,8 +410,8 @@ def johnDumb : Presupposing Bool (Set Bool) := Writer.mk {true} []
 /-- `He knows that if it rains, it rains`, which presupposes a tautology (fn. 13). -/
 def knowsTautology : Presupposing Bool (Set Bool) := Writer.mk Set.univ [Set.univ]
 
-/-- The original condition (24b) filters the tautology presupposed by the second disjunct of
-`Either John is dumb, or he knows that if it rains, it rains` (fn. 13). -/
+/-- The original condition (24b) filters the tautology presupposed by the second disjunct (fn. 13).
+-/
 theorem univ_not_mem_log_disj : Set.univ ∉ (disj (· ⊆ ·) johnDumb knowsTautology).log := by
   intro h
   rcases (mem_log_disj _ _ _).1 h with h | ⟨-, h⟩
@@ -471,9 +467,8 @@ noncomputable def kingBald : France → SignType := hasKing.indicator 1
 private theorem support_kingBald : Function.support kingBald = hasKing := by
   ext w; by_cases h : w ∈ hasKing <;> simp [kingBald, h]
 
-/-- At the actual world of (35), with no king, Łukasiewicz's conjunction leaves (35a) `Paris is
-the capital of France, and the king of France is bald` undefined but makes (35b), with
-`Marseilles`, false. -/
+/-- At the kingless world of (35), Łukasiewicz's conjunction makes (35a) undefined and (35b) false.
+-/
 theorem inf_kingBald_35 :
     ofProp (France.parisNoKing ∈ capitalParis) ⊓ kingBald .parisNoKing = 0 ∧
       ofProp (France.parisNoKing ∉ capitalParis) ⊓ kingBald .parisNoKing = -1 := by
@@ -494,9 +489,7 @@ theorem hasKing_mem_log_conj_35 :
   · exact absurd (h (show France.marseilleNoKing ∈ _ by
       simp [Presupposing.truth, Presupposing.ofTrivalent])) (by simp)
 
-/-- The substrate's Middle Kleene `SignType.meetMiddle` is a truth table too, and shares
-Łukasiewicz's verdict on (35b), filtering the presupposition of the second conjunct where the
-first is false. -/
+/-- Like Łukasiewicz's conjunction, Middle Kleene `SignType.meetMiddle` makes (35b) false. -/
 theorem meetMiddle_35b :
     (ofProp (France.parisNoKing ∉ capitalParis)).meetMiddle (kingBald .parisNoKing) = -1 := by
   simp [kingBald]
@@ -510,29 +503,23 @@ section Attitudes
 
 variable (φ : Set W → Set W → Prop) (att att₁ att₂ : Set W → Set W) (a c : Set W)
 
-/-- With hole attitudes, the compound (37) `Bill believes that Fred has been beating Zelda, and
-furthermore, Bill believes that Fred has stopped beating Zelda`, or (42) with *hope* as the second
-attitude, presupposes that Fred has been beating Zelda unless believing it filters it, which under
-entailment takes a veridical belief. -/
+/-- With hole attitudes, (37) and (42) presuppose that Fred has been beating Zelda unless believing
+it filters it. -/
 theorem mem_log_conj_hole :
     a ∈ (conj φ (att₁ <$> Writer.mk a []) (att₂ <$> Writer.mk c [a])).log ↔ ¬ φ (att₁ a) a := by
   simp [Presupposing.truth]
 
-/-- In (39) `Bill believes that Fred has been beating Zelda, and furthermore, that Fred has stopped
-beating her`, the filter applies inside the complement, and nothing is presupposed whether the verb
-is a hole or a plug. -/
+/-- The sentence (39) presupposes nothing, whether the attitude verb is a hole or a plug. -/
 theorem log_map_conj : (att <$> conj (· ⊆ ·) (Writer.mk a []) (Writer.mk c [a])).log = [] := by
   simp [conj, Presupposing.truth]
 
-/-- With belief as necessity over the believer's doxastic alternatives, (37) and (39) assert
-the same ([hintikka-1962]), which is the equivalence (38), so a hole *believe* is saved on (37)
-only by the equivalence. -/
+/-- With belief as necessity over doxastic alternatives ([hintikka-1962]), (37) and (39) assert the
+same, the equivalence (38). -/
 theorem val_map_box_conj (R : SetRel W W) (A B : Presupposing W (Set W)) :
     (R.core <$> conj φ A B).val = (conj φ (R.core <$> A) (R.core <$> B)).val :=
   SetRel.core_inter R _ _
 
-/-- (42) as the conjunction of two distinct attitudes (43) admits no such equivalence; as plugs,
-the attitudes leave it presupposing nothing, the paper's tentative verdict for the class. -/
+/-- As plugs, the two distinct attitudes of (42), conjoined as (43), presuppose nothing. -/
 theorem log_conj_pure (A B : Presupposing W (Set W)) :
     (conj φ (pure (att₁ A.val)) (pure (att₂ B.val))).log = [] := by
   simp [conj]

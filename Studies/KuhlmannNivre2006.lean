@@ -175,9 +175,8 @@ theorem figure3_gapDegree :
         (fig3c.gapDegreeAt 1 = 2 ∧ fig3c.gapDegree = 2) := by
   decide +kernel
 
-/-- Edge degree 0, 1, and 1: the edge (1, 5) of Figure 3a spans the component `{2, 3, 4}`,
-which its head dominates; the edge (3, 6) of Figure 3b and the edges (2, 4), (3, 5), and
-(4, 6) of Figure 3c each span one component their head does not dominate. -/
+/-- The edge (1, 5) of Figure 3a has degree 0, and the edge (3, 6) of Figure 3b and the edges (2,
+4), (3, 5) and (4, 6) of Figure 3c degree 1. -/
 theorem figure3_edgeDegree :
     (edgeDegreeAt fig3a 0 4 = 0 ∧ edgeDegree fig3a = 0) ∧
       (edgeDegreeAt fig3b 2 5 = 1 ∧ edgeDegree fig3b = 1) ∧
@@ -185,8 +184,8 @@ theorem figure3_edgeDegree :
           edgeDegree fig3c = 1) := by
   decide +kernel
 
-/-- Figures 3a and 3b are well-nested; Figure 3c is not, the disjoint subtrees at nodes 2 and 3
-interleaving through the positions 2, 4 and 3, 5. -/
+/-- Figures 3a and 3b are well-nested, and Figure 3c is not, since its subtrees at nodes 2 and 3
+interleave. -/
 theorem figure3_wellNested :
     fig3a.IsWellNested ∧ fig3b.IsWellNested ∧
       (fig3c.Interleave 1 2 ∧ ¬ Dominates fig3c 1 2 ∧ ¬ Dominates fig3c 2 1) := by

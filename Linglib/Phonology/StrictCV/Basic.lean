@@ -232,8 +232,8 @@ theorem Enclosed.cluster_eq_true : Enclosed x r → x.cluster = true := by
   | nil => exact False.elim
   | cons y r => exact fun h ↦ h.2.1
 
-/-- A stretch whose first nucleus is not enclosed governs the nucleus before it exactly when that
-first nucleus acts: government comes from the following nucleus ([scheer-2004] §23). -/
+/-- A stretch whose first nucleus is not enclosed governs the preceding nucleus exactly when that
+first nucleus acts ([scheer-2004] §23). -/
 theorem governs_cons_iff (h : ¬ Enclosed y r) :
     Governs p ((y, b) :: r) ↔ Acts p ((y, b) :: r) := by
   simp only [Governs, h, false_and, or_false]
@@ -255,10 +255,8 @@ section Havlik
 
 variable {xs ys : List Nucleus}
 
-/-- In a run of floating melodies, required by nothing, before nuclei that govern it or at the end
-of a domain whose final nucleus may be empty and does not act, a nucleus of the run is pronounced
-iff its distance to the end of the run is even: every other yer survives, counting from the
-right edge of the sequence ([scheer-2004] (304)). -/
+/-- In a run of floating melodies before a governing stretch or a final empty non-acting nucleus,
+every other yer survives, counting from the right ([scheer-2004] (304)). -/
 theorem standard_append_of_floating (hxs : ∀ x ∈ xs, x.melody = .floating ∧ x.forced = false)
     (hys : Governs p (standard p ys) ∨ ys = [] ∧ p.empty = true ∧ p.acts = false) :
     standard p (xs ++ ys) =

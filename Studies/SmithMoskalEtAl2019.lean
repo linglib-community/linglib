@@ -163,9 +163,8 @@ theorem wardaman_aab : Setoid.ker wardaman3sg = Setoid.ker Paradigm.aab := by de
 
 theorem khinalugh_aab : Setoid.ker khinalugh2sg = Setoid.ker Paradigm.aab := by decide
 
-/-- The Wardaman and Khinalugh AAB is genuine rather than syncretism, since the absolutive and
-ergative are distinct forms on one base, where the Archi second singular's are identical, the
-{A=A}B of Table 20 the paper sets aside as a two-way contrast. -/
+/-- The Wardaman and Khinalugh AAB is genuine, with distinct absolutive and ergative forms, unlike
+the Archi {A=A}B of Table 20. -/
 theorem genuine_aab :
     Wordlist.wardaman_3sg_abs.form ≠ Wordlist.wardaman_3sg_erg.form ∧
       Wordlist.khinalugh_2sg_abs.form ≠ Wordlist.khinalugh_2sg_erg.form := by

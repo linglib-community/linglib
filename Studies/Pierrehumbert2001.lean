@@ -589,8 +589,8 @@ theorem integral_memorySpread (n : ℕ) :
       simp only [integral_const, probReal_univ, one_smul, spreadGrowth, A, B, c]
       ring
 
-/-- Under a leniting bias the expected memory mean falls with every production, so a change in
-progress is further advanced in a word the more it is used (§3.2, Fig. 3). -/
+/-- Under a leniting bias the expected memory mean strictly falls with each production (§3.2, Fig.
+3). -/
 theorem lenition_advances_with_use (hbias : bias < 0) :
     StrictAnti fun n ↦ ∫ e, memoryMean γ e ∂seqLaw (rule γ tgt ν bias seed) (n + 1) := by
   refine strictAnti_nat_of_succ_lt fun n ↦ ?_

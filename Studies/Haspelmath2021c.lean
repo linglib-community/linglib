@@ -73,8 +73,7 @@ def latin : Inventory Morph where
   forms := [[lauda, s], [lauda, bi, s], [lauda, v, isti]]
   rootClass m := if m = lauda then some .action else none
 
-/-- The four suffixes of (16) are affixes, *-s* and *-isti* because they occur next to *-bi*
-and *-v*. With no affixes given, only *-bi* and *-v* pass. -/
+/-- The four suffixes of (16) are affixes, though with no affixes given only *-bi* and *-v* pass. -/
 theorem latin_affixes :
     (∀ m ∈ [bi, v, s, isti], latin.IsAffix latin.IsContentful m) ∧
       latin.AffixStep latin.IsContentful ∅ bi ∧
@@ -101,9 +100,7 @@ def turkish : Inventory Morph where
   rootClass m :=
     if m = gel then some .action else if m = su then some .object else none
 
-/-- In (18), *mu* occurs on a verb and on a noun, so it is not an affix, and *-sun* follows it
-in (18b), so *-sun* is not an affix either, although it is written as a suffix; *-iyor* is
-one. -/
+/-- In (18), *-iyor* is an affix, while *mu* and the following *-sun* (18b) are not. -/
 theorem turkish_affixes :
     turkish.IsAffix turkish.IsContentful iyor ∧
       ¬ turkish.IsAffix turkish.IsContentful mu ∧
@@ -195,8 +192,8 @@ def italian : Inventory Morph where
   forms := [[mi, da], [da, mmi]]
   rootClass m := if m = da then some .action else none
 
-/-- In (19), the object person forms always occur on verb roots, on either side, so they are
-affixes, although the Italian fragment records *mi* as a clitic. -/
+/-- In (19), the object person forms are affixes, though the Italian fragment records *mi* as a
+clitic. -/
 theorem italian_object_affixes :
     Italian.Pronouns.mi.strength = some .clitic ∧
       italian.IsAffix italian.IsContentful mi ∧

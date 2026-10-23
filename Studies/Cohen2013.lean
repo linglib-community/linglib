@@ -82,9 +82,8 @@ quantifier object. -/
 def SHIFT {E : Type*} (V : E → E → Prop) : ((E → Prop) → Prop) → E → Prop :=
   fun Q x ↦ Q (fun y ↦ V x y)
 
-/-- Negating a shifted verb differs from shifting the negated verb, and only the first
-order is attested ((25)): a type-shift applies at its trigger site, before further
-composition. -/
+/-- Negating a shifted verb differs from shifting the negated verb, and only the first order is
+attested (25). -/
 theorem not_shift_ne_shift_not :
     ∃ (V : Bool → Bool → Prop) (Q : (Bool → Prop) → Prop) (x : Bool),
       ¬ (¬ SHIFT V Q x ↔ SHIFT (fun a b ↦ ¬ V a b) Q x) :=
@@ -231,8 +230,7 @@ theorem cows_gen_over_neg :
     Cohen1999.gen Finset.univ (fun _ ↦ True) eatsSomething (fun x ↦ ¬ eatsNettles x) := by
   decide
 
-/-- With auxiliary focus negation scopes over the generic, whose refutation reading is true as
-long as one cow eats nettles, so the sentence is false ((9b)). -/
+/-- With auxiliary focus, negation scopes over the generic, so the sentence is false (9b). -/
 theorem cows_neg_over_gen_false :
     Cohen1999.gen Finset.univ (fun _ ↦ True) eatsNettles eatsNettles :=
   Cohen1999.gen_self (by decide)

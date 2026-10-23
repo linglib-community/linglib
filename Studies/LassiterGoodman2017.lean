@@ -211,9 +211,7 @@ theorem sorites_uncertainty (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
       have := hθ i (Finset.range_mono n.le_succ hi)
       rwa [ite_eq_left (Finset.mem_range.mp hi)] at this
 
-/-- Under Adams's Thesis (eq. 40) an inductive premise is the conditional probability that
-the lower member is tall given that the upper one is, which is at most the material premise,
-the probability that the threshold avoids the gap. -/
+/-- Under Adams's Thesis (eq. 40), an inductive premise is at most the material premise. -/
 theorem conditionalPremise_le {a b : D} (hab : a ≤ b) :
     ρ[Set.Iio a | Set.Iio b] ≤ ρ (Set.Ico a b)ᶜ := by
   rw [cond_apply .of_discrete, Set.Iio_inter_Iio, min_eq_right hab,

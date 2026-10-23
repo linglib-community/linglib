@@ -132,8 +132,8 @@ def subjectHid : Clause := ⟨who, hid, rutabaga, true, none, false⟩
 /-- (6b): *Laura hid what*, the object extracted. -/
 def objectHid : Clause := ⟨laura, hid, who, false, none, false⟩
 
-/-- (6): the subject in Spec,TP cannot move to Spec,CP across *that*, and leaves the clause only
-with C bundled with T; the object moves across either. -/
+/-- In (6), the subject crosses *that* only with C bundled with T, while the object moves across
+either. -/
 theorem ex6 : (Examples.ex6a.judgment = .acceptable ↔ Derived Examples.ex6a subjectHid) ∧
     (Examples.ex6a_that.judgment = .acceptable ↔ Derived Examples.ex6a_that subjectHid) ∧
     (Examples.ex6b.judgment = .acceptable ↔ Derived Examples.ex6b objectHid) ∧
@@ -200,8 +200,8 @@ def inverted : Clause := ⟨villages, found, examples, true, none, false⟩
 /-- (18b): the locative in the verb phrase. -/
 def uninverted : Clause := ⟨examples, found, villages, false, none, false⟩
 
-/-- (18): a locative extracted from the subject position shows the effect, and one extracted from
-the verb phrase does not: anti-locality is blind to what moves. -/
+/-- In (18), a locative extracted from subject position shows the effect and one from the verb
+phrase does not. -/
 theorem ex18 : (Examples.ex18a.judgment = .acceptable ↔ Derived Examples.ex18a inverted) ∧
     (Examples.ex18a_that.judgment = .acceptable ↔ Derived Examples.ex18a_that inverted) ∧
     (Examples.ex18b.judgment = .acceptable ↔ Derived Examples.ex18b uninverted) ∧

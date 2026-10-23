@@ -101,9 +101,8 @@ def defaultHorizon (probeHead : Cat) : Probe.Profile := ⟨probeHead, some probe
 /-- The four Hindi clause sizes of (168), the nominalized clause beside the finite one. -/
 def hindiSizes : List ClauseSpine := [.vP, .tP, .cP, nmlzP]
 
-/-- (168) from (219): A-movement and φ-agreement, on T⁰ with horizon T, enter only vP clauses;
-wh-licensing, on C⁰ with horizon C, every clause but CP; Ā-movement, on C⁰ with horizon Nmlz,
-every clause but NmlzP. -/
+/-- In Hindi (168), from (219), A-movement and φ-agreement enter only vP clauses, wh-licensing every
+clause but CP, and Ā-movement every clause but NmlzP. -/
 theorem hindi_table :
     row hindiSizes LanguageProbeConfig.hindi.aMove = [true, false, false, false] ∧
       row hindiSizes LanguageProbeConfig.hindi.phi = [true, false, false, false] ∧
@@ -121,9 +120,8 @@ theorem nmlzP_cP_incomparable :
         LanguageProbeConfig.hindi.ābar].map (row hindiSizes)).Nodup := by
   decide
 
-/-- The A- and φ-probes coincide, so a clause that A-extraction has entered is transparent to
-agreement, which is then obligatory, while the Ā-probe's horizon differs, and a finite clause
-shows it (231). -/
+/-- The Hindi A- and φ-probes coincide, while the Ā-probe has a different horizon, as a finite
+clause shows (231). -/
 theorem a_movement_agreement_generalization :
     LanguageProbeConfig.hindi.aMove = LanguageProbeConfig.hindi.phi ∧
       LanguageProbeConfig.hindi.ābar.TransparentTo ClauseSpine.cP.label ∧
@@ -135,9 +133,8 @@ theorem a_movement_agreement_generalization :
 /-- The English clause sizes. -/
 def englishSizes : List ClauseSpine := [.vP, .tP, .cP]
 
-/-- (241): the A-probe, with horizon C, enters nonfinite clauses but not finite ones, the ban on
-hyperraising (242); the wh-probe has no horizon; extraposition, with horizon T, leaves no clause
-larger than vP. -/
+/-- In English (241), the A-probe enters nonfinite but not finite clauses, banning hyperraising
+(242), the wh-probe enters every clause, and extraposition only vP. -/
 theorem english_table :
     row englishSizes LanguageProbeConfig.english.aMove = [true, true, false] ∧
       row englishSizes LanguageProbeConfig.english.wh = [true, true, true] ∧
@@ -183,9 +180,8 @@ def tsezTopP : ClauseSpine := ⟨[.V, .v, .T, .Top]⟩
 
 def tsezForceP : ClauseSpine := ⟨[.V, .v, .T, .Top, .Force]⟩
 
-/-- (269), (271): movement and agreement mismatch in both directions. An Itelmen TP clause is
-transparent to movement but opaque to agreement; a Tsez TopP clause is transparent to agreement
-but opaque to movement, and a ForceP clause, inheriting Top, to neither. -/
+/-- Movement and agreement mismatch in both directions, in Itelmen TP clauses and in Tsez TopP and
+ForceP clauses ((269), (271)). -/
 theorem mismatches (head : Cat) :
     ((itelmenMove head).TransparentTo ClauseSpine.tP.label ∧
         ¬ (itelmenPhi head).TransparentTo ClauseSpine.tP.label) ∧
@@ -226,8 +222,8 @@ theorem attested_nonvacuous :
       germanScr, germanRel, germanWh, germanTop], ¬ p.IsVacuous := by
   decide
 
-/-- (307): the default horizon of a probe on X⁰ is X, the strictest choice that is not vacuous;
-the Hindi probes on T⁰, English extraposition and German scrambling take it. -/
+/-- The default horizon of a probe on X⁰ is X, the strictest non-vacuous choice, taken by the Hindi
+T⁰ probes, English extraposition and German scrambling (307). -/
 theorem default_horizon_strictest :
     (∀ X ∈ [Cat.T, .C, .Force], ¬ (defaultHorizon X).IsVacuous) ∧
       LanguageProbeConfig.hindi.phi = defaultHorizon .T ∧
@@ -237,9 +233,8 @@ theorem default_horizon_strictest :
 
 /-! ### Variation and improper movement (Sections 3.6, 3.4.3, 6.2) -/
 
-/-- (300): the A-movement settings, Lubukusu without a horizon, English with C and Hindi with T,
-form an entailment chain over the clauses of an extended projection, whose labels contain T
-whenever they contain C. -/
+/-- The A-movement settings of Hindi, English and Lubukusu form an entailment chain over clauses
+whose labels contain T whenever they contain C (300). -/
 theorem a_movement_chain (L : Finset Cat) (hL : Cat.C ∈ L → Cat.T ∈ L) :
     (LanguageProbeConfig.hindi.aMove.TransparentTo L →
         LanguageProbeConfig.english.aMove.TransparentTo L) ∧

@@ -188,8 +188,8 @@ theorem _root_.PFun.image_comp {α β γ : Type*} (f : α →. β) (g : β →. 
   · rintro ⟨b, ⟨a, ha, hb⟩, hc⟩
     exact ⟨a, ha, b, hb, hc⟩
 
-/-- The states reachable after two updates in sequence are the image under the second of
-the image under the first, which is how [beaver-krahmer-2001]'s §5.3 monologue composes. -/
+/-- The states reachable after two updates in sequence are the image of the image
+([beaver-krahmer-2001]'s §5.3). -/
 theorem image_seq (φ ψ : PartialUpdate α) (s : Set α) :
     (seq φ ψ).image s = ψ.image (φ.image s) :=
   PFun.image_comp φ ψ s

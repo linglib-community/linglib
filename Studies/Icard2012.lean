@@ -248,9 +248,8 @@ inductive Derives (Γ : ∀ {τ}, Term L τ → Relation → Term L τ → Prop)
   | subst {σ τ} {s s' : Term L σ} {R} (c : Ctx L σ τ) :
       Derives Γ s R s' → Derives Γ (c.fill s) (project R c.pro) (c.fill s')
 
-/-- 𝒞 is sound (Theorem 3.1), a derivable statement holding in every model of the
-assumptions in which no term denotes `⊥`; Composition is Lemma 1.6, Substitution
-Corollary 2.12, and Absurdity needs the nonvacuity. -/
+/-- 𝒞 is sound for models of the assumptions in which no term denotes `⊥` (Theorem 3.1, Lemma 1.6,
+Corollary 2.12). -/
 theorem Derives.sound (M : Model L) {Γ : ∀ {τ}, Term L τ → Relation → Term L τ → Prop}
     (hΓ : ∀ {τ} {t t' : Term L τ} {R}, Γ t R t' → R.Holds (M.eval t) (M.eval t'))
     (hv : ∀ {τ} (t : Term L τ), M.eval t ≠ ⊥) {τ} {t t' : Term L τ} {R}

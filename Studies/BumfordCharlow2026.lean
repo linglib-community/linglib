@@ -300,8 +300,7 @@ theorem mapL_ejectR_counitMode_outputInput (m : StateM ι α) (k : α → StateM
     mapL (F := ReaderM ι) (ejectR (outputInput ι) (counitMode (outputInput ι) ba)) m k =
       m >>= k := rfl
 
-/-- With a monad in between, `F̄ J F̄ ® C <` is the bind of the state transformer (5.39); over
-sets this is the monad of dynamic semantics. -/
+/-- With a monad in between, `F̄ J F̄ ® C <` is the bind of the state transformer (5.39). -/
 theorem mapL_joinMode_mapL_ejectR_counitMode {M : Type u → Type u} [Monad M] [LawfulMonad M]
     (m : StateT ι M α) (k : α → StateT ι M β) :
     mapL (F := ReaderM ι)

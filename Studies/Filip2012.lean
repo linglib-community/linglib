@@ -93,9 +93,8 @@ theorem atelic_of_persistent {θ : α → β → Prop} (hθ : SUM θ) {OBJ : α 
     (hObj : CUM OBJ) : Atelic (VP θ OBJ) :=
   vp_cum hθ hObj
 
-/-- (27), (28iii), (29ii): an incremental verb is lexically unmarked for telicity — its
-non-degeneracy provides a quantized object with which its predicate is telic and a cumulative
-one with which it is atelic and not telic. -/
+/-- An incremental verb is lexically unmarked for telicity, being telic with some quantized object
+and atelic with some cumulative one ((27), (28iii), (29ii)). -/
 theorem incremental_underspecified {θ : α → β → Prop} (h : SINC θ) (hU : UP θ) (hs : SUM θ) :
     (∃ OBJ : α → Prop, QUA OBJ ∧ Telic (VP θ OBJ) ∧ ∃ e, VP θ OBJ e) ∧
     (∃ OBJ : α → Prop, CUM OBJ ∧ Atelic (VP θ OBJ) ∧ ¬ Telic (VP θ OBJ)) := by
@@ -171,8 +170,8 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- (1): the *in* adverbial is acceptable exactly with the telic predicates and the *for*
-adverbial exactly with the atelic ones, across (1), (25), (26), (31), (37). -/
+/-- The *in* adverbial is acceptable exactly with telic predicates, the *for* adverbial with atelic
+ones ((1), (25), (26), (31), (37)). -/
 theorem rows_test : ∀ r ∈ rows, (r.judgment = .acceptable ↔ (r.adverbial = .inNP ↔ r.Telic)) := by
   decide
 

@@ -100,9 +100,8 @@ theorem expectedPayoff_eq_sum_sum (P : Measure Ω) [IsFiniteMeasure P] (μ : Mea
   rw [Finset.sum_comm]
   exact Finset.sum_congr rfl fun a _ ↦ Finset.sum_congr rfl fun ω _ ↦ by ring
 
-/-- **Pearce's lemma**, the paper's Lemma 2 (p. 361), which it calls folklore in game theory and
-cites as [pearce-1984]'s Lemma 3. In a finite decision problem against nature, a mixed act is a
-best response to no belief iff it is strictly dominated by a mixed act. -/
+/-- In a finite decision problem against nature, a mixed act is a best response to no belief iff it
+is strictly dominated (Lemma 2, p. 361; [pearce-1984]'s Lemma 3). -/
 theorem neverBest_iff_strictlyDominated (σ : Measure A) [IsProbabilityMeasure σ] :
     (∀ P : Measure Ω, IsProbabilityMeasure P →
         ∃ ν : Measure A, IsProbabilityMeasure ν ∧ expectedPayoff U P σ < expectedPayoff U P ν) ↔
@@ -451,8 +450,8 @@ theorem expectedUtility_map_gt {c : ℝ} (f : Act ι → Act ι)
     have : (0 : ℝ) < J.preferredCard := by exact_mod_cast J.preferredCard_pos
     exact div_pos one_pos this
 
-/-- **Main Lemma** (Lemma 1). A measure represents the judgments iff, for some cost, the
-uniform preferred act maximizes its expected utility in the canonical decision problem. -/
+/-- A measure represents the judgments iff, for some cost, the uniform preferred act maximizes
+expected utility in the canonical decision problem (Lemma 1). -/
 theorem represents_iff_maximizes (hX : J.strict.Nonempty) :
     J.Represents P ↔ ∃ c, 0 < c ∧ MaximizesPayoff (J.utility s c) P J.uniformPreferred := by
   constructor
@@ -666,12 +665,8 @@ theorem ofRel_strict_nonempty (r : Set Ω → Set Ω → Prop) [DecidableRel r] 
 end Judgments
 
 open scoped Classical in
-/-- With every pair judged by a qualitative probability, Scott's cancellation holds exactly when
-`Q★` avoids strict dominance for some cost, by Theorem 1 joined with Scott's theorem. This makes
-precise the paper's remark (p. 350) that the argument justifies the axioms of the representation
-theorems "insofar as they are shown to be extensionally equivalent to representability". It
-reaches Scott's cancellation, which is equivalent to representability, and not de Finetti's
-axioms, which are hypotheses here and fall short of it from five states on. -/
+/-- For a qualitative probability, Scott's cancellation holds exactly when `Q★` avoids strict
+dominance for some cost (Theorem 1, p. 350). -/
 theorem cancellation_iff_exists_not_dominated [MeasurableSpace Ω] [DiscreteMeasurableSpace Ω]
     (r : Set Ω → Set Ω → Prop) [IsQualitativeProbability r]
     (s : Stakes {p : Set Ω × Set Ω // r p.1 p.2}) :
@@ -717,8 +712,8 @@ theorem explorer_mixture_payoff (c : ℝ) (ω : Fin 3) :
       Judgments.Preferred, explorer, unitStakes, Stakes.const, Fin.sum_univ_three,
       Fin.forall_fin_succ, -Finset.sum_boole] <;> norm_num
 
-/-- In §7 the explorer's preferred act `A1` pays `1 − c` on every island and is strictly
-dominated by the uniform mixture of `A2`, `A3`, `A4`, which pays `1`. -/
+/-- The explorer's preferred act `A1` is strictly dominated by the uniform mixture of `A2`, `A3`,
+`A4` (§7). -/
 theorem explorer_dominated {c : ℝ} (hc : 0 < c) :
     IsStrictlyPayoffDominated (explorer.utility (unitStakes (Fin 3)) c)
       explorer.uniformPreferred := by
@@ -757,10 +752,8 @@ theorem ellsberg_not_representable : ¬ellsberg.Representable := fun ⟨_, _, h�
 theorem ellsberg_balanced : ellsberg.Balanced := fun ω ↦ by
   fin_cases ω <;> simp [ellsberg]
 
-/-- In Raiffa's argument the subject pays to play option 1, gamble 1 on heads and gamble 4 on
-tails, over option 2, gambles 2 and 3, although "for both options, the objective probability of
-receiving the payoff of 100 is one-half" (p. 355). With the coin's weights the preferred act pays
-`50 − c` whatever the ball and option 2 pays `50`. -/
+/-- In Raiffa's argument the preferred act is strictly dominated, paying `50 − c` against option 2's
+`50` (p. 355). -/
 theorem ellsberg_dominated {c : ℝ} (hc : 0 < c) :
     IsStrictlyPayoffDominated (ellsberg.utility coinStakes c) ellsberg.uniformPreferred :=
   ellsberg.dominated_of_balanced ellsberg_balanced rfl _ _ hc

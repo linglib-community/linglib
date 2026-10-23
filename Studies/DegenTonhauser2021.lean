@@ -87,9 +87,8 @@ theorem fact_raises_prior (d : Design) (c : Content) :
     priorMean d .lowerProbability c < priorMean d .higherProbability c := by
   revert d c; decide +kernel
 
-/-- For every predicate the complement's mean certainty rating was higher under the
-higher-probability fact, within and between participants, the pattern of Figures 3 and 6 that
-a prior-sensitive account predicts. -/
+/-- For every predicate, mean certainty is higher under the higher-probability fact (Figures 3 and
+6). -/
 theorem prior_modulates_projection (d : Design) (p : Predicate) :
     certaintyMean d .lowerProbability p < certaintyMean d .higherProbability p := by
   revert d p; decide +kernel

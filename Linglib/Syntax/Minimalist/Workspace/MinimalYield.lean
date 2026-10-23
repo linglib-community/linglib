@@ -136,9 +136,8 @@ theorem sum_map_merge_term_add (hs : s ∈ forestCutChoicesG cuts F)
   simp only [Multiset.map_add, Multiset.map_singleton, Multiset.sum_add, Multiset.sum_singleton]
   omega
 
-/-- With each extraction costing one accessible term, as under `Δ^c` (Lemma 1.6.3 (1.6.8)), a
-    term of Merge satisfies Minimal Yield exactly when it takes at least one of its objects whole.
-    Its size `σ` always grows by one, and it diverges otherwise. -/
+/-- When each extraction costs one accessible term, as under `Δ^c`, a Merge term satisfies Minimal
+Yield iff some merged object is an unextracted workspace component (Lemma 1.6.3 (1.6.8)). -/
 theorem MinimalYield.merge_term_iff_of_extraction_one (hs : s ∈ forestCutChoicesG cuts F)
     (hc : s.HasExtractionCost acc 1) {S S' X : UnorderedTree α} (hK : s.crown = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
@@ -147,8 +146,8 @@ theorem MinimalYield.merge_term_iff_of_extraction_one (hs : s ∈ forestCutChoic
   have hb := card_singleton_add_trunk_add_numWhole hs X
   refine ⟨fun h ↦ h.numWhole_ne_zero hs, fun h ↦ ⟨⟨?_, ?_⟩, ?_⟩⟩ <;> omega
 
-/-- With each extraction costing two accessible terms, as under `Δ^d` (Lemma 1.6.3 (1.6.7)), a
-    term of Merge satisfies Minimal Yield exactly when it takes both of its objects whole. -/
+/-- When each extraction costs two accessible terms, as under `Δ^d`, a Merge term satisfies Minimal
+Yield iff both merged objects are unextracted workspace components (Lemma 1.6.3 (1.6.7)). -/
 theorem MinimalYield.merge_term_iff_of_extraction_two (hs : s ∈ forestCutChoicesG cuts F)
     (hc : s.HasExtractionCost acc 2) {S S' X : UnorderedTree α} (hK : s.crown = {S, S'})
     (hX : acc X = acc S + acc S' + 2) :
@@ -181,10 +180,8 @@ theorem sum_map_unit_term_add (hs : s ∈ forestCutChoicesG cuts F)
   simp only [Multiset.map_add, Multiset.map_singleton, Multiset.sum_add, Multiset.sum_singleton]
   omega
 
-/-- A term whose crown contains no component of the workspace raises `b₀` by one, so it violates
-    Minimal Yield under any counting. These are the Sideward cases 3(a) and 3(b)
-    ([marcolli-chomsky-berwick-2025] Proposition 1.6.8) and the unit stage on its own
-    (Remark 1.6.7). -/
+/-- A term whose crown contains no workspace component violates Minimal Yield under any counting
+([marcolli-chomsky-berwick-2025] Proposition 1.6.8, Remark 1.6.7). -/
 theorem MinimalYieldWeak.not_of_forall_notMem (acc : UnorderedTree α → ℕ)
     (hs : s ∈ forestCutChoicesG cuts F) (hK : ∀ T ∈ s.crown, T ∉ F) (X : UnorderedTree α) :
     ¬ MinimalYieldWeak acc F ({X} + s.trunk) := fun h ↦
@@ -368,9 +365,8 @@ theorem accessibleSize_merge_term (a : α) (hs : s ∈ forestCutChoicesG (cutSum
   simp only [Forest.accessibleSize] at *
   omega
 
-/-- Under trace counting a term of Merge satisfies Minimal Yield exactly when it takes at least
-    one of its objects whole. External Merge and the Sideward case 2(b) satisfy it, and the
-    Sideward cases 3(a) and 3(b) do not ([marcolli-chomsky-berwick-2025] Proposition 1.6.8). -/
+/-- Under trace counting, a Merge term satisfies Minimal Yield iff some merged object is an
+unextracted workspace component ([marcolli-chomsky-berwick-2025] Proposition 1.6.8). -/
 theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
     (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a)
@@ -381,8 +377,8 @@ theorem MinimalYield.merge_term_accessibleCount_iff (a : α)
     (hasExtractionCost_accessibleCount_cutSummandsCN hs hF) hK
     (accessibleCount_merge_of_crown_eq a hs hF hK)
 
-/-- Under trace counting a term of the unit stage loses one accessible term unless it takes `B`
-    whole, and keeps the size `σ` ([marcolli-chomsky-berwick-2025] Remark 1.6.7, for `Δ^c`). -/
+/-- Under trace counting, a unit-stage term loses one accessible term unless `B` is an unextracted
+workspace component ([marcolli-chomsky-berwick-2025] Remark 1.6.7, for `Δ^c`). -/
 theorem accessibleCount_unit_term (hs : s ∈ forestCutChoicesG (cutSummandsCN τ) F)
     (hF : ∀ x ∈ s, x.2.1 ≠ 0 → ∃ a, x.1.value = Sum.inl a) {B : UnorderedTree (α ⊕ β)}
     (hK : s.crown = {B}) :

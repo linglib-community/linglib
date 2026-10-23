@@ -108,8 +108,8 @@ def Composes (l : List NumFeature) : Prop := l.IsChain fun f g ↦ f.sig.2 = g.s
 
 instance : DecidablePred Composes := fun _ ↦ inferInstanceAs (Decidable (List.IsChain _ _))
 
-/-- `[#, ATOM, UNIQUE]` and `[#, ATOM]` compose, and `[#, UNIQUE]` composes in neither order, so
-the atomic plural is a possible head and `[#, UNIQUE]` is not (fn. 21). -/
+/-- `[#, ATOM, UNIQUE]` and `[#, ATOM]` compose, but `[#, UNIQUE]` composes in neither order (fn.
+21). -/
 theorem composes_heads :
     Composes [.num, .atom, .unique] ∧ Composes [.num, .atom] ∧
       ¬ Composes [.num, .unique] ∧ ¬ Composes [.unique, .num] := by
@@ -125,8 +125,8 @@ inductive Exponent where
 def exponents : List (VocabularyItem NumFeature Exponent) :=
   [.ofFeatures {.num, .atom, .unique} .null, .ofFeatures {.num} .s]
 
-/-- By the Subset Principle (67) the singular form spells out only the full head (68), and the
-atomic plural is spelled out by `/s/`, as the plain plural is (71), (73a). -/
+/-- By the Subset Principle (67), the singular spells out only the full head (68), and `/s/` spells
+out both the atomic and the plain plural ((71), (73a)). -/
 theorem spellOut :
     subsetPrinciple exponents ({.num, .atom, .unique} : Finset NumFeature) = some .null ∧
       subsetPrinciple exponents ({.num, .atom} : Finset NumFeature) = some .s ∧
@@ -178,8 +178,8 @@ theorem injOn_of_mem_intro (hwy : w ≠ y) (hH : Set.InjOn (val w) H) (h : H ~[i
   rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩ hab
   rw [hH ha hb ((hval a ha).symm.trans (hab.trans (hval b hb)))]
 
-/-- A referent required not to be a function of `w` cannot be introduced where `w` tells the
-assignments apart, so an exhaustified atomic plural fails there ((113)–(121)). -/
+/-- A referent required not to depend on `w` cannot be introduced where `w` distinguishes the
+assignments, so an exhaustified atomic plural fails there ((113)–(121)). -/
 theorem notMem_dom_intro_test_of_injOn (hwy : w ≠ y) (hH : Set.InjOn (val w) H)
     (hC : C ⊆ (Team.dep (val w) (val y))ᶜ) : H ∉ (intro y ○ test C ○ D).dom := by
   rintro ⟨_, _, ⟨J, hJ, rfl, hJC⟩, -⟩
@@ -219,8 +219,8 @@ theorem exists_mem_vp_atomic_not_unique {a b : E} (ha : Atom a) (hb : Atom b) (h
     simpa [hf, val_extend_self] using this
 
 variable (u u') in
-/-- Exh above a VP whose object is an atomic plural negates the singular alternative (79), which
-some state of two assignments separates from it, and leaves non-uniqueness (87). -/
+/-- Exh above a VP with an atomic-plural object negates the singular alternative (79), leaving
+non-uniqueness (87). -/
 theorem exh_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b) (i : S) :
     Exhaustification.exh
         {acrossModels (S := S) fun M : Model E ↦ vp u u' M ○ test (atomic u') ○ test (unique u')}
@@ -230,10 +230,8 @@ theorem exh_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b) (
   exact exh_acrossModels_comp_test (comp_test_lt _ fun h ↦ hU (mem_comp_test.1 (h hp)).2)
 
 variable (u u') in
-/-- The non-uniqueness implicature of an atomic plural is mandatory (§6.2). At a single assignment
-the singular alternative is equivalent to the atomic plural, so a relevance property obeying
-[magri-2009]'s postulates keeps it relevant, and the exhaustified atomic plural is false at every
-single assignment. -/
+/-- The non-uniqueness implicature of an atomic plural is mandatory under any relevance property
+obeying [magri-2009]'s postulates (§6.2). -/
 theorem disjoint_exhR_atomicPlural {a b : E} (ha : Atom a) (hb : Atom b) (hab : a ≠ b) (i : S)
     {Rel : Set (Model E × (Set S × Set S)) → Prop}
     (hR : Magri2009.IsRelevance {w | w.2.1.Subsingleton}
@@ -270,8 +268,8 @@ theorem notMem_dom_sentence_distS_atomicPlural (huu' : u ≠ u') :
   obtain ⟨y, -, -, -, hU⟩ := (singleton_mem_dom_vp_iff huu').1 (h a ha)
   exact hU (by simp [unique])
 
-/-- Under a weakly distributive licensor an atomic plural is co-distributive (90), every atomic
-part of the subject having carried a single box, and not all of them the same one. -/
+/-- Under a weakly distributive licensor an atomic plural is co-distributive (90), each atomic part
+of the subject carrying a single box, not all the same. -/
 theorem atomicPlural_distW_iff (huu' : u ≠ u') :
     {i} ∈ (sentence u u' P (distW u) M (atomic u' ∩ (unique u')ᶜ)).dom ↔
       ∃ x, P x ∧ ∃ b : E → E, (atomsBelow x).Nonempty ∧
@@ -360,18 +358,16 @@ def wide (M : IModel E) (P : E → Prop) (d : Update (Set S) → Update (Set S))
   intro x ○ test (lex P x) ○ d (intro y ○ test (lex₂ M.inst w y ∩ C) ○
     want w w' x M.bul (test (𝒫 {j | M.meet (val w' j) (val x j) (val y j)})))
 
-/-- Without a weakly distributive licensor an atomic plural takes no wide scope over *want*
-((117)–(121)), so the wide-scope reading of *Miles wants to meet policemen* is contradictory. -/
+/-- Without a weakly distributive licensor an atomic plural cannot scope over *want*, so wide scope
+in *Miles wants to meet policemen* is contradictory ((117)–(121)). -/
 theorem notMem_dom_wide_atomicPlural (hwy : w ≠ y) (M : IModel E) (P : E → Prop) :
     {i} ∉ (wide w w' x y M P id (atomic y ∩ (Team.dep (val w) (val y))ᶜ)).dom := by
   rw [wide, singleton_mem_dom_intro_comp_iff]
   rintro ⟨s, -, h⟩
   exact notMem_dom_intro_test_singleton hwy (fun _ hJ ↦ hJ.2.2) h
 
-/-- On the wide-scope dependent plural reading (133), (134) of *All the boys want to meet
-policemen*, every atomic part `a` of the subject has an atomic policeman `b a` whom it meets at
-every world compatible with its wishes, and the policemen are not all the same. That each is
-atomic is Minor's new prediction (§8). -/
+/-- On the wide dependent plural reading of *All the boys want to meet policemen* ((133), (134)),
+each boy has an atomic policeman he wants to meet, not all the same (§8). -/
 theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x ≠ w') (hww' : w ≠ w')
     (hyw' : y ≠ w') (M : IModel E) (P : E → Prop) :
     {i} ∈ (wide w w' x y M P (distW x) (atomic y ∩ (Team.dep (val w) (val y))ᶜ)).dom ↔
@@ -427,11 +423,8 @@ def model : IModel (Finset Thing) where
   bul _ a := a.image (· - 2)
   meet v a p := v = a.image (· - 2) ∧ p = a.image (· + 2)
 
-/-- Partee's generalization (36) says that a bare plural scopes over *want* exactly when a weakly
-distributive licensor scopes over it. The wide-scope readings of (93) are available exactly when
-their logical forms are satisfiable. The singular's (109) and the dependent plural's (133) are, in
-a model where each boy wants to meet a policeman of his own, and the plain plural's (117) is in
-no model. -/
+/-- A wide-scope reading of (93) is available exactly when satisfiable, as for the singular (109)
+and dependent plural (133) but not the plain plural (117), matching Partee's generalization (36). -/
 theorem partee :
     (Examples.ex_93a.readings.lookup "∃ > want" = some .acceptable ↔
       ∃ (M : IModel (Finset Thing)) (i : Dref → Finset Thing), {i} ∈ (wide Dref.world Dref.bul

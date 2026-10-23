@@ -95,9 +95,8 @@ def complementSchedule (d : Derivation) : List (ℕ × ℕ) :=
       else none
     | _ => none
 
-/-- (13): spelling whole phases out when they are complete, the derivation through the edge of vP₁
-preserves its spell-out order, and the one that skips it, which spells *gave* out before *to whom*
-in vP₁ and after it in CP₁, does not. -/
+/-- In (13), with phases spelled out when complete, only the derivation through the edge of vP₁
+linearizes. -/
 theorem ex13 :
     (derivation .edge).Linearizes ((derivation .edge).phaseSchedule .raising IsPhaseHead) ∧
     ¬ (derivation .skip).Linearizes ((derivation .skip).phaseSchedule .raising IsPhaseHead) ∧

@@ -233,9 +233,8 @@ private theorem leafFeatures_filterMap_keep (C : Finset F)
       leafFeatures_node_inr]
     exact sum_leafFeatures_filterMap C cs ih
 
-/-- The bundle of a fission output is the input bundle restricted to the
-kept features: the vertex law `B_w ∩ (Bᵢ ∪ A)` of
-[senturia-marcolli-2025] Definition 5.6, at the root. -/
+/-- The bundle of a fission output is the input bundle restricted to the kept features, at the root
+([senturia-marcolli-2025] Definition 5.6). -/
 theorem bundle_restrict {C : Finset F} {t : RoseTree (F ⊕ Unit)}
     (ht : IsMorphological t) {S' : UnorderedTree (F ⊕ Unit)}
     (h : restrict C (UnorderedTree.mk t) = some S') :
@@ -451,10 +450,8 @@ theorem msFeatures_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (F
   simp
 
 omit [DecidableEq F] in
-/-- Fusion preserves the total feature content at the site: the fused
-insertion, under whichever of the two data projects (the head function's
-choice in [senturia-marcolli-2025] Definition 5.2), carries exactly what
-the cherry carried. -/
+/-- Fusion preserves the total feature content at the site ([senturia-marcolli-2025] Definition
+5.2). -/
 theorem msFeatures_fuse (lexHead lex₁ lex₂ : Λ)
     (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     msFeatures (insertion lexHead (some (fuse S₁ S₂)))
@@ -471,10 +468,8 @@ theorem toSyntactic_fusionSite (lex₁ lex₂ : Λ) (S₁ S₂ : UnorderedTree (
     Multiset.map_cons, Multiset.map_singleton, insertion, UnorderedTree.map_leaf, Sum.map_inl,
     Sum.map_inr, id]
 
-/-- The necessary condition for fusion: the fused site is matched exactly
-when the union of the two bundles matches the projecting datum
-([senturia-marcolli-2025]'s condition `(B_{v₁} ∪ B_{v₂}, α_v) ∈ Γ_SM`
-following Definition 5.2). -/
+/-- The fused site is matched iff the union of the two bundles matches the projecting datum
+([senturia-marcolli-2025], after Definition 5.2). -/
 theorem matched_fused_iff (Γ : FeatureCorrespondence F Λ) (lexHead : Λ)
     (S₁ S₂ : UnorderedTree (F ⊕ Unit)) :
     Matched Γ (insertion lexHead (some (fuse S₁ S₂)))
@@ -523,10 +518,7 @@ theorem msFeatures_impoverish_le (lex : Λ) (kept : Finset F)
   exact Multiset.filter_le _ _
 
 omit [DecidableEq F] in
-/-- Obliteration removes the entire insertion while the syntactic leaf
-and its datum stay in place — [senturia-marcolli-2025]'s reading of
-Proposition 5.13, on which no morphology is inserted and the syntactic
-tree is untouched. -/
+/-- Obliteration leaves the syntactic tree unchanged ([senturia-marcolli-2025] Proposition 5.13). -/
 theorem toSyntactic_obliterate (lex : Λ) (S : UnorderedTree (F ⊕ Unit)) :
     toSyntactic (insertion lex none : Morphosyntactic F Λ)
       = toSyntactic (insertion lex (some S)) := by

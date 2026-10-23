@@ -215,8 +215,7 @@ def ext (u : Utt) : Set State := {s | Assertable θ u s.dist}
 theorem ext_likelyC : ext .likelyC = Set.univ := by
   ext s; cases s <;> simp [ext, Assertable, real_C, State.cell] <;> norm_num
 
-/-- The conditional is assertable in `s1` and `s2`, where `P(C | A)` is `9/10` and `12/13`, and
-not in `s3`, where it is `3/5` (Table 2(b)). -/
+/-- The conditional is assertable in `s1` and `s2` but not in `s3` (Table 2(b)). -/
 theorem ext_conditional : ext .conditional = ↑({State.s1, .s2} : Finset State) := by
   ext s; cases s <;> simp [ext, Assertable, real_cond, real_A, real_A_inter_C, State.cell, θ] <;>
     norm_num

@@ -89,9 +89,7 @@ end Bridge
 /-! ### The many-valued dilemma -/
 
 /-- No truth-functional conjunction is both idempotent at the borderline value and false on
-borderline contradictions, since with `-0 = 0` both demands constrain the same pair of inputs.
-Kamp states the dilemma (pp. 130–131) for every linearly ordered n-valued logic, of which
-`SignType` is the smallest. -/
+borderline contradictions (pp. 130–131). -/
 theorem kleene_dilemma :
     ¬∃ (meet : SignType → SignType → SignType), meet 0 0 = 0 ∧ meet 0 (-0) = -1 := by
   rintro ⟨meet, hidem, hcontra⟩
@@ -196,9 +194,8 @@ stated in § 6. -/
 def OneDimensional : Prop :=
   ∀ u₁ u₂ : E, (∀ c ∈ S, ext c u₁ → ext c u₂) ∨ (∀ c ∈ S, ext c u₂ → ext c u₁)
 
-/-- For a one-dimensional adjective and strictly positive weights the two comparatives agree,
-Kamp's observation in § 5 that "for this special case the two definitions are equivalent", strict
-positivity rendering his proviso that the measure be correctly specified. -/
+/-- For a one-dimensional adjective and strictly positive weights, the two comparatives agree (§ 5).
+-/
 theorem kampPreorder_le_iff_kampMeasureLe (hp : ∀ c ∈ S, 0 < p c)
     (h18 : OneDimensional ext S) (u₁ u₂ : E) :
     (kampPreorder ext (S : Set C)).le u₁ u₂ ↔ kampMeasureLe ext S p u₁ u₂ := by

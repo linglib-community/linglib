@@ -94,8 +94,8 @@ theorem converges_meN (o : ObjectRealization) : Converges meN o := by decide +re
 theorem converges_passive_iff (o : ObjectRealization) : Converges passive o ↔ o = .dp := by
   decide +revert
 
-/-- *ber-* projects its agent exactly when the object incorporates: an incorporated noun leaves
-the EPP to a subject DP, and a DP object raises for Case (38). -/
+/-- *ber-* projects its agent iff the object incorporates, since a DP object raises for Case (38).
+-/
 theorem converges_ber_iff {v : Head} (hv : v ∈ berHeads) (o : ObjectRealization) :
     Converges v o ↔ (v.HasD ↔ o = .incorporated) := by
   simp only [berHeads, Finset.mem_insert, Finset.mem_singleton] at hv
@@ -473,10 +473,8 @@ theorem model :
 
 /-! ### Relational nouns (§4) -/
 
-/-- A relational noun such as *topi* 'hat' contributes a possession relation `π` of possessor and
-possessum and the sort `N` of the possessum. *ber-* suppresses the possessum with disjoint
-reference, as in an incorporation middle over the relation of possessum to possessor, so that
-*Tono bertopi* says that Tono has some hat on (65). -/
+/-- *ber-* over a relational noun such as *topi* 'hat' suppresses the possessum, so *Tono bertopi*
+says that Tono has some hat on (65). -/
 theorem denote_relationalNoun {E : Type*} (π : E → E → Prop) (N : E → Prop) (s : E) :
     incorporation.denote (flip π) N s ↔ ∃ z, z ≠ s ∧ π s z ∧ N z :=
   denote_incorporation _ _ _
@@ -496,9 +494,8 @@ theorem berParams_eq : berParams = (⊥, (true : Flat Bool)) := by decide
 theorem compat_berParams_iff (v : Head) : Compat berParams v.params ↔ v.IsThematic := by
   simp [berParams_eq, Head.params, Head.IsThematic, compat_prod_iff, bot_compat]
 
-/-- The non-active head of *ber-* has the cell of the passive, but its agent is not implicit, so
-that unlike the passive it departs from the grid: the participant that a dispositional middle
-entails is not of the sort that the passive's is (§2.1). -/
+/-- The non-active head of *ber-* has the passive's parameters but, unlike the passive, no implicit
+agent (§2.1). -/
 theorem berNonActive_params :
     berNonActive.params = passive.params ∧ ¬ berNonActive.ExternalImplicit ∧
       ¬ berNonActive.DCoherent ∧ passive.ExternalImplicit ∧ passive.DCoherent := by

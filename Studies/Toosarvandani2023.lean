@@ -93,8 +93,8 @@ theorem specification_eq_containing : ∀ {fs : List (Finset Ind)} {X : Finset I
     rw [specification_cons, specification_eq_containing h'.2,
       Ioc_sups_containing (h'.1 Y (by simp)) (subset_univ _)]
 
-/-- A group of an elder and a nonelder human lies in the elder and the human specifications, and
-lexical complementarity removes it from the human pronoun, marked reference (62). -/
+/-- Lexical complementarity removes a group of an elder and a nonelder human from the human pronoun,
+giving marked reference (62). -/
 theorem mixed_group_marked {E H : Finset Ind} {e h : Ind} (he : e ∈ E) (hh : h ∈ H) :
     {e, h} ∈ containing E univ ∧ {e, h} ∈ containing H univ ∧
       {e, h} ∉ containing H univ \ containing E univ :=
@@ -102,9 +102,7 @@ theorem mixed_group_marked {E H : Finset Ind} {e h : Ind} (he : e ∈ E) (hh : h
     mem_containing_iff.2 ⟨subset_univ _, h, by simp [hh]⟩,
     fun hm ↦ (mem_containing_sdiff_containing_iff.1 hm).2.2 ⟨e, by simp [he]⟩⟩
 
-/-- Against the local persons, whose most specific features have the speaker and the addressee as
-atoms, the elder pronoun refers to the groups with an elder and no conversational participant
-(62a). -/
+/-- The elder pronoun refers to the groups with an elder and no conversational participant (62a). -/
 theorem mem_elder_lexComp_iff {E : Finset Ind} {i u : Ind} {s : Finset Ind} :
     s ∈ containing E univ \ containing {i, u} univ ↔
       (s ∩ E).Nonempty ∧ i ∉ s ∧ u ∉ s := by

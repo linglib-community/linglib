@@ -117,9 +117,8 @@ def suppletion : Clitic → Q → Option Form
 def QP.suppletion (qp : QP) : Option Form :=
   qp.det.clitic.bind (Bresnan1973.suppletion · qp.q)
 
-/-- (232): *more intelligent dogs* has two sources, the partitive *-er many of* over the
-plural, a count Q, and the degree *-er much* on the adjective, a mass Q, which the suppletion
-of (7) does not tell apart. -/
+/-- *More intelligent dogs* (232) has a count and a mass source, which the suppletion of (7) does
+not distinguish. -/
 theorem more_ambiguous :
     ∃ q q' : Q, q.SelectsCount ∧ ¬ q.SelectsMass ∧ q'.SelectsMass ∧ ¬ q'.SelectsCount ∧
       suppletion .er q = suppletion .er q' :=
@@ -262,8 +261,8 @@ theorem not_formation_of_privative {h : Head} {c : Supply} (hh : h.cat = .qp)
     (hp : h.Privative) (hc : c.site = .measure) : ¬ Formation h c :=
   λ ⟨_, _, hm⟩ => hm hh hc hp
 
-/-- (296b): with the AP as head the identity holds of the AP, and the definiteness of its Q
-is not at issue, *shorter than five feet*. -/
+/-- With the AP as head, comparative formation holds of the AP whatever the definiteness of its Q,
+as in *shorter than five feet* (296b). -/
 theorem formation_ap_measure (site : Position) (polarity : Option Polarity) :
     Formation ⟨.ap, site, polarity⟩ ⟨.ap, .measure⟩ :=
   ⟨.inl rfl, λ h => Cat.noConfusion h, λ h => Cat.noConfusion h⟩
@@ -388,10 +387,8 @@ instance : DecidablePred Anomalous := λ _ => by unfold Anomalous; infer_instanc
 theorem det_rows : ∀ e ∈ rows "det", ¬ Starred e ↔ ∃ qp ∈ qpOf e, qp.WellFormed := by
   decide +kernel
 
-/-- (1)–(19), (84)–(85), (275)–(279): the surface of a QP before what it modifies is
-acceptable exactly when Much Deletion and simple comparative formation license it; problem
-(C), the analytic and synthetic comparatives across adjectives, falls under the AP-internal
-condition. -/
+/-- A prenominal QP surface is acceptable iff Much Deletion and simple comparative formation license
+it ((1)–(19), (84)–(85), (275)–(279)). -/
 theorem surface_rows :
     ∀ e ∈ rows "surface", ¬ Starred e ↔
       ∃ qp ∈ qpOf e, ∃ p ∈ positionOfRow e, ∃ s ∈ surfaceOf e, s.Licit qp p := by
@@ -404,19 +401,16 @@ theorem shift_rows :
       ¬ Starred e ↔ ∃ qp ∈ qpOf e, ∃ o ∈ orderOf e, o.Licit qp := by
   decide +kernel
 
-/-- (242)–(300): a comparative is acceptable exactly when Comparative Formation finds a
-nondistinct constituent in the clause and any contraction keeps clear of the removal site:
-problems (B) and (D), the object and predicate heads of (252)–(255), the positioning of
-*than six feet* and *than Bill* (280)–(283), and the left branch of (300). -/
+/-- A comparative is acceptable iff Comparative Formation finds a nondistinct constituent and
+contraction avoids the removal site ((242)–(300), (252)–(255), (280)–(283)). -/
 theorem formation_rows :
     ∀ e ∈ rows "formation", ¬ Starred e ↔
       ∃ h ∈ headOf e, ∃ c ∈ supplyOf e,
         Formation h c ∧ (Contracted e → ContractionLicit h) := by
   decide +kernel
 
-/-- Problem (A): (242d) implies that my mother is a man because its head is the predicative
-NP `x much tall a man` (243), which the clause predicates of the standard; with the AP head
-of (251), or a standard of the noun's gender, nothing is amiss. -/
+/-- (242d) implies that my mother is a man because its head is the predicative NP of (243), unlike
+the AP head of (251). -/
 theorem taller_man_rows :
     ∀ e ∈ rows "formation", Anomalous e ↔
       ∃ h ∈ headOf e, h.cat = .np ∧

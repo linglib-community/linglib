@@ -141,8 +141,8 @@ theorem afMarker_comm :
 
 /-! ### Licensing (§4.4.2) -/
 
-/-- The person restriction is the Person Licensing Condition on the clause's two core
-arguments (76), since a single person probe licenses at most one [participant] feature. -/
+/-- The person restriction is the Person Licensing Condition on the clause's two core arguments
+(76). -/
 theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc s o := by
   unfold PersonRestriction Plc piProbe Probe.Target.toProbe
   rw [Probe.relativized_allLicensed_iff]
@@ -155,9 +155,8 @@ theorem afMarker_eq_none_iff (s o : Bundle) : afMarker s o = none ↔ ¬ PersonR
   rw [afMarker, personRestriction_iff_plc]
   split_ifs with h <;> simp [h]
 
-/-- The clitic is featurally coarse (68), (69). With one participant argument, the marker is
-that argument's whole exponent, its number included, whether it is the subject or the object
-and whatever the other argument's number. -/
+/-- With one participant argument, the marker is that argument's whole exponent, number included,
+whether subject or object (68), (69). -/
 theorem participant_marker (s o : Bundle) (h : ¬ (s.IsSAP ∧ o.IsSAP)) :
     (s.IsSAP → afMarker s o = some (exponent s)) ∧
       (o.IsSAP → afMarker s o = some (exponent o)) := by
@@ -176,8 +175,8 @@ theorem afTarget_eq_none_iff (s o : Bundle) :
   rw [afTarget, Probe.cascade_eq_none_iff, Probe.search_eq_none_iff, Probe.search_eq_none_iff]
   simp
 
-/-- Failed Agree is tolerated (112), (113). With no participant and no plural argument, both
-probes end unvalued, the derivation converges, and the slot carries the null exponent. -/
+/-- With no participant and no plural argument, both probes end unvalued, the derivation converges,
+and the marker is null (112), (113). -/
 theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP)
     (hsp : ¬ s.IsPlural) (hop : ¬ o.IsPlural) :
     afTarget s o = none ∧ afMarker s o = some [] := by
@@ -185,8 +184,8 @@ theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   simp [hs, ho, hsp, hop]
 
-/-- There is no gratuitous nonagreement (114). With no participant argument, a plural argument
-must be agreed with, and the slot carries its exponent, the subject's first. -/
+/-- With no participant argument, a plural argument is agreed with, the subject first, and the
+marker is its exponent (114). -/
 theorem plural_marker (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) :
     (s.IsPlural → afMarker s o = some (exponent s)) ∧
       (¬ s.IsPlural → o.IsPlural → afMarker s o = some (exponent o)) := by
@@ -196,18 +195,16 @@ theorem plural_marker (s o : Bundle) (hs : ¬ s.IsSAP) (ho : ¬ o.IsSAP) :
 
 /-! ### Against the alternatives (§4.2, chapter 7) -/
 
-/-- A relativized probe escapes the Person Case Constraint (§4.2). The unrelativized person probe
-of [bejar-rezac-2003] is absorbed by a Case-licensed third-person dative above a participant, the
-PCC, whereas the Kichean probe, relativized to [participant], skips the third-person argument and
-licenses the participant below it. -/
+/-- The unrelativized person probe of [bejar-rezac-2003] yields the PCC, while the Kichean probe
+relativized to [participant] licenses a participant below a third-person dative (§4.2). -/
 theorem relativization_contrast :
     ¬ BejarRezac2003.PLC (BejarRezac2003.v.derive
         [.dat (.personNumber .third .singular), .caseless (.personNumber .first .singular)]) ∧
       Plc (.personNumber .third .singular) (.personNumber .first .singular) := by
   decide
 
-/-- There is an asymmetry a hierarchy cannot state (§7.1). It assigns a marker to two participant
-arguments, which the probes exclude, while two plural arguments are admitted by both. -/
+/-- A person hierarchy assigns a marker to two participant arguments, which the probes exclude
+(§7.1). -/
 theorem hierarchy_silent_on_restriction :
     afMarker (.personNumber .first .singular) (.personNumber .second .singular) = none ∧
       hierarchyMarker (.personNumber .first .singular) (.personNumber .second .singular) =
@@ -216,11 +213,8 @@ theorem hierarchy_silent_on_restriction :
         some (exponent (.personNumber .third .plural)) := by
   decide
 
-/-- The K'ichee' formal addressee *laal* does not outrank the third person (§7.1, quoting
-Stiebels). It denotes the hearer, as *at* does, but agrees as a third person singular, and the
-probes read agreement: beside a first person singular argument the slot reflects the first
-person, where *at* violates the person restriction, and beside a third person plural it reflects
-the plural. -/
+/-- The K'ichee' formal addressee *laal* agrees as a third person singular and does not outrank the
+third person (§7.1, quoting Stiebels). -/
 theorem formal_addressee :
     afTarget (phi Kiche.laal) (.personNumber .first .singular) =
         some (.personNumber .first .singular) ∧

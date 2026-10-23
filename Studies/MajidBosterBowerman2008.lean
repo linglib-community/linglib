@@ -87,10 +87,7 @@ def stimulus (c : ℕ) : Content :=
 
 /-! ### The first dimension -/
 
-/-- Placement on Dimension 1, the predictability of the locus of separation, is a function
-neither of the instrument nor of the object (§3.1). The hands alone karate-chop a carrot in the
-middle of the dimension (clip 32) and snap a twig at its unpredictable end (clip 19); carrots
-are sliced at the predictable end (clip 10) and karate-chopped in the middle. -/
+/-- Placement on Dimension 1 is a function neither of the instrument nor of the object (§3.1). -/
 theorem dim1_not_factorsThrough {P : Type*} [Preorder P] (pos : ℕ → P)
     (h₁ : pos 10 < pos 32) (h₂ : pos 32 < pos 19) :
     ¬ pos.FactorsThrough (fun c ↦ (stimulus c).instrument) ∧
@@ -99,22 +96,19 @@ theorem dim1_not_factorsThrough {P : Type*} [Preorder P] (pos : ℕ → P)
 
 /-! ### English -/
 
-/-- English speakers labeled the tearing clips *tear* and extended the verb to pulling yarn
-apart (§3.1, Dimension 2); the fragment's *tear* is compatible with all four clips. -/
+/-- The fragment's *tear* is compatible with the tearing and yarn-pulling clips (§3.1, Dimension 2).
+-/
 theorem tear_overlaps_stimulus :
     ∀ c ∈ tearing ∪ pullingYarn, tear_.root.content.Overlaps (stimulus c) := by
   decide
 
-/-- English speakers labeled the tearing clips *tear* as distinct from *cut* and *break*
-(§3.1), and the fragment's *cut* and *break*, which want a blade and a fractured or fragmented
-result, reject them. -/
+/-- The fragment's *cut* and *break* reject the tearing clips (§3.1). -/
 theorem not_cut_not_break_of_tearing : ∀ c ∈ tearing,
     ¬ cut.root.content.Overlaps (stimulus c) ∧ ¬ break_.root.content.Overlaps (stimulus c) := by
   decide
 
-/-- Some English speakers grouped the snapping and smashing clips together under *break*
-(§3.1, Dimension 3), the general verb beside the specific *snap* and *smash* to which the paper
-attributes the intermediate correlation of English with that dimension (§3.1.1). -/
+/-- The fragment's *break* is compatible with the snapping and smashing clips (§3.1, Dimension 3;
+§3.1.1). -/
 theorem break_overlaps_stimulus :
     ∀ c ∈ snapping ∪ smashing, break_.root.content.Overlaps (stimulus c) := by
   decide

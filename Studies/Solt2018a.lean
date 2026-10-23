@@ -159,9 +159,8 @@ private theorem eq_smul_of_pos {μ μ' : E →+ K} {u : E} (hu : 0 < μ u) (hu' 
   rw [Pi.smul_apply, smul_eq_mul, div_mul_eq_mul_div, eq_div_iff hu.ne']
   linarith
 
-/-- Additive measures (36) that never order a pair oppositely differ only in unit, each being the
-other rescaled by their ratio at a standard element `u`. This is the uniqueness half of Hölder's
-theorem. -/
+/-- Additive measures (36) that never order a pair oppositely differ only in unit, the uniqueness
+half of Hölder's theorem. -/
 theorem eq_smul_of_forall_lt_imp_le {μ μ' : E →+ K} {u : E} (hu : 0 < μ u)
     (h : ∀ a b, μ b < μ a → μ' b ≤ μ' a) : ⇑μ' = (μ' u / μ u) • ⇑μ := by
   have h0 : 0 ≤ μ' u := by simpa using h u 0 (by simpa using hu)
@@ -177,8 +176,8 @@ theorem eq_smul_of_forall_lt_imp_le {μ μ' : E →+ K} {u : E} (hu : 0 < μ u)
 
 variable {μ : C → E →+ K} {u : E}
 
-/-- An additive family (36) has no ordering subjectivity exactly when its measures differ in unit
-alone, as height in inches and height in centimeters do (section 5.1). -/
+/-- An additive family (36) has no ordering subjectivity iff its measures differ in unit alone
+(section 5.1). -/
 theorem forall_not_orderingSubjective_iff (hu : ∀ c, 0 < μ c u) :
     (∀ a b, ¬ OrderingSubjective (fun c ↦ ⇑(μ c)) a b) ↔
       ∀ c c', ⇑(μ c') = (μ c' u / μ c u) • ⇑(μ c) :=
@@ -213,9 +212,8 @@ theorem fullness_smul {k : K} (hk : k ≠ 0) (vol : E → K) :
 
 variable [LinearOrder K] [IsStrictOrderedRing K]
 
-/-- A context-independent derived family (38), a fixed function `f` of component measures, is
-externalizable when the components differ across contexts only in unit and rescaling the
-components rescales `f` by a positive factor. -/
+/-- A context-independent derived family (38) is externalizable when its components differ across
+contexts only in unit and rescaling them rescales `f` positively. -/
 theorem externalizable_derived {ι : Type*} {m : C → ι → E → K} {f : (ι → K) → K}
     (hf : ∀ k : ι → K, (∀ i, 0 < k i) → ∃ φ : K, 0 < φ ∧ ∀ y, f (k * y) = φ * f y)
     (hm : ∀ c c', ∃ k : ι → K, (∀ i, 0 < k i) ∧ ∀ i x, m c' i x = k i * m c i x) :

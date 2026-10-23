@@ -824,8 +824,7 @@ theorem case4_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r26, r
     (run l prefix1S3S).object = third ++ singular := by
   rw [run_eq_of_paraThenSyn r26_paradigmatic r32_syntagmatic hl hperm, case4_para_syn]
 
-/-- (33) before (32) keeps the third person of the object of *opénôm* (Table 21), the *m*, by
-making the goal non-singular before (32) looks at it. -/
+/-- Ordering (33) before (32) keeps the third person of the object of *opénôm* (Table 21). -/
 theorem r33_bleeds_r32 :
     (run [r33, r32] prefix1D3S3S).object = third ++ singular ∧
       (run [r32, r33] prefix1D3S3S).object = singular := by
@@ -861,9 +860,8 @@ theorem r26_bleeds_r29 : Bleeds Rule.apply Rule.Fires r26 (r29 .goal) prefix1S3I
 
 /-! ### The two kinds interleave (§4.2, §5) -/
 
-/-- **Interleaving.** An order with (32a) before (35), as case 1 needs, and (43) before (44), as
-case 5 needs, respects neither block architecture: paradigmatic and syntagmatic impoverishment
-interleave. -/
+/-- An order with (32a) before (35) and (43) before (44) respects neither block architecture, so
+paradigmatic and syntagmatic impoverishment interleave. -/
 theorem must_interleave {l : List Rule} (h₁ : [r34a, r40].Sublist l)
     (h₅ : [r26, r29 .goal].Sublist l) : ¬ ParaThenSyn l ∧ ¬ SynThenPara l :=
   ⟨fun h ↦ r34a_syntagmatic (List.pairwise_pair.mp (h.sublist h₁) r40_paradigmatic),
@@ -1275,19 +1273,15 @@ theorem derive_unaccounted :
       ["kǫ", "kǫ", "kǫ", "kǫ", "îw", "ímo", "ónóm", "ónóm", "ónów"] := by
   decide +kernel
 
-/-- With (40) and (26) as printed, the same cells derive; the bundles differ only where a
-3S:3S:O ditransitive keeps its agent, whose exponent is ∅ anyway. -/
+/-- With (40) and (26) as printed, the same cells derive. -/
 theorem derive_eq_form_printed :
     ∀ r ∈ Taos.prefixes, r.1 ∉ unaccounted →
       r.2 = deriveWith (impoverishmentPrinted false) r.1 ∨
         r.2 = deriveWith (impoverishmentPrinted true) r.1 := by
   decide +kernel
 
-/-- **The leftmost brackets are read on tiers.** In *mopén*, 1S:2D:∅, impoverishment leaves the
-agent only `[+author]`: present, so it stands before the goal for (19), but on neither the
-`[±participant]` nor the number tier, so the goal's person and number are leftmost there, the
-elevation of the appendix's discussion after (10). Read on the present arguments, the participant
-bracket loses *m*, the number brackets *o*, *pé* and *n*, and both together everything. -/
+/-- With the leftmost brackets read on tiers *mopén* (1S:2D:∅) derives, and read on the present
+arguments it loses some or all exponents ((19), after (10)). -/
 theorem mopen_tiers :
     let c : Taos.Cell := ⟨some (.first, .singular), some (.second, .dual), none⟩
     let without (t : Tier) := onTiersVia fun u ↦ if u = t then .present else u
@@ -1436,8 +1430,8 @@ theorem ondarru_markedness_then_linear :
       [clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩]), pastT] := by
   decide
 
-/-- In Ondarru with the linear module first, T is not initial, so neither repair applies, and after
-the absolutive clitic goes T is stranded initial, Arregi and Nevins's (17b) *eu-su-n*. -/
+/-- In Ondarru with the linear module first, T is stranded initial, giving Arregi and Nevins's (17b)
+*eu-su-n*. -/
 theorem ondarru_linear_then_markedness :
     linearThenMarkedness ondarru auxiliary17 =
       [pastT, clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩])] := by
@@ -1455,9 +1449,8 @@ theorem zamudio_markedness_then_linear :
       [lSupport, pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by
   decide
 
-/-- In Zamudio with the linear module first, Ergative Metathesis fronts the ergative clitic, which
-Participant Dissimilation then obliterates, stranding T initial, the form Arregi and Nevins's §6.2.4
-rejects. -/
+/-- In Zamudio with the linear module first, the ergative clitic is fronted and then obliterated,
+stranding T initial in the form §6.2.4 rejects. -/
 theorem zamudio_linear_then_markedness :
     linearThenMarkedness zamudio auxiliary19 =
       [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by

@@ -121,8 +121,7 @@ def Licit (l : List LogophoricCenter) : Prop :=
 instance : DecidablePred Licit := fun l ↦ inferInstanceAs (Decidable (l.Pairwise _))
 
 /-- A domain is licit exactly when it holds at most one center, or a discourse participant and an
-attitude holder, the two ends of the hierarchy. Every other pair of centers intervenes (Table 3),
-and no three centers are pairwise disjoint. -/
+attitude holder (Table 3). -/
 theorem licit_iff {l : List LogophoricCenter} :
     Licit l ↔ l.length ≤ 1 ∨ l.Perm [.discourseParticipant, .attitudeHolder] := by
   match l with
@@ -145,16 +144,14 @@ def center (c : PersonalPronoun) : Option LogophoricCenter :=
   else if .dat ∈ c.cases then some .empathyLocus else none
 
 /-- A Spanish dative and accusative clitic are licit together exactly when the accusative is third
-person, the strong Person Case Constraint (51a). A third-person accusative not read de se, as in
-(33), realizes no center and so clashes with nothing. -/
+person, the strong Person Case Constraint (51a), as in (33). -/
 theorem licit_dative_accusative_iff :
     ∀ d ∈ Spanish.Clitics.dative, ∀ a ∈ Spanish.Clitics.accusative,
       (Licit ([d, a].filterMap center) ↔ a.person = some .third) := by
   decide +kernel
 
-/-- A Spanish dative clitic is licit with an accusative read de se, an attitude holder, exactly
-when the dative is first or second person. A third-person dative gives the clitic logophoric
-restriction (26), and a second-person one the licit (25). -/
+/-- A Spanish dative clitic is licit with a de se accusative exactly when it is first or second
+person ((26), (25)). -/
 theorem licit_dative_attitudeHolder_iff :
     ∀ d ∈ Spanish.Clitics.dative,
       (Licit ([d].filterMap center ++ [.attitudeHolder]) ↔ d.person ≠ some .third) := by
@@ -177,9 +174,8 @@ antecedent, and so is an attitude holder when the antecedent is a logophoric cen
 def Result.domain (r : Result) (d : PersonalPronoun) : List LogophoricCenter :=
   [d].filterMap center ++ if r.logophoricAntecedent = .yes then [.attitudeHolder] else []
 
-/-- The hierarchy predicts the result of every condition (Table 2), whichever Spanish dative
-clitic of the coded person realizes it. Whether the antecedent c-commands the accusative clitic,
-and whether the dative is bound, play no part. -/
+/-- The hierarchy predicts the result of every condition, whichever Spanish dative clitic of the
+coded person realizes it (Table 2). -/
 theorem licit_domain_iff :
     ∀ r ∈ results, ∀ d ∈ Spanish.Clitics.dative, r.dativePerson.Admits d →
       (Licit (r.domain d) ↔ r.grammaticality = .ok) := by

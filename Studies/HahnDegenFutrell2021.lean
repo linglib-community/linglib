@@ -187,9 +187,8 @@ theorem pastCondEntropy_le_condEntropy : pastCondEntropy w μ T ≤ H[w 0 | m₀
   linarith [chain_rule μ hb hm₀, chain_rule μ hm₀ hb, entropy_comm μ hb hm₀,
     condEntropy_nonneg m₀ (block w 0 T) μ]
 
-/-- **The information locality bound**, the paper's Theorem 1. A listener whose memory entropy
-is at most `∑ t ∈ Icc 1 T, t * I t` incurs average surprisal at least the entropy rate plus the
-information at distances beyond `T`. -/
+/-- A listener whose memory entropy is at most `∑ t ∈ Icc 1 T, t * I t` has average surprisal at
+least the entropy rate plus the information beyond distance `T` (Theorem 1). -/
 theorem information_locality_bound :
     entropyRate w μ + ∑' t, distanceInfo w μ (T + t + 1) ≤ H[w 0 | m₀ ; μ] :=
   entropyRate_add_tsum hw (hs.comp measurable_fst) T ▸

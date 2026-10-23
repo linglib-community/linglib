@@ -162,9 +162,8 @@ theorem values_iff_of_uninterpretable
     Values status pluralClass a b c ↔ bestSemanticMatch pluralClass a b = some c := by
   grind [Values, highestWins_eq]
 
-/-- An arbitrary member of an interpretable gender stacked above a core carries both i-genders
-to &P, uniform conjuncts match twice, and the two grammars value the visible and the core
-plural respectively, (78)–(80). -/
+/-- An interpretable-gender member over a core carries both i-genders to &P, and the two grammars
+value the visible and the core plural ((78)–(80)). -/
 theorem two_grammars {g : G} (ho : a.outer = some g)
     (hi : interpretability (status g) = .interpretable) :
     highestWins status pluralClass a a = some (pluralClass g) ∧

@@ -92,9 +92,8 @@ section Revised
 
 variable (r : W → W → Prop)
 
-/-- The revised lift of (30) lets a proposition be as likely as its negation without being as
-likely as everything, escaping Yalcin's collapse, since it is as likely as the whole space only
-when the space is exhausted. -/
+/-- Under the revised lift of (30), a proposition is as likely as the whole space only if it is the
+whole space. -/
 theorem kratzerLift_univ_iff (A : Set W) : KratzerLift r A Set.univ ↔ A = Set.univ :=
   kratzerLift_univ_iff' r A
 
@@ -107,9 +106,8 @@ theorem revised_escapes_collapse :
   rw [kratzerLift_univ_iff] at this
   exact absurd (this ▸ Set.mem_univ 1) (by simp)
 
-/-- In a countermodel to the puzzle for the revised lift, (31) of Appendix B, a world of one
-alternative outside the first proposition fails to dominate a world the first proposition shares
-with the other alternative. -/
+/-- In a countermodel to the puzzle for the revised lift ((31) of Appendix B), a world of one
+alternative outside `A` fails to strictly dominate a world `A` shares with the other. -/
 theorem revised_countermodel_overlap {A B C : Set W} (hB : KratzerLift r A B)
     (hC : KratzerLift r A C) (hn : ¬KratzerLift r A (B ∪ C)) :
     (∃ u ∈ B \ A, ∃ v ∈ A ∩ C, ¬(r u v ∧ ¬r v u)) ∨
@@ -158,9 +156,7 @@ theorem must_best : Yalcin2010.must bestFirst {0} 0 :=
   (Yalcin2010.must_iff _ _ _).2 fun _ ↦ ⟨0, (bestFirst_le _ _).2 fun _ ↦ rfl,
     fun _ hz ↦ (bestFirst_le _ _).1 hz rfl⟩
 
-/-- Under Kratzer's *must* the m-lifting refutes (35), Yalcin's V6. The sole best world is
-necessary but not likelier than its complement, since one world matches no injection from
-two. -/
+/-- Under Kratzer's *must* the m-lifting refutes Yalcin's V6 (35). -/
 theorem mLift_refutes_V6 :
     ¬MustToProbably (MatchingLift (premisePreorder bestFirst).le)
       (Yalcin2010.must bestFirst · 0) :=
@@ -263,15 +259,15 @@ noncomputable def cutClass : SymmetricFuzzyMeasure (Fin 3) where
         | exact absurd (h a2) b2
         | norm_num
 
-/-- Symmetric fuzzy measures refute V13. Under `cutClass` going to the movies is exactly as
-likely as going to school or to the movies, although going to school is possible (48). -/
+/-- Symmetric fuzzy measures refute V13, making the movies as likely as school or the movies though
+school is possible (48). -/
 theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro cutClass.likelihood := fun h ↦
   (h {1} {0} ⟨by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass],
     by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass]⟩).2
     (by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass])
 
-/-- Qualitative additivity, (49) added to (47), gives V13, so a proposition as likely as a
-disjunction it is part of leaves the other disjunct no mass, and (48) forces school out. -/
+/-- Under qualitative additivity ((49) with (47)), if `A ∪ B` is no likelier than `A` then `B \ A`
+has no mass, so (48) forces school out. -/
 theorem QualAddMeasure.eq_zero_of_union_le (m : QualAddMeasure ℝ W) {A B : Set W}
     (h : m (A ∪ B) ≤ m A) : m (B \ A) = 0 :=
   have : m.inducedGe ⊥ (B \ A) := strictDisjunctionIntro_iff.1 strictDisjunctionIntro B A
@@ -299,17 +295,14 @@ theorem bridge1_disjoint_puzzle (h : Bridge1 r P) {A B C : Set W} (hB : Disjoint
     P (B ∪ C) ≤ P A :=
   h _ _ (kratzerLift_rightUnion_of_disjoint r hB hC hAB hAC)
 
-/-- BR2 makes the m-lifting sound for the measure, by Holliday and Icard's footnote 13, so BR3
-follows from BR2 when the order agrees with the measure. -/
+/-- When the order agrees with the measure, BR3 holds, by Holliday and Icard's footnote 13. -/
 theorem bridge3_of_agree [Fintype W] [MeasurableSingletonClass W]
     (h : ∀ v u, r v u ↔ P {u} ≤ P {v}) : Bridge3 r P :=
   fun _ _ hAB ↦ HollidayIcard2013.measure_le_of_matchingLift P r h hAB
 
 end Bridges
 
-/-- In the three-world model of §3, with masses `0.4`, `0.3`, `0.3`, BR2 holds, yet under
-Kratzer's *must* V6 fails, since the necessary best world is less likely than its
-complement. -/
+/-- In the three-world model of §3, BR2 holds yet V6 fails under Kratzer's *must*. -/
 theorem bridge2_refutes_V6 :
     Bridge2 (premisePreorder bestFirst).le skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) := by

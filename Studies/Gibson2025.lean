@@ -232,9 +232,8 @@ theorem subordinator_final_stretches :
 def intensifierFirst : Graph 2 :=
   .ofArcs [Word.mk' "very" .ADV, Word.mk' "tall" .ADJ] 1 [(1, 0, .advmod)]
 
-/-- A one-word dependent costs the same on either side of its head, since the two orders are
-mirror images: Table 5.4's adjective, demonstrative, intensifier, and negator orders need not
-align with the verb-object order. -/
+/-- A one-word dependent costs the same on either side of its head, so Table 5.4's single-word
+orders need not align with verb-object order. -/
 theorem single_word_free : intensifierFirst.mirror.totalLength = intensifierFirst.totalLength :=
   intensifierFirst.totalLength_mirror
 

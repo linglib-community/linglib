@@ -355,9 +355,8 @@ theorem content_iff_contExponent_mem :
     ∀ d ∈ shapeData, ∀ c ∈ buryatAnalysis.contExponent, (d.sort = .content ↔ c ∈ d.typers) := by
   decide
 
-/-- *hanaxa*'s two frames (§4.4.3) each take exactly one typer — converbial
-*-žA* on the bare frame, participial *-Aːša* on the nominalized one — and
-the say-root takes neither. -/
+/-- Each frame of *hanaxa* takes exactly one typer, the bare frame *-žA* and the nominalized one
+*-Aːša* (§4.4.3). -/
 theorem hanaxa_typers :
     (ArgumentFrame.finiteClause.Takes zha ∧ ¬ ArgumentFrame.finiteClause.Takes aasha) ∧
       (nominalizedFrame.Takes aasha ∧ ¬ nominalizedFrame.Takes zha) ∧

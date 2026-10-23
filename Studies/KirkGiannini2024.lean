@@ -83,9 +83,8 @@ paper leaves † undefined off that domain; `Function.extend` returns `⊥` ther
 noncomputable def dagger : (Expr → W → Prop) → Expr → W → Prop :=
   Function.extend (M.mqAtIssue wc) M.diag ⊥
 
-/-- The paper's footnote-22 assumption: no two speakers agree on the intensions of all
-expressions at `w_c` while differing on some at another world. Under it † returns ⦇∗⦈∗ of
-the speaker whose meaning it was given. -/
+/-- Under the footnote-22 assumption that `w_c`-intensions determine speakers, † returns ⦇∗⦈∗ of the
+speaker whose meaning it was given. -/
 theorem dagger_mqAtIssue (h : FactorsThrough M.diag (M.mqAtIssue wc)) (s : Speaker) :
     M.dagger wc (M.mqAtIssue wc s) = M.diag s :=
   h.extend_apply _ s
@@ -139,18 +138,15 @@ theorem daggerMQ_atIssue (h : FactorsThrough M.diag (M.mqAtIssue wc)) (q : Expr)
     (daggerMQ M wc sx ux q).atIssue = M.diag sx q :=
   congrFun (M.dagger_mqAtIssue wc h sx) q
 
-/-- (10′) and (12): ↓ at the clause boundary makes 'Peter orders ‘[eI]pricots’' say that Peter
-orders apricots and utters ‘[eI]pricots’ in so doing, available to a higher quantifier or
-conditional. -/
+/-- In (10′) and (12), ↓ at the clause boundary makes 'Peter orders ‘[eI]pricots’' say that Peter
+orders apricots and utters ‘[eI]pricots’ in doing so. -/
 theorem shunt_mq_atIssue (q : Expr) (w : W) :
     (shunt (mq M wc sx ux q)).atIssue w ↔ M.quot q wc sx w ∧ M.utter sx ux q w := Iff.rfl
 
 /-! ### Conventional implicature items (§3) -/
 
-/-- (26) and (26″): a speech report `F` of a CI item `q` whose meaning is `lex q`, whose
-peripheral content projects unquoted (`TwoDim.map_notAtIssue`) but, 𝔪-quoted, is replaced by
-the attribution R(s_x, u_x, q) while the at-issue content is unchanged, given that ⦇∗⦈ returns
-only at-issue content. -/
+/-- In a speech report `F` of a CI item `q` ((26), (26″)), 𝔪-quoting replaces the peripheral content
+by R(s_x, u_x, q) and keeps the at-issue content. -/
 theorem report_mq (lex : Expr → TwoDim W (W → Prop)) (F : (W → Prop) → W → Prop) (q : Expr)
     (h : M.quot q wc sx = (lex q).atIssue) :
     (F <$> mq M wc sx ux q).atIssue = (F <$> lex q).atIssue ∧
@@ -159,10 +155,8 @@ theorem report_mq (lex : Expr → TwoDim W (W → Prop)) (F : (W → Prop) → W
 
 /-! ### C-monsters (§4) -/
 
-/-- (29) 'If Pluto were a planet, …' with †𝔐 around 'planet': the antecedent contributes the
-diagonal ⦇'planet'⦈∗(s_x), so a [stalnaker-1968] selection function takes the conditional to
-the nearest world whose conventions for 'planet', as `s_x` would use it there, include Pluto,
-when there is such a world. -/
+/-- In (29), *If Pluto were a planet* with †𝔐 around 'planet' selects, by [stalnaker-1968], the
+nearest world whose conventions for 'planet' include Pluto. -/
 theorem selectionConditional_daggerMQ (h : FactorsThrough M.diag (M.mqAtIssue wc))
     (s : Conditional.SelectionFunction W) (q : Expr) (C : Set W) (w : W)
     (hq : {v | M.quot q v sx v}.Nonempty) :
@@ -198,24 +192,21 @@ being the same: the disputants' contents are incompatible. -/
 theorem metaNeg_atIssue_iff_not (q : Expr) (w : W) :
     (metaNeg M wc sx ux q).atIssue w ↔ ¬ (appropAssertion M wc sx ux q).atIssue w := Iff.rfl
 
-/-- The correction in (3): its second clause `q'` ('mongooses') expresses in the mouth of
-`s_x` what `q` ('mongeese') does, so together with it the first clause entails that using `q`
-is not appropriate. -/
+/-- In the correction (3), a second clause `q'` expressing what `q` does makes the first clause
+entail that using `q` is inappropriate. -/
 theorem metaNeg_correction {q q' : Expr} {w : W} (h : M.quot q wc sx = M.quot q' wc sx)
     (h₁ : (metaNeg M wc sx ux q).atIssue w) (h₂ : (mq M wc sx ux q').atIssue w) :
     ¬ □[M.appropriate] (M.utter sx ux q) w :=
   fun hb ↦ h₁ ⟨by simpa [h] using h₂, hb⟩
 
-/-- Whenever verbatim use of `q` is inappropriate, (3)'s form is true whatever the quoted
-clause's truth value: (37) 'She's not happy' can be said of someone ecstatic, whereas (38)
-'She's unhappy', whose negation is incorporated below the covert material, cannot. -/
+/-- Whenever verbatim use of `q` is inappropriate, the form of (3) is true, as for (37) 'She's not
+happy' but not (38) 'She's unhappy'. -/
 theorem metaNeg_of_not_box {q : Expr} {w : W} (hb : ¬ □[M.appropriate] (M.utter sx ux q) w) :
     (metaNeg M wc sx ux q).atIssue w :=
   fun h ↦ hb h.2
 
-/-- (41) 'She's not not happy' with 'not happy' 𝔪-quoted says that she is happy or that
-'not happy' is inappropriate, so (42) 'She's happy' does not follow: double negation is not
-eliminated. -/
+/-- (41) 'She's not not happy', with 'not happy' 𝔪-quoted, says she is happy or 'not happy' is
+inappropriate, so (42) does not follow. -/
 theorem metaNeg_compl {q q₀ : Expr} {w : W} (h : M.quot q wc sx = (M.quot q₀ wc sx)ᶜ) :
     (metaNeg M wc sx ux q).atIssue w ↔
       M.quot q₀ wc sx w ∨ ¬ □[M.appropriate] (M.utter sx ux q) w := by

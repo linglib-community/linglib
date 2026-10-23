@@ -186,8 +186,8 @@ theorem subProb_g : subProb .g = 1/5 := by
     decide, show (active con .g .yes .no).card = 5 by decide]
   norm_num
 
-/-- The six free-ranking shares of the paper's footnote are a half, two fifths and a third for
-the voiceless stops and a third, a quarter and a fifth for the voiced ones. -/
+/-- The six free-ranking substitution rates are 1/2, 2/5 and 1/3 for voiceless stops and 1/3, 1/4
+and 1/5 for voiced ones (the paper's footnote). -/
 theorem factorial_rates :
     subProb .p = 1/2 ∧ subProb .t = 2/5 ∧ subProb .k = 1/3 ∧
     subProb .b = 1/3 ∧ subProb .d = 1/4 ∧ subProb .g = 1/5 :=
@@ -277,8 +277,7 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nasalSubstitution �
   have h_p := place_t_implies_p σ h_t
   exact ⟨h_p, h_t, h_k, h_b, h_d, h⟩
 
-/-- Some ranking substitutes on every stop, which is pattern (j) of Table 5, that of Kalinga and
-Sarangani Manobo. The identity ranking, with `DEP-C` on top, is one. -/
+/-- Some ranking substitutes on every stop, pattern (j) of Table 5. -/
 theorem pattern_j_witness :
     ∃ σ : Equiv.Perm (Fin 6),
       PicksAt nasalSubstitution σ .p .yes ∧ PicksAt nasalSubstitution σ .t .yes ∧

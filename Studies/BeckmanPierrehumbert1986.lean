@@ -213,9 +213,8 @@ def english : IntonationSystem :=
     apBoundaryLAlwaysPresent := false
     catathesisTiming := .afterAccent }
 
-/-- English uses exactly the accents whose tones differ: of the ten, the four two-tone accents
-L*+L, L+L*, H*+H and H+H* are missing, since the realisation rules would neutralise them with
-single-tone accents (§3.2). -/
+/-- English uses exactly the pitch accents whose tones differ, lacking L*+L, L+L*, H*+H and H+H*
+(§3.2). -/
 theorem mem_english_accentShapes_iff (a : PitchAccent) :
     a ∈ english.accentShapes ↔ a.tones.Nodup := by
   revert a; decide

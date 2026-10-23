@@ -205,9 +205,8 @@ def Context.respected : Context → Set Display
   | .existential => {d | ∀ v ∈ d, v = -1}
   | .universal => {d | ∀ v ∈ d, v = 1}
 
-/-- Under the question whether the rule was respected, *every boy opened his presents* does not
-address the existential issue, nor *no boy opened his presents* the universal one, so neither is
-usable anywhere and the question that yields Table 2 is the boy-by-boy one. -/
+/-- Neither *every boy* nor *no boy opened his presents* addresses the polar question whether the
+rule was respected, unlike the boy-by-boy question of Table 2. -/
 theorem not_addressesIssue_respected :
     ¬ Homogeneity.addressesIssue (Setoid.polar Context.existential.respected)
         (supervaluation NumberTree.all) ∧
@@ -253,9 +252,8 @@ theorem implicature_context_free (h : q.ScopeAntitone) (ctx ctx' : Context) :
 
 variable [DecidableRel q]
 
-/-- In the existential context the two verdicts agree on every quantifier, both being the
-existential resolution, so an experiment that does not control the context cannot separate the
-approaches (§2). -/
+/-- In the existential context, the implicature and non-implicature approaches agree on every
+quantifier (§2). -/
 theorem implicature_existential_iff :
     implicature q .existential d ↔ nonImplicature q .existential d := by
   rw [nonImplicature_iff]
@@ -290,10 +288,8 @@ def Quantifier.lax : Quantifier → Context
 
 variable {d : Display}
 
-/-- On the non-implicature approach every quantifier's mixed picture is accepted exactly in its lax
-context (Table 2), so the context affects every quantifier alike and no interaction of context
-and polarity is predicted. Experiment 2 found none (χ²(1) = 2.1, p = .15, §3.2.2), but Experiment
-1 found one (χ²(1) = 11, p < .001, §3.1.2). -/
+/-- On the non-implicature approach, each quantifier's mixed picture is accepted exactly in its lax
+context (Table 2; Experiment 1, χ²(1) = 11, §3.1.2; Experiment 2, §3.2.2). -/
 theorem nonImplicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = 0)
     (ctx : Context) : nonImplicature q.tree ctx d ↔ ctx = q.lax := by
   cases q
@@ -301,10 +297,8 @@ theorem nonImplicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tr
   · exact nonImplicature_universal_of_scopeAntitone NumberTree.scopeAntitone_no hd ctx
   · exact nonImplicature_universal_of_scopeAntitone NumberTree.scopeAntitone_notAll hd ctx
 
-/-- On the implicature approach only *every*'s mixed picture is accepted, in its lax context
-(Table 2), so an interaction of context and polarity is predicted in both experiments. Experiment 1
-found it (χ²(1) = 11, p < .001, §3.1.2), though with a context effect on *no* that the approach
-does not predict, and Experiment 2 did not (χ²(1) = 2.1, p = .15, §3.2.2). -/
+/-- On the implicature approach, only *every*'s mixed picture is accepted, in its lax context (Table
+2; Experiment 1, χ²(1) = 11, §3.1.2; Experiment 2, §3.2.2). -/
 theorem implicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = 0)
     (ctx : Context) : implicature q.tree ctx d ↔ q = .every ∧ ctx = q.lax := by
   cases q
@@ -315,9 +309,7 @@ theorem implicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree 
   · exact iff_of_false (not_implicature_of_scopeAntitone (q := Quantifier.notEvery.tree)
       NumberTree.scopeAntitone_notAll hd ctx) (by simp)
 
-/-- Table 1 is Table 2 over one boy. In a mixed scenario the positive sentence is accepted exactly
-in the existential context on both approaches, and the negative one is rejected in both contexts
-on the implicature approach and accepted exactly in the universal one on the other. -/
+/-- On both approaches, Table 1 is the one-boy case of Table 2. -/
 theorem table1 (ctx : Context) :
     (implicature NumberTree.all ctx [0] ↔ ctx = .existential) ∧
       ¬ implicature NumberTree.notAll ctx [0] ∧
@@ -480,10 +472,8 @@ private theorem reading_some (d : Display) (δ : Designation) :
     Iff.rfl, reading_no]
   simp
 
-/-- On the mixed pictures of the experiments, where some boy opened all of his presents, the amended
-implicature approach accepts *every* and *not every* exactly in their lax contexts and *no* in
-neither. It thus predicts an interaction of context and polarity in Experiment 1 and none in
-Experiment 2, the outcome of both (§4.2). -/
+/-- On the mixed pictures, the amended implicature approach accepts *every* and *not every* exactly
+in their lax contexts and *no* in neither (§4.2). -/
 theorem enriched_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = 0)
     (ht : 1 ∈ d) (ctx : Context) :
     implicature q.enriched ctx d ↔ q ≠ .no ∧ ctx = q.lax := by
@@ -519,8 +509,8 @@ private theorem reading_cardinal {s : Set ℕ} [DecidablePred (· ∈ s)] (d : D
     (δ : Designation) : reading (NumberTree.cardinal s) d δ ↔ (resolve δ d).count true ∈ s :=
   Iff.rfl
 
-/-- (20) in a mixed scenario for its positive part, where two boys opened some but not all of
-their presents and the others none, is accepted exactly in the existential context. -/
+/-- In a mixed scenario for its positive part, (20) is accepted exactly in the existential context.
+-/
 theorem exactlyTwo_positive (h₂ : d.count 0 = 2) (ht : 1 ∉ d) (ctx : Context) :
     nonImplicature (NumberTree.cardinal {2}) ctx d ↔ ctx = .existential := by
   have h0 := List.count_eq_zero.2 ht
@@ -528,8 +518,7 @@ theorem exactlyTwo_positive (h₂ : d.count 0 = 2) (ht : 1 ∉ d) (ctx : Context
   cases ctx <;>
     simp [Context.designation, reading_cardinal, count_resolve_lp, count_resolve_k3, h₂, h0]
 
-/-- (20) in a mixed scenario for its negative part, where two boys opened all of their presents
-and some opened some but not all, is accepted exactly in the universal context. -/
+/-- In a mixed scenario for its negative part, (20) is accepted exactly in the universal context. -/
 theorem exactlyTwo_negative (h₂ : d.count 1 = 2) (hi : 0 ∈ d) (ctx : Context) :
     nonImplicature (NumberTree.cardinal {2}) ctx d ↔ ctx = .universal := by
   have h0 := List.count_pos_iff.2 hi

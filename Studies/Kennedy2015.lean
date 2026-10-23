@@ -75,8 +75,7 @@ open English.NumeralModifiers Semantics
 attribute [local simp] moreThan fewerThan over under atLeast atMost minimally maximally upTo from_
   exactly precisely about around approximately roughly almost nearly approximator shortOf
 
-/-- A Class A modifier (4a) expresses an exclusive ordering, so each of its readings is disjoint
-from the two-sided meaning of the number it modifies, privative there in Kamp's sense. -/
+/-- Each reading of a Class A modifier (4a) is disjoint from the two-sided meaning of its number. -/
 theorem classA_exclusive : ∀ w ∈ inventory, w.modifierClass = some .classA →
     ∀ m ∈ ⟦w⟧, ∀ n, Disjoint (m {n}) {n} := by
   simp [inventory, NumeralModifier.modifierClass, ModifierKind.modifierClass]
@@ -175,10 +174,7 @@ theorem stronger_lt {m : ℕ} (hm : 0 < m) : stronger m .lt = ∅ := by
   simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
   cases c <;> simp
 
-/-- The strengthening (44) fails for *at least m*. Knowing the bare numeral false with the
-assertion is knowing *more than m*, and knowing *more than m* false with the assertion is knowing
-the bare numeral, each contradicting the other primary implicature; the ignorance is not
-strengthened. -/
+/-- The strengthening (44) fails for *at least m*, leaving the ignorance unstrengthened. -/
 theorem not_isSecondaryImplicature_ge (m : ℕ) :
     ¬ IsSecondaryImplicature (Comparison.ge.interval m) (alternatives m)
         (Comparison.eq.interval m) ∧

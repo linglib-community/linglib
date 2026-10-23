@@ -309,9 +309,8 @@ def kinds? (d : Datum) : Option Root.Kinds :=
 def diagnostic? (d : Datum) : Option Diagnostic :=
   d.parse? "diagnostic" [("change denial", .changeDenial), ("restitutive again", .restitutive)]
 
-/-- A row is accepted exactly when its root passes its diagnostic, setting aside the expected
-variation: (13), acceptable to the speakers for whom *broken* has drifted to a 'not functioning'
-sense, and Kakataibo, whose result root in (26) means 'not alive'. -/
+/-- A row is accepted exactly when its root passes its diagnostic, except for the variable (13) and
+Kakataibo (26). -/
 theorem rows : ∀ d ∈ Examples.all, ∀ ks ∈ kinds? d, ∀ g ∈ diagnostic? d,
     (d.judgment = .acceptable ↔ Passes ks g) ∨ d.feature? "judgedBy" = some "some speakers" ∨
       d.language = "cash1251" := by

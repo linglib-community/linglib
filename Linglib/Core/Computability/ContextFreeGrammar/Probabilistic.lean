@@ -195,9 +195,7 @@ theorem ofCounts_weight_lt_ofCounts_weight_iff {x : ContextFreeRule T G.NT → �
   · simp [Nat.le_zero.mp (h0 ▸ hle hr), Nat.le_zero.mp (h0 ▸ hle hr')]
   · rfl
 
-/-- **Relative frequencies maximize the likelihood of rule counts** ([chi-1999] §3): the counts
-`x` have probability `∏ r, W.weight r ^ x r` under a PCFG `W`, at most their probability under
-their relative frequencies. -/
+/-- Relative frequencies maximize the likelihood of rule counts ([chi-1999] §3). -/
 theorem prod_pow_le_prod_ofCounts_pow (x : ContextFreeRule T G.NT → ℕ) :
     ∏ r ∈ G.rules, W.weight r ^ x r ≤ ∏ r ∈ G.rules, (ofCounts x).weight r ^ x r := by
   rw [← Finset.prod_fiberwise_of_maps_to (s := G.rules) (t := G.rules.image (·.input))

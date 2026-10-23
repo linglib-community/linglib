@@ -276,9 +276,8 @@ theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
   simp [barePlural, Construal.Holds, Construal.gq, Force.gq, GQ.every,
     SignType.supervaluation_eq_one_iff]
 
-/-- A child who restricts the plurality to the objects that verify the sentence, (19) and (20),
-accepts both sentences in a GAP context, the pattern of the wide-scope existential, which no
-child showed. -/
+/-- A child restricting the plurality to its verifying objects ((19), (20)) accepts both sentences
+in a GAP context, a pattern no child showed. -/
 theorem domainRestriction_of_isGap (hw : IsGap x w) :
     Reading.homogeneous.value (x.filter (· ∈ w)) .positive w = 1 ∧
       Reading.homogeneous.value (x.filter (· ∉ w)) .negative w = 1 := by
@@ -295,8 +294,8 @@ theorem domainRestriction_of_isGap (hw : IsGap x w) :
 /-- Ternary judgments separate all readings in a GAP context, Experiment 2's design. -/
 theorem gapPattern_injective : Function.Injective Reading.gapPattern := by decide
 
-/-- The four quantified readings give the four possible pairs of binary judgments in a GAP
-context, the three of Figure 2 and the wide-scope existential of the empty fourth group. -/
+/-- The four quantified readings give the four possible pairs of binary judgments in a GAP context
+(Figure 2). -/
 theorem binaryPattern_quantified_bijective :
     Function.Bijective fun c : Construal ↦ (Reading.quantified c).binaryPattern := by decide
 
@@ -357,9 +356,8 @@ theorem exh_mates_weak_of_mem (hA : .strong ∈ A) (h : (wk \ st).Nonempty) :
   rw [innocent_exh_erase_entailed subset_rfl (h.mono Finset.sdiff_subset), himg,
     innocent_exh_singleton h]
 
-/-- The strengthened definite (11) is computed from the exhaustified *some* (10). The inner
-exhaustification of the definite is vacuous and the outer one denies the exhaustified *some*, so
-the *not all* implicature is a sub-computation of the homogeneity implicature. -/
+/-- The strengthened definite (11) is computed from the exhaustified *some* (10), so the *not all*
+implicature is part of the homogeneity implicature. -/
 theorem strengthened_mates_mystery :
     strengthened (mates A) (primal wk st) .mystery =
       innocent.exh {exh (mates A) (primal wk st) .weak} wk := by

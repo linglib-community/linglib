@@ -226,9 +226,7 @@ def Row.RequiresAbstraction (r : Row) : Prop :=
 instance : DecidablePred Row.RequiresAbstraction := fun r ↦ by
   unfold Row.RequiresAbstraction; infer_instance
 
-/-- The conclusion (72d) over the pool: wherever abstraction is required the indicative is
-rejected, and where the same predicate takes an indicative complement it is read as belief,
-assertion, foresight, or a proposition instead. -/
+/-- Wherever abstraction is required, the indicative is rejected (72d). -/
 theorem abstraction_rejects_indicative :
     ∀ r ∈ rows, r.RequiresAbstraction → r.complement = .indicative →
       r.judgment ≠ .acceptable := by
@@ -378,9 +376,8 @@ theorem Report.report₃ (h : F.Report x P w) : F.Report₃ x (fun y t ↦ closu
   let ⟨s, hs, hx, hc⟩ := h
   ⟨s, hs, hx, fun c hcs ↦ let ⟨e, _, t, ht, hP⟩ := hc c hcs; ⟨t, ht, e, hP⟩⟩
 
-/-- When every state causes every eventuality, (79) says no more than (78) of the closed
-complement. Otherwise its prejacent is not a function of the closed complement
-(`Event.causedClosure_factorsThrough_iff`). -/
+/-- When every state causes every eventuality, (79) is equivalent to (78) of the closed complement.
+-/
 theorem report_iff_report₃ (h : ∀ s e w, s ~[F.causeStar w] e) :
     F.Report x P w ↔ F.Report₃ x (fun y t ↦ closure (P y t)) w :=
   ⟨Report.report₃, fun ⟨s, hs, hx, hc⟩ ↦

@@ -97,9 +97,8 @@ theorem reflexive_acceptable_iff_agree :
         HasPhi.Agree r.toPronoun (Agreement.Bundle.personNumber v.1 v.2)) := by
   decide
 
-/-- The reflexive's judgment is no function of the antecedent's semantic number: in (11a) and
-(11b') *magát* is bound by *Kati és Éva*, accepted with the singular verb and rejected with the
-plural. -/
+/-- The reflexive's judgment is not a function of the antecedent's semantic number ((11a), (11b')).
+-/
 theorem not_factorsThrough_semanticNumber :
     ¬ ((rowsWith maga.toPronoun).domRestrict Datum.judgment).FactorsThrough
       ((rowsWith maga.toPronoun).domRestrict semanticNumber?) := fun h ↦
@@ -113,16 +112,13 @@ theorem reciprocal_acceptable_iff :
       (e.judgment = .acceptable ↔ semanticNumber? e = some .plural) := by
   decide
 
-/-- The reciprocal's judgment is no function of the verb's agreement: the verb agrees in the
-third person singular in both (2a) and (12), and the reciprocal is rejected in (2a) and accepted
-in (12). -/
+/-- The reciprocal's judgment is not a function of verb agreement ((2a), (12)). -/
 theorem not_factorsThrough_verbAgr :
     ¬ ((rowsWith egymas.toPronoun).domRestrict Datum.judgment).FactorsThrough
       ((rowsWith egymas.toPronoun).domRestrict verbAgr?) := fun h ↦
   absurd (@h ⟨Examples.ex_2a, by decide⟩ ⟨Examples.ex_12, by decide⟩ rfl) (by decide)
 
-/-- In each of §§3–6, quantified, coordinate and collective antecedents and bound singular
-variables, the reciprocal is accepted with a singular verb and a semantically plural
+/-- In each of §§3–6, the reciprocal is accepted with a singular verb and a semantically plural
 antecedent. -/
 theorem reciprocal_with_singular_verb :
     ∀ n ∈ [3, 4, 5, 6], ∃ e ∈ all, e.nat? "section" = some n ∧ HasAnaphor e egymas.toPronoun ∧

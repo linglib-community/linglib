@@ -140,9 +140,8 @@ def negReading : Mode → (α → Prop) → (α → Prop) → Prop
   | .iteration, A, S => ¬ no A S
   | .resumption, A, S => no A S
 
-/-- Negation iterated over an n-word gives the existential, the only reading of standard
-French *Il ne va pas nulle part* 'he goes somewhere' ((36a)), since constraint (40) keeps *pas*
-out of resumption. -/
+/-- Negation iterated over an n-word gives the existential reading of *Il ne va pas nulle part*
+((36a)), since (40) keeps *pas* out of resumption. -/
 theorem negReading_iteration_iff : negReading .iteration A S ↔ GQ.some A S := by
   simp [negReading, no, GQ.some]
 

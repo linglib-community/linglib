@@ -188,8 +188,8 @@ theorem subtype_readings :
     | subtype t => cases t <;> decide
     | quale r => cases r <;> decide
 
-/-- (27), (29): *John began a book* has exactly two readings, the telic and the agentive
-projections of the qualia of *book*, reading it and writing it. -/
+/-- *John began a book* has exactly two readings, the telic and agentive qualia of *book* ((27),
+(29)). -/
 theorem begin_book_readings (σ : Option Shifter) :
     Applies begin book σ ↔ σ = some (.quale .telic) ∨ σ = some (.quale .agentive) := by
   cases σ with

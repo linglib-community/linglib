@@ -113,8 +113,8 @@ theorem mem_alt_altQ_left {p q : Set W} (h : ¬ p ⊆ q) : p ∈ alt (altQ p q) 
 theorem mem_alt_altQ_right {p q : Set W} (h : ¬ q ⊆ p) : q ∈ alt (altQ p q) :=
   mem_alt_sup_of_alt_right (by simp) fun _ hr hqr => absurd (hqr.trans hr) h
 
-/-- An alternative question has two alternatives, so *kya:* scoping over it fails the
-presupposition ((43), (51)), while each disjunct meets it by `kya_polar` ((44), (47), (52)). -/
+/-- *kya:* over an alternative question fails its presupposition ((43), (51)), while each disjunct
+meets it ((44), (47), (52)). -/
 theorem altQ_not_kyaDefined {p q : Set W} (hpq : ¬p ⊆ q) (hqp : ¬q ⊆ p) :
     ¬KyaDefined (altQ p q) :=
   not_kyaDefined_of_mem_alt (mem_alt_altQ_left hpq) (mem_alt_altQ_right hqp)

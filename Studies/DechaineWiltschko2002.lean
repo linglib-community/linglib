@@ -139,9 +139,8 @@ theorem determiner_rows :
 otherwise the row's own, whose indices mark the bound construal. -/
 def boundJudgment (e : Datum) : Judgment := (e.readings.lookup "sloppy").getD e.judgment
 
-/-- A proform is construed as a bound variable exactly when its category makes it a variable:
-*he* under *every candidate*, but not *me* under VP-ellipsis, the sloppy reading of (40), nor
-*one* or *kare* under a quantifier, (30) and (22). -/
+/-- A proform is construed as a bound variable exactly when its category makes it a variable ((40),
+(30), (22)). -/
 theorem bound_variable_rows :
     ∀ e ∈ Examples.all, e.feature? "test" = some "boundVariable" →
       ∀ c ∈ categoryOf e, (boundJudgment e = .acceptable ↔ c.bindingStatus = .variable) := by

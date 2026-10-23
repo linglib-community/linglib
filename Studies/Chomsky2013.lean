@@ -200,9 +200,8 @@ theorem beta_not_isLabeled : ¬ IsLabeled tP beta ∧ tP.IsLabeledBy tP t := by
 theorem beta_isLabeledBy_of_raising : clause.IsLabeledBy beta v := by
   decide +kernel
 
-/-- (16): the subject and its sister are two phrases whose heads, the subject's determiner and T,
-agree in φ-features, which label the clause. T's probe finds the external argument, the closer
-determiner phrase, so the internal argument raised over it labels nothing. -/
+/-- In (16), φ-agreement between the subject's determiner and T labels the clause, while a raised
+internal argument labels nothing. -/
 theorem clause_isLabeledByFeature_phi :
     clause.IsLabeledByFeature (Agreed clause) clause .phi ∧
       ¬ IsLabeled objectRaised objectRaised := by
@@ -241,8 +240,8 @@ def thoughtAlpha : LinearizedSyntacticObject := thought * alpha
 /-- The wh-phrase moved on from `α`. -/
 def movedOn : LinearizedSyntacticObject := whichCity * (thought * alpha)
 
-/-- (20), (21): the declarative CP is labeled with the wh-phrase in situ, but not with the
-wh-phrase at its edge, two phrases whose heads agree in nothing. -/
+/-- The declarative CP is labeled with the wh-phrase in situ (20) but not with the wh-phrase at its
+edge (21). -/
 theorem ex20_ex21 :
     (Examples.ex20.judgment = .acceptable ↔ IsLabeled thoughtInSitu cP) ∧
       (Examples.ex21.judgment = .acceptable ↔ IsLabeled thoughtAlpha alpha) := by
@@ -257,8 +256,7 @@ def alphaQ : LinearizedSyntacticObject := whichCity * (cQ * tP')
 /-- (22): *they wondered [α in which Texas city [β C [JFK was assassinated]]]*. -/
 def wonderedAlpha : LinearizedSyntacticObject := wondered * alphaQ
 
-/-- (22): `α` is two phrases, but their heads agree in the interrogative feature, which labels it:
-C's probe finds the wh-phrase's head in its base position. -/
+/-- In (22), `α` is labeled by the interrogative feature on which its two heads agree. -/
 theorem ex22 :
     wonderedAlpha.labels alphaQ = {inP, cQ} ∧
       wonderedAlpha.IsLabeledByFeature (Agreed wonderedAlpha) alphaQ .Q ∧

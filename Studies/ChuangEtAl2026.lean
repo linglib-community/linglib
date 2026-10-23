@@ -77,18 +77,15 @@ abbrev ContextualEmbedding : Type := MeaningVector CKIPGPT2HiddenDim
 The comprehension matrix `F` predicts a `ContextualEmbedding` `cF` from a `PitchContour` `c`,
 and the production matrix `G` a contour `sG` from an embedding `s` (§3.3–3.4). -/
 
-/-- No comprehension matrix takes the fifty-dimensional contour space onto the 768-dimensional
-embedding space, the paper's ground for finding ResLDL's comprehension advantage over LDL
-unsurprising (§3.3.2, fn. 29). -/
+/-- No comprehension matrix maps the fifty-dimensional contour space onto the 768-dimensional
+embedding space (§3.3.2, fn. 29). -/
 theorem comprehension_not_surjective
     (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
     ¬ Function.Surjective F.vecMulLinear := fun h ↦ by
   simpa [CKIPGPT2HiddenDim, TaiwanMandarinPitchSampleCount] using
     LinearMap.finrank_le_finrank_of_surjective (f := F.vecMulLinear) h
 
-/-- Points of a cube projected onto a plane cannot be recovered from the projection, the picture
-of fn. 29, so no comprehension matrix inverts production: the meaning `sGF` comprehended from the
-contour produced for `s` is not `s` for every `s`. -/
+/-- No comprehension matrix inverts production (fn. 29). -/
 theorem production_mul_comprehension_ne_one
     (G : Matrix (Fin CKIPGPT2HiddenDim) (Fin TaiwanMandarinPitchSampleCount) ℝ)
     (F : Matrix (Fin TaiwanMandarinPitchSampleCount) (Fin CKIPGPT2HiddenDim) ℝ) :
@@ -101,11 +98,8 @@ variable {m : ℕ} {W : Type*} [DecidableEq W]
   {data : TrainingExperience m TaiwanMandarinPitchSampleCount CKIPGPT2HiddenDim}
   {G : Matrix (Fin CKIPGPT2HiddenDim) (Fin TaiwanMandarinPitchSampleCount) ℝ}
 
-/-- A word type being the set of tokens carrying its corpus label (§1, §2.2), a
-least-squares-trained production matrix sends the centroid of its embeddings to the average of
-its training contours whenever membership in it is a linear functional of the embeddings. The
-paper reports the match as remarkable similarity (Fig. 18), Fig. 14's distinct word-type regions
-being its evidence for the hypothesis. -/
+/-- If word-type membership is a linear functional of the embeddings, a least-squares production
+matrix sends a word type's embedding centroid to its mean training contour (§1, §2.2, Fig. 18). -/
 theorem production_centroid_eq_of_decodable (hG : IsELTrained data G) (word : Fin m → W)
     {w : W} (hw : ∃ i, word i = w) {ℓ : ContextualEmbedding →ₗ[ℝ] ℝ}
     (hℓ : ∀ i, ℓ (data.S i) = if word i = w then 1 else 0) :
@@ -114,9 +108,8 @@ theorem production_centroid_eq_of_decodable (hG : IsELTrained data G) (word : Fi
   hG.centroid_vecMul_eq_of_decodable (by simpa [filter_nonempty_iff] using hw)
     (by simpa using hℓ)
 
-/-- The centroid of all tokens' embeddings, which the paper reads as the meaning of the
-unmodulated rise–fall contour (§3.4.2, Fig. 1), produces the grand-mean training contour when
-some linear functional is constant on the training embeddings. -/
+/-- If some linear functional is constant on the training embeddings, the centroid of all embeddings
+produces the grand-mean contour (§3.4.2, Fig. 1). -/
 theorem production_centroid_univ_eq [NeZero m] (hG : IsELTrained data G)
     {ℓ : ContextualEmbedding →ₗ[ℝ] ℝ} (hℓ : ∀ i, ℓ (data.S i) = 1) :
     univ.centroid ℝ data.S.row ᵥ* G = univ.centroid ℝ data.C.row :=

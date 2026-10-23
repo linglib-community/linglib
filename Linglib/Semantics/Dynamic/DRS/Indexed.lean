@@ -175,9 +175,8 @@ theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.freeVarFin
 
 /-! ### A DRS as a spine transition -/
 
-/-- A well-formed DRS denotes a transition from its context base to the
-base grown by its universe — `K.freeVarFinset ⊆ X` is the *referential presupposition*
-(Def. 27(i)). -/
+/-- A well-formed DRS denotes a transition from its context base to the base grown by its universe,
+given the referential presupposition (Def. 27(i)). -/
 theorem DRS.readsAt_toRelAt {W : Type*} (X : Finset V) (K : DRS L V) :
     Transition.ReadsAt (W := W) ↑X fun _ => DRS.toRelAt (M := M) X K :=
   fun _ _ _ _ h => DRS.toRelAt_congr_left X K h
@@ -451,9 +450,8 @@ theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
   exact Transition.ofTotal_congr _ _
     (funext fun _ => (DRS.toRelAt_merge K₁ K₂ h₁ hfresh).symm)
 
-/-- Applying a DRS's transition to the state a proper context DRS expresses yields the state of
-the merge (the action equation, p. 159), an instance of `Transition.apply_comp` through the
-transition-level Merging Lemma. -/
+/-- Applying a DRS's transition to the state of a proper context DRS yields the state of their merge
+(the action equation, p. 159). -/
 theorem DRS.state_merge (W : Type*) (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
     (h₂ : K₂.freeVarFinset ⊆ K₁.referents)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
@@ -613,9 +611,8 @@ theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
       (DRS.freeVarFinset_subset_iff.mp hfv) k) h
   exact ⟨_, (DRS.toRel_iff _ _ _).2 hflat, heq⟩
 
-/-- On a reuse-free DRS the flat total-assignment semantics and the indexed persistence semantics
-have the same truth conditions (Muskens's fn. 4). Reuse-freeness is needed, since a re-declaring
-witness separates the two (`Studies/Muskens1996.lean`). -/
+/-- On a reuse-free DRS, the flat total-assignment and indexed persistence semantics have the same
+truth conditions (Muskens's fn. 4). -/
 theorem DRS.trueRel_iff_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
     (hfv : K.freeVarFinset ⊆ X) (g : V → M) :
     DRS.trueRel K g ↔ ∃ g', DRS.toRelAt X K g g' := by

@@ -232,8 +232,8 @@ verb-second reply *er HÖRT ihr nicht zu* is appropriate. -/
 theorem appropriate_negatedF_singleton (p : Set W) : Appropriate {p} negatedF p :=
   (appropriate_negatedF_iff _ p).2 (Or.inl rfl)
 
-/-- In (55b) after (55c), the reply *daß er ihr nicht zuhört* is inappropriate, since the negated
-thought its *daß* must take as background is not known. -/
+/-- In (55b) after (55c), *daß er ihr nicht zuhört* is inappropriate, since the negated thought is
+not known. -/
 theorem not_appropriate_negatedC_singleton [Nonempty W] (p : Set W) :
     ¬ Appropriate {p} negatedC p := by
   rw [appropriate_negatedC_iff, Set.mem_singleton_iff]

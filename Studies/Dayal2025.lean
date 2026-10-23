@@ -174,8 +174,8 @@ def layerOf (p : Particle) : Option PeripheryLayer :=
   else if .matrix ∈ p.distribution.possible.cod then some .sap
   else none
 
-/-- Japanese *ka* types the clause at CP, Hindi-Urdu *kya:* sits at PerspP, and the meta
-question particles *kke* and *quick* sit at SAP, as in (15)–(19). -/
+/-- Japanese *ka* types the clause at CP, Hindi-Urdu *kya:* at PerspP, and *kke* and *quick* at SAP
+((15)–(19)). -/
 theorem layers_derived :
     layerOf ka = some .cp ∧ layerOf kya = some .perspP ∧
       layerOf kke = some .sap ∧ layerOf quick = some .sap := by
@@ -193,8 +193,7 @@ def knows : Set W := {w | KnowsAnswer H w Dox}
 aside. -/
 def forgets : Set W := (knows H Dox)ᶜ
 
-/-- Bare *know* and *remember* reject quasi-subordination in every context, as in (26d) and
-(42a), because the requirement of Persp_CQ fails on the context updated with the assertion. -/
+/-- Bare *know* and *remember* reject quasi-subordination in every context ((26d), (42a)). -/
 theorem not_possiblyIgnorant_knows : ¬ PossiblyIgnorant H (c ∩ knows H Dox) Dox :=
   not_possiblyIgnorant_inter_of_subset subset_rfl
 
@@ -210,9 +209,8 @@ theorem possiblyIgnorant_knows_question_iff :
     PossiblyIgnorant H (c ∩ (knows H Dox ∪ (knows H Dox)ᶜ)) Dox ↔ PossiblyIgnorant H c Dox :=
   possiblyIgnorant_inter_union_compl_iff
 
-/-- The same computation licenses *Have you forgotten [was Henry a communist]* (46b),
-which the paper marks unacceptable; §3.3 attributes the difference to who is invested in
-the answer, not formalized here. -/
+/-- The computation licenses *Have you forgotten [was Henry a communist]* (46b), which §3.3 excludes
+on grounds of who is invested in the answer. -/
 theorem possiblyIgnorant_forgets_question_iff :
     PossiblyIgnorant H (c ∩ (forgets H Dox ∪ (forgets H Dox)ᶜ)) Dox ↔
       PossiblyIgnorant H c Dox :=
@@ -345,9 +343,8 @@ def Fine (j : Judgment) : Prop := j = .acceptable ∨ j = .marginal
 
 instance (j : Judgment) : Decidable (Fine j) := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Outside quasi-subordination an English predicate embeds an interrogative iff its lexical
-class, read off the fragment, selects the context's layer, as in (8)–(9), (11), (24) and
-(84)–(85). -/
+/-- Outside quasi-subordination, an English predicate embeds an interrogative iff its lexical class
+selects the context's layer ((8)–(9), (11), (24), (84)–(85)). -/
 theorem selection_rows :
     ∀ row ∈ Examples.all, ∀ v ∈ verbs, ∀ e,
       row.feature? "verb" = some v.form → (row.feature? "embedding").bind contextOf = some e →
@@ -362,13 +359,9 @@ def assertsKnowledge : String → Bool
   | "remember" => true
   | _ => false
 
-/-- Quasi-subordination is licensed iff the class selects PerspP and, for a responsive, its
-content does not assert knowledge of the answer once negation or questioning is taken into
-account, as in (8)–(9), (38), (40), (43), (45)–(46) and (84)–(85). These are the instances of
-`not_possiblyIgnorant_knows`, `possiblyIgnorant_forgets_iff` and
-`possiblyIgnorant_knows_question_iff` in a context where the center may be ignorant. Rows
-the paper attributes to who is invested in the answer (§3.3) carry the feature `invested`
-and are set aside. -/
+/-- Outside the invested rows of §3.3, quasi-subordination is licensed iff the class selects PerspP
+and a responsive does not assert knowledge of the answer ((8)–(9), (38), (40), (43), (45)–(46),
+(84)–(85)). -/
 theorem quasi_rows :
     ∀ row ∈ Examples.all, ∀ v ∈ verbs,
       row.feature? "verb" = some v.form →

@@ -71,8 +71,8 @@ theorem glaSign_eq_glaUpdate (r η : ℝ) {obs hyp : ℕ} (ho : obs ≤ 1) (hh :
 
 variable {O : Type*} [Fintype O]
 
-/-- Over a distribution on the hypotheses, the expected GLA update of a rank is the plasticity
-times the excess of the expected violations over the observed (equation (1)). -/
+/-- The expected GLA update of a rank is the plasticity times the excess of expected over observed
+violations (equation (1)). -/
 theorem expected_glaUpdate (p : O → ℝ) (hp : ∑ h, p h = 1) (c : O → ℕ) (o : O) (r η : ℝ) :
     ∑ h, p h * glaUpdate r η (c o) (c h) = r + η * (∑ h, p h * c h - c o) := by
   have key : ∀ h, p h * glaUpdate r η (c o) (c h) = p h * r + η * (p h * c h) - η * (p h * c o) :=
@@ -80,8 +80,7 @@ theorem expected_glaUpdate (p : O → ℝ) (hp : ∑ h, p h = 1) (c : O → ℕ)
   simp only [key, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, hp]
   ring
 
-/-- The learner is at rest exactly when the expected and the observed violations agree, the
-convergence criterion of Section 4 shared by the GLA and Stochastic Gradient Ascent. -/
+/-- The learner is at rest iff expected and observed violations agree (Section 4). -/
 theorem expected_glaUpdate_eq_self_iff (p : O → ℝ) (hp : ∑ h, p h = 1) (c : O → ℕ) (o : O)
     (r : ℝ) {η : ℝ} (hη : η ≠ 0) :
     ∑ h, p h * glaUpdate r η (c o) (c h) = r ↔ ∑ h, p h * c h = c o := by
@@ -97,9 +96,8 @@ theorem expected_glaUpdate_eq_self_iff (p : O → ℝ) (hp : ∑ h, p h = 1) (c 
 
 variable {I : Type*} [MeasurableSpace O] [MeasurableSingletonClass O] {n : ℕ}
 
-/-- With the other weights held fixed, the derivative of the log probability of an observation in
-weight j is its expected violations of constraint j less the observed ones, which is the observed
-feature less its expectation once violations are read as non-positive features (equation (2)). -/
+/-- The derivative of an observation's log probability in weight j is its expected minus observed
+violations of constraint j (equation (2)). -/
 theorem hasDerivAt_log_maxEnt_update (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (j : Fin n) (i : I) (o : O) (t : ℝ) :
     HasDerivAt
@@ -197,9 +195,8 @@ theorem produced_stages :
 
 theorem cv_unmarked : ∀ i : Syl, ∀ k : Fin 5, k ≠ 0 → con k (i, cv) = 0 := by decide
 
-/-- A learner producing CV with certainty, the initial state with FAITH at 0 and the markedness
-constraints at 10, lowers each markedness rank by the plasticity times the observation's
-violations, (1). -/
+/-- From the initial state, a learner producing CV with certainty lowers each markedness rank by the
+plasticity times the observation's violations (1). -/
 theorem initial_glaUpdate (r η : ℝ) (o : Syl) (k : Fin 5) (hk : k ≠ 0) :
     ∑ h, Pi.single (M := fun _ ↦ ℝ) cv 1 h * glaUpdate r η (con k (o, o)) (con k (o, h)) =
       r - η * con k (o, o) := by

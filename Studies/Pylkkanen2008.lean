@@ -102,8 +102,8 @@ theorem composes_unergative_iff (a : ApplType) :
     (∃ τ ∈ sisterTy a, (Ty.combine? τ Ty.vt).isSome) ↔ a = .high := by
   cases a <;> simp [sisterTy] <;> decide
 
-/-- A low applicative cannot appear in a structure that lacks a direct object (17), since at no
-stage of its saturation does it compose with an unergative verb phrase, in either order. -/
+/-- A low applicative composes with an unergative verb phrase at no stage of its saturation, in
+either order (17). -/
 theorem lowAppl_not_composes_unergative :
     ∀ τ ∈ [lowApplTy, .e ⇒ Ty.evt ⇒ Ty.vt, Ty.evt ⇒ Ty.vt],
       Ty.combine? τ Ty.vt = none ∧ Ty.combine? Ty.vt τ = none := by
@@ -114,9 +114,8 @@ is not a typing fact. -/
 theorem lowApplP_composes_transitive : Ty.combine? (Ty.evt ⇒ Ty.vt) Ty.evt = some Ty.vt := by
   decide
 
-/-- In the derivation (16) of *Mary bought John the book*, the low ApplP takes the verb, whose
-denotation relates its theme to a buying event, and Voice adds the agent by Event
-Identification. -/
+/-- In the derivation (16) of *Mary bought John the book*, low ApplP takes the verb and Voice adds
+the agent by Event Identification. -/
 theorem voiceP_lowAppl (agent theme : Entity → E → Prop) (poss : Entity → Entity → Prop)
     (buying : E → Prop) (mary john book : Entity) (e : E) :
     eventIdentification agent
@@ -125,9 +124,8 @@ theorem voiceP_lowAppl (agent theme : Entity → E → Prop) (poss : Entity → 
   simp only [eventIdentification_apply, lowAppl]
   tauto
 
-/-- Over an unergative the constituent of type `⟨e,⟨s,t⟩⟩` is the Voice' whose open argument is
-the agent, and the low ApplP composed with it holds of no event when no participant is both
-agent and theme, the contradiction of (103b). -/
+/-- Over an unergative, low ApplP holds of no event when no participant is both agent and theme
+(103b). -/
 theorem lowAppl_agent_eq_bot {agent theme : Entity → E → Prop} (h : Disjoint agent theme)
     (poss : Entity → Entity → Prop) (run : E → Prop) (x y : Entity) :
     lowAppl theme poss x y (eventIdentification agent run) = ⊥ := by
@@ -202,10 +200,8 @@ theorem possessor_dative_transitivity :
 
 /-! ### Cause introduces a causing event, not a causer -/
 
-/-- On the bieventive analysis (14) of *John melted the ice*, Voice relates John to an event
-that causes a melting, the reading (13b), since Cause (9), the meaning shared by every causative
-head, is the head `vCause`, which introduces no individual; on the θ-role analysis (16), a
-causer head relates John to the melting itself, the reading (15b). -/
+/-- With Cause (9), analysis (14) relates John to an event causing the melting (13b), and the θ-role
+analysis (16) relates him to the melting (15b). -/
 theorem melted_readings (M : EventStructure.Interpretation Entity E E)
     (agent causer : Entity → E → Prop) (melt : E → Prop) (john : Entity) (e : E) :
     (eventIdentification agent (M.vCause melt) john e ↔
@@ -216,16 +212,14 @@ theorem melted_readings (M : EventStructure.Interpretation Entity E E)
 /-- `causeTy` is the type of Cause (9), `⟨⟨s,t⟩,⟨s,t⟩⟩`. -/
 abbrev causeTy : Ty := Ty.vt ⇒ Ty.vt
 
-/-- Cause applied to a verb phrase yields a predicate of events, the unaccusative causative (18),
-while the θ-role analysis's causer head (16a), of type `⟨e,⟨s,t⟩⟩`, yields a relation that still
-awaits an individual (§3.2). -/
+/-- Cause applied to a verb phrase yields a predicate of events (18), while the causer head (16a)
+yields a relation still awaiting an individual (§3.2). -/
 theorem unaccusative_causative :
     Ty.combine? causeTy Ty.vt = some Ty.vt ∧ Ty.combine? Ty.evt Ty.vt = some Ty.evt := by
   decide
 
-/-- The two heads of the Voice-bundling Cause (42) cannot combine with each other, in either
-order, so they apply to the verb phrase one at a time, and only Cause first, since after Voice
-nothing Cause can take remains (§3.3). -/
+/-- The heads of the Voice-bundling Cause (42) cannot combine with each other and apply to the verb
+phrase Cause first (§3.3). -/
 theorem cause_voice_order :
     Ty.combine? causeTy Ty.evt = none ∧ Ty.combine? Ty.evt causeTy = none ∧
       (Ty.combine? causeTy Ty.vt).bind (Ty.combine? Ty.evt) = some Ty.evt ∧
@@ -264,14 +258,13 @@ def CauseHead.Embeds (c : CauseHead) (l : Layer) : Prop := l ≤ c.selects
 instance (c : CauseHead) (l : Layer) : Decidable (c.Embeds l) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- VP modifiers take scope below Cause, and verbal morphology intervenes between the root and
-Cause, exactly when Cause selects at least a verb (Table 3.2, rows 1 and 2). The two rows
-correlate because both are this one fact. -/
+/-- VP modifiers scope below Cause and verbal morphology intervenes below it exactly when Cause
+selects at least a verb (Table 3.2, rows 1 and 2). -/
 theorem embeds_verb_iff (c : CauseHead) : c.Embeds .verb ↔ c.selects ≠ .root := by
   obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide
 
-/-- Agent-oriented modifiers take scope below Cause, and high applicative morphology intervenes
-between the root and Cause, exactly when Cause selects a phase (Table 3.2, rows 3 and 4). -/
+/-- Agent-oriented modifiers scope below Cause and high applicative morphology intervenes below it
+exactly when Cause selects a phase (Table 3.2, rows 3 and 4). -/
 theorem embeds_phase_iff (c : CauseHead) : c.Embeds .phase ↔ c.selects = .phase := by
   obtain ⟨s, b⟩ := c; cases s <;> cases b <;> decide
 

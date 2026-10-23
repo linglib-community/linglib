@@ -143,11 +143,8 @@ def zRank (rules : List (Rule W × ℕ)) (x : W) : ℕ :=
 def zRanking (rules : List (Rule W × ℕ)) (h : ∃ x, zRank rules x = 0) : RankingFunction W :=
   ⟨zRank rules, h⟩
 
-/-- A ranking is admissible exactly when each rule's consequent follows from its antecedent in
-the ranking's consequence relation `RankingFunction.Entails`, the paper's Definition 7. By
-Principle (3) a consequent follows when its negation has positive rank given the antecedent
-(`RankingFunction.entails_iff_condRank`), equivalently when it holds in every most normal world
-of the antecedent (`RankingFunction.entails_iff_forall_least`). -/
+/-- A ranking is admissible iff each rule's consequent follows from its antecedent in the ranking,
+as in Definition 7 and Principle (3). -/
 theorem admissible_iff_forall_entails {κ : RankingFunction W} {Δ : KnowledgeBase W} :
     Admissible κ Δ ↔ ∀ r ∈ Δ, Entails κ {x | r.ante x} {x | r.cons x} := by
   simp only [Admissible, entails_iff_forall_exists_lt, Rule.Falsified, Set.mem_ofPred_eq,
@@ -205,8 +202,7 @@ private theorem strength_le_foldr_max (Δ : StrengthBase W) {r : StrengthRule W}
     · exact le_max_left _ _
     · exact le_trans (ih htl) (le_max_right _ _)
 
-/-- A strength base admits a δ-admissible ranking exactly when its flat base admits an admissible
-one, since scaling a ranking by one more than the largest strength widens every gap
+/-- A strength base admits a δ-admissible ranking iff its flat base admits an admissible one
 (Theorem 19). -/
 theorem strengthAdmissible_iff_flat [Fintype W] (Δ : StrengthBase W) :
     (∃ κ : RankingFunction W, StrengthAdmissible κ Δ) ↔
@@ -472,8 +468,7 @@ theorem isZPlusOrdering_example24 : IsZPlusOrdering (ΔpbPlus δ₁ δ₂ δ₃ 
 def κPlus : RankingFunction World :=
   ⟨zPlusRank (ΔpbPlus δ₁ δ₂ δ₃ δ₄ δ₅), w₀, zPlusRank_w₀ _ _ _ _ _⟩
 
-/-- Penguin-birds do not fly under κ⁺ whatever the strengths, because the preference for r₃ over
-r₁ is a matter of specificity, not of the δ's (Theorem 25). -/
+/-- Penguin-birds do not fly under κ⁺, whatever the strengths (Theorem 25). -/
 theorem zPlus_penguin_birds_dont_fly :
     Entails (κPlus δ₁ δ₂ δ₃ δ₄ δ₅) {x | penguin x ∧ bird x} {x | ¬ flies x} := by
   rw [entails_iff_forall_exists_lt]
@@ -699,9 +694,8 @@ theorem lCondition_eq_aPart_of_notMem (hA : A.Nonempty) (hA' : Aᶜ.Nonempty) (h
   rw [lCondition_of_notMem κ hw, toNat_min_rank κ hA hA', aPart]
   omega
 
-/-- When `A` comes out with rank `0`, L-conditioning is J-conditioning, Spohn's
-conditionalization of Eq. (25), at the firmness `κ(¬A) + L − κ(A)` that Eq. (30) gives the
-negation. -/
+/-- When `A` comes out with rank `0`, L-conditioning is J-conditioning (Eq. (25)) at the firmness
+that Eq. (30) gives the negation. -/
 theorem lCondition_eq_conditionα (hA : A.Nonempty) (hA' : Aᶜ.Nonempty)
     (h : (rank κ A).toNat ≤ (rank κ Aᶜ).toNat + L) :
     lCondition κ A L = κ.conditionα A hA ((rank κ Aᶜ).toNat + L - (rank κ A).toNat) := by
@@ -784,8 +778,8 @@ theorem rank_κm'_not_bill : rank κm' {x | bill x}ᶜ = 0 :=
   (rank_eq_of_forall_le κm' (A := {x | bill x}ᶜ) (w := ⟨true, false⟩) (by decide)
     (by simp only [κm'_apply]; decide)).trans (by simp [κm'_apply, mary, bill])
 
-/-- L-conditioning κ⁺′ on evidence of strength 2 that Bill goes lowers `M ∧ B` to 1 and
-`¬M ∧ B` to 0, the right of Fig. 6. -/
+/-- L-conditioning κ⁺′ on strength-2 evidence that Bill goes lowers `M ∧ B` to 1 and `¬M ∧ B` to 0
+(Fig. 6). -/
 theorem lCondition_κm'_apply (x : Party) :
     lCondition κm' {x | bill x} 2 x =
       if mary x ∧ bill x then 1 else if mary x ∨ bill x then 0 else 2 := by

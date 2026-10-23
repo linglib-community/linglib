@@ -90,9 +90,8 @@ theorem adopted_unique (r : NominalizationReading) (v : Verbalizer.Alloseme)
     (v, n) = adoptedAllosemes r := by
   revert hr h; revert r v n; decide
 
-/-- The reading pins the division of labor (the "mirror image" claim of §3.5): an event reading
-arises only from contentful v with vacuous n, while a result or content reading forces the
-corresponding contentful n, whatever v contributes. -/
+/-- An event reading arises only from contentful v with vacuous n, and a result or content reading
+only from the corresponding contentful n (§3.5). -/
 theorem reading_determines_contentful_head (v : Verbalizer.Alloseme) (n : Nominalizer.Alloseme) :
     (readingFromAllosemes v n = some .complexEvent →
       v.introducesEvent = true ∧ n = .zero) ∧
@@ -136,9 +135,8 @@ theorem beobachtung_readings_available :
     ∀ r ∈ beobachtungRows.filterMap readingOf, r ∈ availableReadings true := by
   decide
 
-/-- Without an event-entailing root neither the complex event nor the result reading is
-derivable; the content reading survives, since simple content nouns like *Gerücht* 'rumor'
-need no verbal source (Table 2). -/
+/-- Without an event-entailing root neither the complex event nor the result reading is derivable,
+but the content reading is (Table 2). -/
 theorem nonEventive_readings :
     availableReadings false = [.content, .simpleEvent, .simpleState, .simpleEntity] := rfl
 
@@ -227,20 +225,14 @@ def denoteN (m : NominalizationModel E S) :
   | .zero _, .content => some { pred := m.hasContent }
   | _, _ => none
 
-/-- The event and result readings are mirror images at the
-entity-predicate level: the two analytical options for the result
-reading — eventive v with n's result alloseme, or vacuous v with the
-same — agree on what the nominal describes (§3.5, crediting
-[wood-2023]). -/
+/-- The two options for the result reading, eventive or vacuous v, agree on the entity predicate
+(§3.5, crediting [wood-2023]). -/
 theorem result_options_pred_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
     (denoteN m (denoteV ρ .eventive) .result).map (·.pred)
       = (denoteN m (denoteV ρ .zero) .result).map (·.pred) := rfl
 
-/-- ...but not on argument structure: on the both-heads-interpreted
-option the result nominal retains the internal-argument position v
-introduced, on the v-vacuous option it has none. Since result nominals
-cannot saturate an internal argument, this is the reason for adopting the
-vacuous option for the RN reading (§3.5, following [wood-2023]). -/
+/-- The two options for the result reading disagree on argument structure, only eventive v leaving
+an internal-argument position (§3.5, following [wood-2023]). -/
 theorem result_options_disagree_on_arguments (m : NominalizationModel E S)
     (ρ : RootMeaning E S) :
     (∃ r, denoteN m (denoteV ρ .eventive) .result = some r ∧ r.internalArg.isSome)
@@ -261,9 +253,7 @@ theorem zero_v_no_argument_structure (m : NominalizationModel E S) (ρ : RootMea
   · cases cn <;> simp only [denoteV, denoteN, Option.some.injEq, reduceCtorEq] at h <;>
       (try subst h) <;> rfl
 
-/-- The content reading likewise ignores the verbal layer: both v
-options compose to `hasContent`, which is how simple content nouns can
-have the reading with no verbal source at all (§3.5). -/
+/-- Both options for v give the same content reading (§3.5). -/
 theorem content_options_agree (m : NominalizationModel E S) (ρ : RootMeaning E S) :
     denoteN m (denoteV ρ .eventive) .content = denoteN m (denoteV ρ .zero) .content := rfl
 
@@ -363,10 +353,8 @@ theorem two_factors_needed :
       (InterpretivelyCompatible .pfx .prt ∧ ¬ Allowed .pfx .prt) := by
   decide
 
-/-- The printed Table 3 marks the merged pfx/PRT-RSP row's interpretation cell excluded, but
-on the account's own classification only the prefix half is: for a particle over a resultative
-the structural factor does the work, and only some such verbs are also ruled out semantically
-(§4.4). -/
+/-- A particle over a resultative is structurally but not interpretively excluded, though Table 3
+marks the merged row's interpretation cell excluded (§4.4). -/
 theorem prt_rsp_particle_dependent :
     ¬ StructurallyCompatible .prt .rsp ∧ InterpretivelyCompatible .prt .rsp := by
   decide

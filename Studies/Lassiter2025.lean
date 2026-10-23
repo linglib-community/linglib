@@ -135,8 +135,8 @@ theorem anchoring_iff_felicitous
 
 end Felicity
 
-/-- Gibbard's puzzle is that a bare left-nested conditional has no reading out of the blue, (4),
-and none under *only*-inversion, which forces the hypothetical reading, (38b) and (39b). -/
+/-- A bare left-nested conditional has no reading out of the blue (4) or under *only*-inversion
+(38b), (39b), which is Gibbard's puzzle. -/
 theorem bare_not_hypothetical : ¬ Acceptable (.nested .bare) (· = .hypothetical) := by
   simp [acceptable_bare_iff]
 
@@ -165,9 +165,8 @@ theorem coordination_bare (g₁ g₂ : Prop) :
 
 /-! ### Markers, section 2.2 -/
 
-/-- A marker is attested heading a bare left-nested conditional iff it is attested marking a
-premise conditional: *nara* and *wenn* are, (18) and (23), *-ra* and *falls* are not, (19) and
-(24). -/
+/-- A marker heads a bare left-nested conditional iff it marks a premise conditional, as *nara* and
+*wenn* (18), (23) do and *-ra* and *falls* (19), (24) do not. -/
 theorem heads_bare_iff (m : Marker) :
     Acceptable (.nested .bare) (· ∈ m.readings.fst) ↔ .premise ∈ m.readings.fst :=
   acceptable_bare_iff _
@@ -214,9 +213,8 @@ theorem polarity_embedded_antecedent :
     (Position.embedded .antecedent).polarity .premise = -1 ∧
       (Position.embedded .antecedent).polarity .hypothetical = 1 := ⟨rfl, rfl⟩
 
-/-- In the consequent of its embedded conditional, a bare left-nested conditional hosts items
-sensitive to preserving contexts, *rather pleased* in (29), and not the minimizer *lifted a
-finger* of (30). -/
+/-- The embedded consequent of a bare left-nested conditional hosts *rather pleased* (29) but not
+*lifted a finger* (30). -/
 theorem bare_embedded_consequent (e : PolarityItem) :
     Acceptable (.nested .bare) (admits · (.embedded .consequent) e) ↔
       Israel2001.PolarityItem.contextType e = some .positive :=
@@ -229,9 +227,8 @@ theorem bare_embedded_antecedent (e : PolarityItem) :
       Israel2001.PolarityItem.contextType e = some .negative :=
   acceptable_bare_iff _
 
-/-- The diagnostic has force because on a hypothetical reading the embedded consequent would
-reverse the scale, admitting *lifted a finger* and rejecting *rather*, the reverse of (29) and
-(30). -/
+/-- On a hypothetical reading the embedded consequent admits *lifted a finger* and rejects *rather*,
+the reverse of (29) and (30). -/
 theorem polarity_diagnostic :
     admits .hypothetical (.embedded .consequent) English.PolarityItems.liftAFinger ∧
       ¬ admits .hypothetical (.embedded .consequent) English.PolarityItems.rather := by
@@ -303,14 +300,9 @@ theorem markers_described :
     ∀ row ∈ Examples.all, ∀ m ∈ markerOf row, m.readings.fst = m.readings.snd := by
   decide
 
-/-- Every row is judged felicitous iff some reading open to its shape meets its demand. Gibbard's
-(4) fails out of the blue and (11)–(14) succeed once the embedded conditional has been asserted;
-*nara* and *wenn* head the bare left-nested conditionals of (18) and (23), *-ra* and *falls* of (19)
-and (24) do not; *rather* survives in the embedded consequent of (29) and *lifted a finger* does
-not, in (30), nor in the consequent of (31), while it is licensed in the embedded antecedent of
-(32b); (34) coordinates two given antecedents and (33) and (35) mix; (36) inverts with an open
-antecedent, (37b) with a given one, (38b) and (39b) in a bare left-nested conditional; and (40)–(43)
-are hypothetical with an open antecedent. -/
+/-- A row is judged felicitous iff some reading open to its shape meets its demand ((4), (11)–(14),
+(18), (19), (23), (24), (29), (30), (31), (32b), (33), (34), (35), (36), (37b), (38b), (39b),
+(40)–(43)). -/
 theorem acceptable_rows :
     ∀ row ∈ Examples.all,
       (row.JudgedFelicitous ↔ Acceptable (shape row) (demand row)) := by

@@ -200,9 +200,8 @@ instance : (ℓ : ReadingLabel) → (p : Picture3) → Decidable (reading ℓ p)
   | .global, p => inferInstanceAs (Decidable (global p))
   | .local_, p => inferInstanceAs (Decidable (local_ p))
 
-/-- Under *exactly one* the local reading no longer entails the literal one, since a strong
-verifier among weak verifiers makes it true and the literal reading false, which puts it beyond
-a globalist derivation's reach (§5.1). -/
+/-- Under *exactly one* the local reading does not entail the literal one, so no globalist
+derivation yields it (§5.1). -/
 theorem local_not_globallyDerivable : ¬ GloballyDerivable reading .local_ := by
   decide +kernel
 
@@ -290,9 +289,8 @@ def ratingDE (e : Experiment) (i : Item) (c : DEControlCondition) : Option ℕ :
 
 /-! ### Experiment 1 -/
 
-/-- In Figure 5 the ratings of both items rise with the readings true at the condition's
-witness, the conjecture of §3.2 on Experiment 1, which subsumes the contrast between STRONG and
-WEAK that only the truth of the local reading separates. -/
+/-- Ratings of both items rise with the number of readings true at the condition's witness, as §3.2
+conjectures (Figure 5). -/
 theorem exp1_monotone (i : Item) :
     ∃ r₀ ∈ rating₁ i .false_, ∃ r₁ ∈ rating₁ i .literal, ∃ r₂ ∈ rating₁ i .weak,
       ∃ r₃ ∈ rating₁ i .strong,
@@ -329,8 +327,8 @@ theorem local_isReinforceable :
 
 /-! ### Experiment 2 -/
 
-/-- In Figure 12 the condition where only the local reading of *certains* is true is rated above
-the one where only the literal reading is, though the literal reading is false there. -/
+/-- The condition where only the local reading of *certains* is true is rated above the one where
+only the literal reading is (Figure 12). -/
 theorem exp2_local_gt_literal_some :
     ∃ l ∈ rating₂ .some .local_, ∃ t ∈ rating₂ .some .literal, t < l := by
   decide +kernel
@@ -360,14 +358,14 @@ theorem localist_ne_unrestrictedGlobalist_local :
 
 /-! ### The downward-entailing controls (§4.4.4, §5.5.4) -/
 
-/-- In Figures 6 and 13 the condition where only the marginal local reading is true is rated far
-below the one where both readings are, in both experiments and for both items. -/
+/-- The condition where only the marginal local reading is true is rated below the one where both
+readings are (Figures 6 and 13). -/
 theorem de_qLocal_lt_both (e : Experiment) (i : Item) :
     ∃ q ∈ ratingDE e i .qLocal, ∃ b ∈ ratingDE e i .both, q < b := by
   cases e <;> cases i <;> decide +kernel
 
-/-- The same controls are rated higher after the non-monotonic items of Experiment 2 than after
-Experiment 1, which §5.5.4 attributes to exposure to salient local readings. -/
+/-- The same controls are rated higher after Experiment 2's non-monotonic items than after
+Experiment 1 (§5.5.4). -/
 theorem de_qLocal_priming (i : Item) :
     ∃ a ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .two i .qLocal, a < b := by
   cases i <;> decide +kernel

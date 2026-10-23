@@ -118,10 +118,8 @@ def iconicity : Form ≃o Situation where
 
 variable {α : Type*} [Preorder α] {f : Form × Situation → α} {G : Set (Form × Situation)}
 
-/-- Strong bidirection blocks the marked form in every interpretation on any generator in which
-both forms can express the stereotypical situation, keeping only the unmarked form in its
-stereotypical reading. This covers the full generator (7) and the one that restricts the
-unmarked form to the stereotypical situation (9). -/
+/-- On any generator letting both forms express the stereotypical situation, strong bidirection
+keeps only the unmarked stereotypical pair, as for (7) and (9). -/
 theorem strong_total_blocking (hf : StrictMono f) (hu : (.unmarked, .stereotypical) ∈ G)
     (hm : (.marked, .stereotypical) ∈ G) :
     strongOptimalSet G f = {(.unmarked, .stereotypical)} := by
@@ -140,8 +138,7 @@ theorem strong_total_blocking (hf : StrictMono f) (hu : (.unmarked, .stereotypic
     · exact Nat.not_lt_zero _ h
 
 /-- Strong bidirection pairs the marked form with the marked situation iff the generator excludes
-both mixed pairs: the only way to the division of labour under the strong version is to stipulate
-it in the generator, as in (10). -/
+both mixed pairs, as stipulated in (10). -/
 theorem marked_marked_mem_strongOptimalSet_iff (hf : StrictMono f) :
     (.marked, .marked) ∈ strongOptimalSet G f ↔
       (.marked, .marked) ∈ G ∧ (.marked, .stereotypical) ∉ G ∧ (.unmarked, .marked) ∉ G := by
@@ -155,9 +152,8 @@ theorem marked_marked_mem_strongOptimalSet_iff (hf : StrictMono f) :
   · exact hs hq
   · exact lt_irrefl _ hlt
 
-/-- Weak bidirection derives the division of pragmatic labour (12), pairing the unmarked form with
-the stereotypical situation and the marked form with the marked one. The paper credits the
-general proof to Jäger; it is `superoptimalSet_eq_graphOn`. -/
+/-- Weak bidirection derives the division of pragmatic labour (12), pairing unmarked with
+stereotypical and marked with marked. -/
 theorem weak_division_of_labour (hf : StrictMono f) :
     superoptimalSet univ f = {(.unmarked, .stereotypical), (.marked, .marked)} := by
   rw [superoptimalSet_eq_graphOn _ iconicity hf finite_univ.isWF (subset_univ _)]

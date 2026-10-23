@@ -89,8 +89,7 @@ theorem matches_entailed {e : Datum} (h : Disjoint (entailed e) (denied e)) :
     Matches e (entailed e) :=
   ⟨le_rfl, h.le_compl_right⟩
 
-/-- Dowty's exemplar of volition alone (29a) is Cruse's (32), and the two analyses agree on it:
-Dowty attributes volition alone to its subject, and Cruse the volitive alone. -/
+/-- Dowty's exemplar of volition alone (29a) is Cruse's (32), and both analyses agree on it. -/
 theorem cruse_volitive_is_volition_alone :
     entailed Examples.notEatSubject = {.volition} ∧
       (Cruse1973.Row.ofDatum Cruse1973.Examples.ex_32).bind (·.profile) = some {.volitive} := by
@@ -135,9 +134,7 @@ theorem outranks_of_protoAgent_nonempty (hp : p.protoAgent.Nonempty) (hq : q.pro
     Outranks p q :=
   .inl (by simpa [hq] using hp.card_pos)
 
-/-- The hierarchies of (36) fall out of the principle over the canonical role profiles:
-Agent over Instrument, Instrument and Experiencer over Patient, and Patient over Goal for
-direct object. -/
+/-- The hierarchies of (36) follow from the selection principle over the canonical role profiles. -/
 theorem hierarchies :
     Outranks (ThetaRole.canonicalProfile .agent) (ThetaRole.canonicalProfile .instrument) ∧
       Outranks (ThetaRole.canonicalProfile .instrument) (ThetaRole.canonicalProfile .patient) ∧
@@ -149,8 +146,7 @@ theorem hierarchies :
 
 /-! ### The stable case and the ties, (35) and §8.3 -/
 
-/-- In the primary transitive verbs of (35) a subject with four Proto-Agent entailments and no
-Proto-Patient entailment faces an object with the reverse, and (31) selects outright. -/
+/-- In the primary transitive verbs of (35), the subject outranks the object under (31). -/
 theorem primary_transitives :
     Outranks (entailed Examples.buildSubject) (entailed Examples.buildObject) ∧
       Outranks (entailed Examples.writeSubject) (entailed Examples.writeObject) ∧
@@ -179,9 +175,8 @@ theorem psych_doublet :
       Alternates (entailed Examples.pleaseObject) (entailed Examples.pleaseSubject) := by
   decide
 
-/-- Under the inchoative interpretation the experiencer undergoes a change of state, the
-Proto-Patient entailment that selects the stimulus as subject, which is Croft's generalization
-that only stimulus-subject psych verbs take the inchoative reading (§9.2). -/
+/-- Under the inchoative reading, the experiencer's change of state selects the stimulus as subject,
+as Croft's generalization states (§9.2). -/
 theorem inchoative_stimulus_subject :
     Outranks (entailed Examples.surpriseSubject) (entailed Examples.surpriseObjectInchoative) := by
   decide
@@ -341,16 +336,16 @@ theorem exemplars_match_templates :
       desire.objectProfile.all (Matches Examples.seekObject ·) := by
   decide
 
-/-- The psych-state and desire templates split as the paper does: the *like* experiencer is
-sentient, (38), and the *need* subject entails existence but none of (27a) to (27d). -/
+/-- The *like* experiencer fits the psych-state template (38), and the *need* subject fits only the
+desire template, with none of (27a) to (27d). -/
 theorem psych_desire_split :
     Matches Examples.likeSubject psychState.subjectProfile ∧
       Matches Examples.needSubject desire.subjectProfile ∧
       ¬ Matches Examples.needSubject psychState.subjectProfile := by
   decide
 
-/-- The creation template omits (28d), which "all of 28" for the object of *build* includes:
-the template follows the (35) hedge that creation objects are only mostly stationary. -/
+/-- The creation template omits (28d), which the object of *build* has, following the (35) hedge
+that creation objects are mostly stationary. -/
 theorem build_object_stationary_divergence :
     ¬ Matches Examples.buildObject creationObject ∧
       Matches Examples.buildObject (insert .stationary creationObject) := by
@@ -361,9 +356,8 @@ theorem break_object_it_divergence :
       Matches Examples.breakObject (insert .incrementalTheme accomplishmentObjectProfile) := by
   decide
 
-/-- (30e) counts destruction as dependent existence, which the paper never states for the object
-of *eat*: the row leaves it open, so the consumption template and its extension by dependent
-existence both agree with it. -/
+/-- The object of *eat* matches both the consumption template and its extension by dependent
+existence (30e). -/
 theorem eat_object_de_open :
     Matches Examples.eatObject consumptionObject ∧
       Matches Examples.eatObject (insert .dependentExistence consumptionObject) := by

@@ -164,8 +164,8 @@ def host? (e : Datum) : Option Host :=
       ("fear-predicate complement", .inr .emotiveDoxasticPredicate),
       ("polar question", .inr .biasedQuestion), ("conditional", .inr .conditional)]
 
-/-- (20): each Greek host of expletive negation features the Greek spell-out of the negator its
-class assigns, *dhen* in an apparent host and *min* in a host proper. -/
+/-- Each Greek host of expletive negation spells out the negator its class assigns, *dhen* or *min*
+(20). -/
 theorem greek_expletive_negator :
     ∀ e ∈ Examples.all, e.language = "mode1248" → e.feature? "use" = some "expletive" →
       (host? e).map (·.negator.greek.morphs.map (·.form)) = (e.feature? "negator").map ([·]) := by

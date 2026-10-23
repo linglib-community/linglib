@@ -199,10 +199,8 @@ theorem gain_eq (hε : 0 < g.ε) (hc : g.context.Nonempty) (hsum : ∑ h, g.hidd
   simp only [egoUtility, mul_sub, sum_sub_distrib]
   ring
 
-/-- Appendix A, Theorem 1, under the tie that makes its proof go through: if `u₀` is more
-specific than `u₁`, the two are equally informative over the shared context, and some
-hidden object of positive prior satisfies `u₁` but not `u₀`, then the asymmetric utility
-favours `u₀` over `u₁` strictly more than the egocentric utility does. -/
+/-- Under a tie in context mass, a more specific `u₀` gains more under the asymmetric than the
+egocentric utility when some hidden object satisfies only `u₁` (Appendix A, Theorem 1). -/
 theorem gain_pos_of_tie (hε : 0 < g.ε) (hε1 : g.ε < 1) (hc : g.context.Nonempty)
     (hp : ∀ h, 0 ≤ g.hidden h) (hsum : ∑ h, g.hidden h = 1) {u₀ u₁ : U}
     (hspec : ∀ o, g.applies u₀ o → g.applies u₁ o)
@@ -224,10 +222,8 @@ theorem gain_pos_of_tie (hε : 0 < g.ε) (hε1 : g.ε < 1) (hc : g.context.Nonem
   have : g.meaning u₀ h₀ < g.meaning u₁ h₀ := by simp [meaning, h₁, h₂, hε1]
   gcongr
 
-/-- The premise of Appendix A cannot be dropped: when every hidden object of positive prior
-satisfies both descriptions and `u₀` is strictly more specific over the shared context, the
-asymmetric utility favours `u₀` over `u₁` strictly less than the egocentric utility does,
-since the shared hidden object dilutes the narrower description more. -/
+/-- When every likely hidden object satisfies both descriptions and `u₀` is narrower in context, the
+asymmetric utility favours `u₀` less than the egocentric does (Appendix A). -/
 theorem gain_neg_of_shared_hidden (hε : 0 < g.ε) (hc : g.context.Nonempty)
     (hp : ∀ h, 0 ≤ g.hidden h) (hsum : ∑ h, g.hidden h = 1) {u₀ u₁ : U}
     (hshared : ∀ h, 0 < g.hidden h → g.applies u₀ h ∧ g.applies u₁ h)
@@ -326,9 +322,8 @@ theorem mixSpeaker_lt_iff {α : ℝ} (hα : 0 < α) (wS : ℝ) {u u' : U} :
     ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
   exact ⟨fun h => lt_of_mul_lt_mul_left h hα.le, fun h => mul_lt_mul_of_pos_left h hα⟩
 
-/-- Appendix A's corollary: whenever the egocentric speaker does not disprefer the more
-specific description, every mixture speaker with `wS > 0` prefers it, under the tie of
-`gain_pos_of_tie`. -/
+/-- Under the tie of `gain_pos_of_tie`, if the egocentric speaker does not disprefer the more
+specific description, every mixture speaker with `wS > 0` prefers it (Appendix A). -/
 theorem mixSpeaker_prefers (hε : 0 < g.ε) (hε1 : g.ε < 1) (hc : g.context.Nonempty)
     (hp : ∀ h, 0 ≤ g.hidden h) (hsum : ∑ h, g.hidden h = 1) {u₀ u₁ : U}
     (hspec : ∀ o, g.applies u₀ o → g.applies u₁ o)
@@ -418,10 +413,8 @@ theorem stimulus_tie (c : ℝ) :
         ∀ f ∈ ({.shape} : Finset Feature), d2 f = true
       decide
 
-/-- §2.4.1, first prediction: on the stimulus, a mixture speaker with any `wS > 0` prefers
-the full description to the bare shape whenever the cost does not already make the
-egocentric speaker prefer the shape, since a hidden object matching the shape alone has
-positive prior. -/
+/-- On the stimulus, a mixture speaker with `wS > 0` prefers the full description whenever the
+egocentric speaker does not prefer the bare shape (§2.4.1). -/
 theorem stimulus_prefers_full {c α wS : ℝ} (hα : 0 < α) (hw : 0 < wS)
     (hego : (stimulus c).egoUtility {.shape} ≤
       (stimulus c).egoUtility {.shape, .color, .texture}) :

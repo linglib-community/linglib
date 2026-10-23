@@ -276,9 +276,8 @@ theorem language_eq_anbncn_sub_one :
     (fun _ hw ↦ ⟨language_subset_anbncn hw, mt (Language.mem_one _).1 (Grammar.Derives.ne_nil hw)⟩)
     anbncn_sub_one_subset_language
 
-/-- The language of `G₁` is not context-free, since it contains `aⁿbⁿcⁿ` for every `n ≥ 1` and
-each of its words has as many `a` as `b` as `c`. The proof of Theorem 3 of
-[kuhlmann-koller-satta-2015] invokes this standard fact (p. 202) without proving it. -/
+/-- The language of `G₁` is not context-free, a fact the proof of Theorem 3 of
+[kuhlmann-koller-satta-2015] invokes without proof (p. 202). -/
 theorem not_isContextFree_language : ¬ exampleGrammar.language.IsContextFree := by
   refine Language.not_isContextFree_of_replicate_mem_of_count_eq (a := Letter.a) (b := .b)
     (c := .c) (by decide) (Filter.frequently_atTop.2 fun m ↦

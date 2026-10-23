@@ -285,8 +285,8 @@ theorem ultrastrong_pcc : ∀ s ∈ PCC.cliticPairs,
       s.high = .third ∧ s.low ≠ .third ∨ s.high = .second ∧ s.low = .first := by
   decide +kernel
 
-/-- The Me-First probe (39c) bans a 1st person direct object under a 2nd or 3rd person
-indirect object; the 1 > 1 cell of table 1 is beyond it. -/
+/-- The Me-First probe (39c) bans exactly a 1st person direct object under a 2nd or 3rd person
+indirect object. -/
 theorem meFirst_pcc : ∀ s ∈ PCC.cliticPairs,
     PCCViolation meFirstProbe false s ↔ s.low = .first ∧ s.high ≠ .first := by
   decide +kernel
@@ -303,8 +303,8 @@ theorem direct_never_banned (P : Articulation) (b : Bool) (io : Person) :
     rw [show (dp .third).personSegments = [.pi] from rfl, List.mem_singleton] at hs
     exact hs ▸ pi_mem_personSegments _
 
-/-- A probe rooted in [uPERS] that bans a cluster bans its direct object under a 3rd person
-indirect object (§3.4.2), so a ban on [PART] > [PART] entails the ban on 3 > [PART]. -/
+/-- A probe rooted in [uPERS] that bans a cluster also bans its direct object under a 3rd person
+indirect object (§3.4.2). -/
 theorem pccViolation_third_of_pccViolation {P : Articulation} (hpi : PersonSegment.pi ∈ P)
     {b : Bool} {s : Clause.Scenario Person} (h : PCCViolation P b s) :
     PCCViolation P false ⟨.third, s.low⟩ :=
@@ -335,9 +335,8 @@ theorem meFirst_typology :
 
 end Typology
 
-/-- In the Reverse PCC (44)–(45) and its diagnosis (fn. 26), the branching probe over transparent
-goals bans the lower [PART] DP whichever object it is, while a dative exposing its person node alone
-cannot be banned when it is the lower one, so Slovenian's Strong PCC is the branching probe. -/
+/-- In the Reverse PCC (44)–(45), the branching probe bans the lower [PART] DP whichever object it
+is, so Slovenian's Strong PCC is that probe (fn. 26). -/
 theorem reverse_pcc :
     Gluttonous Goal.personSegments branchingProbe [dp .third, dp .second] ∧
     Gluttonous Goal.personSegments branchingProbe [dp .second, dp .first] ∧
@@ -356,10 +355,8 @@ instance (F? : Option BejarRezac2003.Head) (ns : List BejarRezac2003.Nominal) :
     Decidable (RevisedPLC F? ns) := by
   unfold RevisedPLC; infer_instance
 
-/-- Basque (10) is the paper's argument against the original condition. The 3DAT > 1ABS cluster is
-gluttonous in a finite clause and has no probe to glutton in a nonfinite one, whereas the original
-condition leaves the 1st person object unlicensed in both and needs the restriction of (9) to exempt
-the probeless clause. -/
+/-- Basque 3DAT > 1ABS clusters (10) are gluttonous only in finite clauses, while the original
+condition needs the restriction of (9) to exempt nonfinite ones. -/
 theorem nonfinite_obviation :
     PCCViolation weakProbe true ⟨.third, .first⟩ ∧
     ¬ Gluttonous Goal.personSegments [] [dat .third, dp .first] ∧
@@ -380,8 +377,8 @@ probe sees after the person probe. -/
 def afterDoubling (P : Articulation) (goals : List Goal) : List Goal :=
   (goals.zipIdx.filter (· ∉ agreed Goal.personSegments P goals)).map (·.1)
 
-/-- There is no Number Case Constraint ((40)–(42)). Over two clitic-doubled objects the person
-probe, rooted in [uPERS], doubles the higher one, so the number probe sees one goal. -/
+/-- There is no Number Case Constraint, since the person probe doubles the higher of two objects
+((40)–(42)). -/
 theorem no_number_case_constraint {P : Articulation} (hpi : PersonSegment.pi ∈ P)
     {goals : List Goal} (h : goals.length ≤ 2) :
     ¬ Gluttonous Goal.numberSegments (numberProbe P) (afterDoubling P goals) := by
@@ -530,9 +527,8 @@ instance (a : Aftermath) (P : Articulation) (goals : List Goal) :
     Decidable (a.Converges P goals) := by
   cases a <;> simp only [Aftermath.Converges] <;> infer_instance
 
-/-- In Icelandic dative-nominative agreement (76)–(85) in the past mediopassive, a 1st person
-plural nominative crashes on *-ust* against *-umst* (83), a 2nd person plural one converges on
-*-ust* (85), and in the singular, where every cell is *-ist*, the restriction is lifted. -/
+/-- In the Icelandic past mediopassive (76)–(85), a 1st plural nominative crashes (83), a 2nd plural
+one converges (85), and the singular is unrestricted. -/
 theorem icelandic_syncretism :
     ¬ (Aftermath.realize .icelandicMediopassivePast).Converges weakProbe
         [dat .third, dpPl .first] ∧
@@ -549,8 +545,8 @@ def kicheanAgentFocus : RuleSet (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
 def kicheanGoals (s o : numberSystem.values) : List Goal :=
   [⟨.third, s, false⟩, ⟨.third, o, false⟩]
 
-/-- In omnivorous number (§5.2), with no singular item, a number probe gluttonous over SG > PL
-converges on the plural item, and the table of (88) follows. -/
+/-- In omnivorous number (§5.2), a number probe gluttonous over SG > PL converges on the plural
+item, deriving the table of (88). -/
 theorem kichean_omnivorous :
     Gluttonous Goal.numberSegments (numberProbe weakProbe)
       (kicheanGoals (numberSystem.value .singular) (numberSystem.value .plural)) ∧

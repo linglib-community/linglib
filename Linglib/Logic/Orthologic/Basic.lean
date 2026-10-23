@@ -288,10 +288,8 @@ theorem Formula.eval_canonicalVal (φ : Formula Var) :
 
 universe u
 
-/-- A consequence holding in every ortholattice under every valuation is derivable, by evaluating
-    in the Lindenbaum–Tarski algebra under the canonical valuation
-    ([holliday-mandelkern-2024] Theorem 3.13, completeness). Ortholattices in `Var`'s universe
-    suffice. -/
+/-- A consequence holding in every ortholattice under every valuation is derivable
+([holliday-mandelkern-2024] Theorem 3.13, completeness). -/
 theorem complete {Var : Type u} {φ ψ : Formula Var}
     (h : ∀ {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
       [IsOrtholattice L] (v : Var → L), Formula.eval v φ ≤ Formula.eval v ψ) :

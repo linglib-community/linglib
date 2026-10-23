@@ -329,9 +329,8 @@ theorem presupposes_cond_dia_projects (φ ψ χ : Sentence W) :
   ⟨(presupposes_cond_dia φ ψ).neg, (presupposes_cond_dia φ ψ).dia,
     (presupposes_cond_dia φ ψ).cond_left χ⟩
 
-/-- With a context-free consequent, a conditional does not presuppose its antecedent, as a context
-where antecedent and consequent are true at one world and the antecedent is false at the other
-shows (**Fact 4.4**, first claim). -/
+/-- With a context-free consequent, a conditional does not presuppose its antecedent (Fact 4.4,
+first claim). -/
 theorem not_presupposes_cond_antecedent (hψ : ContextFree ψ) {w₁ w₂ : W}
     (h₁ : φ {w₁, w₂} w₁ = 1) (h₁' : ψ {w₁, w₂} w₁ = 1) (h₂ : φ {w₁, w₂} w₂ = -1) :
     ¬ Presupposes (cond φ ψ) φ := by
@@ -487,8 +486,8 @@ theorem update_cond_eq_empty_iff :
   rw [← Set.not_nonempty_iff_eq_empty, update_cond_nonempty_iff, Set.not_nonempty_iff_eq_empty]
   refine ⟨.inr, fun h ↦ h.elim (fun h' ↦ by rw [h', update_empty]) id⟩
 
-/-- For a classical antecedent and a never void consequent, a surviving update on `A → B` removes
-from the context the worlds that the update on `A` and then on `¬B` keeps (**Proposition 5.2**). -/
+/-- For a classical antecedent and a never-void consequent, a nonempty update on `A → B` removes the
+worlds that updating on `A` and then `¬B` keeps (Proposition 5.2). -/
 theorem update_cond_ofSet {p : Set W} (hψ : NeverVoid ψ)
     (h : (update s (cond (ofSet p) ψ)).Nonempty) :
     update s (cond (ofSet p) ψ) = s \ update (update s (ofSet p)) (-ψ) := by
@@ -532,8 +531,8 @@ theorem update_disj_ofSet {p q : Set W} (h : (s ∩ (pᶜ ∩ q)).Nonempty) :
   simp only [Set.mem_inter_iff, mem_restrict]
   exact ⟨fun ⟨hw, h⟩ ↦ ⟨hw, (hval w hw).2 h⟩, fun ⟨hw, h⟩ ↦ ⟨hw, (hval w hw).1 h⟩⟩
 
-/-- For classical conjuncts the update on `A ∧ B` is the intersection of the updates and the update
-on `A` and then `B` (**Proposition 5.2**, (4)). -/
+/-- For classical conjuncts, the update on `A ∧ B` is both the intersection and the composition of
+the updates (Proposition 5.2, (4)). -/
 theorem update_conj_ofSet (p q : Set W) :
     update s (conj (ofSet p) (ofSet q)) = update s (ofSet p) ∩ update s (ofSet q) ∧
       update s (conj (ofSet p) (ofSet q)) = update (update s (ofSet p)) (ofSet q) := by
@@ -617,9 +616,9 @@ private theorem update_ofTrigger_nonempty_iff {t : Set W} (b b' : Atom) :
     exact iff_of_false Set.not_nonempty_empty fun ⟨hb, hne⟩ ↦
       h (accepts_ofSet_iff'.2 ⟨hne.mono Set.inter_subset_left, hb⟩)
 
-/-- Sequential update of an elementary conjunction, conditional or disjunction is felicitous exactly
-when the context admits it under [peters-1979]'s filtering connectives and the content of its second
-argument is possible in [karttunen-1974-presupposition]'s local context (**§5.3–5.5**). -/
+/-- Sequential update of an elementary binary formula is felicitous iff the context admits it under
+[peters-1979]'s connectives and its second argument is possible in [karttunen-1974-presupposition]'s
+local context (§5.3–5.5). -/
 theorem update_localUpdate_nonempty_iff (c : Connective) (a a' b b' : Atom) :
     (update (localUpdate s (ofTrigger I a a') c) (ofTrigger I b b')).Nonempty ↔
       s ⊆ Function.support ((Formula.bin c (.trigger a a') (.trigger b b')).middleKleene I) ∧
@@ -701,9 +700,8 @@ theorem update_neg_conj_dia {p : Set W} (h : (s ∩ p).Nonempty) (h' : (s \ p).N
   simp only [mem_restrict, Set.mem_sdiff]
   exact and_congr_right fun hw ↦ by rw [hv w hw]; simp
 
-/-- Where `p` holds at one world and fails at the other, Definition 3.2 updates `¬p ∧ ◇p` to the
-second world, at which the sentence is then false, while the update of [egre-rossi-sprenger-2026b]
-collapses (footnote 6). -/
+/-- Definition 3.2 updates `¬p ∧ ◇p` to a world where it is false, while the update of
+[egre-rossi-sprenger-2026b] collapses (footnote 6). -/
 theorem update_contra_footnote6 :
     update Set.univ (conj (-ofSet {true}) (dia (ofSet {true}))) = {false} ∧
       conj (-ofSet {true}) (dia (ofSet {true})) {false} false = -1 ∧
@@ -930,8 +928,7 @@ theorem not_entailsSharp_contradiction (p : Set W) :
     rw [Sentence.neg_ofSet, EgreRossiSprenger2026b.conj_ofSet, Set.inter_compl_self] at this
     simp at this
 
-/-- C# is not transitive, since `p ⊨ p ∨ q` and `p ∨ q ⊨ ¬p → q` but not `p ⊨ ¬p → q`
-(footnote 15). -/
+/-- The entailment C# is not transitive (footnote 15). -/
 theorem not_entailsSharp_trans {p q : Set W} {w w' : W} (hw : w ∈ p) (hw' : w' ∉ p)
     (hq : w' ∈ q) :
     EntailsSharp {ofSet p} (disj (ofSet p) (ofSet q)) ∧
@@ -952,8 +949,7 @@ theorem not_entailsSharp_trans {p q : Set W} {w w' : W} (hw : w ∈ p) (hw' : w'
       exact hu.2 this
 
 /-- [von-fintel-1999]'s Strawson entailment between trivalent propositions is the strict-tolerant
-validity of [cobreros-etal-2012], under which the conclusion is tolerantly true wherever the
-premise is strictly true (§6). -/
+validity of [cobreros-etal-2012] (§6). -/
 theorem strawsonEntails_iff_st (p q : W → SignType) :
     Presupposition.strawsonEntails p q ↔
       ∀ w, Designation.k3.threshold ≤ p w → Designation.lp.threshold ≤ q w := by

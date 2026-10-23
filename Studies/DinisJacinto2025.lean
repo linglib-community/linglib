@@ -331,8 +331,8 @@ theorem finite_largelyLT_iff {x y : ℝ*} :
     finite_atMostMarginal_iff]
   tauto
 
-/-- Under Itzhaki's qualitative size, the heaps are exactly what is not largely smaller than a
-clear case on the finite scale, the baldness of §5 (§6). -/
+/-- Under Itzhaki's qualitative size, being a heap is the baldness of §5 on the finite scale (§6).
+-/
 theorem heap_iff_bald {De : Type*} {heap known : De → Prop} [DecidablePred heap]
     [DecidablePred known] {size : De → ℕ} {H : ℝ*} (hH : mk H < 0) (hpos : 0 < H) {e x : De}
     (he : heap e) : heap x ↔ Bald finite (Itzhaki2021.qualSize heap known size H e)

@@ -96,16 +96,14 @@ theorem narrowScopeFC (hα : α.NEFree) (hβ : β.NEFree)
     support M (.poss α) s ∧ support M (.poss β) s :=
   possFC_on M hα hβ h.1
 
-/-- Universal free choice (Fact 9) is `[∀x◇(α ∨ β)]⁺ ⊨ ∀x◇α ∧ ∀x◇β` for `NE`-free `α`, `β`.
-It is Fact 8 at the universal extension `s[x]`. -/
+/-- Universal free choice `[∀x◇(α ∨ β)]⁺ ⊨ ∀x◇α ∧ ∀x◇β` holds for `NE`-free `α`, `β` (Fact 9, via
+Fact 8). -/
 theorem universalFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.univ x (.poss (.disj α β)))) s) :
     support M (.univ x (.poss α)) s ∧ support M (.univ x (.poss β)) s :=
   possFC_on M hα hβ h.1.1
 
-/-- Box free choice (Fact 7) is `[□(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` for `NE`-free `α`, `β`, with the
-derived `□`. The enriched premise puts the enriched disjunction on each index's full accessible
-lift, where the diamond split produces the witnesses. -/
+/-- Box free choice `[□(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` holds for `NE`-free `α`, `β` (Fact 7). -/
 theorem boxFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (Formula.nec (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
@@ -190,9 +188,8 @@ private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
     rw [← hjw]
     exact h j hj
 
-/-- Ignorance (Fact 3) is `[Pc₁ ∨ Qc₂]⁺ ⊨ ◇Pc₁ ∧ ◇Qc₂` on a state-based `R`. It is stated
-for constant atoms, as in the paper's `Pa ∨ Pb`, since the transplant argument needs
-assignment-invariance and fails with a free variable in place of the constant. -/
+/-- Ignorance `[Pc₁ ∨ Qc₂]⁺ ⊨ ◇Pc₁ ∧ ◇Qc₂` holds for constant atoms on a state-based `R` (Fact 3).
+-/
 theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : IsStateBased M.access (State.worldProj s))
     (h : support M
       (Formula.enrich (.disj (.predc P c₁) (.predc Q c₂))) s) :
@@ -206,9 +203,7 @@ theorem ignorance {P Q : Pred} {c₁ c₂ : Const} (hSB : IsStateBased M.access 
 
 /-! ### Negation behaviour (Fact 10) -/
 
-/-- Negation behaviour (Fact 10) is `[¬(α ∨ β)]⁺ ⊨ ¬α ∧ ¬β` for `NE`-free `α`, `β`, in every
-model. Stripping the outer `NE` leaves anti-support of the enriched disjuncts, which
-enrichment strengthens to classical anti-support of each. -/
+/-- Negation `[¬(α ∨ β)]⁺ ⊨ ¬α ∧ ¬β` holds for `NE`-free `α`, `β` in every model (Fact 10). -/
 theorem negationStrip (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.neg (.disj α β))) s) :
     support M (.neg α) s ∧ support M (.neg β) s := by
@@ -237,10 +232,8 @@ private theorem exi_of_subset_extendUniversal_singleton
     subst hi''
     exact ⟨d, by rwa [hupd]⟩
 
-/-- Distribution at maximal information (Fact 5) is `[∀x(α ∨ β)]⁺ ⊨ ∃xα ∧ ∃xβ` for `NE`-free
-`α`, `β` on a singleton state `{i}`. The enriched premise splits the universal extension of
-`{i}` into non-empty parts, and each part extends the same index, so it is the image of a
-functional extension witnessing the existential. -/
+/-- Distribution `[∀x(α ∨ β)]⁺ ⊨ ∃xα ∧ ∃xβ` holds for `NE`-free `α`, `β` on a singleton state (Fact
+5). -/
 theorem distribution {x : Var} {i : Index W Var Domain}
     (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (.univ x (.disj α β))) {i}) :
@@ -289,9 +282,8 @@ private theorem exi_poss_atom_of_subset_extendUniversal
     · rw [hkw]
       exact hmem
 
-/-- Epistemic distribution (Fact 6) is `[∀x(Px ∨ Qx)]⁺ ⊨ ∃x◇Px ∧ ∃x◇Qx` on a state-based
-`R`. It is stated for atoms, as in the paper, since the proof evaluates the atom pointwise at
-a single transplanted world. -/
+/-- Epistemic distribution `[∀x(Px ∨ Qx)]⁺ ⊨ ∃x◇Px ∧ ∃x◇Qx` holds for atoms on a state-based `R`
+(Fact 6). -/
 theorem distributionEpi {P Q : Pred} {x : Var} (hSB : IsStateBased M.access (State.worldProj s))
     (h : support M
       (Formula.enrich (.univ x (.disj (.pred P x) (.pred Q x)))) s) :

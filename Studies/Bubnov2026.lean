@@ -196,9 +196,8 @@ theorem no_hierarchy_derives_both_changes (ℓ : SpecificityFunction → Fin n) 
 
 end EntryLoss
 
-/-- On Dekier's hierarchy the loss of an entry `A` storing the non-specific layer makes the
-specific unknown form `B` epistemic, (3) and (4). Entry loss also derives two unattested
-changes there, a specific known form becoming specific and a specific form unmarked. -/
+/-- On Dekier's hierarchy, entry loss makes a specific unknown form epistemic ((3), (4)), but also
+derives two unattested changes. -/
 theorem entry_loss_derives_downward_changes :
     LossDerives layer .specificUnknown .epistemic ∧ LossDerives layer .specificKnown .specific ∧
       LossDerives layer .specific .unmarked :=
@@ -223,11 +222,7 @@ theorem entry_loss_on_reversed_hierarchy :
 
 /-! ### Coexpression as underspecification -/
 
-/-- Each form of the four coexpression patterns is a single type. English *some-* imposes no
-restriction (AAA), Yakut *-eme* requires variation within an epistemic alternative and *-ere*
-constancy within one (ABB), Latin *ali-* requires variation across the alternatives and *-dam*
-constancy across them (AAB), and Russian *-nibud'*, *-to* and *koe-* require variation within an
-alternative, variation across them and constancy across them, the entries (6) and (7). -/
+/-- Each form of the four coexpression patterns is a single type under the entries (6) and (7). -/
 theorem coexpression_is_underspecification :
     (∃ s ∈ english, s.toSeries = English.Indefinites.someSeries ∧ Instantiates s .unmarked) ∧
       (∃ s ∈ yakut, s.toSeries = Yakut.Indefinites.emeSeries ∧ Instantiates s .nonSpecific) ∧

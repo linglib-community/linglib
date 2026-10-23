@@ -377,9 +377,8 @@ def suffixes : List (String × Suffix) :=
   [("1pl", .poss), ("ablative", .abl), ("dative", .dat), ("allative", .all),
     ("inessive", .iness)]
 
-/-- Every derivation of (13) to (23), each a relation of the data from a stem of Table 18 other
-than the vacillating *dzsungel*, yields the attested suffix, so transparency, antiharmony and
-opacity follow from the prelinking of Table 18 by the same rules. -/
+/-- Every derivation of (13) to (23) from a stem of Table 18 except *dzsungel* yields the attested
+suffix. -/
 theorem derivations : ∀ rel ∈ Wordlist.relations, rel.form ≠ Wordlist.dzsungel →
     ∃ s ∈ stems.lookup rel.form, ∃ x ∈ suffixes.lookup rel.relation,
       derived s x = some (rel.target.segments.drop rel.form.segments.length) := by

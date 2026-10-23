@@ -77,9 +77,8 @@ open Core.Order (TreePath)
 
 /-! ### Categorial selection -/
 
-/-- Two complements of one category after *become*-type predicates differ in acceptability
-((17)). Every complement here is semantically a predicate, so whether a predicate admits one is
-a further fact about it, c-selection (§4.1, after [pollard-sag-1987]). -/
+/-- Two complements of one category after *become*-type predicates differ in acceptability, so
+predicates c-select ((17); §4.1, after [pollard-sag-1987]). -/
 theorem selection_rows : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ Examples.all,
     e₁.feature? "construction" = some "selection" ∧ e₂.feature? "construction" = some "selection" ∧
       e₁.feature? "complement" = e₂.feature? "complement" ∧ e₁.judgment ≠ e₂.judgment := by
@@ -87,9 +86,7 @@ theorem selection_rows : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ Examples.all,
 
 /-! ### Coordinated arguments -/
 
-/-- A predicate with S-features rejects a clausal subject, which can only be a noun phrase under
-the null N, while one that imposes none admits it, so speakers who accept *that images are
-waterproof is incoherent* have a predicate without S-features (§5.7). -/
+/-- A predicate with S-features rejects a clausal subject and one without admits it (§5.7). -/
 theorem cp_subjects :
     ¬ Admits (Satisfies (checkedOnce .headFinal) {N}) [.C] ∧
       Admits (Satisfies (fun _ ↦ []) {N}) [.C] := by
@@ -237,32 +234,28 @@ def soSoonAVisit : PhraseStructure.Tree Cat String :=
 /-- The site prenominal modifiers merge with is the nonmaximal noun of (104). -/
 abbrev nounSite : Site := .at onceAndFutureKing ⟨[1]⟩
 
-/-- An underspecified adverb alone merges with anything but a nonmaximal noun or a comparative,
-so *twice* is out before *taller* and in before *as tall as* ((97)). -/
+/-- An underspecified adverb merges with anything but a nonmaximal noun or a comparative, so *twice*
+precedes *as tall as* but not *taller* ((97)). -/
 theorem adverb_mergesWith_iff {h : Site} :
     MergesWith [.adverb] h ↔
       ¬ (Selected.nonmaximal N).Matches h ∧ ¬ (Selected.degree .cmpr).Matches h := by
   simp [MergesWith, Modifier.adverb, CFeature.ChecksNext, CFeature.ChecksSite,
     CFeature.ChecksHost]
 
-/-- An underspecified adverb merges with the maximal noun phrase *so soon* adjoins to, and not
-with the nonmaximal noun of (104), the distinction the analysis needs (p. 479); which one a site is
-follows from adjunction against projection in its tree. -/
+/-- An underspecified adverb merges with the maximal noun phrase *so soon* adjoins to, not with the
+nonmaximal noun of (104) (p. 479). -/
 theorem adverb_mergesWith_maximal :
     MergesWith [.adverb] (.at soSoonAVisit ⟨[1]⟩) ∧ ¬ MergesWith [.adverb] nounSite := by
   decide
 
-/-- **On prenominal modifiers the analysis agrees with the 2020 one** (p. 480). Coordinated before
-a noun, an adjective or an underspecified adverb may come first and only an adjective last, as the
-2020 analysis derives from a silent Adv head and the ban on adverbs modifying N′, while this one
-needs neither. -/
+/-- Coordinated before a noun, an adjective or an underspecified adverb may come first and only an
+adjective last, as in the 2020 analysis (p. 480). -/
 theorem mergesWith_iff_nominalCoordination (m₁ m₂ : Option AdvHead) :
     MergesWith [.ofAdvHead m₁, .ofAdvHead m₂] nounSite ↔ NominalCoordination m₁ m₂ := by
   rcases m₁ with _ | _ | _ <;> rcases m₂ with _ | _ | _ <;> decide
 
-/-- **It extends to comparatives**, which the 2020 analysis does not cover. Coordinated with a
-measure phrase before a comparative, an underspecified adverb must come first, as in *twice and
-maybe even three times taller* but not *one point five times or even twice taller* ((98)). -/
+/-- Coordinated with a measure phrase before a comparative, an underspecified adverb must come
+first, as in *twice and maybe even three times taller* ((98)). -/
 theorem mergesWith_cmpr_iff : ∀ x ∈ [Modifier.measure, .adverb],
     ∀ y ∈ [Modifier.measure, .adverb], (MergesWith [x, y] (.degree .cmpr) ↔ y = .measure) := by
   decide
@@ -303,8 +296,8 @@ theorem argument_rows_licensed : ∀ e ∈ Examples.all,
           (∀ p ∈ ps, p ∈ cats) ∧ ∃ p ∈ ps, ∃ q ∈ ps, p ≠ q) := by
   decide
 
-/-- On the 2020 paper's arguments the revision keeps every judgment except on the coordinations of
-selected phrases of different categories, its (64) and (69), which it admits. -/
+/-- On the 2020 paper's arguments the revision keeps every judgment except its (64) and (69), which
+it admits. -/
 theorem argument_rows_2020 : ∀ e ∈ BrueningAlKhalaf2020.Examples.all,
     e.feature? "construction" = some "argument" →
       ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
@@ -374,8 +367,8 @@ theorem exp1b_predictions : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
     (Admits (Satisfies (checkedOnce .headInitial) {N}) ps ↔ c = .coordination) := by
   decide
 
-/-- For the speakers whose S-features persist, about a tenth of those surveyed (p. 457), the
-coordinations of Experiment 1b are out as well (§5.9, after `mem_cats_of_admits_id`). -/
+/-- For the speakers whose S-features persist (p. 457), the coordinations of Experiment 1b are out
+(§5.9). -/
 theorem exp1b_persisting : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
     ¬ Admits (Satisfies id {N}) ps := by
   decide

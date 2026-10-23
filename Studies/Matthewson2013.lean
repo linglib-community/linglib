@@ -78,10 +78,8 @@ existential quantifier over worlds (§3.1–3.2), *da'aḵhlxw* and *anooḵ* ar
 and *sgi* is a (weak) necessity modal (§4). -/
 def lexicalForce (m : ModalItem) : ModalForce := if m = sgi then .necessity else .possibility
 
-/-- The lexical forces derive Fig. 1. In an upward-entailing context each modal serves, on
-[deal-2011]'s account, for exactly the forces it is used with. The epistemics have no
-scalemate and serve for both; *sgi* shares its flavours with *da'aḵhlxw* and *anooḵ*, so each
-of the three serves for its own. -/
+/-- In an upward-entailing context each modal serves, on [deal-2011]'s account, for exactly the
+forces of Fig. 1. -/
 theorem forces_usable : ∀ m ∈ modals, ∀ g, g.classical ∈ m.classical.forces ↔
     Deal2011.Usable .positive (lexicalForce m) (Deal2011.HasScalemate lexicalForce modals m) g := by
   decide
@@ -113,9 +111,8 @@ theorem rows_resolve :
 
 /-! ### Force and flavour (§3, §4) -/
 
-/-- Outside the sneeze case, a modal is accepted in a context exactly when it expresses the
-context's force and flavour. The possibility modals are rejected in necessity contexts, (66)
-and (80), and *anooḵ* in a pure circumstantial one, (79). -/
+/-- Outside the sneeze case, a modal is accepted iff it expresses the context's force and flavour
+((66), (79), (80)). -/
 theorem rows_meaning :
     ∀ e ∈ Examples.all, e.feature? "test" ≠ some "sneeze" →
       ∀ m ∈ e.parse? "modal" modalTable, ∀ fo ∈ e.parse? "force" forceTable,
@@ -123,9 +120,7 @@ theorem rows_meaning :
           (e.judgment = .acceptable ↔ (fo, fl) ∈ m.meaning) := by
   decide
 
-/-- *sgi* is volunteered in strong necessity contexts, (89), (92) and (100), and accepted in a
-weak one, (90), with deontic, circumstantial and bouletic readings, so each force and flavour
-it expresses is attested. -/
+/-- Each force and flavour that *sgi* expresses is attested ((89), (90), (92), (100)). -/
 theorem sgi_attested :
     (∀ fo ∈ sgi.forces, ∃ e ∈ Examples.all, e.parse? "modal" modalTable = some sgi ∧
       e.parse? "force" forceTable = some fo ∧ e.judgment = .acceptable) ∧
@@ -140,9 +135,8 @@ theorem sneeze_rows :
       (e.judgment = .acceptable ↔ e.feature? "modal" ≠ some "sgi") := by
   decide
 
-/-- In (96) and (100), *sgi* is rejected in the sneeze case and volunteered for *we must all
-die*, both pure circumstantial strong necessity, so no set of force-flavour pairs predicts its
-judgments, and the sneeze gap is not one of modal strength. -/
+/-- No set of force-flavour pairs predicts the judgments of *sgi*, rejected in the sneeze case (96)
+and volunteered in (100). -/
 theorem sneeze_gap :
     ¬ ∃ M : Finset ForceFlavor, ∀ e ∈ Examples.all, e.parse? "modal" modalTable = some sgi →
       ∀ fo ∈ e.parse? "force" forceTable, ∀ fl ∈ e.parse? "flavor" flavorTable,
@@ -178,9 +172,8 @@ instance (L : List ModalItem) : Decidable (Mixed L) := inferInstanceAs (Decidabl
 
 theorem gitksan_mixed : Mixed modals := by decide
 
-/-- The fragments reproduce Fig. 2. English selects strength and not type, St'át'imcets type and
-not strength, and Javanese both (Fig. 3), a cell that the classification of
-[rullmann-matthewson-davis-2008] left open. -/
+/-- English selects strength and not type, St'át'imcets type and not strength, and Javanese both, a
+cell [rullmann-matthewson-davis-2008] left open (Fig. 2, Fig. 3). -/
 theorem fig2 :
     (StrengthSelective (English.Auxiliaries.modals.map ModalAuxiliary.toModalItem) ∧
         ¬ TypeSelective (English.Auxiliaries.modals.map ModalAuxiliary.toModalItem)) ∧
@@ -205,9 +198,8 @@ def perspectiveOf : String → Option TemporalPerspective
   | "present" => some .present
   | _ => none
 
-/-- In the paradigms (38)–(48), (53), (56), (73) and (83), the prospective aspect *dim* is
-present exactly when the prejacent is future-oriented, with epistemic and circumstantial modals
-alike. -/
+/-- The prospective *dim* is present iff the prejacent is future-oriented, with epistemic and
+circumstantial modals alike ((38)–(48), (53), (56), (73), (83)). -/
 theorem dim_rows :
     ∀ e ∈ Examples.all, ∀ o ∈ (e.feature? "orientation").bind orientationOf,
       (e.judgment = .acceptable ↔ (e.feature? "prospective" = some "true" ↔ o = .future)) := by

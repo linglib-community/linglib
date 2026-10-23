@@ -68,9 +68,8 @@ theorem diamondHom_iterate_compl (n : ℕ) (a : L) : (diamondHom box)^[n] aᶜ =
     rw [Function.iterate_succ_apply, Function.iterate_succ_apply, diamondHom_apply,
       InvolutiveCompl.compl_compl, ih]
 
-/-- With 4, `□a ≤ □□a`, the principle `a ≤ □◇a` yields 5, `◇a ≤ □◇a`, so that `□` makes an
-*S5* modal ortholattice when it is also T ([holliday-mandelkern-2024] Definition 3.19 and the
-proof of Theorem 5.7.3). -/
+/-- With 4, the principle `a ≤ □◇a` yields 5, `◇a ≤ □◇a` ([holliday-mandelkern-2024] Definition 3.19
+and the proof of Theorem 5.7.3). -/
 theorem diamondHom_le_box_diamondHom (h4 : ∀ a, box a ≤ box (box a))
     (hB : ∀ a, a ≤ box (diamondHom box a)) (a : L) :
     diamondHom box a ≤ box (diamondHom box a) :=
@@ -85,8 +84,8 @@ With T it makes an ortholattice with `□` an *epistemic ortholattice*
 def WittgensteinLaw : Prop :=
   ∀ a, Disjoint aᶜ (diamondHom box a)
 
-/-- Wittgenstein's Law is equivalent by involution to its form `a ∧ ◇¬a = 0`, "`p`, but it
-might be that not `p`" ([holliday-mandelkern-2024] after Definition 3.18). -/
+/-- Wittgenstein's Law is equivalent to `a ∧ ◇¬a = 0` ([holliday-mandelkern-2024] after Definition
+3.18). -/
 theorem wittgensteinLaw_iff : WittgensteinLaw box ↔ ∀ a, Disjoint a (box a)ᶜ :=
   InvolutiveCompl.compl_surjective.forall.trans <| by
     simp only [diamondHom_apply, InvolutiveCompl.compl_compl]
@@ -111,8 +110,7 @@ section T
 variable [IsOrtholattice L] (hT : ∀ a, box a ≤ a)
 include hT
 
-/-- Over T, Wittgenstein's Law is equivalent to the principle of Lemma 3.25 that a proposition
-whose necessity is contradictory is itself contradictory ([holliday-mandelkern-2024] after
+/-- Over T, Wittgenstein's Law holds iff `□a = 0` implies `a = 0` ([holliday-mandelkern-2024] after
 Lemma 3.25). -/
 theorem wittgensteinLaw_iff_eq_bot : WittgensteinLaw box ↔ ∀ a, box a = ⊥ → a = ⊥ := by
   refine ⟨fun hW _ ↦ hW.eq_bot_of_box_eq_bot, fun h ↦ wittgensteinLaw_iff.mpr fun a ↦ ?_⟩
@@ -120,8 +118,8 @@ theorem wittgensteinLaw_iff_eq_bot : WittgensteinLaw box ↔ ∀ a, box a = ⊥ 
   rw [map_inf]
   exact ((IsOrtholattice.disjoint_compl_right (box a)).mono_right (hT _)).le_bot
 
-/-- Generalized Wittgenstein sentences are contradictions, since with T `a ∧ ◇ⁿ¬a = 0` for every
-`n`, here in the form `a ⊓ ¬□ⁿa = ⊥` ([holliday-mandelkern-2024] Fact 3.28, algebraically). -/
+/-- Under Wittgenstein's Law, the generalized Wittgenstein sentences `a ∧ ◇ⁿ¬a` are contradictions
+([holliday-mandelkern-2024] Fact 3.28). -/
 theorem WittgensteinLaw.disjoint_compl_box_iterate (hW : WittgensteinLaw box) :
     ∀ n (a : L), Disjoint a (box^[n] a)ᶜ
   | 0, a => IsOrtholattice.disjoint_compl_right a
@@ -150,8 +148,7 @@ distributivity ([holliday-mandelkern-2024] Proposition 3.7). -/
 variable (hp : ∀ a b : L, Disjoint a b → b ≤ aᶜ)
 include hp
 
-/-- When `ᶜ` is a pseudocomplement, as in a Boolean algebra, Wittgenstein's Law says that `◇¬a`
-entails `¬a`, so treating `p ∧ ◇¬p` as a contradiction collapses `might`
+/-- When `ᶜ` is a pseudocomplement, Wittgenstein's Law says that `◇¬a` entails `¬a`
 ([holliday-mandelkern-2024] §1). -/
 theorem wittgensteinLaw_iff_diamondHom_compl_le [IsOrtholattice L] :
     WittgensteinLaw box ↔ ∀ a, diamondHom box aᶜ ≤ aᶜ := by

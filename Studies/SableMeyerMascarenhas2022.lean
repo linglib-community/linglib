@@ -88,8 +88,7 @@ theorem exp2_illusory_d (hbd : (b ∩ d).Nonempty) (h : ((c ∩ b) \ d).Nonempty
     (disjunction b d c).Illusory (disjunction b d c).Matches d :=
   disjunction_illusory_matches hbd h
 
-/-- In the deterministic limit of the causal link, `d ⊆ a`, the Experiment 2 conclusion `a`
-is illusory as well ((10)/(11)); the graded step is the paper's open end. -/
+/-- In the deterministic limit `d ⊆ a`, the Experiment 2 conclusion `a` is illusory ((10)/(11)). -/
 theorem exp2_illusory_a (hda : d ⊆ a) (hbd : (b ∩ d).Nonempty)
     (h : ((c ∩ b) \ a).Nonempty) :
     (disjunction b d c).Illusory (disjunction b d c).Matches a := by
@@ -137,8 +136,8 @@ def system2Premises : List MentalModel := [model true true false, model true fal
 /-- The conclusion consisting of the one positive literal. -/
 def concl (x : Atom) : List MentalModel := [Function.update ⊥ x true]
 
-/-- §5.2.1: the attractive conclusion `b` and the unattractive `c` are both weak necessities
-of (12) — the revised theory's low-γ System 2 cannot see the (13) asymmetry. -/
+/-- Both the attractive `b` and the unattractive `c` are weak necessities of (12), so low-γ System 2
+misses the asymmetry of (13) (§5.2.1). -/
 theorem system2_overgenerates :
     WeakNecessity system2Premises (concl .b) ∧ WeakNecessity system2Premises (concl .c) := by
   decide
@@ -233,8 +232,7 @@ private theorem witness_subset_iff {s : Set World} :
     witness ⊆ s ↔ ∀ m ∈ system2Premises, fillGaps m ∈ s :=
   ⟨fun h m hm ↦ h ⟨m, hm, rfl⟩, fun h _ ⟨m, hm, e⟩ ↦ e ▸ h m hm⟩
 
-/-- Neither conclusion is p-valid, under either reading of the disjunction (§5.3, fn 1): uniform
-on the two explicit models of (12), each conclusion has probability one half. -/
+/-- Neither conclusion of (12) is p-valid under either reading of the disjunction (§5.3, fn 1). -/
 theorem not_pValid :
     ¬ PValid E B ∧ ¬ PValid E C ∧ ¬ PValid Exor B ∧ ¬ PValid Exor C := by
   have hw : witness.Nonempty := ⟨_, _, List.mem_cons_self, rfl⟩
@@ -256,8 +254,7 @@ def BestConfirmed (P : Problem W) (p : Set W) : Prop :=
 
 variable {μ} {a b c d f : Set W}
 
-/-- `D(a ∧ b, d) = P(b) · D(a, d)` when `b` is independent of `a` and of `a ∧ d`: the identity
-behind the §5.4 asymmetry. -/
+/-- If `b` is independent of `a` and of `a ∧ d`, then `D(a ∧ b, d) = P(b) · D(a, d)` (§5.4). -/
 theorem confirmationD_inter_eq_mul (hd : MeasurableSet d) (hab : IndepSet a b μ)
     (hadb : IndepSet (a ∩ d) b μ) :
     confirmationD μ (a ∩ b) d = μ.real b * confirmationD μ a d := by
@@ -307,8 +304,8 @@ theorem not_bestConfirmed_right (hd : MeasurableSet d) (hab : IndepSet a b μ)
   lt_asymm (indirect_bestConfirmed hd hab hadb hcd h0 hb ha c (by simp [indirect]) hne.symm)
     (h (a ∩ b) (by simp [indirect]) hne)
 
-/-- (18): the conjunction fallacy is the indirect schema at the options `(f ∧ b) ∨ b`, and the
-description selects the conjunctive option by the same lemma. -/
+/-- The conjunction fallacy (18) is the indirect schema at `(f ∧ b) ∨ b`, whose best-confirmed
+option is the conjunction. -/
 theorem conjunctionFallacy_bestConfirmed (hd : MeasurableSet d) (hfb : IndepSet f b μ)
     (hfdb : IndepSet (f ∩ d) b μ) (hbd : IndepSet b d μ) (h0 : μ d ≠ 0) (hb : μ b ≠ 0)
     (hf : 0 < confirmationD μ f d) : BestConfirmed μ (indirect f b b d) (f ∩ b) :=

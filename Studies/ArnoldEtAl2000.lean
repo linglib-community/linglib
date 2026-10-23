@@ -175,8 +175,8 @@ theorem rows_heavier_last :
       ∀ c ∈ (constituents r).toList, c.1 ≤ c.2 := by
   decide +kernel
 
-/-- The examples the paper sets aside — the announcer's *That brings to the plate Barry
-Bonds* and (17) — put the lighter constituent last: other factors, planning among them. -/
+/-- The examples set aside, *That brings to the plate Barry Bonds* and (17), put the lighter
+constituent last. -/
 theorem rows_exceptions_lighter_last :
     ∀ r ∈ Examples.all, (r.feature? "exception").isSome →
       ∀ c ∈ (constituents r).toList, c.2 < c.1 := by

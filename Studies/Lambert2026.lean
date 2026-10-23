@@ -180,8 +180,7 @@ def stressInitialCulminative : Language Syl := finnish ⊓ tierWord Syl.isStress
 theorem stressInitialCulminative_isBTK : IsBTK 2 stressInitialCulminative :=
   IsBTC.inter (isBTK_ofPrefix _ (by decide)) (isBTK_tierWord _ _ (by decide))
 
-/-- Culminative stress-final is not definite (§2.3), since `σσᵏσ́` is in and `σ́σᵏσ́` is out with
-the same suffix of length `k`; strict locality is more powerful than definiteness. -/
+/-- Culminative stress-final is not definite (§2.3). -/
 theorem stressFinalCulminative_not_isDefinite (k : ℕ) :
     ¬ stressFinalCulminative.IsDefinite k := by
   intro h
@@ -685,8 +684,7 @@ theorem finnish_not_isDefinite (k : ℕ) : ¬ finnish.IsDefinite k := fun h ↦ 
   rw [← syntacticClass_append] at this
   simpa [finnish] using mem_iff_of_syntacticClass_eq this
 
-/-- Stress-penult is not reverse definite (§6.2.2), since the class `[σσ]` is idempotent, as
-stress-penult is 2-definite, but `[σσ] [σ́] ≠ [σσ]` in the context `__ σ`. -/
+/-- Stress-penult is not reverse definite (§6.2.2). -/
 theorem amara_not_isReverseDefinite (k : ℕ) : ¬ amara.IsReverseDefinite k := fun h ↦ by
   have he := (amara_isDefinite.isRightZero_syntacticClass
     (u := [.unstressed, .unstressed]) le_rfl).isIdempotentElem
@@ -714,9 +712,8 @@ theorem stressPenultCulminative_not_isGeneralizedDefinite (k : ℕ) :
   simpa [stressPenultCulminative, Edge.takeAt_right, rtake, Syl.isStressed] using
     this [] [.stressed, .unstressed]
 
-/-- Culminative stress-penult is not multitier reverse definite (§6.3), since in its syntactic
-monoid `[σσ]` is idempotent but `[σσ] [σ́] [σσ] ≠ [σσ] [σ́]` in the context `__ σ`, against the
-equation of (62). -/
+/-- Culminative stress-penult is not multitier reverse definite, against the equation of (62)
+(§6.3). -/
 theorem stressPenultCulminative_not_isBTK (k : ℕ) : ¬ IsBTK k stressPenultCulminative := fun h ↦ by
   have := h.mem_multitierReverseDefiniteVariety.2.2 _ stressPenultCulminative_isIdempotentElem
     (stressPenultCulminative.syntacticClass [.stressed])

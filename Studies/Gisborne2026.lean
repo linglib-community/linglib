@@ -350,8 +350,7 @@ def theySeemedToDance : Analysis 4 where
   arcs := [(1, 0, .subj), (2, 0, .subj), (3, 0, .subj), (1, 2, .xcomp), (2, 3, .xcomp)]
   root := 1
 
-/-- The network of (9) is neither a tree nor projective, since the subject has three parents and the
-arcs from *to* and *dance* cross the root. -/
+/-- The network of (9) is neither a tree nor projective, since the subject has three parents. -/
 theorem not_isTree_parentGraph_theySeemedToDance :
     ¬ theySeemedToDance.parentGraph.IsTree ∧ ¬ theySeemedToDance.parentGraph.IsProjective := by
   decide
@@ -394,10 +393,8 @@ theorem not_orderedByLandmarks_whHeaded :
     Analysis.not_orderedByLandmarks_of_extraction (h := 3) (w := 1) (q := 0) (by decide)
       ⟨.comp, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
-/-- The revised theory orders the wh-headed analysis too, so the case against it is not word
-order. The paper sets it aside on the distributional evidence of Section 4, and keeps the
-dissociation of landmark and positional head for exceptional constructions such as the free
-relative. -/
+/-- The revised theory also orders the wh-headed analysis, which the paper rejects on the
+distributional evidence of Section 4. -/
 theorem orderedByPositionalHeads_whHeaded : whHeaded.OrderedByPositionalHeads := by decide
 
 /-! ### Free relatives, (53), (55) to (58) -/
@@ -437,25 +434,22 @@ def whatHeBoughtCostLots : Analysis 5 where
     (3, 4, .comp)]
   root := 3
 
-/-- In (55), were every parent a landmark, *What* and *bought* would be each other's (lm-1, lm-2)
-and *What* would have two; by the Subordinate Head Rule, *bought* is not the landmark of the word
-extracted from it. -/
+/-- In (55), the parent graph is not a tree, and taking every parent as a landmark fails to order
+the sentence. -/
 theorem not_orderedByLandmarks_whatHeBoughtCostLots :
     ¬ whatHeBoughtCostLots.parentGraph.IsTree ∧ ¬ whatHeBoughtCostLots.OrderedByLandmarks :=
   ⟨Analysis.not_isTree_parentGraph (p := 0) (w := 2) ⟨.comp, by decide⟩ ⟨.obj, by decide⟩,
     Analysis.not_orderedByLandmarks_of_extraction (h := 2) (w := 0) (q := 3) (by decide)
       ⟨.subj, by decide⟩ (by decide) ⟨.comp, by decide⟩⟩
 
-/-- In (57a) to (57f) *What* is the landmark of *bought*, its complement, and *bought* is the
-positional head of *What*, its extractee; *What*'s landmark is *cost*. -/
+/-- In (57a) to (57f), *What* is the landmark of *bought*, *bought* the positional head of *What*,
+and *cost* the landmark of *What*. -/
 theorem landmarks_whatHeBoughtCostLots :
     whatHeBoughtCostLots.IsLandmark 2 0 ∧ whatHeBoughtCostLots.PositionalHead 0 2 ∧
       whatHeBoughtCostLots.IsLandmark 0 3 ∧ ¬ whatHeBoughtCostLots.IsLandmark 0 2 := by
   decide
 
-/-- In (56) the landmarks form a projective tree, every word stands on its side of its landmark,
-and *What* precedes its positional head, the order in which *bought* follows *What* as its
-complement. -/
+/-- In (56), *What he bought cost lots* is ordered by its positional heads. -/
 theorem orderedByPositionalHeads_whatHeBoughtCostLots :
     whatHeBoughtCostLots.OrderedByPositionalHeads := by
   decide
@@ -533,9 +527,8 @@ def iWonderThenWhatHappened : Analysis 5 where
   arcs := [(1, 0, .subj), (1, 3, .comp), (4, 2, .preAdjunct), (3, 4, .comp), (4, 3, .subj)]
   root := 1
 
-/-- No choice of landmarks orders (11e). The parent *wonder* excludes *happened* as the landmark
-of *what*, and the landmark link from *then* to *happened* crosses the one from *what* to
-*wonder*, (13). -/
+/-- No choice of landmarks orders (11e), as the link from *then* to *happened* crosses the one from
+*what* to *wonder* (13). -/
 theorem not_orderedByChosenLandmarks_iWonderThenWhatHappened :
     ¬ iWonderThenWhatHappened.OrderedByChosenLandmarks := by
   decide
@@ -548,9 +541,7 @@ def iWonderWhatTheySaw : Analysis 5 where
     (4, 3, .subj)]
   root := 1
 
-/-- The later theory cannot order the extraction in (14), since *what* has one landmark, *wonder*,
-and were it *saw*, the head it is extracted from, *saw* would have *what* as its own. The revision
-orders it. -/
+/-- The later theory cannot order the extraction in (14), and the revision orders it. -/
 theorem not_orderedByChosenLandmarks_iWonderWhatTheySaw :
     ¬ iWonderWhatTheySaw.OrderedByChosenLandmarks ∧
       iWonderWhatTheySaw.OrderedByPositionalHeads := by

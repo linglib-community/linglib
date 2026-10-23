@@ -379,19 +379,16 @@ theorem rows_optimal :
 
 /-! ### Suppletion and its suspension -/
 
-/-- **φ-finality follows from the syntax**: the optimal parses phrase the head together with the
-next word exactly where the next word heads the head's phrase or is a second-position element it
-hosts, and otherwise end the head's φ at the head, as MAX-XP and SUBCAT require ((24)–(26),
-(29)). -/
+/-- The optimal parses join a head with the next word exactly where that word heads the head's
+phrase or is a hosted second-position element ((24)–(26), (29)). -/
 theorem optimal_joined_iff (h : Head) (footed sameMax : Bool) :
     ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
       ∀ c ∈ (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal,
         c.phrasing = .joined ↔ (s = .complement ∨ s = .host) := by
   decide +revert +kernel
 
-/-- **The calculus of top-down suppletion** (88): a head takes its marked allomorph exactly where
-it ends its φ and Syllable Lifting is unavailable, the next φ beginning with a footed syllable or
-lying in another maximal φ. -/
+/-- A head takes its marked allomorph exactly where it ends its φ and Syllable Lifting is
+unavailable (88). -/
 theorem optimal_exponent (h : Head) (footed sameMax : Bool) :
     ∀ s ∈ [Constituency.sisters, .adjunct, .complement, .host],
       (tableau vocabulary ⟨h.neighborhood false, s, footed, sameMax⟩).optimal.image
@@ -399,10 +396,8 @@ theorem optimal_exponent (h : Head) (footed sameMax : Bool) :
           then h.long else h.short} := by
   decide +revert +kernel
 
-/-- **MAX-XP is load-bearing.** Without it, joining a stranded head's φ with the next word's,
-which no tableau of the paper lists, does as well as suppletion on every other constraint and
-better on PRIORITY, so under no ranking of the other constraints in which PRIORITY is active is
-the suppleted head optimal, against (76a), (77a) and (78a). -/
+/-- Without MAX-XP, a suppleted head is optimal under no ranking with PRIORITY active, against
+(76a), (77a) and (78a). -/
 theorem suppletion_not_optimal_without_maxXP (h : Head) (footed : Bool)
     {Fs : List (Constraint Candidate)}
     (hFs : ∀ F ∈ Fs, F ∈ (fun x ↦ [subcat x, positionalMinimality x, priority vocabulary x,
@@ -496,8 +491,8 @@ theorem exists_phrasing_eq_zero
     ⟨.separate, nofun, eq_zero_adjunct n fo sm ha⟩, ⟨.joined, nofun, eq_zero_complement n fo sm ha⟩,
     ⟨.joined, nofun, eq_zero_host n fo sm ha⟩]
 
-/-- **Only monosyllables supplete** (§3.3): in each of the paper's configurations, where the first
-item of `v` applicable to a head has at least two syllables, every optimal candidate inserts it. -/
+/-- Where a head's first applicable item has at least two syllables, every optimal candidate inserts
+it (§3.3). -/
 theorem optimal_item_eq_of_two_le
     (hs : x.constituency ∈ [Constituency.sisters, .adjunct, .complement, .host])
     (hi : (v.applicable x.neighborhood).head? = some i) (hk : 2 ≤ syllables i.exponent)
@@ -514,11 +509,8 @@ theorem optimal_item_eq_of_two_le
   exact (priority_eq_zero_iff hi).1 (Nat.le_zero.1
     ((hmin _ (z (z (z hd h₁) h₂) h₃)).trans_eq ((priority_eq_zero_iff hi).2 rfl)))
 
-/-- **PRIORITY undominated reduces to selection.** §5, after [bonet-lloret-mascaro-2007], derives
-suppletion that is not output-optimizing from PRIORITY ranked over the output constraints. Where
-PRIORITY outranks the other constraints and the vocabulary lists its items by non-increasing
-specificity, so that PRIORITY's lexical order extends the Subset Principle's, every optimal
-candidate inserts the Subset Principle's winner. -/
+/-- With PRIORITY undominated and items listed by specificity, every optimal candidate inserts the
+Subset Principle's winner (§5, after [bonet-lloret-mascaro-2007]). -/
 theorem winner?_eq_some_item_of_mem_optimal
     (hv : v.Pairwise fun i j ↦ j.specificity ≤ i.specificity) {Fs : List (Constraint Candidate)}
     (hc : c ∈ (Tableau.ofList (candidates v x) (priority v x :: Fs)).optimal) :
@@ -554,20 +546,15 @@ private theorem not_exists_of_rows {A : Input → V}
   obtain ⟨d, hd, e, he, hA, hne⟩ := h
   exact hne ((hf d hd).symm.trans (by rw [hA]; exact hf e he))
 
-/-- **The syntax does not determine the allomorph** ((76)–(78)): no function of a head's
-neighborhood and of the syntax of the head and the next word gives the attested allomorphs, a
-stranded head taking its marked allomorph before a footed syllable and its unmarked one before an
-unfooted one, as in (76a) and (76b). -/
+/-- No function of a head's neighborhood and the syntax of head and next word gives the attested
+allomorphs ((76)–(78), (76a), (76b)). -/
 theorem forms_not_function_of_constituency :
     ¬ ∃ f : Neighborhood (Finset Feature) × Constituency → Form Wordlist.Cell,
       ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency) = d.form :=
   not_exists_of_rows (A := fun x ↦ (x.neighborhood, x.constituency)) (by decide)
 
-/-- **Nor does the next syllable** ((84), (86)): no function of a head's neighborhood, of the syntax
-of the head and the next word and of whether the next syllable is footed gives the attested
-allomorphs, a stranded demonstrative taking its unmarked allomorph before an unfooted syllable of
-its maximal φ and its marked one before an unfooted syllable of the next, as in (86a) and
-(86b). -/
+/-- No function of a head's neighborhood, the syntax of head and next word, and footing of the next
+syllable gives the attested allomorphs ((84), (86), (86a), (86b)). -/
 theorem forms_not_function_of_footed :
     ¬ ∃ f : Neighborhood (Finset Feature) × Constituency × Bool → Form Wordlist.Cell,
       ∀ d ∈ rows, f (d.input.neighborhood, d.input.constituency, d.input.footed) = d.form :=
@@ -593,9 +580,8 @@ theorem not_subsetPrinciple_eq_forms :
   fun ⟨v, hv⟩ ↦ forms_not_function_of_constituency
     ⟨fun y ↦ (subsetPrinciple v y.1).getD Head.what.short, fun d hd ↦ by simp [hv d hd]⟩
 
-/-- **No selection by the syntax**: no rule set whose rules read of the input only the head's
-neighborhood and the syntax of the head and the next word, as the selectional frame (65) reads the
-right edge of the head's phrase, inserts the attested allomorphs. -/
+/-- No rule set reading only the head's neighborhood and the syntax of head and next word, as frame
+(65) does, inserts the attested allomorphs. -/
 theorem not_realizes_of_constituency
     (hw : ∀ r ∈ w, ∀ ⦃x y : Input⦄,
       (x.neighborhood, x.constituency) = (y.neighborhood, y.constituency) →
@@ -671,11 +657,8 @@ def ditransitiveRows : List (Row × List String) :=
 argument lies outside its c-command domain. -/
 theorem cCommanded_ditransitiveRows : ∀ x ∈ ditransitiveRows, x.2 = [] := by decide
 
-/-- **No c-command-bounded insertion** ((92), §4.3): no function of a head's neighborhood and of
-the words it c-commands gives the attested allomorphs, the stranded demonstrative in the internal
-argument taking its marked allomorph before *guru* (78a) and its unmarked one before *guru-na*
-(78b), the applied argument outside its c-command domain. Vocabulary Insertion that sees only a
-head's c-command domain, inserting cyclically from the bottom up, cannot insert them. -/
+/-- No function of a head's neighborhood and the words it c-commands gives the attested allomorphs
+((92), §4.3, (78a), (78b)). -/
 theorem forms_not_function_of_cCommanded :
     ¬ ∃ f : Neighborhood (Finset Feature) × List String → Form Wordlist.Cell,
       ∀ x ∈ ditransitiveRows, f (x.1.input.neighborhood, x.2) = x.1.form := by

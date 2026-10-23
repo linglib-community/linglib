@@ -133,9 +133,7 @@ def head13b : ComplexHead (Morpheme Feat Exp) (Morpheme Feat Exp) :=
 def insideOut13b : ComplexHead (Morpheme Feat Exp) (Morpheme Feat Exp) :=
   head13b.insertAll (fun _ ↦ False) vocabulary .hierarchical Exp.phon .nondeletion
 
-/-- Inside-out insertion realizes (13b) as *ndur-ay-on-ɗi: when the incompletive is inserted the
-subject suffix is still bare, so by `ComplexHead.visible_of_exp_none` no `vInit` is visible and
-the elsewhere -ay wins. -/
+/-- Inside-out insertion realizes (13b) with the elsewhere *-ay*, as *ndur-ay-on-ɗi*. -/
 theorem exponents_insideOut13b : insideOut13b.exponents = [.ndur, .ay, .on, .«ɗi»] := by decide
 
 theorem not_joint_insideOut13b :
@@ -200,9 +198,8 @@ example : (returnDual.filterMap (·.exp)).map Exp.form = ["nuːŋ", "s", "i", "g
 example : (returnPlural.filterMap (·.exp)).map Exp.form = ["nuːks", "i", "ge"] := by
   simp [returnPlural, Exp.form]
 
-/-- fn. 7: both attested forms of 'return' are joint spell-outs, nuːŋ- before the dual -s and
-nuːks- before the vowel-initial -i. Inside-out insertion cannot state the alternation at all,
-since the root's exponent is present before any affixal exponent is chosen. -/
+/-- Both attested forms of *return*, *nuːŋ-* and *nuːks-*, are joint spell-outs, which inside-out
+insertion cannot state (fn. 7). -/
 theorem joint_return :
     IsJointSpellout vocabulary Exp.phon returnDual ∧
       IsJointSpellout vocabulary Exp.phon returnPlural := by decide

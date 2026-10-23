@@ -56,8 +56,7 @@ def parseCells : Yield → List Tree
       else
         .ft false [.σ w true, .σ w2 false] :: parseCells rest
 
-/-- A heavy syllable is a foot of its own and restarts the count, since it is necessarily
-followed by a foot boundary (Section 4.1.3, after (15)). -/
+/-- A heavy syllable forms a foot of its own and restarts the count (Section 4.1.3, after (15)). -/
 theorem parseCells_heavy {w : Syllable.Weight} (hw : Syllable.Weight.heavy ≤ w) (rest : Yield) :
     parseCells (w :: rest) = .ft false [.σ w true] :: parseCells rest := by
   cases rest <;> simp [parseCells, hw]

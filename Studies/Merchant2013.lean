@@ -240,18 +240,8 @@ theorem voice_between_boundaries :
       ∀ m : Mismatch, m ≠ .voice → m.head ∈ clausalSpine.below .Voice :=
   ⟨rfl, fun m hm ↦ by cases m <;> first | exact absurd rfl hm | decide⟩
 
-/-- End-to-end chain: Voice severing ([kratzer-1996]) →
-    Merchant's deletion domain theory ([merchant-2013]) →
-    voice mismatch asymmetry.
-
-    Step 1 (Voice.lean): Active and passive are distinct Voice heads;
-    Voice is an independent head above vP.
-
-    Step 2 (Ellipsis.lean): VPE's [E] sits on Voice, deleting vP.
-    Voice is external → mismatches invisible to identity.
-
-    Step 3 (this file): Active→passive and passive→active under VPE
-    are both grammatical, as `Ellipsis.Tolerates` predicts. -/
+/-- Distinct active and passive Voice heads (Step 1) outside VPE's deletion domain (Step 2) make
+both voice mismatches grammatical (Step 3; [kratzer-1996], [merchant-2013]). -/
 theorem end_to_end_voice_chain :
     -- Step 1: Active and passive are distinct Voice flavors
     agentive ≠ passive ∧
@@ -263,9 +253,7 @@ theorem end_to_end_voice_chain :
   refine ⟨?_, by decide, rfl, rfl⟩
   intro h; cases h
 
-/-- The *again* diagnostic (§4) shows that under VPE only repetitive *again*, adjoined high to
-    VoiceP, survives, while restitutive *again*, adjoined low to VP, is inside the deletion
-    domain, which confirms that VPE targets vP rather than VP. -/
+/-- Under VPE only repetitive *again* survives, so VPE targets vP rather than VP (§4). -/
 theorem again_confirms_vp_boundary :
     vpEllipsis.Spares AgainReading.repetitive.site ∧
       ¬ vpEllipsis.Spares AgainReading.restitutive.site := by decide

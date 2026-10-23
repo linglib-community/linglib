@@ -195,8 +195,7 @@ theorem assertion_neg_resolves_polarityFocus {p : Set W} (hne : p ≠ ∅) :
   · simp
   · simp
 
-/-- In (57) an antecedent asserting the proposition itself is not a focus alternative that the
-sentence corrects; the alternative set is evoked by the context instead. -/
+/-- In (57), an antecedent asserting the proposition itself does not resolve its polarity focus. -/
 theorem not_assertion_self_resolves (p : Set W) (alts : Set (Set W)) :
     ¬ (Antecedent.assertion p alts).Resolves (polarityFocus p).ordinary
       (polarityFocus p).alternatives :=
@@ -221,8 +220,8 @@ theorem given_polarityFocus (a p : Set W) : Given a (polarityFocus p) := by
   rw [Given, existentialClosure_polarityFocus]
   exact Set.subset_univ a
 
-/-- By (72), a narrow focus whose alternatives do not exhaust the worlds is not Given after every
-antecedent, so it constrains the antecedent as polarity focus does not. -/
+/-- By (72), a narrow focus whose alternatives do not exhaust the worlds is not Given after some
+antecedent. -/
 theorem exists_not_given {m : WithAlternatives (Set W)} (h : existentialClosure m ≠ Set.univ) :
     ∃ a, ¬ Given a m :=
   ⟨Set.univ, fun h' ↦ h (Set.univ_subset_iff.mp h')⟩
@@ -276,9 +275,8 @@ theorem not_good_of_not_diagnose {good patients diagnose polite : Set W}
     (h : good = patients ∩ diagnose ∩ polite) {σ : Set W} (hσ : σ ⊆ diagnoseᶜ) : σ ⊆ goodᶜ :=
   hσ.trans (Set.compl_subset_compl.mpr (h ▸ Set.inter_subset_left.trans Set.inter_subset_right))
 
-/-- By (113) and (114), a constituent question has an alternative that is neither the
-proposition nor its negation, so it does not admit the polarity focus of an emphatic *do* answer. A
-contrastive-topic sentence that directly answers a constituent question rejects *do*. -/
+/-- By (113) and (114), a constituent question does not admit the polarity focus of an emphatic *do*
+answer. -/
 theorem not_admits_polarityFocus_of_constituentQuestion {Q : Question W} {p a : Set W}
     (ha : a ∈ Q.alt) (hp : a ≠ p) (hc : a ≠ pᶜ) :
     ¬ (Antecedent.question Q.alt).Admits (polarityFocus p).alternatives := by
@@ -375,8 +373,8 @@ instance : DecidablePred HostsYesAnswer := fun _ ↦ by
 /-- By (46c), the Verum-focus pattern is acceptable in every clause type. -/
 theorem vf_acceptable : ∀ r ∈ rows, r.kind = .vf → r.acceptable := by decide
 
-/-- Where (125) meets (127), across the embedding environments, a contrastive-topic sentence with
-emphatic *do* is acceptable exactly where a Yes-answer to a polar question can be embedded. -/
+/-- Across embedding environments, a contrastive-topic sentence with emphatic *do* is acceptable
+exactly where a polar Yes-answer embeds, as (125) and (127) show. -/
 theorem ct_acceptable_iff_hostsYesAnswer :
     ∀ r ∈ rows, r.kind.IsCT → r.environment.IsEmbedding →
       (r.acceptable ↔ HostsYesAnswer r.environment) := by

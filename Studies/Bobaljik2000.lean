@@ -147,9 +147,8 @@ theorem class_marker_context :
         [{agrO, third, pl}, {agrS, first, sg}]⟩ := by
   decide
 
-/-- When the subject prefix of (9b) is reached, every morpheme inside it has been rewritten as its
-exponent, and nothing of the object agreement remains for the prefix to be conditioned by. Under
-the non-deletion of [halle-marantz-1993] the object's features would remain. -/
+/-- Under rewriting, no object agreement remains when the subject prefix of (9b) is reached, unlike
+under the non-deletion of [halle-marantz-1993]. -/
 theorem prefix_sees_no_object :
     (stepContext vocab bring .rewriting 3).leftCtx =
         [{item "čeʔn"}, {item "ki"}, {item "s"}, {classII, item "tɸ"}] ∧
@@ -213,20 +212,16 @@ def pseudoVocab : List (VocabularyItem Feature String) :=
   objectVocab ++
     [⟨{(0, agrS), (0, third), (-1, agrO), (-1, third), (-1, sg)}, ""⟩, {agrS, third} ⟷ "ne"]
 
-/-- A third-singular object presents the same features under a third-singular subject, where it
-is spelled out *-nin*, and under a third-plural one, where it is *-ɣʔen* (23). Keyed to those
-features, as in (28a), the deletion of *ne-* overapplies under non-deletion, removing the prefix
-of (19i). Under rewriting the features are gone when the prefix is inserted, so the deletion
-never applies, leaving the prefix of (19c). -/
+/-- With deletion keyed to object features (28a) and the exponents of (23), non-deletion wrongly
+removes the prefix in (19i), while rewriting keeps it as in (19c). -/
 theorem object_features_cannot_bleed :
     morphs .nondeletion pseudoVocab (word "ɬʔu" {third, pl} {third, sg}) = ["ɬʔu", "ɣʔen"] ∧
       morphs .rewriting pseudoVocab (word "ɬʔu" {third, sg} {third, sg}) =
         ["ne", "ɬʔu", "nin"] := by
   decide
 
-/-- In both (19c) and (27) a third-singular subject acts on a third-singular direct object. In
-(27) the verb agrees with the second-person dative instead, *-nin* is not inserted, and *ne-*
-stays, so the prefix tracks the item, not the syntactic configuration. -/
+/-- *ne-* is deleted where *-nin* is inserted (19c) and kept where the verb agrees with a dative
+(27), so it tracks the item, not the configuration. -/
 theorem ditransitive_retains_prefix :
     morphs .rewriting vocab (word "ɬʔu" {third, sg} (agreesWith {third, sg} none)) =
         ["ɬʔu", "nin"] ∧

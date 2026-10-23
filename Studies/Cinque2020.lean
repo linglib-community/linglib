@@ -119,27 +119,24 @@ def unmarkedOrders (s : List Slot) : List (List Minimalist.LexicalItem.Token) :=
   (((stagesOf ((hierarchy.filter (· ∈ s)).map Slot.token)).filter (·.marked = [])).map
     (·.derivation.surfaceTokens)).eraseDups
 
-/-- A finite restrictive, merged between the demonstrative and the cardinal numeral, surfaces
-as Dem RC Num A N in rigid head-final languages (181) and N A Num RC Dem in rigid head-initial
-ones (182). -/
+/-- A finite restrictive surfaces as Dem RC Num A N in rigid head-final languages (181) and N A Num
+RC Dem in rigid head-initial ones (182). -/
 theorem unmarkedOrders_restrictive :
     unmarkedOrders [.A, .Num, .rc .restrictive, .Dem] =
       [[.Dem, .rc .restrictive, .Num, .A, .N], [.N, .A, .Num, .rc .restrictive, .Dem]].map
         (·.map Slot.token) := by
   decide +kernel
 
-/-- A relative merged where participials are, between the cardinal numeral and the adjectives,
-surfaces as Dem Num RC A N, in Karata and Mandarin (200a–b) and the participials of German,
-English and Bulgarian (192)–(197), and as N A RC Num Dem in T'in (200c). -/
+/-- A relative merged between numeral and adjectives surfaces as Dem Num RC A N (200a–b),
+(192)–(197) or as N A RC Num Dem (200c). -/
 theorem unmarkedOrders_participial :
     unmarkedOrders [.A, .Num, .rc .participialStage, .Dem] =
       [[.Dem, .Num, .rc .participialStage, .A, .N],
         [.N, .A, .rc .participialStage, .Num, .Dem]].map (·.map Slot.token) := by
   decide +kernel
 
-/-- Restrictives are merged below the demonstrative and non-restrictives above it, as the orders
-of (171)–(175) show, Dem RC N and N RC Dem for restrictives and RC Dem N and N Dem RC for
-non-restrictives. -/
+/-- Restrictives are merged below the demonstrative and non-restrictives above it, as in the orders
+of (171)–(175). -/
 theorem unmarkedOrders_dem :
     unmarkedOrders [.rc .restrictive, .Dem] =
         [[.Dem, .rc .restrictive, .N], [.N, .rc .restrictive, .Dem]].map (·.map Slot.token) ∧
@@ -167,9 +164,7 @@ def RCType.externalHead (t : RCType) : Size :=
   if .Dem ∈ hierarchy.take t.height then .DP
   else if .Num ∈ hierarchy.take t.height then .dP else .NP
 
-/-- A type merged higher has a bigger external Head. A non-restrictive's contains the strong
-determiners, a restrictive's only the weak ones and a participial's neither (Introduction,
-fn. 3). -/
+/-- A type merged higher has a bigger external Head (Introduction, fn. 3). -/
 theorem externalHead_mono : Monotone RCType.externalHead := by decide
 
 /-- The two derivations, which differ in which Head is overt. -/
@@ -251,15 +246,14 @@ instance (r : RC) : Decidable r.WellFormed := decidable_of_iff _ r.wellFormed_if
 
 variable {r : RC}
 
-/-- The gap strategy realizes exactly an internal Head the size of the external one, a `dP` in
-a restrictive and a DP in a non-restrictive (§4.2). -/
+/-- The gap strategy is well formed exactly with an internal Head the size of the external one
+(§4.2). -/
 theorem RC.wellFormed_iff_of_invariantRelativizer (hs : r.strategy = .invariantRelativizer) :
     r.WellFormed ↔ r.type.Admits r.derivation ∧ r.internalHead = r.type.externalHead := by
   simp [RC.wellFormed_iff, hs]
 
-/-- An internal Head bigger than the external one is categorially distinct from it, so neither
-Head deletes the other, and the relative clause neither reconstructs nor has a gap (§1.5,
-§2.1.2). -/
+/-- A relative clause whose internal Head is bigger than its external one neither reconstructs nor
+has a gap (§1.5, §2.1.2). -/
 theorem RC.WellFormed.not_reconstructs_of_lt (h : r.WellFormed)
     (hlt : r.type.externalHead < r.internalHead) :
     ¬ r.Reconstructs ∧ r.strategy ≠ .invariantRelativizer :=

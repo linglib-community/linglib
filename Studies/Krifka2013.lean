@@ -92,9 +92,7 @@ theorem worlds_descUpdate_subset : (cg.descUpdate φ).worlds ⊆ cg.worlds :=
 theorem interps_defUpdate_subset : (cg.defUpdate φ).interps ⊆ cg.interps :=
   Finset.filter_subset _ _
 
-/-- Admissible interpretations are convex (§3.1): a definitional update whose proposition is
-convex in the interpretation, as *Feynman is tall* is in the standard of tallness, keeps a
-convex set of interpretations convex. -/
+/-- A convex definitional update keeps a convex set of admissible interpretations convex (§3.1). -/
 theorem ordConnected_defUpdate [Preorder I] (hI : (↑cg.interps : Set I).OrdConnected)
     (hφ : ∀ w ∈ cg.worlds, {i | φ i w}.OrdConnected) :
     (↑(cg.defUpdate φ).interps : Set I).OrdConnected := by
@@ -102,10 +100,8 @@ theorem ordConnected_defUpdate [Preorder I] (hI : (↑cg.interps : Set I).OrdCon
   simp only [defUpdate, Finset.coe_filter] at hx hy ⊢
   exact ⟨hI.out hx.1 hy.1 hz, λ w hw => (hφ w hw).out (hx.2 w hw) (hy.2 w hw) hz⟩
 
-/-- A definitional generic from an empirical finding ((31)–(36)): with the species rule (33)
-in the common ground, the chromosome count a measure, and Chiquita a donkey under every
-admissible interpretation, the descriptive update with her count already settles the
-definitional update with *A donkey has 62 chromosomes*. -/
+/-- With the species rule (33) in the common ground, the descriptive update with Chiquita's
+chromosome count settles the definitional update ((31)–(36)). -/
 theorem defUpdateTopic_descUpdate [Fintype X] (donkey : I → W → X → Prop)
     [∀ i w x, Decidable (donkey i w x)] (chrom : I → W → X → ℕ) (ch : X) (n : ℕ)
     (hrule : ∀ i ∈ cg.interps, ∀ w ∈ cg.worlds, ∀ x y, donkey i w x → donkey i w y →

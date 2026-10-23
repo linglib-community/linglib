@@ -246,8 +246,8 @@ def initial (transitive applied : Bool) : Stage where
   slots := (.agent, .external) :: (if transitive then [(.patient, .complement 0)] else []) ++
     if applied then [(.applied, .complement (if transitive then 1 else 0))] else []
 
-/-- An applied argument becomes the subject only with the applied affix inside the passive affix
-(§4.2): with the passive applied first, no grammar and no root yields it. -/
+/-- An applied argument becomes subject only with the applicative affix inside the passive (§4.2).
+-/
 theorem applied_subject_needs_applicative_first (g : Grammar) (transitive applied : Bool) :
     ∀ st ∈ outcomes g [.passive, .applicative] (initial transitive applied),
       .applied ∉ st.subjects := by
@@ -272,9 +272,8 @@ abbrev Derivation := List (Process × Morph)
 application (§2.1). -/
 def word (root : Morph) (d : Derivation) : Tree Morph := Tree.attachMorphs root (d.map (·.2))
 
-/-- The morphological derivation determines the syntactic one (§2.1): for a language marking
-each process by its own morph bound on a side, the word is injective in the sequence of
-processes. -/
+/-- When each process has its own morph on a fixed side, the word determines the sequence of
+processes (§2.1). -/
 theorem word_injective (root : Morph) {μ : Process → Morph} (hμ : Function.Injective μ)
     (hside : ∀ p, (μ p).kind.side?.isSome) :
     Function.Injective fun ps : List Process ↦ word root (ps.map fun p ↦ (p, μ p)) := by

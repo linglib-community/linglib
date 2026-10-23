@@ -80,8 +80,7 @@ theorem eval_map_monadLift [Monad m] [LawfulMonad m] (f : α → r) (x : m α) :
     eval (f <$> (monadLift x : ContT r m α)) = f <$> x := by
   simp only [eval_map, run_monadLift, bind_pure_comp]
 
-/-- Resetting a lifted computation changes nothing, whatever sits on the bottom level, since
-evaluation leaves the side effects of the underlying monad intact ([charlow-2014]'s Fact 4.1). -/
+/-- Resetting a lifted computation changes nothing ([charlow-2014]'s Fact 4.1). -/
 theorem reset_map_monadLift {r' : Type u} [Monad m] [LawfulMonad m] (f : α → r) (x : m α) :
     reset (f <$> (monadLift x : ContT r m α)) = (monadLift (f <$> x) : ContT r' m r) :=
   congrArg monadLift (eval_map_monadLift f x)

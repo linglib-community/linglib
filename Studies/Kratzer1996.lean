@@ -62,8 +62,8 @@ theorem mittieFedTheDog_congr (agent feed feed' : Entity → E → Prop) (mittie
     mittieFedTheDog agent feed mittie dog e ↔ mittieFedTheDog agent feed' mittie dog e :=
   and_congr_right fun _ ↦ h e
 
-/-- An agent head, whose events are not states, and a stative verb phrase such as *own the dog*
-(25), whose events are states, combine by Event Identification to the empty relation. -/
+/-- An agent head and a stative verb phrase such as *own the dog* (25) combine by Event
+Identification to the empty relation. -/
 theorem agent_stative_eq_bot (IsState : E → Prop) {agent : Entity → E → Prop} {P : E → Prop}
     (hagent : ∀ x e, agent x e → ¬ IsState e) (hP : ∀ e, P e → IsState e) :
     eventIdentification agent P = ⊥ :=

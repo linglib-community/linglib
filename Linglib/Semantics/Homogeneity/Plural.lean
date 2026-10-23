@@ -214,10 +214,8 @@ theorem allPlural_blocked_by_wide_issue (q : Setoid W)
     | inr h => exact h
   exact hAddr ⟨w₁, w₂, hEq, (allPlural_eq_one_iff P x w₁).mpr h1, h2'⟩
 
-/-- A usable *all*-sentence leaves no exceptions to mention — "#Although all
-    the professors smiled, Smith didn't" is contradictory. The bare-plural
-    unmentionability result proper ([kriz-2016] §4.1) is
-    `exception_unaddressable`. -/
+/-- A usable *all*-sentence leaves no exceptions to mention, and `exception_unaddressable` is the
+bare-plural result ([kriz-2016] §4.1). -/
 theorem allPlural_exceptions_unmentionable (q : Setoid W) (w : W) (a : Atom)
     (ha : a ∈ x) (h : usable q (allPlural P x) w) : P a w :=
   allPlural_prevents_nonmax P x q w h a ha

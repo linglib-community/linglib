@@ -333,8 +333,7 @@ theorem cwhBulk_paired : ItReading cwhBulk := by decide
 
 theorem cwhBulk_lt_cwh : cost cwhBulk < cost cwh := by decide
 
-/-- Of the three phase edges of the bulk-sharing object, the two CP edges host one wh-phrase each
-and the shared vP edge both, and its asterisk reaches PF ((37b)). -/
+/-- In the bulk-sharing object only the shared vP edge's asterisk reaches PF ((37b)). -/
 theorem pfAsterisks_cwhBulk : pfAsterisks cwhBulk = {.v} := by decide
 
 theorem convergesIn_cwhBulk_iff {mwf : Finset Cat} : ConvergesIn mwf cwhBulk ↔ .v ∉ mwf := by
@@ -397,8 +396,8 @@ theorem csEllipsis_admissible_not_optimal (mwf : Finset Cat) :
   ⟨⟨by decide, convergesIn_of_pfAsterisks_eq_empty (pfAsterisks_csCandidates _ (by decide)) _⟩,
     fun h ↦ absurd ((optimal_cs_iff mwf csEllipsis (by decide)).1 h) (by decide)⟩
 
-/-- The shared verb occurs in the second conjunct outside the elided TP and is silenced all the
-same, so the nonpaired sluice cannot surface as a coordinated wh-question (footnote 30). -/
+/-- The shared verb is silenced though it occurs outside the elided TP, so the nonpaired sluice
+cannot surface as a coordinated wh-question (footnote 30). -/
 theorem csnr_silences_shared :
     (∃ p ∈ occurrences csnr teach, ∀ K ∈ elidedDomains csnr, ¬ K ≤ p) ∧
       IsSilenced csnr teach := by decide
@@ -494,10 +493,8 @@ theorem rnrShared_lt_mixed :
       rnrCost rnrShared < rnrCost rnrMatchedMixed := by
   decide
 
-/-- Belk, Neeleman and Philip license three derivations of (56), their (51), with the prosodic
-break before *have*, *traveled* or *to*. Multidominating the whole auxiliary phrase is cheaper
-than either derivation that elides, so economy blocks those (the paper's (57) and (58)) and
-leaves the break before *have* (59). -/
+/-- Of the three licensed derivations of (56), multidominating the auxiliary phrase is cheapest,
+leaving the break before *have* ((51), (57), (58), (59)). -/
 theorem rnr56_economy :
     (∀ d ∈ BelkNeelemanPhilip2023.derivations51, d.Licensed) ∧
       BelkNeelemanPhilip2023.shareAuxP.pivotOnset = some "have" ∧

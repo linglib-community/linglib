@@ -221,9 +221,8 @@ theorem twentyFive_ten_incomparable :
     ¬ AtLeastAsRound (OnScale decimal) 25 10 ∧ ¬ AtLeastAsRound (OnScale decimal) 10 25 := by
   decide
 
-/-- A bare numeral read with deviation `m` survives Inference Preservation against every
-alternative at least as round, (79a), exactly when `m` is under half the lcm of the widths of its
-scales. -/
+/-- A bare numeral with deviation `m` survives Inference Preservation against every rounder
+alternative (79a) iff `m` is under half the lcm of its scale widths. -/
 theorem forall_not_violates_iff (hW : 0 ∉ W) {m : ℚ} :
     (∀ n' ≠ n, AtLeastAsRound (OnScale W) n n' → ¬ Violates (numeral n m) (numeral n' m)) ↔
       2 * m < scaleLcm W n := by
@@ -278,8 +277,7 @@ theorem tolerated_deviation_is_inferred_cell
 
 end Roundness
 
-/-- *more than n* is blocked by its alternative bare *n* at any positive deviation, (69)–(70),
-since the imprecise comparative overlaps the exact value it is precisely incompatible with. -/
+/-- *more than n* is blocked by bare *n* at any positive deviation ((69)–(70)). -/
 theorem moreThan_blocked (n : ℤ) {m : ℚ} (hm : 0 < m) :
     Violates (moreThan n m) (numeral n m) := by
   refine ⟨false, fun d hd ↦ ?_, fun hall ↦ ?_, fun hall ↦ ?_⟩

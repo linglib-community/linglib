@@ -141,9 +141,8 @@ theorem iterateOthers_hexagon_iff (Q₁ Q₂ : GQ (Fin 6)) (hQ₂ : Q₂.Quantit
     hQ₂ _ _ _ _ e e.bijective hA hB
   simp only [iterateOthers, h]
 
-/-- No iteration with a permutation-invariant inner quantifier is Intermediate Reciprocity on
-every symmetric relation (footnote 8). The paper assumes both quantifiers permutation invariant;
-the outer one needs no assumption. -/
+/-- No iteration with a permutation-invariant inner quantifier is Intermediate Reciprocity on every
+symmetric relation (footnote 8). -/
 theorem intermediateReciprocity_not_iterateOthers (Q₁ Q₂ : GQ (Fin 6))
     (hQ₂ : Q₂.QuantityInvariant) :
     ¬ ∀ R : Fin 6 → Fin 6 → Prop, Std.Symm R →
@@ -192,8 +191,8 @@ theorem isLeast_strong (h : ∃ R ∈ I, StrongReciprocity R X) :
 
 /-! ### Measles (§6.1) -/
 
-/-- One-way Weak Reciprocity over finitely many members needs a cycle. If each third grader gave
-another one measles, some of them passed it around in a circle (99). -/
+/-- One-way Weak Reciprocity over finitely many members needs a cycle, as with the third graders and
+measles (99). -/
 theorem exists_transGen_of_oneWayWeak (h : OneWayWeakReciprocity R X) : ∃ x, TransGen R x x := by
   obtain ⟨hX, h⟩ := oneWayWeakReciprocity_iff.1 h
   by_contra! hcyc
@@ -293,8 +292,8 @@ theorem interpretation_pair_alternative {a b : A} (hab : a ≠ b) :
     · exact ⟨b, by simp, hab, hab'⟩
     · exact ⟨a, by simp, Ne.symm hab, hba'⟩
 
-/-- With two members and an asymmetric relation, the sentence expresses that one member bears
-the relation to the other, Inclusive Alternative Ordering, as for the bunk beds of (108). -/
+/-- With two members and an asymmetric relation, the interpretation is Inclusive Alternative
+Ordering, as for the bunk beds of (108). -/
 theorem pair_isLeast {a b : A} (hab : a ≠ b) :
     IsLeast (candidates {a, b} asymmetric) (interpretation {a, b} (.tot, .alternative)) := by
   rw [interpretation_pair_alternative hab]
@@ -406,9 +405,8 @@ theorem pirates_isLeast :
     | decide
     | exact absurd (nonempty_inter_of_le (by decide) h) hsar
 
-/-- The predicted meaning is too strong. When the four pirates stare at each other in two pairs,
-every pirate is in eye contact and One-way Weak Reciprocity holds, the meaning the paper gives
-(110), but Intermediate Reciprocity fails. -/
+/-- With four pirates staring in two pairs, eye contact satisfies One-way Weak Reciprocity (110),
+but the predicted Intermediate Reciprocity fails. -/
 theorem pirates_eyeContact :
     stareBack ∈ singleValued ∧ OneWayWeakReciprocity stareBack Finset.univ ∧
       stareBack ∉ interpretation Finset.univ (.lin, .plain) := by

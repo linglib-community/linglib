@@ -171,9 +171,8 @@ theorem and_existentialRaising (N N' : Set E) :
     existentialRaising_eq_upperClosure, ← image_singleton_sups, upperClosure_sups]
   rfl
 
-/-- **Minimization after Existential Raising.** The minimal sets containing an `N` and an `N'`
-are the singletons of their overlap and the pairs of an `N` that is not an `N'` with an `N'`
-that is not an `N` (journal p. 580). -/
+/-- The minimal sets containing an `N` and an `N'` are the singletons of their overlap and the pairs
+drawn from their two differences (journal p. 580). -/
 theorem minimization_and_existentialRaising (N N' : Set E) :
     minimization (and_.denote
       {existentialRaising N, existentialRaising N'}) =
@@ -223,8 +222,8 @@ theorem minimization_and_existentialRaising_self (N : Set E) :
   ext P
   simp [eq_comm]
 
-/-- When John is a man, the singleton of John is the only minimal set that contains John and a
-man, so *John and some man met* (43) would be deviant. -/
+/-- When John is a man, *John and some man* minimizes to the singleton of John alone, so *John and
+some man met* (43) is deviant. -/
 theorem minimization_and_individual_existentialRaising {N : Set E} {j : E}
     (hj : j ∈ N) :
     minimization (and_.denote {{P : Set E | individual j P},
@@ -250,8 +249,8 @@ theorem mem_existentialRaising_minimization_inter_iff {N N' : Set E} (h : Disjoi
   · rintro ⟨x, hx, y, hy, hR, hS⟩
     exact ⟨_, ⟨⟨x, hx, y, hy, rfl⟩, hR⟩, hS⟩
 
-/-- With Predicate Distributivity on the scope, *A man and woman had a beer* (29) is true iff
-some man and some woman each had a beer. -/
+/-- With Predicate Distributivity, *A man and woman had a beer* (29) is true iff some man and some
+woman each had a beer. -/
 theorem predicateDistributivity_mem_existentialRaising_minimization_iff {N N' : Set E}
     (h : Disjoint N N') (S : Set E) :
     predicateDistributivity S ∈ existentialRaising (minimization
@@ -302,7 +301,7 @@ theorem exists_mem_minimization_individual_choiceRaising_iff {N P : Set E} (hN :
   exact ChoiceFunction.exists_apply_iff_some hN fun x ↦ P = {j, x}
 
 /-- With Choice Closure above Minimization, *a doctor and lawyer* (57) holds of the pair of any
-doctor and any lawyer, whether or not they share their professions. -/
+doctor and any lawyer. -/
 theorem exists_mem_minimization_choiceRaising_iff {N N' P : Set E} (hN : N.Nonempty)
     (hN' : N'.Nonempty) :
     (∃ f₁ f₂ : ChoiceFunction E, P ∈ minimization (and_.denote
@@ -331,7 +330,7 @@ theorem inter_setOf_ncard_minimization_existentialRaising_predicateDistributivit
     omega
 
 /-- With Distributive Choice Raising and Choice Closure above Minimization, *men and women* (80)
-denotes the mixtures, the unions of a plurality from each noun, which form the set product. -/
+denotes the unions of a plurality from each noun. -/
 theorem exists_mem_minimization_distributiveChoiceRaising_iff {N N' : Set (Set E)} {P : Set E}
     (hN : N.Nonempty) (hN' : N'.Nonempty) :
     (∃ f₁ f₂ : ChoiceFunction (Set E), P ∈ minimization (and_.denote
@@ -344,9 +343,8 @@ theorem exists_mem_minimization_distributiveChoiceRaising_iff {N N' : Set (Set E
       and_congr_right fun _ ↦ (ChoiceFunction.exists_apply_iff_some hN' fun W ↦
         P = M ∪ W).trans (exists_congr fun _ ↦ and_congr_right fun _ ↦ eq_comm))
 
-/-- With Choice Closure at the sentence, as in *Two Americans and three Russians made a team*
-(83), the conjunction of two plural nouns holds of a scope iff the union of a plurality from each
-noun does. -/
+/-- Under sentential Choice Closure (83), conjoined plural nouns hold of a scope iff the union of a
+plurality from each noun does. -/
 theorem exists_mem_existentialRaising_minimization_distributiveChoiceRaising_iff
     {N N' : Set (Set E)} (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set (Set E)) :
     (∃ f₁ f₂ : ChoiceFunction (Set E), S ∈ existentialRaising (minimization
@@ -384,8 +382,8 @@ theorem determinerFitting_some_iff {A B : Set (Set E)} (hB : ∅ ∉ B) :
   obtain ⟨x, hx⟩ := nonempty_iff_ne_empty.mpr fun h ↦ hB (h ▸ hB')
   exact ⟨x, ⟨P, hA, hx⟩, P, ⟨hA, hB'⟩, hx⟩
 
-/-- Determiner Fitting of *no* to a plural noun, as in *No students met* (94), says that no
-student is in a set of students that met. -/
+/-- With Determiner Fitting, *No students met* (94) says that no student is in a set of students
+that met. -/
 theorem determinerFitting_no_predicateDistributivity_iff (N : Set E) (S : Set (Set E)) :
     determinerFitting GQ.no (predicateDistributivity N) S ↔
       ¬ ∃ x ∈ N, ∃ P ∈ S, x ∈ P ∧ P ⊆ N := by
@@ -437,8 +435,8 @@ theorem determinerFitting_every_and_iff_or {N N' : Set E} (h : Disjoint N N')
   (determinerFitting_every_minimization_and h hN hN' S).trans
     (determinerFitting_every_minimization_or N N' S).symm
 
-/-- *A cat and dog came running in* (97) says that a cat and a dog came, where *a cat or dog*
-(98) says that one of them did. -/
+/-- *A cat and dog came running in* (97) says that a cat and a dog came, unlike *a cat or dog* (98).
+-/
 theorem determinerFitting_some_minimization_and {N N' : Set E} (h : Disjoint N N')
     (S : Set E) :
     determinerFitting GQ.some (minimization (and_.denote
@@ -451,8 +449,8 @@ theorem determinerFitting_some_minimization_and {N N' : Set E} (h : Disjoint N N
   exact ⟨fun ⟨x, hx, y, hy, hxS, hyS⟩ ↦ ⟨⟨x, hx, hxS⟩, y, hy, hyS⟩,
     fun ⟨⟨x, hx, hxS⟩, y, hy, hyS⟩ ↦ ⟨x, hx, y, hy, hxS, hyS⟩⟩
 
-/-- When a cat came and no dog did, *a cat or dog came running in* (98) is true and *a cat and
-dog came running in* (97) is false. -/
+/-- When a cat came and no dog did, the disjunction (98) is true and the conjunction (97) is false.
+-/
 theorem some_or_and_not_determinerFitting_some {N N' S : Set E} (h : Disjoint N N')
     {x : E} (hx : x ∈ N) (hxS : x ∈ S) (hN'S : Disjoint N' S) :
     GQ.some (or_.denote {N, N'}) S ∧
@@ -471,8 +469,7 @@ theorem and_subset_sups [Lattice α] (Q Q' : Set α) :
   rw [and_denote, sInf_pair]
   exact fun a h ↦ ⟨a, h.1, a, h.2, sup_idem a⟩
 
-/-- On upward-entailing conjuncts the collective and the intersective entries agree, so the
-collective theory goes wrong only on conjuncts that are not upward entailing (p. 608). -/
+/-- On upward-entailing conjuncts the collective and the intersective entries agree (p. 608). -/
 theorem sups_eq_and [Lattice α] {Q Q' : Set α} (hQ : IsUpperSet Q)
     (hQ' : IsUpperSet Q') : Q ⊻ Q' = and_.denote {Q, Q'} := by
   refine (Subset.antisymm ?_ (and_subset_sups Q Q'))
@@ -497,8 +494,8 @@ theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
   rw [hsing, hsing, image_singleton_sups,
     minimization_and_existentialRaising_of_disjoint h]
 
-/-- When a man and a woman are the only smilers, the collective entry holds of the smilers in
-*No man and no woman smiled* (103a) and the intersective entry does not. -/
+/-- When a man and a woman alone smiled, the collective entry of *No man and no woman smiled* (103a)
+holds and the intersective one fails. -/
 theorem sups_noMan_noWoman {N N' : Set E} (h : Disjoint N N') {x y : E} (hx : x ∈ N)
     (hy : y ∈ N') :
     {x, y} ∈ {P : Set E | GQ.no N P} ⊻ {P | GQ.no N' P} ∧
@@ -521,9 +518,8 @@ theorem sups_individual_nobodyElse {x y : E} (hxy : x ≠ y) :
   exact ⟨⟨{x, y}, mem_insert_of_mem x rfl, ∅, fun _ _ h ↦ h, union_empty _⟩,
     fun ⟨_, hno⟩ ↦ hno x hxy (mem_insert x _)⟩
 
-/-- Take a condition on the number of women that three meets and four does not, such as
-*between one and three* or *an odd number* (105). The collective entry holds of John and four
-women, and the intersective entry does not. -/
+/-- For a condition true of three and false of four (105), the collective entry holds of John and
+four women but the intersective entry does not. -/
 theorem sups_individual_card {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N)
     (hW4 : W.ncard = 4) {p : ℕ → Prop} (h3 : p 3) (h4 : ¬ p 4) :
     insert j W ∈ {P : Set E | individual j P} ⊻ {P | p (N ∩ P).ncard} ∧

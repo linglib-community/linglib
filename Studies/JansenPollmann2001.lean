@@ -350,9 +350,8 @@ theorem not_isRatio_three_mul_pow (rule : Rule) (m : ℕ) :
 
 /-! ### The examples -/
 
-/-- Of the paper's examples of the sequence rule, `[3, 4]`, `[40, 50]`, `[18, 20]` and
-`[100, 150]` follow both rules, `[100, 125]` only the original, and `[1, 3]`, `[5, 7]`, `[6, 9]`
-and `[40, 80]` neither (p. 196). -/
+/-- Of the paper's examples, `[3, 4]`, `[40, 50]`, `[18, 20]` and `[100, 150]` follow both sequence
+rules and `[100, 125]` only the original (p. 196). -/
 theorem seqPair_examples :
     (SeqPair .revised 3 4 ∧ SeqPair .revised 40 50 ∧ SeqPair .revised 18 20 ∧
       SeqPair .revised 100 150) ∧
@@ -375,9 +374,8 @@ def pairData : List (ℕ × ℕ × Bool) := Examples.all.filterMap pairRow
 theorem pair_rows : ∀ d ∈ pairData, d.2.2 = true ↔ SeqPair .revised d.1 d.2.1 := by
   decide +kernel
 
-/-- Of the paper's numbers, 40 has 10-ness, 2-ness and 5-ness, 8 has 10-ness and 2-ness, 300 has
-10-ness and 5-ness, 70 only 10-ness and 61 none; 20 has all three, 80 10-ness and 2-ness, 50
-10-ness and 5-ness, and 45 only 5-ness (p. 198). -/
+/-- Each of the paper's example numbers has the 10-ness, 2-ness and 5-ness the paper assigns it (p.
+198). -/
 theorem kness_examples :
     (HasKness 1 40 ∧ HasKness 2 40 ∧ HasKness 5 40) ∧
     (HasKness 1 8 ∧ HasKness 2 8 ∧ ¬ HasKness 5 8) ∧

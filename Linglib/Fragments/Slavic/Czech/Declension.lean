@@ -325,27 +325,21 @@ def Class.formsOn (k : Class) (s : List String) (σ : Cell) : List (List String)
 
 /-! ### Generalizations over the tables -/
 
-/-- In every class the vocative plural is the nominative plural, as "no adjectival, pronominal,
-numeral or plural noun paradigms have distinct vocative forms (vocative = nominative)"
-(p. 465). -/
+/-- In every class the vocative plural equals the nominative plural (p. 465). -/
 theorem voc_eq_nom_plural (k : Class) :
     k.endings (.of .voc .plural) = k.endings (.of .nom .plural) := by
   cases k <;> decide
 
-/-- "In the plural, the animacy opposition is expressed only in the existence of a distinctive
-nominative plural for animates" (p. 465): the hard and the soft masculine animates and
-inanimates share their plural endings in every case but the nominative and, the vocative
-plural being the nominative, the vocative. -/
+/-- The hard and soft masculine animates share their plural endings with the inanimates except in
+the nominative and vocative (p. 465). -/
 theorem animacy_plural (c : Case) :
     (Class.chlap.pluralEndings c = Class.hrad.pluralEndings c ↔ c ≠ .nom ∧ c ≠ .voc) ∧
       (Class.muz.pluralEndings c = Class.stroj.pluralEndings c ↔ c ≠ .nom ∧ c ≠ .voc) := by
   revert c
   decide
 
-/-- "In the singular, animate accusative equals genitive, which itself, in the core (hard)
-masculine paradigm, differs from the inanimate genitive", the exception being "the masculine
-singular a-declension, which, like the feminine, has inherited unambiguous forms for
-nominative, genitive and accusative" (p. 465). -/
+/-- Animate singular accusative equals genitive except in the masculine a-declension, and the hard
+animate genitive differs from the inanimate one (p. 465). -/
 theorem acc_eq_gen_singular_iff :
     (∀ k : Class, k.gender.IsAnimate →
       (k.singularEndings .acc = k.singularEndings .gen ↔
@@ -354,32 +348,23 @@ theorem acc_eq_gen_singular_iff :
         Class.hrad.singularEndings .gen := by
   decide
 
-/-- The dative and locative singular fall together in every class but the hard masculine
-inanimates and the neuter o-stems, whose dative is *-u* and locative *-ě*, "A noteworthy
-development within the case system" being "the spread of dative–locative syncretism in singular
-noun classes" (p. 465). -/
+/-- The dative and locative singular coincide in every class except the hard masculine inanimates
+and the neuter o-stems (p. 465). -/
 theorem dat_loc_singular_iff (k : Class) :
     k.singularEndings .dat = k.singularEndings .loc ↔
       k ≠ .hrad ∧ k ≠ .mesto := by
   cases k <;> decide
 
-/-- Among the masculines, the dative singular *-u* is that of the hard masculines alone, and of
-all the classes only the masculine a-stems have *-ovi* alone. *Mluvnice češtiny* states both:
-"-u mají pouze jména podtypu I.A s tzv. skloňováním tvrdým" '*-u* is had only by the nouns of
-subtype I.A, with the so-called hard declension', *-i* belonging to the soft ones, and "V III.
-typu má D a L sg podobu jedinou, nevariantní, a to -ovi" 'in type III the dative and locative
-singular have a single, non-variant form, *-ovi*' (p. 292), as the inanimate *hrad* has *-u*
-(p. 307) and *stroj* *-i* (p. 309). Short's tables agree: *chlapovi* or *chlapu*, *hradu*,
-*muži* or *mužovi*, *stroji* and *hrdinovi* (Tables 9.2, 9.3, 9.5), the neuter *městu* not being
-masculine. -/
+/-- Among masculines only the hard classes have dative singular *-u*, and only the masculine a-stems
+have *-ovi* alone (*Mluvnice češtiny*, p. 292, p. 307, p. 309; Tables 9.2, 9.3, 9.5). -/
 theorem dat_singular_u_ovi (k : Class) :
     (k.gender.toLabel = .masculine →
       (["u"] ∈ k.singularEndings .dat ↔ k = .chlap ∨ k = .hrad)) ∧
       (k.singularEndings .dat = [["o", "v", "i"]] ↔ k = .hrdina) := by
   cases k <;> decide
 
-/-- A velar stem of the hard masculines takes *-u* in the vocative singular, as *kluku* 'boy'
-and *vrahu* 'murderer' (p. 465), and any other stem the table's *-e*, as *chlape* (Table 9.2). -/
+/-- A velar hard masculine stem takes vocative singular *-u*, as *kluku* (p. 465), and any other
+stem *-e*, as *chlape* (Table 9.2). -/
 theorem endingsOn_voc_velar :
     (Class.chlap.endingsOn (segments "kluk") (.of .voc .singular)).map (segments "kluk" ++ ·) =
         [segments "kluku"] ∧
@@ -389,11 +374,8 @@ theorem endingsOn_voc_velar :
         (segments "chlap" ++ ·) = [segments "chlape"] := by
   decide +kernel
 
-/-- A velar stem of the hard masculines and of the masculine a-stems takes the locative plural
-*-ích* on the palatalized stem, as *filolozích* (*Mluvnice češtiny*, p. 295), *sluzích*
-(Short, p. 467; *Mluvnice češtiny*, pp. 292, 300) and *dialozích* (*Mluvnice češtiny*, p. 305),
-and any other stem the table's *-ech*, as *chlapech* (Table 9.2) and *předsedech* (*Mluvnice
-češtiny*, p. 292). -/
+/-- Velar hard masculine and masculine a-stems take locative plural *-ích* on the palatalized stem,
+others *-ech* (*Mluvnice češtiny*, p. 295, pp. 292, 300, p. 305; Short, p. 467; Table 9.2). -/
 theorem formsOn_locPl_velar :
     Class.chlap.formsOn (segments "filolog") (.of .loc .plural) = [segments "filolozích"] ∧
       Class.hrdina.formsOn (segments "sluh") (.of .loc .plural) = [segments "sluzích"] ∧
@@ -403,10 +385,8 @@ theorem formsOn_locPl_velar :
         [segments "předsedech"] := by
   decide +kernel
 
-/-- The second palatalization gives Short's examples *ruce* from *ruka* 'hand', *geolozích* from
-*geolog* 'geologist' and the adverb *plaše* from *plachý* 'timid' (p. 462), and *matce* from
-*matka* 'mother' and *sluzích* from *sluha* 'servant' (p. 467), and *Mluvnice češtiny*'s
-*filolozích* from *filolog* 'philologist' (p. 295). -/
+/-- The second palatalization derives *ruce*, *geolozích*, *plaše* (p. 462), *matce*, *sluzích* (p.
+467), and *filolozích* (*Mluvnice češtiny*, p. 295). -/
 theorem palatalize_examples :
     palatalize (segments "ruk") ++ ["e"] = segments "ruce" ∧
       palatalize (segments "geolog") ++ ["í", "ch"] = segments "geolozích" ∧

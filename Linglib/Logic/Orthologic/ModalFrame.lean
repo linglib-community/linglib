@@ -95,9 +95,8 @@ theorem isRegular_core [IsRRegular F R] {A : Set S} (hA : IsRegular F A) :
 
 variable (F)
 
-/-- R-regularity is exactly the condition for `□` to preserve regularity. The converse of
-Proposition 4.22, not stated in [holliday-mandelkern-2024], follows by testing R-regularity on
-the regular set `¬{y}`. -/
+/-- R-regularity holds iff `□` preserves regularity, extending Proposition 4.22 of
+[holliday-mandelkern-2024] by its converse. -/
 theorem isRRegular_iff_isRegular_core :
     IsRRegular F R ↔ ∀ A, IsRegular F A → IsRegular F (R.core A) := by
   refine ⟨fun _ _ ↦ isRegular_core R, fun h ↦ ⟨fun x y' y hxy' hy'y ↦ ?_⟩⟩
@@ -106,10 +105,8 @@ theorem isRRegular_iff_isRegular_core :
   refine ⟨x', hxx', fun x'' hx'x'' ↦ ?_⟩
   simpa [mem_orthoNeg] using hx' x'' hx'x''
 
-/-- Knowability is exactly the condition for `□` to reflect contradiction on regular sets: the
-frame counterpart of the principle of [holliday-mandelkern-2024] Lemma 3.25, to which the paper
-takes Knowability to correspond. The converse, not stated there, follows by testing Knowability
-on the regular set of refinements of `x`. -/
+/-- Knowability holds iff `□` reflects contradiction on regular sets, the frame counterpart of
+[holliday-mandelkern-2024] Lemma 3.25. -/
 theorem isKnowable_iff :
     IsKnowable F R ↔ ∀ A, IsRegular F A → R.core A = ∅ → A = ∅ := by
   refine ⟨fun ⟨hK⟩ A hA h ↦ Set.eq_empty_of_forall_notMem fun x hx ↦ ?_, fun h ↦ ⟨fun x ↦ ?_⟩⟩
@@ -149,9 +146,8 @@ theorem coe_diamondHom_necHom (A : F.Regular) :
     (diamondHom (F.necHom R) A : Set S) = diamond F R A := by
   simp only [diamondHom_apply, Regular.coe_compl, coe_necHom, diamond]
 
-/-- Over a reflexive relation `□A ≤ A`, so the modal ortholattice is T
-([holliday-mandelkern-2024] Proposition 4.25; its footnote 22 weakens reflexivity to every
-possibility accessing a refinement of itself). -/
+/-- Over a reflexive relation `□A ≤ A` ([holliday-mandelkern-2024] Proposition 4.25; footnote 22
+weakens reflexivity). -/
 theorem necHom_le [R.IsRefl] (A : F.Regular) : F.necHom R A ≤ A :=
   Concept.extent_subset_extent_iff.mp fun x hx ↦ hx (R.refl x)
 

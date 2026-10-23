@@ -211,9 +211,8 @@ def tallMan : Tree Cat Word := .node .N [.terminal .Adj .tall, .terminal .N .man
 /-- (29b) *a man*. -/
 def justMan : Tree Cat Word := .node .N [.terminal .N .man]
 
-/-- Deleting the modifier gives an alternative, strictly simpler; in an upward-entailing
-context it is entailed and yields no inference, under a downward-entailing operator it does,
-(30) to (32). -/
+/-- Deleting the modifier yields a strictly simpler structural alternative, giving an inference only
+under downward entailment ((30) to (32)). -/
 theorem justMan_mem_alternatives : justMan ∈ structuralAlternatives lexicon tallMan :=
   Relation.ReflTransGen.single (StructuralOp.delete ⟨0, by simp⟩)
 
@@ -241,8 +240,8 @@ def moreThanWarmYesterday : Tree Cat Word :=
     .node .S [.terminal .Pron .it, .terminal .Aux .was, moreThanWarm, .terminal .Adv .yesterday],
     .terminal .Conj .and_, moreThanWarmToday]
 
-/-- Matsumoto's (40b) is an alternative of (40a) although more complex, since the adjective phrase
-it needs is a subtree of (40a), hence in the substitution source (41). -/
+/-- Matsumoto's (40b) is a structural alternative of (40a), since its adjective phrase lies in the
+substitution source (41). -/
 theorem moreThanWarmYesterday_mem_alternatives :
     moreThanWarmYesterday ∈ structuralAlternatives lexicon warmYesterday :=
   Relation.ReflTransGen.single (StructuralOp.inChild ⟨0, by simp⟩

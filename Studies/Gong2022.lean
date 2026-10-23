@@ -264,16 +264,15 @@ theorem rows_reconstruction :
     ∀ r ∈ rows, r.Reconstructs ↔ ¬ Bleeds r.mover r.construction.chain r.binder.height := by
   decide
 
-/-- Section 2.3: intermediate scrambling of a DP to one landing site reconstructs in (20b) but
-not in (19b), so no classification of the movement as A or Ā decides reconstruction. -/
+/-- Intermediate scrambling of a DP to one landing site reconstructs in (20b) but not in (19b)
+(Section 2.3). -/
 theorem is_not_uniform :
     ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁.construction = .IS ∧ r₂.construction = .IS ∧
       r₁.mover = .dp ∧ r₂.mover = .dp ∧ ¬ r₁.Reconstructs ∧ r₂.Reconstructs := by
   decide
 
-/-- Section 4.2: the Subject Binding Generalization (24) fits the clause-internal data, but (61),
-where the embedded subject binds, is bled because the matrix VP-adjoined position competes for
-case with the matrix subject; and the PP of (94b) reconstructs under a dative binder. -/
+/-- The Subject Binding Generalization (24) fits the clause-internal data but fails for (61) and
+(94b) (Section 4.2). -/
 theorem sbg_fails :
     (∀ r ∈ rows, r.construction = .SS ∨ r.construction = .IS →
       (r.Reconstructs ↔ r.binder.IsSubject)) ∧

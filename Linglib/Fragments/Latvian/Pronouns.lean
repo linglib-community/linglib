@@ -86,9 +86,8 @@ def pats : Case → Number → Gender → Option (List Morph)
   | .loc, .plural, .feminine => some [.root "paš", .suff "ās"]
   | _, _, _ => none
 
-/-- The instrumental of *pats* is its accusative in the singular and its dative in the plural,
-as in every Latvian declension ([kalnaca-lokmane-2021] p. 118): the instrumental has no form of
-its own. -/
+/-- The instrumental of *pats* is its accusative in the singular and its dative in the plural
+([kalnaca-lokmane-2021] p. 118). -/
 theorem pats_inst_eq (g : Gender) :
     pats .inst .singular g = pats .acc .singular g ∧
       pats .inst .plural g = pats .dat .plural g := by

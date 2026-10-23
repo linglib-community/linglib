@@ -73,8 +73,8 @@ theorem ev_eq_must_of_ne_zero (h : Ev f g p w ≠ 0) : Ev f g p w = must f g p w
   rw [Ev, Set.indicator_apply_ne_zero] at h
   rw [Ev, Set.indicator_of_mem h.1, must]
 
-/-- *must* quantifies over what is known, a background at least as rich as the indirect
-evidence, so its accessible worlds are among the evidential's, (10) and (11). -/
+/-- The accessible worlds of *must* lie among the evidential's, its background being at least as
+rich ((10), (11)). -/
 theorem accessible_must_subset (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   Background.accessibleWorlds_anti h
 
@@ -98,23 +98,19 @@ theorem necessity_of_beliefs (hex : ∃ u ∈ f.accessibleWorlds w, ∀ q ∈ g 
   rw [bestWorlds, Preorder.minimals_ofCriteria_eq hex] at hu
   exact h u hu.1 hu.2
 
-/-- The domain of quantification lies within the epistemically accessible worlds, where the
-counterfactual's lies outside them, so the evidential meaning is asserted of the actual epistemic
-state and is no implicature (Section 5.3). -/
+/-- The best worlds lie within the epistemically accessible worlds, so the evidential meaning is
+asserted and is no implicature (Section 5.3). -/
 theorem bestWorlds_subset_accessible : bestWorlds f g w ⊆ f.accessibleWorlds w :=
   Preorder.minimals_subset _ _
 
-/-- The present perfect supplies the presupposition (Section 5.2). The consequent state of the event
-holding at speech time is a proposition the speaker knows, the indirect evidence, and the event not
-holding at speech time is `p` not being known. -/
+/-- The evidential is defined when the speaker knows some proposition and does not know `p`, as the
+present perfect supplies (Section 5.2). -/
 theorem ev_ne_zero_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : ¬ Known f w p) :
     Ev f g p w ≠ 0 := by
   rw [Ev, Set.indicator_of_mem (s := {w | (f w).Nonempty ∧ ¬ Known f w p}) ⟨⟨_, hp'⟩, hnot⟩]
   simp
 
-/-- Like *must*, the evidential does not entail its prejacent (9). In a two-world model the evidence
-excludes nothing, the speaker's beliefs single out the world where `p` holds, and the evidential is
-defined and true at the other world. -/
+/-- Like *must*, the evidential does not entail its prejacent (9). -/
 theorem ev_not_entails :
     ∃ (f : Background (Fin 2)) (g : Background (Fin 2)) (p : Fin 2 → Prop) (w : Fin 2),
       Ev f g p w = 1 ∧ ¬ p w := by

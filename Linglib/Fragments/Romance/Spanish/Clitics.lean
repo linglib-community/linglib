@@ -183,14 +183,14 @@ def reflexive : Finset ReflexivePronoun := (Finset.univ.biUnion reflexiveForms).
 
 /-! ### Syncretism across the series -/
 
-/-- "Only the third-person set has two forms" (§14.1, p. 143): the accusative and the dative of
-a row are the same exactly outside the third person. -/
+/-- The accusative and dative forms of a row coincide exactly outside the third person (§14.1, p.
+143). -/
 theorem table_acc_eq_table_dat_iff (r : Row) :
     table (r, .acc) = table (r, .dat) ↔ r.person ≠ .third := by
   cases r <;> decide
 
-/-- "The usual object pronouns are used with these verbs except in the third person …, which uses
-the pronoun *se* for both singular and plural" (§30.1.1, p. 364). -/
+/-- The reflexive clitics are the ordinary object forms except in the third person, which uses *se*
+(§30.1.1, p. 364). -/
 theorem table_eq_reflexiveForms_iff (r : Row) (k : Case) :
     table (r, k) = reflexiveForms (r, k) ↔ r.person ≠ .third := by
   cases r <;> cases k <;> decide

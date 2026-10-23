@@ -70,9 +70,7 @@ def ulyssesDiscourse : DRS krLang ℕ :=
   .mk {1, 2, 3, 4} [.atom ⟨.jones, ![1]⟩, .atom ⟨.ulysses, ![2]⟩, .atom ⟨.owns, ![1, 2]⟩,
     .eq 3 2, .eq 4 1, .atom ⟨.fascinates, ![3, 4]⟩]
 
-/-- The (1.1) discourse is true iff a single pair verifies both sentences, since the pronouns'
-referents and equations add no quantificational force and the first sentence's referents persist
-into the second. -/
+/-- The (1.1) discourse is true iff a single pair verifies both sentences. -/
 theorem ulysses_tc (a : ℕ → M) :
     DRS.trueRel ulyssesDiscourse a ↔
       ∃ x y : M, rm .jones ![x] ∧ rm .ulysses ![y] ∧ rm .owns ![x, y] ∧
@@ -148,9 +146,8 @@ def donkeyCons : DRS krLang ℕ := .mk ∅ [.atom ⟨.beats, ![1, 2]⟩]
 /-- (2.47) as `[ | donkeyAnte ⇒ donkeyCons]`. -/
 def donkey : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyCons]
 
-/-- The verification clause for `⇒` ((2.31), Def. 2.1.4) makes the antecedent's existentials
-universal, so every owning farmer–donkey pair satisfies `beats`. The consequent, with an empty
-universe, reuses the antecedent's values. -/
+/-- By the verification clause for `⇒` ((2.31), Def. 2.1.4), the donkey sentence is true iff every
+owning farmer–donkey pair satisfies `beats`. -/
 theorem donkey_universal_reading (a : ℕ → M) :
     DRS.trueRel donkey a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
@@ -195,8 +192,8 @@ theorem donkeyPronoun_tc (a : ℕ → M) :
       ⟨fun n ↦ match n with | 3 => v' 2 | n => v' n,
         fun z hz ↦ by dsimp only; split <;> simp_all, rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
 
-/-- Completing the pronoun directly or by a referent and an equation gives the donkey
-conditional the same truth conditions, as the book observes of (2.44) and (2.45). -/
+/-- Completing the pronoun directly or by a referent and an equation gives the same truth
+conditions, (2.44) and (2.45). -/
 theorem donkeyPronoun_agree (a : ℕ → M) :
     DRS.trueRel donkeyPronoun a ↔ DRS.trueRel donkey a :=
   (donkeyPronoun_tc a).trans (donkey_universal_reading a).symm

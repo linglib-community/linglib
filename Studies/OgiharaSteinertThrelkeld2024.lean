@@ -80,10 +80,8 @@ open BeaverCondoravdi2003
 
 variable {W T : Type*} [LinearOrder T] {A B : Set (W × T)} {w : W}
 
-/-- Once the main clause is settled at its times by the history up to them and precludes the
-temporal clause afterwards, no alternatives meeting the initial branch point condition make
-*A before B* true. With the alternatives identical to the world before the A-time, Mozart dies
-then in all of them and finishes the Requiem later in none (§2). -/
+/-- If the main clause is settled at its times and precludes the temporal clause afterwards,
+initial-branch-point alternatives never make *A before B* true (§2). -/
 theorem not_before_of_settled {F : TWFrame W T} (a : Alternatives F B)
     (hA : ∀ t, (w, t) ∈ A → F.alternatives.settled {w} t fun v ↦ (v, t) ∈ A)
     (hAB : ∀ v t t', (v, t) ∈ A → (v, t') ∈ B → t' < t) : ¬ before A B a.alt w := by
@@ -100,18 +98,15 @@ theorem not_settled_mozart :
   have := (h .early rfl .later (mem_alternatives_of_le_one le_rfl _ _)).1 rfl
   simp [dies, World.death] at this
 
-/-- Alternatives parting from the world before the main-clause time, the backtracking that the
-counterfactual reading would need, may instantiate the temporal clause before that time, and
-then *A before B* fails there, the completion of the Requiem before Mozart's actual death that §2
-warns against. -/
+/-- Alternatives parting before the main-clause time may instantiate the temporal clause before it,
+and then *A before B* fails (§2). -/
 theorem not_lt_of_isLeast_of_lt {alt : HistoricalAlternatives W T} {v : W} {t t' e : T}
     (hv : v ∈ alt (w, t)) (hB : (v, t') ∈ B) (ht' : t' < t)
     (he : IsLeast (instTimes (alt (w, t)) B) e) : ¬ t < e :=
   fun hte ↦ not_lt_of_ge (he.2 ⟨v, hv, hB⟩) (ht'.trans hte)
 
-/-- A temporal clause confined to times no later than `hi`, as Ohtani's tenth win of the season
-is to the season, has no earliest time after a main-clause time from `hi` on, whatever the
-alternatives (§5.1). -/
+/-- A temporal clause confined to times no later than `hi` makes *A before B* false for main-clause
+times from `hi` on (§5.1). -/
 theorem not_before_of_le {alt : HistoricalAlternatives W T} {hi : T}
     (hB : ∀ v t, (v, t) ∈ B → t ≤ hi) (hA : ∀ t, (w, t) ∈ A → hi ≤ t) : ¬ before A B alt w :=
   fun ⟨t, ht, _, ⟨⟨_, _, he⟩, _⟩, hte⟩ ↦ lt_irrefl t (hte.trans_le ((hB _ _ he).trans (hA t ht)))
@@ -152,8 +147,8 @@ def Equiv (I : NonemptyInterval T) (e₁ : E) (w₂ : W) : Prop :=
 
 variable {M} {I I' : NonemptyInterval T} {e : E} {w : W}
 
-/-- Equivalence at an interval gives equivalence at any earlier one, the downward closure (18c)
-that the paper adopts from Beaver and Condoravdi and that (17) already entails. -/
+/-- Equivalence at an interval gives equivalence at any earlier one (18c), which (17) already
+entails. -/
 theorem Equiv.anti (h : M.Equiv I e w) (hI : I'.Precedes I) : M.Equiv I' e w := by
   obtain ⟨e₂, hw, hc, h₁, h₂, hs⟩ := h
   have h : Set.Ico (τ e).fst I'.fst ⊆ Set.Ico (τ e).fst I.fst :=
@@ -167,9 +162,8 @@ end EventFrame
 def HoldsAbutting (e : E) (I₀ : NonemptyInterval T) : Prop :=
   ∃ J : NonemptyInterval T, J.snd = I₀.fst ∧ (J : Set T) ⊆ ↑(τ e)
 
-/-- An eventuality holds throughout an interval abutting `I₀` exactly when it is ongoing at the
-start of `I₀`, so it is located at `I₀`, as fn. 23 assumes of the eventuality an alternative is
-taken for. -/
+/-- An eventuality holds throughout an interval abutting `I₀` iff it is ongoing at the start of `I₀`
+(fn. 23). -/
 theorem holdsAbutting_iff {e : E} {I₀ : NonemptyInterval T} :
     HoldsAbutting e I₀ ↔ I₀.fst ∈ τ e := by
   refine ⟨fun ⟨J, hJ, h⟩ ↦ ?_, fun h ↦ ⟨.pure I₀.fst, rfl, by simpa using h⟩⟩
@@ -212,17 +206,16 @@ theorem exists_mem_of_mem_causedTimes (h : I₁ ∈ a.causedTimes B w₀ I₀) :
   let ⟨_, _, _, w₁, _, _, _, _, e₃, _, hB⟩ := h
   ⟨w₁, e₃, hB⟩
 
-/-- An anti-veridical *before* needs an eventuality at the main-clause interval that could lead
-to the temporal clause, so with none it is false, the oddity of *Beethoven died before he
-composed his 11th symphony* (14). -/
+/-- An anti-veridical *before* is false when no eventuality at the main-clause interval could lead
+to the temporal clause (14). -/
 theorem not_before_of_causedTimes_eq_empty (hB : ∀ I e, (w₀, I, e) ∉ B)
     (h : a.causedTimes B w₀ I₀ = ∅) : ¬ a.before A B w₀ I₀ e₀ := by
   rintro ⟨-, -, ⟨I, e, -, hIe⟩ | ⟨s, ⟨⟨I₁, hI₁, -⟩, -⟩, -⟩⟩
   · exact hB I e hIe
   · exact (h ▸ hI₁ : I₁ ∈ (∅ : Set (NonemptyInterval T)))
 
-/-- A temporal clause confined to intervals ending by `hi` makes *A before B* false at a
-main-clause interval starting from `hi` on, in every model (§5.1). -/
+/-- A temporal clause confined to intervals ending by `hi` makes *A before B* false at main-clause
+intervals starting from `hi` on (§5.1). -/
 theorem not_before_of_le {hi : T} (hB : ∀ v I e, (v, I, e) ∈ B → I.snd ≤ hi)
     (hI : hi ≤ I₀.fst) : ¬ a.before A B w₀ I₀ e₀ := by
   have key (I : NonemptyInterval T) (h : ∃ v e, (v, I, e) ∈ B) (hlt : I₀.snd < I.fst) : False :=
@@ -353,9 +346,8 @@ theorem rows_bcCounterexample :
       r.judgment = .acceptable := by
   decide
 
-/-- An anti-veridical *before* is acceptable exactly when an eventuality at its time could lead to
-its temporal clause, Mozart's work on the Requiem (6a) and nothing toward an eleventh symphony
-(14). -/
+/-- An anti-veridical *before* is acceptable iff an eventuality at its time could lead to its
+temporal clause ((6a), (14)). -/
 theorem rows_precursor :
     ∀ r ∈ Examples.all, r.feature? "precursor" ≠ none →
       (r.judgment = .acceptable ↔ r.feature? "precursor" = some "true") := by

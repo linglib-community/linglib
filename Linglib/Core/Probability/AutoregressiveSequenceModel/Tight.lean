@@ -187,8 +187,8 @@ theorem isTight_iff : M.IsTight ↔ (∃ n, M.eosHazard n = 1) ∨ ∑' n, M.eos
   rw [isTight_iff_tendsto_survival, funext M.survival_eq_prod]
   exact ENNReal.tendsto_prod_range_one_sub_nhds_zero_iff M.eosHazard_le_one
 
-/-- A model whose end probability after every prefix of length `t - 1` is at least `f t`, for a
-divergent series of bounds, is tight ([du-etal-2023], Proposition 4.3). -/
+/-- A model whose end probabilities after length-`t - 1` prefixes are bounded below by a divergent
+series is tight ([du-etal-2023], Proposition 4.3). -/
 theorem isTight_of_le_next_none {f : ℕ → ℝ≥0∞}
     (hf : ∀ x : List α, f (x.length + 1) ≤ M.next x {none}) (h : ∑' t, f (t + 1) = ∞) :
     M.IsTight := by

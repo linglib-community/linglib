@@ -116,9 +116,8 @@ theorem voicing_of_D :
     realize [d, ü, ş] [di.form] = [d, ü, ş, t, ü] := by
   decide
 
-/-- A bracketed vowel appears after a consonant and is lost after a vowel, as in *pul-um*,
-*ev-im* against *araba-m*, *ev-iniz* against *araba-nız*, *ev-imiz* against *araba-mız*, and
-the aorist *gör-ür* against *ara-r* (§6.1.3, §8.1.2). -/
+/-- A bracketed vowel appears after a consonant and is lost after a vowel, as in *ev-im* against
+*araba-m* (§6.1.3, §8.1.2). -/
 theorem deletable_vowels :
     realize [p, u, l] [(possessive (.personNumber .first .singular)).form] = [p, u, l, u, m] ∧
     realize [e, v] [(possessive (.personNumber .first .singular)).form] = [e, v, i, m] ∧
@@ -134,10 +133,8 @@ theorem deletable_vowels :
     realize [a, r, a] [aorist.form] = [a, r, a, r] := by
   decide
 
-/-- A bracketed consonant appears after a vowel and is lost after a consonant. The buffer `y`
-does so in *Emine-ye*, *masa-ya* and *atla-yacak* against *sor-acak*, the `n` of the genitive
-in *Suna-nın* and *Emine-nin* against *Betül-ün*, and the `s` of the possessive in *araba-sı*
-and *elbise-si* against *ev-i* (§6.1.3, §8.1.2, §8.1.3). -/
+/-- A bracketed consonant appears after a vowel and is lost after a consonant, as in *masa-ya*
+against *sor-acak* (§6.1.3, §8.1.2, §8.1.3). -/
 theorem deletable_consonants :
     realize [e, m, i, n, e] [dative.form] = [e, m, i, n, e, y, e] ∧
     realize [m, a, s, a] [dative.form] = [m, a, s, a, y, a] ∧
@@ -153,10 +150,8 @@ theorem deletable_consonants :
     realize [e, v] [(possessive (.personNumber .third .singular)).form] = [e, v, i] := by
   decide
 
-/-- A third-person possessive takes a final `n` before a case suffix, as in *tepe-si-n-de*,
-*yüz-ü-n-e* and *elbise-leri-n-e*, where the `n` also keeps the buffer `y` of the dative away.
-It takes none word-finally, as in *tepe-si*, and the other possessives take none, as in
-*oda-m-da* (§6.2 (iib), §8.1.2). -/
+/-- A third-person possessive takes a final `n` before a case suffix but not word-finally, as in
+*tepe-si-n-de* against *tepe-si* (§6.2 (iib), §8.1.2). -/
 theorem pronominal_n :
     realize [t, e, p, e]
         (Nominal.forms [⟨_, possessive (.personNumber .third .singular)⟩, ⟨_, locative⟩]) =
@@ -180,9 +175,8 @@ def arabaIm : Hiatus.Juncture := ⟨[a, r, a, b], a, I, [m], by decide, by decid
 /-- The juncture of *masa* 'table' and the vowel of -(y)A. -/
 def masaA : Hiatus.Juncture := ⟨[m, a, s], a, A, [], by decide, by decide⟩
 
-/-- The two kinds of bracketed segment are the two repairs of hiatus at a juncture. In
-*araba-m* the vowel of -(I)m is elided, and in *masa-ya* the `y` of -(y)A is inserted
-(§6.1.3). -/
+/-- Bracketed vowels and consonants are the two repairs of hiatus, elision in *araba-m* and
+epenthesis in *masa-ya* (§6.1.3). -/
 theorem hiatus_repairs :
     (possessive (.personNumber .first .singular)).form.attach arabaIm.stem = arabaIm.elideV2 ∧
     dative.form.attach masaA.stem = masaA.epenthesize y :=
@@ -205,9 +199,8 @@ theorem predicate_buffers :
       [k, a, t, s, a, y, d, ı, l, a, r] := by
   decide
 
-/-- Before -(I)yor a stem-final `a` or `e` becomes high and harmonizes, as in *anlıyor*,
-*okşuyor*, *bekliyor* and *özlüyor*, and a stem-final high vowel stands, as in *eriyor* and
-*kuruyor* (§8.2.3.3). -/
+/-- Before -(I)yor a stem-final `a` or `e` becomes high and harmonizes, as in *anlıyor*, while a
+final high vowel stands (§8.2.3.3). -/
 theorem imperfective_of_vowel_stems :
     realize [a, n, l, a] [iyor.form] = [a, n, l, ı, y, o, r] ∧
     realize [o, k, ş, a] [iyor.form] = [o, k, ş, u, y, o, r] ∧
@@ -230,9 +223,8 @@ theorem negative_raised :
       [s, ö, y, l, e, m, i, y, o, r] := by
   decide
 
-/-- *Ev-ler-imiz-de-ymiş-ler* 'apparently they are at our homes' is the nominal string, the
-evidential copula, whose buffer `y` appears after the locative's vowel, and a group-2 person
-marker (§8.1 (2)). -/
+/-- The word *ev-ler-imiz-de-ymiş-ler* 'apparently they are at our homes' is a nominal string, the
+evidential copula and a group-2 person marker (§8.1 (2)). -/
 theorem nominal_predicate :
     realize [e, v] [plural.form, (possessive (.personNumber .first .plural)).form, locative.form,
         evidentialCopula.form, (person .two (.personNumber .third .plural)).form] =
@@ -298,11 +290,8 @@ theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
 
 /-! ### Existential sentences (§12.1.1.2) -/
 
-/-- The possessive existential sentences (21), with the adverbial after or before the
-possessor, (22), with a past copula and no possessor, and (26): *Ayten-in İstanbul'da iki
-arkadaş-ı var* and *İstanbul'da Ayten-in iki arkadaş-ı var* 'Ayten has two friends in
-Istanbul', *O gün paramız yoktu* 'We had no money that day' and *Murat'ın yatı var* 'Murat
-has a yacht'. -/
+/-- The existentials (21), (22) and (26), such as *Murat'ın yatı var* 'Murat has a yacht', are
+possessive. -/
 theorem possessive_existential :
     Possession.IsPossessive [[a, y, t, e, n]] [realize [i, s, t, a, n, b, u, l] [locative.form]]
         [[i, k, i], [a, r, k, a, d, a, ş]] (.personNumber .third .singular) Possession.var
@@ -325,9 +314,8 @@ theorem locative_existential :
       [[b, e, n, d, e], [b, i, r], [k, i, t, a, p], [v, a, r]] := by
   decide
 
-/-- The possessive suffix on *araba* in (117) is obligatory (§14.4): *Siz-in araba-nız var*
-'You have a car', without the question particle, and no person-number cell gives *Sizin
-araba var*. -/
+/-- The possessive suffix on *araba* in (117) is obligatory, so no person-number cell gives *Sizin
+araba var* (§14.4). -/
 theorem possessive_obligatory :
     Possession.IsPossessive [[s, i, z]] [] [[a, r, a, b, a]] (.personNumber .second .plural)
         Possession.var [[s, i, z, i, n], [a, r, a, b, a, n, ı, z], [v, a, r]] ∧

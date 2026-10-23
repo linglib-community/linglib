@@ -57,9 +57,8 @@ theorem not_restricted_of_disagreement {α : Type*} [Preorder α] {D : Type} [Pr
     ¬ DimensionallyRestricted α D :=
   fun hDR => h₂ ((hDR μ₁ μ₂ hμ₁ hμ₂ a b).mp h₁)
 
-/-- The componentwise-ordered `D × D` (weight × volume) is not dimensionally restricted, since
-the admissible measures `2·w + v` and `w + v` order the incomparable elements `(0, 1)` and
-`(1, 0)` differently; this is the multi-dimensional signature of entity and event domains. -/
+/-- The componentwise order on `D × D` is not dimensionally restricted, as `2·w + v` and `w + v`
+order `(0, 1)` and `(1, 0)` differently. -/
 theorem prod_not_dimensionallyRestricted {D : Type} [Field D] [LinearOrder D]
     [IsStrictOrderedRing D] : ¬ DimensionallyRestricted (D × D) D := by
   have hmono : ∀ c : D, 0 < c → StrictMono (fun p : D × D => c * p.1 + p.2) := by

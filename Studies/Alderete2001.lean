@@ -169,9 +169,8 @@ theorem depViolFeature_input :
     (derivation b i d).depViolFeature P .derivInput .derivative = zipDep P i d :=
   Correspondence.depViolFeature_of_diagonal _ _ _ P derivation_edge_input
 
-/-- **Strict base mutation** ((27)). The OO relation reads the derivative only where it shares the
-base, so derivatives that differ only in their affixes rate alike on ¬OO-MAX(P), and deleting an
-affix's accent never satisfies it. -/
+/-- Derivatives that differ only in their affixes rate alike on ¬OO-MAX(P), which gives strict base
+mutation (27). -/
 theorem ooAnti_eq_of_take_eq (rel r : ρ) {i' d' : List α}
     (h : d.take b.length = d'.take b.length) :
     (ooAnti rel (Correspondence.maxViolFeature P) r).atDerived (derivation b i d) =
@@ -268,9 +267,8 @@ abbrev identVoice : Correspondence Role Segment → Role → Role → ℕ :=
 def exchange : List (OORelation → ParadigmConstraint Segment) :=
   [ooAnti .exchange identVoice, ooIdentity .exchange identVoice]
 
-/-- **Anti-faithfulness forces one alternation and no more** ((9), fn. 7). Under the exchange
-ranking the winners are the candidates with exactly one voicing alternation in the base, whenever
-one has. -/
+/-- Under the exchange ranking the winners are the candidates with exactly one voicing alternation
+in the base, whenever one exists ((9), fn. 7). -/
 theorem optimal_exchange {b i : List Segment} {S : Finset (List Segment)}
     (h : ∃ d ∈ S, identVoice (derivation b i d) .base .derivative = 1) :
     (tableau (derivation b i) S recursive exchange .exchange).optimal =
@@ -289,9 +287,7 @@ theorem optimal_exchange {b i : List Segment} {S : Finset (List Segment)}
   · rintro e ⟨-, he⟩
     omega
 
-/-- In (11a) *bat* pluralizes as *bed-e*. The faithful *bet-e* violates the anti-faithfulness
-constraint, and the total reversal *ped-e* satisfies it only with a gratuitous second violation of
-faithfulness. -/
+/-- Under the exchange ranking, *bat* pluralizes as *bed-e* (11a). -/
 theorem bat_bede :
     (tableau (derivation (segments "bat") (segments "bat-e")) {segments "bed-e", segments "bet-e",
       segments "ped-e"} recursive exchange .exchange).optimal = {segments "bed-e"} := by
@@ -308,8 +304,7 @@ theorem cogo_coke :
 def pluralInput (r : CLDF.Wordlist.FormRelation Wordlist.Analysis) : List Segment :=
   (word r.form.form.form ++ suffix r.target.form.form).map segment
 
-/-- Every plural of (6) is a winner of the exchange ranking among all the voicings of its
-segments, the voiced *bed-e*, *luð-e* and the devoiced *čok-e*, *owet-e* alike. -/
+/-- Every plural of (6) wins under the exchange ranking among all voicings of its segments. -/
 theorem plurals : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .exchange →
     segments r.target.form.form ∈ (tableau (derivation (segments r.form.form.form) (pluralInput r))
       (voicings (segments r.target.form.form)) recursive exchange .exchange).optimal := by
@@ -456,11 +451,8 @@ derivative is the first morph of it, and an underived word has none. -/
 def base (x : Wordlist.Analysis) : List Char :=
   if x.relation.isSome then stem (x.underlying.getD "") else []
 
-/-- **One grammar for every word** (§3.4). With ¬OO_Dom-MAX(Ac) over IO-MAX(Ac) and CULMIN, the
-summary ranking derives each word of (1), (12), (17), (18) from its input over every placement of
-at most one accent, the dominant derivatives (17), (18) like the recessive (1) and the underived
-*hasi* (28). An underived word has no base, so it rates its candidates alike on every OO
-constraint, whichever relation it is evaluated under. -/
+/-- With ¬OO_Dom-MAX(Ac) over IO-MAX(Ac) and CULMIN, the summary ranking derives each word of (1),
+(12), (17), (18) and (28) from its input (§3.4). -/
 theorem rows : ∀ x ∈ Wordlist.analyses, ∀ u ∈ x.underlying,
     eval grammar (base x) (word u) (word x.form.form) (x.relation.getD .dominant) =
       {word x.form.form} := by
@@ -597,9 +589,8 @@ theorem toneless_wins :
       .dominant).optimal = {word "stuur-ə"} := by
   decide
 
-/-- **One grammar for every word.** With ¬OO_Dom-NOFLOP(Tone) over IO-NOFLOP(Tone), the summary
-ranking derives each derived form of (42) and (48) from its base, the dragging tone mutating and
-the falling tone staying. -/
+/-- With ¬OO_Dom-NOFLOP(Tone) over IO-NOFLOP(Tone), the summary ranking derives each derived form of
+(42) and (48) from its base. -/
 theorem rows : ∀ r ∈ Wordlist.analysisRelations, r.target.relation = some .dominant →
     eval grammar (word r.form.form.form) (word r.form.form.form ++ suffix r.target.form.form)
       (word r.target.form.form) = {word r.target.form.form} := by

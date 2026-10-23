@@ -97,8 +97,8 @@ theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ := by
   exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (Set.toFinite _)
     ⟨0, by show (0 : ℕ) ∈ weakᶜ; simp [weak]⟩ hsub)
 
-/-- The *not all* implicature of *some of the k giraffes* is the same exhaustifier against the
-stronger alternative *all* (29), the mechanism the uniformity prediction (28) rests on. -/
+/-- The *not all* implicature of *some of the k giraffes* is exhaustification against *all* (29), as
+the uniformity prediction (28) requires. -/
 theorem exhIE_some {k : ℕ} (hk : 2 ≤ k) :
     exhIE {{n | 1 ≤ n}, {k}} {n | 1 ≤ n} = {n | 1 ≤ n ∧ n ≠ k} := by
   rw [exhIE_pair_sdiff (φ := {n | 1 ≤ n}) (d := {k}) ⟨1, by simp; omega⟩]
@@ -157,9 +157,8 @@ theorem readings_negative :
   rw [Set.mem_ofPred_eq, neg_homogeneous_eq_one_iff]
   simp [weak]
 
-/-- In the singular context (27) the implicature approach makes the positive sentence literally
-true but its enriched meaning false and the negative sentence false, an asymmetry. The
-ambiguity approach makes both false and the homogeneity approach both undefined. -/
+/-- In the singular context (27) the implicature approach treats the positive and negative sentences
+asymmetrically, while the ambiguity and homogeneity approaches do not. -/
 theorem singular_context :
     (1 ∈ weak ∧ 1 ∉ exhIE {weak, singular} weak ∧
         1 ∉ exhIE {weakᶜ, singularᶜ} weakᶜ) ∧

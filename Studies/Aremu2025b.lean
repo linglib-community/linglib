@@ -185,8 +185,8 @@ theorem ni_second : Examples.ex_2b.surfaceTokens[1]? = some Yoruba.ni.form := by
 def person (r : Datum) : Person :=
   (r.parse? "person" [("first", Person.first), ("second", .second)]).getD .third
 
-/-- A fronted subject is resumed by the singular subject pronoun of its person, *ó* in (10b)
-and *mo* and *o* in the Standard Yorùbá (16a) and (16b), where *ó* is excluded. -/
+/-- A fronted subject is resumed by the singular subject pronoun of its person ((10b), (16a),
+(16b)). -/
 theorem resumptive_mem :
     ∀ r ∈ [Examples.ex_10b, Examples.ex_16a, Examples.ex_16b],
       ∃ p ∈ Yoruba.Pronouns.subject (person r) .singular, p.form ∈ r.surfaceTokens := by

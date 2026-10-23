@@ -79,17 +79,15 @@ theorem can_iff_contentPossibility (h : con e = some (f e)) :
 
 /-! ### Content licensing, section 6.1 -/
 
-/-- A possibility modal anchored to the event that embeds it quantifies over the same worlds as
-that event (53), (57), so the outer universal layer is vacuous whenever the content is
-consistent. -/
+/-- A possibility modal anchored to its embedding event quantifies over that event's worlds, so the
+outer universal is vacuous for consistent content (53), (57). -/
 theorem attitude_can_iff (hC : con e = some C) :
     attitude con holds e (fun _ ↦ contentPossibility con q e) w ↔
       holds e w ∧ (C.Nonempty → ∃ w' ∈ C, q w') := by
   rw [attitude, contentNecessity_const hC, contentPossibility_iff_of_eq_some hC]
 
-/-- With a consistent content, an embedded epistemic possibility says that `q` is compatible
-with the content of the embedding event, the speaker's beliefs under `ASSERT` or the attitude
-holder's under `believe` (54). -/
+/-- With consistent content, an embedded epistemic possibility says that `q` is compatible with the
+embedding event's content (54). -/
 theorem attitude_can_iff_of_nonempty (hC : con e = some C) (hne : C.Nonempty) :
     attitude con holds e (fun _ ↦ contentPossibility con q e) w ↔
       holds e w ∧ ∃ w' ∈ C, q w' := by
@@ -102,9 +100,8 @@ theorem attitude_must_iff :
       holds e w ∧ contentNecessity con q e :=
   and_congr_right' contentNecessity_contentNecessity
 
-/-- (58), [yalcin-2007]'s puzzle: supposing that it is raining and that it might not be raining
-is incoherent, since the epistemic quantifies over the supposition's own content and no
-consistent content satisfies both. -/
+/-- Supposing that it is raining and that it might not be is incoherent, which is [yalcin-2007]'s
+puzzle (58). -/
 theorem not_attitude_suppose {rain : W → Prop} (hC : con e = some C) (hne : C.Nonempty) :
     ¬ attitude con holds e
       (fun w' ↦ rain w' ∧ contentPossibility con (fun w'' ↦ ¬ rain w'') e) w := by
@@ -157,10 +154,8 @@ theorem aspect_above_modRoot : CinqueHead.aspect.Above .modRoot := by decide
 
 end CinqueHead
 
-/-- The same matrix correlation follows from one flavor-neutral entry (section 6.3). A modal
-above tense is bound by the speech event, which has content, and a modal below aspect by the VP
-event, which in (59) has none, so an epistemic modal base is available exactly in the high
-position. -/
+/-- One flavor-neutral entry gives an epistemic modal base exactly in the position above tense,
+since the VP event of (59) lacks content (section 6.3). -/
 theorem epistemic_high_iff {con : E → Option (Set W)} {ev : EventBinder → E}
     (hs : (con (ev .speechAct)).isSome) (hv : con (ev .vpEvent) = none) (pos : ModalPosition) :
     (con (ev pos.matrixBinder)).isSome ↔ pos = .aboveAsp := by

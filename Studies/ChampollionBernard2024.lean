@@ -156,8 +156,8 @@ theorem not_mem_regularClosure_excluders {P : Set E} {s : E}
     let ⟨r, ⟨p, hp, hx⟩, hrs⟩ := mem_upperClosure.1 hs
     hc p hp ⟨r, hrs, p, le_rfl, hx⟩
 
-/-- An event that excludes `p ⊔ q` while cohering with `p` and with `q` verifies `¬(P ∧ Q)` but not
-`¬P ∨ ¬Q`, where `P` is verified by `p` alone and `Q` by `q` alone (§7). -/
+/-- An event excluding `p ⊔ q` while cohering with `p` and with `q` verifies `¬(P ∧ Q)` but not `¬P
+∨ ¬Q` (§7). -/
 theorem mem_neg_sups_diff {p q s : E} (hs : excl s (p ⊔ q)) (hp : ¬ Conflict excl s p)
     (hq : ¬ Conflict excl s q) : s ∈ neg excl ({p} ⊻ {q}) \ (neg excl {p} ∪ neg excl {q}) := by
   rw [Set.singleton_sups_singleton, neg_singleton, neg_singleton, neg_singleton]
@@ -174,8 +174,8 @@ theorem mem_upperClosure_neg_sups_iff (hH : Harmony excl) (hR : PossibleFusion e
     mem_upperClosure_neg_iff hH hR hw, mem_upperClosure_neg_iff hH hR hw, upperClosure_sups,
     UpperSet.mem_sup_iff, not_and_or]
 
-/-- If exclusion is cumulative, the fusion of a verifier of `¬P` with a verifier of `¬Q` verifies
-`¬(P ∧ Q)`, for `P` verified by `p` alone and `Q` by `q` alone (§8, fn. 27). -/
+/-- If exclusion is cumulative, fusing verifiers of `¬P` and `¬Q` verifies `¬(P ∧ Q)` (§8, fn. 27).
+-/
 theorem neg_sups_neg_subset
     (hCum : ∀ ⦃e e' f f' : E⦄, excl e e' → excl f f' → excl (e ⊔ f) (e' ⊔ f')) (p q : E) :
     neg excl {p} ⊻ neg excl {q} ⊆ neg excl ({p} ⊻ {q}) := by
@@ -213,8 +213,7 @@ example : ∃ excl : Set (Fin 3) → Set (Fin 3) → Prop, UpwardExclusion excl 
       simp at this
 
 /-- Under Upward Exclusion, Rashōmon is Fine's second condition on classical exclusion over the
-derived possibility, that two possible events with an impossible fusion have a part of the first
-that excludes the second (fn. 21). -/
+derived possibility (fn. 21). -/
 theorem possibleFusion_iff_exists_le_excl (hU : UpwardExclusion excl) :
     PossibleFusion excl ↔ ∀ ⦃s t : E⦄, s ∈ possible excl → t ∈ possible excl →
       s ⊔ t ∉ possible excl → ∃ s' ≤ s, excl s' t := by
@@ -253,7 +252,7 @@ theorem not_conflict_eggsExcl (i j : Fin 3) : ¬ Conflict eggsExcl {i} {j} := by
   · exact compl_singleton_not_subset_singleton k i h₁
 
 /-- The third egg's being in the basket verifies *egg 1 and egg 2 are not both in the basket* but
-not *either egg 1 or egg 2 is not in the basket* (§7). -/
+not the disjunction of the negations (§7). -/
 theorem eggs_mem_neg_sups_diff :
     ({2} : Set (Fin 3)) ∈
       neg eggsExcl ({{0}} ⊻ {{1}}) \ (neg eggsExcl {{0}} ∪ neg eggsExcl {{1}}) :=
@@ -279,9 +278,8 @@ theorem neg_ver_atom (a : α) : neg Canonical.excl (atom a).ver = (atom a).fal :
   · rintro rfl
     exact ⟨{(a, true)}, le_rfl, (a, false), rfl, rfl⟩
 
-/-- In the canonical frame the negation of a conjunction of two atoms is verified exactly by the
-denial of either atom, its falsifiers in Fine's bilateral semantics, so de Morgan's law holds
-exactly there (§9). -/
+/-- In the canonical frame, the negation of a conjunction of two atoms is verified exactly by its
+falsifiers, so de Morgan's law holds there (§9). -/
 theorem neg_ver_conj_atom (a b : α) :
     neg Canonical.excl ((atom a).conj (atom b)).ver = ((atom a).conj (atom b)).fal := by
   rw [BilProp.ver_conj, BilProp.fal_conj, ver_atom, ver_atom, fal_atom, fal_atom,

@@ -110,8 +110,8 @@ variable {acc w₀ R φ}
 theorem Quantized.nonquantized {g : G} (h : Quantized w₀ R φ g) : Nonquantized w₀ R φ :=
   fun x s e hx ↦ ⟨g, h x s e hx⟩
 
-/-- A nonquantized change entails potential for change when the actual world is among the worlds
-the modality ranges over, (38a) being the existential generalization of (31b) over worlds. -/
+/-- A nonquantized change entails potential for change when the actual world is accessible ((38a),
+(31b)). -/
 theorem Nonquantized.potential (hacc : acc w₀ w₀) (h : Nonquantized w₀ R φ) :
     Potential acc w₀ R φ :=
   fun x s e hx ↦ ⟨w₀, hacc, h x s e hx⟩
@@ -288,9 +288,8 @@ def Role.totallyTraversed : Role := ↑(Sum.inr () : AffectednessEntailment ⊕ 
 
 example : Fintype.card Role = 5 := by decide
 
-/-- *Climbed the stairs* against *climbed up the stairs* ((81)–(84)) contrasts a totally traversed
-path with one of which nothing is entailed on (86). The empty role is covered by total traversal
-on (87), a minimal contrast, as the MAP (69) requires. -/
+/-- *Climbed the stairs* and *climbed up the stairs* ((81)–(84)) form a minimal contrast as the MAP
+(69) requires ((86), (87)). -/
 theorem climb_map : MAP Role.totallyTraversed ⊥ := by
   refine CovBy.wcovBy ?_
   rw [Role.totallyTraversed, WithBot.bot_covBy_coe]
@@ -321,8 +320,8 @@ instance : LinearOrder DativeRole :=
 instance : DecidableRel (· ⩿ · : DativeRole → DativeRole → Prop) :=
   fun a b ↦ decidable_of_iff (a ≤ b ∧ ∀ c, a < c → ¬c < b) Iff.rfl
 
-/-- In *mailed Mary the letter* against *mailed the letter to Mary* ((88)–(89)) the indirect object
-adds prospective possession to arrival, the MAP on the possession chain. -/
+/-- In *mailed Mary the letter* against *mailed the letter to Mary* ((88)–(89)), the indirect object
+adds prospective possession to arrival. -/
 theorem dative_map : MAP DativeRole.recipientGoal .goal := by decide
 
 /-! ### Bridge to [levin-1993]'s judgment rows -/

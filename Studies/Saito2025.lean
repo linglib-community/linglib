@@ -51,12 +51,8 @@ abbrev TriphoneCount : ℕ := 14404
 dimensions. -/
 abbrev Word2VecGermanDim : ℕ := 300
 
-/-- When the suffix-triphone coordinate is linearly decodable from word meanings, the
-inflectional semantics the paper ties to the suffix, a trained production matrix reproduces it
-exactly in `SemSupSuffix`, the entry `Ĉ i s` of (4). So a word carrying the suffix triphone gets
-strictly greater suffix support than one lacking it, which is the direction of the paper's
-contrast between inflected and non-inflected words, obtained from the linear architecture
-alone. -/
+/-- When suffix triphones are linearly decodable from meanings, a trained production matrix gives
+suffixed words strictly greater suffix support `Ĉ i s` (4). -/
 theorem semSupSuffix_lt {m : ℕ}
     {data : TrainingExperience m TriphoneCount Word2VecGermanDim} {q : FrequencyVector m}
     {G : Matrix (Fin Word2VecGermanDim) (Fin TriphoneCount) ℝ} (hG : IsTrained data q G)

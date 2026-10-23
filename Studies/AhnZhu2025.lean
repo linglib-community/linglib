@@ -120,8 +120,8 @@ theorem na_novelist : ∃! x, na novelist author .theNovel x () :=
 theorem bare_author : ∃! x, author .theNovel x () :=
   ⟨.itsAuthor, ⟨rfl, rfl⟩, fun _ hy ↦ hy.2⟩
 
-/-- *na wei zuozhe* (53) is *na* over the relational noun with its relatum slot closed, and with
-`R` resolved to the noun's own relation it is the bare relational reading. -/
+/-- *na wei zuozhe* (53), *na* over the relational noun with its relatum closed, has the bare
+relational reading. -/
 theorem na_ex_author : ∃! x, na (⨆ z, author z) author .theNovel x () := by
   simpa only [na, π_iSup_self] using bare_author
 

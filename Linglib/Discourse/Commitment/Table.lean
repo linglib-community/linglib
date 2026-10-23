@@ -378,8 +378,8 @@ theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
 theorem settle_polarQuestion_self : (K.polarQuestion p).settle p = K.settle p :=
   settle_push_of_decidedBy (decidedBy_polar.2 (.inl (mem_inf_of_right (mem_principal_self p))))
 
-/-- Agreeing to disagree after two assertions, the denial being the case `q = pᶜ`, leaves the
-Table and the common ground as before them, with both commitments recorded. -/
+/-- Agreeing to disagree after two assertions leaves the Table and common ground unchanged, with
+both commitments recorded. -/
 theorem agreeToDisagree_assert_assert (b : A) (q : Set W) :
     ((K.assert a p).assert b q).agreeToDisagree = (K.commit a p).commit b q := rfl
 

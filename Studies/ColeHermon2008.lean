@@ -393,10 +393,7 @@ def ofRow (row : Datum) : Option Extraction := do
 
 end Extraction
 
-/-- Only the VOS Hypothesis fits the extraction data ((7)–(10), (43)–(44), (85)–(88)). The
-direct object and the passive agent, frozen in the fronted VoiceP, cannot be fronted in either
-order, the goal, evacuated before VoiceP raises, can, and with VoiceP in place the object of an
-SVO clause would be free. -/
+/-- Only the VOS Hypothesis fits the extraction data ((7)–(10), (43)–(44), (85)–(88)). -/
 theorem vos_hypothesis_only (hyp : OrderHypothesis) :
     (∀ row ∈ Examples.all, ∀ e ∈ Extraction.ofRow row,
       (row.judgment ≠ .ungrammatical ↔ e.Licit hyp)) ↔ hyp = .vosHypothesis := by
@@ -478,10 +475,8 @@ theorem BindingTheory.Licenses.derivational {th : BindingTheory} {a : Reflexiviz
   | derivational => exact le_rfl
   | semanticHierarchy => exact absurd rfl hth
 
-/-- Only c-command at some stage fits the binding data of Table 1 ((17), (21), (37), (62),
-(66)–(68)). Surface c-command loses every VOS antecedent, (62) and both passive orders
-(67)–(68), reconstruction to the last SVO stage loses the passive agent (67), and the Semantic
-Hierarchy loses the passive subject ((37), (68)). -/
+/-- Only c-command at some stage fits the binding data of Table 1 ((17), (21), (37), (62), (66),
+(67), (68)). -/
 theorem derivational_only (th : BindingTheory) :
     (∀ row ∈ Examples.all, ∀ a ∈ Reflexivization.ofRow row,
       (row.judgment ≠ .ungrammatical ↔ th.Licenses a)) ↔ th = .derivational := by
@@ -507,10 +502,8 @@ theorem table1 : ∀ row ∈ Examples.all, ∀ a ∈ Reflexivization.ofRow row,
       a.grade = g := by
   decide
 
-/-- Stage by stage through the passive (67)–(68), (72)–(74) and (75)–(77), the agent c-commands
-the patient once the verb has adjoined to Voice, stage 6, and not once the patient has raised,
-the patient c-commands the agent once raised and not before, and neither does at the surface,
-once VoiceP has raised. -/
+/-- In the passive (67)–(68), (72)–(74), (75)–(77), agent and patient each c-command the other only
+at intermediate stages, and neither does at the surface. -/
 theorem passive_stages :
     (ex67.vos.CCommandsAt 6 ex67.agent ex67.patient ∧
       ¬ ex67.vos.CCommandsAt ex67.svoStage.length ex67.agent ex67.patient) ∧
@@ -544,8 +537,8 @@ theorem frozen_sides (c : Clause) (σ σ' : Sides) (x : SyntacticObject) :
     (c.vos σ).Frozen x ↔ (c.vos σ').Frozen x := by
   rw [← Derivation.frozen_leftward_iff, vos_leftward c σ σ', Derivation.frozen_leftward_iff]
 
-/-- Nor can the surface order (56), since every one of the thirty-two attachments, (57), (91)
-and, up to the omitted XP, (89) among them, externalizes to V-O-S-IO. -/
+/-- Every one of the thirty-two attachments, including (57), (89) and (91), externalizes the surface
+order (56) as V-O-S-IO. -/
 theorem surface_sides (σ : Sides) :
     (ex56.vos σ).surfacePhon = ["mang-", "alean", "buku", "si-John", "tu si-Mary"] := by
   revert σ; decide +kernel
@@ -579,11 +572,8 @@ def englishPair? (row : Datum) : Option (SyntacticObject × SyntacticObject) := 
   let reflexive ← slot (← row.parse? "reflexive" args)
   return (antecedent, reflexive)
 
-/-- In (95)–(96) the patient binds the agent, which never c-commands it. Raising the patient
-reverses its c-command relation with the agent only when the agent is an argument above it, as
-in Toba Batak; the paper remarks, without arguing it, that if this treatment of English is
-right, [collins-2005]'s smuggling derivation, in which the passive agent is Merged as in the
-active, cannot be maintained. -/
+/-- In (95)–(96) the English patient binds the agent, which never c-commands it, a treatment
+incompatible with [collins-2005]'s smuggling derivation. -/
 theorem english_passive : ∀ row ∈ Examples.all, ∀ p ∈ englishPair? row,
     (row.judgment ≠ .ungrammatical ↔ englishPassive.BindsAtSomeStage p.1 p.2) := by
   decide

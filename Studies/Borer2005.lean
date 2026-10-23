@@ -135,9 +135,8 @@ theorem wellFormed_counter_iff {d : Determiner} (hq : d.quantity = .count)
     (hd : d.divides = false) (p : Bool) : Nominal.WellFormed ⟨some d, p⟩ ↔ p = true := by
   cases p <;> simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
 
-/-- A divider never co-occurs with plural inflection, which would assign ⟨e⟩div range twice:
-*a boy* and *every meat* but not *a boys* or *every boys*, and no Hungarian cardinal with a
-plural (38). -/
+/-- A divider never co-occurs with plural inflection, so neither *a boys* nor a Hungarian cardinal
+with a plural is possible (38). -/
 theorem not_wellFormed_of_divides {d : Determiner} (hd : d.divides = true) :
     ¬ Nominal.WellFormed ⟨some d, true⟩ := fun h ↦ h.1 ⟨rfl, d, rfl, hd⟩
 
@@ -151,8 +150,8 @@ theorem wellFormed_measure_iff {d : Determiner} (hq : d.quantity = .measure)
     (hd : d.divides = false) (p : Bool) : Nominal.WellFormed ⟨some d, p⟩ ↔ p = false := by
   cases p <;> simp [Nominal.WellFormed, Nominal.Divided, hq, hd]
 
-/-- A determiner indifferent to the quantity takes mass and plurals alike, *all meat* and
-*all boys*, and on a bare stem yields no count reading, since it divides nothing (35). -/
+/-- A determiner indifferent to quantity takes mass and plurals alike and divides only a plural
+(35). -/
 theorem wellFormed_neutral {d : Determiner} (hq : d.quantity = .either) (hd : d.divides = false)
     (p : Bool) : Nominal.WellFormed ⟨some d, p⟩ ∧ (Nominal.Divided ⟨some d, p⟩ ↔ p = true) := by
   cases p <;> simp [Nominal.WellFormed, Nominal.Divided, hq, hd]

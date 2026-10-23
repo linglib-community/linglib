@@ -161,8 +161,7 @@ theorem transitivity_patient_regions :
 
 /-! ### Core case marking systems, section 4 -/
 
-/-- Fig. 6: the maximal agent and the maximal patient read out to the two core cases of either
-alignment, nominative and accusative or ergative and absolutive. -/
+/-- The maximal agent and patient map to the two core cases of either alignment (Fig. 6). -/
 theorem pole_alignment :
     maximalAgent.toCaseRegion.toAccusativeCase = .nom ∧
       maximalPatient.toCaseRegion.toAccusativeCase = .acc ∧
@@ -182,8 +181,7 @@ substrate's `sentientNonInstigator`. -/
 /-- The recipient of (9). -/
 def recipient : ParticipantType := sentientNonInstigator
 
-/-- The recipient's node is in the dative region, and with it the experiencer and the second
-argument of the two-place verbs that share its entailments (Fig. 7). -/
+/-- The recipient's node lies in the dative region (Fig. 7). -/
 theorem recipient_dative : recipient.toCaseRegion = .dative := by decide
 
 /-! ### The genitive/accusative alternation in Russian, section 5.2
@@ -212,8 +210,8 @@ given definiteness: the maximal patient once existence is entailed, the bottom o
 def opacityObject (d : Definiteness) : ParticipantType :=
   if d.Referring then maximalPatient else ⊥
 
-/-- The object is in the accusative region exactly when the noun phrase refers, and the
-non-specific reading stays at the bottom node, the governed genitive's (12). -/
+/-- The object is in the accusative region iff the noun phrase refers, and otherwise at the bottom
+node of the governed genitive (12). -/
 theorem genitive_accusative_alternation (d : Definiteness) :
     ((opacityObject d).toCaseRegion = .accAbs ↔ d.Referring) ∧
       (opacityObject d = ⊥ ↔ ¬ d.Referring) := by

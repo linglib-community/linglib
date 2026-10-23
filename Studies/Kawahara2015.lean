@@ -71,9 +71,7 @@ theorem aar_lsr_mismatches :
     trisyllabicConditions.filter (fun w ↦ defaultAccentAAR w != latinStressRule w) =
       [[.heavy, .light, .heavy], [.light, .light, .heavy]] := by decide
 
-/-- On HLH the AAR accents σ₂, the syllable containing the antepenultimate
-    mora, while the LSR accents the antepenult σ₁ since the penult is light
-    (Table 1c: `HL'H` vs `H'LH`). -/
+/-- On HLH the AAR accents σ₂ and the LSR the antepenult σ₁ (Table 1c). -/
 theorem aar_lsr_mismatch_hlh :
     defaultAccentAAR [.heavy, .light, .heavy] = some 1 ∧
       latinStressRule [.heavy, .light, .heavy] = some 0 := by decide
@@ -171,10 +169,8 @@ theorem ameCandy_ga_tones : accentToTones ameCandy.accentMora 3 = [.L, .H, .H] :
 theorem ameRain_ga_tones : accentToTones ameRain.accentMora 3 = [.H, .L, .L] := by
   decide
 
-/-- Of the n+1 accent patterns of a trisyllable ((3)), the unaccented,
-    initial, and medial contours are distinct, while final accent
-    neutralizes with unaccentedness word-internally because the post-accent
-    L falls off the word edge (§1.4). -/
+/-- A trisyllable's unaccented, initial and medial contours are distinct, and final accent
+neutralizes with unaccentedness ((3), §1.4). -/
 theorem trisyllabic_tone_patterns :
     [accentToTones none 3, accentToTones (some 0) 3, accentToTones (some 1) 3].Nodup ∧
       accentToTones none 3 = accentToTones (some 2) 3 := by decide

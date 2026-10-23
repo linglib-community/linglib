@@ -79,8 +79,7 @@ theorem distributiveKindPred_of_bonaFideGeneric [R.IsRefl]
     (h : bonaFideGeneric R k P w) : distributiveKindPred k P w :=
   h w (R.refl w)
 
-/-- In the accidental case (53), distribution over the actual members says nothing about other
-worlds, so it survives an exception at an accessible world, which falsifies the generic parse. -/
+/-- In the accidental case (53), an exception at an accessible world falsifies the generic parse. -/
 theorem not_bonaFideGeneric_of_exception {v : W} (hv : w ~[R] v) {a : Atom} (ha : a ∈ k v)
     (hp : ¬ P a v) : ¬ bonaFideGeneric R k P w :=
   fun h ↦ hp (h v hv a ha)
@@ -89,8 +88,8 @@ theorem not_bonaFideGeneric_of_exception {v : W} (hv : w ~[R] v) {a : Atom} (ha 
 def singularIndefiniteGeneric (N : Atom → W → Prop) (w : W) : Prop :=
   □[R] (fun v ↦ ∀ a, N a v → P a v) w
 
-/-- The generic parse of a kind-denoting plural is the singular indefinite generic over
-membership in the kind (28a), which is why the two have very similar meanings. -/
+/-- The generic parse of a kind-denoting plural is the singular indefinite generic over kind
+membership (28a). -/
 theorem bonaFideGeneric_iff_singularIndefiniteGeneric :
     bonaFideGeneric R k P w ↔ singularIndefiniteGeneric R P (fun a v ↦ a ∈ k v) w :=
   Iff.rfl
@@ -109,8 +108,7 @@ locations. -/
 def cumulativeBelowGen (w : W) : Prop :=
   □[R] (fun v ↦ ∀ X ⊆ k v, X.Nonempty → Set.LiftRel S ↑X ↑locs) w
 
-/-- (74c) is the strong reading. Taken at a singleton sample, it makes every member of the kind
-relate to every location, so it is false of elephants and Africa and Asia. -/
+/-- The strong reading (74c) makes every member of the kind relate to every location. -/
 theorem forall_of_cumulativeBelowGen [R.IsRefl] (h : cumulativeBelowGen R k S locs w)
     {a : Atom} (ha : a ∈ k w) {l : Loc} (hl : l ∈ locs) : S a l := by
   obtain ⟨b, hb, hab⟩ := (h w (R.refl w) {a} (Finset.singleton_subset_iff.2 ha)
@@ -126,9 +124,8 @@ theorem cumulativeKindPred_of_cumulativeBelowGen [R.IsRefl] (hne : (k w).Nonempt
 /-- Derived Property Predication (105b) is the low-scoped existential over a property. -/
 def dpp (N : Atom → W → Prop) (w : W) : Prop := ∃ a, N a w ∧ P a w
 
-/-- The near-universal reading of an episodic bare plural is Distributive Kind Predication and
-the existential one Derived Property Predication over the same noun (105); the first entails the
-second once the kind has members. -/
+/-- Distributive Kind Predication entails Derived Property Predication over the same noun once the
+kind has members (105). -/
 theorem dpp_of_distributiveKindPred (hne : (k w).Nonempty)
     (h : distributiveKindPred k P w) : dpp P (fun a v ↦ a ∈ k v) w :=
   let ⟨a, ha⟩ := hne
@@ -196,10 +193,8 @@ def Parse.Available (n : Nominal) : Parse → Prop
 instance (n : Nominal) : DecidablePred (Parse.Available n) := fun p ↦ by
   cases p <;> unfold Parse.Available <;> infer_instance
 
-/-- By (145) and Tables 1 and 2, the English bare plural has all four parses, the Italian
-definite plural the three kind parses, and the Italian bare plural and the singular indefinite,
-which cannot denote a kind, only `Gen` and the existential, so no accidental or cumulative
-generalization. -/
+/-- By (145) and Tables 1 and 2, the English bare plural has all four parses, the Italian definite
+plural all but `dpp`, and the others only `Gen` and `dpp`. -/
 theorem Parse.available_iff (p : Parse) :
     p.Available .englishBarePlural ∧ (p.Available .italianDefinitePlural ↔ p ≠ .dpp) ∧
       (p.Available .italianBarePlural ↔ p = .gen ∨ p = .dpp) ∧

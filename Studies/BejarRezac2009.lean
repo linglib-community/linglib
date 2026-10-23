@@ -96,7 +96,7 @@ def Ranks (r : Person → ℕ) (f : Scenario Person → Person) : Prop :=
   ∀ s, ((s.map r).kind = .downstream → f s = s.high) ∧ ((s.map r).kind = .upstream → f s = s.low)
 
 /-- A ranking that picks Basque's controller ranks first and second person alike, so it cannot
-decide (2a) and (2c), where each wins over the other (p. 38). -/
+decide (2a) and (2c) (p. 38). -/
 theorem basque_ranks_first_eq_second (r : Person → ℕ) (h : Ranks r basque.value) :
     r .first = r .second := by
   have h12 := (h ⟨.first, .second⟩).1
@@ -110,8 +110,8 @@ theorem basque_ranks_first_eq_second (r : Person → ℕ) (h : Ranks r basque.va
   · exact heq
   · exact absurd (h12 hgt) (by decide)
 
-/-- Under a chain geometry the depth of specification picks the controller of a full probe, so a
-hierarchy describes the full systems of Mohawk and Algonquian (p. 38). -/
+/-- Under a chain geometry, depth of specification ranks the controller of a full probe, as in
+Mohawk and Algonquian (p. 38). -/
 theorem full_ranks (geom : PersonGeometry) (h : geom.IsChain) :
     Ranks (fun p ↦ (personSpec geom p).length)
       (⟨geom, fullProbe geom⟩ : AgreementSystem).value := by
@@ -150,9 +150,7 @@ theorem nishnaabemwin_isDirect_iff (s : Scenario Person) :
 /-- Every Swahili context is inverse (22a). -/
 example (s : Scenario Person) : swahili.IsInverse s := AgreementSystem.flat_isInverse s _
 
-/-- A context direct for Basque's partial probe is direct for the full probe, and 1N2 is inverse
-for the first and direct for the second, which is why Basque marks 1N2 with the added probe and
-Mohawk does not (p. 62). -/
+/-- A context direct for Basque's partial probe is direct for the full probe (p. 62). -/
 theorem basque_isDirect_imp_kashmiri {s : Scenario Person} (h : basque.IsDirect s) :
     kashmiri.IsDirect s :=
   AgreementSystem.IsDirect.mono basque s rfl (by decide) h
@@ -198,9 +196,8 @@ def Converges (sys : AgreementSystem) (hasP : Bool) (s : Scenario Person) : Prop
 instance (sys : AgreementSystem) (hasP : Bool) : DecidablePred (Converges sys hasP) := fun _ ↦ by
   unfold Converges; infer_instance
 
-/-- A derivation converges iff its core probe has property P exactly in an inverse context. Without
-P an inverse context leaves the external argument unlicensed, and with P a direct context values
-the core and the added probe alike on vII, as in (25) and Table 6. -/
+/-- A derivation converges iff its core probe has property P exactly in an inverse context ((25),
+Table 6). -/
 theorem converges_iff (sys : AgreementSystem) (hasP : Bool) (s : Scenario Person) :
     Converges sys hasP s ↔ (hasP = true ↔ sys.IsInverse s) := by
   unfold Converges valuations AgreementSystem.IsInverse
@@ -219,9 +216,8 @@ def highestValue (sys : AgreementSystem) (hasP : Bool) (s : Scenario Person) :
     Option (List PersonSegment) :=
   (valuations sys hasP s).getLast?.map Prod.snd
 
-/-- In a convergent derivation the probe valued last is valued by the external argument, so
-Kashmiri's one agreement slot tracks it in direct and inverse contexts alike, and the internal
-argument bears R-Case exactly when the core probe has P, in inverse contexts (Table 11). -/
+/-- In a convergent derivation the probe valued last is valued by the external argument (Table 11).
+-/
 theorem highestValue_eq_spec {sys : AgreementSystem} {hasP : Bool} {s : Scenario Person}
     (h : Converges sys hasP s) : highestValue sys hasP s = some (sys.spec s.high) := by
   rw [converges_iff] at h
@@ -290,8 +286,8 @@ theorem context_rows : ∀ e ∈ Examples.all, ∀ c ∈ config? e, ∀ x ∈ e.
     (x = "inverse" ↔ c.1.IsInverse c.2) := by
   decide +kernel
 
-/-- Every example showing a repair, the added probe of Bizkaian Basque or the R-Case of Kashmiri, is
-a convergent derivation with property P (Table 9, (29)–(31)). -/
+/-- Every repair example of Bizkaian Basque or Kashmiri is a convergent derivation with property P
+(Table 9, (29)–(31)). -/
 theorem repair_rows : ∀ e ∈ Examples.all, ∀ c ∈ config? e, ∀ _ ∈ e.feature? "repair",
     Converges c.1 true c.2 := by
   decide +kernel
@@ -300,9 +296,8 @@ theorem repair_rows : ∀ e ∈ Examples.all, ∀ c ∈ config? e, ∀ _ ∈ e.f
 def slotPrefix? (e : Datum) : Option Morphology.Morph :=
   e.surfaceTokens.getLast?.map fun w ↦ .pref (String.ofList (w.toList.takeWhile (· ≠ '-')))
 
-/-- The auxiliaries of (2) begin with the Fragment's prefix for the controller's person, in some
-number, which is the absolutive when the internal argument controls and the displaced ergative
-when the external one does, as in (2d). -/
+/-- The auxiliaries of (2) begin with the controller's person prefix, absolutive for an internal and
+displaced ergative for an external controller (2d). -/
 theorem basque_prefix_rows : ∀ e ∈ Examples.all, e.language = "basq1248" →
     ∀ c ∈ config? e, ∀ _ ∈ person? e "controller", ∃ n ∈ [Number.singular, .plural],
       ((match c.1.controller c.2 with
@@ -317,8 +312,8 @@ def georgianSet : Argument → Georgian.AffixSet
   | .ia => .B
   | .ea => .A
 
-/-- In the second-cycle morphology of (18), the 1st person singular is *m-* of Set B when the
-internal argument values the probe and *v-* of Set A when the external argument does. -/
+/-- In (18), the 1st singular is Set B *m-* when the internal argument values the probe and Set A
+*v-* when the external one does. -/
 theorem georgian_prefix_rows : ∀ e ∈ Examples.all, e.language = "nucl1302" →
     ∀ c ∈ config? e,
       ((georgianSet (c.1.controller c.2)).paradigm.realize

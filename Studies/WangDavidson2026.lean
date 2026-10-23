@@ -198,9 +198,8 @@ end Dynamic
 
 /-! ### Trivalent exhaustification -/
 
-/-- The presupposition of `α ∨ β` together with that of `α ∧ β` is that of both disjuncts
-under Strong Kleene (8), so EXH², which imports the conjunction alternative's presupposition,
-makes an exhaustified disjunction project uniformly. -/
+/-- Under Strong Kleene (8), the presuppositions of `α ∨ β` and `α ∧ β` together are those of both
+disjuncts. -/
 theorem sup_inf_ne_zero_iff (a b : SignType) :
     (a ⊔ b ≠ 0 ∧ a ⊓ b ≠ 0) ↔ a ≠ 0 ∧ b ≠ 0 := by
   revert a b; decide

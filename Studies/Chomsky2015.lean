@@ -232,10 +232,8 @@ theorem ex2prime :
 /-- (4): *who do you think read the book*, the complementizer deleted. -/
 def whoThinkNoC : LinearizedSyntacticObject := who * (think * (cNull * alphaWho))
 
-/-- (4): the deleted complementizer passes its phasehood to T, whose complement alone is
-transferred, so *who* moves on from the specifier of T, where a visible complementizer would seal
-it. `α`, labeled at the phase level by the φ-features T and *who* agree in, stays labeled, though at
-the last stage T is alone. -/
+/-- In (4), the deleted complementizer passes phasehood to T, so *who* moves on from the specifier
+of T and `α` stays labeled at the phase level. -/
 theorem ex4 : ¬ ViolatesPic Invisible whoThinkNoC whoD ∧
     ViolatesPic (· = vStar) whoThinkNoC whoD ∧ ¬ IsLabeled .weak whoThinkNoC alphaWho ∧
     ∀ ag ∈ agreementOf Examples.ex4.language,
@@ -269,8 +267,8 @@ theorem expect_not_isLabeled (ag : Agreement) :
     ¬ IsLabeled ag expectInSitu (expect * infinitive : LinearizedSyntacticObject) := by
   cases ag <;> decide +kernel
 
-/-- (3): raised to the specifier of the root, the object agrees with it in the φ-features it
-inherits from v*, which label `α`: raising to object is forced. -/
+/-- In (3), the object raised to the specifier of the root agrees in the φ-features labeling `α`, so
+raising to object is forced. -/
 theorem ex3 : ∀ ag ∈ agreementOf Examples.ex3.language,
     (Examples.ex3.judgment = .acceptable ↔ IsLabeledAtPhase ag expectRaised alphaObject) := by
   decide +kernel
@@ -321,9 +319,8 @@ theorem alphaQ_isLabeledByFeature :
       IsLabeledAtPhase .weak wonderInSitu likes := by
   decide +kernel
 
-/-- (1): `α`, the edge of its phase, is labeled at the next, where *which dog* raised out of its
-criterial position leaves the interrogative C to label `α` by itself, which the paper reads as a
-yes-no question. -/
+/-- In (1), with *which dog* raised out of its criterial position, the interrogative C labels `α` by
+itself at the next phase. -/
 theorem ex1 : (∀ n, wonderRaised.termAt n = alphaQ → stageOf wonderRaised n = wonderRaised) ∧
     wonderRaised.IsLabeledBy alphaQ cQ ∧
     (Examples.ex1.judgment = .acceptable ↔

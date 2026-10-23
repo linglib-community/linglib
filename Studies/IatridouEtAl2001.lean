@@ -112,8 +112,8 @@ theorem inclusive_unbounded_iff :
 theorem inclusive_prfv : inclusive (PRFV P) = PRFV P :=
   funext fun w ↦ inclusive_eq_of_isUpperSet (isUpperSet_prfv P w)
 
-/-- A bounded eventuality that takes time, a telic one in (44d), holds throughout no span, since
-the span's points are among its subintervals and contain no such eventuality. -/
+/-- A bounded eventuality that takes time, such as a telic one in (44d), holds throughout no span.
+-/
 theorem not_durative_prfv (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
     i ∉ durative (PRFV P) w := fun hd ↦
   let ⟨e, hle, hP⟩ := hd (show NonemptyInterval.pure i.fst ∈ Set.Iic i from
@@ -143,8 +143,8 @@ theorem unbounded_pure_iff : .pure t ∈ UNBOUNDED P w ↔ ∃ e, P w e ∧ t �
   ⟨fun ⟨e, hle, hP⟩ ↦ ⟨e, hP, NonemptyInterval.mem_def.2 (NonemptyInterval.le_def.1 hle)⟩,
     fun ⟨e, hP, ht⟩ ↦ ⟨e, NonemptyInterval.le_def.2 (NonemptyInterval.mem_def.1 ht), hP⟩⟩
 
-/-- The universal perfect holds at the right boundary, the utterance time in the present perfect,
-so (6a–b) are contradictions, and a past or future time in the past and future perfect, (7). -/
+/-- The universal perfect asserts the eventuality at the right boundary, making (6a–b)
+contradictions, in the past and future perfect too (7). -/
 theorem universal_at_rb (h : ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P))) :
     ∃ e, P w e ∧ t ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_rb h)
@@ -163,10 +163,8 @@ theorem universal_of_covers {e : E} (he : P w e) (h₀ : t₀ ≤ t) (h₁ : (τ
 
 /-! ### Point 2: an unmodified perfect is silent about the right boundary -/
 
-/-- The inclusive perfect, the reading of the covert adverbial, is true of an eventuality that
-ended before the time of tense, so it does not assert the eventuality there, and *She has been
-sick* and *I have been cooking* can go on *but she is fine now* and *but I'm done now*, (9)–(12) and
-(15). -/
+/-- The inclusive perfect holds of an eventuality that ended before the time of tense, so *She has
+been sick, but she is fine now* is consistent ((9)–(12), (15)). -/
 theorem inclusive_silent_at_rb {e₀ : E} (h : (τ e₀).snd < t) :
     ⟨w, t⟩ ∈ PERF (inclusive (UNBOUNDED fun (_ : W) e ↦ e = e₀)) ∧
       ∀ e, (fun (_ : W) e ↦ e = e₀) w e → t ∉ τ e :=
@@ -185,8 +183,8 @@ theorem unmodified_not_universal {e₀ : E} (h : (τ e₀).snd < t) :
 
 /-! ### Point 3: the span is not the E–R interval -/
 
-/-- With *since 1991* the span starts in 1991 while its only eventuality lies in the fall of
-1993, (28), so the left boundary is set by the adverbial, not by the eventuality. -/
+/-- With *since 1991* the span starts in 1991 though its only eventuality lies in the fall of 1993
+(28). -/
 theorem span_lb_before_event {lb : T} {e₀ : E} (h₁ : lb < (τ e₀).fst) (h₂ : (τ e₀).snd ≤ t) :
     ⟨w, t⟩ ∈ PERF ({pts | pts.fst = lb} ∩ inclusive (PRFV fun (_ : W) e ↦ e = e₀) ·) :=
   ⟨⟨(lb, t), h₁.le.trans ((τ e₀).fst_le_snd.trans h₂)⟩,
@@ -194,9 +192,8 @@ theorem span_lb_before_event {lb : T} {e₀ : E} (h₁ : lb < (τ e₀).fst) (h�
 
 /-! ### Point 4: the aspect of the participle -/
 
-/-- A perfective participle on a predicate whose eventualities take time, a telic or a stative
-that the perfective makes inchoative, has no universal perfect, so none with any adverbial, in Greek
-(30) and (34), Bulgarian (35) and the English nonprogressives of (41). -/
+/-- A perfective participle on a predicate whose eventualities take time has no universal perfect,
+in Greek (30) and (34), Bulgarian (35) and English (41). -/
 theorem no_universal_of_prfv (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
     ⟨w, t⟩ ∉ PERF (durative (PRFV P)) :=
   fun ⟨_, hd, _⟩ ↦ not_durative_prfv h hd
@@ -207,9 +204,8 @@ theorem prfv_pure_iff : .pure t ∈ PRFV P w ↔ ∃ e, P w e ∧ τ e = .pure t
         (τ e).fst_le_snd.trans' (NonemptyInterval.le_def.1 hle).1⟩)⟩,
     fun ⟨e, hP, hτ⟩ ↦ ⟨e, hτ.le, hP⟩⟩
 
-/-- A perfective participle on an activity with *apo 1990 mexri tora* 'from 1990 until now' is
-true when an eventuality fills the span exactly, and then holds at the utterance time like a
-universal perfect, (45). -/
+/-- A perfective activity with *apo 1990 mexri tora* 'from 1990 until now' is true when an
+eventuality fills the span exactly (45). -/
 theorem bounded_activity_fills {e : E} (hP : HasSubintervalProperty P) (he : P w e)
     (h₀ : t₀ ≤ t) (hτ : τ e = ⟨(t₀, t), h₀⟩) :
     ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (PRFV P) ·) ∧ ∃ e', P w e' ∧ t ∈ τ e' :=
@@ -219,8 +215,7 @@ theorem bounded_activity_fills {e : E} (hP : HasSubintervalProperty P) (he : P w
 
 /-! ### Point 5: anteriority derived -/
 
-/-- An experiential perfect places the end of its eventuality by the time of tense, before the
-utterance time in the present perfect and before a past time in the pluperfect, (1). -/
+/-- An experiential perfect ends its eventuality by the time of tense (1). -/
 theorem experiential_ends_by_rb (h : ⟨w, t⟩ ∈ PERF (inclusive (PRFV P))) :
     ∃ e, P w e ∧ (τ e).snd ≤ t :=
   let ⟨_, ⟨_, ⟨e, hle, hP⟩, hj⟩, hrb⟩ := mem_perf.1 h

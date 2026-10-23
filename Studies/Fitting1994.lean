@@ -264,8 +264,8 @@ section Product
 
 variable {L : Type*} [Lattice L] [BoundedOrder L]
 
-/-- The extremal identities (§6) `true ⊔ₖ false = ⊤`, `true ⊓ₖ false = ⊥`, `⊤ ∧ ⊥ = false` and
-`⊤ ∨ ⊥ = true` hold in `L ⊙ L`, with `(⊤, ⊤)` and `(⊥, ⊥)` the knowledge bounds. -/
+/-- The extremal identities (§6) hold in `L ⊙ L`, with `(⊤, ⊤)` and `(⊥, ⊥)` the knowledge bounds.
+-/
 theorem extremal :
     ((⊤ : L ⊙ L) ⊔ₖ ⊥) = mk ⊤ ⊤ ∧ (⊤ : L ⊙ L) ⊓ₖ ⊥ = mk ⊥ ⊥ ∧
       (mk ⊤ ⊤ : L ⊙ L) ⊓ mk ⊥ ⊥ = ⊥ ∧ (mk ⊤ ⊤ : L ⊙ L) ⊔ mk ⊥ ⊥ = ⊤ := by

@@ -272,9 +272,8 @@ end Bisimulation
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
 open Team ModalLogic in
-/-- Every MIL-definable team property is union closed, contains the empty team and is closed
-    under bounded bisimulation. This is the easy inclusion of the expressive completeness of
-    ML(⊆) ([anttila-haggblom-yang-2025] §3). -/
+/-- Every MIL-definable team property is union closed, contains the empty team and is bisimulation
+closed ([anttila-haggblom-yang-2025] §3). -/
 theorem definableClass_support_subset (M : KripkeModel W Atom) :
     definableClass (support M) ⊆ {P | SupClosed P ∧ ∅ ∈ P ∧ BisimClosed M P} :=
   definableClass_subset fun φ ↦ ⟨supClosed_support M φ, support_empty M φ, bisimClosed_support M φ⟩

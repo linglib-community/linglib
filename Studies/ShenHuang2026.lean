@@ -186,10 +186,8 @@ theorem pic_violated_iff (c : Config) :
   obtain ⟨f, o, v⟩ := c
   cases f <;> cases o <;> cases v <;> decide
 
-/-- On the LF-movement analysis with covert movement subject to the PIC, an in-situ wh-phrase
-crosses the phase wherever a fronted one does, so the analysis predicts a definite island that a
-verb of creation removes in Mandarin too (§3, §5.2), the verb-of-creation effect the Mandarin
-experiment does not find (Table 2). -/
+/-- With covert movement subject to the PIC, the LF-movement analysis wrongly predicts a Mandarin
+in-situ definite island removed by verbs of creation (§3, §5.2, Table 2). -/
 theorem violatesPIC_covertTree_iff (c : Config) :
     c.ViolatesPIC c.covertTree ↔ c.object = .definite ∧ c.creation = false := by
   obtain ⟨f, o, v⟩ := c
@@ -248,8 +246,8 @@ def Observed (account : Finset Constraint) : Prop :=
 instance (account : Finset Constraint) : Decidable (Observed account) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- DP phasehood alone (Table 1) predicts an island for a fronted wh-phrase only under a verb that
-is not a verb of creation, hence a verb-of-creation effect, and no island in situ. -/
+/-- DP phasehood alone predicts an island only for a fronted wh-phrase under a non-creation verb,
+and none in situ (Table 1). -/
 theorem phasehood_predictions :
     IslandEffect phasehood true false ∧ ¬ IslandEffect phasehood true true ∧
       VOCEffect phasehood true ∧ ∀ v, ¬ IslandEffect phasehood false v := by
@@ -277,9 +275,8 @@ def Config.ofDatum (ex : Datum) : Option Config := do
   let v ← ex.parse? "creation" [("yes", true), ("no", false)]
   pure ⟨f, o, v⟩
 
-/-- In the verb-of-creation contrasts of [davies-dubinsky-2003], (52)–(54), which the paper's
-Experiment 1 revisits, a non-creation verb with a definite object violates one constraint of the
-combined account more than a creation verb, and the row is judged no better. -/
+/-- In the verb-of-creation contrasts of [davies-dubinsky-2003] ((52)–(54)), a row violating more
+constraints of the combined account is judged no better. -/
 theorem stacking_daviesDubinsky :
     ∀ ex₁ ∈ DaviesDubinsky2003.Examples.all, ∀ ex₂ ∈ DaviesDubinsky2003.Examples.all,
       ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
@@ -360,9 +357,8 @@ at the matrix Spell-out and the derivation linearizes. -/
 theorem edge_stop_linearizes : (derivation true true).Linearizes (schedule true true) := by
   decide
 
-/-- When *what* stays in situ as the embedded clause is spelled out (27b), it follows *Mary* there
-and precedes her at the matrix Spell-out, an ordering contradiction; this is the
-cyclic-linearization content of the PIC on movement. -/
+/-- Leaving *what* in situ at the embedded Spell-out (27b) yields an ordering contradiction at the
+matrix Spell-out. -/
 theorem phase_skip_not_linearizes : ¬ (derivation false true).Linearizes (schedule false true) := by
   decide
 
@@ -387,8 +383,8 @@ instance : DecidablePred IsVerbOfCreation := fun v ↦ inferInstanceAs (Decidabl
 def Config.ofVerb (fronted : Bool) (o : Definiteness) (v : English.Verbs.Verb) : Config :=
   ⟨fronted, o, decide (IsVerbOfCreation v)⟩
 
-/-- In (25) *read that book about* violates both constraints and *write that book about* the
-Specificity Condition alone, the residual definite island under a verb of creation. -/
+/-- In (25), *read that book about* violates both constraints and *write that book about* only the
+Specificity Condition. -/
 theorem read_write :
     violations combined (Config.ofVerb true .definite English.Verbs.read) = 2 ∧
       violations combined (Config.ofVerb true .definite English.Verbs.write) = 1 := by

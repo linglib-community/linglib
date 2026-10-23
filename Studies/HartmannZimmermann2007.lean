@@ -135,9 +135,7 @@ contrast set. -/
 def exhAnswer (u : Use) : Set Alt :=
   excludes (ctx u).contrastSet answer.ordinary
 
-/-- The exhaustified answer computes to the bare true answer, uniformly across the four uses.
-Exhaustification consumes the resolved contrast set and prejacent, never the strategy, which is
-the §3.2 point that exhaustive readings are available in both positions. -/
+/-- The exhaustified answer is the bare true answer in all four uses (§3.2). -/
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
   have key : excludes ({{Alt.ans}, {Alt.alt}} : Set (Set Alt))
       {Alt.ans} = {Alt.ans} := by

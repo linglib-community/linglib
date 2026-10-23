@@ -147,7 +147,7 @@ private theorem cell_grain_200 (k : ℤ) {ε : ℝ} (hk : k * ε = 200) (hε : 0
     (AddSubgroup.mem_zmultiples_iff.2 ⟨k, by rw [zsmul_eq_mul, hk]⟩)]
 
 /-- The Imprecise screen of Figure 1 is rejected at the narrow range of p. 5 and accepted at the
-wide one, so it falls between the two readings the paper offers. -/
+wide one. -/
 theorem rejects_imprecise_iff (r : Range) (hr : r ≠ .exact) :
     Rejects ((ranges r).width : ℝ) uttered (screens .imprecise).displayed.toRat ↔
       r = .narrow := by

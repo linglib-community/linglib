@@ -157,10 +157,8 @@ restrictor analysis of conditionals (cf. [kratzer-1986]), the antecedent of
 conditional necessity is classically DE once the modal base is fixed, so
 widening the antecedent domain strengthens the conditional. -/
 
-/-- Conditional antecedents satisfy strengthening, since conditional necessity is DE in its
-antecedent with the modal base held constant. In K&L's (143), *If John subscribes to any
-newspaper, he gets well informed*, widening *newspaper* to include unimportant newspapers
-strengthens the conditional. -/
+/-- Conditional necessity is downward entailing in its antecedent, so widening strengthens K&L's
+(143). -/
 theorem conditional_satisfies_strengthening {W : Type*}
     (domain : W → Set W) (β : Set W) :
     Antitone (Conditional.strictImp domain · β) :=
@@ -172,16 +170,8 @@ def conditionalWithRestriction {Case : Type*}
     (restriction antecedent consequent : Case → Prop) : Prop :=
   ∀ c, restriction c → antecedent c → consequent c
 
-/-- Widening always satisfies strengthening in conditional antecedents (K&L §3.5.3).
-Natural-language conditionals are not classically DE — their
-(140) does not entail (141) — because the implicit restriction can shift. But
-the restriction cannot undo the effect of widening, so the wide restriction
-is never stronger than the narrow one, and then the wide conditional entails
-the narrow one. Strengthening inferences "do always go through, because
-of the relation between the restrictions of the premise and of the
-conclusion. The two restrictions are always the same, except that the
-restriction of the premise may be somewhat weaker (but never stronger), as
-dictated by the widening", in K&L's words. -/
+/-- Widening always satisfies strengthening in conditional antecedents, though (140) does not entail
+(141) (K&L §3.5.3). -/
 theorem widening_satisfies_conditional_strengthening {Case : Type*}
     {R_narrow R_wide A_narrow A_wide consequent : Case → Prop}
     (hRestrWeaker : ∀ c, R_narrow c → R_wide c)
@@ -293,9 +283,7 @@ theorem widenAlong_weakens_precise {Property : Type*}
     (widenAlong X onDimension).precise ⊆ X.precise :=
   fun _ ⟨h, _⟩ ↦ h
 
-/-- Widening expands the domain, since with fewer constraints more entities qualify. This is the
-restriction-weakening half of K&L §3.5.3, that the restriction cannot undo the effect of
-widening. -/
+/-- Widening expands the domain, so the restriction cannot undo its effect (K&L §3.5.3). -/
 theorem widenAlong_expands_domain {Property Entity : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (apply : Property → Set Entity) :

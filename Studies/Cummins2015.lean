@@ -218,9 +218,8 @@ def atLeast22 : Context := { lo := some 22 }
 /-- The same, with 21 contextually salient. -/
 def atLeast22Primed : Context := { atLeast22 with primedNumeral := some 21 }
 
-/-- Unprimed (Table 3.1), a speaker ranking informativeness above salience prefers *more than
-21* and one ranking salience above informativeness *more than 20*; priming, violated by
-neither, never adjudicates (Table 3.3). -/
+/-- Unprimed, ranking informativeness above salience selects *more than 21* and the reverse ranking
+*more than 20* (Table 3.1), and priming never decides (Table 3.3). -/
 theorem atLeast22_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (toy atLeast22) r {moreThan 21, moreThan 20}).optimal =
       if r.Dominates 0 1 then {moreThan 21} else {moreThan 20} := by
@@ -293,8 +292,8 @@ theorem exact51_optimal (r : Ranking (Fin 3) 3) :
       if r.Dominates 0 1 then {bare 51} else {bare 50} := by
   revert r; decide
 
-/-- For the exact value 100, *100* bounds *about 100*, both bound *about 99*, and the choice
-is between *exactly 100*, for informativeness above simplicity, and *100* (Table 3.6). -/
+/-- For the exact value 100, the winner is *exactly 100* when informativeness dominates simplicity,
+and *100* otherwise (Table 3.6). -/
 theorem exact100_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (approx (.exact 100)) r {bare 100, exactly 100, about 100, about 99}).optimal
       = if r.Dominates 0 2 then {exactly 100} else {bare 100} := by
@@ -307,9 +306,8 @@ theorem about100_optimal (r : Ranking (Fin 3) 3) :
       if r.Dominates 0 2 then {about 100} else {bare 100} := by
   revert r; decide
 
-/-- For the exact value 99, *99* bounds *exactly 99*, and the winner is *99* when
-informativeness dominates salience, *100* when simplicity dominates informativeness, and
-*about 100* otherwise (Table 3.8). -/
+/-- For the exact value 99, the winner is *99*, *100* or *about 100* as informativeness dominates
+salience, simplicity dominates informativeness, or neither (Table 3.8). -/
 theorem exact99_optimal (r : Ranking (Fin 3) 3) :
     (Tableau.ofRanking (approx (.exact 99)) r {bare 99, exactly 99, bare 100, about 100}).optimal
       = if r.Dominates 0 1 then {bare 99}
@@ -446,10 +444,8 @@ theorem moreThan_notMem_optimal {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = so
   · show info ctx (moreThan m) < info ctx (moreThan n)
     simp only [info, moreThan, hlo]; omega
 
-/-- With `n` primed, *more than n* is the sole winner against *more than m* iff numeral
-priming dominates informativeness and, when `m` is the rounder, numeral salience. The book's
-condition, priming above informativeness (§5.4), suffices only for equally salient pairs;
-on its own *more than 70* ~ *more than 80*, 80 is the rounder. -/
+/-- With `n` primed, *more than n* alone wins iff priming dominates informativeness and, if `m` is
+rounder, salience, sharpening the book's condition (§5.4). -/
 theorem moreThan_optimal_iff_of_primed {ctx : Context} {L n m : ℕ} (hlo : ctx.lo = some L)
     (halt : StrongerAlternative ctx n m) (hm : m < L) (hp : ctx.primedNumeral = some n)
     (r : Ranking (Fin 6) 6) :

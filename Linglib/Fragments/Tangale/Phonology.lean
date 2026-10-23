@@ -81,9 +81,7 @@ theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
   exact ⟨i, AR.link_fromRel.mpr ⟨by decide, hi, hj, .inl (.inr ⟨rfl, rfl, rfl, rfl⟩)⟩, hH⟩
 
-/-- Spread followed by Left Line Delinking shifts the H one TBU rightward
-    ((34)), as the docked TBU keeps the new line and the source loses the
-    original. -/
+/-- Spread followed by Left Line Delinking shifts the H one TBU rightward ((34)). -/
 theorem lld_hts_shift {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
     (hj : j + 1 < (ws false).length) (hne : j + 1 ≠ j)
     (hor : ∀ p q, ¬ L false true p q) :

@@ -297,8 +297,8 @@ theorem usable_iff {n : Number} (hn : n ∈ numberSystem.values) {k : ℕ} :
   rcases (by simpa [numberSystem] using hn : n = .singular ∨ n = .plural) with rfl | rfl
   exacts [⟨it, by decide, rfl, rfl, hk⟩, ⟨they, by decide, rfl, rfl, hk⟩]
 
-/-- The denier of (22) has a witness and no licit pronoun, since the referent of a negated singular
-indefinite cannot be resumed when there are several circles. -/
+/-- With two or more circles the singular has no licit pronoun, so the denier of (22) cannot resume
+the referent. -/
 theorem not_usable_singular_of_two_le {k : ℕ} (hk : 2 ≤ k) : ¬ Usable .singular k := by
   rw [usable_iff (by decide)]
   grind [inference_singular, singular]
@@ -492,9 +492,8 @@ theorem ineffability_singular_add_plural (μ : Measure ℕ) [IsFiniteMeasure μ]
   rw [ineffability_singular, ineffability, inference_plural,
     prob_compl_eq_one_sub .of_discrete, add_tsub_cancel_of_le prob_le_one]
 
-/-- The conceivability presupposition is the limiting case of the chance of ineffability (§6).
-With the conceivable cardinalities those of positive probability, a number's presupposition
-holds exactly when the chance that its referent cannot be resumed is not certain. -/
+/-- A number's conceivability presupposition holds iff its chance of ineffability is not one (§6).
+-/
 theorem negated_ne_zero_iff_ineffability_ne_one (μ : Measure ℕ) [IsFiniteMeasure μ]
     (hμ : μ weak ≠ 0) (n : Number) (w : ℕ) :
     negated {k | μ {k} ≠ 0} n w ≠ 0 ↔ ineffability μ n ≠ 1 := by

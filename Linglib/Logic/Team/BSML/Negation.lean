@@ -111,9 +111,8 @@ theorem eq_empty_of_support_of_antiSupport (hs : support M φ s) (hs' : antiSupp
 
 /-! ### Failure of replacement under negation -/
 
-/-- Replacement of equivalents fails under negation ([aloni-2022] Fact 8, [anttila-2021]
-    Fact 2.2.3). The weak contradictions `p ∧ ¬p` and `¬NE` are both supported by `∅` alone, but
-    the empty team supports `¬(p ∧ ¬p)` and not `¬¬NE`. -/
+/-- Replacement of equivalents fails under negation, as `p ∧ ¬p` and `¬NE` are equivalent but their
+negations are not ([aloni-2022] Fact 8, [anttila-2021] Fact 2.2.3). -/
 theorem exists_equivalent_not_equivalent_neg [Inhabited Atom] :
     ∃ φ ψ : Formula Atom, Equivalent (W := W) φ ψ ∧ ¬ Equivalent (W := W) (.neg φ) (.neg ψ) :=
   ⟨.falsum, .neg .ne, fun M t ↦ (support_falsum M t).trans .rfl,

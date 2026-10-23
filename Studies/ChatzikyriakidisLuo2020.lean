@@ -162,8 +162,8 @@ theorem not_isReal_sigmaFst (f : (sigma (sum GR GF) IsFake).left) :
     ¬ IsReal ((sigmaFst (sum GR GF) IsFake).left f) :=
   (isReal_iff_not_isFake f.1).1.mt (not_not_intro f.2)
 
-/-- When no object is both a real and a fake gun, fake guns and real guns have disjoint
-extensions, so *fake* is privative relative to *real gun* (p. 72). -/
+/-- When nothing is both a real and a fake gun, *fake* is privative relative to *real gun* (p. 72).
+-/
 theorem disjoint_range_isFake [Mono (sum GR GF).hom] :
     Disjoint (Set.range (sigma (sum GR GF) IsFake).hom)
       (Set.range (sigma (sum GR GF) IsReal).hom) := by
@@ -234,8 +234,8 @@ theorem standardNeg_not_iff (P : A.left → Prop) (b : B.left) :
 def TypeDisjoint (A B : Over Obj) : Prop :=
   ∀ C : Over Obj, (C ⟶ A) → (C ⟶ B) → IsEmpty C.left
 
-/-- Two nouns are disjoint exactly when no object of the second is an object of the first, so that
-"John is not a table" holds of every man ((3.66), (3.71)). -/
+/-- Two nouns are disjoint iff no object of the second is an object of the first ((3.66), (3.71)).
+-/
 theorem typeDisjoint_iff : TypeDisjoint A B ↔ ∀ b : B.left, ¬ Is A b := by
   refine ⟨fun h b hb ↦ ?_, fun h C s t ↦ ⟨fun c ↦ h (t.left c) (is_iff.2 ⟨s.left c, ?_⟩)⟩⟩
   · obtain ⟨a, ha⟩ := is_iff.1 hb

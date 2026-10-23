@@ -148,15 +148,14 @@ def SemUniversal (restr scope : Ppty E) : Type := (x : E) → restr x → scope 
 restrictor precludes the scope. -/
 def SemNo (restr scope : Ppty E) : Type := ParticularWCNo restr scope
 
-/-- *a is a P*, the copula over the indefinite article, is witnessed iff `P(a)` is (92), so the
-compositional content and the construction-based content of (86)–(87) are distinct but equivalent
-types. -/
+/-- *a is a P* is witnessed iff `P(a)` is (92), so the compositional and construction-based contents
+of (86)–(87) are equivalent. -/
 theorem nonempty_semBe_semIndefArt_iff (P : Ppty E) (a : E) :
     Nonempty (SemBe (SemIndefArt P) a) ↔ Nonempty (P a) :=
   ⟨fun ⟨⟨_, h, ⟨rfl⟩⟩⟩ ↦ ⟨h⟩, fun ⟨h⟩ ↦ ⟨⟨a, h, ⟨rfl⟩⟩⟩⟩
 
-/-- *a P is a*, with the quantifiers in the other order, is witnessed iff `P(a)` is as well (94c);
-only the construction expresses `P(a)` itself, and (89) *A conductor is Dudamel* is odd. -/
+/-- *a P is a* is also witnessed iff `P(a)` is (94c), though *A conductor is Dudamel* (89) is odd.
+-/
 theorem nonempty_semIndefArt_semBe_semPropName_iff (P : Ppty E) (a : E) :
     Nonempty (SemIndefArt P (SemBe (SemPropName a))) ↔ Nonempty (P a) :=
   ⟨fun ⟨⟨_, h, ⟨rfl⟩⟩⟩ ↦ ⟨h⟩, fun ⟨h⟩ ↦ ⟨⟨a, h, ⟨rfl⟩⟩⟩⟩
@@ -275,8 +274,7 @@ theorem NecR.necI [Nonempty M] (h : ms.NecR T) : ms.NecI T :=
 theorem PossR.possI (h : ms.PossR T) : ms.PossI T := by
   grind [PossR, PossI, Occurs, extension, Possibility.occurs_of_witnesses, Set.Nonempty]
 
-/-- Subtyping in a modal system holds in any restriction of it, and restricting attention to some of
-the possibilities is what a postulate does (p. 261). -/
+/-- Subtyping in a modal system persists in any restriction of it, as by a postulate (p. 261). -/
 theorem SubtypeI.comp (h : ms.SubtypeI T₁ T₂) (ι : M' → M) :
     ModalSystem.SubtypeI (ms ∘ ι) T₁ T₂ :=
   fun p ↦ h (ι p)
@@ -917,9 +915,8 @@ theorem GeneralWCDecr.subset_X (w : GeneralWCDecr P c Q) :
   fun a ha ↦ (Finset.mem_filter.1 ha).2.elim (w.f a)
 
 open Classical in
-/-- Under (59b) with a relation closed downwards, a witness can be traded for one whose witness set
-is exactly the objects with both properties, which is the sense in which the general condition for
-*few* makes REFSET anaphora available (p. 315). -/
+/-- Under (59b) with a downward-closed relation, a witness set can be chosen as exactly the objects
+with both properties, making REFSET anaphora available for *few* (p. 315). -/
 theorem GeneralWCDecr.exists_X_eq (hc : ∀ p, Antitone (c · p)) (w : GeneralWCDecr P c Q) :
     ∃ w' : GeneralWCDecr P c Q, w'.X = ({x | P x ∧ Q.Witnessed x} : Finset E) :=
   ⟨⟨_, ⟨Finset.monotone_filter_right _ fun _ _ h ↦ h.1,
@@ -935,8 +932,8 @@ theorem nonempty_generalWCIncr_every_iff :
     fun h ↦ ⟨⟨{x | P x}, ⟨subset_rfl, rfl⟩,
       fun a ha ↦ (h a (Finset.mem_filter.1 ha).2).some⟩⟩⟩
 
-/-- A singleton set of an object with `P` all of whose members have `Q` exists just in case an
-object has both (62), so the truth condition of (60) is *some*. -/
+/-- The witness condition (62) for *exist* holds iff some object has both properties, so (60) has
+the truth condition of *some*. -/
 theorem nonempty_generalWCIncr_exist_iff [DecidableEq E] :
     Nonempty (GeneralWCIncr P .exist Q) ↔ GQ.some P Q.Witnessed :=
   ⟨fun ⟨w⟩ ↦
@@ -1046,8 +1043,8 @@ noncomputable def AnaphoraRef.set [Fintype E] (P : E → Prop) [DecidablePred P]
   | .maxset => {x | P x}
   | .compset => {x | P x ∧ ¬ Q.Witnessed x}
 
-/-- REFSET and COMPSET are disjoint, so a nonempty witness set within the one is not within the
-other, and no witness of (59a) supplies COMPSET, as (76) and (92) show for *most* and *a few*. -/
+/-- REFSET and COMPSET are disjoint, so no witness of (59a) supplies COMPSET, as (76) and (92) show
+for *most* and *a few*. -/
 theorem AnaphoraRef.disjoint_set_refset_compset [Fintype E] (P : E → Prop) [DecidablePred P]
     (Q : Ppty E) : Disjoint (AnaphoraRef.refset.set P Q) (AnaphoraRef.compset.set P Q) := by
   classical
@@ -1100,8 +1097,8 @@ def anaphora : WitnessCondition → AnaphoraRef
   | .generalIncr | .generalDecr | .particularExist => .refset
   | .particularNo | .particularFewComp => .compset
 
-/-- Every witnessed condition has a witness whose set lies in the condition's anaphora set, for
-(59b) under a relation closed downwards, so the anaphora set is read off the witnesses. -/
+/-- Every witnessed condition has a witness within its anaphora set, given a downward-closed
+relation for (59b). -/
 theorem exists_set_subset (wc : WitnessCondition)
     (hc : wc = .generalDecr → ∀ p, Antitone (c · p)) (w : wc.Witness P c Q) :
     ∃ w' : wc.Witness P c Q, wc.set w' ⊆ wc.anaphora.set P Q := by

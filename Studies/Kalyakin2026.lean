@@ -121,9 +121,8 @@ theorem sluicing_voice_blocked_convergent :
 
 /-! ### The *again* diagnostic -/
 
-/-- Under vVPE both the repetitive and the restitutive *again* survive, (52a–b), as both do
-under Persian vVPE ([toosarvandani-2009] (90)), which confirms that the deletion domain is the
-VP and not the vP. -/
+/-- Under vVPE both the repetitive and the restitutive *again* survive ((52a–b);
+[toosarvandani-2009] (90)). -/
 theorem vVPE_both_again :
     vStrandingVPE.Spares AgainReading.repetitive.site ∧
       vStrandingVPE.Spares AgainReading.restitutive.site := by decide

@@ -51,29 +51,23 @@ namespace Zimmermann2026
 
 open Quantifier Quantifier.GQ
 
-/-- Under the existential analysis (16b) the two scopings of *wani* under negation in (13)
-differ, since on the passenger model of [zimmermann-2008] the wide scoping holds and the narrow
-one fails. -/
+/-- Under the existential analysis (16b), the two scopings of *wani* under negation in (13) differ
+on the passenger model of [zimmermann-2008]. -/
 theorem wani_scopings_diverge :
     ¬ ((¬ ∃ x : Zimmermann2008.Faasinjee, Zimmermann2008.Daura x) ↔
       GQ.some (fun _ : Zimmermann2008.Faasinjee ↦ True) (¬ Zimmermann2008.Daura ·)) :=
   fun h ↦ Zimmermann2008.wani_narrow_scope_false (h.mpr Zimmermann2008.wani_wide_scope)
 
-/-- Under the choice-function analysis (16a) *bí* under negation, as in (15), is not the narrow
-reading. When the restrictor has two members, the negated pick and the negated existential
-differ on some predicate. -/
+/-- Under the choice-function analysis (16a), *bí* under negation, as in (15), is not the narrow
+reading when the restrictor has two members. -/
 theorem bi_reading_not_narrow {S E : Type*} (f : S → ChoiceFunction E) {s : S}
     {P : S → E → Prop} {a b : E} (ha : P s a) (hb : P s b) (hab : a ≠ b) :
     ¬ ∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ GQ.some (P s) VP := fun h ↦
   have h' := (Owusu2022.negation_narrow_iff f ⟨a, ha⟩).mp h
   hab ((h' a ha).trans (h' b hb).symm)
 
-/-- The review explains (15) by negation not being an intensional operator, so that it cannot
-shift the situation argument of the choice function away from the resource situation. An
-operator is extensional exactly when it cannot tell an argument whose situation it binds from
-the same argument with the situation fixed (`ModalLogic.isExtensionalAt_iff_forall_diag`), and
-pointwise negation is extensional, so under negation the bound and the free construals of the
-situation argument of *bí* coincide, for any function and restrictor. -/
+/-- Under negation, the bound and free construals of the situation argument of *bí* coincide, as the
+explanation of (15) requires. -/
 theorem bi_negation_construals_collapse {S E : Type*}
     (f : S → ChoiceFunction E) (s₀ : S) (P : S → E → Prop) (VP : E → S → Prop) :
     (fun p s ↦ ¬ p s) (fun s ↦ VP (f s (P s)) s) s₀ ↔

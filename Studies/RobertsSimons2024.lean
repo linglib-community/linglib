@@ -94,21 +94,20 @@ theorem cosOccurs_subset_cosPrecondition : cosOccurs t R P ⊆ cosPrecondition t
 
 /-! ### Why preconditions project (§3.1) -/
 
-/-- The precondition of a change of state can hold without the change, as when John smoked and
-still smokes, so accommodating it is consistent with *John didn't stop smoking* (§3.1). -/
+/-- The precondition of a change of state can hold without the change, so accommodating it is
+consistent with *John didn't stop smoking* (§3.1). -/
 theorem mem_cosPrecondition_diff_cosOccurs {i i' : ι} (hr : i ~[R] i') (hp : t.Prior (P i'))
     (hn : ¬ t.Result (P i)) : i ∈ cosPrecondition t R P \ cosOccurs t R P :=
   ⟨Phasal.denote_eq_zero_iff.not_left.2 ⟨i', hr, hp⟩, by simp [cosOccurs, Phasal.denote, hn]⟩
 
-/-- An entailment that holds only where the change occurs, as a consequence or concomitant of it
-does, is inconsistent with the negated trigger, which makes the precondition the safer thing to
-accommodate (§3.1). -/
+/-- An entailment holding only where the change occurs is inconsistent with the negated trigger
+(§3.1). -/
 theorem inter_compl_cosOccurs_eq_empty {F : Set ι} (hF : F ⊆ cosOccurs t R P) :
     F ∩ (cosOccurs t R P)ᶜ = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨h, hn⟩ ↦ hn (hF h)
 
-/-- In *John didn't stop smoking* (§3.1), with *stop* the English Fragment's entry, John having
-smoked is consistent with the negated trigger, since he may still smoke. -/
+/-- In *John didn't stop smoking*, with the Fragment's *stop*, John's having smoked is consistent
+with the negated trigger (§3.1). -/
 theorem stop_mem_cosPrecondition_diff_cosOccurs {i i' : ι} (hr : i ~[R] i') (h' : P i')
     (h : P i) :
     ∃ t, English.Verbs.stop.phasal = some t ∧ i ∈ cosPrecondition t R P \ cosOccurs t R P :=
@@ -138,9 +137,8 @@ private theorem ncard_raining : raining.ncard = 2 := Set.ncard_pair nofun
 private theorem ncard_univ_cell : (Set.univ : Set Cell).ncard = 3 := by
   rw [Set.ncard_univ, Nat.card_eq_fintype_card]; rfl
 
-/-- Relative to a context restricted to raining, the negative answer *Jane doesn't know that
-it's raining* is less probable than relative to one that leaves the rain open, so asserting it
-is more informative, and the two answers become equiprobable (§3.1). -/
+/-- Restricting the context to raining makes *Jane doesn't know that it's raining* less probable and
+as probable as its positive answer (§3.1). -/
 theorem uniformOn_raining_compl_knows :
     (uniformOn raining).real knowsᶜ < (uniformOn Set.univ).real knowsᶜ ∧
       (uniformOn raining).real knowsᶜ = (uniformOn raining).real knows := by
@@ -166,24 +164,19 @@ On the projective reading the speaker presumes a context `C` entailing the preco
 the event they raise, `C ⊆ pre` (§3.1); suppression is the case in which that presumption cannot
 be attributed to them. -/
 
-/-- In cases 1 and 2 of §3.2.1 projection is suppressed where someone who must accept the presumed
-context does not take the precondition to hold, the hearer in (23), whom the speaker knows to
-reject it, or the doubting speaker in (24). In (23) the context itself is agnostic, so the
-suppression does not come from a contradiction in the context. -/
+/-- Projection is suppressed when someone who must accept the presumed context doubts the
+precondition, as in (23) and (24) (cases 1 and 2 of §3.2.1). -/
 theorem not_presumes_of_doubt {C S pre : Set ι} (hS : S ⊆ C) (h : ¬ S ⊆ pre) : ¬ C ⊆ pre :=
   fun hp ↦ h (hS.trans hp)
 
-/-- In case 3 of §3.2.1 projection is suppressed where the precondition is at issue, since
-presuming a precondition that is an alternative of the question under discussion resolves it,
-which the speaker in (25) signals she cannot do. -/
+/-- Presuming a precondition that is an alternative of the question under discussion resolves it, so
+projection is suppressed in (25) (case 3 of §3.2.1). -/
 theorem resolves_of_presumes {C pre : Set ι} {Q : Question ι} (h : pre ∈ alt Q) (hp : C ⊆ pre) :
     C ∈ Q :=
   mem_of_exists_alt_subset ⟨_, h, hp⟩
 
-/-- In (28c), *If I discover later that I have not told the truth*, *discover* has the agent's
-prior ignorance among its preconditions, and a speaker who presumes that she is ignorant whether
-`P`, where `Dox` gives her beliefs, cannot also presume `P`, since she believes what she
-presumes ([stalnaker-1974]'s explanation, sharpened by the ignorance precondition (29)). -/
+/-- A speaker who presumes she is ignorant whether `P` cannot presume `P` ((28c), (29), after
+[stalnaker-1974]). -/
 theorem not_subset_of_presumes_ignorance {Dox : ι → Set ι} {C P : Set ι} {w : ι} (hw : w ∈ C)
     (hbel : Dox w ⊆ C) (hign : C ⊆ {v | ¬ Dox v ⊆ P}) : ¬ C ⊆ P :=
   fun hP ↦ hign hw (hbel.trans hP)
@@ -198,18 +191,15 @@ requirement that the local context entail the precondition. -/
 
 open Presupposition (Connective)
 
-/-- Filtering arises where the first clause asserts or supposes the precondition, or the other
-disjunct is its negation. The trigger is then evaluated in a context entailing the precondition,
-so no global presumption is attributable to the speaker; in disjunction the condition concerns
-the other disjunct whichever comes first (§4). -/
+/-- The local context entails the precondition when the first conjunct or antecedent does, or when
+the other disjunct's negation does (§4). -/
 theorem localContext_subset {C A pre : Set ι} :
     (A ⊆ pre → Connective.conj.localContext C A ⊆ pre ∧ Connective.cond.localContext C A ⊆ pre) ∧
       (Aᶜ ⊆ pre → Connective.disj.localContext C A ⊆ pre) :=
   ⟨fun h ↦ ⟨fun _ hw ↦ h hw.2, fun _ hw ↦ h hw.2⟩, fun h _ hw ↦ h hw.2⟩
 
-/-- The contrast in (44) is that, in a context that leaves the precondition open, a disjunctive
-antecedent whose other disjunct negates the precondition filters it, whereas a simple antecedent
-leaves the precondition to be presumed globally, which the open context forbids. -/
+/-- In a context leaving the precondition open, a disjunctive antecedent whose other disjunct
+negates it filters it, and a simple antecedent does not (44). -/
 theorem disjunctive_antecedent_filters {C pre : Set ι} (hopen : ¬ C ⊆ pre) :
     Connective.disj.localContext C preᶜ ⊆ pre ∧ ¬ Connective.cond.localContext C Set.univ ⊆ pre :=
   ⟨fun _ hw ↦ not_not.mp hw.2, fun h ↦ hopen fun _ hw ↦ h ⟨hw, trivial⟩⟩

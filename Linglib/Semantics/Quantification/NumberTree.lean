@@ -407,8 +407,7 @@ theorem variety_cont_plus_uniform_iff :
     · exact hno
     · exact ⟨variety_all.compl, cont_all.compl, plus_all.compl, uniform_all.compl⟩
 
-/-- The quantifier *at least two* is not uniform. Adding an individual to `A ∩ B` leaves it false
-at `(0, 0)` and makes it true at `(0, 1)`. -/
+/-- *At least two* is not uniform, since it is false at `(0, 0)` and true at `(0, 1)`. -/
 theorem not_uniform_two_le : ¬ Uniform fun _ b ↦ 2 ≤ b := fun h ↦ by
   have := (h.2 (a₁ := 0) (b₁ := 0) (a₂ := 0) (b₂ := 1) (by simp [compl_apply])
     (by simp [compl_apply])).2

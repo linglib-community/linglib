@@ -445,16 +445,15 @@ def PushCartsToStore (e : Finset Leg) : Prop := e.Nonempty ∧ ∃ k ∈ e, k.va
 
 instance : DecidablePred PushCartsToStore := fun _ ↦ by unfold PushCartsToStore; infer_instance
 
-/-- The fifty-minute event divides along time into its four trips, each of which reaches the
-store within a proper part of the runtime: the strata-based account admits the *for*-adverbial
-(Figure 6.2a). -/
+/-- The cart-pushing event divides along time into four trips each reaching the store, so the
+strata-based account admits the *for*-adverbial (Figure 6.2a). -/
 theorem pushCarts_stratified :
     StratifiedReference id (· < ·) PushCartsToStore (Finset.univ : Finset Leg) :=
   (algClosure_iff_exists_sup' _ _).2
     ⟨{{0, 1}, {2, 3}, {4, 5}, {6, 7}}, by decide, by decide +kernel, by decide +kernel⟩
 
-/-- The halfway legs form a temporal part of the event that does not reach the store, the
-offending event of §6.4.1, so the subregion presupposition fails (Figure 6.2b). -/
+/-- The halfway legs of §6.4.1 do not reach the store, so the subregion presupposition fails (Figure
+6.2b). -/
 theorem pushCarts_not_subregion :
     ¬ SubregionPresup id PushCartsToStore (Finset.univ : Finset Leg) := fun ⟨_, hdiv⟩ ↦
   absurd (hdiv {0, 2, 4, 6} ⟨by decide, {1, 3, 5, 7}, by decide,

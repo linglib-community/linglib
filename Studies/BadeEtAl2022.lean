@@ -157,9 +157,8 @@ open Inquisitive
 
 variable {Atom : Type*} [DecidableEq W] (M : Model W Atom) (φ : Formula Atom)
 
-/-- In InqB, support is a lower set, so inquisitive disjunction with the tautology is the
-tautology: the attentive content of (7a), where the alternatives properly include one another, is
-not expressible there, which is why the study keeps Hamblin sets. -/
+/-- In InqB inquisitive disjunction with the tautology is the tautology, so the attentive content of
+(7a) is not expressible there. -/
 theorem support_inqDisj_top :
     support M (.inqDisj φ Formula.bot.neg) = support M Formula.bot.neg := by
   simp only [support, himp_self, sup_top_eq]
@@ -190,8 +189,7 @@ theorem might_anatomy : Anatomy .epistemic := by decide
 /-- *allowed to* does not (§3.2). -/
 theorem allowed_not_anatomy : ¬ Anatomy .deontic := by decide
 
-/-- Specifically, the deontic fallacies fail the order and the dynamics criteria: canonical and
-reversed do not differ, and the flat structure still produces the fallacy (§2.4). -/
+/-- The deontic fallacies fail the order and the dynamics criteria (§2.4). -/
 theorem allowed_fails_order_and_dynamics :
     (contrasts .deontic .canonicalVsReversed).verdict = .noDifference ∧
       (contrasts .deontic .flatVsBaseline).verdict ≠ .noDifference := by decide

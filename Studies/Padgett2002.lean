@@ -308,8 +308,7 @@ def cand20c : Candidate 3 :=
   cand { starts := {0}, value := ![true, true, true] }
     { starts := {0, 1, 2}, value := ![true, false, true] }
 
-/-- In (20) the attested form violates SPREAD(COLOR) three times and the transparent (20c) six,
-since each of its three [round] autosegments misses two of the three vowels. -/
+/-- In (20) the attested form violates SPREAD(COLOR) three times and the transparent (20c) six. -/
 theorem profile_20 :
     ofLex ((tableau pullArIn 1).profile cand20b) = ![0, 0, 3, 4] ∧
       ofLex ((tableau pullArIn 1).profile cand20c) = ![0, 0, 6, 4] := by
@@ -408,9 +407,8 @@ theorem eqOn_colorSpreading (src tgt : Segment) :
     Set.EqOn (colorSpreading src tgt) src ↑color :=
   classes_eq_featureClass.2.2.2.2 ▸ eqOn_piecewise_of_le src tgt le_rfl
 
-/-- No spreading of a Color node gives the suffix vowel of [son-lar], since it would be round,
-nor not spreading, since /A/ lacks [back] (9). Nor does any give that of [petrolʸ-ü]: from the
-vowel it would be back, from the lateral unround, and /I/ lacks color (23). -/
+/-- No spreading or non-spreading of a Color node yields the suffix vowel of [son-lar] (9) or of
+[petrolʸ-ü] (23). -/
 theorem ne_colorSpreading : colorSpreading o A' ≠ a ∧ A' ≠ a ∧ colorSpreading o I ≠ ü ∧
     colorSpreading l' I ≠ ü ∧ I ≠ ü := by
   decide

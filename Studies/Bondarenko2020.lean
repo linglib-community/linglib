@@ -179,9 +179,8 @@ theorem support_neg_report :
     Function.support (-report τ about P Q g₁ t) = Function.support (report τ about P Q g₁ t) := by
   ext; simp
 
-/-- With a nominalized CP, a predicate of contentful individuals, the presupposition
-is that an individual with the content started before the matrix time; it does not depend on
-the world of evaluation, so it cannot require the content to be true there, (64), (65). -/
+/-- With a nominalized CP, the presupposition is that an individual with the content started before
+the matrix time, independent of the world ((64), (65)). -/
 theorem existsStrong_thetaTh_comp_ne_zero_iff [Nonempty E] [Anchor X I] (p : I → Prop) :
     Trivalent.existsStrong (fun e ↦ thetaTh τ about P (fun _ _ ↦ Anchor.comp p) t e w) ≠ 0 ↔
       PreExists τ (Anchor.comp p) t.fst :=

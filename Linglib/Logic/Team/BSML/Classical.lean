@@ -100,9 +100,8 @@ theorem realize_nec : Realize M ψ.nec w ↔ □[M.accessible] (Realize M ψ) w 
 
 variable [DecidableEq W] {t : Finset W}
 
-/-- An `NE`-free formula is supported by `t` iff it is true at every world of `t`, and
-    anti-supported iff it is false at every world of `t` ([anttila-2021] Proposition 2.2.16,
-    both polarities at once). -/
+/-- An `NE`-free formula is supported (anti-supported) by `t` iff it is true (false) at every world
+of `t` ([anttila-2021] Proposition 2.2.16). -/
 theorem eval_iff_forall_realize (hNE : φ.NEFree) (b : Bool) (t : Finset W) :
     eval M b φ t ↔ ∀ w ∈ t, (Realize M φ w ↔ b) := by
   induction φ generalizing b t with

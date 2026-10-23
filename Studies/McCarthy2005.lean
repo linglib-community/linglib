@@ -388,9 +388,8 @@ where
   diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 6
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6)]
 
-/-- (25): attraction to the unmarked — the prefixed *jaftaʕilu*, where epenthesis would
-make an (LL) foot, is the attractor, and *ftaʕala* keeps its misaligned cluster:
-OP-DEP-V >> SWP >> ALIGN-L(Stem, σ). -/
+/-- In (25), the ranking OP-DEP-V >> SWP >> ALIGN-L(Stem, σ) selects attraction to the unmarked,
+*ftaʕala* keeping its misaligned cluster. -/
 theorem attraction_to_the_unmarked :
     (tableau eighth {.a, .b, .c} ranking).optimal = {.a} := by decide
 
@@ -421,9 +420,7 @@ where
   diag : List (ℕ × ℕ) := Correspondence.diagonalPairs 7
   epenthetic : List (ℕ × ℕ) := [(0, 0), (1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7)]
 
-/-- (27): different members attract different edges — the prefixed imperfectives block
-epenthesis at the left edge via OP-DEP-V, the C-suffixed forms force shortening at the right
-edge via OP-IDENT-WT — under the single ranking (21). -/
+/-- In (27), different members attract different edges under the single ranking (21). -/
 theorem two_attractors : (tableau tenth {.a, .b, .c, .d, .e} ranking).optimal = {.a} := by
   decide
 
@@ -512,9 +509,8 @@ def drink : Cand → Paradigm Seg (List Seg)
 where
   input : List Seg := [.sh, .schwa, .r, .b]
 
-/-- (32): majority rules — the unaffixed *ʃrəb* joins the five CCəC members against the two
-CəCC members, OP-MAX-V being violated once in each direction by every CCəC–CəCC pair
-(twenty against twenty-four marks). -/
+/-- In (32), majority rules, the unaffixed *ʃrəb* joining the five CCəC members against the two CəCC
+members. -/
 theorem majority_rules : (tableau drink {.a, .b, .c, .d} moroccanRanking).optimal = {.a} := by
   decide
 

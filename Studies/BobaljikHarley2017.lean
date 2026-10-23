@@ -177,8 +177,8 @@ def moveToVoice (c : Arguments Number) : T :=
   | none => .node .voice [.node .root [.trace 0 .root],
       .adjoin .voice [.terminal .root .root, .terminal .voice .voice]]
 
-/-- Moved to Voice, the Root is separated from the external argument by no maximal projection, so
-(1) would let an external argument condition it; (1′) does not, since Voice′ is phrasal. -/
+/-- Moved to Voice, the Root may be conditioned by the external argument under (1) but not under
+(1′). -/
 theorem mayCondition_moveToVoice (e : Number) :
     MayCondition (moveToVoice (unergative e)) ⟨[1, 1, 0]⟩ ⟨[0]⟩ ∧
       ¬ MayCondition' (moveToVoice (unergative e)) ⟨[1, 1, 0]⟩ ⟨[0]⟩ := by
@@ -225,9 +225,8 @@ instance (s : Arguments Number) : Decidable (Fits s) := List.decidableBAll _ _
 
 theorem length_applicativeRows : applicativeRows.length = 5 := by decide +kernel
 
-/-- Of the single-argument frames only the unaccusative one fits the applicative rows, so the
-suppletive intransitives are unaccusative and their subjects internal arguments, local to the
-Root (16). -/
+/-- Of the single-argument frames only the unaccusative fits the applicative rows, so the suppletive
+intransitives' subjects are internal arguments (16). -/
 theorem frame_eq_unaccusative (n : Number) :
     Fits (unaccusative n) ∧ ¬ Fits (unergative n) := by
   cases n <;> decide +kernel
@@ -259,8 +258,8 @@ theorem mayCondition'_iff_configuration (n : Number) (k : Configuration) :
     MayCondition' (k.tree n) k.rootPos ⟨[0]⟩ ↔ k = .sister := by
   cases n <;> cases k <;> decide
 
-/-- Under (1) the internal argument may condition the Root as its sister and as the specifier of
-the categorizer, but not adjoined to a low projection, whose lower segment is maximal. -/
+/-- Under (1) the internal argument may condition the Root except when adjoined to a low projection.
+-/
 theorem mayCondition_iff_configuration (n : Number) (k : Configuration) :
     MayCondition (k.tree n) k.rootPos ⟨[0]⟩ ↔ k ≠ .lowAdjunct := by
   cases n <;> cases k <;> decide

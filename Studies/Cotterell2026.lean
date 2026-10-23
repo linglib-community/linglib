@@ -92,8 +92,8 @@ theorem le_next_softmaxModel (hd : ∀ o u, 0 ≤ d o u) (u : List α) (o : Opti
           ENNReal.ofReal_le_one.2 (exp_le_one_iff.2 (by linarith [hd o u]))
     _ = Fintype.card (Option α) := by simp
 
-/-- Proposition 1(a): a nonnegative difficulty measure whose end difficulty after a prefix of
-length `t - 1` is at most `f t`, with `∑ exp (-f t)` divergent, gives a tight softmax model. -/
+/-- A nonnegative difficulty measure with end difficulty bounded by `f` and `∑ exp (-f t)` divergent
+gives a tight softmax model (Proposition 1(a)). -/
 theorem isTight_softmaxModel (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞) :
     (softmaxModel d).IsTight := by
@@ -151,8 +151,8 @@ theorem exists_difficulty_eq_surprisal (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → 
     fun u ↦ -log (∑ o', exp (-d o' u)),
     fun o u ↦ by rw [surprisal_next_ofMeasure_stringMeasure hd hf hdiv]; ring⟩
 
-/-- Proposition 1(b): a constant bound `C` on the end difficulty bounds the expected length of
-the softmax model by `(1 - η) / η`, for `η = exp (-C)` over the size of the extended alphabet. -/
+/-- A constant bound `C` on end difficulty bounds the expected length of the softmax model by `(1 -
+η) / η` (Proposition 1(b)). -/
 theorem lintegral_length_softmaxModel_le (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
     (hC : ∀ u, d none u ≤ C) :
     ∫⁻ x, (x.length : ℝ≥0∞) ∂(softmaxModel d).stringMeasure ≤

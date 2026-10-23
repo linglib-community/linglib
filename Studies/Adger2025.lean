@@ -185,8 +185,7 @@ def askedWhoBought : Parthood Node where
     | .v => some .you | .O => some .C' | .C' => some .who | .T' => some .who
     | .v' => some .who | .O' => some .what | _ => none
 
-/-- In the wh-island (1b) of chapter 5, `who` fills the 2-part of the embedded `C'`, and no
-derivation makes `what` a part of the matrix `C`. -/
+/-- In the wh-island (1b) of chapter 5, no derivation makes `what` a part of the matrix `C`. -/
 theorem wh_island : ¬ askedWhoBought.Reaches .what .C :=
   IsDomain.not_reaches (S := {Node.C', .T', .v', .O', .V', .what}) (b := .C') (c := .who)
     (by decide +kernel) rfl (by decide) (by decide) (by decide) (by decide +kernel) (by decide)
@@ -336,8 +335,8 @@ private theorem reaches_iff : ∀ p ∈ cases, p.1.Reaches p.2 .C ↔ p.1.twoPar
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     exact iff_of_false (trapped _ _ (by decide) (by decide)) (by decide)
 
-/-- The rows on extraction from nominals and subjects, (31)–(44) of chapter 6 and (59) of
-chapter 7: the mover reaches `C` exactly in the acceptable ones. -/
+/-- The mover reaches `C` exactly in the acceptable rows on extraction from nominals and subjects
+((31)–(44) of chapter 6, (59) of chapter 7). -/
 theorem nominal_rows :
     ∀ e ∈ Examples.all, ∀ P ∈ structureOf e, e.feature? "wh" ≠ some "in situ, echo question only" →
       (P.Reaches (moverOf e) .C ↔ e.judgment = .acceptable) := by

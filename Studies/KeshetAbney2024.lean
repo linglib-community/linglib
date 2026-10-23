@@ -244,9 +244,8 @@ theorem felicitous_discourse_iff (m : Modal) (hw : h .w = world w₀) :
     Formula.realize_labelDef, felicitous_modal, felicitous_continuation_iff S h hw, implies_true,
     and_true, true_and]
 
-/-- (83): with `might`, the discourse is felicitous at `w₀` iff, whenever a
-world with a satisfier is accessible from `w₀`, `w₀` itself has a unique
-satisfier. -/
+/-- With *might*, the discourse is felicitous at `w₀` iff accessible satisfiers imply a unique
+satisfier at `w₀` (83). -/
 theorem felicitous_discourseMight_iff (hw : h .w = world w₀) :
     discourseMight.expandSelf.Felicitous S.model h ↔
       ((∃ u e, S.acc w₀ u ∧ S.desc u e) → ∃! e, S.desc w₀ e) := by

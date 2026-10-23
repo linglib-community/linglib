@@ -338,8 +338,8 @@ theorem truthConditional_iff_support_neg_neg :
   simp only [TruthConditional, SetLike.ext_iff, mem_support_neg_neg]
   exact forall_congr' fun s ↦ Iff.comm
 
-/-- By the Ramsey test (Proposition 2.5.2), for a statement `α`, `α → ψ` is supported at `s`
-iff `ψ` is supported at the `α`-worlds of `s`. -/
+/-- For a statement `α`, `α → ψ` is supported at `s` iff `ψ` is supported at the `α`-worlds of `s`
+(Proposition 2.5.2). -/
 theorem mem_support_impl_iff_of_truthConditional [DecidableRel M.val] {α : Formula Atom}
     (hα : TruthConditional M α) :
     s ∈ support M (.impl α ψ) ↔ s.filter (fun w ↦ {w} ∈ support M α) ∈ support M ψ := by

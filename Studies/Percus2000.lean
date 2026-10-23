@@ -183,8 +183,8 @@ theorem scenario_allon :
     canadianReading .allon transparentDP ∧ ¬ canadianReading .allon allOpaque := by
   decide
 
-/-- The second scenario: the sentence is judged false, and the one indexing that would make it
-true is the transparent-predicate indexing (33), which Generalization X excludes. -/
+/-- In the second scenario only the transparent-predicate indexing (33) makes the sentence true, and
+Generalization X excludes it. -/
 theorem scenario_pierre :
     canadianReading .pierre transparentPredicate ∧ ¬ transparentPredicate.GenX ∧
       ¬ canadianReading .pierre transparentDP ∧ ¬ canadianReading .pierre allOpaque := by
@@ -247,8 +247,8 @@ theorem scenario_unaware :
     alwaysReading .unaware ⟨1⟩ ∧ ¬ (⟨1⟩ : QLF).GenY ∧ ¬ alwaysReading .unaware ⟨2⟩ := by
   decide
 
-/-- The indexing (38), the adverb's pronoun bound by the embedded λ, makes the sentence true
-where it is judged true, and the matrix binding would not. -/
+/-- The indexing (38), binding the adverb's pronoun by the embedded λ, makes the sentence true where
+it is judged true, and matrix binding does not. -/
 theorem scenario_deluded :
     alwaysReading .deluded ⟨2⟩ ∧ (⟨2⟩ : QLF).GenY ∧ ¬ alwaysReading .deluded ⟨1⟩ := by
   decide

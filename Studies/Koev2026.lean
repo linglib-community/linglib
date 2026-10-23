@@ -122,10 +122,8 @@ def FitsModifierRowsPos (s : PositiveStandard) : Prop :=
 instance : DecidablePred FitsModifierRowsPos := fun _ ↦ by
   unfold FitsModifierRowsPos; infer_instance
 
-/-- Read off the positive form, the judgments fix the maximum standard without Interpretive
-Economy, where Koev claims for this case only a strong expectation of strong force (§2). The
-fragment's *confident*, whose contextual standard takes *completely*
-([cariani-santorio-wellwood-2024]), is a counterexample to this reading of the modifiers. -/
+/-- The positive-form judgments fix the maximum standard without Interpretive Economy (§2), though
+*confident* takes *completely* with a contextual standard ([cariani-santorio-wellwood-2024]). -/
 theorem fitsModifierRowsPos_iff {s : PositiveStandard} :
     FitsModifierRowsPos s ↔ s = .maxEndpoint := by
   cases s <;> decide
@@ -179,10 +177,8 @@ instance (σ : String → Option PositiveStandard) : Decidable (EntailmentRows �
 instance (σ : String → Option PositiveStandard) : Decidable (DoubleDenialRows σ) := by
   unfold DoubleDenialRows; infer_instance
 
-/-- The fragment's standards predict the judgments: a comparison class with *tall* (13a) but not
-with *full* (13b, fn. 6) or *believe* (14b); *not bent* entails *straight* (15a) and *not doubt*
-*believe* (17a), but *not tall* leaves *short* open (16a); and only *tall* and *short* can both
-be denied (15b)–(17b). The fragment has no *likely* (14a). -/
+/-- The fragment's standards predict the judgments of (13a), (13b, fn. 6), (14b), (15a), (16a),
+(17a) and (15b)–(17b), though the fragment has no *likely* (14a). -/
 theorem rows_standardOf :
     ComparisonClassRows standardOf ∧ EntailmentRows standardOf ∧ DoubleDenialRows standardOf := by
   decide
@@ -192,9 +188,8 @@ def standardWith (s t : PositiveStandard) (form : String) : Option PositiveStand
   (gradabilityIn [{ English.Verbs.believe.toVerb with lexicalStandard := some s },
     { English.Verbs.doubt.toVerb with lexicalStandard := some t }] form).map (·.standard)
 
-/-- The rows of §3 hold of *believe* and *doubt* with lexical standards `s` and `t` exactly when
-the two are complementary endpoints, so they exclude the contextual standard of
-[hawthorne-rothschild-spectre-2016] without Interpretive Economy. -/
+/-- The rows of §3 hold of *believe* and *doubt* exactly when their standards are complementary
+endpoints, excluding the contextual standard of [hawthorne-rothschild-spectre-2016]. -/
 theorem furtherEvidence_iff {s t : PositiveStandard} :
     ComparisonClassRows (standardWith s t) ∧ EntailmentRows (standardWith s t) ∧
       DoubleDenialRows (standardWith s t) ↔ s.Complementary t := by
@@ -203,17 +198,16 @@ theorem furtherEvidence_iff {s t : PositiveStandard} :
 section Credence
 variable {α D : Type*} [LinearOrder D] [OrderTop D] (Cr : α → D)
 
-/-- *Believe*, at the maximum standard of a credence scale, and *doubt*, at the minimum standard
-of its dual, are contradictory (17): not doubting is believing, and one cannot deny both. -/
+/-- *Believe* at the maximum of a credence scale and *doubt* at the minimum of its dual are
+contradictory (17). -/
 theorem isCompl_maxStandardPos_minStandardPos_dual :
     IsCompl {p | MaxStandardPos Cr p} {p | MinStandardPos (OrderDual.toDual ∘ Cr) p} :=
   (Kennedy2007.isCompl_minStandardPos_maxStandardPos_dual (OrderDual.toDual ∘ Cr)).symm
 
 end Credence
 
-/-- If credences range over [lassiter-2017]'s closed probability scale, Interpretive Economy's
-defaults give *doubt* the maximum of the dual scale, as *empty* opposite *full*, and (17) needs
-*doubt* to take the minimum lexically, or the scale to lack a minimum, as fn. 4 suggests. -/
+/-- On [lassiter-2017]'s closed probability scale, Interpretive Economy gives *doubt* the dual
+maximum, so (17) needs a lexical minimum or no minimum (fn. 4). -/
 theorem not_complementary_probability :
     ¬ (Boundedness.ofOrder Lassiter2017.Probability).defaultStandard.Complementary
         (Boundedness.ofOrder Lassiter2017.Probability).dual.defaultStandard := by

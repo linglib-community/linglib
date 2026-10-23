@@ -178,8 +178,8 @@ definite is undefined exactly where the definite is. -/
 theorem neg_the_eq_zero_iff : -the P x = 0 ↔ ¬ WeakUnique P ∨ P x = 0 :=
   SignType.neg_eq_zero_iff.trans the_eq_zero_iff
 
-/-- The empty restrictor is weakly unique, so the definite of an empty noun is false rather
-than undefined — uniqueness without existence, the predicative reading of (13). -/
+/-- The definite of an empty noun is false rather than undefined, the predicative reading of (13).
+-/
 theorem the_neg_one (x : E) : the (fun _ ↦ -1) x = -1 :=
   congrFun (the_eq_of_weakUnique fun _ h ↦ by simp at h) x
 
@@ -319,9 +319,8 @@ theorem mem_atMost_answer {w : Set E} {x : E} :
       (Set.Ici_subset_Ici.1 (h {y} (Set.singleton_subset_iff.2 hy)))
   · exact fun h X hX ↦ Set.Ici_subset_Ici.2 (hX.trans h)
 
-/-- Adjectival *only* is the exclusive schema at the question *what things are P*. The
-schema of [coppock-beaver-2014] over the answers, on the entailment scale, evaluated at an
-extension, is the entry (57) of the predicate with that extension. -/
+/-- Adjectival *only* is the exclusive schema of [coppock-beaver-2014] at the question *what things
+are P*, giving the entry (57). -/
 theorem only_answer_apply [DecidableRel (Exclusive (E := E))] (w : Set E)
     [DecidablePred (· ∈ w)] (x : E) :
     Focus.Particles.only (· ⊆ ·) (Set.range answer) (answer {x}) w =
@@ -636,9 +635,8 @@ theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → SignType
   · simp only [existsHaug_eq_one_iff, meetWeak_eq_one_iff]
     exact ⟨fun ⟨y, hy, hq⟩ ↦ hu y hy ▸ hq, fun hq ↦ ⟨x, hx, hq⟩⟩
 
-/-- An indefinite the definite fails to block has, at some world of the context, a
-restrictor without a unique satisfier, so its reading under iota has no defined update —
-no determinate indefinites (§3.3). -/
+/-- An indefinite the definite fails to block has no defined update under iota, so there are no
+determinate indefinites (§3.3). -/
 theorem no_determinate_indefinites [Nontrivial E] [DecidablePred (WeakUnique (E := E))]
     (F : W → (E → SignType) → SignType) (π : W → E → SignType) (G : W → E → SignType)
     {C : Set W}
@@ -653,9 +651,8 @@ section AntiUniqueness
 variable [DecidablePred (WeakUnique (E := E))] [DecidableRel (Exclusive (E := E))]
   {P Q : (E → SignType)}
 
-/-- By Quantifier Projection (A.4.2), negated *the only P* under the existential shift
-presupposes that there is a `P` and denies that any sole `P` bears `Q`, the anti-uniqueness
-reading (89)–(94). -/
+/-- By Quantifier Projection (A.4.2), negated *the only P* under the existential shift presupposes a
+`P` and denies that any sole `P` bears `Q` ((89)–(94)). -/
 theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
     -ex (the (only P)) Q =
       meetWeak (existsHaug fun x ↦ P x ⊔ 0)
@@ -673,8 +670,8 @@ theorem argumental_anti_uniqueness_presup (hQ : IsBivalent Q) :
     -ex (the (only P)) Q = 0 ↔ ∀ x, P x ≠ 1 := by
   simp [ex, the_only, only, hQ.ne_zero, nonpos_iff_ne_one]
 
-/-- The argumental anti-uniqueness reading is true exactly when there is a `P` and no sole
-`P` bears `Q`, as in (80a) with several talks, one of which Anna gave. -/
+/-- The argumental anti-uniqueness reading is true exactly when there is a `P` and no sole `P` bears
+`Q`, as in (80a). -/
 theorem argumental_anti_uniqueness (hQ : IsBivalent Q) :
     -ex (the (only P)) Q = 1 ↔
       (∃ x, P x = 1) ∧ ∀ x, P x = 1 → Exclusive P x → Q x ≠ 1 := by
@@ -697,9 +694,8 @@ theorem isBivalent_toRelational {poss : E → E → SignType} {P : E → SignTyp
     (hposs : ∀ x y, poss x y ≠ 0) (y : E) : IsBivalent (toRelational poss P y) :=
   (isBivalent_iff_forall_ne_zero _).2 fun x ↦ by simp [toRelational, hP.ne_zero x, hposs x y]
 
-/-- Possessives do not compete with the definite article (§4). A possessive predicate is not
-classically equivalent to *the*, since a weakly unique noun true of an individual the
-possessor does not own separates them. -/
+/-- Possessives do not compete with the definite article, since a possessive predicate is not
+classically equivalent to *the* (§4). -/
 theorem possessive_not_competitor [DecidableEq E]
     [DecidablePred (WeakUnique (E := E))] {poss : E → E → SignType} {x y : E}
     (h : poss x y = -1) : ¬ ClassicallyEquivalent (fun P ↦ toRelational poss P y) the := by
@@ -719,7 +715,7 @@ theorem possessive_not_competitor [DecidableEq E]
   exact absurd this (by decide)
 
 /-- On the indeterminate reading of an argumental possessive (134), *he didn't make his only
-appearance* presupposes an appearance and denies that he made any sole appearance of his. -/
+appearance* presupposes an appearance and denies he made any sole one. -/
 theorem possessive_anti_uniqueness [DecidableRel (Exclusive (E := E))]
     {poss : E → E → SignType} {P Q : E → SignType} (hQ : IsBivalent Q)
     (hposs : ∀ x y, poss x y ≠ 0) (y : E) :

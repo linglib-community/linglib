@@ -141,9 +141,8 @@ theorem run_two_forms :
     spellout (unaccusative .singular) run ≠ spellout (unaccusative .plural) run := by
   decide
 
-/-- The suppletive items compete only at their own index, so a non-suppletive
-intransitive root receives no exponent from `vocabulary`, which is why List-1
-roots must be distinct before spell-out (§2.1). -/
+/-- The suppletive items compete only at their own index, so a non-suppletive intransitive root
+receives no exponent (§2.1). -/
 theorem index_local (c : Arguments Number) : spellout c sing = none := by
   unfold spellout site
   rcases h : c .internal with _ | n
@@ -170,10 +169,8 @@ def conditions : ArgumentRole → Bool
 
 theorem isErgative_conditions : Alignment.IsErgative conditions := by decide
 
-/-- **Suppletion is not agreement.** Hiaki case is nominative–accusative ((29)), and no
-setting of accessibility derives ergative agreement from accusative case
-(`Bobaljik2008.not_isErgative_controls_accusative`), so the pattern is local Vocabulary-Item
-competition, conditioned by the internal argument. -/
+/-- No accessibility setting makes accusative case control the conditioning of Hiaki suppletion, so
+suppletion is not agreement (29). -/
 theorem suppletion_not_agreement (t : Bobaljik2008.CaseCategory) :
     Bobaljik2008.controls .accusative t ≠ conditions := fun h ↦
   Bobaljik2008.not_isErgative_controls_accusative t (h ▸ isErgative_conditions)
@@ -224,9 +221,8 @@ def cahootHead :
     Morphology.Realization.Interpreted Unit (Neighborhood (Finset Allosemy.Feature)) Unit String :=
   toInterpreted cahootLF
 
-/-- The caboodle item is interpreted inside its frame and has an empty
-`interp` fiber elsewhere — a gap, the meaning-side analogue of an empty
-realization fiber, so a licensing failure rather than allosemy (§2.3). -/
+/-- The idiom's root is interpreted only inside its frame, so elsewhere it fails licensing rather
+than showing allosemy (§2.3). -/
 theorem cahoot_interp_gap :
     cahootHead.interp () (embedding {.cat .n}) = {"a conspiracy"} ∧
       cahootHead.interp () ∅ = ∅ := by
@@ -283,8 +279,8 @@ def study : Lexicon String := ⟨.v, "stud", "y", "physics"⟩
 /-- The noun *student* of (21b), with the object *physics*. -/
 def studentOfPhysics : Lexicon String := ⟨.n, "stud", "ent", "physics"⟩
 
-/-- **Selection across categories.** The verb and the noun of (21) have their object merged with
-one head exactly when the root takes the object as its complement. -/
+/-- The verb and the noun of (21) merge their object with the same head iff the root takes the
+object as complement. -/
 theorem selector_eq_iff (a : Attachment) :
     selector (a.tree study) a.argPos = selector (a.tree studentOfPhysics) a.argPos ↔
       a = .complement := by

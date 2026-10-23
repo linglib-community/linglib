@@ -257,8 +257,8 @@ inductive Ent5 where
   | door
   deriving DecidableEq, Repr
 
-/-- (5): *John walked toward the house. The door was open.* Under direct realization the second
-utterance has no backward-looking center; with the door anchored to the house it has one. -/
+/-- In *John walked toward the house. The door was open.* (5), the second utterance has a
+backward-looking center only with the door anchored to the house. -/
 theorem ex5 :
     let u1 : Utterance Ent5 GrammaticalRole := ⟨[⟨.john, .subject, false⟩, ⟨.house, .other, false⟩]⟩
     let u2 : Utterance Ent5 GrammaticalRole := ⟨[⟨.door, .subject, false⟩]⟩
@@ -272,9 +272,8 @@ inductive Ent7 where
   | productZ
   deriving DecidableEq, Repr
 
-/-- (7): with the second-person pronoun introducing a forward-looking center every utterance has
-one; without it the if-clause has none, and the third utterance has one only when the
-if-clause is treated as embedded and the first utterance is its previous utterance. -/
+/-- In (7) every utterance has a forward-looking center when the second-person pronoun introduces
+one, and otherwise the if-clause has none. -/
 theorem ex7 :
     let u1 : Utterance Ent7 GrammaticalRole :=
       ⟨[⟨.you, .subject, true⟩, ⟨.productZ, .object, false⟩]⟩
@@ -299,9 +298,8 @@ inductive Ent9 where
   | lid
   deriving DecidableEq, Repr
 
-/-- (9): with finite clauses as utterances none of the four clauses after the first has a
-backward-looking center; with sentences as utterances the second sentence continues the egg
-vases, as does the second clause once its bases and bodies are anchored to the vases. -/
+/-- In (9) no clause after the first has a backward-looking center when finite clauses are
+utterances, but the second sentence does when sentences are. -/
 theorem ex9 :
     let u1 : Utterance Ent9 GrammaticalRole := ⟨[⟨.vases, .subject, false⟩]⟩
     let u2 : Utterance Ent9 GrammaticalRole :=
@@ -327,9 +325,8 @@ inductive Ent10 where
   | dealer
   deriving DecidableEq, Repr
 
-/-- (10): the corner cupboard and Branicki tie under grammatical-function ranking, so both are
-backward-looking centers of the next utterance, against CB uniqueness; with linear-order
-disambiguation the earlier mention, the cupboard, is the unique one. -/
+/-- In (10) the corner cupboard and Branicki tie as backward-looking centers under
+grammatical-function ranking, and linear order picks the cupboard. -/
 theorem ex10 :
     let u227 : Utterance Ent10 GrammaticalRole :=
       ⟨[⟨.drawing, .subject, false⟩, ⟨.cupboard, .other, false⟩, ⟨.branicki, .other, false⟩]⟩
@@ -357,10 +354,8 @@ inductive Ent14 where
   | patch
   deriving DecidableEq, Repr
 
-/-- (14) and (16): the two definitions of the previous utterance of a clause after an adjunct
-clause pull in opposite directions. In (14) the main clause supplies the center *John* that the
-when-clause lacks, in (16) the adjunct clause supplies the center *the patch* that the main
-clause lacks. -/
+/-- The two definitions of the previous utterance after an adjunct clause pull in opposite
+directions in (14) and (16). -/
 theorem ex14_ex16 :
     let u1 : Utterance Ent14 GrammaticalRole := ⟨[⟨.john, .subject, false⟩]⟩
     let u2 : Utterance Ent14 GrammaticalRole :=

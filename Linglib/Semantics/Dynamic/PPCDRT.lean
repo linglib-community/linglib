@@ -144,10 +144,8 @@ theorem reciprocity_strengthens_underspecified (h : reciprocityCond uAnaph uAnt 
 
 variable {uAnaph uAnt S Δ}
 
-/-- Without distribution, and where the two drefs are defined in the same states, reciprocity is
-a property of the dependency between antecedent and anaphor: its domain and codomain coincide,
-and it is irreflexive. This is [haug-dalrymple-2020]'s gloss of (39), cumulative identity across
-states combined with distinctness within each. -/
+/-- Without distribution, reciprocity says the antecedent-anaphor dependency is irreflexive with
+equal domain and codomain ([haug-dalrymple-2020]'s gloss of (39)). -/
 theorem reciprocityCond_empty_iff (hdef : ∀ s ∈ S, s uAnaph ≠ ⊥ ↔ s uAnt ≠ ⊥) :
     reciprocityCond uAnaph uAnt S ∅ ↔
       (dep uAnt uAnaph S).dom = (dep uAnt uAnaph S).cod ∧ (dep uAnt uAnaph S).IsIrrefl := by
