@@ -77,6 +77,15 @@ sentence-level counterpart of `Data/Wordlist/`.
   taxonomy, so a `parse?` table can read it. A truth-value judgment in a context is the `verdict`
   field, never a feature: the response of a truth task is a field of the datum, like the mark of
   an acceptability task, which on such a row records only well-formedness.
+* A datum answers a question put about the expression, and each question has its own response
+  channel. Is it acceptable? — the mark in `judgment`, fitted through `Judgment.band`. Is it true
+  in this context? — `verdict`, fitted through `FitsVerdict`. Can it mean this? — that reading's
+  entry in `readings`. Is this variant acceptable in the same frame? — its entry in
+  `alternatives`. Is it felicitous, though well formed? — the `felicity` feature that
+  `JudgedFelicitous` reads. A study fits its prediction against the channel whose question the
+  paper asked. Implication judgments, whether an utterance conveys an inference, and relational
+  judgments, whether two sentences are equivalent or contradictory, have no channel yet and sit
+  in claim columns.
 * Studies decide propositions over rows, so every lookup reduces in the kernel. `digits?` reads a
   numeral by a fold over its characters because `String.toNat?` is well-founded recursive and
   does not.
