@@ -8,44 +8,32 @@ public import Mathlib.Data.List.Lookmap
 /-!
 # Dependent case by phase
 
-The configurational rules of `Syntax/Case/Dependent.lean` run domain by domain: each phase
-head's spell-out domain has its own high, low and elsewhere cases, the domains spell out
-innermost first, and a case valued in an inner domain — or by a lexical head — is never
-overwritten, so a dative valued in the verb phrase survives the clause. Functional heads may
-also value case under Agree, each probing the highest caseless NP of the domain it agrees
-into. A language's case assigners are the table of domain rules together with the Agree cases,
-so a purely configurational system, a purely Agree-based one, and the hybrids are points in one
-space.
-Which functional heads a derivation contains is a fact about it, so assignment takes the
-probes present with the domain each agrees into.
+The configurational rules of `Syntax/Case/Dependent.lean` run domain by domain, innermost first,
+each phase head's domain with its own high, low and elsewhere cases, and functional heads value
+case under Agree on the closest caseless NP they reach; a value is never overwritten, so a dative
+valued in the verb phrase survives the clause. A language's case assigners are the table of
+domain rules with the Agree cases, so configurational, Agree-based and hybrid systems are points
+in one space. Assignment over domains (`CaseAssigners.assignBy`) takes what each domain sees,
+c-command among its NPs and its probes as parameters; here the NPs are listed by height with
+their domains set by hand (`PhasedNP`, `CaseAssigners.assign`), which is that assignment with
+c-command as list order (`CaseAssigners.assign_eq_assignBy`), and `Case/SyntacticObject.lean`
+reads them off an object.
 
 ## Main definitions
 
-* `agreeValue`: Agree into a domain, valuing the highest NP there whose case is unvalued.
-* `PhasedNP`: an NP's position for case, its lexical case, the phase head whose domain merges
-  it, and whether it has shifted to the clause edge.
+* `agreeValue`, `agreeValueOn`: Agree on the highest caseless NP of a domain, or the closest.
+* `PhasedNP`: an NP's lexical case, the phase whose domain merges it, and whether it shifted.
 * `CaseAssigners`: the phase heads in spell-out order with their rules, and the Agree cases.
-* `CaseAssigners.assign`: case for every NP of a derivation, the NPs of any type, each with its
-  position.
+* `CaseAssigners.assignBy`, `CaseAssigners.assign`: assignment over domains, and by the list.
 
 ## Main results
 
-* `agreeValue_getElem?`: Agree values at most one NP, an unvalued one in its domain.
-* `agreeValue_eq_self_iff`, `agreeValue_eq_map`: Agree values nothing iff the probe seeking an
-  unvalued NP in its domain finds no goal, and otherwise values the goal it finds.
-* `extends_agreeValue`, `Case.Valuation.ValuedLE.agreeValue`: Agree extends the valuation by its
-  value, and preserves which of two derivations values more nominals.
-* `CaseAssigners.extends_assign`: assignment extends the lexical valuation by what the assigners
-  value.
-* `CaseAssigners.assign_length`: assignment is total.
-* `CaseAssigners.assign_getElem?_of_some`: lexical case is kept.
-* `CaseAssigners.case_mem_cases`: a caseless NP is valued only with a case the assigners
-  mention.
-* `CaseAssigners.mechanism_ne_unmarked`: assigners with no elsewhere case never value an NP as
-  unmarked.
-* `CaseAssigners.exists_probe_of_agree`, `CaseAssigners.mechanism_eq_agree`: a case valued under
-  Agree is the case of a head that probes, and assigners with no configurational rule value under
-  Agree alone.
+* `agreeValue_eq_self_iff`, `agreeValue_eq_map`: Agree values the goal a probe finds, if any.
+* `CaseAssigners.assign_eq_assignBy`: the list is assignment over domains in list order.
+* `CaseAssigners.extends_assign`, `CaseAssigners.extends_assignBy`: assignment extends the
+  lexical valuation by what the assigners value.
+* `CaseAssigners.mechanism_ne_unmarked`, `CaseAssigners.exists_probe_of_agree`,
+  `CaseAssigners.mechanism_eq_agree`: what values a case, given the assigners.
 
 ## References
 
@@ -192,6 +180,52 @@ theorem agreeValue_map {α' β' : Type*} {P' : α' → Bool} {v' : β'} (f : α 
     · by_cases hx : P x <;> simp [hx, hP, hv, ih]
     · simp [ih]
 
+/-- Agree reaches the same NP under a narrower domain that still holds the first unvalued NP of
+    the wider one. -/
+theorem agreeValue_congr {Q : α → Bool} (hQ : ∀ x, Q x → P x)
+    (hfirst : ∀ (i : ℕ) (x : α), s[i]? = some (x, none) → P x →
+      (∀ j < i, ∀ y, s[j]? = some (y, none) → ¬ P y) → Q x) :
+    agreeValue Q v s = agreeValue P v s := by
+  induction s with
+  | nil => rfl
+  | cons p s ih =>
+    obtain ⟨x, a⟩ := p
+    by_cases hp : a.isNone && P x
+    · simp only [Bool.and_eq_true, Option.isNone_iff_eq_none] at hp
+      obtain ⟨rfl, hPx⟩ := hp
+      have hQx : Q x := hfirst 0 x rfl hPx fun j hj ↦ absurd hj (Nat.not_lt_zero j)
+      simp [hQx, hPx]
+    · have hq : ¬ (a.isNone && Q x) := fun h ↦ hp (by
+        simp only [Bool.and_eq_true] at h ⊢
+        exact ⟨h.1, hQ x h.2⟩)
+      rw [agreeValue_cons, agreeValue_cons, ite_eq_right hq, ite_eq_right hp]
+      refine congrArg _ (ih fun i y hy hPy hpre ↦ hfirst (i + 1) y hy hPy fun j hj z hz ↦ ?_)
+      rcases j with _ | j
+      · simp only [List.getElem?_cons_zero, Option.some.injEq, Prod.mk.injEq] at hz
+        obtain ⟨rfl, rfl⟩ := hz
+        simpa using hp
+      · exact hpre j (by omega) z hz
+
+/-- Agree with closeness `lt`, `lt y x` saying `y` is closer to the probe than `x`: the unvalued
+    NP of the domain that no other is closer than, the first of them if several are. -/
+def agreeValueOn (lt : α → α → Prop) [DecidableRel lt] (P : α → Bool) (v : β)
+    (s : Valuation α β) : Valuation α β :=
+  agreeValue (fun x ↦ P x && !s.any fun q ↦ q.2.isNone && P q.1 && decide (lt q.1 x)) v s
+
+/-- On NPs listed closest first, Agree with closeness is Agree over the list. -/
+theorem agreeValueOn_eq_agreeValue {lt : α → α → Prop} [DecidableRel lt]
+    (h : ∀ (i j : ℕ) (x y : α), s[i]? = some (x, none) → P x → s[j]? = some (y, none) →
+      P y → (lt x y ↔ i < j)) :
+    agreeValueOn lt P v s = agreeValue P v s := by
+  refine agreeValue_congr (fun x hx ↦ by simp_all) fun i x hx hPx hpre ↦ ?_
+  simp only [hPx, Bool.true_and, Bool.not_eq_true', List.any_eq_false, Bool.and_eq_true,
+    Option.isNone_iff_eq_none, decide_eq_true_eq, not_and]
+  intro ⟨y, w⟩ hq ⟨hw, hPy⟩ hyx
+  obtain ⟨j, hj⟩ := List.mem_iff_getElem?.1 hq
+  simp only at hw hPy hyx
+  subst hw
+  exact hpre j ((h j i y x hj hPy hx hPx).1 hyx) y hj hPy
+
 end Agree
 
 /-- An NP's position for case is any case a lexical head has valued, the phase head whose
@@ -235,23 +269,25 @@ variable {α : Type*} (g : CaseAssigners) (np : α → PhasedNP)
 
 /-- The head `h` probing the domain of `c` values what the assigners let it. The NPs are of
     any type, `np` giving each its position. -/
-def probePass (c h : Cat) (s : Valuation α (Case × Mechanism)) : Valuation α (Case × Mechanism) :=
+def CaseAssigners.probePass (c h : Cat) (s : Valuation α (Case × Mechanism)) :
+    Valuation α (Case × Mechanism) :=
   match g.agreeCase h with
   | some k => agreeValue (fun x ↦ (np x).visible c) (k, .agree) s
   | none => s
 
 /-- One spell-out domain: its dependent rules, then its probes in order, then its elsewhere
     case. -/
-def domainPass (probes : List (Cat × Cat)) (c : Cat) (s : Valuation α (Case × Mechanism)) :
+def CaseAssigners.domainPass (probes : List (Cat × Cat)) (c : Cat)
+    (s : Valuation α (Case × Mechanism)) :
     Valuation α (Case × Mechanism) :=
   (g.rules c).unmarkedPass (fun x ↦ (np x).spellOut == c) <|
-    (probes.filter (·.2 == c)).foldl (fun st hp ↦ probePass g np c hp.1 st)
+    (probes.filter (·.2 == c)).foldl (fun st hp ↦ g.probePass np c hp.1 st)
       ((g.rules c).dependentPass (fun x ↦ (np x).visible c) s)
 
 /-- The domains spelling out in the assigners' order. -/
 def CaseAssigners.derive (probes : List (Cat × Cat)) (s : Valuation α (Case × Mechanism)) :
     Valuation α (Case × Mechanism) :=
-  (g.domains.map (·.1)).foldl (fun st c ↦ domainPass g np probes c st) s
+  (g.domains.map (·.1)).foldl (fun st c ↦ g.domainPass np probes c st) s
 
 /-- Case for every NP, the domains spelling out in the assigners' order. `probes` lists the
     functional heads present with the phase head whose domain each agrees into. -/
@@ -260,6 +296,47 @@ def CaseAssigners.assign (probes : List (Cat × Cat)) (xs : List α) :
   g.derive np probes (lexicalValuation (fun x ↦ (np x).lexicalCase) xs)
 
 end Assign
+
+/-! ### Assignment over domains -/
+
+section AssignBy
+
+variable {α ι : Type*} (g : CaseAssigners) (cat : ι → Cat) (visible : ι → α → Bool)
+  (above : ι → α → α → Prop) [∀ i, DecidableRel (above i)]
+  (probes : ι → List (Case × (α → Bool))) (spellOut : ι → α → Bool)
+
+/-- One domain: its dependent rules over the NPs it sees, `above i` ordering them by c-command,
+    then each of its probes valuing the closest NP it reaches, then its elsewhere case. -/
+def CaseAssigners.domainPassBy (i : ι) (s : Valuation α (Case × Mechanism)) :
+    Valuation α (Case × Mechanism) :=
+  (g.rules (cat i)).unmarkedPass (spellOut i) <|
+    (probes i).foldl (fun st p ↦ agreeValueOn (above i) p.2 (p.1, .agree) st)
+      ((g.rules (cat i)).dependentPassOn (above i) (visible i) s)
+
+/-- The domains in the order `order`, innermost first. -/
+def CaseAssigners.assignBy (order : List ι) (s : Valuation α (Case × Mechanism)) :
+    Valuation α (Case × Mechanism) :=
+  order.foldl (fun st i ↦ g.domainPassBy cat visible above probes spellOut i st) s
+
+/-- The valuations assignment over the domains `order` can make: those of the rules of a domain,
+    and the case of one of its probes under Agree. -/
+def CaseAssigners.valuationsBy (order : List ι) : Set (Case × Mechanism) :=
+  {v | (∃ i ∈ order, v ∈ (g.rules (cat i)).valuations) ∨
+    v.2 = .agree ∧ ∃ i ∈ order, ∃ p ∈ probes i, p.1 = v.1}
+
+/-- Assignment over domains extends the valuation by what the rules and the probes value. -/
+theorem CaseAssigners.extends_assignBy (order : List ι) (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ g.valuationsBy cat probes order)
+      (g.assignBy cat visible above probes spellOut order s) := by
+  refine Valuation.Extends.foldl _ (fun i hi st ↦ ?_) s
+  have hrules : ∀ v ∈ (g.rules (cat i)).valuations, v ∈ g.valuationsBy cat probes order :=
+    fun v hv ↦ .inl ⟨i, hi, hv⟩
+  refine (((g.rules (cat i)).extends_dependentPassOn _ _ st).mono hrules).trans <|
+    (Valuation.Extends.foldl (F := fun p st ↦ agreeValueOn (above i) p.2 (p.1, .agree) st)
+      _ (fun p hp st ↦ extends_agreeValue (.inr ⟨rfl, i, hi, p, hp, rfl⟩) st) _).trans <|
+    ((g.rules (cat i)).extends_unmarkedPass _ _).mono hrules
+
+end AssignBy
 
 /-! ### What the assigners value -/
 
@@ -296,27 +373,28 @@ section Assign
 
 variable {α : Type*} (g : CaseAssigners) (np : α → PhasedNP)
 
-theorem extends_probePass {probes : List (Cat × Cat)} {hp : Cat × Cat} (hmem : hp ∈ probes)
+theorem CaseAssigners.extends_probePass {probes : List (Cat × Cat)} {hp : Cat × Cat}
+    (hmem : hp ∈ probes)
     (c : Cat) (s : Valuation α (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations probes) (probePass g np c hp.1 s) := by
-  unfold probePass
+    s.Extends (· ∈ g.valuations probes) (g.probePass np c hp.1 s) := by
+  unfold CaseAssigners.probePass
   split
   · exact extends_agreeValue (.inr ⟨rfl, hp, hmem, ‹_›⟩) s
   · exact .refl s
 
-theorem extends_domainPass (probes : List (Cat × Cat)) (c : Cat)
+theorem CaseAssigners.extends_domainPass (probes : List (Cat × Cat)) (c : Cat)
     (s : Valuation α (Case × Mechanism)) :
-    s.Extends (· ∈ g.valuations probes) (domainPass g np probes c s) :=
+    s.Extends (· ∈ g.valuations probes) (g.domainPass np probes c s) :=
   (((g.rules c).extends_dependentPass _ s).mono fun _ h ↦
       g.rules_valuations_subset probes c h).trans <|
     (Valuation.Extends.foldl _ (fun _ hmem ↦
-      extends_probePass g np (List.mem_of_mem_filter hmem) c) _).trans <|
+      g.extends_probePass np (List.mem_of_mem_filter hmem) c) _).trans <|
       ((g.rules c).extends_unmarkedPass _ _).mono fun _ h ↦ g.rules_valuations_subset probes c h
 
 theorem CaseAssigners.extends_derive (probes : List (Cat × Cat))
     (s : Valuation α (Case × Mechanism)) :
     s.Extends (· ∈ g.valuations probes) (g.derive np probes s) :=
-  Valuation.Extends.foldl _ (fun c _ st ↦ extends_domainPass g np probes c st) s
+  Valuation.Extends.foldl _ (fun c _ st ↦ g.extends_domainPass np probes c st) s
 
 /-- Assignment extends the lexical valuation by what the assigners value. -/
 theorem CaseAssigners.extends_assign (probes : List (Cat × Cat)) (xs : List α) :
@@ -381,5 +459,69 @@ theorem CaseAssigners.mechanism_eq_agree (hg : ∀ d ∈ g.domains, d.2 = {}) {c
     · exact hm
 
 end Assign
+
+/-! ### The list as an assignment over domains -/
+
+private theorem map_fst_of_extends {α β : Type*} {p : β → Prop} {s t : Valuation α β}
+    (h : s.Extends p t) : t.map Prod.fst = s.map Prod.fst := by
+  induction h with
+  | nil => rfl
+  | cons hab _ ih => rw [List.map_cons, List.map_cons, hab.1, ih]
+
+/-- Assignment by the list is assignment by domains, the NPs ordered by c-command as they are
+    listed and each probe reaching what its domain sees. -/
+theorem CaseAssigners.assign_eq_assignBy {α : Type*} [DecidableEq α] (g : CaseAssigners)
+    (np : α → PhasedNP) (probes : List (Cat × Cat)) {xs : List α} (hxs : xs.Nodup) :
+    g.assign np probes xs = g.assignBy id (fun c x ↦ (np x).visible c)
+      (fun _ x y ↦ xs.idxOf x < xs.idxOf y)
+      (fun c ↦ (probes.filter (·.2 == c)).filterMap fun hp ↦
+        (g.agreeCase hp.1).map (·, fun x ↦ (np x).visible c))
+      (fun c x ↦ (np x).spellOut == c) (g.domains.map (·.1))
+      (lexicalValuation (fun x ↦ (np x).lexicalCase) xs) := by
+  have hord : ∀ st : Valuation α (Case × Mechanism), st.map Prod.fst = xs →
+      ∀ (i j : ℕ) (x y : α) (a b : Option (Case × Mechanism)), st[i]? = some (x, a) →
+        st[j]? = some (y, b) → (xs.idxOf x < xs.idxOf y ↔ i < j) := by
+    intro st hst i j x y a b hi hj
+    have hxi : xs[i]? = some x := by rw [← hst, List.getElem?_map, hi]; rfl
+    have hyj : xs[j]? = some y := by rw [← hst, List.getElem?_map, hj]; rfl
+    obtain ⟨hi', rfl⟩ := List.getElem?_eq_some_iff.1 hxi
+    obtain ⟨hj', rfl⟩ := List.getElem?_eq_some_iff.1 hyj
+    simp [hxs]
+  have hstep : ∀ c (st : Valuation α (Case × Mechanism)), st.map Prod.fst = xs →
+      g.domainPass np probes c st = g.domainPassBy id (fun c x ↦ (np x).visible c)
+        (fun _ x y ↦ xs.idxOf x < xs.idxOf y)
+        (fun c ↦ (probes.filter (·.2 == c)).filterMap fun hp ↦
+          (g.agreeCase hp.1).map (·, fun x ↦ (np x).visible c))
+        (fun c x ↦ (np x).spellOut == c) c st := by
+    intro c st hst
+    rw [CaseAssigners.domainPass, CaseAssigners.domainPassBy, id,
+      Rules.dependentPassOn_eq_dependentPass _ fun i j x y hi _ hj _ ↦
+        hord st hst i j x y _ _ hi hj]
+    congr 1
+    have hst' := (map_fst_of_extends ((g.rules c).extends_dependentPass
+      (fun x ↦ (np x).visible c) st)).trans hst
+    generalize (g.rules c).dependentPass (fun x ↦ (np x).visible c) st = st' at hst'
+    induction probes.filter (·.2 == c) generalizing st' with
+    | nil => rfl
+    | cons hp L ih =>
+      rw [List.foldl_cons, List.filterMap_cons]
+      unfold CaseAssigners.probePass
+      rcases hk : g.agreeCase hp.1 with _ | k
+      · exact ih st' hst'
+      · rw [Option.map_some, List.foldl_cons, agreeValueOn_eq_agreeValue fun i j x y hi _ hj _ ↦
+          hord st' hst' i j x y _ _ hi hj]
+        exact ih _ ((map_fst_of_extends (extends_agreeValue (p := fun _ ↦ True) trivial st')).trans
+          hst')
+  rw [CaseAssigners.assign, CaseAssigners.derive, CaseAssigners.assignBy]
+  have h0 : (lexicalValuation (fun x ↦ (np x).lexicalCase) xs).map Prod.fst = xs := by
+    simp [lexicalValuation, Valuation.initial, Function.comp_def]
+  generalize lexicalValuation (fun x ↦ (np x).lexicalCase) xs = st at h0
+  induction g.domains.map (·.1) generalizing st with
+  | nil => rfl
+  | cons c L ih =>
+    rw [List.foldl_cons, List.foldl_cons, hstep c st h0]
+    refine ih _ ?_
+    rw [← hstep c st h0]
+    exact (map_fst_of_extends (g.extends_domainPass np probes c st)).trans h0
 
 end Minimalist

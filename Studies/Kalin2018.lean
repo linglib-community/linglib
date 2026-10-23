@@ -292,20 +292,21 @@ theorem assign_eq_map_license (g : CaseAssigners)
   have key (c : Cat) (L : List Licenser)
       (hL : ∀ l ∈ L, l.domain = c ∧ g.agreeCase l.head = some (κ l.head))
       (st : Valuation PhasedNP CaseValue) :
-      L.foldl (fun st l ↦ probePass g id c l.head st) (st.map φ) =
+      L.foldl (fun st l ↦ g.probePass id c l.head st) (st.map φ) =
         (L.foldl (fun st l ↦ l.agree st) st).map φ := by
     induction L generalizing st with
     | nil => rfl
     | cons l L ih =>
       obtain ⟨hdom, hcase⟩ := hL l (mem_cons_self ..)
-      have hstep : probePass g id c l.head (st.map φ) = (l.agree st).map φ := by
-        simp only [probePass, hcase, Licenser.agree, hdom]
+      have hstep : g.probePass id c l.head (st.map φ) = (l.agree st).map φ := by
+        simp only [CaseAssigners.probePass, hcase, Licenser.agree, hdom]
         exact agreeValue_map (P := (·.visible c)) (P' := (·.visible c)) (v := .licenser l)
           id (CaseValue.assigned κ) (fun _ ↦ rfl) rfl st
       rw [foldl_cons, foldl_cons, hstep, ih (fun l hl ↦ hL l (mem_cons_of_mem _ hl))]
   have hcycle (c : Cat) (st : Valuation PhasedNP CaseValue) :
-      domainPass g id (ls.map fun l ↦ (l.head, l.domain)) c (st.map φ) = (cycle ls c st).map φ := by
-    rw [domainPass, rules_eq_of g hg, DependentCase.Rules.unmarkedPass_of_none _ _ rfl,
+      g.domainPass id (ls.map fun l ↦ (l.head, l.domain)) c (st.map φ) =
+        (cycle ls c st).map φ := by
+    rw [CaseAssigners.domainPass, rules_eq_of g hg, DependentCase.Rules.unmarkedPass_of_none _ _ rfl,
       DependentCase.Rules.dependentPass_of_none _ _ rfl rfl, filter_map, foldl_map, cycle]
     exact key c _ (fun l hl ↦ by
       obtain ⟨hl, hc⟩ := mem_filter.1 hl
@@ -316,7 +317,7 @@ theorem assign_eq_map_license (g : CaseAssigners)
       Function.comp_def, CaseValue.assigned]
   rw [CaseAssigners.assign, CaseAssigners.derive, license, hinit]
   suffices ∀ st : Valuation PhasedNP CaseValue, (g.domains.map (·.1)).foldl
-      (fun st c ↦ domainPass g id (ls.map fun l ↦ (l.head, l.domain)) c st) (st.map φ) =
+      (fun st c ↦ g.domainPass id (ls.map fun l ↦ (l.head, l.domain)) c st) (st.map φ) =
       ((g.domains.map (·.1)).foldl (fun st c ↦ cycle ls c st) st).map φ by
     exact this _
   intro st
