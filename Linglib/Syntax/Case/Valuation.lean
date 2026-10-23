@@ -86,11 +86,12 @@ def fill (f : ℕ → α → Option β) (s : Valuation α β) : Valuation α β 
 def valueOf [DecidableEq α] (a : α) (s : Valuation α β) : Option β := (s.lookup a).join
 
 /-- The unvalued nominals `P` selects with their positions, highest first. -/
-def unvaluedEntries (P : α → Bool) (s : Valuation α β) : List (ℕ × α) :=
-  (s.zipIdx.filter fun p ↦ p.1.2.isNone && P p.1.1).map fun p ↦ (p.2, p.1.1)
+def unvaluedEntries (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List (ℕ × α) :=
+  (s.zipIdx.filter fun p ↦ p.1.2.isNone && decide (P p.1.1)).map fun p ↦ (p.2, p.1.1)
 
 /-- The positions of the unvalued nominals `P` selects, highest first. -/
-def unvalued (P : α → Bool) (s : Valuation α β) : List ℕ := (unvaluedEntries P s).map Prod.fst
+def unvalued (P : α → Prop) [DecidablePred P] (s : Valuation α β) : List ℕ :=
+  (unvaluedEntries P s).map Prod.fst
 
 @[simp] theorem length_initial (v : α → Option β) (xs : List α) :
     (initial v xs).length = xs.length := length_map ..
@@ -119,17 +120,17 @@ theorem fill_getElem?_of_none {f : ℕ → α → Option β} {s : Valuation α �
   rw [fill_getElem?]
   rcases s[i]? with _ | ⟨x, _ | v⟩ <;> simp
 
-theorem mem_unvaluedEntries {P : α → Bool} {s : Valuation α β} {i : ℕ} {x : α} :
+theorem mem_unvaluedEntries {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} {x : α} :
     (i, x) ∈ unvaluedEntries P s ↔ s[i]? = some (x, none) ∧ P x := by
   simp only [unvaluedEntries, mem_map, mem_filter, mem_zipIdx_iff_getElem?, Bool.and_eq_true,
-    Option.isNone_iff_eq_none, Prod.mk.injEq]
+    Option.isNone_iff_eq_none, decide_eq_true_eq, Prod.mk.injEq]
   constructor
   · rintro ⟨⟨⟨y, v⟩, j⟩, ⟨hj, rfl, hy⟩, rfl, rfl⟩
     exact ⟨hj, hy⟩
   · rintro ⟨hx, hP⟩
     exact ⟨((x, none), i), ⟨hx, rfl, hP⟩, rfl, rfl⟩
 
-theorem mem_unvalued {P : α → Bool} {s : Valuation α β} {i : ℕ} :
+theorem mem_unvalued {P : α → Prop} [DecidablePred P] {s : Valuation α β} {i : ℕ} :
     i ∈ unvalued P s ↔ ∃ x, s[i]? = some (x, none) ∧ P x := by
   simp only [unvalued, mem_map, Prod.exists, exists_and_right, exists_eq_right]
   exact exists_congr fun _ ↦ mem_unvaluedEntries
