@@ -35,6 +35,15 @@ divide them into contiguous classes (`not_contiguous_continuant_and_voice`): (3.
 * `Parker2002.Contiguous`: a set of obstruent classes is contiguous on a ranking, that is, the
   preimage of an order-connected set (`contiguous_iff_exists_ordConnected`).
 
+## Main results
+
+* `Parker2002.Class.toSonority_monotone`: the modal hierarchy conflates Table 5.28.
+* `Parker2002.le_iff_hierarchy_le`: every ranking strictly monotone for the product order is a
+  hierarchy of (3.6).
+* `Parker2002.not_contiguous_continuant_and_voice`: no ranking divides the obstruents into
+  contiguous classes of both [continuant] and [voice].
+* `Parker2002.contiguous_hierarchy`: the classes each hierarchy of (3.6) keeps contiguous.
+
 ## References
 
 * [parker-2002]: the modal hierarchy (3.3) (p. 62), the obstruent hierarchies (3.6) and their
@@ -105,16 +114,12 @@ def hierarchy (o : Ordering) : Obstruent → ℕ
   | ⟨false, true⟩ => if o = .lt then 3 else 2
   | ⟨true, true⟩ => 4
 
-/-- The hierarchies of (3.6) keep fricatives above stops and voiced obstruents above voiceless
-ones. -/
 theorem strictMono_hierarchy (o : Ordering) : StrictMono (hierarchy o) := by
   revert o
   simp only [StrictMono]
   decide +kernel
 
-/-- (3.6) is exhaustive: a ranking that keeps fricatives above stops and voiced obstruents above
-voiceless ones orders the classes as the hierarchy fixed by how it compares the voiceless
-fricatives with the voiced stops. -/
+/-- Every ranking strictly monotone for the product order is a hierarchy of (3.6). -/
 theorem le_iff_hierarchy_le {α : Type*} [LinearOrder α] {r : Obstruent → α} (hr : StrictMono r)
     (x y : Obstruent) :
     r x ≤ r y ↔ hierarchy (compare (r voicelessFricative) (r voicedStop)) x ≤
@@ -186,7 +191,7 @@ def toSonority : Class → Sonority
   | glide => .glide
   | highCentral | schwa | high | mid | low => .vowel
 
-/-- The modal hierarchy conflates Table 5.28, merging adjacent classes. -/
+/-- The modal hierarchy conflates Table 5.28 (p. 240). -/
 theorem toSonority_monotone : Monotone toSonority := by
   intro a b
   change a.rank ≤ b.rank → _
@@ -208,7 +213,6 @@ instance (r : Obstruent → α) (S : Set Obstruent) [DecidablePred (· ∈ S)] :
     Decidable (Contiguous r S) := by
   unfold Contiguous; infer_instance
 
-/-- A set is contiguous exactly when it is the preimage of an order-connected set. -/
 theorem contiguous_iff_exists_ordConnected {r : Obstruent → α} {S : Set Obstruent} :
     Contiguous r S ↔ ∃ I : Set α, I.OrdConnected ∧ S = r ⁻¹' I := by
   refine ⟨fun h ↦ ⟨{x | ∃ a ∈ S, ∃ b ∈ S, r a ≤ x ∧ x ≤ r b}, ⟨?_⟩, ?_⟩, ?_⟩
@@ -220,7 +224,6 @@ theorem contiguous_iff_exists_ordConnected {r : Obstruent → α} {S : Set Obstr
   · rintro ⟨I, hI, rfl⟩ a ha b hb c hac hcb
     exact hI.out ha hb ⟨hac, hcb⟩
 
-/-- The classes that [continuant] and [voice] pick out are natural classes of the obstruents. -/
 example (v : Bool) :
     IsNaturalClass (Finset.univ.image column)
         ((Finset.univ.filter (·.continuant = v)).image column) ∧
@@ -229,19 +232,18 @@ example (v : Bool) :
   revert v
   decide +kernel
 
-/-- However the obstruent classes are ranked, ties allowed, [continuant] and [voice] do not both
-divide them into contiguous classes: a class of least rank shares [continuant] with one of its
-neighbours and [voice] with the other, and the lower of the two lies between it and the other. -/
+/-- No ranking divides the obstruents into contiguous classes of both [continuant] and [voice]. -/
 theorem not_contiguous_continuant_and_voice (r : Obstruent → α) :
     ¬ ((∀ v, Contiguous r {o | o.continuant = v}) ∧ ∀ v, Contiguous r {o | o.voice = v}) := by
   rintro ⟨hc, hv⟩
+  -- the lower of the two neighbours of a least class lies between it and the other neighbour
   obtain ⟨m, hm⟩ := Finite.exists_min r
   rcases le_total (r ⟨!m.continuant, m.voice⟩) (r ⟨m.continuant, !m.voice⟩) with h | h
   · simpa using hc m.continuant m rfl ⟨m.continuant, !m.voice⟩ rfl _ (hm _) h
   · simpa using hv m.voice m rfl ⟨!m.continuant, m.voice⟩ rfl _ (hm _) h
 
-/-- Hierarchy (3.6a) keeps the classes of [continuant] contiguous, Parker's default (3.6b) those
-of [voice], and the tie (3.6c) none of the four. -/
+/-- (3.6a) keeps the classes of [continuant] contiguous, (3.6b) those of [voice], and (3.6c)
+none. -/
 theorem contiguous_hierarchy (v : Bool) :
     (Contiguous (hierarchy .gt) {o | o.continuant = v} ∧
       ¬ Contiguous (hierarchy .gt) {o | o.voice = v}) ∧
