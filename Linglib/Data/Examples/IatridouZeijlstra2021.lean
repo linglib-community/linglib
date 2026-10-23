@@ -52,7 +52,7 @@ def iz2021_s11b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("ai", "canceled")] }
+    paperFeatures := [("adverbial", "in the 5 years that I have been here, LB adverbial"), ("continuation", "ignorance"), ("section", "1"), ("ai", "canceled")] }
 
 def iz2021_s12 : Datum :=
   { id := "iz2021_s12"
@@ -65,7 +65,7 @@ def iz2021_s12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("ai", "canceled")] }
+    paperFeatures := [("adverbial", "in the last 5 years, LB adverbial"), ("continuation", "denial"), ("section", "1"), ("ai", "canceled")] }
 
 def iz2021_s22a : Datum :=
   { id := "iz2021_s22a"
@@ -78,7 +78,7 @@ def iz2021_s22a : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("adverbial", "in years"), ("ai", "not cancelable")] }
+    paperFeatures := [("continuation", "ignorance"), ("section", "1"), ("adverbial", "in years"), ("ai", "not cancelable")] }
 
 def iz2021_s22b : Datum :=
   { id := "iz2021_s22b"
@@ -91,7 +91,7 @@ def iz2021_s22b : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("adverbial", "in years"), ("ai", "not cancelable")] }
+    paperFeatures := [("continuation", "denial"), ("section", "1"), ("adverbial", "in years"), ("ai", "not cancelable")] }
 
 def iz2021_s23 : Datum :=
   { id := "iz2021_s23"

@@ -39,8 +39,10 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
 * The modal and deontic scales, the polarity facts of Chapter 3 and the presupposition theory
   of Section 1.1 are not formalized, and with them their example rows, the understatement and
   anomaly judgments of Section 2.5 and the intonation rows among them.
-* The example rows are read by the `…_rows` theorems, each judgment beside the fact that
-  derives it, the quantifiers on a domain of four individuals.
+* The example rows are read by `Datum.Fits` theorems, each with its `Datum.ReadCount`: the
+  quantifiers on a domain of four individuals, the cardinal tests through `CardinalTest.claim`
+  at the row's base numeral, and the connective lexicalizations through
+  `NegationRoute.licensed`.
 
 ## References
 
@@ -258,7 +260,7 @@ inductive ConnWorld where
   | onlyA
   | onlyB
   | both
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- *A or B*, inclusive. -/
 def orConn : ConnWorld → Prop
@@ -270,6 +272,20 @@ def andConn : ConnWorld → Prop
   | .both => True
   | _ => False
 
+instance : DecidablePred orConn := fun w ↦
+  match w with
+  | .neither => .isFalse fun h ↦ h
+  | .onlyA => .isTrue trivial
+  | .onlyB => .isTrue trivial
+  | .both => .isTrue trivial
+
+instance : DecidablePred andConn := fun w ↦
+  match w with
+  | .neither => .isFalse fun h ↦ h
+  | .onlyA => .isFalse fun h ↦ h
+  | .onlyB => .isFalse fun h ↦ h
+  | .both => .isTrue trivial
+
 /-- Negating both disjuncts. -/
 def ConnWorld.swap : ConnWorld → ConnWorld
   | .neither => .both
@@ -279,6 +295,9 @@ def ConnWorld.swap : ConnWorld → ConnWorld
 
 /-- Compatibility with a lower negation for a connective. -/
 def CompatibleConn (C : ConnWorld → Prop) : Prop := ∃ w, C w ∧ C (ConnWorld.swap w)
+
+instance (C : ConnWorld → Prop) [DecidablePred C] : Decidable (CompatibleConn C) :=
+  inferInstanceAs (Decidable (∃ w, C w ∧ C w.swap))
 
 theorem orConn_compatible : CompatibleConn orConn := ⟨.onlyA, trivial, trivial⟩
 
@@ -300,26 +319,49 @@ section Data
 
 open Examples
 
-/-- The cardinal rows of Section 1.21: *three* asserts its lower bound and implicates the upper,
-(1.59); suspension runs up the scale only, (1.58b); *in fact more* cancels the implicature while
-*only three, in fact fewer* contradicts an assertion, (1.60). -/
+/-- Horn's tests on a cardinal assertion with base `n`, (1.58)–(1.60): suspension in either
+direction, cancelling the upper bound, and contradicting the assertion of *only*. -/
+inductive CardinalTest where
+  | suspendUpward
+  | suspendDownward
+  | cancelUpward
+  | contradictOnly
+  deriving DecidableEq, Repr
+
+/-- The claim a test makes at base `n`: a suspension proposes a strictly stronger reading, and a
+cancellation or a contradiction a consistent continuation of the assertion. -/
+def CardinalTest.claim : CardinalTest → ℕ → Prop
+  | .suspendUpward, n => Comparison.ge.interval (n + 1) ⊂ Comparison.ge.interval n
+  | .suspendDownward, n => Comparison.ge.interval (n - 1) ⊂ Comparison.ge.interval n
+  | .cancelUpward, n => (Comparison.ge.interval n ∩ Comparison.gt.interval n).Nonempty
+  | .contradictOnly, n =>
+      ((Comparison.ge.interval n ∩ Comparison.le.interval n) ∩
+        Comparison.lt.interval n).Nonempty
+
+instance (t : CardinalTest) (n : ℕ) : Decidable (t.claim n) :=
+  match t with
+  | .suspendUpward => decidable_of_iff (n < n + 1) Set.Ici_ssubset_Ici.symm
+  | .suspendDownward => decidable_of_iff (n < n - 1) Set.Ici_ssubset_Ici.symm
+  | .cancelUpward => .isTrue ⟨n + 1, n.le_succ, n.lt_succ_self⟩
+  | .contradictOnly => .isFalse fun ⟨_, ⟨hge, _⟩, hlt⟩ ↦ absurd (lt_of_le_of_lt hge hlt)
+      (lt_irrefl n)
+
+/-- A cardinal row's test with its base numeral. -/
+def cardinal? (e : Datum) : Option (CardinalTest × ℕ) := do
+  pure (← e.parse? "construction"
+      [("suspension of the upper bound", .suspendUpward),
+        ("suspension of the lower bound", .suspendDownward),
+        ("cancelling the upper bound", .cancelUpward),
+        ("contradicting the assertion of only", .contradictOnly)],
+    ← e.nat? "base")
+
+/-- The cardinal test rows of Section 1.21: a row is acceptable exactly where its test's claim
+holds at its base numeral. -/
 theorem cardinal_rows :
-    (ex1_59a.judgment = .acceptable ∧
-      Comparison.eq.interval 3 = Comparison.ge.interval 3 ∩ Comparison.le.interval 3) ∧
-    (ex1_59b.judgment = .acceptable ∧
-      (Comparison.ge.interval 3)ᶜ = Comparison.lt.interval 3) ∧
-    (ex1_58b_more.judgment = .acceptable ∧
-      Comparison.ge.interval 4 ⊂ Comparison.ge.interval 3) ∧
-    (ex1_58b_fewer.judgment = .ungrammatical ∧
-      ¬ Comparison.ge.interval 2 ⊂ Comparison.ge.interval 3) ∧
-    (ex1_60a.judgment = .acceptable ∧
-      (Comparison.ge.interval 3 ∩ Comparison.gt.interval 3).Nonempty) ∧
-    (ex1_60b.judgment = .ungrammatical ∧
-      Disjoint (Comparison.ge.interval 3 ∩ Comparison.le.interval 3)
-        (Comparison.lt.interval 3)) :=
-  ⟨⟨rfl, bare_eq_atLeast_inter_atMost 3⟩, ⟨rfl, compl_atLeast_eq_fewerThan 3⟩,
-    ⟨rfl, atLeast_succ_ssubset 3⟩, ⟨rfl, ssubset_asymm (atLeast_succ_ssubset 2)⟩,
-    ⟨rfl, atLeast_consistent_with_more 3⟩, ⟨rfl, only_inconsistent_with_fewer 3⟩⟩
+    ∀ e ∈ Examples.all, e.Fits cardinal? fun p ↦ .ofProp (p.1.claim p.2) := by
+  decide
+
+theorem cardinal_read : Datum.ReadCount cardinal? Examples.all 4 := by decide
 
 /-- (2.46): *and* entails *or*, and *or* only implicates *not and*, since the world of both
 disjuncts verifies *or*. -/
@@ -370,22 +412,53 @@ theorem many_rows {Q : Set (Fin (n + 1))} (hQ : IsUpward Q) :
       (Compatible Q → ¬ Compatible Qᶜ) :=
   ⟨rfl, rfl, not_compatible_compl hQ⟩
 
-/-- The lexicalization rows: *nor* and *neither* are *and* and *both* over negated disjuncts and
-exist since *and* is incompatible, (4.49a) and (4.50a); *nand* and *noth* would be *or* and
-*either* over negated disjuncts, which compatibility blocks, (4.49a') and (4.50a'); on the
-quantifier scale *none* lexicalizes as `~some` and as `all~` while `~all = some~` has no route,
-(4.60a). -/
+/-- A lexicalization row's connective, *and*/*both* or *or*/*either*. -/
+inductive RowConnective where
+  | and
+  | or
+  deriving DecidableEq, Repr
+
+/-- The connective's condition on the worlds of two disjuncts. -/
+def RowConnective.pred : RowConnective → ConnWorld → Prop
+  | .and => andConn
+  | .or => orConn
+
+instance (c : RowConnective) : Decidable (CompatibleConn c.pred) :=
+  match c with
+  | .and => inferInstanceAs (Decidable (CompatibleConn andConn))
+  | .or => inferInstanceAs (Decidable (CompatibleConn orConn))
+
+/-- Whether a lexicalization negates inside, on the disjuncts, or outside, on the whole. -/
+inductive NegationRoute where
+  | inner
+  | outer
+  deriving DecidableEq, Repr
+
+/-- (4.59) and (4.62) for the connectives: an outer negation lexicalizes iff the connective is
+compatible with a lower negation, an inner one iff it is not. -/
+def NegationRoute.licensed : NegationRoute → RowConnective → Prop
+  | .outer, c => CompatibleConn c.pred
+  | .inner, c => ¬ CompatibleConn c.pred
+
+instance (r : NegationRoute) (c : RowConnective) : Decidable (r.licensed c) :=
+  match r with
+  | .outer => inferInstanceAs (Decidable (CompatibleConn _))
+  | .inner => inferInstanceAs (Decidable (¬ CompatibleConn _))
+
+/-- A lexicalization row's connective with the route of its negation. -/
+def lexicalization? (e : Datum) : Option (RowConnective × NegationRoute) := do
+  pure (← e.parse? "connective"
+      [("and", .and), ("both", .and), ("or", .or), ("either", .or), ("either...or", .or)],
+    ← e.parse? "route" [("inner", .inner), ("outer", .outer)])
+
+/-- The connective lexicalization rows (4.49), (4.50) and (4.60f): a negated connective
+lexicalizes exactly on the route its compatibility licenses, so *nor* and *neither* exist while
+*nand* and *noth* do not. -/
 theorem lexicalization_rows :
-    ((∀ e ∈ [ex4_49a, ex4_50a], e.judgment = .acceptable) ∧
-      ¬ CompatibleConn andConn) ∧
-    ((∀ e ∈ [ex4_49a_prime, ex4_50a_prime], e.judgment = .ungrammatical) ∧
-      CompatibleConn orConn) ∧
-    (ex4_60a.judgment = .acceptable ∧ OuterNegationLexicalizes (someQ 4) ∧
-      InnerNegationLexicalizes (allQ 4) ∧ ¬ OuterNegationLexicalizes (allQ 4) ∧
-      ¬ InnerNegationLexicalizes (someQ 4)) :=
-  ⟨⟨by decide, andConn_not_compatible⟩, ⟨by decide, orConn_compatible⟩,
-    ⟨rfl, (e_corner_lexicalizable (by omega)).1, (e_corner_lexicalizable (by omega)).2,
-      (o_corner_unlexicalizable (by omega)).1, (o_corner_unlexicalizable (by omega)).2⟩⟩
+    ∀ e ∈ Examples.all, e.Fits lexicalization? fun p ↦ .ofProp (p.2.licensed p.1) := by
+  decide
+
+theorem lexicalization_read : Datum.ReadCount lexicalization? Examples.all 5 := by decide
 
 end Data
 
