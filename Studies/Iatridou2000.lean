@@ -1,7 +1,9 @@
 module
 
+public import Linglib.Data.Examples.Iatridou2000
 public import Linglib.Semantics.Mood.Defs
 public import Mathlib.Data.Set.Basic
+public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Order.Disjoint
 
@@ -28,7 +30,10 @@ subjunctive, keeps the past indicative (`antecedent_french`).
 ## Implementation notes
 
 Exclusion is disjointness of sets of times or worlds, the speaker's coordinate being a set of
-epistemically accessible alternatives; the *before* of temporal past is `TemporalPast`.
+epistemically accessible alternatives; the *before* of temporal past is `TemporalPast`. The
+`…_rows` theorems read the example rows: each conditional row's layer count, reading by
+Aktionsart, evaluation time and aspect requirement follows from the definitions above, the
+future neutral vivid rows falling outside the counterfactual table.
 
 ## References
 
@@ -196,5 +201,90 @@ indicative, (99). -/
 theorem antecedent_french : antecedentForm .nonpastOnly = .indicative := rfl
 
 theorem antecedent_german : antecedentForm .past = .subjunctive := rfl
+
+/-! ### The data -/
+
+section Data
+
+open Examples
+
+/-- The counterfactual types as the rows name them; the future neutral vivid is no
+counterfactual and stays outside the table. -/
+def cfTable : List (String × CounterfactualType) :=
+  [("flv", .flv), ("presCF", .presCF), ("pastCF", .pastCF)]
+
+/-- The Aktionsarten as the rows name them. -/
+def aktionsartTable : List (String × Aktionsart) :=
+  [("telic", .telic), ("activity", .activity), ("individual-level stative", .ilStative),
+    ("stage-level stative", .slStative)]
+
+/-- The language of a row among those of Section 5. -/
+def aspectLanguage? (e : Datum) : Option AspectLanguage :=
+  match e.language with
+  | "stan1293" => some .english
+  | "mode1248" => some .greek
+  | "stan1290" => some .french
+  | _ => none
+
+/-- A row's counterfactual type with its layers of past morphology. -/
+def layers? (e : Datum) : Option (CounterfactualType × ℕ) := do
+  pure (← e.parse? "cf_type" cfTable, ← e.parse? "past_layers" [("1", 1), ("2", 2)])
+
+/-- Each row's layers of past morphology are its type's exclusion features: two for the past
+counterfactual, one otherwise. -/
+theorem layers_rows : ∀ e ∈ Examples.all,
+    e.Fits layers? fun p ↦ .ofProp (p.1.dimensions.card = p.2) := by
+  decide
+
+theorem layers_read : Datum.ReadCount layers? Examples.all 8 := by decide
+
+/-- A row's counterfactual type with its predicate's Aktionsart. -/
+def reading? (e : Datum) : Option (CounterfactualType × Aktionsart) := do
+  pure (← e.parse? "cf_type" cfTable, ← e.parse? "aktionsart" aktionsartTable)
+
+/-- Each row's counterfactual type is a reading of its predicate's Aktionsart, Table 1 over the
+rows. -/
+theorem readings_rows : ∀ e ∈ Examples.all,
+    e.Fits reading? fun p ↦ .ofProp (p.1 ∈ readings p.2) := by
+  decide
+
+theorem readings_read : Datum.ReadCount reading? Examples.all 8 := by decide
+
+/-- A present-tense row's Aktionsart with its evaluation time. -/
+def evaluation? (e : Datum) : Option (Aktionsart × Evaluation) := do
+  pure (← e.parse? "aktionsart" aktionsartTable,
+    ← e.parse? "evaluation" [("future", Evaluation.future), ("now", .now)])
+
+/-- Each present-tense row's evaluation time is one its Aktionsart admits, Table 2 over the
+rows (65)–(67). -/
+theorem evaluation_rows : ∀ e ∈ Examples.all,
+    e.Fits evaluation? fun p ↦ .ofProp (p.2 ∈ p.1.evaluation) := by
+  decide
+
+theorem evaluation_read : Datum.ReadCount evaluation? Examples.all 4 := by decide
+
+/-- A counterfactual row's language with its aspect; the reader reads only the rows that name a
+counterfactual type. -/
+def aspect? (e : Datum) : Option (AspectLanguage × Bool) := do
+  let _ ← e.parse? "cf_type" cfTable
+  pure (← aspectLanguage? e, ← e.parse? "impf" [("yes", true), ("no", false)])
+
+/-- Each counterfactual row carries the imperfective exactly where its language requires it,
+Section 5 over the English, Greek and French rows. -/
+theorem aspect_rows : ∀ e ∈ Examples.all,
+    e.Fits aspect? fun p ↦ .ofProp (p.1.cfAspect = .imperfective ↔ p.2 = true) := by
+  decide
+
+theorem aspect_read : Datum.ReadCount aspect? Examples.all 11 := by decide
+
+/-- (99): French, with a nonpast subjunctive only, puts the past indicative in its
+counterfactual antecedents, as `antecedentForm` chooses. -/
+theorem french_row :
+    ex99.feature? "paradigm" = some "nonpast subjunctive only" ∧
+      ex99.feature? "mood" = some "past indicative" ∧
+      antecedentForm .nonpastOnly = .indicative :=
+  ⟨rfl, rfl, rfl⟩
+
+end Data
 
 end Iatridou2000

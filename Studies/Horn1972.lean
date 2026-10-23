@@ -140,6 +140,14 @@ def noneQ (n : ℕ) : Set (Fin (n + 1)) := {c | c.val = 0}
 
 def notAllQ (n : ℕ) : Set (Fin (n + 1)) := {c | c.val ≠ n}
 
+instance : DecidablePred (· ∈ someQ n) := fun c ↦ decidable_of_iff (1 ≤ c.val) Iff.rfl
+
+instance : DecidablePred (· ∈ halfQ n) := fun c ↦ decidable_of_iff (n ≤ 2 * c.val) Iff.rfl
+
+instance : DecidablePred (· ∈ mostQ n) := fun c ↦ decidable_of_iff (n < 2 * c.val) Iff.rfl
+
+instance : DecidablePred (· ∈ allQ n) := fun c ↦ decidable_of_iff (c.val = n) Iff.rfl
+
 /-- The positive scale (2.4a) on its proportional members: on a domain of at least three
 individuals *all* strictly entails *most*, which strictly entails *some*. -/
 theorem allQ_ssubset_mostQ (hn : 3 ≤ n) : allQ n ⊂ mostQ n :=
@@ -195,6 +203,9 @@ theorem someQ_union_notAllQ (hn : 1 ≤ n) : someQ n ∪ notAllQ n = Set.univ :=
 /-- (4.55): `Q φ` and `Q ¬φ` are compatible when some count puts both a predicate and its
 complement into `Q`. -/
 def Compatible (Q : Set (Fin (n + 1))) : Prop := ∃ c, c ∈ Q ∧ Fin.rev c ∈ Q
+
+instance (Q : Set (Fin (n + 1))) [DecidablePred (· ∈ Q)] : Decidable (Compatible Q) :=
+  inferInstanceAs (Decidable (∃ c, c ∈ Q ∧ _ ∈ Q))
 
 theorem someQ_compatible (hn : 2 ≤ n) : Compatible (someQ n) :=
   ⟨⟨1, by omega⟩, by simp [someQ], by simp [someQ, Fin.val_rev]; omega⟩
@@ -318,15 +329,37 @@ theorem connective_scale_row :
   ⟨rfl, fun w hw ↦ by cases w <;> simp_all [andConn, orConn],
     orConn_not_subset_compl_andConn⟩
 
-/-- The lower-negation rows (4.56): *all* and *most* reject a lower negation while *half* and
-*some* accept one, as their compatibility decides. -/
+/-- The quantifiers the rows name. -/
+inductive RowQuantifier where
+  | all | most | half | some
+  deriving DecidableEq, Repr
+
+/-- A row quantifier as a condition on counts, on a domain of four individuals. -/
+def RowQuantifier.set : RowQuantifier → Set (Fin 5)
+  | .all => allQ 4
+  | .most => mostQ 4
+  | .half => halfQ 4
+  | .some => someQ 4
+
+instance (q : RowQuantifier) : Decidable (Compatible q.set) :=
+  match q with
+  | .all => inferInstanceAs (Decidable (Compatible (allQ 4)))
+  | .most => inferInstanceAs (Decidable (Compatible (mostQ 4)))
+  | .half => inferInstanceAs (Decidable (Compatible (halfQ 4)))
+  | .some => inferInstanceAs (Decidable (Compatible (someQ 4)))
+
+/-- The quantifier a row's `quantifier` feature names. -/
+def quantifier? (e : Datum) : Option RowQuantifier :=
+  e.parse? "quantifier"
+    [("all", .all), ("most", .most), ("half", .half), ("some", .some)]
+
+/-- The lower-negation rows (4.56) and the *some* of (4.60a): a row is acceptable exactly where
+its quantifier is compatible with a lower negation. -/
 theorem compatibility_rows :
-    (ex4_56a.judgment = .ungrammatical ∧ ¬ Compatible (allQ 4)) ∧
-    (ex4_56b.judgment = .ungrammatical ∧ ¬ Compatible (mostQ 4)) ∧
-    (ex4_56c.judgment = .acceptable ∧ Compatible (halfQ 4)) ∧
-    (ex4_56e.judgment = .acceptable ∧ Compatible (someQ 4)) :=
-  ⟨⟨rfl, allQ_not_compatible (by omega)⟩, ⟨rfl, mostQ_not_compatible⟩,
-    ⟨rfl, halfQ_compatible 2⟩, ⟨rfl, someQ_compatible (by omega)⟩⟩
+    ∀ e ∈ Examples.all, e.Fits quantifier? fun q ↦ .ofProp (Compatible q.set) := by
+  decide
+
+theorem compatibility_read : Datum.ReadCount quantifier? Examples.all 5 := by decide
 
 /-- (4.57): whatever expected size *many* demands, it is monotone in the count, so *many* and
 *not many* cannot both accept a lower negation (`not_compatible_compl`), and the pair splits as

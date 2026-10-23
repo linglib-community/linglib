@@ -241,7 +241,6 @@ structure Row where
   eventuality : Eventuality
   licenser : Licenser
   test : Test
-  acceptable : Bool
   deriving DecidableEq, Repr
 
 /-- A main clause is homogeneous when it has an imperfective, progressive or perfect form, or
@@ -280,14 +279,15 @@ def Row.ofDatum (ex : Datum) : Option Row := do
     ("without", .without), ("nonveridical", .nonveridical)]
   let test ← ex.parse? "test" [("plain", Test.plain), ("preposed", .preposed),
     ("noEventContinuation", .noEventContinuation)]
-  pure ⟨connective, aspect, eventuality, licenser, test, ex.judgment == .acceptable⟩
-
-def rows : List Row := Examples.all.filterMap Row.ofDatum
+  pure ⟨connective, aspect, eventuality, licenser, test⟩
 
 /-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
 homogeneity of the main clause and the licensing of the polarity item. -/
-theorem rows_predicted : ∀ r ∈ rows, (r.acceptable = true ↔ Predicted r) := by
+theorem rows_predicted :
+    ∀ e ∈ Examples.all, e.Fits Row.ofDatum fun r ↦ .ofProp (Predicted r) := by
   decide
+
+theorem rows_read : Datum.ReadCount Row.ofDatum Examples.all 36 := by decide
 
 /-- A `Diagnostic` is one of the stativity diagnostics of the fifth section. -/
 inductive Diagnostic
@@ -299,7 +299,6 @@ structure DiagnosticRow where
   aspect : AspectForm
   eventuality : Eventuality
   licenser : Licenser
-  acceptable : Bool
   deriving DecidableEq, Repr
 
 def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
@@ -312,15 +311,15 @@ def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
     ("eventive", .eventive)]
   let licenser ← ex.parse? "licenser" [("none", Licenser.none), ("negation", .negation),
     ("without", .without), ("nonveridical", .nonveridical)]
-  pure ⟨diagnostic, aspect, eventuality, licenser, ex.judgment == .acceptable⟩
-
-def diagnostics : List DiagnosticRow := Examples.all.filterMap DiagnosticRow.ofDatum
+  pure ⟨diagnostic, aspect, eventuality, licenser⟩
 
 /-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
 negation playing no role, so negation is no stativizer. -/
-theorem diagnostics_predicted : ∀ r ∈ diagnostics, (r.acceptable = true ↔
-    ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
-      (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality))) := by
+theorem diagnostics_predicted : ∀ e ∈ Examples.all, e.Fits DiagnosticRow.ofDatum fun r ↦
+    .ofProp ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
+      (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality)) := by
   decide
+
+theorem diagnostics_read : Datum.ReadCount DiagnosticRow.ofDatum Examples.all 12 := by decide
 
 end Giannakidou2002

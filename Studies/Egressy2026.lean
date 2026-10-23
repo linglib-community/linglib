@@ -258,8 +258,10 @@ theorem singleRows_predicted :
 def matrixVerb? (e : Datum) : Option Verb :=
   (e.feature? "matrixVerb").bind (Verb.find? verbs ·)
 
-/-- Every single-embedding row names a fragment entry. -/
-theorem isSome_matrixVerb? : ∀ e ∈ singleRows, (matrixVerb? e).isSome := by decide
+/-- The verb and clause-type readers read every single-embedding row. -/
+theorem singleRows_readCounts :
+    Datum.ReadCount matrixVerb? singleRows 12 ∧ Datum.ReadCount clauseType? singleRows 12 := by
+  decide
 
 /-- The case of a row's expletive diagnoses the clause's grammatical role (§2.1–2.2), accusative
 *azt* an object, nominative *az* a subject and instrumental *azzal* or *amiatt* an adjunct, and
