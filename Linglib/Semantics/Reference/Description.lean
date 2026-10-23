@@ -229,8 +229,6 @@ theorem denote_possessive_isSome_iff :
     (⟦possessive R possessor rel⟧ g s).isSome ↔ ∃! x, R g s x ∧ rel g s (possessor g s) x :=
   iota_isSome_iff _
 
-/-- A possessive description asserts `B` of its referent iff the possessive quantifier
-`Possession.PossNP` holds at the possessor with the definite as possessee quantifier. -/
 theorem possNP_iff_exists_mem_denote_possessive (B : E → Prop) :
     Possession.PossNP (Quantifier.NP.individual (possessor g s)) Quantifier.GQ.the (rel g s)
         (R g s) B ↔ ∃ x ∈ ⟦possessive R possessor rel⟧ g s, B x := by

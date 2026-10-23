@@ -57,7 +57,6 @@ theorem π_apply [Min α] (P : α) (R : ι → α) (x : ι) : π P R x = P ⊓ R
 theorem iSup_π [Order.Frame α] (P : α) (R : ι → α) : ⨆ x, π P R x = P ⊓ ⨆ x, R x :=
   (inf_iSup_eq P R).symm
 
-/-- A relational noun is its possessor-free form relationalized by its own relation. -/
 @[simp] theorem π_iSup_self [CompleteLattice α] (R : ι → α) : π (⨆ x, R x) R = R :=
   funext fun x ↦ inf_eq_right.2 (le_iSup R x)
 
