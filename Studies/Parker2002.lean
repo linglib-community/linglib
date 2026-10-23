@@ -1,10 +1,9 @@
 module
 
-public import Linglib.Phonology.Segmental.NaturalClass
+public import Linglib.Phonology.Segmental.Sonority
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Fintype.Sigma
-import Mathlib.Data.Fintype.Lattice
 import Mathlib.Tactic.Order
 
 /-!
@@ -12,7 +11,7 @@ import Mathlib.Tactic.Order
 
 Parker measures the acoustic correlates of sonority and proposes a universal hierarchy of sixteen
 classes (Table 5.28), which languages conflate by merging adjacent classes. The modal hierarchy
-of five classes, Clements's, is such a conflation (`toSonority_monotone`).
+of five classes, Clements's, is such a conflation (`Class.coarsens_toSonority`).
 
 Within the obstruents, fricatives outrank stops and voiced obstruents voiceless ones, two orders
 Parker takes as fixed. An obstruent class is its values of [continuant] and [voice], and the two
@@ -32,16 +31,14 @@ divide them into contiguous classes (`not_contiguous_continuant_and_voice`): (3.
   the voiceless fricatives with the voiced stops.
 * `Parker2002.Class`, `Parker2002.Class.rankWith`: the classes of Table 5.28 and their ranks, with
   the obstruents ranked by a hierarchy of (3.6); `Class.rank` takes Parker's default.
-* `Parker2002.Contiguous`: a set of obstruent classes is contiguous on a ranking, that is, the
-  preimage of an order-connected set (`contiguous_iff_exists_ordConnected`).
 
 ## Main results
 
-* `Parker2002.Class.toSonority_monotone`: the modal hierarchy conflates Table 5.28.
+* `Parker2002.Class.coarsens_toSonority`: the modal hierarchy coarsens Table 5.28.
 * `Parker2002.le_iff_hierarchy_le`: every ranking strictly monotone for the product order is a
   hierarchy of (3.6).
 * `Parker2002.not_contiguous_continuant_and_voice`: no ranking divides the obstruents into
-  contiguous classes of both [continuant] and [voice].
+  contiguous classes of both [continuant] and [voice], since the two combine freely.
 * `Parker2002.contiguous_hierarchy`: the classes each hierarchy of (3.6) keeps contiguous.
 
 ## References
@@ -191,38 +188,16 @@ def toSonority : Class → Sonority
   | glide => .glide
   | highCentral | schwa | high | mid | low => .vowel
 
-/-- The modal hierarchy conflates Table 5.28 (p. 240). -/
-theorem toSonority_monotone : Monotone toSonority := by
-  intro a b
-  change a.rank ≤ b.rank → _
-  revert a b
+/-- The modal hierarchy coarsens Table 5.28 (p. 240). -/
+theorem coarsens_toSonority : Sonority.Coarsens toSonority rank := by
+  unfold Sonority.Coarsens
   decide +kernel
 
 end Class
 
 /-! ### Contiguity -/
 
-variable {α : Type*} [LinearOrder α]
-
-/-- A set of obstruent classes is contiguous on a ranking when every class ranked between two of
-its members belongs to it. -/
-def Contiguous (r : Obstruent → α) (S : Set Obstruent) : Prop :=
-  ∀ a ∈ S, ∀ b ∈ S, ∀ c, r a ≤ r c → r c ≤ r b → c ∈ S
-
-instance (r : Obstruent → α) (S : Set Obstruent) [DecidablePred (· ∈ S)] :
-    Decidable (Contiguous r S) := by
-  unfold Contiguous; infer_instance
-
-theorem contiguous_iff_exists_ordConnected {r : Obstruent → α} {S : Set Obstruent} :
-    Contiguous r S ↔ ∃ I : Set α, I.OrdConnected ∧ S = r ⁻¹' I := by
-  refine ⟨fun h ↦ ⟨{x | ∃ a ∈ S, ∃ b ∈ S, r a ≤ x ∧ x ≤ r b}, ⟨?_⟩, ?_⟩, ?_⟩
-  · rintro x ⟨a, ha, -, -, hax, -⟩ y ⟨-, -, b, hb, -, hyb⟩ z ⟨hxz, hzy⟩
-    exact ⟨a, ha, b, hb, hax.trans hxz, hzy.trans hyb⟩
-  · ext c
-    exact ⟨fun hc ↦ ⟨c, hc, c, hc, le_rfl, le_rfl⟩,
-      fun ⟨a, ha, b, hb, hac, hcb⟩ ↦ h a ha b hb c hac hcb⟩
-  · rintro ⟨I, hI, rfl⟩ a ha b hb c hac hcb
-    exact hI.out ha hb ⟨hac, hcb⟩
+open Sonority
 
 example (v : Bool) :
     IsNaturalClass (Finset.univ.image column)
@@ -233,14 +208,9 @@ example (v : Bool) :
   decide +kernel
 
 /-- No ranking divides the obstruents into contiguous classes of both [continuant] and [voice]. -/
-theorem not_contiguous_continuant_and_voice (r : Obstruent → α) :
-    ¬ ((∀ v, Contiguous r {o | o.continuant = v}) ∧ ∀ v, Contiguous r {o | o.voice = v}) := by
-  rintro ⟨hc, hv⟩
-  -- the lower of the two neighbours of a least class lies between it and the other neighbour
-  obtain ⟨m, hm⟩ := Finite.exists_min r
-  rcases le_total (r ⟨!m.continuant, m.voice⟩) (r ⟨m.continuant, !m.voice⟩) with h | h
-  · simpa using hc m.continuant m rfl ⟨m.continuant, !m.voice⟩ rfl _ (hm _) h
-  · simpa using hv m.voice m rfl ⟨!m.continuant, m.voice⟩ rfl _ (hm _) h
+theorem not_contiguous_continuant_and_voice {α : Type*} [LinearOrder α] (r : Obstruent → α) :
+    ¬ ((∀ v, Contiguous r {o | o.continuant = v}) ∧ ∀ v, Contiguous r {o | o.voice = v}) :=
+  not_contiguous_of_independent r fun x y ↦ ⟨⟨x, y⟩, rfl, rfl⟩
 
 /-- (3.6a) keeps the classes of [continuant] contiguous, (3.6b) those of [voice], and (3.6c)
 none. -/

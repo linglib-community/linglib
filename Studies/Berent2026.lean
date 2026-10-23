@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.English.Phonology
+public import Linglib.Phonology.Segmental.Sonority
 public import Linglib.Morphology.Root.Consonantal
 public import Studies.BerentEtAl2016
 

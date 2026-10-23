@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.Tarifit.ConsonantalRoots
+public import Studies.Parker2002
 public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Data.Examples.AfkirZellou2025
 public import Linglib.Data.Wordlist.AfkirZellou2025
@@ -36,15 +37,18 @@ the intensive of /χns/ without the schwa after the geminate (`bend_down_imp_int
 * `AfkirZellou2025.imperative`: a root's simple imperative, by the association conventions.
 * `AfkirZellou2025.intensive`: a root's intensive imperative, by the conventions, Erasure and
   fortition.
-* `AfkirZellou2025.sonority`: the sonority of a phone on the scale of Figure 9.
-* `AfkirZellou2025.Rising`, `Plateau`, `Falling`: the sonority profile of the initial cluster.
+* `AfkirZellou2025.sonority`: the sonority of a phone on the scale of Figure 9, which the modal
+  hierarchy coarsens (`coarsens_ofSegment`).
+* `AfkirZellou2025.onsetProfile`: whether sonority rises, plateaus or falls across the initial
+  cluster.
 * `AfkirZellou2025.targets`: the thirty-eight CCəC target words, by root.
 
 ## Implementation notes
 
 Figure 9 ranks voiced stops below voiceless fricatives, the majority view in the literature,
-against the default of Parker, whom it cites (`Sonority.Class.parkerRank`). No target cluster
-pairs the two classes, so the profiles are the same on either scale. The book gives the
+against the default of Parker, whom it cites: it is `sonorityWith .gt`, Parker's (3.6a), where his
+default is `sonorityWith .lt`. No target cluster pairs the two classes, so the profiles are the
+same on either scale. The book gives the
 intensive forms, not their derivation: the derivation here is McCarthy's for the Arabic second
 binyan, whose template CVCCVC the intensive shares (`intensiveStem_eq`). The regression
 estimates, the acoustic measurements and the perception study have no formal counterpart here.
@@ -151,47 +155,47 @@ example : ∀ r ∈ targets, ∀ x ∈ r.segments, x ∈ consonants ∨ x = l :=
 
 /-! ### Sonority profiles -/
 
-/-- The sonority scale of Figure 9, which ranks the obstruents by manner before voicing. -/
-def scale : Sonority.Class → ℕ
-  | .vls => 1 | .vds => 2 | .vlf => 3 | .vdf => 4
+/-- The sonority of a phone on Parker's hierarchy with the obstruents ranked by the hierarchy of
+his (3.6) that `o` fixes, and his classes above them merged into nasals, liquids, glides and
+vowels. -/
+def sonorityWith (o : Ordering) (x : Segment) : ℕ :=
+  match Sonority.ofSegment x with
+  | .obstruent =>
+    Parker2002.hierarchy o ⟨decide (x.HasValue .continuant true), decide (x.HasValue .voice true)⟩
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
 
-/-- The sonority of a phone on the scale of Figure 9. -/
-def sonority (x : Segment) : ℕ := scale (Sonority.Class.ofSegment x)
+/-- The sonority of a phone on the scale of Figure 9, which ranks voiced stops below voiceless
+fricatives, Parker's (3.6a). -/
+def sonority : Segment → ℕ := sonorityWith .gt
+
+theorem coarsens_ofSegment : Sonority.Coarsens Sonority.ofSegment sonority := by
+  have hle (o : Parker2002.Obstruent) : Parker2002.hierarchy .gt o ≤ 4 := by revert o; decide
+  intro a b h
+  simp only [sonority, sonorityWith] at h
+  rcases ha : Sonority.ofSegment a <;> rcases hb : Sonority.ofSegment b <;>
+    simp only [ha, hb] at h <;> first | decide | (have := hle; grind)
 
 /-- The phone at root position `i` is a voiceless obstruent. -/
 def VoicelessAt (r : ConsonantalRoot Segment) (i : ℕ) : Prop :=
-  ∃ p ∈ r.segments[i]?, (Sonority.Class.ofSegment p).Voiceless
-
-/-- The initial cluster rises in sonority. -/
-def Rising (r : ConsonantalRoot Segment) : Prop :=
-  ∃ a ∈ r.segments[0]?, ∃ b ∈ r.segments[1]?, sonority a < sonority b
-
-/-- The initial cluster is level in sonority. -/
-def Plateau (r : ConsonantalRoot Segment) : Prop :=
-  ∃ a ∈ r.segments[0]?, ∃ b ∈ r.segments[1]?, sonority a = sonority b
-
-/-- The initial cluster falls in sonority. -/
-def Falling (r : ConsonantalRoot Segment) : Prop :=
-  ∃ a ∈ r.segments[0]?, ∃ b ∈ r.segments[1]?, sonority b < sonority a
+  ∃ p ∈ r.segments[i]?, Sonority.ofSegment p = .obstruent ∧ ¬ p.HasValue .voice true
 
 instance (r : ConsonantalRoot Segment) (i : ℕ) : Decidable (VoicelessAt r i) := by
   unfold VoicelessAt; infer_instance
-instance (r : ConsonantalRoot Segment) : Decidable (Rising r) := by unfold Rising; infer_instance
-instance (r : ConsonantalRoot Segment) : Decidable (Plateau r) := by
-  unfold Plateau; infer_instance
-instance (r : ConsonantalRoot Segment) : Decidable (Falling r) := by unfold Falling; infer_instance
+
+/-- Whether sonority rises, plateaus or falls across the initial cluster of a root. -/
+def onsetProfile (r : ConsonantalRoot Segment) : Option Ordering := do
+  pure (Sonority.profile sonority (← r.segments[0]?) (← r.segments[1]?))
 
 /-- Seventeen of the target words begin with a rising cluster, six with a plateau and fifteen
 with a fall (§3.2.1). -/
 theorem countP_rising_plateau_falling :
-    targets.countP (Rising ·) = 17 ∧ targets.countP (Plateau ·) = 6 ∧
-      targets.countP (Falling ·) = 15 := by
+    targets.countP (onsetProfile · = some .lt) = 17 ∧
+      targets.countP (onsetProfile · = some .eq) = 6 ∧
+      targets.countP (onsetProfile · = some .gt) = 15 := by
   decide +kernel
 
 example : ∀ r ∈ targets, ∀ a ∈ r.segments[0]?, ∀ b ∈ r.segments[1]?,
-    compare (sonority a) (sonority b) =
-      compare (Sonority.Class.ofSegment a).parkerRank (Sonority.Class.ofSegment b).parkerRank := by
+    Sonority.profile (sonorityWith .gt) a b = Sonority.profile (sonorityWith .lt) a b := by
   decide +kernel
 
 /-! ### The tables -/
@@ -243,19 +247,19 @@ theorem almostExclusively_iff_c2_r :
   decide +kernel
 
 theorem intrusion_of_rising :
-    ∀ x ∈ rows, Rising x.2 →
+    ∀ x ∈ rows, onsetProfile x.2 = some .lt →
       intrusion? x.1 = some .variably ∨ intrusion? x.1 = some .almostExclusively ∨
         VoicelessAt x.2 1 := by
   decide +kernel
 
 theorem nonRising_or_voiceless_of_never_rarely :
     ∀ x ∈ rows, intrusion? x.1 = some .never ∨ intrusion? x.1 = some .rarely →
-      ¬ Rising x.2 ∨ VoicelessAt x.2 1 := by
+      onsetProfile x.2 ≠ some .lt ∨ VoicelessAt x.2 1 := by
   decide +kernel
 
 theorem variably_exceptions :
     ∀ x ∈ rows, intrusion? x.1 = some .variably →
-      Rising x.2 ∨ ¬ VoicelessAt x.2 1 ∨ x.2 ∈ [nqβ, nqr, «qtˤʕ»] := by
+      onsetProfile x.2 = some .lt ∨ ¬ VoicelessAt x.2 1 ∨ x.2 ∈ [nqβ, nqr, «qtˤʕ»] := by
   decide +kernel
 
 /-! ### Vowelless production -/
