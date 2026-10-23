@@ -24,6 +24,7 @@ which restore or respread it.
 * `Morphology.TemplateMatch.associateOneToOne`, `associateRemaining`, `spread`: the three
   conventions on one tier.
 * `Morphology.TemplateMatch.associate`: the three in order.
+* `Morphology.TemplateMatch.delink`: the erasure of the lines of a tier on a slot.
 
 ## Main results
 
@@ -69,6 +70,11 @@ def freeBearers : List ℕ := (m.bearers s).filter (¬ m.IsFilled ·)
 def link (l : List Association) : TemplateMatch α :=
   { m with associations := m.associations ++ l }
 
+/-- The match with the lines from a tier to slot `i` erased, as a language-particular rule erases
+them before the conventions apply again. -/
+def delink (i : ℕ) : TemplateMatch α :=
+  { m with associations := m.associations.filter fun a ↦ !(a.source == s && a.slotIndex == i) }
+
 /-- The line of a tier on the nearest slot left of `i` that has one. -/
 def leftLine (i : ℕ) : Option Association :=
   (m.associations.filter fun a ↦ a.source == s && a.slotIndex < i).foldl
@@ -108,6 +114,8 @@ variable (f : α → β)
   simp [freeBearers, bearers, IsFilled]
 
 theorem link_map (l : List Association) : (m.map f).link l = (m.link l).map f := rfl
+
+theorem delink_map (i : ℕ) : (m.map f).delink s i = (m.delink s i).map f := rfl
 
 theorem associateOneToOne_map :
     (m.map f).associateOneToOne s = (m.associateOneToOne s).map f := by
