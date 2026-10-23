@@ -58,7 +58,9 @@ their strong reading and a repeated description no sloppy reading.
   facts ordered by inclusion, Kratzer's states of affairs, so minimal situations are
   computed and the strong reading of the donkey sentence is a theorem rather than a reading of
   the truth conditions.
-* The examples are `Data.Examples.Elbourne2013`.
+* The examples are `Data.Examples.Elbourne2013`. The ch. 8 contrast rows and the ch. 9
+  sloppy-identity rows are read by `contrast_rows` and `sloppy_rows`; the remaining rows record
+  the readings and analyses the theorems above derive.
 
 ## TODO
 
@@ -512,5 +514,46 @@ theorem everyOwnerBeatsTheDonkeyAndThePriestToo_iff (w : Village E) {p : E}
     exact (key x y).mpr ⟨hs.prop.1, h x y hf hd ho⟩
 
 end SloppyIdentity
+
+/-! ### The data -/
+
+section Data
+
+open Examples
+
+/-- The repeated description of a ch. 9 sloppy-identity row, bare or carrying a bound
+relation. -/
+inductive DescriptionType where
+  | bare
+  | relational
+  deriving DecidableEq, Repr
+
+/-- The description a row's `description` feature names. -/
+def descriptionType? (e : Datum) : Option DescriptionType :=
+  e.parse? "description" [("the donkey", .bare), ("the donkey he owns", .relational)]
+
+/-- The sloppy-identity rows (17) of ch. 9: the strict reading is always available, and the
+sloppy reading is out for the bare description, both occurrences bound to one minimal situation
+(`everyOwnerBeatsTheDonkeyAndThePriestToo_iff`), and in for the relational one, which covaries
+with its bound variable (`relDescription_eq_some_iff`). -/
+theorem sloppy_rows : ∀ e ∈ Examples.all, ∀ d ∈ descriptionType? e,
+    (∀ j ∈ e.readings.lookup "strict", j.band = .accepted) ∧
+      ∀ j ∈ e.readings.lookup "sloppy",
+        j.band = match d with | .bare => .rejected | .relational => .accepted := by
+  decide
+
+theorem sloppy_read : Datum.ReadCount descriptionType? Examples.all 2 := by decide
+
+/-- The contrast rows of ch. 8, (22) and (31) with (33): the description under an agnostic
+attitude is infelicitous (`attitude_eq_zero_of_agnostic`) while its Russellian paraphrase, the
+row's alternative, is consistent (`russellian_consistent`). -/
+theorem contrast_rows : ∀ e ∈ Examples.all, (e.feature? "contrast").isSome →
+    ¬ e.JudgedFelicitous ∧ ∀ a ∈ e.alternatives, a.2 = .acceptable := by
+  decide
+
+theorem contrast_read :
+    (Examples.all.filter fun e => (e.feature? "contrast").isSome).length = 2 := by decide
+
+end Data
 
 end Elbourne2013
