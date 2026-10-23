@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.ChatainSchlenker2026
 public import Linglib.Logic.Trivalent.Flat
 public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Composition.Partial
 public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Fintype.Prod
@@ -23,6 +24,9 @@ can accommodate one of a trigger's two presuppositions while the other projects.
   accommodates at every argument (Table 1).
 * `enrichment_projects_and_accommodates`, `semantic_parallelism`: one enrichment does both, and
   the clauses stay semantically parallel ((66)–(71)).
+* `presupFailure_clause`, `clause_projects_and_accommodates`: on the partial composition engine,
+  the antecedent and the elided clause of (26) share one λ-abstract, and only the elided clause
+  accommodates ((66)–(70)).
 * `enrichment_by_definedness`: enrichment by definedness is `A` (§5.2).
 * `partial_accommodation`, `partial_accommodation_rows`: enrichment by one presupposition of a
   trigger accommodates it alone ((34), (38), (39), §5.2.1).
@@ -33,13 +37,14 @@ can accommodate one of a trigger's two presuppositions while the other projects.
 
 A trivalent predicate `P : E → W → SignType` is `0` where its presupposition fails. Free
 Enrichment (62) is `Modifier.intersective` at `fun x w ↦ ofProp (R x w)`, written out below as
-`ofProp (R x w) ⊓ P x w`. The composition rules (63) are not formalized, since the composition
-engine's truth values are `Prop`, and clauses are composed by hand.
+`ofProp (R x w) ⊓ P x w`. On the partial composition engine, whose predicate modification is Weak
+Kleene, Free Enrichment is instead a map on the lexicon, `if R d w then P w d else false`, which
+agrees with the Strong Kleene conjunction because `R` is two-valued (`enrichment_eq_meetMiddle`);
+the composition rules (63) are then the engine's own. Since every mode of that engine is strict
+(`Montague.Mode.dom_evalPartial`), `A` is no word meaning there.
 
 ## TODO
 
-* The syntactic half of the ellipsis argument needs LF trees with a silent `A` interpreted with
-  three-valued truth, which the composition engine lacks.
 * Intermediate accommodation (55), Homer's diagnostic (§4.2.1), and the constraint on Free
   Enrichment that (77) calls for (§5.2.2).
 
@@ -155,5 +160,75 @@ theorem projection_entails_accommodation {C : SignType → SignType}
 /-- Ann's sentence in (26) entails its locally accommodated reading. -/
 example {a : SignType} (h : -a = 1) : -ofProp (a = 1) = 1 :=
   projection_entails_accommodation (fun _ _ ↦ toFlat_neg_mono) h
+
+/-! ### Composition -/
+
+section Composition
+
+open Montague PhraseStructure PhraseStructure.Tree
+
+variable {D W : Type}
+
+/-- The words of (26): the days, negation, and *take the lab rat out of its cage*. -/
+inductive Word (D : Type) where
+  | day (d : D)
+  | not
+  | takeOut
+
+open Classical in
+/-- The lexicon of (26) at a world `w`, where *take out* is the partial predicate `P w` enriched
+by `R` (62). -/
+noncomputable def lexicon (P : W → D →. Prop) (R : D → W → Prop) (w : W) :
+    Word D → Option (PDenotation D Unit)
+  | .day d => some ⟨.e, Part.some d⟩
+  | .not => some ⟨.t ⇒ .t, Part.some fun p ↦ Part.some (¬ p)⟩
+  | .takeOut => some ⟨.e ⇒ .t, Part.some fun d ↦ if R d w then P w d else Part.some False⟩
+
+/-- The λ-abstract `[λ₁ [not [t₁ take-out]]]` that the antecedent and the elided clause share. -/
+def vp : Tree Unit (Word D) := .binder 1 (.bin (.leaf .not) (.bin (.tr 1) (.leaf .takeOut)))
+
+/-- The clause `[d vp]`, the antecedent of (26) at Monday and its elided clause at Wednesday. -/
+def clause (d : D) : Tree Unit (Word D) := .bin (.leaf (.day d)) vp
+
+variable (P : W → D →. Prop) (R : D → W → Prop) (w : W) (g : Assignment D) (d : D)
+
+/-- The clause fails exactly where the enrichment holds and the predicate is undefined ((68),
+(70)). -/
+theorem presupFailure_clause :
+    PresupFailure (lexicon P R w) g (clause d) ↔ R d w ∧ ¬ (P w d).Dom := by
+  classical
+  have : interpPartial (lexicon P R w) g (clause d) =
+      some ⟨.t, (if R d w then P w d else Part.some False).bind fun p ↦ Part.some (¬ p)⟩ := by
+    simp only [clause, vp, interpPartial_node_binary, interpPartial_terminal, interpPartial_bind,
+      interpPartial_trace, lexicon, Option.bind_some, Option.map_some, Mode.combine?_fn_left,
+      Mode.combine?_fn_right, valueAtPartial, dite_true, Function.update_self, Mode.evalPartial]
+    erw [Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some, Part.bind_some]
+  rw [PresupFailure, this]
+  by_cases h : R d w <;> simp [h]
+
+/-- With an enrichment trivial at `Y` and entailing the presupposition at `X`, the clause shared
+by the antecedent and the elided clause fails at `Y` exactly where the presupposition does and
+never fails at `X` ((66)–(70)). -/
+theorem clause_projects_and_accommodates {X Y : D} (hY : ∀ w, R Y w)
+    (hX : ∀ w, R X w → (P w X).Dom) :
+    (PresupFailure (lexicon P R w) g (clause Y) ↔ ¬ (P w Y).Dom) ∧
+      ¬ PresupFailure (lexicon P R w) g (clause X) := by
+  simp only [presupFailure_clause]
+  exact ⟨and_iff_right (hY w), fun h ↦ h.2 (hX w h.1)⟩
+
+/-- The clause fails where the Strong Kleene enrichment of a trivalent version `Q` of the
+predicate is undefined, so the engine agrees with `enrichment_projects_and_accommodates`. -/
+theorem presupFailure_clause_iff_mem_gapExt {Q : D → W → SignType}
+    (hQ : ∀ w, Q d w = 0 ↔ ¬ (P w d).Dom) [DecidablePred (R d)] :
+    PresupFailure (lexicon P R w) g (clause d) ↔ w ∈ gapExt fun w ↦ ofProp (R d w) ⊓ Q d w := by
+  rw [presupFailure_clause, gapExt_ofProp_inf, Set.mem_inter_iff, mem_gapExt, hQ]; rfl
+
+/-- No word of type `⟨t,t⟩` turns an undefined argument into a defined value, so `A` is no word
+meaning on the partial engine. -/
+example (f : Part (Ty.PDomain D W (.t ⇒ .t))) {a : Part Prop} (ha : ¬ a.Dom) :
+    ¬ (Mode.functionalLeft.evalPartial f a).Dom :=
+  fun h ↦ ha (Mode.dom_evalPartial _ h).2
+
+end Composition
 
 end ChatainSchlenker2026
