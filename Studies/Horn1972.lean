@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Examples.Horn1972
 public import Linglib.Semantics.Degree.Comparison
 public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Interval.Set.LinearOrder
@@ -36,7 +37,10 @@ negation `~Q` lexicalize iff `Q` is compatible and an inner negation `Q~` iff it
   left out. Cardinals use the numeral substrate's lower-bound readings, and the connectives a
   four-world model of two disjuncts (`ConnWorld`).
 * The modal and deontic scales, the polarity facts of Chapter 3 and the presupposition theory
-  of Section 1.1 are not formalized.
+  of Section 1.1 are not formalized, and with them their example rows, the understatement and
+  anomaly judgments of Section 2.5 and the intonation rows among them.
+* The example rows are read by the `…_rows` theorems, each judgment beside the fact that
+  derives it, the quantifiers on a domain of four individuals.
 
 ## References
 
@@ -274,5 +278,82 @@ theorem andConn_not_compatible : ¬ CompatibleConn andConn := by
 implicature being cancelled by *or both*. -/
 theorem orConn_not_subset_compl_andConn : ¬ ∀ w, orConn w → ¬ andConn w :=
   λ h => h .both trivial trivial
+
+/-! ### The data
+
+The judgments of the example rows, each beside the fact that derives it: the cardinal rows of
+Section 1.21, the connective scale of Section 2.13, and the compatibility and lexicalization
+rows of Chapter 4 on a domain of four individuals. -/
+
+section Data
+
+open Examples
+
+/-- The cardinal rows of Section 1.21: *three* asserts its lower bound and implicates the upper,
+(1.59); suspension runs up the scale only, (1.58b); *in fact more* cancels the implicature while
+*only three, in fact fewer* contradicts an assertion, (1.60). -/
+theorem cardinal_rows :
+    (ex1_59a.judgment = .acceptable ∧
+      Comparison.eq.interval 3 = Comparison.ge.interval 3 ∩ Comparison.le.interval 3) ∧
+    (ex1_59b.judgment = .acceptable ∧
+      (Comparison.ge.interval 3)ᶜ = Comparison.lt.interval 3) ∧
+    (ex1_58b_more.judgment = .acceptable ∧
+      Comparison.ge.interval 4 ⊂ Comparison.ge.interval 3) ∧
+    (ex1_58b_fewer.judgment = .ungrammatical ∧
+      ¬ Comparison.ge.interval 2 ⊂ Comparison.ge.interval 3) ∧
+    (ex1_60a.judgment = .acceptable ∧
+      (Comparison.ge.interval 3 ∩ Comparison.gt.interval 3).Nonempty) ∧
+    (ex1_60b.judgment = .ungrammatical ∧
+      Disjoint (Comparison.ge.interval 3 ∩ Comparison.le.interval 3)
+        (Comparison.lt.interval 3)) :=
+  ⟨⟨rfl, bare_eq_atLeast_inter_atMost 3⟩, ⟨rfl, compl_atLeast_eq_fewerThan 3⟩,
+    ⟨rfl, atLeast_succ_ssubset 3⟩, ⟨rfl, ssubset_asymm (atLeast_succ_ssubset 2)⟩,
+    ⟨rfl, atLeast_consistent_with_more 3⟩, ⟨rfl, only_inconsistent_with_fewer 3⟩⟩
+
+/-- (2.46): *and* entails *or*, and *or* only implicates *not and*, since the world of both
+disjuncts verifies *or*. -/
+theorem connective_scale_row :
+    ex2_46.judgment = .acceptable ∧ (∀ w, andConn w → orConn w) ∧
+      ¬ ∀ w, orConn w → ¬ andConn w :=
+  ⟨rfl, fun w hw ↦ by cases w <;> simp_all [andConn, orConn],
+    orConn_not_subset_compl_andConn⟩
+
+/-- The lower-negation rows (4.56): *all* and *most* reject a lower negation while *half* and
+*some* accept one, as their compatibility decides. -/
+theorem compatibility_rows :
+    (ex4_56a.judgment = .ungrammatical ∧ ¬ Compatible (allQ 4)) ∧
+    (ex4_56b.judgment = .ungrammatical ∧ ¬ Compatible (mostQ 4)) ∧
+    (ex4_56c.judgment = .acceptable ∧ Compatible (halfQ 4)) ∧
+    (ex4_56e.judgment = .acceptable ∧ Compatible (someQ 4)) :=
+  ⟨⟨rfl, allQ_not_compatible (by omega)⟩, ⟨rfl, mostQ_not_compatible⟩,
+    ⟨rfl, halfQ_compatible 2⟩, ⟨rfl, someQ_compatible (by omega)⟩⟩
+
+/-- (4.57): whatever expected size *many* demands, it is monotone in the count, so *many* and
+*not many* cannot both accept a lower negation (`not_compatible_compl`), and the pair splits as
+the judgments do. -/
+theorem many_rows {Q : Set (Fin (n + 1))} (hQ : IsUpward Q) :
+    ex4_57a.judgment = .acceptable ∧
+      ex4_57a_prime.judgment = .ungrammatical ∧
+      (Compatible Q → ¬ Compatible Qᶜ) :=
+  ⟨rfl, rfl, not_compatible_compl hQ⟩
+
+/-- The lexicalization rows: *nor* and *neither* are *and* and *both* over negated disjuncts and
+exist since *and* is incompatible, (4.49a) and (4.50a); *nand* and *noth* would be *or* and
+*either* over negated disjuncts, which compatibility blocks, (4.49a') and (4.50a'); on the
+quantifier scale *none* lexicalizes as `~some` and as `all~` while `~all = some~` has no route,
+(4.60a). -/
+theorem lexicalization_rows :
+    ((∀ e ∈ [ex4_49a, ex4_50a], e.judgment = .acceptable) ∧
+      ¬ CompatibleConn andConn) ∧
+    ((∀ e ∈ [ex4_49a_prime, ex4_50a_prime], e.judgment = .ungrammatical) ∧
+      CompatibleConn orConn) ∧
+    (ex4_60a.judgment = .acceptable ∧ OuterNegationLexicalizes (someQ 4) ∧
+      InnerNegationLexicalizes (allQ 4) ∧ ¬ OuterNegationLexicalizes (allQ 4) ∧
+      ¬ InnerNegationLexicalizes (someQ 4)) :=
+  ⟨⟨by decide, andConn_not_compatible⟩, ⟨by decide, orConn_compatible⟩,
+    ⟨rfl, (e_corner_lexicalizable (by omega)).1, (e_corner_lexicalizable (by omega)).2,
+      (o_corner_unlexicalizable (by omega)).1, (o_corner_unlexicalizable (by omega)).2⟩⟩
+
+end Data
 
 end Horn1972
