@@ -29,7 +29,9 @@ subdomain (70), and the same reasoning yields Free Choice (`freeChoice_of_proper
 Without uniqueness the blocked exhaustivity inference (76) and the plural competitor (77)
 give ignorance of number (`numberIgnorance_of_competition`), which uniqueness makes
 unavailable (`not_numberIgnorance_of_uniqueness`) — the two parameters of Table 1. The
-scenario verdicts (24)–(30) are checked in `rows_agree`.
+scenario verdicts (24)–(30) are checked in `rows_agree`, and the singleton-restrictor and
+identity-continuation rows in `restrictor_rows` and `continuation_rows`, each rejected exactly
+under a determiner with a modal component.
 
 ## References
 
@@ -117,6 +119,13 @@ theorem not_numberIgnorance_of_uniqueness (hU : Uniqueness R w D Q) (h : □[R] 
     le_antisymm (hU v hv) (Finset.card_pos.2 ((claim_iff_witnesses_nonempty D Q v).1 (h v hv)))
   exact hne ((one v hv).trans (one v' hv').symm)
 
+/-- Naming the witness contradicts Modal Variation: with every accessible world agreeing on the
+witness set, no two differ, so a determiner with a modal component rejects the *namely* and
+which-question continuations of (2) and (8)–(9). -/
+theorem not_modalVariation_of_box_witnesses {x : Finset E}
+    (h : □[R] (fun v ↦ witnesses D Q v = x) w) : ¬ ModalVariation R w D Q :=
+  fun ⟨v, hv, v', hv', hne⟩ ↦ hne ((h v hv).trans (h v' hv').symm)
+
 /-! ### The scenarios -/
 
 /-- The hiding places; the domain of *habitación de la casa* is the house. -/
@@ -195,7 +204,54 @@ def observed (row : Datum) : Bool :=
 theorem rows_agree :
     ∀ row ∈ Examples.all, ∀ b, predicted row = some b → observed row = b := by decide +kernel
 
-example : (Examples.all.filter fun row => (predicted row).isSome).length = 7 := by
+theorem scenario_read : Datum.ReadCount predicted Examples.all 7 := by decide +kernel
+
+/-- Whether a determiner carries a modal component, (13) and (18): *algún* and the
+*irgend*-series do, *un* and plural *algunos* do not. -/
+inductive DetClass where
+  | modal
+  | plain
+  deriving DecidableEq, Repr
+
+/-- The class of a row's determiner. -/
+def detClass? (e : Datum) : Option DetClass :=
+  e.parse? "determiner"
+    [("algún", .modal), ("irgendwelche", .modal), ("un", .plain), ("algunos", .plain)]
+
+/-- A row whose determiner heads a singleton restrictor, (46)–(49). -/
+def singletonRestrictor? (e : Datum) : Option DetClass := do
+  let c ← detClass? e
+  let _ ← e.parse? "restrictor" [("singleton", ())]
+  pure c
+
+/-- A singleton restrictor is rejected exactly by a determiner with a modal component, whose
+anti-singleton selection returns no domain (`algún_ne_one_of_singleton`), (46)–(49). -/
+theorem restrictor_rows : ∀ e ∈ Examples.all, e.Fits singletonRestrictor? fun c ↦
+    match c with
+    | .modal => .rejected
+    | .plain => .accepted := by
+  decide +kernel
+
+theorem restrictor_read : Datum.ReadCount singletonRestrictor? Examples.all 4 := by
+  decide +kernel
+
+/-- A row whose sentence carries an identity-revealing continuation, a *namely*-appositive or an
+answered which-question. -/
+def identityContinuation? (e : Datum) : Option DetClass := do
+  let c ← detClass? e
+  let _ ← e.parse? "continuation" [("namely", ()), ("which-question", ())]
+  pure c
+
+/-- An identity-revealing continuation is rejected exactly by a determiner with a modal
+component, whose Modal Variation it contradicts (`not_modalVariation_of_box_witnesses`):
+(2)–(3), (8)–(11) and the plurals of (82). -/
+theorem continuation_rows : ∀ e ∈ Examples.all, e.Fits identityContinuation? fun c ↦
+    match c with
+    | .modal => .rejected
+    | .plain => .accepted := by
+  decide +kernel
+
+theorem continuation_read : Datum.ReadCount identityContinuation? Examples.all 8 := by
   decide +kernel
 
 end AlonsoOvalleMenendezBenito2010
