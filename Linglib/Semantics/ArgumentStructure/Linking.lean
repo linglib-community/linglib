@@ -21,6 +21,7 @@ correspondence that joins compatible slots and takes in every required slot on e
 
 * `RoleSlot`, `LinkedFrame`: a slot's admitted roles, and a frame with its slots linked
 * `LinkedFrame.IsProfiled`: a slot is profiled when it is a core slot of the frame
+* `Coherent`: the Semantic Coherence Principle, on a set of lines
 * `IsFusion`, `fusions`: fusions of one linked frame with another, and the finite set of them
 * `contributed`: the slots of the event structure no line ends at
 * `profilingMismatches`, `Corresponds`: the Correspondence Principle of [goldberg-1995]
@@ -128,15 +129,20 @@ inductive SubeventRelation where
 
 variable (V C : LinkedFrame) (σ : Finset (Slot × Slot))
 
+/-- The lines `σ` are coherent when the two slots each joins admit a common role, the Semantic
+Coherence Principle of [goldberg-1995] (p. 50) and [goldberg-jackendoff-2004] (44). -/
+def Coherent : Prop := ∀ x ∈ σ, ¬ Disjoint (V.admits x.1) (C.admits x.2)
+
+instance : Decidable (Coherent V C σ) := inferInstanceAs (Decidable (∀ x ∈ σ, _))
+
 /-- `IsFusion V C σ` holds when the lines `σ` fuse the argument structure `V` with the event
-structure `C`: each line joins a slot of `V` to a slot of `C` that admits a common role, the
-Semantic Coherence Principle of [goldberg-1995] (p. 50), no slot is on two lines, and every
-required slot on either side is on a line. -/
+structure `C`: they are coherent, each joins a slot of `V` to a slot of `C`, no slot is on two
+lines, and every required slot on either side is on a line. -/
 structure IsFusion : Prop where
   /-- Each line joins a slot of `V` to a slot of `C`. -/
   subset : σ ⊆ V.frame.slots.toFinset ×ˢ C.frame.slots.toFinset
   /-- The slots a line joins admit a common role. -/
-  coherent : ∀ x ∈ σ, ¬ Disjoint (V.admits x.1) (C.admits x.2)
+  coherent : Coherent V C σ
   /-- No slot of `V` is on two lines. -/
   injOn_fst : Set.InjOn Prod.fst (σ : Set (Slot × Slot))
   /-- No slot of `C` is on two lines. -/
@@ -147,8 +153,7 @@ structure IsFusion : Prop where
   obligatory_target : ∀ t ∈ C.obligatory, t ∈ σ.image Prod.snd
 
 theorem isFusion_iff : IsFusion V C σ ↔
-    σ ⊆ V.frame.slots.toFinset ×ˢ C.frame.slots.toFinset ∧
-      (∀ x ∈ σ, ¬ Disjoint (V.admits x.1) (C.admits x.2)) ∧
+    σ ⊆ V.frame.slots.toFinset ×ˢ C.frame.slots.toFinset ∧ Coherent V C σ ∧
       Set.InjOn Prod.fst (σ : Set (Slot × Slot)) ∧ Set.InjOn Prod.snd (σ : Set (Slot × Slot)) ∧
       (∀ s ∈ V.obligatory, s ∈ σ.image Prod.fst) ∧ ∀ t ∈ C.obligatory, t ∈ σ.image Prod.snd :=
   ⟨fun ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩ ↦ ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩,
