@@ -22,7 +22,11 @@ modal base guarantees the description at the world of evaluation and the pronoun
 (`felicitous_discourseMust_of_realistic`), whereas a value-based presupposition of existence
 would wrongly license *she* for the mayoral candidates of (85), who all exist. The unembedded
 discourse (74) is felicitous ((78), `felicitous_plain`), and the bathroom disjunction (95) exactly
-when a bathroom, if there is one, is unique ((97), `felicitous_bathroom_iff`).
+when a bathroom, if there is one, is unique ((97), `felicitous_bathroom_iff`). Read as a
+trivalent connective, PIP's conjunction is neither Strong nor Weak Kleene (fn. 21,
+`exists_toTrivalent_conj_ne_inf`, `exists_toTrivalent_conj_ne_meetWeak`), and a sentence extends
+a felicitous discourse felicitously iff the discourse strictly implies the sentence's felicity
+((51), `felicitous_sigma_conj_iff`).
 
 ## Implementation notes
 
@@ -36,6 +40,7 @@ of a `Scenario` (accessibility, antecedent description, continuation) and its PI
 ## References
 
 * [keshet-abney-2024]
+* [peters-1979]
 * [stone-1999]
 * [brasoveanu-2010]
 -/
@@ -72,6 +77,53 @@ abbrev Tm := Term Var Lab Sym
 
 /-- Formulas of the discourses. -/
 abbrev Fm := Formula Var Lab Sym
+
+/-! ### Felicity
+
+PIP's conjunction lets its first conjunct satisfy the presuppositions of its second ((42)). As a
+trivalent connective it is Peters' Middle Kleene conjunction (`Formula.toTrivalent_conj`), and so
+neither Strong nor Weak Kleene (fn. 21). A sentence extends a felicitous discourse felicitously
+iff the discourse strictly implies the sentence's felicity ((48)–(51)). -/
+
+section Felicity
+
+variable {V L : Type*} {P : ℕ → Type*} [DecidableEq V] {α : Type*} (M : Model P α)
+  (g : V → Set α)
+
+/-- Conjunction is not Strong Kleene (fn. 21). -/
+theorem exists_toTrivalent_conj_ne_inf : ∃ φ ψ : Formula V L P,
+    Formula.toTrivalent M g (.conj φ ψ) ≠ φ.toTrivalent M g ⊓ ψ.toTrivalent M g := by
+  obtain ⟨φ, hφ⟩ := Formula.toTrivalent_surjective (L := L) M g 0
+  obtain ⟨ψ, hψ⟩ := Formula.toTrivalent_surjective (L := L) M g (-1)
+  exact ⟨φ, ψ, by rw [Formula.toTrivalent_conj, hφ, hψ]; decide⟩
+
+/-- Conjunction is not Weak Kleene (fn. 21). -/
+theorem exists_toTrivalent_conj_ne_meetWeak : ∃ φ ψ : Formula V L P,
+    Formula.toTrivalent M g (.conj φ ψ) ≠ (φ.toTrivalent M g).meetWeak (ψ.toTrivalent M g) := by
+  obtain ⟨φ, hφ⟩ := Formula.toTrivalent_surjective (L := L) M g (-1)
+  obtain ⟨ψ, hψ⟩ := Formula.toTrivalent_surjective (L := L) M g 0
+  exact ⟨φ, ψ, by rw [Formula.toTrivalent_conj, hφ, hψ]; decide⟩
+
+/-- Given a felicitous discourse `γ` ((48)), its extension by `φ` is felicitous iff `γ` strictly
+implies the felicity of `φ` ((51)), where the local variables of `φ` not local to `γ` do not occur
+in `γ`. -/
+theorem felicitous_sigma_conj_iff {w : V} {γ φ : Formula V L P}
+    (hγ : Expr.Felicitous M g (.sigma w γ)) (hφ : ∀ y ∈ φ.locals, y ∉ γ.locals → y ∉ γ.vars) :
+    Expr.Felicitous M g (.sigma w (.conj γ φ)) ↔
+      ∀ g', Set.EqOn g' g {y | y ∉ (Expr.conj γ φ).locals ∧ y ≠ w} →
+        Formula.Realize M g' γ → φ.Felicitous M g' := by
+  classical
+  refine ⟨fun h g' hg => (h g' hg).2, fun h g' hg => ⟨?_, h g' hg⟩⟩
+  refine (γ.felicitous_congr M (Set.piecewise_eqOn γ.vars g' g)).1
+    ((Term.felicitous_sigma M g w γ).1 hγ _ fun y hy => ?_)
+  by_cases hyγ : y ∈ γ.vars
+  · rw [Set.piecewise_eq_of_mem _ _ _ hyγ]
+    refine hg ⟨fun hl => ?_, hy.2⟩
+    rcases List.mem_append.1 hl with hl | hl
+    exacts [hy.1 hl, hφ y hl hy.1 hyγ]
+  · rw [Set.piecewise_eq_of_notMem _ _ _ hyγ]
+
+end Felicity
 
 /-! ### Scenarios -/
 
@@ -275,15 +327,13 @@ theorem felicitous_exists_descE : (Expr.exists_ .b descE).Felicitous S.model h :
 
 theorem realize_exists_descE (hw : h .w = world w₀) :
     Formula.Realize S.model h (.exists_ .b descE) ↔ ∃ e, S.desc w₀ e := by
-  rw [Formula.realize_exists]
-  simp only [realize_descE]
+  simp only [Formula.realize_exists, realize_descE, Function.update_self,
+    Function.update_of_ne (show Var.w ≠ .b by decide), hw, world_inj]
   constructor
-  · rintro ⟨g', hg, w, e, hw', -, he⟩
-    obtain rfl := world_inj.1 (hw.symm.trans ((hg (by simp)).symm.trans hw'))
+  · rintro ⟨_, _, e, rfl, -, he⟩
     exact ⟨e, he⟩
   · rintro ⟨e, he⟩
-    exact ⟨Function.update h .b {Sum.inr e}, fun y hy => Function.update_of_ne hy _ _, w₀, e,
-      by rw [Function.update_of_ne (by decide), hw], by simp, he⟩
+    exact ⟨_, _, e, rfl, rfl, he⟩
 
 /-- (97): the bathroom disjunction is felicitous at `w₀` iff a bathroom there,
 if any, is unique. -/

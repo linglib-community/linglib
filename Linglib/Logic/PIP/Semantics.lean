@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Set.Lattice.Bounded
-public import Mathlib.Logic.Function.Basic
+public import Linglib.Core.Data.Set.Function
 public import Linglib.Logic.PIP.Syntax
 
 /-!
@@ -36,6 +36,8 @@ relation to a point: an atom for a term, nothing for a formula.
 * `Term.realize_sigma_eq`, `Term.realize_sigma_eq_of_mem_locals` — the value of a
   summation from a characterization of its body; `Term.realize_sigma_eq_image`,
   `Term.realize_sigma_eq_of_distributive` — over singular and distributive descriptions.
+* `Expr.realize_congr` — values and truth depend only on the variables occurring in an
+  expression.
 * `Expr.realize_elim` — the PIP constructs are eliminable: the translation
   preserves values and truth.
 
@@ -120,9 +122,9 @@ def Formula.Realize (φ : Formula V L P) : Prop := Expr.Realize M g φ .unit
 @[simp] theorem Term.realize_presup (t : Term V L P) (ψ : Formula V L P) :
     Term.realize M g (.presup t ψ) = Term.realize M g t := rfl
 
-theorem Term.mem_realize_abs (x : V) (φ : Formula V L P) (a : α) :
-    a ∈ Term.realize M g (.abs x φ) ↔
-      ∃ g', Set.EqOn g' g {x}ᶜ ∧ a ∈ g' x ∧ Formula.Realize M g' φ := Iff.rfl
+@[simp] theorem Term.mem_realize_abs (x : V) (φ : Formula V L P) (a : α) :
+    a ∈ Term.realize M g (.abs x φ) ↔ ∃ X, a ∈ X ∧ Formula.Realize M (Function.update g x X) φ :=
+  Set.exists_eqOn_compl_singleton_iff.trans <| by simp only [Function.update_self]; rfl
 
 theorem Term.mem_realize_sigma (x : V) (φ : Formula V L P) (a : α) :
     a ∈ Term.realize M g (.sigma x φ) ↔
@@ -160,9 +162,9 @@ theorem Term.mem_realize_sigma (x : V) (φ : Formula V L P) (a : α) :
 @[simp] theorem Formula.realize_conj (φ ψ : Formula V L P) :
     Formula.Realize M g (.conj φ ψ) ↔ Formula.Realize M g φ ∧ Formula.Realize M g ψ := Iff.rfl
 
-theorem Formula.realize_exists (x : V) (φ : Formula V L P) :
-    Formula.Realize M g (.exists_ x φ) ↔
-      ∃ g', Set.EqOn g' g {x}ᶜ ∧ Formula.Realize M g' φ := Iff.rfl
+@[simp] theorem Formula.realize_exists (x : V) (φ : Formula V L P) :
+    Formula.Realize M g (.exists_ x φ) ↔ ∃ X, Formula.Realize M (Function.update g x X) φ :=
+  Set.exists_eqOn_compl_singleton_iff
 
 @[simp] theorem Formula.realize_presup (φ ψ : Formula V L P) :
     Formula.Realize M g (.presup φ ψ) ↔ Formula.Realize M g φ := Iff.rfl
@@ -175,42 +177,38 @@ theorem Formula.realize_exists (x : V) (φ : Formula V L P) :
 
 /-! ### Derived clauses -/
 
-theorem Formula.realize_disj (φ ψ : Formula V L P) :
+@[simp] theorem Formula.realize_disj (φ ψ : Formula V L P) :
     Formula.Realize M g (φ.disj ψ) ↔ Formula.Realize M g φ ∨ Formula.Realize M g ψ :=
   show ¬(¬Formula.Realize M g φ ∧ ¬Formula.Realize M g ψ) ↔ _ from or_iff_not_and_not.symm
 
-theorem Formula.realize_impl (φ ψ : Formula V L P) :
+@[simp] theorem Formula.realize_impl (φ ψ : Formula V L P) :
     Formula.Realize M g (φ.impl ψ) ↔ (Formula.Realize M g φ → Formula.Realize M g ψ) :=
   show ¬(Formula.Realize M g φ ∧ ¬Formula.Realize M g ψ) ↔ _ from not_and_not_right
 
-theorem Formula.realize_iff (φ ψ : Formula V L P) :
+@[simp] theorem Formula.realize_iff (φ ψ : Formula V L P) :
     Formula.Realize M g (φ.iff_ ψ) ↔ (Formula.Realize M g φ ↔ Formula.Realize M g ψ) := by
   show Formula.Realize M g (φ.impl ψ) ∧ Formula.Realize M g (ψ.impl φ) ↔ _
   rw [Formula.realize_impl, Formula.realize_impl]
   exact iff_iff_implies_and_implies.symm
 
-theorem Formula.realize_forall (x : V) (φ : Formula V L P) :
-    Formula.Realize M g (Formula.forall_ x φ) ↔
-      ∀ g', Set.EqOn g' g {x}ᶜ → Formula.Realize M g' φ :=
-  show ¬(∃ g', Set.EqOn g' g {x}ᶜ ∧ ¬Formula.Realize M g' φ) ↔ _ by
-    simp only [not_exists, not_and, not_not]
+@[simp] theorem Formula.realize_forall (x : V) (φ : Formula V L P) :
+    Formula.Realize M g (Formula.forall_ x φ) ↔ ∀ X, Formula.Realize M (Function.update g x X) φ :=
+  (Formula.realize_neg _ _ _).trans <| by simp
 
-theorem Formula.realize_some (s t : Term V L P) :
+@[simp] theorem Formula.realize_some (s t : Term V L P) :
     Formula.Realize M g (Formula.some_ s t) ↔ (Term.realize M g s ∩ Term.realize M g t).Nonempty :=
   show ¬(Term.realize M g s ∩ Term.realize M g t = ∅) ↔ _ from Set.nonempty_iff_ne_empty.symm
 
 /-- `∃xφ` is true iff `⋃{x : φ}` is nonempty, provided `φ` is false when `x` is
-the null plurality — the standing assumption that predicates are false of the
+the null plurality, the standing assumption that predicates are false of the
 null individual. -/
 theorem Formula.realize_exists_iff_abs_nonempty (x : V) (φ : Formula V L P)
-    (h : ∀ g', g' x = ∅ → ¬ Formula.Realize M g' φ) :
+    (h : ¬ Formula.Realize M (Function.update g x ∅) φ) :
     Formula.Realize M g (.exists_ x φ) ↔ (Term.realize M g (.abs x φ)).Nonempty := by
-  constructor
-  · rintro ⟨g', hg, hφ⟩
-    obtain ⟨a, ha⟩ := Set.nonempty_iff_ne_empty.mpr fun he => h g' he hφ
-    exact ⟨a, g', hg, ha, hφ⟩
-  · rintro ⟨_, g', hg, _, hφ⟩
-    exact ⟨g', hg, hφ⟩
+  simp only [Formula.realize_exists, Set.Nonempty, Term.mem_realize_abs]
+  refine ⟨fun ⟨X, hX⟩ => ?_, fun ⟨_, X, _, hX⟩ => ⟨X, hX⟩⟩
+  obtain ⟨a, ha⟩ := Set.nonempty_iff_ne_empty.2 fun he => h (he ▸ hX)
+  exact ⟨a, X, ha, hX⟩
 
 /-- The value of a summation whose body, on the assignments agreeing outside the
 summation variable and its locals, depends on the summation variable's value
@@ -271,6 +269,68 @@ theorem Term.realize_sigma_eq_of_distributive {x : V} {φ : Formula V L P} {s : 
   ext a
   simp only [Set.mem_sUnion, Set.mem_ofPred_eq]
   exact ⟨fun ⟨_, ⟨_, hX⟩, ha⟩ => hX ha, fun ha => ⟨{a}, ⟨⟨a, rfl⟩, by simpa⟩, rfl⟩⟩
+
+/-! ### Dependence on the variables -/
+
+/-- Values and truth depend only on the variables occurring in an expression. -/
+theorem Expr.realize_congr :
+    ∀ {k : Kind} (e : Expr V L P k) {g g' : V → Set α}, Set.EqOn g g' e.vars →
+      ∀ a : Kind.Point α k, (e.Realize M g a ↔ e.Realize M g' a)
+  | _, .var x, _, _, h, a => by rw [Expr.Realize, Expr.Realize, h (Set.mem_singleton x)]
+  | _, .bvar x, _, _, h, a => by rw [Expr.Realize, Expr.Realize, h (Set.mem_singleton x)]
+  | _, .abs x φ, _, _, h, a =>
+      Set.exists_eqOn_congr (s := insert x φ.vars) (h.mono Set.inter_subset_left)
+        fun _ _ h' => and_congr (by rw [h' (Set.mem_insert x _)])
+          (Expr.realize_congr φ (h'.mono (Set.subset_insert _ _)) .unit)
+  | _, .sigma x φ, _, _, h, a =>
+      Set.exists_eqOn_congr (s := insert x φ.vars) (h.mono Set.inter_subset_left)
+        fun _ _ h' => and_congr (by rw [h' (Set.mem_insert x _)])
+          (Expr.realize_congr φ (h'.mono (Set.subset_insert _ _)) .unit)
+  | _, .inter s t, _, _, h, a =>
+      and_congr (Expr.realize_congr s (h.mono Set.subset_union_left) a)
+        (Expr.realize_congr t (h.mono Set.subset_union_right) a)
+  | _, .empty, _, _, _, _ => Iff.rfl
+  | _, .top, _, _, _, _ => Iff.rfl
+  | _, .atom r w ts, _, _, h, _ =>
+      iff_of_eq (congrArg₂ (M.I r)
+        (Set.ext fun a => Expr.realize_congr w (h.mono Set.subset_union_left) a)
+        (funext fun i => Set.ext fun a => Expr.realize_congr (ts i)
+          (h.mono (Set.subset_union_of_subset_right (Set.subset_iUnion (fun i => (ts i).vars) i)
+            _)) a))
+  | _, .eq s t, _, _, h, _ =>
+      iff_of_eq (congrArg₂ (· = ·)
+        (Set.ext fun a => Expr.realize_congr s (h.mono Set.subset_union_left) a)
+        (Set.ext fun a => Expr.realize_congr t (h.mono Set.subset_union_right) a))
+  | _, .subset s t, _, _, h, _ =>
+      iff_of_eq (congrArg₂ (· ⊆ ·)
+        (Set.ext fun a => Expr.realize_congr s (h.mono Set.subset_union_left) a)
+        (Set.ext fun a => Expr.realize_congr t (h.mono Set.subset_union_right) a))
+  | _, .mem s t, g, g', h, _ =>
+      exists_congr fun a => and_congr
+        (iff_of_eq (congrArg (fun S : Set α => S = {a})
+          (Set.ext fun b => Expr.realize_congr s (h.mono Set.subset_union_left) b :
+            Term.realize M g s = Term.realize M g' s)))
+        (Expr.realize_congr t (h.mono Set.subset_union_right) a)
+  | _, .sg t, g, g', h, _ =>
+      exists_congr fun a => iff_of_eq (congrArg (fun S : Set α => S = {a})
+        (Set.ext fun b => Expr.realize_congr t h b : Term.realize M g t = Term.realize M g' t))
+  | _, .pl t, _, _, h, _ =>
+      exists_congr fun a => exists_congr fun b => and_congr_right fun _ =>
+        and_congr (Expr.realize_congr t h a) (Expr.realize_congr t h b)
+  | _, .neg φ, _, _, h, _ => not_congr (Expr.realize_congr φ h .unit)
+  | _, .conj φ ψ, _, _, h, _ =>
+      and_congr (Expr.realize_congr φ (h.mono Set.subset_union_left) .unit)
+        (Expr.realize_congr ψ (h.mono Set.subset_union_right) .unit)
+  | _, .exists_ x φ, _, _, h, _ =>
+      Set.exists_eqOn_congr (s := insert x φ.vars) (h.mono Set.inter_subset_left)
+        fun _ _ h' => Expr.realize_congr φ (h'.mono (Set.subset_insert _ _)) .unit
+  | _, .labelDef _ _, _, _, _, _ => Iff.rfl
+  | _, .label _, _, _, _, _ => Iff.rfl
+  | _, .presup e _, _, _, h, a => Expr.realize_congr e (h.mono Set.subset_union_left) a
+
+theorem Formula.realize_congr {φ : Formula V L P} {g g' : V → Set α} (h : Set.EqOn g g' φ.vars) :
+    Formula.Realize M g φ ↔ Formula.Realize M g' φ :=
+  Expr.realize_congr M φ h .unit
 
 /-! ### Eliminability -/
 
