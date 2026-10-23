@@ -13,7 +13,7 @@ conventional-implicature content carries a free orientation variable, resolved i
 the speaker or to another participant (`CIItem.resolve`). Orientation is public commitment: an
 utterance commits the speaker to the at-issue content and whoever the item is oriented to to the
 implicature (`CIItem.utter`), so under a non-speaker-oriented reading the speaker's commitment
-set narrows by the at-issue content alone (`contextSet_utter_speaker_other`). Against the
+set narrows by the at-issue content alone (`commitmentSet_utter_speaker_other`). Against the
 configurational hypothesis, on which non-speaker orientation is semantic binding by an attitude
 predicate (10a), the paper sets the contextual one (10b): speaker orientation is
 a default that pragmatic factors override in any syntactic position. The attested readings and
@@ -74,27 +74,26 @@ def CIItem.resolve (o : Orientation Person) : TwoDim W (W → Prop) :=
 to `o` commits the speaker to the at-issue content and `o` to the conventional implicature. -/
 def CIItem.utter (o : Orientation Person) (K : State (Orientation Person) W) :
     State (Orientation Person) W :=
-  insert (commit .speaker {w | item.atIssue w}) (insert (commit o {w | item.ciFor o w}) K)
+  insert (.speaker, {w | item.atIssue w}) (insert (o, {w | item.ciFor o w}) K)
 
 variable (K : State (Orientation Person) W)
 
-theorem contextSet_utter_speaker :
-    contextSet (ofCommitter (item.utter .speaker K) .speaker) =
-      {w | item.atIssue w} ∩
-        ({w | item.ciFor .speaker w} ∩ contextSet (ofCommitter K .speaker)) := by
-  ext w; simp [CIItem.utter, ofCommitter, contextSet, contents, commit]
+theorem commitmentSet_utter_speaker :
+    (item.utter .speaker K).commitmentSet .speaker =
+      {w | item.atIssue w} ∩ ({w | item.ciFor .speaker w} ∩ K.commitmentSet .speaker) := by
+  simp [CIItem.utter]
 
 /-- A non-speaker-oriented reading adds only the at-issue content to the speaker's commitments, as
 with the appositive of (8) and the expressive of (9). -/
-theorem contextSet_utter_speaker_other (p : Person) :
-    contextSet (ofCommitter (item.utter (.other p) K) .speaker) =
-      {w | item.atIssue w} ∩ contextSet (ofCommitter K .speaker) := by
-  ext w; simp [CIItem.utter, ofCommitter, contextSet, contents, commit]
+theorem commitmentSet_utter_speaker_other (p : Person) :
+    (item.utter (.other p) K).commitmentSet .speaker =
+      {w | item.atIssue w} ∩ K.commitmentSet .speaker := by
+  simp [CIItem.utter, State.commitmentSet_insert_of_ne]
 
-theorem contextSet_utter_other (p : Person) :
-    contextSet (ofCommitter (item.utter (.other p) K) (.other p)) =
-      {w | item.ciFor (.other p) w} ∩ contextSet (ofCommitter K (.other p)) := by
-  ext w; simp [CIItem.utter, ofCommitter, contextSet, contents, commit]
+theorem commitmentSet_utter_other (p : Person) :
+    (item.utter (.other p) K).commitmentSet (.other p) =
+      {w | item.ciFor (.other p) w} ∩ K.commitmentSet (.other p) := by
+  simp [CIItem.utter, State.commitmentSet_insert_of_ne]
 
 /-! ### The configurational and the contextual hypothesis (10) -/
 

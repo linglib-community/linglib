@@ -192,21 +192,20 @@ def ask (c : Context A W) (Q : Question W) : Context A W := ⟨c.moves, Q⟩
 /-- The commitment state of the record commits the speaker of each move to each of its
 commitments. -/
 def commitments (c : Context A W) : Commitment.State A W :=
-  {k | ∃ m ∈ c.moves, ∃ p ∈ m.commitments, k = Commitment.commit m.speaker p}
+  {q | ∃ m ∈ c.moves, ∃ p ∈ m.commitments, q = (m.speaker, p)}
 
 /-- `c.contextSetOf s` is the set of worlds compatible with the commitments of `s`. -/
-def contextSetOf (c : Context A W) (s : A) : Set W :=
-  Commitment.contextSet (Commitment.ofCommitter c.commitments s)
+def contextSetOf (c : Context A W) (s : A) : Set W := c.commitments.commitmentSet s
 
 theorem mem_contextSetOf {c : Context A W} {s : A} {w : W} :
     w ∈ c.contextSetOf s ↔ ∀ m ∈ c.moves, m.speaker = s → ∀ p ∈ m.commitments, w ∈ p := by
-  simp only [contextSetOf, Commitment.contextSet, Commitment.contents, Commitment.ofCommitter,
-    commitments, Set.mem_sInter, Set.mem_image, Set.mem_ofPred_eq]
+  simp only [contextSetOf, Commitment.State.mem_commitmentSet, commitments, Set.mem_ofPred_eq]
   constructor
-  · intro h m hm hs p hp
-    exact h p ⟨_, ⟨⟨⟨m, hm, p, hp, rfl⟩, hs⟩, rfl⟩, rfl⟩
-  · rintro h _ ⟨_, ⟨⟨⟨m, hm, p, hp, rfl⟩, hs⟩, -⟩, rfl⟩
-    exact h m hm hs p hp
+  · rintro h m hm rfl p hp
+    exact h p ⟨m, hm, p, hp, rfl⟩
+  · rintro h _ ⟨m, hm, p, hp, e⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj e
+    exact h m hm rfl _ hp
 
 end Context
 

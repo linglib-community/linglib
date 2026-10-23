@@ -151,7 +151,7 @@ theorem assert_commonGround : (K.assert φ a).commonGround = K.commonGround := r
 
 theorem accept_discourseCommitments :
     φ ∈ ((K.assert φ a).accept φ b).discourseCommitments b :=
-  Table.mem_discourseCommitments_commit_self _ _ _ _ _
+  Table.mem_discourseCommitments_commit_self _ _ _
 
 theorem accept_discourseCommitments_speaker :
     φ ∈ ((K.assert φ a).accept φ b).discourseCommitments a := by
@@ -230,7 +230,7 @@ theorem denial_isSource : (K.denial φ a p).IsSource φᶜ a :=
 theorem figure6_discourseCommitments (h : a ≠ p) :
     φ ∈ ((K.reportative φ a p).accept φ a).discourseCommitments a ∧
     φ ∈ ((K.reportative φ a p).accept φ a).discourseCommitments p :=
-  ⟨Table.mem_discourseCommitments_commit_self _ _ _ _ _, by
+  ⟨Table.mem_discourseCommitments_commit_self _ _ _, by
     rw [show ((K.reportative φ a p).accept φ a).discourseCommitments p =
       ((K.reportative φ a p).toTable.commit a φ).discourseCommitments p from rfl,
       Table.discourseCommitments_commit_of_ne h.symm]
@@ -245,7 +245,7 @@ theorem figure6_discourseCommitments_eq_assert (h : a ≠ p) :
   exact (Table.discourseCommitments_assert _ _ _).symm
 
 theorem figure6_dependent : ((K.reportative φ a p).accept φ a).Dependent φ a :=
-  ⟨Table.mem_discourseCommitments_commit_self _ _ _ _ _, by simp [accept]⟩
+  ⟨Table.mem_discourseCommitments_commit_self _ _ _, by simp [accept]⟩
 
 /-- Weaker than an assertion: the animator is not committed as a source unless she already had
 adequate evidence or best possible grounds for `φ`. -/

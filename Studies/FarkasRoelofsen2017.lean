@@ -195,7 +195,7 @@ namespace Context
 variable {A : Type*} (K : Context A W) (x : A)
 
 /-- `cs(x)` is the set of worlds compatible with everything `x` is committed to. -/
-def cs : Set W := contextSet (ofCommitter K.commitments x)
+def cs : Set W := K.commitments.commitmentSet x
 
 /-- The common ground, the smallest set every participant is committed to the actual world
 lying in. -/
@@ -208,7 +208,7 @@ def CommonlyDecided (P : Question W) : Prop := K.cg ∈ P ∨ ∀ s ∈ P, K.cg 
 /-- The basic convention of use (48) puts the proposition on the table and its informative
 content into the speaker's commitments. -/
 def basic (φ : Question W) : Context A W :=
-  ⟨φ :: K.table, insert (commit x φ.info) K.commitments, K.evidence⟩
+  ⟨φ :: K.table, insert (x, φ.info) K.commitments, K.evidence⟩
 
 /-- A special effect enters the highlighted alternative into the speaker's evidence with a
 credence interval. -/
@@ -250,7 +250,7 @@ theorem table_utter (f : Form) (α : Set W) :
 
 theorem commitments_utter (f : Form) (α : Set W) :
     (K.utter x f α).commitments =
-      insert (commit x (f.interpret (ofSet α)).info) K.commitments := by
+      insert (x, (f.interpret (ofSet α)).info) K.commitments := by
   rcases f with i | i | i <;> cases i <;> rfl
 
 omit [DecidableEq A] in
@@ -258,8 +258,7 @@ omit [DecidableEq A] in
 theorem cs_basic_declarative_falling (α : Set W) :
     (K.basic x ((Form.declarative .falling).interpret (ofSet α))).cs x = K.cs x ∩ α := by
   simp only [cs, basic, interpret_declarative_falling, compl_compl_ofSet, info_ofSet]
-  rw [ofCommitter_insert_of_eq K.commitments x (commit x α) rfl, contextSet_insert_of_commit rfl,
-    commit_content, Set.inter_comm]
+  rw [State.commitmentSet_insert_self, Set.inter_comm]
 
 omit [DecidableEq A] in
 /-- An inquisitive proposition commits the speaker only to the trivial possibility, as in (50)
@@ -267,8 +266,7 @@ and (51). -/
 theorem cs_basic_of_isInquisitive {φ : Question W} (h : φ.info = Set.univ) :
     (K.basic x φ).cs x = K.cs x := by
   simp only [cs, basic, h]
-  rw [ofCommitter_insert_of_eq K.commitments x (commit x Set.univ) rfl,
-    contextSet_insert_of_commit rfl, commit_content, Set.univ_inter]
+  rw [State.commitmentSet_insert_self, Set.univ_inter]
 
 /-- A marked form registers the highlighted alternative as evidenced with its credence
 interval, as in (52), (56) and (58). -/

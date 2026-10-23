@@ -27,7 +27,7 @@ source are checked as well.
 The information state of a preference structure is its world type, so the paper's consistency
 is `PreferenceStructure.Consistent Set.univ`; the theorems take an information state `B`, since
 the paper's incompatibility is relative to what the speaker believes. A public effective
-preference is a commitment of force `.preferential`; the doxastic reduction of a commitment to
+preference is a commitment keyed by the participant and `.preferential`; the doxastic reduction of a commitment to
 one's own preferential commitment, which the paper takes over from the authors' earlier work, is
 a hypothesis on the world-indexed commitment state. Disinterested advice identifies the content
 with the adopted goal, which the paper reaches through a means-end inference, and quantifies
@@ -68,55 +68,58 @@ variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Se
 
 `Want P a p w` is the effective preference `EP_w(a, p)`: `p` is a maximal element of `a`'s
 effective preference structure `P a w`, the distinguished consistent structure that determines
-`a`'s action choices, (28) and (29). The public commitments of §3.2 are `Commitment`s:
-`commit a p` is `PB(a, p)`, to act as though believing `p`, and `commit a p .preferential` is
-`PEP(a, p)`, to act as though `p` were a maximal effective preference; a speaker commits to an
-effective preference only when holding it, condition (iii) of §3.4, `Commitment.Sincere`. -/
+`a`'s action choices, (28) and (29). The public commitments of §3.2 are keyed by participant and
+attitude. A commitment of `(a, .doxastic)` to `p` is `PB(a, p)`, to act as though believing `p`,
+and one of `(a, .preferential)` is `PEP(a, p)`, to act as though `p` were a maximal effective
+preference; a speaker commits to an effective preference only when holding it, condition (iii) of
+§3.4, `Commitment.Sincere`. -/
 
 /-! ### The conventions -/
 
-/-- A declarative under the convention (30) narrows the doxastic context set by its content and
-leaves the preferential one unchanged. -/
-theorem declarative_contextSets (a : A) (p : Set W) (K : State A W) :
-    contextSet (ofForce (insert (commit a p) K) .doxastic) =
-        p ∩ contextSet (ofForce K .doxastic) ∧
-      contextSet (ofForce (insert (commit a p) K) .preferential) =
-        contextSet (ofForce K .preferential) :=
-  ⟨contextSet_ofForce_insert_of_eq_of_commit rfl rfl, contextSet_ofForce_insert_of_ne nofun⟩
+/-- A declarative under the convention (30) narrows the speaker's doxastic commitment set by its
+content and leaves the preferential one unchanged. -/
+theorem declarative_commitmentSets (a : A) (p : Set W) (K : State (A × Force) W) :
+    (insert ((a, .doxastic), p) K).commitmentSet (a, .doxastic) =
+        p ∩ K.commitmentSet (a, .doxastic) ∧
+      (insert ((a, .doxastic), p) K).commitmentSet (a, .preferential) =
+        K.commitmentSet (a, .preferential) :=
+  ⟨State.commitmentSet_insert_self, State.commitmentSet_insert_of_ne (by simp)⟩
 
-/-- An imperative under the convention (47) narrows the preferential context set by its content and
-leaves the doxastic one unchanged (10). -/
-theorem imperative_contextSets (a : A) (p : Set W) (K : State A W) :
-    contextSet (ofForce (insert (commit a p .preferential) K) .preferential) =
-        p ∩ contextSet (ofForce K .preferential) ∧
-      contextSet (ofForce (insert (commit a p .preferential) K) .doxastic) =
-        contextSet (ofForce K .doxastic) :=
-  ⟨contextSet_ofForce_insert_of_eq_of_commit rfl rfl, contextSet_ofForce_insert_of_ne nofun⟩
+/-- An imperative under the convention (47) narrows the speaker's preferential commitment set by
+its content and leaves the doxastic one unchanged (10). -/
+theorem imperative_commitmentSets (a : A) (p : Set W) (K : State (A × Force) W) :
+    (insert ((a, .preferential), p) K).commitmentSet (a, .preferential) =
+        p ∩ K.commitmentSet (a, .preferential) ∧
+      (insert ((a, .preferential), p) K).commitmentSet (a, .doxastic) =
+        K.commitmentSet (a, .doxastic) :=
+  ⟨State.commitmentSet_insert_self, State.commitmentSet_insert_of_ne (by simp)⟩
 
 /-! ### Self-verification -/
 
 /-- The denotation (34) of `IMP(p)` over a world-indexed commitment state is the set of worlds at
 which the speaker is publicly committed to an effective preference for `p`. -/
-def imp (K : W → State A W) (a : A) (p : Set W) : Set W := {w | commit a p .preferential ∈ K w}
+def imp (K : W → State (A × Force) W) (a : A) (p : Set W) : Set W :=
+  {w | ((a, .preferential), p) ∈ K w}
 
 /-- Doxastic reduction for preference commitment, after [condoravdi-lauer-2011], identifies a
 doxastic commitment to one's own preferential commitment with that preferential commitment. -/
-def DoxasticReduction (K : W → State A W) : Prop :=
-  ∀ w (c : Commitment A W), c.force = .preferential →
-    commit c.committer {v | c ∈ K v} ∈ K w → c ∈ K w
+def DoxasticReduction (K : W → State (A × Force) W) : Prop :=
+  ∀ w a p, ((a, .doxastic), {v | ((a, .preferential), p) ∈ K v}) ∈ K w →
+    ((a, .preferential), p) ∈ K w
 
 /-- The doxastic commitment to `IMP(p)` that (30) assigns an imperative holds at the world of
 utterance, so it resists the challenges (23) to (25) (§3.3; cf. (47), §6). -/
-theorem imp_self_verifying {K : W → State A W} (hK : DoxasticReduction K)
-    (h : commit a (imp K a p) ∈ K w) : w ∈ imp K a p :=
-  hK w _ rfl h
+theorem imp_self_verifying {K : W → State (A × Force) W} (hK : DoxasticReduction K)
+    (h : ((a, .doxastic), imp K a p) ∈ K w) : w ∈ imp K a p :=
+  hK w a p h
 
 /-! ### Directive uses -/
 
 /-- In a directive context, a sincere preferential commitment to `p` under (34) is an effective
 preference satisfied only if the addressee effectively prefers `p` (§3.4; cf. (32)). -/
-theorem directive_want_addressee {K : State A W} {ad : A} (hs : Sincere (effectivePreference P) K w)
-    (hp : commit a p .preferential ∈ K) (hii : p ⊆ {v | Want P ad p v}) :
+theorem directive_want_addressee {K : State (A × Force) W} {ad : A}
+    (hs : Sincere (effectivePreference P) K w) (hp : ((a, .preferential), p) ∈ K)
+    (hii : p ⊆ {v | Want P ad p v}) :
     WantNecessary P a {v | Want P ad p v} w :=
   (hs.want hp).wantNecessary.mono hii
 
@@ -124,20 +127,16 @@ theorem directive_want_addressee {K : State A W} {ad : A} (hs : Sincere (effecti
 
 /-- The preferential commitments of a sincere speaker with consistent effective preferences are
 jointly realizable in the information state: successive imperatives are consistent, §2.1. -/
-theorem imperatives_consistent {K : State A W} {B : Set W} (hC : (P a w).Consistent B)
+theorem imperatives_consistent {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
     (hs : Sincere (effectivePreference P) K w) :
-    (B ∩ contextSet (ofForce (ofCommitter K a) .preferential)).Nonempty := by
-  refine hC.inter_sInter_maxElts_nonempty.mono
-    (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter ?_))
-  rintro _ ⟨c, ⟨⟨⟨hc, rfl⟩, hf⟩, hp⟩, rfl⟩
-  have h := hs c hc hp
-  rw [hf] at h
-  exact h
+    (B ∩ K.commitmentSet (a, .preferential)).Nonempty :=
+  hC.inter_sInter_maxElts_nonempty.mono
+    (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter fun _ hp ↦ hs.want hp))
 
 /-- Two imperatives with incompatible contents are not both sincere at one time, (11) and (15):
 the second revises the speaker's effective preferences, (12) to (14). -/
-theorem imperatives_revise {K : State A W} {B : Set W} (hC : (P a w).Consistent B)
-    (hp : commit a p .preferential ∈ K) (hq : commit a q .preferential ∈ K)
+theorem imperatives_revise {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
+    (hp : ((a, .preferential), p) ∈ K) (hq : ((a, .preferential), q) ∈ K)
     (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere (effectivePreference P) K w :=
   fun hs ↦ (hC.inter_inter_nonempty_of_mem_maxElts (hs.want hp) (hs.want hq)).ne_empty h
 
@@ -163,7 +162,7 @@ inductive Use
 
 /-- An utterance requires of the speaker's effective preference structure an effective
 preference for the content unless it is an assertion, which incurs no preferential commitment,
-`declarative_contextSets`, and for advice also nothing ranked below the content, (39). -/
+`declarative_commitmentSets`, and for advice also nothing ranked below the content, (39). -/
 def Use.Holds (u : Use) (S : PreferenceStructure W) (p : Set W) : Prop :=
   (u ≠ .assertion → p ∈ S.maxElts) ∧ (u = .advice → ∀ r ∈ S.prefs, ¬ S.prec r p)
 

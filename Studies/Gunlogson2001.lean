@@ -14,7 +14,7 @@ one of them: a declarative narrows the targeted set to its content (74), an inte
 it alone (87), and the rise or fall selects the addressee's or the speaker's set (75), (76),
 `Locution.update`. The statuses of a proposition in a context, commitment, joint commitment,
 resolution, controversy, bias, and neutrality (63) to (68), are conditions on the commitment
-sets `Commitment.commitmentSet`, and the reduction-set characterization of bias (69) to (71) is
+sets `Commitment.State.commitmentSet`, and the reduction-set characterization of bias (69) to (71) is
 `IsBiasedR`. Chapter 3 classifies locutions by their effect: the theorems that
 no declarative is neutral and no interrogative biasing (91), (92),
 `Locution.not_isNeutralIn_of_decl`, the expression of commitment (93), and entailment,
@@ -48,17 +48,17 @@ says is equivalent to (67), agrees with it exactly on unresolved propositions,
 
 namespace Gunlogson2001
 
-open Commitment Discourse
+open Commitment State Discourse
 
 variable {W : Type*} {K : State Role W} {p : Set W}
 
 /-! ### Commitment sets and the statuses of a proposition, section 3.1 -/
 
 /-- A falling declarative (78): the speaker commits to `p`. -/
-def falling (K : State Role W) (p : Set W) : State Role W := insert (commit .speaker p) K
+def falling (K : State Role W) (p : Set W) : State Role W := insert (.speaker, p) K
 
 /-- A rising declarative (77): the addressee is committed to `p`. -/
-def rising (K : State Role W) (p : Set W) : State Role W := insert (commit .addressee p) K
+def rising (K : State Role W) (p : Set W) : State Role W := insert (.addressee, p) K
 
 /-- (63): `p` is a commitment of `x`. -/
 def IsCommitmentOf (K : State Role W) (x : Role) (p : Set W) : Prop :=
@@ -86,17 +86,13 @@ variable (K p) in
 theorem commitmentSet_falling :
     commitmentSet (falling K p) .speaker = p ∩ commitmentSet K .speaker ∧
       commitmentSet (falling K p) .addressee = commitmentSet K .addressee :=
-  ⟨by rw [commitmentSet, falling, ofCommitter_insert_of_eq K .speaker _ rfl,
-      contextSet_insert_of_commit rfl]; rfl,
-    by rw [commitmentSet, falling, ofCommitter_insert_of_ne K .addressee _ (by simp)]; rfl⟩
+  ⟨commitmentSet_insert_self, commitmentSet_insert_of_ne (by simp)⟩
 
 variable (K p) in
 theorem commitmentSet_rising :
     commitmentSet (rising K p) .addressee = p ∩ commitmentSet K .addressee ∧
       commitmentSet (rising K p) .speaker = commitmentSet K .speaker :=
-  ⟨by rw [commitmentSet, rising, ofCommitter_insert_of_eq K .addressee _ rfl,
-      contextSet_insert_of_commit rfl]; rfl,
-    by rw [commitmentSet, rising, ofCommitter_insert_of_ne K .speaker _ (by simp)]; rfl⟩
+  ⟨commitmentSet_insert_self, commitmentSet_insert_of_ne (by simp)⟩
 
 theorem isJoint_of_mem_jointContents (hne : ∀ x, (commitmentSet K x).Nonempty)
     (h : p ∈ jointContents K) : IsJoint K p :=

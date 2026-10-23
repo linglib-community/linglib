@@ -119,12 +119,13 @@ theorem projectedSet_polarQuestion (hK : K.IsStable) (hp : K.commonGround ⊓ �
 /-- After the addressee confirms (16), the asserted proposition is on every commitment
 list. -/
 theorem mem_jointContents_assert_confirm :
-    p ∈ jointContents ((K.assert .speaker p).commit .addressee p).commitments := by
-  refine mem_jointContents.2 fun a ↦ show p ∈ Table.discourseCommitments _ a from ?_
+    p ∈ ((K.assert .speaker p).commit .addressee p).commitments.jointContents := by
+  refine State.mem_jointContents.2 fun a ↦
+    show p ∈ ((K.assert .speaker p).commit .addressee p).discourseCommitments a from ?_
   cases a
   · rw [Table.discourseCommitments_commit_of_ne (by decide)]
     exact Table.mem_discourseCommitments_assert _ _ _
-  · exact Table.mem_discourseCommitments_commit_self _ _ _ _ _
+  · exact Table.mem_discourseCommitments_commit_self _ _ _
 
 /-- The shared proposition enters the common ground (17). -/
 theorem mem_commonGround_settle :

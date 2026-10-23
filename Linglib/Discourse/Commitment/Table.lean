@@ -61,7 +61,7 @@ and moves only the projected set.
   `Question.decidedBy_top` records that the trivial issue is always decided.
 * M' (17) applies in the paper only once the proposition is on every commitment list;
   `Table.settle` is the operation itself, and the trigger is a hypothesis on the caller,
-  `p ∈ jointContents K.commitments`. Its popping clause is read as "pop from the top while
+  `p ∈ K.commitments.jointContents`. Its popping clause is read as "pop from the top while
   decided", which follows the stack wording of (17) and agrees with the paper's examples; the
   gloss after (17) can also be read as removing every decided item from anywhere in the stack,
   and the clause pops on an entailed complete answer where the gloss says a decided one, which
@@ -155,7 +155,7 @@ instance : Discourse.HasIssue (Table A W) W := ⟨fun K ↦ K.stack.headD ⊤⟩
 def IsStable : Prop := K.stack = []
 
 /-- The discourse commitments `DC_a` are the propositions `a` has publicly committed to. -/
-def discourseCommitments : Set (Set W) := contents (ofCommitter K.commitments a)
+def discourseCommitments : Set (Set W) := K.commitments.contents a
 
 /-! ### The projected set -/
 
@@ -176,8 +176,7 @@ def push : Table A W := { K with stack := P :: K.stack }
 def pop : Table A W := { K with stack := K.stack.tail }
 
 /-- Commit `a` to `p`. -/
-def commit (force : Force := .doxastic) (source : Source := .selfGenerated) : Table A W :=
-  { K with commitments := insert (Commitment.commit a p force source) K.commitments }
+def commit : Table A W := { K with commitments := insert (a, p) K.commitments }
 
 /-- In the default assertion (9), `a` commits to `p` and places the declarative's issue on the
 Table. -/
@@ -192,7 +191,7 @@ list, `p` enters the common ground and leaves the individual commitment lists, a
 new common ground decides are popped from the top of the Table. -/
 noncomputable def settle : Table A W where
   stack := K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p))
-  commitments := {c ∈ K.commitments | c.content ≠ p}
+  commitments := {q ∈ K.commitments | q.2 ≠ p}
   commonGround := K.commonGround ⊓ 𝓟 p
 
 /-- Agreeing to disagree (23), from a Table with the denial on top of the assertion it denies,
@@ -210,15 +209,13 @@ def agreeToDisagree : Table A W := K.pop.pop
 @[simp] theorem stack_pop : K.pop.stack = K.stack.tail := rfl
 @[simp] theorem commitments_pop : K.pop.commitments = K.commitments := rfl
 @[simp] theorem commonGround_pop : K.pop.commonGround = K.commonGround := rfl
-@[simp] theorem stack_commit (force source) : (K.commit a p force source).stack = K.stack := rfl
-@[simp] theorem commitments_commit (force source) :
-    (K.commit a p force source).commitments =
-      insert (Commitment.commit a p force source) K.commitments := rfl
-@[simp] theorem commonGround_commit (force source) :
-    (K.commit a p force source).commonGround = K.commonGround := rfl
+@[simp] theorem stack_commit : (K.commit a p).stack = K.stack := rfl
+@[simp] theorem commitments_commit : (K.commit a p).commitments = insert (a, p) K.commitments :=
+  rfl
+@[simp] theorem commonGround_commit : (K.commit a p).commonGround = K.commonGround := rfl
 @[simp] theorem stack_assert : (K.assert a p).stack = ofSet p :: K.stack := rfl
-@[simp] theorem commitments_assert :
-    (K.assert a p).commitments = insert (Commitment.commit a p) K.commitments := rfl
+@[simp] theorem commitments_assert : (K.assert a p).commitments = insert (a, p) K.commitments :=
+  rfl
 @[simp] theorem commonGround_assert : (K.assert a p).commonGround = K.commonGround := rfl
 @[simp] theorem stack_polarQuestion : (K.polarQuestion p).stack = polar p :: K.stack := rfl
 @[simp] theorem commitments_polarQuestion : (K.polarQuestion p).commitments = K.commitments :=
@@ -231,7 +228,7 @@ open scoped Classical in
     (K.settle p).stack = K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p)) :=
   rfl
 @[simp] theorem commitments_settle :
-    (K.settle p).commitments = {c ∈ K.commitments | c.content ≠ p} := rfl
+    (K.settle p).commitments = {q ∈ K.commitments | q.2 ≠ p} := rfl
 @[simp] theorem commonGround_settle : (K.settle p).commonGround = K.commonGround ⊓ 𝓟 p := rfl
 @[simp] theorem stack_agreeToDisagree : K.agreeToDisagree.stack = K.stack.tail.tail := rfl
 @[simp] theorem commitments_agreeToDisagree : K.agreeToDisagree.commitments = K.commitments :=
@@ -243,8 +240,8 @@ open scoped Classical in
     HasCommonGround.commonGround K = K.commonGround := rfl
 @[simp] theorem toIssue_empty : Discourse.HasIssue.toIssue (empty : Table A W) = ⊤ := rfl
 @[simp] theorem toIssue_push : Discourse.HasIssue.toIssue (K.push P) = P := rfl
-@[simp] theorem toIssue_commit (force source) :
-    Discourse.HasIssue.toIssue (K.commit a p force source) = Discourse.HasIssue.toIssue K := rfl
+@[simp] theorem toIssue_commit :
+    Discourse.HasIssue.toIssue (K.commit a p) = Discourse.HasIssue.toIssue K := rfl
 @[simp] theorem toIssue_assert : Discourse.HasIssue.toIssue (K.assert a p) = ofSet p := rfl
 @[simp] theorem toIssue_polarQuestion :
     Discourse.HasIssue.toIssue (K.polarQuestion p) = polar p := rfl
@@ -265,8 +262,8 @@ theorem isStable_settle_of_isStable (h : K.IsStable) : (K.settle p).IsStable :=
 
 /-! ### Discourse commitments -/
 
-@[simp] theorem discourseCommitments_empty : (empty : Table A W).discourseCommitments a = ∅ := by
-  simp [discourseCommitments, ofCommitter, contents]
+@[simp] theorem discourseCommitments_empty : (empty : Table A W).discourseCommitments a = ∅ :=
+  rfl
 
 @[simp] theorem discourseCommitments_push :
     (K.push P).discourseCommitments a = K.discourseCommitments a := rfl
@@ -277,31 +274,27 @@ theorem isStable_settle_of_isStable (h : K.IsStable) : (K.settle p).IsStable :=
 @[simp] theorem discourseCommitments_agreeToDisagree :
     K.agreeToDisagree.discourseCommitments a = K.discourseCommitments a := rfl
 
-@[simp] theorem discourseCommitments_commit_self (force source) :
-    (K.commit a p force source).discourseCommitments a = insert p (K.discourseCommitments a) := by
-  rw [discourseCommitments, discourseCommitments, commitments_commit,
-    ofCommitter_insert_of_eq _ _ _ (commit_committer a p force source),
-    contents_insert_of_commit (commit_stance a p force source), commit_content]
+@[simp] theorem discourseCommitments_commit_self :
+    (K.commit a p).discourseCommitments a = insert p (K.discourseCommitments a) :=
+  State.contents_insert_self
 
 variable {K a p} in
-theorem discourseCommitments_commit_of_ne {force source} {b : A} (h : b ≠ a) :
-    (K.commit a p force source).discourseCommitments b = K.discourseCommitments b := by
-  rw [discourseCommitments, discourseCommitments, commitments_commit,
-    ofCommitter_insert_of_ne _ _ _ ((commit_committer a p force source).trans_ne h.symm)]
+theorem discourseCommitments_commit_of_ne {b : A} (h : b ≠ a) :
+    (K.commit a p).discourseCommitments b = K.discourseCommitments b :=
+  State.contents_insert_of_ne h
 
-theorem mem_discourseCommitments_commit_iff (force source) {b : A} {q : Set W} :
-    q ∈ (K.commit a p force source).discourseCommitments b ↔ (b = a ∧ q =
-      p) ∨ q ∈ K.discourseCommitments b := by
+theorem mem_discourseCommitments_commit_iff {b : A} {q : Set W} :
+    q ∈ (K.commit a p).discourseCommitments b ↔ (b = a ∧ q = p) ∨ q ∈ K.discourseCommitments b := by
   by_cases hb : b = a
   · subst hb; simp
   · simp [discourseCommitments_commit_of_ne hb, hb]
 
-theorem mem_discourseCommitments_commit_self (force source) :
-    p ∈ (K.commit a p force source).discourseCommitments a := by simp
+theorem mem_discourseCommitments_commit_self : p ∈ (K.commit a p).discourseCommitments a := by
+  simp
 
 @[simp] theorem discourseCommitments_assert :
     (K.assert a p).discourseCommitments a = insert p (K.discourseCommitments a) :=
-      discourseCommitments_commit_self K a p _ _
+  discourseCommitments_commit_self K a p
 
 variable {K a p} in
 theorem discourseCommitments_assert_of_ne {b : A} (h : b ≠ a) :
@@ -309,20 +302,13 @@ theorem discourseCommitments_assert_of_ne {b : A} (h : b ≠ a) :
   discourseCommitments_commit_of_ne h
 
 theorem mem_discourseCommitments_assert :
-    p ∈ (K.assert a p).discourseCommitments a := mem_discourseCommitments_commit_self K a p _ _
+    p ∈ (K.assert a p).discourseCommitments a := mem_discourseCommitments_commit_self K a p
 
 /-- M' strips the shared proposition from every commitment list. -/
 theorem discourseCommitments_settle :
     (K.settle p).discourseCommitments a = K.discourseCommitments a \ {p} := by
-  ext q
-  simp only [discourseCommitments, ofCommitter, contents, commitments_settle, Set.mem_image,
-    Set.mem_ofPred_eq,
-    Set.mem_sdiff, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨c, ⟨⟨⟨hc, hp⟩, ha⟩, hpol⟩, rfl⟩
-    exact ⟨⟨c, ⟨⟨hc, ha⟩, hpol⟩, rfl⟩, hp⟩
-  · rintro ⟨⟨c, ⟨⟨hc, ha⟩, hpol⟩, rfl⟩, hp⟩
-    exact ⟨c, ⟨⟨⟨hc, hp⟩, ha⟩, hpol⟩, rfl⟩
+  ext
+  simp [discourseCommitments, State.contents]
 
 /-! ### The moves on the Table -/
 
@@ -337,14 +323,14 @@ theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.commonGround �
     ((K.push P).settle p).stack = P :: K.stack := by
   simp [h]
 
-theorem settle_commit_self (force source) : (K.commit a p force source).settle p = K.settle p :=
+theorem settle_commit_self : (K.commit a p).settle p = K.settle p :=
   Table.ext rfl (Set.insert_inter_of_notMem (not_not.2 rfl)) rfl
 
 /-- M' with the asserted proposition pops the assertion and strips its commitment. -/
 theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
   (settle_push_of_decidedBy
     (decidedBy_ofSet.2 (mem_inf_of_right (mem_principal_self p)))).trans
-    (settle_commit_self K a p _ _)
+    (settle_commit_self K a p)
 
 theorem settle_polarQuestion_self : (K.polarQuestion p).settle p = K.settle p :=
   settle_push_of_decidedBy (decidedBy_polar.2 (.inl (mem_inf_of_right (mem_principal_self p))))
@@ -409,8 +395,7 @@ end
 
 @[simp] theorem projectedSet_push : (K.push P).projectedSet = project K.projectedSet P := rfl
 
-@[simp] theorem projectedSet_commit (force source) :
-    (K.commit a p force source).projectedSet = K.projectedSet :=
+@[simp] theorem projectedSet_commit : (K.commit a p).projectedSet = K.projectedSet :=
   rfl
 
 @[simp] theorem projectedSet_assert :
