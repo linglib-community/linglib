@@ -336,7 +336,8 @@
       {"name": "shifted past", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["SOT", "blocked"]
+      ["SOT", "blocked"],
+      ["stack", "will, past"]
     ],
     "comment": "The present of will intervenes between the two pasts.",
     "verified": "page-image"
@@ -357,7 +358,8 @@
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["SOT", "applies"]
+      ["SOT", "applies"],
+      ["stack", "infinitive, past"]
     ],
     "comment": "The tenseless infinitive does not intervene.",
     "verified": "page-image"
@@ -378,7 +380,8 @@
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["SOT", "applies"]
+      ["SOT", "applies"],
+      ["stack", "would, past"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -420,7 +423,8 @@
     "readings": [],
     "paperFeatures": [
       ["would", "temporal"],
-      ["SOT", "blocked"]
+      ["SOT", "blocked"],
+      ["stack", "will"]
     ],
     "comment": "would's past must delete, and no past is above it.",
     "verified": "page-image"
@@ -442,7 +446,8 @@
       {"name": "shifted past", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["SOT", "blocked"]
+      ["SOT", "blocked"],
+      ["stack", "infinitive, will"]
     ],
     "comment": "Against a silent would in the infinitive: a past there would license deletion.",
     "verified": "page-image"
