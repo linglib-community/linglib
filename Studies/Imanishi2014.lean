@@ -151,15 +151,12 @@ theorem caseOf_P_eq_none_iff :
   rcases L with ⟨urn, absPos, suffix⟩
   cases urn <;> cases absPos <;> simp [caseOf, phaseHead, caseless, VerbAssignsAbs]
 
-/-- (179): no language aligns both the subject and the object with the absolutive. An
-absolutive subject means the requirement holds, so the nominalized verb is intransitivized and
-cannot assign the object Case. -/
+/-- No language aligns both the subject and the object with the absolutive (179). -/
 theorem not_all_abs : ¬ (L.caseOf .A = some .abs ∧ L.caseOf .P = some .abs) := by
   rcases L with ⟨urn, absPos, suffix⟩
   cases urn <;> simp [caseOf, phaseHead, caseless, VerbAssignsAbs]
 
-/-- (180): no language aligns both with the ergative. An ergative subject sits inside the
-nominalized clause as its highest Case-less DP, so the object is not the highest. -/
+/-- No language aligns both the subject and the object with the ergative (180). -/
 theorem not_all_erg : ¬ (L.caseOf .A = some .gen ∧ L.caseOf .P = some .gen) := by
   rcases L with ⟨urn, absPos, suffix⟩
   cases urn <;> simp [caseOf, phaseHead, caseless, VerbAssignsAbs]

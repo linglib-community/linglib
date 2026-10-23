@@ -112,28 +112,24 @@ theorem russian_elsewhere :
 
 theorem kannada_gap : pattern kannada 2 = none := by decide
 
-/-- The lexicon read off each paradigm reproduces its coverage of the three functions by
-spellout, for English (59), Yakut (67), Latin (70), and Kannada with its gap. -/
+/-- The lexicon read off each paradigm reproduces it by spellout, for English (59), Yakut (67),
+Latin (70) and Kannada. -/
 theorem spellout_lexicon :
     ∀ p ∈ [english, yakut, latin, kannada], spellout (lexicon p) = pattern p := by
   decide
 
-/-- The Elsewhere Principle rules out ABA, (48), since spellout is contiguous, so that a marker
-spelling out both the non-specific and the specific known layer spells out the specific unknown
-one. -/
+/-- Under the Elsewhere Principle spellout is contiguous, so ABA is ruled out (48). -/
 theorem not_aba {v : RuleSet (SupersetRule 3 String)} (hv : v.Antihomophonous)
     (h : spellout v 0 = spellout v 2) : spellout v 0 = spellout v 1 :=
   isContiguous_spellout hv (by decide) (by decide) h
 
-/-- A paradigm gap sits above every filled layer, §6.3, since an entry spelling out a layer
-spells out every layer it contains; a lone gap is thus the specific known type and two gaps are
-the specific types. -/
+/-- A paradigm gap sits above every filled layer (§6.3). -/
 theorem ne_none_of_le {v : RuleSet (SupersetRule 3 String)} {g g' : Fin 3} (h : g ≤ g')
     (hg' : spellout v g' ≠ none) : spellout v g ≠ none :=
   fun hg ↦ hg' (spellout_eq_none_of_le hg h)
 
-/-- With the interrogative pronoun as a layer below the hierarchy, (78) and (79), Mandarin
-*shénme* spells out the interrogative and the non-specific layer and Dutch *wat* all four. -/
+/-- With the interrogative as a lower layer ((78), (79)), Mandarin *shénme* spells out the
+interrogative and non-specific layers and Dutch *wat* all four. -/
 theorem interrogative_subset :
     spellout [(⟨"shénme", 1⟩ : SupersetRule 4 String)] =
         ![some "shénme", some "shénme", none, none] ∧

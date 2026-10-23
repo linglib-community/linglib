@@ -170,8 +170,8 @@ def Step (s : α → ℝ*) (d : ℝ*) (x y : α) : Prop := s y = s x + d
 
 variable {s : α → ℝ*} {d : ℝ*}
 
-/-- The conclusion of a Sorites (52.III) follows from its premises when every intermediate value
-is the size of some individual, the totality of the inverse of the size map (44)–(46). -/
+/-- The conclusion of a Sorites (52.III) follows from its premises when the inverse of the size map
+is total on the intermediate values ((44)–(46)). -/
 theorem Sorites.conclusion (h : Sorites P (Step s d) a b) (hs : Function.Injective s) :
     ∀ n : ℕ, (∀ m < n, ∃ x, s x = s a + m * d) → ∀ y, s y = s a + n * d → P y := by
   intro n
@@ -241,8 +241,8 @@ theorem finitelyClose_qualSize (hx : heap x) (hy : heap y) :
   split_ifs <;> simp only [add_sub_add_left_eq_sub, add_sub_cancel_left, sub_add_cancel_left,
     sub_self, finites.zero_mem, finites.sub_mem (hn _) (hn _), finites.neg_mem (hn _), hn]
 
-/-- Under the qualitative size, a non-heap and a heap make the classic paradox of the heap
-consistent (52), since adding a grain to a non-heap never yields a heap (38a). -/
+/-- Under the qualitative size, the paradox of the heap (52) is consistent, since adding a grain to
+a non-heap never yields a heap (38a). -/
 theorem sorites_not_heap (hH : mk H < 0) {g₁ g : De} (h₁ : ¬ heap g₁) (hg : heap g) :
     Sorites (¬ heap ·) (Step (qualSize heap known size H) 1) g₁ g where
   base := h₁
@@ -252,8 +252,8 @@ theorem sorites_not_heap (hH : mk H < 0) {g₁ g : De} (h₁ : ¬ heap g₁) (hg
     exact (this.trans_le (mk_add_natCast_nonneg (mk_qualSize_nonneg hx) 1)).false
   counter := not_not.2 hg
 
-/-- Under the qualitative size, the reverse paradox of the heap is consistent too (54), since
-removing a grain from a heap never yields a non-heap (38b). -/
+/-- Under the qualitative size, the reverse paradox of the heap (54) is consistent, since removing a
+grain from a heap never yields a non-heap (38b). -/
 theorem sorites_heap (hH : mk H < 0) {g₁ g : De} (h₁ : ¬ heap g₁) (hg : heap g) :
     Sorites heap (Step (qualSize heap known size H) (-1)) g g₁ where
   base := hg
@@ -360,9 +360,7 @@ theorem mem_infinitesimals_of_forall_mul_le {u : ℝ*} {c : ℝ} (hu : 0 < u)
 
 variable {E : Type*} {tall : E → ℝ} {S U : ℝ} {e : ℝ*}
 
-/-- With a millimetre below the relevant unit, the induction premise (63) holds, since the
-standard part of the height of anyone tall, less the qualitative millimetre, still meets the
-standard. -/
+/-- With a millimetre below the relevant unit, the induction premise (63) holds. -/
 theorem induction_premise (he : e ∈ infinitesimals) (hU : 1 < U) {x : E}
     (hx : x ∈ tall ⁻¹' Set.Ici S) :
     S ≤ stdPart ((tall x : ℝ*) - qualUnit U e 1) := by
@@ -446,8 +444,8 @@ theorem finitelyClose_or_infinitelyLess {a b : ℝ*} (h : a < b) :
     FinitelyClose a b ∨ InfinitelyLess a b :=
   (em _).imp_right (⟨h, ·⟩)
 
-/-- The merged paradox (80) has a standard of size making it consistent exactly when the
-qualitative sizes of its small heap and its large heap are infinitely apart. -/
+/-- The merged paradox (80) is consistent for some standard exactly when the sizes of its small and
+large heaps are infinitely apart. -/
 theorem merged_iff {De : Type*} {s : De → ℝ*} {g₅₀ g : De} :
     (∃ S, Sorites (fun x ↦ LeUpToFinite (s x) S) (Step s 1) g₅₀ g) ↔
       InfinitelyLess (s g₅₀) (s g) := by

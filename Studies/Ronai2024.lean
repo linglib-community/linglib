@@ -168,10 +168,7 @@ def mean (n : Inference) : Option ℕ :=
     r.feature? "example" == some "11" && r.feature? "condition" == some n.key).bind
     (·.nat? "mean")
 
-/-- In Figure 1 the responses rise with the readings supporting the inference, true above weak
-above strong above false across the 42 scales. The strong inference above the false control is
-the paper's evidence that embedded implicatures are computed, and the weak inference above the
-strong one reflects that the global reading supports only the former. -/
+/-- The responses rise from false through strong and weak to true readings (Figure 1). -/
 theorem exp1_monotone :
     ∃ r₀ ∈ mean .falseControl, ∃ r₁ ∈ mean .strong, ∃ r₂ ∈ mean .weak,
       ∃ r₃ ∈ mean .trueControl,

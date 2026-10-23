@@ -125,10 +125,8 @@ private theorem mem_cutSummandsCN_mover {mover : SyntacticObject} (hm : mover.va
     rw [cutSummandsCN_filter_mover hm h hne]
     exact Multiset.mem_singleton_self _
 
-/-- An admissible step whose operands are not traces satisfies No Complexity Loss, graded by the
-    size `σ`. External Merge is a term of Merge taking both objects whole, and Internal Merge sends
-    the current object to the Merge of the mover and the remainder, whose sizes sum to its own
-    (the book's (1.6.10)). -/
+/-- An admissible step whose operands are not traces satisfies No Complexity Loss under the size `σ`
+(the book's (1.6.10)). -/
 theorem Step.noComplexityLoss (h : step.Admissible current W) (hcur : current.val.value.isLeft)
     (hitems : ∀ i ∈ step.items, i.val.value.isLeft) :
     NoComplexityLoss (fun T ↦ Forest.accessibleSize {T})

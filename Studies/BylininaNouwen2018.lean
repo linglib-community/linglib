@@ -121,8 +121,8 @@ theorem countDegrees_singleton {A : Set α} {s : Finset α} (hs : ↑s ⊆ A) :
     countDegrees A {s} = {s.card} := by
   rw [countDegrees, inter_eq_right.2 (singleton_subset_iff.2 (mem_plural.2 hs)), image_singleton]
 
-/-- With finitely many members of `A ∩ B` the degree property under `×` is `{0, …, n}` for their
-number `n` ((73)), the measured degree property of `Degree.LowScope`. -/
+/-- With `A ∩ B` finite, the degree property under `×` is `{0, …, n}` for `n` its cardinality (73).
+-/
 theorem countDegrees_plural_eq_Iic {A B : Set α} (h : (A ∩ B).Finite) :
     countDegrees A (plural B) = Iic (A ∩ B).ncard := by
   rw [countDegrees, plural_inter]
@@ -310,9 +310,8 @@ theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Se
     (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=
   funext fun i ↦ countDegrees_plural_eq_Iic (h i)
 
-/-- Over *every student* the split-scope reading (77b), that not every student read a book, is
-true when one student read none and another four, while the reading (77a), that every student
-read none, is false: the continuation (78) separates them. -/
+/-- Over *every student*, the split-scope reading (77b) is true and the reading (77a) false when one
+student read none and another four (78). -/
 theorem highScope_every_not_lowScope :
     HighScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) ∧
       ¬ LowScope (MaxIn {0}) (every fun _ ↦ True) (Iic ∘ fun i : Fin 2 ↦ 4 * (i : ℕ)) :=

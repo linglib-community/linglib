@@ -114,8 +114,7 @@ theorem applies_passive (h : ArgumentFrame.np ∈ v.valency.frames) (sfx : passi
     Applies (passive sfx) v :=
   ⟨_, h, le_rfl⟩
 
-/-- A verb in a voice marked by suffixes is one word when its stem is, so nothing comes between
-its stem and the suffix ([sohn-1999] p. 377). -/
+/-- A suffixally marked voice form of a one-word stem is one word ([sohn-1999] p. 377). -/
 theorem wordsAt_derive (hv : Morph.wordsAt .affix v.stem = [v.stem])
     (hw : ∀ m ∈ w.marker, m.kind = .bound .after .affix) :
     Morph.wordsAt .affix (derive w v).morphs = [(derive w v).morphs] := by

@@ -164,15 +164,14 @@ theorem auxV_uniform (e : Bool) :
 theorem auxV_no_partial (e : Bool) : landing (auxV e) = 0 ∨ landing (auxV e) = 3 := by
   cases e <;> decide
 
-/-- Reduced clauses (41), (42): with Asp the highest head, the subject lands in Spec,AspP
-exactly when Voice bears EPP, and Asp agrees with it exactly then. -/
+/-- In reduced clauses (41), (42), the subject lands in Spec,AspP and Asp agrees with it exactly
+when Voice bears EPP. -/
 theorem reduced_clause (e : Bool) :
     (landing (reduced e) = 2 ↔ e) ∧ (Agrees (reduced e) 1 ↔ e) := by
   cases e <;> decide
 
-/-- Hyperraising (77): the subject stays in situ when the embedded Voice lacks EPP, stops in
-the embedded Spec,TP when C lacks EPP, in the matrix VP when the matrix Voice lacks EPP (69),
-(76), and reaches the matrix Spec,TP otherwise. -/
+/-- In hyperraising (77), the subject climbs until the first of embedded Voice, C and matrix Voice
+lacking EPP, else to matrix Spec,TP ((69), (76)). -/
 theorem hyperraising_sites (e₁ e₂ e₃ : Bool) :
     landing (hyperraising e₁ e₂ e₃)
       = if ¬ e₃ then 0 else if ¬ e₂ then 2 else if ¬ e₁ then 4 else 6 := by
@@ -281,9 +280,8 @@ of raising to object. -/
 def optionalTRaising (t : Bool) : Spine :=
   [⟨.Voice, false, false, false⟩, ⟨.T, t, t, false⟩, ⟨.C, true, false, true⟩, raisingV]
 
-/-- The optional-probe account overgenerates: Asp alone may attract and agree with the subject
-(30), T alone may (31), and the subject may raise to object across a non-agreeing T (25),
-the patterns the phasal account excludes. -/
+/-- The optional-probe account overgenerates attraction and agreement by Asp alone (30) or T alone
+(31), and raising to object across a non-agreeing T (25). -/
 theorem optional_T_overgenerates :
     (landing (optionalT true false) = 2 ∧ Agrees (optionalT true false) 1 ∧
       ¬ Agrees (optionalT true false) 2) ∧
@@ -351,8 +349,8 @@ theorem reduced_accessible_iff (e : Bool) :
     ∀ i < 2, Accessible (reduced e) i ↔ TreeAccessible .phase (reduced e) i := by
   cases e <;> decide
 
-/-- Under [chomsky-2001]'s condition T would reach a subject left in the complement of Voice and
-agree with it, against the default agreement of (6) and (11). -/
+/-- Under [chomsky-2001]'s condition, T would agree with a subject left in the complement of Voice,
+against the default agreement of (6) and (11). -/
 theorem nextPhase_overgenerates :
     ¬ TreeAccessible .phase (simple false) 1 ∧ TreeAccessible .nextPhase (simple false) 1 := by
   decide

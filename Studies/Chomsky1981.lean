@@ -133,7 +133,7 @@ theorem not_grammatical_of_not_locallyCommanded {b : Nominal t} {c : BindingClas
 /-! ### Principle C and Reinhart's restriction -/
 
 /-- For two noun phrases coindexed with each other alone, Principle C is Reinhart's restriction
-(10b) read with c-command, the R-expressions being the noun phrases outside `pron`. -/
+(10b) with c-command. -/
 theorem permits_iff {a b : Nominal t} (hab : a ≠ b) (pron : List TreePath) :
     Reinhart1976.Permits (CCommands t) pron a.1.1 b.1.1 ↔
       (b.1.1 ∉ pron → ¬ (configuration t).Bound (pair a b) b) ∧

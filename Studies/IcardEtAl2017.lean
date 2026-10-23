@@ -357,8 +357,8 @@ theorem table1_disjunctive (hc₀ : 0 < p c) (hc₁ : p c < 1) (ha : p a < 1) :
   · rw [PNS_eq_deltaP (X := c) (ber_true_ne_zero hc₀) (ber_false_ne_zero hc₁) (monotone_effect _),
       hΔ]
 
-/-- No measure in the literature predicts abnormal deflation (§3.4), since when the causes are
-disjoined and the focal cause becomes less normal SP rises while ΔP, PNS and power-PC stay put. -/
+/-- No measure in the literature predicts abnormal deflation, since SP rises while ΔP, PNS and
+power-PC stay put (§3.4). -/
 theorem no_abnormal_deflation (h : p₂ c < p₁ c) (hc₀ : 0 < p₂ c) (hc₁ : p₁ c < 1)
     (ha : p₁ a = p₂ a) (ha' : p₁ a < 1) :
     SP (prior p₁) (cause (fun _ ↦ true) {c}) (effect .disjunctive) <

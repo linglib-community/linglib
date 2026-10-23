@@ -91,8 +91,8 @@ theorem pos_iff_mem_over (μ : Entity → D) (c : D) (x : Entity) :
     pos μ c x ↔ x ∈ μ ⁻¹' Set.Ioi c := by
   simp only [pos_iff_lt, Set.mem_preimage, Set.mem_Ioi]
 
-/-- The contextual comparative `MaxIn (Set.Ioi c)`, `max S > c` (23), holds of an `S` with a
-greatest element iff some `d ∈ S` exceeds `c` (footnote 7). -/
+/-- `max S > c` (23) holds of an `S` with a greatest element iff some `d ∈ S` exceeds `c` (footnote
+7). -/
 theorem maxIn_Ioi_iff_of_isGreatest {S : Set D} {m : D} (h : IsGreatest S m) (c : D) :
     MaxIn (Set.Ioi c) S ↔ ∃ d ∈ S, c < d :=
   ⟨fun ⟨_, hc, h'⟩ => ⟨_, h'.1, hc⟩,
@@ -129,8 +129,8 @@ theorem isGreatest_card_of_isGreatest {Atom : Type*} {P : Finset Atom → Prop}
 
 /-! ### Subcomparatives -/
 
-/-- An individual standard lies on the matrix dimension, so the reading of the shelf–door
-sentence with the door as standard differs from the subcomparative ((74), (79)). -/
+/-- An individual standard lies on the matrix dimension, so the shelf–door sentence with the door as
+standard differs from the subcomparative ((74), (79)). -/
 theorem pos_ne_subcomparative :
     ∃ μ ν : Fin 2 → ℕ, ν 1 < μ 0 ∧ ¬ pos μ (μ 1) 0 :=
   ⟨![2, 3], ![0, 1], by decide, by simp [pos_iff_lt]⟩
@@ -148,18 +148,16 @@ theorem not_er_nobody [NoMaxOrder D] (bought : Entity → Prop) (μ : Entity →
     ¬ er (scopeDegrees (no bought) (Set.Iic ∘ μ)) S :=
   fun ⟨m, _, hm, _, _⟩ => not_isGreatest_nobody bought μ ⟨m, hm⟩
 
-/-- A *yori*-clause built on the unbought individuals denotes the unique one of them, so the
-construction entails that some book in the domain went unbought ((86), (88c)). -/
+/-- A *yori*-clause on the unbought individuals entails that some book in the domain went unbought
+((86), (88c)). -/
 theorem yori_negative_entails_unbought (C : Set Entity) (bought : Entity → Prop)
     (μ : Entity → D) (x : Entity)
     (h : ∃ y, theC C (fun z => ¬ bought z) = some y ∧ pos μ (μ y) x) :
     ∃ y ∈ C, ¬ bought y :=
   let ⟨y, hy, _⟩ := h; ⟨y, ((theC_eq_some_iff _ _ _).1 hy).1⟩
 
-/-- The *than*-clause of a universally quantified comparative, the degrees `d` such that every
-boy read a `d`-long book (95a), is the degree set of the quantifier *every boy read some book*;
-the comparative can hold when no book was read by every boy, so it lacks the uniqueness
-presupposition of the *yori*-clause ((94), (95)). -/
+/-- A universally quantified comparative (95a) can hold when no book was read by every boy, lacking
+the uniqueness presupposition of the *yori*-clause ((94), (95)). -/
 theorem er_everyone_without_shared_book :
     ∃ (read : Fin 2 → Fin 3 → Prop) (μ : Fin 3 → ℕ),
       er (scopeDegrees (fun S => ∀ b, GQ.some (read b) S) (Set.Iic ∘ μ)) (Set.Iic (μ 2)) ∧
@@ -211,9 +209,8 @@ theorem wideScope_of_inSitu {W : Type*} {acc : Set W} {μ : W → D} {s : D}
   let ⟨w₀, hw₀⟩ := hne
   highScope_every_of_lowScope ⟨w₀, hw₀, fun w hw => ((h' w₀ hw₀).trans (h' w hw).symm).le⟩ h
 
-/-- In a model where the acceptable versions of a 10-page draft run to 15 or 16 pages, the
-wide-scope reading of "needs to be exactly 5 pages longer" holds and the in-situ reading
-fails ((136), (138)). -/
+/-- In some model the wide-scope reading of *needs to be exactly 5 pages longer* holds and the
+in-situ reading fails ((136), (138)). -/
 theorem exists_wideScope_not_inSitu :
     ∃ (acc : Set (Fin 2)) (μ : Fin 2 → ℕ),
       wideScope acc μ (10 + 5) ∧ ¬ inSitu acc μ (10 + 5) := by

@@ -66,8 +66,8 @@ theorem notUntil_empty : notUntil (∅ : Set (NonemptyInterval T)) B :=
 theorem notUntil_when (h : notUntil A B) (hp : presupposition A B) : when_ A B :=
   hp.resolve_left h
 
-/-- For point events under the presupposition, *A not until B* and *A when B* — the logical
-forms of Finnish *ennenkuin* and *vasta*, (39) — say the same. -/
+/-- For point events under the presupposition, *A not until B* and *A when B* are equivalent (39).
+-/
 theorem notUntil_iff_when_of_presupposition (a b : T)
     (hp : presupposition {NonemptyInterval.pure a} {NonemptyInterval.pure b}) :
     notUntil {NonemptyInterval.pure a} {NonemptyInterval.pure b} ↔

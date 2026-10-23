@@ -114,10 +114,7 @@ noncomputable def listener [MeasurableSpace R] (μ : Measure M) (f : R → U →
 
 variable (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ)
 
-/-- The speaker with an utterance prior is the speaker with a cost (Appendix A.1). At rationality
-`α ≠ 0` and the cost `−log π / α`, the speaker's weights are the literal listener's mass to the
-power `α` times the utterance prior `π`. Conversely `RSA.speaker_dirac_eq_ofWeights` reads the
-cost weight `exp (-(α * κ u))` of any cost as an unnormalized utterance prior. -/
+/-- A speaker with utterance prior `π` is the speaker with cost `−log π / α` (Appendix A.1). -/
 theorem S1_eq_ofWeights_prior (hα : α ≠ 0) {π : U → ℝ≥0∞} (hπ0 : ∀ u, π u ≠ 0)
     (hπ : ∀ u, π u ≠ ∞) (r : R) :
     S1 μ f α (fun u ↦ -Real.log (π u).toReal / α) r =
@@ -133,9 +130,8 @@ theorem L1_indicator (sem : U → Set M) {r : R} (hr : f r = fun u ↦ (sem u).i
       RSA.listener μ (speaker α κ (RSA.listener μ (truthful sem)) Measure.dirac) := by
   rw [L1, S1, L0, hr, listener_truthful_eq_ofDensity]
 
-/-- Standard RSA gives no mass to non-literal meanings (Appendix A.2). Under a strategy whose
-rhetorical function is a Boolean meaning, a meaning outside the extension of the utterance has
-no listener mass. -/
+/-- Under a Boolean rhetorical function, standard RSA gives no listener mass to meanings outside the
+utterance's extension (Appendix A.2). -/
 theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M) {r : R}
     (hr : f r = fun u ↦ (sem u).indicator 1) {u : U} {m : M} (hm : m ∉ sem u) :
     L1 μ f α κ r u {m} = 0 := by
@@ -197,10 +193,8 @@ proportional to the literal listener's mass on the meanings with the same answer
 noncomputable def qudListener (L : Kernel U M) (q : M → X) : Kernel U M :=
   Kernel.ofWeights fun u m ↦ L u (q ⁻¹' {q m})
 
-/-- The literal listener of question-under-discussion RSA under a question is the literal
-listener of the question's rhetorical function, at a prior of positive mass everywhere
-(Lemma 1). The speaker and the pragmatic listener of a question are built from its literal
-listener as the framework's are, so they agree as well. -/
+/-- At a prior of positive mass everywhere, the literal listener of question-under-discussion RSA
+under a question is that of the question's rhetorical function (Lemma 1). -/
 theorem L0_rhetoricalOfQUD (μ : Measure M) [IsFiniteMeasure μ] (hμ : ∀ m, μ {m} ≠ 0)
     (L : Kernel U M) [IsFiniteKernel L] (q : G → M → X) (g : G) :
     L0 μ (rhetoricalOfQUD μ L q) g = qudListener L (q g) := by
@@ -329,9 +323,8 @@ end AffectAware
 
 /-! #### A literal listener beyond question-under-discussion RSA -/
 
-/-- At a prior there are finitely many literal listeners of question-under-discussion RSA, over
-every Boolean meaning, question and utterance (eq. 24), since each is fixed by the extension of
-the utterance and the cells of the question. -/
+/-- At a fixed prior, question-under-discussion RSA has finitely many literal listeners over all
+Boolean meanings, questions and utterances (eq. 24). -/
 theorem finite_setOf_qudListener (μ : Measure M) :
     {ν : Measure M | ∃ (sem : U → Set M) (X : Type*) (q : M → X) (u : U),
       ν = qudListener (RSA.listener μ (truthful sem)) q u}.Finite :=
@@ -342,10 +335,8 @@ theorem finite_setOf_qudListener (μ : Measure M) :
     simp only [qudListener, Kernel.ofWeights, Kernel.ofFunOfCountable_apply,
       listener_truthful_apply]
 
-/-- Over two or more meanings, at a prior of positive mass everywhere, some literal listener of
-the framework is no literal listener of question-under-discussion RSA at any Boolean meaning,
-question and utterance, since the latter are finitely many and the former realize every
-distribution (Lemma 2). -/
+/-- Over two or more meanings and a prior of positive mass everywhere, some literal listener of the
+framework is no question-under-discussion RSA literal listener (Lemma 2). -/
 theorem exists_L0_ne_qudListener [Nontrivial M] (μ : Measure M) [IsFiniteMeasure μ]
     (hμ : ∀ m, μ {m} ≠ 0) :
     ∃ f : R → U → M → ℝ≥0∞, (∀ r u m, f r u m ≤ 1) ∧

@@ -312,9 +312,8 @@ theorem _root_.Fin.dist_rev_rev (v w : Fin n) :
   simp only [Nat.dist, Fin.val_rev]
   omega
 
-/-- The mirror image of a graph has the same total dependency length —
-the head-final preference is the exact mirror of the head-initial one
-([futrell-levy-gibson-2020], examples (7)–(8)). -/
+/-- The mirror image of a graph has the same total dependency length ([futrell-levy-gibson-2020],
+examples (7)–(8)). -/
 theorem Graph.totalLength_mirror (g : Graph n) :
     g.mirror.totalLength = g.totalLength :=
   g.totalLength_map _ Fin.dist_rev_rev

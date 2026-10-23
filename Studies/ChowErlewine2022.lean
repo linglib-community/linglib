@@ -284,9 +284,8 @@ theorem also_exh_presup :
     ∀ w, (teachOr.withExhAt 1).interp Individual.other .nina w ≠ 0 ↔
       w.mira.exactlyOne := by decide
 
-/-- Under parse (5), *exh* > *also*, EXH²'s strong negation projects the
-presupposition of the negated alternative *also (A ∧ B)*, so a salient individual must teach
-both languages. -/
+/-- Under parse (5), *exh* > *also*, the presupposition requires a salient individual to teach both
+languages. -/
 theorem exh_over_also_presup :
     ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w ≠ 0 ↔
       w.mira.both := by decide
@@ -297,26 +296,23 @@ theorem exh_over_also_true_iff :
     ∀ w, (teachOr.withExhAt 0).interp Individual.other .nina w = 1 ↔
       (w.mira.both ∧ w.nina.either ∧ ¬ w.nina.both) := by decide
 
-/-- By the judgments (3), under the *also* > *exh* parse the disjunctive antecedent (with its
-SI) satisfies the additive presupposition and the conjunctive antecedent does not. -/
+/-- Under the *also* > *exh* parse, the disjunctive antecedent satisfies the additive presupposition
+and the conjunctive one does not, matching (3). -/
 theorem also_exh_verdicts :
     (teachOr.withExhAt 1).FelicitousIn Individual.other .nina (antecedent Taught.exactlyOne)
     ∧ ¬ (teachOr.withExhAt 1).FelicitousIn Individual.other .nina (antecedent Taught.both) := by
   decide
 
-/-- Parse (5) predicts the reverse pattern, licensing exactly the conjunctive antecedent, which
-is felicitous in (3b)'s context and infelicitous in (3a)'s. The facts are the reverse, so the
-grammar must block this parse in (3), as `or_exh_sites` shows it does. -/
+/-- Parse (5) licenses exactly the conjunctive antecedent, felicitous in (3b)'s context and not in
+(3a)'s, so the grammar must block it in (3). -/
 theorem exh_over_also_verdicts :
     (teachOr.withExhAt 0).FelicitousIn Individual.other .nina (antecedent Taught.both)
     ∧ ¬ (teachOr.withExhAt 0).FelicitousIn Individual.other .nina
         (antecedent Taught.exactlyOne) := by
   decide
 
-/-- For the attested positions (8), generalization (9) forces *exh* below *also* in (3), while
-in the passive (7) the only trigger-commanding site is above *also*, so *exh* adjoins to TP,
-whose parse licenses the conjunctive antecedent (`exh_over_also_verdicts`). Passivization
-reverses the (3b) judgment, and there is no blanket ban on TP adjunction. -/
+/-- For the attested positions (8), generalization (9) places *exh* below *also* in (3) and above it
+in the passive (7), reversing the (3b) judgment. -/
 theorem or_exh_sites :
     SITrigger.disj.feature.allowedSites Individual.other teachOr = {1}
     ∧ SITrigger.disj.feature.allowedSites Individual.other passiveOr = {0} := by decide
@@ -331,13 +327,13 @@ def negConj : BaseClause Individual TeachWorld := ⟨andLex, orLex, [.alsoOp, .n
 disjunctive alternative is entailed and nothing is excludable. -/
 theorem exh_vacuous_below_negation : negConj.Vacuous Individual.other 2 := by decide
 
-/-- At position 2 of (19), the `[uexh*]` of the conjunctive trigger forces *exh* to the lowest
-non-vacuous site, just above negation, where it computes the indirect SI. -/
+/-- At position 2 of (19), the `[uexh*]` of the conjunctive trigger forces *exh* just above
+negation. -/
 theorem negConj_site :
     SITrigger.conj.feature.allowedSites Individual.other negConj = {1} := by decide
 
-/-- In the truth conditions of parse (18b), the indirect SI `exh ¬(A ∧ B)` is exclusive
-disjunction, of the salient individual (the presupposition) and of Nina (the assertion). -/
+/-- Under parse (18b), the indirect SI `exh ¬(A ∧ B)` is exclusive disjunction for both the salient
+individual and Nina. -/
 theorem si_under_also_true_iff :
     ∀ w, (negConj.withExhAt 1).interp Individual.other .nina w = 1 ↔
       (w.mira.exactlyOne ∧ w.nina.exactlyOne) := by decide
@@ -350,8 +346,7 @@ theorem indirect_si_contrast :
         (antecedent Taught.neither) := by
   decide
 
-/-- Under parse (18a), *exh* above *also*, EXH² projects the presupposition of the negated
-alternative *also ¬(A ∨ B)*, so it licenses exactly the not-or antecedent, the reverse of the
+/-- Under parse (18a), *exh* above *also* licenses exactly the not-or antecedent, the reverse of the
 facts. -/
 theorem exh_over_also_negConj_verdicts :
     (negConj.withExhAt 0).FelicitousIn Individual.other .nina (antecedent Taught.neither)
@@ -359,9 +354,8 @@ theorem exh_over_also_negConj_verdicts :
         (antecedent Taught.exactlyOne) := by
   decide
 
-/-- Under parse (18c), vacuous *exh* on the conjunction, the unstrengthened presupposition is
-satisfied by both antecedents of (16), so this parse cannot explain the contrast; the non-vacuity
-clause of (9) is what rules it out. -/
+/-- Under parse (18c), vacuous *exh* lets both antecedents of (16) satisfy the presupposition, a
+parse the non-vacuity clause of (9) excludes. -/
 theorem vacuous_parse_licenses_both :
     (negConj.withExhAt 2).FelicitousIn Individual.other .nina (antecedent Taught.exactlyOne)
     ∧ (negConj.withExhAt 2).FelicitousIn Individual.other .nina (antecedent Taught.neither) := by
@@ -373,10 +367,8 @@ The scale of *sm* and *all* over a two-membered domain is the disjunction-conjun
 the (14) and (26) clauses reuse the teaching model, with `Taught` read as which of the two
 students the focus individual met. -/
 
-/-- In the rows (14) and (26a) of the *sm* and *SOME* minimal pair, on the same base clause, the
-`[uexh*]` of unstressed *sm* forces *exh* below *also* (whence (14a)'s infelicity with an *all*
-antecedent), while the `[uexh]` of stressed *SOME* also allows the site above *also* (whence
-(26a)'s felicity). Bare numerals pattern with *sm* on the same base, (13). -/
+/-- Unstressed *sm* forces *exh* below *also* and stressed *SOME* also allows the site above it
+((14), (14a), (26a); bare numerals (13)). -/
 theorem sm_below_also_SOME_free :
     SITrigger.unstressedSome.feature.allowedSites Individual.other teachOr = {1}
     ∧ 0 ∈ SITrigger.stressedSome.feature.allowedSites Individual.other teachOr := by decide
@@ -385,9 +377,7 @@ theorem sm_below_also_SOME_free :
 def embeddedSome : BaseClause Individual TeachWorld :=
   { teachOr with ops := [.alsoOp, .embedOp], triggerDepth := 2 }
 
-/-- In (28), every site `[uexh]` allows, within the embedded clause or just above the embedding
-verb, lies below the matrix *also*, so the additive presupposition is necessarily strengthened
-and (28) is infelicitous. -/
+/-- In (28), every site `[uexh]` allows lies below the matrix *also*, so (28) is infelicitous. -/
 theorem embedded_SOME_trapped :
     SITrigger.stressedSome.feature.allowedSites Individual.other embeddedSome = {1, 2} := by
   decide
@@ -429,10 +419,8 @@ def coldClause : BaseClause City (City → Temp) :=
 /-- Contexts where it is freezing in New York. -/
 def freezingNY : Finset (City → Temp) := Finset.univ.filter (fun w ↦ w .newYork = .freezing)
 
-/-- In (24a), scalar adjectives bear no *exh* feature, so the site above *also* is available,
-and that parse's presupposition (that it is cold in New York, and freezing there via EXH²'s
-projection from the negated *also freezing* alternative) is satisfied by the freezing
-antecedent. -/
+/-- In (24a), scalar adjectives allow *exh* above *also*, and that parse is felicitous with the
+freezing antecedent. -/
 theorem scalarAdj_high_exh_ok :
     0 ∈ SITrigger.scalarAdj.feature.allowedSites City.other coldClause
     ∧ (coldClause.withExhAt 0).FelicitousIn City.other .paris freezingNY := by decide
@@ -467,8 +455,7 @@ def ignoranceScope : Finset Doxa :=
     (altsFromPreds [(·.must Taught.onlyArabic), (·.must Taught.onlyBasque)])
     (predToFinset (·.must Taught.exactlyOne))
 
-/-- In (31), the derived meaning is the scalar implicature plus speaker ignorance about each
-disjunct, so the state supports exactly-one while leaving each disjunct's falsity open. -/
+/-- In (31), the derived state supports exactly-one while leaving each disjunct's falsity open. -/
 theorem ignorance_scope_eq :
     ignoranceScope =
       predToFinset (fun s ↦
@@ -506,9 +493,8 @@ def splitCtx : List Doxa := [{⟨true, false⟩}, {⟨false, true⟩}]
 /-- In the simple antecedent context of (33d), Mira teaches Arabic only. -/
 def simpleCtx : List Doxa := [{⟨true, false⟩}]
 
-/-- By the judgment pattern (33), the disjunctive antecedent is licensed only by parse (34),
-the split antecedent only by parse (35), and the conjunctive and simple antecedents by neither,
-so the grammar must generate both (37a) and (37b), and only those. -/
+/-- By (33), only parse (34) licenses the disjunctive antecedent and only (35) the split one, so the
+grammar must generate (37a) and (37b). -/
 theorem antecedent_pattern :
     (presup34 disjCtx ∧ ¬ presup35 disjCtx)
     ∧ (¬ presup34 conjCtx ∧ ¬ presup35 conjCtx)
@@ -549,10 +535,8 @@ instance (p : List IgnOp) : Decidable (ChecksUExhStar p) :=
   inferInstanceAs
     (Decidable (some (siExhSite p) = teachOr.lowestNonVacuousSite Individual.other))
 
-/-- In the grammaticality pattern (37), (37a) and (37b), which differ only in where the freely
-placed higher *exh* and □ sit, check `[uexh*]`, while (37c), whose SI *exh* is above *also*, does
-not. This is the pattern [marty-romoli-2021] and [spector-sudo-2017] would overgenerate without
-the feature. -/
+/-- In (37), (37a) and (37b) check `[uexh*]` and (37c) does not, a contrast [marty-romoli-2021] and
+[spector-sudo-2017] miss without the feature. -/
 theorem parse37_grammaticality :
     ChecksUExhStar parse37a ∧ ChecksUExhStar parse37b ∧ ¬ ChecksUExhStar parse37c := by decide
 

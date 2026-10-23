@@ -206,8 +206,7 @@ theorem consequenceStar_iff_consequencePlus (hφ : φ.NEFree) (hφ' : φ.Positiv
     ((support_enrich_iff_supportStar hψ hψ').mp
       (h M t ((support_enrich_iff_supportStar hφ hφ').mpr ⟨hs, hne⟩))).1
 
-/-- Negative free choice holds in BSML*, `◇¬(α ∧ β) ⊨* ◇¬α` (Fact 14). A BSML* anti-support
-split of `α ∧ β` has two non-empty parts, and the part anti-supporting `α` is the witness. -/
+/-- Negative free choice holds in BSML*, `◇¬(α ∧ β) ⊨* ◇¬α` (Fact 14). -/
 theorem negativeFC_star_poss (α β : Formula Atom) :
     ConsequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
   fun _ _ _ h w hw ↦

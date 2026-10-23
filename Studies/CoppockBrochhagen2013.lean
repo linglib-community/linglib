@@ -319,8 +319,8 @@ def InteractiveSincerity (P : Set (Set W)) (k : Set W) : Prop :=
 
 variable {α : Type*} [Preorder α] {P : α → Set W}
 
-/-- A speaker whose information set lies in one answer `P b` at or above `a`, and meets each
-answer from `a` up wholly or not at all, restricts *at least `a`* to a single possibility (71). -/
+/-- A speaker whose information lies within one answer at or above `a`, and decides each answer from
+`a` up, restricts *at least `a`* to one possibility (71). -/
 theorem restrict_atLeastInq_eq_singleton (hP : Function.Injective P) {a b : α} (hab : a ≤ b)
     {k : Set W} (hk : k ≠ ∅) (hkb : k ⊆ P b)
     (hsplit : ∀ i, a ≤ i → k ∩ P i = k ∨ k ∩ P i = ∅) :
@@ -349,9 +349,8 @@ theorem split_oneSided {W α : Type*} [LinearOrder α] {μ : W → α} {b : α} 
   · exact Or.inr (eq_empty_of_subset_empty fun w ⟨hw, hwi⟩ ↦
       (not_le.2 h) ((hkb hw : μ w = b) ▸ mem_Ici.1 (mem_preimage.1 hwi)))
 
-/-- A speaker who knows that hexagons have six sides violates Interactive Sincerity with *at
-least five*, on either analysis of the bare numeral, since the sentence raises several
-possibilities (70a). -/
+/-- A speaker who knows that hexagons have six sides violates Interactive Sincerity with *at least
+five* (70a). -/
 theorem not_interactiveSincerity_hexagon {W : Type*} {μ : W → ℕ} (hμ : Function.Surjective μ)
     {k : Set W} (hk : k ≠ ∅) (hk6 : k ⊆ μ ⁻¹' {6}) :
     ¬ InteractiveSincerity (atLeastInq (ranking (twoSided μ)) (range (twoSided μ))
@@ -374,8 +373,8 @@ theorem not_interactiveSincerity_hexagon {W : Type*} {μ : W → ℕ} (hμ : Fun
     rw [hr] at this
     exact this.not_subsingleton subsingleton_singleton
 
-/-- The comparative raises its one possibility, so it never violates Interactive Sincerity, and
-on counts *more than four* has the content of *at least five* (72), (73). -/
+/-- *More than four* raises one possibility, so it satisfies Interactive Sincerity, and on counts it
+has the content of *at least five* ((72), (73)). -/
 theorem moreThan_interactiveSincerity {W : Type*} {μ : W → ℕ} (hμ : Function.Surjective μ)
     (k : Set W) :
     InteractiveSincerity {μ ⁻¹' Ioi 4} k ∧

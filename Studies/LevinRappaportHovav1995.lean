@@ -137,9 +137,8 @@ theorem position_swap :
   revert s
   decide
 
-/-- A ranking assigns every argument the position the book's ranking does exactly when it makes
-an internally caused verb unergative (§4.1.1) and an internally caused verb of directed change
-(§4.2.1–§4.2.3) or of existence (§4.2.4) unaccusative. This is the argument of §4.2. -/
+/-- A ranking matches the book's iff internally caused verbs are unergative (§4.1.1) and those of
+directed change (§4.2.1–§4.2.3) or existence (§4.2.4) unaccusative (§4.2). -/
 theorem position_eq_ranking_iff (r : Ranking) : r.position = ranking.position ↔
     r.position {.immediateCause} = .external ∧
       r.position {.immediateCause, .directedChange} = .directInternal ∧
@@ -158,9 +157,7 @@ theorem position_eq_ranking_iff (r : Ranking) : r.position = ranking.position �
   revert key
   cases r.position s <;> cases ranking.position s <;> simp
 
-/-- Each rule is needed (§4.2). A ranking that assigns every argument the position the book's
-ranking does contains all three rules, since the Default rule could not take precedence over the
-Immediate Cause rule. -/
+/-- Every ranking that matches the book's contains all three rules (§4.2). -/
 theorem mem_of_position_eq_ranking {r : Ranking} (h : r.position = ranking.position)
     (c : Component) : c ∈ r := by
   obtain ⟨h₁, h₂, h₃⟩ := (position_eq_ranking_iff r).mp h
@@ -188,9 +185,8 @@ theorem unaccusative_iff {s : Finset Component} : Unaccusative s ↔ s ≠ {.imm
   rw [Unaccusative, ne_eq, ← ranking_position_eq_external_iff]
   cases ranking.position s <;> simp
 
-/-- A verb of directed change is unaccusative whatever its causation. This covers the externally
-caused verbs of change of state (§4.1.2), the internally caused ones (§4.2.1), the verbs of
-inherently directed motion (§4.2.2) and the assume position sense (§4.2.3). -/
+/-- A verb of directed change is unaccusative whatever its causation (§4.1.2, §4.2.1, §4.2.2,
+§4.2.3). -/
 theorem unaccusative_of_directedChange_mem {s : Finset Component}
     (h : .directedChange ∈ s) : Unaccusative s :=
   unaccusative_iff.mpr (by rintro rfl; simp at h)
@@ -307,8 +303,8 @@ theorem diagnostics_agree :
       (ex.judgment = .acceptable ↔ ranking.position s = p) := by
   decide
 
-/-- Locative inversion is no unaccusative diagnostic (§6.2.2). An unaccusative verb of change of
-state is out of it, (18a), and an unergative verb of sound emission in it, (22a). -/
+/-- Locative inversion excludes the unaccusative (18a) and admits the unergative (22a), so it is no
+unaccusative diagnostic (§6.2.2). -/
 theorem locativeInversion_not_diagnostic :
     (Examples.ex6_18a.judgment ≠ .acceptable ∧ ∀ s ∈ construals Examples.ex6_18a, Unaccusative s) ∧
       Examples.ex6_22a.judgment = .acceptable ∧
@@ -336,10 +332,8 @@ theorem isUnaccusative_agrees :
         ((∀ s ∈ components c, ¬ Unaccusative s) → ¬ v.IsUnaccusative) := by
   decide +kernel
 
-/-- A causative pair is not the causative alternation (§3.2.5). The fragment's *buzz*, *flash*
-and *bleed* have a transitive use whose object is their intransitive subject, (82), (92) and (86),
-so `Verb.IsUnaccusative` counts them unaccusative, while as verbs of emission they are
-unergative. -/
+/-- `Verb.IsUnaccusative` counts *buzz*, *flash* and *bleed* unaccusative by their causative pairs
+((82), (92), (86)), though as emission verbs they are unergative (§3.2.5). -/
 theorem causativePairs_diverge :
     ∀ v ∈ [English.Verbs.buzz, English.Verbs.flash, English.Verbs.bleed], v.IsUnaccusative ∧
       ∀ c ∈ v.levinClasses, ∀ s ∈ components c, ¬ Unaccusative s := by

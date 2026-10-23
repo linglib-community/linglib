@@ -164,23 +164,20 @@ theorem nonfuture_downstream {f : EvidentialFrame T} :
       l ⟦future⟧ᶜ], c.Holds f → f.Downstream := fun c hc ↦
   Constraint.downstream_of_holds (by revert c; decide)
 
-/-- The prospective cells of Korean, Bulgarian and the English *will* forms are neither
-restricted to downstream evidence nor unrestricted, the two options Cariani's obviation
-provides (§5). -/
+/-- The prospective cells of Korean, Bulgarian and English *will* fall outside both options of
+Cariani's obviation (§5). -/
 theorem prospective_beyond_obviation :
     ∀ c ∈ [te ⟦future⟧, ney ⟦future⟧, l ⟦future⟧, willHave, willNow],
       c.eventToAcquisition ≠ ⟦future⟧ᶜ ∧ c.eventToAcquisition ≠ ⊤ := by
   decide
 
-/-- No true future is restricted to downstream evidence, since at a frame where such a cell
-held the speaker would speak before acquiring the evidence (§7). -/
+/-- Under a future restricted to downstream evidence, speech time precedes acquisition time (§7). -/
 theorem speechTime_lt_acquisitionTime {f : EvidentialFrame T}
     (h : (⟨⟦future⟧ᶜ, ⊤, ⟦future⟧⟩ : Constraint).Holds f) : f.speechTime < f.acquisitionTime :=
   lt_of_lt_of_le ((compare_mem_future _ _).1 h.2.2) ((compare_mem_compl_future _ _).1 h.1)
 
-/-- The past-directed *will have* and the simple past assert the same proposition and differ
-in what they presuppose, so *will have* is no necessity modal ((23)). At frames meeting their
-respective constraints the two are the same proposition. -/
+/-- Past-directed *will have* and the simple past assert the same proposition, so *will have* is no
+necessity modal (23). -/
 theorem willHave_meaning_eq_simplePast_meaning {W : Type*} {f f' : EvidentialFrame T}
     (φ : W → Prop) (h : willHave.Holds f) (h' : simplePast.Holds f') :
     meaning willHave f φ = meaning simplePast f' φ := by

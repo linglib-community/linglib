@@ -347,8 +347,7 @@ def anaMight (φ : CCP (W × A)) : CCP (W × A) :=
 def anaNeg (φ : CCP (W × A)) : CCP (W × A) :=
   slice fun t ↦ {i ∈ t | ¬∃ i' ∈ φ t, i'.1 = i.1}
 
-/-- The sliced modal is not distributive (40): with one anaphoric context and two worlds, one of
-which verifies the prejacent, it keeps both points, and point by point it keeps one. -/
+/-- The sliced modal is not distributive (40). -/
 theorem not_isDistributive_anaMight :
     ∃ (W A : Type) (φ : CCP (W × A)), ¬CCP.IsDistributive (anaMight φ) := by
   refine ⟨Bool, Unit, CCP.up {i | i.1 = true}, fun hD ↦ ?_⟩

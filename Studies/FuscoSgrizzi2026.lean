@@ -77,9 +77,7 @@ def aP (circumstances : V → Background W) (inertia : V → Background W)
     (causeStar : W → SetRel V V) (P : W → V → Prop) (s : V) (w : W) : Prop :=
   necessity (circumstances s) (inertia s) (causedClosure causeStar s P) w
 
-/-- The head *a* is the causal subjunctive of [grano-2024]'s (134) with an inertial ordering
-added: with no ordering it is simple necessity of the same prejacent over the circumstantially
-accessible worlds. -/
+/-- With no ordering, the head *a* is the causal subjunctive of [grano-2024]'s (134). -/
 theorem aP_bot (circumstances : V → Background W) (causeStar : W → SetRel V V)
     (P : W → V → Prop) (s : V) (w : W) :
     aP circumstances (fun _ ↦ ⊥) causeStar P s w ↔
@@ -124,9 +122,8 @@ theorem intention_causal (h : intentionReport F circumstances inertia causeStar 
   let ⟨s, _, _, _, hc, _, _, ha⟩ := h
   ⟨s, hc, ha⟩
 
-/-- Future orientation follows when causes precede their effects. The intended event of an
-intention report lies after the attitude state in every inertia world, which excludes a
-past-oriented complement, as in (5b). -/
+/-- When causes precede their effects, the intended event of an intention report follows the
+attitude state, excluding a past-oriented complement (5b). -/
 theorem intention_future {T : Type*} [Preorder T] (τ : V → T)
     (hτ : ∀ s e' w', s ~[causeStar w'] e' → τ s < τ e')
     (h : intentionReport F circumstances inertia causeStar P x y e w) :

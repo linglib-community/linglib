@@ -655,9 +655,7 @@ theorem felicitous_shop139_iff (hw : h .w = world w₀) (hx : h .x = {Sum.inr x�
     and_true]
   exact ⟨fun H => not_not.1 fun hn => hn (H hn).exists, fun H hn => absurd H hn⟩
 
-/-- The double negation of (138b) sums `w` over all pluralities, of which every non-world
-fails `w ∈ ΣwO`; so `w ∉ Σw(w ∉ ΣwO)` is false at any world once the model has a second
-atom. -/
+/-- The double negation of (138b) is false at any world once the model has a second atom. -/
 theorem not_realize_shop138 (hw : h .w = world w₀) (a₁ : Atom W E) (ha : a₁ ≠ Sum.inl w₀) :
     ¬ shop138.expandSelf.Realize S.model h := by
   rw [expandSelf_shop138]
@@ -1006,9 +1004,8 @@ theorem felicitous_everyMonarchy_iff (hw : h .w = world w₀) :
     true_and, felicitous_sigmaM_cherishBody'_iff S h hw (by decide)
       (fun g => felicitous_sgIndef S g _ _) (fun g hg => realize_sgIndef_world S g .monarchy .m hg)]
 
-/-- (150a) is felicitous at `w₀` iff, granted its first sentence, every country that is a
-monarchy has exactly one monarch: the label incorporated into the subordinate quantifier's
-restriction satisfies the presupposition of its nuclear scope. -/
+/-- (150a) is felicitous at `w₀` iff, granted its first sentence, every country that is a monarchy
+has exactly one monarch. -/
 theorem felicitous_discourse150a_iff (hw : h .w = world w₀) :
     discourse150a.expandSelf.Felicitous S.model h ↔
       ((∀ e, S.rel₁ .country w₀ e → S.rel₁ .monarchy w₀ e) →

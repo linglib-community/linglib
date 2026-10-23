@@ -193,8 +193,7 @@ def extTV (S : W → E → E → Prop) : W → Ty.Domain E W Cat.TV.ty :=
 
 @[simp] theorem starTV_extTV (S : W → E → E → Prop) (i : W) : starTV (extTV S i) = S i := rfl
 
-/-- The translation of *be* has the form postulate (4) requires in every interpretation, the
-relation being identity, so the extensionality of *be* need not be postulated. -/
+/-- The translation of *be* satisfies postulate (4) with identity in every interpretation. -/
 theorem realize_be (M : Interp E W) (g : Assignment (W → E)) :
     (fun i ↦ (Analysis.be : Analysis .TV).realize M g i) = extTV fun _ v u ↦ u = v :=
   rfl

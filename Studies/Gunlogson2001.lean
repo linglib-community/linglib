@@ -101,8 +101,8 @@ theorem isBiasedR_iff_isBiased_of_not_isResolved (hu : ¬ IsResolved K p) :
     by_contra hy
     exact hnc ⟨⟨y, hne y, λ w hw hwp => hy ⟨w, hw, hwp⟩⟩, hu, hne⟩
 
-/-- (71) holds of a context in which `p` is a joint commitment, where (67) fails, since a resolved
-context is neutral under (68): the two definitions of bias part at resolved propositions. -/
+/-- A joint commitment is biased in the sense of (71) but not of (67), since a resolved context is
+neutral under (68). -/
 theorem isBiasedR_of_isJoint (h : IsJoint K p) : IsBiasedR K p :=
   isBiasedR_iff.2 ⟨λ x => (h x).1.mono (Set.subset_inter subset_rfl (h x).2), .speaker,
     (h .speaker).2⟩
@@ -194,16 +194,15 @@ def IsNeutralIn (K : State Role W) (p : Set W) : Prop := IsNeutral (L.update p K
 def IsBiasingIn (K : State Role W) (p : Set W) : Prop :=
   IsNeutral K p ∧ IsBiased (L.update p K) p
 
-/-- (91): no declarative is neutral with respect to a context it is consistent with, provided its
-content stays unresolved: the targeted participant is committed to the content afterwards, so its
-negation is controversial. -/
+/-- No declarative is neutral with respect to a context it is consistent with, provided its content
+stays unresolved (91). -/
 theorem not_isNeutralIn_of_decl (hL : L.sentenceType = .decl) (hc : L.Consistent K p)
     (hu : ¬ IsResolved (L.update p K) p) : ¬ L.IsNeutralIn K p := λ hn =>
   hn.2 ⟨⟨L.target, hc _, by rw [commitmentSet_update_target, hL]; simp [SentenceType.update]⟩,
     by simpa using hu, hc⟩
 
-/-- The proviso cannot be dropped: a falling declarative whose content the addressee already
-holds makes it a joint commitment, and a resolved context is neutral under (68). -/
+/-- A falling declarative whose content the addressee already holds is neutral under (68), so the
+proviso cannot be dropped. -/
 theorem isNeutralIn_fallingDecl (ha : IsCommitmentOf K .addressee p)
     (hs : (p ∩ commitmentSet K .speaker).Nonempty) : fallingDecl.IsNeutralIn K p := by
   show IsNeutral (falling K p) p
@@ -243,8 +242,8 @@ theorem not_expressesCommitment_risingInterr (h₀ : p.Nonempty) (h₁ : pᶜ.No
   · obtain ⟨x, -, hx⟩ := hc.1
     exact hx (by simp [update] : w₁ ∈ commitmentSet (risingInterr.update p ∅) x) hw₁
 
-/-- Nor, as literally defined, does a falling declarative, (93) inheriting the gap in (91): a
-context in which only the addressee holds `p` is consistent with it and comes out neutral. -/
+/-- As literally defined, a falling declarative does not express commitment (93), inheriting the gap
+in (91). -/
 theorem not_expressesCommitment_fallingDecl (h₀ : p.Nonempty) :
     ¬ fallingDecl.ExpressesCommitment p := by
   intro h

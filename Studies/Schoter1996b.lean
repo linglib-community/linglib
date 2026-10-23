@@ -122,8 +122,8 @@ theorem designated_iff_top_kLE {x : S ⊙ S} :
     Designated x ↔ (⊤ : S ⊙ S) ≤ₖ x :=
   ⟨fun h ↦ ⟨h.ge, bot_le⟩, fun h ↦ le_antisymm le_top h.1⟩
 
-/-- The footnote characterization of semi-designation: a value is semi-designated iff it is
-truer than its negation and contains some information, `SEMI = {x | ¬x ≤ x, U <ₖ x}` (§2.2). -/
+/-- A value is semi-designated iff it is truer than its negation and carries some information
+(footnote, §2.2). -/
 theorem semiDesignated_iff {x : S ⊙ S} :
     SemiDesignated x ↔ xᶜ ≤ x ∧ (⊥ : Know (S ⊙ S)) < toKnow x := by
   constructor

@@ -267,9 +267,8 @@ theorem closeAppositive_board (s : MathSystem) :
     closeAppositive board (inSubkind s) (λ _ => true) = some ⟨s, 0⟩ := by
   cases s <;> rfl
 
-/-- The Identification Problem dissolved, section 5.2: the close appositives formed with the
-modifiers of two number systems are both defined on the board and refer to distinct subkinds,
-so (20a) and (20b) are jointly coherent. -/
+/-- Close appositives with the modifiers of two number systems refer to distinct subkinds, so (20a)
+and (20b) are jointly coherent (section 5.2). -/
 theorem identification_problem_resolved {s₁ s₂ : MathSystem} (h : s₁ ≠ s₂) :
     ∃ j₁ j₂, closeAppositive board (inSubkind s₁) (λ _ => true) = some j₁ ∧
       closeAppositive board (inSubkind s₂) (λ _ => true) = some j₂ ∧ j₁ ≠ j₂ :=

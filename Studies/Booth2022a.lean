@@ -130,9 +130,8 @@ theorem truth_dia_conj_neg_subset (p q : At) :
   rw [truth_dia_conj_neg, truth_dia_atom]
   exact fun _ hw ↦ hw.mono (Set.inter_subset_inter_right _ Set.sdiff_subset)
 
-/-- Over `!φ`, necessity is the orthodox universal modal over the relevant worlds
-([kratzer-1991]), given that they are nonempty (§6, and fn. 13 on the presupposition of nonempty
-domains). -/
+/-- Over `!φ`, necessity is the universal modal over the relevant worlds when they are nonempty
+([kratzer-1991]; §6, fn. 13). -/
 theorem truth_necessity_bang (φ : BilatInqProp W) :
     truth (necessity R (bang φ)) =
       {w | (R w).Nonempty ∧ ModalLogic.Box (.ofSuccessors R) (· ∈ truth φ) w} :=
@@ -375,9 +374,7 @@ theorem unnecessity_distribution_right (p q : At) :
 
 variable {V R}
 
-/-- **Dual Free Choice** (fn. 32): `¬□(p ∧ q) ⊨ ◇¬p`, by duality, De Morgan and Free Choice for
-the negated atoms. Booth notes the inference is controversial and traces it to the De Morgan law
-for the negative coordinate of conjunction. -/
+/-- Dual Free Choice `¬□(p ∧ q) ⊨ ◇¬p` holds for incomparable atoms (fn. 32). -/
 theorem dual_free_choice (h : IncompRel (· ⊆ ·) (V p) (V q)) :
     truth (Formula.eval V R (.neg (.box (.conj (.atom p) (.atom q))))) ⊆
       truth (Formula.eval V R (.diamond (.neg (.atom p)))) := by
@@ -408,8 +405,7 @@ def IsModalFree : Formula At → Prop
   | .box _ => False
   | .diamond _ => False
 
-/-- The modal-free fragment is classical (§8): a modal-free sentence is false exactly where it is
-not true. No sentence is both (`BilatInqProp.disjoint_truth_falsity`); only modals create gaps. -/
+/-- A modal-free sentence is false exactly where it is not true (§8). -/
 theorem isCompl_truth_falsity (φ : Formula At) (hφ : IsModalFree φ) :
     IsCompl (truth (Formula.eval V R φ)) (falsity (Formula.eval V R φ)) := by
   induction φ generalizing R with
@@ -438,9 +434,7 @@ theorem ross_gap (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     obtain ⟨v, hvR, hvp, -⟩ := h'
     exact hvp (hw.2 hvR)
 
-/-- **The Free Choice gap** (§8): if `p` is possible and `q` is not, `◇(p ∨ q)` is neither true
-(Free Choice would make `q` possible) nor false (Impossibility Distribution would make `p`
-impossible). -/
+/-- If `p` is possible and `q` is not, `◇(p ∨ q)` is neither true nor false (§8). -/
 theorem free_choice_gap (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     (hp : w ∈ truth (Formula.eval V R (.diamond (.atom p))))
     (hq : w ∉ truth (Formula.eval V R (.diamond (.atom q)))) :
@@ -450,8 +444,7 @@ theorem free_choice_gap (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     (disjoint_truth_falsity (Formula.eval V R (.diamond (.atom p)))) hp
     (impossibility_distribution_left V R p q h')⟩
 
-/-- **The Independence gap** (§8): if `p` is possible but not independently of `q`, `◇(p ∨ q)` is
-neither true nor false. Booth's case, `◇p` and `◇q` true but `◇(p ∧ ¬q)` not, is an instance. -/
+/-- If `p` is possible but not independently of `q`, `◇(p ∨ q)` is neither true nor false (§8). -/
 theorem independence_gap (h : IncompRel (· ⊆ ·) (V p) (V q)) {w : W}
     (hp : w ∈ truth (Formula.eval V R (.diamond (.atom p))))
     (hind : w ∉ truth (Formula.eval V R (.diamond (.conj (.atom p) (.neg (.atom q)))))) :
@@ -585,8 +578,8 @@ theorem ross_invalid :
         truth (Formula.eval v r (.box (.disj (.atom true) (.atom false)))) :=
   fun hall ↦ (ross_gap incomp_val box_p).1 (hall W4 rP val incomp_val box_p)
 
-/-- Entailment is not closed under contraposition, the formal content of Booth's "diplomatic
-resolution" (§8): `¬□(p ∨ q) ⊨ ¬□p` (Fact 7) while `□p ⊭ □(p ∨ q)` (Fact 3). -/
+/-- Entailment is not closed under contraposition, as `¬□(p ∨ q) ⊨ ¬□p` (Fact 7) but `□p ⊭ □(p ∨ q)`
+(Fact 3) (§8). -/
 theorem not_contraposition :
     truth (Formula.eval val rP (.neg (.box (.disj (.atom true) (.atom false))))) ⊆
         truth (Formula.eval val rP (.neg (.box (.atom true)))) ∧

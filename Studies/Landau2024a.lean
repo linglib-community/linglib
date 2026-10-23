@@ -140,8 +140,8 @@ def RVG (row : Datum) : Prop :=
 
 instance (row : Datum) : Decidable (RVG row) := inferInstanceAs (Decidable (_ → _ → _))
 
-/-- The Norwegian passives of *promise* (20) obey the generalization: the personal passive, with
-T agreeing with the promisee, bars implicit control, and the impersonal one allows it. -/
+/-- In the Norwegian passives of *promise* (20) the personal passive bars implicit control and the
+impersonal one allows it. -/
 theorem rvg_20 :
     RVG Examples.ex_20a ∧ RVG Examples.ex_20b ∧ Examples.ex_20b.judgment = .acceptable := by
   decide
@@ -182,9 +182,8 @@ variable {W E P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) (s o x 
 addressee is the matrix object `o`. -/
 def reported : Kaplan.Context W E P T := { c with agent := s, addressee := o }
 
-/-- Evaluated at the reported context, a first person exclusive subject includes the matrix
-subject and not the object, a second person one the object and not the subject, and an inclusive
-one both: subject, object and split control. The first two are Postal's correlation (33). -/
+/-- At the reported context a first exclusive subject includes just the matrix subject and a second
+person one just the object, Postal's correlation (33), and an inclusive one both. -/
 theorem mem_participantSets_reported :
     ((reported c s o).participants x ∈ Person.firstExclusive.participantSets ↔
         s ≤ x ∧ ¬ o ≤ x) ∧
@@ -222,8 +221,8 @@ theorem jussive_rows :
 def verbOf (row : Datum) : Option Verb :=
   (row.feature? "verb").bind (Verb.find? (English.Verbs.verbs.map (·.toVerb)) ·)
 
-/-- Partial control is acceptable exactly under the verbs whose derived class lies on a tier
-admitting it: the attitude predicates of (36), not the implicative of (37a). -/
+/-- Partial control is acceptable exactly under verbs whose derived class admits it, the attitude
+predicates of (36) but not the implicative of (37a). -/
 theorem partialControl_rows :
     ∀ row ∈ Examples.all, ∀ v ∈ verbOf row, row.feature? "reading" = some "partial" →
       (row.judgment = .acceptable ↔
@@ -239,8 +238,8 @@ def complementTy : Tier → Option Ty
   | .predicative => some .et
   | .logophoric => Ty.combine? .e .et
 
-/-- A lexical subject saturates the FinP, so a clause hosting one has the type of the FinP applied
-to an individual, which only a logophoric complement has (72). -/
+/-- Only a logophoric complement has the type of a FinP applied to an individual, as a lexical
+subject requires (72). -/
 theorem lexicalSubject_iff_logophoric (t : Tier) :
     complementTy t = Ty.combine? .e .et ↔ t = .logophoric := by
   cases t <;> decide
@@ -313,9 +312,8 @@ instance (row : Datum) : Decidable (IsTopic row) := inferInstanceAs (Decidable (
 
 instance (row : Datum) : Decidable (IsLogophoric row) := inferInstanceAs (Decidable (_ = _))
 
-/-- On the paradigm (52), the pragmatics of NOC (55a) holds: every acceptable controller is a
-topic or a logophoric center, and each licensor occurs without the other, so neither is
-necessary. -/
+/-- In the paradigm (52) every acceptable NOC controller is a topic or a logophoric center, and
+neither is necessary (55a). -/
 theorem noc_rows :
     (∀ row ∈ Examples.all, row.feature? "control" = some "NOC" → row.judgment = .acceptable →
       IsTopic row ∨ IsLogophoric row) ∧

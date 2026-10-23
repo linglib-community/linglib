@@ -68,8 +68,8 @@ noncomputable def marked (salient : Set W → Prop) : W → SignType :=
 
 /-! ### The exhaustive inference is not asserted, section 5.2.1 -/
 
-/-- Negating overt *only* keeps the prejacent and denies exhaustivity, so some alternative the
-prejacent does not entail holds and *also* has its antecedent, (36b) and (37b). -/
+/-- Negated overt *only* keeps the prejacent and verifies a non-entailed alternative, giving *also*
+its antecedent ((36b), (37b)). -/
 theorem negated_only_licenses_also {w : W} (h : -only (· ⊆ ·) alts p w = 1) :
     w ∈ p ∧ ∃ q ∈ alts, ¬ p ⊆ q ∧ w ∈ q := by
   rw [SignType.neg_eq_one_iff, only_eq_neg_one_iff] at h
@@ -85,25 +85,22 @@ theorem negated_cleft_notMem {w : W} (h : -cleft alts p w = 1) : w ∉ p := by
 
 /-! ### Implicature in Ngamo, presupposition in Akan and Ga, section 5.2.2 -/
 
-/-- The Ngamo construction is satisfied, presupposition included, at a world where an alternative
-the prejacent does not entail holds too, so its exhaustive inference is cancellable ((42) and
-(45)). -/
+/-- The Ngamo construction holds with its presupposition where a non-entailed alternative also
+holds, so its exhaustivity is cancellable ((42), (45)). -/
 theorem marked_exhaustivity_cancellable {salient : Set W → Prop} {q : Set W} {w : W}
     (hs : salient (⋃₀ alts)) (hq : q ∈ alts) (hne : ¬ p ⊆ q) (hw : w ∈ p ∩ q) :
     marked alts p salient w = 1 ∧ w ∉ excludes alts p :=
   ⟨by simp [marked, hs, hw.1], fun h ↦ hne (h q hq hw.2)⟩
 
-/-- The cleft, wherever it is defined and true, is exhaustive ((43), (44) and (77)); a further
-true alternative makes it undefined, so it cannot answer a mention-some question, (49) and
-(50). -/
+/-- Where defined and true, the cleft is exhaustive ((43), (44), (77)), so it cannot answer a
+mention-some question ((49), (50)). -/
 theorem cleft_exhaustive {w : W} (h : cleft alts p w = 1) : w ∈ excludes alts p := by
   simp only [cleft, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
     SignType.ofProp_eq_one_iff] at h
   exact h.1.1 h.2
 
-/-- The conditional presupposition projects, (54). A negated cleft is defined and true at a
-world where the prejacent fails and another alternative holds, so *it wasn't Fred she invited* is
-compatible with her inviting Peter and Paul. -/
+/-- A negated cleft is true where the prejacent fails and another alternative holds, so the
+conditional presupposition projects (54). -/
 theorem cleft_neg_of_alt {q : Set W} {w : W} (hq : q ∈ alts) (hw : w ∈ q) (hp : w ∉ p) :
     -cleft alts p w = 1 := by
   simpa [cleft, hp] using ⟨q, hq, hw⟩

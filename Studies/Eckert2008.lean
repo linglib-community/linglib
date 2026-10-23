@@ -293,9 +293,7 @@ def tRelease : Finset TMeaning :=
     .stance .careful, .stance .exasperated, .stance .polite, .stance .effortful,
     .quality .educated, .quality .articulate, .quality .elegant, .quality .prissy}
 
-/-- Qualities are construed no further, so accretion elaborates the field in one round, and
-the indexical field of /t/ release is Figure 4 with the habitual quality of each of its
-stances. -/
+/-- The indexical field of /t/ release is Figure 4, each stance with its habitual quality. -/
 theorem indexicalField_tRelease :
     accretion.indexicalField tRelease = accretion.construe tRelease :=
   accretion.indexicalField_eq_iterate (n := 1) (by decide)

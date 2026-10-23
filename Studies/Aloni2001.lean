@@ -417,8 +417,8 @@ def marked (d : Card) : Set World := {w | left w = d}
 /-- Ralph believes that the Ace of Hearts is on the left. -/
 def ralph : Set World := {w₁}
 
-/-- *Ralph believes the Ace of Spades to be marked* (189), in the world `w₂` where the Ace of Spades
-is on the left, is true under the cover by position. -/
+/-- *Ralph believes the Ace of Spades to be marked* (189) is true at `w₂` under the cover by
+position. -/
 theorem deReUnder_byPosition : DeReUnder byPosition ralph spades marked w₂ :=
   ⟨left, .inl rfl, rfl, by rintro _ rfl; rfl⟩
 
@@ -430,9 +430,7 @@ theorem not_deReUnder_bySuit : ¬ DeReUnder bySuit ralph spades marked w₂ := b
   have h₁ : left w₁ = spades := h w₁ rfl
   exact absurd h₁ (by decide)
 
-/-- Once you learn that the Ace of Hearts is on the right, the covers by position and by suit,
-restricted to the information state `{w₂}`, are one and the same set of concepts, the only cover
-over a single world (Section 4.1). -/
+/-- Restricted to `{w₂}`, the covers by position and by suit coincide (Section 4.1). -/
 theorem restrict_byPosition_eq_restrict_bySuit :
     ({w₂} : Set World).domRestrict '' byPosition = ({w₂} : Set World).domRestrict '' bySuit :=
   (isCover_iff_eq_names.1 (isCover_byPosition.image_domRestrict _)).trans

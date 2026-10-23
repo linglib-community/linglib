@@ -84,9 +84,8 @@ theorem coding_causativeOfTransitive : (causativeOfTransitive t).coding = .synth
 theorem isValencyIncreasing_causative : (causative t).IsValencyIncreasing :=
   Voice.causative_isValencyIncreasing
 
-/-- The passive and the causative of a transitive verb both demote the initial A, the one
-making the P the subject and the other introducing a causer as the new A
-([creissels-2024] §12.5.1). -/
+/-- The passive and the causative of a transitive verb both demote the initial A ([creissels-2024]
+§12.5.1). -/
 theorem fateOfRole_passive_causativeOfTransitive :
     (passive s).fateOfRole .A = .denucleativized ∧
       (causativeOfTransitive t).fateOfRole .A = .denucleativized ∧

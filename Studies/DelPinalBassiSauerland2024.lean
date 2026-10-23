@@ -90,9 +90,8 @@ noncomputable def pexPossOr : W → SignType :=
 
 variable {R a b} {w : W}
 
-/-- Negation denies the prejacent of `pex^{IE+II}[◇(a ∨ b)]` and leaves its presupposition, so
-`pex` is false, and its negation true, exactly where double prohibition holds, (16); the
-presupposition holds there whatever the includable alternatives are. -/
+/-- `pex^{IE+II}[◇(a ∨ b)]` is false, and its negation true, exactly where double prohibition holds
+(16). -/
 theorem double_prohibition :
     pexPossOr R a b w = -1 ↔ w ∉ R.preimage a ∧ w ∉ R.preimage b := by
   simp only [pexPossOr, pexIEII_eq_neg_one_iff, pexIEII_ne_zero_iff, preimage_union]
@@ -179,8 +178,8 @@ theorem gapExt_pexPossOr_nonempty : (Trivalent.gapExt (pexPossOr R a b)).Nonempt
   obtain ⟨w, hwa, hwb⟩ := hF.only_left
   exact ⟨w, by rw [homogeneity_gap hF]; exact .inl ⟨hwa, hwb⟩⟩
 
-/-- With every alternative relevant, `pex^{IE+II}[◇(a ∨ b)]` is true exactly where
-`exh^{IE+II}[◇(a ∨ b)]` is, (12e) and (13); the two differ only in what they presuppose. -/
+/-- With every alternative relevant, `pex^{IE+II}[◇(a ∨ b)]` is true exactly where `exh^{IE+II}[◇(a
+∨ b)]` is ((12e), (13)). -/
 theorem pex_and_exh_agree :
     pexIEII (fcAlts R a b) (R.preimage (a ∪ b)) (fcAlts R a b) w = 1 ↔
       w ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) := by
@@ -295,9 +294,8 @@ theorem pexNecAnd_ne_zero_iff : pexNecAnd R T B w ≠ 0 ↔ (w ∈ R.core T ↔ 
     (and_iff_right fun ψ hψ _ ↦ absurd hψ (not_isInnocentlyExcludable_necAlts h ψ)).trans
       (by rw [II_necAlts_sdiff_inter h₁ h₂ h, homogeneous_pair])
 
-/-- The homogeneity `□T ↔ □B` projects out of the negation of the strong prejacent, so
-`pex^{IE+II}[□(T ∧ B)]` is false, and its negation true, exactly where negative free choice
-holds, (20). -/
+/-- `pex^{IE+II}[□(T ∧ B)]` is false, and its negation true, exactly where negative free choice
+holds (20). -/
 theorem negative_free_choice_under_negation :
     pexNecAnd R T B w = -1 ↔ w ∉ R.core T ∧ w ∉ R.core B := by
   have hl : ⋂₀ (II (necAlts R T B) (R.core (T ∩ B)) \ {R.core (T ∩ B)} ∩
@@ -349,17 +347,16 @@ theorem negative_free_choice_presupposed {T B : Set W} (hF : FreeChoiceWitnesses
   rw [← negative_free_choice hF, ← toTrivalent_pexPossOrTwoDim, TwoDim.toTrivalent_eq_one_iff]
   rfl
 
-/-- The assertion of a negative factive denies belief in the prejacent `◇(a ∨ b)`, hence belief
-in either disjunct, (21b) and (31d′); at `Tᶜ` and `Bᶜ` this is (33b) and (34d). -/
+/-- A negative factive over `◇(a ∨ b)` asserts disbelief in each disjunct ((21b), (31d′); at `Tᶜ`
+and `Bᶜ`, (33b) and (34d)). -/
 theorem unaware_disbelieves_each_disjunct (R' : SetRel W W)
     (hw : (TwoDim.negFactive (pexPossOrTwoDim R a b) (Box R')).atIssue w) :
     ¬ □[R'] (· ∈ R.preimage a) w ∧ ¬ □[R'] (· ∈ R.preimage b) w :=
   ⟨fun hA ↦ hw (box_mono R' (fun _ hv ↦ (preimage_union ..).ge (.inl hv)) w hA),
    fun hB ↦ hw (box_mono R' (fun _ hv ↦ (preimage_union ..).ge (.inr hv)) w hB)⟩
 
-/-- With a flat `exh` complement the factive only denies belief in the strengthened content,
-which an attitude holder who believes Olivia can take Logic but not Algebra satisfies, so the
-target reading that he believes neither is missed, (24a). -/
+/-- With a flat `exh` complement, the factive misses the reading that the attitude holder believes
+neither disjunct (24a). -/
 theorem exh_unaware_too_weak (hF : FreeChoiceWitnesses R a b) :
     ∃ R' : SetRel W W, □[R'] (· ∈ R.preimage a) w ∧
       ¬ □[R'] (· ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b))) w := by
@@ -377,10 +374,8 @@ section Filtering
 
 variable {R : SetRel W W} {a b A B : Set W} {C : W → SignType}
 
-/-- In `¬pex[◇(a ∨ b)] ∨ C`, with `C` presupposing `◇A ∧ ◇B` for `a ⊆ A` and `b ⊆ B`, the
-filtering disjunction (45) filters the free-choice presupposition, since the negation of the
-first disjunct is free choice, and only the homogeneity of the first disjunct projects, (53) and
-§4.4. -/
+/-- In `¬pex[◇(a ∨ b)] ∨ C`, the filtering disjunction (45) filters the free-choice presupposition,
+and only homogeneity projects ((53), §4.4). -/
 theorem free_choice_filtered (hA : a ⊆ A) (hB : b ⊆ B) (hF : FreeChoiceWitnesses R a b)
     (hC : Function.support C = R.preimage A ∩ R.preimage B) :
     Function.support (fun w ↦ (-pexPossOr R a b w).joinMiddle (C w)) =
@@ -393,8 +388,8 @@ theorem free_choice_filtered (hA : a ⊆ A) (hB : b ⊆ B) (hF : FreeChoiceWitne
   grind [preimage_mono hA, preimage_mono hB]
 
 open Classical in
-/-- Without exhaustification under the negation, the antecedent of the conditional
-presupposition is only `◇(a ∨ b)`, and a world permitting `a` but not `B` refutes it, (46c). -/
+/-- Without exhaustification under the negation, a world permitting `a` but not `B` refutes the
+filtering (46c). -/
 theorem no_filtering_without_pex (hC : Function.support C = R.preimage A ∩ R.preimage B)
     (hw : ∃ w ∈ R.preimage a, w ∉ R.preimage B) :
     ∃ w, (-SignType.ofProp (w ∈ R.preimage (a ∪ b))).joinMiddle (C w) = 0 := by
@@ -421,9 +416,8 @@ theorem exh_loses_double_prohibition (hF : FreeChoiceWitnesses R a b) :
   obtain ⟨w₁, hw₁a, hw₁b⟩ := hF.only_left
   exact ⟨w₁, by grind [freeChoice hF], hw₁a⟩
 
-/-- In `pex[□(A ∧ B)] ∨ C`, with `C` presupposing `¬□a ∧ ¬□b`, the negation of the first
-disjunct is negative free choice for `A` and `B`, which entails that presupposition, so it is
-filtered and only the homogeneity `□A ↔ □B` projects, (57c). -/
+/-- In `pex[□(A ∧ B)] ∨ C`, negative free choice filters the presupposition `¬□a ∧ ¬□b`, and only
+homogeneity projects (57c). -/
 theorem negative_free_choice_filtered (hA : a ⊆ A) (hB : b ⊆ B)
     (h₁ : ∃ w ∈ R.core A, w ∉ R.core B) (h₂ : ∃ w ∈ R.core B, w ∉ R.core A)
     (h : (R.core (A ∩ B)).Nonempty) (hC : Function.support C = (R.core a)ᶜ ∩ (R.core b)ᶜ) :
@@ -438,8 +432,8 @@ theorem negative_free_choice_filtered (hA : a ⊆ A) (hB : b ⊆ B)
   grind
 
 open Classical in
-/-- Since `exh^{IE+II}` is vacuous on `□(A ∧ B)`, the negation of the first disjunct is only
-`¬□(A ∧ B)`, and a world requiring `a` but not `B` refutes the filtering, (56c). -/
+/-- Since `exh^{IE+II}` is vacuous on `□(A ∧ B)`, a world requiring `a` but not `B` refutes the
+filtering (56c). -/
 theorem no_negative_filtering_with_exh (h : (R.core (A ∩ B)).Nonempty)
     (hC : Function.support C = (R.core a)ᶜ ∩ (R.core b)ᶜ) (hw : ∃ w ∈ R.core a, w ∉ R.core B) :
     ∃ w, (SignType.ofProp (w ∈ exhIEII (necAlts R A B) (R.core (A ∩ B)))).joinMiddle (C w) = 0 := by
@@ -456,8 +450,7 @@ theorem double_prohibition_accommodated {w : W} :
     SignType.ofProp (-pexPossOr R a b w = 1) = 1 ↔ w ∉ R.preimage a ∧ w ∉ R.preimage b := by
   rw [SignType.ofProp_eq_one_iff, SignType.neg_eq_one_iff, double_prohibition]
 
-/-- After local accommodation the negation of the first disjunct is only `◇a ∨ ◇b`, and a world
-permitting `a` but not `B` refutes the filtering, (59b). -/
+/-- After local accommodation, a world permitting `a` but not `B` refutes the filtering (59b). -/
 theorem no_filtering_with_accommodation (hC : Function.support C = R.preimage A ∩ R.preimage B)
     (hw : ∃ w ∈ R.preimage a, w ∉ R.preimage B) :
     ∃ w, (SignType.ofProp (-pexPossOr R a b w = 1)).joinMiddle (C w) = 0 := by
@@ -482,7 +475,7 @@ section Quantified
 variable {R : SetRel W W} {D : Type*} {S : D → Prop} {p q : D → Set W} {w : W}
 
 /-- With universal projection, `¬∃x ∈ S[pex[◇(px ∨ qx)]]` is true exactly where universal double
-prohibition holds, (70b) and (71), the reading the elided second sentence of (69) needs. -/
+prohibition holds ((70b), (71)), as (69) requires. -/
 theorem universal_double_prohibition :
     -Trivalent.existsWeak (fun x : {x // S x} ↦ pexPossOr R (p x) (q x) w) = 1 ↔
       (¬ ∃ x, S x ∧ w ∈ R.preimage (p x)) ∧ ¬ ∃ x, S x ∧ w ∈ R.preimage (q x) := by
@@ -508,9 +501,8 @@ theorem existential_free_choice
   let ⟨_, ⟨x, hx⟩, ha⟩ := Trivalent.existsWeak_eq_one_iff.1 hw
   ⟨x, hx, (free_choice (hF x hx)).1 ha⟩
 
-/-- With the presupposition bound by the existential, as in the strong Kleene existential
-`Trivalent.existsStrong`, `∃x ∈ S[pex[◇(px ∨ qx)]]` is true exactly where existential free
-choice holds, (75). -/
+/-- With the presupposition bound by the existential, `∃x ∈ S[pex[◇(px ∨ qx)]]` is true exactly
+where existential free choice holds (75). -/
 theorem existential_free_choice_bound :
     Trivalent.existsStrong (fun x : {x // S x} ↦ pexPossOr R (p x) (q x) w) = 1 ↔
       ∃ x, S x ∧ w ∈ R.preimage (p x) ∧ w ∈ R.preimage (q x) := by

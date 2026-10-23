@@ -61,8 +61,8 @@ theorem forall_licit_iff_iff (g : Grammar) :
   revert g
   decide +kernel
 
-/-- With no satisfaction condition and [SPKR] and [ADDR] both dynamic, an inclusive direct object
-leaves an inclusive indirect object visible in 2024 but blocks every indirect object under (30). -/
+/-- With [SPKR] and [ADDR] both dynamic and no satisfaction condition, an inclusive direct object
+licenses an inclusive indirect object in 2024 but not under (30). -/
 theorem inclusive_divergence :
     Deal2024.Licit ⟨none, {.speaker, .addressee}⟩ ⟨.firstInclusive, .firstInclusive⟩ ∧
       ¬ Licit ⟨none, {.speaker, .addressee}⟩ ⟨.firstInclusive, .firstInclusive⟩ := by

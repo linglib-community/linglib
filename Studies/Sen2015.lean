@@ -146,10 +146,8 @@ theorem extremes_specified (c : Context) :
       (c ≤ .geminate → c = .geminate ∨ c = .preI) := by
   revert c; decide
 
-/-- Within the onset the specification is one and the darkness is not. Before /a o u/, /e/ and
-/i/ the same `[Ø back]` /l/ ranges over three degrees, so the categorical specification does not
-determine the colouring, the chapter's reason for rejecting synchronic feature spreading as its
-mechanism (§2.5). -/
+/-- Before /a o u/, /e/ and /i/, the same `[Ø back]` onset /l/ ranges over three degrees of darkness
+(§2.5). -/
 theorem onset_gradient :
     Context.preBack.position = .onset ∧ Context.preE.position = .onset ∧
       Context.preI.position = .onset ∧

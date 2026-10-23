@@ -248,10 +248,8 @@ theorem inanimate_uniform_neuter :
       some .neuter := by
   decide
 
-/-- Closest conjunct agreement is with the PF features of the conjunct next to the predicate,
-which precedes the subject, so it is feminine for *i megalofiia ke o filos tu* whatever the
-genius's referent ((45)) and masculine, not the neuter of CLASS, for *o pinakas ke i karekla*
-((46)). -/
+/-- Closest conjunct agreement takes the PF features of the conjunct next to the predicate ((45),
+(46)). -/
 theorem closest_conjunct :
     (HeadDirection.headInitial.nearest
         [system.nominal megalofiia .man, system.nominal filos .man]).bind system.exponent =

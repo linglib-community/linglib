@@ -281,9 +281,8 @@ private theorem causalStrength_pair₁_toReal (hs : s < 1) {X Y : Urn₁} (hXY :
     (fun i ↦ Subtype.coe_lt_coe.1 (by cases i <;> norm_num [prior₁]))
     (fun i ↦ Subtype.coe_lt_coe.1 (by cases i <;> norm_num [prior₁]))
 
-/-- The holistic NSM rates the intermediate and high pair highest (p. 451), above the low and high
-pair at every stability below one, and above the low and intermediate pair, by `9/10 · s(1 - s)`,
-exactly when the counterfactuals are anchored to the actual round. -/
+/-- The NSM rates the intermediate and high pair highest, beating the low and intermediate pair by
+`9/10 · s(1 - s)` exactly when `0 < s` (p. 451). -/
 theorem intermediate_high_ranked_highest (hs : s < 1) :
     (causalStrength s prior₁ (fun _ ↦ true) twoOrMore {low, intermediate} <
         causalStrength s prior₁ (fun _ ↦ true) twoOrMore {intermediate, high} ↔ 0 < s) ∧
@@ -306,8 +305,8 @@ example : (causalStrength 0 prior₁ (fun _ ↦ true) twoOrMore {low, intermedia
     causalStrength_pair₁_toReal zero_lt_one (by decide)]
   norm_num [prior₁]
 
-/-- The NSM rates the low and high pair above the low and intermediate pair, the prediction from
-which the participants deviated (p. 453), only for stabilities above `9/19`. -/
+/-- The NSM rates the low and high pair above the low and intermediate pair only for stabilities
+above `9/19` (p. 453). -/
 theorem low_high_outscores_low_intermediate_iff (hs : s < 1) :
     causalStrength s prior₁ (fun _ ↦ true) twoOrMore {low, intermediate} <
         causalStrength s prior₁ (fun _ ↦ true) twoOrMore {low, high} ↔ 9 / 19 < (s : ℝ) := by
@@ -348,8 +347,8 @@ theorem mem_win_iff_barePlural :
     w ∈ win rule ↔ ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = 1 := by
   simp [win, Homogeneity.barePlural, SignType.supervaluation_eq_one_iff]
 
-/-- In a losing round, the homogeneous loss is the falsity of each condition's plural predication
-over its urns that are white in the round, the homogeneous negation of the rule (pp. 459, 468). -/
+/-- In a losing round, the homogeneous loss is the homogeneous negation of the rule over the urns
+white in that round (pp. 459, 468). -/
 theorem mem_homogeneousLoss_iff_barePlural (h : w₀ ∉ win rule) :
     w ∈ homogeneousLoss rule w₀ ↔ ∀ D ∈ rule,
       Homogeneity.barePlural (fun i w ↦ w i = true) (D.filter (w₀ · = false)) w = -1 := by
@@ -528,9 +527,8 @@ theorem same_condition_pair_not_necessary (μ : Measure (Urn₂ → Bool)) :
       necessity μ (fun _ ↦ true) (win conditions) {c, d} = 0 :=
   ⟨necessity_eq_zero (by decide), necessity_eq_zero (by decide)⟩
 
-/-- In the round where every urn gave a colored ball, a pair across the two conditions is
-necessary to a positive degree, since without both its balls neither condition holds
-(p. 462). -/
+/-- When every urn gives a colored ball, any pair across the two conditions is necessary to a
+positive degree (p. 462). -/
 theorem crossing_pair_necessary (hs : s < 1) {X Y : Urn₂} (hX : X ∈ ({a, b} : Finset Urn₂))
     (hY : Y ∈ ({c, d} : Finset Urn₂)) :
     0 < necessity (sampling s prior₂ fun _ ↦ true) (fun _ ↦ true) (win conditions) {X, Y} := by
@@ -540,8 +538,8 @@ theorem crossing_pair_necessary (hs : s < 1) {X Y : Urn₂} (hX : X ∈ ({a, b} 
   simp only [mem_inter_iff, mem_compl_iff, mem_ofPred_eq]
   revert X Y; decide
 
-/-- In the round where every urn gave a colored ball, the model scores the two urns of a color
-alike, against the abnormal deflation the paper reports for it (p. 463). -/
+/-- When every urn gives a colored ball, the model scores the two urns of a color alike, contrary to
+the reported abnormal deflation (p. 463). -/
 theorem partners_scored_alike (hs : s < 1) :
     causalStrength s prior₂ (fun _ ↦ true) (win conditions) {a} =
         causalStrength s prior₂ (fun _ ↦ true) (win conditions) {b} ∧
@@ -554,9 +552,7 @@ theorem partners_scored_alike (hs : s < 1) :
     add_zero]
   exact ⟨mul_comm _ _, mul_comm _ _⟩
 
-/-- In the round won through `a` and `b`, with a white ball from `c`, the pair of `a` and `b` is
-fully sufficient and fully necessary and scores one, at the ceiling where the participants put it
-(p. 465). -/
+/-- In the round won through `a` and `b`, the pair of `a` and `b` scores one (p. 465). -/
 theorem pair_scores_one (hs : s < 1) :
     causalStrength s prior₂ triplePositive (win conditions) {a, b} = 1 :=
   score_eq_one (by decide) (by decide)
@@ -568,8 +564,8 @@ theorem idle_urn_not_necessary (μ : Measure (Urn₂ → Bool)) :
     necessity μ triplePositive (win conditions) {d} = 0 :=
   necessity_eq_zero (by decide)
 
-/-- In the round won through `a` and `b`, the rarer colored ball, from `b`, outscores the commoner
-one, from `a`, an abnormal inflation in line with the participants (p. 465). -/
+/-- In the round won through `a` and `b`, the rarer colored ball from `b` outscores the one from `a`
+(p. 465). -/
 theorem triple_positive_abnormal_inflation (hs : s < 1) :
     causalStrength s prior₂ triplePositive (win conditions) {a} <
       causalStrength s prior₂ triplePositive (win conditions) {b} := by
@@ -586,9 +582,7 @@ theorem triple_positive_abnormal_inflation (hs : s < 1) :
 
 /-! #### The losing rounds -/
 
-/-- In the round where every urn gave a white ball, no single white ball is necessary for the
-classical loss, since the other white ball of its color still blocks its condition
-(p. 467). -/
+/-- In the all-white round, no single white ball is necessary for the classical loss (p. 467). -/
 theorem white_ball_redundant (μ : Measure (Urn₂ → Bool)) (i : Urn₂) :
     necessity μ (fun _ ↦ false) (win conditions)ᶜ {i} = 0 :=
   necessity_eq_zero (by revert i; decide)
@@ -648,8 +642,8 @@ theorem causalStrength_singleton_compl_win_toReal (hs : s < 1) (X : Urn₂) :
   simp only [← measureReal_def]
   rw [hYK, probReal_compl_eq_one_sub .of_discrete, hK, hqX]
 
-/-- Under the classical loss, the white ball an urn is likelier to give scores higher, `b` over `a`
-and `c` over `d`, an abnormal deflation contrary to the participants (p. 466). -/
+/-- Under the classical loss, the likelier white ball scores higher (`b` over `a`, `c` over `d`), an
+abnormal deflation contrary to the participants (p. 466). -/
 theorem classical_abnormal_deflation (hs : s < 1) :
     causalStrength s prior₂ (fun _ ↦ false) (win conditions)ᶜ {a} <
         causalStrength s prior₂ (fun _ ↦ false) (win conditions)ᶜ {b} ∧
@@ -698,9 +692,8 @@ theorem homogeneous_lt_iff (hs : s < 1) {w₀ : Urn₂ → Bool} {S S' : Finset 
     ← ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
     ← measureReal_def, measureReal_pi_cause, measureReal_pi_cause, hprod hS, hprod hS']
 
-/-- Under the homogeneous loss, a plurality of white balls scores higher than any part of it, as
-the participants rated triples above pairs and pairs above their single balls (pp. 467,
-469). -/
+/-- Under the homogeneous loss, a plurality of white balls scores higher than any proper part of it
+(pp. 467, 469). -/
 theorem homogeneous_lt_of_ssubset (hs : s < 1) {w₀ : Urn₂ → Bool} {S S' : Finset Urn₂}
     (hS : S.Nonempty) (h : S ⊂ S') (hS' : ∀ i ∈ S', w₀ i = false) :
     causalStrength s prior₂ w₀ (homogeneousLoss conditions w₀) S <
@@ -709,9 +702,8 @@ theorem homogeneous_lt_of_ssubset (hs : s < 1) {w₀ : Urn₂ → Bool} {S S' : 
   exact causalStrength_cause_lt_of_ssubset hs prior₂_pos prior₂_lt_one hS h
     fun i hi ↦ by simpa using hS' i hi
 
-/-- Under the homogeneous loss, the white balls an urn is less likely to give score higher, `a`
-over `b` and `d` over `c` when every urn gave a white ball (p. 466), and `a` over `b`, alone and
-with `d`, when `c` gave a colored one (p. 468). -/
+/-- Under the homogeneous loss, the less likely white ball scores higher, in the all-white round (p.
+466) and when `c` gave a colored ball (p. 468). -/
 theorem homogeneous_abnormal_inflation (hs : s < 1) :
     (causalStrength s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {b} <
         causalStrength s prior₂ (fun _ ↦ false) (homogeneousLoss conditions fun _ ↦ false) {a} ∧
@@ -731,8 +723,8 @@ theorem homogeneous_abnormal_inflation (hs : s < 1) :
   refine ⟨⟨by linarith, by linarith⟩, by linarith, ?_⟩
   nlinarith [mul_pos (sub_pos.2 hs') (sub_pos.2 hs'), mul_nonneg s.2.1 (sub_pos.2 hs').le]
 
-/-- In the round with a colored ball from `c` only, the white ball from `d` is indispensable for
-the classical loss, and those from `a` and `b` are redundant with one another (p. 468). -/
+/-- When only `c` gives a colored ball, the white ball from `d` is indispensable for the classical
+loss and those from `a` and `b` are redundant (p. 468). -/
 theorem classical_triple_negative (hs : s < 1) :
     necessity (sampling s prior₂ tripleNegative) tripleNegative (win conditions)ᶜ {d} = 1 ∧
       necessity (sampling s prior₂ tripleNegative) tripleNegative (win conditions)ᶜ {a} = 0 ∧
@@ -741,8 +733,7 @@ theorem classical_triple_negative (hs : s < 1) :
       (sampling_ne_zero hs prior₂_pos prior₂_lt_one ⟨fun _ ↦ true, by decide⟩),
     necessity_eq_zero (by decide), necessity_eq_zero (by decide)⟩
 
-/-- The homogeneous loss of the round with a colored ball from `c` only is ¬A ∧ ¬B ∧ ¬D, the rule
-negated as homogeneously as the facts allow (p. 468). -/
+/-- When only `c` gives a colored ball, the homogeneous loss is ¬A ∧ ¬B ∧ ¬D (p. 468). -/
 theorem homogeneousLoss_tripleNegative :
     homogeneousLoss conditions tripleNegative = {w | w a = false ∧ w b = false ∧ w d = false} :=
   Set.ext fun w ↦ by revert w; decide

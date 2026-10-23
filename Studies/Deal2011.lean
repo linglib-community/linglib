@@ -156,10 +156,8 @@ theorem servesFor_iff : ServesFor π fo s g ↔ Usable π fo s g := by
       exact ⟨hw.1, fun _ ↦ hw.2 trivial⟩
     · exact ⟨smul_claim_subset hf h hw.1, fun hs' ↦ absurd hs' hs⟩
 
-/-- Table 1: a modal is flexible in a context of polarity `π`, serving for every force, exactly
-when it has no scalemate and its own claim is the weaker there. A modal with a scale is never
-flexible, a scale-free possibility modal is flexible in upward-entailing contexts only, and a
-scale-free necessity modal in downward-entailing ones only. -/
+/-- A modal is flexible in a context iff it has no scalemate and its own claim is the weaker there
+(Table 1). -/
 theorem flexible_iff : (∀ g, ServesFor π fo s g) ↔ ¬ s ∧ StrongerIn π fo.dual fo := by
   simp only [servesFor_iff, Usable]
   refine ⟨fun h ↦ (h fo.dual).resolve_left (by cases fo <;> decide), fun h g ↦ ?_⟩
@@ -230,9 +228,7 @@ theorem rows_resolve :
       (e.parse? "environment" polarityTable).isSome := by
   decide
 
-/-- §1 and §3: *o'qa* is accepted in a context, or on a translation, exactly when it serves for
-the force of the English modal there, both forces in upward-entailing environments and
-possibility alone elsewhere. -/
+/-- *O'qa* is accepted exactly when it serves for the force of the English modal there (§1, §3). -/
 theorem rows :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable,
       ∀ π ∈ e.parse? "environment" polarityTable,

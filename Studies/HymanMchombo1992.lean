@@ -331,8 +331,7 @@ theorem Filtered.cycle {i : Input} {f : Feature} {s t : Stem} (hs : Filtered s)
   subst hy
   exact h3 x hx (rules_eq_obligatory.mpr hxy)
 
-/-- The filters (10) follow from circumscription, since no stem the cyclic spell-out derives has
-an applicative or passive morph immediately before a causative or intensive one. -/
+/-- No stem derived by cyclic spell-out violates the filters (10). -/
 theorem filtered_of_mem_spellOut {i : Input} {s : Stem} (h : s ∈ spellOut rules i) :
     Filtered s := by
   unfold spellOut at h
@@ -345,9 +344,7 @@ theorem filtered_of_mem_spellOut {i : Input} {s : Stem} (h : s ∈ spellOut rule
     obtain ⟨s', hs', ht⟩ := mem_spellOut_go.mp h
     exact (ih hs').cycle ht
 
-/-- A causativized reciprocal surfaces as *-its-an-* as well as *-an-its-* only by the
-circumscription (36), so without it *-its-an-* would spell out only a reciprocalized causative
-((35), (36)). -/
+/-- Without the circumscription (36), *-its-an-* spells out only a reciprocalized causative (35). -/
 theorem ambiguity_needs_late_rule :
     spellOut rules₀ [reciprocal, causative] = {[reciprocal, causative]} ∧
       spellOut rules [reciprocal, causative] =
@@ -383,9 +380,7 @@ theorem valency_passive (n : ℕ) :
   simp only [Feature.valency, Feature.voice?, h₁, h₂]
   split_ifs <;> first | rfl | omega
 
-/-- A transitive verb is detransitivized only once (4a). With no causative or applicative to add
-an argument, an input that a root of valency at most two survives has fewer reciprocals and
-passives than the root has arguments. -/
+/-- A transitive verb is detransitivized only once (4a). -/
 theorem detransitivized_once : ∀ {i : Input} {n : ℕ}, n ≤ 2 → causative ∉ i → applicative ∉ i →
     (i.valency n).isSome → (i.filter (· ∈ [reciprocal, passive])).length ≤ n - 1
   | [], _, _, _, _, _ => by simp
@@ -447,10 +442,8 @@ def Feature.target? : Feature → Option Role
 /-- A feature's place on the hierarchy, an adverbial above every role. -/
 def Feature.rank (f : Feature) : WithBot ℕ := f.target?.map Role.rank
 
-/-- Every circumscription marks off a suffix that targets a role lower on the hierarchy than the
-feature that marks it off (33). The paper notes that a locative or circumstantial
-applicative, below the patient, still precedes the reciprocal: the orders follow the affixes'
-prototypical functions. -/
+/-- Every circumscription marks off a suffix targeting a role lower on the hierarchy than the
+marking feature (33). -/
 theorem rank_lt_of_rules_ne_none {f g : Feature} (h : rules f g ≠ none) : f.rank < g.rank := by
   revert h; revert f g; decide
 
@@ -558,8 +551,8 @@ theorem rows_cyclicFailures :
       ∀ v ∈ root? r, ∀ i ∈ scope? r, ∀ s ∈ suffixes? r, Licensed v i ∧ s ∈ spellOut rules i := by
   decide +kernel
 
-/-- Every order of applicative and passive the paper accepts is spelled out from a scope the
-applied role allows, and every order so spelled out is accepted in some sentence ((27)–(31)). -/
+/-- The orders of applicative and passive that the paper accepts are exactly those spelled out from
+scopes the applied role allows ((27)–(31)). -/
 theorem rows_passive :
     (∀ r ∈ Examples.all, ∀ ρ ∈ role? r, ∀ s ∈ suffixes? r, r.judgment = .acceptable →
       ∃ i ∈ ρ.passiveScopes, s ∈ spellOut rules i) ∧

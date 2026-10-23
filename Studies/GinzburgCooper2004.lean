@@ -181,9 +181,8 @@ def president (form : String) (subject : SubUtterance grammar) (p : Cont) :
     LocutionaryProposition grammar Cont :=
   { form, category := .s, content := p, parameters := {"j"}, constituents := {subject} }
 
-/-- The Hybrid Content Hypothesis as the paper argues it from (19)–(20): "Jill is the president"
-and "She is the president", with the same content and parameters, differ in clarification
-potential, because the potential reads the sub-utterances. -/
+/-- *Jill is the president* and *She is the president* differ in clarification potential despite
+equal content, the Hybrid Content Hypothesis of (19)–(20). -/
 theorem potential_ne_of_constituents (p : Cont) :
     potential (president "Jill is the president" jill p) ≠
       potential (president "She is the president" she p) := by

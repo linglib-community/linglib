@@ -149,11 +149,8 @@ def IsBmrsWeaklyDeterministic (f : List α → List α) : Prop :=
 
 /-! ### The exclusion argument of §5.3 -/
 
-/-- A map that requires both sides is not weakly deterministic. On the far-left perturbation
-the target is unchanged, so ⊙ is conjunction and both one-sided outputs are true; the forward
-one transports to the base by locality. Symmetrically the far-right perturbation delivers the
-backward one. Recombining in the base forces the target unchanged. Thm. 5.2 and Props. 5.4
-and 5.5 are instances. -/
+/-- A map that requires both sides is not weakly deterministic, with Thm. 5.2 and Props. 5.4 and 5.5
+as instances. -/
 theorem not_isBmrsWeaklyDeterministic_of_requiresBothSides {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsBmrsWeaklyDeterministic f := by
   rintro ⟨L, R, PL, PR, outL, outR, hPL, hPR, hm⟩
@@ -218,9 +215,7 @@ private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
       h ⟨(mem_take_flankWord_iff (by decide) (by omega)).mp ht,
         fun hv ↦ hd ((mem_drop_flankWord_iff (by decide) (by omega)).mpr hv)⟩]
 
-/-- Sour Grapes requires both sides, by the maps (a)–(c) of the proof of Thm. 5.2. The middle
-of `+ −…− −` spreads, but neither the triggerless `− −…− −` nor the blocked `+ −…− ⊟` changes
-it. -/
+/-- Sour Grapes requires both sides, by the maps (a)–(c) of the proof of Thm. 5.2. -/
 theorem sourGrapes_requiresBothSides : RequiresBothSides sourGrapes :=
   RequiresBothSides.of_flanks (fill := SG.minus) (xOn := SG.plus)
     (yOn := SG.minus) (xOff := SG.minus) (yOff := SG.blk) (n := fun d ↦ 2 * d + 1)
@@ -286,9 +281,7 @@ def ofAnalysis (a : Wordlist.Analysis) : Option (List BTone × List BTone) :=
   let s := a.form.form.toList.filterMap toneOf
   if u.length = s.length then some (u, s) else none
 
-/-- Bemba spreading takes the tones of each word of Example 2.11 to its surface tones. In (a) the
-initial high spreads to the end of the word, and in (b) a following high bounds the spread to the
-next two tone-bearing units. -/
+/-- Bemba spreading takes each word of Example 2.11 to its surface tones. -/
 theorem bemba_map_forms : ∀ a ∈ Wordlist.analyses, ∀ p ∈ ofAnalysis a, bemba.map p.1 = p.2 := by
   decide
 
@@ -325,9 +318,7 @@ private theorem not_bembaSurfaces_flankWord_LL {d : ℕ} :
   rintro ⟨-, h | ⟨j, -, hjH, -⟩ | ⟨j, -, hjH, -⟩⟩
   exacts [hnoH _ h, hnoH _ hjH, hnoH _ hjH]
 
-/-- Bemba spreading requires both sides, by the maps (a)–(c) of the proof of Prop. 5.4. The
-middle of `H L…L L` spreads, but neither the triggerless far-left flip nor the far-right H,
-which bounds the spread to two TBUs, changes it. -/
+/-- Bemba spreading requires both sides, by the maps (a)–(c) of the proof of Prop. 5.4. -/
 theorem bemba_requiresBothSides : RequiresBothSides bemba.map :=
   bemba.requiresBothSides_of_flanks (n := fun d ↦ 2 * d + 4) (t := fun d ↦ d + 3)
     (fun d ↦ by omega) (fun d ↦ by omega) (fun d ↦ bembaSurfaces_flankWord_HL)
@@ -405,9 +396,8 @@ theorem lholStress_LLLLL :
 
 /-! ### Sour Grapes as a conjunctive simultaneous application (§6.3) -/
 
-/-- Sour Grapes is the conjunctive simultaneous application ⊘ (Def. 6.5) of its two one-sided
-licensing conditions, (6.6) and (6.7). At a target, spreading happens iff a trigger lies to the
-left and no blocker lies to the right. -/
+/-- At a target, Sour Grapes spreads iff a trigger lies to the left and no blocker to the right,
+conjoining (6.6) and (6.7) by ⊘ (Def. 6.5). -/
 theorem sourGrapes_conjunctive {w : List SG} {i : ℕ} (hm : w[i]? = some .minus) :
     (sourGrapes w)[i]? = some (if combineC false
       (decide (.plus ∈ w.take i)) (decide (.blk ∉ w.drop i)) then .plus else .minus) := by

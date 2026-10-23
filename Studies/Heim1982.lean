@@ -325,9 +325,7 @@ theorem admits_aDog {F : File W M} (h : State.Novel F 1) :
   exact admits_seq_of_mem m1 (admits_seq_of_mem (Part.mem_some _) (admits_pro_seq
     (familiar_of_mem (φ := pred₁ cameIn 1) (familiar_of_mem_indef m1) (Part.mem_some _)) trivial))
 
-/-- (16) is infelicitous whenever card 1 is novel and the universal sentence
-is true: `every` returns a subset of the file, at which card 1 is still novel,
-so the pronoun is undefined. -/
+/-- (16) is infelicitous whenever card 1 is novel and the universal sentence is true. -/
 theorem not_admits_everyDog {F : File W M} (h : State.Novel F 1)
     (ht : FCP.trueIn F (every (indef 1 dog) (pred₁ cameIn 1)).fcp) :
     ¬ (everyDog dog cameIn layDown).fcp.Admits F := by
@@ -350,9 +348,7 @@ theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
   have hf : State.Familiar _ 1 := hpro.1.1
   exact hf p hp (h p (FCP.subset_of_mem_neg hF' hp))
 
-/-- §2.4 (5) is felicitous whenever cards 1 and 2 are novel in the initial
-file: the definites of its second sentence find their cards in the file the
-first sentence has produced. -/
+/-- §2.4 (5) is felicitous whenever cards 1 and 2 are novel in the initial file. -/
 theorem admits_womanDog {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
     (womanDog dog woman bit hit).fcp.Admits F := by
   unfold womanDog
@@ -364,9 +360,7 @@ theorem admits_womanDog {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel 
   exact admits_seq_of_mem m1 (admits_seq_of_mem m2 (admits_seq_of_mem (Part.mem_some _)
     (admits_pro_seq f1 (admits_pro_seq f2 trivial))))
 
-/-- §4.1 (2) is felicitous against a file at which cards 1 and 2 are novel:
-"it₂" finds its card in the intermediate file produced by "a pretzel₂" inside
-the nuclear scope. -/
+/-- §4.1 (2) is felicitous against a file at which cards 1 and 2 are novel. -/
 theorem admits_pretzel {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F 2) :
     (pretzelText person pretzel bought ate).fcp.Admits F := by
   unfold pretzelText
@@ -376,9 +370,8 @@ theorem admits_pretzel {F : File W M} (h1 : State.Novel F 1) (h2 : State.Novel F
   exact admits_every_of_mem m1 (admits_seq_of_mem m2 (admits_seq_of_mem (Part.mem_some _)
     (admits_pro_seq f2 trivial)))
 
-/-- Accommodation in the auxiliary file of the negation (§5.2) leaves the initial file's
-cards as they were: the king's card does not survive the negation, the narrow-scope
-reading. -/
+/-- Accommodation in the auxiliary file of the negation leaves the initial file's novel cards novel,
+the narrow-scope reading (§5.2). -/
 theorem novel_of_mem_kingLocal {F F' : File W M} {m i : ℕ} (h : State.Novel F i)
     (hF' : F' ∈ (kingLocal king lunch m i).fcp F) : State.Novel F' i :=
   novel_of_mem (φ := kingLocal king lunch m i) (Set.notMem_empty i) h hF'

@@ -89,9 +89,8 @@ private theorem ncard_range_inr (a b : ℕ) :
     (range (Sum.inr : Fin b → Fin a ⊕ Fin b)).ncard = b := by
   simp [ncard_range_of_injective Sum.inr_injective]
 
-/-- Appendix F: transparency derives the universal presupposition in one step exactly when `q`
-tells the end of each row where no individual is in the scope from every other point of the row,
-or the end where every individual is. -/
+/-- Transparency derives the universal presupposition in one step exactly when `q` separates one end
+of each row from all its other points (Appendix F). -/
 theorem oneStep_iff :
     OneStep q ↔ (∀ a b, 0 < b → (q a b ↔ ¬ q (a + b) 0)) ∨
       (∀ a b, 0 < a → (q a b ↔ ¬ q 0 (a + b))) := by

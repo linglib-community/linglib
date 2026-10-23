@@ -436,8 +436,8 @@ theorem barbara_entails_all : extension barbara.premises ⊆ extension (ac .all)
     have ⟨h₁, h₂⟩ := (mem_extension_pair.1 hs).imp holds_all.1 holds_all.1
     mem_extension_singleton.2 (holds_all.2 ⟨fun r hr hA ↦ h₂.1 r hr (h₁.1 r hr hA), h₁.2⟩)
 
-/-- To *All A are B, All B are C* the noiseless belief-alignment speaker prefers *All A are C* to
-the weaker *Some A are C* and to *nothing follows* (Figure 8). -/
+/-- For *All A are B, All B are C*, the belief-alignment speaker prefers *All A are C* to *Some A
+are C* and *nothing follows* (Figure 8). -/
 theorem barbara_prefers_all (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) (hβ : 1 ≤ β) :
     (withFigure β (beliefAlignment 0 μ α) barbara).real {ac .some} <
         (withFigure β (beliefAlignment 0 μ α) barbara).real {ac .all} ∧

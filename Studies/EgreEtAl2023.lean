@@ -185,8 +185,7 @@ theorem sum_range_sub_dist (n : ℕ) :
       Nat.add_sub_cancel_left]
     ring
 
-/-- Under uniform priors on the values `[0, 2n]` and on the radii `[0, n]` the posterior is
-triangular (§3.2.2), `P(x = k | around n) = (n − |n − k| + 1) / (n + 1)²`. -/
+/-- Under uniform priors on values and radii, the posterior of *around n* is triangular (§3.2.2). -/
 theorem bir_unif_apply_singleton (n k : ℕ) :
     bir (unif (2 * n)) (unif n) (Nat.dist n) {k} =
       (n + 1 - Nat.dist n k : ℕ) / ((n + 1 : ℕ) : ℝ≥0∞) ^ 2 := by
@@ -440,9 +439,8 @@ theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
     rw [table1_apply_singleton] at h3
     simp [table1Weight] at h3
 
-/-- With the belief of Table 1 the speaker prefers "around 4" to the best "between" (§5.2). At
-every rationality she uses it more than "between 1 and 7", the triangular posterior being closer
-to her belief than the flat one. -/
+/-- With the belief of Table 1, the speaker prefers *around 4* to *between 1 and 7* at every
+rationality (§5.2). -/
 theorem table1_prefers_around {lam : ℝ} (hlam : 0 < lam) :
     (RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) ()).real {.between1_7} <
       (RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) ()).real {.around4} := by
@@ -495,8 +493,8 @@ variable [Fintype X] [MeasurableSingletonClass X] [Fintype M] [MeasurableSinglet
 meaning, which constrains the value alone. -/
 noncomputable def jointL0 : Kernel M (X × O) := Kernel.ofDensity P fun m p ↦ meaning m p.1
 
-/-- The value-marginal of the joint literal listener is the literal listener on the
-value-marginal prior, so eq. (BIR) is recovered inside the full model (footnote 23). -/
+/-- The value-marginal of the joint literal listener is the literal listener on the value-marginal
+prior (footnote 23). -/
 theorem jointL0_map_fst (m : M) :
     (jointL0 P meaning m).map Prod.fst = Kernel.ofDensity (P.map Prod.fst) meaning m :=
   Kernel.ofDensity_map P (measurable_of_countable _).aemeasurable measurable_fst.aemeasurable
@@ -596,9 +594,8 @@ noncomputable def luListener : ℕ → Kernel M (W × O)
 noncomputable def luSpeaker (n : ℕ) : Kernel O M :=
   RSA.speaker lam cost (luListener P sem cost lam PI n) fun o ↦ P[|Prod.snd ⁻¹' {o}]
 
-/-- In the lexical uncertainty model, observations with the same support yield the same speaker
-at every level, so the choice of message depends on the support of the speaker's belief and not
-on its shape ((A-8), the limitation (18)). -/
+/-- In the lexical uncertainty model, observations with the same support yield the same speaker at
+every level ((A-8), the limitation (18)). -/
 theorem luSpeaker_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSupport P o₁ o₂)
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (n : ℕ) :
     luSpeaker P sem cost lam PI n o₂ = luSpeaker P sem cost lam PI n o₁ := by
@@ -678,8 +675,8 @@ theorem bir_eq_bind_radiusPosterior :
     rw [ENNReal.tsum_mul_left, Measure.tsum_indicator_apply_singleton ν _ .of_discrete,
       aroundWeight, ENNReal.mul_div_right_comm]
 
-/-- At `n = 1` with uniform priors the weighted rule puts `2/3` on the target where the Bayesian
-rule puts `1/2`, so the two rules differ (Figure 2 against Figure 5). -/
+/-- At `n = 1` with uniform priors the weighted rule puts `2/3` on the target and the Bayesian rule
+`1/2` (Figure 2 against Figure 5). -/
 theorem wir_ne_bir :
     wir (unif 2) ((2 : ℝ≥0∞)⁻¹ • unif 1) (Nat.dist 1) ≠
       bir (unif 2) ((2 : ℝ≥0∞)⁻¹ • unif 1) (Nat.dist 1) := by

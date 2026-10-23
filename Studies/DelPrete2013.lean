@@ -211,8 +211,8 @@ variable [SemilatticeSup S] [SemilatticeSup E] [SemilatticeSup I] {linear : S �
   {τ : SupHom E S} {Th : SupHom E I} (hTh : ∀ e, Atom e → ¬ IsBot (Th e))
 include hTh
 
-/-- (P1), §5: on the habitual reading, every branch of the large expanded situation is covered
-by a plural `V₀`-event, and one `N`-individual is the theme of each of its singular sub-events. -/
+/-- On the habitual reading (P1), every branch of the large expanded situation has a plural
+`V₀`-event with one `N`-theme per atom (§5). -/
 theorem hab_soe {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {N : I → Prop}
     (hN : ∀ ⦃x⦄, N x → Atom x) {fexp : S → S} {s : S} (hL : Large linear τ V₀ (fexp s))
     (h : IMPF linear τ fexp (indefinite Th N (AlgClosure V₀)) s) {b : S}
@@ -221,9 +221,8 @@ theorem hab_soe {V₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, V₀ e → Atom e) {N 
   let ⟨e, ⟨x, hx, hcl, h'⟩, hbe⟩ := h b hb
   ⟨e, isPlural_of_large hV₀ hL hb hcl hbe, hbe, x, hx, λ _ he' => ssp hTh (hN hx) h' he'⟩
 
-/-- (2b) is odd on HAB by principle (O), §7: it is common knowledge that a habit of reading
-philosophy books involves different books, and the habitual truth conditions entail a plural
-reading event of one book throughout. -/
+/-- By principle (O), (2b) is odd on HAB, since habitually reading philosophy books commonly
+involves different books (§7). -/
 theorem not_impf_indefinite {read₀ : E → Prop} (hV₀ : ∀ ⦃e⦄, read₀ e → Atom e)
     {book : I → Prop} (hN : ∀ ⦃x⦄, book x → Atom x)
     (hCK : ∀ e, IsPlural read₀ e → ∀ x, book x → ∃ e', AtomicPart e' e ∧ Th e' ≠ x)
@@ -281,8 +280,7 @@ theorem genWide_of_genNarrow (hφ : (N.normal () {s | φ s}).Nonempty) (h : genN
     genWide N K φ P :=
   fun ⟨X, hX, hall⟩ ↦ let ⟨_, hs⟩ := hφ; h hs ⟨X, hX, hall hs⟩
 
-/-- (10b) is too weak: where every situation is appropriate and Gianni smokes a tuscan cigar of
-one sub-kind or another in each, (10b) holds while (9b) is false, as (10'b) is. -/
+/-- Formula (10b) holds where (9b) and (10'b) fail, so it is too weak. -/
 theorem not_genNarrow_of_genWide :
     ∃ (S I : Type) (N : Normality Unit S) (K : I → Prop) (φ : S → Prop) (P : I → S → Prop),
       (N.normal () {s | φ s}).Nonempty ∧ genWide N K φ P ∧ ¬ genNarrow N K φ P :=

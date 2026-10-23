@@ -66,9 +66,7 @@ private theorem exists_lt_of_iUnblocked {Q Q' : Set (F × M)} {p : F × M}
   obtain ⟨q, hqQ', hq, hlt⟩ : IBlocks f Q' p := not_not.1 fun hb ↦ hp' ⟨hp.1, hb⟩
   exact ⟨q, ⟨hqQ', fun hqQ ↦ hp.2 ⟨q, hqQ, hq, hlt⟩⟩, hlt⟩
 
-/-- When the harmonies of the generator are well-founded the weak version has at most one
-solution (Lemma 1). A minimal pair on which two solutions disagree would have a blocker on which
-they also disagree. -/
+/-- With well-founded generator harmonies, the weak version has at most one solution (Lemma 1). -/
 theorem isWeakSolution_unique (h : (f '' pairs).IsWF) {Q I Q' I' : Set (F × M)}
     (hQI : IsWeakSolution pairs f Q I) (hQI' : IsWeakSolution pairs f Q' I') :
     Q = Q' ∧ I = I' := by

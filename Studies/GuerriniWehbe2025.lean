@@ -140,9 +140,8 @@ section Pruning
 
 variable [∀ a w, Decidable (P a w)]
 
-/-- Keeping the alternatives over `m` atoms, as (21) keeps the pairs, `pex` makes the plural
-predication true after accommodation where all but at most `m - 1` of its atoms satisfy the
-predicate, the reading Bar-Lev's pruning yields (`exhIEII_pruned_eq_atLeast`). -/
+/-- With the alternatives over `m` atoms, as in (21), `pex` makes the plural true after
+accommodation iff all but at most `m - 1` atoms satisfy the predicate. -/
 theorem pexPlural_subDisjsOfCard_eq_one_iff (h : Separating D x P) {m : ℕ} (hm : 0 < m)
     (hmn : m ≤ (x ∩ D).card) :
     pexPlural D x P (subDisjsOfCard (x ∩ D) (atom P) m) w = 1 ↔
@@ -229,8 +228,8 @@ Worlds record who smiled, and `holds a w` says that `a` smiled at `w`. -/
 
 section Students
 
-/-- In (21), pruning to the alternatives over pairs of the three students makes *the students
-smiled* true after accommodation where at least two of them smiled. -/
+/-- In (21), pruning to pairs of the three students makes *the students smiled* true after
+accommodation iff at least two smiled. -/
 theorem pexPlural_pairs_eq_one_iff (w : Finset (Fin 3)) :
     pexPlural Finset.univ Finset.univ holds (subDisjsOfCard Finset.univ (atom holds) 2) w = 1 ↔
       2 ≤ w.card := by
@@ -285,9 +284,8 @@ section Judgments
 
 open Finset
 
-/-- In (9), with John's kids known to be adopted, *all 10 of John's kids are adopted* asserts
-nothing once its presupposition that he has 10 kids is accommodated, while *John has 10 adopted
-kids* is informative. A world records how many kids John has and whether they are all adopted. -/
+/-- In (9), with John's kids known to be adopted, *all 10 of John's kids are adopted* is
+uninformative after accommodation and *John has 10 adopted kids* informative. -/
 theorem judgments_9 :
     (Examples.ex_9a.judgment = .acceptable ↔ Informative {w : ℕ × Bool | w.2 = true}
       ({w | w.1 = 10}.indicator fun w ↦ SignType.ofProp (w.2 = true))) ∧
@@ -300,8 +298,8 @@ private theorem subset_not_forall {n : ℕ} :
     {w : Finset (Fin n) | w ≠ univ} ⊆ {w | ¬ ∀ a ∈ univ, a ∈ univ → holds a w} :=
   fun _ hw hall ↦ hw (eq_univ_of_forall fun a ↦ hall a (mem_univ a) (mem_univ a))
 
-/-- In (10), with Mary known to have read some of the books, *she read the books* asserts nothing
-new, and with her known not to have read all of them, neither does *she didn't read the books*. -/
+/-- In (10), *she read the books* is uninformative given that Mary read some of them, and *she
+didn't read the books* given that she did not read all. -/
 theorem judgments_10 :
     (Examples.ex_10a.judgment = .acceptable ↔ Informative {w : Finset (Fin 2) | w.Nonempty}
       (pexPlural univ univ holds (supClosure (Set.range (atom holds))))) ∧
@@ -312,9 +310,8 @@ theorem judgments_10 :
     iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
 
-/-- In (12), since John is not married to all of his teammates, *John isn't married to any of his
-teammates* is informative, but *John isn't married to his teammates* asserts nothing new once
-homogeneity is accommodated. -/
+/-- In (12), *John isn't married to any of his teammates* is informative, and *John isn't married to
+his teammates* is not once homogeneity is accommodated. -/
 theorem judgments_12 :
     (Examples.ex_12a.judgment = .acceptable ↔ Informative {w : Finset (Fin 2) | w ≠ univ}
       fun w ↦ SignType.ofProp (w = ∅)) ∧
@@ -324,9 +321,8 @@ theorem judgments_12 :
     iff_of_false (by decide) fun h ↦ not_informative_neg (separating_holds _ _) (by decide)
       (fun a _ ↦ subset_supClosure (Set.mem_range_self a)) (h.mono subset_not_forall)⟩
 
-/-- In (13), where at most one candidate can win, *none of the candidates won* and *all of the
-candidates lost* are informative, but *the candidates didn't win* and *the candidates lost*
-assert nothing new once homogeneity is accommodated. -/
+/-- In (13), with at most one winner, *none of the candidates won* and *all of the candidates lost*
+are informative, and their plural-definite counterparts are not. -/
 theorem judgments_13 :
     (Examples.ex_13a.judgment = .acceptable ↔ Informative {w : Finset (Fin 2) | w.card ≤ 1}
       fun w ↦ SignType.ofProp (w = ∅)) ∧

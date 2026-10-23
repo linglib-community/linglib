@@ -351,20 +351,20 @@ theorem Faithful.agreesAfter_iff (h : r.Faithful ord) (D : S → Set W → Set W
     rw [h.bel_revise, h.bel_revise,
       Preorder.minimals_congr fun a ha b hb ↦ hCR Ψ μ a (hα ha) b (hα hb)]
 
-/-- Postulate (C1) holds iff the preorders of a state and of its revision by `μ` agree on the
-`μ`-worlds, which is condition (CR1) of Theorem 4. -/
+/-- For a faithful assignment, (C1) holds iff a state's preorder and its revision's agree on the
+`μ`-worlds, condition (CR1) of Theorem 4. -/
 theorem Faithful.c1_iff (h : r.Faithful ord) :
     r.C1 ↔ ∀ Ψ μ, AgreesOn (ord Ψ) (ord (r.revise Ψ μ)) μ :=
   h.agreesAfter_iff fun _ μ ↦ μ
 
-/-- Postulate (C2) holds iff the preorders of a state and of its revision by `μ` agree on the
-non-`μ`-worlds, which is condition (CR2) of Theorem 4. -/
+/-- For a faithful assignment, (C2) holds iff a state's preorder and its revision's agree on the
+non-`μ`-worlds, condition (CR2) of Theorem 4. -/
 theorem Faithful.c2_iff (h : r.Faithful ord) :
     r.C2 ↔ ∀ Ψ μ, AgreesOn (ord Ψ) (ord (r.revise Ψ μ)) μᶜ :=
   h.agreesAfter_iff fun _ μ ↦ μᶜ
 
-/-- Postulate (CB) holds iff the preorders of a state and of its revision agree outside the
-revised belief set, which is condition (CBR) of Theorem 3. -/
+/-- For a faithful assignment, (CB) holds iff a state's preorder and its revision's agree outside
+the revised belief set, condition (CBR) of Theorem 3. -/
 theorem Faithful.cb_iff (h : r.Faithful ord) :
     r.CB ↔ ∀ Ψ μ, AgreesOn (ord Ψ) (ord (r.revise Ψ μ)) (r.bel (r.revise Ψ μ))ᶜ := by
   rw [← h.agreesAfter_iff fun Ψ μ ↦ (r.bel (r.revise Ψ μ))ᶜ]
@@ -434,9 +434,8 @@ private theorem Faithful.compl_bel_revise_diff (h : r.Faithful ord) (Ψ : S) (μ
     (r.bel (r.revise Ψ μ))ᶜ \ μ = μᶜ ∧ (r.bel (r.revise Ψ μ))ᶜ ∩ μ = μ \ r.bel (r.revise Ψ μ) :=
   ⟨Set.inter_eq_right.2 (Set.compl_subset_compl.2 (h.isAGM.success Ψ μ)), Set.inter_comm _ _⟩
 
-/-- Postulate (C5) holds iff revision by `μ` preserves each weak ranking of a non-`μ`-world below
-a `μ`-world outside the revised belief set, which is condition (CR5) of Theorem 7, its world `ω₃`
-witnessing that `ω₁` is not among the least `μ`-worlds. -/
+/-- For a faithful assignment, (C5) holds iff revision by `μ` preserves weak rankings of
+non-`μ`-worlds below `μ`-worlds outside the revised beliefs, condition (CR5) of Theorem 7. -/
 theorem Faithful.c5_iff (h : r.Faithful ord) :
     r.C5 ↔ ∀ Ψ μ, PreservesLe (ord Ψ) (ord (r.revise Ψ μ)) μᶜ (μ \ r.bel (r.revise Ψ μ)) := by
   refine (forall₃_congr fun _ _ _ ↦ imp_congr_left Set.subset_compl_comm).trans <|
@@ -444,8 +443,8 @@ theorem Faithful.c5_iff (h : r.Faithful ord) :
       forall₂_congr fun Ψ μ ↦ ?_
   rw [(h.compl_bel_revise_diff Ψ μ).1, (h.compl_bel_revise_diff Ψ μ).2]
 
-/-- Postulate (C6) holds iff revision by `μ` preserves each strict ranking of a non-`μ`-world
-below a `μ`-world outside the revised belief set, which is condition (CR6) of Theorem 7. -/
+/-- For a faithful assignment, (C6) holds iff revision by `μ` preserves strict rankings of
+non-`μ`-worlds below `μ`-worlds outside the revised beliefs, condition (CR6) of Theorem 7. -/
 theorem Faithful.c6_iff (h : r.Faithful ord) :
     r.C6 ↔ ∀ Ψ μ, PreservesLt (ord Ψ) (ord (r.revise Ψ μ)) μᶜ (μ \ r.bel (r.revise Ψ μ)) := by
   refine (forall₃_congr fun _ _ _ ↦ imp_congr_left Set.subset_compl_comm).trans <|

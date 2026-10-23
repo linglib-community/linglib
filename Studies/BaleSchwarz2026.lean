@@ -103,8 +103,8 @@ theorem ratio_eq_mathSpeak_iff (hu : u.dimension = D₁) (hr : r.dimension = D�
     ratio w D₁ D₂ x = mathSpeak n u r ↔ w D₁ x / w D₂ x = n * u.magnitude / r.magnitude := by
   simp [ratio, mathSpeak, divisionMP, divisionPer, Prod.ext_iff, hu, hr]
 
-/-- It never accepts a composed *per*-phrase ((27), (28)), since fronting forces composition and
-a quantity of the head unit's dimension is not a quotient of that dimension by another. -/
+/-- An anaphoric measure phrase of dimension `D₁` is never a ratio of `D₁` by another dimension, so
+composed *per*-phrases are out ((27), (28)). -/
 theorem ratio_ne_anaphoricMP (hu : u.dimension = D₁) (hD₂ : D₂ ≠ 1) :
     ratio w D₁ D₂ x ≠ anaphoricMP w n u r y :=
   fun h ↦ hD₂ <| by simpa [hu] using congrArg Prod.snd h

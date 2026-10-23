@@ -253,10 +253,9 @@ theorem isSome_ofChars_forms :
 /-- Every entry has the gender of its class's table. -/
 theorem gender_eq_cls_gender : ∀ n ∈ nouns, n.gender = n.cls.gender := by decide
 
-/-- The entries give Stump's nouns the forms that *Mluvnice češtiny* states where these depart
-from the model nouns' tables: *muži* and *mužové* (p. 298), *filologové* (p. 296), *filolozích*
-(p. 295) and *sluzích* (pp. 292, 300); *filologu* by the velar vocative rule (p. 292); and the
-soft genitive singular *pramene* beside the hard nominative plural *prameny* (p. 310). -/
+/-- The entries give *muži*, *mužové* (p. 298), *filologové* (p. 296), *filolozích* (p. 295),
+*sluzích* (pp. 292, 300), *filologu* (p. 292) and *pramene*, *prameny* (p. 310) as *Mluvnice
+češtiny* states. -/
 theorem forms_examples :
     muz.forms (.of .nom .plural) = [segments "muži", segments "mužové"] ∧
       filolog.forms (.of .nom .plural) = [segments "filologové"] ∧

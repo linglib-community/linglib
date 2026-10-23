@@ -201,8 +201,7 @@ theorem psychCausal_subject_role :
 theorem directedMotion_subject_role :
     directedMotion.subjectProfile.toRole = some .theme := by decide
 
-/-- The subject of the admire class is an experiencer, and its stimulus object is exactly the
-subject of the amuse class, the mirror behind the doublets ([dowty-1991] (38)). -/
+/-- The admire class's stimulus object is exactly the amuse class's subject ([dowty-1991] (38)). -/
 theorem psychState_mirrors_psychCausal :
     psychState.subjectProfile.toRole = some .experiencer ∧
     psychState.objectProfile = some psychCausal.subjectProfile ∧

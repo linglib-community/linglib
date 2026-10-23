@@ -110,9 +110,7 @@ theorem SEquiv.of_eq (h : φ = ψ) : SEquiv φ ψ := h ▸ rfl
 variable {φ ψ} in
 theorem PEquiv.of_eq (h : φ = ψ) : PEquiv φ ψ := h ▸ rfl
 
-/-- s-equivalence and p-equivalence together do not give equivalence (Fact 3). The paper's
-witnesses are the tautologies `Px ∨ ¬Px` and `∃x[Px ∨ ¬Px]`, a trivial test and its existential
-closure, which have the total satisfaction and production sets and differ as relations. -/
+/-- s-equivalence and p-equivalence together do not give equivalence (Fact 3). -/
 theorem exists_sEquiv_pEquiv_ne {E : Type*} [Nontrivial E] :
     ∃ φ ψ : Update (Assignment E), SEquiv φ ψ ∧ PEquiv φ ψ ∧ φ ≠ ψ := by
   have hself (g : Assignment E) : g ~[dexists 0 (test Set.univ)] g :=
@@ -340,8 +338,7 @@ which the conclusion succeeds (Definition 20). -/
 def Entails : Prop := φ.cod ⊆ ψ.dom
 
 variable {φ ψ} in
-/-- Meaning inclusion (Definition 19), which is `⊆` on relations, implies s-entailment
-(Fact 10). The converse fails, as `∃xPx ⊨ₛ ∃xPx → Px` with `∃xPx ⊈ Px` shows. -/
+/-- Meaning inclusion (Definition 19) implies s-entailment (Fact 10). -/
 theorem SEntails.of_subset (h : φ ⊆ ψ) : SEntails φ ψ :=
   fun _ ⟨k, hk⟩ ↦ ⟨k, h hk⟩
 
@@ -384,9 +381,7 @@ theorem not_sEntails_exists_atom [Nontrivial E] :
   obtain ⟨_, rfl, hb⟩ := h (a := fun _ ↦ b) ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   exact hab (by simpa using hb.symm)
 
-/-- Dynamic entailment is not reflexive, since `Px ∧ ∃xQx` does not entail itself, its outputs
-having forgotten that the input satisfied `Px`. Fact 15 restores reflexivity when no active
-quantifier of the formula binds a free variable of it. -/
+/-- Dynamic entailment is not reflexive, as `Px ∧ ∃xQx` shows (cf. Fact 15). -/
 theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Entails φ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨test {g | g 0 = a} ○ dexists 0 (test Set.univ), fun h ↦ ?_⟩
@@ -396,9 +391,8 @@ theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Ent
   obtain ⟨_, _, ⟨rfl, hb⟩, -⟩ := h ⟨_, hb⟩
   exact hab (by simpa using hb.symm)
 
-/-- Dynamic entailment is not transitive, since `¬¬∃xPx ⊨ ∃xPx` and `∃xPx ⊨ Px` but
-`¬¬∃xPx ⊭ Px`, the doubly negated premiss binding nothing. Fact 16 restores transitivity when
-the premiss fixes every variable the middle formula binds in the conclusion. -/
+/-- Dynamic entailment is not transitive, since `¬¬∃xPx ⊨ ∃xPx` and `∃xPx ⊨ Px` but `¬¬∃xPx ⊭ Px`
+(cf. Fact 16). -/
 theorem not_entails_trans [Nontrivial E] :
     ∃ p : E → Prop, ¬ Entails ∼∼(dexists 0 (test {g : Assignment E | p (g 0)}))
       (test {g | p (g 0)}) := by

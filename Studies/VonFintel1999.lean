@@ -161,8 +161,7 @@ it, and asserts that every true alternative is the prejacent. -/
 noncomputable def only68b : W → SignType :=
   {w | w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r}.indicator fun w ↦ SignType.ofProp (w ∈ atMost (· = ·) C p)
 
-/-- With (68b) no downward inference can be assessed within one set of alternatives, since when
-the premise's prejacent is an alternative the conclusion's presupposition fails (p. 134). -/
+/-- With (68b), no downward inference within one set of alternatives can be assessed (p. 134). -/
 theorem only68b_eq_zero {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) : only68b C q w = 0 :=
   Set.indicator_of_notMem (fun h ↦ h.2 ⟨p, hp, hqp⟩) _
 
@@ -170,9 +169,8 @@ end Only
 
 /-! ### Conditional antecedents under an ordering source -/
 
-/-- With a genuine ordering source the antecedent position of Kratzer's conditional necessity is
-not downward entailing (73). The best *strike*-worlds are dry and the match lights, while the best
-*dip and strike*-worlds do not light; world `0` strikes a dry match, world `1` dips it first. -/
+/-- With a genuine ordering source, the antecedent of Kratzer's conditional necessity is not
+downward entailing (73). -/
 theorem not_antitone_conditionalNecessity :
     ¬ Antitone fun α : Fin 2 → Prop ↦
       {w | Restrictor.conditionalNecessity (fun _ ↦ ∅) (fun _ ↦ {(· = 0)}) α (· = 0) w} :=
@@ -200,10 +198,7 @@ noncomputable def theSuperlativeExceeds : W → SignType :=
   {w | ∃ a, Degree.superlative μ C a w = 1}.indicator
     fun w ↦ SignType.ofProp (∀ a, Degree.superlative μ C a w = 1 → d < μ a)
 
-/-- The definite-description use is not even Strawson-valid (80). *The tallest girl in the
-school is over four feet* does not Strawson-entail *the tallest girl in the class is over four
-feet*, since the class's tallest girl need not be the school's; individual `false` is five feet,
-`true` three feet, and the class is `{true}`. -/
+/-- The definite-description superlative is not Strawson downward entailing (80). -/
 theorem not_isStrawsonDE_theSuperlativeExceeds :
     ¬ IsStrawsonDE (theSuperlativeExceeds (W := Unit) (fun b : Bool ↦ if b then 3 else 5) · 4) :=
   fun h ↦ by

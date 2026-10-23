@@ -292,9 +292,7 @@ def rows (g : Grid) : Marks := (List.range (peak g)).map (fun r => g.map (r < ·
 @[simp] theorem getElem_rows {r i : ℕ} (hr : r < (rows g).length) (hi : i < (rows g)[r].length) :
     (rows g)[r][i] = decide (r < g[i]'(by simpa using hi)) := by simp [rows]
 
-/-- **The Continuous Column Constraint is free.** Every rendered grid satisfies it, because a column
-    is a solid stack of marks by construction — continuity is the shape of a histogram, not a
-    theorem about trees ([hayes-1995] §3.4.2). -/
+/-- Every rendered grid satisfies the Continuous Column Constraint ([hayes-1995] §3.4.2). -/
 theorem rows_isContinuous (g : Grid) : Marks.IsContinuous (rows g) := by
   rw [Marks.IsContinuous, rows, List.isChain_map, List.isChain_iff_getElem]
   intro i _
@@ -434,8 +432,7 @@ The forgetful map onto the pure grid is one-way: it drops constituency (`ofTree_
 [hayes-1995] §3.8 argues *for* bracketing precisely because the grid underdetermines it) and, under
 recursion, order-invariant culminativity (`not_culminative_under_recursion`). -/
 
-/-- The grid render is not injective, since it **forgets constituency**. A σ parsed under a foot
-    and the same σ left bare render to the same grid ([hayes-1995] §3.8). -/
+/-- The grid render is not injective, since it forgets constituency ([hayes-1995] §3.8). -/
 theorem _root_.Prosody.Grid.ofTree_not_injective : ¬ Function.Injective Grid.ofTree :=
   Function.not_injective_iff.mpr
     ⟨.om [.ft false [.σ 1]], .om [.σ 1], by decide⟩

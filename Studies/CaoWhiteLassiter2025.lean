@@ -239,15 +239,11 @@ non-interchangeability triplets (3)–(4), the gym gradability triplets (5)–(7
 could-have-done-otherwise pair (8), the intent-denial continuations (9)–(10), and the
 *make*/*let* sufficiency pair (11). -/
 
-/-- The paper's (8) separates *make* from *force*. In one frame with a could-have-done-otherwise
-continuation, *made* tolerates the continuation and *forced* resists it, a difference in the
-causee's alternatives, which ALT measures. -/
+/-- In (8), *made* tolerates a could-have-done-otherwise continuation and *forced* resists it. -/
 theorem judgment_differs_make_force :
     Examples.cwl2025_ex8a.judgment ≠ Examples.cwl2025_ex8b.judgment := by decide
 
-/-- The gym triplets (5)–(7) grade the stronger verbs against a constant *cause*. The same three
-causing events leave *caused* acceptable throughout while *forced* switches, which is why the
-account measures the causal relation rather than classifying it. -/
+/-- In the gym triplets (5)–(7), *caused* stays acceptable while *forced* switches. -/
 theorem gym_grades_stronger_verbs :
     Examples.cwl2025_ex5a.judgment = Examples.cwl2025_ex6a.judgment ∧
       Examples.cwl2025_ex6a.judgment = Examples.cwl2025_ex7a.judgment ∧

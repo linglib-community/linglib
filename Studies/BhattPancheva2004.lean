@@ -90,10 +90,8 @@ def lf43b : Tree Unit String :=
   bin (bin (bin (leaf "Mary") (bin (leaf "climbed") (bin (tr 1) (leaf "high"))))
     (leaf "before you did")) (bin (leaf "-er") (leaf "than 1,000 feet"))
 
-/-- (43) has the reading with the *before*-clause over the comparison and not the reading with the
-comparison over the *before*-clause, in which the *before*-clause's scope contains the degree
-trace but not the DegP; (44), whose clause is merged above the *before*-clause, has only the LF
-(43b). -/
+/-- (43) has the reading with the *before*-clause over the comparison but not the reverse, and (44)
+has only the LF (43b). -/
 theorem hkc_43 :
     IsHeimKennedy (cCommand lf43a) ⟨[1]⟩ ⟨[0, 1, 1]⟩ ⟨[0, 1, 0, 1, 0]⟩ ∧
       ¬ IsHeimKennedy (cCommand lf43b) ⟨[0, 1]⟩ ⟨[1]⟩ ⟨[0, 0, 1, 1, 0]⟩ := by
@@ -128,12 +126,12 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The extraposition data of Section 5.2, (41) to (46) and (53) to (54). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Countercyclic merger derives one half of (39), (38), since a clause merged above an operator
-leaves the comparison no scope below it, (42), (44), (46), (53b) and (54b). -/
+/-- A clause merged above an operator leaves the comparison no scope below it, one half of (39)
+((38), (42), (44), (46), (53b), (54b)). -/
 theorem at_least_as_high : ∀ r ∈ rows, r.site = .high → r.narrow = false := by decide
 
-/-- In the other half of (39), a bare DegP whose clause is merged below an operator has no scope
-above it, (43), (53a) and (54a), whereas a comparative DP raises with its clause, (41) and (45). -/
+/-- A bare DegP whose clause merges below an operator cannot scope above it, while a comparative DP
+can, the other half of (39) ((43), (53a), (54a) against (41), (45)). -/
 theorem exactly_as_high :
     (∀ r ∈ rows, r.degP = true → r.site = .low → r.wide = false) ∧
       ∀ r ∈ rows, r.degP = false → r.site = .low → r.wide = true := by
@@ -179,17 +177,16 @@ def high : TellLF where
   matrixVP := ⟨[0, 0, 1]⟩
   embeddedVP := ⟨[0, 0, 1, 1, 1]⟩
 
-/-- The Ellipsis-Scope Generalization, (59), holds on the LFs of (62). The scope of the DegP
-contains the embedded VP at either site and the matrix VP only at the high site, so the reading
-(62b), the clause merged low with the matrix VP elided, is the one missing. -/
+/-- The Ellipsis-Scope Generalization (59) holds on the LFs of (62), whose missing reading is (62b).
+-/
 theorem ellipsisScope :
     (∀ lf ∈ [low, high], (lf.degP, lf.embeddedVP) ∈ cCommand lf.tree) ∧
       (low.degP, low.matrixVP) ∉ cCommand low.tree ∧
       (high.degP, high.matrixVP) ∈ cCommand high.tree := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
-/-- The Condition C–Scope Generalization, (69) and (70), holds, since the pronoun c-commands the
-name in the degree clause exactly when the comparison does not scope over the matrix predicate. -/
+/-- The pronoun c-commands the name in the degree clause iff the comparison does not scope over the
+matrix predicate, the Condition C–Scope Generalization ((69), (70)). -/
 theorem conditionC_scope :
     ∀ lf ∈ [low, high],
       (lf.pronoun, lf.clause) ∈ cCommand lf.tree ↔ (lf.degP, lf.tells) ∉ cCommand lf.tree := by

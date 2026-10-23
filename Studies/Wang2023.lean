@@ -140,8 +140,8 @@ theorem tod_mp_general (candidates : Finset Number.Features)
   exact ⟨tod_mp_only_minimal candidates hWF hMin c,
     fun h ↦ h ▸ tod_mp_minimal_mem_optimal candidates hMin⟩
 
-/-- With the taboo on top, the most specified cell, singular, local person or definite, is never
-optimal beside a less specified competitor, so these honorifics are unattested (28). -/
+/-- With the taboo on top, the most specified cell is never optimal beside a less specified
+competitor, so those honorifics are unattested (28). -/
 theorem maximal_not_optimal_of_tod_top (candidates : Finset Number.Features)
     (rest : List (Constraint Number.Features))
     (hMin : Number.pluralF ∈ candidates) :

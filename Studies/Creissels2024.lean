@@ -487,11 +487,8 @@ theorem alignment_rows :
     ∃ t ∈ flagging "basq1248", SplitS t (sFlags "basq1248") := by
   decide +kernel
 
-/-- The uncoded alternations of Bambara (2), (3) and Basque (4), which the book calls
-P-ambitransitivity for Basque and describes in the same terms as the Tswana passive for
-Bambara, are P-ambitransitivity: the initial P is the S of an intransitive construction and
-the initial A is not a core term; Bambara's preserves participant structure, with the agent
-an optional oblique, and Basque's does not. -/
+/-- The uncoded alternations of Bambara (2), (3) and Basque (4) are P-ambitransitivity, preserving
+participant structure in Bambara but not in Basque. -/
 theorem ambitransitivity_rows : ∀ row ∈ all,
     row.parse? "marking" codingNames = some .uncoded → ∀ init ∈ paired "transitive" row,
     (construction init).Transitive ∧ ¬ (construction row).Transitive ∧
@@ -540,8 +537,8 @@ theorem causative_valency :
     (construction ex_8_51a).valency = (construction ex_8_51b).valency := by
   decide +kernel
 
-/-- In the portative derivation of Tswana (3) of chapter 12, the woman who brought the food
-came, and the food, which cannot come, is not the initial S. -/
+/-- In the Tswana portative (3) of chapter 12, the woman who brought the food is the initial S and
+the food is not. -/
 theorem portative_rows :
     ex_12_3b.judgment = .acceptable ∧ ex_12_3c.judgment = .ungrammatical ∧
     construction ex_12_3b 0 = .term .S ∧ construction ex_12_3c 1 = .term .S := by
@@ -654,7 +651,7 @@ theorem liftRel_singleton_iff (x : α) :
   simp [Set.LiftRel]
 
 /-- No single participant is a reciprocal event in the sense of §8.3.3 and §11.3.1, so the
-borderline case of §11.3.3 rests on that section's own wording. -/
+borderline case of §11.3.3 needs that section's own wording. -/
 theorem not_weakReciprocity_singleton (x : α) : ¬ WeakReciprocity R {x} := by
   rintro ⟨h, -⟩
   obtain ⟨y, hy, -, hxy⟩ := h x (Finset.mem_singleton_self x)

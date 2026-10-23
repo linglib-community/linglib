@@ -98,9 +98,8 @@ noncomputable def nrp (R H : SetRel W W) (φ : W → SignType) : W → SignType 
 
 variable {R H : SetRel W W} {φ : W → SignType} {w : W}
 
-/-- A neg-raising predicate is false, and its negation true, exactly when the complement's
-presupposition holds throughout the heritage base, the modal base is nonempty, and the complement
-fails throughout it ((60)–(61)). -/
+/-- A neg-raising predicate is false exactly when the complement's presupposition holds throughout
+the heritage base and the complement fails throughout the nonempty modal base ((60)–(61)). -/
 theorem nrp_eq_neg_one_iff :
     nrp R H φ w = -1 ↔ □[H] (φ · ≠ 0) w ∧ (∃ u, w ~[R] u) ∧ □[R] (φ · ≠ 1) w := by
   simp only [nrp, Trivalent.indicator_apply_eq_neg_one_iff, Set.mem_ofPred_eq,
@@ -279,9 +278,8 @@ theorem isAntiAdditive_negStack_self (R₁ R₂ H₂ : SetRel W W) :
     funext (negStack_self_eq R₁ R₂ H₂)]
   exact isAntiAdditive_every (isAntiAdditive_every isAntiAdditive_compl)
 
-/-- When the inner predicate's heritage base is its modal base, the negated stack holds exactly
-when the inner subject is settled throughout the outer heritage base, the outer modal base is
-nonempty, and the inner predicate fails throughout it ((111)–(113)). -/
+/-- With equal inner bases, the negated stack holds iff the inner subject is settled and the inner
+predicate fails throughout the outer bases ((111)–(113)). -/
 theorem negStack_eq (R₁ H₁ R₂ : SetRel W W) (p : Set W) :
     negStack R₁ H₁ R₂ R₂ p = {w | (∀ u, w ~[H₁] u → □[R₂] (· ∈ p) u ∨ □[R₂] (· ∉ p) u) ∧
       (∃ u, w ~[R₁] u) ∧ □[R₁] (fun u ↦ ¬ □[R₂] (· ∈ p) u) w} := by
@@ -332,8 +330,7 @@ theorem not_negStack_subset :
   fun h ↦ h ((negStack_eq _ _ _ _).superset ⟨belFred_settled _, ⟨0, rfl, rfl⟩,
     belFred_not_box (.inr rfl) (by simp)⟩) 0 ⟨rfl, rfl⟩ 2 (.inl ⟨rfl, .inl rfl⟩) rfl
 
-/-- *Not want think* is not anti-additive (97b). John wants Fred not to think `p` and not to
-think `q`, and yet Fred thinks `p or q` at John's desire world. -/
+/-- *Not want think* is not anti-additive (97b). -/
 theorem not_isAntiAdditive_negStack :
     ¬ IsAntiAdditive (negStack desJohn belJohn belFred belFred) := by
   rw [isAntiAdditive_iff_mem]
@@ -498,8 +495,8 @@ theorem superlative_exception :
     ∀ r ∈ rows, r.env = .superlative → r.judgment = .acceptable ∧ ¬ r.env.AntiAdditive := by
   decide
 
-/-- Where a strict NPI in an anti-additive environment is not acceptable, a finite clause boundary
-separates it from its licenser, the room the paper leaves for a locality condition ((73)–(74)). -/
+/-- Where a strict NPI in an anti-additive environment is unacceptable, a finite clause boundary
+separates it from its licenser ((73)–(74)). -/
 theorem finite_boundary : ∀ ex ∈ Examples.all, ∀ e ∈ ex.parse? "environment" envTable,
     e.AntiAdditive → ex.judgment ≠ .acceptable → ex.feature? "clause" = some "finite" := by
   decide

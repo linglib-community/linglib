@@ -150,9 +150,7 @@ theorem UE.mse_of_uo (hE : UE θ) (hO : UO θ) : MSE θ := fun _ _ hxe _ hyx ↦
 theorem UO.mso_of_ue (hO : UO θ) (hE : UE θ) : MSO θ := UE.mse_of_uo hO hE
 
 /-- With unique objects and mapping to subobjects, the events of a fixed object form a quantized
-predicate, since it takes the whole event to `θ` the object. [krifka-1998] draws this
-consequence after (50) from uniqueness of objects alone, which does not suffice, since a
-relation holding of one object and every event has unique objects. -/
+predicate (cf. [krifka-1998] after (50)). -/
 theorem UO.qua_of_mso (hO : UO θ) (hm : MSO θ) (x : α) : QUA (θ x) :=
   qua_of_forall fun _ _ he hlt he' ↦
     let ⟨_, hy, hθ⟩ := hm he hlt

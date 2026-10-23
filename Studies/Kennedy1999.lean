@@ -46,8 +46,8 @@ section Extents
 
 variable {E D : Type*} [LinearOrder D] (μ : E → D) (a b : E)
 
-/-- The positive extent of `a`, (30), properly contains that of `b` exactly when the negative extent
-of `b`, (31), properly contains that of `a`, the antonymy biconditional (54). -/
+/-- The positive extent of `a` (30) properly contains that of `b` iff the negative extent of `b`
+(31) properly contains that of `a` (54). -/
 theorem antonymy_biconditional :
     Set.Iic (μ b) ⊂ Set.Iic (μ a) ↔ Set.Ici (μ a) ⊂ Set.Ici (μ b) :=
   Set.Iic_ssubset_Iic.trans Set.Ici_ssubset_Ici.symm

@@ -86,9 +86,8 @@ def measureOfChange (m : α → T → δ) (x : α) (i : T) : T → Ici (m x i) :
 
 variable (m : α → T → δ) (x : α) (i : T)
 
-/-- Interpretive Economy admits the minimum standard on the scale of a measure of change, the
-maximum exactly when the adjective's scale has a greatest degree, and never the contextual
-standard (§7.3.3). -/
+/-- Interpretive Economy admits the minimum standard on a measure of change, the maximum iff the
+adjective's scale has a greatest degree, and never the contextual one (§7.3.3). -/
 theorem admits_iff {s : PositiveStandard} :
     (Boundedness.ofOrder (Ici (m x i))).Admits s ↔
       s = .minEndpoint ∨ s = .maxEndpoint ∧ (Boundedness.ofOrder δ).HasMax := by
@@ -115,17 +114,16 @@ section Readings
 
 variable {α δ T : Type*} [LinearOrder δ] {m : α → T → δ} {x : α} {i f : T}
 
-/-- The minimum-standard reading of a degree achievement (27) has the truth conditions of the
-comparative, the argument ending the event with more of the property than it began with. -/
+/-- The minimum-standard reading of a degree achievement (27) holds iff the argument ends with more
+of the property than it began with. -/
 theorem minStandardPos_measureOfChange_iff :
     MinStandardPos (measureOfChange m x i) f ↔ m x i < m x f :=
   minStandardPos_projIci_comp_iff
 
 variable [OrderTop δ]
 
-/-- Unless the argument begins with the greatest degree, the maximum-standard reading of a degree
-achievement (27) is the positive form of its adjective at the end of the event, so *straighten*
-and *straight* share their standard (§7.3.3). -/
+/-- Unless the argument begins at the greatest degree, the maximum-standard reading of a degree
+achievement (27) is its adjective's positive form at the end (§7.3.3). -/
 theorem maxStandardPos_measureOfChange_iff (h : m x i ≠ ⊤) :
     MaxStandardPos (measureOfChange m x i) f ↔ MaxStandardPos (m x) f :=
   maxStandardPos_projIci_comp_iff h
@@ -148,9 +146,8 @@ open HayKennedyLevin1999
 variable {α δ T : Type*} [AddCommGroup δ] [LinearOrder δ] [IsOrderedAddMonoid δ]
   {m : α → T → δ} {x : α} {i f : T}
 
-/-- The amount of change, the distance of the measure of change above its derived zero, is the
-positive part of the difference between the final and the initial degree: a positive value when
-there is a positive difference, and zero otherwise, as the paper glosses (23). -/
+/-- The amount of change is the positive part of the difference between the final and initial
+degrees (23). -/
 theorem coe_measureOfChange_sub : (measureOfChange m x i f : δ) - m x i = (m x f - m x i)⁺ := by
   rw [measureOfChange, Function.comp_apply, coe_projIci, max_comm, sup_eq_add_posPart_sub,
     add_sub_cancel_left]
@@ -180,8 +177,8 @@ theorem minStandardPos_measureOfChange_iff_describes_someAmount :
   rw [minStandardPos_measureOfChange_iff, describes_iff_sub_mem, someAmount,
     Comparison.mem_interval, Comparison.rel_gt, sub_pos]
 
-/-- For a positive degree `n`, the amount of change is at least `n`, as a measure phrase requires
-((32)–(33)), exactly when the event is described by the difference values of at least `n`. -/
+/-- For positive `n`, the amount of change is at least `n` iff the event is described by the
+difference values of at least `n` ((32)–(33)). -/
 theorem le_coe_measureOfChange_sub_iff {n : δ} (hn : 0 < n) :
     n ≤ (measureOfChange m x i f : δ) - m x i ↔ Describes m x (Comparison.ge.interval n) i f :=
   (describes_interval_iff (c := .ge) (Ici_subset_Ioi.2 hn)).symm

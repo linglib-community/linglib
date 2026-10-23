@@ -133,10 +133,8 @@ def Row.cell (r : Row) : Option (Finset Node) := Phi.Geometry.cell r.lang.active
 
 theorem licenses_rows : ∀ r ∈ rows, Licenses r.lang.active r.person r.number := by decide
 
-/-- The inventory is read off the paradigm (§2.4, §3): Addressee is active iff
-there is a second person, Speaker iff an inclusive, Minimal iff a dual,
-Augmented iff a paucal, and Individuation iff some person distinguishes
-numbers — which the person-only languages do not. -/
+/-- Each geometry node is active iff the paradigm has the corresponding person or number distinction
+(§2.4, §3). -/
 theorem active_of_rows (l : Lang) :
     (Node.addressee ∈ l.active ↔ ∃ r ∈ l.rows, r.person = .second) ∧
       (Node.speaker ∈ l.active ↔ ∃ r ∈ l.rows, r.person = .firstInclusive) ∧
@@ -285,10 +283,8 @@ theorem second_third_plural_incomparable :
 
 /-! ### Empty paradigm space (§4.1) -/
 
-/-- Maxakalí's first singular, the bare Participant node, and its first
-exclusive plural, Participant with Speaker, fill to the same content by the
-Speaker default yet are distinct geometries — the exclusive plural co-opts the
-representation the contrastive Speaker makes available ((27)). -/
+/-- Maxakalí's first singular and first exclusive plural are distinct geometries with the same
+default-filled content ((27)). -/
 theorem maxakali_coopts :
     ∀ g ∈ cell Lang.maxakali.active .first .singular,
       ∀ g' ∈ cell Lang.maxakali.active .firstExclusive .plural,

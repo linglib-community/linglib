@@ -118,9 +118,8 @@ inductive Deed | read (b : Book) | swim
 def read (b : Book) : Set (Set Deed) := {w | .read b ∈ w}
 def swam : Set (Set Deed) := {w | .swim ∈ w}
 
-/-- Peter read Hamlet and swam. The particle on the object, read as a quantifier, is true, since
-he read nothing else; the reading on which he only read Hamlet, the operator's over the
-predicate's alternatives, is false ((79)–(81)). -/
+/-- If Peter read Hamlet and swam, the quantificational reading of the particle is true and the
+operator reading over predicate alternatives false ((79)–(81)). -/
 theorem peter_read_only_hamlet :
     quantifierOnly Set.univ Book.hamlet read {.read .hamlet, .swim} = 1 ∧
       only (· = ·) {read .hamlet, read .macbeth, swam} (read .hamlet)
@@ -256,9 +255,8 @@ theorem Allows.symmGen_le (h : r.Allows m host focus) : Relation.SymmGen (· ≤
   cases r
   exacts [LeftAlignedOn.symmGen_le h, h, h]
 
-/-- The rule does not tell pied-piping from anti-pied-piping, since a phrase may host the
-particle for a focus exactly when the focus, as a phrase, might host it for a focus on that
-phrase (§6.4). -/
+/-- The rule is symmetric in host and focus, so it does not distinguish pied-piping from
+anti-pied-piping (§6.4). -/
 theorem allows_comm : r.Allows m host focus ↔ r.Allows m focus host := by
   cases r <;> grind [Allows, LeftAlignedOn.symm, Relation.SymmGen]
 
@@ -421,9 +419,8 @@ def heightOfTheLettering : Frame where
 
 /-! ### The leftmost effect in a clause -/
 
-/-- Under the strong variant a verb-final clause marks a focus on the sentence at its subject and
-a focus on the predicate at its object, and neither at the other, the pattern of Miyara Yaeyaman
-*du* and Ishkashimi *məs* ((64)). -/
+/-- Under the strong variant, a verb-final clause marks sentence focus at its subject and predicate
+focus at its object, as with Miyara Yaeyaman *du* (64). -/
 theorem sov_strong :
     sov.Allows .strong .subject .sentence ∧ ¬ sov.Allows .strong .object .sentence ∧
       sov.Allows .strong .object .predicate ∧ ¬ sov.Allows .strong .subject .predicate := by
@@ -435,8 +432,8 @@ theorem svo_strong :
     svo.Allows .strong .object .predicate ∧ ¬ svo.Allows .strong .subject .predicate := by
   decide +kernel
 
-/-- A subject that bears no prominence is skipped, so a focus on the sentence is marked at the
-object and the subject cannot host the particle (§6.1). -/
+/-- A non-prominent subject is skipped, so sentence focus is marked at the object and not at the
+subject (§6.1). -/
 theorem sov_strong_skipped :
     sov.Allows .strong .object .sentence [.subject] ∧
       ¬ sov.Allows .strong .subject .sentence [.subject] := by
@@ -446,9 +443,8 @@ theorem sov_strong_skipped :
 theorem sov_verb (c : Part) : ¬ sov.Allows .strong c .verb := by
   cases c <;> decide +kernel
 
-/-- A preposition stands between the edge of *to which student's friend* and its question word,
-and the phrase is left-aligned with the question word only because the phrase a light
-preposition heads is skipped ((123)). -/
+/-- Under the strong variant, *to which student's friend* is left-aligned with its question word
+only if the light preposition's phrase is skipped (123). -/
 theorem toWhichStudentsFriend_strong :
     toWhichStudentsFriend.Allows .strong .phrase .wh [.phrase] ∧
       ¬ toWhichStudentsFriend.Allows .strong .phrase .wh := by

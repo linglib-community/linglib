@@ -178,9 +178,8 @@ theorem split_mem_exhMW (hn : 2 ≤ n) {i k : Fin m} (hik : i ≠ k) :
       simp at h1
       exact hik h1.symm
 
-/-- With ALT-all-or no alternative is innocently excludable (26), for any domain of at least
-two, each universal alternative holding at a minimal constant world and each existential one
-at a minimal two-property world. -/
+/-- With ALT-all-or, no alternative is innocently excludable over any domain of at least two (26).
+-/
 theorem not_isInnocentlyExcludable_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) :
     ∀ a ∈ altAllOr n m, ¬ IsInnocentlyExcludable (altAllOr n m) Set.univ a := by
   rintro a (⟨i, rfl⟩ | ⟨i, rfl⟩) h
@@ -229,8 +228,8 @@ theorem ncard_allAre (i : Fin m) : (allAre (n := n) i).ncard = 1 := by
   rw [show allAre (n := n) i = {fun _ ↦ i} from Set.ext fun w ↦
     ⟨fun h ↦ funext h, fun h x ↦ congrFun h x⟩, Set.ncard_singleton]
 
-/-- Under the uniform prior of §4, the probability that some of the n individuals is `Aᵢ` given
-that all are one of the `m` is `1 − ((m − 1)/m)^n`. -/
+/-- Under the uniform prior of §4, some of the n individuals is `Aᵢ` with probability `1 − ((m −
+1)/m)^n`. -/
 theorem uniformOn_real_someAre (hm : 1 ≤ m) (i : Fin m) :
     (uniformOn (Set.univ : Set (World n m))).real (someAre i) = 1 - ((m - 1 : ℝ) / m) ^ n := by
   rw [uniformOn_real_apply, Set.univ_inter, ncard_someAre, Set.ncard_univ,
@@ -289,9 +288,8 @@ theorem uniformOn_real_someAre_anti (hn : 1 ≤ n) (hm : 2 ≤ m) {m' : ℕ} (h 
 utterance reaches the threshold. -/
 def Pruned (θ p : ℝ) : Prop := θ ≤ p
 
-/-- One threshold resolves the inference puzzle. The existential alternatives of all-20-or, (6),
-and simple-disj, (8), are pruned, leaving ALT-or and the distributive reading, and those of
-all-2-or, (7), and complex-disj, (9), are kept, leaving ALT-all-or and ignorance. -/
+/-- One threshold prunes the existential alternatives of all-20-or (6) and simple-disj (8) but keeps
+those of all-2-or (7) and complex-disj (9). -/
 theorem threshold_separates :
     ∃ θ : ℝ, Pruned θ ((uniformOn (Set.univ : Set (World 20 2))).real (someAre 0)) ∧
       Pruned θ ((uniformOn (Set.univ : Set (World 4 2))).real (someAre 0)) ∧
@@ -351,10 +349,8 @@ theorem uniformOn_distinct_real_someAre (i : Fin n) :
   rw [uniformOn_real_apply, Set.inter_eq_left.2 (distinct_subset_someAre i), div_self]
   exact Nat.cast_ne_zero.2 ((Set.ncard_pos (Set.toFinite _)).2 ⟨id, Function.injective_id⟩).ne'
 
-/-- Informativeness must be computed blindly to common knowledge (§7.3). Relative to it the
-existential alternatives of deviant-be are certain and any threshold prunes them, which would
-leave no ignorance inference and predict no deviance; blind to it their probability is
-`1 − (2/3)^3`, below every threshold that keeps the alternatives of all-2-or, so they survive. -/
+/-- Informativeness must be computed blindly to common knowledge, as only then are the existential
+alternatives of deviant-be kept (§7.3). -/
 theorem blind_informativeness (θ : ℝ) (h : 3 / 4 < θ) (h1 : θ ≤ 1) :
     ¬ Pruned θ ((uniformOn (Set.univ : Set (World 3 3))).real (someAre 0)) ∧
       Pruned θ ((uniformOn (distinct 3)).real (someAre 0)) := by

@@ -159,8 +159,8 @@ theorem SatisfiesHC2.satisfiesPRC {L : List Relativizer} (h₂ : SatisfiesHC2 L)
     (h₁ : SatisfiesHC1 L) : SatisfiesPRC L :=
   ⟨satisfiesHC1_iff_exists_isPrimary.1 h₁, fun s hp ↦ (h₂ s).isUpperSet_of_top_mem hp⟩
 
-/-- Under HC₂ a primary strategy covers exactly the closed interval from its cut-off up to the
-subject, what Table 1 records as a run of + entries ending at the subject. -/
+/-- Under HC₂, a primary strategy covers exactly the interval from its cut-off up to the subject, as
+in Table 1. -/
 theorem SatisfiesHC2.positions_eq_Icc_top {L : List Relativizer} (h : SatisfiesHC2 L)
     {s : Strategy} (hp : s.IsPrimary L) : s.positions L = Icc ((s.positions L).min' ⟨⊤, hp⟩) ⊤ :=
   eq_Icc_top_of_ordConnected_coe (h s) hp
@@ -196,8 +196,8 @@ def sample : List (List Relativizer) :=
   [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin, basque,
     french, german, hindi, japanese, russian, tagalog, turkish]
 
-/-- Table 1's Hebrew (p. 77): the −case strategy covers subjects and direct objects and the
-+case strategy everything from direct objects down, the direct object shared between them. -/
+/-- In Table 1's Hebrew (p. 77), the −case strategy covers subjects and direct objects and the +case
+strategy direct objects and below. -/
 theorem hebrew_table1 :
     (⟨.postNominal, false⟩ : Strategy).positions hebrew = {.subject, .directObject} ∧
       (⟨.postNominal, true⟩ : Strategy).positions hebrew = Iic .directObject := by
@@ -221,9 +221,8 @@ theorem satisfiesHC2_of_mem_sample {L : List Relativizer} (h : L ∈ sample) :
 theorem satisfiesPRC_of_mem_sample {L : List Relativizer} (h : L ∈ sample) : SatisfiesPRC L :=
   (satisfiesHC2_of_mem_sample h).satisfiesPRC (satisfiesHC1_of_mem_sample h)
 
-/-- Every position from the genitive up is the cut-off of a primary strategy of the sample, the
-Section 1.3 argument that each point of the hierarchy is a possible cut-off. The paper's
-witnesses for the object of comparison are not among the fragments. -/
+/-- Every position from the genitive up is the cut-off of some primary strategy in the sample
+(Section 1.3). -/
 theorem exists_positions_eq_Icc {p : Position} (hp : .genitive ≤ p) :
     ∃ L ∈ sample, ∃ s : Strategy, s.positions L = Icc p .subject := by
   revert p; decide
@@ -279,10 +278,8 @@ theorem satisfiesHCPromotion_tobaBatak :
     SatisfiesHCPromotion tobaBatak (Promotes TobaBatak.voices tobaBatakRole) := by
   decide
 
-/-- Toba Batak relativizes directly the subject and just the positions its voices cannot promote
-(p. 69): a direct object is relativized as a promoted subject, and a noun phrase governed by a
-preposition by the +case strategy. The object of comparison, on which Table 1 has no data, is
-set aside. -/
+/-- Toba Batak relativizes directly the subject and exactly the positions its voices cannot promote
+(p. 69), the object of comparison aside (Table 1). -/
 theorem mem_relativizable_tobaBatak_iff {p : Position} (hp : p ≠ .objComparison) :
     p ∈ relativizable tobaBatak ↔
       p = .subject ∨ ¬ Promotes TobaBatak.voices tobaBatakRole p .subject := by

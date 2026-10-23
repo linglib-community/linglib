@@ -324,16 +324,15 @@ theorem ord_plug_eq_of_given {K : Ctx α γ} (hK : K.Transparent) {t : LF α}
   rw [← ordinary_meaning]
   exact WithAlternatives.ordinary_eq_of_given_mark_focused_bind (fun _ ↦ wellFormed_meaning _) h v
 
-/-- (58) in the paper's form. A constituent whose ordinary value depends on a [FoC]-marked
-constituent with no squiggle between them is not Given, so it cannot be [G]-marked. -/
+/-- A constituent whose ordinary value depends on a [FoC]-marked constituent with no squiggle
+between them is not Given (58). -/
 theorem not_given_plug_foc {K : Ctx α γ} (hK : K.Transparent) {v w : α}
     (hvw : (K.plug (lex v .bare)).ord ≠ (K.plug (lex w .bare)).ord) {t : LF α}
     (ht : t.label.mark = .focused) (c : γ) : ¬ (K.plug t).meaning.Given c := fun h ↦
   hvw ((ord_plug_eq_of_given hK ht h v).trans (ord_plug_eq_of_given hK ht h w).symm)
 
-/-- The dependence is needed, as the paper's derivation of (58) overlooks. *[Mary]FoC came or
-didn't come* contains a FoCus that nothing consumes, yet it is Given with respect to the
-tautology, since its predicate holds of everyone. -/
+/-- *[Mary]FoC came or didn't come* is Given with respect to the tautology though its FoCus is
+unconsumed, a case the derivation of (58) overlooks. -/
 theorem given_foc_came_or_not {E W : Type} (came : E → Set W) (mary : E) :
     (app (lex (fun x ↦ came x ∪ (came x)ᶜ) .bare) (lex mary .foc) .bare).meaning.Given
       Set.univ := by
@@ -488,7 +487,7 @@ theorem representsContrast_narrow (hf : Function.Injective2 f) (x : α) {y y' : 
   · exact absurd (Set.image2_subset (Set.subset_univ _) subset_rfl) hss.2
 
 /-- (50b) *John picked [strawberries]FoC at [Sandy's]FoC farm* does not represent a contrast with
-(50a), since its variant (51) has strictly fewer alternatives and (50a) among them (49iii). -/
+(50a), since its variant (51) has strictly fewer alternatives (49iii). -/
 theorem not_representsContrast_overfocused [Nontrivial α] (hf : Function.Injective2 f) (x : α)
     (y y' : β) : ¬ (pred₂ f x y .bare .foc .bare .foc .bare).RepresentsContrast (f x y') := by
   intro h
@@ -524,10 +523,8 @@ def sofVP (𝔞 p : E → Set W) : LF (E → Set W) :=
   app (lex only .bare) (squiggle {𝔞} (pred₁ quote faculty .bare .foc .bare) .bare)
     ⟨.unfeatured, some p⟩
 
-/-- (60) The [G]-marked VP containing the second occurrence of *the faculty* is felicitous. Its
-squiggle represents a contrast with an accommodated antecedent, quoting someone other than the
-faculty (fn. 53), and consumes the FoCus, so the VP is Given with respect to the VP of the
-preceding sentence. -/
+/-- In (60), the [G]-marked VP containing the second *the faculty* is felicitous, its squiggle
+contrasting with an accommodated antecedent (fn. 53). -/
 theorem felicitous_sofVP (hq : Function.Injective quote) {other : E} (ho : other ≠ faculty)
     (w : Window) (hp : only (quote faculty) ∈ w.preceding _)
     (ha : quote other ∈ w.surrounding _) :
@@ -541,8 +538,7 @@ theorem felicitous_sofVP (hq : Function.Injective quote) {other : E} (ho : other
     refine ⟨hp, Set.ext fun c ↦ ?_⟩
     simp [meaning, ord, pred₁, Label.bare, WithAlternatives.mem_alternatives_seq, eq_comm]
 
-/-- Without the squiggle the [G] on the VP is not licensed when whom one quotes matters to the
-VP, since the FoCus on *the faculty* then reaches it (58). -/
+/-- Without the squiggle, [G] on the VP is not licensed when whom one quotes matters to it (58). -/
 theorem not_felicitous_without_squiggle {v v' : E} (hvv : only (quote v) ≠ only (quote v'))
     (w : Window) (p : E → Set W) :
     ¬ (app (lex only .bare) (pred₁ quote faculty .bare .foc .bare)

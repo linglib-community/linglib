@@ -617,9 +617,8 @@ theorem eval_comp_or_equi :
     Eval interp (.sup (.sup (.comp A B) (.comp B A)) (A.equi B)) ord i w :=
   (em _).elim (Or.inl ∘ Or.inl) fun h₁ ↦ (em _).elim (Or.inl ∘ Or.inr) fun h₂ ↦ Or.inr ⟨h₁, h₂⟩
 
-/-- *More `A` than not*, the supplement's `⊟A`, holds at an index iff `A` holds at every
-interpretation tied with it (the supplement's Fact 1), so at a top-ranked index it says that `A` is
-accepted. -/
+/-- *More `A` than not* holds at an index iff `A` holds at every interpretation tied with it (the
+supplement's Fact 1). -/
 theorem eval_comp_not_iff :
     Eval interp (.comp A (.not A)) ord i w ↔ ∀ j, ord.equiv j i → Eval interp A ord j w :=
   ⟨fun ⟨a, ha, _, _, hd⟩ j hj ↦ of_not_not fun hA ↦
@@ -1098,10 +1097,8 @@ theorem evalRevised_equi_iff_formulaDeg_eq :
   rw [evalRevised_equi_iff interp, formulaDeg, formulaDeg, deg_eq_deg_iff]
   exact RevisedEqui.congr (fun _ ↦ mem_denotation_iff) fun _ ↦ mem_denotation_iff
 
-/-- The revised metalinguistic comparative is the point-standard comparative of degree semantics
-over the metalinguistic measure function `formulaDeg`, which is the paper's (59). Metagradability
-thereby instantiates the central object of degree semantics, a measure `μ : E → D` into a bounded
-linear scale, with the formulas as `E` and the `MetaDegree` scale as `D`. -/
+/-- The revised metalinguistic comparative is the point-standard comparative over the measure
+function `formulaDeg` (59). -/
 theorem mc_iff_formulaDeg_lt : EvalRevised interp (.comp A B) ord i w ↔
     formulaDeg ord i interp B w < formulaDeg ord i interp A w := by
   rw [evalRevised_comp_iff_denotation, formulaDeg, formulaDeg, deg_lt_deg_iff]
@@ -1302,18 +1299,14 @@ abbrev La₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred
 abbrev Pa₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.philosopher .ann
 abbrev Ca₄ : ComparativeFormula (Language.monadic Pred3) Entity := .matom Pred3.psychologist .ann
 
-/-- The basic equative is not transitive. At the top of Figure 1 Ann is as much a linguist as a
-philosopher and as much a philosopher as a psychologist, but she is more a linguist than a
-psychologist, since the one interpretation making her a psychologist and not a linguist lies below
-`i`, which makes her a linguist and not a psychologist. -/
+/-- The basic equative is not transitive, as Ann's case at the top of Figure 1 shows. -/
 theorem equi_not_trans :
     Eval counterexample (La₄.equi Pa₄) ord₄ .i .w0 ∧
       Eval counterexample (Pa₄.equi Ca₄) ord₄ .i .w0 ∧
       Eval counterexample (.comp La₄ Ca₄) ord₄ .i .w0 := by
   decide
 
-/-- The revised semantics makes Ann as much a linguist as a psychologist at the top of Figure 1,
-since `i` is tied with `k`, which makes her both, and with `j`, which makes her neither. -/
+/-- The revised semantics makes Ann as much a linguist as a psychologist at the top of Figure 1. -/
 theorem evalRevised_equi_counterexample :
     EvalRevised counterexample (La₄.equi Pa₄) ord₄ .i .w0 ∧
       EvalRevised counterexample (Pa₄.equi Ca₄) ord₄ .i .w0 ∧

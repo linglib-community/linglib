@@ -204,8 +204,7 @@ theorem denotes_of_kind (h : n.head = .kind) : n.Denotes := by
   · exact .inl hd
   · exact .inr ⟨hd, h⟩
 
-/-- (57c): an object-naming noun denotes only as a constant, so a proper name in argument
-position must fill D, by raising or by an expletive article. -/
+/-- An object-naming noun denotes only as a constant (57c). -/
 theorem denotes_iff_of_object (h : n.head = .object) : n.Denotes ↔ n.IsConstant :=
   ⟨fun hn ↦ hn.resolve_right fun hv ↦ Naming.noConfusion (h.symm.trans hv.2), .inl⟩
 
@@ -238,16 +237,13 @@ def Article.dContent : Article → DContent
   | .operator => .operator
   | .expletive => .referential
 
-/-- The article of *la Maria* is obligatorily an expletive: with an object-naming head the
-nominal denotes only if the article is chained to the name, so it contributes no operator and
-no kind reading arises (26b). -/
+/-- With an object-naming head, as in *la Maria*, the nominal denotes iff the article is expletive
+(26b). -/
 theorem denotes_iff_expletive (a : Article) :
     (⟨.object, a.dContent⟩ : Nominal).Denotes ↔ a = .expletive := by
   cases a <;> decide
 
-/-- With a kind-naming head either article yields a denoting argument: the operator binds a
-variable over the kind (59), and the expletive makes the argument a constant naming the kind,
-the singular generic of (26a). -/
+/-- With a kind-naming head either article yields a denoting argument ((59), (26a)). -/
 theorem denotes_of_kind_article (a : Article) : (⟨.kind, a.dContent⟩ : Nominal).Denotes :=
   Nominal.denotes_of_kind rfl
 

@@ -124,8 +124,7 @@ def SelfDual (D : GQ α) : Prop := dual D = D
 
 variable {D : GQ α}
 
-/-- The *there*-sentence of a positive strong determiner is a tautology (§4.6), since *there are
-D N* says the domain lies in `D(N)`, which C1 reduces to `N ∈ D(N)`. -/
+/-- The *there*-sentence of a positive strong determiner is a tautology (§4.6). -/
 theorem there_of_positiveStrong (hc : Conservative D) (h : PositiveStrong D) (A : α → Prop) :
     D A (fun _ ↦ True) :=
   (livesOn_apply_iff ((conservative_iff_livesOn D).1 hc A)).1 (h A)
@@ -227,8 +226,8 @@ section English
 open English.Determiners (QuantityWord)
 open scoped Semantics
 
-/-- Under the proportional reading (*fewer than half*), *few N are N* is contradictory, so
-`few` is negative strong, where B&C's Table II lists *few* as weak. -/
+/-- On its proportional reading `few` is negative strong, though B&C's Table II lists *few* as weak.
+-/
 theorem few_negativeStrong : NegativeStrong (few : GQ α) := fun A hA ↦ by
   simp [few_apply] at hA
 
@@ -258,11 +257,8 @@ def atLeastHalf : GQ α := (NumberTree.ofSizes fun x p ↦ p ≤ 2 * x).toGQ
 /-- The upper half of *exactly half* puts at most half the restrictor in the scope. -/
 def atMostHalf : GQ α := (NumberTree.ofSizes fun x p ↦ 2 * x ≤ p).toGQ
 
-/-- U6 for *exactly half*, the non-monotone example of §4.8, says that the non-monotone
-determiner is the conjunction of an increasing and a decreasing one, as the monotonicity
-constraint requires of simple NPs; `exactly n` decomposes likewise
-(`Quantifier.GQ.exactly_eq_atLeast_inf_atMost`). On the tree the halves are `a ≤ b` and `b ≤ a`,
-and their meet is `a = b`. -/
+/-- *Exactly half* is the meet of *at least half* and *at most half*, an increasing and a decreasing
+determiner (U6, §4.8). -/
 theorem half_eq_meet : (half : GQ α) = (atLeastHalf ⊓ atMostHalf) := by
   rw [half, atLeastHalf, atMostHalf, ← NumberTree.toGQ_inf]
   congr 1
@@ -286,9 +282,7 @@ theorem all_positiveStrong {d : GQ.Family} (h : d ∈ ⟦QuantityWord.all⟧) :
   exact positiveStrong_every
 
 open Classical in
-/-- *Most* is positive strong on nonempty restrictors (Table II; Appendix B's SP1), since *most
-N are N* whenever there are `N`s. On the empty restrictor the proportional reading fails, as
-in Barwise and Cooper's Table I column, so *most N* can denote the empty quantifier. -/
+/-- *Most* is positive strong on nonempty restrictors (Table II; Appendix B's SP1). -/
 theorem most_apply_self {d : GQ.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A : α → Prop)
     (h : ∃ x, A x) : d α A A := by
   obtain rfl : d = GQ.Family.most := hd
@@ -360,10 +354,8 @@ private theorem min_eq_min_of_le {t k : ℕ} {s s' : Set (Fin k)} (h : (t : ℕ�
     (h' : (t : ℕ∞) ≤ s'.encard) : min (t : ℕ∞) s.encard = min (t : ℕ∞) s'.encard := by
   rw [min_eq_left h, min_eq_left h']
 
-/-- B&C's (5) says that the two models agree on every sentence with fewer than `m` quantifiers;
-for quantifier rank this is `(m - 1)`-equivalence, since each Venn region of `U` and `V` is either
-the same set in both models or has at least `m - 1` elements in both. The region outside `V` is
-the same set, so `2m ≤ k` suffices where B&C take `k ≥ 3m`. -/
+/-- The two models of B&C's (5) are `(m - 1)`-equivalent for quantifier rank whenever `2m ≤ k`,
+where B&C take `k ≥ 3m`. -/
 theorem elementarilyEquivalentUpTo_struc (m k : ℕ) (hm : 0 < m) (hk : 2 * m ≤ k) :
     @ElementarilyEquivalentUpTo _ (m - 1) (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) := by
   refine elementarilyEquivalentUpTo_monadicStructure_iff.2 fun S ↦ ?_
@@ -415,9 +407,8 @@ private theorem moreThanHalf_iff {k m c : ℕ} (S : (Language.monadic (Fin 2)).S
   unfold MoreThanHalf MostUV
   rw [hUV, hVs, ncard_val_lt _ _ (by omega), ncard_val_lt _ _ hm]
 
-/-- C12 of [barwise-cooper-1981] (Appendix C p. 213) says that no first-order sentence over two
-unary predicates is true in exactly the finite models where more than half the `V`'s are `U`'s,
-the formal core of the claim that *most* is a determiner, not a quantifier. -/
+/-- No first-order sentence over two unary predicates is true in exactly the finite models where
+more than half the `V`'s are `U`'s (C12 of [barwise-cooper-1981], Appendix C p. 213). -/
 theorem more_than_half_not_definable :
     ¬ ∃ φ : (Language.monadic (Fin 2)).Sentence, ∀ (M : Type) [Fintype M] [Nonempty M]
       (S : (Language.monadic (Fin 2)).Structure M),
@@ -582,9 +573,8 @@ private theorem swap_pred_iff {E : Type} [DecidableEq E] {P V : E → Prop}
     exact iff_of_false (fun h ↦ h₀ (hPV _ h)) (fun h ↦ h₁ (hPV _ h))
   · rw [Equiv.swap_apply_of_ne_of_ne hx1 hx2]
 
-/-- Barwise and Cooper's property (P) (p. 215) says that on models with `U ⊆ V` whose domain is
-at least twice `|V|` plus the complexity of `ψ`, the `Q`-elimination `star` is correct, since
-the domain "swamps out" `U` and `V`. -/
+/-- On models with `U ⊆ V` and domain at least twice `|V|` plus the complexity of `ψ`, the
+`Q`-elimination `star` is correct (property (P), p. 215). -/
 theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
     (hUV : ∀ x, U x → V x) :
     ∀ {n : ℕ} (ψ : QFormula n),
@@ -691,11 +681,8 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
 
 end QFormula
 
-/-- C13 of [barwise-cooper-1981] (Appendix C pp. 214–215) says that even with the unrelativized
-majority quantifier `Qx[·]`, "more than half of all things", no sentence of `L(Q)` is true in
-exactly the finite models where more than half the `V`'s are `U`'s; the relativized quantifier
-is not definable from the unrelativized one, so *most* must be treated as a determiner, not a
-quantifier. Barwise and Cooper credit a related unpublished 1965 theorem to David Kaplan. -/
+/-- No sentence of `L(Q)` is true in exactly the finite models where more than half the `V`'s are
+`U`'s (C13 of [barwise-cooper-1981], Appendix C pp. 214–215). -/
 theorem more_than_half_not_Q_definable :
     ¬ ∃ φ : QFormula 0, ∀ (E : Type) [Fintype E] (U V : E → Prop),
       (φ.Realize U V default ↔ MostUV U V) := by

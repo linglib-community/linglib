@@ -104,9 +104,8 @@ theorem eq_bot_of_restrictorMonotone (hQ : RestrictorMonotone Q) (h : IsExceptio
 theorem restrictive (h : IsExceptionSet Q A C B) (hC : C ≠ ⊥) : Restrictive Q A C B :=
   ⟨h.1, fun hQA ↦ hC (le_bot_iff.1 (h.2 (show Q (A \ ⊥) B by rwa [sdiff_bot])))⟩
 
-/-- When subtracting `S` rescues the quantification exactly when `S` covers `r`, the exception
-set is `r`. This is the culprit reasoning of [von-fintel-1993]'s §1.6, which instantiates to
-`A \ B` for *every* and `A ⊓ B` for *no*. -/
+/-- If removing `S` rescues the quantification exactly when `S` covers `r`, then `r` is the
+exception set ([von-fintel-1993]'s §1.6). -/
 theorem of_iff_le {r : α → Prop} (h : ∀ S, Q (A \ S) B ↔ r ≤ S) : IsExceptionSet Q A r B :=
   ⟨(h r).2 le_rfl, fun S hS ↦ (h S).1 hS⟩
 
@@ -114,9 +113,8 @@ end IsExceptionSet
 
 /-! ### The three formulations of the uniqueness condition -/
 
-/-- In the second formulation of (21) the exception set is disjoint from every subset of the
-restrictor that verifies the quantification. The hypothesis `C ≤ A` is what the definition
-entails (`IsExceptionSet.le_restrictor`) and this formulation alone does not. -/
+/-- For `C ≤ A`, `C` is an exception set iff removing it verifies the quantification and it is
+disjoint from every verifying subset of the restrictor (21). -/
 theorem isExceptionSet_iff_disjoint (hCA : C ≤ A) :
     IsExceptionSet Q A C B ↔ Q (A \ C) B ∧ ∀ D ≤ A, Q D B → Disjoint C D := by
   unfold IsExceptionSet IsLeast

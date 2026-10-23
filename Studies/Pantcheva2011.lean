@@ -92,8 +92,7 @@ theorem possible_iff_respectsSeam (p : Pattern) : Possible p ↔ RespectsSeam p 
         · have : ¬ k ≤ 1 := λ hk => hi (hs'.mpr hk); omega
       subst hjk'; exact hik
 
-/-- Of the fifteen patterns, exactly four respect the seam, Types 1 to 4 of Table 9.2, with all
-roles distinct (English), Place=Goal (Georgian), Source=Route, and both. -/
+/-- Exactly four of the fifteen patterns respect the seam, Types 1 to 4 of Table 9.2. -/
 theorem possible_syncretisms :
     allPatterns.filter (λ p => Possible p) =
       [![0, 0, 1, 1], ![0, 0, 1, 2], ![0, 1, 2, 2], ![0, 1, 2, 3]] := by

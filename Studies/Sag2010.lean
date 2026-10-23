@@ -244,9 +244,7 @@ private theorem le_finWhRelCl_or_le_infWhRelCl (hs : I.IsSortResolved) (hu : I.S
   (by decide +kernel : ∀ σ : Srt, σ ≤ .whRelCl → IsSpecies σ →
     σ ≤ .finWhRelCl ∨ σ ≤ .infWhRelCl) _ hu (hs u)
 
-/-- The filler daughter of each of the five clauses is nonverbal, a noun phrase, prepositional
-phrase, adjective phrase or adverb phrase (25). A wh-relative's is nominal or prepositional,
-according as it is finite or infinitival. -/
+/-- The filler daughter of each of the five clauses is nonverbal (25). -/
 theorem satisfies_filler_nonverbal (hI : I.Models grammar) (hs : I.IsSortResolved)
     (c : FGClause) (hu : I.S u ≤ c.sort) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.FILLERDTR, .CAT]) .nonverbal) := by
@@ -261,10 +259,8 @@ theorem satisfies_filler_nonverbal (hI : I.Models grammar) (hs : I.IsSortResolve
         h).1.sortAssign_mono (by decide)
   · exact (satisfies_body hI (c := thePrinciple) (by simp [constraints]) hu).1
 
-/-- The head daughter of a topicalized clause, wh-exclamative, wh-interrogative or wh-relative is
-a projection of a verb (27). Except in the topicalized clause, which states it, this follows
-from the head's inversion value, which only a verb has; a wh-relative's comes from the relative
-construction on its mother. -/
+/-- The head daughter of a topicalized clause, wh-exclamative, wh-interrogative or wh-relative is a
+projection of a verb (27). -/
 theorem satisfies_head_verb (hI : I.Models grammar) (hw : I.IsWellTyped) {c : FGClause}
     (hc : c ≠ .theClause) (hu : I.S u ≤ c.sort) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT]) .verb) := by
@@ -290,9 +286,8 @@ theorem satisfies_head_uninverted (hI : I.Models grammar) {c : FGClause}
   · exact (satisfies_hdCat_iff hI (hu.trans (by decide)) [.INV] .minus).1
       (satisfies_body hI (c := relativePrinciple) (by simp [constraints]) (hu.trans (by decide))).1
 
-/-- The head daughter of a topicalized clause, wh-exclamative, the-clause or finite wh-relative
-is finite (29). In a finite wh-relative the construction makes the mother finite, and the head
-daughter shares the mother's category. -/
+/-- The head daughter of a topicalized clause, wh-exclamative, the-clause or finite wh-relative is
+finite (29). -/
 theorem satisfies_head_fin (hI : I.Models grammar)
     (hu : I.S u ≤ .topCl ∨ I.S u ≤ .whExclCl ∨ I.S u ≤ .theCl ∨ I.S u ≤ .finWhRelCl) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .CAT, .VFORM]) .fin) := by

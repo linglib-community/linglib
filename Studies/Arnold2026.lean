@@ -91,9 +91,8 @@ theorem isUpperSet_condition_underspecified : IsUpperSet (Kind.underspecified.co
 theorem isLowerSet_condition_personal : IsLowerSet (Kind.personal.condition U P) :=
   isLowerSet_Iic _
 
-/-- The two kinds share no common ground unless the one accepting just the they/them fact counts
-as underspecified, since knowing someone's pronouns is itself a detail of their representation
-(§3, §4.1). -/
+/-- The two kinds share no common ground unless accepting just the they/them fact counts as
+underspecified (§3, §4.1). -/
 theorem disjoint_condition_iff :
     Disjoint (Kind.underspecified.condition U P) (Kind.personal.condition U P) ↔ 𝓟 P ∉ U := by
   change Disjoint (U : Set (Filter W)) (Set.Iic (𝓟 P)) ↔ _
@@ -104,10 +103,7 @@ theorem disjoint_condition_iff :
 
 variable {ι : Type*} [Preorder ι] {d : ι → Filter W}
 
-/-- As a discourse asserts more, underspecified *they* is lost and not regained. A speaker may
-use *they* for a neighbor who plays a passing role, but not once the story has built a detailed
-picture of them (§2). Assertion histories are such discourses
-(`HasAssertion.antitone_commonGround_play`). -/
+/-- As a discourse asserts more, underspecified *they* is lost and not regained (§2). -/
 theorem antitone_mem_condition_underspecified (hd : Antitone d) :
     Antitone fun i ↦ d i ∈ Kind.underspecified.condition U P :=
   (Set.monotone_mem.2 isUpperSet_condition_underspecified).comp_antitone hd
@@ -146,9 +142,8 @@ theorem antitone_storyGround : Antitone storyGround :=
 follows from the referent's being a student. -/
 def storyThreshold : UpperSet (Filter (Set StoryFact)) := UpperSet.Ici (𝓟 (holds .student))
 
-/-- The teller of §2 began a story with *they* for a student and shifted to *she* as details
-emerged. Underspecified *they* is licensed at the outset, and once a detail is asserted no kind
-of *they* is, then or later. -/
+/-- In the story of §2, underspecified *they* is licensed at the outset, and once a detail is
+asserted no kind of *they* is. -/
 theorem story_they_lost :
     storyGround 0 ∈ Kind.underspecified.condition storyThreshold (holds .theyThem) ∧
       ∀ n, 0 < n → ∀ k : Kind, storyGround n ∉ k.condition storyThreshold (holds .theyThem) := by
@@ -169,9 +164,8 @@ theorem story_they_lost :
 Konnelly and Cowper's grammar reads only the antecedent, so it admits *they* or not whichever
 kind the speaker intends (§5). -/
 
-/-- At Konnelly and Cowper's second stage a singular antecedent outside a quantifier whose entry
-bears a gender does not take *they*, so personal *they* for such a referent needs a homophonous
-entry without the gender, their ad hoc ungendered *Mary* (§5). -/
+/-- At Konnelly and Cowper's second stage, personal *they* for a gendered singular referential
+antecedent needs a homophonous ungendered entry (§5). -/
 theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : KonnellyCowper2020.Gender}
     (hs : a.number = .singular) (hq : a.det = .referential) (hl : a.lexical = some (.gender g)) :
     "they" ∉ forms .two a ∧ "they" ∈ forms .two { a with lexical := none } :=
@@ -183,9 +177,8 @@ theorem stage2_they_needs_ungendered_entry {a : Antecedent} {g : KonnellyCowper2
 as in Konnelly and Cowper's (26). -/
 def myMother : Antecedent := ⟨.singular, .referential, some (.gender .fem), some .fem⟩
 
-/-- The third-stage grammar admits *my mother … they* (§6.2), but in a common ground that no
-longer counts as underspecified and does not accept the they/them fact neither kind's condition
-holds, so such a production would be a counterexample to the proposal. -/
+/-- The third-stage grammar admits *my mother … they* (§6.2), though in some common grounds neither
+kind's condition holds, a would-be counterexample. -/
 theorem stage3_they_counterexample (hU : c ∉ U) (hP : P ∉ c) :
     "they" ∈ forms .three myMother ∧ ∀ k : Kind, c ∉ k.condition U P :=
   ⟨stage3_they nofun, by rintro (_ | _) <;> simpa⟩

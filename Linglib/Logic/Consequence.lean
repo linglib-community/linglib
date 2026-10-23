@@ -87,8 +87,8 @@ theorem Satisfies.cut (hqp : q M φ → p M φ) (h₁ : Satisfies p q M (φ :: �
 
 namespace MixedConsequence
 
-/-- Validity transfers along a map of models that preserves the satisfaction of the premises and
-reflects that of the conclusions: the model correspondences of [cobreros-etal-2012], §2.2.2. -/
+/-- Validity transfers along a map of models preserving premise satisfaction and reflecting
+conclusion satisfaction ([cobreros-etal-2012], §2.2.2). -/
 theorem comap {Model' : Type*} {p' q' : Model' → Formula → Prop} (f : Model' → Model)
     (hp : ∀ M, ∀ γ ∈ Γ, p' M γ → p (f M) γ) (hq : ∀ M, ∀ δ ∈ Δ, q (f M) δ → q' M δ)
     (h : MixedConsequence p q Γ Δ) : MixedConsequence p' q' Γ Δ := fun M hΓ ↦
@@ -107,8 +107,7 @@ theorem weaken (hΓ : Γ ⊆ Γ') (hΔ : Δ ⊆ Δ') (h : MixedConsequence p q �
 theorem of_mem (hpq : p ≤ q) (hΓ : φ ∈ Γ) (hΔ : φ ∈ Δ) : MixedConsequence p q Γ Δ :=
   fun M h ↦ ⟨φ, hΔ, hpq M φ (h φ hΓ)⟩
 
-/-- Cut: from `φ, Γ ⇒ Δ` and `Γ ⇒ φ, Δ` infer `Γ ⇒ Δ`, when `q ≤ p` (the form of transitivity in
-[cobreros-etal-2012], §3.3.2). -/
+/-- From `φ, Γ ⇒ Δ` and `Γ ⇒ φ, Δ` infer `Γ ⇒ Δ` when `q ≤ p` ([cobreros-etal-2012], §3.3.2). -/
 theorem cut (hqp : q ≤ p) (h₁ : MixedConsequence p q (φ :: Γ) Δ)
     (h₂ : MixedConsequence p q Γ (φ :: Δ)) : MixedConsequence p q Γ Δ :=
   fun M ↦ (h₁ M).cut (hqp M φ) (h₂ M)
@@ -139,8 +138,8 @@ theorem isTrans_mixedConsequence (hqp : q ≤ p) :
   ⟨fun _ ψ _ h₁ h₂ ↦ .cut (φ := ψ) hqp (h₂.weaken (by simp) (by simp))
     (h₁.weaken (by simp) (by simp))⟩
 
-/-- Lemma 6 of [cobreros-etal-2012]: `Γ ⇒ Δ` is valid for `p, q` iff the negated sequent
-`¬Δ ⇒ ¬Γ` is valid for their duals `q', p'`. -/
+/-- `Γ ⇒ Δ` is valid for `p, q` iff `¬Δ ⇒ ¬Γ` is valid for their duals `q', p'` (Lemma 6 of
+[cobreros-etal-2012]). -/
 theorem mixedConsequence_iff_dual {neg : Formula → Formula} (hp : IsDual neg p' p)
     (hq : IsDual neg q' q) :
     MixedConsequence p q Γ Δ ↔ MixedConsequence q' p' (Δ.map neg) (Γ.map neg) := by
@@ -149,9 +148,9 @@ theorem mixedConsequence_iff_dual {neg : Formula → Formula} (hp : IsDual neg p
   simp only [List.mem_map, exists_exists_and_eq_and, hp M]
   grind
 
-/-- Lemma 10 of [cobreros-etal-2012] in sequent form: a premise moves into the antecedent of a
-conclusion when the conditional is `q`-satisfied just if its antecedent's `p`-satisfaction brings
-its consequent's `q`-satisfaction. -/
+/-- A premise moves into the antecedent of a conclusion when the conditional is `q`-satisfied iff
+`p`-satisfaction of its antecedent implies `q`-satisfaction of its consequent (Lemma 10 of
+[cobreros-etal-2012]). -/
 theorem mixedConsequence_cons_cons_iff {imp : Formula → Formula → Formula}
     (himp : ∀ M, q M (imp φ ψ) ↔ (p M φ → q M ψ)) :
     MixedConsequence p q (φ :: Γ) (ψ :: Δ) ↔ MixedConsequence p q Γ (imp φ ψ :: Δ) := by

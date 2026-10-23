@@ -166,20 +166,8 @@ def GramCategory.toOrientation : GramCategory → SpeechActOrientation
   | .negation | .tense => .speakerOriented
   | .epistemic3 | .volitiveMood | .illocutionaryMod => .speechActOriented
 
-/-- Strict scope increase implies non-decreasing orientation.
-
-    If category `a` is strictly narrower in scope than `b`, then `a`'s
-    orientation is no higher than `b`'s. This is the formal link between
-    Narrog's Hypothesis I (category climbing: narrow → wide scope) and
-    Hypothesis II (event-oriented → speech-act-oriented).
-
-    The theorem requires strict `<` rather than `≤` because at the
-    boundary between event-oriented and speaker-oriented categories
-    (scope level 2), perfective/imperfective aspect (event-oriented) and
-    deontic modality 1 (speaker-oriented) share the same scope level.
-    Narrog (p. 97, point 4) notes this: volitive categories rank low in
-    the scope hierarchy due to their descriptive use, even though their
-    performative use is high. -/
+/-- Strictly wider scope implies no lower orientation, linking Hypothesis I to Hypothesis II (p.
+97). -/
 theorem scope_implies_orientation (a b : GramCategory) (h : a < b) :
     a.toOrientation ≤ b.toOrientation := by
   revert h; cases a <;> cases b <;> decide

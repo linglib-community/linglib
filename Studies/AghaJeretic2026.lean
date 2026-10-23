@@ -83,8 +83,8 @@ variable {W : Type*}
 
 /-! ### Weak and strong necessity (§2.1) -/
 
-/-- A strong necessity conjoined with the denial of a strong necessity over one domain is
-contradictory, and a weak necessity conjoined with it is consistent, (6) and (8). -/
+/-- Strong necessity conjoined with the denial of strong necessity over one domain is contradictory,
+and weak necessity so conjoined is consistent ((6), (8)). -/
 theorem contradiction_tests :
     Pattern.Contradictory ⟨⟨.necessity, false, false⟩, ⟨.necessity, true, false⟩⟩ ∧
       Pattern.Consistent ⟨⟨.weakNecessity, false, false⟩, ⟨.necessity, true, false⟩⟩ := by
@@ -128,10 +128,8 @@ theorem crosslinguistic_tests :
           Pattern.Consistent ⟨⟨φ, false, false⟩, ⟨.necessity, true, false⟩⟩) := by
   decide
 
-/-- Domain-restriction weak necessity neg-raises for every prejacent at once exactly when its
-nested best-world domain has at most one world, the dichotomous limit [horn-2001] excludes from
-neg-raising: a library observation, where the chapter's §2.5 only remarks that a
-non-quantificational semantics may fare better on the neg-raising facts. -/
+/-- Domain-restriction weak necessity neg-raises for every prejacent iff its nested best-world
+domain has at most one world ([horn-2001], §2.5). -/
 theorem vfiWeak_negRaises_iff (f g g' : Background W) (w : W) :
     (∀ p : W → Prop, ¬ weakNecessity f g g' p w → weakNecessity f g g' (fun w' ↦ ¬ p w') w) ↔
       ((premisePreorder (g' w)).minimals (bestWorlds f g w)).Subsingleton :=
@@ -255,9 +253,8 @@ theorem readings_licensed :
 
 /-! ### Exhaustification of subdomain alternatives (§3.2) -/
 
-/-- Over a nonempty domain, exhaustifying the possibility modal, the disjunction of the
-prejacent over the domain, against its subdomain alternatives yields necessity, the prejacent at
-every world of the domain, (50). Worlds are the states recording where the prejacent holds. -/
+/-- Over a nonempty domain, exhaustifying the possibility modal against its subdomain alternatives
+yields necessity (50). -/
 theorem exh_subdomain {ι : Type*} [DecidableEq ι] (M : Finset ι) (hM : M.Nonempty) :
     exhIEII (supClosure ((fun i ↦ {s : ι → Bool | s i = true}) '' M))
         (⋃ i ∈ M, {s : ι → Bool | s i = true}) =

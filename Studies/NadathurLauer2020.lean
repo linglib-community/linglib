@@ -78,8 +78,7 @@ def Cause (s : ∀ v, Flat (α v)) (u : U) (c : V) (x : α c) (e : V) (y : α e)
 
 variable {M}
 
-/-- *Make* entails that the effect occurs (footnote 20). The background with the cause added holds
-in the evaluation world, so the effect it settles occurs there. -/
+/-- *Make* entails that the effect occurs (footnote 20). -/
 theorem Make.solve_eq {s : ∀ v, Flat (α v)} {u : U} {c : V} {x : α c} {e : V} {y : α e}
     (h : Make M s u c x e y) (hu : u ∈ M.contexts s) : M.solve ⊥ u e = y :=
   h.1.solve_eq (contexts_anti (update_le_self_iff.2 bot_le) hu) h.2
@@ -221,8 +220,7 @@ theorem power_of_fire {s : V → Flat Bool} (hs : s .F = ⊥)
 the power is not sufficient for the fire. -/
 theorem not_make : ¬ Make fireModel s_b actual .P true .F true := by decide
 
-/-- (31b) *Restoring power caused the field to catch fire* is felicitous. The power is necessary
-for the fire, the line being settled down in the supersituation that brings the fire about. -/
+/-- *Restoring power caused the field to catch fire* (31b) is felicitous. -/
 theorem cause : Cause fireModel s_b actual .P true .F true :=
   ⟨⟨by decide, ⟨[.D ← true, .G ← true, .P ← true, .L ← true], by decide, by decide, by decide⟩,
     fun _ _ ↦ power_of_fire⟩, by decide, by decide⟩
@@ -278,9 +276,8 @@ def s_b : V → Flat Bool := [.Vis ← true, .Rn ← true]
 /-- (33a) *Ava's training made Lia take the bus to work* is felicitous. -/
 theorem make : Make busModel s_b actual .Tr true .Bs true := by decide
 
-/-- (33b) *#Ava's training caused Lia to take the bus to work* is infelicitous. The training is
-not necessary, since the supersituation in which the bike stays takes Lia to the bus by the rain
-alone. -/
+/-- *#Ava's training caused Lia to take the bus to work* (33b) is infelicitous, since the training
+is not necessary. -/
 theorem not_cause : ¬ Cause busModel s_b actual .Tr true .Bs true := fun h ↦
   absurd (h.1.2.2 [.Vis ← true, .Rn ← true, .Bk ← false] (by decide) (by decide) (by decide))
     (by decide)
@@ -343,15 +340,14 @@ theorem cause_storms : Cause lighthouseModel ⊥ actual .S true .L true :=
   ⟨⟨by decide, ⟨[.Q ← true, .S ← true], by decide, by decide, by decide⟩,
     fun _ _ ↦ storms_of_collapse⟩, by decide, by decide⟩
 
-/-- (35d) *The storms made the tower collapse* is felicitous relative to the earthquake, a
-background that meets the temporal location constraint at the time of the storms. -/
+/-- *The storms made the tower collapse* (35d) is felicitous relative to the earthquake, a
+background meeting the temporal location constraint. -/
 theorem make_storms : TemporalLocationConstraint time (time .S) ([.Q ← true] : V → Flat Bool) ∧
     Make lighthouseModel [.Q ← true] actual .S true .L true := by
   decide
 
-/-- (35c) *#The earthquake made the tower collapse* is infelicitous. No background meeting the
-temporal location constraint at the time of the earthquake makes it sufficient, since every such
-background leaves the storms open. -/
+/-- *#The earthquake made the tower collapse* (35c) is infelicitous, since no background meeting the
+temporal location constraint makes the earthquake sufficient. -/
 theorem not_make_earthquake (s : V → Flat Bool)
     (hs : TemporalLocationConstraint time (time .Q) s) :
     ¬ Make lighthouseModel s actual .Q true .L true := by
@@ -447,9 +443,8 @@ permission is sufficient for the dancing. -/
 theorem make_permission : Make permission [.WD ← true] ⟨true, true⟩ .G true .D true := by
   decide
 
-/-- (40a) *??Gurung made the children dance* in the permission scenario. The children's desire
-is fixed and suffices to stop the dancing, so the constraint on volitional action fails; this is
-the context in which *let* is felicitous (46). -/
+/-- In the permission scenario of *??Gurung made the children dance* (40a) the constraint on
+volitional action fails, the context where *let* is felicitous (46). -/
 theorem not_volitionalActionConstraint_permission :
     ¬ VolitionalActionConstraint permission [.WD ← true] .G .D .WD := by
   decide
@@ -459,9 +454,8 @@ sufficient for the dancing. -/
 theorem make_command (b : Bool) : Make command [.WD ← b] ⟨b, true⟩ .G true .D true := by
   cases b <;> decide
 
-/-- (41a), (42a) *Gurung made the children dance* in the command scenarios. Whatever the
-children want, their desire cannot stop the dancing once Gurung commands it, so the constraint
-on volitional action holds and *let* is out (46). -/
+/-- In the command scenarios of *Gurung made the children dance* ((41a), (42a)) the constraint on
+volitional action holds, and *let* is out (46). -/
 theorem volitionalActionConstraint_command (b : Bool) :
     VolitionalActionConstraint command [.WD ← b] .G .D .WD := by
   cases b <;> decide
@@ -469,9 +463,8 @@ theorem volitionalActionConstraint_command (b : Bool) :
 /-- In the persuasion scenario (44) Gurung's song is sufficient for the dancing. -/
 theorem make_persuasion : Make persuasion ⊥ ⟨true⟩ .G true .D true := by decide
 
-/-- (44a) *Gurung made the children dance (by playing their favourite song)*. The children's
-desire, though sufficient to stop the dancing, is settled only by the song, so the constraint on
-volitional action holds and *let* is out (46). -/
+/-- In the persuasion scenario of *Gurung made the children dance* (44a) the constraint on
+volitional action holds, and *let* is out (46). -/
 theorem volitionalActionConstraint_persuasion :
     VolitionalActionConstraint persuasion ⊥ .G .D .WD := by
   decide

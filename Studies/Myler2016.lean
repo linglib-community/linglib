@@ -195,15 +195,12 @@ def voiceAlloseme (eventiveVoiceP stative : Bool) : Voice.Alloseme :=
     ((if eventiveVoiceP then {.cat .v, .eventive} else ∅) ∪ if stative then {.stative} else ∅ :
       Finset Allosemy.Feature)
 
-/-- ⟦v⟧ = λx.x ((61)) and, over a relational complement — neither an
-eventive VoiceP nor a state — Voice is the expletive identity: the
-sentence means what its complement means — (7a), the *have* of §4.1.1:
-relational, locative, and experiencer *have*. -/
+/-- Over a relational complement Voice is the expletive identity `⟦v⟧ = λx.x` (61), as with the
+*have* of (7a) and §4.1.1. -/
 theorem expletive_voice_passes_complement : voiceAlloseme false false = .expletive := by decide
 
-/-- Over an eventuality predicate Voice adds a θ-role — the holder of a
-state, the engineer of an eventive VoiceP — so light-verb and ECM *have*
-mean more than their complement — (7b), §4.1.2. -/
+/-- Over an eventuality predicate Voice adds a θ-role, so light-verb and ECM *have* mean more than
+their complement ((7b), §4.1.2). -/
 theorem contentful_voice_adds_theta :
     (voiceAlloseme false true).AssignsTheta ∧ (voiceAlloseme true false).AssignsTheta := by
   decide

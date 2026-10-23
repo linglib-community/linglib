@@ -71,17 +71,15 @@ def governed : Juncture → Bool
   | .verbWhObject     => false
   | .headWhPossessor  => true
 
-/-- The rejected account makes elision a function of the [wh] feature of the second word. It is
-not one, since wh-objects block elision while wh-possessors trigger it ((15c, f) vs (16a, b)). -/
+/-- Elision is not a function of the second word's [wh] feature ((15c, f) vs (16a, b)). -/
 theorem elision_not_factor_through_wh : ¬ Function.FactorsThrough elides secondIsWh :=
   fun h ↦ absurd (@h .verbWhObject .headWhPossessor rfl) (by decide)
 
 theorem elision_tracks_government : ∀ j, elides j = governed j := by
   intro j; cases j <;> rfl
 
-/-- In (15d–f) the verb surfaces before a wh-object in the blocked (faithful) form
-(*dobgo noŋ*) and before a plain object in the elided–repaired form (*dobug Malay*), audibly
-distinct by [kidda-1985]'s cascade. -/
+/-- In (15d–f), the verb's blocked form before a wh-object differs audibly from its elided form, by
+[kidda-1985]'s cascade. -/
 theorem wh_object_cell_audible :
     Tangale.blockedForm ≠ Tangale.elidedForm :=
   Tangale.boundary_audible.1

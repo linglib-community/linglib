@@ -91,9 +91,8 @@ def Distributive : Context Atom → Prop
   | conjLeft C _ | conjRight _ C | disjLeft C _ | disjRight _ C => C.Distributive
   | poss _ | nec _ => False
 
-/-- At a distributive position, `ψ` splits into `ψ ∧ NE` and `ψ ∧ ⊥`. The teams supporting
-    `C.fill ψ` are those supporting `C.fill (ψ ∧ NE)` together with those supporting
-    `C.fill (ψ ∧ ⊥)` ([aloni-anttila-yang-2024] p. 34). -/
+/-- At a distributive position, the teams supporting `C.fill ψ` are those supporting `C.fill (ψ ∧
+NE)` or `C.fill (ψ ∧ ⊥)` ([aloni-anttila-yang-2024] p. 34). -/
 theorem setOf_support_fill [Inhabited Atom] (M : KripkeModel W Atom) (ψ : Formula Atom) :
     ∀ {C : Context Atom}, C.Distributive →
       {s | support M (C.fill ψ) s} = {s | support M (C.fill (.conj ψ .ne)) s} ∪
@@ -354,8 +353,8 @@ theorem Derives.possMon' (h₁ : Γ ⊢ .poss φ) (h₂ : {φ} ⊢ ψ) : Γ ⊢ 
 theorem Derives.disjMon' (h₁ : Γ ⊢ .disj φ ψ) (h₂ : {ψ} ⊢ χ) : Γ ⊢ .disj φ χ := by
   simpa using h₁.disjMon (Δ := ∅) (by simp) (by simpa using h₂)
 
-/-- **Replacement** ([aloni-anttila-yang-2024] Lemma 4.4). A derivation of `ψ` from `φ` carries
-    over to any context in which the hole is under no `¬` except as part of `□`. -/
+/-- A derivation of `ψ` from `φ` carries over to any context whose hole is under no `¬` outside a
+`□` ([aloni-anttila-yang-2024] Lemma 4.4). -/
 theorem Derives.fill (h : {φ} ⊢ ψ) : ∀ C : Formula.Context Atom, {C.fill φ} ⊢ C.fill ψ
   | .hole => h
   | .conjLeft C θ =>
@@ -378,9 +377,8 @@ theorem strongFalsum_derives (φ : Formula Atom) : {.strongFalsum} ⊢ φ :=
 theorem derives_neg_falsum : (∅ : Set (Formula Atom)) ⊢ .neg .falsum :=
   .negI Formula.neFree_falsum (by simp) (.hyp (Set.mem_insert _ _))
 
-/-- Conjunction with an `NE`-free formula distributes over `∨`
-    ([aloni-anttila-yang-2024] Proposition 4.6 (i)). Each disjunct needs `φ`, which only `cut`
-    can supply without putting the premise into a side derivation. -/
+/-- Conjunction with an `NE`-free formula distributes over `∨` ([aloni-anttila-yang-2024]
+Proposition 4.6 (i)). -/
 theorem conj_disj_derives_disj_conj (hφ : φ.NEFree) :
     {.conj φ (.disj ψ χ)} ⊢ .disj (.conj φ ψ) (.conj φ χ) := by
   have hφ' : ∀ γ ∈ ({φ} : Set (Formula Atom)), γ.NEFree := by rintro _ rfl; exact hφ
@@ -393,9 +391,7 @@ theorem conj_disj_derives_disj_conj (hφ : φ.NEFree) :
   refine h₀.conjE₁.cut' (((h₀.conjE₂.mono (by simp)).cut' (h₁.disjCom.mono ?_)))
   intro x; simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_insert_iff]; tauto
 
-/-- A disjunction with an `NE`-conjunct is nonempty ([aloni-anttila-yang-2024] Lemma 4.17).
-    The paper derives it with `⩔`; here `⊥NETrs` on the hole splits the premise, and its
-    `⊥`-branch closes by `⊥⊥Ctr`. -/
+/-- A disjunction with an `NE`-conjunct is nonempty ([aloni-anttila-yang-2024] Lemma 4.17). -/
 theorem disj_conj_ne_derives_conj_ne :
     {.disj φ (.conj ψ .ne)} ⊢ .conj (.disj φ (.conj ψ .ne)) .ne := by
   set θ : Formula Atom := .disj φ (.conj ψ .ne)
@@ -422,9 +418,8 @@ theorem poss_derives_poss_conj_ne : {.poss φ} ⊢ .poss (.conj φ .ne) := by
     simpa using h.negE (α := .poss .falsum) Formula.neFree_falsum Formula.neFree_falsum hneg
   exact (hsplit.disjMon' hfalsum).disjCom.falsumE
 
-/-- **Free choice** ([anttila-2021] Proposition 4.2.5, p. 71). A possibility of a disjunction
-    of nonempty disjuncts yields both possibilities, by `◇Sep` once directly and once after
-    `Com∨`. -/
+/-- A possibility of a disjunction of nonempty disjuncts yields both possibilities ([anttila-2021]
+Proposition 4.2.5, p. 71). -/
 theorem poss_disj_conj_ne_derives_conj_poss :
     {.poss (.disj (.conj φ .ne) (.conj ψ .ne))} ⊢ .conj (.poss φ) (.poss ψ) :=
   have h₀ := Derives.single (Formula.disj (.conj φ .ne) (.conj ψ .ne))
@@ -441,10 +436,8 @@ theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .
   obtain ⟨t₁, -, t₂, hne, h⟩ := soundness hd M ∅ fun γ hγ ↦ hγ ▸ empty_supports_atom M p
   exact hne.ne_empty (Finset.union_eq_empty.mp h).2
 
-/-- Free choice fails without enrichment, `◇(p ∨ q) ⊬ ◇p ∧ ◇q` for distinct atoms. A world that
-    sees only a `q`-world is a zero-model of `◇(p ∨ q)`, the empty team witnessing `p`, but does
-    not support `◇p`, as at the world `w_∅` of the state `s_b` in [aloni-anttila-yang-2024]
-    Figure 3(b) (pp. 6–7). -/
+/-- Without enrichment, `◇(p ∨ q) ⊬ ◇p ∧ ◇q` for distinct atoms ([aloni-anttila-yang-2024] Figure
+3(b), pp. 6–7). -/
 theorem not_poss_disj_derives_conj_poss {p q : Atom} (hpq : p ≠ q) :
     ¬ {.poss (.disj (.atom p) (.atom q))} ⊢ .conj (.poss (.atom p)) (.poss (.atom q)) := by
   intro hd

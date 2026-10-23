@@ -72,9 +72,8 @@ theorem notMem_oMinus_of_singleton {w : W} {i j : E} (hi : i ∈ D) (hj : j ∈ 
 
 variable (P : E → Set W)
 
-/-- Antiexhaustive enrichment gives an existential universal force over its domain, (63c)–(63d):
-*I saw any student* says that every possible student was seen. Negation over σ denies this
-universal, the rhetorical reading (64). -/
+/-- Antiexhaustive enrichment gives an existential universal force over its domain (63c)–(63d),
+which negation over σ denies (64). -/
 theorem oMinus_biUnion (hD : D.Nonempty) : oMinus (fun S ↦ ⋃ a ∈ S, P a) D = ⋂ a ∈ D, P a := by
   classical
   refine Set.Subset.antisymm (fun w ⟨hw, h⟩ ↦ Set.mem_iInter₂.2 fun a ha ↦ ?_) fun w hw ↦ ?_
@@ -103,33 +102,28 @@ theorem oMinus_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
     oMinus (fun S ↦ C (⋃ a ∈ S, P a)) D = C (⋃ a ∈ D, P a) :=
   oMinus_eq_self fun _ hT _ ↦ hC (Set.biUnion_subset_biUnion_left (Finset.coe_subset.2 hT))
 
-/-- The presupposition of the strong σ, (72), fails under an antitone context, since the
-enrichment coincides with the plain statement: *qualunque* has no negative-polarity construal,
-(70). -/
+/-- Under an antitone context the strong σ's presupposition (72) fails, so *qualunque* has no
+negative-polarity construal (70). -/
 theorem not_oMinus_ssubset_of_antitone {C : Set W → Set W} (hC : Antitone C) :
     ¬ oMinus (fun S ↦ C (⋃ a ∈ S, P a)) D ⊂ C (⋃ a ∈ D, P a) := by
   rw [oMinus_antitone_eq P hC]
   exact ssubset_irrefl _
 
-/-- In a positive context the antiexhaustive enrichment properly strengthens the statement,
-(71): a world where one member of the domain is a witness and another is not satisfies the
-statement but not its enrichment. -/
+/-- In a positive context, antiexhaustive enrichment properly strengthens the statement (71). -/
 theorem oMinus_ssubset {a b : E} {w : W} (ha : a ∈ D) (hb : b ∈ D) (hPa : w ∈ P a)
     (hPb : w ∉ P b) : oMinus (fun S ↦ ⋃ a ∈ S, P a) D ⊂ ⋃ a ∈ D, P a :=
   (Set.ssubset_iff_of_subset fun _ h ↦ h.1).2 ⟨w, Set.mem_biUnion ha hPa, fun h ↦
     hPb (Set.mem_iInter₂.1 (oMinus_biUnion P ⟨a, ha⟩ ▸ h) b hb)⟩
 
-/-- Under a possibility modal the antiexhaustive enrichment is the universal over the options:
-every member of the domain is a witness in some accessible world, the distribution of (83)–(85)
-without the uniqueness implicature. -/
+/-- Under a possibility modal, antiexhaustive enrichment makes every domain member a witness in some
+accessible world, as in (83)–(85). -/
 theorem oMinus_preimage_biUnion (R : SetRel W W) (hD : D.Nonempty) :
     oMinus (fun S ↦ R.preimage (⋃ a ∈ S, P a)) D = ⋂ a ∈ D, R.preimage (P a) := by
   simp only [SetRel.preimage_iUnion]
   exact oMinus_biUnion _ hD
 
-/-- Under a necessity modal the antiexhaustive enrichment makes every member of a domain with
-two members an option, (93c)–(93d): a member witnessed in no accessible world would make the
-rest of the domain necessary without making that member necessary. -/
+/-- Under a necessity modal, antiexhaustive enrichment makes every member of a domain of two or more
+an option (93c)–(93d). -/
 theorem oMinus_core_biUnion_subset {R : SetRel W W} (hD : 1 < D.card) :
     oMinus (fun S ↦ R.core (⋃ a ∈ S, P a)) D ∩ R.dom ⊆ ⋂ a ∈ D, R.preimage (P a) := by
   classical
@@ -154,8 +148,8 @@ variable (P : E → Set W) {D : Finset E}
 /-- An episodic scope holds only of the individuals `actual w` that exist at the world `w`. -/
 def IsActualist (actual : W → Set E) (P : E → Set W) : Prop := ∀ a w, w ∈ P a → a ∈ actual w
 
-/-- Over a domain that contains a merely possible individual at every world, an actualist
-universal is never true, (67): *I saw any student* is too strong to ever be true. -/
+/-- Over a domain with a merely possible individual at every world, an actualist universal is never
+true (67). -/
 theorem oMinus_biUnion_eq_empty_of_isActualist {actual : W → Set E}
     (hP : IsActualist actual P) (hD : D.Nonempty) (hwide : ∀ w, ∃ a ∈ D, a ∉ actual w) :
     oMinus (fun S ↦ ⋃ a ∈ S, P a) D = ∅ := by

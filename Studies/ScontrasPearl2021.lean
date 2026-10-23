@@ -197,24 +197,24 @@ theorem numeral_ge_iff_all {a b : ℕ} (h : a + b = n) :
     Degree.Comparison.Rel]
   omega
 
-/-- With as many horses as the numeral counts, the numeral sentence on the exact reading is true
-exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
+/-- With `n` horses, the exact-reading numeral sentence and *every horse didn't jump* have the same
+truth conditions on both interpretations (§4.2.1). -/
 theorem ext_numeral_eq_self (n : ℕ) : ext (numeral .eq n) n = ext NumberTree.all n :=
   funext₂ <| ext_congr fun _ _ ↦ numeral_eq_iff_all
 
-/-- With as many horses as the numeral counts, the numeral sentence on the at-least reading is
-true exactly where *every horse didn't jump* is, on both interpretations (§4.2.1). -/
+/-- With `n` horses, the at-least-reading numeral sentence and *every horse didn't jump* have the
+same truth conditions on both interpretations (§4.2.1). -/
 theorem ext_numeral_ge_self (n : ℕ) : ext (numeral .ge n) n = ext NumberTree.all n :=
   funext₂ <| ext_congr fun _ _ ↦ numeral_ge_iff_all
 
 end Ext
 
-/-- With four horses, *two horses didn't jump* on the exact reading of the numeral is true on its
-surface interpretation only where exactly two jumped ((6), Figure 5). -/
+/-- With four horses, the surface interpretation of exact *two horses didn't jump* is true only
+where exactly two jumped ((6), Figure 5). -/
 theorem ext_twoExact_surface : ext twoExact 4 .surface .amb = {2} := by decide
 
-/-- With four horses, *two horses didn't jump* on the exact reading is true on its inverse
-interpretation wherever the number of jumpers is not two (6). -/
+/-- With four horses, the inverse interpretation of exact *two horses didn't jump* is true wherever
+the number of jumpers is not two (6). -/
 theorem ext_twoExact_inverse : ext twoExact 4 .inverse .amb = {0, 1, 3, 4} := by decide
 
 /-- With four horses, *two horses didn't jump* on the at-least reading is true on its surface
@@ -594,8 +594,8 @@ theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
   rw [div_eq_div_iff hAB.ne' hden.ne']
   field_simp
 
-/-- The sentence is endorsed more often than not exactly when it is produced at the observed
-world more often than on average under the world prior (§5.1). -/
+/-- The listener endorses the sentence more often than not iff its production at the observed world
+exceeds its expected production under the prior (§5.1). -/
 theorem one_half_lt_S2_real_amb_iff (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
     (hz0 : 0 < expectedProduction D n α μ ν) (hz1 : expectedProduction D n α μ ν < 1) :
     1 / 2 < (S2 D n α μ ν w).real {.amb} ↔ expectedProduction D n α μ ν < production D n α ν w := by
@@ -639,9 +639,8 @@ theorem map_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
       ⟨0, Finset.mem_coe.mpr (zero_mem_ext_every hn i)⟩ fun w' h ↦
       Finset.mem_coe.mpr ((hcell w').mpr (iff_of_false (hext w' (Finset.mem_coe.mp h)) hw))
 
-/-- Under the question *all?* the two scope interpretations of *every horse didn't jump* produce
-alike at every world, since the sentence answers the question in the negative on either reading
-(§3.2, §5.1). -/
+/-- Under the question *all?*, the two scope interpretations of *every horse didn't jump* are
+produced alike at every world (§3.2, §5.1). -/
 theorem S1_all_scope (hn : 0 < n) (w : World n) :
     S1 NumberTree.all n α (w, (.surface, .all)) = S1 NumberTree.all n α (w, (.inverse, .all)) := by
   rw [S1_apply, S1_apply, speaker_dirac_eq_ofWeights, speaker_dirac_eq_ofWeights]
@@ -679,8 +678,7 @@ theorem expectedProduction_all (hn : 0 < n) (μ : Measure (World n)) [IsProbabil
   rw [expectedProduction_eq_sum]
   simp only [production_all α ρ hn]
 
-/-- With the question settled as *all?*, endorsement does not depend on the scope prior, which
-matters only through questions the two interpretations answer differently (§3.2, Figure 3). -/
+/-- Under the question *all?*, endorsement does not depend on the scope prior (§3.2, Figure 3). -/
 theorem S2_real_amb_all (hα : 0 < α) (hn : 0 < n) (μ : Measure (World n)) [IsProbabilityMeasure μ]
     (ρ' : Measure Scope) [IsProbabilityMeasure ρ'] {w : World n} (hμ : μ {w} ≠ 0)
     (hz0 : 0 < expectedProduction NumberTree.all n α μ (ρ.prod (Measure.dirac .all)))
@@ -699,9 +697,8 @@ theorem S2_real_amb_all (hα : 0 < α) (hn : 0 < n) (μ : Measure (World n)) [Is
 private theorem ext_every_two (l : Scope × QUD) : 0 < (ext NumberTree.all 2 l.1 .amb).card :=
   ext_every_amb_card_pos two_pos l.1
 
-/-- At the not-all world of the two-horse scenario, the question *all?* maximizes the production
-of the sentence under either interpretation, since the sentence answers it fully on either
-reading (§3.2, Figure 2). -/
+/-- At the not-all world with two horses, the question *all?* maximizes production of the sentence
+on either interpretation (§3.2, Figure 2). -/
 theorem share_le_share_all (hα : 0 < α) (i : Scope) (q : QUD) :
     share NumberTree.all 2 α (i, q) 1 ≤ share NumberTree.all 2 α (i, .all) 1 :=
   (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
@@ -737,9 +734,8 @@ theorem production_antitone (hα : 0 < α) (ν : Measure (Scope × QUD)) :
 
 variable (ν : Measure (Scope × QUD)) [IsProbabilityMeasure ν]
 
-/-- Raising the success base rate of the binomial world prior raises endorsement at every world
-(§3.2, Figure 2), since the more success is expected, the more the sentence rules out on either
-reading. -/
+/-- Raising the base rate of the binomial world prior raises endorsement at every world (§3.2,
+Figure 2). -/
 theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < (p : ℝ))
     (hpp' : (p : ℝ) ≤ p') (hp' : (p' : ℝ) < 1) (w : World 2) :
     (S2 NumberTree.all 2 α Bin(World 2, 2, p) ν w).real {.amb}
@@ -779,10 +775,8 @@ section TwoNot
 
 variable (α : ℝ)
 
-/-- With four horses and two jumpers, the surface interpretation of the sentence is produced at
-least as often on the exact reading of the numeral as on the at-least reading, whatever the
-question, since the exact reading makes the sentence true at that world alone (§4.2.2,
-Figure 7). -/
+/-- With two of four horses jumping, the surface interpretation is produced at least as often on the
+exact reading as on the at-least reading (§4.2.2, Figure 7). -/
 theorem share_twoAtLeast_le_share_twoExact (hα : 0 < α) (q : QUD) :
     share twoAtLeast 4 α (.surface, q) 2 ≤ share twoExact 4 α (.surface, q) 2 :=
   (share_le_share_iff twoAtLeast 4 α hα
@@ -795,10 +789,8 @@ theorem share_twoAtLeast_lt_share_twoExact (hα : 0 < α) {q : QUD} (hq : q ≠ 
     (show 0 < (ext twoAtLeast 4 .surface .amb).card by decide)
     (show 0 < (ext twoExact 4 .surface .amb).card by decide)).mpr (by revert q hq; decide)
 
-/-- Under the inverse interpretation and the question *all?* the at-least reading is produced
-more often at that world. *Not exactly two jumped* is compatible with all four having jumped and
-so leaves *all?* open, while *not at least two jumped* settles it. This is why the paper's 2-of-4
-fit needs a low prior on inverse scope (§4.2.2, Figure 7). -/
+/-- With two of four horses jumping, under the inverse interpretation and the question *all?*, the
+at-least reading is produced more often than the exact one (§4.2.2, Figure 7). -/
 theorem share_twoExact_lt_share_twoAtLeast (hα : 0 < α) :
     share twoExact 4 α (.inverse, .all) 2 < share twoAtLeast 4 α (.inverse, .all) 2 :=
   (share_lt_share_iff twoExact 4 α hα (by decide) (by decide)).mpr (by decide)

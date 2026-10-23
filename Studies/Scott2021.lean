@@ -235,9 +235,8 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 /-- The antecedent's structure. -/
 def Row.tree (r : Row) : Tree DPCat String := pronoun (some r.person) r.number
 
-/-- In a cleft either the bound pronoun or the movement copy is available, so the form is
-accepted iff it is one of the two, which fixes number while leaving person optional
-((24)–(25), (29)). -/
+/-- In a cleft the form is accepted iff it is the bound pronoun or the movement copy ((24)–(25),
+(29)). -/
 theorem cleft_rows :
     ∀ r ∈ rows, r.construction = .cleft →
       (r.accepted = (pronounce r.tree .bound true = some r.form ∨
@@ -251,9 +250,8 @@ theorem island_rows :
       (r.accepted = (pronounce r.tree .bound true = some r.form)) := by
   decide
 
-/-- A movement copy in the parasitic position is licensed only by a movement copy in the
-true-gap position, so for every speaker *ye … ye* is in and *mi … ye* is out ((36)–(37),
-Table 4). -/
+/-- A movement copy in the parasitic position needs a movement copy in the true gap, so *ye … ye* is
+in and *mi … ye* out ((36)–(37), Table 4). -/
 theorem parasitic_rows :
     ∀ r ∈ rows, r.construction = .parasiticGap →
       r.parasitic = pronounce r.tree .movementCopy true →

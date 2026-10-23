@@ -80,9 +80,8 @@ instance : DecidablePred Daura := λ x => match x with
   | .balki => isTrue trivial
   | .cadi => isFalse id
 
-/-- The bare-indefinite reading of *passengers didn't buckle* is false on the model, while the
-some-not reading a wide-scope indefinite would give is true: the readings the chapter
-separates in (13) are distinct. -/
+/-- The bare-indefinite reading of *passengers didn't buckle* is false on the model while the
+wide-scope some-not reading is true (13). -/
 theorem bare_no_wide_scope :
     ¬ ¬ bareVerb (λ x (_ : Unit) => Daura x) (λ _ => True) () ∧
       ∃ x : Faasinjee, ¬ Daura x :=
@@ -109,8 +108,7 @@ theorem every_neg_iff_not_some (R S : α → Prop) :
     every R (¬ S ·) ↔ ¬ GQ.some R S := by
   simp [every, GQ.some]
 
-/-- The negative existential of (73) and the negative universal of (74) differ on the model:
-not every passenger buckled, yet it is false that none did. -/
+/-- The negative existential of (73) and the negative universal of (74) differ on the model. -/
 theorem kowWh_negation_readings_diverge :
     ¬ every (λ _ : Faasinjee => True) Daura ∧
       ¬ every (λ _ : Faasinjee => True) (¬ Daura ·) :=

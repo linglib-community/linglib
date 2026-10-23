@@ -239,7 +239,7 @@ theorem Interpretable.satisfiesFient {p : FientP} (h : p.Interpretable) : p.Sati
   rcases p with ⟨_ | x, _ | m, _ | _ | _, _ | _ | _⟩ <;> simp_all [Interpretable, SatisfiesFient]
 
 /-- A resultative participle with a single DP violates the condition on v[FIENT] wherever the DP is
-generated, since one of the two v[FIENT] heads is left without a specifier (57b). -/
+generated (57b). -/
 theorem not_satisfiesFient_participle (x : DP) (m : Option Root) (r : Root)
     (μ : Option MeansRule) :
     ¬ (⟨some x, m, .participle none r, μ⟩ : FientP).SatisfiesFient ∧
@@ -252,15 +252,14 @@ theorem interp_rootComplement (x : DP) {r : Root} (hr : TakesArgument r) (μ : O
     interp M ⟨some x, none, .root r, μ⟩ = some (M.fient (M.pred r (M.dp x))) := by
   simp [interp, hr]
 
-/-- A directly merged Root names the means and the aP the result: *John hammered the metal flat*
-is `BY(Hammer(the metal), FIENT(Flat(the metal)))`, becoming flat by hammering and not becoming
-hammered by flattening (50). -/
+/-- A directly merged Root names the means and the aP the result, so *John hammered the metal flat*
+is `BY(Hammer(the metal), FIENT(Flat(the metal)))` (50). -/
 theorem interp_directMerge (x : DP) (m a : Root) :
     interp M ⟨some x, some m, .aP a, some .argument⟩ =
       some (M.by_ (M.pred m (M.dp x)) (M.fient (M.pred a (M.dp x)))) := rfl
 
-/-- A Root merged without an argument is no predicate of the DP: *John smoked himself thin* is
-`BY(Smoke, FIENT(Thin(himself)))` and does not entail that John smoked himself (52). -/
+/-- A Root merged without an argument is no predicate of the DP, so *John smoked himself thin* is
+`BY(Smoke, FIENT(Thin(himself)))` (52). -/
 theorem interp_directMerge_noArgument (x : DP) (m a : Root) :
     interp M ⟨some x, some m, .aP a, some .noArgument⟩ =
       some (M.by_ (M.prop m) (M.fient (M.pred a (M.dp x)))) := rfl

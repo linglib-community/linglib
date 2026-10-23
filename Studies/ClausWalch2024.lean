@@ -110,8 +110,8 @@ theorem outcomes_negative (c : Comparison) (h : p + q = N) :
   ext k
   cases c <;> simp [outcomes] <;> omega
 
-/-- The arithmetic argument for the equivalence of the frames presupposes a precise reading
-(p. 4145): the frames leave open the same outcomes just in case the numeral is read precisely. -/
+/-- The two frames leave open the same outcomes just in case the numeral is read precisely (p.
+4145). -/
 theorem outcomes_positive_eq_negative_iff (c : Comparison) (h : p + q = N) (hp : 0 < p) :
     outcomes c.modifier N p q .positive = outcomes c.modifier N p q .negative ↔ c = .eq := by
   rw [outcomes_negative c h]
@@ -176,9 +176,8 @@ def Modifier.entry : Modifier → Numerals.NumeralModifier
   | .bisZu => German.NumeralModifiers.bisZu
   | .hoechstens => German.NumeralModifiers.hoechstens
 
-/-- *Bis zu* and *höchstens* have the same readings and opposite framing effects in either
-scenario (the significant interactions, p. 4148), so no account that sees a modifier only
-through its readings predicts both. -/
+/-- *Bis zu* and *höchstens* share readings but differ in framing effect, so no reading-only account
+predicts both (p. 4148). -/
 theorem no_reading_only_account (P : Set (_root_.Modifier (Set ℕ)) → SignType) (s : Scenario) :
     ¬ (P ⟦Modifier.bisZu.entry⟧ = framingEffect (s.upper .bisZu) ∧
       P ⟦Modifier.hoechstens.entry⟧ = framingEffect (s.upper .hoechstens)) := by
@@ -187,9 +186,8 @@ theorem no_reading_only_account (P : Set (_root_.Modifier (Set ℕ)) → SignTyp
   rw [framingEffect_bisZu, framingEffect_hoechstens] at this
   exact absurd this (by decide)
 
-/-- At the experiments' numbers the range account predicts no effect under *genau*, against the
-significant effects of Experiment 1 (p. 4147), and a reversed one under both upper bounds, right
-for *höchstens* and wrong for *bis zu*. -/
+/-- At the experiments' numbers, the range account mispredicts the framing effects of *genau* (p.
+4147) and *bis zu*. -/
 theorem rangeEffect_fragment (s : Scenario) :
     (∀ m ∈ ⟦genau⟧,
       rangeEffect m s.total (s.number .positive) (s.number .negative) ≠ framingEffect s.genau) ∧
@@ -259,9 +257,8 @@ theorem salienceEffect_eq_framingEffect (s : Scenario) :
   · cases m <;> simp [salienceEffect, appraisal, salience_bisZu hp, salience_bisZu hq,
       salience_hoechstens, framingEffect_bisZu, framingEffect_hoechstens, Frame.valence]
 
-/-- On the Fragment's readings the classification reproduces the paper's lists (p. 4149), with
-*more than*, *at least* and *exactly* making the instances salient and *fewer than* and *at most*
-the complement set. -/
+/-- On the Fragment's readings, *more than*, *at least* and *exactly* make the instances salient and
+*fewer than* and *at most* the complement (p. 4149). -/
 theorem salience_raised (hn : 0 < n) :
     (∀ w ∈ [moreThan, atLeast, exactly], salience (raised w n) = 1) ∧
     ∀ w ∈ [fewerThan, atMost], salience (raised w n) = -1 := by

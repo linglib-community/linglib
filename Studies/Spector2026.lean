@@ -981,8 +981,8 @@ theorem felicitousP_qs (C : Set (W × PluralAssign ℕ D)) (Rd L : R) (hxy : x �
   obtain ⟨-, b, -, hb, -⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h1)
   rw [evalP_and, evalP_valued_eq_true_iff.2 ⟨_, hb⟩, SignType.meetMiddle_one_left]
 
-/-- Over a domain with two individuals *every student came. He …* is infelicitous in the null
-context, because a universal does not license a singular pronoun ((21)–(22)). -/
+/-- With two individuals, *every student came. He …* is infelicitous in the null context
+((21)–(22)). -/
 theorem not_felicitousP_forall_conj {a b : D} (hab : a ≠ b) {P₀ Q : P}
     (hw : ∃ w, ∀ d, d ∈ M.pred P₀ w) :
     ¬ Felicitous (evalP M) Set.univ (.and (.all x (.pred P₀ x)) (.pred Q x)) := fun h ↦
@@ -997,8 +997,8 @@ theorem evalP_ex_and_not_all_ne_true {a b : D} (hab : a ≠ b) (P₀ Q : P) (G :
   rw [evalP_and, SignType.meetMiddle_eq_one_iff, evalP_not, SignType.neg_eq_one_iff] at h
   exact not_singular_of_covers hab (evalP_all_eq_false_iff.1 h.2).1 (singular_of_evalP_ex_pred h.1)
 
-/-- `∀x P(x)` and `¬∃x¬P(x)` differ in falsity. Where `x` covers a domain with two individuals, one
-of which is not a `P`, the universal is false and the negated existential undefined (Remark 4). -/
+/-- Where one of two individuals is not a `P`, `∀x P(x)` is false but `¬∃x¬P(x)` is undefined
+(Remark 4). -/
 theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P)
     (hd : ∃ d, d ∉ M.pred P₀ w) :
     evalP M (.all x (.pred P₀ x)) w (covering D x) = -1 ∧
@@ -1024,8 +1024,8 @@ theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P
     rw [(PluralAssign.value_restrict_eq_singleton_iff.1 hd').2] at hm
     exact absurd hm hd
 
-/-- *Not every male student came. He stayed home.* is infelicitous, because the negated universal
-makes `x` cover the domain, so the pronoun's atomicity fails (fn. 19). -/
+/-- *Not every male student came. He stayed home.* is infelicitous, because the pronoun's atomicity
+fails (fn. 19). -/
 theorem not_felicitousDiscourseP_not_all {a b : D} (hab : a ≠ b) (P₀ Q : P)
     (hd : ∃ d, d ∉ M.pred P₀ w) :
     ¬ FelicitousDiscourse (evalP M) Set.univ [.not (.all x (.pred P₀ x)), .pred Q x] := by
@@ -1132,9 +1132,8 @@ theorem felicitousP_qs_restricted (C : Set (W × PluralAssign ℕ D)) (S B : P) 
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h1.1
   exact evalP_valued_eq_true_iff.2 ⟨_, hb⟩
 
-/-- The pronoun of *every student read a book and everyone liked it* fails Transparency in the null
-context at a world with a non-student where every student read a book, since a plural assignment can
-leave the non-student's book unsettled ((33)–(34)). -/
+/-- At a world with a non-student where every student read a book, the pronoun of *every student
+read a book and everyone liked it* fails Transparency ((33)–(34)). -/
 theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : R) (hxy : x ≠ y)
     {e₀ : D} (he₀ : e₀ ∉ M.pred S w)
     (hS : ∀ s ∈ M.pred S w, ∃ b ∈ M.pred B w, (s, b) ∈ M.rel Rd w) :
@@ -1201,8 +1200,8 @@ theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : 
     evalP_all_eq_true_iff.2 fun e ↦ ⟨hne e, htaut _⟩] at this
   exact absurd this (by decide)
 
-/-- *Every farmer who owns a donkey beats it* is weakly true at a world exactly when every farmer
-who owns a donkey beats a donkey they own, the weak existential reading ((36), §6.7.1). -/
+/-- *Every farmer who owns a donkey beats it* is weakly true iff every donkey-owning farmer beats
+some donkey they own ((36), §6.7.1). -/
 theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
     TrueAtP M (.all x (.or (.not (.and (.pred F x) (.ex y (.and (.pred Dn y) (.rel O x y)))))
       (.rel Bt x y))) w ↔
@@ -1343,9 +1342,8 @@ theorem felicitousP_donkey (C : Set (W × PluralAssign ℕ D)) (F Dn : P) (O Bt 
   obtain ⟨b, hb, -⟩ := evalP_pred_eq_true_iff.1 h.2.1
   exact evalP_valued_eq_true_iff.2 ⟨_, hb⟩
 
-/-- *It is not true that Sue has a donkey and that she beats it* is weakly true at a world
-exactly when Sue has no donkey or has one she does not beat ((39)–(40)). Sue's owning and
-beating are rendered as one-place predicates. -/
+/-- *It is not true that Sue has a donkey and that she beats it* is weakly true iff Sue has no
+donkey or one she does not beat ((39)–(40)). -/
 theorem trueAtP_not_ex_and_iff (Dk OS BS : P) :
     TrueAtP M (.not (.and (.ex x (.and (.pred Dk x) (.pred OS x))) (.pred BS x))) w ↔
       (∀ d, ¬ (d ∈ M.pred Dk w ∧ d ∈ M.pred OS w)) ∨

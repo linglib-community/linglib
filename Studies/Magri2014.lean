@@ -258,8 +258,8 @@ theorem atLeast_nonempty {n : ℕ} (h : n ≤ Fintype.card D) : (atLeast D n).No
 
 variable [DecidableEq D]
 
-/-- (27), (34): an item that means a lower threshold and is a Horn-mate of it strengthens to
-the higher threshold, the plurality inference of PL and the universal reading of THE. -/
+/-- An item meaning a lower threshold whose Horn-mate is a higher threshold strengthens to the
+higher one ((27), (34)). -/
 theorem strengthened_atLeast {m n : ℕ} (hmn : m ≤ n) (hn : n ≤ Fintype.card D) :
     strengthened primalMates (primal (atLeast D m) (atLeast D n)) .mystery = atLeast D n :=
   strengthened_primal_mystery_eq_strong (atLeast_subset_atLeast hmn) (atLeast_nonempty hn)
@@ -327,10 +327,7 @@ theorem exactlyOneSome_inter_exactlyOneAll [Nonempty P] :
       card_pos.2 ⟨s, mem_filter.2 ⟨mem_univ s, hs⟩⟩
     omega
 
-/-- (37): in the scope of *exactly one student* the definite strengthens to ∃!THE ∧ ∃!ALL, that
-is, exactly one student solved some of the problems and that student solved them all: universal
-force in the upward-entailing component and existential force in the downward-entailing one.
-The hypotheses are the consistency conditions of the two exclusions. -/
+/-- In the scope of *exactly one student*, the definite strengthens to ∃!THE ∧ ∃!ALL (37). -/
 theorem exactlyOne_the [Nonempty P] (h₁ : (exactlyOneSome S P \ exactlyOneAll S P).Nonempty)
     (h₂ : (exactlyOneSome S P ∩ exactlyOneAll S P).Nonempty) :
     strengthened primalMates (primal (exactlyOneSome S P) (exactlyOneAll S P)) .mystery =
@@ -349,8 +346,8 @@ inductive Boy where
   | bill
   deriving DecidableEq, Fintype, Nonempty
 
-/-- (56): unfocused conjunction instantiates the dual theory with disjunction as the weak and
-focused conjunction as the strong pole, over the worlds that record which boys Mary saw. -/
+/-- Unfocused conjunction instantiates the dual theory, with disjunction the weak and focused
+conjunction the strong pole (56). -/
 theorem not_andUnF_eq_not_or :
     strengthened dualMates (compl ∘ dual (some Boy) (all Boy)) .mystery = (some Boy)ᶜ :=
   strengthened_dual_not_mystery (atLeast_subset_atLeast Fintype.card_pos) (by decide) (by decide)

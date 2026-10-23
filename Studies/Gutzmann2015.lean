@@ -232,9 +232,8 @@ def truthShadow : {σ ρ : UCType} → Deriv W C σ ρ → Denote W C σ
   | _, _, .app f a => f.truthShadow a.truthShadow
   | _, _, .elim d => d.truthShadow
 
-/-- (4.28), the principle of non-interaction: the truth-conditional dimension of every
-derivation is a function of its lexical items' truth-conditional dimensions alone, so
-use-conditional content never leaks into truth conditions. -/
+/-- Every derivation's truth-conditional dimension depends only on its lexical items'
+truth-conditional dimensions (4.28). -/
 theorem eval_t {σ ρ : UCType} (d : Deriv W C σ ρ) : d.eval.t = d.truthShadow := by
   induction d with
   | lex x => rfl
@@ -401,9 +400,8 @@ theorem jaDeclarative_u :
   simp [jaDeclarative, Deriv.eval, Expr.app, Expr.elim, Expr.ofModifier, Expr.ofTC, prop, E,
     jaEntry]
 
-/-- (6.129): a *ja*-interrogative would require the speaker to want to know whether its content
-holds, the hearer to know, and the speaker to believe it common knowledge, which the book
-argues no reasonable speaker does. -/
+/-- A *ja*-interrogative requires the speaker to want to know its content while believing it common
+knowledge and known to the hearer (6.129). -/
 theorem jaInterrogative_u :
     (jaInterrogative M p).eval.u c ↔
       (M.commonKnowledge c p ∧ M.knowsWhether c p) ∧ deont M (epis M p) c := by
@@ -470,15 +468,14 @@ private theorem derivable_deonticOnly_subset {σ : UCType}
       simp at iha
   | elim _ _ => simp
 
-/-- (6.108): no derivation over the lexicon of a dass-clause or imperative with *wohl* and a
-proposition reaches the epistemic modifier's type, so *wohl* has nothing to take. -/
+/-- No derivation from a dass-clause or imperative with *wohl* and a proposition reaches the
+epistemic modifier's type (6.108). -/
 theorem not_derivable_deonticOnly :
     ¬ Derivable ({func .t .u} ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) :=
   λ h => by simpa using derivable_deonticOnly_subset h
 
-/-- Section 6.5.1: the epistemic modifier's type is derivable from a clause type's mood items
-together with *wohl* and a proposition exactly when the clause type has the epistemic
-modifier. -/
+/-- The epistemic modifier's type is derivable from a clause type's mood items with *wohl* and a
+proposition iff the clause type has the epistemic modifier (Section 6.5.1). -/
 theorem derivable_wohl_iff (ct : ClauseType) :
     Derivable (ct.moodTypes ∪ {modifier (func .t .u) 2, .t}) (modifier (func .t .u) 1) ↔
       ct.HasEpistemic := by

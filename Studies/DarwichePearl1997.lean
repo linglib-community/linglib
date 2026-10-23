@@ -115,10 +115,7 @@ def table₁' : World → ℕ
   | (false, true) => 2
   | (false, false) => 1
 
-/-- In Example 6, with `adder_ok` first and `multiplier_ok` second, the revision is compatible with
-the postulates, its belief worlds being the least `μ`-worlds of the prior. Revising by `¬adder_ok`
-yields `¬adder_ok ∧ multiplier_ok` from the prior but `¬adder_ok ∧ ¬multiplier_ok` after `μ`,
-against (C1), and the two orderings disagree on `μ`, against (CR1). -/
+/-- In Example 6, a revision compatible with the basic postulates violates (C1) and (CR1). -/
 theorem example₆ :
     (∀ w, w ∈ (Preorder.lift table₁').minimals Set.univ ↔
       w ∈ (Preorder.lift table₁).minimals {w | ¬ (w ∈ first ∧ w ∈ second)}) ∧
@@ -142,9 +139,7 @@ def table₂' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- In Example 7, with `smart` first and `rich` second, revising by `smart` yields `smart ∧ rich`
-from the prior but `smart ∧ ¬rich` after `¬smart`, against (C2), and the orderings disagree on the
-`smart`-worlds, against (CR2). -/
+/-- In Example 7, revising by `smart` violates (C2) and (CR2). -/
 theorem example₇ :
     (∀ w, w ∈ (Preorder.lift table₂').minimals Set.univ ↔
       w ∈ (Preorder.lift table₂).minimals {w | w ∉ first}) ∧
@@ -167,9 +162,7 @@ def table₃' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- In Example 8, with `bird` first and `flies` second, revising by `bird` yields `bird ∧ flies`
-from the prior, which entails `flies`, but only `bird` after `flies`, against (C3), and a
-`flies`-world strictly below a `¬flies`-world no longer is, against (CR3). -/
+/-- In Example 8, revising by `bird` violates (C3) and (CR3). -/
 theorem example₈ :
     (∀ w, w ∈ (Preorder.lift table₃').minimals Set.univ ↔
       w ∈ (Preorder.lift table₃).minimals second) ∧
@@ -192,10 +185,7 @@ def table₄' : World → ℕ
   | (false, true) => 0
   | (false, false) => 1
 
-/-- In Example 9, with `shining_sun` first and `nice_day` second, revising by `shining_sun` yields
-`shining_sun` from the prior, leaving `nice_day` open, but `shining_sun ∧ ¬nice_day` after
-`nice_day`, against (C4), and a `nice_day`-world weakly below a `¬nice_day`-world no longer is,
-against (CR4). -/
+/-- In Example 9, revising by `shining_sun` violates (C4) and (CR4). -/
 theorem example₉ :
     (∀ w, w ∈ (Preorder.lift table₄').minimals Set.univ ↔
       w ∈ (Preorder.lift table₄).minimals second) ∧
@@ -206,9 +196,8 @@ theorem example₉ :
 
 /-! ### Boutilier's postulate forgets -/
 
-/-- In Example 10, under (CB), once a bird is seen to be red and then found not to be a bird, all
-that is believed is that it is not a bird, provided revising the original state by `¬bird` left the
-colour open. -/
+/-- Under (CB), finding a red bird not to be a bird leaves only the belief that it is not a bird,
+provided `¬bird` alone left the colour open (Example 10). -/
 theorem cb_forgets {S W : Type*} {r : Revision S W} (h : r.IsAGM) (hCB : r.CB) {Ψ : S}
     {bird red : Set W} (hΨ : r.bel Ψ = bird) (hne : (bird ∩ red).Nonempty)
     (hΨ' : r.bel (r.revise Ψ birdᶜ) = birdᶜ) :

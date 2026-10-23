@@ -327,9 +327,7 @@ private theorem real_false_eq (ρ : Measure Bool) [IsProbabilityMeasure ρ] :
   rw [← Finset.coe_univ, ← sum_measureReal_singleton, Fintype.sum_bool] at h
   linarith
 
-/-- The posterior probability of the complement rises with its prior probability, under every
-utterance, question, rationality, cost and assumption prior, since the world prior enters the
-model at the pragmatic listener alone. This is the prior effect (2b). -/
+/-- The posterior probability of the complement rises with its prior probability (2b). -/
 theorem L1_c_mono (γ' : Measure Bool) [IsProbabilityMeasure γ']
     (h : γ.real {true} ≤ γ'.real {true}) :
     (L1 α k (β.prod γ) ν q u).real {p | p.1.complement = true}

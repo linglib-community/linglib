@@ -88,8 +88,7 @@ theorem IsEventStructure.prec_trans (h : IsEventStructure prec ov) {x y z : E}
     (hxy : prec x y) (hyz : prec y z) : prec x z :=
   h.prec_of_prec_of_ov hxy (h.ov_refl y) hyz
 
-/-- The derivation of the No-Crossing Constraint (Section 1.1): of two lines between two tiers,
-the first ends cannot precede one another while the second ends follow one another. -/
+/-- The axioms of an event structure entail the No-Crossing Constraint (Section 1.1). -/
 theorem IsEventStructure.not_crossing (h : IsEventStructure prec ov) {w x y z : E}
     (hwx : prec w x) (hyz : prec y z) (hwz : ov w z) (hxy : ov x y) : False :=
   h.not_ov_of_prec (h.prec_of_prec_of_ov hwx hxy hyz) hwz
@@ -122,9 +121,7 @@ section Intervals
 
 variable {T : Type*} [LinearOrder T]
 
-/-- Intervals satisfy the axioms under the definitions (11): one interval precedes another when
-every point of the first precedes every point of the second, and two intervals overlap when they
-share a point. -/
+/-- Intervals form an event structure under the precedence and overlap of (11). -/
 theorem isEventStructure_intervals :
     IsEventStructure (fun x y : NonemptyInterval T ↦ ∀ p ∈ x, ∀ q ∈ y, p < q)
       fun x y ↦ ∃ p, p ∈ x ∧ p ∈ y := by

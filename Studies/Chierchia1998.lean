@@ -207,9 +207,8 @@ def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C 
     {p | Quantifier.GQ.some ((iota (IsGreatest (computer p.2))).elim (∅ : Set E) Set.Iic)
       (route · p.1 p.2)}
 
-/-- In (39b) the fronted bare plural is universal over the normal cases of the restriction, and
-the one in the scope is existential over the instances of its kind at each, as Diesing's
-generalization predicts (p. 368). -/
+/-- In (39b) the fronted bare plural is universal over the normal cases, and the one in scope
+existential over its kind's instances (p. 368). -/
 theorem mem_computersRoute {N : Normality S (E × S)} {computer plane : S → Set E}
     {C : Set (E × S)} {route : E → E → S → Prop} {s : S} :
     s ∈ computersRoute N computer plane C route ↔
@@ -217,9 +216,8 @@ theorem mem_computersRoute {N : Normality S (E × S)} {computer plane : S → Se
         ∃ x ∈ (iota (IsGreatest (computer p.2))).elim ∅ Set.Iic, route x p.1 p.2 :=
   Iff.rfl
 
-/-- The generic reading of a bare plural, (38b), entails its episodic reading by derived kind
-predication, (31c), at any situation where the kind has a normal instance: if dogs bark, then
-some dog barks wherever a normal dog is. -/
+/-- The generic reading of a bare plural (38b) entails its episodic reading by derived kind
+predication (31c) wherever the kind has a normal instance. -/
 theorem some_up_of_mem_dogsBark {N : Normality S (E × S)} {dog : S → Set E} {C : Set (E × S)}
     {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
     (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ (iota (IsGreatest (dog p.2))).elim ∅ Set.Iic} ∩ C)) :

@@ -47,9 +47,8 @@ variable {E S : Type*}
 
 /-! ### Elliptical NPs and bare predicates (§2.3–2.4) -/
 
-/-- Predicated of something that is a `P`, the elliptical NP *[John's P]* on its possession
-reading — `P` coerced by `R`, then taken as the genitive's argument — and the bare predicate
-possessive `λx[R(John)(x)]` (31) agree. -/
+/-- For an `x` that is a `P`, the elliptical *[John's P]* on its possession reading agrees with the
+bare predicate possessive (31). -/
 theorem elliptical_iff_bare {P : E → S → Prop} {x : E} {s : S} (possessor : E)
     (R : E → E → S → Prop) (hP : P x s) :
     π P R possessor x s ↔ R possessor x s :=

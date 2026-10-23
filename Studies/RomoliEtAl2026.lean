@@ -181,8 +181,8 @@ theorem pointwise_exactlyTwo_eq_neg_one_iff :
   exact ⟨fun h ↦ by by_contra hc; exact h 2 (by omega) (by omega) rfl,
     fun h k h₁ h₂ ↦ by omega⟩
 
-/-- Under *exactly two* the sentence is defined where two boys opened all of their presents and
-no other boy opened any, or more than two opened all, or fewer than two opened any, (25d). -/
+/-- *Exactly two* is defined where two boys opened all presents and the rest none, more than two
+opened all, or fewer than two any (25d). -/
 theorem pointwise_exactlyTwo_ne_zero_iff :
     pointwise (NumberTree.cardinal {2}) d ≠ 0 ↔
       (d.count 1 = 2 ∧ d.count 0 = 0) ∨ 2 < d.count 1 ∨ d.count 1 + d.count 0 < 2 := by
@@ -346,8 +346,8 @@ theorem asymmetric_iff_of_scopeMonotone (hq : q.ScopeMonotone) :
     resolve_k3_pexCell]
   rfl
 
-/-- In a scope-antitone environment the assertion entails the presupposition, so pruning has no
-effect and the asymmetric verdict is the existential reading in every context, (26) and (27). -/
+/-- In a scope-antitone environment, the asymmetric approach gives the existential reading in every
+context ((26), (27)). -/
 theorem asymmetric_iff_of_scopeAntitone (hq : q.ScopeAntitone) :
     asymmetric q ctx opened ↔ someReading q (opened.map cell) := by
   rw [asymmetric, KrizChemla2015.pointwise_eq_supervaluation_of_scopeAntitone hq,
@@ -399,8 +399,8 @@ theorem asymmetric_all_universal_iff :
     KrizChemla2015.reading_all]
   simp [AugurzkyEtAl2023.Context.designation, KrizChemla2015.designated_k3_cell]
 
-/-- With no alternative pruned, *exactly two boys opened their presents* says after
-accommodation that two boys opened all of their presents and every other boy none, (30). -/
+/-- Without pruning, *exactly two boys opened their presents* says after accommodation that two boys
+opened all of theirs and every other boy none (30). -/
 theorem asymmetric_exactlyTwo_universal_iff :
     asymmetric (NumberTree.cardinal {2}) .universal opened ↔
       (opened.map cell).count 1 = 2 ∧ (opened.map cell).count 0 = 0 := by
@@ -424,8 +424,8 @@ theorem targets_gap : ∀ p ∈ pictures, ∀ pol ∈ p.targetFor,
     pointwise (sentences p.experiment pol).quantifier.tree p.display = 0 := by
   decide
 
-/-- A target picture of Experiment 1 for one sentence makes the other false however its definite
-is resolved, which is why it was not analysed (§3.3.1). -/
+/-- A target picture of Experiment 1 for one sentence makes the other false under any resolution of
+its definite (§3.3.1). -/
 theorem targets_unanalysed : ∀ p ∈ pictures, p.experiment = .one → p.picture = .target →
     ∀ pol, pol ∉ p.targetFor →
     pointwise (sentences p.experiment pol).quantifier.tree p.display = -1 := by
@@ -451,9 +451,8 @@ theorem predictions_symmetric : ∀ p ∈ pictures, ∀ pol ∈ p.targetFor, ∀
       c = Recoding.lax.context pol := by
   decide
 
-/-- On the asymmetric approach only the positive sentence or part is accepted on its target
-pictures, and only in the context prohibiting the presents to be opened, Tables 2, 4, 7 and
-10. -/
+/-- On the asymmetric approach, target pictures are accepted only for the positive sentence in the
+prohibiting context (Tables 2, 4, 7 and 10). -/
 theorem predictions_asymmetric : ∀ p ∈ pictures, ∀ pol ∈ p.targetFor, ∀ c : Context,
     asymmetric (sentences p.experiment pol).quantifier.tree c.raises p.opened ↔
       pol = .positive ∧ c = .prohibited := by
@@ -500,15 +499,14 @@ def targetMean (x : Experiment) (pol : Polarity) (r : Recoding) : Option ℚ :=
       m.experiment = x ∧ m.polarity = pol ∧ m.recoding = r ∧ m.truth = .target).map
         (·.mean.toRat)
 
-/-- The Likert effect sizes of Table 12 are the differences of the target means of Figures 4, 6
-and 8 between the lax and the strict context. -/
+/-- The Likert effect sizes of Table 12 are the lax-minus-strict differences of the target means of
+Figures 4, 6 and 8. -/
 theorem effectSizes_likert : ∀ x pol, ∃ l ∈ targetMean x pol .lax, ∃ s ∈ targetMean x pol .strict,
     l - s = (effectSizes x pol).likert.toRat := by
   decide +kernel
 
-/-- The log-odds effect sizes of Table 12 are the estimates of CONTEXT, the simple effect on the
-negative condition, plus for the positive condition that of the interaction, to the rounding of
-the printed estimates in Tables 5, 8 and 11. -/
+/-- The log-odds effect sizes of Table 12 are the CONTEXT estimate, plus the interaction for the
+positive condition, up to rounding (Tables 5, 8 and 11). -/
 theorem effectSizes_logOdds : ∀ x pol,
     |(estimates x .context).beta.toRat +
         (if pol = .positive then (estimates x .interaction).beta.toRat else 0) -

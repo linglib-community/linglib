@@ -212,8 +212,7 @@ theorem GroupEventReading.atom (h : GroupEventReading GE V ag th d₁ d₂ e) :
   obtain ⟨_, _, rfl, -⟩ := h
   exact GE.atom_up _
 
-/-- The interpretation in (47) is identical to that of the symmetric verb in (41b): the
-group-event reading's dissolution content is what the symmetric verb's postulate delivers. -/
+/-- The group-event reading of (47) has the underlying reading of the symmetric verb in (41b). -/
 theorem GroupEventReading.underlyingReading (h : GroupEventReading GE V ag th d₁ d₂ e) :
     UnderlyingReading GE V ag th d₁ d₂ e := by
   obtain ⟨e₁, e₂, rfl, hc⟩ := h
@@ -239,8 +238,8 @@ structure IsSymmetricVerb (GD : GroupStructure D) (GE : GroupStructure E) (V : S
 
 namespace IsSymmetricVerb
 
-/-- (41a) entails (41b): each event of a symmetric verb dissolves into two events of its base
-with crossed roles for the two members of its pair. -/
+/-- Each event of a symmetric verb has the underlying reading of two distinct participants, so (41a)
+entails (41b). -/
 theorem exists_underlyingReading (h : IsSymmetricVerb GD GE V ag th Vsym agTh) (he : e ∈ Vsym) :
     ∃ d₁ d₂, d₁ ≠ d₂ ∧ UnderlyingReading GE V ag th d₁ d₂ e := by
   obtain ⟨d₁, d₂, h₁, h₂, hne, hrole⟩ := h.exists_pair e he
@@ -321,9 +320,8 @@ object-taking predicate is introduced by dative *à*; an intransitive's causee s
 def causeeRegion (r : RoleList) : CaseRegion :=
   if r.objectProfile.isSome then .dative else .accAbs
 
-/-- Keeping the transitive grid predicts the dative causee and reciprocalization the bare causee,
-and *Pierre a fait s'embrasser Jean et Marie* decides for reciprocalization ((25a) against (25d)).
--/
+/-- Keeping the transitive grid predicts a dative causee and reciprocalization a bare one, and
+French decides for reciprocalization ((25a) against (25d)). -/
 theorem causative_diagnostic (ho : base.objectProfile = some o) :
     causeeRegion (reciprocalize base) = .accAbs ∧ causeeRegion base = .dative :=
   ⟨rfl, by simp [causeeRegion, ho]⟩
@@ -344,9 +342,8 @@ theorem depictive_diagnostic (ho : base.objectProfile = some o) (hp : o.protoPat
   rw [reciprocalize_subjectProfile ho]
   exact hp.mono (EntailmentProfile.protoPatient_mono Finset.subset_union_right)
 
-/-- The comparative remnant construes with a grid position (section 3.2): the transitive offers
-two readings (19a), the reciprocalized grid one (19b); with no object there is no accusative
-remnant ((20) and (21)). -/
+/-- The transitive grid offers a comparative remnant two positions (19a) and the reciprocalized grid
+one (19b), leaving no accusative remnant ((20) and (21); section 3.2). -/
 theorem ellipsis_diagnostic (ho : base.objectProfile = some o) :
     (reciprocalize base).args.length = 1 ∧ base.args.length = 2 :=
   ⟨rfl, by simp [RoleList.args, ho]⟩
@@ -659,9 +656,8 @@ def hitnashek : Set KissEvent := Set.range mutualEvent
 /-- The complex role of the mutual events, the group of Dan and Rina. -/
 noncomputable def kissAgTh (_ : KissEvent) : Individual := individualGroups.up (dan ⊔ rina)
 
-/-- The model meets footnote 17: *hitnašek* is a symmetric verb over the transitive *nišek*
-'kiss'. The pair-group fixes its members up to order, and the postulate holds in either order
-since (41b) is symmetric. -/
+/-- The model makes *hitnašek* a symmetric verb over *nišek* 'kiss' in the sense of footnote 17 and
+(41b). -/
 theorem isSymmetricVerb_hitnashek :
     IsSymmetricVerb individualGroups kissGroups kiss kissAg kissTh hitnashek kissAgTh where
   atom := by
@@ -750,9 +746,8 @@ def Discontinuous (Vsym : Set E) (agTh obl : E → D) (d₁ d₂ : D) : Prop :=
 
 namespace IsDyadicSymmetricVerb
 
-/-- The discontinuous construction entails reciprocity between subject and comitative (section
-7.1): (101) entails (102), whose content is symmetric, so *Dan kissed with Dina* carries the
-underlying content of *Dina kissed with Dan* too. -/
+/-- The discontinuous construction entails reciprocity between subject and comitative, since (101)
+entails the symmetric (102) (section 7.1). -/
 theorem underlyingReading_of_discontinuous (h : IsDyadicSymmetricVerb GE V ag th Vsym agTh obl)
     (hd : Discontinuous Vsym agTh obl d₁ d₂) :
     ∃ e, UnderlyingReading GE V ag th d₁ d₂ e ∧ UnderlyingReading GE V ag th d₂ d₁ e := by
@@ -765,10 +760,8 @@ theorem not_subEventReading (h : IsDyadicSymmetricVerb GE V ag th Vsym agTh obl)
 
 end IsDyadicSymmetricVerb
 
-/-- The postulate does not by itself make (73a) entail (73b). A dyadic entry whose one event has
-Dan kissing with Rina meets footnote 43, while *Rina kissed with Dan* is false of it. The
-infelicity of (73c), *Dan kissed with Dina but Dina didn't kiss with Dan*, needs more than the
-postulate, which entails (102) without being equivalent to it (section 7.5). -/
+/-- The postulate alone does not make (73a) entail (73b), so the infelicity of (73c) needs more than
+the postulate, which entails (102) (footnote 43; section 7.5). -/
 theorem exists_discontinuous_not_comm :
     ∃ (Vsym : Set KissEvent) (agTh obl : KissEvent → Individual),
       IsDyadicSymmetricVerb kissGroups kiss kissAg kissTh Vsym agTh obl ∧

@@ -346,8 +346,8 @@ higher-ranked argument is given and the lower-ranked one new. -/
 def GivennessAlternationUniversal (rate : Scenario BinaryGivenness → F) : Prop :=
   ∀ s, rate ⟨.given, .new⟩ ≤ rate s
 
-/-- Universals 13 and 14 are special cases of the alternation universal (61), Universal 5 read with
-the usage rate of the longer alternant as its coding (§10.1). -/
+/-- Universals 13 and 14 are special cases of the alternation universal (61), Universal 5 with usage
+rate as coding (§10.1). -/
 theorem givennessAlternationUniversal_of_scenarioUniversal
     {rate : Scenario BinaryGivenness → F} (h : ScenarioUniversal rate) :
     GivennessAlternationUniversal rate :=
@@ -512,8 +512,7 @@ def greekT : Scenario Person.Class → ℕ := atLeast .participant ∘ Scenario.
 /-- Icelandic flags R with `fyrir` when T is animate, as in (46). -/
 def icelandicR : Scenario BinaryAnimacy → ℕ := atLeast .animate ∘ Scenario.low
 
-/-- The monotransitive scenario splits obey Universal 5 (§6); the monadic ones by fn. 18 on a binary
-scale, Spanish as a relative split, the dyadic Yurok by inspection. -/
+/-- The monotransitive scenario splits obey Universal 5 (§6), the monadic ones by fn. 18. -/
 theorem universal5_monotransitive :
     ScenarioUniversal yukaghirP ∧ ScenarioUniversal yurokP ∧
       ScenarioUniversal sahaptinA ∧ ScenarioUniversal khantyA ∧ ScenarioUniversal spanishP :=
@@ -556,8 +555,7 @@ theorem yukaghirP_ternary_violates :
       (by decide : Person.prominence .second < Person.prominence .first)
       (Person.prominence .third) (Person.prominence .first)) (by decide)
 
-/-- Modern Greek's rule on the ternary person scale (47a) violates Universal 5 likewise, since the
-downstream `1 > 2` is coded longer than the balanced `3 > 3`. -/
+/-- Modern Greek's rule on the ternary person scale (47a) violates Universal 5. -/
 theorem greekT_ternary_violates :
     ¬ ScenarioUniversal (atLeast (Person.prominence .second) ∘ Scenario.low) :=
   fun h ↦ absurd
@@ -592,10 +590,8 @@ private theorem kashmiri_rank_eq :
   funext p; cases p <;> decide
 
 open Minimalist.CyclicAgree in
-/-- Kashmiri's dative P of (47) falls on the scenarios that the cyclic Agree of [bejar-rezac-2009]
-makes inverse, where their Table 11 puts the internal argument in R-Case, so the relative split and
-the failed licensing of the external argument pick out the same scenarios, those that are not
-downstream on the person scale, by which the full probe ranks persons. -/
+/-- Kashmiri's dative P (47) falls exactly on the scenarios that the cyclic Agree of
+[bejar-rezac-2009] makes inverse (their Table 11). -/
 theorem kashmiriP_iff_isInverse (s : Scenario Person) :
     kashmiriP (s.map Person.prominence) = 1 ↔ BejarRezac2009.kashmiri.IsInverse s := by
   have hm : StrictMono (featuresUpTo · + 1) := by decide
@@ -801,8 +797,7 @@ def focusTable : List (String × Markᵒᵈ) :=
 def Nominality.table : List (String × Nominality) :=
   [("pers", .pronoun), ("prop", .properName), ("common", .commonNoun)]
 
-/-- The single-argument P and A splits of §4.1 and §4.2 reproduce the paper's examples, the Punjabi
-and Kham rows those of the Sakha and Godoberi rules they share. -/
+/-- The P and A splits of §4.1 and §4.2 reproduce the examples. -/
 theorem rows_splitP_splitA :
     Reproduces (rows "yaku1245" "P" "definiteness") (prominence? Definiteness.table) sakhaP ∧
       Reproduces (rows "nuor1238" "P" "animacy") (prominence? Animacy.table) sardinianP ∧
@@ -830,9 +825,8 @@ theorem rows_splitR_splitT :
         makassarVNominality := by
   decide
 
-/-- The scenario splits of §6 and §7 and Itonama's inverse of §9 reproduce the paper's examples; the
-Teop rows reproduce those of the Yukaghir rule, and the rows of (43) and (44) are the American
-varieties'. -/
+/-- The scenario splits of §6 and §7 and Itonama's inverse of §9 reproduce the examples, including
+the rows of (43) and (44). -/
 theorem rows_scenario :
     Reproduces (rows "teop1238" "P" "person") (scenario? Person.Class.table) yukaghirP ∧
       Reproduces (rows "sout2750" "P" "person") (scenario? Person.Class.table) yukaghirP ∧

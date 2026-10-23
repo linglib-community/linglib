@@ -206,8 +206,8 @@ theorem Equiv.duplicatorWins (f : M ≃[L] N) :
 theorem DuplicatorWins.refl (k : ℕ) (v : Fin n → M) : L.DuplicatorWins k v v :=
   (Equiv.refl L M).duplicatorWins k v
 
-/-- On a nonempty structure the atomic condition at rank `k + 1` follows from *forth*, so the
-relation is [libkin-2004]'s `≃ₖ₊₁` (p. 36) and [hodges-1993] Lemma 3.3.1. -/
+/-- On a nonempty structure the back-and-forth condition alone characterizes [libkin-2004]'s `≃ₖ₊₁`
+(p. 36; [hodges-1993] Lemma 3.3.1). -/
 theorem duplicatorWins_succ_iff [Nonempty M] :
     L.DuplicatorWins (k + 1) v w ↔
       (∀ a, ∃ b, L.DuplicatorWins k (Fin.snoc v a) (Fin.snoc w b)) ∧
@@ -343,8 +343,8 @@ theorem hintikka_mem : ∀ (k : ℕ) {n} (v : Fin n → M), L.hintikka k v ∈ L
 theorem qr_hintikka_le (k : ℕ) (v : Fin n → M) : (L.hintikka k v).qr ≤ k :=
   qr_le_of_mem_hintikkaSet (hintikka_mem k v)
 
-/-- A tuple satisfies exactly one game-normal formula of each rank ([hodges-1993]
-Theorem 3.3.2 (a)), so any member of `hintikkaSet k n` it satisfies is its Hintikka formula. -/
+/-- A tuple satisfies exactly one game-normal formula of each rank, its Hintikka formula
+([hodges-1993] Theorem 3.3.2 (a)). -/
 theorem eq_hintikka_of_realize : ∀ {k n} {θ : L.BoundedFormula Empty n} (u : Fin n → M),
     θ ∈ L.hintikkaSet k n → θ.Realize default u → θ = L.hintikka k u
   | 0, n, θ, u, hθ, h => by
@@ -412,8 +412,8 @@ theorem realize_hintikka_iff : ∀ {k n} (v : Fin n → M) (w : Fin n → N),
 termination_by k _ => k
 decreasing_by all_goals omega
 
-/-- Over a finite relational signature, duplicator wins `k` rounds from two tuples iff they
-satisfy the same formulas of quantifier rank `≤ k` ([libkin-2004] Theorem 3.18). -/
+/-- Duplicator wins `k` rounds from two tuples iff they satisfy the same formulas of quantifier rank
+at most `k` ([libkin-2004] Theorem 3.18). -/
 theorem duplicatorWins_iff_realize_iff (v : Fin n → M) (w : Fin n → N) :
     L.DuplicatorWins k v w ↔
       ∀ φ : L.BoundedFormula Empty n, φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w) :=
@@ -425,9 +425,8 @@ theorem elementarilyEquivalentUpTo_iff_duplicatorWins :
   ⟨fun h => (duplicatorWins_iff_realize_iff _ _).2 fun φ hφ => h φ hφ,
     DuplicatorWins.elementarilyEquivalentUpTo⟩
 
-/-- Over a finite relational signature, a class is first-order definable within `K` iff, for some
-`k`, it is closed under `k`-equivalence within `K` ([libkin-2004] Corollary 3.17). The defining
-sentence is the disjunction of the rank-`k` Hintikka sentences of its members. -/
+/-- A class is first-order definable within `K` iff it is closed under `k`-equivalence within `K`
+for some `k` ([libkin-2004] Corollary 3.17). -/
 theorem foDefinable_iff_exists_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.Structure)} :
     L.FODefinable K P ↔ ∃ k, ∀ M ∈ K, ∀ N ∈ K, (M ≅[L, k] N) → M ∈ P → N ∈ P := by
   classical

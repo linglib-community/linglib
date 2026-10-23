@@ -470,10 +470,7 @@ theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empt
 theorem raining_ne_univ : raining ≠ Set.univ := fun h ↦
   Weather.noConfusion (Set.eq_univ_iff_forall.1 h .noRain)
 
-/-- Licensing reproduces Table 1. With evidence for `φ` only the question without negation is
-licensed, read monopolar; with neutral evidence the question without negation, read bipolar, and
-the high-negation question; with evidence against `φ` both negated questions and not the
-question without negation. -/
+/-- Licensing reproduces Table 1. -/
 theorem table1 (e : SignType) :
     (Licensed (evidence raining e) raining none ↔ e ≠ -1) ∧
       (Licensed (evidence raining e) raining (some .negative) ↔ e = -1) ∧

@@ -369,8 +369,8 @@ theorem optimal_ofList_antifaithful_cons (h : ∃ c ∈ s, 0 < F c) :
     (ofList s (F.antifaithful :: Fs)).optimal = (ofList (s.filter (0 < F ·)) Fs).optimal := by
   rw [optimal_ofList_cons, Constraint.argmin_antifaithful h]
 
-/-- **Anti-faithfulness demands one violation and no more** ([alderete-2001] (9)). Under
-`¬F ≫ F` the winners are the candidates violating `F` least among those violating it at all. -/
+/-- Under `¬F ≫ F` the winners are the candidates violating `F` least among those violating it at
+all ([alderete-2001] (9)). -/
 theorem optimal_ofList_antifaithful (h : ∃ c ∈ s, 0 < F c) :
     (ofList s [F.antifaithful, F]).optimal = (s.filter (0 < F ·)).argmin F := by
   rw [optimal_ofList_antifaithful_cons h, optimal_ofList_cons, optimal_ofList_nil]

@@ -43,9 +43,8 @@ variable {W : Type*}
 
 open Question
 
-/-- Updating a non-inquisitive context with a non-inquisitive proposition is again
-non-inquisitive, with the intersection of the two informative contents as its own (Fact 2.36). The
-informative half needs no non-inquisitiveness (`info_inf`). -/
+/-- Updating a non-inquisitive context with a non-inquisitive proposition is non-inquisitive, with
+the intersected informative content (Fact 2.36). -/
 theorem update_nonInquisitive (C P : Question W) (hC : C.info ∈ C)
     (hP : P.info ∈ P) :
     (C ⊓ P).info ∈ C ⊓ P ∧ (C ⊓ P).info = C.info ∩ P.info := by

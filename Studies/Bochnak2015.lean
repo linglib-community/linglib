@@ -72,18 +72,15 @@ theorem washoConjoined_comparative (del : Delineation E) {C : Set E} {x y : E}
     (h : washoConjoined del C x y) : del.Comparative x y :=
   ⟨C, h⟩
 
-/-- Where the target does not count as G, both individuals being short in the paper's context
-(29), the conjoined comparison is simply false, so conjoined comparison is obligatorily
-norm-related. -/
+/-- Where the target does not count as G, as in the context (29), the conjoined comparison is false,
+so it is obligatorily norm-related. -/
 theorem washoConjoined_norm_related (del : Delineation E) {C : Set E} {x y : E}
     (h : x ∉ del C) :
     ¬ washoConjoined del C x y :=
   fun ⟨hx, _⟩ => h hx
 
-/-- For a measure-induced delineation the closure of (27) coincides with
-height comparison — the (28) entailment, through `Delineation.IsSoundFor` and
-`Delineation.IsCompleteFor` (the paper's Consistency Constraints in
-`Semantics/Degree/Delineation.lean`), with no degree variable in the entry. -/
+/-- For a measure-induced delineation the comparative of (27) is height comparison, the (28)
+entailment, with no degree variable in the entry. -/
 theorem comparative_ofMeasure_height_iff (height : E → ℕ) (a b : E) :
     (Delineation.ofMeasure height).Comparative a b ↔ height b < height a :=
   Delineation.comparative_ofMeasure_iff height
@@ -187,10 +184,8 @@ end MarginOfError
 
 /-! ### Footnote 11: the shared comparison class -/
 
-/-- The (28) entailment requires one comparison class shared by both conjuncts of (27), as
-footnote 11 notes. Soundness constrains only same-class separations, so
-a delineation sound for `R` can separate `x` from `y` across two distinct
-classes while `R x y` fails. -/
+/-- The (28) entailment from (27) requires one comparison class shared by both conjuncts (footnote
+11). -/
 theorem cc_b_requires_shared_class :
     ∃ (Entity : Type) (del : Delineation Entity)
       (R : Entity → Entity → Prop),

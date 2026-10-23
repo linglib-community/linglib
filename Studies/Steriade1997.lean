@@ -103,9 +103,8 @@ theorem lexP_singleton : lexP {b} P t = 0 ↔ P t ⊆ P b := by
 theorem lexPM_singleton (hb : f b = f t) : lexPM {b} P f t = 0 ↔ P b ⊆ P t := by
   simp [Finset.filter_singleton, hb]
 
-/-- With one listed allomorph, agreeing with the target in the feature it must encode, Lex(P) and
-Lex(P, M) together are identity to it in the property family, so an impoverished paradigm gives
-the appearance of single-base derivation (p. 12). -/
+/-- With one listed allomorph agreeing with the target in the encoded feature, Lex(P) and Lex(P, M)
+together require identity to it in `P` (p. 12). -/
 theorem lexP_singleton_and_lexPM_singleton_iff (hb : f b = f t) :
     lexP {b} P t = 0 ∧ lexPM {b} P f t = 0 ↔ P t = P b := by
   rw [lexP_singleton, lexPM_singleton _ _ hb, Finset.Subset.antisymm_iff]
@@ -242,9 +241,7 @@ def syllableRanking : List (Constraint Allomorph) :=
 /-- The noun *espoir*, as (3b) transcribes it after *vain*. -/
 def espoir : List Segment := following Wordlist.vain_espoir
 
-/-- Under Lex C] ≫ \*Hiatus, the paper's (8), a recorded liaison form wins iff the sources accept
-it. Both forms of *vain espoir* win, and *joli enfant* with its hiatus beats *\*jolit enfant*,
-whose [t] has no precedent. -/
+/-- Under Lex C] ≫ \*Hiatus (8), a recorded liaison form wins iff the sources accept it. -/
 theorem mem_optimal_iff : ∀ f ∈ Wordlist.all ++ Wordlist.marked, f.cell = Wordlist.masc_liaison →
     (Allomorph.ofForm f ∈ (tableau f.lexeme (hiatusRanking (following f))).optimal ↔
       f ∈ Wordlist.all) := by
@@ -257,8 +254,7 @@ theorem vain_optimal :
   decide +kernel
 
 /-- In the split-base effect (11), *[vɛ̃n] espoir* takes its consonant from the feminine and its
-vowel from the masculine. It satisfies Lex C], \*Hiatus and Lex 'V-gender, and being identical to
-no listed allomorph it violates Lex σ'. -/
+vowel from the masculine. -/
 theorem split_base :
     (genderRanking espoir (listed Wordlist.Lexemes.vain)).map (· (.ofForm Wordlist.vain_espoir)) =
       [0, 0, 0, 1] ∧

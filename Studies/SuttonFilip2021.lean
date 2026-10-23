@@ -307,9 +307,8 @@ def rice : Entry Part := ⟨Frame.ofUnits riceGrains, false, true, none, fun _ h
 
 theorem riceGrains_disjoint : DisjointPred Overlap riceGrains := by decide
 
-/-- The accessibility puzzle, both halves ((Q2), 9.5.3): the grains are disjoint and in the
-basic predicate, yet *rice* is mass; *grains of rice* (50) is the *lentil* entry over the same
-frame, count with the grains as its counting base. -/
+/-- The rice grains are disjoint and in the basic predicate, yet *rice* is mass, while *grains of
+rice* (50) is count ((Q2), 9.5.3). -/
 theorem rice_accessibility :
     riceGrains ⊆ rice.frame.extn ∧ ¬ rice.IsCount ∧
       unitShift rice riceGrains (isMaxDisjointIn_self _ riceGrains_disjoint) =

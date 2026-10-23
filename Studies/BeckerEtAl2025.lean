@@ -67,9 +67,7 @@ def maxMora (input : List ℕ) : Constraint Tree := fun t ↦
 def footing (input : List ℕ) : List (Constraint Tree) :=
   [finalLong, maxMora input, parseInto .ft, iamb]
 
-/-- Trochaic reversal `(σˌσː)(ˈσσ)` is the optimal footing of `/σσσσ/` (Table 2), since two
-    iambs `(σˌσː)(σˈσː)` end in a long vowel and an iamb with two strays `(σˈσː)σσ` leaves two
-    syllables unparsed. -/
+/-- Trochaic reversal `(σˌσː)(ˈσσ)` is the optimal footing of `/σσσσ/` (Table 2). -/
 theorem table2 :
     (Tableau.ofList
       {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1, .σ 2 true]],
@@ -80,8 +78,7 @@ theorem table2 :
   decide
 
 /-- The lexical long vowel of `/σσσːσ/` heads a monosyllabic foot in the optimal `(σˌσː)(ˈσː)σ`
-    (Table 4), since shortening it into a trochee violates Max-μ and an iamb around it leaves
-    two strays. -/
+(Table 4). -/
 theorem table4 :
     (Tableau.ofList
       {.om [.ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]],
@@ -119,8 +116,7 @@ theorem columns_words :
       Tree.columns annatto = [1, 3, 1] := by
   decide
 
-/-- The primary stress of each word, the head of its head foot (p. 2365), is its unique head
-    terminal, the long *kíː*, the trochee-initial *kí* and the long *míː*. -/
+/-- Each word's primary stress, the head of its head foot (p. 2365), is its unique head terminal. -/
 theorem headTerminals_words :
     Tree.headTerminals fell = [.σ 2 true] ∧ Tree.headTerminals weFell = [.σ 1 true] ∧
       Tree.headTerminals annatto = [.σ 2 true] := by
@@ -251,9 +247,8 @@ theorem alignR_lt_alignR (hμ : ∀ i < syllableCount t, 0 < moras t i)
   Finset.sum_lt_sum_of_subset (Finset.Ioo_subset_Ioo_left h.le) (Finset.mem_Ioo.2 ⟨h, h'⟩)
     (by simp) (hμ _ h') fun _ _ _ ↦ Nat.zero_le _
 
-/-- Under any ranking that puts Align-R(H) last, the optimal tone domain of a metrical phrase is
-    `toneDomain t`, the widest domain that starts at the phrase head and contains neither a
-    second foot head nor the phrase-final syllable (§4.5). -/
+/-- If Align-R(H) is ranked last, the optimal tone domain of a metrical phrase is `toneDomain t`
+(§4.5). -/
 theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .alignR) :
     (toneTableau t r).optimal = {toneDomain t} := by
   obtain ⟨hμ, hp, hn⟩ := ht
@@ -296,8 +291,7 @@ theorem toneTableau_optimal (ht : IsMetricalPhrase t) (hr : r (Fin.last 3) = .al
 
 end ToneDomain
 
-/-- In isolation the domain cannot expand past the primary stress (Table 7), the next syllable
-    being phrase-final, so the High target is the primary stress itself. -/
+/-- In isolation the High target is the primary stress itself (Table 7). -/
 theorem tone_in_isolation :
     (toneTableau fell toneRanking).optimal = {⟨(3, 3), le_rfl⟩} ∧
       (toneTableau weFell toneRanking).optimal = {⟨(4, 4), le_rfl⟩} ∧
@@ -324,8 +318,7 @@ theorem tone_blocked_by_trochee_head :
     (toneTableau friendInjured toneRanking).optimal = {⟨(1, 1), le_rfl⟩} :=
   by rw [toneTableau_optimal (by decide) rfl]; decide
 
-/-- The same short *hɛ* joins the domain as the dependent of an iamb (Fig. 10). That it blocks
-    only as the head of a trochee is the paper's third argument for trochaic reversal (§1). -/
+/-- The short *hɛ* joins the tone domain as the dependent of an iamb (Fig. 10, §1). -/
 theorem tone_crosses_iamb_dependent :
     (toneTableau friendHasBeenInjured toneRanking).optimal = {⟨(1, 2), by decide⟩} :=
   by rw [toneTableau_optimal (by decide) rfl]; decide
@@ -347,9 +340,8 @@ def annattoFell : Tree :=
   .ph [.node (.om true) [Tree.ft true [.σ 1, .σ 2 true], Tree.σ 1],
     .om [.σ 1, .ft false [.σ 1, .σ 2 true], .ft true [.σ 1 true, .σ 1]]]
 
-/-- In Fig. 3 the domain runs from the primary stress *mɨː* over three unstressed syllables to
-    *lá* and stops before the foot head *maː*, so the High target is an unstressed syllable three
-    syllables after the stress it marks (§1, §7). -/
+/-- In Fig. 3 the tone domain runs from the primary stress *mɨː* to *lá*, so the High target is an
+unstressed syllable (§1, §7). -/
 theorem stress_tone_incoherence :
     head annattoFell = 1 ∧ (toneTableau annattoFell toneRanking).optimal = {⟨(1, 4), by decide⟩} ∧
       ¬ Stressed annattoFell 4 ∧ Stressed annattoFell 5 :=

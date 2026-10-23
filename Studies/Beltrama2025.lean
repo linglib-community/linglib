@@ -155,8 +155,8 @@ section Complete
 variable [CompleteLattice D] {Acc : W → Set W} {pursued : E → W → Prop} {μ : E → W → D}
   {x : E} {w : W} {s : D}
 
-/-- The paper's form of (64): on a complete scale the standard is the maximum of the degrees
-below the object's value in every pursued accessible world. -/
+/-- On a complete scale the standard (64) is the maximum of the degrees below the object's value in
+every pursued accessible world. -/
 theorem isNecessityStandard_iff :
     IsNecessityStandard Acc pursued μ x w s ↔
       s = sSup {d | ∀ w' ∈ Acc w, pursued x w' → d ≤ μ x w'} := by

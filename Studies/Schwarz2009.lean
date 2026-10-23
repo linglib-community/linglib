@@ -127,8 +127,8 @@ def man : Restrictor Person (Fin 2) := fun _ l x ↦ x = .ornithologist l ∨ x 
 ornithologist. -/
 def boundTo (l : Fin 2) : Assignment Person := fun _ ↦ .ornithologist l
 
-/-- In (31), at every lecture *#vom Mann* fails uniqueness, the student being a man too, and *von
-dem Mann* is the ornithologist that the index is bound to. (28) is the case of one lecture. -/
+/-- In (31) *#vom Mann* fails uniqueness at every lecture while *von dem Mann* denotes the bound
+ornithologist, (28) being the one-lecture case. -/
 theorem covarying_anaphora (l : Fin 2) :
     ⟦DefiniteDescription.unique man⟧ (boundTo l) l = none ∧
       ⟦DefiniteDescription.anaphoric man 1⟧ (boundTo l) l = some (.ornithologist l) :=
@@ -140,8 +140,8 @@ section Covariation
 
 variable (f : W → E) (d : ℕ) (g : Assignment E) (s : W)
 
-/-- The weak article covaries with the situation. Over a restrictor that holds at each situation of
-one entity, as *Gewinner* holds at each round of its winner in (48), it denotes that entity. -/
+/-- The weak article over a restrictor true at each situation of one entity denotes that entity, as
+*Gewinner* does in (48). -/
 theorem weak_covaries : ⟦DefiniteDescription.unique fun _ s x ↦ x = f s⟧ g s = some (f s) :=
   iota_ident (f s)
 
@@ -295,8 +295,8 @@ theorem larger_situation_strong :
     ⟦relational mayorOf 1⟧ (fun _ ↦ {.station}) Finset.univ = none :=
   (iota_eq_none_iff _).2 fun ⟨_, ⟨_, h, _⟩, _⟩ ↦ absurd h (by decide)
 
-/-- The relational strong article is defined in (58) as anaphora to the fridge, where *#in dem
-Gemüsefach* is out, so the analysis overgenerates there, as §6.4.1 acknowledges. -/
+/-- The relational strong article denotes the crisper in (58), where *#in dem Gemüsefach* is out, so
+the analysis overgenerates (§6.4.1). -/
 theorem partWhole_bridging_strong :
     ⟦relational crisperOf 1⟧ (fun _ ↦ fridge) fridge = some {.crisper} :=
   (DefiniteDescription.denote_possessive_eq_some_iff _ _ _ _ _).2
@@ -420,8 +420,8 @@ theorem rows_available : ∀ d ∈ Examples.all, ∀ sc ∈ scenario? d, ∀ p �
   simp only [Scenario.available_iff]
   decide
 
-/-- Every form the paper rules out is unavailable in its scenario, except the strong article
-anaphoric to the whole in part-whole bridging, the overgeneration that §6.4.1 asks about. -/
+/-- Every form the paper rules out is unavailable in its scenario, except the strong article in
+part-whole bridging (§6.4.1). -/
 theorem rows_unavailable : ∀ d ∈ Examples.all, ∀ sc ∈ scenario? d, ∀ p ∈ article? d,
     d.judgment ≠ .acceptable → sc.Available p → sc = .relational true true ∧ p = .familiarity := by
   simp only [Scenario.available_iff]

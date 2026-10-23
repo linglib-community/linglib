@@ -240,8 +240,8 @@ theorem patch_eqOn {J : Set V} (h : HasContext R c) (hR : f ~[R] g)
   have hb := h.blocks hR
   grind [Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
 
-/-- If `f'` agrees with `f` on the inputs and `f R g`, then `R` relates `f'` to the patch of
-`f'` by `g` at the blocks (Lemma 3.7, existence). -/
+/-- If `f'` agrees with `f` on the inputs and `f R g`, then `R` relates `f'` to its patch by `g` at
+the blocks (Lemma 3.7, existence). -/
 theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
     (hR : f ~[R] g) : f' ~[R] c.B.piecewise g f' :=
   h.stable hR hI

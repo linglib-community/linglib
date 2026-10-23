@@ -257,9 +257,8 @@ structure IsEuropeanism : Prop where
   easternIELack : EasternIELack f
   worldMinority : WorldMinority f
 
-/-- Criterion (i) holds of every feature except the two the chapter describes as narrow: the
-V + NI negation of French and Germanic, §2.8, and strict agreement, "characteristic of a few
-European languages", §2.11. -/
+/-- Criterion (i) holds of every feature except V + NI negation (§2.8) and strict agreement (§2.11).
+-/
 theorem majorityOfCore_iff :
     MajorityOfCore f ↔
       f ≠ .negativeIndefinitesWithoutVerbalNegation ∧ f ≠ .strictAgreement := by

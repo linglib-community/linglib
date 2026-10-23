@@ -92,10 +92,8 @@ theorem exists_conjunctionFallacy {φ ψ : Set W} (h : ¬ φ ⊆ ψ) :
   obtain rfl : b = true := top_le_iff.1 hb
   exact h (by simpa using hbφ.symm ▸ inter_subset_right (s := φ) (t := ψ))
 
-/-- A holder confident of a conjunction but not of its conjunct is confident of no set of
-propositions that the threshold account of §2 (7) delivers. Whatever the threshold, the
-propositions whose probability meets it are closed under conjunction elimination, since a
-measure is monotone. -/
+/-- On the threshold account of §2 (7), no holder is confident of a conjunction but not of its
+conjunct. -/
 theorem image_Ici_ne_ge_over [MeasurableSpace W] (P : Measure W) (t : ℝ≥0∞) {c : S}
     {φ ψ : Set W} (h₁ : φ ∩ ψ ∈ θ '' Ici c) (h₂ : φ ∉ θ '' Ici c) :
     θ '' Ici c ≠ P ⁻¹' Set.Ici t :=
@@ -104,23 +102,20 @@ theorem image_Ici_ne_ge_over [MeasurableSpace W] (P : Measure W) (t : ℝ≥0∞
 
 /-! ### *Certain* and *confident* (§5.2) -/
 
-/-- *Certain* entails *confident* (65b), (66b). The paper's reason is that *certain* picks out a
-smaller segment of the ordering than *confident*, which is `Ici_subset_Ici` once *confident*'s
-contrast state lies below *certain*'s; on a total ordering that holds of every contrast state
-once *certain*'s is maximal. -/
+/-- On a total ordering, *certain* entails *confident* once *certain*'s contrast state is maximal
+((65b), (66b)). -/
 theorem image_Ici_subset_image_Ici_of_isMax [@Std.Total S (· ≤ ·)] {m : S} (hm : IsMax m)
     (c : S) : θ '' Ici m ⊆ θ '' Ici c :=
   image_mono (Ici_subset_Ici.2 ((total_of (· ≤ ·) c m).elim id fun h ↦ hm h))
 
-/-- The entailment is asymmetric (65a), (66a). When *confident*'s contrast state `c` is not
-above *certain*'s `m`, the holder is confident but not certain of `c`'s theme. -/
+/-- If *confident*'s contrast state is not above *certain*'s, confidence does not entail certainty
+((65a), (66a)). -/
 theorem not_image_Ici_subset_image_Ici (hθ : θ.Injective) {c m : S} (hmc : ¬ m ≤ c) :
     ¬ θ '' Ici c ⊆ θ '' Ici m :=
   fun h ↦ hmc (Ici_subset_Ici.1 ((image_subset_image_iff hθ).1 h))
 
-/-- *Confident* entails *certain* exactly when its contrast state is itself maximal, so (65a) is
-consistent only on a contrast state below the top. *Confident* measures on an ordering with
-maximal elements (69) without taking them as its standard. -/
+/-- *Confident* entails *certain* exactly when its contrast state is maximal, so (65a) needs a
+contrast state below the top of an ordering with maxima (69). -/
 theorem image_Ici_subset_image_Ici_iff_isMax [@Std.Total S (· ≤ ·)] (hθ : θ.Injective) {m : S}
     (hm : IsMax m) {c : S} : θ '' Ici c ⊆ θ '' Ici m ↔ IsMax c := by
   rw [image_subset_image_iff hθ, Ici_subset_Ici]
@@ -141,9 +136,8 @@ theorem Ici_eq_setOf_isMax [@Std.Total S (· ≤ ·)] {m : S} (hm : IsMax m) :
   exact ⟨fun hs t hst ↦ (hm (hs.trans hst)).trans hs,
     fun hs ↦ (total_of (· ≤ ·) m s).elim id fun h ↦ hs h⟩
 
-/-- Nothing is more confident than a certainty (68). If σ is certain that `p`, σ is not more
-confident of any `q` than of `p`. Admissibility (21) is not enough, since it leaves tied maximal
-states free to be measured apart; the measure must also be monotone. -/
+/-- Under a monotone measure nothing is more confident than a certainty (68), which admissibility
+(21) alone does not ensure. -/
 theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone μ) {s : S}
     (hs : IsMax s) {p q : Set W} (hsp : θ s = p) : ¬ MaxComparative .gt (θ · = q) (θ · = p) μ :=
   fun h ↦

@@ -281,9 +281,8 @@ end Quileute
 
 open Quileute
 
-/-- Every combination of the two features is attested, so the lattice of diagram (6) has all
-four two-vowel classes, all four singletons, the inventory at the top and the empty set at the
-bottom. -/
+/-- Since every combination of the two features is attested, the lattice of diagram (6) has all four
+two-vowel classes and all four singletons. -/
 theorem quileute_classes :
     (naturalClasses vowels (attributeExtents vowels)).toFinset =
       {vowels, {i, u}, {a, «ɑ»}, {«ɑ», u}, {i, a}, {i}, {a}, {«ɑ»}, {u}, ∅} := by
@@ -309,9 +308,8 @@ theorem quileutePrime_synonymy :
       (ofSpecs [(.high, false), (.back, false)]).naturalClass vowels' = ∅ := by
   decide
 
-/-- The redundancy rules Broe reads off the collapsed lattice's dominance relation (p. 104),
-[−back] → [+high] and [−high] → [+back]: the class of the first value lies in that of the
-second. -/
+/-- The redundancy rules [−back] → [+high] and [−high] → [+back] hold as inclusions of natural
+classes (p. 104). -/
 theorem quileutePrime_redundancy :
     (ofSpecs [(.back, false)]).naturalClass vowels' ⊆
         (ofSpecs [(.high, true)]).naturalClass vowels' ∧

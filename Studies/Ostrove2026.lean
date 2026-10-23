@@ -140,14 +140,13 @@ theorem independentTense_iff (c : EmbeddedClauseType) :
     IndependentTense c ↔ c ≠ .untensedSubjunctive := by
   cases c <;> decide +kernel
 
-/-- The restructuring column holds of the rows except under *kòni* 'want', out of whose tensed
-subjunctive a quantifier fronts (fn. 8), so the rows make tensed subjunctives restructure too. -/
+/-- An embedded clause type restructures iff it is not finite, tensed subjunctives included (fn. 8).
+-/
 theorem restructures_iff (c : EmbeddedClauseType) : Restructures c ↔ c ≠ .finite := by
   cases c <;> decide +kernel
 
-/-- With its exception, the restructuring column says that a quantifier fronts out of an
-embedded clause exactly when the clause is an untensed subjunctive or the verb is *kòni* 'want'
-((20), (22), (24), (109)). -/
+/-- A quantifier fronts out of an embedded clause iff the clause is an untensed subjunctive or the
+verb is *kòni* 'want' ((20), (22), (24), (109)). -/
 theorem frontingOut_iff : ∀ row ∈ Examples.all, row.feature? "fronting" = some "out" →
     (row.judgment = .acceptable ↔
       clauseTypeOf row = some .untensedSubjunctive ∨ row.feature? "verb" = some "kòni") := by
@@ -163,9 +162,8 @@ def attested (c : EmbeddedClauseType) : Set Diagnostic :=
 instance (c : EmbeddedClauseType) : DecidablePred (· ∈ attested c) := fun d ↦ by
   unfold attested; infer_instance
 
-/-- No row attests a criterial configuration of an untensed subjunctive, and every other clause
-type attests one: free subjects (12), (18), strict ellipsis (30), (32), and non-c-commanding
-antecedents (43), (45) against (19), (33), (44), (46). -/
+/-- Only the untensed subjunctive attests no free subject (12), (18), strict ellipsis (30), (32) or
+non-c-commanding antecedent (43), (45), against (19), (33), (44), (46). -/
 theorem attested_eq_empty_iff (c : EmbeddedClauseType) :
     attested c = ∅ ↔ c = .untensedSubjunctive := by
   rw [Set.eq_empty_iff_forall_notMem]
@@ -202,9 +200,8 @@ def smpmToLandau (c : EmbeddedClauseType) : ClauseClass :=
 theorem smpmToLandau_landauToSMPM (c : ClauseClass) : smpmToLandau (landauToSMPM c) = c := by
   cases c <;> decide +kernel
 
-/-- Landau's calculus predicts the control profile of every clause type exactly when the clauses
-are `[+Agr]`: at `[−Agr]` it makes the tensed subjunctive, an F-subjunctive, obligatory control,
-yet its subject may be disjoint from the matrix subject (18b). -/
+/-- Landau's calculus predicts every clause type's control profile iff the clauses are `[+Agr]`,
+failing at `[−Agr]` on the tensed subjunctive (18b). -/
 theorem landau_predicts_control_iff (agr : Bool) :
     (∀ c, smpmProfile c = Set.univ ↔ (smpmToLandau c).HasOC agr) ↔ agr = true := by
   simp only [isObligatory_iff]
@@ -212,8 +209,8 @@ theorem landau_predicts_control_iff (agr : Bool) :
 
 /-! ### Against movement (§6) -/
 
-/-- An exempt anaphor with a quantified antecedent is out in a simple clause (75) and good inside
-an untensed subjunctive under a quantified controller ((86), (87)). -/
+/-- Exempt anaphors reject quantified antecedents in simple clauses (75) but accept quantified
+controllers of untensed subjunctives ((86), (87)). -/
 theorem exemptAnaphor_rows : ∀ row ∈ Examples.all,
     row.feature? "diagnostic" = some "exemptAnaphor" →
       (row.judgment = .acceptable ↔ clauseTypeOf row = some .untensedSubjunctive) := by
@@ -233,9 +230,8 @@ def ex86Dependency : SetRel (Fin 2) (Fin 2) := {(0, 1)}
 /-- The attested occupants of the two positions. -/
 def ex86Occupant : Fin 2 → Ex86Item := fun p ↦ if p = 0 then .quantifierDP else .pronoun
 
-/-- Exempt anaphors reject quantified antecedents (78) yet are available in untensed
-subjunctives under quantified controllers (`exemptAnaphor_rows`), so the embedded position holds
-a referential pronoun and not a copy of the quantifier: the dependency is not movement. -/
+/-- The controlled dependency in an untensed subjunctive is not movement, its subject being a
+referential pronoun (78). -/
 theorem smpm_refutes_movement : ¬ IsExhaustive ex86Occupant ex86Dependency :=
   not_isExhaustive_of_mismatch (P := (· = .quantifierDP)) rfl rfl (by decide)
 
@@ -263,17 +259,16 @@ def quiegolaniInventory : Vocabulary Form where
   items := []
   elsewhere := .pronoun
 
-/-- PRO is overt in SMPM, since no SMPM item is conditioned on the controlled subject, so it
-takes the elsewhere pronoun (98), where English's null item yields silent PRO (94a). -/
+/-- PRO is overt in SMPM, the elsewhere pronoun (98), while English's null item makes PRO silent
+(94a). -/
 theorem smpm_overt_pro :
     smpmInventory.controlForm = smpmInventory.elsewhere ∧ englishInventory.controlForm = .null :=
   ⟨Vocabulary.realize_eq_elsewhere (by decide), rfl⟩
 
 theorem smpm_no_null_item : ∀ i ∈ smpmInventory.items, i.exponent ≠ .null := by decide
 
-/-- In the syncretism table (92), each row derived from its inventory, a cell is a context in
-which the bound form is the referential pronoun's, whose own column is the elsewhere form itself.
-The four languages occupy four distinct cells. -/
+/-- The four languages occupy four distinct cells of the syncretism table (92), each derived from
+its inventory. -/
 theorem syncretism_typology :
     englishInventory.syncretic = {.boundVariable} ∧
       quiegolaniInventory.syncretic = Finset.univ ∧
@@ -313,9 +308,8 @@ theorem nonclitic_rows : ∀ row ∈ Examples.all,
 forms are ungrammatical there (`nonclitic_rows`). -/
 def controlledSubjectStrength : Pronoun.Strength := .clitic
 
-/-- The pronouns that can be a controlled subject are exactly the clitics, none of which bears
-focus (65), (66): the overt subject is not the focused pronoun of scope-sensitive copy
-control. -/
+/-- The pronouns that can be controlled subjects are exactly the clitics, none of which bears focus
+(65), (66). -/
 theorem controlledSubject_iff_mem_clitics :
     ∀ p ∈ pronouns, p.strength = some controlledSubjectStrength ↔ p ∈ clitics := by
   decide

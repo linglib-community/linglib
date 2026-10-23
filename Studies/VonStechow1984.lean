@@ -101,9 +101,8 @@ theorem disjunction_to_conjunction_in_than (μa μb μc : D)
     (h : μb ⊔ μc < μa) : μb < μa ∧ μc < μa :=
   sup_lt_iff.mp h
 
-/-- In *a polar bear could be bigger than a grizzly bear could be* ((x), `Examples.exX`, §VIII), if
-the greatest possible A-degree over the accessible worlds exceeds the greatest possible B-degree,
-some accessible A-world beats every B-world. -/
+/-- If the greatest accessible A-degree exceeds the greatest B-degree, some accessible A-world beats
+every B-world ((x), `Examples.exX`, §VIII). -/
 theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
     (hmaxA : IsGreatest (μA '' acc) maxA) (hmaxB : IsGreatest (μB '' acc) maxB)
     (hgt : maxB < maxA) :
@@ -149,11 +148,8 @@ theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)
     (factor : D) (h : FactorEquative μ a b factor) : asSem μ a factor (μ b) :=
   le_of_eq h.symm
 
-/-- Synthesis rule R13 (§XIII) is
-`⟦too⟧(d₁)(A⁰)(p)(x) = the max.d [x is d-A⁰] λd₂ [p □→ A⁰(x, d₂ − d₁)]`, so *too* is R4's
-`moreSem` with a counterfactually determined threshold (DegP head `Degree.Head.excessive`); when
-the threshold is greatest over the accessible worlds, being `excess` too `A` puts the actual degree
-above every accessible world's degree. -/
+/-- With a greatest threshold over the accessible worlds, being `excess` too `A` puts the actual
+degree above every accessible world's (R13, §XIII). -/
 theorem moreSem_exceeds_counterfactual_worlds
     [AddCommMonoid D] [IsOrderedCancelAddMonoid D]
     (μ : W → Entity → D) (w₀ : W) (acc : Set W) (x : Entity)

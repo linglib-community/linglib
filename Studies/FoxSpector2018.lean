@@ -194,9 +194,8 @@ theorem exhIE_op (hne : (S (exhIE C A) \ S A).Nonempty) :
     exhIE {S (exhIE C A), S A} (S (exhIE C A)) = S (exhIE C A) \ S A :=
   exhIE_pair_sdiff _ hne
 
-/-- With more innocently excludable alternatives, the two-layered
-exhaustification under a downward-entailing operator is weaker, so economy forces the smaller
-alternative set, narrow focus. This is the theorem of §10. -/
+/-- With more innocently excludable alternatives, two-layered exhaustification under a
+downward-entailing operator is weaker (§10). -/
 theorem op_exh_mono (hOP : Antitone S)
     (hsub : excludable C' A ⊆ excludable C A) (hne : (S (exhIE C A) \ S A).Nonempty)
     (hne' : (S (exhIE C' A) \ S A).Nonempty) :

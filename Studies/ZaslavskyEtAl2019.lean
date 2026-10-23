@@ -111,9 +111,8 @@ theorem toReal_klDiv_eq {c : C} (hc : μ {c} ≠ 0) :
     (klDiv (κ c) (κ ∘ₘ μ)).toReal = -expectedSurprisal κ μ c - log (μ.real {c}) := by
   rw [toReal_klDiv_eq_integral_log_sub κ μ hc, neg_expectedSurprisal]
 
-/-- Eq. 6: at a capacity-achieving need distribution of positive mass everywhere, `−log p(c)` is
-linear in the expected surprisal with slope one, and the intercept is the capacity of the
-lexicon. -/
+/-- At a capacity-achieving need distribution of positive mass, `−log p(c)` is the expected
+surprisal plus the lexicon's capacity (Eq. 6). -/
 theorem neg_log_eq_add_channelCapacity (h : Im[μ ⊗ₘ κ] = channelCapacity κ)
     (hμ : ∀ c, μ {c} ≠ 0) (c : C) :
     -log (μ.real {c}) = expectedSurprisal κ μ c + channelCapacity κ := by
@@ -121,9 +120,8 @@ theorem neg_log_eq_add_channelCapacity (h : Im[μ ⊗ₘ κ] = channelCapacity �
   rw [toReal_klDiv_eq κ μ (hμ c)] at this
   linarith
 
-/-- Eq. 5: a need distribution satisfies `p(c) ∝ exp(−S(c))` exactly when it is
-capacity-achieving and gives every color positive mass. The condition says that the need
-distribution is a fixed point of the Blahut–Arimoto update (`eq_blahutArimoto_iff`). -/
+/-- A need distribution satisfies `p(c) ∝ exp(−S(c))` exactly when it is capacity-achieving with
+positive mass on every color (Eq. 5). -/
 theorem capacityAchieving_iff :
     (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔
       ∃ Z > 0, ∀ c, μ.real {c} = exp (-expectedSurprisal κ μ c) / Z := by
@@ -288,9 +286,8 @@ following [zaslavsky-kemp-regier-tishby-2018]: it is that paper's least informat
 (`ZaslavskyKempRegierTishby2018.averagePrior`), whose per-language priors are the least
 informative priors of the languages' naming distributions. -/
 
-/-- The per-language priors averaged in eq. 7 are the least informative priors of
-[zaslavsky-kemp-regier-tishby-2018]; those of positive mass everywhere are exactly the need
-distributions satisfying eq. 5. -/
+/-- The least informative priors of [zaslavsky-kemp-regier-tishby-2018] with positive mass are
+exactly the need distributions satisfying eq. 5 (eq. 7). -/
 theorem isLeastInformative_iff [Fintype W] (κ : Kernel C W) [IsMarkovKernel κ] (μ : Measure C)
     [IsProbabilityMeasure μ] :
     (ZaslavskyKempRegierTishby2018.IsLeastInformative μ κ ∧ ∀ c, μ {c} ≠ 0) ↔

@@ -334,9 +334,8 @@ def collapseCover : Cover (⟨{⟨1, .R⟩}, {.z}⟩ : Context lang Var) (Fin 1)
 def collapseSections : ∀ i, Theory (collapseCover.part i)
   | 0 => ⟨{lit .R (fun _ => .x)}, by decide +kernel⟩
 
-/-- Pairwise disjoint vocabularies and a consistent candidate do not make a gluing, against the
-discussion of Proposition 1: the candidate `{R(z)}` of the one-part cover `{x, u} ↦ {z}`
-restricts to `{R(x), R(u)}`. Injective cover maps suffice (`DRT.Cover.isGluing_glue`). -/
+/-- Pairwise disjoint vocabularies and a consistent candidate do not guarantee a gluing, contrary to
+the discussion of Proposition 1. -/
 theorem not_forall_exists_isGluing_of_disjoint :
     ¬ ∀ (ι : Type) [Fintype ι] (c : Context lang Var) (C : Cover c ι) (x : ∀ i, Theory (C.part i)),
       (Pairwise fun i j => Disjoint (C.part i).vocab (C.part j).vocab) →

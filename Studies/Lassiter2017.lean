@@ -152,8 +152,8 @@ theorem coherent_and_not_admits_contextual_probability :
       ¬ (Boundedness.ofOrder Probability).Admits .contextual :=
   coherent_and_not_admits_contextual (by rw [ofOrder_probability]; decide)
 
-/-- The open-interval alternative of §4.2.6 keeps Interpretive Economy by making the scale
-`(0, 1)`, which is open, at the cost of a degree for the tautology. -/
+/-- The open-interval alternative of §4.2.6 keeps Interpretive Economy with the open scale `(0, 1)`,
+leaving the tautology no degree. -/
 theorem ofOrder_Ioo_zero_one :
     Boundedness.ofOrder (Set.Ioo (0 : ℝ) 1) = .open_ ∧ (1 : ℝ) ∉ Set.Ioo (0 : ℝ) 1 :=
   ⟨Boundedness.ofOrder_Ioo, fun h ↦ lt_irrefl _ h.2⟩
@@ -173,9 +173,8 @@ theorem licenses_iff_exists_admits (m : EndpointModifier) (b : Boundedness) :
   cases m <;> cases b <;> simp [Boundedness.Licenses, LicensesPos, Boundedness.Admits,
     Boundedness.HasMin, Boundedness.HasMax]
 
-/-- A relative adjective licenses neither modifier, whatever its scale, which is why
-*completely likely* and *slightly likely* lack a degree reading on a closed scale
-((4.62), (4.63)), where Kennedy's licensing predicts one. -/
+/-- A relative adjective licenses neither endpoint modifier, so *completely likely* and *slightly
+likely* lack a degree reading ((4.62), (4.63)). -/
 theorem not_licensesPos_contextual (m : EndpointModifier) :
     ¬ LicensesPos m .contextual := by
   cases m <;> simp [LicensesPos]
@@ -236,8 +235,8 @@ example : English.Adjectives.possible.standard = .minEndpoint ∧
     English.Adjectives.impossible.standard = .maxEndpoint := by
   decide
 
-/-- *Certain* and *possible* are [lassiter-2015]'s *must* and *might* at threshold one, the
-strong auxiliaries (p. 156), and so duals, `A` being possible iff its negation is not certain. -/
+/-- *Certain* and *possible* are [lassiter-2015]'s strong *must* and *might* at threshold one (p.
+156), and so duals. -/
 theorem mem_possible_iff_not_mem_certain_compl [DiscreteMeasurableSpace W] :
     A ∈ possible P ↔ Aᶜ ∉ certain P := by
   have h := Lassiter2015.probMight_iff_not_probMust_compl P 1 A
@@ -316,9 +315,8 @@ theorem pos_certain (h : θ .certain = 1) : pos P θ .certain = certain P := by
 theorem pos_possible (h : θ .possible = 0) : pos P θ .possible = possible P := by
   simp [pos, EpistemicItem.comparison, possible, h]
 
-/-- The ordering of p. 152 makes the positive forms antitone in strength, so *certain* entails
-*must* (§6.1), *must* entails *likely* (6.14), *likely* entails *might* (6.18), and *might*
-entails *possible* (§6.5). -/
+/-- The positive forms are antitone in strength, so *certain*, *must*, *likely*, *might*, *possible*
+each entail the next (p. 152, §6.1, (6.14), (6.18), §6.5). -/
 theorem antitone_pos (hθ : StrictMono θ) : Antitone (pos P θ) := by
   intro i j hij A hA
   rw [mem_pos_iff] at hA ⊢
@@ -350,9 +348,8 @@ theorem must_lt_certain_iff_possible_lt_might (hmm : θ .might = 1 - θ .must)
     (hcp : θ .possible = 1 - θ .certain) : θ .must < θ .certain ↔ θ .possible < θ .might := by
   constructor <;> intro h <;> linarith
 
-/-- The strong theory, a *must* at probability one, conflicts with the ordering of p. 152 when
-no threshold exceeds the tautology's degree, since *must* cannot then be weaker than *certain*
-(§6.1). -/
+/-- A *must* at probability one conflicts with the ordering of p. 152 when no threshold exceeds the
+tautology's degree (§6.1). -/
 theorem not_strictMono_of_strong (h : θ .must = 1) (hc : θ .certain ≤ 1) : ¬ StrictMono θ :=
   fun hθ ↦ (hθ (show EpistemicItem.must < .certain by decide)).not_ge (h ▸ hc)
 

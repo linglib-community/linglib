@@ -177,16 +177,15 @@ instance (s : Scenario) (e : Ev) (w : World) : Decidable (Claim s e w) := by
 /-- `nonempty` is the set of worlds in which something was taken. -/
 abbrev nonempty : Finset World := univ.filter Finset.Nonempty
 
-/-- In Fig. 1 and (32)–(33), the indiscriminate decision *buy a book* and the decision *buy
-all books* satisfy the modal component, and the decision *buy b₁* does not. -/
+/-- The decisions *buy a book* and *buy all books* satisfy the modal component and *buy b₁* does not
+(Fig. 1, (32)–(33)). -/
 theorem randomChoice :
     Claim (scenario (some nonempty)) .vp {0} ∧ Claim (scenario (some {{0, 1}})) .vp {0, 1} ∧
       ¬ Claim (scenario (some {{0}})) .vp {0} := by
   decide
 
-/-- In Figs. 2–3 and (29), the component anchored to the assertion holds under total or
-partial ignorance and when the speaker knows the whole domain qualifies, but not when the
-speaker knows which proper part does. -/
+/-- The assertion-anchored component holds under total or partial ignorance and when the whole
+domain qualifies, but not when the speaker knows which part does (Figs. 2–3, (29)). -/
 theorem epistemic :
     Claim (scenario none nonempty) .assertion {0} ∧
       Claim (scenario none {{0}, {0, 1}}) .assertion {0} ∧
@@ -229,9 +228,8 @@ scenario. -/
 def flavors (s : Scenario) (site : Site) (embedded : Option Ev) : List ModalFlavor :=
   (binders site embedded).filterMap fun e ↦ (s.worlds e).map fun _ ↦ e.flavor
 
-/-- An external argument is epistemic only, and an internal argument or adjunct is random
-choice or epistemic with a volitional verb and epistemic only with a non-volitional one
-(§3.4). -/
+/-- An external argument has only the epistemic reading, and an internal argument or adjunct also
+random choice with a volitional verb (§3.4). -/
 theorem flavors_pattern (d dox : Finset World) :
     flavors (scenario (some d) dox) .external none = [.epistemic] ∧
       flavors (scenario none dox) .external none = [.epistemic] ∧
@@ -284,9 +282,8 @@ def cualquiera : ModalIndefinite :=
 /-- *N'importe quel* admits normative anchors (120). -/
 def nimporteQuel : ModalIndefinite := ⟨Scenario.Normative, fun _ ↦ True⟩
 
-/-- *Uno cualquiera* is undefined anchored to the assertion or a belief state, so it has no
-epistemic reading ((67)–(68), (93)), but anchored to the order of (86) it is defined, and an
-order that any card fulfils verifies it. -/
+/-- *Uno cualquiera* has no epistemic reading, being undefined anchored to the assertion or a
+belief, but is defined anchored to the order of (86) ((67)–(68), (93)). -/
 theorem cualquiera_selective (s : Scenario) (w : World) :
     cualquiera.denotation s .assertion w = 0 ∧ cualquiera.denotation s .belief w = 0 ∧
       cualquiera.denotation (scenario (some {{0}}) ∅ {{0}, {1}}) .order {0} = 1 := by
@@ -300,9 +297,8 @@ theorem nimporteQuel_selective (s : Scenario) (w : World) :
       nimporteQuel.denotation s .assertion w = 0 :=
   ⟨by decide, by simp [ModalIndefinite.denotation, nimporteQuel, Scenario.Normative]⟩
 
-/-- Where everything was taken, because everyone danced (124)–(125) or Xun bought all the
-books (126)–(127), *yalnhej*'s claim holds, while *algún*'s bound (122) and *uno cualquiera*'s
-unique witness (123) fail. -/
+/-- Where everything was taken ((124)–(125), (126)–(127)), *yalnhej*'s claim holds while *algún*'s
+bound (122) and *uno cualquiera*'s unique witness (123) fail. -/
 theorem upperBound_universal :
     yalnhej.denotation (scenario none {{0, 1}}) .assertion {0, 1} = 1 ∧
       yalnhej.denotation (scenario (some {{0, 1}})) .vp {0, 1} = 1 ∧
@@ -382,9 +378,8 @@ def IsBare (row : Datum) : Prop :=
 
 instance (row : Datum) : Decidable (IsBare row) := by unfold IsBare; infer_instance
 
-/-- In every bare row of an item the study analyses, the judgment of the reading the row names
-and of each reading it lists is acceptable iff the item makes it available ((54), (93),
-(119)–(121), fn. 20 (i)). -/
+/-- In every bare row of an analysed item, each named or listed reading is acceptable iff the item
+makes it available ((54), (93), (119)–(121), fn. 20 (i)). -/
 theorem reading_rows :
     ∀ row ∈ Examples.all, IsBare row → ∀ i ∈ (row.feature? "item").bind itemOf,
       (∀ fl ∈ (row.feature? "reading").bind readingFlavor,

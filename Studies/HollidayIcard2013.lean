@@ -100,10 +100,7 @@ theorem lLift_validities [Nonempty W] :
 
 end LLift
 
-/-- The l-lifting refutes V11 and V13 (Fact 1). On two indiscriminate worlds, `W` is probable
-and `{0}` is at least as likely as `W`, yet `{0}` is not probable (V11); `{0} \ {1}` is
-strictly more likely than `∅`, yet `{0} ∪ {1}` is not strictly more likely than `{1}`
-(V13). -/
+/-- The l-lifting refutes V11 and V13 on two indiscriminate worlds (Fact 1). -/
 theorem lLift_refutes_V11_V13 :
     (∃ (W : Type) (ge_w : W → W → Prop),
       IsPreorder W ge_w ∧ ¬PositiveFormTransfer (LewisLift ge_w)) ∧
@@ -225,10 +222,7 @@ theorem mLift_validities [Finite W] [Nonempty W] :
 
 end MLift
 
-/-- The m-lifting refutes I1–I3, dissolving the disjunction problem (Fact 5). Between
-indiscriminate worlds only cardinality matters, so one world matches `{0}` and `{1}` but not
-`{0, 1}` (I1), and on three worlds `{0, 1}` is strictly more likely than its complement but
-cannot match all of `W` (I2, I3). -/
+/-- The m-lifting refutes I1–I3, dissolving the disjunction problem (Fact 5). -/
 theorem mLift_refutes_I_patterns :
     (∃ (W : Type) (ge_w : W → W → Prop),
       IsPreorder W ge_w ∧ ¬RightUnion (MatchingLift ge_w)) ∧
@@ -256,8 +250,7 @@ theorem mLift_refutes_I_patterns :
     decide
 
 /-- If the world ordering agrees with a measure on singletons, the m-lifting is sound for the
-measure order (footnote 13), since the injection carries the sum of the singleton masses of `B`
-into a sum over a subset of `A`. -/
+measure order (footnote 13). -/
 theorem measure_le_of_matchingLift [Fintype W] [MeasurableSpace W] [MeasurableSingletonClass W]
     (μ : Measure W) (ge_w : W → W → Prop) (h : ∀ v u, ge_w v u ↔ μ {u} ≤ μ {v}) {A B : Set W}
     (hAB : MatchingLift ge_w A B) : μ B ≤ μ A := by
@@ -312,9 +305,7 @@ theorem chain_singleton_vs_pair :
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hmem
     rcases hmem with h | h <;> rw [h] at hle <;> exact absurd hle (by decide)
 
-/-- The m-lifting is not total, even over a linear order on worlds, as the paper remarks before
-Fact 5. On the chain, `{a, d}` and `{b, c}` are incomparable: only `a` can match `c`, which
-leaves nothing for `b`, and nothing in `{b, c}` matches `a`. -/
+/-- The m-lifting is not total, even over a linearly ordered set of worlds (before Fact 5). -/
 theorem mLift_not_total :
     ∃ (W : Type) (ge_w : W → W → Prop), IsLinearOrder W ge_w ∧
       ∃ A B : Set W, ¬MatchingLift ge_w A B ∧ ¬MatchingLift ge_w B A := by
@@ -339,11 +330,7 @@ theorem fa_representable_iff_card_lt_five (n : ℕ) :
       let ⟨r, hr, hnr⟩ := exists_nonrepresentable_fin (n := n) (by omega); hnr (h r hr),
     fun h r _ ↦ representable_of_card_lt_five r (by simpa using h)⟩
 
-/-- No finite measure satisfies the World Cup comparisons (3)–(6), with Argentina, Brazil,
-China, Denmark and England as the worlds `0`–`4`: Argentina-or-England more likely than
-China-or-Denmark, Brazil-or-China more likely than Argentina-or-Denmark, Denmark more likely
-than Argentina-or-China, and Argentina-or-China-or-Denmark more likely than Brazil-or-England.
-The four left-hand sides and the four right-hand sides have the same total mass. -/
+/-- No finite measure satisfies the World Cup comparisons (3)–(6). -/
 theorem worldCup_not_finitelyAdditive (μ : Measure (Fin 5)) [IsFiniteMeasure μ] :
     ¬ (Strict μ.inducedGe {0, 4} {2, 3} ∧ Strict μ.inducedGe {1, 2} {0, 3} ∧
       Strict μ.inducedGe {3} {0, 2} ∧ Strict μ.inducedGe {0, 2, 3} {1, 4}) := by

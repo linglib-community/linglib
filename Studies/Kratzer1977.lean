@@ -101,8 +101,7 @@ theorem canInView_of_mem {B : Set (W → Prop)} (hB : B ∈ consistentSubsets (f
     CanInView f φ i :=
   ⟨B, hB, fun _ hC hBC hd ↦ hC.2 (hd.eq_bot_of_le (sInf_le (hBC hφ)))⟩
 
-/-- A premise of `f i` is necessary under Definition 7 when it is compatible with every
-consistent subset: each extends by it to a consistent subset that entails it. -/
+/-- A premise of `f i` compatible with every consistent subset is necessary (Definition 7). -/
 theorem mustInView_of_forall_not_disjoint (hφ : φ ∈ f i)
     (h : ∀ B ∈ consistentSubsets (f i), ¬ Disjoint (sInf B) φ) : MustInView f φ i := by
   intro B hB
@@ -169,17 +168,14 @@ private theorem judgments_snd : ∀ x ∈ judgments, x ≠ p → ∀ u v : World
   simp only [judgments, Set.mem_insert_iff, Set.mem_singleton_iff]
   rintro x (rfl | rfl | rfl) h u v huv <;> first | exact absurd rfl h | simp [q, huv]
 
-/-- Definition 7 makes (6) true, murder must be a crime: `p` is compatible with every
-consistent subset of the judgments, since making murder a crime at a world of the subset keeps
-it there. -/
+/-- (6), *murder must be a crime*, is true under Definition 7. -/
 theorem must_p (w : World) : MustInView (Function.const World judgments) p w := by
   refine mustInView_of_forall_not_disjoint (by simp [judgments]) fun B hB ↦ ?_
   obtain ⟨w₀, hw₀⟩ := sInf_ne_bot_iff.1 hB.2
   exact not_disjoint_sInf_iff.2 ⟨(true, w₀.2),
     forall_mem_of_eq judgments_snd hB.1 hw₀ rfl fun _ ↦ rfl, rfl⟩
 
-/-- Definition 7 makes (7) false: no consistent subset of the judgments entails that murder
-is not a crime, since any of its worlds can be moved to one where murder is a crime. -/
+/-- (7), that murder must not be a crime, is false under Definition 7. -/
 theorem not_must_neg_p (w : World) :
     ¬ MustInView (Function.const World judgments) pᶜ w := fun h ↦ by
   obtain ⟨C, hC, -, hle⟩ := h ∅ ⟨Set.empty_subset _, by simp⟩
@@ -216,8 +212,7 @@ def recommendations : Set (World → Prop) := {fun w ↦ p w ∧ q w, pᶜ}
 /-- Te Miti's recommendation as two propositions, with Te Kini's. -/
 def recommendations' : Set (World → Prop) := {q, p, pᶜ}
 
-/-- On the first reading (16) is false: Te Kini's ban is a consistent subset whose only
-consistent extension is itself, and flying does not follow from it. -/
+/-- On the first reading (16) is false. -/
 theorem not_must_q (w : World) :
     ¬ MustInView (Function.const World recommendations) q w := fun h ↦ by
   obtain ⟨C, hC, hBC, hle⟩ := h {pᶜ}

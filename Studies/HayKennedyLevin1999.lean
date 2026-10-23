@@ -90,8 +90,7 @@ theorem increase_iff_differentialComparative [AddCommGroup δ] {φ : α → T �
     {t₀ t₁ : T} : Increase φ x d t₀ t₁ ↔ DifferentialComparative (φ x) t₁ t₀ d := by
   rw [Increase, DifferentialComparative, sub_eq_iff_eq_add', eq_comm]
 
-/-- With the difference value given, the degree at the end of the event is determined by the
-    degree at its start, the source of an identifiable endpoint (§3). -/
+/-- Given the difference value, an event's end degree is determined by its start degree (§3). -/
 theorem Increase.end_unique [Add δ] {φ : α → T → δ} {x : α} {d : δ}
     {t₀ t₁ t₂ : T} (h₁ : Increase φ x d t₀ t₁) (h₂ : Increase φ x d t₀ t₂) :
     φ x t₁ = φ x t₂ :=
@@ -138,9 +137,8 @@ theorem isBounded_completely [IsOrderedAddMonoid δ] {top i : δ} (hi : i < top)
 theorem isBounded_significantly {s : δ} (hs : 0 < s) : IsBounded (significantly s) :=
   ⟨s, hs, fun _ hd ↦ hd⟩
 
-/-- A monotone decreasing set of difference values, a lower set like *slightly*'s, specifies no
-    bound on its positive values once it has one, since part of such an increase is again one
-    (§3.1). -/
+/-- A lower set of difference values, like *slightly*'s, sets no bound on positive increases (§3.1).
+-/
 theorem not_isBounded_inter_someAmount [DenselyOrdered δ] {D : Set δ} (hD : IsLowerSet D)
     {d : δ} (hd : d ∈ D) (hd₀ : 0 < d) : ¬ IsBounded (D ∩ someAmount) := by
   rintro ⟨b, hb, hlow⟩

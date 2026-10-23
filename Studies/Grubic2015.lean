@@ -58,9 +58,7 @@ variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set
 
 /-! ### The exclusive *yak('i)*, section 7.1 -/
 
-/-- Negation leaves the presupposition in place, so *not only Dimza built a house* still has
-Dimza building a house (29); on a rank-order scale, where alternatives need not entail the
-prejacent, nothing of the kind follows. -/
+/-- *Not only Dimza built a house* still entails that Dimza built a house (29). -/
 theorem prejacent_projects {w : W} (h : -only (· ⊆ ·) C p w ≠ 0) : w ∈ p :=
   atLeast_subset_subset (by simpa using h)
 
@@ -68,9 +66,8 @@ theorem prejacent_projects {w : W} (h : -only (· ⊆ ·) C p w ≠ 0) : w ∈ p
 def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
   {q | ∃ A ⊆ atoms, A.Nonempty ∧ q = ⋂₀ A}
 
-/-- Over the conjunctions of atomic answers, the truth set of *yak('i)* on the entailment scale
-is the prejacent with no other atom true, the exhaustification `Exhaustification.exh` over the
-atoms ((166) and (25)). -/
+/-- On the entailment scale over conjunctions of atomic answers, *yak('i)* is true exactly where the
+prejacent is the only true atom ((166) and (25)). -/
 theorem posExt_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
     Trivalent.posExt (only (· ⊆ ·) (conjunctions atoms) p) = exh atoms p := by
   ext w

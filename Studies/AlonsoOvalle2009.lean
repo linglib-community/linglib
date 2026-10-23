@@ -118,8 +118,8 @@ abbrev joinedUS : Finset HitlerWorld := {.us}
 
 abbrev pleased : Set HitlerWorld := {.germany}
 
-/-- Under the universal quantifier (29) is true, with (30a) true and (30b) false as (31)
-continues; under a sum with homogeneity (33) it is a gap. -/
+/-- Sentence (29) is true under the universal quantifier, as (30a) holds and (30b) fails per (31),
+and a gap under a homogeneous sum (33). -/
 theorem hitler_negation :
     .actual ∉ distributiveImp hitlerSim {joinedGermany, joinedUS} pleased ∧
       .actual ∈ closestImp hitlerSim ↑joinedGermany pleased ∧
@@ -207,9 +207,8 @@ abbrev newborn : Finset ForkWorld := {.baby}
 
 abbrev bent : Set ForkWorld := {.bookBent}
 
-/-- Under (52)–(53) the closest worlds of the union are magic-book worlds, one of which bends
-the fork, so (51) is true; under the correlative analysis it is false, since (58a) is true
-but (58b) is not. -/
+/-- Under (52)–(53), (51) is true because the closest union-worlds are magic-book worlds, but false
+on the correlative analysis, with (58a) true and (58b) not. -/
 theorem fork :
     .actual ∈ might (closestImp forkSim) ↑(hasBook ∪ newborn) bent ∧
       ¬ DistributiveMight forkSim {hasBook, newborn} bent .actual ∧
@@ -242,9 +241,8 @@ abbrev babyB : Finset BeliefWorld := {.baby₃, .baby₄}
 
 abbrev bentB : Set BeliefWorld := {.book₃, .baby₄}
 
-/-- Manner (75)–(76) is satisfied — (73) holds throughout the belief state and neither (74a)
-nor (74b) does — yet the two simplifications hold together nowhere in it, so (77) is not
-predicted deviant. -/
+/-- Manner (75)–(76) holds, with (73) true throughout the belief state and neither (74a) nor (74b),
+yet (77) is not predicted deviant. -/
 theorem manner_insufficient :
     (∀ w ∈ belief, w ∈ might (closestImp beliefSim) ↑(bookB ∪ babyB) bentB) ∧
       (∃ w ∈ belief, w ∉ might (closestImp beliefSim) ↑bookB bentB) ∧
@@ -253,8 +251,8 @@ theorem manner_insufficient :
 
 /-! ### The visibility of the disjuncts (§5.2) -/
 
-/-- On Nute's recipe (80), when the consequent is one of two incompatible disjuncts, the
-analysis makes the counterfactual true only if the other disjunct is impossible. -/
+/-- On Nute's recipe (80), a counterfactual with one of two incompatible disjuncts as consequent is
+true only if the other is impossible. -/
 theorem distributive_pair_disjoint_iff {A B : Finset W} (h : Disjoint A B) :
     w ∈ distributiveImp ord {A, B} ↑A ↔ B = ∅ := by
   rw [mem_distributiveImp_pair]

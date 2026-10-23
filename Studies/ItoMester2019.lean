@@ -234,10 +234,8 @@ def alignFirst : Ranking Con 6 :=
 def priorityFirst : Ranking Con 6 :=
   Ranking.ofList [.initFaith, .headedness, .phrase, .priority, .alignR, .word]
 
-/-- **No StrongEnd** (18), (25): a function word stranded at the end of its phrase takes its strong
-form, HEADEDNESS barring a φ over a lone syllable and MAX-XP requiring the φ, while an object
-pronoun inside the verb, heading no phrase, is weak; no constraint asks a φ to end in a prosodic
-word. -/
+/-- A phrase-final function word takes its strong form, and an object pronoun inside the verb its
+weak form ((18), (25)). -/
 theorem forms_phraseFinal :
     ∀ r ∈ [alignFirst, priorityFirst],
       (correspondence.language r lookAt).image (·.form) = {.strong} ∧
@@ -276,10 +274,8 @@ private theorem medial_le_final :
       ∀ i, matchTheory.con i (kimIsLeaving, c) ≤ matchTheory.con i (kimIs, d) := by
   decide +kernel
 
-/-- **Exact Match cannot separate medial from final enclisis** (43)–(46): under every ranking of
-standard Match Theory, an enclitic winning in *Kim 's leaving* makes one win in *Kim 's*, so the
-English pattern, which `language_kimIsLeaving` and `language_kimIs` derive under correspondence, is
-out of its reach. -/
+/-- Under every ranking of standard Match Theory, enclisis in *Kim 's leaving* implies enclisis in
+*Kim 's* ((43)–(46)). -/
 theorem matchTheory_enclitic_final_of_medial (r : Ranking Con 6)
     (h : Form.enclitic ∈ (matchTheory.language r kimIsLeaving).image (·.form)) :
     Form.enclitic ∈ (matchTheory.language r kimIs).image (·.form) := by

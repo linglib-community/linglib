@@ -175,11 +175,8 @@ theorem table80_complementary (r : Table80Row) :
     simp [available_iff_logophoric]
   all_goals simp only [Table80Row.Available, Tier.inflectedClass]; decide
 
-/-- The inflected-complement row is the OC-NC generalization (70) over the clause classes:
-agreement leaves obligatory control in an untensed complement, the predicative tier, and
-destroys it in a tensed one, the logophoric tier, since predication is not contingent on feature
-matching while variable binding is ([heim-2008], [kratzer-2009]); its empirical scope is
-contested ([ganenkov-2019]). -/
+/-- The inflected-complement row is the OC-NC generalization (70), keeping control in predicative
+but not logophoric complements ([heim-2008], [kratzer-2009]; contested by [ganenkov-2019]). -/
 theorem inflectedComplement_realizes_ocnc :
     Table80Row.inflectedComplement.Available .predicative ∧
       ¬ Table80Row.inflectedComplement.Available .logophoric := by

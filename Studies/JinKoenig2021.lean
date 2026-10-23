@@ -98,8 +98,7 @@ theorem mem_of_mem_unlessSem {W : Type*} {q p : Set W} {w : W} (h : w ∈ unless
 
 /-! ### Comparatives (Section 6.4) -/
 
-/-- *Y is more Q than Z* says that `Y` has `Q` to its own degree and `Z` does not, the two
-predications of (13d) over distinct entities. -/
+/-- *Y is more Q than Z* predicates `Q` of `Y` at its own degree and denies it of `Z` (13d). -/
 theorem comparative_dual {Entity α : Type*} [LinearOrder α] (μ : Entity → α) (y z : Entity)
     (h : μ z < μ y) : DualInference fun e ↦ μ y ≤ μ e :=
   ⟨⟨y, le_rfl⟩, ⟨z, not_le.2 h⟩⟩

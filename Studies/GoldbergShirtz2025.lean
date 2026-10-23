@@ -141,9 +141,7 @@ def veggieWrapForm : TypedForm String :=
   [ { filler := .fixed "veggie" }
   , { filler := .fixed "wrap", isHead := true } ]
 
-/-- The constructicon witnesses Table 8's degree-of-abstraction grid, in which
-*veggie-wrap* is lexically specified, *a simple ⟨PAL⟩* partially open, and
-the NN-compound and prenominal-PAL schemas fully open and abstract. -/
+/-- The constructicon realizes Table 8's grid of degrees of abstraction. -/
 theorem table8_specificity :
     derivedSpecificity veggieWrapForm = .lexicallySpecified ∧
     aSimplePALConstruction.specificity = .partiallyOpen ∧

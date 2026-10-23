@@ -154,8 +154,7 @@ theorem isAtom_iff {f : ConsGQ α} :
     have hfe : f = ⟨atom p q, conservative_atom p q⟩ := Subtype.ext hf
     exact hfe ▸ isAtom_atom hqp
 
-/-- Every conservative function is the join of the atoms at the pairs where it holds, so the
-conservative algebra is atomistic; this is the indexed form the Appendix uses. -/
+/-- Every conservative function is the join of the atoms at the pairs where it holds (Appendix). -/
 theorem eq_iSup_atom {f : GQ α} (hf : Conservative f) :
     f = ⨆ pq ∈ {pq : (α → Prop) × (α → Prop) | f pq.1 pq.2}, atom pq.1 pq.2 := by
   funext R T
@@ -166,9 +165,7 @@ theorem eq_iSup_atom {f : GQ α} (hf : Conservative f) :
   · rintro ⟨p, q, h, rfl, rfl⟩
     exact (hf _ _).mpr h
 
-/-- The Appendix decomposes an atom into generators, meeting `Sₐ` over the individuals in `q`,
-the complements of `Sₐ` and `Eₐ` over those in `p` but not in `q`, and the complement of `Sₐ`
-with `Eₐ` over those outside `p`. -/
+/-- Every atom is a meet of the generators `Sₐ`, `Eₐ` and their complements (Appendix). -/
 theorem atom_eq_iInf (p q : α → Prop) :
     atom p q = (⨅ a ∈ {a | q a}, someOf a) ⊓
       (⨅ a ∈ {a | p a ∧ ¬ q a}, (someOf a)ᶜ ⊓ (allOf a)ᶜ) ⊓
@@ -354,8 +351,7 @@ theorem existentialSubalgebra_le :
 theorem existential_atLeast (n : ℕ) : Existential (atLeast (α := α) n) := fun R T ↦ by
   simp only [atLeast_apply, and_true]
 
-/-- *every* is not existential, since with a scope lacking one individual *everything is T*
-fails while *every T-thing is an individual* holds (the two-lawyer argument of Section 3.3). -/
+/-- *Every* is not existential (Section 3.3). -/
 theorem not_existential_every [Nonempty α] : ¬ Existential (every : GQ α) := fun h ↦ by
   obtain ⟨b⟩ := ‹Nonempty α›
   exact absurd ((h (fun _ ↦ True) (· ≠ b)).mpr fun _ _ ↦ trivial) fun h' ↦ (h' b trivial) rfl
@@ -378,9 +374,7 @@ theorem theN_two_eq_both [Finite α] : theN 2 = (both : GQ α) := by
   change _ ↔ {x | R x ∧ ¬ T x}.ncard = 0 ∧ {x | R x ∧ T x}.ncard = 2
   omega
 
-/-- *the n* is not existential below the universe size, since *the n things are the first n*
-fails while *the n first-n things are individuals* holds (Section 3.3's argument for *the two*,
-at every `n`). -/
+/-- *The n* is not existential when `n` is below the universe size (Section 3.3). -/
 theorem not_existential_theN [Fintype α] {n : ℕ} (hn : n < Fintype.card α) :
     ¬ Existential (theN (α := α) n) := fun h ↦ by
   have h1 : theN (α := α) n (fun x ↦ True ∧ segment n x) (fun _ ↦ True) := by

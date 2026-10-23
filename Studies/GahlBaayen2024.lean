@@ -233,8 +233,8 @@ theorem semanticSupportForFormFIL_thyme_lt_time :
     supportMatrix_frequencyInformedG, map_apply, Rat.coe_castHom]
   simpa [freq, h100, thyme, Matrix.cons_val_two] using (Rat.cast_lt (K := ℝ)).2 h
 
-/-- *time* and *thyme* share a form row, but the endstate mapping predicts distinct forms for
-them, since their meanings differ outside the kernel of `G` (appendix A3, Fig. A2). -/
+/-- The words *time* and *thyme* share a form row, but the endstate mapping predicts distinct forms
+for them (appendix A3, Fig. A2). -/
 theorem endstate_separates_homophones :
     toy.C time = toy.C thyme ∧ (toy.S * endstateG) time ≠ (toy.S * endstateG) thyme := by
   have h : (semanticVectors * ratG) time 0 ≠ (semanticVectors * ratG) thyme 0 := by
@@ -352,8 +352,8 @@ theorem diag_W_mem_Icc (i : Fin 9) : W i i ∈ Set.Icc 0 1 :=
 right skew of the diagonal values and a power to finish it. -/
 def cind (d : ℝ) : ℝ := Real.log (1 / d) ^ (1 / 4 : ℝ)
 
-/-- `Cind` reverses the order of the diagonal values on `(0, 1)`, so the more a word predicts
-itself the lower its `Cind`, which is the sign of its correlation with frequency in Fig. 2. -/
+/-- `Cind` is strictly antitone on `(0, 1)`, which gives the sign of its correlation with frequency
+in Fig. 2. -/
 theorem strictAntiOn_cind : StrictAntiOn cind (Set.Ioo 0 1) := fun a ha b hb hab ↦ by
   unfold cind
   refine Real.rpow_lt_rpow (Real.log_nonneg ?_)

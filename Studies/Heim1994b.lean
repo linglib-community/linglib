@@ -174,8 +174,7 @@ theorem Karttunen.simplifiedKnow_of_subset {q q' : W → Set (Set W)} (h : q w �
     (hk : simplifiedKnow Dox x w q') : simplifiedKnow Dox x w q :=
   SetRel.core_mono (Set.sInter_subset_sInter h) hk
 
-/-- Clause (i) of (8) is redundant given clause (ii), since an alternative with the same
-answer set lies in the answer in the second sense, hence in the first (§4). -/
+/-- Clause (i) of (8) is redundant given clause (ii) (§4). -/
 theorem Karttunen.simplifiedKnow_of_generalizedKnow {q : W → Set (Set W)}
     (hq : IsKarttunen q) (h : generalizedKnow Dox x w q) : simplifiedKnow Dox x w q :=
   SetRel.core_mono (fun _ hv ↦ ans₂_subset_ans₁ hq w (ker_le_ker_ans₁ q hv)) h
@@ -207,8 +206,8 @@ theorem ans₁_whether (φ : Set W) (w : W) :
     Set.forall_mem_singleton, Set.mem_compl_iff]
   by_cases h : w ∈ φ <;> simp [h]
 
-/-- The simplified, actual, and generalized analyses and Groenendijk and Stokhof's all agree
-on "NP knows whether φ", the proof §4 leaves to the reader and the paper's footnote 11. -/
+/-- The simplified, actual and generalized analyses and Groenendijk and Stokhof's agree on *NP knows
+whether φ* (§4, footnote 11). -/
 theorem knows_whether_tfae (φ : Set W) :
     [Karttunen.simplifiedKnow Dox x w (Karttunen.whether φ),
       Karttunen.know Dox x w (Karttunen.whether φ),
@@ -227,8 +226,8 @@ extension map. -/
 theorem whichDeDicto_eq_ker (S C : E → Set W) :
     GroenendijkStokhof1984.whichDeDicto S C = Setoid.ker (extension S C) := rfl
 
-/-- When no two individuals call in exactly the same possible worlds, the kernel of
-Karttunen's intension is Groenendijk and Stokhof's partition, so that (10) is (11). -/
+/-- When no two individuals call in the same worlds, the kernel of Karttunen's intension is
+Groenendijk and Stokhof's partition, so (10) is (11). -/
 theorem ker_which {S C : E → Set W} (hC : Function.Injective C) :
     Setoid.ker (Karttunen.which S C) = GroenendijkStokhof1984.whichDeDicto S C :=
   Setoid.ker_comp_of_injective (extension S C) hC.image_injective
@@ -276,8 +275,7 @@ theorem singleton_true_mem_which_true :
     ({true} : Set Bool) ∈ Karttunen.which (fun _ ↦ Set.univ) called true :=
   ⟨.mary, by simp [called, extension], rfl⟩
 
-/-- The actual analysis makes (1) true at `false`, where Mary did not call, since the only
-true answer, that Bill called, is believed, and the answer set is not empty. -/
+/-- The actual analysis makes (1) true at `false`, where Mary did not call. -/
 theorem karttunen_know :
     Karttunen.know agnostic () false (Karttunen.which (fun _ ↦ Set.univ) called) := by
   refine ⟨?_, fun h ↦ absurd h (by rw [which_false]; exact Set.singleton_ne_empty _)⟩
@@ -359,8 +357,8 @@ theorem karttunen_know_who :
   · simp [ans₁, Karttunen.which, extension, called]
   · exact absurd h (Set.Nonempty.ne_empty ⟨_, (), by simp [called, extension], rfl⟩)
 
-/-- But (1) is false there on the actual analysis, since the answer set is empty and John
-does not believe it empty, so (6) does not entail (1). -/
+/-- With no student having called, the actual analysis makes (1) false there, so (6) does not entail
+(1). -/
 theorem not_karttunen_know_of_no_student :
     ¬ Karttunen.know agnostic () false (Karttunen.which student called) := by
   rintro ⟨-, hii⟩

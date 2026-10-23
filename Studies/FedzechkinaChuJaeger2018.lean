@@ -152,8 +152,7 @@ theorem fig1_isTree_isProjective : ∀ g ∈ [fig1Sov, fig1Osv, fig1Vso, fig1Vos
     g.IsTree ∧ g.IsProjective := by
   decide +kernel
 
-/-- The eight arrows of Fig. 1 are the yield distances from the verb, and they are the
-arrangement's boundary distances with the yields' lengths, the object four words long. -/
+/-- The eight arrows of Fig. 1 are the yield distances from the verb. -/
 theorem fig1_yieldDist :
     let ℓ := Function.update (1 : Constituent → ℕ) .object 4
     fig1Sov.yieldDist 5 0 = Arrangement.sov.boundaryDist ℓ .verb .subject ∧
@@ -306,8 +305,8 @@ private theorem abs_integral_sub (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) :
       measureReal_compl (.of_discrete), probReal_univ, ← abs_neg]
     ring_nf
 
-/-- Without a length-based ordering preference the mean is `(L + 5) / 2`, the input's 4.5, at
-any overall order frequency, which is the dashed line of Fig. 5. -/
+/-- Without a length-based ordering preference, the mean dependency length is `(L + 5) / 2` at any
+order frequency, the dashed line of Fig. 5. -/
 theorem integral_dependencyLength_of_indepFun (hlang : ∀ᵐ x ∂P, x.2 ∈ language d)
     (h : IndepFun Prod.fst Prod.snd P) : ∫ x, dependencyLength L x ∂P = ((L : ℝ) + 5) / 2 := by
   have hAB : IndepSet (long .subject) subjectFirst P := by
@@ -321,8 +320,8 @@ theorem integral_dependencyLength_of_indepFun (hlang : ∀ᵐ x ∂P, x.2 ∈ la
     (.of_discrete) hAB, measureReal_long hscene (by decide)] at this
   simpa [sub_eq_zero] using this
 
-/-- In the diamond of Fig. 5 the mean lies within `L - 1` times the frequency of the rarer order of
-the input's `(L + 5) / 2`. -/
+/-- The mean dependency length lies within `L - 1` times the rarer order's frequency of `(L + 5) /
+2`, the diamond of Fig. 5. -/
 theorem abs_integral_dependencyLength_sub_le (hL : 1 ≤ L) (hlang : ∀ᵐ x ∂P, x.2 ∈ language d) :
     |∫ x, dependencyLength L x ∂P - ((L : ℝ) + 5) / 2| ≤
       ((L : ℝ) - 1) * min (P.real subjectFirst) (1 - P.real subjectFirst) := by
@@ -372,9 +371,8 @@ theorem measureReal_long_symmDiff_subjectFirst : P.real (long .subject ∆ subje
     measureReal_cond_long hscene (by decide), measureReal_cond_long hscene (by decide)]
   linarith
 
-/-- A verb-final learner's mean dependency length is the input's minus `(L - 1) / 2` times how
-much more often they put the subject first when it is long than when the object is (Fig. 4), so
-the paper's two analyses measure one quantity. -/
+/-- A verb-final learner's mean dependency length is the input's minus `(L - 1) / 2` times their
+length-conditioned subject-first difference (Fig. 4). -/
 theorem integral_dependencyLength_eq_cond (hlang : ∀ᵐ x ∂P, x.2 ∈ language .headFinal) :
     ∫ x, dependencyLength L x ∂P = ((L : ℝ) + 5) / 2 - ((L : ℝ) - 1) / 2 *
       ((P[|long .subject]).real subjectFirst - (P[|long .object]).real subjectFirst) := by
@@ -383,9 +381,8 @@ theorem integral_dependencyLength_eq_cond (hlang : ∀ᵐ x ∂P, x.2 ∈ langua
     measureReal_long_symmDiff_subjectFirst hscene]
   ring
 
-/-- The lower lines of Fig. 5 are reached exactly by the verb-final learners who never put the
-subject first with a long object or always do with a long subject, spending subject-first order
-first where it shortens the dependencies; fixed order does so trivially. -/
+/-- A verb-final learner reaches the lower lines of Fig. 5 iff they never put the subject first with
+a long object or always do with a long subject. -/
 theorem integral_dependencyLength_eq_lower_iff (hL : 1 < L)
     (hlang : ∀ᵐ x ∂P, x.2 ∈ language .headFinal) :
     ∫ x, dependencyLength L x ∂P =
@@ -408,8 +405,7 @@ theorem integral_dependencyLength_eq_lower_iff (hL : 1 < L)
 
 end Prediction
 
-/-- Every point of the lower lines of Fig. 5 is reached, at subject-first frequency `p` by a
-verb-final learner who spends subject-first order on long-subject scenes first. -/
+/-- Every point of the lower lines of Fig. 5 is reached by some verb-final learner. -/
 theorem exists_integral_dependencyLength_eq_lower (p : unitInterval) :
     ∃ P : Measure Production, IsProbabilityMeasure P ∧ P.fst = uniformOn {.subject, .object} ∧
       (∀ᵐ x ∂P, x.2 ∈ language .headFinal) ∧ P.real subjectFirst = p ∧

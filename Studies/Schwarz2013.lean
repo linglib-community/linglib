@@ -54,8 +54,8 @@ theorem german_fering_two_articles :
   ⟨⟨German.Determiners.strengths_inventory, German.Determiners.not_isSyncretic_inventory⟩,
     ⟨Fering.Determiners.strengths_inventory, Fering.Determiners.not_isSyncretic_inventory⟩⟩
 
-/-- In German (16) and Fering (17) alike, part-whole bridging, the fridge and its crisper, takes the
-weak article, and producer bridging, the play and its author, the strong one (§3.2). -/
+/-- In German (16) and Fering (17), part-whole bridging takes the weak article and producer bridging
+the strong one (§3.2). -/
 theorem bridging_split :
     DefiniteDescription.Bridging.strength .partWhole = .uniqueness ∧
     DefiniteDescription.Bridging.strength .relational = .familiarity :=
@@ -70,9 +70,8 @@ theorem exclusively_anaphoric :
 
 /-! ### Languages with two articles (§4.2) -/
 
-/-- Hausa splits its two overt articles (§4.2.2), suffixal *-n* for uniquely identifiable
-referents, inferable first mentions included, and *ɗîn* for discourse-old ones, as German and Fering
-do. -/
+/-- Hausa's two overt articles split into weak *-n* and strong *ɗîn*, as German and Fering do
+(§4.2.2). -/
 theorem hausa_two_articles :
     Hausa.Determiners.inventory.strengths = Finset.univ ∧
       ¬ Hausa.Determiners.inventory.IsSyncretic :=
@@ -92,16 +91,15 @@ theorem construal_two_articles :
       ¬ lakhotaWeakStrongConstrual.IsSyncretic := by
   decide
 
-/-- Granting [ingham-2003]'s anaphoric *kiŋ*, as footnote 16 does and the project fragment does,
-makes *kiŋ* mark both strengths, so the weak and strong parallel is indeed less extensive. -/
+/-- Granting [ingham-2003]'s anaphoric *kiŋ*, as footnote 16 does, *kiŋ* marks both strengths. -/
 theorem anaphoric_kin_syncretic :
     ¬ lakhotaWeakStrongConstrual.IsSyncretic ∧ Lakhota.Determiners.inventory.IsSyncretic :=
   ⟨construal_two_articles.2, Lakhota.Determiners.isSyncretic_inventory⟩
 
 /-! ### Haitian Creole: a different type of contrast (§4.3) -/
 
-/-- Haitian Creole *la* covers uniqueness at every level, anaphora and both bridging types
-((39) to (42)), a single article marking both strengths, neither the §4.1 nor the §4.2 pattern. -/
+/-- Haitian Creole *la* marks both strengths ((39) to (42)), matching neither the §4.1 nor the §4.2
+pattern. -/
 theorem haitian_one_article : HaitianCreole.Determiners.inventory.IsSyncretic :=
   HaitianCreole.Determiners.isSyncretic_inventory
 

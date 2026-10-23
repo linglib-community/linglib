@@ -63,8 +63,7 @@ def ofAnalysis (a : Wordlist.Analysis) : List TBU × List TBU :=
   (tbuString a.underlyingTones, tbuString a.surfaceTones)
 
 /-- The map (36) reproduces every plateau of Section 2.2, Luganda (8) to (12), Zulu (18b) and
-Saramaccan (21), with no change for at most one H and a plateau between the outermost Hs
-otherwise. -/
+Saramaccan (21). -/
 theorem utp_map_forms : ∀ a ∈ Wordlist.analyses, utp.map (ofAnalysis a).1 = (ofAnalysis a).2 := by
   decide
 
@@ -106,10 +105,7 @@ theorem markLeft_run_getElem?_H_iff :
   | none => simp
   | some a => cases a <;> simp [ite_eq_iff]
 
-/-- The (43) decomposition computes UTP, marking left-to-right and then resolving right-to-left.
-Both passes run finite Mealy machines, so this exhibits UTP as a right-subsequential map
-after a left-subsequential one (`Mealy.isLeftSubsequential`,
-`Mealy.isRightSubsequential`). -/
+/-- UTP is the left-to-right marking pass followed by the right-to-left resolving pass of (43). -/
 theorem utp_eq_resolve_mark (w : List TBU) :
     utp.map w = resolveRight.runRight (markLeft.run w) := by
   have hmark (i : ℕ) : Mark.H ∈ (markLeft.run w).drop (i + 1) ↔ TBU.H ∈ w.drop (i + 1) := by
@@ -130,9 +126,7 @@ theorem utp_eq_resolve_mark (w : List TBU) :
       by_cases hL : TBU.H ∈ w.take i <;> by_cases hR : TBU.H ∈ w.drop (i + 1) <;>
         simp [utp.surfaces_split ha, hL, hR]
 
-/-- UTP is regular (§4.2). The (43) decomposition is a right-to-left Mealy pass after a
-left-to-right one, and a bimachine computes such a composite, one deterministic pass per
-direction. What fails above is one-directional determinism, not finite-state computability. -/
+/-- UTP is computable by a bimachine via the (43) decomposition, hence regular (§4.2). -/
 theorem utp_isBimachineComputable : IsBimachineComputable utp.map := by
   rw [show utp.map = resolveRight.runRight ∘ markLeft.run from funext utp_eq_resolve_mark]
   exact resolveRight.isRightSubsequential.isBimachineComputable_comp

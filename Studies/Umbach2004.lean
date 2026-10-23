@@ -166,9 +166,8 @@ theorem mem_polar_inf_polar_of_confirmDeny {q₁ q₂ c₁ c₂ : Set W} (h : Co
   rw [mem_inf, mem_polar, mem_polar]
   exact ⟨Or.inl (Set.inter_subset_left.trans h.1), Or.inr (Set.inter_subset_right.trans h.2)⟩
 
-/-- (19), (20): the content of a confirm+deny *but*-sentence is the content of the *only*-phrase
-over the two alternatives, *John cleaned the ROOM but not the DISHES* and *John only cleaned the
-ROOM*. -/
+/-- The content of a confirm+deny *but*-sentence is that of the *only*-phrase over the two
+alternatives ((19), (20)). -/
 theorem confirmDeny_content_eq_inAddition {a b : α} (hab : a ≠ b) :
     P a ∩ (P b)ᶜ = (inAddition P {a, b} a).content := by
   ext w
@@ -201,8 +200,8 @@ theorem contrastBut_content_eq_correctionBut_content {a b : α} :
 whether or not the denied one does too. -/
 theorem presupposition_contrastBut (a b : α) : (contrastBut P a b).presupposition = P a := rfl
 
-/-- (25c): the contexts licensing a correction are those where exactly one of the two
-alternatives holds, the denied one instead of the confirmed one or the other way around. -/
+/-- A correction is licensed exactly in contexts where one of the two alternatives holds and the
+other does not (25c). -/
 theorem presupposition_correctionBut {a b : α} (hab : a ≠ b) :
     (correctionBut P a b).presupposition = symmDiff (P a) (P b) := by
   ext w

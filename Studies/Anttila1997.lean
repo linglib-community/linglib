@@ -289,9 +289,8 @@ theorem italiaano_weak : Shape.Categorical .italiaano [X', X, L, H', L, H] := fu
   picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) (Finset.mem_insert_self _ _)
     (by decide +kernel)
 
-/-- After a light antepenult, or a heavy one following a heavy ante-antepenult, the stress
-constraints tie (36), (38), (41), so secondary stress is optional and both variants survive
-Sets 1 and 2. -/
+/-- After a light antepenult, or a heavy one after a heavy ante-antepenult, the stress constraints
+tie, so secondary stress is optional ((36), (38), (41)). -/
 theorem stress_tie :
     ∀ s ∈ [Shape.maailma, .ministeri, .aleksanteri, .koordinaatisto],
       ∀ o ∈ s.cands, ∀ o' ∈ s.cands, ∀ c, stratumOf c ≤ 1 →
@@ -377,8 +376,8 @@ theorem card_wins_strong_of {m : Motif} {n t : ℕ} (hp : predictedStrong m = (n
   subst hn ht
   exact h
 
-/-- The shares of (52) are decided in Set 3 after a light antepenult and for *h.tii*, and in
-Set 4 for *h.taa* and *h.too*; the strata below never matter. -/
+/-- The shares of (52) are decided in Set 3 after a light antepenult and for *h.tii*, and in Set 4
+for *h.taa* and *h.too*. -/
 theorem card_wins_strong : ∀ m : Motif,
     (wins m .strong).card * (predictedStrong m).2 = rankings.card * (predictedStrong m).1
   | (.light, .i) => card_wins_strong_of rfl

@@ -301,10 +301,8 @@ private lemma ge_of_forall_singleton (hT : ∀ A B : Set W, A ⊆ B → ge B A) 
     exact hJ A _ _ (hsub _ (Finset.mem_insert_self _ _))
       (ih (fun c hc ↦ hsub c (Finset.mem_insert_of_mem hc)))
 
-/-- A monotone, transitive comparison relation satisfying `J` (right-union) and `DS`
-(determination by singletons) is the l-lifting of a reflexive relation on worlds, namely
-`ge {u} {v}`. This is the per-model core of Holliday and Icard's Theorem 2, the completeness of
-WJR (Halpern's Thm. 7.5.1a), without the syntax. -/
+/-- A monotone, transitive relation satisfying `J` and `DS` is the l-lifting of a reflexive relation
+on worlds (Holliday and Icard's Theorem 2; Halpern's Thm. 7.5.1a). -/
 theorem exists_lewisLift_repr (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     (hTran : ∀ A B C : Set W, ge A B → ge B C → ge A C)
     (hJ : RightUnion ge) (hDS : DeterminedBySingletons ge) :

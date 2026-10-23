@@ -135,15 +135,14 @@ def answers (H : Finset (Finset World)) : Bool × Bool :=
 def exhAnswers (φ ψ : Finset (Finset World)) : Bool × Bool :=
   (decide (ExhP φ ψ one), decide (ExhP φ ψ two))
 
-/-- Over a singleton subdomain the meet and the join collapse, so the *-ro* Hamblin sets of
-(53) and (55) contain the individual answers only, with the plurality for the neutral domain. -/
+/-- Over a singleton subdomain the *-ro* Hamblin sets of (53) and (55) contain only the individual
+answers, plus the plurality for the neutral domain. -/
 theorem hamblinRo_neutral :
     hamblinRo bought neutral = (neutral.image fun e => univ.filter (bought e)) ∧
       hamblinRo bought atoms = atoms.image fun e => univ.filter (bought e) := by decide
 
-/-- In section 2, English bare interrogatives (9)–(11) allow both answers, singular complex ones
-(12)–(13) only a singular answer, and plural complex ones (14)–(15), whose singular
-alternative has the stronger presupposition, only a plural one. -/
+/-- English bare interrogatives allow both answers (9)–(11), singular complex ones only a singular
+answer (12)–(13), and plural complex ones only a plural answer (14)–(15). -/
 theorem dayal_english :
     answers (hamblinRo bought neutral) = (true, true) ∧
       answers (hamblinRo bought atoms) = (true, false) ∧
@@ -158,9 +157,8 @@ theorem spanish_gq :
       answers (hamblin bought atoms) = (true, true) := by
   decide
 
-/-- In (40) and (45) singular bare and complex interrogatives allow both answers, in (53) so
-does the *-ro* bare interrogative through the plurality, and in (55) the *-ro* complex
-interrogative allows only the singular answer. -/
+/-- In Farsi, bare and complex interrogatives allow both answers ((40), (45)), as does bare *-ro*
+(53), while complex *-ro* allows only the singular (55). -/
 theorem farsi :
     answers (hamblin bought neutral) = (true, true) ∧
       answers (hamblin bought atoms) = (true, true) ∧
@@ -182,9 +180,8 @@ theorem permits_singleton (v : World) : ∃ A : Base, ∀ u, A ~[permits] u ↔ 
 /-- The scenario of (59), where Forood must buy one of two things and either is permitted. -/
 def freeChoice : Base := ⟨{{0}, {1}}, by decide⟩
 
-/-- With the interrogative binding into the scope of *must* (34), the question is resolvable in
-the free-choice scenario iff the interrogative ranges over disjunctions, which *-ro* removes,
-the contrast between (35)–(36) and (32)–(33) and between (62) and (63). -/
+/-- Under *must* (34), the question is resolvable in the free-choice scenario iff it ranges over
+disjunctions, which *-ro* removes ((35)–(36) against (32)–(33), (62) against (63)). -/
 theorem modal_gq :
     ∀ D ∈ [neutral, atoms],
       IsExhaustivelyResolvable (box (ofFinset (hamblin bought D)) permits) freeChoice ∧

@@ -221,9 +221,8 @@ theorem duplicatorWins : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.
 
 end MonadicMatch
 
-/-- Two structures for a monadic language are `t`-equivalent when, for every unary type, their
-elements of that type are equinumerous or both at least `t` ([peters-westerstahl-2006]
-Theorem 13 with condition (13.7), first-order case). -/
+/-- Two structures for a monadic language are `t`-equivalent when their unary type counts agree up
+to `t` ([peters-westerstahl-2006] Theorem 13 with condition (13.7), first-order case). -/
 theorem elementarilyEquivalentUpTo_of_min_encard_eq [L.IsMonadic] {t : ℕ}
     (h : ∀ S, min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard =
       min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set N).encard) :
@@ -271,9 +270,8 @@ theorem min_encard_eq : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.D
 
 end DuplicatorWins
 
-/-- Two structures for a finite monadic signature are `t`-equivalent iff, for every unary type,
-their elements of that type are equinumerous or both at least `t` ([peters-westerstahl-2006]
-Theorem 13 with condition (13.7), first-order case). -/
+/-- Two structures for a finite monadic signature are `t`-equivalent iff their unary type counts
+agree up to `t` ([peters-westerstahl-2006] Theorem 13 with condition (13.7), first-order case). -/
 theorem elementarilyEquivalentUpTo_iff_min_encard_eq [L.IsMonadic] [Finite L.Symbols] {t : ℕ} :
     (M ≅[L, t] N) ↔ ∀ S, min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard =
       min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set N).encard :=
@@ -282,9 +280,8 @@ theorem elementarilyEquivalentUpTo_iff_min_encard_eq [L.IsMonadic] [Finite L.Sym
       (elementarilyEquivalentUpTo_iff_duplicatorWins.1 h).min_encard_eq S,
     elementarilyEquivalentUpTo_of_min_encard_eq⟩
 
-/-- A class of structures for a finite monadic signature is first-order definable within `K` iff,
-for some threshold `n`, it is invariant within `K` under agreement of the unary type counts up to
-`n`; for two unary predicates this is [van-benthem-1984] Theorem 6.1. -/
+/-- Over a finite monadic signature, a class is first-order definable within `K` iff invariant under
+agreement of unary type counts up to some `n` ([van-benthem-1984] Theorem 6.1). -/
 theorem foDefinable_iff_exists_min_encard_eq [L.IsMonadic] [Finite L.Symbols]
     {K P : Set (Bundled.{w} L.Structure)} :
     L.FODefinable K P ↔ ∃ n : ℕ, ∀ M ∈ K, ∀ N ∈ K,
@@ -293,10 +290,9 @@ theorem foDefinable_iff_exists_min_encard_eq [L.IsMonadic] [Finite L.Symbols]
   simp only [foDefinable_iff_exists_elementarilyEquivalentUpTo,
     elementarilyEquivalentUpTo_iff_min_encard_eq]
 
-/-- Two monadic structures `(M, P)` and `(N, Q)` over a finite index type are `t`-equivalent iff
-each part of the partition by the predicates, the elements satisfying exactly the predicates
-selected by `S`, has the same size in both or at least `t` elements in both
-([peters-westerstahl-2006] Theorem 13 with condition (13.7), first-order case). -/
+/-- Monadic structures `(M, P)` and `(N, Q)` are `t`-equivalent iff each cell of the predicates'
+partition has equal size or at least `t` in both ([peters-westerstahl-2006] Theorem 13 with
+condition (13.7), first-order case). -/
 theorem elementarilyEquivalentUpTo_monadicStructure_iff {ι : Type v} [Finite ι]
     {P : ι → M → Prop} {Q : ι → N → Prop} {t : ℕ} :
     @ElementarilyEquivalentUpTo _ t M N (monadicStructure M P) (monadicStructure N Q) ↔

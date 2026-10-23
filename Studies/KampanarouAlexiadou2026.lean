@@ -166,8 +166,8 @@ theorem gap_not_sufficient : ∃ r ∈ rows, r.possessor.gap ∧ r.judgment = .u
 theorem gap_not_necessary : ∃ r ∈ rows, ¬ r.possessor.gap ∧ Acceptable r.judgment := by
   decide
 
-/-- The relation matters on its own: the same possessor nominal, the door, yields an acceptable
-apo-PP for its handle (5a) and a questionable one for its mat (11a). -/
+/-- The same possessor yields an acceptable apo-PP for the door's handle (5a) and a questionable one
+for its mat (11a). -/
 theorem relation_matters :
     ∃ r ∈ rows, ∃ s ∈ rows, r.possessor = s.possessor ∧ r.judgment ≠ s.judgment := by
   decide

@@ -178,9 +178,8 @@ theorem flex_univ_eq_disj (ψ : CCP.Partial W) :
     ext w; simp only [Set.mem_sdiff, Set.mem_inter_iff, Set.mem_compl_iff, Trivalent.mem_posExt,
       Set.mem_sep_iff]; tauto]
 
-/-- Accommodating the negation of the first disjunct for the second, (15), the update
-presupposes the first presupposition and, where the first disjunct fails, the second. This is
-the conditional presupposition Katzir and Singh observe, fn. 6. -/
+/-- Accommodating the negated first disjunct for the second (15) yields Katzir and Singh's
+conditional presupposition (fn. 6). -/
 theorem admits_flex_univ_iff (s : Set W) :
     (flex Set.univ (Trivalent.posExt φ)ᶜ (ofTrivalent φ) (ofTrivalent ψ)).Admits s ↔
       ∀ w ∈ s, φ w ≠ 0 ∧ (φ w ≠ 1 → ψ w ≠ 0) := by
@@ -208,9 +207,8 @@ theorem not_admits_flex_univ_univ (h : Conflict φ ψ) {s : Set W} (hs : s.Nonem
   obtain ⟨hp, hq, -⟩ := (mem_flex_univ_univ_iff s _).1 (Part.get_mem hd)
   exact (h w).elim (hp w hw) (hq w hw)
 
-/-- When the first disjunct contradicts the second presupposition, (15), the update with
-tautologies accommodated is not genuine, since where defined it presupposes the second
-presupposition throughout, which leaves the first disjunct no world. -/
+/-- When the first disjunct contradicts the second presupposition (15), the update with tautologies
+accommodated is not genuine. -/
 theorem not_genuine_flex_univ_univ (h : ∀ w, φ w = 1 → ψ w = 0) (s : Set W) :
     ¬ Genuine (flex Set.univ Set.univ (ofTrivalent φ) (ofTrivalent ψ))
       (ofTrivalent φ) (ofTrivalent ψ) s := by
@@ -218,9 +216,8 @@ theorem not_genuine_flex_univ_univ (h : ∀ w, φ w = 1 → ψ w = 0) (s : Set W
   exact ((mem_flex_univ_univ_iff s t).1 ht).2.1 w hw
     (h w ((mem_ofTrivalent_self _ _).1 hφ w rfl))
 
-/-- Accommodating each disjunct's negated rival presupposition, (17), the update is defined
-exactly when some presupposition holds at every world of the input, and returns the worlds
-where a disjunct is true. -/
+/-- With each disjunct's negated rival presupposition accommodated (17), the update is defined iff
+each input world satisfies a presupposition, and keeps the worlds where a disjunct is true. -/
 theorem mem_flex_rival_iff (h : Conflict φ ψ) (s t : Set W) :
     t ∈ flex (Trivalent.gapExt ψ) (Trivalent.gapExt φ) (ofTrivalent φ) (ofTrivalent ψ) s ↔
       (∀ w ∈ s, φ w ≠ 0 ∨ ψ w ≠ 0) ∧ t = {w ∈ s | φ w = 1 ∨ ψ w = 1} := by
@@ -248,9 +245,8 @@ theorem neg_flex_rival (h : Conflict φ ψ) {s : Set W} (hs : ∀ w ∈ s, φ w 
   simp only [Set.mem_sdiff, Set.mem_sep_iff]
   tauto
 
-/-- The standard update filters a presupposition entailed by the negation of the first disjunct,
-(18), where accommodating tautologies still demands it, at a world where the first disjunct holds
-and the second presupposition fails. -/
+/-- At a world where the first disjunct holds and the second presupposition fails, the standard
+update admits the disjunction but accommodating tautologies does not (18). -/
 theorem exists_admits_disj_not_admits_flex_univ_univ (hφ : ∀ w, φ w ≠ 0)
     (hf : ∀ w, φ w ≠ 1 → ψ w ≠ 0) {w : W} (hq : ψ w = 0) :
     (disj (ofTrivalent φ) (ofTrivalent ψ)).Admits {w} ∧
@@ -276,8 +272,8 @@ noncomputable def presidentConducts : Buganda → SignType :=
 theorem conflict_buganda : Conflict kingOpens presidentConducts := by
   intro w; fin_cases w <;> simp [kingOpens, presidentConducts]
 
-/-- On the Buganda input the update with the rival presuppositions accommodated keeps the
-worlds where the head of state performs the duty, and its negation, (4), the others. -/
+/-- On the Buganda input, the update accommodating rival presuppositions keeps the worlds where the
+head of state performs the duty, and its negation (4) the others. -/
 theorem buganda :
     flex (Trivalent.gapExt presidentConducts) (Trivalent.gapExt kingOpens)
         (ofTrivalent kingOpens) (ofTrivalent presidentConducts) Set.univ = Part.some {0, 2} ∧
@@ -305,9 +301,8 @@ def noChild : Bill → SignType := fun w ↦ SignType.ofProp (w = 0)
 noncomputable def allBald : Bill → SignType :=
   {w | w ≠ 0}.indicator fun w ↦ SignType.ofProp (w = 1)
 
-/-- On the Bill input the update with tautologies accommodated is undefined, while
-accommodating the negation of the first disjunct for the second, (15), is defined and genuine,
-keeping the worlds where Bill has no child or his children are all bald. -/
+/-- On the Bill input, accommodating tautologies leaves the update undefined, while accommodating
+the negated first disjunct for the second (15) is defined and genuine. -/
 theorem bill :
     ¬ (flex Set.univ Set.univ (ofTrivalent noChild) (ofTrivalent allBald)).Admits Set.univ ∧
       {0, 1} ∈ flex Set.univ (Trivalent.posExt noChild)ᶜ (ofTrivalent noChild)

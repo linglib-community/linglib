@@ -75,9 +75,8 @@ variable {W E : Type*}
 
 The concrete models measure preference in the reals. -/
 
-/-- A predicate that relates an agent to a question without relating her to any of its answers,
-anxious uncertainty for *worry* (§3.1.2) or anticipation of resolution for Mandarin *qidai*
-(§3.1.1), is not clausally distributive. This is the diagnostic of (23) to (25). -/
+/-- A predicate relating an agent to a question but to none of its answers, like *worry* (§3.1.2) or
+*qidai* (§3.1.1), is not clausally distributive ((23) to (25)). -/
 theorem relational_not_isDistributive (R : E → Set (Set W) → W → Prop) {x : E}
     {Q : Set (Set W)} {w : W} (hR : R x Q w) (h : ∀ p ∈ Q, ¬ R x {p} w) :
     ¬ Distributivity.IsDistributive R :=
@@ -226,17 +225,15 @@ theorem anti_rogative_rows :
       r.judgment ≠ .acceptable := by
   decide +kernel
 
-/-- A negated positive preferential is infelicitous where the agent prefers no answer, and a
-negated negative one is felicitous, so the negative predicates lack threshold significance.
-The rows are (38) to (41), (44), (49), and (52). -/
+/-- A negated positive preferential is infelicitous and a negated negative one felicitous ((38) to
+(41), (44), (49), (52)). -/
 theorem tsp_rows :
     ∀ r ∈ Examples.all, r.feature? "polarity" = some "negated" →
       ∀ v ∈ valence? r, (r.judgment = .acceptable ↔ v = .negative) := by
   decide +kernel
 
-/-- Every declarative the paper judges false is under a class 1 predicate and sits beside a
-constituent question of the same predicate judged true in the same context. This is the
-non-distributivity diagnostic of (23) to (36). -/
+/-- Every declarative judged false is under a class 1 predicate, beside a constituent question
+judged true in the same context ((23) to (36)). -/
 theorem nondistributive_rows :
     ∀ r ∈ Examples.all, r.feature? "truth" = some "false" →
       r.feature? "clause" = some "declarative" →
@@ -245,8 +242,8 @@ theorem nondistributive_rows :
           r'.feature? "clause" = some "constituent" ∧ r'.feature? "truth" = some "true" := by
   decide +kernel
 
-/-- Turkish *diye* clauses combine with *um-* "hope", *kork-* "fear", and an intransitive verb
-alike, in (71), (73), (75), and (76), as adjoined reports of wondering rather than arguments. -/
+/-- Turkish *diye* clauses combine with *um-* 'hope', *kork-* 'fear', and an intransitive verb alike
+((71), (73), (75), (76)). -/
 theorem diye_rows :
     ∀ r ∈ Examples.all, r.feature? "embedding" = some "diye" → r.judgment = .acceptable := by
   decide +kernel
@@ -279,9 +276,8 @@ theorem dolan_isIntransitive : Turkish.dolan.IsIntransitive := by decide
 
 /-! ### Non-canonical composition (§4) -/
 
-/-- Composed with the highlighted content of *whether p*, the singleton of the radical, a
-degree-comparison predicate means its declarative (70). This first candidate analysis (§4.2)
-yields the interpretive asymmetry but not the inquisitive implication. -/
+/-- A degree-comparison predicate composed with the highlighted content of *whether p* means its
+declarative (70), the first candidate analysis of §4.2. -/
 theorem highlighted_eq_declarative (μ : E → W → Set W → ℝ) (θ : Set (Set W) → ℝ)
     (C : Set (Set W)) (x : E) (p : Set W) (w : W) :
     degreeComparison μ θ C x {p} w ↔ p ∈ preferred μ θ C x w :=
@@ -303,9 +299,8 @@ theorem hopes_radical (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) : v₁ <[{Bp}] v₂ :
     Set.mem_singleton_iff, forall_eq]
   exact ⟨fun h ↦ (h₂ h).elim, fun h ↦ h₂ (h h₁)⟩
 
-/-- When the agent hopes for the negation, whichever goal (89) allows, an outcome in which `p`
-holds and the agent does not believe `¬p` satisfies neither `¬p` nor believing `¬p`, so coming
-to believe `p` is no better than not, and the wondering cannot be hopeful. -/
+/-- When the agent hopes for the negation (89), coming to believe `p` is no better than not, so the
+wondering cannot be hopeful. -/
 theorem hopes_negation {G : Set (V → Prop)} (hG : HopefulGoals (fun v ↦ ¬ p v) Bnp G)
     (hp₁ : p v₁) (hn₁ : ¬ Bnp v₁) : ¬ v₁ <[G] v₂ := by
   rintro ⟨-, h⟩
@@ -314,8 +309,8 @@ theorem hopes_negation {G : Set (V → Prop)} (hG : HopefulGoals (fun v ↦ ¬ p
   · exact absurd hp₁ hg₁
   · exact absurd hg₁ hn₁
 
-/-- Fear constrains no goal (87). The purely epistemic goal of knowing whether `p` makes coming
-to believe `p` strictly better than remaining undecided, whichever answer is feared. -/
+/-- Fear constrains no goal (87), and knowing whether `p` makes coming to believe `p` strictly
+better than remaining undecided. -/
 theorem fears (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) (hn₂ : ¬ Bnp v₂) :
     v₁ <[{fun v ↦ Bp v ∨ Bnp v}] v₂ := by
   simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
@@ -324,9 +319,8 @@ theorem fears (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) (hn₂ : ¬ Bnp v₂) :
 
 end Asymmetry
 
-/-- In the polar cases a positive predicate or adverb holds exactly when the agent's attitude
-targets the radical, and a negative one holds either way. The rows are (45), (50), (62), (63),
-(75), (76), (78), and (79). -/
+/-- In the polar cases a positive predicate holds iff the attitude targets the radical, and a
+negative one holds either way ((45), (50), (62), (63), (75), (76), (78), (79)). -/
 theorem asymmetry_rows :
     ∀ r ∈ Examples.all, ∀ t ∈ r.feature? "target", ∀ v ∈ valence? r,
       (v = .positive → (Holds r ↔ t = "radical")) ∧ (v = .negative → Holds r) := by

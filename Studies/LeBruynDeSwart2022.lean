@@ -82,9 +82,8 @@ theorem not_read_unfinished : ¬ read (Individual.atom .unfinished) := fun h ↦
 
 theorem read_finished : read (Individual.atom .finished) := subset_rfl
 
-/-- On the two-book model of (35), with one book finished and one not, Krifka's scrambled
-existential gives the attested reading, and the narrow readings, his in place and the kinds
-approach's at either position, are false. -/
+/-- On the two-book model of (35), Krifka's scrambled existential is true, while his in-place
+reading and the kinds approach's scrambled one are false. -/
 theorem books_example : krifkaScrambled ∧ ¬ krifkaUnscrambled ∧ ¬ chierchiaScrambled := by
   refine ⟨⟨Individual.atom .unfinished, trivial, not_read_unfinished⟩,
     not_not.2 ⟨Individual.atom .finished, trivial, read_finished⟩, ?_⟩

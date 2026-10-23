@@ -66,10 +66,8 @@ private theorem ncard_pair_eq (C A : α → Prop) (R : α → α → Prop)
       exact congrArg (Prod.mk x) (huniq x y y' hA hR hA' hR'))
     fun x ⟨⟨hC, _⟩, y, hA, hR, hP⟩ ↦ ⟨(x, y), ⟨⟨hC, hA, hR⟩, hP⟩, rfl⟩
 
-/-- The uniqueness presupposition neutralizes the perspective paradox (Ch. 4):
-when each possessor has at most one possessee, *most* over
-possessor–possessee pairs (the symmetric construal) and `Poss most` (the
-possessor-dominant construal) have the same truth conditions. -/
+/-- When each possessor has at most one possessee, the symmetric and possessor-dominant construals
+of *most* agree (Ch. 4). -/
 theorem symmetric_iff_possessor_dominant (C A B : α → Prop) (R : α → α → Prop)
     (huniq : ∀ x y y', A y → R x y → A y' → R x y' → y = y') :
     most (fun p : α × α ↦ C p.1 ∧ A p.2 ∧ R p.1 p.2) (fun p ↦ B p.2) ↔

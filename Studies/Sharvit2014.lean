@@ -511,21 +511,18 @@ theorem pShiftable_present_of_wellFormed (h : L.WellFormed .present) : L.PShifta
     ((Language.wellFormed_iff.1 h).resolve_left fun h ↦ Embedded.noConfusion h.1)
 
 /-- A language with p-shiftability in past *before*-clauses under a past has simultaneous
-readings of a past under a past attitude verb (99b), since the embedded past is then deleted by
-the sequence-of-tense rule. -/
+past-under-past readings (99b). -/
 theorem simultaneous_past_of_pShiftable (h : L.PShiftable .past) : L.Simultaneous .past :=
   Language.simultaneous_past_iff.2 (Language.pShiftable_iff.1 h).2
 
-/-- A language with a well-formed past in *before*-clauses under a past and no simultaneous
-reading of a past under a past attitude verb has no p-shiftability there (99c), since the past
-of the *before*-clause is then pronominal. -/
+/-- A language with a well-formed past in *before*-clauses under a past but no simultaneous
+past-under-past reading has no p-shiftability there (99c). -/
 theorem noPShiftability_past_of_not_simultaneous (hw : L.WellFormed .past)
     (hs : ¬ L.Simultaneous .past) : L.NoPShiftability .past :=
   Language.noPShiftability_iff.2 ⟨hw, fun h ↦ hs (simultaneous_past_of_pShiftable h)⟩
 
-/-- A language with tenses and a simultaneous reading of a past under a past attitude verb has a
-well-formed past in *before*-clauses under a past, since a past that the sequence-of-tense rule
-can delete is either pronominal or deleted there too (102). -/
+/-- A language with tenses and a simultaneous past-under-past reading has a well-formed past in
+*before*-clauses under a past (102). -/
 theorem wellFormed_past_of_simultaneous (ht : L.pronominal ∨ L.quantificational)
     (h : L.Simultaneous .past) : L.WellFormed .past :=
   Language.wellFormed_iff.2 (ht.imp (⟨rfl, ·⟩) (⟨·, Language.simultaneous_past_iff.1 h⟩))

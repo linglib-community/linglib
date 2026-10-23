@@ -390,8 +390,7 @@ theorem potentialForChange_impingement :
   ⟨⟨.potential, .potentialForChange, .impingement⟩, by decide⟩
 
 /-- Consumption verbs and degree achievements share the singleton tier but not a degree of
-affectedness, the tier of lexically specified change including quantized and non-quantized change
-((62)). -/
+affectedness ((62)). -/
 theorem consumption_degreeAchievement :
     OutcomeClass.consumption.tier = OutcomeClass.degreeAchievement.tier ∧
       ∃ d d', d ≠ d' ∧ BeaversDegree .consumption d ∧ BeaversDegree .degreeAchievement d' :=

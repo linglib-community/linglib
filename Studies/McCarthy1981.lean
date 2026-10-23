@@ -447,8 +447,8 @@ theorem consonantism_XII_XIII :
   ⟨spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 1, 2]) (by decide),
     spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 104, 2]) (by decide)⟩
 
-/-- A biliteral root geminates its final radical and never its first, giving samam, never
-*sasam (33). In the second and fifth binyanim the effect of Erasure is undone (34). -/
+/-- A biliteral root geminates its final radical and never its first (33), and the second and fifth
+binyanim undo Erasure (34). -/
 theorem consonantism_biliteral :
     (consonantism ax .V .I ⟨[x, y]⟩).spellout = [x, y, y] ∧
       linkCount (consonantism ax .V .I ⟨[x, y]⟩) .root 0 = 1 ∧
@@ -691,8 +691,8 @@ theorem ablaut_classes :
 def ablautLast (mel : List Vowel) : List Vowel :=
   mel.dropLast ++ (mel.getLast?.map Vowel.ablaut).toList
 
-/-- The perfective active melody of the derived binyanim is the basic imperfective melody u–a–i
-with Ablaut on its last element, the OCP, and its initial u erased (47), (48). -/
+/-- The perfective active melody of the derived binyanim is the basic melody u–a–i after Ablaut, the
+OCP, and erasure of its initial u ((47), (48)). -/
 theorem melody_perfActive (abl : Ablaut) (b : Binyan) (hb : b ≠ .I) :
     melody abl .perfActive b = (OCP.collapse (ablautLast [.u, .a, .i])).tail := by
   cases b <;> first | exact absurd rfl hb | rfl

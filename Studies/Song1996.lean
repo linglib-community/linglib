@@ -200,8 +200,7 @@ def Link.meaning (l : Link) (goal event effect : Set W) : Set W :=
 theorem event_mem_stages (l : Link) : Stage.event ∈ l.stages := by
   cases l <;> decide
 
-/-- A biclausal type entails its effect in every model exactly when it expresses RESULT: the AND
-type's clause of effect is factual, the PURP type's only a goal (p. 142). -/
+/-- A biclausal type entails its effect in every model iff it expresses RESULT (p. 142). -/
 theorem forall_meaning_subset_iff (l : Link) :
     (∀ (W : Type) (goal event effect : Set W), l.meaning goal event effect ⊆ effect) ↔
       Stage.result ∈ l.stages := by
@@ -220,9 +219,8 @@ theorem purp_not_implicative :
     ¬ ∀ (W : Type) (goal event effect : Set W), Link.purp.meaning goal event effect ⊆ effect :=
   fun h ↦ absurd ((forall_meaning_subset_iff .purp).1 h) (by decide)
 
-/-- Under the assumption (19) that people generally succeed in realizing the goals they act for,
-a causative of either type entails its effect, the PURP type by the inference from (20) to (21),
-which restores implicativity (§5.4). -/
+/-- Under assumption (19), a causative of either type entails its effect, the PURP type by the
+inference from (20) to (21) (§5.4). -/
 theorem meaning_subset_of_success (l : Link) {goal event effect : Set W}
     (h : goal ∩ event ⊆ effect) : l.meaning goal event effect ⊆ effect := by
   cases l
@@ -231,8 +229,8 @@ theorem meaning_subset_of_success (l : Link) {goal event effect : Set W}
 
 end Meaning
 
-/-- On Song's biclausal examples, denying the effect is acceptable exactly when the link's
-semantic structure lacks RESULT, as for the PURP causatives (7) (pp. 12–13) and ch. 4 (11). -/
+/-- Denying the effect of a biclausal causative is acceptable iff its link lacks RESULT, as for the
+PURP causatives (7) (pp. 12–13) and ch. 4 (11). -/
 theorem effectNegated_rows : ∀ e ∈ Examples.all, e.feature? "effect" = some "negated" →
     ∀ l o, Form.ofRow e = some (.twoClauses l o) →
       (e.judgment = .acceptable ↔ Stage.result ∉ l.stages) := by
@@ -248,9 +246,8 @@ example : ∀ e ∈ Examples.all, ((e.feature? "clauses").isSome → (Form.ofRow
 example : Examples.ex_7.feature? "effect" = some "negated" ∧
     Form.ofRow Examples.ex_7 = some (.twoClauses .purp .effectCause) := by decide +kernel
 
-/-- Compactness does not settle implicativity (§2.6; Figure 5.2, points A and B): denying the
-effect of a COMPACT causative is contradictory for English *kill* (6) and acceptable for the
-Kammu *p-* causative (104). -/
+/-- Compactness does not settle implicativity, since denying the effect is contradictory for English
+*kill* (6) and acceptable for Kammu *p-* (104) (§2.6; Figure 5.2, points A and B). -/
 theorem compact_implicativity_varies : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ Examples.all,
     e₁.feature? "effect" = some "negated" ∧ e₂.feature? "effect" = some "negated" ∧
     (Form.ofRow e₁).bind Form.type = some .compact ∧
@@ -261,8 +258,8 @@ theorem compact_implicativity_varies : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ E
 
 /-! ### Korean (chapter 4) -/
 
-/-- Korean has a lexical, a morphological and a syntactic causative, the first two of the
-COMPACT type and the third of the PURP type (§4.2 (1)–(3)). -/
+/-- Korean has a lexical, a morphological and a syntactic causative, the first two COMPACT and the
+third PURP (§4.2 (1)–(3)). -/
 theorem korean_types :
     [Examples.ch4_1b, Examples.ch4_2b, Examples.ch4_3].map (fun e ↦
         (Form.ofRow e).map fun f ↦ (f.traditional, f.type)) =
@@ -270,9 +267,8 @@ theorem korean_types :
         some (.periphrastic, some .purp)] := by
   decide +kernel
 
-/-- The causative *ha-* takes its clause of effect in every diathesis, while a clause of purpose
-is an adjunct, so (3) without its clause is out (6) and (4) without its clause stands (7)
-(§4.2). -/
+/-- *ha-* takes its clause of effect in every diathesis, so (3) without its clause is out (6) while
+(4) without its clause stands (7) (§4.2). -/
 theorem clause_omitted_rows : (∀ fr ∈ Korean.ha.valency.frames, fr.HasClausal) ∧
     ∀ e ∈ Examples.all, e.feature? "clause" = some "omitted" →
       (e.judgment = .acceptable ↔ e.feature? "construction" = some "purposive") := by
@@ -291,10 +287,8 @@ def haDiathesis? (e : Datum) : Option (Diathesis 3) :=
   e.parse? "construction"
     [("PURP causative", Korean.purpCausative), ("complement causative", Korean.complementCausative)]
 
-/-- The causee of a long causative is nominative exactly when no participant of *ha-* controls
-the clause of effect. In the PURP causative it is the dative or accusative object of *ha-*
-controlling the clause, in the complement causative the subject of the clause (§4.2 (3), (5),
-(8), (11); §4.6). -/
+/-- The causee of a long causative is nominative iff no participant of *ha-* controls the clause of
+effect (§4.2 (3), (5), (8), (11); §4.6). -/
 theorem causee_rows : Korean.ha.valency.diatheses = [Korean.purpCausative,
       Korean.complementCausative] ∧ Korean.purpCausative.controllerRole = some .P ∧
     ∀ e ∈ Examples.all, ∀ d ∈ haDiathesis? e, ∀ c ∈ e.feature? "causee",
@@ -331,22 +325,17 @@ hierarchy makes it an oblique, which is no core NP (p. 178). -/
 def paradigmCoreNPs (v : ℕ) : ℕ :=
   v + if causeeDemotion v = .oblique then 0 else 1
 
-/-- The paradigm causative of an intransitive, transitive or ditransitive base never has more than
-three core NPs: it keeps within the cap of three that Song finds in languages causativizing
-transitive bases (p. 175). -/
+/-- The paradigm causative of a base of valency 1 to 3 has at most three core NPs (p. 175). -/
 theorem paradigmCoreNPs_le_three {v : ℕ} (hv : v ∈ Set.Icc 1 3) : paradigmCoreNPs v ≤ 3 := by
   obtain ⟨h₁, h₃⟩ := hv
   interval_cases v <;> decide
 
-/-- In a language capped at two core NPs, such as Lamang, Uradhi or Urubu-Kaapor, the paradigm
-causative of a transitive base, with its causee an indirect object, exceeds the cap: such a
-language has no morphological causative of transitives (§6.4, p. 174). -/
+/-- In a language capped at two core NPs, the paradigm causative of a transitive base exceeds the
+cap (§6.4, p. 174). -/
 theorem paradigmCoreNPs_two : causeeDemotion 2 = .indirectObject ∧ 2 < paradigmCoreNPs 2 := by
   decide
 
-/-- Under a cap of `n` core NPs, the bases whose morphological causative stays within it form a
-lower set of valencies: productivity declines from intransitive to transitive to ditransitive
-bases (p. 172). -/
+/-- Causative productivity declines with the valency of the base (p. 172). -/
 theorem isLowerSet_setOf_add_one_le (n : ℕ) : IsLowerSet {v : ℕ | v + 1 ≤ n} :=
   fun _ _ h h' ↦ le_trans (Nat.add_le_add_right h 1) h'
 

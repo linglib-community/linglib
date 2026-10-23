@@ -180,10 +180,8 @@ instance {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Pe
     Decidable (MoreUsualOn rank s t) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- Under the person scale 1 > 2 > 3, a variety never bans a more usual combination of table (1)
-while allowing a less usual one exactly when it is the strong, weak, me-first or strictly
-descending PCC, as section 7.1 of [haspelmath-2021] requires. The addressee-first varieties ban
-the downstream `1 > 2`. -/
+/-- Under 1 > 2 > 3, the varieties satisfying [haspelmath-2021]'s universal (section 7.1) over table
+(1) are the strong, weak, me-first, strictly descending and absent PCCs. -/
 theorem universal5_prominence (t : PCCType) :
     Haspelmath2021.RoleReferenceUniversal (MoreUsualOn Person.prominence) t.coding ↔
       t ∈ [PCCType.strong, .weak, .meFirst, .strictlyDescending, .none] := by

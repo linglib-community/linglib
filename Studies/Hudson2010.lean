@@ -213,8 +213,8 @@ def war : Person → Option Stance
   | .quaker => some .rejects
   | _ => none
 
-/-- Nixon inherits both views of war, a conflict with no recognized resolution
-(Section 2.4.2): each view is a credulous conclusion, and neither is a skeptical one. -/
+/-- Nixon inherits both views of war, each a credulous and neither a skeptical conclusion (Section
+2.4.2). -/
 theorem inherited_war_nixon : inherited war .nixon = {.accepts, .rejects} := by
   ext s
   cases s <;> simp only [Set.mem_insert_iff, Set.mem_singleton_iff] <;> decide
@@ -324,9 +324,8 @@ def grandmother : α → α → Prop := Relation.Comp (parent mother father) mot
 /-- Figure 3.17: a grandparent is a parent's parent. -/
 def grandparent : α → α → Prop := Relation.Comp (parent mother father) (parent mother father)
 
-/-- Figure 3.17: a great-grandparent is a grandparent's parent, and the Recycling Principle
-of Section 3.5.2 builds it on *grandparent* rather than as the parent of a parent of a
-parent, to which it is nonetheless equal. -/
+/-- A grandparent's parent equals a parent's parent's parent, the great-grandparent of Figure 3.17
+(Section 3.5.2). -/
 theorem comp_grandparent_parent :
     Relation.Comp (grandparent mother father) (parent mother father) =
       Relation.Comp (parent mother father)

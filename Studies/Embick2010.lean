@@ -141,9 +141,8 @@ theorem head_rows :
       (r.spine.Sees cyclic phonNull r.target j ↔ r.claim = .attested) := by
   decide
 
-/-- The Latin perfects share one cycle. Agr is coactive with Asp[perf] throughout, and only the
-overt tense of the non-indicative forms intervenes, so the effect is linear rather than cyclic
-(§3.1.1). -/
+/-- The Latin perfects share one cycle, and only the overt non-indicative tense intervenes, so the
+effect is linear rather than cyclic (§3.1.1). -/
 theorem perfect_one_cycle :
     ∀ r ∈ rows, r.spine.root = ⟨rootNames.idxOf "AM"⟩ → ∀ j, r.conditioner = some j →
       r.spine.Coactive cyclic r.target j ∧

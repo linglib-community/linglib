@@ -147,27 +147,24 @@ theorem nonpastAvailable_past_iff (L : Language) :
     NonpastAvailable L .past ↔ L.Provides .deleted :=
   eq_mem_pastUnderPast_iff
 
-/-- A bindable present bound by the attitude verb denotes the attitude's now, the time of its
-evaluation index, so its present presupposition holds there, which is the nonpast reading of (5) and
-(12a). -/
+/-- A present bound by the attitude verb denotes the attitude's now, giving the nonpast reading of
+(5) and (12a). -/
 theorem boundPresent_nonpast {W : Type*} [LinearOrder T] (n e : ℕ) (g : Assignment T) (now : T)
     (w : W) :
     (pronoun ⟦Tense.present⟧ n e).presup
       (Function.update (Function.update g e now) n now) w := by
   simp [Function.update_apply, denote_present]
 
-/-- A matrix-indexical present under a past attitude verb refers to the utterance time, the time of
-the index `0`, which the attitude's earlier now cannot match, so its present presupposition fails at
-the attitude's now and (3) has only the double access reading. -/
+/-- A matrix-indexical present under a past attitude verb fails its presupposition at the attitude's
+now, so (3) has only the double access reading. -/
 theorem indexicalPresent_no_nonpast {W : Type*} [LinearOrder T] {n e : ℕ} {g : Assignment T}
     {w : W} (hSpeech : (pronoun ⟦Tense.present⟧ n 0).presup g w) (hlt : g e < g 0) :
     ¬ (pronoun ⟦Tense.present⟧ n e).presup g w := by
   simp only [pronoun_presup, mem_toSetRel_present] at hSpeech ⊢
   exact fun h ↦ hlt.ne (h.symm.trans hSpeech)
 
-/-- The double access reading of (4b) needs the pregnancy interval to contain both the finding
-out and the utterance time; an interval too short to span the two years between them cannot,
-hence the oddity. -/
+/-- An interval shorter than the span from the finding out to the utterance time cannot contain
+both, so the double access reading of (4b) is odd. -/
 theorem not_doubleAccess_of_short [Sub T] [Preorder T] {I : Set T} {b u : T}
     (h : ∀ x ∈ I, ∀ y ∈ I, y - x < u - b) : ¬ {b, u} ⊆ I :=
   fun hI ↦ lt_irrefl _ (h b (hI (by simp)) u (hI (by simp)))
@@ -198,9 +195,7 @@ def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : Assignment
               (g₂ 0)) g₁)
           (g₁ 0)) g) t
 
-/-- The LF (7) has the interpretation (10), that for every time compatible with what John decides at
-some time before the utterance time there is a later time at which he tells his mother, and he
-misses her at every time compatible with that telling. -/
+/-- The LF (7) has the interpretation (10). -/
 theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
     (g : Assignment T) :
     lf7 decides tells miss g ↔

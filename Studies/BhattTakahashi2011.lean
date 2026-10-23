@@ -61,9 +61,8 @@ open RoseTree (cCommand CCommands)
 
 /-! ### The binding generalization (§2) -/
 
-/-- Generalization (10) holds under reduction, where the standard occupies the position of the
-associate in the reduced clause, so that whatever c-commands the associate in the matrix clause
-c-commands every position of the standard. -/
+/-- Under reduction, whatever c-commands the associate in the matrix clause c-commands every
+position of the standard, as Generalization (10) states. -/
 theorem standard_cCommanded_of_associate (e : Lechner2004.PhrasalComparative) {m : TreePath}
     (hcm : ¬ e.correlate ≤ m) (hmc : ¬ m ≤ e.correlate) (h : CCommands e.matrix m e.correlate)
     (q : List ℕ) : CCommands e.gapped m ⟨e.correlate.toList ++ q⟩ :=
@@ -129,9 +128,7 @@ def hindiUrduBindingPairs : List BindingDatum := (rowsOf "hind1269").filterMap b
 
 /-! ### The binding diagnostic (§2, §3.4) -/
 
-/-- The English data (11)–(13) realize the reduction analysis, coreference into the standard
-being possible exactly when the pronoun does not c-command the associate, and rule out the
-direct analysis. -/
+/-- The English data (11)–(13) realize the reduction analysis and rule out the direct analysis. -/
 theorem english_binding :
     realizesReduction englishBindingPairs ∧ ¬ realizesDirect englishBindingPairs := by
   decide
@@ -189,9 +186,8 @@ instance (e : Datum) : Decidable (RAPredictsScope e) :=
 /-- The English scope data (43a–b) follow the reduction generalization. -/
 theorem english_scope : ∀ e ∈ rowsOf "stan1293", RAPredictsScope e := by decide
 
-/-- Hindi-Urdu (40) does not follow it, since a quantifier whose base position is below the degree
-trace still scopes out, as the direct analysis, with no degree trace in the *than*-phrase,
-predicts. -/
+/-- In Hindi-Urdu (40), a quantifier based below the degree trace still scopes out, against the
+reduction analysis. -/
 theorem hindi_urdu_scope : ∃ e ∈ rowsOf "hind1269", ¬ RAPredictsScope e := by decide
 
 /-! ### The typology (§6) -/

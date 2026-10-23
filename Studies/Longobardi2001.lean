@@ -106,8 +106,8 @@ theorem typological_generalization (dp : DPParameter) :
     ¬ PnRequiresOvertD dp ↔ BnCanBeReferential dp := by
   cases h : dp.strongD <;> simp [PnRequiresOvertD, BnCanBeReferential, h]
 
-/-- The Greek prediction (65): strong D with opaque adjectives forces an article on proper
-names, which neither Romance, where the name raises, nor English, where D is weak, does. -/
+/-- Strong D with opaque adjectives forces an article on Greek proper names but not on Romance or
+English ones (65). -/
 theorem pnRequiresArticle_greek :
     PnRequiresArticle greek ∧ ¬ PnRequiresArticle romance ∧ ¬ PnRequiresArticle english := by
   decide

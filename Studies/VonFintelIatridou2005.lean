@@ -81,9 +81,8 @@ abbrev goHarlem : Hoboken → Prop := takeA
 /-- The actual goal in every world is to go to Hoboken. -/
 abbrev goals : Background Hoboken := fun _ ↦ {goHoboken}
 
-/-- On (11), the obvious analysis, the *if*-clause restricting the circumstantial base of a modal
-ordered by the actual goals, makes the Harlem sentence false, since the best *want-Harlem*
-world takes the PATH train. -/
+/-- On the obvious analysis (11) the Harlem sentence is false, since the best *want-Harlem* world
+takes the PATH train. -/
 theorem not_obvious : ¬ conditionalNecessity ⊥ goals wantHarlem takeA wantA := by
   simp only [conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
@@ -152,9 +151,8 @@ def goals : Background Nested
 Hoboken. -/
 abbrev closeness : Background Nested := fun _ ↦ {goHoboken}
 
-/-- On (16), the nested analysis, a closeness modal restricted by the *if*-clause over the
-teleological modal, makes the Harlem sentence false, since in the closest *want-Harlem* world
-the Hoboken goal survives and the PATH train is among the best worlds. -/
+/-- On the nested analysis (16) the Harlem sentence is false, since the PATH train remains among the
+best worlds. -/
 theorem not_nested :
     ¬ conditionalNecessity ⊥ closeness wantHarlem
       (fun w' ↦ necessity ⊥ goals takeA w') actual := by
@@ -195,9 +193,8 @@ theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := by
 theorem haveTo_of_imp (h : ∀ v, p v → q v) : haveTo f p q w :=
   haveTo_iff.2 fun v _ hp ↦ h v hp
 
-/-- In Sloman's London example (23) the train is the best means without being the only one, so
-*you ought to take the train, but you don't have to*. World `true` goes by train, `false` by
-bus; both arrive by noon, and only the train is comfortable. -/
+/-- In Sloman's London example (23), *you ought to take the train, but you don't have to* is true,
+the train being the best means but not the only one. -/
 theorem exists_oughtTo_not_haveTo :
     oughtTo (⊥ : Background Bool) (fun _ ↦ {(· = true)}) (fun _ ↦ True) (· = true) true ∧
       ¬ haveTo (⊥ : Background Bool) (fun _ ↦ True) (· = true) true := by
@@ -210,8 +207,8 @@ theorem exists_oughtTo_not_haveTo :
     and_true]
   decide
 
-/-- By (25), with going to Harlem the designated goal the Hoboken problem does not arise; you have
-to take the A train whatever your actual goals. -/
+/-- With going to Harlem the designated goal (25), you have to take the A train whatever your actual
+goals. -/
 theorem Hoboken.haveTo_takeA : haveTo ⊥ Hoboken.goHarlem Hoboken.takeA Hoboken.wantA :=
   haveTo_of_imp fun _ h ↦ h
 
@@ -270,9 +267,8 @@ end Pedro
 def IsEssentialPart (f : Background W) (p q : W → Prop) (w : W) : Prop :=
   ∃ P : Set (W → Prop), sInf (insert q (f w ∪ P)) ≤ p ∧ ¬ sInf (f w ∪ P) ≤ p
 
-/-- Over arbitrary premises the condition (42) is undiscriminating, since any prejacent is an
-essential part as soon as some accessible world lacks both the prejacent and the goal, the
-premise that either the goal holds or the prejacent fails doing the work. -/
+/-- Over arbitrary premises any prejacent is an essential part (42) once some accessible world lacks
+both the prejacent and the goal. -/
 theorem isEssentialPart_of_exists (h : ∃ v ∈ f.accessibleWorlds w, ¬ q v ∧ ¬ p v) :
     IsEssentialPart f p q w := by
   obtain ⟨v, hv, hq, hp⟩ := h

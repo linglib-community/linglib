@@ -81,9 +81,7 @@ to the onset of the causal chain `s` that the predicate denotes, the least event
 precedence. -/
 def OnsetCondition (s : Set E) (e : E) : Prop := IsLeast s e
 
-/-- Events integrated into one causal predicate are one event, the onset of its chain. So the
-event of a causal *by*-phrase is the one the Cause takes part in, and the phrase is controlled by
-the Cause, *John killed Mary by PRO poisoning her*, (323). -/
+/-- Events integrated into one causal predicate are the same event, the onset of its chain (323). -/
 theorem OnsetCondition.eq (h : OnsetCondition s e) (h' : OnsetCondition s e') : e = e' :=
   IsLeast.unique h h'
 
@@ -113,14 +111,13 @@ instance : LinearOrder KillingEvent :=
   linearOrderOfCovers KillingEvent.Causes (OrderDual.toDual ∘ KillingEvent.ctorIdx) (by decide)
     (by decide)
 
-/-- (313): *John killed the water deer by hiring a poacher*. The hiring, in which John takes
-part, is the onset of the chain the sentence denotes, so a *by*-phrase naming it is
-integrated. -/
+/-- In (313) *John killed the water deer by hiring a poacher*, the hiring is the onset of the
+denoted chain. -/
 theorem onsetCondition_hiring : OnsetCondition (Set.univ : Set KillingEvent) .hiring :=
   isLeast_univ_iff.2 fun e ↦ by cases e <;> decide
 
-/-- (314a): *\*John killed the water deer by the poacher shooting them*. The shooting lies
-downstream of the hiring, so a *by*-phrase naming it cannot be integrated. -/
+/-- In (314a) *\*John killed the water deer by the poacher shooting them*, the shooting is not the
+onset of the chain. -/
 theorem not_onsetCondition_shooting : ¬ OnsetCondition (Set.univ : Set KillingEvent) .shooting :=
   not_onsetCondition_of_lt onsetCondition_hiring (by decide)
 
@@ -175,8 +172,7 @@ theorem eq_percept_or_eq_subjectMatter (h : c < emotion) : c = percept ∨ c = s
 theorem isEventive_iff : c.IsEventive ↔ c = percept := by
   revert c; decide
 
-/-- Chapter 4's correlation: the subject of a Class II verb is intensional exactly when the verb
-is stative. Both properties are fixed by the member of the chain the Cause refers to. -/
+/-- The subject of a Class II verb is intensional exactly when the verb is stative (Chapter 4). -/
 theorem isMindInternal_iff_not_isEventive : c.IsMindInternal ↔ ¬ c.IsEventive :=
   lt_iff_not_ge
 
@@ -189,26 +185,19 @@ open EmotionChain
 
 /-! ### The T/SM restriction -/
 
-/-- The T/SM restriction, (42) and (262): the Onset Condition maps a Subject Matter, like the
-Cause, to the onset of the chain the predicate denotes. On the eventive reading that onset is the
-percept, and the subject matter lies downstream of it, so the Subject Matter cannot be mapped
-there. -/
+/-- On the eventive reading a Subject Matter cannot satisfy the Onset Condition, which is the T/SM
+restriction (42), (262). -/
 theorem tsm_restriction (h : c.IsEventive) : ¬ OnsetCondition (Set.Ici c) subjectMatter :=
   not_onsetCondition_of_lt isLeast_Ici (h.trans_lt (by decide))
 
-/-- A predicate without a Cause, the reduced variant of a Class II verb or the predicate embedded
-in an analytic causative, (43), denotes the chain from the subject matter on, and a Subject Matter
-satisfies the Onset Condition there. -/
+/-- A predicate without a Cause (43) lets a Subject Matter satisfy the Onset Condition. -/
 theorem subjectMatter_onset_without_cause : OnsetCondition (Set.Ici subjectMatter) subjectMatter :=
   isLeast_Ici
 
 /-! ### The comparison with Pesetsky (1995) -/
 
-/-- Both accounts rule out a Cause alongside either object of emotion, a Target as in (42a) or a
-Subject Matter as in (42c). For [pesetsky-1995] the preposition that introduces the stimulus is
-not an affix and strands the zero affix CAUS below the verb. For the thesis the object of
-emotion is the subject matter downstream of the percept that an eventive Cause refers to, so the
-Onset Condition, needed anyway for causal adjuncts, excludes it. -/
+/-- Both [pesetsky-1995] and the Onset Condition rule out a Cause alongside a Target (42a) or a
+Subject Matter (42c). -/
 theorem tsm_restriction_agrees (s : Pesetsky1995.StimulusType) (h : c.IsEventive) :
     ¬ Pesetsky1995.canReachV (Pesetsky1995.stimulusCascade s).spine 1 ∧
       ¬ OnsetCondition (Set.Ici c) subjectMatter :=

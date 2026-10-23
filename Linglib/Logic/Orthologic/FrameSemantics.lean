@@ -116,9 +116,7 @@ theorem eval_map {L : Type u} [Lattice L] [BoundedOrder L] [InvolutiveCompl L]
   | neg φ ih => simp only [Formula.eval, ih, represent_compl hV]
   | and φ ψ ihφ ihψ => simp only [Formula.eval, ihφ, ihψ, represent_inf hV]
 
-/-- Frame consequence implies derivability ([holliday-mandelkern-2024] Theorem 4.19): the
-    canonical frame of any ortholattice over `Set.univ` embeds it into a frame algebra, so frame
-    validity gives validity in every ortholattice. -/
+/-- Frame consequence implies derivability ([holliday-mandelkern-2024] Theorem 4.19). -/
 theorem frame_complete {φ ψ : Formula Var} (h : φ ⊨ᶠ ψ) : φ ⊢ ψ := by
   apply Orthologic.complete
   intro L _ _ _ _ v

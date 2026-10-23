@@ -84,9 +84,8 @@ theorem mu_eq_every : (mu : GQ α) = GQ.every := rfl
 theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=
   funext fun _ ↦ propext ⟨fun h ↦ h a rfl, fun h _ hx ↦ hx ▸ h⟩
 
-/-- In the conjunction of two individuals, (13), J′, a conjunctive coordinator and so
-intersection, applied to the μ phrases of the shifted conjuncts gives the meet of their Montague
-lifts. -/
+/-- J′ applied to the μ phrases of two shifted individuals gives the meet of their Montague lifts
+(13). -/
 theorem conjunction_eq {j : Coordinator} (hj : j.role = .conjunctive) (a b : α) :
     j.denote {mu (shift a), mu (shift b)} = NP.individual a ⊓ NP.individual b := by
   rw [mu_shift, mu_shift, Coordinator.denote_of_conjunctive hj, sInf_pair]
@@ -127,9 +126,8 @@ theorem muPrime_of_distributive {a b : α} (ha : P a) (hb : P b) : muPrime a P �
 
 end Collective
 
-/-- For two members of a team of three, (22), the conjunction of their μ′ phrases holds of forming
-the team, though neither the collective nor the distributive reading does, so μ′ is too weak to
-give a collective reading. -/
+/-- For two members of a team of three (22), the conjunction of their μ′ phrases holds of forming
+the team, though neither collective nor distributive reading does. -/
 theorem muPrime_team :
     (muPrime ({0} : Finset (Fin 3)) (· = Finset.univ) ∧
       muPrime ({1} : Finset (Fin 3)) (· = Finset.univ)) ∧

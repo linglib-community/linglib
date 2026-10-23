@@ -196,8 +196,8 @@ theorem Model.listener_R0'_apply_singleton_ne_zero_iff (hπ : ∀ w, m.prior d {
   rw [RSA.listener_apply_singleton_ne_zero_iff, m.R0'_apply_singleton_ne_zero_iff]
   exact and_iff_right (hπ w)
 
-/-- By the size principle (§2b), between two worlds of equal prior at which a response is true
-and safe, the questioner comes to favour the world with fewer true and safe alternatives. -/
+/-- Between two worlds of equal prior where a response is true and safe, the questioner favours the
+one with fewer true and safe alternatives (§2b). -/
 theorem Model.listener_R0_real_lt_iff {q : Q} {r : R} {w₁ w₂ : W}
     (hp : m.prior d {w₁} = m.prior d {w₂}) (hpos : m.prior d {w₁} ≠ 0)
     (h₁ : r ∈ m.trueSafe w₁ q) (h₂ : r ∈ m.trueSafe w₂ q) :
@@ -339,9 +339,8 @@ theorem Model.respondent_apply_singleton_ne_zero_of_beta_eq_one (hβ : p.β = 1)
     (by obtain ⟨x, hx⟩ := h r; exact hx ▸ EReal.coe_ne_bot x)
     fun r' ↦ by obtain ⟨x, hx⟩ := h r'; exact hx ▸ EReal.coe_ne_top x
 
-/-- Informativity enforces truthfulness (§2c). When `β < 1`, a respondent who considers some
-decision problem possible never gives a response that is false at a world it considers
-possible. -/
+/-- When `β < 1`, a respondent never gives a response false at a world it considers possible (§2c).
+-/
 theorem Model.respondent_truthful [IsFiniteMeasure πD] (hβ : p.β < 1) (hα : 0 < p.αR)
     {πW : Measure W} {q : Q} {r : R} {d : D} (hd : πD {d} ≠ 0) {w : W} (hw : πW {w} ≠ 0)
     (hf : w ∉ m.response r) : m.respondent p πD πW q {r} = 0 := by
@@ -442,9 +441,8 @@ theorem polar_exhaustive_safe :
       ∀ S T, Safe (cards.question S) (cards.response (.exhaustive T)) := by
   decide
 
-/-- Mentioning accepted cards is safe for a question exactly when one of them was asked about.
-Naming one of the two cards asked about is safe, as in (1) (`Examples.ex1`), and naming a third
-card is not, as in (2) (`Examples.ex2`). -/
+/-- Mentioning accepted cards is safe iff one of them was asked about ((1), (2), `Examples.ex1`,
+`Examples.ex2`). -/
 theorem mention_safe_iff (S T : Finset Card) (hS : S.Nonempty) :
     Safe (cards.question S) (cards.response (.mention T)) ↔ (T ∩ S).Nonempty := by
   rw [safe_iff_mem_polar, mem_polar]
@@ -469,10 +467,8 @@ instance (q : Finset Card) : IsMarkovKernel (cards.R0 q) :=
 private theorem cards_prior_ne_zero (d : Goal) (w : Finset Card) : cards.prior d {w} ≠ 0 :=
   uniformOn_univ_singleton_ne_zero w
 
-/-- In (3) (`Examples.ex3`), for a questioner holding the card asked about, the value of the
-decision problem after the answer "yes" already equals its value after the exhaustive list,
-since every world compatible with either answer accepts a card the questioner holds; only the
-cost separates the two answers. -/
+/-- In (3) (`Examples.ex3`), for a questioner holding the card asked about, *yes* has the same
+decision value as the exhaustive list. -/
 theorem yes_value_eq_exhaustive (C w : Finset Card) (hC : .amex ∈ C) (hw : .amex ∈ w)
     (αℵ : ℝ) :
     value (cards.utility (.ownCards C)) αℵ
@@ -500,9 +496,8 @@ theorem yes_value_eq_exhaustive (C w : Finset Card) (hC : .amex ∈ C) (hw : .am
     exact hx.1 ▸ hx.2
   · exact (Set.mem_singleton_iff.1 ((cards.listener_R0'_apply_singleton_ne_zero_iff hπ).1 hw')) ▸ hw
 
-/-- In (5) (`Examples.ex5`), after "yes" to the general question, a world accepting only
-MasterCard keeps positive posterior, so a questioner holding American Express remains
-uncertain; after "yes" to the question about American Express it does not. -/
+/-- In (5) (`Examples.ex5`), after *yes* to the general question a world accepting only MasterCard
+keeps positive posterior, but not after *yes* about American Express. -/
 theorem generalYes_posterior_ne_zero :
     RSA.listener (cards.prior (.ownCards {.amex})) cards.R0' (.polar univ true)
         {{.mastercard}} ≠ 0 ∧

@@ -305,9 +305,8 @@ private theorem literal_salience_green :
     show ⟦Word.green⟧ᴹ = {.greenSquare, .greenCircle} by decide, Finset.sum_pair (by decide)]
   norm_num [listenerChoice]
 
-/-- The belief-oriented speaker who takes the literal listener to hold the salience prior (7)
-prefers *blue* to *circle* at the blue circle exactly when the adjective costs less than
-`log (169 / 139)`, the salient blue circle being the likelier circle. -/
+/-- With the salience prior (7), the belief-oriented speaker prefers *blue* to *circle* at the blue
+circle iff the adjective costs less than `log (169 / 139)`. -/
 theorem salience_prefers_unique_colour_iff (hlam : 0 < lam) :
     (speaker .belief salience lam c .blueCircle).real {.circle} <
       (speaker .belief salience lam c .blueCircle).real {.blue} ↔ c < log (169 / 139) := by
@@ -445,10 +444,8 @@ theorem frankGoodman_listener_green :
     one_mul, sigmoid_def, neg_neg, exp_log two_pos]
   norm_num [listenerChoice]
 
-/-- The action-oriented listener (14) soft-maximizes its belief and so orders the objects as the
-belief does, at every rationality of its own. With the salience prior and the action-oriented
-speaker, the model the paper's comparison favours, it follows salience on *circle* and narrows on
-*green* on the window of its belief. -/
+/-- With the salience prior and the action-oriented speaker, the action-oriented listener (14)
+follows salience on *circle* and narrows on *green* at every rationality. -/
 theorem action_listener_window (hlam : 0 < lam) {lamL : ℝ} (hlamL : 0 < lamL)
     {ρ : Kernel (Word Colour Shape) Object}
     (hρ : ρ = policy lamL (listener salience (speaker .action (uniformOn .univ) lam 0))

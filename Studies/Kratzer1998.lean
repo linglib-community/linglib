@@ -92,8 +92,7 @@ theorem zeroTense_presup [LinearOrder T] (n : ℕ) (g : Assignment T) (w : W) :
     (zeroTense n).presup g w := by
   simp
 
-/-- A zero tense with a binder index makes its clause a property of times, (31). Whatever the
-assignment, the tense under the abstract denotes the time the abstract is applied to. -/
+/-- A zero tense with a binder index makes its clause a property of times (31). -/
 theorem zeroTense_abstract [LT T] (n : ℕ) (g : Assignment T) (t : T) (w : W) :
     lambdaAbsG n (fun g ↦ (zeroTense n).selector g w) g t = some t := by
   simp
@@ -317,9 +316,8 @@ theorem southGerman_transparent :
 theorem english_transparent :
     ¬ english.IsTenseFaithful ∧ ¬ english.IsPerfectCompositional := by decide +kernel
 
-/-- The backward-shifted reading of a past under a past, (42), is the past with the perfect,
-which the English simple past spells out and the German one does not, so that Standard German
-needs the past perfect. -/
+/-- The backward-shifted reading (42) is the past with the perfect, spelled out by the English but
+not the German simple past. -/
 theorem backwardShifted :
     english.SpellsOut .simplePast ⟦past⟧ .perfect ∧
       ¬ standardGerman.SpellsOut .simplePast ⟦past⟧ .perfect ∧
@@ -333,17 +331,14 @@ def varieties : List (String × Variety) := [("stan1293", english), ("stan1295",
 def forms : List (String × Tense.Form) :=
   [("simple past", .simplePast), ("Präteritum", .simplePast), ("Perfekt", .presentPerfect)]
 
-/-- In (40) a form is acceptable out of the blue iff it can describe a past event there. The
-English simple past and the German present perfect can, and the German simple past cannot. -/
+/-- In (40) a form is acceptable out of the blue iff it can describe a past event there. -/
 theorem rows_outOfTheBlue :
     ∀ r ∈ Examples.all, r.feature? "context" = some "out of the blue" →
       ∃ v ∈ varieties.lookup r.language, ∃ f ∈ r.parse? "form" forms,
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
-/-- The rows of (40) are in the form they are labelled with: of the tense forms of *build* for a
-third person singular subject exactly the labelled one occurs in the English row, and of those
-of *bauen* exactly the labelled one has all its words in each German row. -/
+/-- The rows of (40) are in the forms they are labelled with. -/
 theorem rows_realize :
     (∀ f ∈ English.Tense.tenseForms,
       ((∃ ws ∈ English.Verbs.build.tenseForm (English.Auxiliaries.cell .third .singular) f,

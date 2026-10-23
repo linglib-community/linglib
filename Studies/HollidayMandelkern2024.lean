@@ -152,23 +152,20 @@ theorem card_regular :
 
 /-! ### The desiderata of §2 on the Scale -/
 
-/-- Wittgenstein sentences of both orders are contradictions ((2) and (3)), by Proposition 4.27
-applied to `p` and to `¬p`, using that `¬¬p = p` for the regular `p`. -/
+/-- Wittgenstein sentences of both orders are contradictions ((2) and (3)), by Proposition 4.27. -/
 theorem wittgenstein : nP ∩ dP = ∅ ∧ P ∩ dnP = ∅ :=
   ⟨Set.disjoint_iff_inter_eq_empty.mp (disjoint_orthoNeg_diamond frame access P),
     by simpa only [orthoNeg_orthoNeg_of_isRegular frame (embed_isRegular _),
       Set.disjoint_iff_inter_eq_empty] using disjoint_orthoNeg_diamond frame access nP⟩
 
-/-- At the coin whose outcome is unknown, `◇¬p` does not entail `¬p` (§1) and `p` does not
-entail `□p` (§2). In a Boolean algebra `wittgenstein` would force both entailments
-(`Orthologic.wittgensteinLaw_iff_diamondHom_compl_le`). -/
+/-- At the coin with unknown outcome, `◇¬p` does not entail `¬p` (§1) and `p` does not entail `□p`
+(§2). -/
 theorem diamond_neg_not_entail_neg : x3 ∈ dnP ∧ x3 ∉ nP := by decide
 
 theorem not_entail_box : x2 ∈ P ∧ x2 ∉ bP := by decide
 
-/-- EO does not derive `◇¬p ⊢ ¬p`: the Scale's regular propositions form an epistemic
-ortholattice (Proposition 4.27), so by soundness (Theorem 3.26) the derivation would make `x3`,
-which settles `◇¬p`, settle `¬p` (§1). -/
+/-- EO does not derive `◇¬p ⊢ ¬p` (§1), by soundness (Theorem 3.26) for the Scale's epistemic
+ortholattice (Proposition 4.27). -/
 theorem not_derivable_dia_neg_neg :
     ¬ EDerivable (ModalFormula.dia (.neg (.var ()))) (.neg (.var ()) : ModalFormula Unit) := by
   intro h
@@ -193,8 +190,8 @@ theorem not_derivable_box :
   simp only [ModalFormula.eval, CompatFrame.coe_necHom, coe_eB] at hle
   exact not_entail_box.2 (hle not_entail_box.1)
 
-/-- At `x3` the conjunction `(p ∨ ¬p) ∧ (◇p ∧ ◇¬p)` holds but its distribution
-`(p ∧ ◇¬p) ∨ (¬p ∧ ◇p)` does not ((10) and Example 4.33). -/
+/-- At `x3`, `(p ∨ ¬p) ∧ (◇p ∧ ◇¬p)` holds but its distributed form does not ((10) and Example
+4.33). -/
 theorem distributivity_fails :
     x3 ∈ disj frame P nP ∩ (dP ∩ dnP) ∧ x3 ∉ disj frame (P ∩ dnP) (nP ∩ dP) := by
   decide
@@ -205,8 +202,7 @@ theorem disjunctive_syllogism_fails :
     (∀ x : Poss, x ∈ disj frame P bnP) ∧ x3 ∈ orthoNeg frame bnP ∧ x3 ∉ P := by
   decide
 
-/-- The regular propositions of the Scale are not orthomodular ((21) and Example 3.20), since `p`
-entails `◇p` but `◇p` does not entail `p ∨ (¬p ∧ ◇p)`, which fails at `x3`. -/
+/-- The regular propositions of the Scale are not orthomodular ((21) and Example 3.20). -/
 theorem orthomodularity_fails : ¬ IsOrthomodularLattice frame.Regular := by
   intro
   let p : frame.Regular := eB ({0} : Coin)

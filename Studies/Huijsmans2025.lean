@@ -135,9 +135,8 @@ theorem eatFuture_iff {f : EvidentialFrame T} : EatFuture f ↔ f.acquisitionTim
 def AcquiredAfterOnset (mb : Set (T → W → Prop)) (w : W) (f : EvidentialFrame T) : Prop :=
   ∀ q ∈ mb, ∀ m, IsEarliest q w m → m ≤ f.acquisitionTime
 
-/-- The inferential's presupposition entails downstream evidence when the prejacent's earliest
-moment is the event time, the remark of Section 4.2 that the two analyses agree on *č̓ɛ* in
-one direction. -/
+/-- If the prejacent's earliest moment is the event time, the inferential's presupposition entails
+downstream evidence (Section 4.2). -/
 theorem downstream_of_inferentialPresup {mb : Set (T → W → Prop)} {p : T → W → Prop} {w : W}
     {f : EvidentialFrame T} (hacq : AcquiredAfterOnset mb w f)
     (hev : IsEarliest p w f.eventTime) (h : InferentialPresup mb p w) : f.Downstream := by

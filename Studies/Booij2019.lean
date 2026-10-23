@@ -143,8 +143,8 @@ def redSub : Fin 4 → RedPart := ![.c1, .schwa, .c1, .y]
 /-- The base `C₁y`. -/
 def baseSub : Fin 2 → RedPart := ![.c1, .y]
 
-/-- A reduplicant and a base are a paired instantiation of (13) exactly when the reduplicant
-has the schwa, copies its initial consonant, and shares consonant and residue with the base. -/
+/-- A reduplicant and base instantiate (13) iff the reduplicant has the schwa, copies its initial
+consonant, and shares consonant and residue with the base. -/
 theorem reduplication_pairs_iff {r : Fin 4 → Flat String} {b : Fin 2 → Flat String} :
     reduplication.InstantiatesAt (Sum.elim redSub baseSub) (Sum.elim r b) ↔
       r 1 = ↑"ə" ∧ r 0 = r 2 ∧ r 0 = b 0 ∧ r 3 = b 1 := by

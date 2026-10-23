@@ -117,8 +117,8 @@ in (50b). -/
 theorem isLUB_level [DenselyOrdered D] (hε : 0 < ε) : IsLUB (level ε d) (d + ε) :=
   isLUB_Ioo (Set.nonempty_Ioo.1 ⟨d, mem_level_self hε⟩)
 
-/-- The level of radius `ε` around `d` is the union, over all alignments `t` of the grain of width
-`ε`, of the cells containing `d`, as footnote 9 states. -/
+/-- The level of radius `ε` around `d` is the union over alignments of the grain cells containing
+`d` (footnote 9). -/
 theorem level_eq_iUnion_cell {α : Type*} [Field α] [LinearOrder α] [IsStrictOrderedRing α]
     [FloorRing α] {ε : α} (hε : 0 < ε) (d : α) :
     level ε d = ⋃ t, {y | y - t ∈ (grain ε).cell (d - t)} := by
@@ -171,8 +171,7 @@ theorem equative_mono (h : ε₁ ≤ ε₂) : AtLeastAsStrong (equative · dc) �
 theorem comparative_anti (h : ε₁ ≤ ε₂) : AtLeastAsStrong (comparative · dc) ε₂ ε₁ :=
   fun _ ↦ (add_le_add_right h dc).trans_lt
 
-/-- At one grain a comparative and its reversed equative cannot both hold, (30), since the
-difference in degree that the comparative requires is what the equative excludes. -/
+/-- At one grain a comparative and its reversed equative cannot both hold (30). -/
 theorem not_equative_of_comparative {μF dS : D} (h : comparative ε dS μF) :
     ¬ equative ε μF dS :=
   fun h' ↦ lt_asymm h (sub_lt_iff_lt_add.1 h')

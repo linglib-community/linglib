@@ -130,9 +130,7 @@ theorem actuality (hpart : PartsOccur occurs) (hped : EventDescriptionPreserved 
   exact ⟨e₂, he₂,
     hped e₂ w'' w (hbest e₂ w' w'' hocc' hw'') he₂ (hatt w' hw' w'' hw'')⟩
 
-/-- The negative implicative entailment (31): with negation above aspect no actual event is
-a remembering-to-VP, so an actual VP-event is excluded, given an actual memory event whose
-accessible worlds it would persist into. -/
+/-- With negation above aspect, an actual VP-event is excluded given an actual memory event (31). -/
 theorem negated_actuality (hjoin : JoinsOccur occurs)
     (hped : EventDescriptionPreserved occurs vp)
     (hmem : Persists occurs (λ w => ⋃ e, mem e w)) (hbest : Persists occurs best) {w : W}

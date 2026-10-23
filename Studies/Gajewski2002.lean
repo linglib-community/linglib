@@ -141,9 +141,7 @@ theorem permutationInvariant_not : PermutationInvariant (E := E) (.t ⇒ .t) Not
 theorem permutationInvariant_there : PermutationInvariant Ty.et fun _ : E ↦ True :=
   fun _ ↦ rfl
 
-/-- The whole domain and the empty set are the only permutation-invariant properties, the
-discussion under (25); a contingent predicate like *new-student* is therefore replaced by a
-variable in the skeleton. -/
+/-- The whole domain and the empty set are the only permutation-invariant properties (25). -/
 theorem permutationInvariant_et_iff {P : E → Prop} :
     PermutationInvariant Ty.et P ↔ P = (fun _ ↦ True) ∨ P = (fun _ ↦ False) := by
   constructor
@@ -274,8 +272,8 @@ theorem thereSkeleton_some_not_isLAnalytic (a : E) :
     exact hx
   · exact h (fun _ _ ↦ True) ⟨a, trivial, trivial⟩
 
-/-- With *at least two* the skeleton (5b) is false under the empty assignment and true under
-the total one over a two-element domain, so the weak numeral is grammatical *there*. -/
+/-- With *at least two*, the skeleton (5b) is not L-analytic, so the weak numeral is grammatical in
+*there*-sentences. -/
 theorem thereSkeleton_atLeast_two_not_isLAnalytic :
     ¬ (thereSkeleton (atLeast 2 : GQ Bool)).IsLAnalytic := by
   rintro (h | h)
@@ -316,9 +314,8 @@ theorem exceptiveSkeleton_no_not_isLContradiction (a : E) :
   h ![fun _ ↦ True, (· = a), (· = a)]
     ⟨⟨a, rfl⟩, fun _ hx hxa ↦ hx.2 hxa, fun _ hS x hx ↦ by_contra fun hs ↦ hS x ⟨trivial, hs⟩ hx⟩
 
-/-- Footnote 7 concedes a gap. The *most*-exceptive (11c) is ungrammatical, yet its skeleton
-is not L-analytic, since *most* has a nonempty least exception in [von-fintel-1993]'s own
-limiting case. -/
+/-- The *most*-exceptive (11c) is ungrammatical, yet its skeleton is not L-analytic, a gap through
+[von-fintel-1993]'s limiting case (Footnote 7). -/
 theorem exceptiveSkeleton_most_not_isLAnalytic :
     ¬ (exceptiveSkeleton (most : GQ (Fin 2))).IsLAnalytic :=
   fun h ↦ h.elim (exceptiveSkeleton_not_isLTautology _) fun hc ↦

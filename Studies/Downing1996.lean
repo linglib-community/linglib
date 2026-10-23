@@ -386,8 +386,7 @@ theorem reading_classPlural_iff (h : NPHead) :
     reading h = .classPlural ↔ numberSystem h = .transnumeral := by
   cases h <;> decide
 
-/-- Against the hypothesis that classifiers and plural morphemes are in complementary
-distribution: the lexicon pairs a plural form and a classifier with one noun, as in (2b). -/
+/-- Some Japanese noun has both a plural form and a classifier, as in (2b). -/
 theorem plural_and_classifier :
     ∃ n : Japanese.Nouns.Noun, n.plural.isSome ∧ n.classifiers.Nonempty :=
   ⟨Japanese.Nouns.hito, rfl, ⟨_, Finset.mem_singleton_self _⟩⟩

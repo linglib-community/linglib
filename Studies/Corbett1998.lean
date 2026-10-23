@@ -224,8 +224,8 @@ namespace Latin
 
 open _root_.Latin.Gender
 
-/-- In Table 9.2 *facilis* distinguishes only part of what *acer* does and *felix* nothing of what
-*facilis* does, so each class's forms factor through the previous, never conversely. -/
+/-- In Table 9.2 the nominative singular forms of *facilis* factor through those of *acer*, not
+conversely. -/
 theorem facilis_factorsThrough_acer :
     Function.FactorsThrough facilis.nomSg acer.nomSg ∧
       ¬ Function.FactorsThrough acer.nomSg facilis.nomSg := by decide

@@ -141,17 +141,15 @@ theorem mem_image_iff (h : M.R ○ inst ⊆ M.R) (hk : ∀ ⦃s⦄, s ~[M.R] k �
   rw [← image_comp]
   exact ⟨fun ⟨s, hs, hsk⟩ ↦ ⟨s, hs, hk hsk⟩, fun ⟨s, hs, hsk⟩ ↦ ⟨s, hs, h hsk⟩⟩
 
-/-- (119): a state inherits from a kind to a kind with all of its instances, so *Dogs are sitting
-on my lawn* and *All dogs are mammals* give *Mammals are sitting on my lawn*. -/
+/-- A state passes from a kind to any kind containing all its instances, so *Dogs are sitting on my
+lawn* yields *Mammals are sitting on my lawn* (119). -/
 theorem mem_image_of_mem_image (h : M.R ○ inst ⊆ M.R)
     (hk : ∀ ⦃s⦄, s ~[M.R] k → s ~[M.R ○ inst] k) (hsub : ∀ ⦃x⦄, x ~[inst] k → x ~[inst] k')
     {P : Set Stage} (hP : k ∈ M.R.image P) : k' ∈ M.R.image P := by
   obtain ⟨x, hx, hxk⟩ := (mem_image_iff h hk P).1 hP
   exact image_image_subset h P ⟨x, hx, hsub hxk⟩
 
-/-- (135c) *Dogs are everywhere*: a kind whose stages are those of its instances is everywhere
-exactly when at each place one of its instances is there, so different places may hold different
-dogs. -/
+/-- A kind is everywhere iff some instance is at each place, as in *Dogs are everywhere* (135c). -/
 theorem everywhere_iff (h : M.R ○ inst ⊆ M.R) (hk : ∀ ⦃s⦄, s ~[M.R] k → s ~[M.R ○ inst] k) :
     M.Everywhere t k ↔ ∀ p, ∃ x ∈ M.R.image (M.located p t), x ~[inst] k := by
   simp only [Everywhere, mem_image_iff h hk, SetRel.mem_image]

@@ -264,8 +264,8 @@ def inflTerminal (r : ArgumentRole) (c : PronCell) : List Feat :=
 /-- The Set A terminal on Voice or Poss agreeing with a cell. -/
 def vnTerminal (c : PronCell) : List Feat := copied c ++ [.head .vn]
 
-/-- The Fragment's Set B paradigm (Table 4.6) is the Vocabulary's spell-out of what Infl copies
-from an intransitive subject; 2SG and 3SG fall to the Elsewhere item. -/
+/-- The Set B paradigm (Table 4.6) is the Vocabulary's spell-out of what Infl copies from an
+intransitive subject. -/
 theorem setB_realize (c : PronCell) :
     setBExponent.realize (.personNumber c.person c.number) =
       (insert1 (inflTerminal .S c)).map ([·]) := by
@@ -348,8 +348,8 @@ non-verbal predicate, hosts every item its features license. -/
 theorem form_unflagged (c : PronCell) : form none c = morphemes (independentOf c) := by
   cases c <;> decide
 
-/-- In the subject and possessor series (Table 4.25), a pronoun flagged by either locus loses its
-number if first person, so the bases *qin* and *qo* are bled and the enclitic remains. -/
+/-- In the subject and possessor series (Table 4.25), a flagged first-person pronoun loses its
+number, bleeding *qin* and *qo*. -/
 theorem form_flagged (l : Locus) (c : PronCell) : form (some l) c = morphemes (subjPossOf c) := by
   cases l <;> cases c <;> decide
 

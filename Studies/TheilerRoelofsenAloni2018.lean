@@ -226,8 +226,8 @@ variable {dox f x} {P : Question W} {q : Set W} {w : W}
 
 theorem knowInt_iff : knowInt dox f x w ↔ certain dox f x w ∧ know dox f x w := and_comm
 
-/-- *know* of a declarative holds when the nucleus is true and the subject believes it, so
-*know* is veridical and factive for declaratives ((39) and (41)). -/
+/-- *Know* of a declarative holds iff the nucleus is true and believed, so *know* is veridical and
+factive for declaratives ((39) and (41)). -/
 theorem know_ofSet_iff :
     know dox (E (ofSet q)) x w ↔ w ∈ q ∧ dox x w ⊆ q ∧ (dox x w).Nonempty :=
   isTruthful_ofSet_iff
@@ -239,8 +239,8 @@ theorem certain_ofSet_iff (hne : (dox x w).Nonempty) :
   ⟨fun h ↦ (isTruthful_ofSet_iff.1 (h _ hne.some_mem)).2.1,
     fun hs _ hv ↦ isTruthful_ofSet_iff.2 ⟨hs hv, hs, hne⟩⟩
 
-/-- A subject believing an answer or partial answer false at the world of evaluation does not
-know the question, the false-answer sensitivity of (13b) and (25). -/
+/-- A subject who believes a false answer or partial answer does not know the question, as in (13b)
+and (25). -/
 theorem not_know_of_subset (hq : q ∈ altUnion P) (hw : w ∉ q) (h : dox x w ⊆ q) :
     ¬ know dox (E P) x w :=
   fun hk ↦ hk.nfa ⟨q, hq, hw, h⟩
@@ -402,10 +402,8 @@ theorem subset_cell_of_E_exh [Finite W] (h : D ∈ E (exh a) w) : D ⊆ cell a w
   rw [exh, alt_fromSetoid] at hc
   exact (Setoid.eq_of_mem_classes hc hwc cell_mem_classes mem_cell_self) ▸ hDc
 
-/-- Under the internal interpretation of *know*, the intermediate exhaustive reading of a
-wh-complement, the complete operator on the non-exhaustive nucleus, and its strongly
-exhaustive reading, the operator on the exhaustive nucleus, yield the same truth conditions,
-that the subject's state lies within one cell of the partition (Fact 2). -/
+/-- Under internal *know*, the intermediate and strongly exhaustive readings of a wh-complement have
+the same truth conditions (Fact 2). -/
 theorem knowInt_Ecmp_nonExh_iff [Finite W] {dox : X → W → Set W} {x : X}
     (hne : ∀ d, (a d).Nonempty) (hN : (nobody a).Nonempty)
     (hind : ∀ d d', a d ⊆ a d' → d = d') :

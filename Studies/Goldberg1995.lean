@@ -233,9 +233,8 @@ structure. -/
 def kickLF : LinkedFrame :=
   { frame := .np, roles := [(external, ⟨{.agent}, true⟩), (complement 0, ⟨{.patient}, true⟩)] }
 
-/-- The fragment's *kick* derives exactly the book's construal: "the kicker role can only fuse
-with the agent role ... the kicked role is an instance of the patient role but not an instance
-of the recipient role" (p. 54). -/
+/-- The fragment's *kick* derives the book's construal, with kicker fused to agent and kicked to
+patient (p. 54). -/
 theorem kick_linkedFrame : English.Verbs.kick.linkedFrame? = some kickLF := by decide
 
 /-- `kickFusion f` fuses *kick*'s two slots with the ditransitive's three by `f`. -/
@@ -293,9 +292,8 @@ theorem isFusion_put :
       Corresponds putLF causedMotion.meaning.link (putFusion ![some 0, some 1, some 2]) := by
   decide
 
-/-- *put* fuses with caused motion only through the three-role exception: "The Correspondence
-Principle allows for one participant role to be linked to a nonprofiled argument role in cases
-in which the verb lexically profiles three participant roles" (p. 53). -/
+/-- *Put* fuses with caused motion only by linking a role to a nonprofiled argument role, the
+three-role exception (p. 53). -/
 theorem put_uses_exception (f : Fin 3 → Option (Fin 3))
     (h : IsFusionOn putLF causedMotion.meaning.link (putFusion f)) :
     ∃ s ∈ putLF.obligatory, ∃ t ∈ putFusion f s, ¬ causedMotion.meaning.link.IsProfiled t := by
@@ -351,9 +349,8 @@ def wipeLF : LinkedFrame :=
 def talkLF : LinkedFrame :=
   { frame := .intransitive, roles := [(external, ⟨{.agent}, true⟩)] }
 
-/-- The resultative adds only a result-goal to *wipe*, and a patient as well to *talk*: "the
-construction can contribute both patient and result-goal roles, as is done in the case of *talk*"
-(p. 190). -/
+/-- The resultative adds only a result-goal to *wipe*, and both a patient and a result-goal to
+*talk* (p. 190). -/
 theorem wipe_talk_contributed :
     (English.Verbs.wipe.linkedFrame?).all (·.Extends wipeLF) ∧
       IsFusionOn wipeLF resultative.meaning.link
@@ -375,9 +372,8 @@ def becomeLF : LinkedFrame :=
   { frame := ⟨some .nominal, [.clausal]⟩
     roles := [(external, ⟨{.patient}, true⟩), (complement 0, ⟨{.goal}, true⟩)] }
 
-/-- *become* "cannot integrate with the construction, because the construction specifies that
-the agent role must be fused with an independently existing participant role of the verb"
-(p. 190). -/
+/-- *Become* does not fuse with the resultative, which needs the agent fused with an existing
+participant role of the verb (p. 190). -/
 theorem not_isFusion_become (f : Fin 2 → Option (Fin 3)) :
     ¬ IsFusionOn becomeLF resultative.meaning.link
       (ofFin [external, complement 0] [external, complement 0, complement 1] f) := by

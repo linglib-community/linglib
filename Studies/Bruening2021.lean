@@ -177,9 +177,8 @@ theorem sluiced_rows : ∀ v ∈ verbs, .np_np ∈ v.valency.frames → ∀ row 
 
 /-! ### Implicit direct objects -/
 
-/-- A verb that leaves the object of its transitive frame implicit does not leave the second
-object of its double object construction implicit, except *write*, whose *She wrote me* the
-paper's fn. 7 suggests is a prepositional frame with a silent preposition. -/
+/-- A verb leaving its transitive object implicit does not leave its second double object implicit,
+except *write* (fn. 7). -/
 theorem objectDrop_secondObject :
     (verbs.filter fun v ↦ (∃ a, v.Alternates (Argument.secondObject.leaveImplicit a)) ∧
       ∃ a, v.Alternates (.leaveImplicit .np 0 (some a))).map (·.form) = ["write"] := by
@@ -203,9 +202,8 @@ theorem dropsInBothFrames :
       ∃ a, v.Alternates (Argument.directObject.leaveImplicit a)).map (·.form) = ["write"] := by
   decide +kernel
 
-/-- In (63)–(65) a double object verb leaves its direct object implicit beside a first object or
-beside a PP exactly as the example is acceptable. The fragment has no double object frame for
-*ask*, *email*, *text* or *telegraph*. -/
+/-- In (63)–(65), a double object verb leaves its direct object implicit beside a first object or a
+PP iff the example is acceptable. -/
 theorem implicit_rows : ∀ v ∈ verbs, .np_np ∈ v.valency.frames → ∀ row ∈ Examples.all,
     row.feature? "verb" = some v.form → ∀ x,
       (row.feature? "implicit").bind Argument.ofString? = some x →

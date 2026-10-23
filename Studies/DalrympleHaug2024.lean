@@ -246,10 +246,8 @@ def pro (exhaustive collective matrixPlural : Bool) : Antecedent :=
     matrixPlural }
 
 open English English.Verbs Landau2015 in
-/-- Landau's tiers on the paper's control verbs: *want* of (13) and (15) selects an attitude
-    complement and admits partial control, *try* and *manage* of (16) force exhaustive control,
-    and *intend* of (17) and *decide* of (14) fall with *want*, although the paper's argument
-    from (17) assumes exhaustive control. -/
+/-- Landau's tiers make *want* (13), (15), *intend* (17) and *decide* (14) logophoric, and *try* and
+*manage* (16) predicative. -/
 theorem control_tiers :
     derivedControlTier want.toVerb = some .logophoric ∧
       derivedControlTier try_.toVerb = some .predicative ∧
@@ -271,8 +269,8 @@ theorem partial_narrow (A : Analysis) : Available A partialPlural .narrow := by
 theorem not_fits_received_judgment (A : Analysis) : ¬ Fits A partialPlural Examples.ex_13 :=
   fun h ↦ absurd ((h .narrow).mp (partial_narrow A)) (by decide)
 
-/-- A collectively read matrix predicate leaves narrow scope only, whatever the control type,
-    the first of the two readings Heim, Lasnik and May attribute to (14). -/
+/-- A collectively read matrix predicate allows narrow scope only, whatever the control type (14).
+-/
 theorem collective_narrow (A : Analysis) (exhaustive : Bool) (r : Scope) :
     Available A (pro exhaustive true true) r ↔ r = .narrow := by
   cases r <;> simp [Available, pro]
@@ -305,8 +303,7 @@ theorem partialSingular_fits (A : Analysis) :
     ((16)). -/
 def exhaustiveSingular : Antecedent := pro true false false
 
-/-- An individual PRO cannot antecede a narrow reciprocal and a singular matrix subject cannot
-    antecede a wide one, so (16) has no reading on any analysis. -/
+/-- With exhaustive control and a singular matrix subject, (16) has no reading on any analysis. -/
 theorem not_available_exhaustiveSingular (A : Analysis) (r : Scope) :
     ¬ Available A exhaustiveSingular r := by
   cases r <;> simp [Available, exhaustiveSingular, pro]
@@ -330,9 +327,7 @@ theorem plural_fits (A : Analysis) : Fits A plural Examples.ex_1 :=
     *neither of them* ((18)–(20), (24)–(26)). -/
 def distributed (d : Locus) : Antecedent := { plural with distributor := some d }
 
-/-- A distributing reciprocal cannot scope at or above an explicit distributor, so a matrix
-    distributor leaves narrow scope only, the judgment of Heim, Lasnik and May on (18a) derived
-    from their analysis. -/
+/-- A distributing reciprocal under a matrix distributor takes narrow scope only (18a). -/
 theorem narrow_of_distributes_high {A : Analysis} (hA : A.distributes) {a : Antecedent}
     (hd : a.distributor = some .high) {r : Scope} (h : Available A a r) : r = .narrow := by
   cases r <;> simp_all [Available]
@@ -343,9 +338,8 @@ theorem not_available_of_distributes_low {A : Analysis} (hA : A.distributes) {a 
     (hd : a.distributor = some .low) (r : Scope) : ¬ Available A a r := by
   cases r <;> simp_all [Available]
 
-/-- A pronominal reciprocal is blind to explicit distributors, since it accesses the group
-    denoted by the antecedent even when the antecedent is distributed on, so its readings are
-    those of the undistributed antecedent ((27)). -/
+/-- On a non-distributing analysis, a reciprocal's readings are those of the undistributed
+antecedent ((27)). -/
 theorem available_iff_of_not_distributes {A : Analysis} (hA : A.distributes = false)
     (a : Antecedent) (r : Scope) :
     Available A a r ↔ Available A { a with distributor := none } r := by
@@ -370,9 +364,8 @@ theorem simple_distributors :
         ¬ FitsSimple quantificational (distributed .low) Examples.ex_20b := by
   decide
 
-/-- Narrow scope is attested with the distributor in the complement clause and wide scope with
-    a matrix distributor, which the relational analysis covers and the quantificational
-    analysis does not ((24), (26)). -/
+/-- The relational analysis covers the attested narrow scope with a complement distributor and wide
+scope with a matrix one, and the quantificational one does not ((24), (26)). -/
 theorem corpus_distributors :
     (Covers relational (distributed .low) Examples.ex_24a ∧
         Covers relational (distributed .low) Examples.ex_24b ∧
@@ -393,17 +386,15 @@ def logophor : Antecedent := .ofLogophor Wan.Reciprocals.logPl
 /-- The ordinary plural pronoun *à̰* as local antecedent ((32)). -/
 def ordinary : Antecedent := .ofNumber Wan.Reciprocals.ordinaryPl.number
 
-/-- On an analysis that interprets the local antecedent where the reciprocal is, a logophoric
-    antecedent leaves narrow scope only, since under wide scope the reciprocal would drag it
-    out of the report ((29)). -/
+/-- If the local antecedent is interpreted where the reciprocal is, a logophoric antecedent allows
+narrow scope only ((29)). -/
 theorem narrow_of_logophoric {A : Analysis} (hA : ∀ r, A.antecedentLocus r = r.reading.locus)
     {a : Antecedent} (ha : a.logophoric) {r : Scope} (h : Available A a r) :
     r = .narrow := by
   cases r <;> simp_all [Available]
 
-/-- An analysis that binds the local antecedent in situ is blind to a logophoric antecedent,
-    since logophoricity constrains only where the antecedent is interpreted, so its readings
-    for a logophor are those for the ordinary pronoun ((30)). -/
+/-- An analysis binding the local antecedent in situ gives a logophoric antecedent the readings of
+an ordinary pronoun ((30)). -/
 theorem available_iff_of_in_situ {A : Analysis} (hA : ∀ r, A.antecedentLocus r = .low)
     (a : Antecedent) (r : Scope) :
     Available A a r ↔ Available A { a with logophoric := false } r := by

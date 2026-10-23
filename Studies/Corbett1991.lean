@@ -791,8 +791,8 @@ theorem resolve_numbers :
     ∀ a b, numbers.resolve a b = if a = .singular ∧ b = .singular then .dual else .plural := by
   decide
 
-/-- When the number rules apply, their forms are semantically justified (p. 264), since a
-coordination with a non-plural conjunct takes the substrate's resolution of its conjuncts. -/
+/-- A coordination with a non-plural conjunct takes the resolution of its conjuncts, so the number
+forms are semantically justified (p. 264). -/
 theorem numberResolve_eq_resolve (c d : Number) (cs : List Number)
     (h : ∃ x ∈ c :: d :: cs, x ≠ .plural) :
     numberResolve numbers (c :: d :: cs) = some ((d :: cs).foldl numbers.resolve c) := by

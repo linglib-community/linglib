@@ -183,10 +183,7 @@ def Clip.scene (c : Clip) : Scene where
 
 theorem clips_stageable : ∀ c ∈ clips, c.scene.Stageable := by decide
 
-/-- The predictor table as printed (Table 4) disagrees with the clip names on five clips: it
-codes clips 11 and 21, where a pushed or bumped man knocks down a cup tower, with an inanimate
-second participant, the umbrella of clip 22 without one, and adds a human impact to the paper
-of clips 1 and 23. -/
+/-- Table 4 as printed disagrees with the clip names on clips 1, 11, 21, 22 and 23. -/
 theorem table4_disagreements :
     (clips.filter fun c ↦ ¬∀ p, p ∈ c.present ↔ c.scene.Is p).map (·.number) =
       [1, 11, 21, 22, 23] := by
@@ -286,8 +283,8 @@ instance (c : Clip) : DecidablePred (table4Has c) := fun
   | (_, .plus) => inferInstanceAs (Decidable (_ ∈ _))
   | (_, .minus) => inferInstanceAs (Decidable ¬_)
 
-/-- Under the coding of Table 4 as printed, three leaves hold more responses than the twelve
-raters could give their clips, so Table 4 is not the coding the trees were fit on. -/
+/-- Under Table 4 as printed, three leaves hold more responses than the raters could give, so it is
+not the coding the trees were fit on. -/
 theorem table4_exceeded :
     ((leaves.filter fun l ↦
         raters * (clips.countP fun c ↦ ∀ q ∈ leafPath l, table4Has c q) < l.responses).map

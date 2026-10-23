@@ -198,7 +198,7 @@ def twoMeals :
   eating (fun w e ↦ (At w 0 1 ∧ At e 1 2) ∨ (At w 3 4 ∧ At e 4 5)) twoManip
 
 /-- *I didn't eat pie; you fed pie to me* ((92), (106)) is consistent, since John, fed by Mary,
-did not eat, having manipulated no food ((44a)). -/
+manipulated no food (44a). -/
 theorem not_eat_and_feed :
     ¬ eat spoonFeeding spoonManip digesting .john e₀ ∧
       feed spoonFeeding spoonManip digesting .mary .john e₀ :=
@@ -227,10 +227,8 @@ theorem not_licensesBySelf_inchoative :
   let ⟨_, _, hw⟩ := h .john e₀ ⟨2, ⟨⟨w₀, rfl, rfl⟩, rfl⟩, rfl, .inl rfl⟩
   Participant.noConfusion hw.1
 
-/-- *John ate again* said after Mary had fed him, a second causer bringing about the result
-state as in the context of (70). The restitutive reading holds, *again* on the state of
-potential digestion ((66a)), which John had been in before, and the repetitive reading fails,
-since John had not eaten before. -/
+/-- Said after Mary fed John as in (70), *John ate again* is true on the restitutive reading (66a)
+and false on the repetitive one. -/
 theorem restitutive_not_repetitive :
     eat twoMeals twoManip (againState {p | p.2 < p.1} digesting) .john e₁ ∧
       ¬ Repetitive (eat twoMeals twoManip digesting) .john e₁ :=

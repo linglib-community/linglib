@@ -119,10 +119,8 @@ theorem Meaning.strengthen_strong_ssubset (hsc : sm.StrengthCondition)
   exact (Set.ssubset_iff_of_subset (λ _ hw => hsc hw.1)).mpr
     ⟨w, haφ.1 hwa, λ hmem => (mem_strengthen_strong.1 hmem).2 a haALT haφ hwa⟩
 
-/-- Agreement with the paper's scalar assertion `σ`: whenever the strictly
-stronger alternatives have a weakest member `a₀` — the case in which (2)'s
-definite description is defined, as on linearly ordered scales — negating all
-of them is negating `a₀` alone. -/
+/-- Whenever the strictly stronger alternatives have a weakest member `a₀`, as (2) presupposes,
+negating them all is negating `a₀` alone. -/
 theorem Meaning.strengthen_strong_eq_of_isGreatest {a₀ : Set World}
     (h : IsGreatest {a ∈ sm.alternatives | a ⊂ sm.plain} a₀) :
     sm.strengthen.strong = sm.strong ∩ a₀ᶜ := by
@@ -175,10 +173,8 @@ theorem IsScaleSelection.strengthen_ssubset {lex chosen : Set (Set World)} {utt 
 
 /-! ### Downward entailingness suspends implicatures -/
 
-/-- Generalization on SIs (53): a DE function maps the strengthened argument to
-a *weaker* matrix value, so keeping a direct implicature under DE embedding
-would violate the Strength Condition — implicatures are suspended in exactly
-the *any*-licensing environments. -/
+/-- A DE function maps the strengthened argument to a weaker value, so DE embedding suspends
+implicatures, the Generalization on SIs (53). -/
 theorem si_npi_generalization {f : Set World → Set World} (hDE : Antitone f)
     (hsc : sm.StrengthCondition) :
     f sm.plain ⊆ f sm.strong :=
@@ -272,9 +268,8 @@ def drives : Set (Bool × Bool) := {w | w.2}
 theorem drinks_ne_drives : drinks ≠ drives :=
   λ h => by simpa [drinks, drives] using Set.ext_iff.1 h (true, false)
 
-/-- The (81)–(83) computation: embedding "John drinks and drives" under DE
-*doubt* (modelled as complement) yields the indirect implicature (83b) — doubt
-the conjunction yet believe the disjunction. -/
+/-- Under DE *doubt*, *John drinks and drives* yields the indirect implicature (83b) of (81)–(83).
+-/
 theorem doubt_and_indirect_implicature :
     (strongApplyDE compl compl
         (.lexical (drinks ∩ drives) {drinks ∩ drives, drinks ∪ drives})).strong =
@@ -321,9 +316,8 @@ theorem someAndCompetitor_strong :
   rw [strongApplyDE_lexical, Set.image_pair,
     Meaning.strengthen_strong_lexical_pair h, Set.sdiff_compl]
 
-/-- (127)/(128): *any* is blocked under *doubt … and*. The universal closure
-fails to entail the competitor's *strong* meaning — the indirect implicature of
-the intervening *and* is what breaks the entailment. -/
+/-- Under *doubt … and*, the universal closure of *any* fails to entail the competitor's strong
+meaning, so *any* is blocked (127)/(128). -/
 theorem and_blocks_any : ¬anyAndClosure ⊆ someAndCompetitor.strong := by
   intro h
   have hw : (false, false, false) ∈ anyAndClosure := by

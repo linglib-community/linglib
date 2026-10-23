@@ -186,8 +186,8 @@ theorem fixes_randomAssign_ivar (φ : PVar) (v : IVar) :
     Fixes φ (randomAssign (S := State W E) v) :=
   fun _ _ h ↦ (mem_randomAssign_indiv.mp h).1 φ
 
-/-- Maximization `max_φ(D)` over a propositional dref ([hofmann-2025] (40)) is CDRT's `maxAt`,
-keeping the outputs of `D` at which no other output gives `φ` a proper superset. -/
+/-- Maximization `max_φ(D)` over a propositional dref ([hofmann-2025] (40)) keeps the outputs of `D`
+at which no other output gives `φ` a proper superset. -/
 theorem mem_maxAt_prop {D : Update (State W E)} :
     i ~[maxAt φ D] j ↔ i ~[D] j ∧ ∀ k, i ~[D] k → ¬j.prop φ ⊂ k.prop φ :=
   Iff.rfl

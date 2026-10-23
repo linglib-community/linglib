@@ -64,9 +64,7 @@ private theorem support_and_antiSupport_supClosed (φ : Formula Atom) (M : Kripk
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss ψ _ => exact ⟨supClosed_flat _, supClosed_flat _⟩
 
-/-- BSML support is sup-closed ([anttila-2021] Proposition 2.2.8, second part). BSML's
-    connective set lacks the global disjunction ⨼, so the union-closure
-    obstruction is absent and all formulas satisfy the property. -/
+/-- BSML support is sup-closed ([anttila-2021] Proposition 2.2.8, second part). -/
 theorem supClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     SupClosed { t : Finset W | support M φ t } :=
   (support_and_antiSupport_supClosed φ M).1
@@ -110,11 +108,8 @@ theorem isLowerSet_support_of_neFree {φ : Formula Atom}
     IsLowerSet { t : Finset W | support M φ t } :=
   (support_and_antiSupport_isLowerSet_of_neFree φ hNE M).1
 
-/-- Support and anti-support are jointly order-convex. [anttila-2025] Proposition 3.3.6 (p. 82)
-    proves convexity for BSML without its bilateral negation, which swaps the polarities, so here
-    both are proved together. The split cases need union closure of the subformulas
-    (`Set.OrdConnected.tensor`), since split disjunction preserves convexity only in a
-    union-closed setting ([anttila-2025] Fact 3.2.7, p. 71, against Proposition 3.3.1, p. 79). -/
+/-- Support and anti-support are jointly order-convex, extending [anttila-2025] Proposition 3.3.6
+(p. 82) to bilateral negation (Fact 3.2.7, p. 71; Proposition 3.3.1, p. 79). -/
 private theorem support_and_antiSupport_ordConnected
     (φ : Formula Atom) (M : KripkeModel W Atom) :
     Set.OrdConnected {t | support M φ t} ∧ Set.OrdConnected {t | antiSupport M φ t} := by
@@ -130,10 +125,8 @@ private theorem support_and_antiSupport_ordConnected
       (support_and_antiSupport_supClosed ψ₂ M).1, ih₁.2.inter ih₂.2⟩
   | poss ψ _ => exact ⟨ordConnected_flat _, ordConnected_flat _⟩
 
-/-- BSML support is order-convex for every formula, `NE` included ([anttila-2025]
-    Proposition 3.3.6 and the remark after Theorem 3.3.7, pp. 82–83), so a team between two
-    supporting teams supports the formula too. With
-    `supClosed_support`, this is the property for which BSML is expressively complete. -/
+/-- BSML support is order-convex for every formula, `NE` included ([anttila-2025] Proposition 3.3.6
+and the remark after Theorem 3.3.7, pp. 82–83). -/
 theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     Set.OrdConnected { t : Finset W | support M φ t } :=
   (support_and_antiSupport_ordConnected φ M).1
@@ -186,10 +179,8 @@ end Bisimulation
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
 open Team in
-/-- **The NE-free fragment of BSML defines flat properties** ([anttila-2021] Proposition
-    2.2.16), the fragment being the subtype of `NE`-free formulas. `NE` is exactly what moves a
-    formula off the flat properties into the convex, union-closed ones
-    (`definableClass_support_subset` in `BSML/ExpressiveCompleteness.lean`). -/
+/-- The NE-free fragment of BSML defines only flat properties ([anttila-2021] Proposition 2.2.16).
+-/
 theorem definableClass_support_neFree_subset (M : KripkeModel W Atom) :
     definableClass (fun φ : {φ : Formula Atom // φ.NEFree} ↦ support M φ.1) ⊆ {P | IsFlat P} :=
   definableClass_subset fun φ ↦ isFlat_support_of_neFree φ.2 M

@@ -113,10 +113,8 @@ def Complement.phrases : Complement → List Cat
   | .dass => [.C]
   | .coord => [N, .C]
 
-/-- The grammar admits every condition of Experiment 1, after the verb, except a bare clause after
-a verb that does not select one, where the coordination is admitted through the null N. All the
-analyses agree, since the verb precedes. Coordinations are accordingly rated above bare clauses
-after those verbs, and lose less from the absence of selection (table (14), p. 9). -/
+/-- After the verb, the grammar admits every condition of Experiment 1 except a bare clause after a
+non-selecting verb (table (14), p. 9). -/
 theorem exp1_predictions (s : Selection) (c : Complement) : ∀ v ∈ s.verbs,
     (Admits (Licensed (checkedOnce rootPosition) (selects v)) c.phrases ↔
       c = .coord ∨ s = .yes) := by

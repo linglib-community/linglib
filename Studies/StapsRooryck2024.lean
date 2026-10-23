@@ -134,8 +134,8 @@ def byPhrase (init : Entity → E → Prop) (x : Entity) : E → Prop := init x
 /-- Passive Voice (9b) is the existential closure of the external argument. -/
 def voicePass (p : Entity → E → Prop) : E → Prop := fun e ↦ ∃ x, p x e
 
-/-- In (10) the by-phrase combines with the verb's denotation by Event Identification and the
-closure passive Voice performs is redundant, since the by-phrase supplies the initiator. -/
+/-- In (10) the by-phrase combines with the verb by Event Identification, and passive Voice's
+closure is redundant. -/
 theorem voicePass_eventIdentification (init : Entity → E → Prop) (body : E → Prop)
     (j : Entity) (e : E) :
     voicePass (eventIdentification (fun x e ↦ init x e ∧ body e) (byPhrase init j)) e ↔

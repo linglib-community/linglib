@@ -287,13 +287,12 @@ One characterization per utterance, total over all eight parses — the paper's
 row-groups appear as the guards. Each reading is a membership predicate on
 the world's alien-type set, not a truth vector. -/
 
-/-- In Table 1, NN excludes N-types, and matrix parses also negate "none drank not all", which
-is {wA}, the reading of fn. 7 from the alternative *not all* of *none*. -/
+/-- In Table 1, NN excludes N-types, and matrix parses also exclude {wA}, the reading of fn. 7. -/
 theorem table1_nn : ∀ (p : Parse) (w : World),
     exhMeaning p .nn w ↔ (.E ∉ w ∧ (.matrix ∈ p → w ≠ wA)) := by decide +kernel
 
-/-- In Table 1, NS literally holds at wN alone; inner EXH weakens it to the S-free worlds,
-whereupon matrix EXH negates the sentence's own now-stronger literal meaning {wN}. -/
+/-- In Table 1, NS holds literally at wN alone, inner EXH widens it to the worlds without an S-type,
+and matrix EXH then excludes wN. -/
 theorem table1_ns : ∀ (p : Parse) (w : World),
     exhMeaning p .ns w ↔
       if .inner ∈ p then .IO ∉ w ∧ (.matrix ∈ p → w ≠ wN)
@@ -308,9 +307,8 @@ theorem table1_sn : ∀ (p : Parse) (w : World),
     exhMeaning p .sn w ↔
       (.E ∈ w ∧ (.outer ∈ p ∨ .matrix ∈ p → w ≠ wN)) := by decide +kernel
 
-/-- In Table 1, SS has five row-groups. Inner EXH requires an S-type, matrix EXH then being
-vacuous, and adding outer EXH excludes wS; outer EXH alone keeps the mixed worlds, matrix EXH
-alone pins wNS, and the literal parse excludes wN alone. -/
+/-- Table 1 gives SS five row-groups, according to which of inner, outer and matrix EXH the parse
+contains. -/
 theorem table1_ss : ∀ (p : Parse) (w : World),
     exhMeaning p .ss w ↔
       if .inner ∈ p then .IO ∈ w ∧ (.outer ∈ p → w ≠ wS)
@@ -339,8 +337,7 @@ theorem table1_aa : ∀ (p : Parse) (w : World), exhMeaning p .aa w ↔ w = wA :
 theorem literal_eq_exh_none : ∀ (u : Utterance) (w : World),
     literalMeaning u w ↔ exhMeaning ∅ u w := by decide +kernel
 
-/-- ⟦SS⟧^M = {wNS}, the reading that "uniquely singles out this world state" in the
-discussion of eq. 22 and drives GI's win; the matrix-alone case of `table1_ss`. -/
+/-- Under matrix EXH alone ⟦SS⟧ is {wNS}, the reading that singles out this world state (eq. 22). -/
 theorem m_ss_singleton : ∀ w, exhMeaning pM .ss w ↔ w = wNS := by decide +kernel
 
 /-- The matrix operator (eq. A2) is not innocent exclusion, since at MOI its strictly-stronger

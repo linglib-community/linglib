@@ -421,9 +421,8 @@ theorem not_stronglyDiscretionaryOn_sexyLinguist :
     ¬ StronglyDiscretionaryOn world sexyLinguist Set.univ := by
   decide
 
-/-- The hybrid is strongly discretionary once the linguist world is given, so *Ebba tycker
-att Jonas är en sexig lingvist* (15)–(17) is acceptable only in a context where Jonas is taken
-to be a linguist. -/
+/-- The hybrid is strongly discretionary given the linguist world, so (15)–(17) is acceptable only
+where Jonas is taken to be a linguist. -/
 theorem stronglyDiscretionaryOn_sexyLinguist_objectiveGiven :
     StronglyDiscretionaryOn world sexyLinguist CommonGround.objectiveGiven.toSet := by
   decide

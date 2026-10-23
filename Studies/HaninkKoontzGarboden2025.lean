@@ -187,9 +187,8 @@ def vHave (P : Y → Prop) (R : E → Y → Prop) : E → Prop := dom P R
 to. -/
 def nabla (P : E → St → Prop) : St → Prop := ⨆ x, P x
 
-/-- In the Duke-of-York derivation of section 5.2, when possessing a state of the root is bearing
-the root's relation to it, the prefixed root under *ʔil-* and *-iʔ* predicates what the bare
-relation does (28), the meaning its bipartite uses show it to have. -/
+/-- In the Duke-of-York derivation of section 5.2, the prefixed root under *ʔil-* and *-iʔ*
+predicates what the bare relation does (28). -/
 theorem vHave_nabla_self (P : E → St → Prop) (x : E) : vHave (nabla P) P x ↔ ∃ s, P x s :=
   dom_iSup_self P x
 

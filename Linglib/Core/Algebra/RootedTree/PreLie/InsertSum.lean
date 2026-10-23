@@ -188,9 +188,8 @@ theorem card_insertSum (T S : UnorderedTree α) : Multiset.card (T ◁ S) = T.nu
     change Multiset.card (mk t ◁ mk s) = (mk t).numNodes
     rw [mk_insertSum, Multiset.card_map, RoseTree.card_insertSum, numNodes_mk]
 
-/-- Grafting `S₁` into `T` and then `S₂` into the result is grafting `S₁ ◁ S₂` into `T`, plus
-grafting `S₁` and `S₂` into `T` at once. This is the degree-two case
-`T ∘ BX = (T ∘ B) ∘ X - T ∘ (B ∘ X)` of Oudom and Guin's Proposition 3.7. -/
+/-- Grafting `S₁` then `S₂` into `T` is grafting `S₁ ◁ S₂` into `T` plus grafting both at once, the
+degree-two case of Oudom and Guin's Proposition 3.7. -/
 theorem insertSum_bind_insertSum (T S₁ S₂ : UnorderedTree α) :
     (T ◁ S₁).bind (· ◁ S₂) = (S₁ ◁ S₂).bind (T ◁ ·) + insertion T {S₁, S₂} := by
   induction T using Quotient.inductionOn with | h t =>

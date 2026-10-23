@@ -238,8 +238,7 @@ private theorem not_presumably_w₀ :
   fun h ↦ atomP_w₀ <| isFixedPt_presumablyTest_iff.1 h w₀
     ⟨rfl, fun _ hv _ ↦ by obtain rfl : _ = w₀ := hv; exact ⟨trivial, id⟩⟩
 
-/-- The default inference *normally p ⊩ presumably p* is not valid₂, since a state may already know
-that `p` fails, and Veltman concentrates on validity₁ for this reason (§1.3). -/
+/-- The default inference *normally p ⊩ presumably p* is not valid₂ (§1.3). -/
 theorem not_valid₂_presumably : ¬[(promote · atomP)] ⊩₂ presumablyTest atomP :=
   fun h ↦ not_presumably_w₀ (h ⟨{w₀}, ⊤⟩)
 
@@ -307,9 +306,8 @@ theorem ex310_ambiguity :
   · rintro v ⟨_, hnpq⟩ ⟨⟨_, hpv⟩, _⟩
     exact ⟨⟨trivial, fun _ ↦ atomP_w₁⟩, fun hqv ↦ absurd ⟨hpv atomP_w₁, hqv⟩ hnpq⟩
 
-/-- *Normally it rains; it is not raining; so presumably it snows* is invalid, but *normally it
-rains or snows; it is not raining; so presumably it snows* is valid (§3), because a rule *normally
-(p ∨ q)* says what to expect when `p` fails. -/
+/-- *Normally p; not p; so presumably q* is invalid, while *normally (p ∨ q); not p; so presumably
+q* is valid (§3). -/
 theorem rain_or_snow :
     ¬[(promote · atomP), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomQ ∧
       [(promote · fun w ↦ atomP w ∨ atomQ w), (assert · (¬atomP ·))] ⊩₁
@@ -442,9 +440,8 @@ def Applies (π : Frame W) [∀ d, DecidablePred (Normal π d)] (D : List (Rule 
     (s : Finset W) : Prop :=
   ∀ d : Finset W, s ⊆ d → ∃ w ∈ normal π d, Complies w D
 
-/-- A coherent frame stays coherent under a new rule `r` with `r.domain ∩ r.default ≠ ∅` iff `r`
-applies within its own domain, which means that no domain extending `r.domain` has all its normal
-worlds in `r.domain \ r.default` (Proposition 4.7). -/
+/-- A coherent frame stays coherent under a rule `r` with `r.domain ∩ r.default ≠ ∅` iff `r` applies
+within its own domain (Proposition 4.7). -/
 theorem coherent_cons_iff {R : List (Rule W)} (hR : Coherent (Frame.ofRules R)) {r : Rule W}
     (hne : (r.domain ∩ r.default).Nonempty) :
     Coherent (Frame.ofRules (r :: R)) ↔ Applies (Frame.ofRules R) [r] r.domain := by
@@ -472,9 +469,8 @@ theorem coherent_cons_iff {R : List (Rule W)} (hR : Coherent (Frame.ofRules R)) 
       · exact fun h ↦ absurd h hsub
       · exact ((normal_ofRules_iff ..).1 hw.2).2 r' hr'
 
-/-- Weakening the Consequent is almost valid (§5). A state that has accepted `φ ⇝ ψ` never crashes
-on `φ ⇝ (ψ ∨ χ)`, since any normal world of a domain extending `⟦φ⟧` that lies in `⟦φ⟧` already
-satisfies `ψ`. -/
+/-- Weakening the Consequent is almost valid, since a state accepting `φ ⇝ ψ` never crashes on `φ ⇝
+(ψ ∨ χ)` (§5). -/
 theorem weakenConsequent_applies {R : List (Rule W)} (hR : Coherent (Frame.ofRules R))
     {φ ψ χ : Finset W} (hψ : ⟨φ, ψ⟩ ∈ R) (hne : (φ ∩ ψ).Nonempty) :
     Applies (Frame.ofRules R) [⟨φ, ψ ∪ χ⟩] φ := by
@@ -601,8 +597,8 @@ def p : Finset World := Finset.univ.filter (·.val % 2 = 1)
 def q : Finset World := Finset.univ.filter (·.val / 2 % 2 = 1)
 def r : Finset World := Finset.univ.filter (·.val / 4 % 2 = 1)
 
-/-- An exception to *normally p* for `q` is acceptable, but a further exception for `¬q` is not,
-being one exception too many, and neither is *normally q* on top of it (Examples 4.8(i)–(iii)). -/
+/-- An exception to *normally p* for `q` is acceptable, but a further exception for `¬q`, or
+*normally q*, is not (Examples 4.8(i)–(iii)). -/
 theorem ex48 :
     (State.init |> normally p |> rule q pᶜ) ≠ State.absurd ∧
       (State.init |> normally p |> rule q pᶜ |> rule qᶜ pᶜ) = State.absurd ∧
@@ -622,8 +618,8 @@ theorem ex411_specificity :
 theorem ex411_iv : Valid [rule p r, rule q (p ∩ rᶜ), fact (p ∩ q)] (presumably rᶜ) := by
   decide +kernel
 
-/-- In the Nixon diamond `p ⇝ r`, `q ⇝ ¬r`, `p ∧ q` presume neither `r` nor `¬r`, since the two
-defaults apply separately but not jointly (Example 4.11(v), §5). -/
+/-- In the Nixon diamond `p ⇝ r`, `q ⇝ ¬r`, `p ∧ q`, neither `r` nor `¬r` is presumed (Example
+4.11(v), §5). -/
 theorem nixon :
     ¬Valid [rule p r, rule q rᶜ, fact (p ∩ q)] (presumably r) ∧
       ¬Valid [rule p r, rule q rᶜ, fact (p ∩ q)] (presumably rᶜ) := by

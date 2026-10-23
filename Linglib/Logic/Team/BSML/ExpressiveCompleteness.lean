@@ -51,19 +51,8 @@ theorem definableClass_support_subset (M : KripkeModel W Atom) :
   definableClass_subset fun φ ↦
     ⟨ordConnected_support M φ, supClosed_support M φ, bisimClosed_support M φ⟩
 
-/-- Every convex, union-closed, bounded-bisimulation-closed team property is BSML-definable
-    ([anttila-2025] Theorem 3.3.7 and the remark after it, p. 83, here within one model and over
-    finitely many atoms).
-
-    The defining formula conjoins an upper bound — the flat disjunction
-    `δ_U` of the characteristic formulas of the union `U` of all teams of
-    `P` — with, for every set `T` of worlds whose bisimilarity classes meet
-    every team of `P`, the hitting disjunct `(δ_T ∧ NE) ∨ δ_U`. A
-    supporting team `t` lies under `U` and meets every such transversal;
-    the worlds not bisimilar into `t` therefore fail to be a transversal,
-    which yields a team `s₀ ∈ P` whose classes `t` covers, and `s₀ ∪ (U`
-    restricted to `t`'s classes`)` lies in `P` by convexity between `s₀`
-    and `U` and is bisimilar to `t` — so `t ∈ P` by bisimulation closure. -/
+/-- Every convex, union-closed, bounded-bisimulation-closed team property is BSML-definable within
+one model over finitely many atoms ([anttila-2025] Theorem 3.3.7, p. 83). -/
 theorem subset_definableClass_support [Fintype W] [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) :
     {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} ⊆ definableClass (support M) := by

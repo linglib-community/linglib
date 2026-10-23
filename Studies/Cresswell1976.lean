@@ -219,8 +219,8 @@ def Pl (a : Finset E) (n : ℕ) : Prop := a ⊆ noun ∧ a.Nonempty ∧ a.card =
 def All {A B : Type*} (ω : A → B → Prop) (ω' : A → Prop) : Prop :=
   (∃ a b, ω a b) ∧ ∀ a, (∃ b, ω a b) → ω' a
 
-/-- The totality of the sets satisfying a distributive predicate is the number of things
-satisfying it, so *more men walk* counts the walking men ((54), (55)). -/
+/-- The totality of sets satisfying a distributive predicate is the number of things satisfying it,
+so *more men walk* counts the walking men ((54), (55)). -/
 theorem tot_pl [DecidablePred pred] (h : (noun.filter pred).Nonempty) :
     tot (Pl noun) (fun a ↦ ∀ x ∈ a, pred x) = {(noun.filter pred).card} := by
   refine tot_eq_singleton ⟨⟨noun.filter pred, fun _ hx ↦ (Finset.mem_filter.1 hx).2,
@@ -236,8 +236,8 @@ theorem erThan_tot_pl (man bird : Finset E) (walk fly : E → Prop) [DecidablePr
       (bird.filter fly).card < (man.filter walk).card := by
   rw [tot_pl _ _ hw, tot_pl _ _ hf, erThan_singleton]
 
-/-- *All men walk* and *every man walks* are synonymous given that there are men, although
-*all* takes the plural and *every* (3.8) the count noun ((56), (57)). -/
+/-- Given that there are men, plural *all men walk* and count-noun *every man walks* (3.8) are
+synonymous ((56), (57)). -/
 theorem all_pl_iff_forall :
     All (Pl noun) (fun a ↦ ∀ x ∈ a, pred x) ↔ noun.Nonempty ∧ ∀ x ∈ noun, pred x :=
   ⟨fun ⟨⟨_, _, hsub, hne, _⟩, h⟩ ↦
@@ -263,7 +263,7 @@ variable {W D : Type*} [Preorder D] (s : Conditional.SelectionFunction W) (heigh
   (smokes : Set W) (w : W)
 
 /-- *If Bill had been a smoker he would be shorter than he is* holds when his height at the nearest
-world where he smokes is below his actual height ((71)). -/
+smoking world is below his actual height (71). -/
 theorem erThan_sel :
     ErThan {toDual (height (s.sel w smokes))} {toDual (height w)} ↔
       height (s.sel w smokes) < height w :=

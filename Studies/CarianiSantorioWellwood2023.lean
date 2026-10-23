@@ -72,8 +72,8 @@ example :
 
 /-! ### The equal-temperature cities (§4, fn. 10) -/
 
-/-- In the cities of §4, states of distinct holders at equal measure are distinct and, when the
-measure reflects the background into a linear scale, tied, and the background is total. -/
+/-- In the cities of §4, states of distinct holders at equal measure are distinct but tied, and the
+background is total. -/
 theorem ne_and_antisymmRel_and_total {D : Type*} [LinearOrder D] {μ : S → D}
     (hμ : ∀ a b, μ a ≤ μ b → a ≤ b) {s t : S} (hne : holder s ≠ holder t) (heq : μ s = μ t) :
     s ≠ t ∧ AntisymmRel (· ≤ ·) s t ∧ ∀ u v : S, u ≤ v ∨ v ≤ u :=

@@ -81,24 +81,22 @@ open Genericity Determiner
 
 variable {ds : Inventory} {down : Prop}
 
-/-- Wherever ι is unblocked, as in a language without articles, a bare nominal for which ∩ is
-defined is a kind or a definite, ∩ and ι both applying, and never an indefinite, (39c). -/
+/-- Where ι is unblocked, a bare nominal for which ∩ is defined is a kind or a definite and never an
+indefinite (39c). -/
 theorem kind_and_definite (hι : ¬ ds.Blocks .iota) (hdown : down) :
     MaximalFor (ds.Available down) (· ≠ .exists) .down ∧
       MaximalFor (ds.Available down) (· ≠ .exists) .iota ∧
       ¬ MaximalFor (ds.Available down) (· ≠ .exists) .exists := by
   simp [hι, hdown]
 
-/-- Under Chierchia's ranking kind formation pre-empts the definite, so a bare nominal for which ∩
-is defined could not be a definite, against (17) and (18), where Hindi, Russian and Chinese bare
-nominals are kinds and definites alike. -/
+/-- Under Chierchia's ranking, a bare nominal for which ∩ is defined is never a definite, against
+(17) and (18). -/
 theorem chierchia_not_definite (hdown : down) :
     ¬ MaximalFor (ds.Available down) (· = .down) .iota := by
   simp [hdown]
 
-/-- Where ∩ is undefined, as for *is mashiin ke TukRe* 'parts of this machine', ι still outranks
-∃ under Dayal's ranking, so the Hindi bare plural is a non-familiar definite with no wide-scope
-existential reading, (45); Chierchia's ranking would let ∃ apply beside ι. -/
+/-- Where ∩ is undefined, ι outranks ∃ under Dayal's ranking, so the Hindi bare plural is a definite
+with no wide-scope existential reading (45). -/
 theorem definite_not_indefinite (hι : ¬ ds.Blocks .iota) (hex : ¬ ds.Blocks .exists)
     (hdown : ¬ down) :
     MaximalFor (ds.Available down) (· ≠ .exists) .iota ∧
@@ -106,18 +104,15 @@ theorem definite_not_indefinite (hι : ¬ ds.Blocks .iota) (hex : ¬ ds.Blocks .
       MaximalFor (ds.Available down) (· = .down) .exists := by
   simp [hι, hex, hdown]
 
-/-- English *the* blocks ι and, being used anaphorically, ι^x, so the two rankings choose alike for
-English bare nominals and (43) and (44) do not decide between them. -/
+/-- The two rankings choose alike for English bare nominals, so (43) and (44) do not decide between
+them. -/
 theorem english_chierchia_iff_dayal (down : Prop) (τ : CovertShift) :
     MaximalFor (English.Determiners.inventory.Available down) (· = .down) τ ↔
       MaximalFor (English.Determiners.inventory.Available down) (· ≠ .exists) τ :=
   CovertShift.maximalFor_available_eq_down_iff_ne_exists (by decide) (by decide)
 
-/-- With ι and ι^x blocked and ∃ open, ∃ applies exactly where ∩ is undefined. So an English bare
-plural like *parts of this machine* shifts by ∃ and interacts in scope with negation, (43), while
-*spots on the floor* takes only the narrow scope of DKP, (44); and a bare singular shifts by ∃ in
-a language with a definite but no indefinite article, as p. 443 predicts, which Hebrew's (90) and
-(91) support and Doron's (94) contradicts. -/
+/-- With ι and ι^x blocked and ∃ open, ∃ applies exactly where ∩ is undefined ((43), (44); p. 443,
+supported by (90), (91), contradicted by (94)). -/
 theorem exists_iff_not_down (hι : ds.Blocks .iota) (hx : ds.Blocks .iotaAnaphoric)
     (hex : ¬ ds.Blocks .exists) :
     MaximalFor (ds.Available down) (· ≠ .exists) .exists ↔ ¬ down := by
@@ -222,16 +217,14 @@ theorem bareKind_of_bareKind_singular (h : l.BareKind .singular) : l.BareKind nu
   · exact fun hd ↦ h (l.iota_mem_blocked (l.iota_mem_of_down_mem (l.blocked_subset hd)))
   · exact h
 
-/-- English-in-reverse, p. 447, is impossible: a language forming plural kind terms with the
-definite determiner while allowing singular kind terms to be bare, since ∩ is lexicalized only
-with ι. -/
+/-- English-in-reverse, with definite plural kinds and bare singular kinds, is impossible (p. 447).
+-/
 theorem not_englishInReverse :
     ¬ (l.DefiniteKind .plural ∧ l.BareKind .singular) := fun ⟨h, h'⟩ ↦
   h' (l.iota_mem_blocked (l.iota_mem_of_down_mem (by simpa [DefiniteKind] using h)))
 
-/-- German-in-reverse, p. 448, is impossible: a language requiring the definite determiner on
-plural and mass kind terms, the latter number-neutral, but leaving it optional on singular ones,
-since Blocking cannot spare the canonical ι. -/
+/-- German-in-reverse, with definite plural and mass kinds but optionally bare singular kinds, is
+impossible (p. 448). -/
 theorem not_germanInReverse :
     ¬ (¬ l.BareKind .plural ∧ ¬ l.BareKind .general ∧ l.BareKind .singular ∧
       l.DefiniteKind .singular) :=

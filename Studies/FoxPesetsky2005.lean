@@ -74,8 +74,8 @@ theorem objectShift_aux : ¬ Consistent [[V, O], [S, aux, O, adv, V]] :=
   not_consistent_of_pair V O ⟨[V, O], by simp, by simp⟩
     ⟨[S, aux, O, adv, V], by simp, by simp [List.sublist_cons_iff]⟩
 
-/-- Any VP-internal material preceding the object blocks Object Shift (24), verb movement or
-not: the intervener precedes the object at VP and follows it at CP. -/
+/-- Any VP-internal material preceding the object blocks Object Shift (24), with or without verb
+movement. -/
 theorem objectShift_intervener : ¬ Consistent [[V, XP, O], [S, V, O, adv, XP]] :=
   not_consistent_of_pair XP O ⟨[V, XP, O], by simp, by simp⟩
     ⟨[S, V, O, adv, XP], by simp, by simp [List.sublist_cons_iff]⟩

@@ -93,8 +93,8 @@ theorem limitedSymmetry_occurrences_iff {C : Set W} {F : Formula Atom} :
       ∀ t ∈ F.triggers, LimitedSymmetryAt I C t.1 t.2.1 :=
   Formula.forall_mem_occurrences
 
-/-- The parsing points after a trigger are those up to the last item after the gap, as Definition
-3.4.4 counts them; from there on only the sentence itself is consulted. -/
+/-- The parsing points after a trigger are those up to the last item after the gap (Definition
+3.4.4). -/
 theorem limitedSymmetryAt_iff_forall_le {C : Set W} {K : SyntacticEnvironment Atom} {p : Atom} :
     LimitedSymmetryAt I C K p ↔
       ∀ n ≤ K.rightItems, StablyTransparent C (K.continuations I n) (I p) := by
@@ -372,8 +372,7 @@ theorem limitedSymmetry_if_not_and :
       ls_points
     · ls_points
 
-/-- The condition printed in Fact 3.4.8 is not the constraint's, since a context where `q` holds and
-`r` and `p'` fail entails `(q ∧ r) → p'` but violates the constraint. -/
+/-- The condition `(q ∧ r) → p'` printed in Fact 3.4.8 does not imply the constraint. -/
 theorem not_limitedSymmetry_if_not_and_of_printed {w : W} (hq : w ∈ I q) (hr : w ∉ I r)
     (hp : w ∉ I p) :
     {w} ⊆ {w | w ∈ I q → w ∈ I r → w ∈ I p} ∧
@@ -409,7 +408,7 @@ theorem limitedSymmetryAt_not_and_first :
     · ls_points
 
 /-- In `((not p'p) and q'q)` the second trigger requires the context to entail `(not p'p) → q'`,
-filtering by the first conjunct. Fact 3.4.12 (p. 137) prints `p'p → q'`. -/
+where Fact 3.4.12 (p. 137) prints `p'p → q'`. -/
 theorem limitedSymmetryAt_not_and_second :
     LimitedSymmetryAt I C [.right .conj (.not (.trigger p a))] q ↔
       C ⊆ {w | w ∉ I p ∩ I a → w ∈ I q} := by
@@ -460,8 +459,7 @@ theorem limitedSymmetryAt_not_or_first :
   have := h w hw hp 1 (by simp [rightItems, Step.rightItems, Connective.rightItems])
   ls_at this
 
-/-- `((p'p and q) or r)` requires the context to entail `q → (p' ∨ r)`, the second conjunct
-filtering symmetrically, before the highest connective (Fact 3.4.15, p. 138). -/
+/-- `((p'p and q) or r)` requires the context to entail `q → (p' ∨ r)` (Fact 3.4.15, p. 138). -/
 theorem limitedSymmetry_and_or :
     LimitedSymmetry C
         (Formula.occurrences I (.bin .disj (.bin .conj (.trigger p a) (.atom q)) (.atom r))) ↔
@@ -478,8 +476,7 @@ theorem limitedSymmetry_and_or :
       ls_points
     · ls_points
 
-/-- The condition printed in Fact 3.4.12 for the second trigger is not the constraint's, since a
-context where `p'` and `q'` fail entails `p'p → q'` but violates the constraint. -/
+/-- The condition printed in Fact 3.4.12 for the second trigger does not imply the constraint. -/
 theorem not_limitedSymmetryAt_not_and_second_of_printed {w : W} (hp : w ∉ I p) (hq : w ∉ I q) :
     {w} ⊆ {w | w ∈ I p ∩ I a → w ∈ I q} ∧
       ¬ LimitedSymmetryAt I {w} [.right .conj (.not (.trigger p a))] q := by

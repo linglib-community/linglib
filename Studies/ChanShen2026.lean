@@ -255,8 +255,8 @@ def AttP.Licensed (m : LexicalItem.Token) : Prop := PronouncedAtScope t m
 instance (m : LexicalItem.Token) : Decidable (AttP.Licensed t m) :=
   inferInstanceAs (Decidable (PronouncedAtScope _ _))
 
-/-- In an English multiple question the in-situ wh-phrase is under the fronted one, so in situ
-and intervened coincide and ascription agrees with intervention ((1), (25), (26)). -/
+/-- In an English multiple question, ascription licenses *the-hell* exactly where intervention does
+((1), (25), (26)). -/
 theorem licensed_iff_intervention_multiple :
     ∀ t ∈ [multiple (.adjoin whoH theHell) (.bare what), multiple (.bare who) whatTheHell],
       (Licensed t theHell ↔ Intervention.Licensed t theHell) := by
@@ -299,9 +299,8 @@ def CrossesIsland : Prop :=
 
 instance : Decidable (CrossesIsland t) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- Extraction from a complex NP fails exactly where a link of the chain leaves it: under full
-movement, and under partial movement by its covert step, but not in situ ((11), (15), Malay
-(17)). -/
+/-- Extraction from a complex NP fails exactly where a chain link leaves it, under full or partial
+movement but not in situ ((11), (15), (17)). -/
 theorem island_rows : ∀ e ∈ Examples.all, e.feature? "island" = some "complexNP" →
     ∀ t ∈ structureOf bound e, (CrossesIsland t ↔ e.judgment ≠ .acceptable) := by
   decide
@@ -328,9 +327,8 @@ theorem attP_rows :
         (Licensed t theHell → PronouncedAtScope t theHell)) := by
   decide
 
-/-- Covert movement of the in-situ wh-phrase crosses the complex NP of (11b) and licenses
-*the-hell* in the in-situ question (4d), both acceptable and unacceptable the other way round:
-the island facts and the modifier facts each choose binding ([sato-ngui-2017]). -/
+/-- Covert movement mispredicts both the island fact of (11b) and the modifier fact of (4d), each
+favouring binding ([sato-ngui-2017]). -/
 theorem covert_mispredicts :
     (∃ t ∈ structureOf covert Examples.ex11b, CrossesIsland t) ∧
       Examples.ex11b.judgment = .acceptable ∧

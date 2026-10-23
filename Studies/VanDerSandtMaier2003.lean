@@ -259,9 +259,8 @@ def kingQuitRecord : LDRS KingQuitW :=
   [⟨{pr 1}, {w | w.1 = true}⟩, ⟨{pr 1}, {w | w.2 = true}⟩, ⟨{fr 1}, {w | w.1 = true ∧ w.2 = true}⟩,
     ⟨{fr 2}, {w | w.1 = false}⟩]
 
-/-- At the granularity of layers, denying the king moves the presupposition that I quit
-smoking under the negation as well: only the Frege conditions survive, the limitation of
-footnote 10. -/
+/-- Denying the king also moves the presupposition that I quit smoking under the negation, leaving
+only the Frege conditions (footnote 10). -/
 theorem kingQuit_quit_lost :
     surviving kingQuitRecord {pr 1} =
       [⟨{fr 1}, {w | w.1 = true ∧ w.2 = true}⟩, ⟨{fr 2}, {w | w.1 = false}⟩] := by

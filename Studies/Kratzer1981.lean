@@ -241,8 +241,7 @@ theorem not_injustice_must_be_rewarded :
     mem_bestWorlds_injustice_iff, forall_eq]
   decide
 
-/-- Under the traditional analysis over the morally accessible situations (59) holds, and then
-(60) and (61) are both vacuously true, since no accessible situation has injustice. -/
+/-- Under the traditional analysis (59) holds, and so (60) and (61) are both vacuously true. -/
 theorem traditional_collapses :
     simpleNecessity morallyAccessible (fun s ↦ ¬ injustice s) none ∧
       simpleNecessity morallyAccessible (fun s ↦ injustice s → amended s) none ∧

@@ -220,8 +220,8 @@ deriving Decidable
 theorem rows_predicted : ∀ r ∈ Examples.all, ∃ s ∈ r.parse? "np" signOfNP, s.Predicts r := by
   decide
 
-/-- The complement-set reading the paper gives its constructed (90) is not predicted when the
-complement set is stored (94), so that reading calls for abstracting both members (93). -/
+/-- Storing the complement set (94) does not predict the complement-set reading of (90), which needs
+abstraction of both members (93). -/
 theorem not_predicts_ex90 : ¬ (pair {.complement}).Predicts ex90 := by decide
 
 /-! ### Witness sets and truth conditions -/
@@ -230,8 +230,8 @@ section Witness
 
 variable {α : Type*} {Q : NP α} {A X : α → Prop}
 
-/-- A quantifier that holds of the empty set has a witness set inside every predicate, so the
-plain witness representation (85) says nothing of *few* or *no* (§5.5). -/
+/-- A quantifier true of the empty set has a witness inside every predicate, so (85) cannot
+represent *few* or *no* (§5.5). -/
 theorem witness_subset_of_empty (hQ : Q fun _ ↦ False) (X : α → Prop) :
     ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
   ⟨fun _ ↦ False, ⟨fun _ ↦ False.elim, hQ⟩, fun _ ↦ False.elim⟩
@@ -242,9 +242,8 @@ theorem not_witness_iff_of_empty (hQ : Q fun _ ↦ False) (hX : ¬ Q X) :
     ¬ ∀ Y, Q Y ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → Y x :=
   fun h ↦ hX ((h X).2 (witness_subset_of_empty hQ X))
 
-/-- A quantifier living on `A` holds of `X` exactly when some witness set `R` lies inside `X`
-while the rest of `A` lies outside it, the pair representation (91). This needs no
-monotonicity, the two conditions leaving `A ∩ X` as the only candidate. -/
+/-- A quantifier living on `A` holds of `X` iff some witness set lies inside `X` and the rest of `A`
+outside it (91). -/
 theorem pair_apply_iff (h : LivesOn Q A) :
     Q X ↔ ∃ R, Witness Q A R ∧ (∀ x, R x → X x) ∧ ∀ x, A x → ¬ R x → ¬ X x := by
   refine h.apply_iff_witness.trans

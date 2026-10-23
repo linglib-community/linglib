@@ -131,9 +131,8 @@ theorem universal_3_4 (d : HeadDirection) :
     Universal (·.basicOrder.IsEnd .verb d) (·.adposition.headDirection = d) := by
   cases d <;> decide
 
-/-- A question particle placed at the start of the sentence occurs in a prepositional language,
-and one placed at its end in a postpositional language, Thai and Yoruba excepted (Universal 9,
-Table 2). -/
+/-- A sentence-initial question particle occurs in a prepositional language and a final one in a
+postpositional language, Thai and Yoruba excepted (Universal 9, Table 2). -/
 theorem universal_9 :
     Universal (·.questionParticleSentence = some .initial) (·.adposition = .prepositions) ∧
       UniversalExcept (·.questionParticleSentence = some .final)
@@ -195,9 +194,8 @@ theorem not_universal_23_as_printed :
     ¬ Universal (·.apposition = some .properCommon) (·.genitive = .nounFirst) := by
   decide
 
-/-- Universal 23 with the genitive orders exchanged, as footnote 19 and the text's assimilation of
-apposition to the genitive have it: the proper noun first goes with a preposed genitive, but in
-Norwegian, which has both, and the common noun first with a postposed one, Guarani excepted. -/
+/-- Per footnote 19, proper-noun-first apposition goes with a preposed genitive and
+common-noun-first with a postposed one, Norwegian and Guarani excepted (Universal 23). -/
 theorem universal_23 :
     UniversalExcept (·.apposition = some .properCommon) (·.genitive = .dependentFirst)
         ["Norwegian"] ∧

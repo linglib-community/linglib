@@ -59,9 +59,7 @@ def numPEllipsis : Ellipsis nominalSpine := ⟨.D⟩
 
 /-! ### N-stranding -/
 
-/-- N-to-n movement instantiates X-stranding: the base position of the noun lies in n's
-complement while n itself is external, so [E] on n deletes NP and spares the moved noun
-(§1.1). -/
+/-- N-to-n movement is X-stranding, so [E] on n deletes NP and spares the moved noun (§1.1). -/
 theorem n_stranding_is_xStranding :
     ¬ nominalSpine.Deletes .n (.head .n) ∧ nominalSpine.Deletes .n (.head .N) :=
   ⟨nominalSpine.not_deletes_head_self _, by decide⟩
@@ -69,9 +67,8 @@ theorem n_stranding_is_xStranding :
 theorem clausal_nominal_parallel :
     clausalSpine.Deletes .v (.head .V) ∧ nominalSpine.Deletes .n (.head .N) := by decide
 
-/-- Under N-stranding the noun's dependents go and everything above n stays: the postnominal PP of
-*zwei Studenten der Physik* is recovered in *zwei Professoren*, while the numeral and determiner
-are pronounced ((6a)). -/
+/-- Under N-stranding the noun's dependents are deleted while n, the numeral and the determiner are
+pronounced, as in *zwei Professoren* (6a). -/
 theorem nStranding_domain :
     nStrandingNPE.Deletes (.head .N) ∧ nStrandingNPE.Spares (.adjunct .N) ∧
       nStrandingNPE.Spares (.head .n) ∧ nStrandingNPE.Spares (.head .Num) ∧
@@ -79,9 +76,8 @@ theorem nStranding_domain :
 
 /-! ### Against deleting individual constituents -/
 
-/-- No [E] position deletes a prenominal modifier while sparing the noun, since the noun lies in
-the complement of every head that dominates the modifier: *das schönste Auto … das schönste
-Motorrad* is out on the elided-adjective reading ((25a)). -/
+/-- No [E] position deletes a prenominal modifier while sparing the noun, so (25a) lacks the
+elided-adjective reading. -/
 theorem no_individual_prenominal_deletion {p : Cat} (h : nominalSpine.Deletes p (.adjunct .N)) :
     nominalSpine.Deletes p (.head .N) :=
   let ⟨_, he, hN⟩ := h
@@ -93,9 +89,8 @@ theorem no_individual_numeral_deletion {p : Cat} (h : nominalSpine.Deletes p (.h
     nominalSpine.Deletes p (.head .N) :=
   (nominalSpine.below_prefix h).subset (by decide : .N ∈ nominalSpine.below .Num)
 
-/-- Deleting a postnominal dependent requires deleting the noun's whole complement, so if one
-postnominal modifier is pronounced no other can be recovered ((28a)) while eliding both is fine
-((28b)). -/
+/-- Deleting the noun deletes its whole complement, so one postnominal modifier cannot be elided
+while another is pronounced ((28a), (28b)). -/
 theorem postnominal_all_or_nothing (e : Ellipsis nominalSpine) (h : e.Deletes (.head .N)) :
     ∀ d, d = .N ∨ d ∈ nominalSpine.below .N → e.Deletes (.head d) := by
   rintro d (rfl | hd)
@@ -109,9 +104,8 @@ theorem postnominal_all_or_nothing (e : Ellipsis nominalSpine) (h : e.Deletes (.
 def ePositionOfContrast (nounContrastive : Bool) : Ellipsis nominalSpine :=
   if nounContrastive then nStrandingNPE else nPEllipsis
 
-/-- A postnominal dependent of the noun is recoverable exactly when the noun is contrastive: with
-contrast the noun survives while its complement is deleted, without it the noun is deleted along
-with the dependent — the difference between (6a) and Spanish (5), and between (26b) and (27). -/
+/-- A postnominal dependent is recoverable iff the noun is contrastive, which distinguishes (6a)
+from Spanish (5) and (26b) from (27). -/
 theorem contrast_governs_recovery (b : Bool) :
     (ePositionOfContrast b).Deletes (.head .N) ∧
       ((ePositionOfContrast b).Spares (.head .n) ↔ b = true) := by
@@ -123,9 +117,8 @@ theorem german_smaller_domain_than_spanish :
     nStrandingNPE.Spares (.adjunct .N) ∧ nPEllipsis.Deletes (.adjunct .N) ∧
       nStrandingNPE.Spares (.head .n) ∧ nPEllipsis.Deletes (.head .n) := by decide
 
-/-- Gender mismatches pattern with voice mismatches: the head bearing the feature is external
-exactly when [E] sits on it. Gender lives on n, which survives N-stranding but not nP-ellipsis,
-as Voice survives VP-ellipsis but not sluicing (§3). -/
+/-- Gender on n survives N-stranding but not nP-ellipsis, as Voice survives VP-ellipsis but not
+sluicing (§3). -/
 theorem gender_parallels_voice :
     nStrandingNPE.Spares (.head .n) ∧ nPEllipsis.Deletes (.head .n) ∧
       vpEllipsis.Tolerates .voice ∧ ¬ sluicing.Tolerates .voice := by decide

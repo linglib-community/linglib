@@ -136,10 +136,8 @@ theorem compat_iff_forall : Compat p q ↔
    fun ⟨hw, hc⟩ => .of_le le_union_left
     ⟨hw.symm, fun v => Flat.le_or_right (hc v)⟩⟩
 
-/-- Two partial points are compatible (`Compat`: bounded above in the
-descent order) exactly when they share their world and agree wherever
-both are defined — the requirement in [kamp-vangenabith-reyle-2011],
-Def. 0.26, that the union of chosen points be a function. -/
+/-- Two partial points are compatible iff they share their world and agree where both are defined
+([kamp-vangenabith-reyle-2011], Def. 0.26). -/
 theorem compat_iff : Compat p q ↔
     p.world = q.world ∧
       ∀ v (e e' : M), p.assignment v = ↑e → q.assignment v = ↑e' → e = e' := by

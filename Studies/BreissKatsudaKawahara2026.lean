@@ -222,9 +222,8 @@ theorem novel_strictAnti_n2 (w : Weights) (hw : 0 < w.n2) :
   simp only [pNasal_novel]
   exact sigmoid_lt (by nlinarith)
 
-/-- The N2 effect on the log-odds of nasalisation is the same in an existing compound as in a
-novel one, the stored compound adding a constant, so the frequency effect is uniform across
-existing and novel compounds (§3.2). -/
+/-- The N2 effect on the log-odds of nasalisation is the same in existing and novel compounds, up to
+a constant (§3.2). -/
 theorem logit_pNasal_existing (w : Weights) (a b : ℝ) :
     logit (pNasal w (existing a b)) = logit (pNasal w (novel a)) + w.compound * b := by
   rw [pNasal_existing, pNasal_novel, logit_sigmoid, logit_sigmoid]
@@ -234,8 +233,8 @@ theorem novel_lt_existing (w : Weights) (hw : 0 < w.compound) (a : ℝ) {b : ℝ
   rw [pNasal_novel, pNasal_existing]
   exact sigmoid_lt (by nlinarith)
 
-/-- Only a free N2 is listed with [g], so a free N2 lowers nasalisation below that of a bound N2
-under the same compound, (2)–(4) against (5). -/
+/-- A free N2 lowers nasalisation below that of a bound N2 under the same compound, (2)–(4) against
+(5). -/
 theorem existing_lt_bound (w : Weights) (hw : 0 < w.n2) {a : ℝ} (ha : 0 < a) (b : ℝ) :
     pNasal w (existing a b) < pNasal w (bound b) := by
   rw [pNasal_existing, pNasal_bound]
@@ -258,9 +257,7 @@ theorem zero_markedness_iff (w : Weights) (hM : w.markedness = 0) (a b : ℝ) :
 /-- The fitted weights of Table 1. -/
 noncomputable def table1 : Weights := ⟨0, 7.39, 7.09⟩
 
-/-- Under the fitted weights a novel compound, with an activation `σ(f)` for its N2's centred
-log-frequency `f` (§4.4), nasalises less than half the time; §5.2 reports predicted rates from
-0.002 to 0.39 against observed rates up to 0.79. -/
+/-- Under the fitted weights, a novel compound nasalises less than half the time (§4.4, §5.2). -/
 theorem table1_novel_lt_half (f : ℝ) : pNasal table1 (novel (sigmoid f)) < 2⁻¹ := by
   rw [pNasal_novel, ← sigmoid_zero]
   exact sigmoid_lt (by norm_num [table1]; exact sigmoid_pos f)
@@ -285,9 +282,8 @@ theorem tableau7 :
   simp only [pNasal_novel]
   norm_num [harmony_apply, sigmoid_lt_iff, idNasal, activation, novel, freeN2, w78]
 
-/-- Tableau (8) evaluates existing compounds with N2 activation 0.5 and compound activations 0.7
-and 0.3. The more active compound nasalises more, and either nasalises more than the same N2
-without a stored compound. -/
+/-- In Tableau (8), the more active existing compound nasalises more, and either does more than the
+N2 without a stored compound. -/
 theorem tableau8 :
     harmony (violations (existing 0.5 0.7)) w78.vec .oral = -2.7 ∧
       harmony (violations (existing 0.5 0.7)) w78.vec .nasal = -0.5 ∧
@@ -313,9 +309,8 @@ theorem pNasal_tableau8b_lt : pNasal w78 (existing 0.5 0.7) < 0.905 := by
   norm_num [w78, exp_neg] at hi ⊢
   linarith
 
-/-- Tableau (9) weakens markedness and strengthens faithfulness to the compound. The nasal
-candidate is still the majority outcome for either compound of (8), and the compound effect keeps
-its sign. -/
+/-- In Tableau (9), the nasal candidate still wins for either compound of (8), and the compound
+effect keeps its sign. -/
 theorem tableau9 :
     harmony (violations (existing 0.5 0.7)) w9.vec .oral = -1.5 ∧
       harmony (violations (existing 0.5 0.7)) w9.vec .nasal = -0.5 ∧

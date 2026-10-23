@@ -169,9 +169,8 @@ Economy Principle blocks it (93b)–(94). -/
 theorem root_domain : innocent.exh (innocent.preExhaustify domainAlts) assertion = scalar := by
   decide
 
-/-- (101)–(103) do not go through: `{¬(b₁∧¬b₂), ¬(b₂∧¬b₁)}` is a third maximal consistent
-exclusion, so no alternative is innocently excludable and the contradiction-free operator
-is vacuous rather than delivering uniqueness. -/
+/-- No alternative is innocently excludable, so the root operator is vacuous and the derivation of
+uniqueness in (101)–(103) fails. -/
 theorem root_innocent :
     innocent.exh ({scalar} ∪ innocent.preExhaustify domainAlts) assertion = assertion := by decide
 

@@ -70,8 +70,8 @@ theorem alternatives_eq (A : Set ι) (a : ι) :
 
 /-! ### Exhaustive identification (§2) -/
 
-/-- Exhaustively identifying the group `s` over the given set `A` asserts that the predicate
-holds of `s` and of no other given element, the paper's (9). -/
+/-- Exhaustive identification of `s` over the given set `A` asserts that the predicate holds of `s`
+and of no other given element (9). -/
 theorem exh_Ici (A s : Set ι) : exh (alternatives A) (Ici s) = Icc s (s ∪ Aᶜ) := by
   ext w
   simp only [mem_exh, alternatives, mem_Ici, mem_Icc, forall_mem_image, Ici_subset_Ici,
@@ -83,9 +83,8 @@ theorem exh_Ici (A s : Set ι) : exh (alternatives A) (Ici s) = Icc s (s ∪ A�
 theorem exh_Ici_univ (s : Set ι) : exh (alternatives univ) (Ici s) = {s} := by
   rw [exh_Ici, compl_univ, union_empty, Icc_self]
 
-/-- Szabolcsi's coordination test, (12) against (13). The identificational *a hat* contradicts
-the identificational *a hat and a coat*, while the information-focus *a hat* follows from the
-information-focus *a hat and a coat*. -/
+/-- In Szabolcsi's coordination test ((12) against (13)), identificational *a hat* contradicts *a
+hat and a coat*, while information-focus *a hat* follows from it. -/
 theorem szabolcsi_test (hb : b ∈ A) (hab : a ≠ b) :
     Disjoint (exh (alternatives A) (Ici {a, b})) (exh (alternatives A) (Ici {a})) ∧
       Ici ({a, b} : Set ι) ⊆ Ici {a} := by
@@ -96,9 +95,8 @@ theorem szabolcsi_test (hb : b ∈ A) (hab : a ≠ b) :
   · exact hab (mem_singleton_iff.1 h).symm
   · exact h hb
 
-/-- Farkas's dialogue test, (15). Where Mary picked a coat too, the identificational claim is
-false, so *No, she picked a coat, too* denies its exhaustivity, while the information-focus
-claim is true and the denial is out of place. -/
+/-- In Farkas's dialogue test (15), when Mary picked a coat too, the identificational claim is false
+and the information-focus claim true. -/
 theorem farkas_test (hb : b ∈ A) (hab : a ≠ b) :
     {a, b} ∉ exh (alternatives A) (Ici {a}) ∧ {a, b} ∈ Ici ({a} : Set ι) := by
   refine ⟨?_, singleton_subset_iff.2 (mem_insert a _)⟩
@@ -149,8 +147,8 @@ theorem disjoint_exh_additive (A : Set ι) (a : ι) :
   · exact hba h
   · exact h hbA
 
-/-- In the cleft *also*-phrase of (18), a prior identification has removed `b` from the given
-set, so *it was also `a`* identifies `a` in addition, excluding everybody but `a` and `b`. -/
+/-- In the cleft *also*-phrase of (18), *it was also `a`* identifies `a` in addition to the earlier
+`b`, excluding everybody else. -/
 theorem additive_exh_of_notMem (hb : b ∉ A) (hab : b ≠ a) :
     {a, b} ∈ exh (alternatives A) (Ici {a}) ∩ additive (insert b A) a := by
   refine ⟨?_, b, ⟨mem_insert_of_mem a (mem_singleton b), mem_insert b A⟩, hab⟩

@@ -67,18 +67,16 @@ theorem admits_believes_ofTrivalent :
       ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w :=
   Iff.rfl
 
-/-- On atomic complements, Karttunen's rule (3) makes definedness on each `Dox_a(w)` admittance
-in their union, the image of `c` under the doxastic accessibility, which is what `a` is taken to
-believe in `c`. -/
+/-- On atomic complements, Karttunen's rule (3) makes `c` admit `a believes φ` iff the doxastic
+image of `c` admits `φ`. -/
 theorem admits_believes_iff :
     (believes Dox a (ofTrivalent p)).Admits c ↔
       (SetRel.ofSuccessors (Dox a)).image c ⊆ Function.support p :=
   (SetRel.image_subset_iff (R := .ofSuccessors (Dox a))).symm
 
 open Classical in
-/-- On atomic complements (18) is static, as in the calculation (24), since `a believes φ` is the
-update with the trivalent proposition that presupposes that `a` believes `φ`'s presupposition and
-asserts that `a` believes `φ`. -/
+/-- On atomic complements (18) is static, presupposing that `a` believes `φ`'s presupposition and
+asserting that `a` believes `φ` (24). -/
 theorem believes_ofTrivalent :
     believes Dox a (ofTrivalent p) = ofTrivalent
       ({w | ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w}.indicator
@@ -89,18 +87,15 @@ theorem believes_ofTrivalent :
   · simp [believes, mem_ofTrivalent_self, ModalLogic.Box]
     exact fun hw h1 ↦ ⟨hw, fun v hv ↦ by simp [h1 v hv]⟩
 
-/-- (20) presupposes nothing, since every context admits `John believes that Mary_i is here, and
-he believes that Susan_F is here too_i`, where by (22) the *too*-clause presupposes that Mary is
-here. -/
+/-- (20) presupposes nothing, given the presupposition (22) of the *too*-clause. -/
 theorem believes_too_admits (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
     (seq (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m)))
       (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c :=
   ⟨fun _ _ _ _ ↦ SignType.ofProp_ne_zero, fun _ hw v hv ↦ by
     simpa [Set.indicator_apply_ne_zero] using (mem_ofTrivalent_self _ _).1 hw.2 v hv⟩
 
-/-- (25) `John doubts that Mary_i is here and believes that Susan_F is here too_i` is admitted
-only by contexts in which John already believes Mary is here — which its first conjunct then
-reduces to the absurd context. -/
+/-- Only contexts in which John already believes Mary is here admit (25), *John doubts that Mary_i
+is here and believes that Susan_F is here too_i*. -/
 theorem doubt_too_admits_iff (m s : Set W) [DecidablePred (· ∈ m)] [DecidablePred (· ∈ s)] :
     (seq (neg (believes Dox a (ofTrivalent fun w ↦ SignType.ofProp (w ∈ m))))
       (believes Dox a (ofTrivalent (m.indicator fun w ↦ SignType.ofProp (w ∈ s))))).Admits c ↔
@@ -164,9 +159,8 @@ def sick : Set HealthWorld | .w0 | .w2 => True | _ => False
 instance : DecidablePred (· ∈ recovered) := fun w ↦ by
   cases w <;> first | exact isTrue trivial | exact isFalse id
 
-/-- The naive Hintikka rule (27) — `a wants φ` iff every doxastic alternative is a `φ`-world,
-`bel ⊆ φ` — which Heim rejects on [asher-1987]'s Concorde case (32), predicts `wants recovered`
-false under the belief state `sick`, since `w2` is believed and not recovered. -/
+/-- The naive Hintikka rule (27), rejected on [asher-1987]'s Concorde case (32), predicts `wants
+recovered` false under the belief state `sick`. -/
 theorem not_sick_subset_recovered : ¬ sick ⊆ recovered := fun h ↦ @h .w2 trivial
 
 /-- Every world is equally similar to every other. -/
@@ -189,9 +183,8 @@ worlds are believed possible. -/
 theorem defined_recovered : Desire.IsContingent Set.univ recovered :=
   ⟨⟨.w0, trivial, trivial⟩, ⟨.w2, trivial, id⟩⟩
 
-/-- Under (40) and an asymmetric preference, `want recovered` and `want ¬recovered` cannot both
-hold. (Heim's own worry about (40)'s restrictiveness, at (41)–(42), concerns wanting what one is
-convinced of; her remedy (43) replaces `Dox_a` by a superset `F_a`.) -/
+/-- Under (40) and an asymmetric preference, `want recovered` excludes `want ¬recovered`,
+independently of the worry of (41)–(42) and the remedy (43). -/
 theorem not_want_recovered_compl (h : Want heimFrame Set.univ .w0 recovered) :
     ¬ Want heimFrame Set.univ .w0 recoveredᶜ :=
   h.not_compl defined_recovered

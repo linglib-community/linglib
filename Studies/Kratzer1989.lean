@@ -89,9 +89,8 @@ structure Lumps (p q : Set S) (w : S) : Prop where
   /-- `q` is true in every part of `w` in which `p` is true. -/
   localImpl : ∀ ⦃s⦄, s ≤ w → s ∈ p → s ∈ q
 
-/-- At a situation without proper parts lumping is joint truth. In a possible-worlds semantics
-every situation is such a world, so lumping cannot be told from material implication between
-true propositions, which §2 argues it is not. -/
+/-- At a minimal situation lumping is joint truth, so a possible-worlds semantics cannot separate it
+from material implication (§2). -/
 theorem Lumps.iff_of_isMin {S : Type*} [PartialOrder S] {p q : Set S} {w : S} (hw : IsMin w) :
     Lumps p q w ↔ w ∈ p ∧ w ∈ q :=
   ⟨fun h ↦ ⟨h.holds, h.localImpl le_rfl h.holds⟩,
@@ -249,8 +248,8 @@ theorem lumps_paOrAd_pa : Lumps paOrAd pa Sit.actual := ⟨by decide_sit, by dec
 theorem not_follows_paOrAd_pa : ¬ Follows {paOrAd} pa := fun h ↦
   absurd (h ⟨(by decide : IsMax Sit.atlantic), by decide_sit⟩) (by decide_sit)
 
-/-- Nor is it material implication (§2): the calm of the Atlantic and the purchase are both true
-in the actual world, but a part of it supports the first without the second. -/
+/-- Lumping is not material implication, since a part of the actual world supports the Atlantic's
+calm without the purchase (§2). -/
 theorem not_lumps_notAd_pa : ¬ Lumps notAd pa Sit.actual := fun h ↦
   (by decide_sit : Sit.calm ∉ pa) (h.localImpl (by decide) (by decide_sit))
 
@@ -301,9 +300,7 @@ theorem isCrucial_notPa_notAd : IsCrucial facts Sit.actual notPa {notPa, notAd} 
       exact absurd (congrArg (Sit.calm ∈ ·) h) (by decide_sit)
     · exact absurd (h ⟨(by decide : IsMax Sit.noApples), by decide_sit⟩) (by decide_sit)
 
-/-- (10a) under lumping: no crucial premise set keeps the Atlantic's drying compatible. The
-disjunction cannot be added, since it brings along the purchase, which contradicts the
-antecedent; and once the Atlantic's calm is added the consequent is out. -/
+/-- Under lumping, no crucial premise set keeps the Atlantic's drying compatible in (10a). -/
 theorem not_might_crucialSet_atlantic : ¬ Might (crucialSet facts Sit.actual notPa) ad := by
   rintro ⟨A, hA, hall⟩
   have hpa : pa ∉ A := fun h ↦ by

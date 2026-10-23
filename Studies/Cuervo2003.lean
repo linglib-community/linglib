@@ -309,9 +309,7 @@ theorem spanish_change_low : spanish.Licenses llegar ⟨⟨[.vGO], []⟩, true, 
 
 /-! ### The ethical dative (§4.3) -/
 
-/-- The only dative a Spanish unergative takes is an animate ethical clitic: without an object no
-low applicative, without two events no affected one, and the high applicative over an activity
-projects no specifier, (66), (74a), (78). -/
+/-- The only dative a Spanish unergative takes is an animate ethical clitic ((66), (74a), (78)). -/
 theorem unergative_clitic_only {p : Predicate} (hp : p.heads = [.vDO])
     (ho : ¬ p.RootLicensesObject) (d : Dative) :
     spanish.Licenses p d ↔ d = ⟨⟨[], [.vDO]⟩, true, false⟩ := by
@@ -327,9 +325,8 @@ theorem transitive_low_dp :
 
 /-! ### Datives with inchoatives (§4.2.3) -/
 
-/-- An animate dative with an inchoative is affected, between the two events, or the
-experiencer unintentionally responsible for the change, above vGO; an inanimate one is affected
-alone, (55), (60). -/
+/-- An animate dative with an inchoative is an experiencer or affected, and an inanimate one only
+affected ((55), (60)). -/
 theorem inchoative_meanings {p : Predicate} (hp : p.heads = [.vGO, .vBE]) (dp : Bool) :
     meanings spanish p true dp = [.experiencer, .affected] ∧
       meanings spanish p false dp = [.affected] := by

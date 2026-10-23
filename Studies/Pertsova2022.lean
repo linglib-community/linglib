@@ -54,8 +54,7 @@ def Active (F : Finset ThreeFeature) : Prop :=
 
 instance : DecidablePred Active := fun _ ↦ by unfold Active; infer_instance
 
-/-- The active feature sets generate four systems: no person distinction, participants against
-others, three persons, and four with clusivity (p. 402; the first is the empty activation). -/
+/-- The active feature sets generate four person systems (p. 402). -/
 theorem image_graph_active :
     (univ.filter Active).image graph =
       {graph ∅, graph {.participant}, graph {.participant, .author},
@@ -69,9 +68,8 @@ theorem graph_active_ne_authorBipartition (F : Finset ThreeFeature) (hF : Active
     graph F ≠ graph {.author} := by
   revert F; decide
 
-/-- Conflation only arises from inactive features (pp. 402–403): inclusive conflates with second
-person only if the exclusive does too, second with third only if first does too, and first with
-third only if second does too. -/
+/-- Under active features, inclusive conflates with second person only if exclusive does, and
+likewise for the other pairs (pp. 402–403). -/
 theorem no_partial_conflation (F : Finset ThreeFeature) (hF : Active F) :
     ((generated F).r {.speaker, .addressee} {.addressee} →
         (generated F).r {.speaker, .addressee} {.speaker}) ∧

@@ -132,8 +132,8 @@ theorem derivedNominal_not_agentLicensed :
 
 /-! ### Inner and outer heads, (13)–(15) -/
 
-/-- The gerund's n is an outer cyclic head, not local to the root, (9) and (14), whereas the
-derived nominal's n is attached to the root, (8) and (13). -/
+/-- The gerund's n is not local to the root ((9), (14)), whereas the derived nominal's n is ((8),
+(13)). -/
 theorem gerund_n_not_rootLocal :
     ∀ r ∈ rows, ∀ i : Fin r.spine.heads.length, r.spine.heads[i] = .n →
       (r.spine.RootLocal cyclic i ↔ r.construction = .derivedNominal) := by

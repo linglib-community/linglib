@@ -112,8 +112,8 @@ def nullAffixC (R2 : E → (Fin n → D) → Prop) (R1 : E → (Fin m → D) →
 variable {M} {R2 : E → (Fin n → D) → Prop} {R1 : E → (Fin m → D) → Prop} {e e₁ e₂ : E}
   {c c' : D} {ys : Fin n → D} {xs : Fin m → D}
 
-/-- Any arguments of V1 witness the compound, so nothing requires the compound's arguments to be
-interpreted as arguments of V1, and nothing forbids it, (131)–(134), (202)–(206). -/
+/-- Any arguments of V1 witness the compound, so the compound's arguments may but need not be V1's
+((131)–(134), (202)–(206)). -/
 theorem nullAffix_of (hc : M.cause e e₁ e₂) (h2 : R2 e₂ ys) (h1 : R1 e₁ xs) :
     nullAffix M R2 R1 e ys :=
   ⟨e₁, e₂, xs, hc, h2, h1⟩
@@ -142,8 +142,8 @@ participant in the initial event of the causal chain (145). -/
 def Model.CcfInitial : Prop :=
   ∀ e c e₀, M.ccf e = some c → IsLeast (M.chain e) e₀ → M.participant e₀ c
 
-/-- No pure causers: the external argument of a transitive compound is a participant in the
-event described by V1, (146)–(149), as its subject matter in (150)–(151). -/
+/-- The external argument of a transitive compound participates in the event V1 describes, so there
+are no pure causers ((146)–(149), (150)–(151)). -/
 theorem participant_of_nullAffixC (hO : M.Onset) (hI : M.CcfInitial)
     (h : nullAffixC M R2 R1 e c ys) : ∃ e₁ xs, R1 e₁ xs ∧ M.participant e₁ c :=
   let ⟨hc, e₁, e₂, xs, hcause, _, h1⟩ := h
@@ -235,8 +235,8 @@ def ji (e : SinkingEvent) (xs : Fin 2 → Participant) : Prop :=
 @[inherit_doc ji]
 def chen (e : SinkingEvent) (ys : Fin 1 → Participant) : Prop := e = below ∧ ys = ![.cruiser]
 
-/-- (137) through the whole pipeline: *Éjūn jī-chén-le yī sōu xúnyángjiàn* denotes the sinking,
-and the Onset Condition puts the Russian forces in the event V1 describes. -/
+/-- In (137) *Éjūn jī-chén-le yī sōu xúnyángjiàn* places the Russian forces in the event V1
+describes. -/
 theorem ji_chen_participant :
     ∃ e₁ xs, ji e₁ xs ∧ (sinkingModel strike).participant e₁ .russians :=
   participant_of_nullAffixC sinkingModel_strike_onset (sinkingModel_ccfInitial strike)
@@ -292,8 +292,8 @@ def shooting : Ev → Set ℚ
   | .shoot => Set.Icc 0 1
   | .die => Set.Icc 1 3
 
-/-- The shooting and the dying overlap at a single point, so they are neither one event nor
-nested, so only the trieventive macroevent accounts for (107). -/
+/-- The shooting and the dying of (107) are neither one event nor nested, so only a trieventive
+macroevent fits. -/
 theorem shooting_trieventive :
     ¬ Monoeventive shooting .shoot .die ∧ ¬ Bieventive shooting .shoot .die ∧
       (shooting .shoot ∩ shooting .die).Nonempty := by

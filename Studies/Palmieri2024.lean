@@ -225,16 +225,13 @@ theorem lexicalReciprocalIn_iff (l : Language) (c : VerbClass) :
 
 /-! ### Pseudo-reciprocity against plain reciprocity (§4.3) -/
 
-/-- Grammatical reciprocity (50), Strong Reciprocity over the participants, is plain in
-[winter-2018]'s sense for every relation, symmetric or not: plain reciprocity is agreement with
-Strong Reciprocity on pairs. -/
+/-- Strong Reciprocity (50) is plain in [winter-2018]'s sense for every relation. -/
 theorem strongReciprocity_plainReciprocity {A : Type*} (R : A → A → Prop) :
     Winter2018.PlainReciprocity (StrongReciprocity R) R :=
   fun _ _ ↦ .rfl
 
-/-- A lexical entry's collective predicate is not so constrained: for any relation some
-collective predicate fails plain reciprocity for it, the room in which 'divorce' fails the
-collective-to-unidirectional direction (53) and 'kiss' the converse (54). -/
+/-- Some collective predicate fails plain reciprocity for any relation, as with *divorce* (53) and
+*kiss* (54). -/
 theorem exists_collective_not_plain (R : Bool → Bool → Prop) :
     ∃ P : Finset Bool → Prop, ¬ Winter2018.PlainReciprocity P R :=
   ⟨fun X ↦ ¬ StrongReciprocity R X, fun h ↦ iff_not_self (h {true, false} (by decide)).symm⟩

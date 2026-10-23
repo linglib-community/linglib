@@ -100,9 +100,8 @@ theorem Licenses.eq_adjectival (hA : Licenses .adjectival κ) (h : Licenses e κ
     e = .adjectival := by
   cases κ <;> simp_all
 
-/-- A word that is both a verb and an adjective is listed under two categories, since no core is
-licensed in both extended projections. The verbal uses of *thin* and *yellow* cannot be predicted
-from their adjectival ones and must be listed (fn. 39). -/
+/-- A word that is both verbal and adjectival is listed under two categories, as the verbal *thin*
+and *yellow* must be (fn. 39). -/
 theorem exists_ne_of_verbal_of_adjectival {l : List (Option CatFamily)}
     (hV : ∃ κ ∈ l, Licenses .verbal κ) (hA : ∃ κ ∈ l, Licenses .adjectival κ) :
     ∃ κ ∈ l, ∃ κ' ∈ l, κ ≠ κ' := by

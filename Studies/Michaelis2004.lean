@@ -146,12 +146,8 @@ theorem frame_adverbial_coerces_state :
     frameAdverbialRule.override reconciliation [.state]
       = [.achievement] := by decide
 
-/-- Ex. (41), "My radio program ran in less than four minutes": an
-activity input is genuinely ambiguous — inchoative addition yields the
-accomplishment reading (the frame measures the running time), onset
-selection the achievement reading (the frame measures the delay before
-airing) — [de-swart-1998]'s observation, derived from the operator
-inventory. -/
+/-- An activity under a frame adverbial is ambiguous between accomplishment and achievement
+readings, as in Ex. (41) ([de-swart-1998]). -/
 theorem frame_adverbial_activity_ambiguity :
     frameAdverbialRule.override reconciliation [.activity]
       = [.accomplishment, .achievement] := by decide
@@ -163,9 +159,8 @@ complement yields a state directly. -/
 theorem progressive_explicit :
     progressiveRule [.activity] = some .state := by decide
 
-/-- Exx. (31), (42)–(44), "We were living in Boulder": a stative
-complement conforms to the activity type and the predication is again a
-state — the "temporary state" reading. -/
+/-- A stative complement of the progressive conforms to the activity type and yields a temporary
+state, as in Exx. (31), (42)–(44). -/
 theorem progressive_coerces_state :
     progressiveRule.override [conformToActivity] [.state]
       = [.state] := by decide

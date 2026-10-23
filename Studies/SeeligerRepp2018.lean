@@ -73,9 +73,8 @@ declarative of polarity `s`: evidence for the opposite proposition, and a speake
 assumed it. -/
 def rejectQ (s : Polarity) : BiasProfile := ⟨plus (.negative * s), plus s⟩
 
-/-- A rejecting question is used in a proper subset of the situations of the declarative question
-of the opposite polarity (p. 138): the negative one within the positive declarative question's,
-the positive one within the negative declarative question's. -/
+/-- A rejecting question is felicitous in a proper subset of the situations of the opposite-polarity
+declarative question (p. 138). -/
 theorem felicity_rejectQ_ssubset (s : Polarity) :
     (rejectQ s).felicity ⊂ (dqProfile (.negative * s)).felicity := by
   cases s <;> decide

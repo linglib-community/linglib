@@ -149,8 +149,8 @@ private theorem factorsThrough_ofForm {f g : {p : Person // ¬ p.MarksClusivity}
       (fun x : Cell ↦ f (x .person) (x .number)) :=
   fun _ _ ↦ h _ _ _ _
 
-/-- *be* shows more person–number agreement than other verbs ([huddleston-pullum-2002] ch. 3
-§1.1): the present of *have* tells apart only cells that the present of *be* tells apart. -/
+/-- The present of *have* distinguishes only cells that the present of *be* distinguishes
+([huddleston-pullum-2002] ch. 3 §1.1). -/
 theorem factorsThrough_havePresent_bePresent : FactorsThrough havePresent.form bePresent.form :=
   factorsThrough_ofForm (f := bePresentForm) (g := presentForm "has" "have") (by decide)
 

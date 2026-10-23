@@ -84,9 +84,7 @@ F, and the internal argument merges with that head. -/
 def tree27 : T :=
   .node .f [.terminal .d .phrase, .adjoin .f [.terminal .f .f, .terminal .root .root]]
 
-/-- **Suppletion without a Root complement.** In (27) the internal argument may condition the Root
-under (25), since only the complex head lies between them, while in the representation (26) the vP
-and the projection of F intervene, under either formulation of locality. -/
+/-- Under (25), the internal argument may condition the Root in (27) but not in (26). -/
 theorem mayCondition'_tree27 :
     MayCondition' tree27 ⟨[1, 1]⟩ ⟨[0]⟩ ∧ ¬ MayCondition tree26 ⟨[1, 1, 1, 1, 1]⟩ ⟨[1, 1, 0]⟩ := by
   decide
@@ -134,10 +132,7 @@ def data : List (RootClass × Judgment) :=
 
 theorem data_length : data.length = 2 := by decide +kernel
 
-/-- **Only the mixed view derives (56).** A view derives the contrast when the resultative of each
-example is acceptable exactly where the view licenses it. The views that attach every Root in the
-same way give *colored dark* and *blackened dark* the same status, and only the view that merges
-manner Roots as modifiers and result Roots as complements tells them apart. -/
+/-- Only the mixed view derives the contrast (56). -/
 theorem derives_iff (v : View) :
     (∀ p ∈ data, p.2 = .acceptable ↔ v.LicensesResultative p.1) ↔ v = .mixed := by
   cases v <;> decide +kernel
@@ -174,10 +169,8 @@ def oneData : List (Harley2014.Dependent × Judgment) :=
 
 theorem oneData_length : oneData.length = 2 := by decide +kernel
 
-/-- **One-replacement and selection cannot decide.** In a deverbal noun, whatever the
-configuration of the Root and its argument, *one* strands exactly the dependents (8) accepts
-stranded, and the argument is merged with the head the verb merges it with, unlike in a noun that
-categorizes the Root itself (`Harley2014.selector_eq_iff`). -/
+/-- In a deverbal noun, *one* strands exactly the dependents (8) accepts, and the argument merges
+with the verb's head, whatever the configuration. -/
 theorem deverbal_derives (c : Config) :
     (∀ p ∈ oneData, p.2 = .acceptable ↔ OneStrands c p.1) ∧
       selector (deverbal c) (position c .argument) = selector (c.tree .v) c.argPos := by

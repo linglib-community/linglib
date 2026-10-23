@@ -361,9 +361,8 @@ theorem csg1_of_ne_basque {r : CLDF.Wordlist.RootClasses Wordlist.Cell}
     (h : r.id ≠ Wordlist.eus_good_on.roots.id) : rootPattern r 2 ≠ rootPattern r 0 :=
   csg1 ((isContiguous_iff_ne_basque r hr hq).2 h) (suppletive_comparative r hr)
 
-/-- No antihomophonous vocabulary realizes the Basque triple *on – hobe – on-en* (143b), which
-needs the accidental homophony that Antihomophony (44) excludes: the problem section 4.1.2 leaves
-open. -/
+/-- No antihomophonous vocabulary realizes the Basque triple *on – hobe – on-en* (143b), whose
+homophony Antihomophony (44) excludes, as section 4.1.2 leaves open. -/
 theorem basque_not_realized {v : RuleSet (SpanRule 3 ℕ)} (hv : v.Antihomophonous) :
     realize v ≠ some ∘ rootPattern Wordlist.eus_good_on.roots := fun h ↦ by
   have hc := isContiguous_realize hv
@@ -599,9 +598,8 @@ theorem fakeAba_not_antihomophonous : ¬ fakeAba.Antihomophonous := by decide
 /-- Modern Greek BAD (93), with *cheiró-* under CMPR and *kak-* elsewhere. -/
 def greekBad : RuleSet (SpanRule 3 String) := [⟨"kak", 0, none⟩, ⟨"cheiró", 0, some 1⟩]
 
-/-- With Merger the comparative is *cheiró-ter-os*. Without it the root cannot see CMPR, and the
-periphrastic comparative is *pjo kak-ós*, not *\*pjo cheir-ós* (94), which is the RSG from
-locality (90). -/
+/-- With Merger the comparative is *cheiró-ter-os*, and without it *pjo kak-ós*, not *\*pjo
+cheir-ós* (94), the RSG from locality (90). -/
 theorem greek_comparative :
     realizeIn (⟨1⟩ : Synthesis 3) greekBad 1 = some "cheiró" ∧
       realizeIn (⟨0⟩ : Synthesis 3) greekBad 1 = some "kak" := by
@@ -650,9 +648,8 @@ theorem russianBad_antihomophonous : russianBad.Antihomophonous := by decide
 *samyj sux-oj* (107d). -/
 def positiveEmbedding : Fin 3 → Fin 3 := ![0, 1, 0]
 
-/-- *Plox-oj, xuž-e, samyj plox-oj* (106d) is ABA although the vocabulary is antihomophonous,
-since the superlative's adjective word lacks CMPR. The Russian Fragment's superlative is that one:
-periphrastic and on the positive's root, after a comparative on another. -/
+/-- *Plox-oj, xuž-e, samyj plox-oj* (106d) is ABA under an antihomophonous vocabulary, since its
+periphrastic superlative lacks CMPR. -/
 theorem russian_bad_eq_ploxoj :
     Setoid.ker (realize russianBad ∘ positiveEmbedding) = Setoid.ker Paradigm.aba ∧
       Periphrastic Russian.Adjectives.ploxoj.comparison.superlative ∧
@@ -711,9 +708,8 @@ theorem karelian_sources :
       Setoid.ker (rootPattern Wordlist.krl_many_onego.roots) = Setoid.ker Paradigm.abb := by
   decide
 
-/-- The one quantifier triple that is not contiguous and that no parse makes ABB, Zajkov's
-Karelian (165a), has a form another source rejects in its cell: no respondent of the
-questionnaire gave or recognized *äij-in* (p. 130). -/
+/-- Zajkov's Karelian (165a), the one non-contiguous quantifier triple no parse makes ABB, has a
+form no questionnaire respondent gave or recognized (p. 130). -/
 theorem exists_ungrammatical_of_not_isContiguous : ∀ r ∈ Wordlist.rootClasses, Quantifier r →
     ¬ IsContiguous (rootPattern r) →
     r.id ∉ [Wordlist.hye_many.roots.id, Wordlist.bul_many.roots.id] →

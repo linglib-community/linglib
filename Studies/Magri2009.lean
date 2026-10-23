@@ -104,9 +104,8 @@ theorem odd_insert_range_iff {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i,
     Odd Wck (insert φ (range ψP)) φ ↔ φ ∩ Wck ⊆ ⋃ i, ψP i := by
   rw [Odd, exhIE_insert_range h, disjoint_diff_iff]
 
-/-- (34): the Blindness Hypothesis is essential. Strengthening with entailment given common
-knowledge (31b), that is innocent exclusion over the propositions restricted to `Wck`, leaves `φ`
-unstrengthened when its alternatives are equivalent to it given common knowledge. -/
+/-- Innocent exclusion relative to common knowledge (31b) leaves `φ` unstrengthened when its
+alternatives are contextually equivalent to it (34). -/
 theorem exhIE_image_inter {ALT : Set (Set W)} (hφ : φ ∈ ALT)
     (h : ∀ a ∈ ALT, a ∩ Wck = φ ∩ Wck) : exhIE ((· ∩ Wck) '' ALT) (φ ∩ Wck) = φ ∩ Wck := by
   rw [eq_singleton_iff_unique_mem.2 ⟨mem_image_of_mem _ hφ, forall_mem_image.2 h⟩,
@@ -132,18 +131,16 @@ variable {R : Set W → Prop} {ALT : Set (Set W)}
 theorem IsRelevance.relevant (hR : IsRelevance Wck φ R) (h : ψ ∩ Wck = φ ∩ Wck) : R ψ :=
   (hR.congr h).2 hR.uttered
 
-/-- (45): a mismatching implicature is mandatory. When an excludable alternative is equivalent to
-the utterance given common knowledge, the strengthened meaning (42) contradicts common knowledge
-whatever relevance property the context supplies. -/
+/-- When an excludable alternative is contextually equivalent to the utterance, the strengthened
+meaning (42) contradicts common knowledge for every relevance property (45). -/
 theorem disjoint_exhR (hR : IsRelevance Wck φ R) (hψ : IsInnocentlyExcludable ALT φ ψ)
     (h : ψ ∩ Wck = φ ∩ Wck) : Disjoint (exhR R ALT φ) Wck := by
   refine disjoint_left.2 fun x hx hck ↦ hx.2 ψ hψ (hR.relevant h) ?_
   have : x ∈ ψ ∩ Wck := h ▸ ⟨hx.1, hck⟩
   exact this.1
 
-/-- (40), (44): an implicature that does not mismatch is not mandatory. Relevance of exactly the
-propositions equivalent to the utterance given common knowledge satisfies (43) and sets aside
-every other alternative. -/
+/-- Some relevance property satisfying (43) excludes any alternative not contextually equivalent to
+the utterance, so the implicature is optional (40), (44). -/
 theorem exists_isRelevance (h : ψ ∩ Wck ≠ φ ∩ Wck) : ∃ R, IsRelevance Wck φ R ∧ ¬ R ψ :=
   ⟨fun p ↦ p ∩ Wck = φ ∩ Wck, ⟨rfl, fun hpq ↦ by rw [hpq]⟩, h⟩
 
@@ -156,18 +153,17 @@ are. It is the presupposition YES ∪ NO of the distributivity operator (67) and
 (71b) takes common knowledge to entail it. -/
 def Homogeneous (A B : α → Prop) : Prop := GQ.every A B ∨ GQ.no A B
 
-/-- (38), (73), (72b): a sentence with *some* is odd when common knowledge makes its scope
-homogeneous with respect to its restrictor, (71): its Horn-mate with *all* is logically but not
-contextually stronger. -/
+/-- A *some* sentence whose scope common knowledge makes homogeneous with its restrictor (71) is odd
+(38), (73), (72b). -/
 theorem odd_some (hck : ∀ x ∈ Wck, Homogeneous (A x) (B x))
     (h : ∃ x, GQ.some (A x) (B x) ∧ ¬ GQ.every (A x) (B x)) :
     Odd Wck {{x | GQ.some (A x) (B x)}, {x | GQ.every (A x) (B x)}} {x | GQ.some (A x) (B x)} :=
   (odd_pair_iff h).2 fun x ⟨hs, hx⟩ ↦
     (hck x hx).resolve_right fun hno ↦ (GQ.no_contradicts_some _ _).1 hno hs
 
-/-- (61), (62), (63), (142): a sentence without presupposition, (68a), is odd by the Mismatch
-Hypothesis for presuppositions (66) when its Horn-mate presupposes `p`, (68b), which common
-knowledge entails but logic does not: the blind strengthened presupposition (64) is `pᶜ`. -/
+/-- By (66), a presuppositionless sentence (68a) is odd iff common knowledge entails the
+presupposition `p` of its Horn-mate (68b), blindly strengthened as (64) ((61), (62), (63), (142)).
+-/
 theorem odd_univ_iff {p : Set W} (h : pᶜ.Nonempty) : Odd Wck {univ, p} univ ↔ Wck ⊆ p := by
   rw [odd_pair_iff (by rwa [← compl_eq_univ_sdiff]), univ_inter]
 
@@ -202,10 +198,8 @@ theorem iUnion_definite :
   ext f
   simp [definite, GQ.some]
 
-/-- (46a), (54a), (99): an existential in the scope of a universal is odd when, at every world
-compatible with common knowledge, an `N` true at some index of `D` is true throughout its own
-restrictor, and when logically it can hold with every definite alternative false, as at (98).
-Blind strengthening denies the widest-scope reading, which common knowledge makes it entail. -/
+/-- An existential under a universal is odd when common knowledge, but not logic (98), makes it
+entail some definite alternative (46a), (54a), (99). -/
 theorem odd_narrowSome (hD : ∃ i, D i)
     (hck : ∀ f ∈ Wck, ∀ x, N x → ∀ i, D i → f x i → ∀ j, R x j → f x j)
     (h : (narrowSome N D \ ⋃ d : {d // N d}, definite R d).Nonempty) :
@@ -215,8 +209,8 @@ theorem odd_narrowSome (hD : ∃ i, D i)
   obtain ⟨x, hx, hxi⟩ := hf i hi
   exact mem_iUnion.2 ⟨⟨x, hx⟩, hck f hfck x hx i hi hxi⟩
 
-/-- (46a): *#On every day, a fireman won* is odd when it is common knowledge that the same person
-was the winner on every day of `D`. -/
+/-- The sentence *#On every day, a fireman won* is odd when common knowledge fixes the same winner
+on every day of `D` (46a). -/
 theorem winner_odd (hD : ∃ i, D i) (hck : ∀ f ∈ Wck, ∃ g, ∀ x i, D i → (f x i ↔ x = g))
     (h : (narrowSome N D \ ⋃ d : {d // N d}, definite (fun _ ↦ D) d).Nonempty) :
     Odd Wck (alts N D fun _ ↦ D) (narrowSome N D) :=
@@ -271,9 +265,8 @@ theorem running_odd :
       not_exists]
     decide
 
-/-- (54b): *Every day, for every competition, a fireman won* is fine in the context of (54): the
-table is compatible with common knowledge, verifies the sentence (56), and falsifies each
-definite alternative (57). -/
+/-- The sentence (54b) is fine in the context of (54), since the table verifies it (56) and
+falsifies each definite alternative (57). -/
 theorem table_not_odd :
     ¬ Odd sameWinner (alts (fun _ ↦ True) (fun _ ↦ True) fun _ _ ↦ True)
       (narrowSome (fun _ ↦ True) fun _ ↦ True) := by
@@ -326,9 +319,8 @@ private theorem mem_sometimes_sdiff_always (h₁ : live j t₁ ∧ C t₁) (h₂
     (hne : t₁ ≠ t₂) : (fun _ t ↦ t = t₁) ∈ sometimes live j C \ always live j C :=
   ⟨⟨t₁, h₁, rfl⟩, fun h ↦ hne (h t₂ h₂).symm⟩
 
-/-- (72b), (82): *#Sometimes, John is tall* is odd for every restrictor `C` of the adverb that
-meets John's lifespan at two times: its Horn-mate with *always* is logically stronger but
-equivalent given (70). -/
+/-- The sentence *#Sometimes, John is tall* is odd for every restrictor meeting John's lifespan
+twice, given (70) (72b), (82). -/
 theorem sometimes_odd (hck : ∀ f ∈ Wck, Permanent live f) (h₁ : live j t₁ ∧ C t₁)
     (h₂ : live j t₂ ∧ C t₂) (hne : t₁ ≠ t₂) :
     Odd Wck {sometimes live j C, always live j C} (sometimes live j C) :=
@@ -346,10 +338,8 @@ example (h₁ : live j t₁ ∧ C t₁) (h₂ : live j t₂ ∧ C t₂) (hne : t
 
 /-! #### Bare plural subjects (§4.2) -/
 
-/-- (84b), (99): the existential reading (91b) of the bare plural subject of *Firemen are tall* is
-odd. The existential has narrowest scope (88), below GEN over the restrictor `D` (the `C̃` of
-(90)); blind strengthening denies that some fireman is tall throughout the part of his lifespan in
-`C`, (97), and given (70) a fireman tall at a time of `D` is tall throughout his lifespan. -/
+/-- The existential reading (91b) of *Firemen are tall*, scoped below GEN (88) over the `C̃` of
+(90), is odd given (70) and (97) (84b), (99). -/
 theorem existential_odd {N : E → Prop} (hck : ∀ f ∈ Wck, Permanent live f) (hD : ∃ t, D t)
     (h : (narrowSome N D \ ⋃ d : {d // N d}, definite (fun d t ↦ C t ∧ live d t) d).Nonempty) :
     Odd Wck (alts N D fun d t ↦ C t ∧ live d t) (narrowSome N D) :=
@@ -413,8 +403,8 @@ individual-level predicate permanent (70). -/
 theorem existentialOdd_permanent : ExistentialOdd {f | Permanent lifespan f} :=
   existential_odd (fun _ h ↦ h) ⟨0, trivial⟩ ⟨_, world98_mem⟩
 
-/-- (84a): the existential reading of *Firemen are available* is fine, since common knowledge
-does not constrain a stage-level predicate and the world (98) is compatible with it. -/
+/-- The existential reading of *Firemen are available* is fine, since the world (98) is compatible
+with common knowledge (84a). -/
 theorem not_existentialOdd_univ : ¬ ExistentialOdd univ := by
   rw [ExistentialOdd, alts98, alts, odd_insert_range_iff ⟨_, world98_mem⟩]
   exact fun h ↦ world98_mem.2 (h ⟨world98_mem.1, trivial⟩)
@@ -445,12 +435,8 @@ def Woman.relative : Woman → Man
 /-- The world of §4.3: `a₁` is related only to `b₁` and `a₂` only to `b₂`, at all times. -/
 def distributed {T : Type*} (a : Woman) (p : Man × T) : Prop := p.1 = a.relative
 
-/-- (102b), (109): the existential reading (105) of the bare plural subject of *Jewish women are
-related to every Jewish man*, with the universal object scoping over GEN, is fine. Given
-restrictors that meet the lifespans, the world where `a₁` is related only to `b₁` and `a₂` only
-to `b₂` is compatible with (70) for *related*, verifies (105), and falsifies each definite
-alternative (106b). With the definite object of (102a) instead, the reading falls under
-`existential_odd`. -/
+/-- With the universal object over GEN, the existential reading (105) is not odd under (70) and the
+alternatives (106b), unlike (102a) (102b), (109). -/
 theorem universal_not_odd {T : Type*} {live : Woman → T → Prop} {C D : Man → T → Prop}
     (h₁ : ∃ t, C .b₂ t ∧ live .a₁ t) (h₂ : ∃ t, C .b₁ t ∧ live .a₂ t) :
     ¬ Odd {f | ∀ b, Permanent live fun a t ↦ f a (b, t)}
@@ -498,8 +484,7 @@ where it has only the existential reading (§4.5.1), and that reading is odd for
 def PredictedOdd (row : Datum) : Prop :=
   row.feature? "position" = some "right" ∧ ∃ Wck ∈ commonKnowledgeOf row, ExistentialOdd Wck
 
-/-- (8), (125): a row is acceptable exactly when it is not predicted odd; only (8c), with the
-individual-level *intelligent* and its subject to the right of *ja doch*, is odd. -/
+/-- A row is acceptable exactly when it is not predicted odd, and only (8c) is odd (8), (125). -/
 theorem word_order_rows :
     ∀ row ∈ Examples.all, (row.judgment = .acceptable ↔ ¬ PredictedOdd row) := by
   simp only [PredictedOdd, exists_existentialOdd_iff]
@@ -520,18 +505,16 @@ def genPresup {α : Type*} (A : α → Prop) (B : (E → T → Prop) → α → 
     Set (E → T → Prop) :=
   {f | Homogeneous A (B f)}
 
-/-- (134a), (138): *#John is always tall* is odd by the Mismatch Hypothesis for presuppositions.
-It presupposes nothing, (138a), while its Horn-mate *John is tall*, with GEN, presupposes that
-John is tall at all or at none of the times he is alive, (138b), which (70) entails. -/
+/-- The sentence *#John is always tall* presupposes nothing (138a) and is odd, since (70) entails
+the presupposition (138b) of *John is tall* (134a), (138). -/
 theorem always_odd (hck : ∀ f ∈ Wck, Permanent live f) (h₁ : live j t₁) (h₂ : live j t₂)
     (hne : t₁ ≠ t₂) : Odd Wck {univ, genPresup (live j) fun f ↦ f j} univ :=
   (odd_univ_iff ⟨fun _ t ↦ t = t₁,
     fun h ↦ h.elim (fun h ↦ hne (h t₂ h₂).symm) fun h ↦ h t₁ h₁ rfl⟩).2
     fun f hf ↦ (hck f hf).homogeneous fun _ h ↦ h
 
-/-- (139b), (141): *Firemen are always tall* is fine. The homogeneity presupposition of GEN is now
-over firemen and their times, and (70) is compatible with some firemen being tall and others
-not. -/
+/-- The sentence *Firemen are always tall* is fine, as (70) allows some firemen to be tall and
+others not (139b), (141). -/
 theorem always_bare_not_odd {N : E → Prop} {d₁ d₂ : E} (h₁ : N d₁ ∧ live d₁ t₁)
     (h₂ : N d₂ ∧ live d₂ t₂) (hne : d₁ ≠ d₂) :
     ¬ Odd {f | Permanent live f}

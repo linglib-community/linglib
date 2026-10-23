@@ -368,9 +368,8 @@ def complementPerfectivity (d : Datum) : Option Aspect.Perfectivity :=
 /-- The sentences (17), *započna* 'started' with a complement in *-va-*. -/
 def phaseTests : List Datum := [Examples.ex_17a, Examples.ex_17b]
 
-/-- The phase-verb test is necessary for (17) but not sufficient: the accepted sentence has an
-imperfective complement, which the test admits (`Aspect.viewpointPrediction`), but so has (17b),
-which the paper rejects for the incompatibility of completive *iz-* with beginning. -/
+/-- The phase-verb test is necessary for (17) but not sufficient, since it also admits the rejected
+(17b). -/
 theorem phaseTests_necessary :
     (∀ d ∈ phaseTests, d.judgment = .acceptable →
       (complementPerfectivity d).map Aspect.viewpointPrediction = some .accept) ∧

@@ -87,9 +87,8 @@ theorem moroccan_noun : (tableau (paradigms .sh .r .b [] []) {.a, .b} ranking).o
 def jtaVerb (c₁ c₂ c₃ : Seg) : Cand → Paradigm Seg (List Seg) :=
   paradigms c₁ c₂ c₃ [[.ch], [.n, .a], [.ch], [.ch, .i], [.ch, .u]] [[.schwa, .ch], [.u]]
 
-/-- (13): the paradigms of *ʃrəb* 'drink', *gdəm* 'bite' and *ktʃəb* 'write' — CCəC in the
-bare form and before C-initial suffixes, CəCC before V-initial ones, whatever the sonority
-of the root — are OP's optima. -/
+/-- The paradigms of *ʃrəb*, *gdəm* and *ktʃəb* in (13) are optimal under OP whatever the root's
+sonority. -/
 theorem jta_verbs :
     ∀ r ∈ [(Seg.sh, Seg.r, Seg.b), (.g, .d, .m), (.k, .ch, .b)],
       (tableau (jtaVerb r.1 r.2.1 r.2.2) {.a, .b, .c, .d} ranking).optimal = {.a} := by

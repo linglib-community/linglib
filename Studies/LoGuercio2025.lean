@@ -136,9 +136,7 @@ theorem epithet_not_alternative_outOfBlue :
   fun h ↦ no_wideDP_outOfBlue h (Tree.node .Det [.terminal .Det .that_, .terminal .N .bastard,
     .terminal .N .john]) (by decide) (by decide)
 
-/-- After the mention, the epithet sentence is a structural alternative, by the paper's
-derivation (24), in which the mentioned phrase replaces the subject and then *John* replaces
-*Pedro*. -/
+/-- After the mention, the epithet sentence is a structural alternative by derivation (24). -/
 theorem epithet_alternative_priorMention :
     bastardJohnArrived ∈ structuralAlternatives priorContextLex johnArrived := by
   have step1 : StructuralOp (substitutionSource priorContextLex johnArrived) johnArrived

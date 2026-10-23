@@ -137,9 +137,8 @@ def sensitivity : DiathesisAlternation → NonemptyInterval (Finset MeaningCompo
   | .causativeInchoative => ⟨({changeOfState}, {changeOfState, causation}), by decide⟩
   | _ => ⊤
 
-/-- Every alternation but the causative/inchoative is open to a verb whose meaning involves more
-components than one it is open to, as the middle is to verbs of causing a change of state
-"whether or not their meaning also specifies how this change of state comes about" (p. 10). -/
+/-- Every alternation but the causative/inchoative is upward closed in meaning components (p. 10).
+-/
 theorem isUpperSet_sensitivity {a : DiathesisAlternation} (ha : a ≠ .causativeInchoative) :
     IsUpperSet (sensitivity a : Set (Finset MeaningComponent)) := by
   have : (sensitivity a).snd = ⊤ := by cases a <;> first | exact absurd rfl ha | rfl

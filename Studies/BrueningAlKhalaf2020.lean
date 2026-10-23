@@ -185,9 +185,8 @@ theorem Admits.exists_mem {L : List Conjunct → Prop} (h : Admits L ps) :
     ∃ cs, L cs ∧ ∀ p ∈ ps, ∃ x ∈ cs, x ∈ ofCat p :=
   let ⟨cs, hcs, hL⟩ := h; ⟨cs, hL, exists_mem_of_forall₂ (mem_sections_map_ofCat.1 hcs)⟩
 
-/-- **The only selectional violation is a clause where a noun phrase is selected** (§3.2). A
-phrase of a category the selector does not c-select can only be a clause under the null N,
-whichever conjunct the S-features are checked against. -/
+/-- A phrase of a category the selector does not c-select can only be a clause under the null N
+(§3.2). -/
 theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
     ∀ p ∈ ps, p ∈ cats ∨ p = .C ∧ N ∈ cats := by
   obtain ⟨cs, ⟨hsel, -⟩, hcs⟩ := h.exists_mem
@@ -197,8 +196,7 @@ theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
   · exact .inl (hsel _ hx)
   · exact .inr ⟨rfl, hsel _ hx⟩
 
-/-- **The phrase next to the selector is selected in its own category** (§3.1). It is the
-conjunct the S-features are checked against, so it cannot be a clause under the null N. -/
+/-- The phrase next to the selector is selected in its own category (§3.1). -/
 theorem mem_cats_of_mem_nearest (h : Admits (Satisfies (checkedOnce d) cats) ps) :
     ∀ p ∈ d.nearest ps, p ∈ cats := by
   obtain ⟨cs, hcs, hsel, hS⟩ := h
@@ -209,10 +207,8 @@ theorem mem_cats_of_mem_nearest (h : Admits (Satisfies (checkedOnce d) cats) ps)
   have := hsel x (HeadDirection.mem_of_mem_nearest hx)
   rwa [eq_phrase_of_mem_ofCat hxp (hS x (mem_checkedOnce.2 hx))] at this
 
-/-- **Coordination permits the violation ellipsis does** (§3.3). A phrase of a category the
-selector does not c-select can be coordinated with another just when it can be stranded by
-ellipsis of the selector, which deletes the selector's S-features at PF along with it, so that
-none are checked ((80)). -/
+/-- A phrase of a category the selector does not c-select can be coordinated iff it can be stranded
+by ellipsis of the selector (§3.3, (80)). -/
 theorem exists_admits_iff_admits_elided (hp : p ∉ cats) :
     (∃ q, Admits (Licensed (checkedOnce d) cats) [q, p] ∨
         Admits (Licensed (checkedOnce d) cats) [p, q]) ↔
@@ -232,10 +228,8 @@ theorem exists_admits_iff_admits_elided (hp : p ∉ cats) :
     · exact .inr ⟨[nullN, phrase N], by simp [ofCat],
         by simp [Licensed, Coordinable, Satisfies, checkedOnce, cat, hNP, Contentful]⟩
 
-/-- **Speakers whose S-features persist admit no violation in coordination** (fn. 30). For the
-many speakers who reject (3a), S-features do not delete once checked but are checked against every
-conjunct, so no conjunct can be a clause under the null N. Ellipsis, which deletes the selector's
-S-features, still strands one for them. -/
+/-- For speakers who reject (3a), whose S-features persist, no conjunct can be a clause under the
+null N (fn. 30). -/
 theorem mem_cats_of_admits_id (h : Admits (Satisfies id cats) ps) : ∀ p ∈ ps, p ∈ cats := by
   obtain ⟨cs, ⟨hsel, hS⟩, hcs⟩ := h.exists_mem
   intro p hp

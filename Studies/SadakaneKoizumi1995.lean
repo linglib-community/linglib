@@ -110,10 +110,7 @@ def HostsQuantifier (a : Attachment) : Prop :=
 
 instance : DecidablePred HostsQuantifier := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A noun phrase hosts a floating quantifier exactly when its particle cliticizes. A particle
-that heads a phrase puts a branching node above the noun phrase that does not dominate the
-quantifier, as "the PP node prevents the NP from c-commanding the numeral quantifier" (§2) and
-the copula's VP does the same (§3). -/
+/-- A noun phrase hosts a floating quantifier iff its particle cliticizes (§2, §3). -/
 theorem hostsQuantifier_iff {a : Attachment} : a.HostsQuantifier ↔ a = clitic := by
   cases a with
   | clitic => decide
@@ -130,8 +127,8 @@ def Focusable (a : Attachment) : Prop := CaseAssignable a.phrase.cat ∧ a ≠ c
 
 instance : DecidablePred Focusable := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- No particle both lets its noun phrase host a floating quantifier and lets its phrase be the
-focus of a cleft, so none behaves as a case marker and as a postposition at once (§4). -/
+/-- No particle both lets its noun phrase host a floating quantifier and lets its phrase be clefted
+(§4). -/
 theorem not_hostsQuantifier_and_focusable (a : Attachment) :
     ¬ (a.HostsQuantifier ∧ a.Focusable) :=
   fun ⟨h, _, hne⟩ ↦ hne (hostsQuantifier_iff.1 h)
@@ -231,9 +228,8 @@ open Particle
 
 /-! ### Ambiguity -/
 
-/-- A use of *ni* that passes both the numeral quantifier test and the cleft with the particle
-can be read both as the case marker and as the postposition. Such uses are what mislead the
-view of *ni* as a third kind of particle (§4). -/
+/-- A use of *ni* passes both the quantifier and the cleft test iff it is read both as case marker
+and as postposition (§4). -/
 theorem exists_passes_and_exists_passes_iff {S : List Particle} :
     ((∃ p ∈ S, p.Passes .quantifierFloat) ∧ ∃ p ∈ S, p.Passes .cleftWithParticle) ↔
       caseMarker ∈ S ∧ postposition ∈ S := by

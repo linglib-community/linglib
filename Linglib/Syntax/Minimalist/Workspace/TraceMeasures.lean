@@ -132,10 +132,8 @@ private theorem accessibleCount_add_traceLeafCount_add_one {t : UnorderedTree (�
   simp only [UnorderedTree.accessibleCount, UnorderedTree.numEdges]
   omega
 
-/-- Each tree a Δ^c cut extracts from a lexical-rooted object takes its accessible terms with it,
-    and its root becomes a trace ([marcolli-chomsky-berwick-2025] (1.6.8)), so
-    `accessibleCount T` is the crown's and the trunk's accessible terms plus one per extracted
-    tree. -/
+/-- `accessibleCount T` is the crown's and the trunk's accessible terms plus one per tree extracted
+by a Δ^c cut ([marcolli-chomsky-berwick-2025] (1.6.8)). -/
 theorem cutSummandsCN_accessibleCount (τ : UnorderedTree (α ⊕ β) → β)
     {T : UnorderedTree (α ⊕ β)} {a₀ : α} (hT : T.value = Sum.inl a₀)
     {p : Multiset (UnorderedTree (α ⊕ β)) × UnorderedTree (α ⊕ β)} (hp : p ∈ cutSummandsCN τ T) :

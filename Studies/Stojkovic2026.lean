@@ -236,9 +236,7 @@ consonant and after a palatal. -/
 def pattern (vs : List (Context → Constraint Candidate)) : Finset Candidate × Finset Candidate :=
   (optimal ⟨.plain, .a⟩ vs, optimal ⟨.palatal, .a⟩ vs)
 
-/-- The rankings of the four variable constraints derive exactly the four patterns of the
-paper's (31): [ov] throughout, [ov] with [ev], [uv] throughout, and [uv] with [iv], which no
-Slavic language is known to show. -/
+/-- The rankings of the four constraints derive exactly the four patterns of (31). -/
 theorem image_pattern :
     ([noShare, depBack, depNonhigh, depHigh].permutations'.map pattern).toFinset =
       {({.fill true false}, {.fill true false}), ({.fill true false}, {.fill false false}),

@@ -360,9 +360,8 @@ theorem short_infers_larger_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (by linarith [mean_lt_one deg classPrior hdeg c₂]) (by linarith)
     (by linarith [mean_pos deg classPrior hdeg c₁])
 
-/-- For a kind expected to be tall, such as basketball players, whose degrees exceed the
-superordinate class's, *tall* is read against people and *short* against the kind
-(Figure 1E). -/
+/-- For a kind expected to be tall, *tall* is read against the superordinate class and *short*
+against the kind (Figure 1E). -/
 theorem expected_tall [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0)
     (h : mean deg classPrior .superordinate < mean deg classPrior .subordinate) :

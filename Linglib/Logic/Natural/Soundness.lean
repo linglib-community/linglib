@@ -353,11 +353,8 @@ theorem Signature.SoundFor.of_le {σ τ : Signature} {f : α → β}
 
 /-! ### Composition and paths -/
 
-/-- **Soundness composes along `Signature.compose`** ([icard-2012]
-Lemma 2.7 + Proposition 2.10): if ψ is sound for the outer function and φ
-for the inner one, `ψ * φ` is sound for the composite. This is the theorem
-that certifies the enum-level `compose` table against actual context
-functions. -/
+/-- If ψ is sound for the outer function and φ for the inner one, `ψ * φ` is sound for the composite
+([icard-2012] Lemma 2.7, Proposition 2.10). -/
 theorem Signature.SoundFor.comp {ψ φ : Signature} {f : β → γ}
     {g : α → β} (hf : ψ.SoundFor f) (hg : φ.SoundFor g) :
     (ψ * φ).SoundFor (f ∘ g) := by

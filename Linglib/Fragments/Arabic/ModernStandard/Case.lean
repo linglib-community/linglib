@@ -298,13 +298,12 @@ namespace Declension
 
 variable {s : State} {c c' : Case}
 
-/-- The triptote distinguishes the three cases in every state, "each one differentiating a
-particular case" (p. 183), and so establishes them for the declensions that merge them. -/
+/-- The triptote distinguishes the three cases in every state (p. 183). -/
 theorem triptote_injective (s : State) : Function.Injective (triptote s) := by
   decide +revert
 
-/-- The dual and the sound plurals have "a specific nominative inflectional marker" and "merge
-the genitive and accusative into just one other inflectional marker" (p. 187). -/
+/-- The dual and the sound plurals mark the nominative alone and merge the genitive and accusative
+(p. 187). -/
 theorem twoWay_eq_iff :
     ∀ D ∈ [dual, soundFemininePlural, soundMasculinePlural], ∀ s c c',
       D s c = D s c' ↔ (c = .nom ↔ c' = .nom) := by
@@ -333,23 +332,21 @@ theorem nunation : ∀ D ∈ [triptote, soundFemininePlural], ∀ c,
     D .indefinite c = D .definite c ++ "n" := by
   decide
 
-/-- The dual, the sound masculine plural and the invariables "do not take nunation when they are
-indefinite" (p. 164), and their indefinite endings are their definite ones: the dual is "not
-inflected for definiteness" (p. 188), and the invariables "vary neither in case nor in
-definiteness" (p. 200). -/
+/-- The dual, the sound masculine plural and the invariables have the same definite and indefinite
+endings (p. 164, p. 188, p. 200). -/
 theorem definite_eq_indefinite :
     ∀ D ∈ [dual, soundMasculinePlural, invariable], D .definite = D .indefinite := by
   decide
 
-/-- An annexed noun has "neither the definite article nor nunation" (p. 211): outside the dual
-and the sound masculine plural, its ending is that of the definite. -/
+/-- Outside the dual and the sound masculine plural, an annexed noun has its definite ending (p.
+211). -/
 theorem construct_eq_definite :
     ∀ D ∈ [triptote, soundFemininePlural, diptote, defective, indeclinable, invariable],
       D .construct = D .definite := by
   decide
 
-/-- The restriction on nunation applies "also to the final *nuun*s of the dual and the sound
-masculine plural. These *nuun*s are deleted on the first term of a construct phrase" (p. 211). -/
+/-- The dual and the sound masculine plural delete their final *nuun* on the first term of a
+construct phrase (p. 211). -/
 theorem nuun_deletion :
     (∀ c, dual .definite c = dual .construct c ++ "ni") ∧
       ∀ c, soundMasculinePlural .definite c = soundMasculinePlural .construct c ++ "na" := by

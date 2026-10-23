@@ -750,9 +750,8 @@ theorem cgWeight_facts :
       cgWeight change ≤ cgWeight pastT ∧ 2 * cgWeight Finset.univ ≤ 3 * cgWeight pastT := by
   decide
 
-/-- Under the common-ground prior and the question whether John smokes now, the world in which
-he still smokes with the context set that he smoked beats every competitor the paper discusses
-at every rationality of at least one. Projection is context-set inference (Figure 3). -/
+/-- Under the common-ground prior and the question whether John smokes now, the listener favours his
+still smoking with the context set that he smoked (Figure 3). -/
 theorem now_cg_mode {α : ℝ} (hα : 1 ≤ α) :
     (listener .now cgWeight α notStopped).real {(.FF, nowF)}
         < (listener .now cgWeight α notStopped).real {(.TT, pastT)} ∧

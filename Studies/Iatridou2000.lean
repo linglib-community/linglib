@@ -63,9 +63,8 @@ structure Claim (X : Type*) where
   topic_subset : topic ⊆ situation
   excludes : Excludes topic speaker
 
-/-- The claim leaves open whether the situation includes the speaker's worlds or times, so the
-counterfactual inference is an implicature and *in fact, he still is* is consistent,
-(58)–(59). -/
+/-- The claim is consistent with the situation including the speaker's worlds, so *in fact, he still
+is* is consistent ((58)–(59)). -/
 theorem Claim.consistent_with_inclusion :
     ∃ c : Claim Bool, c.speaker ⊆ c.situation ∧ c.topic.Nonempty ∧ c.speaker.Nonempty :=
   ⟨⟨{true}, {false}, Set.univ, Set.subset_univ _, by simp [Excludes]⟩,

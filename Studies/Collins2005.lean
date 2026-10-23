@@ -268,9 +268,8 @@ theorem active_shares_vP (p : Clause) (a : Analysis) :
 
 /-! ### Smuggling (§5) -/
 
-/-- PartP movement smuggles the object past the external argument, (34): the external argument
-c-commands the object before the step and the fronted PartP c-commands it after; the verb's
-head, moved alone, carries no object. -/
+/-- PartP movement smuggles the object past the external argument (34), and head movement of the
+verb alone does not. -/
 theorem partP_smuggles :
     (ex9.passive .partP false).IsSmugglingStep (ex9.voiceP false).length ex9.patient
         ex9.agent ∧
@@ -278,9 +277,8 @@ theorem partP_smuggles :
         ex9.patient ex9.agent := by
   decide
 
-/-- Relativized Minimality (§5): the object is a closest D-goal for Infl only once smuggled;
-in place, or with the verb moved alone, the external argument intervenes, so *The book was by
-John written* (9a) and head movement both fail. -/
+/-- Under Relativized Minimality (§5), only PartP smuggling converges, so *The book was by John
+written* (9a) and head movement both fail. -/
 theorem rm_converges (a : Analysis) :
     ex9.Converges a false ↔ a = .partP := by
   cases a <;> decide
@@ -289,9 +287,8 @@ theorem rm_converges (a : Analysis) :
 moved, Infl's probe finds both. -/
 example : ex9.InflFinds .partP false ex9.agent := by decide +kernel
 
-/-- Of the three analyses, the one that converges is the one that violates [muller-1998]'s
-Freezing (35): the object raises out of the fronted PartP that smuggled it, so the paper assumes
-that Freezing does not hold of PartP movement (fn. 25). -/
+/-- The converging analysis is the one violating [muller-1998]'s Freezing (35), so Freezing is
+assumed not to hold of PartP movement (fn. 25). -/
 theorem converges_iff_not_obeysFreezing (a : Analysis) :
     ex9.Converges a false ↔ ¬ (ex9.passive a false).ObeysFreezing := by
   cases a
@@ -311,8 +308,7 @@ theorem pp_remnant : (ex56.passive .partP true).IsRemnantStep (ex56.voiceP true)
 
 /-! ### *By* takes a vP (§4) -/
 
-/-- The by-phrase of (29), *by the book*, has no projecting head: *by* selects a vP, and a DP
-does not satisfy it; over the vP of (30) it projects. -/
+/-- *By* projects over the vP of (30) but not over the DP of the by-phrase *by the book* (29). -/
 theorem by_selects_vP :
     (({LinearizedSyntacticObject.leaf by₀, LinearizedSyntacticObject.leaf ex9.patient} :
       LinearizedSyntacticObject).toSyntacticObject).selHead = none ∧
@@ -464,17 +460,14 @@ example : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, ∀ x y : Lex
 def Licensing.predict (c : Licensing) : Judgment :=
   c.dependency.predict c.clause c.derivation c.antecedent c.dependent
 
-/-- The [barss-lasnik-1986] tests (10), Principle A (72), (74), the bound variable (75),
-Principle B (80) and Principle C (85) all follow from where the PP sits: evacuated to Spec,XP
-it is c-commanded by the external argument at the surface, inside the fronted PartP only before
-PartP moved. -/
+/-- The [barss-lasnik-1986] tests (10), Principle A (72), (74), the bound variable (75), Principle B
+(80) and Principle C (85) follow from the position of the PP. -/
 theorem licensing_rows : ∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row,
     c.predict = row.judgment := by
   decide
 
-/-- Principle B holds at every stage, as the external argument is Merged. Evaluated at the
-surface it would admit (80a), whose pronoun the fronted PartP has carried out of the external
-argument's c-command. -/
+/-- Principle B fits the pronoun judgments exactly when it holds at every stage, since at the
+surface it would admit (80a). -/
 theorem principleB_anyStage (ℓ : Level) :
     (∀ row ∈ Examples.all, ∀ c ∈ Licensing.ofRow row, c.dependency = .pronoun →
       (row.judgment = .acceptable ↔ (ℓ.configuration c.clause c.derivation).Condition

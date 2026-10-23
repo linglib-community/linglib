@@ -95,8 +95,8 @@ private theorem harmonic_pair {α W : Type*} (p : Pattern α W) (x y : α) :
   by_cases hx : p.OnTier x <;> by_cases hy : p.OnTier y <;>
     simp [Pattern.Harmonic, Pattern.tier, hx, hy]
 
-/-- Two harmonies with the same transparent items fit on one tier (§34.3.1). The words harmonic
-for both form the language of one TSL₂ grammar, which bans what either harmony bans. -/
+/-- Two harmonies with the same transparent items fit on one TSL₂ tier banning what either bans
+(§34.3.1). -/
 theorem harmonic_and_iff_mem_tsl {α W W' : Type*} (p : Pattern α W) (q : Pattern α W')
     (h : ∀ s, p.OnTier s ↔ q.OnTier s) (w : List α) :
     p.Harmonic w ∧ q.Harmonic w ↔ w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs
@@ -143,8 +143,7 @@ theorem lokaa_rows :
         read LokaaV.ofChar f.form.toList ∉ lokaa.language := by
   decide
 
-/-- **No strictly local grammar captures Lokaa harmony** (§34.2.1). The vowels `e` and `o` agree
-across any stretch of transparent material, as do `ɛ` and `ɔ`, but `e` and `ɔ` do not. -/
+/-- No strictly local grammar captures Lokaa harmony (§34.2.1). -/
 theorem lokaa_not_isStrictlyLocal (k : ℕ) : ¬ lokaa.language.IsStrictlyLocal k := fun h ↦
   (mem_tierGrammar_window _ _ _ _).1 (h.suffixSubstitutionClosed [some .e] [some .o] [some .eh]
     [some .oh] _ (List.length_replicate ..) ((mem_tierGrammar_window _ _ _ _).2 (by decide))
@@ -417,9 +416,7 @@ private theorem mem_kikongo_window (x y : KikongoSeg) (hx : x.isVowel = false)
   have he : KikongoSeg.e.isVowel = true := rfl
   simp [List.filter_append, hx, hy, he, List.isChain_replicate_of_rel]
 
-/-- **No single tier carries Kikongo's two harmonies** (§34.3.3), by [lambert-2023]'s method.
-Deleting `e` from `ie` changes membership, so a tier must hold `e`, and then suffix substitution
-across a stretch of `e`s carries `n … n` and `l … l` to the ill-formed `n … l`. -/
+/-- No single tier carries Kikongo's two harmonies (§34.3.3), by [lambert-2023]'s method. -/
 theorem kikongo_not_isTierStrictlyLocal (k : ℕ) : ¬ Language.IsTierStrictlyLocal k kikongo :=
   fun h ↦ by
     obtain ⟨T, _, hinv, hL⟩ := h.exists_tier

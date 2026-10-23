@@ -324,9 +324,7 @@ def Clause.agr (c : Clause) : Option Position :=
   else if c.object = .chain none then some .object
   else none
 
-/-- The Fragment's Set A, the suffixal agreement, marks the argument the agreement of (31)
-picks in both series, which is the nominative subject, the ergative subject, or the nominative
-object of a verb with a dative subject. -/
+/-- Set A agreement marks the argument the agreement of (31) picks in both series. -/
 theorem georgian_agr : ∀ v : Georgian.VerbClass, ∀ s ∈ series,
     ((Georgian.pattern v s).subject.affixes = some .A ↔ (clause v).agr = some .subject) ∧
     ((Georgian.pattern v s).directObject.affixes = some .A ↔

@@ -121,9 +121,8 @@ inductive Ex | A | B | C
 def surface (n a d : Ex) : Case3 → Ex
   | .nom => n | .acc => a | .dat => d
 
-/-- **ABA is generable under NCC**: an elsewhere rule plus a rule referencing
-{k₁, k₃} — the accusative-specific feature set — yields A B A (the
-overgeneration of the paper's §2). -/
+/-- Under NCC, an elsewhere rule plus a rule for the accusative-specific set {k₁, k₃} yields ABA
+(§2). -/
 theorem ncc_aba_generable :
     ∀ c, pattern (D := ncc) [⟨∅, Ex.A⟩, ⟨{.k1, .k3}, Ex.B⟩] c
       = some (surface .A .B .A c) := by
@@ -131,9 +130,8 @@ theorem ncc_aba_generable :
 
 /-! ### Non-Elsewhere Nominative Stems -/
 
-/-- Under SCC, a rule applicable in the nominative is featureless — the
-elsewhere rule. SCC therefore cannot write a Non-Elsewhere Nominative Stem
-(the paper's §3 problem: Doric *h-*, Latvian *pat-*, English feminine *sh-*). -/
+/-- Under SCC, a rule applicable in the nominative is featureless, so SCC cannot state a
+non-elsewhere nominative stem (§3). -/
 theorem scc_nom_forces_empty {r : Rule Case3 scc F}
     (h : Exponence.Applies r .nom) : r.feats = ∅ :=
   Finset.subset_empty.mp h

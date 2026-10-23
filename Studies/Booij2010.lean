@@ -82,8 +82,7 @@ def nessLexicon : Set (Fin 2 → Flat String) :=
   {Wordlist.baldness.slots, Wordlist.bigness.slots, Wordlist.blackness.slots,
     Wordlist.britishness.slots, Wordlist.awareness.slots}
 
-/-- The schema is the abstraction over the stored nouns of (1b): the meet of their descriptions
-keeps the shared affix and leaves a variable where the bases differ. -/
+/-- The *-ness* schema is the meet of the descriptions of the stored nouns of (1b). -/
 theorem nessSchema_body_eq_inf :
     nessSchema.body = Wordlist.baldness.slots ⊓ Wordlist.bigness.slots ⊓ Wordlist.blackness.slots ⊓
       Wordlist.britishness.slots := by

@@ -177,8 +177,8 @@ theorem fact2 [IsTrans (Finset W) (ord w)] (hdeon : IsDeontic ord w Q)
   obtain ⟨v, hv⟩ := hdef q' hq'b q hqb
   exact Finset.disjoint_left.1 (Q.disjoint hq' hq hne) (mem_inter.1 hv).1 (mem_inter.1 hv).2
 
-/-- Fact 3: with a best complete answer `q` and *ought* defined, ⌜ought φ⌝ holds exactly when
-φ holds throughout `q`, the classic entry (59) relativized to `q`. -/
+/-- With a best complete answer `q` and *ought* defined, ⌜ought φ⌝ holds iff φ holds throughout `q`,
+the entry (59) relativized (Fact 3). -/
 theorem fact3 {q : Finset W} (hq : q ∈ Q.parts) (hqb : q ∈ PBEST ord w Q)
     (hdef : Defined ord w Q) (φ : W → Prop) : Ought ord w Q φ ↔ ∀ v ∈ q, φ v := by
   refine ⟨λ ⟨p, hp, hpφ⟩ v hv => ?_, λ h => ⟨q, hqb, h⟩⟩
@@ -404,8 +404,7 @@ theorem indifference :
         ¬ Ought ordering .pie howGood (· = .cannoli) := by
   decide +kernel
 
-/-- Deontic *ought* is a box: under *how good?* the unique best complete answer is *pie or
-cannoli*, and ⌜ought φ⌝ holds exactly when φ does throughout it (Fact 3). -/
+/-- Under *how good?*, ⌜ought φ⌝ holds exactly when φ holds throughout *pie or cannoli* (Fact 3). -/
 theorem ought_iff (φ : World → Prop) :
     Ought ordering .pie howGood φ ↔ ∀ v ∈ ({.pie, .cannoli} : Finset World), φ v :=
   fact3 (by decide +kernel) (by decide +kernel) howGood_defined φ

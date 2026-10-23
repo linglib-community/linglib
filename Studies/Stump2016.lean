@@ -234,10 +234,8 @@ example : linkIII.realized realizeForm wuph {.indefPast, .p1, .sg, .masc}
 example : linkIII.realized realizeForm wuph {.remotePast, .p1, .sg, .masc}
     = {("wuphiyās", {.pastD, .p1, .sg, .masc})} := by decide
 
-/-- WUP's indefinite past and WUPH's recent past have the same form correspondent
-property set, 'past b' 1sg masculine for both, even though their tenses differ
-([stump-2016] Ch. 8). This is why they inflect alike (`-yōs`), the content-to-form
-mismatch the paradigm-linkage model captures. -/
+/-- WUP's indefinite past and WUPH's recent past share their form correspondent property set, so
+they inflect alike ([stump-2016] Ch. 8). -/
 theorem kashmiri_inflect_alike :
     (linkII.corr wup {.indefPast, .p1, .sg, .masc}).image Prod.snd
       = (linkIII.corr wuph {.recentPast, .p1, .sg, .masc}).image Prod.snd := by decide

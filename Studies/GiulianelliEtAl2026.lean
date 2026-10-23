@@ -74,9 +74,8 @@ section LanguageModel
 
 variable [MeasurableSpace α] [MeasurableSingletonClass α] [IsProbabilityMeasure μ] {c : List α}
 
-/-- Standard surprisal is the generalised surprisal with the negative logarithm and the prefix
-indicator (eqs. (2a)–(2d), (4), (5)): the negative log of the target's conditional prefix
-probability. -/
+/-- Standard surprisal is generalised surprisal with the negative logarithm and the prefix indicator
+(eqs. (2a)–(2d), (4), (5)). -/
 theorem genSurprisal_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (w : List α) :
     genSurprisal μ.continuation (fun r ↦ -Real.log r) prefixIndicator c w =
       -Real.log ((ofMeasure μ).condPrefixProb c w).toReal := by

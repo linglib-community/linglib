@@ -100,8 +100,8 @@ theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ Alg
     (hxC : x ∈ C) : C = {x} :=
   (hmin.eq_of_le (y := {x}) (.base (Set.mem_singleton x)) (Set.singleton_subset_iff.2 hxC)).symm
 
-/-- Under a cover by all the parts of `x`, (32), the reading is underspecified, `⋆P` itself, and
-homogeneity is total: the sentence is false only where no part of `x` satisfies `P`. -/
+/-- Under a cover by all parts of `x` (32), the reading is `⋆P` itself, false only where no part of
+`x` satisfies `P`. -/
 theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     (hpow : ∀ y ⊆ x, y.Nonempty → y ∈ C) (hP : ∀ w, ¬ P ∅ w) :
     ⋂₀ readings (coverStar C P) x = {w | AlgClosure (P · w) x} ∧
@@ -125,8 +125,8 @@ theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     exact ⟨fun ⟨z, hzC, hzx, hPz⟩ ↦ ⟨z, hzx, hC z hzC, hPz⟩,
       fun ⟨z, hzx, hz, hPz⟩ ↦ ⟨z, hpow z hzx hz, hzx, hPz⟩⟩
 
-/-- Under the cover by the atoms of `x`, (33), the reading is distributive and homogeneity
-concerns the atoms: the sentence is false only where no atom of `x` satisfies `P`. -/
+/-- Under the cover by the atoms of `x` (33), the reading is distributive, false only where no atom
+of `x` satisfies `P`. -/
 theorem atomic_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∀ a ∈ x, P {a} w} ∧
       ⋃₀ readings (coverStar ((fun a ↦ {a}) '' ↑x) P) x = {w | ∃ a ∈ x, P {a} w} := by
@@ -141,8 +141,8 @@ theorem atomic_cover (hx : x.Nonempty) :
     ext w
     simp
 
-/-- Under the cover by `x` itself, (34), the reading is collective and there is no homogeneity:
-the sentence is true where `x` satisfies `P` and false elsewhere. -/
+/-- Under the cover by `x` itself (34), the reading is collective, true exactly where `x` satisfies
+`P`. -/
 theorem singleton_cover (hx : x.Nonempty) :
     ⋂₀ readings (coverStar {x} P) x = {w | P x w} ∧
       ⋃₀ readings (coverStar {x} P) x = {w | P x w} := by
@@ -203,8 +203,8 @@ variable {C : Set (Finset Kid)} (hC : ∀ z ∈ C, z.Nonempty)
   (hpow : ∀ y : Finset Kid, y.Nonempty → y ∈ C)
 include hC hpow
 
-/-- Under a cover by all the parts, *the four kids lifted the table* is true whether they lifted it
-individually, together, or in two halves, (13) and the intermediate situation of §3. -/
+/-- Under a cover by all parts, *the four kids lifted the table* is true if they lifted it
+individually, together, or in halves (13), §3. -/
 theorem lift_true :
     ∀ w ∈ [Lifting.individually, .together, .halves],
       w ∈ ⋂₀ readings (coverStar C lifted) (Finset.univ : Finset Kid) := by
@@ -218,8 +218,8 @@ theorem lift_true :
   · exact (by decide : ({0, 1} ⊔ {2, 3} : Finset Kid) = Finset.univ) ▸
       .sum (.base (.inl rfl)) (.base (.inr rfl))
 
-/-- When half of the kids lift the table together and the other half does nothing, (3), the
-sentence is neither true nor false, so neither it nor its negation can be truthfully uttered. -/
+/-- When half of the kids lift the table together and the rest do nothing (3), the sentence is
+neither true nor false. -/
 theorem lift_half_gap :
     Lifting.half ∉ ⋂₀ readings (coverStar C lifted) (Finset.univ : Finset Kid) ∧
       Lifting.half ∈ ⋃₀ readings (coverStar C lifted) (Finset.univ : Finset Kid) := by
@@ -252,8 +252,8 @@ def weighs250 : Finset (Fin 2) → Weighing → Prop
 instance (z : Finset (Fin 2)) (w : Weighing) : Decidable (weighs250 z w) := by
   cases w <;> unfold weighs250 <;> infer_instance
 
-/-- Under a cover by all the parts, *these two people weigh 250 lbs* would be true in both
-situations, so its negation (17) could be true in neither. -/
+/-- Under a cover by all parts, *these two people weigh 250 lbs* is true in both situations, so its
+negation (17) is true in neither. -/
 theorem weigh_true_of_power_cover {C : Set (Finset (Fin 2))} (hC : ∀ z ∈ C, z.Nonempty)
     (hpow : ∀ y : Finset (Fin 2), y.Nonempty → y ∈ C) (w : Weighing) :
     w ∈ ⋂₀ readings (coverStar C weighs250) (Finset.univ : Finset (Fin 2)) := by
@@ -263,9 +263,7 @@ theorem weigh_true_of_power_cover {C : Set (Finset (Fin 2))} (hC : ∀ z ∈ C, 
   · exact .base rfl
   · exact (by decide : ({0} ⊔ {1} : Finset (Fin 2)) = Finset.univ) ▸ .sum (.base rfl) (.base rfl)
 
-/-- With the minimal covers, (17) is true in both situations: the cover by the atoms makes the
-positive sentence false when each weighs 125 lbs, and the cover by the pair makes it false when
-each weighs 250 lbs. -/
+/-- Under the minimal covers by the atoms and by the pair, (17) is true in both situations. -/
 theorem weigh_ambiguous :
     Weighing.each125 ∉ ⋃₀ readings (coverStar ((fun a ↦ {a}) '' ↑(Finset.univ : Finset (Fin 2)))
       weighs250) Finset.univ ∧
@@ -284,9 +282,7 @@ variable {C : Set (Finset Kid)} (hC : ∀ z ∈ C, z.Nonempty)
   (hpow : ∀ y : Finset Kid, y.Nonempty → y ∈ C)
 include hC hpow
 
-/-- The judgments of (3) are the model's: neither (3a) nor its negation (3b) is true when half
-of the kids lift the table and the other half does nothing, and (3a) is true when each half lifts
-it. -/
+/-- The model reproduces the judgments of (3) on (3a) and its negation (3b). -/
 theorem judgments_lift_the_table :
     (Examples.ex_3a.readings.lookup "true if half of the kids lifted the table together and the \
         other half did nothing" = some .acceptable ↔
@@ -316,9 +312,8 @@ theorem judgments_13 :
 
 end Judgments
 
-/-- *These two people don't weigh 250 lbs but they do together (individually)*, (17), is
-consistent: the negated sentence is true when together they weigh 250 lbs, by the cover by the
-atoms, and when each weighs 250 lbs, by the cover by the pair. -/
+/-- Both versions of (17), *these two people don't weigh 250 lbs but they do together
+(individually)*, are consistent. -/
 theorem judgments_17 :
     (Examples.ex_17_together.judgment = .acceptable ↔
       Weighing.each125 ∉ ⋃₀ readings (coverStar ((fun a ↦ {a}) '' ↑(Finset.univ : Finset (Fin 2)))

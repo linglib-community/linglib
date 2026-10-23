@@ -190,8 +190,8 @@ theorem voicing_iff {w v : List Seg} :
   · rintro ⟨γs, rfl, rfl, hφ⟩
     exact ⟨gen γs, ⟨⟨γs, rfl⟩, hφ⟩, by simp [Pair.input], by simp [Pair.output]⟩
 
-/-- Definition 25 by spelling: the Γ-string spelling the pair is unique, so `(w, v)` is in the
-relation iff that string exists and its graph is free of the grammar. -/
+/-- Definition 25 holds of `(w, v)` iff its Γ-string spelling exists and its graph is free of the
+grammar. -/
 theorem voicing_iff_spell {w v : List Seg} :
     voicing w v ↔ ∃ γs, spell w v = some γs ∧ (gen γs).Free voicingGrammar := by
   simp only [voicing_iff, spell_eq_some_iff, and_assoc]
@@ -224,8 +224,8 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The pairs of `Rvoice`, (7.5), and the pairs of GEN outside it, (7.17). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- On the paper's pairs the grammar's relation agrees with `Rvoice`: the pairs of (7.5) are in
-it and those of (7.17) outside `Rvoice`, (7.18b) and (7.20), are excluded. -/
+/-- The grammar's relation agrees with `Rvoice` on the paper's pairs ((7.5), (7.17), (7.18b),
+(7.20)). -/
 theorem rows_agree : ∀ r ∈ rows, voicing r.input r.output ↔ r.inRvoice = true := by decide
 
 /-- The rule (7.1) pointwise: a `p` between two `a`s surfaces as `b`. -/

@@ -353,8 +353,8 @@ theorem Number.Packed.eq_of_value_eq (hL : Set.InjOn M.value L) {e e' : Number}
     rw [ih _ (by have := n.value_pos; omega) he.2.2.1 he'.2.2.1 hn rfl,
       ih _ (by omega) he.2.2.2 he'.2.2.2 hr rfl]
 
-/-- Every positive number has exactly one packed NUMBER, given a lexicon whose Ms have distinct
-values, as (82) selects just one way of expressing each number ([hurford-1975], p. 75). -/
+/-- Given Ms with distinct values, every positive number has exactly one packed NUMBER, as (82)
+requires ([hurford-1975], p. 75). -/
 theorem Number.existsUnique_packed (hL : Set.InjOn M.value L) {v : ℕ} (hv : 0 < v) :
     ∃! e : Number, e.Packed L ∧ e.value = v := by
   obtain ⟨e, he, rfl⟩ := exists_packed L hv

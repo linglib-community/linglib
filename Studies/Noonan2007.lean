@@ -168,8 +168,8 @@ def verbTable : List (String × Verb) :=
   [("think", think.toVerb), ("believe", believe.toVerb), ("want", want.toVerb),
     ("regret", regret.toVerb)]
 
-/-- A negated matrix has the reading with the negation in the complement exactly when its verb is
-a propositional attitude, desiderative or modal predicate, as in (214)–(216) and not in (218). -/
+/-- A negated matrix allows the lower-negation reading iff its verb is a propositional attitude,
+desiderative or modal predicate ((214)–(216), (218)). -/
 theorem lowerNeg_iff : ∀ r ∈ Examples.all, ∃ v ∈ (r.parse? "verb" verbTable).toList,
     (r.readings.lookup "lowerNeg" = some .acceptable ↔ ∃ k ∈ negativeRaisers, v ∈ k) := by
   decide

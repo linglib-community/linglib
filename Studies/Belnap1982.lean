@@ -107,9 +107,8 @@ theorem stationB_mem_alt : stationB ∈ alt gasQuestion :=
         exact absurd (hsub (show (2 : Fin 3) ∈ stationB by decide))
           (show (2 : Fin 3) ∉ stationA by decide)
 
-/-- **The Unique Answer Fallacy** (§2.2): at world 0 both stations are
-open, and each is a full, complete, true answer — two distinct complete
-true answers to one question at one world. -/
+/-- At world 0 the gas question has two distinct complete true answers, refuting the Unique Answer
+Fallacy (§2.2). -/
 theorem unique_answer_fallacy :
     ∃ p q : Set (Fin 3), p ∈ alt gasQuestion ∧ q ∈ alt gasQuestion ∧
       p ≠ q ∧ (0 : Fin 3) ∈ p ∧ (0 : Fin 3) ∈ q :=
@@ -146,9 +145,8 @@ theorem distributivity_test {p : Set W} {Q : Question W} {w : W}
     let ⟨_, hσp, hnk⟩ := h
     hnk ⟨p, hpQ, hwp, hσp⟩
 
-/-- The p. 177 example pattern: an irrelevant truth (*China is populous*,
-here the trivial proposition) supports no alternative, so the test rules
-it out as an answer. -/
+/-- An irrelevant truth such as *China is populous* supports no alternative, so the test rules it
+out as an answer (p. 177). -/
 theorem irrelevant_fact_not_answer :
     ¬(Set.univ ∈ alt gasQuestion ∧ (0 : Fin 3) ∈ Set.univ) :=
   distributivity_test
@@ -163,10 +161,7 @@ theorem irrelevant_fact_not_answer :
             exact absurd ((hsub.trans hpe) (Set.mem_univ 1))
               (show (1 : Fin 3) ∉ stationB by decide)⟩
 
-/-- The test is necessary, not sufficient: "P might obviously entail some
-answer to IQ without itself being such an answer" (p. 177). The joint
-answer is the witness: any state that knows it knows the question, yet it
-is not an answer. -/
+/-- The answerhood test is necessary but not sufficient, as the joint answer shows (p. 177). -/
 theorem test_only_necessary :
     ∃ p : Set (Fin 3),
       (∀ σ, σ ⊆ p → KnowsAnswer σ gasQuestion 0) ∧ p ∉ alt gasQuestion :=

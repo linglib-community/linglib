@@ -163,11 +163,8 @@ private theorem card_linked_distinct :
 
 /-! ### The expected-crossings identity -/
 
-/-- **Expected crossings under random linearization** ([ferrer-i-cancho-2017],
-eq. 13): summed over all `n !` linearizations, three times the crossing
-count is `n !` times the number of disjoint link pairs. So a uniformly
-random ordering expects a third of a crossing per pair of links sharing no
-endpoint, whatever the sentence's own order was. -/
+/-- Summed over all `n !` linearizations, three times the crossing count is `n !` times the number
+of disjoint link pairs ([ferrer-i-cancho-2017], eq. 13). -/
 theorem three_mul_sum_crossings_map :
     3 * ∑ σ : Perm (Fin n), (g.map σ).crossings = n ! * disjointLinkPairs g := by
   have key := mul_sum_crossings_map (g := g)
@@ -302,8 +299,8 @@ theorem two_mul_disjointLinkPairs_add_sum_degree_sq :
     tauto
   omega
 
-/-- **Potential crossings of a tree** ([ferrer-i-cancho-2017], eq. 3, from
-[ferrer-i-cancho-2013]): `C_pairs = n (n - 1 - ⟨k²⟩) / 2`, where `⟨k²⟩ = ∑ k² / n`. -/
+/-- A tree has `n (n - 1 - ⟨k²⟩) / 2` pairs of disjoint links ([ferrer-i-cancho-2017], eq. 3, from
+[ferrer-i-cancho-2013]). -/
 theorem two_mul_disjointLinkPairs_add_sum_degree_sq_of_isTree (hT : g.IsTree) :
     2 * disjointLinkPairs g + ∑ v, g.toSimpleGraph.degree v ^ 2 = n * (n - 1) := by
   have hm := hT.isTree_toSimpleGraph.card_edgeFinset
@@ -312,9 +309,8 @@ theorem two_mul_disjointLinkPairs_add_sum_degree_sq_of_isTree (hT : g.IsTree) :
   conv_rhs => rw [← hm]
   rw [Nat.add_sub_cancel, mul_comm]
 
-/-- **Expected crossings of a tree** ([ferrer-i-cancho-2017], eq. 14): a uniformly random
-linearization expects `n (n - 1 - ⟨k²⟩) / 6` crossings, a function of the sentence length and
-the degree second moment alone. -/
+/-- A uniformly random linearization of a tree expects `n (n - 1 - ⟨k²⟩) / 6` crossings
+([ferrer-i-cancho-2017], eq. 14). -/
 theorem six_mul_sum_crossings_map_add_of_isTree (hT : g.IsTree) :
     6 * ∑ σ : Perm (Fin n), (g.map σ).crossings + n ! * ∑ v, g.toSimpleGraph.degree v ^ 2 =
       n ! * (n * (n - 1)) := by

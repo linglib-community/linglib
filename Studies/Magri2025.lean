@@ -60,9 +60,8 @@ variable {n : ℕ} {H : (Fin n → ℕ) → ℝ}
 
 /-! ### Shifted sigmoids (§2.1–2.2) -/
 
-/-- Hayes and Zuraw's generalization (7). Four rates lie on two sigmoids at shared abscissas, the
-bottom one shifted by `δ`, exactly when the differences of their logits along the two rows agree
-((9), §2.2). -/
+/-- Four rates lie on two sigmoids at shared abscissas, shifted by `δ`, exactly when their logit
+differences along the rows agree ((7), (9), §2.2). -/
 theorem exists_shiftedSigmoids_iff {X : Type*} (sq : Square X) {r : X → ℝ}
     (hr : ∀ x, r x ∈ Set.Ioo 0 1) :
     (∃ x₁ x₂ δ : ℝ, r sq.tl = sigmoid x₁ ∧ r sq.tr = sigmoid x₂ ∧ r sq.bl = sigmoid (x₁ + δ) ∧
@@ -327,9 +326,8 @@ theorem inverseHarmony_pos {w : Fin n → ℝ} (hw : ∀ k, 0 ≤ w k) (v : Fin 
   exact inv_pos.2 <| add_pos_of_pos_of_nonneg one_pos <|
     sum_nonneg fun k _ ↦ mul_nonneg (hw k) (Nat.cast_nonneg (v k))
 
-/-- On the Tagalog square, the inverse harmony satisfies HZ's identity (28) only when the two
-prefix constraints have equal weights, or the two stem-nasal constraints have none (§4.4 and
-footnote 11). -/
+/-- On the Tagalog square, inverse harmony satisfies the identity (28) only with equal
+prefix-constraint weights or zero stem-nasal weights (§4.4 and footnote 11). -/
 theorem inverseHarmony_hz_tagalog_iff {w : Fin 6 → ℝ} (hw : ∀ k, 0 ≤ w k) :
     tagalogSquare.interaction (logOdds (inverseHarmony w) tagalogConstraints .yes .no) = 0 ↔
       w 4 = w 5 ∨ w 2 = 0 ∧ w 3 = 0 := by

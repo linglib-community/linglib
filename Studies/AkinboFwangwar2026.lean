@@ -331,8 +331,7 @@ def candG : Candidate input :=
 
 def candidates : List (Candidate input) := [candA, candB, candC, candD, candE, candF, candG]
 
-/-- The printed rows of (26): an anchor counts the root on which the tone comes closest to its
-edge, and all four syllables when the tone is on neither root. -/
+/-- The violation marks of the candidates are the printed rows of (26). -/
 private theorem marks :
     candidates.map (fun c ↦ columns.map (con · c)) =
       [[4, 4, 4, 4, 0], [1, 0, 0, 1, 0], [0, 1, 1, 0, 0], [0, 0, 0, 0, 2], [0, 0, 1, 1, 1],

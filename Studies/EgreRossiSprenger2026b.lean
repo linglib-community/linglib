@@ -649,9 +649,8 @@ theorem not_accepts_dia_conj_neg {s : Set W} (hs : s.Nonempty) (p : Set W) :
   rw [((agrees_ofSet p).dia.conj (agrees_ofSet p).neg).accepts_iff, inf_comm]
   exact Yalcin2007.not_accepted_contra hs
 
-/-- **Import-Export fails for a modal antecedent**, (18) against (19): where `p` is possible the
-update on `◇p` is idle, so `◇p → (¬p → q)` is `¬p → q` and true at a `¬p`-world where `q` holds,
-while the update on `◇p ∧ ¬p` collapses and `(◇p ∧ ¬p) → q` is void. -/
+/-- Import-Export fails for a modal antecedent, since `◇p → (¬p → q)` (18) can be true where `(◇p ∧
+¬p) → q` (19) is void. -/
 theorem import_export_fails :
     cond (dia (ofSet {true})) (cond (-ofSet {true}) (ofSet Set.univ)) Set.univ false = 1 ∧
       cond (conj (dia (ofSet {true})) (-ofSet {true})) (ofSet Set.univ) Set.univ false = 0 := by
@@ -740,9 +739,8 @@ theorem entails_cond_dia (a b : Set W) :
   rw [accepts_cond_ofSet_iff, accepts_dia_ofSet_iff]
   exact fun hsa ↦ h₁ (hsa.mono Set.inter_subset_left)
 
-/-- Without the premise `◇A` the first entailment fails. *If my team wins out, they might win it
-all* (27) does not entail *it might turn out that my team wins out and wins it all* (26), since
-a context excluding `A` accepts the conditional vacuously. -/
+/-- Without the premise `◇A`, *if my team wins out, they might win it all* (27) does not entail
+(26). -/
 theorem not_entails_dia_conj :
     ¬ Entails {cond (ofSet (∅ : Set Unit)) (dia (ofSet Set.univ))}
       (dia (conj (ofSet ∅) (ofSet Set.univ))) := by
@@ -833,9 +831,7 @@ private theorem marble_must : Accepts Set.univ (cond (-ofSet {true}) (box (ofSet
 private theorem marble_not_must : Accepts Set.univ (-box (ofSet ({false} : Set Bool))) :=
   fun w _ ↦ by rw [neg_apply, marble_box]; decide
 
-/-- ... and fails for a modal consequent, [yalcin-2012]'s marble (28): with a green and a black
-marble possible, *if the marble is not green, it must be black* and *it is not the case that it
-must be black* are accepted, *the marble is green* is not. -/
+/-- Modus tollens fails for a modal consequent in [yalcin-2012]'s marble case (28). -/
 theorem not_modus_tollens_box :
     ¬ Entails {cond (-ofSet {true}) (box (ofSet {false})), -box (ofSet {false})}
       (ofSet ({true} : Set Bool)) := by
@@ -1034,9 +1030,8 @@ theorem prob_cond_box_eq_prob_box_cond [IsFiniteMeasure μ] (h : Mirrors μ s) :
       h.prob_eq_one_iff.2 (accepts_box_cond_iff.2 ha)]
   · rw [prob_cond_box_eq_zero h ha, prob_box_cond_eq_zero h ha]
 
-/-- Under Definition 6 read literally, a credence giving the context probability 1 without
-positive weight at each of its worlds, the probability half of Theorem 1 fails: concentrated on a
-`¬p`-world, the credence makes `p → □¬p` certain by All Void and `□(p → ¬p)` impossible. -/
+/-- Under Definition 6 read literally, the probability half of Theorem 1 fails, since `p → □¬p` and
+`□(p → ¬p)` can differ in probability. -/
 theorem not_prob_cond_box_eq_of_literal :
     ∃ μ : Measure Bool, IsProbabilityMeasure μ ∧ μ Set.univ = 1 ∧
       prob μ (cond (ofSet {true}) (box (-ofSet {true})) Set.univ) ≠
@@ -1099,8 +1094,8 @@ theorem cond_ofSet (a b : Set W) :
 
 variable [MeasurableSpace W]
 
-/-- A conditional whose antecedent is an epistemic contradiction is void throughout, so its
-probability is 1 by All Void, under every credence and at every context (footnote 11). -/
+/-- A conditional whose antecedent is an epistemic contradiction has probability 1 under every
+credence and at every context (footnote 11). -/
 theorem prob_cond_contra (μ : Measure W) (q : Set W) (φ : Sentence W) (s : Set W) :
     prob μ (cond (conj (-ofSet q) (dia (ofSet q))) φ s) = 1 := by
   have h0 : cond (conj (-ofSet q) (dia (ofSet q))) φ s = 0 := by
@@ -1113,15 +1108,14 @@ theorem prob_cond_contra (μ : Measure W) (q : Set W) (φ : Sentence W) (s : Set
 variable [DiscreteMeasurableSpace W]
 
 /-- For conditional-free `A` and `B`, the probability of `A → B` is the conditional probability of
-`B` given `A` (**Adams's Thesis**, §4.1), at every context and under every credence, since the
-degenerate clause makes nonmodal sentences context-independent. -/
+`B` given `A`, Adams's Thesis (§4.1). -/
 theorem prob_cond_ofSet {μ : Measure W} {a : Set W} (b : Set W) (h : μ a ≠ 0) (s : Set W) :
     prob μ (cond (ofSet a) (ofSet b) s) = μ[b | a] := by
   rw [cond_ofSet]
   exact EgreRossiSprenger2026a.prob_ofAdams h
 
-/-- On a fair coin the epistemic contradiction *the coin is facing heads and might not face heads*
-has probability `1/2`, true at the heads world and false at the tails world (footnote 12). -/
+/-- On a fair coin *the coin is facing heads and might not face heads* has probability `1/2`
+(footnote 12). -/
 theorem prob_contra'_coin :
     prob (uniformOn Set.univ) (conj (ofSet {true}) (dia (-ofSet {true})) Set.univ) = 1 / 2 := by
   have hval : conj (ofSet ({true} : Set Bool)) (dia (-ofSet {true})) Set.univ =
@@ -1135,9 +1129,8 @@ theorem prob_contra'_coin :
     prob_count_eq (P := {true}) (S := Finset.univ) (by decide) (by decide) Finset.univ_nonempty]
   simp
 
-/-- *If the die has been tossed, the outcome is greater than 1* (20) has probability `5/6` and *if
-the die has been tossed, the outcome must be greater than 1* (21) probability `0`, though a
-context accepts the one exactly when it accepts the other. -/
+/-- *If the die has been tossed, the outcome is greater than 1* (20) has probability `5/6` and its
+*must* counterpart (21) probability `0`. -/
 theorem die_bare_vs_must :
     prob (uniformOn Set.univ) (cond (ofSet Set.univ) (ofSet {w : Fin 6 | w ≠ 0}) Set.univ) =
         5 / 6 ∧

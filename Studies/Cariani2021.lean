@@ -130,8 +130,8 @@ theorem linearWas_linearWill (hA : A t) (h : linearWas (fun _ ↦ True) t) :
   let ⟨u, hu, _⟩ := linearWas_iff.1 h
   linearWas_iff.2 ⟨u, hu, linearWill_iff.2 ⟨t, hu, hA⟩⟩
 
-/-- `K_t`'s FB, *A ⊃ always in the future, was A* (p. 17), is the unit of the adjunction of
-sometime in the past to always in the future. -/
+/-- The `K_t` axiom FB, *A ⊃ always in the future, was A*, is the unit of the past-future adjunction
+(p. 17). -/
 theorem kt_fb : A ≤ □[Tense.toSetRel ⟦Tense.future⟧] (linearWas A) :=
   Tense.diamond_past_box_future_gc.le_u_l A
 
@@ -182,8 +182,8 @@ theorem forall_not_hybrid_and_not_iff {i : W × T} :
       (h (v := (s.sel i.1 H, u)) ⟨rfl, hu⟩ (u := (s.sel i.1 H, u')) ⟨rfl, hu'⟩),
       fun h _ ⟨hw, hu⟩ _ ⟨hw', hu'⟩ ↦ Prod.ext (hw.trans hw'.symm) (h hu hu')⟩
 
-/-- In the tacos model of p. 83, with Monday `0`, tacos on Tuesday `1` and pasta on Wednesday
-`2`, on Monday *I will have tacos* and *I will not have tacos* are both true. -/
+/-- In the tacos model, *I will have tacos* and *I will not have tacos* are both true on Monday (p.
+83). -/
 theorem hybrid_tacos (s : SelectionFunction Unit) :
     hybrid s .univ (fun j : Unit × ℕ ↦ j.2 = 1) ((), 0) ∧
       hybrid s .univ (fun j : Unit × ℕ ↦ ¬ j.2 = 1) ((), 0) :=
@@ -238,8 +238,8 @@ theorem hybrid_iff_linearWill {A : W × T → Prop} {w : W} {t : T} (hw : w ∈ 
   · rintro ⟨u, hu, hA⟩
     exact ⟨(w, u), ⟨(s.centering w H hw).symm, hu⟩, hA⟩
 
-/-- Symmetric *will* has no present-directed use: a prejacent restricted to the present holds at
-no later time, where *The laundry will be done by now* is true (p. 46). -/
+/-- Symmetric *will* has no present-directed use, though *The laundry will be done by now* is true
+(p. 46). -/
 theorem not_linearWill_now {A : T → Prop} {now : T} :
     ¬ linearWill (fun u ↦ u = now ∧ A u) now :=
   fun h ↦ let ⟨_, hu, hnow, _⟩ := linearWill_iff.1 h; lt_irrefl now (hnow ▸ hu)
@@ -277,8 +277,8 @@ def historical : SetRel World World := {p | p.1 = .w4 ↔ p.2 = .w4}
 
 instance : historical.IsRefl := ⟨fun _ ↦ Iff.rfl⟩
 
-/-- Over the fixed domain of the historical possibilities, *it is possible that Oedipus will
-avoid incest* is false at the actual world, whatever the selection function (p. 95). -/
+/-- Over the historical possibilities as a fixed domain, *it is possible that Oedipus will avoid
+incest* is false at the actual world (p. 95). -/
 theorem not_diamond_will_fixed (s : SelectionFunction World) :
     ¬ ◇[epistemic] (· ∈ CarianiSantorio2018.will s historicalPossibilities avoidIncest) .w0 := by
   rintro ⟨v, -, hv⟩
@@ -433,22 +433,19 @@ theorem pres_woll_of_pres_WOLL (h : w ∈ MB w now) (hW : PRES now (WOLL MB Q) w
     PRES now (woll s MB Q) w :=
   (pres_woll_iff_of_mem h).2 (Condoravdi2002.pres_woll_iff.1 hW w h)
 
-/-- Present-directed *will* keeps excluded middle: *Either the laundry will be done by now or it
-won't be* is a tautology (§5.7, (5), p. 87), where Condoravdi's universal WOLL, like *must* in (6),
-loses it over a base whose worlds disagree (`not_pres_WOLL_and_neg`). -/
+/-- Present-directed *will* validates excluded middle (§5.7, (5), p. 87), unlike Condoravdi's
+universal WOLL, which like *must* in (6) does not. -/
 theorem pres_woll_or_neg : PRES now (woll s MB Q) w ∨ PRES now (woll s MB (neg Q)) w := by
   rw [pres_woll_neg_iff]
   exact em _
 
-/-- *By now* outermost is idle at the present: it restricts the interval to the present, which
-the present tense has already fixed, so WOLL below it re-extends the interval forward (p. 129). -/
+/-- Outermost *by now* is idle in the present tense (p. 129). -/
 theorem pres_frame_now_iff (X : SortedProperty W E T) :
     PRES now (frame (Interval.pure ↑now) X) w ↔ PRES now X w := by
   simp only [PRES, frame, At, inf_idem]
 
-/-- *By now* under WOLL restricts the forward interval to the present, so present-directed *will*
-with a stative prejacent, *The laundry will be done by now*, (10), holds when a state of the
-selected world overlaps the present (p. 129). -/
+/-- Present-directed *will* with the stative *The laundry will be done by now* (10) holds when a
+state of the selected world overlaps the present (p. 129). -/
 theorem pres_woll_frame_stative_iff {P : W → E → Prop} :
     PRES now (woll s MB (frame (Interval.pure ↑now) (.stative P))) w ↔
       ∃ e, P (s.sel w (MB w now)) e ∧ now ∈ τ e := by
@@ -459,9 +456,8 @@ theorem pres_woll_frame_stative_iff {P : W → E → Prop} :
   refine exists_congr fun e ↦ and_congr_right fun _ ↦ ?_
   simp [NonemptyInterval.mem_def]
 
-/-- With an eventive prejacent, (11), the event has to fit the present, so only an instantaneous
-event can make present-directed *will* true, as in *They will win the match ... NOW!*, (12)
-(p. 129). -/
+/-- With an eventive prejacent (11), present-directed *will* requires an instantaneous event at the
+present, as in (12) (p. 129). -/
 theorem pres_woll_frame_eventive_iff {P : W → E → Prop} :
     PRES now (woll s MB (frame (Interval.pure ↑now) (.eventive P))) w ↔
       ∃ e, P (s.sel w (MB w now)) e ∧ τ e = NonemptyInterval.pure now := by
@@ -548,11 +544,8 @@ def Indeterminate (φ : C → Prop) (c : C) : Prop := ¬ □[R] φ c ∧ ¬ □[
 
 variable {R}
 
-/-- The lifting argument, Fact 11.1. If the truth of `A` in the context of the utterance is
-indeterminate, every context of the cloud has the speaker assert `A`, this is then determinate,
-and the truth norm determinately ties satisfaction of the norm to the truth of what is asserted,
-then whether the norm is satisfied is indeterminate. The argument uses only the K logic of `D`,
-though the book assumes S5 (p. 210). -/
+/-- If the truth of `A` in the utterance context is indeterminate, so is whether its determinate
+assertion satisfies the truth norm (Fact 11.1, p. 210). -/
 theorem indeterminate_sat (cloud : Set C) {cu : C} {holds asserts sat : C → Prop}
     (hind : Indeterminate R holds cu)
     (hbridge : (∀ c ∈ cloud, asserts c) → □[R] asserts cu)

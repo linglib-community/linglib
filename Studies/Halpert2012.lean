@@ -139,9 +139,8 @@ def Converges (c : Clause) : Prop :=
 
 instance : DecidablePred Converges := fun c ↦ by unfold Converges; infer_instance
 
-/-- A clause converges iff each phrase needing licensing is the highest phrase of vP or of V⁰'s
-domain, the latter only when it is also highest in vP or V⁰ has inherited case, so that no phrase
-outside vP, between the two, or below either needs licensing (§3.3.3, p. 112). -/
+/-- A clause converges iff only the highest phrase of vP, or of V⁰'s domain when nothing is above or
+case is inherited, needs licensing (§3.3.3, p. 112). -/
 theorem converges_iff :
     c.Converges ↔ (∀ g ∈ c.outside, ¬ g.NeedsL) ∧ (∀ g ∈ c.above.tail, ¬ g.NeedsL) ∧
       (∀ g ∈ c.vDomain.tail, ¬ g.NeedsL) ∧
@@ -205,9 +204,8 @@ end Clause
 top, each marked with whether it moves out (§4.5). -/
 def evacuate (base : List (Goal × Bool)) : List Goal := (base.filter (!·.2)).map Prod.fst
 
-/-- Under the Activity Condition (270) L⁰'s goal cannot move once L⁰ has probed it, and then L⁰
-probing before A-movement reaches the goal it reaches after, so ordering the two freely derives
-nothing that movement first does not (§4.5.1). -/
+/-- Under the Activity Condition (270), L⁰ probing before A-movement reaches the same goal as after,
+so free ordering derives nothing new (§4.5.1). -/
 theorem search_eq_search_evacuate {base : List (Goal × Bool)} (h : ∀ x ∈ base.head?, x.2 = false) :
     Clause.L.search (base.map Prod.fst) = Clause.L.search (evacuate base) := by
   cases base with

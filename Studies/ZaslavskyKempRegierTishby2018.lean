@@ -224,8 +224,8 @@ theorem objective_eq_weightedCost (β : ℝ) :
   rw [objective, weightedCost, costPair, distortion_eq]
   ring
 
-/-- For `β ≤ 1` the objective is minimized by a lexicon that ignores the meaning, at `0`: the
-IB optima are informative only above `β = 1`, and eq. 6 takes `β ≥ 1`. -/
+/-- For `β ≤ 1` a lexicon ignoring the meaning minimizes the objective, so IB optima are informative
+only above `β = 1` (eq. 6). -/
 theorem objective_const_le (ν : Measure W) [IsProbabilityMeasure ν] {β : ℝ} (hβ : β ≤ 1) :
     objective meanings source (Kernel.const M ν) β ≤ objective meanings source encoder β := by
   have h0 : accuracy meanings source (Kernel.const M ν) = 0 :=
@@ -417,8 +417,8 @@ theorem complexity_eq_sum_klDiv_posterior :
   rw [complexity, ← measureMutualInfo_map_swap, ← compProd_posterior_eq_map_swap,
     measureMutualInfo_compProd, posterior_comp_self]
 
-/-- A least informative prior "can be evaluated using the Blahut–Arimoto algorithm" (SI §2.1):
-one of positive mass everywhere is a fixed point of the Blahut–Arimoto update. -/
+/-- A least informative prior of positive mass everywhere is a fixed point of the Blahut–Arimoto
+update (SI §2.1). -/
 theorem IsLeastInformative.eq_blahutArimoto (h : IsLeastInformative source encoder)
     (hsource : ∀ m, source {m} ≠ 0) : source = blahutArimoto encoder source :=
   (eq_blahutArimoto_iff encoder source).1 ⟨(isLeastInformative_iff source encoder).1 h, hsource⟩

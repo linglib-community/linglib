@@ -115,8 +115,7 @@ abbrev sheep : AR (TwoTier TRN TBUKind) := AR.ofWords [H, H] [μ, μ] fun p q �
 /-- `γ₁γ₁` derives the spread high of Figure 12a. -/
 theorem realize_γ₁_γ₁ : toAR (realize [.γ₁, .γ₁]) = snake := by decide
 
-/-- `γ₁γ₂` derives the high and downstepped high of Figure 12b: the floating high of `γ₂`
-merges with the high of `γ₁`, and the linked high stays distinct. -/
+/-- `γ₁γ₂` derives the high and downstepped high of Figure 12b. -/
 theorem realize_γ₁_γ₂ : toAR (realize [.γ₁, .γ₂]) = sheep := by decide
 
 /-- Collapsing every run after concatenating merges all three highs of `γ₁γ₂`, deriving the

@@ -313,9 +313,8 @@ variable {I} {o : Order} {c : Set (Assign V Δ E × W)} {g : Assign V Δ E} {w :
       (fun a ↦ p.Realize I (g.pair δ x a) w ∧ q.Realize I (g.pair δ x a) w) :=
   Iff.rfl
 
-/-- A quantifier's bounds hold when at every individual's paired assignment the restrictor is
-satt, the restrictor and scope are satt as a junction, and the familiar variables keep their
-values (p. 1114). -/
+/-- A quantifier is satt iff, at each individual's paired assignment, its restrictor and junction
+are satt and familiar variables keep their values (p. 1114). -/
 theorem satt_quant {Q : Quantifier.NumberTree} {δ : Δ} :
     (quant Q x δ p q).Satt I o c g w ↔ ∀ a,
       p.Satt I o c (g.pair δ x a) w ∧
@@ -358,15 +357,15 @@ theorem satt_disj :
 
 @[simp] theorem satt_neg : (neg p).Satt I o c g w ↔ p.Satt I o c g w := Iff.rfl
 
-/-- An indefinite's bounds hold when its body is satt at some assignment and, if the indefinite
-is true, its body is true and satt at the given one (p. 1114). -/
+/-- An indefinite is satt iff its body is satt somewhere and, if the indefinite is true, its body is
+true and satt (p. 1114). -/
 theorem satt_indef :
     (indef x p q).Satt I o c g w ↔ (∃ g', (conj p q).Satt I o c g' w) ∧
       ((indef x p q).Realize I g w → (conj p q).Realize I g w ∧ (conj p q).Satt I o c g w) :=
   Iff.rfl
 
-/-- A definite's bounds hold when updating with its restrictor leaves the context unchanged
-and its scope is satt at `cᵖ` if the restrictor is true (p. 1114). -/
+/-- A definite is satt iff its restrictor leaves the context unchanged and, if the restrictor is
+true, its scope is satt at `cᵖ` (p. 1114). -/
 theorem satt_iota :
     (iota x p q).Satt I o c g w ↔
       update I o c p = c ∧ (p.Realize I g w → q.Satt I o (update I o c p) g w) :=
@@ -417,8 +416,7 @@ theorem posExt_iota_of_update_eq (h : update I o c p = c) :
     Set.mem_inter_iff, Set.mem_ofPred_eq, true_and]
   tauto
 
-/-- A definite whose restrictor is not idle on the context is satt nowhere, since the familiarity
-bound holds at all points of a context or at none (p. 1104). -/
+/-- A definite whose restrictor changes the context is satt nowhere (p. 1104). -/
 theorem posExt_iota_eq_empty (h : update I o c p ≠ c) :
     posExt ((iota x p q).toTrivalent I o c) = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ hi ↦
@@ -572,10 +570,8 @@ theorem update_indef_atom₁ :
       c ∩ valuedIn x (extension I F ⊓ extension I G) := by
   rw [update_eq_inter_posExt, posExt_indef_atom₁]
 
-/-- The null context does not admit `ɜx(Fx, Gx)` in Stalnaker's sense once some world has an
-`F` that is `G`, since the point of the empty assignment there violates the witness bound. This
-is why updating keeps the points where a sentence is satt instead of requiring all of them to be
-(p. 1103). -/
+/-- Once some world has an `F` that is `G`, the null context does not admit `ɜx(Fx, Gx)` in
+Stalnaker's sense (p. 1103). -/
 theorem not_univ_subset_support_indef_atom₁
     (h : ∃ w, (extension I F w ∩ extension I G w).Nonempty) :
     ¬ Set.univ ⊆ Function.support (toTrivalent I .asymmetric (Set.univ : Set (Assign V Δ E × W))
@@ -649,9 +645,8 @@ theorem posExt_neg_indef_atom₁ [Nonempty E] :
     realize_indef_atom₁, Set.mem_ofPred_eq, Set.not_nonempty_iff_eq_empty]
   exact ⟨And.right, fun hr ↦ ⟨fun h ↦ absurd hr h.ne_empty, hr⟩⟩
 
-/-- (19) *We don't have a cat. # She is a tabby.* Updating the null context with a negated
-indefinite and then a pronoun on its variable leaves no point, once some world has no `F` that is
-`G` (p. 1106). -/
+/-- If some world has no `F` that is `G`, updating the null context with `¬ɜx(Fx, Gx)` and then a
+pronoun on `x` leaves nothing (19) (p. 1106). -/
 theorem update_null_neg_indef_then_it (h : ∃ w, extension I F w ∩ extension I G w = ∅) :
     update I .asymmetric (update I .asymmetric (Set.univ : Set (Assign V Δ E × W))
       (neg (indef x (atom₁ F x) (atom₁ G x))))
@@ -774,9 +769,7 @@ theorem boundEquiv_ex20a_ex20c (hF : ∀ g w, F.Realize I g w → g x ≠ ⊥) :
     BoundEquiv I .asymmetric (ex20a x F G H) (ex20c x F G H) :=
   ⟨boundEntails_ex20a_ex20c hF, boundEntails_ex20c_ex20a⟩
 
-/-- At a point of its context, (20-a) bound-entails (20-c) for any formulae, since the pronoun's
-familiarity bound values `x` throughout the local context of the indefinite, which contains the
-point. -/
+/-- At a point of its context, (20-a) bound-entails (20-c) for any formulae. -/
 theorem realize_ex20c_of_realize_ex20a (hc : (g, w) ∈ c)
     (hs : (ex20a x F G H).Satt I .asymmetric c g w)
     (hs' : (ex20c x F G H).Satt I .asymmetric c g w) (hr : (ex20a x F G H).Realize I g w) :
@@ -813,16 +806,16 @@ theorem posExt_ex20b :
   rw [ex20b, posExt_conj, posExt_indef_atom₁, posExt_iota_after_indef_atom₁,
     valuedIn_inter_valuedIn, ← inf_inf_distrib_left, ← inf_assoc]
 
-/-- So is (20-c) (p. 1108). Hence, as footnote 23 has it, any one of (20-a)–(20-c) is satt and
-true where all three are, and updating with any of them has the same effect. -/
+/-- (20-c) is satt and true exactly where `x` is an `F` that is `G` and `H`, so (20-a)–(20-c) update
+alike (p. 1108, footnote 23). -/
 theorem posExt_ex20c :
     posExt ((ex20c x (atom₁ F x) (atom₁ G x) (atom₁ H x)).toTrivalent I .asymmetric c) =
       valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
   rw [ex20c, posExt_conj, posExt_indef_atom₁, posExt_iota_top_after_indef_atom₁,
     valuedIn_inter_valuedIn]
 
-/-- The formulations of (20) are not logically equivalent, since at a point whose world has an `F`
-that is `G` and `H` but whose `x` is not an `H`, (20-a) is true and (20-b) is false (p. 1108). -/
+/-- The formulations of (20) differ, since where some `F` is `G` and `H` but `x` is not `H`, (20-a)
+is true and (20-b) false (p. 1108). -/
 theorem realize_ex20a_and_not_realize_ex20b
     (h : (extension I F w ∩ extension I G w ∩ extension I H w).Nonempty) {b : E}
     (hb : g x = b) (hH : b ∉ extension I H w) :
@@ -851,17 +844,15 @@ theorem boundEquiv_disj_neg_conj : BoundEquiv I o (disj (neg p) q) (disj (neg p)
 
 variable (F G H : L.Relations 1)
 
-/-- A doubly negated indefinite licenses a subsequent definite as the indefinite does, as in *It's
-not the case that Susie doesn't have a child. The child is at boarding school.* (p. 1109). -/
+/-- A doubly negated indefinite licenses a subsequent definite as the indefinite does (p. 1109). -/
 theorem update_neg_neg_indef_then_the :
     update I .asymmetric (update I .asymmetric c (neg (neg (indef x (atom₁ F x) (atom₁ G x)))))
         (iota x (atom₁ F x) (atom₁ H x)) =
       c ∩ valuedIn x (extension I F ⊓ extension I G ⊓ extension I H) := by
   rw [update_neg_neg, update_indef_then_the]
 
-/-- The bathroom disjunction *Either Susie doesn't have a child, or the child is at boarding
-school* is true and satt exactly where Susie is childless or `x` is Susie's child and at
-boarding school (p. 1109). -/
+/-- The bathroom disjunction is true and satt exactly where Susie is childless or `x` is her child
+at boarding school (p. 1109). -/
 theorem posExt_bathroom [Nonempty E] :
     posExt ((disj (neg (indef x (atom₁ F x) (atom₁ G x)))
         (iota x (atom₁ F x) (atom₁ H x))).toTrivalent I .asymmetric c) =
@@ -897,9 +888,8 @@ theorem posExt_bathroom [Nonempty E] :
       · exact ⟨fun a hF hG ↦ (hA a hF hG).elim, .inl hA⟩
       · exact ⟨fun _ _ _ ↦ hFG, .inr ⟨hFG.1, hH⟩⟩
 
-/-- (16-a) *Either there isn't a bathroom, or it is upstairs*, `¬ɜx(Fx, Gx) ∨ ιx(⊤x, Hx)`, is
-felicitous in the null context, since the pronoun's local context is the update with the doubly
-negated indefinite, which values `x` throughout (p. 1105). -/
+/-- (16-a) *Either there isn't a bathroom, or it is upstairs* is felicitous in the null context (p.
+1105). -/
 theorem felicitous_bathroom [Nonempty W] [Nonempty E] : Felicitous I .asymmetric Set.univ
     (disj (neg (indef x (atom₁ F x) (atom₁ G x))) (iota x (top x) (atom₁ H x)) :
       Formula L V Δ) := by
@@ -916,9 +906,8 @@ section Order
 
 variable (S M C : L.Relations 1) (x : V)
 
-/-- With asymmetric local contexts (15-a) *A man came in and he sat down*,
-`ɜx(Mx, Cx) & ιx(⊤x, Sx)`, is felicitous in the null context, since the pronoun's local context
-is the update with the indefinite, which values `x` throughout (p. 1105). -/
+/-- With asymmetric local contexts, (15-a) `ɜx(Mx, Cx) & ιx(⊤x, Sx)` is felicitous in the null
+context (p. 1105). -/
 theorem felicitous_ex15a_asymmetric [Nonempty W] [Nonempty E] : Felicitous I .asymmetric Set.univ
     (conj (indef x (atom₁ M x) (atom₁ C x)) (iota x (top x) (atom₁ S x)) : Formula L V Δ) := by
   obtain ⟨w⟩ := ‹Nonempty W›
@@ -936,8 +925,8 @@ theorem not_felicitous_ex15b_asymmetric [Nonempty W] :
   obtain ⟨w⟩ := ‹Nonempty W›
   exact (hi.1.1 (⊥, w) trivial).1 rfl
 
-/-- With symmetric local contexts (15-b) is satt in the null context wherever `x` is a man who
-came in, the pronoun's local context being the update with the indefinite (p. 1106). -/
+/-- With symmetric local contexts, (15-b) is satt in the null context wherever `x` is a man who came
+in (p. 1106). -/
 theorem satt_ex15b_symmetric (hM : (atom₁ M x : Formula L V Δ).Realize I g w)
     (hC : (atom₁ C x : Formula L V Δ).Realize I g w) :
     (ex15b (Δ := Δ) S M C x).Satt I .symmetric Set.univ g w := by
@@ -983,9 +972,8 @@ theorem logicallyEquivalent_hasChild_isParent
     obtain ⟨b, hb, hb'⟩ := (hPar w).1 hR
     exact ⟨b, realize_atom₁.2 ⟨b, hb, by simp⟩, realize_atom₁.2 ⟨b, hb', by simp⟩⟩
 
-/-- But only the indefinite licenses a pronoun. After *Sue is a parent*, *she is …* empties any
-context with a point not valuing `x`, while after *Sue has a child* it keeps the points where
-`x` is Sue's child ((2), (9), pp. 1093 and 1104). -/
+/-- After *Sue is a parent*, a pronoun on `x` empties any context with a point not valuing `x` ((2),
+(9), pp. 1093 and 1104). -/
 theorem update_isParent_then_it (c : Set (Assign V Δ E × W))
     (h : ∃ i ∈ update I .asymmetric c (isParent Par), i.1 x = ⊥) :
     update I .asymmetric (update I .asymmetric c (isParent Par)) (iota x (top x) (atom₁ B x)) =
@@ -1014,8 +1002,8 @@ def ex22b (Q : Quantifier.NumberTree) : Formula L V Δ :=
 
 variable {Pa Ch Of Lv x y δ} {Q : Quantifier.NumberTree}
 
-/-- (21-b) is satt only if `y` is valued at every point of the context where `x` is a parent,
-since the pronoun finds no witness in the restrictor (p. 1111). -/
+/-- (21-b) is satt only if `y` is valued at every point of the context where `x` is a parent (p.
+1111). -/
 theorem familiar_of_satt_ex21b (a : E) (h : (ex21b Pa Lv x y δ Q).Satt I o c g w) :
     ∀ j ∈ c, (atom₁ Pa x).Realize I j.1 j.2 → j.1 y ≠ ⊥ := fun j hj hP ↦
   ((Order.junct_right (h a).2.1).1 j ⟨hj, hP, satt_atom₁.2 (ne_bot_of_realize_atom₁ hP)⟩).1
@@ -1029,8 +1017,8 @@ theorem not_felicitous_ex21b (hxy : x ≠ y) (hP : ∃ (w : W) (a : E), (I w).Re
     (realize_atom₁.2 ⟨a, ha, by simp⟩) ?_
   simp [Assign.update_apply_of_ne (Ne.symm hxy)]
 
-/-- Where `y` is familiar the pairing must keep it fixed, so (21-b) has only the reading on which
-every parent loves one particular individual (p. 1111). -/
+/-- Where `y` is familiar, (21-b) has only the reading on which every parent loves one fixed
+individual (p. 1111). -/
 theorem realize_ex21b_iff_of_familiar (hxy : x ≠ y)
     (hs : (ex21b Pa Lv x y δ Q).Satt I o c g w) (hy : Familiar c y) :
     (ex21b Pa Lv x y δ Q).Realize I g w ↔ Q.toGQ (fun a ↦ (I w).RelMap Pa ![a])
@@ -1062,8 +1050,8 @@ theorem satt_hasChildOf_iff [Nonempty E] :
   obtain ⟨a, b, ha, hb, -⟩ := realize_atom₂.1 (h hr).2
   exact hj g (by rw [ha]; exact Flat.coe_ne_bot) (by rw [hb]; exact Flat.coe_ne_bot)
 
-/-- (22-b) is satt, even with `y` novel, exactly where its pairing gives every individual with a
-child one of its children and keeps the familiar variables fixed (p. 1110). -/
+/-- (22-b) is satt, even with `y` novel, iff its pairing gives each individual with a child one of
+its children and fixes familiar variables (p. 1110). -/
 theorem satt_ex22b_iff [Nonempty E] :
     (ex22b Ch Of Lv x y δ Q).Satt I o c g w ↔ ∀ a,
       ((hasChildOf Ch Of x y).Realize I (g.pair δ x a) w →
@@ -1083,9 +1071,8 @@ theorem satt_ex22b_iff [Nonempty E] :
   · exact ⟨hp c, hq⟩
   · exact ⟨hp _, hq⟩
 
-/-- Where (22-b) is satt it is true exactly when the number tree relates the individuals with a
-child to those who love the child paired with them, which is the covarying reading
-(p. 1111). -/
+/-- (22-b) is true iff the number tree relates the individuals with a child to those loving their
+paired child, the covarying reading (p. 1111). -/
 theorem realize_ex22b_iff (hxy : x ≠ y) :
     (ex22b Ch Of Lv x y δ Q).Realize I g w ↔
       Q.toGQ (fun a ↦ ∃ b, (I w).RelMap Ch ![b] ∧ (I w).RelMap Of ![b, a])
@@ -1190,18 +1177,15 @@ theorem satt_ex20c (w : Bool) : (ex20c 0 F₀ F₀ H₀).Satt I₂ .asymmetric �
 theorem not_realize_ex20c (w : Bool) : ¬ (ex20c 0 F₀ F₀ H₀).Realize I₂ ⊥ w :=
   fun h ↦ h.2.1 rfl
 
-/-- (20-b) does not bound-entail (20-a) when the restrictor is `¬ɜy(⊤y, R(x, y))`, since at the
-null context, the empty assignment, and a world where something bears `S` to something, (20-b)
-is satt and true and (20-a) satt and false. -/
+/-- (20-b) does not bound-entail (20-a) when the restrictor is `¬ɜy(⊤y, R(x, y))`. -/
 theorem not_boundEntails_ex20b_ex20a :
     ¬ BoundEntails I₂ .asymmetric (ex20b 0 F₀ F₀ H₀) (ex20a 0 F₀ F₀ H₀) :=
   fun h ↦ Bool.noConfusion <| (realize_ex20a_iff true).1 <|
     boundEntails_iff.1 h Set.univ ⊥ true (holds_ex20b _ _).1 (satt_ex20a _ _)
       (holds_ex20b Set.univ _).2
 
-/-- (20-a) does not bound-entail (20-c) for the same restrictor. The refuting index is a point
-outside its context, the empty one; at points of the context the entailment holds
-(`realize_ex20c_of_realize_ex20a`). -/
+/-- (20-a) does not bound-entail (20-c) for the same restrictor, though it does at points of the
+context. -/
 theorem not_boundEntails_ex20a_ex20c :
     ¬ BoundEntails I₂ .asymmetric (ex20a 0 F₀ F₀ H₀) (ex20c 0 F₀ F₀ H₀) :=
   fun h ↦ not_realize_ex20c false <|

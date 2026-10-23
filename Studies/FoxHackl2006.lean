@@ -134,8 +134,8 @@ theorem isExhaustivelyResolvable_box [DenselyOrdered D] {φ : D → Set W} (hφ 
   rw [IsStrongestTrueAnswer, trueAnswers_range]
   exact hanti.map_isGreatest (box_eq_Iic hφ a w ▸ isGreatest_Iic)
 
-/-- No existential modal closes the interval, since the true degrees of *allowed to φ d* have no
-greatest element, so the constraint still applies ((14), (47)). -/
+/-- Under an existential modal, the true degrees of *allowed to φ d* have no greatest element ((14),
+(47)). -/
 theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ)
     (hopen : IsNecessarilyOpen φ) (R : SetRel W W) (w : W) :
     ¬ ∃ m, IsGreatest {d | w ∈ R.preimage (φ d)} m := by
@@ -151,8 +151,8 @@ theorem isNecessarilyOpenBelow_lt_over (μ : W → D) :
     IsNecessarilyOpenBelow (μ ⁻¹' Set.Iio ·) :=
   isNecessarilyOpen_gt_over (toDual ∘ μ)
 
-/-- On a dense scale the negated degree property has no most informative (least true) degree, so
-a degree question or definite description over it is undefined ((16), (19a), (25)). -/
+/-- On a dense scale the negated degree property has no least true degree, so its degree question is
+undefined ((16), (19a), (25)). -/
 theorem negation_not_isExhaustivelyResolvable [DenselyOrdered D] (μ : W → D)
     (hμ : Function.Surjective μ) (w : W) : ¬ IsExhaustivelyResolvable (range (μ ⁻¹' Set.Iio ·)) w :=
   not_isExhaustivelyResolvable_of_isNecessarilyOpenBelow
@@ -175,8 +175,8 @@ theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictM
 
 /-! ### Cardinality as a level of granularity -/
 
-/-- At cardinality granularity *more than n* is *at least n + 1*, whose most informative degree
-is the count, so *only more than 15F* means *exactly 16* ((73)–(75)). -/
+/-- At cardinality granularity, *more than m* is strongest true iff the count is `m + 1`, so *only
+more than 15F* means *exactly 16* ((73)–(75)). -/
 theorem moreThan_exact_nat (μ : W → ℕ) (hμ : Function.Surjective μ) (m : ℕ) (w : W) :
     IsStrongestTrueAnswer (range (μ ⁻¹' Set.Ioi ·)) w (μ ⁻¹' Set.Ioi m) ↔ μ w = m + 1 := by
   refine isStrongestTrueAnswer_range_iff.trans ⟨fun ⟨h1, h2⟩ => ?_, fun h => ⟨?_, fun y hy => ?_⟩⟩

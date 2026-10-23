@@ -42,9 +42,8 @@ theorem notAll_not_scopeUp : ¬ ScopeMonotone (Quant.notAll.sem : GQ (Fin 3)) :=
   h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
     fun _ hf ↦ hf.elim) (fun hall ↦ hall 0 trivial) (fun _ _ ↦ trivial)
 
-/-- Section 7.3, (62): every conventionalist theory predicts the local reading under *all* and
-*more than one*; only the stronger versions predict it under *exactly two*, which is neither
-upward nor downward entailing in its scope. -/
+/-- Every conventionalist theory predicts the local reading under *all* and *more than one*, but
+only the stronger ones under *exactly two* (Section 7.3, (62)). -/
 theorem conventionalist_predictions :
     PredictsLocalSIWeak (Quant.all.sem : GQ (Fin 3)) ∧
       PredictsLocalSIWeak (Quant.moreThanOne.sem : GQ (Fin 3)) ∧

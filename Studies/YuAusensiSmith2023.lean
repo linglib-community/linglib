@@ -166,8 +166,8 @@ theorem diamond_compl_of_again_ne_zero (hP : P ≤ M.IsStateᶜ) (h : again R P 
 
 variable (B : Entity → Ev → Prop) (x : Entity)
 
-/-- *Again* on a change-of-state root presupposes an earlier event, whether it attaches to the
-root or to the causative verb phrase, so the root has no restitutive reading (25). -/
+/-- *Again* on a change-of-state root presupposes an earlier event wherever it attaches, so the root
+has no restitutive reading (25). -/
 theorem again_changeOfState :
     (again R (Analysis.yuAusensiSmith.denote M .changeOfState B x) v ≠ 0 →
         ◇[R] M.IsStateᶜ v) ∧
@@ -176,8 +176,8 @@ theorem again_changeOfState :
   ⟨diamond_compl_of_again_ne_zero (Analysis.denote_le_compl (by decide) B x),
     diamond_compl_of_again_ne_zero (Model.causative_le_compl _)⟩
 
-/-- On Beavers and Koontz-Garboden's analysis *again* on a change-of-state root presupposes an
-earlier state that a change gave rise to, so *again* does not tell the analyses apart (p. 1616). -/
+/-- On Beavers and Koontz-Garboden's analysis, *again* on a change-of-state root presupposes an
+earlier state resulting from a change (p. 1616). -/
 theorem again_beaversKoontzGarboden
     (h : again R (Analysis.beaversKoontzGarboden.denote M .changeOfState B x) v ≠ 0) :
     ◇[R] (◇[M.become] ⊤) v :=
@@ -445,10 +445,8 @@ theorem exists_of_resultative {e : Ev}
 
 variable {B : Entity → Ev → Prop} {holder : Entity → Ev → Prop} {c x : Entity} {s : Ev}
 
-/-- Beavers and Koontz-Garboden's resultative conjoins the change-of-state root with the result
-phrase by Event Identification (55), so one state is a state of both. Once each state has one
-holder (56) and each description entails its holder, the individual in the root's state is the
-holder of the result. -/
+/-- Under Event Identification (55) with unique holders (56), the individual in the change-of-state
+root's state is the holder of the result. -/
 theorem holder_eq_of_up (hU : Mereology.UP holder) (hB : B ≤ holder) (hL : L ≤ holder c)
     (h : eventIdentification (Analysis.beaversKoontzGarboden.denote M .changeOfState B) L x s) :
     x = c :=
@@ -496,8 +494,8 @@ def looseFromDeck (s : Eventuality) : Prop := holder .corpse s ∧ s = .loose
 theorem up_holder : Mereology.UP holder := by
   rintro x y v (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) (⟨rfl, hv⟩ | ⟨rfl, hv⟩) <;> first | rfl | cases hv
 
-/-- The sentence (34): the monks are the agent of an event of something becoming broken that
-causes the corpse to be loose from the deck, and the thing that became broken is the deck. -/
+/-- Sentence (34) makes the monks the agent of the deck's becoming broken, which causes the corpse
+to be loose from the deck. -/
 theorem sentence :
     eventIdentification model.effector
         (Event.closure (flip (eventIdentification
@@ -542,8 +540,8 @@ theorem rows_available : ∀ d ∈ Examples.all, ∀ c ∈ rootClass? d, ∀ t �
   simp only [available_iff]
   decide
 
-/-- On Beavers and Koontz-Garboden's analysis a reading other than the modifier is accepted
-exactly when it is available, except the internal reading with a change-of-state root (§4.1). -/
+/-- On Beavers and Koontz-Garboden's analysis, a non-modifier reading is accepted exactly when
+available, except the internal reading of a change-of-state root (§4.1). -/
 theorem rows_beaversKoontzGarboden : ∀ d ∈ Examples.all, ∀ c ∈ rootClass? d, ∀ t ∈ tests d,
     t.1 ≠ .modifier → ((t.2 = .acceptable ↔ Available .beaversKoontzGarboden c t.1) ↔
       ¬ (c = .changeOfState ∧ t.1 = .internal)) := by

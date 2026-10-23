@@ -307,10 +307,8 @@ def CausationType.baseSubevent : CausationType → Subevent
   | .internal => .causing
   | .external => .caused
 
-/-- Under transitivization (26)–(27) and the hierarchy (31), the base's participant takes the
-role of the subevent it occupies and the added participant that of the other, so the instigator
-of an internally-caused process outranks the added argument, and the participant of an
-externally-caused event is outranked by it. -/
+/-- Under transitivization (26)–(27) and the hierarchy (31), the base participant takes the role of
+its subevent and the added participant that of the other. -/
 theorem predictLinking_roles (c : CausationType) :
     originalRole (predictLinking c) = some (termRole c.baseSubevent) ∧
       addedRole (predictLinking c) = some (termRole c.baseSubevent.other) := by
@@ -380,9 +378,8 @@ theorem causation_determines_linking (v w : Verb)
     (h : v.causationType = w.causationType) : verbLinking v = verbLinking w := by
   simp [verbLinking, h]
 
-/-- Lexical aspect does not settle the alternation. *Meyah* 'work' and *balak'* 'roll' are both
-processes, with the same template, and they link differently, the counterexample to rule (14),
-which reads only lexical aspect ((4) vs (10)). -/
+/-- *Meyah* 'work' and *balak'* 'roll' share a template but link differently, against the
+aspect-based rule (14) ((4) vs (10)). -/
 theorem template_underdetermines_linking :
     stemTemplate meyah.stemClass = stemTemplate balak'.stemClass ∧
     addedTermRole meyah ≠ addedTermRole balak' := ⟨rfl, by decide⟩
@@ -393,15 +390,12 @@ theorem stemClass_underdetermines_linking :
     hàan.stemClass = kim.stemClass ∧
     addedTermRole hàan ≠ addedTermRole kim := ⟨rfl, by decide⟩
 
-/-- Nor does the overt suffix. *Meyah* and *balak'* both take *-t*, and they link differently:
-"balak' takes the applicative suffix –t when transitivized. However, the linking properties of the
-transitivized stem balak'-t are those of a causativized stem" (§6). -/
+/-- *Meyah* and *balak'* take the same suffix *-t* but link differently (§6). -/
 theorem suffix_underdetermines_linking :
     transitivizerSuffix meyah = transitivizerSuffix balak' ∧
     addedTermRole meyah ≠ addedTermRole balak' := ⟨rfl, by decide⟩
 
-/-- Nor does the suffix follow from causation type and stem class: *balak'* and *péek* agree on
-both and still differ in suffix ((8), (10)) — the dissociation runs in both directions. -/
+/-- *Balak'* and *péek* share stem class and causation type but differ in suffix ((8), (10)). -/
 theorem suffix_not_predictable :
     balak'.stemClass = péek.stemClass ∧ balak'.causationType = péek.causationType ∧
     transitivizerSuffix balak' ≠ transitivizerSuffix péek := ⟨rfl, rfl, by decide⟩
@@ -413,19 +407,14 @@ theorem documented_linking :
 
 /-! ### Degree achievements: event type vs aspect -/
 
-/-- Degree achievements are event-structurally state changes, not processes, even though they
-behave atelically. The class takes the resultative *-a'n* ((19), *ka'n-a'n-en* 'I'm very tired')
-and incorporates the universal quantifier *láah* ((20), *lúub-láah* 'they fell completely'),
-which active intransitives do not, despite behaving atelically under (15) (§5). -/
+/-- Degree achievements such as *ka'n* have a result state, as *-a'n* (19) and *láah* (20) attest,
+despite behaving atelically under (15) (§5). -/
 theorem kaan_is_state_change : (stemTemplate ka'n.stemClass).HasResultState := by decide
 
 theorem naak_is_state_change : (stemTemplate na'k.stemClass).HasResultState := by decide
 
-/-- Degree achievements transitivize like state-change verbs, adding an instigator as A rather
-than an applied object as P. This is the first direct counterevidence against Kraemer and
-Wunderlich's aspect-based linking, whose rule (14) treats them with the process verbs and so
-predicts applicativization; they causativize like every other state-change verb ((17) lists the
-class, (21) derives *lúub* 'fall'). -/
+/-- Degree achievements causativize like state-change verbs, adding an A, against rule (14) ((17),
+(21)). -/
 theorem degree_achievements_causativize :
     addedTermRole ka'n = some .A ∧ addedTermRole na'k = some .A := ⟨rfl, rfl⟩
 
@@ -512,9 +501,8 @@ def pivotSourceRole (va : Voice) : Option TermRole :=
   (va.pivot.bind fun p ↦ (va.preimages p).head?).bind fun s ↦
     (va.initial.argumentRole s).map TermRole.ofArgumentRole
 
-/-- The sole argument of a detransitivized stem is the participant of the subevent it denotes, in
-the role (33) gives that subevent: the S of an antipassive was the A, that of an anticausative
-or a passive the P. -/
+/-- The sole argument of a detransitivized stem bears the role (33) assigns its subevent, the A for
+an antipassive and the P otherwise. -/
 theorem pivotSourceRole_toVoice (d : DetransitivizationType) :
     pivotSourceRole d.toVoice = some (termRole d.retained) := by
   cases d <;> decide
@@ -573,16 +561,13 @@ theorem salience_agrees_on_shared_roots :
     salienceClassOf na'k.stemClass = Lucy1994.predictedClass Lucy1994.naak :=
   ⟨rfl, rfl, rfl⟩
 
-/-- *Hàan* 'eat' defeats a purely transitiviser-based classification. Its stem class maps to
-patient salient, yet it transitivizes with applicative *-t*, the exponent Lucy's diagnostic reads
-as agent salient. The suffix tracks internal causation, not class (9). -/
+/-- *Hàan* 'eat' is patient salient by stem class yet takes applicative *-t*, so the suffix tracks
+internal causation (9). -/
 theorem haanEat_defies_transitiviser_diagnostic :
     transitivizerSuffix hàan = some .applicativeT ∧
     salienceClassOf hàan.stemClass = some .patient := ⟨rfl, rfl⟩
 
-/-- *Péek* is active in this paper's classification, a manner-of-motion process with
-idiosyncratic causative *-s*, but a `#`-marked state-change root in Lucy's (4), so the two
-sources classify the same root differently. -/
+/-- This paper classifies *péek* as agent salient, and Lucy's (4) as patient salient. -/
 theorem peek_stem_vs_root_class_divergence :
     salienceClassOf péek.stemClass = some .agent ∧
     Lucy1994.predictedClass Lucy1994.peek = some .patient := ⟨rfl, rfl⟩

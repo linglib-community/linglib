@@ -212,8 +212,8 @@ def kindPronoun (noun : English.Nouns.Noun) (n m : ℕ) : Update (HAssign World 
 def partitive (n m : ℕ) : Update (HAssign World E) :=
   {(g, h) | ∃ x y, g n = .entity x ∧ y ≤ x ∧ h = Function.update g m (.entity y)}
 
-/-- After a negated sentence the kind pronoun and the empty NP are interpretable on the
-concept referent, and a partitive on the trapped entity referent is not ((5a)–(5c)). -/
+/-- After a negated sentence, the kind pronoun and the empty NP can take the concept referent, but a
+partitive cannot take the entity referent ((5a)–(5c)). -/
 theorem anaphora_after_negation {nC nE m : ℕ} {P : World → Set E} {noun : English.Nouns.Noun}
     {φ : Update (HAssign World E)} {g h : HAssign World E}
     (hPresup : g nC = .concept P noun) (hNovel : g nE = .undef) (hNeg : g ~[test (neg φ)] h) :

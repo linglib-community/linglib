@@ -242,8 +242,8 @@ theorem no_gen_antipassive_incorporation :
       kaqchikelIncorporation.WellFormed ∧ kaqchikelIncorporation.objectMarker = none := by
   decide
 
-/-- The Chol/Q'anjob'al-type alignment (5): the subject, the highest DP of the nominalized
-clause, takes genitive from D, and the object absolutive from Voice or the suffix. -/
+/-- In the Chol/Q'anjob'al-type alignment (5), the nominalized subject takes genitive from D and the
+object absolutive. -/
 theorem chol_qanjobal_markers :
     cholProgressive.WellFormed ∧ cholProgressive.subjectMarker = some .setA ∧
       cholProgressive.objectMarker = some .setB ∧
@@ -257,9 +257,8 @@ theorem subject_ne_gen (h : c.Restricted) : c.subject ≠ some .gen := by
   simp only [subject, ite_eq_left h]
   split <;> simp
 
-/-- The non-finiteness diagnostic of (59) and (60): a set B marker inside the nominalized clause
-needs a Case assigner in its verbal domain, so it survives only in a low absolutive language or
-with the suffix. -/
+/-- A set B object marker in the nominalized clause requires a low absolutive language or the suffix
+((59), (60)). -/
 theorem absPos_low_or_suffix_of_object (h : c.object = some .absVoice) :
     c.lang.absPos = .low ∨ c.lang.suffix := by
   unfold object at h

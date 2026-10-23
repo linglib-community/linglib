@@ -125,9 +125,7 @@ theorem not_guaranteesException_some : ¬ GuaranteesException (GQ.some : GQ α) 
 attended (`Examples.ex_25a`). -/
 abbrev attended : Fin 5 → Prop := (3 ≤ ·)
 
-/-- No set of students is the exception set of *most students attended* in situation (25)
-(`Examples.ex_25b`), since excluding any two of the three nonattenders makes it true, so only
-the empty set lies below every rescuer, and without any exclusion it is false. -/
+/-- No set of students is the exception set of *most students attended* in situation (25). -/
 theorem not_isExceptionSet_most (C : Fin 5 → Prop) : ¬ IsExceptionSet most ⊤ C attended := by
   rintro ⟨h1, h2⟩
   have hTJ : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended := by decide
@@ -166,9 +164,7 @@ theorem isExceptionSet_most_two :
 
 /-! ### What *but* operates on (§1.8) -/
 
-/-- The *but*-phrase cannot be a noun modifier (§1.8). No operation on the restrictor alone
-yields the exception-set truth conditions with *every*, since with the whole domain as scope
-the modified quantification is true while a nonempty `C` is not the exception set. -/
+/-- No noun modifier yields the exception-set truth conditions with *every* (§1.8). -/
 theorem not_exists_nounModifier (hC : C ≠ ⊥) :
     ¬ ∃ f : (α → Prop) → α → Prop, ∀ A B, every (f A) B ↔ IsExceptionSet every A C B :=
   fun ⟨_, hf⟩ ↦
@@ -177,7 +173,7 @@ theorem not_exists_nounModifier (hC : C ≠ ⊥) :
 /-! ### Free exceptives (§2) -/
 
 /-- In the situation of (25), *except for Tom and John, most students attended* holds where no
-*but*-phrase does, so the free exceptive occurs with *most* (34c). -/
+*but*-phrase does (34c). -/
 theorem restrictive_most :
     Restrictive most ⊤ (fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended :=
   ⟨by decide, fun h ↦ absurd h (by decide)⟩
@@ -246,10 +242,8 @@ private theorem rows_eq : rows =
      ⟨.exceptFor, .no, .acceptable⟩, ⟨.exceptFor, .most, .acceptable⟩] := by
   decide
 
-/-- In Horn's paradigm (10) and the *but*-sentences (1a), (2b), (22) and (25b), a *but*-phrase
-is acceptable with a determiner exactly when its readings guarantee an exception set on every
-finite domain, the semantic fact the paper takes the co-occurrence restriction to
-grammaticize. -/
+/-- A *but*-phrase is acceptable with a determiner iff its readings guarantee an exception set on
+every finite domain ((10), (1a), (2b), (22), (25b)). -/
 theorem but_predicted :
     ∀ r ∈ rows, r.marker = .but →
       (r.judgment = .acceptable ↔
@@ -289,9 +283,8 @@ theorem but_predicted :
   · exact fun h ↦ nomatch h
   · exact fun h ↦ nomatch h
 
-/-- The free exceptives of (1b), (33a), (34a) and (34c) are acceptable with every tabled
-determiner, each of which admits a restrictive exceptive on some finite domain, as the
-semantics without the uniqueness condition predicts. -/
+/-- The free exceptives of (1b), (33a), (34a) and (34c) are acceptable with every tabled determiner,
+each admitting a restrictive exceptive on some finite domain. -/
 theorem exceptFor_predicted :
     ∀ r ∈ rows, r.marker = .exceptFor →
       (r.judgment = .acceptable ↔

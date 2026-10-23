@@ -115,8 +115,8 @@ def intro (x y z : E) : Set (Set (E × E × E)) := atom (x, y, z)
 introductions. -/
 def scenario : Set (E × E × E) := {(m, b, s), (m, t, s)}
 
-/-- The focus semantic value of *introduced [Bill]F to Sue* with Mary as subject (5a) is the set
-of propositions of the form 'Mary introduced y to Sue'. -/
+/-- The focus semantic value of *introduced [Bill]F to Sue* (5a) is the set of propositions *Mary
+introduced y to Sue*. -/
 theorem vp_objectFocus :
     ((fun y ↦ intro m y s) <$> focused b).alternatives = Set.range fun y ↦ intro m y s :=
   alternatives_map_focused _ _
@@ -226,8 +226,8 @@ theorem ace_ssubset_pass : ace m ⊂ pass {m} := by
 theorem pass_union [DecidableEq E] (g g' : Finset E) : pass (g ∪ g') = pass g ∩ pass g' := by
   ext w; simp [pass, or_imp, forall_and]
 
-/-- The scale of acing and passing lies inside the focus semantic value of *I [passed]F*, and
-asserting the weaker member implicates the negation of the stronger (16). -/
+/-- The focus semantic value of *I [passed]F* contains the scale of acing and passing, so asserting
+passing implicates not acing (16). -/
 theorem verbFocus_scale :
     {ace m, pass {m}} ⊆ ((fun V : Finset E → Set (Grades E) ↦ V {m}) <$>
       focused pass).alternatives ∧
@@ -244,8 +244,8 @@ theorem subjectFocus_scale :
     Set.range pass ⊆ ((pass (E := E)) <$> focused {m}).alternatives := by
   rw [alternatives_map_focused]
 
-/-- The acing scale does not lie inside the focus semantic value of *[I]F passed*, since no
-group's passing is Mats's acing, which is why (17) suggests nothing about acing. -/
+/-- The focus semantic value of *[I]F passed* does not contain acing, so (17) suggests nothing about
+acing. -/
 theorem ace_notMem_subjectFocus : ace m ∉ ((pass (E := E)) <$> focused {m}).alternatives := by
   rw [alternatives_map_focused]
   rintro ⟨g, hg⟩
@@ -336,8 +336,8 @@ def FocusSite.marks : FocusSite → Mark × Mark
 def mainClause (f : FocusSite) : Set (Set (Set (E × E))) :=
   (map₂ beats ((unfeatured she).mark f.marks.1) ((unfeatured me).mark f.marks.2)).alternatives
 
-/-- The *than*-clause is an antecedent for the focus in the main clause exactly when the
-correlate is the focused phrase, so each reading survives under one placement of focus (66). -/
+/-- The *than*-clause antecedes the main-clause focus iff the correlate is the focused phrase (66).
+-/
 theorem ellipsis_filter (hsm : sue ≠ me) (hss : sue ≠ she) (r : Correlate) (f : FocusSite) :
     (Antecedent.phrase (thanClause she me sue r)).Resolves (beats she me)
         (mainClause she me f) ↔

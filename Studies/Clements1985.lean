@@ -260,15 +260,14 @@ theorem no_spreading_nasal_distributed (σ : Spreading) :
   rw [h] at this
   simpa using this (show Feature.continuant ∈ featureClass classNode? .supralaryngeal by decide)
 
-/-- Kikuyu assigns `[−continuant, +voiced]` to postnasal obstruents (§5.1, (24)). Only the
-root reaches both, so the theory makes `[voiced]` redundant there, filled in by a later rule. -/
+/-- Only the root reaches both `[continuant]` and `[voice]`, so Kikuyu's postnasal `[−continuant,
++voiced]` makes `[voiced]` redundant (§5.1, (24)). -/
 theorem eq_root_of_continuant_of_voice (h₁ : Feature.continuant ∈ σ.features)
     (h₂ : Feature.voice ∈ σ.features) : σ = .node .root :=
   eq_root_of_manner_of_laryngeal rfl rfl h₁ h₂
 
-/-- English palatalisation assigns a glide's place and `[+continuant]` at once (§5.2, (25)).
-One spreading doing both is supralaryngeal, so the paper decomposes it into spirantisation and
-place assimilation. -/
+/-- A spreading that assigns `[anterior]` and `[+continuant]` at once spreads the supralaryngeal
+node, as English palatalisation would need (§5.2, (25)). -/
 theorem supralaryngeal_subset_of_anterior_of_continuant (h₁ : Feature.anterior ∈ σ.features)
     (h₂ : Feature.continuant ∈ σ.features) :
     featureClass classNode? Node.supralaryngeal ⊆ σ.features :=
@@ -334,19 +333,16 @@ theorem rule14_eq_rule12 :
       rule14.apply [x, y] = rule12.apply [x, y] := by
   decide
 
-/-- The `[αnasal]` variant of (14) is a rule of the same form and applies, making /n/ before /θ/
-an oral dental, though no single spreading carries what it copies
-(`no_spreading_nasal_distributed`). -/
+/-- The `[αnasal]` variant of (14) makes /n/ before /θ/ an oral dental, though no single spreading
+carries what it copies. -/
 theorem rule14Nasal_n_θ :
     rule14Nasal.apply [n, θ] = [(n.setFeature .nasal false).setFeature .distributed true, θ] := by
   decide
 
 /-! ### Supralaryngeal spreading: Icelandic preaspiration ((6)–(7)) -/
 
-/-- In (7) the first half of a geminate aspirated stop loses its supralaryngeal node and
-takes the preceding vowel's, so the output shares every supralaryngeal feature with the
-vowel and keeps only the stop's laryngeal features `[+spread, −voiced]`, an [h]. Klamath
-(9a) and Sierra Popoluca (16) spread the same node from a lateral and from a nasal. -/
+/-- Supralaryngeal spreading yields preaspiration (7), sharing the vowel's supralaryngeal and the
+stop's laryngeal features, as also in Klamath (9a) and Sierra Popoluca (16). -/
 theorem preaspiration (v c : Segment) :
     Set.EqOn ((Spreading.node .supralaryngeal).apply v c) v
         ↑(featureClass classNode? Node.supralaryngeal) ∧
@@ -356,8 +352,7 @@ theorem preaspiration (v c : Segment) :
 
 /-! ### Primary and secondary place features (§4) -/
 
-/-- The primary features alone separate /p t k/, so `[high]` and `[back]` are not needed for
-consonant place, as table (22) shows for /p t c k/. -/
+/-- The primary place features alone separate /p t k/, as table (22) shows for /p t c k/. -/
 theorem primary_separates_stops :
     ∀ x ∈ [p, t, k], ∀ y ∈ [p, t, k],
       Set.EqOn x y ↑PlaceSet.primary.features → x = y := by

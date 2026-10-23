@@ -115,10 +115,8 @@ variable (w : List Segment)
 
 end Conjugation
 
-/-- The infinitive stems of Karlsson's contracted verbs with the alternations (1) to (3) and (5)
-to (7), *sieppaa-* 'snatch', *konttaa-* 'crawl', *hakkaa-* 'hew', *hautaa-* 'bury', *rahtaa-*
-'freight' and *makaa-* 'lie', are *siepat-*, *kontat-*, *hakat-*, *haudat-*, *rahdat-* and
-*maat-* (§4.1.4). -/
+/-- The infinitive stems of Karlsson's contracted verbs with alternations (1) to (3) and (5) to (7)
+are *siepat-*, *kontat-*, *hakat-*, *haudat-*, *rahdat-* and *maat-* (§4.1.4). -/
 theorem infinitiveStem_contracted :
     Conjugation.huomata.infinitiveStem [s, i, e, p, p, a, a] = [s, i, e, p, a, t] ∧
       Conjugation.huomata.infinitiveStem [k, o, n, t, t, a, a] = [k, o, n, t, a, t] ∧

@@ -158,9 +158,8 @@ def permitted : SetRel Candidate Candidate :=
 instance (w c : Candidate) : Decidable (w ~[permitted] c) :=
   inferInstanceAs (Decidable (c ∈ ({.phdA, .phdB} : Finset Candidate)))
 
-/-- In (15) Modal Variation holds without Free Choice; the singleton competitors are all
-false (59b) and carry their anti-exhaustivity implicatures (68b), while the widening
-competitor *bedroom or living room* (72) does not. -/
+/-- In (15) Modal Variation holds without Free Choice, the singleton competitors being false (59b)
+with anti-exhaustivity implicatures (68b), unlike the widening competitor (72). -/
 theorem hideAndSeek (w : Room) :
     ModalVariation (epist pedro15) w house inRoom ∧ ¬ FreeChoice (epist pedro15) w house inRoom ∧
       (∀ S ∈ subdomainAlternatives .singletons house, ¬ □[epist pedro15] (claim inRoom S) w) ∧

@@ -99,8 +99,7 @@ theorem aOrBdn_off_at_uu :
     .uu ∈ closestImp hammingSim aOrBdn lightOff := by decide
 
 /-- *If A and B were not both up, the light would be off* is predicted true at the actual world,
-the antecedent being equivalent to the disjunction; participants judged it true only by a
-minority (Table 3). -/
+though only a minority judged it true (Table 3). -/
 theorem notBothUp_off_at_uu :
     .uu ∈ closestImp hammingSim notBothUp lightOff := by decide
 

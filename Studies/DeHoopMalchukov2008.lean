@@ -108,16 +108,15 @@ end Constraints
 def asymmetrical : Finset (Option Unit × Strength) :=
   {(some (), .strong), (some (), .weak), (none, .strong), (none, .weak)}
 
-/-- Tableaux (18), (31) and (39): IDENTIFY over ECONOMY marks the strong argument in either
-position, Manipuri's ergative on the volitional subject, Hindi's accusative and Central Pomo's
-patientive on the strong object. -/
+/-- IDENTIFY over ECONOMY marks the strong argument in either position (Tableaux (18), (31) and
+(39)). -/
 theorem identify_marks_strong :
     superoptimal asymmetrical (profile [identify () .strong, economy]) =
       {(some (), .strong), (none, .weak)} := by
   decide
 
-/-- Tableaux (21), (26), (32) and (35): DISTINGUISHABILITY over ECONOMY marks the confusable
-argument, the weak subject in Fore and Dyirbal and the strong object in Hindi and Awtuw. -/
+/-- DISTINGUISHABILITY over ECONOMY marks the confusable argument (Tableaux (21), (26), (32) and
+(35)). -/
 theorem distinguish_marks_confusable (pos : Position) :
     superoptimal asymmetrical (profile [distinguish pos.confusable, economy]) =
       {(some (), pos.confusable), (none, pos.confusable.opposite)} := by
@@ -145,9 +144,8 @@ def symmetrical : Finset (Option Overt × Strength) :=
   {(some .identifying, .strong), (some .identifying, .weak), (some .other, .strong),
     (some .other, .weak)}
 
-/-- Tableaux (24) and (29): IDENTIFY pairs each overt case with a strength, ergative with the
-volitional and oblique with the nonvolitional subject in Lezgian, accusative with the strong
-and partitive with the weak object in Finnish. -/
+/-- In a symmetrical system IDENTIFY pairs each overt case with a strength, as in Lezgian and
+Finnish (Tableaux (24) and (29)). -/
 theorem symmetrical_identify :
     superoptimal symmetrical (profile [identify .identifying .strong, economy]) =
       {(some .identifying, .strong), (some .other, .weak)} := by

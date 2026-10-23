@@ -76,8 +76,7 @@ open Morphology.Containment (SupersetSpellable isContiguous_iff_spelloutGenerabl
 instrumental, comitative. -/
 def sequence : Fin 6 → Case := ![.nom, .acc, .gen, .dat, .inst, .com]
 
-/-- Blake's hierarchy, less the positions the sequence leaves out, orders the cases of the sequence
-as the sequence does (48): each has a position, and a later case a later one. -/
+/-- Blake's hierarchy orders the cases of the sequence (48) as the sequence does. -/
 theorem exists_position_lt {i j : Fin 6} (h : i < j) :
     ∃ p q, Blake1994.position (sequence i) = some p ∧ Blake1994.position (sequence j) = some q ∧
       p < q := by

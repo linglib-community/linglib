@@ -100,9 +100,8 @@ theorem bumperCrop_conjunction_false :
        .actual ∈ variablyStrictImp cropSim sunCold bumperCrop) := by
   rw [holds, holds]; decide
 
-/-- Lewis's disjunctive closure is true while the conjunction regimentation is false. Since
-    the English sentence S is false (matching the conjunction) while S* is true (matching
-    Lewis), S ≠ S*: premise (2) is false. -/
+/-- Lewis's disjunctive closure is true while the conjunction regimentation is false, so premise (2)
+fails. -/
 theorem lewis_ne_conjunction :
     .actual ∈ variablyStrictImp cropSim (goodWeather ∪ sunCold) bumperCrop ∧
     ¬ (.actual ∈ variablyStrictImp cropSim goodWeather bumperCrop ∧

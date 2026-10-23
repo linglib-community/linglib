@@ -72,12 +72,8 @@ namespace NaturalLogic
 
 /-! ### Tightness of the join table -/
 
-/-- **Tightness of the join table** ([icard-2012] Lemma 1.5 is an
-equality): `R.join S` is the least — strongest — relation sound for
-chaining `R` then `S`, already over the three-atom Boolean algebra.
-Soundness over any bounded distributive lattice is
-`Relation.Holds.join`; conversely any `T` sound on `Finset (Fin 3)`
-alone weakens the table entry. -/
+/-- `R.join S` is the strongest relation sound for chaining `R` then `S`, so [icard-2012]'s Lemma
+1.5 is an equality. -/
 theorem Relation.isLeast_join (R S : Relation) :
     IsLeast {T : Relation | ∀ x y z : Finset (Fin 3),
       R.Holds x y → S.Holds y z → T.Holds x z} (R.join S) := by
@@ -109,12 +105,8 @@ theorem Relation.mem_range_constraints_of_holds {α : Type*} [Lattice α]
   · exact hy ((h .disjoint (hp (by decide))).eq_bot_of_ge (h .ge (hp (by decide))))
   · exact hx' ((h .codisjoint (hp (by decide))).eq_top_of_le (h .ge (hp (by decide))))
 
-/-- **Why seven**: of the sixteen conjunctions of atomic constraints,
-exactly the seven in the range of `constraints` are nondegenerately
-realizable — here already on the three-atom Boolean algebra; the other
-nine force an argument to `⊥` or `⊤` on every bounded lattice
-([maccartney-manning-2009]'s nontrivial-denotation proviso,
-[icard-2012] §1). -/
+/-- Exactly seven of the sixteen conjunctions of atomic constraints are nondegenerately realizable
+([maccartney-manning-2009]'s nontrivial-denotation proviso, [icard-2012] §1). -/
 theorem Relation.mem_range_constraints_iff {s : Finset Relation.Atom} :
     s ∈ Set.range Relation.constraints ↔
       ∃ x y : Finset (Fin 3), x ≠ ⊥ ∧ x ≠ ⊤ ∧ y ≠ ⊥ ∧ y ≠ ⊤ ∧
@@ -127,18 +119,14 @@ theorem Relation.mem_range_constraints_iff {s : Finset Relation.Atom} :
 
 /-! ### The join characterization and the strongest relation -/
 
-/-- [icard-2012]'s Definition 1.4 as a characterization: `R.join S ≤ T`
-exactly when chaining `R`'s content with `S`'s lands inside `T`'s —
-soundness and tightness in one iff, the `sup_le_iff` idiom. -/
+/-- `R.join S ≤ T` iff chaining `R` with `S` lands inside `T` ([icard-2012]'s Definition 1.4). -/
 theorem Relation.join_le_iff {R S T : Relation} :
     R.join S ≤ T ↔
       ∀ x y z : Finset (Fin 3), R.Holds x y → S.Holds y z → T.Holds x z :=
   ⟨λ h _ _ _ hR hS => (hR.join hS).of_le h, λ h => (Relation.isLeast_join R S).2 h⟩
 
-/-- [icard-2012]'s Lemma 1.3: any two elements distinct from `⊥` and `⊤`
-stand in a strongest natural-logic relation — stated there for Boolean
-lattices, proved here for any bounded lattice. It fails at `⊥`/`⊤`:
-`x ⌣ ⊤` and `x ⊑ ⊤` hold with no common strengthening. -/
+/-- Any two elements of a bounded lattice other than `⊥` and `⊤` stand in a strongest relation
+([icard-2012]'s Lemma 1.3, for Boolean lattices). -/
 theorem Relation.exists_isLeast_holds {α : Type*} [Lattice α] [BoundedOrder α]
     {x y : α} (hx : x ≠ ⊥) (hx' : x ≠ ⊤) (hy : y ≠ ⊥) (hy' : y ≠ ⊤) :
     ∃ R : Relation, IsLeast {S : Relation | S.Holds x y} R := by
@@ -157,10 +145,8 @@ theorem Relation.exists_isLeast_holds {α : Type*} [Lattice α] [BoundedOrder α
 /-! ### Tightness of the projection tables -/
 
 set_option synthInstance.maxSize 400 in
-/-- **Tightness of the projection tables** ([icard-2012] Definition 2.3;
-his Lemma 2.4 as an equality): `project R σ` is the least relation `T`
-such that every σ-function sends `R`-pairs to `T`-pairs, already over
-the two-element Boolean algebra. -/
+/-- `project R σ` is the least relation to which every σ-function sends `R`-pairs, so [icard-2012]'s
+Lemma 2.4 is an equality (Definition 2.3). -/
 theorem Signature.isLeast_project (R : Relation) (σ : Signature) :
     IsLeast {T : Relation | ∀ f : Finset (Fin 1) → Finset (Fin 1),
       σ.HoldsFor f → ∀ x y, R.Holds x y → T.Holds (f x) (f y)}
@@ -174,10 +160,8 @@ theorem Signature.isLeast_project (R : Relation) (σ : Signature) :
   obtain ⟨f, hf, x, y, hR, hT'⟩ := counter R σ T hle
   exact hT' (hT f hf x y hR)
 
-/-- The refinement order on signatures is inclusion of function classes —
-[icard-2012]'s semantic definition of ≼ (§2.2) recovered as a
-characterization of the property-set order, with countermodels on the
-two-element Boolean algebra. -/
+/-- The refinement order on signatures is inclusion of function classes, which is [icard-2012]'s
+semantic definition of ≼ (§2.2). -/
 theorem Signature.le_iff_holdsFor {σ τ : Signature} :
     σ ≤ τ ↔
       ∀ f : Finset (Fin 1) → Finset (Fin 1), σ.HoldsFor f → τ.HoldsFor f := by

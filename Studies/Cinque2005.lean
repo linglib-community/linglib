@@ -208,9 +208,8 @@ theorem markedOptions_eq_stated :
     (table.filter fun r => r.stated.isSome && r.order != [.A, .N, .Num, .Dem]).all fun r =>
       decide (markedOptions r.order = r.stated) := by decide +kernel
 
-/-- For (6w), A N Num Dem, the paper counts one marked option, the picture-of-who pied-piping of
-`[A N]` past Num, but (7b-v) lists the order as partial, and no derivation avoids it, since the
-noun never passes A. -/
+/-- For (6w), A N Num Dem, the derivation has two marked options, though the paper counts one,
+consistent with (7b-v) listing it as partial. -/
 theorem markedOptions_w : markedOptions [.A, .N, .Num, .Dem] = some 2 := by decide +kernel
 
 /-- (6p), N Dem A Num, for which the paper states no count, has one marked option, the

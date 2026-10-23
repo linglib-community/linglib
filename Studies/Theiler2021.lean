@@ -116,11 +116,8 @@ theorem denn_pair_not_denn_singleton (h : ∀ s, Proceed s ↔ s ⊆ p ∨ s ⊆
   · exact ⟨p, by simp, hp⟩
   · exact ⟨q, by simp, hq'⟩
 
-/-- Two Annas, (4) and (20): the wh-question *which Anna do you mean* highlights the property
-of being the intended referent, whose instantiations are that Anna from Munich and that Anna
-from Berlin was meant; the polar question *do you mean Anna from Munich* highlights the first
-alone. Proceeding, interpreting A's assertion, is resolving which Anna was meant, the issue
-both questions raise; *denn* is licensed in the wh-question and not in the polar question. -/
+/-- In Two Annas ((4), (20)), *denn* is licensed in the wh-question *which Anna do you mean* and not
+in the polar question. -/
 theorem twoAnnas (hp : p ≠ Set.univ) :
     Denn (· ∈ polar p) {p, pᶜ} ∧ ¬ Denn (· ∈ polar p) {p} :=
   denn_pair_not_denn_singleton (λ _ => mem_polar)
@@ -144,9 +141,8 @@ theorem denn_singleton_and_denn_singleton_iff :
     Denn Proceed {p} ∧ Denn Proceed {q} ↔ Denn Proceed {p ∩ q} := by
   simp only [denn_singleton, Necessary, Set.subset_inter_iff, imp_and, forall_and]
 
-/-- An alternative question highlights both disjuncts, (35), a polar disjunctive question their
-disjunction, (36): learning a disjunct is learning the disjunction, so the former licenses
-*denn* more demandingly. -/
+/-- If an alternative question (35) licenses *denn*, so does the corresponding polar disjunctive
+question (36). -/
 theorem denn_pair_imp_denn_union (h : Denn Proceed {p, q}) : Denn Proceed {p ∪ q} :=
   λ s hs => by
     obtain ⟨r, hr, hsr⟩ := h s hs

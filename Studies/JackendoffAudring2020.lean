@@ -514,8 +514,8 @@ theorem specialCells_not_natural : ¬ IsValueConjunction gFeatures ↑specialCel
   rw [isValueConjunction_coe_iff]
   decide
 
-/-- The pattern (45) is morphomic, as the book says citing [aronoff-1994], because the cells
-the special stem serves are a syncretism class and no natural class of the paradigm. -/
+/-- The pattern (45) is morphomic, its special-stem cells forming a syncretism class but no natural
+class ([aronoff-1994]). -/
 theorem spricht_morphome : IsMorphome sprechen (IsValueConjunction gFeatures) ↑specialCells :=
   isMorphome_of_formCells sprechen (.second, .sg) _ sprechen_formCells (by decide)
     specialCells_not_natural
@@ -615,8 +615,8 @@ def walk : VCell → Exponent
   | .past | .ptcp => .t
   | .prespt => .ing
 
-/-- The double coindexation of Section 4.3 appears as a syncretism, since the present and the
-infinitive share the stem's phonology, and the past the past participle's. -/
+/-- The present and infinitive share one form of *walk*, and the past and past participle another
+(Section 4.3). -/
 theorem walk_syncretism :
     formCells walk .bare = {.pres, .inf} ∧ formCells walk .t = {.past, .ptcp} := by
   decide
@@ -627,8 +627,7 @@ theorem walk_syncretism :
 and makes the base a variable. -/
 def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish"]
 
-/-- Structural Intersection constructs the schema, since the description of (6) is the meet of
-the three sisters of (5), keeping what they share and leaving a variable where they differ. -/
+/-- Structural Intersection makes the schema of (6) the meet of the three sisters of (5). -/
 theorem ishSchema_body_eq_inf :
     ishSchema.body =
       Wordlist.piggish.slots ⊓ Wordlist.childish.slots ⊓ Wordlist.sluggish.slots := by

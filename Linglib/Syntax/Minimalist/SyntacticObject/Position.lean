@@ -156,9 +156,8 @@ theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands 
   rw [Subtype.ext (IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hmc)
     (Positions.covBy_iff.1 hmd) hcq (Subtype.coe_le_coe.2 hdq))]
 
-/-- C-command between occurrences is c-command between their terms when the commander's term
-differs from those of its sisters, [collins-stabler-2016]'s Theorem 3; their Merge applies only to
-distinct objects, which secures the condition. -/
+/-- C-command between occurrences is c-command between their terms when the commander's term differs
+from its sisters' ([collins-stabler-2016]'s Theorem 3). -/
 theorem cCommands_termAt_of_cCommands {p q : t.val.Positions}
     (hs : ∀ d, Order.pred p ⋖ d → d ≠ p → t.termAt d ≠ t.termAt p)
     (h : t.val.CCommands p q) : t.toSyntacticObject.CCommands (t.termAt p) (t.termAt q) := by

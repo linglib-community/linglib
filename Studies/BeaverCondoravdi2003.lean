@@ -113,16 +113,15 @@ theorem anscombe_after_complement_UE (h : timeTrace B ⊆ timeTrace B') :
     Anscombe.after A B → Anscombe.after A B' :=
   fun ⟨t, ht, t', ht', hlt⟩ ↦ ⟨t, ht, t', h ht', hlt⟩
 
-/-- With a never-instantiated temporal clause Anscombe's *before* holds of any instantiated main
-clause, the overgeneration of (32) and (33), so *David ate lots of ketchup before he made a clean
-sweep of all the gold medals* comes out true if he never won. -/
+/-- With a never-instantiated temporal clause, Anscombe's *before* holds of any instantiated main
+clause, the overgeneration of (32) and (33). -/
 theorem anscombe_before_of_empty (hB : timeTrace B = ∅) (hA : (timeTrace A).Nonempty) :
     beforeEver A B :=
   let ⟨t, ht⟩ := hA
   ⟨t, ht, fun t' ht' ↦ absurd (hB ▸ ht') (Set.notMem_empty t')⟩
 
 /-- The uniform *before* is Anscombe's on a temporal clause exactly when the clause has a first
-time, the hypothesis of Proposition 2, or no time precedes all of it. -/
+time, as in Proposition 2, or no strict lower bound. -/
 theorem forall_uniform_lt_iff_beforeEver :
     (∀ A, uniform (· < ·) (timeTrace A) (timeTrace B) ↔ beforeEver A B) ↔
       (∃ e, IsLeast (timeTrace B) e) ∨ strictLowerBounds (timeTrace B) = ∅ := by

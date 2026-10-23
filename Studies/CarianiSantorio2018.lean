@@ -132,17 +132,16 @@ An *if*-clause restricts the modal parameter of *will* to the antecedent-worlds,
 /-- *If A, will B* is *will B* over the modal parameter restricted to the `A`-worlds. -/
 def willIf (f A : Set W) : CompleteLatticeHom (Set W) (Set W) := will s (f ∩ A)
 
-/-- *Will* commutes with negation under an *if*-clause, which is Negation Swap in conditionals
-(§7). Since the *if*-clause only shifts the parameter, the narrow and the wide form are this one
-equation. -/
+/-- *Will* commutes with negation under an *if*-clause, which is Negation Swap in conditionals (§7).
+-/
 theorem willIf_compl : willIf s f A Bᶜ = (willIf s f A B)ᶜ := will_compl s
 
 /-- Conditional Excluded Middle for will-conditionals is valid₂ (§7). -/
 theorem willIf_excluded_middle : Valid2 fun s f ↦ willIf s f A B ∪ willIf s f A Bᶜ :=
   fun s f ↦ will_excluded_middle s (f ∩ A)
 
-/-- Under modal subordination, *If A, will B. Will C* with the second *will* coindexed with the
-restricted parameter is *if A, will (B and C)*, (24) of §5.3.1. -/
+/-- Under modal subordination, *If A, will B. Will C* is equivalent to *if A, will (B and C)* ((24)
+of §5.3.1). -/
 theorem willIf_inter : willIf s f A B ∩ willIf s f A C = willIf s f A (B ∩ C) :=
   (map_inf _ B C).symm
 
@@ -163,9 +162,8 @@ variable {T : Type*} [Preorder T] {F : Temporal.TWFrame W T} {t : T}
 theorem mem_will_alternatives_iff : w ∈ will s (F.alternatives (w, t)) A ↔ w ∈ A :=
   mem_will_of_mem s Temporal.TWFrame.mem_alternatives_self
 
-/-- Every candidate world of a context has the same historical alternatives, so the modal
-parameter of *will*, and with it the content of *will A*, is fixed even when it is indeterminate
-which context an utterance takes place in (§3). -/
+/-- Every candidate world of a context has the same historical alternatives, so the content of *will
+A* is fixed even when the context is indeterminate (§3). -/
 theorem will_alternatives_eq {v : W} (hv : v ∈ F.alternatives (w, t)) :
     will s (F.alternatives (v, t)) = will s (F.alternatives (w, t)) := by
   rw [Temporal.TWFrame.alternatives_eq_of_mem hv]
@@ -186,9 +184,8 @@ The modal analyses the paper argues against make *will* necessity over the best 
 the `necessity f g` of [kratzer-1981] with the open worlds as modal base, such as the most likely
 open worlds of [kaufmann-2005-truth]. They differ in the ordering source `g` (§2.4, (14)). -/
 
-/-- A universal analysis commutes with negation for every prejacent exactly when it is truth at a
-selected world, so the scopelessness of §2.2 leaves no quantificational analysis but selection
-(§2.4). -/
+/-- A universal analysis commutes with negation for every prejacent iff it is truth at a selected
+world (§2.2, §2.4). -/
 theorem necessity_compl_eq_iff {f g : Background W} :
     (∀ p : W → Prop, necessity f g pᶜ = (necessity f g p)ᶜ) ↔
       ∃ σ : W → W, ∀ p : W → Prop, necessity f g p = p ∘ σ := by
@@ -196,8 +193,8 @@ theorem necessity_compl_eq_iff {f g : Background W} :
   obtain ⟨σ, hσ⟩ := ModalLogic.box_compl_eq_iff.1 h
   exact ⟨σ, fun p ↦ by rw [← ModalLogic.box_graph σ p, hσ]; rfl⟩
 
-/-- On a parameter whose best worlds hold an `A`-world and a non-`A`-world, universal *will*
-verifies neither *will A* nor *will not A*, so its scope with negation matters (§2.4). -/
+/-- If the best worlds include an `A`-world and a non-`A`-world, universal *will* verifies neither
+*will A* nor *will not A* (§2.4). -/
 theorem not_necessity_or_necessity_compl {f g : Background W} {v v' : W}
     (hv : v ∈ bestWorlds f g w) (hv' : v' ∈ bestWorlds f g w) (hA : v ∈ A) (hA' : v' ∉ A) :
     ¬ (necessity f g (· ∈ A) w ∨ necessity f g (· ∈ Aᶜ) w) := by
@@ -248,9 +245,8 @@ def warriorsCap : Set W := {.cw}
 /-- The proposition that Cynthia wears some cap, Warriors or Giants. -/
 def wearsCap : Set W := {.cw, .cg}
 
-/-- Whatever the selection function, *Cynthia will wear a Warriors cap* is true at the context
-whose world is the Warriors-cap world and false at the one whose world is the Giants-cap world,
-so while the future is open its truth value is indeterminate (§3, §6). -/
+/-- *Cynthia will wear a Warriors cap* is true at the Warriors-cap context and false at the
+Giants-cap context, so its truth value is indeterminate (§3, §6). -/
 theorem will_warriorsCap_indeterminate (s : SelectionFunction W) :
     .cw ∈ will s (frame.alternatives (.cw, 0)) warriorsCap ∧
       .cg ∉ will s (frame.alternatives (.cg, 0)) warriorsCap := by
@@ -298,8 +294,8 @@ theorem credence_necessity_warriorsCap :
   measure_necessity_eq_zero _ <| .of_forall fun _ h ↦ by
     simpa [warriorsCap] using h (show W.cg ∈ bestWorlds histBase ⊥ _ by simp)
 
-/-- On the universal reading *will not* and *not will* come apart, since at every world *Cynthia
-will wear a Warriors cap* and *Cynthia will not wear a Warriors cap* are both false (§2.4). -/
+/-- On the universal reading, *Cynthia will wear a Warriors cap* and *Cynthia will not wear a
+Warriors cap* are both false at every world (§2.4). -/
 theorem not_necessity_warriorsCap_or_compl (w : W) :
     ¬ (necessity histBase ⊥ (· ∈ warriorsCap) w ∨ necessity histBase ⊥ (· ∈ warriorsCapᶜ) w) :=
   not_necessity_or_necessity_compl (v := .cw) (v' := .cg) (by simp) (by simp)
@@ -317,9 +313,8 @@ theorem not_conditionalNecessity_wearsCap_or_compl (w : W) :
 
 The cap-conditional is (31) of §8.2. -/
 
-/-- Under any selection function, *if Cynthia wears a cap, she will wear a Warriors cap* is true
-at the Warriors-cap world, false at the Giants-cap world, and true at the no-cap world exactly
-when that world selects the Warriors-cap world (footnote 32). -/
+/-- *If Cynthia wears a cap, she will wear a Warriors cap* is true exactly at the Warriors-cap world
+and at a no-cap world selecting it (footnote 32). -/
 theorem mem_willIf_wearsCap_warriorsCap (s : SelectionFunction W) (w v : W) :
     v ∈ willIf s (frame.alternatives (w, 0)) wearsCap warriorsCap ↔
       v = .cw ∨ v = .cn ∧ s.sel .cn wearsCap = .cw := by

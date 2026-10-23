@@ -185,9 +185,8 @@ theorem _root_.OptimalityTheory.Tableau.optimal_eq_argmax_harmonyScore {C : Type
 
 /-! ### MaxEnt → OT limit -/
 
-/-- Scaling exponentially separated weights concentrates the MaxEnt distribution on the sole OT
-    winner of a ranking with violation bound `M`, which is the sole HG winner
-    (`Tableau.optimal_eq_argmax_harmonyScore`). -/
+/-- Scaling exponentially separated weights concentrates MaxEnt on the sole OT winner, which is the
+sole HG winner (`Tableau.optimal_eq_argmax_harmonyScore`). -/
 theorem maxent_ot_limit {C : Type*} [Fintype C] [MeasurableSpace C] [MeasurableSingletonClass C]
     (ranking : List (Constraint C)) (M : Nat) (hM : 0 < M) (c_opt : C)
     (hbound : ∀ c : C, ∀ con ∈ ranking, con c ≤ M)

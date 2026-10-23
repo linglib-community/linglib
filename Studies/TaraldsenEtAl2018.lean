@@ -92,8 +92,8 @@ def pluralPrefixes (L : RuleSet (LexicalEntry (Option NCFeature) String)) (base 
   exponents L [.cls base, .num] <|>
     (exponents L [.cls spec, .num]).bind fun outer ↦ (exponents L [.cls base]).map (outer ++ ·)
 
-/-- A plural has one prefix where an entry lexicalizes the Specifier on the singular's
-classifier, and otherwise a plural prefix stacked on the singular one (75). -/
+/-- A plural has a single prefix if an entry lexicalizes the Specifier on the singular's classifier,
+and otherwise stacks prefixes (75). -/
 theorem pluralPrefixes_eq (h : treeSpellout L (leaf (some .num)) = none) (base spec : ℕ) :
     pluralPrefixes L base spec =
       (((treeSpellout L (plTree base)).map fun x ↦ [x]) <|>
@@ -213,8 +213,7 @@ theorem xhosa_sharesClassifierN (g : Xhosa.Gender) :
     SharesClassifierN (xhosaSg g) (xhosaPl g) ↔ g ∈ [.genderA, .genderD, .genderE] := by
   cases g <;> decide
 
-/-- Xhosa merges the plural entry's classifier with the root, so even the genders B and C,
-whose plural classifier is no singular's, have the one prefix, *mi* and *ma* (82)–(83). -/
+/-- Every Xhosa plural, including genders B and C, has a single prefix ((82)–(83)). -/
 theorem xhosa_plurals :
     xhosaGenders.map (fun g ↦ pluralPrefixes xhosaPrefixes (xhosa g).plN (xhosa g).plN) =
       [some ["ba"], some ["mi"], some ["ma"], some ["zi"], some ["zi"]] := by
@@ -244,8 +243,7 @@ def rhonga : List ClassPair :=
 /-- The Changana and Rhonga class-prefix lexicon. -/
 def rhongaPrefixes : RuleSet (LexicalEntry (Option NCFeature) String) := lexicon rhonga
 
-/-- Classes 3, 5 and 9 stack, *mi-mu-twa* 'thorns', *ma-rhi-tu* 'words' and *ti-yi-n-dlu*
-'houses' (62), (78), and classes 1 and 7 have the one prefix of *va-nhu* and *swi-fambu*. -/
+/-- In Rhonga, classes 3, 5 and 9 stack prefixes and classes 1 and 7 have one ((62), (78)). -/
 theorem rhonga_plurals :
     rhonga.map (fun p ↦ pluralPrefixes rhongaPrefixes p.sgN p.plN) =
       [some ["va"], some ["mi", "mu"], some ["ma", "rhi"], some ["swi"], some ["ti", "yi"]] := by
@@ -268,9 +266,8 @@ theorem rhonga_stacking_iff_not_sharesClassifierN {p : ClassPair} (hp : p ∈ rh
 def shonaPrefixes : RuleSet (LexicalEntry (Option NCFeature) String) :=
   [⟨sgTree 4, "mi"⟩, ⟨plTree 6, "ma"⟩]
 
-/-- The double plural *ma-mi-sha* 'groups of villages' (84), (88) is derived from the entry
-(89). From the entry (87), *mi* on `[# N₄]`, it would be underivable, *mi* lexicalizing the
-Specifier by itself. -/
+/-- The double plural *ma-mi-sha* 'groups of villages' ((84), (88)) derives from the entry (89) but
+not from (87). -/
 theorem shona_double_plural :
     pluralPrefixes shonaPrefixes 4 6 = some ["ma", "mi"] ∧
       pluralPrefixes [⟨plTree 4, "mi"⟩, ⟨plTree 6, "ma"⟩] 4 6 = some ["mi"] := by

@@ -110,9 +110,8 @@ with the assertion and projects the presupposition. -/
 noncomputable def modify (P : E → SignType) (N : E → Prop) : E → SignType :=
   fun x ↦ (P x).meetWeak (SignType.ofProp (N x))
 
-/-- When the noun denotes the plural closure of the classifier's own sortal, the paper's (7c),
-the noun entails the presupposition, so the modified phrase is defined wherever the noun
-holds. -/
+/-- When the noun is the plural closure of the classifier's sortal (7c), the modified phrase is
+defined wherever the noun holds. -/
 theorem modify_sortal_ne_zero (c : Sortal W E) (n : W → ℕ) (w : W) {x : E}
     (h : AlgClosure (c w) x) : modify (c.apply n w) (AlgClosure (c w)) x ≠ 0 := by
   simp [modify, h]
@@ -134,10 +133,8 @@ theorem IsDown.unique {atomic : Sortal W E} {P : W → E → Prop} {n m : W → 
   obtain ⟨x, hx⟩ := hsurj w
   exact hx.symm.trans ((hm w x).mp ((hn w x).mpr hx))
 
-/-- A numeral-plus-classifier phrase has a type-`n` correlate relative to the classifier's
-sortal, the paper's (25), since on the plural closure of the sortal it is the property of having
-the numeral's number of sortal atoms. So ∩ applies in Japanese to *juu-ni-nin* and returns
-twelve. -/
+/-- On the plural closure of its sortal, a numeral-classifier phrase holds of exactly the sums with
+the numeral's number of atoms (25). -/
 theorem isDown_sortal (c : Sortal W E) (n : W → ℕ) :
     ∀ w x, AlgClosure (c w) x → (c.apply n w x = 1 ↔ atomCount c w x = n w) :=
   fun _ _ hx ↦ by simp [hx, up]
@@ -154,8 +151,8 @@ inductive PredicateOf (hasClassifiers : Prop) (atomic : Sortal W E) (n : W → �
       PredicateOf hasClassifiers atomic n
         fun w x ↦ c.apply n w x = 1
 
-/-- With classifiers in the lexicon every predicate use of a numeral goes through a
-classifier and carries its sortal presupposition, the contrast of the paper's (15) and (16). -/
+/-- With classifiers in the lexicon, every predicate use of a numeral goes through a classifier and
+its sortal presupposition ((15), (16)). -/
 theorem predicateOf_iff_of_hasClassifiers {hasClassifiers : Prop} (h : hasClassifiers)
     (atomic : Sortal W E) (n : W → ℕ) (P : W → E → Prop) :
     PredicateOf hasClassifiers atomic n P ↔

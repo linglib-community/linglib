@@ -204,9 +204,7 @@ theorem gen_proportional {β : Type*} [Fintype β] [MeasurableSpace β] [Measura
 
 /-! ### Homogeneity is degenerate unrestricted (definition 4, p. 82) -/
 
-/-- Salmon's two trivial cases are the only homogeneous reference classes: partitioning by
-the scope itself separates any mixed one (p. 82). Hence definition 5 restricts the
-partitions to the salient ones. -/
+/-- Salmon's two trivial cases are the only homogeneous reference classes (p. 82). -/
 theorem homogeneous_iff (hR : (domain.filter ψ).Nonempty) :
     Homogeneous domain ψ φ ↔
       no (fun x ↦ x ∈ domain ∧ ψ x) φ ∨ every (fun x ↦ x ∈ domain ∧ ψ x) φ := by

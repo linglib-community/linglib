@@ -193,10 +193,8 @@ theorem prepositive_bisyndetic_emphatic :
       emphatic? d = some true := by
   decide
 
-/-- The comitative-sourced coordinators of the rows have the patterns of a harmonic comitative
-source, A co-B and A-co B, except Tauya *-sou*, (85b), doubled on both conjuncts as §5.1
-describes, and Amele *ca*, (81), and Huallaga Quechua *-wan*, (86), postpositive on the second
-conjunct, A B-co, the pattern of a postpositional comitative after its noun. -/
+/-- Comitative-sourced coordinators show harmonic comitative patterns, except Tauya *-sou* (85b),
+doubled (§5.1), and Amele *ca* (81) and Huallaga Quechua *-wan* (86). -/
 theorem comitative_patterns : ∀ d ∈ Examples.all, d.feature? "source" = some "comitative" →
     ∀ p ∈ pattern? d,
       (∃ a m, (DiachronicSource.comitative a m).Harmonic ∧
@@ -299,9 +297,8 @@ theorem emphatic_iff_correlative : ∀ a ∈ attestations, a.datum.nat? "coordin
     ∀ e ∈ emphatic? a.datum, (e = true ↔ a.coordinators.IsCorrelative) := by
   decide
 
-/-- Normal bisyndesis is postpositive with one coordinator, §2.1 and §1.3. A construction whose
-coordinators are not correlative and mark both coordinands marks them after them, so that by
-`emphatic_iff_correlative` prepositive bisyndesis is emphatic, as [stassen-2000] finds. -/
+/-- Non-correlative bisyndesis is postpositive (§2.1, §1.3), so prepositive bisyndesis is emphatic,
+as [stassen-2000] finds. -/
 theorem normal_bisyndetic_postpositive : ∀ a ∈ attestations, ¬ a.coordinators.IsCorrelative →
     ∀ p ∈ pattern? a.datum, p.syndesis = 2 → p = (some .after, some .after) := by
   decide

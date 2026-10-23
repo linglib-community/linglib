@@ -96,8 +96,7 @@ example, as in none of the sample (p. 15). -/
 theorem coAB_not_mem_patterns : ∀ d ∈ Examples.all, (some .before, none) ∉ patterns d := by
   decide
 
-/-- The overt strategies other than medial monosyndeton postpose or suffix their connectives
-(p. 12): in an example without a medial connective, no coordinator precedes its noun phrase. -/
+/-- In an example without a medial connective, no coordinator precedes its noun phrase (p. 12). -/
 theorem postpositive_of_not_medial : ∀ d ∈ Examples.all, patterns d ≠ medial →
     ∀ p ∈ patterns d, p.1 ≠ some .before ∧ p.2 ≠ some .before := by
   decide

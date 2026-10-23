@@ -67,9 +67,7 @@ theorem hope_question_iff_significance {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : 
     degreeComparison μ θ C x Q w ↔ Degree.ThresholdSignificant (μ x w) θ C :=
   degreeComparison_iff_thresholdSignificant μ θ C hCQ x w
 
-/-- *Hope* with a declarative is not trivial (35). Threshold Significance over the focus
-alternatives does not settle whether the subject prefers the one proposition of the complement,
-as a model with a preferred alternative and a dispreferred complement shows. -/
+/-- *Hope* with a declarative is not trivial (35). -/
 theorem exists_significance_not_hope_declarative :
     ∃ (μ : Unit → Bool → Set Bool → ℝ) (θ : Set (Set Bool) → ℝ) (C : Set (Set Bool))
       (A : Set Bool), A ∈ C ∧ Degree.ThresholdSignificant (μ () true) θ C ∧

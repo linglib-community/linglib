@@ -170,8 +170,7 @@ theorem consistent (hg : holds N p.general ∅) (he : holds N p.exception ∅) :
     Consistent N [p.general, p.exception] :=
   consistent_pair hg he p.abnormal
 
-/-- §5.2: the reverse order is inconsistent once there is an exception: it is salient when the
-general is evaluated, satisfies the general's restrictor, and contradicts its matrix. -/
+/-- Once there is an exception, the reverse order is inconsistent (§5.2). -/
 theorem reverse_inconsistent (he : holds N p.exception ∅)
     (hne : (N.normal () p.exception.restrictor).Nonempty) :
     ¬ Consistent N [p.exception, p.general] := by
@@ -277,8 +276,7 @@ def lionsHaveManes : GenericSentence Lion := ⟨{.male}, {.male}⟩
 some way. -/
 def lionsGiveBirth : GenericSentence Lion := ⟨{.female}, {.female}⟩
 
-/-- (29): the mixed sequence is consistent in both orders, every instance of each restrictor
-being normal, since each generic's restrictor excludes the lions the other makes salient. -/
+/-- The mixed sequence (29) is consistent in both orders. -/
 theorem lions_both_orders :
     Consistent ⊤ [lionsHaveManes, lionsGiveBirth] ∧ Consistent ⊤ [lionsGiveBirth, lionsHaveManes] :=
   consistent_both_orders ((holds_empty _ _).2 (Normality.mem_gen_top.2 subset_rfl))
@@ -301,9 +299,8 @@ theorem sobelState_eq : sobelState = ⟨[⟨p ∩ q, rᶜ⟩, ⟨p, r⟩], Finse
 theorem reverseState_eq : reverseState = ⟨[⟨p, r⟩, ⟨p ∩ q, rᶜ⟩], Finset.univ⟩ := by
   decide +kernel
 
-/-- Appendix A: neither order crashes and both reach the same frame, since a presented frame
-does not depend on the order of its rules, so Veltman's theory predicts the reverse Sobel
-sequence consistent. -/
+/-- In Veltman's theory neither order crashes and both reach the same frame, so the reverse Sobel
+sequence is consistent (Appendix A). -/
 theorem veltman_reverse_consistent :
     sobelState ≠ State.absurd ∧ reverseState ≠ State.absurd ∧
       sobelState.frame = reverseState.frame :=

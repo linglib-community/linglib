@@ -379,16 +379,15 @@ def hebrewTaqtil : Pattern :=
   { template := [.C, .C, .V, .C], consonantal := [3], category := .noun, vocalism := ["i"],
     vocLines := [⟨.vocalism, 0, 2⟩], pre := ["ta"] }
 
-/-- √klt fills CaCaC[+c] radical by radical, and the biradical √kl satisfies it by spreading its
-final l, QaTaT and never QaQaT, with no misalignment ((3a–b), (1)). -/
+/-- √klt fills CaCaC[+c] radical by radical and √kl by spreading its final l, both without
+misalignment ((3a–b), (1)). -/
 theorem klt_kl_satisfy :
     (derive hebrewPst klt).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst klt) ∧
     (derive hebrewPst kl).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst kl) ∧
     ⟨.root, 1, 4⟩ ∈ (derive hebrewPst kl).associations := by
   decide
 
-/-- For √klj the [+c] final slot stays vacant; template satisfaction by spreading would yield
-[kalal] with the nonfinal l template-final, which *Misalignment rules out ((4), (6)). -/
+/-- For √klj the final [+c] slot stays vacant, since spreading would misalign the l ((4), (6)). -/
 theorem klj_spread_misaligned :
     (derive hebrewPst klj).unfilledCSlots = [4] ∧
     ¬ Misaligned (derive hebrewPst klj) ∧
@@ -402,9 +401,8 @@ theorem klj_qtila_qatul :
     (derive hebrewQatul klj).allCSlotsFilled := by
   decide
 
-/-- √dmj leaves the [+c] final slot of taQTiL vacant and spreading would misalign; merged with the
-feminine morph, whose t associates from the right, the template is satisfied without misalignment
-(10). -/
+/-- √dmj satisfies taQTiL through the feminine morph's t rather than by misaligning spreading (10).
+-/
 theorem dmj_taqtil :
     (associate hebrewTaqtil dmj).unfilledCSlots = [3] ∧
     Misaligned ((associate hebrewTaqtil dmj).spread .root) ∧
@@ -435,8 +433,8 @@ def amharicInf : Pattern :=
     vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 3⟩], pre := ["mä"], joinsGlide := true }
 
-/-- In the PFV the barred j of √fdj joins d at the geminate slot and the final slot stays vacant,
-with no misalignment; spreading d there would misalign (7). -/
+/-- In the PFV √fdj leaves its final slot vacant without misalignment, where spreading d would
+misalign (7). -/
 theorem fdj_pfv :
     ⟨.root, 2, 2⟩ ∈ (derive amharicPfv fdj).associations ∧
     (derive amharicPfv fdj).unfilledCSlots = [4] ∧
@@ -460,9 +458,8 @@ theorem fdj_grnd :
     IsNonCrossing (melodyLinks (derive amharicGrnd fdj) : SetRel ℕ ℕ) := by
   decide
 
-/-- All three INF derivations leave a C-slot vacant, but the intruder associates only in (13a),
-where the vacancy is final; in (13b–c) its line to the medial vacancy would cross the final
-radical's, so it floats, and no representation is misaligned. -/
+/-- Each INF derivation leaves a C-slot vacant, and the intruder fills it only when it is final,
+(13a) against (13b–c). -/
 theorem inf_intrusion :
     (associate amharicInf sma).unfilledCSlots = [4] ∧
     (associate amharicInf sam).unfilledCSlots = [2] ∧
@@ -595,8 +592,7 @@ def nounRows : List NounRow := Examples.all.filterMap NounRow.ofDatum
 /-- The surface form the pipeline derives for a row, where its cell has a pattern. -/
 def Row.surface? (r : Row) : Option (List Char) := r.cell.pattern?.map (surfaceChars · r.root)
 
-/-- The pipeline reproduces every cell of (3), (5), (12) that has a pattern, except the PFV
-of √sma, where the final radical merges with the suffix vowel. -/
+/-- The derivation reproduces every patterned cell of (3), (5), (12) except the PFV of √sma. -/
 theorem rows_surface :
     ∀ r ∈ rows, r.cell.pattern?.isSome → (r.root, r.cell) ≠ (sma, .pfv) →
       r.surface? = some r.form.toList := by
@@ -619,9 +615,8 @@ def BarredFinal (r : ConsonantalRoot String) : Prop :=
 instance (r : ConsonantalRoot String) : Decidable (BarredFinal r) := by
   unfold BarredFinal; split <;> infer_instance
 
-/-- Across the Amharic paradigms (5) and (12), a nonradical [t] occurs exactly in the nominal
-cells of the roots whose final radical is barred — the distribution [broselow-1984]'s default
-consonant leaves unexplained (§2.2) and the suffix analysis derives (§4.2). -/
+/-- In Amharic (5) and (12), a nonradical [t] occurs exactly in the nominal cells of roots with a
+barred final radical (§2.2, §4.2, against [broselow-1984]). -/
 theorem intruder_distribution :
     ∀ r ∈ rows, r.lang = .amharic →
       ('t' ∈ r.form.toList ∧ "t" ∉ r.root.segments ↔ r.cell.IsNominal ∧ BarredFinal r.root) := by

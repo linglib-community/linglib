@@ -292,8 +292,8 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 def kaqchikelRows : List Row :=
   (Examples.all.filter (·.language = "kaqc1270")).filterMap Row.ofDatum
 
-/-- The configuration of (44): in the clause of every row, an extraction is too close exactly when
-the subject moves from Spec,TP to the layer immediately above TP. -/
+/-- In every row's clause, an extraction is too close exactly when the subject moves from Spec,TP to
+the layer immediately above TP (44). -/
 theorem extractionTooClose_iff :
     ∀ r ∈ rows, ∀ c ∈ candidatesOf r.input.transitive r.grammar.objectOnly,
       ∀ x ∈ r.input.extracted,
@@ -307,8 +307,8 @@ theorem rows_optimal :
       ∃ c ∈ (r.grammar.tableau r.input).optimal, c.form r.input.args = r.form := by
   decide
 
-/-- The generalization of §3. With at most one participant argument, AF is optimal in Kaqchikel
-exactly when the subject moves to the layer immediately above TP. -/
+/-- With at most one participant argument, AF is optimal in Kaqchikel exactly when the subject moves
+to the layer immediately above TP (§3). -/
 theorem af_iff_immediately_preverbal :
     ∀ r ∈ kaqchikelRows, ¬ (r.input.subj.IsSAP ∧ r.input.obj.IsSAP) →
       ((∃ c ∈ (kaqchikel.tableau r.input).optimal, c.AFSuffix r.input.args) ↔
@@ -320,15 +320,13 @@ theorem af_iff_immediately_preverbal :
 /-- Subject extraction to Spec,CP in a simple transitive clause. -/
 def subjectExtraction (s o : Person) : Input := ⟨true, [.cP], some (.subj, 0), s, o⟩
 
-/-- Without extraction (§5.1), cross-referencing selects the derivation that moves the subject to
-Spec,TP; this is also what an evaluation at TP would select before the anti-locality violation
-of a later extraction is visible, the argument of §5.3 for evaluation at the clause. -/
+/-- Without extraction, the optimal derivation moves the subject to Spec,TP (§5.1, §5.3). -/
 theorem no_extraction_full (s o : Person) :
     (kaqchikel.tableau ⟨true, [.cP], none, s, o⟩).optimal = {⟨true, .obj⟩} := by
   cases s <;> cases o <;> decide
 
-/-- Under subject extraction with two third-person arguments (§5.1), both AF derivations beat
-the derivation through Spec,TP, and the two constraints do not decide the Set B target. -/
+/-- Under subject extraction with two third-person arguments, both AF derivations are optimal
+(§5.1). -/
 theorem subject_extraction_af :
     (kaqchikel.tableau (subjectExtraction .third .third)).optimal =
       {⟨false, .subj⟩, ⟨false, .obj⟩} := by
@@ -406,12 +404,8 @@ instance : DecidablePred Row.DistantSubject := fun r ↦
   inferInstanceAs (Decidable (∃ e ∈ r.input.extracted, _))
 instance : DecidablePred Row.TwoParticipants := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The last-resort model merges the Case-assigning AF Voice only where the regular derivation
-would crash, so it sees neither person nor what lies between the extracted subject and the verb.
-It judges a Kaqchikel example correctly exactly when the subject is not extracted past an
-intervening layer, the locality such Case-based accounts miss (fn. 47), and the arguments are not
-both participants, the exception for which a last resort would need a last resort of its own
-(§5.3, (81)); the optimality grammar fits every example (`rows_optimal`). -/
+/-- The last-resort model fits a Kaqchikel example exactly when its subject crosses no intervening
+layer and its arguments are not both participants (fn. 47, §5.3, (81)). -/
 theorem lastResort_matches_iff : ∀ r ∈ kaqchikelRows,
     ((r.judgment = .acceptable ↔ CoonMateoPedroPreminger2014.Converges r.lastResortClause) ↔
       ¬ r.DistantSubject ∧ ¬ r.TwoParticipants) := by

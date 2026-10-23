@@ -128,8 +128,8 @@ def pf (v : Verb) (σ : Finset Feat) : String × Finset Feat :=
 /-- The form `kallaðir` of (4a) is derived by (6) as `kall` + `-a` + `-ði` + `-r`. -/
 theorem pf_kalla : pf kalla {ind, pst, p2, sg} = ("kallaðir", {ind, pst, p2, sg}) := by decide
 
-/-- The bare imperative `gríp` of (4c) arises as the IFD fires in Blocks I and II and the zero
-imperative exponent preempts `-r` in Block III. -/
+/-- The bare imperative `gríp` of (4c) arises as the zero imperative exponent preempts `-r` in Block
+III. -/
 theorem pf_gripa_imp : pf gripa {imp, p2, sg} = ("gríp", {imp, p2, sg}) := by decide
 
 /-- The form `flaug` of (4d) is the stem of the narrowest stem-choice rule for FLJÚGA, followed

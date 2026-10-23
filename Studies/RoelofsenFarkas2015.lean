@@ -69,9 +69,8 @@ polarity (70), (71). -/
 def RelativePresup (r : Polarity) (H ant : Set (Polarity × Set W)) : Prop :=
   ∃ β, ant = {β} ∧ H = {r • β}
 
-/-- An absolute feature `s` and a relative feature `r` together presuppose that the antecedent
-highlights a single possibility, of polarity `r * s`, and that the prejacent expresses its image
-under `r`, highlighted with polarity `s` (72)–(75). -/
+/-- An absolute feature `s` and a relative feature `r` presuppose a single antecedent possibility of
+polarity `r * s` and a prejacent expressing its image under `r` ((72)–(75)). -/
 theorem absolutePresup_and_relativePresup_iff {r s : Polarity} {q : Question W}
     {H ant : Set (Polarity × Set W)} :
     AbsolutePresup s q H ∧ RelativePresup r H ant ↔
@@ -103,10 +102,8 @@ theorem proposition_query_even_eq_odd (hodd : v o = (v e)ᶜ) :
     (query (atom e)).proposition v = (query (atom o)).proposition v := by
   simp only [proposition, Question.query_ofSet, hodd, Question.polar_compl]
 
-/-- A response of polarity `s` to a polar question of polarity `t` on `a` expresses `s • v a`,
-with the relative feature `s / t`: *yes, it is* conveys the even answer after *Is it even?* and
-the odd one after *Is it odd?*, and *no, it isn't* conveys that the number is not odd after *Is it
-odd?* and that it is not even after *Is it not even?* (49), (50), (52), (53). -/
+/-- A response of polarity `s` to a polar question of polarity `t` on `a` expresses `s • v a` with
+relative feature `s / t` ((49), (50), (52), (53)). -/
 theorem presup_query_ofPolarity {r s t : Polarity} (a : A) {q : Question W}
     {H : Set (Polarity × Set W)}
     (h : AbsolutePresup s q H ∧ RelativePresup r H ((query (ofPolarity t a)).highlights v)) :

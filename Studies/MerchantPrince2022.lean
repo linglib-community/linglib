@@ -179,9 +179,7 @@ theorem irreflexive_htcLT_of_forall {κ : Type*} (g : κ → Ranking ι n → �
   exact ((Setoid.ker_def.1 (hg j hrμ)).trans_lt hj |>.trans_le
     ((Setoid.ker_def.1 (hg j hνb)).le.trans (hmono j))).false
 
-/-- A GEPO can be instantiated iff it is acyclic, the **instantiability of the GEPO**
-(Lemma (280)). The number of a leg's predecessors under the hypertransitive closure instantiates an
-acyclic GEPO. -/
+/-- A GEPO can be instantiated iff it is acyclic (Lemma (280)). -/
 theorem exists_instantiates_iff [Fintype ι] [DecidableEq ι] :
     (∃ f, Instantiates π c f) ↔ ∀ r, ¬ HtcLT π c r r := by
   classical
@@ -264,10 +262,9 @@ private theorem eq_of_forall_apply_eq (hf : Instantiates π c (f c)) (l : Rankin
     exact h₃.trans (ih (t + 1) (by omega) (by omega) ν'
       (apply_eq_of_lt_succ htn rfl h₁ fun j hj ↦ (h₂ j hj).trans (hν j hj)))
 
-/-- If every constraint's GEPO is instantiated, then the legs whose rows agree with the row of `l`
-on its top `k` constraints are those whose blocks meet the legs that agree with `l` on its top `k`
-positions, and every other leg's row is lexicographically above `l`'s within the top `k`. This is
-Lemma (287), proved here by bubbling. -/
+/-- Under instantiating functions, within the top `k` constraints of `l` every leg's row either
+matches that of `l`, via a block agreeing with `l`, or lies lexicographically above it (Lemma
+(287)). -/
 private theorem filtration (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι n) :
     ∀ k ≤ n, ∀ μ : Ranking ι n,
       (∃ j : Fin n, j.val < k ∧ (∀ j' < j, f (l j') μ = f (l j') l) ∧ f (l j) l < f (l j) μ) ∨
@@ -314,8 +311,8 @@ private theorem filtration (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι
       rw [hc]
       exact lt_of_le_of_ne ((hl.symm.trans_le h₃.1).trans_eq hμ.symm) (Ne.symm hfc)
 
-/-- Under instantiating functions, every leg outside a leg's own block has a row strictly above
-the leg's row, read in the leg's rank order (Lemma (287)). -/
+/-- Under instantiating functions, every leg outside a leg's block has a strictly higher row in that
+leg's rank order (Lemma (287)). -/
 theorem toLex_lt_of_not_rel (hf : ∀ c, Instantiates π c (f c)) (l : Ranking ι n)
     {μ : Ranking ι n} (h : ¬ π l μ) :
     toLex ((fun c ↦ f c l) ∘ l) < toLex ((fun c ↦ f c μ) ∘ l) := by
@@ -358,9 +355,7 @@ private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O
   obtain ⟨h₁, h₂, -⟩ := Pi.eq_and_lt_and_gt_of_toLex_comp_swap r hcov hlt hlt'
   exact ⟨x, hx, y, hy, h₁, h₂⟩
 
-/-- **A typology has an acyclic GMOAT** (the left-to-right half of Theorem (290)). The winners'
-violations of `c` at each input are constant on GEPO-equivalent legs and weakly increase across
-every border pair, strictly at an input whose winners the transposition changes. -/
+/-- A typology has an acyclic GMOAT (the left-to-right half of Theorem (290)). -/
 theorem IsTypology.isAcyclic (h : IsTypology π) : IsAcyclic π := by
   obtain ⟨I, O, S, rfl⟩ := h
   intro c
@@ -398,9 +393,7 @@ theorem IsTypology.isAcyclic (h : IsTypology π) : IsAcyclic π := by
 
 variable [Fintype ι] [DecidableEq ι]
 
-/-- An instantiated GMOAT is a typology (Theorem (288)). The violation tableau with one candidate
-per leg, which violates `c` as often as the instantiating function of `c` counts, has typology
-`π`. -/
+/-- An instantiated GMOAT is a typology (Theorem (288)). -/
 theorem isTypology_of_instantiates (hf : ∀ c, Instantiates π c (f c)) : IsTypology π := by
   let S : ConstraintSystem PUnit.{u + 1} (Ranking ι n) ι := ⟨fun _ ↦ Finset.univ, fun c x ↦ f c x.2⟩
   have hrow : ∀ {μ ν : Ranking ι n}, π μ ν → ∀ c, f c μ = f c ν := fun h c ↦
@@ -457,8 +450,8 @@ def partition164 : Setoid (Ranking Con 3) := Setoid.ker (· ∈ blockO)
 theorem partition164_iff {r s : Ranking Con 3} : partition164 r s ↔ (r ∈ blockO ↔ s ∈ blockO) :=
   Setoid.ker_def.trans eq_iff_iff
 
-/-- The GEPO of `X` in (164) has a cycle, since `O <π.bp.X B` by the border point pair
-`{XZY, ZXY}` and `B <π.bp.X O` by `{ZXY, ZYX}`. -/
+/-- The GEPO of `X` in (164) has a cycle through the border point pairs `{XZY, ZXY}` and `{ZXY,
+ZYX}`. -/
 theorem htcLT_X_cycle : HtcLT partition164 .X (leg .X .Z .Y) (leg .X .Z .Y) := by
   have h₁ : BorderLT partition164 .X (leg .X .Z .Y) (leg .Z .X .Y) :=
     ⟨0, by decide, by decide, by decide, by rw [partition164_iff]; decide⟩

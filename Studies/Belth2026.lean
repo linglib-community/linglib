@@ -294,10 +294,8 @@ def sibTier : List Seg := alphabet.filter Seg.sib
 /-- The surface sibilants the right-context rules leave untouched. -/
 def rightUntouched : List Seg := [.sh, .sh, .sh, .s, .s, .s]
 
-/-- The paper's trace (21), (30), (32) and (33) is three iterations over the tiers Σ, [+cons]
-and [+sib], the left rule chosen each time with 1, 4 and 7 correct applications out of 8, 8
-and 7, the second iteration deleting `n`, `k` and `g`, and the third leaving only *ut-S*
-untouched, whose [s] is the default. -/
+/-- The learner's trace (21), (30), (32), (33) takes three iterations, over the tiers Σ, [+cons] and
+[+sib]. -/
 theorem iterations : problem.iterate .agree problem.alphabet.length problem.alphabet [] =
     [{ tier := alphabet, contextsL := [.u, .a, .o, .i, .t], contextsR := [.i],
        left := ⟨8, 1, [.u, .a, .o, .i], []⟩, right := ⟨2, 0, [.i], rightUntouched⟩,
@@ -432,9 +430,8 @@ def latinSR (e : Datum) : List LatSeg := latinSegments e.primaryText
 /-- The Latin rows, (53). -/
 def latinRows : List Datum := Examples.all.filter (·.language = "lati1261")
 
-/-- Rule (54) derives every form of (53) but *lunaris*, with dissimilation from a
-tier-adjacent stem `l` (53b) and its blocking by an intervening `r` (53c) or non-coronal
-consonant (53d). -/
+/-- Rule (54) derives every form of (53) but *lunaris*, including dissimilation (53b) and its
+blocking by `r` (53c) or a non-coronal (53d). -/
 theorem latin_rows : ∀ e ∈ latinRows, e.id ≠ "belth2026_53b2" →
     latinDissimRule.apply (latinUR e) = latinSR e := by
   decide
@@ -465,9 +462,8 @@ def segments (cs : List Char) : List Segment := cs.filterMap ofChar
 /-- The underlying form of a stem with the essive -nA. -/
 def ur (form : String) : List Segment := segments (stem form) ++ [n, A]
 
-/-- Rule (52) is the search-and-copy reading of the fragment's harmony, whose tier excludes
-consonants and the neutral vowels and whose Elsewhere default is `[−back]`; it derives the
-four forms of (51). -/
+/-- Rule (52), the search-and-copy reading of the fragment's harmony, derives the four forms of
+(51). -/
 theorem rows : ∀ f ∈ forms Examples.ex_51,
     palatalHarmony.searchCopy.apply (ur f) = segments f.toList := by
   decide
@@ -501,8 +497,8 @@ def ur (form : String) : List Segment :=
   | [] => []
   | stem :: affixes => stem.filterMap ofChar ++ affixes.flatMap (·.filterMap ofAffixChar)
 
-/-- Rule (49a), backness and rounding from the tier-preceding vowel, is the fragment's two
-harmonies applied in turn; its surface forms derive the forms of (46) and (47). -/
+/-- Rule (49a) is the fragment's two harmonies applied in turn and derives the forms of (46) and
+(47). -/
 theorem rows : ∀ e ∈ [Examples.ex_46, Examples.ex_47], ∀ f ∈ forms e,
     surface (ur f) = segments f := by
   decide +kernel

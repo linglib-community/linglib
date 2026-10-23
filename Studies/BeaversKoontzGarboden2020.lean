@@ -103,9 +103,8 @@ def typology : Finset Root.Kinds :=
   {propertyConcept, pureResult, causativeResult, pureManner, {.state, .manner},
    {.state, .manner, .result}, fullSpec}
 
-/-- The typology (12) is exhaustive, since the signatures respecting the collocational
-restrictions are its seven rows and `∅`, the roots positively specified for no feature that the
-book sets aside (p. 227). -/
+/-- The signatures respecting the collocational restrictions are exactly `∅` and the seven rows of
+the typology (12) (p. 227). -/
 theorem wellFormed_iff_mem_typology :
     ∀ s : Root.Kinds, s.WellFormed ↔ s = ∅ ∨ s ∈ typology := by decide
 
@@ -114,10 +113,8 @@ def attestedCells : Finset (Root.Kinds × Root.Position) :=
   {(propertyConcept, .complement), (pureResult, .complement), (causativeResult, .complement),
    (pureManner, .adjoined), (fullSpec, .adjoined), (fullSpec, .complement)}
 
-/-- The book's account of the empty cells of (12) (pp. 229–230): on markedness grounds an
-adjoined root describes a manner and a complement root a state, and on naturalness grounds a
-root describing a manner and a state also entails the causation that relates them. These
-carve out exactly the filled cells. -/
+/-- The filled cells of (12) are those where an adjoined root is a manner, a complement root a
+state, and manner with state entails cause (pp. 229–230). -/
 theorem mem_attestedCells_iff : ∀ (s : Root.Kinds) (p : Root.Position),
     (s, p) ∈ attestedCells ↔ s ∈ typology ∧ (p = .adjoined → .manner ∈ s) ∧
       (p = .complement → .state ∈ s) ∧ (.manner ∈ s → .state ∈ s → .cause ∈ s) := by
@@ -184,10 +181,8 @@ open ArgumentStructure EventStructure Template
 
 variable {σ : Eventuality}
 
-/-- The attested rows of (12) are the signatures of the templates of the basic inventory, the
-state, the activity, the achievement and the two accomplishments: as (13) and the text after it
-show (p. 231), √blossom has the templatic meaning of the inchoative, √crack of the causative and
-√drown of the resultative. -/
+/-- The attested rows of (12) are the signatures of the state, activity, achievement and two
+accomplishment templates ((13), p. 231). -/
 theorem attestedRows_eq_kinds_templates :
     attestedCells.image Prod.fst =
       {state.kinds, act.kinds, achievement.kinds, causative.kinds, accomplishment.kinds} := by
@@ -197,8 +192,8 @@ theorem kinds_ne_of_cause_not_mem {t : Template σ} {s : Root.Kinds} (hm : .mann
     (hs : .state ∈ s) (hc : .cause ∉ s) : t.kinds ≠ s := by
   rintro rfl; exact hc (hasCause_of_mem_kinds hm hs)
 
-/-- The two rows of (12) that describe a manner and a state without a cause are the signature
-of no template, as the book finds no event template that would relate the two (p. 230). -/
+/-- The two manner-and-state rows of (12) without a cause are the signature of no template (p. 230).
+-/
 theorem kinds_ne_emptyRows (t : Template σ) :
     t.kinds ≠ {.state, .manner} ∧ t.kinds ≠ {.state, .manner, .result} :=
   ⟨kinds_ne_of_cause_not_mem (by decide) (by decide) (by decide),

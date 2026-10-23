@@ -184,9 +184,8 @@ theorem speaker_prefers_a_at_onlyA_exh {α : ℝ} (hα : 0 < α) :
       (speaker υ .exhaustified α .onlyA).real {.a} :=
   speaker_uniformOn_dirac_real_singleton_lt_of_card_lt _ hα (by decide) (by decide) (by decide)
 
-/-- Hearing *or* at the paper's α = 100, the listener ranks each free-choice state, Only One
-and Any Number (the paper's 0.5 each), above each of Only A, Only B, and Only Both (each ≈ 0).
-This derives free choice (Table 5). -/
+/-- Hearing *or* at α = 100, the listener ranks each free-choice state above each of Only A, Only B
+and Only Both (Table 5). -/
 theorem fci_derived :
     ∀ w ∈ ({.onlyA, .onlyB, .onlyBoth} : Finset FCState),
       ∀ w' ∈ ({.onlyOne, .anyNumber} : Finset FCState),
@@ -254,10 +253,8 @@ theorem jointPriorB_real_singleton (p : FCState × Interp) :
     jointPriorB.real {p} = biasedWeight p.1 := by
   rw [measureReal_def, jointPriorB_singleton, ENNReal.toReal_natCast]
 
-/-- Exclusivity tracks the prior (Table 6). With 75% of the prior on Any Number, the listener
-hearing *or* ranks Any Number above every other state at every rationality, since under the
-exhaustified function *or* is produced there with certainty and no other state has a comparable
-prior. -/
+/-- With 75% of the prior on Any Number, the listener hearing *or* ranks Any Number above every
+other state at every rationality (Table 6). -/
 theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .anyNumber) :
     (listenerB α .or_).fst.real {w} < (listenerB α .or_).fst.real {.anyNumber} := by
   have hμ : priorB {.anyNumber} ≠ 0 := by rw [priorB_singleton]; simp [biasedWeight]
@@ -345,9 +342,8 @@ noncomputable abbrev negListener (α : ℝ) : Kernel NegUtterance (NegState × I
     (RSA.listener (uniformOn Set.univ) (truthful fun u ↦ (negSem p.2 u : Set NegState)))
     Measure.dirac p.1
 
-/-- Hearing *you may not take an apple or a pear*, the listener assigns no mass to any state
-other than Neither, in particular none to Only A and Only B, where a free-choice reading of the
-negated disjunction would be true. There is no free choice under negation (Table 9). -/
+/-- Hearing *you may not take an apple or a pear*, the listener assigns no mass to any state but
+Neither, so there is no free choice under negation (Table 9). -/
 theorem no_fci_under_negation {α : ℝ} (hα : 0 < α) {p : NegState × Interp}
     (hp : p.1 ≠ .neither) : negListener α .notOr {p} = 0 :=
   listener_apply_singleton_eq_zero (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _

@@ -296,9 +296,8 @@ theorem anticipatory_rows :
       (anticipatory (ur e)).map sibilantClass = (sr e).map sibilantClass := by
   decide
 
-/-- The book qualifies the account in section 3.1.2. The s-perfective (12) and s-destruct (14)
-prefixes assimilate the following first-person prefix perseveratively, which the anticipatory
-map mispredicts. -/
+/-- The s-perfective (12) and s-destruct (14) prefixes assimilate perseveratively, which the
+anticipatory map mispredicts (section 3.1.2). -/
 theorem perseveratory_rows :
     ∀ e ∈ Examples.all, e.feature? "directionality" = some "perseveratory" →
       (anticipatory (ur e)).map sibilantClass ≠ (sr e).map sibilantClass := by

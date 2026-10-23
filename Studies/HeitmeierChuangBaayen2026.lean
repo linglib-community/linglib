@@ -82,9 +82,8 @@ theorem not_exists_paradigm_eq_of_not_regular {f : ParadigmSystem Lexeme Cell (F
 
 /-! ### Interpolation -/
 
-/-- Over word-specific, linearly independent embeddings any form table is the paradigm of some
-linear mapping, irregulars included, which is the irregular-linear cell of Table 16.2 and the
-English past tense on empirical embeddings (§12.9). -/
+/-- Over linearly independent word-specific embeddings, any form table is the paradigm of some
+linear mapping (Table 16.2, §12.9). -/
 theorem exists_paradigm_eq_of_linearIndependent {s : ParadigmSystem Lexeme Cell (MeaningVector d)}
     (hs : LinearIndependent ℝ (Function.uncurry s))
     (f : ParadigmSystem Lexeme Cell (FormVector n)) :
@@ -93,9 +92,8 @@ theorem exists_paradigm_eq_of_linearIndependent {s : ParadigmSystem Lexeme Cell 
   obtain ⟨G, rfl⟩ := toLinearMapRight'.surjective G
   exact ⟨G, funext fun l ↦ funext fun c ↦ hG (l, c)⟩
 
-/-- When the lexeme and inflectional-function vectors are jointly linearly independent, a table
-is the paradigm of some linear mapping over imputed semantics iff it is analogically regular,
-so for a regularized system linearity and regularity are the same constraint (§16.6). -/
+/-- If the lexeme and inflectional-function vectors are jointly linearly independent, a table is a
+linear paradigm over imputed semantics iff it is analogically regular (§16.6). -/
 theorem exists_paradigm_imputed_eq_iff (hind : LinearIndependent ℝ (Sum.elim σ ε))
     (f : ParadigmSystem Lexeme Cell (FormVector n)) :
     (∃ G : Matrix (Fin d) (Fin n) ℝ, paradigm G (imputed σ ε) = f) ↔
@@ -159,8 +157,8 @@ theorem sub_vecMul_update_smul_one (x : MeaningVector d) (y : FormVector n) :
   ext j
   simp [mul_comm]
 
-/-- "The next predicted outcome from the same input vector is closer to the target than the
-previous one" (§6.2) exactly when `η * x ⬝ᵥ x` lies strictly between `0` and `2`. -/
+/-- A learning step brings the next prediction closer to the target iff `η * x ⬝ᵥ x` lies strictly
+between `0` and `2` (§6.2). -/
 theorem abs_sub_vecMul_update_lt_iff {x : MeaningVector d} {y : FormVector n} {j : Fin n}
     (hj : y j ≠ (x ᵥ* G) j) :
     |y j - (x ᵥ* update (η • 1) 1 x y G) j| < |y j - (x ᵥ* G) j| ↔ |1 - η * x ⬝ᵥ x| < 1 := by
@@ -175,9 +173,8 @@ theorem tendsto_vecMul_iterate_update_smul_one {x : MeaningVector d} (y : FormVe
     Tendsto (fun k ↦ x ᵥ* (update (η • 1) 1 x y)^[k] G) atTop (𝓝 y) :=
   tendsto_vecMul_iterate_update y G fun _ ↦ by simpa using h
 
-/-- A mapping matrix is trained exactly when the frequency-weighted changes that the usage
-events would each make to it cancel. Endstate learning, the case of uniform weights, is in this
-sense the "equilibrium state of network weights" of incremental learning (§1.3). -/
+/-- A mapping matrix is trained iff the frequency-weighted changes the usage events would make to it
+cancel (§1.3). -/
 theorem isTrained_iff_sum_update_sub_eq_zero (hη : η ≠ 0) :
     IsTrained data q G ↔
       ∑ i, (q i : ℝ) • (update (η • 1) 1 (data.S i) (data.C i) G - G) = 0 := by
@@ -248,10 +245,8 @@ private theorem mem_cues_iff (v : Fin 2) (c : English.Verbs.Verb.Cell) :
       v = walk ∧ (c = .past ∨ c = .pastParticiple) := by
   revert v c; decide +kernel
 
-/-- The English past tense violates proportional analogy, since *walked* adds the cue `ed#` to
-*walk* while *went* adds nothing to *go*. So no linear mapping produces it from constructed
-meanings (`not_exists_paradigm_eq_of_not_regular`), while independent embeddings realise it
-(`exists_paradigm_eq_of_linearIndependent`), as in §12.9. -/
+/-- The English past tense violates proportional analogy, so no linear mapping produces it from
+constructed meanings (§12.9). -/
 theorem pastTense_not_regular : ¬ IsAnalogicallyRegular pastTense := fun h ↦ by
   have := congrFun (isAnalogicallyRegular_iff.1 h walk go past base) 6
   simp [pastTense, cueVector, multiHot, mem_cues_iff] at this

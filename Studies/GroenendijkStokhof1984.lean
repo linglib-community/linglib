@@ -150,8 +150,7 @@ theorem whichDeDicto_inf_who_le (G P : E → Set W) :
     have := who_iff.1 hG x
     grind
 
-/-- Asking of each individual whom they love is asking who loves whom, the pair-list reading of
-*whom does everyone love* over a fixed domain (chapter VI, pp. 447–449). -/
+/-- Asking of each individual whom they love is asking who loves whom (chapter VI, pp. 447–449). -/
 theorem iInf_who (R : E → E → Set W) : ⨅ x, who (R x) = who fun p : E × E ↦ R p.1 p.2 := by
   ext v u
   simp only [Setoid.iInf_iff, who_iff, Prod.forall]
@@ -202,8 +201,8 @@ theorem knows_nobody {P : E → Set W} (h : Knows R (who P) w) (hw : ∀ x, w �
     w ∈ R.core {v | ∀ x, v ∉ P x} :=
   fun _ hv x ↦ (knows_who_iff.1 h).2 x (hw x) hv
 
-/-- Someone whose beliefs `D` are consistent and lie within their knowledge `K`, and who believes
-of a non-walker that they walk, doesn't know who walks (chapter II, (VIII) and p. 109). -/
+/-- Someone with consistent beliefs within their knowledge who believes of a non-walker that they
+walk doesn't know who walks (chapter II, (VIII) and p. 109). -/
 theorem not_knows_who_of_believes {D K : SetRel W W} {P : E → Set W} {x : E} (hDK : D ⊆ K)
     (hD : ∃ v, w ~[D] v) (hbel : w ∈ D.core (P x)) (hx : w ∉ P x) : ¬ Knows K (who P) w :=
   fun h ↦ let ⟨_, hv⟩ := hD; (knows_who_iff.1 h).2 x hx (hDK hv) (hbel hv)
@@ -219,9 +218,8 @@ theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows R (partition H) w)
   · show trueAnswers H v = ∅
     rw [show trueAnswers H v = trueAnswers H w from h hv, h₀]
 
-/-- Without its clause for an empty answer set, Karttunen's postulate counts anyone as knowing
-who walks when nobody walks, so that it validates (XIII) only through that clause (chapter II,
-pp. 92–93). -/
+/-- When nobody walks, Karttunen's postulate without its empty-answer clause counts anyone as
+knowing who walks (chapter II, pp. 92–93). -/
 theorem knowsAnswer_of_forall_notMem {P : E → Set W} (h : ∀ x, w ∉ P x) :
     KnowsAnswer (Set.range P) w R := fun _ _ ↦ by
   rintro p ⟨⟨x, rfl⟩, hx⟩
@@ -245,9 +243,8 @@ def john : SetRel Bool Bool := Set.univ
 /-- John believes that Bill and Suzy walk. -/
 def johnBelieves : SetRel Bool Bool := {p | p.2 = false}
 
-/-- Karttunen's postulate counts John as knowing who walks at `true`, where only Bill walks,
-though he believes that Suzy walks too, so that it does not validate (VIII); nor does it count
-him as knowing who doesn't walk, so that it does not validate (X) (chapter II, pp. 86–88). -/
+/-- Karttunen's postulate counts John as knowing who walks though he believes Suzy walks too,
+against (VIII), and not as knowing who doesn't walk, against (X) (chapter II, pp. 86–88). -/
 theorem karttunen_knows :
     Karttunen1977.Knows true john (Set.range walk) ∧ true ∈ johnBelieves.core (walk .suzy) ∧
       ¬ Karttunen1977.Knows true john (Set.range fun x ↦ (walk x)ᶜ) := by
@@ -843,9 +840,8 @@ theorem determined_inter_subset (P₁ P₂ : Set W) :
     determined Q (P₁ ∩ P₂) ⊆ determined Q P₁ ∩ determined Q P₂ :=
   Set.subset_inter (determined_mono Set.inter_subset_left) (determined_mono Set.inter_subset_right)
 
-/-- Of two different compatible propositions the first of which gives a partial answer, one is
-better than the other, or their conjunction or their disjunction is a partial answer better than
-both (chapter V, appendix 2, (18), which also assumes that the second gives a partial answer). -/
+/-- Of two distinct compatible propositions, the first a partial answer, one is better, or their
+conjunction or disjunction is a partial answer better than both (chapter V, appendix 2, (18)). -/
 theorem better_or_inter_or_union {P₁ P₂ : Set W} (h₁ : GivesPartialSemanticAnswer P₁ Q)
     (h : (P₁ ∩ P₂).Nonempty) (hne : P₁ ≠ P₂) :
     Better Q P₁ P₂ ∨ Better Q P₂ P₁ ∨
@@ -905,19 +901,19 @@ theorem knowsSome_of_knows {P : E → Set W} {x : E} (h : Knows R (who P) w) (hx
     KnowsSome R P w :=
   ⟨x, hx, h.mem_core (who_decides P x) hx⟩
 
-/-- When nobody has a pen, *John knows who has a pen* is false on its mention-some reading, even
-when John knows that nobody does (chapter VI, p. 538). -/
+/-- When nobody has a pen, *John knows who has a pen* is false on its mention-some reading (chapter
+VI, p. 538). -/
 theorem not_knowsSome {P : E → Set W} (h : ∀ x, w ∉ P x) : ¬ KnowsSome R P w :=
   fun ⟨x, hx, _⟩ ↦ h x hx
 
-/-- A true complete answer to who has a pen, other than that nobody does, is a true complete
-answer on the mention-some reading (chapter VI, p. 538). -/
+/-- A true complete answer to *who has a pen* other than *nobody* is a true complete mention-some
+answer (chapter VI, p. 538). -/
 theorem mem_which_of_mem_fromSetoid {P : E → Set W} {s : Set W} {x : E}
     (hs : s ∈ fromSetoid (who P)) (hw : w ∈ s) (hx : w ∈ P x) : s ∈ which Set.univ P :=
   mem_which.2 (Or.inr ⟨x, trivial, fun v hv ↦ (who_iff.1 ((mem_fromSetoid.1 hs) v hv w hw) x).2 hx⟩)
 
-/-- A true complete answer on the mention-some reading gives a true partial answer to who has a
-pen, as long as someone could fail to have one (chapter VI, p. 538). -/
+/-- A true complete mention-some answer gives a true partial answer to *who has a pen*, if someone
+could lack one (chapter VI, p. 538). -/
 theorem givesPartialSemanticAnswer_of_subset {P : E → Set W} {s : Set W} {x : E} {v : W}
     (hs : s ⊆ P x) (hw : w ∈ s) (hv : v ∉ P x) :
     GivesPartialSemanticAnswer s (who P) ∧ w ∈ determined (who P) s := by

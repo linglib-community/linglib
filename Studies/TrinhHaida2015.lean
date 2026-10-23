@@ -97,8 +97,8 @@ theorem IsDomain.mem_of_isSymmetric (hA : IsDomain F S A) (h : IsSymmetric S S�
   hA.closed S₂ h₂ (h.sdiff_eq ▸ BooleanSubalgebra.sdiff_mem
     (BooleanSubalgebra.subset_closure hA.self_mem) (BooleanSubalgebra.subset_closure h₁))
 
-/-- In (43), (46) and (49), the domain that would license an inference against one of two
-symmetric formal alternatives, the prejacent with that alternative alone, fails (27). -/
+/-- A domain cannot pair the prejacent with one of two symmetric formal alternatives (27), as in
+(43), (46) and (49). -/
 theorem not_isDomain_pair_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)
     (h₂ : S₂ ∈ F) : ¬ IsDomain F S {S, S₁} := by
   intro hA
@@ -119,9 +119,8 @@ theorem isDomain_pair (hS : S ∈ F) (h₁ : S₁ ∈ F)
 
 variable {run smoke : Set W}
 
-/-- In (35)–(36), with *run ∧ smoke* underivable, `{run, run ∧ ¬smoke}` is a domain for the
-formal alternatives `{run, smoke, ¬smoke, run ∧ ¬smoke}`, provided a non-runner smokes in some
-world and not in another, since then neither *smoke* nor *¬smoke* is in the closure. -/
+/-- With *run ∧ smoke* underivable, `{run, run ∧ ¬smoke}` is a domain for the formal alternatives of
+(35)–(36). -/
 theorem run_smoke_isDomain {w v : W} (hw : w ∉ run ∧ w ∈ smoke)
     (hv : v ∉ run ∧ v ∉ smoke) :
     IsDomain {run, smoke, smokeᶜ, run ∩ smokeᶜ} run {run, run ∩ smokeᶜ} := by

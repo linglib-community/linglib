@@ -150,9 +150,7 @@ def nouns : List Noun := [domina, dominus, bellum, consul, civis, manus, dies]
 
 /-! ### The cases the paradigms distinguish -/
 
-/-- The paradigms of the table, singular and plural, separate the six cases: any two cases differ
-in some form of some noun, which is how the traditional description establishes them
-([blake-2001] §2.2.1). -/
+/-- The singular and plural paradigms of the table separate the six cases ([blake-2001] §2.2.1). -/
 theorem separatesPoints_paradigms :
     {p | ∃ n ∈ nouns, p = n.singular ∨ p = n.plural}.SeparatesPoints := by
   intro c d h

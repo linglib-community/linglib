@@ -199,9 +199,8 @@ theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal 
 feature [dorsal] rather than the Tongue Body node. -/
 def dorsalAssimilation : Segment := ({Feature.dorsal} : Finset Feature).piecewise src tgt
 
-/-- Spreading the terminal [dorsal] leaves the target's secondary articulation, its [back] value,
-untouched (44), which is how the palatalised nasal of (44a) keeps its palatalisation
-and the plain nasal of (44b) stays plain. -/
+/-- Spreading terminal [dorsal] leaves the target's [back] untouched (44), so the nasals of (44a)
+and (44b) keep their secondary articulation. -/
 theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :=
   Finset.piecewise_eq_of_notMem _ _ _ (by decide)
 

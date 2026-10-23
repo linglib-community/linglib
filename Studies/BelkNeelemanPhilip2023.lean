@@ -181,8 +181,7 @@ def aBook' : LexicalItem.Token := ⟨.of .D [] "a book about opera", 12⟩
 def boughtWrapped (x y : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
   (john * ((bought * x) * forMary)) * (bill * (wrapped * y))
 
-/-- Material of the first conjunct follows the gap (90), so neither pruning the first object
-(91a) nor the branch to a shared object (91b) is licensed. -/
+/-- Material of the first conjunct follows the gap (90), so neither (91a) nor (91b) is licensed. -/
 theorem not_licensed_gapBeforePP :
     ¬ (⟨boughtWrapped aBook aBook', [], [(⟨[0, 1, 0, 1]⟩, ⟨[1, 1, 1]⟩)]⟩ : Derivation).Licensed ∧
       ¬ (⟨boughtWrapped aBook aBook, [(⟨[0, 1, 0, 1]⟩, ⟨[1, 1, 1]⟩)], []⟩ :
@@ -326,8 +325,8 @@ def finiteSharePP : Derivation :=
   ⟨(john * (will * (travel * samePivot))) * (ryo * (will' * (travel' * samePivot))),
     [(⟨[0, 1, 1, 1]⟩, ⟨[1, 1, 1, 1]⟩)], [(⟨[0, 1]⟩, ⟨[1, 1]⟩)]⟩
 
-/-- The finite pivot of (52) is multidominated as a whole, so the prosodic break cannot shift
-rightward: its rivals would create a finite pivot through ellipsis (26). -/
+/-- The finite pivot of (52) is multidominated as a whole, so its prosodic break cannot shift
+rightward (26). -/
 theorem pivotOnset_finite :
     finiteShareT.Licensed ∧ finiteShareT.pivotOnset = some "will" ∧
       ¬ finiteShareVP.Licensed ∧ ¬ finiteSharePP.Licensed := by

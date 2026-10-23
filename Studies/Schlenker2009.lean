@@ -166,8 +166,8 @@ theorem isLocalContext_not [Nonempty Atom] (C : Set W) :
       (SyntacticEnvironment.continuations I [(.not : SyntacticEnvironment.Step Atom)] 0) C :=
   isLocalContext_incremental I _ C
 
-/-- The second argument of a conjunction or a conditional takes the context updated with the first,
-the second disjunct the context updated with the first's negation, (24), (30) and (33). -/
+/-- The second argument of a conjunction or conditional takes the context updated with the first,
+and a second disjunct that updated with its negation ((24), (30), (33)). -/
 theorem isLocalContext_right [Nonempty Atom] (c : Connective) (F : Formula Atom) (C : Set W) :
     IsLocalContext C (SyntacticEnvironment.continuations I [.right c F] 0)
       (c.localContext C (F.truth I)) :=
@@ -195,8 +195,8 @@ theorem Satisfaction.symmetric {C : Set W} {F : Formula Atom}
   (satisfaction_iff_transparency I _ C F).2
     ((satisfaction_iff_transparency I _ C F).1 h).symmetric
 
-/-- Incremental Transparency is admittance by the formula's context change potential, which updates
-the context to its worlds at which the formula is true (`Formula.ccp_get`; Theorem 1 of C.9). -/
+/-- Incremental Transparency is admittance by the formula's context change potential (Theorem 1 of
+C.9). -/
 theorem transparency_incremental_iff_admits (C : Set W) (F : Formula Atom) :
     Transparency .incremental C (Formula.occurrences I F) ↔ (F.ccp I).Admits C := by
   rw [Formula.admits_ccp_iff, Transparency, Formula.forall_mem_occurrences]
@@ -308,8 +308,8 @@ theorem image_snd_localContext_believe :
     Prod.snd '' {q : W × W | q.1 ∈ C ∧ q.2 ∈ Dox q.1} = (SetRel.ofSuccessors Dox).image C := by
   ext; simp [and_comm]
 
-/-- A presupposition about the world of evaluation is satisfied in the complement of *believe* iff
-every world compatible with the agent's beliefs at a world of the context satisfies it (p. 3:32). -/
+/-- A presupposition about the evaluation world is satisfied in the complement of *believe* iff all
+the agent's belief worlds satisfy it (p. 3:32). -/
 theorem satisfied_believe_iff {P : Set W} :
     Satisfied C (believe Dox) (Prod.snd ⁻¹' P) ↔ (SetRel.ofSuccessors Dox).image C ⊆ P := by
   rw [satisfied_iff (isLocalContext_believe Dox), ← Set.image_subset_iff,
@@ -317,9 +317,8 @@ theorem satisfied_believe_iff {P : Set W} :
 
 end Belief
 
-/-- The complement's presupposition is satisfied in the complement of *believe* iff the context
-admits the report under rule (18) of [heim-1992], which the paper calls the standard result obtained
-in Heim's framework (p. 3:32). -/
+/-- The complement's presupposition is satisfied under *believe* iff the context admits the report
+under rule (18) of [heim-1992] (p. 3:32). -/
 theorem satisfied_believe_iff_admits {E : Type*} (Dox : E → W → Set W) (a : E)
     (p : W → SignType) {C : Set W} :
     Satisfied C (believe (Dox a)) (Prod.snd ⁻¹' Function.support p) ↔
@@ -845,8 +844,8 @@ theorem Transparency.strongKleeneAcceptable {C : Set W} {F : Formula Atom}
     (Formula.admits_ccp_iff I |>.1 ((transparency_incremental_iff_admits I C F).1 h))
   ⟨hK, (strongKleeneAcceptable_iff_supervaluationAcceptable_incremental I C F).1 hK⟩
 
-/-- With a world where `p` and `q` fail and one where both hold, `(pp' and qq')` satisfies symmetric
-Transparency but is neither Strong Kleene nor supervaluation acceptable (Theorem 39a, item 39). -/
+/-- With one world where `p` and `q` fail and one where both hold, `(pp' and qq')` is symmetrically
+transparent but neither Strong Kleene nor supervaluation acceptable (Theorem 39a, item 39). -/
 theorem transparency_symmetric_not_strongKleeneAcceptable_not_supervaluationAcceptable
     {p p' q q' : Atom} {w₁ w₂ : W} (hp₁ : w₁ ∉ I p) (hq₁ : w₁ ∉ I q) (hp₂ : w₂ ∈ I p)
     (hq₂ : w₂ ∈ I q) :
@@ -869,8 +868,8 @@ theorem transparency_symmetric_not_strongKleeneAcceptable_not_supervaluationAcce
       (fun _ _ ↦ True) (fun _ _ ↦ False)
     simp [resolve, Connective.eval, hp₁, hq₁] at this
 
-/-- `(pp' or (not pp'))` is symmetrically supervaluation acceptable in the set of all worlds, but
-not Strong Kleene acceptable there when `p` is not a tautology (Lemma 11, item 37). -/
+/-- `(pp' or (not pp'))` is symmetrically supervaluation acceptable but, when `p` is not a
+tautology, not Strong Kleene acceptable (Lemma 11, item 37). -/
 theorem supervaluationAcceptable_symmetric_not_strongKleeneAcceptable {p p' : Atom} {w₀ : W}
     (hw₀ : w₀ ∉ I p) :
     SupervaluationAcceptable I .symmetric Set.univ
@@ -894,11 +893,9 @@ open Quantifier
 
 variable {E : Type*} {q : NumberTree} {A : W → E → Prop} {C : Set W} {P : Set (W × E)}
 
-/-- Where `q` is not constant on the row of the restrictor's size at any world of the context, as
-C.9's Non-Triviality and Constancy together guarantee, a presupposition triggered in the nuclear
-scope is transparent iff every individual of the restrictor satisfies it at every world of the
-context. This is universal projection, the consequence of Theorem 2 of C.9 for a quantified
-clause. -/
+/-- Where `q` is non-constant on the restrictor's size, a nuclear-scope presupposition is
+transparent iff every restrictor individual satisfies it, universal projection (Theorem 2 of C.9).
+-/
 theorem transparent_scope_iff_universal [Finite E]
     (hNT : ∀ w ∈ C, ¬ q.ConstantOnRow {x | A w x}.ncard) :
     Transparent C {scopeTruth q A} P ↔ ∀ w ∈ C, ∀ e, A w e → (w, e) ∈ P := by

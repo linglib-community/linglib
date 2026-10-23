@@ -103,9 +103,8 @@ theorem order_predicted :
 
 Each position of the derivation predicts a diagnostic. -/
 
-/-- The theme A-moves to Spec,TP, so Setswana agreement is the default class 17 and never the
-agent's class (36), (38), whereas a preposed quote without inversion leaves the agent in
-Spec,TP and its agreement (65). -/
+/-- The theme A-moves to Spec,TP, so Setswana agreement is the default class 17, not the agent's
+((36), (38)), unlike a preposed quote without inversion (65). -/
 theorem theme_specTP_setswana_agreement :
     qiSmuggling.themePosition = .specTP ∧
       Examples.ex36.judgment = .acceptable ∧ Examples.ex36_sm10.judgment = .ungrammatical ∧
@@ -142,9 +141,8 @@ theorem agent_specvP_conjoint :
       Examples.ex87.judgment = .acceptable ∧ Examples.ex87_disj.judgment = .ungrammatical := by
   decide
 
-/-- The quote is bound by the discourse head rather than moved: it may stay postverbal (88),
-(89), split around the verb and the agent (90), (92), and need not be a constituent or
-grammatical (96a), (97a), unlike the fronted phrase of locative inversion (93a). -/
+/-- The quote is bound by the discourse head rather than moved, so it may stay postverbal ((88),
+(89)), split ((90), (92)), or be a non-constituent ((96a), (97a)), unlike (93a). -/
 theorem quote_discourseQUOT :
     qiSmuggling.quoteBinder = .discourseQUOT ∧
       Examples.ex88.judgment = .acceptable ∧ Examples.ex89.judgment = .acceptable ∧
@@ -163,9 +161,8 @@ def Licensed (smuggledDPs : ℕ) : Prop := smuggledDPs ≤ 1
 
 instance (n : ℕ) : Decidable (Licensed n) := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- In (125)–(135), an inversion is acceptable exactly when the smuggled constituent carries at most
-one DP, a goal DP blocking it and a PP or adjunct goal not, in quotative and locative inversion
-alike. -/
+/-- An inversion is acceptable iff the smuggled constituent contains at most one DP ((125)–(135)).
+-/
 theorem transitivity_predicted :
     ∀ ex ∈ Examples.all, ∀ n ∈ ex.parse? "smuggledDPs" [("1", 1), ("2", 2)],
       (ex.judgment = .acceptable ↔ Licensed n) := by
@@ -182,9 +179,8 @@ inductive InverseVoiceKind
   | locativeInversion
   deriving DecidableEq, Repr
 
-/-- Locative inversion parallels quotative inversion: it is acceptable with an unergative verb
-of motion (136a) and with *arrive* in Setswana (55), raises the same way (138), and obeys the
-transitivity constraint (134a), (135). -/
+/-- Locative inversion patterns with quotative inversion in admitting (136a) and (55), raising in
+(138), and obeying the transitivity constraint ((134a), (135)). -/
 theorem locative_inversion_parallel :
     Examples.ex136a.judgment = .acceptable ∧ Examples.ex55.judgment = .acceptable ∧
       Examples.ex138.judgment = .acceptable ∧ Examples.ex134a.judgment = .ungrammatical ∧
@@ -308,10 +304,8 @@ theorem setswana_vs_english_reduces_to_reprobe
   ⟨defectiveCircumvention_default_when_no_reprobe _ _ _ _ hd,
    defectiveCircumvention_tracks_lower _ _ _ _ hd hc⟩
 
-/-- Storment's English-specific prediction: a 1st/2nd person agent
-    (whose phi-features clash with the defective theme's [3]) cannot
-    license re-probe — `*"What do we do now?" ask we`. The derivation
-    crashes on feature incompatibility (eq. 46, page 14). -/
+/-- A 1st or 2nd person agent cannot license re-probing, so English `*"What do we do now?" ask we`
+crashes (eq. 46, page 14). -/
 theorem english_qi_clash_on_incompatible_agent
     (probe alpha beta : FeatureBundle)
     (compat : FeatureBundle → FeatureBundle → Bool)

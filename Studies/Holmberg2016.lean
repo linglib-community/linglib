@@ -341,8 +341,8 @@ variable {W : Type*}
 
 /-! ### The question variable -/
 
-/-- An answer does not assert but chooses between the two alternatives of the question
-(Section 5.1), and whatever polarity it gives the positive alternative yields one of them. -/
+/-- Either polarity applied to the positive alternative yields an alternative of the question, so an
+answer chooses between them (Section 5.1). -/
 theorem smul_mem_alt {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
     (hnu : q.radical ≠ Set.univ) (s : Polarity) : s • q.radical ∈ alt ⟦q⟧ := by
   rw [PolarInterrogative.alt_denote hne hnu]
@@ -456,9 +456,8 @@ theorem no_reversal_needed_truth_based (f : AnswerFeature) : f.answer (.height .
 
 /-! ### Japanese (Section 4.1) -/
 
-/-- On the prediction of Section 4.10 that the Japanese negation in a negative-bias question does
-not value the polarity head, being low, *un* confirms that he does not drink coffee and *uun*
-that he does. -/
+/-- With low negation, Japanese *un* confirms that he does not drink coffee and *uun* that he does
+(Section 4.10). -/
 theorem japanese_negative_question :
     (japanese .un).answer (.height .low) = some .negative ∧
       (japanese .uun).answer (.height .low) = some .positive := by

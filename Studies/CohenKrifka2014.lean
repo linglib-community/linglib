@@ -88,8 +88,8 @@ theorem mem_grant : d ∈ grant C a φ ↔ d = C.root ∨ d ∈ C ∧ commit a �
   rintro (rfl | ⟨-, hk⟩)
   exacts [h (C.commit_mem_root_assert a φᶜ _), h hk]
 
-/-- On a space whose states never carry both a commitment and its denial, every state reached
-by asserting `φ` survives granting `φ`, so the grant includes the assertion ((39)). -/
+/-- On a space with no state carrying a commitment and its denial, the grant of `φ` includes its
+assertion ((39)). -/
 theorem assert_le_grant (hmem : (C.assert a φ).root ∈ C)
     (hcons : ∀ d ∈ C, commit a φ ∈ d → commit a φᶜ ∉ d) : C.assert a φ ≤ grant C a φ := by
   intro d hd
@@ -392,8 +392,8 @@ theorem granting_consistent : ∀ d ∈ granting,
     · exact raining_ne_compl (congrArg content h₂).symm
     · exact Set.notMem_empty _ h₂
 
-/-- Granting `raining` includes every state its assertion reaches, and also the root, which
-the assertion leaves behind, so the grant does not enforce the assertion ((39), p. 54). -/
+/-- Granting `raining` strictly includes its assertion, so the grant does not enforce the assertion
+((39), p. 54). -/
 theorem granting_assert_lt_grant :
     granting.assert .speaker raining < grant granting .speaker raining :=
   IsConcreteLE.lt_iff_le_and_exists.2

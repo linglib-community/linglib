@@ -315,8 +315,8 @@ def barnRole : InferentialRole Barn where
 /-- Having observed smoke and rain, one acknowledges both, by default entitled. -/
 def barnCard : Scorecard Barn := ⟨{.smoke, .rain}, {.smoke, .rain}⟩
 
-/-- One may be entitled to each of two incompatible claims while committed to neither (p. 675
-n. 44); committing to one of them defeats entitlement to the other. -/
+/-- One may be entitled to each of two incompatible claims while committed to neither (p. 675 n.
+44). -/
 theorem barn_entitled :
     barnCard.Entitled barnRole .fire ∧ barnCard.Entitled barnRole .noFire ∧
       ¬ barnCard.Committed barnRole .fire ∧ ¬ barnCard.Committed barnRole .noFire ∧
@@ -380,8 +380,7 @@ def disavow (b : I) (p : P) : Score I P := fun k ↦
   by_cases h : i = b <;> simp [challenge, h]
 
 /-- A challenged assertion with no other support is a commitment without entitlement (pp. 177–178).
-Once a scorekeeper takes the challenger to be entitled to the challenge, it attributes to the
-asserter the commitment and no entitlement at all. -/
+-/
 theorem challenge_committed_not_entitled (hb : (s k b).primaFacie = ∅) {q' : P}
     (ha : (assert s b p k a).Entitled R q) :
     (challenge R (assert s b p) a q b p k b).Committed R p ∧
@@ -396,8 +395,7 @@ theorem entitled_defer (hb : (s k b).Entitled R p) (hp : ¬ (defer R s a b p k a
     (defer R s a b p k a).Entitled R p :=
   .primaFacie (by simp [defer, hb]) hp
 
-/-- Deferral to a source the scorekeeper takes to be unentitled confers no entitlement, since others
-cannot inherit an entitlement the asserter does not possess (p. 171). -/
+/-- Deferral to a source the scorekeeper takes to be unentitled confers no entitlement (p. 171). -/
 theorem not_entitled_defer (hb : ¬ (s k b).Entitled R p) (ha : (s k a).primaFacie = ∅) :
     ¬ (defer R s a b p k a).Entitled R q :=
   Scorecard.not_entitled_of_primaFacie_eq_empty <| by simp [defer, hb, ha]

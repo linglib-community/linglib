@@ -137,8 +137,8 @@ theorem harmony_iff_hasAux : c.Harmony ↔ c.hasAux = true := by
 theorem isInfix_vP (h : c.Harmony) : [.particle, .verb] <:+: c.vP := by
   grind [Harmony, vP, verbInV, remnantVP]
 
-/-- What stands between the particle and the verb on the surface was not spelled out with them,
-so the harmony of the vP does not reach it (41). -/
+/-- Material between the particle and the verb on the surface lies outside the vP, so vP harmony
+does not reach it (41). -/
 theorem notMem_vP_of_between (h : c.Harmony) {x : Terminal} (h₁ : [.particle, x] <+ c.cP)
     (h₂ : [x, .verb] <+ c.cP) : x ∉ c.vP :=
   c.consistent.notMem_of_isInfix (by simp [phases]) (by simp [phases]) (c.isInfix_vP h) h₁ h₂
@@ -154,8 +154,8 @@ structure Discontinuous {α : Type*} (phases : List (List α)) (a b : α) : Prop
   adjacent : ∃ p ∈ phases, [a, b] <:+: p
   separated : ∃ q ∈ phases, ∃ x, [a, x] <+ q ∧ [x, b] <+ q
 
-/-- Under discontinuous harmony some Spell-out puts between the two terminals material that the
-Spell-out where they were adjacent did not hold, so they did not stay together (§7). -/
+/-- Under discontinuous harmony, some Spell-out separates the two terminals by material the adjacent
+Spell-out lacked (§7). -/
 theorem Discontinuous.exists_notMem {α : Type*} {phases : List (List α)} {a b : α}
     (h : Discontinuous phases a b) :
     ∃ p ∈ phases, [a, b] <:+: p ∧ ∃ q ∈ phases, ∃ x ∈ q, x ∉ p := by
@@ -196,8 +196,8 @@ def vPTableau (part : Morpheme) (root : List Phonology.Segment) :
   Tableau.ofList ((revaluations part.vowels).map (· ++ root)).toFinset
     [atrHarm, identIO (part.vowels ++ root)]
 
-/-- Over the particle verbs of (10)–(12), the vP tableau's unique winner gives the particle the
-root's value when the root is in the vP Spell-out, and keeps it faithful when it is not. -/
+/-- Over the particle verbs of (10)–(12), the particle takes the root's value when the root is in
+the vP Spell-out and stays faithful otherwise. -/
 theorem vPTableau_optimal : ∀ pv ∈ particleVerbs,
     (vPTableau pv.particle pv.verb.vowels).optimal =
         {pv.particle.vowels.map (withATR · pv.verb.atr) ++ pv.verb.vowels} ∧
@@ -233,8 +233,8 @@ vowels included. -/
 def rootFreeTableau (input : List Phonology.Segment) : Tableau (List Phonology.Segment) 2 :=
   Tableau.ofList (revaluations input).toFinset [atrHarm, identIO input]
 
-/-- With the root free, the two constraints alone repair /jɔkʊ-ni/ at the root, against (12a),
-since one changed vowel beats two, and they leave /mɛ-nu/ undecided, against (10e). -/
+/-- With the root free, the constraints repair /jɔkʊ-ni/ at the root, against (12a), and leave
+/mɛ-nu/ undecided, against (10e). -/
 theorem optimal_rootFree :
     (rootFreeTableau (jOkU.vowels ++ ni.vowels)).optimal = {[openO, upsilon, smallCapitalI]} ∧
       (rootFreeTableau (mE.vowels ++ nu.vowels)).optimal = {[e, u], [epsilon, upsilon]} := by
@@ -327,9 +327,8 @@ def lateShift : Derivation :=
   ⟨Terminal.verb.token, vSteps ++ edgeSteps.take 1 ++ (Clause.mk true true).tSteps ++ cSteps ++
     edgeSteps.drop 1 ++ (Clause.mk true true).focusSteps⟩
 
-/-- Object shift lets the particle front (§6.2). If the object shifted only after C merged, the
-vP would be spelled out with the object before the particle, and fronting the particle past it
-would not linearize. -/
+/-- If the object shifted only after C merged, fronting the particle past it would not linearize
+(§6.2). -/
 theorem not_linearizes_lateShift : ¬ lateShift.Linearizes (vPSchedule lateShift) := by
   decide
 

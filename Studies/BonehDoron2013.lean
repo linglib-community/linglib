@@ -59,9 +59,8 @@ event. -/
 /-! Iteration, (14), a sum of P-events with at least two distinct proper P-parts on Link's
 closure, is `Mereology.IsPlural`. -/
 
-/-- With the indefinite scoping over Hab, the same object recurs through the iteration, so the
-reading is contradictory when the predicate is unrepeatable per object, one smoking per cigarette,
-(4b), (8). -/
+/-- With the indefinite over Hab, the reading is contradictory for a predicate unrepeatable per
+object, such as smoking a cigarette ((4b), (8)). -/
 theorem same_object_infelicity {E C : Type*} [SemilatticeSup E]
     {smoke : E → C → Prop} {cig : C → Prop}
     (hOnce : ∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) :
@@ -125,17 +124,15 @@ def usedToOp {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] (P : W �
     W → Set (NonemptyInterval T) :=
   retro (IMPF P)
 
-/-- One reference interval serves the retrospective and the perfect at once only for an
-instantaneous perspective, (32)–(34). The two form the Horn scale behind the retrospectivity
-implicature (31)–(33). -/
+/-- One reference interval serves both the retrospective and the perfect only for an instantaneous
+perspective ((32)–(34); see (31)–(33)). -/
 theorem retro_perfect_forces_point {T : Type*} [LinearOrder T]
     {i p : NonemptyInterval T} (hb : i.IsBefore p) (hf : p.FinalSubinterval i) :
     p.IsPoint :=
   le_antisymm p.fst_le_snd (hf.2.trans_le hb)
 
-/-- Retrospectivity of the state is cancellable, as in *… used to go to. Still do.* (30), since
-the imperfective (19a) bounds only the reference interval, so a state whose run time properly
-contains a reference interval before the perspective satisfies *used to* however far it runs. -/
+/-- A state persisting past the perspective still satisfies *used to*, so retrospectivity is
+cancellable ((30), (19a)). -/
 theorem usedTo_of_persisting_state {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     {P : W → E → Prop} {w : W} {e : E} (hP : P w e)
     {i p : NonemptyInterval T} (hie : i < τ e) (hip : i.IsBefore p) :

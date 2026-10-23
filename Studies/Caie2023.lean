@@ -222,10 +222,8 @@ theorem run_timDislikesMixed : run univ initial timDislikesMixed = facts := by
 
 /-! ### Why Standard Updating fails -/
 
-/-- Minimal Symmetry gives the two discourses a compositional context that interprets their
-common first sentence in both, and Preservation carries it to the second sentence of each. No
-dressing intension makes both (2) and (4) true where the Facts hold, so one of the discourses
-eliminates a world where they do: Safe Information (ii) fails. -/
+/-- Under Minimal Symmetry and Preservation, no dressing intension makes both (2) and (4) true where
+the Facts hold, so Safe Information (ii) fails. -/
 theorem preservation_drops_fact_world (c : Pairing) :
     ¬(facts ⊆ diagonal (fun _ => c) likesBoth ∧ facts ⊆ diagonal (fun _ => c) dislikesBoth) :=
   fun ⟨h₁, h₂⟩ => h₂ rfl (h₁ rfl)
@@ -237,10 +235,8 @@ theorem exists_true_intension (w : Pairing) :
   · exact ⟨⟨_, rfl⟩, ⟨.mixed, by simp [dislikesBoth]⟩, ⟨_, rfl⟩, ⟨_, rfl⟩⟩
   · exact ⟨⟨_, rfl⟩, ⟨.matching, by simp [dislikesBoth]⟩, ⟨_, rfl⟩, ⟨_, rfl⟩⟩
 
-/-- Avoiding the first horn by letting the context shift between sentences costs the second:
-under Uniform Charity (2) and (3) are each interpreted so as to come out true, neither
-eliminates anything, and the worlds where Tim likes mixed pairs survive the discourse. Safe
-Information (i) fails. -/
+/-- Under Uniform Charity, (2) and (3) each come out true and eliminate nothing, so Safe Information
+(i) fails. -/
 theorem charity_not_safe (interp₂ interp₃ : Pairing → Pairing)
     (h₂ : Charitable interp₂ likesBoth) (h₃ : Charitable interp₃ bothMatching) :
     ¬((univ ∩ diagonal interp₂ likesBoth) ∩ diagonal interp₃ bothMatching ⊆ facts) := by

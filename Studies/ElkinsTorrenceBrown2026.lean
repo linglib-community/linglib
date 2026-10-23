@@ -175,9 +175,8 @@ theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
   · intro hv
     exact ⟨.cat .Voice, ⟨.Voice, hv, by simp⟩, Or.inl rfl⟩
 
-/-- By Table 3, =(y)a' is licensed in a clause of the dependency exactly when that clause's size
-projects Voice, so in full CP and aspectless complements but not in nonfinite ones (§3.3–3.4, §4.3).
--/
+/-- =(y)a' is licensed in a clause of the dependency iff that clause projects Voice (Table 3,
+§3.3–3.4, §4.3). -/
 theorem licensed_iff_mem_voice {d : Dependency} {i : ℕ} {s : ClauseSpine} {n : ℕ}
     (hd : d.getD i [] = spine s n) : Licensed d i ↔ .Voice ∈ s := by
   rw [licensed_iff, hd, exists_hostsReflex_spine_iff]
@@ -201,9 +200,8 @@ def patterns (d : Dependency) : List (List (ℕ × Head)) := (sites d).sublists
 alone, four combinations. -/
 theorem patterns_length_22 : (patterns [spine finiteClause 1]).length = 4 := by decide
 
-/-- In (63), with two directionals, there are three sites although the intransitive clause has a
-single argument DP, so leapfrogging over intervening DPs ([keine-zeijlstra-2025]) yields too few
-stopovers (§5.2). -/
+/-- In (63) there are more sites than intervening DPs, so leapfrogging over DPs
+([keine-zeijlstra-2025]) yields too few stopovers (§5.2). -/
 theorem sites_exceed_interveners : 1 < (sites [spine finiteClause 2]).length := by
   rw [sites_monoclausal_length]
   decide
@@ -248,15 +246,15 @@ theorem copy_fails_nonfinite :
       ¬ Licensed [spine nonfiniteClause 0, spine finiteClause 0] 0 := by
   decide
 
-/-- Conversely, Ā-agreement through the verbal domain would put a matrix reflex over a K'ichean
-AspP complement, (53), against the Fronting Particle Generalization; copy spellout does not. -/
+/-- Ā-agreement through the verbal domain would wrongly license a matrix reflex over a K'ichean AspP
+complement (53), but copy spellout does not. -/
 theorem agree_fails_fpg :
     Licensed [spine aspP 0, spine finiteClause 0] 1 ∧
       ¬ CopyLicensed [spine aspP 0, spine finiteClause 0] 1 := by
   decide
 
-/-- An Agent-Focus-like reflex is confined to the clause of origin, as the antipassive is in
-(38); =(y)a' is licensed in every clause of the path, (24). -/
+/-- =(y)a' is licensed in every clause of the path (24), unlike the clause-bound antipassive (38).
+-/
 theorem origin_only_fails :
     Licensed [spine finiteClause 0, spine finiteClause 0] 1 ∧ (1 : ℕ) ≠ 0 := by
   decide

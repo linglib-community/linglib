@@ -101,9 +101,8 @@ def IfNotIndeed (ctx : Context W) (x y : Set W) : Prop :=
     (1 < bayesFactor (swapIssue ctx) x ∧
       bayesFactor (swapIssue ctx) x < bayesFactor (swapIssue ctx) y)
 
-/-- Prediction 2: *A (or B), if not indeed A and B*. When A and B are independent finite
-confirmers of H, the conjunction is more relevant than the disjunction and than A, both of which
-confirm H (Theorem 6a). -/
+/-- For independent finite confirmers A and B of H, *A (or B), if not indeed A and B* is licensed
+(Prediction 2, Theorem 6a). -/
 theorem IndepConfirmers.ifNotIndeed_inter {ctx : Context W} [IsFiniteMeasure ctx.prior]
     [ctx.Nondegenerate] {a b : Set W} (hbm : MeasurableSet b) (h : IndepConfirmers ctx a b) :
     IfNotIndeed ctx (a ∪ b) (a ∩ b) ∧ IfNotIndeed ctx a (a ∩ b) := by
@@ -163,9 +162,8 @@ private theorem indepConfirmers₁ :
   · rw [posRelevant_iff_one_lt_toReal tb, toReal_bayesFactor_count, h1, h2, h5, h6]
     norm_num
 
-/-- Theorem 6b, first clause: that the exclusive disjunction of independent finite confirmers
-does not disconfirm H is not derivable. In the first countermodel it is false at the one world
-where H holds. -/
+/-- The exclusive disjunction of independent finite confirmers can disconfirm H, so the first clause
+of Theorem 6b is not derivable. -/
 theorem exists_negRelevant_symmDiff :
     ∃ (ctx : Context World₁) (a b : Set World₁),
       IndepConfirmers ctx a b ∧ negRelevant ctx (a ∆ b) := by
@@ -243,9 +241,8 @@ theorem exists_not_negRelevant_symmDiff :
     toReal_bayesFactor_count, h1, h2, h11, h12]
   norm_num
 
-/-- Prediction 1: *A or B, if not indeed A*. By Theorem 6b's third clause the disjunction need not
-be less relevant than a disjunct: in the second countermodel the disjunction and A confirm H
-equally, and the disjunction disconfirms ¬H, so neither condition of Hypothesis 3 holds. -/
+/-- Independent finite confirmers need not license *A or B, if not indeed A*, since neither
+condition of Hypothesis 3 need hold (Prediction 1, Theorem 6b). -/
 theorem exists_not_ifNotIndeed_union :
     ∃ (ctx : Context World₂) (a b : Set World₂),
       IndepConfirmers ctx a b ∧ ¬ IfNotIndeed ctx (a ∪ b) a := by
@@ -285,9 +282,8 @@ theorem not_butFelicitous_and_evenFelicitous (ctx : Context W) (a b : Set W) :
   rintro ⟨⟨-, hb, -⟩, -, ha, he⟩
   exact lt_irrefl _ ((ha.trans (OrderDual.toDual_lt_toDual.mp (he a rfl))).trans hb)
 
-/-- Theorem 8: under issue-conditional independence, B is unexpected given A iff A and B are
-H-contrary. Both come to the sign of one factorized cross-product of the masses of A and B on
-either side of the issue. -/
+/-- Under issue-conditional independence, B is unexpected given A iff A and B are H-contrary
+(Theorem 8). -/
 theorem cond_lt_iff_hContrary (ctx : Context W) [IsProbabilityMeasure ctx.prior]
     [ctx.Nondegenerate] {a b : Set W} (ham : MeasurableSet a) (hcip : CondIndepIssue ctx a b)
     (ha0 : ctx.prior a ≠ 0) (hb0 : ctx.prior b ≠ 0) :
@@ -350,8 +346,7 @@ interpretation. -/
 abbrev defaultButCtx (μ : Measure W) (b : Set W) (hb : MeasurableSet b) : Context W :=
   ⟨bᶜ, hb.compl, μ⟩
 
-/-- Theorem 9: when the issue is ¬B, A and B are issue-conditionally independent for every A.
-Given ¬B, B and A∧B are null; given B, B is certain. -/
+/-- When the issue is ¬B, A and B are issue-conditionally independent for every A (Theorem 9). -/
 theorem condIndepIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure μ] {a b : Set W}
     (ham : MeasurableSet a) (hbm : MeasurableSet b) :
     CondIndepIssue (defaultButCtx μ b hbm) a b := by
@@ -397,9 +392,8 @@ theorem bayesFactor_lt_swapIssue_defaultButCtx (μ : Measure W) [IsFiniteMeasure
     ENNReal.div_zero (cond_apply_self hb (measure_ne_top _ _) ▸ one_ne_zero), ENNReal.div_zero hne]
   exact ⟨hfin, hfin⟩
 
-/-- Theorem 10(c): when the issue is ¬B, an A that confirms it makes B unexpected. The default
-issue makes A and B independent (Theorem 9) and H-contrary (Theorem 10(a)), so Theorem 8
-applies. -/
+/-- When the issue is ¬B, an A that confirms it makes B unexpected (Theorem 10(c), from Theorem 8,
+Theorem 9 and Theorem 10(a)). -/
 theorem cond_lt_of_posRelevant_defaultButCtx (μ : Measure W) [IsProbabilityMeasure μ]
     {a b : Set W} (ham : MeasurableSet a) (hbm : MeasurableSet b)
     (hpos : posRelevant (defaultButCtx μ b hbm) a) (hab : μ (a ∩ b) ≠ 0) :
@@ -428,9 +422,8 @@ no instance Qa makes another instance Qb less probable. -/
 def NonnegInstantialRelevance {E : Type*} (μ : Measure W) (Q : E → Set W) : Prop :=
   ∀ i j, μ (Q j) ≤ μ[|Q i] (Q j)
 
-/-- Corollary 11: under non-negative instantial relevance, *Qa but Qb* is infelicitous in every
-context where the Conditional Independence Presumption holds of its conjuncts, since
-H-contrariness would make Qb unexpected given Qa (Theorem 8). -/
+/-- Under non-negative instantial relevance and the Conditional Independence Presumption, *Qa but
+Qb* is infelicitous (Corollary 11, Theorem 8). -/
 theorem not_butFelicitous_of_nonnegInstantialRelevance {E : Type*} (ctx : Context W)
     [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate] {Q : E → Set W}
     (hQ : NonnegInstantialRelevance ctx.prior Q) {i j : E} (hm : MeasurableSet (Q i))
@@ -516,8 +509,7 @@ def ButAlsoFelicitous (ctx₀ ctx : Context W) (ba bb : Set W) : Prop :=
   TopicAnaphoricallySalient ctx₀ ctx ba bb ∧
     compare (bayesFactor ctx₀ ba) 1 = (compare (bayesFactor ctx bb) 1).swap
 
-/-- Corollary 15: the antecedent of *also* is not an instance of the focus itself. Were b = a, Bb
-would be presupposed and so irrelevant to the issue, while salience needs it relevant. -/
+/-- The antecedent of *also* is not an instance of the focus itself (Corollary 15). -/
 theorem TopicAnaphoricallySalient.ne {E : Type*} {ctx₀ : Context W}
     [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate] {B : E → Set W} {i j : E}
     (h : TopicAnaphoricallySalient ctx₀ ctx (B i) (B j)) (hm : MeasurableSet (B i)) : i ≠ j := by

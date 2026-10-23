@@ -205,8 +205,7 @@ theorem nrv_necessary_for_msg :
         true :=
   ⟨by decide, by decide, ⟨_, .refl _, by decide, by decide⟩, fun _ _ hc h ↦ nrv_of_msg hc h⟩
 
-/-- (34a) *Dreyfus dared to send a message to the Germans* is felicitous, since at every context
-of the background NRV is causally necessary and sufficient for MSG. -/
+/-- *Dreyfus dared to send a message to the Germans* (34a) is felicitous. -/
 theorem dare_felicitous_for_msg (u : dreyfusModel.contexts dreyfusBg) : dare .MSG u ≠ 0 := by
   rw [dare, sentence, Set.indicator_apply_ne_zero]
   exact ⟨⟨fun _ hq ↦ by obtain rfl := Flat.coe_inj.1 hq; exact nrv_sufficient_for_msg,
@@ -226,25 +225,23 @@ theorem not_msg_of_not_dare {u : dreyfusModel.contexts dreyfusBg}
   exact ((causalInterpretation dreyfusModel dreyfusBg).holds_neg _ u).1
     (holds_signed_of_implied_eq (m := .negative) (q := .negative) rfl h')
 
-/-- (34c) *?/# Dreyfus dared to establish communication with the Germans* is infelicitous, since
-NRV is not causally sufficient for COM, which stays unsettled while LST and BRK are
-unresolved. -/
+/-- *?/# Dreyfus dared to establish communication with the Germans* (34c) is infelicitous, since NRV
+is not causally sufficient for COM. -/
 theorem dare_infelicitous_for_com (u : dreyfusModel.contexts dreyfusBg) : dare .COM u = 0 := by
   rw [dare, sentence]
   exact Set.indicator_of_notMem (fun h ↦
     (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .COM true)
       (h.1 .positive rfl).2) _
 
-/-- (34d) *?/# Dreyfus dared to spy for the Germans* is infelicitous, since NRV is not causally
-sufficient for SPY, whose conditions LST, BRK and COM are all undetermined. -/
+/-- *?/# Dreyfus dared to spy for the Germans* (34d) is infelicitous, since NRV is not causally
+sufficient for SPY. -/
 theorem dare_infelicitous_for_spy (u : dreyfusModel.contexts dreyfusBg) : dare .SPY u = 0 := by
   rw [dare, sentence]
   exact Set.indicator_of_notMem (fun h ↦
     (by decide : ¬ dreyfusModel.CausallySufficient dreyfusBg .NRV true .SPY true)
       (h.1 .positive rfl).2) _
 
-/-- In (34c) NRV is nevertheless causally necessary for COM. Achievability settles the exogenous
-LST = 1 and BRK = 0, and every path to COM = 1 runs through NRV = 1. -/
+/-- In (34c) NRV is nevertheless causally necessary for COM. -/
 theorem nrv_necessary_for_com :
     dreyfusModel.CausallyNecessary dreyfusModel.IsExogenousSettlement dreyfusBg .NRV true .COM
       true :=

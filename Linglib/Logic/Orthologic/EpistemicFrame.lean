@@ -285,9 +285,8 @@ theorem eB_compl (b : B) : eB bᶜ = (eB b)ᶜ := by
   apply SetLike.coe_injective
   rw [coe_eB, CompatFrame.Regular.coe_compl, coe_eB, embed_compl]
 
-/-- The diamond of an embedded proposition strictly extends it unless the proposition is
-trivial, since `(⊤, ⊤)` lies in `◇e(b)` but not in `e(b)` ([holliday-mandelkern-2024]
-Theorem 5.7.4). -/
+/-- The diamond of an embedded nontrivial proposition strictly extends it
+([holliday-mandelkern-2024] Theorem 5.7.4). -/
 theorem not_diamond_embed_subset {b : B} (hb : b ≠ ⊥) (hb' : b ≠ ⊤) :
     ¬ diamond (epistemicFrame B) access (embed b) ⊆ embed b := by
   intro h
@@ -299,8 +298,7 @@ theorem not_diamond_embed_subset {b : B} (hb : b ≠ ⊥) (hb' : b ≠ ⊤) :
 
 instance : (access (B := B)).IsTrans := ⟨fun _ _ _ h h' ↦ ⟨h.1.trans h'.1, h'.2.trans h.2⟩⟩
 
-/-- Whatever is the case must be possible, `U ⊆ □◇U` for every set `U`, witnessed by
-`(a ⊔ a'', a ⊔ a'')` for `(a, i) ∈ U` (the proof of [holliday-mandelkern-2024]
+/-- Whatever is the case must be possible, `U ⊆ □◇U` (the proof of [holliday-mandelkern-2024]
 Theorem 5.7.3). -/
 theorem subset_core_diamond (U : Set (Possibility B)) :
     U ⊆ access.core (diamond (epistemicFrame B) access U) := by

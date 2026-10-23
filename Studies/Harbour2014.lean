@@ -154,8 +154,8 @@ omit [DecidableEq α] in
 private theorem nonempty_eq_region : (Finset.Nonempty : Finset α → Prop) = region ∅ (1 ≤ ·) := by
   ext t; simp [region, Finset.one_le_card]
 
-/-- `(+minimal(−minimalⁿ(−atomic(P))))` holds of exactly the sums of `n + 2` atoms, the
-successor-like function (31); `n = 0` gives the dual of (30) and `n = 1` the trial. -/
+/-- `(+minimal(−minimalⁿ(−atomic(P))))` holds of exactly the sums of `n + 2` atoms (31), the dual of
+(30) at `n = 0` and the trial at `n = 1`. -/
 theorem atomize_nonMinimalOf_iterate (n : ℕ) (s : Finset α) :
     atomize (nonMinimalOf^[n] (nonAtomsOf Finset.Nonempty)) s ↔ s.card = n + 2 := by
   have hna : nonAtomsOf (1 ≤ ·) = (2 ≤ ·) := by
@@ -202,10 +202,8 @@ variable {α : Type*} [DecidableEq α]
 /-- A band holds of the sums of at least `lo` and fewer than `hi` atoms. -/
 def Band (lo hi : ℕ) (s : Finset α) : Prop := lo ≤ s.card ∧ s.card < hi
 
-/-- No element of a band above the null individual is additive in it, given infinitely many
-atoms, since two of its elements can always sum past its upper bound. So the bounded region below
-a cut of the third-person lattice is `[−additive]` throughout (10), and
-`(+additive(−additive(P)))` is unsatisfiable (§3.3). -/
+/-- Given infinitely many atoms, no element of a band above the null individual is additive in it
+(10), so `(+additive(−additive(P)))` is unsatisfiable (§3.3). -/
 theorem not_additiveIn_band [Infinite α] {lo hi : ℕ} (hlo : 1 ≤ lo) (s : Finset α) :
     ¬ additiveIn (Band lo hi) s := by
   rintro ⟨⟨hl, hh⟩, h⟩
@@ -228,8 +226,7 @@ theorem additiveIn_le_card' {i : α} {c : ℕ} {s : Finset α} (hi : i ∈ s) (h
   ⟨⟨hi, hs⟩, fun _ _ ↦ ⟨Finset.mem_union_left _ hi,
     hs.trans (Finset.card_le_card Finset.subset_union_left)⟩⟩
 
-/-- The least element of the person lattice over `B`, the sums containing `B`, is `B` itself,
-which is additive among the least elements, so the first- and second-person singular and the
+/-- The least element `B` of the person lattice over `B` is additive, so the singulars and the
 inclusive minimal are `[+additive]` (n. 23). -/
 theorem additiveIn_atomize_superset (B : Finset α) : additiveIn (atomize (B ⊆ ·)) B := by
   have hB : atomize (B ⊆ ·) B := ⟨subset_rfl, fun _ hy _ ↦ hy⟩
@@ -279,8 +276,8 @@ theorem ordConnected_plusAdditive_nonempty [Infinite α] {c : ℕ} (hc : 1 ≤ c
   simp only [plusAdditive_nonempty_iff hc]
   exact IsUpperSet.ordConnected fun _ _ hst h ↦ h.trans (Finset.card_le_card hst)
 
-/-- On the first-person exclusive lattice, the sums containing the speaker `i`, the speaker atom
-is the only element additive below a cut (Figure 8), being the lattice's bottom. -/
+/-- On the first-person exclusive lattice, only the speaker atom is additive below a cut (Figure 8).
+-/
 theorem additiveIn_firstPerson_iff [Infinite α] {i : α} {c : ℕ} (hc : 2 ≤ c) (s : Finset α) :
     additiveIn (fun t ↦ i ∈ t ∧ t.card < c) s ↔ s = {i} := by
   refine ⟨fun ⟨⟨hi, hlt⟩, h⟩ ↦ ?_, ?_⟩
@@ -300,10 +297,8 @@ theorem additiveIn_firstPerson_iff [Infinite α] {i : α} {c : ℕ} (hc : 2 ≤ 
     refine ⟨⟨Finset.mem_singleton_self i, by simp; omega⟩, fun t ht ↦ ?_⟩
     rwa [Finset.sup_eq_union, Finset.singleton_union, Finset.insert_eq_of_mem ht.1]
 
-/-- So `{±additive}` cuts the first-person lattice nonconvexly, a `[−additive]` paucal lying
-between the `[+additive]` speaker and a `[+additive]` plural (p. 212), and by the convexity
-condition (32), after [gardenfors-2004], `[±additive]` is never a language's sole number
-feature. -/
+/-- `{±additive}` cuts the first-person lattice nonconvexly (p. 212), so by (32), after
+[gardenfors-2004], `[±additive]` is never a language's sole number feature. -/
 theorem not_ordConnected_plusAdditive_firstPerson [Infinite α] (i : α) {c : ℕ} (hc : 3 ≤ c) :
     ¬ {s | PlusAdditive c (i ∈ ·) s}.OrdConnected := by
   intro h
@@ -544,9 +539,8 @@ theorem Bundle.exact_le {D : Type*} [SemilatticeSup D] (b : Bundle) (P : D → P
 
 theorem bound_strata_le : ∀ b : Bundle, ∀ p ≤ 2, (b.strata (.ray p)).bound ≤ 4 := by decide
 
-/-- The axiom of extension caps the exact numbers at the trial and the unit augmented, three
-atoms on the third-person lattice and the inclusive one alike, so there is no dyad augmented
-(§4.2). -/
+/-- The axiom of extension caps exact numbers at three atoms, so there is no dyad augmented (§4.2).
+-/
 theorem le_three_of_strata_eq_point (b : Bundle) {p : ℕ} (hp : p ≤ 2) {n : ℕ}
     (h : b.strata (.ray p) = .point n) : n ≤ 3 := by
   have := bound_strata_le b p hp
@@ -757,10 +751,8 @@ theorem values_atomic_recursive : ∀ m d : Activation, ∀ c : Convention,
     (Setting.mk .recursive m d).values c 0 = (Setting.mk .active m d).values c 0 := by
   decide +kernel
 
-/-- `{±atomic}` and `{±minimal}` cut the third-person lattice alike, but on the inclusive lattice,
-whose least element is the speaker and hearer, `[±atomic]` draws no line and `[±minimal]` does,
-so Svan's singular and plural and Winnebago's minimal and augmented need different features
-(p. 203). -/
+/-- `[±atomic]` and `[±minimal]` cut the third-person lattice alike but differ on the inclusive
+lattice (p. 203). -/
 theorem system_atomic_minimal :
     (⟨.active, .inactive, .inactive⟩ : Setting).system 0 = [{(.atomic, true)}, {(.atomic, false)}] ∧
       (⟨.inactive, .active, .inactive⟩ : Setting).system 0 =
@@ -940,10 +932,8 @@ end Table3
 
 /-! ### Composed number (§5.2) -/
 
-/-- In the singular–dual–paucal–plural system of Yimas and Motuna the paucal shares `[−additive]`
-with the dual and `[−minimal]` with the plural, so Motuna composes it from a dual–paucal and a
-paucal–plural morpheme ((38)–(40)) and Yimas marks it by `[−additive]` on a `[−minimal]` form
-((44)–(45)). -/
+/-- In the Yimas and Motuna system the paucal shares `[−additive]` with the dual and `[−minimal]`
+with the plural ((38)–(40), (44)–(45)). -/
 theorem yimas_system :
     (((⟨.active, .active, .active⟩ : Setting).system 0).map
       fun b ↦ (b.label (.one .low), b)).Perm
@@ -985,9 +975,8 @@ theorem meleFila_cell_plural {α : Type*} [DecidableEq α] {lo hi : ℕ} (h₁ :
   rw [cell_collapse h₁ (Nat.zero_le 2), ref _ (by unfold collapse; split_ifs <;> omega)]
   unfold collapse; split_ifs <;> omega
 
-/-- So the plural belongs to two natural classes (Table 4), `[+additive]` with the greater plural,
-realized by the article *a*, and `[−minimal −additive]` with the paucal, realized by the pronoun
-*raateu*. -/
+/-- The plural belongs to two natural classes, `[+additive]` with the greater plural and `[−minimal
+−additive]` with the paucal (Table 4). -/
 theorem meleFila_classes :
     (((meleFila.system 0).filter ((.additive, true) ∈ ·)).map
         (Bundle.label (.two .high))).Perm [.plural, .greaterPlural] ∧

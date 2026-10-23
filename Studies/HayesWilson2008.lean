@@ -287,10 +287,8 @@ theorem integral_violations_empirical (hD : ∑ x, D x ≠ 0) (i : Fin n) :
 
 variable [Nonempty Ω]
 
-/-- The partial derivative of the log probability of the data in the weight of constraint `i`
-    is its expected count (8), scaled by the size of the data, minus its observed count
-    ([della-pietra-della-pietra-lafferty-1997]). The paper's §3.3.2 states the two terms as
-    `O[Cᵢ] − E[Cᵢ]`, with the penalty direction in mind. -/
+/-- The partial derivative of the log likelihood in a constraint weight is the scaled expected count
+(8) minus the observed count ([della-pietra-della-pietra-lafferty-1997], §3.3.2). -/
 theorem hasDerivAt_logLik (i : Fin n) :
     HasDerivAt (fun t ↦ logLik viol (Function.update w i t) D)
       ((∑ x, D x : ℕ) * (∫ x, viol.violations x ∂maxEnt viol.violations w) i -
@@ -306,10 +304,8 @@ theorem hasDerivAt_logLik (i : Fin n) :
   simp only [observed, Nat.cast_sum, Nat.cast_mul, Finset.sum_mul, mul_sub,
     Finset.sum_sub_distrib]
 
-/-- Maximizing the probability of the data is maximizing entropy (§3.3.1,
-    [della-pietra-della-pietra-lafferty-1997]). Weights that make the data most probable give
-    the distribution of greatest entropy among those whose expected violations average the
-    observed ones. -/
+/-- Weights maximizing the data's probability give the maximum-entropy distribution among those
+matching the observed violations (§3.3.1, [della-pietra-della-pietra-lafferty-1997]). -/
 theorem isGreatest_measureEntropy_of_isMaxOn_logLik (hD : ∑ x, D x ≠ 0)
     (h : IsMaxOn (fun w ↦ logLik viol w D) Set.univ w) :
     IsGreatest (measureEntropy '' {q : Measure Ω | IsProbabilityMeasure q ∧
@@ -375,8 +371,7 @@ def attested : List (List Seg) :=
 /-- Every attested onset is penalized by at most 4.53; most score 0 (§5.3.1). -/
 theorem attested_le : ∀ o ∈ attested, h o ≤ 453 := by decide
 
-/-- Exactly ten attested onsets receive penalties, the rarest ones, namely [θ], [z], [θr], [tw],
-    [ʃr], [ð], [dw], [gw], [θw], and [skl] in the corpus order of (11) (§5.3.1). -/
+/-- Exactly ten attested onsets, the rarest ones, receive penalties ((11), §5.3.1). -/
 theorem attested_penalized :
     (attested.filter (h · ≠ 0)).map (fun o ↦ (o, h o)) =
       [([th], 184), ([z], 269), ([th, r], 184), ([t, w], 170), ([sh, r], 210), ([dh], 453),
@@ -387,8 +382,8 @@ def twelve : List (List Seg) :=
   [[s, t, w], [d, l], [hh, l], [hh, r], [v, l], [v, r], [sh, l], [sh, w], [s, r], [f, w], [p, w],
     [s, p, w]]
 
-/-- The accidental gap [stw] scores 3.76, followed by [dl] 4.40, [hl] and [hr] 4.82, [vl], [vr],
-    [ʃl], and [ʃw] 4.84, [sr] 4.90, and [fw], [pw], and [spw] 4.96 (§5.3.1). -/
+/-- The twelve accidental gaps score from 3.76 for [stw] to 4.96 for [fw], [pw] and [spw] (§5.3.1).
+-/
 theorem twelve_scores :
     twelve.map h = [376, 440, 482, 482, 484, 484, 484, 484, 490, 496, 496, 496] := by decide
 

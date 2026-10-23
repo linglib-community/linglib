@@ -250,12 +250,8 @@ theorem Antimatroid.exists_insert_step (A : Antimatroid α) {G : Set α}
         (hfin.subset Set.sdiff_subset) hz_feas ⟨hx, hzx.symm⟩ rfl
       exact ⟨H, h1, h2.trans Set.sdiff_subset, h3, h4⟩
 
-/-- If no feasible set meets `W` exactly in `{x}`, some rooted circuit rooted at `x` has its
-    carrier inside `W`. This is the hard direction of [dietrich-1987]'s characterization of the
-    feasible sets by the rooted circuits, Lemma 8 of [merchant-riggle-2016]. The carrier is a
-    cardinality-minimal critical subset; minimality forces every proper trace
-    free, via the two-point sets `F ∩ C = {x, w}` that near-critical
-    subsets provide. -/
+/-- If no feasible set meets `W` exactly in `{x}`, some circuit rooted at `x` lies inside `W`
+([merchant-riggle-2016] Lemma 8, after [dietrich-1987]). -/
 theorem Antimatroid.exists_rootedCircuit_of_critical (A : Antimatroid α)
     (hfin : A.E.Finite) {W : Set α} (hWE : W ⊆ A.E) {x : α} (hxW : x ∈ W)
     (hcrit : ¬∃ F, A.IsFeasible F ∧ F ∩ W = {x}) :

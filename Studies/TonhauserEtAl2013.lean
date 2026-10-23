@@ -110,9 +110,8 @@ theorem obligatoryLocalEffect_iff :
     ObligatoryLocalEffect R m Acc ↔ ∀ c, Acc c → R.image c ⊆ m :=
   forall₂_congr fun _ _ ↦ SetRel.image_subset_iff.symm
 
-/-- A constraint on the local context of an embedded sentence is a constraint on the context of
-the embedding one when the embedding is along a reflexive relation, as in the family of
-sentences. The constraint then projects, (24). -/
+/-- A local-context constraint on an embedded sentence projects to the embedding one along a
+reflexive relation (24). -/
 theorem StrongContextualFelicity.of_image [R.IsRefl] (h : StrongContextualFelicity m Acc)
     (hloc : ∀ c, Acc' c → Acc (R.image c)) : StrongContextualFelicity m Acc' :=
   fun c hc ↦ (SetRel.self_subset_image c).trans (h _ (hloc c hc))

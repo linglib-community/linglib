@@ -83,8 +83,8 @@ def NullAdjunct (c : Config) : Prop :=
 
 instance : DecidablePred NullAdjunct := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Generalizations (12) and (59) with the prediction of §2.2: an adjunct is null only inside the
-verb phrase and only with the object null, absent, or a contrastively focused remnant. -/
+/-- An adjunct is null iff it is inside the verb phrase and the object is not overt ((12), (59),
+§2.2). -/
 theorem nullAdjunct_iff (c : Config) : NullAdjunct c ↔ c.adjunct = .vp ∧ c.object ≠ .overt := by
   obtain ⟨a, o, s⟩ := c
   cases a <;> cases o <;> cases s <;> decide

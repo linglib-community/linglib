@@ -239,15 +239,12 @@ theorem defined_strip (φ : Formula W E P T) (sE : Assignment E) (sT : Assignmen
     φ.strip.Defined sE sT cu ct := by
   induction φ generalizing sE sT <;> simp_all [strip, Defined]
 
-/-- Elimination of the Context of Utterance, (23): stripping preserves truth. The paper
-restricts the claim to formulas that are not weird because its truth predicate is undefined
-elsewhere; here it holds outright. -/
+/-- Stripping the Context of Utterance preserves truth (23). -/
 theorem realize_strip (φ : Formula W E P T) (sE : Assignment E) (sT : Assignment T) :
     φ.strip.Realize sE sT ct ↔ φ.Realize sE sT ct := by
   induction φ generalizing sE sT <;> simp_all [strip, Realize]
 
-/-- (28c): a past and a present tense under one time abstraction cannot both be defined, so the
-choice of tense in a passage must be consistent. -/
+/-- A past and a present tense under one time abstraction cannot both be defined (28c). -/
 theorem not_defined_lamT_and_past_pres [Preorder T] (t : Term (Context W E P T) T)
     (R R' : T → W → Prop) :
     ¬ (lamT t k (.and (.atom₀ R (.past k)) (.atom₀ R' (.pres k)))).Defined sE sT cu ct := by
@@ -270,8 +267,8 @@ def lamPast [LT T] (f : T → T) (R : T → W → Prop) (k : ℕ) : Formula W E 
     (lamPast f R k).Defined sE sT cu ct ↔ f ct.time < cu.time := by
   simp [lamPast, Defined]
 
-/-- (1) is true exactly when the predicate holds at the adverbial's time in the world of the
-Context of Thought; the Context of Utterance has been eliminated. -/
+/-- (1) is true iff the predicate holds at the adverbial's time in the world of the Context of
+Thought. -/
 @[simp] theorem realize_lamPast_iff [LT T] :
     (lamPast f R k).Realize sE sT ct ↔ R (f ct.time) ct.world := by
   simp [lamPast, Realize]
@@ -282,10 +279,7 @@ theorem not_defined_lamPast_self [Preorder T] (hf : ∀ t, t ≤ f t) :
   rw [defined_lamPast_iff]
   exact not_lt_of_ge (hf c.time)
 
-/-- A felicitous (1) is evaluated against two distinct contexts, the paper's decisive argument
-for the Context of Thought: in Free Indirect Discourse the Context of Utterance is the actual
-one and the character's thought lies in its past, in the Historical Present the Context of
-Thought is the actual one and the utterance is set in the past. -/
+/-- If (1) is defined, the Context of Utterance differs from the Context of Thought. -/
 theorem ne_of_defined_lamPast [Preorder T] (hf : ∀ t, t ≤ f t)
     (hd : (lamPast f R k).Defined sE sT cu ct) : cu ≠ ct := by
   rintro rfl
@@ -320,9 +314,8 @@ theorem not_defined_lamPres_name_self (hf : ∀ t, f t ≠ t) (a : E) :
     ¬ (lamPres f Q (.name a) k).Defined sE sT c c := by
   simpa using hf c.time
 
-/-- The necessity of improper contexts (31): a first person pronoun in the Historical Present
-denotes the speaker of the Context of Utterance, so when that speaker is not alive at its time
-in its world the context is improper in the sense of [kaplan-1989]. -/
+/-- A first person pronoun in the Historical Present makes the context improper in the sense of
+[kaplan-1989] when its speaker is not alive at its time (31). -/
 theorem not_proper_of_defined_lamPres (alive : E → T → W → Prop) {j : ℕ}
     (hd : (lamPres f Q (.I j) k).Defined sE sT cu ct) (h : ¬ alive (sE j) cu.time cu.world)
     (located : E → P → T → W → Prop) : ¬ Kaplan1989.Proper (alive · cu.time ·) located cu := by

@@ -167,9 +167,8 @@ on that domain. -/
 def DomainIndependent (F : Set W → W → W → Prop) : Prop :=
   ∃ R : W → W → Prop, ∀ D u v, u ∈ D → v ∈ D → (R u v ↔ F D u v)
 
-/-- The ∗∗-revision is domain-independent exactly when a `p`-world and a non-`p`-world that are
-both best in a domain stay best in every larger domain. Bestness is stable under shrinking a
-domain (`Preorder.mem_minimals_of_subset`); (131) presupposes stability under widening. -/
+/-- The ∗∗-revision is domain-independent iff a `p`-world and a non-`p`-world both best in a domain
+stay best in every larger domain (131). -/
 theorem domainIndependent_starstar_iff (g : Background W) (p : W → Prop) (w : W) :
     DomainIndependent (starstar g p w) ↔
       ∀ ⦃D D' : Set W⦄, D ⊆ D' → ∀ ⦃u v⦄, p u → ¬ p v →
@@ -223,8 +222,7 @@ theorem minimals_univ_g₃ : (premisePreorder (g₃ 0)).minimals Set.univ = {0, 
   revert u
   decide
 
-/-- (131) has no solution on the three-world frame: `1`, the `p`-world, and `0` are both best in
-the pair, and `1` is not best in the whole frame. -/
+/-- (131) has no solution on the three-world frame. -/
 theorem not_domainIndependent_starstar : ¬ DomainIndependent (starstar g₃ (· = 1) 0) := by
   intro h
   have h₁ := (domainIndependent_starstar_iff g₃ (· = 1) 0).1 h (D := {0, 1}) (D' := Set.univ)
@@ -475,9 +473,8 @@ theorem Vertex.entails_iff (v v' : Vertex) :
   · rintro (rfl | rfl | ⟨rfl, rfl⟩)
     exacts [.refl _, entails_of_sn _, entails_xg true]
 
-/-- In (82), the X-marked weak necessity and its unmarked counterpart are independent, and the
-X-marked strong necessity does not entail its unmarked counterpart; the unmarked strong
-necessity does entail the marked one, against the paper's first line of (82b). -/
+/-- In (82) the X-marked and unmarked weak necessities are independent, and of the strong ones only
+the unmarked entails the other, against (82b). -/
 theorem entails_82 :
     (¬ Vertex.Entails ⟨false, true⟩ ⟨true, true⟩ ∧ ¬ Vertex.Entails ⟨true, true⟩ ⟨false, true⟩) ∧
       (Vertex.Entails ⟨false, false⟩ ⟨true, false⟩ ∧
@@ -970,8 +967,7 @@ theorem deve_guess (w : Day) :
   rintro _ rfl
   rfl
 
-/-- After A has checked (81), *deve* is false and *devia* is true. Suspending the knowledge
-that Peter is not in his office reinstates the bias towards his being there. -/
+/-- After A has checked (81), *deve* is false and *devia* is true. -/
 theorem devia_81 (w : Day) :
     ¬ Vertex.necessity ⟨false, true⟩ sim checked normal workday atOffice w ∧
       Vertex.necessity ⟨true, true⟩ sim checked normal workday atOffice w := by

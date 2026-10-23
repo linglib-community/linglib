@@ -86,8 +86,8 @@ theorem gen_univ {w : W} (h : n.normal w Set.univ = {w}) (q : Set W) :
     w ∈ n.gen Set.univ q ↔ w ∈ q := by
   simp [h]
 
-/-- With a fixed set of normal worlds, *Birds fly* makes Opus fly in its normal penguin worlds,
-so with *Penguins don't fly* it has none ((7), (8)). -/
+/-- With a fixed set of normal worlds, *Birds fly* and *Penguins don't fly* leave Opus no normal
+penguin world ((7), (8)). -/
 theorem normal_ofAccess_eq_empty {B : W → Set W} {bird penguin fly : Set W} {w : W}
     (hpb : penguin ⊆ bird) (hb : w ∈ (Normality.ofAccess B).gen bird fly)
     (hp : w ∈ (Normality.ofAccess B).gen penguin flyᶜ) :
@@ -95,9 +95,8 @@ theorem normal_ofAccess_eq_empty {B : W → Set W} {bird penguin fly : Set W} {w
   (Normality.ofAccess B).normal_eq_empty_of_disjoint (Conditional.strictImp_anti_left hpb hb) hp
     disjoint_compl_right
 
-/-- With normality from an ordering of worlds, *Birds fly* and *Penguins don't fly* hold together
-and there is a normal Opus-penguin world, since the more normal world, where Opus is an ordinary
-bird and flies, is not a penguin world ((7), (8)). -/
+/-- With normality from an ordering of worlds, *Birds fly* and *Penguins don't fly* are compatible
+with a normal Opus-penguin world ((7), (8)). -/
 theorem exists_bird_penguin :
     ∃ (n : Normality Bool Bool) (bird penguin fly : Set Bool), penguin ⊆ bird ∧
       true ∈ n.gen bird fly ∧ true ∈ n.gen penguin flyᶜ ∧ (n.normal true penguin).Nonempty := by

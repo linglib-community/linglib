@@ -476,8 +476,8 @@ section Baseline
 
 variable (s : Setting)
 
-/-- In the world of both, the speaker prefers *A* to *A and B* exactly when the information
-*A and B* would add, the negated log prior, does not exceed its cost (6a). -/
+/-- In the world of both, the speaker prefers *A* to *A and B* iff the information *A and B* adds
+does not exceed its cost (6a). -/
 theorem baseline_aAndB_lt_a_iff :
     (s.speaker literal .wab).real {.aAndB} < (s.speaker literal .wab).real {.a} ↔
       -s.cAndB < Real.log s.p := by
@@ -511,8 +511,8 @@ theorem prior_lt_listener_iff_speaker_lt :
   exact real_lt_posterior_real_singleton_iff_of_pair (s.speaker literal) s.prior (by decide)
     s.prior_support (comp_speaker_literal_ne_zero s _) (s.prior_ne_zero _) (s.prior_ne_zero _)
 
-/-- The listener is anti-exhaustive exactly when the log odds of the prior exceed the cost
-disadvantage of *A and not B* over *A and B*, whatever the rationality (6b). -/
+/-- The listener is anti-exhaustive iff the prior log odds exceed the cost disadvantage of *A and
+not B* over *A and B*, whatever the rationality (6b). -/
 theorem prior_lt_listener_iff :
     s.prior.real {.wab} < (listener s .a).real {.wab} ↔
       s.cAndNotB - s.cAndB < Real.log s.p - Real.log (1 - s.p) := by
@@ -847,10 +847,8 @@ noncomputable def svListener : Kernel Message (World × QUD) :=
   RSA.listener (svJoint s Q) (svSpeaker s)
 
 include hQ in
-/-- The posterior of both A and B falls below its prior, for every prior in the open interval,
-every prior on the questions that gives the fine one positive probability, and every cost,
-since the fine question contributes a use of *A* in the world of A alone and none in the
-world of both (Appendix A.3, the listener). -/
+/-- In the question-sensitive model the posterior of both A and B falls below its prior, for every
+prior and cost (Appendix A.3). -/
 theorem svListener_fst_lt_prior : (svListener s Q .a).fst.real {.wab} < s.prior.real {.wab} := by
   have hm : 0 < ∑ p, (svJoint s Q).real {p} * (svSpeaker s p).real {.a} := by
     rw [← Measure.comp_real_singleton]
@@ -993,9 +991,8 @@ theorem bayesWonkyJointListener_fst :
   simp [bayesWonkySpeaker, bgPrior_apply_singleton]
 
 include hω₀ hω₁ in
-/-- Anti-exhaustivity exactly when the wonkiness-weighted excess of the use of *A* in the
-world of both over its use in the world of A alone is positive (Appendix A.2, the Bayesian
-model). -/
+/-- The Bayesian wonky listener is anti-exhaustive iff the wonkiness-weighted excess of *A*'s use in
+the world of both over the world of A alone is positive (Appendix A.2). -/
 theorem prior_lt_bayesWonkyListener_iff :
     s.prior.real {.wab} < (bayesWonkyListener s ω .a).real {.wab} ↔
       0 < (1 - ω) * (s.logistic (s.cAndB + Real.log s.p) -

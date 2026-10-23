@@ -81,8 +81,8 @@ def say (acc : E → Context W E P T → Set (Context W E P T)) (x : E)
 
 variable (acc : E → Context W E P T → Set (Context W E P T)) (x : E)
 
-/-- `OP∀` is Stalnaker's diagonal operator (fn. 7): a sentence under it holds at a context and an
-index iff its character holds at the index taken as its own context. -/
+/-- `OP∀` is Stalnaker's diagonal operator, evaluating its prejacent at the index taken as its own
+context (fn. 7). -/
 theorem shiftyOp_opAll_iff_holdsAt (χ : Character (Context W E P T) (Context W E P T) Prop)
     (c i : Context W E P T) : shiftyOp opAll χ c i ↔ χ.HoldsAt id i := by
   simp [Character.HoldsAt]
@@ -182,9 +182,8 @@ theorem readings_slaveWant :
 
 variable (j₁ j₂ : Context W E P T) (S₁ S₂ : Finset Coord)
 
-/-- Two stacked reports evaluate the lowest complement at the utterance context overwritten by the
-intermediate operator from the intermediate reported context, then by the lowest operator from the
-lowest one (31). -/
+/-- Under two stacked reports, the lowest complement is evaluated at the utterance context
+overwritten first by the intermediate and then by the lowest operator (31). -/
 theorem say_shiftyOp_say_shiftyOp (acc' : E → Context W E P T → Set (Context W E P T)) (y : E)
     (χ : Character (Context W E P T) (Context W E P T) Prop) (i : Context W E P T) :
     say acc x (shiftyOp S₁ (say acc' y (shiftyOp S₂ χ))) c i ↔
@@ -203,8 +202,8 @@ theorem apply_foldl_overwrite_eq_contextAt {f : Context W E P T → α} {k : Coo
 
 variable {c j₁ S₁ S₂}
 
-/-- (32): a shifted second person in the intermediate clause diagnoses `OP∀` there, after which
-the lowest clause reads no coordinate from the utterance context, at depth `0`. -/
+/-- If the intermediate clause has a shifted second person, the lowest clause reads no coordinate
+from the utterance context (32). -/
 theorem localDepth_ne_zero (h₁ : S₁ ∈ vano) (h₂ : S₂ ∈ vano)
     (hyou : (overwrite S₁ c j₁).addressee = j₁.addressee) (hne : c.addressee ≠ j₁.addressee)
     (k : Coord) : localDepth [S₁, S₂] k ≠ 0 := by
@@ -219,14 +218,12 @@ the context at some depth of the tower, and `f` takes the value `a` there. -/
 def Bound (t : ContextTower (Context W E P T)) (f : Context W E P T → α) (a : α) : Prop :=
   ∃ k ≤ t.depth, (AccessPattern.mk (.relative k) f).resolve t = a
 
-/-- On the binding account a clause can always read the utterance context, whatever the clauses
-above it read: binding locally does not prevent binding at a distance, against (32). -/
+/-- On the binding account a clause can always read the utterance context, contrary to (32). -/
 theorem bound_origin (t : ContextTower (Context W E P T)) (f : Context W E P T → α) :
     Bound t f (f t.origin) :=
   ⟨0, Nat.zero_le _, by simp [AccessPattern.resolve]⟩
 
-/-- (19): Schlenker's English *I*, the author of the utterance context, and Amharic *I*, the author
-of the innermost context variable, are bound readings of the first person. -/
+/-- Schlenker's English *I* and Amharic *I* are both bound readings of the first person (19). -/
 theorem bound_I_amharicI (t : ContextTower (Context W E P T)) :
     Bound t Context.agent (Kaplan.I.resolve t) ∧
       Bound t Context.agent (Schlenker2003.amharicI.resolve t) :=
@@ -234,17 +231,15 @@ theorem bound_I_amharicI (t : ContextTower (Context W E P T)) :
     ⟨t.depth, le_rfl, by
       simp [AccessPattern.resolve, AccessPattern.innermost, Schlenker2003.amharicI]⟩⟩
 
-/-- On a single report the binding account matches the operator account (§3.4): *say* with `OP∀`
-evaluates its complement at each reported context, the contexts Schlenker's verb binds. -/
+/-- For a single report, *say* with `OP∀` agrees with Schlenker's binding verb (§3.4). -/
 theorem say_shiftyOp_opAll_iff_say (compat : E → T → W → Set (Context W E P T))
     (χ : Character (Context W E P T) (Context W E P T) Prop) (c i : Context W E P T) :
     say (fun x i ↦ compat x i.time i.world) x (shiftyOp opAll χ) c i ↔
       Schlenker2003.Say compat x i.time i.world (fun t ↦ χ t.innermost t.innermost) (.root c) := by
   simp [say, Schlenker2003.Say]
 
-/-- (32): under two reports with Schlenker's verbs, the lowest clause can still read the utterance
-context, which the operator account excludes once the intermediate clause shifts
-(`localDepth_ne_zero`). -/
+/-- Under two reports with Schlenker's verbs the lowest clause can still read the utterance context,
+contrary to (32). -/
 theorem say_say_bound_origin (compat compat' : E → T → W → Set (Context W E P T)) (y : E)
     (f : Context W E P T → α) (c : Context W E P T) :
     Schlenker2003.Say compat x c.time c.world
@@ -299,19 +294,16 @@ theorem rows_utterance :
         (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∀ k ∈ p.2, k ∉ S) := by
   decide +kernel
 
-/-- Shift-Together (16): a judged mixed reading is acceptable exactly when an operator option of
-the verb overwrites the coordinate of one embedded indexical but not of another, which no option of
-the rows' verbs does. -/
+/-- A judged mixed reading is acceptable iff an operator option of the verb shifts one embedded
+indexical but not another, which is Shift-Together (16). -/
 theorem rows_mixed :
     ∀ r ∈ Examples.all, ∀ p ∈ (singleReport? r).toList, ∀ x ∈ r.readings,
       "mixed".toList <+: x.1.toList →
         (x.2 = .acceptable ↔ ∃ S ∈ p.1, ∃ k ∈ p.2, ∃ k' ∈ p.2, k ∈ S ∧ k' ∉ S) := by
   decide +kernel
 
-/-- (32), (33): in the lowest of two reports, a judged reading of the embedded indexicals is
-acceptable exactly when options of the intermediate and the lowest verb make them read the
-context at its depth, the intermediate option overwriting the addressee where the intermediate
-clause has a shifted second person. -/
+/-- In the lower of two reports, a judged reading is acceptable iff the verbs' operator options make
+each embedded indexical read the context at its depth ((32), (33)). -/
 theorem rows_double_report :
     ∀ r ∈ Examples.all, r.feature? "test" = some "multiple_embedding" →
       ∀ p ∈ (entryCoords? r).toList, ∀ x ∈ r.readings,

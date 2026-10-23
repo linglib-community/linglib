@@ -166,9 +166,7 @@ def cand : Cand4 → Correspondence Role Seg
   | .d => paradigm [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r, .i] [.l, .ae, .r]
       (diagonalPairs 4) (diagonalPairs 3) (diagonalPairs 3)
 
-/-- In (16) and (29), under recursive evaluation the underapplication paradigm
-*L[æ]rry ~ L[æ]r* wins, since overapplication in the base costs an IO-IDENT violation in the
-dominant recursion. -/
+/-- Under recursive evaluation the underapplication paradigm *L[æ]rry ~ L[æ]r* wins ((16), (29)). -/
 theorem underapplication :
     (tableau cand {.a, .b, .c, .d} recursive ranking ()).optimal = {.d} := by decide
 
@@ -439,9 +437,8 @@ def uncover : Cand3 → Correspondence Role Seg
 where
   input : List Seg := [.glide, .vowel, .spirant, .liquid, .vowel]
 
-/-- In (92), by TETRU, epenthesis applies normally into a rising-sonority cluster,
-*yiɣ.lē ~ yi.ɣel* 'uncover', with `SON-CON` outranking OOJ-DEP, while the overapplying base
-loses in the dominant recursion. -/
+/-- By TETRU, epenthesis applies normally in *yiɣ.lē ~ yi.ɣel* 'uncover' (92), with `SON-CON`
+outranking OOJ-DEP. -/
 theorem tetru :
     (tableau uncover {.a, .b, .c} recursive epenthesis .jussive).optimal = {.b} := by decide
 

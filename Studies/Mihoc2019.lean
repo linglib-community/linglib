@@ -250,9 +250,8 @@ theorem mem_exh_moreThan_univ (n maxD : ℕ) :
   rw [mem_exh_moreThan_iff (Set.mem_univ _) (Nat.lt_succ_self n) fun _ _ h ↦ h]
   omega
 
-/-- In the grading context of [spector-2014] (her Ch. 3 (33)), with *more than nine* the next
-point above *more than five*, *John solved more than five problems* is exhaustified to between
-six and nine. -/
+/-- In [spector-2014]'s grading context (her Ch. 3 (33)), *John solved more than five problems* is
+exhaustified to between six and nine. -/
 theorem mem_exh_moreThan_five {S : Set ℕ} (h9 : 9 ∈ S) (hgap : ∀ m ∈ S, 5 < m → 9 ≤ m)
     (maxD : ℕ) :
     maxD ∈ exh ((Form.moreThan 5).scalarAlts S) {d | (Form.moreThan 5).tc d} ↔
@@ -398,15 +397,14 @@ private theorem ncard_possibleValues_bounds [IsSerial R] (hT : □[R] (μ · ∈
   ⟨(Set.ncard_pos (T.finite_toSet.subset (box_mem_iff.1 hT))).2 nonempty_possibleValues,
     by simpa using Set.ncard_le_ncard (box_mem_iff.1 hT)⟩
 
-/-- Keeping only the singleton subdomain alternatives rules out a 'winner' state and admits the
-rest, total ignorance and a 'loser' state that excludes some value without settling one (her
+/-- Keeping only the singleton subdomain alternatives rules out exactly the 'winner' state (her
 Table 4.1). -/
 theorem domainImplicatures_one_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w)
     (h : 1 < T.card) : DomainImplicatures R μ w T 1 ↔ ¬ Winner R μ w := by
   rw [domainImplicatures_iff hT h, winner_iff]
 
-/-- Keeping only the subdomain alternatives of size at least two admits exactly a 'winner' state
-and total ignorance, ruling out a 'loser' state (her Table 4.2). -/
+/-- Keeping only the subdomain alternatives of size at least two admits exactly a 'winner' state and
+total ignorance (her Table 4.2). -/
 theorem forall_two_le_domainImplicatures_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w) :
     (∀ k, 2 ≤ k → k < T.card → DomainImplicatures R μ w T k) ↔
       Winner R μ w ∨ FreeChoice R w T (μ · = ·) := by
@@ -427,9 +425,8 @@ theorem forall_domainImplicatures_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : 
   by_contra hne
   exact (domainImplicatures_iff hT (by omega)).1 (h _ hpos (by omega)) rfl
 
-/-- The scalar implicature of `□_S` *less than n* on the full scale, against *less than n − 1*,
-holds iff the largest value is possible, so it clashes with a 'loser' state excluding that value
-and with a 'winner' state settling another (the mixed cells of her Tables 4.1 and 4.2). -/
+/-- The scalar implicature of `□_S` *less than n* against *less than n − 1* holds iff the largest
+value is possible (her Tables 4.1 and 4.2). -/
 theorem not_box_lessThan_pred_iff {n : ℕ} (hT : possibleValues R μ w ⊆ Finset.range n) :
     ¬ □[R] (fun v ↦ (Form.lessThan (n - 1)).tc (μ v)) w ↔ n - 1 ∈ possibleValues R μ w := by
   simp only [tc_lessThan]

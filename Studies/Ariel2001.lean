@@ -166,18 +166,16 @@ theorem rows_topicality_over_distance :
       c < m := by
   decide +kernel
 
-/-- Comparing (3) with (4), the entity whose point of view a newspaper takes is coded by the
-higher marker: the victim by zero and the rapist by a name in Haaretz, the rapists by zero and
-the victim by a demonstrative in Maariv. -/
+/-- A newspaper codes the entity whose point of view it takes by the higher accessibility marker
+((3), (4)). -/
 theorem rows_perspective :
     ∀ r ∈ Examples.all, ∀ v ∈ (marker r "victim").toList, ∀ p ∈ (marker r "rapists").toList,
       (r.feature? "perspective" = some "victim" → p < v) ∧
         (r.feature? "perspective" = some "rapists" → v < p) := by
   decide +kernel
 
-/-- (8): every referring expression of the article's opening sentence codes lower
-accessibility than its counterpart in the headline — initial retrievals, but of entities the
-headline has just made accessible. -/
+/-- Every referring expression of the article's opening sentence codes lower accessibility than its
+counterpart in the headline (8). -/
 theorem rows_headline :
     ∀ a ∈ Examples.all, ∀ b ∈ Examples.all,
       a.source.paperLabel = "(8a)" → b.source.paperLabel = "(8b)" →
@@ -224,8 +222,7 @@ theorem pronominalization_vacuous {E R : Type*} [DecidableEq E] [LinearOrder R]
     PronominalizationConstraint prev cur :=
   pronominalizationConstraint_of_forall_not h
 
-/-- (12): the discourse topic is pronominal while the subject of two consecutive clauses is
-a description — the topic, not the local subject, takes the higher marker. -/
+/-- The discourse topic takes a higher accessibility marker than the local subject (12). -/
 theorem rows_topic_over_subject :
     ∀ r ∈ Examples.all, ∀ t ∈ (marker r "topicMarker").toList,
       ∀ s ∈ (marker r "subjectMarker").toList, s < t := by

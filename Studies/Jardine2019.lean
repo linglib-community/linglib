@@ -204,8 +204,8 @@ def Grammar.set : Grammar → Language Sym
 instance (g : Grammar) (w : List Sym) : Decidable (w ∈ g.set) := by
   cases g <;> simp only [Grammar.set] <;> infer_instance
 
-/-- The grammar (26) admits the strings of (27) and excludes `HH` and `HF`, whose fused `H`
-spans two morae, and `B_UTP` admits the strings of `L_UTP`, (32). -/
+/-- The grammar (26) admits the strings of (27) and excludes `HH` and `HF`, and `B_UTP` admits the
+strings of `L_UTP` (32). -/
 theorem rows_agree : ∀ r ∈ rows, r.string ∈ r.grammar.set ↔ r.member = true := by decide +kernel
 
 theorem HLH_not_mem_ASL_utp : [.H, .L, .H] ∉ ASL utpGrammar := by decide

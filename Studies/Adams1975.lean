@@ -180,8 +180,8 @@ theorem tfae_pEntails (hA : ∀ i ∈ s, MeasurableSet (A i)) (hB : MeasurableSe
     exact absurd this (by norm_num)
   tfae_finish
 
-/-- Where the premises do not p-entail the conclusion, premises as probable as one likes are
-compatible with a conclusion as improbable as one likes (Theorem 3.2, for factual formulas). -/
+/-- Where the premises do not p-entail the conclusion, they can be arbitrarily probable while it is
+arbitrarily improbable (Theorem 3.2, for factual formulas). -/
 theorem exists_of_not_pEntails (hA : ∀ i ∈ s, MeasurableSet (A i)) (hB : MeasurableSet B)
     (h : ¬ PEntails s (fun i ↦ .fact (A i)) (.fact B)) (ε : ℝ≥0∞) :
     ∃ μ : Measure Ω, IsProbabilityMeasure μ ∧ (∀ i ∈ s, 1 - ε ≤ μ (A i)) ∧ μ B ≤ ε := by
@@ -215,10 +215,8 @@ theorem pEntails_iff_mass {φ ψ : Set Ω} : PEntails s X ⟨φ, ψ⟩ ↔ ∀ �
     · exact (one_sub_le_cond_iff .of_discrete .of_discrete h0).mp (h h0 hX hp)
   · exact (one_sub_le_cond_iff .of_discrete .of_discrete h0).mpr (h hX hp)
 
-/-- **Theorem 4.2, its rules R2 to R6.** P-entailment from a set of conditionals, read as a
-relation between antecedent and consequent, is reflexive and closed under weakening and
-conjunction of consequents, disjunction of antecedents, and the strengthening of an antecedent by
-one of its consequents, the rules from which R2 to R6 follow. -/
+/-- P-entailment from a set of conditionals is a preferential consequence relation, from which the
+rules R2 to R6 follow (Theorem 4.2). -/
 theorem isPreferential_pEntails (s : Finset ι) (X : ι → Formula Ω) :
     Nonmonotonic.IsPreferential fun φ ψ ↦ PEntails s X ⟨φ, ψ⟩ where
   refl _ := pEntails_iff_mass.mpr fun _ _ ↦ ⟨1, one_pos, fun _ _ _ _ ↦ by simp⟩

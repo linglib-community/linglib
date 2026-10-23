@@ -147,10 +147,8 @@ theorem allomorphy_rows :
       (r.spine.SeesRoot cyclic phonNull r.trigger ↔ c = .attested) := by
   decide
 
-/-- **Allosemy** (§6.2–6.4): the trigger fixes a special root meaning iff it
-is local and every head between them is semantically null — so an overt but
-semantically null verbalizer lets a noncyclic participle or continuative reach
-the root, and an overt adjectivizer blocks it. -/
+/-- A trigger fixes a special root meaning iff it is local and every intervening head is
+semantically null (§6.2–6.4). -/
 theorem allosemy_rows :
     ∀ r ∈ rows, ∀ c, r.allosemy = some c →
       (r.spine.SeesRoot cyclic semNull r.trigger ↔ c = .attested) := by
@@ -168,9 +166,8 @@ theorem domains_cross_cut :
       ∃ r ∈ rows, r.spine.IdiomLocal agentive r.trigger ∧ ¬ r.spine.RootLocal cyclic r.trigger := by
   decide
 
-/-- **The strong prediction** (§6.5): whatever conditions the root across an
-intervening head sees only null heads below it, and if it is itself a
-category head it is the first. -/
+/-- Whatever conditions the root across an intervening head sees only null heads below it, and is
+the first category head if it is one (§6.5). -/
 theorem strong_prediction {s : ComplexHead Root Morpheme} {null : Morpheme → Prop}
     {i : Fin s.heads.length}
     (h : s.SeesRoot cyclic null i) :

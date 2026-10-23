@@ -489,8 +489,7 @@ theorem overt_voice_paradox (c : Clause) (e : Exponence) (hv : e.voice.isSome = 
       (List.singleton_sublist.mpr
         (List.mem_filter.mpr ⟨by simp [Clause.voiceP], by simpa using hnot⟩))
 
-/-- The agent of a bare passive cannot be Ā-extracted: the theme precedes it at VoiceP
-Spell-out and would follow it at CP, whether Voice is overt or null (60). -/
+/-- The agent of a bare passive cannot be Ā-extracted, whether Voice is overt or null (60). -/
 theorem bare_passive_agent_paradox (c : Clause) (e : Exponence) (ha : c.agentProjected = true)
     (hsp : c.spec = .theme) (he : c.extracted = some (.nominal .agent))
     (hs : c.subject = some .theme) : ¬ Consistent (c.phases e) := by

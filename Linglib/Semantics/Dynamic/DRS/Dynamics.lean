@@ -107,10 +107,8 @@ theorem DRS.trueRel_map {W : Type*} [DecidableEq W] (e : V ≃ W)
 
 /-! ### The merging lemma: sequencing is merge, under freshness -/
 
-/-- When `K₂`'s universe is fresh for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the
-composition of the two box relations (the Merging Lemma of §II.2). It is the semantic Merging
-Lemma `Update.box_comp_box`, since freshness puts `K₂`'s referents outside the dimension set of
-`K₁`'s conditions. -/
+/-- When the universe of `K₂` is fresh for the conditions of `K₁`, `K₁ ⊕ K₂` denotes the composition
+of their box relations (the Merging Lemma of §II.2). -/
 theorem DRS.toRel_merge (K₁ K₂ : DRS L V)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (DRS.toRel (K₁.merge K₂) : Update (V → M)) = DRS.toRel K₁ ○ DRS.toRel K₂ := by

@@ -217,8 +217,8 @@ private theorem diffSq_pos (x : Prefix × StemC) : 0 < diffSq x := by
   revert x
   decide +kernel
 
-/-- The Noisy HG noise on /p/ is the sum of four Gaussians, one for each constraint that
-distinguishes substitution from its absence, whatever the prefix (15). -/
+/-- The Noisy HG noise on /p/ is a sum of four Gaussians, one per constraint distinguishing
+substitution from its absence (15). -/
 theorem dotProduct_violationDiff_self_p (q : Prefix) :
     (constraints.violationDiff ((q, .p), .yes) ((q, .p), .no) ⬝ᵥ
       constraints.violationDiff ((q, .p), .yes) ((q, .p), .no) : ℝ) = 4 := by
@@ -292,9 +292,8 @@ theorem raceRate_le_one (n a u : ℝ) : raceRate η n a u ≤ 1 := by
   calc _ ≤ ∫⁻ _, 1 ∂η.map (n + ·) := lintegral_mono fun _ ↦ mul_le_one' prob_le_one prob_le_one
     _ = 1 := by simp [Measure.map_apply (measurable_const_add n) .univ]
 
-/-- Magri's theorem (§3.8). The difference that a stronger constraint of one family makes to the
-opposing candidate's rate is larger the weaker the constraint of the other family, for noise of
-any law. -/
+/-- For noise of any law, a stronger constraint of one family changes the opposing rate more the
+weaker the constraint of the other family (Magri's theorem, §3.8). -/
 theorem raceRate_add_le {n a a' u u' : ℝ} (ha : a' ≤ a) (hu : u ≤ u') :
     raceRate η n a u + raceRate η n a' u' ≤ raceRate η n a' u + raceRate η n a u' := by
   simp only [raceRate_eq]
@@ -309,8 +308,8 @@ theorem raceRate_add_le {n a a' u u' : ℝ} (ha : a' ≤ a) (hu : u ≤ u') :
     _ ≤ A * B + p * B + (A * B + A * q) + p * q := le_self_add
     _ = (A + p) * (B + q) + A * B := by ring
 
-/-- The difference that a stronger constraint of one family makes grows monotonically as the
-constraint of the other family weakens: the rates diverge uniformly (§3.8, Figure 20). -/
+/-- The difference a stronger constraint of one family makes grows monotonically as the constraint
+of the other family weakens (§3.8, Figure 20). -/
 theorem antitone_raceRate_sub (n : ℝ) {u u' : ℝ} (hu : u ≤ u') :
     Antitone fun a ↦ (raceRate η n a u).toReal - (raceRate η n a u').toReal := by
   intro a' a ha
@@ -343,10 +342,8 @@ theorem tendsto_raceRate_atTop (n u : ℝ) :
       simpa using ENNReal.Tendsto.mul_const (hlim x) (.inr (measure_ne_top η _)))
   simpa [raceRate_eq] using key
 
-/-- In Harmonic Grammar the three constraints pull against each other as in a tug-of-war: with
-two candidates MaxEnt gives the first the rate `sigmoid (n - a - u)` (13). A stronger constraint of
-one family then makes no difference at either extreme of the other, so the difference it makes
-is neither antitone nor monotone. -/
+/-- With the two-candidate MaxEnt rate `sigmoid (n - a - u)` (13), the difference a stronger
+constraint makes is neither antitone nor monotone in the other. -/
 theorem not_antitone_not_monotone_sigmoid_sub (n : ℝ) {u u' : ℝ} (hu : u < u') :
     ¬ Antitone (fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')) ∧
       ¬ Monotone (fun a ↦ sigmoid (n - a - u) - sigmoid (n - a - u')) := by

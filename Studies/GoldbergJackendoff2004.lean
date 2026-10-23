@@ -121,8 +121,8 @@ causer, in a causative, and otherwise the host. -/
 def Subconstruction.subjectRoles (s : Subconstruction) : Finset ThetaRole :=
   if s.causative then {.agent} else s.hostRoles
 
-/-- The intransitive path resultative is more liberal than the intransitive property resultative
-in the verbs it admits (§6.2): a subject role compatible with BECOME is compatible with GO. -/
+/-- A subject role compatible with the intransitive property resultative is compatible with the
+intransitive path resultative (§6.2). -/
 theorem coheres_noncausative_path {rV : Finset ThetaRole}
     (h : ¬ Disjoint rV (Subconstruction.subjectRoles ⟨false, .property⟩)) :
     ¬ Disjoint rV (Subconstruction.subjectRoles ⟨false, .path⟩) :=
@@ -149,17 +149,16 @@ cotemporal. -/
 def resultative (V : E → Prop) (R : Path Loc → Prop) (e : E) : Prop :=
   V e ∧ R (σ e)
 
-/-- By the generalization (27), an end-bounded result phrase makes the resultative telic whatever
-the verb, when the path of a sum of events is the sum of their paths and distinct events have
-distinct paths. -/
+/-- If paths are additive and injective on events, an end-bounded result phrase makes the
+resultative telic (27). -/
 theorem qua_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e')
     (hinj : Function.Injective (σ : E → Path Loc)) (hR : QUA R) : QUA (resultative V R) :=
   IsAntichain.subset
     (qua_pullback ((OrderHomClass.monotone (SupHom.mk σ hσ)).strictMono_of_injective hinj) hR)
     fun _ h ↦ h.2
 
-/-- By the generalization (27), a result phrase that is not end-bounded leaves the resultative of
-an activity atelic, when the path of a sum of events is the sum of their paths. -/
+/-- If paths are additive, a non-end-bounded result phrase leaves the resultative of an activity
+atelic (27). -/
 theorem cum_resultative (hσ : ∀ e e' : E, σ (e ⊔ e') = σ e ⊔ σ e') (hV : CUM V) (hR : CUM R) :
     CUM (resultative V R) :=
   SupClosed.inter hV (hR.preimage (SupHom.mk σ hσ))
@@ -239,10 +238,8 @@ theorem rows_coherence :
     ∀ r ∈ rows, r.endBounded = none → (r.judgment = .acceptable ↔ r.Coheres) := by
   decide +kernel
 
-/-- Where the fragment derives a role label for the object from the verb's basic frame, the
-label is among the paper's construals: the object of *wipe* is a patient. The subject's label is
-not comparable, since a noncausative may use the verb's anticausative frame, whose subject is the
-basic frame's object: the melting chocolate of (48b), not the causer the fragment labels. -/
+/-- Where the fragment derives an object role label from the verb's basic frame, the label is among
+the paper's construals, though subject labels may differ, as in (48b). -/
 theorem rows_thetaLabel :
     ∀ r ∈ rows, ∀ ρs ∈ r.objectRole, ∀ s ∈ r.verb.coreSlots[1]?, ∀ ρ ∈ r.verb.thetaLabel s,
       ρ ∈ ρs := by

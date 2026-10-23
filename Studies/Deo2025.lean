@@ -141,9 +141,8 @@ theorem imperative_contextSets :
       (congrArg _ (contextSet_ofForce_insert_of_eq_of_commit rfl rfl)),
     (bara_contextSets K p .preferential w).2.trans (contextSet_ofForce_insert_of_ne nofun)⟩
 
-/-- Once the addressee takes up the content of a *bərə*-utterance, dependently or not, it joins
-the joint commitments under its attitude, §4: the implicit preference that *bərə* makes
-explicit. -/
+/-- Once the addressee takes up a *bərə*-utterance's content, it joins the joint commitments under
+its attitude (§4). -/
 theorem mem_joint_insert (s : Commitment.Source) :
     p ∈ joint (insert (commit .addressee p f s) (bara K p f w)) f :=
   Set.mem_iInter.2 λ x => match x with
@@ -191,20 +190,16 @@ theorem inter_uptake_eq_empty (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     B ∩ uptake K p f = ∅ :=
   Set.eq_empty_of_forall_notMem λ v hv => hv.2.2 (h v hv.1)
 
-/-- A manifest commitment of the addressee, §3.4: with the addressee already a source for `p` by
-the speaker's information, a sincere *bərə* commitment would be an effective preference for the
-unrealizable, against the consistency of the speaker's effective preferences, so *bərə* is out:
-a permission or concession, (11b) and (11c), the revealed preference of (15), a commissive, (9),
-and the response to one, (16). -/
+/-- If the addressee is already a source for `p` by the speaker's information, *bərə* is
+infelicitous ((11b), (11c), (15), (9), (16), §3.4). -/
 theorem not_felicitous_of_isSource (benefits : Set W → Role → Prop) (g : Set W) (f : Force)
     (hC : (P .speaker w).Consistent B) (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     ¬ Felicitous P K B benefits g p f w :=
   λ hf => hC.realistic _ (want_uptake_of_sincere hf.1).1
     (by rw [Set.inter_comm]; exact inter_uptake_eq_empty h)
 
-/-- Deference, §3.4: the preference for dependent uptake and the preference that leaves the
-choice to the addressee are not jointly realizable, so *bərə* is out in an offer or invitation,
-(11a). -/
+/-- When the speaker defers to the addressee, *bərə* is infelicitous, as in an offer or invitation
+((11a), §3.4). -/
 theorem not_felicitous_of_defers (benefits : Set W → Role → Prop) (g : Set W)
     (hC : (P .speaker w).Consistent B) (h : Defers P K p f w) :
     ¬ Felicitous P K B benefits g p f w :=
@@ -292,8 +287,8 @@ theorem mem_uptake_sunnyTomorrow {v : Weather} :
     v ∈ uptake state sunnyTomorrow .doxastic ↔ v.upSunny := by
   simp [uptake, IsDependent, mem_state_sunnyTomorrow, not_isSource]
 
-/-- The warning of (5a) is felicitous: by Bilal's information Anu stays safe only if she takes his
-word on the rain, and she may yet drive without doing so. -/
+/-- The warning of (5a) is felicitous, since Anu may yet drive without taking Bilal's word on the
+rain. -/
 theorem felicitous_raining : Felicitous prefs state info benefit safe raining .doxastic w₀ := by
   refine ⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, λ _ _ h => h⟩, nofun, λ c hc hf _ =>
     absurd (hc.2.2.1.symm.trans hf) nofun⟩, ⟨Or.inr rfl, λ _ _ h => h⟩, rfl, ?_, ?_⟩
@@ -372,8 +367,8 @@ theorem felicitous_latent :
     λ v hv => mem_uptake.2 (hv.1 hv.2), λ h => ?_⟩, ⟨rfl, λ _ _ h => h⟩⟩
   simpa [w₀] using mem_uptake.1 (h (show w₀ ∈ info from λ h => h))
 
-/-- The second context of (15): Bilal has revealed his preference and is a source for the
-content, so under any consistent effective preferences of Anu's *bərə* is out. -/
+/-- In the second context of (15), Bilal's revealed preference makes *bərə* infelicitous under any
+consistent effective preferences of Anu's. -/
 theorem not_felicitous_revealed (P : Role → Car → PreferenceStructure Car)
     (hC : (P .speaker w₀).Consistent info) :
     ¬ Felicitous P revealed info benefit taking taking .preferential w₀ :=

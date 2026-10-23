@@ -139,9 +139,8 @@ theorem compsetAccessible_few (hS : S.Nonempty) : CompsetAccessible (sieve Numbe
 which removes the empty-reference bipartition from a denotation. -/
 def refind (D : Finset (Finset α)) : Finset (Finset α) := D.erase ∅
 
-/-- A denotation carrying a reference individual never makes its complement set accessible,
-whatever the condition: *a few* shares the condition of *few* and blocks the anaphora, the paper's
-(44), *A few music lovers admire Reger. #They prefer Mozart.* -/
+/-- A denotation with a reference individual never makes its complement set accessible, so *a few*
+blocks the anaphora of (44). -/
 theorem not_compsetAccessible_refind (D : Finset (Finset α)) : ¬ CompsetAccessible (refind D) :=
   notMem_erase _ _
 
@@ -161,8 +160,8 @@ theorem antiPredication_iff (hR : R ⊆ S) : AntiPredication B S R ↔ R = S.fil
   exact ⟨fun ha ↦ ⟨hR ha, h₁ a ha⟩,
     fun ⟨haS, haB⟩ ↦ by_contra fun haR ↦ h₂ a (mem_sdiff.2 ⟨haS, haR⟩) haB⟩
 
-/-- The truth conditions of *q N VP* (§4.5): some surviving bipartition is anti-predicated exactly
-when the condition holds of the sizes of `N \ VP` and `N ∩ VP`. -/
+/-- Some surviving bipartition of *q N VP* is anti-predicated iff the condition holds of the sizes
+of `N \ VP` and `N ∩ VP` (§4.5). -/
 theorem exists_antiPredication_iff :
     (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q #(S \ S.filter B) #(S.filter B) :=
   ⟨fun ⟨_, hR, h⟩ ↦ (antiPredication_iff (mem_sieve.1 hR).1).1 h ▸ (mem_sieve.1 hR).2,
@@ -183,9 +182,8 @@ theorem livesOn_toGQ : LivesOn (q.toGQ (· ∈ S)) (· ∈ S) :=
 
 /-! ### Witness sets -/
 
-/-- The witness of a quantified noun phrase is a surviving reference set (the paper's (17)), and
-these are exactly the witness sets of [barwise-cooper-1981] of the tree quantifier on the head
-noun. -/
+/-- The surviving reference sets (17) are exactly the [barwise-cooper-1981] witness sets of the tree
+quantifier on the head noun. -/
 theorem mem_sieve_iff_witness :
     R ∈ sieve q S ↔ Witness (q.toGQ (· ∈ S)) (· ∈ S) (· ∈ R) := by
   simp only [mem_sieve, Witness, toGQ_apply, ncard_mem_and, subset_iff]
@@ -210,9 +208,8 @@ theorem sieve_eq_iff {q' : NumberTree} [DecidableRel q'] :
     simpa [hR, ha, hb] using congrArg (R ∈ ·) h
   · simpa [row, hab] using congrArg ((a, b) ∈ ·) h
 
-/-- A condition selects one of `2 ^ (k + 1)` sets of points of row `k`, so the paper's
-`2 ^ (k + 1) - 1` combinatorially possible denotations over a noun with `k` instances (§4.8)
-are the nonempty ones. -/
+/-- The nonempty sets of points of row `k` number `2 ^ (k + 1) - 1`, the possible denotations over a
+noun with `k` instances (§4.8). -/
 theorem card_Ioc_antidiagonal (k : ℕ) : #(Ioc ∅ (antidiagonal k)) = 2 ^ (k + 1) - 1 := by
   rw [card_Ioc_finset (empty_subset _), Nat.card_antidiagonal, card_empty, Nat.sub_zero]
 

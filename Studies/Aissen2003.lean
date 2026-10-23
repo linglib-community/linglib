@@ -293,9 +293,8 @@ def markedWins (ranking : List (Constraint (L × Bool))) (ℓ : L) : Bool :=
   decide ((Tableau.ofList {(ℓ, true), (ℓ, false)} ranking).optimal
     = {(ℓ, true)})
 
-/-- Tableaux 1–2 evaluate a specific indefinite object. In Hebrew \*STRUC_C outranks
-\*Oj/Spec & \*Ø_C and the zero parse wins; in Turkish the ranking is reversed and the marked
-parse wins. -/
+/-- In Tableaux 1–2 the zero parse of a specific indefinite object wins in Hebrew and the marked
+parse in Turkish. -/
 theorem tableaux_1_2 :
     markedWins (interpolation DefinitenessScale.all 3) .indefiniteSpecific = false ∧
     markedWins (interpolation DefinitenessScale.all 4) .indefiniteSpecific = true := by
@@ -325,9 +324,7 @@ theorem figure2_languages :
       markedWins (interpolation DefinitenessScale.all 5) d) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- Persian's obligatory grid realizes the same interpolation type as Turkish's, since specific
-indefinites "require the suffix -rā, exactly as ... the accusative suffix in Turkish"
-(§5.3). -/
+/-- Persian's obligatory grid realizes the same interpolation type as Turkish's (§5.3). -/
 theorem persian_same_type_as_turkish :
     ∀ c, c ∈ persianDOM ↔ c ∈ turkishDOM := by decide
 
@@ -341,8 +338,8 @@ theorem figure3_typology :
          [true,  true,  false],
          [true,  true,  true]] := by decide
 
-/-- Figure 3's cleanly cutoff languages match their types, Kalkatungu with none, Ritharngu
-with the humans, Dhargari with the animates, and Written Japanese and Dhalandji with all. -/
+/-- Figure 3's cleanly cutoff languages match their interpolation types, from Kalkatungu with none
+to Written Japanese and Dhalandji with all. -/
 theorem figure3_languages :
     (∀ a d, (a, d) ∈ noDOM ↔ markedWins (interpolation Animacy.all 0) a) ∧
     (∀ a d, (a, d) ∈ ritharnguDOM ↔ markedWins (interpolation Animacy.all 1) a) ∧

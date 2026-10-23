@@ -147,8 +147,8 @@ theorem ivek_doxastic_identity_iff_holdsAt :
 
 /-! ### Conjunction and negation, §2 -/
 
-/-- On the identity cover *ivək* of two complements that are incompatible over a nonempty
-domain is contradictory: Option 1 of (12) for (6), and the necessity reading of (8a). -/
+/-- On the identity cover, *ivək* of two complements incompatible over a nonempty domain is
+contradictory (Option 1 of (12) for (6); necessity reading of (8a)). -/
 theorem not_ivek_identity_and (h : ∃ v, w ~[F.access φ x] v)
     (hpq : ∀ v, w ~[F.access φ x] v → p v → ¬ q v) :
     ¬ (F.ivek φ .identity p x w ∧ F.ivek φ .identity q x w) := by
@@ -156,30 +156,29 @@ theorem not_ivek_identity_and (h : ∃ v, w ~[F.access φ x] v)
   obtain ⟨v, hv⟩ := h
   exact hpq v hv (ivek_identity_iff.1 hp v hv) (ivek_identity_iff.1 hq v hv)
 
-/-- On the full cover the two hold together when the domain leaves both complements open:
-Option 2 of (12) for (6), and the possibility reading of (8a). -/
+/-- On the full cover, *ivək* holds of both complements iff the domain leaves each open (Option 2 of
+(12) for (6); possibility reading of (8a)). -/
 theorem ivek_all_and_iff :
     F.ivek φ .all p x w ∧ F.ivek φ .all q x w ↔
       (∃ v, w ~[F.access φ x] v ∧ p v) ∧ ∃ v, w ~[F.access φ x] v ∧ q v :=
   and_congr ivek_all_iff ivek_all_iff
 
-/-- On the identity cover (8b) is the felicitous Option 1 of (13), on which the holder's beliefs
-leave open that the ball is not white and that it is not black. -/
+/-- On the identity cover, (8b) says the beliefs leave open that the ball is not white and that it
+is not black (Option 1 of (13)). -/
 theorem ex8b_identity_iff {white black : W → Prop} :
     ¬ F.ivek φ .identity white x w ∧ ¬ F.ivek φ .identity black x w ↔
       (∃ v, w ~[F.access φ x] v ∧ ¬ white v) ∧ ∃ v, w ~[F.access φ x] v ∧ ¬ black v := by
   simp only [ivek_identity_iff, not_box]
   rfl
 
-/-- (8b) on the full cover is the reading on which the ball is neither white nor black, which
-the paper glosses as half white and half black. -/
+/-- On the full cover, (8b) says the ball is neither white nor black. -/
 theorem ex8b_all_iff {white black : W → Prop} :
     ¬ F.ivek φ .all white x w ∧ ¬ F.ivek φ .all black x w ↔
       □[F.access φ x] (fun v ↦ ¬ white v ∧ ¬ black v) w := by
   rw [box_and, ← not_diamond, ← not_diamond, ivek_all_iff, ivek_all_iff]
 
-/-- In the context of (8), where the ball is white or black in every world the domain admits,
-the full-cover reading of (8b) is false: the infelicitous Option 2 of (13). -/
+/-- If the ball is white or black in every admissible world, as in (8), the full-cover reading of
+(8b) is false (Option 2 of (13)). -/
 theorem ex8b_all_false {white black : W → Prop} (h : ∃ v, w ~[F.access φ x] v)
     (hctx : ∀ v, w ~[F.access φ x] v → white v ∨ black v) :
     ¬ (¬ F.ivek φ .all white x w ∧ ¬ F.ivek φ .all black x w) := by
@@ -190,8 +189,8 @@ theorem ex8b_all_false {white black : W → Prop} (h : ∃ v, w ~[F.access φ x]
 
 /-! ### One flavor for each *ivək*, §3 -/
 
-/-- One *ivək* over two clauses that contradict each other, as in (20), is false on every
-reading over a nonempty domain, the one flavor holding of both. -/
+/-- Over a nonempty domain, a single *ivək* over contradictory clauses, as in (20), is false on
+every reading. -/
 theorem not_ivek_and_not (h : ∃ v, w ~[F.access φ x] v) (c : Cover) :
     ¬ F.ivek φ c (fun v ↦ p v ∧ ¬ p v) x w := by
   cases c
@@ -201,8 +200,8 @@ theorem not_ivek_and_not (h : ∃ v, w ~[F.access φ x] v) (c : Cover) :
 
 end Frame
 
-/-- In (14) the two *ivək*s of a discourse, set to the assertive and the doxastic flavor, say that
-the students study well and think that they study badly, on nonempty domains. -/
+/-- The two *ivək*s of (14), with assertive and doxastic flavors, can report saying that the
+students study well and thinking that they study badly. -/
 theorem ex14_consistent : ∃ (F : Frame Bool Unit) (p : Bool → Prop),
     (∃ v, true ~[F.sayings ()] v) ∧ (∃ v, true ~[F.belief ()] v) ∧
       F.ivek .assertive .identity p () true ∧

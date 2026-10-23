@@ -60,9 +60,8 @@ def ifThen : Sentence W := fun s w ↦ b (update a s) w
 
 /-! ### Epistemic modals under *or*, §3.2 -/
 
-/-- (36): *the dog is in the backyard or it must be in the kitchen* is a disjunction of the
-first disjunct with the report that the information, given that the dog is not in the
-backyard, puts it in the kitchen. -/
+/-- *The dog is in the backyard or it must be in the kitchen* holds iff it is in the backyard or the
+information puts it in the kitchen otherwise (36). -/
 theorem disj_must_iff (p q : Set W) (s : Set W) (w : W) :
     disj (Sentence.ofProp p) (Sentence.ofProp q).must s w ↔
       w ∈ p ∨ ∀ w' ∈ s, w' ∉ p → w' ∈ q := by
@@ -76,10 +75,7 @@ theorem disjunctive_syllogism (p q : Set W) :
   · exact hp
   · exact absurd hq (h _ (List.mem_cons_of_mem _ List.mem_cons_self))
 
-/-- (38)–(40): disjunctive syllogism fails with the modal disjunct. On the two-world model,
-the dog inside in one world and outside in the other, the disjunction *the dog is inside or it
-must be outside* and *it's not the case that it must be outside* both hold at the outside
-world, where the dog is not inside. -/
+/-- Disjunctive syllogism fails with a modal disjunct ((38)–(40)). -/
 theorem not_disjunctive_syllogism :
     ¬ StandardConsequence
       [disj (Sentence.ofProp {true}) (Sentence.ofProp {false}).must,
@@ -141,8 +137,8 @@ under the parameter updated with its negation, (67). -/
 theorem doubleEntailment_disj :
     Use.doubleEntailment.interpret .or a b = fun s w ↦ a s w ∧ b (update aᶜ s) w := rfl
 
-/-- (61) and (62): *the police show up, and there might be trouble* is true when some world
-of the parameter in which the police show up is one with trouble. -/
+/-- *The police show up, and there might be trouble* is true iff some parameter world where the
+police show up has trouble ((61) and (62)). -/
 theorem cond_might_iff (p t : Set W) (s : Set W) (w : W) :
     ifThen (Sentence.ofProp p) (Sentence.ofProp t).might s w ↔
       ∃ w' ∈ s, w' ∈ p ∧ w' ∈ t := by

@@ -74,22 +74,22 @@ theorem highestGender (default : Gender) (r r' : Root) (hs : List Head) (h : Cat
     show [Head.cat h] = [] ++ [.cat h] from rfl,
     agreeingGender_lastCycle (above := []) trivial (by simp)]
 
-/-- In (22)–(26) *ɨnnat-ɨnnät* 'motherhood' is the plain n *-ɨnnät* over the female n of *ɨnnat*
-'mother', and takes the masculine default; a search of every n would find the feminine. -/
+/-- In (22)–(26), *ɨnnat-ɨnnät* 'motherhood' takes the masculine default of its highest plain n, not
+the feminine of a lower n. -/
 theorem amharic_innat (r : Root) :
     agreeing .masculine r [.cat .n_iFem, .cat .n_plain] = .masculine ∧
       agreeingGender Head.gender .masculine [.cat .n_plain, .cat .n_iFem] = .feminine :=
   agreeingGender_lastCycle_plain (hs := []) trivial rfl rfl
 
-/-- In (29) and (31) *Städt-chen* 'little town' is the plain n *-chen* over the arbitrary
-feminine n of *Stadt* 'town', and is neuter; a search of every n would find the feminine. -/
+/-- In (29) and (31), *Städt-chen* 'little town' is neuter by its plain n *-chen*, not feminine like
+*Stadt*. -/
 theorem german_chen (r : Root) :
     agreeing .neuter r [.cat .n_uFem, .cat .n_plain] = .neuter ∧
       agreeingGender Head.gender .neuter [.cat .n_plain, .cat .n_uFem] = .feminine :=
   agreeingGender_lastCycle_plain (hs := []) trivial rfl rfl
 
-/-- By (42) an evaluative head that is not an n leaves the nominal the gender of its highest n, as
-Russian *l'es-ók* 'little forest' stays masculine. -/
+/-- By (42), a non-n evaluative head keeps the gender of the highest n, as Russian *l'es-ók* 'little
+forest' stays masculine. -/
 theorem evaluative_transparent (default : Gender) (r : Root) (hs : List Head)
     (h : Categorizer.Head) :
     agreeing default r (hs ++ [.cat h, .eval]) = agreeing default r (hs ++ [.cat h]) := by

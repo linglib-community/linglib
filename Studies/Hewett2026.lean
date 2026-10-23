@@ -214,8 +214,8 @@ theorem brk_not_rootDetermined : ¬ RootDetermined (rows .brk) := by decide
 
 theorem brk_categoryDetermined : CategoryDetermined (rows .brk) := by decide
 
-/-- √krh takes a bare object in XaYaZ and *fi* in XaYYaZ (13a), so the root and its category do
-not determine the preposition and selection at or below the categorizer is too early. -/
+/-- √krh takes a bare object in XaYaZ and *fi* in XaYYaZ (13a), so the root and its category do not
+determine the preposition. -/
 theorem krh_not_categoryDetermined : ¬ CategoryDetermined (rows .krh) := by decide
 
 /-- √dwr selects *b-* in XaYaZ and *ʕala* in XaYYaZ (13b). -/

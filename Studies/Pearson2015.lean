@@ -123,8 +123,7 @@ def ClaimDeRe (Acq : Set (E → Centered W E → Prop)) (alts : Set (Centered W 
 /-! ### General consequences -/
 
 /-- An acquaintance-based generator gives each epistemic alternative in its domain the holder's own
-concept, on the actual center and the attitude alternatives: the one relation is borne uniquely to
-the values of both. Pearson draws this from (82) before (83) reduces to (84). -/
+concept ((82); cf. (83), (84)). -/
 theorem AcquaintanceBased.eqOn_of_mem_epiAlt (h : AcquaintanceBased Acq alts G x w dom)
     (hu : u ∈ dom) (he : u ∈ epiAlt alts) : Set.EqOn (G u) (G x) (insert (w, x) alts) := by
   obtain ⟨R, -, hR⟩ := h u hu
@@ -198,8 +197,7 @@ theorem deRe_true : SayDeRe s1Acq sayAlts cleverP john actual {john} :=
   ⟨authorGen, authorGen_suitable, by
     simp [sayAlts, cleverP, authorGen, authorConcept, actual, bel, auth]⟩
 
-/-- *yè* is de se or de re, the same sentence being false on the de se LF (78) and true on the de re
-LF (79). -/
+/-- On the de se LF (78) the *yè* sentence is false, and on the de re LF (79) it is true. -/
 theorem ye_de_se_de_re_ambiguous :
     ¬ SayDeSe sayAlts cleverP ∧ SayDeRe s1Acq sayAlts cleverP john actual {john} :=
   ⟨deSe_false, deRe_true⟩

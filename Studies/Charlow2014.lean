@@ -380,9 +380,8 @@ theorem eval_combine_monadLift {M : Type u → Type u} [Monad M] [LawfulMonad M]
     ContT.eval (combine f (monadLift m : ContT γ M α) (monadLift n)) = combine f m n := by
   rw [combine_eq_seq, ContT.eval_seq_monadLift, combine_eq_seq]
 
-/-- Evaluating a combination of lifted programs and lifting the result is lifting their
-combination, so the side effects of the underlying monad, whichever it is, survive evaluation
-(Fact 4.1). -/
+/-- Resetting a combination of lifted programs equals lifting their combination, so the underlying
+monad's effects survive evaluation (Fact 4.1). -/
 theorem reset_combine_monadLift {M : Type u → Type u} [Monad M] [LawfulMonad M]
     {α β γ ρ : Type u} (f : α → β → γ) (m : M α) (n : M β) :
     ContT.reset (combine f (monadLift m : ContT γ M α) (monadLift n)) =
@@ -580,8 +579,7 @@ theorem exceptional_neg (rel ling : E → Prop) (met : E → E → Prop) :
   funext s; ext q; simp [combine, ContT.eval, ContT.reset]
 
 /-- *If a relative of mine dies, I'll be rich* gets `∃ > if` from a Reset antecedent (4.9,
-`Examples.ex4_1a`). The thesis notes that the truth conditions are a little too weak, one
-relative who does not die verifying the conditional. -/
+`Examples.ex4_1a`). -/
 theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
     ContT.eval ((combine (· ·)
       (combine (· ·) (liftValue (cond (E := E)) : Tower E Prop _)
@@ -591,9 +589,8 @@ theorem exceptional_cond (rel dies : E → Prop) (rich : Prop) :
       indef rel >>= fun x ↦ pure (dies x → rich) := by
   funext s; ext q; simp [combine, ContT.eval, ContT.reset, cond]
 
-/-- In *if every relative of mine dies, I'll be rich* the universal is discharged inside the Reset
-antecedent, so the conditional is a plain truth condition with the universal below `if`, and no
-reading puts it above (`Examples.ex4_1b`). -/
+/-- In *if every relative of mine dies, I'll be rich* the universal scopes below `if` on every
+reading (`Examples.ex4_1b`). -/
 theorem island_cond_every (rel dies : E → Prop) (rich : Prop) :
     ContT.eval ((combine (· ·)
       (combine (· ·) (liftValue (cond (E := E)) : Tower E Prop _)
@@ -653,9 +650,8 @@ theorem cf_exceptional_cond (rel dies : E → Prop) (rich : Prop) (hrel : ∃ x,
   · rintro ⟨_, ⟨q, ⟨hq, -⟩, rfl⟩, h⟩
     exact ⟨q.1, hq, h⟩
 
-/-- Closing the choice function above *no candidate* gives the reading on which no candidate
-submitted every paper he wrote ([schwarz-2001]), given that every candidate wrote a paper and no
-two wrote the same papers (4.35, `Examples.ex4_4`). -/
+/-- Closing the choice function above *no candidate* gives the [schwarz-2001] reading that no
+candidate submitted every paper he wrote (4.35, `Examples.ex4_4`). -/
 theorem cf_no_candidate_iff [Nonempty E] (cand : E → Prop) (paperBy submitted : E → E → Prop)
     (hwrote : ∀ x, cand x → ∃ y, paperBy x y) (hinj : Set.InjOn paperBy {x | cand x}) :
     (∃ f : ChoiceFunction E, ¬ ∃ x, cand x ∧ submitted (f (paperBy x)) x) ↔
@@ -666,8 +662,8 @@ theorem cf_no_candidate_iff [Nonempty E] (cand : E → Prop) (paperBy submitted 
   push Not
   simpa using h
 
-/-- When every girl fancies the same boys `B`, a choice function closed above *every girl* picks
-one boy for all of them, the reading [geurts-2000] objects to (4.36). -/
+/-- When all the girls fancy the same boys, a choice function closed above *every girl* picks one
+boy for all of them, as [geurts-2000] objects (4.36). -/
 theorem cf_same_restrictor_iff (girl : E → Prop) (boysFancied gave : E → E → Prop) {B : E → Prop}
     (hB : ∃ y, B y) (hsame : ∀ x, girl x → boysFancied x = B) :
     (∃ f : ChoiceFunction E, ∀ x, girl x → gave (f (boysFancied x)) x) ↔
@@ -675,9 +671,8 @@ theorem cf_same_restrictor_iff (girl : E → Prop) (boysFancied gave : E → E �
   rw [← GQ.some, ← ChoiceFunction.exists_apply_iff_some hB]
   exact exists_congr fun f ↦ forall₂_congr fun x hx ↦ by rw [hsame x hx]
 
-/-- Closing the choice function of *a book by …* above negation and that of *a famous linguist*
-below it gives the reading that every famous linguist wrote a book I did not read, given that no
-two famous linguists wrote the same books (4.37, `Examples.ex4_6`). -/
+/-- Closing *a book by …* above negation and *a famous linguist* below it gives the reading that
+every famous linguist wrote a book I did not read (4.37, `Examples.ex4_6`). -/
 theorem cf_layered_iff [Nonempty E] (linguist : E → Prop) (bookBy : E → E → Prop)
     (read : E → Prop) (hling : ∃ x, linguist x) (hbook : ∀ x, linguist x → ∃ y, bookBy x y)
     (hinj : Set.InjOn bookBy {x | linguist x}) :
@@ -692,9 +687,8 @@ theorem cf_layered_iff [Nonempty E] (linguist : E → Prop) (bookBy : E → E �
   simp only [Set.domRestrict_apply, Subtype.forall, Set.mem_ofPred_eq, GQ.some] at h
   simpa only [hneg] using h
 
-/-- A choice function closed above *no candidate* over the doubleton of each candidate's vita
-and portfolio gives the reading that no candidate submitted both, given that the doubletons are
-distinct (4.38). -/
+/-- A choice function over each candidate's vita and portfolio, closed above *no candidate*, gives
+the reading that no candidate submitted both (4.38). -/
 theorem cf_disjunction_iff [Nonempty E] (cand : E → Prop) (vita portfolio : E → E)
     (submit : E → E → Prop)
     (hinj : Set.InjOn (fun x y ↦ y = vita x ∨ y = portfolio x) {x | cand x}) :
@@ -758,9 +752,8 @@ def distr (R : Set A → α) (X : Set A) : Tower (Set A) Prop α :=
 @[simp] theorem run_distr (R : Set A → α) (X : Set A) (k : α → StateSet (Set A) Prop) :
     (distr R X).run k = fun s ↦ {(∀ x ∈ X, holds (k (R {x})) s, s)} := rfl
 
-/-- In the distributive inverse-scope reading of *a guard is standing in front of two buildings*
-guards vary with buildings, and the plural's nondeterminism outscopes the distributed universal
-(4.17). -/
+/-- In the distributive inverse-scope reading of *a guard is standing in front of two buildings*,
+guards vary with buildings (4.17). -/
 theorem indef_fronts_two_distr (guard bldgs : Set A → Prop) (fronts : Set A → Set A → Prop) :
     (combine (combine (combine (fun x f ↦ f x)))
       (pure (pure (monadLift (indef guard))) :
@@ -805,8 +798,8 @@ theorem or_names_left (c m : E) (left : E → Prop) :
       (dref (pure c) <|> dref (pure m)) >>= fun x ↦ pure (left x) := by
   funext s; ext q; simp [combine, ContT.eval]
 
-/-- In *whenever I see Alf or hear Cal, I scream his name* the antecedent is a proper subpart of
-each disjunct, and the disjunctive program still hosts the dref (4.28). -/
+/-- In *whenever I see Alf or hear Cal, I scream his name* the disjunction hosts a dref for a proper
+subpart of each disjunct (4.28). -/
 theorem or_subparts (me a c : E) (see hear : E → E → Prop) :
     ContT.eval (combine (fun x f ↦ f x) (liftValue me : Tower E Prop E)
       (or (combine (fun x f ↦ f x) (bindShift (liftValue a)) (liftValue see))
@@ -822,9 +815,8 @@ theorem or_pure_pure (steak burger : E → Prop) :
       (pure (monadLift (indef burger))) =
       fun c ↦ c (monadLift (indef steak)) <|> c (monadLift (indef burger)) := rfl
 
-/-- In *either everyone ate a steak or a hamburger*, with `everyone` externally lifted beside the
-disjunction of (4.29), the universal outscopes each indefinite and not the disjunction's
-nondeterminism, which lives on the top level (`Examples.ex4_24b`). -/
+/-- In *either everyone ate a steak or a hamburger* the universal outscopes each indefinite but not
+the disjunction of (4.29) (`Examples.ex4_24b`). -/
 theorem or_over_every (person steak burger : E → Prop) (ate : E → E → Prop) :
     eval₂ (combine (combine (fun x f ↦ f x))
       (pure (everyDP person) : Tower E Prop (Tower E Prop E))
@@ -841,9 +833,7 @@ theorem or_map_pure_every (steak burger : E → Prop) :
       fun c ↦ (everyDP steak).run (fun x ↦ c (pure x)) <|>
         (everyDP burger).run (fun x ↦ c (pure x)) := rfl
 
-/-- In the higher-order disjunctive program *Mary or John or Bill* (4.31) the disjunction of Mary
-and John is lifted and disjoined with Bill, and lowering twice leaves the layering
-`{{m, j}, b}`. -/
+/-- Lowering *Mary or John or Bill* (4.31) twice leaves the layering `{{m, j}, b}`. -/
 theorem or_or_names (m j b : E) :
     ContT.eval (ContT.eval <$>
       or (pure (or (liftValue m) (liftValue j)) : Tower E (StateSet E E) (Tower E E E))
@@ -1025,9 +1015,8 @@ theorem only_fmark_fmark (alt : E → Set E) (b s : E) (intro : E → E → E �
   simp [combine, ContT.eval, fmark, WithAlternatives.alternatives_bind,
     WithAlternatives.alternatives_pure, eq_comm]
 
-/-- In selective association, with BILLᶠ externally and SUEᶠ internally lifted, `only` catches
-Bill's alternatives at the inner level and Sue's survive to `also`, for the scope order
-`also > SUEᶠ > only > BILLᶠ` (5.4.4, `Examples.ex5_27b`). -/
+/-- In selective association `only` catches BILLᶠ's alternatives and SUEᶠ's survive to `also`
+(5.4.4, `Examples.ex5_27b`). -/
 theorem only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
     ContT.eval (combine (· ·)
       (monadLift (pure only : WithAlternatives (WithAlternatives (E → W → Prop) → E → W → Prop)) :
@@ -1046,8 +1035,8 @@ theorem only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E → E 
   · ext P
     simp [combine, ContT.eval, fmark, Function.comp_def, eq_comm]
 
-/-- In *he also only introduced BILLᶠ to SUEᶠ* merging in `also` captures the surviving
-alternatives of SUEᶠ, for the scope order `also > SUEᶠ > only > BILLᶠ` (`Examples.ex5_27b`). -/
+/-- In *he also only introduced BILLᶠ to SUEᶠ*, `also` captures the surviving alternatives of SUEᶠ
+(`Examples.ex5_27b`). -/
 theorem also_only_focus_layered (alt : E → Set E) (b s : E) (intro : E → E → E → W → Prop) :
     also (ContT.eval (combine (· ·)
       (monadLift (pure only :

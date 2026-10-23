@@ -89,8 +89,8 @@ def OmegaSeparates (a b : Constituent) (t : Tree) : Prop :=
 instance (a b : Constituent) (t : Tree) : Decidable (OmegaSeparates a b t) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- In the recursive parse every stacked prefix and the stem is ω-initial: `n` high prefixes
-over a vowel-initial stem give `n + 1` loci of [ʔ]-insertion ((21)–(23)). -/
+/-- In the recursive parse, `n` high prefixes over a vowel-initial stem give `n + 1` loci of
+[ʔ]-insertion ((21)–(23)). -/
 theorem omegaInitial_nested {ps : List Constituent} {s : Constituent}
     (hps : ∀ p ∈ ps, p.level ≠ .om) (hs : s.level ≠ .om) :
     omegaInitial (nested ps s) = ps ++ [s] := by

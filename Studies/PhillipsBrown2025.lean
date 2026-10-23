@@ -207,9 +207,8 @@ theorem heim_no_conflict (F : Conditional.Frame World) (w : World) [Std.Antisymm
     ¬ (Conditional.Want F bel w ↑act ∧ Conditional.Want F bel w (↑act : Set World)ᶜ) :=
   fun ⟨h, h'⟩ ↦ h.not_compl hd h'
 
-/-- On a belief-based semantics, the cost being believed to come exactly with the act, wanting
-the act is wanting the cost, *Nap* entailing *Fail*, the closure under doxastic equivalence of
-§4.1. -/
+/-- On a belief-based semantics, wanting the act is wanting the cost believed to come with it
+(§4.1). -/
 theorem closure_under_doxastic_equivalence (A : Set (World → Prop))
     (h : BestWorlds.Want A bel ↑act) : BestWorlds.Want A bel ↑cost :=
   h.mono_on (by decide +kernel)

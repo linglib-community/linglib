@@ -88,10 +88,8 @@ theorem isContiguous_iff_feasiblyMonotone {ι F : Type*} [LinearOrder ι]
 
 /-! ### Four characterizations coincide over a linear hierarchy -/
 
-/-- Over a linear containment hierarchy, contiguity, feasible monotonicity (definition (6)),
-generability by Elsewhere insertion over a terminal antihomophonous vocabulary ([bobaljik-2012])
-and spellability by Superset competition over a context-free antihomophonous lexicon
-([caha-2009]) are equivalent. -/
+/-- On a linear containment hierarchy, contiguity, feasible monotonicity (6), Elsewhere generability
+([bobaljik-2012]) and Superset spellability ([caha-2009]) are equivalent. -/
 theorem isContiguous_tfae {n : ℕ} {F : Type*} (p : Paradigm n F) :
     [IsContiguous p,
      FeasiblyMonotone p,
@@ -230,10 +228,7 @@ def wPCC : PCC := .ofGrammar _root_.PCC.weakGrammar
 /-- `mPCC` is the Me-first constraint (19d). -/
 def mPCC : PCC := .ofGrammar _root_.PCC.meFirstGrammar
 
-/-- Table 4 states, in the paper's words (19), that the direct object must be third person, that
-it is less prominent than the indirect object, that a third-person indirect object combines only
-with a third-person direct object, and that a second- or third-person indirect object excludes a
-first-person direct object. -/
+/-- Table 4 gives the strong, ultrastrong, weak and me-first PCCs as stated in (19). -/
 theorem table4 :
     (∀ p, sPCC p = true ↔ p.1.low = .third) ∧
       (∀ p, uPCC p = true ↔ p.1.low.prominence < p.1.high.prominence) ∧
@@ -274,8 +269,8 @@ theorem unattested_singleton_class :
         (Finset.univ.filter fun p ↦ c p = false).card = 1) := by
   decide
 
-/-- Over the naive hierarchy (23) the ultrastrong constraint is neither monotone nor antitone, so
-no order of the truth values rescues it, while the weak constraint is monotone (25). -/
+/-- Over the naive hierarchy (23) the ultrastrong constraint is neither monotone nor antitone, while
+the weak one is monotone (25). -/
 theorem uPCC_not_monotone_naive :
     ¬ Monotone (α := NaiveCombination) uPCC ∧ ¬ Antitone (α := NaiveCombination) uPCC ∧
       Monotone (α := NaiveCombination) wPCC := by

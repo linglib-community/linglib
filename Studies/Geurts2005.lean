@@ -232,8 +232,8 @@ theorem mustHereOrThere_nontrivial : mustHereOrThere.Nontrivial := by
   simp only [mustHereOrThere, List.mem_cons, List.not_mem_nil, or_false] at hd
   rcases hd with rfl | rfl <;> exact Set.singleton_nonempty _
 
-/-- The disjunction holds and satisfies all three constraints, yet the background is not within
-the first content ("It does not follow from (27) that It must be here"). -/
+/-- The disjunction holds and satisfies all three constraints, though *It must be here* does not
+follow from (27). -/
 theorem not_must_here : ¬ (Set.univ : Set Loc) ⊆ {.here} :=
   fun h ↦ by simpa using h (Set.mem_univ Loc.there)
 
@@ -267,8 +267,8 @@ def ForwardReference (f₁ f₂ : ModalForce) : Prop := f₁ ≠ .possibility �
 
 instance : DecidableRel ForwardReference := fun _ _ ↦ by unfold ForwardReference; infer_instance
 
-/-- A disjunction of modals is acceptable exactly when no domain refers forward, the paper's
-explanation of the odd "?It must be here or else it may be there" in (1)–(2). -/
+/-- A disjunction of modals is acceptable exactly when no domain refers forward, which explains the
+oddness of (1)–(2). -/
 theorem rows_forward_reference :
     ∀ r ∈ rows, r.judgment = .acceptable ↔ ¬ ForwardReference r.force₁ r.force₂ := by
   decide

@@ -80,9 +80,8 @@ open scoped NNReal
 
 variable {C : Type*} [Fintype C] [Nonempty C] {n : ℕ}
 
-/-- MaxEnt is the Gumbel random utility model (§4). When the candidates' harmonies are perturbed by
-independent standard Gumbel noise, the probability that `c` has the highest perturbed harmony is the
-MaxEnt probability of (4), by McFadden's Lemma 1. -/
+/-- With independent standard Gumbel noise on the harmonies, the probability that `c` wins is its
+MaxEnt probability (4) (§4, by McFadden's Lemma 1). -/
 theorem choiceProb_pi_gumbelMeasure_eq_maxEnt [DecidableEq C] [MeasurableSpace C]
     [MeasurableSingletonClass C] (con : ConstraintSet C (Fin n))
     (w : Fin n → ℝ) (c : C) :
@@ -90,16 +89,15 @@ theorem choiceProb_pi_gumbelMeasure_eq_maxEnt [DecidableEq C] [MeasurableSpace C
       maxEnt con.violations w {c} := by
   simp [choiceProb_pi_gumbelMeasure _ one_ne_zero c, maxEnt_singleton]
 
-/-- Between two candidates the MaxEnt logit of the first is the harmony difference (10), since under
-standard Gumbel noise the choice probability is the logistic function of the difference. -/
+/-- Between two candidates, the MaxEnt logit of the first is the harmony difference (10). -/
 theorem logit_choiceProb_pi_gumbelMeasure (con : ConstraintSet (Fin 2) (Fin n)) (w : Fin n → ℝ) :
     logit (choiceProb (Measure.pi fun c ↦ gumbelMeasure (harmonyScore con w c) 1) 0).toReal =
       harmonyScore con w 0 - harmonyScore con w 1 := by
   rw [choiceProb_pi_gumbelMeasure_fin_two _ one_ne_zero, ENNReal.toReal_ofReal (sigmoid_pos _).le]
   simp
 
-/-- Under noise of variance `v` on the weights, the probit of the first candidate is the harmony
-difference over the standard deviation `σ_d` of its noise (16). -/
+/-- Under weight noise of variance `v`, the probit of the first candidate is the harmony difference
+over its noise deviation `σ_d` (16). -/
 theorem probit_weightNoiseChoiceProb (con : ConstraintSet (Fin 2) (Fin n)) (w : Fin n → ℝ)
     {v : ℝ≥0} (hv : v ≠ 0) (hd : (con.violationDiff 0 1 : Fin n → ℝ) ≠ 0) :
     probit (weightNoiseChoiceProb con w v 0).toReal =
@@ -131,9 +129,8 @@ theorem probitChange_eq (h Δh : ℝ) {σ σ' : ℝ} (hσ : 0 < σ) (hσ' : 0 < 
   field_simp
   ring
 
-/-- When the change enlarges the noise, `σ < σ'`, the probit gain decreases with the initial
-harmony difference: the same change in violations has a smaller effect the higher the schwa
-candidate already stands (§7.2). -/
+/-- When the change enlarges the noise, the probit gain strictly decreases in the initial harmony
+difference (§7.2). -/
 theorem probitChange_strictAnti (Δh : ℝ) {σ σ' : ℝ} (hσ : 0 < σ) (hσ' : σ < σ') :
     StrictAnti (probitChange · Δh σ σ') := by
   intro h₁ h₂ hlt
@@ -309,9 +306,8 @@ theorem probit_gain_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) {
   rw [show √(4 : ℝ) = 2 by rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
   ring
 
-/-- With positive weights and the Max and Dep effect below the \*CCC one, the initial harmony
-differences of the four \*Clash pairs are ordered 1 < 5 < 3 < 7, so NHG predicts their probit gains
-ordered 1-2 > 5-6 > 3-4 > 7-8, where the data show the same gain in three of the four (§8.2). -/
+/-- Under these weights, NHG predicts the probit gains of the four \*Clash pairs to be ordered 1-2 >
+5-6 > 3-4 > 7-8 (§8.2). -/
 theorem clash_gain_ordered (w : Fin 6 → ℝ) {σ : ℝ} (hσ : 0 < σ) (hw : 0 < w 3 + w 4)
     (hw' : w 3 + w 4 < w 1 - w 5) :
     let gain u o := probit (weightNoiseProb ⟨u, o, .monosyllable⟩ w σ) -
@@ -329,9 +325,8 @@ theorem clash_gain_ordered (w : Fin 6 → ℝ) {σ : ℝ} (hσ : 0 < σ) (hw : 0
   simp only [gain, probit_gain_following _ _ _ hσ]
   exact ⟨hanti (by linarith), hanti (by linarith), hanti (by linarith)⟩
 
-/-- For the pairs differing in the preceding consonants, `σ_d` is unchanged, so the NHG probit gain
-is the rescaled harmony change (41): the same for words and clitics, larger before a monosyllable
-than before a disyllable. -/
+/-- For pairs differing in preceding consonants, the NHG probit gain is the rescaled harmony change
+(41), larger before a monosyllable. -/
 theorem probit_gain_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) {σ : ℝ}
     (hσ : 0 < σ) :
     probit (weightNoiseProb ⟨u, .cc, f⟩ w σ) - probit (weightNoiseProb ⟨u, .c, f⟩ w σ) =
@@ -358,10 +353,8 @@ theorem maxEntProb_following_lt (u : Underlying) (o : Onset) (w : Fin 6 → ℝ)
 /-- The observed odds of the schwa. -/
 def odds (x : Context) : ℚ := observedRate x / (100 - observedRate x)
 
-/-- The effect of the preceding consonants is larger in words than in clitics (§8.2). The odds ratio
-across \*CCC is larger with underlying `/∅/` than with `/ə/`, in both stress contexts. MaxEnt with
-Smith & Pater's constraints predicts equal odds ratios (`logit_onset`); this is the Max × \*CCC
-interaction that motivates \*CCC/iP. -/
+/-- The effect of preceding consonants is larger in words than in clitics, against MaxEnt with Smith
+& Pater's constraints (§8.2). -/
 theorem onset_effect_larger_for_words : ∀ f,
     odds ⟨.schwa, .cc, f⟩ / odds ⟨.schwa, .c, f⟩ < odds ⟨.zero, .cc, f⟩ / odds ⟨.zero, .c, f⟩ := by
   intro f
@@ -398,8 +391,8 @@ def revised (x : Context) : ConstraintSet Cand (Fin 6)
 noncomputable def harmonyDiffRevised (x : Context) (w : Fin 6 → ℝ) : ℝ :=
   harmonyScore (revised x) w 0 - harmonyScore (revised x) w 1
 
-/-- With \*CCC/iP the effect of the preceding consonants on the harmony difference is larger in
-words by the weight of \*CCC/iP, so a MaxEnt grammar can fit the interaction (§8.3). -/
+/-- With \*CCC/iP, the effect of preceding consonants on the harmony difference is larger in words
+by its weight (§8.3). -/
 theorem harmonyDiffRevised_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) :
     harmonyDiffRevised ⟨u, .cc, f⟩ w - harmonyDiffRevised ⟨u, .c, f⟩ w =
       w 1 - w 5 + if u = .zero then w 2 else 0 := by
@@ -441,10 +434,8 @@ theorem table45_maxent :
   field_simp
   ring
 
-/-- Under weight noise of variance `v`, the harmony differences of `a` and of `c` from `b` have
-variances `5v` and `2v` (14) and covariance `2v` (§9), so their joint law is not determined by the
-harmonies. The paper computes by numerical integration that `b` and `c`, of equal harmony, then
-receive the probabilities 0.260 and 0.141. -/
+/-- Under weight noise of variance `v`, the harmony differences of `a` and `c` from `b` have
+variances `5v` and `2v` (14) and covariance `2v` (§9). -/
 theorem table45_variance_covariance (v : ℝ≥0) :
     Var[fun η ↦ harmonyScore tableCon (tableW + η) 0 - harmonyScore tableCon (tableW + η) 1;
         weightNoise (Fin 3) v] = 5 * v ∧

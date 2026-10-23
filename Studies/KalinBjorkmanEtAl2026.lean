@@ -304,9 +304,8 @@ theorem mas_reanalyses (m : MappingType) (h : m ≠ .oneToOne) : table4 m .mas =
 theorem no_theory_handles_gaps (r : Representative) : table4 .morphologicalGap r = [.no] := by
   cases r <;> rfl
 
-/-- The theories that treat some non-one-to-one mapping as genuine are exactly the
-realizational ones of Table 2: separating exponents from features is what makes a mismatch
-possible, Section 4.6. -/
+/-- The theories treating some non-one-to-one mapping as genuine are exactly the realizational ones
+of Table 2 (Section 4.6). -/
 theorem handlesNatively_iff_realizational (r : Representative) :
     (∃ m, m ≠ .oneToOne ∧ HandlesNatively m r) ↔ r.theory.cell.mapping = .realizational := by
   revert r; decide

@@ -321,9 +321,7 @@ def warao : Program Seg WHead
       (.ite (.label stop x) .fls
         (.ite (.initial x) .fls (.call .N' x.pred)))
 
-/-- Fig. 4, the rounds of evaluating (6) on /naote/. The first round values N′ at the nasal and
-at the stop, the second at the positions after them, and the third at position 2, reaching the
-output column N′ = ⊤⊤⊤⊥⊥, [nãõte], with spreading blocked by the t. -/
+/-- Evaluating (6) on /naote/ in rounds reaches the output N′ = ⊤⊤⊤⊥⊥, [nãõte], as in Fig. 4. -/
 theorem warao_rounds :
     (List.range 5).map (warao.approx naote 1 .N') = [some true, none, none, some false, none] ∧
     (List.range 5).map (warao.approx naote 2 .N') =

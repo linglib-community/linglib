@@ -44,15 +44,13 @@ theorem card_consonants : consonants.card = 25 := by decide +kernel
 
 /-! ### Voicing pairs -/
 
-/-- The voiceless obstruents whose counterpart in [voice] is a phoneme are all but *c*, *č* and
-*ch*, whose counterparts [dz], [dž] and [ɣ] occur only as positional variants
-(pp. 457–458). -/
+/-- Every voiceless obstruent but *c*, *č* and *ch* has a phonemic counterpart in [voice] (pp.
+457–458). -/
 theorem voiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false → x.HasValue .voice false →
     (x.setFeature .voice true ∈ inventory ↔ x ≠ c ∧ x ≠ č ∧ x ≠ ch) := by
   decide +kernel
 
-/-- The counterparts in [voice] of *c*, *č* and *ch* are [dz], [dž] and [ɣ]. Where /x/ might
-assimilate, "it voices not to /h/, but to [ɣ]" (p. 458). -/
+/-- The counterparts in [voice] of *c*, *č* and *ch* are [dz], [dž] and [ɣ] (p. 458). -/
 theorem setFeature_voice_c_č_ch :
     c.setFeature .voice true = .ofChart .«dz» ∧ č.setFeature .voice true = .ofChart .«d̠ʒ» ∧
       ch.setFeature .voice true = .ofChart .«ɣ» := by
@@ -65,9 +63,8 @@ theorem devoiced_mem_iff : ∀ x ∈ inventory, x.HasValue .sonorant false →
     x.HasValue .voice true → (x.setFeature .voice false ∈ inventory ↔ x ≠ h) := by
   decide +kernel
 
-/-- *h* and *ch*, "a nearly matching pair of fricatives" (p. 462), differ in [voice],
-[spread glottis] and [consonantal], and in [dorsal] and the tongue-body features that go with
-it. -/
+/-- *h* and *ch* differ in [voice], [spread glottis], [consonantal], [dorsal] and the tongue-body
+features (p. 462). -/
 theorem h_ch : Finset.univ.filter (fun ft ↦ h ft ≠ ch ft) =
     {.consonantal, .voice, .spreadGlottis, .dorsal, .high, .low, .front, .back} := by
   decide +kernel
@@ -87,10 +84,8 @@ theorem secondPalatalization_mem : ∀ x ∈ palatalizing,
       secondPalatalization x .voice = x .voice := by
   decide +kernel
 
-/-- "Here too the reflex of *g* has de-affricated from *dz* to *z*" (p. 462): the reflex of *g*
-is that of *k* voiced, [dz], de-affricated, and *h*, the Czech reflex of Proto-Slavic *g*
-(p. 461), shares it. *k* and *g* differ in [voice] alone, and their reflexes in [continuant] as
-well. -/
+/-- The second-palatalization reflex of *g*, shared by *h* (p. 461), is the voiced reflex of *k*
+de-affricated (p. 462). -/
 theorem secondPalatalization_g :
     (secondPalatalization k).setFeature .voice true = .ofChart .«dz» ∧
       (Segment.ofChart .«dz»).setFeature .continuant true = secondPalatalization g ∧
@@ -102,9 +97,8 @@ theorem secondPalatalization_g :
 
 /-! ### Spelling -/
 
-/-- *b*, *p*, *v* and *f* before *ě* are followed by /j/, and *m* by /ň/, so that *pěna* 'foam',
-*věno* 'dowry', *harfě* 'harp' and *město* 'town' read as Short's transcriptions /pjena/,
-/vjeno/, /harfje/ and /mňesto/, each transcribed phoneme read as its letter (p. 459). -/
+/-- *b*, *p*, *v*, *f* before *ě* are followed by /j/ and *m* by /ň/, matching Short's
+transcriptions of *pěna*, *věno*, *harfě* and *město* (p. 459). -/
 theorem ofString?_eq_segments : ∀ w ∈ [pena, veno, harfe, mesto],
     ofString? w.form = (w.segments.mapM ofString?).map List.flatten := by
   decide +kernel
@@ -116,8 +110,7 @@ theorem ofString?_obed :
       (obed.segments.mapM ofString?).map List.flatten = some [o, b, j, e, t] := by
   decide +kernel
 
-/-- Length is phonemic, as in *dal* 'he gave' and *dál* 'further', *dul* 'blew' and *důl*
-'mine', and *ryby* 'fish' and *rybí* 'fish-', where *y* and *i* write one vowel (p. 456). -/
+/-- Vowel length is phonemic, as in *dal* and *dál*, *dul* and *důl*, *ryby* and *rybí* (p. 456). -/
 theorem ofString?_length :
     ofString? dal.form = some [d, a, l] ∧ ofString? dal_long.form = some [d, a, a, l] ∧
       ofString? dul.form = some [d, u, l] ∧ ofString? dul_long.form = some [d, u, u, l] ∧
@@ -130,8 +123,8 @@ theorem ofString?_diphthong :
     ofString? sud.form = some [s, u, d] ∧ ofString? soud.form = some [s, o, u, d] := by
   decide +kernel
 
-/-- The alternation of *d* with *ď* before a front vowel, in *mladý*, *mladí*, *mladě* 'young'
-(p. 462), and *ď* written with the háček before a back vowel, as in *ďábel* 'devil' (p. 459). -/
+/-- *d* alternates with *ď* before a front vowel, as in *mladý*, *mladí*, *mladě* (p. 462), and *ď*
+is written before a back vowel, as in *ďábel* (p. 459). -/
 theorem ofString?_d_ď :
     ofString? mlady.form = some [m, l, a, d, i, i] ∧
       ofString? mladi.form = some [m, l, a, ď, i, i] ∧

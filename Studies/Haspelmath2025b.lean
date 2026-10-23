@@ -148,8 +148,8 @@ def ed : Form := ⟨.suff "ed", none⟩
 def english : Inventory Form := inventory
   [[geo, logy], [hello], [hammerN], [hammerN, s], [hammerV], [hammerV, ed]]
 
-/-- `geo-` is contentful but only occurs with another contentful form, so it is not a root,
-although it is a morphological core under the formal base definition (§2). -/
+/-- `geo-` is not a root, though it is a morphological core under the formal base definition (§2).
+-/
 theorem geo_not_root :
     ¬ english.IsRoot geo ∧
       geo.shape.IsCoreIn (english.forms.map shapes) (english.forms.map shapes) := by
@@ -341,8 +341,8 @@ def hammerRoots : RootVar → Slot
   | .verbCategory => hammerVerb .morphosyntax
   | .shape => hammerNoun .phonology
 
-/-- The two *hammer* roots of (20) instantiate the sister schemas of (21) as a pair, their
-shapes filled alike; neither is derived from the other or from an abstract root. -/
+/-- The two *hammer* roots of (20) instantiate the sister schemas of (21) as a pair, neither derived
+from the other. -/
 theorem hammer_sisters :
     nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun hammerVerb) :=
   ⟨hammerRoots, λ v => by cases v <;> first | exact bot_le | exact le_rfl,

@@ -271,18 +271,14 @@ theorem surveyedCloser_trans : ∀ a b c : BybeeCategory,
     SurveyedCloser a b → SurveyedCloser b c → SurveyedCloser a c := by
   decide
 
-/-- `SurveyedCloser` is total on the surveyed categories: any two distinct
-surveyed categories are ordered by the §6 data in exactly one direction. With
-irreflexivity and transitivity, the survey *alone* determines a strict total
-order on its four categories. -/
+/-- `SurveyedCloser` is total on the surveyed categories, so the §6 survey alone fixes a strict
+total order on them. -/
 theorem surveyedCloser_total : ∀ a b : BybeeCategory,
     Surveyed a → Surveyed b → a ≠ b → SurveyedCloser a b ∨ SurveyedCloser b a := by
   decide
 
-/-- Order isomorphism: on the surveyed categories, `SurveyedCloser` and the
-hierarchy's `<` coincide via `toRelevanceHierarchy`. The hierarchy there is
-not merely consistent with Bybee's evidence — it *is* the order the §6 survey
-determines. -/
+/-- On the surveyed categories, `SurveyedCloser` coincides with the relevance hierarchy's order
+(§6). -/
 theorem survey_order_iso_relevance : ∀ a b : BybeeCategory,
     Surveyed a → Surveyed b →
       (SurveyedCloser a b ↔ toRelevanceHierarchy a < toRelevanceHierarchy b) := by

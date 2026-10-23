@@ -140,8 +140,8 @@ theorem support_regret :
     Function.support (regret dox base g p) = Function.support (glad dox base g p) := by
   ext; simp [regret, glad, isContingent_compl]
 
-/-- The presupposition of *glad* makes the domain properly contain the belief worlds, since the
-belief worlds are `p`-worlds and the domain has a non-`p`-world ([von-fintel-1999], p. 123). -/
+/-- If *glad* is defined, its domain properly contains the belief worlds ([von-fintel-1999], p.
+123). -/
 theorem ssubset_of_glad_ne_zero (h : glad dox base g p w ≠ 0) : dox w ⊂ base w := by
   obtain ⟨hp, hb, -, v, hv⟩ : dox w ⊆ p ∧ dox w ⊆ base w ∧ IsContingent (base w) p := by
     simpa [glad] using h

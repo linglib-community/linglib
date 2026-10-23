@@ -213,10 +213,8 @@ theorem Realizes.precedes_of_pastPerfect {b to₂ ts : NonemptyInterval T}
   exact (h.2.1.trans to₂.fst_le_snd).trans_lt h.1
 
 
-/-- The conditional, the future perfect and the conditional perfect relate the situation-TO to an
-intermediate TO only, so its relation to t₀ is not expressed: each has realizations with the
-situation-TO before, around and after t₀, and the tense is vague among them rather than
-ambiguous (§5.1.2.3). -/
+/-- The conditional, future perfect and conditional perfect leave the situation-TO's relation to t₀
+unexpressed, so these tenses are vague (§5.1.2.3). -/
 theorem vague :
     ∀ o : Ordering,
       (∃ to₂ ts : NonemptyInterval ℤ, Realizes conditional (.pure 0) [to₂, ts] ∧
@@ -235,10 +233,8 @@ theorem vague :
       ⟨.pure 3, .pure 1, by decide +kernel, by decide⟩,
       ⟨.pure (-6), .pure 3, .pure 1, by decide +kernel, by decide⟩⟩
 
-/-- Projected onto [reichenbach-1947]'s points, S at the basic TO, R at the intermediate TO and E
-at the situation-TO, the conditional realizes every order of the posterior past and the future
-perfect every order of the anterior future, the two retrogressive fundamental forms that group
-three orders each (§5.1.2.2). -/
+/-- Projected onto [reichenbach-1947]'s points, the conditional realizes every posterior-past order
+and the future perfect every anterior-future order (§5.1.2.2). -/
 theorem covers_retrogressive :
     (∀ x ∈ Reichenbach1947.structures, x.1 = .lt → x.2.1 = .gt →
       ∃ s r e : Fin 3, Realizes conditional (.pure s) [.pure r, .pure e] ∧

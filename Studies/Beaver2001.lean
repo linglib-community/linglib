@@ -371,10 +371,8 @@ private theorem meetMiddle_ne_zero_iff {a b : SignType} :
     a.meetMiddle b ≠ 0 ↔ a ≠ 0 ∧ (a = 1 → b ≠ 0) := by
   cases a <;> cases b <;> decide
 
-/-- On PL+∂ an update is the Heimian update of the sentence's trivalent value, defined iff the
-sentence is classical at every world of the state and keeping the worlds where it is true.
-This combines Lemma 10.1 with the distributivity of non-modal updates used to prove
-Lemma 10.2. -/
+/-- On PL+∂ an update is the Heimian update of the sentence's trivalent value (Lemma 10.1, with the
+distributivity used for Lemma 10.2). -/
 theorem eval_eq_ofTrivalent (hφ : NonModal φ) :
     φ.eval F = CCP.Partial.ofTrivalent (φ.tval F) := by
   induction hφ with

@@ -213,9 +213,8 @@ theorem omitted_of_not_entailed {ctx : Set (Set W)} {p a : Set W} (hp : ¬ ctx �
   · exact Set.not_disjoint_iff.mpr ⟨s, hs, hne, hsa⟩
   · exact Set.not_disjoint_iff.mpr ⟨s, hs, hne, hsa.trans Set.inter_subset_right⟩
 
-/-- In Table 4.4, with positive evidence for the presupposition and the alternative exhaustified
-below the belief operator, the exhaustive implicature contradicts the context and the trigger
-is obligatory, although its presupposition is not entailed. -/
+/-- With positive evidence for the presupposition and the alternative exhaustified below the belief
+operator, the trigger is obligatory (Table 4.4). -/
 theorem obligatory_of_positive_evidence {ctx : Set (Set W)} {p a : Set W}
     (hposs : ctx ⊆ Poss p) (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ p ∩ a) :
     Beats (ranking ctx (presupSentence p a)) (presupSentence p a) (plainExhBelowK a p) := by
@@ -239,9 +238,8 @@ theorem omitted_of_denied {ctx : Set (Set W)} {p a : Set W} (hneg : ctx ⊆ K p�
   rintro t ht ⟨⟨w, hw⟩, htp⟩
   exact (hneg ht).2 hw (htp hw).1
 
-/-- In Table 4.6, an ignorance context with the alternative exhaustified above the belief
-operator, the presuppositional sentence commits the speaker to the presupposition and so
-contradicts the ignorance, while the alternative is coherent; the trigger is dropped. -/
+/-- In an ignorance context with the alternative exhaustified above the belief operator, the trigger
+is dropped (Table 4.6). -/
 theorem omitted_of_ignorance {ctx : Set (Set W)} {p a : Set W} (hign : ctx ⊆ Ignorant p)
     (hwit : ∃ s ∈ ctx, s ⊆ a) :
     Beats (ranking ctx (presupSentence p a)) (plainExhAboveK a p) (presupSentence p a) := by
@@ -256,10 +254,8 @@ theorem omitted_of_ignorance {ctx : Set (Set W)} {p a : Set W} (hign : ctx ⊆ I
     obtain ⟨-, ⟨u, hu, hup⟩⟩ := hign ht
     exact hup (htp hu).1
 
-/-- In Tables 4.7 and 4.9 the context gives positive evidence for the presupposition without
-entailing it, and the alternative has two exhaustified readings. Exhaustified against the
-failure of the presupposition, so that it conveys that the presupposition holds, the alternative
-wins. Exhaustified against the presupposition, it loses, so the trigger is optional. -/
+/-- With positive but not entailing evidence for the presupposition, the alternative wins on one
+exhaustified reading and loses on the other, so the trigger is optional (Tables 4.7 and 4.9). -/
 theorem optional_of_two_readings {ctx : Set (Set W)} {p a : Set W} (hposs : ctx ⊆ Poss p)
     (hp : ¬ ctx ⊆ K p) (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ p ∩ a) :
     Beats (ranking ctx (presupSentence p a)) (plainExhBelowK a pᶜ) (presupSentence p a) ∧
@@ -378,8 +374,8 @@ noncomputable def Trigger.aspectual (R S : SetRel W W) (P : W → Prop) :
   | .kaishi => Mandarin.kaishi.phasal.map (·.denote S P)
   | _ => none
 
-/-- An aspectual trigger whose alternative is obtained by deletion asserts its prejacent, so the
-sentence without the trigger makes the same assertion, as (1) requires of the alternative. -/
+/-- An aspectual trigger whose alternative arises by deletion asserts its prejacent, as (1) requires
+of the alternative. -/
 theorem eq_one_iff_of_altStructure_deletion (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) {w : W} (hw : φ w ≠ 0) : φ w = 1 ↔ P w := by
   cases t <;>
@@ -389,8 +385,8 @@ theorem eq_one_iff_buzai (h : Trigger.buzai.aspectual R S P = some φ) {w : W} (
     φ w = 1 ↔ ¬ P w := by
   cases h; simp_all [Phasal.denote]
 
-/-- A sentence with an aspectual trigger that asserts its prejacent is obligatory, against the
-sentence without the trigger, when the context entails its presupposition, as in Table 4.2. -/
+/-- An aspectual trigger asserting its prejacent is obligatory when the context entails its
+presupposition (Table 4.2). -/
 theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) (hp : ctx ⊆ K (Function.support φ))
     (hwit : ∃ s ∈ ctx, s ⊆ {w | P w}) :
@@ -398,8 +394,8 @@ theorem aspectual_obligatory_of_entailed (h : t.aspectual R S P = some φ)
   rw [Candidate.ofTrivalent_eq_presupSentence fun _ ↦ eq_one_iff_of_altStructure_deletion h ht]
   exact obligatory_of_entailed hp hwit
 
-/-- A sentence with an aspectual trigger that asserts its prejacent loses to the sentence without
-the trigger when the context does not entail its presupposition, as in Table 4.3. -/
+/-- An aspectual trigger asserting its prejacent loses to the sentence without it when the context
+does not entail its presupposition (Table 4.3). -/
 theorem aspectual_omitted_of_not_entailed (h : t.aspectual R S P = some φ)
     (ht : t.altStructure = .deletion) (hp : ¬ ctx ⊆ K (Function.support φ))
     (hwit : ∃ s ∈ ctx, s.Nonempty ∧ s ⊆ Function.support φ ∩ {w | P w}) :
@@ -440,8 +436,8 @@ def pAlt : Finset PQ := Finset.univ.filter (·.1 = true)
 /-- The alternative `q` of (26). -/
 def qAlt : Finset PQ := Finset.univ.filter (·.2 = true)
 
-/-- The disjunction `p ∨ q` with the alternatives `p`, `q` and `p ∧ q`, (26), has two maximal
-consistent subsets, yielding the readings `q ∧ ¬p` and `p ∧ ¬q`. -/
+/-- With alternatives `p`, `q` and `p ∧ q` (26), `p ∨ q` has two maximal consistent exclusions,
+yielding `q ∧ ¬p` and `p ∧ ¬q`. -/
 theorem disjunction_two_maxima :
     Exhaustification.IsMaximalExclusion {pAlt, qAlt, pAlt ∩ qAlt} (pAlt ∪ qAlt)
         {pAlt, pAlt ∩ qAlt} ∧
@@ -463,8 +459,8 @@ def cells : Finset (Finset PQ) :=
 *buzai* 'no longer'. -/
 def notNow : Finset PQ := Finset.univ.filter (·.2 = false)
 
-/-- The alternative of *buzai* has the two maximal consistent subsets of (49), on which it means
-that the state held in the past and that it did not. -/
+/-- The alternative of *buzai* has two maximal consistent subsets (49), meaning that the state held
+in the past or that it did not. -/
 theorem notNow_two_maxima :
     Exhaustification.IsMaximalExclusion cells notNow
         {cell false true, cell true true, cell false false} ∧

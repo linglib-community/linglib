@@ -232,8 +232,7 @@ theorem artificial_not_fake_not_counterfeit :
     by simp [artificialE, privativeE], by simp [fake, privativeE],
     by simp [counterfeitE, privativeE]⟩
 
-/-- A fake N may have an N's constitution, as a fake gun may be made of a gun's parts, which a
-fake_m N may not (`privativeE_le_compl`, footnote 17). -/
+/-- A fake N may have an N's constitution, as a fake gun may be made of gun parts (footnote 17). -/
 theorem fake_constitutive :
     ∃ (made : Property Unit Bool → Property Unit Bool) (N : DualContent Unit Bool) (x : Bool),
       (fake made N).extension () x ∧ N.quale .constitutive () x :=
@@ -244,26 +243,23 @@ theorem fake_constitutive :
 
 variable {made}
 
-/-- On the bracketing [[fake B] N] a fake B N is a real N that is not a B, a real gun made of fake
-plastic, and on [fake [B N]] it is not a B N (§3). -/
+/-- On [[fake B] N] a fake B N is an N that is not a B, and on [fake [B N]] it is not a B N (§3). -/
 theorem fake_bracketing (B N : DualContent W E) :
     (intersective (fake made B) N).extension ≤ N.extension ⊓ B.extensionᶜ ∧
       Disjoint (fake made (intersective B N)).extension (B.extension ⊓ N.extension) :=
   ⟨le_inf inf_le_right (inf_le_left.trans (disjoint_privativeE B).le_compl_right),
     disjoint_privativeE _⟩
 
-/-- What is not from the brand and was made to look like a B N is a fake B N on [fake [B N]],
-even a real N, so a handbag not from Chanel made to pass for a Chanel handbag is a fake Chanel
-handbag (p. 7:15). -/
+/-- On [fake [B N]], something not from the brand B and made to look like a B N is a fake B N (p.
+7:15). -/
 theorem fake_brand_counterfeit_reading {B N : DualContent W E} {w : W} {x : E}
     (hB : ¬ B.extension w x) (hA : ¬ B.quale .agentive w x)
     (hF : made (B.quale .formal ⊓ N.quale .formal) w x) :
     (fake made (intersective B N)).extension w x :=
   ⟨⟨fun h ↦ hB h.1, fun h ↦ hA h.1⟩, hF⟩
 
-/-- Something that is not an N, lacks an N's origin, and was made to look like a B N is a fake
-B N on [fake [B N]] whatever its relation to B's origin, so a fake handbag made by Chanel is a
-fake Chanel handbag; on [[fake B] N] it is not (p. 7:15 and footnote 12). -/
+/-- A fake handbag made by Chanel is a fake Chanel handbag on [fake [B N]] but not on [[fake B] N]
+(p. 7:15 and footnote 12). -/
 theorem fake_brand_made_by_brand_reading {B N : DualContent W E} {w : W} {x : E}
     (hN : ¬ N.extension w x) (hA : ¬ N.quale .agentive w x)
     (hF : made (B.quale .formal ⊓ N.quale .formal) w x) :
@@ -285,17 +281,15 @@ theorem fake_vacuous_in_head {lex : Property W E → DualContent W E}
     ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P) w (P w) :=
   not_isNonVacuous_of_isPrivative (fake_isPrivative hlex) P w
 
-/-- No shift is needed (§5), since in any domain with a fake N and an N the literal *fake N* has a
-positive extension, the fake Ns, and a negative extension, which contains every N. -/
+/-- In any domain with a fake N and an N, literal *fake N* is non-vacuous, so no shift is needed
+(§5). -/
 theorem fake_isNonVacuous {N : DualContent W E} {w : W} {d : E → Prop}
     (hfake : ∃ x, d x ∧ (fake made N).extension w x) (hN : ∃ x, d x ∧ N.extension w x) :
     IsNonVacuous (fake made N).extension w d :=
   isNonVacuous_of_disjoint (disjoint_privativeE N) hfake hN
 
-/-- If attributive *fake* is the first-order predicate (33), a world with a gun that is fake, as
-in the evil park owner scenario, and a gun that is not makes the literal *fake gun* non-vacuous
-among the guns, so shifting heads does not shift *gun* and every fake gun is a gun, a reading
-*fake gun* never has (§6). -/
+/-- If attributive *fake* is the predicate (33), a world with fake and non-fake guns blocks head
+shifting, so every fake gun would wrongly be a gun (§6). -/
 theorem shifting_heads_evil_park_owner {fake gun : Property W E} {w : W}
     (hfake : ∃ x, gun w x ∧ fake w x) (hreal : ∃ x, gun w x ∧ ¬ fake w x) :
     ¬ ShiftsHead (intersective fake) gun w ∧ intersective fake gun ≤ gun :=

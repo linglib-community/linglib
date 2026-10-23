@@ -352,10 +352,8 @@ def secondDeterminerNumber : Node → Option Bool
   | _ => none
 
 open DefaultInheritance in
-/-- "The inheritance link between the EBNP and the N+PP would explain the reappearance of the
-indefinite article in the second determiner position in the EBNP" (p. 226): the stages that
-inherit a second determiner through the network are exactly those at which the overview tables
-record one, the head-classifier excepted. -/
+/-- The stages inheriting a second determiner through the network are exactly those where the
+overview tables record one, except the head-classifier (p. 226). -/
 theorem inherited_secondDeterminer (s : Stage) :
     true ∈ inherited secondDeterminer (.stage s) ↔ s ∈ Diagnostic.det₂.span := by
   revert s; decide

@@ -126,8 +126,8 @@ theorem greek_condEntropy_nomPl_accPl :
     H[(nominal · nomPl) | (nominal · accPl) ; uniformOn Set.univ] = 0 :=
   condEntropy_eq_zero_of_predicts _ (by decide)
 
-/-- In the paper's (13), an accusative plural in *-a* leaves the genitive singular split two
-to one, carrying `log 3 − (2/3) log 2` nats = 0.918 bits. -/
+/-- In (13), an accusative plural in *-a* leaves the genitive singular with conditional entropy `log
+3 − (2/3) log 2` nats. -/
 theorem greek_genSg_given_accPl_a :
     H[(nominal · genSg) ; uniformOn ((nominal · accPl) ⁻¹' {"-a"})] =
       log 3 - 2 / 3 * log 2 := by
@@ -208,9 +208,8 @@ theorem mazatec_vowels_constant :
   ⟨entropy_eq_zero_of_card_realizations_le_one _ (by decide),
     entropy_eq_zero_of_card_realizations_le_one _ (by decide)⟩
 
-/-- Over Table 6, "only the third-person forms are in any way diagnostic" comes to this much.
-The third person predicts the second singular yet is no principal part, while the first
-singular predicts the first inclusive. -/
+/-- Over Table 6, the third person predicts the second singular without being a principal part, and
+the first singular predicts the first inclusive. -/
 theorem mazatec_vowels_diagnosticity :
     finalVowels.Predicts {.third} .sg2 ∧ ¬ finalVowels.IsPrincipalPartSet {.third} ∧
       finalVowels.Predicts {.sg1} .incl := by

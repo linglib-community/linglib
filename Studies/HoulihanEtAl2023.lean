@@ -230,8 +230,7 @@ theorem policy_eq_sigmoid (a : Action) :
 
 theorem policy_pos (a : Action) : 0 < S.policy U q a := Real.softmax_pos _ a
 
-/-- A player certain that the opponent will steal cooperates at most half the time, since the gap of
-(3.1) is then the disadvantageous-inequity cost of cooperating. -/
+/-- A player certain that the opponent will steal cooperates at most half the time (3.1). -/
 theorem policy_cooperate_le_half_of_belief_eq_zero (hb : q.belief = 0) (hd : 0 ≤ q.base .dia) :
     S.policy S.expectedBaseUtility q .cooperate ≤ 1 / 2 := by
   rw [policy_eq_sigmoid, Action.other_cooperate, one_div, ← Real.sigmoid_zero,

@@ -128,9 +128,7 @@ theorem rows_pattern :
           m.pattern = p := by
   decide +kernel
 
-/-- In Doyayo (15a) the auxiliary partially encodes subject person through tone while the
-lexical verb carries tense, which (13) classifies as split; the book files it under
-lex-headed. -/
+/-- Doyayo (15a) is split by (13), though the book files it under lex-headed. -/
 theorem doyayo_split :
     ∀ m ∈ (InflectionalMarking.ofRow? Examples.doyayo_lexheaded).toList, m.pattern = .split := by
   decide +kernel
@@ -146,9 +144,8 @@ theorem splitDoubled_doubles_subject :
 
 /-! ### Negative auxiliaries -/
 
-/-- Negative auxiliaries head constructions of more than one pattern (§1.7.2). A negative verb
-that heads its construction is expected to host the inflection, and Udihe (49) is aux-headed, but
-Kwerba (52) is lex-headed, so the expectation is a tendency rather than a law. -/
+/-- Negative auxiliaries head both aux-headed constructions, as in Udihe (49), and lex-headed ones,
+as in Kwerba (52) (§1.7.2). -/
 theorem negative_auxiliary_patterns :
     (∃ r ∈ Examples.all, r.feature? "strategy" = some "negVerb" ∧
       (r.feature? "infl_pattern").bind InflectionPattern.ofString? = some .auxHeaded) ∧

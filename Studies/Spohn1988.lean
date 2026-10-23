@@ -79,8 +79,8 @@ theorem conditionα_conditionα (h0 : rank κ A = 0) (α : ℕ) :
       κ.rank_conditionα_compl hA hA', ENat.toNat_natCast]
     omega
 
-/-- After conditionalizing on the negation of `A` at any firmness, conditionalizing on `A` at
-the firmness with which `A` was believed restores the ranking (Theorem 3, second half). -/
+/-- After conditionalizing on `Aᶜ` at any firmness, conditionalizing on `A` at its former firmness
+restores the ranking (Theorem 3, second half). -/
 theorem conditionα_compl_conditionα (hA' : Aᶜ.Nonempty) (h0 : rank κ A = 0) (α : ℕ) :
     (κ.conditionα Aᶜ hA' α).conditionα A hA (rank κ Aᶜ).toNat = κ := by
   have hAc : rank (κ.conditionα Aᶜ hA' α) A = α := by
@@ -98,8 +98,8 @@ theorem conditionα_compl_conditionα (hA' : Aᶜ.Nonempty) (h0 : rank κ A = 0)
       toNat_rank_eq_zero _ (κ.rank_conditionα hA' α)]
     omega
 
-/-- Conditionalizations on `A` and on `B` commute when the cells `A ∩ B`, `A ∩ Bᶜ` and
-`Aᶜ ∩ B` all have rank zero (Theorem 4). -/
+/-- Conditionalizations on `A` and `B` commute if `A ∩ B`, `A ∩ Bᶜ` and `Aᶜ ∩ B` have rank zero
+(Theorem 4). -/
 theorem conditionα_comm (hAB : rank κ (A ∩ B) = 0) (hAB' : rank κ (A ∩ Bᶜ) = 0)
     (hA'B : rank κ (Aᶜ ∩ B) = 0) (α β : ℕ) :
     (κ.conditionα A hA α).conditionα B hB β = (κ.conditionα B hB β).conditionα A hA α := by
@@ -294,8 +294,8 @@ theorem condRank_add_iff {A X Y Z : Set W} (hX : (A ∩ X).Nonempty) (hY : (A �
 
 variable {κ}
 
-/-- Independence holds exactly when, for satisfiable members `B` of `𝔅` and `C` of `ℭ`, the
-rank of `C` given `B` is the rank of `C` (Theorem 8, (a) and (b)). -/
+/-- Independence is invariance of the ranks of satisfiable members of `ℭ` under conditioning on
+satisfiable members of `𝔅` (Theorem 8, (a) and (b)). -/
 theorem independent_iff_condRank :
     Independent κ 𝔅 ℭ ↔ ∀ B C, 𝔅.Decides B → ℭ.Decides C → B.Nonempty → C.Nonempty →
       κ[C | B] = rank κ C := by
@@ -312,9 +312,8 @@ theorem independent_iff_condRank :
     exact WithTop.add_ne_top.2 ⟨rank_ne_top κ (𝔅.cell_nonempty w),
       rank_ne_top κ (ℭ.cell_nonempty v)⟩ heq.symm
 
-/-- Independence holds exactly when generalized conditionalization on any ranking of the atoms
-of `𝔅` leaves the ranks of the satisfiable members of `ℭ` unchanged (Theorem 8, (a) and
-(c)). -/
+/-- Independence is invariance of the ranks in `ℭ` under generalized conditionalization on any
+ranking of the atoms of `𝔅` (Theorem 8, (a) and (c)). -/
 theorem independent_iff_condition :
     Independent κ 𝔅 ℭ ↔ ∀ (l : RankingFunction (Quotient 𝔅)) (C : Set W), ℭ.Decides C →
       C.Nonempty → rank (condition κ 𝔅 l) C = rank κ C := by
@@ -434,8 +433,7 @@ theorem CondIndependentOn.symm {𝔇 : Setoid W} (h : CondIndependentOn κ 𝔅 
     CondIndependentOn κ ℭ 𝔅 𝔇 :=
   fun d ↦ (h d).symm
 
-/-- If `ℭ` is independent of `𝔅` given `𝔇 + 𝔈` and `𝔇` is independent of `𝔅` given `𝔈`, then
-`ℭ + 𝔇` is independent of `𝔅` given `𝔈` (Theorem 11). -/
+/-- If `ℭ ⊥ 𝔅` given `𝔇 + 𝔈` and `𝔇 ⊥ 𝔅` given `𝔈`, then `ℭ + 𝔇 ⊥ 𝔅` given `𝔈` (Theorem 11). -/
 theorem CondIndependentOn.inf {𝔇 𝔈 : Setoid W} (h₁ : CondIndependentOn κ 𝔅 ℭ (𝔇 ⊓ 𝔈))
     (h₂ : CondIndependentOn κ 𝔅 𝔇 𝔈) : CondIndependentOn κ 𝔅 (ℭ ⊓ 𝔇) 𝔈 := by
   intro e w v hne
@@ -472,8 +470,7 @@ theorem CondIndependentOn.inf {𝔇 𝔈 : Setoid W} (h₁ : CondIndependentOn �
   rw [condRank_add_iff κ hX3 hY2 hZ3]
   omega
 
-/-- If `𝔅` is independent of `ℭ` given `𝔇 + 𝔈` and of `𝔇` given `𝔈`, then it is independent
-of `ℭ + 𝔇` given `𝔈` (Theorem 12). -/
+/-- If `𝔅 ⊥ ℭ` given `𝔇 + 𝔈` and `𝔅 ⊥ 𝔇` given `𝔈`, then `𝔅 ⊥ ℭ + 𝔇` given `𝔈` (Theorem 12). -/
 theorem CondIndependentOn.inf' {𝔇 𝔈 : Setoid W} (h₁ : CondIndependentOn κ ℭ 𝔅 (𝔇 ⊓ 𝔈))
     (h₂ : CondIndependentOn κ 𝔇 𝔅 𝔈) : CondIndependentOn κ (ℭ ⊓ 𝔇) 𝔅 𝔈 :=
   (CondIndependentOn.inf h₁.symm h₂.symm).symm

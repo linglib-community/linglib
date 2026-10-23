@@ -112,8 +112,7 @@ def IsSourGrapes (f : List Seg → List Seg) : Prop :=
     f (.plus :: replicate n .minus ++ [.opaqueMinus]) =
       .plus :: replicate n .minus ++ [.opaqueMinus]
 
-/-- No left-subsequential function meets (8) (Theorem 5). A left scan reading `+ −ⁿ⁺¹` must hold
-back all but a bounded part of its output until it learns whether `⊟` follows. -/
+/-- No left-subsequential function meets (8) (Theorem 5). -/
 theorem not_isLeftSubsequential_of_isSourGrapes {f : List Seg → List Seg} (hf : IsSourGrapes f) :
     ¬ IsLeftSubsequential f :=
   not_isLeftSubsequential_of_diverging fun N ↦
@@ -169,8 +168,8 @@ theorem exists_isRightSubsequential_isSourGrapes :
         from rfl, raiseUnlessFinalBlocked_runFrom_true]
     simp [raiseUnlessFinalBlocked]
 
-/-- The right half of Theorem 5 holds once a word with no trigger is left alone. No
-length-preserving right-subsequential function meets (8) and leaves every `−ⁿ` unchanged. -/
+/-- No length-preserving right-subsequential function meets (8) and leaves every trigger-free `−ⁿ`
+unchanged, the right half of Theorem 5. -/
 theorem not_isRightSubsequential_of_isSourGrapes {f : List Seg → List Seg}
     (hlen : ∀ w, (f w).length = w.length) (hf : IsSourGrapes f)
     (hnone : ∀ n, f (replicate n .minus) = replicate n .minus) : ¬ IsRightSubsequential f := by
@@ -189,8 +188,7 @@ def IsDominantRecessive (f : List Seg → List Seg) : Prop :=
   ∀ w, (∀ a ∈ w, a = .plus ∨ a = .minus) →
     f w = if .plus ∈ w then replicate w.length .plus else replicate w.length .minus
 
-/-- No length-preserving subsequential function, in either direction, meets (9) (Theorem 6). A
-medial `−` among `−`s turns `+` under a `+` placed far to the left or far to the right. -/
+/-- No length-preserving subsequential function, in either direction, meets (9) (Theorem 6). -/
 theorem not_isSubsequential_of_isDominantRecessive {f : List Seg → List Seg}
     (hlen : ∀ w, (f w).length = w.length) (hf : IsDominantRecessive f) :
     ∀ d, ¬ IsSubsequential d f := by

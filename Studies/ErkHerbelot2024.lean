@@ -377,8 +377,8 @@ private theorem bat_num (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- Table 1 in closed form: the posterior probability of the *stick* sense of *bat* in
-*a player was holding a bat* is `(α + 1) / (2α + 1)`. -/
+/-- The posterior probability of the *stick* sense of *bat* in *a player was holding a bat* is `(α +
+1) / (2α + 1)` (Table 1). -/
 theorem batStick_real (α : ℝ) (hα : 0 < α) :
     ((batSDS α hα).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} =
       (α + 1) / (2 * α + 1) := by
@@ -404,8 +404,8 @@ theorem batStick_tenth :
       {.BAT_STICK} = 11 / 12 := by
   rw [batStick_real]; norm_num
 
-/-- The *stick* preference "grows more pronounced when the concentration parameter α of the
-Dirichlet distribution is lower" (p. 571): the posterior is strictly decreasing in `α`. -/
+/-- The posterior of the *stick* sense is strictly decreasing in the concentration parameter `α` (p.
+571). -/
 theorem batStick_strictAnti {α β : ℝ} (hα : 0 < α) (hαβ : α < β) :
     ((batSDS β (hα.trans hαβ)).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} <
       ((batSDS α hα).nodePosterior batLabel batRoles batLabels 2).real {.BAT_STICK} := by
@@ -600,8 +600,8 @@ private theorem star_den_ne_zero (α : ℝ) (hα : 0 < α) :
   have : (0 : ℝ) < 19 * (115 * α + 8) / (10584 * (2 * α + 1)) := by positivity
   linarith
 
-/-- Table 2 in closed form: the posterior probability of the *person* sense of *star* in
-*an astronomer married a star* is `105α / (115α + 8)`. -/
+/-- The posterior probability of the *person* sense of *star* in *an astronomer married a star* is
+`105α / (115α + 8)` (Table 2). -/
 theorem starPerson_real (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).nodePosterior starLabel starRoles starLabels 2).real {.STAR_PERSON} =
       105 * α / (115 * α + 8) := by
@@ -630,9 +630,7 @@ theorem starPerson_tenth :
       {.STAR_PERSON} = 7 / 13 := by
   rw [starPerson_real]; norm_num
 
-/-- "The more emphasis there is on a coherent scenario (the lower the value of α), the more
-probability mass is given to the situation where an astronomer marries a giant ball of plasma"
-(p. 572): the *sun* posterior is strictly decreasing in `α`. -/
+/-- The posterior of the *sun* sense of *star* is strictly decreasing in `α` (p. 572). -/
 theorem starSun_strictAnti {α β : ℝ} (hα : 0 < α) (hαβ : α < β) :
     ((starSDS β (hα.trans hαβ)).nodePosterior starLabel starRoles starLabels 2).real
         {.STAR_SUN} <
@@ -663,9 +661,8 @@ theorem stargazing_prefers_sun (α : ℝ) (hα : 0 < α) :
     star_cards]
   norm_num
 
-/-- Figure 6: "either the concept for *star* conflicts with the selectional constraint, or it
-conflicts with the preference for a coherent scenario": on the *star* node the selectional
-constraint prefers STAR-PERSON while the STARGAZING scenario prefers STAR-SUN. -/
+/-- On the *star* node the selectional constraint prefers STAR-PERSON while the STARGAZING scenario
+prefers STAR-SUN (Figure 6). -/
 theorem star_constraints_conflict (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).selectional .marryTheme).real {.STAR_SUN} <
         ((starSDS α hα).selectional .marryTheme).real {.STAR_PERSON} ∧

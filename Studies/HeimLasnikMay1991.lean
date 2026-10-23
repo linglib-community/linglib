@@ -103,12 +103,8 @@ theorem eachOtherLF_singleton (a : A) (R : A → A → Prop) :
   rw [Finset.mem_singleton] at hx hz1
   exact absurd (hz1.trans hx.symm) hz2
 
-/-- (68) "They are taller than each other" is contradictory: the
-    each∘other composition over an asymmetric relation fails on every
-    genuine plurality. Under embedding, only broad scope of *each*
-    rescues it ((69)/(70)); with an explicit matrix distributor,
-    re-attachment would stack distributors ((71)/(72)), so only the
-    contradictory narrow reading survives. -/
+/-- (68) *They are taller than each other* is contradictory, since each∘other over an asymmetric
+relation fails on every plurality ((69)/(70), (71)/(72)). -/
 theorem eachOtherLF_asymmetric_contradictory
     {np : Finset A} {R : A → A → Prop}
     (hasym : ∀ x y, R x y → ¬ R y x) (hcard : 2 ≤ np.card) :

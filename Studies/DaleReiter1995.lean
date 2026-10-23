@@ -385,9 +385,8 @@ def makeReferringExpression (r : E) (C : Finset E) (P : List A) :
     Option (Description A V) :=
   d.loop r C P ∅
 
-/-- The loop returns through `withType` a description that never retracts a pair, rules out
-every remaining distractor and adds only pairs known to hold (§3.2.1's indelible
-generation, §4.3). -/
+/-- The loop returns a description that never retracts a pair, rules out every distractor and adds
+only pairs known to hold (§3.2.1, §4.3). -/
 theorem loop_spec (r : E) : ∀ (P : List A) (C : Finset E) (L L' : Description A V),
     d.loop r C P L = some L' → ∃ L₀, L' = d.withType r L₀ ∧ L ⊆ L₀ ∧
       (∀ c ∈ C, ∃ p ∈ L₀, d.userKnows c p.1 p.2 = .fails) ∧
@@ -415,8 +414,8 @@ theorem makeReferringExpression_rulesOut {r : E} {C : Finset E} {P : List A}
   obtain ⟨L₀, rfl, -, hrule, -⟩ := d.loop_spec r P C ∅ L h
   exact λ c hc => (hrule c hc).imp λ p hp => ⟨d.withType_subset r _ hp.1, hp.2⟩
 
-/-- Every pair of Fig. 6's output is known to the user to hold of the referent, except the
-head noun added at the end, which is the basic-level type (§4.3). -/
+/-- Every pair of Fig. 6's output except the final head noun is known to the user to hold of the
+referent (§4.3). -/
 theorem makeReferringExpression_mem {r : E} {C : Finset E} {P : List A}
     {L : Description A V} (h : d.makeReferringExpression r C P = some L) :
     ∀ p ∈ L, d.userKnows r p.1 p.2 = .holds ∨ d.basicLevel r p.1 = some p.2 := by
@@ -648,9 +647,8 @@ def kb : KB Picture Attr Value
 /-- The contrast set. -/
 def contrast : Finset Picture := {.blackCup, .whiteCup}
 
-/-- The paper's speaker scans the black cup and says *white*, then scans the white cup and
-adds *bird*, which alone would have done (§3.2.1). The algorithm reproduces that output only
-with colour before type in the preference order; type first yields *the bird*. -/
+/-- The algorithm outputs *white bird* only with colour before type in the preference order
+(§3.2.1). -/
 theorem makeReferringExpression_picture :
     (Domain.flat kb .type).makeReferringExpression .bird contrast [.property .color, .type] =
       some {(.property .color, .white), (.type, .bird)} ∧

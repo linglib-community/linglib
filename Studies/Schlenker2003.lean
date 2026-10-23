@@ -168,8 +168,8 @@ theorem english_amharic_differ :
         (.root speechCtx) := by
   simp [Say, tellsAlice, isHappy, speechCtx, Kaplan.I]
 
-/-- (54): in *I didn't hear what he told me to bring*, the shifted second person of Bob's report
-to Alice is Alice, where English *you* is Carl. -/
+/-- In (54), the shifted Amharic second person of Bob's report is Alice, where English *you* is
+Carl. -/
 theorem amharicYou_shifts :
     Say tellsAlice .bob () .w0
       (fun τ ↦ amharicYou.resolve τ = .alice ∧ Kaplan.you.resolve τ = .carl) (.root speechCtx) := by

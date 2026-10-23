@@ -275,9 +275,8 @@ end LanguageType
 
 /-! ### Paradigmatic displacement: Tunica -/
 
-/-- Tunica negates the habitual on the semelfactive form, (5): each construction is symmetric in
-the paradigm, and the paradigm displaces without neutralizing, the two negative markers keeping
-the aspects apart. -/
+/-- Tunica negates the habitual on the semelfactive form (5), so its paradigm displaces without
+neutralizing. -/
 theorem tunica_displaces :
     Formed "tuni1252" ∧ (∀ p ∈ pairs "tuni1252", IsSymmetricIn (pairs "tuni1252") p) ∧
       Displaces (pairs "tuni1252") ∧ ¬ Neutralizes (pairs "tuni1252") := by
@@ -371,10 +370,8 @@ theorem english_both :
 
 /-! ### Non-realized marking: Imbabura Quechua -/
 
-/-- The Imbabura Quechua negative is the polar interrogative with *mana* inserted, the two
-compared without their possessors *ñuka* 'my' and *kan-paj* 'your', (63c, d), Cole's (332) and
-(333). Against the declarative it has the interrogative validator *-chu* where the declarative has
-the assertive *-mi*, Cole's (89b) and (90), *ari* 'yes' set aside. -/
+/-- The Imbabura Quechua negative is the polar interrogative plus *mana* ((63c, d); Cole's (332),
+(333)), with *-chu* where the declarative has *-mi* (Cole's (89b), (90)). -/
 theorem quechua_negative_of_interrogative :
     IsSymmetric ⟨Quechua.Negation.mana, (forms Cole1982.Examples.ex_333).drop 2,
       (forms Cole1982.Examples.ex_332).drop 1⟩ ∧

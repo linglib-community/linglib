@@ -227,8 +227,7 @@ theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
   · rw [ht_eq] at htm
     exact absurd htm (not_lt.mpr (le_of_lt (hm_dom b hb_compl (Ne.symm hmb))))
 
-/-- *While* demands total overlap, which the complement of the embedded interval cannot supply, so
-it is not ambidirectional and Hungarian *amíg* with negation reads only as *until* (74). -/
+/-- *While* is not ambidirectional, so Hungarian *amíg* with negation reads only as *until* (74). -/
 theorem while_not_ambidirectional [Inhabited T] :
     ¬ ∀ (A B : Set T), IsAmbidirectional (fun X ↦ ∀ t ∈ A, t ∈ X) B := by
   intro h

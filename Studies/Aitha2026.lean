@@ -214,12 +214,11 @@ def strongCells : List (Root × Case × String) :=
 /-- The singular weak cells. -/
 def weakCells : List Cell := cells.filter fun c ↦ c.strongRoot = none ∧ ¬ c.plural
 
-/-- The items of (4) insert the attested exponent in every strong cell of (1), (2), and fn. 6;
-the agreement suffix, bearing no [ACC], leaves the nominative form. -/
+/-- The items of (4) insert the attested exponent in every strong cell of (1), (2), and fn. 6. -/
 theorem strong_rows : ∀ x ∈ strongCells, strongN x.1 x.2.1 = some x.2.2 := by decide
 
-/-- In every singular weak cell of (6)–(8), (13)–(18), and (34) the form is long exactly when
-the following syllable is light and word-internal, the weak generalization. -/
+/-- In every singular weak cell of (6)–(8), (13)–(18), and (34), the form is long exactly when the
+following syllable is light and word-internal. -/
 theorem weak_rows : ∀ c ∈ weakCells, c.long = some (decide (TriggersLong c.following)) := by
   decide
 
@@ -229,8 +228,8 @@ def oceanNom : Cell := ⟨"samudram", none, false, some .nom, none, "am", some f
 /-- The long form under the 1SG agreement suffix, in a nominative predicate nominal ((13)). -/
 def ocean1sg : Cell := ⟨"samudram", none, false, some .nom, some ⟨true, .light⟩, "āni", some true⟩
 
-/-- No assignment of a form to each case fits the weak cells, since the nominative carries both
-*-am* and *-āni* ((8) with (13)–(16)), so the weak alternation is not case allomorphy. -/
+/-- No assignment of forms to cases fits the weak cells, since the nominative has both *-am* and
+*-āni* ((8) with (13)–(16)). -/
 theorem weak_not_case_function :
     ¬ ∃ f : Option Case → Option Bool, ∀ c ∈ weakCells, f c.case = c.long := by
   rintro ⟨f, h⟩
@@ -484,8 +483,8 @@ theorem prosodic_segmental_reranked :
       Reranked Con.maxMora .identLength wordOrder phraseOrder := by
   decide
 
-/-- IDENT-STRESS outranks ONSET at the Word level and ONSET outranks it at the Phrase level, so
-the onsetless *an* of (63) is resyllabified only in (67). -/
+/-- IDENT-STRESS outranks ONSET at the Word level and is outranked at the Phrase level, so *an* of
+(63) resyllabifies only in (67). -/
 theorem identStress_onset_reranked : Reranked Con.identStress .onset wordOrder phraseOrder := by
   decide
 

@@ -102,14 +102,14 @@ theorem neutral_iff {c x : E} : Neutral (Set.Iic c) x ↔ x ≤ c := Set.Iic_sub
 
 theorem domain_iff {c x : E} : Domain (Set.Iic c) x ↔ c < x := Set.Iic_ssubset_Iic
 
-/-- Under the convention (45) that vertical order maps marked loci to proper parts, the marked
-presupposition met at one locus is met at every higher one, as in (48). -/
+/-- Under the convention (45) that height maps marked loci to proper parts, a marked presupposition
+met at one locus is met at every higher one (48). -/
 theorem domain_of_lt {H : Type*} [Preorder H] {ref : H → E} (hconv : StrictMono ref)
     {C : Set E} {k k' : H} (hk : Domain C (ref k)) (hkk' : k < k') : Domain C (ref k') :=
   hk.trans (Set.Iic_ssubset_Iic.2 (hconv hkk'))
 
-/-- The remainder of a plane less an established locus sums with it to the plane, and a higher
-plane's remainder contains the neutral plane's, as in (14). -/
+/-- A plane less an established locus sums with it to the plane, and a higher plane's remainder
+contains the neutral plane's (14). -/
 theorem remainder {E : Type*} [GeneralizedCoheytingAlgebra E] {a d d' : E} (h : a ≤ d)
     (h' : d ≤ d') : a ⊔ d \ a = d ∧ d \ a ≤ d' \ a :=
   ⟨sup_sdiff_cancel_right h, sdiff_le_sdiff_right h'⟩
@@ -150,10 +150,8 @@ theorem some_of_le {x x' : E} (h : x ≤ x') (Q : E → Prop) :
     GQ.some (partitive x) Q → GQ.some (partitive x') Q :=
   restrictorMonotone_some Q fun _ hy => le_trans hy h
 
-/-- Height is not intensification (section 4, after (36)), since a part of the wider plural
-outside the narrower one makes `SOMEONE-high` true where `SOMEONE-neutral` is false, so on no
-reading of height as strengthening, on which the high form would entail the neutral one as
-[bergen-2016] has for stressed quantifiers, does the existential come out right. -/
+/-- Height is not intensification, unlike stress in [bergen-2016], since `SOMEONE-high` can be true
+where `SOMEONE-neutral` is false (section 4, after (36)). -/
 theorem not_strengthening {x x' w : E} (hw : w ≤ x') (hwx : ¬ w ≤ x) :
     ¬ ∀ Q : E → Prop, GQ.some (partitive x') Q → GQ.some (partitive x) Q :=
   fun h ↦ let ⟨_, hy, e⟩ := h (· = w) ⟨w, hw, rfl⟩; hwx (e ▸ hy)

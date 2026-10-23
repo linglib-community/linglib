@@ -236,8 +236,8 @@ theorem supported_stronglyExhaustive_nonempty_iff_subset (hw : w ∈ σ) :
     rwa [show S = α w from (hσ hw).symm] at hσ
   · exact fun h ↦ ⟨_, ⟨α w, rfl⟩, h⟩
 
-/-- With the restrictor `D` outside the negation and the positive extension `A ⊆ D` settled, the
-negated question is settled exactly when the domain is (p. 86). -/
+/-- With the restrictor `D` outside the negation and `A ⊆ D` settled, the negated question is
+settled exactly when the domain is (p. 86). -/
 theorem restricted_compl_subsingleton_iff {A D : W → Set τ} (hAD : ∀ w, A w ⊆ D w)
     (hA : (A '' σ).Subsingleton) :
     ((fun w ↦ D w \ A w) '' σ).Subsingleton ↔ (D '' σ).Subsingleton := by
@@ -339,8 +339,8 @@ theorem question_of_universal_true {S : Set W → E → Prop} :
     (⟨S, fun _ _ ↦ True⟩ : TwinRelations W E).question P x ↔ embed S P x := by
   simp [question, embed]
 
-/-- With all its content in the universal relation, as for Italian *ignorare* (100)–(101), a
-predicate denies the embedding rule for the negated relation on nonempty answer sets. -/
+/-- A predicate with all its content in the universal relation, like Italian *ignorare* (100)–(101),
+denies the embedding rule on nonempty answer sets. -/
 theorem question_of_existential_true {S : Set W → E → Prop} (hP : P.Nonempty) :
     (⟨fun _ _ ↦ True, fun p x ↦ ¬ S p x⟩ : TwinRelations W E).question P x ↔ ¬ embed S P x := by
   simp only [question, embed, and_true, not_exists, not_and]
@@ -369,8 +369,8 @@ def forgot (forgot knew : Set W → E → Prop) : TwinRelations W E :=
 
 end TwinRelations
 
-/-- For a believer with consistent beliefs the universal half of (71) adds nothing over strongly
-exhaustive answers, so knowing the question is knowing the true answer (pp. 154, 163). -/
+/-- For a consistent believer, knowing the question (71) is knowing the true strongly exhaustive
+answer (pp. 154, 163). -/
 theorem know_question_stronglyExhaustive_iff {σ : E → Set W} (hσ : ∀ x, (σ x).Nonempty) (x : E) :
     (TwinRelations.know (fun p x ↦ σ x ⊆ p ∧ w ∈ p) (fun p x ↦ σ x ⊆ p) w).question
         (stronglyExhaustive α) x ↔

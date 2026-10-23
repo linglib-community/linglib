@@ -225,9 +225,8 @@ theorem monotone_converges_activate (ds : List Cat) (ls : List Licenser)
     (nps : List LicensedNP) : Monotone fun S ↦ Converges ds (activate ls S) nps :=
   fun _ _ hS hc ↦ hc.mono <| monotone_filter_right _ fun _ ↦ by simpa using Or.imp_right (@hS _)
 
-/-- The Licensing Economy Principle, (36) of [kalin-2018]: an activation is economical iff it
-converges and each activated secondary licenser is activated because the derivation would
-otherwise not converge. -/
+/-- An activation is economical iff it converges and no activated secondary licenser can be dropped,
+the Licensing Economy Principle ((36) of [kalin-2018]). -/
 theorem economical_iff : Economical ds ls nps S ↔
     Converges ds (activate ls S) nps ∧ ∀ l ∈ S, ¬ Converges ds (activate ls (S.erase l)) nps :=
   Finset.minimal_iff_forall_erase fun _ _ h hts ↦ monotone_converges_activate ds ls nps hts h
@@ -437,9 +436,8 @@ theorem rows_agree : ∀ r ∈ rows, ∀ subject : Bool,
   exact ⟨h₁.trans exists_economical_iff.symm,
     fun S hS ↦ h₂ S (Finset.mem_powerset.2 hS.subset_toFinset) hS⟩
 
-/-- The object agreement is differential marking: a specific object in the imperfective is
-licensed by the secondary T, activated for it alone, (47), and a nonspecific object activates
-nothing and goes unlicensed, (48). -/
+/-- In the imperfective a specific object is licensed by the secondary T (47), and a nonspecific one
+activates nothing and goes unlicensed (48). -/
 theorem imperfective_object (subject : Bool) :
     Economical domains imperfective (transitive subject true) {tImpf} ∧
       (license domains (activate imperfective {tImpf})
@@ -470,8 +468,7 @@ animate: the subject above v, the object in its domain. -/
 def toyTransitive (subject object : Bool) : List LicensedNP :=
   [{ needsLicensing := subject }, { phase := .v, needsLicensing := object }]
 
-/-- An animate object activates v, which licenses it: T licenses the subject whatever its
-animacy and never the object, so without v the derivation crashes, (24). -/
+/-- An animate object activates v, without which the derivation crashes (24). -/
 theorem toy_animate_object (subject : Bool) :
     ¬ Converges toyDomains (activate toy ∅) (toyTransitive subject true) ∧
     Economical toyDomains toy (toyTransitive subject true) {toyV} ∧
@@ -489,9 +486,8 @@ theorem toy_inanimate_object (subject : Bool) :
 
 /-! ### Licensing against dependent case -/
 
-/-- The perfective ban is an argument for licensing (Section 2.1.3): the dependent-case rules of
-an accusative language value a specific perfective object accusative, but licensing leaves it
-unvalued, and the derivation crashes whatever the specificity of the subject. -/
+/-- Dependent case values a specific perfective object accusative, but licensing leaves it unvalued
+and the derivation crashes (Section 2.1.3). -/
 theorem dependentCase_values_banned_object (subject : Bool) :
     ((DependentCase.assignCases .accusative (·.lexicalCase) (transitive subject true))[1]?.bind
         (·.2.map (·.1))) = some .acc ∧

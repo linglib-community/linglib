@@ -222,11 +222,8 @@ def Marking.AtMost (m₁ m₂ : Marking) : Prop :=
 
 instance (m₁ m₂ : Marking) : Decidable (m₁.AtMost m₂) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The information-flow prediction: within a language, the special case on P is monotone up
-the prominence scales and the special case on A monotone down them, (7)–(27) of chapter 6:
-Russian and Polish by animacy, Turkish and Persian by definiteness, Hindi and Spanish by
-both, and Dyirbal on both roles from the cut between first and second person pronouns and
-the rest of the hierarchy. -/
+/-- Within a language, special P-marking is monotone up the prominence scales and special A-marking
+down them ((7)–(27) of chapter 6). -/
 theorem marking_monotone : ∀ r₁ ∈ acceptable, ∀ m₁ ∈ Marking.ofRow r₁,
     ∀ r₂ ∈ acceptable.filter (·.language = r₁.language), ∀ m₂ ∈ Marking.ofRow r₂,
       m₁.AtMost m₂ →
@@ -302,17 +299,14 @@ def Causative.PassiveAdmits (c : Causative) : Prop :=
 
 instance (c : Causative) : Decidable c.PassiveAdmits := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The Turkish paradigm (12)–(16), the doubling of (17)–(18), the further demotion of (20)
-and of the control alternatives, and the exclusion of (22): the hierarchy with the language's
-parameters admits exactly the positions the languages accept. -/
+/-- The causee hierarchy with each language's parameters admits exactly the accepted positions of
+(12)–(16), (17)–(18), (20) and (22). -/
 theorem causee_rows : ∀ row ∈ Examples.all, ∀ c ∈ Causative.ofRow row,
     (row.judgment = .acceptable ↔ c.HierarchyAdmits) := by
   decide
 
-/-- The passive analysis admits (22), the oblique causee of a transitive base in Turkish, which
-the language rejects although it passivizes every transitive verb, and excludes the
-instrumental causee of Hungarian (9), whose base is intransitive and whose language has no
-passive expressing the agent in that case. -/
+/-- The passive analysis wrongly admits the Turkish oblique causee (22) and excludes the Hungarian
+instrumental causee (9). -/
 theorem passive_analysis_fails :
     (∃ row ∈ Examples.all, ∃ c ∈ Causative.ofRow row,
       c.PassiveAdmits ∧ row.judgment = .ungrammatical) ∧
@@ -339,8 +333,8 @@ def Controlled.ofRow (row : Datum) : Option Controlled := do
     ← row.parse? "causee" [("directObject", .directObject), ("indirectObject", .indirectObject),
       ("oblique", .oblique)]⟩
 
-/-- By the control hierarchy, (8)–(9) and (23)–(28), the causee retaining more control takes the
-position lower on the hierarchy within a language, and a language offers the pair. -/
+/-- Within a language the causee retaining more control takes the lower hierarchy position, and some
+language offers the pair ((8)–(9), (23)–(28)). -/
 theorem control_rows :
     (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ Controlled.ofRow r₁,
       ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language), ∀ c₂ ∈ Controlled.ofRow r₂,
@@ -360,9 +354,8 @@ def CausativeConstruction.ofRow (row : Datum) : Option CausativeConstruction := 
       ("analytic", .periphrastic)],
     ← row.parse? "mediation" [("direct", Mediation.direct), ("indirect", .indirect)]⟩
 
-/-- Within a language, the more compact causative is the more appropriate to direct
-causation, Nivkh (6)–(7) and the English *broke* ~ *brought it about* pair: the substrate's
-monotonicity on every pair of rows, and a pair strictly ordered on both scales. -/
+/-- Within a language the more compact causative is the more appropriate to direct causation, as in
+Nivkh (6)–(7). -/
 theorem compactness_rows :
     (∀ r₁ ∈ Examples.all, ∀ c₁ ∈ CausativeConstruction.ofRow r₁,
       ∀ r₂ ∈ Examples.all.filter (·.language = r₁.language),

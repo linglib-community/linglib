@@ -113,10 +113,8 @@ theorem mergeOp_pair (lbl : α) (S S' : UnorderedTree α) :
       = of' ({UnorderedTree.node lbl {S, S'}} : Forest (UnorderedTree α)) :=
   mergeOpG_pair lbl S S'
 
-/-- Merge commutes with a spectator component `T` that has neither `S` nor `S'` as a subtree
-    ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). The primitive term of `T` does not fit inside
-    `{S, S'}`, no nonempty cut of `T` extracts `S` or `S'`, and the empty cut passes `T` through to
-    the right channel. -/
+/-- Merge commutes with a spectator component having neither `S` nor `S'` as a subtree
+([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
 theorem mergeOpG_ofTree_mul
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) {S S' T : UnorderedTree α}
@@ -183,9 +181,8 @@ theorem mergeOp_ofTree_mul (lbl : α) {S S' T : UnorderedTree α}
     mergeOp (R := R) lbl S S' (ofTree T * w) = ofTree T * mergeOp (R := R) lbl S S' w :=
   mergeOpG_ofTree_mul lbl hT_S hT_S' w
 
-/-- External Merge with a residual workspace `F̂` none of whose components has `S` or `S'` as a
-    subtree ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). Without the hypothesis Merge also
-    matches accessible terms inside `F̂`, the Sideward cases of `Merge/Sideward.lean`. -/
+/-- External Merge of `S` and `S'` beside a workspace `F̂` none of whose components contains them
+leaves `F̂` unchanged ([marcolli-chomsky-berwick-2025] Lemma 1.4.1). -/
 theorem mergeOpG_pair_residual
     {cuts : UnorderedTree α → Multiset (Forest (UnorderedTree α) × UnorderedTree α)}
     [IsMergeCuts cuts] (lbl : α) {S S' : UnorderedTree α} {Fhat : Forest (UnorderedTree α)}

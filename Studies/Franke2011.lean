@@ -347,8 +347,8 @@ theorem receiverStepBy_subset {key : T → β} {S : T → Finset M}
 
 variable (den)
 
-/-- The first sophisticated receiver of the chain from the literal sender reads a message as the
-states where it is true that make fewest messages true (107). -/
+/-- The first sophisticated receiver reads a message as its true states that make fewest messages
+true (107). -/
 theorem receiverStep_inverse (m : M) :
     receiverStep den (inverse den) m = (den m).argmin fun t ↦ (inverse den t).card := by
   rw [receiverStep, bestResponse, inverse_inverse]
@@ -1175,9 +1175,8 @@ theorem receiverResponse_subset [IsFiniteMeasure G.prior] (hprior : ∀ t, G.pri
 
 /-! ### Theorems 1 and 2: the light system is the heavy system with flat or near-flat priors -/
 
-/-- Against the unbiased belief in a receiver type that respects truth, the heavy sender is the
-light sender (76), since the probability of being understood is one over the number of
-interpretations (129). -/
+/-- Against the unbiased belief in a truth-respecting receiver, the heavy sender is the light sender
+((76), (129)). -/
 theorem senderResponse_eq_senderStep {R : M → Finset T} (hR : ∀ m, R m ⊆ G.trueStates m) :
     senderResponse G R = senderStep G.trueStates R := by
   funext t
@@ -1496,9 +1495,8 @@ structure IsPBE (σ : Kernel T M) (ρ : Kernel M T) (μ : M → Measure T) : Pro
   consistent : ∀ m, (σ ∘ₘ G.prior) {m} ≠ 0 → ∀ t,
     (μ m).real {t} = G.prior.real {t} * (σ t).real {m} / (σ ∘ₘ G.prior).real {m}
 
-/-- The unbiased beliefs in a fixed point of the heavy system form a perfect Bayesian
-equilibrium, with the Bayesian posterior after every message sent and the literal reading after
-the others (Theorem 4). -/
+/-- The unbiased beliefs in a fixed point of the heavy system form a perfect Bayesian equilibrium
+(Theorem 4). -/
 theorem exists_isPBE_of_isFixedPt [Nonempty T] [IsFiniteMeasure G.prior]
     (hprior : ∀ t, G.prior {t} ≠ 0) {R : M → Finset T}
     (hR : IsFixedPt (receiverResponse G ∘ senderResponse G) R) :
@@ -1614,8 +1612,8 @@ end Counting
 
 namespace TwoDisjuncts
 
-/-- With the flat priors of Figure 5 the heavy system's second receiver reads the disjunction
-literally (137) and its fourth reads it as free choice (139). -/
+/-- With the flat priors of Figure 5, the heavy system's second receiver reads the disjunction
+literally (137) and its fourth as free choice (139). -/
 theorem receiverLevel_free_choice :
     receiverLevel game 1 .either = {.onlyA, .onlyB, .both} ∧
       receiverLevel game 2 = fun m ↦ {freeChoiceReceiver m} := by
@@ -1675,9 +1673,8 @@ end Exhaustification
 
 namespace TwoDisjuncts
 
-/-- In the free choice game exhaustification by minimal models is the first sophisticated
-receiver's reading, as footnote 37 says of all the examples, and not the second's (§10,
-Figure 7). -/
+/-- In the free choice game, exhaustification by minimal models is the first sophisticated
+receiver's reading (footnote 37; §10, Figure 7). -/
 theorem exhMW_eq_receiverStep (m : Message) :
     exhMW (alternatives game) {t | game.meaning m t} =
       ↑(receiverStep game.trueStates (inverse game.trueStates) m) := by
@@ -1778,9 +1775,9 @@ theorem exhMW_alt₂ : exhMW alt₂ (A ∪ B) = exhMW alt₁ (A ∪ B) :=
   exhMW_insert_of_monotoneDetermined _ _ fun _ _ h hw ↦
     ⟨h A (by simp [alt₁]) hw.1, h B (by simp [alt₁]) hw.2⟩
 
-/-- The minimal-models exhaustifier does not see the conjunctive alternative and agrees with
-innocent exclusion over the larger set, while innocent exclusion over the smaller set excludes
-nothing (113). -/
+/-- Minimal-models exhaustification ignores the conjunctive alternative and matches innocent
+exclusion over the larger set, while innocent exclusion over the smaller set excludes nothing (113).
+-/
 theorem exhaustivity_operators :
     exhMW alt₁ (A ∪ B) = exhMW alt₂ (A ∪ B) ∧ exhMW alt₂ (A ∪ B) = exhIE alt₂ (A ∪ B) ∧
       exhIE alt₂ (A ∪ B) ⊂ exhIE alt₁ (A ∪ B) := by

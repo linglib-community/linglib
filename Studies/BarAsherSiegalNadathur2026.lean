@@ -226,8 +226,7 @@ def beforeSwitch : Situation V := [lock ← false, electricity ← false]
 first highlighted row of Table 2. -/
 def switchedOn : Situation V := [lock ← false, electricity ← true]
 
-/-- (40) *Nur is opening the door* is true once the power is switched on: the electronic
-procedure is initiated by the power, and neither culmination nor non-culmination is settled. -/
+/-- *Nur is opening the door* (40) is true once the power is switched on. -/
 theorem prog_opening : Prog model doorOpens beforeSwitch switchedOn :=
   ⟨⟨sElec, sElec_sufficient, electricity, true, by decide, by decide, by decide⟩,
     not_cul_or_term (by decide)⟩
@@ -238,8 +237,8 @@ def realistic : Situation V :=
   [handle ← false, lock ← false, electricity ← true, button ← false, circuit ← false,
     doorOpens ← false]
 
-/-- In the realistic context the unturned handle and unpressed button complete a sufficient set
-for non-culmination (39c), so (40) comes out false, against intuition, as the paper observes. -/
+/-- In the realistic context, a sufficient set for non-culmination (39c) makes (40) false, against
+intuition. -/
 theorem not_prog_realistic : ¬ Prog model doorOpens beforeSwitch realistic :=
   fun h ↦ h.2 (Or.inr ⟨sNotCirc, sNotCirc_sufficient, by decide⟩)
 

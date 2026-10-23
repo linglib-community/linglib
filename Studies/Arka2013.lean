@@ -128,9 +128,8 @@ instance {T : Type*} [LinearOrder T] (f : ReichenbachFrame T) :
     Decidable (englishPresentPerfect f) := by
   unfold englishPresentPerfect; infer_instance
 
-/-- With a past reference time the English present perfect is contradictory, Klein's puzzle,
-while *sudah* under the same reference time is satisfiable, as in (5b) *Dia sudah pergi
-kemarin*. -/
+/-- With a past reference time, the English present perfect is contradictory while *sudah* is
+satisfiable, as in (5b). -/
 theorem klein_puzzle_dissolved :
     (∀ f : ReichenbachFrame ℤ, englishPresentPerfect f → f.referencePosition ≠ .lt) ∧
       ∃ f : ReichenbachFrame ℤ, frame sudah.viewpoint f ∧ f.referencePosition = .lt :=

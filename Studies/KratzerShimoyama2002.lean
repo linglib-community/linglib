@@ -96,17 +96,16 @@ theorem opExists_singleton (p : W → Prop) : opExists {p} = {p} := by simp [opE
 
 theorem opForall_singleton (p : W → Prop) : opForall {p} = {p} := by simp [opForall]
 
-/-- Alternatives are caught by the nearest operator (4), since a closed set has a single member
-and a higher operator finds nothing left to quantify over. -/
+/-- Alternatives are caught by the nearest operator (4), so a higher operator applied after closure
+changes nothing. -/
 theorem opForall_opExists (A : Set (W → Prop)) : opForall (opExists A) = opExists A :=
   opForall_singleton _
 
 theorem opExists_opForall (A : Set (W → Prop)) : opExists (opForall A) = opForall A :=
   opExists_singleton _
 
-/-- Determiner quantification is the special case with individual alternatives (§2), so that
-existential closure over the propositions a predicate yields from a set of individuals is the
-ordinary existential quantifier. -/
+/-- Existential closure over the propositions a predicate yields from a set of individuals is
+ordinary existential quantification (§2). -/
 theorem opExists_image (P : E → W → Prop) (A : Set E) :
     opExists (P '' A) = {fun w ↦ ∃ x ∈ A, P x w} := by
   simp [opExists]
@@ -127,10 +126,8 @@ theorem opNeg_eq_denote {c : Coordinator} (hc : c.role = .negative) (A : Set (W 
     opNeg A = {c.denote A} := by
   rw [opNeg, Coordinator.denote_of_negative hc]; congr 1; ext w; simp [sSup_apply]
 
-/-- The coordination an indeterminate's particle applies to the propositions a predicate yields
-from a set of individuals is, at each world, the indeterminate quantifier's reading,
-`IndeterminateQuantifier.reading`, so the determiner readings are the special case of the paper's
-closure with individual alternatives (§2). -/
+/-- An indeterminate's particle applied to a predicate's propositions over a set of individuals
+gives the indeterminate quantifier's reading (§2). -/
 theorem denote_image_eq_reading [Fintype E] (q : IndeterminateQuantifier)
     (P : E → W → Prop) (A : Set E) :
     q.particle.denote (P '' A) = fun w ↦ q.reading E (· ∈ A) (P · w) := by
@@ -207,8 +204,7 @@ theorem kann_singleton (R : SetRel W W) (p : W → Prop) : kann R {p} = {◇[R] 
 theorem muss_singleton (R : SetRel W W) (p : W → Prop) : muss R {p} = {□[R] p} := by
   simp [muss]
 
-/-- The distribution requirement is not entailed by *muss* (§6). With two alternatives and a
-single accessible world verifying one of them, necessity holds and distribution fails. -/
+/-- *muss* does not entail the distribution requirement (§6). -/
 theorem not_distribution_of_muss :
     ∃ (R : SetRel Bool Bool) (A : Set (Bool → Prop)) (w : Bool),
       (∀ q ∈ muss R A, q w) ∧ ¬ distribution R A w :=
@@ -284,10 +280,8 @@ theorem japanese_same_base.{u} :
   rw [Japanese.Determiners.denote_dare_ka, Japanese.Determiners.denote_dare_mo]
   exact fun h ↦ Quantifier.GQ.Family.some_ne_every (Set.singleton_eq_singleton_iff.1 h)
 
-/-- The Latvian series are selective (§1, §9). In [haspelmath-1997]'s figure the *kaut*-series
-is existential, the *ne*-series confined to the direct scope of negation and the *jeb*-series to
-indirect negation, comparatives and free choice, so that no function of the map is served by two
-series. -/
+/-- The Latvian series serve pairwise disjoint functions on [haspelmath-1997]'s map, so they are
+selective (§1, §9). -/
 theorem latvian_selective :
     Haspelmath1997.latvian.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
@@ -296,10 +290,8 @@ theorem japanese_series_disjoint :
     Haspelmath1997.japanese.Pairwise (Disjoint ·.functions ·.functions) := by
   decide
 
-/-- In the Beck effects (23) and their scrambled counterparts (24), a multiple question with the
-second wh-phrase in situ is ungrammatical iff an operator bearing an interpretable feature,
-inflectional negation or the existential closure of a quantifier, intervenes between the
-wh-phrase and the complementiser. -/
+/-- In (23) and (24), a multiple question with an in-situ wh-phrase is ungrammatical iff an operator
+with an interpretable feature intervenes. -/
 theorem rows_beck :
     ∀ r ∈ Examples.all, (r.feature? "order").isSome →
       (r.judgment = .ungrammatical ↔
@@ -323,17 +315,15 @@ theorem rows_irgendein :
       (r.judgment = .acceptable ↔ c ∈ German.PolarityItems.irgendein.licensingContexts) := by
   decide
 
-/-- Under a negative operator *irgendein* is acceptable exactly when the operator closes its scope
-with [∃] and not with [Neg], so under *niemand* and *auf keinen Fall* and not under *nicht*, (12),
-(18) and (21). -/
+/-- Under a negative operator, *irgendein* is acceptable exactly when that operator closes its scope
+with [∃] ((12), (18), (21)). -/
 theorem rows_irgendein_selective :
     ∀ r ∈ Examples.all, (contextOf? r).isSome → ∀ f ∈ r.feature? "feature",
       (r.judgment = .acceptable ↔ f = "exists") := by
   decide
 
-/-- The licensing theory licenses *irgendein* under inflectional negation, which is downward
-entailing, and (21) is ungrammatical, so strength does not exclude the item there and selectivity
-does. -/
+/-- The licensing theory licenses *irgendein* under inflectional negation, yet (21) is
+ungrammatical, so selectivity rather than strength excludes it. -/
 theorem negation_licenses_irgendein :
     LicensingContext.negation.licenser.Licenses German.PolarityItems.irgendein ∧
       Examples.ex21.judgment = .ungrammatical :=

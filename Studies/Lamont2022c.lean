@@ -175,9 +175,8 @@ def rankings (n : ℕ) : List (List (Constraint (Footing Unit))) :=
     trochee n ++ parseLR n ++ iamb n, trochee n ++ iamb n ++ parseLR n,
     iamb n ++ parseLR n ++ trochee n, iamb n ++ trochee n ++ parseLR n]
 
-/-- A monosyllabic foot is never optimal while a disyllabic foot can be parsed ((23)): under
-every ranking of the three constraints, no monosyllabic parse of `/σσσσ/` is in the step
-optimum, so `FtBin` is unnecessary. -/
+/-- No monosyllabic parse of `/σσσσ/` is in the step optimum under any ranking, so `FtBin` is
+unnecessary ((23)). -/
 theorem monosyllable_never_optimal :
     ∀ r ∈ rankings 4, ∀ m ∈ monoParses,
       m ∉ (HSDerivation.mk gen r).stepOptimum (strays 4) := by
@@ -307,9 +306,8 @@ theorem steps_43 :
     (waorani 5).Converged [trochSt, monoSt, trochSt] := by
   decide +kernel
 
-/-- (44): with a pentasyllabic suffix string, the head foot is parsed at the right edge, the
-suffix string is footed from its left edge before the stem, the stem is exhaustively footed,
-and the remaining suffix syllable stays unfooted. -/
+/-- In the derivation (44) of a pentasyllabic suffix string, the head foot comes first at the right
+edge and one suffix syllable stays unfooted. -/
 theorem steps_44 :
     (waorani 10).stepOptimum [st, st, st, st, st, sf, sf, sf, sf, sf] =
         {[st, st, st, st, st, sf, sf, sf, trochSf]} ∧

@@ -170,9 +170,8 @@ def Profile.ofFactivity : Option Factivity → Profile
   | none => .nonfactive
 
 variable {E : Type*} in
-/-- A doxastic predicate's presupposition is admitted exactly when the requirement of the profile
-its factivity determines holds, for a factive the requirement (10) that the complement be Common
-Ground. -/
+/-- A doxastic predicate's presupposition is admitted iff the requirement of its factivity profile
+holds, Common Ground status for a factive (10). -/
 theorem subset_support_sentence_iff (V : DoxasticPredicate W E) (a : E) :
     c ⊆ Function.support (V.sentence a p) ↔ (Profile.ofFactivity V.factivity).condition c p := by
   rw [DoxasticPredicate.support_sentence]

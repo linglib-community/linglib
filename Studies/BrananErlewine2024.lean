@@ -300,8 +300,8 @@ theorem ex21_ex23 :
     (Examples.ex23b.judgment = .acceptable ↔ cliticAgent.Converges) := by
   decide +kernel
 
-/-- (26), (28): a DP at the edge of a clausal subject is the closest DP, (27), and each *gi* on
-the way attracts the closest DP, skipping a clitic. -/
+/-- A DP at the edge of a clausal subject is the closest DP (27), and each *gi* attracts the closest
+DP ((26), (28)). -/
 theorem ex26_ex28 :
     (Examples.ex26a.judgment = .acceptable ↔ (clausalSubject resumptive).Converges) ∧
     (Examples.ex26b.judgment = .acceptable ↔ (clausalSubject gap).Converges) ∧

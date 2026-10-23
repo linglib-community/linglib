@@ -257,16 +257,14 @@ theorem after_stative_inchoative_iff :
     rw [timeTrace_inchoative_of_isLeast (isLeast_timeTrace_stative j)]
     exact isGreatest_singleton)
 
-/-- In (23) John met Mary at three and Mary climbed the mountain from one to four, so *before* the
-start of the climb is false and *before* its telos true. -/
+/-- In (23), *before* the start of the climb is false and *before* its telos true. -/
 theorem example23 :
     ¬ before {NonemptyInterval.pure 15} {⟨⟨13, 16⟩, by omega⟩} ∧
       before {NonemptyInterval.pure 15}
         (completive {⟨⟨13, 16⟩, by omega⟩}) := by
   simp [before_culmination_start, before_culmination_telos]
 
-/-- In (24) John met Mary in 2022 and Mary was president from 2021 to 2028, so *after* the end of
-her term is false and *after* its onset true. -/
+/-- In (24), *after* the end of Mary's term is false and *after* its onset true. -/
 theorem example24 :
     ¬ after {NonemptyInterval.pure 2022} (Set.Iic ⟨⟨2021, 2028⟩, by omega⟩) ∧
       after {NonemptyInterval.pure 2022}
@@ -325,9 +323,8 @@ theorem after_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ tim
   exact before_antitone _ (by simpa only [timeTrace_image_dual] using Set.preimage_mono h)
     ⟨OrderDual.toDual m', by simpa only [timeTrace_image_dual] using hm'.dual⟩
 
-/-- The coerced reading is not downward entailing, since precedence of a telos does not carry over
-to a sub-eventuality with an earlier telos, so a *before* clause licenses NPIs only on its default
-reading (25). -/
+/-- The coerced reading of *before* is not downward entailing, so a *before* clause licenses NPIs
+only on its default reading (25). -/
 theorem not_before_completive_antitone (h₃ : ∃ a b c : T, a < b ∧ b < c) :
     ¬ ∀ A B B' : Set (NonemptyInterval T), timeTrace B' ⊆ timeTrace B →
       (∃ l', IsGreatest (timeTrace B') l') →
@@ -378,9 +375,8 @@ theorem before_iff_uniform :
     before A B ↔ BeaverCondoravdi2003.uniform (· < ·) (timeTrace A) (timeTrace B) := by
   simp only [before, BeaverCondoravdi2003.uniform, maxOnScale_lt_eq, Set.mem_ofPred_eq]
 
-/-- So *before* agrees with Anscombe's *before ever* on a clause exactly when the clause has a
-first time or no time precedes all of it, the condition of Proposition 2 of Beaver and
-Condoravdi. -/
+/-- *Before* agrees with Anscombe's *before ever* on a clause iff the clause has a first time or no
+time precedes all of it (Proposition 2 of Beaver and Condoravdi). -/
 theorem forall_before_iff_beforeEver :
     (∀ A, before A B ↔ beforeEver A B) ↔
       (∃ m, IsLeast (timeTrace B) m) ∨ strictLowerBounds (timeTrace B) = ∅ := by

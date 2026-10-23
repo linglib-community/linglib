@@ -148,9 +148,8 @@ theorem licenses_iff_carries {r : Negation.Strength} (he : e.licensor = some r) 
   · rw [he, Option.some_inj] at hw
     exact absurd hw hr
 
-/-- A non-trivial classical context blocks the positive polarity items of a class exactly where
-it licenses the negative polarity items of that class (the mirror image of [vanderwouden-1997]'s
-(181)). -/
+/-- A non-trivial classical context anti-licenses a class's PPIs exactly where it licenses its NPIs
+(mirroring [vanderwouden-1997]'s (181)). -/
 theorem antiLicenses_iff_licenses {e' : PolarityItem} {F : OperatorFamily}
     (hc : L = .classical F) (hn : ¬ L.IsStrawsonUE)
     (h : e.antiLicensor = e'.licensor) : L.AntiLicenses e ↔ L.Licenses e' := by

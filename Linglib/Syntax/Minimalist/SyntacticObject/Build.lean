@@ -124,9 +124,8 @@ theorem merge_ne_left (l r : LinearizedSyntacticObject L) : merge l r ≠ l := f
     List.sum_nil] at this
   omega
 
-/-- No homomorphism of magmas forgets in the other direction, since the ordered objects have no
-    commutative submagma: the images of `t * (t * t)` and `(t * t) * t` would coincide
-    ([marcolli-chomsky-berwick-2025] Lemma 1.13.1). -/
+/-- No magma homomorphism maps syntactic objects to linearized ones ([marcolli-chomsky-berwick-2025]
+Lemma 1.13.1). -/
 theorem isEmpty_mulHom : IsEmpty (SyntacticObject L →ₙ* LinearizedSyntacticObject L) := by
   refine ⟨fun φ ↦ ?_⟩
   have h := congrArg φ (mul_comm (default : SyntacticObject L) (default * default))

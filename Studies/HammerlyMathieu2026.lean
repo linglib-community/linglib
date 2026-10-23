@@ -317,9 +317,8 @@ theorem derivation_26 :
       (inflP .plain ⟨bare .prox, bare .anim⟩).copies inflHead = phiFeatures .prox := by
   decide +kernel
 
-/-- (27): ergative Voice copies nothing, so its theme sign is the elsewhere form, the inverse
-([oxford-2019]), and moves the proximate patient over its agent, which Infl Agrees with and moves
-again. -/
+/-- In (27), ergative Voice copies nothing, so its theme sign is the inverse ([oxford-2019]), and
+the proximate patient moves over the agent and again to Infl. -/
 theorem derivation_27 :
     (voiceP .ergative ⟨bare .anim, bare .prox⟩).obj =
         {↑patient, {↑agent, {↑voiceHead, {.traceOf patient, ↑stem}}}} ∧
@@ -329,8 +328,8 @@ theorem derivation_27 :
       (inflP .ergative ⟨bare .anim, bare .prox⟩).copies inflHead = phiFeatures .prox := by
   decide +kernel
 
-/-- (28): Voice moves the second person patient into a second specifier, and Infl, finding Voice and
-both arguments equidistant, Agrees with all three and moves neither. -/
+/-- In (28), Voice moves the second-person patient into a second specifier, and Infl Agrees with
+Voice and both arguments and moves neither. -/
 theorem derivation_28 :
     (voiceP .plain ⟨bare .part, bare .addr⟩).obj =
         {↑patient, {↑agent, {↑voiceHead, {.traceOf patient, ↑stem}}}} ∧
@@ -340,8 +339,8 @@ theorem derivation_28 :
       (inflP .plain ⟨bare .part, bare .addr⟩).copies inflHead = phiFeatures .addr := by
   decide +kernel
 
-/-- (29): Voice leaves the proximate patient in place, and Infl Agrees with the local agent and with
-Voice, which bears the patient's features, the portmanteau, and moves the agent. -/
+/-- In (29), Voice leaves the proximate patient in place, and Infl Agrees with the local agent and
+with Voice and moves the agent. -/
 theorem derivation_29 :
     (voiceP .plain ⟨bare .part, bare .prox⟩).obj = {↑agent, {↑voiceHead, vP}} ∧
       (voiceP .plain ⟨bare .part, bare .prox⟩).copies voiceHead = phiFeatures .prox ∧
@@ -474,8 +473,8 @@ instance : DecidablePred FitsRows := fun _ ↦ by unfold FitsRows; infer_instanc
 /-- The mixed probe (32) fits every judgment. -/
 theorem fitsRows_cEpp : FitsRows cEpp := by decide +kernel
 
-/-- With Voice and Infl as they are, a φ-probe on C cannot choose between the arguments Voice
-made equidistant, so a local patient would block LDA, against (12), (13), (15) and (18). -/
+/-- A φ-probe on C does not fit the rows, since a local patient would block LDA, against (12), (13),
+(15) and (18). -/
 theorem not_fitsRows_phiEpp : ¬ FitsRows phiEpp := by decide +kernel
 
 /-- A δ-probe on C reaches past the proximate in Spec,IP, so LDA could target the obviative
@@ -490,10 +489,8 @@ def targetOf (row : Datum) : Option (PhiFeature × Role) := do
   let f ← (row.feature? (if r = .ea then "ea" else "ia")).bind categoryOf
   pure (f, r)
 
-/-- A proximate patient is a target of LDA under an obviative agent (11a) but not under a first
-person agent (16b), so whether an argument can be targeted depends on its coargument; section 4
-argues that a purely local principle selecting the matrix object, as [lesourd-2019] proposes for
-Passamaquoddy, cannot express this. -/
+/-- A proximate patient is an LDA target under an obviative agent (11a) but not under a first-person
+agent (16b) (section 4, against [lesourd-2019]). -/
 theorem target_eq_ex_11a_ex_16b :
     targetOf Examples.ex_11a = targetOf Examples.ex_16b ∧
       Examples.ex_11a.judgment ≠ Examples.ex_16b.judgment := by

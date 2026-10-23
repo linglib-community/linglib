@@ -214,9 +214,7 @@ example : support fig5b (.disj (.poss (enrich (.atom .a))) (.poss (enrich (.atom
 
 /-! ### Negation and incompatibility -/
 
-/-- Incompatibility does not define negation, so the converse of Fact 7 fails (p. 5:31). The
-    state `{w_b}` is disjoint from every team supporting `¬((a ∧ NE) ∨ b)` but does not support
-    its negation, since `a` is no open possibility in `{w_b}`. -/
+/-- Incompatibility does not define negation, so the converse of Fact 7 fails (p. 5:31). -/
 theorem not_forall_support_neg_of_forall_disjoint :
     ¬ ∀ (φ : Formula Atom) (M : KripkeModel (Finset Atom) Atom) (s : Finset (Finset Atom)),
       (∀ t, support M φ t → Disjoint s t) → support M (.neg φ) s :=
@@ -289,9 +287,8 @@ theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : Consequence (W :
   (consequence_iff_classicalConsequence (φ := .neg β) (ψ := .neg α) hβ hα).mpr
     fun M w hβ' hα' ↦ hβ' ((consequence_iff_classicalConsequence hα hβ).mp h M w hα')
 
-/-- Contraposition fails in BSML⁺. Positive FC holds, but its contrapositive
-`¬(◇a ∧ ◇b) ⊨⁺ ¬◇(a ∨ b)` fails at `{w_a}` on Figure 5(a)'s frame, where `R[w_a] = {w_b}`
-anti-supports `a` but not `a ∨ b`. -/
+/-- Positive FC holds in BSML⁺ but its contrapositive fails on Figure 5(a)'s frame, so
+contraposition fails. -/
 theorem not_contraposition_plus :
     ConsequencePlus (W := Finset Atom) (.poss aOrB) (.conj mayA mayB) ∧
       ¬ ConsequencePlus (W := Finset Atom) (.neg (.conj mayA mayB)) (.neg (.poss aOrB)) :=

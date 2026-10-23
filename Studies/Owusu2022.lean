@@ -83,8 +83,8 @@ theorem closure_below_negation_iff {N VP : E → Prop} (hN : ∃ x, N x) :
     (¬ ∃ f : ChoiceFunction E, VP (f N)) ↔ ¬ GQ.some N VP :=
   not_congr (ChoiceFunction.exists_apply_iff_some hN VP)
 
-/-- Under negation, the free function of (67) gives the narrow reading for every predicate
-exactly when its pick is the only member of the restrictor at the situation. -/
+/-- Under negation, the free function of (67) gives the narrow reading for every predicate iff its
+pick is the restrictor's only member at the situation. -/
 theorem negation_narrow_iff (f : S → ChoiceFunction E) {s : S} {P : S → E → Prop}
     (hP : ∃ x, P s x) :
     (∀ VP : E → Prop, ¬ VP (f s (P s)) ↔ ¬ GQ.some (P s) VP) ↔ ∀ x, P s x → x = f s (P s) :=
@@ -92,9 +92,7 @@ theorem negation_narrow_iff (f : S → ChoiceFunction E) {s : S} {P : S → E �
 
 /-! ### Conditionals -/
 
-/-- Closing the choice function at the top of a conditional, as Matthewson's analysis does,
-gives the wide reading of (60), on which some member of the restrictor is such that the
-consequent holds if it satisfies the antecedent. -/
+/-- Closing the choice function above a conditional gives the wide reading of (60). -/
 theorem closure_above_conditional_iff {N A : E → Prop} {p : Prop} (hN : ∃ x, N x) :
     (∃ f : ChoiceFunction E, A (f N) → p) ↔ ∃ x, N x ∧ (A x → p) :=
   ChoiceFunction.exists_apply_iff_some hN fun x ↦ A x → p
@@ -111,8 +109,8 @@ theorem wide_iff (hB : ∃ x, B x) :
     (∃ f : ChoiceFunction E, ∀ z, R z (f B)) ↔ GQ.some B fun x ↦ ∀ z, R z x :=
   ChoiceFunction.exists_apply_iff_some hB fun x ↦ ∀ z, R z x
 
-/-- With the individual index bound by *biara*, some function makes (55b) true exactly when
-every woman read a book, the reading (24) glosses as *every* over the indefinite. -/
+/-- With the individual index bound by *biara*, some function makes (55b) true iff every woman read
+a book (24). -/
 theorem functional_iff (hB : ∃ x, B x) :
     (∃ F : ι → ChoiceFunction E, ∀ z, R z (F z B)) ↔ ∀ z, GQ.some B (R z) :=
   ChoiceFunction.exists_pi_apply_iff (fun _ ↦ hB) R
@@ -125,8 +123,8 @@ section DownwardEntailing
 
 variable {Wrote Submitted : ι → E → Prop}
 
-/-- With the index free, some function makes (57a) true exactly when every student wrote a
-paper they did not submit, provided distinct students wrote distinct papers. -/
+/-- With the index free, some function makes (57a) true iff every student wrote a paper they did not
+submit, given distinct papers. -/
 theorem ex57_free_iff [Nonempty E] (hW : ∀ x, ∃ y, Wrote x y)
     (hinj : Function.Injective Wrote) :
     (∃ f : ChoiceFunction E, ∀ x, ¬ Submitted x (f (Wrote x))) ↔

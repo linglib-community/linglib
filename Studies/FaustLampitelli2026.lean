@@ -161,9 +161,8 @@ def Guttural.IsPharyngeal : Guttural → Prop
 instance : DecidablePred Guttural.IsPharyngeal :=
   fun g ↦ by cases g <;> unfold Guttural.IsPharyngeal <;> infer_instance
 
-/-- In the feature system the gutturals are no natural class of Tigrinya's consonants, since what
-the glottals and the pharyngeals share also describes the dorsal obstruents. Element Theory groups
-them by their |A| (20). -/
+/-- In the feature system the gutturals form no natural class of Tigrinya consonants, whereas
+Element Theory groups them by their |A| (20). -/
 theorem not_isNaturalClass_gutturals :
     ¬ Phonology.IsNaturalClass Tigrinya.Phonology.consonants
       (Finset.univ.image Guttural.segment) := by
@@ -643,8 +642,8 @@ theorem rows_unpredicted : ∀ r ∈ rows, ¬ r.predicted → ∀ f ∈ r.forms,
 /-- The 2nd-person jussive of 'hear', /t_-s_mʌʕ_/ (32a). -/
 def jussive32a : Form := (instantiate juss2 ⟨["s", "m", "ʕ"]⟩).getD []
 
-/-- The fused vowel of (32a) is governed by the nucleus after it iff final nuclei act. Since
-[tɨsmaʕ] keeps its vowel, the final nucleus does not govern (§3.3.1). -/
+/-- The fused vowel of (32a) is governed by the following nucleus iff final nuclei act, so [tɨsmaʕ]
+shows the final nucleus does not govern (§3.3.1). -/
 theorem governs_32a (p : StrictCV.FinalNucleus) :
     StrictCV.Governs p ((lexical (fusion jussive32a)).drop 3) ↔ p.acts = true := by
   cases p with | mk e a => cases e <;> cases a <;> decide
@@ -664,10 +663,8 @@ def economical (p : StrictCV.FinalNucleus) (l : List StrictCV.Nucleus) :
     decide (StrictCV.SatisfiesECP p r ∧ ∀ y ∈ r, y.1.forced = true → y.2 = true)
   admissible.filter fun r ↦ admissible.all fun r' ↦ r.countP (·.2) ≤ r'.countP (·.2)
 
-/-- In (37a) a left-aligned run of three empty nuclei precedes the lexical vowel, and the ECP
-needs two epentheses, [C▪C▪C_C] or [C▪C_C▪C], whatever the final nucleus. The first is the
-standard realization; the derivation yields the second, which Ethiosemitic always takes
-(§3.3.3). -/
+/-- In (37a), three empty nuclei precede the lexical vowel, and the derivation yields the
+Ethiosemitic realization [C▪C_C▪C] rather than the standard one (§3.3.3). -/
 theorem syneresis_37a :
     (nuclei (dissociation (fusion gerund37a))).map (·.melody) =
         [.empty, .empty, .empty, .associated] ∧
@@ -686,9 +683,8 @@ def DissociatedThird (f : Form) : Prop :=
 
 instance (f : Form) : Decidable (DissociatedThird f) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- On every form of (4)–(19) and (31)–(39), the derivation pronounces the nuclei of the standard
-realization, except in the configuration of (37a), where the standard realization is the
-unattested *[mɨsɨmʕu] (§3.3.3). -/
+/-- On every form of (4)–(19) and (31)–(39), the derivation pronounces the standard realization
+except in the configuration of (37a) (§3.3.3). -/
 theorem rows_pronounced_eq_standard : ∀ r ∈ rows, ∀ f ∈ r.stem,
     pronounced (derive f) = (StrictCV.standard final (nuclei (dissociation (fusion f)))).map
       Prod.snd ↔ ¬ DissociatedThird f := by

@@ -59,8 +59,8 @@ variable {E : Type*}
 
 /-! ### Partitions and the Disjointness Condition (§3.1) -/
 
-/-- A family of subkinds ((16), (28)) covers the kind and has no overlap iff every realization
-lies in exactly one of them, the clause that makes a family a `Setoid.IsPartition`. -/
+/-- A family of subkinds ((16), (28)) covers the kind without overlap iff every realization lies in
+exactly one subkind. -/
 theorem cover_and_noOverlap_iff {c : Set (Set E)} :
     ((∀ x, ∃ y ∈ c, x ∈ y) ∧ ∀ x, ∀ y ∈ c, x ∈ y → ¬ ∃ z ∈ c, y ≠ z ∧ x ∈ z) ↔
       ∀ x, ∃! y ∈ c, x ∈ y := by
@@ -106,8 +106,8 @@ structure Dog where
 /-- Fido, a border collie and a watch-dog, (14b). -/
 def fido : Dog := ⟨.borderCollie, .watchDog, 0⟩
 
-/-- With only Fido in the room (14b), no partition of the dogs has two subkinds realized there,
-so *two kinds of dog are sitting in the next room* is false. -/
+/-- With only Fido in the room (14b), *two kinds of dog are sitting in the next room* is false for
+every partition. -/
 theorem ncard_realized_fido_le (s : Setoid Dog) : (realized s.classes {fido}).ncard ≤ 1 :=
   (ncard_realized_classes_le s (Set.finite_singleton fido)).trans (Set.ncard_singleton fido).le
 
@@ -196,9 +196,8 @@ theorem the_kappaPlus_eq_none (s : Setoid E) {P : Set E} {a b : E} (ha : a ∈ P
   (iota_eq_none_iff _).2 fun ⟨y, ⟨hy, hPy⟩, _⟩ ↦
     h (s.rel_iff_exists_classes.2 ⟨y, hy, hPy ha, hPy hb⟩)
 
-/-- Under the partition by a function `f` ((36), (37), footnote 11), such as what each lion
-eats, the individuals on which `f` takes a given value form a cell, and the definite with that
-restrictor refers to exactly them, the second line of (36). -/
+/-- Under the partition by a function `f` ((36), (37), footnote 11), the definite with a cell's
+restrictor refers to that cell. -/
 theorem the_kappaPlus_ker {β : Type*} (f : E → β) (a : E) :
     iota (· ∈ kappaPlus (Setoid.ker f) (f ⁻¹' {f a})) = some (f ⁻¹' {f a}) :=
   the_kappaPlus_eq_some _ rfl fun _ h ↦ h
@@ -236,10 +235,8 @@ theorem the_kappaPlus_diet :
 
 /-! ### Amounts (§4.3) -/
 
-/-- An amount reading is ad hoc kind reference (§4.3) under the partition of a preorder into its
-degrees, (57)–(59), and needs only that the restrictor lie in one cell (p. 617). When every
-instance of the restrictor is as A as `a`, the definite over κ+ refers to the degree of `a`, the
-individuals exactly as A as `a`, (59). -/
+/-- Under the partition of a preorder into degrees, the definite over κ+ refers to the individuals
+exactly as A as `a` ((57)–(59), §4.3, p. 617). -/
 theorem amount_reading [Preorder E] {P : Set E} {a : E} (ha : a ∈ P)
     (hP : ∀ x ∈ P, AntisymmRel (· ≤ ·) x a) :
     iota (· ∈ kappaPlus (Degree.cresswellSetoid (· ≤ ·)) P) =

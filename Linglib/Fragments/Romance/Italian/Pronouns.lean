@@ -272,8 +272,8 @@ theorem atonic_acc_eq_atonic_dat_iff (r : Row) :
     atonic (r, .acc) = atonic (r, .dat) ↔ r.person ≠ .third := by
   cases r <;> decide
 
-/-- The atonic forms of a row are its reflexive exactly outside the third person, where the
-reflexive *si* "does not distinguish case, gender or number" (p. 96). -/
+/-- The atonic forms of a row are its reflexive forms exactly outside the third person, where *si*
+is invariant (p. 96). -/
 theorem atonic_eq_reflexiveForms_iff (r : Row) (k : Case) :
     atonic (r, k) = reflexiveForms r ↔ r.person ≠ .third := by
   cases r <;> cases k <;> decide

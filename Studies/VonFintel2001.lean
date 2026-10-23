@@ -139,10 +139,7 @@ theorem perfection_of_forall (h : ∀ r : Set W, ¬ r ⊆ p → s ∉ strictImp 
   intro s' hs' hp hq
   exact h {s'} (fun h ↦ hp (h rfl)) fun _ ⟨_, hx⟩ ↦ Set.mem_singleton_iff.1 hx ▸ hq
 
-/-- Relativized perfection (18), excluding the alternatives of a narrower set of antecedents,
-falls short of perfection. Situation `0` is a call after midnight, `1` a polite call before
-midnight and `2` an insulting one; excluding *if you call before midnight, I will be upset*
-leaves the insult upsetting. -/
+/-- Relativized perfection (18) falls short of perfection. -/
 theorem exists_relativized_not_perfection :
     ∃ (acc : Fin 3 → Set (Fin 3)) (p q : Set (Fin 3)) (R : Set (Set (Fin 3))) (s : Fin 3),
       s ∈ strictImp acc p q ∧ (∀ r ∈ R, ¬ r ⊆ p → s ∉ strictImp acc r q) ∧

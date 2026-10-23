@@ -112,8 +112,8 @@ noncomputable def belnapSquare (C B : E → Prop) : Square SignType where
   I := restrictedExists C B
   O := restrictedExists C (fun x ↦ ¬B x)
 
-/-- All four forms share one assertiveness condition, ∃xCx, so the square's relations are as
-strong as possible, with equi-assertiveness on top of the content relations (p. 8). -/
+/-- All four forms share the assertiveness condition ∃xCx, so the square adds equi-assertiveness to
+its content relations (p. 8). -/
 theorem square_equiassertive :
     ((belnapSquare C B).A = 0 ↔ (belnapSquare C B).E = 0) ∧
     ((belnapSquare C B).A = 0 ↔ (belnapSquare C B).I = 0) ∧
@@ -153,9 +153,7 @@ theorem obversion : restrictedForall C (fun x ↦ ¬¬B x) = restrictedForall C 
 theorem i_conversion_equitrue : restrictedExists C B = 1 ↔ restrictedExists B C = 1 := by
   simp [GQ.some, and_comm]
 
-/-- I-conversion is not equi-assertive, since "'Some unicorns are animals' is nonassertive while
-'Some animals are unicorns' is just plain false" (p. 8). In any nonempty domain, a restrictor true
-of everything and one true of nothing separate the two conditions. -/
+/-- I-conversion is not equi-assertive in any nonempty domain (p. 8). -/
 theorem i_conversion_not_equiassertive [Nonempty E] :
     ∃ C B : E → Prop, restrictedExists C B ≠ 0 ∧ restrictedExists B C = 0 :=
   ⟨fun _ ↦ True, fun _ ↦ False, by simp, by simp⟩
@@ -168,9 +166,7 @@ theorem barbara_assertive (A C B : E → Prop) (hMinor : restrictedForall A C = 
   obtain ⟨⟨x, hAx⟩, hAC⟩ := hMinor
   simpa using ⟨⟨x, hAC x hAx⟩, ⟨x, hAx⟩⟩
 
-/-- When Barbara's minor is true her major implies her conclusion, and "it is her major alone
-which does any implying of her conclusion, a feature of the situation which doubtless explains
-the tradition according to which Barbara's major is major and her minor only minor" (p. 9). -/
+/-- When Barbara's minor is true, her major implies her conclusion (p. 9). -/
 theorem barbara (A C B : E → Prop) (hMinor : restrictedForall A C = 1) :
     restrictedForall C B = 1 → restrictedForall A B = 1 := by
   simp only [restrictedForall_eq_one_iff, every] at hMinor ⊢
@@ -178,10 +174,8 @@ theorem barbara (A C B : E → Prop) (hMinor : restrictedForall A C = 1) :
 
 /-! ### Contraposition and confirmation (§6) -/
 
-/-- The contrapositive ∀x(¬Bx/¬Cx) is assertive when there are nonblack things, and ∀x(Cx/Bx)
-when there are crows. Reports that something is not a crow support the contrapositive but are
-"evidentially irrelevant" to the original (p. 10), so the confirmation paradox dissolves because
-the two are not the same conditional assertion. -/
+/-- The contrapositive ∀x(¬Bx/¬Cx) is assertive when there are nonblack things, and ∀x(Cx/Bx) when
+there are crows (p. 10). -/
 theorem contrapositive_different_assertiveness :
     (restrictedForall C B ≠ 0 ↔ ∃ x, C x) ∧
       (restrictedForall (fun x ↦ ¬B x) (fun x ↦ ¬C x) ≠ 0 ↔ ∃ x, ¬B x) := by

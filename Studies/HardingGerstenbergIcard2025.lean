@@ -183,8 +183,7 @@ instance : semConj.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide
 /-- In the context Bob knows, he was late and forgot the birthday. -/
 def context : Context := ⟨true, true⟩
 
-/-- "Because T" is true in both worlds and "because B" in the conjunctive world. These are the
-interpretation sets of Example 3, derived from actual causation with the empty contingency. -/
+/-- "Because T" is true in both worlds and "because B" in the conjunctive world (Example 3). -/
 theorem actualCause_T_semT : actualCause semT context .T .C :=
   ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
@@ -194,8 +193,8 @@ theorem actualCause_T_semConj : actualCause semConj context .T .C :=
 theorem actualCause_B_semConj : actualCause semConj context .B .C :=
   ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
-/-- "Because B" is false in the tardiness-only world, the negative membership of Example 3, since
-no path runs from the birthday to crossness, so under no contingency is it but-for crossness. -/
+/-- "Because B" is false in the tardiness-only world, since no path runs from the birthday to
+crossness (Example 3). -/
 theorem not_actualCause_B_semT : ¬ actualCause semT context .B .C := by
   rintro ⟨-, -, I, h1, h2⟩
   have hB : ¬ Relation.ReflTransGen semT.graph.Adj .B .C := by decide
@@ -255,8 +254,8 @@ theorem policy_prior_half (m : Msg) : (policy βL prior reward m).real {1} = 1 /
     expectedReward_prior, expectedReward_prior]
   simp [Real.sigmoid_zero]
 
-/-- By the speaker's utilities (4), "because T" is worth nothing in either world, and "because
-B" less than nothing in the tardiness-only world and more in the conjunctive one. -/
+/-- By the speaker's utilities (4), "because T" is worth nothing, and "because B" is negative in the
+tardiness-only world and positive in the conjunctive one. -/
 theorem utility_L0 :
     actionUtility (policy βL L0 reward) reward 0 0 = 0 ∧
       actionUtility (policy βL L0 reward) reward 0 1 = 0 ∧

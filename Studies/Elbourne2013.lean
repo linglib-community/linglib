@@ -163,8 +163,8 @@ theorem sentence_ne_zero_iff (σ : S → S) (f vp : E → S → Prop) (s : S) :
   rw [sentence, Ne, presupOfReferent_eq_zero_iff, ← Ne, Option.ne_none_iff_isSome]
   exact the_isSome_iff f (σ s)
 
-/-- Where the description denotes, the sentence says of that individual what the predicate says
-of it; a referential description makes the proposition object-dependent, (12) of ch. 5. -/
+/-- Where the description denotes an individual, the sentence says the predicate of that individual
+((12) of ch. 5). -/
 theorem sentence_eq_one_iff (σ : S → S) (f vp : E → S → Prop) {s : S} {x : E}
     (h : description σ f s = some x) : sentence σ f vp s = 1 ↔ vp x s := by
   simp [sentence, presupOfReferent_of_some h]
@@ -213,9 +213,7 @@ theorem attributiveDeRe_ne_zero_iff (R : S → Set S) (f vp : E → S → Prop) 
     attributiveDeRe R f vp s ≠ 0 ↔ ∃! x, f x s :=
   sentence_ne_zero_iff id f _ s
 
-/-- Kripke's number of the planets, (16) of ch. 7, is attributive, since the speaker need not
-know which number, yet de re, since the number in the topic situation is what is odd in every
-accessible world. -/
+/-- Kripke's *the number of the planets* is attributive yet de re ((16) of ch. 7). -/
 theorem attributiveDeRe_eq_one_iff (R : S → Set S) (f vp : E → S → Prop) {s : S} {x : E}
     (h : the f s = some x) : attributiveDeRe R f vp s = 1 ↔ ∀ w ∈ R s, vp x w :=
   sentence_eq_one_iff id f _ h
@@ -230,16 +228,16 @@ complement is true throughout the verb's own alternatives, doxastic for *believe
 noncomputable def attitude (dox R : S → Set S) (p : S → SignType) : S → SignType :=
   {s | ∀ w ∈ dox s, p w ≠ 0}.indicator fun s ↦ SignType.ofProp (∀ w ∈ R s, p w = 1)
 
-/-- *Hans wants the ghost in his attic to be quiet*, (40)–(41) of ch. 8, presupposes that Hans
-believes there is exactly one ghost in his attic. -/
+/-- *Hans wants the ghost in his attic to be quiet* presupposes Hans's belief in exactly one such
+ghost ((40)–(41) of ch. 8). -/
 theorem attitude_ne_zero_iff (dox R : S → Set S) (f vp : E → S → Prop) (s : S) :
     attitude dox R (sentence id f vp) s ≠ 0 ↔ ∀ w ∈ dox s, ∃! x, f x w := by
   simp only [attitude, ne_eq, Set.indicator_apply_eq_zero, Set.mem_ofPred_eq,
     SignType.ofProp_ne_zero, imp_false, not_not]
   exact forall₂_congr fun w _ ↦ sentence_ne_zero_iff id f vp w
 
-/-- A subject unsure whether there is a ghost in his attic cannot felicitously want the ghost in
-his attic to be quiet, (31) with (33b), since the presupposition attributes the belief to him. -/
+/-- A subject unsure whether there is a ghost in his attic cannot felicitously want the ghost to be
+quiet ((31) with (33b)). -/
 theorem attitude_eq_zero_of_agnostic (dox R : S → Set S) (f vp : E → S → Prop) {s : S}
     (h : ∃ w ∈ dox s, ¬ ∃ x, f x w) : attitude dox R (sentence id f vp) s = 0 := by
   refine not_not.1 fun hp ↦ ?_
@@ -250,8 +248,8 @@ theorem attitude_eq_zero_of_agnostic (dox R : S → Set S) (f vp : E → S → P
 def russellian (R : S → Set S) (f vp : E → S → Prop) (s : S) : Prop :=
   ∀ w ∈ R s, ∃ x, f x w ∧ (∀ y, f y w → y = x) ∧ vp x w
 
-/-- The antecedent of a conditional is a hole, (39) of ch. 8, so the existence presupposition of
-the description projects to the whole conditional, here the Weak Kleene material conditional. -/
+/-- The existence presupposition of a description in a conditional antecedent projects to the whole
+conditional ((39) of ch. 8). -/
 theorem conditional_ne_zero_iff (f vp : E → S → Prop) (q : S → SignType) (s : S) :
     (-sentence id f vp s).joinWeak (q s) ≠ 0 ↔ (∃! x, f x s) ∧ q s ≠ 0 := by
   rw [Ne, SignType.joinWeak_eq_zero_iff, SignType.neg_eq_zero_iff, not_or, ← Ne,
@@ -260,18 +258,15 @@ theorem conditional_ne_zero_iff (f vp : E → S → Prop) (q : S → SignType) (
 
 end Article
 
-/-- The Russellian paraphrase is consistent with agnosticism, (31) with (33a), since the
-existence claim sits inside the bouletic alternatives. The witness has two situations, one
-without a ghost that the subject leaves open and one with a quiet ghost that he wants. -/
+/-- The Russellian paraphrase is consistent with agnosticism about the ghost ((31) with (33a)). -/
 theorem russellian_consistent :
     ∃ (dox R : Bool → Set Bool) (f vp : Unit → Bool → Prop),
       (∃ w ∈ dox true, ¬ ∃ x, f x w) ∧ russellian R f vp true :=
   ⟨fun _ ↦ Set.univ, fun _ ↦ {true}, fun _ w ↦ w = true, fun _ _ ↦ True,
     ⟨false, Set.mem_univ _, by simp⟩, fun w hw ↦ ⟨(), hw, fun _ _ ↦ rfl, trivial⟩⟩
 
-/-- Under an attitude verb the description commits the subject, not the speaker, to a fountain
-of youth, (36) of ch. 8. The presupposition holds although there is none in the topic
-situation. -/
+/-- Under an attitude verb, the description presupposes a fountain of youth for the subject, not the
+speaker ((36) of ch. 8). -/
 theorem attitude_ne_zero_not_speaker :
     ∃ (dox R : Bool → Set Bool) (f vp : Unit → Bool → Prop) (s : Bool),
       attitude dox R (sentence id f vp) s ≠ 0 ∧ ¬ ∃ x, f x s :=
@@ -387,8 +382,7 @@ theorem the_donkey_minimal (x y : E) :
     Fact.donkey.injEq] at hz
   exact hz
 
-/-- The domain condition of the donkey-anaphoric description is met by minimality, since every
-minimal situation of a farmer owning a donkey contains exactly one donkey, §6.2. -/
+/-- Every minimal situation of a farmer owning a donkey contains exactly one donkey (§6.2). -/
 theorem existsUnique_donkey_of_minimal (w : Village E) (x : E) {s' : Village E}
     (hs : Minimal (fun s' ↦ s' ≤ w ∧ s' ≤ w ∧ ownsADonkey w x s') s') :
     ∃! z, Fact.donkey z ∈ s' := by
@@ -422,9 +416,8 @@ private theorem beatsTheDonkey_iff (w : Village E) (x y : E) :
   simp only [Option.mem_def, Option.some.injEq, exists_eq_left']
   exact Q_mem_iff (fun x ↦ Fact.beats x y) x w _
 
-/-- On the neat semantics for donkey sentences (§6.2), the sentence is true in the village world
-iff every farmer beats every donkey he owns. The bound description picks out the unique donkey
-of each minimal owning situation, so the reading is the strong one. -/
+/-- On the neat semantics for donkey sentences (§6.2), the donkey sentence is true iff every farmer
+beats every donkey he owns. -/
 theorem everyOwnerBeatsTheDonkey_iff (w : Village E) :
     everyOwnerBeatsTheDonkey w w ↔
       ∀ x y, Fact.farmer x ∈ w → Fact.donkey y ∈ w → Fact.owns x y ∈ w → Fact.beats x y ∈ w := by
@@ -453,9 +446,8 @@ def world : Village Bool := {Fact.table true, Fact.table false, Fact.covered tru
 
 theorem room_le_world : room ≤ world := by decide
 
-/-- Incompleteness, (4) of ch. 9, arises when *the table is covered with books* is said in a room
-with one table. The referential situation pronoun to the room satisfies the domain condition
-although the world contains two tables. -/
+/-- The situation pronoun satisfies the domain condition of *the table* although the world contains
+two tables ((4) of ch. 9). -/
 theorem incomplete_description :
     sentence (fun _ ↦ room) (fun x (s : Village Bool) ↦ Fact.table x ∈ s)
         (fun x s ↦ Fact.covered x ∈ s) world ≠ 0 ∧
@@ -474,9 +466,8 @@ noncomputable def relDescription {S : Type*} (rel : E → E → S → Prop) (np 
     (s : S) : Option E :=
   iota fun x ↦ np x s ∧ rel x v s
 
-/-- The relation-variable description covaries with its individual variable. Read as *the donkey
-v owns*, *the donkey* denotes each owner's own donkey, which licenses the sloppy reading of (17b)
-in ch. 9 and would wrongly license one for (17a). -/
+/-- The relation-variable description covaries with its individual variable, which licenses a sloppy
+reading for (17b) of ch. 9 but wrongly also for (17a). -/
 theorem relDescription_eq_some_iff {S : Type*} (rel : E → E → S → Prop) (np : E → S → Prop)
     (v : E) (s : S) (x : E) :
     relDescription rel np v s = some x ↔
@@ -495,9 +486,8 @@ noncomputable def everyOwnerBeatsTheDonkeyAndThePriestToo (s₀ s : Village E) :
       Fact.beats x z ∈ s'' ∧
         ∃ p ∈ the (fun p (s : Village E) ↦ Fact.priest p ∈ s) s₀, Fact.beats p z ∈ s'') x s s') s
 
-/-- On the strict reading, (32) of ch. 9, the priest beats each farmer's donkey. A sloppy reading,
-on which the priest beats his own donkey, would need the description to depend on an individual
-variable, which the situation-variable description lacks. -/
+/-- On the situation-variable description, (32) of ch. 9 has only the strict reading, on which the
+priest beats each farmer's donkey. -/
 theorem everyOwnerBeatsTheDonkeyAndThePriestToo_iff (w : Village E) {p : E}
     (hp : the (fun p (s : Village E) ↦ Fact.priest p ∈ s) w = some p) :
     everyOwnerBeatsTheDonkeyAndThePriestToo w w ↔

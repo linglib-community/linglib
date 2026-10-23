@@ -78,9 +78,7 @@ theorem card_filter_form (a b : Ordering) :
     (structures.filter fun x ↦ x.1 = a ∧ x.2.1 = b).card = (b.comp a).card := by
   revert a b; decide
 
-/-- More than one order obtains only for the two retrogressive forms, in which the direction from
-S to R is opposite to the direction from R to E: the posterior past and the anterior future
-(p. 297). -/
+/-- More than one order obtains only for the posterior past and the anterior future (p. 297). -/
 theorem one_lt_card_comp_iff (a b : Ordering) :
     1 < (b.comp a).card ↔ (a = .lt ∧ b = .gt) ∨ (a = .gt ∧ b = .lt) := by
   revert a b; decide
