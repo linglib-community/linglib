@@ -22,16 +22,20 @@ segment gives each feature the value `+`, `−` or none, and segments are ordere
 with the unspecified segment least and the meet of two segments the description they share.
 
 The file also defines the sonority hierarchy of Hayes's Table 4.1, whose five classes are cut by
-four features and defined by the descriptions of p. 77, together with Parker's refinement of it
-into eight classes, and names the vowels, obstruents and nasals by those descriptions. The
-theorems are in `Phonology/Segmental/Basic.lean`.
+four features and defined by the descriptions of p. 77, and names the vowels, obstruents and
+nasals by those descriptions. Parker's hierarchy refines it, and is collapsed here to eight
+classes: his four obstruent classes, with the affricates among the stops, and his nasals,
+liquids, glides and vowels, with his several liquid and vowel classes each merged. Parker ranks
+/h/ alone, between the voiced fricatives and the nasals, and here a [−sonorant] /h/ falls among
+the voiceless fricatives. The theorems are in `Phonology/Segmental/Basic.lean`.
 
 ## References
 
 * [hayes-2009]: the features of ch. 4 and Table 4.7, the tongue-root feature (p. 83), the
   sonority hierarchy of Table 4.1 (p. 76) and its manner classes (p. 77)
 * [halle-vaux-wolfe-2000]: [ATR] and [RTR]
-* [parker-2002]: the eight sonority classes
+* [parker-2002]: the five classes as the hierarchy cited most often (p. 62), the default order of
+  voiced stops above voiceless fricatives (p. 70), and the sixteen classes of Table 5.28 (p. 240)
 -/
 
 @[expose] public section
@@ -250,7 +254,7 @@ def ofSegment (s : Segment) : Sonority :=
 
 /-! ### Parker's classes -/
 
-/-- The eight sonority classes of Parker, which split the obstruents by [continuant] and
+/-- Parker's sonority classes collapsed to eight, which split the obstruents by [continuant] and
 [voice]. -/
 inductive Class where
   /-- The voiceless stops. -/
@@ -273,8 +277,8 @@ inductive Class where
 
 namespace Class
 
--- UNVERIFIED: Parker 2002 not opened; the order of `vds` above `vlf` is from secondary sources.
-/-- Parker's ranking of the classes, with voiced stops above voiceless fricatives. -/
+/-- Parker's ranking of the classes, with voiced stops above voiceless fricatives, his default
+order, which a language may reverse. -/
 def parkerRank : Class → ℕ
   | .vls => 1 | .vlf => 2 | .vds => 3 | .vdf => 4
   | .nasal => 5 | .liquid => 6 | .glide => 7 | .vowel => 8
