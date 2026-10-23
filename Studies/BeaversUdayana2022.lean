@@ -257,6 +257,7 @@ theorem denote_reflexive_iff_resolve :
     reflexive.denote V P s ↔ BeaversZubair2013.Reading.reflexive.resolve h (flip V) s :=
   denote_reflexive V P s
 
+/-- An anticausative is the existential resolution of a suppressed causer. -/
 theorem denote_anticausative_iff_resolve :
     anticausative.denote V P s ↔ BeaversZubair2013.Reading.existential.resolve h (flip V) s :=
   denote_anticausative V P s
@@ -300,6 +301,7 @@ def EntailsExternalCauser (f : Form) : Prop :=
 def EntailsAgentSubject (f : Form) : Prop :=
   ∀ (E : Type) (V : E → E → Prop) (P : E → Prop) (o s : E), f.denote V P o s → ∃ x, V x s
 
+/-- The passive and the dispositional middle alone entail an external causer. -/
 theorem entailsExternalCauser_iff (f : Form) :
     f.EntailsExternalCauser ↔ f = .di ∨ f = .middle dispositional := by
   refine ⟨fun hf ↦ ?_, ?_⟩
@@ -308,6 +310,8 @@ theorem entailsExternalCauser_iff (f : Form) :
     rcases f with _ | _ | ⟨_ | _, _ | _ | _⟩ <;> simp_all [dispositional]
   · rintro (rfl | rfl) _ _ _ _ _ h <;> simpa [dispositional] using h
 
+/-- The subject is the agent in the active and in the middles that keep the agent in place, with
+an incorporated object or the coreferent reading. -/
 theorem entailsAgentSubject_iff (f : Form) :
     f.EntailsAgentSubject ↔
       f = .meN ∨ ∃ m, f = .middle m ∧ (m.object = .incorporated ∨ m.reading = .coreferent) := by
@@ -488,6 +492,7 @@ def berParams : Params := berHeads.inf' ⟨berActive, by simp [berHeads]⟩ Head
 
 theorem berParams_eq : berParams = (⊥, (true : Flat Bool)) := by decide
 
+/-- *ber-* is compatible with the thematic Voice heads alone. -/
 theorem compat_berParams_iff (v : Head) : Compat berParams v.params ↔ v.IsThematic := by
   simp [berParams_eq, Head.params, Head.IsThematic, compat_prod_iff, bot_compat]
 

@@ -141,6 +141,7 @@ theorem form_isSome : ∀ t : TAM, ∀ c ∈ pacCells, (t.form c).isSome := by d
 
 theorem relCounterparts_subset_rel : ∀ t : TAM, t.relCounterparts ⊆ rel := by decide
 
+/-- A TAM occurs in Rel environments exactly when it is its own Rel counterpart. -/
 theorem mem_rel_iff : ∀ t : TAM, t ∈ rel ↔ t.relCounterparts = {t} := by decide
 
 theorem general_union_rel : general ∪ rel = Finset.univ := by decide
@@ -152,6 +153,7 @@ theorem ne_iff_not_mem_rel :
     ∀ t : TAM, ∀ t' ∈ t.relCounterparts, t' ≠ t ↔ t ∉ rel := by
   decide
 
+/-- A Rel counterpart that is another TAM differs from it in every cell. -/
 theorem form_ne_of_mem_relCounterparts :
     ∀ t : TAM, ∀ t' ∈ t.relCounterparts, t' ≠ t → ∀ c ∈ pacCells, t'.form c ≠ t.form c := by
   decide

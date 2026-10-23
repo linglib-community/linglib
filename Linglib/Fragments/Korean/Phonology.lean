@@ -85,6 +85,7 @@ def l : Segment := .ofChart .«l»
 lateral, and they are pairwise distinct. -/
 def inventory : Finset Segment := ⟨↑[p, t, k, m, n, ŋ, a, i, u, l], by decide⟩
 
+/-- The phonemes are segments of PHOIBLE's Korean inventory. -/
 theorem subset_kor : inventory ⊆ Inventories.Korean.kor.segments :=
   Inventory.subset_segments_iff.2 (by decide)
 
@@ -99,10 +100,14 @@ def stopNasalization : Rule where
 /-- The features other than [delayed release]. -/
 def exceptDelayedRelease : Finset Phonology.Feature := {.delayedRelease}ᶜ
 
+/-- No two phonemes differ in [delayed release] alone. -/
 theorem isDistinctive_compl_delayedRelease :
     IsDistinctive exceptDelayedRelease inventory := by
   decide
 
+/-- *pak* 'gourd' and *paŋ* 'room' before *n* derive the same string, which has the velar
+nasal on every feature but [delayed release]; *paŋ* is unchanged there, and so is *pak*
+alone. -/
 theorem pak_paŋ_neutralized :
     (derive [stopNasalization] [p, a, k, n]).map (Segment.restrict exceptDelayedRelease) =
         [p, a, ŋ, n].map (Segment.restrict exceptDelayedRelease) ∧
@@ -110,6 +115,8 @@ theorem pak_paŋ_neutralized :
       derive [stopNasalization] [p, a, k] = [p, a, k] := by
   decide
 
+/-- The string derived from *pak* before *n* is not the string with the velar nasal itself,
+because the rule leaves the stop its [−delayed release]. -/
 theorem derive_pak_ne_paŋ :
     derive [stopNasalization] [p, a, k, n] ≠ [p, a, ŋ, n] := by
   decide

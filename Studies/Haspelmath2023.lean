@@ -124,6 +124,8 @@ def ausZuGehen : Inventory Morph where
   forms := [[aus, zu, geh, en]]
   rootClass m := if m = geh then some .action else none
 
+/-- English *to* precedes an adverb as well as a verb, so it is a clitic, while German *zu-*
+always occurs on a verb root and is a prefix. -/
 theorem to_clitic_zu_prefix :
     infinitives.IsClitic infinitives.IsContentful «to» ∧
       ausZuGehen.IsAffix ausZuGehen.IsContentful zu := by
@@ -166,6 +168,8 @@ def genitivesDe : Inventory Morph where
   rootClass m :=
     if m = kim ∨ m = ring then some .object else none
 
+/-- English *'s* also follows a verb, so it is a clitic, while German *-s* always follows a noun
+and is a suffix. -/
 theorem genitive_clitic_suffix :
     genitives.IsClitic genitives.IsContentful s_gen ∧
       genitivesDe.IsAffix genitivesDe.IsContentful s_genDe := by
@@ -185,6 +189,8 @@ def italian : Inventory Morph where
   forms := [[alber, o], [alber, i_pl]]
   rootClass m := if m = alber then some .object else none
 
+/-- *alber* needs *-o* unless *-i* replaces it, so *-o* is a required affix, *alber* is not a
+word and *alber-o* is. -/
 theorem alber_required :
     italian.IsRequiredAffix italian.IsContentful o alber ∧
       ¬ italian.IsWord italian.IsContentful [alber] ∧
@@ -201,6 +207,8 @@ def german : Inventory Morph where
   forms := [[geb, en], [geb, t]]
   rootClass m := if m = geb then some .action else none
 
+/-- *geb* takes *-en* or the alternative required suffix *-t*, so the bare root is not a
+word. -/
 theorem geb_required :
     german.IsRequiredAffix german.IsContentful en geb ∧
       ¬ german.IsWord german.IsContentful [geb] := by
@@ -222,6 +230,8 @@ def trees : Inventory Morph where
   rootClass m :=
     if m = tree ∨ m = house then some .object else if m = big then some .property else none
 
+/-- *-s* can be absent from a free form, as in *a tree*, without another affix replacing it, so
+it is not required, and *tree* is a word although it is not a free form. -/
 theorem tree_word :
     ¬ trees.IsRequiredAffix trees.IsContentful s_pl tree ∧
       trees.IsWord trees.IsContentful [tree] ∧ [tree] ∉ trees.forms := by
@@ -229,6 +239,8 @@ theorem tree_word :
 
 /-! ### Bloomfield's minimum free form (§3.1) -/
 
+/-- Bloomfield's definition is too narrow: *tree* and the clitic *to* are words but not free
+forms, so not minimum free forms. -/
 theorem bloomfield_too_narrow :
     (trees.IsWord trees.IsContentful [tree] ∧
         ¬ IsMinimalFreeForm trees.forms [tree]) ∧
@@ -237,6 +249,8 @@ theorem bloomfield_too_narrow :
   ⟨⟨by decide, fun h ↦ by simpa [trees] using h.1⟩, by decide,
     fun h ↦ by simpa [infinitives] using h.1⟩
 
+/-- Bloomfield's definition is too broad: *a tree* cannot be broken up into free forms, so it
+is a minimum free form, but it is a clitic and a root, not a word. -/
 theorem bloomfield_too_broad :
     IsMinimalFreeForm trees.forms [a, tree] ∧
       ¬ trees.IsWord trees.IsContentful [a, tree] :=
@@ -244,6 +258,8 @@ theorem bloomfield_too_broad :
 
 /-! ### Words at an attachment -/
 
+/-- The words at `.affix` of the English forms with *tree* and of the Italian forms are words,
+while *a=tree*, one word at `.clitic`, is not. -/
 theorem wordsAt_affix_words :
     (∀ f ∈ trees.forms, ∀ w ∈ Morph.wordsAt .affix f,
         trees.IsWord trees.IsContentful w) ∧

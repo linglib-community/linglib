@@ -153,6 +153,9 @@ def toTree (side : H → Morph.Side) : Morphology.Word.Tree (R ⊕ H) :=
 /-- The surface order of root and heads. -/
 def surface (side : H → Morph.Side) : List (R ⊕ H) := (s.toTree side).toList
 
+/-- **The Mirror Principle.** The surface is the prefixal heads outermost first, the root, and the
+suffixal heads innermost first, so on each side the surface order outward from the root is the
+order of merger. -/
 theorem surface_eq (side : H → Morph.Side) :
     s.surface side =
       ((s.heads.filter fun h => side h = .before).map Sum.inr).reverse ++

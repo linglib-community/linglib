@@ -84,10 +84,15 @@ def ending (p : Preceding) (x : GenderNumber) (c : Case) : String :=
 @[simp] theorem ending_inflected : ending .inflected = weak := by
   funext x c; simp [ending, Preceding.HasEnding]
 
+/-- After an *ein*-word an adjective departs from the weak endings exactly in the cells where the
+determiner has no ending. -/
 theorem ending_einWord_ne_weak_iff (x : GenderNumber) (c : Case) :
     ending .einWord x c ≠ weak x c ↔ Endingless x c := by
   revert x c; decide
 
+/-- The noun phrase *ein junges Mädchen* 'a young girl' agrees with the gender the suffix fixes:
+*Mädchen* is neuter, *ein* has no ending in the nominative singular neuter, and the adjective
+takes the strong *-es*. The feminine, the sex of the referent, would give *eine junge*. -/
 theorem ein_junges_maedchen :
     Determiners.ein (.sg Gender.maedchen.gender) .nom = some "ein" ∧
       "jung" ++ ending .einWord (.sg Gender.maedchen.gender) .nom = "junges" ∧

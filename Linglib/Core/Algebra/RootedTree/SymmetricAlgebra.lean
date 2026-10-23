@@ -30,6 +30,8 @@ generator is primitive.
 
 variable {R : Type*} [CommSemiring R] {T M : Type*} [AddCommMonoid M] [Module R M]
 
+/-- `ConnesKreimer R T` is the symmetric algebra on a module with basis `T`, each basis vector
+going to its tree. -/
 theorem IsSymmetricAlgebra.connesKreimer (b : Module.Basis T R M) :
     IsSymmetricAlgebra (b.constr R (ConnesKreimer.ofTree (R := R))) :=
   (AlgEquiv.ofAlgHom (SymmetricAlgebra.lift (b.constr R ConnesKreimer.ofTree))

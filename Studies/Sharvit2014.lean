@@ -107,6 +107,10 @@ def BeforeDefined (C : NonemptyInterval M) (P : Set (NonemptyInterval M)) : Prop
   ∃ m, IsEarliest C P m ∧ C.fst < m
 
 
+/-- On dense time, the earliest moment of a clause with an existentially quantified tense is the
+start of the contextually relevant interval, whatever the cell of the tense. A clause time that
+follows a time of the predicate can be started later, one that overlaps it can be widened to the
+whole interval, and one that precedes it can be started at the start of the interval. -/
 theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
     (h : IsEarliest C {t | ◇[Perspective.toSetRel c] (· ∈ q) t} m) : m = C.fst := by
   refine h.fst_le.eq_of_not_lt' fun hlt ↦ ?_
@@ -212,6 +216,7 @@ def NoPShiftability (r : Reading) : Prop :=
   ∀ (M : Type) [LinearOrder M] (C SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) (m : M),
     IsEarliest C (r.denote SP q) m → m < SP.fst
 
+/-- The existential readings are the ones that fail. -/
 theorem fails_iff {r : Reading} : r.Fails ↔ ∃ τ, r = .existential τ := by
   refine ⟨fun h ↦ ?_, fun ⟨τ, hτ⟩ M _ _ C SP q ↦ hτ ▸ not_beforeDefined_diamond⟩
   have key : ∀ (SP : NonemptyInterval ℚ) (r : Reading),
@@ -227,6 +232,7 @@ theorem fails_iff {r : Reading} : r.Fails ↔ ∃ τ, r = .existential τ := by
   · exact ⟨τ, rfl⟩
   · exact absurd h (key (.pure 0) _ rfl subset_rfl)
 
+/-- The pronominal present is the reading with the Stump effect. -/
 theorem stumpEffect_iff {r : Reading} : r.StumpEffect ↔ r = .pronominal .present := by
   refine ⟨fun h ↦ ?_, fun hr M _ SP t d q ht hd ↦ ?_⟩
   · have key : ∀ r : Reading, (NonemptyInterval.pure 1 : NonemptyInterval ℤ) ∈
@@ -421,6 +427,8 @@ def languages : List (String × Language) :=
 /-- The embedded tenses of the example rows. -/
 def tenses : List (String × Embedded) := [("past", .past), ("present", .present)]
 
+/-- A tense in a *before*-clause under a past is acceptable exactly where the language's
+parameters make it well-formed. -/
 theorem judgment_iff :
     ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "before" →
       e.feature? "clauseTime" ≠ some "after speech" →
@@ -434,6 +442,8 @@ theorem clauseTime_iff :
         (e.judgment = .acceptable ↔ L.PShiftable τ) := by
   decide
 
+/-- A tense under a past attitude verb has a simultaneous reading exactly where the language's
+parameters give it one. -/
 theorem simultaneous_iff :
     ∀ e ∈ Examples.all, e.language ≠ "mode1248" → e.feature? "construction" = some "attitude" →
       ∃ L ∈ languages.lookup e.language, ∃ τ ∈ e.parse? "embedded" tenses,

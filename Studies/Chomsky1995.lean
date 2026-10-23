@@ -154,6 +154,8 @@ theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Pr
   rw [hv, e.le_iff_le, e.le_iff_le, e.surjective.forall]
   simp only [e.lt_iff_lt, e.le_iff_le]
 
+/-- Bare c-command commutes with order isomorphisms, so the LCA in the bare theory ignores the
+order of sisters. -/
 theorem linearizes_bareCCommand_image_iff {β : Type*} [PartialOrder β] {H' : β → β → Prop}
     (e : α ≃o β) (hH : ∀ a b, H' (e a) (e b) ↔ H a b) :
     Linearizes (bareCCommand H') (e '' T) ↔ Linearizes (bareCCommand H) T := by
@@ -179,6 +181,8 @@ theorem not_precedes_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hvb : IsVisible H b
   · exact h
   · exact mem_bareCCommand_of_covBy hb ha hab.symm hvb
 
+/-- Under the LCA one of two sister terminals lies outside `T`, so with traces exempt every
+right-branching structure ends in a trace. -/
 theorem Linearizes.not_mem_or_not_mem_of_covBy (hl : Linearizes (bareCCommand H) T)
     (hH : ∀ m d, H m d → m ⋖ d) (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b) (hma : IsMax a)
     (hmb : IsMax b) : a ∉ T ∨ b ∉ T := by
@@ -188,6 +192,9 @@ theorem Linearizes.not_mem_or_not_mem_of_covBy (hl : Linearizes (bareCCommand H)
   · exact not_precedes_of_covBy ha hb (isVisible_of_isMax hH hmb) h
   · exact not_precedes_of_covBy hb ha (isVisible_of_isMax hH hma) h
 
+/-- On a finite tree in which every node with a daughter branches, the LCA fails as soon as
+there is a node with a daughter, unless some terminal is exempt. This is why the bare theory
+must weaken the LCA. -/
 theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d)
     (hb : ∀ x : α, ¬ IsMax x → IsBranching x) (hx : ¬ IsMax x) :
     ¬ Linearizes (bareCCommand H) {a | IsMax a} := fun hl ↦ by
@@ -199,6 +206,7 @@ theorem not_linearizes_of_not_isMax [Finite α] (hH : ∀ m d, H m d → m ⋖ d
 `K` has daughters `J` and `L`, and `L` has daughters `h` and `P`, so that `J` is a specifier,
 `h` a head and `P` its complement. -/
 
+/-- Every node a visible specifier dominates precedes the head. -/
 theorem precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvJ : IsVisible H J) (hj : J ≤ j) : Precedes (bareCCommand H) j h := by
   refine precedes_iff.2 ⟨J, hj, h, le_rfl, mem_bareCCommand.2 ⟨hvJ, fun hJh ↦ ?_, fun hhJ ↦ ?_,
@@ -208,6 +216,8 @@ theorem precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L �
   · exact not_le_of_covBy hL hJ hJL.symm (hh.le.trans hhJ)
   · exact not_le_of_covBy hL hJ hJL.symm ((mem_bareCCommand.1 hc).2.2.2 L hh.lt)
 
+/-- A visible head precedes the nodes properly inside its complement but not the complement
+itself, so the order specifier-head-complement needs a branching complement. -/
 theorem precedes_of_complement (hh : L ⋖ h) (hP : L ⋖ P) (hhP : h ≠ P) (hvh : IsVisible H h)
     (hp : P < p) : Precedes (bareCCommand H) h p := by
   refine precedes_iff.2 ⟨h, le_rfl, p, le_rfl, mem_bareCCommand.2 ⟨hvh, fun hhp ↦ ?_, fun hph ↦ ?_,
@@ -217,6 +227,7 @@ theorem precedes_of_complement (hh : L ⋖ h) (hP : L ⋖ P) (hhP : h ≠ P) (hv
   · exact not_le_of_covBy hP hh hhP.symm (hp.le.trans hph)
   · exact not_le_of_covBy hP hh hhP.symm ((mem_bareCCommand.1 hc).2.2.2 P hp)
 
+/-- When the X′ is invisible the head precedes nothing in the specifier. -/
 theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h)
     (hvL : ¬ IsVisible H L) (hj : J ≤ j) : ¬ Precedes (bareCCommand H) h j := by
   rintro ⟨⟨x, y⟩, ⟨hxy, -⟩, hxh, hyj⟩
@@ -229,6 +240,8 @@ theorem not_precedes_of_spec (hJ : K ⋖ J) (hL : K ⋖ L) (hJL : J ≠ L) (hh :
     · exact (IsLeftLinear.comparable_of_le_common
         ((IsLeftLinear.le_of_lt_of_covBy hL hxL).trans (hJ.le.trans hj)) hyj).elim hn₁ hn₂
 
+/-- Under the LCA a specifier with a terminal properly inside it forces the X′ to be invisible,
+since a visible X′ would put the head before that terminal as well as after it. -/
 theorem Linearizes.not_isVisible (hl : Linearizes (bareCCommand H) T) (hJ : K ⋖ J)
     (hL : K ⋖ L) (hJL : J ≠ L) (hh : L ⋖ h) (hvJ : IsVisible H J) (hα : J < a) (haT : a ∈ T)
     (hhT : h ∈ T) : ¬ IsVisible H L := fun hvL ↦ by
@@ -353,6 +366,7 @@ theorem not_linearizes_theManSawIt :
     ¬ Linearizes (bareCCommand (HeadDaughterAt theManSawIt)) (pronounced theManSawIt) := by
   decide
 
+/-- With *man* and *it* raised the LCA holds, and the string is *the saw*. -/
 theorem linearizes_theManSawItRaised :
     Linearizes (bareCCommand (HeadDaughterAt theManSawItRaised)) (pronounced theManSawItRaised) ∧
       (∀ p, p ∈ pronounced theManSawItRaised ↔

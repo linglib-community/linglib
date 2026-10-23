@@ -101,9 +101,12 @@ theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : DefiniteDescrip
 
 /-! ### Type-shifting under blocking -/
 
+/-- Mandarin has no overt exponent of uniqueness, so its bare nouns are unique definites by the
+covert ι. -/
 theorem iotaAvailable_mandarin : IotaAvailable Mandarin.Determiners.inventory := by
   decide
 
+/-- Cantonese [Clf-N] marks uniqueness, so its bare nouns have no definite shift. -/
 theorem not_iotaAvailable_cantonese : ¬ IotaAvailable Cantonese.Determiners.inventory := by
   decide
 
@@ -155,6 +158,8 @@ instance (p : Prop) [Decidable p] : ∀ o, Decidable (Agrees p o)
   | none => inferInstanceAs (Decidable True)
   | some _ => inferInstanceAs (Decidable (_ ↔ _))
 
+/-- Row by row, the paper judges the bare noun licit exactly when `BareLicit` holds and the marked
+form exactly when `MarkedLicit` does. -/
 theorem rows_agree :
     ∀ r ∈ rows, Agrees (BareLicit r.inventory r.env r.topic) r.bare ∧
       Agrees (MarkedLicit r.inventory r.env) r.marked := by
@@ -170,11 +175,15 @@ theorem demonstrative_eq_some_iff {E W : Type} (R : Restrictor E W) (d : ℕ) (g
     ⟦DefiniteDescription.demonstrative R d⟧ g s = some x ↔ R g s (g d) ∧ x = g d :=
   DefiniteDescription.denote_anaphoric_eq_some_iff R d g s
 
+/-- A demonstrative cannot covary through the situation pronoun, its referents at any two situations
+coinciding. -/
 theorem demonstrative_rigid {E W : Type} (R : Restrictor E W) (d : ℕ) (g : Assignment E)
     {s s' : W} {x x' : E} (h : ⟦DefiniteDescription.demonstrative R d⟧ g s = some x)
     (h' : ⟦DefiniteDescription.demonstrative R d⟧ g s' = some x') : x = x' :=
   DefiniteDescription.denote_anaphoric_rigid R d g s h h'
 
+/-- The bare noun's covert ι does covary. Over the restrictor true of the situation itself, the bare
+noun denotes each situation at that situation, so distinct situations give distinct referents. -/
 theorem bare_covaries {W : Type} (g : Assignment W) (s : W) :
     ⟦DefiniteDescription.bare fun _ s x ↦ x = s⟧ g s = some s :=
   (DefiniteDescription.denote_bare_eq_some_iff _ _ _).2 ⟨rfl, fun _ h ↦ h⟩

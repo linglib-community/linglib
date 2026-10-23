@@ -250,6 +250,7 @@ def ownADog : Update (HAssign Unit (Individual Ent)) :=
 /-- *John₁ doesn't own [a₃ [dog]₂]* (44e) is the VP negation, the test of the negated update. -/
 def doesntOwnADog : Update (HAssign Unit (Individual Ent)) := test (neg ownADog)
 
+/-- The negated sentence holds in the model, there being no dogs, and returns the input. -/
 theorem doesntOwnADog_g₀ : g₀ ~[doesntOwnADog] g₀ :=
   ⟨rfl, fun ⟨_, _, rfl, _, _, _, h₂, _, hy⟩ ↦ by
     rw [Function.update_of_ne (by decide : (2 : ℕ) ≠ 3)] at h₂

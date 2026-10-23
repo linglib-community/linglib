@@ -128,6 +128,7 @@ theorem self_mem_subtrees (t : UnorderedTree α) : t ∈ subtrees t := by
   induction t with
   | node a F _ => simp
 
+/-- One subtree per vertex. -/
 theorem card_subtrees (t : UnorderedTree α) : (subtrees t).card = t.numNodes := by
   induction t with
   | node a F ih =>

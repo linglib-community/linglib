@@ -306,6 +306,8 @@ def table : List Causative :=
 /-- The survey as a formal context, a surveyed process bearing the tiers it reaches. -/
 def Reaches (c : {c // c ∈ table}) (t : Tier) : Prop := t ∈ c.1.reach
 
+/-- The hierarchy is the order of implication among the tiers in the survey, one tier coming
+before another exactly when every surveyed process that reaches the second reaches the first. -/
 theorem ofAttribute_reaches_le_iff {t t' : Tier} :
     Concept.ofAttribute Reaches t' ≤ Concept.ofAttribute Reaches t ↔ t ≤ t' := by
   rw [Concept.ofAttribute_le_ofAttribute_iff]
@@ -313,6 +315,7 @@ theorem ofAttribute_reaches_le_iff {t t' : Tier} :
   revert t t'
   decide
 
+/-- No surveyed language skips a tier. -/
 theorem table_respectsHierarchy : ∀ c ∈ table, c.RespectsHierarchy := fun c hc ↦
   Concept.antitone_ofAttribute_iff.1 (fun _ _ h ↦ ofAttribute_reaches_le_iff.2 h) ⟨c, hc⟩
 

@@ -162,11 +162,15 @@ theorem relativized_goal :
 theorem goal_eq_none_iff : p.goal goals = none ↔ ¬ ∃ a, p.search goals = some a ∧ p.int a := by
   simp only [← Option.not_isSome_iff_eq_none, Option.isSome_iff_exists, goal_eq_some_iff]
 
+/-- Locality as list search. The probe finds `a` iff `a` satisfies it and every earlier goal
+does not, so that nothing intervenes. -/
 theorem search_eq_some_iff_closest {a : α} :
     p.search goals = some a ↔
       p.sat a ∧ ∃ l₁ l₂, goals = l₁ ++ a :: l₂ ∧ ∀ b ∈ l₁, ¬ p.sat b := by
   simp [search, List.find?_eq_some_iff_append]
 
+/-- Over a goal sequence in which no later goal precedes an earlier one, the found goal is
+minimal among the satisfying goals. -/
 theorem not_rel_of_search_eq_some {r : α → α → Prop} {a : α}
     (hord : goals.Pairwise fun x y ↦ ¬ r y x) (h : p.search goals = some a) :
     ∀ b ∈ goals, p.sat b → b ≠ a → ¬ r b a := by
@@ -180,6 +184,7 @@ theorem not_rel_of_search_eq_some {r : α → α → Prop} {a : α}
 
 /-! ### Success -/
 
+/-- A probe finds a goal iff some goal satisfies it. -/
 @[simp]
 theorem search_isSome : (p.search goals).isSome ↔ ∃ a ∈ goals, p.sat a := by
   simp [search, List.find?_isSome]
@@ -250,6 +255,7 @@ theorem allLicensed_of_forall_not (h : ∀ a ∈ goals, ¬ needs a) :
   ⟨fun a ha hn ↦ absurd hn (h a ha),
     List.pairwise_of_forall_mem_list fun _ _ b hb hn ↦ absurd hn (h b hb)⟩
 
+/-- One search licenses at most one needy goal. -/
 theorem AllLicensed.countP_le_one [DecidablePred needs] (h : p.AllLicensed needs goals) :
     goals.countP (needs ·) ≤ 1 := by
   induction goals with
@@ -279,6 +285,9 @@ theorem allLicensed_iff_forall_licensed (hnd : goals.Nodup) :
     simpa [Licensed, search, List.find?_cons, hsat b hb hn] using
       h b (List.mem_cons_of_mem _ hb) hn
 
+/-- On the diagonal, where the probe is relativized to exactly the needy goals, all needy goals
+are licensed iff at most one goal is needy, one search licensing one goal, the fact behind
+[preminger-2014]'s person restriction. -/
 theorem relativized_allLicensed_iff :
     (relativized f).AllLicensed f goals ↔ goals.countP (f ·) ≤ 1 := by
   refine ⟨AllLicensed.countP_le_one, fun h ↦ ?_⟩
@@ -291,6 +300,8 @@ theorem relativized_allLicensed_iff :
     simp only [show f a from ha, decide_true, ite_true] at h
     omega
 
+/-- Licensing by the indiscriminate probe allows no needy goal below the head of the sequence,
+the highest-element condition of [halpert-2012]. -/
 theorem indiscriminate_allLicensed_iff :
     (indiscriminate : Probe α).AllLicensed needs goals ↔ ∀ a ∈ goals.tail, ¬ needs a := by
   cases goals with

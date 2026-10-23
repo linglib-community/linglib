@@ -116,9 +116,12 @@ private theorem mem_foldr_of_sublist {l v : List Slot} (h : v <+ l) :
     · exact ⟨[], nil_mem_position a, v, ih h, rfl⟩
     · exact ⟨[a], singleton_mem_position a, r, ih hr, rfl⟩
 
+/-- A string filling positions at most once, in order, is admitted. -/
 theorem mem_language_of_sublist {v : List Slot} (h : v <+ t.slots) : v ∈ t.language :=
   mem_foldr_of_sublist h
 
+/-- Without stacking positions, a string is admitted exactly when it fills positions at most
+once, in order. -/
 theorem mem_language_iff_sublist (h : t.stacking = ∅) {v : List Slot} :
     v ∈ t.language ↔ v <+ t.slots := by
   have : t.toRegularExpression = .sublists t.slots := by

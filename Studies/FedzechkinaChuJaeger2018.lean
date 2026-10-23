@@ -83,6 +83,8 @@ theorem language_headInitial :
     language .headInitial = (language .headFinal).image Arrangement.mirror := by
   decide
 
+/-- With the verb at an edge, the measure is two plus the length of the argument in the middle,
+next to the verb. -/
 theorem verbDependencyLength_eq {d : HeadDirection} {a : Arrangement Constituent 3}
     (ha : a ∈ language d) (ℓ : Constituent → ℕ) :
     verbDependencyLength a ℓ = ℓ (a.symm 1) + 2 := by

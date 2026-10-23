@@ -103,6 +103,7 @@ theorem universalDegree_lt_iff (hx : x ∈ C) (hy : y ∈ C) :
     universalDegree μ C x < universalDegree μ C y ↔ μ x < μ y :=
   (relativeRank_strictMonoOn (C.image μ)).lt_iff_lt (mem_image_of_mem μ hx) (mem_image_of_mem μ hy)
 
+/-- Universal degrees are invariant under any order embedding of the scale. -/
 @[simp] theorem universalDegree_comp (f : D ↪o D') (μ : E → D) (C : Finset E) :
     universalDegree (f ∘ μ) C = universalDegree μ C := by
   funext x
@@ -145,6 +146,8 @@ theorem ker_universalDegree (C : Finset E) :
   rw [← not_lt, ← not_lt, ← universalDegree_lt_iff (μ := μ) b.2 a.2,
     ← universalDegree_lt_iff (μ := ν) b.2 a.2, h a, h b]
 
+/-- Two members of a comparison class share a universal degree exactly when they are
+equivalent in [cresswell-1976]'s sense under the restricted quasi-order. -/
 theorem universalDegree_eq_iff (hx : x ∈ C) (hy : y ∈ C) :
     universalDegree μ C x = universalDegree μ C y ↔
       (cresswellSetoid fun a b : C ↦ μ b ≤ μ a).r ⟨x, hx⟩ ⟨y, hy⟩ := by

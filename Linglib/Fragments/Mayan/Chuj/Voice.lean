@@ -61,6 +61,8 @@ def passive : Voice := Voice.passive.marked [.suff "chaj"]
 def voices : Finset Voice :=
   {transitive, incorporationAntipassive, absolutiveAntipassive, agentlessPassive, passive}
 
+/-- The four intransitivizing suffixes differ in the fate of the agent: kept by *-w* and
+*-waj*, demoted but present under *-chaj*, absent under *-j* ([coon-2019]). -/
 theorem agentFate :
     incorporationAntipassive.fateOfRole .A = .maintained ∧
       absolutiveAntipassive.fateOfRole .A = .maintained ∧

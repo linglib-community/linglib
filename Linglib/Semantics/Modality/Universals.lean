@@ -76,6 +76,7 @@ instance : Decidable (PathConnected m) :=
 
 variable {m}
 
+/-- The universal as the paper states it, closure under recombining two pairs into a third. -/
 theorem forceFlavorIndependent_iff :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m, (x.1, y.2) ∈ m := by
   refine ⟨fun h x hx y hy ↦ ?_, fun h ↦ Finset.subset_product.antisymm fun ⟨a, b⟩ hz ↦ ?_⟩
@@ -89,6 +90,9 @@ theorem forceFlavorIndependent_iff :
 alias ⟨ForceFlavorIndependent.mk_mem, ForceFlavorIndependent.of_mk_mem⟩ :=
   forceFlavorIndependent_iff
 
+/-- A meaning is independent exactly when it contains the rectangle spanned by any two of its
+pairs, the pairs between them for the grid betweenness on the force-flavor space, so
+independence is convexity in that sense. -/
 theorem forceFlavorIndependent_iff_pair_product_subset :
     ForceFlavorIndependent m ↔ ∀ x ∈ m, ∀ y ∈ m,
       ({x.1, y.1} : Finset α) ×ˢ ({x.2, y.2} : Finset β) ⊆ m := by
@@ -113,6 +117,8 @@ theorem ForceFlavorIndependent.pathConnected (h : ForceFlavorIndependent m) : Pa
 theorem ForceFlavorIndependent.singleton (x : α × β) : ForceFlavorIndependent {x} := by
   simp [ForceFlavorIndependent]
 
+/-- A modal item varies on a single axis exactly when it does not vary in both force and
+flavor. -/
 theorem ModalItem.singleAxis_meaning_iff {i : ModalItem} :
     SingleAxis i.meaning ↔ ¬ (i.VariesForce ∧ i.VariesFlavor) := by
   unfold SingleAxis ModalItem.VariesForce ModalItem.VariesFlavor ModalItem.forces ModalItem.flavors

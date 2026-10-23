@@ -151,6 +151,8 @@ theorem Formula.felicitous_exists (x : V) (φ : Formula V L P) :
 @[simp] theorem Formula.felicitous_label (X : L) :
     Expr.Felicitous M g (.label X : Formula V L P) ↔ False := Iff.rfl
 
+/-- Every infelicity traces to a presupposition: an expression without
+presuppositions is felicitous. -/
 theorem Expr.felicitous_of_presupFree :
     ∀ {k : Kind} (e : Expr V L P k), e.PresupFree → ∀ g, e.Felicitous M g
   | _, .var _, _, _ => trivial
@@ -182,6 +184,7 @@ theorem Expr.felicitous_of_presupFree :
 
 /-! ### Derived clauses -/
 
+/-- `F(φ ∨ ψ)` iff `Fφ ∧ (¬φ → Fψ)`. -/
 theorem Formula.felicitous_disj (φ ψ : Formula V L P) :
     Expr.Felicitous M g (φ.disj ψ) ↔
       φ.Felicitous M g ∧ (¬ Formula.Realize M g φ → ψ.Felicitous M g) := Iff.rfl
@@ -208,6 +211,7 @@ theorem Formula.felicitous_forall (x : V) (φ : Formula V L P) :
     Expr.Felicitous M g (Formula.forall_ x φ) ↔
       ∀ g', Set.EqOn g' g {x}ᶜ → φ.Felicitous M g' := Iff.rfl
 
+/-- `F(some(s, t))` iff `Fs ∧ Ft`. -/
 theorem Formula.felicitous_some (s t : Term V L P) :
     Expr.Felicitous M g (Formula.some_ s t) ↔ s.Felicitous M g ∧ t.Felicitous M g :=
   show (s.Felicitous M g ∧ t.Felicitous M g) ∧ True ↔ _ from (and_true _).to_iff
@@ -217,6 +221,9 @@ theorem Term.felicitous_sigma_conj (w : V) (γ φ : Formula V L P) :
       ∀ g', Set.EqOn g' g {y | y ∉ (Expr.conj γ φ).locals ∧ y ≠ w} →
         γ.Felicitous M g' ∧ (Formula.Realize M g' γ → φ.Felicitous M g') := Iff.rfl
 
+/-- Given that the discourse so far is felicitous for all values of the local
+variables, the extended discourse is felicitous iff the discourse so far
+strictly implies the felicity of the new sentence. -/
 theorem Term.felicitous_sigma_conj_of_felicitous (w : V) (γ φ : Formula V L P)
     (hγ : ∀ g', Set.EqOn g' g {y | y ∉ (Expr.conj γ φ).locals ∧ y ≠ w} → γ.Felicitous M g') :
     Expr.Felicitous M g (.sigma w (.conj γ φ)) ↔

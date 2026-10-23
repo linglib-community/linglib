@@ -128,6 +128,8 @@ theorem forall_subtypeR_recTypes_iff :
   simpa using Atom.forall_realizers_subset_preimage_iff (T := T₂) (B := T₁) (f := id).1
     fun E inst ↦ h Unit E (fun _ ↦ inst) ()
 
+/-- A belief type believes a type in every modal system exactly when it contains the fields of some
+relabelling of it, as an actual belief. -/
 theorem forall_subtypeRelabel_recTypes_iff :
     (∀ (M E : Type) (S : M → L.Structure E),
       (recTypes S).SubtypeRelabel (orbitRel (Equiv.Perm α) _) B T) ↔
@@ -246,10 +248,12 @@ abbrev system (p : Possib) : lang.Structure Obj where
     @Structure.RelMap lang Obj (system p) n R xs ↔ holds p R xs :=
   .rfl
 
+/-- No witch exists. -/
 theorem extension_witch_actual : (recTypes system).extension witch .actual = ∅ := by
   ext r
   simp [mem_extension_recTypes, Atom.Realize, witch, holds]
 
+/-- Hob believes that there is a witch. -/
 theorem believes_witch :
     (recTypes system).SubtypeRelabel (orbitRel (Equiv.Perm Label) _) hob witch :=
   subtypeRelabel_of_smul_subset 1 (by simp [hob])
@@ -346,6 +350,8 @@ theorem isGluing_sameGlue : sameCover.IsGluing (presheaf lang Label) sections sa
 theorem isGluing_apartGlue : apartCover.IsGluing (presheaf lang Label) sections apartGlue := by
   decide +kernel
 
+/-- Gluing along the aligning cover merges Hob's belief and the content of Nob's question as
+record types. -/
 theorem atom_image_sameGlue :
     Literal.atom '' (sameGlue.lits : Set (Literal sameCtx)) = hob ∪ nob := by
   have : sameGlue.lits = {lit .ind ![.x], lit .witch ![.c, .x], lit .blightedBobsMare ![.b, .x],
@@ -366,6 +372,9 @@ theorem atom_image_apartGlue :
     Matrix.comp_vecEmpty, Equiv.swap_apply_def]
   tauto
 
+/-- *She (the same witch)*. Aligned on the witch, Hob's belief and the content of Nob's question
+are not both true where different witches blighted the mare and killed the sow, since their
+witnesses are the compatible pairs of local witnesses and compatibility gives both one witch. -/
 theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅ := by
   let _ := system .twoWitches
   refine Set.eq_empty_of_forall_notMem fun r hr ↦ ?_
@@ -378,6 +387,8 @@ theorem same_witch : (recTypes system).extension (hob ∪ nob) .twoWitches = ∅
   simp [Literal.Holds, lit, holds] at h₀ h₁
   simp_all
 
+/-- Keeping the witches apart, which leaves Nob's beliefs as they are, makes Hob's belief and the
+content of Nob's question true together. -/
 theorem other_witch :
     ((recTypes system).extension (hob ∪ Equiv.swap Label.x .y • nob) .twoWitches).Nonempty := by
   let _ := system .twoWitches

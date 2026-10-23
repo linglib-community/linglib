@@ -117,6 +117,7 @@ theorem comparative_iff_outranks_univ {a b : E} : d.Comparative a b ↔ d.Outran
 
 variable {d} {C : Set E} {u v w : E}
 
+/-- Under monotonicity the ordering is asymmetric. -/
 theorem IsMonotone.outranks_asymm (hmono : d.IsMonotone) :
     d.Outranks C u v → ¬ d.Outranks C v u := fun ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, _, hv₂, hnu₂⟩ ↦
   hnu₂ (hmono X₁ (Set.mem_univ _) X₂ (Set.mem_univ _) u v hu₁ hnv₁ hv₂)
@@ -126,6 +127,8 @@ theorem IsMonotone.outranks_trans (hmono : d.IsMonotone) :
   fun ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, hX₂, hv₂, hnw₂⟩ ↦
     ⟨X₂, hX₂, hmono X₁ (Set.mem_univ _) X₂ (Set.mem_univ _) u v hu₁ hnv₁ hv₂, hnw₂⟩
 
+/-- The ordering is cotransitive for every delineation, so together with asymmetry it is a strict
+weak order. -/
 theorem Outranks.cotrans (h : d.Outranks C u w) (v : E) :
     d.Outranks C u v ∨ d.Outranks C v w := by
   obtain ⟨X, hX, hu, hnw⟩ := h
@@ -165,6 +168,7 @@ different subclasses apply different criteria for *clever* or *nice*. -/
 def IsNonlinear : Prop :=
   ∃ C u v, d.Outranks C u v ∧ d.Outranks C v u
 
+/-- A monotone delineation is never nonlinear, since monotonicity makes its ordering asymmetric. -/
 theorem IsMonotone.not_isNonlinear (hmono : d.IsMonotone) : ¬ d.IsNonlinear :=
   fun ⟨_, _, _, h, h'⟩ ↦ hmono.outranks_asymm h h'
 
@@ -192,6 +196,8 @@ theorem isMonotone_ofMeasure : (ofMeasure μ).IsMonotone := by
 theorem monotone_ofMeasure : Monotone (ofMeasure μ) :=
   fun _ _ hle _ ⟨y, hy, hlt⟩ ↦ ⟨y, hle hy, hlt⟩
 
+/-- Under a measure-induced delineation, the ordering of two members of a comparison class is
+degree comparison. -/
 theorem outranks_ofMeasure_iff {C : Set E} {a b : E} (ha : a ∈ C) (hb : b ∈ C) :
     (ofMeasure μ).Outranks C a b ↔ μ b < μ a := by
   refine ⟨fun ⟨_, _, ⟨y, hy, hlt⟩, hneg⟩ ↦ ?_, fun hlt ↦ ?_⟩

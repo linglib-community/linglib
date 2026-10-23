@@ -224,6 +224,8 @@ instance : DecidablePred Anticausativizes := fun r ↦
 example {E : Type} (z : E) (vp : E → Prop) : Prop :=
   causerSuppress Root.kada.causerSort (by decide) z vp
 
+/-- The roots that meet the condition of causer suppression are exactly those whose verbs have
+an inchoative. -/
 theorem anticausativizes_iff_alternates (r : Root) :
     Anticausativizes r ↔ r.verb.Alternates Voice.anticausative := by
   cases r <;> decide

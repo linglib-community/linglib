@@ -51,6 +51,8 @@ private theorem geomMean_eq_ofReal_exp {β ν : Measure W} [IsFiniteMeasure ν] 
 variable [MeasurableSpace U] [Fintype U] [MeasurableSpace O] [Countable O]
   [MeasurableSingletonClass O]
 
+/-- When every listener dominates every belief, the speaker is the softmax of the expected
+log-probability the listener gives the state under the belief, less the cost. -/
 theorem speaker_eq_softmax_sum_log [∀ u, IsFiniteMeasure (L u)] (h : ∀ o u, b o ≪ L u) :
     speaker α C L b = Kernel.softmax fun o u ↦
       ((α * (∑ w, (b o).real {w} * Real.log ((L u).real {w}) - C u) : ℝ) : EReal) := by
@@ -90,6 +92,9 @@ private theorem geomMean_rpow_eq_exp_klDiv {β ν : Measure W} [IsProbabilityMea
       EReal.neg_top, EReal.exp_bot, zero_mul, Measure.geomMean_eq_zero_iff.2 ⟨w, hβ, hν⟩,
       ENNReal.zero_rpow_of_pos hα]
 
+/-- For probability beliefs the speaker is the softmax of the negative Kullback–Leibler divergence
+of the listener from the belief, less the cost, since the divergence and the expected
+log-probability differ by the entropy of the belief, which no utterance changes. -/
 theorem speaker_eq_softmax_klDiv [∀ o, IsProbabilityMeasure (b o)]
     [∀ u, IsZeroOrProbabilityMeasure (L u)] (hα : 0 < α) :
     speaker α C L b = Kernel.softmax fun o u ↦
@@ -149,6 +154,8 @@ private theorem cond_apply_singleton_ne_zero_iff {s : Set W} {w : W} :
   by_cases hw : w ∈ s <;>
     simp [cond_apply (μ := μ) (MeasurableSet.of_discrete (s := s)), hw, measure_ne_top]
 
+/-- A speaker who knows an event on which every graded meaning is constant sees the listener only
+through those constants, so two such events with the same constants yield the same speaker. -/
 theorem speaker_cond_ofDensity_apply_eq {m : U → W → ℝ≥0∞} (hα : 0 ≤ α) {o₁ o₂ : O}
     (h₁ : μ (A o₁) ≠ 0) (h₂ : μ (A o₂) ≠ 0) {g : U → ℝ≥0∞}
     (hg₁ : ∀ u, ∀ w ∈ A o₁, μ {w} ≠ 0 → m u w = g u)
@@ -177,6 +184,8 @@ private theorem geomMean_cond_indicator {s t : Set W} (hs : μ s ≠ 0) [Decidab
     exact Measure.geomMean_eq_zero_iff.2
       ⟨w, cond_apply_singleton_ne_zero_iff.2 ⟨hws, hμ⟩, Set.indicator_of_notMem hwt 1⟩
 
+/-- Against a literal listener the speaker depends on what she knows only through the utterances
+it entails. -/
 theorem speaker_cond_listener_truthful_apply_eq (hα : 0 ≤ α) {o₁ o₂ : O} (h₁ : μ (A o₁) ≠ 0)
     (h₂ : μ (A o₂) ≠ 0) (h : ∀ u, A o₂ ≤ᵐ[μ] sem u ↔ A o₁ ≤ᵐ[μ] sem u) :
     speaker α C (listener μ (truthful sem)) (fun o ↦ μ[|A o]) o₂ =

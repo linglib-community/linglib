@@ -62,6 +62,7 @@ instance : Max Person where
     | .first, .firstExclusive | .firstExclusive, .first => .first
     | p, q => if p = q then p else .firstInclusive
 
+/-- The participant sets of a coordination are the unions of its conjuncts'. -/
 @[simp] theorem participantSets_sup (p q : Person) :
     (p ⊔ q).participantSets = p.participantSets ⊻ q.participantSets := by
   revert p q; decide
@@ -85,6 +86,7 @@ instance : OrderBot Person where
 
 @[simp] theorem ofParticipants_empty : ofParticipants ∅ = ⊥ := rfl
 
+/-- The person of a union of participant sets is the join of their persons. -/
 theorem ofParticipants_union (s t : Finset Role) :
     ofParticipants (s ∪ t) = ofParticipants s ⊔ ofParticipants t :=
   participantSets_injective <| by simp
@@ -95,6 +97,7 @@ theorem participantSets_subset_coarsen (p : Person) :
     p.participantSets ⊆ p.coarsen.participantSets := by
   cases p <;> decide
 
+/-- Coarsening sends a value to the tripartition value covering its participant sets. -/
 theorem coarsen_eq_iff (p q : Person) :
     p.coarsen = q ↔ q.coarsen = q ∧ p.participantSets ⊆ q.participantSets := by
   revert p q; decide

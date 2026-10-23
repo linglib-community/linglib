@@ -122,6 +122,7 @@ def them_sg : PersonalPronoun :=
 def pronouns : Finset PersonalPronoun :=
   {i, me, we, us, you, you_pl, he, him, she, her, it, they, them, they_sg, them_sg}
 
+/-- Gender is marked in the third person singular only. -/
 theorem third_singular_of_gender :
     ∀ p ∈ pronouns, p.gender.isSome → p.person = some .third ∧ p.number = some .singular := by
   decide
@@ -129,12 +130,15 @@ theorem third_singular_of_gender :
 /-- The forms of each referential category. -/
 def paradigm : Person.Category → Finset String := PersonalPronoun.paradigm pronouns
 
+/-- *You* does not distinguish one addressee from several. -/
 theorem paradigm_addressee : paradigm .addressee = paradigm .addresseeOthers := by
   decide +kernel
 
+/-- *We* does not distinguish a group with the addressee from one without. -/
 theorem paradigm_speakerAddressee : paradigm .speakerAddressee = paradigm .speakerOthers := by
   decide +kernel
 
+/-- The forms for several others, *they* and *them*, also serve a single other. -/
 theorem paradigm_others_subset : paradigm .others ⊆ paradigm .other := by
   decide +kernel
 
@@ -175,6 +179,7 @@ def themself : ReflexivePronoun := reflexive them_sg "themself"
 def reflexives : Finset ReflexivePronoun :=
   {myself, yourself, himself, herself, itself, ourselves, yourselves, themselves, themself}
 
+/-- Every personal pronoun has a reflexive with its person, number and gender. -/
 theorem exists_reflexive :
     ∀ p ∈ pronouns, ∃ r ∈ reflexives,
       r.person = p.person ∧ r.number = p.number ∧ r.gender = p.gender := by

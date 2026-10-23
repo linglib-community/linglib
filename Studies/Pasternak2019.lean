@@ -103,6 +103,9 @@ theorem intensityComparative_unique {ea eb : E} (ha : themed v frame α x ea)
     intensityComparative v frame α β x y ↔ v.μint eb < v.μint ea :=
   maxComparative_iff_of_unique ha ha' hb hb'
 
+/-- Under the presupposition on both sides the comparative compares the maximal states, so with
+`ea` Ann's state of hating Bill and `eb` Matt's of hating Jeff the sentence holds iff `ea` is
+the more intense. -/
 theorem intensityComparative_of_greatest [PartialOrder E] {ea eb : E}
     (hx : Monotonic v frame x) (hy : Monotonic v frame y)
     (ha : IsGreatest {e | themed v frame α x e} ea)

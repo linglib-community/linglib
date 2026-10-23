@@ -67,11 +67,16 @@ section LinearOrder
 
 variable [LinearOrder α] {compat : D → E → α} {C : Finset E} {r : E} {d : D}
 
+/-- A rescaling of a description's compatibility that is strictly monotone on the values the
+description takes, such as the literal listener's normalization of a nonnegative meaning,
+preserves distinguishing. -/
 theorem distinguishes_comp_iff [Preorder β] {compat' : D → E → β} {φ : α → β} {s : Set α}
     (hφ : StrictMonoOn φ s) (hs : ∀ x, compat d x ∈ s) (h : ∀ x, compat' d x = φ (compat d x)) :
     Distinguishes compat' C r d ↔ Distinguishes compat C r d :=
   forall₂_congr fun c _ ↦ by rw [h, h]; exact hφ.lt_iff_lt (hs c) (hs r)
 
+/-- A graded compatibility distinguishes exactly when some threshold of it does, and the
+referent's own compatibility is such a threshold. -/
 theorem distinguishes_iff_exists_threshold :
     Distinguishes compat C r d ↔ ∃ t, Distinguishes (fun d x ↦ t ≤ compat d x) C r d := by
   refine ⟨fun h ↦ ⟨compat d r, fun c hc ↦ Prop.lt_iff.2 ⟨not_le.2 (h c hc), le_rfl⟩⟩, ?_⟩
@@ -92,12 +97,16 @@ instance [∀ d x, Decidable (compat d x)] : Decidable (Distinguishes compat C r
 
 variable {compat C r d}
 
+/-- At truth values, a description distinguishes `r` from a nonempty contrast set exactly when
+it holds of `r` and of no distractor. -/
 theorem distinguishes_prop_iff (hC : C.Nonempty) :
     Distinguishes compat C r d ↔ compat d r ∧ ∀ c ∈ C, ¬ compat d c := by
   simp only [Distinguishes, Prop.lt_iff]
   exact ⟨fun h ↦ ⟨(h _ hC.choose_spec).2, fun c hc ↦ (h c hc).1⟩,
     fun ⟨hr, h⟩ c hc ↦ ⟨h c hc, hr⟩⟩
 
+/-- Identification against a nonempty contrast set that excludes the referent is the Russellian
+uniqueness of the description on the domain `insert r C`. -/
 theorem distinguishes_iff_iota [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) :
     Distinguishes compat C r d ↔ iota (fun x ↦ compat d x ∧ x ∈ insert r C) = some r := by
   rw [distinguishes_prop_iff hC, iota_eq_some_iff]
@@ -106,6 +115,8 @@ theorem distinguishes_iff_iota [DecidableEq E] (hC : C.Nonempty) (hr : r ∉ C) 
     ⟨fun h x ⟨hx, hxr⟩ ↦ hxr.elim id fun hxC ↦ (h x hxC hx).elim,
       fun h c hc hc' ↦ hr (h c ⟨hc', .inr hc⟩ ▸ hc)⟩
 
+/-- Against every other individual of a finite domain with at least two, a description
+distinguishes `r` exactly when `r` is its whole extension. -/
 theorem distinguishes_univ_erase_iff [Fintype E] [DecidableEq E] [Nontrivial E] :
     Distinguishes compat (Finset.univ.erase r) r d ↔ {x | compat d x} = {r} := by
   obtain ⟨x, hx⟩ := exists_ne r

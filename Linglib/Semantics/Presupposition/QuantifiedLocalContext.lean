@@ -89,6 +89,9 @@ theorem dependsOn_slice [Finite E] (w : W) (g : (E → Prop) → Prop) :
   ⟨{w} ×ˢ Set.univ, (Set.finite_singleton w).prod Set.finite_univ,
     fun _ _ hd ↦ congrArg g (funext fun x ↦ hd (w, x) ⟨rfl, trivial⟩)⟩
 
+/-- A trigger in the nuclear scope that presupposes `P` and asserts `a` is transparent at `a` iff at
+each world of the context the quantifier gives one value to every scope that agrees with `a` on
+the individuals that satisfy `P` there. -/
 theorem transparentAt_scopeTruth_iff {q : NumberTree} {A : W → E → Prop} {C : Set W}
     {P a : Set (W × E)} :
     TransparentAt C {scopeTruth q A} P a ↔ ∀ w ∈ C, ∀ D D' : E → Prop,
@@ -115,6 +118,8 @@ variable [Finite E] (q : NumberTree) {C : Set W}
 
 /-! ### The nuclear scope -/
 
+/-- The local context of the nuclear scope of `(Q A. _)` is the individuals of the restrictor, at
+the worlds of the context where `q` is not constant on the row of the restrictor's size. -/
 theorem isLocalContext_scopeTruth (A : W → E → Prop) (C : Set W) :
     IsLocalContext C {scopeTruth q A}
       {p | p.1 ∈ C ∧ A p.1 p.2 ∧ ¬ q.ConstantOnRow {x | A p.1 x}.ncard} := by
@@ -126,6 +131,9 @@ theorem isLocalContext_scopeTruth (A : W → E → Prop) (C : Set W) :
   simp only [dependsOn_slice_iff, NumberTree.dependsOn_toGQ_compl_singleton_iff, not_imp]
   exact ⟨fun ⟨hv, ha, hc⟩ ↦ ⟨v, hv, rfl, ha, hc⟩, fun ⟨_, hw, rfl, ha, hc⟩ ↦ ⟨hw, ha, hc⟩⟩
 
+/-- A presupposition triggered in the nuclear scope projects universally over the restrictor. It
+is transparent iff at each world of the context where `q` is not constant on the row of the
+restrictor's size, every individual of the restrictor satisfies it. -/
 theorem transparent_scopeTruth_iff {A : W → E → Prop} {P : Set (W × E)} :
     Transparent C {scopeTruth q A} P ↔
       ∀ w ∈ C, ¬ q.ConstantOnRow {x | A w x}.ncard → ∀ e, A w e → (w, e) ∈ P := by
@@ -135,6 +143,8 @@ theorem transparent_scopeTruth_iff {A : W → E → Prop} {P : Set (W × E)} :
 
 /-! ### The restrictor -/
 
+/-- With every scope as a continuation, the local context of the restrictor is every individual at
+every world of the context, unless `q` is constant below the size of the universe. -/
 theorem isLocalContext_restrictorTruth (C : Set W) :
     IsLocalContext C (Set.range (restrictorTruth q))
       {p : W × E | p.1 ∈ C ∧ ¬ q.ConstantBelow (Nat.card E)} := by
@@ -152,6 +162,9 @@ theorem isLocalContext_restrictorTruth (C : Set W) :
     exact ⟨hw, (NumberTree.exists_not_dependsOn_toGQ_restrictor_iff e).1
       ⟨B v, fun h ↦ hB ((dependsOn_slice_iff (g := (q.toGQ · (B v)))).2 fun _ ↦ h)⟩⟩
 
+/-- A presupposition triggered in the restrictor, with every scope as a continuation, projects
+universally over the domain. It is transparent iff every individual satisfies it at each world of
+the context, unless `q` is constant below the size of the universe. -/
 theorem transparent_restrictorTruth_iff {P : Set (W × E)} :
     Transparent C (Set.range (restrictorTruth q)) P ↔
       (¬ q.ConstantBelow (Nat.card E) → ∀ w ∈ C, ∀ e, (w, e) ∈ P) := by

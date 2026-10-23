@@ -226,6 +226,8 @@ theorem valueWith_mono (v : α) :
       obtain rfl : u = w := Flat.coe_le_coe.1 (WithBot.coe_le_coe.1 h)
       exact le_rfl
 
+/-- On a borne slot, valuation restricts to flat unification: the `WithBot` refinement adds
+exactly the absence guard. -/
 theorem map_toFlat_valueWith (hs : s ≠ absent) :
     (valueWith v s).map toFlat = PartialUnify.unify s.toFlat (v : Flat α) := by
   cases s with

@@ -44,6 +44,7 @@ namespace List
 
 variable {α β γ : Type*} {R : α → α → Prop}
 
+/-- `Forall₂` for a composite relation is the pointwise composite of the two `Forall₂`s. -/
 theorem forall₂_comp_iff {R : α → β → Prop} {S : β → γ → Prop} {l₁ : List α} {l₃ : List γ} :
     Forall₂ (Relation.Comp R S) l₁ l₃ ↔ ∃ l₂, Forall₂ R l₁ l₂ ∧ Forall₂ S l₂ l₃ := by
   constructor
@@ -92,6 +93,8 @@ instance (priority := high) decidableForall₂ {R : α → β → Prop} [∀ a b
 
 /-! ### The lexicographic order refines the pointwise order -/
 
+/-- Lists ordered pointwise are ordered lexicographically, the list form of
+`Pi.toLex_monotone`. -/
 theorem Forall₂.le [Preorder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ ·) l₁ l₂) : l₁ ≤ l₂ := by
   induction h with
   | nil => exact fun h ↦ nomatch h
@@ -101,6 +104,8 @@ theorem Forall₂.le [Preorder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ 
     | cons hlt => exact ih hlt
     | rel hlt => exact hab.not_gt hlt
 
+/-- Distinct lists ordered pointwise are strictly ordered lexicographically, the list form of
+`Pi.toLex_strictMono`. -/
 theorem Forall₂.lt_of_ne [PartialOrder α] {l₁ l₂ : List α} (h : Forall₂ (· ≤ ·) l₁ l₂)
     (hne : l₁ ≠ l₂) : l₁ < l₂ := by
   induction h with

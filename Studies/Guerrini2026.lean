@@ -73,6 +73,8 @@ theorem bonaFideGeneric_iff :
     bonaFideGeneric R k P w ↔ ∀ v, w ~[R] v → distributiveKindPred k P v :=
   Iff.rfl
 
+/-- A law-like generalization holds of the actual members: under a reflexive accessibility the
+generic parse entails Distributive Kind Predication. -/
 theorem distributiveKindPred_of_bonaFideGeneric [R.IsRefl]
     (h : bonaFideGeneric R k P w) : distributiveKindPred k P w :=
   h w (R.refl w)

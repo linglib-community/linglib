@@ -120,6 +120,7 @@ theorem admits_knows :
     (knows Dox a φ).Admits c ↔ c ∈ φ c ∧ (believes Dox a φ).Admits c :=
   exists_prop
 
+/-- A context admitting a *know* report admits its complement's presupposition. -/
 theorem admits_of_admits_knows (h : (knows Dox a (ofTrivalent p)).Admits c) :
     c ⊆ Function.support p :=
   supports.admits h.fst
@@ -140,6 +141,9 @@ def celloDox (_ : Unit) (_ : CelloWorld) : Set CelloWorld := {.owns}
 /-- `Patrick sells his cello` (1) presupposes that he owns one. -/
 noncomputable def sellsCello : CelloWorld → SignType := ({.owns} : Set CelloWorld).indicator 1
 
+/-- Where Patrick lacks a cello but believes he owns one, `Patrick believes he is selling his
+cello` is admitted and `Patrick knows he is selling his cello` is not, since `celloDox` is not
+veridical at `lacks`. -/
 theorem believes_admits_not_knows :
     (believes celloDox () (ofTrivalent sellsCello)).Admits {.lacks} ∧
       ¬ (knows celloDox () (ofTrivalent sellsCello)).Admits {.lacks} :=

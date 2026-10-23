@@ -73,6 +73,8 @@ theorem IsMinCover.subset_sUnion {C : Set (Set W)} {S : Set W} (h : IsMinCover C
     S ⊆ ⋃₀ C :=
   h.prop
 
+/-- A cover is minimal exactly when each member is needed: dropping it leaves part of `S`
+uncovered. -/
 theorem isMinCover_iff {C : Set (Set W)} {S : Set W} :
     IsMinCover C S ↔ S ⊆ ⋃₀ C ∧ ∀ c ∈ C, ¬ S ⊆ ⋃₀ (C \ {c}) := by
   refine ⟨fun h ↦ ⟨h.prop, fun c hc hcov ↦ (h.le_of_le hcov Set.sdiff_subset hc).2 rfl⟩,
@@ -141,6 +143,7 @@ theorem isSuperCover_pair_iff {A B S : Set W} :
     IsSuperCover {A, B} S ↔ S ⊆ A ∪ B ∧ (A ∩ S).Nonempty ∧ (B ∩ S).Nonempty := by
   simp [IsSuperCover]
 
+/-- A minimal cover is a super cover, since a member missing `S` could be dropped. -/
 theorem IsMinCover.isSuperCover {C : Set (Set W)} {S : Set W} (h : IsMinCover C S) :
     IsSuperCover C S := by
   refine ⟨h.subset_sUnion, fun c hc ↦ Set.nonempty_iff_ne_empty.2 fun hcS ↦ ?_⟩
@@ -283,6 +286,7 @@ def possibility (R : W → Set W) (φ : BilatInqProp W) : BilatInqProp W :=
 
 variable (R : W → Set W) (φ : BilatInqProp W)
 
+/-- The duality of the modals: `◇φ = ¬□¬φ`. -/
 theorem possibility_eq_compl_necessity_compl : possibility R φ = (necessity R φᶜ)ᶜ := rfl
 
 theorem necessity_eq_compl_possibility_compl : necessity R φ = (possibility R φᶜ)ᶜ := rfl
@@ -303,11 +307,15 @@ theorem necessity_eq_compl_possibility_compl : necessity R φ = (possibility R �
     falsity (possibility R φ) = {w | IsMinCover (alt φ.con) (R w)} :=
   info_box R _
 
+/-- Over a single alternative `A`, necessity is orthodox: true where the relevant worlds are
+nonempty and inside `A`. -/
 theorem truth_necessity_of_alt_eq_singleton {A : Set W} (h : alt φ.pro = {A}) :
     truth (necessity R φ) = {w | (R w).Nonempty ∧ R w ⊆ A} := by
   ext w
   simp [h, isMinCover_singleton_iff']
 
+/-- Over a single alternative `A`, possibility is orthodox: true where some relevant world lies
+in `A`. -/
 theorem truth_possibility_of_alt_eq_singleton {A : Set W} (h : alt φ.pro = {A}) :
     truth (possibility R φ) = {w | (R w ∩ A).Nonempty} := by
   ext w

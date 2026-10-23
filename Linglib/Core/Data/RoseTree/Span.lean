@@ -131,11 +131,14 @@ theorem take_append_leafList_append_drop (h : t.subtreeAt p = some s) :
       t.leafList.drop (t.leafIndex p + s.numLeaves) = t.leafList :=
   (take_drop_leafList h).1
 
+/-- The frontier of the subtree at `p` is the slice of the frontier of the tree that begins at
+`t.leafIndex p`. -/
 theorem drop_take_leafList (h : t.subtreeAt p = some s) :
     (t.leafList.take (t.leafIndex p + s.numLeaves)).drop (t.leafIndex p) = s.leafList := by
   obtain ⟨pre, post, hlen, hy, -⟩ := exists_leafList_eq h
   rw [hy, ← hlen, ← length_leafList, ← List.length_append, List.take_left, List.drop_left]
 
+/-- Replacing the subtree at `p` replaces its slice of the frontier. -/
 theorem leafList_replaceAt (h : t.subtreeAt p = some s) (new : RoseTree α) :
     (t.replaceAt p new).leafList = t.leafList.take (t.leafIndex p) ++ new.leafList ++
       t.leafList.drop (t.leafIndex p + s.numLeaves) :=
@@ -187,6 +190,7 @@ private theorem sum_take_add_numLeaves_le {cs : List (RoseTree α)} {i j : ℕ} 
   exact ((List.take_sublist_take_left (Nat.succ_le_of_lt hij)).map numLeaves).sum_le_sum
     fun _ _ ↦ Nat.zero_le _
 
+/-- The frontier of a subtree ends before the frontier of any subtree it precedes begins. -/
 theorem leafIndex_add_numLeaves_le_of_precedes {p q : TreePath} (hpq : p.Precedes q)
     (hp : t.subtreeAt p.toList = some s) (hq : (t.subtreeAt q.toList).isSome) :
     t.leafIndex p.toList + s.numLeaves ≤ t.leafIndex q.toList := by
@@ -233,6 +237,8 @@ theorem leafIndex_eq_zero_iff (h : (t.subtreeAt p).isSome) :
       rwa [List.length_map, List.length_take_of_le (List.getElem?_eq_some_iff.mp hc).1.le] at this
     exact List.forall_mem_cons.2 ⟨by omega, ih (by rw [hcs]; rfl) h0.2⟩
 
+/-- Two positions of a tree are left-aligned exactly when their frontiers begin at the same
+leaf. -/
 theorem leftAligned_iff_leafIndex_eq {p q : TreePath} (hp : (t.subtreeAt p.toList).isSome)
     (hq : (t.subtreeAt q.toList).isSome) :
     p.LeftAligned q ↔ t.leafIndex p.toList = t.leafIndex q.toList := by
@@ -318,6 +324,8 @@ private theorem filterMap_verticesList (a : α) (cs : List (RoseTree α)) :
     | none => rfl
     | some s => by_cases hP : P s <;> simp [hP, Nat.add_assoc]
 
+/-- The spans of a node are its own, if it satisfies `P`, and those of its forest of
+children. -/
 @[simp] theorem spans_node (a : α) (cs : List (RoseTree α)) :
     (node a cs).spans P =
       (if P (node a cs) then [(0, (node a cs).numLeaves)] else []) ++ spansList P cs := by

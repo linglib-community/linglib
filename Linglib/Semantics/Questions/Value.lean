@@ -126,6 +126,8 @@ private theorem utility_eq (Q : Finpartition (Finset.univ : Finset W)) :
     hmass, one_mul]
   rw [Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp)]
 
+/-- The expected utility value of a question is the value of information of the experiment that
+reveals its answer. -/
 theorem utility_eq_valueOfInformation [Nonempty W] [MeasurableSpace (Finset W)]
     [MeasurableSingletonClass (Finset W)] (Q : Finpartition (Finset.univ : Finset W)) :
     utility U μ Q =
@@ -182,6 +184,8 @@ theorem utility_eq_sum_valueSampleInfo [Nonempty W]
     Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * ∫ w, U w a ∂μ[|c]) (by simp),
     sum_measureReal_mul_integral_cond, ha]
 
+/-- A question is worthless exactly when the action that is best now stays best whatever the
+answer. -/
 theorem utility_eq_zero_iff [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : Finset W))
     {a : A} (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
     utility U μ Q = 0 ↔
@@ -243,6 +247,8 @@ theorem utility_wh_mono [Finite A] [Nonempty W] (P : W → Finset D)
     utility U μ (wh P dom) ≤ utility U μ (wh P dom') :=
   utility_anti U μ (wh_anti P h)
 
+/-- When the utilities depend only on which individuals of `dom` satisfy `P`, every larger domain
+yielding a different question gives a worse one. -/
 theorem better_wh_of_factorsThrough [Nonempty W] (P : W → Finset D) {dom dom' : Finset D}
     (h : dom ⊆ dom') (hU : U.FactorsThrough (wh P dom).part) (hne : wh P dom' ≠ wh P dom) :
     Better U μ (wh P dom) (wh P dom') := by

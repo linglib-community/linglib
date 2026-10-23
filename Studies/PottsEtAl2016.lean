@@ -235,6 +235,9 @@ theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
   exact speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w m
 
+/-- Hearing *exactly one player hit some of his shots*, the uncertainty listener gives mass to
+the locally enriched states NSA and SAA, false on the literal construal, and the fixed-lexicon
+listener none. -/
 theorem one_some_local :
     ∀ w ∈ ({.NSA, .SAA} : Finset World),
       (L1 α k (some oneSome)).fst {w} ≠ 0 ∧ L1fixed α k (some oneSome) {w} = 0 := by
@@ -243,6 +246,8 @@ theorem one_some_local :
   simp only [Finset.mem_insert, Finset.mem_singleton] at hw
   rcases hw with rfl | rfl <;> decide
 
+/-- Hearing *no player hit some of his shots*, the uncertainty listener gives mass to the locally
+enriched states NNA, NAA and AAA, and the fixed-lexicon listener none. -/
 theorem no_some_local :
     ∀ w ∈ ({.NNA, .NAA, .AAA} : Finset World),
       (L1 α k (some noSome)).fst {w} ≠ 0 ∧ L1fixed α k (some noSome) {w} = 0 := by
@@ -336,6 +341,9 @@ private theorem weights :
     Real.rpow_lt_rpow (by norm_num) (by norm_num) hα,
     Real.rpow_lt_one (by norm_num) (by norm_num) hα, by positivity⟩
 
+/-- Hearing *every player hit some of his shots*, the uncertainty listener ranks the locally
+enriched SSS above the other true states and AAA below the two remaining ones, the ordering of
+the human responses. -/
 theorem every_some_ordering :
     (L1 α k (some everySome)).fst.real {.SSA} < (L1 α k (some everySome)).fst.real {.SSS} ∧
     (L1 α k (some everySome)).fst.real {.SAA} < (L1 α k (some everySome)).fst.real {.SSS} ∧

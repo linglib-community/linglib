@@ -460,6 +460,8 @@ instance : PartialOrder Node := network.partialOrder Node.rank (by decide)
 instance : DecidableLE Node :=
   network.decidableLE [.ditransitive .actual, .causedMotion] (by decide)
 
+/-- Every link respects its type: the extensions of the ditransitive have its form, and
+intransitive motion is a proper subpart of caused motion. -/
 theorem network_wellTyped : network.WellTyped := by decide
 
 theorem isMother_resultative_iff (n : Node) :
@@ -475,6 +477,7 @@ def statedForm : Node → Option (TypedForm String)
   | .ditransitive _ => none
   | n => some (construction n).form
 
+/-- Each sense of the ditransitive inherits the central sense's form. -/
 theorem inherited_statedForm (m : TransferModality) :
     DefaultInheritance.inherited statedForm (.ditransitive m) = {(ditransitive .actual).form} := by
   cases m <;> exact DefaultInheritance.inherited_eq_singleton_of_isLeast

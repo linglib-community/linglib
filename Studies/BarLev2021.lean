@@ -106,12 +106,17 @@ structure Separating : Prop where
 
 /-! ### Homogeneity -/
 
+/-- Exhaustifying `∃-PL` over its subdomain alternatives gives the universal reading, the
+maximality implicature. -/
 theorem exhIEII_eq_universal (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
     exhIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) =
       {w | ∀ a ∈ x, a ∈ D → P a w} := by
   rw [exhIEII_supClosure (p := atom P) h.single hne h.all]
   ext w; simp [atom, Finset.mem_inter]
 
+/-- With negation over `∃-PL` every negated subdomain alternative is entailed by the negated
+prejacent, so exhaustification over any of them is vacuous and no pruning yields a non-maximal
+reading. -/
 theorem exhIEII_compl_biUnion {C : Set (Set W)} (hC : C ⊆ compl '' supClosure (atom P '' ↑(x ∩ D)))
     (hsat : (⋃ b ∈ x ∩ D, atom P b)ᶜ.Nonempty) :
     exhIEII C (⋃ b ∈ x ∩ D, atom P b)ᶜ = (⋃ b ∈ x ∩ D, atom P b)ᶜ := by
@@ -184,6 +189,8 @@ theorem atLeast_card : atLeast D x P (x ∩ D).card = {w | ∀ a ∈ x, a ∈ D 
   · rw [Finset.filter_true_of_mem fun a ha ↦
       h a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2]
 
+/-- Exhaustifying over the size-`m` alternatives yields "at least `n + 1 - m` of the kids
+laughed". -/
 theorem exhIEII_pruned_eq_atLeast (h : Separating D x P) {m : ℕ} (hm : 0 < m)
     (hmn : m ≤ (x ∩ D).card) :
     exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b) =
@@ -230,6 +237,8 @@ theorem exhIEII_supClosure_subset_exhIEII_subDisjsOfCard (h : Separating D x P)
 
 /-! ### Relevance and gappiness -/
 
+/-- Given the polar question whether at least `k` of the kids laughed, *the kids laughed* means
+that at least `k` did, provided every number of laughers is realized at some world. -/
 theorem isReading_polar_atLeast (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {k : ℕ} (hk : 0 < k)
     (hkn : k ≤ (x ∩ D).card) :
@@ -262,6 +271,8 @@ theorem gappy_iff (h : Separating D x P) (hcount : ∀ k ≤ (x ∩ D).card, ∃
     exact ⟨⟨_, _, isReading_polar_atLeast h hcount hpos (count_le_card w), mem_atLeast.2 le_rfl⟩,
       ⟨_, _, isReading_polar_atLeast h hcount (Nat.succ_pos _) hlt, by simp⟩⟩
 
+/-- A plain positive definite plural is gappy exactly where [kriz-2016]'s trivalent plural
+predication is undefined, where the accounts agree. -/
 theorem gappy_iff_barePlural_eq_zero (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) (w : W) :
     Gappy D x P w ↔ Homogeneity.barePlural P (x ∩ D) w = 0 := by
@@ -270,6 +281,9 @@ theorem gappy_iff_barePlural_eq_zero (h : Separating D x P)
   exact and_congr_right fun _ ↦ ⟨fun hlt ↦ Finset.ssubset_iff_subset_ne.2
     ⟨Finset.filter_subset _ _, ne_of_apply_ne _ hlt.ne⟩, Finset.card_lt_card⟩
 
+/-- At a gappy world the trivalent negation is still undefined, while the negative sentence with
+negation over `∃-PL`, exhaustified over any of its alternatives, is plainly false, where the
+accounts part. -/
 theorem neg_barePlural_eq_zero_and_notMem_exhIEII_compl (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {w : W} (hw : Gappy D x P w)
     (C : Set (Set W)) :

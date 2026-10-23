@@ -103,6 +103,9 @@ private theorem truncLT_sub_truncLT_mul (x y : R⟦Γ⟧) :
   obtain ⟨j, hj, l, hl, rfl⟩ := support_mul_subset ((mem_support _ _).mpr hne)
   exact (add_nonneg (hnonneg x hj) (hnonneg y hl)).not_gt hi
 
+/-- The projection onto the polar part is a Rota–Baxter operator of weight `-1`, from the ring
+identity `R a * b + a * R b - a * b = R a * R b - (a - R a) * (b - R b)`: `R` fixes the first
+term, a product of polar parts, and kills the second, a product of nonpolar parts. -/
 theorem isRotaBaxter_truncLT (k : Type*) [Ring k] [Module k R⟦Γ⟧] :
     IsRotaBaxter (-1 : k) ⇑(truncLT (0 : Γ) : ZeroHom R⟦Γ⟧ R⟦Γ⟧) := by
   refine isRotaBaxter_neg_one_iff.2 fun a b ↦ ?_

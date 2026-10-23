@@ -370,6 +370,8 @@ theorem existsUnique_subset_iff (hT : possibleValues R μ w ⊆ T) (hk : k < T.c
     · exact hVS' (hV.mem_toFinset.1 hx)
     · rw [hS'.2, ← Set.ncard_eq_toFinset_card V hV, hcard]
 
+/-- The implicatures from the subdomain alternatives of size `k` hold iff the speaker does not
+consider exactly `k` values possible. -/
 theorem domainImplicatures_iff (hT : □[R] (μ · ∈ (T : Set ℕ)) w) (hk : k < T.card) :
     DomainImplicatures R μ w T k ↔ (possibleValues R μ w).ncard ≠ k := by
   simp only [DomainImplicatures, forall_not_exhAgainst_ne_iff, Finset.mem_coe.symm, box_mem_iff]

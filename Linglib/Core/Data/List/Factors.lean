@@ -41,6 +41,7 @@ of the suffixes long enough to have one. -/
 def kFactors (k : ℕ) (xs : List α) : List (List α) :=
   (xs.tails.filter (k ≤ ·.length)).map (·.take k)
 
+/-- A list is a `k`-factor of `xs` iff it is a length-`k` infix. -/
 theorem mem_kFactors : f ∈ kFactors k xs ↔ f <:+: xs ∧ f.length = k := by
   simp only [kFactors, mem_map, mem_filter, mem_tails, decide_eq_true_eq]
   constructor
@@ -58,10 +59,13 @@ theorem mem_kFactors : f ∈ kFactors k xs ↔ f <:+: xs ∧ f.length = k := by
   simp only [kFactors, tails_cons, filter_cons, length_cons, decide_eq_true_eq]
   split_ifs <;> simp
 
+/-- The 2-factors of `a :: b :: rest` are `[a, b]` followed by those of `b :: rest`. -/
 theorem kFactors_two_cons_cons (a b : α) (rest : List α) :
     kFactors 2 (a :: b :: rest) = [a, b] :: kFactors 2 (b :: rest) := by
   rw [kFactors_cons, ite_eq_left (by simp)]; rfl
 
+/-- A `k`-factor of `u ++ v` lies in `u`, in `v`, or across the seam, in the last `k - 1` letters
+of `u` followed by the first `k - 1` letters of `v`. -/
 theorem mem_kFactors_append {u v : List α} :
     f ∈ kFactors k (u ++ v) ↔ f ∈ kFactors k u ∨ f ∈ kFactors k v ∨
       f ∈ kFactors k (u.rtake (k - 1) ++ v.take (k - 1)) := by

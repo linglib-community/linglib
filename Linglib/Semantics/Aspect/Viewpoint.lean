@@ -160,10 +160,12 @@ theorem mem_unbounded : t ∈ UNBOUNDED P w ↔ ∃ e : E, t ≤ τ e ∧ P w e 
 theorem impf_subset_unbounded (P : W → E → Prop) (w : W) : IMPF P w ⊆ UNBOUNDED P w :=
   ofRel_mono (R := (· < ·)) (S := (· ≤ ·)) (fun _ _ ↦ le_of_lt) P w
 
+/-- The non-strict imperfective holds on the lower closure of the predicate's run times. -/
 theorem unbounded_eq_lowerClosure : UNBOUNDED P w = lowerClosure (τ '' {e | P w e}) :=
   Set.ext fun _ ↦ ⟨fun ⟨e, hle, hP⟩ ↦ ⟨τ e, Set.mem_image_of_mem τ hP, hle⟩,
     fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
 
+/-- The perfective holds on the upper closure of the predicate's run times. -/
 theorem prfv_eq_upperClosure : PRFV P w = upperClosure (τ '' {e | P w e}) :=
   Set.ext fun _ ↦ ⟨fun ⟨e, hle, hP⟩ ↦ ⟨τ e, Set.mem_image_of_mem τ hP, hle⟩,
     fun ⟨_, ⟨e, hP, rfl⟩, hle⟩ ↦ ⟨e, hle, hP⟩⟩
@@ -218,6 +220,7 @@ of an interval adverbial, *in*. -/
 def inclusive (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
   fun w ↦ {i | ∃ j ∈ p w, j ≤ i}
 
+/-- The inclusive reading is the upper closure of the interval property. -/
 theorem inclusive_eq_upperClosure : inclusive p w = upperClosure (p w) :=
   rfl
 

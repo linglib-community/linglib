@@ -56,10 +56,13 @@ theorem numNodes_node_pair (a : α) (l r : UnorderedTree α) :
   simp only [Multiset.insert_eq_cons, Multiset.map_cons, Multiset.map_singleton,
     Multiset.sum_cons, Multiset.sum_singleton]
 
+/-- Counted leaves are among the non-root vertices whenever some vertex is uncounted. -/
 theorem countP_leaves_le_numEdges (p : α → Prop) [DecidablePred p] (t : UnorderedTree α)
     (h : t.leaves.countP p < t.numNodes) : t.leaves.countP p ≤ t.numEdges :=
   Nat.le_sub_one_of_lt h
 
+/-- Euler's relation for forests: `#V = b₀ + #E`, with `Multiset.card` the number of
+    component trees. -/
 theorem sum_map_numNodes (F : Multiset (UnorderedTree α)) :
     (F.map numNodes).sum = Multiset.card F + (F.map numEdges).sum := by
   induction F using Multiset.induction with

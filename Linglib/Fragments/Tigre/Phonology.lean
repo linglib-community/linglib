@@ -152,6 +152,8 @@ def «ɨ» : Segment := .ofChart .«ɨ»
 /-- The vowels of Tigre. -/
 def vowels : Finset Segment := ⟨↑[a, «ʌ», i, u, e, o, «ɨ»], by decide +kernel⟩
 
+/-- The consonants, in the order of PHOIBLE's inventory 576, are the segments of its
+nonsyllabic phonemes. -/
 theorem tig_phonemes_map :
     (Inventories.Tigre.tig.phonemes.filter (·.features .syllabic = some false)).map
         (Segment.ofChart ·.features) =

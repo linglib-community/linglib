@@ -409,6 +409,8 @@ theorem speaker_uniformOn_dirac_real_finset_lt_iff (hα : 0 < α) (A : Finset U)
   · rw [div_eq_mul_inv, mul_right_comm, ← div_eq_mul_inv, ENNReal.lt_div_iff_mul_lt
       (.inl (Multiset.invPowSum_pos hα.le h₂).ne') (.inl (htop _ _))]
 
+/-- The speaker is likelier to choose within `A` at `w₂` than at `w₁`, at every positive
+rationality, when the products of profiles are ordered by strict dominance. -/
 theorem speaker_uniformOn_dirac_real_finset_lt_of_strictDominates (hα : 0 < α)
     (h : ((profile sem A w₂).prodMul (profile sem Aᶜ w₁)).StrictDominates
       ((profile sem A w₁).prodMul (profile sem Aᶜ w₂))) :

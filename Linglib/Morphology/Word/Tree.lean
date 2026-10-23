@@ -140,6 +140,7 @@ theorem attachAll_concat (root : M) (affixes : List (Morph.Side × M)) (p : Morp
     attachAll root (affixes ++ [p]) = (attachAll root affixes).attach p.1 p.2 :=
   List.foldl_concat ..
 
+/-- The tree records the affixes attached and their order: attachment to a root is injective. -/
 theorem attachAll_injective (root : M) : Function.Injective (attachAll root) := by
   intro l₁ l₂ h
   induction l₁ using List.reverseRecOn generalizing l₂ with
@@ -163,6 +164,9 @@ theorem toList_foldl_attach (t : Tree M) : ∀ affixes : List (Morph.Side × M),
     rw [List.foldl_cons, toList_foldl_attach (t.attach s a) rest]
     cases s <;> simp [toList]
 
+/-- Attachment surfaces with the affixes of each side read outward from the
+root in the order they were attached, prefixes outermost first and suffixes
+innermost first. -/
 theorem toList_attachAll (root : M) (affixes : List (Morph.Side × M)) :
     (attachAll root affixes).toList =
       ((affixes.filter (·.1 = .before)).map (·.2)).reverse ++

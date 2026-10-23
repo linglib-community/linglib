@@ -90,6 +90,8 @@ monotonic, so it validates the Ross inference. Booth's is not (`not_monotone_nec
 theorem kratzer_monotone (R : W → Set W) : Monotone fun A : Set W ↦ {w | R w ⊆ A} :=
   fun _ _ hAB _ hw ↦ hw.trans hAB
 
+/-- A Booth necessity is a Kratzerian one (Def 1): the relevant worlds lie in the truth set of
+the prejacent. -/
 theorem truth_necessity_subset (R : W → Set W) (φ : BilatInqProp W) :
     truth (necessity R φ) ⊆ {w | R w ⊆ truth φ} := by
   rw [truth_necessity]

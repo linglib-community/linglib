@@ -189,6 +189,7 @@ def consonants : Finset Segment := inventory.filter (¬ ·.IsVowel)
 def ofPhoneme (y : Data.PHOIBLE.Phoneme) : Segment :=
   if y.segmentClass = .vowel then vowel y.features else .ofChart y.features
 
+/-- Each phoneme is the segment of a phoneme of PHOIBLE's Czech inventory. -/
 theorem exists_mem_ces :
     ∀ x ∈ inventory, ∃ y ∈ Inventories.Czech.ces.phonemes, x = ofPhoneme y := by
   decide +kernel
@@ -260,6 +261,7 @@ palatal *ď*, *ť* or *ň*. -/
 def letter (x : Segment) : Option String :=
   (alphabet ++ ["ď", "ť", "ň"]).find? (ofString? · = some [x])
 
+/-- Each phoneme has a letter. -/
 theorem isSome_letter : ∀ x ∈ inventory, (letter x).isSome := by decide +kernel
 
 end Czech.Phonology

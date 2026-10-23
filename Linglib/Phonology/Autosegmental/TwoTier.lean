@@ -150,6 +150,8 @@ private theorem forall_getElem?_add_iff_prefix_drop {γ : Type*} {l l' : List γ
   · rw [List.getElem?_drop, Nat.add_comm o p, h hp, List.getElem?_eq_getElem hp]
   · rw [Nat.add_comm p o, ← List.getElem?_drop, h hp, List.getElem?_eq_getElem hp]
 
+/-- One presentation embeds in another as a factor iff its words occur in the host's at a pair
+of bounded offsets and its lines transport there. -/
 theorem factorEmbeds_ofWords_iff :
     (ofWords as bs L).FactorEmbeds (ofWords as' bs' L') ↔
       ∃ ot ≤ as'.length, ∃ of ≤ bs'.length, as <+: as'.drop ot ∧ bs <+: bs'.drop of ∧
@@ -233,6 +235,7 @@ theorem link_prod_ofWords (w : List S) (p q : ℕ) :
     rw [List.map_cons, List.prod_cons, link_mul, ih]
     simp [BlockLinks]
 
+/-- A realized string of presentations is one presentation. -/
 theorem prod_ofWords (w : List S) :
     (w.map fun s ↦ ofWords (as s) (bs s) (L s)).prod =
       ofWords (w.map as).flatten (w.map bs).flatten (BlockLinks as bs L w) :=

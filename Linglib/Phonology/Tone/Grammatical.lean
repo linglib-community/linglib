@@ -223,6 +223,8 @@ theorem uniform_unvalue : Uniform (unvalue (S := S)) := fun h h' hs ↦ by
     simp [unvalue, List.map_map, Function.comp_def]
   rw [this, this, hs]
 
+/-- Overwriting erases, in that a host and its unvalued projection are overwritten alike, which
+is why a replacive trigger neutralises the target's tones. -/
 @[simp] theorem overwrite_unvalue (host : List (TBU S)) (u : Tune) :
     overwrite (unvalue host) u = overwrite host u :=
   overwrite_eq_of_map_seg_eq (map_seg_unvalue host) u
@@ -295,6 +297,8 @@ theorem uniform_apply_of_isDominant {d : Dominance} (hd : d.IsDominant) (u : Tun
   · exact uniform_overwrite u
   · exact uniform_unvalue
 
+/-- Dominance is transparadigmatic uniformity ([rolle-2018] ch. 5), in that a trigger is dominant
+exactly when its operation gives the same output for every target of the same segments. -/
 theorem isDominant_iff_uniform [Inhabited S] (d : Dominance) :
     d.IsDominant ↔ ∀ u : Tune, Uniform (d.apply (S := S) u) := by
   refine ⟨fun hd u ↦ uniform_apply_of_isDominant hd u, fun hu ↦ ?_⟩

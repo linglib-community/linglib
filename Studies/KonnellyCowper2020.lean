@@ -119,11 +119,15 @@ theorem items_eq :
 /-- The exponent of a feature bundle under the Subset Principle. -/
 def spellout (b : Finset Feature) : Option String := subsetPrinciple items b
 
+/-- Each English third-person nominative pronoun spells out its own features, singular *they* by
+the Elsewhere item. -/
 theorem spellout_pronounFeatures :
     ∀ p ∈ English.Pronouns.pronouns, p.person = some .third → .nom ∈ p.cases →
       spellout (pronounFeatures p) = some p.form := by
   decide
 
+/-- Singular and plural *they* are a syncretism of the Elsewhere item, so an item of singular
+*they*'s own would change no exponent. -/
 theorem subsetPrinciple_append_they_sg (b : Finset Feature) :
     subsetPrinciple (items ++ [vocabularyItem English.Pronouns.they_sg]) b = spellout b := by
   revert b
@@ -231,6 +235,8 @@ theorem they_mem_forms (h : none ∈ s.genders a ∨ a.det = .quantifier) (hi : 
     · simp [h]
   · by_cases hs : a.number = .singular <;> simp [Antecedent.numFeatures, hs, hi] <;> decide
 
+/-- A singular animate antecedent takes *they* exactly when the pronoun may lack a gender
+feature, under a quantifier or where n may bear none. -/
 theorem they_mem_forms_iff (hs : a.number = .singular) (hi : ¬ a.Inanimate) :
     "they" ∈ forms s a ↔ a.det = .quantifier ∨ none ∈ s.genders a := by
   refine ⟨fun h ↦ ?_, fun h ↦ they_mem_forms h.symm hi⟩
@@ -339,6 +345,8 @@ theorem rows_described :
       ((Stage.ofRow? "stage" e).isSome ∨ (Stage.ofRow? "firstStage" e).isSome) := by
   decide +kernel
 
+/-- An example's pronoun is available to its antecedent at the stage whose speakers judge it
+exactly when they accept it, for either gender of a referent the example says only is known. -/
 theorem rows_judgment :
     ∀ e ∈ Examples.all, ∀ g, ∀ a ∈ Antecedent.ofRow g e, ∀ p ∈ e.feature? "pronoun",
       ∀ s ∈ Stage.ofRow? "stage" e, (p ∈ forms s a ↔ e.judgment = .acceptable) := by

@@ -128,6 +128,9 @@ theorem isAffixallyInflected_iff (S : Realization R Ctx F) (extract : F → Fins
       S.IsSuppletive r ∧ ¬ HasSuppletiveCore S extract r := by
   rw [IsAffixallyInflected, HasSuppletiveCore, isConstantIn_iff_not_isVariantIn]
 
+/-- **The core-axis dichotomy**: a form-variant root is either affixally
+inflected (*cat*/*cats*) or has a suppletive core (*go*/*went*), exhaustively
+and exclusively. -/
 theorem suppletive_core_dichotomy (S : Realization R Ctx F) (extract : F → Finset C)
     [DecidableEq C] {r : R} (h : S.IsSuppletive r) :
     IsAffixallyInflected S extract r ∨ HasSuppletiveCore S extract r := by
@@ -135,6 +138,11 @@ theorem suppletive_core_dichotomy (S : Realization R Ctx F) (extract : F → Fin
   · exact Or.inr hv
   · exact Or.inl ⟨h, isConstantIn_iff_not_isVariantIn.mpr hv⟩
 
+/-- **The suppletion trichotomy**: a form-variant root is classified by two
+orthogonal cuts — the landed cell-locus cut (`IsOverabundant`, cell-internal
+*dived*/*dove*, versus `IsProperlySuppletive`, cross-cell *go*/*went*) and the
+core-axis cut (`IsAffixallyInflected` versus `HasSuppletiveCore`). Their cross
+product is the descriptive taxonomy of root-form variation. -/
 theorem suppletive_taxonomy (S : Realization R Ctx F) (extract : F → Finset C)
     [DecidableEq C] {r : R} (h : S.IsSuppletive r) :
     (S.IsOverabundant r ∨ S.IsProperlySuppletive r) ∧
@@ -173,6 +181,9 @@ def DoesLexicalWork (S : Realization.Interpreted R Ctx F M) (τ : R → T) (r : 
     Prop :=
   ∃ r', τ r = τ r' ∧ ¬ S.ProfileEq r r'
 
+/-- **The l/f dichotomy**: an inventory is functional iff no index does lexical
+work. The Harley–Noyer split ([harley-noyer-1999], [embick-2021]) as the
+negation duality between the two certificates. -/
 theorem isFunctionalInventory_iff_no_lexicalWork
     (S : Realization.Interpreted R Ctx F M) (τ : R → T) :
     IsFunctionalInventory S τ ↔ ∀ r, ¬ DoesLexicalWork S τ r := by

@@ -31,6 +31,7 @@ namespace List
 
 variable {α β γ : Type*} [LinearOrder β] [LinearOrder γ] {f : α → β} {l : List α} {m : α}
 
+/-- The maximizer of a list is the maximizer of any filter that keeps it. -/
 theorem argmax_filter_of_mem {p : α → Bool} (h : m ∈ argmax f l) (hp : p m) :
     m ∈ argmax f (l.filter p) := by
   induction l generalizing m with
@@ -65,6 +66,7 @@ theorem argmax_map {δ : Type*} (g : δ → α) (l : List δ) :
     · simp only [Option.map_some, Function.comp]
       split_ifs <;> rfl
 
+/-- Scores that order `l` the same way have the same `argmax`. -/
 theorem argmax_congr {g : α → γ} (h : ∀ a ∈ l, ∀ b ∈ l, f a ≤ f b ↔ g a ≤ g b) :
     argmax f l = argmax g l := by
   induction l with
@@ -76,6 +78,7 @@ theorem argmax_congr {g : α → γ} (h : ∀ a ∈ l, ∀ b ∈ l, f a ≤ f b 
     · rfl
     · simp only [← not_le, h c (mem_cons_of_mem _ (argmax_mem hc)) a mem_cons_self]
 
+/-- On a list sorted by decreasing score, `argmax` is the head. -/
 theorem argmax_eq_head? (h : l.Pairwise fun a b ↦ f b ≤ f a) : argmax f l = l.head? := by
   induction l with
   | nil => rfl

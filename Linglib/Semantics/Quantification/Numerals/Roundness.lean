@@ -76,6 +76,7 @@ variable {D ι : Type*} {r : D → ι → Prop} {d e f : D}
 /-- `e` is at least as round as `d` when it has every roundness property that `d` has. -/
 def AtLeastAsRound (r : D → ι → Prop) (d e : D) : Prop := ∀ ⦃i⦄, r d i → r e i
 
+/-- Being at least as round is the criteria-derived preorder with every scale as a criterion. -/
 theorem atLeastAsRound_iff_ofCriteria :
     AtLeastAsRound r d e ↔ (Preorder.ofCriteria r Set.univ).le e d :=
   ⟨fun h _ _ hi ↦ h hi, fun h _ hi ↦ h _ trivial hi⟩
@@ -90,6 +91,7 @@ theorem atLeastAsRound_iff_upperPolar_subset :
     AtLeastAsRound r d e ↔ upperPolar r {d} ⊆ upperPolar r {e} := by
   simp only [AtLeastAsRound, Set.subset_def, mem_upperPolar_singleton]
 
+/-- The numbers at least as round as `d` are the extent closure of `d`. -/
 theorem atLeastAsRound_iff_mem_extentClosure : AtLeastAsRound r d e ↔ e ∈ extentClosure r {d} := by
   simp only [extentClosure_apply, mem_lowerPolar_iff, mem_upperPolar_singleton]
   exact Iff.rfl
@@ -146,12 +148,15 @@ theorem atLeastAsRound_onScale_iff_scaleLcm_dvd :
 theorem scaleLcm_dvd (W : Finset ℤ) (d : ℤ) : scaleLcm W d ∣ d :=
   atLeastAsRound_onScale_iff_scaleLcm_dvd.1 (.refl _ d)
 
+/-- On scales of multiples, the numbers at least as round as `d` are the meet of the scales
+through `d`, the scale of multiples of their lcm. -/
 theorem extentClosure_onScale :
     extentClosure (OnScale W) {d} = AddSubgroup.zmultiples (scaleLcm W d) := by
   ext e
   rw [← atLeastAsRound_iff_mem_extentClosure, SetLike.mem_coe, Int.mem_zmultiples_iff,
     atLeastAsRound_onScale_iff_scaleLcm_dvd]
 
+/-- On scales of multiples, roundness is divisibility of the lcms of the widths. -/
 theorem atLeastAsRound_onScale_iff_dvd :
     AtLeastAsRound (OnScale W) d e ↔ scaleLcm W d ∣ scaleLcm W e := by
   refine ⟨fun h ↦ Finset.lcm_mono fun w hw ↦ ?_, fun h ↦ ?_⟩
@@ -176,6 +181,8 @@ theorem atLeastAsRound_add_scaleLcm (W : Finset ℤ) (d : ℤ) :
     AtLeastAsRound (OnScale W) d (d + scaleLcm W d) :=
   atLeastAsRound_onScale_iff_scaleLcm_dvd.2 (dvd_add (scaleLcm_dvd W d) dvd_rfl)
 
+/-- On scales of multiples, the least number above `d` at least as round as `d` is the next point
+of the scale of multiples of `scaleLcm W d`. -/
 theorem isLeast_atLeastAsRound_onScale (hW : 0 ∉ W) (d : ℤ) :
     IsLeast {e | d < e ∧ AtLeastAsRound (OnScale W) d e} (d + scaleLcm W d) :=
   ⟨⟨lt_add_of_pos_right d (scaleLcm_pos hW d), atLeastAsRound_add_scaleLcm W d⟩,

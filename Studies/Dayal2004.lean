@@ -183,6 +183,7 @@ the canonical ι, p. 442. -/
 def german : Lexicalization :=
   ⟨{.down, .iota}, {.iota}, by decide, by decide, by decide, by decide⟩
 
+/-- The principles admit exactly the four attested types. -/
 theorem classification (l : Lexicalization) :
     l = articleless ∨ l = english ∨ l = romance ∨ l = german := by
   obtain ⟨L, B, h₁, h₂, h₃, h₄⟩ := l
@@ -300,6 +301,8 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 theorem ofDatum_isSome : ∀ d ∈ Examples.all, (Row.ofDatum d).isSome := by
   decide
 
+/-- Each kind term is judged acceptable exactly where its language's lexicalization licenses its
+form. -/
 theorem rows_agree :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.lexicalization.Licit r.num r.form) := by
   decide

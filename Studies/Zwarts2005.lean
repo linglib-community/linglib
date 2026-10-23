@@ -179,6 +179,8 @@ theorem awayFromPP_concat_closed [Preorder α] (d : Loc → α) :
   rw [hr.goal_eq, hr.source_eq]
   exact hp.trans_le (hr.1 ▸ hq.le)
 
+/-- On the rational line with the reference object at the origin, *towards* is
+cumulative, with a concrete concatenable pair witnessing non-vacuity. -/
 theorem towardsPP_cumulative :
     Cumulative Path.IsConcat (towardsPP (abs : ℚ → ℚ)) := by
   refine ⟨⟨⟨2, [1]⟩, ?_, ⟨1, [0]⟩, ?_, _, ⟨rfl, rfl⟩⟩,

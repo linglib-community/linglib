@@ -150,6 +150,8 @@ def homEquiv (T : Set (L.Atom α)) : (Canonical T →[L] M) ≃ realizers M T wh
 
 end Canonical
 
+/-- One set of atoms entails another along a map of variables in every structure exactly when the
+map carries the atoms of the second into the first. -/
 theorem forall_realizers_subset_preimage_iff [L.IsRelational] {B : Set (L.Atom β)} {f : α → β} :
     (∀ (M : Type x) [L.Structure M], realizers M B ⊆ (· ∘ f) ⁻¹' realizers M T) ↔
       map f '' T ⊆ B := by

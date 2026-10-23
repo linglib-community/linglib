@@ -48,6 +48,7 @@ theorem ofCriteria_le_iff_subset (sat : α → C → Prop) (criteria : Set C)
       {c ∈ criteria | sat b c} ⊆ {c ∈ criteria | sat a c} :=
   ⟨fun h _ hc ↦ ⟨hc.1, h _ hc.1 hc.2⟩, fun h _ hc hb ↦ (h ⟨hc, hb⟩).2⟩
 
+/-- No criteria give the order relating every two elements. -/
 @[simp] theorem ofCriteria_empty (sat : α → C → Prop) : ofCriteria sat ∅ = ⊤ :=
   top_unique fun _ _ _ _ h ↦ h.elim
 

@@ -72,6 +72,7 @@ theorem DRS.trueRel_iff_exists_extends (K : DRS L V) (a : V → M) :
 
 /-! ### The spine connectives (SEM1/2) -/
 
+/-- A negated sub-DRS is the spine's `neg` of its box relation. -/
 theorem verifies_neg_toRel (K : DRS L V) (f : V → M) :
     VerifiesCondition f (.neg K) ↔ f ∈ neg (DRS.toRel K) := by
   simp only [verifies_neg, DynamicSemantics.Update.mem_neg, DRS.toRel_iff]
@@ -86,14 +87,19 @@ theorem verifies_dis_toRel (l r : DRS L V) (f : V → M) :
 
 /-! ### Truth: the triangle, coincidence, and alphabetic variants -/
 
+/-- The dynamic truth of a DRS equals its first-order translation's `Realize`
+— the third edge of the `Verifies`/`toFormula`/`toRel` triangle. -/
 theorem DRS.trueRel_iff_realize_toFormula (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ (K.toFormula).Realize a :=
   (DRS.trueRel_iff_exists_extends K a).trans (DRS.realize_toFormula K a).symm
 
+/-- Truth reads the input embedding only at the free referents. -/
 theorem DRS.trueRel_congr {K : DRS L V} {a₁ a₂ : V → M}
     (h : Set.EqOn a₁ a₂ ↑K.freeVarFinset) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ := by
   simpa only [DRS.trueRel_iff_exists_extends] using exists_extends_verifies_congr h
 
+/-- Renaming along a bijection transports dynamic truth, so alphabetic variants have the same
+truth conditions. -/
 theorem DRS.trueRel_map {W : Type*} [DecidableEq W] (e : V ≃ W)
     (K : DRS L V) (a : W → M) :
     DRS.trueRel (K.map e) a ↔ DRS.trueRel K (a ∘ e) := by

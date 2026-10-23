@@ -88,13 +88,16 @@ instance : ∀ (r : Option Polarity) (ev : SignType), Decidable (Felicitous r ev
   | some .negative, ev => inferInstanceAs (Decidable ¬ E ev)
   | some .positive, ev => inferInstanceAs (Decidable (E (-ev)))
 
+/-- A positive question requires no compelling evidence against `p`. -/
 theorem felicitous_none_iff (ev : SignType) :
     Felicitous none ev ↔ ¬ CompellingAgainst ev := Iff.rfl
 
+/-- An outer-negation question requires no compelling evidence *for* `p`. -/
 theorem felicitous_some_positive_iff (ev : SignType) :
     Felicitous (some .positive) ev ↔ ¬ CompellingFor ev := by
   decide +revert
 
+/-- An inner-negation question requires compelling evidence against `p`. -/
 theorem felicitous_some_negative_iff (ev : SignType) :
     Felicitous (some .negative) ev ↔ CompellingAgainst ev := by
   decide +revert
@@ -109,6 +112,8 @@ theorem felicitous_some_positive_zero_not_negative :
     Felicitous (some .positive) 0 ∧ ¬ Felicitous (some .negative) 0 := by
   decide
 
+/-- No two question types share a felicity profile, so the predicted synonymies of a Hamblin
+denotation ([hamblin-1973b]) are not real. -/
 theorem felicity_separates_readings (r s : Option Polarity)
     (h : ∀ ev, Felicitous r ev ↔ Felicitous s ev) :
     r = s := by
@@ -141,6 +146,8 @@ instance : ∀ d : Determiner, Decidable d.declarativeOK
   | .kein | .no => inferInstanceAs (Decidable True)
   | .nichtEin | .notSome => inferInstanceAs (Decidable False)
 
+/-- An outer-negation construal is confined to the syntactic category of interrogative: exactly the
+determiners that fail in declaratives are the outer-negation ones. -/
 theorem outer_is_interrogative_only (d : Determiner) :
     d.polarity = .positive ↔ ¬ d.declarativeOK := by
   cases d <;> decide

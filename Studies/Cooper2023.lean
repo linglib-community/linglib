@@ -510,10 +510,12 @@ theorem not_twoStars_subtypeI : ¬ system.SubtypeI .twoStars .oneStar := fun h �
 theorem believe_twoStars : ancients.Matches system ⊥ (ancients.ltm ()) .twoStars :=
   .subtype ⟨_, rfl, fun _ _ _ _ h ↦ h⟩
 
+/-- Under their own postulates the ancients do not believe that Hesperus is Phosphorus. -/
 theorem not_believe_oneStar : ¬ ancients.Matches system ⊥ (ancients.ltm ()) .oneStar := by
   rintro (⟨T, rfl, hs⟩ | ⟨_, hp, _⟩)
   exacts [not_twoStars_subtypeI hs, hp]
 
+/-- Under the reporter's postulates, which exclude the alternative, they do. -/
 theorem believe_oneStar_reporter :
     ancients.Matches (system ∘ fun _ : Unit ↦ .actual) ⊥ (ancients.ltm ()) .oneStar :=
   .subtype ⟨_, rfl, fun _ _ _ _ h ↦ ⟨h, h.2.trans h.1.symm⟩⟩
@@ -1586,6 +1588,8 @@ def quantNames : List (String × QuantName) :=
 def anaphoraRefs : List (String × AnaphoraRef) :=
   [("refset", .refset), ("maxset", .maxset), ("compset", .compset)]
 
+/-- A reading of a pronoun with a quantified antecedent is acceptable exactly when a witness
+for the content provides a path to its anaphora set. -/
 theorem anaphora_rows : ∀ row ∈ Examples.all, ∀ v ∈ row.feature? "quantifier",
     ∃ q ∈ quantNames.lookup v, ∀ r ∈ row.readings,
       ∃ ref ∈ anaphoraRefs.lookup r.1, (r.2 = .acceptable ↔ ref ∈ anaphoraAvailable q) := by

@@ -99,6 +99,8 @@ def eventPosition : Ordering := compare f.eventTime f.referenceTime
 @[simp] theorem eventPosition_eq_gt : f.eventPosition = .gt ↔ f.referenceTime < f.eventTime :=
   compare_gt_iff_gt
 
+/-- The point of the event stands to the perspective time as the composition of the event
+position with the reference position allows. -/
 theorem compare_eventTime_perspectiveTime_mem :
     compare f.eventTime f.perspectiveTime ∈ f.eventPosition.comp f.referencePosition :=
   Ordering.compare_mem_comp _ _ _

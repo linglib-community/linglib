@@ -363,12 +363,14 @@ def affixes : List (Registered Syllable) := [reAct, aStat, taHand]
 def loans : List (Registered Syllable) :=
   [oociHorse, piikiPig, poociPouch, taaciBowl, cooroSalt, kaateCar]
 
+/-- Every stem's tier has one entry per mora. -/
 theorem stems_aligned : ∀ s ∈ stems, s.IsAligned Prosody.Syllable.pnatMoraCount := by decide
 
 theorem affixes_aligned : ∀ s ∈ affixes, s.IsAligned Prosody.Syllable.pnatMoraCount := by decide
 
 theorem loans_aligned : ∀ s ∈ loans, s.IsAligned Prosody.Syllable.pnatMoraCount := by decide
 
+/-- The lax front vowel occurs long only: every syllable it heads is bimoraic. -/
 theorem smallCapitalI_heavy :
     ∀ s ∈ stems, ∀ σ ∈ s.syllables,
       σ.nucleusSegments = [smallCapitalI] → σ.moraCount = 2 := by

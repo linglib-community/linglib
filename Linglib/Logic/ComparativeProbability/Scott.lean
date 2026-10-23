@@ -106,6 +106,7 @@ def Cancellation (ge : Set W → Set W → Prop) : Prop :=
   ∀ M : Multiset (W → SignType), (∀ v ∈ M, ge (posSupport v) (negSupport v)) →
     comparisonSum M = 0 → ∀ v ∈ M, ge (negSupport v) (posSupport v)
 
+/-- Cancellation pulls back along an equivalence of carriers. -/
 theorem Cancellation.transport {α : Type*} (e : W ≃ α) {r : Set W → Set W → Prop}
     (h : Cancellation r) : Cancellation (Set.preimage e ⁻¹'o r) := by
   intro M hvalid hsum v hv
@@ -131,6 +132,7 @@ private theorem comparisonSum_eq_seqCount (L : List (W → SignType)) (i : W) :
     push_cast
     split_ifs <;> ring
 
+/-- The balanced-sequence form implies the sign-vector form. -/
 theorem FiniteCancellation.cancellation {ge : Set W → Set W → Prop}
     (h : FiniteCancellation ge) : Cancellation ge := by
   intro M hge hsum v hv
@@ -180,6 +182,8 @@ private theorem negSupport_normalize (p : Set W × Set W) :
   simp only [mem_negSupport, normalize, sign_eq_neg_one_iff, Set.mem_sdiff]
   split_ifs <;> simp_all
 
+/-- For a qualitative probability the sign-vector form implies the balanced-sequence form, by
+    normalizing every comparison with additivity. -/
 theorem Cancellation.finiteCancellation (r : Set W → Set W → Prop) [IsQualitativeProbability r]
     (h : Cancellation r) : FiniteCancellation r := by
   intro prem X Y hbal hprem
@@ -202,6 +206,7 @@ theorem Cancellation.finiteCancellation (r : Set W → Set W → Prop) [IsQualit
       Pi.zero_apply, List.sum_cons]
     omega
 
+/-- The two forms of Scott's condition agree on a qualitative probability. -/
 theorem cancellation_iff_finiteCancellation (r : Set W → Set W → Prop)
     [IsQualitativeProbability r] : Cancellation r ↔ FiniteCancellation r :=
   ⟨Cancellation.finiteCancellation r, FiniteCancellation.cancellation⟩
@@ -394,19 +399,25 @@ section Scott
 variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
   (r : Set W → Set W → Prop) [IsQualitativeProbability r]
 
+/-- **Scott's theorem**, hard direction. A qualitative probability on a finite carrier
+    satisfying cancellation is represented by a probability measure. -/
 theorem cancellation_implies_representable (h : Cancellation r) : Representable r := by
   classical
   exact perm_repr (Fintype.equivFin W) r
     (representable_of_cancellation_fin _ (h.transport (Fintype.equivFin W)))
 
+/-- **Scott's theorem** in sign-vector form. -/
 theorem representable_iff_cancellation : Representable r ↔ Cancellation r :=
   ⟨fun h ↦ h.finiteCancellation.cancellation, cancellation_implies_representable r⟩
 
+/-- **Scott's theorem** in balanced-sequence form. -/
 theorem representable_iff_finiteCancellation : Representable r ↔ FiniteCancellation r :=
   (representable_iff_cancellation r).trans (cancellation_iff_finiteCancellation r)
 
 end Scott
 
+/-- A null atom and representability one cardinality down yield cancellation, by swapping the
+    null atom to position 0 and applying `null_elem_reduce`. -/
 theorem cancellation_of_null_atom {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) → Prop)
     [IsQualitativeProbability r] {j : Fin (n + 2)} (hj : r ∅ {j})
     (sub : ∀ r' : Set (Fin (n + 1)) → Set (Fin (n + 1)) → Prop,

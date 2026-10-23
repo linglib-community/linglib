@@ -120,6 +120,8 @@ theorem val_add_discharge : ∀ {ms ms' : List (Finset F)}, discharge i env ms =
       rw [List.map_cons, List.map_cons, List.sum_cons, List.sum_cons, add_left_comm,
         val_add_discharge h'']
 
+/-- **Conservation.** In the free commutative monoid on the features, the inserted items'
+features and the residue sum to the node. -/
 theorem bind_insertions_add_residue :
     ∀ (items : RuleSet (VocabularyItem F E)) (ms : List (Finset F)),
     (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.features.val) +
@@ -136,11 +138,15 @@ theorem bind_insertions_add_residue :
       rw [← Multiset.cons_coe, Multiset.cons_bind, add_assoc,
         bind_insertions_add_residue rest ms', val_add_discharge h]
 
+/-- **No multiple exponence.** The inserted items' features fit inside the node, so no feature is
+discharged more often than the node bears it. -/
 theorem bind_insertions_le (items : RuleSet (VocabularyItem F E)) (ms : List (Finset F)) :
     (insertions items env ms : Multiset (VocabularyItem F E)).bind (·.features.val) ≤
       (ms.map Finset.val).sum :=
   bind_insertions_add_residue items ms ▸ Multiset.le_add_right _ _
 
+/-- On a node whose matrices are disjoint the inserted items' features are disjoint, so the items
+partition the features they discharge. -/
 theorem pairwise_disjoint_insertions (h : (ms.map Finset.val).sum.Nodup) :
     (insertions items env ms).Pairwise fun i j ↦ Disjoint i.features j.features := by
   have := Multiset.nodup_of_le (bind_insertions_le (env := env) items ms) h
@@ -180,6 +186,7 @@ theorem discharge_singleton (i : VocabularyItem F E) (m : Finset F) :
         then some [m \ i.features] else none := by
   simp [discharge]
 
+/-- At a single matrix, the first item inserted is the first item that applies there. -/
 theorem head?_insertions_singleton (m : Finset F) : ∀ items : RuleSet (VocabularyItem F E),
     (insertions items env [m]).head? =
       (items.applicable ({ env with focus := m } : Neighborhood (Finset F))).head?
@@ -192,6 +199,9 @@ theorem head?_insertions_singleton (m : Finset F) : ∀ items : RuleSet (Vocabul
       simpa [insertions, RuleSet.applicable, h] using
         head?_insertions_singleton m rest
 
+/-- On a Vocabulary ordered by decreasing specificity, the first insertion at a single matrix is
+the Subset Principle's winner, so scansion agrees with Elsewhere competition where both
+apply. -/
 theorem head?_scansion_singleton (m : Finset F)
     (hsorted : items.Pairwise fun i j => j.specificity ≤ i.specificity) :
     (scansion items env [m]).head? =

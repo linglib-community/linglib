@@ -98,6 +98,9 @@ def intelligence : Member → ℕ
   | .i => 10 | .f | .d' => 9 | .j => 8 | .g => 7 | .h | .a' => 6 | .a => 5 | .d => 4
   | .b | .b' | .c' => 3 | .e | .e' => 2 | .c => 1
 
+/-- Betty, second most beautiful, is more beautiful for a committee member than Heather, fifth
+most intelligent, is intelligent; Betty, third least intelligent, is not more intelligent than
+Evelin, fifth most beautiful, is beautiful. -/
 theorem indirect_comparison :
     .b ∈ (universalDegree beauty original) ⁻¹' Set.Ioi
       (universalDegree intelligence original .h) ∧
@@ -137,6 +140,9 @@ theorem universalDegree_withMeasurements (hμ : ∀ n, μ (.inr n) = n)
     universalDegree μ (withMeasurements P N) (.inl x) = μ (.inl x) / N :=
   universalDegree_of_image_eq_Icc (image_withMeasurements hμ hP) (by simp [withMeasurements, hx])
 
+/-- When the comparison class keeps the measurements up to a common bound, each measuring itself
+on both scales, and everyone measures within the bound, comparing universal degrees is
+comparing measurements, as in a direct comparison. -/
 theorem direct_comparison (hμ : ∀ n, μ (.inr n) = n) (hν : ∀ n, ν (.inr n) = n)
     (hPμ : ∀ x ∈ P, μ (.inl x) ∈ Icc 1 N) (hPν : ∀ x ∈ P, ν (.inl x) ∈ Icc 1 N)
     {z w : E ⊕ ℕ} (hz : z ∈ withMeasurements P N) (hw : w ∈ withMeasurements P N) :
@@ -205,6 +211,9 @@ def widthClass : Man → ℕ
 /-- The comparison class that *for a man* fixes holds the men and no measurements. -/
 def men : Finset (Man ⊕ ℕ) := univ.map .inl
 
+/-- Seymour is five feet tall and three feet wide. Among men ordered as above and measurements up
+to eighty inches he is taller than he is wide, but restricted to men his height degree is one
+eighth and his width degree one, so he is not taller for a man than he is wide for a man. -/
 theorem for_a_man {τ ω : Man ⊕ ℕ → ℕ}
     (hτ : ∀ x y, τ (.inl x) ≤ τ (.inl y) ↔ heightClass x ≤ heightClass y)
     (hω : ∀ x y, ω (.inl x) ≤ ω (.inl y) ↔ widthClass x ≤ widthClass y)
@@ -287,6 +296,9 @@ def truth? (r : Datum) : Option Bool :=
   | some "false" => some false
   | _ => none
 
+/-- Every sentence the paper evaluates in one of its situations has the truth value it reports,
+since the subject's universal degree exceeds the standard's exactly when the paper says the sentence
+is true. -/
 theorem rows_truth : ∀ r ∈ Examples.all, (r.feature? "model").isSome →
     ∃ t ∈ truth? r, ∃ d₁ ∈ degree? r "subject" "subjectScale",
       ∃ d₂ ∈ degree? r "standard" "standardScale", (d₂ < d₁ ↔ t = true) := by

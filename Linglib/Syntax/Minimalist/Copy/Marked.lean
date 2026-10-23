@@ -203,6 +203,7 @@ def mark (t : Marked) (m : SyntacticObject) (l : Option LexicalItem.Token) : Mar
     (t.mark m l).unmark = t.unmark :=
   Subtype.ext (map_snd_markTree m l t.val)
 
+/-- Marking the copies of `m` with its trace contracts to replacing `m` by its trace. -/
 theorem contract_mark (m : SyntacticObject) (τ : SyntacticObject → Option LexicalItem.Token) :
     (t.mark m (τ m)).contract = t.contract.replace m (m.traceLinearized τ) :=
   Subtype.ext (by
@@ -248,6 +249,7 @@ theorem mk_contractTree_of_find? {target : SyntacticObject} {s : Marked}
   obtain ⟨r, -, hr, rfl⟩ := Option.pmap_eq_some_iff.1 h
   simpa using List.find?_some hr
 
+/-- The occurrence found contracts to the occurrence found in the contraction. -/
 theorem map_contract_find? (target : SyntacticObject) :
     (t.find? target).map contract = t.contract.find? target := by
   apply Option.map_injective Subtype.val_injective
@@ -316,6 +318,8 @@ private theorem mem_terms_unmark {t : Marked} {r : RoseTree (CopyMark × Vertex)
     (⟨_, isSyntacticObject_of_isSubtree hr⟩ : SyntacticObject) ∈ t.unmark.toSyntacticObject.terms :=
   LinearizedSyntacticObject.mem_terms_toSyntacticObject.2 ⟨_, mem_subtrees.2 (hr.map _), rfl⟩
 
+/-- A c-command between two pronounced leaves of the contraction holds between the same leaves of
+the copy object, the contraction changing nothing outside the lower copies. -/
 theorem cCommands_unmark_of_cCommands_contract {t : Marked} {x y : LexicalItem.Token}
     (hxy : x ≠ y) (h : t.contract.toSyntacticObject.CCommands ↑x ↑y) :
     t.unmark.toSyntacticObject.CCommands ↑x ↑y := by

@@ -392,6 +392,7 @@ def sentence? (d : Datum) : Option Sentence := do
 def evidence? (d : Datum) : Option Evidence :=
   d.parse? "evidence" [("none", Evidence.none), ("inferred", .inferred), ("explicit", .explicit)]
 
+/-- The analysis allows the judgment of every row. -/
 theorem rows_judgment : ∀ d ∈ Examples.all,
     ∃ s ∈ sentence? d, d.judgment ∈ (s.verdict (evidence? d)).judgments := by
   decide

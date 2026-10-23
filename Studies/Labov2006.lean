@@ -181,6 +181,8 @@ theorem oh_double_deviation :
         StrictMonoOn (fun g ↦ standardIndex .oh g s) {g | g ≠ .lower} := by
   decide +kernel
 
+/-- On the table, a class group deviates from class stratification exactly when it deviates from
+stylistic stratification, as Labov's hypothesis has it. -/
 theorem classDeviant_iff_styleDeviant (v : Variable) (g : ClassGroup) :
     ClassDeviant v g ↔ StyleDeviant v g := by
   revert v g; decide +kernel
@@ -232,6 +234,7 @@ end Cases
 
 theorem upgliding_caseIB : CaseIB fun a c ↦ (upglidingByAgeAndClass a c).percent := by decide
 
+/-- (r) in casual speech is distributed as a prestige feature in change, in every detail. -/
 theorem r_caseIIB : CaseIIB fun a c ↦ (rCasualByAgeAndClass a.toLevel c).index := by decide
 
 theorem r_gap_widens :
@@ -274,6 +277,7 @@ theorem ing_older_less : ∀ c < ⊤,
       (ingByAgeAndClass .older c).careful < (ingByAgeAndClass .younger c).careful := by
   decide
 
+/-- (ing) in careful speech is distributed as a stable stigmatized feature. -/
 theorem ing_careful_caseIA : CaseIA fun a c ↦ (ingByAgeAndClass a c).careful := by decide
 
 theorem ing_casual_departure :

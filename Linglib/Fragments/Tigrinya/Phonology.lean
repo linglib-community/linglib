@@ -170,6 +170,8 @@ def «ʌ» : Segment := .ofChart .«ʌ»
 /-- The vowels of Tigrinya. -/
 def vowels : Finset Segment := ⟨↑[a, e, i, o, u, «ɨ», «ʌ»], by decide +kernel⟩
 
+/-- The consonants and vowels, in the order of PHOIBLE's inventory 1350, are the segments of its
+phonemes other than the geminates, which are [+long]. -/
 theorem tir_phonemes_map :
     (Inventories.Tigrinya.tir.phonemes.filter (·.features .long ≠ some true)).map
         (Segment.ofChart ·.features) =

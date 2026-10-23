@@ -127,6 +127,8 @@ section LongProducts
 
 variable {α : Type*} {f : FreeSemigroup α →ₙ* S} {w : FreeSemigroup α} {k : ℕ}
 
+/-- A semigroup is definite when, for some bound, every product of at least that many elements is a
+right zero. -/
 theorem IsDefinite.of_isRightZero_map (hf : Function.Surjective f)
     (h : ∀ w, k ≤ w.length → IsRightZero (f w)) : IsDefinite S := by
   intro e he
@@ -150,18 +152,23 @@ theorem IsLocallyTrivial.of_map_mul_map_eq (hf : Function.Surjective f)
 
 variable [Finite S] (f)
 
+/-- In a finite definite semigroup, a product of at least `|S|` elements is a right zero. -/
 theorem IsDefinite.isRightZero_map (h : IsDefinite S) (hw : Nat.card S ≤ w.length) :
     IsRightZero (f w) := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw
   rw [hw, h e he x]
   exact (h e he).mul_right y
 
+/-- In a finite reverse definite semigroup, a product of at least `|S|` elements is a left
+zero. -/
 theorem IsReverseDefinite.isLeftZero_map (h : IsReverseDefinite S) (hw : Nat.card S ≤ w.length) :
     IsLeftZero (f w) := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw
   rw [hw, mul_assoc, h e he y]
   exact (h e he).mul_left x
 
+/-- In a finite locally trivial semigroup, a product of at least `|S|` elements absorbs anything
+placed between two copies of it. -/
 theorem IsLocallyTrivial.map_mul_map_eq (h : IsLocallyTrivial S) (hw : Nat.card S ≤ w.length)
     (s : S) : f w * s * f w = f w := by
   obtain ⟨x, e, y, he, hw⟩ := FreeSemigroup.exists_isIdempotentElem_map_eq_mul_mul f hw

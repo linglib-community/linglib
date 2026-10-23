@@ -240,6 +240,8 @@ theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) �
     · exact Iff.rfl
   · exact Iff.rfl
 
+/-- The intruder's line never crosses a root line, so intrusion keeps the merged melody
+non-crossing. -/
 theorem isNonCrossing_melodyLinks_intrude (m : TemplateMatch String)
     (h : IsNonCrossing (melodyLinks m : SetRel ℕ ℕ)) :
     IsNonCrossing (melodyLinks (intrude m) : SetRel ℕ ℕ) := by

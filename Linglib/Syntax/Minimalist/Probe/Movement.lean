@@ -80,6 +80,7 @@ theorem attract_eq_some_iff :
     rintro ⟨ha, hu⟩
     exact h ⟨a, ha, hu⟩
 
+/-- The Ban on Multiple Move: a probe agreeing with two goals attracts neither. -/
 theorem attract_eq_none_of_ne (ha : p.AgreesWith s key a) (hb : p.AgreesWith s key b)
     (hab : a ≠ b) : p.attract s key = none :=
   Option.eq_none_iff_forall_ne_some.2 fun c hc ↦ by

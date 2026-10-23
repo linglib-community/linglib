@@ -85,6 +85,8 @@ private theorem go_iff : ∀ {cs ds : List (RoseTree α)},
       obtain ⟨d, hd, hcd⟩ := List.mem_map.1 (hp.subset List.mem_cons_self)
       simpa [(h c List.mem_cons_self d hd).2 hcd.symm] using List.findIdx?_eq_none_iff.1 hi d hd
 
+/-- Two ordered trees are `eqv`-related iff they are equal up to reordering the children of
+every vertex. -/
 theorem eqv_iff_perm : eqv t s ↔ Perm t s := by
   rw [← mk_eq_mk_iff]
   induction t generalizing s with

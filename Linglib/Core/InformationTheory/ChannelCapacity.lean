@@ -135,6 +135,9 @@ private theorem measureMutualInfo_compProd_eq_sum :
   · simp [hc]
   · rw [mul_div_mul_left _ _ hc, mul_assoc]
 
+/-- The compensation identity. Averaging the divergence of the rows of a channel from a
+reference measure overshoots the mutual information by the divergence of the output marginal
+from that reference. -/
 theorem sum_mul_toReal_klDiv (q : Measure W) [IsProbabilityMeasure q]
     (hq : ∀ c, μ {c} ≠ 0 → κ c ≪ q) :
     ∑ c, μ.real {c} * (klDiv (κ c) q).toReal = Im[μ ⊗ₘ κ] + (klDiv (κ ∘ₘ μ) q).toReal := by
@@ -169,6 +172,8 @@ theorem sum_mul_toReal_klDiv (q : Measure W) [IsProbabilityMeasure q]
           * log ((κ ∘ₘ μ).real {w} / q.real {w}))]
         simp_rw [← Finset.sum_mul, ← Measure.comp_real_singleton]
 
+/-- Mutual information across a channel is the input average of the divergence of each row from
+the output marginal. -/
 theorem measureMutualInfo_compProd :
     Im[μ ⊗ₘ κ] = ∑ c, μ.real {c} * (klDiv (κ c) (κ ∘ₘ μ)).toReal := by
   rw [sum_mul_toReal_klDiv κ μ _ fun c hc ↦ κ.absolutelyContinuous_comp μ hc, klDiv_self,
@@ -228,6 +233,8 @@ theorem toReal_klDiv_eq_integral_log_sub [Nonempty C] {c : C} (hc : μ {c} ≠ 0
     log_mul hpc hk, log_div hk hw']
   ring
 
+/-- The Bayesian decoder maximizes the expected log score of the input. No decoder that charges
+every input the posterior charges does better, even one that gives no guess at some outputs. -/
 theorem sum_mul_integral_log_le [Nonempty C] (φ : W → Measure C)
     [∀ w, IsZeroOrProbabilityMeasure (φ w)] (hφ : ∀ w, (κ ∘ₘ μ) {w} ≠ 0 → (κ†μ) w ≪ φ w) :
     ∑ c, μ.real {c} * ∫ w, log ((φ w).real {c}) ∂(κ c)
@@ -291,6 +298,9 @@ private theorem toReal_klDiv_of_eq_blahutArimoto (h : μ = blahutArimoto κ μ) 
   rw [toReal_klDiv_eq_integral_log_sub κ μ hc, hreal, log_softmax]
   ring
 
+/-- An input distribution achieves capacity with positive mass everywhere exactly when it is
+the uniform distribution tilted by each input's expected log posterior, a fixed point of the
+Blahut–Arimoto update ([blahut-1972], [arimoto-1972]). -/
 theorem eq_blahutArimoto_iff :
     (Im[μ ⊗ₘ κ] = channelCapacity κ ∧ ∀ c, μ {c} ≠ 0) ↔ μ = blahutArimoto κ μ := by
   have := isProbabilityMeasure_uniformOn (Set.finite_univ (α := C)) Set.univ_nonempty

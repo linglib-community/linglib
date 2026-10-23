@@ -296,10 +296,14 @@ instance : DecidablePred Telic := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _)
 /-- The class Table 1 assigns to an intransitive by its sole argument's profile. -/
 def intransClass : IntransClass := table1 (decide (Agentive p)) (decide (Telic p))
 
+/-- Predicates high in agentivity and low in patient properties are invariably
+unergative. -/
 theorem intransClass_unergative (h : Agentive p) (h' : ¬ Telic p) :
     intransClass p = .unergative := by
   simp only [intransClass, decide_eq_true h, decide_eq_false h', table1]
 
+/-- Predicates low in agentivity and high in patient properties are invariably
+unaccusative. -/
 theorem intransClass_unaccusative (h : ¬ Agentive p) (h' : Telic p) :
     intransClass p = .unaccusative := by
   simp only [intransClass, decide_eq_false h, decide_eq_true h', table1]

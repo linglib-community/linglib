@@ -389,6 +389,8 @@ theorem listener_snd_real_lt_iff (u : U) (b₁ b₂ : B) :
   rw [key, key, listener_real_finset_lt_iff, Finset.sum_product, Finset.sum_product]
   simp only [Finset.sum_singleton]
 
+/-- **Lexical uncertainty.** Against a product prior, the first marginal of the listener is the
+listener of the speaker averaged over the second coordinate by its prior. -/
 theorem listener_prod_fst (μA : Measure A) (ν : Measure B) (S : A × B → Measure U) :
     (listener (μA.prod ν) S).fst = listener μA fun a ↦ ∑ b, ν {b} • S (a, b) := by
   ext u : 1
@@ -697,6 +699,7 @@ theorem speaker_real_singleton_lt_iff (hα : 0 ≤ α) (h0 : ∃ u, ∀ w, b o {
         (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
     (ENNReal.sum_ne_top.mpr fun _ _ ↦ geomMean_weight_ne_top hα _)
 
+/-- The speaker never produces an utterance whose listener rules out a state she entertains. -/
 theorem speaker_apply_singleton_eq_zero_iff [IsFiniteMeasure (b o)] (hα : 0 < α) :
     speaker α C L b o {u} = 0 ↔ ∃ w, b o {w} ≠ 0 ∧ L u {w} = 0 := by
   rw [speaker_apply_singleton, ENNReal.div_eq_zero_iff,
@@ -727,6 +730,8 @@ private theorem geomMean_ofDensity (β : Measure W) [IsProbabilityMeasure β] (u
 
 variable [IsFiniteMeasure μ]
 
+/-- Against the listener of a graded meaning the speaker weighs an utterance by the geometric mean
+of its meaning over her belief and by the inverse of the meaning's prior mass. -/
 theorem speaker_ofDensity_apply_singleton (hα : 0 ≤ α) [IsProbabilityMeasure (b o)]
     (hb : b o ≪ μ) (u : U) :
     speaker α C (Kernel.ofDensity μ m) b o {u} =
@@ -773,6 +778,8 @@ private theorem dirac_absolutelyContinuous {μ : Measure W} (h : μ {w} ≠ 0) :
   Measure.absolutelyContinuous_of_forall_singleton fun _ hw' ↦ of_not_not fun hd ↦
     h (eq_of_dirac_apply_singleton_ne_zero hd ▸ hw')
 
+/-- A speaker who knows the state weights an utterance by its listener's mass there to the power
+`α`, times the cost weight `exp (-(α * C u))`. -/
 theorem speaker_dirac_eq_ofWeights (α : ℝ) (C : U → ℝ) (L : U → Measure W) :
     speaker α C L Measure.dirac =
       Kernel.ofWeights fun w u ↦ L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
@@ -979,6 +986,9 @@ theorem speaker_listener_truthful_dirac_le_of_subset [DiscreteMeasurableSpace W]
   · rw [Set.indicator_of_notMem hv]; exact zero_le
 
 open Filter Topology in
+/-- As rationality grows, the speaker puts all its mass on the utterance whose listener mass,
+discounted by its cost, is greatest at `w`, so the fully rational speaker maximizes the
+utility. -/
 theorem tendsto_speaker_dirac_real_singleton_atTop [IsFiniteKernel L] (hu : L u {w} ≠ 0)
     (hmax : ∀ u' ≠ u, (L u' {w}).toReal * Real.exp (-C u') < (L u {w}).toReal * Real.exp (-C u)) :
     Tendsto (fun α ↦ (speaker α C L Measure.dirac w).real {u}) atTop (𝓝 1) := by

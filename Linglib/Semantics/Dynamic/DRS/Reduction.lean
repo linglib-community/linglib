@@ -184,6 +184,7 @@ private theorem DRS.realize_toFormula_of_forall [DecidableEq V] {K : DRS L V}
   exact exists_congr fun v' => and_congr_right fun _ =>
     Condition.realize_toFormulaAll_of_forall fun c hc => ih c hc v'
 
+/-- A single condition's translation realizes as `VerifiesCondition`. -/
 theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
     (Condition.toFormula c).Realize v ↔ VerifiesCondition v c := by
   induction c generalizing v with

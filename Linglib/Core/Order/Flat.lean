@@ -186,6 +186,7 @@ theorem eq_of_le (h : x ≤ y) (hyx : y ≠ ⊥ → x ≠ ⊥) : x = y := by
 
 /-! ### Covering -/
 
+/-- The flat order has height one: its covers are the steps from `⊥` to a committed value. -/
 theorem covBy_iff : x ⋖ y ↔ x = ⊥ ∧ y ≠ ⊥ := by
   constructor
   · intro h
@@ -265,6 +266,7 @@ theorem inf_def [DecidableEq α] (x y : Flat α) : x ⊓ y = if x = y then x els
     (a : Flat α) ⊓ b = if a = b then (a : Flat α) else ⊥ := by
   simp [inf_def]
 
+/-- Two committed slots are disjoint exactly when they disagree. -/
 @[simp] theorem disjoint_coe_coe : Disjoint (a : Flat α) b ↔ a ≠ b := by
   constructor
   · rintro h rfl
@@ -272,6 +274,7 @@ theorem inf_def [DecidableEq α] (x y : Flat α) : x ⊓ y = if x = y then x els
   · rintro hab x hxa hxb
     cases x <;> simp_all
 
+/-- Two committed slots are compatible exactly when they agree. -/
 @[simp] theorem compat_coe_coe : Compat (a : Flat α) b ↔ a = b :=
   ⟨fun ⟨_, hu⟩ ↦ by
     obtain ⟨ha, hb⟩ := mem_upperBounds_pair.mp hu
@@ -329,6 +332,8 @@ instance [DecidableEq α] : PartialUnify (Flat α) where
       rw [unify_coe_coe, ite_eq_left rfl]
       exact WithTop.coe_ne_top
 
+/-- Two slots are compatible exactly when their committed values coincide;
+an uncommitted slot is a wildcard. -/
 theorem compat_iff : Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑b → a = b := by
   refine ⟨fun ⟨u, hu⟩ a ha b hb ↦ ?_, fun h ↦ ?_⟩
   · have hx := hu (Set.mem_insert x {y})

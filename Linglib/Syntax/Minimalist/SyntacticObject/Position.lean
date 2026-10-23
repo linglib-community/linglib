@@ -88,6 +88,7 @@ theorem length_children_subtree (hp : ¬ IsMax p) : p.subtree.children.length = 
   rw [hsub] at hp hs
   exact (SyntacticObject.length_eq_zero_or_two hs).resolve_left (by simpa using hp)
 
+/-- A position that is not a leaf branches. -/
 theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
   have h2 := length_children_subtree hp
   have hv : ∀ i < 2, (⟨p.val.toList ++ [i]⟩ : TreePath) ∈ t.val.validPaths := fun i hi ↦
@@ -96,6 +97,7 @@ theorem isBranching_of_not_isMax (hp : ¬ IsMax p) : IsBranching p := by
     ⟨_, hv 1 (by omega)⟩, Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨1, rfl⟩), fun h ↦ ?_⟩
   simpa using congrArg (fun q : t.val.Positions ↦ q.val.toList.getLast?) h
 
+/-- The term at a position immediately contains the terms at its covers. -/
 theorem immediatelyContains_termAt :
     ImmediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
   show y.val ∈ (UnorderedTree.mk p.subtree).children ↔ _
@@ -107,6 +109,7 @@ theorem immediatelyContains_termAt :
   · rintro ⟨q, hpq, rfl⟩
     exact ⟨q.subtree, Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩, rfl⟩
 
+/-- The term at a position contains or equals the terms at the positions below it. -/
 theorem containsOrEq_termAt : ContainsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
   rw [← mem_terms, ← Multiset.mem_map_of_injective Subtype.val_injective, map_val_terms]
   show y.val ∈ unorderedSubtrees p.subtree ↔ _
@@ -137,6 +140,8 @@ theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent
   rcases length_eq_zero_or_two hso with h0 | h2 <;>
     grind [arity, List.length_eq_zero_iff, children_node]
 
+/-- C-command between terms is witnessed by c-command between occurrences of them, with no
+condition on how often they occur. -/
 theorem exists_cCommands_termAt_of_cCommands (h : t.toSyntacticObject.CCommands x y) :
     ∃ p q : t.val.Positions, t.val.CCommands p q ∧ t.termAt p = x ∧ t.termAt q = y := by
   obtain ⟨z, -, ⟨w, hw, hwx, hwz, hne⟩, hzy⟩ := h
@@ -293,6 +298,8 @@ instance : DecidablePred (· ∈ t.branching) :=
 
 variable {t} {q g : t.val.Positions}
 
+/-- Between positions neither of which dominates the other, closeness under the branching
+positions is asymmetric c-command. -/
 theorem above_branching_lt_iff (hqg : ¬ q ≤ g) (hgq : ¬ g ≤ q) :
     t.above t.branching q < t.above t.branching g ↔
       t.val.CCommands q g ∧ ¬ t.val.CCommands g q := by
@@ -342,6 +349,8 @@ theorem complement_complement {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 :
   omega
 
 variable {t} in
+/-- In a syntactic object, a head other than the root c-commands exactly the positions below its
+complement. -/
 theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.validPaths)
     (h0 : h ≠ ⊥) (hq : q ∈ t.val.validPaths) :
     q ∈ t.val.cCommandDomain h ↔ complement h ≤ q := by

@@ -73,6 +73,8 @@ def _root_.Data.WordOrder.VerbPosition.arrangement : VerbPosition → Arrangemen
   | .medial => .svo
   | .final => .sov
 
+/-- The arrangements of subject, object and verb in which the subject precedes the object, the
+three Universal 1 leaves, are exactly those of the types I, II and III. -/
 theorem subjectFirst_iff_mem_range (a : Arrangement Constituent 3) :
     a.Precedes .subject .object ↔ a ∈ Set.range VerbPosition.arrangement := by
   revert a
@@ -115,11 +117,16 @@ instance (P Q : SampleRow → Prop) (exceptions : List String) [DecidablePred P]
     [DecidablePred Q] : Decidable (UniversalExcept P Q exceptions) :=
   inferInstanceAs (Decidable (∀ r ∈ sample, P r → Q r ∨ r.language ∈ exceptions))
 
+/-- The noun precedes its genitive in a prepositional language and follows it in a postpositional
+one, a head in the adposition's direction, in 29 of the 30 languages (Universal 2). Norwegian,
+the exception of the text, has both orders by the paper's additional note. -/
 theorem universal_2 :
     UniversalExcept (fun _ ↦ True)
       (fun r ↦ r.genitive.headDirection? = some r.adposition.headDirection) ["Norwegian"] := by
   decide
 
+/-- A verb-initial language of the sample is prepositional and a verb-final one postpositional,
+its adposition a head in the direction of the verb (Universals 3 and 4). -/
 theorem universal_3_4 (d : HeadDirection) :
     Universal (·.basicOrder.IsEnd .verb d) (·.adposition.headDirection = d) := by
   cases d <;> decide
@@ -182,6 +189,8 @@ theorem universal_22 :
         (·.adposition = .prepositions) ["Songhai"] := by
   decide
 
+/-- Universal 23 as printed fails on the data, since every language that puts the proper noun first
+puts the genitive before the noun, Norwegian having both orders. -/
 theorem not_universal_23_as_printed :
     ¬ Universal (·.apposition = some .properCommon) (·.genitive = .nounFirst) := by
   decide

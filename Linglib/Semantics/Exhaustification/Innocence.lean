@@ -36,6 +36,9 @@ universe u
 
 variable {World : Type u} {ALT : Set (Set World)} {φ : Set World}
 
+/-- **Innocent exclusion is the greatest natural consistent exclusion.** Over finitely many
+alternatives and a satisfiable prejacent, the innocently excludable alternatives are the greatest
+set a natural consistent rule selects from the maximal consistent exclusions. -/
 theorem isGreatest_setOf_isInnocentlyExcludable (hfin : ALT.Finite) (hsat : φ.Nonempty) :
     IsGreatest ((fun F ↦ F _ {X | Maximal (IsConsistentExclusion ALT φ) X}) ''
         {F | IsNaturalSelection F ∧ IsConsistentSelection F})
@@ -43,6 +46,9 @@ theorem isGreatest_setOf_isInnocentlyExcludable (hfin : ALT.Finite) (hsat : φ.N
   isGreatest_setOf_forall_maximal hfin (fun _ h ↦ h.1)
     ⟨∅, empty_subset _, by rwa [sUnion_empty, sdiff_empty]⟩
 
+/-- **Innocent inclusion is the greatest natural consistent inclusion.** Over finitely many
+alternatives, when innocent exclusion is consistent the innocently includable alternatives are
+the greatest set a natural consistent rule selects from the maximal consistent inclusions. -/
 theorem isGreatest_II (hfin : ALT.Finite) (hne : (exhIE ALT φ).Nonempty) :
     IsGreatest ((fun F ↦ F _ {R | Maximal (IsConsistentInclusion ALT φ) R}) ''
         {F | IsNaturalSelection F ∧ IsConsistentSelection F})

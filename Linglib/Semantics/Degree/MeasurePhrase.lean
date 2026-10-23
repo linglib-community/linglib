@@ -81,6 +81,8 @@ theorem differentialComparative_add_const [AddGroup D] (μ : E → D) (c : D) (a
   differentialComparative_comp_of_commute (g := (· + c)) (add_left_injective c)
     (fun x ↦ add_assoc d x c) μ a b
 
+/-- Under a change of unit and origin, a differential holds once its amount is rescaled by the
+same unit. -/
 theorem differentialComparative_const_mul_add_const {k : Type*} [CommRing k] [IsDomain k]
     (μ : E → k) {a : k} (ha : a ≠ 0) (b : k) (x y : E) (d : k) :
     DifferentialComparative (fun e ↦ a * μ e + b) x y (a * d) ↔
@@ -88,6 +90,8 @@ theorem differentialComparative_const_mul_add_const {k : Type*} [CommRing k] [Is
   rw [differentialComparative_add_const (μ := fun e ↦ a * μ e)]
   simp only [DifferentialComparative, ← mul_sub, (mul_right_injective₀ ha).eq_iff]
 
+/-- A differential survives an injective change of scale for every measure exactly when the change
+commutes with adding its amount, so it is not meaningful on an ordinal scale. -/
 theorem differentialComparative_comp_iff_commute [AddGroup D] [Nontrivial E] {g : D → D}
     (hg : Injective g) {d : D} :
     (∀ (μ : E → D) a b, DifferentialComparative (g ∘ μ) a b d ↔ DifferentialComparative μ a b d) ↔
@@ -119,6 +123,8 @@ theorem factorEquative_const_mul [CommMonoidWithZero D] [IsCancelMulZero D] (μ 
   factorEquative_comp_of_commute (g := (c * ·)) (mul_right_injective₀ hc)
     (fun x ↦ mul_left_comm c n x) μ a b
 
+/-- A factor phrase survives an injective change of scale for every measure exactly when the change
+commutes with multiplying by its factor. -/
 theorem factorEquative_comp_iff_commute [Mul D] [Nontrivial E] {g : D → D} (hg : Injective g)
     {n : D} :
     (∀ (μ : E → D) a b, FactorEquative (g ∘ μ) a b n ↔ FactorEquative μ a b n) ↔
@@ -129,6 +135,8 @@ theorem factorEquative_comp_iff_commute [Mul D] [Nontrivial E] {g : D → D} (hg
   have := (h (fun e ↦ if e = a then n * x else x) a b).2 (by simp [FactorEquative, hab.symm])
   simpa [FactorEquative, hab.symm] using this
 
+/-- A factor phrase survives translating the scale by `c` for every measure exactly when the factor
+fixes `c`, since moving the zero point destroys ratios. -/
 theorem factorEquative_add_const_iff [Ring D] [Nontrivial E] (c n : D) :
     (∀ (μ : E → D) a b, FactorEquative (fun x ↦ μ x + c) a b n ↔ FactorEquative μ a b n) ↔
       n * c = c := by

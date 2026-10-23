@@ -166,6 +166,8 @@ structure OnsetRime where
 /-- Passing from σ to onset-rime structure, the rime is the moraic spine ([selkirk-1982]). -/
 def Syllable.toOnsetRime (σ : Syllable) : OnsetRime := ⟨σ.onset, σ.morae⟩
 
+/-- By **weight correspondence**, the onset-rime rime's mora count equals σ's weight, so the
+    moraic and onset-rime theories agree on weight ([selkirk-1982]; [hayes-1989]). -/
 theorem Syllable.toOnsetRime_weight (σ : Syllable) :
     σ.toOnsetRime.rime.length = σ.moraCount := rfl
 

@@ -66,9 +66,12 @@ def homogeneous : List Verb := [misla, obicham, znam, blesta, pisha, cheta, peja
 /-- The simplex quantized verbs of (4). -/
 def quantized : List Verb := [kupja, dam]
 
+/-- Each aspectless homogeneous verb is one the dictionary calls imperfective, the default value
+it shows. -/
 theorem homogeneous_imperfective : ∀ v ∈ homogeneous, v.perfectivity = some .imperfective := by
   decide
 
+/-- Each quantized simplex verb is one the dictionary calls perfective. -/
 theorem quantized_perfective : ∀ v ∈ quantized, v.perfectivity = some .perfective := by
   decide
 
@@ -111,6 +114,7 @@ def WellFormed (ps : List (Morph × PrefixClass)) : Prop :=
 instance (ps : List (Morph × PrefixClass)) : Decidable (WellFormed ps) := by
   unfold WellFormed Ordered DistributiveLicensed DelimitativeAlone; infer_instance
 
+/-- Nothing stacks on top of attenuative *po-*: in an ordered stack it is outermost. -/
 theorem attenuative_outermost {l : List SuperlexicalSubtype} (h : l.Pairwise Above)
     (hm : .attenuative ∈ l) : l.head? = some .attenuative := by
   cases l with
@@ -324,6 +328,8 @@ def sPoPreNa : Analysis :=
 head without *iz-* above. -/
 def starred : List Analysis := [s25b, sNaPo, sRazPo, s29, sPreNa, sPoPreNa]
 
+/-- Every analysis spells out its form: the attested stacks the forms the paper accepts, the
+starred ones the forms it rejects. -/
 theorem spells : ∀ a ∈ attested ++ starred, Spells a.morphs a.form.form := by decide
 
 /-- The attested stacks are accepted forms and the starred ones rejected forms. -/
@@ -332,8 +338,10 @@ theorem judgments :
       ∀ a ∈ starred, a.form.judgment = .ungrammatical := by
   decide
 
+/-- Every attested stack is well-formed. -/
 theorem attested_wellFormed : ∀ a ∈ attested, WellFormed a.prefixes := by decide
 
+/-- The starred stacks are ill-formed. -/
 theorem starred_not_wellFormed : ∀ a ∈ starred, ¬ WellFormed a.prefixes := by decide
 
 theorem starred_distributive_not_wellFormed :

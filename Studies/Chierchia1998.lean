@@ -97,6 +97,8 @@ end Language
 
 open Language
 
+/-- A [+arg, −pred] language has a generalized classifier system, and a classifier language must
+be [+arg, −pred]: the classifier languages of the sample are exactly the [+arg, −pred] ones. -/
 theorem hasClassifiers_iff : ∀ l : Language, l.HasClassifiers ↔ l.nominalMapping = .argOnly
   | .mandarin =>
     iff_of_true ⟨Mandarin.Classifiers.ge, by simp [Mandarin.Classifiers.classifiers]⟩ rfl
@@ -120,11 +122,15 @@ open Mereology
 
 variable {S E : Type*} {K : Set (S → Option E)} {P : S → Set E}
 
+/-- ∩ is undefined for a singular property: its concept is singular in every situation, and no
+kind is. -/
 theorem iota_isGreatest_notMem_of_atom [PartialOrder E]
     (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d) (hP : ∀ s, ∀ x ∈ P s, Atom x) :
     (fun s ↦ iota (IsGreatest (P s))) ∉ K :=
   fun h ↦ hK _ h fun s _ hd ↦ hP s _ (iota_isGreatest_eq_some_iff.1 hd).1
 
+/-- The concept of a property closed under sum is not singular in every situation once its
+extension somewhere is finite and has a plurality. -/
 theorem not_forall_atom_iota_isGreatest [SemilatticeSup E] {s : S} {x : E}
     (hfin : (P s).Finite) (hcum : SupClosed (P s)) (hx : x ∈ P s) (hx0 : ¬ IsBot x)
     (hxa : ¬ Atom x) : ¬ ∀ s, ∀ d ∈ iota (IsGreatest (P s)), Atom d := fun h ↦ by
@@ -141,6 +147,8 @@ The determiner inventory of each sampled language decides by the Blocking Princi
 covert shifts it blocks, and with the mapping which bare nominals it admits as arguments
 (`NominalMapping.LicensesBare`), given whether ∩ is defined for the nominal. -/
 
+/-- A [+arg, −pred] language has no articles and so blocks neither ι nor ∃, and ∩ is never
+blocked: all three of Chierchia's shifts are available to Mandarin and Japanese bare nouns. -/
 theorem argOnly_blocks_nothing :
     ∀ l : Language, l.nominalMapping = .argOnly →
       ¬ l.determiners.Blocks .iota ∧ ¬ l.determiners.Blocks .exists := by
@@ -151,6 +159,7 @@ theorem argOnly_licensesBare (down : Prop) :
       (nominalMapping .japanese).LicensesBare (determiners .japanese) down := by
   simp [NominalMapping.LicensesBare, nominalMapping]
 
+/-- The [−arg, +pred] languages of the sample have a definite article and so block ι. -/
 theorem predOnly_blocks_iota :
     ∀ l : Language, l.nominalMapping = .predOnly → l.determiners.Blocks .iota := by
   decide
@@ -160,6 +169,8 @@ theorem predOnly_not_licensesBare (down : Prop) :
       ¬ (nominalMapping .italian).LicensesBare (determiners .italian) down := by
   simp [NominalMapping.LicensesBare, nominalMapping]
 
+/-- English, [+arg, +pred] with *the* and *a* blocking ι and ∃, admits exactly the bare nominals
+kind formation is defined for. -/
 theorem english_licensesBare_iff (down : Prop) :
     (nominalMapping .english).LicensesBare (determiners .english) down ↔ down :=
   NominalMapping.argAndPred_licensesBare_iff (by decide) (by decide)

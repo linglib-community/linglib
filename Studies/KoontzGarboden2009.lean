@@ -116,6 +116,8 @@ kind of causative that §3.5 finds the inchoative to entail. -/
 theorem causative_self_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : causative M θ P x x e := h
 
+/-- A derived inchoative retains a causing subevent whose causer is its subject, so CAUSE
+survives reflexivization. -/
 theorem exists_cause_of_anticausative {x : Entity} {e : E}
     (h : anticausative M θ P x e) : ∃ w, θ x w ∧ w ~[M.cause] e :=
   let ⟨w, hθ, hc, _⟩ := h; ⟨w, hθ, hc⟩
@@ -212,6 +214,7 @@ exactly to templates with CAUSE and changes no operator. -/
 def reflexivizeTemplate (t : Template .event) : Option (Template .event) :=
   if t.HasCause then some t else none
 
+/-- Anticausativization as reflexivization satisfies the hypothesis. -/
 theorem monotonicityHypothesis_reflexivizeTemplate :
     MonotonicityHypothesis reflexivizeTemplate := by
   intro t t' h

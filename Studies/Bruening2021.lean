@@ -152,6 +152,12 @@ def Sluices (h : Cat) : Prop := ∃ b : Binder, b.head = h ∧ ¬ b.Projects
 
 instance (h : Cat) : Decidable (Sluices h) := inferInstanceAs (Decidable (∃ _, _))
 
+/-- The interpretations an implicit argument shows are those available to an argument of its
+head, and of no other head. The verb chooses ∃ or ι for its own arguments, so their
+interpretations vary from verb to verb, while ApplPass alone closes off the first object. An
+analysis on which the verb selects the first object, as Pesetsky's and Larson's do, predicts
+indefinite implicit first objects; a small-clause analysis, on which the verb selects neither,
+predicts no lexical variation in the second. -/
 theorem interps_eq_observed_iff (x : Argument) (h : Cat) :
     interps h = observed x ↔ h = x.host := by
   rcases eq_or_ne x .firstObject with rfl | hx
@@ -190,6 +196,8 @@ theorem combine?_appl :
       Ty.combine? (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.et = none := by
   decide
 
+/-- No verb but *write* leaves its direct object implicit both in the double object and in the
+prepositional frame. -/
 theorem dropsInBothFrames :
     (verbs.filter fun v ↦ (∃ a, v.Alternates (Argument.secondObject.leaveImplicit a)) ∧
       ∃ a, v.Alternates (Argument.directObject.leaveImplicit a)).map (·.form) = ["write"] := by

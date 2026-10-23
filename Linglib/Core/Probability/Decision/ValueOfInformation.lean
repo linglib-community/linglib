@@ -83,6 +83,8 @@ section ArgminEstimator
 variable {m𝓨 : MeasurableSpace 𝓨} [StandardBorelSpace Θ] [Nonempty Θ] [Countable 𝓧]
   [MeasurableSingletonClass 𝓧] [Finite 𝓨] [Nonempty 𝓨]
 
+/-- With countably many observations and finitely many estimates, choosing a minimizer of the
+posterior expected loss at each observation gives an argmin estimator. -/
 theorem hasArgminEstimator_of_finite (ℓ : Θ → 𝓨 → ℝ≥0∞) (P : Kernel Θ 𝓧) [IsFiniteKernel P]
     (π : Measure Θ) [IsFiniteMeasure π] : HasArgminEstimator ℓ P π := by
   choose f hf using fun x ↦ Finite.exists_min fun y ↦ ∫⁻ θ, ℓ θ y ∂(P†π) x
@@ -116,12 +118,14 @@ theorem valueOfInformation_smul (V : Measure Θ → ℝ) (c : ℝ) :
   simp only [valueOfInformation, Pi.smul_apply, smul_eq_mul, integral_const_mul, mul_sub]
 
 omit [IsFiniteKernel κ] in
+/-- An experiment whose law does not depend on the parameter is worth nothing. -/
 theorem valueOfInformation_const (V : Measure Θ → ℝ) (ν : Measure 𝓧) [IsProbabilityMeasure ν]
     [IsProbabilityMeasure π] : valueOfInformation V (Kernel.const Θ ν) π = 0 := by
   rw [valueOfInformation, Measure.const_comp, measure_univ, one_smul, sub_eq_zero,
     integral_congr_ae ((posterior_const ν π).mono fun x hx ↦ congrArg V hx)]
   simp
 
+/-- Observing the parameter itself leaves a point-mass belief at each value. -/
 theorem valueOfInformation_id (V : Measure Θ → ℝ) :
     valueOfInformation V Kernel.id π = ∫ θ, V (Measure.dirac θ) ∂π - V π := by
   rw [valueOfInformation, Measure.id_comp]
@@ -202,6 +206,8 @@ theorem bayesRisk_ofReal_sub :
       (ae_of_all _ fun x ↦ sub_nonneg.2 (decisionValue_le hC _)),
     integral_sub (integrable_const C) .of_finite, integral_const, probReal_univ, one_smul]
 
+/-- At the regret loss `C − U`, the risk increase of an experiment is the value of information
+of the decision value. -/
 theorem riskIncrease_ofReal_sub :
     riskIncrease (fun θ a ↦ ENNReal.ofReal (C - U θ a)) κ π =
       ENNReal.ofReal (valueOfInformation (decisionValue U) κ π) := by
@@ -220,6 +226,7 @@ variable [Finite Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ] [None
   [MeasurableSingletonClass 𝓧] [Finite 𝓨] (U : Θ → 𝓨 → ℝ) (κ : Kernel Θ 𝓧) [IsMarkovKernel κ]
   (π : Measure Θ) [IsProbabilityMeasure π]
 
+/-- Information has nonnegative value to an expected-utility maximizer. -/
 theorem valueOfInformation_decisionValue_nonneg : 0 ≤ valueOfInformation (decisionValue U) κ π := by
   rcases isEmpty_or_nonempty 𝓨 with h𝓨 | h𝓨
   · simp [valueOfInformation, decisionValue]
@@ -234,6 +241,7 @@ theorem valueOfInformation_decisionValue_nonneg : 0 ≤ valueOfInformation (deci
   rw [valueOfInformation]
   linarith
 
+/-- Garbling an experiment cannot raise its value to an expected-utility maximizer. -/
 theorem valueOfInformation_decisionValue_comp_le {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'}
     [Finite 𝓧'] [MeasurableSingletonClass 𝓧'] (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
     valueOfInformation (decisionValue U) (η ∘ₖ κ) π ≤ valueOfInformation (decisionValue U) κ π := by
@@ -247,6 +255,8 @@ theorem valueOfInformation_decisionValue_comp_le {𝓧' : Type*} {m𝓧' : Measu
   rwa [riskIncrease_ofReal_sub hC, riskIncrease_ofReal_sub hC,
     ENNReal.ofReal_le_ofReal_iff (valueOfInformation_decisionValue_nonneg U κ π)] at h
 
+/-- No experiment is worth more than observing the parameter itself, the expected value of
+perfect information. -/
 theorem valueOfInformation_decisionValue_le_id :
     valueOfInformation (decisionValue U) κ π ≤
       valueOfInformation (decisionValue U) Kernel.id π := by
@@ -261,6 +271,8 @@ section Deterministic
 variable [Finite Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ] [Nonempty Θ]
   [Fintype 𝓧] [MeasurableSingletonClass 𝓧]
 
+/-- The value of information of observing `f` is the decision value of the prior conditioned on
+each fibre of `f`, weighted by the fibre's probability, less the decision value of the prior. -/
 theorem valueOfInformation_deterministic (V : Measure Θ → ℝ) {f : Θ → 𝓧} (hf : Measurable f)
     (π : Measure Θ) [IsFiniteMeasure π] :
     valueOfInformation V (Kernel.deterministic f hf) π =
@@ -287,6 +299,8 @@ theorem valueOfInformation_decisionValue_le_of_factorsThrough [Finite 𝓨] (U :
   exact this
 
 omit [MeasurableSingletonClass 𝓧] in
+/-- Averaging the expectations conditional on the fibres of `f` recovers the expectation, the law
+of total expectation. -/
 theorem sum_measureReal_mul_integral_cond (g : Θ → ℝ) (f : Θ → 𝓧) (π : Measure Θ)
     [IsProbabilityMeasure π] :
     ∑ x, π.real (f ⁻¹' {x}) * ∫ θ, g θ ∂π[|f ⁻¹' {x}] = ∫ θ, g θ ∂π := by
@@ -298,6 +312,8 @@ theorem sum_measureReal_mul_integral_cond (g : Θ → ℝ) (f : Θ → 𝓧) (π
 variable {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'} [Fintype 𝓧'] [MeasurableSingletonClass 𝓧']
   [Nonempty 𝓧']
 
+/-- If observing `g` is never worth more than observing `f` to an expected-utility maximizer
+with actions `𝓧'` and a uniform prior, then `g` factors through `f`. -/
 theorem exists_eq_comp_of_forall_valueOfInformation_le [Fintype Θ] (f : Θ → 𝓧) (g : Θ → 𝓧')
     (h : ∀ U : Θ → 𝓧' → ℝ,
       valueOfInformation (decisionValue U) (Kernel.deterministic g (measurable_of_countable g))

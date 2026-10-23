@@ -59,6 +59,7 @@ instance [∀ b, DecidablePred (· ∈ P b)] (b : TreePath) :
     DecidablePred (· ∈ (t.configuration P).domain b) :=
   fun a ↦ inferInstanceAs (Decidable ((b, a) ∈ commandRelation (P b)))
 
+/-- More bounding nodes give smaller domains and the same command. -/
 theorem configuration_anti (h : ∀ b, P b ⊆ Q b) : t.configuration Q ≤ t.configuration P :=
   ⟨le_rfl, fun b _ ha ↦ upperPolar_anti _ (h b) ha⟩
 

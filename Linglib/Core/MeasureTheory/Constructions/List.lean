@@ -57,6 +57,7 @@ section Prefixes
 
 variable {α : Type*} [Countable α] (μ : Measure (List α))
 
+/-- The lists of length at least `n` are partitioned by their prefix of length `n`. -/
 theorem tsum_measure_setOf_prefix_length (n : ℕ) :
     ∑' x : {x : List α // x.length = n}, μ {y | x.1 <+: y} = μ {y | n ≤ y.length} := by
   have h (x : {x : List α // x.length = n}) : {y | x.1 <+: y} = List.take n ⁻¹' {x.1} := by
@@ -69,6 +70,8 @@ theorem tsum_measure_setOf_prefix_length (n : ℕ) :
   rw [hs, ← tsum_measure_preimage_singleton (Set.to_countable _) fun _ _ ↦ .of_discrete]
   rfl
 
+/-- The total measure of the prefix sets is the integral of the number of prefixes, the length
+plus one. -/
 theorem tsum_measure_setOf_prefix :
     ∑' x, μ {y | x <+: y} = ∫⁻ y, (y.length : ℝ≥0∞) + 1 ∂μ := by
   simp_rw [← Nat.cast_add_one]

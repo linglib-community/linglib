@@ -144,6 +144,8 @@ theorem applies_mono {n' : Neighborhood (Finset F)} (h : Applies i n) (hn : n �
     Applies i n' :=
   fun _ hx ↦ Neighborhood.mem_of_subset hn (h _ hx)
 
+/-- Specificity is reverse inclusion of sites: an item applies in fewer neighborhoods exactly when
+its site is larger, since principal up-sets are ordered reversely to their generators. -/
 theorem applySet_subset_iff : applySet i ⊆ applySet j ↔ j.site ⊆ i.site := by
   classical
   rw [applySet_eq, applySet_eq, Set.Ici_subset_Ici, Neighborhood.ofFinset_subset_ofFinset]
@@ -211,6 +213,8 @@ theorem subsetPrinciple_winner_mem (h : subsetPrinciple items n = some e) :
 theorem winner?_isSome_iff : (winner? items n).isSome ↔ ∃ i ∈ items, Applies i n :=
   RuleSet.selectBy_isSome_iff
 
+/-- On a vocabulary listed by non-increasing specificity, the winner is the first applicable
+item. -/
 theorem winner?_eq_head?_applicable (h : items.Pairwise fun i j ↦ j.specificity ≤ i.specificity) :
     winner? items n = (items.applicable n).head? :=
   RuleSet.selectBy_eq_head?_applicable h
@@ -223,6 +227,8 @@ theorem subsetPrinciple_eq_head?_applicable
     subsetPrinciple items n = ((items.applicable n).head?).map (·.exponent) := by
   rw [subsetPrinciple_eq_map_winner?, winner?_eq_head?_applicable h]
 
+/-- The winner is an Elsewhere winner of the shared core, with no faithfulness hypothesis, since
+`VocabularyItem.specificity` is strictly antitone outright. -/
 theorem winner?_isElsewhereWinner (h : winner? items n = some i) :
     items.IsElsewhereWinner applySet n i :=
   RuleSet.selectBy_isElsewhereWinner
@@ -236,6 +242,9 @@ theorem winner?_eq_of_subset (hsub : n' ⊆ n) (h : winner? items n = some i) (h
     winner? items n' = some i :=
   RuleSet.selectBy_eq_some_of_applies (fun _ _ hs ↦ VocabularyItem.applies_mono hs hsub) h hi
 
+/-- **Retreat to the general case.** Shrinking the neighborhood, deleting features by
+Impoverishment, can only make the winner weakly less specific, which is why impoverishment yields
+syncretism with a more general exponent rather than a different specific one. -/
 theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
     ∃ i, winner? items n = some i ∧ i'.specificity ≤ i.specificity := by
   have hi' : Applies i' n := VocabularyItem.applies_mono (RuleSet.selectBy_applies h') hsub
@@ -243,6 +252,9 @@ theorem winner?_retreat (hsub : n' ⊆ n) (h' : winner? items n' = some i') :
     (winner?_isSome_iff.mpr ⟨i', RuleSet.selectBy_mem h', hi'⟩)
   exact ⟨i, hi, RuleSet.le_of_selectBy_eq_some hi (RuleSet.selectBy_mem h') hi'⟩
 
+/-- An antihomophonous vocabulary realizes no ABA pattern over neighborhoods ordered by inclusion:
+an exponent inserted at two nested neighborhoods is inserted at every neighborhood between
+them. -/
 theorem isContiguous_subsetPrinciple (hv : items.Antihomophonous) :
     IsContiguous (subsetPrinciple items) :=
   RuleSet.isContiguous_realize_of_monotone hv fun _ _ _ _ hn hs ↦ VocabularyItem.applies_mono hs hn

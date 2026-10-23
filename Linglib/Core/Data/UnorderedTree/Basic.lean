@@ -198,6 +198,8 @@ An unordered tree is a label over a multiset of unordered trees. `induction_on`,
 `para` are the induction, recursion and paramorphism principles of that description; a function
 defined through them needs no proof of invariance under `RoseTree.Perm`. -/
 
+/-- Induction on an unordered tree proves `motive t` for all `t` from `motive (node a F)` given
+`motive c` for every child `c ∈ F`. -/
 @[elab_as_elim, induction_eliminator]
 theorem induction_on {motive : UnorderedTree α → Prop} (t : UnorderedTree α)
     (node : ∀ (a : α) (F : Multiset (UnorderedTree α)), (∀ c ∈ F, motive c) → motive (node a F)) :

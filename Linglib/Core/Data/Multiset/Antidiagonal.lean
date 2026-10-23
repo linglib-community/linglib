@@ -31,6 +31,7 @@ namespace Multiset
 
 variable {α : Type*}
 
+/-- `antidiagonal` of a coerced list enumerates `sublists'.revzip`. -/
 theorem antidiagonal_coe_sublists' (l : List α) :
     antidiagonal (l : Multiset α) =
       ((l.sublists'.revzip.map fun p => ((p.1 : Multiset α), (p.2 : Multiset α)) :
@@ -40,12 +41,16 @@ theorem antidiagonal_coe_sublists' (l : List α) :
 
 variable [DecidableEq α]
 
+/-- The splits of `s` whose first part has `k` elements are the `k`-element sub-multisets of `s`
+paired with their complements (`Finset.HasAntidiagonal.filter_fst_eq_antidiagonal` analogue). -/
 theorem filter_card_fst_eq_antidiagonal (s : Multiset α) (k : ℕ) :
     (s.antidiagonal.filter fun p ↦ card p.1 = k) = (s.powersetCard k).map fun t ↦ (t, s - t) := by
   rw [← map_swap_antidiagonal, antidiagonal_eq_map_powerset, map_map, filter_map,
     powersetCard_eq_filter]
   rfl
 
+/-- The multiplicity of `(s, t)` in `antidiagonal (s + t)` is the number of ways to
+    select the sub-multiset `t` from `s + t`. -/
 theorem count_antidiagonal_eq_count_powerset (s t : Multiset α) :
     (antidiagonal (s + t)).count (s, t) = (s + t).powerset.count t := by
   rw [antidiagonal_eq_map_powerset,

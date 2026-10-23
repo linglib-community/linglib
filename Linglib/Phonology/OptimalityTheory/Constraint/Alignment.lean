@@ -89,6 +89,9 @@ def deficiency : Constraint (List β × List γ) := fun x ↦ x.1.length - x.1.m
 
 variable {R}
 
+/-- **Correspondence asks no more than alignment along a stricter relation**: where `S` is
+contained in `R` and no two members of a duplicate-free family bear `S` to one member, the members
+left without a correspondent along `R` are among those bearing `S` to none. -/
 theorem deficiency_le_align {S : β → γ → Prop} [DecidableRel S] {x : List β × List γ}
     (hx : x.1.Nodup) (hSR : ∀ a ∈ x.1, ∀ b, S a b → R a b)
     (hS : ∀ a ∈ x.1, ∀ a' ∈ x.1, ∀ b, S a b → S a' b → a = a') : deficiency R x ≤ align S x := by

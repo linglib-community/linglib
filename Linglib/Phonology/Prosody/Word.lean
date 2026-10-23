@@ -102,6 +102,8 @@ abbrev minimalProjections (ℓ : Level) (t : Tree) : Set TreePath :=
 abbrev NoLevelRecursion (ℓ : Level) (t : Tree) : Prop :=
   IsAntichain (· ≤ ·) (levelPositions ℓ t)
 
+/-- **No-Recursion collapses the projections**: under transitive No-Recursion at `ℓ`, every
+`ℓ`-node is at once topmost and bottommost. -/
 theorem maximalProjections_eq_minimalProjections {ℓ : Level} {t : Tree}
     (h : NoLevelRecursion ℓ t) : maximalProjections ℓ t = minimalProjections ℓ t := by
   ext p

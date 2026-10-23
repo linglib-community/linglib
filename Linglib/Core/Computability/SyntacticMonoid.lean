@@ -234,6 +234,7 @@ theorem IsRegular.of_finite_syntacticMonoid (h : Finite L.SyntacticMonoid) : L.I
   .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
     (fun _ _ e ↦ (syntacticClass_eq_iff.mp e).leftQuotient_eq) (Set.toFinite _)
 
+/-- `L` is regular iff `L.SyntacticMonoid` is finite. -/
 theorem isRegular_iff_finite_syntacticMonoid : L.IsRegular ↔ Finite L.SyntacticMonoid :=
   ⟨IsRegular.finite_syntacticMonoid, IsRegular.of_finite_syntacticMonoid⟩
 

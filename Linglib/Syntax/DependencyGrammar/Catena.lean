@@ -70,6 +70,8 @@ theorem connected_induce_cone (g : Graph n) (v : Fin n) :
     · exact ih
     · exact ih.trans (SimpleGraph.Adj.reachable ⟨hne, Or.inl hbc⟩)
 
+/-- Every constituent is a catena, since a constituent is the dominance cone of some position
+and cones induce connected subgraphs. -/
 theorem IsConstituent.isCatena {g : Graph n} {s : Finset (Fin n)}
     (h : IsConstituent g s) : IsCatena g s := by
   obtain ⟨v, hv⟩ := h
@@ -81,6 +83,9 @@ theorem isCatena_pair (g : Graph n) {v w : Fin n} (h : g.Adj v w) (hne : v ≠ w
   rw [IsCatena, Finset.coe_pair]
   exact SimpleGraph.induce_pair_connected_of_adj ⟨hne, .inl h⟩
 
+/-- In a forest, a head with one of its dependents is not a constituent when the head has
+another dependent, since the head's cone contains the other dependent and the dependent's cone
+does not contain the head. -/
 theorem not_isConstituent_pair {g : Graph n} (hF : g.IsForest) {v w u : Fin n} (hw : g.Adj v w)
     (hu : g.Adj v u) (huw : u ≠ w) : ¬ IsConstituent g {v, w} := by
   rintro ⟨c, hc⟩
@@ -98,6 +103,8 @@ theorem isConstituent_univ {g : Graph n} (hT : g.IsTree) :
 theorem isCatena_univ {g : Graph n} (hT : g.IsTree) : IsCatena g Finset.univ :=
   (isConstituent_univ hT).isCatena
 
+/-- The undirected view of a dependency tree is a tree: it is connected, the whole sentence being
+a catena, and its edges are the links from each position other than the root to its head. -/
 theorem Graph.IsTree.isTree_toSimpleGraph {g : Graph n} (hT : g.IsTree) :
     g.toSimpleGraph.IsTree := by
   have hhead {w : Fin n} (hw : w ≠ g.root) : g.Adj (g.headOf w) w :=

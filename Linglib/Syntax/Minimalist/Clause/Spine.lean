@@ -93,6 +93,7 @@ def IsExtendedProjection (s : ClauseSpine) : Prop := s.heads.IsChain Cat.Extends
 instance (s : ClauseSpine) : Decidable s.IsExtendedProjection :=
   inferInstanceAs (Decidable (List.IsChain _ _))
 
+/-- In an extended projection every head extends each head below it. -/
 theorem IsExtendedProjection.pairwise (h : s.IsExtendedProjection) :
     s.heads.Pairwise Cat.ExtendsTo :=
   List.isChain_iff_pairwise.1 h
@@ -142,6 +143,7 @@ def above (s : ClauseSpine) (c : Cat) : List Cat := s.heads.rtakeWhile (· != c)
 theorem notMem_below_self (s : ClauseSpine) (c : Cat) : c ∉ s.below c := fun h ↦ by
   simpa using List.mem_takeWhile_imp h
 
+/-- The complement of a head lies inside the complement of every head above it. -/
 theorem below_prefix (h : c ∈ s.below d) : s.below c <+: s.below d :=
   List.takeWhile_bne_prefix_of_mem h
 

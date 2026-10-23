@@ -78,10 +78,13 @@ end PreExists
 theorem preExists_of_precedes {x : X} (hx : Q x) (h : (τ x).Precedes t) : PreExists τ Q t.fst :=
   ⟨x, hx, (τ x).fst_le_snd.trans_lt h⟩
 
+/-- A description of individuals preceding an interval pre-exists it exactly when it describes
+something. -/
 theorem preExists_iff_exists_of_precedes (h : ∀ x, Q x → (τ x).Precedes t) :
     PreExists τ Q t.fst ↔ ∃ x, Q x :=
   ⟨PreExists.exists, fun ⟨x, hx⟩ ↦ preExists_of_precedes hx (h x hx)⟩
 
+/-- A description of individuals within an interval never pre-exists it. -/
 theorem not_preExists_of_le (h : ∀ x, Q x → τ x ≤ t) : ¬ PreExists τ Q t.fst :=
   fun ⟨x, hx, hlt⟩ ↦ hlt.not_ge (h x hx).1
 

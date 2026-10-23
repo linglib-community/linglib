@@ -117,6 +117,7 @@ theorem IsMaximalProjection.eq_of_isProjectionOf {h p : α} (hp : IsMaximalProje
   · rfl
   · exact absurd hcp (hp c)
 
+/-- Along a functional head relation a node has one lexical head. -/
 theorem IsLexicalHeadOf.unique (hfun : Relator.RightUnique H) {p h h' : α}
     (hh : IsLexicalHeadOf H h p) (hh' : IsLexicalHeadOf H h' p) : h = h' := by
   rcases Relation.ReflTransGen.total_of_right_unique hfun hh.1 hh'.1 with h1 | h1
@@ -176,6 +177,7 @@ theorem IsProjectionOf.exists_of_lt [IsLeftLinear α] {h p q : α} (hp : IsProje
   · exact absurd rfl hpq.ne
   · exact ⟨m, hm⟩
 
+/-- The maximal projection of `h` is the least of its projections. -/
 theorem isLeast_projections_iff [IsLeftLinear α] {h m : α} :
     IsLeast {p | IsProjectionOf H h p} m ↔ IsProjectionOf H h m ∧ IsMaximalProjection H m := by
   constructor
@@ -190,6 +192,7 @@ theorem isLeast_projections_iff [IsLeftLinear α] {h m : α} :
         exact absurd hx (hmax x)
     · exact h
 
+/-- Every node has a maximal projection. -/
 theorem exists_isLeast_projections [IsLeftLinear α] [WellFoundedLT α] (h : α) :
     ∃ m, IsLeast {p | IsProjectionOf H h p} m := by
   obtain ⟨m, hm, hmin⟩ := WellFounded.has_min wellFounded_lt {p | IsProjectionOf H h p}
@@ -316,6 +319,7 @@ theorem mem_segments_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : �
     · exact mem_segments_of_reflTransGen h
     · exact mem_segments_comm.1 (mem_segments_of_reflTransGen h)
 
+/-- The segments of a category form a chain. -/
 theorem isChain_segments [IsLeftLinear α] (hU : Relator.RightUnique A) (x : α) :
     IsChain (· ≤ ·) (segments A x) := by
   have hL : Relator.RightUnique (Function.swap A) := fun _ _ _ h h' ↦
@@ -332,6 +336,8 @@ theorem isChain_segments [IsLeftLinear α] (hU : Relator.RightUnique A) (x : α)
       (fun h ↦ IsProjectionOf.le hA (Relation.reflTransGen_swap.1 h))
       (fun h ↦ IsProjectionOf.le hA (Relation.reflTransGen_swap.1 h))
 
+/-- A category includes what the segments at or below `x` dominate, since those above dominate
+whatever `x` does. -/
 theorem includes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
     Includes A x y ↔ ∀ s, Relation.ReflTransGen A x s → s ≤ y := by
   refine ⟨fun h s hs ↦ h s (mem_segments_of_reflTransGen hs), fun h s hs ↦ ?_⟩
@@ -339,6 +345,7 @@ theorem includes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
   · exact h s hs
   · exact (IsProjectionOf.le hA hs).trans (h x .refl)
 
+/-- A category excludes what no segment at or above `x` dominates. -/
 theorem excludes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
     Excludes A x y ↔ ∀ s, Relation.ReflTransGen A s x → ¬ s ≤ y := by
   refine ⟨fun h s hs ↦ h s (mem_segments_comm.1 (mem_segments_of_reflTransGen hs)),
@@ -355,6 +362,8 @@ theorem includes_iff_forall_le [IsLeftLinear α] (hU : Relator.RightUnique A) {x
   | refl => exact hxy
   | tail hq hqd ih => exact h _ hq ih _ hqd
 
+/-- An adjunct is not included in the category it adjoins to, since the host segment does not
+dominate it. -/
 theorem not_includes_of_covBy {m d a : α} (hmd : A m d) (ha : m ⋖ a) (had : a ≠ d) :
     ¬ Includes A m a := fun h ↦
   not_le_of_covBy (hA _ _ hmd) ha had.symm (h d (Relation.EqvGen.rel _ _ hmd))
@@ -416,6 +425,8 @@ abbrev maxCommand : SetRel α α := commandRelation (maximalProjections P A)
 variable (hA : ∀ m d, A m d → m ⋖ d)
 include hA
 
+/-- An adjunct to a maximal category MAX-commands out of it, while what the category dominates
+does not MAX-command the adjunct. -/
 theorem maxCommand_adjunct [IsLeftLinear α] {m d a b : α} (hmd : A m d) (ha : m ⋖ a)
     (had : a ≠ d) (hd : d ∈ maximalProjections P A) (hdb : d < b) :
     (a, b) ∈ maxCommand P A ∧ (b, a) ∉ maxCommand P A :=
@@ -433,6 +444,8 @@ theorem isMaximalCategory_iff_forall_above [IsLeftLinear α] (hP : ∀ m d, P m 
     · exact fun m hm ↦ hdisj c s hcs (eq_of_covBy_covBy (hP _ _ hm) (hA _ _ hcs) ▸ hm)
   · exact h s hs
 
+/-- A node that projects to the lowest segment `b` of a maximal category MAX-commands exactly what
+`b` dominates. -/
 theorem mem_maxCommand_iff_le [IsLeftLinear α] (hP : ∀ m d, P m d → m ⋖ d) {h b x : α}
     (hb : IsProjectionOf (P ⊔ A) h b) (hmax : b ∈ maximalProjections P A) (hne : b ≠ h) :
     (h, x) ∈ maxCommand P A ↔ b ≤ x := by
@@ -561,6 +574,7 @@ theorem isProjectionOf_maximalProjectionAt (h : TreePath) :
   | none => exact .refl _
   | some r => simpa using List.find?_some hf
 
+/-- `maximalProjectionAt hd h` is the least projection of `h`. -/
 theorem isLeast_maximalProjectionAt (h : TreePath) :
     IsLeast {p | IsProjectionOf (headDaughterRel hd) h p} (maximalProjectionAt hd h) := by
   refine ⟨isProjectionOf_maximalProjectionAt hd h, fun p hp ↦ ?_⟩

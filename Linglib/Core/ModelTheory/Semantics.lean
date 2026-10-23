@@ -32,6 +32,7 @@ namespace FirstOrder.Language
 
 open Structure
 
+/-- [UPSTREAM] The value of a term depends only on the values of its variables. -/
 theorem Term.dependsOn_realize {L : Language} {M : Type*} [L.Structure M] {α : Type*}
     [DecidableEq α] (t : L.Term α) : DependsOn (fun v : α → M ↦ t.realize v) t.varFinset := by
   intro v₁ v₂ h

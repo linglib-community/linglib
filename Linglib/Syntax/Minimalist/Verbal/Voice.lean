@@ -216,6 +216,7 @@ theorem passive_anticausative :
       anticausative.HasD := by
   decide
 
+/-- Every named thematic cell keeps its variable implicit exactly when it lacks a specifier. -/
 theorem canonical_dCoherent :
     agentive.DCoherent ∧ causer.DCoherent ∧ experiencer.DCoherent ∧
       anticausative.DCoherent ∧ middle.DCoherent ∧ passive.DCoherent ∧ reflexive.DCoherent ∧
@@ -227,6 +228,8 @@ theorem phasal_cells :
       ¬ passive.IsPhasal := by
   decide
 
+/-- The antipassive is a thematic active head that is no phase, phasehood tracking v*
+transitivity ([chomsky-2001]) and the antipassive detransitivizing. -/
 theorem antipassive_not_phasal : antipassive.AssignsTheta ∧ ¬ antipassive.IsPhasal := by decide
 
 end Minimalist.Voice

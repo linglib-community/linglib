@@ -190,6 +190,8 @@ theorem Uniform.weakHeights_eq {e : Edge} {t : SWTree} (h : Uniform e t) :
   | leaf _ => rfl
   | node s w e' ihs _ => simp [weakHeights, otherHeights, h.1, ihs h.2.1]
 
+/-- Under uniform labelling at either edge the RPPR says exactly what the End Rule says, so the
+labelling of nonterminals does no work. -/
 theorem uniform_rppr_iff {e : Edge} {t : SWTree} (h : Uniform e t) :
     Rppr t ↔ Everywhere (EdgeStrong e) t := by
   rw [rppr_iff]
@@ -895,6 +897,8 @@ theorem hawaiian_mainStressAt {n : ℕ} (hn : 2 ≤ n) : MainStressAt (hawaiian 
     rw [hawaiian_eq hn]
     simpa [show n - 4 + 2 = n - 2 by omega] using h
 
+/-- No perfect grid gives Hawaiian's initial dactyl, whatever its direction, starting altitude and
+extrametricality, so the End Rule must stress both edges before the sweep. -/
 theorem hawaiian_ne_alternating (d : Edge) (a : Altitude) (x : Option Edge) :
     endRule .right 3 false (alternating d a x 5) ≠ hawaiian 5 := by
   rcases x with _ | _ | _ <;> cases d <;> cases a <;> decide

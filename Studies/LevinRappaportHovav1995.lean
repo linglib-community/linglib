@@ -182,6 +182,8 @@ def Unaccusative (s : Finset Component) : Prop := ranking.position s = .directIn
 
 instance : DecidablePred Unaccusative := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
+/-- A verb is unergative exactly when its argument is the immediate cause and neither undergoes
+a directed change nor has its existence at issue. -/
 theorem unaccusative_iff {s : Finset Component} : Unaccusative s ↔ s ≠ {.immediateCause} := by
   rw [Unaccusative, ne_eq, ← ranking_position_eq_external_iff]
   cases ranking.position s <;> simp
@@ -298,6 +300,8 @@ def construals (ex : Datum) : List (Finset Component) :=
 
 theorem construals_ne_nil : ∀ ex ∈ Examples.all, construals ex ≠ [] := by decide
 
+/-- Every diagnostic row is acceptable exactly when the linking puts the verb's argument in the
+position the diagnostic indicates. -/
 theorem diagnostics_agree :
     ∀ ex ∈ Examples.all, ∀ p ∈ diagnosticOf ex, ∀ s ∈ construals ex,
       (ex.judgment = .acceptable ↔ ranking.position s = p) := by
@@ -323,6 +327,9 @@ theorem entryOf_isSome :
       (entryOf ex).isSome := by
   decide
 
+/-- Where a row's class gives one verdict, the English fragment's entry for its verb is
+unaccusative exactly as the linking rules say: *break*, *burn*, *freeze*, *arrive* and *appear*
+are, *run* and *swim* are not. -/
 theorem isUnaccusative_agrees :
     ∀ ex ∈ Examples.all, ∀ v ∈ entryOf ex, ∀ c ∈ classOf ex,
       ((∀ s ∈ components c, Unaccusative s) → v.IsUnaccusative) ∧

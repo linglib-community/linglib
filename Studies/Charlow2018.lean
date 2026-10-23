@@ -69,6 +69,8 @@ The standard rule interprets a branching node by giving both daughters the same 
 `⟦α β⟧ := λg. ⟦α⟧ g (⟦β⟧ g)` (6). Binding needs the sister of `Λᵢ` evaluated at shifted
 assignments, which the rule never supplies. -/
 
+/-- No denotation for `Λᵢ` binds under the standard rule (section 2.2), since whatever `L` is,
+`λg. L g (⟦α⟧ g)` sees `⟦α⟧` only at `g`, while binding needs `λg. λx. ⟦α⟧ g^{i→x}`. -/
 theorem not_exists_abstraction_denotation [Nontrivial E] (i : ℕ) :
     ¬ ∃ L : Assignment E → Prop → E → Prop,
       ∀ α : Assignment E → Prop, (fun g => L g (α g)) = lambdaAbsG i α := by
@@ -164,9 +166,12 @@ section MonadLaws
 
 variable {M : Type → Type} [Monad M] [LawfulMonad M] {α : Type}
 
+/-- The flattener is associative, `μ ∘ μ = λm. μ (ρ μ ⊛ m)`. -/
 theorem joinM_joinM (m : M (M (M α))) : joinM (joinM m) = joinM (pure joinM <*> m) := by
   rw [pure_seq, joinM_map_joinM]
 
+/-- Flattening undoes the inner lift, `λm. μ (ρ ρ ⊛ m) = λm. m`; the other half of the identity
+law, `μ ∘ ρ = id`, is `joinM_pure`. -/
 theorem joinM_pure_seq_pure (m : M α) : joinM (pure pure <*> m) = m := by
   rw [pure_seq, joinM_map_pure]
 
@@ -231,6 +236,10 @@ example (mom : E → E) :
     fun i x g => g[i ↦ x], fun _ _ g => g, fun _ => rfl, fun _ _ => rfl,
     fun _ _ => by simp only [Function.eval, Function.update_self]⟩
 
+/-- Assignments that can store every intension exist only over a one-element domain. Storing
+makes the lookup `con i` a surjection from `G` onto `G → E`, which Cantor's diagonal argument
+rules out once `E` has two elements. This is why the laws above store only the intension a
+derivation needs, and the difficulty section 5.1 cites for such assignments. -/
 theorem subsingleton_of_forall_store [Nonempty G] (i : ℕ)
     (h : ∀ n g, con i (shiftCon i n g) = n) : Subsingleton E := by
   classical
@@ -264,6 +273,10 @@ individuals, the composite `G_{G_e e} ∘ G_e` of section 5.2. -/
 abbrev ConceptThenIndividual (E : Type) : Type → Type :=
   Functor.Comp (ReaderM (Assignment (Assignment E → E))) (ReaderM (Assignment E))
 
+/-- On type-homogeneous assignments (section 5.2) the paycheck reading has `her₁` read an
+intension from the outer assignment and evaluate it at the inner one, with `Λ₀` binding the
+subject's trace in the inner layer. The meaning is `λg. λh. likes (g₁ h^{0→b}) b`, with no
+flattener. -/
 theorem typed_paycheck (likes : E → E → Prop) (mom : E → E) (b : E)
     (g : Assignment (Assignment E → E)) (h : Assignment E) (hg : g 1 = fun h => mom (h 0)) :
     (Functor.Comp.mk (lambdaAbsG 0 <$> (pure likes <*>

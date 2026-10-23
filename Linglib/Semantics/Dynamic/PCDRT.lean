@@ -103,12 +103,16 @@ theorem value_mono (h : I ⊆ J) : value u I ⊆ value u J :=
 theorem dep_mono (h : I ⊆ J) : dep u v I ⊆ dep u v J :=
   fun _ ⟨i, hi, hu, hv⟩ ↦ ⟨i, h hi, hu, hv⟩
 
+/-- Where every row valuing `u` also values `v`, the values of `u` are the domain of the
+dependency between them. -/
 theorem dom_dep (h : ∀ i ∈ I, RegisterStructure.val u i ≠ ⊥ → RegisterStructure.val v i ≠ ⊥) :
     (dep u v I).dom = value u I := by
   refine Set.ext fun x ↦ ⟨fun ⟨y, hp⟩ ↦ fst_mem_value_of_mem_dep hp, fun ⟨i, hi, hx⟩ ↦ ?_⟩
   obtain ⟨y, hy⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hx ▸ Flat.coe_ne_bot))
   exact ⟨y, i, hi, hx, hy⟩
 
+/-- Where every row valuing `v` also values `u`, the values of `v` are the codomain of the
+dependency between them. -/
 theorem cod_dep (h : ∀ i ∈ I, RegisterStructure.val v i ≠ ⊥ → RegisterStructure.val u i ≠ ⊥) :
     (dep u v I).cod = value v I := by
   refine Set.ext fun y ↦ ⟨fun ⟨x, hp⟩ ↦ snd_mem_value_of_mem_dep hp, fun ⟨i, hi, hy⟩ ↦ ?_⟩
@@ -133,6 +137,7 @@ theorem singleton_mem_intro (i : S) (u : R) (e : Flat E) :
     {i} ~[intro u] {RegisterStructure.extend i u e} :=
   ⟨fun _ hi ↦ ⟨_, rfl, e, by rw [hi]⟩, fun _ hj ↦ ⟨i, rfl, e, by rw [hj]⟩⟩
 
+/-- The lift of an update that fixes `v` leaves `v`'s values alone. -/
 theorem value_eq_of_fixes {D : Update S} (h : Fixes v D) (hIJ : I ~[cumul D] J) :
     value v J = value v I := by
   ext x

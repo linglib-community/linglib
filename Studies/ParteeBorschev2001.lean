@@ -90,6 +90,7 @@ theorem petinUbijca_iff (y : Ent) :
   simp only [π_apply, Pi.inf_apply, iSup_apply, iSup_Prop_eq, inf_Prop_eq, murderer, rPoss]
   decide +revert
 
+/-- The genitive and the prenominal possessive are distinct predicates on a relational noun. -/
 theorem ubijcaPeti_ne_petinUbijca : murderer petja ≠ π (⨆ v, murderer v) rPoss petja :=
   fun h ↦ absurd ((ubijcaPeti_iff killer).2 rfl) (by rw [h, petinUbijca_iff]; decide)
 

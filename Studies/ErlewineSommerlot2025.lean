@@ -228,9 +228,11 @@ def WellFormed : Prop :=
 
 instance : Decidable c.WellFormed := by unfold WellFormed; infer_instance
 
+/-- Every well-formed clause's derivation spells out the paper's VoiceP and CP snapshots. -/
 theorem spellouts_eq : ∀ c : Clause, c.WellFormed → c.spellouts = [c.voiceP, c.cP] := by
   decide +kernel
 
+/-- The phase of Voice is complete when VoiceP is built, and that of C at the end. -/
 theorem schedule_eq : ∀ c : Clause, c.WellFormed → c.schedule =
     [(c.voicePSteps.length, c.voicePSteps.length), (c.derivation.length, c.derivation.length)] := by
   decide +kernel
@@ -458,6 +460,7 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 /-- The rows of the six grammars. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- Every example is acceptable exactly when its grammar generates its construction. -/
 theorem rows_grammatical :
     ∀ r ∈ rows, r.judgment = .acceptable ↔ r.grammar.Generates r.extracted r.order r.affix := by
   decide +kernel

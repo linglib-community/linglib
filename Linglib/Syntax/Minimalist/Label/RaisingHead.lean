@@ -278,6 +278,8 @@ head function by the drawing convention: the head daughter of the subtree at eac
 `none` off the object. -/
 def HeadFunction.raising : HeadFunction := fun t q ↦ (t.val.subtreeAt q.toList).bind headIndex?
 
+/-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
+it. -/
 theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
     (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
     (h : treeRaisingHead s = some ℓ) :

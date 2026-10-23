@@ -180,6 +180,7 @@ theorem bayesFactor_swapIssue (ctx : Context W) (e : Set W) :
       ctx.prior[|ctx.topicᶜ] e / ctx.prior[|ctx.topic] e := by
   simp [bayesFactor, swapIssue, compl_compl]
 
+/-- E confirms H exactly when H makes E more probable than ¬H does. -/
 theorem posRelevant_iff_cond_lt {ctx : Context W} {e : Set W} :
     posRelevant ctx e ↔ ctx.prior[|ctx.topicᶜ] e < ctx.prior[|ctx.topic] e := by
   rw [posRelevant, bayesFactor_def]

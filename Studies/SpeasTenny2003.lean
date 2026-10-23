@@ -94,6 +94,8 @@ def SAFeatures.controller (f : SAFeatures) : SAArgument :=
 theorem SAFeatures.controller_cCommands (f : SAFeatures) : f.CCommands f.controller .content := by
   rcases f with ⟨_ | _, _ | _⟩ <;> decide
 
+/-- The controller is the closest c-commander of the content, since any other argument c-commanding
+the content c-commands the controller. -/
 theorem SAFeatures.controller_closest (f : SAFeatures) {a : SAArgument}
     (h : f.CCommands a .content) (ha : a ≠ f.controller) : f.CCommands a f.controller := by
   rcases f with ⟨_ | _, _⟩ <;> cases a <;> simp_all [SAFeatures.CCommands, SAFeatures.height,
@@ -187,6 +189,8 @@ def target : LogophoricRole → PRole
   | .self => .seatOfKnowledge
   | .pivot => .seatOfKnowledge
 
+/-- No logophoric role is a role of its own, since each is a coindexing with the speaker or the
+seat. -/
 theorem target_ne_hearer (r : LogophoricRole) : target r ≠ .hearer := by
   cases r <;> decide
 

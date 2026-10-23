@@ -77,12 +77,15 @@ def terrace (level : Int) (shifts : List Int) : List Int :=
     (terrace level shifts).length = shifts.length := by
   simp [terrace]
 
+/-- A sequence realizes piecewise: the second part continues from the register the first
+part leaves. -/
 theorem terrace_append (level : Int) (ds es : List Int) :
     terrace level (ds ++ es) = terrace level ds ++ terrace (level + ds.sum) es := by
   induction ds generalizing level with
   | nil => simp
   | cons d ds ih => simp only [List.cons_append, terrace_cons, ih, List.sum_cons, Int.add_assoc]
 
+/-- A baseline only shifts the levels. -/
 theorem terrace_add (level d : Int) (shifts : List Int) :
     terrace (level + d) shifts = (terrace level shifts).map (· + d) := by
   induction shifts generalizing level with
@@ -91,6 +94,10 @@ theorem terrace_add (level d : Int) (shifts : List Int) :
     simp only [terrace_cons, List.map_cons]
     rw [show level + d + e = level + e + d by omega, ih]
 
+/-- **Monotonicity**: pointwise lower shifts and a lower baseline give pointwise lower
+levels. Structural basis of catathesis blocking ([beckman-pierrehumbert-1986]): a register
+reset at a phrase boundary leaves everything after it higher than continued compression
+would. -/
 theorem terrace_mono {ds es : List Int} (h : List.Forall₂ (· ≤ ·) ds es) {n m : Int}
     (hnm : n ≤ m) : List.Forall₂ (· ≤ ·) (terrace n ds) (terrace m es) := by
   induction h generalizing n m with
@@ -172,6 +179,7 @@ def realize (level : Int) (tier : RegisterTier) : List Int :=
     (realize level tier).length = tier.length := by
   simp [realize]
 
+/-- A tier with one node per mora realizes as the node sequence. -/
 theorem realize_map_singleton (level : Int) (ts : List TRN) :
     realize level (ts.map ([·])) = realizePitch level ts := by
   simp [realize, realizePitch, List.map_map, Function.comp_def]

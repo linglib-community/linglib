@@ -187,6 +187,8 @@ theorem monotone_posExt_consequent (ct : Reading) (p : Set W) :
   · exact fun _ _ h _ hw ↦
       denote_premise_eq_one_iff.2 ((denote_premise_eq_one_iff.1 hw).imp_right (h ·))
 
+/-- Over a domain that grows with the antecedent, each clause's signature is sound for the
+clause's function. -/
 theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct : Reading)
     (c : Clause) : (clauseSignature ct c).SoundFor (clauseMap (ofDomain D) p q ct c) := by
   cases ct <;> cases c
@@ -195,6 +197,9 @@ theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct 
   · exact soundFor_mono_iff.2 (monotone_posExt_premise _ q)
   · exact soundFor_mono_iff.2 (monotone_posExt_consequent .premise p)
 
+/-- Over the closest antecedent-worlds the hypothetical antecedent is not antitone — with three
+worlds ranked `0 < 1 < 2` from `0`, *if 1 or 2, then 1* holds at `0` while *if 2, then 1* does
+not. -/
 theorem exists_not_antitone_hypothetical_closestImp :
     ∃ (ord : Fin 3 → Preorder (Fin 3)) (q : Set (Fin 3)),
       ¬ Antitone fun p ↦ Trivalent.posExt (hypothetical.denote (closestImp ord) p q) := by

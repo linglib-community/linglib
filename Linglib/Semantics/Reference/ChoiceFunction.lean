@@ -93,10 +93,13 @@ choice function commits to one, and distinct choice functions commit differently
 
 open Quantifier Quantifier.GQ
 
+/-- A choice function whose pick satisfies the predicate witnesses the existential reading. -/
 theorem some_of_apply (f : ChoiceFunction E) {N VP : E → Prop} (hN : ∃ x, N x)
     (hVP : VP (f N)) : GQ.some N VP :=
   ⟨f N, f.apply_of_exists hN, hVP⟩
 
+/-- A choice function agrees with the existential reading on every predicate exactly when its
+pick is the only member of the restrictor. -/
 theorem forall_apply_iff_some_iff (f : ChoiceFunction E) {N : E → Prop} (hN : ∃ x, N x) :
     (∀ VP : E → Prop, VP (f N) ↔ GQ.some N VP) ↔ ∀ x, N x → x = f N := by
   refine ⟨fun h x hx ↦ ((h (· = x)).mpr ⟨x, hx, rfl⟩).symm, fun h VP ↦
@@ -104,11 +107,14 @@ theorem forall_apply_iff_some_iff (f : ChoiceFunction E) {N : E → Prop} (hN : 
   rintro ⟨x, hx, hVP⟩
   rwa [h x hx] at hVP
 
+/-- Existential quantification over choice functions is the existential reading. -/
 theorem exists_apply_iff_some {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
     (∃ f : ChoiceFunction E, VP (f N)) ↔ GQ.some N VP :=
   ⟨fun ⟨f, h⟩ ↦ f.some_of_apply hN h, fun ⟨_, hx, h⟩ ↦
     let ⟨f, hfx⟩ := exists_apply_eq hx; ⟨f, hfx ▸ h⟩⟩
 
+/-- Universal quantification over choice functions is the universal reading, on a nonempty
+restrictor. -/
 theorem forall_apply_iff_every {N : E → Prop} (hN : ∃ x, N x) (VP : E → Prop) :
     (∀ f : ChoiceFunction E, VP (f N)) ↔ every N VP :=
   ⟨fun h _ hx ↦ let ⟨f, hfx⟩ := exists_apply_eq hx; hfx ▸ h f,
@@ -125,6 +131,9 @@ theorem forall_apply_iff_of_not_exists {N : E → Prop} (hN : ¬ ∃ x, N x) (VP
 
 /-! ### Scope relative to a binder -/
 
+/-- A choice function applied to a restrictor that contains a bound variable takes no scope
+relative to the binder. Since the restrictor already varies with the variable, one choice
+function can be assembled from the pointwise choices. -/
 theorem exists_forall_apply_iff [Nonempty E] (R : ι → E → Prop) (VP : E → Prop) :
     (∃ f : ChoiceFunction E, ∀ i, VP (f (R i))) ↔ ∀ i, ∃ f : ChoiceFunction E, VP (f (R i)) := by
   classical
@@ -139,6 +148,9 @@ theorem exists_forall_apply_iff [Nonempty E] (R : ι → E → Prop) (VP : E →
     rw [← hi.choose_spec] at this
     simpa [hi] using this
 
+/-- When distinct values of a bound variable give distinct nonempty restrictors, closing a choice
+function above the binder gives the reading with the existential below it, even if the predicate
+also contains the variable. -/
 theorem exists_forall_apply_iff_of_injective [Nonempty E] {R : ι → E → Prop}
     (hR : Function.Injective R) (hN : ∀ i, ∃ x, R i x) (VP : ι → E → Prop) :
     (∃ f : ChoiceFunction E, ∀ i, VP i (f (R i))) ↔ ∀ i, GQ.some (R i) (VP i) := by
@@ -154,6 +166,8 @@ theorem exists_forall_apply_iff_of_injective [Nonempty E] {R : ι → E → Prop
   · have hi : ∃ j, R j = R i := ⟨i, rfl⟩
     simpa [hi, hR hi.choose_spec] using hVP i
 
+/-- Closing a skolemized choice function above a binder of its index gives the reading with the
+existential below the binder. -/
 theorem exists_pi_apply_iff {N : S → E → Prop} (hN : ∀ s, ∃ x, N s x) (VP : S → E → Prop) :
     (∃ F : S → ChoiceFunction E, ∀ s, VP s (F s (N s))) ↔ ∀ s, GQ.some (N s) (VP s) :=
   Classical.skolem.symm.trans <| forall_congr' fun s ↦ exists_apply_iff_some (hN s) (VP s)

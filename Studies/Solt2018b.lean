@@ -94,6 +94,9 @@ theorem proportionalMeasure_const_mul (k : ℚ) (hk : k ≠ 0) (tot y : α) :
     proportionalMeasure (fun x ↦ k * μ x) tot y = proportionalMeasure μ tot y :=
   mul_div_mul_left _ _ hk
 
+/-- *n percent of x are P* on the lexical entry for *percent* of [ahn-sauerland-2017],
+which lexicalizes the division, holds exactly when the proportional measure of the
+P-part of `x` is the degree `n / 100`, a point on the proportional scale. -/
 theorem percent_iff_proportionalMeasure [SemilatticeInf α] (x p : α) (n : ℚ) :
     μ (x ⊓ p) / μ x = n / 100 ↔ proportionalMeasure μ x (x ⊓ p) = n / 100 := Iff.rfl
 
@@ -112,6 +115,9 @@ theorem proportionalReading_iff {A B a b : α} (hA : 0 < μ A) (hB : 0 < μ B) :
     ProportionalReading μ A B a b ↔ μ b * μ A < μ a * μ B := by
   rw [ProportionalReading, proportionalMeasure_eq, proportionalMeasure_eq, div_lt_div_iff₀ hB hA]
 
+/-- The readings come apart, since a part that is outmeasured by the other is nonetheless the
+larger share whenever its totality is small enough, as with Ithaca's thirty thousand
+residents against New York City's eight million. -/
 theorem readings_diverge {A B a b : α} (hA : 0 < μ A) (hB : 0 < μ B)
     (h : μ a < μ b) (h' : μ b * μ A < μ a * μ B) :
     ¬ CardinalReading μ a b ∧ ProportionalReading μ A B a b :=
@@ -174,6 +180,9 @@ theorem restricted_positive_iff (r : Reading) :
   · rintro ⟨k, hk, rfl⟩; cases k <;> simp_all [MeasureKind.IsRestricted, reading]
   · rintro rfl; exact ⟨.domainRestricted, trivial, rfl⟩
 
+/-- With only restricted kinds available, under an individual-level predicate or in a partitive,
+the comparative keeps its cardinal reading through an ordinary domain-restricted measure while
+the positive form loses it. -/
 theorem restricted_asymmetry :
     Licensed MeasureKind.IsRestricted .comparative .cardinal ∧
     ¬ Licensed MeasureKind.IsRestricted .positive .cardinal :=
@@ -185,6 +194,10 @@ def ambiguityKinds : MeasureKind → Prop
   | .domainRestricted => False
   | _ => True
 
+/-- On the ambiguity account, whatever confines the positive form to its proportional
+reading confines the comparative too. With the inventory reduced to the proportional
+entry, both forms read alike, and the cardinal reading of *more residents of Ithaca than
+New York City know their neighbors* is lost. -/
 theorem ambiguity_symmetric (r : Reading) :
     Licensed (fun k ↦ ambiguityKinds k ∧ k.IsRestricted) .positive r ↔
       Licensed (fun k ↦ ambiguityKinds k ∧ k.IsRestricted) .comparative r := by

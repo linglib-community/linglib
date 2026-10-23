@@ -90,6 +90,7 @@ def Valid (s : Finset Feature) : Prop :=
 
 instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
+/-- The five levels are exactly the combinations of features the exclusion principles leave. -/
 theorem range_features : Set.range features = {s | Valid s} :=
   Set.ext <| (by decide : ∀ s, (∃ l, features l = s) ↔ Valid s)
 

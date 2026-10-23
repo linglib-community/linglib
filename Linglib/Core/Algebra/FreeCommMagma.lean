@@ -108,6 +108,7 @@ theorem inductionOn {motive : FreeCommMagma α → Prop} (x : FreeCommMagma α)
   | ih1 a => exact of a
   | ih2 a b ha hb => exact mul (ofMagma a) (ofMagma b) ha hb
 
+/-- Magma homomorphisms out of a free commutative magma agreeing on the generators are equal. -/
 @[ext]
 theorem hom_ext {M : Type v} [Mul M] {f g : FreeCommMagma α →ₙ* M}
     (h : ∀ a, f (of a) = g (of a)) : f = g :=

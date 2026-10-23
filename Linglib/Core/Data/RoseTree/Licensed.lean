@@ -78,6 +78,7 @@ theorem Licensed.of_mem {a : α} {cs : List (RoseTree α)} (h : (node a cs).Lice
     {c : RoseTree α} (hc : c ∈ cs) : c.Licensed R :=
   (licensed_node_iff.mp h).2 c hc
 
+/-- Induction over the trees `R` licenses. -/
 @[elab_as_elim]
 theorem Licensed.induction {motive : (t : RoseTree α) → t.Licensed R → Prop}
     (node : ∀ a cs (hR : R a (cs.map value)) (hcs : ∀ c ∈ cs, c.Licensed R),
@@ -99,6 +100,7 @@ theorem Licensed.of_subtreeAt {t s : RoseTree α} (ht : t.Licensed R) {p : List 
     (hs : subtreeAt t p = some s) : s.Licensed R :=
   ht.of_isSubtree (isSubtree_iff_exists_subtreeAt.mpr ⟨p, hs⟩)
 
+/-- Replacing a subtree by a licensed tree with the same root value keeps a tree licensed. -/
 theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
     (hs : subtreeAt t p = some s) (hnew : new.Licensed R) (hv : new.value = s.value) :
     (t.replaceAt p new).Licensed R := by
@@ -124,6 +126,8 @@ theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List
         · exact ht.of_mem hd
         · exact ih (ht.of_mem (List.mem_of_getElem? hc)) hcs
 
+/-- A relation that ignores the order of the children licenses a tree exactly when it licenses
+any permutation of it. -/
 theorem licensed_of_perm (hR : ∀ a {ks ls : List α}, ks.Perm ls → (R a ks ↔ R a ls)) :
     ∀ {t s : RoseTree α}, t.Perm s → (t.Licensed R ↔ s.Licensed R) := by
   intro t

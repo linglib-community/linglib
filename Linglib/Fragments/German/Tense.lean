@@ -208,6 +208,8 @@ perfect. -/
 def southernTenseForms : List Tense.Form :=
   [.simplePresent, .presentPerfect, .doublePerfect, .future, .futurePerfect]
 
+/-- The standard tense forms and the complex pluperfects are exactly the forms that German
+realizes. -/
 theorem PrincipalParts.tenseForm_isSome_iff (v : PrincipalParts) (f : Tense.Form) :
     (v.tenseForm f).isSome ↔ f ∈ tenseForms ∨ f ∈ complexPluperfects := by
   constructor

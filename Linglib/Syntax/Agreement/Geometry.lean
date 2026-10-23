@@ -235,6 +235,7 @@ theorem numberNodes_isLowerSet {active : Finset Node} {n : Number} {ns : Finset 
     (h : numberNodes active n = some ns) : IsLowerSet (↑(insert ⊥ ns) : Set Node) := by
   cases n <;> simp [numberNodes] at h <;> (try split_ifs at h) <;> subst h <;> decide
 
+/-- Every assigned geometry is a lower set. -/
 theorem cell_isLowerSet {active : Finset Node} {p : Person} {n : Number} {g : Finset Node}
     (h : cell active p n = some g) : IsLowerSet (↑g : Set Node) := by
   simp only [cell, Option.bind_eq_bind, Option.pure_def] at h

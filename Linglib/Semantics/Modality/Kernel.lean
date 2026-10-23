@@ -165,6 +165,8 @@ theorem Kernel.compatibleWith_iff_not_followsFrom_not :
     k.compatibleWith φ ↔ ¬ k.FollowsFrom fun w' ↦ ¬ φ w' := by
   simp [Kernel.compatibleWith, Kernel.FollowsFrom, Pi.le_def]
 
+/-- *Might* `φ` is the negation of *can't* `φ`, with the same presupposition and the negated
+assertion. -/
 theorem kernelMight_eq_neg_kernelCant : kernelMight k φ = -kernelCant k φ := by
   ext w
   refine SignType.eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_ <;>
@@ -175,6 +177,7 @@ theorem kernelMust_empty_ne_zero : kernelMust ⟨∅⟩ φ w ≠ 0 := by
 
 /-! ### Bridge to Kratzer necessity -/
 
+/-- The assertion of kernel *must* is Kratzer simple necessity over the induced modal base. -/
 theorem Kernel.followsFrom_iff_simpleNecessity :
     k.FollowsFrom φ ↔ simpleNecessity k.toBackground φ w :=
   Iff.rfl

@@ -102,6 +102,8 @@ theorem integral_eq (q : Measure Phrase) [IsFiniteMeasure q] (g : Phrase → ℝ
   rw [integral_fintype .of_finite, sum_eq]
   simp only [smul_eq_mul]
 
+/-- Knowing only the five phrases, the maximum entropy model is uniform. With no features, every
+distribution satisfies the constraints, and the uniform one has the greatest entropy. -/
 theorem isGreatest_uniform :
     IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q})
       (Hm[maxEnt (fun _ : Phrase ↦ (0 : Fin 0 → ℝ)) 0]) ∧
@@ -126,6 +128,8 @@ theorem twoModel_real_singleton :
   simp only [twoModel, maxEnt_real_singleton, softmax_apply, sum_eq]
   norm_num [harmony, twoFeatures, dansOrEn, dotProduct, he]
 
+/-- Requiring `p(dans) + p(en) = 3/10`, the most uniform model gives *dans* and *en* `3/20` each
+and the other three phrases `7/30` each. -/
 theorem isGreatest_two :
     IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q ∧
       q.real {dans} + q.real {en} = 3 / 10}) (Hm[twoModel]) := by
@@ -189,6 +193,7 @@ theorem threeModel_real_singleton :
   exact maxEnt_three_real_singleton (by linarith) (by linarith) (by linarith)
     (by linear_combination hs / 200) (by ring)
 
+/-- Requiring also `p(dans) + p(à) = 1/2`, the most uniform model gives *dans* `(9 − √51)/10`. -/
 theorem isGreatest_three :
     IsGreatest (measureEntropy '' {q : Measure Phrase | IsProbabilityMeasure q ∧
       q.real {dans} + q.real {en} = 3 / 10 ∧ q.real {dans} + q.real {à} = 1 / 2})
@@ -259,6 +264,7 @@ theorem lagrangian_le_lagrangian_model (θ : ι → ℝ) (q : Kernel X Y) [IsMar
   simp only [lagrangian, model, dotProduct_sub, neg_dotProduct] at h₁ h₂ ⊢
   linarith
 
+/-- The value of the Lagrangian at its maximizer is minus the log-likelihood of `p_θ`. -/
 theorem lagrangian_model_eq_neg_logLik (θ : ι → ℝ) :
     lagrangian f p (model f θ) θ = -logLik p (model f θ) := by
   have h := condEntropy_condMaxEnt f (-θ) p.fst
@@ -268,6 +274,7 @@ theorem lagrangian_model_eq_neg_logLik (θ : ι → ℝ) :
 
 variable {f p} {θ : ι → ℝ}
 
+/-- The parameters of greatest likelihood give a model satisfying the constraints. -/
 theorem model_mem_constraints (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     model f θ ∈ constraints f p :=
   ⟨inferInstanceAs (IsMarkovKernel (condMaxEnt f (-θ))),
@@ -280,6 +287,8 @@ theorem isGreatest_condEntropy_model (h : IsMaxOn (fun θ ↦ logLik p (model f 
       (H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ]) :=
   isGreatest_condEntropy_of_isMaxOn f (-θ) p (isMaxOn_condLogLikelihood_neg f p h)
 
+/-- The primal and dual values agree, the greatest entropy in `C` being minus the greatest
+log-likelihood. -/
 theorem condEntropy_model_eq_neg_logLik
     (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ) :
     H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ] = -logLik p (model f θ) := by
@@ -287,6 +296,8 @@ theorem condEntropy_model_eq_neg_logLik
     (model_mem_constraints h).2, neg_neg]
   rfl
 
+/-- A model in `C` with the greatest entropy is the maximum entropy model at every context of
+positive empirical mass. -/
 theorem eq_model_of_condEntropy_eq (h : IsMaxOn (fun θ ↦ logLik p (model f θ)) Set.univ θ)
     {q : Kernel X Y} (hq : q ∈ constraints f p)
     (hH : H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q] = H[Prod.snd | Prod.fst ; p.fst ⊗ₘ model f θ])

@@ -126,12 +126,14 @@ def cotRankingDemoted [DecidableEq E] [LinearOrder R]
 
 /-! ### COHERE and ALIGN factor through `cb` (and `cp`) -/
 
+/-- COHERE cannot distinguish candidates whose `cb` agrees. -/
 theorem cohere_factors_through_cb [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R) (priorTopic : Option E)
     (c1 c2 : Candidate E R) (h : cb prev c1.utt = cb prev c2.utt) :
     (cohere prev priorTopic) c1 = (cohere prev priorTopic) c2 := by
   simp only [cohere, Constraint.binary_apply, h]
 
+/-- ALIGN cannot distinguish candidates whose `cb` and `cp` both agree. -/
 theorem align_factors_through_cb_and_cp [DecidableEq E] [LinearOrder R]
     (prev : Utterance E R)
     (c1 c2 : Candidate E R)

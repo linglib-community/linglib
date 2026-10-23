@@ -100,6 +100,8 @@ def optimal : Finset C := t.candidates.argmin t.profile
 
 variable {t c} {d m : C}
 
+/-- A winner is a candidate whose profile is lexicographically below that of every
+candidate. -/
 theorem mem_optimal_iff :
     c ∈ t.optimal ↔ c ∈ t.candidates ∧ ∀ d ∈ t.candidates, t.profile c ≤ t.profile d :=
   Finset.mem_argmin
@@ -107,6 +109,7 @@ theorem mem_optimal_iff :
 theorem optimal_subset : t.optimal ⊆ t.candidates :=
   Finset.argmin_subset
 
+/-- A tableau with a candidate has a winner. -/
 theorem optimal_nonempty (h : t.candidates.Nonempty) : t.optimal.Nonempty :=
   Finset.argmin_nonempty h
 
@@ -114,6 +117,8 @@ theorem le_of_mem_optimal (hc : c ∈ t.optimal) (hd : d ∈ t.candidates) :
     t.profile c ≤ t.profile d :=
   (mem_optimal_iff.1 hc).2 d hd
 
+/-- A tableau has sole winner `m` iff `m` is a candidate that strictly lex-dominates every other
+candidate. -/
 theorem optimal_eq_singleton_iff :
     t.optimal = {m} ↔ m ∈ t.candidates ∧ ∀ c ∈ t.candidates, c ≠ m → t.profile m < t.profile c :=
   Finset.argmin_eq_singleton_iff
@@ -121,6 +126,7 @@ theorem optimal_eq_singleton_iff :
 @[simp] theorem optimal_singleton (hc : t.candidates = {c}) : t.optimal = {c} :=
   optimal_eq_singleton_iff.2 ⟨by simp [hc], fun _ hd hdc ↦ absurd (by simpa [hc] using hd) hdc⟩
 
+/-- A candidate strictly lex-dominated by a competitor is no winner. -/
 theorem notMem_optimal_of_lt (hc : c ∈ t.candidates) (h : t.profile c < t.profile d) :
     d ∉ t.optimal :=
   fun hd ↦ (le_of_mem_optimal hd hc).not_gt h
@@ -133,6 +139,8 @@ theorem profile_eq_zero_of_mem_optimal (hc : c ∈ t.optimal) (hd : d ∈ t.cand
     (h0 : t.profile d = 0) : t.profile c = 0 :=
   le_antisymm (h0 ▸ le_of_mem_optimal hc hd) bot_le
 
+/-- A winner does at least as well as every candidate on the top constraint, so a satisfiable
+top constraint is satisfied by every winner. -/
 theorem constraints_zero_le_of_mem_optimal {t : Tableau C (n + 1)} (hc : c ∈ t.optimal)
     (hd : d ∈ t.candidates) : t.constraints 0 c ≤ t.constraints 0 d :=
   Pi.apply_le_of_toLex (x := (t.constraints · c)) (le_of_mem_optimal hc hd) fun j hj ↦
@@ -195,6 +203,8 @@ theorem ofRanking_optimal_eq_singleton_iff :
   simp only [optimal_eq_singleton_iff, ofRanking_candidates,
     ofRanking_profile_lt_iff_exists_dominates]
 
+/-- A candidate beaten pointwise on the constraint set by a competitor is harmonically bounded,
+that is, optimal under no ranking of the set. -/
 theorem ofRanking_notMem_optimal_of_lt (hc : c ∈ candidates) (hlt : (con · c) < (con · d)) :
     d ∉ (ofRanking con r candidates).optimal :=
   notMem_optimal_of_lt hc (Pi.toLex_comp_strictMono r hlt)
@@ -204,15 +214,21 @@ theorem ofRanking_optimal_eq_singleton_of_forall_lt (hc : c ∈ candidates)
     (ofRanking con r candidates).optimal = {c} :=
   optimal_eq_singleton_iff.2 ⟨hc, fun d hd hne ↦ Pi.toLex_comp_strictMono r (hlt d hd hne)⟩
 
+/-- A candidate with no violations on the constraint set wins under every ranking of it. -/
 theorem ofRanking_zero_mem_optimal (hc : c ∈ candidates) (hzero : ∀ i, con i c = 0) :
     c ∈ (ofRanking con r candidates).optimal :=
   mem_optimal_of_profile_eq_zero hc (funext fun p ↦ hzero (r p))
 
+/-- If some candidate satisfies every constraint of the set, then under every ranking so does
+every winner. -/
 theorem ofRanking_eq_zero_of_mem_optimal (hc : c ∈ (ofRanking con r candidates).optimal)
     (hd : d ∈ candidates) (h0 : ∀ i, con i d = 0) (i : ι) : con i c = 0 := by
   have h := profile_eq_zero_of_mem_optimal hc hd (funext fun p ↦ h0 (r p))
   simpa using show con (r (r.symm i)) c = 0 from congrFun h (r.symm i)
 
+/-- **Optimality transfers along constraint-wise bounds.** Under any ranking, a candidate of a
+second tableau violating each constraint no more than a winner of the first is a winner, where each
+candidate of the second violates each constraint at least as much as some candidate of the first. -/
 theorem ofRanking_mem_optimal_of_forall_le {C' : Type*} {con' : ConstraintSet C' ι}
     {candidates' : Finset C'} {d : C'} (hc : c ∈ (ofRanking con r candidates).optimal)
     (hd : d ∈ candidates') (hdc : ∀ i, con' i d ≤ con i c)
@@ -224,6 +240,8 @@ theorem ofRanking_mem_optimal_of_forall_le {C' : Type*} {con' : ConstraintSet C'
   exact (hm (show (con' · d) ≤ (con · c) from hdc)).trans
     ((le_of_mem_optimal hc hc').trans (hm (show (con · c') ≤ (con' · d') from hle)))
 
+/-- If some candidate violates none of the constraints a ranking puts above its last, the winners
+are the candidates violating none of them that do best on the last. -/
 theorem ofRanking_optimal_eq_argmin_filter [Fintype ι] [DecidableEq ι] {r : Ranking ι (n + 1)}
     (h : ∃ c ∈ candidates, ∀ i ≠ r (Fin.last n), con i c = 0) :
     (ofRanking con r candidates).optimal =
@@ -262,6 +280,8 @@ section Bounding
 variable [DecidableEq C] [Fintype ι] (hn : Fintype.card ι = n)
 include hn
 
+/-- A candidate wins against its only competitor under some ranking iff the competitor does not
+harmonically bound it. -/
 theorem exists_mem_ofRanking_optimal_iff_pair (hcand : candidates = {c, d}) :
     (∃ r : Ranking ι n, c ∈ (ofRanking con r candidates).optimal) ↔ ¬ (con · d) < (con · c) := by
   rw [← Pi.forall_toLex_comp_lt_iff hn, not_forall]
@@ -292,6 +312,7 @@ it. -/
 def tail (t : Tableau C (n + 1)) : Tableau C n :=
   ⟨t.candidates.argmin (t.constraints 0), Fin.tail t.constraints⟩
 
+/-- The winners of a tableau are the winners of its tail. -/
 theorem optimal_tail (t : Tableau C (n + 1)) : t.tail.optimal = t.optimal := by
   ext c
   simp only [mem_optimal_iff, tail, Finset.mem_argmin, profile, Pi.toLex_le_toLex_iff_succ]
@@ -307,6 +328,8 @@ variable {s : Finset C} {F : Constraint C} {Fs Gs : List (Constraint C)}
 
 theorem ofList_cons_tail : (ofList s (F :: Fs)).tail = ofList (s.argmin F) Fs := rfl
 
+/-- The winners under a ranked list are the winners under its lower constraints among the
+candidates doing best on its top constraint. -/
 theorem optimal_ofList_cons : (ofList s (F :: Fs)).optimal = (ofList (s.argmin F) Fs).optimal := by
   rw [← ofList_cons_tail, optimal_tail]
 
@@ -318,6 +341,8 @@ theorem optimal_ofList_cons_of_forall_eq (h : ∀ c ∈ s, ∀ d ∈ s, F c = F 
     (ofList s (F :: Fs)).optimal = (ofList s Fs).optimal := by
   rw [optimal_ofList_cons, Finset.argmin_eq_self_of_forall_le fun c hc d hd ↦ (h c hc d hd).le]
 
+/-- Constraints that rate every candidate alike are inert wherever they are ranked above the
+others. -/
 theorem optimal_ofList_append_of_forall_eq (h : ∀ F ∈ Fs, ∀ c ∈ s, ∀ d ∈ s, F c = F d) :
     (ofList s (Fs ++ Gs)).optimal = (ofList s Gs).optimal := by
   induction Fs with

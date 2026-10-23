@@ -103,6 +103,8 @@ theorem mem_orientedBase [LT T] :
     s' ∈ orientedBase history s C ↔ s'.world ∈ history s ∧ s.time ~[Tense.toSetRel C] s'.time :=
   Iff.rfl
 
+/-- On linear time the time of a situation in an oriented base stands to the index's time in a
+position of the cell. -/
 theorem compare_mem_of_mem_orientedBase [LinearOrder T] (h : s' ∈ orientedBase history s C) :
     compare s'.time s.time ∈ C :=
   Tense.mem_toSetRel_iff_compare.1 h.2
@@ -121,6 +123,8 @@ theorem mem_futureHistoryBase [Preorder T] :
     s' ∈ futureHistoryBase history s ↔ s'.world ∈ history s ∧ s.time < s'.time := by
   rw [mem_orientedBase, Tense.mem_toSetRel_future]
 
+/-- A situation in the actual-history base is no later than the index, the Upper Limit
+Constraint of [abusch-1997] as [klecha-2016] derives it from the doxastic base. -/
 theorem time_le_of_mem_actualHistoryBase [PartialOrder T] (h : s' ∈ actualHistoryBase history s) :
     s'.time ≤ s.time :=
   (mem_actualHistoryBase.1 h).2
@@ -134,6 +138,7 @@ theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
   ext
   simp only [mem_orientedBase, Tense.toSetRel_sup, Set.mem_union, and_or_left]
 
+/-- On linear time the actual and future bases together hold the alternatives at all times. -/
 theorem actualHistoryBase_union_futureHistoryBase [LinearOrder T] :
     actualHistoryBase history s ∪ futureHistoryBase history s = history s ×ˢ Set.univ := by
   rw [← orientedBase_sup, compl_sup_eq_top]
@@ -165,6 +170,8 @@ variable {F}
 
 theorem mem_alternatives_self : w ∈ F.alternatives (w, t) := (F.sim t).iseqv.refl w
 
+/-- Historical equivalence partitions the worlds, so an alternative of a world has the same
+alternatives as the world. -/
 theorem alternatives_eq_of_mem (h : v ∈ F.alternatives (w, t)) :
     F.alternatives (v, t) = F.alternatives (w, t) :=
   Set.ext fun _ ↦ ⟨(F.sim t).iseqv.trans h, (F.sim t).iseqv.trans ((F.sim t).iseqv.symm h)⟩
@@ -188,12 +195,16 @@ common-ground world sees worlds disagreeing on it. -/
 def diverse (MB : W → T → Set W) (cg : Set W) (t : T) (P : W → Prop) : Prop :=
   ∃ w ∈ cg, ∃ w' ∈ MB w t, ∃ w'' ∈ MB w t, P w' ∧ ¬ P w''
 
+/-- A settled property is not diverse over a modal base within the metaphysical one, so
+metaphysical readings of possibility modals are blocked for settled properties. -/
 theorem settled_not_diverse {history : HistoricalAlternatives W T} {MB : W → T → Set W}
     {cg : Set W} {t : T} {P : W → Prop} (hMB : ∀ w ∈ cg, MB w t ⊆ history (w, t))
     (h : settled history cg t P) : ¬ diverse MB cg t P :=
   fun ⟨w, hw, w', hw', w'', hw'', hP, hnP⟩ ↦
     hnP ((h w hw w'' (hMB w hw hw'')).mp ((h w hw w' (hMB w hw hw')).mpr hP))
 
+/-- Over the alternatives of a T × W frame, a property is settled at a time over a common ground
+exactly when, at every common-ground world, it or its negation is historically necessary. -/
 theorem settled_alternatives_iff [Preorder T] {F : Temporal.TWFrame W T} {cg : Set W} {t : T}
     {P : W → Prop} :
     settled F.alternatives cg t P ↔ ∀ w ∈ cg, □[F.alt t] P w ∨ □[F.alt t] (fun v ↦ ¬ P v) w := by

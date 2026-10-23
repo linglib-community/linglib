@@ -99,6 +99,7 @@ abbrev commandRelation (P : Set α) : SetRel α α := upperPolar Admits P
 
 theorem mem_commandRelation : a ~[commandRelation P] b ↔ ∀ x ∈ P, x < a → x ≤ b := Iff.rfl
 
+/-- The nodes `a` commands are the upper bounds of the `P`-nodes properly dominating `a`. -/
 theorem mem_commandRelation_iff_mem_upperBounds :
     a ~[commandRelation P] b ↔ b ∈ upperBounds (P ∩ Iio a) :=
   ⟨fun h _ hx ↦ h hx.1 hx.2, fun h _ hx hxa ↦ h ⟨hx, hxa⟩⟩
@@ -113,6 +114,8 @@ theorem mem_commandRelation_congr (h : ∀ x < a, x ∈ P ↔ x ∈ Q) :
     a ~[commandRelation P] b ↔ a ~[commandRelation Q] b :=
   ⟨fun hP _ hx hxa ↦ hP ((h _ hxa).2 hx) hxa, fun hQ _ hx hxa ↦ hQ ((h _ hxa).1 hx) hxa⟩
 
+/-- When the `P`-nodes properly dominating `a` have a greatest member `m`, the lowest of them in
+the tree, `a` commands exactly what `m` dominates. -/
 theorem mem_commandRelation_iff_le (h : IsGreatest (P ∩ Iio a) m) :
     a ~[commandRelation P] b ↔ m ≤ b := by
   rw [mem_commandRelation_iff_mem_upperBounds, h.isLUB.upperBounds_eq, mem_Ici]
@@ -137,15 +140,20 @@ theorem mem_commandRelation_iff_of_le (hcb : c ≤ b) (hca : ¬ c < a) :
 theorem mem_commandRelation_of_covBy (ha : m ⋖ a) (hb : m ≤ b) : a ~[commandRelation P] b :=
   fun _ _ hxa ↦ (IsLeftLinear.le_of_lt_of_covBy ha hxa).trans hb
 
+/-- A node whose mother is a generator commands exactly what its mother dominates. -/
 theorem mem_commandRelation_iff_le_of_covBy (ha : m ⋖ a) (hm : m ∈ P) :
     a ~[commandRelation P] b ↔ m ≤ b :=
   mem_commandRelation_iff_le ⟨⟨hm, ha.lt⟩, fun _ hx ↦ IsLeftLinear.le_of_lt_of_covBy ha hx.2⟩
 
+/-- A node whose mother is not a generator commands exactly what its mother commands. -/
 theorem mem_commandRelation_iff_of_covBy (ha : m ⋖ a) (hm : m ∉ P) :
     a ~[commandRelation P] b ↔ m ~[commandRelation P] b :=
   ⟨fun h _ hx hxm ↦ h hx (hxm.trans ha.lt), fun h _ hx hxa ↦
     h hx ((IsLeftLinear.le_of_lt_of_covBy ha hxa).lt_of_ne fun e ↦ hm (e ▸ hx))⟩
 
+/-- The command relation of `P` is the only relation in which the root commands every node and a
+node commands what its mother dominates or what its mother commands, according as the mother is
+in `P` or not. -/
 theorem eq_commandRelation_of_forall_covBy [OrderBot α] [WellFoundedLT α] [IsStronglyCoatomic α]
     {R : SetRel α α} (hbot : ∀ b, ⊥ ~[R] b)
     (hmem : ∀ ⦃m a⦄, m ⋖ a → m ∈ P → ∀ b, a ~[R] b ↔ m ≤ b)
@@ -211,6 +219,8 @@ theorem ancestors_subset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
   rintro rfl
   exact hba hx.2.le
 
+/-- Between nodes neither of which dominates the other, strict closeness is asymmetric
+command. -/
 theorem ancestors_ssubset_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors P a ⊂ ancestors P b ↔ a ~[commandRelation P] b ∧ ¬ b ~[commandRelation P] a := by
   rw [ssubset_def, ancestors_subset_ancestors_iff hab hba, ancestors_subset_ancestors_iff hba hab]
@@ -220,6 +230,8 @@ theorem ancestors_eq_ancestors_iff (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
   rw [Subset.antisymm_iff, ancestors_subset_ancestors_iff hab hba,
     ancestors_subset_ancestors_iff hba hab, mem_mateRelation]
 
+/-- Among nodes none of which dominates another, the closest are those that no node of the set
+asymmetrically commands, the Minimal Link Condition. -/
 theorem minimalFor_ancestors_iff {S : Set α} (hS : IsAntichain (· ≤ ·) S) :
     MinimalFor (· ∈ S) (ancestors P) a ↔
       a ∈ S ∧ ∀ ⦃b⦄, b ∈ S → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) :=
@@ -268,6 +280,8 @@ section DominanceImageTree
 
 variable [PartialOrder α] [IsLeftLinear α] {R : SetRel α α} {a b m : α}
 
+/-- Two daughters of one node are not related by the dominance image of the asymmetric part of a
+relation between disconnected nodes that relates them both ways. -/
 theorem not_mem_dominanceImage_asymmetrize_of_covBy
     (hR : ∀ ⦃x y⦄, x ~[R] y → ¬ x ≤ y ∧ ¬ y ≤ x) (hab : a ~[R] b → b ~[R] a)
     (ha : m ⋖ a) (hb : m ⋖ b) : ¬ a ~[dominanceImage R.asymmetrize] b := by
@@ -360,6 +374,8 @@ def cCommandDomain (t : RoseTree β) (a : TreePath) : Set TreePath := {b | t.CCo
 instance (t : RoseTree β) (a b : TreePath) : Decidable (b ∈ t.cCommandDomain a) :=
   inferInstanceAs (Decidable (t.CCommands a b))
 
+/-- C-command is sisterhood plus dominance: a position whose parent branches c-commands exactly
+the positions properly below its parent and not below itself. -/
 theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ ⊥)
     (hp : IsBranchingAt t a.parent) : CCommands t a b ↔ a.parent < b ∧ ¬ a ≤ b := by
   have hcov : a.parent ⋖ a := by
@@ -376,6 +392,8 @@ theorem cCommands_iff_of_covBy {t : RoseTree β} {m c q : TreePath} (hc : m ⋖ 
   have hpar : c.parent = m := by rw [← TreePath.pred_eq_parent, Order.pred_eq_of_covBy hc]
   rw [cCommands_iff_parent_lt (ne_bot_of_gt hc.lt) (hpar ▸ hm), hpar]
 
+/-- Between positions neither of which dominates the other, strict closeness under the branching
+positions is asymmetric c-command. -/
 theorem ancestors_ssubset_ancestors_iff_cCommands {t : RoseTree β} {a b : TreePath}
     (hab : ¬ a ≤ b) (hba : ¬ b ≤ a) :
     ancestors {p | t.IsBranchingAt p} a ⊂ ancestors {p | t.IsBranchingAt p} b ↔

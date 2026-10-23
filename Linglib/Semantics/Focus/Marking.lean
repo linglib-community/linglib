@@ -115,6 +115,8 @@ theorem nontrivial_alternatives_mark_focused [Nontrivial α] (d : WithAlternativ
       Set.range (f x) := by
   simp [Set.image2_singleton_left]
 
+/-- Unless a constituent already evokes its whole type, its alternatives grow exactly along the
+order of the marks: the order on marks is the order of the alternatives they evoke. -/
 theorem alternatives_mark_subset_alternatives_mark_iff (hd : d.alternatives ≠ .univ)
     {m m' : Mark} : (d.mark m).alternatives ⊆ (d.mark m').alternatives ↔ m ≤ m' := by
   cases m <;> cases m' <;> simp [Set.univ_subset_iff, hd] <;> decide
@@ -125,6 +127,8 @@ universe u
 
 variable {σ τ : Type u}
 
+/-- On a well-formed meaning a mark is a continuation: each alternative is bound into the
+meaning of a terminal bearing the mark, so F-marking replaces it by the whole type. -/
 theorem mark_eq_bind {d : WithAlternatives σ} (hd : d.WellFormed) (m : Mark) :
     d.mark m = d >>= fun a ↦ (pure a : WithAlternatives σ).mark m := by
   cases m
@@ -133,6 +137,8 @@ theorem mark_eq_bind {d : WithAlternatives σ} (hd : d.WellFormed) (m : Mark) :
     rw [alternatives_bind]
     exact ⟨fun _ ↦ ⟨_, hd, Set.mem_univ x⟩, fun _ ↦ Set.mem_univ x⟩
 
+/-- An F-marked constituent under a continuation with well-formed values is Given only if the
+ordinary values of the continuation ignore it. -/
 theorem ordinary_eq_of_given_mark_focused_bind {d : WithAlternatives σ}
     {k : σ → WithAlternatives τ} (hk : ∀ a, (k a).WellFormed) {c : τ}
     (h : (d.mark .focused >>= k).Given c) (a : σ) : (k a).ordinary = c := by

@@ -217,6 +217,8 @@ def focusNode : Focused → Node
   | .vp => .vp
   | .object => .obj
 
+/-- A configuration has an overt reflex on the reflex analysis exactly when its marking here is
+not the default clausal one. -/
 theorem overt_iff_marking_ne_default :
     ∀ c : Config, c.WF → ∀ inv ∈ tangale c.tam,
       ((realize c).Nonempty ↔ marking inv (focusNode c.focused) ≠ some .s) := by
@@ -258,6 +260,10 @@ private theorem mem_excluded_left_mk {α β : Type*} {a : α} {b : β} {t : α �
   · simp only [excluded_strong, narrow_left, Set.mem_compl_iff, Set.mem_image2_iff injective2_mk,
       Set.mem_singleton_iff, reduceCtorEq, iff_false]
 
+/-- In an English domain, whose inventory is the node and its default-weak daughter, the
+restriction of each metrical pattern excludes exactly the targets whose focus Blocking takes from
+the marking the pattern provides. The literal meaning, which focuses nothing, survives only
+default weights. -/
 theorem notMem_excluded_iff {α β : Type*} [DecidableEq α] [DecidableEq β] {n w w' : Node}
     (h : n.daughters = some (w, w')) (a : α) (b : β) (t : α × β) (ρ : Restriction) :
     t ∉ excluded Prod.mk a b .left ρ ↔
@@ -356,11 +362,16 @@ def englishMarked? (r : Datum) : Option (Node × Node) :=
   | "stan1293", some "nuclear stress on verb" => some (.s, .v)
   | _, _ => none
 
+/-- Every reading of a row is realized by the marking the row shows, which is the marking the
+inventory predicts for that focus. -/
 theorem rows_marking :
     ∀ r ∈ Examples.all, ∀ inv ∈ inventory? r, ∀ m ∈ marked? r, ∀ x ∈ r.readings,
       ∀ f ∈ Node.parse? x.1, x.2 = .acceptable ∧ marking inv f = some m := by
   decide
 
+/-- With the clause marked by default weights and the verb by reversal, a reading of the English
+row is acceptable exactly when its focal target survives the restrictions of
+*Kim ATE the yogurt*. -/
 theorem rows_english :
     ∀ r ∈ Examples.all, englishMarked? r = some (.s, .v) → ∀ x ∈ r.readings, ∀ F ∈ focus? x.1,
       (x.2 = .acceptable ↔ englishTarget F ∈ (kimAteTheYogurt .weak .strong).alternatives) := by

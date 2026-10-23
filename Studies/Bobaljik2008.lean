@@ -76,6 +76,8 @@ end CaseCategory
 
 variable {α : Type*}
 
+/-- In a language whose least accessible category is `t`, the categories at or above `t` are
+accessible, so the accessible categories are closed upward. -/
 theorem isUpperSet_accessible (t : CaseCategory) : IsUpperSet {c | t ≤ c} := isUpperSet_Ici t
 
 /-- The controller of agreement is the highest noun phrase of the domain whose case is
@@ -93,24 +95,32 @@ def controls (a : Alignment.AlignmentType) (t : CaseCategory) : ArgumentRole →
 
 /-! ### The predicted agreement alignments -/
 
+/-- An accusative case system gives subject agreement at every setting. -/
 theorem isAccusative_controls_accusative (t : CaseCategory) :
     Alignment.IsAccusative (controls .accusative t) := by
   cases t <;> decide
 
+/-- An ergative case system gives absolutive agreement when only unmarked case is accessible,
+as in Hindi. -/
 theorem isErgative_controls_ergative_unmarked :
     Alignment.IsErgative (controls .ergative .unmarked) := by
   decide
 
+/-- An ergative case system gives subject agreement when dependent case is accessible, as in
+Nepali. -/
 theorem isAccusative_controls_ergative_dependent :
     Alignment.IsAccusative (controls .ergative .dependent) := by
   decide
 
+/-- No setting derives ergative agreement from accusative case. -/
 theorem not_isErgative_controls_accusative (t : CaseCategory) :
     ¬ Alignment.IsErgative (controls .accusative t) :=
   (isAccusative_controls_accusative t).not_isErgative
 
 /-! ### Case against grammatical function -/
 
+/-- Below a subject with lexical case, as the dative subjects of Icelandic, the verb agrees
+with the nominative object unless lexical case is itself accessible. -/
 theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
     controller t (assignCases .accusative (fun r ↦ if r = ArgumentRole.A then some c else none)
       [ArgumentRole.A, .P]) = some 1 := by

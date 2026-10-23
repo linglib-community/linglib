@@ -85,6 +85,8 @@ def IsResolved (U : W → A → ℝ) (C : Set W) : Prop := ∃ a, ∀ b, ∀ w �
 better. -/
 def optimalityRegion (U : W → A → ℝ) (a : A) : Set W := {w | ∀ b, U w b ≤ U w a}
 
+/-- Information resolves the decision problem exactly when it lies within the optimality
+region of some action. -/
 theorem isResolved_iff_exists_subset_optimalityRegion (U : W → A → ℝ) (C : Set W) :
     IsResolved U C ↔ ∃ a, C ⊆ optimalityRegion U a :=
   ⟨fun ⟨a, h⟩ ↦ ⟨a, fun _ hw b ↦ h b _ hw⟩, fun ⟨a, h⟩ ↦ ⟨a, fun _ _ hw ↦ h hw _⟩⟩
@@ -150,6 +152,8 @@ theorem newspaper_optimalityRegions :
       optimalityRegion newspaper .palace = {.palace, .both} := by
   constructor <;> ext w <;> cases w <;> norm_num [optimalityRegion, forall_walk, newspaper]
 
+/-- The mention-some answer *at least at the station* resolves the problem although it is only
+a partial answer to the partition question. -/
 theorem newspaper_station_resolves : IsResolved newspaper ({.station, .both} : Set NewsW) :=
   (isResolved_iff_exists_subset_optimalityRegion _ _).2
     ⟨.station, newspaper_optimalityRegions.1.ge⟩
@@ -180,6 +184,9 @@ private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .
   rw [Question.utilityValue, hval, newspaper_value]
   norm_num
 
+/-- Taking effort into account, the mention-some answer *at least at the station* is a better
+answer than the complete answer *only at the station*, since both resolve the problem and the
+first says less. -/
 theorem newspaper_betterAnswer :
     Question.BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
   refine Question.betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
@@ -268,6 +275,9 @@ theorem questionR_actions (U : W → A → ℝ) :
   · rintro ⟨⟨a, rfl⟩, w, hw⟩
     exact ⟨w, a, hw, rfl⟩
 
+/-- When an answer is more relevant the more informative it is, the rule asks for the most
+informative true answer, and for a distributive predicate it gives the partition by the
+predicate's extension, the mention-all reading of [groenendijk-stokhof-1984]. -/
 theorem questionR_entailment {D : Type*} (ext : W → Set D) :
     questionR (fun w ↦ {g | g ⊆ ext w}) (fun _ g ↦ OrderDual.toDual {v | g ⊆ ext v}) =
       (Setoid.ker ext).classes := by
@@ -309,6 +319,7 @@ theorem bestPlace_optimalValues :
   refine ⟨?_, ?_, ?_⟩ <;> ext a <;> cases a <;>
     norm_num [mem_optimalValues, forall_walk, bestPlace]
 
+/-- The rule yields the overlapping mention-some answers. -/
 theorem bestPlace_questionR :
     questionR (fun _ ↦ Set.univ) bestPlace = {{.station, .both}, {.palace, .both}} := by
   have h (a : Walk) : optimalityRegion bestPlace a =
@@ -457,6 +468,8 @@ private theorem singleton_ssubset_city (w : Address) :
 
 private theorem livesAt_eq (w : Address) : livesAt w = {.address w, .city w.city} := rfl
 
+/-- For a visit, taking effort into account, *Where do you live?* denotes the partition by
+city. -/
 theorem liveIn_visit :
     questionR livesAt (relevanceWithEffort visit livesAt) = (Setoid.ker Address.city).classes := by
   have h (w : Address) : optimalValues livesAt (relevanceWithEffort visit livesAt) w =
@@ -621,6 +634,8 @@ private theorem whAnswers_pair {f : SpiderW → Concept} {c₁ c₂ : Concept} {
   simp only [Set.mem_singleton_iff, eq_comm (a := c₁), eq_comm (a := c₂)]
   rw [show {v | f v = c₁} = S₁ from Set.ext h₁, show {v | f v = c₂} = S₂ from Set.ext h₂]
 
+/-- For a questioner who has to know the culprit's name, *Who killed spiderman?* denotes the
+partition by name. -/
 theorem killer_byName :
     questionR killer (fun _ c ↦ IsResolved byName {v | c ∈ killer v}) =
       {{.johnBlue, .johnGreen}, {.billBlue, .billGreen}} := by
@@ -653,6 +668,8 @@ theorem killer_byName :
       exacts [⟨.johnBlue, rfl⟩, ⟨.billBlue, rfl⟩])
   all_goals cases v <;> simp [nameOf]
 
+/-- For a questioner who has to know what the culprit looks like, *Who killed spiderman?*
+denotes the partition by mask. -/
 theorem killer_byMask :
     questionR killer (fun _ c ↦ IsResolved byMask {v | c ∈ killer v}) =
       {{.johnBlue, .billBlue}, {.johnGreen, .billGreen}} := by
@@ -727,6 +744,7 @@ theorem isCover_masks : Aloni2001.IsCover (Concept.val '' {.blue, .green}) := by
     exacts [⟨_, hb, rfl⟩, ⟨_, hg, rfl⟩, ⟨_, hg, rfl⟩, ⟨_, hb, rfl⟩, ⟨_, hg, rfl⟩, ⟨_, hb, rfl⟩,
       ⟨_, hb, rfl⟩, ⟨_, hg, rfl⟩]
 
+/-- The four concepts form no cover, since the culprit is counted twice, by name and by mask. -/
 theorem not_isCover_range_val : ¬ Aloni2001.IsCover (Set.range Concept.val) := fun h ↦ by
   have e := h.eq_of_apply_eq ⟨.john, rfl⟩ ⟨.blue, rfl⟩ (w := .johnBlue) rfl
   cases congrFun e .johnGreen
@@ -742,6 +760,9 @@ private theorem classes_eq_pair {Q : Setoid SpiderW} {S₁ S₂ : Set SpiderW} {
   · rintro (rfl | rfl)
     exacts [⟨w₁, h₁.symm⟩, ⟨w₂, h₂.symm⟩]
 
+/-- For a questioner who has to know the culprit's name, *Who killed spiderman?* is exactly Aloni's
+question `Q_A` under the name cover (section 5.3), by `image_val_names` and
+`Aloni2001.whoUnder_names` Groenendijk and Stokhof's partition. -/
 theorem killer_byName_eq_whoUnder :
     questionR killer (fun _ c ↦ IsResolved byName {v | c ∈ killer v}) =
       (Aloni2001.whoUnder (Concept.val '' {.john, .bill}) killed).classes := by
@@ -755,6 +776,8 @@ theorem killer_byName_eq_whoUnder :
   · rw [Aloni2001.whoUnder_iff, Aloni2001.whoUnder_iff]
     cases w <;> simp
 
+/-- For a questioner who has to know what the culprit looks like, *Who killed spiderman?* is
+exactly Aloni's question `Q_B` under the cover by masks (section 5.3). -/
 theorem killer_byMask_eq_whoUnder :
     questionR killer (fun _ c ↦ IsResolved byMask {v | c ∈ killer v}) =
       (Aloni2001.whoUnder (Concept.val '' {.blue, .green}) killed).classes := by
@@ -788,6 +811,8 @@ def autographRank : Beatle → ℕ
 /-- The autographs that count, McCartney's ignored. -/
 def counted (w : Finset Beatle) : Set Beatle := ↑(w.erase .mccartney)
 
+/-- Ranked by the hierarchy, *Which Beatles' autograph do you have?* has just three resolving
+answers, at least a Lennon autograph, Harrison but not Lennon, and only Starr. -/
 theorem beatles_questionR :
     questionR counted (fun _ ↦ autographRank) =
       {{w | .lennon ∈ w}, {w | .harrison ∈ w ∧ .lennon ∉ w},

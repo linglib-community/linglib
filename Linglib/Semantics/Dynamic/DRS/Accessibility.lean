@@ -248,6 +248,7 @@ private theorem Condition.mem_occurrences_of_step (c : Condition L V) :
     · exact .inr (DRS.mem_occurrences.mp (mem_occurrences_of_step_head hs))
     · exact .inr (.inr ⟨d, hd, ihr d hd hp hs⟩)
 
+/-- The computed occurrences are exactly those the walk reaches. -/
 theorem DRS.mem_occurrences_iff {bs : List (DRS L V)} {K : DRS L V}
     {p : List (DRS L V) × DRS L V} :
     p ∈ DRS.occurrences bs K ↔ Relation.ReflTransGen ScopeStep (bs, K) p := by

@@ -77,6 +77,8 @@ theorem headDaughterAt_eq_sup (t : Tree C W) : HeadDaughterAt t = ProjectsAt t �
 abbrev maximalProjectionsAt (t : Tree C W) : Set TreePath :=
   maximalProjections (ProjectsAt t) (AdjoinsAt t)
 
+/-- On a tree without adjunction the maximal projections are the nodes that are no node's head
+daughter. -/
 theorem maximalProjectionsAt_eq_of_forall_not_isSegmentAt {t : Tree C W}
     (h : ∀ p, ¬ IsSegmentAt t p) :
     maximalProjectionsAt t = {p | IsMaximalProjection (HeadDaughterAt t) p} := by
@@ -106,6 +108,7 @@ theorem cat_eq_of_headIndex? {t : Tree C W} {i : ℕ} (h : headIndex? t = some i
     exact ⟨x.1, List.mem_zipIdx_iff_getElem?.mp hz, by simpa using hc⟩
   · cases h
 
+/-- A projection has the category of what it projects from. -/
 theorem cat_eq_of_isProjectionOf {t : Tree C W} {h p : TreePath}
     (hp : IsProjectionOf (HeadDaughterAt t) h p) {s s' : Tree C W}
     (hs : t.subtreeAt p.toList = some s) (hs' : t.subtreeAt h.toList = some s') :

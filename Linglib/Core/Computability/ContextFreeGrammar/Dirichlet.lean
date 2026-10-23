@@ -104,6 +104,8 @@ theorem urn_update (x : ContextFreeRule T G.NT → ℕ) (a : G.NT) :
     (M.update x).urn a = M.urn a + fun r : G.RulesWithLHS a ↦ (x r : ℝ) :=
   rfl
 
+/-- **Chain rule.** The probability of the counts `x + y` is the probability of `x` times the
+probability of `y` under the posterior given `x`. -/
 theorem countsProb_add (x y : ContextFreeRule T G.NT → ℕ) :
     M.countsProb (x + y) = M.countsProb x * (M.update x).countsProb y := by
   rw [countsProb, countsProb, countsProb, ← prod_mul_distrib]
@@ -141,6 +143,11 @@ theorem mean_weight_lt_mean_weight_iff {a : G.NT} {r r' : G.RulesWithLHS a} :
   rw [mean, PCFG.normalize_weight_lt_normalize_weight_iff,
     ENNReal.ofReal_lt_ofReal_iff (M.pseudo_pos r' (mem_filter.mp r'.2).1)]
 
+/-- On a tree with at most one node labelled by each nonterminal, the mean PCFG gives the tree its
+probability under the prior. For the posterior given a corpus, the proposal grammar of the
+Hastings sampler of [johnson-griffiths-goldwater-2007] is then the exact conditional. A tree that
+expands a nonterminal twice generally separates the two: the first expansion reinforces the urn
+at that nonterminal, and the mean PCFG does not see it. -/
 theorem derivProb_mean {t : RoseTree (Symbol T G.NT)} (ht : t.Licensed G.Licenses)
     (hone : ∀ a, t.values.count (.nonterminal a) ≤ 1) :
     M.mean.derivProb t = .ofReal (M.countsProb (ruleCounts {t})) := by

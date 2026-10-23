@@ -89,6 +89,7 @@ theorem paradigmatic_ofFocus (p : Bundle → Prop) [DecidablePred p] (target : T
 
 /-! ### Impoverishment only deletes -/
 
+/-- A rule whose deletion shrinks bundles leaves a bundle below the focus. -/
 theorem apply_le [Preorder Bundle] {delete : Bundle → Target → Bundle}
     (h : ∀ b t, delete b t ≤ b) (rule : ImpoverishmentRule Bundle Target)
     (n : Neighborhood Bundle) : rule.apply delete n ≤ n.focus := by
@@ -97,6 +98,7 @@ theorem apply_le [Preorder Bundle] {delete : Bundle → Target → Bundle}
   · exact h _ _
   · exact le_rfl
 
+/-- On bundles of features, a rule erases its target from the focus where its condition holds. -/
 theorem apply_erase_subset {α : Type*} [DecidableEq α] (rule : ImpoverishmentRule (Finset α) α)
     (n : Neighborhood (Finset α)) : rule.apply Finset.erase n ⊆ n.focus :=
   apply_le (fun _ _ ↦ Finset.erase_subset _ _) rule n

@@ -65,6 +65,10 @@ open Haspelmath1997 hiding russian
 
 /-! ### Morphological containment -/
 
+/-- A structure of two layers that is not spelled out by one exponent is spelled out by the
+exponent of its lower layer and a suffix. Were a higher layer of the hierarchy to have an
+exponent of its own, the marker of one function would thus be built on the marker of another,
+the containment no indefinite paradigm shows. -/
 theorem containment_of_two_exponents {F : Type*} [DecidableEq F]
     (L : RuleSet (LexicalEntry (Option F) String)) (f₁ f₂ : F) {x : String} {r : List String}
     (h₁ : exponents L [f₁] = some [x]) (h₂ : exponents L [f₁, f₂] = some r) (hr : r.length ≠ 1) :
@@ -84,6 +88,9 @@ theorem containment_of_two_exponents {F : Type*} [DecidableEq F]
     · simp [hw] at h₂
       exact absurd (by simp [← h₂]) hr
 
+/-- A lexicon like Dekier's, every entry of which stores the lowest layer, gives each layer a
+single exponent under the lexicalization algorithm, the one its spellout has there, so no
+marker is built on another. -/
 theorem no_containment_of_bottom_entries {n : ℕ} (L : RuleSet (SupersetRule n String))
     (g : Fin n) :
     exponents (L.map (LexicalEntry.ofSupersetRule some)) (List.range ((g : ℕ) + 1)) =
@@ -92,6 +99,11 @@ theorem no_containment_of_bottom_entries {n : ℕ} (L : RuleSet (SupersetRule n 
 
 /-! ### Complexity -/
 
+/-- No single atom states the specific unknown requirement, whatever its variables, since a
+constancy atom is closed under subteams, a variation atom under superteams, and the requirement
+under neither. On the semantic account the specific unknown type is thus the complex one, the
+specific known and the non-specific type each being a single atom, where the hierarchy makes
+the specific known layer the most complex. -/
 theorem specificUnknown_not_atomic {V E : Type*} [Nontrivial E] {v x : V} (hvx : v ≠ x)
     (Z : Finset V) (u : V) :
     (¬ ∀ T : Finset (V → E), IndefiniteType.specificUnknown.Requires T v x ↔ Dep T Z u) ∧
@@ -127,6 +139,9 @@ def coverage (ℓ : SpecificityFunction → Fin n) (L : RuleSet (SupersetRule n 
 @[simp]
 theorem mem_coverage : u ∈ coverage ℓ L φ ↔ spellout L (ℓ u) = some φ := by simp [coverage]
 
+/-- A hierarchy ordering its layers as the map orders the uses, Dekier's or its reverse, complies
+with the ban on ABA, since it gives each form an interval of the uses and so only a type whose
+requirement is convex (`IndefiniteType.ordConnected_requires`). -/
 theorem ordConnected_coverage (hℓ : Monotone ℓ ∨ Antitone ℓ) (hL : L.Antihomophonous) :
     (coverage ℓ L φ : Set SpecificityFunction).OrdConnected := by
   have h :=
@@ -162,11 +177,17 @@ theorem lt_of_mem_sdiff (h : LossDerives ℓ t t') (hu' : u' ∈ t'.profile \ t.
 
 end LossDerives
 
+/-- A change entry loss derives is a semantic weakening, so the hierarchy predicts a part of
+what the semantic account predicts. -/
 theorem entry_loss_is_weakening (h : LossDerives ℓ t t') {V E : Type*} (T : Finset (V → E))
     (v x : V) : t.Requires T v x → t'.Requires T v x := by
   simp only [IndefiniteType.requires_iff]
   exact fun ⟨u, hu, hT⟩ ↦ ⟨u, h.profile_subset hu, hT⟩
 
+/-- On no hierarchy does entry loss derive both attested changes to the epistemic type. A
+specific unknown form gains the non-specific function and a non-specific form the specific
+unknown one, and each gain would put the gained function's layer below the other's. This holds
+of Dekier's hierarchy and of its reverse alike. -/
 theorem no_hierarchy_derives_both_changes (ℓ : SpecificityFunction → Fin n) :
     ¬ (LossDerives ℓ .specificUnknown .epistemic ∧ LossDerives ℓ .nonSpecific .epistemic) :=
   fun ⟨h, h'⟩ ↦ lt_asymm

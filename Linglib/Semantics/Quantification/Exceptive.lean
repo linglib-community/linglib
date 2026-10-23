@@ -71,9 +71,12 @@ def IsExceptionSet (Q : GQ α) (A C B : α → Prop) : Prop :=
 
 namespace Restrictive
 
+/-- A left-upward-monotone determiner falsifies every restrictive exceptive. -/
 theorem not_of_restrictorMonotone (hQ : RestrictorMonotone Q) : ¬ Restrictive Q A C B :=
   fun h ↦ h.2 (hQ B sdiff_le h.1)
 
+/-- Under a left-downward-monotone determiner a restrictive exceptive survives enlarging the
+exception set, the inference the exception set blocks. -/
 theorem mono (hQ : RestrictorAntitone Q) (h : Restrictive Q A C B) {C' : α → Prop}
     (hC : C ≤ C') : Restrictive Q A C' B :=
   ⟨hQ B (sdiff_le_sdiff_left hC) h.1, h.2⟩
@@ -82,13 +85,18 @@ end Restrictive
 
 namespace IsExceptionSet
 
+/-- The exception set is unique. -/
 theorem unique (h : IsExceptionSet Q A C B) {C' : α → Prop} (h' : IsExceptionSet Q A C' B) :
     C = C' :=
   IsLeast.unique h h'
 
+/-- The exception set lies within the restrictor, since subtracting `C ⊓ A` subtracts as much
+as `C`. -/
 theorem le_restrictor (h : IsExceptionSet Q A C B) : C ≤ A :=
   (le_inf_iff.1 (h.2 (show Q (A \ (C ⊓ A)) B by rw [sdiff_inf_self_right]; exact h.1))).2
 
+/-- A left-upward-monotone determiner has only the empty exception set, since once the
+quantification holds with `C` subtracted it holds with nothing subtracted. -/
 theorem eq_bot_of_restrictorMonotone (hQ : RestrictorMonotone Q) (h : IsExceptionSet Q A C B) :
     C = ⊥ :=
   le_bot_iff.1 (h.2 (show Q (A \ ⊥) B by rw [sdiff_bot]; exact hQ B sdiff_le h.1))

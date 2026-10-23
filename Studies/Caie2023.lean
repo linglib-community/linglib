@@ -115,6 +115,9 @@ def fragments : Set (C × W) := {f | f.2 ∈ cs ∧ f.1 ∈ I f.2}
 false at its world. -/
 def updateFragments (X : Set (C × W)) : Set (C × W) := {f ∈ X | sem f.1 f.2}
 
+/-- One filtration of the fragment set does the work of both parts of an update step: the
+fragments of the updated context set under the pruned interpretations are exactly the fragments
+that survive the assertion. -/
 theorem fragments_prune :
     fragments (cs ∩ disjunctiveDiagonal I sem) (prune I sem)
       = updateFragments sem (fragments cs I) := by
@@ -137,6 +140,9 @@ def run : Set W → (W → Set C) → List (C → W → Prop) → Set W
   | cs, _, [] => cs
   | cs, I, sem :: rest => run (cs ∩ disjunctiveDiagonal I sem) (prune I sem) rest
 
+/-- A discourse eliminates a world exactly when no context available there at the outset makes
+all of its sentences true: pruning makes a discourse update on the conjunction of its sentences
+under a single interpretation. -/
 theorem run_eq_inter (ss : List (C → W → Prop)) (h : ∀ w ∈ cs, (I w).Nonempty) :
     run cs I ss = cs ∩ disjunctiveDiagonal I fun c w => ∀ s ∈ ss, s c w := by
   induction ss generalizing cs I with

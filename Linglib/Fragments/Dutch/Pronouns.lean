@@ -100,10 +100,12 @@ def addresseePl : Grade → PersonalPronoun
 /-- The strong subject pronouns. -/
 def pronouns : Finset PersonalPronoun := {ik, jij, u, hij, zij_sg, het, wij, jullie, zij_pl}
 
+/-- The familiar grade distinguishes one addressee from several, and the polite grade does not. -/
 theorem addressee_number :
     addresseeSg .familiar ≠ addresseePl .familiar ∧ addresseeSg .polite = addresseePl .polite := by
   decide
 
+/-- The polite form denotes exactly what the two familiar forms denote between them. -/
 theorem u_referential : u.referential = jij.referential ∪ jullie.referential := by decide
 
 end Pronouns

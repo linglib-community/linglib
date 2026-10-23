@@ -249,15 +249,19 @@ theorem logit_maxEntProb (x : Context) (w : Fin 6 → ℝ) :
     logit (maxEntProb x w) = harmonyDiff x w := by
   rw [maxEntProb, maxEnt_real_singleton, logit_softmax_fin_two]; rfl
 
+/-- MaxEnt predicts the same logit difference, the weight of \*Clash, across the four pairs
+1-2, 3-4, 5-6, 7-8. -/
 theorem logit_following (u : Underlying) (o : Onset) (w : Fin 6 → ℝ) :
     logit (maxEntProb ⟨u, o, .monosyllable⟩ w) - logit (maxEntProb ⟨u, o, .disyllable⟩ w) =
       w 2 := by
   rw [logit_maxEntProb, logit_maxEntProb, harmonyDiff_following]
 
+/-- … and the same logit difference across the pairs 1-3, 2-4, 5-7, 6-8. -/
 theorem logit_onset (u : Underlying) (f : Following) (w : Fin 6 → ℝ) :
     logit (maxEntProb ⟨u, .cc, f⟩ w) - logit (maxEntProb ⟨u, .c, f⟩ w) = w 1 - w 5 := by
   rw [logit_maxEntProb, logit_maxEntProb, harmonyDiff_onset]
 
+/-- … and across the pairs 1-5, 2-6, 3-7, 4-8. -/
 theorem logit_underlying (o : Onset) (f : Following) (w : Fin 6 → ℝ) :
     logit (maxEntProb ⟨.schwa, o, f⟩ w) - logit (maxEntProb ⟨.zero, o, f⟩ w) = w 3 + w 4 := by
   rw [logit_maxEntProb, logit_maxEntProb, harmonyDiff_underlying]

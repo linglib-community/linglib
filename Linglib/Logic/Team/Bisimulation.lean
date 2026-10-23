@@ -209,6 +209,8 @@ private theorem exists_liftRel_witness (hR : ∀ a b, r₁ a b → Set.LiftRel r
     obtain ⟨y', hy'b, hyy'⟩ := (hR a b hab).1 y hya
     exact ⟨y', Finset.mem_filter.2 ⟨Finset.mem_biUnion.2 ⟨b, hb, hy'b⟩, y, hy, hyy'⟩, hyy'⟩
 
+/-- The single-witness possibility modality preserves invariance between downward-closed
+    properties. -/
 theorem Invariant.possWitness (hR : ∀ a b, r₁ a b → Set.LiftRel r ↑(R a) ↑(R' b))
     (hP : IsLowerSet P) (hP' : IsLowerSet P') (h : Invariant r P P') :
     Invariant r₁ (possWitness R P) (possWitness R' P') := by

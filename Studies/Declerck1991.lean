@@ -157,6 +157,7 @@ example :
       chain conditionalPerfect = [.past, .posterior, .anterior] := by
   decide
 
+/-- Each absolute sector has exactly one absolute tense to locate a situation in it. -/
 theorem absolute_sector_bijective :
     (∀ s : Sector, ∃ f ∈ tenses, IsAbsolute f ∧ sector f = s) ∧
       ∀ f ∈ tenses, ∀ g ∈ tenses, IsAbsolute f → IsAbsolute g → sector f = sector g → f = g := by
@@ -180,6 +181,7 @@ instance (f : Form) (b : NonemptyInterval T) (tos : List (NonemptyInterval T)) :
 
 variable {t₀ : T} {x : NonemptyInterval T}
 
+/-- The preterit places its situation-TO wholly before t₀. -/
 theorem realizes_simplePast_iff : Realizes .simplePast (.pure t₀) [x] ↔ x.snd < t₀ := by
   simp [Realizes, show chain .simplePast = [.past] from rfl, Allen.HoldsAlong, Link.cell,
     NonemptyInterval.Precedes]

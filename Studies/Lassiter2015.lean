@@ -98,6 +98,8 @@ when the space is exhausted. -/
 theorem kratzerLift_univ_iff (A : Set W) : KratzerLift r A Set.univ ↔ A = Set.univ :=
   kratzerLift_univ_iff' r A
 
+/-- Over two indiscriminate worlds `{0}` is as likely as its complement but not as
+everything. -/
 theorem revised_escapes_collapse :
     ¬EquiprobabilityCollapse (KratzerLift fun _ _ : Fin 2 ↦ True) := by
   intro h
@@ -196,6 +198,8 @@ section Probability
 
 variable [MeasurableSpace W] [DiscreteMeasurableSpace W] (P : Measure W) [IsProbabilityMeasure P]
 
+/-- The premises are compatible with the conclusion, since when the first proposition holds at
+least half the mass, any alternatives outside it together weigh no more. -/
 theorem prob_rightUnion_of_half {A B C : Set W} (hA : 1 / 2 ≤ P.real A) (hB : B ⊆ Aᶜ)
     (hC : C ⊆ Aᶜ) : P.real (B ∪ C) ≤ P.real A := by
   have h1 := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
@@ -204,6 +208,8 @@ theorem prob_rightUnion_of_half {A B C : Set W} (hA : 1 / 2 ≤ P.real A) (hB : 
 
 end Probability
 
+/-- In the fair lottery a holder of at most `k` of `n` tickets wins with probability at most
+`k / n` and loses with probability at least `(n - k) / n`. -/
 theorem lottery_bound {n k : ℕ} [NeZero n] {A : Set (Fin n)} (h : A.ncard ≤ k) :
     (uniformOn (Set.univ : Set (Fin n))).real A ≤ k / n ∧
       ((n : ℝ) - k) / n ≤ (uniformOn (Set.univ : Set (Fin n))).real Aᶜ := by
@@ -315,6 +321,8 @@ theorem bridge2_refutes_V6 :
     simp [Measure.inducedGe_iff_real, skewed_real, Fin.sum_univ_three, Set.indicator_apply] at h
     norm_num at h
 
+/-- The same model satisfies BR3, since the order agrees with the measure on singletons, so
+BR3 too allows a necessary proposition to be less likely than its negation. -/
 theorem bridge3_refutes_V6 :
     Bridge3 (premisePreorder bestFirst).le skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must bestFirst · 0) :=
@@ -343,6 +351,8 @@ theorem thin_real (A : Set (Fin 2)) :
 /-- `bestFirst₂` makes the first of two worlds the best. -/
 def bestFirst₂ : Set (Fin 2 → Prop) := {(· = 0)}
 
+/-- In `thin` BR1 holds and the sole best world is necessary, yet it is only barely likelier
+than its negation, so BR1 cannot deliver *much more likely*. -/
 theorem bridge1_thin_margin :
     Bridge1 (premisePreorder bestFirst₂).le thin ∧ Yalcin2010.must bestFirst₂ {0} 0 ∧
       thin.real {0} < 5002 / 10000 := by

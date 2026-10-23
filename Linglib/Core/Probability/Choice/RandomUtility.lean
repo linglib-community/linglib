@@ -83,12 +83,15 @@ theorem measurableSet_setOf_forall_ne_lt (i : ι) :
   exact .iInter fun j ↦ .iInter fun _ ↦
     measurableSet_lt (measurable_pi_apply j) (measurable_pi_apply i)
 
+/-- The choice probabilities of a pushforward law are the masses of the preimage events. -/
 theorem choiceProb_map {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) {U : Ω → ι → ℝ}
     (hU : Measurable U) (i : ι) :
     choiceProb (P.map U) i = P {ω | ∀ j, j ≠ i → U ω j < U ω i} := by
   rw [choiceProb, Measure.map_apply hU (measurableSet_setOf_forall_ne_lt i)]
   rfl
 
+/-- When ties have probability zero the choice probabilities of the alternatives sum to one, as for
+independent atomless noise (`Measure.pi_setOf_apply_eq_apply`). -/
 theorem sum_choiceProb [Nonempty ι] (μ : Measure (ι → ℝ)) [IsProbabilityMeasure μ]
     (hμ : ∀ j k, j ≠ k → μ {x | x j = x k} = 0) : ∑ i, choiceProb μ i = 1 := by
   have hdisj : Pairwise (Function.onFun Disjoint fun i ↦ {x : ι → ℝ | ∀ j, j ≠ i → x j < x i}) :=
@@ -106,6 +109,8 @@ theorem sum_choiceProb [Nonempty ι] (μ : Measure (ι → ℝ)) [IsProbabilityM
 
 variable [DecidableEq ι]
 
+/-- The choice probability of `i` is the integral, against the law of the `i`-th utility, of the
+probability that every other utility falls below it. -/
 theorem choiceProb_pi_eq_lintegral (ν : ι → Measure ℝ) [∀ j, SigmaFinite (ν j)] (i : ι) :
     choiceProb (Measure.pi ν) i = ∫⁻ x, ∏ j ∈ univ.erase i, ν j (Iio x) ∂ν i := by
   have hS : {x : ι → ℝ | ∀ j, j ≠ i → x j < x i} = MeasurableEquiv.piSplitAt (fun _ ↦ ℝ) i ⁻¹'
@@ -132,6 +137,9 @@ end ChoiceProb
 
 /-! ### Gaussian noise: the probit rule -/
 
+/-- Two alternatives with independent Gaussian utilities of means `u 0`, `u 1` and common variance
+`v` follow the binary probit rule, since the difference of the utilities is Gaussian with variance
+`2 * v`. -/
 theorem choiceProb_pi_gaussianReal (u : Fin 2 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) :
     choiceProb (Measure.pi fun j ↦ gaussianReal (u j) v) 0 =
       ENNReal.ofReal (normalCDF ((u 0 - u 1) / √(2 * v))) := by
@@ -175,6 +183,11 @@ section GumbelRUM
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι] {β : ℝ≥0}
 
+/-- When the utilities are independent with `Gumbel(uⱼ, β)` laws, alternative `i` has the highest
+utility with probability `softmax (β⁻¹ • u) i`. The density of the `i`-th utility times the other
+utilities' cdfs is `softmax (β⁻¹ • u) i` times the density of the maximum utility, which is Gumbel
+with location `β * log (∑ j, exp (u j / β))` by max-stability. McFadden states the unit-scale case;
+the scale of the noise is not separately identified from that of `u`. -/
 theorem choiceProb_pi_gumbelMeasure (u : ι → ℝ) (hβ : β ≠ 0) (i : ι) :
     choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) i =
       ENNReal.ofReal (softmax ((β : ℝ)⁻¹ • u) i) := by

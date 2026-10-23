@@ -92,6 +92,8 @@ instance : Decidable (IsTripartite m) := inferInstanceAs (Decidable (_ ∧ _ ∧
 
 end
 
+/-- Every marking has one of the five alignments, the five partitions of a three-element
+set. -/
 theorem marking_cases :
     IsNeutral m ∨ IsAccusative m ∨ IsErgative m ∨ IsHorizontal m ∨ IsTripartite m := by
   unfold IsNeutral IsAccusative IsErgative IsHorizontal IsTripartite

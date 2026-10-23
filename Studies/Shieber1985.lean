@@ -178,6 +178,7 @@ structure Claims : Prop where
   count_eq : ∀ s ∈ L, s.map f ∈ schema →
     (s.map f).count a = (s.map f).count c ∧ (s.map f).count b = (s.map f).count d
 
+/-- The image of a language meeting the claims, intersected with `r`, is `w aᵐ bⁿ x cᵐ dⁿ y`. -/
 theorem Claims.map_inf_caseSorted (h : Claims f L) : L.map f ⊓ caseSorted = crossSerial := by
   ext l
   refine ⟨?_, fun ⟨m, n, hl⟩ ↦ ?_⟩
@@ -189,10 +190,14 @@ theorem Claims.map_inf_caseSorted (h : Claims f L) : L.map f ⊓ caseSorted = cr
   · obtain ⟨s, hs, he⟩ := h.exists_mem m n
     exact ⟨⟨s, hs, he.trans hl.symm⟩, m, n, m, n, hl⟩
 
+/-- A language meeting the four claims is not context-free. -/
 theorem Claims.not_isContextFree (h : Claims f L) : ¬ L.IsContextFree := fun hL ↦
   not_isContextFree_crossSerial <|
     h.map_inf_caseSorted ▸ (hL.map f).inf_isRegular isRegular_caseSorted
 
+/-- A language is not context-free if every clause `w aⁿ bⁿ x cⁿ dⁿ y` is grammatical and every
+object noun phrase of a clause of the schema has a verb requiring its case, objects being
+optional. -/
 theorem not_isContextFree_of_count_le (hmem : ∀ n, ∃ s ∈ L, s.map f = clause n n n n)
     (hle : ∀ s ∈ L, s.map f ∈ schema →
       (s.map f).count a ≤ (s.map f).count c ∧ (s.map f).count b ≤ (s.map f).count d) :

@@ -91,6 +91,8 @@ theorem maxNonOverlap_iff_of_disjoint (h : DisjointPred Overlap P) :
   ⟨And.left, fun hx ↦ ⟨hx, fun y hy hov ↦
     (Classical.byContradiction fun hne ↦ h ⟨x, hx, y, hy, Ne.symm hne, hov⟩).le⟩⟩
 
+/-- The singular half of the generalization says that on a pairwise non-overlapping restrictor
+the quantifier is the ordinary universal. -/
 theorem qForall_iff_of_disjoint (h : DisjointPred Overlap P) : QForall P Q ↔ ∀ x ∈ P, x ∈ Q :=
   forall_congr' fun _ ↦ imp_congr_left (maxNonOverlap_iff_of_disjoint h)
 
@@ -113,6 +115,8 @@ theorem maxNonOverlap_iff_of_supClosed (h0 : ∀ x ∈ P, ¬ IsBot x) (hP : SupC
   ⟨fun hx ↦ cum_maximal_unique hP (hx.maximal (h0 x hx.1)) hm,
    fun hxm ↦ hxm ▸ maxNonOverlap_of_supClosed hP hm⟩
 
+/-- The plural half of the generalization says that on a sum-closed restrictor without the null
+individual the quantifier applies the scope to the largest sum. -/
 theorem qForall_iff_of_supClosed (h0 : ∀ x ∈ P, ¬ IsBot x) (hP : SupClosed P)
     (hm : Maximal (· ∈ P) m) : QForall P Q ↔ m ∈ Q := by
   simp only [QForall, maxNonOverlap_iff_of_supClosed h0 hP hm, forall_eq]
@@ -163,6 +167,8 @@ theorem jeder_dom : (jeder P Q).Dom ↔ OneAtDom P := Iff.rfl
 theorem each_dom : (each P Q).Dom ↔ OneAtDom P :=
   ⟨fun h ↦ h.1, fun h ↦ ⟨h, h.oneEmptyDom⟩⟩
 
+/-- *Each* is defined on fewer restrictors than *every*, and where both are defined they agree,
+since the presupposition of *each* entails that of *every* and both leave the bare quantifier. -/
 theorem each_le_every : each P Q ≤ every P Q :=
   fun _ ⟨h, hp⟩ ↦ ⟨(each_dom.1 h).oneEmptyDom, hp⟩
 
@@ -239,6 +245,8 @@ instance : DecidablePred (· ∈ student) := fun s ↦ inferInstanceAs (Decidabl
 instance : DecidablePred (· ∈ twoStudents) := fun s ↦ inferInstanceAs (Decidable (s.card = 2))
 instance : DecidablePred (· ∈ met) := fun s ↦ inferInstanceAs (Decidable (s = Finset.univ))
 
+/-- The Distributivity–Number Generalization on one algebra, where the collective scope holds
+under the plural restrictor and fails under the singular one. -/
 theorem dng : QForall students met ∧ ¬ QForall student met := by decide
 
 theorem qForall_students_iff (Q : Set (Finset Student)) : QForall students Q ↔ Finset.univ ∈ Q :=
@@ -253,6 +261,8 @@ theorem maximal_twoStudents : ∀ s ∈ twoStudents, Maximal (· ∈ twoStudents
 
 theorem not_maxNonOverlap_twoStudents : ∀ s, ¬ MaxNonOverlap twoStudents s := by decide
 
+/-- With three salient students the quantifier over *two students* is vacuous, so the reading
+on which every pair of students satisfies the scope is unavailable. -/
 theorem qForall_twoStudents (Q : Set (Finset Student)) : QForall twoStudents Q :=
   fun s hs ↦ (not_maxNonOverlap_twoStudents s hs).elim
 
@@ -296,9 +306,11 @@ theorem not_atom_tenMinutes : ∀ I ∈ tenMinutes, ¬ Atom I := by
 theorem not_oneAtDom_tenMinutes : ¬ OneAtDom tenMinutes :=
   fun h ↦ not_atom_tenMinutes _ (Set.mem_range_self 0) (h.2 _ (Set.mem_range_self 0))
 
+/-- *Every ten minutes* is defined. -/
 theorem every_tenMinutes_dom (Q : Set (Set ℕ)) : (every tenMinutes Q).Dom :=
   oneEmptyDom_tenMinutes
 
+/-- *Each ten minutes* is a presupposition failure. -/
 theorem each_tenMinutes_undefined (Q : Set (Set ℕ)) : ¬ (each tenMinutes Q).Dom :=
   fun h ↦ not_oneAtDom_tenMinutes (each_dom.1 h)
 
@@ -333,6 +345,8 @@ def english : English.Determiners.QuantityWord → Option Structure
   | .each => some .atomic
   | _ => none
 
+/-- At the lexicon the generalization says that the English forms carrying a ONE head are exactly
+the universal determiners the fragment records as selecting the singular. -/
 theorem one_iff_singular :
     ∀ w s, english w = some s →
       (s ≠ .bare ↔ w.numberRestriction = some .singular) := by
@@ -354,6 +368,8 @@ def structureTable : List (String × Structure) :=
   [("bare", .bare), ("nonOverlap", .nonOverlap), ("atomic", .atomic),
     ("atomicOnly", .atomicOnly)]
 
+/-- The paper's judgments on universal quantifiers with *ten minutes* are the definedness
+predictions, since a form is acceptable just in case its structure is defined on the intervals. -/
 theorem judgment_rows :
     ∀ row ∈ Examples.all, ∃ s, row.parse? "structure" structureTable = some s ∧
       (row.judgment = .acceptable ↔ (over s.head tenMinutes Set.univ).Dom) := by

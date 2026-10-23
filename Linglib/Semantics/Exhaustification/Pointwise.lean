@@ -57,6 +57,7 @@ instance [Fintype ι] [DecidableRel r] [DecidablePred A] : Decidable (exhAgainst
 
 /-! ### Independent rivals -/
 
+/-- Some member is exhaustified against all the others iff exactly one member holds. -/
 theorem exists_exhAgainst_ne_iff_existsUnique : (∃ i, exhAgainst (· ≠ ·) A i) ↔ ∃! i, A i :=
   ⟨fun ⟨i, hi, h⟩ ↦ ⟨i, hi, fun j hj ↦ by_contra fun hne ↦ h j (Ne.symm hne) hj⟩,
     fun ⟨i, hi, h⟩ ↦ ⟨i, hi, fun j hne hj ↦ hne (h j hj).symm⟩⟩

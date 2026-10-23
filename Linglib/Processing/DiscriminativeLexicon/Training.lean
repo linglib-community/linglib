@@ -183,6 +183,8 @@ theorem weightedLoss_sqrtScale :
   rw [hrow, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul]
   simp [← mul_assoc, Real.mul_self_sqrt (q i).coe_nonneg]
 
+/-- FIL under `q` is exactly EL on the `√Q`-premultiplied experience, which is the FIL–EL
+equivalence of [heitmeier-2024] without any invertibility assumption. -/
 theorem isELTrained_sqrtScale_iff : IsELTrained (data.sqrtScale q) G ↔ IsTrained data q G := by
   have h : weightedLoss (data.sqrtScale q) 1 = weightedLoss data q :=
     funext fun G ↦ weightedLoss_sqrtScale data q G
@@ -235,6 +237,9 @@ theorem exists_isTrained : ∃ G, IsTrained data q G := by
 
 /-! ### The normal equations -/
 
+/-- `G` is trained iff it satisfies the **normal equations** `SᵀQ(SG − C) = 0`
+([gahl-baayen-2024] (A2), (A4)), by Mathlib's adjoint characterisation of least squares applied
+column by column. -/
 theorem isTrained_iff : IsTrained data q G ↔ data.Sᵀ * q.Q * (data.S * G - data.C) = 0 := by
   have hcol : ∀ j, Core.IsLeastSquares (toEuclideanLin (q.sqrtQ * data.S))
       (WithLp.toLp 2 ((q.sqrtQ * data.C).col j)) (WithLp.toLp 2 (G.col j)) ↔
@@ -255,6 +260,8 @@ theorem isTrained_iff : IsTrained data q G ↔ data.Sᵀ * q.Q * (data.S * G - d
   rw [hX, ← neg_eq_zero (a := data.Sᵀ * q.Q * (data.S * G - data.C)), ← transpose_eq_zero]
   exact ⟨funext, fun h j ↦ congrFun h j⟩
 
+/-- When `SᵀQS` is invertible, the **closed form** `G = (SᵀQS)⁻¹SᵀQC` is trained
+([gahl-baayen-2024] (A2), (A4)). -/
 theorem isTrained_closedForm (hS : IsUnit (data.Sᵀ * q.Q * data.S)) :
     IsTrained data q ((data.Sᵀ * q.Q * data.S)⁻¹ * (data.Sᵀ * q.Q * data.C)) := by
   rw [isTrained_iff, Matrix.mul_sub, ← Matrix.mul_assoc,
@@ -287,6 +294,8 @@ theorem IsTrained.sum_smul_mul_eq_of_decodable (hG : IsTrained data q G) {P : Fi
 
 /-! ### Fitted values -/
 
+/-- All trained matrices under positive weights produce the same predicted forms `SG` on the
+training events, so fitted values are unique even when `G` is not. -/
 theorem IsTrained.mul_eq (hq : ∀ i, 0 < q i) {G' : Matrix (Fin d) (Fin n) ℝ}
     (hG : IsTrained data q G) (hG' : IsTrained data q G') : data.S * G = data.S * G' := by
   rw [isTrained_iff_forall_isLeastSquares] at hG hG'
@@ -330,6 +339,9 @@ theorem IsTrained.exists_vecMul_ne [NeZero n] (hG : IsTrained data q G) {s : Mea
   exact ⟨G + vecMulVec v (Pi.single 0 1), hG.add_of_mul_eq_zero hSH,
     fun h ↦ hφs (by simpa [Matrix.vecMul_add, hvec] using h.symm)⟩
 
+/-- The trained matrix is uniquely determined exactly when the experienced meanings span the
+meaning space, which is the coordinate-free form of the papers' full-column-rank condition on
+the closed-form solution ([gahl-baayen-2024] appendix; [heitmeier-2024]). -/
 theorem existsUnique_isTrained_iff [NeZero n] (hq : ∀ i, 0 < q i) :
     (∃! G : Matrix (Fin d) (Fin n) ℝ, IsTrained data q G) ↔
       Submodule.span ℝ (Set.range data.S.row) = ⊤ := by
@@ -360,6 +372,9 @@ theorem IsTrained.mul_apply_eq_of_decodable (hq : ∀ i, 0 < q i) (hG : IsTraine
 
 /-! ### Centres of mass -/
 
+/-- Whenever membership in a set `P` of usage events is a linear functional of the meanings, a
+mapping matrix trained under `q` sends the `q`-weighted centre of mass of `P`'s meanings to the
+`q`-weighted centre of mass of `P`'s observed forms. -/
 theorem IsTrained.centerMass_vecMul_eq_of_decodable (hG : IsTrained data q G)
     {P : Finset (Fin m)} {w : MeaningVector d →ₗ[ℝ] ℝ}
     (hw : ∀ i, w (data.S i) = if i ∈ P then 1 else 0) :

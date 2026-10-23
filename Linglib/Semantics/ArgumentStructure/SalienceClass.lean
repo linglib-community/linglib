@@ -78,6 +78,9 @@ def SalienceClass.ofKinds : Option SalienceClass :=
   else if IsPatientSalient s v then some .patient
   else none
 
+/-- Collocational closure does not move the transitiviser cut on
+    cause-free signatures: the only available closure edge is
+    result→state, which no arm of the classifier consults. -/
 theorem SalienceClass.ofKinds_close (h : Root.Kind.cause ∉ s) :
     ofKinds (Root.Kinds.close s) v = ofKinds s v := by
   revert s v; decide

@@ -116,6 +116,8 @@ theorem toSegment_apply_of_ne_round (m : FeatureMatrix) {f : Phonology.Feature}
     m.toSegment .round = ((m .round).unbotD false : Bool) :=
   Function.update_self ..
 
+/-- The segments of feature matrices are exactly those specified for [round], since each other
+feature of `Phonology.Feature` is a column of its own. -/
 theorem range_toSegment : Set.range toSegment = {s : Segment | s .round ≠ ⊥} := by
   refine Set.ext fun s ↦ ⟨by rintro ⟨m, rfl⟩; simp, fun hs ↦ ?_⟩
   refine ⟨Function.extend Phonology.Feature.toPHOIBLE s ⊥, funext fun f ↦ ?_⟩

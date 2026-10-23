@@ -77,6 +77,8 @@ def cases : Infinitive → Finset Case
   | .ma => {.ine, .ela, .ill, .ade, .abess, .instr}
   | .minen => {.nom, .part}
 
+/-- Of the local cases the MA infinitive takes the interior series and, of the exterior
+series, the adessive alone. -/
 theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.Path.Direction}
     {c : _root_.Case} (h : _root_.Case.toCase r d = some c) :
     c ∈ ma.cases.image Case.label ↔ r = .interior ∨ r = .exterior ∧ d = .place := by
@@ -105,6 +107,9 @@ def base : Infinitive → List Segment → List Segment
   | .ma, w => w ++ [m, A]
   | .minen, w => w ++ [m, i, n, Finnish.e, n]
 
+/-- The E infinitive of *luke-a* 'read', *itke-ä* 'cry', *tunte-a* 'feel' and *koke-a*
+'experience' is built on *luki-*, *itki-*, *tunti-* and *koki-*, and that of *sano-a* 'say' on
+*sano-*. -/
 theorem surface_base_e :
     surface (base .e [l, u, k, Finnish.e]) = [l, u, k, i, Finnish.e] ∧
       surface (base .e [i, t, k, Finnish.e]) = [i, t, k, i, Finnish.e] ∧

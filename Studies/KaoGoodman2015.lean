@@ -109,18 +109,25 @@ theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
   simp only [L0, listener_truthful_apply_singleton_ne_zero_iff]
   rfl
 
+/-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
+valence, through the negative valence of terrible weather. -/
 theorem hyperbole (hα : 0 < α) (hν : ν {.valence} ≠ 0) {a a' : Bool}
     (hbad : μ {(.bad, false, a)} ≠ 0) (hterrible : μ {(.terrible, false, a')} ≠ 0) :
     (L1 μ ν α .terrible).fst {(.bad, false, a)} ≠ 0 := by
   rw [listener_ne_zero_iff μ ν α hα]
   exact ⟨hbad, .valence, hν, (.terrible, false, a'), rfl, rfl, hterrible⟩
 
+/-- Under the arousal question, "terrible" can ironically mean amazing weather with positive
+valence and high arousal, through the high arousal of terrible weather. -/
 theorem irony (hα : 0 < α) (hν : ν {.arousal} ≠ 0) {v : Bool}
     (hamazing : μ {(.amazing, true, true)} ≠ 0) (hterrible : μ {(.terrible, v, true)} ≠ 0) :
     (L1 μ ν α .terrible).fst {(.amazing, true, true)} ≠ 0 := by
   rw [listener_ne_zero_iff μ ν α hα]
   exact ⟨hamazing, .arousal, hν, (.terrible, v, true), rfl, rfl, hterrible⟩
 
+/-- Without the arousal question, a positive-valence reading of "terrible" needs positive
+valence to be possible at terrible weather itself, since a negative utterance carries no true
+information about positive affect. -/
 theorem valence_flip_needs_arousal (hα : 0 < α) (hν : ∀ q, ν {q} ≠ 0 → q ≠ .arousal)
     {s : Weather} {a : Bool} (h : (L1 μ ν α .terrible).fst {(s, true, a)} ≠ 0) :
     ∃ a', μ {(.terrible, true, a')} ≠ 0 := by

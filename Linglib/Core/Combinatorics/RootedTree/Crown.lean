@@ -40,6 +40,7 @@ variable {α : Type*} (extract : RoseTree α → Option (List (RoseTree α)))
 
 mutual
 
+/-- Every crown component of a cut of `t` is a subtree of a child of `t`. -/
 theorem mk_mem_of_mem_crown_cutSummandsG :
     ∀ (t : RoseTree α), ∀ p ∈ cutSummandsG extract t, ∀ x ∈ p.1,
       UnorderedTree.mk x ∈ unorderedSubtreesList t.children
@@ -148,6 +149,7 @@ theorem exists_mem_crown_augActionG (hex : ∀ t, (extract t).isSome) :
 
 end
 
+/-- The crown components of the pruning cuts of `T` are exactly its proper subtrees. -/
 theorem exists_mem_crown_cutSummandsN_iff {T X : UnorderedTree α} :
     (∃ p ∈ cutSummandsN T, X ∈ p.1) ↔ X ∈ T.subtrees ∧ X ≠ T := by
   induction T using Quotient.inductionOn with
@@ -168,6 +170,8 @@ theorem exists_mem_crown_cutSummandsN_iff {T X : UnorderedTree α} :
         exact ⟨projSummand p, by rw [cutSummandsN_mk]; exact Multiset.mem_map_of_mem _ hp,
           Multiset.mem_map_of_mem _ hx⟩
 
+/-- `X` is not a subtree of `T` exactly when `T ≠ X` and no pruning cut of `T` has `X` in its
+crown. -/
 theorem not_mem_subtrees_iff {T X : UnorderedTree α} :
     X ∉ T.subtrees ↔ T ≠ X ∧ ∀ p ∈ cutSummandsN T, X ∉ p.1 := by
   constructor

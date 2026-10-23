@@ -102,6 +102,8 @@ def ofDomain (D : I → Set W → Set W) (p q : Set W) : Set I := {i | D i p ⊆
 @[simp]
 theorem mem_ofDomain : i ∈ ofDomain D p q ↔ D i p ⊆ q := Iff.rfl
 
+/-- The conditional over a domain is necessity along the relation sending `i` to the worlds of
+its domain, `SetRel.core` of `SetRel.ofSuccessors`. -/
 theorem ofDomain_eq_core : ofDomain D p q = (SetRel.ofSuccessors (D · p)).core q := rfl
 
 theorem ofDomain_mono_right (hq : q ⊆ q') : ofDomain D p q ⊆ ofDomain D p q' :=
@@ -304,6 +306,9 @@ theorem mem_closestImp_of_closest_eq_empty (h : (ord w).minimals p = ∅) :
     w ∈ closestImp ord p q :=
   (mem_closestImp.2 (h ▸ Set.empty_subset q))
 
+/-- Where an antecedent has no closest worlds, as for [lewis-1973]'s line more than an inch long,
+*if p, it would not be v* is true for every world `v`, since every antecedent-world has a
+strictly closer one. -/
 theorem mem_variablyStrictImp_compl_singleton (h : (ord w).minimals p = ∅) (v : W) :
     w ∈ variablyStrictImp ord p {v}ᶜ := by
   rcases p.eq_empty_or_nonempty with hp | ⟨u, hu⟩
@@ -416,6 +421,7 @@ theorem isPreferential_closestImp (hwf : WellFounded (ord w).lt) :
     Nonmonotonic.IsPreferential fun p q ↦ w ∈ closestImp ord p q :=
   Nonmonotonic.isPreferential_entails hwf
 
+/-- On a well-founded total preorder the conditional at a world is rational. -/
 theorem isRational_closestImp (hwf : WellFounded (ord w).lt) (htot : Std.Total (ord w).le) :
     Nonmonotonic.IsRational fun p q ↦ w ∈ closestImp ord p q :=
   Nonmonotonic.isRational_entails hwf htot

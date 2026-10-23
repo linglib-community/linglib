@@ -48,6 +48,7 @@ def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
 def ReciprocalPronoun.toWord (p : ReciprocalPronoun) : Morphology.Word :=
   p.toPronoun.toWord (some .Rcp)
 
+/-- A reciprocal pronoun is a reciprocal anaphor. -/
 @[simp]
 theorem ReciprocalPronoun.bindingClassOf_toWord (p : ReciprocalPronoun) :
     Binding.bindingClassOf p.toWord = some .reciprocal :=

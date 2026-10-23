@@ -291,6 +291,7 @@ def toAR : AR (TwoTier (Sponsored T M) (Sponsored S M)) :=
   AR.link_ofWords.trans
     ⟨fun h ↦ h.2.2, fun h ↦ ⟨(f.lt_of_mem_lines h).1, (f.lt_of_mem_lines h).2, h⟩⟩
 
+/-- The presented representation obeys the NCC iff the lines are non-crossing. -/
 theorem noCrossing_toAR_iff :
     f.toAR.NoCrossing ↔
       IsNonCrossing (f.links : SetRel (Fin f.upper.length) (Fin f.lower.length)) := by
@@ -526,6 +527,8 @@ theorem deleted_subset_of_mem_gen (hc : c' ∈ c.gen) : c.deleted ⊆ c'.deleted
   rcases mem_gen.1 hc with rfl | ⟨_, -, rfl⟩ | ⟨_, _, -, -, rfl⟩
   exacts [subset_rfl, Finset.subset_insert _ _, subset_rfl]
 
+/-- GEN is closed on the No-Crossing Constraint, since deletion shrinks the surface lines and
+    each inserted line ends in its node's window. -/
 theorem isNonCrossing_links_of_mem_gen
     (h : IsNonCrossing (c.links : SetRel (Fin u.upper.length) (Fin u.lower.length)))
     (hc : c' ∈ c.gen) :

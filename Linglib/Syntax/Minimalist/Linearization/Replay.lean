@@ -191,6 +191,8 @@ theorem Derivation.replay?_faithful (d : Derivation) {c : Cfg LinearizedSyntacti
     (fun _ _ _ ↦ Step.map_of_replay?) h, Derivation.run, Cfg.map, List.map_nil,
     toSyntacticObject_of_toLinearizedLeaf? hp]
 
+/-- A successful externalization forgets to the derived object, so the surface readouts are the
+    word order of `final` itself. -/
 theorem Derivation.externalize?_faithful (d : Derivation) {p : LinearizedSyntacticObject}
     (h : d.externalize? τ = some p) : p.toSyntacticObject = d.final τ := by
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
@@ -370,6 +372,9 @@ theorem foldlM_replay?_of_harmonicList : ∀ {steps : List Step} {c : Cfg Syntac
     obtain ⟨q', h', hq'⟩ := foldlM_replay?_of_harmonicList hs hq₁
     exact ⟨q', by simp [List.foldlM_cons, h₁, h'], hq'⟩
 
+/-- A derivation from a leaf whose every step is harmonic externalizes to the harmonic
+    linearization of its object: the order the derivation records is the one the head function
+    determines. -/
 theorem Derivation.externalize?_eq_linearize? {d : Derivation}
     (hi : d.initial.toLinearizedLeaf?.isSome)
     (hd : Step.HarmonicList side τ d.steps ⟨d.initial, []⟩) :
@@ -381,6 +386,8 @@ theorem Derivation.externalize?_eq_linearize? {d : Derivation}
   rw [Derivation.externalize?, Derivation.replay?, hp, Option.bind_some, h', Option.map_some,
     Derivation.final, Derivation.run, hq'.1]
 
+/-- The linearized object is a datum of the derivation, not of the object it derives: merging a
+    second leaf on the left and on the right derives one object in two orders. -/
 theorem Derivation.not_factorsThrough_final :
     ¬ Function.FactorsThrough (externalize? · selHead) (final · selHead) := fun h ↦ by
   have := @h ⟨.leaf ⟨.of .N [], 0⟩, [.em .left (.leaf ⟨.of .N [], 1⟩)]⟩

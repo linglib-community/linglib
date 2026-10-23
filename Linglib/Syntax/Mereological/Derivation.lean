@@ -85,6 +85,8 @@ theorem imm_iff (h : P.Subjoins x y Q) :
     ∃ n, P.nextDim y = some n ∧ ∀ m a b, Q.Imm m a b ↔ P.Imm m a b ∨ (m = n ∧ a = x ∧ b = y) :=
   imm_subjoin_iff h.subjoin_eq
 
+/-- A part always subjoins as a 2-part: Angular Locality requires its target to have a 1-part
+already. -/
 theorem imm_two_of_isPart (h : P.Subjoins x y Q) (hx : P.IsPart x) : Q.Imm .two x y := by
   obtain ⟨n, hn, hQ⟩ := h.imm_iff
   obtain rfl := nextDim_eq_two (isSome_onePart_of_canSubjoin (h.canSubjoin hx)) hn
@@ -232,10 +234,15 @@ theorem derives (hD : P.IsDomain S b) (h : P.Derives Q) : Q.IsDomain S b := by
     obtain ⟨_, _, hRQ⟩ := hRQ
     exact ih.subjoins hRQ
 
+/-- In every derivation, an object inside a domain of `b` that has become a part of something
+outside it is `b` itself or a 2-part of `b`, which is successive cyclicity. -/
 theorem eq_or_nPart_two_of_derives (hD : P.IsDomain S b) (h : P.Derives Q) {n : Dim}
     (hγ : γ ∈ S) (hβ : β ∉ S) (hγβ : Q.Imm n γ β) : γ = b ∨ Q.NPart .two γ b :=
   ((hD.derives h).exit γ hγ n β hγβ hβ).2
 
+/-- A filled 2-part is a strong island: once `c` is the 2-part of `b`, no derivation makes an
+object inside a domain of `b`, other than `b`, `c` and the parts of `c`, a part of anything outside
+the domain. -/
 theorem not_reaches (hD : P.IsDomain S b) (hc : P.Imm .two c b) (hγ : γ ∈ S) (hγb : γ ≠ b)
     (hγc : γ ≠ c) (hdc : ¬ P.Descendant γ c) (hβ : β ∉ S) : ¬ P.Reaches γ β :=
   fun ⟨_, h, _, hγβ⟩ ↦ (hD.eq_or_nPart_two_of_derives h hγ hβ hγβ).elim hγb fun hb ↦

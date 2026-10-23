@@ -252,6 +252,8 @@ theorem ace_notMem_subjectFocus : ace m ∉ ((pass (E := E)) <$> focused {m}).al
   have := (Set.ext_iff.1 hg (fun _ ↦ 1)).1 (fun _ _ ↦ le_rfl)
   simp [ace] at this
 
+/-- In the roommate implicature, asserting that Mats passed implicates the negation of the group
+proposition that Mats and Paul passed, which with Mats passing is Paul not passing. -/
 theorem roommate_implicature [DecidableEq E] (p : E) (w : Grades E) (hm : w ∈ pass {m})
     (hmp : w ∉ pass {m, p}) : w ∉ pass {p} := fun hp ↦
   hmp (by rw [show ({m, p} : Finset E) = {m} ∪ {p} from rfl, pass_union]; exact ⟨hm, hp⟩)
@@ -278,11 +280,15 @@ theorem subjectFocus_value :
     ((fun x ↦ cut x b) <$> focused m).alternatives = Set.range fun x ↦ cut x b :=
   alternatives_map_focused _ _
 
+/-- (23Aa) answers (23Qa), since the question fully resolves the focus on the subject, with any
+other person supplying the contrasting alternative. -/
 theorem question_resolves_subjectFocus {x : E} (hm : m ∈ P) (hx : x ∈ P) (hxm : x ≠ m) :
     (Antecedent.question (whoCut P b)).Resolves (cut m b) (Set.range fun x ↦ cut x b) :=
   ⟨Set.image_subset_range _ _, ⟨m, hm, rfl⟩,
     cut x b, ⟨x, hx, rfl⟩, fun h ↦ hxm (Prod.mk.inj (atom_injective h)).1⟩
 
+/-- (23Ab) does not answer (23Qa), since another person's cutting Bill down to size is not of the
+form 'Mary cut y down to size'. -/
 theorem question_rejects_objectFocus {x : E} (hx : x ∈ P) (hxm : x ≠ m) :
     ¬ (Antecedent.question (whoCut P b)).Admits (Set.range fun y ↦ cut m y) := fun h ↦
   let ⟨_, hy⟩ := h ⟨x, hx, rfl⟩

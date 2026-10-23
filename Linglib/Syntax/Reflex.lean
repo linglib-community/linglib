@@ -192,10 +192,14 @@ theorem AntiPiedPipes.not_exactlyTargets (h : AntiPiedPipes s target) :
     ¬ ExactlyTargets s target :=
   fun he ↦ let ⟨ρ, hρ, hlt⟩ := h; (he ρ hρ ▸ hlt).false
 
+/-- A nonempty reflex set hosted throughout by `host` pied-pipes a target exactly when `host`
+properly contains it. -/
 theorem ExactlyTargets.piedPipes_iff (h : ExactlyTargets s host) (hs : s.Nonempty) :
     PiedPipes s target ↔ target < host :=
   ⟨fun ⟨ρ, hρ, hlt⟩ ↦ h ρ hρ ▸ hlt, fun hlt ↦ hs.elim fun ρ hρ ↦ ⟨ρ, hρ, (h ρ hρ).symm ▸ hlt⟩⟩
 
+/-- A nonempty reflex set hosted throughout by `host` anti-pied-pipes a target exactly when the
+target properly contains `host`. -/
 theorem ExactlyTargets.antiPiedPipes_iff (h : ExactlyTargets s host) (hs : s.Nonempty) :
     AntiPiedPipes s target ↔ host < target :=
   ⟨fun ⟨ρ, hρ, hlt⟩ ↦ h ρ hρ ▸ hlt, fun hlt ↦ hs.elim fun ρ hρ ↦ ⟨ρ, hρ, (h ρ hρ).symm ▸ hlt⟩⟩

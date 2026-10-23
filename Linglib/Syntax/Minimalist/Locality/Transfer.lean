@@ -113,9 +113,11 @@ theorem isUpperSet_complementDomain : IsUpperSet (complementDomain hd t deleted 
 
 theorem isUpperSet_wholePhaseDomain : IsUpperSet (wholePhaseDomain hd t h) := isUpperSet_Ioi _
 
+/-- Sealed positions dominate only sealed positions. -/
 theorem isUpperSet_sealed (hD : ∀ h, IsUpperSet (D h)) : IsUpperSet (sealed Φ D σ s) :=
   fun _ _ hab ⟨h, hΦ, hσ, hq⟩ ↦ ⟨h, hΦ, hσ, hD h hab hq⟩
 
+/-- A schedule under which a domain stays transferred seals more at every later stage. -/
 theorem sealed_anti (hσ : ∀ h, Antitone (σ Φ h)) : Antitone (sealed Φ D σ) :=
   fun _ _ hs _ ⟨h, hΦ, hσh, hq⟩ ↦ ⟨h, hΦ, hσ h hs hσh, hq⟩
 
@@ -128,6 +130,7 @@ theorem pic1_of_pic2 (hp : Pic2 hd t Φ h s) : Pic1 hd t Φ h s :=
   let ⟨z, _, hs, hc⟩ := hp
   hs.trans_lt ((parent_covBy_complement z).lt.trans_le hc)
 
+/-- [chomsky-2001]'s condition seals less than [chomsky-2000]'s. -/
 theorem sealed_pic2_subset_pic1 : sealed Φ D (Pic2 hd t) s ⊆ sealed Φ D (Pic1 hd t) s :=
   fun _ ⟨h, hΦ, hσ, hq⟩ ↦ ⟨h, hΦ, pic1_of_pic2 hσ, hq⟩
 
@@ -209,6 +212,8 @@ theorem not_le_fst_iff {tok : LexicalItem.Token} {x : TreePath × TreePath} {D :
   · intro hlt hDx
     exact hnx (((hcov.eq_or_eq hlt.le hDx).resolve_left hlt.ne') ▸ hD)
 
+/-- An island is a cut: a link escapes the domain at `D` exactly when it leaves the positions `D`
+dominates, sealed at every stage above `D`. -/
 theorem escapes_iff {tok : LexicalItem.Token} {D : TreePath} :
     Escapes hd t tok D ↔ LinkLeaves hd t tok (sealed {D} Set.Ici fun _ h s ↦ s < h) := by
   unfold Escapes LinkLeaves
@@ -217,6 +222,8 @@ theorem escapes_iff {tok : LexicalItem.Token} {D : TreePath} :
   exact ⟨fun ⟨hD, hDx⟩ ↦ ⟨(not_le_fst_iff hx hD).1 hDx, hD⟩,
     fun ⟨hlt, hD⟩ ↦ ⟨hD, (not_le_fst_iff hx hD).2 hlt⟩⟩
 
+/-- The condition on chain links is a cut: a link leaves the phase of `h` exactly when it leaves the
+complement of `h`, sealed at every stage above the phase. -/
 theorem crosses_iff {tok : LexicalItem.Token} {h : TreePath} (hh : h ∈ t.val.validPaths)
     (h0 : h ≠ ⊥) (hproj : projectionAt hd t h ≤ h.parent) :
     Crosses hd t tok h ↔

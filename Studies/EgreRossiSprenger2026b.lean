@@ -634,6 +634,7 @@ theorem not_accepts_contra' {s : Set W} (hs : s.Nonempty) (q : Set W) :
   rw [((agrees_ofSet q).conj (agrees_ofSet q).neg.dia).accepts_iff]
   exact Yalcin2007.not_accepted_contra' hs
 
+/-- ... and every update on it collapses. -/
 theorem update_contra' (s q : Set W) : update s (conj (ofSet q) (dia (-ofSet q))) = ∅ :=
   update_eq_empty_of_forall_not_accepts (fun _ ht ↦ not_accepts_contra' ht q) s
 
@@ -730,6 +731,7 @@ theorem entails_dia_conj (a b : Set W) :
   rw [conj_ofSet, accepts_dia_ofSet_iff, ← Set.inter_assoc]
   exact fun hs ↦ h₂ (h₁ hs)
 
+/-- ... and `◇(A ∧ B) ⊨ A → ◇B`. -/
 theorem entails_cond_dia (a b : Set W) :
     Entails {dia (conj (ofSet a) (ofSet b))} (cond (ofSet a) (dia (ofSet b))) := by
   intro s h
@@ -1024,6 +1026,7 @@ theorem prob_cond_box_le [IsFiniteMeasure μ] (h : Mirrors μ s) :
   · rw [prob_cond_box_eq_zero h ha]
     exact zero_le
 
+/-- ... and exactly as probable as `□(A → B)`. -/
 theorem prob_cond_box_eq_prob_box_cond [IsFiniteMeasure μ] (h : Mirrors μ s) :
     prob μ (cond φ (box ψ) s) = prob μ (box (cond φ ψ) s) := by
   by_cases ha : Accepts s (cond φ ψ)
@@ -1086,6 +1089,8 @@ section Predictions
 
 open Sentence Classical
 
+/-- The conditional between conditional-free sentences denotes, in every context, the conditional
+event of [egre-rossi-sprenger-2026a]'s reading of an Adams formula. -/
 theorem cond_ofSet (a b : Set W) :
     cond (ofSet a) (ofSet b) = ofCooper (EgreRossiSprenger2026a.ofAdams ⟨a, b⟩) := by
   change cond (ofCooper fun w ↦ ofProp (w ∈ a)) (ofCooper fun w ↦ ofProp (w ∈ b)) = _
@@ -1177,6 +1182,7 @@ theorem contextFree_ofFormula (A : Formula ι) : ContextFree (ofFormula t A) :=
 @[simp] theorem ofFormula_disj (A B : Formula ι) :
     ofFormula t (.disj A B) = disj (ofFormula t A) (ofFormula t B) := rfl
 
+/-- The conditional–modal conditional restricts to Cooper's on the Mind paper's formulas. -/
 @[simp] theorem ofFormula_cond (A B : Formula ι) :
     ofFormula t (.cond A B) = cond (ofFormula t A) (ofFormula t B) :=
   (cond_ofCooper _ _).symm

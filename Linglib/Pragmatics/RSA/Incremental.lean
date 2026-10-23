@@ -63,6 +63,7 @@ def prodMeaning (lex : U → W → R) (us : List U) (w : W) : R :=
     prodMeaning lex (u :: us) w = lex u w * prodMeaning lex us w := by
   simp [prodMeaning]
 
+/-- The value of a word sequence does not depend on the order of its words. -/
 theorem prodMeaning_perm {lex : U → W → R} {us us' : List U} (h : us.Perm us') (w : W) :
     prodMeaning lex us w = prodMeaning lex us' w :=
   (h.map _).prod_eq

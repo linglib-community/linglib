@@ -185,6 +185,8 @@ theorem toSetRel_sup (C D : Finset Ordering) :
 @[gcongr] theorem toSetRel_subset_toSetRel (h : C ⊆ D) : (toSetRel C : SetRel T T) ⊆ toSetRel D :=
   fun _ ⟨o, ho, hc⟩ ↦ ⟨o, h ho, hc⟩
 
+/-- The converse of a cell's relation is the relation of its mirror image, which exchanges the
+past with the future. -/
 theorem inv_toSetRel (C : Finset Ordering) :
     (toSetRel C : SetRel T T).inv = toSetRel (C.image .swap) := by
   ext ⟨r, p⟩
@@ -231,6 +233,8 @@ theorem toSetRel_comp_subset (C D : Finset Ordering) :
   fun _ ⟨_, h₁, h₂⟩ ↦
     mem_toSetRel_iff.2 (compare_mem_comp (mem_toSetRel_iff.1 h₂) (mem_toSetRel_iff.1 h₁))
 
+/-- On dense time without endpoints the composite of two cells' relations is the relation of
+the composed cell. -/
 theorem toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] (C D : Finset Ordering) :
     toSetRel C ○ toSetRel D = (toSetRel (comp D C) : SetRel T T) := by
   ext ⟨p, r⟩

@@ -80,6 +80,8 @@ variable {it jt : SpanRule n F} {g : Fin n}
 
 @[simp] theorem exponent_eq : Rule.exponent it = it.exponent := rfl
 
+/-- Over a linear hierarchy the applicability sets are nested, so specificity is the reverse of
+threshold order and the Elsewhere ordering ([kiparsky-1973]) is total. -/
 theorem applySet_subset_iff : applySet it ⊆ applySet jt ↔ jt.threshold ≤ it.threshold :=
   Set.Ici_subset_Ici
 
@@ -144,6 +146,8 @@ variable {e e' : SupersetRule n F} {g : Fin n}
 
 @[simp] theorem exponent_eq : Rule.exponent e = e.exponent := rfl
 
+/-- An entry is more specific than another iff it stores the smaller constituent, the nanosyntax
+principle Minimize Junk. -/
 theorem applySet_subset_iff : applySet e ⊆ applySet e' ↔ e.spans ≤ e'.spans := Set.Iic_subset_Iic
 
 theorem applySet_ssubset_iff : applySet e ⊂ applySet e' ↔ e.spans < e'.spans := Set.Iic_ssubset_Iic

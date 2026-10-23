@@ -72,6 +72,8 @@ variable {C B : E → Prop}
 
 /-! ### Assertiveness and content -/
 
+/-- ∀x(Cx/Bx) is nonassertive exactly when nothing satisfies `C`. This is the existential
+presupposition of universals, which Strawson stipulated and Belnap derives. -/
 @[simp] theorem restrictedForall_eq_zero_iff : restrictedForall C B = 0 ↔ ∀ x, ¬ C x := by
   simp [restrictedForall]
 
@@ -126,10 +128,15 @@ def contentSquare (C : E → Prop) : Square ((E → Prop) → Prop) where
   I B := (belnapSquare C B).I = 1
   O B := (belnapSquare C B).O = 1
 
+/-- Where the forms are assertive, a form is true exactly when what it asserts is, and the
+content square is the square of `every`, `no`, `some` and `not every` at the restrictor `C`. -/
 theorem contentSquare_eq_square (hC : ∃ x, C x) : contentSquare C = GQ.square C := by
   simp only [contentSquare, GQ.square, Square.mk.injEq]
   refine ⟨?_, ?_, ?_, ?_⟩ <;> funext B <;> simp [belnapSquare, hC, every, no, GQ.some, compl_apply]
 
+/-- The content square satisfies `SquareRelations` when the restrictor is non-empty, which is
+Belnap's assertiveness condition, so the relations hold exactly where the forms are
+assertive. -/
 theorem content_square_relations (hR : ∃ x : E, C x) :
     SquareRelations (contentSquare C) :=
   contentSquare_eq_square hR ▸ GQ.square_relations hR

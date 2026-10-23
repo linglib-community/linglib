@@ -48,6 +48,7 @@ instance (priority := 100) toIsStrictOrder [IsIntervalOrder α r] : IsStrictOrde
   irrefl := Std.Irrefl.irrefl
   trans _ b _ hab hbc := (two_plus_two hab hbc).resolve_right (Std.Irrefl.irrefl b)
 
+/-- An interval order pulls back along any map. -/
 theorem invImage (h : IsIntervalOrder α r) (f : β → α) : IsIntervalOrder β (InvImage r f) where
   irrefl a := h.irrefl (f a)
   two_plus_two _ _ _ _ hab hcd := h.two_plus_two hab hcd

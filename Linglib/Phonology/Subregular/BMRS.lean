@@ -268,12 +268,16 @@ theorem Eval.congr_of_allWalks {p : Walk → Prop} {r : ℕ → ℕ → Prop} [I
   | ite_true _ _ ihc ih₁ => exact fun he hag ↦ .ite_true (ihc he.1 hag) (ih₁ he.2.1 hag)
   | ite_false _ _ ihc ih₂ => exact fun he hag ↦ .ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
 
+/-- A successor-free program evaluated at `i` reads only the prefix through `i`, so equal-length
+words with that prefix in common evaluate identically. -/
 theorem Eval.congr_take (hP : P.Backward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
     e.AllWalks Walk.Backward → w.take (i + 1) = w'.take (i + 1) → Eval P w' i e b := fun he hw ↦
   h.congr_of_allWalks (r := (· ≤ ·)) (fun ht hv ↦ Walk.eval_le_of_backward ht hv) hP hlen he
     fun _ hk ↦ List.take_eq_take_iff_getElem?.mp hw _ (Nat.lt_succ_of_le hk)
 
+/-- A predecessor-free program evaluated at `i` reads only the suffix from `i`, so equal-length
+words with that suffix in common evaluate identically. -/
 theorem Eval.congr_drop (hP : P.Forward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
     e.AllWalks Walk.Forward → w.drop i = w'.drop i → Eval P w' i e b := fun he hw ↦
@@ -454,6 +458,7 @@ theorem approx_eq_approx_card_mul_length [Fintype F] (hk : Fintype.card F * w.le
 def eval [Fintype F] (P : Program α F) (w : List α) (i : ℕ) (e : Expr α F) : Option Bool :=
   e.evalWith w (P.approx w (Fintype.card F * w.length)) i
 
+/-- The rounds settle on the derivation system. -/
 theorem eval_eq_some_iff [Fintype F] : P.eval w i e = some b ↔ Eval P w i e b := by
   refine ⟨eval_of_evalWith fun _ _ _ ↦ eval_of_approx, fun h ↦ ?_⟩
   obtain ⟨k, hk⟩ := exists_evalWith_approx h

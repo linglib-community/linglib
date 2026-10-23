@@ -113,6 +113,8 @@ theorem eval_conjs_map {α : Type*} (t : α → Formula L V) (C : α → Set (V 
     exact congrArg test (Set.ext fun f ↦ by simp)
 
 variable {φ} in
+/-- A formula with no active quantifier variable is a test, since atoms, negations,
+disjunctions, implications and universals are and conjunction preserves it. -/
 theorem isTest_eval (h : φ.aqv = ∅) : IsTest (φ.eval M) := by
   induction φ with
   | top => exact subset_rfl

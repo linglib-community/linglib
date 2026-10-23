@@ -83,10 +83,16 @@ theorem isStrawsonUE_gladBetter : IsStrawsonUE (gladBetter dox rel g) :=
     (fun _ _ h _ hw a ha b hb ↦ hw a ha b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩)
     fun _ _ h ↦ by simp_all [gladBetter]
 
+/-- On the best-worlds *glad*, *a wants p and believes p* entails *a is glad that p*, the
+inference [kadmon-landman-1993] draw, when the modal base contains the belief worlds. -/
 theorem glad_eq_one_of_want_eq_one {w : W} (hd : dox w ⊆ rel w) (hb : dox w ⊆ p)
     (hw : want rel g p w = 1) : glad dox rel g p w = 1 := by
   simp [glad, hd, hb, hw]
 
+/-- The Honda Civic scenario refutes that inference on the set-comparison *glad*. World `0` is
+the actual one, where the Civic bought is a lemon, `1` is where a good Civic is bought, and `2`
+where none is; the subject believes `0`, wants the good Civic, and is not glad that a Civic was
+bought, since `0` is no better than `2`. -/
 theorem not_gladBetter_of_want :
     ∃ (dox rel : Fin 3 → Set (Fin 3)) (g : Fin 3 → Set (Fin 3 → Prop)) (p : Set (Fin 3))
       (w : Fin 3), dox w ⊆ p ∧ want rel g p w = 1 ∧ gladBetter dox rel g p w = -1 := by
@@ -108,6 +114,7 @@ noncomputable def regretBetter : W → SignType :=
   (Function.support (glad dox rel g p)).indicator
     fun w ↦ SignType.ofProp (Better (g w) (rel w \ p) (dox w))
 
+/-- The set-comparison *sorry* is Strawson upward entailing in its complement. -/
 theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
   .of_monotone (a := fun p w ↦ Better (g w) (rel w \ p) (dox w))
     (fun _ _ h _ hw b hb a ha ↦ hw b ⟨hb.1, fun hp ↦ hb.2 (h hp)⟩ a ha)

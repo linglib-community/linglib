@@ -66,6 +66,7 @@ def l : Segment := .ofChart .«l»
 /-- The Ndebele phonemes of the agreement prefixes, pairwise distinct. -/
 def inventory : Finset Segment := ⟨↑[i, e, a, o, u, s, l], by decide⟩
 
+/-- The phonemes are segments of PHOIBLE's Ndebele inventory. -/
 theorem subset_nde : inventory ⊆ Inventories.Ndebele.nde.segments :=
   Inventory.subset_segments_iff.2 (by decide)
 

@@ -51,6 +51,8 @@ universe u
 
 variable {P : Type u} {D : Type*} {dim : P → D} {G : SimpleGraph P}
 
+/-- When the compatibility graph is complete multipartite, the personae are the sets with exactly
+one property of each class of mutually incompatible properties. -/
 theorem mem_maximalIndepSets_iff_of_isCompleteMultipartite_compl [Fintype P] [DecidableEq P]
     [DecidableRel G.Adj] (h : Gᶜ.IsCompleteMultipartite) {s : Finset P} :
     s ∈ G.maximalIndepSets ↔ ∀ p, (s.filter fun q ↦ q = p ∨ G.Adj q p).card = 1 := by
@@ -100,6 +102,8 @@ theorem isCompleteMultipartite_compl_dimensionalIncompatibility :
   rw [compl_dimensionalIncompatibility]
   exact ⟨fun _ _ _ hab hbc ↦ by simp_all⟩
 
+/-- An incompatibility graph comes from dimensions exactly when its compatibility graph is
+complete multipartite; the dimensions are then the parts. -/
 theorem isCompleteMultipartite_compl_iff :
     Gᶜ.IsCompleteMultipartite ↔
       ∃ (D : Type u) (dim : P → D), dimensionalIncompatibility dim = G := by
@@ -161,6 +165,7 @@ def Pole.polarity : Pole → SignType
   | .competent | .warm | .antiSolidary => 1
   | .incompetent | .cold | .solidary => -1
 
+/-- A pole is determined by its dimension and polarity. -/
 theorem Pole.eq_iff {p q : Pole} :
     p = q ↔ p.dimension = q.dimension ∧ p.polarity = q.polarity := by
   revert p q; decide
@@ -194,6 +199,7 @@ theorem Pole.dimension_surjective : Function.Surjective Pole.dimension
   | .warmth => ⟨.warm, rfl⟩
   | .antiSolidarity => ⟨.solidary, rfl⟩
 
+/-- Two poles are incompatible when one is opposite the other. -/
 theorem Pole.incompatible_adj_iff {p q : Pole} :
     (dimensionalIncompatibility Pole.dimension).Adj p q ↔ q = p.opposite := by
   revert p q; decide

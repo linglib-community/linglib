@@ -471,6 +471,9 @@ theorem phraseQ_optimal :
 
 open OptimalityTheory.Stratal
 
+/-- *DIST-0 and ALIGN-RIGHT outrank MAX at the Word level and are outranked by it at the
+Phrase level, so consonants delete at the Word level and are kept and resyllabified at the
+Phrase level. -/
 theorem distZero_alignR_max_reranked :
     Reranked Con.distZero .max wordOrder phraseOrder ∧
       Reranked Con.alignR .max wordOrder phraseOrder := by

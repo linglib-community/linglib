@@ -54,6 +54,7 @@ is defined, the conclusion's presupposition being a premise added to the entailm
 something the entailment delivers. -/
 def strawsonEntails (p q : W → SignType) : Prop := ∀ w, p w = 1 → q w ≠ 0 → q w = 1
 
+/-- Strawson entailment is the disjointness of the premise's truth and the conclusion's falsity. -/
 theorem strawsonEntails_iff_disjoint {p q : W → SignType} :
     strawsonEntails p q ↔ Disjoint (posExt p) (negExt q) := by
   rw [Set.disjoint_left]
@@ -63,6 +64,8 @@ theorem strawsonEntails_iff_disjoint {p q : W → SignType} :
   · simp only [mem_posExt, mem_negExt] at h
     cases hw : q w <;> simp_all
 
+/-- Strawson entailment is not transitive, since an undefined middle term discharges both premises
+vacuously, the well-known failure of [von-fintel-1999]'s notion; so it supports no `Preorder`. -/
 theorem strawsonEntails_not_trans :
     ¬ ∀ p q r : Unit → SignType,
       strawsonEntails p q → strawsonEntails q r → strawsonEntails p r := by

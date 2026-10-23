@@ -107,6 +107,7 @@ theorem isCleanAt_gT (s : Sym) : (gT s).IsCleanAt true := by
 theorem prod_map_gT (w : List Sym) : (w.map gT).prod = unmerged w :=
   AR.prod_ofWords Sym.melody (fun _ ↦ [μ]) (fun _ _ _ ↦ True) w
 
+/-- The realization of a string is the presentation of its merged words. -/
 theorem toAR_realize (w : List Sym) : MergeAR.toAR (realize w) = merged w := by
   rw [realize, MergeAR.prod_map_ofAR isCleanAt_gT, MergeAR.toAR_ofAR]
   exact AR.prod_ofWords_collapse Sym.melody (fun _ ↦ [μ]) (fun _ _ _ ↦ True) w

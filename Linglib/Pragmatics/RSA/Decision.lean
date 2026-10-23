@@ -56,6 +56,8 @@ noncomputable def actionUtility (π : Kernel U A) (R : A → W → ℝ) (u : U) 
 
 variable [DiscreteMeasurableSpace A] (R : A → W → ℝ) (π : Kernel U A) {u : U} {a a' : A} {w : W}
 
+/-- With two actions, utility is the reward of the first weighted by its share and of the second
+by the rest. -/
 theorem actionUtility_of_pair [IsMarkovKernel π] (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     actionUtility π R u w = (π u).real {a} * R a w + (1 - (π u).real {a}) * R a' w := by
   rw [actionUtility, Fintype.sum_eq_add a a' haa' (fun c hc ↦ absurd (hall c) (not_or.mpr hc)),
@@ -99,6 +101,7 @@ instance [Nonempty A] : IsMarkovKernel (policy β L R) :=
 
 variable {β} {u : U} {a a' : A} {w : W}
 
+/-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
 theorem policy_real_singleton :
     (policy β L R u).real {a} = Real.softmax (fun a ↦ β * expectedReward L R u a) a :=
   Kernel.softmax_coe_real_singleton (fun u a ↦ β * expectedReward L R u a) u a
@@ -118,6 +121,8 @@ theorem policy_single_real_lt_iff [DecidableEq W] [DiscreteMeasurableSpace W] (h
         (policy β L (fun a ↦ Pi.single a 1) u).real {w'} ↔ (L u).real {w} < (L u).real {w'} := by
   rw [policy_real_lt_iff _ _ hβ, expectedReward_single, expectedReward_single]
 
+/-- With two actions, the policy's share of one is the logistic function of the scaled
+difference in expected reward. -/
 theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     (policy β L R u).real {a} =
       Real.sigmoid (β * (expectedReward L R u a - expectedReward L R u a')) := by

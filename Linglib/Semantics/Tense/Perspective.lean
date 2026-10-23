@@ -139,10 +139,13 @@ theorem eq_mem_of_presup_present (hr : Presup ⟦present⟧ π r) (hle : r ≤ t
       (presup_present.1 hr)) hle
   rwa [Presup, h] at hth
 
+/-- A reference overlapping the perspective cannot be restricted by an adverb whose cell excludes
+overlap with it, the ⌈then⌉-present clash. -/
 theorem not_presup_of_presup_present (hC : .eq ∉ C) (hr : Presup ⟦present⟧ π r) (hle : r ≤ th) :
     ¬ Presup C π th :=
   fun hth ↦ hC (eq_mem_of_presup_present hr hle hth)
 
+/-- The cells that can restrict a present tense are exactly those that admit overlap. -/
 theorem exists_presup_present_iff [Nonempty T] :
     (∃ π r th : NonemptyInterval T, Presup ⟦present⟧ π r ∧ r ≤ th ∧ Presup C π th) ↔ .eq ∈ C := by
   refine ⟨fun ⟨_, _, _, hr, hle, hth⟩ ↦ eq_mem_of_presup_present hr hle hth, fun h ↦ ?_⟩

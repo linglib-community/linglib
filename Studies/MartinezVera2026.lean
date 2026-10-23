@@ -717,6 +717,7 @@ def ofDatum? (x : Datum) : Option MiExample := do
 
 end MiExample
 
+/-- Every *=mi* example is acceptable exactly when its presupposition holds in its context. -/
 theorem judgment_eq_acceptable_iff_miDefined :
     ∀ x ∈ Examples.all, ∀ r ∈ MiExample.ofDatum? x,
       (x.judgment = .acceptable ↔ MiDefined r.context (alternatives r.focus) r.scope.prop) := by

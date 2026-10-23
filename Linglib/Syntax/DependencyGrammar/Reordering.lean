@@ -667,6 +667,8 @@ private theorem sameSide_of_support_subset_after
   simp only [mem_after, Precedes, Equiv.trans_apply] at this
   exact this
 
+/-- Reordering the dependents after `v` changes total dependency length exactly as it changes the
+head's boundary distances in the sibling arrangement. -/
 theorem Graph.totalLength_reorderDependents_add
     (hσ : σ.support ⊆ (g.siblingArrangement v).after v') :
     (g.reorderDependents v σ).totalLength +
@@ -686,6 +688,7 @@ theorem Graph.totalLength_le_reorderDependents
   have := sum_boundaryDist_le (fun c : g.siblings v ↦ g.phraseLength c) hσ' h
   omega
 
+/-- The reordering is strictly longer exactly when it is not itself short before long. -/
 theorem Graph.totalLength_lt_reorderDependents_iff
     (hσ : σ.support ⊆ (g.siblingArrangement v).after v')
     (h : MonovaryOn (fun c : g.siblings v ↦ g.phraseLength c) (g.siblingArrangement v)

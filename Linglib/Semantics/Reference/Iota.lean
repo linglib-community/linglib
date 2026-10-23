@@ -63,6 +63,7 @@ meant.
 
 variable {α : Type*} {p : α → Prop}
 
+/-- Unique existence is nonemptiness together with subsingletonness of the extension. -/
 theorem existsUnique_iff_nonempty_subsingleton :
     (∃! x, p x) ↔ {x | p x}.Nonempty ∧ {x | p x}.Subsingleton :=
   (exists_congr fun _ ↦ Set.eq_singleton_iff_unique_mem.symm).trans
@@ -92,6 +93,7 @@ theorem iota_isSome_iff : (iota P).isSome ↔ ∃! x, P x := by
 theorem iota_eq_none_iff : iota P = none ↔ ¬ ∃! x, P x := by
   rw [← Option.not_isSome_iff_eq_none, iota_isSome_iff]
 
+/-- A predicate with two distinct satisfiers has no iota. -/
 theorem iota_eq_none_of_ne {e' : E} (he : P e) (he' : P e') (hne : e ≠ e') : iota P = none :=
   (iota_eq_none_iff P).2 fun h ↦ hne (h.unique he he')
 
@@ -106,6 +108,7 @@ theorem iota_ident (j : E) : iota (ident j) = some j :=
 
 variable (S : E → Prop)
 
+/-- The determiner *the* asserts its scope of the Russellian referent. -/
 theorem the_sem_iff_iota : the P S ↔ ∃ x ∈ iota P, S x :=
   exists_congr fun x ↦ and_congr_left' <|
     (⟨fun h ↦ ⟨(h x).2 rfl, fun y ↦ (h y).1⟩, fun ⟨hx, hu⟩ y ↦ ⟨hu y, fun e ↦ e ▸ hx⟩⟩ :
@@ -151,11 +154,14 @@ theorem iota_isGreatest_Iic : iota (IsGreatest (Set.Iic d)) = some d :=
 theorem iota_isGreatest_empty : iota (IsGreatest (∅ : Set E)) = none :=
   iota_isGreatest_eq_none_iff.2 fun ⟨_, h, _⟩ ↦ h
 
+/-- The largest part of a partial individual is that individual. -/
 theorem iota_isGreatest_elim_Iic (o : Option E) :
     iota (IsGreatest (o.elim ∅ Set.Iic)) = o := by
   cases o
   exacts [iota_isGreatest_empty, iota_isGreatest_Iic]
 
+/-- If `X` is closed downward and has a largest member wherever it is nonempty, then `X` is the
+set of parts of its largest member. -/
 theorem elim_Iic_iota_isGreatest (hX : IsLowerSet X) (hd : X.Nonempty → ∃ d, IsGreatest X d) :
     (iota (IsGreatest X)).elim ∅ Set.Iic = X := by
   rcases X.eq_empty_or_nonempty with rfl | hne
@@ -165,17 +171,21 @@ theorem elim_Iic_iota_isGreatest (hX : IsLowerSet X) (hd : X.Nonempty → ∃ d,
     rw [iota_isGreatest_eq_some_iff.2 hd]
     exact Set.Subset.antisymm (fun _ hx ↦ hX hx hd.1) fun _ hx ↦ hd.2 hx
 
+/-- On an antichain, such as a set of atoms, the largest member is the unique member. -/
 theorem _root_.IsAntichain.iota_isGreatest (hs : IsAntichain (· ≤ ·) X) :
     iota (IsGreatest X) = iota (· ∈ X) :=
   Option.ext fun _ ↦ (iota_isGreatest_eq_some_iff.trans <|
     hs.greatest_iff.trans Set.eq_singleton_iff_unique_mem).trans (iota_eq_some_iff _).symm
 
+/-- An antichain with two members, such as a set of two atoms, has no largest member. -/
 theorem _root_.IsAntichain.iota_isGreatest_eq_none (hs : IsAntichain (· ≤ ·) X) {a b : E}
     (ha : a ∈ X) (hb : b ∈ X) (hab : a ≠ b) : iota (IsGreatest X) = none :=
   iota_isGreatest_eq_none_iff.2 fun ⟨_, hd⟩ ↦ by
     rw [hs.greatest_iff.1 hd] at ha hb
     exact hab (ha.trans hb.symm)
 
+/-- A finite nonempty directed set, such as a finite nonempty sup-closed set, has a largest
+member. -/
 theorem _root_.DirectedOn.iota_isGreatest_isSome (hs : DirectedOn (· ≤ ·) X) (hfin : X.Finite)
     (hne : X.Nonempty) : (iota (IsGreatest X)).isSome :=
   let ⟨m, hm⟩ := hfin.exists_maximal hne

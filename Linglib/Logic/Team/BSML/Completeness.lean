@@ -377,6 +377,8 @@ theorem Derives.poss_strongHintikka {k : ℕ} {U : Finset (WorldType n k)} {Γ :
 
 /-! ### Strong Hintikka formulas derive what their teams support -/
 
+/-- A strong Hintikka formula derives every formula its team supports, and the negation of every
+    formula its team anti-supports. -/
 theorem derives_of_support (he : Function.Injective e) :
     ∀ (φ : Formula Atom) {k : ℕ}, φ.modalDepth ≤ k → φ.AtomsIn (Set.range e) →
       ∀ T : Finset (WorldType n k),
@@ -557,6 +559,7 @@ theorem neFree_bigDisj_hintikka (e : Fin n → Atom) {k : ℕ} (L : List (WorldT
   neFree_bigDisj _ fun x hx ↦ by
     obtain ⟨σ, -, rfl⟩ := List.mem_map.mp hx; exact neFree_hintikka e k σ
 
+/-- **Exhaustiveness.** Every world has some type of each depth. -/
 theorem derives_bigDisj_hintikka (e : Fin n → Atom) :
     ∀ (k : ℕ) (Γ : Set (Formula Atom)),
       Γ ⊢ bigDisj ((Finset.univ : Finset (WorldType n k)).toList.map (hintikka e k))
@@ -654,6 +657,8 @@ theorem hintikka_derives (he : Function.Injective e) {β : Formula Atom} (hβ : 
     fun hr ↦ Derives.of_conj_ne hβ ((strongHintikka_singleton τ).trans
       (h.2 ((antiSupport_singleton_iff_not_realize hβ).mpr hr)))⟩
 
+/-- **Classical normal form.** A classical formula derives the disjunction of the Hintikka
+    formulas of the types at which it is true. -/
 theorem derives_bigDisj_realize (he : Function.Injective e) {β : Formula Atom} (hβ : β.NEFree)
     {k : ℕ} (hk : β.modalDepth ≤ k) (hA : β.AtomsIn (Set.range e)) :
     {β} ⊢ bigDisj ((Finset.univ.filter fun τ ↦ Realize (univModel e) β (world k τ)).toList.map
@@ -930,6 +935,9 @@ theorem splits_fill_of_neFree (he : Function.Injective e) {β : Formula Atom} (h
   splits_of_derives_bigDisj (derives_bigDisj_realize he hβ hk hA) (fun T hT ↦
     (support_image_iff hβ T).mpr fun τ hτ ↦ by simpa using hT hτ) hC
 
+/-- In a splittable context, a formula splits into the strong Hintikka formulas of the teams
+    supporting it, and its negation into those of the teams anti-supporting it, together with
+    the context's extra case. -/
 theorem splits_fill (he : Function.Injective e) (hd : default ∈ Set.range e) :
     ∀ (φ : Formula Atom) {k : ℕ}, φ.modalDepth ≤ k → φ.AtomsIn (Set.range e) →
       ∀ {C : Formula.Context Atom}, C.Splittable →
@@ -1165,6 +1173,7 @@ theorem completeness {Γ : Finset (Formula Atom)} {φ : Formula Atom}
     · exact hσ.elim
   exact (Derives.bigConj_of_forall fun x hx ↦ .hyp (Finset.mem_toList.mp hx)).trans hγφ
 
+/-- For finite premise sets, derivability is consequence on every model. -/
 theorem derives_iff {Γ : Finset (Formula Atom)} {φ : Formula Atom} :
     (Γ : Set (Formula Atom)) ⊢ φ ↔ ∀ (W : Type) [DecidableEq W] (M : KripkeModel W Atom)
       (s : Finset W), (∀ γ ∈ Γ, support M γ s) → support M φ s :=

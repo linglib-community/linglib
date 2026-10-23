@@ -269,6 +269,8 @@ theorem Licensed.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree 
   obtain ⟨A, rfl⟩ := (ht.of_subtreeAt hu).exists_nonterminal_of_ne_nil hne
   exact ⟨A, cs, hu⟩
 
+/-- By pigeonhole, a path of at least `g.rules.card` steps through a licensed tree, ending at a
+node with children, passes two nodes with the same nonterminal. -/
 theorem Licensed.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
     (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
     (hs : subtreeAt t p = some s)
@@ -383,6 +385,8 @@ private theorem exists_forest {sf : List (Symbol T g.NT)} {w : List T}
       simp only [List.map_append, List.flatten_append, List.map_cons, List.map_nil,
         List.flatten_cons, List.flatten_nil, List.append_nil, RoseTree.yield_node_nonterminal]
 
+/-- **Completeness.** Every word of the language has a licensed derivation tree from the start
+symbol. -/
 theorem exists_licensed_tree (g : ContextFreeGrammar T) {w : List T} (hw : w ∈ g.language) :
     ∃ t : RoseTree (Symbol T g.NT), t.Licensed g.Licenses ∧ t.yield = w ∧
       t.value = .nonterminal g.initial := by

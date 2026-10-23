@@ -140,6 +140,7 @@ private theorem insertionMultiset_mk_of {hs : List (RoseTree α)}
     refine Multiset.bind_congr fun p _ ↦ ?_
     rw [ih h List.mem_cons_self, ihs fun h hh ↦ ih h (List.mem_cons_of_mem _ hh)]
 
+/-- `insertion` computes `RoseTree.insertion` on planar representatives. -/
 theorem insertion_mk (t : RoseTree α) (gs : List (RoseTree α)) :
     insertion (mk t) ↑(gs.map mk) = (RoseTree.insertion t gs).map mk := by
   induction t generalizing gs with
@@ -148,6 +149,7 @@ theorem insertion_mk (t : RoseTree α) (gs : List (RoseTree α)) :
       Multiset.bind_map]
     exact Multiset.bind_congr fun p _ ↦ by rw [insertionMultiset_mk_of ih]
 
+/-- `insertionMultiset` computes `RoseTree.insertionForest` on planar representatives. -/
 theorem insertionMultiset_mk (hs gs : List (RoseTree α)) :
     insertionMultiset ↑(hs.map mk) ↑(gs.map mk) =
       (insertionForest hs gs).map fun L => (↑(L.map mk) : Multiset (UnorderedTree α)) :=
@@ -190,6 +192,8 @@ theorem insertionMultiset_singleton_value (T : UnorderedTree α) (B : Multiset (
   obtain ⟨T', hT', rfl⟩ := h
   exact ⟨mk T', rfl, value_of_mem_insertion hT'⟩
 
+/-- Splits of an output forest are splits of the host and of the guests, each guest following
+its host. -/
 theorem insertionMultiset_antidiagonal (A G : Multiset (UnorderedTree α)) :
     (insertionMultiset A G).bind Multiset.antidiagonal =
       A.antidiagonal.bind fun pa => G.antidiagonal.bind fun pg =>
@@ -211,6 +215,7 @@ theorem insertionMultiset_antidiagonal (A G : Multiset (UnorderedTree α)) :
   simp only [SProd.sprod, Multiset.product, Multiset.bind_map, Multiset.map_map]
   exact Multiset.bind_congr fun L₁ _ => Multiset.bind_singleton _ _
 
+/-- Grafting into a disjoint union splits the guests between the two parts. -/
 theorem insertionMultiset_add_host (A B C : Multiset (UnorderedTree α)) :
     insertionMultiset (A + B) C =
       C.antidiagonal.bind fun p =>
@@ -257,6 +262,8 @@ theorem card_le_of_mem_productMultiset {F G W : Multiset (UnorderedTree α)}
   obtain ⟨X, hX, rfl⟩ := Multiset.mem_map.mp h
   simp [insertionMultiset_card_eq F p.2 hX]
 
+/-- Grafting into a single node `node a A` puts the forests of `A ⋆ B` under the root: each guest
+is a new child of the root or grafted into `A`. -/
 theorem insertionMultiset_singleton_node (a : α) (A B : Multiset (UnorderedTree α)) :
     insertionMultiset {node a A} B = (productMultiset A B).map fun F => {node a F} := by
   rw [insertionMultiset_singleton, insertion_node, productMultiset, Multiset.map_bind,
@@ -304,6 +311,7 @@ private theorem bind_antidiagonal_middle_swap {β γ : Type*} (B : Multiset β)
       ih fun x y z w ↦ g x (a ::ₘ y) z w, ih fun x y z w ↦ g (a ::ₘ x) y z w]
     abel
 
+/-- Splitting the forests of `A ⋆ B` is splitting `A` and `B` and multiplying the parts. -/
 theorem productMultiset_bind_antidiagonal (A B : Multiset (UnorderedTree α)) :
     (productMultiset A B).bind Multiset.antidiagonal =
       (Multiset.antidiagonal A ×ˢ Multiset.antidiagonal B).bind (fun pq =>

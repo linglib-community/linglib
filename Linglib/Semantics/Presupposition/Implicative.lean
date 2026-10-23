@@ -102,6 +102,8 @@ noncomputable def sentence (s : ImplicationSignature) (v S : F) : W → SignType
 
 variable {R} {s : ImplicationSignature} {v S : F} {w : W}
 
+/-- A claim of matrix polarity `m` implies the polarity of the complement that its signature
+records for a context of that polarity. -/
 theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
     (hs : (m • sentence R s v S) w = 1) : R.Holds (R.signed q S) w := by
   cases m
@@ -115,6 +117,8 @@ theorem holds_signed_of_implied_eq {m q : Polarity} (hq : s.implied m = q)
     exact hs.2 (R.holds_of_necessary (hs.1.2 q hq) (Interpretation.holds_signed_negative_mul.2 h))
 
 variable (R v S) in
+/-- A signature that implies more presupposes more, the presupposition of a sentence weakening
+as its signature descends. -/
 theorem antitone_support : Antitone fun s ↦ Function.support (sentence R s v S) := by
   intro s t h w hw
   simp only [sentence, Function.mem_support, ne_eq, Set.indicator_apply_eq_zero,

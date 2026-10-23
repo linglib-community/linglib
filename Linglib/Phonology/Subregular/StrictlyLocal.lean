@@ -378,18 +378,24 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
       (by rw [List.append_nil]; exact hyfin ▸ hy)
     rwa [List.take_append_drop, List.append_nil] at hnew
 
+/-- For widths `k ≥ 2`, a language is strictly `k`-local if and only if it is closed under
+suffix substitution at `k`. -/
 theorem isStrictlyLocal_iff_suffixSubstitutionClosed {L : Language α} {k : ℕ}
     (hk : 2 ≤ k) : L.IsStrictlyLocal k ↔ L.SuffixSubstitutionClosed k :=
   ⟨IsStrictlyLocal.suffixSubstitutionClosed, fun hL ↦ hL.isStrictlyLocal hk⟩
 
 /-! ### Local testability -/
 
+/-- A strictly `k`-local language is locally `k`-testable. Padding a word with boundary markers
+pulls it back from the words over the augmented alphabet whose factors of length `k` are all
+permitted, and that language is locally `k`-testable outright. -/
 theorem IsStrictlyLocal.toIsLocallyTestable {L : Language α} {k : ℕ} (h : L.IsStrictlyLocal k) :
     L.IsLocallyTestable k := by
   obtain ⟨G, rfl⟩ := h
   exact (((isLocallyTestable_setOf_kFactors k {S | S ⊆ G}).rightQuotient
     (List.replicate (k - 1) none)).leftQuotient (List.replicate (k - 1) none)).preimage_map some
 
+/-- Over a finite alphabet strictly local languages are star-free. -/
 theorem IsStrictlyLocal.isStarFree [Finite α] {L : Language α} {k : ℕ}
     (h : L.IsStrictlyLocal k) : L.IsStarFree :=
   h.toIsLocallyTestable.isStarFree

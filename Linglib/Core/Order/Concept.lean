@@ -103,11 +103,15 @@ section Implication
 
 variable {α β : Type*} {r : α → β → Prop} {a b : β}
 
+/-- The attribute concept of `b` lies below that of `a` exactly when every object with `b`
+has `a`. -/
 theorem ofAttribute_le_ofAttribute_iff :
     ofAttribute r b ≤ ofAttribute r a ↔ ∀ ⦃x⦄, r x b → r x a := by
   rw [← extent_subset_extent_iff]
   simp [ofAttribute, ofAttributes, Set.subset_def, mem_lowerPolar_iff]
 
+/-- The attribute concepts reverse a preorder on the attributes exactly when the attributes of
+every object form a lower set of it. -/
 theorem antitone_ofAttribute_iff [Preorder β] :
     Antitone (ofAttribute r) ↔ ∀ x, IsLowerSet {b | r x b} := by
   simp only [Antitone, ofAttribute_le_ofAttribute_iff, IsLowerSet, Set.mem_ofPred_eq]

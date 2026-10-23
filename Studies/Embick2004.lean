@@ -107,6 +107,8 @@ theorem headIndex?_rootComplement (r : Root) : (rootComplement r).headIndex? = s
 
 theorem headIndex?_directMerge (r : Root) : (directMerge r).headIndex? = some 1 := rfl
 
+/-- What tells the structures apart is how v[FIENT] heads them: a Root complement is projected
+over, while a directly merged Root makes the mother a further segment of v[FIENT]. -/
 theorem isSegment_directMerge (r : Root) :
     ¬ (rootComplement r).value.IsSegment ∧ (directMerge r).value.IsSegment :=
   ⟨id, trivial⟩
@@ -123,6 +125,7 @@ def moveRoot : Tree Cat Word → Tree Cat Word
 def headDaughter? (t : Tree Cat Word) : Option (Tree Cat Word) :=
   t.headIndex?.bind (t.children[·]?)
 
+/-- Head movement of a Root complement builds exactly the complex head of Direct Merge. -/
 theorem headDaughter?_moveRoot (r : Root) :
     headDaughter? (moveRoot (rootComplement r)) = some (directMerge r) := rfl
 
@@ -150,6 +153,8 @@ theorem realize_flat : realize vocabulary ⟨.flat, [.fient]⟩ = some "-en" := 
 
 theorem realize_hammer : realize vocabulary ⟨.hammer, [.fient]⟩ = some "" := by decide
 
+/-- Every vocabulary realizes v[FIENT] alike whether its Root moved from complement position or
+was directly merged, so *hammer-ed* has the null v[FIENT] of *hammer-ed flat*. -/
 theorem realize_moveRoot (vocab : List (VocabularyItem Feature String)) (r : Root) :
     ((headDaughter? (moveRoot (rootComplement r))).bind complexHead?).map (realize vocab) =
       (complexHead? (directMerge r)).map (realize vocab) := by
@@ -297,6 +302,9 @@ def data : List (FientP × Judgment) :=
 
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
+/-- An example is acceptable exactly when its analysis is interpretable: *The metal is hammered*
+and *John laughed himself hoarse* are, *John is laughed*, *John laughed hoarse* and *John kicked
+the door opened* are not. -/
 theorem acceptable_iff_interpretable :
     ∀ p ∈ data, p.2 = .acceptable ↔ p.1.Interpretable := by
   decide +kernel

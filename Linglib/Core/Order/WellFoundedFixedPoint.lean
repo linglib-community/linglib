@@ -76,6 +76,7 @@ theorem isFixedPt_iff_eq_fixedPoint {x : ∀ i, β i} :
 theorem fixedPoint_apply (i : ι) : hr.fixedPoint F i = F (hr.fixedPoint F) i :=
   (congrFun (isFixedPt_fixedPoint hr hF) i).symm
 
+/-- Iterating from any family past a ranking of `r` reaches the fixed point. -/
 theorem fixedPoint_eq_iterate (rk : r →r ((· < ·) : ℕ → ℕ → Prop)) {n : ℕ} (hn : ∀ i, rk i < n)
     (x : ∀ i, β i) : hr.fixedPoint F = F^[n] x := by
   funext i
@@ -96,12 +97,15 @@ theorem exists_relHom_lt_card [Fintype ι] (hr : WellFounded r) :
     · simpa using hj
   · exact Finset.filter_ssubset.2 ⟨i, Finset.mem_univ i, irrefl i⟩
 
+/-- On a finite index type, iterating once per index reaches the fixed point. -/
 theorem fixedPoint_eq_iterate_card [Fintype ι] (x : ∀ i, β i) :
     hr.fixedPoint F = F^[Fintype.card ι] x :=
   let ⟨rk, hrk⟩ := exists_relHom_lt_card hr
   fixedPoint_eq_iterate hF rk hrk x
 
 omit hF in
+/-- Fixed points are ordered as the maps are. If `F x ≤ G y` whenever `x ≤ y`, the fixed point of
+`F` lies below that of `G`. -/
 theorem fixedPoint_le_fixedPoint [∀ i, Preorder (β i)] (hF : ∀ i, DependsOn (F · i) {j | r j i})
     (hG : ∀ i, DependsOn (G · i) {j | r j i}) (hFG : ∀ x y, x ≤ y → F x ≤ G y) :
     hr.fixedPoint F ≤ hr.fixedPoint G := by

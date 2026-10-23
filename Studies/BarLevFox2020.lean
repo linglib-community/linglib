@@ -92,15 +92,19 @@ private theorem FreeChoiceWitnesses.exists_both :
     ∃ w ∈ R.preimage (a ∪ b) ∩ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b) :=
   hF.not_both.imp fun _ h ↦ ⟨⟨⟨preimage_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩
 
+/-- Given the witnesses, `◇(a ∨ b)` strengthens to `◇a ∧ ◇b ∧ ¬◇(a ∧ b)`, free choice. -/
 theorem freeChoice : exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) =
     (R.preimage a ∩ R.preimage b) \ R.preimage (a ∩ b) := by
   rw [fcAlts, exhIEII_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both,
     Set.inter_assoc, Set.inter_eq_right.2 fun _ h ↦ preimage_mono Set.subset_union_left h.1]
 
+/-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
+alternatives. -/
 theorem II_fcAlts :
     II (fcAlts R a b) (R.preimage (a ∪ b)) = {R.preimage (a ∪ b), R.preimage a, R.preimage b} :=
   II_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both
 
+/-- The only excludable alternative of `◇(a ∨ b)` is the conjunctive one. -/
 theorem isInnocentlyExcludable_fcAlts_iff {q : Set W} :
     IsInnocentlyExcludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔ q = R.preimage (a ∩ b) :=
   isInnocentlyExcludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
@@ -111,6 +115,8 @@ section SimpleDisjunction
 
 variable {a b : Set W}
 
+/-- Without the modal the conjunctive alternative is the conjunction of the disjunct
+alternatives, so exhaustification denies it and includes neither disjunct. -/
 theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
     exhIEII {a ∪ b, a, b, a ∩ b} (a ∪ b) = (a ∪ b) \ (a ∩ b) :=
   exhIEII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
@@ -132,6 +138,7 @@ noncomputable def only (ALT : Set (Set W)) (φ : Set W) : W → SignType :=
   {w | ∀ r ∈ II ALT φ, w ∈ r}.indicator
     fun w ↦ SignType.ofProp (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q)
 
+/-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
 theorem support_only_fcAlts {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitnesses R a b) :
     Function.support (only (fcAlts R a b) (R.preimage (a ∪ b))) =
       R.preimage a ∩ R.preimage b := by
@@ -173,6 +180,9 @@ def sdaAlts : Set (Set W) :=
 
 variable {ord p q r}
 
+/-- Disjunctive antecedents simplify. Over total similarity preorders, given a world where only
+the first simplification holds, one where only the second does, and one where both hold but the
+conjunctive one fails, `(p ∨ q) → r` strengthens to `(p → r) ∧ (q → r) ∧ ¬((p ∧ q) → r)`. -/
 theorem sda (htot : ∀ w, Std.Total (ord w).le)
     (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r,
       w ∉ closestImp ord q r ∪ closestImp ord (p ∩ q) r)

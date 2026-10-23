@@ -87,6 +87,7 @@ def HasObjectPrefix (c : Bundle) : Prop := ∃ ms ∈ setB.realize c, ms ≠ []
 
 instance : DecidablePred HasObjectPrefix := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
+/-- The direct objects with a Set B prefix are the first and second persons. -/
 theorem hasObjectPrefix_iff_isSAP :
     ∀ c ∈ Bundle.personNumberCells, HasObjectPrefix c ↔ c.IsSAP := by
   decide
@@ -162,10 +163,14 @@ def pattern : VerbClass → Series → Pattern
   | .intransitive, _ => .nominative
   | .indirect, _ => .inverse
 
+/-- The subject keeps its set of affixes from the first series to the second, whatever becomes
+of its case. -/
 theorem subject_affixes_present_eq_aorist (v : VerbClass) :
     (pattern v .present).subject.affixes = (pattern v .aorist).subject.affixes := by
   cases v <;> rfl
 
+/-- The subject changes case from the first series to the second exactly in the transitive and
+medial classes. -/
 theorem subject_case_ne_iff (v : VerbClass) :
     (pattern v .present).subject.case ≠ (pattern v .aorist).subject.case ↔
       v = .transitive ∨ v = .medial := by

@@ -123,6 +123,8 @@ theorem realize_γ₁_γ₂ : toAR (realize [.γ₁, .γ₂]) = sheep := by deci
 spread graph of Figure 12a instead. -/
 theorem collapse_prod_γ₁_γ₂ : ([Sym.γ₁, .γ₂].map g).prod.collapse true = snake := by decide
 
+/-- Once a primitive violates the OCP, collapsing after concatenation does not compute
+merging concatenation: the two realizations of `γ₁γ₂` differ. -/
 theorem realize_γ₁_γ₂_ne_collapse :
     toAR (realize [.γ₁, .γ₂]) ≠ ([Sym.γ₁, .γ₂].map g).prod.collapse true := by
   rw [realize_γ₁_γ₂, collapse_prod_γ₁_γ₂]

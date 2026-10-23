@@ -107,6 +107,7 @@ theorem not_factorsThrough_semanticNumber :
 
 /-! ### The reciprocal -/
 
+/-- The reciprocal is acceptable exactly when its antecedent is semantically plural. -/
 theorem reciprocal_acceptable_iff :
     ∀ e ∈ all, HasAnaphor e egymas.toPronoun →
       (e.judgment = .acceptable ↔ semanticNumber? e = some .plural) := by

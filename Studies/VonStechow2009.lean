@@ -118,6 +118,7 @@ from the left by a stretch where it fails. -/
 def Achievement (φ : T → Prop) (m : T) : Prop :=
   (∃ n₁ < m, ¬ φ n₁ ∧ ∀ n₂, n₁ < n₂ → n₂ < m → ¬ φ n₂) ∧ φ m
 
+/-- Von Stechow's semantics is satisfiable in the rationals. -/
 theorem achievement_rat : Achievement (fun q : ℚ ↦ 0 ≤ q) 0 :=
   ⟨⟨-1, by norm_num, by norm_num, fun _ _ h ↦ not_le.2 h⟩, le_rfl⟩
 
@@ -164,6 +165,9 @@ theorem xn_iff_perf {W : Type*} (p : W → Set (NonemptyInterval T)) (w : W) :
     .pure s ∈ perfect p w ↔ (w, s) ∈ PERF p := by
   rw [perf_eq_atPoint_perfect]; rfl
 
+/-- In *John has called yesterday* (42, `Examples.ex_42`) *yesterday* modifies the extended-now
+interval, which ends at the speech time, so the sentence is contradictory unless the speech time
+is on yesterday. -/
 theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T))
     (yesterday : NonemptyInterval T) (w : W) (hs : s ∉ yesterday) :
     (w, s) ∉ PERF (Set.Iic yesterday ∩ call ·) := fun h ↦
@@ -427,6 +431,8 @@ theorem not_exists_earliest_will [DenselyOrdered T] :
   obtain ⟨c, hsc, hcm⟩ := exists_between hsm
   exact absurd (hmin ⟨hsc, t', hcm.trans hmt, hl⟩) (not_le.2 hcm)
 
+/-- When the clause has an earliest time, *before* the earliest time is the *before ever* of
+[anscombe-1964], the universal *before* that von Stechow attributes to her. -/
 theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) :
     (∃ t ∈ A, t < m) ↔ Tense.beforeEver (NonemptyInterval.pure '' A)
       (NonemptyInterval.pure '' B) := by
@@ -434,6 +440,7 @@ theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) 
   · simp [Tense.timeTrace_image]
   · simpa [Tense.timeTrace_image] using hm
 
+/-- And *after* the earliest time is the existential *after* of [anscombe-1964]. -/
 theorem after_earliest_iff_after {A B : Set T} {m : T} (hm : IsLeast B m) :
     (∃ t ∈ A, m < t) ↔
       Anscombe1964.Anscombe.after (NonemptyInterval.pure '' A) (NonemptyInterval.pure '' B) := by

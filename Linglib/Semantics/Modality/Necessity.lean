@@ -167,6 +167,8 @@ theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     humanNecessity f g p w :=
   OrderingSemantics.isNecessity_of_minimals_subset hlim fun _ hv ↦ h _ hv
 
+/-- Under the Limit Assumption, [kratzer-1981]'s human necessity is exactly universal
+quantification over the best worlds. -/
 theorem humanNecessity_iff_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) :
     humanNecessity f g p w ↔ necessity f g p w :=
@@ -268,6 +270,8 @@ end Unified
 variable (h : ((f ⊔ g).accessibleWorlds w).Nonempty)
 include h
 
+/-- When the ordering source is consistent with the modal base, good possibility is simple
+necessity over the unified backgrounds. -/
 theorem goodPossibility_iff_simpleNecessity_sup :
     goodPossibility f g p w ↔ simpleNecessity (f ⊔ g) p w :=
   let ⟨_, hb⟩ := h
@@ -344,6 +348,8 @@ theorem Background.IsRealistic.isSerial {f : Background W} (h : f.IsRealistic) :
 theorem isRealistic_iff_refl {f : Background W} : f.IsRealistic ↔ f.accessible.IsRefl :=
   ⟨Background.IsRealistic.refl, fun h w ↦ h.refl w⟩
 
+/-- A modal base is realistic exactly when simple necessity over it is veridical, what must be
+the case being the case, so **T** defines realism. -/
 theorem isRealistic_iff_simpleNecessity_le_id {f : Background W} :
     f.IsRealistic ↔ simpleNecessity f ≤ id :=
   isRealistic_iff_refl.trans box_T_iff.symm

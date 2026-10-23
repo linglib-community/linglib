@@ -379,6 +379,8 @@ theorem Phrase.packed_mk_one {m : M} (hm : m ∈ L) : (mk .one m).Packed L :=
   ⟨M.isHighestUnder_iff.2 ⟨hm, by simp [Number.value], fun _ _ h ↦ by simpa [Number.value] using h⟩,
     trivial⟩
 
+/-- A mark is the sister of a NUMBER in a packed NUMBER exactly when no packed PHRASE fits under
+the whole. -/
 theorem Number.packed_oneAnd_iff {r : Number} :
     (oneAnd r).Packed L ↔
       r.Packed L ∧ ∀ q : Phrase, q.Packed L → q.value ≤ (oneAnd r).value → q.value ≤ 1 := by
@@ -394,6 +396,8 @@ theorem Number.packed_oneAnd_iff {r : Number} :
     have := m.one_lt_value
     omega
 
+/-- A PHRASE is the sister of a NUMBER in a packed NUMBER exactly when it is packed and no packed
+PHRASE has a higher value not above the whole. -/
 theorem Number.packed_phraseAnd_iff {p : Phrase} {r : Number} :
     (phraseAnd p r).Packed L ↔ p.Packed L ∧ r.Packed L ∧
       ∀ q : Phrase, q.Packed L → q.value ≤ (phraseAnd p r).value → q.value ≤ p.value := by

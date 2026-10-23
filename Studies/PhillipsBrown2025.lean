@@ -145,6 +145,8 @@ theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell
     Want G s bel p := fun w _ ↦
   (Setoid.decides_iff_forall_cell.1 hc w).resolve_right fun h ↦ hnp ⟨w, h⟩
 
+/-- The semantics is Strawson upward monotone, since where both ascriptions are defined,
+`want p` entails `want q` for `p ⊆ q`. -/
 theorem want_strawsonEntails (hpq : p ⊆ q) :
     strawsonEntails (want G N s bel p) (want G N s bel q) := fun _ hp hq ↦ by
   simp_all [want]
@@ -193,10 +195,13 @@ instance : DecidablePred (· ∈ bel) :=
 /-- The desires are the benefit and not the cost. -/
 def desires : List (Finset World) := [benefit, costᶜ]
 
+/-- Von Fintel's semantics cannot make *Nap* and *Not-nap* both true, whatever the desires,
+since some belief-world is best and it settles the act one way. -/
 theorem vonFintel_no_conflict (A : Set (World → Prop)) :
     ¬ (BestWorlds.Want A bel ↑act ∧ BestWorlds.Want A bel (↑act : Set World)ᶜ) :=
   fun ⟨h, h'⟩ ↦ h.not_compl ⟨⟨true, true, true⟩, by decide⟩ h'
 
+/-- Neither can Heim's, under her definedness amendment and antisymmetric desirability. -/
 theorem heim_no_conflict (F : Conditional.Frame World) (w : World) [Std.Antisymm (F.pref w)]
     (hd : Desire.IsContingent bel ↑act) :
     ¬ (Conditional.Want F bel w ↑act ∧ Conditional.Want F bel w (↑act : Set World)ᶜ) :=
@@ -235,6 +240,7 @@ instance : DecidableRel qCost := inferInstanceAs (DecidableRel (Setoid.ofProps _
 /-- The salient propositions of the case, the test set of the anti-deckstacking constraint. -/
 def issues : List (Finset World) := [act, benefit, cost]
 
+/-- Considering the act and its benefit, *Nap* and *Lobster* are defined and true. -/
 theorem act_true : Defined issues qBenefit bel ↑act ∧ Want desires qBenefit bel ↑act := by
   decide +kernel
 
@@ -242,6 +248,8 @@ theorem act_true : Defined issues qBenefit bel ↑act ∧ Want desires qBenefit 
 the inference from *Nap* to *Fail* (§4.1). -/
 theorem cost_undefined : ¬ qBenefit.Decides ↑cost := by decide +kernel
 
+/-- Considering the act and its cost, not doing the act is wanted, *Not-nap* and *Not-lobster*,
+and so is avoiding the cost, *Not-die*. -/
 theorem not_act_true :
     Defined issues qCost bel (↑act : Set World)ᶜ ∧ Want desires qCost bel (↑act : Set World)ᶜ ∧
       Want desires qCost bel (↑cost : Set World)ᶜ := by
@@ -280,11 +288,15 @@ def qFair : Setoid LuWorld := Setoid.ofProps {rain, happy}
 instance : DecidableRel qStacked := inferInstanceAs (DecidableRel (Setoid.ker _))
 instance : DecidableRel qFair := inferInstanceAs (DecidableRel (Setoid.ofProps _))
 
+/-- Without the constraint the deck-stacked question makes *Lu wants it not to rain* true,
+though Lu is indifferent to the weather; the level playing field makes it false. -/
 theorem not_rain_deckstacked :
     Want [happy] qStacked belLu (↑rain : Set LuWorld)ᶜ ∧
       ¬ Want [happy] qFair belLu (↑rain : Set LuWorld)ᶜ := by
   decide +kernel
 
+/-- The deck-stacked question violates the constraint at *happy*, which one answer entails and
+another leaves open, while the level playing field satisfies it for every proposition. -/
 theorem deckstacked_excluded :
     ¬ IsAntiDeckstacking [happy] qStacked ∧
       ∀ q : Finset LuWorld, (∃ w, qFair.cell w ⊆ ↑q) → qFair.Decides ↑q := by
@@ -301,6 +313,10 @@ theorem antiDeckstacking_univ_singleton {W : Type*} {s : Setoid W}
 
 /-! ### Belief-sensitivity (§4.2) -/
 
+/-- An agent whose beliefs are insensitive to every question that decides `p`, William III and
+England avoiding nuclear war with France, has *S wants p* undefined in every context, since
+where `p` is decided the beliefs are insensitive, and where they are sensitive `p` is not
+decided. -/
 theorem undefined_of_insensitive {W : Type*} {bel p : Set W}
     (h : ∀ s : Setoid W, s.Decides p → ¬ IsBelSensitive s bel) (N : List (Finset W))
     (s : Setoid W) : ¬ Defined N s bel p :=

@@ -180,6 +180,8 @@ theorem alt_disj : alt (ofSet vM ⊔ ofSet vB) = {vM, vB} :=
   alt_ofSet_sup_ofSet (fun h ↦ by simpa [vB] using h (show (true, false) ∈ vM from rfl))
     (fun h ↦ by simpa [vM] using h (show (false, true) ∈ vB from rfl))
 
+/-- `¬◇(M ∨ B)` is true: no nonempty set of burning worlds contains a mailing-without-burning
+world, as a minimal cover by `{M, B}` would need. -/
 theorem not_dia_disj (w : Bool × Bool) : w ∈ (dia rB (ofSet vM ⊔ ofSet vB))ᶜ.info := by
   rw [info_compl, info_dia, alt_disj]
   rintro ⟨R', hR', -, hmc⟩
@@ -201,6 +203,7 @@ theorem box_neg_disj (w : Bool × Bool) : w ∉ (box rB (ofSet vM ⊔ ofSet vB)�
   intro h
   exact h (show (true, true) ∈ rB w from rfl) (Or.inr rfl)
 
+/-- `¬□(M ∨ B)` is true: the burning worlds hold no mailing-without-burning world. -/
 theorem not_box_disj (w : Bool × Bool) : w ∈ (box rB (ofSet vM ⊔ ofSet vB))ᶜ.info := by
   rw [info_compl, info_box, alt_disj]
   intro hmc

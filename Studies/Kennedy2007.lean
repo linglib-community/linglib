@@ -44,6 +44,8 @@ variable {Entity D : Type*} [LinearOrder D]
 
 /-! ### Definite descriptions (§3.2, (53)–(54)) -/
 
+/-- *The long one* succeeds because two objects of different length can always be told apart by
+a contextual standard. -/
 theorem exists_relativePos_of_lt (μ : Entity → D) {a b : Entity} (h : μ b < μ a) :
     ∃ θ, RelativePos μ θ a ∧ ¬ RelativePos μ θ b :=
   ⟨μ b, h, lt_irrefl _⟩

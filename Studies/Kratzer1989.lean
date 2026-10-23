@@ -154,6 +154,8 @@ def ClosedUnderLumping (F A : Set (Set S)) (w : S) : Prop := ∀ p ∈ A, ∀ q 
 of `A` logically implies is in `A`. -/
 def ClosedUnderConsequence (F A : Set (Set S)) : Prop := ∀ B ⊆ A, ∀ q ∈ F, Follows B q → q ∈ A
 
+/-- Since consequence is monotone in the premises, strong closure under logical consequence is
+closure under the consequences of the whole set. -/
 theorem closedUnderConsequence_iff : ClosedUnderConsequence F A ↔ ∀ q ∈ F, Follows A q → q ∈ A :=
   ⟨fun h q hq ↦ h A subset_rfl q hq, fun h _ hB q hq hBq ↦ h q hq (hBq.mono hB)⟩
 

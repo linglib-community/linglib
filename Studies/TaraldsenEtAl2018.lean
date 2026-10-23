@@ -76,6 +76,8 @@ head alone, the work of the Foot Condition (68). -/
 
 variable {L : RuleSet (LexicalEntry (Option NCFeature) String)} {base spec : ℕ}
 
+/-- The Specifier `[# Nₙ]` is lexicalized whole by a single prefix or not at all, the classifier
+never evacuating to leave the number head a suffix of its own. -/
 theorem exponents_cls_num (h : treeSpellout L (leaf (some .num)) = none) (n : ℕ) :
     exponents L [.cls n, .num] = (treeSpellout L (plTree n)).map fun x ↦ [x] :=
   exponents_cons_of_forall_leaf (L := L) (NCFeature.cls n) (fs := [NCFeature.num])
@@ -102,6 +104,8 @@ theorem pluralPrefixes_eq (h : treeSpellout L (leaf (some .num)) = none) (base s
   rcases treeSpellout L (plTree spec) with - | o <;>
     rcases treeSpellout L (leaf (some (.cls base))) with - | i <;> rfl
 
+/-- A plural stacks exactly when no entry lexicalizes the plural Specifier on the singular's
+classifier, the correlation of section 4.5. -/
 theorem stacks_iff_no_entry (h : treeSpellout L (leaf (some .num)) = none) {r : List String}
     (hr : pluralPrefixes L base spec = some r) :
     1 < r.length ↔ ∀ e ∈ L, ¬ e.Matches (plTree base) := by
@@ -247,6 +251,9 @@ theorem rhonga_plurals :
       [some ["va"], some ["mi", "mu"], some ["ma", "rhi"], some ["swi"], some ["ti", "yi"]] := by
   decide
 
+/-- In Changana and Rhonga a plural stacks exactly when its prefix and the singular's share no
+classifier, the correlation of section 4.5 with the agreement facts: those are the genders
+with no entry for the plural Specifier on the singular's classifier. -/
 theorem rhonga_stacking_iff_not_sharesClassifierN {p : ClassPair} (hp : p ∈ rhonga)
     {r : List String} (hr : pluralPrefixes rhongaPrefixes p.sgN p.plN = some r) :
     1 < r.length ↔ ¬ SharesClassifierN p.sg p.pl := by

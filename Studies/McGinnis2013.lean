@@ -260,6 +260,9 @@ theorem row_ofDatum_isSome : ∀ ex ∈ Examples.all, (Row.ofDatum ex).isSome :=
 /-- The rows are the forms of (2)–(6), (12), (15), (21)–(23), (26). -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- **Agree and Fission.** A form is grammatical iff its prefix is the Subset Principle's winner
+and its suffixes are what scansion inserts, so a clause has one Group, no *-t* after *-es*, no
+*-s* beside *-t*, and no *-t* for a dative first-person plural. -/
 theorem rows_realized :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
       personPrefix r.subj r.obj = some r.prefix_ ∧
@@ -328,11 +331,14 @@ def agreementAffixes (subj obj : Argument) : List Morph :=
   ((personPrefix subj obj).filter (· ≠ "")).toList.map .pref ++
     if plural ∈ suffixItems .aorist subj obj then [.suff plural.exponent] else []
 
+/-- With a third-person singular subject each object receives its Set B affixes ([hewitt-1995]),
+*gv-* without *-t* for the first person plural. -/
 theorem setB_realize :
     ∀ p ∈ [Person.first, .second, .third], ∀ n ∈ [Number.singular, .plural],
       setB.realize (.personNumber p n) = some (agreementAffixes ⟨.third, .singular⟩ ⟨p, n⟩) := by
   decide
 
+/-- With a third-person singular object each participant subject receives its Set A affixes. -/
 theorem setA_realize :
     ∀ p ∈ [Person.first, .second], ∀ n ∈ [Number.singular, .plural],
       setA.realize (.personNumber p n) = some (agreementAffixes ⟨p, n⟩ ⟨.third, .singular⟩) := by

@@ -108,6 +108,8 @@ open Autosegmental
 
 variable {α : Type*}
 
+/-- A forbidden-factor `SL_k` language is the banned-subgraph language of its forbidden factors
+over boundary-padded strings. -/
 theorem bannedSubgraph_ofList_boundary {Fs : List (Augmented α)} {k : ℕ}
     (hk : ∀ f ∈ Fs, f.length = k) :
     bannedSubgraph (fun w ↦ AR.ofList (boundary k w)) (Fs.map AR.ofList) =
@@ -142,6 +144,8 @@ theorem setOf_factorEmbeds_prod_map_eq_of_link_free (F : AR τ) (hF : ∀ i j p 
     MonoidHom.comp_apply, FreeMonoid.lift_ofList, AR.wordHom_apply]
   exact Iff.rfl
 
+/-- Without lines, a banned-subgraph language is an intersection over the factors of unions
+over the tiers of tier-avoidance preimages. -/
 theorem bannedSubgraph_prod_map_eq_of_link_free (B : List (AR τ))
     (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.Link i j p q) :
     bannedSubgraph (fun w ↦ (w.map g).prod) B =
@@ -158,6 +162,7 @@ theorem bannedSubgraph_prod_map_eq_of_link_free (B : List (AR τ))
 
 variable [Finite ι]
 
+/-- Without lines, a banned-subgraph language over a realization is star-free. -/
 theorem isStarFree_bannedSubgraph_prod_map (B : List (AR τ))
     (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.Link i j p q) :
     IsStarFree (bannedSubgraph (fun w ↦ (w.map g).prod) B) := by

@@ -119,6 +119,10 @@ theorem unique_answer_fallacy :
     show (0 : Fin 3) ∈ stationA by decide,
     show (0 : Fin 3) ∈ stationB by decide⟩
 
+/-- The [karttunen-1977] denotation — the true propositions taken
+*jointly* — is here the intersection of the two stations' propositions,
+and it is not itself among the question's possible answers: uniqueness is
+an artifact of taking the set itself as the answer. -/
 theorem joint_answer_not_an_answer :
     stationA ∩ stationB ∉ alt gasQuestion := fun h => by
   have hA : stationA ∈ gasQuestion :=
@@ -130,6 +134,11 @@ theorem joint_answer_not_an_answer :
 
 /-! ### The Distributivity Test (§2.4, pp. 176–177) -/
 
+/-- **The Distributivity Test**: "For any P and IQ, let the following
+inference fail: Sally knows that P, therefore Sally knows IQ. Then P is
+not an answer to IQ." A failing instance is an information state that
+entails P without knowing Q — its existence rules P out as a true
+answer. -/
 theorem distributivity_test {p : Set W} {Q : Question W} {w : W}
     (h : ∃ σ, σ ⊆ p ∧ ¬KnowsAnswer σ Q w) :
     ¬(p ∈ alt Q ∧ w ∈ p) :=

@@ -27,6 +27,7 @@ namespace List
 
 variable {α : Type*} {r s : α → α → Bool}
 
+/-- Splitting by a coarser relation and then by a finer one splits by the finer one. -/
 theorem flatMap_splitBy_splitBy (h : ∀ x y, r x y → s x y) (l : List α) :
     (l.splitBy s).flatMap (splitBy r) = l.splitBy r := by
   symm

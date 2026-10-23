@@ -62,6 +62,8 @@ variable {v : RuleSet (SpanRule n F)} {it : SpanRule n F}
 theorem realize_realizes (h : realize v g = some φ) : v.Realizes applySet g φ :=
   RuleSet.realize_realizes (fun _ _ _ _ h ↦ SpanRule.applySet_ssubset_iff.1 h) h
 
+/-- The rule selected at a grade is realized at every lower grade its threshold reaches, so
+Elsewhere insertion plateaus between thresholds. -/
 theorem realize_eq_of_threshold_le (h : v.selectBy SpanRule.threshold g' = some it)
     (hit : it.threshold ≤ g) (hg : g ≤ g') : realize v g = realize v g' :=
   congrArg (Option.map _) <|
@@ -84,6 +86,8 @@ theorem spellout_realizes (h : spellout v g = some φ) : v.Realizes applySet g �
   RuleSet.realize_realizes (f := fun e : SupersetRule n F ↦ OrderDual.toDual e.spans)
     (fun _ _ _ _ h ↦ OrderDual.toDual_lt_toDual.2 (SupersetRule.applySet_ssubset_iff.1 h)) h
 
+/-- Spellout gaps propagate upward, since an entry matching a higher grade matches the lower one
+too, [dekier-2021]'s paradigm-gap monotonicity for indefinites. -/
 theorem spellout_eq_none_of_le (h : spellout v g = none) (hg : g ≤ g') : spellout v g' = none :=
   Option.map_eq_none_iff.mpr <| RuleSet.selectBy_eq_none_of_applies
     (fun _ _ hs ↦ le_trans hg hs) (Option.map_eq_none_iff.mp h)
@@ -93,6 +97,9 @@ theorem spellout_eq_of_le_spans (h : v.selectBy (fun e ↦ OrderDual.toDual e.sp
   congrArg (Option.map _) <|
     (RuleSet.selectBy_eq_some_of_applies (fun _ _ hs ↦ le_trans hg hs) h he).trans h.symm
 
+/-- The loss of entries extends a form downward only. If an antihomophonous lexicon spells out a
+form at a grade and, after losing entries, still spells it out at a higher grade, it spelled it
+out there before ([bubnov-2026]). -/
 theorem spellout_eq_some_of_filter_of_le (hv : v.Antihomophonous) {p : SupersetRule n F → Bool}
     (h : spellout v g = some φ) (h' : spellout (v.filter p) g' = some φ) (hg : g ≤ g') :
     spellout v g' = some φ := by
@@ -113,6 +120,7 @@ applies where its threshold does, and feature counting maximizes the threshold. 
 def SpanRule.toDecomposition (it : SpanRule n F) : Decomposition.Rule (Fin n) Finset.Iic F :=
   ⟨Finset.Iic it.threshold, it.exponent⟩
 
+/-- Elsewhere insertion is feature-decomposition exponence over the chain of initial segments. -/
 theorem pattern_toDecomposition (v : RuleSet (SpanRule n F)) :
     Decomposition.pattern (v.map SpanRule.toDecomposition) = realize v := by
   funext g

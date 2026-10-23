@@ -265,6 +265,8 @@ theorem zero_le_pexCell_iff {ctx : AugurzkyEtAl2023.Context} {n : ℕ} :
   unfold pexCell
   split_ifs <;> simp_all <;> omega
 
+/-- [guerrini-wehbe-2025]'s `pex` on a boy's *he opened his presents*, over the alternatives the
+context leaves, is the value `pexCell` gives the number of his presents he opened. -/
 theorem pexPlural_alternatives (ctx : AugurzkyEtAl2023.Context) (w : Finset ℕ) :
     pexPlural nine nine BarLev2021.holds (alternatives ctx) w = pexCell ctx (nine ∩ w).card := by
   have hk := threshold_nine ctx
@@ -457,6 +459,9 @@ theorem predictions_asymmetric : ∀ p ∈ pictures, ∀ pol ∈ p.targetFor, �
       pol = .positive ∧ c = .prohibited := by
   decide
 
+/-- The implicature approach as [augurzky-etal-2023] state it treats *exactly two* as it treats
+*every*, accepting the negative target of Experiment 3 where the presents are required to be
+opened, which the asymmetric approach rejects. -/
 theorem implicature_negativeTarget : ∀ p ∈ pictures, p.experiment = .three →
     .negative ∈ p.targetFor →
       AugurzkyEtAl2023.implicature Quantifier.exactlyTwo.tree .universal p.display ∧

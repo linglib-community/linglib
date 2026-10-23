@@ -99,6 +99,8 @@ one interlocutor's. -/
 def Accessible (φ : PVar) (v : IVar) (φ_DC : PVar) (i : State W E) : Prop :=
   i ∈ localEntailment φ v ∧ (i.prop φ_DC).Nonempty
 
+/-- In a veridical anaphor context, one the speaker's commitments entail, only a veridical
+dref is accessible. -/
 theorem veridicalIndiv_of_accessible {φ φ_DC : PVar} {v : IVar} {j : State W E}
     (hdec : j ∈ incl φ_DC φ) (h : Accessible φ v φ_DC j) : VeridicalIndiv φ_DC v j :=
   fun w hw ↦ h.1 w (hdec hw)

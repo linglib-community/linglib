@@ -135,6 +135,8 @@ instance Comparison.intervalDecidable {α : Type*} [Preorder α] [DecidableEq α
     [DecidableLT α] (c : Comparison) (a n : α) : Decidable (a ∈ c.interval n) :=
   decidable_of_iff _ (Comparison.mem_interval c a n).symm
 
+/-- A comparison keeps its threshold exactly when it is not strict, so the Class A/B distinction
+([geurts-nouwen-2007], [nouwen-2010]) is membership of the interval's endpoint. -/
 @[simp] theorem Comparison.boundary_mem {α : Type*} [Preorder α]
     (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.IsStrict := by
   cases c <;> simp [Comparison.interval, Comparison.IsStrict]
@@ -215,6 +217,8 @@ def Comparison.bounds {α : Type*} [Preorder α] : Comparison → Set α → Set
   | .le => lowerBounds
   | .lt => strictLowerBounds
 
+/-- At a singleton standard the bounds of a comparison are its interval, so Hoeksema's phrasal and
+clausal comparatives coincide there. -/
 theorem Comparison.bounds_singleton {α : Type*} [Preorder α] (c : Comparison) (n : α) :
     c.bounds {n} = c.interval n := by
   cases c
@@ -256,6 +260,8 @@ section Dual
 
 variable {α : Type*} [Preorder α] (c : Comparison)
 
+/-- The dual comparison exchanges its arguments, so *a is shorter than b* exactly when *b is
+taller than a*. -/
 theorem Comparison.rel_dual (a b : α) : c.dual.Rel a b ↔ c.Rel b a := by
   cases c <;> simp only [Comparison.dual, Comparison.Rel, eq_comm]
 
@@ -263,6 +269,7 @@ theorem Comparison.rel_dual_toDual (a b : α) :
     c.dual.Rel a b ↔ c.Rel (OrderDual.toDual a) (OrderDual.toDual b) := by
   cases c <;> exact Iff.rfl
 
+/-- The interval of the dual comparison is the interval of the comparison on the dual scale. -/
 theorem Comparison.interval_dual (n : α) :
     c.dual.interval n = OrderDual.toDual ⁻¹' c.interval (OrderDual.toDual n) := by
   cases c <;> rfl
@@ -284,6 +291,8 @@ theorem Comparison.rel_map_iff (f : α ↪o β) (c : Comparison) {a n : α} :
     c.Rel (f a) (f n) ↔ c.Rel a n := by
   cases c <;> simp [Comparison.Rel, f.lt_iff_lt, f.le_iff_le, f.injective.eq_iff]
 
+/-- An order embedding of the scale pulls the interval at `f n` back to the interval at `n`, so a
+comparison is invariant when its threshold moves along with the measure. -/
 theorem Comparison.preimage_interval (f : α ↪o β) (c : Comparison) (n : α) :
     f ⁻¹' c.interval (f n) = c.interval n := by
   ext a

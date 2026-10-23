@@ -150,11 +150,15 @@ theorem only_subset_eq (hp : p ∈ C) :
     only (· ⊆ ·) C p = p.indicator fun w ↦ SignType.ofProp (w ∈ excludes C p) := by
   rw [only, atLeast_subset_eq hp, atMost_subset]
 
+/-- On the entailment scale *only* is true exactly where the exhaustification
+`Exhaustification.exh` is. -/
 theorem posExt_only_subset (hp : p ∈ C) : Trivalent.posExt (only (· ⊆ ·) C p) = exh C p := by
   ext w; simp [only_subset_eq hp, exh]
 
 /-! #### The identity scale -/
 
+/-- When the prejacent entails no other alternative, the identity-scale assertion, that every true
+alternative is the prejacent, is the entailment-scale one. -/
 theorem atMost_eq_eq_atMost_subset (h : ∀ q ∈ C, p ⊆ q → q = p) :
     atMost (· = ·) C p = atMost (· ⊆ ·) C p :=
   Set.ext fun _ ↦ (forall₂_congr fun _ _ ↦ imp_congr_right fun _ ↦ eq_comm).trans
@@ -185,6 +189,7 @@ variable {S C p} {q : Set W} {w : W}
 @[simp] theorem mem_additivePresup : w ∈ additivePresup S C p ↔ ∃ q ∈ C, w ∈ q ∧ ¬ S p q :=
   Iff.rfl
 
+/-- The additive presupposes exactly what *only* asserts to be false. -/
 theorem additivePresup_eq_compl_atMost : additivePresup S C p = (atMost S C p)ᶜ := by
   ext; simp
 
@@ -202,6 +207,8 @@ theorem support_additive : Function.support (additive S C p) = additivePresup S 
     additive S C p w = -1 ↔ w ∈ additivePresup S C p ∧ w ∉ p := by
   simp [additive]
 
+/-- Where the prejacent and the presupposition of *only* hold, *only* is true exactly where the
+additive is not. -/
 theorem only_eq_one_iff_additive_ne_one (hw : w ∈ p) (hl : w ∈ atLeast S C p) :
     only S C p w = 1 ↔ additive S C p w ≠ 1 := by
   simp [-mem_atLeast, -mem_atMost, hw, hl, additivePresup_eq_compl_atMost]
@@ -228,6 +235,8 @@ theorem additivePresup_subset_subset_eq : additivePresup (· ⊆ ·) C p ⊆ add
 theorem additivePresup_subset_eq_empty (h : ∀ q ∈ C, p ⊆ q) : additivePresup (· ⊆ ·) C p = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ ⟨q, hq, _, hn⟩ ↦ hn (h q hq)
 
+/-- A true alternative other than the prejacent satisfies the identity-scale presupposition, even
+one that the prejacent entails. -/
 theorem mem_additivePresup_eq (hq : q ∈ C) (hw : w ∈ q) (hne : q ≠ p) :
     w ∈ additivePresup (· = ·) C p :=
   ⟨q, hq, hw, fun h ↦ hne h.symm⟩
@@ -250,10 +259,14 @@ when the prejacent `p` is less likely than every focus alternative. -/
 def evenPresup (μ : Set W → α) (p : Set W) (alts : Set (Set W)) : Prop :=
   ∀ q ∈ alts, μ p < μ q
 
+/-- Under a likelihood respecting entailment, an alternative that entails the prejacent is at
+least as likely and so refutes the presupposition of *even*. -/
 theorem not_evenPresup_of_subset (hμ : Monotone μ) (hq : q ∈ alts) (hqp : q ⊆ p) :
     ¬ evenPresup μ p alts :=
   fun h ↦ lt_irrefl _ (lt_of_lt_of_le (h q hq) (hμ hqp))
 
+/-- When the prejacent entails every alternative, the presupposition of *even* asks only that
+no alternative be exactly as likely. -/
 theorem evenPresup_iff_ne (hμ : Monotone μ) (h : ∀ q ∈ alts, p ⊆ q) :
     evenPresup μ p alts ↔ ∀ q ∈ alts, μ p ≠ μ q :=
   forall₂_congr fun q hq ↦ lt_iff_le_and_ne.trans (and_iff_right (hμ (h q hq)))

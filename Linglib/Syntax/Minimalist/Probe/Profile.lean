@@ -73,6 +73,8 @@ theorem TransparentTo.anti (h : L₁ ⊆ L₂) (hL : p.TransparentTo L₂) : p.T
 
 variable (p)
 
+/-- Upward Entailment. Transparency is antitone in the extension order of clause spines, since a
+spine's label contains the horizon whenever a spine below it does. -/
 theorem transparentTo_label_antitone : Antitone fun s : ClauseSpine ↦ p.TransparentTo s.label :=
   fun _ _ h ht ↦ ht.anti h
 

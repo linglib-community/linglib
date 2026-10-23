@@ -52,6 +52,7 @@ theorem card_leavesWithDepth (t : UnorderedTree α) :
     Multiset.card t.leavesWithDepth = t.numLeaves :=
   Quotient.inductionOn t fun p => RoseTree.card_leavesWithDepth p
 
+/-- The number of leaf labels is the number of leaves. -/
 theorem card_leaves (t : UnorderedTree α) : Multiset.card t.leaves = t.numLeaves := by
   rw [leaves, Multiset.card_map, card_leavesWithDepth]
 
@@ -84,6 +85,7 @@ theorem countP_leaves_node_of_not (a : α) (F : Multiset (UnorderedTree α)) (h 
       Multiset.map_coe, Multiset.sum_coe, List.map_map]
     rfl
 
+/-- A root failing `p` is an uncounted vertex, so the count is strict. -/
 theorem countP_leaves_lt_numNodes_of_not_root (t : UnorderedTree α) (h : ¬p t.value) :
     t.leaves.countP p < t.numNodes := by
   induction t using Quotient.inductionOn with

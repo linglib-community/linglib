@@ -82,10 +82,14 @@ section Branching
 
 variable {M : Type*} [PartialOrder M] [IsLeftLinear M] {now t t' : M}
 
+/-- From an epistemic alternative the past is determinate, in that a time the upper limit constraint
+admits lies on every history through the now. -/
 theorem histories_subset_of_upperLimit (h : now ~[toSetRel upperLimitConstraint] t) :
     histories now ⊆ histories t :=
   histories_antitone (mem_toSetRel_upperLimitConstraint.1 h)
 
+/-- The future is not determinate, in that where two later times lie on different branches, neither
+lies on every history through the now. -/
 theorem not_histories_subset_of_branching (ht' : now ≤ t') (h : ¬ t ≤ t') (h' : ¬ t' ≤ t) :
     ¬ histories now ⊆ histories t := fun hsub ↦
   let ⟨f, hf⟩ := histories_nonempty t'
@@ -154,6 +158,7 @@ theorem TemporalArgument.not_locallyLicensed_of_coindexed (hcon : a.Con ρ g)
   rw [Con, hl, h] at hcon
   exact lt_irrefl _ hcon
 
+/-- A past coindexed with its local evaluation time is licensed by a transmitted relation. -/
 theorem PastConstraint.nonLocallyLicensed_of_coindexed (hp : PastConstraint ρ acc)
     (hcon : a.Con ρ g) (h : a.index = a.evalIndex) : a.NonLocallyLicensed ρ acc :=
   let ⟨r, hr, hρ⟩ := hp
@@ -226,6 +231,11 @@ theorem presentUnderPast_false [Preorder T] (h₁ : matrix.Con ρ g) (hp : PastC
     (hq : PresentConstraint ρ {1, 3}) : False :=
   hq.ne_lt (r := 1) (Finset.mem_insert_self _ _) h₁ (pastConstraint_singleton.1 hp)
 
+/-- On the double access reading the scoped present denotes an interval `I` overlapping the
+utterance time, and its trace denotes `J` in the belief world, bounded by the upper limit constraint
+at the believer's now. The counterpart correspondence, on which `I` follows the believing time iff
+`J` follows the now and `I` overlaps it iff `J` overlaps the now, leaves only the reading where `I`
+overlaps the believing time as well. -/
 theorem doubleAccess_of_counterpart [LinearOrder T] {I J : Set T} (hI : I.OrdConnected)
     {believing utterance now : T} (hlt : believing < utterance) (hU : utterance ∈ I)
     (hulc : ∃ s ∈ J, s ≤ now)

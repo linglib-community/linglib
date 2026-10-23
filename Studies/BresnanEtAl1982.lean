@@ -165,6 +165,7 @@ theorem topVP_licensed (k m : ℕ) : (topVP k m).Licensed cStructure.Licenses :=
     simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
     exact ⟨.terminal _, spine_licensed k, cluster_licensed m⟩
 
+/-- The c-structure grammar generates every tree, whatever its counts of objects and verbs. -/
 theorem tree_licensed_cStructure (k m : ℕ) : (tree k m).Licensed cStructure.Licenses := by
   refine .nonterminal _ _ (by simp [cStructure]) ?_
   simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
@@ -198,6 +199,7 @@ def Spine.Complete (s : Spine) : Prop := ∀ i, s.GovernsObj i → s.HasObj i
 /-- Coherence requires every OBJ present to be subcategorized by the PRED at its depth. -/
 def Spine.Coherent (s : Spine) : Prop := ∀ i, s.HasObj i → s.GovernsObj i
 
+/-- Completeness and Coherence hold together exactly when the objects match the non-final verbs. -/
 theorem Spine.complete_and_coherent_iff (s : Spine) (hv : 1 ≤ s.verbs) :
     s.Complete ∧ s.Coherent ↔ s.objects + 1 = s.verbs := by
   simp only [Complete, Coherent, GovernsObj, HasObj]
@@ -266,6 +268,7 @@ theorem weakGrammar_derives_center (k : ℕ) :
       rw [List.replicate_succ', List.replicate_succ]; simp
     rw [e]; exact h
 
+/-- The matched strings are weakly context-free, since `dutch n` yields `np^(n+2) v^(n+2)`. -/
 theorem yield_dutch_mem_weakGrammar (n : ℕ) : (dutch n).yield ∈ weakGrammar.language := by
   rw [ContextFreeGrammar.mem_language_iff, yield_dutch]
   simp only [List.map_append, List.map_replicate]
@@ -314,6 +317,11 @@ def catAt : ℕ → Cat
   | 1 => .VP
   | _ + 2 => .vBar
 
+/-- No context-free grammar generates exactly the well-formed trees, under any relabelling of its
+nonterminals to the categories S, VP, V′ — so no finite feature decoration helps. A grammar with
+`L` rules that generates `dutch (L + 1)` repeats a nonterminal along the verb cluster, and
+replacing the lower repeat by the upper one gives a licensed tree of the same root with more verbs
+than noun phrases, which no `dutch n` has. -/
 theorem not_strongly_contextFree (g : ContextFreeGrammar Word) (ℓ : g.NT → Cat) :
     map (Symbol.mapNonterminal ℓ) '' trees g ≠ Set.range dutch := by
   intro hEq

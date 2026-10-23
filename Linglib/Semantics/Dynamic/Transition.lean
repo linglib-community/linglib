@@ -313,6 +313,7 @@ def IsExtension (u : Transition W M X Y) : Prop :=
 theorem isExtension_id : (id X : Transition W M X X).IsExtension :=
   fun _ _ _ h => h
 
+/-- Extensions compose. -/
 theorem IsExtension.comp {u : Transition W M X Y} {v : Transition W M Y Z}
     (hu : u.IsExtension) (hv : v.IsExtension) : (u.comp v).IsExtension := by
   rintro w e e' ⟨k, hek, hke⟩

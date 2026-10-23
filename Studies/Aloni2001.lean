@@ -200,6 +200,8 @@ theorem card_covers [Finite W] [Finite D] [Nonempty W] :
 `w'` when some concept of the set picks out `d` in `w` and `d'` in `w'`. -/
 def crossId (S : Set (W → D)) (x x' : W × D) : Prop := ∃ c ∈ S, c x.1 = x.2 ∧ c x'.1 = x'.2
 
+/-- The name cover identifies each individual of a world with itself in every other world, the
+rigid method of cross-identification. -/
 theorem crossId_names {x x' : W × D} : crossId names x x' ↔ x.2 = x'.2 :=
   ⟨fun ⟨_, ⟨_, rfl⟩, e, e'⟩ ↦ e.symm.trans e', fun h ↦ ⟨_, ⟨x.2, rfl⟩, rfl, h⟩⟩
 
@@ -300,6 +302,8 @@ theorem whoUnder_iff {P : D → Set W} {v w : W} :
     whoUnder C P v w ↔ ∀ c ∈ C, (v ∈ P (c v) ↔ w ∈ P (c w)) :=
   GroenendijkStokhof1984.who_iff.trans Subtype.forall
 
+/-- Under the name cover, a question under cover is the question of [groenendijk-stokhof-1984],
+the name cover being a copy of the individuals. -/
 theorem whoUnder_names (P : D → Set W) : whoUnder names P = GroenendijkStokhof1984.who P :=
   (GroenendijkStokhof1984.who_comp_of_surjective
     (f := fun d ↦ (⟨_, d, rfl⟩ : (names : Set (W → D)))) (fun ⟨_, d, rfl⟩ ↦ ⟨d, rfl⟩) _).symm
@@ -312,6 +316,8 @@ belief world. -/
 def DeReUnder (C : Set (W → D)) (R : Set W) (y : D) (P : D → Set W) (w : W) : Prop :=
   ∃ c ∈ C, c w = y ∧ ∀ v ∈ R, v ∈ P (c v)
 
+/-- A de re report under a cover holds when the believer ascribes the property to the res under
+one of the cover's concepts, in the sense of [lewis-1979-attitudes] with worlds as centers. -/
 theorem deReUnder_iff_exists_ascribesUnder {R : Set W} {y : D} {P : D → Set W} {w : W} :
     DeReUnder C R y P w ↔ ∃ c ∈ C, AscribesUnder R w (some ∘ c) y P := by
   unfold DeReUnder

@@ -109,6 +109,8 @@ section SpuriousAmbiguity
 
 variable {R : RuleSystem α} {τ : α → Ty} {E W : Type} (lex : SemLexicon T τ E W)
 
+/-- Reassociating a forward-composition chain preserves its interpretation, since composition
+is associative. -/
 theorem Derivation.interp_fcomp_assoc {x y z w : Cat α} {m n p : Modality}
     (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R (.rslash y n z))
     (d₃ : Derivation T R (.rslash z p w)) (h₁ : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩])
@@ -120,6 +122,8 @@ theorem Derivation.interp_fcomp_assoc {x y z w : Cat α} {m n p : Modality}
   rcases d₁.interp lex with _ | m₁ <;> rcases d₂.interp lex with _ | m₂ <;>
     rcases d₃.interp lex with _ | m₃ <;> rfl
 
+/-- Composing and then applying has the interpretation of applying twice, since
+`(f ∘ g) x = f (g x)`. -/
 theorem Derivation.interp_fapp_fcomp {x y z : Cat α} {m n : Modality}
     (d₁ : Derivation T R (.rslash x m y)) (d₂ : Derivation T R (.rslash y n z))
     (d₃ : Derivation T R z) (h₁ : R x ⟨.right, m, y⟩ [⟨.right, n, z⟩])

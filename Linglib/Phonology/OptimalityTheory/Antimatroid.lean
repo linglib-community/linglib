@@ -236,6 +236,10 @@ When every ERC ranks a single winner over a single loser, or imposes nothing, th
 partial order, and the feasible sets are its order ideals: the sets feasible for each ERC alone.
 In general that intersection is strictly larger. -/
 
+/-- For ERCs that each rank one constraint over one other, a set is feasible exactly when it is
+feasible for each of them. A set feasible for each is a top segment of the ranking that lists
+it first and the rest after, each in the order of a ranking satisfying all the ERCs, since each
+ERC's loser in the set has its unique winner in the set. -/
 theorem isFeasible_iff_forall_singleton_of_simple
     (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α)
     (hsimple : ∀ α ∈ E, α.IsSimple ∨ α.IsTrivial) (S : Finset (Fin n)) :
@@ -264,6 +268,9 @@ theorem isFeasible_iff_forall_singleton_of_simple
     · exact Or.inl (by simp [key, hwS, hlS])
     · exact Or.inr ⟨by simp [key, hwS, hlS], hdom⟩
 
+/-- In general a set feasible for each of a consistent set of ERCs need not be feasible for all
+of them: two ERCs over four constraints, each with two winners, admit a set that holds a winner
+of each ERC whose loser it holds without being a top segment of a ranking satisfying both. -/
 theorem exists_forall_isFeasible_singleton_not_isFeasible :
     ∃ (E : Finset (ERC (Fin 4))) (S : Finset (Fin 4)), (linearExtensions E).Nonempty ∧
       (∀ α ∈ E, IsFeasible {α} (S : Set (Fin 4))) ∧
@@ -492,10 +499,13 @@ theorem exists_satisfiedBy_ofAntimatroid (hE : A.E = Set.univ) :
   obtain ⟨r, hr, -⟩ := (isFeasible_ofAntimatroid_iff hE _).mpr A.ground_feasible
   exact ⟨r, hr⟩
 
+/-- An antimatroid is the antimatroid of its ERCs. -/
 theorem toAntimatroid_ofAntimatroid (hE : A.E = Set.univ) :
     toAntimatroid (ofAntimatroid A) (exists_satisfiedBy_ofAntimatroid hE) = A :=
   Antimatroid.ext hE.symm (funext fun S ↦ propext (isFeasible_ofAntimatroid_iff hE S))
 
+/-- The ERCs of the antimatroid of `E` are satisfied by exactly the rankings that satisfy
+`E`. -/
 theorem satisfiedBy_ofAntimatroid_toAntimatroid_iff
     (hcons : ∃ r : Ranking (Fin n) n, ∀ α ∈ E, SatisfiedBy r α) (r : Ranking (Fin n) n) :
     (∀ α ∈ ofAntimatroid (toAntimatroid E hcons), SatisfiedBy r α) ↔ ∀ α ∈ E, SatisfiedBy r α :=

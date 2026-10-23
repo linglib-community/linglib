@@ -60,6 +60,7 @@ def shuffleIdeal (w : List α) : Language α := {v | w <+ v}
 @[simp] theorem shuffleIdeal_nil : shuffleIdeal ([] : List α) = ⊤ :=
   eq_top_iff.mpr fun x _ ↦ nil_sublist x
 
+/-- Containing a pattern that fits in the window is piecewise testable. -/
 theorem isPiecewiseTestable_shuffleIdeal (hw : w.length ≤ k) :
     (shuffleIdeal w).IsPiecewiseTestable k :=
   fun _ _ e ↦ propext (subseqSet_eq_iff e hw)
@@ -92,6 +93,8 @@ theorem exists_suffix_leftQuotient_shuffleIdeal (w x : List α) :
     · split <;> simp [tail_suffix]
     · rw [← singleton_append, leftQuotient_append, leftQuotient_singleton_shuffleIdeal, e]
 
+/-- A shuffle ideal is **regular**: its left quotients are shuffle ideals of the finitely many
+suffixes of `w`, so Myhill–Nerode applies. -/
 theorem isRegular_shuffleIdeal (w : List α) : (shuffleIdeal w).IsRegular := by
   refine isRegular_iff_finite_range_leftQuotient.mpr
     ((w.tails.finite_toSet.image shuffleIdeal).subset ?_)
@@ -110,10 +113,15 @@ theorem IsSublistClosed.mem_compl_of_sublist (hL : L.IsSublistClosed) {v w : Lis
 theorem isSublistClosed_compl_shuffleIdeal (w : List α) : (shuffleIdeal w)ᶜ.IsSublistClosed :=
   fun _ _ hvw hw hm ↦ hw (hm.trans hvw)
 
+/-- **Finite forbidden basis**: over a finite alphabet a sublist-closed language is avoidance of
+finitely many forbidden subsequences, the finite-basis property of well-quasi-orders
+(`WellQuasiOrdered.exists_finset_eq_biUnion`) at Higman's lemma. -/
 theorem IsSublistClosed.exists_finset_compl_eq_biSup_shuffleIdeal [Finite α]
     (hL : L.IsSublistClosed) : ∃ F : Finset (List α), Lᶜ = ⨆ m ∈ F, shuffleIdeal m :=
   List.wellQuasiOrdered_sublist.exists_finset_eq_biUnion fun _ _ ↦ hL.mem_compl_of_sublist
 
+/-- Over a finite alphabet a sublist-closed language is piecewise testable, at the length of its
+longest forbidden basis word. -/
 theorem IsSublistClosed.exists_isPiecewiseTestable [Finite α] (hL : L.IsSublistClosed) :
     ∃ k, L.IsPiecewiseTestable k := by
   obtain ⟨F, hF⟩ := hL.exists_finset_compl_eq_biSup_shuffleIdeal
@@ -122,6 +130,7 @@ theorem IsSublistClosed.exists_isPiecewiseTestable [Finite α] (hL : L.IsSublist
   refine (IsPiecewiseTestable.iSup fun m ↦ IsPiecewiseTestable.iSup fun hm ↦ ?_).compl
   exact isPiecewiseTestable_shuffleIdeal (F.le_sup (f := length) hm)
 
+/-- **Haines' theorem**: over a finite alphabet every sublist-closed language is regular. -/
 theorem IsSublistClosed.isRegular [Finite α] (hL : L.IsSublistClosed) : L.IsRegular :=
   have ⟨_, h⟩ := hL.exists_isPiecewiseTestable
   h.isRegular

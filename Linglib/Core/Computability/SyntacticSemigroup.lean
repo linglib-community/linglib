@@ -131,6 +131,7 @@ theorem IsRegular.finite_syntacticSemigroup (h : L.IsRegular) : Finite L.Syntact
 theorem IsRegular.of_finite_syntacticSemigroup (h : Finite L.SyntacticSemigroup) : L.IsRegular :=
   IsRegular.of_finite_syntacticMonoid L.finite_syntacticMonoid_of_finite_syntacticSemigroup
 
+/-- A language is regular exactly when its syntactic semigroup is finite. -/
 theorem isRegular_iff_finite_syntacticSemigroup :
     L.IsRegular ↔ Finite L.SyntacticSemigroup :=
   ⟨IsRegular.finite_syntacticSemigroup, IsRegular.of_finite_syntacticSemigroup⟩
@@ -160,6 +161,8 @@ theorem syntacticSemigroupCon_congr {L' : Language α}
   Con.ext fun u v ↦ forall_congr' fun x ↦ forall_congr' fun y ↦
     iff_congr (h _ (by simp)) (h _ (by simp))
 
+/-- Adjoining the empty word leaves the syntactic congruence unchanged, since the congruence
+quantifies only over nonempty words. -/
 theorem syntacticSemigroupCon_insert_nil :
     (insert [] L).syntacticSemigroupCon = L.syntacticSemigroupCon :=
   syntacticSemigroupCon_congr fun _ hw ↦ Set.mem_insert_iff.trans (or_iff_right hw)

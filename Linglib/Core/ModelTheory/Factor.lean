@@ -65,6 +65,8 @@ variable (M) in
 def Occurs (f : L.Factor k) : Prop :=
   (Atom.realizers M f.atoms).Nonempty
 
+/-- A factor occurs exactly when its canonical structure maps homomorphically into the
+structure. -/
 theorem occurs_iff_nonempty_hom [L.IsRelational] :
     f.Occurs M ↔ Nonempty (Atom.Canonical f.atoms →[L] M) :=
   ⟨fun ⟨v, hv⟩ ↦ ⟨(Atom.Canonical.homEquiv _).symm ⟨v, hv⟩⟩,
@@ -84,6 +86,7 @@ def factors (k : ℕ) (M : Type w) [L.Structure M] : Set (L.Factor k) :=
     f ∈ L.factors k M ↔ f.Occurs M :=
   .rfl
 
+/-- A homomorphism carries the factors of its domain to factors of its codomain. -/
 theorem factors_mono {k : ℕ} {M : Type w} {N : Type x} [L.Structure M] [L.Structure N]
     (φ : M →[L] N) : L.factors k M ⊆ L.factors k N :=
   fun _ ↦ Factor.Occurs.hom φ

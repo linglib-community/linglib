@@ -199,6 +199,9 @@ theorem setOf_eq_eq_cause_union : {w : ι → Bool | w X = w Y} =
 
 variable [Fintype ι] {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
 
+/-- In a two-of-three threshold game won with all three causes, a pair scores the probability that
+its two causes agree, since it is fully sufficient and is necessary where both its causes are
+absent. -/
 theorem score_twoOrMore_pair (h3 : Fintype.card ι = 3) (hXY : X ≠ Y)
     (hc : Measure.pi ν ((cause (fun _ ↦ true) {X, Y})ᶜ ∩ twoOrMoreᶜ) ≠ 0) :
     score (Measure.pi ν) (fun _ ↦ true) twoOrMore {X, Y} = Measure.pi ν {w | w X = w Y} := by
@@ -339,6 +342,8 @@ instance [DecidableEq ι] (w₀ : ι → Bool) : DecidablePred (· ∈ homogeneo
 
 variable {rule} {w w₀ : ι → Bool}
 
+/-- A win is the truth of some condition's plural predication, "the urns of the condition gave
+colored balls". -/
 theorem mem_win_iff_barePlural :
     w ∈ win rule ↔ ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = 1 := by
   simp [win, Homogeneity.barePlural, SignType.supervaluation_eq_one_iff]
@@ -356,6 +361,8 @@ theorem mem_homogeneousLoss_iff_barePlural (h : w₀ ∉ win rule) :
   by_contra hi'
   exact hne ⟨i, Finset.mem_filter.2 ⟨hi, by simpa using hi'⟩⟩
 
+/-- A loss falls short of the homogeneous loss of the round where every urn is white exactly when
+some condition's plural predication falls in the homogeneity gap. -/
 theorem not_mem_homogeneousLoss_iff_indet (hw : w ∉ win rule) :
     w ∉ homogeneousLoss rule (fun _ ↦ false) ↔
       ∃ D ∈ rule, Homogeneity.barePlural (fun i w ↦ w i = true) D w = 0 := by
@@ -668,6 +675,7 @@ theorem homogeneousLoss_conditions (w₀ : Urn₂ → Bool) :
     homogeneousLoss conditions w₀ = cause w₀ (Finset.univ.filter (w₀ · = false)) :=
   homogeneousLoss_eq_cause (by decide)
 
+/-- Under the homogeneous loss, of two pluralities of white balls the less likely scores higher. -/
 theorem homogeneous_lt_iff (hs : s < 1) {w₀ : Urn₂ → Bool} {S S' : Finset Urn₂}
     (hS : ∀ i ∈ S, w₀ i = false) (hS' : ∀ i ∈ S', w₀ i = false) (hne : S.Nonempty)
     (hne' : S'.Nonempty) :

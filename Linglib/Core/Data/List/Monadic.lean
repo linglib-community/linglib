@@ -27,6 +27,8 @@ namespace List
 
 variable {α β γ : Type*} {f : β → α → Option β} {g : γ → α → γ} {π : β → γ}
 
+/-- A successful fold of a partial step function whose successful steps project to those of `g`
+projects to the fold of `g`. -/
 theorem foldl_eq_of_foldlM_eq_some (hf : ∀ b a b', f b a = some b' → π b' = g (π b) a) :
     ∀ {l : List α} {b b' : β}, l.foldlM f b = some b' → π b' = l.foldl g (π b)
   | [], _, _, h => by obtain rfl := Option.some.inj h; rfl
@@ -35,6 +37,8 @@ theorem foldl_eq_of_foldlM_eq_some (hf : ∀ b a b', f b a = some b' → π b' =
     rw [foldl_cons, ← hf b a c hc]
     exact foldl_eq_of_foldlM_eq_some hf h
 
+/-- A partial fold whose steps commute with `π` maps under `π` to the partial fold of the
+projected steps. -/
 theorem map_foldlM {f : β → α → Option β} {g : γ → α → Option γ}
     (hf : ∀ b a, (f b a).map π = g (π b) a) :
     ∀ (l : List α) (b : β), (l.foldlM f b).map π = l.foldlM g (π b)

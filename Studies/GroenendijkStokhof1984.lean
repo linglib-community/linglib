@@ -121,6 +121,8 @@ theorem who_le_polar (P : E → Set W) (x : E) : who P ≤ Setoid.polar (P x) :=
 
 theorem who_decides (P : E → Set W) (x : E) : (who P).Decides (P x) := who_le_polar P x
 
+/-- *Who walks* and *who doesn't walk* are one question, so that knowing the answer to either is
+knowing the answer to the other (chapter II, (X)). -/
 theorem who_compl (P : E → Set W) : who (fun x ↦ (P x)ᶜ) = who P :=
   Setoid.ker_comp_of_injective (extension P) compl_injective
 
@@ -128,9 +130,12 @@ theorem who_comp_of_surjective {E' : Type*} {f : E' → E} (hf : Function.Surjec
     (P : E → Set W) : who (P ∘ f) = who P :=
   Setoid.ker_comp_of_injective (extension P) (Set.preimage_injective.2 hf)
 
+/-- *Who walks* entails *which girl walks* read de re (chapter II, (XI)). -/
 theorem who_le_whichDeRe (G P : E → Set W) (w : W) : who P ≤ whichDeRe G P w :=
   Setoid.ker_le_ker_comp (extension P) (extension G w ∩ ·)
 
+/-- *Which man walks* and *which man doesn't walk*, both read de re, are one question (chapter
+II, (XII)). -/
 theorem whichDeRe_compl (G P : E → Set W) (w : W) :
     whichDeRe G (fun x ↦ (P x)ᶜ) w = whichDeRe G P w := by
   ext v u
@@ -165,6 +170,8 @@ theorem Knows.mono (hQ : Q ≤ Q') (h : Knows R Q w) : Knows R Q' w :=
 theorem knows_inf_iff : Knows R (Q ⊓ Q') w ↔ Knows R Q w ∧ Knows R Q' w :=
   ⟨fun h ↦ ⟨h.mono inf_le_left, h.mono inf_le_right⟩, fun h _ hv ↦ ⟨h.1 hv, h.2 hv⟩⟩
 
+/-- To know the answer is to know every true proposition the question decides, which uses no
+factivity, so that the arguments (I) to (VII) of chapter II hold for *tell* as for *know*. -/
 theorem Knows.mem_core (h : Knows R Q w) (hp : Q.Decides p) (hw : w ∈ p) : w ∈ R.core p :=
   SetRel.core_mono (hp.cell_subset hw) h
 
@@ -203,6 +210,8 @@ theorem not_knows_who_of_believes {D K : SetRel W W} {P : E → Set W} {x : E} (
 
 /-! ### Karttunen's postulate for *know* -/
 
+/-- Knowing the answer to a partition satisfies Karttunen's meaning postulate for *know* on the
+Hamblin set, both its clause for the true answers and its clause for an empty set of them. -/
 theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows R (partition H) w) :
     Karttunen1977.Knows w R H := by
   refine ⟨SetRel.core_mono (fun v hv ↦ ?_) h, fun h₀ v hv ↦ ?_⟩
@@ -668,6 +677,7 @@ theorem doxastic_inter_byDescription : info.doxastic ∩ byDescription = {(0, {0
 theorem pragmatically_equivalent : info.doxastic ∩ byName = info.doxastic ∩ byDescription := by
   rw [doxastic_inter_byName, doxastic_inter_byDescription]
 
+/-- Both answers give the individual a true answer to who G's. -/
 theorem givesTrueAnswer :
     info.GivesTrueAnswer byName whoGs ∧ info.GivesTrueAnswer byDescription whoGs := by
   refine ⟨?_, ?_⟩ <;>
@@ -678,6 +688,8 @@ theorem givesTrueAnswer :
       Set.singleton_subset_iff, mem_cell, whoGs_iff]
     rfl
 
+/-- Only the answer by name lets the individual know who G's, since the description is false at
+the actual index and so does not reach their knowledge. -/
 theorem letsKnow_byName :
     info.LetsKnow byName whoGs ∧ ¬ info.LetsKnow byDescription whoGs := by
   refine ⟨?_, fun h ↦ ?_⟩

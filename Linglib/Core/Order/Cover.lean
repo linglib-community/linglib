@@ -41,6 +41,8 @@ instance CovBy.instDecidableRelOfFintype : DecidableRel (α := α) (· ⋖ ·) :
 
 end Decidable
 
+/-- A chain of weak covers that starts at or below `x` and reaches an element at or above `x`
+contains `x`. -/
 theorem List.IsChain.mem_of_le_of_le [LinearOrder α] {x m : α} :
     ∀ {a : α} {l : List α}, (a :: l).IsChain (· ⩿ ·) → a ≤ x → m ∈ a :: l → x ≤ m → x ∈ a :: l
   | a, [], _, hax, hm, hxm => by

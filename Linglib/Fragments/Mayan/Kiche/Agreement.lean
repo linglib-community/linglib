@@ -134,6 +134,8 @@ def addresseePl : Grade → PersonalPronoun
   | .nonhonorific => ix
   | .honorific => alaq
 
+/-- The honorific second person denotes what the nonhonorific one does and agrees as the third
+person singular *are'* does. -/
 theorem addressee_honorific :
     laal.referential = at_.referential ∧ alaq.referential = ix.referential ∧
       phi laal = phi are' ∧ phi alaq = phi are' := by

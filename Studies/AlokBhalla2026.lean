@@ -138,6 +138,8 @@ def threshold : Language → Context
   | .magahi | .innovativeSouthernBasque => .finiteNonRoot
   | .galician => .nonfinite
 
+/-- A marker in an embedded clause is grammatical exactly where the context is at least its
+language's threshold (exx 9, 12–18, 21, 30–32). -/
 theorem distribution_rows :
     ∀ row ∈ Examples.all, ∀ l ∈ languages.lookup row.language,
       ∀ c ∈ row.parse? "embedding" contexts, row.judgment = .acceptable ↔ threshold l ≤ c := by
@@ -187,6 +189,7 @@ def lowest (l : Language) : Locus → Context
     | .innovativeSouthernBasque => .finiteNonRoot
     | _ => .root
 
+/-- The loci of a language reach every context in which it has the marker. -/
 theorem loci_sound (l : Language) : (loci l).inf' (loci_nonempty l) (lowest l) ≤ threshold l := by
   cases l <;> decide
 
@@ -378,6 +381,8 @@ def Goal.person : Goal → Person
 addressee. -/
 def kaurProbe : Minimalist.Probe Goal := .relativized fun g ↦ decide g.person.IsSAP
 
+/-- The probe reaches the addressee exactly past a third person subject, so Punjabi allocutivity is
+out with first and second person subjects. -/
 theorem allocutive_iff_third (p : Person) :
     kaurProbe.goal [.subject p, .addressee] = some .addressee ↔ p = .third := by
   cases p <;> decide

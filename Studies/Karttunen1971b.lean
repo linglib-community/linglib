@@ -117,6 +117,8 @@ theorem exists_semi_not_diamond_le :
     postulates_semi_iff.2 fun b ↦ by cases b <;> simp,
     fun h ↦ Bool.false_ne_true (h false ⟨true, trivial, rfl⟩)⟩
 
+/-- The complement follows exactly when the verb is a true factive or the sentence is asserted or
+negated. -/
 theorem projects_iff : Projects c e ↔ c = .full ∨ e = .unembedded ∨ e = .negation := by
   refine ⟨fun h ↦ ?_, fun h W R _ A s hA ↦ hA.commitment_le h⟩
   obtain ⟨R, _, A, s, hA, hn⟩ := exists_semi_not_diamond_le

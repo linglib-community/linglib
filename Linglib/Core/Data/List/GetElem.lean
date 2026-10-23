@@ -65,6 +65,7 @@ theorem getElem?_int_eq_none_iff : w[i]? = none ↔ i < 0 ∨ (w.length : ℤ) �
   rw [_root_.getElem?_eq_none_iff]
   omega
 
+/-- Agreement of integer-indexed entries up to the length of `w` forces equality. -/
 theorem ext_getElem?_int (h : ∀ j : ℤ, j ≤ (w.length : ℤ) → y[j]? = w[j]?) : y = w := by
   have hy : y.length ≤ w.length := by
     have h1 := h (w.length : ℤ) (Int.le_refl _)
@@ -75,6 +76,7 @@ theorem ext_getElem?_int (h : ∀ j : ℤ, j ≤ (w.length : ℤ) → y[j]? = w[
   · simpa using h n (by omega)
   · rw [getElem?_eq_none hn, getElem?_eq_none (by omega)]
 
+/-- Agreement of integer-indexed entries below `c` transfers prefixes of length `c`. -/
 theorem ext_take_getElem?_int {c : ℕ} (h : ∀ j : ℤ, j < (c : ℤ) → y[j]? = w[j]?) :
     y.take c = w.take c :=
   ext_take_getElem? fun n hn ↦ by simpa using h n (by omega)

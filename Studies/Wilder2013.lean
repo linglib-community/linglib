@@ -121,11 +121,14 @@ theorem doSupport_iff (c : Clause) :
   simp only [DoSupport, AffixHopping]
   tauto
 
+/-- Emphatic *do* is *do*-support forced by an affirmative Σ alone, as in (4a-ii). -/
 theorem emphaticDo_iff (c : Clause) :
     EmphaticDo c ↔ ¬c.aux ∧ ¬c.inversion ∧ ¬c.emptyV ∧ ∃ f, c.sigma = some (.positive, f) := by
   obtain ⟨aux, sigma, inv, ev⟩ := c
   rcases sigma with _ | ⟨_ | _, f⟩ <;> simp [EmphaticDo, DoSupport, AffixHopping]
 
+/-- The syntax of emphatic assertion is that of negation, since with Σ present *do*-support does
+not depend on the value of Σ. -/
 theorem doSupport_negative_iff_positive (c : Clause) (f f' : Mark) :
     DoSupport { c with sigma := some (.negative, f) } ↔
       DoSupport { c with sigma := some (.positive, f') } := by
@@ -168,6 +171,8 @@ theorem polarityFocus_wellFormed (p : Set W) : (polarityFocus p).WellFormed :=
   ((WithAlternatives.WellFormed.unfeatured _).mark _).map₂
     (WithAlternatives.WellFormed.unfeatured _)
 
+/-- The alternative set of an emphatic *do* sentence is the meaning of the polar question it
+answers (section 4.1). -/
 theorem polarityFocus_alternatives_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     (polarityFocus p).alternatives = (Question.polar p).alt :=
   (polarityFocus_alternatives_eq_orbit p).trans (Question.alt_polar_eq_orbit hne hnu).symm
@@ -210,6 +215,8 @@ theorem existentialClosure_polarityFocus (p : Set W) :
   rw [existentialClosure, polarityFocus_alternatives]
   simp
 
+/-- Any salient antecedent makes a clause with polarity focus Given, so the requirement that the
+antecedent be the negation falls on the unfocused subject and verb phrase, not on the clause. -/
 theorem given_polarityFocus (a p : Set W) : Given a (polarityFocus p) := by
   rw [Given, existentialClosure_polarityFocus]
   exact Set.subset_univ a
@@ -240,6 +247,8 @@ theorem directlyAnswersPolar_doctorStrategy (good patients diagnose polite : Set
     DirectlyAnswersPolar (doctorStrategy good patients diagnose polite) patients := by
   simp [DirectlyAnswersPolar, doctorStrategy, RoseTree.leaf]
 
+/-- The strategy is complete when the three subquestions decide the superquestion, so that a
+state that settles each of them settles whether he is a good doctor. -/
 theorem doctorStrategy_isComplete {good patients diagnose polite : Set W}
     (h : good = patients ∩ diagnose ∩ polite) :
     (doctorStrategy good patients diagnose polite).IsComplete := by

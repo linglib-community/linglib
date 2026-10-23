@@ -81,14 +81,17 @@ theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
     (realize (.adjunct a)).Nonempty ↔ a ≠ .temporal := by
   decide +revert
 
+/-- The antipassive is the reflex of transitive-subject extraction alone. -/
 theorem antipassive_mem_realize_iff (s : Mayan.ExtractionSite) :
     Reflex.morpheme .verb antipassive.marker ∈ realize s ↔ s = .argument .A := by
   decide +revert
 
+/-- Among the arguments, the recipient alone licenses the enclitic. -/
 theorem enclitic_mem_realize_argument_iff (r : ArgumentRole) :
     Reflex.morpheme .verbalComplex [movementEnclitic] ∈ realize (.argument r) ↔ r = .R := by
   decide +revert
 
+/-- The directional hosts the enclitic at exactly the sites the verbal complex does. -/
 theorem enclitic_directional_mem_realize_iff (s : Mayan.ExtractionSite) :
     Reflex.morpheme .directional [movementEnclitic] ∈ realize s ↔
       Reflex.morpheme .verbalComplex [movementEnclitic] ∈ realize s := by

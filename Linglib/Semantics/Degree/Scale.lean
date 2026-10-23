@@ -147,6 +147,8 @@ def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
 def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
   d.defaultVendlerClass.telicity
 
+/-- A degree achievement is telic by default exactly when the degrees of its scale have a
+    greatest element ([kennedy-levin-2008]). -/
 theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
     d.defaultTelicity = .telic ↔ ∃ m : d.Scale, IsTop m :=
   Boundedness.telicity_defaultVendlerClass_eq_telic_iff.trans

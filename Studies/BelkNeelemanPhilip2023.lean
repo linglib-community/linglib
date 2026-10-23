@@ -158,6 +158,7 @@ def leftNodeE : Derivation := ⟨likesDislikes opera opera', [], [(⟨[1, 1, 1]�
 theorem phon_rnrMD : rnrMD.phon = ["John", "likes", "Mary", "dislikes", "opera"] := by decide
 theorem phon_rnrE : rnrE.phon = rnrMD.phon := by decide
 
+/-- Both derivations of right-node raising are licensed. -/
 theorem licensed_rnrMD : rnrMD.Licensed := by decide
 theorem licensed_rnrE : rnrE.Licensed := by decide
 
@@ -255,6 +256,8 @@ prosodic break before it. -/
 theorem licensed_pieBeforePim :
     pieBeforePim.Licensed ∧ pieBeforePim.pivotOnset = some "the same paper" := by decide
 
+/-- But not before material of the elided pivot, since forced pruning comes first, while the direct
+object still follows the indirect one in the first conjunct. -/
 theorem not_licensed_pimBeforePie :
     ¬ pimBeforePie.Licensed ∧
       ¬ MayPrune pimBeforePie.input [] ⟨[0, 1, 1, 1, 0]⟩ ⟨[1, 1, 1, 1, 0]⟩ := by

@@ -98,6 +98,7 @@ theorem represent_extent (hV : JoinDense V) (a : L) :
 
 /-! ### The representation is an order-embedding preserving the lattice operations -/
 
+/-- `represent V` preserves and reflects the order. -/
 theorem represent_le_iff (hV : JoinDense V) {a a' : L} :
     represent V a ≤ represent V a' ↔ a ≤ a' := by
   rw [← Concept.extent_subset_extent_iff]
@@ -112,6 +113,7 @@ theorem represent_le_iff (hV : JoinDense V) {a a' : L} :
   · intro h b hb
     exact hb.trans h
 
+/-- `represent` preserves meets (`Concept` inf is extent intersection). -/
 theorem represent_inf (hV : JoinDense V) (a a' : L) :
     represent V (a ⊓ a') = represent V a ⊓ represent V a' := by
   apply Concept.ext
@@ -139,6 +141,7 @@ theorem represent_compl (hV : JoinDense V) (a : L) :
   ext b
   exact InvolutiveCompl.le_compl_comm
 
+/-- `represent` preserves joins (from `⊓`- and `ᶜ`-preservation via De Morgan). -/
 theorem represent_sup (hV : JoinDense V) (a a' : L) :
     represent V (a ⊔ a') = represent V a ⊔ represent V a' := by
   rw [show a ⊔ a' = (aᶜ ⊓ a'ᶜ)ᶜ by

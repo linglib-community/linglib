@@ -120,6 +120,7 @@ theorem UE.me (h : UE θ) : ME θ := fun _ _ hxe _ hle ↦ (h hxe hle).exists
 
 theorem UO.mo (h : UO θ) : MO θ := UE.me h
 
+/-- With mapping to objects, uniqueness of participants gives uniqueness of objects. -/
 theorem UP.uo_of_mo (hU : UP θ) (hm : MO θ) : UO θ := fun _ _ hxe _ hle ↦
   let ⟨y, hy, hθ⟩ := hm hxe hle
   ⟨y, ⟨hy, hθ⟩, fun _ hz ↦ hU hz.2 hθ⟩
@@ -138,6 +139,9 @@ theorem MSE.me (h : MSE θ) : ME θ := fun _ _ hxe _ hle ↦
 
 theorem MSO.mo (h : MSO θ) : MO θ := MSE.me h
 
+/-- Uniqueness of events and of objects give mapping to subevents. The part of the event
+related to a proper part of the object is proper, since the whole event's unique related part
+of the object is the object itself. -/
 theorem UE.mse_of_uo (hE : UE θ) (hO : UO θ) : MSE θ := fun _ _ hxe _ hyx ↦
   let ⟨e', ⟨he', hθ⟩, _⟩ := hE hxe hyx.le
   ⟨e', lt_of_le_of_ne he' fun h ↦ hyx.ne ((hO hxe le_rfl).unique ⟨hyx.le, h ▸ hθ⟩ ⟨le_rfl, hxe⟩),
@@ -168,6 +172,8 @@ private theorem monotone_of_ue (hE : UE θ) {f : Set.Iic x → β}
     let ⟨e₀, ⟨he₀, hθ⟩, _⟩ := hE (hf y₂).1.2 hle
     (hf y₁).2 e₀ ⟨he₀.trans (hf y₂).1.1, hθ⟩ ▸ he₀
 
+/-- Under uniqueness of events and of objects, `θ` restricts, between the parts of a related
+object and event, to the graph of an order isomorphism. -/
 theorem UE.exists_orderIso_of_uo (hE : UE θ) (hO : UO θ) (hxe : θ x e) :
     ∃ f : Set.Iic x ≃o Set.Iic e, ∀ (y : Set.Iic x) (e' : Set.Iic e), θ y e' ↔ f y = e' := by
   choose f hf using fun y : Set.Iic x ↦ hE hxe y.2
@@ -210,6 +216,7 @@ theorem uo_graph_iff : UO (· = f ·) ↔ Monotone f :=
   ⟨fun h _ _ hle ↦ let ⟨_, ⟨hy, hy'⟩, _⟩ := h rfl hle; hy' ▸ hy,
     fun h _ _ hxe _ hle ↦ ⟨_, ⟨hxe ▸ h hle, rfl⟩, fun _ hz ↦ hz.2⟩⟩
 
+/-- The graph of a function maps to subobjects iff the function is strictly monotone. -/
 theorem mso_graph_iff : MSO (· = f ·) ↔ StrictMono f :=
   ⟨fun h _ _ hlt ↦ let ⟨_, hy, hy'⟩ := h rfl hlt; hy' ▸ hy,
     fun h _ _ hxe _ hlt ↦ ⟨_, hxe ▸ h hlt, rfl⟩⟩

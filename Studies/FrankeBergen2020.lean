@@ -508,6 +508,8 @@ theorem vanilla_ss_prefers_wNA {α : ℝ} (hα : 0 < α) :
   RSA.listener_speaker_uniformOn_real_singleton_lt_of_strictDominates (ext ∅) hα
     (by decide +kernel)
 
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener favors some-but-not-all drinkers over all-drinkers, as attested. -/
 theorem gi_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (giListener α .ss).real {wNA} < (giListener α .ss).real {wNS} :=
   RSA.listener_compProd_speaker_uniformOn_fst_real_lt_of_strictDominates giSem Prod.fst hα
@@ -555,12 +557,18 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
 
 /-! ### The position of the latent parameter -/
 
+/-- Hearing "some of the aliens drank some of their water", the pooled
+listener's parse posterior peaks at exhaustification of the whole
+sentence. -/
 theorem ss_m_parse_pref : ∀ p : Parse, p ≠ pM →
     (giParsePosterior 5 .ss).real {(.ss, p)} < (giParsePosterior 5 .ss).real {(.ss, pM)} :=
   fun p _ ↦
   RSA.listener_compProd_speaker_uniformOn_snd_real_lt_of_divPowSum giSem Prod.fst (k := 5)
     (D := 12) (by decide +kernel) rfl rfl (by revert p; decide +kernel)
 
+/-- Hearing "some of the aliens drank some of their water", the per-parse
+listener favors exhaustifying the outer quantifier over exhaustifying the
+whole sentence. -/
 theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
     (perParseListener α .ss).snd.real {pM} < (perParseListener α .ss).snd.real {pO} := by
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),

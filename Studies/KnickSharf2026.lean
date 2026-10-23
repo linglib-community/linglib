@@ -115,6 +115,9 @@ theorem u_perf_entails_simple_present (V : W → E → Prop) (tᵣ : Set T) (tc 
   let ⟨pts, ⟨_, e, hlt, hV⟩, hRB⟩ := mem_perf.1 h
   ⟨e, lt_of_le_of_lt (NonemptyInterval.le_def.2 ⟨hRB ▸ pts.fst_le_snd, hRB.ge⟩) hlt, hV⟩
 
+/-- Under broad focus, where the domain `tᵣ` is the whole line, the U-perfect is equivalent to
+the simple present, the equivalence by which competition rules it out; the converse direction
+takes the point `tc` as the perfect time span. -/
 theorem broad_focus_equiv (V : W → E → Prop) (tc : T) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w :=
   ⟨u_perf_entails_simple_present V Set.univ tc w, fun h ↦ ⟨.pure tc, ⟨Set.mem_univ _, h⟩, rfl⟩⟩

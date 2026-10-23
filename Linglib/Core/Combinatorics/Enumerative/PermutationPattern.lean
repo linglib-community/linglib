@@ -62,6 +62,8 @@ private theorem card_sort_comp_eq (q : Fin k ↪ α) (ρ : Perm (Fin k)) :
     Tuple.sort_comp_perm_of_injective (σ.injective.comp q.injective), inv_mul_eq_one]
   exact eq_comm
 
+/-- **Order patterns are uniform**: each reordering of `Fin k` is the order pattern of one
+permutation in `k !` on a fixed injective tuple. -/
 theorem factorial_mul_card_sort_comp_eq (q : Fin k ↪ α) (ρ : Perm (Fin k)) :
     k ! * #{σ : Perm α | Tuple.sort (σ ∘ q) = ρ} = (Fintype.card α)! := by
   have h := card_eq_sum_card_fiberwise (s := (univ : Finset (Perm α))) (t := univ)
@@ -70,6 +72,7 @@ theorem factorial_mul_card_sort_comp_eq (q : Fin k ↪ α) (ρ : Perm (Fin k)) :
     card_univ, card_univ, Fintype.card_perm, Fintype.card_perm, Fintype.card_fin] at h
   exact h.symm
 
+/-- One permutation in `k !` leaves a fixed injective tuple in increasing order. -/
 theorem factorial_mul_card_monotone_comp (q : Fin k ↪ α) :
     k ! * #{σ : Perm α | Monotone (σ ∘ q)} = (Fintype.card α)! := by
   simpa only [one_def, Tuple.sort_eq_refl_iff_monotone] using factorial_mul_card_sort_comp_eq q 1

@@ -269,6 +269,8 @@ theorem satisfiedBy_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r]
     obtain ⟨a, b, hrel, rfl⟩ := mem_toERCs.mp hα
     exact (simpleERC_satisfiedBy_toRel_iff a b σ).mpr (hcons a b hrel)
 
+/-- The consistent total orders of a grammar are exactly the linear extensions
+of its simple-ERC encoding ([merchant-riggle-2016]; [prince-2002]). -/
 theorem consistentTotalOrders_eq_linearExtensions (r : Fin n → Fin n → Prop)
     [DecidableRel r] :
     consistentTotalOrders r = ERC.linearExtensions (toERCs r) := by
@@ -469,6 +471,9 @@ theorem card_filter_picksAt_binary_add [DecidableRel r]
   rwa [h_two, Finset.sum_pair h_ne] at h
 
 omit [DecidableEq Output] in
+/-- With pairwise-distinct violation profiles every ranking picks exactly one candidate, so under
+any probability measure on rankings, a POC grammar's or stochastic OT's, the candidates'
+probabilities sum to one. -/
 theorem sum_measure_setOf_picksAt (μ : Measure (Ranking (Fin n) n)) [IsProbabilityMeasure μ]
     (h_ne : (S.gen i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) :
     ∑ o ∈ S.gen i, μ {σ | PicksAt S σ i o} = 1 := by
@@ -510,6 +515,8 @@ theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking (Fin n) n) :
     simpa using show con (σ (σ.symm x)) (i, o) = con (σ (σ.symm x)) (i, o') from
       congrFun heq (σ.symm x)
 
+/-- For binary candidate sets, `PicksAt σ i chosen` holds exactly when the σ-earliest active
+constraint favors `chosen`. -/
 theorem picksAt_binary_iff_exists_favoring_isMinOn
     (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other) (σ : Ranking (Fin n) n) :
     PicksAt S σ i chosen ↔
@@ -524,6 +531,8 @@ whose winner-preferring and non-neutral constraints are `favoring` and `active`,
 random ranking satisfies an ERC with a non-neutral constraint at rate `|W| / |W ∪ L|`
 (`ERC.card_filter_satisfiedBy_mul_card`). -/
 
+/-- A uniformly random ranking satisfies an ERC with a non-neutral constraint at rate
+`|W| / |W ∪ L|`. -/
 theorem ERC.uniformOn_real_satisfiedBy (α : ERC (Fin n)) (h : ∃ k, α k ≠ .e) :
     (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | α.SatisfiedBy σ} =
       (#{k | α k = .W} : ℝ) / #{k | α k ≠ .e} := by
@@ -533,6 +542,8 @@ theorem ERC.uniformOn_real_satisfiedBy (α : ERC (Fin n)) (h : ∃ k, α k ≠ .
       (by exact_mod_cast (Finset.card_pos.2 ⟨k, mem_filter.2 ⟨mem_univ k, hk⟩⟩).ne')]
   exact_mod_cast α.card_filter_satisfiedBy_mul_card.trans (Nat.mul_comm _ _)
 
+/-- Under the discrete grammar, with every ranking a linear extension, the uniform measure on
+rankings picks `chosen` at rate `|favoring| / |active|`. -/
 theorem uniformOn_real_picksAt_discrete_binary
     (h_two : S.gen i = {chosen, other}) (h_ne : chosen ≠ other) :
     (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | PicksAt S σ i chosen} =
@@ -615,6 +626,8 @@ theorem card_filter_picksAt_stratified_binary
       (isConsistent_swap_mul h_triv (Finset.mem_filter.mp h₁).2 (Finset.mem_filter.mp h₂).2
         (mem_consistentTotalOrders.mp hσ))
 
+/-- Under a stratified grammar, the uniform measure on its linear extensions picks `chosen` at
+the deciding-stratum rate `|favoring ∩ Dₖ| / |Dₖ|`. -/
 theorem uniformOn_real_picksAt_stratified_binary
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
@@ -651,6 +664,7 @@ theorem picksAt_stratified_of_dominates
   exact (lex_lt_iff_exists_favoring_isMinOn σ).2 ⟨x, mem_inter.2 ⟨h_sub hx, hxA⟩, hminA⟩
 
 omit [DecidableEq Output] in
+/-- A candidate dominating every rival at the deciding stratum wins with probability one. -/
 theorem uniformOn_picksAt_stratified_eq_one
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] (ho : o ∈ S.gen i)

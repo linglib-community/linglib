@@ -77,18 +77,22 @@ theorem IsContrary.symm (h : IsContrary x y) : IsContrary y x :=
 theorem IsSubcontrary.symm (h : IsSubcontrary x y) : IsSubcontrary y x :=
   ⟨fun h' ↦ h.1 h'.symm, h.2.symm⟩
 
+/-- Two elements that cannot both hold are contradictory or contrary. -/
 theorem disjoint_iff_isCompl_or_isContrary : Disjoint x y ↔ IsCompl x y ∨ IsContrary x y := by
   rw [IsContrary, isCompl_iff, ← and_or_left]
   simp only [or_not, and_true]
 
+/-- Two elements that cannot both fail are contradictory or subcontrary. -/
 theorem codisjoint_iff_isCompl_or_isSubcontrary :
     Codisjoint x y ↔ IsCompl x y ∨ IsSubcontrary x y := by
   rw [IsSubcontrary, isCompl_iff, ← or_and_right]
   simp only [or_not, true_and]
 
+/-- Contrariety is subalternation into the complement. -/
 theorem isContrary_iff_lt_compl : IsContrary x y ↔ x < yᶜ := by
   rw [IsContrary, lt_iff_le_not_ge, le_compl_iff_disjoint_right, codisjoint_iff_compl_le_left]
 
+/-- Subcontrariety is subalternation out of the complement. -/
 theorem isSubcontrary_iff_compl_lt : IsSubcontrary x y ↔ yᶜ < x := by
   rw [IsSubcontrary, lt_iff_le_not_ge, le_compl_iff_disjoint_right, codisjoint_iff_compl_le_left,
     and_comm]

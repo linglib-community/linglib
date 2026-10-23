@@ -203,6 +203,8 @@ def fciPairs : Finset (FCState × Interp) := Finset.univ.filter fun p => HasFCI 
 /-- The remaining pairs. -/
 def nonFciPairs : Finset (FCState × Interp) := Finset.univ.filter fun p => ¬ HasFCI p.1
 
+/-- At α = 2 the free-choice states still carry the majority of the posterior given *or*
+(the paper's "only 70%"). -/
 theorem fci_majority_low_alpha :
     (listener 2 .or_).real ↑nonFciPairs < (listener 2 .or_).real ↑fciPairs :=
   listener_uniformOn_family_real_lt_of_divPowSum sem (k := 2) (D := 20) (by decide +kernel)

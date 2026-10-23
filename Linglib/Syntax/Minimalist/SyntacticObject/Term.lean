@@ -160,6 +160,7 @@ theorem numNodes_lt_of_contains (h : Contains x y) : y.val.numNodes < x.val.numN
   transGen_minimal (r' := InvImage (· > ·) fun s : SyntacticObject L ↦ s.val.numNodes)
     (fun _ _ ↦ numNodes_lt_of_immediatelyContains) x y h
 
+/-- Being a proper term is well-founded: an object has finitely many terms. -/
 theorem wellFounded_flip_contains : WellFounded (flip (Contains (L := L))) :=
   Subrelation.wf (fun h ↦ numNodes_lt_of_contains h)
     (InvImage.wf (fun s : SyntacticObject L ↦ s.val.numNodes) wellFounded_lt)
@@ -221,6 +222,7 @@ def terms (s : SyntacticObject L) : Multiset (SyntacticObject L) :=
     simp only [Multiset.map_cons, Multiset.map_add, map_val_terms, merge_val,
       UnorderedTree.subtrees_node_pair]
 
+/-- The terms of `x` are the objects it reflexively contains. -/
 @[simp] theorem mem_terms : y ∈ x.terms ↔ ContainsOrEq x y := by
   induction x using ind with
   | leaf tok => simp
@@ -281,6 +283,7 @@ theorem cons_accessibleTerms (s : SyntacticObject L) : s ::ₘ s.accessibleTerms
     (merge l r).accessibleTerms = l.terms + r.terms := by
   simp [accessibleTerms]
 
+/-- The accessible terms of `x` are the objects it contains. -/
 @[simp] theorem mem_accessibleTerms : y ∈ x.accessibleTerms ↔ Contains x y := by
   induction x using ind with
   | leaf tok => simp
@@ -288,6 +291,7 @@ theorem cons_accessibleTerms (s : SyntacticObject L) : s ::ₘ s.accessibleTerms
   | traceOf tok => simp
   | merge l r _ _ => simp
 
+/-- One accessible term per edge. -/
 theorem card_accessibleTerms (s : SyntacticObject L) :
     s.accessibleTerms.card = s.val.numEdges := by
   rw [accessibleTerms, Multiset.card_erase_of_mem (self_mem_terms s), card_terms]; rfl
@@ -328,6 +332,7 @@ instance [DecidableEq L] (root x y : SyntacticObject L) : Decidable (CCommands r
 theorem Sisters.cCommands (h : Sisters root x y) : CCommands root x y :=
   ⟨y, h.mem_right, h, ReflTransGen.refl⟩
 
+/-- A c-commanded object is a term of the root. -/
 theorem CCommands.mem_terms (h : CCommands root x y) : y ∈ root.terms :=
   let ⟨_, hz, _, hzy⟩ := h
   terms_subset_terms (SyntacticObject.mem_terms.1 hz) (SyntacticObject.mem_terms.2 hzy)

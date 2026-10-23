@@ -47,6 +47,8 @@ def definableClass (s : Form → Finset α → Prop) : Set (TeamProperty α) :=
     P ∈ definableClass s ↔ ∃ φ, {t | s φ t} = P :=
   Set.mem_range
 
+/-- **Soundness from closure.** If every formula's support set has the closure property `C`,
+every definable property does. -/
 theorem definableClass_subset {s : Form → Finset α → Prop} {C : TeamProperty α → Prop}
     (h : ∀ φ, C {t | s φ t}) : definableClass s ⊆ {P | C P} :=
   Set.range_subset_iff.2 h

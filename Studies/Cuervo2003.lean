@@ -268,6 +268,7 @@ def meanings (i : Inventory) (p : Predicate) (animate fullDP : Bool) : List Mean
 
 /-! ### The double object construction and Baker's gap (§3.1, §3.2.3) -/
 
+/-- No low applicative with a complex structure: the theme is the specifier of the lower vP. -/
 theorem not_licenses_low_of_biEventive {i : Inventory} {p : Predicate} {d : Dative}
     (hc : LittleV.BiEventive p.heads) (hl : d.site.Low) : ¬ i.Licenses p d :=
   fun h ↦ (h.2.1 hl).1.2.1 hc

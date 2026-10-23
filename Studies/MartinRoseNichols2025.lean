@@ -153,6 +153,8 @@ def transitivePairs : Finset (Form × Reading) :=
 def anticausativePairs : Finset (Form × Reading) :=
   {(.anticausative, .production), (.anticausative, .dependence)}
 
+/-- The production constraint. When a thick causative in its physical sense promotes
+production, the lexical form takes it and periphrastic *cause* is left with dependence. -/
 theorem production_constraint :
     superoptimal transitivePairs (tableau true) =
       {(.lexical, .production), (.periphrastic, .dependence)} := by
@@ -167,14 +169,19 @@ theorem reading_eq_dependence_of_periphrastic :
       r = .dependence := by
   decide
 
+/-- Where nothing promotes production, in the abstract sense or with a thin verb, the lexical
+form keeps the dependence reading. -/
 theorem lexical_dependence_of_not_promoted :
     (Form.lexical, Reading.dependence) ∈ superoptimal transitivePairs (tableau false) := by
   decide
 
+/-- The anticausative with a causer phrase has both readings. -/
 theorem anticausative_readings :
     superoptimal anticausativePairs (tableau false) = anticausativePairs := by
   decide
 
+/-- Under the production constraint a subject with abstract reference falsifies the lexical
+causative. -/
 theorem not_holds_of_not_physical {r : Reading}
     (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true))
     (h : ¬C.Physical s) : ¬r.holds C s o := by
@@ -320,18 +327,25 @@ def causativeMannerVerbs : Finset Sample := strongResultative \ resultless
 /-- The thick verbs that are not causative manner verbs, thick through their result state. -/
 def thickState : Finset Sample := thick \ causativeMannerVerbs
 
+/-- Every causative manner verb is thick. -/
 theorem causativeMannerVerbs_subset_thick : causativeMannerVerbs ⊆ thick := by decide
 
+/-- *Bury* is the one thick verb that is not a causative manner verb. -/
 theorem thickState_eq : thickState = {.bury} := by decide
 
+/-- The thin verbs found with strong resultatives are exactly the resultless ones. -/
 theorem strongResultative_sdiff_thick : strongResultative \ thick = resultless := by decide
 
+/-- *Close* and *lower* are the thin verbs not found with an omission or quality subject. -/
 theorem thin_without_omission : thickᶜ \ omissionSubject = {.close, .lower} := by decide
 
+/-- The thick verbs found with an omission subject, each under a reinterpretation of the
+subject as a productive cause. -/
 theorem thick_inter_omissionSubject :
     thick ∩ omissionSubject = {.burn, .lift, .lock, .melt} := by
   decide
 
+/-- The alternation column agrees with the fragment's diatheses except on *cool*. -/
 theorem alternating_iff_hasCausativeAlternation :
     ∀ s, s ≠ .cool → (s ∈ alternating ↔ s.entry.valency.HasCausativeAlternation) := by
   decide

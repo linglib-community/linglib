@@ -134,12 +134,14 @@ point of `step`. -/
 noncomputable def solve (I : ∀ v, Flat (α v)) (u : U) : ∀ v, α v :=
   hM.fixedPoint (M.step I u)
 
+/-- The solution satisfies the equations. -/
 theorem isFixedPt_solve (I : ∀ v, Flat (α v)) (u : U) :
     Function.IsFixedPt (M.step I u) (M.solve I u) :=
   hM.isFixedPt_fixedPoint (dependsOn_step I u)
 
 variable {M}
 
+/-- An assignment satisfying the equations is the solution. -/
 theorem eq_solve_of_isFixedPt {I : ∀ v, Flat (α v)} {u : U} {x : ∀ v, α v}
     (hx : Function.IsFixedPt (M.step I u) x) : x = M.solve I u :=
   WellFounded.eq_fixedPoint_of_isFixedPt (dependsOn_step I u) hx
@@ -160,11 +162,14 @@ theorem solve_of_eq_bot {I : ∀ v, Flat (α v)} {v : V} (h : I v = ⊥) (u : U)
     M.solve I u v = M.eqn v u (M.solve I u) := by
   rw [solve_apply, h, Flat.unbotD_bot]
 
+/-- Iterating the equations from any assignment past a ranking of the graph reaches the
+solution. -/
 theorem solve_eq_iterate (r : M.graph.Adj →r ((· < ·) : ℕ → ℕ → Prop)) {n : ℕ}
     (hn : ∀ v, r v < n) (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
     M.solve I u = (M.step I u)^[n] x :=
   WellFounded.fixedPoint_eq_iterate (dependsOn_step I u) r hn x
 
+/-- In a finite model, iterating the equations once per variable reaches the solution. -/
 theorem solve_eq_iterate_card [Fintype V] (I : ∀ v, Flat (α v)) (u : U) (x : ∀ v, α v) :
     M.solve I u = (M.step I u)^[Fintype.card V] x :=
   WellFounded.fixedPoint_eq_iterate_card (dependsOn_step I u) x

@@ -324,6 +324,8 @@ theorem U_mul_W : U * W = U := by
 theorem isStarProjection_W : IsStarProjection W := by
   rw [W_eq_conjTranspose]; exact isStarProjection_conjTranspose_mul_inv_mul isUnit_det_gramU
 
+/-- Regressing the words of each utterance on themselves, as the paper does for the toy corpus,
+does not determine `W`, since the identity, the "ideal solution" of (A9), is trained as well. -/
 theorem not_existsUnique_isELTrained :
     ¬ ∃! G, IsELTrained (⟨U, U⟩ : TrainingExperience 5 9 9) G := by
   rintro ⟨G, -, hG⟩

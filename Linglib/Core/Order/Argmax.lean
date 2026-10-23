@@ -89,6 +89,7 @@ theorem mem_argmax_comp_surjective {α' : Type*} [Fintype α] [Fintype α']
   exact ⟨fun h b ↦ (he b).elim fun a' hb ↦ hb ▸ h a',
     fun h a' ↦ h (e a')⟩
 
+/-- The argmax is the singleton `{a}` iff `a ∈ s` beats every other element of `s`. -/
 @[to_dual /-- The argmin is the singleton `{a}` iff `a ∈ s` beats every other element of `s`. -/]
 theorem argmax_eq_singleton_iff : s.argmax f = {a} ↔ a ∈ s ∧ ∀ b ∈ s, b ≠ a → f b < f a := by
   refine ⟨fun h ↦ ?_, fun ⟨ha, h⟩ ↦ ?_⟩
@@ -101,6 +102,7 @@ theorem argmax_eq_singleton_iff : s.argmax f = {a} ↔ a ∈ s ∧ ∀ b ∈ s, 
     rintro rfl
     exact ⟨ha, fun c hc ↦ (eq_or_ne c b).elim (fun h ↦ h ▸ le_rfl) fun hcb ↦ (h c hc hcb).le⟩
 
+/-- A score strictly antitone on `s` is minimized exactly at the greatest element of `s`. -/
 theorem _root_.StrictAntiOn.argmin_eq_singleton [PartialOrder α] (hf : StrictAntiOn f s)
     (ha : IsGreatest (s : Set α) a) : s.argmin f = {a} :=
   argmin_eq_singleton_iff.2 ⟨ha.1, fun _ hb hba ↦ hf hb ha.1 ((ha.2 hb).lt_of_ne hba)⟩
@@ -109,6 +111,7 @@ section Total
 
 variable [Std.Total (α := β) (· ≤ ·)]
 
+/-- In a total preorder, a nonempty finset has a maximizer. -/
 @[to_dual /-- In a total preorder, a nonempty finset has a minimizer. -/]
 theorem argmax_nonempty (hs : s.Nonempty) : (s.argmax f).Nonempty := by
   obtain ⟨a, ha, h⟩ := s.exists_maximalFor f hs
@@ -176,6 +179,8 @@ theorem argmax_eq_argmax_of_support [Zero β] {t : Finset α} (hts : t ⊆ s) (h
     · exact hmax b hbt
     · exact (hzero b hb hbt).symm ▸ (hpos a hat).le
 
+/-- The argmax set is invariant under strictly monotone rescaling of the
+score — inverse-temperature changes do not move the argmax. -/
 theorem argmax_comp_strictMono {g : β → γ} (hg : StrictMono g) :
     s.argmax (g ∘ f) = s.argmax f := by
   ext a

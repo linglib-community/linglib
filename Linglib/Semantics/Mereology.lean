@@ -110,6 +110,7 @@ abbrev CUM (P : α → Prop) : Prop := SupClosed {x | P x}
 instance [Fintype α] [DecidablePred P] : Decidable (CUM P) :=
   decidable_of_iff (∀ x, P x → ∀ y, P y → P (x ⊔ y)) Iff.rfl
 
+/-- A quantized predicate with two members is not cumulative ([krifka-1989] (T 3)). -/
 theorem qua_cum_incompatible (hQ : QUA P) {x y : α} (hx : P x) (hy : P y) (hne : x ≠ y) :
     ¬ CUM P := by
   intro hC
@@ -356,6 +357,7 @@ theorem atomize_ne_bot : atomize (· ≠ (⊥ : α)) = IsAtom := by
 
 end OrderBot
 
+/-- The atomic parts of a finite set are its singletons. -/
 theorem atomsBelow_finset {β : Type*} (s : Finset β) :
     atomsBelow s = (fun b ↦ ({b} : Finset β)) '' ↑s := by
   ext a
@@ -366,6 +368,7 @@ theorem atomsBelow_finset {β : Type*} (s : Finset β) :
   · rintro ⟨b, hb, rfl⟩
     exact ⟨⟨b, rfl⟩, Finset.singleton_subset_iff.2 hb⟩
 
+/-- A finite set has as many atomic parts as members. -/
 theorem atomCount_finset {β : Type*} (s : Finset β) : atomCount (Finset β) s = s.card := by
   rw [atomCount, atomsBelow_finset, Set.ncard_image_of_injective _ Finset.singleton_injective,
     Set.ncard_coe_finset]
@@ -509,6 +512,8 @@ theorem remainder_unique {z z' : α} (hz : ¬ Overlap z x) (hlub : IsLUB {x, z} 
     · exact hov
   exact le_antisymm (key hz hlub hlub') (key hz' hlub' hlub)
 
+/-- A proper part of `y` has exactly one remainder in `y`, the unique separation of
+[krifka-1998] and [champollion-2017]. -/
 theorem existsUnique_remainder (h : x < y) : ∃! z, ¬ Overlap z x ∧ IsLUB {x, z} y :=
   let ⟨z, hz, hlub⟩ := exists_remainder h
   ⟨z, ⟨hz, hlub⟩, fun _ ⟨hz', hlub'⟩ ↦ remainder_unique hz' hlub' hz hlub⟩
@@ -588,6 +593,8 @@ property there. Either way, the measure phrases such a measure builds are quanti
 [krifka-1989] analyses *five ounces of gold*. -/
 def QMOD {M : Type*} (R : α → Prop) (μ : α → M) (n : M) : α → Prop := fun x ↦ R x ∧ μ x = n
 
+/-- A measure phrase is quantized if its measure is strictly monotone on the predicate it
+restricts. -/
 theorem qmod_qua {M : Type*} [PartialOrder α] [Preorder M] {R : α → Prop} {μ : α → M}
     (hμ : StrictMonoOn μ {x | R x}) (n : M) : QUA (QMOD R μ n) :=
   fun _ hx _ hy hne hle ↦ (hμ hx.1 hy.1 (lt_of_le_of_ne hle hne)).ne (hx.2.trans hy.2.symm)
@@ -604,6 +611,8 @@ theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop
   exact Set.ncard_lt_ncard ((Set.ssubset_iff_of_subset hsub).2
     ⟨a, ⟨hP (hPt a ha), Finset.le_sup' id ha⟩, fun h ↦ hax h.2⟩) (Set.toFinite _)
 
+/-- The sums of `P`-atoms with `n` atoms form an antichain, so *two cats* is quantized
+([champollion-krifka-2016]). -/
 theorem qua_algClosure_atomCount [SemilatticeSup α] [Fintype α] {P : α → Prop}
     (hP : ∀ ⦃a⦄, P a → Atom a) (n : ℕ) : QUA (QMOD (AlgClosure P) (atomCount α) n) :=
   qmod_qua (atomCount_strictMonoOn hP) n
@@ -618,6 +627,8 @@ class IsExtensiveMeasure (μ : α → M) : Prop where
   additive : ∀ x y, ¬ Overlap x y → μ (x ⊔ y) = μ x + μ y
   positive : ∀ x, ¬ IsBot x → 0 < μ x
 
+/-- Over a carrier with remainders, an extensive measure gives a proper part a smaller measure
+than the whole, which adds a non-null remainder to it. -/
 theorem IsExtensiveMeasure.strictMono [HasRemainders α] [AddLeftStrictMono M] (μ : α → M)
     [h : IsExtensiveMeasure μ] : StrictMono μ := fun x y hxy ↦ by
   obtain ⟨z, hz, rfl⟩ := HasRemainders.exists_remainder hxy
@@ -716,6 +727,8 @@ theorem exists_isMaxDisjointIn_mem {P : Set α} {x : α} (hx : x ∈ P) :
   exact hyD (hD.2 ⟨Set.insert_subset hy hD.prop.1, hno⟩ (Set.subset_insert _ _)
     (Set.mem_insert _ _))
 
+/-- The null schema is the identity, since every member of a predicate is in some
+perspective. -/
 theorem nullSchema_eq (P : Set α) : nullSchema ov P = P :=
   Set.Subset.antisymm (fun _ ⟨_, hD, hx⟩ ↦ hD.1 hx)
     (fun _ hx ↦ let ⟨D, hD, hxD⟩ := exists_isMaxDisjointIn_mem ov hx; ⟨D, hD, hxD⟩)

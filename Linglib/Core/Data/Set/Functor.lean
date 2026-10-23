@@ -58,6 +58,7 @@ theorem liftRel_iff_subset_preimage_image :
     LiftRel r s t ↔ s ⊆ SetRel.preimage {q | r q.1 q.2} t ∧ t ⊆ SetRel.image {q | r q.1 q.2} s :=
   Iff.rfl
 
+/-- The lifting holds exactly when some subrelation of `r` has domain `s` and codomain `t`. -/
 theorem liftRel_iff_exists_dom_cod :
     LiftRel r s t ↔ ∃ D : SetRel α β, D ⊆ {q | r q.1 q.2} ∧ D.dom = s ∧ D.cod = t := by
   refine ⟨fun ⟨hl, hr⟩ ↦ ⟨{q | q.1 ∈ s ∧ q.2 ∈ t ∧ r q.1 q.2}, fun _ h ↦ h.2.2,
@@ -73,6 +74,7 @@ theorem liftRel_iff_exists_dom_cod :
 theorem liftRel_iff_biTotal : LiftRel r s t ↔ Relator.BiTotal fun (a : s) (b : t) ↦ r a b := by
   simp [LiftRel, Relator.BiTotal, Relator.LeftTotal, Relator.RightTotal]
 
+/-- At a homogeneous relation, the lifting is the functor-level `Functor.Liftr` of `Set`. -/
 theorem liftRel_iff_liftr {r : α → α → Prop} {s t : Set α} :
     LiftRel r s t ↔ Functor.Liftr r s t := by
   rw [liftRel_iff_exists_dom_cod]
@@ -108,6 +110,7 @@ theorem liftRel_eq {s t : Set α} : LiftRel (· = ·) s t ↔ s = t := by
   · rintro rfl
     exact liftRel_refl_of_refl_on fun _ _ ↦ rfl
 
+/-- The lifting of a composite relation is the composite of the liftings. -/
 theorem liftRel_comp {p : β → γ → Prop} {u : Set γ} :
     LiftRel (Relation.Comp r p) s u ↔ ∃ t, LiftRel r s t ∧ LiftRel p t u := by
   constructor
@@ -169,6 +172,8 @@ theorem LiftRel.union (h₁ : LiftRel r s₁ t₁) (h₂ : LiftRel r s₂ t₂) 
     fun b hb ↦ hb.elim (fun hb ↦ (h₁.2 b hb).imp fun _ ⟨ha, hab⟩ ↦ ⟨.inl ha, hab⟩)
       fun hb ↦ (h₂.2 b hb).imp fun _ ⟨ha, hab⟩ ↦ ⟨.inr ha, hab⟩⟩
 
+/-- Lifted families over lifted index sets: if `s` and `t` are related and related indices carry
+related sets, the indexed unions are related. -/
 theorem LiftRel.biUnion {q : γ → δ → Prop} {f : α → Set γ} {g : β → Set δ}
     (h : LiftRel r s t) (H : ∀ a ∈ s, ∀ b ∈ t, r a b → LiftRel q (f a) (g b)) :
     LiftRel q (⋃ a ∈ s, f a) (⋃ b ∈ t, g b) := by

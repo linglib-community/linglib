@@ -141,6 +141,8 @@ structure Condition where
 /-- A condition matches when its context supports its disambiguation. -/
 def Condition.IsMatch (c : Condition) : Prop := c.context.Supports c.disambiguation
 
+/-- A condition matches exactly when its context has two women and its disambiguation is a
+relative clause, or one woman and a complement clause. -/
 theorem Condition.isMatch_iff (c : Condition) :
     c.IsMatch ↔ (c.context = .nonUniqueReferents ↔ c.disambiguation.IsRelative) := by
   obtain ⟨d, x⟩ := c
@@ -275,15 +277,19 @@ section Marginals
 
 variable (p : Params)
 
+/-- Garden-pathing has the probability of attentive reading times that of garden-pathing. -/
 theorem tree_real_gardenPathed :
     (tree p).real {o | o.GardenPathed} = p.attentive * p.gardenPath := by
   simp [tree, node_real_apply, Route.GardenPathed]
 
+/-- A regression has the probability of overt reanalysis. -/
 theorem tree_real_regresses : (tree p).real {o | o.Regresses} =
     p.attentive * p.gardenPath * (1 - p.triage) * (1 - p.covert) := by
   simp [tree, node_real_apply, Route.Regresses]
   ring
 
+/-- Acceptance collects the accepting guess, the correct first pass, and the successful
+reanalyses, and its probability does not depend on postponement. -/
 theorem tree_real_accepts : (tree p).real {o | o.Accepts} =
     (1 - p.attentive) * p.bias + p.attentive * (1 - p.gardenPath + p.gardenPath *
       (1 - p.triage) * ((1 - p.covert) * p.overtSuccess + p.covert * p.covertSuccess)) := by
@@ -329,6 +335,8 @@ section Means
 
 variable (p : Params) (k : Costs)
 
+/-- The mean cost at the disambiguating region adds the attention cost of attentive reading to
+the garden-path probability times the expected cost of a garden-pathed trial. -/
 theorem integral_disambiguating_tree : ∫ o, k.disambiguating o ∂tree p =
     p.attentive * (k.attention + p.gardenPath * (k.gardenPath + (1 - p.triage) *
       ((1 - p.covert) * k.regression + p.covert * (1 - p.postpone) * k.covert))) := by
@@ -360,6 +368,11 @@ theorem monotone_integral_covert :
 
 end Means
 
+/-- Condition means cannot locate an effect of context. From garden-path probability `1 / 2`
+and covert reanalysis cost `800`, illustrative values, an effect on attachment that halves the
+probability and an effect on reanalysis that halves the cost leave the same mean cost at both
+regions and the same rates of regression and acceptance, but different mixtures over route
+costs, `800` on a quarter of the trials against `400` on half of them. -/
 theorem means_not_identifiable :
     ∃ (p : Params) (k : Costs) (g : I) (c : ℝ≥0), g < p.gardenPath ∧ c < k.covert ∧
       ∫ o, k.disambiguating o ∂tree {p with gardenPath := g} =

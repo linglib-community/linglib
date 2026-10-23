@@ -91,6 +91,7 @@ theorem IsGranularity.ordConnected (h : IsGranularity γ w) (s : D) : (γ s).Ord
   · exact le_antisymm (h₂ hy).2 hzy ▸ hy
   exact h₁ ⟨hlt, hlt'⟩
 
+/-- The granularity function of width zero is the exact reading, every cell a single degree. -/
 theorem isGranularity_zero_iff : IsGranularity γ 0 ↔ γ = fun s ↦ {s} := by
   refine ⟨fun h ↦ funext fun s ↦ ?_, by rintro rfl; exact ⟨fun s ↦ rfl, fun s ↦ ⟨s, by simp⟩⟩⟩
   obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
@@ -105,6 +106,7 @@ theorem IsGranularity.nonneg (h : IsGranularity γ w) : 0 ≤ w := by
   obtain ⟨h₃, h₄⟩ := h₂ (h.mem_self 0)
   exact le_of_add_le_add_left (a := a) (by simpa using h₃.trans h₄)
 
+/-- A cell of a wider granularity function never lies inside a cell of a narrower one. -/
 theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ w₁)
     (h₂ : IsGranularity γ₂ w₂) (hlt : w₁ < w₂) (s t : D) : ¬ γ₂ t ⊆ γ₁ s := fun hsub ↦ by
   obtain ⟨a, ha, -⟩ := h₂.exists_Ioo_subset_subset_Icc t
@@ -155,6 +157,7 @@ theorem abs_sub_representative_le_abs_sub (hε : ε ≠ 0) (d : α) (n : ℤ) :
     |d - representative ε d| ≤ |d - n • ε| :=
   abs_sub_round_div_zsmul_le_abs_sub_zsmul hε d n
 
+/-- The cell of `d` is the half-open interval of width `ε` centred on its representative. -/
 theorem cell_grain (hε : 0 < ε) (d : α) :
     (grain ε).cell d = Ico (representative ε d - ε / 2) (representative ε d + ε / 2) := by
   ext x
@@ -209,6 +212,8 @@ theorem isGranularity_cell (hε : 0 < ε) : IsGranularity (grain ε).cell ε whe
     rw [cell_grain hε, show representative ε d - ε / 2 + ε = representative ε d + ε / 2 by ring]
     exact ⟨Ioo_subset_Ico_self, Ico_subset_Icc_self⟩⟩
 
+/-- Around a common multiple of two widths, the cell of the finer grain lies inside the cell of
+the coarser one. -/
 theorem cell_grain_subset_cell_grain (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂)
     (h₁ : d ∈ AddSubgroup.zmultiples ε₁) (h₂ : d ∈ AddSubgroup.zmultiples ε₂) :
     (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
@@ -243,6 +248,7 @@ theorem not_grain_le_grain_of_even (hε : 0 < ε) {j : ℕ} (hj : 0 < j) :
   rw [hcoarse] at h1
   exact absurd h1.2 (by linarith)
 
+/-- The grain of width `ε` refines the grain of width `k * ε` exactly when `k` is odd. -/
 theorem grain_le_grain_iff_odd (hε : 0 < ε) {k : ℕ} (hk : 0 < k) :
     grain ε ≤ grain (k * ε) ↔ Odd k := by
   rcases Nat.even_or_odd' k with ⟨j, rfl | rfl⟩

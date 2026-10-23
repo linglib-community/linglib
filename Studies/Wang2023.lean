@@ -128,6 +128,8 @@ theorem tod_mp_minimal_mem_optimal (candidates : Finset Number.Features)
     rw [hc'_mp] at hlt
     exact lt_irrefl _ hlt
 
+/-- Taboo » MP! selects the least specified cell alone from any well-formed candidate set
+that contains it: the emergence of the semantically unmarked. -/
 theorem tod_mp_general (candidates : Finset Number.Features)
     (hWF : ∀ c ∈ candidates, IsLowerSet (↑c : Set Number.Feature))
     (hMin : Number.pluralF ∈ candidates) :

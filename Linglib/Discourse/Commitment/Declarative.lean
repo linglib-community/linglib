@@ -79,6 +79,8 @@ def IsNeutral : Prop := ¬ IsControversial K p ∧ ¬ IsControversial K pᶜ
     commitmentSet (∅ : State Discourse.Role W) x = Set.univ := by
   simp [commitmentSet, ofCommitter]
 
+/-- A falling declarative narrows the speaker's commitment set by its content and leaves the
+addressee's alone. -/
 theorem commitmentSet_falling :
     commitmentSet (falling K p) .speaker = p ∩ commitmentSet K .speaker ∧
       commitmentSet (falling K p) .addressee = commitmentSet K .addressee := by
@@ -89,6 +91,8 @@ theorem commitmentSet_falling :
   · rw [commitmentSet, falling, ofCommitter_insert_of_ne K .addressee _ (by simp)]
     rfl
 
+/-- A rising declarative narrows the addressee's commitment set by its content and leaves the
+speaker's alone. -/
 theorem commitmentSet_rising :
     commitmentSet (rising K p) .addressee = p ∩ commitmentSet K .addressee ∧
       commitmentSet (rising K p) .speaker = commitmentSet K .speaker := by
@@ -106,6 +110,7 @@ variable {K p}
 @[simp] theorem isResolved_compl : IsResolved K pᶜ ↔ IsResolved K p := by
   simp [IsResolved, or_comm]
 
+/-- A resolved proposition is controversial for no one, so a resolved context is neutral. -/
 theorem IsResolved.isNeutral (h : IsResolved K p) : IsNeutral K p :=
   ⟨λ hc => hc.2.1 h, λ hc => hc.2.1 (isResolved_compl.2 h)⟩
 
@@ -136,11 +141,15 @@ theorem isBiased_of_commitmentSet_eq {K' : State Discourse.Role W} {y : Discours
   · exact (h.not_subset hu hne y.other).1 (hx ▸ (hj y.other).2)
   · exact hnot y (hj y).2
 
+/-- A falling declarative in a neutral, unresolved, nonempty context biases it toward its
+content. -/
 theorem isBiased_falling (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (falling K p) p :=
   isBiased_of_commitmentSet_eq h hu hne (commitmentSet_falling K p).1
     (commitmentSet_falling K p).2
 
+/-- A rising declarative in a neutral, unresolved, nonempty context biases it toward its
+content. -/
 theorem isBiased_rising (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) : IsBiased (rising K p) p :=
   isBiased_of_commitmentSet_eq h hu hne (commitmentSet_rising K p).1

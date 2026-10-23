@@ -94,12 +94,15 @@ theorem collapse_eq_destutter (xs : List α) : collapse xs = xs.destutter (· �
     collapse (List.replicate (n + 1) a) = [a] :=
   List.destutter_replicate (fun h ↦ h rfl) n
 
+/-- `collapse` lands in the OCP-clean set. -/
 theorem isClean_collapse (xs : List α) : IsClean (collapse xs) :=
   List.isChain_destutter _ xs
 
 protected theorem IsClean.collapse_eq {xs : List α} (h : IsClean xs) : collapse xs = xs :=
   List.destutter_of_isChain _ xs h
 
+/-- `collapse` fixes exactly the OCP-clean tiers, so with `isClean_collapse` it is a retraction
+onto them. -/
 @[simp] theorem collapse_eq_self_iff (xs : List α) : collapse xs = xs ↔ IsClean xs :=
   List.destutter_eq_self_iff _ xs
 
@@ -225,6 +228,8 @@ theorem collapse_append_of_isClean (hx : IsClean xs) (hy : IsClean ys) :
     collapse (xs ++ ys) = mergeAppend xs ys :=
   List.IsChain.destutter_ne_append hx hy
 
+/-- **The OCP congruence.** The collapse of a concatenation is the merging append of the
+collapses. -/
 theorem collapse_append (xs ys : List α) :
     collapse (xs ++ ys) = mergeAppend (collapse xs) (collapse ys) := by
   rw [← collapse_append_of_isClean (isClean_collapse xs) (isClean_collapse ys)]
@@ -310,10 +315,13 @@ A position of `xs ++ ys` keeps its run index in `xs` when it lies in `xs`; a pos
 moves to its run index in `ys`, offset by where `collapse ys` starts in the merging append of
 the collapses. -/
 
+/-- The run index of a prefix position is unaffected by a right append. -/
 theorem runIdx_append_left {k : ℕ} (h : k < xs.length) : runIdx (xs ++ ys) k = runIdx xs k := by
   unfold runIdx
   rw [List.take_append_of_le_length (by omega)]
 
+/-- The run index of a suffix position is its run index in the suffix, offset by where the
+collapsed suffix starts in the merging append of the collapses. -/
 theorem runIdx_append_right {a : ℕ} (ha : a < ys.length) :
     runIdx (xs ++ ys) (xs.length + a) =
       mergeOffset (collapse xs) (collapse ys) + runIdx ys a := by

@@ -78,6 +78,8 @@ theorem closeness_embedded_iff (o : Order) :
     Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases ↔ o = .cpFirst := by
   cases o <;> decide
 
+/-- The analyses differ before the verb only, which is what makes German the test case, since
+after it the closeness analyses check the first conjunct too. -/
 theorem accounts_diverge_embedded :
     (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {N}) o.phrases ↔
         Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧

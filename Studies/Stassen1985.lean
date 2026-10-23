@@ -134,6 +134,8 @@ def type1985 (c : Comparative) : Option Type1985 :=
   | .fixed, _, some .loc => some .locative
   | .fixed, _, _ => none
 
+/-- The type of a construction collapses to the type its anatomy derives in the typology of
+the atlas. -/
 theorem toWALS_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some t) :
     t.toWALS = c.type := by
   obtain ⟨m, ca, fe, sc, _⟩ := c
@@ -142,6 +144,7 @@ theorem toWALS_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some 
   · rcases fe with _ | _ | _ <;> rcases sc with _ | k <;> (try cases k) <;>
       simp_all [type1985, Comparative.type, Type1985.toWALS] <;> (subst h; rfl)
 
+/-- The case assignment of a construction's type is the construction's. -/
 theorem caseAssignment_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some t) :
     t.caseAssignment = c.caseAssignment := by
   obtain ⟨m, ca, fe, sc, _⟩ := c
@@ -150,6 +153,7 @@ theorem caseAssignment_type1985 {c : Comparative} {t : Type1985} (h : type1985 c
   · rcases fe with _ | _ | _ <;> rcases sc with _ | k <;> (try cases k) <;>
       simp_all [type1985, Type1985.caseAssignment] <;> (subst h; rfl)
 
+/-- The spatial case of an adverbial type is the case of the construction's standard. -/
 theorem spatialCase_type1985 {c : Comparative} {t : Type1985} (h : type1985 c = some t)
     (hs : t.spatialCase.isSome) : t.spatialCase = c.standardCase := by
   obtain ⟨m, ca, fe, sc, _⟩ := c
@@ -263,6 +267,7 @@ theorem exists_models : ∀ t : Type1985, ∃ ct, Models ct t := by decide
 
 variable {ct : ChainType} {t : Type1985}
 
+/-- Universal 1A says that a derived-case comparative is modelled on a balanced chain. -/
 theorem universal1A (h : Models ct t) (hd : t.caseAssignment = .derived) :
     ct.strategy = .balancing := by
   revert ct t; decide
@@ -287,6 +292,8 @@ theorem universal3B (h : Models ct .allative) : ct = .consecutivePosterior := by
 theorem universal3C (h : Models ct .locative) : ct = .simultaneousAbsolute := by
   revert ct; decide
 
+/-- Universal 4 says that a conjoined comparative is modelled on the balanced simultaneous
+chain. -/
 theorem universal4 (h : Models ct .conjoined) : ct = .simultaneousBalanced := by
   revert ct; decide
 
@@ -298,27 +305,36 @@ def strategy : UD.VerbForm → Strategy
   | .Fin => .balancing
   | _ => .deranking
 
+/-- The ablative standards of Japanese, Korean, Turkish and Hindi-Urdu are separative
+comparatives, the type the book lists the four languages under. -/
 theorem separative_fragments :
     ∀ c ∈ [Japanese.Comparison.yori, Korean.Comparison.boda, Turkish.Comparison.dan,
       HindiUrdu.Comparison.se], type1985 c = some .separative := by
   decide
 
+/-- Mandarin has an exceed comparative, the type the book lists it under. -/
 theorem mandarin_exceed : type1985 Mandarin.Comparison.bi = some .exceed := by decide
 
 /-- English has a particle comparative, the construction of §9.4. -/
 theorem english_particle : type1985 English.Comparison.than = some .particle := by decide
 
+/-- Swahili has a primary exceed comparative and a secondary conjoined one, the double option
+of the book's chapter 10, and its *kuliko* construction, an adverbial standard in no spatial
+case, is the indeterminate case the book calls it. -/
 theorem swahili_double_option :
     type1985 Swahili.Comparison.kushinda = some .exceed ∧
       type1985 Swahili.Comparison.conjoined = some .conjoined ∧
       type1985 Swahili.Comparison.kuliko = none := by
   decide
 
+/-- Korean has a separative comparative and deranked chains, so the chain its comparative is
+modelled on has the strategy its converbs show. -/
 theorem korean_consistent :
     ∀ ct, Models ct .separative →
       ∀ c : Korean.Converb, ct.strategy = strategy c.verbForm := by
   decide
 
+/-- Turkish likewise has a separative comparative and deranked chains. -/
 theorem turkish_consistent :
     ∀ ct, Models ct .separative →
       ∀ c : Turkish.Converb, ct.strategy = strategy c.verbForm := by

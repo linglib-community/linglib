@@ -80,6 +80,9 @@ instance (x : TreePath × TreePath) : Decidable (CompToSpec hd t x) :=
 
 variable {hd t}
 
+/-- A link that moves the complement of a phase head, landing outside it, moves it to a
+specifier of the head's phrase or leaves the complement after the phase is complete: with the
+PIC, Abels's anti-locality leaves the complement of a phase head no way out. -/
 theorem compToSpec_or_mem_sealed {tok : LexicalItem.Token} {x : TreePath × TreePath}
     {h : TreePath} (hh : h ∈ t.val.validPaths) (h0 : h ≠ ⊥) (hhead : IsHeadPosition t h)
     (hx : x ∈ links hd t tok) (hr : projectionAt hd t x.2 = complement h)

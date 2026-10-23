@@ -166,6 +166,10 @@ theorem isLowerSet_of_ordConnected_empty {T : TeamProperty α}
     rw [Set.mem_Icc]; exact ⟨Finset.empty_subset b, hab⟩
   exact hConv.out hEmpty hb hmem
 
+/-- **Given the empty-team property, downward closure and convexity coincide**
+    ([anttila-2025]). For NE-bearing team properties — which break the
+    empty-team property — convexity is the invariant that survives where
+    downward closure does not. -/
 theorem isLowerSet_iff_ordConnected_of_empty {T : TeamProperty α}
     (hEmpty : ∅ ∈ T) : IsLowerSet T ↔ T.OrdConnected :=
   ⟨IsLowerSet.ordConnected, fun h => isLowerSet_of_ordConnected_empty h hEmpty⟩

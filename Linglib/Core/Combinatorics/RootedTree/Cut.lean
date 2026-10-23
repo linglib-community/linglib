@@ -295,6 +295,7 @@ private theorem cutListSummandsG_proj_perm (extract : RoseTree α → Option (Li
   | trans _ _ ih1 ih2 => exact ih1.trans ih2
 
 mutual
+/-- For an invariant policy, the projected cuts of a tree depend only on the unordered tree. -/
 theorem cutSummandsG_proj_perm (hExt : ExtractInvariant extract) :
     ∀ {t s : RoseTree α}, RoseTree.Perm t s →
       (cutSummandsG extract t).map projSummand = (cutSummandsG extract s).map projSummand
@@ -575,6 +576,8 @@ theorem CutChoice.card_add_numWhole_le_card_crown (hs : s ∈ forestCutChoicesG 
     · simp only [numWhole_cons, hy, ite_false, crown_cons, Multiset.card_add]
       omega
 
+/-- A choice of cuts with extraction cost `k` in `μ` keeps the measure of the forest, counting
+    `k` for each tree it extracts and each tree it takes whole as extracting itself. -/
 theorem CutChoice.HasExtractionCost.sum_map_add_mul_numWhole {μ : UnorderedTree α → ℕ} {k : ℕ}
     (hs : s ∈ forestCutChoicesG cuts F) (hc : s.HasExtractionCost μ k) :
     (F.map μ).sum + k * s.numWhole =
@@ -660,6 +663,7 @@ end CutChoice
 
 mutual
 
+/-- The empty cut is the unique cut with empty crown. -/
 theorem cutSummandsG_filter_empty :
     ∀ (T : RoseTree α),
       (cutSummandsG extract T).filter (fun p ↦ p.1.card = 0) =
@@ -746,6 +750,7 @@ private theorem forestCutsG_cutSummandsN_coe (ps : List (RoseTree α)) :
     rw [List.map_cons, ← Multiset.cons_coe, forestCutsG_cons, ih, treeCutsG_cutSummandsN_mk,
       cutListSummandsG_cons_proj]
 
+/-- The pruning cuts of a node choose, for each child, to cut it whole or to cut inside it. -/
 @[simp] theorem cutSummandsN_node (a : α) (F : Multiset (UnorderedTree α)) :
     cutSummandsN (UnorderedTree.node a F) =
       (forestCutsG cutSummandsN F).map fun pf ↦ (pf.1, UnorderedTree.node a pf.2) := by

@@ -104,6 +104,9 @@ end Premise
 
 variable {H : W → Set (Set W)} {A C : Set W}
 
+/-- A premise frame and the ordering frame it induces, on the worlds where some premise holds,
+evaluate every counterfactual alike. For an antecedent-world `j`, the premises that hold at `j`
+form a nonempty maximal consistent premise set exactly when `j` is a closest antecedent-world. -/
 theorem premiseImp_eq_orderingImp :
     premiseImp H A C = orderingImp (fun i ↦ ⋃₀ H i) (premiseOrder H) A C := by
   ext i
@@ -190,9 +193,11 @@ field. -/
 def neutralImp (S : W → Set W) (ord : W → Preorder W) (A C : Set W) : Set W :=
   {i | OrderingSemantics.IsNecessity (ord i) (S i ∩ A) C}
 
+/-- The neutral truth condition entails OF. -/
 theorem neutralImp_subset_orderingImp : neutralImp S ord A C ⊆ orderingImp S ord A C :=
   fun _ hi ↦ OrderingSemantics.IsNecessity.minimals_subset hi
 
+/-- Under the Limit Assumption OF entails the neutral truth condition. -/
 theorem orderingImp_subset_neutralImp {i : W}
     (hlim : ∀ B : Set W, (S i ∩ B).Nonempty → ((ord i).minimals (S i ∩ B)).Nonempty)
     (hi : i ∈ orderingImp S ord A C) : i ∈ neutralImp S ord A C := by
@@ -209,6 +214,8 @@ theorem neutralImp_univ_subset_variablyStrictImp :
   rcases A.eq_empty_or_nonempty with hA | hA
   exacts [.inl hA, .inr (hi'.isGoodPossibility hA)]
 
+/-- On a universal frame satisfying comparability the neutral truth condition is
+[lewis-1973]'s. -/
 theorem neutralImp_univ_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le) :
     neutralImp (fun _ ↦ Set.univ) ord A C = variablyStrictImp ord A C := by
   refine subset_antisymm neutralImp_univ_subset_variablyStrictImp fun i hi ↦ ?_

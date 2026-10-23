@@ -387,6 +387,7 @@ theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g
   have h1 : g₂ 0 = 1 := hmortal
   exact absurd (h0.symm.trans h1) (by decide)
 
+/-- The reconciliation `DRS.trueRel_iff_toRelAt` fails on the witness. -/
 theorem fn4_diverges (g : ℕ → Fin 2) :
     ¬ (DRS.trueRel fn4 g ↔ ∃ g', DRS.toRelAt ∅ fn4 g g') :=
   fun h ↦ fn4_not_toRelAt g (h.mp (fn4_trueRel g))

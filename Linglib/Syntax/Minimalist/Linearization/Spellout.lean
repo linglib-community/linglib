@@ -72,6 +72,7 @@ def pfYield : List LexicalItem.Token :=
 /-- The pronounced forms, left to right. -/
 def pfPhon : List String := (pfYield t).filterMap (·.item.phonForm?)
 
+/-- A token is pronounced once at most, however many mothers dominate it. -/
 theorem nodup_pfYield : (pfYield t).Nodup := by
   refine ((nodup_map_fst_positions _ t.val).of_map Prod.fst).filterMap fun x y tok hx hy ↦ ?_
   simp only [Option.mem_def, Option.ite_none_right_eq_some, Option.some.injEq] at hx hy

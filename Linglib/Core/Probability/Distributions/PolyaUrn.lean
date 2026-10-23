@@ -81,6 +81,7 @@ theorem polyaUrn_real_singleton {n : ℕ} (s : Fin n → α) :
     (polyaUrn θ n).real {s} = polyaUrnProb θ (countVec s) := by
   rw [measureReal_def, polyaUrn_singleton hθ, ENNReal.toReal_ofReal (polyaUrnProb_pos hθ _).le]
 
+/-- The sequence drawn from a Pólya urn is exchangeable ([pitman-2006] Exercise 2.2.2). -/
 theorem exchangeable_polyaUrn (n : ℕ) : Exchangeable (polyaUrn θ n) :=
   exchangeable_of_measure_singleton fun s σ ↦ by
     rw [polyaUrn_singleton hθ, polyaUrn_singleton hθ, countVec_comp_perm]

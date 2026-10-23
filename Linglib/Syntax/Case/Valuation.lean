@@ -151,6 +151,7 @@ theorem Extends.trans (h₁ : Extends p s t) (h₂ : Extends p t u) : Extends p 
 
 theorem Extends.length_eq (h : Extends p s t) : s.length = t.length := Forall₂.length_eq h
 
+/-- A value, once assigned, persists. -/
 theorem Extends.getElem?_of_some (h : Extends p s t) {i : ℕ} {x : α} {v : β}
     (hs : s[i]? = some (x, some v)) : t[i]? = some (x, some v) := by
   induction h generalizing i with
@@ -160,6 +161,7 @@ theorem Extends.getElem?_of_some (h : Extends p s t) {i : ℕ} {x : α} {v : β}
     | zero => obtain ⟨h₁, h₂ | ⟨hn, -⟩⟩ := hab <;> simp_all [Prod.ext_iff]
     | succ i => simpa using ih (by simpa using hs)
 
+/-- A value of the extending valuation was already assigned or satisfies `p`. -/
 theorem Extends.of_getElem? (h : Extends p s t) {i : ℕ} {x : α} {v : β}
     (ht : t[i]? = some (x, some v)) : s[i]? = some (x, some v) ∨ p v := by
   induction h generalizing i with
@@ -183,6 +185,7 @@ theorem Extends.map {γ : Type*} (f : α → γ) (h : Extends p s t) :
   simpa [Extends, forall₂_map_left_iff, forall₂_map_right_iff] using
     h.imp fun _ _ ⟨h₁, h₂⟩ ↦ ⟨congrArg f h₁, h₂⟩
 
+/-- A sequence of steps each extending by `p` extends by `p`. -/
 theorem Extends.foldl {γ : Type*} {F : γ → Valuation α β → Valuation α β} :
     ∀ (l : List γ), (∀ c ∈ l, ∀ s, Extends p s (F c s)) →
       ∀ s : Valuation α β, Extends p s (l.foldl (fun s c ↦ F c s) s)
@@ -196,6 +199,7 @@ theorem extends_fillFrom {f : ℕ → α → Option β} (hf : ∀ i x v, f i x =
   | i, (x, none) :: s => .cons ⟨rfl, .inr ⟨rfl, fun v hv ↦ hf i x v hv⟩⟩ (extends_fillFrom hf _ s)
   | _, (_, some _) :: s => .cons ⟨rfl, .inl rfl⟩ (extends_fillFrom hf _ s)
 
+/-- Filling the unvalued nominals extends the valuation by the values proposed. -/
 theorem extends_fill {f : ℕ → α → Option β} (hf : ∀ i x v, f i x = some v → p v)
     (s : Valuation α β) : Extends p s (fill f s) :=
   extends_fillFrom hf 0 s

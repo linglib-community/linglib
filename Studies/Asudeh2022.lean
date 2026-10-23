@@ -236,6 +236,7 @@ theorem Term.HypLinear.rename (hf : ∀ n B, Γ[n]? = some B → Γ'[f n]? = som
     · have := lt_length_of_rename hf hx; omega
     · omega
 
+/-- Reordering the premises of a linear proof leaves it linear, so commutativity holds. -/
 theorem Term.Linear.rename_perm {T : GlueTy α} {t : Term Γ T} (ht : t.Linear)
     (σ : Equiv.Perm ℕ) (hσ : ∀ n, Γ.length ≤ n → σ n = n) (hlen : Γ'.length = Γ.length)
     (hf : ∀ n B, Γ[n]? = some B → Γ'[σ n]? = some B) : (t.rename σ hf).Linear := by
@@ -287,6 +288,7 @@ theorem getElem?_append_left_of_eq_some {A : GlueTy α} {n : ℕ} {B : GlueTy α
 def Term.weaken {T : GlueTy α} (A : GlueTy α) (t : Term Γ T) : Term (Γ ++ [A]) T :=
   t.rename id fun _ _ ↦ getElem?_append_left_of_eq_some
 
+/-- A weakened proof is never linear, since its added premise is left over. -/
 theorem Term.not_linear_weaken {T : GlueTy α} (A : GlueTy α) (t : Term Γ T) :
     ¬ (t.weaken A).Linear := by
   intro h
@@ -318,6 +320,8 @@ private theorem count_map_contract (m : ℕ) : ∀ l : List ℕ,
     simp only [List.map_cons, List.count_cons, count_map_contract m l, liftPos, beq_iff_eq]
     split_ifs <;> omega
 
+/-- Contracting a linear proof never yields a linear one, since the merged premise is used
+    twice. -/
 theorem Term.Linear.not_linear_contract {A T : GlueTy α} {t : Term (Γ ++ [A, A]) T}
     (ht : t.Linear) : ¬ t.contract.Linear := by
   intro h
@@ -383,6 +387,8 @@ theorem Term.count_eq_sum (x : α) {T : GlueTy α} (t : Term Γ T) (ht : t.HypLi
     simp only [uses, GlueTy.count, h]
     push_cast; ring
 
+/-- The conclusion of a linear proof has the total count of its premises, which is count
+    invariance. -/
 theorem Term.Linear.count_eq (x : α) {T : GlueTy α} {t : Term Γ T} (ht : t.Linear) :
     T.count x = (Γ.map (GlueTy.count x)).sum := by
   rw [t.count_eq_sum x ht.2]
@@ -407,6 +413,7 @@ theorem Term.Linear.count_eq (x : α) {T : GlueTy α} {t : Term Γ T} (ht : t.Li
   refine List.ext_getElem (by simp) fun i _ h ↦ ?_
   simp [countAt, List.getElem?_eq_getElem (by simpa using h : i < Γ.length)]
 
+/-- A formula derivable from a multiset has the multiset's total count of every atom. -/
 theorem Derivable.count_eq {M : Multiset (GlueTy α)} {C : GlueTy α} (h : Derivable M C)
     (x : α) : C.count x = (M.map (GlueTy.count x)).sum := by
   obtain ⟨Γ, rfl, t, ht⟩ := h
@@ -746,6 +753,7 @@ def Linking.equivLabel (L : S.Linking) (x : α) :
   left_inv v := by simp
   right_inv v := by simp
 
+/-- A sequent with a linking has a conclusion with its premises' total count of every atom. -/
 theorem Linking.count_eq {Γ : List (GlueTy α)} {C : GlueTy α} (L : (Sequent.of Γ C).Linking)
     (x : α) : C.count x = (Γ.map (GlueTy.count x)).sum := by
   have h := Fintype.card_congr (L.equivLabel x)
@@ -849,6 +857,7 @@ def finnish : List (List (GlueTy Label)) :=
 def english : List (List (GlueTy Label)) :=
   [[atom Label.p], [atom Label.w ⊸ atom Label.p ⊸ atom Label.d], [atom Label.w]]
 
+/-- Two words and three words instantiate the same premises. -/
 theorem finnish_english : finnish.flatten = english.flatten ∧ finnish.length ≠ english.length :=
   by decide
 
@@ -884,6 +893,8 @@ theorem surface_linear : surface.Linear := by decide
 
 theorem inverse_linear : inverse.Linear := by decide
 
+/-- *Everybody loves somebody* has exactly two correct proof nets, the two normal-form proofs
+    the paper finds for it. -/
 theorem card_correct_loves :
     Fintype.card {L : (Sequent.of everybodyLovesSomebody.flatten (atom Label.l)).Linking //
       L.Correct} = 2 := by
@@ -914,11 +925,13 @@ def scopeEnv {E : Type} (person : E → Prop) (love : E → E → Prop) :
     Env (fun x ↦ Montague.Ty.Domain E Unit x.ty) everybodyLovesSomebody.flatten :=
   .cons (every person) (.cons love (.cons (GQ.some person) .nil))
 
+/-- The surface proof means the surface-scope reading, every person loving some person. -/
 theorem surface_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     surface.eval (scopeEnv person love) =
       surfaceScope every GQ.some person person fun x y ↦ love y x :=
   rfl
 
+/-- The inverse proof means the inverse-scope reading, some person loved by every person. -/
 theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) :
     inverse.eval (scopeEnv person love) =
       inverseScope every GQ.some person person fun x y ↦ love y x :=
@@ -926,6 +939,8 @@ theorem inverse_eval {E : Type} (person : E → Prop) (love : E → E → Prop) 
 
 open HeimKratzer1998.Toy (person sees) in
 open PhraseStructure.Tree (interp) in
+/-- One set of premises yields, by its two proofs, what Heim and Kratzer's engine computes from
+    their two Quantifier Raising trees. -/
 theorem interp_qr_eq_eval :
     interp HeimKratzer1998.lex HeimKratzer1998.g₀ HeimKratzer1998.tree_surface =
         some ⟨.t, surface.eval (scopeEnv person sees)⟩ ∧
@@ -1106,6 +1121,8 @@ theorem derivable_of_complete_coherent {s : Spine} (hv : 1 ≤ s.verbs)
   refine ⟨_, ?_, build n n 0 (by omega), build_linear n n 0 _⟩
   simp [premises, subjOfVerb]
 
+/-- The meaning constructors of a spine have a linear proof of its clause exactly when the
+    spine is complete and coherent. -/
 theorem derivable_iff_complete_coherent (s : Spine) (hv : 1 ≤ s.verbs) :
     Derivable (premises s) (atom (.clause 0)) ↔ s.Complete ∧ s.Coherent :=
   ⟨complete_coherent_of_derivable hv, derivable_of_complete_coherent hv⟩

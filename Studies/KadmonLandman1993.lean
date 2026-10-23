@@ -84,11 +84,17 @@ def Strengthening {World Entity : Type*} (C : Set World → Set World) (D D' : S
     (P : Entity → Set World) : Prop :=
   C (existsInDomain D' P) ⊆ C (existsInDomain D P)
 
+/-- In a DE (antitone) context, strengthening is automatic. K&L note that for many examples this
+makes the same predictions as [ladusaw-1979], while explaining *why* DE contexts license, since
+widening must strengthen and DE reverses entailment. -/
 theorem de_satisfies_strengthening {World Entity : Type*} {C : Set World → Set World}
     (hDE : Antitone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : Strengthening C D D' P :=
   hDE (existsInDomain_mono P hD)
 
+/-- In a UE (monotone) context, widening *weakens* — the opposite of
+strengthening. This is K&L's explanation for why *any* is out in plain
+positive contexts. -/
 theorem ue_widening_weakens {World Entity : Type*} {C : Set World → Set World}
     (hUE : Monotone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : C (existsInDomain D P) ⊆ C (existsInDomain D' P) :=
@@ -102,6 +108,8 @@ so this file's classification cannot drift from the semantics. K&L's classificat
 explain adversative predicates (DE on a constant perspective) and conditionals with implicit
 restrictions. -/
 
+/-- Ladusaw-DE contexts are K&L strengthening contexts; Ladusaw describes *where* NPIs occur, and
+K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (L : PolarityItem.Licenser)
     (hDE : IsDownwardEntailing L) : L.mechanism = .strengthening := by
   unfold IsDownwardEntailing at hDE
@@ -132,6 +140,8 @@ theorem strengthening_sorryThat {Entity : Type*} {D D' : Set Entity} (P : Entity
 
 end Adversatives
 
+/-- *Glad* fails the strengthening condition, so it does not license *any*. The best world bought
+the `false` car, so one is glad that some car was bought but not that the `true` car was. -/
 theorem not_strengthening_wants :
     ¬ Strengthening (wants fun _ : Bool ↦ {false}) {true} .univ fun x ↦ {x} := by
   intro h
@@ -378,6 +388,8 @@ def genericSubTrue {Property Entity : Type*} (X : VagueRestriction Property)
     (apply : Property → Set Entity) (R : Set Entity) (scope : Entity → Prop) : Prop :=
   ∃ v ∈ X.precisifications, genericTrue apply R scope v
 
+/-- Domain vagueness yields two precisifications with different domains —
+the room generics need for legitimate exceptions. -/
 theorem domain_vague_allows_exceptions {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
     (hVague : isDomainVague X apply) :
@@ -418,6 +430,9 @@ theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
   rw [SignType.supervaluation_eq_one_iff]
   simp only [genericSuperTrue, ← hV, Finset.mem_coe]
 
+/-- K&L's exception-tolerance zone is Fine's borderline zone. A generic that is
+subvaluationistically but not supervaluationistically true is exactly one whose supervaluation
+status is indefinite, assertable for K&L and borderline for [fine-1975]. -/
 theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]
@@ -463,6 +478,8 @@ def AlmostRow.ofDatum (e : Datum) : Option AlmostRow := do
 /-- The *almost* data of Sections 4.1.1 and 4.3. -/
 def almostRows : List AlmostRow := Examples.all.filterMap AlmostRow.ofDatum
 
+/-- *Almost* modifies a domain-precise true universal or a dimensionally universal noun phrase,
+such as *every owl*, *no owl* and *any owl*, but not *some owl* nor generic *an owl*. -/
 theorem almost_rows :
     ∀ r ∈ almostRows, r.ok = true ↔ (r.universal = true ∧ r.precision = .precise) ∨
       r.dimUniversal = true := by
@@ -508,6 +525,10 @@ def Row.ofDatum (e : Datum) : Option Row :=
 /-- The licensing data of Sections 1 to 3. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- On the paper's own data, *any* is grammatical exactly when its context licenses it, as a
+downward-entailing or a generic context, or the local signature is downward entailing, so widening
+strengthens, or it is read as settling for less under *glad*, or as a metalinguistic denial under a
+negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
       (∃ c ∈ r.context, c.licenser.Licenses English.PolarityItems.any) ∨

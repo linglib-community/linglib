@@ -370,12 +370,14 @@ end Lighthouse
 
 /-! ### Neither relation implies the other -/
 
+/-- Causal sufficiency does not imply causal necessity, by the bus scenario. -/
 theorem not_forall_causallySufficient_imp_causallyNecessary :
     ¬ ∀ (U V : Type) [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
       (s : V → Flat Bool) (c : V) (x : Bool) (e : V) (y : Bool),
       M.CausallySufficient s c x e y → M.CausallyNecessary (· ≤ ·) s c x e y :=
   fun h ↦ Bus.not_cause ⟨h _ _ _ _ _ _ _ _ Bus.make.1, Bus.make.2, by decide⟩
 
+/-- Causal necessity does not imply causal sufficiency, by the fire scenario. -/
 theorem not_forall_causallyNecessary_imp_causallySufficient :
     ¬ ∀ (U V : Type) [DecidableEq V] (M : CausalModel U V fun _ ↦ Bool) [M.IsAcyclic]
       (s : V → Flat Bool) (c : V) (x : Bool) (e : V) (y : Bool),

@@ -106,6 +106,7 @@ variable {P} {B : Set W}
 theorem Consistent.mono {H : Set W} (hC : P.Consistent B) (h : B ⊆ H) : P.Consistent H :=
   fun X hX hXH ↦ hC X hX (Set.subset_eq_empty (Set.inter_subset_inter_left _ h) hXH)
 
+/-- Consistency entails realism, by the singleton subfamilies and irreflexivity. -/
 theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := by
   intro p hp hpB
   obtain ⟨_, rfl, _, rfl, hqr⟩ := hC {p} (Set.singleton_subset_iff.2 hp)
@@ -236,6 +237,7 @@ theorem Want.wantSufficient (h : Want P a φ w) : WantSufficient P a φ w := ⟨
 
 theorem Want.wantNecessary (h : Want P a φ w) : WantNecessary P a φ w := ⟨φ, h, subset_rfl⟩
 
+/-- Over a consistent background a proposition and its negation are not both wanted. -/
 theorem Want.not_compl {B : Set W} (hC : (P a w).Consistent B) (h : Want P a φ w) :
     ¬ Want P a φᶜ w := fun hn ↦
   (hC.inter_inter_nonempty_of_mem_maxElts h hn).ne_empty <| by

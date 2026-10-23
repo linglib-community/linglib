@@ -386,6 +386,10 @@ theorem size_overmodification_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1)
     Real.log_lt_log_iff h h', ← one_lt_div h, gain_bigRed hs0 hc0 hc1.le,
     one_lt_gain_iff one_pos hc1 hs0 hs1]
 
+/-- The odds of the redundant *small blue* against *small* for the small blue pin exceed the odds
+of the redundant *big red* against *red* for the big red pin exactly when size is noisier than
+colour, at every positive rationality and when the two redundant adjectives cost the same. This is
+the paper's asymmetry, more redundant use of colour than of size. -/
 theorem overmodification_odds_lt_iff (hα : 0 < α) (hs0 : 0 < xs) (hs1 : xs ≤ 1) (hc0 : 0 < xc)
     (hc1 : xc ≤ 1) (hC : C .smallBlue - C .small = C .bigRed - C .red) :
     (S1 α C (meaning xs xc) .bigRed).real {.bigRed} /
@@ -416,6 +420,8 @@ theorem smallBlue_distinguishes_iff (hc : 0 < xc) :
   · rintro ⟨h1, h2⟩
     exact ⟨by nlinarith, by nlinarith⟩
 
+/-- With Boolean values the redundant modifier adds nothing, since *small* and *small blue* both
+identify the small blue pin with certainty and are produced alike. -/
 theorem boolean_no_preference (α : ℝ) :
     (S1 α 0 (meaning 1 1) .smallBlue).real {.small} =
       (S1 α 0 (meaning 1 1) .smallBlue).real {.smallBlue} := by

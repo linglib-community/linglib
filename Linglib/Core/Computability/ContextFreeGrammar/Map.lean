@@ -187,6 +187,7 @@ theorem Derives.of_applyHom {l : List (Symbol T G.NT)} {t' : List (Symbol T' G.N
     obtain ⟨t', hp, ht'⟩ := step.of_applyHom
     exact ⟨t', hd.trans_produces hp, ht'⟩
 
+/-- The image grammar generates the image language. -/
 theorem applyHom_language (G : ContextFreeGrammar T) :
     (G.applyHom h).language = Language.stringMap h G.language := by
   ext w'
@@ -201,6 +202,7 @@ theorem applyHom_language (G : ContextFreeGrammar T) :
 
 end ContextFreeGrammar
 
+/-- Context-free languages are closed under string homomorphisms. -/
 theorem Language.IsContextFree.stringMap (f : T → List T') {L : Language T}
     (hL : L.IsContextFree) : (Language.stringMap f L).IsContextFree :=
   let ⟨G, hG⟩ := hL

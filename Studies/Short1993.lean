@@ -78,6 +78,8 @@ theorem h_ch : Finset.univ.filter (fun ft ↦ h ft ≠ ch ft) =
 theorem image_secondPalatalization : palatalizing.image secondPalatalization = {c, z, š} := by
   decide +kernel
 
+/-- The reflex of a palatalizing segment is a phoneme, a coronal strident that is not dorsal,
+and has its voicing. -/
 theorem secondPalatalization_mem : ∀ x ∈ palatalizing,
     secondPalatalization x ∈ inventory ∧ (secondPalatalization x).HasValue .coronal true ∧
       (secondPalatalization x).HasValue .strident true ∧

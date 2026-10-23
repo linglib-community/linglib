@@ -84,6 +84,7 @@ theorem exists_pow_eq_pow_of_finite (x : M) :
       (f := fun n : ℕ ↦ x ^ n) (fun _ ↦ Set.mem_univ _)
   exact ⟨i, j, hij, h_eq⟩
 
+/-- In a finite monoid every element has an idempotent positive power. -/
 theorem exists_pos_pow_isIdempotent (x : M) :
     ∃ n > 0, IsIdempotentElem (x ^ n) := by
   obtain ⟨i, j, hij, h_eq⟩ := exists_pow_eq_pow_of_finite x
@@ -134,11 +135,14 @@ private theorem exists_pos_pow_isIdempotentElem_coe (x : S) :
   obtain ⟨e, he⟩ := WithOne.exists_coe_pow x n hn
   exact ⟨n, e, hn, he, WithOne.isIdempotentElem_coe.1 (he ▸ hidem)⟩
 
+/-- A finite nonempty semigroup contains an idempotent. -/
 theorem exists_isIdempotentElem [Nonempty S] : ∃ e : S, IsIdempotentElem e :=
   have ⟨x⟩ := ‹Nonempty S›
   have ⟨_, e, _, _, he⟩ := exists_pos_pow_isIdempotentElem_coe x
   ⟨e, he⟩
 
+/-- A surjective homomorphism of finite semigroups lifts every idempotent to an idempotent, since
+an idempotent power of a preimage is still sent to it. -/
 theorem exists_isIdempotentElem_map_eq {f : S →ₙ* T} (hf : Function.Surjective f) {e' : T}
     (he' : IsIdempotentElem e') : ∃ e : S, IsIdempotentElem e ∧ f e = e' := by
   obtain ⟨x, rfl⟩ := hf e'
@@ -162,6 +166,9 @@ theorem exists_isIdempotentElem_mul_eq {p u : S} (h : p * u = p) :
     | succ k ih => rw [pow_succ, ← mul_assoc, ih, ← WithOne.coe_mul, h]
   rw [WithOne.coe_mul, ← hu, hpow]
 
+/-- Let `p` be a sequence in a finite nonempty semigroup `S` in which each of the first `|S|` terms
+is a right multiple of the previous one. Then one of these terms is fixed on the right by an
+idempotent. -/
 theorem exists_lt_card_isIdempotentElem_mul_eq [Nonempty S] {p : ℕ → S}
     (hp : ∀ k, k + 1 < Nat.card S → ∃ s, p (k + 1) = p k * s) :
     ∃ i < Nat.card S, ∃ e, IsIdempotentElem e ∧ p i * e = p i := by
@@ -205,6 +212,7 @@ theorem exists_le_length_map_eq {u : FreeSemigroup α} (hu : IsIdempotentElem (f
     have : 0 < u.length := Nat.succ_pos _
     rw [length_mul]; omega
 
+/-- A word of length at least `|S|` is sent into `S e S` for an idempotent `e`. -/
 theorem exists_isIdempotentElem_map_eq_mul_mul [Finite S] {w : FreeSemigroup α}
     (hw : Nat.card S ≤ w.length) : ∃ x e y, IsIdempotentElem e ∧ f w = x * e * y := by
   obtain ⟨a, t⟩ := w

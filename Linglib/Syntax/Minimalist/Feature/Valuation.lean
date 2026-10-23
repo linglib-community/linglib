@@ -42,6 +42,8 @@ theorem le_of_valueAt_eq_coe (h : b.valueAt t v = ↑b') : b ≤ b' := by
   obtain ⟨s, hs, rfl⟩ := WithTop.map_eq_some_iff.1 h
   exact le_update_self_iff.2 (FeatureSlot.le_of_valueWith_eq_coe hs)
 
+/-- Where the bundle bears the dimension, valuation is unification with the bundle carrying only
+the value: Agree adds the goal's value to the probe as unification does, failing on a clash. -/
 theorem valueAt_eq_unify (hb : b t ≠ .absent) :
     b.valueAt t v = PartialUnify.unify b (single t v) := by
   cases h : (b t).valueWith v with
@@ -64,6 +66,8 @@ theorem valueAt_eq_unify (hb : b t ≠ .absent) :
       · simpa using hl.2 (mem_upperBounds_pair.2 ⟨hbw u, by simpa using hsw u⟩)
       · simpa [hu] using hbw u
 
+/-- On a borne agreement dimension, valuation restricts to flat unification of the bundle's
+agreement content with the value: the checking layer adds exactly the absence guard. -/
 theorem map_agreement_valueAt {d : Agreement.Dimension} {v : d.Value} {b : FeatureBundle}
     (hb : b (.agr d) ≠ .absent) :
     (b.valueAt (.agr d) v).map agreement = PartialUnify.unify b.agreement (.set d v ⊥) := by

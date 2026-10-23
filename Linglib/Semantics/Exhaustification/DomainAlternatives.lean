@@ -147,6 +147,8 @@ theorem exhIE_singletons_eq (h : RealizesWitnessSets R D Q) :
   rw [mem_exhIE_iff_subset_sUnion, sUnion_minimal_singletons h]
   exact ⟨And.left, fun hw ↦ ⟨hw, fun a ha ↦ ha.1⟩⟩
 
+/-- Against the possibility of each member, innocent exclusion and inclusion strengthens the
+possibility of the claim exactly to free choice, without pre-exhaustification. -/
 theorem exhIEII_singletons_eq_freeChoice (h : RealizesWitnessSets R D Q) (hD : D.Nonempty) :
     exhIEII ((fun x ↦ {v | ◇[R] (Q · x) v}) '' ↑D) {v | ◇[R] (claim Q D) v} =
       {w | FreeChoice R w D Q} := by
@@ -199,6 +201,8 @@ of the domain. -/
 def AntiExhaustivity (S : Finset E) : Prop :=
   ◇[R] (claim Q S) w → ◇[R] (claim Q (D \ S)) w
 
+/-- For a singleton, anti-exhaustivity negates the possibility of its member exhaustified against
+the possibility of each other member of the domain. -/
 theorem antiExhaustivity_singleton_iff {a : E} (ha : a ∈ D) :
     AntiExhaustivity R w D Q {a} ↔ ¬ exhAgainst (· ≠ ·) (fun x : D ↦ ◇[R] (Q · x) w) ⟨a, ha⟩ := by
   simp only [AntiExhaustivity, exhAgainst, claim, Diamond, Finset.mem_singleton, exists_eq_left,
@@ -338,6 +342,8 @@ theorem mem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     exact ⟨z, hzT, not_not.1 fun hz ↦
       hw (diamond_claim_iff.2 ⟨z, Finset.mem_sdiff.2 ⟨hP hT hzT, hz⟩, hzw⟩)⟩
 
+/-- Negating the innocent pre-exhaustification of a proper subdomain is its anti-exhaustivity,
+in a model realizing every set of witnesses. -/
 theorem notMem_exhIE_subdomain_iff (h : RealizesWitnessSets R D Q)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) :
     w ∉ exhIE ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))
@@ -353,6 +359,9 @@ theorem freeChoice_of_forall_notMem_exhIE (h : RealizesWitnessSets R D Q)
     FreeChoice R w D Q :=
   freeChoice_of_proper R w D Q hw fun S hS ↦ (notMem_exhIE_subdomain_iff h hS).1 (hs S hS)
 
+/-- Exhaustifying the possibility of a subdomain with two members against every subdomain
+alternative without innocent exclusion is contradictory, in a model realizing every set of
+witnesses. -/
 theorem exh_subdomain_eq_empty (h : RealizesWitnessSets R D Q)
     (hS₀ : S₀ ∈ subdomainAlternatives .proper D) (h2 : 1 < S₀.card) :
     exh ((fun S ↦ {v | ◇[R] (claim Q S) v}) '' ↑(subdomainAlternatives .proper D))

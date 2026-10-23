@@ -101,6 +101,9 @@ theorem elementarilyEquivalent_iff_forall_elementarilyEquivalentUpTo :
   ⟨fun h _ φ _ => h.realize_sentence φ,
     fun h => elementarilyEquivalent_iff.2 fun φ => h φ.qr φ le_rfl⟩
 
+/-- **The Ehrenfeucht–Fraïssé method.** If for every rank `n` some structure in `K` with
+property `P` is `n`-equivalent to one in `K` without it, then `P` is not definable within `K`,
+since a defining sentence would be fooled at its own quantifier rank. -/
 theorem not_foDefinable_of_elementarilyEquivalentUpTo {K P : Set (Bundled.{w} L.Structure)}
     (h : ∀ n, ∃ M ∈ K, ∃ N ∈ K, (M ≅[L, n] N) ∧ M ∈ P ∧ N ∉ P) : ¬ L.FODefinable K P := by
   rintro ⟨φ, hφ⟩
@@ -153,6 +156,9 @@ theorem antitone (v : Fin n → M) (w : Fin n → N) : Antitone (L.DuplicatorWin
 theorem mono (hkl : k ≤ l) (h : L.DuplicatorWins l v w) : L.DuplicatorWins k v w :=
   DuplicatorWins.antitone v w hkl h
 
+/-- Tuples from which duplicator wins `k` rounds satisfy the same formulas of quantifier rank
+`≤ k`. Atomic formulas agree by the atomic condition, and quantified ones by the *back* and
+*forth* moves. -/
 theorem realize_iff : ∀ {n} {φ : L.BoundedFormula Empty n} {k} {v : Fin n → M} {w : Fin n → N},
     L.DuplicatorWins k v w → φ.qr ≤ k → (φ.Realize default v ↔ φ.Realize default w)
   | _, .falsum, _, _, _, _, _ => Iff.rfl

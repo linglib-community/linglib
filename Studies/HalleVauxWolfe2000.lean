@@ -140,13 +140,17 @@ def node : Feature → Option Node
 
 /-! ### Articulator-free features and Place -/
 
+/-- The articulator-free features and the root features belong to the root's class alone, since no
+articulator node dominates them. -/
 theorem articulatorFree_mem_featureClass_iff :
     ∀ f ∈ ({.consonantal, .sonorant, .continuant, .strident, .lateral} : Finset Feature),
       ∀ a : Node, f ∈ featureClass node a ↔ a = ⊥ := by
   decide
 
+/-- Soft Palate is a sister of Place, not under it. -/
 theorem nasal_notMem_place : Feature.nasal ∉ featureClass node Node.place := by decide
 
+/-- Place dominates exactly the three oral articulators. -/
 theorem place_eq_union :
     featureClass node Node.place =
       featureClass node Node.lips ∪ featureClass node Node.tongueBlade ∪
@@ -178,10 +182,14 @@ variable (src tgt : Segment)
 `tgt`, the substrate's `Finset.piecewise` on the Place class. -/
 def placeAssimilation : Segment := (featureClass node Node.place).piecewise src tgt
 
+/-- Spreading Place carries the whole Tongue Body class, `eqOn_piecewise_of_le`; in the same way
+the Lips and Tongue Blade classes. -/
 theorem placeAssimilation_eqOn_tongueBody :
     Set.EqOn (placeAssimilation src tgt) src ↑(featureClass node Node.tongueBody) :=
   eqOn_piecewise_of_le src tgt (by decide)
 
+/-- Soft Palate is a sister of Place, so Place assimilation leaves [nasal] where it was and the
+assimilated nasal is still a nasal (`eqOn_piecewise_of_incompRel`). -/
 theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal :=
   eqOn_piecewise_of_incompRel (a := Node.place) (b := Node.softPalate) src tgt
     ⟨by decide, by decide⟩

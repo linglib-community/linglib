@@ -60,6 +60,8 @@ namespace Finset
 
 variable {α : Type u} {f : Finset α → Finset α} {u S : Finset α}
 
+/-- An inflationary operation on the subsets of a finite set reaches a fixed point after as many
+iterations as the set has elements. -/
 theorem isFixedPt_iterate_card (hf : ∀ T, T ⊆ f T) (hu : ∀ T ⊆ u, f T ⊆ u) (hS : S ⊆ u) :
     IsFixedPt f (f^[u.card] S) := by
   by_contra hfix
@@ -87,6 +89,8 @@ namespace Function
 
 variable {α : Type u} [Fintype α] {f : α → α} {a b : α}
 
+/-- On a finite type, a point of the forward orbit of `a` is reached within `card α` iterations,
+since a longer path repeats a point and can be shortened. -/
 theorem exists_lt_card_iterate_eq {n : ℕ} (h : f^[n] a = b) :
     ∃ m < Fintype.card α, f^[m] a = b := by
   induction n using Nat.strong_induction_on with
@@ -149,6 +153,8 @@ theorem mem_reach_iff (hs : ∀ x, step x ⊆ s) :
     rw [← hfix.eq]
     exact Finset.mem_union_right _ (Finset.mem_biUnion.2 ⟨_, ih, hcb⟩)
 
+/-- Along successors that lower a natural-number rank, the nodes reached from `a` are those
+reached by as many rounds of closure as its rank, with no bounding set. -/
 theorem mem_iterate_closeStep_iff {rank : α → ℕ} (hrank : ∀ x, ∀ y ∈ step x, rank y < rank x)
     {n : ℕ} (h : rank a ≤ n) :
     b ∈ (closeStep step)^[n] {a} ↔ ReflTransGen (fun x y ↦ y ∈ step x) a b := by
@@ -241,6 +247,8 @@ end Decidable
 
 /-! ### The closure of an acyclic relation as an order -/
 
+/-- Over a left-unique relation, positions reaching a common target are comparable, dually to
+`Relation.ReflTransGen.total_of_right_unique`. -/
 theorem total_of_left_unique {r : α → α → Prop} (U : Relator.LeftUnique r)
     {a b c : α} (ac : Relation.ReflTransGen r a c)
     (bc : Relation.ReflTransGen r b c) :
@@ -251,6 +259,8 @@ theorem total_of_left_unique {r : α → α → Prop} (U : Relator.LeftUnique r)
       (Relation.reflTransGen_swap.mpr bc)).symm.imp
     Relation.reflTransGen_swap.mp Relation.reflTransGen_swap.mp
 
+/-- On a finite carrier, if the relation is acyclic and every element other
+than `a` has a predecessor, then `a` reaches everything. -/
 theorem of_forall_exists [Finite α] {r : α → α → Prop}
     (hirr : ∀ v, ¬ Relation.TransGen r v v) {a : α}
     (h : ∀ v, v ≠ a → ∃ u, r u v) (v : α) : Relation.ReflTransGen r a v := by
@@ -265,6 +275,10 @@ theorem of_forall_exists [Finite α] {r : α → α → Prop}
 
 /-! ### Crossing a boundary -/
 
+/-- A reflexive-transitive path from inside `S` to outside it crosses the
+boundary at a single step, the source reaching the exit and the entry
+reaching the target. This is the `Relation.ReflTransGen` analogue of
+`SimpleGraph.Walk.exists_boundary_dart`. -/
 theorem exists_boundary {r : α → α → Prop} {S : Set α} {a b : α}
     (h : Relation.ReflTransGen r a b) (ha : a ∈ S) (hb : b ∉ S) :
     ∃ c d, r c d ∧ c ∈ S ∧ d ∉ S ∧
@@ -304,6 +318,8 @@ theorem transGen_iff_exists_iterate :
       obtain ⟨c, hc, hcb⟩ := Option.bind_eq_some_iff.1 h
       exact (ih hc).tail hcb
 
+/-- On a finite carrier, reachability along a partial function is reachability within
+`card (Option α)` iterations. -/
 theorem transGen_iff_mem_iterate [Fintype α] :
     TransGen (fun a b ↦ b ∈ f a) a b ↔
       some b ∈ List.iterate (·.bind f) (f a) (Fintype.card (Option α)) := by
@@ -321,12 +337,15 @@ end PartialFun
 
 end Relation
 
+/-- On a finite carrier, a relation whose transitive closure is irreflexive is well founded. -/
 theorem Finite.wellFounded_of_irrefl_transGen {α : Type*} [Finite α] {r : α → α → Prop}
     (h : ∀ a, ¬ Relation.TransGen r a a) : WellFounded r :=
   have : IsTrans α (Relation.TransGen r) := ⟨fun _ _ _ ↦ Relation.TransGen.trans⟩
   have : Std.Irrefl (Relation.TransGen r) := ⟨h⟩
   Subrelation.wf (fun h ↦ Relation.TransGen.single h) (Finite.wellFounded_of_trans_of_irrefl _)
 
+/-- On a finite carrier, when the transitive closure of a relation is irreflexive, a step along it
+strictly increases the number of predecessors, which is therefore a rank function. -/
 theorem Relation.TransGen.card_filter_lt_card_filter {α : Type*} [Fintype α]
     {r : α → α → Prop} [DecidableRel (Relation.TransGen r)] (h : ∀ a, ¬ Relation.TransGen r a a)
     {a b : α} (hab : Relation.TransGen r a b) :
@@ -377,6 +396,8 @@ def Relation.reachIn [DecidableEq α] (step : α → List α) : ℕ → α → �
   | 0, a, b => a == b
   | n + 1, a, b => a == b || (step a).any fun c ↦ reachIn step n c b
 
+/-- Along edges that decrease a natural-number rank, `b` is reachable from `a` exactly when it is
+reachable within `rank a` steps. -/
 theorem Relation.reflTransGen_iff_reachIn [DecidableEq α] {step : α → List α} {rank : α → ℕ}
     (hstep : ∀ a b, covers a b ↔ b ∈ step a) (hrank : ∀ a b, covers a b → rank b < rank a)
     {n : ℕ} {a b : α} (h : rank a ≤ n) :

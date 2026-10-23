@@ -187,6 +187,9 @@ end Deverbal
 
 /-! ### Roots inserted after syntax -/
 
+/-- **A Root need not be categorized.** Primary Merge pairs the null derivation with whichever item
+it selects first, and that item labels the result, so the derivation of *the books* builds a Root
+from its definite and plural features alone, labelled by the definite feature. -/
 theorem root_without_categorizer :
     ∃ o : DeBelderVanCraenenbroeck2015.Obj DeBelderVanCraenenbroeck2015.Feature,
       Relation.ReflTransGen DeBelderVanCraenenbroeck2015.Step (.init [{.definite}, {.plural}])

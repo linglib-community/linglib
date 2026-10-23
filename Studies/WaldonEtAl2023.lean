@@ -109,6 +109,7 @@ even prior and the threshold marginalized. -/
 noncomputable def prohibitionPosterior (m : ℝ) : ℝ≥0∞ :=
   2⁻¹ * meetsProb m / (2⁻¹ * meetsProb m + 2⁻¹ * (1 - meetsProb m))
 
+/-- The posterior is the measure. -/
 theorem prohibitionPosterior_eq {m : ℝ} (hm1 : m ≤ 1) :
     prohibitionPosterior m = ENNReal.ofReal m := by
   have h1 : meetsProb m ≤ 1 := by
@@ -151,6 +152,9 @@ theorem measure_bidirectional (hγ : γ < 1) {g : G} {o o' : O}
   · have := measure_explicit_sub_neutral N γ g o'
     nlinarith
 
+/-- No single shift of the standard of comparison is bidirectional. With one measure and two
+thresholds, an object included under the second but not the first and another included under
+the first but not the second cannot both exist. -/
 theorem not_threshold_shift (m : O → ℝ) (θ θ' : ℝ) (o o' : O) :
     ¬ ((m o < θ ∧ θ' ≤ m o) ∧ (θ ≤ m o' ∧ m o' < θ')) :=
   fun ⟨⟨h1, h2⟩, h3, h4⟩ ↦ by linarith

@@ -231,12 +231,15 @@ private theorem support_and_antiSupport_empty
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨Team.empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
   | poss ψ ih => exact ⟨Team.empty_mem_possWitness ih.1, Team.empty_mem_necImage ih.2⟩
 
+/-- Every MDL formula is supported on the empty team. -/
 theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     support M φ ∅ :=
   (support_and_antiSupport_empty φ M).1
 
 /-! ### Dep breaks union closure (the defining feature) -/
 
+/-- The dependence atom is not union-closed. When two worlds agree on `p` but not on `q`,
+    each of their singleton teams supports `=(p; q)` but the team of both does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     {M : KripkeModel W Atom} (hp : M.val p w₁ ↔ M.val p w₂) (hq : ¬ (M.val q w₁ ↔ M.val q w₂)) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := fun h ↦ by

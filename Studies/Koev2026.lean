@@ -134,10 +134,14 @@ theorem fitsModifierRowsPos_iff {s : PositiveStandard} :
 standard fixed in its lexicon. -/
 def weakBelieve : Verb := { English.Verbs.believe.toVerb with lexicalStandard := some .contextual }
 
+/-- The weak semantics gives *believe* the degree semantics of the fragment's *confident*
+([cariani-santorio-wellwood-2024]). -/
 theorem gradability_weakBelieve :
     weakBelieve.gradability? = English.Adjectives.confident.gradability? := by
   decide
 
+/-- Read off the scale, the judgments leave the weak semantics open: its scale fits them, and
+only Interpretive Economy, which does not admit its standard, excludes it. -/
 theorem weakBelieve_fitsModifierRows :
     ∃ γ ∈ weakBelieve.gradability?,
       FitsModifierRows γ.boundedness ∧ ¬ γ.boundedness.Admits γ.standard := by

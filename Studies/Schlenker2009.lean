@@ -213,6 +213,7 @@ theorem transparency_incremental_iff_admits (C : Set W) (F : Formula Atom) :
   · have : Nonempty Atom := ⟨o.2.1⟩
     exact (Formula.middleKleene_ne_zero_iff I F w).1 (h hw) o ho ((hdep o.1 w).1 hl)
 
+/-- Incremental satisfaction is admittance by the formula's context change potential (C.22). -/
 theorem satisfaction_incremental_iff_admits (C : Set W) (F : Formula Atom) :
     Satisfaction .incremental C (Formula.occurrences I F) ↔ (F.ccp I).Admits C :=
   (satisfaction_iff_transparency I _ C F).trans (transparency_incremental_iff_admits I C F)
@@ -915,6 +916,9 @@ theorem transparent_infinitelyMany_of_finite {P : Set (Unit × ℕ)}
   exact ⟨fun h ↦ h.mono fun _ hn ↦ hn.2,
     fun h ↦ (h.sdiff hP).mono fun _ hn ↦ ⟨by simpa using hn.2, hn.1⟩⟩
 
+/-- The scope of *infinitely many* has no local context. Leaving out any one individual is
+transparent, so a least transparent restriction would contain no individual, but the empty
+restriction is not transparent (C.23i). -/
 theorem not_exists_isLocalContext_infinitelyMany :
     ¬ ∃ x, IsLocalContext Set.univ {infinitelyMany} x := by
   rintro ⟨x, hx, hle⟩
@@ -924,6 +928,12 @@ theorem not_exists_isLocalContext_infinitelyMany :
   have := hx infinitelyMany rfl Set.univ () trivial
   simp [infinitelyMany, Set.infinite_univ] at this
 
+/-- With one world and two individuals, the first not `Q` and the second `Q` and `Q'`, the sentence
+`(No P. QQ')` is false however the first individual is resolved, so the trigger is transparent at
+its assertion and the sentence is Strong Kleene and supervaluation acceptable
+(`QuantifiedClause.strongKleeneAcceptable_trigger_iff`), but Transparency rejects it, since for a
+scope false of the second individual the first decides (Theorems 38b and 39b; the trigger is final,
+so the incremental and symmetric versions coincide). -/
 theorem transparentAt_not_transparent_no :
     TransparentAt {()} {scopeTruth NumberTree.no fun (_ : Unit) (_ : Fin 2) ↦ True}
         {p | p.2 = 1} Set.univ ∧

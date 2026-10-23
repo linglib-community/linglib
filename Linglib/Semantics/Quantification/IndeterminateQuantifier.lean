@@ -50,16 +50,19 @@ instance : Semantics.Denotes IndeterminateQuantifier (Set GQ.Family.{u}) where
 
 variable {q}
 
+/-- Under a disjunctive particle the reading is `Quantifier.GQ.some`. -/
 theorem reading_of_disjunctive (h : q.particle.role = .disjunctive) :
     q.reading = GQ.Family.some.{u} := by
   funext _ _ R S
   rw [reading, Coordinator.denote_of_disjunctive h, ← GQ.some_eq_sSup_image]; rfl
 
+/-- Under a conjunctive particle the reading is `every`. -/
 theorem reading_of_conjunctive (h : q.particle.role = .conjunctive) :
     q.reading = GQ.Family.every.{u} := by
   funext _ _ R S
   rw [reading, Coordinator.denote_of_conjunctive h, ← GQ.every_eq_sInf_image]; rfl
 
+/-- Under a negative particle the reading is `no`. -/
 theorem reading_of_negative (h : q.particle.role = .negative) :
     q.reading = GQ.Family.no.{u} := by
   funext _ _ R S

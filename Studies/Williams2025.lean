@@ -177,6 +177,10 @@ theorem not_needsMod_mod {f s : E} (hs : mod plan C w (τ f) s) (hlt : (τ s).fs
 
 /-! ### Against the Modalized Complement Analysis, §3.1 -/
 
+/-- [white-2014] modalizes the infinitive of the implicative *forget* and the gerund of the
+factive one alike, but the infinitive frame hosts the plain infinitive, which needs the modal,
+and the perfect infinitive, which like the gerund does not, so whether the modal heads a
+complement is not a matter of its frame. -/
 theorem mca_overgenerates {f : E} (h : P w e) (hf : (τ e).Precedes (τ f)) :
     (∀ fr ∈ English.Verbs.forget.valency.frames, White2014.Modalized fr) ∧
       (∃ fr ∈ English.Verbs.forget_rog.valency.frames, White2014.Modalized fr) ∧

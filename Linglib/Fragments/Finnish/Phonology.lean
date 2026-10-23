@@ -185,6 +185,7 @@ def vowels : Finset Segment := ⟨↑[a, o, u, ä, ö, y, e, i], by decide⟩
 /-- The consonants of the example forms, pairwise distinct. -/
 def consonants : Finset Segment := ⟨↑[p, t, k, d, s, n, v, l, j, m, h, r], by decide⟩
 
+/-- The vowels are those of PHOIBLE's Finnish inventory. -/
 theorem subset_fin : vowels ⊆ Inventories.Finnish.fin.featureMatrices.image vowel :=
   Inventory.subset_image_featureMatrices_iff.2 (by decide)
 
@@ -214,8 +215,10 @@ def IsNeutral (s : Segment) : Prop :=
 instance : DecidablePred IsBackVowel := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsNeutral := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
+/-- The neutral vowels are /e i/. -/
 theorem isNeutral_iff : ∀ x ∈ vowels, IsNeutral x ↔ x = e ∨ x = i := by decide
 
+/-- The back vowels are /ɑ o u/. -/
 theorem isBackVowel_iff : ∀ x ∈ vowels, IsBackVowel x ↔ x = a ∨ x = o ∨ x = u := by decide
 
 /-! ### The harmony system -/
@@ -237,9 +240,12 @@ def copyToV (f : Phonology.Feature) : System Segment :=
     (IsTarget := fun s ↦ s.IsVowel ∧ s.Unspecified .round)
     (IsTransparent := fun s ↦ ¬ s.IsVowel)
 
+/-- `V` is the only vowel without [round], so the vowels copying targets are `V` alone. -/
 theorem unspecified_round_iff : ∀ x ∈ vowels ∪ {A, O, V}, x.Unspecified .round ↔ x = V := by
   decide
 
+/-- Every consonant is [−syllabic], so it is off the tier of copying and harmony and matches
+the context `C`. -/
 theorem hasValue_syllabic_consonants : ∀ x ∈ consonants, x.HasValue .syllabic false := by
   decide
 
@@ -251,13 +257,19 @@ def vowelCopy (w : List Segment) : List Segment :=
 harmony fill the suffix vowels. -/
 def surface (w : List Segment) : List Segment := palatalHarmony.searchCopy.apply (vowelCopy w)
 
+/-- The natural class of the suffix vowel among the vowels is its two alternants. -/
 theorem naturalClass_A : A.naturalClass vowels = {a, ä} := by decide
 
+/-- The suffix vowel has no value for [back], so it is a target of harmony. -/
 theorem unspecified_back_A : A.Unspecified .back := by decide
 
+/-- The suffix vowel with [back] filled in is /ɑ/ or /æ/. -/
 theorem setFeature_back_A : A.setFeature .back true = a ∧ A.setFeature .back false = ä := by
   decide
 
+/-- A back stem vowel is the source of harmony, also across a following neutral vowel. A front
+harmonic vowel is the source of front harmony, and a stem of neutral vowels has no source,
+so that it takes the default. -/
 theorem sourceValue_back :
     palatalHarmony.searchCopy.sourceValue [a] = some true ∧
       palatalHarmony.searchCopy.sourceValue [a, i] = some true ∧
@@ -265,6 +277,9 @@ theorem sourceValue_back :
       palatalHarmony.searchCopy.sourceValue [e, i] = none := by
   decide
 
+/-- The suffix vowel is back after *talo* 'house', front after *kylä* 'village' and front by
+default after *tie* 'road', whose vowels are neutral. `V` copies the vowel before it, and
+after the suffix vowel it harmonizes with it, as in *talo-on* and *talo-na-an*. -/
 theorem surface_suffix :
     surface [t, a, l, o, s, s, A] = [t, a, l, o, s, s, a] ∧
       surface [k, y, l, ä, s, s, A] = [k, y, l, ä, s, s, ä] ∧
@@ -310,6 +325,8 @@ def quantitativeGradation : List Rule :=
 /-- Consonant gradation is the qualitative rules followed by the quantitative ones. -/
 def consonantGradation : List Rule := qualitativeGradation ++ quantitativeGradation
 
+/-- Karlsson's paradigm of *katto* 'roof'. The genitive, adessive and ablative endings close
+the syllable and the long stop shortens, and before the essive -na it does not. -/
 theorem katto :
     derive consonantGradation [k, a, t, t, o, n] = [k, a, t, o, n] ∧
       derive consonantGradation [k, a, t, t, o, l, l, a] = [k, a, t, o, l, l, a] ∧
@@ -317,11 +334,14 @@ theorem katto :
       derive consonantGradation [k, a, t, t, o, n, a] = [k, a, t, t, o, n, a] := by
   decide
 
+/-- Quantitative gradation in *kaappi* 'cupboard' and *kukka* 'flower'. -/
 theorem quantitative_gradation :
     derive consonantGradation [k, a, a, p, p, i, s, s, a] = [k, a, a, p, i, s, s, a] ∧
       derive consonantGradation [k, u, k, k, a, n] = [k, u, k, a, n] := by
   decide
 
+/-- Qualitative gradation in *tupa* 'hut', *katu* 'street', *lähte-* 'leave' and *tauko*
+'pause'. -/
 theorem qualitative_gradation :
     derive consonantGradation [t, u, p, a, s, s, a] = [t, u, v, a, s, s, a] ∧
       derive consonantGradation [k, a, t, u, l, l, a] = [k, a, d, u, l, l, a] ∧

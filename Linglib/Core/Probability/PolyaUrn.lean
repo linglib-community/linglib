@@ -137,6 +137,8 @@ theorem polyaUrnProb_zero : polyaUrnProb θ 0 = 1 := by
 theorem polyaUrnPredictive_zero (c : α) : polyaUrnPredictive θ 0 c = θ c / ∑ i, θ i := by
   simp [polyaUrnPredictive]
 
+/-- Drawing colour `c` multiplies the probability of the sequence by the probability of drawing
+`c`: the rising-factorial recursion `(a)_{m + 1} = (a)_m (a + m)` at `c` and at the total. -/
 theorem polyaUrnProb_update_succ [DecidableEq α] (x : α → ℕ) (c : α) :
     polyaUrnProb θ (Function.update x c (x c + 1)) =
       polyaUrnProb θ x * polyaUrnPredictive θ x c := by
@@ -153,6 +155,8 @@ theorem polyaUrnProb_update_succ [DecidableEq α] (x : α → ℕ) (c : α) :
   rw [polyaUrnProb, polyaUrnProb, polyaUrnPredictive, hsum, hprod, ascPochhammer_succ_eval,
     div_mul_div_comm, Nat.cast_sum]
 
+/-- Appending colour `c` to a sequence multiplies its probability by the probability of drawing
+`c`. -/
 theorem polyaUrnProb_countVec_snoc [DecidableEq α] (c : α) {n : ℕ} (s : Fin n → α) :
     polyaUrnProb θ (countVec (Fin.snoc s c : Fin (n + 1) → α)) =
       polyaUrnProb θ (countVec s) * polyaUrnPredictive θ (countVec s) c := by
@@ -163,6 +167,8 @@ theorem polyaUrnProb_countVec_cons [DecidableEq α] (c : α) {n : ℕ} (s : Fin 
       polyaUrnProb θ (countVec s) * polyaUrnPredictive θ (countVec s) c := by
   rw [countVec_cons, polyaUrnProb_update_succ]
 
+/-- **Conjugacy.** The probability of counts `x + y` is the probability of `x` times the
+probability of `y` under the urn whose weights are raised by `x`. -/
 theorem polyaUrnProb_add (x y : α → ℕ) :
     polyaUrnProb θ (x + y) = polyaUrnProb θ x * polyaUrnProb (θ + fun c ↦ (x c : ℝ)) y := by
   have hasc (a : ℝ) (m k : ℕ) : (ascPochhammer ℝ (m + k)).eval a =
@@ -172,6 +178,8 @@ theorem polyaUrnProb_add (x y : α → ℕ) :
   simp only [polyaUrnProb, Pi.add_apply, sum_add_distrib, hasc, prod_mul_distrib, Nat.cast_sum]
   rw [div_mul_div_comm]
 
+/-- **Conjugacy of the prediction rule.** After the counts `x`, the urn with weights `θ + x`
+predicts as the original urn does after the counts `x + y`. -/
 theorem polyaUrnPredictive_add (x y : α → ℕ) :
     polyaUrnPredictive (θ + fun c ↦ (x c : ℝ)) y = polyaUrnPredictive θ (x + y) := by
   funext c
@@ -208,6 +216,7 @@ theorem polyaUrnPredictive_lt_polyaUrnPredictive_iff (hθ : ∀ i, 0 < θ i) {x 
   have : Nonempty α := ⟨c⟩
   div_lt_div_iff_of_pos_right (sum_add_sum_pos hθ x)
 
+/-- The prediction rule is a probability on the colours. -/
 theorem sum_polyaUrnPredictive [Nonempty α] (hθ : ∀ i, 0 < θ i) (x : α → ℕ) :
     ∑ c, polyaUrnPredictive θ x c = 1 := by
   simp only [polyaUrnPredictive, ← sum_div, sum_add_distrib]

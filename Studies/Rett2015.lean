@@ -133,6 +133,8 @@ theorem exact_equative_iff_eq :
       a ∉ μ ⁻¹' (p • Comparison.gt).interval (μ b)) ↔ μ a = μ b := by
   cases p <;> simp [eq_iff_le_not_lt, and_comm]
 
+/-- The strengthened equatives of two antonyms, *exactly as tall as* and *exactly as short as*,
+are mutually entailing. -/
 theorem exact_equative_antonym_invariant :
     (a ∈ μ ⁻¹' (p • Comparison.ge).interval (μ b) ∧
         a ∉ μ ⁻¹' (p • Comparison.gt).interval (μ b)) ↔
@@ -144,6 +146,8 @@ theorem comparative_antonyms_exclusive (h : a ∈ μ ⁻¹' (p • Comparison.gt
     a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b) := by
   cases p <;> simpa using lt_asymm h
 
+/-- Wherever the antonyms could differ, `μ a ≠ μ b`, their comparatives are complementary, so no
+truth-conditionally equivalent unmarked alternative exists. -/
 theorem comparative_antonym_variant (h : μ a ≠ μ b) :
     a ∈ μ ⁻¹' (p • Comparison.gt).interval (μ b) ↔
       a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b) := by

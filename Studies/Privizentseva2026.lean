@@ -259,6 +259,7 @@ def Derivation.Fits (d : Derivation) (r : Row) : Prop :=
 instance (d : Derivation) (r : Row) : Decidable (d.Fits r) :=
   inferInstanceAs (Decidable (_ ↔ _))
 
+/-- The analysis predicts every structural connectivity judgment of chapter 4. -/
 theorem rows_predicted : ∀ r ∈ rows, (analysis r.headCase).Fits r := by
   decide
 
@@ -314,6 +315,8 @@ def inSituRows : List (HeadCase × Bool) := Examples.all.filterMap fun ex ↦ do
 
 example : inSituRows.length = 6 := by decide
 
+/-- A relative clause stays in the base position of its head exactly when its derivation does
+not force the head noun phrase out of it. -/
 theorem inSitu_rows : ∀ r ∈ inSituRows, r.2 = true ↔ ¬ (analysis r.1).ForcedExSitu := by
   decide
 
@@ -426,12 +429,18 @@ def raisingRelative : Minimalist.Derivation :=
   ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC,
     .extract headNoun, .extract konaRemnant, .remerge, .remerge, .em .left externalD]⟩
 
+/-- Selection before saturation licenses every stage of the raising relative, which obeys Freezing
+and ends with an empty stack and nothing pending: the noun's selector, pending since *kona*
+selected it, is checked once the noun merges back and selects the relative CP. -/
 theorem raisingRelative_licensed :
     raisingRelative.LicensedBy pendingHom ∧ raisingRelative.ObeysFreezing ∧
       ∃ c ∈ raisingRelative.replay? (head ∘ pendingHom), c.stack = [] ∧
         pendingHom c.current.toSyntacticObject = ⟨some (externalD, [], 0)⟩ := by
   decide
 
+/-- Triggered Merge accepts the derived relative but rejects its derivation: it fails exactly at
+the stages where the noun, still selecting, sits inside *kona*'s phrase, before it is copied out,
+which the derived object, holding only the noun's trace there, no longer shows. -/
 theorem triggeredMerge_rejects_raisingRelative :
     raisingRelative.LicensedAt SyntacticObject.selCheckHom raisingRelative.length ∧
       ∀ n ≤ raisingRelative.length,

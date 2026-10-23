@@ -75,6 +75,7 @@ def StatusSuffix.ofVerbForm : Mayan.VerbForm → StatusSuffix
   | .transitive => .tv
   | .agentFocus => .itv
 
+/-- A form takes the intransitive status suffix exactly when it lacks Set A. -/
 theorem StatusSuffix.ofVerbForm_eq_itv_iff (f : Mayan.VerbForm) :
     ofVerbForm f = .itv ↔ ¬ f.HasSetA := by
   decide +revert
@@ -120,6 +121,8 @@ def realize (agent : Person) : Mayan.ExtractionSite → Option (Finset (Reflex M
   | .adjunct .temporal => some ∅
   | .adjunct _ => none
 
+/-- The Agent Focus reflex appears exactly under the extraction of a third-person transitive
+subject. -/
 theorem agentFocus_mem_realize_iff (agent : Person) (s : Mayan.ExtractionSite) :
     (∃ m ∈ realize agent s, Reflex.morpheme .verb (suffixes .agentFocus) ∈ m) ↔
       s = .argument .A ∧ ¬ agent.IsSAP := by

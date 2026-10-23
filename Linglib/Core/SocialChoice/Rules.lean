@@ -240,6 +240,8 @@ theorem not_ordinalInvariant_utilitarian [Nontrivial α] {i j : ι} (hij : i ≠
 
 variable {v : Profile ι α K} {x y : α}
 
+/-- The Pareto rule ranks `x` weakly above `y` iff every utilitarian rule with positive weights
+does. -/
 theorem paretoRule_iff_forall_utilitarian :
     paretoRule v x y ↔ ∀ c : ι → K, (∀ i, 0 < c i) → utilitarian c v x y := by
   refine ⟨fun h c hc ↦ dotProduct_le_dotProduct_of_nonneg_left h fun i ↦ (hc i).le, fun h ↦ ?_⟩
@@ -284,6 +286,8 @@ variable [Fintype ι] [Nonempty ι] [LinearOrder K]
 def maximin : Rule ι α K := fun v x y ↦
   univ.inf' univ_nonempty (v y) ≤ univ.inf' univ_nonempty (v x)
 
+/-- The maximin rule needs only ordinal level comparability, since a common strictly increasing
+map moves every lowest value alike. -/
 theorem maximin_ordinalLevelInvariant : Invariant ordinalLevel (maximin : Rule ι α K) := by
   rintro f ⟨u, hu, hf⟩ v
   have key : ∀ z, univ.inf' univ_nonempty ((v.transform f) z) = u (univ.inf' univ_nonempty (v z)) :=

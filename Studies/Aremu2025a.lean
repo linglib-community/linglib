@@ -135,6 +135,7 @@ theorem exactlyTargets_reflexes (h : a.fronted = some m) :
 theorem reflexes_nonempty (h : a.fronted = some m) : a.reflexes.Nonempty :=
   ⟨.displacement (toDual m), by simp [reflexes, h]⟩
 
+/-- An answer anti-pied-pipes its focus exactly when what it fronts lies properly inside it. -/
 theorem antiPiedPipes_iff : AntiPiedPipes a.reflexes (toDual a.focus) ↔ ∃ m ∈ a.fronted,
     a.focus < m := by
   cases h : a.fronted with
@@ -156,6 +157,7 @@ def Licensed (a : Answer) : Prop :=
 
 instance : Decidable a.Licensed := inferInstanceAs (Decidable (_ ∧ _))
 
+/-- Only a focused clause is marked on a proper part. -/
 theorem focus_eq_clause_of_antiPiedPipes (h : a.Licensed)
     (hap : AntiPiedPipes a.reflexes (toDual a.focus)) : a.focus = clause := by
   obtain ⟨m, hm, hlt⟩ := antiPiedPipes_iff.1 hap
@@ -185,6 +187,8 @@ theorem not_licensed_subject_inSitu :
     ¬ ({ focus := subject, fronted := none } : Answer).Licensed := by
   decide
 
+/-- A focus in place has no reflex in any channel, as *Adé ra bàtà* 'Adé bought A SHOE' has
+neither particle nor prominence. -/
 theorem not_perceptible : ¬ Perceptible fun a : {a : Answer // a.Licensed} ↦ a.1.reflexes :=
   fun h ↦ Finset.not_nonempty_empty (h ⟨{ focus := object, fronted := none }, by decide⟩)
 
@@ -197,6 +201,8 @@ def relativePosition (m : TreePath) : Option Relativization.Position :=
   else if m = adjunct then some .oblique
   else none
 
+/-- A fronted subject is resumed and a fronted object or adjunct leaves a gap, as relativization
+with *tí* treats them, which Awobuluyi's grammar gives to the clause after *ni*. -/
 theorem relTi_realize_eq_vacated {p : Relativization.Position}
     (h : relativePosition m = some p) : Yoruba.relTi.realize p = {vacated m} := by
   unfold relativePosition at h
@@ -229,6 +235,8 @@ def Accepts (a : Answer) (r : Datum) : Prop :=
 instance (a : Answer) (r : Datum) : Decidable (Accepts a r) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-- Every row records an answer, which the model accepts exactly when the chapter judges the row
+felicitous. -/
 theorem judgedFelicitous_iff :
     ∀ r ∈ Examples.all, ∃ a ∈ Answer.ofRow? r, (Accepts a r ↔ r.JudgedFelicitous) := by
   decide

@@ -70,6 +70,7 @@ def leaves (t : RoseTree α) : Multiset α := t.leavesWithDepth.map Prod.fst
 
 /-! ### Cardinality -/
 
+/-- The projection has one element per leaf. -/
 theorem card_leavesWithDepth (t : RoseTree α) :
     Multiset.card t.leavesWithDepth = t.numLeaves := by
   induction t with
@@ -97,6 +98,7 @@ theorem card_leavesWithDepth (t : RoseTree α) :
 theorem card_leaves (t : RoseTree α) : Multiset.card t.leaves = t.numLeaves := by
   rw [leaves, Multiset.card_map, card_leavesWithDepth]
 
+/-- The leaf labels are the frontier with its order forgotten. -/
 theorem coe_leafList (t : RoseTree α) : (t.leafList : Multiset α) = t.leaves := by
   induction t with
   | node a cs ih =>
@@ -110,6 +112,7 @@ theorem coe_leafList (t : RoseTree α) : (t.leafList : Multiset α) = t.leaves :
         rw [List.map_cons, List.flatten_cons, ← Multiset.coe_add, ihd]
         simp
 
+/-- A leaf is a vertex. -/
 theorem numLeaves_le_numNodes (t : RoseTree α) : t.numLeaves ≤ t.numNodes := by
   induction t with
   | node a cs ih =>
@@ -119,6 +122,8 @@ theorem numLeaves_le_numNodes (t : RoseTree α) : t.numLeaves ≤ t.numNodes := 
 
 /-! ### `Perm` invariance -/
 
+/-- `leavesWithDepth` is `Perm`-invariant, since the fold algebra reads its arguments only
+through a nil test and a sum. -/
 theorem leavesWithDepth_perm {t s : RoseTree α} (h : Perm t s) :
     t.leavesWithDepth = s.leavesWithDepth := by
   refine fold_perm (fun v l₁ l₂ h' ↦ ?_) h
@@ -129,6 +134,7 @@ theorem leavesWithDepth_perm {t s : RoseTree α} (h : Perm t s) :
     | nil => exact absurd h'.eq_nil (by simp)
     | cons y ys => exact (h'.map (Multiset.map fun p : α × ℕ ↦ (p.1, p.2 + 1))).sum_eq
 
+/-- `leaves` is a `Perm`-invariant. -/
 theorem leaves_perm {t s : RoseTree α} (h : Perm t s) : t.leaves = s.leaves :=
   congrArg (Multiset.map Prod.fst) (leavesWithDepth_perm h)
 
@@ -176,6 +182,7 @@ theorem sum_map_countP_leaves_le_node (a : α) (cs : List (RoseTree α)) :
 theorem countP_leaves_le_numNodes (t : RoseTree α) : t.leaves.countP p ≤ t.numNodes :=
   (Multiset.countP_le_card _ _).trans ((card_leaves t).trans_le (numLeaves_le_numNodes t))
 
+/-- A root failing `p` is an uncounted vertex, so the count is strict. -/
 theorem countP_leaves_lt_numNodes_of_not {a : α} (cs : List (RoseTree α)) (h : ¬p a) :
     (leaves (node a cs)).countP p < numNodes (node a cs) := by
   rw [countP_leaves_node_of_not p cs h, numNodes_node]

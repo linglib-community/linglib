@@ -120,14 +120,18 @@ theorem two_le_cycle_of_cyclic_of_cyclic (hjk : j < k) (hki : k ≤ i) (hj : cyc
 
 /-! ### The root's domain -/
 
+/-- The root's domain is an initial segment. -/
 theorem RootLocal.of_le (h : s.RootLocal cyclic i) (hji : j ≤ i) : s.RootLocal cyclic j :=
   (cycle_mono hji).trans h
 
+/-- A cyclic head above a cyclic head is not local to the root, since category change closes the
+root's domain. -/
 theorem not_rootLocal_of_cyclic_of_cyclic (hji : j < i) (hj : cyclic s.heads[j])
     (hi : cyclic s.heads[i]) : ¬ s.RootLocal cyclic i :=
   fun h => absurd (two_le_cycle_of_cyclic_of_cyclic hji le_rfl hj hi)
     (by unfold RootLocal at h; omega)
 
+/-- A local cyclic head is the first one. -/
 theorem RootLocal.cyclic_first (h : s.RootLocal cyclic i) (hi : cyclic s.heads[i]) :
     ∀ j < i, ¬ cyclic s.heads[j] :=
   fun _ hji hj => not_rootLocal_of_cyclic_of_cyclic hji hj hi h
@@ -140,15 +144,20 @@ theorem coactive_self (i : Fin s.heads.length) : s.Coactive cyclic i i := by
 theorem coactive_of_cycle_eq (h : s.cycle cyclic i = s.cycle cyclic j) : s.Coactive cyclic i j := by
   unfold Coactive insertionCycle; omega
 
+/-- Nothing already in a cycle sees a later cyclic head, so there is no outward sensitivity to a
+further category head. -/
 theorem not_coactive_of_lt_of_cyclic (hij : i < j) (hi : 1 ≤ s.cycle cyclic i)
     (hj : cyclic s.heads[j]) : ¬ s.Coactive cyclic i j := by
   have := cycle_add_one_le_of_lt_of_cyclic hij hj
   unfold Coactive insertionCycle; omega
 
+/-- Two cyclic heads are never realized in one cycle, so category-defining heads do not fuse. -/
 theorem not_coactive_of_cyclic_of_cyclic (hij : i < j) (hi : cyclic s.heads[i])
     (hj : cyclic s.heads[j]) : ¬ s.Coactive cyclic i j :=
   not_coactive_of_lt_of_cyclic hij (one_le_cycle_of_cyclic hi) hj
 
+/-- Material two cycles down is inactive, the complement of an inner cyclic head being closed off
+once the next cyclic head is spelled out. -/
 theorem not_coactive_of_add_two_le (h : s.cycle cyclic j + 2 ≤ s.cycle cyclic i) :
     ¬ s.Coactive cyclic i j := by
   unfold Coactive insertionCycle; omega
@@ -208,6 +217,7 @@ theorem Sees.coactive (h : s.Sees cyclic null i j) : s.Coactive cyclic i j := h.
 
 theorem SeesRoot.rootLocal (h : s.SeesRoot cyclic null i) : s.RootLocal cyclic i := h.1
 
+/-- An intervening head that is not null at the interface blocks conditioning. -/
 theorem not_sees_of_not_null (hik : min i j < k) (hkj : k < max i j) (hk : ¬ null s.heads[k]) :
     ¬ s.Sees cyclic null i j :=
   fun h => hk (h.2 k hik hkj)
@@ -216,6 +226,8 @@ theorem not_seesRoot_of_not_null (hki : k < i) (hk : ¬ null s.heads[k]) :
     ¬ s.SeesRoot cyclic null i :=
   fun h => hk (h.2 k hki)
 
+/-- The interface domains agree wherever the two kinds of nullness agree between the heads, one
+cycle bounding both. -/
 theorem sees_congr {null' : H → Prop}
     (h : ∀ k, min i j < k → k < max i j → (null s.heads[k] ↔ null' s.heads[k])) :
     s.Sees cyclic null i j ↔ s.Sees cyclic null' i j :=

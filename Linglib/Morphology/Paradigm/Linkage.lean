@@ -193,6 +193,7 @@ theorem _root_.Morphology.Realization.IsInvariant.isInvariantAlong (h : ℓ.IsIn
     (p : Z → X) : ℓ.IsInvariantAlong p l :=
   fun _ _ z hz z' hz' ↦ congrArg p (h z hz z' hz')
 
+/-- Heteroclisis entails suppletion, since stems of two classes are two stems. -/
 theorem IsHeteroclite.isSuppletive (h : ℓ.IsHeteroclite cls l) : ℓ.IsSuppletive l :=
   let ⟨σ, σ', z, hz, z', hz', hne⟩ := h
   ⟨σ, σ', z, hz, z', hz', ne_of_apply_ne cls hne⟩
@@ -251,6 +252,8 @@ theorem realized_eq_image_corr [DecidableEq M] (l : L) (σ : S) :
     ℓ.realized rf l σ = (ℓ.corr l σ).image fun zτ ↦ (rf zτ.1 zτ.2, zτ.2) := by
   ext; simp
 
+/-- Equal correspondent sets force equal realizations, within a lexeme (the mechanism of
+syncretism) and across lexemes. -/
 theorem realized_eq_of_corr_eq {l₁ l₂ : L} {σ₁ σ₂ : S} (h : ℓ.corr l₁ σ₁ = ℓ.corr l₂ σ₂) :
     ℓ.realized rf l₁ σ₁ = ℓ.realized rf l₂ σ₂ := by
   classical
@@ -291,6 +294,8 @@ variable {ι f}
     (ofFun ι f).IsHeteroclite cls l ↔ ∃ σ σ', cls (f l σ) ≠ cls (f l σ') := by
   simp [IsHeteroclite]
 
+/-- Under an injective identification, the linkage of a stem choice is canonical exactly when
+each lexeme's stem is independent of the property set. -/
 theorem ofFun_isCanonical_iff (hι : Function.Injective ι) :
     (ofFun ι f).IsCanonical ι ↔ ∀ l σ σ', f l σ = f l σ' :=
   ⟨fun h l ↦ ofFun_isInvariantAlong_iff.mp (h.stemInvariant l), fun h ↦
@@ -325,6 +330,8 @@ abbrev ofRules (ι : S → M) (key : R → κ) (rules : L → List R) (root : L 
     Linkage L Z S M :=
   ofFun ι fun l σ ↦ Exponence.RuleSet.realizeMinimalD (rules l) key (fun _ ↦ root l) σ
 
+/-- With no language-specific rules, the linkage of rules is the canonical linkage of the
+roots. -/
 theorem ofRules_nil (ι : S → M) (key : R → κ) (st : L → Z) :
     ofRules ι key (fun _ ↦ ([] : List R)) st = canonical ι st :=
   rfl

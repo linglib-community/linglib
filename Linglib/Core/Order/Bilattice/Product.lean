@@ -250,13 +250,18 @@ instance : NegConfComm (L ⊙ L) := ⟨fun _ ↦ rfl⟩
 @[simp] theorem pro_conf (x : L ⊙ L) : (conf x).pro = x.conᶜ := rfl
 @[simp] theorem con_conf (x : L ⊙ L) : (conf x).con = x.proᶜ := rfl
 
+/-- The exact values are the pairs `⟨a, aᶜ⟩`. -/
 theorem isExact_iff (x : L ⊙ L) : IsExact x ↔ x.con = x.proᶜ :=
   ⟨fun h ↦ (congrArg con h.eq).symm,
     fun h ↦ ext (by simp [h, InvolutiveCompl.compl_compl]) h.symm⟩
 
+/-- A pair is consistent when its evidence against lies below the complement of its evidence
+for. -/
 theorem isConsistent_iff (x : L ⊙ L) : IsConsistent x ↔ x.con ≤ x.proᶜ :=
   ⟨And.right, fun h ↦ ⟨InvolutiveCompl.le_compl_comm.1 h, h⟩⟩
 
+/-- A pair is anticonsistent when the complement of its evidence for lies below its evidence
+against. -/
 theorem isAnticonsistent_iff (x : L ⊙ L) : IsAnticonsistent x ↔ x.proᶜ ≤ x.con :=
   ⟨And.right, fun h ↦ ⟨(InvolutiveCompl.compl_le_compl h).trans
     (InvolutiveCompl.compl_compl x.pro).le, h⟩⟩

@@ -83,6 +83,7 @@ theorem baselineSpeaker_real_singleton (r : E) (w : Word C S) :
     ENNReal.toReal_div]
   split_ifs <;> simp
 
+/-- The baseline speaker is the informative speaker's limit as the rationality goes to zero. -/
 theorem tendsto_speaker_baselineSpeaker (r : E) (w : Word C S) :
     Tendsto (fun α : ℝ ↦ (speaker M α r).real {w}) (𝓝[>] 0)
       (𝓝 ((baselineSpeaker M r).real {w})) := by
@@ -91,6 +92,7 @@ theorem tendsto_speaker_baselineSpeaker (r : E) (w : Word C S) :
   rwa [FrankGoodman2012.filter_mem_denote, Finset.card_pair (by simp), Nat.cast_ofNat,
     ← baselineSpeaker_real_singleton] at h
 
+/-- Among the objects a word is true of, the baseline listener follows the prior. -/
 theorem baselineListener_real_singleton_lt_iff (P : Measure E) [IsFiniteMeasure P]
     (h : r ∈ ⟦w⟧ᴹ) (h' : r' ∈ ⟦w⟧ᴹ) :
     (baselineListener M P w).real {r'} < (baselineListener M P w).real {r} ↔
@@ -122,6 +124,8 @@ competitor and stays undecided among the rest. -/
 def PragmaticallyReducible (α : ℝ) (w : Word C S) : Prop :=
   Pragmatic M α w ∧ ¬ PragmaticallySolvable M α w
 
+/-- Outside the pragmatic conditions a listener with a uniform prior is indifferent among the
+objects the word is true of, as the baseline listener is. -/
 theorem not_pragmatic_iff :
     ¬ Pragmatic M α w ↔ ∀ r ∈ ⟦w⟧ᴹ, ∀ r' ∈ ⟦w⟧ᴹ,
       (listener M Measure.count α w).real {r'} = (listener M Measure.count α w).real {r} := by
@@ -139,6 +143,8 @@ private theorem listener_count_lt_iff (hα : 0 < α) (h : r ∈ ⟦w⟧ᴹ) (h' 
       ⟦(⟨b, M r' b⟩ : Word C S)⟧ᴹ.card < ⟦(⟨b, M r b⟩ : Word C S)⟧ᴹ.card :=
   FrankGoodman2012.listener_real_singleton_lt_iff M hα Measure.count h h' (by simp) (by simp) hb
 
+/-- A condition is pragmatic exactly when two objects the word is true of share their other
+feature with different numbers of objects. -/
 theorem pragmatic_iff (hα : 0 < α) {b : Attribute} (hb : b ≠ w.1) :
     Pragmatic M α w ↔ ∃ r ∈ ⟦w⟧ᴹ, ∃ r' ∈ ⟦w⟧ᴹ,
       ⟦(⟨b, M r' b⟩ : Word C S)⟧ᴹ.card < ⟦(⟨b, M r b⟩ : Word C S)⟧ᴹ.card := by
@@ -179,11 +185,14 @@ def solvable : SolvableObject → (a : Attribute) → a.Value Colour Shape
   | .shapeCompetitor, .colour => Colour.green
   | .shapeCompetitor, .shape => Shape.boot
 
+/-- On hearing *blue* the listener singles out the blue boot, since for the blue mitt the speaker
+had the more informative *mitt*. -/
 theorem solvable_blue (hα : 0 < α) :
     PragmaticallySolvable solvable α (⟨.colour, Colour.blue⟩ : Word Colour Shape) :=
   (pragmaticallySolvable_iff solvable hα (b := .shape) (by decide)).2
     ⟨(pragmatic_iff solvable hα (b := .shape) (by decide)).2 (by decide), by decide⟩
 
+/-- On hearing *boot* the listener singles out the blue boot as well. -/
 theorem solvable_boot (hα : 0 < α) :
     PragmaticallySolvable solvable α (⟨.shape, Shape.boot⟩ : Word Colour Shape) :=
   (pragmaticallySolvable_iff solvable hα (b := .colour) (by decide)).2
@@ -207,12 +216,16 @@ def reducible : ReducibleObject → (a : Attribute) → a.Value Colour Shape
   | .competitor, .colour => Colour.blue
   | .competitor, .shape => Shape.mitt
 
+/-- On hearing *blue* the listener excludes the blue mitt and stays undecided between the two
+boots. -/
 theorem reducible_blue (hα : 0 < α) :
     PragmaticallyReducible reducible α (⟨.colour, Colour.blue⟩ : Word Colour Shape) :=
   ⟨(pragmatic_iff reducible hα (b := .shape) (by decide)).2 (by decide),
     fun h ↦ absurd ((pragmaticallySolvable_iff reducible hα (b := .shape) (by decide)).1 h).2
       (by decide)⟩
 
+/-- On hearing *boot* the listener is indifferent between the two boots, an ambiguous condition
+in which the model and the baseline agree. -/
 theorem not_pragmatic_boot (hα : 0 < α) :
     ¬ Pragmatic reducible α (⟨.shape, Shape.boot⟩ : Word Colour Shape) :=
   fun h ↦ absurd ((pragmatic_iff reducible hα (b := .colour) (by decide)).1 h) (by decide)

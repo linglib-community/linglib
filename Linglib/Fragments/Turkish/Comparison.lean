@@ -46,6 +46,7 @@ def dan : Comparative :=
   { standardMarker := [.suff "DAn"], caseAssignment := .fixed, fixedEncoding := some .adverbial,
     standardCase := some .abl, degreeMarkers := [.free "daha"] }
 
+/-- The construction is locational. -/
 theorem type_dan : dan.type = .locational := rfl
 
 end Turkish.Comparison

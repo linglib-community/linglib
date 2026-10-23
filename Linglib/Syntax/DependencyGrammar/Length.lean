@@ -194,6 +194,9 @@ theorem boundaryDist_trans_of_notMem_after {c : α} (hc : c ∉ a.after x) :
     (precedes_trans_iff_of_notMem_after hσ hx).2, (precedes_trans_iff_of_notMem_after hσ hc).1,
     (precedes_trans_iff_of_notMem_after hσ hc).2]
 
+/-- Behaghel's law of growing constituents ([behaghel-1909]). When the lengths of the elements
+after `x` grow outward (`ℓ` monovaries with rank, short before long), no rearrangement of them
+shortens the distance from `x` to them. -/
 theorem sum_boundaryDist_after_le (h : MonovaryOn ℓ a (a.after x)) :
     ∑ c ∈ a.after x, a.boundaryDist ℓ x c ≤
       ∑ c ∈ after (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c := by
@@ -290,6 +293,7 @@ def Graph.map (g : Graph n) (σ : Equiv.Perm (Fin n)) : Graph n :=
 /-- The mirror image, transported along position reversal. -/
 def Graph.mirror (g : Graph n) : Graph n := g.map Fin.revPerm
 
+/-- Transport along an isometry of the positions preserves total dependency length. -/
 theorem Graph.totalLength_map (g : Graph n) (σ : Equiv.Perm (Fin n))
     (hσ : ∀ v w : Fin n, Nat.dist (σ v) (σ w) = Nat.dist v w) :
     (g.map σ).totalLength = g.totalLength := by
@@ -390,6 +394,8 @@ private theorem card_between {a b : Fin n} (hab : a ≠ b) :
     simp only [Nat.dist, Fin.lt_def] at h ⊢
     omega
 
+/-- On a projective tree the distance from a head to the nearest word of a dependent's phrase is
+one more than the phrase sizes of the dependents between them. -/
 theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h : g.Adj v w) :
     g.yieldDist v w = 1 + ∑ u ∈ g.children v with (v < u ∧ u < w ∨ w < u ∧ u < v),
       (g.yield u).ncard := by
@@ -532,6 +538,7 @@ theorem Graph.yieldDist_eq_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) {w
   rw [Graph.siblings, sum_insert (by simpa using hT.not_adj_self), ite_eq_right (by simp),
     zero_add]
 
+/-- The sum of a head's yield distances is the head's measure in the sibling arrangement. -/
 theorem Graph.sum_yieldDist_eq_sum_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) :
     ∑ w ∈ g.children v, g.yieldDist v w =
       ∑ c, (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)

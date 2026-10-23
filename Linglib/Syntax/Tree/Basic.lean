@@ -510,6 +510,7 @@ theorem mem_positionedTerminals_of_subtreeAt {t : Tree C W} {p : List ℕ} {c : 
     (⟨p⟩, (c, w)) ∈ t.positionedTerminals :=
   List.mem_filterMap.mpr ⟨_, RoseTree.mem_positionedLeaves_of_subtreeAt h, rfl⟩
 
+/-- The terminal positions, in the order of the yield, ascend in precedence. -/
 theorem pairwise_precedes_positionedTerminals (t : Tree C W) :
     t.positionedTerminals.Pairwise fun x y ↦ x.1.Precedes y.1 :=
   (RoseTree.pairwise_precedes_positionedLeaves _).filterMap _ fun _ _ h _ ha _ hb ↦ by

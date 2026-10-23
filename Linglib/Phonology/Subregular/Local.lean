@@ -52,6 +52,8 @@ variable {M k} {S T : Set ι}
 
 /-! ### Strictly local sets -/
 
+/-- A set is strictly local exactly when it contains every member whose factors all occur in its
+members. -/
 theorem isStrictlyLocal_iff :
     L.IsStrictlyLocal M k S ↔ ∀ i, L.factors k (M i) ⊆ ⋃ j ∈ S, L.factors k (M j) → i ∈ S := by
   refine ⟨?_, fun h ↦ ⟨⋃ j ∈ S, L.factors k (M j), Set.ext fun i ↦
@@ -59,6 +61,7 @@ theorem isStrictlyLocal_iff :
   rintro ⟨G, rfl⟩ i hi
   exact hi.trans (Set.iUnion₂_subset fun _ hj ↦ hj)
 
+/-- Strictly local sets are closed under any operation that adds no factor. -/
 theorem IsStrictlyLocal.mem_of_factors_subset_union (hS : L.IsStrictlyLocal M k S) {a b c : ι}
     (ha : a ∈ S) (hb : b ∈ S) (h : L.factors k (M c) ⊆ L.factors k (M a) ∪ L.factors k (M b)) :
     c ∈ S := by

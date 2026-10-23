@@ -184,6 +184,8 @@ def derivations (L : RuleSet (LexicalEntry (Option F) α)) :
 theorem derivations_singleton (d : Derivation F) (f : F) :
     derivations L d [f] = mergeOptions L d f := by simp
 
+/-- Deriving a sequence is deriving its first part and then the rest from each result in turn,
+so a failure in the rest returns to the latest merger of the first part with an option left. -/
 theorem derivations_append (d : Derivation F) (fs gs : List F) :
     derivations L d (fs ++ gs) = (derivations L d fs).flatMap (derivations L · gs) := by
   induction fs generalizing d with
@@ -254,6 +256,7 @@ private theorem isSome_of_mem_derivations {d d' : Derivation F} {fs : List F}
     · exact hd t (List.mem_of_mem_take ht)
     · exact List.mem_singleton.1 ht ▸ hx
 
+/-- Every constituent of the derivation the algorithm returns is matched by an entry. -/
 theorem exists_matches_of_mem_lexicalize {d : Derivation F} {fs : List F}
     (h : lexicalize L fs = some d) {t : RoseTree (Option F)} (ht : t ∈ d) :
     ∃ e ∈ L, e.Matches t := by
@@ -263,6 +266,7 @@ theorem exists_matches_of_mem_lexicalize {d : Derivation F} {fs : List F}
   exact absurd (treeSpellout_eq_none_iff.2 fun e he hm ↦ hne ⟨e, he, hm⟩) (by
     rw [← Option.not_isSome_iff_eq_none]; exact not_not.2 this)
 
+/-- A sequence the algorithm derives is pronounced. -/
 theorem exponents_eq_none_iff {fs : List F} : exponents L fs = none ↔ lexicalize L fs = none := by
   rcases h : lexicalize L fs with - | d
   · simp [exponents, h]
@@ -318,6 +322,8 @@ theorem derivations_cons_of_forall_leaf (f₀ : F) {fs : List F}
         (.of_mem_children (t := merge f (spine f₀ fs)) (List.mem_singleton_self _)) hx]
     · simp [mergeOptions_singleton_of_leaf (h f (by simp))]
 
+/-- Where no entry lexicalizes a feature above the bottom alone, the sequence gets a single
+exponent, that of its one phrase, or none. -/
 theorem exponents_cons_of_forall_leaf (f₀ : F) {fs : List F}
     (h : ∀ f ∈ fs, treeSpellout L (leaf (some f)) = none) :
     exponents L (f₀ :: fs) = (treeSpellout L (spine f₀ fs)).map fun x ↦ [x] := by
@@ -328,6 +334,8 @@ section Containment
 
 variable {n : ℕ} {feat : ℕ → F}
 
+/-- On a lexicon of containment entries the algorithm never evacuates, and it gives each grade
+the single exponent the containment engine spells out there. -/
 theorem exponents_ofSupersetRule (hf : feat.Injective)
     (v : RuleSet (Containment.SupersetRule n α)) (g : Fin n) :
     exponents (v.map (LexicalEntry.ofSupersetRule (some ∘ feat)))

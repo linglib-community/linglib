@@ -149,6 +149,7 @@ instance (g : Goal) (μ : Measure Object) (lam c : ℝ) : IsFiniteKernel (speake
 theorem literal_uniform : literal (uniformOn .univ) = FrankGoodman2012.literal M :=
   rfl
 
+/-- At the uniform prior and no cost the belief-oriented speaker is Frank and Goodman's. -/
 theorem speaker_belief_uniform (lam : ℝ) :
     speaker .belief (uniformOn .univ) lam 0 = FrankGoodman2012.speaker M lam := by
   rw [speaker, cost_zero]
@@ -419,6 +420,8 @@ theorem salience_listener_green_iff (hlam : 0 < lam) (g : Goal) :
     salience_real_singleton, green_greenCircle hlam]
   simp only [listenerChoice, Nat.cast_ofNat]
 
+/-- Without cost a listener with the salience prior follows salience on *circle* and narrows on
+*green*, as the paper's listeners did, exactly on a window of rationalities of the speaker. -/
 theorem salience_listener_window (hlam : 0 < lam) (g : Goal) :
     ((listener salience (speaker g (uniformOn .univ) lam 0) .circle).real {.greenCircle} <
         (listener salience (speaker g (uniformOn .univ) lam 0) .circle).real {.blueCircle} ∧
@@ -431,6 +434,8 @@ theorem salience_listener_window (hlam : 0 < lam) (g : Goal) :
     ← div_eq_mul_inv 71, lt_div_iff₀ hE, div_lt_iff₀ hE]
   constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith
 
+/-- Frank and Goodman's listener at the measured salience and rationality one takes *green* to
+refer to the salient green square. -/
 theorem frankGoodman_listener_green :
     (FrankGoodman2012.listener M salience 1 .green).real {.greenCircle} <
       (FrankGoodman2012.listener M salience 1 .green).real {.greenSquare} := by

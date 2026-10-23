@@ -109,6 +109,9 @@ theorem rightComp_run (h : T₂.runRight (T₁.run []) = []) :
 
 end SubsequentialTransducer
 
+/-- **Elgot–Mezei composition.** A right-subsequential function after a left-subsequential
+one is bimachine-computable, as soon as the composite preserves the empty word (as every
+bimachine-computable function does). -/
 theorem IsRightSubsequential.isBimachineComputable_comp {f : List α → List β}
     {g : List β → List γ} (hg : IsRightSubsequential g) (hf : IsLeftSubsequential f)
     (hnil : g (f []) = []) : IsBimachineComputable (g ∘ f) := by
@@ -122,6 +125,9 @@ theorem Mealy.isBimachineComputable_runRight_comp [Fintype σ₁] [Fintype σ₂
     IsBimachineComputable (T₂.runRight ∘ T₁.run) :=
   T₂.isRightSubsequential.isBimachineComputable_comp T₁.isLeftSubsequential rfl
 
+/-- **Elgot–Mezei composition, mirrored.** A left-subsequential function after a
+right-subsequential one is bimachine-computable, as soon as the composite preserves the
+empty word. Its reverse conjugate is the composition the other way round. -/
 theorem IsLeftSubsequential.isBimachineComputable_comp {f : List α → List β}
     {g : List β → List γ} (hg : IsLeftSubsequential g) (hf : IsRightSubsequential f)
     (hnil : g (f []) = []) : IsBimachineComputable (g ∘ f) := by

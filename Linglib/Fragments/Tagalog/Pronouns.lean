@@ -91,19 +91,24 @@ def entry (c : Category) (k : Case) (form : String) : PersonalPronoun :=
 def pronouns : Finset PersonalPronoun :=
   Finset.univ.biUnion fun c ↦ {entry c .ang (ang c), entry c .ng (ng c), entry c .sa (sa c)}
 
+/-- An entry denotes exactly its category. -/
 theorem entry_categories (c : Category) (k : Case) (f : String) :
     (entry c k f).categories = {c} := by
   show Category.ofPersonNumber c.person (number c) = {c}
   cases c <;> decide
 
+/-- Clusivity is borne only by the non-singular first-person entries. -/
 theorem entry_wellFormed (c : Category) (k : Case) (f : String) : (entry c k f).WellFormed := by
   show ∀ per ∈ some c.person, per.MarksClusivity → some (number c) ≠ some .singular
   cases c <;> decide
 
+/-- The inventory's paradigm in a case series is the series: the subject forms are the *ang*
+forms. -/
 theorem paradigm_nom (c : Category) :
     PersonalPronoun.paradigm (pronouns.filter (.nom ∈ ·.cases)) c = {ang c} := by
   cases c <;> decide +kernel
 
+/-- No two categories share an *ang* form. -/
 theorem ang_injective : Function.Injective ang := by decide
 
 end Tagalog

@@ -155,10 +155,13 @@ instance : (t : PCCType) → DecidablePred t.Licit
   | .aDescending, _ => inferInstanceAs (Decidable (_ < _))
   | .none, _ => inferInstanceAs (Decidable True)
 
+/-- The strictly descending PCC holds of an IO–DO combination exactly when the scenario is
+downstream on 1 > 2 > 3. -/
 theorem strictlyDescending_iff_downstream (s : Scenario Person) :
     PCCType.Licit .strictlyDescending s ↔ (s.map Person.prominence).kind = .downstream :=
   (Scenario.kind_eq_downstream_iff (s := s.map Person.prominence)).symm
 
+/-- The A-descending PCC holds exactly when the scenario is downstream on 2 > 1 > 3. -/
 theorem aDescending_iff_downstream (s : Scenario Person) :
     PCCType.Licit .aDescending s ↔ (s.map addresseeRank).kind = .downstream :=
   (Scenario.kind_eq_downstream_iff (s := s.map addresseeRank)).symm
@@ -186,6 +189,9 @@ theorem universal5_prominence (t : PCCType) :
       t ∈ [PCCType.strong, .weak, .meFirst, .strictlyDescending, .none] := by
   revert t; decide +kernel
 
+/-- Under the ranking 2 > 1 > 3 it is the strong, weak, you-first and A-descending varieties
+that obey the scenario universal; me-first and strictly descending ban the then-downstream
+`2 > 1`. -/
 theorem universal5_addressee (t : PCCType) :
     Haspelmath2021.RoleReferenceUniversal (MoreUsualOn addresseeRank) t.coding ↔
       t ∈ [PCCType.strong, .weak, .youFirst, .aDescending, .none] := by
@@ -258,6 +264,9 @@ theorem agrees_with_pConstraint :
         (Licit strictlyDescending s ↔ PCC.IsLicit PCC.ultraStrongGrammar s) := by
   decide +kernel
 
+/-- On the six cells the four varieties coincide with the gluttony probes of
+[coon-keine-2021], so a probe that stops too early and one that agrees too much draw the same
+lines there. -/
 theorem agrees_with_gluttony :
     ∀ s ∈ PCC.distinctPairs,
       (Licit strong s ↔ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe true s) ∧

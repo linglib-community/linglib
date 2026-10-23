@@ -98,6 +98,8 @@ theorem attributive_of_not_declines {a : Adjective} (h : ¬ a.Declines) (d g n) 
     attributive a d g .plural = a.inflected.getD a.form := by
   rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding]
 
+/-- Before a neuter singular or non-count noun in an indefinite noun phrase the ending is
+absent. -/
 @[simp] theorem attributive_indefinite_neuter_singular (a : Adjective) :
     attributive a .indefinite .neuter .singular = a.form := by
   rcases h : a.inflected with _ | f <;> simp [attributive, h, TakesEnding]
@@ -134,6 +136,8 @@ def houten : Adjective := { form := "houten" }
 /-- *gouden* 'golden' is a substance adjective like *houten*. -/
 def gouden : Adjective := { form := "gouden" }
 
+/-- The neuter *paard* takes the bare form in an indefinite singular phrase only, *een oud paard*,
+*het oude paard*, *oude paarden*. -/
 theorem oud_paard :
     attributive oud .indefinite Nouns.paard.gender .singular = "oud" ∧
       attributive oud .definite Nouns.paard.gender .singular = "oude" ∧

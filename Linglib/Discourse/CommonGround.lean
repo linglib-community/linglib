@@ -168,6 +168,7 @@ def play (s : S) (h : List (Set W)) : S :=
     play s (h₁ ++ h₂) = play (play s h₁) h₂ :=
   List.foldl_append
 
+/-- A played history adds the principal filter of the history's intersection. -/
 theorem commonGround_play (h : List (Set W)) (s : S) :
     commonGround (play s h) = commonGround s ⊓ 𝓟 (⋂ p ∈ h, p) := by
   induction h generalizing s with
@@ -190,10 +191,14 @@ theorem commonGround_play_le_of_subset {h₁ h₂ : List (Set W)} (hs : h₁ ⊆
   exact inf_le_inf_left _
     (principal_mono.2 (Set.subset_iInter₂ fun p hp ↦ Set.iInter₂_subset p (hs hp)))
 
+/-- Along a family of histories, each asserting everything the earlier ones do, the common
+ground only grows. -/
 theorem antitone_commonGround_play {ι : Type*} [Preorder ι] {h : ι → List (Set W)}
     (hh : ∀ ⦃i j⦄, i ≤ j → h i ⊆ h j) : Antitone fun i ↦ commonGround (play s (h i)) :=
   fun _ _ hij ↦ commonGround_play_le_of_subset s (hh hij)
 
+/-- Assertion order is irrelevant, so permuted histories project to the same common ground.
+States may differ, since frameworks can record order, but the projection cannot. -/
 theorem commonGround_play_perm {h₁ h₂ : List (Set W)} (p : h₁.Perm h₂) :
     commonGround (play (initial : S) h₁) = commonGround (play (initial : S) h₂) := by
   simp [commonGround_play_initial, p.mem_iff]

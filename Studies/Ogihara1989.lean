@@ -56,6 +56,9 @@ open scoped SetRel
 variable {T : Type*} [LinearOrder T] {P : NonemptyInterval T → Prop} {K σ : NonemptyInterval T}
   {g : Assignment (NonemptyInterval T)} {n : ℕ}
 
+/-- The past restricted to the salient interval `K` holds when the clause held at a past
+subinterval of `K`, as *Yes, I saw her* (`Examples.ex_57`) says of the day. It is Partee's past
+tense with its index bound by an existential quantifier over the subintervals of `K`. -/
 theorem restricted_iff_exists_past :
     ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ K ∧ P t) σ ↔
       ∃ t ≤ K, lambdaAbsG n (Past n P σ) g t := by
@@ -67,6 +70,8 @@ theorem restricted_iff_exists_past :
 off the stove and the time of the tense's index the salient interval. The sentence says that this
 interval is past and has no subinterval at which the speaker turned off the stove. -/
 
+/-- The stove sentence says that the salient interval is past and denies the past restricted to
+it. -/
 theorem no_subinterval_iff_not_restricted :
     Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ↔
       Perspective.Presup ⟦past⟧ σ (g n) ∧
@@ -75,10 +80,15 @@ theorem no_subinterval_iff_not_restricted :
     h.2 ⟨t, Perspective.presup_past.2 (NonemptyInterval.precedes_of_le_of_precedes hle
       (Perspective.presup_past.1 h.1)), hle, hP⟩⟩⟩
 
+/-- A speaker who turned off the stove at no subinterval of the salient interval did not turn it
+off at that interval. -/
 theorem no_subinterval_entails_deictic (h : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g) :
     Past n (fun t ↦ ¬ P t) σ g :=
   ⟨h.1, fun hP ↦ h.2 ⟨_, le_rfl, hP⟩⟩
 
+/-- Turning off the stove takes a moment, so a speaker who did so within the salient interval
+did not do so at that interval, and the referential reading is true where the sentence is
+false. -/
 theorem deictic_too_weak :
     ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
       (P : NonemptyInterval ℤ → Prop),
@@ -86,11 +96,14 @@ theorem deictic_too_weak :
   ⟨.pure 10, fun _ ↦ ⟨(0, 5), by decide⟩, (· = .pure 3), ⟨by decide, by decide⟩,
     fun h ↦ h.2 ⟨.pure 3, by decide, rfl⟩⟩
 
+/-- A speaker who never turned off the stove turned it off at no subinterval of the salient
+interval. -/
 theorem never_entails_no_subinterval (hn : Perspective.Presup ⟦past⟧ σ (g n))
     (h : ¬ ◇[Perspective.toSetRel ⟦past⟧] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
   ⟨hn, fun ⟨t, hle, hP⟩ ↦ h ⟨t, Perspective.presup_past.2
     (NonemptyInterval.precedes_of_le_of_precedes hle (Perspective.presup_past.1 hn)), hP⟩⟩
 
+/-- The sentence is true of a speaker who turned off the stove before the salient interval. -/
 theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
       (P : NonemptyInterval ℤ → Prop),

@@ -174,6 +174,8 @@ theorem State.Balanced.of_reflTransGen {s t : State F} (h : Relation.ReflTransGe
   | refl => exact hs
   | tail _ hst ih => exact hst.balanced ih
 
+/-- **One derivational workspace, one root.** Every object a derivation builds from a resource of
+bundles has one root for each Primary Merge, the first Merge of each derivational workspace. -/
 theorem roots_eq_primaryMerges {R : List (Finset F)} {o : Obj F}
     (h : Relation.ReflTransGen Step (State.init R) ⟨[], o⟩) (ho : ¬ o.IsNull) :
     o.roots = o.primaryMerges := by

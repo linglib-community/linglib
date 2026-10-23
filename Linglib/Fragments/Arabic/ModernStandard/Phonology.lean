@@ -141,6 +141,7 @@ def u : Segment := .ofChart .«u»
 /-- The vowels of Modern Standard Arabic. -/
 def vowels : Finset Segment := ⟨↑[a, i, u], by decide +kernel⟩
 
+/-- Every consonant but `t`, `k`, `χ` and `ʁ` is a segment of PHOIBLE's inventory 2157. -/
 theorem subset_arb : consonants \ {t, k, χ, «ʁ»} ⊆ Inventories.Arabic.arb.segments :=
   Inventory.subset_segments_iff.2 (by decide +kernel)
 

@@ -166,6 +166,7 @@ theorem Subordinate.sizeOf_lt {K' K : DRS L V} (h : Subordinate K' K) :
 theorem Subordinate.irrefl (K : DRS L V) : ¬ Subordinate K K :=
   fun h => absurd h.sizeOf_lt (lt_irrefl _)
 
+/-- Weak subordination is a partial order on DRS values. -/
 theorem WeakSubordinate.antisymm {K' K : DRS L V} (h : WeakSubordinate K' K)
     (h' : WeakSubordinate K K') : K' = K := by
   rcases Relation.reflTransGen_iff_eq_or_transGen.mp h with rfl | h₁

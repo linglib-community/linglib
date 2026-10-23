@@ -183,13 +183,16 @@ theorem extension_neg (v : SignType) (m : StateSet D SignType) (g : PartialAssig
     extension v (neg m) g = extension (-v) m g :=
   Set.ext fun h ↦ Set.ext_iff.1 (rel_neg v m) (g, h)
 
+/-- Double negation is the identity (Obs. 2.2). -/
 theorem neg_neg (m : StateSet D SignType) : neg (neg m) = m := by
   simp only [neg, Functor.map_map, _root_.neg_neg, id_map']
 
+/-- de Morgan's law for disjunction (Obs. 2.6). -/
 theorem neg_disj (m n : StateSet D SignType) : neg (disj m n) = conj (neg m) (neg n) := by
   simp only [neg, disj, conj, map_seq, seq_map_assoc, Functor.map_map,
     Function.comp_def, SignType.neg_sup]
 
+/-- de Morgan's law for conjunction (Obs. 2.6). -/
 theorem neg_conj (m n : StateSet D SignType) : neg (conj m n) = disj (neg m) (neg n) := by
   simp only [neg, disj, conj, map_seq, seq_map_assoc, Functor.map_map,
     Function.comp_def, SignType.neg_inf]
@@ -307,6 +310,8 @@ theorem dplExists_destructive (n : ℕ) (m : StateSet D SignType) :
   · rintro ⟨_, ⟨x, rfl⟩, hx⟩
     exact ⟨x, hx⟩
 
+/-- Positive closure is not a bind, since a bind treats each output separately while closure drops
+the false outputs exactly when a true one exists (App. A). -/
 theorem not_exists_bind_eq_positiveClosure :
     ¬ ∃ k : SignType → StateSet D SignType, ∀ m, positiveClosure m = m >>= k := by
   rintro ⟨k, hk⟩
@@ -415,6 +420,7 @@ theorem mem_extension_true_conj {m n : StateSet D SignType} {g i : PartialAssign
     rw [rel_true_conj]
   simpa [SetRel.mem_comp] using this
 
+/-- Egli's theorem for positive extensions, for either existential (Obs. 2.4). -/
 theorem egli (e : Existential) (n : ℕ) (m k : StateSet D SignType) (g : PartialAssign ℕ D) :
     extension 1 (exists_ e n (conj m k)) g = extension 1 (conj (exists_ e n m) k) g := by
   ext i
@@ -626,6 +632,8 @@ theorem extension_false_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fres
 
 end Atoms
 
+/-- Egli's theorem fails for negative extensions (Obs. 2.5). When everyone walked in and nobody sat
+down, the input falsifies `∃₁ (W 1 ∧ S 1)` but only its resets falsify `∃₁ W 1 ∧ S 1`. -/
 theorem not_egli_negative [Nonempty D] :
     extension (-1) (exists_ .destructive 1 (conj (atom (Set.univ : Set D) 1) (atom ∅ 1))) ⊥ ≠
       extension (-1) (conj (exists_ .destructive 1 (atom Set.univ 1)) (atom ∅ 1)) ⊥ := by

@@ -193,6 +193,9 @@ theorem satisfies_principleB_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
   simp [principleB, locallyOBinds, coindexed, agrees, hr _, le_ppro_iff, comp_vecCons₂,
     Codependent]
 
+/-- At a root of which every entity is a component, and with nothing locally o-commanding
+itself, the principles hold exactly when codependence satisfies the framework-neutral Conditions
+A and B over local o-command, with the anaphors that nothing locally o-commands exempt. -/
 theorem satisfies_grammar_iff (hr : I.IsRootedAt r) (hirr : ∀ x, ¬ I.R .locO ![x, x]) :
     (∀ d ∈ grammar, I.Satisfies (fun _ ↦ r) r d) ↔
       (configuration I).Satisfies (Codependent I) (configuration I).exempt

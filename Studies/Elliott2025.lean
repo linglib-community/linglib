@@ -101,11 +101,14 @@ def classicalSentence (D : Finset α → Prop) (N vp : α → Prop) : Prop :=
 
 variable {N vp : α → Prop}
 
+/-- Van Benthem's problem is that every part of a plurality that satisfies the scope satisfies it
+too, so *less than `n` `N` `vp`* says only that some `N` satisfies `vp`. -/
 theorem classical_lessThan_iff_some {n : ℕ} (hn : 1 < n) :
     classicalSentence (·.card < n) N vp ↔ GQ.some N vp := by
   refine ⟨fun ⟨X, ⟨x, hx⟩, _, hN, hvp⟩ ↦ ⟨x, hN x hx, hvp x hx⟩, fun ⟨x, hN, hvp⟩ ↦ ?_⟩
   exact ⟨{x}, Finset.singleton_nonempty x, by simpa, by simpa, by simpa⟩
 
+/-- The problem of *zero* is that every plurality has an atom, so *zero* is never satisfied. -/
 theorem classical_zero_false : ¬ classicalSentence (·.card = 0) N vp :=
   fun ⟨_, hX, hcard, _⟩ ↦ hX.card_pos.ne' hcard
 
@@ -223,6 +226,8 @@ theorem delta_polarize_iff : (polarize N vp).delta vp' ↔ ∀ x, N x → (vp' x
   refine forall_congr' fun x ↦ ?_
   by_cases h : N x <;> by_cases hv : vp x <;> simp [h, hv, Flat.coe_inj]
 
+/-- The ∆-operator for `f` holds exactly of the parts of the group that polarizes every
+individual by `f`. -/
 theorem delta_iff_le : X.delta vp ↔ X ≤ polarize ⊤ vp := by
   rw [le_iff_parts_subset]
   refine forall₂_congr fun ⟨x, b⟩ _ ↦ ?_
@@ -255,6 +260,8 @@ theorem noun_iff : noun N X ↔ X.atoms = {x | N x} := by
 theorem noun_polarize (N vp : α → Prop) : noun N (polarize N vp) := by
   simp [noun_iff]
 
+/-- The groups of a noun are its extension polarized by every possible scope, one for each
+division of the extension into positive and negative atoms. -/
 theorem setOf_noun : {X | noun N X} = Set.range (polarize N) := by
   ext X
   refine ⟨fun h ↦ ⟨(· ∈ X.posAtoms), ?_⟩, fun ⟨S, hS⟩ ↦ hS ▸ noun_polarize N S⟩
@@ -317,6 +324,7 @@ def sentence (D : Det α) (N vp : α → Prop) : Prop := GQ.some (D ⊓ noun N) 
 /-- A determiner yields a generalized quantifier through the truth conditions of its sentences. -/
 def Det.toGQ (D : Det α) : GQ α := sentence D
 
+/-- A sentence holds when its determiner holds of the noun's extension polarized by the scope. -/
 theorem sentence_iff (D : Det α) (N vp : α → Prop) : sentence D N vp ↔ D (polarize N vp) :=
   ⟨fun ⟨_, ⟨hD, hX⟩, hd⟩ ↦ (delta_iff_eq_polarize hX).1 hd ▸ hD,
     fun h ↦ ⟨_, ⟨h, noun_polarize N vp⟩, (delta_iff_eq_polarize (noun_polarize N vp)).2 rfl⟩⟩
@@ -324,6 +332,8 @@ theorem sentence_iff (D : Det α) (N vp : α → Prop) : sentence D N vp ↔ D (
 /-! ### Upper bounds, existential entailment and *zero* -/
 
 open Examples in
+/-- With three boys, *less than three boys sneezed* is false if they all sneezed and true if none
+did, as judged. -/
 theorem lessThan_three_matches_judgments :
     (ex_10.readings.lookup "true in the context" = some .acceptable ↔
       sentence (Det.lessThan 3) (⊤ : Fin 3 → Prop) ⊤) ∧
@@ -372,6 +382,7 @@ theorem toGQ_ofGQ (Q : GQ α) (R S : α → Prop) :
   rw [Det.toGQ, sentence_iff, Det.ofGQ, atoms_polarize, posAtoms_polarize]
   rfl
 
+/-- The round trip is the identity exactly on the conservative quantifiers. -/
 theorem toGQ_ofGQ_eq_iff (Q : GQ α) : (Det.ofGQ Q).toGQ = Q ↔ Conservative Q := by
   refine ⟨fun h R S ↦ by rw [← toGQ_ofGQ Q R S, h], fun hQ ↦ ?_⟩
   funext R S
@@ -384,6 +395,8 @@ theorem sentence_ofGQ (hQ : Conservative Q) (R S : α → Prop) :
     sentence (Det.ofGQ Q) R S ↔ Q R S :=
   (toGQ_ofGQ Q R S).trans (hQ R S).symm
 
+/-- Every predicate yields a conservative quantifier, so conservativity is a consequence of the
+theory rather than a constraint on it. -/
 theorem conservative_toGQ (D : Det α) : Conservative D.toGQ := fun R S ↦ by
   simp only [Det.toGQ, sentence_iff]
   rw [polarize_eq_polarize_iff.2 fun _ hx ↦ (and_iff_right hx).symm]
@@ -406,6 +419,8 @@ noncomputable def consGQOrderIso : ConsGQ α ≃o Det α :=
     (fun _ _ h _ ↦ h _ _)
     (fun {D₁ D₂} h R S hs ↦ (sentence_iff D₂ R S).2 (h _ ((sentence_iff D₁ R S).1 hs)))
 
+/-- The isomorphism sends Keenan and Stavi's atom at a restrictor `p` and a scope `q` inside it
+to the predicate of the single group `polarize p q`. -/
 theorem ofGQ_atom {p q : α → Prop} (h : q ≤ p) :
     Det.ofGQ (KeenanStavi1986.atom p q) = NP.ident (polarize p q) := by
   funext X
@@ -486,15 +501,20 @@ theorem most_eq_ofGQ : (Det.most : Det α) = Det.ofGQ GQ.most := by
 theorem toGQ_atLeast (n : ℕ) : (Det.atLeast n : Det α).toGQ = GQ.atLeast n := by
   rw [atLeast_eq_ofGQ, toGQ_ofGQ_of_conservative (conservative_atLeast n)]
 
+/-- *Exactly two boys sneezed* says that exactly two boys sneezed. -/
 theorem toGQ_exactly (n : ℕ) : (Det.exactly n : Det α).toGQ = GQ.exactly n := by
   rw [exactly_eq_ofGQ, toGQ_ofGQ_of_conservative (conservative_exactly n)]
 
+/-- *Less than three boys sneezed* says that fewer than three boys sneezed, with no upper-bound
+or existential-entailment problem. -/
 theorem toGQ_lessThan (n : ℕ) : (Det.lessThan n : Det α).toGQ = (GQ.atLeast n)ᶜ := by
   rw [lessThan_eq_compl, toGQ_compl, toGQ_atLeast]
 
+/-- *Most boys sneezed* has the truth conditions of the relational *most*. -/
 theorem toGQ_most : (Det.most : Det α).toGQ = GQ.most := by
   rw [most_eq_ofGQ, toGQ_ofGQ_of_conservative conservative_most]
 
+/-- *All boys sneezed* has universal truth conditions. -/
 theorem toGQ_all : (Det.all : Det α).toGQ = every := by
   rw [all_eq_ofGQ, toGQ_ofGQ_of_conservative conservative_every]
 
@@ -524,6 +544,8 @@ theorem card_ne_bot : Nat.card {X : PolarGroup α // X ≠ ⊥} = 3 ^ Fintype.ca
 theorem card_det : Nat.card (Det α) = 2 ^ 3 ^ Fintype.card α := by
   rw [← Nat.card_congr consGQOrderIso.toEquiv, KeenanStavi1986.card_consGQ]
 
+/-- Without the empty group there are `2 ^ (3 ^ n - 1)` predicates of groups on `n`
+individuals. -/
 theorem card_predicates :
     Nat.card ({X : PolarGroup α // X ≠ ⊥} → Prop) = 2 ^ (3 ^ Fintype.card α - 1) := by
   rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop, card_ne_bot]
@@ -546,6 +568,8 @@ example : Nat.card (GQ (Fin 2)) = 65536 := by
 
 end Count
 
+/-- Two conservative quantifiers give predicates that agree on the nonempty groups exactly when
+they agree on the nonempty restrictors. -/
 theorem eqOn_ofGQ_iff {Q Q' : GQ α} (hQ : Conservative Q) (hQ' : Conservative Q') :
     Set.EqOn (Det.ofGQ Q) (Det.ofGQ Q') {⊥}ᶜ ↔ Set.EqOn Q Q' {R | ∃ x, R x} := by
   refine ⟨fun h R hR ↦ funext fun S ↦ ?_, fun h X hX ↦ congrFun (h ?_) _⟩
@@ -573,12 +597,16 @@ theorem none_inf_noun : Det.none ⊓ noun N = NP.ident (polarize N ⊥) := by
   exact propext ⟨fun ⟨h, hX⟩ ↦ (delta_iff_eq_polarize hX).1 h,
     fun h ↦ h ▸ ⟨(delta_iff_eq_polarize (noun_polarize N ⊥)).2 rfl, noun_polarize N ⊥⟩⟩
 
+/-- Existential raising of *all `N`* is the Montague individual of the noun's wholly positive
+group, so it is scopeless and the universal force stays with the ∆-operator. -/
 theorem all_scopeless : GQ.some (Det.all ⊓ noun N) = NP.individual (polarize N ⊤) :=
   NP.some_eq_individual_iff.2 (all_inf_noun N)
 
 theorem none_scopeless : GQ.some (Det.none ⊓ noun N) = NP.individual (polarize N ⊥) :=
   NP.some_eq_individual_iff.2 (none_inf_noun N)
 
+/-- *Exactly two* of three individuals holds of several groups, so its existential raising is no
+individual and an exceptional scope reading is predicted. -/
 theorem exactly_two_not_individual :
     ¬ ∃ X₀, GQ.some (Det.exactly 2 ⊓ noun (⊤ : Fin 3 → Prop)) = NP.individual X₀ := by
   have mem {a b : Fin 3} (hab : a ≠ b) :
@@ -614,6 +642,7 @@ theorem delta_collective_iff (hC : ∀ x, C x → ¬ Atom x) (hX : noun (fun x �
   · simpa using fun hc ↦ hC x hc (hA hx)
   · exact absurd hx (Set.eq_empty_iff_forall_notMem.1 h x)
 
+/-- *Some boy gathered* is false, since a positive atom would have to gather. -/
 theorem not_some_singular_collective (hC : ∀ x, C x → ¬ Atom x) :
     ¬ sentence Det.some (fun x ↦ Atom x ∧ N x) C := fun ⟨_, ⟨hs, hX⟩, hd⟩ ↦
   hs ((delta_collective_iff hC hX).1 hd)
@@ -628,6 +657,8 @@ open GroenendijkStokhof1984
 
 variable {E W : Type*} (G P : E → Set W) (w : W)
 
+/-- Two indices give the same answer to *which `G` `P`?*, read de re at `w`, exactly when they
+polarize the `G`-individuals alike, so the answers correspond to the groups of the noun. -/
 theorem whichDeRe_eq_ker :
     whichDeRe G P w = Setoid.ker fun v ↦ polarize (· ∈ extension G w) (· ∈ extension P v) := by
   ext v u
@@ -640,6 +671,7 @@ theorem sentence_relevant (D : Det E) :
   intro v u h
   simp only [Set.mem_ofPred_eq, sentence_iff, Setoid.ker_def.1 h]
 
+/-- Every conservative determiner is relevant to the question. -/
 theorem relevant_of_conservative {Q : GQ E} (hQ : Conservative Q) :
     (whichDeRe G P w).Decides {v | Q (· ∈ extension G w) (· ∈ extension P v)} := by
   simpa only [sentence_ofGQ hQ] using sentence_relevant G P w (Det.ofGQ Q)

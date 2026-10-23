@@ -64,29 +64,39 @@ def equivFlatBool : SignType ≃ Flat Bool where
   left_inv a := by cases a <;> rfl
   right_inv x := by cases x with | bot => rfl | coe b => cases b <;> rfl
 
+/-- The truth order and the knowledge order differ, since `-1 ≤ 0` in the truth order but the
+defined value `-1` is not below the undefined `0 = ⊥` in the knowledge order. -/
 theorem truthOrder_ne_knowledgeOrder :
     (-1 : SignType) ≤ 0 ∧ ¬ toFlat (-1) ≤ toFlat 0 := by decide
 
+/-- Strong Kleene negation is regular; being unary, it is the unique monotone extension of
+Boolean `not`. -/
 theorem toFlat_neg_mono {a b : SignType} (h : toFlat a ≤ toFlat b) :
     toFlat (-a) ≤ toFlat (-b) := by
   cases a <;> cases b <;> revert h <;> decide
 
+/-- Strong Kleene conjunction is regular in each argument. -/
 theorem toFlat_inf_mono_left {a a' : SignType} (b : SignType)
     (h : toFlat a ≤ toFlat a') : toFlat (a ⊓ b) ≤ toFlat (a' ⊓ b) := by
   cases a <;> cases a' <;> cases b <;> revert h <;> decide
 
+/-- Strong Kleene disjunction is regular in each argument. -/
 theorem toFlat_sup_mono_left {a a' : SignType} (b : SignType)
     (h : toFlat a ≤ toFlat a') : toFlat (a ⊔ b) ≤ toFlat (a' ⊔ b) := by
   cases a <;> cases a' <;> cases b <;> revert h <;> decide
 
+/-- Weak Kleene conjunction is not truth-monotone, since `0 ≤ 1` but `meetWeak 0 (-1) = 0` is not
+below `meetWeak 1 (-1) = -1`; unlike `⊓` it is no bilattice operation. -/
 theorem meetWeak_not_truthMono :
     ¬ ∀ a a' b : SignType, a ≤ a' → meetWeak a b ≤ meetWeak a' b :=
   fun h ↦ absurd (h 0 1 (-1) (by decide)) (by decide)
 
+/-- Weak Kleene disjunction is not truth-monotone either. -/
 theorem joinWeak_not_truthMono :
     ¬ ∀ a a' b : SignType, a ≤ a' → joinWeak a b ≤ joinWeak a' b :=
   fun h ↦ absurd (h (-1) 0 1 (by decide)) (by decide)
 
+/-- Over a nonempty family, the supervaluation is the knowledge meet of the classical values. -/
 theorem toFlat_supervaluation {α : Type*} {s : Finset α} (P : α → Prop) [DecidablePred P]
     (hs : s.Nonempty) :
     toFlat (supervaluation s P) = s.inf' hs fun a ↦ (decide (P a) : Flat Bool) := by
@@ -104,6 +114,9 @@ theorem toFlat_supervaluation {α : Type*} {s : Finset α} (P : α → Prop) [De
     rw [Finset.inf'_congr hs rfl fun a ha ↦ by rw [decide_eq_true (this a ha)],
       Finset.inf'_const]; rfl
 
+/-- Shrinking a family to a nonempty subfamily can only add information. Nonemptiness is needed,
+since the empty family's `1` is a convention rather than a meet and a family whose members all fail
+`P` has the incomparable value `-1`. -/
 theorem toFlat_supervaluation_mono {α : Type*} {s t : Finset α} (P : α → Prop)
     [DecidablePred P] (h : s ⊆ t) (hs : s.Nonempty) :
     toFlat (supervaluation t P) ≤ toFlat (supervaluation s P) := by

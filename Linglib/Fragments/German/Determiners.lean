@@ -108,12 +108,17 @@ def definite : GenderNumber → Case → String
 
 /-! ### Syncretism -/
 
+/-- The masculine singular of the definite article keeps the four cases apart. -/
 theorem injective_definite_sg_masc : Function.Injective (definite (.sg .masc)) := by decide
 
+/-- The nominative and the accusative of the definite article fall together everywhere but in the
+masculine singular. -/
 theorem definite_nom_eq_acc_iff (x : GenderNumber) :
     definite x .nom = definite x .acc ↔ x ≠ .sg .masc := by
   revert x; decide
 
+/-- The genitive and the dative of the definite article fall together in the feminine singular
+only. -/
 theorem definite_gen_eq_dat_iff (x : GenderNumber) :
     definite x .gen = definite x .dat ↔ x = .sg .fem := by
   revert x; decide
@@ -127,6 +132,7 @@ theorem not_injective_definite_sg_dat :
     ¬ Function.Injective fun g ↦ definite (.sg g) .dat := by
   decide
 
+/-- The three-gender carrier is faithful to the definite article. -/
 theorem faithful : Gender.Faithful fun g ↦ definite (.sg g) :=
   fun _ _ h ↦ injective_definite_sg_nom (congrFun h .nom)
 
@@ -154,6 +160,7 @@ def inventory : Determiner.Inventory :=
     .demonstrative { form := dieser (.sg .masc) .nom, deixis := Finset.univ },
     .possessive { form := "mein" } ]
 
+/-- Both strengths are marked, by distinct articles. -/
 theorem strengths_inventory : inventory.strengths = Finset.univ := by decide
 
 theorem not_isSyncretic_inventory : ¬ inventory.IsSyncretic := by decide

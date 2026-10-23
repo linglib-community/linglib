@@ -189,6 +189,8 @@ theorem IsFusion.exists_fused (h : IsFusion V C σ) (ha : C.obligatory ≠ []) :
   let ⟨s, _, hs⟩ := h.obligatory_target t ht
   ⟨s, t, hs⟩
 
+/-- The identity correspondence fuses a well-formed argument structure whose slots all admit some
+role with itself, the case in which a verb's own argument structure is the clause's. -/
 theorem isFusion_refl (hV : V.WF) (hne : ∀ s ∈ V.frame.slots, (V.admits s).Nonempty) :
     IsFusion V V fun s ↦ if s ∈ V.frame.slots then some s else none where
   coherent s t hst := by

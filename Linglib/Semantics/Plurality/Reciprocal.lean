@@ -313,6 +313,8 @@ instance [DecidableEq α] (R : α → α → Prop) [DecidableRel R] (X : Finset 
     Decidable (WeakReciprocity R X) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
+/-- Weak Reciprocity is `**` of the relation with non-identity conjoined into it, in the coverage
+form `Set.LiftRel`, the bivalent common ground of [beck-2001] and [sternefeld-1998]. -/
 theorem weakReciprocity_iff_liftRel (R : α → α → Prop) (X : Finset α) :
     WeakReciprocity R X ↔ Set.LiftRel (fun a b ↦ R a b ∧ a ≠ b) ↑X ↑X := Iff.rfl
 

@@ -91,6 +91,7 @@ theorem strictPlural_subset_general (B : Finset α) : strictPlural B ⊆ general
   rw [mem_strictPlural] at hx
   exact mem_general.2 ⟨hx.1, Finset.card_pos.1 (by omega)⟩
 
+/-- Under a numeral the singular and the plural noun mean the same. -/
 theorem two_general_eq_two_strictPlural (B : Finset α) :
     two (general B) = two (strictPlural B) := by
   ext x
@@ -143,6 +144,8 @@ theorem strictPlural_presupposition_stronger (B : Finset α) :
   · simp [Finset.card_pos.1 (by omega : 0 < B.card)]
   · simp at h
 
+/-- Read off the presuppositions, competition makes the singular definite denote a single boy
+    exactly when the plural definite's presupposition fails. -/
 theorem strict_singular_iff (B : Finset α) (hB : B.Nonempty) :
     (sup? (general B)).map Finset.card = some 1 ↔ sup? (strictPlural B) = none := by
   rw [sup?_general, sup?_strictPlural, ite_eq_left hB]
@@ -218,12 +221,17 @@ def lexicon : Finset (Tree Cat String) :=
   {.terminal .Num "-∅", .terminal .Num "-ner", .terminal .Det "-n", .terminal .Det "-ə",
    .terminal .V "vaze-ts", .terminal .V "vaze-ts-in", .terminal .N "dəgha"}
 
+/-- The plural indefinite is no structural alternative to the singular indefinite. It has a
+    determiner phrase, and neither the singular indefinite nor the lexicon has one, so no chain
+    of deletions, contractions and substitutions reaches it. -/
 theorem pluralIndef_not_alternative :
     pluralIndef ∉ structuralAlternatives lexicon singularIndef := fun h ↦
   (by decide : ¬ ∀ s ∈ pluralIndef.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = .Det))
     (phrase_preservation _ .Det (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
       (by decide) h)
 
+/-- The plural definite is a structural alternative to the singular definite, and conversely:
+    they differ by three same-category substitutions. -/
 theorem pluralDef_alternative : equalComplexity (↑lexicon) singularDef pluralDef := by
   let step₁ : Tree Cat String :=
     .node .S [
@@ -259,6 +267,8 @@ theorem pluralDef_alternative : equalComplexity (↑lexicon) singularDef pluralD
       apply StructuralOp.inChild ⟨0, by simp⟩
       exact StructuralOp.subst rfl (by simp [lexicon])
 
+/-- The numeral-modified plural is a structural alternative to the numeral-modified singular,
+    and conversely: the number head and the verb form substitute. -/
 theorem numeralPl_alternative : equalComplexity lexicon numeralSg numeralPl := by
   let step : Tree Cat String :=
     .node .S [
@@ -309,6 +319,9 @@ def denotation? (r : Datum) : Option (Finset (Finset Boy)) :=
     | _ => noun
   else none
 
+/-- Each predicative sentence of the paper is acceptable exactly when its subject is in the
+    denotation of its predicate: a single boy is a boy but not boys, and two boys are boys,
+    two boys, and not one boy. -/
 theorem rows_predication :
     ∀ r ∈ Examples.all, ∀ s ∈ subject? r, ∀ P ∈ denotation? r,
       (s ∈ P ↔ r.judgment = .acceptable) := by

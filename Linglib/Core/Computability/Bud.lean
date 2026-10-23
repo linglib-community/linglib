@@ -207,6 +207,8 @@ variable {P : Ω → Ω → Ω → Prop}
 
 @[simp] theorem nodeLocal_cherry : (cherry c a b).NodeLocal P ↔ P c a b := by simp [cherry]
 
+/-- Grafting at a leaf of the matching color preserves vertex-local properties: the host's
+vertices keep their colors, and the inserted tree brings its own. -/
 theorem NodeLocal.graft (hx : x.NodeLocal P) (hs : s.NodeLocal P)
     (h : x.inputs[i]? = some s.out) : (x.graft i s).NodeLocal P := by
   induction x generalizing i with
@@ -267,6 +269,7 @@ theorem Produces.graft (hi : i < x.numInputs) (h : B.Produces s t) :
   have hj' := lt_numInputs_of_getElem?_eq_some hj
   exact ⟨r, hr, i + j, (getElem?_inputs_graft hi hj').trans hj, graft_graft hi hj'⟩
 
+/-- A derivation can be carried out at any input of a larger tree. -/
 theorem Derives.graft (hi : i < x.numInputs) (h : B.Derives s t) :
     B.Derives (x.graft i s) (x.graft i t) :=
   h.lift (x.graft i) fun _ _ ↦ Produces.graft hi
@@ -279,6 +282,8 @@ theorem Derives.node_right (h : B.Derives s t) (c : Ω) (l : Tree Ω) :
     B.Derives (node c l s) (node c l t) := by
   simpa [graft_node] using h.graft (x := node c l (leaf c)) (i := l.numInputs) (by simp)
 
+/-- Joining derivable trees under a cherry rule is derivable: derivability is closed under the
+colored Merge of the cherry's colors. -/
 theorem Derives.node (hc : cherry c a b ∈ B.rules) (hl : B.Derives (leaf a) l)
     (hr : B.Derives (leaf b) r) : B.Derives (leaf c) (node c l r) :=
   (Produces.single ⟨_, hc, 0, rfl, rfl⟩).trans ((hl.node_left c _).trans (hr.node_right c l))
@@ -309,6 +314,8 @@ variable {R : Ω → Ω → Ω → Prop} {I T : Set Ω}
 @[simp] theorem cherry_mem_ofCherries : cherry c a b ∈ (ofCherries R I T).rules ↔ R c a b := by
   simp [ofCherries]
 
+/-- In a system of cherries, a tree is derivable from the unit of `c` iff `c` is its root color
+and every vertex and its two children form a rule. -/
 theorem ofCherries_derives_leaf_iff :
     (ofCherries R I T).Derives (leaf c) x ↔ x.out = c ∧ x.NodeLocal R := by
   refine ⟨fun h ↦ ⟨h.out_eq, h.nodeLocal ?_ trivial⟩, ?_⟩

@@ -67,6 +67,7 @@ def Consistent (phases : List (List α)) : Prop := ∀ a, ¬ SpelloutOrder phase
 
 theorem Statement.spelloutOrder (h : Statement phases a b) : SpelloutOrder phases a b := .single h
 
+/-- The crash condition, in order-theoretic vocabulary. -/
 theorem consistent_iff_isStrictOrder :
     Consistent phases ↔ IsStrictOrder α (SpelloutOrder phases) :=
   ⟨fun h ↦ { irrefl := h, trans := fun _ _ _ ↦ Relation.TransGen.trans },
@@ -146,6 +147,9 @@ theorem Statement.right_mem_support (h : Statement phases a b) : b ∈ support p
   let ⟨p, hp, hs⟩ := h
   mem_dedup.mpr (mem_flatten.mpr ⟨p, hp, hs.subset (by simp)⟩)
 
+/-- Convergence is the existence of a PF string: a duplicate-free order of the terminals of
+which every Spell-out is a sub-order. One direction is `consistent_of_forall_sublist`; the other
+extends the candidate order to a linear order (Szpilrajn) and sorts the support by it. -/
 theorem consistent_iff_exists_linearization :
     Consistent phases ↔ ∃ l : List α, l.Nodup ∧ ∀ p ∈ phases, p <+ l := by
   refine ⟨fun h ↦ ?_, fun ⟨l, hnd, hl⟩ ↦ consistent_of_forall_sublist hl hnd⟩

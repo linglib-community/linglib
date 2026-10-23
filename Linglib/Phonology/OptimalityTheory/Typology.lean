@@ -73,6 +73,8 @@ variable {S r i} {o : O}
 theorem typology_iff {r' : Ranking ι n} : S.typology r r' ↔ S.language r = S.language r' :=
   Iff.rfl
 
+/-- A ranking selects `o` alone at an input iff `o` is a candidate whose violations, read in
+rank order, are lexicographically below every other candidate's. -/
 theorem language_eq_singleton_iff : S.language r i = {o} ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
     toLex (fun k ↦ S.con (r k) (i, o)) < toLex (fun k ↦ S.con (r k) (i, o')) :=
   Tableau.optimal_eq_singleton_iff
@@ -89,6 +91,8 @@ theorem con_eq_of_mem_language {o' : O} (ho : o ∈ S.language r i) (ho' : o' �
     (Tableau.le_of_mem_optimal ho' (Tableau.optimal_subset ho))
   simpa [tableau, Tableau.profile] using congrFun (congrArg ofLex h) (r.symm C)
 
+/-- The language of a ranking at an input consists of the candidates with the violations of any
+one of its winners. -/
 theorem mem_language_iff_of_mem {o' : O} (ho : o ∈ S.language r i) :
     o' ∈ S.language r i ↔ o' ∈ S.gen i ∧ ∀ C, S.con C (i, o') = S.con C (i, o) := by
   refine ⟨fun h ↦ ⟨Tableau.optimal_subset h, con_eq_of_mem_language h ho⟩, fun ⟨hg, he⟩ ↦ ?_⟩
@@ -101,6 +105,8 @@ section Joint
 
 variable [Fintype I] [DecidableEq I] (S r)
 
+/-- The language of the joint system is the product of the system's languages, so a tuple wins
+iff each of its candidates wins at its input ([prince-2015]). -/
 theorem language_joint : S.joint.language r () = Fintype.piFinset (S.language r) := by
   have hprofile : (S.joint.tableau r ()).profile = fun g ↦ ∑ i, (S.tableau r i).profile (g i) :=
     funext fun g ↦ funext fun p ↦
@@ -111,6 +117,8 @@ theorem language_joint : S.joint.language r () = Fintype.piFinset (S.language r)
 
 variable {S}
 
+/-- **One tableau suffices** ([prince-2015]). When every input has a candidate, the joint system
+has the system's typology. -/
 theorem typology_joint [DecidableEq O] (h : ∀ i, (S.gen i).Nonempty) :
     (S.joint.typology : Setoid (Ranking ι n)) = S.typology := by
   refine Setoid.ext fun r r' ↦ ?_

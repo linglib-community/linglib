@@ -149,6 +149,8 @@ instance : DecidablePred Predicational
   | attributional => .isTrue trivial
   | hyparctic => .isFalse id
 
+/-- The predicational types are the classificational, attributional, predlocative and
+appertentive ones; the equational, existential, predpossessive and hyparctic types are not. -/
 theorem predicational_iff : t.Predicational ↔
     t = classificational ∨ t = attributional ∨ t = predlocative ∨ t = appertentive := by
   decide +revert
@@ -192,6 +194,9 @@ theorem IsCopula.mono (h : S ⊆ T) : IsCopula S → IsCopula T := fun ⟨t, ht,
 theorem not_isCopula_of_possessional (h : ∀ t ∈ S, t.Possessional) : ¬ IsCopula S :=
   fun ⟨t, ht, hc⟩ ↦ (h t ht).not_copular hc
 
+/-- A form is an existive exactly when it occurs in existential clauses and in no clauses but
+existential and predpossessive ones, since of the two types only the existential defines a
+copula. -/
 theorem isExistive_iff : IsExistive S ↔ existential ∈ S ∧ S ⊆ {existential, predpossessive} := by
   refine ⟨fun ⟨⟨t, ht, hc⟩, h⟩ ↦ ⟨?_, h⟩, fun ⟨h, h'⟩ ↦ ⟨⟨_, h, by decide⟩, h'⟩⟩
   rcases h ht with rfl | rfl
@@ -293,6 +298,8 @@ theorem existive_gloss : ∀ row ∈ all, "EXV" ∈ row.features "boldGloss" →
     constructions row = [existential] ∨ row = ex66 ∧ constructions row = [hyparctic] := by
   decide +kernel
 
+/-- The Hamar form glossed as an existive occurs in a hyparctic clause, so whatever other clauses
+it occurs in, it is not an existive as defined. -/
 theorem existive_gloss_hyparctic {S : Set Construction} (h : ∀ t ∈ constructions ex66, t ∈ S) :
     "EXV" ∈ ex66.features "boldGloss" ∧ ¬ IsExistive S :=
   ⟨by decide +kernel, fun hS ↦ hS.hyparctic_notMem (h _ (by decide +kernel))⟩
@@ -303,6 +310,9 @@ section Finnish
 
 open Phonology Finnish Finnish.Nominal Subregular.LocalRewrite
 
+/-- The possessor of the locpossessive example and the location of the existent-postposing one
+are the adessives of *Pekka* and *katto* in the Finnish fragment, after consonant gradation, and
+the adessive is a place case: the locative flag of the locpossessive strategy. -/
 theorem finnish_adessive :
     (realize [p, e, k, k, a] [⟨_, .case .ade⟩]).map (derive consonantGradation) =
         (Finnish.ofString? "pekalla").toList ∧

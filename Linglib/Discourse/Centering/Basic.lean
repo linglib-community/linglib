@@ -141,6 +141,8 @@ theorem cb_mem_cf (h : cb prev cur = some e) : e ∈ prev.cf := List.mem_of_find
 theorem mem_of_cb (h : cb prev cur = some e) : e ∈ cur :=
   decide_eq_true_eq.mp (List.find?_eq_some_iff_append.mp h).1
 
+/-- `cur` has `e` as backward-looking center after `prev` iff `e` is a forward-looking center of
+`prev` realized in `cur` with no higher-ranked forward-looking center realized in `cur`. -/
 theorem cb_eq_some_iff : cb prev cur = some e ↔
     e ∈ cur ∧ ∃ l₁ l₂, prev.cf = l₁ ++ e :: l₂ ∧ ∀ e' ∈ l₁, e' ∉ cur := by
   simp [cb, List.find?_eq_some_iff_append]
@@ -148,6 +150,9 @@ theorem cb_eq_some_iff : cb prev cur = some e ↔
 theorem cb_eq_none_iff : cb prev cur = none ↔ ∀ e ∈ prev.cf, e ∉ cur := by
   simp [cb, List.find?_eq_none]
 
+/-- No forward-looking center of `prev` realized in `cur` outranks the backward-looking center:
+every realization in `prev` of an entity realized in `cur` is ranked at or below some
+realization of the center. -/
 theorem role_le_of_cb (h : cb prev cur = some e) {r : Realization E R}
     (hr : r ∈ prev.realizations) (hcur : r.entity ∈ cur) :
     ∃ r' ∈ prev.realizations, r'.entity = e ∧ r.role ≤ r'.role := by

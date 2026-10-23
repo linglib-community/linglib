@@ -76,6 +76,7 @@ def deReComparative (μ : W → Entity → D) (w₀ wBel : W) (x : Entity) : Pro
 def deDictoComparative (μ : W → Entity → D) (wBel : W) (x : Entity) : Prop :=
   μ wBel x > μ wBel x
 
+/-- The de dicto reading is contradictory. -/
 theorem deDicto_absurd (μ : W → Entity → D) (wBel : W) (x : Entity) :
     ¬ deDictoComparative μ wBel x :=
   lt_irrefl _

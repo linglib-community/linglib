@@ -90,6 +90,7 @@ theorem minterm_mem_closure (σ : ι → Bool) : minterm φ σ ∈ closure (Set.
     split
     exacts [h, compl_mem h]
 
+/-- A minterm lies below each element of the closure or below its complement. -/
 theorem minterm_le_or_le_compl {ψ : α} (hψ : ψ ∈ closure (Set.range φ)) (σ : ι → Bool) :
     minterm φ σ ≤ ψ ∨ minterm φ σ ≤ ψᶜ := by
   induction hψ using closure_bot_sup_induction with
@@ -157,11 +158,13 @@ noncomputable def toSetOfMinterms :
   .rfl
 
 variable (φ) in
+/-- The closure of a family with `n` nonzero minterms has `2 ^ n` elements. -/
 theorem card_closure :
     Nat.card (closure (Set.range φ)) = 2 ^ #(Finpartition.minterms φ).parts := by
   rw [Nat.card_congr (toSetOfMinterms φ).toEquiv, Nat.card_eq_fintype_card, Fintype.card_set,
     Fintype.card_coe]
 
+/-- The atoms of the closure are the nonzero minterms. -/
 theorem isAtom_iff_mem_minterms {ψ : closure (Set.range φ)} :
     IsAtom ψ ↔ ψ.1 ∈ (Finpartition.minterms φ).parts where
   mp h := by
@@ -205,6 +208,8 @@ variable {ι' α' : Type*} [BooleanAlgebra α'] [Fintype ι'] [DecidableEq ι'] 
   (ψ : ι' → α')
 
 variable (φ) in
+/-- The closures of two families are order-isomorphic iff the families have equally many nonzero
+minterms. -/
 theorem nonempty_orderIso_closure_iff :
     Nonempty (closure (Set.range φ) ≃o closure (Set.range ψ)) ↔
       #(Finpartition.minterms φ).parts = #(Finpartition.minterms ψ).parts where

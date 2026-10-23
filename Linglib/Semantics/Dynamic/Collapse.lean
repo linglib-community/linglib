@@ -134,6 +134,8 @@ universe u
 
 variable {S : Type*}
 
+/-- Sequencing is Kleisli composition for the powerset monad, an update
+being the Kleisli arrow that sends a state to its image. -/
 theorem comp_eq_kleisliComp (D₁ D₂ : Update S) :
     (fun i => (D₁ ○ D₂).image {i}) = (fun i => D₁.image {i}) >=> fun i => D₂.image {i} :=
   funext fun i => Set.ext fun j => by
@@ -141,9 +143,11 @@ theorem comp_eq_kleisliComp (D₁ D₂ : Update S) :
     simp only [SetRel.mem_image, Set.mem_singleton_iff, exists_eq_left, SetRel.mem_comp,
       exists_prop]
 
+/-- The trivial test is `pure`. -/
 theorem id_eq_pure : (fun i => (SetRel.id : Update S).image {i}) = fun i => (pure i : Set S) :=
   funext fun _ => SetRel.image_id _
 
+/-- The relational image is `bind`, the monad's extension operator. -/
 theorem image_eq_bind (R : Update S) (σ : Set S) : R.image σ = σ >>= fun i => R.image {i} :=
   Set.ext fun j => by
     rw [Set.bind_def, Set.mem_iUnion₂]
@@ -151,6 +155,7 @@ theorem image_eq_bind (R : Update S) (σ : Set S) : R.image σ = σ >>= fun i =>
 
 /-! ### Distributivity is complete join preservation -/
 
+/-- A CCP is distributive iff it preserves arbitrary joins of states. -/
 theorem isDistributive_iff_map_sSup (φ : CCP S) :
     CCP.IsDistributive φ ↔ ∀ T : Set (Set S), φ (sSup T) = sSup (φ '' T) := by
   simp only [Set.sSup_eq_sUnion]
@@ -193,6 +198,8 @@ def imageEquiv : Update S ≃ sSupHom (Set S) (Set S) where
   right_inv f := sSupHom.ext fun σ =>
     congrFun (CCP.image_lower _ ((isDistributive_iff_map_sSup _).mpr f.map_sSup')) σ
 
+/-- The equivalence sends sequencing to composition (diagrammatic order):
+the transformer monoid restricts to the relational one. -/
 theorem imageEquiv_comp (D₁ D₂ : Update S) :
     (imageEquiv (D₁ ○ D₂) : Set S → Set S) =
       (imageEquiv D₂ : Set S → Set S) ∘ (imageEquiv D₁ : Set S → Set S) :=

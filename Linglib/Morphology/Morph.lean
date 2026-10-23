@@ -305,10 +305,13 @@ def wordsAt (l : Attachment) (ms : List Morph) : List (List Morph) :=
 
 @[simp] theorem wordsAt_singleton (l : Attachment) (m : Morph) : wordsAt l [m] = [[m]] := rfl
 
+/-- Words at a tighter attachment nest in the words at a looser one. -/
 theorem flatMap_wordsAt (h : l ≤ l') (ms : List Morph) :
     (wordsAt l' ms).flatMap (wordsAt l) = wordsAt l ms :=
   List.flatMap_splitBy_splitBy (fun _ _ hj ↦ decide_eq_true ((of_decide_eq_true hj).mono h)) ms
 
+/-- A host with morphs bound before it on one side and after or inside it on the other, none
+more loosely than `l`, is one word at `l`. -/
 theorem wordsAt_append_cons {P S : List Morph} (h : Morph)
     (hP : ∀ p ∈ P, ∃ a ≤ l, p.kind = .bound .before a)
     (hS : ∀ s ∈ S, ∃ q ≠ .before, ∃ a ≤ l, s.kind = .bound q a) :
@@ -325,6 +328,8 @@ theorem wordsAt_append_cons {P S : List Morph} (h : Morph)
     rw [List.cons_append, List.isChain_cons]
     exact ⟨fun _ _ ↦ decide_eq_true (.inl (hP p (by simp))), ih fun q hq ↦ hP q (by simp [hq])⟩
 
+/-- A word at `l` followed by morphs bound after or inside their hosts, none more loosely than
+`l`, is one word at `l`. -/
 theorem wordsAt_append_of_eq_singleton {ms S : List Morph} (h : wordsAt l ms = [ms])
     (hS : ∀ s ∈ S, ∃ q ≠ .before, ∃ a ≤ l, s.kind = .bound q a) :
     wordsAt l (ms ++ S) = [ms ++ S] := by
@@ -341,6 +346,7 @@ theorem wordsAt_append_of_eq_singleton {ms S : List Morph} (h : wordsAt l ms = [
     exact ⟨fun y hy ↦ decide_eq_true (.inr (hS y (by simp [List.mem_of_mem_head? hy]))),
       ih fun t ht ↦ hS t (by simp [ht])⟩
 
+/-- Two sequences of morphs whose junction joins no morphs at `l` have the words of each. -/
 theorem wordsAt_append {ms ns : List Morph}
     (h : ∀ x ∈ ms.getLast?, ∀ y ∈ ns.head?, ¬ JoinsAt l x y) :
     wordsAt l (ms ++ ns) = wordsAt l ms ++ wordsAt l ns :=
@@ -373,6 +379,8 @@ theorem countP_le_one_of_isChain_joinsAt {w : List Morph}
     · rw [List.countP_cons_of_neg (by simpa using ha)]
       exact ih h.tail
 
+/-- Every word has at most one morph that is not bound, a root or a free form hosting the
+rest. -/
 theorem countP_le_one_of_mem_wordsAt {ms w : List Morph} (hw : w ∈ wordsAt l ms) :
     w.countP (fun m ↦ m.kind.position? = none) ≤ 1 :=
   countP_le_one_of_isChain_joinsAt (List.isChain_of_mem_splitBy hw)
@@ -397,6 +405,7 @@ def surface (ms : List Morph) : String :=
 
 @[simp] theorem surface_nil : surface [] = "" := rfl
 
+/-- A single morph surfaces as itself, so an unanalysed form is the surface form of its root. -/
 @[simp] theorem surface_singleton (m : Morph) : surface [m] = toString m := by simp [surface]
 
 /-- The boundaries between the morphs of a word in the notation `surface` writes are the affix

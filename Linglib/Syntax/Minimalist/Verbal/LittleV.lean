@@ -139,6 +139,7 @@ theorem Causative.licensesVoice (h : Causative l) : LicensesVoice l := h.1
 theorem Inchoative.not_licensesVoice (h : Inchoative l) : ¬ LicensesVoice l :=
   fun h' => by simp [LicensesVoice, h.1] at h'
 
+/-- Causatives do not include inchoatives: the two differ in the higher head. -/
 theorem Causative.not_inchoative (h : Causative l) : ¬ Inchoative l :=
   fun h' => by simp [Inchoative, h.1] at h'
 
@@ -148,6 +149,8 @@ theorem Change.not_licensesVoice (h : Change l) : ¬ LicensesVoice l := by
 theorem State.not_licensesVoice (h : State l) : ¬ LicensesVoice l := by
   subst h; decide
 
+/-- A well-formed inchoative is exactly `[vGO, vBE]`: `vGO` embeds only a state, under which
+    nothing is embedded. -/
 theorem Inchoative.eq_of_isWellFormed (hi : Inchoative l) (hw : IsWellFormed l) :
     l = [.vGO, .vBE] := by
   obtain ⟨hd, hl⟩ := hi

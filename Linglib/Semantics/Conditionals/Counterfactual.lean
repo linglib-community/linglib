@@ -140,6 +140,7 @@ theorem cem_selectional :
   · rw [selectionalCounterfactual_compl h]
     cases selectionalCounterfactual ord p q w <;> decide
 
+/-- Unembedded, the homogeneity counterfactual is the selectional counterfactual. -/
 theorem homogeneityCounterfactual_eq_selectionalCounterfactual :
     homogeneityCounterfactual ord p q w = selectionalCounterfactual ord p q w :=
   SignType.eq_of_eq_zero_iff_of_eq_one_iff
@@ -236,6 +237,8 @@ theorem selectionalCounterfactual_eq_neg_one_iff_forall_compatible (hc : IsCente
     intro hp hq
     exact h s hs ((mem_selectionConditional_of_nonempty s hp).2 hq)
 
+/-- On a finite, strongly centered family of preorders the supervaluation over completions is
+the selectional counterfactual. -/
 theorem superCounterfactual_eq_selectionalCounterfactual (hc : IsCentered ord) :
     superCounterfactual ord p q w = selectionalCounterfactual ord p q w := by
   unfold superCounterfactual

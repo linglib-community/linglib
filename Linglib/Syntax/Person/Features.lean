@@ -98,6 +98,8 @@ private theorem mem_upperPolar_lowerPolar (t : Features) (f : Feature) :
       ∀ s : Finset Role, (∀ g ∈ t, Bears s g) → Bears s f := by
   simp [mem_upperPolar_iff, mem_lowerPolar_iff]
 
+/-- The bundles passing the containment filter, the lower sets of the chain, are exactly the
+closed sets of features of the context. -/
 theorem wellFormed_iff_isIntent (t : Features) :
     IsLowerSet (↑t : Set Feature) ↔ IsIntent Bears (t : Set Feature) := by
   rw [isIntent_iff, Set.ext_iff]
@@ -115,6 +117,7 @@ theorem not_wellFormed_singleton_author :
     ¬ IsLowerSet (↑({.author} : Features) : Set Feature) := by
   decide
 
+/-- Exactly three bundles pass the containment filter. -/
 theorem card_wellFormed : Fintype.card {pf : Features // IsLowerSet (↑pf : Set Feature)} = 3 := by
   rw [Fintype.card_subtype_isLowerSet]; rfl
 
@@ -139,6 +142,7 @@ theorem coe_toFeatures (p : Person) :
 @[simp] theorem toFeatures_coarsen (p : Person) : p.coarsen.toFeatures = p.toFeatures := by
   cases p <;> decide
 
+/-- The bundle of a coordination is the union of its conjuncts' bundles. -/
 theorem toFeatures_sup (p q : Person) : (p ⊔ q).toFeatures = p.toFeatures ∪ q.toFeatures := by
   revert p q; decide
 
@@ -151,6 +155,8 @@ theorem isSAP_iff_participant {p : Person} : p.IsSAP ↔ .participant ∈ p.toFe
 theorem includesSpeaker_iff_author {p : Person} : p.IncludesSpeaker ↔ .author ∈ p.toFeatures := by
   revert p; decide
 
+/-- A tripartition value covers exactly the participant sets whose features are its bundle, the
+sets in the domain of its bundle and in no domain of a more specified one. -/
 theorem mem_participantSets_iff {p : Person} (hp : p.coarsen = p) (s : Finset Role) :
     s ∈ p.participantSets ↔ univ.filter (Bears s) = p.toFeatures := by
   revert p s; decide
@@ -179,13 +185,17 @@ def prominence (p : Person) : WithBot Feature := p.toFeatures.max
 @[simp] theorem prominence_second : prominence .second = Feature.participant := by decide
 @[simp] theorem prominence_third : prominence .third = ⊥ := by decide
 
+/-- A value bears exactly the features up to its prominence. -/
 theorem mem_toFeatures_iff {p : Person} {f : Feature} : f ∈ p.toFeatures ↔ ↑f ≤ p.prominence := by
   revert p f; decide
 
+/-- Prominence orders values by inclusion of their bundles. -/
 theorem prominence_le_iff_subset {p q : Person} :
     p.prominence ≤ q.prominence ↔ p.toFeatures ⊆ q.toFeatures := by
   revert p q; decide
 
+/-- Prominence is the order resolution induces up to clusivity, `p` being at most as prominent as
+`q` iff coordinating them gives `q`'s tripartition value. -/
 theorem prominence_le_iff {p q : Person} :
     p.prominence ≤ q.prominence ↔ (p ⊔ q).coarsen = q.coarsen := by
   revert p q; decide
@@ -217,6 +227,7 @@ theorem toFeatures_person (c : Category) : c.person.toFeatures = c.toFeatures :=
 theorem toFeatures_wellFormed (c : Category) : IsLowerSet (↑c.toFeatures : Set Feature) := by
   cases c <;> decide +kernel
 
+/-- A set of categories has a person iff the categories share a bundle. -/
 theorem sharedPerson_isSome_iff (s : Finset Category) :
     (sharedPerson s).isSome ↔ s.Nonempty ∧ ∀ c ∈ s, ∀ d ∈ s, c.toFeatures = d.toFeatures := by
   revert s; decide +kernel

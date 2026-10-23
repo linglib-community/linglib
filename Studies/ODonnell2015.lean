@@ -375,6 +375,9 @@ theorem card_seating (hD : ∀ t ∈ D, t.Licensed G.Licenses) (a : G.NT) :
     rw [hv] at hlic
     exact Finset.mem_filter.mpr ⟨hlic, rfl⟩
 
+/-- **At a nonterminal on no right-hand side the full-listing counts are type counts.** If no rule
+has `r`'s left-hand side among its children, the derivations stored with `r` at the root are the
+word types of the corpus formed with `r`. -/
 theorem counts_eq_card_filter_toFinset (hD : ∀ t ∈ D, t.Licensed G.Licenses)
     {r : ContextFreeRule T G.NT} (hr : ∀ r' ∈ G.rules, .nonterminal r.input ∉ r'.output) :
     counts D r = (D.toFinset.filter (RoseTree.ruleAt? (g := G) · [] = some r)).card := by
@@ -451,6 +454,7 @@ theorem mag_ness_lt_ion (hD : ∀ t ∈ D, t.Licensed (suffixGrammar ι).License
   rw [h.card_wordTypes_eq, h.card_wordTypes_eq]
   decide
 
+/-- **Baayen's `P` ranks *-ness* above *-ion*.** -/
 theorem baayenP_ion_lt_ness (h : Realizes D) : baayenP D .ion < baayenP D .ness := by
   simp only [baayenP, h.hapaxes_eq, h.tokens_eq]
   norm_num [spectrum]
@@ -531,6 +535,8 @@ def bookMult (s : Suffix) (i : Fin 1117) : ℕ :=
       2 * ((spectrum s).wordTypes - 1 - (spectrum s).hapaxes)
   else 0
 
+/-- **The book's counts are realized** by a corpus of licensed derivations of the suffix grammar,
+so the theorems on `Realizes` apply. -/
 theorem exists_realizes : ∃ D : Corpus (Fin 1117),
     (∀ t ∈ D, t.Licensed (suffixGrammar (Fin 1117)).Licenses) ∧ Realizes D :=
   ⟨corpus bookMult, fun _ ↦ licensed_of_mem_corpus,
@@ -569,6 +575,9 @@ theorem selectByCard_isElsewhereWinner {v : RuleSet (DomainRule Ctx F)} {c : Ctx
 
 variable [MeasurableSpace Ctx] [MeasurableSingletonClass Ctx]
 
+/-- **Elsewhere selection is maximum-likelihood inference.** A rule that gives a form at least the
+probability any other rule generating it does, each rule generating its domain uniformly, is an
+Elsewhere winner at that form. -/
 theorem isElsewhereWinner_of_forall_uniformOn_le {v : RuleSet (DomainRule Ctx F)} {c : Ctx}
     {r : DomainRule Ctx F} (hrv : r ∈ v) (hrc : c ∈ r.dom)
     (hmax : ∀ s ∈ v, c ∈ s.dom →

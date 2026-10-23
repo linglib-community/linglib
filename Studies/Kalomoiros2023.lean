@@ -108,6 +108,9 @@ theorem limitedSymmetryAt_iff_forall_le {C : Set W} {K : SyntacticEnvironment At
     · exact h n hn
     · rwa [continuations_eq_top_of_le I hn.le]
 
+/-- The constraint is checked world by world. At a world where the presupposition fails, whenever
+every good final at a parsing point makes the sentence true (false) with a false gap, every good
+final makes it true (false) with a true gap. -/
 theorem limitedSymmetryAt_iff (C : Set W) (K : SyntacticEnvironment Atom) (p : Atom) :
     LimitedSymmetryAt I C K p ↔ ∀ w ∈ C, w ∉ I p → ∀ n ≤ K.rightItems,
       ((∀ K', AgreeUpTo n K K' → w ∈ K'.truth I ∅) →

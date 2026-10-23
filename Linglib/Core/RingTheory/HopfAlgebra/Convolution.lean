@@ -35,6 +35,8 @@ open WithConv
 
 variable {R A C : Type*} [CommSemiring R] [CommSemiring A] [HopfAlgebra R A]
 
+/-- For an algebra map `f` from a commutative Hopf algebra into a commutative algebra, `f ∘ S` is
+a left convolution inverse of `f`: the antipode law `S ⋆ id = 1` transported along `f`. -/
 theorem AlgHom.comp_antipode_cancel [CommSemiring C] [Algebra R C] (f : A →ₐ[R] C) :
     toConv (f.comp (HopfAlgebra.antipodeAlgHom R A)) * toConv f = 1 := by
   have h := comp_convMul_distrib f (toConv (HopfAlgebra.antipodeAlgHom R A)) (toConv (.id R A))

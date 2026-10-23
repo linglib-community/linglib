@@ -60,6 +60,9 @@ theorem replicate_append_replicate_append_replicate_mem_anbncn (n : ℕ) :
 
 variable [DecidableEq α] {X : Language α}
 
+/-- A language containing `aⁿbⁿcⁿ` for infinitely many `n`, whose words have as many `a` as `b`
+as `c`, is not context-free. Pumping out a window of `aⁿbⁿcⁿ` no longer than the pumping length
+leaves `a` or `c` untouched, so by the counts no letter is removed at all. -/
 theorem not_isContextFree_of_replicate_mem_of_count_eq (h : [a, b, c].Nodup)
     (hmem : ∃ᶠ n in Filter.atTop, replicate n a ++ replicate n b ++ replicate n c ∈ X)
     (hcount : ∀ w ∈ X, w.count a = w.count b ∧ w.count b = w.count c) : ¬ X.IsContextFree := by
@@ -94,6 +97,7 @@ theorem not_isContextFree_of_replicate_mem_of_count_eq (h : [a, b, c].Nodup)
   obtain ⟨rfl, rfl⟩ := append_eq_nil_iff.1 hnil
   simp at hvy
 
+/-- For distinct letters, `{aⁿbⁿcⁿ}` is not context-free. -/
 theorem not_isContextFree_anbncn (h : [a, b, c].Nodup) : ¬ (anbncn a b c).IsContextFree := by
   obtain ⟨⟨hab, hac⟩, hbc⟩ : (a ≠ b ∧ a ≠ c) ∧ b ≠ c := by simpa using h
   refine not_isContextFree_of_replicate_mem_of_count_eq h

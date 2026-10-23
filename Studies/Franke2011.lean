@@ -465,6 +465,8 @@ theorem isNashEquilibrium_scalar_and_reversed :
     game.isNashEquilibrium_of_leftInverse uniformOn_univ_singleton_ne_zero
       fun t ↦ by cases t <;> rfl⟩
 
+/-- Both chains reach the attested play at their first sophisticated level and stay there, so
+"some" conveys not-all. -/
 theorem scalar_implicature :
     receiverChain game.trueStates 1 = (fun m ↦ {scalarReceiver m}) ∧
       senderChain game.trueStates 1 = (fun t ↦ {scalarSender t}) ∧
@@ -890,6 +892,8 @@ theorem exclusivity :
     receiverStep game.trueStates (senderChain game.trueStates 1) .either = {.tuu01, .tuuu1} := by
   decide
 
+/-- Under every competence prior the disjunction conveys that the speaker believes `A ∧ B`
+false. -/
 theorem exclusivity_of_competencePrior {p : State → ℝ} (hp : CompetencePrior table p) :
     receiverStepBy game.trueStates p (senderChainBy game.trueStates p 1) .either = {.tuu01} := by
   rw [receiverStepBy_congr _ hp.argmax_eq, senderChainBy_congr _ hp.argmax_eq]
@@ -1569,6 +1573,8 @@ section Counting
 
 variable {T M : Type*} [Fintype T] [Fintype M] [DecidableEq T] [DecidableEq M]
 
+/-- Counting reasoning reaches a fixed point along the chain from the literal receiver, for every
+denotation (Theorems 1 and 3), as the heavy chain of a flat prior. -/
 theorem exists_isFixedPt_receiverChain (den : M → Finset T) :
     ∃ n, IsFixedPt (receiverStep den ∘ senderStep den) (receiverChain den n) := by
   let : MeasurableSpace T := ⊤

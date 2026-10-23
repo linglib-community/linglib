@@ -59,6 +59,8 @@ variable {α β : Type*} {k : ℕ} {u u' v v' : List α}
 def kTestVector (k : ℕ) (w : List α) : List α × Set (List α) × List α :=
   (Edge.left.takeAt (k - 1) w, {f | f ∈ w.kFactors k}, Edge.right.takeAt (k - 1) w)
 
+/-- Words with the same `k`-test vectors have concatenations with the same `k`-test vector, since
+a factor across the seam lies in the suffix of one word followed by the prefix of the other. -/
 theorem kTestVector_append_congr (hu : u.kTestVector k = u'.kTestVector k)
     (hv : v.kTestVector k = v'.kTestVector k) :
     (u ++ v).kTestVector k = (u' ++ v').kTestVector k := by
@@ -138,10 +140,12 @@ theorem IsLocallyTestable.rightQuotient (h : L.IsLocallyTestable k) (u : List α
     (L.rightQuotient u).IsLocallyTestable k :=
   fun _ _ e ↦ h (List.kTestVector_append_congr e rfl)
 
+/-- Locally testable languages are closed under inverse images of letter-to-letter maps. -/
 theorem IsLocallyTestable.preimage_map {L : Language β} (h : L.IsLocallyTestable k) (g : α → β) :
     IsLocallyTestable (List.map g ⁻¹' L) k :=
   fun _ _ e ↦ h (by rw [List.kTestVector_map, List.kTestVector_map, e])
 
+/-- Over a finite alphabet locally testable languages are star-free. -/
 theorem IsLocallyTestable.isStarFree [Finite α] (h : L.IsLocallyTestable k) : L.IsStarFree :=
   .of_factorsThrough h (fun _ _ _ _ ↦ List.kTestVector_append_congr)
     (List.finite_range_kTestVector k) (List.kTestVector_flatten_replicate_succ k)
@@ -157,6 +161,7 @@ section Finite
 
 variable [Finite α]
 
+/-- Over a finite alphabet generalized definite languages are star-free. -/
 theorem IsGeneralizedDefinite.isStarFree (h : L.IsGeneralizedDefinite k) : L.IsStarFree :=
   h.toIsLocallyTestable.isStarFree
 
@@ -166,6 +171,7 @@ theorem IsDefinite.isStarFree (h : L.IsDefinite k) : L.IsStarFree :=
 theorem IsReverseDefinite.isStarFree (h : L.IsReverseDefinite k) : L.IsStarFree :=
   h.toIsGeneralizedDefinite.isStarFree
 
+/-- Over a finite alphabet finite and cofinite languages are star-free. -/
 theorem IsFiniteOrCofinite.isStarFree (h : L.IsFiniteOrCofinite) : L.IsStarFree :=
   let ⟨⟨_, hD⟩, _⟩ := h.exists_isDefinite_and_isReverseDefinite
   hD.isStarFree
@@ -194,6 +200,8 @@ private theorem infix_iff_map_occ (c x : List α) :
   obtain ⟨p, m, rfl, -, hm⟩ := List.map_eq_append_iff.mp hl
   exact eq_of_map_occ_eq hm ▸ ⟨p, q, rfl⟩
 
+/-- The words containing `c` as a factor form a star-free language over any alphabet, finite or
+not. -/
 theorem isStarFree_setOf_infix (c : List α) : IsStarFree {w | c <:+: w} := by
   convert (isLocallyTestable_setOf_infix (c.map (occ c))).isStarFree.comap
     (FreeMonoid.map (occ c)) using 1

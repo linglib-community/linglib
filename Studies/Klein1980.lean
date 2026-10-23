@@ -62,6 +62,7 @@ theorem clever_nonlinear : cleverDel.IsNonlinear :=
     ⟨{Clever2.j}, by simp, by simp [cleverDel], by simp [cleverDel]⟩,
     ⟨{Clever2.m}, by simp, by simp [cleverDel], by simp [cleverDel]⟩⟩
 
+/-- The clever delineation is not monotone, so no measure function induces it. -/
 theorem clever_not_monotone : ¬ cleverDel.IsMonotone :=
   fun h ↦ h.not_isNonlinear clever_nonlinear
 
@@ -96,6 +97,8 @@ primitive. -/
 def kleinDegree (d : Delineation E) (C : Set E) (u : E) : Set E :=
   {v | d.Nondistinct C u v}
 
+/-- For measure-induced delineations, two entities share a Klein degree iff they share a
+measure value. -/
 theorem kleinDegree_ofMeasure (μ : E → D) {C : Set E} {a b : E} (ha : a ∈ C) (hb : b ∈ C) :
     b ∈ kleinDegree (Delineation.ofMeasure μ) C a ↔ μ a = μ b := by
   have hab : ({a, b} : Set E) ⊆ C := Set.insert_subset ha (Set.singleton_subset_iff.2 hb)
@@ -120,6 +123,7 @@ Under monotonicity the context-relative ordering is irreflexive, transitive and 
 incomparability, the ordering structure a degree scale would give without degrees in the
 ontology. -/
 
+/-- Under monotonicity the ordering is a strict weak order. -/
 theorem isStrictWeakOrder_outranks {d : Delineation E} (hmono : d.IsMonotone) (C : Set E) :
     IsStrictWeakOrder E (d.Outranks C) where
   irrefl _ := fun ⟨_, _, h, h'⟩ ↦ h' h
@@ -140,6 +144,7 @@ theorem outranks_or_outranks_or_nondistinct (d : Delineation E) (C : Set E) (u v
 Both quantify universally over ways of making the predicate precise, completions for Kamp and
 comparison classes for Klein, so over all completions the two preorders coincide. -/
 
+/-- Klein's preorder is Kamp's over all completions of the same extension function. -/
 theorem preorder_le_iff_kampPreorder_le (d : Delineation E) (u v : E) :
     d.preorder.le u v ↔ (Kamp1975.kampPreorder (fun C x ↦ x ∈ d C) Set.univ).le u v :=
   d.preorder_le_iff.trans ⟨fun h c _ ↦ h c, fun h c ↦ h c (Set.mem_univ _)⟩

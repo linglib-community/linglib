@@ -77,6 +77,8 @@ noncomputable def antipodeAlgHomN :
     ConnesKreimer R (UnorderedTree α) →ₐ[R] ConnesKreimer R (UnorderedTree α) :=
   birkhoffMinus LinearMap.id (-AddMonoidHom.id _)
 
+/-- `S ⋆ id = 1`, the left inverse law of the negative part at `P = -id`. An input to the instance;
+afterwards this is `AlgHom.antipode_id_cancel`. -/
 theorem antipodeAlgHomN_convMul_id :
     toConv (antipodeAlgHomN (R := R) (α := α)) * toConv (AlgHom.id R _) = 1 :=
   birkhoffMinus_neg_id_convMul (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
@@ -112,6 +114,8 @@ private theorem id_convMul_aeval_antipodeRightTreeN :
     counit_ofTree, map_zero]
   abel
 
+/-- `id ⋆ S = 1`, since `S` equals the right antipode. An input to
+the instance; afterwards this is `LinearMap.id_mul_antipode`. -/
 theorem id_convMul_antipodeAlgHomN :
     toConv (AlgHom.id R _) * toConv (antipodeAlgHomN (R := R) (α := α)) = 1 :=
   left_inv_eq_right_inv antipodeAlgHomN_convMul_id (id_convMul_aeval_antipodeRightTreeN (R := R))
@@ -126,6 +130,7 @@ theorem antipodeAlgHom_eq_antipodeAlgHomN :
     HopfAlgebra.antipodeAlgHom R (ConnesKreimer R (UnorderedTree α)) = antipodeAlgHomN :=
   rfl
 
+/-- The antipode on a tree, `S(T) = −Σ_{(F, T') ∈ cutSummandsN T} (Π_{t ∈ F} S(t)) · T'`. -/
 theorem antipode_ofTree (T : UnorderedTree α) :
     HopfAlgebra.antipode R (ofTree T : ConnesKreimer R (UnorderedTree α)) =
       -((cutSummandsN T).map fun p ↦
@@ -140,6 +145,8 @@ theorem antipode_ofTree (T : UnorderedTree α) :
 
 variable {ℛ : Type*} [CommSemiring ℛ] [Algebra R ℛ]
 
+/-- The Birkhoff factorization `φ = (φ₋ ∘ S) ⋆ φ₊` of a character, from `φ₊ = φ₋ ⋆ φ` and the
+left inverse `φ₋ ∘ S` of `φ₋`. -/
 theorem birkhoffFactorization (P : ℛ →+ ℛ) (φ : ConnesKreimer R (UnorderedTree α) →ₐ[R] ℛ) :
     toConv φ
       = toConv ((birkhoffMinus φ.toLinearMap P).comp

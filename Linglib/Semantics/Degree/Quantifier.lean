@@ -132,6 +132,8 @@ theorem isUpperSet_scopeDegrees (hQ : Antitone Q) (hP : ∀ x, IsLowerSet (P x))
     IsUpperSet (scopeDegrees Q P) :=
   fun _ _ h hd ↦ hQ (fun x hx ↦ hP x h hx) hd
 
+/-- Under an antitone quantifier, negation, *at most n* or *refuse*, the degree set has no
+maximum on a scale without a top, so the high-scope reading is a presupposition failure. -/
 theorem not_isGreatest_scopeDegrees [NoMaxOrder D] (hQ : Antitone Q)
     (hP : ∀ x, IsLowerSet (P x)) : ¬ ∃ m, IsGreatest (scopeDegrees Q P) m :=
   fun ⟨_, hm⟩ ↦ (isUpperSet_scopeDegrees hQ hP).not_bddAbove ⟨_, hm.1⟩ hm.bddAbove
@@ -166,10 +168,13 @@ theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y
   obtain ⟨x₀, hx₀, hmin⟩ := hR
   exact ⟨μ x₀, h x₀ hx₀, hmin, fun _ hd ↦ hd x₀ hx₀⟩
 
+/-- Over `every R` the greatest degree every `R`-witness reaches is the infimum of their measures.
+-/
 theorem highScope_maxIn_singleton_every {R : α → Prop} {m : D} :
     HighScope (MaxIn {m}) (every R) (Iic ∘ μ) ↔ IsGLB (μ '' {x | R x}) m := by
   rw [HighScope, maxIn_singleton, scopeDegrees_every_Iic]; rfl
 
+/-- Over `some R` the greatest degree some `R`-witness reaches is the greatest of their measures. -/
 theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
     HighScope (MaxIn {m}) (GQ.some R) (Iic ∘ μ) ↔ IsGreatest (μ '' {x | R x}) m := by
   rw [HighScope, maxIn_singleton, scopeDegrees_some_Iic, isGreatest_lowerClosure_iff]
@@ -212,6 +217,8 @@ theorem highScope_of_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥) (
   obtain ⟨m, hm⟩ := exists_isGreatest_scopeDegrees hQ hQ₀ ⟨_, hd₀⟩
   exact ⟨μ m, hU (hm.2 hd₀) hx₀, hm⟩
 
+/-- Over a monotone quantifier on a finite domain, a degree quantifier at an upper set,
+comparative or equative, takes scope without truth-conditional effect. -/
 theorem highScope_maxIn_iff_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (hU : IsUpperSet U) : HighScope (MaxIn U) Q (Iic ∘ μ) ↔ LowScope (MaxIn U) Q (Iic ∘ μ) :=
   ⟨lowScope_of_highScope hQ hU, highScope_of_lowScope hQ hQ₀ hU⟩
@@ -225,6 +232,9 @@ theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
   obtain ⟨x, hx⟩ := exists_isGreatest_scopeDegrees hQ hQ₀ hne
   exact maxIn_compl.trans (and_iff_right ⟨_, hx⟩)
 
+/-- Under the meet of a quantifier with an antitone one, *exactly n* as *at least n* and *at
+most n*, the maximum of the degree set, when defined, is that of the other conjunct, so
+high-scope *exactly two girls are taller than t* means *at least two*. -/
 theorem isGreatest_scopeDegrees_of_inf {P : α → Set D} (hQ' : Antitone Q')
     (hP : ∀ x, IsLowerSet (P x)) {m : D} (h : IsGreatest (scopeDegrees (Q ⊓ Q') P) m) :
     IsGreatest (scopeDegrees Q P) m :=
@@ -281,6 +291,8 @@ theorem MaxComparative.trans (h₁ : MaxComparative .gt P Q μ) (h₂ : MaxCompa
   let ⟨z, hz, hlt'⟩ := h₁.exists_lt hy
   ⟨_, hδ, z, hz, hlt.trans hlt'⟩
 
+/-- Under unique matrix and than-clause witnesses, the max-quantified comparative compares their
+measures directly. -/
 theorem maxComparative_iff_of_unique {xa xb : α} (ha : P xa) (ha_unique : ∀ x, P x → x = xa)
     (hb : Q xb) (hb_unique : ∀ x, Q x → x = xb) :
     MaxComparative c P Q μ ↔ c.Rel (μ xa) (μ xb) := by

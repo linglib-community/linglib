@@ -180,6 +180,7 @@ inductive Provable : OForm Atom → Prop where
 open TWFrame
 open ModalLogic (box_four)
 
+/-- Every `TW`-provable formula is T × W-valid, the soundness of `TW` ([von-kutschera-1997]). -/
 theorem soundness {a : OForm Atom} (h : Provable a) : Valid.{u, v} a := by
   intro T World _ F V t w
   induction h generalizing V t w with

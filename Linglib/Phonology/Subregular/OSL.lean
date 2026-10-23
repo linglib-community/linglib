@@ -156,6 +156,8 @@ theorem IsLeftOutputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
   | nil => exact h₀.symm
   | append_singleton u x ih => rw [OSLRule.apply_append_singleton, hg, ih]
 
+/-- A function is `k`-OSL if and only if it fixes `[]`, is prefix-preserving, and has residuals
+factoring through the last `k - 1` output symbols. -/
 theorem isLeftOutputStrictlyLocal_iff_factorsThrough_residual :
     IsLeftOutputStrictlyLocal k f ↔ f [] = [] ∧ (∀ u v, f u <+: f (u ++ v)) ∧
       f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) :=
@@ -164,6 +166,7 @@ theorem isLeftOutputStrictlyLocal_iff_factorsThrough_residual :
 
 /-! ### The hierarchy in `k` -/
 
+/-- A `k`-OSL function is `k'`-OSL for every `k' ≥ k`. -/
 protected theorem IsLeftOutputStrictlyLocal.weaken (hf : IsLeftOutputStrictlyLocal k f)
     (hk : k ≤ k') : IsLeftOutputStrictlyLocal k' f :=
   .of_factorsThrough_residual hf.map_nil hf.isPrefix fun u₁ u₂ h ↦
@@ -175,6 +178,8 @@ protected theorem IsRightOutputStrictlyLocal.weaken (hf : IsRightOutputStrictlyL
     (hk : k ≤ k') : IsRightOutputStrictlyLocal k' f :=
   IsLeftOutputStrictlyLocal.weaken hf hk
 
+/-- The `1`-OSL functions are the letterwise homomorphisms `List.flatMap h`, which are also the
+`1`-ISL functions. -/
 theorem isLeftOutputStrictlyLocal_one_iff :
     IsLeftOutputStrictlyLocal 1 f ↔ ∃ h : α → List β, List.flatMap h = f := by
   refine ⟨fun ⟨r, hr⟩ ↦ ⟨fun x ↦ r.windowOutput [] x, funext fun u ↦ ?_⟩,
@@ -192,6 +197,7 @@ theorem isLeftOutputStrictlyLocal_one_iff :
 An OSL rule is a window recursion accumulating its own output, so over a finite output alphabet
 the bounded output window is a finite state space (`isLeftSubsequential_windowRun`). -/
 
+/-- Over a finite output alphabet, left-OSL functions are left-subsequential. -/
 theorem IsLeftOutputStrictlyLocal.isLeftSubsequential [Fintype β]
     (hf : IsLeftOutputStrictlyLocal k f) : IsLeftSubsequential f := by
   obtain ⟨r, rfl⟩ := hf
@@ -277,6 +283,8 @@ variable [DecidableEq α] {a b c : α}
 def ISLRule.dissimilate (a b : α) : ISLRule 2 α α where
   windowOutput w x := if w = [a] ∧ x = a then [b] else [x]
 
+/-- Dissimilation is not OSL, since `aa` and `ab` have the same output `ab` but continue
+differently on `a`. -/
 theorem ISLRule.dissimilate_not_isLeftOutputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     ¬ IsLeftOutputStrictlyLocal k (dissimilate a b).apply := fun h ↦ by
   have e := congrFun (h.factorsThrough_residual (a := [a, a]) (b := [a, b])
@@ -309,6 +317,8 @@ private theorem spread_apply_replicate (hab : a ≠ b) (n : ℕ) :
       List.eq_of_mem_replicate ((List.rtake_suffix _ _).subset (h ▸ List.mem_singleton_self a))
     simp [OSLRule.spread, this]
 
+/-- Spreading is not ISL, since `a bᵏ⁻¹` and `bᵏ` end in the same `k - 1` input symbols while a
+further `b` surfaces as `a` after the first and as `b` after the second. -/
 theorem OSLRule.spread_not_isLeftInputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     ¬ IsLeftInputStrictlyLocal k (spread a).apply := fun h ↦ by
   have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) b)
@@ -343,6 +353,8 @@ private theorem longDistanceAgree_run_cons_replicate (hcb : c ≠ b) (x : α) (n
   rw [Mealy.run, Mealy.runFrom_cons, longDistanceAgree_runFrom_replicate hcb]
   simp [longDistanceAgree]
 
+/-- Long-distance assimilation is not ISL, since `acᵏ⁻¹` and `bcᵏ⁻¹` end alike while a further
+`b` surfaces as `a` only after the first. -/
 theorem longDistanceAgree_not_isLeftInputStrictlyLocal (hab : a ≠ b) (hca : c ≠ a) (k : ℕ) :
     ¬ IsLeftInputStrictlyLocal k (longDistanceAgree a b).run := fun h ↦ by
   have e := congrFun (h.factorsThrough_residual (a := a :: List.replicate (k - 1) c)
@@ -350,6 +362,8 @@ theorem longDistanceAgree_not_isLeftInputStrictlyLocal (hab : a ≠ b) (hca : c 
   simp [Mealy.residual_run, longDistanceAgree, List.any_replicate, hca, hab.symm] at e
   exact hab e
 
+/-- Long-distance assimilation is not OSL, since `acᵏ⁻¹` and `bcᵏ⁻¹` are output unchanged and
+end alike while a further `b` surfaces as `a` only after the first. -/
 theorem longDistanceAgree_not_isLeftOutputStrictlyLocal (hab : a ≠ b) (hca : c ≠ a)
     (hcb : c ≠ b) (k : ℕ) : ¬ IsLeftOutputStrictlyLocal k (longDistanceAgree a b).run := by
   intro h

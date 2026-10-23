@@ -142,6 +142,9 @@ theorem exists_dirac_of_not_subset (hB : MeasurableSet B) (h : ¬ ⋂ i ∈ s, A
   exact ⟨w, fun i hi ↦ Measure.dirac_apply_of_mem (Set.mem_iInter₂.mp hw i hi), by
     rw [Measure.dirac_apply' _ hB, Set.indicator_of_notMem hwB]⟩
 
+/-- **Theorems 3.1, 3.3 and 3.4, for factual formulas.** Logical consequence, p-entailment, the
+uncertainty bound under every probability, and the preservation of certainty coincide; for
+factual premises 3.3 needs no consistency assumption. -/
 theorem tfae_pEntails (hA : ∀ i ∈ s, MeasurableSet (A i)) (hB : MeasurableSet B) :
     [⋂ i ∈ s, A i ⊆ B,
       PEntails s (fun i ↦ .fact (A i)) (.fact B),
@@ -396,6 +399,8 @@ theorem materially_valid_not_pEntailed (π : Pattern) : π.MateriallyValid ∧ �
     cases π <;> simp [Pattern.witnesses, Pattern.premises, Pattern.conclusion, atom, Formula.fact,
       Fin.forall_fin_succ]
 
+/-- **The printed inferences.** Each English inference Adams prints is unacceptable and
+instantiates a pattern valid for the material conditional but not p-entailed. -/
 theorem printed_inferences : ∀ e ∈ Examples.all, e.judgment = .unacceptable ∧
     ∃ π : Pattern, e.feature? "pattern" = some π.name ∧ π.MateriallyValid ∧ ¬ π.PEntailed := by
   intro e he
@@ -404,6 +409,9 @@ theorem printed_inferences : ∀ e ∈ Examples.all, e.judgment = .unacceptable 
   obtain ⟨hj, π, hπ⟩ := hname
   exact ⟨hj, π, hπ, materially_valid_not_pEntailed π⟩
 
+/-- **P-entailment is not rational.** `B ⇒ C` p-entails neither `B ⇒ −A` nor, by Antecedent
+Restriction's counterexample, `(B & A) ⇒ C`, so rational monotonicity fails, which the
+closest-worlds conditional on a total order satisfies (`Conditional.isRational_closestImp`). -/
 theorem not_isRational_pEntails :
     ¬ Nonmonotonic.IsRational fun φ ψ : Set Assignment ↦
       PEntails Finset.univ ![(⟨atom 1, atom 2⟩ : Formula Assignment)] ⟨φ, ψ⟩ := fun h ↦

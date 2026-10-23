@@ -95,6 +95,9 @@ def domain (r : Datum) : List Arg :=
 def observed? (r : Datum) (np : Arg) : Option Observed :=
   (r.feature? np.feature).bind Observed.parse?
 
+/-- Every clause the book introduces its languages with is derived by the algorithm from the
+    language's alignment type: the ergative and accusative NPs are the dependent-case NPs and
+    the nominative, absolutive and unmarked NPs the leftovers. -/
 theorem rows_case :
     ∀ r ∈ Examples.all, ∀ lang ∈ alignment? r.language, ∀ np ∈ [Arg.subject, .object],
       ∀ o ∈ observed? r np, ∀ v ∈ (assignCases lang (fun _ ↦ none) (domain r)).valueOf np,

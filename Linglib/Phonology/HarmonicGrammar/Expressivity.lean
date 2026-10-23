@@ -172,6 +172,9 @@ theorem exponential_separation_precludes_ganging {n : Nat} (w : Fin n → ℝ)
 
 /-! ### HG–OT agreement -/
 
+/-- With exponentially separated weights bounding every violation, a tableau's OT winners are
+its HG winners: the candidates of lexicographically least profile are those of greatest
+harmony. -/
 theorem _root_.OptimalityTheory.Tableau.optimal_eq_argmax_harmonyScore {C : Type*} {n M : ℕ}
     {w : Fin n → ℝ} (t : Tableau C n) (hw : ExponentiallySeparated w M)
     (hM : ∀ c ∈ t.candidates, ∀ p, t.constraints p c ≤ M) :
@@ -265,6 +268,8 @@ theorem mem_ercs [Fintype ι] [DecidableEq Output] {P : RealizationProblem Input
   simp only [ercs, Finset.mem_biUnion, Finset.mem_image, Finset.mem_erase]
   tauto
 
+/-- Provided no competitor ties the target's violation profile, `σ` realizes the target iff `σ`
+    satisfies every winner–loser ERC ([prince-2002]). -/
 theorem realizedByRanking_iff_satisfiedBy [Fintype ι] [DecidableEq Output]
     {P : RealizationProblem Input Output ι} {σ : Ranking ι n}
     (hvp : ∀ i ∈ P.inputs, ∀ o ∈ P.gen i, o ≠ P.target i →
@@ -293,6 +298,9 @@ end RealizationProblem
 
 /-! ### Forward containment — OT ⊆ HG -/
 
+/-- Every OT language is an HG language on a finite set of inputs. The weights are exponentially
+    separated weights read off the ranking, with the largest violation count as the separation
+    bound. -/
 theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [Fintype ι]
     (S : ConstraintSystem Input Output ι) (X : Finset Input) (σ : Ranking ι n) :
     ∃ w : ι → ℝ, 0 ≤ w ∧ ∀ i ∈ X, S.hgLanguage w i = S.language σ i := by
@@ -311,6 +319,7 @@ theorem _root_.OptimalityTheory.ConstraintSystem.exists_hgLanguage_eq_language [
   simp only [harmonyScore, comp_equiv_symm_dotProduct]
   rfl
 
+/-- An OT-realizable problem is HG-realizable. -/
 theorem RealizationProblem.IsOTRealizable.isHGRealizable
     {P : RealizationProblem Input Output (Fin n)} (h : P.IsOTRealizable) : P.IsHGRealizable := by
   obtain ⟨σ, hσ⟩ := h
@@ -319,6 +328,12 @@ theorem RealizationProblem.IsOTRealizable.isHGRealizable
 
 /-! ### Strict containment — the cumulativity gap -/
 
+/-- HG with non-negative weights strictly contains OT. The witness is [coetzee-pater-2011]'s
+    abstract Lyman's Law instance after [ito-mester-1986], in which faithful candidates violate
+    `{M1}`, `{M2}`, and `{M1, M2}` against an unfaithful `{F}` and only the third input targets
+    the unfaithful output. The weights `[3, 2, 2]` realize it, since `2 + 2 > 3` holds on the
+    third input only, while the winner–loser ERCs `F ≫ M1`, `F ≫ M2`, and "some markedness
+    constraint above `F`" are inconsistent. -/
 theorem hg_strictly_contains_ot :
     ∃ (Input Output : Type) (n : ℕ) (P : RealizationProblem Input Output (Fin n)),
       P.IsHGRealizable ∧ ¬ P.IsOTRealizable := by
@@ -386,6 +401,8 @@ theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
   exact ⟨σ.toRel, inferInstance,
     fun τ hτ ↦ Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
 
+/-- Under categorical realizability, OT and partial orders coincide; the
+    partial order's advantage is probabilistic, the uniform measure on its linear extensions. -/
 theorem RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable
     (P : RealizationProblem Input Output (Fin n)) :
     P.IsOTRealizable ↔ P.IsPartialOrderRealizable :=

@@ -60,6 +60,7 @@ noncomputable def softmax (s : ι → ℝ) : ι → ℝ := fun i ↦ exp (s i) /
 
 theorem softmax_apply (s : ι → ℝ) (i : ι) : softmax s i = exp (s i) / ∑ j, exp (s j) := rfl
 
+/-- Softmax is invariant under translating every score by the same constant. -/
 theorem softmax_add_const (s : ι → ℝ) (c : ℝ) : softmax (fun i ↦ s i + c) = softmax s := by
   funext i
   simp only [softmax_apply, exp_add, ← sum_mul]
@@ -68,6 +69,7 @@ theorem softmax_add_const (s : ι → ℝ) (c : ℝ) : softmax (fun i ↦ s i + 
 @[simp] theorem softmax_zero : softmax (0 : ι → ℝ) = fun _ ↦ (Fintype.card ι : ℝ)⁻¹ := by
   funext i; simp [softmax_apply, card_univ]
 
+/-- Equal scores give the uniform distribution. -/
 @[simp] theorem softmax_const (c : ℝ) :
     softmax (fun _ : ι ↦ c) = fun _ ↦ (Fintype.card ι : ℝ)⁻¹ := by
   simpa using softmax_add_const (0 : ι → ℝ) c
@@ -88,6 +90,8 @@ theorem sum_exp_pos : 0 < ∑ j, exp (s j) := sum_pos (fun _ _ ↦ exp_pos _) un
 @[bound] theorem softmax_le_one : softmax s i ≤ 1 :=
   (single_le_sum (fun j _ ↦ softmax_nonneg s j) (mem_univ i)).trans_eq (sum_softmax s)
 
+/-- The odds of two alternatives are their exponentiated score difference, whatever the other
+alternatives are. -/
 theorem softmax_div_softmax : softmax s i / softmax s j = exp (s i - s j) := by
   rw [softmax_apply, softmax_apply, div_div_div_cancel_right₀ (sum_exp_pos s).ne', exp_sub]
 
@@ -112,6 +116,9 @@ end Nonempty
 
 /-! ### Convexity -/
 
+/-- Log-sum-exp, the logarithm of softmax's normalizer, is convex. Hölder's inequality with
+exponents `a⁻¹` and `b⁻¹` bounds `∑ i, exp (a * s i + b * t i)` by
+`(∑ i, exp (s i)) ^ a * (∑ i, exp (t i)) ^ b`. -/
 theorem convexOn_log_sum_exp [Nonempty ι] :
     ConvexOn ℝ Set.univ fun s : ι → ℝ ↦ log (∑ i, exp (s i)) := by
   refine ⟨convex_univ, fun s _ t _ a b ha hb hab ↦ ?_⟩
@@ -142,6 +149,8 @@ section Deriv
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [Nonempty ι] {f : ι → E → ℝ}
   {f' : ι → E →L[ℝ] ℝ} {x : E}
 
+/-- The derivative of log-sum-exp of a family of scores is the softmax-weighted sum of their
+derivatives. -/
 theorem _root_.HasFDerivAt.log_sum_exp (hf : ∀ i, HasFDerivAt (f i) (f' i) x) :
     HasFDerivAt (fun y ↦ log (∑ i, exp (f i y))) (∑ i, softmax (f · x) i • f' i) x := by
   convert (HasFDerivAt.fun_sum fun i _ ↦ (hf i).exp).log (sum_exp_pos (f · x)).ne' using 1
@@ -153,6 +162,7 @@ section Update
 
 variable [DecidableEq ι] [Nontrivial ι]
 
+/-- `softmax (update s i x) i` is strictly increasing in the score `x`. -/
 theorem softmax_update_strictMono (s : ι → ℝ) (i : ι) :
     StrictMono fun x ↦ softmax (Function.update s i x) i := by
   obtain ⟨j, hj⟩ := exists_ne i
@@ -185,6 +195,7 @@ theorem softmax_eq_inv_sum_exp_sub (s : ι → ℝ) (i : ι) :
     softmax s i = (∑ j, exp (s j - s i))⁻¹ := by
   simp only [softmax_apply, exp_sub, ← sum_div, inv_div]
 
+/-- As the inverse temperature grows, softmax concentrates on a strict maximizer. -/
 theorem tendsto_softmax_atTop {s : ι → ℝ} {i : ι} (h : ∀ j ≠ i, s j < s i) :
     Tendsto (fun α : ℝ ↦ softmax (α • s) i) atTop (𝓝 1) := by
   classical
@@ -202,6 +213,7 @@ end Limit
 
 /-! ### Two alternatives -/
 
+/-- With two alternatives, softmax is the logistic function of the score difference. -/
 theorem softmax_eq_sigmoid_of_univ_eq_pair [DecidableEq ι] {i j : ι} (hij : i ≠ j)
     (h : (univ : Finset ι) = {i, j}) (s : ι → ℝ) : softmax s i = sigmoid (s i - s j) := by
   rw [softmax_apply, h, sum_pair hij, exp_div_add_exp_eq_sigmoid]
@@ -218,6 +230,8 @@ section Pi
 
 variable {V : Type*} [DecidableEq ι] [Fintype V]
 
+/-- The softmax of a separable score `∑ i, c i (g i)` on assignments `g : ι → V` is the product
+of the coordinate softmaxes. -/
 theorem softmax_sum_apply (c : ι → V → ℝ) (f : ι → V) :
     softmax (fun g : ι → V ↦ ∑ i, c i (g i)) f = ∏ i, softmax (c i) (f i) := by
   simp only [softmax_apply, exp_sum, prod_div_distrib, Fintype.prod_sum]

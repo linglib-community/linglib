@@ -227,6 +227,8 @@ off the legs and independent of any ERC presentation. -/
 def feasible (G : Grammar n) (S : Set (Fin n)) : Prop :=
   ∃ r : Ranking (Fin n) n, r ∈ G.legs ∧ ∃ k : Fin (n + 1), ↑(r.take k) = S
 
+/-- The feasible family of `ofERCs E` is that of `E`, so the antimatroid face agrees with
+`ERC.toAntimatroid`. -/
 theorem feasible_ofERCs (E : Finset (ERC (Fin n))) (hcons : (ERC.linearExtensions E).Nonempty)
     (S : Set (Fin n)) :
     (ofERCs E hcons).feasible S ↔ ERC.IsFeasible ↑E S := by

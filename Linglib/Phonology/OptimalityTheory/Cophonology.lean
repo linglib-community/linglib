@@ -72,6 +72,8 @@ def cophonologicalEval
     (defaultRanking subranking : List (L × Constraint C)) (candidates : Finset C) : Finset C :=
   (Tableau.ofList candidates ((mergeRanking defaultRanking subranking).map (·.2))).optimal
 
+/-- With an empty subranking, cophonological evaluation reduces to standard OT
+evaluation: CPT is a proper generalization of OT. -/
 theorem cophonologicalEval_empty_sub
     (defaultRanking : List (L × Constraint C)) (candidates : Finset C) :
     cophonologicalEval defaultRanking [] candidates

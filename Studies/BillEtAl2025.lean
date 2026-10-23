@@ -71,6 +71,7 @@ def Sentence.pronounced : Sentence → Finset Head
   | .mu => {.mu 0, .mu 1}
   | .jMu => Finset.univ
 
+/-- Each sentence type pronounces heads in a way that Mitrović and Sauerland's examples attest. -/
 theorem pronounced_mem_attested (s : Sentence) : s.pronounced ∈ attested := by
   rw [mem_attested_iff]; cases s <;> decide
 
@@ -141,6 +142,8 @@ end Account
 
 /-! ### The predictions -/
 
+/-- The decomposition with the Transparency Principle predicts J-μ, which pronounces every head,
+easier than either other sentence type. -/
 theorem transparency_prediction (s : Sentence) (h : s ≠ .jMu) :
     Account.universal.covert .jMu < Account.universal.covert s := by
   revert s; decide
@@ -173,6 +176,8 @@ def PlayedMore (g : Group) (s t : Sentence) : Prop :=
 instance (g : Group) : DecidableRel (PlayedMore g) := fun _ _ ↦
   inferInstanceAs (Decidable (∃ _, _ ∧ _))
 
+/-- Georgian children replayed J-μ sentences more than J and than μ sentences, and J and μ
+sentences did not differ. -/
 theorem playedMore_child_iff (s t : Sentence) :
     PlayedMore .child s t ↔ s = .jMu ∧ t ≠ .jMu := by
   revert s t; decide
@@ -192,6 +197,7 @@ def SentenceEffect (l : Language) (m : Measure) : Prop := (lrt l m .sentence).ma
 instance (l : Language) (m : Measure) : Decidable (SentenceEffect l m) :=
   inferInstanceAs (Decidable (_ = _))
 
+/-- Hungarian showed no difference between the sentence types on either measure. -/
 theorem not_sentenceEffect_hungarian (m : Measure) : ¬ SentenceEffect .hungarian m := by
   revert m; decide
 
@@ -206,6 +212,8 @@ def Desiderata (c : Sentence → ℕ) : Prop :=
 instance (c : Sentence → ℕ) : Decidable (Desiderata c) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
+/-- The conditions say that the order a measure predicts is the one the Georgian children
+showed. -/
 theorem desiderata_iff (c : Sentence → ℕ) :
     Desiderata c ↔ ∀ s t, c s < c t ↔ PlayedMore .child t s := by
   simp only [playedMore_child_iff]
@@ -257,6 +265,8 @@ instance : DecidablePred BasicTrue := fun st ↦ inferInstanceAs (Decidable (_ �
 
 theorem not_basicTrue_singleton : ¬ BasicTrue {0} := by decide
 
+/-- The decomposition, a conjunctive J over the μ phrases of the shifted conjuncts, computes the
+basic truth conditions of *is on the table*. -/
 theorem basicTrue_iff_conjunction {j : Coordinator} (hj : j.role = .conjunctive)
     (st : EndState) : BasicTrue st ↔ j.denote {mu (shift (0 : Object)), mu (shift 1)} (· ∈ st) := by
   rw [conjunction_apply hj]; simp [BasicTrue, mentioned, Finset.insert_subset_iff]
@@ -265,6 +275,7 @@ theorem basicTrue_iff_conjunction {j : Coordinator} (hj : j.role = .conjunctive)
 conditions with every innocently excludable alternative naming one object denied. -/
 def Accurate (st : EndState) : Prop := st ∈ exhIE (Set.range onTable) {st | BasicTrue st}
 
+/-- The accurate end state has the mentioned objects and nothing else on the table. -/
 theorem accurate_iff (st : EndState) : Accurate st ↔ st = mentioned := by
   have h : (exh (Set.range onTable) {st | BasicTrue st}).Nonempty := ⟨mentioned, by decide⟩
   rw [Accurate, exhIE_eq_exh_of_nonempty _ _ h]

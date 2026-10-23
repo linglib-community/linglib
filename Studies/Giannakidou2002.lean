@@ -82,6 +82,8 @@ theorem durativeUntil_iff_of_isLowerSet {p : W → Set (NonemptyInterval T)} {w 
     durativeUntil p w t' ↔ ∃ i ∈ p w, i.fst < i.snd ∧ i.snd = t' := by
   simp only [durativeUntil, durative_eq_of_isLowerSet hp]
 
+/-- A perfective description of a single event is incompatible with durative UNTIL, since an
+achievement or accomplishment cannot lie within both endpoints of the until interval. -/
 theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
     (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
   rintro ⟨i, h, hi, -⟩
@@ -120,10 +122,14 @@ theorem eventiveUntil_actualization {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ∃ e, P w e :=
   let ⟨⟨e, he, _⟩, _⟩ := h; ⟨e, he⟩
 
+/-- The wide-scope reading holds when nothing P-like ever happens, so it carries no
+actualization. -/
 theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
     (h : t < t') : wideScope P w t' :=
   ⟨⟨(t, t'), h.le⟩, fun _ _ e he ↦ absurd he (hP e), h, rfl⟩
 
+/-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
+supplies. -/
 theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     eventiveUntil P w t ↔ notUntil (τ '' {e | P w e}) {NonemptyInterval.pure t} ∧
       when_ (τ '' {e | P w e}) {NonemptyInterval.pure t} := by
@@ -278,6 +284,8 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- Every judgment on the UNTIL sentences follows from the connective's fragment entry, the
+homogeneity of the main clause and the licensing of the polarity item. -/
 theorem rows_predicted : ∀ r ∈ rows, (r.acceptable = true ↔ Predicted r) := by
   decide
 
@@ -308,6 +316,8 @@ def DiagnosticRow.ofDatum (ex : Datum) : Option DiagnosticRow := do
 
 def diagnostics : List DiagnosticRow := Examples.all.filterMap DiagnosticRow.ofDatum
 
+/-- The stative diagnostics accept a homogeneous clause and the imperative rejects one, with
+negation playing no role, so negation is no stativizer. -/
 theorem diagnostics_predicted : ∀ r ∈ diagnostics, (r.acceptable = true ↔
     ((r.diagnostic = .imperative → ¬ Homog r.aspect r.eventuality) ∧
       (r.diagnostic ≠ .imperative → Homog r.aspect r.eventuality))) := by

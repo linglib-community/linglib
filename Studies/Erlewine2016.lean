@@ -300,6 +300,8 @@ theorem extractionTooClose_iff :
         (ExtractionTooClose (r.input.clause c) x.1 ↔ x.1 = .subj ∧ c.aProbe = true ∧ x.2 = 0) := by
   decide
 
+/-- In every row the attested form is grammatical exactly when an optimal derivation realizes
+it. -/
 theorem rows_optimal :
     ∀ r ∈ rows, r.judgment = .acceptable ↔
       ∃ c ∈ (r.grammar.tableau r.input).optimal, c.form r.input.args = r.form := by
@@ -344,6 +346,8 @@ theorem participant_exception :
     (kaqchikel.tableau (subjectExtraction .first .second)).optimal = {⟨true, .obj⟩} := by
   decide
 
+/-- Subject extraction to Spec,CP has an optimal AF derivation exactly when the arguments are not
+both participants, which is when the Kaqchikel fragment records the Agent Focus reflex. -/
 theorem exists_optimal_agentFocus_iff (c : Mayan.VerbClass) (s o : Person) :
     (∃ d ∈ (kaqchikel.tableau (subjectExtraction s o)).optimal,
         d.form (argsOf true) = .agentFocus) ↔

@@ -129,6 +129,7 @@ def liftN : UnorderedTree (Vertex L) → β :=
 @[simp] theorem liftN_mk (p : RoseTree (Vertex L)) :
     liftN ℓ τ (UnorderedTree.mk p) = RoseTree.fold (mergeAlgebra ℓ τ) p := rfl
 
+/-- Merge multiplies values, the nonplanar magma law. -/
 theorem liftN_merge (a b : UnorderedTree (Vertex L)) :
     liftN ℓ τ (UnorderedTree.node Vertex.bare {a, b}) = liftN ℓ τ a * liftN ℓ τ b := by
   refine Quotient.inductionOn₂ a b fun pa pb => ?_
@@ -162,6 +163,7 @@ noncomputable def lift : SyntacticObject L →ₙ* β where
 
 end CommMagma
 
+/-- Morphisms agreeing on the leaves are equal, the uniqueness half of the universal property. -/
 theorem hom_ext [Mul β] {f g : SyntacticObject L →ₙ* β}
     (hlex : ∀ tok, f (SyntacticObject.leaf tok) = g (SyntacticObject.leaf tok))
     (htrace : f trace = g trace) (htraceOf : ∀ tok, f (traceOf tok) = g (traceOf tok)) :

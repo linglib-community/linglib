@@ -88,6 +88,8 @@ theorem isGoodPossibility_iff_subtype :
   ⟨fun ⟨v, hv, hvt⟩ ↦ ⟨⟨v, hv⟩, trivial, fun ⟨w, hw⟩ _ hwv ↦ hvt w hw hwv⟩,
     fun ⟨⟨v, hv⟩, _, hvt⟩ ↦ ⟨v, hv, fun w hw hwv ↦ hvt ⟨w, hw⟩ trivial hwv⟩⟩
 
+/-- `t` is a necessity over `s` exactly when its interior in the lower-set topology of `s` is
+dense. -/
 theorem isNecessity_iff_dense_interior :
     letI : Preorder s := @Preorder.lift s W p Subtype.val
     IsNecessity p s t ↔ Dense (interior (Subtype.val ⁻¹' t : Set (WithLowerSet s))) := by
@@ -95,6 +97,8 @@ theorem isNecessity_iff_dense_interior :
   exact (isNecessity_iff_subtype p s t).trans
     (isNecessity_univ_iff_dense_interior (α := WithLowerSet s))
 
+/-- `t` is a good possibility over `s` exactly when its interior in the lower-set topology of `s`
+is nonempty. -/
 theorem isGoodPossibility_iff_nonempty_interior :
     letI : Preorder s := @Preorder.lift s W p Subtype.val
     IsGoodPossibility p s t ↔ (interior (Subtype.val ⁻¹' t : Set (WithLowerSet s))).Nonempty := by

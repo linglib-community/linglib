@@ -62,10 +62,12 @@ open IoninMatushansky2006 (cardMod cardMod_atoms_iff)
 
 /-! ### The two strategies, in the morphology -/
 
+/-- Ch'ol classifiers are suffixes on the numeral, as the fragment's entries record. -/
 theorem chol_classifiers_suffixed :
     ∀ c ∈ Chol.Classifiers.classifiers, c.kind = .bound .after .affix := by
   decide
 
+/-- Shan classifiers are free morphemes, as the fragment's entries record. -/
 theorem shan_classifiers_free : ∀ c ∈ Shan.Classifiers.classifiers, c.kind = .free := by
   decide
 

@@ -116,9 +116,12 @@ def UsesPreDative (g : Grade) : Prop := g.terminations .D = ∅
 
 instance (g : Grade) : Decidable g.UsesPreDative := inferInstanceAs (Decidable (_ = _))
 
+/-- The grades that add the pre-dative suffix are grade 2 and those with no form before a direct
+object, grades 3, 3a, 3b and 7. -/
 theorem usesPreDative_iff : ∀ g : Grade, g.UsesPreDative ↔ g = gr2 ∨ ¬ g.HasObjectForms := by
   decide
 
+/-- Grade 2 is the one grade whose A-, B- and C-forms all differ. -/
 theorem changing_iff : ∀ g : Grade,
     (g.HasObjectForms ∧ Disjoint (g.terminations .A) (g.terminations .B) ∧
       Disjoint (g.terminations .B) (g.terminations .C) ∧
@@ -177,6 +180,7 @@ def gyaru : Verb := { morphs := [.root "gyā̀ru"], valency := .ofFrame .intrans
 def verbs : List Verb :=
   [ci, ja, dafa, zaga, saya, fita, kaura, gudu, saye, sayar, sayo, komo, sayu, gyaru]
 
+/-- The verbs of a grade with no form before a direct object are intransitive. -/
 theorem Verb.isIntransitive_of_not_hasObjectForms :
     ∀ v ∈ verbs, ¬ v.grade.HasObjectForms → v.IsIntransitive := by
   decide

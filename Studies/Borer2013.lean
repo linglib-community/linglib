@@ -91,6 +91,7 @@ variable {e : CatFamily} {κ : Option CatFamily}
 
 @[simp] theorem licenses_none : Licenses e none ↔ e = .nominal ∨ e = .verbal := Iff.rfl
 
+/-- Roots, and roots alone, occur both as nouns and as verbs. -/
 theorem licenses_nominal_and_verbal_iff :
     Licenses .nominal κ ∧ Licenses .verbal κ ↔ κ = none := by
   cases κ <;> grind [Licenses]
@@ -145,6 +146,9 @@ def Row.ofDatum (d : Datum) : Option Row := do
 /-- The examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- An example is acceptable exactly when its word is listed as a core that fits the extended
+projection the example puts it in: *a dance*, *to dance* and *too green* are acceptable, and
+*too dance*, *a green* and *to green* are not. -/
 theorem acceptable_iff_licensed :
     ∀ d ∈ data, d.judgment = .acceptable ↔ ∃ κ ∈ d.cores, Licenses d.frame κ := by
   decide +kernel
@@ -255,6 +259,10 @@ theorem complement_eq_none_of_rootSelected :
     ∀ w ∈ words, w.choice = .rootSelected → complement w.terminals w.target = none := by
   decide +kernel
 
+/-- In a word well formed under the resolution, a segment of the adjectival extended projection
+or a functor taking adjectives attaches to a categorized core, never to a bare root, so its
+realization is never selected by a root: adjectives take only the regular *-er* and *-est*, and
+only the default nominalizers. -/
 theorem complement_ne_none_of_wellFormed {ts : List Terminal} (hw : WellFormed Licenses ts)
     {i : ℕ} (hi : i < ts.length)
     (ht : ts[i] = .segment .adjectival ∨ ∃ p, ts[i] = .functor p [.adjectival]) :
@@ -269,6 +277,11 @@ theorem not_wellFormed_iff :
       ∃ p ∈ [CatFamily.verbal, .nominal], w.terminals.head? = some (.functor p [.adjectival]) := by
   decide +kernel
 
+/-- **The puzzle of the adjective.** No licensing condition on the category of a complement both
+derives the judgments of the paradigm and lets the verbalizers of the problem cases take what
+their selection requires. *Too dance* shows that a bare root is not adjectival, while the
+root-selected *-ify* of *clarify* takes an adjectival complement that, selection being local,
+must be its root. -/
 theorem not_exists_licensing :
     ¬ ∃ L : CatFamily → Option CatFamily → Prop,
       (∀ d ∈ data, d.judgment = .acceptable ↔ ∃ κ ∈ d.cores, L d.frame κ) ∧
@@ -282,6 +295,9 @@ theorem not_exists_licensing :
   obtain rfl : c = .adjectival := by simpa using hc
   exact absurd ((hdata _ hdance).mpr ⟨none, List.mem_singleton_self _, hL⟩) (by decide)
 
+/-- In Distributed Morphology every stem is categorized by a head, so without ∅-Transparency no
+inflection sees the root, and the past of *run* is no closer to its root than the past of
+*instantiate*. With Embick's ∅-Transparency every root-selected inflection does see it. -/
 theorem dm_seesRoot :
     ∀ w ∈ dmWords, ¬ w.spine.SeesRoot Embick2010.cyclic (fun _ ↦ False) w.target ∧
       (w.choice = .rootSelected →

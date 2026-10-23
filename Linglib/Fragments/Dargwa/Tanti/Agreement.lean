@@ -117,8 +117,10 @@ def Value.plMarker : Value → Person.Class → Marker
   | _, .participant => .d
   | _, .nonParticipant => .b
 
+/-- The singular markers distinguish the three genders. -/
 theorem Value.sgMarker_injective : Function.Injective Value.sgMarker := by decide
 
+/-- The plural markers do not distinguish men from women. -/
 theorem Value.plMarker_masc_eq_fem : Value.masc.plMarker = Value.fem.plMarker := by
   funext c; cases c <;> rfl
 
@@ -157,6 +159,7 @@ def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
      (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "a"]),
      (.personNumber .second .plural, [.suff "a"]), (.personNumber .third .plural, [])]
 
+/-- In every set, a cell is unmarked exactly when it is not a speech-act participant's. -/
 theorem PersonSet.realize_eq_nil_iff :
     ∀ s : PersonSet, ∀ c ∈ Bundle.personNumberCells,
       s.paradigm.realize c = some [] ↔ ¬ c.IsSAP := by
@@ -182,6 +185,7 @@ theorem isDargic_clitic : IsDargic PersonSet.clitic.paradigm := by decide
 
 theorem isDargic_optative : IsDargic PersonSet.optative.paradigm := by decide
 
+/-- The irrealis set has a first person plural marker of its own. -/
 theorem not_isDargic_irrealis : ¬ IsDargic PersonSet.irrealis.paradigm := by decide
 
 /-! ### Transitive clauses -/
@@ -202,6 +206,7 @@ or *-an* otherwise. -/
 def intransitiveThematic (p : Person) : List Morph :=
   if p.IsSAP then [.suff "u"] else [.suff "ar", .suff "an"]
 
+/-- The thematic suffix is *-i* exactly when A controls person agreement. -/
 theorem thematic_eq_i_iff (s : Scenario Person) :
     thematic s = .suff "i" ↔ personController s = .A := by
   simp only [thematic, personController, Person.kind_map_toClass_eq_downstream_iff]

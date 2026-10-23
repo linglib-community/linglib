@@ -166,6 +166,9 @@ end FourierMotzkin
 
 variable [IsStrictOrderedRing K] {ι σ : Type*} [Fintype ι] [Fintype σ]
 
+/-- **Farkas' lemma.** A finite system of linear inequalities `A *ᵥ x ≤ b` over a linearly
+ordered field has a solution, or a nonnegative combination `y` of its rows has `y ᵥ* A = 0` and
+`y ⬝ᵥ b < 0`. -/
 theorem farkas (A : Matrix ι σ K) (b : ι → K) :
     (∃ x, A *ᵥ x ≤ b) ∨ ∃ y, 0 ≤ y ∧ y ᵥ* A = 0 ∧ y ⬝ᵥ b < 0 := by
   classical
@@ -175,6 +178,8 @@ theorem farkas (A : Matrix ι σ K) (b : ι → K) :
   · simpa [submatrix_mulVec_equiv] using hx
   · simpa [vecMul, dotProduct] using congrFun hyA (e s)
 
+/-- **Gordan's alternative.** Either a nonnegative combination of the rows of `M` is positive in
+every column, or a probability vector `x` has `M *ᵥ x ≤ 0`. -/
 theorem gordan (M : Matrix ι σ K) :
     (∃ y, 0 ≤ y ∧ ∀ j, 0 < (y ᵥ* M) j) ∨ ∃ x, 0 ≤ x ∧ ∑ j, x j = 1 ∧ M *ᵥ x ≤ 0 := by
   classical

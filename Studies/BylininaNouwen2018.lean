@@ -198,6 +198,7 @@ theorem exhaustified_zero : zero.exhaustified = nobody.licenser := by
 theorem isStrawsonUE_zero : zero.IsStrawsonUE :=
   fun p _ B _ _ ↦ zero_mem_countDegrees p.A B
 
+/-- So *zero* licenses no negative polarity item, weak or strong. -/
 @[simp] theorem not_licenses_zero (e : PolarityItem) : ¬ zero.Licenses e := by
   rintro (⟨_, _, h⟩ | ⟨h, _⟩ | ⟨h, _⟩)
   exacts [h.weak.2 isStrawsonUE_zero, h.elim, h.elim]
@@ -252,6 +253,8 @@ def Row.ofDatum (ex : Datum) : List Row :=
 
 def rows : List Row := Examples.all.flatMap Row.ofDatum
 
+/-- Every judgment is the library's verdict, a sentence being acceptable exactly when its licenser
+licenses its item. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.licenser.denote.Licenses r.item) := by
   decide
@@ -269,6 +272,7 @@ theorem antitone_maxIn_countDegrees {U : Set ℕ} (hU : IsLowerSet U) {A : Set �
   rw [countDegrees_plural_eq_Iic (hA.inter_of_left _), maxIn_Iic] at h ⊢
   exact hU (ncard_le_ncard (inter_subset_inter_right A hB) (hA.inter_of_left _)) h
 
+/-- Under `*`, *fewer than ten students passed* is false when no student passed. -/
 theorem not_antitone_maxIn_countDegrees_sdiff :
     ¬ Antitone fun B : Set Unit ↦ MaxIn (Iio 10) (countDegrees univ (plural B \ {∅})) := by
   intro h
@@ -297,6 +301,10 @@ theorem exhAgainst_iff_lowScope :
 
 end Scope
 
+/-- A count's measured degree property is that of its full pluralities. With finitely many members
+of each `A ∩ B i`, the pluralities of `A` that are `B i` have the degrees `Iic` of their number,
+so `Degree.LowScope` and `Degree.HighScope` at `Iic ∘` the count are the readings of the plural
+model. -/
 theorem countDegrees_plural_eq_Iic_comp {ι : Type*} {A : Set α} {B : ι → Set α}
     (h : ∀ i, (A ∩ B i).Finite) :
     (fun i ↦ countDegrees A (plural (B i))) = Iic ∘ fun i ↦ (A ∩ B i).ncard :=

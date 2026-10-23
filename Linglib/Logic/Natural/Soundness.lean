@@ -96,6 +96,8 @@ instance Relation.decidableHolds {α : Type*} [Lattice α] [BoundedOrder α]
 
 /-! ### Join soundness -/
 
+/-- Chained relations compose as the join table says. Distributivity is needed for the cells
+that reason through a complement (`negation ⋈ negation = equiv` is uniqueness of complements). -/
 theorem Relation.Holds.join {β : Type*} [DistribLattice β] [BoundedOrder β]
     {R S : Relation} {x y z : β} (hR : R.Holds x y) (hS : S.Holds y z) :
     (R.join S).Holds x z := by
@@ -168,6 +170,8 @@ theorem Signature.SoundFor.antitone {σ : Signature} {f : α → β} (h : σ.Sou
   intro x y hxy
   cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
 
+/-- The `.additive` row is sound exactly for the monotone functions sending codisjoint pairs to
+codisjoint pairs. -/
 theorem soundFor_additive_iff {f : α → β} :
     Signature.SoundFor .additive f ↔
       Monotone f ∧ ∀ ⦃x y⦄, Codisjoint x y → Codisjoint (f x) (f y) := by
@@ -227,6 +231,8 @@ theorem soundFor_addMult_iff {f : α → β} :
   | cover => exact hc hR
   | independent => trivial
 
+/-- The `.antiAddMult` row is sound exactly for the antitone functions exchanging disjointness
+and codisjointness. -/
 theorem soundFor_antiAddMult_iff {f : α → β} :
     Signature.SoundFor .antiAddMult f ↔ Antitone f ∧
       (∀ ⦃x y⦄, Disjoint x y → Codisjoint (f x) (f y)) ∧

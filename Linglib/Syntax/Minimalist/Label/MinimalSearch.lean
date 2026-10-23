@@ -161,6 +161,7 @@ theorem labels_eq_of_forall_labelsAt_eq {S : Finset LexicalItem.Token}
 
 /-! ### What minimal search finds -/
 
+/-- Search finds the visible heads that no visible head asymmetrically c-commands. -/
 theorem findsHead_iff : t.FindsHead n q ↔
     (n ≤ q ∧ t.InDomain (t.termAt q) (t.termAt n) ∧ t.IsHeadAt q) ∧
       ∀ ⦃q'⦄, n ≤ q' → t.InDomain (t.termAt q') (t.termAt n) → t.IsHeadAt q' →
@@ -289,6 +290,8 @@ theorem findsHead_iff_of_covBy (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d) (hd
       exact fun h ↦ not_cCommands_of_covBy hc hd hcd hcq hdq h.1
     · exact hmin (he ▸ heq) ((hv q' (he ▸ heq) hq').1 hv') hq'
 
+/-- Two non-heads leave the heads of both, when neither has moved out of their merge and they
+share no token. -/
 theorem labelsAt_merge (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d) (hch : ¬ t.IsHeadAt c)
     (hdh : ¬ t.IsHeadAt d) (hdisj : Disjoint (t.termAt c).yield (t.termAt d).yield)
     (hvc : t.InDomain (t.termAt c) (t.termAt n)) (hvd : t.InDomain (t.termAt d) (t.termAt n)) :
@@ -312,6 +315,7 @@ theorem labelsAt_merge (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d) (hch : ¬ t
     · exact ⟨q, (findC (findsHead_iff.1 hfq).1.1).2 hfq, hk⟩
     · exact ⟨q, (findD (findsHead_iff.1 hfq).1.1).2 hfq, hk⟩
 
+/-- A daughter that has moved on is invisible: the heads found are those of the other daughter. -/
 theorem labelsAt_merge_of_not_inDomain (hc : n ⋖ c) (hd : n ⋖ d) (hcd : c ≠ d)
     (hcv : ∀ tok ∈ (t.termAt c).yield, ¬ t.InDomain ↑tok (t.termAt n))
     (hdisj : Disjoint (t.termAt c).yield (t.termAt d).yield)
@@ -374,6 +378,7 @@ def label : HeadFunction := fun t x ↦
       else false
   else none
 
+/-- The head daughters of the label head function are label daughters. -/
 theorem labelDaughter_of_headDaughterRel_label {t : LinearizedSyntacticObject}
     {n c : t.val.Positions} (h : headDaughterRel (label t) n.val c.val) : t.LabelDaughter n c := by
   obtain ⟨i, hi, hc⟩ := h

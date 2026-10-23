@@ -106,6 +106,10 @@ theorem mul_eq_of_mul_mul_eq (h : IsMultitierReverseDefinite M) {e x z : M}
     _ = f ^ (n + 1) * g ^ (n + 1) := by rw [pow_succ_stabilizes (hn f) (n + 1) n.le_succ]
     _ = e := key n
 
+/-- In a finite multitier reverse definite monoid, a product of at least `|M|` factors `x * yᵢ`
+absorbs a further `x`. Two of its first `|M| + 1` prefix products coincide, so a prefix `a`
+satisfies `a * u = a` for a segment `u` beginning with `x`, and the idempotent power of `u`
+absorbs `x`. -/
 theorem prod_map_mul_mul_eq [Finite M] (h : IsMultitierReverseDefinite M) (x : M) {ys : List M}
     (hys : Nat.card M ≤ ys.length) : (ys.map (x * ·)).prod * x = (ys.map (x * ·)).prod := by
   obtain ⟨i, j, hij, hj, hp⟩ : ∃ i j : ℕ, i < j ∧ j ≤ Nat.card M ∧
@@ -143,6 +147,8 @@ theorem prod_map_mul_mul_eq [Finite M] (h : IsMultitierReverseDefinite M) (x : M
 
 end IsMultitierReverseDefinite
 
+/-- A finite monoid is multitier reverse definite exactly when it satisfies Lambert's equation
+`x^ω y x = x^ω y`, stated through the idempotent powers of `x`. -/
 theorem isMultitierReverseDefinite_iff {M : Type*} [Monoid M] [Finite M] :
     IsMultitierReverseDefinite M ↔
       ∀ (x y : M) (n : ℕ), n ≠ 0 → IsIdempotentElem (x ^ n) → x ^ n * y * x = x ^ n * y := by
@@ -189,6 +195,9 @@ theorem IsBTK.mem_multitierReverseDefiniteVariety [Finite α] (h : IsBTK k L) :
 
 /-! ### Languages satisfying the equation are multitier reverse definite -/
 
+/-- Over a finite alphabet, a language decided by the length-`k` prefixes of the tier projections
+of a word is multitier reverse definite with window `k`, as a finite union of intersections of
+tier-based reverse definite languages. -/
 theorem isBTK_of_forall_take_filter_eq [Finite α]
     (h : ∀ w w' : List α,
       (∀ T : α → Bool, (w.filter T).take k = (w'.filter T).take k) → (w ∈ L ↔ w' ∈ L)) :

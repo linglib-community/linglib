@@ -172,6 +172,8 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] (hvw : ∀
   (hα : 0 < α)
 include hvw hα
 
+/-- Every persona both variants convey is produced alike, so speakers constructing different
+personae shift between the variants together. -/
 theorem S1_eq {p p' : Persona G} (hp : prior {p} ≠ 0) (hp' : prior {p'} ≠ 0)
     (hl : p ≠ h.persona) (hr : p ≠ h.symm.persona) (hl' : p' ≠ h.persona)
     (hr' : p' ≠ h.symm.persona) : S1 F α prior p' = S1 F α prior p :=
@@ -223,6 +225,8 @@ variable [Fintype V] [MeasurableSpace V] [MeasurableSingletonClass V] (hvw : ∀
   (hα : 0 < α)
 include hvw hα
 
+/-- A persona both variants convey produces the first in its share, each extension being every
+persona but the one its rival indexes. -/
 theorem S1_real_singleton_of_ne {p : Persona G} (hp : prior {p} ≠ 0) (hl : p ≠ h.persona)
     (hr : p ≠ h.symm.persona) : (S1 F α prior p).real {v} = share h prior α := by
   rw [speaker_listener_truthful_dirac_zero_real_singleton_of_pair hα prior _ hp h.ne
@@ -281,6 +285,9 @@ private theorem mul_L1_real_singleton_of_eq (p : Persona G) :
   rw [← mul_L1_real_singleton h hvw hα hprior, share_eq_half h (hprior _) hpr, hlr]
   ring
 
+/-- When the two personae the variants index are equally likely, hearing the first variant leaves
+every persona both convey at its prior, so a listener already sure of such a persona stays sure
+whatever the speaker says. -/
 theorem L1_real_singleton_of_ne {p : Persona G} (hl : p ≠ h.persona) (hr : p ≠ h.symm.persona) :
     (L1 F α prior v).real {p} = prior.real {p} / prior.real Set.univ := by
   have key := mul_L1_real_singleton_of_eq h hvw hα hprior hpr p
@@ -290,6 +297,8 @@ theorem L1_real_singleton_of_ne {p : Persona G} (hl : p ≠ h.persona) (hr : p �
   field_simp at key ⊢
   linarith
 
+/-- When the two personae the variants index are equally likely, hearing the first variant
+doubles the probability of the persona only it conveys. -/
 theorem L1_real_singleton_persona :
     (L1 F α prior v).real {h.persona} = 2 * prior.real {h.persona} / prior.real Set.univ := by
   have key := mul_L1_real_singleton_of_eq h hvw hα hprior hpr h.persona
@@ -458,6 +467,8 @@ theorem apicalRate_strictAnti (formal : Measure Persona) : StrictAnti (apicalRat
   intro s t h
   cases s <;> cases t <;> first | exact absurd h (by decide) | (simp only [*]; norm_num)
 
+/-- The model orders Labov's styles as Obama's observed rates of *-in'* do, whatever the prior
+at the convention. -/
 theorem apicalRate_lt_iff (formal : Measure Persona) {s t : Labov2012.Style} :
     apicalRate formal s < apicalRate formal t
       ↔ (Labov2012.ingByStyle s).percent < (Labov2012.ingByStyle t).percent :=

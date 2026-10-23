@@ -76,6 +76,7 @@ theorem causedClosure_mono_left (h : ∀ e, s ~[cause w] e → s ~[cause' w] e) 
     causedClosure cause s P w → causedClosure cause' s P w :=
   Exists.imp fun e he ↦ ⟨h e he.1, he.2⟩
 
+/-- The causally self-referential prejacent entails the closed proposition. -/
 theorem causedClosure.closure (h : causedClosure cause s P w) : closure P w :=
   h.imp fun _ he ↦ he.2
 
@@ -87,6 +88,9 @@ theorem not_causedClosure_of_forall_not (h : ∀ e, ¬ s ~[cause w] e) :
     ¬ causedClosure cause s P w :=
   fun ⟨e, he, _⟩ ↦ h e he
 
+/-- Causal self-reference needs the open eventuality argument. The prejacent is a function of the
+closed proposition exactly when causation by the state is trivial at every world, relating the
+state to every eventuality or to none. -/
 theorem causedClosure_factorsThrough_iff :
     (causedClosure cause s).FactorsThrough closure ↔
       ∀ w, (∀ e, s ~[cause w] e) ∨ ∀ e, ¬ s ~[cause w] e := by

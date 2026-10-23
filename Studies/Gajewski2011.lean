@@ -226,6 +226,7 @@ def IsTrivial (f : Set α → Prop) : Prop := (∀ x, f x) ∨ ∀ x, ¬ f x
 its complement, as the items above the midpoint of their scale do ([horn-1989]). -/
 def IsIntolerant (f : Set α → Prop) : Prop := ¬ IsTrivial f → ∀ x, ¬ f x ∨ ¬ f xᶜ
 
+/-- Anti-additivity implies Intolerance, since accepting `x` and `xᶜ` means accepting everything. -/
 theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive f) :
     IsIntolerant f := fun hnt x ↦ by
   by_contra hx
@@ -234,6 +235,8 @@ theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive
   rw [Set.union_compl_self] at huniv
   exact hnt (Or.inl fun y ↦ h.antitone (Set.subset_univ y) huniv)
 
+/-- Proportional *few* is Intolerant, since fewer than half in and fewer than half out is
+impossible. -/
 theorem few_isIntolerant (A : α → Prop) : IsIntolerant (few A) := fun _ x ↦ by
   by_contra hx
   rw [not_or, not_not, not_not, few_apply, few_apply] at hx
@@ -242,6 +245,8 @@ theorem few_isIntolerant (A : α → Prop) : IsIntolerant (few A) := fun _ x ↦
   rw [e] at h₂
   exact absurd (h₁.trans h₂) (lt_irrefl _)
 
+/-- Cardinal *fewer than four* is not Intolerant, since with six elements three are in and three
+out. -/
 theorem atMostThree_not_isIntolerant :
     ¬ IsIntolerant (atMost 3 (fun _ : Fin 6 ↦ True)) := fun h ↦ by
   let _ : DecidablePred (fun x : Fin 6 ↦ x < 3)ᶜ := fun z ↦ inferInstanceAs (Decidable (¬ z < 3))
@@ -273,6 +278,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
+/-- Every judgment in the paper follows from the two licensing principles. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.judgment = .acceptable ↔ Licensed r.licenser r.strength) := by
   simp only [licensed_iff]

@@ -134,6 +134,8 @@ private theorem flatMap_members_amalgamate {below : List (Amalgam H)}
       simp only [amalgamate, ha] at h <;>
       first | simpa [List.append_assoc, Amalgam.members] using ih h | simp at h
 
+/-- The complex heads partition the spine in the order of syntactic composition: the affixes of
+a complex head mirror that order, and no head gains or loses an occurrence. -/
 theorem flatMap_members_amalgamateSpine {spine out : List (Amalgam H)}
     (h : amalgamateSpine spine = some out) :
     out.flatMap Amalgam.members = spine.flatMap Amalgam.members := by
@@ -256,6 +258,9 @@ private theorem foldl_raising (p : FreeMagma H) (lo : List H) :
   | nil => rfl
   | cons h lo ih => simpa using ih _
 
+/-- The complex head of a spine can sit at any of its heads. With the heads below Raising and
+the heads above Lowering, all the heads form one complex head there, each added to the complex
+head of the heads below it. -/
 theorem amalgamateSpine_raising_lowering {lo hi rest : List H} {s b : H}
     (h : lo ++ s :: hi = b :: rest) :
     amalgamateSpine (lo.map (single · (some .raising)) ++ single s none ::
@@ -288,6 +293,9 @@ private theorem forall_isLeftComb_amalgamate {below : List (Amalgam H)}
         | (rw [ih h]; rcases hs with _ | ⟨⟨y, n⟩, hs⟩ <;>
             simp [List.isChain_cons_cons] <;> tauto)
 
+/-- Every complex head of a convergent derivation adds one head at a time, the bracketing that
+mirrors the order of syntactic composition, exactly when no head Lowers right after a head has
+Raised into it. -/
 theorem forall_isLeftComb_iff {hs : List (H × Option Direction)} {out : List (Amalgam H)}
     (h : amalgamateSpine (hs.map fun p ↦ single p.1 p.2) = some out) :
     (∀ a ∈ out, a.complex.IsLeftComb) ↔
@@ -386,6 +394,10 @@ def spine? (r : Datum) : Option (List (Amalgam ClausalHead)) :=
   | "dani1285", some "root" => some (moveToRoot danish V)
   | _, _ => none
 
+/-- The canonical tests for verb movement place a finite verb before a low adverb, sentential
+negation or a floating quantifier exactly when it is pronounced in T or above. The paper's
+examples of French, Danish and Russian finite clauses are acceptable in exactly the order that
+the position of the verbal complex predicts. -/
 theorem verb_placement :
     ∀ r ∈ Examples.all, r.feature? "phenomenon" = some "finiteVerbPlacement" →
       r.feature? "diagnostic" ≠ some "coordination" →

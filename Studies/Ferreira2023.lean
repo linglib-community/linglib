@@ -234,6 +234,7 @@ theorem not_domainIndependent_starstar : ¬ DomainIndependent (starstar g₃ (·
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h₁
   exact absurd h₁.1 (by decide)
 
+/-- In the paper's terms, no ordering source is a ∗∗-revision of `g₃` for `(· = 1)`. -/
 theorem not_exists_starstar_orderingSource :
     ¬ ∃ g' : Background (Fin 3), ∀ (D : Set (Fin 3)) (u v : Fin 3), u ∈ D → v ∈ D →
       ((u <[g' 0] v) ↔ starstar g₃ (· = 1) 0 D u v) :=
@@ -712,6 +713,7 @@ theorem Profile.Valid.exists_model {π : Profile} (hπ : π.Valid) :
 
 end twoWorlds
 
+/-- A conjunction is contradictory exactly when no valid profile satisfies both conjuncts. -/
 theorem Pattern.contradictory_iff (pat : Pattern) :
     pat.Contradictory ↔ ∀ π : Profile, π.Valid →
       ¬ (pat.first.evalP π = true ∧ pat.second.evalP π = true) := by
@@ -736,6 +738,7 @@ theorem Pattern.consistent_iff (pat : Pattern) :
     exact ⟨Bool, f, g, p, q, true, hne, (Conjunct.holds_iff_evalP _ _ _ _ _ _).2 h₁,
       (Conjunct.holds_iff_evalP _ _ _ _ _ _).2 h₂⟩
 
+/-- A conjunct entails another exactly when it does on every valid profile. -/
 theorem Conjunct.entails_iff (c₁ c₂ : Conjunct) :
     c₁.Entails c₂ ↔ ∀ π : Profile, π.Valid → c₁.evalP π = true → c₂.evalP π = true := by
   constructor

@@ -275,6 +275,8 @@ def buryatRound : Pattern (Option BuryatV) Bool :=
       | some v => if v.high then .opaque else .participating
       | none => .transparent }
 
+/-- The printed grammar is ATR harmony and rounding harmony with opaque high vowels, on one
+tier. -/
 theorem buryat_language :
     buryat.language = {w | buryatATR.Harmonic w ∧ buryatRound.Harmonic w} := by
   ext w
@@ -319,6 +321,10 @@ theorem yakut_not_isStrictlyPiecewise (k : ℕ) : ¬ yakut.language.IsStrictlyPi
 def yakutFront : Pattern (Option TurkicV) Bool :=
   { value := Option.map TurkicV.front, participation := allParticipate }
 
+/-- **Yakut's rounding is no segment-level pattern beside its fronting harmony**, whatever its
+values, tier, blockers, icy targets, and direction. The tier bigram `u a` is licit and `a u` is
+not, so read left to right `a` would have to be opaque or `u` an icy target, and either would
+license `*oa` or `*uo`; read right to left the two roles swap. -/
 theorem yakut_rounding_not_pattern {W : Type*} (q : Pattern (Option TurkicV) W) :
     yakut.language ≠ {w | yakutFront.Harmonic w ∧ q.Harmonic w} := fun h ↦ by
   have hmem : ∀ w, w ∈ yakut.language ↔ yakutFront.Harmonic w ∧ q.Harmonic w := fun w ↦ by

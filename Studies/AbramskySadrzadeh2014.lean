@@ -356,6 +356,8 @@ instance {L : Language} {V : Type*} (c : Context L V) : DiscreteMeasurableSpace 
 variable {L : Language} {V : Type*} [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
   {c : Context L V} {ι : Type*} {C : Cover c ι} {x : ∀ i, Theory (C.part i)}
 
+/-- A probability measure on global theories glues the point masses `δ_{sᵢ}` in `D ∘ F` iff it
+is carried by the gluings of the `sᵢ`. -/
 theorem map_restrict_eq_dirac_iff [Countable ι] (d : Measure (Theory c))
     [IsProbabilityMeasure d] :
     (∀ i, d.map (Theory.restrict (C.map i)) = Measure.dirac (x i)) ↔
@@ -448,6 +450,7 @@ theorem gluingMeasure_apply (c : Noun × Noun) :
     Measure.smul_apply, smul_eq_mul, Measure.ofWeights_apply_singleton, ← Nat.cast_sum,
     show ∑ c : Noun × Noun, score c = 48 from rfl, Nat.cast_ofNat, ENNReal.div_eq_inv_mul]
 
+/-- *Ripe bananas, cheeky monkeys* (`t₂`) is the most likely resolution, with probability `1/2`. -/
 theorem gluingMeasure_le :
     gluingMeasure {ripeGluing (.banana, .monkey)} = 1 / 2 ∧
       ∀ t, gluingMeasure {t} ≤ gluingMeasure {ripeGluing (.banana, .monkey)} := by
@@ -462,6 +465,7 @@ theorem gluingMeasure_le :
       Set.preimage_singleton_eq_empty.2 ht, measure_empty]
     exact zero_le
 
+/-- The printed `d(t_c)` is `score c / 48` rounded, except `d(t₄) = 0.205` for `10/48`. -/
 theorem gluingProbability_rounds_iff (c : Noun × Noun) :
     (gluingProbability c.1 c.2).probability.Rounds (score c) 48 ↔ c ≠ (.monkey, .monkey) := by
   obtain ⟨a, b⟩ := c

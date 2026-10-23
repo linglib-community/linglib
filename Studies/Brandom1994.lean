@@ -123,6 +123,7 @@ def IsNegation (p n : P) : Prop :=
 
 variable {R}
 
+/-- In a coherent role a negation has the orthocomplement of the claim's content. -/
 theorem IsNegation.content_eq_compl (hR : R.Coherent) (h : R.IsNegation p n) :
     R.content n = (R.content p)ᶜ := by
   refine SetLike.ext fun r ↦ ⟨fun hr ↦ ?_, fun hr ↦ ?_⟩
@@ -268,6 +269,7 @@ theorem precludes_eq : R.Precludes = Relation.Comp (ReflTransGen R.committive) R
   exact h ⟨{p}, {q}⟩ (Scorecard.committed_of_mem rfl)
     (.primaFacie rfl fun ⟨r, ⟨s, hs, hsr⟩, hrq⟩ ↦ hq ⟨r, hs ▸ hsr, hrq⟩)
 
+/-- A role is coherent exactly when its incompatibility is the one its own scorekeeping confers. -/
 theorem coherent_iff_precludes_eq : R.Coherent ↔ R.Precludes = R.incompatible := by
   rw [precludes_eq]
   refine ⟨fun hR ↦ funext₂ fun p q ↦ propext ⟨fun ⟨r, hpr, hrq⟩ ↦

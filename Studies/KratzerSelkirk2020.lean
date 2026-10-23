@@ -84,6 +84,8 @@ namespace KratzerSelkirk2020
 
 /-! ### The features (45)–(47) -/
 
+/-- No constituent bears both features, since an F-marked constituent of a type with two values
+is Given with respect to nothing. -/
 theorem not_given_mark_focused {α : Type*} [Nontrivial α] (d : WithAlternatives α) (a : α) :
     ¬ (d.mark .focused).Given a :=
   not_given_of_nontrivial (d.nontrivial_alternatives_mark_focused) a
@@ -295,6 +297,8 @@ def Transparent : {α γ : Type} → Ctx α γ → Prop
   | _, _, arg _ _ K => K.Transparent
   | _, _, squiggle _ _ _ => False
 
+/-- Through a transparent context the meaning of a constituent is the meaning of its hole bound
+into the context, which is a continuation. -/
 theorem meaning_plug {K : Ctx α γ} (hK : K.Transparent) (t : LF α) :
     (K.plug t).meaning = t.meaning >>= fun a ↦ (K.plug (lex a .bare)).meaning := by
   induction K with
@@ -570,6 +574,9 @@ theorem not_given_of_isAGiven :
 /-- *Every `P` is a `Q`*, with the restrictor and the scope as properties. -/
 def every {E W : Type*} (P Q : E → Set W) : Set W := {w | ∀ x, w ∈ P x → w ∈ Q x}
 
+/-- Footnote 14 finds Schwarzschild's givenness, entailment of the existential F-closure, too easy
+to satisfy, which A-Givenness is not. The F-closure of *Every [cat]F is a complainer*, that every
+`P` is a complainer for some `P`, holds at every world, since every complainer is a complainer. -/
 theorem sUnion_alternatives_every_focused {E W : Type} (cat complainer : E → Set W) :
     ⋃₀ ((every · complainer) <$>
       (pure cat : WithAlternatives (E → Set W)).mark .focused).alternatives = Set.univ := by

@@ -115,6 +115,7 @@ def domain (g : PartialAssign Var D) : Set Var := {x | g x ≠ ⊥}
 @[simp] theorem domain_bot : (⊥ : PartialAssign Var D).domain = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ h ↦ h rfl
 
+/-- `h` extends `g` exactly when the two agree on the domain of `g`. -/
 theorem le_iff_eqOn_domain : g ≤ h ↔ Set.EqOn g h g.domain := by
   refine Pi.le_def.trans (forall_congr' fun x ↦ ⟨fun hx hne ↦ Flat.eq_of_le hx fun _ ↦ hne,
     fun hx ↦ ?_⟩)
@@ -162,6 +163,7 @@ theorem update_comm (h : x ≠ y) (a b : D) (g : PartialAssign Var D) :
 theorem covBy_update {x : Var} (hx : g x = ⊥) (d : D) : g ⋖ g.update x d :=
   covBy_iff.2 ⟨x, hx, by simp, fun _ hy ↦ (update_of_ne hy d g).symm⟩
 
+/-- `h` covers `g` exactly when `h` updates `g` at a variable `g` leaves unvalued. -/
 theorem covBy_iff_exists_update : g ⋖ h ↔ ∃ x d, g x = ⊥ ∧ g.update x d = h := by
   refine ⟨fun hc ↦ ?_, fun ⟨x, d, hx, he⟩ ↦ he ▸ covBy_update hx d⟩
   obtain ⟨x, hx, hhx, hagree⟩ := covBy_iff.1 hc
@@ -245,6 +247,9 @@ theorem value_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).value 
 
 /-! #### Single values -/
 
+/-- `x` has the single value `d` in `G` exactly when some assignment in `G` sends `x` to `d` and
+every assignment in `G` that values `x` sends it to `d`, the form in which [Spector][spector-2026]
+states his *atomic*. -/
 theorem value_eq_singleton_iff :
     G.value x = {d} ↔ (∃ g ∈ G, g x = ↑d) ∧ ∀ g ∈ G, g x ≠ ⊥ → g x = ↑d := by
   refine Set.eq_singleton_iff_unique_mem.trans ⟨fun ⟨hex, hall⟩ ↦ ⟨hex, fun g hg hne ↦ ?_⟩,
@@ -261,6 +266,8 @@ theorem eq_of_mem_restrict (h : G.value x = {d}) (hg : g ∈ G.restrict x a) : a
   rw [value_singleton, Set.eq_singleton_iff_unique_mem]
   exact ⟨And.left, fun h ↦ ⟨h, fun _ hd' ↦ Flat.coe_inj.1 (hd'.symm.trans h)⟩⟩
 
+/-- The restriction of `G` to `x = a` gives `x` the single value `d` exactly when it is nonempty
+and `d = a`. -/
 theorem value_restrict_eq_singleton_iff :
     (G.restrict x a).value x = {d} ↔ (G.restrict x a).Nonempty ∧ d = a := by
   refine ⟨fun h ↦ ?_, fun ⟨hne, hd⟩ ↦ hd.symm ▸ value_restrict hne⟩

@@ -180,6 +180,7 @@ same condition and agree on it. -/
 
 section ConditionalEvent
 
+/-- Every trivalent proposition is the conditional event of its truth on its definedness. -/
 theorem indicator_support_ofProp_eq_one (p : W → SignType) :
     (Function.support p).indicator (fun w ↦ ofProp (p w = 1)) = p := by
   funext w
@@ -188,6 +189,7 @@ theorem indicator_support_ofProp_eq_one (p : W → SignType) :
   · rw [Set.indicator_of_mem h]
     cases hp : p w <;> simp_all
 
+/-- Two conditional events coincide exactly when they have the same condition and agree on it. -/
 theorem indicator_ofProp_eq_indicator_ofProp_iff {A A' : Set W} {B B' : W → Prop}
     [DecidablePred B] [DecidablePred B'] :
     (A.indicator fun w ↦ ofProp (B w)) = A'.indicator (fun w ↦ ofProp (B' w)) ↔
@@ -496,6 +498,9 @@ theorem existsHaug_presuppose_ne_neg_one (p : W → SignType) :
     existsHaug (fun w => (p w ⊔ 0)) ≠ -1 := by
   simp
 
+/-- Quantifier Projection ([coppock-beaver-2015]'s appendix) lets a presupposition under the
+existential project as an existentially quantified presupposition, over bivalent `φ` and
+`ψ`. -/
 theorem existsHaug_meetWeak_presuppose {φ ψ : W → SignType} (hφ : IsBivalent φ)
     (hψ : IsBivalent ψ) :
     existsHaug (fun w => meetWeak (φ w ⊔ 0) (ψ w)) =

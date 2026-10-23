@@ -180,11 +180,15 @@ dogs. -/
 theorem presupLog_sentence :
     presupLog (sentence like) = [∃ z, like .john z ∧ z ≠ .dogs] := rfl
 
+/-- Once both logs are exposed, the conventional implicature entails the presupposition, since
+John likes cats and cats are not dogs. -/
 theorem presupposition_of_ci (h : ∀ q ∈ ciLog (sentence like), q) :
     ∀ p ∈ presupLog (sentence like), p := by
   simp only [presupLog_sentence, List.mem_singleton, forall_eq]
   exact ⟨.cats, h _ (by simp [ciLog_sentence]), by decide⟩
 
+/-- The relative clause never reaches the at-issue dimension, since whatever it says, the
+sentence's at-issue value is that John likes dogs. -/
 theorem atIssue_sentence_congr (l l' : M Prop Prop (E → Prop)) :
     atIssue (also (likes like) dogs (comma john l)) =
       atIssue (also (likes like) dogs (comma john l')) := rfl

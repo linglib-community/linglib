@@ -380,6 +380,9 @@ theorem isProbabilityMeasure_pitmanYor (n : ℕ) : IsProbabilityMeasure (pitmanY
   have := isProbabilityMeasure_seqLaw_crpRule hα₀ hα₁ hθ n
   (Measure.isProbabilityMeasure_map_iff (measurable_of_countable _).aemeasurable).2 inferInstance
 
+/-- **The seating plan on labels.** A sequence of table labels has the probability
+`pitmanYorEPPF` of the partition it generates if each label is the first customer at its table,
+and probability `0` otherwise. -/
 theorem seqLaw_crpRule_singleton : ∀ {n : ℕ} (s : Fin n → ℕ),
     seqLaw (crpRule α θ) n {s} =
       if (Finpartition.ofFun s).minLabel = s then

@@ -61,6 +61,9 @@ section Posterior
 variable [Fintype X] [StandardBorelSpace X] [Nonempty X] {𝓧 : Type*} [MeasurableSpace 𝓧]
   [MeasurableSingletonClass 𝓧] (κ : Kernel X 𝓧) [IsFiniteKernel κ] {u : 𝓧}
 
+/-- At an observation that both points emit with positive likelihood, the posterior mass of a
+point is strictly increasing in its Bernoulli prior: a state that is more likely a priori is
+more likely a posteriori. -/
 theorem strictMono_posterior_bernoulliMeasure (hxy : x ≠ y) (hκx : κ x {u} ≠ 0)
     (hκy : κ y {u} ≠ 0) : StrictMono fun p : I ↦ ((κ†Ber(x, y, p)) u).real {x} := by
   intro p q hpq

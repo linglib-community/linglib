@@ -100,6 +100,7 @@ def compatible (m : ι → Triangle) : Prop := ∃ i, m i = ⊤
 instance [Fintype ι] (m : ι → Triangle) : Decidable (compatible m) :=
   inferInstanceAs (Decidable (∃ _, _))
 
+/-- Negating the alternative *some N was Q* yields the strong inference. -/
 theorem compatible_iff_not_strong (m : ι → Triangle) :
     compatible m ↔ ¬ Inference.den .strong m := by
   simp only [compatible, Inference.den, not_forall]

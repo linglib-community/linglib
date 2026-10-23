@@ -215,12 +215,17 @@ theorem value_of_isGap (hw : IsGap x w) (r : Reading) :
   simp only [Reading.value, Construal.holds_of_isGap hw]
   rcases r with ⟨_ | _, _ | _⟩ | _ | _ <;> decide
 
+/-- Where every object has the property all readings make the positive sentence true and the
+negative one false, as the clearly true and clearly false controls of both experiments require.
+-/
 theorem value_of_subset (hx : x.Nonempty) (hw : x ⊆ w) (r : Reading) :
     (r.value x .positive w, r.value x .negative w) = (1, -1) := by
   simp only [Reading.value, Construal.holds_of_subset hx hw,
     SignType.supervaluation_const r.construals_nonempty]
   simp
 
+/-- Where no object has the property all readings make the positive sentence false and the
+negative one true. -/
 theorem value_of_disjoint (hx : x.Nonempty) (hw : Disjoint x w) (r : Reading) :
     (r.value x .positive w, r.value x .negative w) = (-1, 1) := by
   simp only [Reading.value, Construal.holds_of_disjoint hx hw,
@@ -237,6 +242,8 @@ theorem value_negative_of_low {r : Reading} (h : ∀ c ∈ r.construals, c.scope
   refine SignType.supervaluation_congr fun c hc ↦ ?_
   obtain ⟨_ | _, _⟩ := c <;> cases h _ hc <;> rfl
 
+/-- The homogeneous reading is the trivalent plural `barePlural`, the supervaluation over the
+objects of the plurality. -/
 theorem value_homogeneous (hx : x.Nonempty) :
     Reading.homogeneous.value x .positive = barePlural (· ∈ ·) x := by
   funext w
@@ -260,6 +267,8 @@ theorem isGap_iff_not_homogeneous (hx : x.Nonempty) :
 
 variable [DecidableEq Atom]
 
+/-- A participant who reads the definite homogeneously but reverses the positive judgment to
+obtain the negative one, weak negation (fn 23), responds as a universal participant. -/
 theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
     -SignType.ofProp (Reading.homogeneous.value x .positive w = 1) =
       (Reading.quantified ⟨.universal, .low⟩).value x .negative w := by
@@ -283,6 +292,7 @@ theorem domainRestriction_of_isGap (hw : IsGap x w) :
 
 /-! ### Binary and ternary judgments -/
 
+/-- Ternary judgments separate all readings in a GAP context, Experiment 2's design. -/
 theorem gapPattern_injective : Function.Injective Reading.gapPattern := by decide
 
 /-- The four quantified readings give the four possible pairs of binary judgments in a GAP
@@ -290,6 +300,8 @@ context, the three of Figure 2 and the wide-scope existential of the empty fourt
 theorem binaryPattern_quantified_bijective :
     Function.Bijective fun c : Construal ↦ (Reading.quantified c).binaryPattern := by decide
 
+/-- Binary judgments conflate the homogeneous reading and the scope-ambiguous universal with the
+wide-scope universal, all three rejecting both sentences in a GAP context. -/
 theorem binaryPattern_eq_wideScopeUniversal :
     ∀ r ∈ ({.homogeneous, .scopeAmbiguous} : Finset Reading),
       r.binaryPattern = (Reading.quantified ⟨.universal, .wide⟩).binaryPattern := by decide
@@ -404,6 +416,10 @@ theorem allWorlds_subset_someWorlds (hx : x.Nonempty) : allWorlds x ⊆ someWorl
 theorem isGap_iff_mem_sdiff : IsGap x w ↔ w ∈ someWorlds x \ allWorlds x := by
   simp [IsGap, Finset.subset_iff]
 
+/-- Since the *not all* implicature is a sub-computation of homogeneity, a participant accepts
+the positive definite in a GAP context exactly when they accept *some* where every object has the
+property, whatever their alternatives. The homogeneous participants of both experiments who
+accept *some* there contradict the account. -/
 theorem definite_in_gap_iff_some_in_all (hw : IsGap x w) (hw' : x ⊆ w') :
     w ∈ strengthened (mates A) (primal (someWorlds x) (allWorlds x)) .mystery ↔
       w' ∈ exh (mates A) (primal (someWorlds x) (allWorlds x)) .weak := by

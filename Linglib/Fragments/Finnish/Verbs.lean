@@ -385,9 +385,12 @@ def verbs : List Verb :=
     paeta, onnistua, uskaltaa, viitsiä, malttaa, hennoa, kehdata, ehtiä, jaksaa, mahtua, pystyä,
     laiminlyödä, epäröidä]
 
+/-- The citation form of each entry is the A infinitive of the infinitive stem formed from its
+inflectional stem. -/
 theorem ofString?_form : ∀ v ∈ verbs, ofString? v.form = some (v.infinitive .a) := by
   decide +kernel
 
+/-- The endings of each entry's complement make a word. -/
 theorem wellFormed_complement : ∀ v ∈ verbs, ∀ ic ∈ v.complement,
     Nominal.WellFormed (ic.1.endings ic.2) := by
   decide +kernel

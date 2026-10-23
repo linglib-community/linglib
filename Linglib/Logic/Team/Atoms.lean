@@ -90,10 +90,15 @@ theorem supClosed_incl (f g : α → β) : SupClosed (incl f g) := by
   · obtain ⟨b, hb, h⟩ := ht a ha
     exact ⟨b, Or.inr hb, h⟩
 
+/-- Dependence is not union-closed. Two points agreeing on `f` and differing on `g` each form a
+team satisfying the atom, but their union does not. -/
 theorem not_supClosed_dep {a b : α} (hf : f a = f b) (hg : g a ≠ g b) :
     ¬ SupClosed (dep f g) := fun h ↦
   hg <| mem_dep.1 (h (singleton_mem_dep a) (singleton_mem_dep b)) a (.inl rfl) b (.inr rfl) hf
 
+/-- Inclusion is not downward-closed. If `b` supplies the `g`-value both of its own `f`-value
+and of `a`'s, but `a` does not supply its own, then `{a, b}` satisfies the atom and `{a}` does
+not. -/
 theorem not_isLowerSet_incl {f g : α → β} {a b : α} (hab : f a = g b) (hb : f b = g b)
     (ha : f a ≠ g a) : ¬ IsLowerSet (incl f g) := by
   intro h
@@ -132,6 +137,8 @@ instance [DecidableEq E] (T : Finset (V → E)) (Z : Finset V) (u : V) : Decidab
 instance [DecidableEq E] (T : Finset (V → E)) (Z : Finset V) (u : V) : Decidable (Var T Z u) :=
   inferInstanceAs (Decidable (∃ i ∈ T, ∃ j ∈ T, _))
 
+/-- Dependence holds exactly when, on the team, some function takes the values of the variables
+of `Z` to the value of `u`. -/
 theorem dep_iff_exists [Nonempty E] :
     Dep T Z u ↔ ∃ h : (Z → E) → E, ∀ i ∈ T, i u = h ((Z : Set V).domRestrict i) :=
   (Function.factorsThrough_iff _).trans <| exists_congr fun _ ↦ funext_iff.trans Subtype.forall
@@ -141,10 +148,13 @@ theorem dep_iff_exists [Nonempty E] :
 
 @[simp] theorem not_var : ¬ Var T Z u ↔ Dep T Z u := by rw [← not_dep, not_not]
 
+/-- The constancy atom `=(u)`, dependence on no variables, holds when `u` takes at most one value
+on the team. -/
 theorem dep_empty_iff : Dep T ∅ u ↔ ((· u) '' (T : Set (V → E))).Subsingleton :=
   Set.factorsThrough_domRestrict_iff_of_subsingleton fun _ _ _ _ ↦
     funext fun z ↦ absurd (Finset.mem_coe.1 z.2) (Finset.notMem_empty _)
 
+/-- Variation on no variables holds when `u` takes two values on the team. -/
 theorem var_empty_iff : Var T ∅ u ↔ ((· u) '' (T : Set (V → E))).Nontrivial := by
   rw [← not_dep, dep_empty_iff, Set.not_subsingleton_iff]
 

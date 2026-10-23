@@ -359,6 +359,8 @@ theorem rows_unit_sensitivity : ∀ e ∈ Examples.all, ∀ s ∈ scenario? e,
     (s.per.magnitude ≤ s.subjectMeasure ↔ e.judgment = .acceptable) := by
   decide +kernel
 
+/-- At a world where its subject measures as the example states, a *per*-sentence is defined
+exactly when the example is felicitous. -/
 theorem acceptable_iff_mem_dom {e : Datum} (he : e ∈ Examples.all)
     {s : Scenario} (hs : s ∈ scenario? e) (hy : w s.per.dimension y = s.subjectMeasure) :
     e.judgment = .acceptable ↔ w ∈ (perSentence s.per y φ).Dom := by

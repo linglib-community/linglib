@@ -127,6 +127,8 @@ def eval (S : Layered β) (fs : List Feature) : Option (Layered β) :=
     S.eval (f :: fs) = (f.apply S).bind (·.eval fs) := by
   simp [eval]
 
+/-- A feature structure has an output on a layered set iff it has at most as many features as
+the set has predecessors and only its last feature is `DIST`. -/
 theorem isSome_eval_iff :
     (S.eval fs).isSome ↔ fs.length ≤ S.preds.length ∧ ∀ f ∈ fs.dropLast, f = .prox := by
   induction fs generalizing S with
@@ -231,6 +233,8 @@ theorem eval_first : S.layered.eval first = some ⟨S.Si, []⟩ := rfl
 
 theorem eval_inclusive : S.layered.eval inclusive = some ⟨S.Siu, [S.Si]⟩ := rfl
 
+/-- The person features have an output for exactly five structures, the four persons and the
+structure with no feature. -/
 theorem isSome_eval_layered_iff :
     (S.layered.eval fs).isSome ↔ fs ∈ [[], inclusive, first, second, third] := by
   rw [Layered.isSome_eval_iff]
@@ -325,6 +329,9 @@ private def crowd : PersonSpace ℕ :=
   ⟨0, 2, .Iio 2, .Iio 4, .Iio 6, by simp, by simp, by simp, Set.Iio_subset_Iio (by decide),
     Set.Iio_subset_Iio (by decide)⟩
 
+/-- The inventory consists of the pronouns with a denotation in some person space. The inclusive
+has no singular, its set having two obligatory members, and the structure with no feature
+neither a singular nor a plural, `PL` not being defined on its set. -/
 theorem mem_inventory_iff {p : Pronoun} :
     p ∈ inventory ↔ ∃ (S : PersonSpace ℕ) (L : Layered (Set ℕ)), p.Denotes S L := by
   refine ⟨fun h ↦ ?_, fun ⟨S, L, h, hn⟩ ↦ ?_⟩
@@ -363,6 +370,8 @@ theorem map_categories_inventory :
 def Pronoun.CanBeExpletive (p : Pronoun) : Prop :=
   ∃ (S : PersonSpace ℕ) (L : Layered (Set ℕ)), p.Denotes S L ∧ L.set = ∅
 
+/-- Only the third person singular can be an expletive, since `DIST` alone can deliver the empty
+set and `PL` is not defined on it. -/
 theorem canBeExpletive_iff {p : Pronoun} : p.CanBeExpletive ↔ p = ⟨third, false⟩ := by
   refine ⟨fun ⟨S, L, ⟨h, hn⟩, he⟩ ↦ ?_, ?_⟩
   · obtain ⟨fs, n⟩ := p
@@ -380,6 +389,8 @@ def subject? (e : Datum) : Option Pronoun :=
   e.parse? "person" [("first", ⟨first, false⟩), ("second", ⟨second, false⟩),
     ("third", ⟨third, false⟩), ("featureless", ⟨[], false⟩)]
 
+/-- The paper reports an expletive subject acceptable exactly when its pronoun can be an
+expletive. -/
 theorem acceptable_iff_canBeExpletive :
     ∀ e ∈ Examples.all, e.feature? "phenomenon" = some "expletive" →
       ∃ p ∈ subject? e, (e.judgment = .acceptable ↔ p.CanBeExpletive) := by
@@ -444,11 +455,14 @@ def dutch : RuleSet (SpellOut PersonalPronoun) :=
     ⟨{.prox}, true, wij⟩, ⟨{.prox, .dist}, true, jullie⟩, ⟨{.dist}, true, zij_pl⟩]
 
 open Dutch.Pronouns in
+/-- Under Maximal Encoding the rule mentioning the most features is used, so the Dutch rules
+realize the inventory with one form for the inclusive and the exclusive. -/
 theorem dutch_paradigm :
     inventory.map (dutch.realize SpellOut.size) =
       [some ik, some jij, some hij, some wij, some wij, some jullie, some zij_pl] := by
   decide
 
+/-- Each Dutch pronoun denotes the referential categories that the pronouns it realizes cover. -/
 theorem dutch_referential : ∀ r ∈ dutch, ∀ c,
     c ∈ r.exponent.referential ↔
       ∃ p ∈ inventory, dutch.realize SpellOut.size p = some r.exponent ∧ c ∈ p.categories := by

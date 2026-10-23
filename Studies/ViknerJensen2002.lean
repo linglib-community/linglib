@@ -222,6 +222,8 @@ theorem sister_genitive_inherent : (sister sister').genitive ctrl .inherent = so
 theorem sister_favourite :
     (sister sister').favourite prefer = some (favourite prefer sister') := rfl
 
+/-- *Mary's movie* has two lexical interpretations, the movie Mary made and the movie Mary
+controls. -/
 theorem movie_lexical : (movie movie' make watch).lexical ctrl = {.agentive, .control} := by
   ext t
   cases t <;> simp [Sense.lexical, Sense.genitive, Sense.shift, Sense.shiftWith, Sense.sortal,
@@ -231,6 +233,8 @@ theorem movie_lexical : (movie movie' make watch).lexical ctrl = {.agentive, .co
 theorem movie_favourite :
     (movie movie' make watch).favourite prefer = some (favourite prefer (π movie' watch)) := rfl
 
+/-- *Anne's favourite sky* has no lexical interpretation, only pragmatic ones, since *sky* has no
+telic quale. -/
 theorem sky_favourite : (sky sky').favourite prefer = none := rfl
 
 theorem sky_pragmatic (relatedTo : E → E → S → Prop) :

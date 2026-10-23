@@ -54,6 +54,7 @@ variable {α : Type*} {L : Language α}
 is a language of the pseudovariety of aperiodic monoids. -/
 def IsStarFree (L : Language α) : Prop := Monoid.aperiodicVariety.langs L
 
+/-- A language is star-free exactly when it is regular with an aperiodic syntactic monoid. -/
 theorem isStarFree_iff : L.IsStarFree ↔ L.IsRegular ∧ Monoid.IsAperiodic L.SyntacticMonoid :=
   ⟨fun h ↦ ⟨.of_finite_syntacticMonoid h.1, h.2⟩, fun h ↦ ⟨h.1.finite_syntacticMonoid, h.2⟩⟩
 
@@ -62,23 +63,30 @@ theorem IsStarFree.isRegular (h : L.IsStarFree) : L.IsRegular := .of_finite_synt
 theorem IsStarFree.isAperiodic (h : L.IsStarFree) :
     Monoid.IsAperiodic L.SyntacticMonoid := h.2
 
+/-- Star-free languages are closed under complement. -/
 theorem IsStarFree.compl (h : L.IsStarFree) : Lᶜ.IsStarFree :=
   Monoid.aperiodicVariety.langs_compl h
 
+/-- Star-free languages are closed under intersection. -/
 theorem IsStarFree.inter {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
     (L ⊓ M).IsStarFree :=
   Monoid.aperiodicVariety.langs_inf hL hM
 
+/-- Star-free languages are closed under union. -/
 theorem IsStarFree.union {M : Language α} (hL : L.IsStarFree) (hM : M.IsStarFree) :
     (L ⊔ M).IsStarFree :=
   Monoid.aperiodicVariety.langs_sup hL hM
 
+/-- A language recognized by a finite aperiodic monoid is star-free. Unlike
+`Monoid.Pseudovariety.langs_of_recognizes`, the recognizer may live in any universe. -/
 theorem IsStarFree.of_recognizes {M : Type*} [Monoid M] [Finite M]
     (hM : Monoid.IsAperiodic M) (η : FreeMonoid α →* M) (P : Set M)
     (hL : ∀ w : List α, w ∈ L ↔ η (FreeMonoid.ofList w) ∈ P) : L.IsStarFree := by
   obtain ⟨N, f, hf⟩ := Recognizes.syntacticMonoid_isSubquotient (φ := η) ⟨P, Set.ext hL⟩
   exact ⟨.of_surjective f hf, (hM.of_injective N.subtype_injective).of_surjective hf⟩
 
+/-- A language is star-free when membership factors through a map `g` with finite range that
+respects concatenation and takes the same value on `n + 1` copies of a word as on `n`. -/
 theorem IsStarFree.of_factorsThrough {β : Type*} {g : List α → β} {n : ℕ}
     (hL : Function.FactorsThrough (· ∈ L) g)
     (hg : ∀ ⦃u u' v v'⦄, g u = g u' → g v = g v' → g (u ++ v) = g (u' ++ v'))
@@ -106,6 +114,7 @@ theorem not_isStarFree_setOf_even_length [Nonempty α] :
   rw [Set.mem_ofPred_eq, Set.mem_ofPred_eq] at h'
   simp [Nat.even_add_one, -Nat.not_even_iff_odd] at h'
 
+/-- Star-free languages are closed under inverse homomorphisms of free monoids. -/
 theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
     (φ : FreeMonoid α →* FreeMonoid β) :
     Language.IsStarFree {w : List α | φ (FreeMonoid.ofList w) ∈ L} := by
@@ -113,6 +122,8 @@ theorem IsStarFree.comap {α β : Type*} {L : Language β} (h : L.IsStarFree)
   obtain ⟨S, hS⟩ := L.recognizes_toSyntacticMonoid.comap φ
   exact .of_recognizes h.2 _ S (Set.ext_iff.mp hS)
 
+/-- Star-free languages are closed under preimage by erasure, the instance of `IsStarFree.comap`
+for `FreeMonoid.filter p`, which erases the letters failing `p`. -/
 theorem IsStarFree.preimage_filter (h : L.IsStarFree) (p : α → Bool) :
     IsStarFree {w | w.filter p ∈ L} :=
   h.comap (FreeMonoid.filter p)

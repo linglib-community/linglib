@@ -143,6 +143,8 @@ theorem combine_eq_seq (f : α → β → γ) (m : M α) (n : M β) :
     combine f m n = f <$> m <*> n := by
   simp only [combine, seq_eq_bind_map, ← bind_pure_comp, bind_assoc, pure_bind]
 
+/-- Sequencing a combined node is sequencing its daughters in linear order, whatever the
+bracketing, which is Rebracket. -/
 theorem combine_bind (f : α → β → γ) (m : M α) (n : M β) (k : γ → M δ) :
     combine f m n >>= k = m >>= fun x ↦ n >>= fun y ↦ k (f x y) := by
   simp [combine, bind_assoc]
@@ -728,6 +730,7 @@ theorem indef_visits_indef_layered (law rel : E → Prop) (visits : E → E → 
       indef rel >>= fun y ↦ pure (indef law >>= fun x ↦ pure (visits y x)) := by
   funext s; ext q; simp [combine, ContT.eval, Function.comp_def]
 
+/-- Lifting a layered program twice restores the three-level tower. -/
 theorem monadLift_layered {M : Type u → Type u} [Monad M] [LawfulMonad M] {ρ α β : Type u}
     (m : M α) (f : α → M β) :
     (monadLift <$> (monadLift (m >>= fun y ↦ pure (f y)) : ContT ρ M (M β)) :
@@ -1207,6 +1210,9 @@ theorem indef_told_no_indef_pro (man person : E → Prop) (bookBy : E → E → 
         pure (¬ ∃ y, person y ∧ told y z x) := by
   funext s; ext; simp [combine, ContT.eval, Function.comp_def]
 
+/-- In Reader.Set, in *a man left; he was tired* the indefinite's nondeterminism survives the
+island and its dref does not, the second sentence's pronoun still reading the input stack.
+Contrast `Charlow2014.exceptional_binding`. -/
 theorem no_exceptional_binding (man left tired : E → Prop) :
     ContT.eval (combine (fun x f ↦ f x)
       (ContT.reset (combine (fun x f ↦ f x)
@@ -1226,6 +1232,8 @@ theorem run_monadLift (m : ReaderSet E α) (k : α → ReaderSet E β) :
 
 end ReaderSet
 
+/-- ... whereas a State.Set continuation is evaluated at the lifted program's
+output stack. -/
 theorem run_monadLift (m : StateSet E α) (k : α → StateSet E β) :
     (monadLift m : Tower E β α).run k = fun s ↦ ⋃ q ∈ m s, k q.1 q.2 := by
   funext s; ext; simp

@@ -285,6 +285,8 @@ theorem condition_anaphor (hc : c.IsAnaphor) :
     s.Condition L E b c ↔ b ∈ E ∨ s.LocallyBound L b := by
   rcases hc with rfl | rfl <;> rfl
 
+/-- Outside the exempt positions an anaphor meets its condition exactly where a pronominal fails
+its own. -/
 theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E) :
     s.Condition L E b c ↔ ¬ s.Condition L E b .pronoun := by
   rw [condition_anaphor hc, Condition, not_not, or_iff_right hb]
@@ -292,6 +294,8 @@ theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E) :
 theorem condition_of_mem (hc : c.IsAnaphor) (hb : b ∈ E) : s.Condition L E b c :=
   (condition_anaphor hc).2 (.inl hb)
 
+/-- With the structural exemption, an anaphor meets its condition exactly when it is bound in
+its domain if anything there commands it. -/
 theorem condition_exempt_iff (hc : c.IsAnaphor) :
     s.Condition L s.exempt b c ↔ (s.LocallyCommanded b → s.LocallyBound L b) := by
   rw [condition_anaphor hc, imp_iff_not_or]
@@ -314,14 +318,18 @@ theorem Satisfies.mono_exempt (hE : E ⊆ E') (h : s.Satisfies L E cls) : s.Sati
   | reflexive | reciprocal => exact this.imp_left (hE ·)
   | pronoun | rExpression => exact this
 
+/-- An anaphor's condition is monotone in the configuration, since more command and larger
+domains bind more. -/
 theorem condition_mono (hc : c.IsAnaphor) :
     Monotone fun s : Configuration ι ↦ s.Condition L E b c := fun _ _ hst h ↦
   (condition_anaphor hc).2 (((condition_anaphor hc).1 h).imp_right (·.of_le hst))
 
+/-- A pronominal's condition is antitone in the configuration. -/
 theorem condition_pronoun_anti :
     Antitone fun s : Configuration ι ↦ s.Condition L E b .pronoun :=
   fun _ _ hst h hb ↦ h (hb.of_le hst)
 
+/-- An R-expression's condition is antitone in the configuration. -/
 theorem condition_rExpression_anti :
     Antitone fun s : Configuration ι ↦ s.Condition L E b .rExpression :=
   fun _ _ hst h hb ↦ h (hb.of_le hst)
@@ -369,6 +377,8 @@ theorem bound_comap_or (hf : f.Injective) :
       exact .inl ⟨a, (binds_comap hf).2 h⟩
     · exact .inr ⟨x, hr, h⟩
 
+/-- An anaphor meets Condition A among all positions exactly when it meets it among those `f`
+reaches with the covertly bound positions exempt. -/
 theorem condition_comap (hf : f.Injective) (hc : c.IsAnaphor) :
     (s.comap f).Condition (L on f) (f ⁻¹' E ∪ s.covertlyBound L f) b c ↔
       s.Condition L E (f b) c := by

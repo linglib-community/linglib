@@ -100,6 +100,7 @@ theorem isFinalPart_self (h : NoPartPrecedes precedes) (e : β) : IsFinalPart pr
 theorem IsTelic.flip {P : β → Prop} (h : IsTelic precedes P) : IsTelic (flip precedes) P :=
   fun e e' he he' hle ↦ ⟨(h e e' he he' hle).2, (h e e' he he' hle).1⟩
 
+/-- Quantized predicates are telic. -/
 theorem isTelic_of_qua (h : NoPartPrecedes precedes) {P : β → Prop} (hP : QUA P) :
     IsTelic precedes P := fun e e' he he' hle ↦ by
   obtain rfl : e' = e := by_contra fun hne ↦ hP he' he hne hle
@@ -111,15 +112,21 @@ theorem isTelic_of_not_precedes (h : ∀ a b, ¬ precedes a b) (P : β → Prop)
 
 end Telicity
 
+/-- A telic predicate need not be quantized, as the predicate true of every event running from
+three to four is not on two such events one part of the other. -/
 theorem exists_isTelic_not_qua : ∃ P : Bool → Prop, IsTelic (fun _ _ ↦ False) P ∧ ¬ QUA P :=
   ⟨fun _ ↦ True, isTelic_of_not_precedes (fun _ _ ↦ id) _,
     fun h ↦ h (x := false) trivial (y := true) trivial Bool.noConfusion (Bool.false_le true)⟩
 
+/-- A cumulative predicate true of two events, a part of one following the other, is not
+telic. -/
 theorem not_isTelic_of_cum [SemilatticeSup β] {precedes : β → β → Prop} {P : β → Prop}
     (hP : CUM P) {e e' e'' : β} (he : P e) (he' : P e') (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
   fun hT ↦ (hT (e ⊔ e') e' (hP he he') he' le_sup_right).2.2 ⟨e'', h''.trans le_sup_left, hp⟩
 
+/-- A divisive predicate true of an event with a part preceding another part is not telic, as
+the divisive reference of activities makes them atelic ([champollion-krifka-2016]). -/
 theorem not_isTelic_of_div [PartialOrder β] {precedes : β → β → Prop} {P : β → Prop}
     (hP : DIV P) {e e' e'' : β} (he : P e) (h' : e' ≤ e) (h'' : e'' ≤ e)
     (hp : precedes e' e'') : ¬ IsTelic precedes P :=
@@ -155,9 +162,11 @@ sums. -/
 def INC (θ : α → β → Prop) : Prop :=
   ∃ θ', SINC θ' ∧ ∀ x e, θ x e ↔ AlgClosure (Function.uncurry θ') (x, e)
 
+/-- A summative strictly incremental relation is incremental, being its own closure. -/
 theorem SINC.inc_of_sum (h : SINC θ) (hs : SUM θ) : INC θ :=
   ⟨θ, h, fun x e ↦ (algClosure_of_cum (x := (x, e)) (sum_iff_cum_uncurry.1 hs)).symm⟩
 
+/-- An incremental relation is summative, being a closure under sums. -/
 theorem INC.sum (h : INC θ) : SUM θ := by
   obtain ⟨θ', -, hθ⟩ := h
   have : Function.uncurry θ = AlgClosure (Function.uncurry θ') :=
@@ -188,9 +197,12 @@ def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop := fun e ↦ 
 
 variable {θ : α → β → Prop} {OBJ : α → Prop}
 
+/-- A summative relation carries cumulativity from the object to the verb phrase. -/
 theorem vp_cum (hθ : SUM θ) (hObj : CUM OBJ) : CUM (VP θ OBJ) :=
   fun _ ⟨_, h₁, hθ₁⟩ _ ⟨_, h₂, hθ₂⟩ ↦ ⟨_, hObj h₁ h₂, hθ hθ₁ hθ₂⟩
 
+/-- Uniqueness of participants and mapping to subobjects carry quantization from the object
+to the verb phrase, since the object of a proper subevent is a proper part of the object. -/
 theorem vp_qua (hU : UP θ) (hm : MSO θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
   qua_of_forall fun _ _ ⟨_, hy, hθ⟩ hlt ⟨_, hz, hθz⟩ ↦
     let ⟨_, hlt', hθ'⟩ := hm hθ hlt
@@ -204,10 +216,16 @@ omit [SemilatticeSup α] [SemilatticeSup β] in
 theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (· = f ·) OBJ = OBJ ∘ f :=
   funext fun _ ↦ propext ⟨by rintro ⟨_, h, rfl⟩; exact h, fun h ↦ ⟨_, h, rfl⟩⟩
 
+/-- A cumulative object predicate along a sum homomorphism gives a cumulative verb phrase, so
+*drink milk* is cumulative ([champollion-krifka-2016]). -/
 theorem vp_cum_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F) (hObj : CUM OBJ) :
     CUM (VP (· = f ·) OBJ) :=
   vp_cum (sum_graph f) hObj
 
+/-- A quantized object predicate along an injective sum homomorphism gives a quantized verb
+phrase, so *drink two liters of milk* is quantized ([champollion-krifka-2016]). The
+homomorphism places the participant of a proper subevent below the whole participant, and
+injectivity makes it a proper part. -/
 theorem vp_qua_graph {F : Type*} [FunLike F β α] [SupHomClass F β α] (f : F)
     (hf : Function.Injective f) (hObj : QUA OBJ) : QUA (VP (· = f ·) OBJ) :=
   vp_qua (up_graph f) ((mso_graph_iff f).2 ((OrderHomClass.mono f).strictMono_of_injective hf))

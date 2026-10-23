@@ -155,6 +155,9 @@ pronoun and (4) for a bound one. -/
 noncomputable def sentence (σ : S → S) (f vp : E → S → Prop) : S → SignType :=
   presupOfReferent (description σ f) vp
 
+/-- The sentence presupposes exactly one satisfier at the situation its pronoun denotes. A free
+pronoun discharges the domain condition at its referent, whatever situation the proposition is
+applied to; a bound one carries it to the situation where the proposition is applied. -/
 theorem sentence_ne_zero_iff (σ : S → S) (f vp : E → S → Prop) (s : S) :
     sentence σ f vp s ≠ 0 ↔ ∃! x, f x (σ s) := by
   rw [sentence, Ne, presupOfReferent_eq_zero_iff, ← Ne, Option.ne_none_iff_isSome]
@@ -193,10 +196,14 @@ description is evaluated at the topic situation and only the predicate is modali
 noncomputable def attributiveDeRe (R : S → Set S) (f vp : E → S → Prop) : S → SignType :=
   presupOfReferent (the f) fun x s ↦ ∀ w ∈ R s, vp x w
 
+/-- De dicto, every accessible situation must contain exactly one satisfier, and the satisfiers
+may differ. -/
 theorem deDicto_ne_zero_iff (R : S → Set S) (f vp : E → S → Prop) (s : S) :
     deDicto R f vp s ≠ 0 ↔ ∀ w ∈ R s, ∃! x, f x w :=
   (box_ne_zero_iff R _ s).trans <| forall₂_congr fun w _ ↦ sentence_ne_zero_iff id f vp w
 
+/-- De re, the satisfier is fixed in the actual world, and need not satisfy the property in the
+accessible situations. -/
 theorem deRe_ne_zero_iff (R : S → Set S) (w₀ : S) (f vp : E → S → Prop) (s : S) :
     deRe R w₀ f vp s ≠ 0 ↔ ∀ w ∈ R s, ∃! x, f x w₀ :=
   (box_ne_zero_iff R _ s).trans <| forall₂_congr fun w _ ↦

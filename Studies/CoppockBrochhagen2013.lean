@@ -172,6 +172,8 @@ open Semantics
 
 variable {W : Type*} {μ : W → ℕ}
 
+/-- On the question of how many, *at least* is the Fragment's reading of the numeral it modifies,
+pulled back along the count. -/
 theorem atLeast_fragment (hμ : Function.Surjective μ) (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atLeast⟧,
       Focus.Particles.atLeast (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =
@@ -179,6 +181,8 @@ theorem atLeast_fragment (hμ : Function.Surjective μ) (n : ℕ) :
   rintro m (rfl : m = _)
   rw [atLeast_twoSided hμ, Degree.Comparison.modifier_singleton, Degree.Comparison.interval_ge]
 
+/-- On the question of how many, *at most* is the Fragment's reading of the numeral it modifies,
+pulled back along the count. -/
 theorem atMost_fragment (hμ : Function.Surjective μ) (n : ℕ) :
     ∀ m ∈ ⟦English.NumeralModifiers.atMost⟧,
       Focus.Particles.atMost (ranking (twoSided μ)) (range (twoSided μ)) (twoSided μ n) =

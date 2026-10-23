@@ -164,6 +164,8 @@ theorem log_maxEnt_real_singleton (c : C) :
   have : Nonempty C := ⟨c⟩
   rw [maxEnt_real_singleton, log_softmax, logPartition]
 
+/-- The log-odds of two candidates are their harmony difference, `-(w ⬝ᵥ (T a - T b))`, linear
+in the weights. -/
 theorem log_maxEnt_real_singleton_div (a b : C) :
     log ((maxEnt T w).real {a} / (maxEnt T w).real {b}) = harmony T w a - harmony T w b := by
   have : Nonempty C := ⟨a⟩
@@ -179,11 +181,14 @@ theorem maxEnt_real_singleton_le_iff {a b : C} :
   have : Nonempty C := ⟨a⟩
   rw [maxEnt_real_singleton, maxEnt_real_singleton, softmax_le_softmax_iff]
 
+/-- Of exactly two candidates, one has the sigmoid of its harmony advantage over the other. -/
 theorem maxEnt_real_singleton_of_pair [DecidableEq C] {a b : C} (hab : a ≠ b)
     (h : (univ : Finset C) = {a, b}) :
     (maxEnt T w).real {a} = sigmoid (harmony T w a - harmony T w b) := by
   rw [maxEnt_real_singleton, softmax_eq_sigmoid_of_univ_eq_pair hab h]
 
+/-- Scaling the weights scales the harmonies, so the MaxEnt distribution concentrates on the sole
+candidate of greatest harmony. -/
 theorem tendsto_maxEnt_smul_atTop {c : C} (h : univ.argmax (harmony T w) = {c}) :
     Tendsto (fun α : ℝ ↦ (maxEnt T (α • w)).real {c}) atTop (𝓝 1) := by
   simpa [maxEnt_real_singleton, harmony_smul] using tendsto_softmax_atTop fun c' hc' ↦
@@ -232,6 +237,8 @@ theorem measureEntropy_le_maxEnt {q : Measure C} [IsProbabilityMeasure q]
   rw [← measureEntropy_add_toReal_klDiv_maxEnt T w hq]
   exact le_add_of_nonneg_right ENNReal.toReal_nonneg
 
+/-- The MaxEnt distribution is the only distribution with its expected violations and its
+entropy. -/
 theorem eq_maxEnt_of_measureEntropy_eq {q : Measure C} [IsProbabilityMeasure q]
     (hq : ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w) (h : Hm[q] = Hm[maxEnt T w]) :
     q = maxEnt T w := by
@@ -240,6 +247,8 @@ theorem eq_maxEnt_of_measureEntropy_eq {q : Measure C} [IsProbabilityMeasure q]
   exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hkl).resolve_right
     (klDiv_ne_top (absolutelyContinuous_maxEnt T w q) .of_finite))
 
+/-- The MaxEnt distribution has the greatest entropy among the distributions with its expected
+violations. -/
 theorem isGreatest_measureEntropy_maxEnt :
     IsGreatest (measureEntropy '' {q | IsProbabilityMeasure q ∧
       ∫ c, T c ∂q = ∫ c, T c ∂maxEnt T w}) (Hm[maxEnt T w]) :=
@@ -263,12 +272,15 @@ theorem hasFDerivAt_logPartition :
     LinearMap.coe_toContinuousLinearMap', dotProductBilin, LinearMap.coe_mk, AddHom.coe_mk,
     integral_eq_sum, maxEnt_real_singleton, sum_dotProduct, smul_dotProduct, smul_eq_mul]
 
+/-- The log-likelihood is concave in the weights: it is linear in them less the log-partition
+function. -/
 theorem concaveOn_logLikelihood : ConcaveOn ℝ Set.univ (logLikelihood T p) := by
   have hlin : ConcaveOn ℝ Set.univ fun w : ι → ℝ ↦ -(w ⬝ᵥ ∫ c, T c ∂p) :=
     (LinearMap.concaveOn (-(dotProductBilin ℝ ℝ |>.flip (∫ c, T c ∂p))) convex_univ).congr
       fun w _ ↦ by simp
   exact (hlin.sub (convexOn_logPartition T)).congr fun w _ ↦ (logLikelihood_eq T w p).symm
 
+/-- The gradient of the log-likelihood is the expected less the observed violation vector. -/
 theorem hasFDerivAt_logLikelihood :
     HasFDerivAt (logLikelihood T p)
       (LinearMap.toContinuousLinearMap
@@ -292,6 +304,8 @@ theorem hasDerivAt_logLikelihood_update [DecidableEq ι] (j : ι) :
     (hasDerivAt_update w j (w j)) (Function.update_eq_self j w).symm
   exact this.congr_deriv (by simp [dotProductBilin, dotProduct_single])
 
+/-- Weights maximize the log-likelihood exactly when their MaxEnt distribution has the observed
+expected violations. -/
 theorem isMaxOn_logLikelihood_iff :
     IsMaxOn (logLikelihood T p) Set.univ w ↔ ∫ c, T c ∂maxEnt T w = ∫ c, T c ∂p := by
   classical
@@ -308,6 +322,8 @@ theorem isMaxOn_logLikelihood_iff :
     rw [logLikelihood_eq, logLikelihood_eq, ← h]
     linarith [ENNReal.toReal_nonneg (a := klDiv (maxEnt T w) (maxEnt T w'))]
 
+/-- The most likely MaxEnt grammar of an empirical distribution gives the maximum-entropy
+distribution among those with the observed expected violations. -/
 theorem isGreatest_measureEntropy_of_isMaxOn (h : IsMaxOn (logLikelihood T p) Set.univ w) :
     IsGreatest (measureEntropy '' {q | IsProbabilityMeasure q ∧
       ∫ c, T c ∂q = ∫ c, T c ∂p}) (Hm[maxEnt T w]) := by
@@ -320,6 +336,9 @@ section Joint
 variable {κ O : Type*} [Fintype κ] [DecidableEq κ] [Fintype O] [MeasurableSpace O]
   [MeasurableSingletonClass O] [Nonempty O] (T : κ → O → ι → ℝ)
 
+/-- When the violations of an output tuple add up its coordinates' violations, the MaxEnt
+distribution of the tuples is the product of the coordinates' MaxEnt distributions, so the
+coordinates are independent. -/
 theorem maxEnt_sum :
     maxEnt (fun f : κ → O ↦ ∑ k, T k (f k)) w = Measure.pi fun k ↦ maxEnt (T k) w := by
   refine Measure.ext_iff_singleton.2 fun f ↦ ?_
@@ -412,6 +431,8 @@ theorem eq_condMaxEnt_of_condEntropy_eq {q : Kernel X Y} [IsMarkovKernel q]
   exact klDiv_eq_zero_iff.1 (((ENNReal.toReal_eq_zero_iff _).1 hx').resolve_right
     (klDiv_ne_top (absolutelyContinuous_maxEnt _ w (q x)) .of_finite))
 
+/-- The conditional MaxEnt grammar has the greatest conditional entropy among the conditional
+models with its average expected violations. -/
 theorem isGreatest_condEntropy_condMaxEnt :
     IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; ν ⊗ₘ q]) ''
       {q | IsMarkovKernel q ∧ ∫ z, T z ∂(ν ⊗ₘ q) = ∫ z, T z ∂(ν ⊗ₘ condMaxEnt T w)})
@@ -458,6 +479,8 @@ theorem hasFDerivAt_condLogLikelihood :
     smul_dotProduct, mul_neg, sum_neg_distrib]
   ring
 
+/-- Weights maximize the conditional log-likelihood exactly when the expected violations of their
+grammar, over the observed inputs, are the observed ones. -/
 theorem isMaxOn_condLogLikelihood_iff :
     IsMaxOn (condLogLikelihood T p) Set.univ w ↔
       ∫ z, T z ∂(p.fst ⊗ₘ condMaxEnt T w) = ∫ z, T z ∂p := by
@@ -478,12 +501,16 @@ theorem isMaxOn_condLogLikelihood_iff :
     rw [condLogLikelihood_eq, condLogLikelihood_eq, ← h]
     linarith
 
+/-- At weights matching the observed violations the conditional log-likelihood is minus the
+conditional entropy of the grammar, the common value of the two dual problems. -/
 theorem condLogLikelihood_eq_neg_condEntropy
     (h : ∫ z, T z ∂(p.fst ⊗ₘ condMaxEnt T w) = ∫ z, T z ∂p) :
     condLogLikelihood T p w = -H[Prod.snd | Prod.fst ; p.fst ⊗ₘ condMaxEnt T w] := by
   rw [condLogLikelihood_eq, condEntropy_condMaxEnt, h]
   ring
 
+/-- The most likely conditional MaxEnt grammar of an empirical distribution has the greatest
+conditional entropy among the conditional models with the observed expected violations. -/
 theorem isGreatest_condEntropy_of_isMaxOn (h : IsMaxOn (condLogLikelihood T p) Set.univ w) :
     IsGreatest ((fun q : Kernel X Y ↦ H[Prod.snd | Prod.fst ; p.fst ⊗ₘ q]) ''
       {q | IsMarkovKernel q ∧ ∫ z, T z ∂(p.fst ⊗ₘ q) = ∫ z, T z ∂p})

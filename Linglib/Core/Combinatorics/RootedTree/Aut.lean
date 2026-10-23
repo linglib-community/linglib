@@ -70,6 +70,7 @@ theorem forestAutCard_eq_prod_mul_multinomialFactor (F : Multiset (UnorderedTree
   rw [Finset.prod_multiset_map_count, ← Finset.prod_mul_distrib]
   exact Finset.prod_congr rfl fun t _ => mul_comm _ _
 
+/-- `autCard` at a node is `forestAutCard` of the children: the recursive formula. -/
 @[simp] theorem autCard_node (a : α) (F : Multiset (UnorderedTree α)) :
     autCard (UnorderedTree.node a F) = forestAutCard F := by
   simp [autCard, forestAutCard_eq_prod_mul_multinomialFactor]
@@ -94,6 +95,8 @@ compute the split multiplicity; `Nat.add_choose_mul_factorial_mul_factorial` rec
 it with the factorials per distinct tree. This identity is the combinatorial core of the
 pairing's product-coproduct adjunction (`GrossmanLarson.pairing_of'_mul_of'`). -/
 
+/-- **Multinomial split identity** for `forestAutCard`:
+    `|Aut (F+G)| = count (F,G) (antidiagonal (F+G)) · |Aut F| · |Aut G|`. -/
 theorem forestAutCard_add (F G : Multiset (UnorderedTree α)) :
     forestAutCard (F + G) = (Multiset.antidiagonal (F + G)).count (F, G) *
       (forestAutCard F * forestAutCard G) := by

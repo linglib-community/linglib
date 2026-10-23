@@ -354,6 +354,8 @@ def IsProper (K : DRS L V) : Prop := K.freeVarFinset = ∅
 instance (K : DRS L V) : Decidable K.IsProper :=
   decidable_of_iff (K.freeVarFinset = ∅) Iff.rfl
 
+/-- Merging preserves properness when the increment's free referents are
+supplied by the context DRS's universe. -/
 theorem isProper_merge {K₁ K₂ : DRS L V} (h₁ : K₁.IsProper)
     (h₂ : K₂.freeVarFinset ⊆ K₁.referents) : (K₁.merge K₂).IsProper :=
   Finset.subset_empty.mp (freeVarFinset_merge_subset (Finset.subset_empty.mpr h₁)

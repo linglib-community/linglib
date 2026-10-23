@@ -94,12 +94,17 @@ theorem resume_some_iff : resume GQ.Family.some A B R ↔ iterate GQ.some GQ.som
 theorem resume_every_iff : resume GQ.Family.every A B R ↔ iterate every every A B R :=
   ⟨fun h x hx y hy ↦ h (x, y) ⟨hx, hy⟩, fun h _ hp ↦ h _ hp.1 _ hp.2⟩
 
+/-- The resumption of *no* is the iteration of *no* and *some*, so a negative chain read by
+resumption denies every pair. -/
 theorem resume_no_iff : resume GQ.Family.no A B R ↔ iterate no GQ.some A B R :=
   ⟨fun h x hx ⟨y, hy, hr⟩ ↦ h (x, y) ⟨hx, hy⟩ hr, fun h _ hp hr ↦ h _ hp.1 ⟨_, hp.2, hr⟩⟩
 
+/-- The resumption of *no* is also the iteration of *every* and *no*. -/
 theorem resume_no_iff_iterate_every_no : resume GQ.Family.no A B R ↔ iterate every no A B R :=
   ⟨fun h x hx y hy ↦ h (x, y) ⟨hx, hy⟩, fun h _ hp ↦ h _ hp.1 _ hp.2⟩
 
+/-- The resumption of a quantifier that is scope-upward-monotone on pairs is monotone in the
+relation. -/
 theorem resume_mono (h : ScopeMonotone (Q (α × α))) (hR : ∀ x y, R x y → R' x y) :
     resume Q A B R → resume Q A B R' :=
   h _ fun p ↦ hR p.1 p.2
@@ -118,12 +123,15 @@ outscopes the first. -/
 def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   iterate Q₂ Q₁ B A fun y x ↦ R x y
 
+/-- An existential scoping over a universal entails the universal scoping over the existential,
+so the two linear readings of an *every*/*some* pair are nested. -/
 theorem iterate_every_some_of_some_every (A B : α → Prop) (R : α → α → Prop)
     (h : iterate GQ.some every A B R) : iterate every GQ.some B A (flip R) :=
   let ⟨x, hx, hall⟩ := h; fun y hy ↦ ⟨x, hx, hall y hy⟩
 
 /-! ### Monotonicity -/
 
+/-- The iteration of two scope-upward-monotone quantifiers is monotone in the relation. -/
 theorem iterate_mono (h₁ : ScopeMonotone Q₁) (h₂ : ScopeMonotone Q₂)
     (hR : ∀ x y, R x y → R' x y) : iterate Q₁ Q₂ A B R → iterate Q₁ Q₂ A B R' :=
   h₁ A fun x ↦ h₂ B (hR x)

@@ -46,6 +46,8 @@ def focusRealize (c : Mayan.VerbClass) (agent patient : Person) (r : ArgumentRol
   Extraction.realize c agent patient (.argument r) ∪
     {.displacement .phrase, .morpheme .phrase [ja]}
 
+/-- Agent Focus marks the focus of a transitive subject, not of an intransitive one, unless both
+arguments are speech-act participants. -/
 theorem agentFocus_mem_focusRealize_iff (c : Mayan.VerbClass) (agent patient : Person)
     (r : ArgumentRole) :
     Reflex.morpheme .verb (agentFocus c).marker ∈ focusRealize c agent patient r ↔

@@ -311,6 +311,10 @@ theorem lex_nonneg_ercOfProfiles_iff (w l : ViolationProfile n) :
         (ERCVal.zero_lt_iff _).trans (ercOfProfiles_eq_W_iff w l q))).trans
     (Pi.lex_le_iff_forall (ofLex w) (ofLex l)).symm
 
+/-- ERC satisfaction *is* lexicographic domination: `r` satisfies the ERC of a
+winner/loser pair iff the winner's violations, read in `r`'s priority order, are lex-≤
+the loser's ([prince-2002]). Precomposition with the ranking is absorbed by
+instantiating `lex_nonneg_ercOfProfiles_iff` at the ranked readings. -/
 theorem satisfiedBy_ercOfProfiles_iff_le (r : Ranking ι n) (w l : ι → ℕ) :
     (ercOfProfiles w l).SatisfiedBy r ↔ toLex (w ∘ r) ≤ toLex (l ∘ r) :=
   lex_nonneg_ercOfProfiles_iff (toLex (w ∘ r)) (toLex (l ∘ r))

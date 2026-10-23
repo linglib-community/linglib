@@ -57,6 +57,10 @@ variable {S X D : Type*} [Preorder S] [Preorder D] {ρ : S → X} {μ : S → D}
 
 /-! ### Upward monotonicity -/
 
+/-- If `b` has the property and `a` has more of it than `b`, then `a` has the property. The
+comparative supplies a state of `a`'s measuring above a state of `b`'s with the property, an
+admissible measure on a total background places it above that state, and the threshold is upward
+closed. -/
 theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet T)
     (hμ : StrictMono μ) {a b : X} (hb : b ∈ ρ '' T)
     (h : MaxComparative .gt (ρ · = a) (ρ · = b) μ) : a ∈ ρ '' T :=
@@ -91,6 +95,9 @@ example :
 /-! ### The comparative and the positive form -/
 
 omit [Preorder S] in
+/-- The comparative does not entail the positive form. When `s` and `t` are the only states of
+their holders and `s` measures above `t` without the property, the holder of `s` has more of it
+than the holder of `t` without having it. -/
 theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s ∉ T)
     (hs : ∀ u, ρ u = ρ s → u = s) (ht : ∀ u, ρ u = ρ t → u = t) :
     MaxComparative .gt (ρ · = ρ s) (ρ · = ρ t) μ ∧ ρ s ∉ ρ '' T :=
@@ -101,6 +108,8 @@ theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s 
 
 section Thresholds
 
+/-- The upper sets of a background, as extensions, form a monotone delineation iff the
+background is total. Two incomparable states give the cycle of a nonlinear delineation. -/
 theorem isMonotoneOn_upperSets_iff :
     (⟨id⟩ : Delineation S).IsMonotoneOn {C | IsUpperSet C} ↔ ∀ s t : S, s ≤ t ∨ t ≤ s := by
   refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ h₁ C₂ h₂ a b ha hb hb₂ ↦ ?_⟩
@@ -141,6 +150,8 @@ theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : S
     MaxComparative .gt (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
   ⟨exists_isUpperSet_of_maxComparative hm, maxComparative_of_exists_isUpperSet hμ hb⟩
 
+/-- Every threshold property of the background is a degree threshold pulled back along the
+measure iff the measure reflects the background. -/
 theorem forall_isUpperSet_exists_preimage_iff :
     (∀ T : Set S, IsUpperSet T → ∃ U : Set D, IsUpperSet U ∧ T = μ ⁻¹' U) ↔
       ∀ a b, μ a ≤ μ b → a ≤ b := by

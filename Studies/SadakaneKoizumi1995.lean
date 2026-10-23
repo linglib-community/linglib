@@ -337,6 +337,8 @@ def readings (x : Datum) : List Reading :=
 /-- `test? x` is the test the example `x` applies, if any. -/
 def test? (x : Datum) : Option Test := x.parse? "test" testLabels
 
+/-- Every test example is acceptable exactly when a particle the paper reads in it passes the
+test. -/
 theorem judgment_eq_acceptable_iff :
     ∀ x ∈ Examples.all, ∀ t, test? x = some t →
       (x.judgment = .acceptable ↔ ∃ p ∈ particles x, p.Passes t) := by

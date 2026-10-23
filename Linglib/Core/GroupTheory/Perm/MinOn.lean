@@ -73,6 +73,8 @@ private theorem card_filter_isMinOn_symm_eq {S : Finset (Perm α)} {y y' : α} (
     simpa only [swap_apply_right] using (isMinOn_symm_swap_mul_iff (x := y') hy hy').2 hσ.2
 
 open scoped Classical in
+/-- In a family `S` of permutations closed under swaps of elements of `D`, the permutations
+placing an element of `Y` first among `D`, counted `#D` times, number `#S * #(Y ∩ D)`. -/
 theorem card_filter_isMinOn_symm_mul_card (S : Finset (Perm α)) (D Y : Finset α)
     (hS : ∀ y ∈ D, ∀ y' ∈ D, ∀ σ ∈ S, swap y y' * σ ∈ S) :
     #{σ ∈ S | ∃ x ∈ Y ∩ D, IsMinOn σ.symm D x} * #D = #S * #(Y ∩ D) := by
@@ -99,6 +101,8 @@ theorem card_filter_isMinOn_symm_mul_card (S : Finset (Perm α)) (D Y : Finset �
 variable [Fintype α]
 
 open scoped Classical in
+/-- The permutations placing an element of `Y` first among `D`, counted `#D` times, number
+`(card α)! * #(Y ∩ D)`. -/
 theorem card_filter_isMinOn_symm_univ_mul_card (D Y : Finset α) :
     #{σ : Perm α | ∃ x ∈ Y ∩ D, IsMinOn σ.symm D x} * #D = (Fintype.card α).factorial *
       #(Y ∩ D) := by

@@ -122,6 +122,8 @@ def u : Segment := .ofChart .«u»
 /-- The vowels of Modern Hebrew. -/
 def vowels : Finset Segment := ⟨↑[a, «ɛ», i, o, u], by decide +kernel⟩
 
+/-- The consonants and vowels, in the order of PHOIBLE's inventory 2449, are the segments of its
+phonemes. -/
 theorem heb_phonemes_map :
     Inventories.IsraeliHebrew.heb.phonemes.map (Segment.ofChart ·.features) =
       [b, d, f, h, j, k, l, m, n, p, s, t, ts, v, x, z, «ɡ», «ʁ», «ʃ», «ʔ», a, i, o, u, «ɛ»] :=
@@ -138,11 +140,15 @@ def K : Segment := k ⊓ x
 /-- The archisegment of the alternating פ, the meet of /p/ and /f/. -/
 def P : Segment := p ⊓ f
 
+/-- The archisegments leave continuancy unspecified, and every consonant and vowel specifies
+it. -/
 theorem unspecified_continuant :
     (∀ x ∈ [B, K, P], x.Unspecified .continuant) ∧
       ∀ x ∈ consonants ∪ vowels, ¬x.Unspecified .continuant := by
   decide +kernel
 
+/-- Each archisegment has one stop and one fricative among the consonants, since with continuancy
+set `B`, `K` and `P` pick out /b/ and /v/, /k/ and /x/, /p/ and /f/. -/
 theorem naturalClass_setFeature_continuant :
     (B.setFeature .continuant false).naturalClass consonants = {b} ∧
       (B.setFeature .continuant true).naturalClass consonants = {v} ∧

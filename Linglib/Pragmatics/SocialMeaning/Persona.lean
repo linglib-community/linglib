@@ -88,12 +88,15 @@ def lift : Finset (Finset P) := G.maximalIndepSets.filter (F.Compatible v)
 /-- The Montagovian-individual lift sends a variant to the personae that meet it. -/
 def liftMI : Finset (Finset P) := G.maximalIndepSets.filter (F.Meets v)
 
+/-- The more a variant indexes, the fewer personae are compatible with it. -/
 theorem lift_subset_lift (h : F.indexes v₁ ⊆ F.indexes v₂) : F.lift v₂ ⊆ F.lift v₁ :=
   Finset.monotone_filter_right _ fun _ _ hπ ↦ h.trans hπ
 
+/-- The more a variant indexes, the more personae meet it. -/
 theorem liftMI_subset_liftMI (h : F.indexes v₁ ⊆ F.indexes v₂) : F.liftMI v₁ ⊆ F.liftMI v₂ :=
   Finset.monotone_filter_right _ fun _ _ hπ hd ↦ hπ (hd.mono_left h)
 
+/-- A variant that indexes a whole persona is compatible with that persona alone. -/
 theorem lift_eq_singleton (h : F.indexes v ∈ G.maximalIndepSets) : F.lift v = {F.indexes v} := by
   ext π
   simp only [lift, Finset.mem_filter, Finset.mem_singleton, Compatible]
@@ -151,6 +154,8 @@ theorem ne [Nonempty P] : v ≠ w := by
   rintro rfl
   exact h.persona_ne rfl
 
+/-- The first variant meets every persona but the one the second indexes, the persona with none
+of its properties. -/
 theorem personae_eq_compl : F.personae v = {h.symm.persona}ᶜ := by
   ext π
   rw [mem_personae, Finset.mem_compl, Finset.mem_singleton, Meets, h.indexes_eq_compl,
@@ -175,6 +180,7 @@ theorem mem_personae_of_ne {p : Persona G} (hp : p ≠ h.persona) (hp' : p ≠ h
   · rw [h.symm.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
     exact hp
 
+/-- The first variant is compatible with the persona it indexes alone. -/
 theorem lift_eq_singleton : F.lift v = {F.indexes v} :=
   F.lift_eq_singleton v h.left_mem
 
@@ -219,6 +225,8 @@ theorem ground_indexes_mem_maximalIndepSets_iff [Zero R] [LinearOrder R]
   rw [this, card_filter_dimension_polarity]
   split_ifs with h <;> simp_all [sign_eq_zero_iff]
 
+/-- Of an antipodal pair of sign fields, the second grounds as the opposites of the poles the
+first grounds as. -/
 theorem Antipodal.ground_indexes {M : AssociationField Variant Dimension SignType}
     (h : M.Antipodal v₁ v₂) :
     M.ground.indexes v₂ = (M.ground.indexes v₁).map Pole.oppositeEquiv.toEmbedding := by
@@ -229,6 +237,8 @@ theorem Antipodal.ground_indexes {M : AssociationField Variant Dimension SignTyp
     Pole.polarity_opposite, Pi.neg_apply, hs]
   exact neg_eq_iff_eq_neg
 
+/-- An antipodal pair of sign fields that index every dimension ground as complementary
+personae. -/
 theorem Antipodal.complementary {M : AssociationField Variant Dimension SignType}
     (h : M.Antipodal v₁ v₂) (hv : ∀ d, M v₁ d ≠ 0) : M.ground.Complementary v₁ v₂ := by
   have h₂ (d : Dimension) : M v₂ d = -M v₁ d := by rw [congrFun h d, Pi.neg_apply, neg_neg]

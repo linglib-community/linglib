@@ -159,6 +159,7 @@ def fakeME (N : DualContent W E) : Property W E :=
 
 variable {made} {r : QualeRole} {g : Property W E}
 
+/-- A privative N is not an N. -/
 theorem disjoint_privativeE (N : DualContent W E) :
     Disjoint (privativeE made r g N) N.extension :=
   disjoint_compl_left.mono_left (inf_le_left.trans inf_le_left)
@@ -277,6 +278,8 @@ theorem fake_isPrivative {lex : Property W E → DualContent W E}
     IsPrivative (DualContent.extension ∘ fake made ∘ lex) :=
   fun P ↦ (disjoint_privativeE (lex P)).mono_right (hlex P).ge
 
+/-- Hence the literal *fake N* is vacuous within its head, the local domain of head primacy,
+which is what triggers the head shift of [partee-2010]. -/
 theorem fake_vacuous_in_head {lex : Property W E → DualContent W E}
     (hlex : Function.LeftInverse DualContent.extension lex) (P : Property W E) (w : W) :
     ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P) w (P w) :=

@@ -82,6 +82,7 @@ theorem of_class (h : 𝒞 L) : IsTierBased 𝒞 L := by
   show w ∈ L ↔ List.filter (fun _ ↦ true) w ∈ L
   rw [List.filter_true]
 
+/-- Monotonicity in the base class. -/
 theorem mono (h : ∀ L, 𝒞 L → 𝒟 L) (hL : IsTierBased 𝒞 L) : IsTierBased 𝒟 L := by
   obtain ⟨T, L', hL_eq, hL'⟩ := hL
   exact ⟨T, L', hL_eq, h _ hL'⟩
@@ -110,6 +111,7 @@ theorem IsBTC.compl (h : IsBTC 𝒞 L) : IsBTC 𝒞 Lᶜ :=
 theorem IsBTC.of_class (h : 𝒞 L) : IsBTC 𝒞 L :=
   .base (IsTierBased.of_class h)
 
+/-- Monotonicity of multitier closure in the base class. -/
 theorem IsBTC.mono (h : ∀ L, 𝒞 L → 𝒟 L) (hL : IsBTC 𝒞 L) : IsBTC 𝒟 L :=
   BooleanSubalgebra.closure_mono (fun _ hL' ↦ IsTierBased.mono h hL') hL
 
@@ -205,6 +207,9 @@ theorem isBTD_ofSuffix (hk : xs.length ≤ k) : IsBTD k (ofSuffix xs) :=
 
 /-! ### Tier-based strictly local languages -/
 
+/-- The tier-based strictly `k`-local languages are the tier-based closure of the strictly
+`k`-local ones, since a `TierStrictlyLocalGrammar` is a tier together with an `SL_k` language
+pulled back along erasure of the off-tier symbols. -/
 theorem isTierStrictlyLocal_iff_isTierBased :
     IsTierStrictlyLocal k L ↔ IsTierBased (IsStrictlyLocal · k) L := by
   constructor
@@ -243,6 +248,7 @@ namespace IsBTC.Indist
 
 end IsBTC.Indist
 
+/-- Two 𝒞-tier-indistinguishable words have the same membership in every `IsBTC 𝒞`-language. -/
 theorem IsBTC.mem_iff_of_indist (hL : IsBTC 𝒞 L) (hindist : IsBTC.Indist 𝒞 w₁ w₂) :
     w₁ ∈ L ↔ w₂ ∈ L := by
   induction hL using BooleanSubalgebra.closure_bot_sup_induction with
@@ -253,6 +259,8 @@ theorem IsBTC.mem_iff_of_indist (hL : IsBTC 𝒞 L) (hindist : IsBTC.Indist 𝒞
   | sup _ _ _ _ ih₁ ih₂ => exact or_congr ih₁ ih₂
   | compl _ _ ih => exact not_congr ih
 
+/-- If `w₁ ∈ L` and `w₂ ∉ L` but `w₁` and `w₂` are 𝒞-tier-indistinguishable, then
+`L ∉ IsBTC 𝒞`. -/
 theorem not_isBTC_of_indist (h_indist : IsBTC.Indist 𝒞 w₁ w₂)
     (h_w₁ : w₁ ∈ L) (h_w₂ : w₂ ∉ L) :
     ¬ IsBTC 𝒞 L :=
@@ -273,12 +281,14 @@ A tier projection is the free monoid endomorphism `FreeMonoid.filter T`, and a v
 languages is a Boolean algebra closed under inverse images of such endomorphisms, so it contains
 the multitier closure of any class it contains. -/
 
+/-- The multitier closure of `𝒞` lies in every variety of languages containing `𝒞`. -/
 theorem IsBTC.mem_languageVariety {𝒱 : Monoid.LanguageVariety} (h𝒞 : ∀ L, 𝒞 L → L ∈ 𝒱 α)
     (h : IsBTC 𝒞 L) : L ∈ 𝒱 α :=
   BooleanSubalgebra.closure_le.2 (by
     rintro _ ⟨T, L', rfl, hL'⟩
     exact 𝒱.comap_mem (FreeMonoid.filter T) (h𝒞 L' hL')) h
 
+/-- The multitier closure of a star-free base class is star-free. -/
 theorem IsBTC.isStarFree (h𝒞 : ∀ L, 𝒞 L → L.IsStarFree) (h : IsBTC 𝒞 L) : L.IsStarFree :=
   h.mem_languageVariety (𝒱 := Monoid.aperiodicVariety.toLanguageVariety) h𝒞
 

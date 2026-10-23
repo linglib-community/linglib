@@ -571,6 +571,8 @@ theorem comp_asymm (h : Eval interp (.comp A B) ord i w) : ¬ Eval interp (.comp
     let ⟨i', hi', hA', hB', domA⟩ := h
     (domA j hj hB hA).2 (domB i' hi' hA' hB').1
 
+/-- The comparative is transitive, since whichever of the two witnesses is ranked higher witnesses
+the composite, and the two domination clauses cover the rivals of the composite. -/
 theorem comp_trans (h₁ : Eval interp (.comp A B) ord i w)
     (h₂ : Eval interp (.comp B C) ord i w) : Eval interp (.comp A C) ord i w := by
   obtain ⟨i₁, hi₁, hA₁, hB₁, dom₁⟩ := h₁
@@ -631,6 +633,9 @@ theorem accepted_mono (h : ∀ i, Eval interp A ord i w → Eval interp B ord i 
     (hA : AssertoricContent interp A ord w) : AssertoricContent interp B ord w :=
   fun x hx ↦ h x (hA x hx)
 
+/-- Accepting `A` and `¬B` means accepting `A ≻ B`. Every top-ranked interpretation makes `A` true
+and `B` false, so an interpretation making `B` true and `A` false is not top-ranked and lies
+strictly below each of them. -/
 theorem accepted_comp_of_accepted (hA : AssertoricContent interp A ord w)
     (hB : AssertoricContent interp (.not B) ord w) :
     AssertoricContent interp (.comp A B) ord w :=
@@ -762,6 +767,8 @@ section ModifierConsequences
 variable {ord : SemanticOrdering I} (d : DistanceFunction I ord) {i : I} {w : W}
   {φ : ComparativeFormula L E}
 
+/-- *very A* is truth at every reasonably close interpretation, since a witness strictly above a
+close falsifier would, by noncontractivity, have it close too. -/
 theorem evalVery_iff :
     EvalVery interp φ ord d i w ↔ ∀ i', d.close i i' → Eval interp φ ord i' w := by
   constructor
@@ -898,6 +905,7 @@ theorem evalRevised_equi_iff : EvalRevised interp (A.equi B) ord i w ↔
     (EvalRevised interp A ord · w) (EvalRevised interp B ord · w) i with h | h | h
   exacts [h, (h₁ h).elim, (h₂ h).elim]
 
+/-- The revised equative is transitive, unlike the basic one (`equi_not_trans`). -/
 theorem evalRevised_equi_trans (h₁ : EvalRevised interp (A.equi B) ord i w)
     (h₂ : EvalRevised interp (B.equi C) ord i w) : EvalRevised interp (A.equi C) ord i w :=
   (evalRevised_equi_iff interp).2

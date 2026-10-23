@@ -311,6 +311,7 @@ def merge (l r : LinearizedSyntacticObject L) : LinearizedSyntacticObject L :=
 @[simp] theorem toSyntacticObject_traceOf (a : L) :
     (traceOf a).toSyntacticObject = SyntacticObject.traceOf a := rfl
 
+/-- Forgetting the order commutes with Merge. -/
 @[simp] theorem toSyntacticObject_merge (l r : LinearizedSyntacticObject L) :
     (merge l r).toSyntacticObject = SyntacticObject.merge l.toSyntacticObject r.toSyntacticObject :=
   Subtype.ext (SyntacticObject.merge_mk l.val r.val l.2 r.2).symm
@@ -323,6 +324,8 @@ namespace SyntacticObject
 
 variable {L : Type}
 
+/-- Induction on syntactic objects, each of which is a lexical leaf, a trace, or the Merge of two
+    syntactic objects. -/
 @[elab_as_elim]
 theorem ind {motive : SyntacticObject L → Prop}
     (leaf : ∀ a, motive (leaf a))
@@ -359,6 +362,7 @@ theorem ind {motive : SyntacticObject L → Prop}
         List.sum_nil] at hw
       exact merge _ _ (IH pl.numNodes (by omega) pl hl rfl) (IH pr.numNodes (by omega) pr hr rfl)
 
+/-- Every syntactic object is a lexical leaf, a trace, or a Merge. -/
 theorem exists_form (s : SyntacticObject L) :
     (∃ a, s = leaf a) ∨ s = trace ∨ (∃ a, s = traceOf a) ∨ (∃ l r, s = merge l r) := by
   induction s using ind with

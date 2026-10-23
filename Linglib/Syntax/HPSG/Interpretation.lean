@@ -94,6 +94,7 @@ variable {I} {g g' : ℕ → U} {u v : U}
 @[simp] theorem termDenot_feat (t : Term Sig) (α : Sig.Attr) :
     I.termDenot g (t.feat α) u = (I.termDenot g t u).bind (I.A α) := rfl
 
+/-- A term denotation depends only on the values of the variables that occur in the term. -/
 theorem termDenot_congr {t : Term Sig} (h : ∀ x ∈ t.freeVars, g x = g' x) :
     I.termDenot g t u = I.termDenot g' t u := by
   induction t with
@@ -197,6 +198,8 @@ theorem termDenot_path_append (p q : Path Sig) :
     rw [List.cons_append, termDenot_path_cons, termDenot_path_cons, Option.bind_assoc]
     simp only [ih]
 
+/-- In a well-typed interpretation the signature admits every path that is defined, from the
+sort of the entity it starts at to the sort of the entity it reaches. -/
 theorem IsWellTyped.admits (hI : I.IsWellTyped) {p : Path Sig}
     (h : I.termDenot g (.path p) u = some v) : Sig.Admits (I.S u) p (I.S v) := by
   induction p generalizing u with

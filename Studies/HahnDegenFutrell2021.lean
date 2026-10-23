@@ -99,6 +99,10 @@ theorem longObjectFirst_eq_reorderDependents :
   Graph.ext (funext (by decide +kernel : ∀ x, _)) (funext₂ (by decide +kernel : ∀ x y, _))
     (by decide +kernel)
 
+/-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
+raises its distance to the object from six to nine, so the total dependency length falls: by
+Behaghel's law at the verb, the phrases after it grow outward in the shifted order and not in the
+unshifted one. -/
 theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by
   rw [longObjectFirst_eq_reorderDependents]
   exact (Graph.totalLength_lt_reorderDependents_iff (by decide +kernel) (by decide +kernel)
@@ -325,6 +329,8 @@ def japaneseCategories : List RelevanceHierarchy :=
 theorem paper_sesotho_suffixes_respect_relevance :
     (paperSesothoTemplate.suffixSlots.filterMap sesothoCategory?).SortedLE := by decide
 
+/-- The Fragment's suffix order, [demuth-1992]'s, has the perfect before the passive, tense
+before voice, and is not sorted by the hierarchy: the paper's agreement rests on its order. -/
 theorem sesotho_suffixes_violate_relevance : ¬ sesothoSuffixCategories.SortedLE := by decide
 
 theorem sesotho_prefixes_violate_relevance :
@@ -336,6 +342,10 @@ theorem japanese_valence_voice_inside :
     japaneseCategories.Pairwise fun a b ↦ b ≤ .voice → a ≤ .voice := by
   decide
 
+/-- The Japanese suffix order is nonetheless not sorted by the hierarchy: [bybee-1985]'s survey
+ranks tense closer to the stem than mood, `Bybee1985.SurveyedCloser`, and the desiderative, a
+mood suffix, precedes the final inflection, read as tense. The paper claims no order of mood
+and tense. -/
 theorem japanese_violates_surveyed_relevance :
     Bybee1985.SurveyedCloser .tense .mood ∧ ¬ japaneseCategories.SortedLE := by
   decide

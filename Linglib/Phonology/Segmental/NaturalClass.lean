@@ -79,6 +79,8 @@ theorem naturalClass_anti (I : Finset Segment) : Antitone (naturalClass · I) :=
 theorem naturalClass_mono (d : Segment) : Monotone d.naturalClass :=
   fun _ _ h ↦ Finset.filter_subset_filter _ h
 
+/-- A set lies in the natural class of `d` exactly when it lies in the inventory and `d` is
+below each of its members. -/
 theorem subset_naturalClass_iff :
     S ⊆ d.naturalClass I ↔ S ⊆ I ∧ d ∈ lowerBounds (S : Set Segment) := by
   simp only [Finset.subset_iff, mem_naturalClass, mem_lowerBounds, Finset.mem_coe, imp_and,
@@ -92,6 +94,8 @@ theorem subset_naturalClass_inf' (hS : S ⊆ I) (hne : S.Nonempty) :
     S ⊆ (S.inf' hne id).naturalClass I :=
   (subset_naturalClass_iff_le_inf' hS hne).2 le_rfl
 
+/-- The natural class of what a set shares is the smallest natural class containing the
+set. -/
 theorem naturalClass_inf'_subset_iff (hS : S ⊆ I) (hne : S.Nonempty) :
     (S.inf' hne id).naturalClass I ⊆ d.naturalClass I ↔ S ⊆ d.naturalClass I :=
   ⟨(subset_naturalClass_inf' hS hne).trans,
@@ -117,6 +121,8 @@ theorem isNaturalClass_naturalClass (h : (d.naturalClass I).Nonempty) :
 
 theorem isNaturalClass_self (h : I.Nonempty) : IsNaturalClass I I := ⟨h, ⊥, naturalClass_bot I⟩
 
+/-- A set is a natural class exactly when it is the natural class of what its members
+share. -/
 theorem isNaturalClass_iff :
     IsNaturalClass I S ↔ ∃ hne : S.Nonempty, (S.inf' hne id).naturalClass I = S := by
   refine ⟨fun h ↦ ⟨h.1, ?_⟩, fun ⟨hne, h⟩ ↦ ⟨hne, _, h⟩⟩
@@ -128,6 +134,8 @@ theorem isNaturalClass_iff :
 instance (I S : Finset Segment) : Decidable (IsNaturalClass I S) :=
   decidable_of_iff _ isNaturalClass_iff.symm
 
+/-- Two natural classes that overlap meet in a natural class, that of what their common members
+share. -/
 theorem IsNaturalClass.inter (hS : IsNaturalClass I S) (hT : IsNaturalClass I T)
     (hST : (S ∩ T).Nonempty) : IsNaturalClass I (S ∩ T) := by
   obtain ⟨-, d, rfl⟩ := hS

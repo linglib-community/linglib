@@ -76,6 +76,8 @@ end PairMarginal
 variable [StandardBorelSpace Ω] [Nonempty Ω]
   (κ : Kernel Ω 𝓧) (μ : Measure Ω) [IsFiniteMeasure μ] [IsFiniteKernel κ]
 
+/-- At an observation of positive mass, the posterior mass of a state is given exactly by Bayes'
+rule. -/
 theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
     (κ†μ) x {ω} = μ {ω} * κ ω {x} / (κ ∘ₘ μ) {x} := by
   have hrect := congrArg (fun m => m ({x} ×ˢ {ω}))
@@ -96,6 +98,8 @@ theorem posterior_apply_singleton_ne_zero_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x
     not_or]
   exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, measure_ne_top _ _⟩⟩
 
+/-- A deterministic observation's posterior is the prior conditioned on the observation's
+fibre. -/
 theorem posterior_deterministic_eq_cond [Countable Ω] {f : Ω → 𝓧} (hf : Measurable f) {x : 𝓧}
     (hx : μ (f ⁻¹' {x}) ≠ 0) : ((Kernel.deterministic f hf)†μ) x = μ[|f ⁻¹' {x}] := by
   have hx' : (Kernel.deterministic f hf ∘ₘ μ) {x} ≠ 0 := by
@@ -115,6 +119,8 @@ theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω 
   rw [measureReal_def, posterior_apply_singleton κ μ hx, ENNReal.toReal_div, ENNReal.toReal_mul,
     measureReal_def, measureReal_def, measureReal_def]
 
+/-- At every state and observation, the observation marginal times the posterior is the prior
+times the likelihood, Bayes' rule on reals with the denominator cleared. -/
 theorem comp_real_mul_posterior_real [Fintype Ω] (ω : Ω) (x : 𝓧) :
     (κ ∘ₘ μ).real {x} * ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} := by
   obtain hx | hx := eq_or_ne ((κ ∘ₘ μ) {x}) 0
@@ -159,6 +165,8 @@ theorem integral_posterior (f : Ω → ℝ) :
 
 variable [IsProbabilityMeasure μ] {f : Ω → ℝ}
 
+/-- Conditioning on an observation raises the expectation of a statistic that monovaries with
+the observation's likelihood. -/
 theorem integral_le_integral_posterior (hf : Monovary f fun ω ↦ (κ ω).real {x}) :
     ∫ ω, f ω ∂μ ≤ ∫ ω, f ω ∂((κ†μ) x) := by
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
@@ -182,6 +190,9 @@ section Pair
 variable [Fintype Ω] {ω ω' : Ω} (hne : ω ≠ ω') (hsupp : ∀ ω'', μ {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω')
 include hne hsupp
 
+/-- Under two priors carried by the same two atoms, at an observation both atoms emit with
+positive likelihood, the posterior mass of an atom is strictly increasing in its prior mass, so
+Bayes' rule is prior-sensitive. -/
 theorem posterior_real_singleton_lt_posterior_of_pair {ν : Measure Ω} [IsProbabilityMeasure μ]
     [IsProbabilityMeasure ν] (hν : ∀ ω'', ν {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω') {x : 𝓧}
     (hκω : κ ω {x} ≠ 0) (hκω' : κ ω' {x} ≠ 0) (hμν : μ.real {ω} < ν.real {ω}) :

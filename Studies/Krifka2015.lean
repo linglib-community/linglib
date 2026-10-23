@@ -266,6 +266,7 @@ theorem highNegationQuestion_update_no :
       (coherent A W).update {commit a φᶜ, refuse a φ} :=
   question_singleton_update _ (not_subset_root_coherent _) {refuse a φ}
 
+/-- *No* to a question with high negation lands on the state that keeps the refusal. -/
 theorem root_highNegationQuestion_update_no [Nonempty W] :
     ((highNegationQuestion (coherent A W) a φ).update {commit a φᶜ}).root =
       {commit a φᶜ, refuse a φ} := by

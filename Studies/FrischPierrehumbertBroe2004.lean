@@ -423,6 +423,8 @@ theorem expandedLabials_restrict : ∀ g ∈ Feature.all,
 def expandedClasses : List Mask :=
   Broe1993.naturalClasses (.ofList (List.replicate 6 true)) (attributesOf expandedLabials)
 
+/-- In the expanded inventory /f, m/ share 2 of the 13 classes containing either, where they
+shared 2 of 9: the new classes are {f, v}, {p, f}, {p, b, m} and {b, v, m}. -/
 theorem expandedSimilarity_f_m :
     expandedClasses.countP (fun s ↦ 2 ∈ s ∧ 4 ∈ s) = 2 ∧
       expandedClasses.countP (fun s ↦ 2 ∈ s ∨ 4 ∈ s) = 13 := by

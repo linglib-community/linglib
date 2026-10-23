@@ -205,6 +205,9 @@ theorem realize_iff_of_isAtomic (h : L.MonadicMatch v w) {φ : L.BoundedFormula 
     rw [hv, hw]
     exact Iff.of_eq (congrFun (h.unaryType_eq i) R)
 
+/-- In a monadic language the counting strategy wins `j` rounds from matched tuples when, for
+every unary type, the unplayed elements of that type are equinumerous on the two sides or both at
+least `j`. -/
 theorem duplicatorWins : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.MonadicMatch v w →
     (∀ S, min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range v).encard =
       min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range w).encard) →
@@ -247,6 +250,8 @@ theorem exists_mem_sdiff_range {k : ℕ} (h : L.DuplicatorWins (k + 1) v w) {S :
     exact (this.symm.trans ha.1 : L.unaryType b = S)
   · simpa [hi] using (hm.eq_iff i.castSucc (Fin.last n)).2
 
+/-- At a winning position for `j` rounds, the unplayed elements of each unary type are
+equinumerous on the two sides or both at least `j`. -/
 theorem min_encard_eq : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.DuplicatorWins j v w →
     ∀ S, min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range v).encard =
       min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range w).encard

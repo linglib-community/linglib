@@ -72,6 +72,8 @@ def chierchiaScrambled : Prop :=
   NP.individual (fun s ↦ iota (IsGreatest (books s)))
     (fun k : Unit → Option (Individual Book) ↦ GQ.some ((k ()).elim (∅ : Set _) Set.Iic) read)ᶜ
 
+/-- Scrambling a kind over negation changes nothing, since a kind takes no scope, as a name
+takes none, so the kinds approach gives narrow scope at either position. -/
 theorem chierchiaScrambled_iff : chierchiaScrambled ↔ chierchiaUnscrambled :=
   NP.individual_compl _ _
 

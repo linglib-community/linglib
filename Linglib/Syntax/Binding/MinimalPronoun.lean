@@ -103,6 +103,8 @@ variable {v}
 theorem mem_syncretic [DecidableEq E] : c ∈ v.syncretic ↔ v.realize c = v.elsewhere := by
   simp [syncretic]
 
+/-- The elsewhere form is the elsewhere item of the Subset Principle: realizing a context is
+selecting among the items followed by the item of empty site. -/
 theorem some_realize (c : Context) :
     some (v.realize c) = subsetPrinciple (v.items ++ [∅ ⟷ v.elsewhere]) (.ofBundle {c}) := by
   have happ : Morphology.Exponence.RuleSet.applicable (v.items ++ [∅ ⟷ v.elsewhere])
@@ -116,6 +118,7 @@ theorem some_realize (c : Context) :
   | none => rfl
   | some i => simp
 
+/-- A context that no item applies to gets the elsewhere form. -/
 theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Exponence.Applies i (.ofBundle {c})) :
     v.realize c = v.elsewhere := by
   have : subsetPrinciple v.items (.ofBundle {c}) = none :=
@@ -131,6 +134,8 @@ theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
     obtain ⟨i, hi, he, hsub⟩ := subsetPrinciple_winner_mem hs
     exact ⟨i, hi, hsub, by simp [realize, hs, he]⟩
 
+/-- Silent PRO needs a null item: where the elsewhere form is overt, a controlled subject is
+null only through an item for that context whose exponent is null. -/
 theorem exists_null_item_of_controlForm_eq_null {v : Vocabulary Form}
     (he : v.elsewhere ≠ .null) (h : v.controlForm = .null) :
     ∃ i ∈ v.items, Morphology.Exponence.Applies i (.ofBundle {.controlledSubject}) ∧

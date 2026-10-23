@@ -442,6 +442,7 @@ theorem dependsOn_paper_narrow :
       ∅ := by
   rw [paper_narrow]; exact dependsOn_const _
 
+/-- The wide reading does depend on the pronoun, so it is not the bound reading. -/
 theorem not_dependsOn_paper_wide :
     ¬ DependsOn (paperBy (E := Bool) Set.univ (fun _ y ↦ y = true) >>=
       fun x ↦ det GQ.no Set.univ (beta 0 fun y ↦ pure (x = y))) ∅ := by

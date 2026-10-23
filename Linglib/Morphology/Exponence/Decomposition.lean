@@ -74,6 +74,11 @@ specified applicable rule, the Elsewhere Principle as `selectBy` on feature card
 def pattern (v : RuleSet (Rule Cell D F)) (c : Cell) : Option F :=
   (v.selectBy (fun r : Rule Cell D F ↦ r.feats.card) c).map Rule.exponent
 
+/-- When the middle cell `y` nests between the outer cells, with `D y ⊆ D z` (appliers at `y`
+persist to `z`) and `D x ∩ D z ⊆ D y` (appliers at both outer cells reach `y`), a rule winning
+both `x` and `z` also wins `y`, so no exponent can interrupt an A_A pattern with a distinct
+middle B. This is *ABA order-theoretically. The hypotheses are the shared profile of Strong and
+Weak Case Containment, and No Case Containment violates the first. -/
 theorem noABA {v : RuleSet (Rule Cell D F)} {A B : Rule Cell D F} {x y z : Cell}
     (h1 : D y ⊆ D z) (h2 : D x ∩ D z ⊆ D y)
     (hx : IsWinner v x A) (hz : IsWinner v z A) (hy : IsWinner v y B) : B = A := by

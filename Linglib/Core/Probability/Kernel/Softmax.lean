@@ -95,6 +95,8 @@ theorem softmax_real_singleton_lt_iff {w : α} (htop : ∀ u, score w u ≠ ⊤)
       (ENNReal.sum_ne_top.mpr fun u _ ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
     EReal.exp_lt_exp_iff]
 
+/-- When exactly two points of a row have score above `⊥`, the share of one is the logistic
+function of the score difference. -/
 theorem softmax_real_singleton_of_pair {w : α} {u u' : β} (huu' : u ≠ u')
     (hu : score w u ≠ ⊥) (hu' : score w u' ≠ ⊥) (htop : ∀ v, score w v ≠ ⊤)
     (hsupp : ∀ v, score w v ≠ ⊥ → v = u ∨ v = u') :
@@ -119,6 +121,8 @@ open InformationTheory
 variable [Countable α] [MeasurableSingletonClass α] [Fintype β] [MeasurableSingletonClass β]
   {score : α → β → EReal} {w : α}
 
+/-- A row of the softmax kernel is the uniform measure on the points of score above `⊥`, tilted by
+the score. -/
 theorem softmax_eq_tilted (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
     softmax score w =
       (uniformOn {u | score w u ≠ ⊥}).tilted fun u ↦ (score w u).toReal := by
@@ -149,6 +153,7 @@ theorem softmax_eq_tilted (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w
   · rw [Set.indicator_of_notMem hu, Set.inter_singleton_eq_empty.2 hu]
     simp
 
+/-- A real-valued score gives each row the counting measure tilted by the score. -/
 theorem softmax_coe_eq_count_tilted [Nonempty β] (f : α → β → ℝ) (w : α) :
     softmax (fun w u ↦ (f w u : EReal)) w = Measure.count.tilted (f w) := by
   rw [softmax_eq_tilted (score := fun w u ↦ (f w u : EReal)) (w := w)
@@ -156,6 +161,7 @@ theorem softmax_coe_eq_count_tilted [Nonempty β] (f : α → β → ℝ) (w : �
   simp only [ne_eq, EReal.coe_ne_bot, not_false_eq_true, Set.ofPred_true, EReal.toReal_coe]
   exact uniformOn_univ_tilted
 
+/-- A real-valued score gives each row the softmax of the score. -/
 theorem softmax_coe_real_singleton (f : α → β → ℝ) (w : α) (u : β) :
     (softmax (fun w u ↦ (f w u : EReal)) w).real {u} = Real.softmax (f w) u := by
   have : Nonempty β := ⟨u⟩
@@ -176,6 +182,9 @@ theorem freeEnergy_softmax (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score 
   rw [softmax_eq_tilted htop h0]
   exact freeEnergy_tilted _ .of_finite .of_finite .of_finite
 
+/-- A row of the softmax kernel is the Gibbs optimizer. Among the distributions absolutely
+continuous with respect to the uniform measure on the points of score above `⊥`, it has the
+greatest expected score less divergence from that uniform measure. -/
 theorem isGreatest_freeEnergy_softmax (htop : ∀ u, score w u ≠ ⊤)
     (h0 : ∃ u, score w u ≠ ⊥) :
     IsGreatest ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal) ''

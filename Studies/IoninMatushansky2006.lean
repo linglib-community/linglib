@@ -119,6 +119,8 @@ theorem cardMod_cardMod_atoms {m : ℕ} (hm : m ≠ 0) (n : ℕ) (S : Set α) (x
   obtain ⟨t, ht, hat⟩ := Q.exists_mem ha
   exact ((cardMod_atoms_iff m S t).1 (hQ t ht)).2 hat
 
+/-- Iterated modification computes Hurford's PHRASE projection rule, so `[n m] books` counts
+`(Phrase.mk n m).value` members. -/
 theorem iterated_matches_phrase (n : Numeral.Number) (m : Numeral.M) (S : Set α)
     (x : Finset α) :
     cardMod n.value (cardMod m.value (· ∈ ({·} : α → Finset α) '' S)) x ↔

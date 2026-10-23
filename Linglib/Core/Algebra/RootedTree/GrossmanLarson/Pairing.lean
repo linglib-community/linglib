@@ -64,6 +64,7 @@ noncomputable def pairing :
       (if F = G then (forestAutCard F : R) else 0) := by
   simp [pairing]
 
+/-- The pairing is symmetric. -/
 theorem pairing_symm (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x y = pairing y x := by
   have h : pairing (R := R) (α := α) = pairing.flip := by
@@ -90,6 +91,7 @@ theorem pairing_one_right (w : ConnesKreimer R (UnorderedTree α)) :
     rcases eq_or_ne F 0 with rfl | h <;> simp [← ConnesKreimer.of'_zero, *]
   exact congr($h w)
 
+/-- Pairing with `of' F` takes the coefficient of `F`, weighted by the symmetries of `F`. -/
 theorem pairing_of' (F : Forest (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' F) = (forestAutCard F : R) • ConnesKreimer.lcoeff R F := by
   ext G
@@ -104,6 +106,7 @@ theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
   rw [pairing_symm, pairing_of', LinearMap.smul_apply, ConnesKreimer.lcoeff_apply, smul_eq_mul,
     mul_comm]
 
+/-- Over a ring of characteristic zero without zero divisors, the pairing is nondegenerate. -/
 theorem pairing_nondegenerate
     [CharZero R] [NoZeroDivisors R] (x : ConnesKreimer R (UnorderedTree α))
     (h : ∀ y, pairing (R := R) x y = 0) : x = 0 := by
@@ -147,6 +150,7 @@ theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
   · rw [pairing_of'_of', pairing_of'_of']
     split_ifs with h₁ h₂ <;> simp_all [Prod.ext_iff]
 
+/-- Pairing a basis forest against a product splits the forest over its antidiagonal. -/
 theorem pairing_of'_mul (W : Forest (UnorderedTree α))
     (z₁ z₂ : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' W) (z₁ * z₂) =
@@ -164,6 +168,8 @@ theorem pairing_of'_mul (W : Forest (UnorderedTree α))
       simp only [← ConnesKreimer.smul_of', smul_mul_smul_comm, map_smul, smul_eq_mul,
         pairing_of'_mul_of', mul_mul_mul_comm r, Multiset.sum_map_mul_left]
 
+/-- Pairing a Grossman–Larson product against a Connes–Kreimer product splits both of its
+factors, `⟨A ⋆ B, C₁ · C₂⟩ = Σ_{A = A₁ + A₂} Σ_{B = B₁ + B₂} ⟨A₁ ⋆ B₁, C₁⟩ ⟨A₂ ⋆ B₂, C₂⟩`. -/
 theorem pairing_product_of'_mul_of' (A B C₁ C₂ : Forest (UnorderedTree α)) :
     pairing (R := R) (product (ConnesKreimer.of' A) (ConnesKreimer.of' B))
         (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =

@@ -97,9 +97,12 @@ theorem isComponentOf_generated :
         exact ih.tail ⟨α, generated_A_eq_some.2 hα⟩
     exact fun h ↦ key h
 
+/-- A generated sub-interpretation is rooted at its generator. -/
 theorem isRootedAt_generated : (I.generated r).IsRootedAt ⟨r, .refl⟩ :=
   fun v ↦ isComponentOf_generated.2 v.2
 
+/-- Satisfaction is local. An entity of a generated sub-interpretation satisfies a formula
+there exactly when it satisfies it in the whole interpretation. -/
 theorem satisfies_generated {d : Desc Sig} : ∀ {g : ℕ → {v // I.IsComponentOf r v}},
     (I.generated r).Satisfies g v d ↔ I.Satisfies (fun n ↦ (g n).1) v d := by
   induction d with

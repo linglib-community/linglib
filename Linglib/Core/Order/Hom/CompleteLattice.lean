@@ -25,6 +25,8 @@ namespace CompleteLatticeHom
 
 variable {α β : Type*}
 
+/-- A complete lattice homomorphism `φ : Set β → Set α` places each point of `α` in the image of
+exactly one singleton. -/
 theorem existsUnique_mem_map_singleton (φ : CompleteLatticeHom (Set β) (Set α)) (a : α) :
     ∃! b, a ∈ φ {b} := by
   have ha : a ∈ φ (⨆ b : β, {b}) := by
@@ -36,6 +38,7 @@ theorem existsUnique_mem_map_singleton (φ : CompleteLatticeHom (Set β) (Set α
   have : a ∈ φ ({c} ⊓ {b}) := by rw [map_inf]; exact ⟨hc, hb⟩
   rwa [h, map_bot] at this
 
+/-- Every complete lattice homomorphism `Set β → Set α` is the preimage map of a function. -/
 theorem setPreimage_surjective :
     Function.Surjective (setPreimage : (α → β) → CompleteLatticeHom (Set β) (Set α)) := by
   intro φ
@@ -47,6 +50,7 @@ theorem setPreimage_surjective :
   simp only [Set.iSup_eq_iUnion, Set.mem_iUnion, exists_prop]
   exact ⟨fun h ↦ ⟨f a, h, hf a⟩, fun ⟨b, hb, hab⟩ ↦ hu a b hab ▸ hb⟩
 
+/-- Distinct functions have distinct preimage maps. -/
 theorem setPreimage_injective :
     Function.Injective (setPreimage : (α → β) → CompleteLatticeHom (Set β) (Set α)) := by
   intro f g h

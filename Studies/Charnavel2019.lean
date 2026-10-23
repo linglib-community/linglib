@@ -206,6 +206,8 @@ theorem mem_silentlyBound_iff :
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ and_congr_left fun _ ↦ ?_
   simp [Overt]
 
+/-- Condition A with the silent pronouns counted is Condition A among the pronounced noun
+phrases with the silently bound anaphors exempt. -/
 theorem condition_overt (hc : c.IsAnaphor) :
     (overtConfiguration t).Condition (Coindexed on Subtype.val) (silentlyBound t) b c ↔
       (configuration t).Condition Coindexed ∅ b.1 c := by
@@ -224,6 +226,9 @@ theorem condition_pronoun_overt :
       b ∉ silentlyBound t) ↔ (configuration t).Condition Coindexed ∅ b.1 .pronoun :=
   Configuration.condition_pronoun_comap Subtype.val_injective
 
+/-- An anaphor that no silent pronoun is coindexed with is bound by a pronounced noun phrase in
+its domain. Since a logophoric center has a mental state, an inanimate anaphor is such an
+anaphor, and so is plain. -/
 theorem locallyBound_overt_of_licit (ht : Licit t) (hb : b.1.1.2.class? = some .reflexive)
     (h : ∀ x : Nominal t, x.1.2.IsSilent → ¬ Coindexed x b.1) :
     (overtConfiguration t).LocallyBound (Coindexed on Subtype.val) b := by
@@ -231,6 +236,8 @@ theorem locallyBound_overt_of_licit (ht : Licit t) (hb : b.1.1.2.class? = some .
   obtain ⟨x, -, hx, hbind⟩ := mem_silentlyBound_iff.1 hE
   exact h x hx hbind.2.1
 
+/-- Two anaphors without pronounced binders corefer when their domains hold one silent pronoun
+between them, there being one logophoric operator to a spell-out domain. -/
 theorem index_eq_of_licit (ht : Licit t) {a b : Overt t}
     (ha : a.1.1.2.class? = some .reflexive) (hb : b.1.1.2.class? = some .reflexive)
     (hna : ¬ (overtConfiguration t).LocallyBound (Coindexed on Subtype.val) a)
@@ -403,9 +410,13 @@ def antecedent? (d : Datum) : Option Center :=
     [("non-attitudinal source", .nonAttitudinalSource), ("attitude holder", .attitudeHolder),
       ("empathy locus", .empathyLocus), ("deictic center", .deicticCenter)]
 
+/-- Each example is acceptable exactly when its sentence is grammatical. -/
 theorem grammatical_iff : ∀ p ∈ sentences, (p.1.judgment = .acceptable ↔ p.2.Grammatical) := by
   decide +kernel
 
+/-- The inn sentence and the Marie sentence have one structure and opposite judgments, so no
+condition on structure alone, as an exemption by position is, separates the acceptable examples
+from the others. -/
 theorem not_exists_forall_iff_rep :
     ¬ ∃ P : (ℕ → Rep) → Prop, ∀ p ∈ sentences, (p.1.judgment = .acceptable ↔ P p.2.rep) := by
   rintro ⟨P, h⟩
@@ -427,10 +438,14 @@ theorem licit_rep_antecedent :
     ∀ p ∈ sentences, (antecedent? p.1).isSome → Licit (p.2.rep 1) := by
   decide +kernel
 
+/-- Where the tests classify the antecedent, the anaphor is acceptable exactly when the
+antecedent is an attitude holder or an empathy locus. -/
 theorem acceptable_iff_isLogophoric :
     ∀ d ∈ Examples.all, ∀ k ∈ antecedent? d, (d.judgment = .acceptable ↔ k.IsLogophoric) := by
   decide
 
+/-- The source and the pivot of Sells, and not the self, each take in the antecedent of an
+unacceptable anaphor, a source that holds no attitude and a deictic center. -/
 theorem exists_unacceptable_mem_centersOf_iff {r : LogophoricRole} :
     (∃ d ∈ Examples.all, d.judgment ≠ .acceptable ∧ ∃ k ∈ antecedent? d, k ∈ centersOf r) ↔
       r ≠ .self := by

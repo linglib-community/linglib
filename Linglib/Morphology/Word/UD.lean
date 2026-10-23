@@ -55,6 +55,7 @@ def fromUD : UD.Person → Option Person
   | .third => some .third
   | .zero => none
 
+/-- Realization is a partial inverse of ingestion up to clusivity, which has no tag. -/
 theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> decide
 
 @[simp] theorem toUD_fromUD {u : UD.Person} {p : Person} (h : fromUD u = some p) :
@@ -127,6 +128,7 @@ def fromUD : UD.Gender → Gender
   | .Neut => .neuter
   | .Com => .common
 
+/-- Realization is a partial inverse of ingestion. -/
 theorem isPartialInv_fromUD_toUD : Function.IsPartialInv fromUD toUD :=
   fun x y ↦ by cases x <;> cases y <;> decide
 
@@ -206,6 +208,9 @@ def fromUD : UD.Case → Case
   | .Per => .perl
   | .Abe => .abess
 
+/-- Ingestion after realization is the identity but on the oblique, which realizes as `Acc`, the
+tag UD's guidelines give the oblique of a language with a direct and an oblique case only, and
+ingests as the accusative. -/
 theorem fromUD_toUD (c : Case) : fromUD c.toUD = if c = .obl then .acc else c := by
   cases c <;> rfl
 

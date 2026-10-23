@@ -340,6 +340,7 @@ theorem discourseCommitments_assert_of_ne {b : A} (h : b ≠ a) :
 theorem mem_discourseCommitments_assert :
     p ∈ (K.assert a p).discourseCommitments a := mem_discourseCommitments_commit_self K a p _ _
 
+/-- M' strips the shared proposition from every commitment list. -/
 theorem discourseCommitments_settle :
     (K.settle p).discourseCommitments a = K.discourseCommitments a \ {p} := by
   ext q
@@ -368,6 +369,7 @@ theorem stack_settle_push_of_not_decidedBy (h : ¬ P.DecidedBy (K.commonGround �
 theorem settle_commit_self (force source) : (K.commit a p force source).settle p = K.settle p :=
   Table.ext rfl (Set.insert_inter_of_notMem (not_not.2 rfl)) rfl
 
+/-- M' with the asserted proposition pops the assertion and strips its commitment. -/
 theorem settle_assert_self : (K.assert a p).settle p = K.settle p :=
   (settle_push_of_decidedBy
     (decidedBy_ofSet.2 (mem_inf_of_right (mem_principal_self p)))).trans
@@ -381,6 +383,7 @@ Table and the common ground as before them, with both commitments recorded. -/
 theorem agreeToDisagree_assert_assert (b : A) (q : Set W) :
     ((K.assert a p).assert b q).agreeToDisagree = (K.commit a p).commit b q := rfl
 
+/-- Agreeing to disagree restores the crisis status of the context before the assertions. -/
 theorem inCrisis_agreeToDisagree_assert_assert (b : A) (q : Set W) :
     ((K.assert a p).assert b q).agreeToDisagree.InCrisis ↔ K.InCrisis := Iff.rfl
 
@@ -393,6 +396,7 @@ variable {K a p P} {f : Filter W}
 theorem projectedSet_of_isStable (h : K.IsStable) : K.projectedSet = {K.commonGround} := by
   rw [projectedSet, show K.stack = [] from h, List.foldr_nil]
 
+/-- A projected common ground refines the current one. -/
 theorem le_commonGround_of_mem_projectedSet (h : f ∈ K.projectedSet) : f ≤ K.commonGround := by
   obtain ⟨T, C, cg⟩ := K
   induction T generalizing f with
@@ -444,6 +448,8 @@ end
 @[simp] theorem projectedSet_polarQuestion :
     (K.polarQuestion p).projectedSet = project K.projectedSet (polar p) := rfl
 
+/-- With the projected set derived, a conversation is in crisis exactly when no projected common
+ground is consistent. -/
 theorem inCrisis_iff : K.InCrisis ↔ ∀ f ∈ K.projectedSet, f = ⊥ :=
   or_iff_right_of_imp fun hcg _ hf ↦
     le_bot_iff.1 ((le_commonGround_of_mem_projectedSet hf).trans_eq hcg)
@@ -457,6 +463,7 @@ theorem projectedSet_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ
     rw [compl_compl]
     exact mem_of_mem_projectedSet_assert hg
 
+/-- A denied assertion leaves the conversation in crisis. -/
 theorem inCrisis_assert_assert_compl (b : A) : ((K.assert a p).assert b pᶜ).InCrisis :=
   (inCrisis_iff _).2 fun f hf ↦
     absurd (projectedSet_assert_assert_compl K a p b ▸ hf) (Set.notMem_empty f)

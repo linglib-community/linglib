@@ -188,6 +188,8 @@ theorem mem_produced_iff (σ : Ranking (Fin 5) 5) (i : Syl) :
     i ∈ produced (univ.filter (σ.Dominates 0)) ↔ PicksAt syllabification σ i i := by
   simp [produced, faithful_iff]
 
+/-- The stages at which FAITH overtakes *CODA, ONSET, *COMPLEXCODA and *COMPLEXONSET in turn
+produce the syllable types in the nested order CV; CVC; V, VC; CVCC, VCC; CCV, CCVC, CCVCC. -/
 theorem produced_stages :
     produced ∅ = {cv} ∧ produced {4} = {cv, cvc} ∧ produced {4, 3} = {cv, cvc, v, vc} ∧
     produced {4, 3, 2} = {cv, cvc, v, vc, cvcc, vcc} ∧ produced {4, 3, 2, 1} = univ := by
@@ -210,6 +212,8 @@ theorem initial_glaUpdate (r η : ℝ) (o : Syl) (k : Fin 5) (hk : k ≠ 0) :
 /-- The violation rate of a constraint in the corpus of Table 1, in permyriad. -/
 def corpusRate (k : Fin 5) : ℕ := (rows.map fun r ↦ r.2 * con k (r.1, r.1)).sum
 
+/-- FAITH is never violated in the corpus, and the markedness ranks fall fastest for *CODA, then
+ONSET, *COMPLEXCODA and *COMPLEXONSET, the order in which FAITH overtakes them. -/
 theorem corpusRate_order :
     corpusRate 0 = 0 ∧ corpusRate 1 < corpusRate 2 ∧ corpusRate 2 < corpusRate 3 ∧
     corpusRate 3 < corpusRate 4 := by

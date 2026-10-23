@@ -142,6 +142,11 @@ instance : Exponence.Rule (Rule L P F) (L × P) F where
     Exponence.Applies r c ↔ c.1 ∈ r.klass ∧ r.props ≤ c.2 :=
   Iff.rfl
 
+/-- For same-class rules, narrowness implies applicability-set inclusion, so the
+narrower rule applies in a subset of the contexts, [stump-2001]'s two-clause
+narrowness falling under [stump-2016]'s single-clause domain-subset precedence.
+Across classes the order is strictly intensional (a smaller class outranks a
+larger one whatever the property sets), so a class hypothesis is required. -/
 theorem Rule.applySet_mono {r s : Rule L P F} (hk : r.klass = s.klass)
     (h : r.narrowness ≤ s.narrowness) : Exponence.applySet r ⊆ Exponence.applySet s := by
   rcases Rule.narrowness_le_iff.1 h with hlt | ⟨_, hp⟩
@@ -183,6 +188,9 @@ theorem identityDefault_applies (c : L × P) :
   ⟨Finset.mem_univ _, bot_le⟩
 
 omit [DecidableLE P] [DecidableLT P] in
+/-- The IFD is `≤`-maximal, since every rule is at least as narrow. It is a top
+element of the narrowness order without an `OrderTop` instance (which would force
+`Fintype`/`OrderBot` globally). -/
 theorem le_identityDefault (r : Rule L P (Action Z P)) :
     r.narrowness ≤ (identityDefault (Z := Z) (P := P)).narrowness := by
   by_cases h : r.klass = Finset.univ
@@ -291,11 +299,19 @@ def evalPortmanteau (Lindex : Z → L) (bmn bm bn : Block L Z P) (wσ : Z × P) 
   then evalBlock Lindex bm (evalBlock Lindex bn wσ)
   else evalBlock Lindex bmn wσ
 
+/-- Where no portmanteau rule applies, the portmanteau block is the composition
+of its component blocks, the **Function Composition Default**
+([bonami-stump-2016]). -/
 theorem evalPortmanteau_eq_comp_of_not_applies (Lindex : Z → L) (bmn bm bn : Block L Z P)
     (wσ : Z × P) (h : bmn.applicable (Lindex wσ.1, wσ.2) = []) :
     evalPortmanteau Lindex bmn bm bn wσ = evalBlock Lindex bm (evalBlock Lindex bn wσ) := by
   simp [evalPortmanteau, h]
 
+/-- Appending a `≤`-maximal always-applicable rule to a block leaves narrowest-rule
+selection unchanged when the block already selects, and picks that rule otherwise,
+since a maximal rule is preempted by any genuine competitor and fires only in the
+elsewhere. This is the mechanism shared by `identityDefault` and
+`functionCompositionDefault`. -/
 theorem selectMinimal_append_maximal {v : RuleSet (Rule L P F)} {c : L × P}
     {top : Rule L P F} (hmax : ∀ r : Rule L P F, r.narrowness ≤ top.narrowness)
     (htop : Exponence.Applies top c) :
@@ -354,6 +370,16 @@ theorem le_functionCompositionDefault (Lindex : Z → L) (bm bn : Block L Z P)
   · exact Rule.narrowness_le_iff.2 (.inr ⟨h, bot_le⟩)
   · exact Rule.narrowness_le_iff.2 (.inl (Finset.ssubset_univ_iff.mpr h))
 
+/-- For a portmanteau block `bmn` of rules of exponence, the stipulated
+`evalPortmanteau` equals the block `bmn ++ [fcd]` evaluated as an ordinary
+block. Where a portmanteau rule applies it wins by
+narrowness (`le_functionCompositionDefault`, via `selectMinimal_append_maximal`);
+where none does, the appended FCD fires and evaluates `bm ∘ bn` at the cell. This
+certifies the stipulated Function Composition Default as [stump-2020]'s
+single-block rule-conflation reading of [bonami-stump-2016]'s block-straddling
+device. The exponence-only hypothesis on `bmn` is what a portmanteau block *is*
+in PFM, since referral, a separate syncretism device, re-selects over the block's
+`expoFragment`, which the appended (exponence-shaped) FCD would perturb. -/
 theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
     (bmn bm bn : Block L Z P) (wσ : Z × P)
     (hbmn : ∀ r ∈ bmn, ∃ f, r.payload = Action.expo f) :
@@ -383,6 +409,9 @@ theorem evalPortmanteau_eq_functionCompositionDefault (Lindex : Z → L)
 
 end FunctionCompositionDefault
 
+/-- With property-preserving property mapping and PFM1 basic stem choice, the PFM2
+realization of a paradigm linkage's block cascade ([stump-2016]'s
+`PF(⟨L, σ⟩) = PF(Corr(⟨L, σ⟩))`) is this paradigm function. -/
 theorem _root_.Morphology.Linkage.realized_eq_paradigmFunction [DecidableEq Z]
     (ℓ : Linkage L Z P P) (Lindex : Z → L) (stemChoice : L × P → Z)
     (blocks : List (Block L Z P)) (l : L) (σ : P) (h : ℓ.IsPropertyPreserving id)
@@ -391,6 +420,8 @@ theorem _root_.Morphology.Linkage.realized_eq_paradigmFunction [DecidableEq Z]
       = {paradigmFunction Lindex stemChoice blocks (l, σ)} := by
   simp [Linkage.realized, h l σ, hstem, paradigmFunction, Prod.ext_iff]
 
+/-- The linkage of a PFM1 basic stem choice realizes its block cascade as this paradigm
+function. -/
 theorem _root_.Morphology.Linkage.ofFun_realized_eq_paradigmFunction [DecidableEq Z]
     (Lindex : Z → L) (stemChoice : L × P → Z) (blocks : List (Block L Z P)) (l : L) (σ : P) :
     (Linkage.ofFun id (Function.curry stemChoice)).realized
@@ -399,6 +430,8 @@ theorem _root_.Morphology.Linkage.ofFun_realized_eq_paradigmFunction [DecidableE
   Linkage.realized_eq_paradigmFunction _ Lindex stemChoice blocks l σ (fun _ _ ↦ rfl)
     fun _ _ ↦ rfl
 
+/-- The linkage of rules of paradigm linkage realizes its block cascade as the paradigm function
+whose basic stem choice realizes each lexeme's rules over its root. -/
 theorem _root_.Morphology.Linkage.ofRules_realized_eq_paradigmFunction [DecidableEq Z]
     {R : Type*} [Exponence.Rule R P Z] {κ : Type*} [Preorder κ] (key : R → κ)
     [DecidableRel (· < · : κ → κ → Prop)]

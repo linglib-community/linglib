@@ -82,6 +82,8 @@ variable {s : Theory c}
 theorem mem_realizers {g : c.vars → M} : g ∈ s.realizers M ↔ ∀ l ∈ s.lits, l.Holds g :=
   .rfl
 
+/-- An embedding verifies the DRS of a theory exactly when its restriction to the context's
+referents realizes the theory. -/
 theorem verifies_toDRS_iff {g : V → M} : Verifies g s.toDRS ↔ g ∘ Subtype.val ∈ s.realizers M := by
   rw [verifies_iff, mem_realizers]
   simp only [toDRS, DRS.conditions_mk, List.mem_map, Finset.mem_toList, forall_exists_index,
@@ -127,6 +129,8 @@ theorem glueAssignment_comp {g : ∀ i, (C.part i).vars → M} (hg : C.Compatibl
 variable [L.Structure M] [Fintype ι] [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
   {x : ∀ i, Theory (C.part i)} {s : Theory c}
 
+/-- An assignment realizes the least gluing of a family exactly when its restriction along every
+cover morphism realizes the local theory. -/
 theorem mem_realizers_iff (hs : s.lits = C.pushforward x) {g : c.vars → M} :
     g ∈ s.realizers M ↔ ∀ i, g ∘ (C.map i).map ∈ (x i).realizers M := by
   simp only [Theory.mem_realizers, hs, mem_pushforward, forall_exists_index, and_imp]

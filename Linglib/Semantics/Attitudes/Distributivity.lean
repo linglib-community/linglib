@@ -42,6 +42,7 @@ of propositions exactly when it relates her to the singleton of one of them. -/
 def IsDistributive (V : E → Set (Set W) → W → Prop) : Prop :=
   ∀ x Q w, V x Q w ↔ ∃ p ∈ Q, V x {p} w
 
+/-- A predicate that holds of a question but of none of its answers is not distributive. -/
 theorem not_isDistributive_of_forall_not {V : E → Set (Set W) → W → Prop} {x : E}
     {Q : Set (Set W)} {w : W} (hQ : V x Q w) (h : ∀ p ∈ Q, ¬ V x {p} w) : ¬ IsDistributive V :=
   fun hV ↦ let ⟨p, hp, hxp⟩ := (hV x Q w).1 hQ; h p hp hxp

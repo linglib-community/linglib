@@ -50,6 +50,7 @@ def MustBePreverbal (d : DefinitenessDegree) : Prop := d ∉ accusative
 
 instance : DecidablePred MustBePreverbal := fun d ↦ inferInstanceAs (Decidable (d ∉ accusative))
 
+/-- Only a non-specific indefinite is confined to the preverbal position. -/
 theorem mustBePreverbal_iff (d : DefinitenessDegree) : MustBePreverbal d ↔ d = .nonSpecific := by
   cases d <;> decide
 

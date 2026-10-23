@@ -64,6 +64,7 @@ theorem IsSmugglingStep.frozen (h : d.IsSmugglingStep i xp w) : d.Frozen xp :=
   let ⟨m, hm, hc, _⟩ := h
   ⟨m, mem_movedItems_of_mem_mover? hm, hc⟩
 
+/-- Moving the smuggled phrase on violates Freezing. -/
 theorem IsSmugglingStep.not_obeysFreezing_append_im (h : d.IsSmugglingStep i xp w)
     (side : Edge) : ¬ (d.append [.im xp side]).ObeysFreezing :=
   fun h' ↦ (obeysFreezing_append_im_iff.1 h').2 h.frozen

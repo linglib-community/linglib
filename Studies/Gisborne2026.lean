@@ -207,6 +207,8 @@ theorem mem_specifiers_pair {c : Concept A} :
   rw [mem_specifiers, pair_le_iff]
   rcases c with _ | _ | ⟨w', p'⟩ <;> simp [landmarkRule]
 
+/-- The landmark rules make `p` the landmark of `w` exactly when `p` is a parent of `w` and not
+a subordinate parent. -/
 theorem isLandmark_iff : A.IsLandmark w p ↔ A.Parent p w ∧ ¬ A.SubordinateParent w p := by
   by_cases hs : A.SubordinateParent w p
   · have : inherited A.landmarkRule (.pair w p) = {false} :=
@@ -318,10 +320,14 @@ theorem not_extractionBy_isLandmark (hex : A.Dep h w .extractee)
     (hs : A.SubordinateParent w h) : ¬ A.ExtractionBy A.IsLandmark := fun hE ↦
   (isLandmark_iff.1 (hE h w hex)).2 hs
 
+/-- A word that heads the clause it is extracted from and depends on a head outside it cannot be
+positioned by landmarks, since the head it is extracted from is subordinate to the outside head. -/
 theorem not_orderedByLandmarks_of_extraction (hex : A.Dep h w .extractee) (hq : A.Parent q w)
     (hqh : q ≠ h) (hwh : A.Parent w h) : ¬ A.OrderedByLandmarks := fun hO ↦
   not_extractionBy_isLandmark hex ⟨⟨_, hex⟩, q, hqh, hq, .head hq (.single hwh)⟩ hO.2
 
+/-- The revision accepts every analysis the 2007 theory accepts, since an extracted word precedes
+the head it is extracted from when that head is its landmark. -/
 theorem OrderedByLandmarks.orderedByPositionalHeads (hO : A.OrderedByLandmarks) :
     A.OrderedByPositionalHeads := by
   refine ⟨hO.1, fun w h hex ↦ ?_⟩

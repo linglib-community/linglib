@@ -126,6 +126,8 @@ theorem bir_apply_singleton (x : X) :
     · rintro ⟨rfl, h⟩
       exact ⟨h, rfl⟩
 
+/-- By eq. (BIR), the information state after "around" is the literal listener at the graded
+meaning, `P(x = k | around n) ∝ P(x = k) · P(y ≥ |n − k|)`. -/
 theorem bir_eq_ofDensity {U : Type*} [MeasurableSpace U] [Countable U]
     [MeasurableSingletonClass U] {m : U → X → ℝ≥0∞} {u : U} (hm : m u = aroundWeight ν d) :
     bir μ ν d = Kernel.ofDensity μ m u :=
@@ -241,6 +243,9 @@ theorem lintegral_aroundWeight_ne_top : ∫⁻ x, aroundWeight ν (Nat.dist n) x
   ne_top_of_le_ne_top (ENNReal.mul_ne_top (measure_ne_top ν _) (measure_ne_top μ _))
     ((lintegral_mono fun _ ↦ measure_mono (Set.subset_univ _)).trans (lintegral_const _).le)
 
+/-- For `k₁ < k₂`, hearing "around n" raises the odds of `n − k₁` against `n − k₂` above their
+prior odds, whatever the priors, as soon as the radii between `k₁` and `k₂` have positive prior
+mass (the ratio inequality). -/
 theorem ratio_inequality {k₁ k₂ : ℕ} (h : k₁ < k₂) (hk : k₂ ≤ n) (hμ₁ : μ {n - k₁} ≠ 0)
     (hμ₂ : μ {n - k₂} ≠ 0) (hν : ν (Set.Ico k₁ k₂) ≠ 0) (hν₂ : ν (Set.Ici k₂) ≠ 0) :
     μ.real {n - k₁} / μ.real {n - k₂} <
@@ -642,6 +647,9 @@ theorem within_dist (n y : ℕ) : within (Nat.dist n) y = Set.Icc (n - y) (n + y
 
 variable [IsFiniteMeasure μ]
 
+/-- The Bayesian rule is the weighted rule with the posterior over radii in place of the prior
+(BIR′), so the two rules differ exactly in which distribution over radii weights the
+intervals. -/
 theorem bir_eq_bind_radiusPosterior :
     bir μ ν d = (radiusPosterior μ ν d).bind fun y ↦ μ[|within d y] :=
   Measure.ext_of_singleton fun x ↦ by

@@ -397,6 +397,8 @@ theorem isRightSubsequential_iff :
       ↔ ∃ (σ : Type) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
   exists₃_congr fun _ _ T ↦ by rw [T.runRight_eq_revConj_run, List.revConj_eq_iff]
 
+/-- Every finite-state transducer computes a left-subsequential function, whatever the
+universe of its state type. -/
 theorem SubsequentialTransducer.isLeftSubsequential {σ : Type*} [Fintype σ]
     (T : SubsequentialTransducer σ α β) :
     IsLeftSubsequential T.run :=
@@ -425,11 +427,15 @@ theorem SubsequentialTransducer.isRightSubsequential {σ : Type*} [Fintype σ]
 
 /-! ### Mealy-computable functions -/
 
+/-- A Mealy-computable function is left-subsequential, since
+`Mealy.toSubsequentialTransducer` presents a Mealy machine as a block transducer emitting
+singleton blocks. -/
 theorem IsMealyComputable.isLeftSubsequential (hf : IsMealyComputable f) :
     IsLeftSubsequential f := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   exact T.toSubsequentialTransducer_run ▸ T.toSubsequentialTransducer.isLeftSubsequential
 
+/-- A finite Mealy machine computes a left-subsequential function. -/
 theorem Mealy.isLeftSubsequential {σ : Type*} [Fintype σ] (T : Mealy σ α β) :
     IsLeftSubsequential T.run :=
   T.isMealyComputable.isLeftSubsequential
@@ -483,18 +489,23 @@ end WindowRun
 
 /-! ### Closure under composition -/
 
+/-- Left-subsequential functions are closed under composition, by
+`SubsequentialTransducer.comp` [mohri-1997]. -/
 theorem IsLeftSubsequential.comp (hg : IsLeftSubsequential g)
     (hf : IsLeftSubsequential f) : IsLeftSubsequential (g ∘ f) := by
   obtain ⟨σ₁, _, T₁, rfl⟩ := hf
   obtain ⟨σ₂, _, T₂, rfl⟩ := hg
   exact ⟨σ₂ × σ₁, inferInstance, T₂.comp T₁, T₂.run_comp T₁⟩
 
+/-- Right-subsequential functions are closed under composition, by conjugating the left
+closure. -/
 theorem IsRightSubsequential.comp (hg : IsRightSubsequential g)
     (hf : IsRightSubsequential f) : IsRightSubsequential (g ∘ f) := by
   show IsLeftSubsequential (List.revConj (g ∘ f))
   rw [List.revConj_comp]
   exact IsLeftSubsequential.comp hg hf
 
+/-- Subsequential functions are closed under composition in either scan direction. -/
 theorem IsSubsequential.comp {d : Edge} (hg : IsSubsequential d g)
     (hf : IsSubsequential d f) : IsSubsequential d (g ∘ f) :=
   match d, hg, hf with
@@ -503,17 +514,21 @@ theorem IsSubsequential.comp {d : Edge} (hg : IsSubsequential d g)
 
 /-! ### Regular preimages -/
 
+/-- Left-subsequential functions pull back regular languages (`DFA.comapSubsequential`). -/
 theorem IsLeftSubsequential.isRegular_preimage (hf : IsLeftSubsequential f)
     {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   obtain ⟨τ, _, M, rfl⟩ := hL
   exact ⟨σ × τ, inferInstance, M.comapSubsequential T, M.accepts_comapSubsequential T⟩
 
+/-- Right-subsequential functions pull back regular languages, by conjugating the left case
+through the closure of the regular languages under reversal. -/
 theorem IsRightSubsequential.isRegular_preimage (hf : IsRightSubsequential f)
     {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) := by
   have h := (hf.revConj.isRegular_preimage hL.reverse).reverse
   rwa [← List.preimage_revConj, List.revConj_revConj] at h
 
+/-- Subsequential functions pull back regular languages in either scan direction. -/
 theorem IsSubsequential.isRegular_preimage {d : Edge} (hf : IsSubsequential d f)
     {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) :=
   match d, hf with
@@ -536,6 +551,8 @@ theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
     List.append_nil]
   exact (List.rdrop_prefix _ _).trans (List.prefix_append _ _)
 
+/-- For a right-subsequential `f`, all but the first `N` symbols of `f u` are a suffix of
+`f (v ++ u)`. -/
 theorem IsRightSubsequential.bounded_delay (hf : IsRightSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, (f u).drop N <:+ f (v ++ u) := by
   obtain ⟨N, hN⟩ := IsLeftSubsequential.bounded_delay hf

@@ -114,6 +114,7 @@ theorem atLeast_inf_atMost (n : ℕ) :
     NumberTree.atLeast n ⊓ NumberTree.atMost n = NumberTree.exactly n := by
   funext a b; exact propext (show n ≤ b ∧ b ≤ n ↔ b = n by omega)
 
+/-- *More than half* is *most*. -/
 theorem thresholdGt_one_two : thresholdGt 1 2 = NumberTree.most := by
   funext a b; exact propext (show 1 * (a + b) < 2 * b ↔ a < b by omega)
 
@@ -340,6 +341,7 @@ there-sentences, although Barwise and Cooper's Table II labels *few* and *half* 
 truth depends on `|A \ B|`, not just on `|A ∩ B|`. *Few* already fails it on one individual,
 *most* and *half* on two. -/
 
+/-- *Most* fails `Existential`, by `A = ⊤` and `B = {0}` on two individuals. -/
 theorem not_existential_most : ¬ Existential (most : GQ (Fin 2)) := fun h ↦ by
   have := h (fun _ ↦ True) (· = 0)
   revert this; decide
@@ -373,6 +375,8 @@ theorem not_scopeAntitone_half : ¬ ScopeAntitone (half : GQ (Fin 3)) := fun h �
       half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) fun _ ↦ False := h _ hle
   revert this; decide
 
+/-- *Half* is non-monotone in its scope, neither monotone nor antitone
+([van-de-pol-etal-2023]). -/
 theorem not_monotone_half :
     ¬ ScopeMonotone (half : GQ (Fin 3)) ∧ ¬ ScopeAntitone (half : GQ (Fin 3)) :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩

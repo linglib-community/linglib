@@ -38,6 +38,8 @@ attribute [local instance] Classical.propDecidable
 
 /-! ### Reductions -/
 
+/-- Agreement on disjoint pairs suffices for full representability, since additivity reduces
+    every comparison to a disjoint one. -/
 theorem reduce_to_disjoint {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
     {r : Set W → Set W → Prop} [IsQualitativeAdditive r] (μ : Measure W) [IsFiniteMeasure μ]
     (h : ∀ C D : Set W, Disjoint C D → (r C D ↔ μ D ≤ μ C)) :
@@ -70,6 +72,8 @@ private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
   ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
     Set.mem_sdiff]; exact And.comm
 
+/-- If atom `0` is null in a qualitative probability on `Fin (n+2)` and some atom is not,
+    representability reduces along `Fin.succ` to `Fin (n+1)`. -/
 theorem null_elem_reduce {n : ℕ} (r : Set (Fin (n + 2)) → Set (Fin (n + 2)) → Prop)
     [IsQualitativeProbability r] (hn0 : r ∅ {0}) (hnn : ∃ i : Fin (n + 1), ¬r ∅ {Fin.succ i})
     (sub_repr : ∀ r' : Set (Fin (n + 1)) → Set (Fin (n + 1)) → Prop,
@@ -105,6 +109,7 @@ theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n) (r : Set (Fin n) → Set 
   show r (σ ⁻¹' ∅) (σ ⁻¹' {j}) ↔ _
   rw [Set.preimage_empty, show σ ⁻¹' {j} = {σ.symm j} by ext; simp [Equiv.eq_symm_apply]]
 
+/-- Representability transports backward along any equivalence. -/
 theorem perm_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W]
     [MeasurableSpace α] [DiscreteMeasurableSpace α] (σ : W ≃ α) (r : Set W → Set W → Prop)
     (h : Representable (Set.preimage σ ⁻¹'o r)) : Representable r := by

@@ -76,6 +76,7 @@ theorem overshadowing (hα : α .inflection < α .adverb) (hβ : 0 < β j) (hlam
   simp only [iterate_update_zero_apply]
   exact mul_lt_mul_of_pos_right hα (mul_pos (mul_pos hlam hβ) (geom_sum_pos' (by linarith) hn))
 
+/-- In the limit each cue holds its salience's share of the outcome's maximal activation. -/
 theorem tendsto_strength (c : Cue) (h : |1 - (α .adverb + α .inflection) * β j| < 1) :
     Tendsto (fun n ↦ (update α β 1 lam)^[n] 0 c j) atTop
       (𝓝 (α c / (α .adverb + α .inflection) * lam j)) := by
@@ -84,6 +85,10 @@ theorem tendsto_strength (c : Cue) (h : |1 - (α .adverb + α .inflection) * β 
 
 /-! ### Blocking -/
 
+/-- A learner whose cues already predict the outcome learns nothing from utterances that pair
+adverb and inflection, so "all the extra input in the world might sum to naught". The
+second-language learner, who knows the adverb and not the inflection, is the case
+`V .adverb = lam` and `V .inflection = 0`. -/
 theorem blocking {V : Matrix Cue κ ℝ} (hV : V .adverb + V .inflection = lam) (n : ℕ) :
     (update α β 1 lam)^[n] V = V := by
   refine Function.iterate_fixed (update_eq_self_of_vecMul_eq α β ?_) n

@@ -116,14 +116,17 @@ theorem mem_of_isSubquotient {M N : Type u} [Monoid M] [Monoid N] (h : IsSubquot
 
 /-! ### Quotients by congruences -/
 
+/-- Membership of a quotient descends along a coarsening of congruences. -/
 theorem mem_quotient_of_le {M : Type u} [Monoid M] {c d : Con M} (h : c ≤ d)
     (hc : V.mem c.Quotient) : V.mem d.Quotient :=
   V.quot (f := Con.map c d h) (Con.lift_surjective_of_surjective _ Con.mk'_surjective) hc
 
+/-- The quotient by the kernel of a homomorphism into a member is a member. -/
 theorem mem_quotient_ker {M N : Type u} [Monoid M] [Monoid N] (f : M →* N) (h : V.mem N) :
     V.mem (Con.ker f).Quotient :=
   V.sub (Con.kerLift_injective f) h
 
+/-- The quotient by the meet of two congruences is a member when both quotients are. -/
 theorem mem_quotient_inf {M : Type u} [Monoid M] {c d : Con M} (hc : V.mem c.Quotient)
     (hd : V.mem d.Quotient) : V.mem (c ⊓ d).Quotient := by
   have h : Con.ker (c.mk'.prod d.mk') ≤ c ⊓ d := by
@@ -146,6 +149,7 @@ private def piOptionEquivProdMul {α : Type*} (f : Option α → Type*) [∀ i, 
     (∀ i, f i) ≃* f none × ∀ a, f (some a) :=
   { Equiv.piOptionEquivProd with map_mul' := fun _ _ ↦ rfl }
 
+/-- A pseudovariety is closed under finite dependent products. -/
 theorem pi_mem {ι : Type u} [Finite ι] {f : ι → Type u} [∀ i, Monoid (f i)]
     (h : ∀ i, V.mem (f i)) : V.mem (∀ i, f i) := by
   refine Finite.induction_empty_option
@@ -250,14 +254,17 @@ theorem mem_of_mulEquiv {S T : Type u} [Semigroup S] [Semigroup T] (e : S ≃* T
     V.mem T :=
   V.quot (f := e.toMulHom) e.surjective h
 
+/-- Membership of a quotient descends along a coarsening of congruences. -/
 theorem mem_quotient_of_le {S : Type u} [Semigroup S] {c d : Con S} (h : c ≤ d)
     (hc : V.mem c.Quotient) : V.mem d.Quotient :=
   V.quot (Con.mapMulHom_surjective c d h) hc
 
+/-- The quotient by the kernel of a homomorphism into a member is a member. -/
 theorem mem_quotient_ker {S T : Type u} [Semigroup S] [Semigroup T] (f : S →ₙ* T)
     (h : V.mem T) : V.mem (Con.ker f).Quotient :=
   V.sub (Con.kerLiftMulHom_injective f) h
 
+/-- The quotient by the meet of two congruences is a member when both quotients are. -/
 theorem mem_quotient_inf {S : Type u} [Semigroup S] {c d : Con S} (hc : V.mem c.Quotient)
     (hd : V.mem d.Quotient) : V.mem (c ⊓ d).Quotient := by
   have h : Con.ker (c.mkMulHom.prod d.mkMulHom) ≤ c ⊓ d := by

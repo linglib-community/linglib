@@ -89,6 +89,7 @@ def Category.predicates (c : Category) : Set Predicate := {p | p ∈ (classifica
 instance (c : Category) : DecidablePred (· ∈ c.predicates) :=
   fun p ↦ inferInstanceAs (Decidable (p ∈ (classification c).predicates))
 
+/-- The English lexicon marks factive exactly the canonically factive predicates. -/
 theorem isFactive_iff {p : Predicate} :
     (entry p).IsFactive ↔ p ∈ Category.canonicallyFactive.predicates := by
   cases p <;> decide
@@ -146,6 +147,8 @@ theorem not_separates_certaintyMean (t : Task) :
   not_separates_of_le (a := .reveal) (b := .inform) (by decide) (by decide)
     ((certaintyMean_reveal_le_iff t _).2 (.inr (by decide)))
 
+/-- No threshold on either task's certainty ratings picks out the canonically factive
+predicates. -/
 theorem not_exists_threshold (t : Task) :
     ¬ ∃ θ, Category.canonicallyFactive.predicates = certaintyMean t ⁻¹' Ioi θ :=
   (separates_iff_exists_threshold ⟨.inform, by decide⟩).not.1 (not_separates_certaintyMean t)
@@ -160,6 +163,8 @@ def Entailed (d : Diagnostic) (t : Task) (p : Predicate) : Prop :=
 instance (d : Diagnostic) (t : Task) : DecidablePred (Entailed d t) :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
+/-- Under either diagnostic and task, no complement is projective and entailed, or the entailed
+complement of *be right* projects less than the nonentailed one of *say*. -/
 theorem factive_eq_empty_or_not_separates (d : Diagnostic) (t t' : Task) :
     {p | Projects t' p ∧ Entailed d t p} = ∅ ∨
       ¬ Separates {p | Projects t' p ∧ Entailed d t p} (certaintyMean t') := by

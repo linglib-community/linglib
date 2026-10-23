@@ -104,6 +104,9 @@ def spatialDecomp (c : Case) : Option (Localization × Direction) :=
   | some r, some d => some (r, d)
   | _, _ => none
 
+/-- `toCase` and `spatialDecomp` are inverse on the localization-specific
+    cells — the decomposition round-trips where localization is not conflated.
+    (`route` is localization-neutral, hence `none` on both sides.) -/
 theorem spatialDecomp_toCase (r : Localization) (d : Direction) :
     (toCase r d).bind spatialDecomp =
       (toCase r d).map (fun _ => (r, d)) := by

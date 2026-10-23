@@ -100,9 +100,12 @@ theorem eat_sum : SUM eat := sum_graph (SupHom.id _)
 
 theorem eat_up : UP eat := up_graph id
 
+/-- *eat apples* is cumulative, since the bare plural is cumulative and *eat* is summative. -/
 theorem eat_apples_cum : CUM (VP eat Finset.Nonempty) :=
   vp_cum eat_sum fun _ hx _ _ ↦ hx.mono Finset.subset_union_left
 
+/-- *eat two apples* is quantized, since a measure phrase is quantized and *eat* is strictly
+incremental. -/
 theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
   vp_qua eat_up eat_sinc.mso
     (qua_pullback (IsExtensiveMeasure.strictMono Finset.card) (singleton_qua 2))
@@ -152,6 +155,8 @@ def precedes (a b : Finset (Fin 3)) : Prop := ∀ i ∈ a, ∀ j ∈ b, i < j
 
 instance : DecidableRel precedes := fun _ _ ↦ by unfold precedes; infer_instance
 
+/-- *Read the article* is not telic, since the strict reading `{0, 1}` is a part of the reading
+`{0, 1, 2}` that the re-reading `{2}` follows. -/
 theorem not_isTelic_read : ¬ IsTelic precedes (read Finset.univ) := fun h ↦ by
   have hsum : read Finset.univ {0, 1, 2} := by
     have := AlgClosure.sum (P := Function.uncurry readOnce) (x := (Finset.univ, {0, 1}))
@@ -194,6 +199,8 @@ theorem isTelic_of_seinc (x : α) : IsTelic precedes (θ x) :=
   fun _ _ hx hx' hle ↦
     ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
 
+/-- The verb phrase of a quantized object under a strictly expansive incremental relation with
+unique participants is telic, as *eat two apples* is. -/
 theorem isTelic_vp_of_seinc (hUP : UP θ) {OBJ : α → Prop} (hOBJ : QUA OBJ) :
     IsTelic precedes (VP θ OBJ) := by
   rintro e e' ⟨x, hOx, hx⟩ ⟨x', hOx', hx'⟩ hle
@@ -250,6 +257,8 @@ theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
     | base h => exact h
     | sum _ _ hp ih₁ ih₂ => exact hClosed _ _ _ _ ih₁ ih₂ hp⟩⟩
 
+/-- A movement with a specified source and goal is telic under mapping to objects and
+uniqueness of participants, as *walk from the university to the capitol* is. -/
 theorem isTelic_sourceGoal (hax : NoPartPrecedes precedes) (hMO : MO θ) (hUP : UP θ)
     (u v : α) :
     IsTelic precedes

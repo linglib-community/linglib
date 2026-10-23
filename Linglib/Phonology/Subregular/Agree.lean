@@ -110,6 +110,8 @@ theorem TierStrictlyLocalGrammar.mem_ofForbiddenPairs_language_iff_forall_sublis
   · exact hp a (hab.mem mem_cons_self)
   · exact hp b (hab.mem (mem_cons_of_mem _ mem_cons_self))
 
+/-- The tier-based and subsequence-based descriptions generate the same language when the
+permitted pairs are transitive on the tier. -/
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_eq_strictlyPiecewise :
     (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language =
       (StrictlyPiecewiseGrammar.ofForbiddenPairs R p).language 2 :=
@@ -123,6 +125,8 @@ theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise :
 
 end Transitive
 
+/-- A forbidden-pair language is strictly piecewise exactly when its permitted pairs are
+transitive on the tier. -/
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise_iff
     (hk : 2 ≤ k) :
     (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language.IsStrictlyPiecewise k ↔
@@ -136,6 +140,8 @@ theorem TierStrictlyLocalGrammar.ofForbiddenPairs_language_isStrictlyPiecewise_i
   rw [mem_ofForbiddenPairs_language_iff] at this
   simp [ha, hc, hac] at this
 
+/-- The OCP is strictly piecewise only on a tier with at most one symbol. For distinct on-tier
+`a` and `b`, the word `a b a` is legal and its subsequence `a a` is not. -/
 theorem TierStrictlyLocalGrammar.ofForbiddenPairs_eq_language_isStrictlyPiecewise_iff
     [DecidableEq α] (hk : 2 ≤ k) :
     (TierStrictlyLocalGrammar.ofForbiddenPairs (· = ·) p).language.IsStrictlyPiecewise k ↔
@@ -159,6 +165,8 @@ theorem TierStrictlyLocalGrammar.mem_agree_language_iff_forall_sublist_pair (w :
   (mem_ofForbiddenPairs_language_iff_forall_sublist_pair not_ne_trans w).trans <| by
     simp only [ne_eq, not_not]
 
+/-- The tier-based and subsequence-based descriptions of agreement generate the same language,
+for any tier predicate. -/
 theorem TierStrictlyLocalGrammar.agree_language_eq_strictlyPiecewise :
     (TierStrictlyLocalGrammar.agree p).language = (StrictlyPiecewiseGrammar.agree p).language 2 :=
   ofForbiddenPairs_language_eq_strictlyPiecewise not_ne_trans

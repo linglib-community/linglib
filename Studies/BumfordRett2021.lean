@@ -397,6 +397,8 @@ theorem measured_reflect (c : Option Comparison) (w : World) :
     measured c w.reflect - w.reflect.centre = -(measured c w - w.centre) := by
   rcases c with _ | _ <;> grind [measured, keishaHeight, World.height_reflect, World.centre_reflect]
 
+/-- The negative antonym's expected deviation is minus the positive antonym's with the costs of
+the antonyms exchanged, so the antonyms of a construction differ only through their costs. -/
 theorem expectedDeviation_antonym (c : Option Comparison) (p : Polarity) :
     expectedDeviation c α cost (Polarity.negative * p) =
       -expectedDeviation c α (cost ∘ Utterance.antonym) p := by
@@ -467,6 +469,9 @@ private theorem exactEquative_tall (hα : 0 < α) :
     rcases u' with ⟨_ | _⟩ | _ <;>
       simp [Holds, measured, World.reflect, World.height, keishaHeight] at * <;> omega
 
+/-- The positive construction is evaluative for both antonyms, at every rationality and every
+cost. After *tall* the listener expects the subject above the centre of the class, and after
+*short* below it. -/
 theorem positive_evaluative (hα : 0 < α) (p : Polarity) :
     0 < p • expectedDeviation none α cost p := by
   cases p
@@ -475,6 +480,10 @@ theorem positive_evaluative (hα : 0 < α) (p : Polarity) :
       expectedDeviation_antonym, neg_neg]
     exact positive_tall hα
 
+/-- The exact equative shifts the listener for both antonyms, at every rationality and every
+cost. After *exactly as tall as Keisha* the listener expects Keisha above the centre of the class,
+and after *exactly as short as Keisha* below it, so the unmarked antonym is evaluative in direction
+and its weakness in the paper is one of magnitude. -/
 theorem exactEquative_evaluative (hα : 0 < α) (p : Polarity) :
     0 < p • expectedDeviation (some .eq) α cost p := by
   cases p
@@ -559,6 +568,9 @@ theorem isMarkovKernel_speaker (hα : 0 ≤ α) (c : Option Comparison) :
     exact (RSA.isMarkovKernel_speaker_dirac hα cost (literal c q.2)
       (fun w ↦ ⟨.silence, literal_ne_zero (c := c) trivial⟩)).isProbabilityMeasure q.1⟩
 
+/-- Weighted by how often the speaker makes each utterance, the listener's expected deviations sum
+to the prior's, which is zero. The listener's beliefs average back to the prior, so an antonym the
+speaker says rarely carries a more extreme inference. -/
 theorem evaluativity_balances (hα : 0 ≤ α) (c : Option Comparison) :
     ∑ u, (speaker c α cost ∘ₘ prior.prod Measure.count).real {u} *
       ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost u).fst = 0 := by
@@ -624,6 +636,8 @@ def AntonymsExclusive (c : Option Comparison) : Prop :=
 theorem antonymsExclusive_comparative : AntonymsExclusive (some .gt) := fun σ w h ↦ by
   simp [Holds] at h; omega
 
+/-- Among the constructions relating the subject to Keisha, the antonyms exclude each other exactly
+where Rett's classification makes the construction polar-variant. -/
 theorem antonymsExclusive_iff_not_isPolarInvariant {r : Comparison}
     (hr : r = .eq ∨ r = .ge ∨ r = .gt) :
     AntonymsExclusive (some r) ↔ ¬ Rett2015.IsPolarInvariant (construction (some r)) := by
@@ -659,6 +673,8 @@ private theorem speaker_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Co
   · rw [RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h),
       RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h)]
 
+/-- Where the antonyms exclude each other, an antonym's expected deviation depends on the costs only
+through its own cost and silence's, since the other antonym never competes with it. -/
 theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Comparison}
     (hex : AntonymsExclusive c) {p : Polarity} (hp : cost (.say p) = cost' (.say p))
     (hs : cost .silence = cost' .silence) :

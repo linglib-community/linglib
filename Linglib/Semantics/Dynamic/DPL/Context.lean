@@ -338,6 +338,8 @@ theorem mem_dom_iff (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c
     (hfg : f ~[R] g) : f ∈ S.dom ↔ g ∈ S.dom :=
   (hS.dependsOn_dom fun _ hv ↦ hR.blocks hfg (Finset.disjoint_right.mp hd hv)).to_iff
 
+/-- A relation that blocks none of the inputs of another commutes with its truth, so the
+sequence is true where both are. -/
 theorem dom_comp (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d.I) :
     (R ○ S).dom = R.dom ∩ S.dom :=
   Set.ext fun _ ↦
@@ -388,9 +390,11 @@ def context : Formula L V → Context V
   | ex x φ => .reset x * context φ
   | all x φ => (Context.reset x).impl (context φ)
 
+/-- The blocks of a formula's context are its active quantifier variables. -/
 theorem context_B (φ : Formula L V) : φ.context.B = φ.aqv := by
   induction φ <;> simp_all [context, aqv]
 
+/-- The inputs of a formula's context are its free variables. -/
 theorem context_I (φ : Formula L V) : φ.context.I = φ.fv := by
   induction φ <;> simp_all [context, fv, context_B, Finset.sdiff_singleton_eq_erase]
 

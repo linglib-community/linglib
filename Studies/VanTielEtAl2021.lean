@@ -93,6 +93,9 @@ theorem gq_eq_one_or_zero (mono : M → Monotonicity) (θ : M → ℕ) (m : M) (
   unfold gq
   split <;> split_ifs <;> simp
 
+/-- *Some* and *few* stand in no entailment relation. With a lower bound for *some* and an upper
+bound for *few* inside the range, *few* is true and *some* false of an empty intersection, and
+the other way round of a full one. -/
 theorem gq_no_entailment (mono : M → Monotonicity) (θ : M → ℕ) {m m' : M}
     (hm : mono m = .increasing) (hθm : 1 ≤ θ m) (hθm' : θ m ≤ n) (hm' : mono m' = .decreasing)
     (hθ : θ m' < n) :
@@ -101,12 +104,14 @@ theorem gq_no_entailment (mono : M → Monotonicity) (θ : M → ℕ) {m m' : M}
   simp [gq, hm, hm', Fin.val_last]
   omega
 
+/-- A word with a lower bound is true at more states as the intersection grows. -/
 theorem monotone_gq (mono : M → Monotonicity) (θ : M → ℕ) {m : M} (h : mono m = .increasing) :
     Monotone (gq (n := n) mono θ m) := fun t t' (htt' : t.val ≤ t'.val) ↦ by
   simp only [gq, h]
   split_ifs with h₁ h₂
   exacts [le_rfl, absurd (h₁.trans htt') h₂, zero_le_one, le_rfl]
 
+/-- A word with an upper bound is true at fewer states as the intersection grows. -/
 theorem antitone_gq (mono : M → Monotonicity) (θ : M → ℕ) {m : M} (h : mono m = .decreasing) :
     Antitone (gq (n := n) mono θ m) := fun t t' (htt' : t.val ≤ t'.val) ↦ by
   simp only [gq, h]
@@ -118,6 +123,7 @@ theorem pt_pos (p d : M → ℝ) (m : M) (t : State n) : 0 < pt p d m t := Real.
 theorem pt_le_one (p d : M → ℝ) (m : M) (t : State n) : pt p d m t ≤ 1 :=
   Real.exp_le_one_iff.2 (neg_nonpos.2 (sq_nonneg _))
 
+/-- The prototype semantics is gradient by itself, a state closer to the prototype being truer. -/
 theorem pt_lt_pt_of_abs_lt (p d : M → ℝ) (m : M) {t t' : State n} (hd : 0 < d m)
     (h : |(t.val : ℝ) - p m| < |(t'.val : ℝ) - p m|) : pt p d m t' < pt p d m t := by
   unfold pt
@@ -169,10 +175,13 @@ the probability that the literal listener recovers the state from it. -/
 noncomputable def speakerPrag (L : Lexicon n M) (sal : M → ℝ) (α : ℝ) : Kernel (State n) M :=
   Kernel.ofWeights fun t m ↦ ENNReal.ofReal (sal m * ((listenerLit L m).real {t}) ^ α)
 
+/-- A literal speaker never produces a false word. -/
 theorem speakerLit_apply_singleton_eq_zero (L : Lexicon n M) (sal : M → ℝ) {m : M}
     {t : State n} (h : L m t = 0) : speakerLit L sal t {m} = 0 :=
   Kernel.ofWeights_apply_singleton_eq_zero (by simp [h])
 
+/-- A literal speaker is indifferent among words of equal salience and truth value, so that with a
+threshold semantics its productions are step functions. -/
 theorem speakerLit_real_eq_of_eq (L : Lexicon n M) (sal : M → ℝ) {m m' : M} {t : State n}
     (hL : L m t = L m' t) (hs : sal m = sal m') :
     (speakerLit L sal t).real {m} = (speakerLit L sal t).real {m'} := by
@@ -213,6 +222,7 @@ theorem speakerPrag_real_lt_of_card_lt (mono : M → Monotonicity) (θ : M → �
 /-- The monotonicity of a word is the one Experiment 2 assigned it. -/
 def Word.monotonicity (w : Word) : Monotonicity := (classification w).monotonicity
 
+/-- *Some* and *few* compete without entailment for any thresholds inside the range. -/
 theorem some_few_no_entailment (θ : Word → ℕ) (hs : 1 ≤ θ .some) (hs' : θ .some ≤ n)
     (hf : θ .few < n) :
     gq Word.monotonicity θ .few (0 : State n) = 1 ∧
@@ -238,6 +248,9 @@ def Word.toQuantityWord? : Word → Option QuantityWord
   | .all => .some .all
   | _ => .none
 
+/-- Experiment 2 coded a word the fragment shares monotone decreasing exactly when the word has a
+reading antitone in its scope on every finite domain. *Half*, whose reading is neither monotone
+nor antitone, was coded increasing. -/
 theorem monotonicity_eq_decreasing_iff {w : Word} {q : QuantityWord}
     (h : w.toQuantityWord? = some q) :
     w.monotonicity = .decreasing ↔

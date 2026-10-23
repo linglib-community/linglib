@@ -68,6 +68,8 @@ def lookAtAgentivity : Agentivity := {.sentience, .instigation, .motion}
 /-- The subject of *assassinate*: all four properties. -/
 def assassinateAgentivity : Agentivity := ⊤
 
+/-- Each verb adds one property to the last: a chain from the bottom to the top of the
+agentivity lattice, the paper's illustration that height is degree of agentivity. -/
 theorem canonical_verb_chain :
     sitAgentivity < knowAgentivity ∧ knowAgentivity < discoverAgentivity ∧
       discoverAgentivity < lookAtAgentivity ∧ lookAtAgentivity < assassinateAgentivity := by
@@ -90,6 +92,8 @@ coming into existence as a change of state (his (30a)) and attributes all of (28
 *build*, so read literally the correspondences exclude the creation level, existential persistence
 (end), at which Grimm places the objects of verbs of creation. -/
 
+/-- The object of *build*, with Dowty's entailments, admits only total non-persistence and
+existential persistence (beginning), not the creation level Grimm assigns it. -/
 theorem build_object_admits_iff (l : PersistenceLevel) :
     (Dowty1991.entailed Dowty1991.Examples.buildObject).Admits l ↔
       l = .totalNonPersistence ∨ l = .exPersBeginning := by
@@ -104,6 +108,8 @@ conative *hit at* is unaffected and an object may happen to be destroyed, while 
 does not exist when the event begins cannot be hit: patients are closed downward to the
 existence of the entity. -/
 
+/-- Everything above the minimal instigator is in the nominative or ergative region: the range of
+the subject of *kill*, from the interval characterization of that region. -/
 theorem kill_subject_range {n : ParticipantType} (h : minimalInstigator ≤ n) :
     n.toCaseRegion = .nomErg :=
   (ParticipantType.toCaseRegion_eq_nomErg_iff n).mpr h
@@ -112,6 +118,9 @@ theorem kill_subject_endpoints :
     minimalInstigator.toCaseRegion = .nomErg ∧ (⊤ : ParticipantType).toCaseRegion = .nomErg :=
   ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
 
+/-- The persistence levels an entity that exists when the event begins can have are the up-set
+of existential persistence (beginning): the range of the patient of *hit* and, in section 3, the
+persistence axis of the transitivity region. -/
 theorem transitive_region_eq_Ici (n : ParticipantType) :
     n.InTransitiveRegion ↔ PersistenceLevel.exPersBeginning ≤ n.2 := by
   revert n; decide
@@ -132,6 +141,9 @@ entails instigation and motion; the agent of pursuit adds sentience (Fig. 5). -/
 persistence. -/
 def pursuitAgent : ParticipantType := ({.sentience, .instigation, .motion}, .totalPersistence)
 
+/-- Along the hierarchy the patient moves away from the maximal patient: the patient of *break*
+is the maximal patient, that of *shoot* lies above it inside the transitivity region, and that of
+*search* outside it, while the agents stay in the nominative or ergative region. -/
 theorem transitivity_hierarchy :
     TransitivityRank.resultativeEffective.patientType = maximalPatient ∧
       TransitivityRank.resultativeEffective.patientType ≤ TransitivityRank.contact.patientType ∧

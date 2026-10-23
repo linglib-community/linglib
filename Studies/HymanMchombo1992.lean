@@ -224,6 +224,7 @@ theorem mem_spellOut_go {K : Rules} {f : Feature} {rest : List Feature} {t : Ste
     t ∈ spellOut.go K (f :: rest) ↔ ∃ s ∈ spellOut.go K rest, t ∈ cycle K rest.reverse f s := by
   simp [spellOut.go]
 
+/-- Every stem the cyclic spell-out derives satisfies the RMC. -/
 theorem rmc_of_mem_spellOut {K : Rules} {i : Input} {s : Stem} (h : s ∈ spellOut K i) :
     RMC s := by
   unfold spellOut at h
@@ -237,6 +238,7 @@ theorem rmc_of_mem_spellOut {K : Rules} {i : Input} {s : Stem} (h : s ∈ spellO
     simp only [cycle, List.mem_filter, decide_eq_true_eq] at ht
     exact ht.2
 
+/-- Every stem the cyclic spell-out derives spells out exactly the features of its input. -/
 theorem mem_iff_of_mem_spellOut {K : Rules} {i : Input} {s : Stem} (h : s ∈ spellOut K i)
     (x : Feature) : x ∈ s ↔ x ∈ i := by
   rw [show x ∈ i ↔ x ∈ i.reverse from List.mem_reverse.symm]
@@ -529,6 +531,8 @@ theorem rows_parse :
       ((scope? r).isSome ∨ (role? r).isSome) := by
   decide +kernel
 
+/-- Each stem row's form is its root followed by the spelling of its suffixes, as a bare stem or
+with the final vowel *-a*. -/
 theorem rows_form :
     ∀ r ∈ Examples.all, role? r = none → ∀ v ∈ root? r, ∀ s ∈ suffixes? r,
       r.primaryText = v.form ++ spell s ++ "-" ∨ r.primaryText = v.form ++ spell s ++ "-a" := by
@@ -538,6 +542,8 @@ theorem rows_form :
 it, and the triple applicative of (25a), whose degradation the paper leaves open. -/
 def cyclicFailures : List String := ["hymanmchombo1992_34c", "hymanmchombo1992_25a_3"]
 
+/-- Every stem the paper accepts survives its root's valency and is spelled out from its scope;
+outside `cyclicFailures`, no stem it stars is. -/
 theorem rows_spellOut :
     ∀ r ∈ Examples.all, ∀ v ∈ root? r, ∀ i ∈ scope? r, ∀ s ∈ suffixes? r,
       (r.judgment = .acceptable → Licensed v i ∧ s ∈ spellOut rules i) ∧

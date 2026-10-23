@@ -116,6 +116,8 @@ theorem fbcPredictsIsland_iff (c : FGDConstruction) :
     FBCPredictsIsland c ↔ FBCViolation (fillerFocus c) (subjectFocus c) :=
   (fbcViolation_iff_lt _ _).symm
 
+/-- The constraint makes the island effect turn on the construction: present in wh-questions,
+absent in relative clauses and topicalization. -/
 theorem fbc_predicts_construction_dependence :
     FBCPredictsIsland .whQuestion ∧ ¬ FBCPredictsIsland .relativeClause ∧
       ¬ FBCPredictsIsland .topicalization := by
@@ -128,10 +130,15 @@ cross-constructional analysis puts the three penalties at comparable magnitude w
 95% HPDIs (§7). Taking `Island` to be the effect's distribution over constructions, the finding is
 that it holds of a construction whose filler is not focused. -/
 
+/-- An island effect in relative clauses refutes the Focus Background Constraint, in either
+formulation (`fbcPredictsIsland_iff`), which ties the effect to a focused filler. -/
 theorem fbc_falsified (Island : FGDConstruction → Prop)
     (hfbc : ∀ c, Island c ↔ FBCPredictsIsland c) (h : Island .relativeClause) : False :=
   fbc_predicts_construction_dependence.2.1 ((hfbc _).1 h)
 
+/-- The limit of the result. An account whose prediction reads only the extraction domain gives
+the same verdict in every construction, since the design holds the domain fixed — so
+construction-invariant effects are what it predicts, and the experiments do not bear on it. -/
 theorem domain_only_predicts_invariance (P : Mark → Prop) (c c' : FGDConstruction) :
     P (subjectFocus c) ↔ P (subjectFocus c') := Iff.rfl
 

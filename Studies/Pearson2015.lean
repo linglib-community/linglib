@@ -130,6 +130,10 @@ theorem AcquaintanceBased.eqOn_of_mem_epiAlt (h : AcquaintanceBased Acq alts G x
   obtain ⟨R, -, hR⟩ := h u hu
   exact fun p hp ↦ Option.some_inj.1 ((hR p hp).1.symm.trans ((hR p hp).2 he))
 
+/-- The de se reading is the de re reading through the self concept, whose relation is identity,
+Lewis's relation of acquaintance par excellence. When identity is among the holder's acquaintance
+relations and every res in the domain is the holder or one of her epistemic alternatives, the de
+se reading entails the de re reading. -/
 theorem sayDeRe_of_sayDeSe (hself : (fun y p ↦ y = selfConcept p) ∈ Acq)
     (hdom : ∀ u ∈ dom, u = x ∨ u ∈ epiAlt alts) (h : SayDeSe alts P) :
     SayDeRe Acq alts P x w dom :=
@@ -139,6 +143,9 @@ theorem sayDeRe_of_sayDeSe (hself : (fun y p ↦ y = selfConcept p) ∈ Acq)
         ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
     h⟩
 
+/-- A de re claim about a res in the domain that is not an epistemic alternative of the holder
+needs an acquaintance relation she bears uniquely to the res in the actual world, the base
+condition of [lewis-1979-attitudes]. -/
 theorem ClaimDeRe.exists_relatum_eq (h : ClaimDeRe Acq alts P res x w dom) (hres : res ∈ dom)
     (hne : res ∉ epiAlt alts) : ∃ R ∈ Acq, relatum R (w, x) = some res := by
   obtain ⟨G, ⟨hrel, hacq⟩, -⟩ := h
@@ -252,6 +259,7 @@ theorem claimsNapoleon_false :
   rw [relatum_eq] at hb
   exact absurd (Option.some_inj.1 hb) (by decide)
 
+/-- In the Napoleon contrast the bound-pronoun reading is true and the name reading false. -/
 theorem napoleon_contrast :
     SayDeRe johnAcq claimAlts delusionalP john actualN {john} ∧
       ¬ ClaimDeRe johnAcq claimAlts delusionalP napoleon john actualN {napoleon} :=

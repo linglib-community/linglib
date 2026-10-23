@@ -184,6 +184,7 @@ theorem slate_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
     slate (insert c K) = slate K ⊓ 𝓟 c.content := by
   rw [slate, slate, contents_insert_of_commit h, Filter.generate_insert]
 
+/-- A new commitment intersects the context set with its content. -/
 theorem contextSet_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
     contextSet (insert c K) = c.content ∩ contextSet K := by
   simp [contextSet, contents_insert_of_commit h]
@@ -196,11 +197,13 @@ theorem ofForce_insert_of_ne {c : Commitment A W} {f : Force} (h : c.force ≠ f
     ofForce (insert c K) f = ofForce K f :=
   Set.insert_inter_of_notMem h
 
+/-- A new commitment to the attitude `f` intersects the `f`-context set with its content. -/
 theorem contextSet_ofForce_insert_of_eq_of_commit {c : Commitment A W} {f : Force}
     (hf : c.force = f) (hp : c.stance = .commit) :
     contextSet (ofForce (insert c K) f) = c.content ∩ contextSet (ofForce K f) := by
   rw [ofForce_insert_of_eq hf, contextSet_insert_of_commit hp]
 
+/-- A new commitment to another attitude leaves the `f`-context set alone. -/
 theorem contextSet_ofForce_insert_of_ne {c : Commitment A W} {f : Force} (h : c.force ≠ f) :
     contextSet (ofForce (insert c K) f) = contextSet (ofForce K f) :=
   congrArg contextSet (ofForce_insert_of_ne h)

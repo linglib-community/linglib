@@ -72,6 +72,8 @@ section CommSemiring
 variable [CommSemiring R] {f : ConnesKreimer R (UnorderedTree α) →ₗ[R] R}
   {F : Forest (UnorderedTree α)}
 
+/-- A linear functional on the Connes–Kreimer bialgebra is a dual primitive exactly when it
+vanishes on every forest that is not a single tree. -/
 theorem isDualPrimitive_iff :
     IsDualPrimitive R f ↔ ∀ F : Forest (UnorderedTree α), F.card ≠ 1 → f (of' F) = 0 := by
   refine ⟨fun hf F hF ↦ ?_, fun h ↦ ?_⟩
@@ -143,11 +145,15 @@ section CommRing
 
 variable [CommRing R] (T T₁ T₂ : UnorderedTree α)
 
+/-- The commutator of two single-tree deltas vanishes on every forest that is not a single
+tree. -/
 theorem lie_lcoeff_singleton_apply_of' {F : Forest (UnorderedTree α)} (hF : F.card ≠ 1) :
     ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))⁆ (of' F) = 0 :=
   isDualPrimitive_iff.1
     ((isDualPrimitive_lcoeff_singleton T₁).lie (isDualPrimitive_lcoeff_singleton T₂)) F hF
 
+/-- The commutator of two single-tree deltas takes a tree `T` to the number of single cuts of `T`
+with crown `T₁` and trunk `T₂` minus the number with crown `T₂` and trunk `T₁`. -/
 theorem lie_lcoeff_singleton_apply_ofTree [DecidableEq α] :
     ⁅toConv (lcoeff R {T₁}), toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))⁆ (ofTree T) =
       (countSingleCutsRho T T₁ T₂ : R) - countSingleCutsRho T T₂ T₁ := by
@@ -170,6 +176,8 @@ section CommSemiring
 
 variable [CommSemiring R]
 
+/-- Pairing with a primitive element of the Grossman–Larson bialgebra is a dual primitive of the
+Connes–Kreimer bialgebra. -/
 theorem isDualPrimitive_pairing {x : GrossmanLarson R α} (hx : IsPrimitiveElem R x) :
     IsDualPrimitive R (pairing (R := R) x.toConnesKreimer) := by
   have h (z : ConnesKreimer R (UnorderedTree α)) :
@@ -188,6 +196,9 @@ theorem isPrimitiveElem_of_iff [CharZero R] {F : Forest (UnorderedTree α)} :
 
 end CommSemiring
 
+/-- **Hoffman's relation**. The single cuts of `T` with crown `T₁` and trunk `T₂`, counted with
+the symmetries of `T₁` and `T₂`, are as many as the vertices of `T₂` at which grafting `T₁` gives
+`T`, counted with the symmetries of `T`. -/
 theorem _root_.ConnesKreimer.autCard_mul_autCard_mul_countSingleCutsRho
     (T T₁ T₂ : UnorderedTree α) :
     autCard T₁ * autCard T₂ * countSingleCutsRho T T₁ T₂ = (T₂ ◁ T₁).count T * autCard T := by
@@ -243,6 +254,8 @@ theorem coe_pairingLie_op_of (T : UnorderedTree α) :
   rw [coe_pairingLie, unop_op, ι_of, toConnesKreimer_of, pairing_of', forestAutCard_singleton,
     toConv_smul]
 
+/-- Over a ring of characteristic zero without zero divisors, the pre-Lie algebra of rooted trees
+embeds in the dual primitives. -/
 theorem pairingLie_injective [CharZero R] [NoZeroDivisors R] :
     Function.Injective (pairingLie (R := R) (α := α)) := fun _ _ h ↦
   unop_injective <| ι_injective <| GrossmanLarson.ext <|

@@ -200,6 +200,8 @@ theorem le_root_update (k : S) : k ≤ (C.update k).root := le_sInf fun _ hd ↦
 theorem root_le_root_update (k : S) : C.root ≤ (C.update k).root :=
   le_sInf fun _ hd ↦ C.root_le hd.1
 
+/-- The space admits an update, in that the new root is one of its states, iff its states above
+`k` have a least member. -/
 theorem root_update_mem_iff : (C.update k).root ∈ C ↔ ∃ r, IsLeast (↑C ∩ Set.Ici k) r := by
   refine ⟨fun h ↦ ⟨_, ⟨h, C.le_root_update k⟩, fun _ hd ↦ sInf_le hd⟩, fun ⟨r, hr⟩ ↦ ?_⟩
   rw [root_update, hr.csInf_eq]
@@ -208,6 +210,7 @@ theorem root_update_mem_iff : (C.update k).root ∈ C ↔ ∃ r, IsLeast (↑C �
 theorem root_update_of_mem (h : k ⊔ C.root ∈ C) : (C.update k).root = k ⊔ C.root :=
   IsLeast.csInf_eq ⟨⟨h, le_sup_left⟩, fun _ hd ↦ sup_le hd.2 (C.root_le hd.1)⟩
 
+/-- An update the space admits is its restriction to the states above `k`. -/
 theorem coe_update_of_root_mem (h : (C.update k).root ∈ C) :
     (C.update k : Set S) = ↑C ∩ Set.Ici k :=
   Set.insert_eq_of_mem ⟨h, C.le_root_update k⟩

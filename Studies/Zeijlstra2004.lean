@@ -165,6 +165,8 @@ theorem meaning_concord_iff_resumption :
   rw [DeSwartSag2002.reading_resumption_iff]
   simp [meaning, interp, NegElement.feature, iterate, no, GQ.some]
 
+/-- Two n-words carrying `[iNEG]` in a double negation language give de Swart and Sag's
+iteration of *no*. -/
 theorem meaning_dn_iff_iteration :
     meaning [.nword .i A, .nword .i B] P ↔
       DeSwartSag2002.reading .iteration A B fun x y ↦ P [x, y] := by
@@ -189,6 +191,8 @@ section Readings
 theorem not_scopeMonotone_no : ¬ ScopeMonotone (no : GQ PUnit.{u + 1}) := fun h ↦ by
   simpa [no] using h (fun _ ↦ True) (bot_le (a := fun _ ↦ True))
 
+/-- Of the readings of Italian *nessuno*, the one upward monotone in its scope on every finite
+domain is the indefinite. -/
 theorem mem_nessuno_and_scopeMonotone_iff {d : GQ.Family.{u}} :
     (d ∈ ⟦Italian.Determiners.QuantityWord.nessuno⟧ ∧
       ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = GQ.Family.some := by

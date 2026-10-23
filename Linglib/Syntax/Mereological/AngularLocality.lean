@@ -54,6 +54,8 @@ theorem CanSubjoin.mono (h : P ≤ Q) (hγβ : P.CanSubjoin γ β) : Q.CanSubjoi
   let ⟨n, a, h₁, h₂⟩ := hγβ
   ⟨n, a, h₁.mono h, h₂.mono h⟩
 
+/-- Lowering, sideward, and parallel subjunction are ruled out, since the target must contain the
+mover. -/
 theorem descendant_of_canSubjoin (h : P.CanSubjoin γ β) : P.Descendant γ β :=
   let ⟨_, _, h₁, h₂⟩ := h
   (descendant_of_nPart h₁).trans (descendant_of_nPart h₂)
@@ -65,6 +67,8 @@ theorem isSome_onePart_of_canSubjoin (h : P.CanSubjoin γ β) : (P.onePart β).i
 
 /-! ### Antilocality -/
 
+/-- An immediate 1-part cannot resubjoin to its whole, since the only object it is a part of is
+the whole, which is not a 1-part of itself. -/
 theorem not_canSubjoin_of_imm_one (hP : P.Acyclic) (h : P.Imm .one γ β) :
     ¬ P.CanSubjoin γ β := by
   rintro ⟨_, a, hγa, haβ⟩
@@ -120,6 +124,8 @@ theorem canSubjoin_of_nPart_two {b d : α} (hγ : P.NPart .two γ b) (hbd : P.Im
     (hd : P.NPart .one d β) : P.CanSubjoin γ β :=
   ⟨.two, d, hγ.tail hbd, hd⟩
 
+/-- From inside a domain of the 2-part `b` of `d`, an object reaches an object above `d` in `d`'s
+extended projection exactly when it is a 2-part of `b`, which is the escape hatch. -/
 theorem IsDomain.canSubjoin_iff_nPart_two {S : Set α} {b d : α} (hD : P.IsDomain S b)
     (hbd : P.Imm .two b d) (hd : P.NPart .one d β) (hγ : γ ∈ S) (hγb : γ ≠ b) (hβ : β ∉ S) :
     P.CanSubjoin γ β ↔ P.NPart .two γ b :=

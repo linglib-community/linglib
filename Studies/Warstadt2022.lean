@@ -276,6 +276,8 @@ def usSets : List (Finset World) :=
 /-- The uniform world prior. -/
 def uniform : World → ℕ := fun _ ↦ 1
 
+/-- *Not green card* settles the free-drink question in every context set, since at a world
+where it is true the literal listener is certain of the answer. -/
 theorem freeDrink_exhaustive {C : Finset World} {w : World} (hC : w ∈ C)
     (h : w ∈ Utterance.notGC.sem) :
     L0 uniform QUD.cell Utterance.sem C .freeDrink .notGC {QUD.cell .freeDrink w} = 1 :=
@@ -656,6 +658,9 @@ def which (_ : Unit) (w : Hobby) : Finset Hobby := {w}
 /-- The universe of hobbies. -/
 def hobbies : Finset Hobby := {.sprinter, .runner, .athlete, .other}
 
+/-- *Not an Olympic sprinter* settles the question at the runner world exactly within context
+sets that exclude the athlete and the non-athlete world, so the accommodation the paper
+describes is of a common ground in which Tom is a runner or a sprinter. -/
 theorem notSprinter_exhaustive_iff {C : Finset Hobby} (hC : .runner ∈ C) :
     L0 hobbyWeight which HobbyUtterance.sem C () .notSprinter {which () .runner} = 1
       ↔ .athlete ∉ C ∧ .other ∉ C := by

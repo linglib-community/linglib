@@ -174,6 +174,7 @@ structure Idiot (Human : Idiocy → Type*) (STND : Idiocy) where
   /-- The degree exceeds the standard. -/
   above : STND < degree
 
+/-- No degree is both above and below the standard, so *small idiot* is contradictory. -/
 theorem small_idiot_contradictory (STND : Idiocy) : ¬ ∃ i : Idiocy, STND < i ∧ i < STND :=
   fun ⟨_, h1, h2⟩ ↦ lt_asymm h1 h2
 

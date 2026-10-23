@@ -40,6 +40,8 @@ namespace Multiset
 
 variable {α : Type*}
 
+/-- `powersetCard n s` is the slice of `powerset s` with `n` elements
+(`Finset.powersetCard_eq_filter` analogue). -/
 theorem powersetCard_eq_filter {n : ℕ} {s : Multiset α} :
     powersetCard n s = s.powerset.filter fun t ↦ card t = n := by
   induction s using Multiset.induction generalizing n with
@@ -51,6 +53,7 @@ theorem powersetCard_eq_filter {n : ℕ} {s : Multiset α} :
 
 /-! ### Sums over `sublists'.revzip` -/
 
+/-- Swapping the two buckets of every split enumerates the same splits. -/
 theorem bind_revzip_sublists'_swap {β : Type*} (l : List α)
     (F : List α → List α → Multiset β) :
     (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p => F p.1 p.2) =
@@ -59,6 +62,8 @@ theorem bind_revzip_sublists'_swap {β : Type*} (l : List α)
     ← Multiset.map_coe, Multiset.bind_map]
   rfl
 
+/-- Nested splits reassociate. Splitting the second bucket of every split enumerates the same
+ordered triples as splitting the first bucket. -/
 theorem bind_revzip_sublists'_assoc {β : Type*} (l : List α)
     (K : List α → List α → List α → Multiset β) :
     (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p =>
@@ -157,6 +162,8 @@ private theorem count_powerset_subset {S : Finset α} {t s : Multiset α} (ht : 
       rw [hmap, count_eq_zero.mpr has]
       simp
 
+/-- Count of a sub-multiset `s ≤ t` among the sub-multisets of `t`: for each distinct
+    `x`, choose `s.count x` of the `t.count x` copies. -/
 theorem count_powerset_of_le {s t : Multiset α} (h : s ≤ t) :
     t.powerset.count s = ∏ x ∈ t.toFinset, (t.count x).choose (s.count x) :=
   count_powerset_subset Finset.Subset.rfl (toFinset_subset.mpr (subset_of_le h))

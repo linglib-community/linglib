@@ -208,6 +208,9 @@ theorem isFaithfulness_identOI : Correspondence.IsFaithfulness identOI := fun s 
   | nil => rfl
   | cons a s ih => simpa [List.countP_cons] using ih
 
+/-- CORR is neither faithfulness, since the fully faithful candidate of two identical nasals
+violates it, nor markedness, since two candidates with the same output can differ on it: it
+demands correspondence itself. -/
 theorem not_isFaithfulness_corr (k : Fin 4) : ¬ Correspondence.IsFaithfulness (corr k) := by
   have : ∀ k, corr k (.identity [.stop .coronal .nasal, .vocoid, .stop .coronal .nasal]) ≠ 0 := by
     decide
@@ -257,12 +260,17 @@ def pair (a b : Seg) : List Seg := [a, .vocoid, b]
 def cut (k : Fin 4) : List (Constraint (Correspondence BinaryRole Seg)) :=
   hierarchy [identCLCR, identCRCL] k []
 
+/-- The typology: a nasal followed by an oral consonant agrees with it, the two corresponding,
+exactly when the pair is at least as similar as the cut below which IDENT-OI(nasal) sits;
+otherwise the input surfaces faithfully with no correspondence. -/
 theorem winner_eq (k : Fin 4) (p : Place) (b : Seg) (hb : b.IsConsonant) (hn : ¬ b.IsNasal) :
     (tableau (cut k) (pair (.stop p .nasal) b)).optimal =
       {if AtLeast k (.stop p .nasal) b then ⟨[.stop p .nasal, .vocoid, b.nasalize], [(0, 2)]⟩
         else ⟨pair (.stop p .nasal) b, []⟩} := by
   revert k p b; decide +kernel
 
+/-- Demoting IDENT-OI(nasal) only widens the agreeing class: a pair that agrees at a cut agrees
+at every lower cut. -/
 theorem agree_of_le {k k' : Fin 4} (hk : k ≤ k') (p : Place) (b : Seg) (hb : b.IsConsonant)
     (hn : ¬ b.IsNasal)
     (h : (tableau (cut k) (pair (.stop p .nasal) b)).optimal =
@@ -325,6 +333,8 @@ theorem ngbaka_tableaux :
       (tableau ngbaka (parse "maᵑga".toList)).optimal = {⟨parse "maᵑga".toList, []⟩} := by
   decide +kernel
 
+/-- The morpheme structure constraint: a word of the rows is well formed exactly when it is a
+fixed point of the Ngbaka grammar. -/
 theorem ngbaka_rows : ∀ d ∈ ngbakaData, d.2 = .acceptable ↔ IsFixedPoint ngbaka d.1 := by
   decide +kernel
 
@@ -349,6 +359,7 @@ def harmonize (w : List Seg) : List Seg :=
     if (∃ i < j, Triggers w i ∧ AtLeast 3 (w.getD i .vocoid) s) ∧
         ¬ (w.getD (j - 1) .vocoid).IsNasal then s.nasalize else s
 
+/-- Every alternation of the rows is the surface map of its underlying stem. -/
 theorem kikongo_rows : ∀ d ∈ kikongoData, harmonize d.1 = d.2 := by
   decide +kernel
 
@@ -358,15 +369,20 @@ def NoCluster (w : List Seg) : Prop :=
 
 instance (w : List Seg) : Decidable (NoCluster w) := inferInstanceAs (Decidable (∀ i < _, _))
 
+/-- The grammar agrees with the map: for the stems without NC clusters and with at most four
+consonants, some optimal candidate of the Kikongo ranking has the map's output. -/
 theorem kikongo_grammar :
     ∀ d ∈ kikongoData, (consonants d.1).length ≤ 4 → NoCluster d.1 →
       ∃ c ∈ (tableau kikongo d.1).optimal, c.out = harmonize d.1 := by
   decide +kernel
 
+/-- *tum-idi*: the suffix consonant nasalizes and corresponds with the nasal. -/
 theorem tumidi :
     (tableau kikongo (parse "tum-idi".toList)).optimal = {⟨parse "tum-ini".toList, [(2, 4)]⟩} := by
   decide +kernel
 
+/-- *nik-ulu*: the voiceless stop is neutral, agreeing with nothing and corresponding with
+nothing, while the approximant nasalizes. -/
 theorem nikulu :
     (tableau kikongo (parse "nik-ulu".toList)).optimal = {⟨parse "nik-unu".toList, [(0, 4)]⟩} := by
   decide +kernel
@@ -388,6 +404,9 @@ def kudumukila : List Cand :=
    ⟨[k, v, d, v, m, v, k, v, .approximant, v], [(2, 8)]⟩,
    ⟨[k, v, d, v, m, v, k, v, .approximant, v], [(2, 4), (2, 8), (4, 8)]⟩]
 
+/-- The direction of agreement: with IDENT-CLCR above IDENT-OI(nasal) and IDENT-CRCL below
+it, the suffix consonant to the right of the nasal nasalizes and the voiced stop to its left
+stays oral. -/
 theorem kudumukila_winner :
     (Tableau.ofList kudumukila.toFinset
       (kikongo.map (·.comap (Cand.correspondence (parse "kudumuk-ila".toList))))).optimal =

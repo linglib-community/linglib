@@ -131,11 +131,14 @@ theorem IsFactorAt.clamp (h : F.IsFactorAt X o) :
       Nat.min_eq_left (h.offset_le (i := j) (by omega))]
     exact h.link_map i j p q hl
 
+/-- `FactorEmbeds` is a bounded search over offsets. -/
 theorem factorEmbeds_iff_bounded :
     F.FactorEmbeds X ↔
       ∃ o : ι → ℕ, (∀ i, o i ≤ (X.word i).length) ∧ F.IsFactorAt X o :=
   ⟨fun ⟨_, h⟩ => ⟨_, fun _ => min_le_right _ _, h.clamp⟩, fun ⟨o, _, h⟩ => ⟨o, h⟩⟩
 
+/-- For a link-free factor, embedding reduces to independent per-tier infix
+    occurrences ([jardine-2019]'s link-free fragment). -/
 theorem factorEmbeds_iff_infix_of_link_free (hF : ∀ i j p q, ¬ F.Link i j p q) :
     F.FactorEmbeds X ↔ ∀ i, F.word i <:+: X.word i := by
   constructor
@@ -167,6 +170,7 @@ def ofList (w : List α) : AR fun _ : Unit ↦ α := ⟨fun _ ↦ w, ⊥, bot_le
 @[simp] theorem not_link_ofList (w : List α) (i j : Unit) (p q : ℕ) :
     ¬ (ofList w).Link i j p q := fun h ↦ h.2.2
 
+/-- One string embeds in another as a factor iff it is an infix. -/
 @[simp] theorem factorEmbeds_ofList_iff (f w : List α) :
     (ofList f).FactorEmbeds (ofList w) ↔ f <:+: w := by
   rw [factorEmbeds_iff_infix_of_link_free (not_link_ofList f)]

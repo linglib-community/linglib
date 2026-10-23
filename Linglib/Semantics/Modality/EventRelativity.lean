@@ -138,6 +138,7 @@ theorem contentPossibility.mono (hpq : ∀ w, p w → q w) (h : contentPossibili
   let ⟨C, hC, w, hw, hp⟩ := h
   ⟨C, hC, w, hw, hpq w hp⟩
 
+/-- Necessity over a consistent content entails possibility. -/
 theorem contentNecessity.contentPossibility (hC : con e = some C) (hne : C.Nonempty)
     (h : contentNecessity con q e) : contentPossibility con q e :=
   let ⟨w, hw⟩ := hne
@@ -147,10 +148,14 @@ theorem contentPossibility_iff_not_contentNecessity_not (hC : con e = some C) :
     contentPossibility con q e ↔ ¬ contentNecessity con (fun w ↦ ¬ q w) e := by
   simp [contentPossibility_iff_of_eq_some hC, contentNecessity_iff_of_eq_some hC]
 
+/-- Necessity of a proposition that does not vary with the world holds when the content is
+inconsistent or the proposition is true. -/
 theorem contentNecessity_const (hC : con e = some C) :
     contentNecessity con (fun _ ↦ r) e ↔ (C.Nonempty → r) := by
   simp [contentNecessity_iff_of_eq_some hC, Set.Nonempty]
 
+/-- Possibility of a proposition that does not vary with the world holds when the content is
+consistent and the proposition is true. -/
 theorem contentPossibility_const (hC : con e = some C) :
     contentPossibility con (fun _ ↦ r) e ↔ C.Nonempty ∧ r := by
   simp [contentPossibility_iff_of_eq_some hC, Set.Nonempty]

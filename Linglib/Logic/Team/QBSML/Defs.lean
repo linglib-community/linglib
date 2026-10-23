@@ -433,6 +433,7 @@ inductive Formula.NEFree : Formula Var Const Pred → Prop
   | exi (x : Var) {φ : Formula Var Const Pred} : NEFree φ → NEFree (.exi x φ)
   | univ (x : Var) {φ : Formula Var Const Pred} : NEFree φ → NEFree (.univ x φ)
 
+/-- The derived `□φ := ¬◇¬φ` preserves NE-freeness. -/
 theorem Formula.NEFree.nec {φ : Formula Var Const Pred}
     (h : φ.NEFree) : φ.nec.NEFree :=
   .neg (.poss (.neg h))

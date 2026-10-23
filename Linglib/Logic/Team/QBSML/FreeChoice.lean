@@ -66,6 +66,8 @@ private theorem poss_of_subset_modalLift {X : Finset W}
     State.worldProj_nonempty (nonempty_of_support_enrich h),
     (State.modalLift_worldProj_of_subset ht).symm ▸ support_of_support_enrich hα h⟩
 
+/-- An enriched split disjunction supported on a modal pairing yields a non-empty world-set
+witness for each disjunct. This is the shared core of the free-choice facts. -/
 theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
     (hα : α.NEFree) (hβ : β.NEFree)
     (hsupp : support M (Formula.disj α β).enrich (State.modalLift X g)) :
@@ -151,6 +153,9 @@ private theorem poss_exi_of_subset_extendFunctional
   rw [Index.world_update]
   exact (State.mem_modalLift.mp hi).1
 
+/-- Quantified box free choice is `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` for `NE`-free `α`, `β`.
+The enriched premise puts the enriched split disjunction on the functional extension of each
+index's full accessible lift, and each non-empty half yields a `◇∃x` witness. -/
 theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M
       (Formula.enrich (Formula.nec (.exi x (.disj α β)))) s) :

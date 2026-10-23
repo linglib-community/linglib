@@ -70,6 +70,7 @@ theorem nodup_parts : P.parts.Nodup :=
     obtain ⟨a, ha⟩ := P.nonempty_of_mem_parts hA
     exact (h a ha a (hAB ▸ ha)).false
 
+/-- A part contains every element of the support lying between two of its elements. -/
 theorem mem_of_le_of_le (hA : A ∈ P.parts) (hx : x ∈ A) (hz : z ∈ A) (hy : y ∈ P.support)
     (hxy : x ≤ y) (hyz : y ≤ z) : y ∈ A := by
   obtain ⟨B, hB, hyB⟩ := P.mem_support.1 hy
@@ -119,12 +120,14 @@ alias ⟨_, mem_part⟩ := mem_part_self
   obtain ⟨A, hA, hyA, -⟩ := P.mem_part_iff_exists.1 hy
   exact P.mem_support.2 ⟨A, hA, hyA⟩
 
+/-- `part` is contiguous on the support. -/
 theorem isContiguous_part : IsContiguous fun x : P.support ↦ P.part x := by
   intro x y z hxy hyz (hxz : P.part x = P.part z)
   have hA := P.part_mem.2 x.2
   exact (P.part_eq_of_mem hA (P.mem_of_le_of_le hA (P.mem_part x.2)
     (hxz ▸ P.mem_part z.2) y.2 hxy hyz)).symm
 
+/-- An interval partition is determined by `part`. -/
 theorem ext_part {Q : IntervalPartition α} (h : ∀ x, P.part x = Q.part x) : P = Q := by
   have hmem {P Q : IntervalPartition α} (h : ∀ x, P.part x = Q.part x) {A : Finset α}
       (hA : A ∈ P.parts) : A ∈ Q.parts := by
@@ -164,6 +167,7 @@ def indiscrete (s : Finset α) (hs : s.Nonempty) : IntervalPartition α :=
 @[simp] theorem part_indiscrete (hs : s.Nonempty) (hx : x ∈ s) : (indiscrete s hs).part x = s :=
   part_eq_of_mem _ (List.mem_singleton_self s) hx
 
+/-- An interval partition is discrete iff `part` is injective on its support. -/
 theorem eq_discrete_iff_injOn : P = discrete P.support ↔ Set.InjOn P.part P.support := by
   refine ⟨fun h x hx y hy hxy ↦ ?_, fun h ↦ ext_part _ fun x ↦ ?_⟩
   · rw [h, support_discrete] at *

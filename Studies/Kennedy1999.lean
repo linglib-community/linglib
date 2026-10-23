@@ -79,6 +79,8 @@ def crossPolarRows : List Datum :=
   , Examples.ficus_short_low, Examples.ficus_short_high
   , Examples.incomm_tall_clever, Examples.incomm_tragic_heavy ]
 
+/-- A subdeletion comparative is acceptable exactly when the compared extents are of the same
+sort on a shared scale, which covers cross-polar anomaly and incommensurability at once. -/
 theorem comparison_defined_iff :
     ∀ e ∈ crossPolarRows, e.judgment = .acceptable ↔ (samePolarity e ∧ sharedScale e) := by
   decide
@@ -95,6 +97,8 @@ its standard derived by applying the adjective to the measure phrase. -/
 def measurePhraseAbsoluteRows : List Datum :=
   [ Examples.mp_cadillac, Examples.mp_fiat, Examples.mp_reich, Examples.mp_slow ]
 
+/-- An absolute measure-phrase construction is acceptable exactly with a positive adjective,
+whose extents are bounded. -/
 theorem measurePhrase_positive_iff :
     ∀ e ∈ measurePhraseAbsoluteRows,
       e.judgment = .acceptable ↔ e.feature? "polarity" = some "positive" := by

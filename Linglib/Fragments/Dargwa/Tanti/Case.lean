@@ -94,6 +94,7 @@ def BuiltOnOblique (c : Case) : Prop := c.exponent.head? = some obliqueStem
 
 instance : DecidablePred BuiltOnOblique := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
+/-- The ergative, dative and comitative are the cases built on the oblique stem. -/
 theorem builtOnOblique_iff (c : Case) :
     BuiltOnOblique c ↔ c = .erg ∨ c = .dat ∨ c = .com := by
   cases c <;> decide
@@ -106,6 +107,7 @@ def marking : ArgumentRole → Case
   | .A => .erg
   | .S | .P | .R | .T => .abs
 
+/-- The marking is the ergative alignment. -/
 theorem label_comp_marking : Case.label ∘ marking = Alignment.ergative := by
   funext r; cases r <;> rfl
 

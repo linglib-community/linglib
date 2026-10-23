@@ -162,25 +162,32 @@ theorem separatesPoints_paradigms :
   obtain ⟨n, hn, h | h⟩ := this c d h
   exacts [⟨_, ⟨n, hn, .inl rfl⟩, h⟩, ⟨_, ⟨n, hn, .inr rfl⟩, h⟩]
 
+/-- No one paradigm of the table distinguishes all six cases. -/
 theorem not_injective :
     ∀ n ∈ nouns, ¬ Function.Injective n.singular ∧ ¬ Function.Injective n.plural := by
   decide
 
 /-! ### Syncretism -/
 
+/-- A neuter does not distinguish nominative and accusative in either number. -/
 theorem nom_acc_syncretic_of_neuter :
     ∀ n ∈ nouns, n.IsNeuter →
       n.singular .nom = n.singular .acc ∧ n.plural .nom = n.plural .acc := by
   decide
 
+/-- No plural distinguishes dative and ablative. -/
 theorem plural_dat_abl_syncretic : ∀ n ∈ nouns, n.plural .dat = n.plural .abl := by
   decide
 
+/-- The singular fails to distinguish dative and ablative in the second declension and the
+i-stems, and nowhere else. -/
 theorem singular_dat_abl_syncretic_iff :
     ∀ n ∈ nouns,
       n.singular .dat = n.singular .abl ↔ n.cls = .second ∨ n.cls = .thirdI := by
   decide
 
+/-- The vocative singular differs from the nominative in the non-neuters of the second
+declension, and nowhere else. -/
 theorem singular_nom_voc_syncretic_iff :
     ∀ n ∈ nouns,
       n.singular .nom = n.singular .voc ↔ ¬ (n.cls = .second ∧ ¬ n.IsNeuter) := by

@@ -206,6 +206,8 @@ context set. Unlike `boxCs` and `boxLe` it is not upward monotone in `p`. -/
 def boxAns (c : State W) (p : W → Prop) : Prop :=
   ∀ w v, w ∈ c.info → v ∈ c.info → c.inquiry w v → (p w ↔ p v)
 
+/-- A state settles `p` exactly when its issue entails the polar question whether `p` relative to
+the context set. -/
 theorem boxAns_iff_le_relativeTo (c : State W) (p : W → Prop) :
     c.boxAns p ↔ Question.fromSetoid c.inquiry ≤ (Question.polar {w | p w}).relativeTo c.info := by
   rw [Question.le_def]

@@ -251,6 +251,8 @@ theorem sufficiency_singleton {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
   rw [sufficiency, compl_cause_singleton, h₁, cond_apply .of_discrete, h₂, hnum, hden,
     ← ENNReal.div_eq_inv_mul, ENNReal.mul_div_mul_left _ _ hX (measure_ne_top _ _)]
 
+/-- The score of a single cause is its probability times its sufficiency, plus the probability of
+its absence when flipping it in the actual round removes the outcome. -/
 theorem score_singleton [DecidablePred (· ∈ E)] {X : ι} (hX : ν X {!w₀ X} ≠ 0) :
     score (Measure.pi ν) w₀ E {X} = ν X {w₀ X} * sufficiency (Measure.pi ν) w₀ E {X} +
       if Function.update w₀ X (!w₀ X) ∈ E then 0 else ν X {!w₀ X} := by
@@ -258,6 +260,8 @@ theorem score_singleton [DecidablePred (· ∈ E)] {X : ι} (hX : ν X {!w₀ X}
     measure_pi_cause, Finset.prod_singleton, measure_pi_compl_cause_singleton]
   split_ifs <;> simp
 
+/-- When the outcome is that the urns `T` all show their actual draws, the score of a part `S` of
+`T` is the probability that `S` is absent plus the probability of the outcome. -/
 theorem score_pi_cause (hST : S ⊆ T) (hc : Measure.pi ν (cause w₀ S)ᶜ ≠ 0) :
     score (Measure.pi ν) w₀ (cause w₀ T) S =
       Measure.pi ν (cause w₀ S)ᶜ + Measure.pi ν (cause w₀ T) := by

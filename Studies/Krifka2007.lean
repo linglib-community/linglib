@@ -91,6 +91,8 @@ def approximateInterpretation : Form × Reading → ℕ
   | (_, .approximate) => 0
   | (_, .precise) => 1
 
+/-- The superoptimal pairs of the earlier account read the simple form approximately and the
+complex form precisely, the division of pragmatic labour. -/
 theorem division_of_labour :
     superoptimal Finset.univ (profile [simpleExpression, approximateInterpretation]) =
       {(.simple, .approximate), (.complex, .precise)} := by
@@ -157,6 +159,8 @@ private theorem economy_eq {c : Numeral → ℕ} (h : c .forty < c .thirtyNine) 
       exact absurd ⟨.forty, by decide, h⟩ hx
     · rfl
 
+/-- With *forty* the cheaper word, a true value of 39 is reported as *forty* read approximately
+or *thirty-nine* read precisely, and a true value of 40 as *forty* on either reading. -/
 theorem winners_of_true_value {c : Numeral → ℕ} (h : c .forty < c .thirtyNine) :
     (reportTableau c 39).optimal = {(.forty, .approximate), (.thirtyNine, .precise)} ∧
       (reportTableau c 40).optimal = {(.forty, .approximate), (.forty, .precise)} := by
@@ -209,6 +213,8 @@ theorem approximate_mass :
     Finset.inter_eq_right.2 (Finset.Icc_subset_Icc (by norm_num) (by norm_num))]
   norm_num
 
+/-- Hearing *forty*, the approximate reading is the conservative hypothesis, covering more of
+the prior than the precise one. -/
 theorem approximate_more_probable :
     uniformOn (Finset.Icc 1 100 : Set ℕ) {40} <
       uniformOn (Finset.Icc 1 100 : Set ℕ) (Set.Icc 36 44) := by
@@ -248,6 +254,9 @@ theorem measure_reportedOn_of_not_dvd {w : W} (h : ¬ (w : ℤ) ∣ n) :
   rw [reportedOn, preimage_representative_of_notMem (mt intCast_mem_zmultiples_iff.1 h),
     Set.prod_empty, measure_empty]
 
+/-- Hearing `n` on aligned scales with equal priors, the most probable scale is the coarsest one
+through `n`: *forty-five minutes* is read at the quarter hours and *forty* at the five
+minutes. -/
 theorem coarsest_scale_most_probable [SFinite ν]
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s) (hr : r ≠ 0) (hr' : r ≠ ⊤)
     (hpos : ∀ w ∈ W, 0 < w) (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a)

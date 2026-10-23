@@ -158,6 +158,9 @@ abbrev system : Bud.System (Color L) :=
 
 variable {hier} {g₀ : List PolarizedRole} {c a b : Color L}
 
+/-- The local conservation law: at every generator, either one child receives the last role of
+the other child's giver grid while the root keeps the residue, or the node is an adjunct
+attachment, or a movement landing under a non-theta root. -/
 theorem IsGen.conservation (h : IsGen (L := L) hier g₀ a b) :
     (∃ ρ g, a.Matches [.down ρ] ∧ b.Matches (upGrid g ++ [.up ρ]) ∧
       (g₀ = upGrid g ∨ g = [])) ∨
@@ -177,6 +180,8 @@ theorem IsGen.eq_nil_of_emptyTree (h : IsGen hier g₀ a b)
   | adjunct => simp at he
   | move => rfl
 
+/-- Movement lands only in non-theta positions: a generator with an empty-tree child has the
+non-theta root. The External/Internal Merge dichotomy of theta theory, at generator level. -/
 theorem ThetaLocal.eq_nontheta (h : ThetaLocal hier c a b)
     (he : a = .emptyTree ∨ b = .emptyTree) : c = .nontheta := by
   obtain ⟨g₀, rfl, hg | hg⟩ := h
@@ -218,6 +223,9 @@ theorem combSpine_nodeLocal {g : List ThetaRole} (hg : g ≠ []) {rest : List Th
     exact ⟨⟨_, rfl, .inl (.discharge g ρ hg hstep (by simp) (by simp))⟩, trivial,
       ih (by simp) (by simpa using hchain)⟩
 
+/-- The bare theta combs are derivable in the complete system, provided the internal roles
+descend the hierarchy: the generator half of [marcolli-larson-2025]'s reduction of the bare
+system to the complete one. -/
 theorem comb_derivable (g₀ : List PolarizedRole) (ρE : ThetaRole) (ρIs : List ThetaRole)
     (hchain : ρIs.IsChain hier) :
     (system (L := L) hier).Derives (.leaf (.free g₀)) (comb g₀ ρE ρIs) :=
@@ -332,6 +340,9 @@ theorem out_ne_emptyTree (hx : x.NodeLocal (ThetaLocal hier))
     obtain ⟨⟨g₀, rfl, -⟩, -⟩ := hx
     simp
 
+/-- The sole-role invariant: in a movement-free derivable structure whose root color receives at
+most one role, every argument position receives at most one role. Adding a dual-receiver
+generator, as *se*-marked parasitic assignment does, is the only way to violate it. -/
 theorem derives_soleReceiver (h : (system (L := L) hier).Derives (.leaf c) x)
     (hroot : c.SoleReceiver) (hmove : Color.emptyTree ∉ x.inputs) :
     ∀ d ∈ x.inputs, d.SoleReceiver := by

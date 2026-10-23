@@ -165,6 +165,7 @@ to the question the context raises. -/
 def nonImplicature (ctx : Context) (d : Display) : Prop :=
   Homogeneity.usable ctx.issue (supervaluation q) d
 
+/-- The non-implicature verdict is truth at the resolution the context makes. -/
 theorem nonImplicature_iff (ctx : Context) (d : Display) :
     nonImplicature q ctx d ↔ reading q d ctx.designation :=
   usable_iff_reading q le_rfl (fun _ _ h ↦ Setoid.polar_iff.2 <|
@@ -335,6 +336,9 @@ private theorem krizChemla_faulty_clearlyFalse :
     ∀ i ∈ KrizChemla2015.items, i.status = .faulty → i.condition = .clearlyFalse := by
   decide
 
+/-- With an existential context accommodated throughout, the non-implicature approach accepts
+every GAP item of *every* and rejects every GAP item of *no* in Križ and Chemla's experiments,
+the asymmetry they found. -/
 theorem krizChemla_asymmetry_of_existential :
     ∀ i ∈ KrizChemla2015.items, i.condition = .gap → i.embedding = .all ∨ i.embedding = .no →
       (nonImplicature i.embedding.tree .existential i.display ↔ i.embedding = .all) := by
@@ -405,6 +409,8 @@ theorem designated_cell (ctx : Context) (n : ℕ) :
   · rw [Context.threshold, nine, Finset.card_range]
     exact SignType.one_le_iff.trans (KrizChemla2015.designated_k3_cell n)
 
+/-- The reading pruning selects for a boy's presents under the context's question holds of the
+presents he opened exactly when the context's standard designates his cell. -/
 theorem mem_reading_iff_designated_cell (ctx : Context) {r : Set (Finset ℕ)}
     (hr : IsReading nine nine BarLev2021.holds (ctx.question nine) r) (w : Finset ℕ) :
     w ∈ r ↔ ctx.designation.threshold ≤ (cell (nine ∩ w).card) := by

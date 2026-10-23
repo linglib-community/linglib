@@ -60,11 +60,15 @@ theorem pexIEII_eq_one_iff : pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠
 theorem pexIEII_eq_neg_one_iff : pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ w ∉ φ := by
   simp [pexIEII]
 
+/-- A prejacent between the meet and the join of its relevant includable alternatives is true
+under `pex` exactly where the presupposition holds and all of them are true. -/
 theorem pexIEII_eq_one_iff_forall_mem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
     (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
     pexIEII ALT φ Rc w = 1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∈ α :=
   pexIEII_eq_one_iff.trans <| and_congr_right fun h ↦ (pexIEII_ne_zero_iff.1 h).2.mem_iff hl hu
 
+/-- A prejacent between the meet and the join of its relevant includable alternatives is false
+under `pex` exactly where the presupposition holds and all of them are false. -/
 theorem pexIEII_eq_neg_one_iff_forall_notMem (hl : ⋂₀ (II ALT φ \ {φ} ∩ Rc) ⊆ φ)
     (hu : φ ⊆ ⋃₀ (II ALT φ \ {φ} ∩ Rc)) :
     pexIEII ALT φ Rc w = -1 ↔ pexIEII ALT φ Rc w ≠ 0 ∧ ∀ α ∈ II ALT φ \ {φ} ∩ Rc, w ∉ α :=

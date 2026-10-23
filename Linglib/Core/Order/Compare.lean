@@ -57,6 +57,8 @@ theorem compare_mem_comp (a b c : α) : compare a c ∈ (compare a b).comp (comp
       | exact h₁.trans h₂ | exact h₂.trans h₁ | exact h₁.trans_eq h₂
       | exact h₂.symm.trans_lt h₁
 
+/-- In a dense linear order without endpoints, every result the composition table allows is
+realized by some intermediate point. -/
 theorem exists_compare_eq_of_mem_comp [DenselyOrdered α] [NoMinOrder α] [NoMaxOrder α] {a c : α}
     {o₁ o₂ : Ordering} (h : compare a c ∈ o₁.comp o₂) :
     ∃ b, compare a b = o₁ ∧ compare b c = o₂ := by
@@ -75,6 +77,8 @@ theorem exists_compare_eq_of_mem_comp [DenselyOrdered α] [NoMinOrder α] [NoMax
   · exact ⟨c, h, rfl⟩
   · exact (exists_between h).imp fun _ ↦ And.symm
 
+/-- Finitely many points of a linear order compare as their ranks do, the numbers of points below
+them, so that their order type is realized among as many natural numbers. -/
 theorem exists_fin_compare_eq {n : ℕ} (f : Fin n → α) :
     ∃ g : Fin n → Fin n, ∀ x y, compare (g x) (g y) = compare (f x) (f y) := by
   classical
@@ -92,6 +96,9 @@ theorem exists_fin_compare_eq {n : ℕ} (f : Fin n → α) :
   · rw [compare_eq_iff_eq.2 h, compare_eq_iff_eq]; simp [r, h]
   · rw [compare_gt_iff_gt.2 h, compare_gt_iff_gt]; exact Fin.mk_lt_mk.2 (hlt h)
 
+/-- In a dense linear order without endpoints, points `p` with the order type of all but the last
+of the points `q` of another linear order extend by one point to the order type of all of
+them. -/
 theorem exists_snoc_compare_eq [DenselyOrdered α] [NoMinOrder α] [NoMaxOrder α] [Nonempty α]
     {β : Type*} [LinearOrder β] {n : ℕ} {p : Fin n → α} {q : Fin (n + 1) → β}
     (h : ∀ x y, compare (p x) (p y) = compare (q x.castSucc) (q y.castSucc)) :

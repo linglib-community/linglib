@@ -219,6 +219,8 @@ instance (k : ProjectiveClass) : DecidablePred (Excludes k)
   | .matrix _ _ => decidable_of_iff' _ excludes_matrix_iff
   | .belief _ => decidable_of_iff' _ excludes_belief_iff
 
+/-- The two diagnostics separate the four classes, in that classes excluding the same utterances
+in a neutral context and the same belief reports are one class. -/
 theorem eq_of_excludes_iff {k' : ProjectiveClass} (hs : s ≠ .positive)
     (hm : Excludes k (.matrix e .neutral) ↔ Excludes k' (.matrix e .neutral))
     (hb : Excludes k (.belief s) ↔ Excludes k' (.belief s)) : k = k' :=
@@ -264,6 +266,9 @@ theorem exists_rows_of_class :
           test? r = some (.belief s) := by
   decide
 
+/-- Each class other than A has an acceptable example in a configuration that class A excludes,
+so a theory of projection on which every projective content must be satisfied in its local
+context does not extend to it (section 8). -/
 theorem acceptable_rows_of_ne_A :
     ∀ k ≠ ProjectiveClass.A, ∃ r ∈ Examples.all, class? r = some k ∧ r.judgment = .acceptable ∧
       ∃ t ∈ test? r, Excludes .A t := by

@@ -289,6 +289,8 @@ private theorem _root_.Autosegmental.Graph.Iso.link_toGraph
   rw [hv, hw] at hadj'
   exact ⟨hp', hq', hadj'⟩
 
+/-- Representations whose graphs are isomorphic are equal: the graph reading is injective up to
+isomorphism. -/
 theorem nonempty_iso_toGraph_iff : Nonempty (Graph.Iso X.toGraph Y.toGraph) ↔ X = Y := by
   refine ⟨fun ⟨e⟩ ↦ ?_, by rintro rfl; exact ⟨Graph.Iso.refl _⟩⟩
   have hlen (i : ι) : (X.word i).length = (Y.word i).length := by

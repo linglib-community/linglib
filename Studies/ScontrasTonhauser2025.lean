@@ -145,6 +145,8 @@ theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Qu
   obtain ⟨w, rfl⟩ : ∃ w, q.answer w = b := by cases q <;> exact ⟨⟨b, b⟩, rfl⟩
   rw [L0_apply, L0_apply, l0, l0, h]
 
+/-- Under the belief question, a speaker who assumes the complement answers fully with negated
+*know* at a world in which Cole does not believe the complement. -/
 theorem L0_knowNeg_bel_eq_one {A : Finset World} (hA : A ⊆ sem .cPos) {w : World} (hw : w ∈ A)
     (hb : w.believes = false) : L0 A .belief .knowNeg {Question.answer .belief w} = 1 := by
   rw [L0_apply, l0, Finset.filter_true_of_mem]
@@ -201,6 +203,8 @@ instance (α k : ℝ) (A : Finset World) (q : Question) (w : World) :
 
 variable (α k : ℝ)
 
+/-- A speaker who assumes the complement produces negated *know* and negated *think* alike
+under either question, since they are equally informative and equally costly. -/
 theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) (w : World) :
     S1 α k A q w {.knowNeg} = S1 α k A q w {.thinkNeg} := by
   rw [S1, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
@@ -222,6 +226,8 @@ theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) {w : World} (hb : w.belie
   rw [ENNReal.div_lt_iff (Or.inl three_ne_zero) (Or.inl (ENNReal.ofNat_ne_top)), one_mul]
   norm_num
 
+/-- Under the belief question the speaker's choice depends on the world only through Cole's
+belief, as the question's cells do. -/
 theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.believes) :
     S1 α k A .belief w = S1 α k A .belief w' := by
   rw [S1, S1, show Question.answer .belief w = Question.answer .belief w' from h]

@@ -144,6 +144,8 @@ def blockedForm : Skeleton := ve ponE ++ go
 the final cluster (*pon-ug ŋâi* 'knew Ngai'). -/
 def elidedForm : Skeleton := epenthesize (ve (ve ponE ++ go))
 
+/-- The cascade is audible. Both outputs are phonotactically licit and they differ, so blocking
+phrasal elision (the prosodic boundary of the perfective focus reflex) is perceptible. -/
 theorem boundary_audible :
     blockedForm ≠ elidedForm ∧
     Phonotactic blockedForm ∧ Phonotactic elidedForm := by decide

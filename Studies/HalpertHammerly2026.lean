@@ -110,6 +110,7 @@ theorem mem_category {s : Spec} {x : Primitive} :
   refine forall₂_congr fun p b ↦ imp_congr_right fun _ ↦ ?_
   cases b <;> simp [value, feature]
 
+/-- Feature-definable categories are order-convex. -/
 theorem category_ordConnected (s : Spec) : (category s).OrdConnected :=
   Set.ordConnected_iInter fun p ↦ Set.ordConnected_biInter fun b _ ↦ value_ordConnected p b
 

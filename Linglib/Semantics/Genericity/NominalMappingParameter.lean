@@ -162,6 +162,8 @@ instance (m : NominalMapping) (ds : Determiner.Inventory) (down : Prop) [Decidab
 
 variable {m : NominalMapping} {ds : Determiner.Inventory} {down : Prop}
 
+/-- With ι and ∃ blocked, a [+arg, +pred] language admits exactly the bare nominals ∩ is
+defined for. -/
 theorem argAndPred_licensesBare_iff (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
     argAndPred.LicensesBare ds down ↔ down := by
   simp [LicensesBare, hι, hex]
@@ -170,6 +172,7 @@ theorem argAndPred_licensesBare_false_iff :
     argAndPred.LicensesBare ds False ↔ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists := by
   simp [LicensesBare]
 
+/-- A language admits a bare nominal with a kind iff it is [+arg]. -/
 theorem licensesBare_true_iff : m.LicensesBare ds True ↔ .kind ∈ m := by
   simp [LicensesBare]
 

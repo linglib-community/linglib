@@ -39,6 +39,8 @@ namespace Mkochi2021
 
 open Casali1997
 
+/-- Some ranking of Casali's constraints elides the vowel a row reports exactly at the junctures
+between a root and a suffix, and none does between two suffixes or two enclitics. -/
 theorem exists_mem_optimal_iff_rootSuffix :
     ∀ row ∈ Data.Hiatus.Mkochi2021.rows, ∀ c, IsOfKind c row.juncture →
       ((∃ r, row.elided ∈ (tableau c r).optimal) ↔ row.juncture = .rootSuffix) := by
@@ -48,6 +50,8 @@ theorem exists_mem_optimal_iff_rootSuffix :
     decide
   exact fun row hrow _ hc ↦ (exists_mem_optimal_iff_of_isOfKind hc).trans (key row hrow)
 
+/-- At a schematic juncture of two suffixes no ranking of Casali's constraints elides the second
+vowel. -/
 theorem schematic_suffixSuffix :
     ¬ ∃ r, .second ∈ (tableau (schematic .suffixSuffix) r).optimal := by
   rw [exists_mem_optimal_iff_of_isOfKind (isOfKind_schematic _)]

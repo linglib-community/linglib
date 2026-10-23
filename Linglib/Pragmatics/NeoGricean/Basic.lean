@@ -93,6 +93,9 @@ the commitment. -/
 def IsSecondaryImplicature (φ : Set W) (alts : Set (Set W)) (ψ : Set W) : Prop :=
   Consistent (commitment φ alts ∩ secondaryImplicature ψ)
 
+/-- The strengthened meaning `φ \ ψ` is the canonical witness: `K¬ψ` is a secondary
+implicature iff `φ \ ψ` is consistent and entails no alternative. A blocked secondary
+implicature is thus always blocked by a single primary. -/
 theorem isSecondaryImplicature_iff :
     IsSecondaryImplicature φ alts ψ ↔ (φ \ ψ).Nonempty ∧ ∀ χ ∈ alts, ¬ φ \ ψ ⊆ χ := by
   constructor
@@ -129,6 +132,8 @@ theorem subset_compl_iff_not_subset (hs : s.Nonempty) (hc : s ⊆ ψ ∨ s ⊆ �
     s ⊆ ψᶜ ↔ ¬ s ⊆ ψ :=
   ⟨fun h h' => not_subset_compl_of_subset hs h' h, hc.resolve_left⟩
 
+/-- The Standard Recipe: on consistent states, the weak implicature plus competence is the
+strong implicature. -/
 theorem primaryImplicature_inter_competent (ψ : Set W) :
     primaryImplicature ψ ∩ competent ψ = secondaryImplicature ψ \ {∅} := by
   ext s

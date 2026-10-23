@@ -92,6 +92,8 @@ theorem rdrop_prefix (n : ℕ) (l : List α) : l.rdrop n <+: l := take_prefix _ 
 
 theorem rtake_suffix (n : ℕ) (l : List α) : l.rtake n <:+ l := drop_suffix _ _
 
+/-- The last `n` elements of `l` are the suffix of `l` of length `min n l.length`, mirroring
+`List.suffix_iff_eq_drop`. -/
 theorem rtake_eq_iff {u : List α} : l.rtake n = u ↔ u <:+ l ∧ u.length = min n l.length := by
   refine ⟨by rintro rfl; exact ⟨rtake_suffix n l, length_rtake⟩, fun ⟨h, hlen⟩ ↦ ?_⟩
   rw [suffix_iff_eq_drop.1 h, hlen, rtake]
@@ -102,10 +104,14 @@ theorem rtake_eq_iff {u : List α} : l.rtake n = u ↔ u <:+ l ∧ u.length = mi
   rw [rdrop_eq_reverse_drop_reverse, rtake_eq_reverse_take_reverse, ← reverse_append,
     take_append_drop, reverse_reverse]
 
+/-- Truncating to the last `n` elements before appending is the same as truncating after: the
+last `n` elements are enough state to compute the next window. -/
 theorem rtake_append_rtake (n : ℕ) (l₁ l₂ : List α) :
     (l₁.rtake n ++ l₂).rtake n = (l₁ ++ l₂).rtake n := by
   rw [rtake_append, rtake_append, rtake_rtake, Nat.min_eq_left (Nat.sub_le _ _)]
 
+/-- A middle block of length at least `n` screens off everything to its left: the last `n`
+elements of `a ++ u ++ y` do not depend on `a`. -/
 theorem rtake_append_append_of_le_length (a u y : List α) (h : n ≤ u.length) :
     (a ++ u ++ y).rtake n = (u ++ y).rtake n := by
   rw [rtake_append, rtake_append, rtake_append,

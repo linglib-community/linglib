@@ -349,6 +349,9 @@ theorem satisfies_body (hI : I.Models grammar) {c : Constraint sig} (hc : c ∈ 
     (hu : I.S u ≤ c.sort) : I.Satisfies (fun _ ↦ u) u c.body :=
   hI.satisfies_body (List.mem_map_of_mem hc) hu
 
+/-- An entity of the nonsubject wh-interrogative sort satisfies the grammar exactly when it
+satisfies the headed, filler-head, core clause, interrogative and nonsubject wh-interrogative
+constructions. Only the last is stated on its sort. -/
 theorem forall_satisfies_grammar_iff_of_nsWhIntCl (hu : I.S u = .nsWhIntCl) :
     (∀ d ∈ grammar, I.Satisfies g u d) ↔
       ∀ c ∈ [headedPrinciple, fillerHeadPrinciple, corePrinciple, interrogativePrinciple,
@@ -356,6 +359,10 @@ theorem forall_satisfies_grammar_iff_of_nsWhIntCl (hu : I.S u = .nsWhIntCl) :
   rw [grammar, Interpretation.forall_satisfies_map_toDesc_iff, hu]
   rfl
 
+/-- In a model of the grammar, the mother of a filler-head construct has a `GAP` list of sort
+`σ` exactly when the rest of its head daughter's list does, since the filler discharges the
+first gap and the rest passes up. The mother's list is therefore empty exactly when the head
+daughter has one gap. -/
 theorem satisfies_mtrGap_iff (hI : I.Models grammar) (hu : I.S u ≤ .fillerHeadCxt) (σ : Srt) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.MTR, .GAP]) σ) ↔
       I.Satisfies (fun _ ↦ u) u (.sortAssign (.path [.HDDTR, .GAP, .REST]) σ) := by
@@ -368,6 +375,8 @@ theorem satisfies_mtrGap_iff (hI : I.Models grammar) (hu : I.S u ≤ .fillerHead
   · obtain rfl : w = v := Option.mem_unique hw hv'
     exact ⟨w, hv, hle⟩
 
+/-- In a model of the grammar, the mother and the head daughter of a headed construct share
+their category, so a feature of the mother's category has the same value on the head's. -/
 theorem satisfies_hdCat_iff (hI : I.Models grammar) (hu : I.S u ≤ .headedCxt) (p : Path sig)
     (σ : Srt) :
     I.Satisfies (fun _ ↦ u) u (.sortAssign (.path (.MTR :: .CAT :: p)) σ) ↔
@@ -389,6 +398,9 @@ theorem satisfies_le_of_mem_termDenot (hI : I.IsWellTyped) {p : Path sig} {α : 
   obtain ⟨d, hd, hle, -⟩ := exists_mem_decl_of_appropOfDecl_eq_some _ hτ
   exact ⟨w, hw, hle.trans (hσ d hd)⟩
 
+/-- No daughter or mother of a construct is covert in a well-typed interpretation, since the
+signs of a phrasal construct are overt expressions [sag-2012]. A gap, which stands on a `GAP`
+list for an unrealized argument, is therefore never a daughter. -/
 theorem not_le_covertExpr (hI : I.IsWellTyped) {α : sig.Attr}
     (hα : α ∈ [.MTR, .HDDTR, .FILLERDTR, .CONJ1, .CONJ2]) {v : U} (hv : I.A α u = some v) :
     ¬ I.S v ≤ .covertExpr := by
@@ -478,6 +490,9 @@ theorem models_memberDef_of_forall (hI : I.IsWellTyped)
   exact and_congr_right fun _ ↦ or_congr_right <| exists_congr fun y ↦
     and_congr_right fun hy ↦ (h u x y hx (hl.tail ⟨_, hy⟩)).symm
 
+/-- On lists without cycles the principle `memberDef` defines list membership. A well-typed
+interpretation models it exactly when `member` holds of two components of an entity just when
+the first is an element of the second. -/
 theorem models_memberDef_iff (hI : I.IsWellTyped)
     (hwf : WellFounded fun b a ↦ I.A .REST a = some b) :
     I.Models [memberDef] ↔ ∀ u x l, I.IsComponentOf u x → I.IsComponentOf u l →

@@ -116,6 +116,7 @@ theorem unintegratedCount_revPerm (k : ℕ) :
 def totalIntegrationCost (σ : Equiv.Perm (Fin n)) : ℕ :=
   ∑ k ∈ Finset.range n, unintegratedCount σ (k + 1)
 
+/-- The crossed (Dutch) cluster costs `n(n−1)/2`: one NP integrates per verb. -/
 theorem totalIntegrationCost_refl (n : ℕ) :
     totalIntegrationCost (Equiv.refl (Fin n)) = n * (n - 1) / 2 := by
   unfold totalIntegrationCost
@@ -129,6 +130,8 @@ theorem totalIntegrationCost_refl (n : ℕ) :
   have h2 := Finset.sum_range_id_mul_two n
   omega
 
+/-- The nested (German) cluster costs `n(n−1)`: all `n` NPs float until the last
+verb. -/
 theorem totalIntegrationCost_revPerm (n : ℕ) :
     totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) = n * (n - 1) := by
   unfold totalIntegrationCost
@@ -160,6 +163,7 @@ theorem crossed_lt_nested (hn : 2 ≤ n) :
   have h : 0 < n * (n - 1) := Nat.mul_pos (by omega) (by omega)
   omega
 
+/-- The gap equals the whole crossed cost `n(n−1)/2`. -/
 theorem cost_gap (n : ℕ) :
     totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin n)) -
         totalIntegrationCost (Equiv.refl (Fin n)) =
@@ -175,6 +179,9 @@ theorem level_costs :
       totalIntegrationCost (Fin.revPerm : Equiv.Perm (Fin 4))) = (2, 6, 12) := by
   simp [totalIntegrationCost_refl, totalIntegrationCost_revPerm]
 
+/-- The nested binding is antitone — the projective, stack-parsable pattern
+([bresnan-etal-1982]) — and the crossed one is not; the costs run the other way,
+so parsing difficulty does not track stack-parsability. -/
 theorem nonprojective_is_cheaper (hn : 2 ≤ n) :
     ¬Antitone ⇑(Equiv.refl (Fin n)) ∧ Antitone ⇑(Fin.revPerm : Equiv.Perm (Fin n)) ∧
       totalIntegrationCost (Equiv.refl (Fin n)) <

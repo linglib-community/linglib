@@ -84,6 +84,8 @@ private theorem support_and_antiSupport_empty_of_neFree
     exact ⟨empty_mem_tensor (ih₁ hNE.1).1 (ih₂ hNE.2).1, ⟨(ih₁ hNE.1).2, (ih₂ hNE.2).2⟩⟩
   | poss ψ _ => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
 
+/-- NE-free BSML formulas are supported on the empty team. The only
+    obstruction is NE itself, which fails on ∅ by definition. -/
 theorem support_empty_of_neFree {φ : Formula Atom}
     (hNE : φ.NEFree) (M : KripkeModel W Atom) : support M φ ∅ :=
   (support_and_antiSupport_empty_of_neFree φ hNE M).1
@@ -101,6 +103,8 @@ private theorem support_and_antiSupport_isLowerSet_of_neFree
     exact ⟨(ih₁ hNE.1).1.tensor (ih₂ hNE.2).1, (ih₁ hNE.1).2.inter (ih₂ hNE.2).2⟩
   | poss ψ _ => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
 
+/-- An `NE`-free BSML formula is downward closed, so its support survives passing to a
+    subteam. -/
 theorem isLowerSet_support_of_neFree {φ : Formula Atom}
     (hNE : φ.NEFree) (M : KripkeModel W Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=

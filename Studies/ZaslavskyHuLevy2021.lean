@@ -125,6 +125,8 @@ instance : ∀ t u, IsZeroOrProbabilityMeasure (listener P C α l t u)
 
 variable {P C α l} {u : U} {m : M}
 
+/-- The listeners of the recursion respect the lexicon. An utterance never leads the listener to
+a meaning it does not apply to. -/
 theorem listener_apply_singleton_eq_zero (hα : 0 < α) (h : l u m = 0) :
     ∀ t, listener P C α l t u {m} = 0
   | 0 => by rw [listener, Kernel.ofDensity_apply_singleton, h, zero_mul, ENNReal.zero_div]
@@ -133,6 +135,8 @@ theorem listener_apply_singleton_eq_zero (hα : 0 < α) (h : l u m = 0) :
     exact RSA.listener_apply_singleton_eq_zero
       (RSA.speaker_dirac_apply_singleton_eq_zero hα (listener_apply_singleton_eq_zero hα h t))
 
+/-- The speakers of the recursion respect the lexicon. No meaning is expressed by an utterance
+that does not apply to it. -/
 theorem speaker_listener_apply_singleton_eq_zero (hα : 0 < α) (h : l u m = 0) (t : ℕ) :
     RSA.speaker α C (listener P C α l t) Measure.dirac m {u} = 0 :=
   RSA.speaker_dirac_apply_singleton_eq_zero hα (listener_apply_singleton_eq_zero hα h t)
@@ -189,6 +193,7 @@ theorem freeEnergy_le_freeEnergy_listener_succ (t : ℕ) :
   simp only [Kernel.comp_id] at h
   exact h
 
+/-- The tradeoff converges along the recursion, being monotone and bounded above. -/
 theorem exists_tendsto_freeEnergy : ∃ g, Tendsto (fun t ↦ RSA.freeEnergy P Kernel.id C α
     (RSA.speaker α C (listener P C α l t) Measure.dirac) (listener P C α l t)) atTop (𝓝 g) := by
   refine ⟨_, tendsto_atTop_ciSup (monotone_nat_of_le_succ fun t ↦

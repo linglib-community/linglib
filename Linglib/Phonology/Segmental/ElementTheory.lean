@@ -213,6 +213,7 @@ def headedSimplex (e : Element) : MR := ⟨{e}, {e}, subset_rfl⟩
 @[simp] theorem headedSimplex_le_iff : headedSimplex e ≤ m ↔ e ∈ m.heads := by
   simpa [le_def] using fun h ↦ m.heads_subset h
 
+/-- A headed element properly contains its unheaded self. -/
 theorem simplex_lt_headedSimplex (e : Element) : simplex e < headedSimplex e :=
   ⟨by simp, by simp [le_def]⟩
 
@@ -301,6 +302,7 @@ instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (_ �
 
 theorem wellFormed_bot : WellFormed ⊥ := by simp [WellFormed]
 
+/-- Docking preserves well-formedness. -/
 theorem WellFormed.sup (h₁ : s₁.WellFormed) (h₂ : s₂.WellFormed) : (s₁ ⊔ s₂).WellFormed :=
   ⟨Finset.union_subset h₁.1 h₂.1, Finset.union_subset h₁.2.1 h₂.2.1,
     Finset.union_subset h₁.2.2 h₂.2.2⟩

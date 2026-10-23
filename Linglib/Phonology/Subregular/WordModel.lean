@@ -197,6 +197,8 @@ def diagram (P : Type*) [Labelling α P] (s : List α) {k : ℕ} (hs : s.length 
     · exact SimpleGraph.Adj.reachable
         ⟨h.ne', .inr ⟨⟨.ord, ![y, x]⟩, by exact h, ⟨0, rfl⟩, ⟨1, rfl⟩⟩⟩
 
+/-- The diagram of a word occurs exactly in the words with a subsequence whose positions carry
+its labels, position by position. -/
 theorem diagram_occurs_iff_forall₂ [Labelling α P] {s : List α} {k : ℕ} (hs : s.length ≤ k) :
     (diagram P s hs).Occurs (WordModel w (· < ·)) ↔
       ∃ t, t <+ w ∧
@@ -408,6 +410,8 @@ def succDiagram (P : Type*) [Labelling β P] (c : List β) {k : ℕ} (hc : c.len
         simp [Fin.covBy_iff]
     exact (reach x x.2).symm.trans (reach y y.2)
 
+/-- The successor diagram of a word occurs exactly in the words with an infix whose positions
+carry its labels, position by position. -/
 theorem succDiagram_occurs_iff_forall₂ {c u : List β} {k : ℕ} (hc : c.length ≤ k) :
     (succDiagram P c hc).Occurs (WordModel u (· ⋖ ·)) ↔
       ∃ t, t <:+: u ∧
@@ -791,6 +795,8 @@ namespace Language
 
 variable {α : Type u} {L : Language α} {k : ℕ}
 
+/-- A stringset is strictly `k`-piecewise exactly when it is a strictly `k`-local set of
+precedence models. -/
 theorem isStrictlyPiecewise_iff_wordModel :
     L.IsStrictlyPiecewise k ↔ (wordLanguage α).IsStrictlyLocal (WordModel · (· < ·)) k L := by
   rw [isStrictlyLocal_iff]
@@ -806,6 +812,8 @@ theorem isStrictlyPiecewise_iff_wordModel :
       exact Set.mem_iUnion₂.2 ⟨s, hw s hs hsw, hfs⟩
     · exact hS s fun f hf ↦ Set.mem_iUnion₂.2 ⟨w, hw, WordModel.factors_subset_of_sublist hs hf⟩
 
+/-- A stringset is strictly `k`-local, for `2 ≤ k`, exactly when it is a strictly `k`-local set of
+anchored words ordered by successor. -/
 theorem isStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
     L.IsStrictlyLocal k ↔
       (wordLanguage (α ⊕ Edge)).IsStrictlyLocal (fun w ↦ WordModel (anchor w) (· ⋖ ·)) k L := by
@@ -814,6 +822,10 @@ theorem isStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
   exact (FirstOrder.Language.isStrictlyLocal_iff.2 hS).mem_of_factors_subset_union h₁ h₂
     (factors_crossover_subset hx)
 
+/-- A stringset is tier-based strictly `k`-local, for `2 ≤ k`, exactly when for some tier it is a
+strictly `k`-local set of words under successor relativized to the tier. Restricting a word to
+its tier positions and taking successor there gives the successor model of its projection, so
+the relativized models are those of the projections. -/
 theorem isTierStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
     IsTierStrictlyLocal k L ↔ ∃ (T : α → Prop) (_ : DecidablePred T),
       (wordLanguage (α ⊕ Edge)).IsStrictlyLocal
@@ -827,11 +839,15 @@ theorem isTierStrictlyLocal_iff_wordModel (hk : 2 ≤ k) :
     obtain ⟨G₀, hG₀⟩ := (isStrictlyLocal_iff_wordModel hk).2 ⟨G', rfl⟩
     exact ⟨⟨T, G₀⟩, Set.ext fun w ↦ Set.ext_iff.1 hG₀ (w.filter (T ·))⟩
 
+/-- A stringset is piecewise `k`-testable exactly when it is a locally `k`-testable set of words
+under precedence. -/
 theorem isPiecewiseTestable_iff_wordModel :
     L.IsPiecewiseTestable k ↔ (wordLanguage α).IsLocallyTestable (WordModel · (· < ·)) k L :=
   ⟨fun h _ _ e ↦ h (WordModel.factors_eq_iff_subseqSet.1 e),
     fun h _ _ e ↦ h (WordModel.factors_eq_iff_subseqSet.2 e)⟩
 
+/-- A stringset is locally `k`-testable exactly when it is a locally `k`-testable set of words
+between their edges under successor. -/
 theorem isLocallyTestable_iff_wordModel :
     L.IsLocallyTestable k ↔
       (wordLanguage (α ⊕ Edge)).IsLocallyTestable (fun w ↦ WordModel (anchor w) (· ⋖ ·)) k L := by

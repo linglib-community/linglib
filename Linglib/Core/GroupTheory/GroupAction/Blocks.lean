@@ -28,6 +28,7 @@ open scoped Pointwise
 
 variable {G X : Type*} [Group G] [MulAction G X]
 
+/-- A fixed block of a pretransitive action is empty or the whole space. -/
 theorem IsFixedBlock.eq_empty_or_univ [IsPretransitive G X] {B : Set X}
     (hB : IsFixedBlock G B) : B = ∅ ∨ B = Set.univ := by
   rcases B.eq_empty_or_nonempty with h | ⟨a, ha⟩

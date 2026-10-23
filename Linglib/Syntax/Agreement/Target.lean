@@ -83,6 +83,7 @@ variable (t : Target V F)
 theorem coe_inflection : (t.inflection : Set Dimension) = {d | ¬ DependsOn t.form {d}ᶜ} :=
   Set.ext t.mem_inflection
 
+/-- The inflection is the least set of dimensions the form depends on. -/
 theorem isLeast_inflection : IsLeast {s | DependsOn t.form s} t.inflection :=
   t.coe_inflection ▸ isLeast_dependsOn_of_finite t.form
 
@@ -92,6 +93,8 @@ theorem dependsOn_inflection : DependsOn t.form t.inflection :=
 theorem dependsOn_form_iff {s : Set Dimension} : DependsOn t.form s ↔ ↑t.inflection ⊆ s :=
   ⟨fun h ↦ t.isLeast_inflection.2 h, t.dependsOn_inflection.mono⟩
 
+/-- A target inflects for a dimension when two cells differing there alone take different
+forms. -/
 theorem mem_inflection_iff {d : Dimension} :
     d ∈ t.inflection ↔ ∃ x a, t.form (update x d a) ≠ t.form x := by
   simp [t.mem_inflection, dependsOn_compl_singleton_iff]

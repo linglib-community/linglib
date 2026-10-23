@@ -178,6 +178,8 @@ def pull : Option Base → ℝ
 @[simp] theorem pull_storedCompound (b : ℝ) : pull (some (storedCompound b)) = b := rfl
 @[simp] theorem pull_none : pull none = 0 := rfl
 
+/-- The probability of nasalisation is the sigmoid of the markedness weight plus the weighted
+pulls of the two bases, so each frequency effect takes the sign of its base's listed velar. -/
 theorem pNasal_eq_sigmoid (w : Weights) (it : Item) :
     pNasal w it = sigmoid (w.markedness + w.n2 * pull it.n2 + w.compound * pull it.compound) := by
   rw [pNasal, votingBases, maxEnt_real_singleton_of_pair _ _ (a := Velar.nasal) (b := .oral)

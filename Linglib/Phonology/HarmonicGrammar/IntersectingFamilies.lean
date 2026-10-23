@@ -139,6 +139,8 @@ theorem InsensitiveToCol.interaction_eq_zero {f : X → R} (h : sq.InsensitiveTo
   rw [interaction_apply, h.1, h.2]
   ring
 
+/-- Under independence, a sum of per-constraint terms, each reading only its constraint's
+violations of the candidates of a form, has zero interaction. -/
 theorem Independent.interaction_sum_eq_zero {con : ConstraintSet (X × Y) (Fin n)}
     (h : sq.Independent con)
     (φ : Fin n → (Y → ℕ) → R) : sq.interaction (fun x ↦ ∑ k, φ k (curry (con k) x)) = 0 := by

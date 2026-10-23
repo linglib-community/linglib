@@ -45,6 +45,7 @@ def hull : AR τ :=
 
 @[simp] theorem word_hull : (X.hull m).word = X.word := rfl
 
+/-- In the hull, melody node `p` links to `q` iff `q` lies between two of `p`'s links. -/
 theorem link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ} (hq : q < (X.word j).length) :
     (X.hull m).Link m j p q ↔
       ∃ q₁ q₂, X.Link m j p q₁ ∧ X.Link m j p q₂ ∧ q₁ ≤ q ∧ q ≤ q₂ := by
@@ -71,6 +72,7 @@ theorem link_hull_of_ne {i j : ι} (hi : i ≠ m) (hj : j ≠ m) (p q : ℕ) :
   · intro hl
     exact ⟨hl.ne, hl.lt_left, hl.lt_right, .inl (.inr ⟨hi, hj, hl⟩)⟩
 
+/-- Melody lines flank themselves: the hull extends the link relation. -/
 theorem link_subset_hull {i j : ι} {p q : ℕ} (h : X.Link i j p q) : (X.hull m).Link i j p q := by
   rcases eq_or_ne m i with rfl | hi
   · rcases eq_or_ne m j with rfl | hj
@@ -80,6 +82,7 @@ theorem link_subset_hull {i j : ι} {p q : ℕ} (h : X.Link i j p q) : (X.hull m
     · exact ((X.link_hull_left m hi h.lt_left).mpr ⟨p, p, h.symm, h.symm, le_rfl, le_rfl⟩).symm
     · exact (X.link_hull_of_ne m (Ne.symm hi) (Ne.symm hj) p q).mpr h
 
+/-- Each melody node's hull lines form an interval. -/
 theorem link_hull_convex {j : ι} (hj : m ≠ j) {p q₁ q q₂ : ℕ} (hq : q < (X.word j).length)
     (h₁ : (X.hull m).Link m j p q₁) (h₂ : (X.hull m).Link m j p q₂)
     (hle₁ : q₁ ≤ q) (hle₂ : q ≤ q₂) : (X.hull m).Link m j p q := by

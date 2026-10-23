@@ -702,6 +702,9 @@ theorem cell_region {B : Finset α} {lo hi : ℕ} (σ : Setting) (b : Bundle) (x
     exact ⟨⟨⟨hB, hE⟩, hb⟩, fun b' hb' hbb' ⟨⟨_, hE'⟩, hb''⟩ ↦ h b' hb' hbb' ⟨hE', hb''⟩⟩
 
 open Classical in
+/-- On the person lattice over any base of at most two atoms, given infinitely many atoms, and
+for every placement of the cuts above four atoms, the bundles of a setting with nonempty cells
+form its system. -/
 theorem filter_cell_eq_system [Infinite α] {B : Finset α} (hB : B.card ≤ 2) {lo hi : ℕ}
     (h₁ : 4 < lo) (h₂ : lo < hi) (σ : Setting) :
     σ.bundles.filter (fun b ↦ ∃ x, σ.cell Finset.card lo hi
@@ -895,12 +898,15 @@ def derivedImplications : List (Number × Number) :=
     (.augmented, .minimal), (.greaterPaucal, .paucal), (.paucal, .plural),
     (.greaterPlural, .plural)]
 
+/-- The settings derive each implication of `derivedImplications`. -/
 theorem requires_of_mem_derivedImplications : ∀ e ∈ derivedImplications, Requires e.1 e.2 := by
   have h : ∀ σ : Setting, ∀ c : Convention, c.Fits σ.additive → σ.Legitimate →
       ∀ e ∈ derivedImplications, e.1 ∈ (σ.toSystem c).values → e.2 ∈ (σ.toSystem c).values := by
     decide +kernel
   exact fun e he ↦ requires_iff.2 fun σ c hc hσ ↦ h σ c hc hσ e he
 
+/-- The unit augmented does not require the augmented, since `{±additive, ±minimal*}` generates
+it without. -/
 theorem not_requires_unitAugmented_augmented : ¬ Requires .unitAugmented .augmented := fun h ↦
   absurd (requires_iff.1 h ⟨.inactive, .recursive, .active⟩ (.one .low) trivial (by decide)
     (by decide)) (by decide)
@@ -911,6 +917,8 @@ theorem mem_table3_of_requires {b a : Number} (h : Requires b a) {r} (hr : r ∈
   rw [← table3_generated r hr] at hb ⊢
   exact requires_iff.1 h _ _ (table3_legitimate r hr).1 (table3_legitimate r hr).2 hb
 
+/-- Every system of [corbett-2000]'s sequences of choices is a lower set of the order the settings
+induce, having with a number every number that number requires. -/
 theorem mem_of_requires_corbett (c : Corbett2000.Choices) {b a : Number} (h : Requires b a)
     (hb : b ∈ c.toSystem.values) : a ∈ c.toSystem.values := by
   have key : ∀ b a : Number, (∀ r ∈ table3, b ∈ r.2.2 → a ∈ r.2.2) →
@@ -959,6 +967,8 @@ theorem meleFila_system :
      (.greaterPlural, {(.atomic, false), (.minimal, false), (.additive, true)})] := by
   decide +kernel
 
+/-- On every third-person lattice the plural holds of the sums from the lower cut up to the
+upper, `[+additive]` relative to the one and `[−additive]` relative to the other. -/
 theorem meleFila_cell_plural {α : Type*} [DecidableEq α] {lo hi : ℕ} (h₁ : 4 < lo)
     (x : Finset α) :
     meleFila.cell Finset.card lo hi Finset.Nonempty

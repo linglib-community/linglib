@@ -74,18 +74,24 @@ theorem should_eq_neg_one_iff (w : W) :
     should D p w = -1 ↔ (D w).Nonempty ∧ ∀ w' ∈ D w, ¬ p w' :=
   supervaluation_eq_neg_one_iff ..
 
+/-- The sentence has a gap when some best worlds satisfy the prejacent and some do not. -/
 theorem should_eq_zero_iff (w : W) :
     should D p w = 0 ↔ (∃ w' ∈ D w, p w') ∧ ∃ w' ∈ D w, ¬ p w' :=
   supervaluation_eq_zero_iff ..
 
+/-- Over a nonempty domain negating the prejacent negates the modal sentence, so the gap is
+symmetric and negation is scopeless. -/
 theorem should_not (w : W) (hne : (D w).Nonempty) :
     should D (fun w' ↦ ¬ p w') w = -should D p w :=
   supervaluation_not _ hne
 
+/-- A true negated weak necessity leaves no best world for the existential continuation. -/
 theorem not_exists_of_should_not (w : W) (h : should D (fun w' ↦ ¬ p w') w = 1) :
     ¬ ∃ w' ∈ D w, p w' :=
   fun ⟨w', hw', hp⟩ ↦ (should_eq_one_iff D _ w).1 h w' hw' hp
 
+/-- In a mixed domain a negated strong necessity is true and the existential continuation
+holds with it. -/
 theorem must_false_of_indet (w : W) (h : should D p w = 0) :
     must D p w = -1 ∧ ∃ w' ∈ D w, p w' := by
   obtain ⟨⟨a, ha, hp⟩, b, hb, hn⟩ := (should_eq_zero_iff D p w).1 h
@@ -94,12 +100,16 @@ theorem must_false_of_indet (w : W) (h : should D p w = 0) :
 
 /-! ### Homogeneity removal -/
 
+/-- *Must* is *should* with its gap removed, the universal quantifier being the meta-assertion
+of the plural predication, as *all* is of *the*. -/
 theorem must_eq_metaAssert_should : must D p = (fun v ↦ SignType.ofProp (v = 1)) ∘ should D p :=
   funext fun w ↦ by simp [must, should, supervaluation_eq_one_iff]
 
 theorem isBivalent_must : Trivalent.IsBivalent (must D p) :=
   must_eq_metaAssert_should D p ▸ Trivalent.isBivalent_ofProp_eq_one _
 
+/-- In a mixed domain the negated bare *should* is not true, while the negated *necessarily
+should* is true and compatible with the existential continuation. -/
 theorem necessarily_removes_gap (w : W) (h : should D p w = 0) :
     should D (fun w' ↦ ¬ p w') w ≠ 1 ∧ -SignType.ofProp (should D p w = 1) = 1 ∧
       ∃ w' ∈ D w, p w' := by
@@ -121,6 +131,8 @@ def doors : Door → Finset Door := fun _ ↦ {.left, .right}
 /-- The issue that separates every world from every other. -/
 abbrev strict : Setoid Door := ⊥
 
+/-- Taking the right door *should* be taken is neither true nor false — neither assertible nor
+deniable — while that it *must* be taken is false. -/
 theorem two_doors : ∀ w, should doors (· = .right) w = 0 ∧
     ¬ usable strict (should doors (· = .right)) w ∧ must doors (· = .right) w = -1 := by
   decide
@@ -150,6 +162,8 @@ abbrev wayQUD : Setoid Grade := ⊤
 /-- *What are the minimal requirements?* — worlds are grouped by their rules. -/
 abbrev minimalQUD : Setoid Grade := Setoid.ker grade
 
+/-- Where most exercises suffice, *you should do every exercise* is usable under the first
+question but not the second, and *you have to do every exercise* under neither. -/
 theorem exception_tolerance :
     usable wayQUD (should grade everyExercise) .lenientAll ∧
       ¬ usable minimalQUD (should grade everyExercise) .lenientAll ∧
@@ -204,6 +218,8 @@ end Minimal
 
 variable (w : W)
 
+/-- Strong necessity, as a quantifier over sets of worlds, has the domain as its unique minimal
+set, so picking that set out yields the plurality weak necessity denotes. -/
 theorem x_must :
     (∃! X, Minimal (D w ⊆ ·) X) ∧ ∀ X, Minimal (D w ⊆ ·) X ↔ X = D w :=
   ⟨⟨D w, minimal_ge_iff.2 rfl, fun _ ↦ minimal_ge_iff.1⟩, fun _ ↦ minimal_ge_iff⟩
@@ -211,6 +227,8 @@ theorem x_must :
 variable [DecidableEq W]
 
 open scoped Finset in
+/-- Possibility over two or more best worlds has minimal sets but no unique one, so a marker that
+needs only some minimal set applies to it and one that needs the unique minimal set does not. -/
 theorem possibility_witnesses (h : 1 < #(D w)) :
     (∃ X, Minimal (fun X ↦ (D w ∩ X).Nonempty) X) ∧
       ¬ ∃! X, Minimal (fun X ↦ (D w ∩ X).Nonempty) X :=
@@ -274,10 +292,12 @@ def domainRestrictionPredict (pol : Polarity) (s : Scenario) : SignType :=
   | .positive => must (fun _ ↦ scenarioDomain s) (· = true) true
   | .negative => -must (fun _ ↦ scenarioDomain s) (· = true) true
 
+/-- The plural semantics reproduces every cell of the *should* grid. -/
 theorem should_matches_grid :
     ∀ d ∈ shouldGrid, shouldPredict d.polarity d.scenario = d.observed := by
   decide
 
+/-- Domain restriction matches the classical cells and fails exactly the gap cells. -/
 theorem domainRestriction_fails_exactly_gap :
     ∀ d ∈ shouldGrid,
       (domainRestrictionPredict d.polarity d.scenario = d.observed ↔ d.scenario ≠ .gap) := by

@@ -186,6 +186,9 @@ def john_sees_pizza_and_mary_eats_pizza : Derivation String .multimodal S :=
     (.fapp (.lex "and" (conj S))
       (.bapp (.lex "Mary" NP) (.fapp (.lex "eats" TV) (.lex "pizza" NP))))
 
+/-- The non-constituent coordination and its spelled-out paraphrase receive the same truth
+conditions, since the composed derivation yields the canonical predicate-argument
+structure. -/
 theorem nonConstituentCoord_eq_spelledOut :
     john_sees_and_mary_eats_pizza.interp semLexicon =
       john_sees_pizza_and_mary_eats_pizza.interp semLexicon := rfl
@@ -367,6 +370,8 @@ def predictedDirection (a : Arrangement Constituent 3) : Option GappingDirection
 /-- The gapping examples of chapter 7. -/
 def gappingData : List Datum := Examples.all.filter (·.feature? "phenomenon" = some "gapping")
 
+/-- In every gapping example of chapter 7, the construction is acceptable exactly when it gaps in
+the direction its clause's basic order predicts. -/
 theorem gapping_acceptable_iff :
     ∀ ex ∈ gappingData, ex.judgment = .acceptable ↔
       ex.parse? "gappingDirection" [("forward", .forward), ("backward", .backward)] =
@@ -655,6 +660,8 @@ theorem manny_rheme :
     (Derivation.lex (R := .multimodal) "Manny" NP).infoFeature annaMannyAccents = some .ρ :=
   rfl
 
+/-- Folding the rheme into the theme's constituent clashes. The whole sentence projects no
+single marking, so the tune forces the phrasing "[Anna married][Manny]". -/
 theorem theme_rheme_clash :
     (Derivation.fapp anna_married (.lex "Manny" NP)).infoFeature annaMannyAccents
       = none := rfl

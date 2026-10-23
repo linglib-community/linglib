@@ -101,6 +101,9 @@ instance (g : Deal2024.Grammar) (goals : List Person) : Decidable (DependentCase
   | some [] => isFalse fun ⟨_, _, h'⟩ ↦ by simp [h] at h'
   | none => isFalse fun ⟨_, _, h'⟩ ↦ by simp [h] at h'
 
+/-- With two goals, dependent case on the second is [deal-2024]'s licit Agree with both, the
+    probe meeting the first goal in the direct-object slot and the second in the indirect-object
+    slot. -/
 theorem dependentCase_iff_licit (g : Deal2024.Grammar) (g₁ g₂ : Person) :
     DependentCase g [g₁, g₂] ↔ Licit g ⟨g₂, g₁⟩ := by
   revert g g₁ g₂

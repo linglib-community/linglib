@@ -178,6 +178,8 @@ def MAX (D : Set (Set ℕ)) : Set ℕ → Prop := MaxIn (⋂₀ D)
 theorem MAX_individual (n : ℕ) : MAX (individual n) = MaxIn {n} :=
   congrArg MaxIn (sInter_individual n)
 
+/-- At its landing site `MAX` of the lower-bound quantifier is its exhaustification against the
+higher numerals, a strengthening that moves with the numeral. -/
 theorem MAX_individual_iff_exhAgainst {n : ℕ} {P : Set ℕ} :
     MAX (individual n) P ↔ exhAgainst (· < ·) (individual · P) n := by
   rw [MAX_individual]; exact maxIn_singleton_iff_exhAgainst
@@ -211,6 +213,8 @@ theorem zeroWithMAX_eq_zero : zeroWithMAX = BylininaNouwen2018.zero := by
   funext p B
   exact propext MAX_individual_iff_exhAgainst
 
+/-- So it licenses no negative polarity item, where Kennedy's *zero* is *no* and licenses both
+(`BylininaNouwen2018.kennedyZero_eq_nobody`). -/
 theorem not_licenses_zeroWithMAX (e : PolarityItem) : ¬ zeroWithMAX.Licenses e :=
   zeroWithMAX_eq_zero ▸ not_licenses_zero e
 

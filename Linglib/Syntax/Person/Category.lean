@@ -92,6 +92,7 @@ instance : DecidablePred WellFormed := fun _ ↦ by unfold WellFormed; infer_ins
 def toConfig (c : Category) : {x // WellFormed x} :=
   ⟨(c.participants, c.otherCount), by cases c <;> decide +kernel⟩
 
+/-- The categories are exactly the well-formed configurations. -/
 theorem toConfig_bijective : Function.Bijective toConfig :=
   ⟨by decide +kernel, by decide +kernel⟩
 
@@ -188,6 +189,8 @@ def ofPersonNumber : Person → Number → Finset Category
   | .third, .general => {.other, .others}
   | .third, _ => {.others}
 
+/-- `ofPersonNumber` inverts the person projection, recovering every category from its
+coordinates at some number value. -/
 theorem ofPersonNumber_person (c : Category) : ∃ n, ofPersonNumber c.person n = {c} := by
   cases c
   · exact ⟨.singular, rfl⟩

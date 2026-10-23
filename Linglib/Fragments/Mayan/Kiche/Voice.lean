@@ -107,20 +107,28 @@ def agentFocusOblique (c : Mayan.VerbClass) : Voice :=
 def voices (c : Mayan.VerbClass) : Finset Voice :=
   {active c, simplePassive c, completedPassive c, absolutiveAntipassive c, agentFocus c}
 
+/-- Agent focus is the one voice beside the active that neither makes a participant a core term
+nor demotes one, its subject, verb and object all present ([mondloch-2017]). -/
 theorem isSymmetrical_iff (c : Mayan.VerbClass) :
     ∀ v ∈ voices c, v.IsSymmetrical ↔ v = active c ∨ v = agentFocus c := by
   cases c <;> decide
 
+/-- The passives and the absolutive antipassive derive an intransitive construction, and the
+verb conjugates as a simple intransitive ([mondloch-2017]). -/
 theorem not_isTransitive_iff (c : Mayan.VerbClass) :
     ∀ v ∈ voices c, ¬ v.derived.IsTransitive ↔
       v = simplePassive c ∨ v = completedPassive c ∨ v = absolutiveAntipassive c := by
   cases c <;> decide
 
+/-- The two structures of agent focus differ in the patient, a core term beside the agent or an
+oblique ([can-pixabaj-2017]). -/
 theorem agentFocus_agentFocusOblique_fate (c : Mayan.VerbClass) :
     (agentFocus c).fateOfRole .P = .maintained ∧
       (agentFocusOblique c).fateOfRole .P = .denucleativized := by
   cases c <;> decide
 
+/-- The absolutive antipassive and agent focus are syncretic on derived verbs, both *-n*, and
+distinct on radical ones, *-Vn* against *-Vw* ([mondloch-2017]). -/
 theorem marker_agentFocus_eq_iff (c : Mayan.VerbClass) :
     (agentFocus c).marker = (absolutiveAntipassive c).marker ↔ c = .derived := by
   cases c <;> decide

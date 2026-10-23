@@ -129,6 +129,8 @@ theorem IsConsistentExclusion.subset_sdiff_satisfied {X : Set (Set World)}
     X ⊆ ALT \ Preorder.satisfied (· ∈ ·) ALT u :=
   fun b hb ↦ mem_sdiff_satisfied.2 ⟨hX.1 hb, fun hub ↦ hu ⟨b, hb, hub⟩⟩
 
+/-- The alternatives false at a prejacent world form a maximal consistent exclusion iff the world
+is minimal. -/
 theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
     Maximal (IsConsistentExclusion ALT φ) (ALT \ Preorder.satisfied (· ∈ ·) ALT u) ↔
       IsMinimal ALT φ u := by
@@ -142,6 +144,7 @@ theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
   · exact hmin ⟨v, hv, fun c hc hvc ↦ by_contra fun huc ↦
       hvY ⟨c, hXY (mem_sdiff_satisfied.2 ⟨hc, huc⟩), hvc⟩, fun huv ↦ hvY ⟨b, hb, huv b (hY hb) hub⟩⟩
 
+/-- Every maximal consistent exclusion is the set of alternatives false at a minimal world. -/
 theorem Maximal.exists_eq_sdiff_satisfied {X : Set (Set World)}
     (hX : Maximal (IsConsistentExclusion ALT φ) X) :
     ∃ u, IsMinimal ALT φ u ∧ X = ALT \ Preorder.satisfied (· ∈ ·) ALT u := by
@@ -152,6 +155,7 @@ theorem Maximal.exists_eq_sdiff_satisfied {X : Set (Set World)}
 
 variable (ALT φ)
 
+/-- An alternative is innocently excludable iff it fails at every minimal world. -/
 theorem isInnocentlyExcludable_iff_exhMW_subset_compl (a : Set World) (ha : a ∈ ALT) :
     IsInnocentlyExcludable ALT φ a ↔ exhMW ALT φ ⊆ aᶜ := by
   refine ⟨fun h u hu ↦ (mem_sdiff_satisfied.1 (h.2 _ ((maximal_sdiff_satisfied_iff hu.1).2 hu))).2,
@@ -183,6 +187,7 @@ theorem exhIE_eq_of_iff {P : Set World → Prop}
   exact and_congr_right fun _ ↦ ⟨fun h' q hq hP ↦ h' q ((h q hq).2 hP),
     fun h' q hq ↦ h' q hq.1 ((h q hq.1).1 hq)⟩
 
+/-- Innocent exclusion is exhaustification over the innocently excludable alternatives. -/
 theorem exhIE_eq_exh (hfin : ALT.Finite) :
     exhIE ALT φ = exh {a | IsInnocentlyExcludable ALT φ a} φ := by
   ext u
@@ -226,6 +231,7 @@ theorem exh_subset_exhMW : exh ALT φ ⊆ exhMW ALT φ :=
 theorem exh_subset_exhIE : exh ALT φ ⊆ exhIE ALT φ :=
   (exh_subset_exhMW ALT φ).trans (exhMW_subset_exhIE ALT φ)
 
+/-- With a unique maximal consistent exclusion, innocent exclusion denies exactly its members. -/
 theorem exhIE_eq_sdiff_of_maximal_unique {X₀ : Set (Set World)}
     (h₀ : Maximal (IsConsistentExclusion ALT φ) X₀)
     (huniq : ∀ X, Maximal (IsConsistentExclusion ALT φ) X → X = X₀) :
@@ -235,6 +241,8 @@ theorem exhIE_eq_sdiff_of_maximal_unique {X₀ : Set (Set World)}
   exact and_congr_right fun _ ↦ ⟨fun h a ha ↦ h a ⟨h₀.prop.1 ha, fun X hX ↦ huniq X hX ▸ ha⟩,
     fun h a ha ↦ h a (ha.2 X₀ h₀)⟩
 
+/-- When the prejacent is consistent with the denial of every alternative it does not entail,
+innocent exclusion denies them all ([fox-2007]). -/
 theorem exhIE_eq_exh_of_nonempty (h : (exh ALT φ).Nonempty) : exhIE ALT φ = exh ALT φ := by
   obtain ⟨v, hv, hvex⟩ := h
   refine Subset.antisymm (fun u hu ↦ ⟨exhIE_subset ALT φ hu, fun q hq huq ↦ by_contra fun hφq ↦ ?_⟩)
@@ -291,6 +299,9 @@ end MinimalCover
 
 /-! ### Closure under conjunction and disjunction -/
 
+/-- With finitely many alternatives closed under conjunction the two exhaustifiers coincide. A
+prejacent world above another verifies the conjunction of the alternatives true at it, which
+every minimal world falsifies. -/
 theorem exhMW_eq_exhIE_of_infClosed (hfin : ALT.Finite) (hinf : InfClosed ALT) :
     exhMW ALT φ = exhIE ALT φ := by
   refine (exhMW_subset_exhIE ALT φ).antisymm fun u hu ↦ ⟨hu.1, fun ⟨v, hv, hvu, huv⟩ ↦ ?_⟩
@@ -317,6 +328,8 @@ theorem exhMW_sUnion_image_powerset : exhMW (sUnion '' 𝒫 ALT) φ = exhMW ALT 
   unfold exhMW ltALT
   simp only [leALT_sUnion_image_powerset]
 
+/-- Innocent exclusion is unchanged by closing the alternatives under disjunction, since a
+disjunction fails at every minimal world iff each disjunct does. -/
 theorem exhIE_sUnion_image_powerset : exhIE (sUnion '' 𝒫 ALT) φ = exhIE ALT φ := by
   ext u
   refine and_congr_right fun _ ↦ ⟨fun h a ha ↦ h a ?_, fun h a ha ↦ ?_⟩
@@ -355,6 +368,8 @@ theorem mem_exh_iff_isLeast :
   rintro _ ⟨v, hv, rfl⟩ a ⟨ha, hwa⟩
   exact ⟨ha, h a ha hwa hv⟩
 
+/-- Exhaustification is consistent iff the sets of alternatives the prejacent worlds verify have a
+least element. -/
 theorem exh_nonempty_iff :
     (exh ALT φ).Nonempty ↔ ∃ P, IsLeast (Preorder.satisfied (· ∈ ·) ALT '' φ) P := by
   refine ⟨fun ⟨w, hw⟩ ↦ ⟨_, (mem_exh_iff_isLeast.1 hw).2⟩, ?_⟩
@@ -369,6 +384,8 @@ theorem isInnocentlyExcludable_iff_forall_minimal {a : Set World} (ha : a ∈ AL
   rintro h _ ⟨⟨u, hu, rfl⟩, hmin⟩ ⟨-, hua⟩
   exact h ((mem_exhMW_iff_minimal ALT φ).2 ⟨hu, ⟨u, hu, rfl⟩, hmin⟩) hua
 
+/-- Innocent exclusion keeps the prejacent worlds verifying only alternatives that some minimal
+verified set contains. -/
 theorem mem_exhIE_iff_subset_sUnion :
     w ∈ exhIE ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (· ∈ ·) ALT w ⊆
       ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by

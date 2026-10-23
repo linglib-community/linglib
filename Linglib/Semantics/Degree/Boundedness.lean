@@ -253,6 +253,7 @@ abbrev DegreeShape : Boundedness → Type
 instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.DegreeShape := by
   cases b <;> exact inferInstance
 
+/-- Every boundedness is that of a linear order, since `DegreeShape` is a section of `ofOrder`. -/
 @[simp] theorem ofOrder_degreeShape : ∀ b : Boundedness, ofOrder b.DegreeShape = b
   | .open_ => ext (iff_of_false not_hasMin_ofOrder id) (iff_of_false not_hasMax_ofOrder id)
   | .lowerClosed =>
@@ -401,10 +402,14 @@ def defaultStandard : Boundedness → PositiveStandard
 theorem admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard := by
   cases b <;> decide
 
+/-- The default standard is the maximum exactly when the scale has one. -/
 theorem defaultStandard_eq_maxEndpoint_iff {b : Boundedness} :
     b.defaultStandard = .maxEndpoint ↔ b.HasMax := by
   cases b <;> decide
 
+/-- The default standards of a scale and its dual are complementary exactly when the scale has one
+endpoint. An open scale gives both poles a contextual standard and a totally closed one gives both
+the maximum, as for *full* and *empty*. -/
 theorem complementary_defaultStandard_dual_iff {b : Boundedness} :
     b.defaultStandard.Complementary b.dual.defaultStandard ↔
       b = .lowerClosed ∨ b = .upperClosed := by

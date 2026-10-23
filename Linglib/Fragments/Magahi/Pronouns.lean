@@ -177,11 +177,15 @@ def thirdPlural : Case → Grade → PersonalPronoun
   | .nom, _ => okhnii
   | _, _ => okhniiKe
 
+/-- Two second-person singular grades share their forms exactly when both are below the high
+honorific. -/
 theorem secondSingular_eq_iff (c : Case) (g h : Grade) :
     secondSingular c g = secondSingular c h ↔
       g = h ∨ g < .highHonorific ∧ h < .highHonorific := by
   revert c g h; decide
 
+/-- Two third-person singular grades share their forms exactly when both are above the
+nonhonorific, except in the nominative, which has one form for every grade. -/
 theorem thirdSingular_eq_iff (c : Case) (g h : Grade) :
     thirdSingular c g = thirdSingular c h ↔
       c = .nom ∨ g = h ∨ .nonhonorific < g ∧ .nonhonorific < h := by
@@ -200,6 +204,7 @@ def secondAgreement : Grade → Morph
   | .honorific => .suff "a"
   | .highHonorific => .suff "thi(n)"
 
+/-- The verb separates the three second-person grades, among them the two *tu* serves. -/
 theorem secondAgreement_injective : Function.Injective secondAgreement := by decide
 
 /-- The suffix agreeing with a non-second-person subject and with the addressee, by the grade of
@@ -211,6 +216,8 @@ def allocutive : Grade → Grade → Morph
   | _, .highHonorific => .suff "thi(n)"
   | _, _ => .suff "thu(n)"
 
+/-- Honorific and high honorific subjects take the same suffixes, which separate only a high
+honorific addressee from the others. -/
 theorem allocutive_honorific :
     allocutive .honorific = allocutive .highHonorific ∧
       ∀ a b, allocutive .honorific a = allocutive .honorific b ↔

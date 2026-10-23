@@ -350,12 +350,14 @@ theorem utp_map_eq_resolve_mark (w : List TBU) :
       (resolveRight_replicate a).1.2, resolveRight_finalOutput, resolveFinal]
   · rw [resolve_mark, utp_map_blocks]
 
+/-- A preserves length. -/
 theorem length_markLeft_run (w : List TBU) : (markLeft.run w).length = w.length := by
   rcases decomposition w with ⟨a, rfl⟩ | ⟨a, js, t, rfl⟩
   · simp [SubsequentialTransducer.run, SubsequentialTransducer.runFrom,
       (markLeft_replicate .q0 (.inl rfl) a).1, (markLeft_replicate .q0 (.inl rfl) a).2]
   · rw [markLeft_run]; simp [length_codes]
 
+/-- Unbounded tonal plateauing is weakly deterministic in Heinz and Lai's sense. -/
 theorem utp_isWeaklyDeterministic : IsWeaklyDeterministic utp.map :=
   ⟨markLeft.run, resolveRight.runRight, markLeft.isLeftSubsequential,
     fun w ↦ (length_markLeft_run w).le, resolveRight.isRightSubsequential,

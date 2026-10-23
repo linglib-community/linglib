@@ -154,6 +154,7 @@ theorem getElem?_runFrom (w : B.LetterToLetter) (l : L) (xs : List α) (i : ℕ)
       w.cell (B.lStateAfter l (xs.take i)) a (B.rState (xs.drop (i + 1))) := by
   induction xs generalizing l i <;> cases i <;> simp [w.output_eq, *]
 
+/-- Output `i` is `cell (lState (x.take i)) (x i) (rState (x.drop (i+1)))`. -/
 theorem getElem?_run (w : B.LetterToLetter) (x : List α) (i : ℕ) :
     (B.run x)[i]? = x[i]?.map fun a ↦
       w.cell (B.lState (x.take i)) a (B.rState (x.drop (i + 1))) :=
@@ -249,6 +250,7 @@ private theorem reverse_runFrom (r : R) (xs : List α) :
     congr 1
     simp [rState, lStateAfter]
 
+/-- The mirror bimachine computes the reverse conjugate. -/
 @[simp] theorem run_reverse : B.reverse.run = List.revConj B.run :=
   funext fun xs ↦ B.reverse_runFrom B.rInit xs
 
@@ -336,6 +338,7 @@ theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
   ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
     B.run_map _ _⟩
 
+/-- The reverse conjugate of a bimachine-computable function is bimachine-computable. -/
 protected theorem IsBimachineComputable.revConj {f : List α → List β}
     (h : IsBimachineComputable f) : IsBimachineComputable (List.revConj f) :=
   have ⟨L, _, R, _, B, hB⟩ := h

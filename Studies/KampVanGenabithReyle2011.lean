@@ -61,6 +61,9 @@ theorem marble_worlds_eq_coin :
   · rintro ⟨p, ⟨hw, -⟩, rfl⟩
     exact ⟨⟨p.world, fun _ ↦ ((0 : Fin 2) : Flat (Fin 2))⟩, ⟨hw, rfl⟩, rfl⟩
 
+/-- But the states differ, since the marble witness is not a coin witness. With
+`marble_worlds_eq_coin`, this is Partee's argument that context change operates on information
+states, not on propositions. -/
 theorem marble_ne_coin : marbleState ≠ coinState := by
   intro h
   have hmem : (⟨true, fun _ ↦ ((0 : Fin 2) : Flat (Fin 2))⟩ : Possibility Bool Unit (Flat (Fin 2)))

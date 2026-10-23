@@ -99,10 +99,13 @@ theorem choice_covered_of_le {R' : α → Prop} [DecidablePred R'] (h : ∀ x, R
 
 /-! ### Number trials -/
 
+/-- The critical trials show a smaller and a larger set, so an exact numeral has no visible
+referent and the covered box is chosen. -/
 theorem choice_exact_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
     choice (· ∈ Comparison.eq.interval m) ⟨a, b⟩ = some .covered :=
   (choice_eq_covered_iff _ _).2 ⟨by simp; omega, by simp; omega⟩
 
+/-- A lower-bounded numeral refers to the larger set. -/
 theorem choice_atLeast_visible {m a b : ℕ} (ha : a < m) (hb : m ≤ b) :
     choice (· ∈ Comparison.ge.interval m) ⟨a, b⟩ = some (.visible b) :=
   (choice_eq_visible_right_iff _ _).2 ⟨by simp; omega, by simp; omega⟩
@@ -165,6 +168,8 @@ theorem some_some_all_literal : choice someLiteral ⟨.IO, .A⟩ = Option.none :
 theorem some_some_all_strengthened :
     choice someStrengthened ⟨.IO, .A⟩ = some (.visible .IO) := by decide
 
+/-- In some(NONE,ALL), the control for implicature cancellation, the literal meaning picks the
+total set, which adults and children chose, and the strengthened meaning the covered box. -/
 theorem some_none_all_literal : choice someLiteral ⟨.E, .A⟩ = some (.visible .A) := by
   decide
 
@@ -193,6 +198,7 @@ theorem exhKnown_last (k n : ℕ) :
     exhKnown k (Fin.last k) n ↔ n ∈ Comparison.ge.interval k :=
   ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun j hj ↦ absurd hj (not_lt.2 (Fin.le_last j))⟩⟩
 
+/-- A numeral below the top is exhaustified to its exact meaning. -/
 theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : ℕ) :
     exhKnown k i n ↔ n ∈ Comparison.eq.interval (i : ℕ) := by
   have hs : (i : ℕ) + 1 < k + 1 := by have := Fin.lt_def.1 hi; simp at this; omega

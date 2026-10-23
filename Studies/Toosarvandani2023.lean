@@ -143,6 +143,7 @@ theorem pair_mem_sups_singular {X : Finset Ind} {x : Ind} (hx : x ∈ X) (y : In
     (mem_filter.2
       ⟨mem_Ioc.2 ⟨empty_ssubset.2 (singleton_nonempty y), subset_univ _⟩, card_singleton y⟩)
 
+/-- So person and animacy must compose before number. -/
 theorem exists_plural_sups_singular {X : Finset Ind} {x y : Ind} (hx : x ∈ X) (hxy : x ≠ y) :
     ∃ s ∈ Ioc ∅ X ⊻ singular piDen, s.card ≠ 1 :=
   ⟨{x, y}, pair_mem_sups_singular hx y, by rw [card_pair hxy]; decide⟩
@@ -237,6 +238,8 @@ theorem Pronoun.le_iff_features_subset {p q : Pronoun} : p ≤ q ↔ p.features 
 specific feature (62), its specification by `specification_eq_containing`. -/
 def Pronoun.denotation (p : Pronoun) : Finset (Finset Atom) := containing p.top.atoms univ
 
+/-- A pronoun is at least as high as another exactly when its denotation lies inside the other's,
+so the hierarchy of featural specification is one of semantic specificity. -/
 theorem Pronoun.le_iff_denotation_subset {p q : Pronoun} :
     p ≤ q ↔ q.denotation ⊆ p.denotation := by
   rw [le_iff_top_le, Feature.le_iff_atoms_subset, denotation, denotation,
@@ -296,6 +299,8 @@ def scenario? (e : Datum) : Option (Scenario Pronoun) := do
 /-- The Yalálag rows. -/
 def yalalag : List Datum := Examples.all.filter (·.language = "yala1267")
 
+/-- Every Yalálag example is grammatical exactly when its head Agrees with both pronouns, so
+the object clitic is blocked in the upstream scenarios and only there. -/
 theorem yalalag_rows :
     yalalag ≠ [] ∧ ∀ e ∈ yalalag, ∃ s ∈ scenario? e, (e.judgment = .acceptable ↔ Agrees s) := by
   decide +kernel

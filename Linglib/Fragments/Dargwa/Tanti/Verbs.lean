@@ -122,10 +122,12 @@ theorem licensed_preverbTemplate_iff {E : PreverbGroup → Type*} {w : List (Σ 
     preverbTemplate.Licensed w ↔ (w.map Sigma.fst).Sublist [.localization, .direction] :=
   AffixTemplate.mem_language_iff_sublist rfl
 
+/-- A string of preverbs the template licenses has at most two. -/
 theorem length_le_two_of_licensed {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)}
     (h : preverbTemplate.Licensed w) : w.length ≤ 2 := by
   simpa using (licensed_preverbTemplate_iff.1 h).length_le
 
+/-- *če-*, *če-b-* and *če-r-* are *super* with the lative, essive and elative markers. -/
 theorem Localization.preverb?_super :
     Localization.super.preverb? .lative = some (fun _ ↦ [.pref "če"]) ∧
       Localization.super.preverb? .essive = some (fun g ↦ [.pref "če", .pref g.form]) ∧
@@ -281,6 +283,8 @@ def stop : ComplexVerb :=
     preverbs := [⟨.direction, Direction.down.preverb, by decide⟩], lightVerb := standUp,
     gloss := "stop" }
 
+/-- In *w-isːe-w-ig-* 'start crying' the stem and the light verb each take the marker of the
+agreement controller. -/
 theorem morphs_startCrying (g : Gender.Marker) :
     startCrying.morphs g = [.pref g.form, .root "isːe", .pref g.form, .root "ig"] := rfl
 

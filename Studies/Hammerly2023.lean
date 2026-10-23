@@ -160,6 +160,7 @@ inclusive with second person (60). -/
 theorem not_admissible_participant_participantStar :
     ¬ Admissible [.participant, .participantStar] := by decide
 
+/-- Narrowing is not licensed at the top, where the wide feature divides the space. -/
 theorem not_admissible_participantStar : ¬ Admissible [.participantStar] := by decide
 
 /-- The admissible hierarchies derive exactly the partitions that Harbour's bivalent geometry (9)

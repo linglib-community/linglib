@@ -21,6 +21,7 @@ values by a linear map: given `hv : LinearIndependent K v` and `w : ι → W`, t
 variable {ι K V W : Type*} [Field K] [AddCommGroup V] [Module K V] [AddCommGroup W]
   [Module K W]
 
+/-- A linear map may take any values on a linearly independent family. -/
 theorem LinearIndependent.exists_linearMap_apply_eq {v : ι → V} (hv : LinearIndependent K v)
     (w : ι → W) : ∃ f : V →ₗ[K] W, ∀ i, f (v i) = w i := by
   obtain ⟨f, hf⟩ := LinearMap.exists_extend ((Module.Basis.span hv).constr K w)

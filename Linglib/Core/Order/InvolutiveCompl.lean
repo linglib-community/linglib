@@ -88,6 +88,7 @@ protected theorem compl_eq_iff_eq_compl : aᶜ = b ↔ a = bᶜ :=
   ⟨fun h ↦ InvolutiveCompl.compl_compl b ▸ InvolutiveCompl.compl_compl a ▸
     InvolutiveCompl.compl_le_compl h, InvolutiveCompl.compl_le_compl⟩
 
+/-- Orthogonality is symmetric, `a ≤ bᶜ ↔ b ≤ aᶜ`. -/
 protected theorem le_compl_comm : a ≤ bᶜ ↔ b ≤ aᶜ :=
   ⟨fun h ↦ InvolutiveCompl.compl_compl b ▸ InvolutiveCompl.compl_le_compl h,
     fun h ↦ InvolutiveCompl.compl_compl a ▸ InvolutiveCompl.compl_le_compl h⟩

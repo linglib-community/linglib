@@ -25,6 +25,9 @@ minimal elements are those that nothing is `r`-related to.
 variable {ι β : Type*} [Preorder ι] [Preorder β] {P : ι → Prop} {f : ι → β} {r : ι → ι → Prop}
   {i : ι}
 
+/-- Among elements of `P` none of which lies below another, an element is minimal under a key
+whose strict order between incomparable elements is the irreflexive relation `r` exactly when no
+element of `P` is `r`-related to it. -/
 theorem minimalFor_iff_of_isAntichain (hP : IsAntichain (· ≤ ·) {j | P j}) (hr : ∀ j, ¬ r j j)
     (h : ∀ ⦃j k⦄, ¬ j ≤ k → ¬ k ≤ j → (f j < f k ↔ r j k)) :
     MinimalFor P f i ↔ P i ∧ ∀ ⦃j⦄, P j → ¬ r j i := by

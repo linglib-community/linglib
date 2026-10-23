@@ -82,6 +82,9 @@ variable {c}
 local macro "protects_simp" : tactic =>
   `(tactic| simp [Protects, Juncture.v1Idx, Juncture.v2Idx])
 
+/-- The first vowel begins a word when it is the whole of its morph and that morph begins a word,
+is lexical when its morph is a root, and begins a morph or makes it up when it is the whole of
+it. -/
 @[simp] theorem protects_v1Idx {p : Prominence} :
     c.Protects p c.v1Idx ↔ match p with
       | .wordInitial => c.stemBody = [] ∧ ∀ b ∈ c.before, ¬ b.JoinsAt .clitic c.left
@@ -89,6 +92,9 @@ local macro "protects_simp" : tactic =>
       | .morphemeInitial | .soleSegment => c.stemBody = [] := by
   cases p <;> protects_simp
 
+/-- The second vowel always begins a morph, begins a word when its morph is not joined to the
+first, is lexical when its morph is a root, and makes up its morph when that has no other
+segment. -/
 @[simp] theorem protects_v2Idx {p : Prominence} :
     c.Protects p c.v2Idx ↔ match p with
       | .wordInitial => ¬ c.left.JoinsAt .clitic c.right

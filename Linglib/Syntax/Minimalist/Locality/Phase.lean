@@ -167,6 +167,7 @@ theorem isPhaseHead_iff_exists_isComplementOf : IsPhaseHead T ℓ ↔ ∃ z, IsC
     · exact ⟨r, _, hm, hℓ, by simp, by simp, by rintro rfl; simp at hℓ⟩
     · exact ⟨l, _, hm, hℓ, by simp, by simp, by rintro rfl; simp at hℓ⟩
 
+/-- A head projects exactly when its phase has a nonempty interior. -/
 theorem isPhaseHead_iff_phaseInterior_ne_zero : IsPhaseHead T ℓ ↔ T.phaseInterior ℓ ≠ 0 := by
   rw [isPhaseHead_iff_exists_isComplementOf]
   refine ⟨fun ⟨z, hz⟩ h0 ↦ Multiset.filter_eq_nil.1 h0 z hz.mem_terms ⟨z, hz.mem_terms, hz, .refl⟩,
@@ -178,6 +179,7 @@ theorem isPhaseHead_iff_phaseInterior_ne_zero : IsPhaseHead T ℓ ↔ T.phaseInt
 theorem phaseInterior_le_phase : T.phaseInterior ℓ ≤ T.phase ℓ :=
   Multiset.monotone_filter_right _ fun _ h ↦ h.withinProjection
 
+/-- The interior and the edge partition the phase. -/
 theorem phaseInterior_add_phaseEdge : T.phaseInterior ℓ + T.phaseEdge ℓ = T.phase ℓ := by
   conv_rhs => rw [← Multiset.filter_add_not (· ∈ T.phaseInterior ℓ) (T.phase ℓ)]
   congr 1
@@ -188,6 +190,7 @@ theorem phaseInterior_add_phaseEdge : T.phaseInterior ℓ + T.phaseEdge ℓ = T.
 theorem phaseInterior_le_cCommandDomain : T.phaseInterior ℓ ≤ T.cCommandDomain (leaf ℓ) :=
   Multiset.monotone_filter_right _ fun _ h ↦ h.cCommands
 
+/-- The interior of a head that projects wherever it occurs is its c-command domain. -/
 theorem phaseInterior_eq_cCommandDomain
     (h : ∀ m ∈ T.terms, ImmediatelyContains m (leaf ℓ) → m.raisingHead = some ℓ) :
     T.phaseInterior ℓ = T.cCommandDomain (leaf ℓ) :=

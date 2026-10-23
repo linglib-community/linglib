@@ -349,10 +349,12 @@ def inventory : List Adposition :=
    vanAf, onderDoor, tussenDoor, overHeen, doorHeen, omHeen, naarToe, tussenIn,
    na, tijdens, met, zonder, dankzij, namens, ondanks, ongeacht, vanwege, volgens, wegens]
 
+/-- Every postpositional use denotes a path. -/
 theorem direction_post_ne_place :
     ∀ a ∈ inventory, a.IsPostposition → a.direction .post ≠ .place := by
   decide
 
+/-- Every postposition but *af* is also a preposition. -/
 theorem pre_of_post :
     ∀ a ∈ inventory, a.IsPostposition → a.IsPreposition ∨ a.toAdposition = af.toAdposition := by
   decide
@@ -365,6 +367,7 @@ theorem complements_of_circum :
     ∀ a ∈ inventory, a.IsCircumposition → a.complements = {some .np} := by
   decide
 
+/-- The adpositions whose complement cannot be R-pronominalized are non-spatial. -/
 theorem not_isSpatial_of_not_rPronoun :
     ∀ a ∈ inventory, a.rPronoun = false → ¬ a.IsSpatial := by
   decide

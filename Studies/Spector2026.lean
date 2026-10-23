@@ -773,6 +773,8 @@ theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
   rw [(hmem a').1 ⟨⟨a', rfl⟩, hga⟩]
   simp
 
+/-- In the full system *¬∃x¬∃yS(x, y)* is true exactly when everyone spoke to someone, because the
+embedded existential is evaluated at each restriction, which restores covariation. -/
 theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (w : W) :
     TrueAtP M (.not (.ex x (.not (.ex y (.rel S x y))))) w ↔
       ∀ a, ∃ b, (a, b) ∈ M.rel S w := by

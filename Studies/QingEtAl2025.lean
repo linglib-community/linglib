@@ -213,11 +213,14 @@ def Argument (r : Datum) : Prop :=
 
 instance (r : Datum) : Decidable (Argument r) := by unfold Argument; infer_instance
 
+/-- Every acceptable interrogative complement is under a class 1 or class 2 predicate. -/
 theorem responsive_rows :
     ∀ r ∈ Examples.all, Argument r → r.judgment = .acceptable →
       ∀ c ∈ class? r, c ≠ .distributivePositive := by
   decide +kernel
 
+/-- Under canonical composition a class 3 predicate takes no question: the paper marks every
+such example, *hope whether* and its counterparts in the four other languages. -/
 theorem anti_rogative_rows :
     ∀ r ∈ Examples.all, Argument r → class? r = some .distributivePositive →
       r.judgment ≠ .acceptable := by
@@ -292,6 +295,9 @@ variable {V : Type*} {p Bp Bnp : V → Prop} {v₁ v₂ : V}
 (89). -/
 def HopefulGoals (φ Bφ : V → Prop) (G : Set (V → Prop)) : Prop := ∀ g ∈ G, g = φ ∨ g = Bφ
 
+/-- When the agent hopes for the radical, with the goal of believing `p`, the outcome in which
+they come to believe `p` is strictly better than the one in which they do not, so the
+wondering meets Tabatowski's convention on asking whether `p`. -/
 theorem hopes_radical (h₁ : Bp v₁) (h₂ : ¬ Bp v₂) : v₁ <[{Bp}] v₂ := by
   simp only [Preorder.ofCriteria_lt_iff, Preorder.ofCriteria_le_iff,
     Set.mem_singleton_iff, forall_eq]

@@ -137,11 +137,14 @@ def lexical : IntervalPartition Feature := ⟨[{.v, .caus₁}, {.voice}], by dec
 
 theorem lexical_part_caus₁ : lexical.part .caus₁ = {.v, .caus₁} := by decide
 
+/-- A lexical causative allomorph applies to the head bearing Caus only if v is on that head, in
+every context. -/
 theorem v_mem_of_applies {P : IntervalPartition Feature} {ρ : Root} {l r : List Terminal}
     (h : Applies (lexicalItem ρ) (⟨causTerminal P, l, r⟩ : Neighborhood Terminal)) :
     Feature.v ∈ P.part .caus₁ := by
   simpa [Neighborhood.mem_def, causTerminal] using h (0, .inl .v) (by simp [lexicalItem])
 
+/-- In the lexical causative next to its root, the root's allomorph is inserted. -/
 theorem subsetPrinciple_lexical (ρ : Root) :
     subsetPrinciple (vocabulary ρ) ⟨causTerminal lexical, [{.inr ρ}], []⟩ = some (.lexical ρ) := by
   have hl : Applies (lexicalItem ρ) (⟨causTerminal lexical, [{.inr ρ}], []⟩ : Neighborhood _) := by
@@ -179,6 +182,7 @@ def ofCauseHead : CauseHead → Option (IntervalPartition Feature)
   | ⟨.verb, false⟩ => some turkish
   | ⟨.phase, _⟩ => none
 
+/-- A causative head has a causee position iff its pattern puts v and Voice on different heads. -/
 theorem hasCauseePosition_iff {c : Pylkkanen2008.CauseHead} {P : IntervalPartition Feature}
     (h : ofCauseHead c = some P) : c.HasCauseePosition ↔ Feature.voice ∉ P.part .v := by
   obtain ⟨_ | _ | _, _ | _⟩ := c <;> cases h <;>

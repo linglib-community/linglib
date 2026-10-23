@@ -294,6 +294,7 @@ theorem divPowSum_pos {D k : ℕ} (hD : D ≠ 0) (h : ∀ n ∈ m, n ∣ D) (hm 
     (pow_pos (Nat.div_pos (Nat.le_of_dvd (Nat.pos_of_ne_zero hD) (h n hn)) hn0) k)
     (single_le_sum (fun x _ ↦ Nat.zero_le x) _ (mem_map_of_mem _ hn))
 
+/-- At a natural exponent, `invPowSum` times the common denominator `Dᵏ` is `divPowSum`. -/
 theorem invPowSum_mul_pow_eq_divPowSum {D : ℕ} (hD : D ≠ 0) (k : ℕ) {m : Multiset ℕ}
     (h : ∀ n ∈ m, n ∣ D) :
     m.invPowSum k * (D : ℝ≥0∞) ^ k = divPowSum D k m := by

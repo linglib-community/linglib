@@ -96,6 +96,9 @@ theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s ∈ v, Applies s c' �
     (hr : v.IsElsewhereWinner key c r) (hc' : Applies r c') : v.IsElsewhereWinner key c' r :=
   hr.anti (fun s hs ↦ ⟨hs.1, h s hs.1 hs.2⟩) ⟨hr.1.1, hc'⟩
 
+/-- There is no ABA across nested contexts. Over an antihomophonous rule set, an exponent
+realized at the smallest and the largest of three nested contexts is realized at the middle
+one. -/
 theorem Realizes.of_realizes {c₁ c₂ : Ctx} (hv : v.Antihomophonous)
     (h₁ : ∀ s ∈ v, Applies s c₁ → Applies s c₂) (h₂ : ∀ s ∈ v, Applies s c₂ → Applies s c)
     (hr₁ : v.Realizes key c₁ φ) (hr : v.Realizes key c φ) : v.Realizes key c₂ φ := by

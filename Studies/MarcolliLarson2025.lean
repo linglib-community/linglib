@@ -90,9 +90,14 @@ theorem parasiticGen_notMem : parasiticGen ∉ (system (L := Unit) giveHier).rul
 def seSystem : Bud.System (Color Unit) :=
   { system giveHier with rules := insert parasiticGen (system giveHier).rules }
 
+/-- With the marking, the dual-role discharge is derivable: *Jean* ends with both the matrix
+experiencer role and the retained embedded agent role. -/
 theorem parasiticGen_derivable : seSystem.Derives (.leaf .nontheta) parasiticGen :=
   Bud.System.Produces.single ⟨_, Set.mem_insert .., 0, rfl, rfl⟩
 
+/-- Without the marking, the dual-role configuration is underivable: the structure is
+movement-free and its root receives no role, so the sole-role invariant forbids the
+dual-receiver argument. The sole-role requirement of [siloni-2012]'s "I"-reading account. -/
 theorem parasiticGen_not_derivable :
     ¬ (system (L := Unit) giveHier).Derives (.leaf .nontheta) parasiticGen := by
   intro h
@@ -119,6 +124,8 @@ def anchoredGiveComb : Bud.Tree (Color LexicalItem.Token) :=
         (.leaf (.lex toMary [.down .goal]))
         (.leaf (.lex gave (upGrid [.agent, .theme, .goal])))))
 
+/-- The anchored *give* comb is an unbalanced theta structure: its root is initial, its leaves
+are lexical, and each vertex discharges one role of the verb's grid. -/
 theorem anchoredGiveComb_mem_language :
     anchoredGiveComb brian gave theBook toMary ∈ (system giveHier).language := by
   refine Bud.System.mem_ofCherries_language_iff.2

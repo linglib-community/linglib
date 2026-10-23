@@ -144,6 +144,11 @@ private theorem hsStep_descends {lt : C → C → Prop}
         rw [hp] at hne
         exact sound a a' hcv hp fun he => hne (congrArg some he)
 
+/-- **HS terminates under a well-founded harmony order.** If every genuine step
+descends a well-founded `lt` (`sound`), the search is eventually constant: some `N`
+past which further fuel doesn't change the result. Derivations cannot loop while each
+step makes measurable progress, so the explicit `Nat` bound is harmless: the orbit cannot
+descend the harmony order lifted to `Option` forever, so some iterate is a fixed point. -/
 theorem iterateGen_eventually_constant {lt : C → C → Prop} (wf : WellFounded lt)
     (sound : ∀ c c', step c ≠ {c} → pick (step c) = some c' → c' ≠ c → lt c' c)
     (c : C) :
@@ -189,11 +194,15 @@ def Converged : Prop := D.stepOptimum c = ({c} : Finset C)
 
 instance : Decidable (D.Converged c) := decEq (D.stepOptimum c) ({c} : Finset C)
 
+/-- `Converged` is `Function.IsFixedPt` of the powerset step
+`s ↦ ⋃ x ∈ s, stepOptimum x` at the singleton `{c}` — by `Finset.singleton_biUnion`,
+with no intermediate combinator. Simp-normalized toward `Converged`. -/
 @[simp] theorem isFixedPt_singleton_iff_converged :
     Function.IsFixedPt (fun s => s.biUnion D.stepOptimum) ({c} : Finset C)
       ↔ D.Converged c := by
   simp [Converged, Function.IsFixedPt, Finset.singleton_biUnion]
 
+/-- GEN-restriction to the faithful candidate forces convergence. -/
 theorem converged_of_singleton_gen (h : D.gen c = ({c} : Finset C)) : D.Converged c :=
   Tableau.optimal_singleton h
 

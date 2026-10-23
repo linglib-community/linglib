@@ -240,9 +240,11 @@ diagram of `X`, `Y` and `Z`, `p` counts `X ∩ Y ∩ Z`, `x` the rest of `X ∩ 
 def Euclidean (q : NumberTree) : Prop :=
   ∀ p x y s t u, q (y + s) (p + x) → q (x + s) (p + y) → q (x + u) (p + t)
 
+/-- The only asymmetric quantifier is the empty one. -/
 theorem Asymmetric.eq_bot (h : q.Asymmetric) : q = ⊥ :=
   funext₂ fun a c ↦ eq_false fun hq ↦ h a a c hq hq
 
+/-- The only strongly connected quantifier is the universal one. -/
 theorem StronglyConnected.eq_top (h : q.StronglyConnected) : q = ⊤ :=
   funext₂ fun a c ↦ eq_true ((h a a c).elim id id)
 
@@ -252,6 +254,7 @@ theorem Irreflexive.asymmetric (hI : q.Irreflexive)
     (hT : ∀ a b c, q a c → q b c → q 0 (a + c)) : q.Asymmetric :=
   fun a b c h₁ h₂ ↦ hI _ (hT a b c h₁ h₂)
 
+/-- A nonempty Euclidean quantifier is universal. -/
 theorem Euclidean.eq_top (h : q.Euclidean) (hq : ∃ a b, q a b) : q = ⊤ := by
   obtain ⟨d, c, hdc⟩ := hq
   have h₁ : ∀ t u, q u (c + t) := fun t u ↦ by
@@ -383,6 +386,8 @@ private theorem eq_all_or_eq_no (hV : q.Variety) (hC : q.Cont) (hP : q.Plus) (hU
   · exact .inl (eq_all hC.1 hU h00 h10 h01)
   · exact ((hP.1 h00).elim h10 h01).elim
 
+/-- The quantifiers with variety that satisfy CONT, PLUS and UNIF are exactly *all*, *some*,
+*no* and *not all*. -/
 theorem variety_cont_plus_uniform_iff :
     q.Variety ∧ q.Cont ∧ q.Plus ∧ q.Uniform ↔
       q = NumberTree.all ∨ q = NumberTree.some ∨ q = NumberTree.no ∨ q = NumberTree.notAll := by
@@ -501,6 +506,8 @@ theorem _root_.Quantifier.GQ.iff_of_ncard_eq [Finite α] (hC : Conservative Q)
 def ofGQ (Q : GQ α) : NumberTree := fun a b ↦
   ∃ A B : α → Prop, {x | A x ∧ ¬ B x}.ncard = a ∧ {x | A x ∧ B x}.ncard = b ∧ Q A B
 
+/-- A conservative, permutation-invariant quantifier on a finite universe holds of `A` and `B`
+exactly when its tree holds of `|A \ B|` and `|A ∩ B|`. -/
 theorem ofGQ_iff [Finite α] (hC : Conservative Q) (hQ : QuantityInvariant Q) (A B : α → Prop) :
     ofGQ Q {x | A x ∧ ¬ B x}.ncard {x | A x ∧ B x}.ncard ↔ Q A B :=
   ⟨fun ⟨_, _, hd, hi, h⟩ ↦ (GQ.iff_of_ncard_eq hC hQ hd hi).mp h, fun h ↦ ⟨A, B, rfl, rfl, h⟩⟩
@@ -527,6 +534,7 @@ instance toGQ.decidable [Fintype α] (q : NumberTree) [DecidableRel q] (A B : α
     (Finset.univ.filter fun x ↦ A x ∧ B x).card) <| by
       rw [toGQ_apply, Set.ncard_setOf_eq_card_filter, Set.ncard_setOf_eq_card_filter]
 
+/-- The quantifier of a tree is conservative, since `A \ B` and `A ∩ B` see only `B ∩ A`. -/
 theorem conservative_toGQ (q : NumberTree) : Conservative (q.toGQ : GQ α) := fun A B ↦ by
   unfold toGQ
   congr! 3 <;> ext <;> tauto
@@ -534,6 +542,7 @@ theorem conservative_toGQ (q : NumberTree) : Conservative (q.toGQ : GQ α) := fu
 theorem quantity_toGQ (q : NumberTree) : (q.toGQ : GQ α).Quantity :=
   fun _ _ _ _ hi hd _ _ ↦ by rw [toGQ_apply, toGQ_apply, hi, hd]
 
+/-- The quantifier of a tree is permutation invariant. -/
 theorem quantityInvariant_toGQ (q : NumberTree) : QuantityInvariant (q.toGQ : GQ α) :=
   (quantity_toGQ q).quantityInvariant
 
@@ -576,6 +585,8 @@ theorem card_points (n : ℕ) : (points n).card = (n + 1) * (n + 2) / 2 := by
   rw [points, Finset.card_sigma, Finset.sum_congr rfl fun k _ ↦ Finset.Nat.card_antidiagonal k,
     ← h n, Nat.mul_div_cancel _ two_pos]
 
+/-- The conservative, permutation-invariant quantifiers on a universe of `n` individuals are the
+sets of points in rows `0` to `n` of the tree. -/
 theorem card_powerset_points (n : ℕ) :
     (points n).powerset.card = 2 ^ ((n + 1) * (n + 2) / 2) := by
   rw [Finset.card_powerset, card_points]
@@ -653,6 +664,8 @@ theorem toGQ_all_iff {A B : α → Prop} : NumberTree.all.toGQ A B ↔ ∀ x, A 
   rw [toGQ_apply, NumberTree.all, Set.ncard_eq_zero, Set.eq_empty_iff_forall_notMem]
   simp
 
+/-- The quantifier of a tree depends on whether an individual is in its scope only if the
+individual is in its restrictor and the tree is not constant on the restrictor's row. -/
 theorem dependsOn_toGQ_compl_singleton_iff (A : α → Prop) (e : α) :
     DependsOn (q.toGQ A) {e}ᶜ ↔ (A e → q.ConstantOnRow {x | A x}.ncard) := by
   refine ⟨fun hdep hA ↦ by_contra fun hc ↦ ?_, fun h D D' hD ↦ propext ?_⟩

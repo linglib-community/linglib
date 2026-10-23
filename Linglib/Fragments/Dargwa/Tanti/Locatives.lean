@@ -199,6 +199,7 @@ theorem super_elative_hither :
 
 variable {l : Localization}
 
+/-- No elative without a direction marker is spatial. -/
 theorem not_isSpatial_elative_none (l : Localization) : ¬ IsSpatial ⟨l, .elative, none⟩ :=
   fun h ↦ h.2.1 rfl rfl
 
@@ -216,10 +217,13 @@ theorem isSpatial_translative_iff {d : Option Direction} :
     IsSpatial ⟨l, .translative, d⟩ ↔ l.TakesTranslative :=
   ⟨fun h ↦ h.2.2.1 rfl, fun h ↦ ⟨nofun, nofun, fun _ ↦ h, fun _ ↦ rfl⟩⟩
 
+/-- *post* takes the translative alone. -/
 theorem isSpatial_post_iff {o : Orientation} {d : Option Direction} :
     IsSpatial ⟨.post, o, d⟩ ↔ o = .translative :=
   ⟨fun h ↦ h.2.2.2 rfl, fun h ↦ h ▸ isSpatial_translative_iff.2 (.inr (.inr rfl))⟩
 
+/-- The forms fill the grid of regions and path heads except for the route, which the
+translative expresses, outside the exterior. -/
 theorem exists_isSpatial_iff (r : Spatial.Localization) (d : Spatial.Path.Direction) :
     (∃ f : LocativeForm,
       f.IsSpatial ∧ f.localization.region = r ∧ f.orientation.pathDir = d) ↔

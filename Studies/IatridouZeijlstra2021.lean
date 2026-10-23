@@ -217,6 +217,8 @@ theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | τ.f
   · exact .inl (le_def.2 ⟨(h₂.trans h₁.symm).le, h⟩)
   · exact .inr (le_def.2 ⟨(h₁.trans h₂.symm).le, h⟩)
 
+/-- On a chain of spans sharing the fixed boundary, the widened span is the maximal event-free
+one, the boundary stretched until the sentence would become false. -/
 theorem widened_iff_maximal (hF : IsChain (· ≤ ·) F) :
     Widened F P w τ ↔ Maximal (· ∈ F \ PRFV P w) τ := by
   refine ⟨fun h ↦ ⟨h.1, fun _ hτ' _ ↦ h.2 hτ'⟩, fun h ↦ ⟨h.1, fun τ' hτ' ↦ ?_⟩⟩
@@ -269,6 +271,8 @@ example : Widened (W := Unit) (E := NonemptyInterval ℤ) {τ | τ.snd = 10}
   · simp at hlt ⊢; omega
   · simp at hrb ⊢; omega
 
+/-- In dense time a perfect time span is widened only past infinitely many events, since with
+finitely many an event-free span can always be stretched a little further. -/
 theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
     (hfin : {e | P w e}.Finite) : ¬ Widened {τ | τ.snd = t} P w τ := fun h ↦ by
   obtain ⟨s, hs, hsF⟩ :
@@ -380,11 +384,16 @@ section Ambiguity
 
 variable {P : W → E → Prop} {w : W}
 
+/-- The durative *until* of [giannakidou-2002] accepts a negated perfective, which has the
+subinterval property, in a model with no relevant event at all. -/
 theorem two_until_overgenerates (hP : ∀ e, ¬ P w e) {s t : T} (h : s < t) :
     Giannakidou2002.durativeUntil (fun w ↦ (PRFV P w)ᶜ) w t :=
   (Giannakidou2002.durativeUntil_iff_of_isLowerSet (isLowerSet_compl_prfv P w) t).2
     ⟨⟨(s, t), h.le⟩, fun ⟨e, _, he⟩ ↦ hP e he, h, rfl⟩
 
+/-- *No time but `t₀` is a time of a `P`-event*, the exceptive of *dhen … para mono* with a
+temporal argument on the least-exception semantics, says that `t₀` is the only such time, which
+entails the punctual *until* of [giannakidou-2002], the event at `t₀` included. -/
 theorem eventiveUntil_of_exceptive {t₀ : T}
     (h : Quantifier.Exceptive.IsExceptionSet .no ⊤ (· = t₀) fun t ↦ ∃ e, P w e ∧ t ∈ Event.τ e) :
     Giannakidou2002.eventiveUntil P w t₀ := by
@@ -408,12 +417,14 @@ section RightBoundary
 
 variable {Q : W → E → Prop} {w : W} {e : E}
 
+/-- A perfective argument clause sets the right boundary at the completion of its first event. -/
 theorem isLeast_rightBoundaries_prfv (he : Q w e)
     (hfirst : ∀ e', Q w e' → (Event.τ e).snd ≤ (Event.τ e').snd) :
     IsLeast ((·.snd) '' PRFV Q w) (Event.τ e).snd :=
   ⟨⟨Event.τ e, ⟨e, le_rfl, he⟩, rfl⟩,
     fun _ ⟨_, ⟨e', hle, he'⟩, hτ⟩ ↦ hτ ▸ (hfirst e' he').trans (le_def.1 hle).2⟩
 
+/-- An imperfective argument clause sets the right boundary at the onset of its first event. -/
 theorem isLeast_rightBoundaries_unbounded (he : Q w e)
     (hfirst : ∀ e', Q w e' → (Event.τ e).fst ≤ (Event.τ e').fst) :
     IsLeast ((·.snd) '' UNBOUNDED Q w) (Event.τ e).fst :=

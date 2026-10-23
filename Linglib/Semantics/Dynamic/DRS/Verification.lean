@@ -162,6 +162,8 @@ theorem verifies_map_condition (e : V ≃ W) (f : W → M) (c : Condition L V) :
     exact or_congr (exists_extends_verifies_map_aux e l f ihl)
       (exists_extends_verifies_map_aux e r f ihr)
 
+/-- `f` verifies `K.map e` iff `f ∘ e` verifies `K`, so alphabetic variants have the same
+semantics. -/
 theorem verifies_map (e : V ≃ W) (f : W → M) (K : DRS L V) :
     Verifies f (K.map e) ↔ Verifies (f ∘ e) K :=
   verifies_map_all e K f (fun c _ u => verifies_map_condition e u c)
@@ -220,6 +222,8 @@ theorem verifiesCondition_congr (c : Condition L V) {f₁ f₂ : V → M}
       (Box.exists_extends_congr l (verifies_of_eqOn ihl) (h.mono Set.subset_union_left))
       (Box.exists_extends_congr r (verifies_of_eqOn ihr) (h.mono Set.subset_union_right))
 
+/-- "Some extension verifies `K`" reads the input embedding only at `K`'s free
+referents. -/
 theorem exists_extends_verifies_congr {K : DRS L V} {f₁ f₂ : V → M}
     (h : Set.EqOn f₁ f₂ ↑K.freeVarFinset) :
     (∃ g, K.Extends f₁ g ∧ Verifies g K) ↔ ∃ g, K.Extends f₂ g ∧ Verifies g K := by

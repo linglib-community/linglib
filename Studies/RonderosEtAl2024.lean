@@ -238,10 +238,17 @@ def BaselineHigherThanScalar (t : AdjType) : Prop :=
 instance : DecidablePred BaselineHigherThanScalar := fun _ ↦
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
+/-- The perceptual account predicts the effects found, for colour and scalar adjectives and not
+for material ones. -/
 theorem perceptual_matches : ∀ t, perceptual.PredictsEffect t ↔ Effect t := by decide +kernel
 
+/-- The pragmatic account predicts an effect for material and none for colour, the reverse of
+what was found. -/
 theorem pragmatic_fails : ¬ ∀ t, pragmatic.PredictsEffect t ↔ Effect t := by decide +kernel
 
+/-- The baseline follows the adjective classes. Looks to the property-matching objects exceed
+those for scalar adjectives exactly for the non-gradable types, which need no comparison class
+([aparicio-xiang-kennedy-2015]). -/
 theorem baseline_higher_iff_not_relative :
     ∀ t, BaselineHigherThanScalar t ↔ t.adjectiveClass ≠ .relative := by
   decide +kernel

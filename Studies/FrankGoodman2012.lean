@@ -152,6 +152,8 @@ theorem size_principle (hα : 0 < α) (h₁ : r ∈ ⟦w₁⟧ᴹ) (h₂ : r ∈
     (h : ⟦w₂⟧ᴹ.card < ⟦w₁⟧ᴹ.card) : (speaker M α r).real {w₁} < (speaker M α r).real {w₂} :=
   RSA.speaker_uniformOn_dirac_real_singleton_lt_of_card_lt _ hα h₁ h₂ h
 
+/-- Of two objects a word is true of, the speaker uses the word more for the one whose other
+feature more objects share, the object whose alternative word is the less informative. -/
 theorem speaker_real_singleton_lt_iff (hα : 0 < α) (h : r ∈ ⟦w⟧ᴹ) (h' : r' ∈ ⟦w⟧ᴹ)
     {b : Attribute} (hb : b ≠ w.1) :
     (speaker M α r').real {w} < (speaker M α r).real {w} ↔
@@ -245,6 +247,8 @@ theorem prefers_informative (hα : 0 < α) :
     (speaker M α .blueCircle).real {.blue} < (speaker M α .blueCircle).real {.circle} :=
   size_principle M hα (by decide) (by decide) (by decide)
 
+/-- *Blue* is used less for the blue circle, where *circle* competes, than for the blue square,
+where the only competitor is as ambiguous. -/
 theorem narrowing_blue (hα : 0 < α) :
     (speaker M α .blueCircle).real {.blue} < (speaker M α .blueSquare).real {.blue} :=
   (speaker_real_singleton_lt_iff M hα (by decide) (by decide) (b := .shape) (by decide)).2
@@ -255,6 +259,8 @@ theorem narrowing_square (hα : 0 < α) :
   (speaker_real_singleton_lt_iff M hα (by decide) (by decide) (b := .colour) (by decide)).2
     (by decide)
 
+/-- A listener with a uniform prior who hears *blue* favours the blue square over the blue
+circle. -/
 theorem listener_narrows_blue (hα : 0 < α) :
     (listener M Measure.count α .blue).real {.blueCircle} <
       (listener M Measure.count α .blue).real {.blueSquare} :=

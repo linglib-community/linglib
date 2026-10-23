@@ -77,12 +77,15 @@ section LeftLinear
 
 variable [IsLeftLinear M]
 
+/-- Later moments lie on fewer histories. -/
 theorem histories_antitone : Antitone (histories (M := M)) :=
   fun _ _ hmn _ hh ↦ Flag.Iic_subset hh hmn
 
+/-- A maximal moment lies on exactly one history, its past. -/
 theorem histories_eq_singleton {x : M} (hx : IsMax x) : histories x = {Flag.ofIsMax hx} :=
   Set.eq_singleton_iff_unique_mem.2 ⟨Set.mem_Iic.2 le_rfl, fun _ ↦ Flag.eq_ofIsMax_of_mem hx⟩
 
+/-- Two moments share a history exactly when they are comparable. -/
 theorem histories_inter_nonempty_iff {m n : M} :
     (histories m ∩ histories n).Nonempty ↔ m ≤ n ∨ n ≤ m :=
   ⟨fun ⟨h, hm, hn⟩ ↦ h.le_or_le hm hn, fun hmn ↦ hmn.elim
@@ -149,12 +152,14 @@ variable {φ} {m : M} {h : Flag M}
 
 @[simp] theorem mem_settled : (m, h) ∈ settled φ ↔ ∀ h' ∈ histories m, (m, h') ∈ φ := Iff.rfl
 
+/-- Atomic propositions are settled, since the valuation depends only on the moment. -/
 @[simp] theorem settled_atom (φ : Set M) : settled (atom φ) = atom φ :=
   Set.ext fun p ↦ ⟨fun H ↦ let ⟨h', hh'⟩ := histories_nonempty p.1; H h' hh', fun hφ _ _ ↦ hφ⟩
 
 theorem settled_past_atom (φ : Set M) : settled (past (atom φ)) = atom (Peircean.past φ) :=
   Set.ext fun p ↦ ⟨fun H ↦ let ⟨h', hh'⟩ := histories_nonempty p.1; H h' hh', fun hφ _ _ ↦ hφ⟩
 
+/-- The settled future of an atom is the Peircean future. -/
 theorem settled_future_atom (φ : Set M) :
     settled (future (atom φ)) = atom (Peircean.future φ) := rfl
 
@@ -183,6 +188,7 @@ quantifying over the maximal moments above it, and settled future truth is decid
 
 namespace Peircean
 
+/-- Settled future truth on a finite frame is a search over the maximal moments. -/
 theorem mem_future_iff [IsLeftLinear M] [Finite M] {φ : Set M} {m : M} :
     m ∈ future φ ↔ ∀ x, IsMax x → m ≤ x → ∃ m', m < m' ∧ m' ≤ x ∧ m' ∈ φ := by
   have : Nonempty M := ⟨m⟩

@@ -496,6 +496,7 @@ def AtLeastAsStrong (α β : (E → SignType) → (E → SignType)) : Prop :=
 def Dominates (α β : (E → SignType) → (E → SignType)) : Prop :=
   ClassicallyEquivalent α β ∧ AtLeastAsStrong α β ∧ ¬ AtLeastAsStrong β α
 
+/-- The definite article dominates the indefinite. -/
 theorem the_dominates_an [Nontrivial E] [DecidablePred (WeakUnique (E := E))] :
     Dominates (the (E := E)) an := by
   refine ⟨fun P _ x h _ ↦ ?_, fun P hP x _ ↦ ?_, fun h ↦ ?_⟩
@@ -541,10 +542,16 @@ theorem an_only_blocked [Nontrivial E] :
     Blocks C (fun α w ↦ F w (α (only (π w)))) the an :=
   blocks_of_weakUnique F (fun w ↦ only (π w)) fun _ _ ↦ weakUnique_only _
 
+/-- The sentence with *the* and the sentence with *a(n)* mean the same whenever the
+description is an *only* phrase, since the article contributes nothing to an inherently
+unique description. -/
 theorem sentence_the_only_eq_an_only :
     (fun w ↦ F w (the (only (π w)))) = fun w ↦ F w (an (only (π w))) := by
   funext w; rw [the_only]; rfl
 
+/-- With the *the*-sentence as the alternative, the *an*-sentence is not blocked at sentence
+level, although `an_only_blocked` blocks it at expression level, so Maximize Presupposition
+must compare expressions rather than sentences. -/
 theorem not_blocked_sentence_an_only :
     ¬ Competition.Blocked
         (Competition.sameAssertion (fun _ ↦ {fun w ↦ F w (the (only (π w)))})
@@ -816,6 +823,9 @@ theorem high_the_eq_low_an : high the = fun _ ↦ an onlySurvivor .scott := by
   rw [high_the_eq_high_an]
   rfl
 
+/-- On the high-scope derivation *the* blocks *a*. Together with
+`an_only_survivor_not_blocked`, this shows that blocking compares derivations rather than
+strings, so the surviving surface form owes its life to the low-scope derivation. -/
 theorem the_only_survivor_blocked : Blocks Set.univ high the an :=
   ⟨the_dominates_an, by rw [high_the_eq_high_an]⟩
 
@@ -839,6 +849,8 @@ inductive Item | this | that
 def restrictors : List (String × (Item → SignType)) :=
   [("uniqueIfAny", fun _ ↦ -1), ("multiple", fun _ ↦ 1), ("only", only (fun _ ↦ 1))]
 
+/-- A predicative-definite row is acceptable exactly when the definite of its restrictor is
+classical of the subject. -/
 theorem restrictor_rows : ∀ row ∈ Examples.all, ∀ P ∈ row.parse? "restrictor" restrictors,
     (row.judgment = .acceptable ↔ the P .this ≠ 0) := by
   decide +kernel

@@ -905,6 +905,9 @@ def steps (n : ℕ) : List (Formula Unit (Fin (n + 1))) :=
 def tolerances (n : ℕ) : List (Formula Unit (Fin (n + 1))) :=
   (List.finRange n).map fun k ↦ tolerance () k.castSucc k.succ
 
+/-- Version 1 of the sorites is `st`-invalid for every series of at least four members, the
+four-element model being a countermodel, although each of its steps is `st`-valid
+(`st_one_step`). Below four members it is valid by Facts 2 and 3. -/
 theorem not_st_version1 (hn : 3 ≤ n) :
     ¬ Consequence .strict .tolerant (.atom (.pred () 0) :: steps n)
       [.atom (.pred () (Fin.last n))] := by
@@ -919,6 +922,8 @@ theorem not_st_version1 (hn : 3 ≤ n) :
   · exact (series_realize_strict (by omega) _).2 (by simp)
   · exact ⟨by simp [series]; omega, by simp [series]⟩
 
+/-- Version 2 of the sorites, with tolerance as a premise, is `st`-valid, since it is classically
+valid and `st` extends classical consequence. -/
 theorem st_version2 (n : ℕ) :
     Consequence .strict .tolerant (.atom (.pred () 0) :: steps n ++ tolerances n)
       [.atom (.pred () (Fin.last n))] := by

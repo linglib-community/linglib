@@ -73,6 +73,8 @@ section DestructiveUpdate
 
 variable {E : Type*} {P Q : E → Prop} {g h : Assignment E}
 
+/-- *A linguist⁶ entered the room. A linguist⁶ was already there*: the outputs map the index to
+a witness of the second indefinite, the value the first gave it being overwritten. -/
 theorem mem_indefinites_iff (n : ℕ) :
     g ~[dexists n (test {k | P (k n)}) ○ dexists n (test {k | Q (k n)})] h ↔
       (∃ x, P x) ∧ ∃ y, Q y ∧ h = Function.update g n y := by
@@ -117,11 +119,13 @@ def upStatic (p : Prop) : Assignment E → Prop :=
 def upDynamic (p : Prop) : Assignment E → Set (Assignment E) :=
   fun g ↦ {h | h = g ∧ p}
 
+/-- The dynamic `↑` is the test of the static one. -/
 theorem upDynamic_eq_test (p : Prop) :
     {i : Assignment E × Assignment E | i.2 ∈ upDynamic p i.1} = test {g | upStatic p g} := by
   ext ⟨g, h⟩
   exact ⟨fun ⟨hgh, hp⟩ ↦ ⟨hgh.symm, hp⟩, fun ⟨hgh, hp⟩ ↦ ⟨hgh.symm, hp⟩⟩
 
+/-- A dynamic proposition built with `↑` is true where the static one is. -/
 theorem nonempty_upDynamic_iff (p : Prop) (g : Assignment E) :
     (upDynamic p g).Nonempty ↔ upStatic p g :=
   ⟨fun ⟨_, _, hp⟩ ↦ hp, fun hp ↦ ⟨g, rfl, hp⟩⟩
@@ -174,6 +178,9 @@ theorem reachable_trans (hgh : reachable L g h) (hhk : reachable L h k) : reacha
   obtain ⟨ψ, hψ⟩ := hhk
   exact ⟨φ ⋏ ψ, h, hφ, hψ⟩
 
+/-- The assignments reachable from one another are those that differ at finitely many
+variables: a formula changes only its active quantifier variables, and resetting the variables
+where two assignments differ takes the one to the other. -/
 theorem reachable_iff_finite : reachable L g h ↔ {x | g x ≠ h x}.Finite := by
   constructor
   · rintro ⟨φ, hφ⟩
@@ -185,10 +192,13 @@ theorem reachable_iff_finite : reachable L g h ↔ {x | g x ≠ h x}.Finite := b
     by_contra hne
     exact hy (by simpa using fun heq ↦ hne heq.symm)
 
+/-- Reachability is symmetric, so it is a partial order only if it is trivial. -/
 theorem reachable_symm (hgh : reachable L g h) : reachable L h g := by
   rw [reachable_iff_finite] at hgh ⊢
   simpa only [ne_comm] using hgh
 
+/-- Antisymmetry fails: distinct assignments are reachable from one another, an overwritten
+variable being overwritten again with its old value. -/
 theorem antisymmetry_fails [Nontrivial E] :
     ∃ g h : Assignment E, g ≠ h ∧ reachable L g h ∧ reachable L h g := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
@@ -218,6 +228,7 @@ theorem distNeg_eq_image (φ : CCP S) : distNeg φ = (test (Update.neg (CCP.lowe
   ext i
   simp [distNeg, Set.eq_empty_iff_forall_notMem]
 
+/-- The pointwise negation is distributive, whatever its prejacent. -/
 theorem isDistributive_distNeg (φ : CCP S) : CCP.IsDistributive (distNeg φ) :=
   distNeg_eq_image φ ▸ image_isDistributive _
 
@@ -230,6 +241,8 @@ theorem neg_might_of_eq_empty (h : φ s = ∅) : CCP.neg (CCP.might φ) s = s :=
 theorem neg_eq_self_of_disjoint (h : Disjoint s (φ s)) : CCP.neg φ s = s :=
   sdiff_eq_left.mpr h
 
+/-- The pointwise negation conflates negated possibility and negated necessity: on an
+eliminative prejacent both keep the points the prejacent rejects. -/
 theorem distNeg_might_eq_distNeg_must (hφ : CCP.IsEliminative φ) :
     distNeg (CCP.might φ) = distNeg (CCP.must φ) := by
   funext s
@@ -294,6 +307,7 @@ theorem part_of_mem_part {t : Set (W × A)} (ht : t ∈ Part s) : Part t = {t} :
   · rintro rfl
     exact ⟨⟨i, hi⟩, g, Set.ext fun k ↦ ⟨fun hk ↦ ⟨hk, hk.2⟩, fun hk ↦ hk.1⟩⟩
 
+/-- Slicing is anaphorically distributive. -/
 theorem isAnaphoricallyDistributive_slice (ψ : CCP (W × A)) :
     IsAnaphoricallyDistributive (slice ψ) := by
   funext s
@@ -349,6 +363,8 @@ theorem not_isDistributive_anaMight :
   obtain rfl : j = (false, ()) := (hsub hjt).trans (hsub hft).symm
   exact Bool.false_ne_true hj
 
+/-- On an update that only changes the anaphoric context, the sliced negation is the pointwise
+one: within a cell a world identifies its point, so a surviving world is a surviving point. -/
 theorem anaNeg_image {D : Update (W × A)} (hD : ∀ ⦃i j⦄, i ~[D] j → i.1 = j.1)
     (s : Set (W × A)) : anaNeg D.image s = s \ D.dom := by
   ext i

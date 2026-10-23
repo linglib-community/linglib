@@ -80,6 +80,7 @@ namespace Triangle
 /-- The corners of the square, each given as the set of vertices at which it holds. -/
 def corners : Square (Finset Triangle) := ⟨{.A}, {.E}, {.IO, .A}, {.E, .IO}⟩
 
+/-- The element of `corners` at each vertex is that vertex's singleton. -/
 theorem triangle_corners (t : Triangle) : corners.triangle t = {t} := by
   cases t <;> decide
 
@@ -106,8 +107,10 @@ theorem bot_eq_E : (⊥ : Triangle) = .E := rfl
 
 theorem top_eq_A : (⊤ : Triangle) = .A := rfl
 
+/-- *Some* holds above the bottom vertex. -/
 theorem mem_corners_I {t : Triangle} : t ∈ corners.I ↔ ⊥ < t := by decide +revert
 
+/-- *All* holds at the top vertex. -/
 theorem mem_corners_A {t : Triangle} : t ∈ corners.A ↔ t = ⊤ := by decide +revert
 
 theorem mem_corners_O {t : Triangle} : t ∈ corners.O ↔ t < ⊤ := by decide +revert
@@ -133,14 +136,17 @@ structure SquareRelations (sq : Square α) : Prop where
 
 namespace SquareRelations
 
+/-- `A` entails `I`. -/
 theorem subalternAI (h : SquareRelations sq) : sq.A ≤ sq.I := by
   rw [h.contradEI.symm.eq_compl]
   exact le_compl_iff_disjoint_right.mpr h.contraryAE
 
+/-- `E` entails `O`. -/
 theorem subalternEO (h : SquareRelations sq) : sq.E ≤ sq.O := by
   rw [h.contradAO.symm.eq_compl]
   exact le_compl_iff_disjoint_right.mpr h.contraryAE.symm
 
+/-- `I` and `O` cannot both fail. -/
 theorem subcontrIO (h : SquareRelations sq) : Codisjoint sq.I sq.O := by
   rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, codisjoint_iff, ← compl_inf,
     disjoint_iff.mp h.contraryAE.symm, compl_bot]
@@ -155,6 +161,7 @@ theorem inf_IO_eq (h : SquareRelations sq) : sq.I ⊓ sq.O = (sq.A ⊔ sq.E)ᶜ 
   rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, compl_sup, inf_comm]
 
 open Function in
+/-- The vertices of a square are pairwise disjoint. -/
 theorem pairwise_disjoint_triangle (h : SquareRelations sq) :
     Pairwise (Disjoint on sq.triangle) := by
   have hA : Disjoint sq.A (sq.I ⊓ sq.O) := by
@@ -166,6 +173,7 @@ theorem pairwise_disjoint_triangle (h : SquareRelations sq) :
     | simp only [onFun, Square.triangle]
   exacts [hE, h.contraryAE.symm, hE.symm, hA.symm, h.contraryAE, hA]
 
+/-- The vertices of a square join to `⊤`. -/
 theorem sup_triangle (h : SquareRelations sq) :
     sq.triangle .E ⊔ sq.triangle .IO ⊔ sq.triangle .A = ⊤ := by
   simp only [Square.triangle]
@@ -175,6 +183,7 @@ theorem sup_triangle (h : SquareRelations sq) :
 
 end SquareRelations
 
+/-- The corners as sets of vertices satisfy the relations of the square. -/
 theorem Triangle.squareRelations_corners : SquareRelations Triangle.corners :=
   .of_disjoint (by decide) (by decide) (by decide)
 

@@ -159,6 +159,8 @@ theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} {u : U} (hf : ∀ 
 
 variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
 
+/-- The pragmatic listener interprets an utterance as a meaning exactly when the meaning has
+positive prior and some strategy of positive posterior weight admits it at the utterance. -/
 theorem listener_apply_singleton_ne_zero_iff (hα : 0 < α) {u : U} (hf : ∀ r m, f r u m ≠ ∞)
     (ρ : Kernel U R) (m : M) :
     listener μ f α κ ρ u {m} ≠ 0 ↔ μ {m} ≠ 0 ∧ ∃ r, ρ u {r} ≠ 0 ∧ f r u m ≠ 0 := by
@@ -299,6 +301,8 @@ private theorem ncard_project_kaoWuEtAl2014 (g : KaoWuEtAl2014.Goal)
   revert g m
   decide
 
+/-- The question-indexed speaker of Kao and Goodman's irony model is the framework's speaker at
+the rhetorical function of the question, at a prior of positive mass everywhere. -/
 theorem kaoGoodman2015_S1 (μ : Measure KaoGoodman2015.Meaning) [IsFiniteMeasure μ]
     (hμ : ∀ m, μ {m} ≠ 0) {α : ℝ} (hα : 0 ≤ α) (m : KaoGoodman2015.Meaning)
     (q : KaoGoodman2015.QUD) :
@@ -309,6 +313,8 @@ theorem kaoGoodman2015_S1 (μ : Measure KaoGoodman2015.Meaning) [IsFiniteMeasure
   rw [S1, L0_rhetoricalOfQUD μ hμ]
   exact (speaker_qudListener_dirac _ _ (ncard_project_kaoGoodman2015 q) hα 0 m).symm
 
+/-- The goal-indexed speaker of Kao and colleagues' hyperbole model is the framework's speaker
+at the rhetorical function of the goal, at a prior of positive mass everywhere. -/
 theorem kaoWuEtAl2014_S1 (μ : Measure KaoWuEtAl2014.Meaning) [IsFiniteMeasure μ]
     (hμ : ∀ m, μ {m} ≠ 0) (c : ℝ) (m : KaoWuEtAl2014.Meaning) (g : KaoWuEtAl2014.Goal) :
     KaoWuEtAl2014.S1 μ c (m, g) =
@@ -394,6 +400,9 @@ theorem literal_strategy_apply_eq_zero (hα : 0 < α)
 
 variable [IsFiniteMeasure μ] (ρ : Kernel Weather WeatherStrategy)
 
+/-- The listener keeps the literal reading of *the weather is amazing* exactly when the strategy
+posterior gives the literal strategy weight, since the ironic and the hyperbolic strategy both
+exclude amazing weather at this utterance. -/
 theorem literal_reading_iff (hα : 0 < α) (hf : ∀ r m, f r .amazing m ≠ ∞)
     (hliteral : f .literal .amazing .amazing ≠ 0) (hirony : f .irony .amazing .amazing = 0)
     (hhyperbole : f .hyperbole .amazing .amazing = 0) (hμ : μ {.amazing} ≠ 0) :

@@ -60,12 +60,14 @@ def insertSum (T S : RoseTree α) : Multiset (RoseTree α) :=
 
 @[inherit_doc] scoped infixl:65 " ◁ " => insertSum
 
+/-- `T ◁ S` sums, over the vertices `p` of `T`, the grafting of `S` at `p`. -/
 theorem insertSum_eq_map_multiGraft (T S : RoseTree α) :
     T ◁ S = ((vertices T).map fun p => multiGraft T [(p, S)] : Multiset (RoseTree α)) := by
   rw [insertSum, insertion_def, List.length_singleton, List.replicate_one, List.sections_singleton,
     List.map_map]
   rfl
 
+/-- Grafting into a node either adds a child at the root or grafts inside the children. -/
 theorem insertSum_node (a : α) (cs : List (RoseTree α)) (S : RoseTree α) :
     node a cs ◁ S = node a (S :: cs) ::ₘ (insertionForest cs [S]).map (node a) := by
   rw [insertSum, insertion_node, show [S].sublists'.revzip = [([], [S]), ([S], [])] from rfl,
@@ -197,6 +199,9 @@ theorem insertSum_bind_insertSum (T S₁ S₂ : UnorderedTree α) :
   simp only [quot_mk_eq_mk, mk_insertSum, Multiset.bind_map, ← Multiset.map_bind]
   exact (RoseTree.map_mk_bind_insertSum t s₁ s₂).trans (congrArg _ (insertion_mk t [s₁, s₂]).symm)
 
+/-- The associator of the grafting product is symmetric in its last two arguments, so that
+`(T ◁ S₁) ◁ S₂ - T ◁ (S₁ ◁ S₂) = (T ◁ S₂) ◁ S₁ - T ◁ (S₂ ◁ S₁)`, here stated without
+subtraction. -/
 theorem insertSum_assoc_symm (T S₁ S₂ : UnorderedTree α) :
     (T ◁ S₁).bind (· ◁ S₂) + (S₂ ◁ S₁).bind (T ◁ ·) =
       (T ◁ S₂).bind (· ◁ S₁) + (S₁ ◁ S₂).bind (T ◁ ·) := by

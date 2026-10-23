@@ -594,6 +594,7 @@ def misprinted : Item := ⟨.exactly, .gapQ, [5, 5, 9, 9], .used⟩
 /-- The item is printed in Table 13. -/
 theorem misprinted_mem : misprinted ∈ items := by decide
 
+/-- The item realizes the GAP?? pattern, its all-variant true and its some-variant false. -/
 theorem misprinted_gapQQ :
     ¬ weak .exactly misprinted.display ∧ strong .exactly misprinted.display := by
   decide
@@ -636,6 +637,7 @@ theorem supervaluation_eq_zero_iff_weak (e : Embedding) (d : Display) :
   unfold weak strong
   split_ifs <;> simp [supervaluation_eq_zero_iff, Iff.comm]
 
+/-- The supervaluation is true exactly on the items designed true. -/
 theorem supervaluation_eq_one_iff_condition : ∀ i ∈ tested, i.status ≠ .faulty →
     i ≠ misprinted → (supervaluation i.embedding.tree i.display = 1 ↔
       i.condition = .clearlyTrue) := by
@@ -644,6 +646,8 @@ theorem supervaluation_eq_one_iff_condition : ∀ i ∈ tested, i.status ≠ .fa
   rw [supervaluation_eq_one_iff_weak, h₁, h₂]
   cases i.condition <;> simp
 
+/-- The supervaluation gaps on an item exactly when its environment and condition were found to
+gap, outside the discounted tests. -/
 theorem supervaluation_eq_zero_iff_found : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     ∀ t ∈ gapTests, ¬ t.Discounted → t.embedding = i.embedding → t.condition = i.condition →
       (supervaluation i.embedding.tree i.display = 0 ↔ t.found = .yes) := by
@@ -671,6 +675,7 @@ theorem universalPresupposition_false_item :
       universalPresupposition i.embedding.tree i.display = 0 := by
   decide
 
+/-- The per-boy supervaluation departs from the two-candidate one on exactly the GAP? items. -/
 theorem pointwise_ne_iff : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
     (pointwise i.embedding.tree i.display ≠ supervaluation i.embedding.tree i.display ↔
       i.condition = .gapQ) := by

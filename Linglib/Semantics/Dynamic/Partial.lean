@@ -88,6 +88,10 @@ def ofTotal (φ : α → α) : PartialUpdate α := fun s ↦ Part.some (φ s)
     composition law of partial functions. -/
 def seq (φ ψ : PartialUpdate α) : PartialUpdate α := ψ.comp φ
 
+/-- Sequencing is Kleisli composition for the `Part` monad, since a partial update is
+    definitionally a Kleisli arrow `α → Part α`. This is the partiality column of the effect
+    view of dynamic semantics, beside the powerset column in `Collapse.lean` ([moggi-1991],
+    [shan-2001]). -/
 theorem seq_eq_kleisliComp (φ ψ : α → Part α) :
     (seq φ ψ : α → Part α) = φ >=> ψ := rfl
 
@@ -122,6 +126,10 @@ theorem supports_iff_isFixedPt :
     supports s φ ↔ Function.IsFixedPt (· >>= φ) (pure s : Part α) :=
   supports_iff_eq_some.trans isFixedPt_bind_pure_iff.symm
 
+/-- Dynamic entailment between partial updates, every defined update with `φ` supporting `ψ`
+([veltman-1996]'s acceptance consequence; [heim-1982]'s entailment between file change
+potentials), is `Entails` of their extensions along `Part.bind`. It is absorption, sequencing
+`ψ` after `φ` changing nothing. -/
 theorem entails_bind_iff_seq_eq : Entails [(· >>= φ)] (· >>= ψ) ↔ seq φ ψ = φ := by
   rw [entails_singleton_iff, seq_eq_kleisliComp]
   refine ⟨fun h ↦ funext fun s ↦ ?_, fun h ↦ funext fun x ↦ ?_⟩
@@ -158,6 +166,9 @@ theorem Presupposes.seq_left (h : Presupposes φ ψ) : Presupposes (seq φ χ) �
 
 /-! ### The satisfaction law -/
 
+/-- The Karttunen satisfaction law ([karttunen-1974-presupposition]), that `s` admits `φ ∧ ψ`
+    iff `s` admits `φ` and `s[φ]` admits `ψ`, holds by construction as the domain condition of
+    `Part.bind`. -/
 theorem admits_seq (φ ψ : PartialUpdate α) (s : α) :
     (seq φ ψ).Admits s ↔ ∃ h : φ.Admits s, ψ.Admits ((φ s).get h) :=
   Iff.rfl
@@ -317,16 +328,21 @@ satisfaction in the local contexts (`Presupposition.subset_support_meetMiddle_if
 siblings), so Karttunen filtering is the composition law of partial updates, not a
 stipulation. -/
 
+/-- Dynamic conjunction admits `s` iff the Middle Kleene conjunction is defined throughout it. -/
 theorem admits_seq_ofTrivalent (p q : W → SignType) (s : Set W) :
     (PartialUpdate.seq (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (p w).meetMiddle (q w) :=
   (admits_seq_ofTrivalent_iff p _ s).trans Presupposition.subset_support_meetMiddle_iff.symm
 
+/-- The dynamic conditional admits `s` iff the Middle Kleene conditional is defined throughout
+it. -/
 theorem admits_cond_ofTrivalent (p q : W → SignType) (s : Set W) :
     (cond (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (-p w).joinMiddle (q w) :=
   (admits_cond_ofTrivalent_iff p _ s).trans Presupposition.subset_support_neg_joinMiddle_iff.symm
 
+/-- Dynamic disjunction admits `s` iff the Middle Kleene disjunction is defined throughout it,
+the ¬φ local context being Karttunen's negative-antecedent filtering. -/
 theorem admits_disj_ofTrivalent (p q : W → SignType) (s : Set W) :
     (disj (ofTrivalent p) (ofTrivalent q)).Admits s ↔
       s ⊆ Function.support fun w ↦ (p w).joinMiddle (q w) :=
@@ -359,6 +375,7 @@ theorem neg (h : Presupposes φ ψ) : Presupposes (CCP.Partial.neg φ) ψ := h
 theorem cond_left (h : Presupposes φ ψ) : Presupposes (CCP.Partial.cond φ χ) ψ :=
   fun s ⟨hs, _⟩ ↦ h s hs
 
+/-- A presupposition of the second conjunct projects conditionalised on the first. -/
 theorem seq_right (h : Presupposes φ ψ) : Presupposes (seq χ φ) (CCP.Partial.cond χ ψ) := by
   rintro s ⟨hχ, hφ⟩
   exact Part.mem_bind_iff.2 ⟨_, Part.get_mem hχ, (Part.mem_map_iff _).2 ⟨_, h _ hφ, by simp⟩⟩

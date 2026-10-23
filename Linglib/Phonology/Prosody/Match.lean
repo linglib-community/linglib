@@ -83,6 +83,9 @@ def syntaxProsodyMax (α : List ((ℕ × ℕ) × ℕ)) (π : Level) : Constraint
 
 variable {α : List ((ℕ × ℕ) × ℕ)}
 
+/-- **Existential correspondence asks no more than Match** ([ito-mester-2019]): where the
+constituents of `α` have distinct spans each containing its head, fewer of them lack a
+corresponding node than lack a node of the same span. -/
 theorem deficiency_corresponds_le (hα : (α.map (·.1)).Nodup)
     (hhead : ∀ a ∈ α, a.2 ∈ Set.Ico a.1.1 a.1.2) (m : List (ℕ × ℕ)) :
     Constraint.deficiency (Corresponds α) (α, m) ≤ Constraint.align Eq (α.map (·.1), m) := by

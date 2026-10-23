@@ -71,6 +71,7 @@ theorem comulPrim_unique
     φ = comulPrim :=
   algHom_ext_ofTree fun t ↦ by rw [h, comulPrim_ofTree]
 
+/-- The admissible-cut coproduct at the empty-cut enumeration is primitive. -/
 theorem comulAlgHomNG_emptyCuts {α : Type*} :
     comulAlgHomNG (R := R) (α := α) emptyCuts = comulPrim :=
   comulPrim_unique _ fun t ↦ by simp [comulTreeNG, emptyCuts]
@@ -93,6 +94,7 @@ private theorem prod_map_one_tmul (B : Forest T) :
     rw [Multiset.map_cons, Multiset.prod_cons, ih, Algebra.TensorProduct.tmul_mul_tmul,
       of'_cons, one_mul]
 
+/-- `Δ_P` sums `A ⊗ B` over the splittings `F = A + B`, counted with multiplicity. -/
 theorem comulPrim_of' (F : Forest T) :
     comulPrim (R := R) (of' F) =
       (F.antidiagonal.map fun p ↦ (of' p.1 : ConnesKreimer R T) ⊗ₜ[R] of' p.2).sum := by
@@ -100,6 +102,8 @@ theorem comulPrim_of' (F : Forest T) :
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun p _ ↦ ?_)
   rw [prod_map_tmul_one, prod_map_one_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
 
+/-- The terms of `Δ_P(F)` whose left factor has `k` trees sum `A ⊗ (F - A)` over the `k`-tree
+subforests `A` of `F`. -/
 theorem rTensor_homogeneousComponent_comulPrim_of' [DecidableEq T] (k : ℕ) (F : Forest T) :
     (homogeneousComponent k).rTensor _ (comulPrim (R := R) (of' F)) =
       ((F.powersetCard k).map fun A ↦ (of' A : ConnesKreimer R T) ⊗ₜ[R] of' (F - A)).sum := by
@@ -140,6 +144,8 @@ theorem comm_comp_comulPrim :
   ext t
   simp [add_comm]
 
+/-- Along the identification of `ConnesKreimer R T` with the symmetric algebra on a module with
+basis `T`, `Δ_P` is the comultiplication of the symmetric algebra. -/
 theorem comulPrim_comp_equiv {M : Type*} [AddCommMonoid M] [Module R M] (b : Module.Basis T R M) :
     (comulPrim (R := R)).comp (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom =
       (Algebra.TensorProduct.map (IsSymmetricAlgebra.connesKreimer b).equiv.toAlgHom

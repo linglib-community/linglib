@@ -162,6 +162,8 @@ theorem Respects.mono {ks' : Root.Kinds} (hks : ks ⊆ ks') (h : M.Respects P Q 
     M.Respects P Q ks :=
   fun p hp ↦ h p (hp.trans hks)
 
+/-- A signature is respected iff its collocational closure is: the closure adds a result only
+below a cause, whose postulate entails change, and adds no manner or cause. -/
 @[simp] theorem respects_close : M.Respects P Q (Root.Kinds.close ks) ↔ M.Respects P Q ks := by
   refine ⟨Respects.mono (Root.Kinds.close.le_closure ks), fun h p hp ↦ ?_⟩
   have hm := Root.Kinds.mem_close_iff_of_isMax (s := ks) Root.Kind.isMax_manner

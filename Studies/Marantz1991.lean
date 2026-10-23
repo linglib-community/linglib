@@ -144,6 +144,9 @@ theorem subject_of_lexical {l : Case} (h : c.subjectCase = some l) :
   · simp [subject, chains, Rules.assign_singleton, Rules.elsewhere]
   · cases v <;> simp [subject, chains, Rules.assign_pair, Rules.assign_singleton, Rules.elsewhere]
 
+/-- The subject has dependent case exactly when no lexical head has marked it, the rules assign
+a dependent case upward, and the object position holds a distinct unmarked chain or is unfilled
+and seen. -/
 theorem subject_dependent_iff :
     (c.subject r v).map (·.2) = some .dependent ↔
       c.subjectCase = none ∧ r.high.isSome ∧
@@ -152,16 +155,22 @@ theorem subject_dependent_iff :
     cases v <;>
     simp [subject, chains, Rules.assign_pair, Rules.assign_singleton, Rules.elsewhere]
 
+/-- The object has dependent case exactly when it is a distinct chain no lexical head has
+marked, the subject's chain is unmarked too, and the rules assign a dependent case downward. -/
 theorem object_dependent_iff :
     (c.object? r v).map (·.2) = some .dependent ↔
       c.subjectCase = none ∧ c.object = .chain none ∧ r.low.isSome := by
   obtain ⟨t, _ | s, (_ | l') | _ | _⟩ := c <;> obtain ⟨hi, _ | lo, _ | un⟩ := r <;>
     simp [object?, chains, Rules.assign_pair, Rules.elsewhere]
 
+/-- The ergative generalization holds under any rules, since a subject moved from the object
+position has no dependent case. -/
 theorem ergative_generalization (h : c.object = .trace) :
     (c.subject r v).map (·.2) ≠ some .dependent := fun hd ↦ by
   simpa [h] using ((c.subject_dependent_iff r v).1 hd).2.2
 
+/-- Burzio's generalization does not hold of case, since the object of a clause with a
+non-thematic subject position is accusative when the subject's chain is distinct from it. -/
 theorem not_burzio :
     raising.thematicSubject = false ∧
       raising.object? (.ofAlignment .accusative) v = some (.acc, .dependent) := by
@@ -260,11 +269,15 @@ def clause? (e : Datum) : Option Clause :=
 def case? (e : Datum) (key : String) : Option Case :=
   e.parse? key [("NOM", .nom), ("ERG", .erg), ("DAT", .dat), ("ABS", .abs)]
 
+/-- An example is acceptable exactly when the case of its subject is one the setting of its
+language gives the subject of its clause. This covers the ergative on Georgian and Basque
+unergatives, its optionality in Hindi, and its absence from unaccusatives in all three. -/
 theorem subject_rows : ∀ e ∈ Examples.all,
     ∃ g ∈ setting? e, ∃ c ∈ clause? e, ∃ s ∈ case? e "subject",
       (e.judgment = .acceptable ↔ some s ∈ g.subjectCases c) := by
   decide +kernel
 
+/-- The case of the object of an example is the one its setting gives. -/
 theorem object_rows : ∀ e ∈ Examples.all, ∀ o ∈ case? e "object",
     ∃ g ∈ setting? e, ∃ c ∈ clause? e, g.objectCases c = {some o} := by
   decide +kernel
@@ -282,10 +295,12 @@ def clause : Georgian.VerbClass → Clause
 /-- The two series the paper treats. -/
 def series : List Georgian.Series := [.present, .aorist]
 
+/-- The rules derive the subject case of the Fragment for every class in both series. -/
 theorem georgian_subject_eq_pattern : ∀ v : Georgian.VerbClass, ∀ s ∈ series,
     (georgian s).subjectCases (clause v) = {some (Georgian.pattern v s).subject.case.label} := by
   decide +kernel
 
+/-- The rules derive the object case of the Fragment for the two classes with an object. -/
 theorem georgian_object_eq_pattern : ∀ v ∈ [Georgian.VerbClass.transitive, .indirect],
     ∀ s ∈ series,
       (georgian s).objectCases (clause v) =
@@ -327,6 +342,9 @@ inductive ECMArgument where
   | embeddedObject
   deriving DecidableEq, Repr
 
+/-- The embedded subject is accusative against the matrix subject and the embedded object
+against the embedded subject, so an accusative does not depend on a nominative having been
+assigned in its clause. -/
 theorem ecm :
     let r := Rules.ofAlignment .accusative
     ((r.unmarkedPass (fun _ ↦ true) <|

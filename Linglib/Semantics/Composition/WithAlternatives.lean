@@ -121,6 +121,7 @@ instance : LawfulMonad WithAlternatives := LawfulMonad.mk'
     b ∈ (f <$> m).alternatives ↔ ∃ a ∈ m.alternatives, f a = b := by
   simp [Functor.map, unfeatured, eq_comm]
 
+/-- In Hamblin functional application alternative functions apply to alternative arguments. -/
 @[simp] theorem mem_alternatives_seq {mf : WithAlternatives (α → β)} {ma : WithAlternatives α}
     {b : β} :
     b ∈ (mf <*> ma).alternatives ↔ ∃ g ∈ mf.alternatives, ∃ a ∈ ma.alternatives, g a = b := by
@@ -158,6 +159,8 @@ instance : CommApplicative WithAlternatives where
     · rintro ⟨_, ⟨y, hy, rfl⟩, x, hx, rfl⟩
       exact ⟨_, ⟨x, hx, rfl⟩, y, hy, rfl⟩
 
+/-- By commutativity an application can run its argument first, binding the argument into the
+function applied to it. -/
 theorem seq_eq_bind_seq_pure (mf : WithAlternatives (α → β)) (mx : WithAlternatives α) :
     mf <*> mx = mx >>= fun x ↦ mf <*> pure x := by
   have h := CommApplicative.commutative_map mf mx (f := fun g x ↦ g x)
@@ -192,6 +195,7 @@ theorem WellFormed.seq {mf : WithAlternatives (α → β)} {ma : WithAlternative
 /-- A meaning is Given with respect to `a` when its alternatives have collapsed to `{a}`. -/
 def Given (m : WithAlternatives α) (a : α) : Prop := m.alternatives = {a}
 
+/-- Unfeatured meanings are Given with respect to their value. -/
 theorem Given.unfeatured (x : α) : (unfeatured x).Given x :=
   unfeatured_alternatives x
 
@@ -201,6 +205,8 @@ theorem alternatives_seq_eq_univ {mf : WithAlternatives (α → β)} {ma : WithA
   let ⟨a, ha⟩ := ha
   Set.eq_univ_of_forall fun b ↦ mem_alternatives_seq.2 ⟨fun _ ↦ b, hf ▸ Set.mem_univ _, a, ha, rfl⟩
 
+/-- A Given function collapses Hamblin composition to application on the argument's alternatives:
+deaccented material contributes exactly its ordinary value. -/
 theorem Given.alternatives_seq {mf : WithAlternatives (α → β)} {f : α → β}
     (h : mf.Given f) (ma : WithAlternatives α) :
     (mf <*> ma).alternatives = f '' ma.alternatives := by

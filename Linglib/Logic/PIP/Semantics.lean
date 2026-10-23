@@ -199,6 +199,9 @@ theorem Formula.realize_some (s t : Term V L P) :
     Formula.Realize M g (Formula.some_ s t) ↔ (Term.realize M g s ∩ Term.realize M g t).Nonempty :=
   show ¬(Term.realize M g s ∩ Term.realize M g t = ∅) ↔ _ from Set.nonempty_iff_ne_empty.symm
 
+/-- `∃xφ` is true iff `⋃{x : φ}` is nonempty, provided `φ` is false when `x` is
+the null plurality — the standing assumption that predicates are false of the
+null individual. -/
 theorem Formula.realize_exists_iff_abs_nonempty (x : V) (φ : Formula V L P)
     (h : ∀ g', g' x = ∅ → ¬ Formula.Realize M g' φ) :
     Formula.Realize M g (.exists_ x φ) ↔ (Term.realize M g (.abs x φ)).Nonempty := by
@@ -209,6 +212,9 @@ theorem Formula.realize_exists_iff_abs_nonempty (x : V) (φ : Formula V L P)
   · rintro ⟨_, g', hg, _, hφ⟩
     exact ⟨g', hg, hφ⟩
 
+/-- The value of a summation whose body, on the assignments agreeing outside the
+summation variable and its locals, depends on the summation variable's value
+alone: the sum of the pluralities satisfying that condition. -/
 theorem Term.realize_sigma_eq {x : V} {φ : Formula V L P} {B : Set α → Prop}
     (hφ : ∀ g', Set.EqOn g' g {y | y ∉ φ.locals ∧ y ≠ x} →
       (Formula.Realize M g' φ ↔ B (g' x))) :
@@ -223,6 +229,9 @@ theorem Term.realize_sigma_eq {x : V} {φ : Formula V L P} {B : Set α → Prop}
       fun y hy => Function.update_of_ne hy.2 _ _
     exact ⟨_, hg, by simpa, (hφ _ hg).2 (by simpa)⟩
 
+/-- The value of a summation whose body depends on the summation variable's value and on
+that of a local variable `y`: the sum of the pluralities related to some plurality, the
+local being summed away. -/
 theorem Term.realize_sigma_eq_of_mem_locals {x y : V} (hxy : y ≠ x) {φ : Formula V L P}
     {C : Set α → Set α → Prop}
     (hφ : ∀ g', Set.EqOn g' g {z | z ∉ φ.locals ∧ z ≠ x} →
@@ -241,6 +250,8 @@ theorem Term.realize_sigma_eq_of_mem_locals {x y : V} (hxy : y ≠ x) {φ : Form
     refine ⟨_, hg, by simpa [Function.update_of_ne hxy.symm], (hφ _ hg).2 ?_⟩
     rwa [Function.update_self, Function.update_of_ne hxy.symm, Function.update_self]
 
+/-- A summation over a singular description, true of the singletons of the images of `s`:
+the plurality of those images. -/
 theorem Term.realize_sigma_eq_image {β : Type*} {x : V} {φ : Formula V L P} {f : β → α}
     {s : Set β}
     (hφ : ∀ g', Set.EqOn g' g {y | y ∉ φ.locals ∧ y ≠ x} →
@@ -250,6 +261,8 @@ theorem Term.realize_sigma_eq_image {β : Type*} {x : V} {φ : Formula V L P} {f
   ext a
   simp [and_comm, eq_comm]
 
+/-- A summation over a distributive description, true of the nonempty pluralities within
+`s`: `s` itself. -/
 theorem Term.realize_sigma_eq_of_distributive {x : V} {φ : Formula V L P} {s : Set α}
     (hφ : ∀ g', Set.EqOn g' g {y | y ∉ φ.locals ∧ y ≠ x} →
       (Formula.Realize M g' φ ↔ (g' x).Nonempty ∧ g' x ⊆ s)) :
@@ -286,6 +299,8 @@ theorem Formula.realize_closeList (xs : List V) (φ : Formula V L P) :
       · rw [Function.update_of_ne hyx]
         exact hg' (by simp only [Set.mem_ofPred_eq, List.mem_cons, not_or]; exact ⟨hyx, hy⟩)
 
+/-- The PIP constructs are eliminable: the translation preserves values and
+truth. -/
 theorem Expr.realize_elim :
     ∀ {k : Kind} (e : Expr V L P k) (g : V → Set α) (a : Kind.Point α k),
       e.elim.Realize M g a ↔ e.Realize M g a

@@ -68,8 +68,10 @@ def birbirlerini : ReciprocalPronoun :=
 def reciprocals : Finset ReciprocalPronoun :=
   {birbirimiz, birbiriniz, birbirleri, birbiri, birbirlerini}
 
+/-- Every form of the reciprocal is plural. -/
 theorem number_reciprocals : ∀ r ∈ reciprocals, r.number = some .plural := by decide
 
+/-- A singular nominal is no candidate antecedent of a reciprocal. -/
 theorem not_candidateAntecedent_of_singular {r : ReciprocalPronoun} (hr : r ∈ reciprocals)
     {w : Morphology.Word} (hw : w.features .number = some .singular) :
     ¬ r.toPronoun.CandidateAntecedent w :=

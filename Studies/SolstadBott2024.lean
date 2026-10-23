@@ -116,6 +116,10 @@ theorem Felicity.licenses_iff :
 instance (f : Felicity) (k : Context) : Decidable (f.Licenses k) :=
   decidable_of_iff' _ Felicity.licenses_iff
 
+/-- Take a sentence acceptable wherever some continuation meets its constraint. It is acceptable
+only in contexts that entail the content, the strong contextual felicity of Tonhauser and
+colleagues, exactly when the constraint is the strong one or the content is trivial. The
+constraint of occasion verbs is therefore not one. -/
 theorem strongContextualFelicity_iff :
     TonhauserEtAl2013.StrongContextualFelicity m (fun b ↦ ∃ a, f.Satisfied m b a) ↔
       f = .strong ∨ m = Set.univ := by
@@ -141,6 +145,9 @@ def TriggerTwo.felicity : TriggerTwo → Felicity
   | too => .strong
   | _ => .free
 
+/-- In both experiments a supported context differs reliably from the neutral one exactly where
+the trigger's constraint is met. A following sentence helps occasion verbs and does not help
+pronouns, demonstratives or *auch*. -/
 theorem contextTests_iff_licenses :
     (∀ r ∈ contextTestsExp1, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context) ∧
       ∀ r ∈ contextTestsExp2, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context := by
@@ -192,6 +199,9 @@ def Account.Filters (a : Account) (x : Antecedent) : Prop :=
   ∀ (Atom W : Type) (I : Atom → Set W) (p p' q : Atom), I q ⊆ I p →
     ∀ C, a.Accepts I C (x.formula p p' q)
 
+/-- Incremental local contexts and limited symmetry filter the implication only after the clause
+entailing it, symmetric local contexts on either side of it, and local accommodation
+everywhere. -/
 theorem Account.filters_iff {a : Account} {x : Antecedent} :
     a.Filters x ↔ a = .localAccommodation ∨ a = .symmetric ∧ x ≠ .triggerOnly ∨
       (a = .incremental ∨ a = .limitedSymmetry) ∧ x = .triggerLast := by
@@ -243,6 +253,9 @@ def Account.Fits (a : Account) (g : TriggerGroup) : Prop :=
 instance (a : Account) (g : TriggerGroup) : Decidable (a.Fits g) :=
   inferInstanceAs (Decidable (∀ y : Antecedent, y ≠ .triggerFirst → _))
 
+/-- Only symmetric local contexts fit the occasion verbs, and only the two asymmetric accounts
+the factive and aspectual triggers. Local accommodation fits neither, since it makes the trigger
+alone as little projective as the trigger after the clause entailing its content. -/
 theorem fits_iff (a : Account) (g : TriggerGroup) :
     a.Fits g ↔ g = .occasion ∧ a = .symmetric ∨
       g = .factiveAspectual ∧ (a = .incremental ∨ a = .limitedSymmetry) := by

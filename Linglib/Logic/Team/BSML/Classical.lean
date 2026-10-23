@@ -137,6 +137,8 @@ theorem antiSupport_iff_forall_not_realize (hNE : φ.NEFree) :
     antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w := by
   simpa using eval_iff_forall_realize hNE false t
 
+/-- A singleton team supports an `NE`-free formula iff its world realizes it,
+    `{w} ⊨⁺ φ ↔ M, w ⊨ φ`. -/
 theorem support_singleton_iff_realize (hNE : φ.NEFree) :
     support M φ {w} ↔ Realize M φ w := by
   simp [support_iff_forall_realize hNE]

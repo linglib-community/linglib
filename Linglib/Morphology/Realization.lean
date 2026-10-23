@@ -164,6 +164,8 @@ def IsProperlySuppletive (r : R) : Prop :=
   ∃ c c', (S.realize r c).Nonempty ∧ (S.realize r c').Nonempty ∧
     S.realize r c ≠ S.realize r c'
 
+/-- Form variance at an index decomposes into overabundance or suppletion
+proper. -/
 theorem isSuppletive_iff {r : R} :
     S.IsSuppletive r ↔ S.IsOverabundant r ∨ S.IsProperlySuppletive r := by
   constructor
@@ -435,6 +437,10 @@ def reduce : Interpreted (Quotient S.profileSetoid) Ctx F M where
 def reduceHom : Hom S S.reduce :=
   ⟨Quotient.mk S.profileSetoid, id, fun _ _ => rfl, fun _ _ => rfl⟩
 
+/-- Mergers along any strict hom refine profile equality, so `reduce` merges
+as much as the strict tier ever can. Mergers beyond profiles, such as the
+*hammer* carvings or pattern-bound lexemes into an [arad-2005] root, are
+necessarily lax. -/
 theorem Hom.profileEq_of_onRoot_eq {R₂ C₂ : Type*}
     {T : Interpreted R₂ C₂ F M} (φ : Hom S T) {r r' : R}
     (h : φ.onRoot r = φ.onRoot r') : S.ProfileEq r r' :=

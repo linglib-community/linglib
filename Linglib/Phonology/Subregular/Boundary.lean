@@ -145,6 +145,8 @@ lemma getElem?_boundary_eq_getElem?_int {q : ℕ} (h : q < w.length + 2 * (k - 1
       List.getElem?_natCast, List.getElem?_eq_getElem hlt, Option.map_some]
   · rw [List.getElem?_int_eq_none_iff.mpr (.inr (by omega))]
 
+/-- The `k`-factors of the augmented word are exactly its windows over
+`[1 - k, w.length)`. -/
 lemma mem_kFactors_boundary_iff {f : List (Option α)} (hk : 1 ≤ k) :
     f ∈ List.kFactors k (boundary k y) ↔
       ∃ i : ℤ, 1 - k ≤ i ∧ i < y.length ∧ f = window k y i := by

@@ -127,11 +127,13 @@ theorem mixedConsequence_nil_singleton : MixedConsequence p q [] [φ] ↔ ∀ M,
 theorem mixedConsequence_singleton_nil : MixedConsequence p q [φ] [] ↔ ∀ M, ¬ p M φ := by
   simp [MixedConsequence, Satisfies]
 
+/-- The single-premise, single-conclusion relation is reflexive exactly when `p ≤ q`. -/
 theorem stdRefl_mixedConsequence_iff :
     Std.Refl (fun φ ψ ↦ MixedConsequence p q [φ] [ψ]) ↔ p ≤ q :=
   ⟨fun ⟨h⟩ M φ hp ↦ by simpa using h φ M (by simpa using hp),
     fun hpq ↦ ⟨fun _ ↦ .of_mem hpq (List.mem_singleton_self _) (List.mem_singleton_self _)⟩⟩
 
+/-- The single-premise, single-conclusion relation is transitive when `q ≤ p`. -/
 theorem isTrans_mixedConsequence (hqp : q ≤ p) :
     IsTrans Formula fun φ ψ ↦ MixedConsequence p q [φ] [ψ] :=
   ⟨fun _ ψ _ h₁ h₂ ↦ .cut (φ := ψ) hqp (h₂.weaken (by simp) (by simp))

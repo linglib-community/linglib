@@ -98,6 +98,10 @@ theorem quantifierOnly_eq_only (hα : α ∈ C) (hβ : Set.InjOn β C) :
   · rw [only_eq_one_iff, ← hL, ← hM]
     simp [quantifierOnly]
 
+/-- A particle on a proper part of its focus is not a quantifier over alternatives to its sister.
+Where the scope holds of the sister and of nothing else, the quantifier is true whatever
+alternatives it is given, though an alternative `ψ` to the whole focus is true as well, so that
+the operator associating with that focus is false. -/
 theorem quantifierOnly_ne_only (C : Set σ) (hψ : ψ ∈ D) (hne : ψ ≠ β α) (hw : w ∈ ψ)
     (hwα : w ∈ β α) (hβ : ∀ γ, γ ≠ α → w ∉ β γ) :
     quantifierOnly C α β ≠ only (· = ·) D (β α) := by
@@ -188,12 +192,15 @@ namespace LeftAlignedOn
   obtain rfl := Option.mem_unique hb hb'
   exact ⟨a, ha, c, hc, hab.trans hbc⟩
 
+/-- Of two left-aligned constituents one contains the other. -/
 theorem symmGen_le (h : LeftAlignedOn m X Y) : Relation.SymmGen (· ≤ ·) X Y := by
   obtain ⟨a, ha, b, hb, hab⟩ := h
   rcases hab.le_or_ge with h | h
   · exact List.prefix_or_prefix_of_prefix ((le_of_mem_leftmost ha).trans h) (le_of_mem_leftmost hb)
   · exact List.prefix_or_prefix_of_prefix (le_of_mem_leftmost ha) ((le_of_mem_leftmost hb).trans h)
 
+/-- Two constituents left-aligned with a third overlap, so of two separate phrases at most one
+is left-aligned with a given focus, which is the leftmost effect. -/
 theorem symmGen_le_of_common (h₁ : LeftAlignedOn m X Z) (h₂ : LeftAlignedOn m Y Z) :
     Relation.SymmGen (· ≤ ·) X Y :=
   (h₁.trans h₂.symm).symmGen_le
@@ -244,6 +251,7 @@ theorem Favors.allows (h : r.Favors m host focus) : r.Allows m host focus := by
   cases r
   exacts [h, LeftAlignedOn.symmGen_le h, h]
 
+/-- A phrase that may host the particle overlaps the focus. -/
 theorem Allows.symmGen_le (h : r.Allows m host focus) : Relation.SymmGen (· ≤ ·) host focus := by
   cases r
   exacts [LeftAlignedOn.symmGen_le h, h, h]

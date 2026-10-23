@@ -190,6 +190,7 @@ theorem adjacent_self {p : Path Loc} :
     p.adjacent p ↔ p.goal = p.source :=
   or_self_iff
 
+/-- Concatenable paths are adjacent. -/
 theorem IsConcat.adjacent {p q r : Path Loc} (h : IsConcat p q r) :
     p.adjacent q :=
   Or.inl h.1
@@ -245,6 +246,7 @@ def rank : Direction → Fin 4
 /-- The heads a direction contains, a downward-closed stack. -/
 def shells (d : Direction) : Finset (Fin 4) := Finset.Iic d.rank
 
+/-- Strict rank is strict inclusion of head stacks. -/
 theorem lt_iff_shells_ssubset (d₁ d₂ : Direction) :
     d₁.rank < d₂.rank ↔ d₁.shells ⊂ d₂.shells := by
   simp [shells]
@@ -311,6 +313,8 @@ theorem direction_transition_injective :
   intro a b h
   cases a <;> cases b <;> simp_all [direction, transition]
 
+/-- A direction and a transition make a shape exactly when the direction is not Place and a
+Route is not delimited. -/
 theorem exists_direction_transition_iff (d : Direction) (t : Transition) :
     (∃ s : Shape, s.direction = d ∧ s.transition = t) ↔
       d ≠ .place ∧ (d = .route → t ≠ .delimited) := by
@@ -406,6 +410,7 @@ theorem IsTerminative.isCofinal (h : IsTerminative R γ) : IsCofinal R γ := by
     exact hne this
   · show ⊤ ∈ γ ⁻¹' R; rw [hS]; rfl
 
+/-- No path is both cofinal and coinitial. -/
 theorem IsCofinal.not_isCoinitial (h : IsCofinal R γ) : ¬ IsCoinitial R γ :=
   fun h' ↦ h'.2.2 h.2.2
 
@@ -435,10 +440,12 @@ theorem HasShape.comp [Preorder β] {d : α → β} {s : Shape} (h : HasShape R 
   | approximative => exact ⟨fun k ↦ h.1 (e k), h.2.comp_strictMono e.strictMono⟩
   | recessive => exact ⟨fun k ↦ h.1 (e k), h.2.comp e.strictMono⟩
 
+/-- Reparametrizing a path by an order isomorphism keeps its shape. -/
 theorem hasShape_comp [Preorder β] {d : α → β} (e : κ ≃o ι) {s : Shape} :
     HasShape R (γ ∘ e) d s ↔ HasShape R γ d s :=
   ⟨fun h ↦ by simpa [Function.comp_def] using h.comp e.symm, fun h ↦ h.comp e⟩
 
+/-- Traversing a path the other way, on the dual order of positions, reverses its shape. -/
 theorem hasShape_comp_ofDual [Preorder β] {d : α → β} {s : Shape} :
     HasShape R (γ ∘ ofDual) d s ↔ HasShape R γ d s.reverse := by
   have hpre : (γ ∘ ofDual) ⁻¹' R = ofDual ⁻¹' (γ ⁻¹' R) := rfl
@@ -517,6 +524,7 @@ theorem coe_reverse : ⇑p.reverse = (p ∘ OrderDual.ofDual) ∘ p.revIso := by
   congr 1
   simp [points]
 
+/-- Reversing a path reverses its shape. -/
 theorem hasShape_reverse {β : Type*} [Preorder β] {d : Loc → β} {R : Set Loc} {s : Shape} :
     HasShape R p.reverse d s ↔ HasShape R p d s.reverse := by
   rw [coe_reverse, hasShape_comp, hasShape_comp_ofDual]

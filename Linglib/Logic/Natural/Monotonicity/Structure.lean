@@ -139,6 +139,7 @@ variable {σ₁ σ₂ τ₁ τ₂ : Ty B}
 
 /-! ### Functor laws -/
 
+/-- The coercion along `le_refl` is the identity. -/
 @[simp] theorem castLE_rfl : ∀ σ : Ty B, castLE (le_refl σ) = (OrderHom.id : Dom Db σ →o _)
   | .base _ => castLE_base _
   | .arr σ m τ => by
@@ -148,6 +149,8 @@ variable {σ₁ σ₂ τ₁ τ₂ : Ty B}
           | funext a
       all_goals simp [castLE_rfl σ, castLE_rfl τ]
 
+/-- The coercions compose: casting along `h₁` then `h₂` is casting
+    along `h₁.trans h₂`. -/
 theorem castLE_castLE :
     ∀ {σ τ μ : Ty B} (h₁ : σ ≤ τ) (h₂ : τ ≤ μ) (a : Dom Db σ),
       castLE h₂ (castLE h₁ a) = castLE (h₁.trans h₂) a

@@ -207,6 +207,10 @@ private theorem realize_stTerm {k : ℕ} {v : Var → M} {u : ℕ → W} :
         (fun i ↦ by simpa [Fin.cons_succ] using realize_stTerm (args i))]
     rfl
 
+/-- The standard translation preserves satisfaction. Kripke satisfaction at the world pinned at
+    index `k` is first-order realization over `K.correspondence` at the sorted valuation. Off-sort
+    quantifier instances are discharged by the relational guards, and `box`'s fresh world variable
+    `k + 1` leaves index `k` untouched. -/
 theorem realize_st [DecidableEq Var] {φ : ModalFormula L Var} {k : ℕ}
     {v : Var → M} {u : ℕ → W} :
     φ.Realize K (u k) v ↔

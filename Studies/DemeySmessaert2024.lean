@@ -92,6 +92,8 @@ def subjectNegation : Fin 8 → Finset {m // IsEFOLPattern m} := ![
   univ.filter fun m ↦ no (fun r ↦ ¬ InS m.1 r) (InP m.1),
   univ.filter fun m ↦ ¬ every (fun r ↦ ¬ InS m.1 r) (InP m.1)]
 
+/-- The octagon for subject negation induces a partition of seven cells, so its Boolean closure
+has `2 ^ 7` elements. -/
 theorem card_minterms_subjectNegation : #(Finpartition.minterms subjectNegation).parts = 7 := by
   decide +kernel
 
@@ -137,6 +139,8 @@ def deontic : Fin 8 → Finset KDType := ![
   univ.filter fun t ↦ Val t none ∧ ◇[access t] (fun w ↦ ¬ Val t w) none,
   univ.filter fun t ↦ Val t none ∨ □[access t] (Val t) none]
 
+/-- The deontic octagon induces a partition of six cells, so its Boolean closure has `2 ^ 6`
+elements. -/
 theorem card_minterms_deontic : #(Finpartition.minterms deontic).parts = 6 := by
   decide +kernel
 
@@ -148,6 +152,8 @@ def deonticIso : AristotelianIso subjectNegation deontic where
   map_codisjoint := by simp only [codisjoint_iff]; decide +kernel
   map_lt := by decide +kernel
 
+/-- The deontic octagon is not Boolean isomorphic to the octagon for subject negation, since
+their closures have `2 ^ 6` and `2 ^ 7` elements. -/
 theorem isEmpty_booleanIso_deontic : IsEmpty (BooleanIso subjectNegation deontic) :=
   ⟨fun e ↦ by
     have := (BooleanSubalgebra.nonempty_orderIso_closure_iff _ _).1 ⟨e.closureIso⟩
@@ -351,6 +357,9 @@ end Family
 
 variable {α : Type*} [BooleanAlgebra α] {φ : Fin 8 → α}
 
+/-- Every Keynes–Johnson octagon, in any Boolean algebra, induces a partition of six or of seven
+cells. Its nonzero minterms are among the seven consistent ones, six of which are meets of two
+corners and so nonzero; the seventh may or may not vanish. -/
 theorem card_minterms_eq_six_or_seven [DecidableEq α] (e : AristotelianIso subjectNegation φ) :
     #(Finpartition.minterms φ).parts = 6 ∨ #(Finpartition.minterms φ).parts = 7 := by
   rw [← Finpartition.parts_minterms_comp_equiv e.toEquiv, Finpartition.card_parts_minterms]
@@ -361,6 +370,8 @@ theorem card_minterms_eq_six_or_seven [DecidableEq α] (e : AristotelianIso subj
   rw [card_filter_consistent] at h₂
   omega
 
+/-- A Keynes–Johnson octagon is Boolean isomorphic to the octagon for subject negation iff it
+induces seven cells, its nonzero minterms then being the seven consistent ones. -/
 theorem nonempty_booleanIso_subjectNegation_iff [DecidableEq α]
     (e : AristotelianIso subjectNegation φ) :
     Nonempty (BooleanIso subjectNegation φ) ↔ #(Finpartition.minterms φ).parts = 7 where
@@ -372,6 +383,8 @@ theorem nonempty_booleanIso_subjectNegation_iff [DecidableEq α]
     (minterm_ne_bot_iff_consistent (ψ := φ ∘ e.toEquiv) e.map_disjoint e.map_codisjoint e.map_lt
       (by rwa [Finpartition.parts_minterms_comp_equiv]) σ).symm⟩
 
+/-- A Keynes–Johnson octagon is Boolean isomorphic to the deontic octagon iff it induces six
+cells, its nonzero minterms then being the six meets of two corners. -/
 theorem nonempty_booleanIso_deontic_iff [DecidableEq α] (e : AristotelianIso subjectNegation φ) :
     Nonempty (BooleanIso deontic φ) ↔ #(Finpartition.minterms φ).parts = 6 where
   mp := fun ⟨b⟩ ↦ (BooleanSubalgebra.nonempty_orderIso_closure_iff _ _).1 ⟨b.closureIso⟩ ▸
@@ -382,6 +395,9 @@ theorem nonempty_booleanIso_deontic_iff [DecidableEq α] (e : AristotelianIso su
     (minterm_ne_bot_iff_mem_image (ψ := φ ∘ e.toEquiv) e.map_disjoint e.map_lt
       (by rwa [Finpartition.parts_minterms_comp_equiv]) σ).symm⟩
 
+/-- The Keynes–Johnson octagons form exactly two Boolean subfamilies, each octagon being Boolean
+isomorphic to the octagon for subject negation or to the deontic octagon, which are not Boolean
+isomorphic to each other (`isEmpty_booleanIso_deontic`). -/
 theorem nonempty_booleanIso_subjectNegation_or_deontic (e : AristotelianIso subjectNegation φ) :
     Nonempty (BooleanIso subjectNegation φ) ∨ Nonempty (BooleanIso deontic φ) := by
   classical

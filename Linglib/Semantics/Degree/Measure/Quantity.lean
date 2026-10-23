@@ -48,6 +48,7 @@ def pure (n : K) : Quantity K := (n, 1)
 @[simp] theorem pure_fst (n : K) : (pure n).1 = n := rfl
 @[simp] theorem pure_snd (n : K) : (pure n).2 = 1 := rfl
 
+/-- A quantity is invertible exactly when its magnitude is, since every dimension is. -/
 theorem isUnit_iff [CommGroupWithZero K] {q : Quantity K} : IsUnit q ↔ q.1 ≠ 0 := by
   simp [Prod.isUnit_iff, Group.isUnit, isUnit_iff_ne_zero]
 

@@ -296,6 +296,9 @@ theorem Bald.tolerance :
   unfold Bald
   grind [ml.irrelevance, LargelyLT]
 
+/-- No finite chain of marginal steps leads from someone not bald to the last member, so a
+series in which each member is marginally balder than the one before satisfies the premises of
+the Sorites only if it is infinite. -/
 theorem not_transGen_marginallyLT (hx : ¬ Bald ml e x) :
     ¬ Relation.TransGen ml.MarginallyLT x e := fun h ↦ by
   rw [Relation.transGen_eq_self] at h

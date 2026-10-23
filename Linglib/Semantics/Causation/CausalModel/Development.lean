@@ -138,6 +138,7 @@ theorem causallyEntails_root_iff {t : ∀ v, Flat (α v)} {v : V} {x : α v}
   · exact absurd h Flat.bot_ne_coe
   · exact fun u y ↦ h u y fun w hw ↦ absurd hw (hroot w)
 
+/-- The strict development settles less than the Kleene one. -/
 theorem Forced.of_causallyEntails (h : M.CausallyEntails s v x) : M.Forced s v x :=
   WellFounded.fixedPoint_le_fixedPoint (dependsOn_entailsStep s) (dependsOn_forcedStep s)
     (fun _ _ ↦ entailsStep_le_forcedStep s) v x h
@@ -148,6 +149,7 @@ theorem CausallyEntails.parent_settled (h : M.CausallyEntails s v x) (hv : s v =
   · rw [hv] at h; exact absurd h Flat.bot_ne_coe
   · exact hpar w hw
 
+/-- Observations that agree on a variable and all its ancestors settle it alike. -/
 theorem causallyEntails_congr {t : ∀ v, Flat (α v)}
     (h : ∀ w, Relation.ReflTransGen M.graph.Adj w v → s w = t w) :
     M.CausallyEntails s v x ↔ M.CausallyEntails t v x := by
@@ -178,6 +180,8 @@ theorem causallyEntails_iff_iterate_card [Fintype V] :
 
 variable [∀ v, Nonempty (α v)]
 
+/-- The Kleene development is sound. What it forces from `s` holds in every context when `s` is
+imposed as an intervention. -/
 theorem Forced.solve_eq_of_intervene (h : M.Forced s v x) (u : U) : M.solve s u v = x := by
   induction v using hM.induction with
   | _ v ih =>
@@ -186,18 +190,24 @@ theorem Forced.solve_eq_of_intervene (h : M.Forced s v x) (u : U) : M.solve s u 
     · rw [solve_of_eq_bot hs u]
       exact h u _ fun w hw _ hz ↦ ih w hw hz
 
+/-- The strict development is sound for the interventional reading. -/
 theorem CausallyEntails.solve_eq_of_intervene (h : M.CausallyEntails s v x) (u : U) :
     M.solve s u v = x :=
   (Forced.of_causallyEntails h).solve_eq_of_intervene u
 
+/-- The Kleene development is sound for the observational reading. What it forces from `s` holds
+in every context where `s` holds. -/
 theorem Forced.solve_bot_eq (h : M.Forced s v x) {u : U} (hu : u ∈ M.contexts s) :
     M.solve ⊥ u v = x := by
   rw [← solve_eq_solve_bot_of_mem_contexts hu]; exact h.solve_eq_of_intervene u
 
+/-- The strict development is sound for the observational reading. -/
 theorem CausallyEntails.solve_bot_eq (h : M.CausallyEntails s v x) {u : U}
     (hu : u ∈ M.contexts s) : M.solve ⊥ u v = x :=
   (Forced.of_causallyEntails h).solve_bot_eq hu
 
+/-- When the context reaches the model only at its roots, an observation whose development settles
+every root develops, in a context where it holds, to that context's actual world. -/
 theorem causallyEntails_solve_bot [M.ContextAtRoots] {u : U}
     (hs : ∀ v, (∀ w, ¬ M.graph.Adj w v) → ∃ z, M.CausallyEntails s v z)
     (hu : u ∈ M.contexts s) : ∀ v, M.CausallyEntails s v (M.solve ⊥ u v) := by
@@ -240,6 +250,8 @@ theorem CausallyEntails.eqn_eq [Nonempty U] (h : M.CausallyEntails s v x) (hv : 
   · rw [hv] at h; exact absurd h Flat.bot_ne_coe
   · exact h u y fun w hw _ hz ↦ (hy w hw).unique hz
 
+/-- A variable the strict development settles, unobserved, settles each parent to the value its
+equation needs for the result. -/
 theorem CausallyEntails.parent_eq [Nonempty U] (h : M.CausallyEntails s v x) (hv : s v = ⊥)
     {w : V} (hw : M.graph.Adj w v) {z : α w}
     (hz : ∀ u (y : ∀ w, α w), M.eqn v u y = x → y w = z) : M.CausallyEntails s w z := by
@@ -298,6 +310,7 @@ theorem develop_apply (s : ∀ v, Flat (α v)) (v : V) :
   WellFounded.fixedPoint_apply (dependsOn_developStep s) v
 
 omit [∀ v, Nonempty (α v)] in
+/-- The strict development settles `v` to `x` exactly when its computation does. -/
 theorem causallyEntails_iff_develop {s : ∀ v, Flat (α v)} {v : V} {x : α v} :
     M.CausallyEntails s v x ↔ M.develop s v = ↑x := by
   induction v using hM.induction with

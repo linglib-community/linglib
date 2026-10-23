@@ -101,6 +101,7 @@ derivation from `r` branches. -/
 abbrev NonterminalPos (r : ContextFreeRule T N) : Type :=
   {i : Fin r.output.length // r.output[i].IsNonterminal}
 
+/-- A rewrite of a concatenation `u₁ ++ u₂` happens entirely in `u₁` or entirely in `u₂`. -/
 theorem Rewrites.append_split {r : ContextFreeRule T N} :
     ∀ {u₁ u₂ v : List (Symbol T N)}, r.Rewrites (u₁ ++ u₂) v →
       (∃ v₁, v = v₁ ++ u₂ ∧ r.Rewrites u₁ v₁) ∨ (∃ v₂, v = u₁ ++ v₂ ∧ r.Rewrites u₂ v₂) := by
@@ -157,6 +158,8 @@ theorem card_filter_input_ne_zero [DecidableEq g.NT] {a : g.NT} (ha : a ∈ g.ru
     (g.rules.filter (·.input = a)).card ≠ 0 :=
   Finset.card_ne_zero.mpr (Finset.nonempty_coe_sort.mp (nonempty_rulesWithLHS_iff.mpr ha))
 
+/-- A production from a concatenation `u₁ ++ u₂` happens entirely in `u₁` or entirely in
+`u₂`. -/
 theorem Produces.append_split {u₁ u₂ v : List (Symbol T g.NT)} (h : g.Produces (u₁ ++ u₂) v) :
     (∃ v₁, v = v₁ ++ u₂ ∧ g.Produces u₁ v₁) ∨ (∃ v₂, v = u₁ ++ v₂ ∧ g.Produces u₂ v₂) := by
   obtain ⟨r, hr, hrw⟩ := h
@@ -164,6 +167,8 @@ theorem Produces.append_split {u₁ u₂ v : List (Symbol T g.NT)} (h : g.Produc
   · exact .inl ⟨v₁, hv, r, hr, hrw₁⟩
   · exact .inr ⟨v₂, hv, r, hr, hrw₂⟩
 
+/-- A derivation from a concatenation `u₁ ++ u₂` splits into derivations from `u₁` and from
+`u₂`. -/
 theorem Derives.append_split {u₁ u₂ v : List (Symbol T g.NT)} (h : g.Derives (u₁ ++ u₂) v) :
     ∃ v₁ v₂, v = v₁ ++ v₂ ∧ g.Derives u₁ v₁ ∧ g.Derives u₂ v₂ := by
   induction h with
@@ -177,6 +182,8 @@ theorem Derives.append_split {u₁ u₂ v : List (Symbol T g.NT)} (h : g.Derives
 theorem not_produces_map_terminal {w : List T} {v : List (Symbol T g.NT)} :
     ¬ g.Produces (w.map .terminal) v := fun ⟨_, _, h⟩ ↦ h.not_map_terminal
 
+/-- A word with a single nonterminal produces exactly the words obtained by replacing that
+nonterminal with the output of one of its rules. -/
 theorem produces_map_terminal_append_singleton_append_iff {A : g.NT} {w u : List T}
     {v : List (Symbol T g.NT)} :
     g.Produces (w.map .terminal ++ [.nonterminal A] ++ u.map .terminal) v ↔

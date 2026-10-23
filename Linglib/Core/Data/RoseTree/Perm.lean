@@ -153,6 +153,7 @@ private theorem PermList.rel : ∀ {cs ds : List (RoseTree α)}, PermList cs ds 
     exact Multiset.rel_refl_of_refl_on fun t _ ↦ Perm.refl t
   | _, _, .trans h₁ h₂ => .trans _ h₁.rel h₂.rel
 
+/-- `PermList` is `Multiset.Rel Perm` on the coerced lists. -/
 theorem permList_iff_rel {cs ds : List (RoseTree α)} :
     PermList cs ds ↔ Multiset.Rel Perm (↑cs : Multiset (RoseTree α)) ↑ds :=
   ⟨PermList.rel, PermList.of_rel⟩
@@ -164,6 +165,8 @@ private theorem Perm.value_children : ∀ {t s : RoseTree α}, Perm t s →
     ⟨h₁.value_children.1.trans h₂.value_children.1,
      .trans _ h₁.value_children.2 h₂.value_children.2⟩
 
+/-- Two nodes are related exactly when their labels are equal and their children are related by
+`Multiset.Rel Perm`. -/
 theorem perm_node_iff {a b : α} {cs ds : List (RoseTree α)} :
     Perm (.node a cs) (.node b ds) ↔
       a = b ∧ Multiset.Rel Perm (↑cs : Multiset (RoseTree α)) ↑ds := by

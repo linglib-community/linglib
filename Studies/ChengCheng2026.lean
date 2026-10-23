@@ -153,6 +153,7 @@ instance (c : Combination) : Decidable c.ShareHead := inferInstanceAs (Decidable
 
 end Combination
 
+/-- Under either attachment, *dǎ* and the root lie in one complex head. -/
 theorem x0At_tree_lexicon (a : Attachment) :
     x0At (a.tree lexicon) ⟨[0, 1]⟩ = x0At (a.tree lexicon) RootCategorization.rootPos := by
   cases a <;> rfl
@@ -165,12 +166,15 @@ def test? (d : Datum) : Option (Combination × Bool) := do
 
 theorem length_filterMap_test? : (Examples.all.filterMap test?).length = 12 := by decide +kernel
 
+/-- A test form is acceptable iff it keeps *dǎ* with what follows it or the two lie in different
+complex heads. -/
 theorem diagnostics_iff : ∀ d ∈ Examples.all, ∀ p ∈ test? d,
     d.judgment = .acceptable ↔ (p.2 = true → ¬ p.1.ShareHead) := by
   decide +kernel
 
 /-! ### Locality of the root -/
 
+/-- *dǎ* is local to the root after it iff the combination is *dǎ*+R. -/
 theorem mayCondition'_rootPos_daPos_iff (c : Combination) :
     MayCondition' c.tree c.rootPos c.daPos ↔ c = .root := by
   cases c <;> decide

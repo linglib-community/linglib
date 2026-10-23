@@ -256,6 +256,8 @@ def eB (b : B) : (epistemicFrame B).Regular :=
 
 theorem eB_mono {b c : B} (h : b ≤ c) : eB b ≤ eB c := fun _ hx ↦ le_trans hx h
 
+/-- `e_B` reflects order, as the possibility `(b, ⊤)` witnesses `b ≤ c` from
+`e_B b ≤ e_B c`. -/
 theorem eB_le_iff {b c : B} : eB b ≤ eB c ↔ b ≤ c := by
   refine ⟨fun h ↦ ?_, eB_mono⟩
   rcases eq_or_ne b ⊥ with rfl | hb

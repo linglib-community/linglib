@@ -63,6 +63,7 @@ theorem mem_deletion_edge {j : Fin t.length} {k : Fin s.length} :
 theorem deletion_isSymmetric : (deletion s t f).IsSymmetric :=
   (ofFun_isSymmetric _ _ _).swap
 
+/-- A deletion violates a positional MAX at the protected positions off the range of its map. -/
 theorem maxViolAt_deletion (P : ℕ → Prop) [DecidablePred P] :
     (deletion s t f).maxViolAt P .lhs .rhs =
       ((Finset.univ.filter fun i : Fin s.length ↦ P i) \ Finset.univ.image f).card := by
@@ -79,6 +80,8 @@ theorem identViol_deletion_eq_zero_iff [DecidableEq α] :
     identViol_eq_zero_iff_of_graph fun _ _ ↦ mem_deletion_edge]
   rfl
 
+/-- A deletion along `Fin.succAbove p` violates a positional MAX exactly when the constraint
+protects position `p`. -/
 theorem maxViolAt_deletion_succAbove (p : Fin (t.length + 1)) (h : t.length + 1 = s.length)
     (P : ℕ → Prop) [DecidablePred P] :
     (deletion s t fun j ↦ (p.succAbove j).cast h).maxViolAt P .lhs .rhs =
@@ -125,6 +128,7 @@ theorem maxViol_eraseIdx : (eraseIdx s i).maxViol .lhs .rhs = 1 := by
 
 theorem depViol_eraseIdx : (eraseIdx s i).depViol .lhs .rhs = 0 := depViol_deletion
 
+/-- A deletion of one segment changes no other. -/
 theorem identViol_eraseIdx [DecidableEq α] : (eraseIdx s i).identViol .lhs .rhs = 0 := by
   refine identViol_deletion_eq_zero_iff.2 fun j ↦ ?_
   simp only [Fin.succAbove, Fin.lt_def, Fin.val_castSucc, Fin.val_cast]
@@ -142,6 +146,8 @@ variable {s : List α} {i : Fin (s.length + 1)} {a : α}
 
 @[simp] theorem insertIdx_form_rhs : (insertIdx s i a).form .rhs = s.insertIdx i a := rfl
 
+/-- An insertion violates a positional DEP exactly when the constraint covers the inserted
+position. -/
 theorem depViolAt_insertIdx (P : ℕ → Prop) [DecidablePred P] :
     (insertIdx s i a).depViolAt P .lhs .rhs = if P i then 1 else 0 := by
   rw [insertIdx, depViolAt_swap, BinaryRole.swap_lhs, BinaryRole.swap_rhs,
@@ -154,6 +160,7 @@ theorem maxViol_insertIdx : (insertIdx s i a).maxViol .lhs .rhs = 0 := by
   rw [insertIdx, maxViol_swap, BinaryRole.swap_lhs, BinaryRole.swap_rhs,
     deletion_isSymmetric.maxViol_eq, depViol_deletion]
 
+/-- An insertion of one segment changes no other. -/
 theorem identViol_insertIdx [DecidableEq α] : (insertIdx s i a).identViol .lhs .rhs = 0 := by
   rw [insertIdx, identViol_swap, BinaryRole.swap_lhs, BinaryRole.swap_rhs,
     deletion_isSymmetric.identViol_eq]
@@ -185,6 +192,8 @@ variable {s : List α} {D : Finset ℕ}
 @[simp] theorem eraseIdxs_form_rhs :
     (eraseIdxs s D).form .rhs = (s.zipIdx.filter fun p ↦ p.2 ∉ D).map Prod.fst := rfl
 
+/-- A deletion of the positions `D` violates a positional MAX once for each protected position
+in `D`. -/
 theorem maxViolAt_eraseIdxs (hD : ∀ k ∈ D, k < s.length) (P : ℕ → Prop) [DecidablePred P] :
     (eraseIdxs s D).maxViolAt P .lhs .rhs = (D.filter P).card := by
   rw [eraseIdxs, maxViolAt_deletion]
@@ -205,6 +214,7 @@ theorem maxViolAt_eraseIdxs (hD : ∀ k ∈ D, k < s.length) (P : ℕ → Prop) 
 
 theorem depViol_eraseIdxs : (eraseIdxs s D).depViol .lhs .rhs = 0 := depViol_deletion
 
+/-- A deletion of a set of positions changes no other segment. -/
 theorem identViol_eraseIdxs [DecidableEq α] : (eraseIdxs s D).identViol .lhs .rhs = 0 := by
   refine identViol_deletion_eq_zero_iff.2 fun j ↦ ?_
   simp only [Fin.getElem_fin, List.getElem_map]

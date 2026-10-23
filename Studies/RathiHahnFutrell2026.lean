@@ -124,6 +124,8 @@ theorem condEntropy_le_entropy_fused (hX₁ : Measurable X₁) (hX₂ : Measurab
   (entropy_fused_eq hX₁ hX₂ hg).ge.trans' <| le_add_of_nonneg_right <|
     mutualInfo_nonneg μ ((measurable_of_finite (Function.uncurry g)).comp (hX₁.prodMk hX₂)) hX₁
 
+/-- A part fusing a feature independent of the other two with the second leaves the third
+feature at least its entropy given the second, the appendix's second argument. -/
 theorem condEntropy_le_condEntropy_fused (hX₁ : Measurable X₁) (hX₂ : Measurable X₂)
     (hX₃ : Measurable X₃) (hind : X₁ ⟂ᵢ[μ] fun ω ↦ (X₂ ω, X₃ ω)) (g : S₁ → S₂ → F) :
     H[X₃ | X₂ ; μ] ≤ H[X₃ | fun ω ↦ g (X₁ ω) (X₂ ω) ; μ] := by
@@ -544,6 +546,8 @@ private theorem condEntropy_char_le_fst_past {t : ℕ} (ht : 0 < t) :
   exact condEntropy_le_condEntropy_comp _ (measurable_char L t)
     (measurable_block (measurable_char L) 0 t) _
 
+/-- Once the context spans a word, a language whose characters reveal their position has the
+entropy of a word per character. -/
 theorem pastCondEntropy_char_of_le {t : ℕ} (ht : 0 < t) (hkt : k ≤ t + 1) :
     pastCondEntropy (char L) (stream k P) t = (k : ℝ)⁻¹ * H[fun m ↦ L m ; P] := by
   refine le_antisymm ?_ (le_pastCondEntropy_char P L t)
@@ -747,6 +751,8 @@ private theorem entropy_injective {B : Type*} [MeasurableSpace B] [MeasurableSin
   rw [← entropy_meaning d]
   exact entropy_comp_of_injective _ measurable_id' (measurable_of_finite f) hf
 
+/-- With no context, the fusional language is less surprising exactly when the features are
+dependent. -/
 theorem pastCondEntropy_fus_lt_agg_zero_iff :
     pastCondEntropy (char (tagged fus)) (stream 2 (meanings d)) 0
       < pastCondEntropy (char (tagged agg)) (stream 2 (meanings d)) 0 ↔ (d : ℝ) ≠ 2⁻¹ := by
@@ -771,6 +777,9 @@ theorem mutualInfo_disagree_tense : I[fun ω ↦ ω 1 : tense ; meanings d] = 0 
     condEntropy_xor_eq_entropy (measurable_pi_apply 0) (measurable_pi_apply 1) (indep d)]
   exact sub_eq_zero.mpr ((entropy_tense d).trans (entropy_voice d).symm)
 
+/-- The hypotheses the appendix states for its second argument do not suffice. Take the
+disagreement bit as a first feature: it is independent of voice and of tense, and voice and
+tense share information, yet a part that fuses it with voice determines tense. -/
 theorem condEntropy_fused_lt (h₀ : 0 < (d : ℝ)) (h₁ : (d : ℝ) < 1) (hd : (d : ℝ) ≠ 2⁻¹) :
     I[fun ω ↦ ω 1 : voice ; meanings d] = 0 ∧ I[fun ω ↦ ω 1 : tense ; meanings d] = 0 ∧
       0 < I[tense : voice ; meanings d] ∧
@@ -832,6 +841,8 @@ private theorem measurePreserving_flip :
       (Filter.Eventually.of_forall fun w ↦ map_add_uniformOn _)
   exact Measure.measurePreserving_swap.comp (hS.comp Measure.measurePreserving_swap)
 
+/-- Without context, dropping category clustering leaves the surprisal unchanged: the uniformly
+random start averages away which category comes first. -/
 theorem pastCondEntropy_nonclustered_zero :
     pastCondEntropy (char nonclustered) (stream 2 (meanings d)) 0
       = pastCondEntropy (char (tagged agg)) (stream 2 (meanings d)) 0 := by
@@ -846,6 +857,10 @@ theorem pastCondEntropy_tagged_agg_one_le :
     ← entropy_injective d (f := nonclustered) (by decide)]
   exact le_pastCondEntropy_char _ _ 1
 
+/-- At the paper's uniform weights, the clustered language is strictly less surprising with one
+character of context: in the nonclustered stream two consecutive characters still carry
+information about where the stream started, since two voice morphemes in a row cross a word
+boundary. -/
 theorem pastCondEntropy_tagged_agg_one_lt :
     pastCondEntropy (char (tagged agg)) (stream 2 (meanings half)) 1
       < pastCondEntropy (char nonclustered) (stream 2 (meanings half)) 1 := by
@@ -1102,6 +1117,8 @@ theorem pastCondEntropy_fuseHigh_one :
     condEntropy_tense_aspect]
   rfl
 
+/-- With one character of context, fusing the independent voice and aspect raises the surprisal
+exactly when aspect and tense are dependent: the second character no longer reveals aspect. -/
 theorem pastCondEntropy_agg_lt_fuseLow_one_iff :
     pastCondEntropy (char (tagged agg)) (stream 3 (meanings d)) 1
       < pastCondEntropy (char (tagged fuseLow)) (stream 3 (meanings d)) 1 ↔ (d : ℝ) ≠ 2⁻¹ := by

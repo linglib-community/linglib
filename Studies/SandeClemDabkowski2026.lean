@@ -215,6 +215,7 @@ def rootVowels : List Phonology.Segment := if c.Harmony then verb.vowels else []
 ((12), (13)). -/
 def particleATR : Bool := if c.Harmony then verb.atr else part.atr
 
+/-- In every clause the vP tableau gives each particle vowel the value harmony assigns. -/
 theorem vPTableau_optimal {pv : ParticleVerb} (hpv : pv ∈ particleVerbs) :
     (vPTableau pv.particle (c.rootVowels pv.verb)).optimal =
       {pv.particle.vowels.map (withATR · (c.particleATR pv.particle pv.verb)) ++
@@ -304,6 +305,7 @@ def focusSteps : List Step := if c.fronted then [.im remnant.toSyntacticObject] 
 def derivation : Derivation :=
   ⟨Terminal.verb.token, vSteps ++ edgeSteps ++ c.tSteps ++ cSteps ++ c.focusSteps⟩
 
+/-- The derivation's Spell-outs are the vP and CP snapshots. -/
 theorem spellouts_eq_phases :
     (vPSchedule c.derivation).map (fun p ↦ (c.derivation.spellout p.1 p.2).filterMap
       Terminal.ofToken?) = c.phases := by

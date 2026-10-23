@@ -301,11 +301,15 @@ theorem exp1_monotone (i : Item) :
           (r₃, (Exp1Condition.truthSet .strong).card)] := by
   cases i <;> decide +kernel
 
+/-- The restricted globalist leaves the same readings available at STRONG as at WEAK, the local
+reading being true at STRONG but beyond a matrix-only mechanism, so it predicts equal ratings. -/
 theorem restrictedGlobalist_strong_eq_weak :
     availableAt Exp1Some.reading .restrictedGlobalist (Exp1Condition.witness .strong) =
       availableAt Exp1Some.reading .restrictedGlobalist (Exp1Condition.witness .weak) := by
   decide
 
+/-- The localist leaves strictly more available at STRONG than at WEAK and so predicts the
+gap. -/
 theorem localist_weak_ssubset_strong :
     availableAt Exp1Some.reading .localist (Exp1Condition.witness .weak) ⊂
       availableAt Exp1Some.reading .localist (Exp1Condition.witness .strong) := by
@@ -316,6 +320,8 @@ theorem localist_eq_unrestrictedGlobalist_exp1 (c : Exp1Condition) :
       availableAt Exp1Some.reading .unrestrictedGlobalist c.witness := by
   cases c <;> decide +kernel
 
+/-- The local reading is reinforceable over the literal one, since at WEAK the literal reading
+holds and the local one fails. -/
 theorem local_isReinforceable :
     Implicature.IsReinforceable (Exp1Some.reading (ι := Fin 6) .literal)
       (Exp1Some.reading .local_) :=
@@ -334,6 +340,9 @@ theorem exp2_false_lt_local (i : Item) :
     ∃ f ∈ rating₂ i .false_, ∃ l ∈ rating₂ i .local_, f < l := by
   cases i <;> decide +kernel
 
+/-- The unrestricted globalist collapses at the diagnostic condition, where the one reading true
+at LOCAL is beyond its reach, so it leaves nothing available there, as at FALSE, and predicts
+equal ratings. -/
 theorem unrestrictedGlobalist_local_eq_false :
     availableAt Exp2Some.reading .unrestrictedGlobalist (Exp2Condition.witness .local_) =
       availableAt Exp2Some.reading .unrestrictedGlobalist (Exp2Condition.witness .false_) := by
@@ -369,6 +378,9 @@ theorem de_qLocal_lt_local (i : Item) :
     ∃ q ∈ ratingDE .two i .qLocal, ∃ l ∈ rating₂ i .local_, q < l := by
   cases i <;> decide +kernel
 
+/-- The marginal local reading under negation is rated far below the baseline, as the responses
+consistent with a local implicature fall far below the genuine-ambiguity baseline in the fourth
+experiment of Geurts and Pouscoulous. -/
 theorem de_agrees_with_geurts_pouscoulous :
     ∀ i : Item, ∃ q ∈ ratingDE .one i .qLocal, ∃ b ∈ ratingDE .one i .both, q < b :=
   de_qLocal_lt_both .one

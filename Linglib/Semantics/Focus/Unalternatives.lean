@@ -137,6 +137,8 @@ theorem compl_alternatives_node :
       excluded op d₁.ordinary d₂.ordinary e r :=
   compl_compl _
 
+/-- Under a bijective composition, the targets of a node are the alternatives of the Roothian
+composition of its daughters, less what the node's restriction excludes. -/
 theorem alternatives_node (hop : Bijective (uncurry op)) :
     (node op e r d₁ d₂).alternatives =
       (map₂ op d₁ d₂).alternatives \ excluded op d₁.ordinary d₂.ordinary e r := by
@@ -163,10 +165,13 @@ theorem WellFormed.node_weak (hop : Injective2 op) (h₁ : d₁.WellFormed) (h�
   · rintro ⟨x, hx, y, -, h⟩
     exact hx (by rwa [(hop h).1])
 
+/-- A strong restriction excludes the literal meaning of its node. -/
 theorem not_wellFormed_node_strong (hop : Injective2 op) :
     ¬ (node op e .strong d₁ d₂).WellFormed :=
   fun h ↦ h (.inr (notMem_narrow hop e))
 
+/-- A strong restriction on the left daughter leaves no target when her sister excludes her own
+literal meaning. -/
 theorem alternatives_node_left_strong_eq_empty (h : ¬ d₂.WellFormed) :
     (node op .left .strong d₁ d₂).alternatives = ∅ := by
   refine eq_empty_of_forall_notMem fun t ht ↦ ?_

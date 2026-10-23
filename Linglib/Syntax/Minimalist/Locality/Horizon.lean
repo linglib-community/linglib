@@ -56,6 +56,8 @@ variable {t}
 theorem isUpperSet_horizon {a : TreePath} {c : Cat} : IsUpperSet (horizon t a c) :=
   fun _ _ hqr ⟨h, hh, hq⟩ ↦ ⟨h, hh, hq.trans hqr⟩
 
+/-- A horizon is the cut of the complements of the horizon heads the probe c-commands, under a
+schedule that transfers them at every stage. -/
 theorem horizon_eq_sealed (hd : HeadFunction) (a s : TreePath) (c : Cat) :
     horizon t a c = sealed (horizonHeads t a c) (complementDomain hd t ∅) (fun _ _ _ ↦ True) s := by
   ext q

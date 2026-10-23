@@ -83,10 +83,13 @@ inductive VerbPrefix where
 def Value.verbPrefix (g : Value) : numberSystem.values → VerbPrefix :=
   numberSystem.elim (match g with | .masc => .y | .fem => .t) .y
 
+/-- The article is polar. -/
 theorem polar_article : Gender.Polar Value.article := by decide
 
+/-- The article distinguishes the two genders. -/
 theorem faithful_article : Gender.Faithful Value.article := polar_article.faithful
 
+/-- The verbal prefix distinguishes the two genders. -/
 theorem faithful_verbPrefix : Gender.Faithful Value.verbPrefix := by decide
 
 /-! ### Nouns -/

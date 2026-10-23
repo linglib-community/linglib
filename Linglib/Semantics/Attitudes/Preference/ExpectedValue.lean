@@ -93,6 +93,8 @@ theorem expectedValue_eq_sum [Fintype W] [DecidablePred (· ∈ bel ∩ p)] :
   · simp [expectedValue, cond_eq_zero_of_meas_eq_zero h]
   · rw [mul_div_cancel_left₀ _ (measureReal_pos h).ne']
 
+/-- Expected value is an interval scale, commuting with affine transformations of the value
+function. -/
 theorem expectedValue_affine (h : HasPositiveBeliefMass μ bel p) (a b : ℝ) :
     expectedValue μ (fun w ↦ a * V w + b) bel p = a * expectedValue μ V bel p + b := by
   have := cond_isProbabilityMeasure (μ := μ) h
@@ -100,6 +102,8 @@ theorem expectedValue_affine (h : HasPositiveBeliefMass μ bel p) (a b : ℝ) :
   rw [integral_add .of_finite .of_finite, integral_const_mul, integral_const, probReal_univ,
     one_smul]
 
+/-- The expected value of a disjoint union lies between the expected values of the
+parts. -/
 theorem expectedValue_intermediate (hp : HasPositiveBeliefMass μ bel p)
     (hq : HasPositiveBeliefMass μ bel q) (hd : Disjoint p q) :
     min (expectedValue μ V bel p) (expectedValue μ V bel q) ≤ expectedValue μ V bel (p ∪ q) ∧
@@ -126,6 +130,7 @@ theorem expectedValue_intermediate (hp : HasPositiveBeliefMass μ bel p)
     nlinarith [le_max_left (expectedValue μ V bel p) (expectedValue μ V bel q),
       le_max_right (expectedValue μ V bel p) (expectedValue μ V bel q)]
 
+/-- Weakening holds, since disjoint `p` and `q` both above threshold put their union above it. -/
 theorem Want.union (hp' : HasPositiveBeliefMass μ bel p) (hq' : HasPositiveBeliefMass μ bel q)
     (hd : Disjoint p q) (hp : Want μ V θ bel p) (hq : Want μ V θ bel q) :
     Want μ V θ bel (p ∪ q) :=
@@ -136,6 +141,8 @@ theorem Want.resolve_left (hp' : HasPositiveBeliefMass μ bel p)
     (hp : ¬ Want μ V θ bel p) : Want μ V θ bel q :=
   (lt_max_iff.1 (lt_of_lt_of_le h (expectedValue_intermediate hp' hq' hd).2)).resolve_left hp
 
+/-- By the Smith Principle, when `p` and `q` exhaust the worlds, wanting `p` without wanting `¬q`
+is wanting `p ∩ q`. -/
 theorem Want.inter_of_union_eq_univ (hpq : HasPositiveBeliefMass μ bel (p ∩ q))
     (hq' : HasPositiveBeliefMass μ bel qᶜ) (huniv : p ∪ q = Set.univ) (hp : Want μ V θ bel p)
     (hex : ¬ Want μ V θ bel qᶜ) : Want μ V θ bel (p ∩ q) := by
@@ -146,6 +153,7 @@ theorem Want.inter_of_union_eq_univ (hpq : HasPositiveBeliefMass μ bel (p ∩ q
     (by rw [heq]; exact hp) hex
 
 omit [Finite W] [MeasurableSingletonClass W] [IsFiniteMeasure μ] in
+/-- The bare threshold admits simultaneous `want p` and `want ¬p`. -/
 theorem exists_want_and_want_compl :
     ∃ (W : Type) (_ : MeasurableSpace W) (μ : Measure W) (V : W → ℝ) (θ : ℝ) (bel p : Set W),
       Want μ V θ bel p ∧ Want μ V θ bel pᶜ := by

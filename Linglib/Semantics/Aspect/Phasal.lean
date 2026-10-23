@@ -111,6 +111,8 @@ instance (t : Phasal) [Decidable p] [Decidable q] : Decidable (t.Transition p q)
 
 theorem transition_iff (t : Phasal) : t.Transition p q ↔ t.Prior p ∧ t.Result q := Iff.rfl
 
+/-- A cessation and an inception are changes, the result state having the opposite polarity to
+the prior state. -/
 theorem result_iff_not_prior {t : Phasal} (ht : t ≠ continuation) :
     t.Result p ↔ ¬ t.Prior p := by
   cases t
@@ -135,6 +137,8 @@ variable {t : Phasal}
 @[simp] theorem denote_eq_zero_iff : t.denote R P i = 0 ↔ ¬ ◇[R] (fun i ↦ t.Prior (P i)) i := by
   simp [denote]
 
+/-- A phasal verb is true where an earlier index and the index of evaluation stand in its
+transition. -/
 theorem denote_eq_one_iff : t.denote R P i = 1 ↔ ∃ i', i ~[R] i' ∧ t.Transition (P i') (P i) := by
   simp only [denote, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
     SignType.ofProp_eq_one_iff]
@@ -156,6 +160,9 @@ theorem denote_cessation_eq_one_iff :
     cessation.denote R P i = 1 ↔ Become R (fun i ↦ ¬ P i) i := by
   rw [denote_cessation_eq_inception, denote_inception_eq_one_iff]
 
+/-- A cessation and an inception presuppose contradictory prior states, though possibly of
+different earlier indices, so that for no state are both defined at an index exactly when the
+index has at most one earlier index. -/
 theorem forall_denote_cessation_eq_zero_or_inception_eq_zero_iff :
     (∀ P : ι → Prop, cessation.denote R P i = 0 ∨ inception.denote R P i = 0) ↔
       ∀ ⦃j⦄, i ~[R] j → ∀ ⦃k⦄, i ~[R] k → j = k := by

@@ -37,16 +37,22 @@ private theorem sub_zsmul_eq_sub_mul (hε : ε ≠ 0) (d : α) (n : ℤ) :
 
 variable [LinearOrder α] [IsStrictOrderedRing α] [FloorRing α]
 
+/-- Rounding to the nearest multiple of `ε` moves a point by at most `ε / 2`, the sibling of
+`abs_sub_round` for multiples. -/
 theorem abs_sub_round_div_zsmul_le (hε : 0 < ε) (d : α) :
     |d - round (d / ε) • ε| ≤ ε / 2 := by
   rw [sub_zsmul_eq_sub_mul hε.ne', abs_mul, abs_of_pos hε]
   exact (mul_le_mul_of_nonneg_right (abs_sub_round _) hε.le).trans_eq (by ring)
 
+/-- The nearest multiple of `ε` is no farther from `d` than any multiple, the sibling of
+`round_le` for multiples. -/
 theorem abs_sub_round_div_zsmul_le_abs_sub_zsmul (hε : ε ≠ 0) (d : α) (n : ℤ) :
     |d - round (d / ε) • ε| ≤ |d - n • ε| := by
   rw [sub_zsmul_eq_sub_mul hε, sub_zsmul_eq_sub_mul hε, abs_mul, abs_mul]
   exact mul_le_mul_of_nonneg_right (round_le (d / ε) n) (abs_nonneg ε)
 
+/-- Rounding moves a point by exactly a half at the half-integers, the equality case of
+`abs_sub_round`. -/
 theorem abs_sub_round_eq_half_iff {x : α} : |x - round x| = 1 / 2 ↔ ∃ k : ℤ, x = k + 1 / 2 := by
   rw [round_eq]
   have h0 := Int.fract_nonneg (x + 1 / 2)
@@ -65,6 +71,9 @@ theorem abs_sub_round_eq_half_iff {x : α} : |x - round x| = 1 / 2 ↔ ∃ k : �
     rw [show (k : α) + 1 / 2 + 1 / 2 = ((k + 1 : ℤ) : α) by push_cast; ring, Int.fract_intCast]
     norm_num [abs_of_neg]
 
+/-- Rounding a quotient by an odd natural factors through rounding, since the half-integers
+`k * (2 * j + 1) + j + 1 / 2` at which `round (x / (2 * j + 1))` jumps are among those at which
+`round x` jumps. -/
 theorem round_div_two_mul_add_one (x : α) (j : ℕ) :
     round (x / (2 * j + 1 : ℕ)) = (round x + j) / (2 * j + 1 : ℕ) := by
   have hk : (0 : α) < (2 * j + 1 : ℕ) := by positivity

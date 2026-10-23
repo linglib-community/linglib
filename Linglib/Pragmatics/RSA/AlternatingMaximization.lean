@@ -227,6 +227,8 @@ variable (hα : 0 ≤ α) (L : Kernel U W) [IsFiniteKernel L]
   (S : Kernel O U) [IsMarkovKernel S] (hS : ∀ o, (κ ∘ₘ μ) {o} ≠ 0 → S o ≪ speaker α C L b o)
 include hα hS
 
+/-- Against a fixed listener, the free energy of a speaker and her expected divergence from the RSA
+speaker add up to the expected log partition function. -/
 theorem freeEnergy_add_sum_klDiv :
     freeEnergy μ κ C α S L +
         ∑ o, (κ ∘ₘ μ).real {o} * (klDiv (S o) (speaker α C L b o)).toReal =
@@ -240,6 +242,7 @@ theorem freeEnergy_add_sum_klDiv :
   · linear_combination
       (κ ∘ₘ μ).real {o} * toReal_klDiv_speaker_add_measureEntropy (C := C) hα (hS o h)
 
+/-- Against a fixed listener the speaker at the Bayesian belief maximizes the free energy. -/
 theorem freeEnergy_le_freeEnergy_speaker :
     freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α (speaker α C L b) L := by
   rw [freeEnergy, freeEnergy, expectedUtility_eq_sum_comp hb S L,
@@ -290,6 +293,7 @@ theorem expectedUtility_le_listener :
 
 variable [Fintype O]
 
+/-- Against a fixed speaker her Bayesian listener maximizes the free energy. -/
 theorem freeEnergy_le_freeEnergy_listener (hα : 0 ≤ α) :
     freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α S (listener μ (S ∘ₖ κ)) :=
   add_le_add_right
@@ -350,6 +354,7 @@ theorem isMarkovKernel_speaker_listener (hκ : ∀ o, (κ ∘ₘ μ) {o} ≠ 0) 
     (Measure.absolutelyContinuous_of_forall_singleton fun _ hu ↦ of_not_not fun hS ↦
       speaker_listener_apply_singleton_ne_zero hb hα (hκ o) hS hu)⟩
 
+/-- The speaker's best response to the listener of any speaker raises the free energy. -/
 theorem freeEnergy_listener_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKernel S] :
     freeEnergy μ κ C α S (listener μ (S ∘ₖ κ)) ≤
       freeEnergy μ κ C α (speaker α C (listener μ (S ∘ₖ κ)) b) (listener μ (S ∘ₖ κ)) :=
@@ -359,6 +364,7 @@ theorem freeEnergy_listener_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKern
 
 variable [Nonempty W]
 
+/-- The listener's update to the speaker who answers her raises the free energy. -/
 theorem freeEnergy_speaker_le_freeEnergy_listener (L : Kernel U W)
     [∀ u, IsZeroOrProbabilityMeasure (L u)] [IsMarkovKernel (speaker α C L b)] :
     freeEnergy μ κ C α (speaker α C L b) L ≤

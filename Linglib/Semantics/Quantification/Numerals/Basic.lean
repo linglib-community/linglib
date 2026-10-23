@@ -145,6 +145,7 @@ variable {m n : ℕ}
 /-- The lower-bounded meaning of `m` exhaustified against the next numeral. -/
 def exhNumeral (m : ℕ) : Set ℕ := Comparison.ge.interval m \ Comparison.ge.interval (m + 1)
 
+/-- The exhaustified lower-bounded meaning is the two-sided meaning. -/
 theorem exhNumeral_eq (m : ℕ) : exhNumeral m = Comparison.eq.interval m := by
   ext n
   simp only [exhNumeral, Comparison.interval_ge, Comparison.interval_eq, Set.mem_sdiff,
@@ -154,6 +155,8 @@ theorem exhNumeral_eq (m : ℕ) : exhNumeral m = Comparison.eq.interval m := by
 instance : DecidablePred (· ∈ exhNumeral m) := fun n ↦
   decidable_of_iff (n = m) (by rw [exhNumeral_eq]; rfl)
 
+/-- Exhaustifying against the next numeral is exhaustifying against the whole scale of higher
+numerals, which is an entailment chain (`Exhaustification.exhAgainst_lt_iff_succ`). -/
 theorem mem_exhNumeral_iff_exhAgainst :
     n ∈ exhNumeral m ↔
       Exhaustification.exhAgainst (· < ·) (fun k ↦ n ∈ Comparison.ge.interval (m + k)) 0 := by

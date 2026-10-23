@@ -128,16 +128,19 @@ end Constitution
 
 /-! ### Link's theorems -/
 
+/-- On an atom, `*P` and `P` agree (T.8). -/
 theorem algClosure_iff_of_atom (hx : Atom x) : AlgClosure P x ↔ P x :=
   ⟨(of_algClosure_of_atom · hx), .base⟩
 
 theorem IsDistr.not_properPlural (hP : IsDistr P) (hx : P x) : ¬ properPlural P x :=
   fun h ↦ h.2 (hP x hx)
 
+/-- The sum of two distinct atoms of a distributive predicate is a proper plural. -/
 theorem IsDistr.properPlural_sup (hP : IsDistr P) (hx : P x) (hy : P y) (hne : x ≠ y) :
     properPlural P (x ⊔ y) :=
   ⟨.sum (.base hx) (.base hy), not_atom_sup_of_ne (hP x hx) (hP y hy) hne⟩
 
+/-- Proper plurals are closed under sum. -/
 theorem cum_properPlural : CUM (properPlural P) := by
   rintro x ⟨hx, hx'⟩ y ⟨hy, hy'⟩
   refine ⟨.sum hx hy, fun h ↦ ?_⟩
@@ -151,6 +154,8 @@ Boolean algebra. -/
 def AtomJoinPrime (E : Type*) [SemilatticeSup E] : Prop :=
   ∀ (a : E), Atom a → ∀ (x y : E), a ≤ x ⊔ y → a ≤ x ∨ a ≤ y
 
+/-- If atoms are join-prime, every atomic part of an element of `*P` satisfies a distributive
+`P`. -/
 theorem IsDistr.of_algClosure_of_atom_le (hP : IsDistr P) (hJP : AtomJoinPrime E)
     (h : AlgClosure P x) (hy : Atom y) (hle : y ≤ x) : P y := by
   induction h with
@@ -165,6 +170,7 @@ individual is its singleton, and sum is union. -/
 section Finset
 variable {α : Type*} [DecidableEq α]
 
+/-- `*` of a set of individuals, taken as singletons, holds of exactly its nonempty subsets. -/
 theorem algClosure_image_singleton (S : Set α) (x : Finset α) :
     AlgClosure (· ∈ ({·} : α → Finset α) '' S) x ↔ x.Nonempty ∧ ↑x ⊆ S := by
   constructor
@@ -198,6 +204,8 @@ theorem algClosure_iff_of_subset_range_singleton {P : Finset α → Prop}
   rw [algClosure_image_singleton]
   exact Iff.rfl
 
+/-- `×` of a set of individuals, taken as singletons, holds of exactly its subsets, the empty one
+among them. -/
 theorem fullAlgClosure_image_singleton (S : Set α) (x : Finset α) :
     FullAlgClosure (· ∈ ({·} : α → Finset α) '' S) x ↔ ↑x ⊆ S := by
   rw [FullAlgClosure, algClosure_image_singleton]
@@ -205,6 +213,7 @@ theorem fullAlgClosure_image_singleton (S : Set α) (x : Finset α) :
   rcases x.eq_empty_or_nonempty with rfl | hx
   exacts [.inr rfl, .inl ⟨hx, h⟩]
 
+/-- The pluralities of `×S` for a finite `S` number `0, …, |S|` atoms. -/
 theorem card_image_fullAlgClosure {S : Set α} (h : S.Finite) :
     Finset.card '' {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' S) x} = Set.Iic S.ncard := by
   rw [show {x | FullAlgClosure (· ∈ ({·} : α → Finset α) '' S) x} = {x | x ⊆ h.toFinset} from
@@ -214,6 +223,7 @@ theorem card_image_fullAlgClosure {S : Set α} (h : S.Finite) :
   exact ⟨fun ⟨x, hx, hd⟩ ↦ hd ▸ Finset.card_le_card hx,
     fun hd ↦ let ⟨y, hy, hc⟩ := Finset.exists_subset_card_eq hd; ⟨y, hy, hc⟩⟩
 
+/-- Those of `*S` number `1, …, |S|`: without the empty sum no plurality has zero atoms. -/
 theorem card_image_algClosure {S : Set α} (h : S.Finite) :
     Finset.card '' {x | AlgClosure (· ∈ ({·} : α → Finset α) '' S) x} = Set.Icc 1 S.ncard := by
   rw [show {x | AlgClosure (· ∈ ({·} : α → Finset α) '' S) x} =

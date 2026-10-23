@@ -169,12 +169,16 @@ def WellFormed (es : List (Σ σ, Exponent σ)) : Prop :=
 
 instance : DecidablePred WellFormed := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
+/-- The nominative plural takes no case ending, so *pullo-t* is a word and *pullo-t-ssa* is
+not. -/
 theorem not_wellFormed_nominativePlural_case (c : Case) :
     ¬ WellFormed [⟨_, .nominativePlural⟩, ⟨_, .case c⟩] := by
   intro h
   have := h.2.1
   cases c <;> simp_all [Exponent.fills]
 
+/-- A comitative needs a possessive ending, so *vaimo-ine-ni* is a word and *vaimo-ine* is
+not. -/
 theorem not_wellFormed_comitative : ¬ WellFormed [⟨_, .case .com⟩] := by
   decide
 
@@ -243,6 +247,9 @@ def continuations (w : List Segment) (num : numberSystem.values) (c : Option Cas
 def realize (w : List Segment) (es : List (Σ σ, Exponent σ)) : List (List Segment) :=
   (continuations w (numberSystem.value .singular) none es).map surface
 
+/-- The third person is -Vn or -nsA after the inessive, as in *talo-ssa-an* 'in his house', and
+-nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his
+house'. -/
 theorem continuations_third :
     continuations [] (numberSystem.value .singular) none [⟨_, .case .ine⟩,
                                  ⟨_, .possessive (.personNumber .third .singular)⟩] =
@@ -252,6 +259,8 @@ theorem continuations_third :
         [[V, n, s, A], [h, V, n, s, A], [s, e, e, n, s, A]] := by
   decide
 
+/-- With a possessive ending the genitive is the nominative, as in *ove-mme* 'our door, of our
+door'. -/
 theorem realize_gen_possessive (w : List Segment) (p : Bundle) :
     realize w [⟨_, .case .gen⟩, ⟨_, .possessive p⟩] = realize w [⟨_, .possessive p⟩] := by
   have hn : ¬ n.IsVowel := by decide

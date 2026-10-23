@@ -116,6 +116,7 @@ instance : PredOrder TreePath where
 
 @[simp] theorem pred_eq_parent (p : TreePath) : Order.pred p = p.parent := rfl
 
+/-- A position is covered exactly by its daughters, the extensions by one index. -/
 theorem covBy_iff {p q : TreePath} : p ⋖ q ↔ ∃ i, q.toList = p.toList ++ [i] := by
   constructor
   · intro h
@@ -181,6 +182,7 @@ theorem precedes_cons_of_lt {i j : ℕ} (hij : i < j) (p q : TreePath) :
     Precedes ⟨i :: p.toList⟩ ⟨j :: q.toList⟩ :=
   ⟨[], i, j, hij, by simp, by simp⟩
 
+/-- `p` precedes `q` exactly when `p` comes lexicographically before `q` without dominating it. -/
 theorem precedes_iff_lt_and_not_le {p q : TreePath} :
     Precedes p q ↔ p.toList < q.toList ∧ ¬ p ≤ q := by
   refine ⟨fun h ↦ ⟨h.lt, h.not_le⟩, fun ⟨hlt, hle⟩ ↦ ?_⟩
@@ -219,6 +221,7 @@ instance : IsStrictOrder TreePath Precedes where
   irrefl := Precedes.irrefl
   trans _ _ _ := Precedes.trans
 
+/-- Any two positions are related by dominance or by precedence. -/
 protected theorem trichotomy (p q : TreePath) : p ≤ q ∨ q ≤ p ∨ Precedes p q ∨ Precedes q p := by
   by_cases hpq : p ≤ q
   · exact .inl hpq
@@ -269,6 +272,8 @@ private theorem exists_eq_reverse_dropWhile_append (l : List ℕ) :
   rw [← List.eq_replicate_iff.2 ⟨List.length_reverse, fun x hx ↦ ?_⟩, h]
   exact beq_iff_eq.1 (List.all_eq_true.1 List.all_takeWhile x (List.mem_reverse.1 hx))
 
+/-- Positions are left-aligned exactly when descending through first daughters from each reaches
+a common position. -/
 theorem leftAligned_iff_exists {p q : TreePath} :
     LeftAligned p q ↔
       ∃ j k, p.toList ++ List.replicate j 0 = q.toList ++ List.replicate k 0 := by

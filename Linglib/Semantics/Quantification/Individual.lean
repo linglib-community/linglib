@@ -84,6 +84,8 @@ theorem eq_iSup_every_inf_no (Q : NP E) : Q = ⨆ (R) (_ : Q R), every R ⊓ no 
   funext fun _ ↦ by
     simp only [iSup_apply, iSup_Prop_eq, every_inf_no_compl_apply, exists_prop, exists_eq_right']
 
+/-- Complete homomorphisms out of `NP E` that agree on the individuals are equal, the
+individuals being complete generators. -/
 theorem completeLatticeHom_ext {β : Type*} [CompleteBooleanAlgebra β]
     {f g : CompleteLatticeHom (NP E) β} (h : ∀ x, f (individual x) = g (individual x)) :
     f = g := by
@@ -109,6 +111,7 @@ def BE : CompleteLatticeHom (NP E) (E → Prop) where
 @[simp] theorem some_ident (j : E) : GQ.some (ident j) = individual j :=
   funext fun _ ↦ propext ⟨fun ⟨_, h, hP⟩ ↦ h ▸ hP, fun hP ↦ ⟨j, rfl, hP⟩⟩
 
+/-- `BE ∘ A` is the identity: *be a man* is *man*. -/
 @[simp] theorem BE_some (P : E → Prop) : BE (GQ.some P) = P :=
   funext fun _ ↦ propext ⟨fun ⟨_, hP, h⟩ ↦ h ▸ hP, fun hP ↦ ⟨_, hP, rfl⟩⟩
 

@@ -147,6 +147,8 @@ theorem IsLeftInputStrictlyLocal.of_factorsThrough_residual (h₀ : f [] = [])
   | nil => exact h₀.symm
   | append_singleton u x ih => rw [ISLRule.apply_append_singleton, hg, ih]
 
+/-- A function is `k`-ISL if and only if it fixes `[]`, is prefix-preserving, and has residuals
+factoring through the last `k - 1` input symbols. -/
 theorem isLeftInputStrictlyLocal_iff_factorsThrough_residual :
     IsLeftInputStrictlyLocal k f ↔ f [] = [] ∧ (∀ u v, f u <+: f (u ++ v)) ∧
       f.residual.FactorsThrough fun u ↦ u.rtake (k - 1) :=
@@ -155,6 +157,7 @@ theorem isLeftInputStrictlyLocal_iff_factorsThrough_residual :
 
 /-! ### The hierarchy in `k` -/
 
+/-- A `k`-ISL function is `k'`-ISL for every `k' ≥ k`. -/
 protected theorem IsLeftInputStrictlyLocal.weaken (hf : IsLeftInputStrictlyLocal k f)
     (hk : k ≤ k') : IsLeftInputStrictlyLocal k' f :=
   .of_factorsThrough_residual hf.map_nil hf.isPrefix fun u₁ u₂ h ↦
@@ -166,6 +169,8 @@ protected theorem IsRightInputStrictlyLocal.weaken (hf : IsRightInputStrictlyLoc
     (hk : k ≤ k') : IsRightInputStrictlyLocal k' f :=
   IsLeftInputStrictlyLocal.weaken hf hk
 
+/-- The `1`-ISL functions are the letterwise homomorphisms `List.flatMap h`, among them the
+erasing projections `List.filterMap g`. -/
 theorem isLeftInputStrictlyLocal_one_iff :
     IsLeftInputStrictlyLocal 1 f ↔ ∃ h : α → List β, List.flatMap h = f := by
   refine ⟨fun ⟨r, hr⟩ ↦ ⟨fun x ↦ r.windowOutput [] x, funext fun u ↦ ?_⟩,
@@ -183,6 +188,7 @@ theorem isLeftInputStrictlyLocal_one_iff :
 An ISL rule is a window recursion accumulating the input, so over a finite input alphabet the
 bounded input window is a finite state space (`isLeftSubsequential_windowRun`). -/
 
+/-- Over a finite input alphabet, left-ISL functions are left-subsequential. -/
 theorem IsLeftInputStrictlyLocal.isLeftSubsequential [Fintype α]
     (hf : IsLeftInputStrictlyLocal k f) : IsLeftSubsequential f := by
   obtain ⟨r, rfl⟩ := hf

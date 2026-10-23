@@ -157,6 +157,8 @@ theorem factorsThrough_havePresent_bePresent : FactorsThrough havePresent.form b
 theorem factorsThrough_doPresent_bePresent : FactorsThrough doPresent.form bePresent.form :=
   factorsThrough_ofForm (f := bePresentForm) (g := presentForm "does" "do") (by decide)
 
+/-- The present of *be* tells the first person singular from the second, which the present of
+*have* does not. -/
 theorem not_factorsThrough_bePresent_havePresent :
     ¬ FactorsThrough bePresent.form havePresent.form :=
   fun h ↦ absurd (h (a := cell .first .singular) (b := cell .second .singular) rfl) (by decide)

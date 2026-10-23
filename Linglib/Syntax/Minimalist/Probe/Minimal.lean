@@ -71,6 +71,7 @@ def AgreesWith (a : α) : Prop := p.Inspects s key a ∧ p.int a
 
 variable {p s key} {a b : α}
 
+/-- A probe finds the inspected goals that satisfy it. -/
 theorem finds_iff : p.Finds s key a ↔ p.Inspects s key a ∧ p.sat a := by
   rw [Finds, minimalFor_iff_forall_lt, Inspects]
   constructor
@@ -91,21 +92,29 @@ theorem Finds.le {β : Type*} [LinearOrder β] {key : α → β} (h : p.Finds s 
     (hs : p.sat b) : key a ≤ key b :=
   MinimalFor.le h ⟨hb, hs⟩
 
+/-- Under a well-founded key, a probe with a satisfier in its domain finds a goal. -/
 theorem exists_finds [WellFoundedLT β] (h : ∃ a ∈ s, p.sat a) : ∃ a, p.Finds s key a :=
   exists_minimalFor_of_wellFoundedLT _ key (let ⟨a, ha, hs⟩ := h; ⟨a, ha, hs⟩)
 
+/-- A goal inspected in a domain is inspected in any part of it that contains the goal, as a
+horizon cuts the domain. -/
 theorem Inspects.of_subset {t : Set α} (h : p.Inspects s key a) (hts : t ⊆ s) (ha : a ∈ t) :
     p.Inspects t key a :=
   ⟨ha, fun _ hb ↦ h.2 (hts hb)⟩
 
+/-- A goal found in a domain is found in any part of it that contains the goal. -/
 theorem Finds.of_subset {t : Set α} (h : p.Finds s key a) (hts : t ⊆ s) (ha : a ∈ t) :
     p.Finds t key a :=
   finds_iff.2 ⟨h.inspects.of_subset hts ha, h.sat⟩
 
+/-- A goal found under a key that refines another is found under that one: a goal closer under
+the coarser key is closer under the finer. -/
 theorem Finds.of_refines {γ : Type*} [Preorder γ] {key' : α → γ}
     (hk : ∀ ⦃a b⦄, key a < key b → key' a < key' b) (h : p.Finds s key' a) : p.Finds s key a :=
   finds_iff.2 ⟨⟨h.mem, fun _ hb hsb hlt ↦ h.inspects.2 hb hsb (hk hlt)⟩, h.sat⟩
 
+/-- When every interacting goal satisfies the probe, it agrees with the goals it finds that
+interact. -/
 theorem agreesWith_iff_finds (hp : ∀ a, p.int a → p.sat a) :
     p.AgreesWith s key a ↔ p.Finds s key a ∧ p.int a := by
   rw [AgreesWith, finds_iff]
@@ -170,6 +179,7 @@ theorem mem_copied_iff [Fintype α] {s : Set α} [DecidablePred (· ∈ s)] {key
 
 end Spec
 
+/-- A goal found under Best Match is found under the closeness it refines. -/
 theorem Finds.of_bestMatch {F : Type*} [DecidableEq F] {sp : Spec F} {feats : α → Finset F}
     (h : (sp.toProbe feats).Finds s (sp.bestMatch feats key) a) :
     (sp.toProbe feats).Finds s key a :=
@@ -184,11 +194,15 @@ open scoped SetRel
 
 variable {α : Type*} [PartialOrder α] {P : Set α} {p : Probe α} {s : Set α} {a b x : α}
 
+/-- Among satisfiers none of which dominates another, a probe finds those that no satisfier
+asymmetrically commands, the Minimal Link Condition. -/
 theorem finds_ancestors_iff (hs : IsAntichain (· ≤ ·) {b | b ∈ s ∧ p.sat b}) :
     p.Finds s (ancestors P) a ↔ (a ∈ s ∧ p.sat a) ∧
       ∀ ⦃b⦄, b ∈ s → p.sat b → ¬ (b ~[commandRelation P] a ∧ ¬ a ~[commandRelation P] b) := by
   simpa only [Finds, and_imp, Set.mem_ofPred_eq] using minimalFor_ancestors_iff (P := P) hs
 
+/-- A probe does not find a goal that a satisfier dominates through a generator: the container is
+found before what it contains, as the A-over-A principle requires. -/
 theorem not_finds_ancestors_of_lt (hb : b ∈ s) (hsb : p.sat b) (hbx : b ≤ x) (hxa : x < a)
     (hx : x ∈ P) : ¬ p.Finds s (ancestors P) a := fun h ↦
   h.inspects.2 hb hsb (ancestors_ssubset_ancestors_of_le_of_lt hbx hxa hx)
@@ -211,6 +225,7 @@ section List
 
 variable [DecidableEq α] {l : List α}
 
+/-- The goals the list search inspects are those that no satisfier precedes. -/
 theorem mem_inspected_iff_inspects :
     a ∈ p.inspected l ↔ p.Inspects {b | b ∈ l} l.idxOf a := by
   induction l with
@@ -250,9 +265,11 @@ theorem mem_inspected_iff_inspects :
             rw [List.idxOf_cons_ne l (Ne.symm hbx), List.idxOf_cons_ne l (Ne.symm hax)]
             exact Nat.succ_lt_succ hlt)
 
+/-- The list search is Relativized Minimality keyed by position. -/
 theorem search_eq_some_iff_finds : p.search l = some a ↔ p.Finds {b | b ∈ l} l.idxOf a := by
   rw [search_eq_some_iff_mem_inspected, mem_inspected_iff_inspects, finds_iff]
 
+/-- The list Agree flags the goals the probe agrees with, keyed by position. -/
 theorem mem_agree_interacted_iff {σ : Type*} {copy : α → σ → σ} {st : σ} :
     a ∈ (p.agree copy st l).interacted ↔ p.AgreesWith {b | b ∈ l} l.idxOf a := by
   rw [agree_interacted, List.mem_filter, mem_inspected_iff_inspects, AgreesWith, decide_eq_true_iff]

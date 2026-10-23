@@ -125,6 +125,8 @@ theorem posterior_spoke (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) :
     .of_discrete (x := true) (by rwa [preimage_spoke, ← spoke_comp_apply_true])
   rwa [preimage_spoke] at this
 
+/-- Speaking raises the probability that the situation used to be different exactly when the
+remark is trivial with nothing changed and worth making had the situation changed. -/
 theorem prior_lt_posterior_iff (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) (hs : μ {.same} ≠ 0)
     (hd : μ {.different} ≠ 0) :
     μ.real {.different} < ((s.spoke†μ) true).real {.different} ↔
@@ -134,6 +136,8 @@ theorem prior_lt_posterior_iff (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) (hs : μ 
   by_cases h₁ : s.bar ≤ s.worth .same <;> by_cases h₂ : s.bar ≤ s.worth .different <;>
     simp [h₁, h₂, not_le.mp]
 
+/-- A speaker who does not know the situation over time makes the remark in every past or in
+none, so hearing it leaves the prior unchanged. -/
 theorem posterior_eq_prior_of_not_knowledgeable (hk : ¬ s.Knowledgeable)
     (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) : (s.spoke†μ) true = μ := by
   have hpre : {p | s.bar ≤ s.worth p} = Set.univ := by
@@ -151,6 +155,8 @@ theorem not_prior_lt_posterior_of_not_knowledgeable (hk : ¬ s.Knowledgeable)
   rw [posterior_eq_prior_of_not_knowledgeable μ hk hx]
   exact lt_irrefl _
 
+/-- A quieter speaker with the same view of the situation licenses the inference whenever a
+more talkative one does, as long as a change would still be worth mentioning to her. -/
 theorem prior_lt_posterior_of_bar_le (hw : s.worth = t.worth) (hb : s.bar ≤ t.bar)
     (ht : t.bar ≤ t.worth .different) (hx : (s.spoke ∘ₘ μ) {true} ≠ 0)
     (hx' : (t.spoke ∘ₘ μ) {true} ≠ 0) (hs : μ {.same} ≠ 0) (hd : μ {.different} ≠ 0)
@@ -225,6 +231,8 @@ theorem exp4_yes_eq_no : m.rt .different true = m.rt .different false := by
 theorem yes_contrast : m.rt .different true - m.rt .same true = m.alternative := by
   simp [rt, ConsidersAlternative, Endorses, asserted]
 
+/-- The *no* answers of the two experiments take equally long, since both consider the
+alternative. -/
 theorem exp3_no_eq_exp4_no : m.rt .same false = m.rt .different false := by
   simp [rt, ConsidersAlternative, Endorses, asserted]
 
@@ -240,6 +248,8 @@ theorem exp3_confounded : m.rt .same false - m.rt .same true = m.negative + m.in
 theorem yes_contrast : m.rt .different true - m.rt .same true = m.inference := by
   simp [rt, Endorses, asserted]
 
+/-- If the *no* answers of the two experiments take equally long, so do the *yes* answers, so the
+additive model cannot give the paper's pattern. -/
 theorem yes_eq_yes_of_no_eq_no (h : m.rt .same false = m.rt .different false) :
     m.rt .different true = m.rt .same true := by
   simp [rt, Endorses, asserted] at h ⊢; linarith

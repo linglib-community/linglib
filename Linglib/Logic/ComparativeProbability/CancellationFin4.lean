@@ -299,6 +299,8 @@ decreasing_by
     | exact Multiset.card_erase_lt_of_mem ‹_›
     | (rw [‹M = _›]; simp)
 
+/-- A qualitative probability on `Fin 4` with no null atom satisfies cancellation, by the merge
+    reduction `merge_to_single`. -/
 theorem no_null_cancellation (r : Set (Fin 4) → Set (Fin 4) → Prop) [IsQualitativeProbability r]
     (hnull : ∀ i : Fin 4, ¬ r ∅ {i}) : Cancellation r := by
   intro M hvalid hsum v hv
@@ -455,6 +457,9 @@ private theorem no_null_cancellation_of_le_four (hn : n ≤ 4) (r : Set (Fin n) 
 
 end Extend
 
+/-- Every qualitative probability on at most four atoms satisfies cancellation. A null atom
+    reduces to one atom fewer (`cancellation_of_null_atom`); otherwise the lexicographic
+    extension to `Fin 4` applies. -/
 theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
     ∀ (r : Set (Fin n) → Set (Fin n) → Prop) [IsQualitativeProbability r], Cancellation r
   | 0, _, r, hr => (not_isQualitativeProbability_of_isEmpty r hr).elim
@@ -469,6 +474,8 @@ theorem cancellation_of_le_four : ∀ {n : ℕ}, n ≤ 4 →
       · push Not at h
         exact no_null_cancellation_of_le_four hn r h
 
+/-- Every qualitative probability on at most four atoms is representable, by Scott
+    cancellation. -/
 theorem representable_of_le_four {n : ℕ} (hn : n ≤ 4) (r : Set (Fin n) → Set (Fin n) → Prop)
     [IsQualitativeProbability r] : Representable r :=
   cancellation_implies_representable r (cancellation_of_le_four hn r)

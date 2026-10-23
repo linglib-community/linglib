@@ -212,6 +212,8 @@ private theorem runFrom_eq_self (hd : sys.default = none)
       rw [sys.searchCopy.toMealy_runFrom_cons_of_not_tier hx, sys.emit_of_not_onTier hx]
       exact congrArg _ (runFrom_eq_self hd hb xs a? h)
 
+/-- A harmonic word is a fixed point of the run, provided there is no default and blockers
+do not undergo. -/
 theorem apply_eq_self_of_harmonic (hd : sys.default = none)
     (hb : ∀ s, sys.pattern.participation s = .opaque → ¬ sys.IsTarget s) {w : List α}
     (h : sys.pattern.Harmonic w) : sys.searchCopy.apply w = w := by
@@ -253,6 +255,8 @@ private theorem harmonic_of_runFrom_eq_self (hs : sys.Saturated) :
       rw [sys.pattern.tier_cons_of_not_onTier hx]
       exact harmonic_of_runFrom_eq_self hs xs a? ha (List.cons.inj h).2
 
+/-- On a saturated system without a default the harmonic words are exactly the fixed points
+of the run. -/
 theorem harmonic_iff_apply_eq_self (hs : sys.Saturated) (hd : sys.default = none)
     (hb : ∀ s, sys.pattern.participation s = .opaque → ¬ sys.IsTarget s) (w : List α) :
     sys.pattern.Harmonic w ↔ sys.searchCopy.apply w = w :=
@@ -325,6 +329,9 @@ private theorem runFrom_harmonic (hs : sys.Saturated) (hw : sys.searchCopy.Prese
         sys.pattern.tier_cons_of_not_onTier hx]
       exact runFrom_harmonic hs hw xs a? ha
 
+/-- On a saturated system without a default whose writes stay visible, the run writes the
+value of the first visible segment in the direction of spreading into every visible
+segment. -/
 theorem apply_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier)
     (hd : sys.default = none) (w : List α) : sys.searchCopy.apply w = w.map fun s ↦
       if sys.pattern.OnTier s then
@@ -334,6 +341,7 @@ theorem apply_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier)
   rw [SearchCopy.apply, searchCopy_direction, sys.scan_eq_map hs hw hd, ← Edge.map_orient,
     Edge.orient_orient]
 
+/-- On a saturated system whose writes stay visible, the run's output is harmonic. -/
 theorem harmonic_apply (hs : sys.Saturated) (hw : sys.searchCopy.PreservesTier) (w : List α) :
     sys.pattern.Harmonic (sys.searchCopy.apply w) := by
   rw [sys.pattern.harmonic_iff_isChain_orient, SearchCopy.apply, searchCopy_direction,

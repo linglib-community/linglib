@@ -60,11 +60,13 @@ instance (d : Derivation) (n : Nat) (x y : SyntacticObject) :
     Decidable (d.CCommandsAt n x y) := by
   unfold CCommandsAt; infer_instance
 
+/-- The stage the predicate looks at is the derivation's own. -/
 theorem CCommandsAt.cCommands_stageAt (h : d.CCommandsAt n x y) :
     CCommands (d.stageAt n) x y :=
   let ⟨_, hp, hc⟩ := h
   d.externalize?_take_faithful n hp ▸ hc
 
+/-- The early stages of an extended derivation are the original's. -/
 theorem cCommandsAt_append_of_le (h : n ≤ d.length) :
     (d.append steps).CCommandsAt n x y ↔ d.CCommandsAt n x y := by
   rw [CCommandsAt, CCommandsAt, take_append_of_le h]
@@ -80,9 +82,11 @@ def BindsAtSomeStage (d : Derivation) (x y : SyntacticObject) : Prop :=
 instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtSomeStage x y) := by
   unfold BindsAtSomeStage; infer_instance
 
+/-- Binding at the surface is binding at some stage. -/
 theorem BindsAtSurface.bindsAtSomeStage (h : d.BindsAtSurface x y) : d.BindsAtSomeStage x y :=
   ⟨d.length, le_rfl, h⟩
 
+/-- Binding at some stage is monotone under extension. -/
 theorem BindsAtSomeStage.append (h : d.BindsAtSomeStage x y) :
     (d.append steps).BindsAtSomeStage x y :=
   let ⟨n, hn, hc⟩ := h
@@ -100,6 +104,7 @@ def BindsAtLF (d : Derivation) (x y : SyntacticObject) : Prop :=
 instance (d : Derivation) (x y : SyntacticObject) : Decidable (d.BindsAtLF x y) := by
   unfold BindsAtLF; infer_instance
 
+/-- Binding at some stage is binding at the copy object, where every stage survives. -/
 theorem BindsAtSomeStage.bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.replay?.isSome) (h : d.BindsAtSomeStage ↑x ↑y) : d.BindsAtLF ↑x ↑y := by
   obtain ⟨n, -, p, hp, hc⟩ := h
@@ -116,6 +121,9 @@ theorem BindsAtSomeStage.bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
   obtain rfl := Option.some.inj hC
   exact ⟨C', hC', h1.mono hsub⟩
 
+/-- Binding at the copy object is binding at some stage, in a derivation of Merge steps that moves
+no trace and merges no token twice: two copies stand in a c-command relation only if, at the step
+that merged the higher one, its sister held the other pronounced. -/
 theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge)
     (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.val.value.isLeft)
@@ -229,6 +237,9 @@ theorem BindsAtLF.bindsAtSomeStage {x y : LexicalItem.Token} (hxy : x ≠ y)
         rw [terms_leaf, Multiset.mem_singleton, leaf_inj] at this
         exact absurd this.symm hxy
 
+/-- Derivational binding is binding at the copy object: in a derivation of Merge steps that moves
+no trace and merges no token twice, `x` c-commands `y` at some stage exactly when some copy of `x`
+c-commands some copy of `y` in the object with every copy in place. -/
 theorem bindsAtSomeStage_iff_bindsAtLF {x y : LexicalItem.Token} (hxy : x ≠ y)
     (hd : d.lexTokens.Nodup) (hm : ∀ step ∈ d.steps, step.IsMerge)
     (hmv : ∀ step ∈ d.steps, ∀ m ∈ step.mover?, m.val.value.isLeft) (hr : d.replay?.isSome) :

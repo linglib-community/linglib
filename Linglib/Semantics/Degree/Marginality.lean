@@ -155,6 +155,7 @@ instance : IsOrderConnected α ml.LargelyLT where
 instance instIsStrictWeakOrderLargelyLT : IsStrictWeakOrder α ml.LargelyLT :=
   isStrictWeakOrder_of_isOrderConnected
 
+/-- At most marginal difference is incomparability under largely smaller than. -/
 theorem atMostMarginal_iff_incompRel : ml.AtMostMarginal x y ↔ IncompRel ml.LargelyLT x y := by
   simp only [AtMostMarginal, Relation.reflGen_iff, Relation.SymmGen, IncompRel]
   grind [marginallyLT_or_largelyLT_of_lt, MarginallyLT.not_largelyLT]
@@ -254,6 +255,8 @@ theorem ext {ml ml' : MarginalScale α} (h : ∀ x y, ml.MarginallyLT x y ↔ ml
   congr
   exact funext₂ fun x y ↦ propext (h x y)
 
+/-- Every marginal scale is the scale of its partition into blocks of at most marginally different
+degrees. -/
 theorem ofSetoid_atMostMarginalSetoid :
     ofSetoid ml.atMostMarginalSetoid ordConnected_setOf_atMostMarginal
       (let ⟨x, y, h⟩ := ml.exists_large;
@@ -363,6 +366,8 @@ section Lex
 variable {β γ : Type*} [LinearOrder β] [LinearOrder γ] [Nontrivial β] [Nonempty γ]
   [NoMaxOrder γ] [NoMinOrder γ] {f : α → β ×ₗ γ}
 
+/-- A map into a lexicographic marginal scale is a homomorphism exactly when its block coordinate
+pulls back largely smaller than and its location coordinate grows along marginal steps. -/
 theorem isHom_lex_iff :
     ml.IsHom (lex β γ) f ↔ (∀ x y, ml.LargelyLT x y ↔ (ofLex (f x)).1 < (ofLex (f y)).1) ∧
       ∀ ⦃x y⦄, ml.MarginallyLT x y → (ofLex (f x)).2 < (ofLex (f y)).2 := by

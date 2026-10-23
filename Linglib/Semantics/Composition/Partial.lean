@@ -232,6 +232,8 @@ theorem Denotation.lifts_toPartial {d : Denotation E W Id S} (h : d.1.FirstOrder
   obtain ⟨ty, x⟩ := d
   exact .mk (Ty.lifts_toPartial h x)
 
+/-- Every mode preserves the lift, since on defined daughters that lift total ones a mode's
+partial value is defined and lifts its total value. -/
 theorem Mode.lifts_evalPartial {σ₁ σ₂ τ : Ty} (m : Mode σ₁ σ₂ τ) {a : Ty.Domain E W σ₁ S}
     {b : Ty.Domain E W σ₂ S} {a' : Ty.PDomain E W σ₁ S} {b' : Ty.PDomain E W σ₂ S}
     (ha : Ty.Lifts σ₁ a a') (hb : Ty.Lifts σ₂ b b') :
@@ -390,6 +392,7 @@ theorem interpPartial_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).ma
   simp only [interpPartial, Option.map_map, Function.comp_def]
   exact translate_map_fst lex h t
 
+/-- Uninterpretability is decided by the leaves' types alone. -/
 theorem uninterpretable_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
     Uninterpretable lex g t ↔ Uninterpretable lex' g' t := by
   have := interpPartial_map_fst_congr lex lex' g g' h t
@@ -404,6 +407,8 @@ section Total
 variable {C : Type} {L : Type*} {lex : L → Option (Denotation E W Id S)}
   {lex' : L → Option (PDenotation E W S)}
 
+/-- On a lexicon lifting a total one, every value of the partial engine is defined and lifts the
+pure engine's value at that node. -/
 theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d')
     (g : Assignment E) (t : Tree C L) {d' : PDenotation E W S}
     (h : interpPartial lex' g t = some d') :
@@ -420,6 +425,7 @@ theorem interpPartial_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w 
   · simp only [hz]
     exact .mk hl
 
+/-- A lexicon lifting a total one has no presupposition failures. -/
 theorem not_presupFailure_of_lifts
     (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some d ∧ d.Lifts d') (g : Assignment E)
     (t : Tree C L) : ¬ PresupFailure lex' g t := by

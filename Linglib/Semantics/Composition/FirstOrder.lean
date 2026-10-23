@@ -234,6 +234,7 @@ private theorem realize_applyNext {k j : ℕ} {ys : Fin k → M}
     (P.applyNext h).Realize v (Fin.snoc zs a) ↔ P' a :=
   hP _ _ _ ((snoc_comp_castLE zs a).trans hzs) _ a (by simp [Ty.Realizes]) _ le_rfl _ rfl
 
+/-- A composition mode preserves the logical relation. -/
 theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) {n : ℕ} {xs : Fin n → M}
     {a : Ty.SyntacticDomain L α σ₁ n} {b : Ty.SyntacticDomain L α σ₂ n}
     {a' : Ty.Domain M W σ₁ Q} {b' : Ty.Domain M W σ₂ Q}
@@ -263,6 +264,9 @@ theorem Mode.realizes_readback {σ₁ σ₂ τ : Ty} (μ : Mode σ₁ σ₂ τ) 
     exact and_congr (hb k hk ys hys x c hx j hj zs hzs e d he i hi us hus)
       (ha j (hk.trans hj) zs (comp_castLE_trans hys hzs) e d he i hi us hus)
 
+/-- When the readbacks of the constants realize their denotations, the readback of a term under
+a valuation of its variables realizes the term's denotation under the assignment that valuation
+realizes. This is the fundamental lemma of the logical relation. -/
 theorem Term.realizes_readback {K : Ty → Type*}
     {R : ∀ {ty : Ty} (n : ℕ), K ty → Ty.SyntacticDomain L α ty n}
     {I : ∀ {ty : Ty}, K ty → Ty.Domain M W ty Q}
@@ -283,6 +287,8 @@ theorem Term.realizes_readback {K : Ty → Type*}
       exact (realize_relabel_castLE S v hk (ρ j) ys).trans (hys ▸ hρ j)
   | comp μ l r ihl ihr => exact μ.realizes_readback S v (ihl hρ) (ihr hρ)
 
+/-- The readbacks of the first-order constants realize their denotations in a composition
+model at a world. -/
 theorem FirstOrderConstant.realizes_readback (m : Model L) (w : m.W) (v : α → m.E) {ty : Ty}
     (c : FirstOrderConstant L ty) (n : ℕ) (xs : Fin n → m.E) :
     Ty.Realizes (m.interp w) v ty n xs (FirstOrderConstant.readback n c) (c.interp m w) := by
@@ -338,6 +344,8 @@ theorem FirstOrderConstant.realizes_readback (m : Model L) (w : m.W) (v : α →
       BoundedFormula.realize_sup]
     exact or_congr (hp j hj zs hzs) (hq j (hk₂.trans hj) zs (comp_castLE_trans hys₂ hzs))
 
+/-- A first-order logical form denotes, at a world of a composition model and under an
+assignment, the realization of its readback there. -/
 theorem Term.realizeAt_toFormula (m : Model L) (w : m.W) (u : Term (FirstOrderConstant L) .t)
     (g : Assignment m.E) :
     u.toFormula.RealizeAt m.interp w g ↔ u.eval (FirstOrderConstant.interp m w) g :=
@@ -376,12 +384,16 @@ theorem holdsAt_iff_eval (m : Model L) (w : m.W) {t : Tree C X}
   rw [Tree.interp_eq_eval_translate (FirstOrderConstant.interp m w), h]
   simp
 
+/-- A tree that translates to a logical form of type `t` holds where the readback of the
+logical form is realized. -/
 theorem holdsAt_iff_realizeAt (m : Model L) (w : m.W) {t : Tree C X}
     {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
     (g : Assignment m.E) :
     HoldsAt (m.lexicon words w) g t ↔ u.toFormula.RealizeAt m.interp w g :=
   (holdsAt_iff_eval m w h g).trans (Term.realizeAt_toFormula m w u g).symm
 
+/-- First-order consequence between the readbacks of two trees yields entailment between the
+trees in every composition model, at every world and under every assignment. -/
 theorem holdsAt_of_models {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderConstant L) .t}
     (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩)
     (hmod : ∀ (M : Type) (S : L.Structure M) (v : ℕ → M),
@@ -409,6 +421,8 @@ variable {L₀ : Language.{0, 0}} {C : Type} {X : Type*}
 private theorem modelEmpty (M : Type) [L₀.Structure M] : M ⊨ (∅ : L₀.Theory) :=
   ⟨fun _φ hφ ↦ absurd hφ (by simp)⟩
 
+/-- Over composition models with nonempty domains, entailment between two trees is mathlib's
+`⊨ᵇ` between their readbacks over the empty theory. -/
 theorem models_imp_iff_entails {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOrderConstant L₀) .t}
     (h₁ : Tree.translate words t₁ = some ⟨.t, u₁⟩) (h₂ : Tree.translate words t₂ = some ⟨.t, u₂⟩) :
     (∅ : L₀.Theory) ⊨ᵇ u₁.toFormula.imp u₂.toFormula ↔
@@ -428,6 +442,9 @@ theorem models_imp_iff_entails {t₁ t₂ : Tree C X} {u₁ u₂ : Term (FirstOr
     rwa [holdsAt_iff_realizeAt (Model.ofStructure M M.struc) () h₁,
       holdsAt_iff_realizeAt (Model.ofStructure M M.struc) () h₂] at this
 
+/-- A family of trees whose readbacks are closed is jointly true in a composition model with a
+nonempty domain iff every finite subfamily is. The nontrivial direction is mathlib's compactness
+theorem `Theory.isSatisfiable_iff_isFinitelySatisfiable`. -/
 theorem holdsAt_compactness {ι : Type} {trees : ι → Tree C X}
     {us : ι → Term (FirstOrderConstant L₀) .t}
     (hc : ∀ i, Tree.translate words (trees i) = some ⟨.t, us i⟩)

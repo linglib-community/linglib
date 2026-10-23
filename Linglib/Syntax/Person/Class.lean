@@ -65,10 +65,13 @@ def toClass (p : Person) : Class := if p.IsSAP then .participant else .nonPartic
     p.toClass = .nonParticipant ↔ ¬ p.IsSAP := by
   revert p; decide
 
+/-- The class is the coarsening of prominence at the participant level. -/
 theorem toClass_mono {p q : Person} (h : p.prominence ≤ q.prominence) :
     p.toClass ≤ q.toClass := by
   revert h; cases p <;> cases q <;> decide
 
+/-- A scenario is downstream on the binary person scale exactly when its higher-ranked argument
+alone is a speech-act participant. -/
 theorem kind_map_toClass_eq_downstream_iff {s : Clause.Scenario Person} :
     (s.map toClass).kind = .downstream ↔ s.high.IsSAP ∧ ¬ s.low.IsSAP := by
   rw [Clause.Scenario.kind_eq_downstream_iff_eq_top, Clause.Scenario.ext_iff]

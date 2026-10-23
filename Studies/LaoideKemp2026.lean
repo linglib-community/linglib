@@ -325,6 +325,7 @@ theorem wellFounded_flip_step : WellFounded (flip (Step (u := u))) :=
   Subrelation.wf (fun h ↦ h.floatingCount_lt) (InvImage.wf floatingCount wellFounded_lt)
 
 variable (c) in
+/-- Every candidate derives a surface form. -/
 theorem surfaces_nonempty : (surfaces c).Nonempty := by
   obtain ⟨b, hb, hmin⟩ := wellFounded_flip_step.has_min {b | ReflTransGen Step c b} ⟨c, .refl⟩
   exact ⟨b, mem_surfaces.2 ⟨hb, isSurface_iff_forall_not_step.2 fun b' h ↦ hmin b' (hb.tail h) h⟩⟩
@@ -451,6 +452,8 @@ theorem not_hostsSegment_of_emptyCV (hc : ReflTransGen Step (.input _) c) {i : F
     (hi : i.val < 2) : ¬ HostsSegment c i :=
   (blocked hc).2 i hi
 
+/-- Whatever the stem, a form that begins with an empty CV unit begins with an empty consonantal
+slot in every candidate derived, so under the morphosyntactic analysis it would take *d'*. -/
 theorem beginsWithEmptyC_of_emptyCV (hc : ReflTransGen Step (.input _) c) : BeginsWithEmptyC c :=
   ⟨⟨0, by simp [emptyCV]⟩, rfl, rfl, not_hostsSegment_of_emptyCV hc (by simp)⟩
 

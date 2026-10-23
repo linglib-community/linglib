@@ -513,6 +513,7 @@ def Clause.ofRow (row : Datum) : Option Clause := do
     row.parse? "extracted" [("S", ArgumentRole.S), ("A", .A), ("P", .P)],
     decide (row.feature? "separated" = some "yes")⟩
 
+/-- Every analysed example is grammatical exactly when its clause converges. -/
 theorem analysed_rows : ∀ row ∈ Examples.all, (row.feature? "predicate").isSome = true →
     ∃ c ∈ Clause.ofRow row, (row.judgment = .acceptable ↔ Converges c) := by
   decide

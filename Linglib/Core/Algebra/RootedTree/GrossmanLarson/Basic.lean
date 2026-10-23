@@ -94,6 +94,7 @@ noncomputable def insertion :
   refine LinearMap.congr_fun (lhom_ext' (f := insertion.flip 1) (g := .id) fun F ↦ ?_) x
   simp [← of'_zero, insertionMultiset_zero_right]
 
+/-- The empty forest has no vertices to graft onto: `1 ∘ x = ε(x)`. -/
 theorem insertion_one_left (x : ConnesKreimer R (UnorderedTree α)) :
     insertion 1 x = counit x • 1 := by
   refine LinearMap.congr_fun (lhom_ext' (f := insertion 1) (g := counit.toLinearMap.smulRight 1)
@@ -108,6 +109,8 @@ theorem insertion_one_left (x : ConnesKreimer R (UnorderedTree α)) :
     Multiset.map_map]
   rfl
 
+/-- Grafting into a disjoint union splits the guests between the two parts:
+`AB ∘ C = Σ (A ∘ C₍₁₎)(B ∘ C₍₂₎)`. -/
 theorem insertion_of'_add (A B C : Forest (UnorderedTree α)) :
     insertion (of' (A + B)) (of' C) =
       (C.antidiagonal.map fun p ↦
@@ -128,6 +131,7 @@ private theorem counit_insertion_of'_of' (F G : Forest (UnorderedTree α)) :
     obtain ⟨X, hX, rfl⟩ := Multiset.mem_map.mp hr
     simp [insertionMultiset_card_eq F G hX, hF]
 
+/-- The counit is multiplicative for the insertion. -/
 theorem counit_insertion (x y : ConnesKreimer R (UnorderedTree α)) :
     counit (insertion x y) = counit x * counit y := by
   have h : (insertion (R := R) (α := α)).compr₂ counit.toLinearMap =
@@ -145,6 +149,7 @@ noncomputable def product :
     product (of' F) (of' G) = ((productMultiset F G).map (of' (R := R))).sum := by
   simp [product]
 
+/-- `x ⋆ G = Σ_{G = G₁ + G₂} (x ∘ G₂) G₁`, the product of Oudom and Guin on a basis forest `G`. -/
 theorem product_of' (x : ConnesKreimer R (UnorderedTree α)) (G : Forest (UnorderedTree α)) :
     product x (of' G) = (G.antidiagonal.map fun p ↦ insertion x (of' p.2) * of' p.1).sum := by
   induction x using induction_linear with
@@ -180,6 +185,7 @@ private theorem counit_product_of'_of' (F G : Forest (UnorderedTree α)) :
     simp only [ite_eq_right_iff]
     omega
 
+/-- The counit is multiplicative for the Grossman–Larson product. -/
 theorem counit_product (x y : ConnesKreimer R (UnorderedTree α)) :
     counit (product x y) = counit x * counit y := by
   have h : (product (R := R) (α := α)).compr₂ counit.toLinearMap =
@@ -327,6 +333,7 @@ theorem ι_injective : Function.Injective (ι : ChapotonLivernet R α → Grossm
   exact fun x y hxy ↦
     ChapotonLivernet.coeffLinearEquiv.injective (h (linearEquiv.symm.injective hxy))
 
+/-- The grafting product of trees is the insertion of their one-tree forests. -/
 theorem toConnesKreimer_ι_mul (x y : ChapotonLivernet R α) :
     (ι (x * y)).toConnesKreimer = insertion (ι x).toConnesKreimer (ι y).toConnesKreimer := by
   induction x using ChapotonLivernet.induction_linear with
@@ -341,6 +348,8 @@ theorem toConnesKreimer_ι_mul (x y : ChapotonLivernet R α) :
       simp [smul_mul_smul_comm, ChapotonLivernet.of_mul_of, ChapotonLivernet.graft,
         map_multiset_sum, Multiset.map_map, smul_smul, mul_comm a b]
 
+/-- The product of one-tree forests is their disjoint union plus their insertion,
+`x ⋆ y = x y + x ∘ y`. -/
 theorem toConnesKreimer_ι_mul_ι (x y : ChapotonLivernet R α) :
     (ι x * ι y).toConnesKreimer = (ι x).toConnesKreimer * (ι y).toConnesKreimer +
       insertion (ι x).toConnesKreimer (ι y).toConnesKreimer := by

@@ -62,6 +62,9 @@ private theorem integral_score_comp {n : ℕ} (hV : Measurable (V n)) (hlaw : P.
     ∫ ω, g (V n ω) w c ∂P = ∫ a, g a w c ∂(L c) := by
   rw [← hlaw, integral_map hV.aemeasurable (hlaw ▸ hint).aestronglyMeasurable]
 
+/-- The Monte Carlo estimate is consistent: for pairwise independent alternatives distributed as
+the language model and a warping continuous at the expected score, it converges almost surely to
+the generalized surprisal. -/
 theorem ae_tendsto_mcEstimate {f : ℝ → ℝ} (hV : ∀ n, Measurable (V n))
     (hlaw : ∀ n, P.map (V n) = L c) (hindep : Pairwise fun i j ↦ V i ⟂ᵢ[P] V j)
     (hg : Measurable fun a ↦ g a w c) (hint : Integrable (fun a ↦ g a w c) (L c))
@@ -77,6 +80,8 @@ theorem ae_tendsto_mcEstimate {f : ℝ → ℝ} (hV : ∀ n, Measurable (V n))
   rw [integral_score_comp (hV 0) (hlaw 0) hint] at hω
   exact hf.tendsto.comp (by simpa [smul_eq_mul] using hω)
 
+/-- With the identity warping, the Monte Carlo estimate from `N ≠ 0` alternatives distributed as
+the language model is unbiased. -/
 theorem integral_mcEstimate_id (hV : ∀ n, Measurable (V n)) (hlaw : ∀ n, P.map (V n) = L c)
     (hint : Integrable (fun a ↦ g a w c) (L c)) {N : ℕ} (hN : N ≠ 0) :
     ∫ ω, mcEstimate id g c w (fun n ↦ V n ω) N ∂P = genSurprisal L id g c w := by

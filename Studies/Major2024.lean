@@ -79,6 +79,9 @@ def linker? (r : Datum) : Option Complementizer :=
 
 /-! ### 'Say' inside the converb clause -/
 
+/-- A verb is acceptable with or without a complement exactly when it has a frame for it,
+whether it is finite or under the converb suffix: *de-* needs its complement in a *dep* clause as
+*oyla-* 'think' does in its converb clause, and *warqira-* 'scream' takes none. -/
 theorem subcategorization :
     ∀ r ∈ Examples.all, ∀ fr ∈ r.parse? "complement"
         [("none", ArgumentFrame.intransitive), ("dp", .np), ("participial", .typedBy lik)],
@@ -87,6 +90,7 @@ theorem subcategorization :
 
 /-! ### No argument -/
 
+/-- No verb takes a converb clause. -/
 theorem not_takes_ip (v : Verb) : ¬ v.Takes ip := Verb.not_takes_of_blank rfl rfl
 
 theorem dep_unselected :
@@ -100,6 +104,8 @@ theorem clausal_subject :
   simp only [ArgumentFrame.Position.exists_takes_iff]
   decide
 
+/-- Denying the content of a clause is contradictory exactly when a factive verb takes the
+clause: under *bil-* 'know' a participial clause is presupposed and a *dep* clause is not. -/
 theorem factive_denial :
     ∀ r ∈ Examples.all, r.feature? "diagnostic" = some "denial" →
       ∃ v ∈ verb? "matrixVerb" r, ∃ z ∈ linker? r,
@@ -163,6 +169,10 @@ def voice? (r : Datum) : Option VoiceType :=
     [("animate", .agentive), ("inanimate", .nonThematic), ("none", .nonThematic)]).orElse
     fun _ ↦ (verb? "verb" r).bind (·.voiceType)
 
+/-- An object, or the subject of the complement of *de-*, is acceptable in a case exactly when
+some setting of `[+ACC/SPEC]` gives it that case, the feature being borne only by a θ-assigning
+`v` and shown by the NP's place before an adverb: so a predicate nominal under *bol-* 'become'
+and the subject below a saying with no agent stay bare, under either modality. -/
 theorem case_below_v :
     ∀ g ∈ [grammar, pureChomsky], ∀ r ∈ Examples.all, ∀ c ∈ case? r,
       r.feature? "clause" ≠ some "participial" → ∃ vt ∈ voice? r,
@@ -192,12 +202,20 @@ def complementizerCases (g : CaseAssigners) (r : Datum) : List (Option Case) :=
       then [subject] else []) ++
       (if r.feature? "matrixObject" = some "ACC" then [internal true] else []) ++ [internal true])
 
+/-- With a complementizer and Agree alone the raised subject is caseless where the examples have
+it accusative: beside unaccusative *ket-* 'leave', beside a passive, and beside *éyt-* 'tell',
+whose one `v` has an object of its own. By `pureChomsky_v_of_acc` nothing but a `v` could value
+it, which is the argument for the dependent rule that the verb inside *dep* answers. -/
 theorem complementizer_agree :
     ∀ r ∈ [Examples.ex_123, Examples.ex_122, Examples.ex_124],
       r.judgment = .acceptable ∧ case? r = some (some .acc) ∧
         (complementizerCases pureChomsky r).getLast? = some none := by
   decide
 
+/-- With a complementizer the dependent rule values the raised subject accusative wherever the
+matrix clause has an argument: so beside the inanimate subject 'this news', where the accusative
+is out, and not when the news is a locative whose source is inside a relative clause, where the
+accusative is in. -/
 theorem complementizer_dependent :
     Examples.ex_128_acc.judgment = .ungrammatical ∧
       (complementizerCases grammar Examples.ex_128_acc).getLast? = some (some .acc) ∧

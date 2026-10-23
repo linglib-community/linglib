@@ -244,10 +244,14 @@ def direct : Tree Cat Unit :=
     (e.sentence.replaceAt (e.thanPhrase.toList ++ [1]) (Tree.trace 1 .N)).replaceAt
       e.correlate.toList (Tree.trace 0 .N)]]
 
+/-- In the Gapped clause the remnant c-commands a matrix term exactly when the correlate
+c-commands it in the matrix clause (Prediction V). -/
 theorem gapped_cCommands_iff (m : TreePath) :
     CCommands e.gapped e.correlate m ↔ CCommands e.matrix e.correlate m :=
   cCommands_replaceAt_self
 
+/-- A matrix term outside the correlate c-commands a position of the remnant in the Gapped clause
+exactly when it c-commands the correlate in the matrix clause. -/
 theorem cCommands_gapped_iff {m : TreePath} (hcm : ¬ e.correlate ≤ m) (hmc : ¬ m ≤ e.correlate)
     (q : List ℕ) :
     CCommands e.gapped m ⟨e.correlate.toList ++ q⟩ ↔ CCommands e.matrix m e.correlate :=
@@ -392,10 +396,12 @@ theorem rep_nominals (a : Analysis) : ∀ d ∈ phrasalData,
       (a.rep d.1).1.subtreeAt (a.rep d.1).2.2.toList = some np := by
   revert a; decide
 
+/-- Of the three analyses only the Gapped clause predicts the judgments of the minimal pairs. -/
 theorem analysis_fits_iff (a : Analysis) :
     (∀ d ∈ phrasalData, a.Permits d.1 ↔ Attested d.2) ↔ a = .reduction := by
   revert a; decide
 
+/-- Each minimal pair receives a single verdict from each reading of the direct analysis. -/
 theorem direct_same (a : Analysis) (ha : a ≠ .reduction) :
     (a.Permits ex83 ↔ a.Permits ex85) ∧ (a.Permits ex87a ↔ a.Permits ex87b) ∧
       (a.Permits ex90 ↔ a.Permits ex91) := by

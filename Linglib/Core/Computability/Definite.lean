@@ -177,26 +177,31 @@ theorem isReverseDefinite_iff_isDefinite_reverse {k : ℕ} {L : Language α} :
 
 /-! ### Inclusions into the generalized definite languages -/
 
+/-- A `k`-definite language is generalized `k`-definite. -/
 theorem IsDefinite.toIsGeneralizedDefinite {k : ℕ} {L : Language α}
     (h : L.IsDefinite k) : L.IsGeneralizedDefinite k :=
   fun _ _ hab ↦ h (congrArg Prod.snd hab)
 
+/-- A reverse `k`-definite language is generalized `k`-definite. -/
 theorem IsReverseDefinite.toIsGeneralizedDefinite {k : ℕ} {L : Language α}
     (h : L.IsReverseDefinite k) : L.IsGeneralizedDefinite k :=
   fun _ _ hab ↦ h (congrArg Prod.fst hab)
 
 /-! ### Regularity -/
 
+/-- A definite language over a finite alphabet is regular. -/
 theorem IsDefinite.isRegular [Finite α] {k : ℕ} {L : Language α} (h : L.IsDefinite k) :
     L.IsRegular :=
   .of_factorsThrough h (fun _ _ x e ↦ Edge.takeAt_append_congr .right e x)
     (Edge.finite_range_takeAt .right k)
 
+/-- A reverse definite language over a finite alphabet is regular. -/
 theorem IsReverseDefinite.isRegular [Finite α] {k : ℕ} {L : Language α}
     (h : L.IsReverseDefinite k) : L.IsRegular :=
   .of_factorsThrough h (fun _ _ x e ↦ Edge.takeAt_append_congr .left e x)
     (Edge.finite_range_takeAt .left k)
 
+/-- A generalized definite language over a finite alphabet is regular. -/
 theorem IsGeneralizedDefinite.isRegular [Finite α] {k : ℕ} {L : Language α}
     (h : L.IsGeneralizedDefinite k) : L.IsRegular :=
   .of_factorsThrough h
@@ -277,6 +282,8 @@ theorem isFiniteOrCofinite_of_isDefinite_and_isReverseDefinite [Finite α]
   exact (iff_of_eq (hD (takeAt_right_eq_of_bridge hk hk').symm)).trans
     (iff_of_eq (hR (takeAt_left_eq_of_bridge hk hk')))
 
+/-- Over a finite alphabet, a language is finite or cofinite exactly when it is definite and
+reverse definite. -/
 theorem isFiniteOrCofinite_iff_exists_isDefinite_and_isReverseDefinite [Finite α]
     {L : Language α} :
     L.IsFiniteOrCofinite ↔

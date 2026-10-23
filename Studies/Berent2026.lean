@@ -71,10 +71,14 @@ variable {c₁ c₂ d₁ d₂ : Segment}
 /-- The sonority rise across a two-consonant onset. Larger rises are better formed. -/
 def onsetRise (c₁ c₂ : Segment) : ℤ := Sonority.rise (.ofSegment c₁) (.ofSegment c₂)
 
+/-- The rise of an onset depends on its segments only through the features that sonority
+reads, whatever their place of articulation and laryngeal setting. -/
 theorem onsetRise_congr (h₁ : ∀ f ∈ Sonority.features, c₁ f = d₁ f)
     (h₂ : ∀ f ∈ Sonority.features, c₂ f = d₂ f) : onsetRise c₁ c₂ = onsetRise d₁ d₂ := by
   rw [onsetRise, onsetRise, Sonority.ofSegment_congr h₁, Sonority.ofSegment_congr h₂]
 
+/-- Changing a feature that sonority does not read in the first consonant leaves the rise
+unchanged. -/
 theorem onsetRise_setFeature_left {f : Feature} (hf : f ∉ Sonority.features) (v : Bool) :
     onsetRise (c₁.setFeature f v) c₂ = onsetRise c₁ c₂ := by
   rw [onsetRise, Sonority.ofSegment_setFeature hf, onsetRise]
@@ -85,6 +89,8 @@ theorem onsetRise_setFeature_right {f : Feature} (hf : f ∉ Sonority.features) 
 
 open English English.Phonology
 
+/-- The onset of blif is a larger rise than that of bnif, the onset of bdif is a plateau,
+and the onset of lbif is a fall. -/
 theorem sonority_cline :
     0 < onsetRise b n ∧ onsetRise b n < onsetRise b l ∧ onsetRise b d = 0 ∧ onsetRise l b < 0 := by
   decide
@@ -116,6 +122,8 @@ theorem initialIdentity_double_left (x y : α) : InitialIdentity ⟨[x, x, y]⟩
 theorem not_initialIdentity_double_right (h : y ≠ x) : ¬ InitialIdentity ⟨[y, x, x]⟩ := by
   simp [InitialIdentity, h]
 
+/-- The root restriction gives the same verdict on a root and on its image under an
+injective relabelling, so it extends to consonants the language lacks. -/
 theorem initialIdentity_map (hf : Function.Injective f) (r : ConsonantalRoot α) :
     InitialIdentity ⟨r.segments.map f⟩ ↔ InitialIdentity r := by
   simp only [InitialIdentity, OCP.IsClean, ← List.map_take, List.isChain_map, hf.ne_iff]

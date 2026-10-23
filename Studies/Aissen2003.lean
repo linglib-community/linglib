@@ -218,6 +218,8 @@ theorem dom_obligatory_zone_upperSet : ∀ z ∈ allDOMZones, IsUpperSet z := by
     | exact (isUpperSet_Ici _).union (isUpperSet_Ici _)
     | exact (isUpperSet_Ici _).preimage (DefinitenessScale.degree_monotone.comp monotone_snd)
 
+/-- Every attested system fits the prominence order, so no language obligatorily marks a less
+prominent object while leaving a more prominent one unmarked. -/
 theorem dom_fits : ∀ z ∈ allDOMZones, Fits (marking z) :=
   fun z hz ↦ (fits_marking_iff z).2 (dom_obligatory_zone_upperSet z hz)
 

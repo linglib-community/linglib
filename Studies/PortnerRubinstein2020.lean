@@ -150,12 +150,14 @@ end Backgrounds
 
 variable (B : Backgrounds W) (m : Grammatical)
 
+/-- In Spanish *believe* takes the indicative and *want* and *hope* the subjunctive. -/
 theorem spanish_takes :
     ((spanish m B.believe).isSome ↔ m = .indicative) ∧
       ((spanish m B.want).isSome ↔ m = .subjunctive) ∧
       ((spanish m B.hope).isSome ↔ m = .subjunctive) := by
   cases m <;> simp [Backgrounds.believe, Backgrounds.want, Backgrounds.hope]
 
+/-- In French *believe* and *hope* take the indicative and *want* the subjunctive. -/
 theorem french_takes :
     ((french m B.believe).isSome ↔ m = .indicative) ∧
       ((french m B.want).isSome ↔ m = .subjunctive) ∧
@@ -163,6 +165,7 @@ theorem french_takes :
   simp only [french, B.spl_believe, B.spl_want, B.spl_hope]
   cases m <;> simp [Backgrounds.believe, Backgrounds.want]
 
+/-- French *hope* with the indicative means what Spanish *hope* with the subjunctive means. -/
 theorem french_hope_eq_spanish_hope :
     french .indicative B.hope = spanish .subjunctive B.hope := by
   rw [french, B.spl_hope, spanish_indicative_single, Backgrounds.hope, spanish_subjunctive_pair]
@@ -184,6 +187,7 @@ def Selects (v : Verb) (m : Grammatical) : Prop :=
 instance (v : Verb) (m : Grammatical) : Decidable (Selects v m) :=
   inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, coding m ∈ fr.codings))
 
+/-- The Spanish entries record the moods the analysis predicts. -/
 theorem spanish_fragment :
     (Selects Spanish.Verbs.creer m ↔ (spanish m B.believe).isSome) ∧
       (Selects Spanish.Verbs.querer m ↔ (spanish m B.want).isSome) ∧
@@ -191,6 +195,7 @@ theorem spanish_fragment :
   rw [(spanish_takes B m).1, (spanish_takes B m).2.1, (spanish_takes B m).2.2]
   cases m <;> decide
 
+/-- The French entries record the moods the analysis predicts. -/
 theorem french_fragment :
     (Selects French.Verbs.croire m ↔ (french m B.believe).isSome) ∧
       (Selects French.Verbs.vouloir m ↔ (french m B.want).isSome) ∧
@@ -221,11 +226,14 @@ def doxPlus : Background Marriage := ⊥
 /-- The desires are to marry Alice and to marry Sue. -/
 def bul : Background Marriage := fun _ ↦ {marriesAlice, marriesSue}
 
+/-- The speaker wants to marry Alice and wants to marry Sue. -/
 theorem want_alice_and_want_sue (w : Marriage) :
     goodPossibility doxPlus bul marriesAlice w ∧ goodPossibility doxPlus bul marriesSue w :=
   ⟨⟨.alice, by simp [doxPlus], fun _ _ hv ↦ hv marriesAlice (by simp [bul]) rfl⟩,
     ⟨.sue, by simp [doxPlus], fun _ _ hv ↦ hv marriesSue (by simp [bul]) rfl⟩⟩
 
+/-- On von Fintel's best-worlds *want* it is false that the speaker wants to marry Alice, since
+the outcome is contingent on the beliefs⁺ and marrying Sue is a best outcome. -/
 theorem bestWorlds_want_alice_eq_neg_one (w : Marriage) :
     Desire.BestWorlds.want doxPlus.accessibleWorlds bul marriesAlice w = -1 := by
   refine Desire.BestWorlds.want_eq_neg_one_iff.2
@@ -236,6 +244,7 @@ theorem bestWorlds_want_alice_eq_neg_one (w : Marriage) :
     exact hv ▸ (premisePreorder _).le_refl _
   exact Marriage.noConfusion (h hbest : marriesAlice .sue)
 
+/-- No one hopes for each of two outcomes their beliefs rule out together. -/
 theorem not_hope_both {p q : W → Prop} {w : W}
     (hpq : ∀ v ∈ B.dox.accessibleWorlds w, ¬ (p v ∧ q v)) :
     ¬ (goodPossibility B.dox B.bulc p w ∧ goodPossibility B.dox B.bulc q w) := by

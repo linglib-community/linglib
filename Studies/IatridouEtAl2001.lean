@@ -149,6 +149,7 @@ theorem universal_at_rb (h : ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P))) :
     ∃ e, P w e ∧ t ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_rb h)
 
+/-- With *since t₀* the universal perfect holds at `t₀`, the observation of [mittwoch-1988]. -/
 theorem universal_at_lb (h : ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED P) ·)) :
     ∃ e, P w e ∧ t₀ ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_lb h)
@@ -173,6 +174,8 @@ theorem inclusive_silent_at_rb {e₀ : E} (h : (τ e₀).snd < t) :
       ⟨τ e₀, ⟨e₀, le_rfl, rfl⟩, NonemptyInterval.le_def.2 ⟨le_rfl, h.le⟩⟩, rfl⟩,
     fun _ he ht ↦ (NonemptyInterval.mem_def.1 ht).2.not_gt (he ▸ h)⟩
 
+/-- An unmodified perfect does not entail the universal perfect, which is therefore never its
+reading. -/
 theorem unmodified_not_universal {e₀ : E} (h : (τ e₀).snd < t) :
     ¬ ∀ P : W → E → Prop, ⟨w, t⟩ ∈ PERF (inclusive (UNBOUNDED P)) →
       ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P)) := fun hall ↦
@@ -223,11 +226,15 @@ theorem experiential_ends_by_rb (h : ⟨w, t⟩ ∈ PERF (inclusive (PRFV P))) :
   let ⟨_, ⟨_, ⟨e, hle, hP⟩, hj⟩, hrb⟩ := mem_perf.1 h
   ⟨e, hP, hrb ▸ (NonemptyInterval.le_def.1 (hle.trans hj)).2⟩
 
+/-- The universal perfect is not anterior, since its eventuality has not ended at the time of
+tense, so an anteriority operator in the perfect would make it underivable. -/
 theorem universal_not_anterior (h : ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P))) :
     ∃ e, P w e ∧ ¬ (τ e).snd < t :=
   let ⟨e, hP, ht⟩ := universal_at_rb h
   ⟨e, hP, (NonemptyInterval.mem_def.1 ht).2.not_gt⟩
 
+/-- In the future perfect the right boundary follows the utterance time `now`, and the
+eventuality may end before `now` or start after it. -/
 theorem future_perfect_underspecified {now : T} {e₁ e₂ : E} (h₁ : (τ e₁).snd < now)
     (h₂ : now < (τ e₂).fst) (h₂' : (τ e₂).snd ≤ t) :
     (∃ P : W → E → Prop, ⟨w, t⟩ ∈ PERF (inclusive (PRFV P)) ∧ ∀ e, P w e → (τ e).snd < now) ∧

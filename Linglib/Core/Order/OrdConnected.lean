@@ -33,6 +33,7 @@ lower intervals, a map is contiguous iff some monotone map to `ℕ` has the same
 
 @[expose] public section
 
+/-- An order-connected set containing the top element is an upper set. -/
 theorem Set.OrdConnected.isUpperSet_of_top_mem {α : Type*} [Preorder α] [OrderTop α]
     {s : Set α} (hs : s.OrdConnected) (ht : ⊤ ∈ s) : IsUpperSet s :=
   fun _ _ hab ha ↦ hs.out ha ht ⟨hab, le_top⟩
@@ -51,6 +52,8 @@ instance decidableOrdConnectedCoe [Preorder α] [DecidableEq α] [LocallyFiniteO
 
 variable [LinearOrder α] [LocallyFiniteOrder α] {s : Finset α}
 
+/-- An order-connected finset containing the top element is the closed interval from its least
+element up to the top. -/
 theorem eq_Icc_top_of_ordConnected_coe [OrderTop α] (hc : (s : Set α).OrdConnected) (ht : ⊤ ∈ s) :
     s = Icc (s.min' ⟨⊤, ht⟩) ⊤ := by
   ext p
@@ -73,6 +76,7 @@ instance [Fintype ι] [DecidableLE ι] [DecidableEq F] (p : ι → F) :
     Decidable (IsContiguous p) :=
   inferInstanceAs (Decidable (∀ i j k : ι, i ≤ j → j ≤ k → p i = p k → p i = p j))
 
+/-- A map is contiguous iff its fibres are order-connected. -/
 theorem isContiguous_iff_ordConnected_preimage (p : ι → F) :
     IsContiguous p ↔ ∀ y, (p ⁻¹' {y}).OrdConnected := by
   refine ⟨fun hp y ↦ ⟨fun i hi k hk j hj ↦ ?_⟩, fun h i j k hij hjk hik ↦ ?_⟩
@@ -80,6 +84,7 @@ theorem isContiguous_iff_ordConnected_preimage (p : ι → F) :
     exact (hp hj.1 hj.2 (hi.trans hk.symm)).symm.trans hi
   · exact ((h (p i)).out (Set.mem_singleton _) hik.symm ⟨hij, hjk⟩).symm
 
+/-- A monotone map into a partial order is contiguous. -/
 theorem Monotone.isContiguous [PartialOrder F] {f : ι → F} (hf : Monotone f) :
     IsContiguous f :=
   fun _ _ _ hij hjk he ↦ le_antisymm (hf hij) ((hf hjk).trans_eq he.symm)
@@ -129,6 +134,8 @@ private theorem eq_of_score_eq [DecidableEq F] (hp : IsContiguous p) (hij : i �
   rw [Finset.mem_Iic] at hl
   exact (hp hl hij hpl).symm.trans hpl
 
+/-- Over a linear order with finite lower intervals, a map is contiguous iff some monotone map to
+`ℕ` has the same kernel. -/
 theorem isContiguous_iff_exists_monotone (p : ι → F) :
     IsContiguous p ↔ ∃ g : ι → ℕ, Monotone g ∧ ∀ i j, p i = p j ↔ g i = g j := by
   classical

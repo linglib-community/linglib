@@ -91,6 +91,9 @@ theorem not_before_of_settled {F : TWFrame W T} (a : Alternatives F B)
   exact (hAB v t e ((hA t ht w (Set.mem_singleton w) v (a.subset_alternatives _ hv)).1 ht)
     he).asymm hte
 
+/-- Beaver and Condoravdi's Mozart model makes the counterfactual *before* true only by leaving
+the death unsettled at its time, Mozart living on in an alternative that agrees with the world
+before it. -/
 theorem not_settled_mozart :
     ¬ frame.alternatives.settled {World.early} 1 fun v ↦ (v, 1) ∈ dies := by
   intro h

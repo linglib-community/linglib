@@ -80,10 +80,13 @@ def Environment.internal : Environment → Finset LogophoricRole
 
 variable {e : Environment} {r r' : LogophoricRole}
 
+/-- The hierarchy of roles is the one the table shows, `r` lying below `r'` when `r` is internal
+in every environment in which `r'` is. -/
 theorem le_iff_forall_mem_internal :
     r ≤ r' ↔ ∀ e : Environment, r' ∈ e.internal → r ∈ e.internal := by
   cases r <;> cases r' <;> decide
 
+/-- The table has exactly the role specifications that respect the hierarchy. -/
 theorem exists_internal_eq_iff {s : Finset LogophoricRole} :
     (∃ e : Environment, e.internal = s) ↔ IsLowerSet (s : Set LogophoricRole) := by
   have h : ∀ s : Finset LogophoricRole,
@@ -131,17 +134,28 @@ def OfProtagonist (d : Datum) : Prop := ("internal protagonist", Judgment.accept
 
 instance : DecidablePred OfProtagonist := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
+/-- The pivot is the one role that fits the binding of Japanese *zibun*. The
+protagonist binds it under verbs of saying and psychological verbs, negated or not, and in
+adverbial clauses reported from the protagonist's point of view, but not in a *when* clause, which
+does not invite that point of view. -/
 theorem fits_zibun_iff : Fits Bound (examplesOf "pronoun" "zibun") r ↔ r = .pivot := by
   cases r <;> decide
 
+/-- The source is the one role that fits *that fool*, an evaluation that can be the protagonist's
+under a verb of saying alone. -/
 theorem fits_thatFool_iff :
     Fits OfProtagonist (examplesOf "diagnostic" "that fool") r ↔ r = .source := by
   cases r <;> decide
 
+/-- The self is the one role that fits *mysteriously*, where the mystery is the protagonist's
+under a verb of saying or a psychological verb and the speaker's under third-person point of
+view. -/
 theorem fits_mysteriously_iff :
     Fits OfProtagonist (examplesOf "diagnostic" "mysteriously") r ↔ r = .self := by
   cases r <;> decide
 
+/-- The pivot is the one role that fits *beloved*, which goes with the protagonist in all three
+environments. -/
 theorem fits_beloved_iff :
     Fits OfProtagonist (examplesOf "diagnostic" "beloved") r ↔ r = .pivot := by
   cases r <;> decide
@@ -149,6 +163,10 @@ theorem fits_beloved_iff :
 theorem fits_sig : Fits Bound (examplesOf "pronoun" Icelandic.Reciprocals.sig.form) .self := by
   decide
 
+/-- The source does not fit the Ewe logophoric pronoun *yè*, which appears under 'say' and also
+under a psychological predicate, where the source is the external speaker's. The paper remarks of
+such examples that the self is relevant beside the source, and later suggests the source as the
+orientation of logophoric pronouns. -/
 theorem fits_ye_iff : Fits Bound (examplesOf "pronoun" Ewe.Pronouns.ye.form) r ↔ r ≠ .source := by
   cases r <;> decide
 

@@ -191,6 +191,7 @@ theorem multiGraftChildren_length :
       multiGraftChildren_length cs (pairs.filterMap tailChildFilter)]
 
 mutual
+/-- Grafting nothing leaves a tree unchanged. -/
 theorem multiGraft_nil : ∀ (T : RoseTree α), multiGraft T [] = T
   | .node a cs => by
     show RoseTree.node a ([] ++ multiGraftChildren cs []) = RoseTree.node a cs

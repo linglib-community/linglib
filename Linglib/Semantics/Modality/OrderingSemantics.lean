@@ -89,6 +89,9 @@ theorem IsGoodPossibility.mono (h : IsGoodPossibility p s t) (htt' : t ⊆ t') :
   let ⟨v, hv, hvt⟩ := h
   ⟨v, hv, fun w hw hwv ↦ htt' (hvt w hw hwv)⟩
 
+/-- The good possibilities are not closed under intersection. Under the identity order on `Bool`
+each world is a branch of its own, so `{true}` and `{false}` are good possibilities and their empty
+intersection is not. -/
 theorem exists_not_isGoodPossibility_inter :
     ∃ (p : Preorder Bool) (t t' : Set Bool), IsGoodPossibility p .univ t ∧
       IsGoodPossibility p .univ t' ∧ ¬ IsGoodPossibility p .univ (t ∩ t') :=

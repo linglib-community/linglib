@@ -164,6 +164,7 @@ def yield (p : LinearizedSyntacticObject L) : List L :=
 theorem yield_toSyntacticObject (p : LinearizedSyntacticObject L) :
     p.toSyntacticObject.yield = p.val.leaves.filterMap (Sum.elim id fun _ ↦ none) := rfl
 
+/-- The pronounced tokens of a linearized object are those of its object, in order. -/
 theorem coe_yield (p : LinearizedSyntacticObject L) :
     (p.yield : Multiset L) = p.toSyntacticObject.yield := by
   rw [yield, ← Multiset.filterMap_coe, RoseTree.coe_leafList]

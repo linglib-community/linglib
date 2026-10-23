@@ -154,6 +154,7 @@ theorem one_def : (1 : Update S) = .id := rfl
 
 /-! ### Tests -/
 
+/-- A test's domain is its condition. -/
 @[simp] theorem dom_test (C : Condition S) : (test C).dom = C := by ext; simp
 
 @[simp] theorem cod_test (C : Condition S) : (test C).cod = C := by ext; simp
@@ -165,6 +166,7 @@ theorem test_injective : Function.Injective (test : Condition S → Update S) :=
 
 @[simp] theorem test_univ : test (Set.univ : Condition S) = .id := by ext ⟨i, j⟩; simp
 
+/-- Sequenced tests test the conjunction. -/
 @[simp] theorem test_comp_test (C₁ C₂ : Condition S) : test C₁ ○ test C₂ = test (C₁ ∩ C₂) := by
   ext ⟨i, j⟩; simp only [mem_comp, mem_test]; grind
 
@@ -173,6 +175,7 @@ theorem test_injective : Function.Injective (test : Condition S → Update S) :=
 @[simp] theorem image_test (C σ : Set S) : (test C).image σ = σ ∩ C := by
   ext; simp only [mem_image, mem_test]; grind
 
+/-- The weakest precondition of a test conjoins its condition. -/
 @[simp] theorem preimage_test (C t : Condition S) : (test C).preimage t = C ∩ t := by
   ext; simp only [mem_preimage, mem_test]; grind
 
@@ -287,6 +290,7 @@ theorem strictLift_subset_cumul (D : Update S) : strictLift D ⊆ cumul D := by
   exact ⟨fun i hi ↦ ⟨f i, Set.mem_image_of_mem f hi, hf i hi⟩,
     fun _ ⟨i, hi, hj⟩ ↦ ⟨i, hi, hj ▸ hf i hi⟩⟩
 
+/-- From a one-row state, the strict lift moves to a one-row state. -/
 theorem singleton_mem_strictLift_iff {i : S} :
     {i} ~[strictLift D] J ↔ ∃ j, i ~[D] j ∧ J = {j} := by
   refine ⟨fun ⟨f, hf, h⟩ ↦ ⟨f i, hf i rfl, h ▸ Set.image_singleton⟩, ?_⟩
@@ -364,6 +368,8 @@ theorem IsTest.isEliminative (h : IsTest u) : IsEliminative u :=
 theorem guard_isTest (C : Set S → Prop) : IsTest (guard C) :=
   fun s ↦ (Classical.em (C s)).elim (fun h ↦ .inl (guard_pos h)) (fun h ↦ .inr (guard_neg h))
 
+/-- A test is the guard of its own acceptance condition — the mirror of
+`Update.IsTest.eq_test_dom`. -/
 theorem IsTest.eq_guard (h : IsTest u) : u = guard fun s ↦ u s = s :=
   funext fun s ↦ Set.ext fun p ↦
     ⟨fun hp ↦ (h s).elim (fun hs ↦ ⟨hs ▸ hp, hs⟩)
@@ -406,6 +412,8 @@ theorem isClassical_up (c : Set S) : IsClassical (up c) :=
    fun _ ↦ Set.ext fun p ↦
      ⟨fun ⟨hp, hc⟩ ↦ ⟨p, hp, rfl, hc⟩, fun ⟨_, hi, hpi, hc⟩ ↦ ⟨hpi ▸ hi, hc⟩⟩⟩
 
+/-- `might` is not distributive, since a whole-state test can pass where every per-singleton
+test fails. -/
 theorem might_not_isDistributive :
     ∃ (S : Type) (φ : CCP S), ¬IsDistributive (might φ) := by
   refine ⟨Bool, (fun s ↦ {p ∈ s | p = true}), fun hD ↦ ?_⟩
@@ -439,9 +447,11 @@ def CCP.lower (φ : CCP S) : Update S := {p | p.2 ∈ φ {p.1}}
 theorem Update.image_isDistributive (R : Update S) : CCP.IsDistributive R.image :=
   fun _ ↦ by ext; simp only [mem_image, Set.mem_ofPred_eq, Set.mem_singleton_iff]; grind
 
+/-- `lower` is a left inverse of the image, so the relational face loses nothing. -/
 theorem Update.lower_image (R : Update S) : CCP.lower R.image = R := by
   ext ⟨i, j⟩; simp
 
+/-- The image is a right inverse of `lower` on distributive transformers. -/
 theorem CCP.image_lower (φ : CCP S) (hd : CCP.IsDistributive φ) : (lower φ).image = φ :=
   funext fun σ ↦ (hd σ).symm
 
@@ -465,6 +475,7 @@ theorem Update.image_test_isEliminative (C : Condition S) :
     CCP.IsEliminative (test C).image :=
   CCP.up_eq_image_test C ▸ (CCP.isClassical_up C).1
 
+/-- A transformer is the image of a test iff it is classical. -/
 theorem CCP.exists_eq_image_test_iff {φ : CCP S} :
     (∃ C : Condition S, φ = (test C).image) ↔ CCP.IsClassical φ := by
   refine ⟨fun ⟨C, hC⟩ ↦ hC ▸ ⟨image_test_isEliminative C, image_isDistributive _⟩,
@@ -474,6 +485,8 @@ theorem CCP.exists_eq_image_test_iff {φ : CCP S} :
   exact ⟨fun ⟨i, hi, hpi⟩ ↦ have h : p = i := he {i} hpi; ⟨h ▸ hi, h ▸ hpi⟩,
     fun ⟨hp, hC⟩ ↦ ⟨p, hp, hC⟩⟩
 
+/-- The classical updates are exactly the static ones, with `up ∘ down` as their normal
+form. -/
 theorem CCP.isClassical_iff_up_down_eq {φ : CCP S} :
     CCP.IsClassical φ ↔ CCP.up (CCP.down φ) = φ :=
   ⟨fun h ↦ by

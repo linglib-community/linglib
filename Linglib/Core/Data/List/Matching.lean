@@ -53,6 +53,8 @@ theorem matchingNumber_cons (a : α) (l : List α) (m : List β) :
     matchingNumber R (a :: l) m = max (matchingNumber R l m)
       ({b ∈ m.toFinset | R a b}.sup fun b ↦ matchingNumber R l (m.erase b) + 1) := rfl
 
+/-- `R` has a matching of size `k` between `l` and `m`, a sublist of `l` of length `k` related by
+`Forall₂ R` to a subpermutation of `m`, exactly when `k` is at most the matching number. -/
 theorem le_matchingNumber_iff {k : ℕ} :
     k ≤ matchingNumber R l m ↔ ∃ l₁ m₁, l₁ <+ l ∧ m₁ <+~ m ∧ Forall₂ R l₁ m₁ ∧ l₁.length = k := by
   induction l generalizing m k with
@@ -83,6 +85,8 @@ theorem le_matchingNumber_iff {k : ℕ} :
           (Finset.mem_filter.2 ⟨mem_toFinset.2 hb, hab⟩)))
         exact Nat.succ_le_succ (ih.2 ⟨r, m₂, hr, by simpa using hm.erase b, hR₂, rfl⟩)
 
+/-- The members of a duplicate-free list bearing `S` to some member of `m` are pairable along `R`,
+where `S` is contained in `R` and no two members bear `S` to one member of `m`. -/
 theorem countP_le_matchingNumber {S : α → β → Prop} [DecidableRel S] (hl : l.Nodup)
     (hSR : ∀ a ∈ l, ∀ b, S a b → R a b) (hS : ∀ a ∈ l, ∀ a' ∈ l, ∀ b, S a b → S a' b → a = a')
     (m : List β) : l.countP (fun a ↦ ∃ b ∈ m, S a b) ≤ matchingNumber R l m := by

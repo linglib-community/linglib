@@ -41,6 +41,7 @@ fixes. -/
 def toWord : Morphology.Word :=
   { p.toPronoun.toWord (some .Int) with cat := p.ontology.upos }
 
+/-- An interrogative projects a wh-marked word. -/
 theorem isWh_toWord : p.toWord.features.IsWh :=
   .inl rfl
 

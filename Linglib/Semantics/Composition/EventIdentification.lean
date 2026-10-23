@@ -59,6 +59,7 @@ theorem eventIdentification_apply (x : α) (e : β) :
 theorem eventIdentification_eq_inf : eventIdentification f g = f ⊓ Function.const α g :=
   rfl
 
+/-- Event Identification is predicate modification of each of the relation's sections. -/
 theorem eventIdentification_eq_comp :
     eventIdentification f g = Modifier.intersective g ∘ f := by
   ext

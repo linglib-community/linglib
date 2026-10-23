@@ -52,6 +52,7 @@ def extensions (x : Flat α) : Finset α := univ.filter (x ≤ ↑·)
 @[simp] theorem extensions_coe (a : α) : (a : Flat α).extensions = {a} := by
   ext; simp [coe_le_iff, eq_comm]
 
+/-- The meet of a nonempty finset of values is the greatest flat value extending to all of them. -/
 theorem le_inf'_iff_subset_extensions (hs : s.Nonempty) :
     x ≤ s.inf' hs (↑) ↔ s ⊆ x.extensions := by
   simp [Finset.le_inf'_iff, subset_iff]

@@ -120,6 +120,7 @@ theorem joinBelnap_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c �
       condAssert .lp (joinBelnap a c) (joinBelnap (meetBelnap a b) (meetBelnap c d)) := by
   revert ha hb hc hd; cases a <;> cases b <;> cases c <;> cases d <;> decide
 
+/-- Conjunction does not extend to trivalent conjuncts. -/
 theorem conjunction_needs_boolean :
     ¬ ∀ a b c d : SignType,
       meetBelnap (condAssert .lp a b) (condAssert .lp c d) =
@@ -256,14 +257,18 @@ theorem NoCond.cooperEval_ne_zero {φ : Formula ι} (h : NoCond φ) (v : ι → 
 
 /-! ### Proposition 1: the five equivalences -/
 
+/-- Negating a conditional negates its consequent, for arbitrary formulas (**Negation
+Commutation**). -/
 theorem equiv_neg_cond (φ ψ : Formula ι) : CooperEquiv (.neg (.cond φ ψ)) (.cond φ (.neg ψ)) :=
   fun _ ↦ neg_condAssert
 
+/-- **Import-Export**, for arbitrary formulas. -/
 theorem equiv_cond_cond (φ ψ χ : Formula ι) :
     CooperEquiv (.cond φ (.cond ψ χ)) (.cond (.conj φ ψ) χ) := fun v ↦ by
   rw [cooperEval_cond, cooperEval_cond, cooperEval_cond, condAssert_condAssert, cooperEval_conj,
     condAssert_lp_meetBelnap_left]
 
+/-- **Conjunction**, for conditional-free components. -/
 theorem equiv_conj_cond {φ ψ χ ξ : Formula ι} (hφ : NoCond φ) (hψ : NoCond ψ) (hχ : NoCond χ)
     (hξ : NoCond ξ) :
     CooperEquiv (.conj (.cond φ ψ) (.cond χ ξ))
@@ -271,6 +276,7 @@ theorem equiv_conj_cond {φ ψ χ ξ : Formula ι} (hφ : NoCond φ) (hψ : NoCo
   simpa using meetBelnap_condAssert_condAssert (hφ.cooperEval_ne_zero v)
     (hψ.cooperEval_ne_zero v) (hχ.cooperEval_ne_zero v) (hξ.cooperEval_ne_zero v)
 
+/-- **Disjunction**, for conditional-free components. -/
 theorem equiv_disj_cond {φ ψ χ ξ : Formula ι} (hφ : NoCond φ) (hψ : NoCond ψ) (hχ : NoCond χ)
     (hξ : NoCond ξ) :
     CooperEquiv (.disj (.cond φ ψ) (.cond χ ξ))
@@ -278,6 +284,8 @@ theorem equiv_disj_cond {φ ψ χ ξ : Formula ι} (hφ : NoCond φ) (hψ : NoCo
   simpa using joinBelnap_condAssert_condAssert (hφ.cooperEval_ne_zero v)
     (hψ.cooperEval_ne_zero v) (hχ.cooperEval_ne_zero v) (hξ.cooperEval_ne_zero v)
 
+/-- **Left-Nesting**, for a conditional-free inner consequent: in antecedent position an
+indicative and its material conditional express the same supposition. -/
 theorem equiv_cond_left {ψ : Formula ι} (hψ : NoCond ψ) (φ χ : Formula ι) :
     CooperEquiv (.cond (.cond φ ψ) χ) (.cond (material φ ψ) χ) := fun v ↦ by
   simpa using condAssert_condAssert_material (b := cooperEval v ψ) (hψ.cooperEval_ne_zero v)
@@ -398,6 +406,10 @@ theorem prob_value_bot [IsProbabilityMeasure μ] (i : ι) :
   rw [this, Trivalent.prob_ofProp]
   simp
 
+/-- The third principle (`prob_value_disj` below) fails without its properness clause, which the
+printed axiom omits: a
+certainly void disjunction of certainly void disjuncts has probability 1 by the All Void
+convention, while the disjuncts' probabilities sum to 2. -/
 theorem additivity_all_void (μ : Measure W) (t : W → ι → Bool) (i : ι) :
     posExt (value t (.cond (bot i) (top i))) = ∅ ∧
       Trivalent.prob μ (value t (.disj (.cond (bot i) (top i)) (.cond (bot i) (top i)))) = 1 ∧
@@ -510,11 +522,15 @@ variable [DiscreteMeasurableSpace W]
 The remaining principles divide credence by the weight of the defined region, so they read the
 measure of explicit sets and hold under the discrete σ-algebra of the paper's finite models. -/
 
+/-- Negation complements probability unless the sentence is void almost surely, the second
+principle with its printed exception. -/
 theorem prob_value_neg [IsFiniteMeasure μ] {φ : Formula ι}
     (h : μ (Function.support (value t φ)) ≠ 0) :
     Trivalent.prob μ (value t (.neg φ)) = 1 - Trivalent.prob μ (value t φ) :=
   Trivalent.prob_neg h
 
+/-- Disjuncts that are never true together and take classical values in the same worlds add, when
+the common defined region has positive credence (the third principle). -/
 theorem prob_value_disj {φ ψ : Formula ι}
     (hsupp : Function.support (value t φ) = Function.support (value t ψ))
     (hdisj : Disjoint (posExt (value t φ)) (posExt (value t ψ)))
@@ -523,6 +539,8 @@ theorem prob_value_disj {φ ψ : Formula ι}
       Trivalent.prob μ (value t φ) + Trivalent.prob μ (value t ψ) :=
   Trivalent.prob_joinBelnap hsupp hdisj h
 
+/-- A conditional certain in C has conditional probability 1 (axiom 3′), with no properness
+needed, since the All Void convention points the right way here. -/
 theorem prob_cond_eq_one_of_cEntails [IsFiniteMeasure μ] {A B : Formula ι}
     (h : CEntails [A] B) :
     Trivalent.prob μ (value t (.cond A B)) = 1 := by
@@ -551,6 +569,9 @@ theorem prob_cond_eq_zero_of_cEntails_neg {A B : Formula ι} (h : CEntails [] (.
   rw [cooperEval_neg, hB] at this
   exact absurd this (by decide)
 
+/-- Trivalent Additivity (axiom 5′) holds under conditions (ii) and (iii) in their
+designated-value form together with a live defined region for `C → A`, the properness the
+printed version lacks. -/
 theorem prob_cond_disj {A B C : Formula ι} (hii : CEntails [C] (.neg (.conj A B)))
     (hiii : ∀ v, 0 ≤ cooperEval v C → (cooperEval v A = 0 ↔ cooperEval v B = 0))
     (hproper : μ (Function.support (value t (.cond C A))) ≠ 0) :
@@ -611,6 +632,8 @@ theorem ofAdams_eq_indicator (φ : Adams1975.Formula W) :
   rw [ofAdams_eq_indicator]
   simp [Set.support_indicator]
 
+/-- Adams's simple conditionals exhaust the trivalent propositions, each being the conditional
+event of its truth on its definedness. -/
 theorem exists_ofAdams_eq (p : W → SignType) : ∃ φ : Adams1975.Formula W, ofAdams φ = p := by
   refine ⟨⟨Function.support p, posExt p⟩, ?_⟩
   rw [ofAdams_eq_indicator]
@@ -619,6 +642,8 @@ theorem exists_ofAdams_eq (p : W → SignType) : ∃ φ : Adams1975.Formula W, o
   funext w
   congr 1
 
+/-- Two Adams formulas denote the same proposition exactly when they have the same antecedent and
+agree on it, de Finetti's identity of conditional events. -/
 theorem ofAdams_eq_ofAdams_iff {φ ψ : Adams1975.Formula W} :
     ofAdams φ = ofAdams ψ ↔ φ.ante = ψ.ante ∧ φ.ante ∩ φ.cons = ψ.ante ∩ ψ.cons := by
   rw [ofAdams_eq_indicator, ofAdams_eq_indicator, indicator_ofProp_eq_indicator_ofProp_iff]
@@ -635,17 +660,23 @@ theorem value_cond_eq_ofAdams {A B : Formula ι} (hA : NoCond A) (hB : NoCond B)
 
 variable [MeasurableSpace W] [DiscreteMeasurableSpace W] {μ : Measure W}
 
+/-- The trivalent probability of an Adams formula with a live antecedent is his conditional
+probability. -/
 theorem prob_ofAdams {φ : Adams1975.Formula W} (h : μ φ.ante ≠ 0) :
     Trivalent.prob μ (ofAdams φ) = μ[φ.cons | φ.ante] := by
   rw [ofAdams_eq_indicator, Trivalent.prob_indicator_ofProp _ _ h]
   rfl
 
+/-- For conditional-free `A` and `B` with a live antecedent, the probability of `A → B` is the
+conditional probability of `B` given `A` (**Adams's Thesis**). -/
 theorem adams_thesis {A B : Formula ι} (hA : NoCond A) (hB : NoCond B) {t : W → ι → Bool}
     (h : μ {w | cooperEval (t w) A = 1} ≠ 0) :
     Trivalent.prob μ (value t (.cond A B)) =
       μ[{w | cooperEval (t w) B = 1} | {w | cooperEval (t w) A = 1}] := by
   rw [value_cond_eq_ofAdams hA hB t, prob_ofAdams h]
 
+/-- [adams-1975]'s p-entailment is a condition on trivalent probabilities, with his proper
+assignments the credences under which no premise or conclusion is void almost surely. -/
 theorem pEntails_iff_prob {κ : Type*} {s : Finset κ} {X : κ → Adams1975.Formula W}
     {d : Adams1975.Formula W} :
     Adams1975.PEntails s X d ↔ ∀ ε > 0, ∃ δ > 0, ∀ μ : Measure W, IsProbabilityMeasure μ →

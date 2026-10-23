@@ -79,12 +79,14 @@ private theorem maximalFor_prop_iff {ι : Type*} {P T : ι → Prop} {i : ι} :
 
 variable {A : CovertShift → Prop} {τ : CovertShift}
 
+/-- Under Chierchia's ranking an available shift applies when it is ∩ or ∩ is unavailable. -/
 theorem maximalFor_eq_down_iff :
     MaximalFor A (· = .down) τ ↔ A τ ∧ (τ = .down ∨ ¬ A .down) := by
   rw [maximalFor_prop_iff]
   exact and_congr_right fun _ ↦ or_congr_right
     ⟨fun h hd ↦ h _ hd rfl, fun h _ hj hd ↦ h (hd ▸ hj)⟩
 
+/-- Under Dayal's ranking an available shift applies when it is not ∃ or only ∃ is available. -/
 theorem maximalFor_ne_exists_iff :
     MaximalFor A (· ≠ .exists) τ ↔ A τ ∧ (τ ≠ .exists ∨ ∀ σ, A σ → σ = .exists) := by
   simp [maximalFor_prop_iff]
@@ -99,6 +101,7 @@ open Determiner.Inventory
 
 variable {ds : Determiner.Inventory} {down : Prop}
 
+/-- Under Dayal's ranking ∩ applies wherever it is defined, since no determiner blocks it. -/
 @[simp] theorem maximalFor_available_ne_exists_down :
     MaximalFor (ds.Available down) (· ≠ .exists) .down ↔ down := by
   simp [maximalFor_ne_exists_iff, Available, not_blocks_down]
@@ -118,6 +121,7 @@ variable {ds : Determiner.Inventory} {down : Prop}
   · exact absurd (h' .iotaAnaphoric ⟨nofun, hx⟩) nofun
   · cases σ <;> simp_all
 
+/-- Under Chierchia's ranking, too, ∩ applies wherever it is defined. -/
 @[simp] theorem maximalFor_available_eq_down_down :
     MaximalFor (ds.Available down) (· = .down) .down ↔ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
@@ -130,6 +134,8 @@ variable {ds : Determiner.Inventory} {down : Prop}
     MaximalFor (ds.Available down) (· = .down) .exists ↔ ¬ ds.Blocks .exists ∧ ¬ down := by
   simp [maximalFor_eq_down_iff, Available, not_blocks_down]
 
+/-- Where the determiners block ι and ι^x, as a definite article used anaphorically does, the two
+rankings select the same shifts. -/
 theorem maximalFor_available_eq_down_iff_ne_exists (hι : ds.Blocks .iota)
     (hx : ds.Blocks .iotaAnaphoric) :
     MaximalFor (ds.Available down) (· = .down) τ ↔

@@ -173,6 +173,8 @@ theorem superoptimalSet_subset : superoptimalSet pairs f ⊆ pairs := by
   rw [superoptimalSet, ← (unblockedSq pairs f).map_gfp]
   exact unblockedSet_subset _ _
 
+/-- Optimal pairs are super-optimal, since `strongOptimalSet` is a post-fixed point of the
+squared step, since the step is antitone and lands in `pairs`. -/
 theorem strongOptimalSet_subset_superoptimalSet :
     strongOptimalSet pairs f ⊆ superoptimalSet pairs f :=
   le_gfp _ (unblockedSet_antitone pairs f (unblockedSet_subset pairs f))
@@ -207,6 +209,8 @@ theorem isFixedPt_superoptimalSet (h : (f '' pairs).IsWF) :
     IsFixedPt (unblockedSet pairs f) (superoptimalSet pairs f) := by
   rw [IsFixedPt, unblockedSet_superoptimalSet, lfp_eq_superoptimalSet pairs f h]
 
+/-- A pair is super-optimal iff it lies in the generator and no super-optimal pair blocks it,
+Jäger's reformulation of super-optimality. -/
 theorem mem_superoptimalSet (h : (f '' pairs).IsWF) :
     p ∈ superoptimalSet pairs f ↔ p ∈ pairs ∧ ¬ Blocks f (superoptimalSet pairs f) p := by
   conv_lhs => rw [← (isFixedPt_superoptimalSet pairs f h).eq]
@@ -302,6 +306,10 @@ theorem superoptimalSet_eq_of_strictMono (hf : StrictMono f) :
     simp only [unblockedSq_apply, unblockedSet_eq_of_strictMono pairs hf]
   rw [superoptimalSet, superoptimalSet, this]
 
+/-- On a generator well-founded in markedness and containing the graph of an isomorphism `e`
+between the markedness orders of forms and of meanings, the super-optimal pairs are exactly that
+graph, under every harmony strictly monotone in markedness. This is the division of pragmatic
+labour. -/
 theorem superoptimalSet_eq_graphOn (e : F ≃o M) (hf : StrictMono f) (h : pairs.IsWF)
     (he : univ.graphOn e ⊆ pairs) : superoptimalSet pairs f = univ.graphOn e := by
   rw [superoptimalSet_eq_of_strictMono pairs hf]

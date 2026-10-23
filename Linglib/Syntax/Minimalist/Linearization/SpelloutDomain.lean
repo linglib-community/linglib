@@ -116,6 +116,7 @@ variable {d m n} {steps : List Step}
 @[simp] theorem spelloutDomain_self : d.spelloutDomain m m = d.stage? m := by
   simp [spelloutDomain]
 
+/-- A domain spelled out when it is built reads the surface of its stage. -/
 theorem spellout_self : d.spellout m m = (d.take m).surfaceTokens := by
   simp [spellout, stage?, surfaceTokens]
 
@@ -129,6 +130,7 @@ theorem spelloutDomain_append_of_le (hmn : m ≤ n) (h : n ≤ d.length) :
   rw [append, List.drop_append_of_le_length (hmn.trans h),
     List.take_append_of_le_length (by rw [List.length_drop]; simp only [length] at h; omega)]
 
+/-- Extending a derivation changes no earlier Spell-out. -/
 theorem spellout_append_of_le (hmn : m ≤ n) (h : n ≤ d.length) :
     (d.append steps).spellout m n = d.spellout m n := by
   rw [spellout, spellout, spelloutDomain_append_of_le hmn h]

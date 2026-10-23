@@ -83,6 +83,9 @@ def atoms : Finset Relation :=
       fun x ↦ x.1 ≤ x.2.1 ∧ x.2.2.1 ≤ x.2.2.2).image
     fun x ↦ ofEndpoints x.1 x.2.1 x.2.2.1 x.2.2.2
 
+/-- Twenty-six relations are realizable: Allen's thirteen between proper intervals, five between
+a point and a proper interval, five between a proper interval and a point, and three between
+points. -/
 theorem card_atoms : atoms.card = 26 := by decide +kernel
 
 /-! ### The relation of two intervals -/
@@ -196,6 +199,9 @@ theorem toSetRel_comp_subset :
   · rw [ofEndpoints_eq hg 2 3 4 5]; exact mem_toSetRel.1 hjk
   · exact ofEndpoints_eq hg 0 1 4 5
 
+/-- On dense time without endpoints, the relation of the composite of two cells is the composite
+of their relations: the second interval of a configuration of endpoints can be placed between
+any two intervals that stand as its first and third do. -/
 theorem toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
     (toSetRel (comp C D) : SetRel (NonemptyInterval T) _) = toSetRel C ○ toSetRel D := by
   refine le_antisymm (fun ⟨i, k⟩ h ↦ ?_) toSetRel_comp_subset
@@ -386,6 +392,7 @@ private theorem eq_of_mem_atoms_of_shapes :
       t = ⟨t.fstFst, t.fstFst, t.fstFst, t.fstFst, .eq, .eq⟩ := by
   decide +kernel
 
+/-- On points, Allen composition is the composition of comparison cells. -/
 theorem comp_pure (R S : Finset Ordering) : comp (pure R) (pure S) = pure (Tense.comp R S) := by
   ext t
   simp only [mem_comp, pure, Finset.mem_filter]
@@ -448,6 +455,8 @@ theorem HoldsAlong.mem_compAlong :
     rw [compAlong, List.getLast_cons (List.cons_ne_nil _ _)]
     exact toSetRel_comp_subset (SetRel.mem_comp.2 ⟨x, h.mem_compAlong, hx⟩)
 
+/-- On dense time without endpoints, two times stand in a chain's composite exactly when the chain
+can be realized from the first to the second. -/
 theorem mem_compAlong_iff [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
     ∀ {cs : List (Finset Relation)} {b x : NonemptyInterval T},
       (x, b) ∈ toSetRel (compAlong cs) ↔

@@ -63,6 +63,8 @@ def lexicalPassive : Voice := Voice.passive.marked [.suff "j"]
 /-- The active, the antipassive and the three passives. -/
 def voices : Finset Voice := {active, antipassive, passive, nullPassive, lexicalPassive}
 
+/-- Every voice but the active derives an intransitive construction, the verb marking one
+argument by Set B ([england-2017]). -/
 theorem not_isTransitive_of_ne_active : ∀ v ∈ voices, v ≠ active → ¬ v.derived.IsTransitive := by
   decide
 

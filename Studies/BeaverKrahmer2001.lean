@@ -242,6 +242,9 @@ theorem cancelNeg_eq_neg_metaAssert (a : SignType) :
     cancelNeg a = -ofProp (a = 1) := by
   cases a <;> rfl
 
+/-- No single trivalent disjunction both projects the left disjunct's presupposition and
+cancels it against a denying right disjunct, on the paper's own schema for the Soames
+disjunctions. -/
 theorem no_disjunction_table_projects_and_cancels :
     ¬ ∃ f : SignType → SignType → SignType,
       (∀ π γ δ : Bool,
@@ -446,6 +449,8 @@ theorem presup_transpl (φ π : Formula Atom) :
   simp only [eval_presup, eval_transpl, eval_conn, eval_assert, Connective.eval,
     Kleene.meet, presupVal_transplicate]
 
+/-- The strong conditional projects only a disjunctively weakened presupposition, the
+famous too-weak prediction for a presupposing antecedent. -/
 theorem strong_conditional_presupposition (φ ψ : Formula Atom) :
     Equiv (presup (conn .imp .strong φ ψ))
       (conn .conj .strong (conn .disj .strong (presup φ) (assert ψ))
@@ -454,6 +459,8 @@ theorem strong_conditional_presupposition (φ ψ : Formula Atom) :
     eval_assert, deny, eval_neg]
   exact presupVal_imp_strong _ _
 
+/-- The middle conditional filters. The antecedent's presupposition projects intact, and the
+consequent's survives unless the antecedent is denied. -/
 theorem middle_conditional_filters (φ ψ : Formula Atom) :
     Equiv (presup (conn .imp .middle φ ψ))
       (conn .conj .strong (presup φ) (conn .disj .strong (deny φ) (presup ψ))) := fun V ↦ by
@@ -461,6 +468,8 @@ theorem middle_conditional_filters (φ ψ : Formula Atom) :
     eval_assert, deny, eval_neg]
   exact presupVal_imp_middle _ _
 
+/-- The weak conditional is cumulative, projecting every elementary presupposition, which is
+the analysis of [langendoen-savin-1971]. -/
 theorem weak_conditional_cumulative (φ ψ : Formula Atom) :
     Equiv (presup (conn .imp .weak φ ψ)) (conn .conj .strong (presup φ) (presup ψ)) :=
   fun V ↦ by
@@ -612,6 +621,7 @@ def preferred : Formula Atom :=
   conn .disj .weak (assert (transpl (atom .q) (atom .p)))
     (assert (transpl (atom .r) (neg (atom .p))))
 
+/-- The basic translation presupposes a contradiction, so it is nowhere defined. -/
 theorem basic_undefined : ¬ Defined basic := by decide
 
 end StoppedOrStarted
@@ -663,6 +673,9 @@ open DynamicSemantics
 
 variable {W : Type*}
 
+/-- The paper's `update ξ σ τ` says, in its own vocabulary, that `σ` supports the
+presupposition `P ∘ ξ` throughout and that `τ` is `σ` intersected with the asserted
+content `A ∘ ξ`. -/
 theorem update_iff (ξ : (W → SignType)) (σ τ : Set W) :
     (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' ↔
       σ ⊆ {i | presupVal (ξ i) = 1} ∧ τ = σ ∩ {i | ofProp (ξ i = 1) = 1} := by
@@ -679,6 +692,8 @@ theorem hearer_update (ξ : (W → SignType)) (cgs : Set (Set W)) (τ : Set W) :
       ∃ σ ∈ cgs, (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' :=
   PFun.mem_image _ _ _
 
+/-- The two-stage procedure filters out the candidate common grounds incompatible with
+the presuppositions, then updates each remaining one with the assertion. -/
 theorem hearer_update_filters_then_asserts (ξ : (W → SignType)) (cgs : Set (Set W)) :
     (CCP.Partial.ofTrivalent ξ).image cgs =
       (fun σ ↦ σ ∩ Trivalent.posExt ξ) '' {σ ∈ cgs | (CCP.Partial.ofTrivalent ξ).Admits σ} := by
@@ -691,6 +706,8 @@ theorem hearer_update_filters_then_asserts (ξ : (W → SignType)) (cgs : Set (S
   · rintro ⟨σ, ⟨hσ, hd⟩, rfl⟩
     exact ⟨σ, hσ, (CCP.Partial.mem_ofTrivalent ..).2 ⟨hd, rfl⟩⟩
 
+/-- A hearer making no assumptions updates from the full powerset; two sentences compose
+by sequencing the updates. -/
 theorem monologue (ξ₁ ξ₂ : (W → SignType)) :
     (CCP.Partial.ofTrivalent ξ₂).image ((CCP.Partial.ofTrivalent ξ₁).image Set.univ) =
       (PartialUpdate.seq (CCP.Partial.ofTrivalent ξ₁) (CCP.Partial.ofTrivalent ξ₂)).image
@@ -748,17 +765,24 @@ def Kleene.verdictKey : Kleene → String
   | .middle => "middleVerdict"
   | .weak => "weakVerdict"
 
+/-- The presupposition the paper prints for each logic is the maximal presupposition the
+semantics computes. -/
 theorem printed_predictions : ∀ k : Kleene, ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "schema" (schemas k), ∀ π ∈ row.parse? k.predictsKey presups,
       Formula.Equiv (Formula.presup φ) π := by
   decide +kernel
 
+/-- The paper's verdicts compare the predicted with the intuitive presupposition. -/
 theorem printed_verdicts : ∀ k : Kleene, ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "schema" (schemas k), ∀ ι ∈ row.parse? "intuitive" presups,
     ∀ v ∈ row.parse? k.verdictKey verdictTable,
       (v = true ↔ Formula.Equiv (Formula.presup φ) ι) := by
   decide +kernel
 
+/-- No single logic fits the Soames disjunction data, since each of the three mispredicts
+the intuitive presupposition of some printed example ([soames-1979];
+[van-der-sandt-1989]'s conclusion, which the paper accepts before restoring flexibility
+with the floating A). -/
 theorem no_kleene_fits_soames_disjunctions : ∀ k : Kleene, ∃ row ∈ Examples.all,
     ∃ φ ∈ row.parse? "schema" (schemas k), ∃ ι ∈ row.parse? "intuitive" presups,
       ¬ Formula.Equiv (Formula.presup φ) ι := by

@@ -213,6 +213,7 @@ theorem eTIA_eq_of_hasSubintervalProperty {Q : W → E → Prop}
   · obtain ⟨l, hl, hlm⟩ := IsTimeMeasure.exists_Ioc_eq_of_le hge
     exact ⟨⟨⟨l, (τ e).snd⟩, hl.trans (τ e).fst_le_snd⟩, hlm, e, he, le_def.2 ⟨hl, le_rfl⟩⟩
 
+/-- With an atelic VP, as in *Mary was sick in three days*, the E-TIA is not licensed. -/
 theorem not_isMIPLicensed_eTIA [Nontrivial α] {Q : W → E → Prop}
     (hQ : HasSubintervalProperty Q) : ¬ IsMIPLicensed (eTIA μ Q) :=
   not_isMIPLicensed_of_forall_eq (eTIA_eq_of_hasSubintervalProperty μ hQ)
@@ -267,6 +268,7 @@ theorem not_isLeast_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T) (w : 
   let ⟨_, _, hmn, hm⟩ := exists_lt_of_mem_gTIA μ hn
   hmn.not_ge (hlb hm)
 
+/-- A positive G-TIA, as in *Mary has been sick in three days*, is not licensed over dense time. -/
 theorem not_isMIPLicensed_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T) :
     ¬ IsMIPLicensed (gTIA μ P s) :=
   not_isMIPLicensed_of_not_isLeast (gTIA_monotone μ P s) (not_isLeast_gTIA μ P s)
@@ -287,6 +289,8 @@ theorem isGreatest_gTIANeg {P : W → E → Prop} {s : T} {w : W} {l₀ : T}
     exact hn ⟨l, hlμ, e₀, he₀, (Icc_subset_Ioo_iff (τ e₀).fst_le_snd).2
       ⟨hll₀.trans_eq hfst.symm, hsnd⟩⟩
 
+/-- In *Mary hasn't been sick in three days*, when worlds separate the gap's length, a negated
+G-TIA is licensed at the world where the last event abuts the span. -/
 theorem isMIPLicensed_gTIANeg {P : W → E → Prop} {s : T} (hφ : StrictAnti (gTIANeg μ P s))
     {w : W} {l₀ : T} (hall : ∀ e, P w e → (τ e).fst ≤ l₀)
     (hwit : ∃ e, P w e ∧ (τ e).fst = l₀ ∧ (τ e).snd < s) : IsMIPLicensed (gTIANeg μ P s) :=

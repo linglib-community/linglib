@@ -188,6 +188,7 @@ def vowels : Finset Segment :=
 /-- The phonemes. -/
 def inventory : Finset Segment := consonants ∪ vowels
 
+/-- The vowels are the [+syllabic] phonemes. -/
 theorem isVowel_iff : ∀ s ∈ inventory, s.IsVowel ↔ s ∈ vowels := by decide
 
 end Drubea

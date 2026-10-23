@@ -93,6 +93,7 @@ theorem selectBy_applies (h : v.selectBy f c = some r) : Applies r c :=
 theorem selectBy_eq_none_iff : v.selectBy f c = none ↔ v.applicable c = [] :=
   List.argmax_eq_none
 
+/-- On a rule set listed by non-increasing score, selection takes the first applicable rule. -/
 theorem selectBy_eq_head?_applicable (h : v.Pairwise fun r s ↦ f s ≤ f r) :
     v.selectBy f c = (v.applicable c).head? :=
   List.argmax_eq_head? (h.filter _)
@@ -140,6 +141,8 @@ theorem applicable_eq_filter (h : ∀ s ∈ v, Applies s c → Applies s c') :
   rw [applicable, applicable, List.filter_filter]
   exact List.filter_congr fun s hs ↦ by by_cases hc : Applies s c <;> simp [hc, h s hs]
 
+/-- Selection by a score is consistent under contraction. The rule selected at `c'` is selected
+at any context whose applicable rules are among those at `c'`, as long as it applies there. -/
 theorem selectBy_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
     (hr : v.selectBy f c' = some r) (hrc : Applies r c) : v.selectBy f c = some r := by
   rw [selectBy, applicable_eq_filter h]
@@ -165,11 +168,13 @@ section Contiguity
 
 variable [Preorder Ctx]
 
+/-- Rules applicable on upper sets of contexts realize contiguous patterns. -/
 theorem isContiguous_realize_of_monotone (hv : v.Antihomophonous)
     (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realize f) :=
   fun _ _ _ hij hjk he ↦
     (realize_eq_of_applies hv (fun s hs ↦ h s hs hij) (fun s hs ↦ h s hs hjk) he).symm
 
+/-- Rules applicable on lower sets of contexts realize contiguous patterns. -/
 theorem isContiguous_realize_of_antitone (hv : v.Antihomophonous)
     (h : ∀ r ∈ v, Antitone (Applies r)) : IsContiguous (v.realize f) :=
   fun _ _ _ hij hjk he ↦ he.trans
@@ -204,6 +209,8 @@ section Map
 variable {R' Ctx' E' : Type*} [Rule R' Ctx' E'] [DecidableRel (Applies : R' → Ctx' → Prop)]
   {β : Type*} [LinearOrder β] {f' : R' → β} {g : R → R'} {c' : Ctx'}
 
+/-- Selection commutes with a map of rules that preserves applicability and the comparison of
+scores. -/
 theorem selectBy_map (happ : ∀ r ∈ v, Applies (g r) c' ↔ Applies r c)
     (hf : ∀ r ∈ v, ∀ s ∈ v, f' (g r) ≤ f' (g s) ↔ f r ≤ f s) :
     selectBy (v.map g) f' c' = (v.selectBy f c).map g := by
@@ -220,6 +227,8 @@ end Map
 
 variable {κ : Type*} [Preorder κ] {key : R → κ}
 
+/-- A score that strictly reverses specificity on the applicable rules selects an Elsewhere
+winner. -/
 theorem selectBy_isElsewhereWinner
     (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r)
     (h : v.selectBy f c = some r) : v.IsElsewhereWinner key c r := by
@@ -249,6 +258,7 @@ theorem selectMinimal_eq_find? : v.selectMinimal key c =
   rw [List.find?_filter]
   exact List.find?_congr fun r _ ↦ by simp only [decide_eq_true_eq, List.all_eq_true]
 
+/-- `selectMinimal` returns an Elsewhere winner. -/
 theorem selectMinimal_isElsewhereWinner
     (h : v.selectMinimal key c = some r) : v.IsElsewhereWinner key c r := by
   have hall := List.find?_some h
@@ -278,6 +288,8 @@ theorem selectMinimal_congr (h : v.applicable c = v.applicable c') :
     v.selectMinimal key c = v.selectMinimal key c' := by
   rw [selectMinimal, selectMinimal, h]
 
+/-- A rule system sensitive only to what `A` sees selects the same rule in
+contexts that `A` identifies. -/
 theorem selectMinimal_factorsThrough {V : Type*} {A : Ctx → V}
     (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
     (v.selectMinimal key).FactorsThrough A :=
@@ -288,6 +300,8 @@ theorem selectMinimal_factorsThrough {V : Type*} {A : Ctx → V}
 def realizeMinimal (v : RuleSet R) (key : R → κ) (c : Ctx) : Option E :=
   (v.selectMinimal key c).map exponent
 
+/-- A rule system sensitive only to what `A` sees realizes the same exponent in contexts that `A`
+identifies. -/
 theorem realizeMinimal_factorsThrough {V : Type*} {A : Ctx → V}
     (h : ∀ r ∈ v, ∀ ⦃c c'⦄, A c = A c' → (Applies r c ↔ Applies r c')) :
     (v.realizeMinimal key).FactorsThrough A :=
@@ -316,6 +330,8 @@ theorem realizeMinimal_eq_of_isElsewhereWinner (hv : v.Coherent key)
     (realizeMinimal_isSome_iff (key := key).mpr ⟨r, hr.prop.1, hr.prop.2⟩)
   rw [hφ, (realizeMinimal_realizes hφ).eq hv hc ⟨r, hr, rfl⟩]
 
+/-- Under Pāṇinian Determinism a coherent rule set realizes by minimal selection what it
+realizes by selection on any score strictly reversing specificity. -/
 theorem realizeMinimal_eq_realize (hv : v.Coherent key)
     (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
     (hf : ∀ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r < key s → f s < f r) :
@@ -328,6 +344,9 @@ theorem realizeMinimal_eq_realize (hv : v.Coherent key)
 
 /-! ### Contraction under Pāṇinian Determinism -/
 
+/-- Minimal selection is consistent under contraction where the Elsewhere winners of the smaller
+context form a chain, Stump's Pāṇinian Determinism. The rule selected at `c'` is then selected
+at any context whose applicable rules are among those at `c'`, as long as it applies there. -/
 theorem selectMinimal_eq_some_of_applies (h : ∀ s ∈ v, Applies s c → Applies s c')
     (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
     (hr : v.selectMinimal key c' = some r)
@@ -370,6 +389,8 @@ section Contiguity
 
 variable [Preorder Ctx]
 
+/-- Under Pāṇinian Determinism, rules applicable on upper sets of contexts realize contiguous
+patterns by minimal selection. -/
 theorem isContiguous_realizeMinimal_of_monotone (hv : v.Antihomophonous)
     (hc : ∀ c, IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
     (h : ∀ r ∈ v, Monotone (Applies r)) : IsContiguous (v.realizeMinimal key) :=
@@ -434,6 +455,8 @@ theorem realizeMinimalD_factorsThrough {V : Type*} {A : Ctx → V}
   fun _ _ hA ↦ by rw [realizeMinimalD, realizeMinimalD, realizeMinimal, realizeMinimal,
     selectMinimal_factorsThrough h hA, hd hA]
 
+/-- Over a coherent rule set whose Elsewhere winners form a chain, the realized value is the
+exponent of any Elsewhere winner, so it does not depend on the order of the rule set. -/
 theorem realizeMinimalD_eq_of_isElsewhereWinner (hv : v.Coherent key)
     (hc : IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s})
     (hr : v.IsElsewhereWinner key c r) :

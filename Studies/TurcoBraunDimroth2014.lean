@@ -101,17 +101,23 @@ def pol (s : Sentence S W) : Polarity := s.polarityOp.getD .positive
 /-- The proposition a sentence asserts. -/
 def denotation (s : Sentence S W) : Set W := s.pol • s.property s.situation
 
+/-- Accenting the assertion operator leaves the truth conditions unchanged. -/
 theorem denotation_verumFocus (s : Sentence S W) (m : Focus.Mark) :
     { s with verumFocus := m }.denotation = s.denotation := rfl
 
+/-- An overt affirmative particle leaves the truth conditions of the unmarked affirmative
+sentence unchanged: *wel* and Verum focus are functionally equivalent on a positive sentence. -/
 theorem denotation_affirmation (s : Sentence S W) :
     { s with polarityOp := some .positive }.denotation =
       { s with polarityOp := none }.denotation := rfl
 
+/-- An overt value of the polarity operator is the polarity of the sentence: a sentence with
+the affirmative particle is positive, so the particle cannot occur in a negated sentence. -/
 theorem pol_of_polarityOp_eq_some {s : Sentence S W} {p : Polarity} (h : s.polarityOp = some p) :
     s.pol = p := by
   simp only [pol, h, Option.getD_some]
 
+/-- Verum focus can occur in a negated sentence, *Das Kind HAT nicht geweint*. -/
 theorem exists_verumFocus_negative [Nonempty S] :
     ∃ s : Sentence S W, s.verumFocus = .focused ∧ s.pol = .negative :=
   ⟨⟨fun _ ↦ ∅, Classical.arbitrary S, some .negative, .focused⟩, rfl, rfl⟩
@@ -131,16 +137,21 @@ def IsContrast (a b : Sentence S W) : Prop := Switch a b ∧ a.situation ≠ b.s
 /-- A polarity correction is a switch between claims about the same topic situation. -/
 def IsCorrection (a b : Sentence S W) : Prop := Switch a b ∧ a.situation = b.situation
 
+/-- The claims of a switch exclude each other exactly when the property's holding of the second
+topic situation entails its holding of the first. -/
 theorem Switch.disjoint_iff {a b : Sentence S W} (h : Switch a b) :
     Disjoint a.denotation b.denotation ↔ b.property b.situation ⊆ a.property a.situation := by
   obtain ⟨hP, ha, hb⟩ := h
   simp only [Sentence.denotation, ha, hb, hP, Polarity.negative_smul_set, Polarity.positive_smul,
     Set.disjoint_compl_left_iff_subset]
 
+/-- The claims of a correction exclude each other. -/
 theorem IsCorrection.disjoint {a b : Sentence S W} (h : IsCorrection a b) :
     Disjoint a.denotation b.denotation :=
   h.1.disjoint_iff.2 (by rw [h.1.1, h.2])
 
+/-- The claims of a contrast need not exclude each other: any two topic situations carry a
+contrast whose claims are jointly true. -/
 theorem exists_isContrast_not_disjoint [Nonempty W] {s₁ s₂ : S} (h : s₁ ≠ s₂) :
     ∃ a b : Sentence S W, IsContrast a b ∧ ¬ Disjoint a.denotation b.denotation := by
   refine ⟨⟨fun s ↦ {_w | s = s₂}, s₁, some .negative, .unfeatured⟩,

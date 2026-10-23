@@ -99,6 +99,8 @@ middle, so no distinct B can interrupt an A_A pattern. It discharges for the two
 containment decompositions by `decide` on the hypotheses; NCC violates the
 first (`ncc_aba_generable`). -/
 
+/-- *ABA under Strong Case Containment ([caha-2009],
+[smith-moskal-xu-kang-bobaljik-2019]). -/
 theorem noABA_scc {v : RuleSet (Rule Case3 scc F)} {A B : Rule Case3 scc F}
     (hnom : IsWinner v .nom A) (hdat : IsWinner v .dat A)
     (hacc : IsWinner v .acc B) : B = A :=
@@ -212,6 +214,8 @@ def table20stem (c : LCell) : Option String :=
 theorem latvian_stems : ∀ c, pattern latvianRules c = table20stem c := by
   decide
 
+/-- The pattern "cuts across genders": neither rule references gender, so the
+distribution is gender-blind. -/
 theorem latvian_gender_blind (c n) :
     pattern latvianRules ⟨c, n, .masc⟩ = pattern latvianRules ⟨c, n, .fem⟩ := by
   revert c n; decide
@@ -252,6 +256,7 @@ def yiddishStem (c : YCell) : String :=
   else if c.case ≠ .nom ∧ c.num = .pl then "undz"
   else "m"
 
+/-- The three rules generate the paradigm. -/
 theorem yiddish_stems : ∀ c, pattern yiddishRules c = some (yiddishStem c) := by
   decide
 

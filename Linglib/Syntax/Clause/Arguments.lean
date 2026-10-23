@@ -74,9 +74,11 @@ def valency (c : Arguments α) : Valency := Finset.univ.filter fun p ↦ (c p).i
 @[simp] theorem valency_empty : (empty : Arguments α).valency = ∅ := by
   ext p; simp [valency, empty]
 
+/-- An unaccusative clause's sole argument occupies the root's valency. -/
 theorem unaccusative_isRootValency : (unaccusative x).valency.IsRootValency := by
   rw [valency_unaccusative]; exact le_rfl
 
+/-- An unergative clause's sole argument occupies Voice's valency. -/
 theorem unergative_isVoiceValency : (unergative x).valency.IsVoiceValency := by
   rw [valency_unergative]; exact le_rfl
 

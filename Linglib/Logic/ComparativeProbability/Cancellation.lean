@@ -104,6 +104,8 @@ private lemma measureReal_sum_mono {prem : List (Set W × Set W)}
     exact add_le_add ((μ.inducedGe_iff_real).1 (hprem p (List.mem_cons_self ..)))
       (ih fun q hq ↦ hprem q (List.mem_cons_of_mem _ hq))
 
+/-- The order a finite measure induces satisfies finite cancellation, since a balanced pair of
+    sequences has equal total measure on its two sides. -/
 theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.inducedGe := by
   intro prem X Y hbal hprem
   have hsum := measureReal_listSum_eq_of_balanced μ hbal
@@ -113,6 +115,8 @@ theorem _root_.MeasureTheory.Measure.finiteCancellation : FiniteCancellation μ.
 
 end
 
+/-- A representable relation satisfies finite cancellation (the soundness half of Scott's
+    theorem, in balanced-sequence form). -/
 theorem Representable.finiteCancellation [Fintype W] [MeasurableSpace W]
     [MeasurableSingletonClass W] {r : Set W → Set W → Prop} (h : Representable r) :
     FiniteCancellation r := by

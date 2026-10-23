@@ -83,9 +83,13 @@ end Preorder
 
 variable [Lattice (Know B)] [Negation B]
 
+/-- Negation commutes with the knowledge meet, `(a ⊓ₖ b)ᶜ = aᶜ ⊓ₖ bᶜ` (note following
+[avron-1996] Def 2.3). -/
 theorem compl_kInf (a b : B) : (a ⊓ₖ b)ᶜ = aᶜ ⊓ₖ bᶜ :=
   toKnow.injective (Negation.knowIso.map_inf (toKnow a) (toKnow b))
 
+/-- Negation commutes with the knowledge join, `(a ⊔ₖ b)ᶜ = aᶜ ⊔ₖ bᶜ` (note following
+[avron-1996] Def 2.3). -/
 theorem compl_kSup (a b : B) : (a ⊔ₖ b)ᶜ = aᶜ ⊔ₖ bᶜ :=
   toKnow.injective (Negation.knowIso.map_sup (toKnow a) (toKnow b))
 
@@ -201,6 +205,8 @@ section ClassesClosure
 
 variable [Lattice B] [Lattice (Know B)] [IsInterlaced B] [Conflation B]
 
+/-- The consistent values are closed under truth meet
+([fitting-2021] Prop 8.5.2). -/
 theorem IsConsistent.inf {a b : B} (ha : IsConsistent a) (hb : IsConsistent b) :
     IsConsistent (a ⊓ b) := by
   rw [IsConsistent, conf_inf]
@@ -217,6 +223,7 @@ theorem IsConsistent.sup {a b : B} (ha : IsConsistent a) (hb : IsConsistent b) :
     _ ≤ₖ conf b ⊔ conf a := IsInterlaced.sup_kmono hb (conf a)
     _ = conf a ⊔ conf b := sup_comm ..
 
+/-- The anticonsistent values are closed under truth meet. -/
 theorem IsAnticonsistent.inf {a b : B} (ha : IsAnticonsistent a)
     (hb : IsAnticonsistent b) : IsAnticonsistent (a ⊓ b) := by
   rw [IsAnticonsistent, conf_inf]
@@ -234,6 +241,7 @@ theorem IsAnticonsistent.sup {a b : B} (ha : IsAnticonsistent a)
     _ = a ⊔ b := sup_comm ..
 
 omit [IsInterlaced B] in
+/-- The exact values are closed under truth meet. -/
 theorem IsExact.inf {a b : B} (ha : IsExact a) (hb : IsExact b) : IsExact (a ⊓ b) :=
   (conf_inf a b).trans (by rw [ha.eq, hb.eq])
 
@@ -278,6 +286,8 @@ section Interpolation
 
 variable [Lattice B] [Lattice (Know B)] [IsInterlaced B] [Conflation B]
 
+/-- Every consistent value is knowledge-below an exact value
+([fitting-2021] Prop 8.5.3): `a ⊔ −a` is exact. -/
 theorem IsConsistent.exists_exact_kLE {a : B} (ha : IsConsistent a) :
     ∃ b : B, IsExact b ∧ a ≤ₖ b := by
   refine ⟨a ⊔ conf a, (conf_sup _ _).trans (by rw [conf_conf, sup_comm]), ?_⟩
@@ -285,6 +295,8 @@ theorem IsConsistent.exists_exact_kLE {a : B} (ha : IsConsistent a) :
         simpa only [sup_idem] using IsInterlaced.sup_kmono ha a
     _ = a ⊔ conf a := sup_comm ..
 
+/-- Every anticonsistent value is knowledge-above an exact value
+([fitting-2021] Prop 8.5.3): `a ⊓ −a` is exact. -/
 theorem IsAnticonsistent.exists_exact_kLE {a : B} (ha : IsAnticonsistent a) :
     ∃ b : B, IsExact b ∧ b ≤ₖ a := by
   refine ⟨a ⊓ conf a, (conf_inf _ _).trans (by rw [conf_conf, inf_comm]), ?_⟩
@@ -297,6 +309,8 @@ section ExactAntichain
 
 variable [Preorder B] [PartialOrder (Know B)] [Conflation B]
 
+/-- The exact values form a knowledge-order antichain
+([fitting-2021] Prop 8.5.4). -/
 theorem IsExact.eq_of_kLE {a b : B} (ha : IsExact a) (hb : IsExact b)
     (h : a ≤ₖ b) : a = b :=
   kLE_antisymm h (by

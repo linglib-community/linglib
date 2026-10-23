@@ -90,6 +90,8 @@ likelihood for the speaker's channel. -/
 noncomputable def Listener.L0 (L : Listener P M) : Kernel M P :=
   listener L.prior L.likelihood
 
+/-- A likelihood that is zero or one, as for a lexicalized social meaning, gives Burnett's literal
+listener, who conditions the prior on the personae the message is true of. -/
 theorem Listener.L0_eq_listener_truthful (L : Listener P M)
     (h : ∀ p m, L.likelihood p {m} = 0 ∨ L.likelihood p {m} = 1) :
     L.L0 = listener L.prior (truthful fun m ↦ {p | L.likelihood p {m} = 1}) := by
@@ -328,6 +330,7 @@ private theorem log_unsavvy_bounds :
 
 variable {α : ℝ} {G : Multiset (Listener Persona Message)} {π : Persona}
 
+/-- To any group of pro-vaxxers, savvy or not, Stein disavows. -/
 theorem disavows_to_proVaxxers (hα : 0 < α) (hG : G ≠ 0)
     (h : ∀ L ∈ G, L = savvyProVaxxer ∨ L = unsavvyProVaxxer) :
     (S1 α 0 G π).real {.bigPharma} < (S1 α 0 G π).real {.corporateScientists} := by
@@ -336,6 +339,7 @@ theorem disavows_to_proVaxxers (hα : 0 < α) (hG : G ≠ 0)
   · linarith [advantage_savvyProVaxxer, log_savvy_bounds.2]
   · linarith [advantage_unsavvyProVaxxer, log_unsavvy_bounds.2]
 
+/-- To any group of anti-vaxxers Stein dogwhistles. -/
 theorem dogwhistles_to_antiVaxxers (hα : 0 < α) (hG : G ≠ 0) (h : ∀ L ∈ G, L = antiVaxxer) :
     (S1 α 0 G π).real {.corporateScientists} < (S1 α 0 G π).real {.bigPharma} :=
   S1_real_singleton_lt_of_forall hα hG fun L hL ↦ by

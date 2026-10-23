@@ -71,6 +71,7 @@ def principalFilter (B : α → Prop) : NP α := fun X ↦ ∀ x, B x → X x
 
 variable {Q : NP α} {A B X : α → Prop}
 
+/-- A quantifier living on `A` contains `A` iff it contains the domain (C1). -/
 theorem livesOn_apply_iff (h : LivesOn Q A) : Q A ↔ Q (fun _ ↦ True) := by
   rw [h (fun _ ↦ True)]
   simp only [and_true]
@@ -134,6 +135,7 @@ theorem not_there_of_negativeStrong (hc : Conservative D) (h : NegativeStrong D)
     (A : α → Prop) : ¬ D A (fun _ ↦ True) :=
   fun hA ↦ h A ((livesOn_apply_iff ((conservative_iff_livesOn D).1 hc A)).2 hA)
 
+/-- Definite determiners are positive strong (C3). -/
 theorem Definite.positiveStrong (hc : Conservative D) (hd : Definite D) :
     PositiveStrong D := by
   intro A
@@ -147,6 +149,9 @@ theorem apply_univ_inter_of_intersective (h : IntersectionCondition D) (A B : α
     D A B ↔ D (fun x ↦ A x ∧ B x) (fun _ ↦ True) :=
   h A B (fun x ↦ A x ∧ B x) (fun _ ↦ True) (fun x ↦ by tauto)
 
+/-- A strong determiner satisfying the intersection condition is trivial, since positive strong
+makes every `D(A)` everything and negative strong makes it empty; so no proper strong
+determiner is symmetric (C6). -/
 theorem strong_trivial_of_intersective (h : IntersectionCondition D) :
     (PositiveStrong D → ∀ A B, D A B) ∧ (NegativeStrong D → ∀ A B, ¬ D A B) :=
   ⟨fun hs A B ↦ (h (fun x ↦ A x ∧ B x) (fun x ↦ A x ∧ B x) A B (fun x ↦ by tauto)).1
@@ -154,6 +159,7 @@ theorem strong_trivial_of_intersective (h : IntersectionCondition D) :
     fun hs A B hAB ↦ hs (fun x ↦ A x ∧ B x)
       ((h A B (fun x ↦ A x ∧ B x) (fun x ↦ A x ∧ B x) (fun x ↦ by tauto)).1 hAB)⟩
 
+/-- A persistent symmetric determiner is increasing (C7). -/
 theorem scopeUp_of_restrictorUp_symmetric (hp : RestrictorMonotone D)
     (hs : Std.Symm D) : ScopeMonotone D :=
   fun R S S' hSS' hRS ↦ hs.symm S' R (hp R hSS' (hs.symm R S hRS))
@@ -165,6 +171,8 @@ theorem apply_inter_of_positiveStrong_scopeUp (hps : PositiveStrong D)
 theorem scopeMonotone_dual (h : ScopeMonotone D) : ScopeMonotone (dual D) :=
   ScopeAntitone.compl _ (ScopeMonotone.innerNeg _ h)
 
+/-- An increasing quantifier and its dual overlap, since `D(R)(A)` and `Ď(R)(B)` force a
+common member of `A` and `B` (C10). -/
 theorem exists_and_of_scopeUp_dual (hm : ScopeMonotone D) {R A B : α → Prop}
     (hA : D R A) (hB : dual D R B) : ∃ x, A x ∧ B x := by
   by_contra h
@@ -773,6 +781,11 @@ theorem most_sem_not_definable :
 /-! ### The engine-level corollary: no tree means *most* -/
 
 open Montague PhraseStructure in
+/-- No tree means *most*. Under any translation of words into the first-order constants of the
+language of C12, no tree has, across all nonempty finite models and under every assignment, the
+truth conditions of `most`. A tree whose logical form has type `t` reads back to a first-order
+formula whose universal closure would define `most`, against C12; any other tree is true in no
+model, while `most` is true in the one-element model where both predicates hold. -/
 theorem no_tree_means_most {C X : Type}
     (words : X → Option (Σ ty, FirstOrderConstant (Language.monadic (Fin 2)) ty)) :
     ¬ ∃ t : PhraseStructure.Tree C X, ∀ (M : Type) [Fintype M] [Nonempty M]

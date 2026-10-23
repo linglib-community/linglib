@@ -147,6 +147,8 @@ inductive IsSubterm : {α β : Eventuality} → Template α → Template β → 
   | caused {α : Eventuality} {u : Template α} {c e : Template .event} :
       IsSubterm u e → IsSubterm u (cause c e)
 
+/-- A template whose primitives include a manner and a state has `CAUSE`, since causation is
+the only primitive that relates an action to a state. -/
 theorem hasCause_of_mem_kinds {t : Template σ} (hm : Root.Kind.manner ∈ t.kinds)
     (hs : Root.Kind.state ∈ t.kinds) : t.HasCause := by
   induction t with
@@ -156,6 +158,7 @@ theorem hasCause_of_mem_kinds {t : Template σ} (hm : Root.Kind.manner ∈ t.kin
     exact Finset.mem_insert_of_mem (ih hm hs)
   | cause => exact Finset.mem_insert_self _ _
 
+/-- A subterm's primitives are among the template's. -/
 theorem IsSubterm.kinds_subset {u : Template τ} {t : Template σ} (h : u.IsSubterm t) :
     u.kinds ⊆ t.kinds := by
   induction h with
@@ -185,10 +188,14 @@ def denote : {σ : Eventuality} → Template σ → Entity → Entity → σ.Car
 
 variable {M P Q} {y x : Entity}
 
+/-- CAUSE with an individual causer is the `vcause` of Beavers and Koontz-Garboden, an event
+whose effector is the causer and which causes the caused subevent. -/
 theorem denote_cause_effector {t : Template .event} {v : Event} :
     (cause effector t).denote M P Q y x v ↔ M.effector y v ∧ M.vCause (t.denote M P Q x x) v :=
   Iff.rfl
 
+/-- A template's denotation entails that each of its subterms is realized, with the same
+undergoer. -/
 theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.IsSubterm t)
     {v : σ.Carrier State Event} (h : t.denote M P Q y x v) :
     ∃ y' w, u.denote M P Q y' x w := by
@@ -268,6 +275,8 @@ private theorem denote_noCause [Nonempty State] {t : Template σ} (ht : ¬ t.Has
 
 variable [Nonempty Entity] [Nonempty State] [Nonempty Event] {t : Template σ}
 
+/-- A template has `BECOME` iff every denotation of it, in every interpretation, involves a
+change. -/
 theorem hasResultState_iff :
     t.HasResultState ↔ ∀ (M : Interpretation Entity State Event) P Q y x
       (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ s e, s ~[M.become] e := by
@@ -276,6 +285,8 @@ theorem hasResultState_iff :
     (Classical.arbitrary _) (denote_noChange ht _ _ _)
   exact hb
 
+/-- A template has `CAUSE` iff every denotation of it, in every interpretation, involves a
+causal relation. -/
 theorem hasCause_iff :
     t.HasCause ↔ ∀ (M : Interpretation Entity State Event) P Q y x
       (v : σ.Carrier State Event), t.denote M P Q y x v → ∃ v e, v ~[M.cause] e := by

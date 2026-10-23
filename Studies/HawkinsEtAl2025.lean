@@ -83,6 +83,8 @@ variable {W Q R A D : Type*}
 not knowing `r`, that is, when every belief state that knows `r` resolves `q`. -/
 def Safe (q r : Set W) : Prop := ∀ s ⊆ r, s ∈ polar q
 
+/-- A response is safe exactly when it resolves the polar question, since resolution is
+downward closed. -/
 theorem safe_iff_mem_polar {q r : Set W} : Safe q r ↔ r ∈ polar q :=
   ⟨fun h ↦ h r subset_rfl, fun h _ hs ↦ (polar q).isLowerSet hs h⟩
 
@@ -246,6 +248,8 @@ noncomputable def Model.questionScore (d : D) (q : Q) : ℝ :=
   ∫ r, (value (m.utility d) p.αℵ (RSA.listener (m.prior d) (m.R0 q) r) - p.wc * m.cost r)
     ∂(m.R0 q ∘ₘ m.prior d)
 
+/-- The question score is the value of information of the question under the policy value, plus
+the value of the prior, less the expected cost. -/
 theorem Model.questionScore_eq_valueOfInformation [StandardBorelSpace W] [Nonempty W] (d : D)
     [IsFiniteMeasure (m.prior d)] (q : Q) :
     m.questionScore p d q =
@@ -293,6 +297,8 @@ noncomputable def Model.goalPosterior : Kernel Q D := RSA.listener πD (m.questi
 instance : IsFiniteKernel (m.goalPosterior p πD) :=
   inferInstanceAs (IsFiniteKernel (RSA.listener _ _))
 
+/-- Between decision problems of equal prior, the respondent comes to favour the one under which
+the question was the likelier, so a question signals the goal. -/
 theorem Model.goalPosterior_real_lt_iff [IsFiniteMeasure πD] (q : Q) {d₁ d₂ : D}
     (hp : πD {d₁} = πD {d₂}) (hpos : πD {d₁} ≠ 0) :
     (m.goalPosterior p πD q).real {d₁} < (m.goalPosterior p πD q).real {d₂} ↔

@@ -126,6 +126,7 @@ theorem better_irrefl (u : U) : ¬ s.Better u u := fun h ↦ h.2 (s.atLeastAsGoo
 
 theorem better_asymm (h : s.Better u v) : ¬ s.Better v u := fun h' ↦ h.2 h'.1
 
+/-- Better-than is a strict order, the irreflexive part of the at-least-as-good preorder. -/
 theorem better_trans (h : s.Better u v) (h' : s.Better v x) : s.Better u x :=
   ⟨s.atLeastAsGood_trans h.1 h'.1, fun hx ↦ h.2 (s.atLeastAsGood_trans h'.1 hx)⟩
 

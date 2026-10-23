@@ -152,6 +152,9 @@ theorem intentionDegree_eq_one_of_no_alternatives
   exact ENNReal.div_self (mul_ne_zero h0 (ENNReal.coe_ne_zero.mpr hw))
     (ENNReal.mul_ne_top htop ENNReal.coe_ne_top)
 
+/-- An agent who could not have done otherwise comes out maximally intentional, since the
+simplified INT does not carry the alternative-possibilities condition; ALT is what separates
+*made* from *forced*. -/
 theorem intentionDegree_eq_one_of_altCount_eq_zero [MeasurableSpace A]
     (μ : MeasureTheory.Measure A) [MeasureTheory.IsFiniteMeasure μ]
     (hle : ∀ a, pr a ≤ μ {a}) (h : altCount taken μ = 0) (h0 : pr taken ≠ 0)
@@ -204,6 +207,8 @@ theorem suf_dirac [MeasurableSingletonClass U] (u₀ : U) (c : V) (x : α c) (e 
   rw [suf_bot, MeasureTheory.Measure.dirac_apply, Set.indicator_apply]
   simp only [Set.mem_ofPred_eq, Pi.one_apply]
 
+/-- Nadathur and Lauer's *make* entails maximal SUF. Whenever *make* holds of the empty
+background, SUF is 1 under every distribution over contexts. -/
 theorem suf_eq_one_of_make (ν : MeasureTheory.Measure U) [MeasureTheory.IsProbabilityMeasure ν]
     {u₀ : U} {c e : V} {x : α c} {y : α e} (h : NadathurLauer2020.Make M ⊥ u₀ c x e y) :
     suf M ν ⊥ c x e y = 1 := by
@@ -291,6 +296,7 @@ theorem effect_iff (b : Bool) :
     model.solve [.cause ← true] b .effect = true ↔ b = true := by
   cases b <;> decide
 
+/-- SUF is the probability of the noise, graded as the paper's measure requires. -/
 theorem suf_eq {p : ℝ≥0∞} (hp : p ≤ 1) :
     suf model (background p) ⊥ .cause true .effect true = p := by
   have : MeasureTheory.IsProbabilityMeasure (background p) :=

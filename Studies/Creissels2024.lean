@@ -271,6 +271,8 @@ def voiceTypes : List (Voice × Kind) :=
     (obliqueApplicative, .xApplicativization), (portative, .portative),
     (patientVoice, .symmetrical)]
 
+/-- Each voice relates an initial and a derived construction that realize the type it is
+named for. -/
 theorem voices_typed :
     ∀ e ∈ voiceTypes, ∃ o, e.2.Realize e.1.initial.construction e.1.derived.construction o := by
   decide +kernel
@@ -283,6 +285,9 @@ theorem instrumentNucleativization_neutral :
 
 theorem portative_isValencyIncreasing : portative.IsValencyIncreasing := by decide
 
+/-- English *break* is a decausativization in the fragment's own diatheses: the intransitive
+leaves the breaker out of participant structure and makes the thing broken the S, so it is not a
+passivization. -/
 theorem break_decausativization :
     ∃ c ∈ English.Verbs.break_.valency.basic?, ∃ d ∈ English.Verbs.break_.valency.diatheses,
       Decausativization c.construction d.construction ∧
@@ -454,6 +459,8 @@ theorem paired_resolves : ∀ row ∈ all, ∀ key ∈ ["initial", "transitive"]
     (row.feature? key).isSome → (paired key row).isSome := by
   decide +kernel
 
+/-- Every derived construction of the book's examples realizes the type the book assigns
+it, relative to its initial construction. -/
 theorem rows_classified : ∀ row ∈ all, ∀ k ∈ row.parse? "alternation" kindNames,
     ∀ init ∈ paired "initial" row,
     k.Realize (construction init) (construction row) (row.parse? "new" slotNames) := by

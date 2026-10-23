@@ -183,6 +183,9 @@ theorem presup_beats_of_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candidat
 
 /-! ### Felicity Presupposition above Maximize Presupposition -/
 
+/-- Were Maximize Presupposition ranked above Felicity Presupposition, a coherent
+presuppositional sentence would beat a coherent alternative whatever the context entails, so
+every trigger with an alternative would be obligatory. -/
 theorem presup_beats_of_mp_over_fp {ctx : Set (Set W)} {p a : Set W} {c : Candidate W}
     (hc0 : c.presup = none) (hsp : ¬ Disjoint ctx (K (p ∩ a))) (hc : ¬ Disjoint ctx c.commitment) :
     Beats [ViolIC ctx, ViolMP (presupSentence p a), ViolFP ctx] (presupSentence p a) c :=

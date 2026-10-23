@@ -164,6 +164,8 @@ theorem before_iff_not_diamond : before X t ↔ ¬ ◇[Perspective.toSetRel ⟦f
 theorem before_of_forall_not (h : ∀ t', ¬ X t') (t : NonemptyInterval T) : before X t :=
   fun t' ht' ↦ absurd ht' (h t')
 
+/-- A time of one clause before another clause puts the first before ever the second, the
+universal *before* of Anscombe. -/
 theorem beforeEver_of_before {A B : Set (NonemptyInterval T)} (ht : t ∈ A)
     (h : before (· ∈ B) t) : beforeEver A B :=
   ⟨t.snd, ⟨t, ht, t.fst_le_snd, le_rfl⟩, fun _ ⟨t', ht', h'⟩ ↦ (h t' ht').trans_le h'.1⟩

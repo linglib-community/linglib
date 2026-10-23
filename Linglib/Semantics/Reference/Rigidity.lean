@@ -50,6 +50,7 @@ theorem isRigidOn_iff_subsingleton_image : IsRigidOn f S ↔ (f '' S).Subsinglet
 
 theorem isRigid_const (x : τ) : IsRigid fun _ : W => x := fun _ _ => rfl
 
+/-- Over a single index every intension is rigid. -/
 theorem isRigid_of_subsingleton [Subsingleton W] (f : W → τ) : IsRigid f :=
   isRigid_iff_subsingleton_range.2 (Set.subsingleton_range f)
 
@@ -62,6 +63,7 @@ theorem IsRigid.isRigidOn {f : W → τ} (h : IsRigid f) (S : Set W) : IsRigidOn
 theorem IsRigid.eq_const {f : W → τ} (h : IsRigid f) (w : W) : f = fun _ => f w :=
   funext fun w' => h w' w
 
+/-- Rigid intensions that agree at one index are equal, which is the necessity of identity. -/
 theorem IsRigid.eq_of_apply_eq {f g : W → τ} (hf : IsRigid f) (hg : IsRigid g) {w : W}
     (h : f w = g w) : f = g :=
   funext fun w' => (hf w' w).trans (h.trans (hg w w'))

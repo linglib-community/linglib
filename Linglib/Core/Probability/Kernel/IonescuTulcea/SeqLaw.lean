@@ -98,6 +98,8 @@ theorem isProbabilityMeasure_seqLaw [∀ n, IsMarkovKernel (κ n)] :
 instance [∀ n, IsMarkovKernel (κ n)] (n : ℕ) : IsProbabilityMeasure (seqLaw κ n) :=
   isProbabilityMeasure_seqLaw n
 
+/-- The chain rule for expectations: integrating over the first `n + 1` draws integrates the next
+draw against the prediction rule, then the first `n`. -/
 theorem integral_seqLaw_succ [∀ n, IsSFiniteKernel (κ n)] {n : ℕ} {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℝ E] {f : (Fin (n + 1) → α) → E}
     (hf : Integrable f (seqLaw κ (n + 1))) :
@@ -111,6 +113,8 @@ section Singleton
 
 variable [MeasurableSingletonClass α] [∀ n, IsSFiniteKernel (κ n)]
 
+/-- The chain rule, one draw at a time: appending `c` to `s` multiplies its mass by the
+probability of drawing `c` after `s`. -/
 theorem seqLaw_succ_singleton_snoc {n : ℕ} (s : Fin n → α) (c : α) :
     seqLaw κ (n + 1) {Fin.snoc s c} = seqLaw κ n {s} * κ n s {c} := by
   rw [seqLaw_succ, Measure.map_apply measurable_snoc_prod (measurableSet_singleton _),
@@ -120,6 +124,8 @@ theorem seqLaw_succ_singleton_snoc {n : ℕ} (s : Fin n → α) (c : α) :
     Measure.compProd_apply_prod (measurableSet_singleton _) (measurableSet_singleton _),
     Measure.restrict_singleton, lintegral_smul_measure, lintegral_dirac, smul_eq_mul]
 
+/-- The chain rule: the mass of a sequence is the product of the probability of each draw given
+the draws before it. -/
 theorem seqLaw_singleton : ∀ {n : ℕ} (x : Fin n → α),
     seqLaw κ n {x} = ∏ i : Fin n, κ i (Fin.take i i.2.le x) {x i}
   | 0, x => by simp [Subsingleton.elim x default]
@@ -190,6 +196,8 @@ private theorem partialTraj_comp_singleton (n : ℕ) (z : Π _ : Iic n, α) :
     rw [seqLaw_succ_singleton_snoc]
     rfl
 
+/-- After the first draw, the next `n` draws of a prediction rule are the partial trajectory of
+the rule read on trajectories. -/
 theorem seqLaw_succ_eq_map_partialTraj (n : ℕ) :
     seqLaw κ (n + 1) = (Kernel.partialTraj (X := fun _ ↦ α) (trajRule κ) 0 n ∘ₘ
       (κ 0 default).map (fun a (_ : Iic 0) ↦ a)).map (trajEquivFin n) :=
@@ -207,6 +215,7 @@ noncomputable def seqTrajectory : Measure (ℕ → α) :=
 instance : IsProbabilityMeasure (seqTrajectory κ) := by
   unfold seqTrajectory; infer_instance
 
+/-- The first `n + 1` draws of the whole sequence have the law of the first `n + 1` draws. -/
 theorem seqTrajectory_map_frestrictLe (n : ℕ) :
     (seqTrajectory κ).map (trajEquivFin n ∘ frestrictLe n) = seqLaw κ (n + 1) := by
   rw [seqLaw_succ_eq_map_partialTraj, seqTrajectory, Kernel.trajMeasure,

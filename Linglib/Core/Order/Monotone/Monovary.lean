@@ -41,18 +41,24 @@ variable {ι ι' α β : Type*} [Preorder α] [Preorder β] {f : ι → α} {g :
 
 /-! ### Monovary -/
 
+/-- Any two functions monovary on a singleton. -/
 @[simp] theorem monovaryOn_singleton (a : ι) : MonovaryOn f g {a} := by
   simp [MonovaryOn]
 
+/-- Two functions monovary on a union iff they monovary on each part and neither part inverts
+the order against the other. The `Monovary` analogue of `Set.pairwise_union`. -/
 theorem monovaryOn_union : MonovaryOn f g (s ∪ t) ↔ MonovaryOn f g s ∧ MonovaryOn f g t ∧
     ∀ a ∈ s, ∀ b ∈ t, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
   grind [MonovaryOn]
 
+/-- The `Monovary` analogue of `Set.pairwise_insert`. -/
 theorem monovaryOn_insert {a : ι} :
     MonovaryOn f g (insert a s) ↔
       MonovaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f a ≤ f b) ∧ (g b < g a → f b ≤ f a) := by
   grind [MonovaryOn]
 
+/-- `f` and `g` monovary on `k '' u` iff `f ∘ k` and `g ∘ k` monovary on `u`. The image
+companion of `MonovaryOn.comp_right`. -/
 theorem monovaryOn_image (k : ι' → ι) (u : Set ι') :
     MonovaryOn f g (k '' u) ↔ MonovaryOn (f ∘ k) (g ∘ k) u := by
   grind [MonovaryOn]
@@ -71,6 +77,8 @@ theorem antivaryOn_insert {a : ι} :
       AntivaryOn f g s ∧ ∀ b ∈ s, (g a < g b → f b ≤ f a) ∧ (g b < g a → f a ≤ f b) := by
   grind [AntivaryOn]
 
+/-- `f` and `g` antivary on `k '' u` iff `f ∘ k` and `g ∘ k` antivary on `u`. The image
+companion of `AntivaryOn.comp_right`. -/
 theorem antivaryOn_image (k : ι' → ι) (u : Set ι') :
     AntivaryOn f g (k '' u) ↔ AntivaryOn (f ∘ k) (g ∘ k) u := by
   grind [AntivaryOn]

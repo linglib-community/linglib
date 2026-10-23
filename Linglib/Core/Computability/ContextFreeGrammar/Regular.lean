@@ -114,6 +114,7 @@ theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
         (ContextFreeGrammar.produces_map_terminal_append_singleton_iff.2
           ⟨⟨M.eval w, []⟩, mem_rules_toContextFreeGrammar.2 (.inr ⟨hacc, rfl⟩), rfl, by simp⟩)
 
+/-- The grammar of `M` generates the language of `M`. -/
 theorem language_toContextFreeGrammar : M.toContextFreeGrammar.language = M.accepts := by
   ext w
   change M.toContextFreeGrammar.Derives [nonterminal M.start] _ ↔ _
@@ -360,6 +361,7 @@ theorem le_language_inter : G.language ⊓ M.accepts ≤ (G.inter M).language :=
     ⟨⟨none, [.nonterminal (some (M.start, G.initial, M.eval w))]⟩,
       mem_inter_rules.mpr (.inl ⟨rfl, _, hM, rfl⟩), rfl, rfl⟩).trans_derives hd
 
+/-- **Bar-Hillel's theorem**: `G.inter M` generates the intersection. -/
 theorem language_inter (G : ContextFreeGrammar T) (M : DFA T σ) :
     (G.inter M).language = G.language ⊓ M.accepts :=
   language_inter_le.antisymm le_language_inter
@@ -370,6 +372,7 @@ namespace Language
 
 variable {α : Type*}
 
+/-- Over a finite alphabet, every regular language is context-free. -/
 theorem IsRegular.isContextFree [Finite α] {L : Language α} (h : L.IsRegular) :
     L.IsContextFree := by
   classical
@@ -377,6 +380,7 @@ theorem IsRegular.isContextFree [Finite α] {L : Language α} (h : L.IsRegular) 
   obtain ⟨σ, _, M, rfl⟩ := h
   exact ⟨M.toContextFreeGrammar, DFA.language_toContextFreeGrammar⟩
 
+/-- Context-free languages are closed under intersection with regular languages. -/
 theorem IsContextFree.inf_isRegular {L R : Language α}
     (hL : L.IsContextFree) (hR : R.IsRegular) : (L ⊓ R).IsContextFree := by
   obtain ⟨G, rfl⟩ := hL

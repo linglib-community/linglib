@@ -73,6 +73,7 @@ namespace SignType
 
 /-! ### Kleene's negation -/
 
+/-- Two values agree once they agree on being `0` and on being `1`. -/
 theorem eq_of_eq_zero_iff_of_eq_one_iff {a b : SignType} (h₀ : a = 0 ↔ b = 0)
     (h₁ : a = 1 ↔ b = 1) : a = b := by
   revert h₀ h₁; cases a <;> cases b <;> decide
@@ -225,6 +226,8 @@ def Designation.dual : Designation → Designation
 @[simp] theorem Designation.threshold_k3 : Designation.k3.threshold = 1 := rfl
 @[simp] theorem Designation.threshold_lp : Designation.lp.threshold = 0 := rfl
 
+/-- Negation swaps the designation standards, fixing `0` and exchanging the complements of the
+two principal filters. -/
 theorem Designation.dual_threshold_le_neg_iff (d : Designation) (v : SignType) :
     d.dual.threshold ≤ -v ↔ ¬ d.threshold ≤ v := by
   cases d <;> cases v <;> decide
@@ -304,6 +307,7 @@ def meetWeak : SignType → SignType → SignType
   | .pos, .neg | .neg, .pos | .neg, .neg => -1
   | _, _ => 0
 
+/-- Weak Kleene conjunction is `meetWith` demanding both operands defined. -/
 theorem meetWeak_eq_meetWith (a b : SignType) :
     meetWeak a b = meetWith (a ≠ 0 ∧ b ≠ 0) a b := by
   cases a <;> cases b <;> decide
@@ -586,9 +590,12 @@ theorem condAssert_congr_left (h : d.threshold ≤ a ↔ d.threshold ≤ a') (b 
     condAssert d a b = condAssert d a' b := by
   simp only [condAssert, h]
 
+/-- Negation commutes with the conditional. -/
 @[simp] theorem neg_condAssert : -condAssert d a b = condAssert d a (-b) := by
   unfold condAssert; split_ifs <;> simp
 
+/-- **Import-Export**: a conditional on `a` of a conditional on `b` is the conditional on the
+Strong Kleene conjunction `a ⊓ b`, which is designated exactly when both conjuncts are. -/
 theorem condAssert_condAssert : condAssert d a (condAssert d b c) = condAssert d (a ⊓ b) c := by
   by_cases ha : d.threshold ≤ a <;> by_cases hb : d.threshold ≤ b <;>
     simp [condAssert, le_inf_iff, ha, hb]

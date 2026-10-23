@@ -62,6 +62,7 @@ variable {horizon p q} {i : I}
       (horizon i ∩ p).Nonempty ∧ ¬ horizon i ∩ p ⊆ q := by
   simp [horizonCounterfactual]
 
+/-- A true counterfactual has a horizon-world where its antecedent and consequent hold together. -/
 theorem exists_mem_of_horizonCounterfactual_eq_one (h : horizonCounterfactual horizon p q i = 1) :
     ∃ w ∈ horizon i, w ∈ p ∧ w ∈ q :=
   let ⟨⟨w, hw⟩, hs⟩ := horizonCounterfactual_eq_one_iff.1 h

@@ -111,6 +111,7 @@ def EmbeddabilityPrinciple (L : Language) : Prop := ∃ z, L.Provides z
 instance (L : Language) : Decidable (EmbeddabilityPrinciple L) :=
   inferInstanceAs (Decidable (∃ z, L.Provides z))
 
+/-- Exactly type 4 violates the Embeddability Principle. -/
 theorem embeddabilityPrinciple_iff (L : Language) :
     EmbeddabilityPrinciple L ↔ L ≠ type4 := by
   obtain ⟨s, p⟩ := L

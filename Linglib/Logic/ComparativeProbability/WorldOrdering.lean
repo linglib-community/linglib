@@ -107,6 +107,7 @@ instance [Std.Refl r] : IsLikelihoodMono (LewisLift r) := ⟨fun _ _ h ↦ lewis
 instance [Nonempty α] : IsNontrivial (LewisLift r) :=
   ⟨fun h ↦ Set.univ_nonempty.ne_empty (lewisLift_empty_left_iff.1 h)⟩
 
+/-- The l-lifting is right-union closed, Halpern's axiom `J`. -/
 theorem rightUnion_lewisLift : RightUnion (LewisLift r) :=
   fun _ _ _ h₁ h₂ ↦ Set.union_subset h₁ h₂
 
@@ -115,6 +116,8 @@ theorem determinedBySingletons_lewisLift : DeterminedBySingletons (LewisLift r) 
     let ⟨a, ha, hab⟩ := hAb rfl
     ⟨a, ha, lewisLift_singleton_iff.2 ⟨a, rfl, hab⟩⟩
 
+/-- Over a **total** relation, the strict l-lifting collapses to Lewis's ∃∀ comparative
+possibility: some `A`-world strictly dominates every `B`-world. -/
 theorem strict_lewisLift_iff (hTotal : ∀ a b, r a b ∨ r b a) (A B : Set α) :
     Strict (LewisLift r) A B ↔ ∃ a ∈ A, ∀ b ∈ B, r a b ∧ ¬ r b a := by
   constructor
@@ -318,6 +321,9 @@ theorem exists_lewisLift_repr (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     have hAa : ge A {a} := hMono {a} A (Set.singleton_subset_iff.mpr haA)
     exact hTran A {a} {b} hAa hab
 
+/-- A monotone, transitive comparison relation is the l-lifting of a reflexive world relation
+**iff** it satisfies right-union and determination by singletons, the model-theoretic form of
+soundness and completeness for WJR. -/
 theorem lewisLift_repr_iff (hMono : ∀ A B : Set W, A ⊆ B → ge B A)
     (hTran : ∀ A B C : Set W, ge A B → ge B C → ge A C) :
     (∃ ge_w : W → W → Prop, (∀ w, ge_w w w) ∧ ∀ A B, ge A B ↔ LewisLift ge_w A B) ↔
@@ -358,6 +364,8 @@ theorem kratzerLift_univ_iff' (r : α → α → Prop) (A : Set α) :
   · rintro rfl b hb
     exact absurd hb.1 hb.2
 
+/-- When `A` is disjoint from both alternatives the revised lift is right-union closed, so the
+disjunction puzzle survives it. -/
 theorem kratzerLift_rightUnion_of_disjoint (r : α → α → Prop) {A B C : Set α}
     (hB : Disjoint A B) (hC : Disjoint A C) (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) :
     KratzerLift r A (B ∪ C) := by

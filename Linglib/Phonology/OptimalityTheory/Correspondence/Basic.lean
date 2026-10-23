@@ -749,6 +749,8 @@ theorem isMarkedness_comap (out : Role) (m : Constraint (List α)) :
     IsMarkedness out (m.comap (·.form out)) :=
   Function.FactorsThrough.rfl.comp_left m
 
+/-- A constraint is markedness for the role `out` exactly when it is a constraint on strings
+pulled back along `form out`. -/
 theorem isMarkedness_iff_exists_comap (out : Role) (k : Constraint (Correspondence Role α)) :
     IsMarkedness out k ↔ ∃ m : Constraint (List α), k = m.comap (·.form out) :=
   Function.factorsThrough_iff k
@@ -763,6 +765,8 @@ theorem isFaithfulness_identViol [DecidableEq α] :
     IsFaithfulness (α := α) (identViol · .lhs .rhs) :=
   identViol_identity
 
+/-- The anti-faithfulness constraint of a faithfulness constraint is not faithfulness, since the
+fully faithful candidate violates it. -/
 theorem IsFaithfulness.not_antifaithful {k : Constraint (Correspondence BinaryRole α)}
     (hk : IsFaithfulness k) : ¬ IsFaithfulness k.antifaithful := fun h ↦ by
   simpa [Constraint.antifaithful_eq_zero_iff, hk []] using h []

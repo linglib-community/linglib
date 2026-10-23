@@ -60,6 +60,9 @@ theorem significance_entails_hope_question {C Q : Set (Set W)} (hCQ : C ⊆ Q) (
     (h : Degree.ThresholdSignificant (μ x w) θ C) : degreeComparison μ θ C x Q w :=
   (degreeComparison_iff_thresholdSignificant μ θ C hCQ x w).2 h
 
+/-- With the comparison class inside the question, the assertion of *hope* with a question is its
+presupposition, so the meaning is true whenever defined. This is [gajewski-2002]'s L-analyticity,
+which makes *hope* anti-rogative. -/
 theorem hope_question_iff_significance {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E) (w : W) :
     degreeComparison μ θ C x Q w ↔ Degree.ThresholdSignificant (μ x w) θ C :=
   degreeComparison_iff_thresholdSignificant μ θ C hCQ x w

@@ -282,17 +282,20 @@ theorem subtype_ne (h : ∃ a, ¬ M a) : {a // M a} ≠ α := fun e ↦ by
   obtain ⟨a, ha⟩ := h
   exact (Fintype.card_subtype_lt ha).ne (Fintype.card_congr (Equiv.cast e))
 
+/-- Law (A3) fails for `HDoesNot` at a proper finite Σ-subtype, such as the men among the humans. -/
 theorem not_doesNot_comp_heq (h : ∃ a, ¬ M a) (m : {a // M a}) :
     ¬ ∀ (P : α → Prop) (C : Type) (z : C),
       HDoesNot P z → HDoesNot (P ∘ Subtype.val : {a // M a} → Prop) z :=
   fun h3 ↦ not_hDoesNot_self_iff.2 trivial
     (h3 (fun _ ↦ True) _ m (hDoesNot_of_ne (subtype_ne h).symm _ m))
 
+/-- Law (A4) fails for `HDoesNot` at a proper finite Σ-subtype. -/
 theorem not_forall_doesNot_of_sub_heq (h : ∃ a, ¬ M a) (m : {a // M a}) :
     ¬ ∀ (C : Type) (P : C → Prop), (∀ y : α, HDoesNot P y) → ∀ x : {a // M a}, HDoesNot P x :=
   fun h4 ↦ not_hDoesNot_self_iff.2 trivial
     (h4 _ (fun _ ↦ True) (hDoesNot_of_ne (subtype_ne h) _) m)
 
+/-- Law (A5) fails for `HDoesNot` at a proper finite Σ-subtype. -/
 theorem not_exists_doesNot_of_sub_heq (h : ∃ a, ¬ M a) (m : {a // M a}) :
     ¬ ∀ (C : Type) (P : C → Prop), (∃ x : {a // M a}, HDoesNot P x) → ∃ y : α, HDoesNot P y :=
   fun h5 ↦

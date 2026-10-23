@@ -109,6 +109,7 @@ noncomputable def galtonWatson : Kernel (Symbol T G.NT) (List (Symbol T G.NT)) :
 
 @[simp] theorem galtonWatson_apply (s : Symbol T G.NT) : W.galtonWatson s = W.offspring s := rfl
 
+/-- A grammar with a rule at every nonterminal has a Markov offspring kernel. -/
 theorem isMarkovKernel_galtonWatson (h : ∀ A, A ∈ G.rules.image (·.input)) :
     IsMarkovKernel W.galtonWatson :=
   ⟨fun s ↦ ⟨by
@@ -116,6 +117,7 @@ theorem isMarkovKernel_galtonWatson (h : ∀ A, A ∈ G.rules.image (·.input)) 
     | terminal a => simp [offspring]
     | nonterminal A => exact (W.offspring_nonterminal_univ A).trans (W.sum_weight A (h A))⟩⟩
 
+/-- The Galton–Watson weight of a derivation tree is the product of its rule weights. -/
 theorem galtonWatson_weight (t : RoseTree (Symbol T G.NT)) :
     GaltonWatson.weight W.galtonWatson t = W.derivProb t := by
   simp only [GaltonWatson.weight, derivProb, galtonWatson_apply, offspring_singleton]
@@ -134,11 +136,14 @@ theorem derivationMeasure_singleton_of_ne {t : RoseTree (Symbol T G.NT)} {s : Sy
   GaltonWatson.law_singleton_of_ne W.galtonWatson h
 
 open scoped Classical in
+/-- Under the derivation measure at `s`, a tree has probability `derivProb` when rooted at `s`
+and `0` otherwise. -/
 theorem derivationMeasure_singleton (t : RoseTree (Symbol T G.NT)) (s : Symbol T G.NT) :
     W.derivationMeasure s {t} = if t.value = s then W.derivProb t else 0 := by
   rw [derivationMeasure, GaltonWatson.law_singleton, galtonWatson_weight]
   split_ifs <;> rfl
 
+/-- The derivation measure is a sub-probability measure at every symbol. -/
 theorem derivationMeasure_apply_univ_le_one (s : Symbol T G.NT) :
     W.derivationMeasure s Set.univ ≤ 1 :=
   GaltonWatson.law_univ_le_one W.offspring_univ_le_one s

@@ -174,6 +174,7 @@ theorem headDirection_eq_headFinal : headDirection k d = .headFinal ↔ Raises k
 theorem headDirection_eq_headInitial : headDirection k d = .headInitial ↔ ¬ Raises k d := by
   unfold headDirection headPosition position; split <;> simp [*]
 
+/-- A complement can be extracted exactly when it has raised. -/
 theorem extractable_iff_raises : Extractable k d ↔ Raises k d := by
   unfold Extractable headPosition position; split <;> simp [*]
 
@@ -191,18 +192,27 @@ def linearization : Option ComplementKind → Spatial.Path.Direction → Option 
       | .prePP, .headFinal => .circum
       | _, _ => .pre
 
+/-- A postposition is nothing but a directional adposition with a raised nominal complement, which
+is why the postpositional use of an adposition is always the directional one. -/
 theorem linearization_eq_post_iff (k : ComplementKind) (d : Spatial.Path.Direction) :
     linearization (some k) d = some .post ↔ k = .nominal ∧ d ≠ .place := by
   cases k <;> cases d <;> decide
 
+/-- A circumposition is nothing but an adposition whose complement is a prepositional phrase: the
+second adpositional element is the head, and the first is the head of the raised complement. -/
 theorem linearization_eq_circum_iff (k : ComplementKind) (d : Spatial.Path.Direction) :
     linearization (some k) d = some .circum ↔ k = .prePP := by
   cases k <;> cases d <;> decide
 
+/-- An R-pronoun never yields the postpositional order: *de wandeling er op* 'the hike on it'
+has only the locational reading, so R-pronominalization is confined to prepositional phrases,
+and a circumpositional phrase R-pronominalizes through its prepositional complement. -/
 theorem linearization_rPronoun (d : Spatial.Path.Direction) :
     linearization (some .rPronoun) d = some .pre := by
   cases d <;> rfl
 
+/-- The rule derives each of the four traditional classes, so none of them need be listed in the
+lexicon, and derives no other order: an adposition never surfaces inside its complement. -/
 theorem range_linearization :
     Set.range (Function.uncurry linearization) = {some .inposition}ᶜ := by
   ext o
@@ -223,10 +233,12 @@ theorem extractable_nominal_iff (d : Spatial.Path.Direction) : Extractable .nomi
 theorem extractable_rPronoun (d : Spatial.Path.Direction) : Extractable .rPronoun d :=
   extractable_iff_raises.2 trivial
 
+/-- From a prepositional phrase only an R-pronoun can be extracted. -/
 theorem extractable_iff_of_linearization_eq_pre {k : ComplementKind} {d : Spatial.Path.Direction}
     (h : linearization (some k) d = some .pre) : Extractable k d ↔ k = .rPronoun := by
   revert h; cases k <;> cases d <;> decide
 
+/-- From a postpositional or a circumpositional phrase the complement can be extracted. -/
 theorem extractable_of_linearization_ne_pre {k : ComplementKind} {d : Spatial.Path.Direction}
     (h : linearization (some k) d ≠ some .pre) : Extractable k d := by
   revert h; cases k <;> cases d <;> decide
@@ -237,10 +249,17 @@ theorem circumP_patterns_with_preP :
 
 /-! ### The condition on nominal raising -/
 
+/-- The semantic condition the chapter leaves open is, in Helmantel's analysis, that the
+adposition is not inherently directional: a directional phrase raises its nominal complement
+when its directionality is syntactic rather than lexical, and that raising entails the chapter's
+idealized rule. -/
 theorem raises_nominal_of_dpRaises {inherent : Prop} {d : Spatial.Path.Direction}
     (h : Helmantel2002.DPRaises (d ≠ .place) inherent) : Raises .nominal d :=
   h.1
 
+/-- Under that condition the inherently directional prepositions *naar*, *tot* and *van* raise no
+complement and have no postpositional use, as the fragment records, which removes them from the
+rule's overprediction. -/
 theorem pointLocative_not_postP :
     ∀ a ∈ Helmantel2002.pointLocatives, ¬ a.IsPostposition :=
   fun a ha h ↦ by
@@ -248,17 +267,25 @@ theorem pointLocative_not_postP :
 
 /-! ### The Dutch lexicon -/
 
+/-- The rule reproduces every postpositional use the grammar records: the postpositional order is
+derived from the path that use denotes. -/
 theorem linearization_direction_post :
     ∀ a ∈ inventory, a.IsPostposition →
       linearization (some .nominal) (a.direction .post) = some .post :=
   fun a ha h ↦ (linearization_eq_post_iff _ _).2 ⟨rfl, direction_post_ne_place a ha h⟩
 
+/-- A circumposition is a postposition with a prepositional-phrase complement, so each
+circumposition of the grammar is a listed preposition followed by a listed postposition or
+particle. -/
 theorem circumP_parts :
     ∀ a ∈ inventory, a.IsComplex →
       ∃ b ∈ inventory, ∃ c ∈ inventory, a.morphs = b.morphs ++ c.morphs ∧
         b.IsPreposition ∧ (c.IsPostposition ∨ c.IsIntransitive) := by
   decide
 
+/-- Every postposition but *af* is also a preposition, so the postpositional order is derived from
+the prepositional one; *af*, the one postposition the grammar records without a prepositional
+use, is a directional adposition whose complement always raises. -/
 theorem postP_subset_preP :
     ∀ a ∈ inventory, a.IsPostposition → a.IsPreposition ∨ a.toAdposition = af.toAdposition :=
   pre_of_post
@@ -272,6 +299,8 @@ theorem postP_has_both_readings :
         a.toAdposition = voorbij.toAdposition := by
   decide
 
+/-- A circumposition takes only a nominal complement, the complement of the raised prepositional
+phrase. -/
 theorem circumP_complement_nominal :
     ∀ a ∈ inventory, a.IsCircumposition → a.complements = {some .np} :=
   complements_of_circum
@@ -284,6 +313,7 @@ theorem complex_no_rPron :
     tijdens.rPronoun = false ∧ ondanks.rPronoun = false ∧ zonder.rPronoun = false :=
   ⟨rfl, rfl, rfl⟩
 
+/-- An adposition that cannot be R-pronominalized has no postpositional use either. -/
 theorem no_rPron_not_postP :
     ∀ a ∈ inventory, a.rPronoun = false → .post ∉ a.linearization := by
   decide
@@ -301,11 +331,17 @@ theorem selection_verbClass_eq_be_iff (r : PerfectAuxiliary) (d : Spatial.Path.D
     (verbClass d).selection r = .be ↔ d ≠ .place := by
   unfold verbClass; split <;> simp [*, TransitivityClass.selection]
 
+/-- In *de fietser heeft op de heuvel gereden* 'the cyclist rode on the hill' the prepositional
+phrase of *op* is locational and its verb takes *hebben* 'have', and in *de fietser is de heuvel
+op gereden* 'the cyclist rode up the hill' the postpositional phrase denotes a goal path and its
+verb takes *zijn* 'be'. -/
 theorem perfect_op (r : PerfectAuxiliary) :
     (verbClass (op.direction .pre)).selection r = .have ∧
       (verbClass (op.direction .post)).selection r = .be :=
   ⟨rfl, rfl⟩
 
+/-- A postpositional phrase denotes a path and is the complementive of a verb of traversing, which
+is unaccusative and takes *zijn* 'be'. -/
 theorem postP_selects_zijn (r : PerfectAuxiliary) :
     ∀ a ∈ inventory, .post ∈ a.linearization → (verbClass (a.direction .post)).selection r = .be :=
   fun a ha h ↦ (selection_verbClass_eq_be_iff r _).2 (direction_post_ne_place a ha h)

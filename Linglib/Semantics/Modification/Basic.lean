@@ -148,6 +148,8 @@ theorem isSubsective_pointwise_iff : IsSubsective (pointwise r) ↔ ∀ a, r a �
   obtain ⟨a, ha, hba⟩ := mem_pointwise.1 hb
   exact (h a hba).symm ▸ ha
 
+/-- A pointwise modifier is privative only when its map is empty everywhere, since an argument
+`{a, b}` with `b ∈ r a` meets its own value. -/
 theorem isPrivative_pointwise_iff : IsPrivative (pointwise r) ↔ ∀ a, r a = ∅ := by
   refine ⟨fun h a ↦ Set.eq_empty_iff_forall_notMem.2 fun b hb ↦ ?_, fun h s ↦ ?_⟩
   · exact Set.disjoint_left.1 (h {a, b}) (mem_pointwise.2 ⟨a, by simp, hb⟩) (by simp)

@@ -86,6 +86,8 @@ theorem sub_vecMul_update :
     y - x ᵥ* update α β x y W = (y - x ᵥ* W) * (1 - (x ⬝ᵥ (α * x)) • β) := by
   rw [vecMul_update, mul_sub, mul_one, mul_smul_comm, sub_add_eq_sub_sub]
 
+/-- An event leaves the weights fixed exactly when none of its cues is effective or none of its
+outcomes is mispredicted. -/
 theorem update_eq_self_iff :
     update α β x y W = W ↔ α * x = 0 ∨ (y - x ᵥ* W) * β = 0 := by
   simp [update, ← Matrix.ext_iff, vecMulVec_apply, funext_iff, forall_or_left, forall_or_right]
@@ -101,6 +103,8 @@ theorem sub_vecMul_iterate_update (n : ℕ) :
   | zero => simp
   | succ n ih => rw [Function.iterate_succ_apply', sub_vecMul_update, ih, pow_succ, mul_assoc]
 
+/-- After `n` repetitions of an event every cue has gained in proportion to its rate and
+value. -/
 theorem iterate_update (n : ℕ) :
     (update α β x y)^[n] W = W + vecMulVec (α * x)
       ((y - x ᵥ* W) * β * ∑ k ∈ range n, (1 - (x ⬝ᵥ (α * x)) • β) ^ k) := by
@@ -132,6 +136,8 @@ theorem tendsto_vecMul_iterate_update (h : ∀ j, |1 - x ⬝ᵥ (α * x) * β j|
     ((tendsto_pow_atTop_nhds_zero_of_abs_lt_one (h j)).const_mul (y j - (x ᵥ* W) j)).const_sub
       (y j)
 
+/-- Under repetition the weight from cue `i` to outcome `j` converges, the cue having gained
+the share `α i * x i / x ⬝ᵥ (α * x)` of the outcome's initial prediction error. -/
 theorem tendsto_iterate_update_apply (i : ι) {j : κ} (h : |1 - x ⬝ᵥ (α * x) * β j| < 1) :
     Tendsto (fun n ↦ (update α β x y)^[n] W i j) atTop
       (𝓝 (W i j + α i * x i / x ⬝ᵥ (α * x) * (y j - (x ᵥ* W) j))) := by

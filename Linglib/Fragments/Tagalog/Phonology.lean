@@ -118,6 +118,7 @@ def consonants : Finset Segment :=
 /-- The vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, e, a, o, u], by decide⟩
 
+/-- The phonemes are segments of PHOIBLE's Tagalog inventory. -/
 theorem subset_tgl : consonants ∪ vowels ⊆ Inventories.Tagalog.tgl.segments :=
   Inventory.subset_segments_iff.2 (by decide)
 
@@ -147,11 +148,14 @@ def substituted (pre : List Segment) : List Segment → List Segment
   | [] => pre ++ [ŋ]
   | x :: rest => pre ++ substitute x ++ rest
 
+/-- Each obstruent substitutes to the nasal of its place, and the glottal stop, which has no
+place, to the velar nasal. -/
 theorem substitute_eq :
     substitute p = [m] ∧ substitute b = [m] ∧ substitute t = [n] ∧ substitute d = [n] ∧
       substitute s = [n] ∧ substitute k = [ŋ] ∧ substitute g = [ŋ] ∧ substitute «ʔ» = [ŋ] := by
   decide
 
+/-- The prefix nasal is unchanged before a nasal, a glide, `h` or a vowel. -/
 theorem cluster_of_not_trigger :
     ∀ x ∈ consonants ∪ vowels, ¬ trigger ≤ x → cluster [] [x] = [ŋ, x] := by
   decide

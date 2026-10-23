@@ -111,6 +111,8 @@ theorem not_replaceable_of_isHeadAt {X : C} {t : Tree C W} {p : TreePath} (h : I
   rintro ⟨s, hs, hh, -⟩
   simp [IsHeadAt, Option.mem_def.mp hs, hh] at h
 
+/-- **Locality is the absence of stranding.** A trigger may condition a head under the refined
+formulation exactly when no proform strands it from the head. -/
 theorem mayCondition'_iff_forall_not_strands {t : Tree C W} {α β : TreePath} :
     MayCondition' t α β ↔ ∀ X, ¬ Strands X t α β := by
   refine ⟨fun h X ⟨p, hp, hr⟩ ↦ not_replaceable_of_isHeadAt (h p hp) hr, fun h p hp ↦ ?_⟩
@@ -186,6 +188,7 @@ theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t
   simp only [List.append_nil] at h0
   simp [IsHeadAt, h0, ht] at this
 
+/-- Embedding a phrase with a phrasal root leaves the labels local to its heads unchanged. -/
 theorem localSet_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
     (α : List ℕ) : localSet (E.replaceAt h t) ⟨h ++ α⟩ = localSet t ⟨α⟩ := by
   ext l
@@ -214,6 +217,7 @@ private theorem all_isHead_replaceAt_of_prefix (hE : (E.subtreeAt h).isSome)
   · rfl
   · exact absurd (isHead_of_isHead_replaceAt s d t hsd hh) (by simp [ht])
 
+/-- Embedding a phrase with a phrasal root leaves the complex heads of its nodes unchanged. -/
 theorem x0At_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false) (α : List ℕ) :
     x0At (E.replaceAt h t) ⟨h ++ α⟩ = x0At t ⟨α⟩ := by
   simp only [x0At]

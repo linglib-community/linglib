@@ -186,6 +186,8 @@ theorem Sorites.conclusion (h : Sorites P (Step s d) a b) (hs : Function.Injecti
     push_cast
     ring
 
+/-- When the inverse of the size map is total and `b` is reached arithmetically from `a`, the
+premises of a Sorites are inconsistent. -/
 theorem Sorites.false_of_total (h : Sorites P (Step s d) a b) (hs : Function.Injective s)
     (n : ℕ) (htot : ∀ m < n, ∃ x, s x = s a + m * d) (hb : s b = s a + n * d) : False :=
   h.counter (h.conclusion hs n htot b hb)
@@ -320,6 +322,7 @@ theorem sorites_qs : Sorites (¬ heap ·) (Step qs 1) g₁ g₁₀₀₀₀ :=
 theorem sorites_qs_reverse : Sorites heap (Step qs (-1)) g₁₀₀₀₀ g₁ :=
   sorites_heap archimedeanClassMk_omega_neg (by simp [heap, g₁]) rfl
 
+/-- Under the quantitative size, the premises of the classic paradox are inconsistent. -/
 theorem not_sorites_size : ¬ Sorites (¬ heap ·) (Step (fun x : De ↦ (x.1 : ℝ*)) 1) g₁ g₁₀₀₀₀ :=
   fun h ↦ h.false_of_total (fun _ _ e ↦ Subtype.ext (by simpa using e)) 9999
     (fun m hm ↦ ⟨⟨m + 1, by simp, by omega⟩, by simp [g₁]; ring⟩) (by simp [g₁₀₀₀₀, g₁]; norm_num)
@@ -366,6 +369,8 @@ theorem induction_premise (he : e ∈ infinitesimals) (hU : 1 < U) {x : E}
   rw [show qualUnit U e 1 = e by simp [qualUnit, hU], stdPart_sub_infinitesimal _ he]
   exact hx
 
+/-- With a millimetre below the relevant unit, the conclusion (70.III) holds, since any number
+of qualitative millimetres below two metres is still tall. -/
 theorem conclusion_tall (he : e ∈ infinitesimals) (hU : 1 < U) (hS : S ≤ 2000) (n : ℕ) :
     S ≤ stdPart ((2000 : ℝ*) - n * qualUnit U e 1) := by
   have hne : (n : ℝ*) * e ∈ infinitesimals := by

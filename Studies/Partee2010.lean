@@ -141,6 +141,8 @@ theorem splittable_not_ordConnected :
     (h.out (show Splittable .subsective by decide) (show Splittable .privative by decide)
       ⟨by decide, by decide⟩)
 
+/-- Once the privatives are reanalysed as subsective, the classes that split are exactly the
+subsective ones, an initial segment of the scale. -/
 theorem reanalyse_splittable_iff (c : AdjectiveClass) :
     (∃ c', Splittable c' ∧ c'.reanalyse = c) ↔ c ≤ .subsective := by
   revert c

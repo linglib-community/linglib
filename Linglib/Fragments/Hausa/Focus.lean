@@ -113,6 +113,8 @@ def stab? : Option Particle :=
 
 variable {c}
 
+/-- A licensed focus changes the TAM exactly when it is fronted and the TAM does not occur in Rel
+environments. -/
 theorem pacTAM_ne_iff (h : c.Licensed) :
     c.pacTAM ≠ c.tam ↔ c.strategy = .exSitu ∧ c.tam ∉ TAM.rel := by
   cases hs : c.strategy

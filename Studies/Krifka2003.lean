@@ -92,11 +92,13 @@ theorem isExtensiveMeasure_ofAtoms (D : World → Set Atom) : IsExtensiveMeasure
     fun _ _ _ _ _ ⟨hx, hfx, hnx⟩ ⟨hy, hfy, hny⟩ hd ↦
       ⟨Set.union_subset hx hy, hfx.union hfy, by rw [Set.ncard_union_eq hd hfx hfy, hnx, hny]⟩⟩
 
+/-- Numeral phrases are quantized: a proper part of `n` dogs is not `n` dogs. -/
 theorem qua_withNumber_ofAtoms (D : World → Set Atom) (n : ℕ) (w : World) :
     QUA (· ∈ withNumber n (ofAtoms D) w) :=
   qua_of_forall fun _ _ ⟨_, hf, hn⟩ hlt ⟨_, _, hn'⟩ ↦
     (Set.ncard_lt_ncard hlt hf).ne (hn'.trans hn.symm)
 
+/-- The semantic plural of an atom-counting noun is cumulative. -/
 theorem cum_pluralize_ofAtoms (D : World → Set Atom) (w : World) :
     CUM (· ∈ pluralize (ofAtoms D) w) :=
   fun _ ⟨_, hx, hfx, _⟩ _ ⟨_, hy, hfy, _⟩ ↦ ⟨_, Set.union_subset hx hy, hfx.union hfy, rfl⟩
@@ -179,6 +181,7 @@ def indefinite (n : ℕ) (den : CountNoun World Atom) (w : World) : Den (Set Ato
 def numeral (n : ℕ) (den : CountNoun World Atom) (w : World) : Den (Set Atom) :=
   .pred (· ∈ den w n)
 
+/-- Bare plurals scope below negation whether moved or not, and cannot scope above it. -/
 theorem bare_narrow (den : CountNoun World Atom) (w : World) (V : Set Atom → Prop) :
     (bare den w).movedNeutral V = some (.tv (¬ ∃ x, (∃ n, x ∈ den w n) ∧ V x)) ∧
       (bare den w).movedEntity V = none :=

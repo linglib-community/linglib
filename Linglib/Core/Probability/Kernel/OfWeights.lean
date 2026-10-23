@@ -140,6 +140,7 @@ theorem ofWeights_apply_eq_dirac [DecidableEq β] {w : α → β → ℝ≥0∞}
   · subst hb; simp [ENNReal.div_self hc0 hc]
   · simp [hb, Ne.symm hb]
 
+/-- The mass of a finite event under a weight-kernel row. -/
 theorem ofWeights_apply_finset (w : α → β → ℝ≥0∞) (a : α) (E : Finset β) :
     ofWeights w a ↑E = (∑ b ∈ E, w a b) / ∑ b, w a b := by
   rw [← sum_measure_singleton, div_eq_mul_inv, Finset.sum_mul]
@@ -160,6 +161,7 @@ theorem ofWeights_real_singleton (w : α → β → ℝ≥0∞) (a : α) (hw : �
     (ofWeights w a).real {b} = (w a b).toReal / ∑ b', (w a b').toReal := by
   rw [← Finset.coe_singleton, ofWeights_real_finset w a hw, Finset.sum_singleton]
 
+/-- The real mass of a decidable event under a weight-kernel row with finite weights. -/
 theorem ofWeights_real_setOf (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (p : β → Prop)
     [DecidablePred p] :
     (ofWeights w a).real {b | p b} = (∑ b with p b, (w a b).toReal) / ∑ b, (w a b).toReal := by
@@ -178,6 +180,8 @@ theorem ofWeights_real_singleton_lt_iff {w : α → β → ℝ≥0∞} (a : α)
       (ENNReal.div_ne_top (hb b₂) h0),
     ENNReal.div_lt_div_iff_left h0 htop]
 
+/-- The product of two uniform experts is uniform on their agreement set, and collapses to the
+zero measure when they agree nowhere. -/
 theorem ofWeights_uniformOn_mul_uniformOn [DecidableEq β] (A B : α → Finset β) (a : α) :
     ofWeights (fun a b ↦ uniformOn ↑(A a) {b} * uniformOn ↑(B a) {b}) a =
       uniformOn (↑(A a ∩ B a) : Set β) := by

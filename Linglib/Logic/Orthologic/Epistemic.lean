@@ -161,6 +161,8 @@ theorem wittgensteinLaw_iff_diamondHom_compl_le [IsOrtholattice L] :
   · simpa only [diamondHom_apply, InvolutiveCompl.compl_compl] using
       (IsOrtholattice.disjoint_compl_right a).mono_right h
 
+/-- When `ᶜ` is a pseudocomplement, with T Wittgenstein's Law makes `□` the identity, so a Boolean
+algebra has no non-trivial epistemic modality. -/
 theorem WittgensteinLaw.eq_id (hW : WittgensteinLaw box) (hT : ∀ a, box a ≤ a) :
     box = InfTopHom.id L :=
   InfTopHom.ext fun a ↦ (hT a).antisymm <|

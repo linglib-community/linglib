@@ -187,6 +187,7 @@ private theorem update_congr {x : ℕ} {s : Finset ℕ} (h : ∀ y ∈ s.erase x
   · simp
   · simpa [Function.update_of_ne hyx] using h y (Finset.mem_erase.2 ⟨hyx, hy⟩)
 
+/-- Satisfaction depends only on the values of the free variables. -/
 theorem satisfies_congr : ∀ {g g' : ℕ → U},
     (∀ x ∈ d.freeVars, g x = g' x) → (I.Satisfies g u d ↔ I.Satisfies g' u d) := by
   induction d with
@@ -242,6 +243,7 @@ instance [Fintype U] [DecidableEq U] [DecidableLE Srt] [Fintype Sig.Attr]
 
 variable {I}
 
+/-- A model of a grammar of closed formulae satisfies them under every assignment. -/
 theorem models_iff_forall_assignment (hG : ∀ d ∈ G, d.freeVars = ∅) :
     I.Models G ↔ ∀ (g : ℕ → U) (u : U), ∀ d ∈ G, I.Satisfies g u d :=
   ⟨fun h g u d hd ↦ (satisfies_iff_of_freeVars_eq_empty (hG d hd) _ g).1 (h u d hd),
@@ -291,6 +293,9 @@ variable {I : Interpretation Sig U} {C : List (Constraint Sig)} {g : ℕ → U} 
     I.Satisfies g u c.toDesc ↔ I.S u ≤ c.sort → I.Satisfies g u c.body := by
   simp [Constraint.toDesc]
 
+/-- An entity satisfies the formulae that state a list of constraints exactly when it satisfies
+the bodies of the constraints that its sort inherits. An entity below several constrained sorts
+therefore satisfies the constraints on all of them. -/
 theorem forall_satisfies_map_toDesc_iff [DecidableLE Srt] :
     (∀ d ∈ C.map Constraint.toDesc, I.Satisfies g u d) ↔
       ∀ c ∈ Constraint.inherited C (I.S u), I.Satisfies g u c.body := by

@@ -95,6 +95,8 @@ theorem kya_not_two_cell {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
   refine not_kyaDefined_of_mem_alt (p₁ := p) (p₂ := pᶜ) (by simp [halt]) (by simp [halt])
     fun h ↦ hne (Set.eq_empty_of_forall_notMem fun w hw ↦ (h ▸ hw : w ∈ pᶜ) hw)
 
+/-- The presupposition picks out exactly the non-inquisitive contents among the normal ones.
+The declarative *p* meets it as well as the polar question, since both are `ofSet p`. -/
 theorem kyaDefined_iff_not_isInquisitive {Q : Question W} (hQ : Q.IsNormal) :
     KyaDefined Q ↔ ¬Q.IsInquisitive :=
   hQ.exists_alt_eq_singleton_iff.trans (info_mem_iff_not_isInquisitive Q)

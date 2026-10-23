@@ -69,6 +69,8 @@ theorem nonempty_of_support_enrich (h : support M φ.enrich s) : s.Nonempty := b
   | ne => exact h
   | _ => exact h.2
 
+/-- Only the empty state anti-supports `NE`, so anti-support of `φ ∧ NE` reduces to
+anti-support of `φ`. -/
 theorem antiSupport_conj_ne (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) :
     antiSupport M (.conj φ .ne) s ↔ antiSupport M φ s where
@@ -131,6 +133,8 @@ theorem antiSupport_of_antiSupport_enrich (hNE : φ.NEFree) (h : antiSupport M �
 
 /-! ### The enriched derived `□` -/
 
+/-- Support of the enriched derived `□φ` is enriched support of `φ` at every index's full
+accessible lift `R(wᵢ)[gᵢ]`, on a non-empty state. -/
 theorem support_enrich_nec_iff (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) :
     support M φ.nec.enrich s ↔

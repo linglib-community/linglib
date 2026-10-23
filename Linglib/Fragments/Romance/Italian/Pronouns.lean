@@ -278,6 +278,7 @@ theorem atonic_eq_reflexiveForms_iff (r : Row) (k : Case) :
     atonic (r, k) = reflexiveForms r ↔ r.person ≠ .third := by
   cases r <;> cases k <;> decide
 
+/-- Dative *loro* is the one atonic object form that is weak rather than a clitic. -/
 theorem strength_eq_weak_iff {p : PersonalPronoun} (hp : p ∈ accusative ∪ dative) :
     p.strength = some .weak ↔ p = loro_dat := by
   revert p; decide +kernel

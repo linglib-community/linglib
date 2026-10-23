@@ -57,6 +57,8 @@ of the other. -/
 def AntiDominating (v w : W → SignType) : Prop :=
   posSupport v ⊆ negSupport w ∧ posSupport w ⊆ negSupport v
 
+/-- An integer functional that is nonnegative on a multiset of comparisons summing to zero
+vanishes on each of them. -/
 theorem dotProduct_eq_zero_of_comparisonSum_eq_zero [Fintype W] {M : Multiset (W → SignType)}
     (hM : comparisonSum M = 0) {u : W → ℤ} (hu : ∀ v ∈ M, 0 ≤ u ⬝ᵥ fun i ↦ (v i : ℤ))
     {v : W → SignType} (hv : v ∈ M) : (u ⬝ᵥ fun i ↦ (v i : ℤ)) = 0 := by
@@ -545,6 +547,9 @@ private lemma false_of_four_le_card (hS : NoWitness S) (hposne : ∀ v ∈ S, �
   rw [← coe_pos, ← coe_pos, disjoint_coe]
   exact disjoint_iff_inter_eq_empty.2 hdisj
 
+/-- **Anti-domination from balance.** A nonempty multiset of pairwise non-mergeable comparisons
+on four atoms, each with a nonempty positive side, that sums to zero contains an anti-dominating
+pair. -/
 theorem exists_antiDominating {M : Multiset (Fin 4 → SignType)} (hM : comparisonSum M = 0)
     (hpos : ∀ v ∈ M, (posSupport v).Nonempty)
     (hmerge : ∀ v ∈ M, ∀ w ∈ M, v ≠ w → ¬Mergeable v w) (hne : M ≠ 0) :

@@ -72,6 +72,8 @@ theorem toAgentivity_eq_preimage (p : EntailmentProfile) :
 theorem toAgentivity_monotone : Monotone toAgentivity := fun _ _ h _ ↦ by
   simpa using @h _
 
+/-- Dowty's inclusion of Proto-Agent entailments is Grimm's order on agentivity together with
+independent existence, which Grimm moves to the persistence axis. -/
 theorem protoAgent_subset_iff :
     q.protoAgent ⊆ p.protoAgent ↔
       q.toAgentivity ⊆ p.toAgentivity ∧
@@ -90,6 +92,8 @@ end EntailmentProfile
 
 open EntailmentProfile
 
+/-- Grimm's dominance criterion selects the subject when its agentivity strictly includes the
+object's and independent existence is preserved. -/
 theorem outranks_of_lattice_dominance {subj obj : EntailmentProfile}
     (hlt : obj.toAgentivity ⊂ subj.toAgentivity)
     (hie : .independentExistence ∈ obj → .independentExistence ∈ subj) :

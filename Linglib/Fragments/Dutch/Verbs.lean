@@ -129,9 +129,11 @@ def prefixVerb (p : String) (v : Verb) : Verb :=
   let w : Verb := { v with formation := .prefix p }
   { w with morphs := [.root w.infinitive] }
 
+/-- A particle precedes the *ge-* of the past participle. -/
 theorem pastParticiple_particle (p : String) (v : Verb) :
     (particleVerb p v).pastParticiple = p ++ "ge" ++ v.participle := rfl
 
+/-- A prefix replaces the *ge-* of the past participle. -/
 theorem pastParticiple_prefix (p : String) (v : Verb) :
     (prefixVerb p v).pastParticiple = p ++ v.participle := rfl
 
@@ -339,6 +341,7 @@ def inventory : List Verb :=
    komen, sterven, groeien, stijgen, blijven, overblijven, duren, staan, bestaan, blazen, werken,
    lopen, wandelen, rollen]
 
+/-- The rule gives every entry on its basic frame an auxiliary its perfect takes. -/
 theorem perfectAuxiliary_mem : ∀ v ∈ inventory, v.perfectAuxiliaries.Nonempty →
     perfectAuxiliary v (v.valency.frames.headD .intransitive) ∈ v.perfectAuxiliaries := by
   decide
@@ -349,10 +352,12 @@ theorem takesSpatial_of_direction_eq_place :
     ∀ v ∈ inventory, v.direction = some .place → v.TakesSpatial := by
   decide
 
+/-- *opgebeld* and *uitgevoerd*, with the particle before *ge-*. -/
 theorem opgebeld :
     opbellen.pastParticiple = "opgebeld" ∧ uitvoeren.pastParticiple = "uitgevoerd" := by
   decide
 
+/-- *ontdekt* and *verdiend*, without *ge-*. -/
 theorem ontdekt :
     ontdekken.pastParticiple = "ontdekt" ∧ verdienen.pastParticiple = "verdiend" := by
   decide

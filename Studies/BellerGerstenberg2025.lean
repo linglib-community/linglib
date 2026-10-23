@@ -228,6 +228,8 @@ theorem listener_caused_identifies {α : ℝ} (hα : 0 < α) :
     (listener α .caused).real {.s2} < (listener α .caused).real {.s1} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
 
+/-- Hearing "enabled", the pragmatic listener favours double prevention over Michottean
+launching, where the speaker would have said "caused". This is the scalar implicature. -/
 theorem listener_enabled_implicature {α : ℝ} (hα : 0 < α) :
     (listener α .enabled).real {.s1} < (listener α .enabled).real {.s2} :=
   listener_speaker_uniformOn_real_singleton_lt_of_strictDominates sem hα (by decide +kernel)
@@ -310,6 +312,9 @@ noncomputable def CausalWorld.ofModel (M : CausalModel U V fun _ ↦ Bool) [M.Is
   how := decide (M.graph.Adj cause effect)
   sufficient := decide (M.solve (Function.update removed cause ↑false) u effect ≠ true)
 
+/-- Michottean launching, in the context where the cause occurs, computes the profile of the
+first scenario, since with no alternative causes to remove sufficient-causation is
+whether-causation. -/
 theorem launch_ofModel :
     CausalWorld.ofModel launch ⊥ ⟨true⟩ .cause .effect = Scenario.s1.aspects := by
   decide

@@ -85,6 +85,7 @@ noncomputable def hypergeometric (N n : ℕ) : Kernel (Fin (N + 1)) (Fin (N + 1)
 instance (N n : ℕ) : IsFiniteKernel (hypergeometric N n) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
+/-- Drawing every object reveals the number of marked ones. -/
 theorem hypergeometric_self : hypergeometric N N = Kernel.id :=
   Kernel.ext fun K ↦ (Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun k ↦ by
     simp [hypergeometricCount_self (Nat.lt_succ_iff.1 K.isLt), Fin.ext_iff]).trans
@@ -106,12 +107,15 @@ theorem hypergeometric_apply_singleton_ne_zero_iff :
     Nat.cast_eq_zero]
   exact ⟨And.left, fun h ↦ ⟨h, ENNReal.sum_ne_top.mpr fun _ _ ↦ ENNReal.natCast_ne_top _⟩⟩
 
+/-- The hypergeometric mass function. -/
 theorem hypergeometric_real_singleton (hn : n ≤ N) :
     (hypergeometric N n K).real {k} = hypergeometricCount N K n k / N.choose n := by
   rw [measureReal_def, hypergeometric, Kernel.ofWeights_apply_singleton, ENNReal.toReal_div,
     ← Nat.cast_sum, ENNReal.toReal_natCast, ENNReal.toReal_natCast,
     sum_hypergeometricCount (Nat.lt_succ_iff.1 K.isLt) hn]
 
+/-- After drawing every object, the posterior over the number of marked ones is the point mass at
+the number observed. -/
 theorem posterior_hypergeometric_self (μ : Measure (Fin (N + 1))) [IsFiniteMeasure μ]
     (hμ : μ {K} ≠ 0) : ((hypergeometric N N)†μ) K = Measure.dirac K := by
   simp only [hypergeometric_self]

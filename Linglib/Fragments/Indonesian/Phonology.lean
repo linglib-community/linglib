@@ -146,6 +146,8 @@ def consonants : Finset Segment :=
 /-- The vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, u, é, e, o, a], by decide⟩
 
+/-- Every phoneme but the palatal glide is a segment of PHOIBLE's Standard Indonesian
+inventory. -/
 theorem subset_ind : (consonants ∪ vowels).erase y ⊆ Inventories.Indonesian.ind.segments :=
   Inventory.subset_segments_iff.2 (by decide)
 

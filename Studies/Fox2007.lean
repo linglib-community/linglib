@@ -120,6 +120,9 @@ theorem exhIter_eq_of_succ_eq {n : ℕ} (h : ∀ q ∈ C, exhIter C (n + 1) q = 
   | base => rfl
   | succ m _ ih => rw [exhIter_succ, image_congr fun r hr ↦ ih hr, ih hq, ← exhIter_succ, h q hq]
 
+/-- Over finitely many alternatives, iterated exhaustification of every alternative eventually
+stops changing, as Spector observed. Every layer is a union of classes of worlds verifying the
+same alternatives, and there are finitely many such unions. -/
 theorem exists_exhIter_eq (hC : C.Finite) :
     ∃ n, ∀ m, n ≤ m → ∀ q ∈ C, exhIter C m q = exhIter C n q := by
   let f : W → Set C := fun u ↦ {c | u ∈ (c : Set W)}
@@ -230,6 +233,8 @@ theorem exhMW_eq : exhMW {w, s, n, e} w = symmDiff s n := by
       fun _ ↦ ?_, fun h' ↦ (hus (hs h')).elim⟩⟩
     exact hv.resolve_left fun hvs ↦ hus (hvu.2.1 hvs)
 
+/-- Exhaustification by minimal worlds contradicts the conjunction of the middle alternatives,
+so on a diamond it can never yield free choice. -/
 theorem disjoint_exhMW : Disjoint (exhMW {w, s, n, e} w) (s ∩ n) := by
   rw [h.exhMW_eq]
   exact Set.disjoint_left.2 fun u hu hu' ↦ hu.elim (fun h' ↦ h'.2 hu'.2) fun h' ↦ h'.2 hu'.1
@@ -309,6 +314,8 @@ theorem exhIter_two_eq_of_eq_inter (he : e = s ∩ n) :
     exact ⟨b, Or.inr ⟨hbn, hbs⟩, fun h' ↦ h'.2 hbn⟩
   · exact Set.disjoint_left.2 fun u hu hu' ↦ hu.elim (fun h' ↦ h'.2 hu'.2) fun h' ↦ h'.2 hu'.1
 
+/-- The second layer adds nothing exactly when the strongest alternative is the conjunction of
+the middle ones. -/
 theorem exhIter_two_eq_iff :
     exhIter {w, s, n, e} 2 w = exhIE {w, s, n, e} w ↔ e = s ∩ n := by
   refine ⟨fun hv ↦ by_contra fun hne ↦ ?_, fun he ↦ ?_⟩
@@ -524,6 +531,8 @@ theorem exclusive_or (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
   simp only [mem_sdiff, mem_union, mem_inter_iff, Set.mem_symmDiff]
   tauto
 
+/-- Plain disjunction is exclusive at every layer of exhaustification, so no layer yields the
+conjunctive reading. -/
 theorem exclusive_or_of_one_le (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) {n : ℕ}
     (hn : 1 ≤ n) : exhIter {p ∪ q, p, q, p ∩ q} n (p ∪ q) = symmDiff p q := by
   have h := isDiamond_or hp hq
@@ -564,6 +573,9 @@ section Modal
 
 variable {R : SetRel W W} {p q : Set W}
 
+/-- Free choice permission. Given a world where each option is allowed without the other and one
+where each is allowed but not both, the doubly exhaustified `◇(p ∨ q)` asserts both permissions
+and denies the joint one. -/
 theorem free_choice_permission (hp : (R.preimage p \ R.preimage q).Nonempty)
     (hq : (R.preimage q \ R.preimage p).Nonempty)
     (h : ((R.preimage p ∩ R.preimage q) \ R.preimage (p ∩ q)).Nonempty) :
@@ -581,6 +593,10 @@ theorem free_choice_permission_with_necessity
   free_choice_hornAlt SetRel.preimage_mono SetRel.core_mono
     (SetRel.preimage_union (R := R) (t₁ := p) (t₂ := q)).le hp hq h
 
+/-- Free choice under a negated necessity modal. Against the alternatives under `¬□` and `¬◇`,
+the doubly exhaustified `¬□(p ∧ q)` asserts that neither conjunct is required, that their
+disjunction is required and that their conjunction is allowed. It is free choice permission for
+the negated conjuncts. -/
 theorem free_choice_not_required
     (hp : ((R.core p)ᶜ \ ((R.core q)ᶜ ∪ (R.preimage (p ∩ q))ᶜ)).Nonempty)
     (hq : ((R.core q)ᶜ \ ((R.core p)ᶜ ∪ (R.preimage (p ∩ q))ᶜ)).Nonempty)
@@ -592,6 +608,8 @@ theorem free_choice_not_required
   simp only [← SetRel.preimage_compl, ← SetRel.core_compl, compl_inter, compl_union] at *
   exact free_choice_permission_with_necessity hp hq h
 
+/-- When `□(p ∨ q)` is consistent with denying `□p` and `□q`, exhaustification denies both,
+since a necessity modal does not distribute over disjunction. -/
 theorem required_implicatures (h : (R.core (p ∪ q) \ (R.core p ∪ R.core q)).Nonempty) :
     exhIE {R.core (p ∪ q), R.core p, R.core q, R.core (p ∩ q)} (R.core (p ∪ q))
       = R.core (p ∪ q) \ (R.core p ∪ R.core q) :=
@@ -612,6 +630,8 @@ section Quantifier
 
 variable {ι : Type*} {P Q : ι → Set W}
 
+/-- Existential free choice. Given a witness for each disjunct but none for both, the doubly
+exhaustified `∃x (P x ∨ Q x)` asserts witnesses for each disjunct and denies a joint one. -/
 theorem existential_free_choice (hp : ((⋃ x, P x) \ ⋃ x, Q x).Nonempty)
     (hq : ((⋃ x, Q x) \ ⋃ x, P x).Nonempty)
     (h : (((⋃ x, P x) ∩ ⋃ x, Q x) \ ⋃ x, P x ∩ Q x).Nonempty) :
@@ -630,6 +650,9 @@ theorem existential_free_choice_with_universal
   free_choice_hornAlt (O := fun P : ι → Set W ↦ ⋃ x, P x) (O' := fun P : ι → Set W ↦ ⋂ x, P x)
     (fun _ _ h ↦ iUnion_mono h) (fun _ _ h ↦ iInter_mono h) (iUnion_union_distrib P Q).le hp hq h
 
+/-- Conjunctive free choice. Against the alternatives under `¬∀` and `¬∃`, the doubly
+exhaustified `¬∀x (P x ∧ Q x)` asserts that something lacks each conjunct, that everything has
+one of them and that something has both. -/
 theorem conjunctive_free_choice
     (hp : ((⋂ x, P x)ᶜ \ ((⋂ x, Q x)ᶜ ∪ (⋃ x, P x ∩ Q x)ᶜ)).Nonempty)
     (hq : ((⋂ x, Q x)ᶜ \ ((⋂ x, P x)ᶜ ∪ (⋃ x, P x ∩ Q x)ᶜ)).Nonempty)
@@ -640,6 +663,8 @@ theorem conjunctive_free_choice
   simp only [compl_iInter, compl_iUnion, compl_inter, compl_union] at *
   exact existential_free_choice_with_universal hp hq h
 
+/-- When `∀x (P x ∨ Q x)` is consistent with denying `∀x P x` and `∀x Q x`, exhaustification
+denies both, since a universal quantifier does not distribute over disjunction. -/
 theorem universal_implicatures (h : ((⋂ x, P x ∪ Q x) \ ((⋂ x, P x) ∪ ⋂ x, Q x)).Nonempty) :
     exhIE {⋂ x, P x ∪ Q x, ⋂ x, P x, ⋂ x, Q x, ⋂ x, P x ∩ Q x} (⋂ x, P x ∪ Q x)
       = (⋂ x, P x ∪ Q x) \ ((⋂ x, P x) ∪ ⋂ x, Q x) :=
@@ -673,6 +698,8 @@ theorem exhIE_singular (hP : ∃ u, (∃! x, u ∈ P x) ∧ ∀ x, u ∉ Q x)
   exact exhIE_hornAlt (O := fun P : ι → Set W ↦ ⋃ x, P x) (fun _ _ h ↦ iUnion_mono h)
     atLeastTwo_mono (iUnion_union_distrib P Q).le ⟨u, mem_singular hu.1 hu.2⟩ ⟨v, hv'⟩
 
+/-- A singular indefinite over a disjunction has no free choice reading, since every layer of
+exhaustification contradicts a witness for each disjunct. -/
 theorem singular_no_free_choice (hP : ∃ u, (∃! x, u ∈ P x) ∧ ∀ x, u ∉ Q x)
     (hQ : ∃ u, (∃! x, u ∈ Q x) ∧ ∀ x, u ∉ P x) {n : ℕ} (hn : 1 ≤ n) :
     Disjoint (exhIter {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x,
@@ -696,6 +723,9 @@ section Chierchia
 
 variable {r sh ah : Set W}
 
+/-- Against the eight alternatives of Chierchia's *John did the reading or some of the
+homework*, innocent exclusion denies *all of the homework* and the conjunction but not *the
+reading*. -/
 theorem embedded_scalar_implicature (hah : ah ⊆ sh) (hsh : (sh \ (r ∪ ah)).Nonempty)
     (hr : (r \ sh).Nonempty) :
     exhIE {r ∪ sh, r, sh, r ∩ sh, r ∪ ah, r, ah, r ∩ ah} (r ∪ sh) = (r ∪ sh) \ (ah ∪ (r ∩ sh)) := by
@@ -780,6 +810,8 @@ theorem not_isInnocentlyExcludable_atom (i : ι) :
   rw [hmi]
   exact hkv
 
+/-- Exhaustifying the existential answer against its Hamblin alternatives yields *exactly one*,
+provided each individual can be the sole witness. -/
 theorem exhIE_infClosure_range [Fintype ι] [DecidableEq ι] :
     exhIE (infClosure (range a)) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
   ext u
@@ -847,6 +879,8 @@ theorem isSauerlandExcludable_infClosure_range {i j k : ι} (hij : i ≠ j) (hik
         · exact pick j hSj (hne hij hTi)
       · exact pick i hSi hTi
 
+/-- With three individuals, denying every answer that passes Sauerland's test contradicts the
+existential answer. -/
 theorem sauerland_exclusion_eq_empty {i j k : ι} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) :
     exh {q | IsSauerlandExcludable (infClosure (range a)) (⋃ i, a i) q} (⋃ i, a i) = ∅ := by
   refine eq_empty_of_forall_notMem fun u ⟨hu, h⟩ ↦ ?_

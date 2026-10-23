@@ -154,6 +154,8 @@ def english : Inventory Morph where
     if m = house ∨ m = apple then some .object
     else if m = big ∨ m = «open» then some .property else none
 
+/-- The English indefinite article occurs on nouns and on prenominal adjectives, so neither of
+its shapes is a prefix. -/
 theorem english_article_not_affix :
     ¬ english.IsAffix english.IsContentful a ∧
       ¬ english.IsAffix english.IsContentful an := by
@@ -174,6 +176,7 @@ def russian : Inventory Morph where
   rootClass m :=
     if m = znaesh then some .action else if m = zdorov then some .property else none
 
+/-- *li* occurs on verbs and adjectives, so it is not an affix. -/
 theorem russian_li_not_affix :
     ¬ russian.IsAffix russian.IsContentful li := by
   decide
@@ -218,6 +221,8 @@ def schematicClass : Schematic → Option RootClass
 /-- One root with two suffixes in either order. -/
 def variableOrder : Inventory Schematic := ⟨[[y, x, z], [y, z, x]], schematicClass⟩
 
+/-- With two suffixes in either order, the empty set solves the definition, so its least
+solution has no affix, while both suffixes are affixes, its greatest solution. -/
 theorem variableOrder_affixes :
     (∀ m, ¬ variableOrder.AffixStep variableOrder.IsContentful ∅ m) ∧
       {m | variableOrder.IsAffix variableOrder.IsContentful m} = {x, z} ∧
@@ -228,6 +233,8 @@ theorem variableOrder_affixes :
 /-- Two roots of different classes separated by two bound morphs, each also next to one root. -/
 def separated : Inventory Schematic := ⟨[[y₁, x, z, y₂], [y₁, x], [z, y₂]], schematicClass⟩
 
+/-- When two markers separate two roots, each marker is an affix in some solution of the
+definition, but given that both are affixes, neither passes. -/
 theorem separated_affixes :
     separated.IsAffix separated.IsContentful x ∧
       separated.IsAffix separated.IsContentful z ∧
@@ -239,6 +246,9 @@ theorem separated_affixes :
 root. -/
 def suffixBeforeRoot : Inventory Schematic := ⟨[[y₁, x], [y₁, x, y₂]], schematicClass⟩
 
+/-- Occurrence on a root is adjacency on either side, so a suffix that always follows an object
+root but precedes an action root in a longer free form occurs on roots of two classes, and is
+not an affix. -/
 theorem suffixBeforeRoot_not_affix :
     ¬ suffixBeforeRoot.IsAffix suffixBeforeRoot.IsContentful x := by
   decide

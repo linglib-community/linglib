@@ -213,6 +213,8 @@ theorem toPattern_injective : Function.Injective toPattern := by
 /-- The questions a type answers positively. -/
 abbrev profile (t : Clusivity) : Finset Question := t.toPattern.profile
 
+/-- The order of asking is the order of implication among the five types, one question coming
+before another exactly when every type that answers the second positively answers the first so. -/
 theorem ofAttribute_profile_le_iff {q q' : Question} :
     Concept.ofAttribute (fun (t : Clusivity) q ↦ q ∈ t.profile) q' ≤
       Concept.ofAttribute (fun (t : Clusivity) q ↦ q ∈ t.profile) q ↔ q ≤ q' := by
@@ -227,6 +229,8 @@ theorem profile_isLowerSet (t : Clusivity) : IsLowerSet (↑t.profile : Set Ques
 def rung (t : Clusivity) : {S : Finset Question // IsLowerSet (↑S : Set Question)} :=
   ⟨t.profile, t.profile_isLowerSet⟩
 
+/-- The common types are exactly the rungs of the hierarchy, one for each lower set of the
+questions. -/
 theorem rung_bijective : Function.Bijective rung := by decide +kernel
 
 /-- In the First Person Hierarchy a type precedes another when it answers fewer of the
@@ -234,6 +238,7 @@ questions, ordering no-we, unified-we, only-inclusive, inclusive/exclusive and
 minimal/augmented. -/
 instance : LinearOrder Clusivity := LinearOrder.lift' (fun t ↦ t.profile.card) (by decide +kernel)
 
+/-- Along the hierarchy each type's profile extends its predecessor's. -/
 theorem le_iff_profile_subset {s t : Clusivity} : s ≤ t ↔ s.profile ⊆ t.profile := by
   revert s t; decide +kernel
 
@@ -718,6 +723,10 @@ theorem rows_rare_of_not_respectsExplicitnessHierarchy :
     ∀ r ∈ rows, ¬ r.syncretism.RespectsExplicitnessHierarchy → r.ubiquity = .rare := by
   decide +kernel
 
+/-- The Explicitness Hierarchy is the order of implication among the common and semi-common
+printed paradigms, one opposition being given up before another exactly when every such paradigm
+that gives up the second gives up the first. With the rare paradigms included, three of its steps
+fail. -/
 theorem ofAttribute_givenUp_le_iff {o o' : Opposition} :
     Concept.ofAttribute
         (fun (r : {r // r ∈ rows.filter (·.ubiquity ≠ .rare)}) ↦ r.1.syncretism.GivesUp) o' ≤

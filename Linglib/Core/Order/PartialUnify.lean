@@ -100,6 +100,7 @@ namespace PartialUnify
 
 variable {α : Type*} [PartialOrder α] [PartialUnify α] {a b c : α}
 
+/-- `unify a b` is the join of `↑a` and `↑b` in `WithTop α`. -/
 theorem isLUB_unify (a b : α) : IsLUB {(a : WithTop α), (b : WithTop α)} (unify a b) := by
   rw [← Set.image_pair]
   generalize h : unify a b = x
@@ -146,6 +147,7 @@ theorem unify_comm (a b : α) : unify a b = unify b a := sup_comm (a : WithTop �
 
 @[simp] theorem unify_self (a : α) : unify a a = a := sup_idem (a : WithTop α)
 
+/-- Unification is associative, with failure propagating. -/
 theorem unify_assoc (a b c : α) : unify a b ⊔ ↑c = ↑a ⊔ unify b c :=
   sup_assoc (a : WithTop α) b c
 
@@ -166,6 +168,8 @@ theorem coe_sup_eq_coe_iff {x : WithTop α} :
     ↑a ⊔ x = ↑c ↔ ∃ y : α, x = ↑y ∧ unify a y = ↑c := by
   induction x using WithTop.recTopCoe <;> simp
 
+/-- Unification is monotone where defined, so shrinking both inputs preserves success and
+shrinks the output. -/
 theorem unify_mono {a₁ a₂ b₁ b₂ u₂ : α} (ha : a₁ ≤ a₂) (hb : b₁ ≤ b₂)
     (h₂ : unify a₂ b₂ = u₂) : ∃ u₁ : α, unify a₁ b₁ = u₁ ∧ u₁ ≤ u₂ :=
   WithTop.le_coe_iff.mp

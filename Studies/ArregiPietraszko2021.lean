@@ -99,10 +99,13 @@ theorem extend_ofHeads (bottom x : Head) (above : List Head) :
     (ofHeads bottom above).extend x = ofHeads bottom (above ++ [x]) := by
   simp [extend, ofHeads]
 
+/-- By the **Mirror Principle**, the terminals of a complex head are ordered as its heads are. -/
 theorem terminals_ofHeads (bottom : Head) (above : List Head) :
     (ofHeads bottom above).terminals = bottom :: above := by
   simp [terminals, ofHeads, toList_lift_foldl_mul_of]
 
+/-- GenHM derives the Mirror Principle: each terminal of a complex head attaches outside the
+complex head of the heads below it. -/
 theorem isLeftComb_mvalue_ofHeads (bottom : Head) (above : List Head) :
     (ofHeads bottom above).mvalue.IsLeftComb :=
   (isLeftComb_foldl_mul_of _ _).mpr (isLeftComb_of _)
@@ -291,6 +294,10 @@ its T is an orphan and what the language does to an orphan T is not recorded. -/
 def HeadChain.word (L : Language) (c : HeadChain) : Option (List (List Piece)) :=
   (if c.Orphan .T then L.orphanT else some .ignored).map (·.spellout.pf c.domain)
 
+/-- The four fates of an orphan T give the four forms of a fronted verb: a finite verb where the
+orphan is ignored, the infinitival exponent on the stem that tense conditions where insertion
+disregards the features of the orphan, a true infinitive under impoverishment, and a bare stem
+under obliteration. -/
 theorem fronted_forms :
     let fronted : HeadChain := ⟨[.V], (HeadChain.ofHeads .V [.T]).mvalue⟩
     OrphanFate.ignored.spellout.pf fronted.domain = [[.finiteStem], [.finite]] ∧
@@ -389,6 +396,7 @@ theorem splits_of_doSupport (h : (derive L cx verb).DoSupport) : Splits L cx ver
   simp only [Chains.DoSupport, derive, hs, ↓reduceIte] at h
   exact HeadChain.not_orphan_ofHeads _ _ _ h
 
+/-- Do-support arises exactly where the chain of a strong verb splits. -/
 theorem doSupport_iff (h : .V ∉ cx.above) : (derive L cx verb).DoSupport ↔ Splits L cx verb := by
   refine ⟨splits_of_doSupport, fun hs ↦ ?_⟩
   obtain rfl := hs.1
@@ -646,6 +654,8 @@ theorem relative_prefixes :
 /-- The same terminals in the same order with the opposite bracketing, the linker innermost. -/
 def nonMirror : FreeMagma Head := of .T * (of .C * (of .D * of .Lnk))
 
+/-- In class 9 the Mirror-obeying complex head spells out as the attested *e-* and the opposite
+bracketing of the same terminals as *i-*. -/
 theorem mirror_class9 :
     (FreeMagma.lift FreeMonoid.of nonMirror).toList = relative.terminals ∧
       ∃ e ∈ exponents? Wordlist.f_19_cl9.analysis,
@@ -653,6 +663,9 @@ theorem mirror_class9 :
           (lift e nonMirror).segments = [Ndebele.i] := by
   decide +kernel
 
+/-- Coalescence is not associative. An associative juncture rule would spell out every
+bracketing of the same terminals alike, and the two bracketings of the class 9 prefix come out
+differently, /i/ and /i/ merging before /a/ coalesces with them in one and after in the other. -/
 theorem mul_not_assoc : ¬ ∀ x y z : Exponent, x * y * z = x * (y * z) := fun h ↦ by
   let _ : Semigroup Exponent := { (inferInstance : Mul Exponent) with mul_assoc := h }
   obtain ⟨hterm, hspell⟩ := mirror_class9

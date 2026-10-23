@@ -77,6 +77,7 @@ instance [Fintype W] [DecidableRel (premisePreorder A).le] [DecidablePred (· �
     [DecidablePred (· ∈ p)] : Decidable (Want A dom p) :=
   decidable_of_iff _ want_iff.symm
 
+/-- Wanting a conjunction is wanting each conjunct. -/
 theorem want_inter_iff : Want A dom (p ∩ q) ↔ Want A dom p ∧ Want A dom q :=
   Set.subset_inter_iff
 
@@ -133,6 +134,8 @@ private theorem isContingent_compl {D : Set W} : IsContingent D pᶜ ↔ IsConti
   rw [IsContingent, IsContingent, Set.sdiff_compl, ← Set.sdiff_eq, and_comm]
 
 variable (dox base g p) in
+/-- *Sorry* has the presupposition of *glad*, since *want* presupposes as much of `¬p` as of
+`p`. -/
 theorem support_regret :
     Function.support (regret dox base g p) = Function.support (glad dox base g p) := by
   ext; simp [regret, glad, isContingent_compl]

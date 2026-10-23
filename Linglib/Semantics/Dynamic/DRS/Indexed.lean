@@ -119,6 +119,7 @@ read-support is one line — the flat semantics' piecewise witness surgery
 disappears. Write-support needs the referential presupposition `freeVarFinset ⊆ X`
 only at the atomic clauses. -/
 
+/-- `toRelAt X K` reads its input only at `X`. -/
 theorem DRS.toRelAt_congr_left (X : Finset V) (K : DRS L V) {f f' g : V → M}
     (h : Set.EqOn f f' ↑X) : DRS.toRelAt X K f g ↔ DRS.toRelAt X K f' g := by
   obtain ⟨U, conds⟩ := K
@@ -159,6 +160,8 @@ theorem Condition.holdsAllAt_congr {X : Finset V} (cs : List (Condition L V))
     simp only [Condition.holdsAllAt_cons]
     exact and_congr (Condition.holdsAt_congr c hfv.1 hgg') (ih hfv.2)
 
+/-- `toRelAt X K` writes its output only at `X ∪ U`, given the referential
+presupposition `K.freeVarFinset ⊆ X`. -/
 theorem DRS.toRelAt_congr_right {X : Finset V} (K : DRS L V) (hfv : K.freeVarFinset ⊆ X)
     {f g g' : V → M} (hgg' : Set.EqOn g g' ↑(X ∪ K.referents)) :
     DRS.toRelAt X K f g ↔ DRS.toRelAt X K f g' := by
@@ -434,6 +437,8 @@ theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.free
       (Condition.holdsAllAt_union_fresh c₁ hfresh hfvc₁ g).mpr
         ((Condition.holdsAllAt_congr c₁ hfvc₁ hgh).mpr hh₁), hh₂⟩
 
+/-- Sequencing the transitions of two DRSs gives the merge's transition, repackaged along the
+associativity of the grown bases. -/
 theorem DRS.transition_merge (W : Type*) {X : Finset V} (K₁ K₂ : DRS L V)
     (h₁ : K₁.freeVarFinset ⊆ X) (h₂ : K₂.freeVarFinset ⊆ X ∪ K₁.referents)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :

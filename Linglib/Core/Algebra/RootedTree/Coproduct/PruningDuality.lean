@@ -97,6 +97,9 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
 
 /-! ### The duality theorem -/
 
+/-- The Grossman–Larson product is the transpose of the pruning coproduct under the
+symmetry-weighted pairing, `⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`. The tensor slots are crossed:
+the grafted factor `y` pairs against the pruned crowns and the host `x` against the trunks. -/
 theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedTree α)) :
     pairing (product x y) z = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (R := R) z) := by
   -- Core statement at basis `z = of' C`, strong induction on total weight.
@@ -152,6 +155,8 @@ theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedT
 
 /-! ### The pairing as a map to the convolution algebra -/
 
+/-- The pairing turns the Grossman–Larson product into the convolution product of linear
+functionals, in the opposite order. -/
 theorem toConv_pairing_product (x y : ConnesKreimer R (UnorderedTree α)) :
     toConv (pairing (R := R) (product x y)) = toConv (pairing y) * toConv (pairing x) := by
   ext z
@@ -160,6 +165,8 @@ theorem toConv_pairing_product (x y : ConnesKreimer R (UnorderedTree α)) :
   exact (pairing_gl_eq_pairing_coproduct_Rho x y (ConnesKreimer.of' z)).trans
     (LinearMap.congr_fun h _).symm
 
+/-- The two triple Grossman–Larson products pair equally against everything, since the
+convolution product is associative. -/
 theorem pairing_product_assoc (x y z : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (product (product x y) z) = pairing (product x (product y z)) :=
   toConv_injective <| by simp only [toConv_pairing_product, mul_assoc]

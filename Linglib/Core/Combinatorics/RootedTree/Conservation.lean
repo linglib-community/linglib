@@ -45,6 +45,7 @@ variable {α : Type*}
 
 /-! ### Vertex conservation for the pruning cuts -/
 
+/-- The crown and the trunk of a pruning cut have exactly the vertices of the tree. -/
 theorem cutSummandsN_numNodes (T : UnorderedTree α) :
     ∀ p ∈ cutSummandsN T,
       (p.1.map UnorderedTree.numNodes).sum + p.2.numNodes = T.numNodes :=
@@ -54,6 +55,7 @@ theorem cutSummandsN_numNodes (T : UnorderedTree α) :
     simpa [projSummand, Multiset.map_map, Function.comp_def] using
       cutSummandsG_numNodes pruning (k := 0) (fun _ _ h ↦ by cases h; rfl) t q hq
 
+/-- A choice of pruning cuts conserves vertices. -/
 theorem hasExtractionCost_numNodes_cutSummandsN {F : Multiset (UnorderedTree α)} {s : CutChoice α}
     (hs : s ∈ forestCutChoicesG cutSummandsN F) :
     s.HasExtractionCost UnorderedTree.numNodes 0 :=
@@ -69,6 +71,7 @@ theorem cutSummandsN_crown_ne_singleton (T : UnorderedTree α)
   have := p.2.numNodes_pos
   omega
 
+/-- Every crown component of a pruning cut has fewer vertices than the tree. -/
 theorem cutSummandsN_crown_numNodes_lt {T : UnorderedTree α}
     {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
     {t : UnorderedTree α} (ht : t ∈ p.1) : t.numNodes < T.numNodes := by
@@ -77,6 +80,7 @@ theorem cutSummandsN_crown_numNodes_lt {T : UnorderedTree α}
   have := p.2.numNodes_pos
   omega
 
+/-- The trunk of a pruning cut with a nonempty crown has fewer vertices than the tree. -/
 theorem cutSummandsN_trunk_numNodes_lt {T : UnorderedTree α}
     {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
     (h : p.1 ≠ 0) : p.2.numNodes < T.numNodes := by
@@ -107,6 +111,9 @@ The deletion coproduct contracts the vertices a pruning cut leaves with a single
 binary tree the cut leaves the parent of each tree it extracts with a single child, unless it
 extracts both of the parent's children, which leaves the parent a leaf. -/
 
+/-- Deleting the crown of a pruning cut and contracting the unary vertices of its trunk removes,
+    besides the crown's own edges, one edge for each crown component and one for each unary
+    vertex. -/
 theorem cutSummandsN_numEdges_contractUnary {T : UnorderedTree α}
     {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T) :
     T.numEdges = (p.1.map UnorderedTree.numEdges).sum + p.2.contractUnary.numEdges +
@@ -181,6 +188,8 @@ private theorem augActionG_pruning_numUnary : ∀ (t : RoseTree α),
 
 end
 
+/-- In a full binary tree a pruning cut leaves a unary vertex for each tree it extracts, less two
+    for each vertex both of whose children it extracts. -/
 theorem cutSummandsN_numUnary {T : UnorderedTree α} (hT : T.IsFullBinary)
     {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T) :
     ∃ k, Multiset.card p.1 = p.2.numUnary + 2 * k := by

@@ -82,6 +82,8 @@ theorem canInView_iff_of_consistent (h : sInf (f i) ≠ ⊥) :
   refine ⟨fun ⟨B, hB, hAll⟩ ↦ hAll (f i) ⟨subset_rfl, h⟩ hB.1,
     fun hc ↦ ⟨f i, ⟨subset_rfl, h⟩, fun C hC _ hd ↦ hc (hd.mono_left (sInf_le_sInf hC.1))⟩⟩
 
+/-- *Can* is the negation of *must not*, since compatibility with a premise set is the failure
+of the negation to follow from it. -/
 theorem canInView_iff_not_mustInView_not (f : Background W) (φ : W → Prop) (i : W) :
     CanInView f φ i ↔ ¬ MustInView f (fun j ↦ ¬ φ j) i := by
   have h (C : Set (W → Prop)) : (sInf C ≤ fun j ↦ ¬ φ j) ↔ Disjoint (sInf C) φ :=

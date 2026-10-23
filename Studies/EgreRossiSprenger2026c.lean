@@ -443,6 +443,8 @@ theorem not_presupposes_forallInstances_exists :
     simp only [existsInstances, hc, existsHaug_eq_zero_iff] at this
     exact absurd (this ()) (by decide)
 
+/-- At a single world the restricted universal is [belnap-1970]'s restricted quantification, whose
+existential presupposition is bound to the world. -/
 theorem forallInstances_singleton {D : Type} (A B : D → Set W) (w : W) :
     forallInstances (fun d ↦ cond (ofSet (A d)) (ofSet (B d))) {w} w =
       Belnap1970.restrictedForall (fun d ↦ w ∈ A d) (fun d ↦ w ∈ B d) := by
@@ -821,12 +823,14 @@ theorem entailsSharp_never_true :
     rw [cond_apply_of_mem hu]
     simp
 
+/-- False Antecedents, `¬A ⊨ A → C`, is C-valid. -/
 theorem entails_neg_cond (φ ψ : Sentence W) : Entails {-φ} (cond φ ψ) := fun s h w _ ↦
   (cond_apply_of_not_exists (fun ⟨w', hw', h'⟩ ↦ by
     have := h _ (Set.mem_singleton _) w' hw'
     rw [Pi.neg_apply, Pi.neg_apply, h'] at this
     exact absurd this (by decide)) w).ge
 
+/-- False Antecedents is not C♭-valid for a contingent classical antecedent. -/
 theorem not_entailsFlat_neg_cond {p : Set W} {w : W} (hw : w ∉ p) (ψ : Sentence W) :
     ¬ EntailsFlat {-ofSet p} (cond (ofSet p) ψ) := fun h ↦ by
   have := accepts_cond_iff.1 (h {w} fun φ hφ ↦ by
@@ -836,6 +840,8 @@ theorem not_entailsFlat_neg_cond {p : Set W} {w : W} (hw : w ∉ p) (ψ : Senten
     hw (Set.mem_singleton_iff.1 hx.1 ▸ hx.2)] at this
   exact not_accepts_empty _ this
 
+/-- False Antecedents is not C#-valid for a classical antecedent, since wherever `¬A` is not false
+`A → C` is void. -/
 theorem not_entailsSharp_neg_cond (p : Set W) (ψ : Sentence W) :
     ¬ EntailsSharp {-ofSet p} (cond (ofSet p) ψ) := fun ⟨_, h⟩ ↦ h fun s w _ hΓ ↦ by
   have hwp : w ∉ p := fun hwp ↦ by
@@ -858,6 +864,7 @@ theorem not_entailsFlat_or_to_if {p q : Set W} {w : W} (hp : w ∈ p) :
     Set.eq_empty_of_forall_notMem fun x hx ↦ hx.2 (Set.mem_singleton_iff.1 hx.1 ▸ hp)] at this
   exact not_accepts_empty _ this
 
+/-- Or-to-If is C#-valid when `¬p ∧ q` is possible. -/
 theorem entailsSharp_or_to_if {p q : Set W} {w : W} (hp : w ∉ p) (hq : w ∈ q) :
     EntailsSharp {disj (ofSet p) (ofSet q)} (cond (-ofSet p) (ofSet q)) := by
   rw [entailsSharp_iff]
@@ -885,6 +892,7 @@ theorem not_accepts_cond_cond_neg (s p q : Set W) :
   rw [Pi.neg_apply, Pi.neg_apply, h] at this
   exact absurd this (by decide)
 
+/-- Reductio from conflicting conditionals, `p → q, p → ¬q ⊨ ¬p`, is C#-valid when `p` can fail. -/
 theorem entailsSharp_reductio {p q : Set W} {w : W} (hw : w ∉ p) :
     EntailsSharp {cond (ofSet p) (ofSet q), cond (ofSet p) (-ofSet q)} (-ofSet p) := by
   rw [entailsSharp_iff]

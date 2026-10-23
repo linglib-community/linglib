@@ -120,6 +120,7 @@ theorem Valid2.valid1 {φ : SelectionFunction W → Set W → Set W} (h : Valid2
 theorem will_excluded_middle : Valid2 fun s f ↦ will s f A ∪ will s f Aᶜ := fun s _ ↦ by
   simp only [will_compl, Set.union_compl_self]
 
+/-- Every context at which *will A* is true verifies `A`. -/
 theorem valid1_materialImp_will : Valid1 fun s f ↦ materialImp (will s f A) A :=
   fun s _ _ hw ↦ (mem_will_of_mem s hw).1
 
@@ -256,6 +257,8 @@ theorem will_warriorsCap_indeterminate (s : SelectionFunction W) :
   rw [mem_will_alternatives_iff s, mem_will_alternatives_iff s]
   simp [warriorsCap]
 
+/-- *Will A* does not valid₂-entail `A`. At the Warriors-cap world, with the no-cap world as the
+only modal parameter, *Cynthia will wear no cap* is true and its prejacent false. -/
 theorem not_valid2_materialImp_will :
     ¬ Valid2 fun s f ↦ materialImp (will s f {W.cn}) {W.cn} := fun h ↦ by
   obtain ⟨s, hs⟩ := SelectionFunction.exists_sel_eq (w := W.cw) (Set.mem_singleton W.cn) (by simp)
@@ -347,6 +350,9 @@ theorem cond_wearsCap_warriorsCap : cynthiaCredence[|wearsCap].real warriorsCap 
     Set.ncard_singleton, wearsCap, Set.ncard_pair (by decide)]
   norm_num
 
+/-- No proposition over the Sports Fan model has credence 1/2, since every credence is a multiple
+of 1/3, so no reading of the cap-conditional has its conditional probability. It is an instance
+of the point of [hajek-1989] that conditional probabilities outnumber unconditional ones. -/
 theorem no_unconditional_one_half (S : Set W) : cynthiaCredence.real S ≠ 1 / 2 := by
   rw [cynthiaCredence_real]
   intro h

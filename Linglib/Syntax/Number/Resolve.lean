@@ -103,6 +103,9 @@ theorem exactCard_ofCard {n : ℕ} (hn : 0 < n) :
 
 variable {ns}
 
+/-- In a system whose determinate values are an initial segment of singular, dual and trial,
+conjuncts of `m` and `n` individuals resolve to the value of `m + n`, so resolution matches the
+semantics of number. -/
 theorem resolve_ofCard (h : ns.DeterminateInitial) {m n : ℕ} (hm : 0 < m) (hn : 0 < n) :
     ns.resolve (ns.ofCard m) (ns.ofCard n) = ns.ofCard (m + n) := by
   have h₁ : Number.dual ∈ ns.values → Number.singular ∈ ns.values :=
@@ -127,6 +130,8 @@ example : let ns : System := { values := {.dual, .plural} }
 example : let ns : System := { values := {.singular, .trial, .plural} }
     ns.resolve (ns.ofCard 2) (ns.ofCard 1) ≠ ns.ofCard 3 := by decide
 
+/-- Any number of conjuncts, resolved in order, give the value of the sum of their
+cardinalities. -/
 theorem foldl_resolve_ofCard (h : ns.DeterminateInitial) {m : ℕ} (hm : 0 < m) {ms : List ℕ}
     (hms : ∀ x ∈ ms, 0 < x) :
     (ms.map ns.ofCard).foldl ns.resolve (ns.ofCard m) = ns.ofCard (m + ms.sum) := by
@@ -136,11 +141,14 @@ theorem foldl_resolve_ofCard (h : ns.DeterminateInitial) {m : ℕ} (hm : 0 < m) 
     rw [List.map_cons, List.foldl_cons, resolve_ofCard h hm (hms x (by simp)),
       ih (by omega) fun y hy ↦ hms y (by simp [hy]), List.sum_cons, Nat.add_assoc]
 
+/-- Conjuncts denoting disjoint pluralities resolve to the value of their sum. -/
 theorem resolve_card_union {α : Type*} [DecidableEq α] (h : ns.DeterminateInitial)
     {s t : Finset α} (hs : s.Nonempty) (ht : t.Nonempty) (hst : Disjoint s t) :
     ns.resolve (ns.ofCard s.card) (ns.ofCard t.card) = ns.ofCard (s ∪ t).card := by
   rw [Finset.card_union_of_disjoint hst, resolve_ofCard h hs.card_pos ht.card_pos]
 
+/-- A target shows the value of its controller's referent when the controller's system has
+every determinate value of the target's. -/
 theorem coarsen_ofCard {src tgt : System}
     (h : ∀ v ∈ tgt.values, v.isDeterminate → v ∈ src.values) (n : ℕ) :
     tgt.coarsen (src.ofCard n) = tgt.ofCard n := by

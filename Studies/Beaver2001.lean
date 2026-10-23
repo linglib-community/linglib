@@ -549,6 +549,8 @@ def translations : List (String × Formula Atom) :=
    ("bih IMPLIES (∂bih AND cb_a_bih)", implies (atom .hiding) realises),
    ("MIGHT(bih AND ∂bih AND cb_a_bih)", might (and (atom .hiding) realises))]
 
+/-- The entailments the book prints for its translations (E168c, E169c, E172c, E173c, E174c,
+E175d) hold in every model, each translation presupposing what it entails. -/
 theorem entailed_rows (F : Atom → Set W) : ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "translation" translations, ∀ ψ ∈ row.parse? "entails" translations,
       Entails F φ ψ := by
@@ -569,6 +571,7 @@ theorem entailed_rows (F : Atom → Set W) : ∀ row ∈ Examples.all,
     (presup_and_presupposes _ _).implies_right.entails
       ((NonModal.atom _).not.implies (.atom _))]
 
+/-- The non-entailments it prints (E175c, E176c, E177c) fail in the term model. -/
 theorem unentailed_rows : ∀ row ∈ Examples.all,
     ∀ φ ∈ row.parse? "translation" translations, ∀ ψ ∈ row.parse? "doesNotEntail" translations,
       ¬Entails (termModel Atom) φ ψ := by

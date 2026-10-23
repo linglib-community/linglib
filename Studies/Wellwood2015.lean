@@ -225,6 +225,8 @@ theorem not_nontriviallyStructured_of_qua [PartialOrder α] {P : α → Prop} (h
     ¬ NontriviallyStructured P :=
   fun ⟨_, _, hx, hy, hlt⟩ ↦ hQ hx hy hlt.ne hlt.le
 
+/-- A cumulative domain with two satisfiers is non-trivially structured, since their sum has one
+of them as a proper part. -/
 theorem nontriviallyStructured_of_cum [SemilatticeSup α] {P : α → Prop} (hC : CUM P) {x y : α}
     (hx : P x) (hy : P y) (hne : x ≠ y) : NontriviallyStructured P := by
   by_cases h : x < x ⊔ y

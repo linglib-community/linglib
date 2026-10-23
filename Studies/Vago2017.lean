@@ -80,6 +80,7 @@ candidate `D` gives, the deletion of the positions of its vowels. -/
 def corr (D : Finset ElidedVowel) : Correspondence BinaryRole Segment :=
   Correspondence.eraseIdxs c.input (deleted c D)
 
+/-- The output of each correspondence is the form of its candidate. -/
 theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).form .rhs = resolve c D := by
   have hmem (k : ℕ) : k ∈ deleted c D ↔
       .first ∈ D ∧ k = c.stemBody.length ∨ .second ∈ D ∧ k = c.stemBody.length + 1 := by
@@ -104,6 +105,8 @@ theorem corr_form_rhs (D : Finset ElidedVowel) : (corr c D).form .rhs = resolve 
     rw [hmem]
     rintro (⟨-, h⟩ | ⟨-, h⟩) <;> omega
 
+/-- Each MAX constraint counts the input segments it protects that have no correspondent in the
+output. -/
 theorem maxAt_deleted_eq_maxViolAt (P : ℕ → Prop) [DecidablePred P] (D : Finset ElidedVowel) :
     maxAt P (deleted c D) = (corr c D).maxViolAt P .lhs .rhs :=
   maxAt_eq_maxViolAt P fun k hk ↦ by
@@ -175,6 +178,10 @@ local macro "regular_beats " k:num : tactic =>
       first | omega | simp_all [Wordlist.Hierarchy.order, marks, maxAt_insert]);
       simp_all [Wordlist.Hierarchy.order, marks, maxAt_insert, Nat.pos_iff_ne_zero]]))
 
+/-- Between a morph and a suffix that is not a root, under the regular hierarchy, the second
+vowel deletes when the first is long or the sole segment of its morph, and the first vowel deletes
+otherwise. This holds when the second vowel is short and not alone in its morph, and deleting
+either vowel or both leaves no vowel sequence. -/
 theorem optimal_regular (hl : c.left ≠ .root) (hr : c.right ≠ .root) (hv₂ : c.v2Idx ∉ long)
     (hs : c.suffixBody ≠ []) (hfree : ∀ D : Finset ElidedVowel, D.Nonempty →
       Hiatus.count (resolve c D) = 0) :
@@ -244,6 +251,8 @@ def example? (a : Wordlist.Analysis) : Option Example := do
   pure ⟨c, Hungarian.longPositions a.left ∪ (Hungarian.longPositions a.right).image (· + l.length),
     ← Hungarian.transcribe? (a.before.getD ""), a.hierarchy, deletionOf a.deleted⟩
 
+/-- For every example, the tableau of its candidates under the hierarchy of its suffix selects the
+attested deletion, and the form it gives, after the morph before it, spells the attested form. -/
 theorem tableaux :
     ∀ a ∈ Wordlist.analyses, ∃ x ∈ example? a,
       (tableau x.context x.long x.hierarchy.order).optimal = {x.deletion} ∧
@@ -263,6 +272,8 @@ private theorem con_erdesz_lt_iff (i : Con) :
     con erdesz i {.first} < con erdesz i ∅ ↔ i = .starVV := by
   revert i; decide +kernel
 
+/-- A ranking of Vago's constraints under which erdő-ész deletes its first vowel ranks \*VV above
+MAX on long vowels and above MAX LEX, since that vowel is long and in a root. -/
 theorem starVV_dominates_of_erdesz {r : Ranking Con 5}
     (h : {.first} ∈
       (Tableau.ofRanking (con erdesz) r {∅, {.first}, {.second}, {.first, .second}}).optimal) :

@@ -45,6 +45,7 @@ def coordinate? {E W : Type} {M : Type → Type} [Applicative M] (c : Coordinato
         ⟨d1.1, (fun p q ↦ letI := i; c.denote {p, q}) <$> d1.2 <*> (h ▸ d2.2)⟩
   else none
 
+/-- Predicate modification is generalized conjunction at `⟨e,t⟩`. -/
 theorem combine?_eq_coordinate?_of_conjunctive {E W : Type} {M : Type → Type}
     [Applicative M] {c : Coordinator} (hc : c.role = .conjunctive) (d1 d2 : Denotation E W M)
     (h1 : d1.1 = (.e ⇒ .t)) (h2 : d2.1 = (.e ⇒ .t)) :

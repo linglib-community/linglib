@@ -69,11 +69,14 @@ variable (μ θ C)
     degreeComparison μ θ C x {p} w ↔ p ∈ preferred μ θ C x w := by
   simp [degreeComparison]
 
+/-- Degree-comparison predicates are clausally distributive. -/
 theorem isDistributive_degreeComparison :
     Distributivity.IsDistributive (degreeComparison μ θ C) := fun x Q w ↦ by
   simp only [degreeComparison_singleton]
   exact ⟨fun ⟨p, hpQ, hp⟩ ↦ ⟨p, hpQ, hp⟩, fun ⟨p, hpQ, hp⟩ ↦ ⟨p, hpQ, hp⟩⟩
 
+/-- With the comparison class inside the question, a degree-comparison predicate asserts exactly
+that the threshold is significant on the class. -/
 theorem degreeComparison_iff_thresholdSignificant {Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E)
     (w : W) : degreeComparison μ θ C x Q w ↔ Degree.ThresholdSignificant (μ x w) θ C := by
   rw [degreeComparison, preferred, ← Set.inter_assoc, Set.inter_eq_right.2 hCQ]

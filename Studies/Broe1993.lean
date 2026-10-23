@@ -112,6 +112,8 @@ theorem base_mem_naturalClasses (base : α) (attrs : List α) :
   | nil => exact List.mem_singleton_self base
   | cons a rest ih => exact mem_naturalClasses_cons.2 (.inl ih)
 
+/-- Meeting a natural class with an attribute extent gives a natural class: the classes are closed
+under the meets that generate them. -/
 theorem inf_mem_naturalClasses (ha : a ∈ attrs) (hs : s ∈ naturalClasses base attrs) :
     a ⊓ s ∈ naturalClasses base attrs := by
   induction attrs generalizing s with
@@ -126,6 +128,8 @@ theorem inf_mem_naturalClasses (ha : a ∈ attrs) (hs : s ∈ naturalClasses bas
       · exact .inl (ih ha' hs)
       · exact .inr ⟨a ⊓ t, ih ha' ht, inf_left_comm _ _ _⟩
 
+/-- A natural class is the inventory met with attribute extents, and every such meet is a natural
+class. -/
 theorem mem_naturalClasses :
     s ∈ naturalClasses base attrs ↔
       ∃ sub : List α, (∀ a ∈ sub, a ∈ attrs) ∧ s = sub.foldr (· ⊓ ·) base := by
@@ -146,6 +150,9 @@ theorem mem_naturalClasses :
       exact inf_mem_naturalClasses (hmem a List.mem_cons_self)
         (ih fun c hc ↦ hmem c (List.mem_cons_of_mem _ hc))
 
+/-- Every collection that contains the inventory and is closed under meeting with the attribute
+extents contains all the natural classes: the construction is the closure system the attribute
+extents generate, not a larger collection. -/
 theorem naturalClasses_minimal {C : Set α} (hbase : base ∈ C)
     (hclosed : ∀ a ∈ attrs, ∀ s ∈ C, a ⊓ s ∈ C) : ∀ s ∈ naturalClasses base attrs, s ∈ C := by
   intro s hs
@@ -203,6 +210,9 @@ private theorem foldr_inf_naturalClass (l : List (Feature × Bool)) :
       List.forall_mem_cons, ← hasValue_iff_ofSpecs_le]
     tauto
 
+/-- From the attribute extents of a segment inventory the construction gives exactly the natural
+classes of the inventory and the empty class: the meets of the attribute extents are the classes
+the descriptions denote. -/
 theorem mem_naturalClasses_attributeExtents :
     S ∈ naturalClasses I (attributeExtents I) ↔ S = ∅ ∨ IsNaturalClass I S := by
   rw [mem_naturalClasses]
@@ -280,6 +290,8 @@ theorem quileute_classes :
   rw [toFinset_naturalClasses_attributeExtents]
   decide
 
+/-- No feature value can be predicted from another: the class of no value of [high] or [back]
+lies within the class of another, so the gapless system carries no redundancy. -/
 theorem quileute_no_redundancy : ∀ p ∈ values, ∀ q ∈ values,
     (ofSpecs [p]).naturalClass vowels ⊆ (ofSpecs [q]).naturalClass vowels → p = q := by
   decide

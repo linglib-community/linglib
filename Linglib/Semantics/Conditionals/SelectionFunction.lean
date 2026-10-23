@@ -61,6 +61,8 @@ structure SelectionFunction (W : Type*) where
   /-- A world at which the proposition holds selects itself. -/
   centering : ∀ (w : W) (A : Set W), w ∈ A → sel w A = w
 
+/-- Inclusion and centering are the only constraints on a selection function, so at a world
+outside a proposition any world of the proposition is selected by some selection function. -/
 theorem SelectionFunction.exists_sel_eq {W : Type*} {w v : W} {A : Set W} (hv : v ∈ A)
     (hw : w ∉ A) : ∃ s : SelectionFunction W, s.sel w A = v := by
   classical
@@ -156,6 +158,7 @@ variable {s R}
 
 @[simp] theorem mem_modal : w ∈ s.modal R A ↔ s.along R w ∈ A := Iff.rfl
 
+/-- The selectional modal is necessity along the graph of the selection. -/
 theorem modal_eq_core (A : Set W) : s.modal R A = (Function.graph (s.along R)).core A :=
   Set.preimage_eq_core _ A
 
@@ -163,11 +166,13 @@ theorem along_eq_self (h : w ~[R] w) : s.along R w = w := s.centering w _ h
 
 theorem rel_along (h : ∃ v, w ~[R] v) : w ~[R] s.along R w := s.inclusion w {v | w ~[R] v} h
 
+/-- At the worlds that access themselves, the selectional modal of `A` holds where `A` does. -/
 theorem modal_inter_refl (A : Set W) : s.modal R A ∩ {w | w ~[R] w} = A ∩ {w | w ~[R] w} :=
   Set.ext fun w ↦ and_congr_left fun h ↦ by
     change s.along R w ∈ A ↔ w ∈ A
     rw [along_eq_self (R := R) h]
 
+/-- Along a reflexive relation selection is idle, so the selectional modal is the identity. -/
 theorem modal_eq_id [R.IsRefl] : s.modal R = CompleteLatticeHom.id (Set W) := by
   ext A w
   change s.along R w ∈ A ↔ w ∈ A
@@ -343,6 +348,9 @@ theorem SelectionFunction.exists_compatible [Finite W] (hc : IsCentered ord)
     simp only [hp, ↓reduceDIte]
     exact (c.order w).le_antisymm _ _ (hmle w p hp v hv.1) (hcv _ (hm w p hp))
 
+/-- On a finite, strongly centered family of preorders, the conditional of the closest worlds
+holds iff the selection conditional is true on every completion, [stalnaker-1981]'s
+supervaluation for a single conditional. -/
 theorem mem_closestImp_iff_forall_compatible [Finite W] (hc : IsCentered ord) :
     w ∈ closestImp ord p q ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q := by

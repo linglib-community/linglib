@@ -246,6 +246,8 @@ theorem salience_bisZu (hn : 1 ≤ n) : salience (Modifier.bisZu.raise n) = 1 :=
 theorem salience_hoechstens : salience (Modifier.hoechstens.raise n) = -1 := by
   simp [salience, Modifier.raise, Blok2015.sUnion_atMost]
 
+/-- The salience and valence account predicts every framing effect, standard under *genau* and
+*bis zu* and reversed under *höchstens*, in both scenarios. -/
 theorem salienceEffect_eq_framingEffect (s : Scenario) :
     salienceEffect (raised genau) s.number = framingEffect s.genau ∧
       ∀ m, salienceEffect m.raise s.number = framingEffect (s.upper m) := by

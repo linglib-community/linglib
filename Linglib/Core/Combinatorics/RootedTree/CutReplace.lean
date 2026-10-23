@@ -106,6 +106,8 @@ theorem crown_ne_of_mem_cutSummandsG {t : RoseTree γ}
 
 mutual
 
+/-- When `M` occurs exactly once below the root of `t`, one cut of `t` has crown `{M}`, and its
+    trunk is `t` with `M` replaced by `R`. -/
 theorem map_trunk_filter_cutSummandsG
     (hE : ∀ s, UnorderedTree.mk s = M → ∃ ρ, E s = some [ρ] ∧ UnorderedTree.mk ρ = R) :
     ∀ (t : RoseTree γ), (unorderedSubtreesList t.children).count M = 1 →

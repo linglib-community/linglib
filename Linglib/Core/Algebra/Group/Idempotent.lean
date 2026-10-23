@@ -64,17 +64,21 @@ theorem IsRightZero.isIdempotentElem (h : IsRightZero a) : IsIdempotentElem a :=
 section Hom
 variable [Mul N] [FunLike F M N] [MulHomClass F M N] {f : F}
 
+/-- A surjective homomorphism sends left zeros to left zeros. -/
 theorem IsLeftZero.map_of_surjective (h : IsLeftZero a) (hf : Function.Surjective f) :
     IsLeftZero (f a) :=
   hf.forall.2 fun b ↦ by rw [← map_mul, h]
 
+/-- A surjective homomorphism sends right zeros to right zeros. -/
 theorem IsRightZero.map_of_surjective (h : IsRightZero a) (hf : Function.Surjective f) :
     IsRightZero (f a) :=
   hf.forall.2 fun b ↦ by rw [← map_mul, h]
 
+/-- An element sent to a left zero by an injective homomorphism is a left zero. -/
 theorem IsLeftZero.of_map (h : IsLeftZero (f a)) (hf : Function.Injective f) : IsLeftZero a :=
   fun b ↦ hf <| by rw [map_mul, h]
 
+/-- An element sent to a right zero by an injective homomorphism is a right zero. -/
 theorem IsRightZero.of_map (h : IsRightZero (f a)) (hf : Function.Injective f) :
     IsRightZero a :=
   fun b ↦ hf <| by rw [map_mul, h]
@@ -86,9 +90,11 @@ end Mul
 section Semigroup
 variable [Semigroup M] {a : M}
 
+/-- In a semigroup, multiplying a left zero on the left gives a left zero. -/
 theorem IsLeftZero.mul_left (h : IsLeftZero a) (b : M) : IsLeftZero (b * a) :=
   fun c ↦ by rw [mul_assoc, h]
 
+/-- In a semigroup, multiplying a right zero on the right gives a right zero. -/
 theorem IsRightZero.mul_right (h : IsRightZero a) (b : M) : IsRightZero (a * b) :=
   fun c ↦ by rw [← mul_assoc, h]
 

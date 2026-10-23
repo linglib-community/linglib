@@ -96,6 +96,9 @@ each of its tones on its own root, M on the reduplicant and H on the base. -/
 def pluractional (d : Dominance) (i : Ideophone) : List TRN :=
   (d.apply ⟨[.M], .left⟩ i.syllables ++ d.apply ⟨[.H], .left⟩ i.syllables).map TBU.tone
 
+/-- The printed verbs fit replacive dominance and no other type of [rolle-2018]'s typology: the
+singular verb is the selected verbaliser's tune applied to the ideophone, and the pluractional
+verb VBZ₂ on the doubled ideophone. -/
 theorem fits_iff (d : Dominance) :
     (∀ i ∈ ideophones, i.verb = (verbalizer i).map (singular d · i) ∧
       i.pluractional = pluractional d i) ↔ d = .replacive := by
@@ -358,6 +361,8 @@ def SelectsWinners (r : Ranking Con 5) : Prop :=
     (Tableau.ofRanking con r Tableau25.candidates.toFinset).optimal = {Tableau25.candE} ∧
     (Tableau.ofRanking con r Tableau26.candidates.toFinset).optimal = {Tableau26.candD}
 
+/-- The tableaux select the printed verbs exactly under the rankings with
+R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ and MAX-Tone below both M anchors. -/
 theorem selectsWinners_iff (r : Ranking Con 5) :
     SelectsWinners r ↔ r.Dominates .rAnchorH .rAnchorM ∧ r.Dominates .rAnchorM .lAnchorH ∧
       r.Dominates .rAnchorM .maxTone ∧ r.Dominates .lAnchorM .maxTone := by
@@ -365,6 +370,9 @@ theorem selectsWinners_iff (r : Ranking Con 5) :
   simp only [Ranking.Dominates, Fin.lt_def]
   omega
 
+/-- Neither L-ANCH-Mᵥ ≫ R-ANCH-Mᵥ nor L-ANCH-Hᵥ ≫ MAX-Tone, both of which the paper states, is
+needed: the ranking R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Mᵥ ≫ MAX-Tone ≫ L-ANCH-Hᵥ reverses both and
+selects the printed verbs. -/
 theorem exists_selectsWinners_rAnchorM_lAnchorM :
     ∃ r : Ranking Con 5, SelectsWinners r ∧ r.Dominates .rAnchorM .lAnchorM ∧
       r.Dominates .maxTone .lAnchorH := by

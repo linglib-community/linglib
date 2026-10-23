@@ -68,6 +68,7 @@ namespace IsLeftLinear
 
 variable {M : Type*} [PartialOrder M] [IsLeftLinear M]
 
+/-- In a left-linear order the principal down-set `Iic m` is a chain. -/
 theorem isChain_Iic (m : M) : IsChain (· ≤ ·) (Set.Iic m) := by
   intro a ha b hb _
   exact comparable_of_le_common (Set.mem_Iic.mp ha) (Set.mem_Iic.mp hb)
@@ -96,6 +97,8 @@ variable {M : Type*} [PartialOrder M]
 /-- A node is branching when it has at least two covers. -/
 def IsBranching (x : M) : Prop := {a | x ⋖ a}.Nontrivial
 
+/-- In a finite order in which every non-maximal node branches, a non-maximal node yields a node
+covered by two distinct maximal ones. -/
 theorem exists_cherry [Finite M] (hb : ∀ x : M, ¬ IsMax x → IsBranching x) {x : M}
     (hx : ¬ IsMax x) : ∃ m a b : M, m ⋖ a ∧ m ⋖ b ∧ a ≠ b ∧ IsMax a ∧ IsMax b := by
   obtain ⟨m, hm, hmax⟩ := (Set.toFinite {y : M | ¬ IsMax y}).exists_maximal ⟨x, hx⟩
@@ -120,6 +123,8 @@ namespace Flag
 
 variable {M : Type*} [PartialOrder M] {m x y : M} {h : Flag M}
 
+/-- A flag through a non-maximal element contains a strictly larger one; otherwise inserting
+the successor would extend the chain. -/
 theorem exists_mem_gt_of_lt (hm : m ∈ h) (hx : m < x) : ∃ y ∈ h, m < y := by
   by_contra! hcon
   have hxh : x ∈ h := mem_iff_forall_le_or_ge.2 fun b hb ↦ .inr <|
@@ -148,6 +153,8 @@ theorem eq_ofIsMax_of_mem (hx : IsMax x) (hxh : x ∈ h) : h = ofIsMax hx :=
 
 variable [Finite M]
 
+/-- On a finite left-linear order every flag is the down-set of a maximal element, since the
+flag has a greatest element, which a strict successor would contradict. -/
 theorem exists_isMax_eq_ofIsMax [Nonempty M] (h : Flag M) :
     ∃ x, ∃ hx : IsMax x, h = ofIsMax hx := by
   obtain ⟨x, hx, hmax⟩ :=
@@ -157,6 +164,8 @@ theorem exists_isMax_eq_ofIsMax [Nonempty M] (h : Flag M) :
   obtain ⟨z, hz, hxz⟩ := exists_mem_gt_of_lt hx (lt_of_le_not_ge hxy hyx)
   exact hmax z hz hxz
 
+/-- On a finite left-linear order, quantifying over the flags through an element is
+quantifying over the maximal elements above it. -/
 theorem forall_mem_iff [Nonempty M] {P : Flag M → Prop} :
     (∀ h : Flag M, m ∈ h → P h) ↔ ∀ x, ∀ hx : IsMax x, m ≤ x → P (ofIsMax hx) :=
   ⟨fun H x hx hmx ↦ H _ hmx, fun H h hm ↦ by

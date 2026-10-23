@@ -126,6 +126,8 @@ morphophonological features of its exponent. -/
 def visible (expFeatures : E → Finset F) (s : Morpheme F E) : Finset F :=
   s.feats ∪ (s.exp.map expFeatures).getD ∅
 
+/-- A bare morpheme presents its features only, since nothing of an exponent
+is visible before insertion. -/
 @[simp] theorem visible_of_exp_none {expFeatures : E → Finset F} {s : Morpheme F E}
     (h : s.exp = none) : visible expFeatures s = s.feats := by
   simp [visible, h]
@@ -171,6 +173,8 @@ def contextAt (loc : Locality) (expFeatures : E → Finset F) (i : ℕ) : Neighb
     .around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
       ((w.heads[i]?.map (·.feats)).getD ∅)
 
+/-- Under hierarchy, context is by distance, head `j` standing at offset
+`j - i` from head `i`. -/
 theorem nth_contextAt_hierarchical {expFeatures : E → Finset F} {i j : ℕ}
     (hi : i ≤ w.heads.length) (hj : j ≠ i) :
     (w.contextAt isNull .hierarchical expFeatures i).nth (j - i) =
@@ -180,6 +184,7 @@ theorem nth_contextAt_hierarchical {expFeatures : E → Finset F} {i j : ℕ}
   simpa [contextAt, show ((j + 1 : ℕ) - (i + 1 : ℕ) : ℤ) = j - i by omega,
     show (default : Finset F) = ∅ from rfl] using this
 
+/-- Under hierarchy, the root stands at offset `-(i + 1)` from head `i`. -/
 theorem nth_contextAt_hierarchical_root {expFeatures : E → Finset F} {i : ℕ}
     (hi : i ≤ w.heads.length) :
     (w.contextAt isNull .hierarchical expFeatures i).nth (-(i + 1)) =
@@ -239,6 +244,7 @@ theorem insertUpTo_succ (n : ℕ) :
     (w.insertAt isNull vocab loc expFeatures dis i).heads.length = w.heads.length := by
   unfold insertAt; split <;> (try split) <;> (try split) <;> simp
 
+/-- Insertion applies once, leaving a realized morpheme alone. -/
 theorem insertAt_of_isRealized {i : ℕ} {s : Morpheme F E} (hs : w.heads[i]? = some s)
     (h : s.IsRealized) : w.insertAt isNull vocab loc expFeatures dis i = w := by
   unfold insertAt; rw [hs]; simp [h]
@@ -268,6 +274,7 @@ theorem exp_insertUpTo_of_eq_some (n : ℕ) {j : ℕ} {s : Morpheme F E} {e : E}
     obtain ⟨s', hs', he'⟩ := ih hs
     exact exp_insertAt_of_eq_some isNull hs' he'
 
+/-- **Uniqueness.** An exponent, once substituted for Q, is never replaced. -/
 theorem exp_insertAll_of_eq_some {j : ℕ} {s : Morpheme F E} {e : E} (hs : w.heads[j]? = some s)
     (he : s.exp = some e) :
     ∃ s', (w.insertAll isNull vocab loc expFeatures dis).heads[j]? = some s' ∧
@@ -282,6 +289,8 @@ theorem exp_insertAt_of_lt {i j : ℕ} (hij : i < j) {s : Morpheme F E} (hs : w.
       s'.exp = none := by
   rw [getElem?_heads_insertAt_of_ne isNull hij.ne]; exact ⟨s, hs, he⟩
 
+/-- Inside-out insertion up to `n` leaves every head from `n` on bare, so
+when a head is reached its outer context carries features only. -/
 theorem exp_insertUpTo_of_le (n : ℕ) {j : ℕ} (hnj : n ≤ j) {s : Morpheme F E}
     (hs : w.heads[j]? = some s) (he : s.exp = none) :
     ∃ s', (w.insertUpTo isNull vocab loc expFeatures dis n).heads[j]? = some s' ∧
@@ -353,6 +362,8 @@ theorem feats_insertUpTo_rewriting (hw : ∀ s ∈ w.heads, s.exp = none) (n : �
   | zero => intro s hs hr; simp [Morpheme.IsRealized, hw s hs] at hr
   | succ n ih => rw [insertUpTo_succ]; exact feats_insertAt_rewriting isNull ih n
 
+/-- Under rewriting, inside-out insertion from bare morphemes replaces each morpheme it realizes
+by its exponent, so an inner morpheme presents its exponent's features alone. -/
 theorem visible_insertUpTo_rewriting (hw : ∀ s ∈ w.heads, s.exp = none) (n : ℕ) {s : Morpheme F E}
     (hs : s ∈ (w.insertUpTo isNull vocab loc expFeatures .rewriting n).heads) {e : E}
     (he : s.exp = some e) : visible expFeatures s = expFeatures e := by

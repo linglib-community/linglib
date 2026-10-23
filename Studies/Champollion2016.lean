@@ -269,6 +269,8 @@ theorem predicateDistributivity_mem_existentialRaising_minimization_iff {N N' : 
 
 /-! ### Choice Raising -/
 
+/-- Minimization of the meet of two principal filters keeps only their join. This is how
+Intersection and Minimization form a collective individual. -/
 theorem minimization_and_Ici (a b : Set E) :
     minimization (and_.denote {Ici a, Ici b}) = {a ∪ b} := by
   rw [and_denote, sInf_pair]

@@ -140,6 +140,8 @@ theorem isConsistentSelection_sInter :
   rintro A 𝓚 - - ⟨K, hK⟩
   exact ⟨K, hK, sInter_subset_of_mem hK⟩
 
+/-- On a finite antichain, the intersection is the greatest set a natural consistent rule
+selects. -/
 theorem isGreatest_sInter {A : Type u} {𝓚 : Set (Set A)} (h𝓚 : IsAntichain (· ⊆ ·) 𝓚)
     (hfin : 𝓚.Finite) :
     IsGreatest ((fun F ↦ F A 𝓚) '' {F | IsNaturalSelection F ∧ IsConsistentSelection F})
@@ -148,6 +150,8 @@ theorem isGreatest_sInter {A : Type u} {𝓚 : Set (Set A)} (h𝓚 : IsAntichain
     by rintro _ ⟨F, ⟨hnat, hcons⟩, rfl⟩; exact hnat.subset_sInter hcons h𝓚 hfin⟩
 
 open scoped Classical in
+/-- Choosing a member of the family is consistent but not natural, since on two disjoint options
+it selects one of them, outside their intersection. -/
 theorem not_isNaturalSelection_choose :
     ¬ IsNaturalSelection.{0} fun _ 𝓚 ↦ if h : 𝓚.Nonempty then h.some else ∅ := by
   intro hnat

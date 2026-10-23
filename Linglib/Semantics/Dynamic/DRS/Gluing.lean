@@ -186,6 +186,7 @@ omit hx hc
 
 /-! ### The sheaf condition -/
 
+/-- Basic DRSs are separated for a presieve iff it is jointly surjective on literals. -/
 theorem isSeparatedFor_iff : R.IsSeparatedFor (presheaf L V) ↔ R ∈ literalPrecoverage L V c := by
   rw [mem_literalPrecoverage_iff]
   refine ⟨fun h l => by_contra fun hl => ?_, fun h x t₁ t₂ h₁ h₂ => ?_⟩
@@ -206,11 +207,13 @@ theorem isSeparatedFor_iff : R.IsSeparatedFor (presheaf L V) ↔ R ∈ literalPr
     change m ∈ ((presheaf L V).map f.op t₁).lits ↔ m ∈ ((presheaf L V).map f.op t₂).lits
     rw [h₁ f hf, h₂ f hf]
 
+/-- Basic DRSs are a sheaf for a presieve iff it is jointly surjective on literals. -/
 theorem isSheafFor_iff (hc : ∀ r ∈ c.vocab, Nonempty (Fin r.1 ↪ V)) :
     R.IsSheafFor (presheaf L V) ↔ R ∈ literalPrecoverage L V c := by
   rw [← isSeparatedFor_iff, ← isSeparatedFor_and_exists_isAmalgamation_iff_isSheafFor]
   exact and_iff_left fun x hx => ⟨_, isAmalgamation_amalgamate hx hc⟩
 
+/-- Basic DRSs are a sheaf for the topology of covers jointly surjective on literals. -/
 theorem isSheaf_literalCoverage [Infinite V] :
     Presieve.IsSheaf (literalCoverage L V).toGrothendieck (presheaf L V) :=
   (isSheaf_coverage _ _).2 fun _ hR => (isSheafFor_iff fun _ _ =>
@@ -284,6 +287,8 @@ theorem IsGluing.pushforward_subset (hs : C.IsGluing (presheaf L V) x s) :
   rw [← hs i] at hm
   exact Theory.mem_restrict.1 hm
 
+/-- A family glues iff the renamings of its local literals form a gluing, which is then the
+least one. -/
 theorem exists_isGluing_iff : (∃ s, C.IsGluing (presheaf L V) x s) ↔
     ∃ h : Literal.Consistent (C.pushforward x), C.IsGluing (presheaf L V) x ⟨_, h⟩ := by
   refine ⟨fun ⟨s, hs⟩ => ⟨s.consistent.mono hs.pushforward_subset, fun i => ?_⟩,
@@ -338,6 +343,8 @@ theorem referents_toDRS_glue : (C.glue hdisj hinj x).toDRS.referents =
     rw [show (C.map i).extend y = _ from Context.Hom.extend_coe (C.map i) ⟨y, hy⟩]
     exact ((C.map i).map ⟨y, hy⟩).2
 
+/-- The conditions of the glued DRS are those of the renamed local DRSs, as a multiset, so the
+gluing is the merge of the local DRSs after unification of referents. -/
 theorem coe_conditions_toDRS_glue :
     ((C.glue hdisj hinj x).toDRS.conditions : Multiset (Condition L V)) =
       ∑ i, (((x i).toDRS.map (C.map i).extend).conditions : Multiset (Condition L V)) := by

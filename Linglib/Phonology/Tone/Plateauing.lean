@@ -210,6 +210,8 @@ variable {w : List TBU} {i j k : ℕ}
 theorem utp.surfaces_def : utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈ w.drop i :=
   Iff.rfl
 
+/-- What surfaces is the representation. `utp.Surfaces w i` is the H-linkedness of timing slot
+`i` in the output representation `plateauAR w`, the OCP-merged, hull-closed realization. -/
 theorem utp.surfaces_iff_surfacesWith_plateauAR :
     utp.Surfaces w i ↔ (plateauAR w).SurfacesWith TRN.H i :=
   (surfacesWith_plateauAR w i).symm
@@ -274,6 +276,7 @@ def plateau (w : List TBU) : Finset ℕ := utp.support w
     have ⟨i, hi⟩ := List.mem_iff_getElem?.mp hw
     ⟨i, mem_plateau.mpr (utp.surfaces_of_hi hi)⟩⟩
 
+/-- `utp.map` writes the indicator word of its plateau. -/
 theorem utp.map_eq_plateau_indicator :
     utp.map w
       = (List.range w.length).map fun i => if i ∈ plateau w then TBU.H else TBU.O :=
@@ -288,6 +291,7 @@ theorem plateau_eq_Icc_of {lo hi : ℕ} (hlo : w[lo]? = some .H) (hhi : w[hi]? =
     have hb₁ := hb j₁ h₁; have hb₂ := hb j₂ h₂; omega
   · exact fun hj => ⟨⟨lo, hj.1, hlo⟩, hi, hj.2, hhi⟩
 
+/-- The plateau is an interval, from the first trigger to the last. -/
 theorem plateau_eq_Icc (hne : (plateau w).Nonempty) :
     plateau w = Finset.Icc ((plateau w).min' hne) ((plateau w).max' hne) := by
   ext j
@@ -303,6 +307,7 @@ Plateauing is a closure operator in the pointwise H-order: extensive
 engine is convexity: the output's Hs are the plateau, an interval, so plateauing the
 output surfaces nothing new (`utp.surfaces_map`). -/
 
+/-- Every H survives plateauing. -/
 theorem utp.map_getElem?_H_of_getElem?_H (h : w[i]? = some .H) :
     (utp.map w)[i]? = some .H :=
   utp.map_getElem?_hi_of_getElem?_hi h
@@ -313,6 +318,7 @@ theorem utp.surfaces_mono {w' : List TBU}
   obtain ⟨⟨l, hl, hlH⟩, r, hr, hrH⟩ := utp.surfaces_iff.mp h
   exact utp.surfaces_iff.mpr ⟨⟨l, hl, hw l hlH⟩, r, hr, hw r hrH⟩
 
+/-- Plateauing is monotone, pointwise more Hs in giving pointwise more Hs out. -/
 theorem utp.map_mono {w' : List TBU}
     (hw : ∀ j : ℕ, w[j]? = some TBU.H → w'[j]? = some TBU.H) (j : ℕ)
     (h : (utp.map w)[j]? = some TBU.H) : (utp.map w')[j]? = some TBU.H :=
@@ -339,6 +345,7 @@ theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
   ext j
   rw [mem_plateau, mem_plateau, utp.surfaces_map]
 
+/-- Plateauing is idempotent, a plateau being already closed. -/
 @[simp] theorem utp.map_map : utp.map (utp.map w) = utp.map w := by
   rw [utp.map_eq_plateau_indicator (w := utp.map w), plateau_map, Surfacing.map_length,
     ← utp.map_eq_plateau_indicator]
@@ -398,6 +405,7 @@ theorem HOH_sublist_iff : [TBU.H, .O, .H].Sublist w ↔ ∃ i, utp.Surfaces w i 
     · rw [List.getElem?_drop, show a + 1 + (i - (a + 1)) = i by omega]
       exact hi
 
+/-- The outputs of plateauing are the words without an `H O H` subsequence. -/
 theorem utp.mem_range_map_iff : w ∈ Set.range utp.map ↔ w ∉ Language.shuffleIdeal [.H, .O, .H] := by
   rw [utp.range_map, Function.mem_fixedPoints, Function.IsFixedPt, utp.map_eq_self_iff,
     Language.mem_shuffleIdeal, HOH_sublist_iff]
@@ -412,11 +420,13 @@ theorem utp.mem_range_map_iff : w ∈ Set.range utp.map ↔ w ∉ Language.shuff
 
 The rule schemata as theorems about `utp` rather than clauses of its definition. -/
 
+/-- A toneless word is unchanged. -/
 theorem utp.map_toneless (n : ℕ) : utp.map (List.replicate n .O) = List.replicate n .O := by
   have h : plateau (List.replicate n TBU.O) = ∅ :=
     Finset.not_nonempty_iff_eq_empty.mp (by simp)
   simp [utp.map_eq_plateau_indicator, h, List.map_const']
 
+/-- A word with a single H is unchanged — one H cannot trigger a plateau. -/
 theorem utp.map_single (m n : ℕ) :
     utp.map (List.replicate m .O ++ .H :: List.replicate n .O)
       = List.replicate m .O ++ .H :: List.replicate n .O := by
@@ -432,6 +442,8 @@ theorem utp.map_single (m n : ℕ) :
     List.getElem_replicate, List.length_replicate, Finset.mem_Icc]
   split_ifs <;> first | rfl | omega
 
+/-- Everything between the outermost Hs surfaces H; the medial material `w` is
+arbitrary. -/
 theorem utp.map_plateau (m p : ℕ) (w : List TBU) :
     utp.map (List.replicate m .O ++ .H :: (w ++ .H :: List.replicate p .O))
       = List.replicate m .O ++ (List.replicate (w.length + 2) .H ++ List.replicate p .O) := by
@@ -459,6 +471,8 @@ example : utp.map [.H, .O, .O, .H] = [.H, .H, .H, .H] := by decide
 Whether the target surfaces is controlled by unboundedly distant flanks: instantiate
 the flank-witness template with `2d+2` toneless TBUs between the flanks. -/
 
+/-- UTP requires both sides. Its trigger is the two-sided window conjunction, so deleting either
+flanking H reverts the plateau target. -/
 theorem utp.requiresBothSides : RequiresBothSides utp.map :=
   utp.requiresBothSides_of_surfaces_iff fun _ _ => utp.surfaces_def
 

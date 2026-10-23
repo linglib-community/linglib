@@ -297,6 +297,7 @@ def LoadsMostOn (e : Experiment) (s : Scale) (f : Factor) : Prop :=
 instance (e : Experiment) (s : Scale) (f : Factor) : Decidable (LoadsMostOn e s f) :=
   inferInstanceAs (Decidable (∀ _, _))
 
+/-- In Experiment 1 every scale loads most on the dimension it was included to measure. -/
 theorem loadsMostOn_exp1 (s : Scale) : LoadsMostOn .exp1 s (scales s).dimension := by
   revert s; decide +kernel
 

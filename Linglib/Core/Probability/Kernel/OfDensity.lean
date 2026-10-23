@@ -58,6 +58,7 @@ instance (μ : Measure β) (f : α → β → ℝ≥0∞) (a : α) :
 instance (μ : Measure β) (f : α → β → ℝ≥0∞) : IsFiniteKernel (ofDensity μ f) :=
   ⟨⟨1, ENNReal.one_lt_top, fun a ↦ by rw [ofDensity_apply]; exact prob_le_one⟩⟩
 
+/-- At the indicator of a measurable set the row is the base measure conditioned on the set. -/
 theorem ofDensity_indicator_one_apply (μ : Measure β) (s : α → Set β) (a : α)
     (hs : MeasurableSet (s a)) : ofDensity μ (fun a ↦ (s a).indicator 1) a = μ[|s a] := by
   rw [ofDensity_apply, withDensity_indicator_one hs]
@@ -73,6 +74,8 @@ theorem ofDensity_const_mul (μ : Measure β) (f : α → β → ℝ≥0∞) {c 
     (hc : c ≠ ∞) : ofDensity μ (fun a b ↦ c * f a b) = ofDensity μ f :=
   Kernel.ext fun _ ↦ ofDensity_apply_eq_of_eq_mul μ hc0 hc fun _ ↦ rfl
 
+/-- Dividing each row's density by its supremum, which puts the density in the unit interval,
+leaves the kernel unchanged. -/
 theorem ofDensity_div_iSup (μ : Measure β) (f : α → β → ℝ≥0∞) (hf : ∀ a, ⨆ b, f a b ≠ ∞) :
     ofDensity μ (fun a b ↦ f a b / ⨆ b', f a b') = ofDensity μ f := by
   ext a : 1
@@ -161,6 +164,7 @@ theorem ofDensity_uniformOn_ofReal_apply_singleton [Fintype β] [MeasurableSingl
   rw [ofDensity_uniformOn_apply_singleton, ← ENNReal.ofReal_sum_of_nonneg fun b' _ ↦ hf b',
     ← ENNReal.ofReal_div_of_pos hpos]
 
+/-- Against the counting measure the density kernel is the weight kernel. -/
 theorem ofDensity_count [Fintype β] [MeasurableSingletonClass β] (w : α → β → ℝ≥0∞) :
     ofDensity Measure.count w = ofWeights w := by
   ext a : 1
@@ -168,6 +172,8 @@ theorem ofDensity_count [Fintype β] [MeasurableSingletonClass β] (w : α → �
   rw [ofDensity_apply_singleton, ofWeights_apply_singleton]
   simp
 
+/-- Bayes' rule. With a kernel's likelihood of the observation as density against the prior, the
+row at an observation of positive marginal is the posterior. -/
 theorem ofDensity_apply_eq_posterior [Countable β] [MeasurableSingletonClass β]
     [StandardBorelSpace β] [Nonempty β] (κ : Kernel β α) [IsFiniteKernel κ] (μ : Measure β)
     [IsFiniteMeasure μ] {a : α} (ha : (κ ∘ₘ μ) {a} ≠ 0) :

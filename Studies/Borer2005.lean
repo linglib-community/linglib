@@ -181,6 +181,8 @@ variable {α : Type*} {P : α → Prop}
 /-- A finset of cells is a division of the `P`-stuff when every cell is carved from it. -/
 def IsDivision (P : α → Prop) (d : Finset α) : Prop := ∀ x ∈ d, P x
 
+/-- Divided stuff is still stuff: the sum of the cells of a cumulative root satisfies the root,
+apples plus apples being apples, the cumulativity bare plurals share with mass nouns. -/
 theorem sup'_mem [SemilatticeSup α] (hCum : CUM P) {d : Finset α} (hne : d.Nonempty)
     (hd : IsDivision P d) : P (d.sup' hne id) :=
   hCum.finsetSup'_mem hne hd
@@ -189,6 +191,8 @@ section Units
 
 variable (unit : α → Prop)
 
+/-- Plural marking presupposes no singulars: whenever the stuff has a noncanonical portion, some
+nonempty division contains no unit, the reticules behind *zero apples* and *0.5 apples*. -/
 theorem exists_division_without_units (h : ∃ x, P x ∧ ¬ unit x) :
     ∃ d : Finset α, IsDivision P d ∧ d.Nonempty ∧ ∀ x ∈ d, ¬ unit x :=
   let ⟨x, hP, hu⟩ := h
@@ -200,6 +204,9 @@ variable [DecidablePred unit]
 counter at ⟨e⟩# selects a reticule. -/
 def count (d : Finset α) : ℕ := (d.filter unit).card
 
+/-- Individuals emerge at ⟨e⟩#: a division with a positive count contains a canonical unit of
+the stuff, so *more than three circles* cannot be true without individual circles, though bare
+*circles* can. -/
 theorem exists_unit_of_count_pos {d : Finset α} (hd : IsDivision P d) (h : 0 < count unit d) :
     ∃ x, unit x ∧ P x :=
   let ⟨x, hx⟩ := Finset.card_pos.1 h

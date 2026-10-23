@@ -92,6 +92,8 @@ section RewriteFirst
 variable {p : Neighborhood Bundle → Prop} [DecidablePred p]
   {f : Neighborhood Bundle → SpelloutDomain Bundle}
 
+/-- A rewrite that never lengthens a neighborhood's string never lengthens the
+domain. -/
 theorem length_rewriteFirst_le (hf : ∀ n, (f n).length ≤ n.toList.length)
     (d : SpelloutDomain Bundle) : (rewriteFirst p f d).length ≤ d.length := by
   unfold rewriteFirst
@@ -99,6 +101,8 @@ theorem length_rewriteFirst_le (hf : ∀ n, (f n).length ≤ n.toList.length)
   | none => exact le_rfl
   | some n => simpa [toList_of_mem_along d (List.mem_of_find?_eq_some h)] using hf n
 
+/-- A rewrite that preserves the length of each neighborhood's string preserves
+the number of terminals. -/
 theorem length_rewriteFirst (hf : ∀ n, (f n).length = n.toList.length)
     (d : SpelloutDomain Bundle) : (rewriteFirst p f d).length = d.length := by
   unfold rewriteFirst
@@ -219,6 +223,8 @@ def pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     List (List F) :=
   (along (s.run d)).map s.insert
 
+/-- Exponent slots equal terminals after the modules, so the exponent count diverges from the
+syntactic terminal count only through the modules. -/
 @[simp] theorem length_pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     (s.pf d).length = (s.run d).length := by
   simp [pf]
@@ -248,6 +254,9 @@ def rewriteAt : Spellout Bundle F :=
 @[simp] theorem insert_rewriteAt (n : Neighborhood Bundle) :
     (s.rewriteAt r).insert n = s.insert { n with focus := r n } := rfl
 
+/-- The timing of a focus-level rule matters only to insertion that reads the context. Where
+insertion reads the focus alone, the rule yields the same exponents applied before insertion and
+at insertion. -/
 theorem pf_rewriteBefore_eq_pf_rewriteAt
     (hs : ∀ n n' : Neighborhood Bundle, n.focus = n'.focus → s.insert n = s.insert n')
     (d : SpelloutDomain Bundle) : (s.rewriteBefore r).pf d = (s.rewriteAt r).pf d := by

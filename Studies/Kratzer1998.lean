@@ -177,6 +177,8 @@ variable (T) in
 def AspectHead.IsAnterior (a : AspectHead) : Prop :=
   ∀ r s : NonemptyInterval T, a.rel r s → s.Precedes r
 
+/-- Only the perfect is anterior, since the imperfective and the perfective relate a time to
+itself. -/
 theorem AspectHead.isAnterior_iff [Nonempty T] (a : AspectHead) :
     a.IsAnterior T ↔ a = .perfect := by
   obtain ⟨t⟩ := ‹Nonempty T›
@@ -276,6 +278,8 @@ def DescribesPastOutOfTheBlue (f : Tense.Form) : Prop :=
   ∃ C a, v.SpellsOut f C a ∧
     (∀ t₀ : T, (tense (W := Unit) C 0).presup (outOfTheBlue t₀) ()) ∧ a.IsAnterior T
 
+/-- A form can describe a past event out of the blue iff it spells out, with the perfect, a
+tense that admits coincidence with the utterance time. -/
 theorem describesPastOutOfTheBlue_iff (T : Type*) [LinearOrder T] [Nonempty T] (f : Tense.Form) :
     v.DescribesPastOutOfTheBlue T f ↔ ∃ x ∈ v.table, x.1 = f ∧ .eq ∈ x.2.1 ∧ x.2.2 = .perfect := by
   simp only [DescribesPastOutOfTheBlue, tense_outOfTheBlue_iff, forall_const,

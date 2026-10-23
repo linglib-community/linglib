@@ -133,6 +133,10 @@ theorem valence_highest_when_derivOrInfl :
     ∀ c : BybeeCategory, derivOrInflCount50 c ≤ derivOrInflCount50 .valence := by
   decide
 
+/-- The generality prediction: restricted to *inflection*, valence is the least
+frequent category (6%, down from 90%) — generality "predicts fewer inflections
+among the most highly relevant categories", because highly relevant morphology
+is rarely obligatory across all stems. -/
 theorem valence_lowest_when_inflectional :
     ∀ c : BybeeCategory, inflectionalCount50 .valence ≤ inflectionalCount50 c := by
   decide
@@ -197,6 +201,8 @@ def orderPairs : List OrderPair := [
   ⟨.mood, .personAgr, 13, 5, 26⟩
 ]
 
+/-- Aspect vs. tense and aspect vs. mood are categorical: zero counterexamples
+in the whole sample, the strongest confirmations Bybee reports. -/
 theorem aspect_categorical_against_tense_and_mood :
     ∀ p ∈ orderPairs,
       p.closer = .aspect → (p.further = .tense ∨ p.further = .mood) →
@@ -342,6 +348,9 @@ def strongRegularized : List VerbFrequency := [
   ⟨"mow", 1⟩, ⟨"sow", 6⟩, ⟨"flow", 40⟩, ⟨"row", 5⟩
 ]
 
+/-- The mean token frequency of the still-Strong verbs strictly exceeds that of
+the regularized ones — irregularity survives where lexical strength is high.
+Stated as the cross-multiplied sum comparison to stay in `Nat`. -/
 theorem strong_verbs_higher_frequency_than_regularized :
     (strongRegularized.map (·.tokenFreq)).sum * strongStillStrong.length
     < (strongStillStrong.map (·.tokenFreq)).sum * strongRegularized.length := by

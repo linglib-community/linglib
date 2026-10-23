@@ -97,6 +97,8 @@ theorem IsExtendedProjection.fValue_le_fLevel (hs : s.IsExtendedProjection) (hc 
     c.fValue ≤ s.size.fLevel :=
   fValue_le_getLastD hs.pairwise hc
 
+/-- On extended projections, the extension order refines the size order: a spine whose heads
+another projects is no larger. -/
 theorem size_le_size (h : s ≤ t) (ht : t.IsExtendedProjection) : s.size ≤ t.size := by
   rcases List.eq_nil_or_concat s.heads with hs | ⟨l, c, hs⟩
   · show (s.heads.getLastD .V).fValue ≤ t.size.fLevel
@@ -126,6 +128,7 @@ def finP : ComplementSize := ⟨.Fin⟩
 /-- The CP-sized complement of a finite clause, the size of the CP spine. -/
 def cP : ComplementSize := ClauseSpine.cP.size
 
+/-- The standard sizes ascend as their spines do. -/
 theorem vP_le_tP : vP ≤ tP := ClauseSpine.size_le_size ClauseSpine.vP_le_tP (by decide)
 
 theorem tP_le_cP : tP ≤ cP := ClauseSpine.size_le_size ClauseSpine.tP_le_cP (by decide)

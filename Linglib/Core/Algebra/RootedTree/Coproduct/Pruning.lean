@@ -178,6 +178,7 @@ theorem comulTreeN_node_cocycle (a : α) (F : Forest (UnorderedTree α)) :
          (of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)
   rw [LinearMap.lTensor_tmul, bPlusLin_of']
 
+/-- The cocycle, lifted to the algebra-hom level on tree basis elements. -/
 theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (UnorderedTree α)) :
     comulAlgHomN (R := R) (bPlusLin (R := R) a (of' F)) =
       bPlusLin (R := R) a (of' F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
@@ -512,6 +513,7 @@ theorem comulAlgHomN_coassoc_algHom :
       (comulAlgHomN (R := R) (α := α))).comp comulAlgHomN :=
   coassocLHS_eq_coassocRHS
 
+/-- Coassociativity of Δ^ρ (LinearMap form). -/
 theorem comulRhoN_coassoc :
     (TensorProduct.assoc R
         (ConnesKreimer R (UnorderedTree α))

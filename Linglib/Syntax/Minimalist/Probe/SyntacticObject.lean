@@ -49,10 +49,14 @@ namespace LinearizedSyntacticObject
 variable {t : LinearizedSyntacticObject} {p : Probe t.val.Positions} {s : Set t.val.Positions}
   {q g : t.val.Positions}
 
+/-- A satisfier that asymmetrically c-commands a position blocks the goal there, whatever else the
+probe's domain holds. -/
 theorem not_finds_of_cCommands (hq : q ∈ s) (hsq : p.sat q) (hqg : t.val.CCommands q g)
     (hgq : ¬ t.val.CCommands g q) : ¬ p.Finds s (t.above t.branching) g := fun h ↦
   h.inspects.2 hq hsq (above_branching_lt_of_cCommands hqg hgq)
 
+/-- Among satisfiers none of which dominates another, a probe finds those that no satisfier
+asymmetrically c-commands: mutually c-commanding candidates are equidistant. -/
 theorem finds_above_branching_iff (hs : IsAntichain (· ≤ ·) {q | q ∈ s ∧ p.sat q}) :
     p.Finds s (t.above t.branching) g ↔ (g ∈ s ∧ p.sat g) ∧
       ∀ ⦃q⦄, q ∈ s → p.sat q → ¬ (t.val.CCommands q g ∧ ¬ t.val.CCommands g q) := by

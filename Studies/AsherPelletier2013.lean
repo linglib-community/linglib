@@ -68,15 +68,20 @@ variable (n : Normality W W)
 worlds where it is a normal `φ`. -/
 def generic (φ ψ : E → Set W) (w : W) : Prop := ∀ a, w ∈ n.gen (φ a) (ψ a)
 
+/-- Contrary generics select disjoint normal worlds for each individual: if birds fly and
+penguins don't, the normal Opus-penguin worlds are not normal Opus-bird worlds. -/
 theorem generic_disjoint {φ φ' ψ : E → Set W} {w : W} (h : generic n φ ψ w)
     (h' : generic n φ' (fun a ↦ (ψ a)ᶜ) w) (a : E) :
     Disjoint (n.normal w (φ a)) (n.normal w (φ' a)) :=
   n.disjoint_normal_of_disjoint (h a) (h' a) disjoint_compl_right
 
+/-- A generic with a conjoined scope entails the generic with either conjunct. -/
 theorem generic_inter {φ ψ χ : E → Set W} {w : W} (h : generic n φ (fun a ↦ ψ a ∩ χ a) w) :
     generic n φ ψ w :=
   fun a _ hv ↦ (h a hv).1
 
+/-- With logical truths selecting the world of evaluation itself, a tautologous restrictor
+makes the conditional its consequent at that world. -/
 theorem gen_univ {w : W} (h : n.normal w Set.univ = {w}) (q : Set W) :
     w ∈ n.gen Set.univ q ↔ w ∈ q := by
   simp [h]
@@ -160,6 +165,8 @@ variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasu
     any `d` is that of `b` given `a` and `d`. -/
 def Conditionalizes (a b c : Set Ω) : Prop := ∀ d, MeasurableSet d → μ[c | d] = μ[b | a ∩ d]
 
+/-- Under conditionalization the probability of the scope given the restrictor is the
+    probability of the scope, whenever the restrictor is compatible with the scope. -/
 theorem cond_eq_of_conditionalizes {a b c : Set Ω} (ha : MeasurableSet a)
     (hb : MeasurableSet b) (h : Conditionalizes μ a b c) (h₁ : μ (a ∩ b) ≠ 0) :
     μ[b | a] = μ b := by

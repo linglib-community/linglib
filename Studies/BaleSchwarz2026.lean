@@ -161,6 +161,7 @@ def dimensions? (e : Datum) : Option (QuantityDimension × QuantityDimension) :=
   | (u, none) => pure (p, u.dimension)
   | (u, some r) => pure (p, if ← composed? e then u.dimension else u.dimension / r.dimension)
 
+/-- The measure phrase's dimension matches the predicate's exactly in the felicitous rows. -/
 theorem rows_dimension : ∀ e ∈ Examples.all, ∀ p ∈ dimensions? e,
     (p.1 = p.2 ↔ e.judgment = .acceptable) := by
   decide +kernel

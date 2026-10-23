@@ -73,6 +73,8 @@ noncomputable def regularizedObjective (con : ConstraintSet (I × O) (Fin n)) (w
     (data : List (I × O)) (σ : ℝ) : ℝ :=
   logPseudoLikelihood con w data - ∑ j, w j ^ 2 / (2 * σ ^ 2)
 
+/-- Replicating the corpus r times while dividing the prior's variance by r multiplies the
+objective by r: the weights learned depend on nσ² alone. -/
 theorem regularizedObjective_replicate (con : ConstraintSet (I × O) (Fin n)) (w : Fin n → ℝ)
     (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
     (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
@@ -179,6 +181,10 @@ theorem logPseudoLikelihood_eq (h : data ≠ []) (w : Fin n → ℝ) :
   rw [logPseudoLikelihood, ← Fin.sum_univ_fun_getElem]
   rfl
 
+/-- Maximum entropy models "have as high an entropy as possible under the constraint that they
+match the training data" (section 2). Weights maximizing the log pseudo-likelihood give the
+grammar of greatest conditional entropy among the conditional models whose violations, averaged
+over the training inputs, are the training data's. -/
 theorem isGreatest_condEntropy_of_isMaxOn_logPseudoLikelihood (h : data ≠ []) {w : Fin n → ℝ}
     (hw : IsMaxOn (fun w ↦ logPseudoLikelihood con w data) Set.univ w) :
     IsGreatest ((fun q : Kernel I O ↦ H[Prod.snd | Prod.fst ; (empirical data).fst ⊗ₘ q]) ''
@@ -202,6 +208,8 @@ end MaximumEntropy
 def pairConstraintSet (win lose : Fin n → ℕ) : ConstraintSet (Fin 2) (Fin n) :=
   fun j c ↦ if c = 0 then win j else lose j
 
+/-- A two-candidate model sees the violations only through their difference, the winner's
+probability being the sigmoid of the weighted difference vector. -/
 theorem maxEnt_pairConstraintSet_real_zero (w : Fin n → ℝ) (win lose : Fin n → ℕ) :
     (maxEnt (pairConstraintSet win lose).violations w).real {0} =
       sigmoid (∑ j, w j * ((lose j : ℝ) - win j)) := by
@@ -236,6 +244,9 @@ noncomputable def wolofWeights : Fin 5 → ℝ
   | 3 => 353 / 100
   | 4 => 41 / 100
 
+/-- The learned weights are exponentially separated, each exceeding the sum of all lower ones, the
+spacing under which Harmonic Grammar reproduces the strict domination of the ranking the Gradual
+Learning Algorithm finds ([johnson-2002], `Pi.strictMonoOn_sum_mul`). -/
 theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := fun k ↦ by
   rw [← Finset.filter_lt_eq_Ioi]
   fin_cases k <;>

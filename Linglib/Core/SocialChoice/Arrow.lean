@@ -260,6 +260,8 @@ theorem exists_decisive_ssubset (hO : Invariant ordinal a) (hW : WeakOrderValued
 
 variable [Fintype ι]
 
+/-- Arrow's theorem says that with three or more alternatives a rule that is ordinally invariant,
+outputs weak orderings, respects weak Pareto and is independent has a dictator. -/
 theorem exists_isDictator (hO : Invariant ordinal a) (hW : WeakOrderValued a)
     (hP : WeakPareto a) (hI : Independent a) (h₃ : 3 ≤ Fintype.card α) :
     ∃ i, IsDictator a i := by
@@ -283,6 +285,7 @@ theorem exists_isDictator (hO : Invariant ordinal a) (hW : WeakOrderValued a)
   obtain ⟨i, rfl⟩ := Finset.card_eq_one.1 hcard
   exact ⟨i, fun v p q h ↦ hG.2 v p q fun j hj ↦ (Finset.mem_singleton.1 hj) ▸ h⟩
 
+/-- Arrow's theorem is an impossibility, since no rule meets all of Arrow's conditions. -/
 theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) :
     ¬ (Invariant ordinal a ∧ WeakOrderValued a ∧ WeakPareto a ∧ Independent a ∧
       NonDictatorial a) :=

@@ -43,6 +43,7 @@ variable {U V : Type*} {α : V → Type*} {M : CausalModel U V α} [∀ v, Nonem
 
 section Locality
 
+/-- Interventions that agree on a variable and all its ancestors give it the same value. -/
 theorem solve_congr {I J : ∀ v, Flat (α v)} {v : V}
     (h : ∀ w, ReflTransGen M.graph.Adj w v → I w = J w) (u : U) :
     M.solve I u v = M.solve J u v := by
@@ -59,6 +60,7 @@ variable [DecidableEq V]
     M.solve (Function.update I c ↑x) u c = x :=
   solve_of_eq_coe (Function.update_self ..) u
 
+/-- Intervening on `c` leaves every variable that `c` is not an ancestor of unchanged. -/
 theorem solve_update_of_not_reflTransGen {c v : V} (h : ¬ ReflTransGen M.graph.Adj c v)
     (I : ∀ v, Flat (α v)) (x : Flat (α c)) (u : U) :
     M.solve (Function.update I c x) u v = M.solve I u v :=
@@ -85,6 +87,7 @@ variable {M}
 
 theorem contexts_anti : Antitone M.contexts := fun _ _ h _ hu ↦ h.trans hu
 
+/-- In a context where the observation holds, imposing it as an intervention changes nothing. -/
 theorem solve_eq_solve_bot_of_mem_contexts {s : ∀ v, Flat (α v)} {u : U} (hu : u ∈ M.contexts s) :
     M.solve s u = M.solve ⊥ u := by
   refine (eq_solve_of_isFixedPt (funext fun v ↦ ?_)).symm

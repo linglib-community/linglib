@@ -161,6 +161,7 @@ noncomputable def afterP (A B : Set (W × T)) : W → SignType :=
   {w | ∃ e, IsLeast {t | (w, t) ∈ B} e}.indicator
     fun w ↦ SignType.ofProp (uniform (· > ·) {t | (w, t) ∈ A} {t | (w, t) ∈ B})
 
+/-- The uniform *before* is Strawson downward entailing in its temporal clause. -/
 theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
   intro _ _ hB w hq hp
   simp only [beforeP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
@@ -170,6 +171,7 @@ theorem isStrawsonDE_before (A : Set (W × T)) : IsStrawsonDE (beforeP A) := by
   obtain ⟨-, t, ht, _, he', hlt⟩ := hq
   exact ⟨⟨e, he⟩, t, ht, e, he, hlt.trans_le (he'.2 (hB he.1))⟩
 
+/-- The uniform *after* is Strawson upward entailing in its temporal clause. -/
 theorem isStrawsonUE_after (A : Set (W × T)) : IsStrawsonUE (afterP A) := by
   intro _ _ hB w hp hq
   simp only [afterP, Trivalent.indicator_apply_eq_one_iff, ne_eq, Set.indicator_apply_eq_zero,
@@ -412,6 +414,8 @@ def alternatives : Alternatives frame finishes where
 /-- The context in which (40) is uttered, one world of each kind. -/
 def context : Set World := {.finish, .early, .idle}
 
+/-- Updating the context with *Mozart died before he finished the Requiem* keeps exactly the
+`early` world. -/
 theorem mozart_update : context ∩ {w | before dies finishes alt w} = {.early} := by
   ext w
   simp only [context, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff,

@@ -111,11 +111,15 @@ theorem _root_.Subregular.TierStrictlyLocalGrammar.isTierStrictlyLocal_language 
 
 /-! ## Inclusions -/
 
+/-- **SL_k ⊆ TSL_k.** Over the universal tier projection is the identity, so the TSL grammar's
+`language` reduces to the underlying SL grammar's `language`. -/
 theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
     (h : L.IsStrictlyLocal k) : IsTierStrictlyLocal k L := by
   obtain ⟨G, rfl⟩ := h
   exact ⟨{ tier := fun _ ↦ True, permitted := G }, by ext w; simp⟩
 
+/-- A tier-based strictly local language in which every symbol is visible somewhere, deleting it
+from some string changing membership, is strictly local, since its tier is the whole alphabet. -/
 theorem IsTierStrictlyLocal.isStrictlyLocal {k : ℕ} {L : Language α}
     (h : IsTierStrictlyLocal k L) (hvis : ∀ a, ∃ u v, ¬ (u ++ a :: v ∈ L ↔ u ++ v ∈ L)) :
     L.IsStrictlyLocal k := by
@@ -163,6 +167,9 @@ theorem IsTierStrictlyLocal.exists_tier {k : ℕ} {L : Language α}
       (by simp; omega) (by simpa only [List.append_assoc] using h₁)
       (by simpa only [List.append_assoc] using h₂)
 
+/-- **Lambert's characterization of the tier-based strictly local languages.** For `2 ≤ k`, a
+language is tier-based strictly `k`-local exactly when some tier has freely insertable and
+deletable off-tier symbols and closes the language under preprojective suffix substitution. -/
 theorem isTierStrictlyLocal_iff_exists_tier {k : ℕ} {L : Language α} (hk : 2 ≤ k) :
     IsTierStrictlyLocal k L ↔
       ∃ (T : α → Prop) (_ : DecidablePred T),
@@ -202,6 +209,10 @@ theorem isTierStrictlyLocal_iff_exists_tier {k : ℕ} {L : Language α} (hk : 2 
 
 variable [Finite α]
 
+/-- **Tier-based strictly local languages are star-free** ([heinz-rawal-tanner-2011]). Over a
+finite alphabet, a TSL language is the preimage of an `SL_k` language under erasure of the
+off-tier symbols, and star-freeness survives that preimage (`IsStarFree.preimage_filter`), so
+`TSL_k ⊆ SF`. -/
 theorem IsTierStrictlyLocal.isStarFree {k : ℕ} {L : Language α} (h : IsTierStrictlyLocal k L) :
     L.IsStarFree := by
   obtain ⟨G, rfl⟩ := h

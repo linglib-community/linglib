@@ -138,6 +138,7 @@ variable {p}
 theorem of_mem_outerMatches {s t : RoseTree α} (h : s ∈ outerMatches p t) : p s := by
   simpa using (List.mem_filter.1 h).2
 
+/-- The first subtree in preorder satisfying `p` is an outermost one. -/
 theorem mem_outerMatches_of_find? {s t : RoseTree α}
     (h : t.subtrees.find? (fun u ↦ decide (p u)) = some s) : s ∈ outerMatches p t := by
   induction t with
@@ -177,6 +178,7 @@ private theorem leaves_replaceIf_list (cs : List (RoseTree α))
     rw [add_add_add_comm, ih x List.mem_cons_self,
       ihxs fun y hy ↦ ih y (List.mem_cons_of_mem _ hy), add_add_add_comm]
 
+/-- Substitution trades the leaves of the replaced subtrees for copies of the replacement's. -/
 theorem leaves_replaceIf (t : RoseTree α) :
     (replaceIf p r t).leaves + ((outerMatches p t).map leaves).sum =
       t.leaves + (outerMatches p t).length • r.leaves := by
@@ -190,6 +192,8 @@ theorem leaves_replaceIf (t : RoseTree α) :
       · rw [List.map_cons, leaves_node_cons, leaves_node_cons, ← List.map_cons, List.map_map]
         exact leaves_replaceIf_list p r _ ih
 
+/-- When the outermost matches all have the same leaves under `g`, the replacement has none, and
+no `g`-value occurs twice among the leaves of `t`, replacing trades the leaves of one match. -/
 theorem filterMap_leaves_replaceIf_add {β : Type*} [DecidableEq β] {g : α → Option β}
     {L : Multiset β} {s t : RoseTree α} (hL : ∀ u, p u → u.leaves.filterMap g = L)
     (hr : r.leaves.filterMap g = 0) (ht : (t.leaves.filterMap g).Nodup)

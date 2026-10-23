@@ -151,6 +151,9 @@ Subordinate Future in the restrictor and the present in the nuclear scope. -/
 abbrev relativeClause (delivers chance : Index W T → Prop) : Update (State W T) :=
   sfForm history delivers chance ⟦Tense.present⟧
 
+/-- The form of the paper's derivations is a test, true at a state iff every historical
+alternative `e` of the anchor after it where `A` holds has the main-clause situation in its
+world, timed by the cell relative to `e`, satisfying `C`. -/
 theorem sfForm_true_at :
     i ∈ (sfForm history A C cell).dom ↔
       ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → A e →
@@ -174,6 +177,9 @@ theorem relativeClause_true_at (delivers chance : Index W T → Prop) :
 
 variable {k l : State W T}
 
+/-- The Subordinate Future places the situation it introduces after the anchor, and the main
+clause is timed by its tense relative to that situation, not the anchor. The rows of the paper's
+table of main-clause tenses are the cells `future`, `present` and `past`. -/
 theorem temporal_shift (hk : i ~[subj history 1 (val 0) (fut (radical A))] k)
     (hl : k ~[ind (val 2) (val 1) (temporal cell (radical C))] l) :
     (l 0).time < (l 1).time ∧ compare (l 2).time (l 1).time ∈ cell := by
@@ -183,6 +189,8 @@ theorem temporal_shift (hk : i ~[subj history 1 (val 0) (fut (radical A))] k)
   obtain ⟨rfl, hc, -⟩ := temporal_radical_apply.mp hl
   exact ⟨by simpa using ht, hc⟩
 
+/-- In modal donkey anaphora the indicative retrieves the situation the subjunctive introduced,
+so the main clause is evaluated in a historical alternative of the anchor. -/
 theorem modal_donkey_anaphora (hk : i ~[subj history 1 (val 0) (fut (radical A))] k)
     (hl : k ~[ind (val 2) (val 1) (temporal cell (radical C))] l) :
     (l 2).world ∈ history (l 0) := by
@@ -202,11 +210,15 @@ satisfied in a historical alternative, not at the anchor, which is why the conti
 anyone will come at all* is felicitous. Under the indicative it must be satisfied in the
 anchor's world. -/
 
+/-- The Subordinate Future restrictor is true iff the anchor has a later historical alternative
+satisfying `A`. -/
 theorem subj_fut_true_at :
     i ∈ (subj history 1 (val 0) (fut (radical A))).dom ↔
       ∃ e ∈ historicalBase history (i 0), (i 0).time < e.time ∧ A e := by
   simp [subj_apply, temporal_radical_apply]
 
+/-- The indicative restrictor is true iff its situation lies in the anchor's world, after the
+anchor, and satisfies `A`. -/
 theorem ind_fut_true_at :
     i ∈ (ind (val 2) (val 0) (fut (radical A))).dom ↔
       (i 2).world = (i 0).world ∧ (i 0).time < (i 2).time ∧ A (i 2) := by

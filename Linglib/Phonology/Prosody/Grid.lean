@@ -104,6 +104,8 @@ def IsContinuous (m : Marks) : Prop :=
 
 instance (m : Marks) : Decidable (IsContinuous m) := by unfold IsContinuous; infer_instance
 
+/-- Read column by column, continuity says that a mark in a row sits over a mark in the row
+    below. -/
 theorem isContinuous_iff {m : Marks} : IsContinuous m ↔
     ∀ r (hr : r + 1 < m.length) i (hi : i < m[r + 1].length) (hi' : i < m[r].length),
       m[r + 1][i] = true → m[r][i] = true := by
@@ -237,6 +239,7 @@ def IsCulminative (g : Grid) : Prop := g.countP (· == peak g) = 1
 
 instance (g : Grid) : Decidable (IsCulminative g) := by unfold IsCulminative; infer_instance
 
+/-- A column strictly taller than every other is the unique peak. -/
 theorem isCulminative_of_forall_lt {i : ℕ} (hi : i < g.length)
     (h : ∀ j (hj : j < g.length), j ≠ i → g[j] < g[i]) : IsCulminative g := by
   have hpeak : peak g = g[i] :=
@@ -260,6 +263,7 @@ theorem isCulminative_of_forall_lt {i : ℕ} (hi : i < g.length)
   rw [List.drop_eq_getElem_cons hi, List.countP_cons_of_pos (by simp [hm])] at h3
   omega
 
+/-- Two columns at the peak of a culminative grid are the same column. -/
 theorem IsCulminative.eq_of_eq_peak (hc : IsCulminative g) {i j : ℕ} (hi : i < g.length)
     (hj : j < g.length) (hpi : g[i] = peak g) (hpj : g[j] = peak g) : i = j := by
   by_contra hne
@@ -356,6 +360,8 @@ instance : Decidable (IsHeaded t) := by unfold IsHeaded; infer_instance
 /-- The metrical grid of a tree, as stacked rows. -/
 def _root_.Prosody.Grid.ofTree : Marks := (columns t).rows
 
+/-- `Grid.ofTree` always satisfies the Continuous Column Constraint ([prince-1983];
+    [hayes-1995]), free from `Grid.rows_isContinuous`, since a projected grid is a histogram. -/
 theorem _root_.Prosody.Grid.ofTree_isContinuous : Marks.IsContinuous (Grid.ofTree t) :=
   rows_isContinuous _
 
@@ -414,6 +420,7 @@ theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) 
     simp [project_node, Constituent.level, Constituent.isHead, edge,
       promote, clear, toGrid, cell, hi]
 
+/-- A foot's grid peaks at `2` — its head σ carries the primary mark ([liberman-prince-1977]). -/
 theorem peak_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
     peak (columns (f.toProsTree w)) = 2 := by
   rw [columns_toProsTree, Foot.toGrid]
@@ -433,6 +440,8 @@ theorem _root_.Prosody.Grid.ofTree_not_injective : ¬ Function.Injective Grid.of
   Function.not_injective_iff.mpr
     ⟨.om [.ft false [.σ 1]], .om [.σ 1], by decide⟩
 
+/-- **Recursion can break culminativity.** A word recursively dominating another word, each
+    heading its own σ, has two equally tall columns and no unique peak. -/
 theorem not_culminative_under_recursion : ∃ t : Tree, IsWord t ∧ ¬ IsCulminative (columns t) :=
   ⟨.om [.ft true [.σ 1 true], .om [.ft true [.σ 1 true]]], by decide⟩
 
@@ -530,6 +539,8 @@ theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
     omega
   · exact absurd hh List.not_mem_nil
 
+/-- On a non-recursive headed word the head terminal is the grid peak ([liberman-prince-1977]), so
+    metrical primary stress is the tallest column. -/
 theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : noRec t = 0) :
     headHeights t = [peak (columns t)] := by
   obtain ⟨v, hv⟩ := List.length_eq_one_iff.mp hh
@@ -541,10 +552,13 @@ theorem headHeights_eq_peak {t : Tree} (hw : IsWord t) (hh : IsHeaded t) (hr : n
     · rw [hv, List.mem_singleton] at hmem; omega
   rw [hv, le_antisymm (headHeight_le_peak hvmem) hge]
 
+/-- Under recursion the peak can desert the head terminal, even when culminative ([ito-mester-2009]
+    for recursive ω; the peak≠head-terminal consequence is a property of this model). -/
 theorem head_below_peak_under_recursion :
     ∃ t, IsWord t ∧ IsHeaded t ∧ IsCulminative (columns t) ∧ headHeights t ≠ [peak (columns t)] :=
   ⟨.om [.σ 1 true, .om [.ft true [.σ 1 true]]], by decide⟩
 
+/-- Without Layeredness the peak can desert the head terminal too. -/
 theorem head_below_peak_unlayered :
     ∃ t, IsHeaded t ∧ noRec t = 0 ∧ ¬ IsWord t ∧ headHeights t ≠ [peak (columns t)] :=
   ⟨.om [.ph [.ft true [.σ 1 true]], .σ 1 true], by decide⟩

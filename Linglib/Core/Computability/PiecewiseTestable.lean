@@ -53,6 +53,8 @@ lemma subseqSet_eq_iff {k : ℕ} {w₁ w₂ : List α}
     s <+ w₁ ↔ s <+ w₂ := by
   simpa [hlen] using Set.ext_iff.mp heq s
 
+/-- Sharing `subseqSet k` is preserved by concatenation, since a subsequence of `u ++ v` splits
+as a subsequence of `u` followed by one of `v`. -/
 theorem subseqSet_append_congr {k : ℕ} {u₁ u₂ v₁ v₂ : List α}
     (hu : subseqSet k u₁ = subseqSet k u₂) (hv : subseqSet k v₁ = subseqSet k v₂) :
     subseqSet k (u₁ ++ v₁) = subseqSet k (u₂ ++ v₂) := by
@@ -78,6 +80,7 @@ theorem List.sublist_flatten_replicate_of_length_le {w : List α} :
     · exact h₁.append (sublist_flatten_replicate_of_length_le
         (by simp only [length_append, length_cons] at hs; omega) h₂)
 
+/-- `k + 1` copies of a word have the same subsequences of length at most `k` as `k` copies. -/
 theorem subseqSet_flatten_replicate_succ (k : ℕ) (w : List α) :
     subseqSet k (replicate (k + 1) w).flatten = subseqSet k (replicate k w).flatten :=
   Set.ext fun _ ↦ ⟨fun h ↦ ⟨sublist_flatten_replicate_of_length_le h.2 h.1, h.2⟩,
@@ -112,6 +115,7 @@ theorem IsPiecewiseTestable.iSup {ι : Sort*} {f : ι → Language α}
     (h : ∀ i, (f i).IsPiecewiseTestable k) : (⨆ i, f i).IsPiecewiseTestable k :=
   fun _ _ e ↦ propext <| by simp only [mem_iSup]; exact exists_congr fun i ↦ (h i e).to_iff
 
+/-- Over a finite alphabet piecewise testable languages are star-free. -/
 theorem IsPiecewiseTestable.isStarFree [Finite α] (h : L.IsPiecewiseTestable k) : L.IsStarFree :=
   .of_factorsThrough h (fun _ _ _ _ ↦ subseqSet_append_congr) (finite_range_subseqSet k)
     (subseqSet_flatten_replicate_succ k)

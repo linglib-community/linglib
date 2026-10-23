@@ -110,6 +110,7 @@ def Features.ofNumber : Number → Option Features
   | .plural => some pluralF
   | _ => none
 
+/-- Exactly three bundles pass the containment filter, the three basic number values. -/
 theorem card_wellFormed : Fintype.card {nf : Features // IsLowerSet (↑nf : Set Feature)} = 3 := by
   rw [Fintype.card_subtype_isLowerSet]; rfl
 
@@ -136,6 +137,7 @@ its minimal non-atoms, and the plural on the rest. -/
 def latticeToFeatures (P : D → Prop) [DecidablePred P] (x : D) : Features :=
   if atomsOf P x then singularF else if dualOf P x then dualF else pluralF
 
+/-- Classification never produces the ill-formed cell. -/
 theorem latticeToFeatures_wellFormed (P : D → Prop) [DecidablePred P] (x : D) :
     IsLowerSet (↑(latticeToFeatures P x) : Set Feature) := by
   unfold latticeToFeatures
@@ -147,6 +149,8 @@ being a minimal non-atom of the region `domain`
 abbrev dualPredOnLattice (domain P : D → Prop) (x : D) : Prop :=
   P x ∧ dualOf domain x
 
+/-- The dual predicate modifier is the restriction of `P` to the elements
+classified `dualF`. -/
 theorem dualPredOnLattice_iff (domain : D → Prop) [DecidablePred domain] (P : D → Prop)
     (x : D) : dualPredOnLattice domain P x ↔ P x ∧ latticeToFeatures domain x = dualF := by
   unfold latticeToFeatures

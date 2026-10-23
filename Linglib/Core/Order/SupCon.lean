@@ -104,6 +104,8 @@ theorem exists_iff_le [Finite α] (y : α) : ∃ a, ∀ z, z ≤ a ↔ c.r (z �
     exact c.iseqv.trans (c.iseqv.symm this) ha
   · exact Finset.le_sup' id (by simpa [s] using hz)
 
+/-- In a finite join-semilattice, two elements are congruent iff they lie in the same down-sets
+`Iic a` among those that are unions of classes. -/
 theorem r_iff_forall_le [Finite α] :
     c.r x y ↔ ∀ a, (∀ z w, c.r z w → (z ≤ a ↔ w ≤ a)) → (x ≤ a ↔ y ≤ a) := by
   refine ⟨fun h a ha ↦ ha x y h, fun h ↦ ?_⟩

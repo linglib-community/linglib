@@ -84,6 +84,10 @@ theorem Model.intensional_apply₂ (r : P 2) (Wp X Y : Set (Atom W E)) :
   rw [show as = ![as 0, as 1] from funext (Fin.forall_fin_two.2 ⟨rfl, rfl⟩)]
   exact H _ h.1 _ h.2
 
+/-- The value of a summation over a world variable whose body, on the assignments
+agreeing outside the summation variable and its locals, holds iff the variable is a
+world standing in the relation `B` to the value of the local `y`: the worlds so
+related to some plurality. -/
 theorem Term.realize_sigma_world_eq [DecidableEq V] (M : Model P (Atom W E))
     (g : V → Set (Atom W E)) {x y : V} (hxy : y ≠ x) {φ : Formula V L P}
     {B : Set (Atom W E) → W → Prop}
@@ -98,6 +102,8 @@ theorem Term.realize_sigma_world_eq [DecidableEq V] (M : Model P (Atom W E))
   exact ⟨fun ⟨_, ⟨_, w, rfl, hB⟩, ha⟩ => ⟨w, ⟨_, hB⟩, ha.symm⟩,
     fun ⟨w, ⟨Y, hB⟩, ha⟩ => ⟨_, ⟨Y, w, rfl, hB⟩, ha.symm⟩⟩
 
+/-- A summation over worlds whose body is distributive in a local `y`, true of the nonempty
+pluralities within `s w` at each world `w`: the worlds where `s w` is nonempty. -/
 theorem Term.realize_sigma_world_eq_of_distributive [DecidableEq V] (M : Model P (Atom W E))
     (g : V → Set (Atom W E)) {x y : V} (hxy : y ≠ x) {φ : Formula V L P}
     {s : W → Set (Atom W E)}

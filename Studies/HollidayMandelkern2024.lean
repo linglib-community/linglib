@@ -332,6 +332,8 @@ theorem stratified_level1 :
       ∃ z, z ∈ l.set ∧ z ∈ m.set := by
   decide
 
+/-- Across levels the criterion fails, since `x2` settles `p`, `x3` settles `◇¬p`, the two
+are compatible, and nothing settles both. -/
 theorem not_stratified_across_levels :
     x2 ∈ P ∧ x3 ∈ dnP ∧ frame.compat x2 x3 ∧ ∀ z : Poss, z ∉ P ∩ dnP := by
   decide

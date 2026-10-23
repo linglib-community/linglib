@@ -161,6 +161,8 @@ private theorem strength_toReal (hc : p c < 1) (ha : p a < 1) :
 
 /-! ### The four effects (§3.2, §5, Table 5) -/
 
+/-- When the causes are conjoined a less normal focal cause is more causal, provided `P(A) < 1`
+(abnormal inflation). -/
 theorem abnormal_inflation (h : p₂ c < p₁ c) (hc : p₁ c < 1) (ha : p₁ a = p₂ a) (ha' : p₁ a < 1) :
     strength p₁ .conjunctive < strength p₂ .conjunctive := by
   rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top, (strength_toReal hc ha').1,
@@ -169,6 +171,8 @@ theorem abnormal_inflation (h : p₂ c < p₁ c) (hc : p₁ c < 1) (ha : p₁ a 
   have : (p₁ a : ℝ) < 1 := ha'
   nlinarith
 
+/-- When the causes are conjoined a less normal alternative makes the focal cause less causal,
+provided `0 < P(C)` (supersession). -/
 theorem supersession (h : p₂ a < p₁ a) (ha : p₁ a < 1) (hc : p₁ c = p₂ c) (hc₀ : 0 < p₁ c)
     (hc₁ : p₁ c < 1) : strength p₂ .conjunctive < strength p₁ .conjunctive := by
   rw [← ENNReal.toReal_lt_toReal strength_ne_top strength_ne_top, (strength_toReal hc₁ ha).1,
@@ -177,6 +181,8 @@ theorem supersession (h : p₂ a < p₁ a) (ha : p₁ a < 1) (hc : p₁ c = p₂
   have : (0 : ℝ) < p₁ c := hc₀
   nlinarith
 
+/-- When the causes are disjoined the alternative's normality does not affect the focal cause (no
+supersession with disjunction). -/
 theorem no_supersession (hc : p₁ c = p₂ c) (hc₁ : p₁ c < 1) (ha₁ : p₁ a < 1) (ha₂ : p₂ a < 1) :
     strength p₁ .disjunctive = strength p₂ .disjunctive := by
   rw [(strength_collider hc₁ ha₁).2, (strength_collider (hc ▸ hc₁) ha₂).2, hc]

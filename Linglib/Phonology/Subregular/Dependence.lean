@@ -108,6 +108,8 @@ def UnboundedDependence (f : List α → List β) (s : Edge) : Prop :=
 @[simp] theorem not_unboundedDependence_iff {s : Edge} :
     ¬ UnboundedDependence f s ↔ BoundedDependence f s := not_not
 
+/-- Unbounded dependence, coordinate-wise, says that every margin fails at some output
+coordinate. -/
 theorem unboundedDependence_iff {s : Edge} :
     UnboundedDependence f s ↔
       ∀ N, ∃ i, ¬ FactorsThrough (fun u ↦ (f u)[i]?) (s.window i N) := by
@@ -239,6 +241,8 @@ theorem IsFarPerturbation.flankWord_right {i d : ℕ} (y' : α) (h : i + d ≤ n
     IsFarPerturbation (flankWord x fill y n) (flankWord x fill y' n) i d .right :=
   ⟨by simp, by simp only [Edge.window_right, take_flankWord h]⟩
 
+/-- A `d`-indexed family of flank words whose target's image flips under changing
+either flank alone has two-sided unbounded dependence. -/
 theorem TwoSidedUnboundedDependence.of_flanks {fill xOn yOn xOff yOff : α}
     {n t : ℕ → ℕ} (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
     (hL : ∀ d, (f (flankWord xOn fill yOn (n d)))[t d]?
@@ -253,6 +257,8 @@ theorem TwoSidedUnboundedDependence.of_flanks {fill xOn yOn xOff yOff : α}
   | .left => exact ⟨_, .flankWord_left xOff (ht d), hL d⟩
   | .right => exact ⟨_, .flankWord_right yOff (hn d), hR d⟩
 
+/-- A `d`-indexed family of flank words whose target sits `d`-far from both flanks,
+changed in the base and reverted by flipping either flank alone, requires both sides. -/
 theorem RequiresBothSides.of_flanks {f : List α → List α}
     {fill xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
     (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
@@ -424,12 +430,14 @@ section Machines
 
 variable {σ : Type*}
 
+/-- A length-preserving left-subsequential function depends boundedly on the right. -/
 theorem IsLeftSubsequential.boundedDependence_right
     (hlen : ∀ w, (f w).length = w.length) (hf : IsLeftSubsequential f) :
     BoundedDependence f .right :=
   have ⟨N, hN⟩ := hf.exists_getElem?_take_eq hlen
   ⟨N, fun i u v h ↦ (hN i u).symm.trans ((congrArg (fun w ↦ (f w)[i]?) h).trans (hN i v))⟩
 
+/-- A length-preserving right-subsequential function depends boundedly on the left. -/
 theorem IsRightSubsequential.boundedDependence_left
     (hlen : ∀ w, (f w).length = w.length) (hf : IsRightSubsequential f) :
     BoundedDependence f .left := by
@@ -439,22 +447,28 @@ theorem IsRightSubsequential.boundedDependence_left
   · simpa [Nat.sub_eq_zero_of_le hiN.le] using congrArg (·[i]?) (congrArg f h)
   · exact (hN i u hiN).symm.trans ((congrArg (fun w ↦ (f w)[N]?) h).trans (hN i v hiN))
 
+/-- A length-preserving function with two-sided unbounded dependence is subsequential in
+neither direction. -/
 theorem TwoSidedUnboundedDependence.not_isSubsequential (h : TwoSidedUnboundedDependence f)
     (hlen : ∀ w, (f w).length = w.length) : ∀ d, ¬ IsSubsequential d f
   | .left => fun hf ↦ h.unboundedDependence .right (hf.boundedDependence_right hlen)
   | .right => fun hf ↦ h.unboundedDependence .left (hf.boundedDependence_left hlen)
 
+/-- A sequential machine is left-determined at every coordinate. -/
 theorem Mealy.leftDetermined (T : Mealy σ α β) (i : ℕ) : LeftDetermined T.run i := fun u v h ↦ by
   simpa [T.run_take] using congrArg (fun w ↦ (T.run w)[i]?) h
 
+/-- A sequential machine's output never depends on input to its right. -/
 theorem Mealy.boundedDependence_right (T : Mealy σ α β) : BoundedDependence T.run .right :=
   BoundedDependence.right_of_leftDetermined T.leftDetermined
 
+/-- A Mealy-computable map is left-determined at every coordinate. -/
 theorem IsMealyComputable.leftDetermined {f : List α → List β}
     (hf : IsMealyComputable f) (i : ℕ) : LeftDetermined f i := by
   obtain ⟨σ, _, T, rfl⟩ := hf
   exact T.leftDetermined i
 
+/-- A Mealy-computable map's output never depends on input to its right. -/
 theorem IsMealyComputable.boundedDependence_right {f : List α → List β}
     (hf : IsMealyComputable f) : BoundedDependence f .right :=
   BoundedDependence.right_of_leftDetermined hf.leftDetermined
@@ -464,6 +478,10 @@ theorem IsMealyComputable.boundedDependence_right {f : List α → List β}
 A map that requires both sides escapes the non-interacting bimachines, and the
 conjunctive flag bimachine shows the non-interacting class is proper. -/
 
+/-- A map that requires both sides is computed by no non-interacting bimachine. At the
+witness the base changes but each far perturbation reverts. The right perturbation
+shares the left window, silencing `ruleL` at this cell; the left perturbation shares
+the right window, silencing `ruleR`; yet the base needs one of them to fire. -/
 theorem RequiresBothSides.not_isNonInteractingBimachineComputable [DecidableEq α]
     {f : List α → List α}
     (hf : RequiresBothSides f) : ¬ IsNonInteractingBimachineComputable f := by
@@ -498,6 +516,8 @@ theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
     (fun d ↦ by rw [conjBM.run_flankWord_mid]; decide)
     (conjBM.run_flankWord_mid false true) (conjBM.run_flankWord_mid true false)
 
+/-- Changed cells of a non-interacting bimachine's run are each determined by a
+single side, `OneSidedAt` transported to words. -/
 theorem IsNonInteractingBimachineComputable.oneSidedChanges [DecidableEq α]
     {f : List α → List α} (hf : IsNonInteractingBimachineComputable f) :
     OneSidedChanges f := by
@@ -528,6 +548,8 @@ theorem IsNonInteractingBimachineComputable.oneSidedChanges [DecidableEq α]
   · exact absurd (by rw [List.getElem?_eq_none (by simpa [w.length_run] using hi),
       List.getElem?_eq_none hi]) hchange
 
+/-- The non-interacting class is proper inside the bimachine-computable functions —
+`conjBM` is computed by a bimachine, but by no non-interacting one. -/
 theorem setOf_isNonInteractingBimachineComputable_ssubset :
     {f : List Bool → List Bool | IsNonInteractingBimachineComputable f} ⊂
       {f | IsBimachineComputable f} :=

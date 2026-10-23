@@ -151,6 +151,7 @@ theorem profile_replaceAt {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt h).
   have ht : isHead (a.tree L) = false := by cases a <;> rfl
   rw [profile, profile, x0At_replaceAt hE ht, localSet_replaceAt hE ht]
 
+/-- **In every context the two attachments give the Root one profile.** -/
 theorem profile_replaceAt_eq {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt h).isSome)
     (L : Lexicon W) :
     profile (E.replaceAt h (Attachment.complement.tree L)) ⟨h ++ rootPos.toList⟩ =
@@ -186,6 +187,8 @@ theorem lexicon_eq_of_profile_eq {a a' : Attachment} {L L' : Lexicon W}
 /-- An observable of a phrase and the position of its Root. -/
 abbrev Observable (W X : Type*) := Tree Cat W × TreePath → X
 
+/-- **Invariance.** An observable takes one value on the two attachments of every Root exactly
+when it factors through the profile. -/
 theorem invariant_iff_factorsThrough {X : Type*} (O : Observable W X) :
     (∀ L, O (Attachment.complement.tree L, rootPos) = O (Attachment.modifier.tree L, rootPos)) ↔
       Function.FactorsThrough (fun p : Attachment × Lexicon W ↦ O (p.1.tree p.2, rootPos))
@@ -202,6 +205,8 @@ theorem rootProjects_complement (L : Lexicon W) :
 theorem rootProjects_modifier (L : Lexicon W) :
     rootProjects (Attachment.modifier.tree L) = false := rfl
 
+/-- **Completeness.** The profile and whether the Root labels a phrase determine the
+configuration. -/
 theorem injective_profile_rootProjects :
     Function.Injective fun p : Attachment × Lexicon W ↦
       (profile (p.1.tree p.2) rootPos, rootProjects (p.1.tree p.2)) := by
@@ -236,6 +241,8 @@ theorem not_strands_argPos {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt h)
   mayCondition'_iff_forall_not_strands.mp
     ((mayCondition'_replaceAt_append hE _ _).mpr (mayCondition'_argPos a L)) X
 
+/-- **Pronominalization cannot decide.** In every context a proform strands from the Root under
+one attachment whatever it strands under the other. -/
 theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt h).isSome)
     (L : Lexicon W) (X : Cat) (β : TreePath) :
     Strands X (E.replaceAt h (Attachment.complement.tree L)) ⟨h ++ rootPos.toList⟩ β ↔

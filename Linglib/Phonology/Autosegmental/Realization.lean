@@ -40,6 +40,7 @@ variable {ι : Type*} {τ : ι → Type*}
 
 namespace AR
 
+/-- The words of a product are the concatenated words of its factors. -/
 theorem word_prod (l : List (AR τ)) (i : ι) : l.prod.word i = (l.map (·.word i)).flatten := by
   induction l with
   | nil => rfl
@@ -67,6 +68,7 @@ def tierOffset (i : ι) (w : List S) (k : ℕ) : ℕ :=
     tierOffset g₀ i (a :: w) (k + 1) = ((g₀ a).word i).length + tierOffset g₀ i w k := by
   simp [tierOffset]
 
+/-- A line of a realization lies inside one symbol's primitive, at that symbol's tier offsets. -/
 theorem link_prod_map (i j : ι) (w : List S) (p q : ℕ) :
     (w.map g₀).prod.Link i j p q ↔
       ∃ k, ∃ hk : k < w.length, tierOffset g₀ i w k ≤ p ∧ tierOffset g₀ j w k ≤ q ∧

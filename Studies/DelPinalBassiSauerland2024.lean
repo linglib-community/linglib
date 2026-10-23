@@ -146,6 +146,8 @@ theorem free_choice : pexPossOr R a b w = 1 ↔ w ∈ R.preimage a ∧ w ∈ R.p
   grind
 
 open Classical in
+/-- `pex^{IE+II}[◇(a ∨ b)]` is the plural predication that `a` and `b` are permitted, true where
+both are, false where neither is, and undefined in between. -/
 theorem pexPossOr_eq_barePlural :
     pexPossOr R a b = barePlural (fun x w ↦ w ∈ R.preimage x) {a, b} := by
   funext w

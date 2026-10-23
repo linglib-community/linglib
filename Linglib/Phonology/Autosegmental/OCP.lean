@@ -95,6 +95,7 @@ def repoint : AR τ :=
 
 variable {X m w}
 
+/-- The lines of a repointing are the repointed lines. -/
 theorem link_repoint {i j : ι} {r s : ℕ} :
     (X.repoint m w hf).Link i j r s ↔
       ∃ p q, X.Link i j p q ∧ repointIdx m f i p = r ∧ repointIdx m f j q = s := by
@@ -105,6 +106,7 @@ theorem link_repoint {i j : ι} {r s : ℕ} :
   · rintro ⟨p, q, ⟨hp, hq, h⟩, rfl, rfl⟩
     exact ⟨(⟨p, hp⟩, ⟨q, hq⟩), h, rfl, rfl⟩
 
+/-- A monotone repointing preserves the NCC. -/
 theorem NoCrossing.repoint (hmono : Monotone f) (h : X.NoCrossing) :
     (X.repoint m w hf).NoCrossing :=
   NoCrossing.map _ _ (fun i _ _ hab ↦ repointIdx_monotone hmono i hab) h
@@ -149,12 +151,15 @@ theorem link_collapse {i j : ι} {r s : ℕ} :
         repointIdx m (runIdx (X.word m)) j q = s :=
   link_repoint _
 
+/-- The collapse is OCP-clean at the collapsed tier. -/
 theorem isCleanAt_collapse : (X.collapse m).IsCleanAt m := by
   simpa [IsCleanAt] using isClean_collapse (X.word m)
 
+/-- The collapse preserves the NCC, since it repoints links monotonically. -/
 theorem NoCrossing.collapse (h : X.NoCrossing) : (X.collapse m).NoCrossing :=
   h.repoint _ (runIdx_monotone _)
 
+/-- Collapsing a representation that is clean at `m` changes nothing. -/
 theorem IsCleanAt.collapse_eq (h : X.IsCleanAt m) : X.collapse m = X := by
   refine ext (funext fun i ↦ ?_) fun i j r s ↦ ?_
   · rcases eq_or_ne i m with rfl | hi
@@ -202,6 +207,7 @@ theorem link_collapse_true_false {X : AR (TwoTier α β)} [DecidableEq β] {r s 
 
 variable [DecidableEq β] {as : List α} {bs : List β} {L : ℕ → ℕ → Prop} [DecidableRel L]
 
+/-- Collapsing the melody of a presentation gives a presentation. -/
 theorem collapse_ofWords :
     (ofWords as bs L).collapse true = ofWords (OCP.collapse as) bs (MergedLinks as L) :=
   ext_of_true_false (by simp) (by simp) fun r s ↦ by
@@ -216,6 +222,7 @@ theorem collapse_ofWords :
 variable {S : Type*} (as : S → List α) (bs : S → List β) (L : S → ℕ → ℕ → Prop)
   [∀ s, DecidableRel (L s)]
 
+/-- The merged realization of a string of presentations is one presentation. -/
 theorem prod_ofWords_collapse (w : List S) :
     (w.map fun s ↦ ofWords (as s) (bs s) (L s)).prod.collapse true =
       ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten

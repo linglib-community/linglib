@@ -178,6 +178,9 @@ def attested : Finset (Finset Head) := (Examples.all.map pronounced).toFinset
 theorem attested_eq : attested = {{.j}, {.mu 1}, {.mu 0, .mu 1}, {.j, .mu 1}, Finset.univ} := by
   decide
 
+/-- The examples pronounce exactly the nonempty sets of heads in which the μ of the first conjunct
+comes only with that of the second, all but the sets that keep the first μ and drop the
+second. -/
 theorem mem_attested_iff {h : Finset Head} :
     h ∈ attested ↔ h.Nonempty ∧ (Head.mu 0 ∈ h → Head.mu 1 ∈ h) := by
   rw [attested_eq]; revert h; decide
@@ -212,10 +215,13 @@ theorem coordinators_conjunctive :
     ∀ c ∈ jCoordinators ++ muCoordinators, c.role = .conjunctive := by
   decide
 
+/-- Every μ coordinator has a use outside conjunction, as an additive particle or as the particle
+of an indeterminate quantifier. -/
 theorem mu_has_other_use : ∀ c ∈ muCoordinators,
     (∃ a ∈ additiveParticles, c.IsAlsoAdditive a) ∨ ∃ q ∈ quantifiers, q.particle = c := by
   decide
 
+/-- No J coordinator has an additive or a quantificational use. -/
 theorem j_has_no_other_use : ∀ c ∈ jCoordinators,
     (∀ a ∈ additiveParticles, ¬ c.IsAlsoAdditive a) ∧ ∀ q ∈ quantifiers, q.particle ≠ c := by
   decide

@@ -280,6 +280,8 @@ theorem counitMode_ba_eject (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (a : �
   have h : (fun l => (fun r => ba l r) <$> eject adj k) = k := (eject adj).left_inv k
   simp only [counitMode, h]
 
+/-- Every adjunction gives rise to a monad through the grammar (section 5.3.4): the mode
+`F̄ ® C <` is the bind of the monad `Γ Ω` the adjunction induces. -/
 theorem mapL_ejectR_counitMode (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) (m : Γ (Ω α))
     (k : α → Γ (Ω β)) :
     mapL (ejectR adj (counitMode adj ba)) m k = adj.toMonad.μ.app β (adj.toMonad.map (↾k) m) := by

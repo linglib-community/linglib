@@ -140,14 +140,20 @@ theorem resolve_congr_of_applies_iff (h : ∀ r ∈ rs, r.Applies cs ↔ r.Appli
     simp only [List.forall_mem_cons] at h
     simp [resolve_cons, h.1, ih h.2]
 
+/-- Resolution depends only on which descriptors occur among the conjuncts, so rules cannot
+count them. -/
 theorem resolve_congr (rs : List (ResolutionRule α G)) (h : ∀ c, c ∈ cs ↔ c ∈ ds) :
     resolve rs cs = resolve rs ds :=
   resolve_congr_of_applies_iff fun r _ ↦ r.applies_congr h
 
+/-- A type-A rule with its default is the type-B rule for the complementary sort with the
+default swapped. -/
 theorem resolve_any_otherwise {a b : G} (h : ∀ c, q c ↔ ¬ p c) :
     resolve [any p a, otherwise b] cs = resolve [all q b, otherwise a] cs := by
   by_cases hp : ∀ c ∈ cs, ¬ p c <;> simp +contextual [resolve_cons, h, hp]
 
+/-- Rules whose sorts read the conjuncts through `f` give a resolution reading them through
+`f`. -/
 theorem resolve_factorsThrough {f : α → β} (h : ∀ r ∈ rs, Function.FactorsThrough r.pred f) :
     Function.FactorsThrough (resolve rs) (List.map f) := fun cs ds hcd ↦
   resolve_congr_of_applies_iff fun r hr ↦ by

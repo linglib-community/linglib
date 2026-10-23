@@ -99,6 +99,8 @@ def turnedScriptA : Segment := vowel .«ɒ» (Segment.ofSpecs [(.round, false)])
 /-- The seven short vowels, pairwise distinct. -/
 def vowels : Finset Segment := ⟨↑[i, y, u, epsilon, ø, o, turnedScriptA], by decide⟩
 
+/-- The vowels but the low one, which departs from the chart, are those of PHOIBLE's
+Hungarian inventory, and the low vowel's chart entry is in that inventory. -/
 theorem subset_hun :
     vowels.erase turnedScriptA ⊆ Inventories.Hungarian.hun.featureMatrices.image vowel ∧
       FeatureMatrix.«ɒ» ∈ Inventories.Hungarian.hun.featureMatrices :=
@@ -187,6 +189,7 @@ def consonants : Finset Segment :=
   ⟨↑[p, b, t, d, «cç», «ɟʝ», k, g, ts, dz, «t̠ʃ», «d̠ʒ», f, v, s, z, «ʃ», «ʒ», h, m, n, «ɲ», l, r,
     j], by decide⟩
 
+/-- The consonants are segments of PHOIBLE's Hungarian inventory. -/
 theorem consonants_subset_hun : consonants ⊆ Inventories.Hungarian.hun.segments :=
   Inventory.subset_segments_iff.2 (by decide)
 
@@ -261,10 +264,13 @@ instance : DecidablePred IsNeutral := fun _ ↦ inferInstanceAs (Decidable (_ �
 instance : DecidablePred IsFrontHarmonic := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 instance : DecidablePred IsBackHarmonic := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
+/-- The neutral vowels are /i/ and /ɛ/. -/
 theorem isNeutral_iff : ∀ x ∈ vowels, IsNeutral x ↔ x = i ∨ x = epsilon := by decide
 
+/-- The front harmonic vowels are /y/ and /ø/. -/
 theorem isFrontHarmonic_iff : ∀ x ∈ vowels, IsFrontHarmonic x ↔ x = y ∨ x = ø := by decide
 
+/-- The back harmonic vowels are /u/, /o/ and /ɒ/. -/
 theorem isBackHarmonic_iff :
     ∀ x ∈ vowels, IsBackHarmonic x ↔ x = u ∨ x = o ∨ x = turnedScriptA := by
   decide

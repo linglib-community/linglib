@@ -98,6 +98,7 @@ theorem II_eq_nonExcludable_of_cell_nonempty (h : (cell ALT φ).Nonempty) :
   refine ⟨fun ⟨_, hr⟩ ↦ hr _ ⟨hD, fun _ hR _ ↦ hR.subset_nonExcludable⟩, fun hr ↦ ⟨hr.1, fun R hR ↦
     hR.mem_of_prop_insert (hD.mono (Set.insert_subset hr hR.1.subset_nonExcludable))⟩⟩
 
+/-- When the cell is consistent, exhaustification is the cell. -/
 theorem exhIEII_eq_cell_of_cell_nonempty
     (h : (cell ALT φ).Nonempty) :
     exhIEII ALT φ = cell ALT φ := by
@@ -201,12 +202,16 @@ theorem IsMinimalCover.cell_eq (hM : IsMinimalCover ALT φ M) :
     · by_contra hnr
       exact hnIE ((hM.isInnocentlyExcludable_iff hr).2 fun v hv hvr ↦ hnr ((h r hr).2 ⟨v, hv, hvr⟩))
 
+/-- With a representative set of minimal worlds and a consistent cell, exhaustification asserts
+the prejacent and settles every alternative as the minimal worlds jointly do. -/
 theorem IsMinimalCover.exhIEII_eq (hM : IsMinimalCover ALT φ M)
     (hne : ∃ w ∈ φ, ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)) :
     exhIEII ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)} := by
   rw [← hM.cell_eq]
   exact exhIEII_eq_cell_of_cell_nonempty ALT φ (by rw [hM.cell_eq]; exact hne)
 
+/-- With a representative set of minimal worlds and a consistent cell, the innocently
+includable alternatives are those true at some minimal world. -/
 theorem IsMinimalCover.II_eq (hM : IsMinimalCover ALT φ M)
     (hne : ∃ w ∈ φ, ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)) :
     II ALT φ = {r ∈ ALT | ∃ v ∈ M, v ∈ r} := by
@@ -248,6 +253,8 @@ section Verified
 
 variable {ALT φ} {w : World}
 
+/-- The cell of the prejacent consists of the prejacent worlds verifying exactly the alternatives
+of the minimal verified sets. -/
 theorem mem_cell_iff : w ∈ cell ALT φ ↔ w ∈ φ ∧ Preorder.satisfied (· ∈ ·) ALT w =
     ⋃₀ {P | Minimal (· ∈ Preorder.satisfied (· ∈ ·) ALT '' φ) P} := by
   change (w ∈ φ ∧ (∀ q, IsInnocentlyExcludable ALT φ q → w ∉ q) ∧

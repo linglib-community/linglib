@@ -362,6 +362,7 @@ operator. -/
 def LexicallyCumulative {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   ∀ x, AlgClosure P x ↔ P x
 
+/-- Lexical cumulativity entails Krifka's `CUM` (closure under binary join). -/
 theorem lexicallyCumulative_imp_cum {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (h : LexicallyCumulative P) : CUM P := by
   intro x hPx y hPy
@@ -393,6 +394,9 @@ end Distributivity
 
 /-! ### Atelicity as a Schwarzschild cover (§5.4) -/
 
+/-- A predicate `P` has stratified subinterval reference at `e` iff `e` is the sum of a finite
+Schwarzschild cover into proper-subinterval `P`-parts, the book's theorem at the runtime
+dimension. -/
 theorem subintervalReference_iff_cover {T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     [SemilatticeSup E] {P : E → Prop} {e : E} :
     SubintervalReference P e ↔
@@ -417,6 +421,10 @@ def SubregionPresup (e : α) : Prop :=
 
 variable {τ P}
 
+/-- On an event that splits into two parts with non-overlapping, non-null runtimes, the
+divisiveness clause of the subregion presupposition yields stratified reference along the
+runtime: the two parts are each other's temporal siblings, so both fall under the predicate,
+and each has a properly smaller runtime. -/
 theorem stratifiedReference_of_divisiveness (hτ : Monotone τ) {a b : α}
     (hov : ¬ Overlap (τ a) (τ b)) (ha : ¬ IsBot (τ a)) (hb : ¬ IsBot (τ b))
     (hdiv : ∀ e', IsTemporalPart τ e' (a ⊔ b) → P e') :

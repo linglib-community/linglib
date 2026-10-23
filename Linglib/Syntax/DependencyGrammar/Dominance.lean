@@ -99,6 +99,8 @@ theorem exists_link_across {S : Set (Fin n)} (hx : Dominates g v x) (hy : Domina
   · obtain ⟨p, q, hpq, hpS, hqS, hvp, -⟩ := hx.exists_boundary (S := Sᶜ) hv (not_not_intro hxS)
     exact ⟨q, p, .inr hpq, hvp.tail hpq, hvp, not_not.1 hqS, hpS⟩
 
+/-- Positions under a common dominator, neither of which dominates the other, lie under distinct
+dependents of one position, their lowest common governor. -/
 theorem exists_adj_adj_of_not_dominates (hu : Dominates g x u) (hv : Dominates g x v)
     (huv : ¬ Dominates g u v) (hvu : ¬ Dominates g v u) :
     ∃ p u' v', g.Adj p u' ∧ g.Adj p v' ∧ u' ≠ v' ∧ Dominates g u' u ∧ Dominates g v' v := by
@@ -155,6 +157,7 @@ theorem dominates_total (hv : Dominates g v x) (hw : Dominates g w x) :
     Dominates g v w ∨ Dominates g w v :=
   ReflTransGen.total_of_left_unique hF.leftUnique_adj hv hw
 
+/-- Positions of a forest neither of which dominates the other have disjoint yields. -/
 theorem disjoint_yield (hvw : ¬ Dominates g v w) (hwv : ¬ Dominates g w v) :
     Disjoint (g.yield v) (g.yield w) :=
   Set.disjoint_left.2 fun _ hv hw ↦ (hF.dominates_total hv hw).elim hvw hwv
@@ -195,6 +198,8 @@ theorem Graph.isTree_iff_forall_not_adj_iff :
   · by_contra hno
     exact hw ((h w).1 fun v hv ↦ hno ⟨v, hv⟩)
 
+/-- A graph is a tree when no position has two heads, the root has none, and the root dominates
+every position: a cycle would have to be entered from the root's side through a second head. -/
 theorem Graph.isTree_iff_leftUnique_adj :
     g.IsTree ↔
       Relator.LeftUnique g.Adj ∧ (∀ v, ¬ g.Adj v g.root) ∧ ∀ v, Dominates g g.root v := by

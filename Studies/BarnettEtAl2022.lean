@@ -351,6 +351,7 @@ theorem share_mul_share_le {β : ℝ} (hβ : 0 ≤ β) {u v : Fin 9} (huv : u �
 private theorem sum_share_pos (β : ℝ) (u : Fin 9) : 0 < ∑ x : Fin n → Fin 9, share n β u x :=
   sum_pos (fun x _ ↦ share_pos β u x) univ_nonempty
 
+/-- The pragmatic listener discounts every stick. -/
 theorem pragmaticListener_real_le_literal {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9) :
     (pragmaticListener n β u).real (longer n) ≤ literal n u := by
   have h := holley_isUpperSet (g := (1 : (Fin n → Fin 9) → ℝ)) (fun x ↦ (share_pos β u x).le)
@@ -374,6 +375,7 @@ theorem pragmaticListener_zero (u : Fin 9) :
   push_cast
   field_simp
 
+/-- The pragmatic belief in *longer* grows with the stick shown. -/
 theorem pragmaticListener_real_mono {β : ℝ} (hβ : 0 ≤ β) :
     Monotone fun u ↦ (pragmaticListener n β u).real (longer n) := fun u v huv ↦ by
   have h := holley_isUpperSet (fun x ↦ (share_pos (n := n) β u x).le)
@@ -401,6 +403,7 @@ theorem backfires_zero : backfires n 0 = ∅ :=
     rw [pragmaticListener_zero] at h₂
     exact h₂.not_gt h₁
 
+/-- The sticks that backfire form an interval. -/
 theorem ordConnected_backfires {β : ℝ} (hβ : 0 ≤ β) : (backfires n β).OrdConnected :=
   IsUpperSet.ordConnected (s := {u | (uniformOn Set.univ).real (longer n) < literal n u})
       (fun _ _ h hu ↦ hu.trans_le (literal_mono h)) |>.inter <|
@@ -437,6 +440,7 @@ theorem tendsto_reveal_real_singleton_atTop (w : Fin (n + 1) → Fin 9) (i : Fin
   rw [sum_boole]
   exact_mod_cast (card_sup_pos w).ne'
 
+/-- As the bias grows the speaker shows the longest stick with certainty. -/
 theorem tendsto_speaker_real_singleton_atTop (w : Fin (n + 1) → Fin 9) (u : Fin 9) :
     Tendsto (fun β ↦ (speaker n β w).real {u}) atTop (𝓝 (if u = univ.sup w then 1 else 0)) := by
   simp_rw [speaker_real_singleton]
@@ -450,6 +454,8 @@ theorem tendsto_speaker_real_singleton_atTop (w : Fin (n + 1) → Fin 9) (u : Fi
   · refine (sum_eq_zero fun i hi ↦ ?_).symm
     rw [ite_eq_right_iff.2 fun h ↦ absurd ((mem_filter.1 hi).2.symm.trans h) hu, zero_div]
 
+/-- As the bias grows the pragmatic listener's beliefs tend to the uniform prior conditioned on
+the shown stick being the longest. -/
 theorem tendsto_pragmaticListener_real_atTop (u : Fin 9) (E : Set (Fin (n + 1) → Fin 9)) :
     Tendsto (fun β ↦ (pragmaticListener n β u).real E) atTop
       (𝓝 ((uniformOn {w : Fin (n + 1) → Fin 9 | univ.sup w = u}).real E)) := by
@@ -609,6 +615,8 @@ theorem limit_eq (u : Fin 9) :
   rw [h₁, h₂]
   fin_cases u <;> norm_num
 
+/-- For a strongly enough biased speaker the sticks that backfire are exactly those of length
+five to seven. -/
 theorem eventually_backfires_eq : ∀ᶠ β in atTop, backfires 4 β = length ⁻¹' Set.Icc 5 7 := by
   have hlo : ∀ᶠ β in atTop, (pragmaticListener 4 β 6).real (longer 4) <
       (uniformOn Set.univ).real (longer 4) :=

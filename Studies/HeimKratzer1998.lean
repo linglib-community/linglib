@@ -280,6 +280,7 @@ inductive Denotes (lex : L → Option (Denotation E W)) :
   | pa {g : Assignment E} {n : ℕ} {c : C} {body : Tree C L} {τ : Ty} {F : E → Ty.Domain E W τ}
       (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) : Denotes lex g (.bind n c body) ⟨.e ⇒ τ, F⟩
 
+/-- Where the book assigns a denotation, the engine at `M = Id` computes it. -/
 theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment E}
     {t : Tree C L} {d : Denotation E W} (h : Denotes lex g t d) : interp lex g t = some d := by
   induction h with
@@ -352,6 +353,7 @@ noncomputable def partialLex : String → Option (PDenotation ToyEntity Unit)
   | "John" => some ⟨.e, Part.some .john⟩
   | _ => none
 
+/-- *The student* is a presupposition failure in the toy model, which has two students. -/
 theorem the_student_fails :
     PresupFailure partialLex g₀ (.bin (.leaf "the") (.leaf "student")) := by
   refine ⟨⟨.e, the (PFun.lift student)⟩, ?_, fun ⟨x, _, huniq⟩ ↦ ?_⟩
@@ -361,6 +363,7 @@ theorem the_student_fails :
   have hm := huniq .mary ((true_mem_lift _ _).mpr (.inr rfl))
   exact ToyEntity.noConfusion (hj.trans hm.symm)
 
+/-- *The pizza* denotes the pizza, the toy model's unique one. -/
 theorem the_pizza : interpPartial partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) =
     some ⟨.e, Part.some .pizza⟩ := by
   rw [interpPartial_node_binary, interpPartial_terminal, interpPartial_terminal]
@@ -419,6 +422,7 @@ inductive Denotes (lex : L → Option (PDenotation E W)) :
       {F : E → Part (Ty.PDomain E W τ)} (h : ∀ x, Denotes lex (g[n ↦ x]) body ⟨τ, F x⟩) :
       Denotes lex g (.bind n c body) ⟨.e ⇒ τ, Part.some F⟩
 
+/-- Where the book's revised rules assign a value, the partial engine computes it. -/
 theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment E}
     {t : Tree C L} {d : PDenotation E W} (h : Denotes lex g t d) :
     interpPartial lex g t = some d := by
@@ -623,6 +627,7 @@ theorem interp_computes_surface :
 theorem interp_computes_inverse :
     interp lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
 
+/-- The two QR derivations interpret to different meanings. -/
 theorem scope_ambiguity_computed : interp lex g₀ tree_surface ≠ interp lex g₀ tree_inverse := by
   rw [interp_computes_surface, interp_computes_inverse]
   intro h
@@ -713,6 +718,7 @@ theorem inSitu_eq_surface :
     interp (resolve (· = .some_)) g₀ tree_inSitu = interp lex g₀ tree_surface :=
   interp_computes_inSitu.trans interp_computes_surface.symm
 
+/-- The surface-scope reading is among the readings of the flat tree under the lexical rule. -/
 theorem surfaceScopeProp_mem_readings_inSitu :
     ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexFlex g₀ tree_inSitu :=
   Tree.interp_mem_readings (resolve_mem_lexFlex _) interp_computes_inSitu

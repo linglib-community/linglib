@@ -334,6 +334,8 @@ private theorem L0_of_noisyMeaning {c : ℝ} (hc : 0 < c) {u : Utterance}
       (by simpa using Ne.symm hw)]
     simp [hw]
 
+/-- A subject fragment is the point mass on the meaning whose full sentence deletes to it, at
+every positive deletion rate. -/
 theorem L0_subject (hδ : 0 < δ) : L0 δ (.subject m) = Measure.dirac m :=
   L0_of_noisyMeaning m hδ (noisyMeaning_subject m)
 
@@ -359,6 +361,7 @@ theorem channelMix_full (m' : Meaning) :
   · simp [h]
   · simp [h, h1, h2, hδ₀, sub_pos.mpr hδ₁]
 
+/-- The speaker utters the full sentence for its meaning. -/
 theorem S1_apply : S1 δ m = Measure.dirac m := by
   refine Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun m' => ?_
   rw [channelMix_full m hδ₀ hδ₁, ENNReal.rpow_one]
@@ -376,6 +379,7 @@ theorem comp_apply_subject (w : Meaning) :
       Set.indicator_of_notMem (by simpa using Ne.symm hu), zero_mul]
   · exact fun h => absurd (mem_univ _) h
 
+/-- The pragmatic listener also reads a subject fragment as the point mass on its source. -/
 theorem L1_subject : L1 δ (.subject m) = Measure.dirac m := by
   have hmarg : ((N δ ∘ₖ S1 δ) ∘ₘ μ) {.subject m} = ENNReal.ofReal δ := by
     rw [Measure.comp_apply_singleton]
@@ -506,6 +510,8 @@ theorem rpow_mul_rpow_eq_exp_neg_binEntropy {r : ℝ} (hr₀ : 0 < r) (hr₁ : r
     binEntropy_eq_negMulLog_add_negMulLog_one_sub, negMulLog, negMulLog]
   congr 1; ring
 
+/-- The knowledgeable speaker's channel-mixed listener for the two forms of "Bob went" is the
+entropy form of their rates. -/
 theorem channelMix_eq_exp_neg_binEntropy (hε₀ : 0 < ε) (hε₁ : ε < 1) :
     channelMix (N ε) (L0 ε) .bobWent .onlyBob = ENNReal.ofReal (exp (-binEntropy ε) / 2) ∧
     channelMix (N ε) (L0 ε) .BOB_went .onlyBob =

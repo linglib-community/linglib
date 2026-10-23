@@ -61,6 +61,7 @@ namespace Akan
 chart leaves without [tense], keeps the chart's [−ATR]. -/
 def vowel (m : FeatureMatrix) : Segment := .ofChart m.tenseAsATR
 
+/-- A vowel has the chart's values off [ATR] and [tense]. -/
 theorem vowel_apply (m : FeatureMatrix) {f : Phonology.Feature} (ha : f ≠ .atr)
     (ht : f ≠ .tense) : vowel m f = m.toSegment f := by
   rw [vowel, Segment.ofChart_eq_toSegment, m.toSegment_tenseAsATR_of_ne ha ht]
@@ -96,9 +97,11 @@ def upsilon : Segment := vowel .«ʊ»
 def vowels : Finset Segment :=
   ⟨↑[i, e, o, u, smallCapitalI, epsilon, a, openO, upsilon], by decide⟩
 
+/-- The vowels are those of PHOIBLE's Akan inventory. -/
 theorem subset_aka : vowels ⊆ Inventories.Akan.aka.featureMatrices.image vowel :=
   Inventory.subset_image_featureMatrices_iff.2 (by decide)
 
+/-- Dolphyne's advanced set is /i e o u/. -/
 theorem hasValue_atr_iff :
     ∀ x ∈ vowels, x.HasValue .atr true ↔ x ∈ ({i, e, o, u} : Finset Segment) := by
   decide
@@ -119,6 +122,7 @@ being the name of the symbol tɕ. It keeps the stop's values, [+dorsal] among th
 segment. -/
 def tcCurl : Segment := .ofChart .«k» palatalized
 
+/-- The affricate has the stop's values off the features palatalization writes. -/
 theorem restrict_tcCurl_eq_k :
     Segment.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) tcCurl =
       Segment.restrict ({.coronal, .anterior, .distributed, .delayedRelease}ᶜ) k := by

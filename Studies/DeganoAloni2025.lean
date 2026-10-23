@@ -171,6 +171,7 @@ theorem renders_use (T : Finset (V → E)) (v x : V) : Renders T v x (use T v x)
   split_ifs with hc hv
   exacts [hc, ⟨hv, not_dep.1 hc⟩, not_dep.1 hv]
 
+/-- A team renders exactly the use `use` assigns it. -/
 theorem renders_iff : Renders T v x u ↔ use T v x = u :=
   ⟨renders_unique (renders_use T v x), (· ▸ renders_use T v x)⟩
 
@@ -229,6 +230,7 @@ section. So a requirement is convex, closed under subteams or closed under super
 when its profile is, and one requirement entails another exactly when its profile is included in
 the other's. -/
 
+/-- The uses of a type form an interval exactly when the type is not the unattested one. -/
 theorem IndefiniteType.ordConnected_profile_iff :
     (t.profile : Set SpecificityFunction).OrdConnected ↔ t ≠ .skPlusNS := by
   cases t <;> decide
@@ -246,6 +248,8 @@ private theorem exists_monotone_section [DecidableEq E] [Nontrivial E] (hvx : v 
   obtain ⟨g, hg, hgu⟩ := exists_monotone_renders (E := E) hvx
   exact ⟨g, hg, fun s ↦ by ext u; simp [renders_iff.1 (hgu u)]⟩
 
+/-- A type's requirement is convex exactly when its uses form an interval, so convexity over teams
+is convexity over the uses. -/
 theorem IndefiniteType.ordConnected_requires_iff [Nontrivial E] (hvx : v ≠ x) :
     {T : Finset (V → E) | t.Requires T v x}.OrdConnected ↔
       (t.profile : Set SpecificityFunction).OrdConnected := by
@@ -318,6 +322,8 @@ theorem connected_profile_iff {t : IndefiniteType} :
       (t.profile : Set SpecificityFunction).OrdConnected := by
   cases t <;> decide
 
+/-- A type's requirement is convex exactly when its uses form a connected region of the map, so
+convexity over teams is contiguity on the map. -/
 theorem ordConnected_requires_iff_connected {V E : Type*} [Nontrivial E] {v x : V} (hvx : v ≠ x)
     {t : IndefiniteType} :
     {T : Finset (V → E) | t.Requires T v x}.OrdConnected ↔
@@ -333,6 +339,10 @@ private def decidableOrdConnectedFin (s : Finset (Fin 3)) :
       fun h _ ha _ hb _ h₁ h₂ ↦ h.out ha hb ⟨h₁, h₂⟩⟩
 
 attribute [local instance] decidableOrdConnectedFin in
+/-- The map orders the uses as convexity requires. On an ordering `σ` of the three uses, every
+type whose uses are contiguous has a convex requirement exactly when `σ` is the map's order or its
+reverse; on any other ordering the specific known and the non-specific use are contiguous, and
+their disjunction is not convex. -/
 theorem forall_ordConnected_requires_iff {V E : Type*} [Nontrivial E] {v x : V} (hvx : v ≠ x)
     (σ : SpecificityFunction ≃ Fin 3) :
     (∀ t : IndefiniteType, (σ '' t.profile).OrdConnected →
@@ -341,6 +351,8 @@ theorem forall_ordConnected_requires_iff {V E : Type*} [Nontrivial E] {v x : V} 
   revert σ
   decide
 
+/-- Every series of the sample covering one of the three uses instantiates a type with a convex
+requirement, since it covers a connected region of the map. -/
 theorem sample_instantiates_ordConnected {V E : Type*} (v x : V) :
     ∀ p ∈ Haspelmath1997.sample, ∀ s ∈ p, (specificityFunctions s.functions).Nonempty →
       ∃ t, Instantiates s t ∧ {T : Finset (V → E) | t.Requires T v x}.OrdConnected :=

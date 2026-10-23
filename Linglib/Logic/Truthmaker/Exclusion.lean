@@ -93,6 +93,8 @@ section Preorder
 
 variable [Preorder S] {excl : S → S → Prop} {s t : S}
 
+/-- A proposition `s` contains `t` exactly when `s` excludes `t` in the sense of `Excludes`, with
+containment of states in place of exclusion. -/
 theorem isConjunctivePart_iff_excludes {s t : Set S} :
     IsConjunctivePart t s ↔ Excludes (· ≥ ·) s t :=
   Iff.rfl
@@ -126,6 +128,7 @@ def possible : LowerSet S where
 theorem mem_possible : s ∈ possible excl ↔ ¬ Conflict excl s s :=
   Iff.rfl
 
+/-- A state is possible exactly when no two of its parts conflict. -/
 theorem mem_possible_iff_forall : s ∈ possible excl ↔ ∀ t ≤ s, ∀ u ≤ s, ¬ Conflict excl t u :=
   ⟨fun hs _ ht _ hu hc ↦ hs (hc.mono ht hu), fun h ↦ h s le_rfl s le_rfl⟩
 
@@ -232,10 +235,14 @@ theorem coe_upperClosure_exclusiveNeg (hU : UpwardExclusion excl) (P : Set S) :
   rw [SetLike.mem_coe, mem_upperClosure_exclusiveNeg]
   exact forall₂_congr fun _ _ ↦ hU.conflict_iff.symm
 
+/-- Under Upward Exclusion, the states containing a verifier of the exclusionary negation of `P` are
+those that conflict with every verifier of `P`. -/
 theorem coe_upperClosure_exclusionaryNeg (hU : UpwardExclusion excl) (P : Set S) :
     (upperClosure (exclusionaryNeg excl P) : Set S) = upperPolar (flip (Conflict excl)) P := by
   rw [exclusionaryNeg, upperClosure_regularClosure, coe_upperClosure_exclusiveNeg hU]
 
+/-- If every verifier of `P` has an excluder, the subject-matter of the exclusive negation of `P` is
+the fusion of all excluders of verifiers of `P`. -/
 theorem sSup_exclusiveNeg (h : ∀ p ∈ P, ∃ r, excl r p) :
     sSup (exclusiveNeg excl P) = sSup {r | ∃ p ∈ P, excl r p} := by
   classical
@@ -279,6 +286,7 @@ theorem exclusiveNeg_iUnion {ι : Type*} (P : ι → Set S) :
       obtain ⟨q, hq, hqp⟩ := (hQ i).2 hpi
       exact ⟨q, Set.mem_iUnion_of_mem i hq, hqp⟩
 
+/-- The exclusionary negation of a single state is the regular closure of its excluders. -/
 theorem exclusionaryNeg_singleton (p : S) :
     exclusionaryNeg excl {p} = regularClosure {q | excl q p} := by
   refine le_antisymm (regularClosure.le_closure_iff.1 ?_) (regularClosure.monotone ?_)
@@ -332,6 +340,9 @@ theorem exists_conflict_of_conflict_sSup (hU : UpwardExclusion excl)
   let ⟨p, hp, hc⟩ := hD.exists_conflict (hU hrt ht)
   ⟨p, hp, hc.mono hrx le_rfl⟩
 
+/-- Under Upward Exclusion, a state that conflicts with a fusion always conflicts with one of its
+members exactly when every state that excludes a fusion has a part that excludes one of its
+members, the half of Downward Exclusion that rules out emergent exclusion. -/
 theorem forall_exists_conflict_iff (hU : UpwardExclusion excl) :
     (∀ ⦃x : S⦄ ⦃P : Set S⦄, Conflict excl x (sSup P) → ∃ p ∈ P, Conflict excl x p) ↔
       ∀ ⦃q : S⦄ ⦃P : Set S⦄, excl q (sSup P) → q ∈ upperClosure {r | ∃ p ∈ P, excl r p} := by
@@ -342,6 +353,8 @@ theorem forall_exists_conflict_iff (hU : UpwardExclusion excl) :
   · obtain ⟨r', ⟨p, hp, hr'p⟩, hr'r⟩ := mem_upperClosure.1 (h (hU hrt ht))
     exact ⟨p, hp, r', hr'r.trans hrx, p, le_rfl, hr'p⟩
 
+/-- Under Upward and Downward Exclusion, the exclusionary negation of a proposition is that of its
+regular closure. -/
 theorem exclusionaryNeg_regularClosure (hU : UpwardExclusion excl) (hD : DownwardExclusion excl)
     (P : Set S) : exclusionaryNeg excl (regularClosure P) = exclusionaryNeg excl P := by
   have hex : (∀ y ∈ regularClosure P, ∃ r, excl r y) ↔ ∀ p ∈ P, ∃ r, excl r p :=
@@ -360,6 +373,9 @@ theorem exclusionaryNeg_regularClosure (hU : UpwardExclusion excl) (hD : Downwar
     exact le_antisymm (sSup_le fun r ⟨_, hy, hry⟩ ↦ (hD (hU hry hy.2)).2)
       (sSup_le_sSup fun r ⟨p, hp, hr⟩ ↦ ⟨p, regularClosure.le_closure P hp, hr⟩)
 
+/-- Under Upward, Downward and Null Exclusion, the exclusionary negation of the conjunction of a
+family of propositions with verifiers, none verified by the null state, is the disjunction of their
+exclusionary negations. -/
 theorem exclusionaryNeg_iSups {ι : Type*} (hU : UpwardExclusion excl)
     (hD : DownwardExclusion excl) (hN : NullExclusion excl) {P : ι → Set S}
     (hne : ∀ i, (P i).Nonempty) (hP : ∀ i, ⊥ ∉ P i) :
@@ -410,6 +426,8 @@ structure ClassicalExclusion (P : LowerSet S) : Prop where
 
 variable {P : LowerSet S}
 
+/-- Under classical exclusion, a single state paired with its exclusionary negation is
+exclusive. -/
 theorem ClassicalExclusion.exclusive (h : ClassicalExclusion excl P) (p : S) :
     (BilProp.mk {p} (exclusionaryNeg excl {p})).Exclusive P := by
   intro s hs t ht hpt
@@ -419,6 +437,8 @@ theorem ClassicalExclusion.exclusive (h : ClassicalExclusion excl P) (p : S) :
   obtain ⟨e, he, het⟩ := mem_upperClosure.1 ht.1
   exact h.sup_not_mem he (P.lower ((sup_le_sup_right het p).trans (sup_comm t p).le) hpt)
 
+/-- Under classical exclusion, a single state paired with its exclusionary negation is
+exhaustive. -/
 theorem ClassicalExclusion.exhaustive (h : ClassicalExclusion excl P) (p : S) :
     (BilProp.mk {p} (exclusionaryNeg excl {p})).Exhaustive P := by
   intro s hs
@@ -439,6 +459,9 @@ section Frame
 
 variable [Order.Frame S] {excl : S → S → Prop}
 
+/-- In a distributive space, under Upward, Downward and Null Exclusion, the exclusionary negation of
+the disjunction of a family of propositions not verified by the null state is the conjunction of
+their exclusionary negations. -/
 theorem exclusionaryNeg_regularClosure_iUnion {ι : Type*} (hU : UpwardExclusion excl)
     (hD : DownwardExclusion excl) (hN : NullExclusion excl) {P : ι → Set S}
     (hP : ∀ i, ⊥ ∉ P i) : exclusionaryNeg excl (regularClosure (⋃ i, P i)) =
@@ -447,6 +470,9 @@ theorem exclusionaryNeg_regularClosure_iUnion {ι : Type*} (hU : UpwardExclusion
     regularClosure_iSups fun i ↦ exclusiveNeg_nonempty hN (hP i)]
   rfl
 
+/-- In a distributive space, under Upward, Downward and Null Exclusion, if double exclusionary
+negation restores every single state, it restores every regular proposition that the null state
+does not verify. -/
 theorem exclusionaryNeg_exclusionaryNeg (hU : UpwardExclusion excl) (hD : DownwardExclusion excl)
     (hN : NullExclusion excl) (h : ∀ p : S, exclusionaryNeg excl (exclusionaryNeg excl {p}) = {p})
     {P : Set S} (hP : regularClosure.IsClosed P) (hP' : ⊥ ∉ P) :
@@ -490,6 +516,7 @@ theorem conflict_excl_iff {s t : Set (α × Bool)} :
   · rintro ⟨x, hx₁, hx₂⟩
     exact ⟨{x}, Set.singleton_subset_iff.2 hx₁, _, Set.singleton_subset_iff.2 hx₂, x, rfl, rfl⟩
 
+/-- The states possible under canonical exclusion are the consistent sets of literals. -/
 theorem possible_excl : Truthmaker.possible (excl (α := α)) = possible :=
   SetLike.ext fun _ ↦ by
     simp [Truthmaker.mem_possible, conflict_excl_iff, Canonical.mem_possible]
@@ -515,6 +542,7 @@ every state containing another colour. -/
 def excl (s t : Set (Fin 3)) : Prop :=
   ∃ i, s = {i} ∧ ∃ j ∈ t, j ≠ i
 
+/-- The exclusionary negation of the exclusionary negation of red is not red. -/
 theorem exclusionaryNeg_exclusionaryNeg_ne :
     exclusionaryNeg excl (exclusionaryNeg excl {{0}}) ≠ {{0}} := by
   have hblue : ({1} : Set (Fin 3)) ∈ exclusionaryNeg excl {{0}} := by

@@ -59,6 +59,7 @@ def Frozen (d : Derivation) (x : SyntacticObject) : Prop := ∃ m ∈ d.movedIte
 instance (d : Derivation) (x : SyntacticObject) : Decidable (d.Frozen x) :=
   inferInstanceAs (Decidable (∃ m ∈ d.movedItems, Contains m x))
 
+/-- Extending a derivation freezes what its new movers contain and nothing else. -/
 theorem frozen_append_iff :
     (d.append steps).Frozen x ↔
       d.Frozen x ∨ ∃ m ∈ steps.filterMap Step.mover?, Contains m x := by
@@ -85,6 +86,7 @@ theorem obeysFreezing_append_iff :
   simp only [ObeysFreezing, movedItems_append, List.pairwise_append, Frozen]
   grind
 
+/-- A further movement obeys Freezing exactly when its mover is not frozen. -/
 @[simp] theorem obeysFreezing_append_im_iff {m : SyntacticObject} {side : Edge} :
     (d.append [.im m side]).ObeysFreezing ↔ d.ObeysFreezing ∧ ¬ d.Frozen m := by
   simp [obeysFreezing_append_iff]
@@ -131,6 +133,8 @@ theorem obeysUIC_append_singleton_iff {step : Step} :
       rw [take_length_append]
       exact hs m (by rwa [hlast] at hm)
 
+/-- A further movement obeys the Unlabeled Immobility Condition exactly when its mover is labeled
+in the object built so far. -/
 @[simp] theorem obeysUIC_append_im_iff {m : SyntacticObject} {side : Edge} :
     (d.append [.im m side]).ObeysUIC L ↔ d.ObeysUIC L ∧ ∃ p ∈ d.externalize?, L p m := by
   simp [obeysUIC_append_singleton_iff]

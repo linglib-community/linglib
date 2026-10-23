@@ -85,17 +85,21 @@ abbrev Syntacticosemantic (R : Clause.Scenario Person → Prop) :=
 
 variable {R : Clause.Scenario Person → Prop} {dat acc : PersonalPronoun}
 
+/-- The two predictions coincide on ordinary pronouns, those denoting exactly the categories
+their agreement features realize. -/
 theorem morphosyntactic_iff_of_ordinary (hd : dat.IsOrdinary) (hd' : dat.referential.Nonempty)
     (ha : acc.IsOrdinary) (ha' : acc.referential.Nonempty) :
     Morphosyntactic R dat acc ↔ Syntacticosemantic R dat acc := by
   simp [Licit, PersonalPronoun.referentialPerson_eq_person hd hd',
     PersonalPronoun.referentialPerson_eq_person ha ha']
 
+/-- Every restriction reading agreement person treats LEI as *lei*. -/
 theorem morphosyntactic_lei_formal :
     (Morphosyntactic R dat lei_formal ↔ Morphosyntactic R dat lei) ∧
       (Morphosyntactic R lei_formal acc ↔ Morphosyntactic R lei acc) :=
   ⟨Iff.rfl, Iff.rfl⟩
 
+/-- Every restriction reading interpretable person treats LEI as *tu*. -/
 theorem syntacticosemantic_lei_formal :
     (Syntacticosemantic R dat lei_formal ↔ Syntacticosemantic R dat tu) ∧
       (Syntacticosemantic R lei_formal acc ↔ Syntacticosemantic R tu acc) :=
@@ -116,26 +120,35 @@ theorem lei_dative : ∀ g ∈ grammars,
       Syntacticosemantic (IsLicit g) lei_formal lei := by
   decide
 
+/-- A third person dative over accusative LEI is licensed on agreement person and banned on
+interpretable person. -/
 theorem lei_accusative : ∀ g ∈ grammars,
     Morphosyntactic (IsLicit g) lui lei_formal ∧
       ¬ Syntacticosemantic (IsLicit g) lui lei_formal := by
   decide
 
+/-- The interaction–satisfaction grammars, read over agreement person, license accusative LEI. -/
 theorem deal_licenses_lei : ∀ g ∈ [Deal2024.weak, Deal2024.strong],
     Morphosyntactic (Deal2024.Licit g) lui lei_formal := by
   decide
 
+/-- Feature gluttony, read over agreement person, licenses accusative LEI, since a third person
+dative and a third person accusative do not glutton the Weak probe. -/
 theorem gluttony_licenses_lei :
     Morphosyntactic (¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false ·) lui
       lei_formal := by
   decide
 
+/-- Under the Fancy Constraint with a third person causee as applied argument, a third person
+accusative is licit and second person and LEI are not. -/
 theorem fancy_constraint :
     Syntacticosemantic (IsLicit weakGrammar) lui lei ∧
       ¬ Syntacticosemantic (IsLicit weakGrammar) lui tu ∧
       ¬ Syntacticosemantic (IsLicit weakGrammar) lui lei_formal := by
   decide
 
+/-- Coordinated with a third person, LEI resolves to second person on its interpretable value and
+to third on its agreement value. -/
 theorem resolved_person :
     lei_formal.referentialPerson.map (· ⊔ .third) = some .second ∧
       lei_formal.person.map (· ⊔ .third) = some .third :=
@@ -148,11 +161,15 @@ theorem first_dative_lei :
 
 /-! ### Spanish and German -/
 
+/-- USTED as dative over a third person accusative is licit; a third person dative over
+accusative USTED is not. -/
 theorem usted_accusative :
     Syntacticosemantic (IsLicit weakGrammar) Spanish.Pronouns.usted Spanish.Pronouns.el ∧
       ¬ Syntacticosemantic (IsLicit weakGrammar) Spanish.Pronouns.el Spanish.Pronouns.usted := by
   decide
 
+/-- A third person dative over accusative SIE is banned where over third plural *sie* it is
+licit. -/
 theorem sie_accusative :
     Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er German.Pronouns.sie_pl ∧
       ¬ Syntacticosemantic (IsLicit weakGrammar) German.Pronouns.er
@@ -160,6 +177,9 @@ theorem sie_accusative :
   decide
 
 open CoonKeine2021 in
+/-- Under assumed identity with a third plural subject, SIE, entering with its agreement person,
+does not glutton the person probe where second plural *ihr* does, and a singular subject gluttons
+the number probe against plural SIE. -/
 theorem assumed_identity :
     (∀ p ∈ German.Pronouns.sie_formal.person,
       ¬ Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧

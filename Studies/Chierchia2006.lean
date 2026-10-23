@@ -149,6 +149,8 @@ def evenEnrich (C : Set (Set W)) (p : Set W) : Set W := {w | w ∈ p ∧ ∀ q �
 
 theorem evenEnrich_subset (C : Set (Set W)) (p : Set W) : evenEnrich C p ⊆ p := fun _ h ↦ h.1
 
+/-- The even-like implicature is a condition on the alternatives, not on the world: enrichment
+is vacuous or a contradiction. -/
 theorem evenEnrich_eq_or_eq_empty (C : Set (Set W)) (p : Set W) :
     evenEnrich C p = p ∨ evenEnrich C p = ∅ := by
   by_cases h : ∀ q ∈ C, p ⊆ q
@@ -875,6 +877,8 @@ local macro "excluded" : tactic => `(tactic| first
   | exact excluded_episodicSubtrigged_of_scalar rfl rfl _
   | exact excluded_episodic_of_not_scalar rfl rfl _)
 
+/-- Every judged reading is predicted: a reading the paper marks `??` or worse is excluded, and
+one it marks at most `?` is available. -/
 theorem judgedReadings_predicted : ∀ x ∈ judgedReadings,
     (x.2.2.2 ≤ .questionable → Excluded x.1 x.2.1 x.2.2.1) ∧
       (.marginal ≤ x.2.2.2 → Available x.1 x.2.1 x.2.2.1) := by
@@ -884,6 +888,8 @@ theorem judgedReadings_predicted : ∀ x ∈ judgedReadings,
     | exact ⟨fun h ↦ absurd h (by decide), fun _ ↦ by available⟩
     | exact ⟨fun _ ↦ by excluded, fun h ↦ absurd h (by decide)⟩
 
+/-- Every sentence judged as a whole is predicted: one the paper marks `??` or worse has every
+reading excluded, and one it marks at most `?` has a reading available. -/
 theorem judgedSentences_predicted : ∀ x ∈ judgedSentences,
     (x.2.2 ≤ .questionable → ∀ r, Excluded x.1 x.2.1 r) ∧
       (.marginal ≤ x.2.2 → ∃ r, Available x.1 x.2.1 r) := by

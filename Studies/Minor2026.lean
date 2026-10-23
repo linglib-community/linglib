@@ -310,6 +310,8 @@ theorem notMem_dom_want_atomicPlural (hw'y : w' ≠ y) (hC : C ⊆ (Team.dep (va
   obtain ⟨e, rfl⟩ := singleton_mem_intro_iff.1 hK
   exact notMem_dom_intro_test_of_injOn hw'y injOn_val_split hC ⟨out, mem_distW.1 hD⟩
 
+/-- With a flat complement *want* is Hintikka's, holding of a state exactly when the complement
+holds at every world compatible with each experiencer's wishes. -/
 theorem mem_dom_want_test_iff (hxw' : x ≠ w') (hww' : w ≠ w') {Q : Set S} :
     J ∈ (want w w' x bul (test (𝒫 Q))).dom ↔
       ∀ j ∈ J, ∀ v ∈ atomsBelow (bul (val w j) (val x j)), extend j w' v ∈ Q := by

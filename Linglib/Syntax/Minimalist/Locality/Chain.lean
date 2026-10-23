@@ -51,6 +51,8 @@ open RoseTree SyntacticObject Core.Order PhraseStructure
 
 variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
 
+/-- The positions a phase head occurring only at `a` c-commands carry the terms within its
+complement. -/
 theorem withinComplement_iff_exists_mem_cCommandDomain {t : LinearizedSyntacticObject}
     {ℓ : LexicalItem.Token} {a : t.val.Positions} {x : SyntacticObject}
     (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)

@@ -197,6 +197,8 @@ theorem AffixStep.mem_flatten {A : Set M} {x : M} (h : L.AffixStep root A x) :
   obtain ⟨w, hw, hx⟩ := h.2.2.1
   exact List.mem_flatten.2 ⟨w, hw, hx⟩
 
+/-- The candidate sets can be restricted to sublists of the bound morphs of the inventory that
+are not roots. -/
 theorem isAffix_iff_sublists [DecidableEq M] [DecidablePred root] {x : M} :
     L.IsAffix root x ↔
       ∃ A ∈ (L.forms.flatten.dedup.filter fun y ↦ L.IsBound y ∧ ¬ root y).sublists,
@@ -251,6 +253,8 @@ def affixStep (hF : ∀ w ∈ L.forms, RootsContiguous root w) : Set M →o Set 
   toFun A := {x | L.AffixStep root (A ∩ {z | ¬ root z}) x}
   monotone' _ _ h _ hx := hx.mono hF (Set.inter_subset_inter_left _ h) fun _ hz ↦ hz.2
 
+/-- When roots are contiguous in every free form, the affixes are the greatest fixed point of the
+step. -/
 theorem setOf_isAffix_eq_gfp (hF : ∀ w ∈ L.forms, RootsContiguous root w) :
     {x | L.IsAffix root x} = (L.affixStep root hF).gfp := by
   have key {A : Set M} (hA : ∀ z ∈ A, ¬ root z) : A ∩ {z | ¬ root z} = A :=

@@ -119,6 +119,7 @@ instance : LinearOrder Ext := LinearOrder.lift' Ext.slot slot_injective
 
 theorem carp_sortedLT : carp.slots.SortedLT := by decide
 
+/-- The template admits exactly the strings of extensions rising in its order. -/
 theorem mem_carp_language {c : List Ext} : c ∈ carp.language ↔ c.SortedLT := by
   rw [carp.mem_language_iff_sublist rfl]
   refine ⟨fun h ↦ (carp_sortedLT.pairwise.sublist h).sortedLT, fun h ↦ ?_⟩
@@ -303,6 +304,8 @@ theorem mem_candidates {i : Input} {c : Candidate} :
 theorem templatic_mem_candidates (i : Input) : templatic i ∈ candidates i :=
   Finset.mem_insert_self _ _
 
+/-- The template alone licenses exactly the strings it admits: every pair rises in its order,
+so no suffix doubles. -/
 theorem licensedBy_template_iff {i : Input} {c : Candidate} :
     LicensedBy i [.template] c ↔ c ∈ carp.language := by
   rw [mem_carp_language]
@@ -326,6 +329,7 @@ theorem licensedBy_template_iff {i : Input} {c : Candidate} :
 theorem licensedBy_template_templatic (i : Input) : LicensedBy i [.template] (templatic i) :=
   licensedBy_template_iff.mpr (mem_carp_language.mpr (templatic_sortedLT i))
 
+/-- A candidate the template alone licenses is the templatic realization. -/
 theorem licensedBy_iff_templatic {i : Input} {c : Candidate} (hc : c ∈ candidates i) :
     LicensedBy i [.template] c ↔ c = templatic i := by
   refine ⟨fun h ↦ ?_, fun h ↦ h ▸ licensedBy_template_templatic i⟩
@@ -499,6 +503,8 @@ theorem scope_not_recoverable :
       chichewa.outputs [.A, .C, .P] = {[.C, .A, .P]} := by
   decide +kernel
 
+/-- Under the Mirror Principle the two derivations build different words, *-its-il-idw-* and
+*-il-its-idw-*. -/
 theorem mirror_predicts_distinct_words :
     (Baker1985.word (.root "lim")
       [(.causative, .suff "its"), (.applicative, .suff "il"), (.passive, .suff "idw")]).toList ≠
@@ -548,6 +554,7 @@ def grammar? (r : Datum) : Option Grammar :=
 def subject? (r : Datum) : Option Baker1985.Arg :=
   r.parse? "subject" [("instrument", .applied), ("causee", .agent)]
 
+/-- Every form the paper judges is acceptable exactly when it is an output of its scope. -/
 theorem rows_outputs :
     ∀ r ∈ Examples.all, subject? r = none → ∀ G ∈ grammar? r, ∀ i ∈ scope? r,
       ∀ c ∈ suffixes? r, (r.judgment = .acceptable ↔ c ∈ G.outputs i) := by

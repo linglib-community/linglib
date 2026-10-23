@@ -87,6 +87,7 @@ section Sentences
 
 variable (x y z w : X) (P Q : Ad)
 
+/-- Comparing across adjectives needs only a co-ordinal scale. -/
 theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) := by
   rintro f ⟨u, hu, hf⟩ v
   have : pairs (v.transform f) = u ∘ pairs v := funext fun p ↦ by
@@ -94,6 +95,8 @@ theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) 
   simp only [comparative, this]
   exact propext hu.lt_iff_lt
 
+/-- With a separate strictly increasing map for each adjective, comparing across two adjectives
+is not meaningful. -/
 theorem not_comparative_ordinal [DecidableEq Ad] (hPQ : P ≠ Q) :
     ¬ Invariant ordinal (comparative x P y Q) := by
   intro h
@@ -107,6 +110,8 @@ theorem not_comparative_ordinal [DecidableEq Ad] (hPQ : P ≠ Q) :
     simp [comparative, pairs, Profile.transform, v, f, hPQ, hPQ.symm]
   exact h₂ (h f hf v ▸ h₁)
 
+/-- A differential across adjectives holds up to a common change of unit and origin, once its
+amount is rescaled by the unit. -/
 theorem differential_cardinalFull {f : Ad → ℝ → ℝ} {a b : ℝ} (ha : 0 < a)
     (hf : ∀ i t, f i t = a * t + b) (d : ℝ) (v : Profile Ad X ℝ) :
     differential x P y Q (a * d) (v.transform f) ↔ differential x P y Q d v := by
@@ -115,6 +120,7 @@ theorem differential_cardinalFull {f : Ad → ℝ → ℝ} {a b : ℝ} (ha : 0 <
   rw [differential, differential, this]
   exact differentialComparative_const_mul_add_const _ ha.ne' b _ _ d
 
+/-- A factor across adjectives holds up to a common change of unit. -/
 theorem factor_ratioFull (n : ℝ) : Invariant ratioFull (factor x P y Q n) := by
   rintro f ⟨a, ha, hf⟩ v
   have : pairs (v.transform f) = fun p ↦ a * pairs v p := funext fun p ↦ by
@@ -122,6 +128,7 @@ theorem factor_ratioFull (n : ℝ) : Invariant ratioFull (factor x P y Q n) := b
   simp only [factor, this]
   exact propext (factorEquative_const_mul _ ha.ne' _ _ n)
 
+/-- A factor across adjectives does not survive a common change of origin. -/
 theorem not_factor_cardinalFull [DecidableEq X] [DecidableEq Ad] (hne : (x, P) ≠ (y, Q)) :
     ¬ Invariant cardinalFull (factor x P y Q 2) := by
   intro h
@@ -135,6 +142,9 @@ theorem not_factor_cardinalFull [DecidableEq X] [DecidableEq Ad] (hne : (x, P) �
     simp [factor, FactorEquative, pairs, Profile.transform, v, f, hyQ]; norm_num
   exact h₂ (h f hf v ▸ h₁)
 
+/-- Comparing differences on two adjectives survives a common unit with a separate origin per
+adjective, since each origin cancels within its own difference; the paper defines this scale in
+note 17 without drawing the consequence. -/
 theorem differenceComparative_cardinalUnit :
     Invariant cardinalUnit (differenceComparative x y P z w Q) := by
   rintro f ⟨a, ha, b, hf⟩ v
@@ -158,6 +168,9 @@ theorem universal_transform {f : Ad → ℝ → ℝ} (hf : f ∈ (ordinal : Set 
   funext₂ fun x P ↦ congrFun (universalDegree_comp (OrderEmbedding.ofStrictMono (f P) (hf P))
     (v · P) C) x
 
+/-- Read through universal degrees, *x is n times as P as y is Q* survives a separate strictly
+increasing map per adjective, so a ratio across adjectives becomes meaningful although each
+adjective's measure is only ordinal. -/
 theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
     Invariant ordinal fun v : Profile Ad X ℝ ↦
       FactorEquative (pairs (universal v C)) (x, P) (y, Q) n := by

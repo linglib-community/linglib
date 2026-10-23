@@ -70,10 +70,12 @@ theorem the_iff {α : Type*} (R S : α → Prop) :
 
 /-! ### The order on predicates -/
 
+/-- *Every* is the pointwise order on predicates, the standard formulation `R ⊆ S`. -/
 theorem every_iff_le {α : Type*} {R S : α → Prop} : every R S ↔ R ≤ S := Iff.rfl
 
 theorem no_iff_le_compl {α : Type*} {R S : α → Prop} : no R S ↔ R ≤ Sᶜ := Iff.rfl
 
+/-- *No* is disjointness of restrictor and scope. -/
 theorem no_iff_disjoint {α : Type*} {R S : α → Prop} : no R S ↔ Disjoint R S :=
   no_iff_le_compl.trans le_compl_iff_disjoint_right
 
@@ -325,6 +327,7 @@ theorem a_e_contrary (R S : α → Prop) :
     ∀ x : α, ¬ R x := by
   intro hA hE x hR; exact hE x hR (hA x hR)
 
+/-- With a non-empty restrictor the four determiners stand in all six relations of the square. -/
 theorem square_relations {R : α → Prop} (hR : ∃ x : α, R x) :
     Aristotelian.SquareRelations (square R) :=
   .of_disjoint (funext fun S ↦ propext <| iff_not_comm.mp (no_contradicts_some R S)) rfl <|

@@ -113,6 +113,7 @@ def third : Case → Grade → Option PersonalPronoun
   | .acc, .honorific => some hunka
   | _, _ => none
 
+/-- Two second-person grades share their nominative exactly when both are below the honorific. -/
 theorem second_nom_eq_iff (g h : Grade) :
     second .nom g = second .nom h ↔ g = h ∨ g < .honorific ∧ h < .honorific := by
   revert g h; decide
@@ -133,6 +134,8 @@ def secondAgreement : Grade → Morph
   | .honorific => .suff "əũh"
   | .highHonorific => .suff "əũh"
 
+/-- The verb separates every pair of second-person grades except the honorific and the high
+honorific, the two the pronouns separate as *əhã* and *əpne*. -/
 theorem secondAgreement_eq_iff (g h : Grade) :
     secondAgreement g = secondAgreement h ↔ g = h ∨ .midHonorific < g ∧ .midHonorific < h := by
   revert g h; decide

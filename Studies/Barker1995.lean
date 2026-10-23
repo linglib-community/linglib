@@ -107,10 +107,14 @@ abbrev hasRing : Fin 12 → Fin 12 → Prop := fun x y ↦
 
 abbrev isIcy : Fin 12 → Prop := fun y ↦ y = 9 ∨ y = 10
 
+/-- *Most planets' rings are made of ice* is true: `Poss` narrows the domain
+to the three ringed planets, two of which have icy rings. -/
 theorem most_planets_rings_icy :
     Poss most isPlanet GQ.some hasRing isRing isIcy := by
   unfold Poss dom; decide
 
+/-- Without narrowing, the quantification is false: only two of the nine
+planets have an icy ring. -/
 theorem not_unnarrowed :
     ¬ most isPlanet
       (fun x ↦ GQ.some (fun y ↦ isRing y ∧ hasRing x y) isIcy) := by
@@ -132,6 +136,7 @@ abbrev favors : Fin 8 → Fin 8 → Prop := fun x y ↦
 
 abbrev isBlue : Fin 8 → Prop := fun y ↦ y = 7
 
+/-- *Most people's favorite color is blue*, counting people, is true, with 3 of 5. -/
 theorem favorite_color_possessor_dominant :
     Poss most isPerson GQ.some favors isColor isBlue := by
   unfold Poss dom; decide

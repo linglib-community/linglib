@@ -138,6 +138,7 @@ def Effect.apply (e : Effect) (w : List Segment) (s : Segment) (d : List Segment
   | .copyRight C => some (d.head?.elim s fun t ↦ C.piecewise t s)
   | .copyLeft C => some (w.getLast?.elim s fun t ↦ C.piecewise t s)
 
+/-- An effect reads at most `leftReach` symbols of the prefix. -/
 theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : List Segment)
     (s : Segment) (d : List Segment) : e.apply (w.rtake n) s d = e.apply w s d := by
   cases e with
@@ -149,6 +150,7 @@ theorem Effect.apply_rtake (e : Effect) {n : ℕ} (h : e.leftReach ≤ n) (w : L
     have h1 : 1 ≤ n := by simpa [Effect.leftReach] using h
     simp only [Effect.apply, List.getLast?_rtake, ite_eq_right (Nat.ne_of_gt h1)]
 
+/-- An effect reads at most `rightReach` symbols of the suffix. -/
 theorem Effect.apply_append (e : Effect) (w : List Segment) (s : Segment) (d d' : List Segment)
     (h : e.rightReach ≤ d.length) : e.apply w s (d ++ d') = e.apply w s d := by
   cases e with
@@ -329,10 +331,12 @@ private theorem Rule.length_apply_go {r : Rule} (h : r.effect ≠ .delete)
     rw [Rule.apply_go_cons, List.length_append, Rule.length_verdict h, ih, List.length_cons,
       Nat.add_comm]
 
+/-- A rule that does not delete preserves the length of the word. -/
 theorem Rule.length_apply {r : Rule} (h : r.effect ≠ .delete) (input : List Segment) :
     (r.apply input).length = input.length :=
   Rule.length_apply_go h [] input
 
+/-- A cascade of rules that do not delete preserves the length of the word. -/
 theorem length_derive {rules : List Rule} (h : ∀ r ∈ rules, r.effect ≠ .delete)
     (input : List Segment) : (derive rules input).length = input.length := by
   induction rules generalizing input with
@@ -390,6 +394,8 @@ theorem Rule.toISLRule_apply (r : Rule) (h : r.rightReach = 0) :
   show (r.toISLRule h).applyAux [] input = _
   rw [r.applyAux_toISLRule h, Rule.apply_eq_scan]
 
+/-- **A rewrite rule with no right reach is Left-ISL**, with `k` one more than its left
+reach. -/
 theorem Rule.isLeftInputStrictlyLocal (r : Rule) (h : r.rightReach = 0) :
     IsLeftInputStrictlyLocal (r.leftReach + 1) r.apply :=
   ⟨r.toISLRule h, r.toISLRule_apply h⟩
@@ -455,6 +461,11 @@ theorem Rule.run_toSubsequentialTransducer (r : Rule) :
   rw [SubsequentialTransducer.run, r.runFrom_toSubsequentialTransducer]
   simp [Rule.apply_eq_scan, Rule.toSubsequentialTransducer]
 
+/-- **Every local rewrite rule is Left-Subsequential.** `Segment` is a partial
+valuation of the 26 features of Hayes, so it is finite but carries no
+`Fintype` instance (its `Flat` slots are deliberately opaque), and the hypothesis
+supplies the finite alphabet Mohri assumes without forcing a
+`3 ^ 26`-element enumeration on every consumer of this file. -/
 theorem Rule.isLeftSubsequential [Fintype Segment] (r : Rule) :
     IsLeftSubsequential r.apply :=
   r.run_toSubsequentialTransducer ▸ r.toSubsequentialTransducer.isLeftSubsequential

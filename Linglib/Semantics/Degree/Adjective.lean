@@ -216,6 +216,9 @@ def ComplementaryStandards (p : AntonymPair) : Prop :=
 instance (p : AntonymPair) : Decidable p.ComplementaryStandards := by
   unfold ComplementaryStandards; infer_instance
 
+/-- Without lexically fixed standards, the poles take complementary standards exactly when the
+scale has one endpoint. An open scale gives both a contextual standard, which leaves a gap, and a
+totally closed one gives both the maximum, as for *full* and *empty*. -/
 theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
     (hp : p.posLexicalStandard = none) (hn : p.negLexicalStandard = none) :
     p.ComplementaryStandards ↔

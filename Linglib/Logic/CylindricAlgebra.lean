@@ -120,6 +120,7 @@ theorem cyl_compl_cyl : cyl i (cyl i x)ᶜ = (cyl i x)ᶜ := by
   refine (le_cyl ..).antisymm' ?_
   rw [le_compl_iff_disjoint_right, disjoint_iff, ← cyl_inf_cyl, compl_inf_eq_bot, cyl_bot]
 
+/-- Cylindrification is conjugate to itself. -/
 theorem disjoint_cyl_comm : Disjoint (cyl i x) y ↔ Disjoint x (cyl i y) := by
   have key {x y : A} (h : Disjoint (cyl i x) y) : Disjoint x (cyl i y) := by
     have : cyl i (y ⊓ cyl i x) = ⊥ := by rw [inf_comm, h.eq_bot, cyl_bot]
@@ -206,6 +207,8 @@ theorem subst_sup (i j : ι) (x y : A) : subst i j (x ⊔ y) = subst i j x ⊔ s
   · simp
   · simp only [subst_of_ne h, inf_sup_left, cyl_sup]
 
+/-- Substitution commutes with complement. Off the diagonal, this is the content of the seventh
+cylindric axiom. -/
 theorem subst_compl (i j : ι) (x : A) : subst i j xᶜ = (subst i j x)ᶜ := by
   obtain rfl | h := eq_or_ne i j
   · simp
@@ -285,11 +288,15 @@ theorem cyl_apply : cyl i p g ↔ ∃ e, p (update g i e) :=
 theorem diag_apply : (diag i j : (ι → E) → Prop) g ↔ g i = g j :=
   Iff.rfl
 
+/-- Substituting the `j`-th variable for the `i`-th evaluates the predicate at the assignment
+whose `i`-th value is overwritten by its `j`-th value. -/
 theorem subst_apply : subst i j p g ↔ p (update g i (g j)) := by
   obtain rfl | h := eq_or_ne i j
   · simp
   · simp [subst_of_ne h, update_of_ne h.symm]
 
+/-- A predicate that depends only on the variables in `s` is fixed by cylindrification along
+every index outside `s`. -/
 theorem dimSet_subset_of_dependsOn {s : Set ι} (hp : DependsOn p s) : dimSet p ⊆ s := by
   intro i
   contrapose!

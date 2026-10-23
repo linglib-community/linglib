@@ -289,6 +289,8 @@ theorem matchTheory_enclitic_final_of_medial (r : Ranking Con 6)
   exact Finset.mem_image.2 ⟨d, Tableau.ofRanking_mem_optimal_of_forall_le hc hd hdc
     medial_le_final, hde⟩
 
+/-- Existential correspondence draws the line: under `priorityFirst` an enclitic wins in
+*Kim 's leaving* and none in *Kim 's*, against the implication exact Match obeys. -/
 theorem correspondence_not_enclitic_final_of_medial :
     ¬ ∀ r : Ranking Con 6,
       Form.enclitic ∈ (correspondence.language r kimIsLeaving).image (·.form) →

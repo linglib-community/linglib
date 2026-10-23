@@ -120,6 +120,8 @@ def Judgment.rows : List Judgment :=
    ⟨.approximately, .three, true⟩, ⟨.approximately, .dry, false⟩,
    ⟨.moreOrLess, .dry, true⟩, ⟨.moreOrLess, .three, false⟩]
 
+/-- The two-type classification reproduces every cited judgment, an approximator being acceptable
+exactly with the class it selects; this is the dualism argument. -/
 theorem classification_predicts_distribution :
     ∀ j ∈ Judgment.rows, (compatible j.approximator j.item ↔ j.acceptable) := by
   decide

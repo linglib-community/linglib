@@ -29,6 +29,8 @@ namespace SimpleGraph
 
 variable {V : Type*} (G : SimpleGraph V)
 
+/-- A set of vertices is a maximal independent set exactly when it is independent and every
+vertex outside it is adjacent to one inside. -/
 theorem maximal_isIndepSet_iff_forall_exists_adj {s : Set V} :
     Maximal G.IsIndepSet s ↔ G.IsIndepSet s ∧ ∀ v ∉ s, ∃ w ∈ s, G.Adj v w := by
   rw [Set.maximal_iff_forall_insert fun _ _ ht hst ↦ ht.mono hst]

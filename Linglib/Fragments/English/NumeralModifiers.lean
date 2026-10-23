@@ -126,11 +126,14 @@ def inventory : List NumeralModifier :=
 
 variable {form : String} {m : Modifier (Set ℕ)}
 
+/-- Every reading of an approximator is extensive, so the exact numeral entails the approximated
+one. -/
 theorem isExtensive_of_mem_approximator (hm : m ∈ ⟦approximator form⟧) :
     Modifier.IsExtensive m := by
   obtain ⟨y, rfl⟩ := hm
   exact Modifier.isExtensive_pointwise_iff.2 fun n ↦ ⟨Nat.sub_le n y, Nat.le_add_right n y⟩
 
+/-- No reading of *almost* or *nearly* is true of the number itself. -/
 theorem disjoint_singleton_of_mem_shortOf (hm : m ∈ ⟦shortOf form⟧) (n : ℕ) :
     Disjoint (m {n}) {n} := by
   obtain ⟨y, rfl⟩ := hm

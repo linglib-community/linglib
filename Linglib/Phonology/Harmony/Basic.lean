@@ -230,6 +230,8 @@ theorem Pattern.harmonic_insert_transparent {p : Pattern α V} {t : α}
   unfold Pattern.Harmonic Pattern.tier
   simp [List.filter_append, Pattern.OnTier, ht]
 
+/-- With all segments participating, the chain and pairwise formulations
+    coincide (value-agreement is transitive). -/
 theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
     (h : ∀ s ∈ w, p.participation s = .participating) :
     p.Harmonic w ↔ p.AgreeOn (p.tier w) := by
@@ -256,6 +258,10 @@ theorem Pattern.harmonic_iff_agreeOn {p : Pattern α V} {w : List α}
         ih fun s hs => hl s (List.mem_cons_of_mem a hs)]
 
 open Subregular TierStrictlyLocalGrammar in
+/-- Harmony is TSL₂ by construction, since the tier supplies both the unbounded distance
+strictly local grammars lack and the blocking strictly piecewise grammars lack
+([aksenova-rawski-graf-heinz-2024]; for the latter,
+`McMullin2016.blockingLang_not_isStrictlyPiecewise`). -/
 theorem Pattern.harmonic_iff_mem_tsl (p : Pattern α V) (w : List α) :
     p.Harmonic w ↔ w ∈ (ofForbiddenPairs (¬ p.Licit · ·) p.OnTier).language := by
   simp only [mem_ofForbiddenPairs_language_iff, Pattern.Harmonic, Pattern.tier,
@@ -266,6 +272,8 @@ def Pattern.project (p : Pattern α V) (s : α) : Option V :=
   if p.OnTier s then p.value s else none
 
 open Subregular TierStrictlyLocalGrammar in
+/-- When every segment on the tier participates with a value, the harmonic words are the inverse
+image, under the tier projection, of agreement among the values. -/
 theorem Pattern.harmonic_iff_map_project_mem [DecidableEq V] (p : Pattern α V)
     (hp : ∀ s, p.OnTier s → p.participation s = .participating ∧ (p.value s).isSome)
     (w : List α) :

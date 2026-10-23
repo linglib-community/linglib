@@ -60,6 +60,8 @@ theorem mem_ambncmdn {w : List α} : w ∈ ambncmdn a b c d ↔
 
 variable [DecidableEq α] {X : Language α}
 
+/-- A language containing `aⁿbⁿcⁿdⁿ` for infinitely many `n`, whose words have no more `a` than
+`c` and no more `b` than `d`, is not context-free. -/
 theorem not_isContextFree_of_replicate_mem_of_count_le (h : [a, b, c, d].Nodup)
     (hmem : ∃ᶠ n in Filter.atTop,
       replicate n a ++ replicate n b ++ replicate n c ++ replicate n d ∈ X)
@@ -104,6 +106,7 @@ theorem not_isContextFree_of_replicate_mem_of_count_le (h : [a, b, c, d].Nodup)
   obtain ⟨rfl, rfl⟩ := append_eq_nil_iff.1 hnil
   simp at hvy
 
+/-- For distinct letters, `{aᵐbⁿcᵐdⁿ}` is not context-free. -/
 theorem not_isContextFree_ambncmdn (h : [a, b, c, d].Nodup) :
     ¬ (ambncmdn a b c d).IsContextFree := by
   obtain ⟨⟨hab, hac, had⟩, ⟨hbc, hbd⟩, hcd⟩ :

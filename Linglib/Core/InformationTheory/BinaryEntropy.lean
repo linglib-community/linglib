@@ -33,6 +33,7 @@ namespace InformationTheory
 
 variable {S : Type*} [MeasurableSpace S] [MeasurableSingletonClass S]
 
+/-- A Bernoulli measure on two distinct points has the binary entropy of its parameter. -/
 theorem measureEntropy_bernoulliMeasure {x y : S} (h : x ≠ y) (p : I) :
     Hm[Ber(x, y, p)] = binEntropy p := by
   classical

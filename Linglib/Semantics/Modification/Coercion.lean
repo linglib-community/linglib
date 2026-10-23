@@ -63,11 +63,15 @@ theorem isNonVacuous_of_disjoint {P Q : Property W E} {w : W} {d : E → Prop} (
     (hP : ∃ x, d x ∧ P w x) (hQ : ∃ x, d x ∧ Q w x) : IsNonVacuous P w d :=
   ⟨hP, hQ.imp fun _ hx ↦ ⟨hx.1, fun hPx ↦ h.le_bot w _ ⟨hPx, hx.2⟩⟩⟩
 
+/-- A privative modifier is never non-vacuous within the extension of its noun, the local domain
+that head primacy assigns. -/
 theorem not_isNonVacuous_of_isPrivative {adj : Modifier (Property W E)}
     (hp : Modifier.IsPrivative adj) (N : Property W E) (w : W) :
     ¬ IsNonVacuous (adj N) w (N w) :=
   fun h ↦ h.1.elim fun x hx ↦ isPrivative_iff.1 hp N w x hx.2 hx.1
 
+/-- No predicate is non-vacuous within its own extension, so a tautologous modifier such as
+*real*, whose value is the noun, is vacuous within its head. -/
 theorem not_isNonVacuous_self (P : Property W E) (w : W) : ¬ IsNonVacuous P w (P w) :=
   fun h ↦ h.2.elim fun _ hx ↦ hx.2 hx.1
 
@@ -83,10 +87,13 @@ def ShiftsHead (adj : Modifier (Property W E)) (N : Property W E) (w : W) : Prop
 
 variable {adj : Modifier (Property W E)} {N : Property W E} {w : W}
 
+/-- A compound already non-vacuous within its head does not shift the head. -/
 theorem not_shiftsHead_of_isNonVacuous (h : IsNonVacuous (adj N) w (N w)) :
     ¬ ShiftsHead adj N w :=
   fun h' ↦ h'.1 h
 
+/-- A privative adjective shifts its head exactly when there are things in its value and things
+in the noun, so *fake fur* widens *fur* just when there are fake furs and real furs. -/
 theorem shiftsHead_iff_of_isPrivative (hp : Modifier.IsPrivative adj) :
     ShiftsHead adj N w ↔ (∃ x, adj N w x) ∧ ∃ x, N w x := by
   rw [ShiftsHead, isNonVacuous_sup_self_iff,

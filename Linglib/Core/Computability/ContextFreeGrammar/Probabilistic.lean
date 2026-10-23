@@ -232,6 +232,8 @@ theorem derivProb_eq_prod_pow_ruleCount {t : RoseTree (Symbol T G.NT)}
       simp only [List.map_cons, List.prod_cons, List.sum_cons, pow_add, Finset.prod_mul_distrib]
       rw [ih c (List.mem_cons_self ..), ihl fun c' hc' ↦ ih c' (List.mem_cons_of_mem _ hc')]
 
+/-- Over licensed derivation trees, the probability of a corpus is the product over the grammar's
+rules of the rule weight raised to the rule's count. -/
 theorem corpusProb_eq_prod_pow_ruleCounts (D : Multiset (RoseTree (Symbol T G.NT)))
     (h : ∀ t ∈ D, t.Licensed G.Licenses) :
     W.corpusProb D = ∏ r ∈ G.rules, W.weight r ^ RoseTree.ruleCounts D r := by
@@ -249,6 +251,8 @@ its rule counts. -/
 noncomputable def relFreq (D : Multiset (RoseTree (Symbol T G.NT))) : PCFG G :=
   ofCounts (RoseTree.ruleCounts D)
 
+/-- **The relative-frequency estimate is the maximum-likelihood PCFG** of a corpus of derivation
+trees the grammar licenses. -/
 theorem corpusProb_le_corpusProb_relFreq {D : Multiset (RoseTree (Symbol T G.NT))}
     (hD : ∀ t ∈ D, t.Licensed G.Licenses) : W.corpusProb D ≤ (relFreq D).corpusProb D := by
   rw [W.corpusProb_eq_prod_pow_ruleCounts D hD, (relFreq D).corpusProb_eq_prod_pow_ruleCounts D hD]

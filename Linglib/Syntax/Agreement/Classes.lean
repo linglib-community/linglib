@@ -70,6 +70,8 @@ variable {N T F : Type*}
 every target in every morphosyntactic form. -/
 abbrev agreementClasses (agr : N → T → F) : Setoid N := Setoid.ker agr
 
+/-- The controller genders, being the agreement classes, are as many as the agreement map
+has values. -/
 theorem card_quotient_agreementClasses (agr : N → T → F) :
     Nat.card (Quotient (agreementClasses agr)) = Nat.card (Set.range agr) :=
   Nat.card_congr (Setoid.quotientKerEquivRange agr)
@@ -77,6 +79,7 @@ theorem card_quotient_agreementClasses (agr : N → T → F) :
 /-- The target genders of a target are the forms it shows. -/
 abbrev targetGenders (agr : N → T → F) (t : T) : Set F := Set.range (agr · t)
 
+/-- The controller genders are at most the product of the target genders over the targets. -/
 theorem card_range_le_prod [Finite N] [Fintype T] (agr : N → T → F) :
     Nat.card (Set.range agr) ≤ ∏ t, Nat.card (targetGenders agr t) := by
   rw [← Nat.card_pi]
@@ -107,10 +110,12 @@ def Convergent (sg : N → F) (pl : N → F') : Prop :=
 def Crossed (sg : N → F) (pl : N → F') : Prop :=
   ¬ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl
 
+/-- Parallel target genders have the same kernel. -/
 theorem parallel_iff_ker_eq {sg : N → F} {pl : N → F'} :
     Parallel sg pl ↔ Setoid.ker sg = Setoid.ker pl :=
   (le_antisymm_iff (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
 
+/-- Convergent target genders have strictly ordered kernels. -/
 theorem convergent_iff_ker_lt {sg : N → F} {pl : N → F'} :
     Convergent sg pl ↔ Setoid.ker sg < Setoid.ker pl :=
   (lt_iff_le_not_ge (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
@@ -160,6 +165,8 @@ theorem Polar.injective (h : Polar f) (t : T) : Function.Injective (f · t) :=
 theorem Polar.faithful [Nonempty T] (h : Polar f) : Faithful f :=
   fun _ _ e ↦ h.injective (Classical.arbitrary T) (congrFun e _)
 
+/-- A polar exponent admits at most two values of either feature, since with three values of
+one feature two of them would share a form. -/
 theorem Polar.card_le_two [Fintype G] [Nontrivial T] (h : Polar f) :
     Fintype.card G ≤ 2 := by
   by_contra hc
@@ -176,6 +183,7 @@ theorem Polar.card_eq_two [Fintype G] [Nontrivial G] [Nontrivial T] (h : Polar f
     Fintype.card G = 2 :=
   le_antisymm h.card_le_two Fintype.one_lt_card
 
+/-- A polar exponent is a parallel system. -/
 theorem Polar.parallel (h : Polar f) (t t' : T) : Parallel (f · t) (f · t') :=
   ⟨fun _ _ e ↦ congrArg (f · t') (h.injective t e),
     fun _ _ e ↦ congrArg (f · t) (h.injective t' e)⟩

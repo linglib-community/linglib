@@ -342,6 +342,9 @@ theorem convergesIn_cwhBulk_iff {mwf : Finset Cat} : ConvergesIn mwf cwhBulk ↔
 
 theorem pfAsterisks_cwh : pfAsterisks cwh = ∅ := by decide
 
+/-- In both English varieties the coordinated wh-question has one optimal derivation, non-bulk
+sharing: the ellipsis analysis and the extra null complementizer cost more, and bulk sharing,
+though cheaper, crashes at the vP edge, so the paired reading is unavailable. -/
 theorem optimal_cwh_iff : ∀ t ∈ cwhCandidates,
     (Optimal englishA cwhCandidates t ↔ t = cwh) ∧
       (Optimal englishB cwhCandidates t ↔ t = cwh) := by
@@ -377,6 +380,11 @@ theorem csnrTwoE_excluded :
     ¬ NoVacuousEllipsis csnrTwoE ∧ cost csSharedC < cost csnrTwoE := by
   decide
 
+/-- In every language the coordinated sluice has two optimal derivations. For the paired
+reading, the elided shared C′ is cheaper than eliding two clauses or sharing TP under two
+complementizers. For the nonpaired reading, two complementizers of which only one bears [E] are
+cheaper than eliding two clauses, while a shared [E] complementizer, which draws one token fewer,
+elides vacuously, as does a second [E]. -/
 theorem optimal_cs_iff (mwf : Finset Cat) :
     ∀ t ∈ csCandidates, Optimal mwf csCandidates t ↔ t = cs ∨ t = csnr := by
   intro t ht
@@ -408,6 +416,7 @@ theorem convergesIn_multipleQuestion_iff {mwf : Finset Cat} :
   rw [ConvergesIn, pfAsterisks_multipleQuestion, Finset.disjoint_insert_right,
     Finset.disjoint_singleton_right]
 
+/-- Multiple sluicing converges exactly where the CP edge does not count. -/
 theorem convergesIn_multipleSluice_iff {mwf : Finset Cat} :
     ConvergesIn mwf (multipleQuestion cE) ↔ .C ∉ mwf := by
   rw [ConvergesIn, pfAsterisks_multipleSluice, Finset.disjoint_singleton_right]
