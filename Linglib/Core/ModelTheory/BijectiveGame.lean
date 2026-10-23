@@ -9,15 +9,13 @@ public import Mathlib.Algebra.Order.Group.Abs
 /-!
 # First-order logic with monadic quantifiers and the bijective game
 
-`[UPSTREAM]` candidate. Adding every monadic Lindström quantifier to first-order logic gives the
-logic `FO(Mon)`. Besides atomic formulas and connectives, a quantifier `Q` over `m` predicates
-binds one variable in `m` formulas, and holds when the domain, with the predicates read as the
-formulas' extensions, belongs to `Q`. Hella's bijective game is the matching
-Ehrenfeucht–Fraïssé game: each round duplicator commits to a bijection between the domains,
-spoiler picks an element, and its image answers it. If duplicator wins `k` rounds, the two
-positions satisfy the same `FO(Mon)` formulas of quantifier rank `≤ k`, since a bijection
-matching the formulas' extensions is an isomorphism of the monadic structures they carve out,
-which no quantifier can tell apart.
+`[UPSTREAM]` candidate. This file defines `FO(Mon)`, first-order logic with every monadic
+Lindström quantifier, and Hella's bijective Ehrenfeucht–Fraïssé game for it. A quantifier `Q` over
+`m` predicates binds one variable in `m` formulas, and holds when the domain, with the predicates
+interpreted as the extensions of the formulas, belongs to `Q`. In each round of the game,
+duplicator chooses a bijection between the domains, spoiler chooses an element, and its image is
+the answer. If duplicator wins `k` rounds, the two positions satisfy the same `FO(Mon)` formulas
+of quantifier rank `≤ k`.
 
 ## Main definitions
 
@@ -70,8 +68,8 @@ namespace MonFormula
 variable {M : Type w} [L.Structure M]
 
 /-- Satisfaction of a formula of `FO(Mon)` under an assignment of its free variables. A monadic
-quantifier holds when the domain, each predicate read as the extension of the corresponding
-formula in the bound variable, belongs to the quantifier. -/
+quantifier holds when the domain, with each predicate interpreted as the extension of the
+corresponding formula in the bound variable, belongs to the quantifier. -/
 def Realize : ∀ {n}, L.MonFormula n → (Fin n → M) → Prop
   | _, equal t₁ t₂, v => t₁.realize (Sum.elim default v) = t₂.realize (Sum.elim default v)
   | _, rel R ts, v => Structure.RelMap R fun i ↦ (ts i).realize (Sum.elim default v)
@@ -102,9 +100,9 @@ variable {M N : Type w} [L.Structure M] [L.Structure N] {k n : ℕ}
 
 variable (L) in
 /-- Duplicator wins the `k`-round bijective game from an `n`-tuple `v` of `M` and an `n`-tuple
-`w` of `N` when the tuples satisfy the same atomic formulas and, with `k + 1` rounds left, she has
-a bijection `g` between the domains such that each element `a` of `M` and its image `g a` extend
-the tuples to a position she wins with `k` rounds left. -/
+`w` of `N`. The tuples must satisfy the same atomic formulas; with `k + 1` rounds left, she must
+also have a bijection `g : M ≃ N` such that she wins with `k` rounds left from `v` extended by `a`
+and `w` extended by `g a`, for every `a`. -/
 def DuplicatorWinsBijective : ℕ → ∀ {n : ℕ}, (Fin n → M) → (Fin n → N) → Prop
   | 0, _, v, w => L.DuplicatorWins 0 v w
   | k + 1, _, v, w => L.DuplicatorWins 0 v w ∧
@@ -153,10 +151,9 @@ theorem not_monDefinable_of_duplicatorWinsBijective {K P : Set (Bundled.{w} L.St
 The successor graph of a permutation `σ` joins each element `x` to `σ x`. Duplicator wins `r`
 rounds of the bijective game between the successor graphs of two permutations of equinumerous
 finite sets whose cycles all have length at least `2 ^ r`. With `k` rounds left she keeps the
-chosen points matched displacement by displacement up to `2 ^ k`: the `j`-th point lies `d`
-steps along `σ` from the `i`-th exactly when the same holds along `τ`. In each round she
-translates the points near the chosen ones along `τ` and matches the remaining points by
-counting. -/
+chosen points matched for every displacement up to `2 ^ k`: the `j`-th point lies `d` steps along
+`σ` from the `i`-th exactly when the same holds along `τ`. In each round she maps the points near
+the chosen ones by translating along `τ`, and matches the remaining points by counting. -/
 
 section Permutation
 
@@ -189,7 +186,6 @@ private theorem DisplacementMatch.mono {t t' : ℕ} {n : ℕ} {v : Fin n → M} 
     (h : DisplacementMatch σ τ t' v w) (htt' : t ≤ t') : DisplacementMatch σ τ t v w :=
   fun i j d hd ↦ h i j d (hd.trans (by exact_mod_cast htt'))
 
-/-- With displacements matched up to `1`, the points agree on equality and adjacency. -/
 private theorem DisplacementMatch.duplicatorWins_zero {n : ℕ} {v : Fin n → M} {w : Fin n → N}
     (h : DisplacementMatch σ τ 1 v w) :
     @DuplicatorWins Language.graph M N (graphStructure fun x y ↦ y = σ x)
@@ -209,8 +205,6 @@ private theorem DisplacementMatch.duplicatorWins_zero {n : ℕ} {v : Fin n → M
     simp only [zpow_one] at this
     exact this
 
-/-- In one round, from points matched up to `2 * t`, duplicator has a bijection whose every move
-keeps them matched up to `t`. -/
 private theorem DisplacementMatch.exists_equiv [Fintype M] [Fintype N]
     (hcard : Fintype.card M = Fintype.card N) {t : ℕ}
     (hσ : ∀ x (d : ℤ), |d| ≤ t → (σ ^ d) x = x → d = 0)

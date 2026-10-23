@@ -9,55 +9,35 @@ public import Linglib.Core.Data.List.Forall2
 
 /-! # Argument frames
 
-A predicate's argument frame is its external argument, if any, and its complement positions
-in order. A position is nominal, adpositional, clausal, implicit or expletive, and carries the
-axes the predicate selects for: the type of case, in Blake's sense, and the adposition of an
-adpositional position, Noonan's coding, the sentence types and the subject requirement of a
-clausal one, and the interpretation of an implicit one. Positions and frames are partially
-ordered by refinement, so a schematic frame lies below every frame instantiating it.
+An *argument frame* of a predicate is its external argument, if any, and its complement
+positions in order. A *position* is nominal, adpositional, clausal, implicit or expletive, and
+records what the predicate selects there: the type of case (in Blake's sense) and the adposition
+of an adpositional position; Noonan's coding, the sentence types and the subject requirement of a
+clausal one; the interpretation of an implicit one. Positions and frames are partially ordered by
+refinement, so a schematic frame lies below every frame instantiating it.
 
 ## Main definitions
 
-* `ImplicitInterp` — the interpretation of an unexpressed argument
-* `ArgumentFrame.Position` — one argument position, with its selectional axes
-* `ArgumentFrame.Position.Kind`, `Position.kind`, `IsNominal`, `IsAdpositional`,
-  `IsClausal`, `IsExpressed` — the category of a position
-* `ArgumentFrame.Position.Axis`, `Axes`, `Position.axes` — the axes a position
-  records, as a bundle of partial values in the flat order
-* `ArgumentFrame` — external argument and complements, with the refinement order
-* `ArgumentFrame.Slot`, `ArgumentFrame.get?`, `ArgumentFrame.slots`, `ArgumentFrame.coreSlots`,
-  `ArgumentFrame.valency`, `ArgumentFrame.IsTransitive`, `ArgumentFrame.argumentRole` — the
-  argument slots of a frame and their comparative S/A/P/R/T classification
-* `ArgumentFrame.IsIntransitive`, `ArgumentFrame.HasNominal`,
-  `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal`, `ArgumentFrame.HasFinite`,
-  `ArgumentFrame.HasImplicit` — shape predicates
-* `ArgumentFrame.leaveImplicit` — a frame with one complement left unexpressed
-* `ArgumentFrame.withObject` — a frame with a nominal object before its complements
-* `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, … — smart
-  constructors
-
-## Main results
-
-* `ArgumentFrame.Position.le_def`, `ArgumentFrame.le_def` — the refinement orders
+* `ImplicitInterp`: the interpretation of an unexpressed argument.
+* `ArgumentFrame.Position`: an argument position, with its selectional axes.
+* `ArgumentFrame.Position.kind`, `Position.axes`: a position's category and recorded axes.
+* `ArgumentFrame`: an external argument and complements, ordered by refinement.
+* `ArgumentFrame.Slot`, `ArgumentFrame.coreSlots`, `ArgumentFrame.argumentRole`: argument slots,
+  the core ones, and their comparative S/A/P/R/T roles.
+* `ArgumentFrame.leaveImplicit`, `withObject`: a complement left unexpressed; an object added.
+* `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, …: frames.
 
 ## Implementation notes
 
-A position refines another within its kind: `p ≤ q` when the two are of
-one kind and every axis `p` records, `q` records with the same value. A
-frame's order fixes the external argument and refines the complements
-pointwise (`List.Forall₂`). A frame is the surface clause, its external argument the subject
-position, `none` for a predicate that selects no subject, as an impersonal passive and a raising
-predicate; an unaccusative verb's sole argument is its subject, unaccusativity being read off the
-verb's diatheses (`Verb.IsUnaccusative`). The comparative role labels S, A, P, R and T are read
-off the frame's coding (`ArgumentFrame.argumentRole`), never stored. The interpretations of an
-implicit argument are Fillmore's and Bruening's, with Levin's understood-object alternations.
-Complement-taking is cross-categorial, Noonan's complement-taking predicates including
-adjectives and nouns, so `ArgumentFrame` is not under `Verb`. Control is a participant of a
-diathesis (`Diathesis.controller`), frame-conditioned attitude and opacity live on `Verb.Reading`
-(`Syntax/Category/Verb/Defs.lean`), and the
-selection relation between frames and clause-typers (`Verb.Takes`) in
-`Syntax/Category/Verb/ArgumentFrame/Takes.lean`. Deal's CP-external shell inventory lives
-with its consumer in `Studies/Deal2026.lean`.
+The external argument is the subject position of the surface clause, `none` for a predicate that
+selects no subject (an impersonal passive, a raising predicate). An unaccusative verb's sole
+argument is its subject; unaccusativity is a property of the verb's diatheses
+(`Verb.IsUnaccusative`). The roles S, A, P, R and T are computed from the frame's coding
+(`ArgumentFrame.argumentRole`), never stored. `ArgumentFrame` is not under `Verb` because
+complement-taking is cross-categorial: Noonan's complement-taking predicates include adjectives
+and nouns. Control is a participant of a diathesis (`Diathesis.controller`); attitude and opacity
+are recorded on `Verb.Reading`, the selection of clause-typers on `Verb.Takes`, and Deal's
+CP-external shells in `Studies/Deal2026.lean`.
 
 ## References
 
@@ -72,7 +52,8 @@ with its consumer in `Studies/Deal2026.lean`.
 
 @[expose] public section
 
-/-- The interpretation of an unexpressed argument. -/
+/-- The interpretation of an unexpressed argument, after Fillmore and Bruening, with Levin's
+understood-object alternations. -/
 inductive ImplicitInterp where
   /-- An existentially bound argument, an unspecified someone or something. -/
   | indef
@@ -88,11 +69,10 @@ inductive ImplicitInterp where
 
 namespace ArgumentFrame
 
-/-- An argument position of a frame is nominal; adpositional, recording the
-    type of case marked and the adposition selected; clausal, recording the
-    coding, the sentence types and the subject requirement
-    selected; implicit, an unexpressed argument with its interpretation;
-    or expletive. Every axis is optional, and `none` or `⊥` is unselective. -/
+/-- An argument position of a frame: nominal; adpositional, with the type of case marked and
+    the adposition selected; clausal, with the coding, the sentence types and the subject
+    requirement selected; implicit, an unexpressed argument with its interpretation; or
+    expletive. Every axis is optional, and `none` or `⊥` selects nothing. -/
 inductive Position where
   | nominal
   | adpositional (relation : Option Case.Kind := none)
@@ -189,7 +169,7 @@ inductive Axis where
   | interp
   deriving DecidableEq, Fintype, Repr
 
-/-- The carrier of an axis is a flat slot over the values of an enumerated axis, and a
+/-- The values an axis takes: an optional value in the flat order for an enumerated axis, and a
     selection of sentence types for the `types` axis. -/
 def Axis.Carrier : Axis → Type
   | coding => Flat Clause.ComplementType
@@ -239,7 +219,7 @@ instance : ∀ a : Axis, DecidableLE a.Carrier
   | .adposition => inferInstanceAs (DecidableLE (Flat Adposition))
   | .interp => inferInstanceAs (DecidableLE (Flat ImplicitInterp))
 
-/-- A bundle of partial axis values, ordered pointwise by extension, so that unification is
+/-- A family of partial axis values, ordered pointwise by extension. Unification is
     `PartialUnify.unify` and consistency is `Compat`. -/
 abbrev Axes := ∀ a : Axis, a.Carrier
 
@@ -252,7 +232,6 @@ def axes (p : Position) : Axes
   | .adposition => p.adposition?
   | .interp => p.interp?
 
-/-- A position is its kind and its axes. -/
 theorem eq_of_kind_eq_of_axes_eq {p q : Position} (hk : p.kind = q.kind)
     (ha : p.axes = q.axes) : p = q := by
   have h := fun a ↦ congrFun ha a
@@ -286,7 +265,7 @@ end ArgumentFrame
     order. -/
 @[ext]
 structure ArgumentFrame where
-  /-- The external argument; `none` for an unaccusative or impersonal frame. -/
+  /-- The external argument; `none` for a predicate that selects no subject. -/
   external : Option ArgumentFrame.Position := some .nominal
   /-- The complement positions in order. -/
   complements : List ArgumentFrame.Position
@@ -343,8 +322,8 @@ instance : Decidable fr.IsTransitive := inferInstanceAs (Decidable (_ ≤ _))
 /-- The core objects are the core complements. -/
 def coreObjects : List Slot := fr.coreSlots.filter (· != .external)
 
-/-- The comparative argument role of a core slot is read off its coding. A nominal subject is S
-    without a core object and A with one, a sole core object is P, and of two core objects the
+/-- The comparative argument role of a core slot, computed from the frame. A nominal subject is
+    S without a core object and A with one; a sole core object is P; of two core objects, the
     first is R and the second T. -/
 def argumentRole : Slot → Option ArgumentRole
   | .external => if .external ∈ fr.coreSlots then some (if fr.coreObjects = [] then .S else .A)
@@ -355,8 +334,8 @@ def argumentRole : Slot → Option ArgumentRole
     | 2, some 1 => some .T
     | _, _ => none
 
-/-- The slot object entailments sit on is the last core object, the sole object of a
-    monotransitive and the second object of a double-object frame. -/
+/-- The slot that carries object entailments: the last core object, which is the sole object of
+    a monotransitive frame and the second object of a double-object frame. -/
 def objectSlot? : Option Slot := fr.coreObjects.getLast?
 
 /-! ### Shape predicates -/
@@ -395,8 +374,8 @@ instance : Decidable fr.HasImplicit := inferInstanceAs (Decidable (∃ p ∈ _, 
 def leaveImplicit (i : ℕ) (a : Option ImplicitInterp := none) : ArgumentFrame :=
   { fr with complements := fr.complements.set i (.implicit a) }
 
-/-- The frame with a nominal object before its complements, the object of an object-control or
-causative verb before its infinitive or small clause, as in *persuade him to leave* and *make him
+/-- The frame with a nominal object added before its complements, as for an object-control or
+causative verb before its infinitive or small clause: *persuade him to leave*, *make him
 leave*. -/
 def withObject : ArgumentFrame := { fr with complements := .nominal :: fr.complements }
 
@@ -454,8 +433,8 @@ def subjunctiveClause : ArgumentFrame :=
   ⟨some .nominal, [.clausal (coding := some .subjunctive) (types := .only .declarative)]⟩
 
 /-- Infinitival clause. Who the embedded subject is varies by verb (equi-deletion, raising, or
-    adposition-marked overt subjects, [noonan-2007] §1.3.4), so it lives on the verb's diathesis,
-    `Diathesis.controller`, not here. -/
+    adposition-marked overt subjects, [noonan-2007] §1.3.4), so it is recorded on the verb's
+    diathesis (`Diathesis.controller`), not here. -/
 def infinitival : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .infinitive)]⟩
 
 /-- The raising frame has an infinitival clause and no external argument. -/
@@ -464,10 +443,9 @@ def raising : ArgumentFrame := ⟨none, [.clausal (coding := some .infinitive)]�
 /-- Gerund / nominalized clause. -/
 def gerund : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .nominalized)]⟩
 
-/-- Small clause (*consider X happy*; causative *make X leave*). Outside
-    [noonan-2007]'s coding inventory, which classifies complements by
-    the part of speech of their predicate, so the position records
-    nothing. -/
+/-- Small clause (*consider X happy*; causative *make X leave*). It falls outside
+    [noonan-2007]'s coding inventory, which classifies complements by the part of speech of
+    their predicate, so the position records nothing. -/
 def smallClause : ArgumentFrame := ⟨some .nominal, [.clausal]⟩
 
 /-- The frame of an embedded question. The sentence type is orthogonal to the

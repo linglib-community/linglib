@@ -7,19 +7,17 @@ public import Linglib.Semantics.Modification.Basic
 /-!
 # Composition modes
 
-The composition modes of Heim and Kratzer, with the intensional application of von Fintel and
-Heim and the event identification of Kratzer, are typed binary operations: a mode of type
-`Mode σ₁ σ₂ τ` composes a left daughter of type `σ₁` and a right daughter of type `σ₂` into a
-mother of type `τ`. Functional application, intensional application and event identification
-come in two orders, the function or role head being the left or the right daughter. The types of
-two daughters select the mode they compose by (`Ty.mode?`), the first that applies in the order
-functional application, intensional application, predicate modification, event identification.
+A *composition mode* of type `Mode σ₁ σ₂ τ` composes a left daughter of type `σ₁` and a right
+daughter of type `σ₂` into a mother of type `τ`. The modes are Heim and Kratzer's, with the
+intensional application of von Fintel and Heim and the event identification of Kratzer;
+functional application, intensional application and event identification come in both orders.
+The daughters' types select the mode (`Ty.mode?`): the first that applies among functional
+application, intensional application, predicate modification and event identification.
 
-A mode denotes an operation on the denotation domains (`Mode.eval`): application, application to
-the rigid intension of the argument, the intersection of two predicates, and event
-identification. Under an applicative effect a mode composes the daughters' computations in their
-linear order (`Mode.evalM`), whichever daughter is the function. In any family of values indexed
-by the types, `Mode.combine?` composes two values by the mode their types select.
+A mode denotes an operation on the denotation domains (`Mode.eval`). Under an applicative effect a
+mode composes the daughters' computations in linear order, whichever daughter is the function
+(`Mode.evalM`). In any family of values indexed by types, `Mode.combine?` composes two values by
+the mode their types select.
 
 ## Main definitions
 
@@ -48,12 +46,11 @@ by the types, `Mode.combine?` composes two values by the mode their types select
 
 namespace Montague
 
-/-- The composition modes are the typed binary operations of functional application, with the
-function as either daughter, of intensional application, which applies a daughter expecting an
-intension to the rigid intension of its sister in either order ([von-fintel-heim-2011]), of
-predicate modification, the intersection of two predicates of one sort, and of event
-identification of a role head and a predicate of eventualities in either order, Kratzer's (23)
-([kratzer-1996]). -/
+/-- The composition modes, typed by the two daughters and the mother: functional application;
+intensional application of a daughter expecting an intension to the rigid intension of its sister
+([von-fintel-heim-2011]); predicate modification of two predicates of one sort; and event
+identification of a role head with a predicate of eventualities, Kratzer's (23) ([kratzer-1996]).
+All but predicate modification come in both orders. -/
 inductive Mode : Ty → Ty → Ty → Type where
   /-- Functional application, the left daughter the function. -/
   | functionalLeft {σ τ : Ty} : Mode (σ ⇒ τ) σ τ
@@ -80,20 +77,17 @@ def functionalLeft? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
   | .fn σ τ, σ₂ => if h : σ = σ₂ then some ⟨τ, h ▸ functionalLeft⟩ else none
   | _, _ => none
 
-/-- Backward functional application applies when the right daughter is a function on the left one.
- -/
+/-- Backward functional application applies when the right daughter is a function on the left. -/
 def functionalRight? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
   | σ₁, .fn σ τ => if h : σ = σ₁ then some ⟨τ, h ▸ functionalRight⟩ else none
   | _, _ => none
 
-/-- Intensional application applies when the left daughter expects the intension of the right one.
- -/
+/-- Intensional application applies when the left daughter expects the right one's intension. -/
 def intensionalLeft? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
   | .fn (.intens σ) τ, σ₂ => if h : σ = σ₂ then some ⟨τ, h ▸ intensionalLeft⟩ else none
   | _, _ => none
 
-/-- Intensional application applies when the right daughter expects the intension of the left one.
- -/
+/-- Intensional application applies when the right daughter expects the left one's intension. -/
 def intensionalRight? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ₂ τ)
   | σ₁, .fn (.intens σ) τ => if h : σ = σ₁ then some ⟨τ, h ▸ intensionalRight⟩ else none
   | _, _ => none
@@ -113,27 +107,24 @@ def eventIdentification? : (σ₁ σ₂ : Ty) → Option (Σ τ, Mode σ₁ σ�
 
 end Mode
 
-/-- `σ₁.mode? σ₂` is the mode by which a left daughter of type `σ₁` and a right daughter of type
-`σ₂` compose, the first that applies of functional application (the left daughter as the
-function first), intensional application, predicate modification and event identification, and
-`none` when none does. -/
+/-- The mode by which a left daughter of type `σ₁` and a right daughter of type `σ₂` compose: the
+first that applies of functional application (with the left daughter as the function first),
+intensional application, predicate modification and event identification. -/
 def Ty.mode? (σ₁ σ₂ : Ty) : Option (Σ τ, Mode σ₁ σ₂ τ) :=
   Mode.functionalLeft? σ₁ σ₂ <|> Mode.functionalRight? σ₁ σ₂ <|> Mode.intensionalLeft? σ₁ σ₂ <|>
     Mode.intensionalRight? σ₁ σ₂ <|> Mode.predicateModification? σ₁ σ₂ <|>
       Mode.eventIdentification? σ₁ σ₂
 
-/-- `σ₁.combine? σ₂` is the type a left daughter of type `σ₁` and a right daughter of type `σ₂`
-compose to, the mother's type under the mode their types select. -/
+/-- The type of the mother of a left daughter of type `σ₁` and a right daughter of type `σ₂`,
+under the mode their types select. -/
 def Ty.combine? (σ₁ σ₂ : Ty) : Option Ty := (σ₁.mode? σ₂).map (·.1)
 
 namespace Mode
 
-/-- A function type applies to an argument of its domain, the function on the left. -/
 @[simp] theorem mode?_fn_left (σ τ : Ty) : (σ ⇒ τ).mode? σ = some ⟨τ, functionalLeft⟩ := by
   simp only [Ty.mode?, functionalLeft?, ↓reduceDIte, Option.orElse_eq_orElse, Option.orElse_eq_or,
     Option.some_or]
 
-/-- No type is its own argument type, so a type never applies to a function type from itself. -/
 theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = none := by
   cases σ with
   | fn a b =>
@@ -145,12 +136,10 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
     · rfl
   | _ => rfl
 
-/-- A function type applies to an argument of its domain, the function on the right. -/
 @[simp] theorem mode?_fn_right (σ τ : Ty) : σ.mode? (σ ⇒ τ) = some ⟨τ, functionalRight⟩ := by
   simp only [Ty.mode?, functionalLeft?_self_fn, functionalRight?, ↓reduceDIte,
     Option.orElse_eq_orElse, Option.orElse_eq_or, Option.none_or, Option.some_or]
 
-/-- Two predicates compose by predicate modification. -/
 @[simp] theorem mode?_predicateModification :
     (Ty.e ⇒ .t).mode? (.e ⇒ .t) = some ⟨_, predicateModification⟩ := by
   simp [Ty.mode?, functionalLeft?, functionalRight?, intensionalLeft?, intensionalRight?,
@@ -160,7 +149,7 @@ theorem functionalLeft?_self_fn (σ τ : Ty) : functionalLeft? σ (σ ⇒ τ) = 
 
 variable {E W : Type} {S : Sorts} {σ₁ σ₂ τ : Ty}
 
-/-- A mode denotes application, application to the rigid intension of the argument, the
+/-- The denotation of a mode: application, application to the rigid intension of the argument,
 intersection of two predicates, or event identification. -/
 @[simp] def eval : Mode σ₁ σ₂ τ → Ty.Domain E W σ₁ S → Ty.Domain E W σ₂ S → Ty.Domain E W τ S
   | functionalLeft, f, a => f a
@@ -177,7 +166,6 @@ def evalM {M : Type → Type} [Applicative M] (m : Mode σ₁ σ₂ τ) (a : M (
     (b : M (Ty.Domain E W σ₂ S)) : M (Ty.Domain E W τ S) :=
   m.eval <$> a <*> b
 
-/-- At the identity effect a mode denotes its pure denotation. -/
 @[simp] theorem evalM_id (m : Mode σ₁ σ₂ τ) (a : Ty.Domain E W σ₁ S) (b : Ty.Domain E W σ₂ S) :
     m.evalM (M := Id) a b = m.eval a b := rfl
 
@@ -191,8 +179,7 @@ def combine? (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ �
     Option (Σ ty, V ty) :=
   (d₁.1.mode? d₂.1).map fun p ↦ ⟨p.1, op p.2 d₁.2 d₂.2⟩
 
-/-- The type of a composed value is the type the mode selects, a function of the daughters' types
-alone. -/
+/-- The type of a composed value depends only on the daughters' types. -/
 @[simp] theorem combine?_map_fst (op : ∀ {σ₁ σ₂ τ : Ty}, Mode σ₁ σ₂ τ → V σ₁ → V σ₂ → V τ)
     (d₁ d₂ : Σ ty, V ty) : (combine? op d₁ d₂).map (·.1) = d₁.1.combine? d₂.1 := by
   simp [combine?, Ty.combine?, Option.map_map, Function.comp_def]

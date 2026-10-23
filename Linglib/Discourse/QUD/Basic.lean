@@ -8,63 +8,42 @@ public import Linglib.Semantics.Questions.Resolution
 /-!
 # Questions under discussion: stack and strategy
 
-Roberts (2012) gives the inquiry coordinate of the conversational scoreboard. It is the stack of
-accepted but unanswered questions, a `List (Question W)` with the immediate QUD at its head, well
-formed when each question is a contextual subquestion of every question below it (definition
-(10g), `List.Pairwise (Question.IsSubquestionOf C)`). This file also defines strategies of
-inquiry as rose trees of questions (`Strategy`, (12); Büring's 2003 d-trees are the explicit
-tree-shaped ancestor), strategy completeness (`IsComplete`, a licensing condition on each local
-tree), and relevance of a move's denotation to a set of questions (`Question.IsRelevantTo`, built
-from the assertion clause of Relevance (15)). Ginzburg's (2012) KoS models the same coordinate as
-a partially ordered set with its own update rules, which lives with the gameboard in
-`Discourse/Gameboard/`. Beaver, Roberts, Simons and Tonhauser (2017) survey the framework, and
-Riester (2019) gives reconstruction rules and well-formedness constraints for QUD trees over
-corpus data.
+The questions under discussion form a stack of accepted but unanswered questions, a
+`List (Question W)` with the immediate QUD at its head. The stack is well formed in a context set
+`C` when each question is a contextual subquestion of every question below it
+(`List.Pairwise (Question.IsSubquestionOf C)`, definition (10g)). A *strategy of inquiry* is a rose
+tree of questions whose children are the subquestions pursued to answer their parent (12).
 
 ## Main definitions
 
-* `Discourse.Strategy` — strategies of inquiry as `RoseTree (Question W)`
-* `Discourse.Strategy.WellFormed` — every question in a subtree is a
-  contextual subquestion of the subtree's root
-* `Discourse.Strategy.IsComplete` — at every branching node, the meet of
-  the children's questions entails the parent's
-* `Question.IsRelevantTo` — some alternative of the move partially
-  answers some question in the set
+* `Discourse.Strategy`: strategies of inquiry as `RoseTree (Question W)`.
+* `Discourse.Strategy.WellFormed`: every question in a subtree is a contextual subquestion of the
+  subtree's root.
+* `Discourse.Strategy.IsComplete`: at every branching node, the meet of the children's questions
+  entails the parent's.
 
 ## Implementation notes
 
-Definition (10g) makes QUD a function from moves to ordered sets of
-accepted, unanswered questions; a `List (Question W)` models a single value
-of that function, and clause (iii) — each question's complete answers
-contextually entail partial answers to every question below it — is
-`List.Pairwise (Question.IsSubquestionOf C)`, relative to a context set
-because entailment in (9) is contextual throughout. The paper warns
-against strengthening (iii) to question entailment (the bridging-question
-discourse (13) violates it). Questions
-are retired when answered or determined practically unanswerable, and
-the paper licenses non-LIFO removal (answering a lower question discharges the
-higher questions in its strategy); `List.tail` is the unconditional LIFO
-special case, and the licensing conditions are the caller's obligation.
+Definition (10g) makes QUD a function from moves to ordered sets of questions; a list is one value
+of that function. Clause (iii) is relative to a context set because entailment in (9) is contextual
+throughout; the paper warns against strengthening it to question entailment, which the
+bridging-question discourse (13) violates. The paper allows a lower answered question to discharge
+the higher questions of its strategy; `List.tail` is the last-in-first-out special case, and the
+conditions on removal are the caller's obligation.
 
-Definition (12) gives `Strat(q)` derivatively — its substrategies are those
-for the questions accepted while `q` was the immediate QUD — with
-well-formedness left to "rational considerations", and the second
-component an unordered set. The ordered `RoseTree` follows
-Büring (2003). A strategy read off well-formed stacks has every question
-of a subtree a contextual subquestion of that subtree's root, and since
-the relation is not transitive `WellFormed` states this for every
-ancestor, not only the parent. `IsComplete` is the success criterion the D₀ discussion
-illustrates (complete answers to the subquestions jointly yield a
-complete answer to the parent), not a clause of (12); the converse
-direction (parent entails children-meet) is exactly what (13) rules out.
+Definition (12) leaves the well-formedness of `Strat(q)` to "rational considerations" and its
+substrategies unordered; the ordered `RoseTree` follows Büring. Contextual subquestionhood
+is not transitive, so `WellFormed` relates every question of a subtree to that subtree's root, not
+only to its parent. `IsComplete` is the success criterion of the D₀ discussion, not a clause of
+(12); its converse, the parent entailing the meet of the children, is what (13) rules out.
 
-`IsRelevantTo` is existential answerhood relevance: weaker than (15), whose
-guarantee is universal (every complete answer to the move contextually
-entails a partial answer to the QUD), and set-valued where (15) targets
-only `last(QUD)`. The set extension is the proxy Ippolito, Kiss and
-Williams (2025) use for their relevance assumption, consumed by the
-discourse *only* definedness condition in their (16); that the set really
-holds subquestions of the QUD is the caller's obligation.
+`Question.IsRelevantTo` (in `Semantics/Questions/Resolution.lean`) is existential, so weaker
+than (15), which requires every complete answer to the move to contextually entail a partial
+answer to the QUD; and it targets a set of questions where (15) targets only `last(QUD)`. The set
+version is the relevance assumption of Ippolito, Kiss and Williams, used by the definedness
+condition of discourse *only* in their (16); that the set holds subquestions of the QUD is the
+caller's obligation. Ginzburg's KoS orders the QUD partially, with its own update rules, in
+`Discourse/Gameboard/`.
 
 ## References
 
@@ -80,18 +59,17 @@ holds subquestions of the QUD is the caller's obligation.
 
 namespace Discourse
 
-/-- A strategy of inquiry is a rose tree of questions ([roberts-2012] definition (12),
-[buring-2003]'s d-trees), each node a question and its children the subquestions pursued to
-answer it. -/
+/-- A strategy of inquiry: a rose tree of questions whose children are the subquestions pursued
+to answer their parent ([roberts-2012] definition (12); [buring-2003]'s d-trees). -/
 abbrev Strategy (W : Type*) := RoseTree (Question W)
 
 namespace Strategy
 
 variable {W : Type*}
 
-/-- A strategy is **well formed** in the context `C` when every question in a subtree is a
-contextual subquestion of that subtree's root ([roberts-2012] definition (12), the strategies
-read off the stacks of (10g)). -/
+/-- A strategy is well formed in the context `C` when every question in a subtree is a contextual
+subquestion of that subtree's root. These are the strategies obtained from the stacks of (10g)
+([roberts-2012] definition (12)). -/
 inductive WellFormed (C : Set W) : Strategy W → Prop
   | node {q : Question W} {cs : List (Strategy W)}
       (sub : ∀ c ∈ cs, ∀ r ∈ c.values, Question.IsSubquestionOf C r q)
@@ -105,7 +83,6 @@ theorem WellFormed.leaf (C : Set W) (q : Question W) : WellFormed C (.leaf q : S
       (∀ c ∈ cs, ∀ r ∈ c.values, Question.IsSubquestionOf C r q) ∧ ∀ c ∈ cs, WellFormed C c :=
   ⟨fun | .node h₁ h₂ => ⟨h₁, h₂⟩, fun ⟨h₁, h₂⟩ => .node h₁ h₂⟩
 
-/-- Every question of a well-formed strategy is a contextual subquestion of its root. -/
 theorem WellFormed.isSubquestionOf_root {C : Set W} : ∀ {t : Strategy W}, WellFormed C t →
     ∀ r ∈ t.values, Question.IsSubquestionOf C r t.value
   | .node _ _, .node h _, r, hr => by
@@ -115,9 +92,9 @@ theorem WellFormed.isSubquestionOf_root {C : Set W} : ∀ {t : Strategy W}, Well
     · obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hl
       exact h c hc r hrl
 
-/-- A strategy is **complete** when at every branching node the meet of the children's questions
-entails the parent's question, so that jointly resolving the subquestions resolves the parent.
-Each local tree is licensed by entailment, and terminal nodes are trivially complete. -/
+/-- A strategy is complete when at every branching node the meet of the children's questions
+entails the parent's question, so that resolving all the subquestions resolves the parent. Leaves
+are complete. -/
 def IsComplete (t : Strategy W) : Prop :=
   t.Licensed fun q qs ↦ qs ≠ [] → (qs : Multiset (Question W)).inf ≤ q
 
@@ -136,8 +113,6 @@ theorem IsComplete.node {q : Question W} {cs : List (Strategy W)}
 theorem IsComplete.leaf (q : Question W) : IsComplete (.leaf q : Strategy W) :=
   .node (fun h => absurd rfl h) nofun
 
-/-- Under binary branching, a two-child node is complete when the meet of the children's
-questions entails the parent's and both children are complete. -/
 theorem IsComplete.node_pair {q : Question W} {s t : Strategy W}
     (h : s.value ⊓ t.value ≤ q) (hs : s.IsComplete) (ht : t.IsComplete) :
     IsComplete (.node q [s, t]) :=

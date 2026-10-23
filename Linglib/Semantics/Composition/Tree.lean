@@ -6,16 +6,13 @@ public import Linglib.Semantics.Composition.Term
 /-!
 # Type-driven interpretation
 
-This file interprets phrase-structure trees by Heim and Kratzer's type-driven composition, with
-the intensional application of von Fintel and Heim and the event identification of Kratzer,
-parameterized over an effect functor `M` in the style of Bumford and Charlow. A tree translates
-to a term of the composition modes (`PhraseStructure.Tree.translate`): a terminal to its word's
-constant, a binary node to the composition of its daughters' terms by the mode their types
-select, a trace to the variable of its index, and a binder to the abstraction over it. Its
-denotation is the evaluation of that term (`PhraseStructure.Tree.interp`), so a tree is
-interpreted by translation followed by the interpretation of the terms, as in Montague's theory
-of translation. Translation is the one type-driven step, and Predicate Abstraction is a capability
-of the effect (`PredAbs`) rather than a given.
+This file interprets phrase-structure trees by type-driven composition over an effect functor
+`M`. A tree translates to a term of the composition modes (`PhraseStructure.Tree.translate`), and
+its denotation is the evaluation of that term (`PhraseStructure.Tree.interp`), as in Montague's
+theory of translation. The modes are Heim and Kratzer's, with the intensional application of von
+Fintel and Heim and the event identification of Kratzer; the effect functor follows Bumford and
+Charlow. Translation is the only type-driven step, and Predicate Abstraction is a capability of
+the effect (`PredAbs`), not built in.
 
 ## Main definitions
 
@@ -29,29 +26,23 @@ of the effect (`PredAbs`) rather than a given.
 
 ## Main results
 
-* `PhraseStructure.Tree.interp_eq_eval_translate`: the pure engine is the denotation of the
-  tree's term.
-* `PhraseStructure.Tree.interp_map_fst`: the type of a tree's denotation is the type `ty?`
-  computes.
-* `PhraseStructure.Tree.interp_congr_of_agree` and its corollaries: Heim and Kratzer's theorems
-  on variable binding, that a tree's denotation depends on the assignment only at its free traces.
-* `PhraseStructure.Tree.readings_eq_of_choice`, `PhraseStructure.Tree.mem_readings_node_binary`:
-  the engine on an unambiguous lexicon is a case of `readings`, and a binary node's readings
-  compose pointwise.
-* `PhraseStructure.Tree.translate_map_const`, `PhraseStructure.Tree.translate_rel`: translation
-  commutes with renaming the constants and carries related lexicons to related terms.
+* `interp_eq_eval_translate`: a tree's denotation is the evaluation of its term.
+* `interp_map_fst`: the type of a tree's denotation is the type `ty?` computes.
+* `interp_congr_of_agree` and its corollaries: Heim and Kratzer's theorems on variable binding.
+* `readings_eq_of_choice`, `mem_readings_node_binary`: readings extend the engine and compose
+  pointwise.
+* `translate_map_const`, `translate_rel`: translation respects renaming and relating constants.
 
 ## Implementation notes
 
-The tree operations live in the namespace of `PhraseStructure.Tree`, as mathlib's `Term.realize`
-lives in that of `Term`, so that `t.interp lex g` works. Binary nodes sequence effects in linear
-order, the left daughter's first whichever daughter is the function, so at `M = Cont R` surface
-scope is the default reading and inverse scope needs a reordered evaluation
+The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.interp lex g` works.
+Binary nodes sequence effects left to right, whichever daughter is the function, so at
+`M = Cont R` surface scope is the default and inverse scope needs a reordered evaluation
 (`Composition/Cont.lean`). Predicate Abstraction needs a distributor
-`(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`, which scope effects lack, so under them `.bind`
-nodes fail and binding comes from the order of effects instead. The abstraction's fallback value
-`valueAt` is never reached, since types do not depend on the assignment. The category parameter
-of a tree is ignored, composition being type-driven.
+`(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`; scope effects lack one, so under them `.bind`
+nodes fail and binding comes from the order of effects. The abstraction's fallback value
+`valueAt` is never reached, since types do not depend on the assignment. The category of a node
+is ignored, composition being type-driven.
 
 ## References
 
@@ -123,10 +114,10 @@ section Translate
 
 variable {C : Type} {K : Ty → Type*} {L : Type*}
 
-/-- `translate lex t` is the term the tree `t` translates to by the composition principles of
-[heim-kratzer-1998]. A terminal translates to its word's constant, a non-branching node to its
-daughter's term, a binary node to the composition of its daughters' terms by the mode their types
-select, a trace to the variable of its index, and a binder to the abstraction over that variable. -/
+/-- The term the tree `t` translates to by the composition principles of [heim-kratzer-1998]:
+a terminal goes to its word's constant, a non-branching node to its daughter's term, a binary
+node to its daughters' terms composed by the mode their types select, a trace to the variable of
+its index, and a binder to the abstraction over that variable. -/
 def translate (lex : L → Option (Σ ty, K ty)) : Tree C L → Option (Σ ty, Term K ty)
   | .terminal _ w => (lex w).map fun c ↦ ⟨c.1, .const c.2⟩
   | .node _ (t :: []) => translate lex t
@@ -171,7 +162,6 @@ variable (lex : L → Option (Σ ty, K ty))
     translate lex (.bind n c body) =
       (translate lex body).map fun d ↦ ⟨.e ⇒ d.1, .lam n d.2⟩ := rfl
 
-/-- A node whose daughters its label does not license translates to nothing. -/
 theorem translate_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
     translate lex (RoseTree.node l cs) = none := by
@@ -191,7 +181,6 @@ theorem translate_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     · rfl
 
 
-/-- Translation commutes with renaming the constants. -/
 theorem translate_map_const {K' : Ty → Type*} (f : ∀ {ty : Ty}, K ty → K' ty) (t : Tree C L) :
     translate (fun w ↦ (lex w).map fun c ↦ ⟨c.1, f c.2⟩) t =
       (translate lex t).map fun d ↦ ⟨d.1, d.2.map f⟩ := by
@@ -233,7 +222,6 @@ private theorem bind_combine?_map_fst {K' : Ty → Type*}
   subst h₂
   simp
 
-/-- The types of a tree's term depend only on the types of its words' constants. -/
 theorem translate_map_fst {K' : Ty → Type*} {lex' : L → Option (Σ ty, K' ty)}
     (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
     (translate lex t).map (·.1) = (translate lex' t).map (·.1) := by
@@ -325,11 +313,12 @@ section TreeInterp
 
 variable {C : Type}
 
-/-- In the denotation of a tree under an assignment, by the composition principles of
-[heim-kratzer-1998], a terminal denotes what its leaf interpretation gives it, a non-branching
-node what its daughter does, a binary node what the mode its daughters' types select composes, a
-trace the value of its index, and a binder the abstraction over its index, when the effect has a
-distributor. It is the denotation of the tree's term, each word's denotation its constant. -/
+/-- The denotation of a tree under an assignment, by the composition principles of
+[heim-kratzer-1998]. A terminal denotes its leaf interpretation, a non-branching node its
+daughter's denotation, a binary node its daughters' denotations composed by the mode their types
+select, a trace the value of its index, and a binder the abstraction over its index when the
+effect has a distributor. It is the denotation of the tree's term with each word's denotation as
+its constant. -/
 def interp {E W : Type} {M : Type → Type} [Applicative M] {S : Sorts} [PredAbs M E W S]
     {L : Type*} (lex : L → Option (Denotation E W M S)) (g : Assignment E) (t : Tree C L) :
     Option (Denotation E W M S) :=
@@ -409,7 +398,6 @@ variable (lex : L → Option (Denotation E W M S)) (g : Assignment E)
         funext x
         rcases b.evalM (fun c ↦ c) (g[n ↦ x]) with _ | v <;> simp [valueAt]
 
-/-- A node whose daughters its label does not license denotes nothing. -/
 theorem interp_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
     interp lex g (RoseTree.node l cs) = none := by
@@ -472,7 +460,6 @@ variable (lexTy : L → Option Ty) (abs : Bool)
     ty? lexTy abs (.bind n c body) =
       if abs then (ty? lexTy abs body).map (.fn .e) else none := rfl
 
-/-- A node whose daughters its label does not license has no type. -/
 theorem ty?_junk {l : Tree.Label C L} {cs : List (Tree C L)}
     (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
     ty? lexTy abs (RoseTree.node l cs) = none := by
@@ -525,7 +512,6 @@ theorem interp_map_fst (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment
       cases interp lex g body <;> rfl
   | junk l cs hj _ => rw [interp_junk lex g hj, ty?_junk _ _ hj]; rfl
 
-/-- A tree is interpretable exactly when the types of its leaves give it a type. -/
 theorem isSome_interp (h : ∀ w, (lex w).map (·.1) = lexTy w) (g : Assignment E)
     (t : Tree C L) :
     (interp lex g t).isSome =
@@ -537,18 +523,17 @@ end TreeTyping
 /-! ### Assignment dependence and free variables
 
 [heim-kratzer-1998]'s theorems on variable binding (§5.4.2): the denotation of a tree depends
-on the assignment only at the traces free in it. Interpretability and the type composed do not
-depend on the assignment at all (`interp_map_fst_congr`), so with total assignments their
-theorem (9), that a tree with no free occurrence of the index `i` denotes alike under an
-assignment and its modification at `i`, is `interp_update_of_not_mem_freeIndices`, and their
-(10), that a closed tree denotes alike under every assignment, is `interp_congr_of_closed`. -/
+on the assignment only at the traces free in it. Interpretability and the type do not depend on
+the assignment at all (`interp_map_fst_congr`). With total assignments, their theorem (9) is
+`interp_update_of_not_mem_freeIndices`: a tree with no free occurrence of `i` has the same
+denotation under an assignment and its modification at `i`. Their (10) is `interp_congr_of_closed`:
+a closed tree has the same denotation under every assignment. -/
 
 section FreeVariables
 
 variable {C : Type} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M] [PredAbs M E W S]
   {L : Type*} (lex : L → Option (Denotation E W M S))
 
-/-- Whether a tree is interpretable, and at which type, does not depend on the assignment. -/
 theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
     (interp lex g t).map (·.1) = (interp lex g' t).map (·.1) := by
   rw [interp_map_fst (fun _ ↦ rfl), interp_map_fst (fun _ ↦ rfl)]
@@ -636,7 +621,6 @@ section Readings
 variable {C : Type} {L : Type*} {E W : Type} {S : Sorts} {M : Type → Type} [Applicative M]
   [PredAbs M E W S]
 
-/-- Interpretation commutes with relabelling the leaves. -/
 theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : L → L')
     (g : Assignment E) (t : Tree C L) : interp lex g (t.map f) = interp (lex ∘ f) g t := by
   induction t using Tree.rec' generalizing g with
@@ -667,16 +651,14 @@ theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M S)) (f : 
 
 variable (lex : L → Set (Denotation E W M S)) (g : Assignment E)
 
-/-- The readings of a tree under a leaf interpretation giving each word a set of readings, the
-values the engine computes over the resolutions of the tree, each occurrence of a word resolved
-to one of its readings. -/
+/-- The readings of a tree when each word has a set of readings: the denotations of the trees
+obtained by resolving each occurrence of a word to one of its readings. -/
 def readings (t : Tree C L) : Set (Denotation E W M S) :=
   {d | ∃ r : Tree C {p : L × Denotation E W M S // p.2 ∈ lex p.1},
     r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g r = some d}
 
 variable {lex g}
 
-/-- A value the engine computes under a choice of readings is the value of a resolved tree. -/
 theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)} {t : Tree C L}
     {d : Denotation E W M S} (h : interp choice g t = some d) :
     ∃ r : Tree C {p : L × Denotation E W M S // choice p.1 = some p.2},
@@ -729,7 +711,6 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M S)}
     simpa only [hres] using h
   | junk l cs hj _ => exact absurd h (by rw [interp_junk _ _ hj]; simp)
 
-/-- A value the engine computes under a choice among the readings is a reading. -/
 theorem interp_mem_readings {choice : L → Option (Denotation E W M S)}
     (hc : ∀ w d, choice w = some d → d ∈ lex w) {t : Tree C L} {d : Denotation E W M S}
     (h : interp choice g t = some d) : d ∈ readings lex g t := by

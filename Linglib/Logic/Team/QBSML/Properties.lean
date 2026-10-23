@@ -9,46 +9,36 @@ public import Linglib.Logic.Team.Definability
 /-!
 # QBSML formula properties
 
-[aloni-vanormondt-2023] [anttila-2021]
-
-The QBSML instances of the closure properties of [anttila-2021]
-Proposition 2.2.8: NE-free formulas have downward-closed, sup-closed,
-empty-team support, hence flat support, via the same
-`Team.isFlat_iff` template as
-`Logic/Team/BSML/Properties.lean`.
+This file proves that the support of an NE-free QBSML formula has the closure properties of
+[anttila-2021] Proposition 2.2.8: it is downward closed, closed under unions, and contains the
+empty state. Such a formula is therefore flat, as in `Logic/Team/BSML/Properties.lean`, and a
+state supports it iff its translation is classically satisfied at every index of the state.
 
 ## Main declarations
 
-* `support_empty_of_neFree`, `isLowerSet_support_of_neFree`,
-  `supClosed_support_of_neFree` — the three closure properties.
-* `isFlat_support_of_neFree` — flatness of the NE-free fragment
-  ([anttila-2021] Proposition 2.2.16, QBSML specialisation).
-* `definableClass_support_neFree_subset` — the NE-free fragment defines flat properties.
-* `Formula.toFormula?`,
-  `support_iff_forall_realizeAt` — the modal-free case of
-  [aloni-vanormondt-2023] Proposition 4.1: support of a translatable formula
-  is mathlib `Formula.Realize` at every index.
-* `Formula.toModal?`, `support_iff_forall_realize` — the **full**
-  Proposition 4.1: the NE-free fragment (modals included) translates into
-  `ModalFormula` over `Logic/Modal/FirstOrder/Semantics.lean`, and support is
-  Kripke satisfaction at every index; the translation is total on exactly
-  the NE-free fragment (`exists_toModal?_of_neFree`).
-* `eval_mapAtoms_iff` — atom-substitution congruence: an atom map with
-  bilaterally equivalent images is *salva veritate*.
-* `support_disj_inl`, `support_nec_iff`, `support_nec_mono`,
-  `support_exi_of_update_closure` — upward monotonicity of the NE-free
-  fragment and existential introduction via witness reconstruction.
+* `support_empty_of_neFree`, `isLowerSet_support_of_neFree`, `supClosed_support_of_neFree`: the
+  three closure properties.
+* `isFlat_support_of_neFree`: NE-free formulas are flat ([anttila-2021] Proposition 2.2.16).
+* `definableClass_support_neFree_subset`: NE-free formulas define flat properties.
+* `Formula.toFormula?`, `support_iff_forall_realizeAt`: [aloni-vanormondt-2023] Proposition 4.1
+  for modal-free formulas, with mathlib's `Formula.Realize` as classical satisfaction.
+* `Formula.toModal?`, `support_iff_forall_realize`: Proposition 4.1 for all NE-free formulas, via
+  a translation into `ModalFormula` defined exactly on them (`exists_toModal?_of_neFree`).
+* `eval_mapAtoms_iff`: replacing atoms by bilaterally equivalent formulas preserves support.
+* `support_disj_inl`, `support_nec_iff`, `support_nec_mono`, `support_exi_of_update_closure`:
+  disjunction introduction, monotonicity of `□`, and existential introduction.
 
 ## Implementation notes
 
-The closure inductions are folds over the connective-level lemmas of
-`Team/Operations.lean` and the quantifier clauses `State.univ`/`State.exi`
-of `QBSML/Defs.lean`. BSML proves its closure properties in separate
-inductions; QBSML cannot: union closure of the functional-extension clause
-(`State.supClosed_exi`) needs downward closure of the subformula, so the
-two properties live in one joint induction — and union closure holds only
-on the NE-free fragment, whereas BSML's is unconditional. The flatness
-corollary is unaffected: flat consumers use NE-free anyway.
+BSML proves its closure properties in separate inductions. QBSML proves downward and union
+closure in one induction, because union closure of the existential clause (`State.supClosed_exi`)
+needs downward closure of the subformula. Union closure is proved here for NE-free formulas,
+and in BSML for all formulas.
+
+## References
+
+* [aloni-vanormondt-2023]
+* [anttila-2021]
 -/
 
 @[expose] public section
@@ -65,9 +55,6 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [F
 
 /-! ### Empty-team property for NE-free formulas -/
 
-/-- NE-free formulas are supported and anti-supported by the empty team. Each case is the
-    empty-team lemma of its connective (`Team/Operations.lean`, `State.empty_mem_univ`,
-    `State.empty_mem_exi`). -/
 private theorem support_and_antiSupport_empty_of_neFree
     {φ : Formula Var Const Pred} (hNE : φ.NEFree)
     (M : Model W Domain Const Pred) :
@@ -83,7 +70,6 @@ private theorem support_and_antiSupport_empty_of_neFree
   | @exi x _ _ ih => exact ⟨State.empty_mem_exi ih.1, State.empty_mem_univ ih.2⟩
   | @univ x _ _ ih => exact ⟨State.empty_mem_univ ih.1, State.empty_mem_exi ih.2⟩
 
-/-- NE-free QBSML formulas are supported on the empty team. -/
 theorem support_empty_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     support M φ ∅ :=
@@ -91,11 +77,8 @@ theorem support_empty_of_neFree {φ : Formula Var Const Pred}
 
 /-! ### Downward and union closure for NE-free formulas -/
 
-/-- Joint downward and union closure of NE-free formulas, both polarities — the quantifier
-    cases are [aloni-vanormondt-2023] Fact 2, the rest the first-order re-run of
-    [anttila-2021] Proposition 2.2.8. Each case is the closure lemma of its connective;
-    union closure of the functional-extension clause (`State.supClosed_exi`) needs the
-    downward closure of the subformula, so the two properties live in one induction. -/
+/-- Downward and union closure of support and anti-support, proved together: the quantifier
+    cases are [aloni-vanormondt-2023] Fact 2, the others [anttila-2021] Proposition 2.2.8. -/
 private theorem support_and_antiSupport_dc_uc_of_neFree
     {φ : Formula Var Const Pred} (hNE : φ.NEFree)
     (M : Model W Domain Const Pred) :
@@ -121,19 +104,13 @@ private theorem support_and_antiSupport_dc_uc_of_neFree
     exact ⟨⟨State.isLowerSet_univ ih.1.1, State.supClosed_univ ih.1.2⟩,
       ⟨State.isLowerSet_exi ih.2.1, State.supClosed_exi ih.2.1 ih.2.2⟩⟩
 
-/-- NE-free QBSML formulas are downward-closed ([anttila-2021]
-    Proposition 2.2.8 part 1, extended to first-order). -/
+/-- NE-free QBSML formulas are downward closed ([anttila-2021] Proposition 2.2.8 part 1, for
+    first-order formulas). -/
 theorem isLowerSet_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
   (support_and_antiSupport_dc_uc_of_neFree hNE M).1.1
 
-/-- NE-free QBSML formulas have sup-closed support.
-
-    NB: BSML's `supClosed_support` needs no NE-free hypothesis, but
-    QBSML's `exi` UC case needs downward closure of the subformula as IH
-    (see the module docstring), so the QBSML version narrows to NE-free.
-    The downstream flat corollary consumes NE-free anyway. -/
 theorem supClosed_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     SupClosed { t : Finset (Index W Var Domain) | support M φ t } :=
@@ -141,10 +118,8 @@ theorem supClosed_support_of_neFree {φ : Formula Var Const Pred}
 
 /-! ### Flatness corollary -/
 
-/-- NE-free QBSML formulas are flat, the QBSML case of [anttila-2021] Proposition 2.2.16.
-    It follows from [anttila-2021] Proposition 2.2.2
-    (`Team.isFlat_iff`) applied to the three closure properties
-    above. -/
+/-- NE-free QBSML formulas are flat ([anttila-2021] Proposition 2.2.16). This follows from the
+    three closure properties by [anttila-2021] Proposition 2.2.2 (`Team.isFlat_iff`). -/
 theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsFlat { t : Finset (Index W Var Domain) | support M φ t } :=
@@ -155,18 +130,8 @@ theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
 
 /-! ### Soundness for the flat cell (Definability bridge) -/
 
-/-- The NE-free fragment of QBSML is sound for the flat cell, since every team
-    property definable by an NE-free QBSML formula is flat (downward-closed,
-    union-closed, empty-team). This restates [aloni-vanormondt-2023]'s
-    observation that NE-free QBSML reduces to classical first-order modal
-    logic, whose support is flat, in the `Team/Definability.lean` vocabulary.
-
-    The restriction to the NE-free fragment is essential, not incidental: NE
-    is the only source of non-classical behaviour, and union closure of `exi`
-    already needs downward closure of the subformula as IH (see the module
-    docstring), which NE breaks. So QBSML has no unconditional all-formula
-    cell — unlike BSML, whose NE-bearing formulas still land in the convex,
-    union-closed cell. -/
+/-- Every team property defined by an NE-free QBSML formula is flat, as in
+    [aloni-vanormondt-2023]'s reduction of NE-free QBSML to classical first-order modal logic. -/
 theorem definableClass_support_neFree_subset (M : Model W Domain Const Pred) :
     definableClass (fun φ : {φ : Formula Var Const Pred // φ.NEFree} ↦ support M φ.1) ⊆
       {P | IsFlat P} :=
@@ -176,11 +141,9 @@ end Closure
 
 /-! ### Fact 1: classical validities
 
-[aloni-vanormondt-2023] Fact 1 lists the classical equivalences QBSML
-validates: double negation elimination, the De Morgan laws, and the `□`/`◇`
-and `∀`/`∃` dualities. In the bilateral setup every one is definitional —
-negation literally swaps `support` and `antiSupport`, whose clauses are
-arranged in De Morgan pairs — so each is `Iff.rfl`. -/
+[aloni-vanormondt-2023] Fact 1 lists the classical equivalences QBSML validates: double negation
+elimination, the De Morgan laws, and the `□`/`◇` and `∀`/`∃` dualities. Each holds by `Iff.rfl`,
+since negation swaps `support` and `antiSupport`, whose clauses are De Morgan duals. -/
 
 section Fact1
 
@@ -230,16 +193,12 @@ variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [F
 
 /-! ### Flatness as pointwise evaluation -/
 
-/-- Flat (NE-free) support is pointwise: a team supports `φ` iff each of its
-    singletons does (`Team.IsFlat` unfolded at the support set). -/
 theorem support_iff_forall_singleton {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) :
     support M φ s ↔ ∀ i ∈ s, support M φ {i} :=
   isFlat_support_of_neFree hNE M s
 
-/-- Anti-support of an NE-free formula is likewise pointwise: flatness of the
-    bilateral negation. -/
 theorem antiSupport_iff_forall_singleton {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred)
     (s : Finset (Index W Var Domain)) :
@@ -248,11 +207,8 @@ theorem antiSupport_iff_forall_singleton {φ : Formula Var Const Pred}
 
 /-! ### Atom substitution salva veritate -/
 
-/-- An atom map whose images are bilaterally equivalent to the atoms they replace is *salva
-    veritate*: `φ.mapAtoms fp fc` and `φ` are supported and anti-supported by exactly the same
-    states. Atom-rewriting operations (e.g. [yan-2023]'s reinterpretation function,
-    `Studies/Yan2023.lean`) get truth-conditional harmlessness for the price of their two atom
-    lemmas. -/
+/-- Replacing each atom by a formula with the same support and anti-support preserves support
+    and anti-support; [yan-2023]'s reinterpretation function (`Studies/Yan2023.lean`) uses this. -/
 theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
     {fp : Pred → Var → Formula Var Const Pred}
     {fc : Pred → Const → Formula Var Const Pred}
@@ -338,16 +294,12 @@ theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
 
 /-! ### Upward monotonicity of the NE-free fragment -/
 
-/-- Disjunction introduction: `α ⊨ α ∨ β` for NE-free `β` (the right
-    disjunct is supported by the empty half of the split). -/
 theorem support_disj_inl (M : Model W Domain Const Pred)
     {α β : Formula Var Const Pred} (hβ : β.NEFree)
     {s : Finset (Index W Var Domain)} (h : support M α s) :
     support M (.disj α β) s :=
   ⟨s, h, ∅, support_empty_of_neFree hβ M, sup_bot_eq s⟩
 
-/-- Support of the derived `□` is pointwise support at the full accessible
-    lift — definitional, by the `neg`/`poss` clauses of `eval`. -/
 @[simp] theorem support_nec_iff (M : Model W Domain Const Pred)
     (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
     support M φ.nec s ↔
@@ -355,8 +307,6 @@ theorem support_disj_inl (M : Model W Domain Const Pred)
         (State.modalLift (M.access i.world) i.assign) :=
   Iff.rfl
 
-/-- `□` is monotone: a state-wise entailment between prejacents lifts to
-    their necessitations. -/
 theorem support_nec_mono (M : Model W Domain Const Pred)
     {α β : Formula Var Const Pred}
     (h : ∀ t : Finset (Index W Var Domain), support M α t → support M β t)
@@ -366,12 +316,9 @@ theorem support_nec_mono (M : Model W Domain Const Pred)
 
 /-! ### Existential introduction via witness reconstruction -/
 
-/-- A state `t` of `x`-updates of `s` (covering all of `s`) that supports
-    `γ` witnesses `∃x γ` on `s`: the functional collecting, at each index,
-    the values whose updates land in `t` reconstructs `t` exactly
-    (`State.extendFunctional_filter_of_update_mem`). The shared
-    existential-witness step of the free-choice facts
-    (`Logic/Team/QBSML/FreeChoice.lean`). -/
+/-- A state `s` supports `∃x γ` if some state `t` supporting `γ` consists of indices of `s` with
+    `x` reassigned and contains such a reassignment of each index of `s`. This is the existential
+    step of the free-choice facts (`Logic/Team/QBSML/FreeChoice.lean`). -/
 theorem support_exi_of_update_closure (M : Model W Domain Const Pred)
     {γ : Formula Var Const Pred} {x : Var}
     {s t : Finset (Index W Var Domain)}
@@ -390,24 +337,20 @@ end Fragment
 
 /-! ### Classicality: the modal-free Realize bridge
 
-[aloni-vanormondt-2023] Proposition 4.1 reduces the NE-free fragment to
-classical quantified modal logic. The modal-free part of that reduction is
-stated against mathlib first-order satisfaction: `Formula.toFormula?`
-translates the fragment into `((Language.monadic Pred)[[Const]]).Formula Var` — quantifiers
-via the computable named binders `Formula.all₁` / `Formula.ex₁` of
-`Core/ModelTheory/Binders.lean` — support at a singleton state is
-`Formula.Realize` in the structure the model carries at that world
-(`support_singleton_iff_realizeAt`), and flatness extends the bridge to
-arbitrary states (`support_iff_forall_realizeAt`). Modals remain outside the
-bridge: their right-hand side is classical *modal* logic, which mathlib's
-`ModelTheory` does not carry. -/
+[aloni-vanormondt-2023] Proposition 4.1 reduces the NE-free fragment to classical quantified modal
+logic. This section proves the modal-free case against mathlib's first-order satisfaction.
+`Formula.toFormula?` translates a formula into `((Language.monadic Pred)[[Const]]).Formula Var`,
+with quantifiers as the named binders `Formula.all₁` / `Formula.ex₁` of
+`Core/ModelTheory/Binders.lean`. Support at a singleton state is `Formula.Realize` in the structure
+the model carries at that world (`support_singleton_iff_realizeAt`), and by flatness support at any
+state is satisfaction at each of its indices (`support_iff_forall_realizeAt`). Modal formulas are
+left to the next section, since mathlib's `ModelTheory` has no modal logic. -/
 
 open FirstOrder Language
 
-/-- Translate the modal-free fragment of QBSML into mathlib first-order
-    formulas over the monadic signature: quantifiers via the computable named
-    binders `Formula.all₁` / `Formula.ex₁` (`none` on `NE` and modal
-    formulas). -/
+/-- The translation of a modal-free QBSML formula into a mathlib first-order formula over the
+    monadic signature, with quantifiers as the named binders `Formula.all₁` / `Formula.ex₁`; it is
+    `none` on `NE` and on modal formulas. -/
 def Formula.toFormula? [DecidableEq Var] :
     Formula Var Const Pred → Option (((Language.monadic Pred)[[Const]]).Formula Var)
   | .pred P x => some ((predSymb P).formula₁ (Term.var x))
@@ -419,7 +362,6 @@ def Formula.toFormula? [DecidableEq Var] :
   | .univ x φ => φ.toFormula?.map (Formula.all₁ x ·)
   | _ => none
 
-/-- Translatable formulas are NE-free. -/
 theorem neFree_of_toFormula? [DecidableEq Var] :
     ∀ {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var},
       φ.toFormula? = some ψ → φ.NEFree := by
@@ -461,7 +403,6 @@ theorem neFree_of_toFormula? [DecidableEq Var] :
   | ne => intro ψ hψ; simp [Formula.toFormula?] at hψ
   | poss _ _ => intro ψ hψ; simp [Formula.toFormula?] at hψ
 
-/-- Updating an index's assignment refines the matching valuation update. -/
 private lemma update_refines [DecidableEq Var] {i : Index W Var Domain} {v : Var → Domain}
     (hv : ∀ y, i.assign y = ↑(v y)) (x : Var) (d : Domain) :
     ∀ y, (i.update x d).assign y = ↑(Function.update v x d y) := by
@@ -477,11 +418,6 @@ section RealizeAt
 
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-/-- Support of a translatable formula at `{i}` is classical satisfaction at `i.world`, and
-    anti-support its negation. The bilateral induction interleaves the two through negation; the
-    split cases use that every subset of a singleton is `∅` or the singleton, plus the empty-team
-    property; the quantifier cases decompose the extended states pointwise via flatness and apply
-    the IH at the updated index and valuation. -/
 private theorem support_and_antiSupport_singleton_realizeAt
     (M : Model W Domain Const Pred) :
     ∀ {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var},
@@ -709,10 +645,9 @@ private theorem support_and_antiSupport_singleton_realizeAt
   | ne => intro ψ hψ; simp [Formula.toFormula?] at hψ
   | poss _ _ => intro ψ hψ; simp [Formula.toFormula?] at hψ
 
-/-- **[aloni-vanormondt-2023] Proposition 4.1, singleton case** (modal-free
-    fragment): support of a translatable formula at a singleton state is
-    classical first-order satisfaction at that index's world, for any total
-    valuation the index's partial assignment refines. -/
+/-- A singleton state supports a translatable modal-free formula iff the translation is satisfied
+    at the index's world, under any total valuation extending the index's partial assignment
+    ([aloni-vanormondt-2023] Proposition 4.1, singleton case). -/
 theorem support_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
@@ -720,8 +655,6 @@ theorem support_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     support M φ {i} ↔ ψ.RealizeAt M.interp i.world v :=
   (support_and_antiSupport_singleton_realizeAt M hψ hv).1
 
-/-- Anti-support of a translatable formula at a singleton state is the
-    classical falsity of its translation. -/
 theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) {i : Index W Var Domain}
@@ -729,9 +662,9 @@ theorem antiSupport_singleton_iff_realizeAt (M : Model W Domain Const Pred)
     antiSupport M φ {i} ↔ ¬ ψ.RealizeAt M.interp i.world v :=
   (support_and_antiSupport_singleton_realizeAt M hψ hv).2
 
-/-- A translatable formula is supported by a state iff it is classically satisfied at every index,
-    [aloni-vanormondt-2023] Proposition 4.1 for the modal-free fragment: `M, s ⊨ φ(x̄)` iff `M, w
-    ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s`, with the right-hand side mathlib's `Formula.Realize`. -/
+/-- A state supports a translatable modal-free formula iff the translation is satisfied at every
+    index: `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([aloni-vanormondt-2023]
+    Proposition 4.1, modal-free case). -/
 theorem support_iff_forall_realizeAt (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred} {ψ : ((Language.monadic Pred)[[Const]]).Formula Var}
     (hψ : φ.toFormula? = some ψ) (s : Finset (Index W Var Domain))
@@ -746,15 +679,14 @@ end RealizeAt
 
 /-! ### Classicality II: the full modal bridge
 
-The complete [aloni-vanormondt-2023] Proposition 4.1: `Formula.toModal?`
-translates the **whole NE-free fragment** — modals included — into
-`ModalFormula` over the monadic signature
-(`Logic/Modal/FirstOrder/Semantics.lean`), and support is Kripke satisfaction at
-every index. The translation is total on exactly the NE-free fragment. -/
+[aloni-vanormondt-2023] Proposition 4.1 in full: `Formula.toModal?` translates every NE-free
+formula, modal or not, into a `ModalFormula` over the monadic signature
+(`Logic/Modal/FirstOrder/Semantics.lean`), and support is Kripke satisfaction at every index. The
+translation is defined exactly on the NE-free formulas. -/
 
-/-- Translate QBSML into modal formulas over the monadic signature: atoms
-    embed as classical formulas, `◇` becomes the derived `ModalFormula.diamond`,
-    quantifiers become named binders; only `NE` returns `none`. -/
+/-- The translation of QBSML into first-order modal formulas over the monadic signature: `◇`
+    becomes `ModalFormula.diamond` and quantifiers become named binders. Only `NE` has no
+    translation. -/
 def Formula.toModal? [DecidableEq Var] :
     Formula Var Const Pred →
       Option (ModalFormula ((Language.monadic Pred)[[Const]]) Var)
@@ -771,7 +703,6 @@ def Formula.toModal? [DecidableEq Var] :
   | .exi x φ => φ.toModal?.map (ModalFormula.ex x ·)
   | .univ x φ => φ.toModal?.map (ModalFormula.all x ·)
 
-/-- Modally translatable formulas are NE-free. -/
 theorem neFree_of_toModal? [DecidableEq Var] :
     ∀ {φ : Formula Var Const Pred}
       {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var},
@@ -818,9 +749,6 @@ theorem neFree_of_toModal? [DecidableEq Var] :
     | some α => exact .univ x (ih hφ)
   | ne => intro τ hτ; simp [Formula.toModal?] at hτ
 
-/-- The modal translation is total on the NE-free fragment: together with
-    `neFree_of_toModal?`, the translatable and NE-free fragments
-    coincide. -/
 theorem exists_toModal?_of_neFree [DecidableEq Var] :
     ∀ {φ : Formula Var Const Pred}, φ.NEFree →
       ∃ τ, φ.toModal? = some τ := by
@@ -853,10 +781,6 @@ section Realize
 
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-/-- For the full NE-free fragment, support of a modally translatable formula at `{i}` is Kripke
-    satisfaction at `i.world`, and anti-support its negation. The modal case decomposes the
-    accessible lift pointwise via flatness: a nonempty witnessing subteam collapses to a single
-    accessible world. -/
 private theorem support_and_antiSupport_singleton_realize
     (M : Model W Domain Const Pred) :
     ∀ {φ : Formula Var Const Pred}
@@ -1129,9 +1053,8 @@ private theorem support_and_antiSupport_singleton_realize
           exact ((ih hφ (update_refines hv x d')).2).mpr hd
   | ne => intro τ hτ; simp [Formula.toModal?] at hτ
 
-/-- **[aloni-vanormondt-2023] Proposition 4.1, singleton case** (full
-    NE-free fragment): support of a modally translatable formula at a
-    singleton state is Kripke satisfaction at that index's world. -/
+/-- A singleton state supports a modally translatable formula iff its translation is satisfied
+    at the index's world ([aloni-vanormondt-2023] Proposition 4.1, singleton case). -/
 theorem support_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
@@ -1140,8 +1063,6 @@ theorem support_singleton_iff_realize (M : Model W Domain Const Pred)
     support M φ {i} ↔ τ.Realize M i.world v :=
   (support_and_antiSupport_singleton_realize M hτ hv).1
 
-/-- Anti-support of a modally translatable formula at a singleton state is
-    classical modal falsity. -/
 theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}
@@ -1150,11 +1071,9 @@ theorem antiSupport_singleton_iff_realize (M : Model W Domain Const Pred)
     antiSupport M φ {i} ↔ ¬ τ.Realize M i.world v :=
   (support_and_antiSupport_singleton_realize M hτ hv).2
 
-/-- **[aloni-vanormondt-2023] Proposition 4.1** (full NE-free fragment):
-    an NE-free formula is supported by a state iff its modal translation is
-    classically satisfied at every index — `M, s ⊨ φ(x̄)` iff
-    `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s`, the right-hand side Kripke
-    satisfaction over mathlib structures. -/
+/-- A state supports an NE-free formula iff its modal translation is satisfied at every index:
+    `M, s ⊨ φ(x̄)` iff `M, w ⊨_g φ(x̄)` for all `⟨w, g⟩ ∈ s` ([aloni-vanormondt-2023]
+    Proposition 4.1). -/
 theorem support_iff_forall_realize (M : Model W Domain Const Pred)
     {φ : Formula Var Const Pred}
     {τ : ModalFormula ((Language.monadic Pred)[[Const]]) Var}

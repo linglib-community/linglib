@@ -14,36 +14,33 @@ public import Linglib.Semantics.Polarity.Strength
 /-!
 # Licensers
 
-A licenser is what a construction places over the position of a polarity item: a family of
-operators, one for each choice of what the construction leaves open, such as the model, a
-restrictor, a bound or an accessibility relation. A classical licenser maps between bounded
-lattices, a scalar licenser does so with a stronger mate on its scale, von Fintel's map into
-trivalent propositions carries a presupposition, a modal licenser quantifies over worlds, and a
-question licenser is a wh-question.
-
-Following Gajewski, a licenser has two meanings: the plain one below the exhaustivity operator
-and the one above it, with its direct implicature, the exhaustification against its stronger
-scale-mates, factored in. Only a scalar licenser has a direct implicature. Every negative polarity
-item needs the plain meaning downward entailing modulo presupposition, after von Fintel, and not
-trivially so, not upward entailing as well, after Bylinina and Nouwen; an item needing a stronger
-strength of negation needs it outright of the other meaning. Gajewski asks only for downward
-entailment there, and the library keeps Zwarts's strengths, which agree with it on the scale
-endpoints. A modal licenser licenses free choice when the antiexhaustified existential under one
-of its operators is consistent, after Chierchia, and a question licenses by relevance, since
-widening the domain of a wh-question never lowers its value, after van Rooy.
+A *licenser* is the operator a construction places over the position of a polarity item, given
+as a family of operators indexed by what the construction leaves open (the model, a restrictor, a
+bound or an accessibility relation). It is classical (a map between bounded lattices), scalar (one
+with stronger scale-mates), Strawsonian (von Fintel's map into trivalent propositions), modal, or
+a wh-question. A licenser has a plain meaning below the exhaustivity operator and, after
+Gajewski, a meaning above it that adds its direct implicature, the exhaustification against its
+stronger scale-mates; only a scalar licenser has a direct implicature.
 
 ## Main definitions
 
 * `PolarityItem.Licenser`: the five kinds of licenser.
 * `PolarityItem.Licenser.exhaustified`: the licenser with its direct implicature factored in.
 * `PolarityItem.Licenser.Holds`, `PolarityItem.Licenser.IsStrawsonDE`,
-  `PolarityItem.Licenser.IsStrawsonUE`, `PolarityItem.Licenser.Carries`: a signature held outright,
-  downward and upward entailment modulo presupposition, and a strength of negation carried.
+  `PolarityItem.Licenser.IsStrawsonUE`: a signature held outright, and downward and upward
+  entailment modulo presupposition.
+* `PolarityItem.Licenser.Carries`: a strength of negation carried. Every negative polarity item
+  needs the plain meaning downward entailing modulo presupposition (von Fintel) and not upward
+  entailing as well (Bylinina and Nouwen); a stronger strength must hold outright of the
+  exhaustified meaning.
 * `PolarityItem.Licenser.LicensesFreeChoice`, `PolarityItem.Licenser.LicensesByRelevance`: the
-  free-choice and question routes.
+  free-choice route of a modal licenser (Chierchia) and the relevance route of a question
+  (van Rooy).
 
 ## Implementation notes
 
+* Gajewski asks only for downward entailment of the exhaustified meaning; Zwarts's strengths are
+  kept here, and agree with Gajewski's condition at the endpoints of the scale.
 * The unit conditions of `Signature.HoldsFor` do not exclude constant maps, which are downward
   entailing and, if constantly false, anti-additive; requiring weak strength not to be upward
   entailing as well excludes them.
@@ -124,9 +121,8 @@ structure ScalarFamily extends OperatorFamily where
   /-- The operator exhaustified against its stronger scale-mates, at each parameter. -/
   exhaustified : ∀ p, Dom p → Cod p
 
-/-- A licenser is the operator a construction places over the position of a polarity item, a
-classical operator, a scalar operator with its enrichment, an operator into trivalent
-propositions, a modal operator, or a question. -/
+/-- The operator a construction places over the position of a polarity item: classical, scalar
+(with its enrichment), into trivalent propositions, modal, or a question. -/
 inductive Licenser : Type 2 where
   | classical (F : OperatorFamily)
   | scalar (F : ScalarFamily)
@@ -145,8 +141,8 @@ inductive LicensingMechanism where
 
 namespace Licenser
 
-/-- The licenser with its direct implicature factored in, the meaning above the exhaustivity
-operator, is the enriched operators of a scalar licenser and any other licenser itself. -/
+/-- The meaning of a licenser above the exhaustivity operator: the enriched operators of a scalar
+licenser, and any other licenser itself. -/
 def exhaustified : Licenser → Licenser
   | .scalar F => .classical { F.toOperatorFamily with op := F.exhaustified }
   | L => L
@@ -173,10 +169,10 @@ def IsStrawsonUE : Licenser → Prop
   | .modal _ | .question => False
 
 /-- A licenser carries weak strength when it is downward and not upward entailing modulo
-presupposition, the condition every negative polarity item puts on the meaning below the
+presupposition. This is the condition every negative polarity item puts on the meaning below the
 exhaustivity operator ([von-fintel-1999], [gajewski-2011]'s Condition 1,
-[bylinina-nouwen-2018]'s (53)), and a stronger strength when it also holds that strength outright
-with its direct implicature factored in. -/
+[bylinina-nouwen-2018]'s (53)). It carries a stronger strength when, in addition, its exhaustified
+meaning holds that strength outright. -/
 def Carries (L : Licenser) : Negation.Strength → Prop
   | .weak => L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE
   | s => (L.IsStrawsonDE ∧ ¬ L.IsStrawsonUE) ∧ L.exhaustified.Holds s.toSignature
@@ -233,7 +229,6 @@ theorem Carries.weak (h : L.Carries s) : L.Carries .weak := by
   | weak => exact h
   | antiAdditive | antiMorphic => exact h.1
 
-/-- Carrying a strength carries every weaker one. -/
 theorem Carries.of_le (h : L.Carries s) (hts : t ≤ s) : L.Carries t := by
   cases t with
   | weak => exact h.weak
@@ -258,12 +253,10 @@ theorem carries_classical_iff {F : OperatorFamily} :
     exact ⟨fun h ↦ ⟨h.2, h.1.2⟩, fun h ↦
       ⟨⟨isStrawsonDE_of_holds_anti (h.1.toSignature_of_le (s := .weak) (by decide)), h.2⟩, h.1⟩⟩
 
-/-- A licenser holding exactly the strength `s₀` outright holds `s` exactly when `s ≤ s₀`. -/
 theorem holds_toSignature_iff {s₀ : Negation.Strength} (h : L.Holds s₀.toSignature)
     (hn : ∀ s, s₀ < s → ¬ L.Holds s.toSignature) : L.Holds s.toSignature ↔ s ≤ s₀ :=
   ⟨fun hs ↦ not_lt.mp fun hlt ↦ hn s hlt hs, fun hs ↦ h.toSignature_of_le hs⟩
 
-/-- A licenser holding no strength outright holds none. -/
 theorem not_holds_toSignature (h : ¬ L.Holds .anti) : ¬ L.Holds s.toSignature := fun hs ↦
   h (hs.of_le (Negation.Strength.toSignature_antitone
     (by cases s <;> decide : Negation.Strength.weak ≤ s)))

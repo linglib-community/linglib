@@ -8,69 +8,46 @@ public import Linglib.Semantics.Dynamic.Consequence
 # Expectation states
 
 This file defines Veltman's expectation patterns and expectation states, the updates with
-*normally φ* and *presumably φ*, and the necessity modals that Portner reads off such states.
+*normally φ* and *presumably φ*, and the necessity modals that Portner defines on such states.
 
-An expectation pattern is a preorder on worlds, where `w ≤ v` means that `w` conforms to every
-rule that `v` conforms to. Refining a pattern with a proposition removes the pairs that rank a
-world outside the proposition below a world inside it, which is the meet of the pattern with the
-preorder that a single proposition induces, so the laws of refinement are those of a
-meet-semilattice. A pattern respects a proposition when refining with it changes nothing;
-Veltman calls a nonempty such proposition a default in the pattern, and a pattern is determined
-by the propositions it respects. An expectation state pairs a pattern with the agent's
-information. Asserting a fact eliminates worlds, *normally φ* refines the pattern in favour of
-`φ` without eliminating anything, and *presumably φ* tests whether `φ` holds in the optimal
-worlds, the minimal worlds of the information under the pattern. Assertion and promotion are
-additive in the sense of `Semantics/Dynamic/Consequence.lean`. Defaults are dynamic: a promoted
-expectation persists under further assertions and promotions, conflicting defaults leave the
-agent agnostic, and compatible ones reinforce each other.
-
-Read at the level of discourse, assertion and promotion are the two updates of Portner's account
-of mood, on the context set and on the To-Do List. Informational necessity `□_cs` is truth
-throughout the information and preferential necessity `□_≤` is truth at the optimal worlds, and
-a state accepts an assertion or a presumption exactly when the corresponding necessity holds.
-Local necessity, the force Portner and Rubinstein give the subjunctive, is good possibility in
-ordering semantics over the information ranked by the pattern; it is preferential necessity when
-the information has a most normal world.
+An *expectation pattern* is a preorder on worlds, where `w ≤ v` means that `w` conforms to every
+rule that `v` conforms to. Refining a pattern with a proposition takes its meet with the preorder
+the proposition induces, and a pattern *respects* a proposition when refining with it changes
+nothing; Veltman's defaults in a pattern are the nonempty propositions it respects. An *expectation
+state* pairs a pattern with the agent's information. Asserting `φ` eliminates the worlds outside
+`φ`, *normally φ* refines the pattern with `φ`, and *presumably φ* tests whether `φ` holds at the
+optimal worlds, the minimal worlds of the information under the pattern. In Portner's account of
+mood, assertion and promotion are the updates of the context set and of the To-Do List.
 
 ## Main definitions
 
-* `DynamicSemantics.ExpState.crit`, `DynamicSemantics.ExpState.refine`: the pattern induced by
-  one proposition, and the refinement of a pattern with a proposition.
-* `DynamicSemantics.ExpState.Respects`: refining the pattern with the proposition changes nothing.
-* `DynamicSemantics.ExpState`: a pattern together with the agent's information, with `init`,
-  `optimal`, `assert` and `promote`.
-* `DynamicSemantics.ExpState.presumablyTest`, `DynamicSemantics.ExpState.mightTest`: the tests.
-* `DynamicSemantics.ExpState.boxCs`, `DynamicSemantics.ExpState.boxLe`,
-  `DynamicSemantics.ExpState.localNecessity`: informational, preferential and local necessity.
+* `ExpState.crit`, `ExpState.refine`: the pattern a proposition induces, and refinement by it.
+* `ExpState.Respects`: refining the pattern with the proposition changes nothing.
+* `ExpState`: a pattern with the agent's information; `init`, `optimal`, `assert`, `promote`.
+* `ExpState.presumablyTest`, `ExpState.mightTest`: the tests *presumably φ* and *might φ*.
+* `ExpState.boxCs`, `ExpState.boxLe`, `ExpState.localNecessity`: the three necessity modals.
 
 ## Main results
 
-* `refine_empty`, `refine_univ`, `refine_idem`, `refine_mono`: the laws of refinement.
-* `le_iff_forall_respects`: a pattern ranks `w` below `v` exactly when every proposition it
-  respects that holds at `v` holds at `w`.
+* `refine_empty`, `refine_univ`, `refine_idem`, `refine_mono`: the meet-semilattice laws.
+* `le_iff_forall_respects`: a pattern is determined by the propositions it respects.
 * `isAdditive_assert`, `isAdditive_promote`: assertion and promotion are additive.
-* `le_assert_iff`, `isFixedPt_presumablyTest_iff`: a state accepts an assertion or a presumption
-  exactly when it is informationally or preferentially necessary.
-* `normally_creates_respect`, `persistence_assert`, `persistence_normally`: a promotion creates
-  an expectation that later updates preserve.
-* `normally_presumably_succeeds`, `boxLe_of_respects`: *normally φ; presumably φ* passes.
-* `conflicting_defaults_iff_agree`, `compatible_defaults_optimal`: conflicting defaults yield
-  agnosticism, and compatible ones reinforce each other.
-* `promote_respects_idempotent`, `promote_comm`: promotion is idempotent and commutative.
-* `localNecessity_iff_boxLe`: with a most normal world, local necessity is preferential
+* `le_assert_iff`, `isFixedPt_presumablyTest_iff`: acceptance as informational or preferential
   necessity.
+* `normally_creates_respect`, `persistence_assert`, `persistence_normally`: expectations persist.
+* `normally_presumably_succeeds`, `boxLe_of_respects`: *normally φ; presumably φ* passes.
+* `conflicting_defaults_iff_agree`, `compatible_defaults_optimal`: conflict and reinforcement.
+* `promote_respects_idempotent`, `promote_comm`: promotion is idempotent and commutative.
+* `localNecessity_iff_boxLe`: with a most normal world, local necessity is preferential necessity.
 
 ## Implementation notes
 
-Veltman's states have coherent patterns, and his update with *normally φ* crashes when no normal
-world of the pattern is a `φ`-world. Here promotion refines unconditionally and patterns need not
-be coherent, so a conflicting rule shows up as the failure of its acceptability condition rather
-than as a crash. The crashing update is the rule update of the section 4 system in
-`Studies/Veltman1996.lean`, where the restricted rules and expectation frames of that section
-live.
-
-The preference structures of Condoravdi and Lauer order propositions, one type level above the
-ordering of worlds here.
+Veltman's patterns are coherent, and his update with *normally φ* crashes when no normal world of
+the pattern is a `φ`-world. Here promotion refines unconditionally, so a conflicting rule shows up
+as a failed acceptability condition rather than a crash. The crashing update, with the restricted
+rules and expectation frames of section 4, is in `Studies/Veltman1996.lean`. The preference
+structures of Condoravdi and Lauer order propositions, one type level above the ordering of worlds
+here.
 
 ## References
 
@@ -113,24 +90,19 @@ outside `φ` below a world inside it. It is the meet of `p` with the criterion p
 
 theorem refine_le : (refine p φ).le w v ↔ p.le w v ∧ (φ v → φ w) := Iff.rfl
 
-/-- Refining with the contradiction changes nothing. -/
 theorem refine_empty (p : Preorder W) : refine p (fun _ ↦ False) = p := by
   rw [refine, crit_const, inf_top_eq]
 
-/-- Refining with the tautology changes nothing. -/
 theorem refine_univ (p : Preorder W) : refine p (fun _ ↦ True) = p := by
   rw [refine, crit_const, inf_top_eq]
 
-/-- Refining twice with one proposition is refining once. -/
 theorem refine_idem (p : Preorder W) (φ : W → Prop) : refine (refine p φ) φ = refine p φ :=
   inf_right_idem _ _
 
-/-- The order of two refinements is immaterial. -/
 theorem refine_comm (p : Preorder W) (φ ψ : W → Prop) :
     refine (refine p φ) ψ = refine (refine p ψ) φ :=
   inf_right_comm _ _ _
 
-/-- Refinement preserves refinement of patterns. -/
 theorem refine_mono (h : p ≤ q) (φ : W → Prop) : refine p φ ≤ refine q φ :=
   inf_le_inf_right _ h
 
@@ -140,14 +112,11 @@ def Respects (p : Preorder W) (φ : W → Prop) : Prop := p ≤ crit φ
 
 theorem respects_iff : Respects p φ ↔ ∀ ⦃w v⦄, p.le w v → φ v → φ w := Iff.rfl
 
-/-- A refinement of a pattern respects what the pattern respects. -/
 theorem Respects.mono (h : Respects q φ) (hpq : p ≤ q) : Respects p φ := hpq.trans h
 
-/-- The refinement with `φ` respects `φ`. -/
 theorem respects_refine (p : Preorder W) (φ : W → Prop) : Respects (refine p φ) φ :=
   inf_le_right
 
-/-- A pattern respects `φ` exactly when refining with `φ` changes nothing. -/
 theorem refine_eq_self_iff : refine p φ = p ↔ Respects p φ := inf_eq_left
 
 /-- A pattern ranks `w` below `v` exactly when every proposition it respects that holds at `v`
@@ -157,8 +126,8 @@ theorem le_iff_forall_respects : p.le w v ↔ ∀ φ, Respects p φ → φ v →
     h (p.le · v) (fun _ _ hab hbv ↦ p.le_trans _ _ _ hab hbv) (p.le_refl v)⟩
 
 /-- Under a total pattern that respects `φ`, the minimal worlds of a domain containing a
-`φ`-world are `φ`-worlds. Totality is needed, since a world outside `φ` may otherwise be minimal
-by being incomparable with every `φ`-world. -/
+`φ`-world are `φ`-worlds. Without totality, a world outside `φ` can be minimal by being
+incomparable with every `φ`-world. -/
 theorem minimals_subset_of_respects {d : Set W} (hr : Respects p φ) (ht : Std.Total p.le)
     (hex : ∃ w ∈ d, φ w) : p.minimals d ⊆ {w ∈ d | φ w} := by
   intro w hw
@@ -218,7 +187,8 @@ def boxLe (σ : ExpState W) (p : W → Prop) : Prop :=
 
 /-- Local necessity holds of `p` when some world of the information sees only `p`-worlds among the
 worlds of the information at least as normal as itself, so that `p` holds throughout a branch of
-the pattern. This is Portner and Rubinstein's force of the subjunctive. -/
+the pattern. This is good possibility in ordering semantics, Portner and Rubinstein's force of the
+subjunctive. -/
 def localNecessity (σ : ExpState W) (p : W → Prop) : Prop :=
   OrderingSemantics.IsGoodPossibility σ.order σ.info {v | p v}
 
@@ -262,16 +232,15 @@ end Classical
 @[simp] theorem promote_order (σ : ExpState W) (φ : W → Prop) :
     (σ.promote φ).order = refine σ.order φ := rfl
 
-/-- Assertion can only shrink the information. -/
 theorem assert_info_subset (σ : ExpState W) (φ : W → Prop) :
     (σ.assert φ).info ⊆ σ.info := fun _ hw ↦ hw.1
 
-/-! Expectation states are ordered componentwise, a more constrained state lying below a less
-constrained one, as finer setoids lie below coarser ones, and the minimal state `init` is the
-top. Veltman orients his order the other way, with weaker states below stronger ones, and the
-content is the same. Both updates are additive, meeting the input with the update of `init`, so
-they are deflationary, monotone, idempotent and persistent, and his acceptance of `φ` in `σ`, that
-updating `σ` with `φ` returns `σ`, is the fixpoint condition `σ ≤ σ[φ]`. -/
+/-! Expectation states are ordered componentwise, with more constrained states below less
+constrained ones, as finer setoids lie below coarser ones; `init` is the top. Veltman orders states
+the other way, with the same content. Both updates are additive: they meet the input with the
+update of `init`. So they are deflationary, monotone, idempotent and persistent, and Veltman's
+acceptance of `φ` in `σ` (updating `σ` with `φ` returns `σ`) is the fixpoint condition
+`σ ≤ σ[φ]`. -/
 
 instance : PartialOrder (ExpState W) where
   le σ τ := σ.info ⊆ τ.info ∧ σ.order ≤ τ.order
@@ -294,21 +263,16 @@ theorem le_iff {σ τ : ExpState W} :
 
 theorem top_eq_init : (⊤ : ExpState W) = init := rfl
 
-/-- Assertion is additive, since asserting `φ` meets the state with the assertion of `φ` in the
-minimal state. -/
 theorem isAdditive_assert (φ : W → Prop) : IsAdditive (ExpState.assert · φ) := fun _ ↦
   ExpState.ext (Set.ext fun _ ↦ ⟨fun ⟨hw, hφ⟩ ↦ ⟨hw, trivial, hφ⟩, fun ⟨hw, _, hφ⟩ ↦ ⟨hw, hφ⟩⟩)
     (inf_top_eq _).symm
 
-/-- Promotion is additive, so rules are additive just like assertions of fact. -/
 theorem isAdditive_promote (φ : W → Prop) : IsAdditive (ExpState.promote · φ) := fun σ ↦
   ExpState.ext (Set.inter_univ _).symm (congrArg (σ.order ⊓ ·) (top_inf_eq (crit φ)).symm)
 
-/-- Assertion lands below the input. -/
 theorem assert_le_self (σ : ExpState W) (φ : W → Prop) : σ.assert φ ≤ σ :=
   ⟨σ.assert_info_subset φ, le_refl _⟩
 
-/-- Promotion lands below the input. -/
 theorem promote_le_self (σ : ExpState W) (φ : W → Prop) : σ.promote φ ≤ σ :=
   ⟨subset_rfl, inf_le_left⟩
 
@@ -320,8 +284,6 @@ theorem promote_mono {σ τ : ExpState W} (h : σ ≤ τ) (φ : W → Prop) :
     σ.promote φ ≤ τ.promote φ :=
   ⟨h.1, refine_mono h.2 φ⟩
 
-/-- After a sequence of assertions the information is the input's information filtered by
-every asserted proposition. -/
 theorem mem_foldl_assert_info (ps : List (W → Prop)) (σ : ExpState W) (v : W) :
     v ∈ (ps.foldl ExpState.assert σ).info ↔ v ∈ σ.info ∧ ∀ p ∈ ps, p v := by
   induction ps generalizing σ with
@@ -335,8 +297,6 @@ theorem mem_foldl_assert_info (ps : List (W → Prop)) (σ : ExpState W) (v : W)
     · rintro ⟨hv, hall⟩
       exact ⟨⟨hv, hall p (Or.inl rfl)⟩, fun q hq ↦ hall q (Or.inr hq)⟩
 
-/-- After a sequence of promotions the pattern is the input's pattern refined with every
-promoted proposition. -/
 theorem foldl_promote_order_le (ps : List (W → Prop)) (σ : ExpState W) (w v : W) :
     (ps.foldl ExpState.promote σ).order.le w v ↔
       σ.order.le w v ∧ ∀ p ∈ ps, p v → p w := by
@@ -351,7 +311,6 @@ theorem foldl_promote_order_le (ps : List (W → Prop)) (σ : ExpState W) (w v :
     · rintro ⟨hle, hall⟩
       exact ⟨⟨hle, hall p (Or.inl rfl)⟩, fun q hq ↦ hall q (Or.inr hq)⟩
 
-/-- A sequence of promotions leaves the information fixed. -/
 @[simp] theorem foldl_promote_info (ps : List (W → Prop)) (σ : ExpState W) :
     (ps.foldl ExpState.promote σ).info = σ.info := by
   induction ps generalizing σ with
@@ -370,7 +329,6 @@ theorem le_promote_iff (σ : ExpState W) (φ : W → Prop) :
     σ ≤ σ.promote φ ↔ Respects σ.order φ :=
   ⟨fun h ↦ h.2.trans inf_le_right, fun h ↦ ⟨subset_rfl, le_inf (le_refl _) h⟩⟩
 
-/-- The test *presumably φ* either returns the state or empties the information. -/
 theorem presumably_isTest (φ : W → Prop) (σ : ExpState W) :
     (presumablyTest φ σ).info = σ.info ∨ (presumablyTest φ σ).info = ∅ := by
   unfold presumablyTest; split <;> simp
@@ -385,17 +343,14 @@ theorem isFixedPt_presumablyTest_iff {σ : ExpState W} :
     rw [← he] at hw
     exact absurd hw.1 (Set.notMem_empty w)
 
-/-- The test *might φ* either returns the state or empties the information. -/
 theorem might_isTest (φ : W → Prop) (σ : ExpState W) :
     (mightTest φ σ).info = σ.info ∨ (mightTest φ σ).info = ∅ := by
   unfold mightTest; split <;> simp
 
-/-- The test *might φ* preserves the pattern. -/
 theorem mightTest_preserves_order (φ : W → Prop) (σ : ExpState W) :
     (mightTest φ σ).order = σ.order := by
   unfold mightTest; split <;> rfl
 
-/-- The test *presumably φ* preserves the pattern. -/
 theorem presumablyTest_preserves_order (φ : W → Prop) (σ : ExpState W) :
     (presumablyTest φ σ).order = σ.order := by
   unfold presumablyTest; split <;> rfl
@@ -437,7 +392,6 @@ theorem normally_creates_respect (σ : ExpState W) (φ : W → Prop) :
 
 /-! ### Idempotency and commutativity -/
 
-/-- If the pattern already respects `φ`, promoting `φ` changes nothing. -/
 theorem promote_respects_idempotent (σ : ExpState W) (φ : W → Prop)
     (h : Respects σ.order φ) :
     σ.promote φ = σ := by
@@ -445,12 +399,10 @@ theorem promote_respects_idempotent (σ : ExpState W) (φ : W → Prop)
   congr 1
   exact refine_eq_self_iff.2 h
 
-/-- Promoting `φ` twice is promoting it once. -/
 theorem promote_promote_self (σ : ExpState W) (φ : W → Prop) :
     (σ.promote φ).promote φ = σ.promote φ :=
   promote_respects_idempotent _ φ (normally_creates_respect σ φ)
 
-/-- The order of two promotions is immaterial. -/
 theorem promote_comm (σ : ExpState W) (φ ψ : W → Prop) :
     (σ.promote φ).promote ψ = (σ.promote ψ).promote φ :=
   congrArg (ExpState.mk σ.info) (refine_comm σ.order φ ψ)
@@ -458,10 +410,8 @@ theorem promote_comm (σ : ExpState W) (φ ψ : W → Prop) :
 /-! ### Conflicting defaults -/
 
 /-- After *normally φ* and *normally not φ* the pattern relates two worlds only when they agree
-on `φ`. Worlds inside and outside `φ` can then both be optimal, so neither *presumably φ* nor
-*presumably not φ* passes. This is the unconditional case of conflicting defaults; the Nixon
-diamond, where the conflict arises between conditional defaults, needs the expectation frames
-of the paper's section 4. -/
+on `φ`, so neither *presumably φ* nor *presumably not φ* passes. The Nixon diamond, where
+conditional defaults conflict, needs the expectation frames of the paper's section 4. -/
 theorem conflicting_defaults_le (φ : W → Prop) (w v : W) :
     (refine (refine ⊤ φ) (fun x ↦ ¬φ x)).le w v ↔ (φ v → φ w) ∧ (¬φ v → ¬φ w) := by
   rw [refine_le, refine_le]
@@ -495,26 +445,23 @@ theorem compatible_defaults_optimal (φ ψ : W → Prop) (d : Set W)
 
 /-! ### Necessity modals
 
-Portner's mood unification operates on a partially ordered set of worlds, a pair of a context set
-and an ordering. This is Veltman's expectation state read at the level of discourse, with `info`
-as the Stalnakerian context set and `order` as the Kratzerian ordering source. Veltman says that a
-state accepts a sentence when updating with it changes nothing, a condition that Portner,
-following Farkas, reformulates for *believe* and *want*: acceptance of an assertion is
-informational necessity (`le_assert_iff`), and acceptance of *presumably φ* is preferential
-necessity (`isFixedPt_presumablyTest_iff`). -/
+Portner's mood semantics works with a context set and an ordering of worlds, that is, an
+expectation state with `info` as the Stalnakerian context set and `order` as the Kratzerian
+ordering source. A state accepts a sentence when updating with it changes nothing. Accepting an
+assertion is informational necessity (`le_assert_iff`), and accepting *presumably φ* is
+preferential necessity (`isFixedPt_presumablyTest_iff`); Portner, following Farkas, states these
+conditions for *believe* and *want*. -/
 
-/-- `□_cs` is upward monotone. -/
 theorem boxCs_mono (σ : ExpState W) (p q : W → Prop)
     (h : ∀ w, p w → q w) : σ.boxCs p → σ.boxCs q :=
   fun hp w hw ↦ h w (hp w hw)
 
-/-- `□_≤` is upward monotone. -/
 theorem boxLe_mono (σ : ExpState W) (p q : W → Prop)
     (h : ∀ w, p w → q w) : σ.boxLe p → σ.boxLe q :=
   fun hp w hw ↦ h w (hp w hw)
 
-/-- After asserting `p`, `p` is informationally necessary, the Stalnakerian principle that asserting
-`p` makes `p` common ground. -/
+/-- Asserting `p` makes `p` informationally necessary: Stalnaker's principle that an assertion
+becomes common ground. -/
 theorem boxCs_assert_self (σ : ExpState W) (p : W → Prop) :
     (σ.assert p).boxCs p :=
   fun _ hw ↦ hw.2

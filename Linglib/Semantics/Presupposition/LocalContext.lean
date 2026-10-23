@@ -6,63 +6,35 @@ public import Linglib.Core.Logic.Function.DependsOn
 /-!
 # Transparency and local contexts
 
-Schlenker defines transparency and local contexts on syntactic environments. A syntactic
-environment is represented by the set of functions from the denotation of its gap to the
-sentence's truth set, one for each continuation of the string that the theory consults. A
-restriction `x` on the gap is transparent in a context set `C` when restricting any denotation of
-the gap by `x` changes the sentence's truth value at no world of `C`, for every such function
-(`Transparent`). The local context is the least transparent restriction (`IsLocalContext`), and a
-presupposition is satisfied when it is entailed by the local context (`Satisfied`).
-
-A restriction is transparent iff at each world of the context, under each continuation, the
-sentence's truth value factors through restricting the gap by it (`transparent_iff_factorsThrough`).
-When the gap denotes a set of indices, worlds for a clause or world–individual pairs for a
-predicate, this is dependence: the truth value depends only on the gap's denotation within the
-restriction (`transparent_iff_dependsOn`). The local context is then the set of indices on which the
-truth value depends at some world of the context under some continuation, and it exists whenever
-each of these truth values depends on finitely many indices (`isLocalContext_of_dependsOn`). In the
-propositional case every environment is truth-functional, the truth value at a world depending only
-on the gap's value there (`IsTruthFunctional`), so the local context is the set of worlds of the
-context at which the truth value depends on the gap for some continuation
-(`isLocalContext_of_isTruthFunctional`).
-
-A restriction is transparent at an assertion when it is transparent for the denotations of the gap
-that agree with that assertion on it (`TransparentAt`), the resolutions of a trigger that
-presupposes the restriction and asserts the assertion. Transparency at the trigger's own assertion
-is the trigger's definedness by supervaluation, every resolution giving the sentence the same truth
-value (`transparentAt_iff`), and transparency is transparency at every assertion
-(`transparent_iff_forall_transparentAt`).
-
-A restriction is stably transparent when it never settles the truth value across a set of
-continuations unless the unrestricted gap settles it the same way (`StablyTransparent`), the
-condition Kalomoiros's Limited Symmetry imposes at each parsing point after a trigger. It is weaker
-than transparency, and the two coincide for a single continuation, so that transparency is stable
-transparency for each continuation alone (`transparent_iff_forall_stablyTransparent_singleton`).
-Transparency, unlike stability, is unchanged when the gap is negated
-(`transparent_image_compl_iff`).
+A syntactic environment is represented by a set of functions, one for each continuation of the
+string, from a denotation of the gap to the set of worlds where the sentence is true. A restriction
+of the gap is *transparent* in a context set if conjoining it to any denotation of the gap changes
+the truth value at no world of the context. The *local context* is the least transparent
+restriction, and a presupposition is *satisfied* when the local context entails it.
 
 ## Main definitions
 
-* `Presupposition.Transparent`: a transparent restriction of a gap.
+* `Presupposition.Transparent`: a transparent restriction of the gap.
 * `Presupposition.IsLocalContext`: the least transparent restriction.
 * `Presupposition.Satisfied`: satisfaction of a presupposition in the local context.
 * `Presupposition.TransparentAt`: transparency for the resolutions of a trigger.
-* `Presupposition.StablyTransparent`: a restriction that settles no truth value the gap leaves
-  open.
+* `Presupposition.StablyTransparent`: transparency for the truth values all continuations share.
 
 ## Main results
 
 * `Presupposition.transparent_iff_forall_transparentAt`, `Presupposition.transparentAt_iff`:
   transparency is definedness by supervaluation at every assertion.
-* `Presupposition.transparent_iff_factorsThrough`: the truth value factors through the
-  restriction.
 * `Presupposition.transparent_iff_dependsOn`: transparency is dependence.
-* `Presupposition.transparent_iff_forall_stablyTransparent_singleton`: transparency is stable
-  transparency for each continuation alone.
-* `Presupposition.isLocalContext_of_dependsOn`: the local context is the set of indices the truth
-  value depends on.
+* `Presupposition.isLocalContext_of_dependsOn`: under finite dependence, the local context is the
+  set of indices the truth value depends on.
+* `Presupposition.isLocalContext_of_isTruthFunctional`: the local context in the propositional
+  case, where every environment is truth-functional.
 * `Presupposition.IsLocalContext.satisfied_iff_transparent`: where the local context exists,
   satisfaction is transparency.
+* `Presupposition.transparent_iff_forall_stablyTransparent_singleton`: transparency is stable
+  transparency for each continuation alone; stable transparency is weaker.
+* `Presupposition.transparent_image_compl_iff`: transparency, unlike stable transparency, is
+  invariant under negating the gap.
 
 ## Implementation notes
 
@@ -83,13 +55,13 @@ namespace Presupposition
 
 variable {W α : Type*} [SemilatticeInf α]
 
-/-- A restriction `x` on the gap of the environment `env` is transparent in the context `C` when
-restricting any denotation `d` of the gap by `x` changes the truth value at no world of `C`, for
-every continuation in `env`. -/
+/-- A restriction `x` of the gap is transparent in the context `C` if, for every continuation in
+`env` and every denotation `d` of the gap, replacing `d` by `x ⊓ d` changes the truth value at no
+world of `C`. -/
 def Transparent (C : Set W) (env : Set (α → Set W)) (x : α) : Prop :=
   ∀ f ∈ env, ∀ d : α, ∀ w ∈ C, w ∈ f (x ⊓ d) ↔ w ∈ f d
 
-/-- The local context of the gap of `env` in `C` is its least transparent restriction. -/
+/-- The local context of the gap in `C`: its least transparent restriction. -/
 def IsLocalContext (C : Set W) (env : Set (α → Set W)) (x : α) : Prop :=
   IsLeast {x | Transparent C env x} x
 
@@ -97,7 +69,6 @@ theorem Transparent.anti {C : Set W} {env env' : Set (α → Set W)} {x : α} (h
     (hx : Transparent C env x) : Transparent C env' x :=
   fun f hf ↦ hx f (h hf)
 
-/-- Transparency holds in a context iff it holds at each of its worlds. -/
 theorem transparent_iff_forall_singleton {C : Set W} {env : Set (α → Set W)} {x : α} :
     Transparent C env x ↔ ∀ w ∈ C, Transparent {w} env x :=
   ⟨fun h w hw f hf d _ hv ↦ hv ▸ h f hf d w hw, fun h f hf d w hw ↦ h w hw f hf d w rfl⟩
@@ -119,8 +90,6 @@ section Lattice
 
 variable {C : Set W} {env : Set (α → Set W)} {x y : α}
 
-/-- A restriction is transparent iff at each world of the context, under each continuation, the
-sentence's truth value factors through restricting the gap by it. -/
 theorem transparent_iff_factorsThrough : Transparent C env x ↔
     ∀ f ∈ env, ∀ w ∈ C, Function.FactorsThrough (fun d ↦ w ∈ f d) (x ⊓ ·) := by
   refine ⟨fun h f hf w hw d d' hd ↦ ?_, fun h f hf d w hw ↦ Iff.of_eq (h f hf w hw ?_)⟩
@@ -128,7 +97,6 @@ theorem transparent_iff_factorsThrough : Transparent C env x ↔
     exact propext ((h f hf d w hw).symm.trans (by rw [hd]; exact h f hf d' w hw))
   · exact (inf_assoc x x d).symm.trans (congrArg (· ⊓ d) (inf_idem x))
 
-/-- A restriction weaker than a transparent one is transparent. -/
 theorem Transparent.mono (hx : Transparent C env x) (hxy : x ≤ y) : Transparent C env y :=
   fun f hf d w hw ↦ by
     rw [← hx f hf (y ⊓ d) w hw, ← inf_assoc, inf_eq_left.2 hxy]
@@ -146,7 +114,6 @@ theorem IsLocalContext.satisfied_iff_transparent (h : IsLocalContext C env x) (P
   rw [satisfied_iff h]
   exact ⟨h.1.mono, fun hP ↦ h.2 hP⟩
 
-/-- A satisfied presupposition is transparent. -/
 theorem Satisfied.transparent (h : Satisfied C env x) : Transparent C env x :=
   let ⟨_, hy, hyx⟩ := h
   hy.1.mono hyx
@@ -155,11 +122,10 @@ end Lattice
 
 /-! ### Transparency at an assertion -/
 
-/-- A restriction `x` on the gap of `env` is transparent in `C` at the assertion `a` when it is
-transparent for the denotations of the gap that agree with `a` on `x`. These are the resolutions of
-a trigger presupposing `x` and asserting `a`, which resolve its presupposition failure either way,
-so that transparency at `a` is the definedness of the trigger by supervaluation: every resolution
-gives the sentence the same truth value at each world of `C` (`transparentAt_iff`). -/
+/-- A restriction `x` is transparent in `C` at the assertion `a` if it is transparent for the
+denotations of the gap that agree with `a` on `x`. These are the resolutions of a trigger that
+presupposes `x` and asserts `a`, so transparency at `a` is definedness by supervaluation: every
+resolution gives the sentence the same truth value at each world of `C` (`transparentAt_iff`). -/
 def TransparentAt (C : Set W) (env : Set (α → Set W)) (x a : α) : Prop :=
   ∀ f ∈ env, ∀ d, x ⊓ d = x ⊓ a → ∀ w ∈ C, w ∈ f (x ⊓ d) ↔ w ∈ f d
 
@@ -170,13 +136,9 @@ variable {C : Set W} {env : Set (α → Set W)} {x a : α}
 theorem Transparent.transparentAt (h : Transparent C env x) (a : α) : TransparentAt C env x a :=
   fun f hf d _ ↦ h f hf d
 
-/-- Transparency is transparency at every assertion: it quantifies over the assertion that
-supervaluation holds fixed. -/
 theorem transparent_iff_forall_transparentAt : Transparent C env x ↔ ∀ a, TransparentAt C env x a :=
   ⟨Transparent.transparentAt, fun h f hf d ↦ h d f hf d rfl⟩
 
-/-- Transparency at `a` says that the resolutions of the trigger give the sentence one truth value
-at each world of the context. -/
 theorem transparentAt_iff : TransparentAt C env x a ↔
     ∀ f ∈ env, ∀ d d', x ⊓ d = x ⊓ a → x ⊓ d' = x ⊓ a → ∀ w ∈ C, (w ∈ f d ↔ w ∈ f d') := by
   refine ⟨fun h f hf d d' hd hd' w hw ↦ ?_, fun h f hf d hd w hw ↦ h f hf _ _ ?_ hd w hw⟩
@@ -191,8 +153,9 @@ section Dependence
 
 variable {ι : Type*} {C : Set W} {env : Set (Set ι → Set W)} {x : Set ι}
 
-/-- A restriction is transparent iff at each world of the context, under each continuation, the
-sentence's truth value depends only on the gap's denotation within the restriction. -/
+/-- For a gap denoting a set of indices, a restriction is transparent iff, at each world of the
+context and under each continuation, the truth value depends only on the gap's denotation within
+the restriction. -/
 theorem transparent_iff_dependsOn :
     Transparent C env x ↔ ∀ f ∈ env, ∀ w ∈ C, DependsOn (fun d : Set ι ↦ w ∈ f d) x := by
   have h (d d' : Set ι) : x ⊓ d = x ⊓ d' ↔ ∀ i ∈ x, d i = d' i :=
@@ -203,9 +166,8 @@ theorem transparent_iff_dependsOn :
   exact forall₂_congr fun f _ ↦ forall₂_congr fun w _ ↦
     ⟨fun hf d d' hd ↦ hf ((h d d').2 hd), fun hf d d' hd ↦ hf ((h d d').1 hd)⟩
 
-/-- If the truth value at each world of the context, under each continuation, depends on finitely
-many indices, the local context exists: it is the set of indices on which the truth value depends
-at some world of the context under some continuation. -/
+/-- If each truth value at a world of the context depends on finitely many indices, the local
+context is the set of indices on which some such truth value depends. -/
 theorem isLocalContext_of_dependsOn
     (h : ∀ f ∈ env, ∀ w ∈ C, ∃ s : Set ι, s.Finite ∧ DependsOn (fun d : Set ι ↦ w ∈ f d) s) :
     IsLocalContext C env
@@ -233,8 +195,7 @@ private theorem forall_inf_compl_iff {P : β → Prop} {x : β} :
   · rw [← h (x ⊓ d), sup_inf_left, compl_sup_eq_top, top_inf_eq, h d]
   · rw [← h (xᶜ ⊔ y), inf_sup_left, inf_compl_eq_bot, bot_sup_eq, h y]
 
-/-- Transparency is invariant under negating the gap. A restriction is transparent for a set of
-continuations iff it is transparent for the same continuations applied to the gap's negation. -/
+/-- Transparency is invariant under negating the gap. -/
 theorem transparent_image_compl_iff {C : Set W} {env : Set (β → Set W)} {x : β} :
     Transparent C ((fun f d ↦ f dᶜ) '' env) x ↔ Transparent C env x := by
   simp only [Transparent, Set.forall_mem_image]
@@ -246,10 +207,10 @@ end Compl
 
 /-! ### Stable transparency -/
 
-/-- A restriction `x` on the gap is stably transparent in `C` for a set of continuations when
-restricting a denotation `d` by `x` settles the truth value at a world of `C` across all of them
-only where `d` settles it the same way: wherever every continuation makes the sentence true
-(false) with `x ⊓ d`, every continuation makes it true (false) with `d`. -/
+/-- A restriction `x` is stably transparent in `C` if, at each world of `C`, whenever every
+continuation in `env` makes the sentence true (false) with `x ⊓ d`, every continuation makes it
+true (false) with `d`. This is the condition of Kalomoiros's Limited Symmetry at each parsing point
+after a trigger. -/
 def StablyTransparent (C : Set W) (env : Set (α → Set W)) (x : α) : Prop :=
   ∀ d, ∀ w ∈ C, ((∀ f ∈ env, w ∈ f (x ⊓ d)) → ∀ f ∈ env, w ∈ f d) ∧
     ((∀ f ∈ env, w ∉ f (x ⊓ d)) → ∀ f ∈ env, w ∉ f d)
@@ -262,7 +223,6 @@ theorem Transparent.stablyTransparent (h : Transparent C env x) : StablyTranspar
   fun d w hw ↦ ⟨fun ht f hf ↦ (h f hf d w hw).1 (ht f hf),
     fun hn f hf hd ↦ hn f hf ((h f hf d w hw).2 hd)⟩
 
-/-- For a single continuation, stable transparency is transparency. -/
 theorem stablyTransparent_singleton_iff {f : α → Set W} :
     StablyTransparent C {f} x ↔ Transparent C {f} x := by
   refine ⟨fun h g hg d w hw ↦ ?_, Transparent.stablyTransparent⟩
@@ -271,7 +231,6 @@ theorem stablyTransparent_singleton_iff {f : α → Set W} :
   simp only [Set.mem_singleton_iff, forall_eq] at h'
   exact ⟨h'.1, fun hd ↦ by_contra fun hn ↦ h'.2 hn hd⟩
 
-/-- Transparency is stable transparency for each continuation alone. -/
 theorem transparent_iff_forall_stablyTransparent_singleton :
     Transparent C env x ↔ ∀ f ∈ env, StablyTransparent C {f} x := by
   simp only [stablyTransparent_singleton_iff, Transparent, Set.mem_singleton_iff, forall_eq]
@@ -322,15 +281,13 @@ theorem isLocalContext_of_isTruthFunctional (henv : ∀ f ∈ env, IsTruthFuncti
     IsLocalContext C env (C ∩ {w | ∃ f ∈ env, DependsAt f w}) :=
   ⟨(transparent_iff_subset henv).2 le_rfl, fun _ hy ↦ (transparent_iff_subset henv).1 hy⟩
 
-/-- For truth-functional continuations, a presupposition is satisfied in its local context iff it
-is a transparent restriction. -/
 theorem satisfied_iff_transparent (henv : ∀ f ∈ env, IsTruthFunctional f) (P : Set W) :
     Satisfied C env P ↔ Transparent C env P :=
   (isLocalContext_of_isTruthFunctional henv).satisfied_iff_transparent P
 
-/-- A restriction is stably transparent for truth-functional continuations iff at each world of the
-context outside it, whenever the continuations agree on the truth value with a false gap, they
-agree on it with a true gap. -/
+/-- For truth-functional continuations, `x` is stably transparent iff at each world of the
+context outside `x`, if every continuation makes the sentence true (false) with a false gap, every
+continuation makes it true (false) with a true gap. -/
 theorem stablyTransparent_iff (henv : ∀ f ∈ env, IsTruthFunctional f) :
     StablyTransparent C env x ↔ ∀ w ∈ C, w ∉ x →
       ((∀ f ∈ env, w ∈ f ∅) → ∀ f ∈ env, w ∈ f Set.univ) ∧

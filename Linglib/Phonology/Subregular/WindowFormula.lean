@@ -11,49 +11,34 @@ public import Linglib.Core.Data.List.DropRight
 /-!
 # Quantifier-free position tests
 
-A `Subregular.Walk` walks successor and predecessor steps from a position, and a
-`Subregular.WindowFormula` is a boolean combination of label and definedness tests on such walks.
-Because successor and predecessor are *functions*, a term reaches a bounded neighbourhood of its
-position with no quantifiers, the syntactic source of strict locality. Satisfaction is
-decidable, and a formula whose walks are backward with depth `≤ r` reads only the `r + 1`
-symbols ending at its position (`BackBounded.realize_congr`). These formulas are the guards of
-logical transductions (`Transduction.lean`) and the term language of boolean monadic recursive
-schemes (`BMRS.lean`).
+A *walk* is a sequence of successor and predecessor steps from a position, and a *window
+formula* is a boolean combination of tests on walks: the label at the position a walk reaches, or
+whether it reaches one. Since successor and predecessor are functions, a formula reaches a bounded
+neighbourhood of its position with no quantifiers, the syntactic source of strict locality. These
+formulas are the guards of logical transductions and the terms of boolean monadic recursive schemes.
 
 ## Main definitions
 
-* `Subregular.succ?` / `Subregular.pred?`: the next/previous position, as partial functions.
-* `Subregular.Walk`: walks; `Walk.eval` reads the position a walk reaches, `none` off an edge.
-* `Walk.Backward` / `Walk.Forward` / `Walk.pdepth` / `Walk.sdepth`: one-sided walks and how far
-  back and forward a walk reaches.
-* `Subregular.WindowFormula`: label/definedness tests on walks, closed under boolean combination;
-  `WindowFormula.Realize` is decidable satisfaction; `initial`/`final` are the derived edge tests.
-* `WindowFormula.Bounded l r`: every walk reaches at most `l` back and `r` forward;
-  `WindowFormula.BackBounded r` is `Bounded r 0`.
-* `Walk.back j`, `WindowFormula.window r u`: the walk `j` steps back, and the test that the last
-  `r` symbols before the position spell `u`.
+* `Subregular.Walk`, `Walk.eval`: walks, and the position a walk reaches (`none` off an edge).
+* `Subregular.WindowFormula`, `WindowFormula.Realize`: formulas, and decidable satisfaction.
+* `WindowFormula.Bounded l r`: every walk reaches at most `l` back and `r` forward.
+* `WindowFormula.BackBounded r`: `Bounded r 0`.
+* `WindowFormula.window r u`: the last `r` symbols before the position spell `u`.
 
 ## Main results
 
-* `Walk.eval_backward`: a backward walk of depth `j` from position `n` reads exactly `n - j`.
-* `Walk.eval_bounded`: a walk reads the same displacement from two positions whose windows
-  have the same edges.
-* `Bounded.realize_congr`: a bounded formula cannot distinguish positions whose windows agree;
-  `BackBounded.realize_congr` is the left-window case.
-* `realize_window`: `window r u` holds exactly where the last `r` symbols before the position
-  spell `u`.
+* `Walk.eval_backward`: a backward walk of depth `j` from position `n` reaches `n - j`.
+* `Bounded.realize_congr`: a bounded formula cannot distinguish positions whose windows agree.
+* `BackBounded.realize_congr`: a back-bounded formula reads only the `r + 1` symbols ending at
+  its position.
 
 ## Implementation notes
 
-The logic is monadic — one position variable, so `Walk.eval` takes a position rather than an
-assignment — since every consumer (transduction guards, BMRS) is; and there is no equality atom:
-with a single position variable, two walks from one origin agree exactly when both are defined
-with equal displacement, so equality tests reduce to definedness tests. It is a bespoke syntax
-rather than a fragment of `FirstOrder.Language`: over a relational word signature,
-quantifier-free formulas cannot leave their variables, so bounded-window reach requires
-successor and predecessor as *function* symbols — but a mathlib `Structure` interprets function
-symbols totally, whereas falling off an edge is the semantics here (`defined`, `initial`,
-`final`).
+The logic is monadic (one position variable), as every consumer is. There is no equality atom:
+two walks from one position agree iff both are defined with equal displacement. The syntax is
+not a fragment of `FirstOrder.Language`: bounded reach needs successor and predecessor as
+function symbols (relational quantifier-free formulas cannot leave their variables), which a
+`Structure` interprets totally, whereas falling off an edge is the semantics here.
 
 ## References
 
@@ -101,18 +86,16 @@ theorem pred?_of_pos {w : List α} {m : ℕ} (h0 : 0 < m) (hm : m ≤ w.length) 
   have hm' : m' < w.length := by omega
   simp [pred?, hm']
 
-/-- The successor structure depends only on the length. -/
 theorem succ?_congr {w w' : List α} (h : w.length = w'.length) : succ? w = succ? w' := by
   funext n; simp [succ?, h]
 
-/-- The predecessor structure depends only on the length. -/
 theorem pred?_congr {w w' : List α} (h : w.length = w'.length) : pred? w = pred? w' := by
   funext n; cases n <;> simp [pred?, h]
 
 /-! ### Walks -/
 
-/-- A **term** is a walk of successor and predecessor steps from the position variable. Chains of
-`succ` and `pred` reach a bounded window with no quantifier. -/
+/-- A walk of successor and predecessor steps from the position variable. Chains of `succ` and
+`pred` reach a bounded window with no quantifier. -/
 inductive Walk where
   | var : Walk
   | succ : Walk → Walk
@@ -121,8 +104,7 @@ inductive Walk where
 
 namespace Walk
 
-/-- The position a term reads, walking from position `n` of `w`; `none` once the walk falls off
-an edge. -/
+/-- The position a walk from position `n` of `w` reaches, or `none` if it falls off an edge. -/
 def eval (w : List α) (n : ℕ) : Walk → Option ℕ
   | .var => if n < w.length then some n else none
   | .succ t => (eval w n t).bind (succ? w)
@@ -139,10 +121,8 @@ theorem eval_var_eq_some_iff : Walk.var.eval w n = some v ↔ v = n ∧ n < w.le
   split <;> simp_all [eq_comm]
   omega
 
-/-- The variable reads its own in-domain position. -/
 @[simp] theorem eval_var (h : n < w.length) : Walk.var.eval w n = some n := ite_eq_left h
 
-/-- Terms read in-domain positions. -/
 theorem eval_lt : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v < w.length
   | .var, _, h => by
     obtain ⟨rfl, hlt⟩ := eval_var_eq_some_iff.mp h
@@ -155,7 +135,6 @@ theorem eval_lt : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v < w.length
     obtain ⟨u, -, hu⟩ := Option.bind_eq_some_iff.mp h
     exact (pred?_eq_some_iff.mp hu).2
 
-/-- A one-step successor walk reads the successor position. -/
 @[simp] theorem eval_succ_var : Walk.var.succ.eval w n = succ? w n := by
   rcases Nat.lt_or_ge n w.length with h | h
   · rw [eval_succ, eval_var h, Option.bind_some]
@@ -165,12 +144,11 @@ theorem eval_lt : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v < w.length
     have := (succ?_eq_some_iff.mp hm).2
     omega
 
-/-- A one-step predecessor walk reads the predecessor position (in-domain, since off the right
-edge `pred?` is still defined at `w.length` but the variable is not). -/
+/-- From an in-range position, a one-step predecessor walk reaches the predecessor. Out of range
+the two differ, since `pred?` is defined at `w.length` but the variable is not. -/
 theorem eval_pred_var (h : n < w.length) : Walk.var.pred.eval w n = pred? w n := by
   rw [eval_pred, eval_var h, Option.bind_some]
 
-/-- Terms read only the length, so their reads transport across equal-length words. -/
 theorem eval_congr (hlen : w.length = w'.length) : ∀ t : Walk, t.eval w n = t.eval w' n
   | .var => by simp [eval, hlen]
   | .succ t => by rw [eval_succ, eval_succ, eval_congr hlen t, succ?_congr hlen]
@@ -182,7 +160,6 @@ def comp : Walk → Walk → Walk
   | .succ t, u => .succ (t.comp u)
   | .pred t, u => .pred (t.comp u)
 
-/-- Composite terms read sequenced positions. -/
 theorem eval_comp : ∀ t u : Walk, (t.comp u).eval w n = (u.eval w n).bind fun v => t.eval w v
   | .var, u => by
     cases hu : u.eval w n with
@@ -193,27 +170,27 @@ theorem eval_comp : ∀ t u : Walk, (t.comp u).eval w n = (u.eval w n).bind fun 
 
 /-! ### Directed walks -/
 
-/-- A term is *backward* if it uses no successor — only the variable and predecessors, so it
-reads positions at or before its variable. -/
+/-- A walk is backward if it uses no successor step, so it reaches only positions at or before
+its start. -/
 def Backward : Walk → Prop
   | .var => True
   | .pred t => t.Backward
   | .succ _ => False
 
-/-- A term is *forward* if it uses no predecessor, so it reads positions at or after its
-variable. -/
+/-- A walk is forward if it uses no predecessor step, so it reaches only positions at or after
+its start. -/
 def Forward : Walk → Prop
   | .var => True
   | .pred _ => False
   | .succ t => t.Forward
 
-/-- The predecessor depth of a term is how far back it reaches. -/
+/-- The number of predecessor steps of a walk, which bounds how far back it reaches. -/
 def pdepth : Walk → ℕ
   | .var => 0
   | .pred t => t.pdepth + 1
   | .succ t => t.pdepth
 
-/-- The successor depth of a term is how far forward it reaches. -/
+/-- The number of successor steps of a walk, which bounds how far forward it reaches. -/
 def sdepth : Walk → ℕ
   | .var => 0
   | .pred t => t.sdepth
@@ -229,7 +206,6 @@ instance instDecidableForward : ∀ t : Walk, Decidable t.Forward
   | .pred _ => .isFalse not_false
   | .succ t => instDecidableForward t
 
-/-- Backward terms only move left. -/
 theorem eval_le_of_backward :
     ∀ {t : Walk}, t.Backward → ∀ {v}, t.eval w n = some v → v ≤ n
   | .var, _, v, h => Nat.le_of_eq (eval_var_eq_some_iff.mp h).1
@@ -238,7 +214,6 @@ theorem eval_le_of_backward :
     obtain ⟨rfl, -⟩ := pred?_eq_some_iff.mp huv
     exact Nat.le_of_succ_le (eval_le_of_backward (t := t) ht hu)
 
-/-- Forward terms only move right. -/
 theorem le_eval_of_forward :
     ∀ {t : Walk}, t.Forward → ∀ {v}, t.eval w n = some v → n ≤ v
   | .var, _, v, h => Nat.le_of_eq (eval_var_eq_some_iff.mp h).1.symm
@@ -247,8 +222,8 @@ theorem le_eval_of_forward :
     obtain ⟨rfl, -⟩ := succ?_eq_some_iff.mp huv
     exact Nat.le_trans (le_eval_of_forward (t := t) ht hu) (Nat.le_succ u)
 
-/-- A backward term of predecessor depth `j`, read from an in-range position `n`, reads exactly
-position `n - j` — defined iff `j ≤ n`. -/
+/-- From an in-range position `n`, a backward walk of predecessor depth `j` reaches `n - j` if
+`j ≤ n` and is undefined otherwise. -/
 theorem eval_backward (hn : n < w.length) :
     ∀ {t : Walk}, t.Backward →
       t.eval w n = if t.pdepth ≤ n then some (n - t.pdepth) else none := by
@@ -283,15 +258,12 @@ theorem backward_back : ∀ j, (back j).Backward
   | 0 => trivial
   | j + 1 => backward_back j
 
-/-- From an in-range position `n`, the walk `j` steps back reads position `n - j`, defined iff
-`j ≤ n`. -/
 theorem eval_back (hn : n < w.length) (j : ℕ) :
     (back j).eval w n = if j ≤ n then some (n - j) else none := by
   simpa using eval_backward hn (backward_back j)
 
 /-! ### Bounded windows -/
 
-/-- A walk reaches at most `pdepth` back. -/
 theorem le_eval_add_pdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → n ≤ v + t.pdepth
   | .var, v, h => by
     obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
@@ -307,7 +279,6 @@ theorem le_eval_add_pdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → n
     have := le_eval_add_pdepth hu
     simp only [pdepth]; omega
 
-/-- A walk reaches at most `sdepth` forward. -/
 theorem eval_le_add_sdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v ≤ n + t.sdepth
   | .var, v, h => by
     obtain ⟨rfl, -⟩ := eval_var_eq_some_iff.mp h
@@ -323,10 +294,9 @@ theorem eval_le_add_sdepth : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v
     have := eval_le_add_sdepth hu
     simp only [sdepth]; omega
 
-/-- **Window transport.** From two in-range positions whose windows `l` back and `r` forward
-have the same edges — an offset stays in range at one exactly when it does at the other — a
-walk reaching at most `l` back and `r` forward reads the same displacement, or falls off at
-both. -/
+/-- Let `n` and `n'` be in-range positions whose windows `l` back and `r` forward have the same
+edges: each offset is in range at one iff it is at the other. A walk reaching at most `l` back and
+`r` forward moves the same displacement from both, or falls off at both. -/
 theorem eval_bounded {l r n' : ℕ} (hn : n < w.length) (hn' : n' < w'.length)
     (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n'))
     (hright : ∀ j ≤ r, (n + j < w.length ↔ n' + j < w'.length)) :
@@ -391,8 +361,8 @@ end Walk
 
 /-! ### Quantifier-free formulas -/
 
-/-- A **quantifier-free formula** is a boolean combination of label and definedness tests on
-term walks from a single position. -/
+/-- A quantifier-free formula: a boolean combination of label and definedness tests on walks
+from a single position. -/
 inductive WindowFormula (α : Type*) where
   | label : α → Walk → WindowFormula α
   | defined : Walk → WindowFormula α
@@ -430,7 +400,6 @@ instance instDecidableRealize [DecidableEq α] (w : List α) (n : ℕ) :
 @[simp] theorem realize_conj {w : List α} {n : ℕ} {φ ψ : WindowFormula α} :
     (φ.conj ψ).Realize w n ↔ φ.Realize w n ∧ ψ.Realize w n := Iff.rfl
 
-/-- A label test at the position itself reads the symbol there. -/
 @[simp] theorem realize_label_var {w : List α} {n : ℕ} {a : α} :
     (label a .var).Realize w n ↔ w[n]? = some a := by
   simp only [Realize, Walk.eval]
@@ -471,9 +440,9 @@ instance instDecidableBounded (l r : ℕ) : ∀ φ : WindowFormula α, Decidable
 own, bounded by `r` back and nothing forward. -/
 abbrev BackBounded (r : ℕ) (φ : WindowFormula α) : Prop := φ.Bounded r 0
 
-/-- A bounded formula reads only its window: it has the same truth value at `(w, n)` and
-`(w', n')` whenever the windows `l` back and `r` forward agree — the same labels at each
-offset, and the same offsets in range. -/
+/-- A formula bounded by `l` and `r` has the same truth value at `(w, n)` and `(w', n')` whenever
+the windows `l` back and `r` forward agree: the same offsets are in range and carry the same
+labels. -/
 theorem Bounded.realize_congr {l r : ℕ} {w w' : List α} {n n' : ℕ}
     (hn : n < w.length) (hn' : n' < w'.length)
     (hleft : ∀ j ≤ l, (j ≤ n ↔ j ≤ n') ∧ (j ≤ n → w[n - j]? = w'[n' - j]?))
@@ -588,7 +557,7 @@ section Example
 
 private inductive Sym | a | b deriving DecidableEq
 
-/-- The position is flanked by `a`s — a bounded two-sided context stated by walks, with no
+/-- The position is flanked by `a`s: a bounded two-sided context stated by walks, with no
 quantifier. -/
 private def flankedByA : WindowFormula Sym :=
   .conj (.label .a (.pred .var)) (.label .a (.succ .var))

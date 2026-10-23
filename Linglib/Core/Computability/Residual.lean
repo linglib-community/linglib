@@ -21,57 +21,48 @@ public import Linglib.Core.Computability.Subsequential
 /-!
 # Residuals of string functions
 
-This file characterizes the subsequential, Mealy-computable and bimachine-computable functions by
-their residuals, in the style of the Myhill–Nerode theorem for languages. The *prefix function* of
-`f : List α → List β` sends a word `u` to the longest common prefix of the outputs of `f` on the
-extensions of `u`, and the *residual* of `f` by `u` sends `v` to what `f` outputs on `u ++ v`
-beyond that prefix. Residuals compose as a right action of words,
-and a function is subsequential if and only if it has finitely many residuals, the
-characterization of Oncina and García recalled by Chandlee, Eyraud and Heinz. A subsequential
-function is Mealy-computable exactly when it is also length- and prefix-preserving, the Nerode
-criterion of Eilenberg and Holcombe.
-
-A length-preserving function whose output at a position can depend on input unboundedly far to
-its right, as in bidirectional harmony, has infinitely many residuals in this sense. Such
-functions are characterized instead by their *synchronous* residuals and coresiduals, which cut
-the output where the input is cut: a length-preserving function is bimachine-computable if and
-only if it has finitely many of each, the length-preserving stratum
-of the canonical bimachine of Reutenauer and Schützenberger surveyed by Filiot and Reynier.
+This file characterizes subsequential, Mealy-computable and bimachine-computable functions by
+their residuals, in the style of the Myhill–Nerode theorem. The *prefix function* of `f` at `u` is
+the longest common prefix of the outputs of `f` on the extensions of `u`, and the *residual* of `f`
+by `u` sends `v` to the rest of `f (u ++ v)`. A function is subsequential iff it has finitely many
+residuals, and Mealy-computable iff it is moreover length- and prefix-preserving. A
+length-preserving function whose output can depend on input unboundedly far to its right, as in
+bidirectional harmony, has infinitely many residuals; it is bimachine-computable iff it has
+finitely many *synchronous* residuals and coresiduals, which cut the output where the input is cut.
 
 ## Main definitions
 
-* `Function.prefixFunction f u`: the longest common prefix of `f` on the extensions of `u`
-* `Function.residual f u`: the residual of `f` by the word `u`
-* `Function.syncResidual f u`, `Function.syncCoresidual f y`: the output after `u` and before `y`
-  of a length-preserving `f`
+* `Function.prefixFunction`, `Function.residual`: the prefix function and the residual.
+* `Function.syncResidual`, `Function.syncCoresidual`: the output after and before a cut.
 
 ## Main results
 
-* `Function.residual_append`: residuals compose as a right action of words
-* `isLeftSubsequential_iff_finite_range_residual`: `f` is left-subsequential if and only if it
-  has finitely many residuals
-* `isMealyComputable_iff_residual`: `f` is Mealy-computable if and only if it is length- and
-  prefix-preserving with finitely many residuals
+* `Function.residual_append`: residuals compose as a right action of words.
+* `isLeftSubsequential_iff_finite_range_residual`: subsequential iff finitely many residuals.
+* `isMealyComputable_iff_residual`: Mealy-computable iff length- and prefix-preserving with
+  finitely many residuals.
 * `isLengthPreservingBimachineComputable_iff_syncResidual`: a length-preserving `f` is
-  bimachine-computable if and only if it has finitely many synchronous residuals and coresiduals
+  bimachine-computable iff it has finitely many synchronous residuals and coresiduals.
 
 ## Implementation notes
 
-The prefix function takes the supremum in `ℕ` of the lengths of the common prefixes, so it and
-the residual are noncomputable. For a prefix-preserving `f` the prefix function is `f` itself
-(`prefixFunction_eq_self`) and the residual drops `f u` (`residual_eq_drop`), which on
-length-preserving functions is the synchronous residual (`residual_eq_syncResidual`).
+The prefix function is a supremum in `ℕ`, so it and the residual are noncomputable. For a
+prefix-preserving `f` the residual drops `f u` (`residual_eq_drop`), which on length-preserving
+functions is the synchronous residual (`residual_eq_syncResidual`).
 
 ## References
 
-* [S. Eilenberg, *Automata, Languages and Machines, Volume A* (1974)][eilenberg-1974]
+* [S. Eilenberg, *Automata, Languages and Machines, Volume A* (1974)][eilenberg-1974]: the Nerode
+  criterion for Mealy machines, with Holcombe
 * [W. M. L. Holcombe, *Algebraic Automata Theory* (1982)][holcombe-1982]
 * [C. Reutenauer and M. P. Schützenberger, *Minimization of Rational Word Functions*
-  (1991)][reutenauer-schutzenberger-1991]
+  (1991)][reutenauer-schutzenberger-1991]: the canonical bimachine, whose length-preserving
+  stratum is the bimachine characterization here
 * [E. Filiot and P. A. Reynier, *Transducers, Logic and Algebra for Functions of Finite Words*
-  (2016)][filiot-reynier-2016]
+  (2016)][filiot-reynier-2016]: a survey of the canonical bimachine
 * [J. Chandlee, R. Eyraud and J. Heinz, *Output Strictly Local Functions*
-  (2015)][chandlee-eyraud-heinz-2015]
+  (2015)][chandlee-eyraud-heinz-2015]: recalls the subsequential characterization of Oncina and
+  García
 -/
 
 @[expose] public section
@@ -82,13 +73,13 @@ namespace Function
 
 /-! ### The prefix function and residuals -/
 
-/-- The **prefix function** of `f` sends `u` to the longest common prefix of the outputs of `f`
-on the extensions of `u`, the output already determined after reading `u`. -/
+/-- The prefix function of `f` at `u`: the longest common prefix of the outputs of `f` on the
+extensions of `u`, that is, the output already determined after reading `u`. -/
 noncomputable def prefixFunction (u : List α) : List β :=
   (f u).take (sSup {n | n ≤ (f u).length ∧ ∀ w, (f u).take n <+: f (u ++ w)})
 
-/-- The **residual** of `f` by `u` sends `v` to what `f` outputs on `u ++ v` beyond the prefix
-function at `u`, the analogue for string functions of `Language.leftQuotient`. -/
+/-- The residual of `f` by `u` sends `v` to what `f` outputs on `u ++ v` beyond the prefix
+function at `u`. It is the analogue for string functions of `Language.leftQuotient`. -/
 noncomputable def residual (u : List α) : List α → List β :=
   fun v ↦ (f (u ++ v)).drop (f.prefixFunction u).length
 
@@ -106,8 +97,6 @@ private lemma sSup_mem_commonPrefixLengths :
 theorem prefixFunction_prefix (u w : List α) : f.prefixFunction u <+: f (u ++ w) :=
   sSup_mem_commonPrefixLengths.2 w
 
-/-- The prefix function at `u` is the greatest common prefix of `f` on the extensions of
-`u`. -/
 theorem prefix_prefixFunction_iff : p <+: f.prefixFunction u ↔ ∀ w, p <+: f (u ++ w) := by
   refine ⟨fun h w ↦ h.trans (prefixFunction_prefix u w), fun h ↦ ?_⟩
   have hu : p <+: f u := by simpa using h []
@@ -124,7 +113,6 @@ theorem prefixFunction_append_residual (u v : List α) :
   obtain ⟨t, ht⟩ := prefixFunction_prefix (f := f) u v
   simp [residual, ← ht]
 
-/-- A function prefix-preserving at `u` extends its output on `u` by the residual. -/
 theorem append_residual (h : ∀ w, f u <+: f (u ++ w)) (v : List α) :
     f u ++ f.residual u v = f (u ++ v) :=
   prefixFunction_eq_self h ▸ prefixFunction_append_residual u v
@@ -139,8 +127,6 @@ theorem residual_nil (h : f [] = []) : f.residual [] = f := by
   funext v
   simp [h]
 
-/-- If `f` on the extensions of `u` is `P` followed by `g` on the extensions of `v`, then its
-prefix function at `u` is `P` followed by that of `g` at `v`. -/
 theorem prefixFunction_eq_of_forall {P : List β} (h : ∀ w, f (u ++ w) = P ++ g (v ++ w)) :
     f.prefixFunction u = P ++ g.prefixFunction v := by
   have hP : P <+: f.prefixFunction u := prefix_prefixFunction_iff.mpr fun w ↦ h w ▸
@@ -164,8 +150,8 @@ theorem residual_eq_of_forall {P : List β} (h : ∀ w, f (u ++ w) = P ++ g (v +
     List.drop_append]
   simp
 
-/-- Residuals compose as a right action of words, the residual by `u ++ v` being the residual by
-`v` of the residual by `u`. -/
+/-- Residuals compose as a right action of words: the residual by `u ++ v` is the residual by `v`
+of the residual by `u`. -/
 theorem residual_append (u v : List α) : f.residual (u ++ v) = (f.residual u).residual v :=
   residual_eq_of_forall fun w ↦ by
     rw [List.append_assoc]
@@ -175,10 +161,11 @@ end Function
 
 /-! ### Residuals through a state summary
 
-A function that extends its output by one block per letter, the block read off a summary `W`
-of the input whose update is determined, has residuals that factor through `W`; conversely a
-prefix-preserving function whose residuals factor through `W` extends by blocks read off `W`.
-The strictly local function classes are the instances with `W` a bounded window. -/
+Let `W` summarize the input, with `W (u ++ [x])` determined by `W u` and `x`. A function whose
+output grows by one block per letter, each block determined by the current summary and letter, has
+residuals that factor through `W`. Conversely, a prefix-preserving function whose residuals factor
+through `W` grows by such blocks. The strictly local function classes are the cases where `W` is a
+bounded window. -/
 
 namespace Function
 
@@ -186,22 +173,18 @@ section StateSummary
 
 variable {f} {γ : Type*} {W : List α → γ}
 
-/-- A function extending its output at every letter is prefix-preserving. -/
 theorem isPrefix_append_of_append_singleton (hf : ∀ u x, f u <+: f (u ++ [x])) (u v : List α) :
     f u <+: f (u ++ v) := by
   induction v using List.reverseRecOn with
   | nil => simp
   | append_singleton v x ih => exact ih.trans (List.append_assoc u v [x] ▸ hf (u ++ v) x)
 
-/-- A summary updated letter by letter is the fold of its update over the rest of the
-input. -/
 theorem foldl_eq_of_append_singleton {δ : γ → α → γ} (hW : ∀ u x, W (u ++ [x]) = δ (W u) x)
     (u v : List α) : v.foldl δ (W u) = W (u ++ v) := by
   induction v using List.reverseRecOn with
   | nil => simp
   | append_singleton v x ih => rw [List.foldl_concat, ih, ← hW, List.append_assoc]
 
-/-- Residuals of a function built block by block from a state summary factor through it. -/
 theorem factorsThrough_residual_of_append_singleton (δ : γ → α → γ) (g : γ → α → List β)
     (hW : ∀ u x, W (u ++ [x]) = δ (W u) x) (hf : ∀ u x, f (u ++ [x]) = f u ++ g (W u) x) :
     f.residual.FactorsThrough W := by
@@ -217,8 +200,6 @@ theorem factorsThrough_residual_of_append_singleton (δ : γ → α → γ) (g :
     rw [← List.append_assoc, hf, List.drop_append_of_le_length (hpre u₁ v).length_le, ih,
       ← List.append_assoc, hf, List.drop_append_of_le_length (hpre u₂ v).length_le, hWv]
 
-/-- A prefix-preserving function whose residuals factor through `W` extends by blocks read
-off `W`. -/
 theorem exists_append_singleton_of_factorsThrough_residual
     (hpre : ∀ u v, f u <+: f (u ++ v)) (hW : f.residual.FactorsThrough W) :
     ∃ g : γ → α → List β, ∀ u x, f (u ++ [x]) = f u ++ g (W u) x :=
@@ -238,7 +219,6 @@ section Subsequential
 
 variable {f}
 
-/-- Residuals of a transducer's run factor through its states. -/
 theorem SubsequentialTransducer.residual_run {σ : Type*} (T : SubsequentialTransducer σ α β)
     (u : List α) : T.run.residual u = (T.runFrom (T.eval u)).residual [] :=
   residual_eq_of_forall (P := T.emitted T.start u) fun w ↦ by
@@ -250,9 +230,6 @@ theorem IsLeftSubsequential.finite_range_residual (hf : IsLeftSubsequential f) :
   exact (Set.finite_range fun q ↦ (T.runFrom q).residual []).subset
     (Set.range_subset_iff.mpr fun u ↦ ⟨_, (T.residual_run u).symm⟩)
 
-/-- A function with finitely many residuals is left-subsequential. The residuals are the states,
-each emitting its prefix function on the next letter and its value on `[]` at the end, and a
-fresh start state reads the first letter off `f` itself. -/
 theorem IsLeftSubsequential.of_finite_range_residual (hf : (Set.range f.residual).Finite) :
     IsLeftSubsequential f := by
   have := hf.fintype
@@ -276,23 +253,18 @@ theorem IsLeftSubsequential.of_finite_range_residual (hf : (Set.range f.residual
   have hT : T.run = f := funext fun v ↦ hrun none v
   exact hT ▸ T.isLeftSubsequential
 
-/-- **Myhill–Nerode for subsequential transducers.** A function is left-subsequential if and
-only if it has finitely many residuals ([chandlee-eyraud-heinz-2015], after Oncina and
-García). -/
+/-- Myhill–Nerode for subsequential transducers: a function is left-subsequential iff it has
+finitely many residuals ([chandlee-eyraud-heinz-2015], after Oncina and García). -/
 theorem isLeftSubsequential_iff_finite_range_residual :
     IsLeftSubsequential f ↔ (Set.range f.residual).Finite :=
   ⟨IsLeftSubsequential.finite_range_residual, IsLeftSubsequential.of_finite_range_residual⟩
 
-/-- A function is right-subsequential if and only if its reverse-conjugate has finitely many
-residuals. -/
 theorem isRightSubsequential_iff_finite_range_residual :
     IsRightSubsequential f ↔ (Set.range (List.revConj f).residual).Finite :=
   isLeftSubsequential_iff_finite_range_residual
 
 end Subsequential
 
-/-- A length-preserving function whose output at the split point of `u ++ x :: w` is
-`c u x w` reads each output coordinate off the split of the input there. -/
 private theorem getElem?_eq_of_append_cons {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length) {c : List α → α → List α → β}
     (hc : ∀ u x w, (f (u ++ x :: w))[u.length]? = some (c u x w)) (xs : List α) (i : ℕ) :
@@ -307,7 +279,6 @@ private theorem getElem?_eq_of_append_cons {f : List α → List β}
 
 /-! ### Myhill–Nerode for Mealy machines -/
 
-/-- Residuals of a machine's run are its runs from the states it reaches. -/
 theorem Mealy.residual_run {σ : Type*} (T : Mealy σ α β) (u : List α) :
     T.run.residual u = T.runFrom (T.eval u) := by
   rw [residual_eq_of_forall (P := T.runFrom T.start u) (v := [])
@@ -345,8 +316,6 @@ theorem isMealyComputable_of_stateSummary
   refine List.ext_getElem? fun i ↦ ?_
   rw [T.getElem?_run, getElem?_eq_of_append_cons hlen hout, hstate]
 
-/-- A length-preserving, prefix-preserving function with finitely many residuals is
-Mealy-computable, with the residuals themselves as the states. -/
 theorem isMealyComputable_of_residual {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length)
     (hpre : ∀ u v, f u <+: f (u ++ v))
@@ -370,8 +339,8 @@ theorem isMealyComputable_of_residual {f : List α → List β}
     show (f (u ++ [x])).drop (f u).length = f.residual u [x] by rw [residual_eq_drop (hpre u)],
     List.head?_eq_some_head]
 
-/-- **Myhill–Nerode for Mealy machines.** A function is Mealy-computable if and only
-if it is length-preserving, prefix-preserving, and has finitely many residuals. -/
+/-- Myhill–Nerode for Mealy machines: a function is Mealy-computable iff it is length-preserving,
+prefix-preserving, and has finitely many residuals. -/
 theorem isMealyComputable_iff_residual {f : List α → List β} :
     IsMealyComputable f
       ↔ (∀ xs, (f xs).length = xs.length) ∧ (∀ u v, f u <+: f (u ++ v))
@@ -383,13 +352,13 @@ theorem isMealyComputable_iff_residual {f : List α → List β} :
 
 namespace Function
 
-/-- The **synchronous residual** of `f` by `u` is the output of `f` on `u ++ v` past the first
-`u.length` symbols, the cells after `u` of a length-preserving `f`. -/
+/-- The synchronous residual of `f` by `u` sends `v` to the output of `f` on `u ++ v` past its
+first `u.length` symbols: for a length-preserving `f`, the output after `u`. -/
 def syncResidual (u : List α) : List α → List β :=
   fun v ↦ (f (u ++ v)).drop u.length
 
-/-- The **synchronous coresidual** of `f` by `y` is the output of `f` on `u ++ y` up to its
-first `u.length` symbols, the cells before `y` of a length-preserving `f`. -/
+/-- The synchronous coresidual of `f` by `y` sends `u` to the first `u.length` symbols of the
+output of `f` on `u ++ y`: for a length-preserving `f`, the output before `y`. -/
 def syncCoresidual (y : List α) : List α → List β :=
   fun u ↦ (f (u ++ y)).take u.length
 
@@ -397,7 +366,6 @@ theorem syncResidual_append_singleton (u : List α) (x : α) :
     syncResidual f (u ++ [x]) = fun v ↦ (syncResidual f u (x :: v)).drop 1 := by
   funext v; simp [syncResidual]
 
-/-- Synchronous coresiduals step by prepending a letter, the right-to-left congruence. -/
 theorem syncCoresidual_cons (x : α) (y : List α) :
     syncCoresidual f (x :: y) = fun u ↦ (syncCoresidual f y (u ++ [x])).take u.length := by
   funext u
@@ -405,19 +373,16 @@ theorem syncCoresidual_cons (x : α) (y : List α) :
     List.length_nil, List.append_assoc, List.singleton_append]
   rw [Nat.min_eq_left (Nat.le_succ _)]
 
-/-- The cell at the seam, read through the synchronous residual. -/
 theorem getElem?_syncResidual_cons (u : List α) (x : α) (w : List α) :
     (syncResidual f u (x :: w))[0]? = (f (u ++ x :: w))[u.length]? := by
   simp [syncResidual, List.getElem?_drop]
 
-/-- The cell at the seam, read through the synchronous coresidual. -/
 theorem getElem?_syncCoresidual_append (u : List α) (x : α) (w : List α) :
     (syncCoresidual f w (u ++ [x]))[u.length]? = (f (u ++ x :: w))[u.length]? := by
   simp only [syncCoresidual, List.length_append, List.length_cons, List.length_nil,
     List.append_assoc, List.singleton_append]
   exact List.getElem?_take_of_lt (Nat.lt_succ_self _)
 
-/-- On a length- and prefix-preserving function the residual is the synchronous residual. -/
 theorem residual_eq_syncResidual {f : List α → List β} (hlen : ∀ xs, (f xs).length = xs.length)
     (hpre : ∀ u v, f u <+: f (u ++ v)) : f.residual = f.syncResidual := by
   funext u
@@ -432,15 +397,12 @@ section Bimachine
 
 variable {L R : Type*} (B : Bimachine L R α β)
 
-/-- Dropping a scanned prefix of a letter-to-letter bimachine run reseeds the left
-state. -/
 theorem Bimachine.drop_runFrom_append (w : B.LetterToLetter) (l : L) (x v : List α) :
     (B.runFrom l (x ++ v)).drop x.length = B.runFrom (B.lStateAfter l x) v := by
   induction x generalizing l with
   | nil => rfl
   | cons a x ih => simpa [w.output_eq] using ih (B.lStep l a)
 
-/-- Taking the unscanned prefix of a bimachine run reseeds the right state. -/
 theorem Bimachine.take_runFrom_append (w : B.LetterToLetter) (l : L) (u y : List α) :
     (B.runFrom l (u ++ y)).take u.length
       = Bimachine.runFrom {B with rInit := B.rState y} l u := by
@@ -451,12 +413,10 @@ theorem Bimachine.take_runFrom_append (w : B.LetterToLetter) (l : L) (u y : List
       List.length_cons, List.take_succ_cons, ih (B.lStep l a), B.rState_append u y]
     simp [w.output_eq]
 
-/-- Residuals of a bimachine's run reseed the left automaton. -/
 theorem Bimachine.syncResidual_run (w : B.LetterToLetter) (x : List α) :
     syncResidual B.run x = B.runFrom (B.lState x) :=
   funext fun v ↦ B.drop_runFrom_append w B.lInit x v
 
-/-- Coresiduals of a bimachine's run reseed the right automaton. -/
 theorem Bimachine.syncCoresidual_run (w : B.LetterToLetter) (y : List α) :
     syncCoresidual B.run y = Bimachine.run {B with rInit := B.rState y} :=
   funext fun u ↦ B.take_runFrom_append w B.lInit u y
@@ -503,10 +463,6 @@ theorem isLengthPreservingBimachineComputable_of_stateSummaries
     getElem?_eq_of_append_cons hlen hout]
   simp only [hL, hR]
 
-/-- A length-preserving function with finitely many residuals and coresiduals is
-bimachine-computable, with syncResidual classes as the left states and syncCoresidual classes as the
-right states, and with the cell output read off representatives, which is well-defined by
-exchanging one context at a time. -/
 theorem isLengthPreservingBimachineComputable_of_syncResidual {f : List α → List β}
     (hlen : ∀ xs, (f xs).length = xs.length)
     (hfinL : (Set.range (syncResidual f)).Finite)
@@ -548,9 +504,8 @@ theorem isLengthPreservingBimachineComputable_of_syncResidual {f : List α → L
 
 end Bimachine
 
-/-- **Myhill–Nerode for bimachines.** A function is bimachine-computable if and only
-if it is length-preserving with finitely many residuals and finitely many
-coresiduals. -/
+/-- Myhill–Nerode for bimachines: a function is length-preserving bimachine-computable iff it is
+length-preserving with finitely many synchronous residuals and finitely many coresiduals. -/
 theorem isLengthPreservingBimachineComputable_iff_syncResidual {f : List α → List β} :
     IsLengthPreservingBimachineComputable f
       ↔ (∀ xs, (f xs).length = xs.length) ∧ (Set.range (syncResidual f)).Finite
