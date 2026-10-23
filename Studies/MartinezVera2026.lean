@@ -41,7 +41,7 @@ exhaustifying it relative to the alternatives of the constituent *=mi* marks yie
 ## Implementation notes
 
 The paper's composition rule I is the bind of `TwoDim`, whose `⊤` plays the empty not-at-issue
-layer. An illocutionary operator is the move it puts on record: its speaker's commitments,
+layer. An illocutionary operator is the move it puts on record, with its speaker's commitments,
 without their addressee, and the propositions by which it addresses the question under
 discussion, addressing being partial answerhood. Exhaustification is innocent exclusion; the
 paper glosses the alternatives it may deny as those entailing the prejacent, under which a
@@ -329,7 +329,7 @@ theorem contextSetOf_present_assert_assert_compl :
 
 /-! ### The examples
 
-The examples are evaluated in a model whose worlds are sets of events: an event fixes a value at
+The examples are evaluated in a model whose worlds are sets of events. An event fixes a value at
 each constituent site of the scope sentence, a world is the set of events that happened, and the
 question under discussion asks which event happened. The scope is that the scope event happened,
 and a correction asserts that its variant at the contrasted site did. The propositions in play

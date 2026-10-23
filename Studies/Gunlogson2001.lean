@@ -7,19 +7,18 @@ public import Linglib.Discourse.Role
 /-!
 # Gunlogson (2001): True to Form: Rising and Falling Declaratives as Questions in English
 
-This file formalizes chapters 3 and 4 of [gunlogson-2001], the context-update semantics of rising
-and falling declaratives and the account of when a declarative can be a polar question. A context
-is a pair of commitment sets, and a locution, a sentence type with its intonation (73), updates
-one of them: a declarative narrows the targeted set to its content (74), an interrogative leaves
-it alone (87), and the rise or fall selects the addressee's or the speaker's set (75), (76),
-`Locution.update`. The statuses of a proposition in a context, commitment, joint commitment,
-resolution, controversy, bias, and neutrality (63) to (68), are conditions on the commitment
-sets `Commitment.State.commitmentSet`, and the reduction-set characterization of bias (69) to (71) is
-`IsBiasedR`. Chapter 3 classifies locutions by their effect: the theorems that
-no declarative is neutral and no interrogative biasing (91), (92),
-`Locution.not_isNeutralIn_of_decl`, the expression of commitment (93), and entailment,
-informativeness, and vacuousness (94) to (101), which separate a locution entailed by a context
-from one uninformative in it. Chapter 4 defines a
+Chapters 3 and 4 of Gunlogson's dissertation give the context-update semantics of rising and
+falling declaratives and say when a declarative can be a polar question. A context is a pair of
+commitment sets, and a locution, a sentence type with its intonation (73), updates one of them. A
+declarative narrows the targeted set to its content (74), an interrogative leaves it alone (87),
+and the rise or fall selects the addressee's or the speaker's set (75), (76), `Locution.update`.
+The statuses of a proposition in a context, namely commitment, joint commitment, resolution,
+controversy, bias, and neutrality (63) to (68), are conditions on the commitment sets
+`Commitment.State.commitmentSet`, and the reduction-set characterization of bias (69) to (71) is
+`IsBiasedR`. Chapter 3 classifies locutions by their effect, with the theorems that no
+declarative is neutral and no interrogative biasing (91), (92), `Locution.not_isNeutralIn_of_decl`,
+the expression of commitment (93), and entailment, informativeness, and vacuousness (94) to (101),
+which separate a locution entailed by a context from one uninformative in it. Chapter 4 defines a
 polar question as a locution uninformative with respect to the addressee's commitment set (104),
 (132), `Locution.IsPolarQuestion`, which for a declarative is the Contextual Bias Condition (105),
 makes every rising declarative question reiterative (134) and without effect (133), and makes the
@@ -28,16 +27,16 @@ rows of `Data.Examples.Gunlogson2001`.
 
 ## Implementation notes
 
-Presuppositional admittance, (83) and (84), is not modelled, so consistency (86) is the
-nonemptiness of the updated commitment sets, and the second clause of the final definition of
-polar question (136), which is not a condition on commitment sets, is left out. Theorem (91) does
-not hold as stated: a resolved proposition is controversial for no one under (66), so a resolved
-context is neutral under (68), and a declarative whose content the addressee already holds makes
-it a joint commitment and so is neutral, `Locution.isNeutralIn_fallingDecl`. The theorem holds
-when the content stays unresolved, which is the form given here, and (93) correspondingly fails
-for declaratives as literally defined. The reduction-set definition of bias (71), which the paper
-says is equivalent to (67), agrees with it exactly on unresolved propositions,
-`isBiasedR_iff_isBiased_of_not_isResolved` and `isBiasedR_of_isJoint`.
+Presuppositional admittance, (83) and (84), is not modelled, so consistency (86) is the nonemptiness
+of the updated commitment sets, and the second clause of the final definition of polar question
+(136), which is not a condition on commitment sets, is left out. Theorem (91) does not hold as
+stated, since a resolved proposition is controversial for no one under (66), so a resolved context
+is neutral under (68), and a declarative whose content the addressee already holds makes it a joint
+commitment and so is neutral, `Locution.isNeutralIn_fallingDecl`. The theorem holds when the content
+stays unresolved, which is the form given here, and (93) correspondingly fails for declaratives as
+literally defined. The reduction-set definition of bias (71), which the paper says is equivalent to
+(67), agrees with it exactly on unresolved propositions, `isBiasedR_iff_isBiased_of_not_isResolved`
+and `isBiasedR_of_isJoint`.
 
 ## References
 
@@ -54,31 +53,31 @@ variable {W : Type*} {K : State Role W} {p : Set W}
 
 /-! ### Commitment sets and the statuses of a proposition, section 3.1 -/
 
-/-- A falling declarative (78): the speaker commits to `p`. -/
+/-- In a falling declarative the speaker commits to `p` (78). -/
 def falling (K : State Role W) (p : Set W) : State Role W := insert (.speaker, p) K
 
-/-- A rising declarative (77): the addressee is committed to `p`. -/
+/-- In a rising declarative the addressee is committed to `p` (77). -/
 def rising (K : State Role W) (p : Set W) : State Role W := insert (.addressee, p) K
 
-/-- (63): `p` is a commitment of `x`. -/
+/-- `p` is a commitment of `x` (63). -/
 def IsCommitmentOf (K : State Role W) (x : Role) (p : Set W) : Prop :=
   (commitmentSet K x).Nonempty ∧ commitmentSet K x ⊆ p
 
-/-- (64): `p` is a joint commitment. -/
+/-- `p` is a joint commitment (64). -/
 def IsJoint (K : State Role W) (p : Set W) : Prop := ∀ x, IsCommitmentOf K x p
 
-/-- (65): `p` is resolved. -/
+/-- `p` is resolved (65). -/
 def IsResolved (K : State Role W) (p : Set W) : Prop := IsJoint K p ∨ IsJoint K pᶜ
 
-/-- (66): `p` is controversial: someone is committed against it, it is unresolved, and no
-commitment set is empty. -/
+/-- `p` is controversial when someone is committed against it, it is unresolved, and no
+commitment set is empty (66). -/
 def IsControversial (K : State Role W) (p : Set W) : Prop :=
   (∃ x, IsCommitmentOf K x pᶜ) ∧ ¬ IsResolved K p ∧ ∀ x, (commitmentSet K x).Nonempty
 
-/-- (67): the context is biased toward `p`. -/
+/-- The context is biased toward `p` (67). -/
 def IsBiased (K : State Role W) (p : Set W) : Prop := IsControversial K pᶜ ∧ ¬ IsControversial K p
 
-/-- (68): the context is neutral with respect to `p`. -/
+/-- The context is neutral with respect to `p` (68). -/
 def IsNeutral (K : State Role W) (p : Set W) : Prop :=
   ¬ IsControversial K p ∧ ¬ IsControversial K pᶜ
 
@@ -146,13 +145,12 @@ theorem isBiased_rising (h : IsNeutral K p) (hu : ¬ IsResolved K p)
 
 /-! ### Contextual bias through the reduction set, section 3.1 -/
 
-/-- (69): `K'` is reductively accessible from `K` when each commitment set shrinks to a nonempty
-subset. -/
+/-- `K'` is reductively accessible from `K` when each commitment set shrinks to a nonempty subset
+(69). -/
 def Accessible (K K' : State Role W) : Prop :=
   (∀ x, commitmentSet K' x ⊆ commitmentSet K x) ∧ ∀ x, (commitmentSet K' x).Nonempty
 
-/-- (71): `K` is biased toward `p` when some accessible context settles `p` and none settles
-`pᶜ`. -/
+/-- `K` is biased toward `p` when some accessible context settles `p` and none settles `pᶜ` (71). -/
 def IsBiasedR (K : State Role W) (p : Set W) : Prop :=
   (∃ K', Accessible K K' ∧ ∀ x, commitmentSet K' x ⊆ p) ∧
     ¬ ∃ K', Accessible K K' ∧ ∀ x, commitmentSet K' x ⊆ pᶜ
@@ -205,19 +203,19 @@ theorem not_isBiased_of_isJoint (h : IsJoint K p) : ¬ IsBiased K p :=
 
 /-! ### Locutions and their context change potentials, sections 3.2 and 3.3 -/
 
-/-- (73d): the sentence types. -/
+/-- The sentence types (73d). -/
 inductive SentenceType
   | decl
   | interr
   deriving DecidableEq
 
-/-- (74) and (87): a declarative with content `p` narrows a commitment set to `p`; an
-interrogative leaves it alone. -/
+/-- A declarative with content `p` narrows a commitment set to `p`; an interrogative leaves it alone
+(74) and (87). -/
 def SentenceType.update (p : Set W) : SentenceType → Set W → Set W
   | .decl, cs => p ∩ cs
   | .interr, cs => cs
 
-/-- (95): a commitment set entails a sentence when updating with it has no effect. -/
+/-- A commitment set entails a sentence when updating with it has no effect (95). -/
 def SentenceType.Entails (S : SentenceType) (cs p : Set W) : Prop := S.update p cs = cs
 
 theorem SentenceType.entails_decl_iff {cs : Set W} : SentenceType.decl.Entails cs p ↔ cs ⊆ p :=
@@ -225,7 +223,7 @@ theorem SentenceType.entails_decl_iff {cs : Set W} : SentenceType.decl.Entails c
 
 theorem SentenceType.entails_interr {cs : Set W} : SentenceType.interr.Entails cs p := rfl
 
-/-- (73e): the locutions, a sentence type with a rise or a fall. -/
+/-- The locutions, a sentence type with a rise or a fall (73e). -/
 inductive Locution
   | risingDecl
   | fallingDecl
@@ -239,14 +237,13 @@ def sentenceType : Locution → SentenceType
   | .risingInterr => .interr
   | _ => .decl
 
-/-- (75) and (76): the commitment set the intonation targets, the addressee's under a rise and
-the speaker's under a fall. -/
+/-- The commitment set the intonation targets, the addressee's under a rise and the speaker's under
+a fall (75) and (76). -/
 def target : Locution → Role
   | .fallingDecl => .speaker
   | _ => .addressee
 
-/-- (77), (78), and (88): the context change potential of a locution with descriptive content
-`p`. -/
+/-- The context change potential of a locution with descriptive content `p` (77), (78), and (88). -/
 def update (p : Set W) : Locution → State Role W → State Role W
   | .risingDecl, K => rising K p
   | .fallingDecl, K => falling K p
@@ -254,7 +251,7 @@ def update (p : Set W) : Locution → State Role W → State Role W
 
 variable (L : Locution)
 
-/-- (81): the locution applies its sentence meaning to the targeted commitment set. -/
+/-- The locution applies its sentence meaning to the targeted commitment set (81). -/
 theorem commitmentSet_update_target :
     commitmentSet (L.update p K) L.target =
       L.sentenceType.update p (commitmentSet K L.target) := by
@@ -263,7 +260,7 @@ theorem commitmentSet_update_target :
   · exact (commitmentSet_falling K p).1
   · rfl
 
-/-- (81): the other commitment set is unchanged. -/
+/-- The other commitment set is unchanged (81). -/
 theorem commitmentSet_update_of_ne {x : Role} (h : x ≠ L.target) :
     commitmentSet (L.update p K) x = commitmentSet K x := by
   cases L <;> cases x <;>
@@ -273,17 +270,17 @@ theorem commitmentSet_update_of_ne {x : Role} (h : x ≠ L.target) :
     | exact (commitmentSet_falling K p).2
     | rfl
 
-/-- (86): `L` with content `p` is consistent with `K` when every updated commitment set is
-nonempty. -/
+/-- `L` with content `p` is consistent with `K` when every updated commitment set is nonempty (86).
+-/
 def Consistent (K : State Role W) (p : Set W) : Prop :=
   ∀ x, (commitmentSet (L.update p K) x).Nonempty
 
 /-! ### Locutionary bias and neutrality, section 3.4 -/
 
-/-- (89): `L` is neutral with respect to `K` when the updated context is neutral. -/
+/-- `L` is neutral with respect to `K` when the updated context is neutral (89). -/
 def IsNeutralIn (K : State Role W) (p : Set W) : Prop := IsNeutral (L.update p K) p
 
-/-- (90): `L` is biasing with respect to `K` when it takes a neutral context to a biased one. -/
+/-- `L` is biasing with respect to `K` when it takes a neutral context to a biased one (90). -/
 def IsBiasingIn (K : State Role W) (p : Set W) : Prop :=
   IsNeutral K p ∧ IsBiased (L.update p K) p
 
@@ -314,13 +311,12 @@ theorem isBiasingIn_of_decl (hL : L.sentenceType = .decl) (h : IsNeutral K p)
   · exact isBiased_falling h hu hne
   · exact absurd hL (by decide)
 
-/-- (92): no interrogative is biasing: it leaves the context as it is, and a neutral context is
-not biased. -/
+/-- No interrogative is biasing, since it leaves the context as it is and a neutral context is not
+biased (92). -/
 theorem not_isBiasingIn_risingInterr : ¬ risingInterr.IsBiasingIn K p :=
   fun h ↦ h.1.not_isBiased h.2
 
-/-- (93): `L` expresses commitment to `p` when no context consistent with it comes out
-neutral. -/
+/-- `L` expresses commitment to `p` when no context consistent with it comes out neutral (93). -/
 def ExpressesCommitment (p : Set W) : Prop :=
   ∀ K : State Role W, L.Consistent K p → ¬ L.IsNeutralIn K p
 
@@ -356,7 +352,7 @@ theorem not_expressesCommitment_fallingDecl (h₀ : p.Nonempty) :
 
 /-! ### Entailment, informativeness, and vacuousness, section 3.5 -/
 
-/-- (94): a context entails a locution when the update leaves every commitment set as it was. -/
+/-- A context entails a locution when the update leaves every commitment set as it was (94). -/
 def Entails (K : State Role W) (p : Set W) : Prop :=
   ∀ x, commitmentSet (L.update p K) x = commitmentSet K x
 
@@ -372,15 +368,16 @@ theorem entails_iff : L.Entails K p ↔ L.sentenceType.Entails (commitmentSet K 
       exact h
     · exact commitmentSet_update_of_ne L hx
 
-/-- (97): `L` is uninformative with respect to `x`'s commitment set when the set entails its
-sentence. -/
+/-- `L` is uninformative with respect to `x`'s commitment set when the set entails its sentence
+(97). -/
 def Uninformative (K : State Role W) (x : Role) (p : Set W) : Prop :=
   L.sentenceType.Entails (commitmentSet K x) p
 
-/-- (99): uninformative with respect to every commitment set. -/
+/-- `L` is uninformative in `K` when it is uninformative with respect to every commitment set
+(99). -/
 def UninformativeIn (K : State Role W) (p : Set W) : Prop := ∀ x, L.Uninformative K x p
 
-/-- (98): informative with respect to some commitment set. -/
+/-- `L` is informative in `K` when it is informative with respect to some commitment set (98). -/
 def InformativeIn (K : State Role W) (p : Set W) : Prop := ∃ x, ¬ L.Uninformative K x p
 
 theorem uninformative_risingInterr (x : Role) : risingInterr.Uninformative K x p := rfl
@@ -390,8 +387,8 @@ theorem uninformative_iff_of_decl (hL : L.sentenceType = .decl) {x : Role} :
   rw [Uninformative, hL]
   exact SentenceType.entails_decl_iff
 
-/-- (100): a falling declarative reiterating the speaker's commitment is entailed by the context
-yet informative with respect to the addressee. -/
+/-- A falling declarative reiterating the speaker's commitment is entailed by the context yet
+informative with respect to the addressee (100). -/
 theorem entails_and_informativeIn_fallingDecl (hs : commitmentSet K .speaker ⊆ p)
     (ha : ¬ commitmentSet K .addressee ⊆ p) :
     fallingDecl.Entails K p ∧ fallingDecl.InformativeIn K p :=
@@ -405,8 +402,8 @@ theorem uninformative_of_isCommitmentOf {x : Role} (h : IsCommitmentOf K x p) :
   · rw [Uninformative, hL]
     rfl
 
-/-- (101): a locution whose content is a joint commitment is vacuous; it is then uninformative
-with respect to the context and entailed by it. -/
+/-- A locution whose content is a joint commitment is vacuous; it is then uninformative with respect
+to the context and entailed by it (101). -/
 theorem uninformativeIn_and_entails_of_isJoint (h : IsJoint K p) :
     L.UninformativeIn K p ∧ L.Entails K p :=
   ⟨fun x ↦ L.uninformative_of_isCommitmentOf (h x),
@@ -414,28 +411,27 @@ theorem uninformativeIn_and_entails_of_isJoint (h : IsJoint K p) :
 
 /-! ### Polar questions, chapter 4 -/
 
-/-- (132), the Uninformativeness Condition (104) taken as necessary and sufficient: an utterance
-of `L` is a polar question in `K` when `L` is uninformative with respect to the addressee's
-commitment set. -/
+/-- An utterance of `L` is a polar question in `K` when `L` is uninformative with respect to the
+addressee's commitment set, the Uninformativeness Condition (104) taken as necessary and
+sufficient (132). -/
 def IsPolarQuestion (K : State Role W) (p : Set W) : Prop := L.Uninformative K .addressee p
 
-/-- (131): every rising interrogative is a polar question. -/
+/-- Every rising interrogative is a polar question (131). -/
 theorem isPolarQuestion_risingInterr : risingInterr.IsPolarQuestion K p := rfl
 
-/-- (105), the Contextual Bias Condition: a declarative is a polar question only where the
+/-- By the Contextual Bias Condition (105), a declarative is a polar question only where the
 addressee is already committed to its content. -/
 theorem isPolarQuestion_iff_of_decl (hL : L.sentenceType = .decl) :
     L.IsPolarQuestion K p ↔ commitmentSet K .addressee ⊆ p :=
   uninformative_iff_of_decl L hL
 
-/-- (133): a rising declarative that is a polar question has the effect of the interrogative
-with the same content, none. -/
+/-- A rising declarative that is a polar question has the effect of the interrogative with the same
+content, none (133). -/
 theorem entails_of_isPolarQuestion_risingDecl (h : risingDecl.IsPolarQuestion K p) :
     risingDecl.Entails K p :=
   (entails_iff _).2 h
 
-/-- (134): a reiterative question, a polar question whose content the addressee is committed
-to. -/
+/-- A reiterative question, a polar question whose content the addressee is committed to (134). -/
 def IsReiterativeQuestion (K : State Role W) (p : Set W) : Prop :=
   L.IsPolarQuestion K p ∧ IsCommitmentOf K .addressee p
 
@@ -443,8 +439,8 @@ theorem isReiterativeQuestion_risingDecl (hne : (commitmentSet K .addressee).Non
     (h : risingDecl.IsPolarQuestion K p) : risingDecl.IsReiterativeQuestion K p :=
   ⟨h, hne, (isPolarQuestion_iff_of_decl _ rfl).1 h⟩
 
-/-- (135): a resolving question, a reiterative question that takes its unresolved content to a
-joint commitment. -/
+/-- A resolving question, a reiterative question that takes its unresolved content to a joint
+commitment (135). -/
 def IsResolvingQuestion (K : State Role W) (p : Set W) : Prop :=
   L.IsReiterativeQuestion K p ∧ ¬ IsResolved K p ∧ IsJoint (L.update p K) p
 

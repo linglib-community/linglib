@@ -7,22 +7,21 @@ public import Linglib.Data.Examples.HarrisPotts2009
 /-!
 # Harris and Potts (2009): Perspective-shifting with appositives and expressives
 
-This file formalizes [harris-potts-2009]'s account of whose commitments an appositive or
-expressive expresses. The two-dimensional meaning of [potts-2005] is kept, but the
-conventional-implicature content carries a free orientation variable, resolved in discourse to
-the speaker or to another participant (`CIItem.resolve`). Orientation is public commitment: an
-utterance commits the speaker to the at-issue content and whoever the item is oriented to to the
-implicature (`CIItem.utter`), so under a non-speaker-oriented reading the speaker's commitment
-set narrows by the at-issue content alone (`commitmentSet_utter_speaker_other`). Against the
-configurational hypothesis, on which non-speaker orientation is semantic binding by an attitude
-predicate (10a), the paper sets the contextual one (10b): speaker orientation is
-a default that pragmatic factors override in any syntactic position. The attested readings and
-the items of the two experiments are the rows of `Data/Examples/HarrisPotts2009.json`, and
-`not_configurational` is the paper's refutation: (11) and (12) are epithets in matrix
-clauses read from another's perspective. Experiment 1 extends this to appositives, read as the
-attitude subject's in 68% of unembedded and 86% of embedded trials, so that embedding
-facilitates the shift without being required for it; Experiment 2 finds a negative context
-raising subject-oriented readings of a matrix epithet from 7% to 17%; and the corpus study
+Harris and Potts account for whose commitments an appositive or expressive expresses. Potts's
+two-dimensional meaning is kept, but the conventional-implicature content carries a free orientation
+variable, resolved in discourse to the speaker or to another participant (`CIItem.resolve`).
+Orientation is public commitment, since an utterance commits the speaker to the at-issue content and
+whoever the item is oriented to to the implicature (`CIItem.utter`), so under a non-speaker-oriented
+reading the speaker's commitment set narrows by the at-issue content alone
+(`commitmentSet_utter_speaker_other`). Against the configurational hypothesis, on which non-speaker
+orientation is semantic binding by an attitude predicate (10a), the paper sets the contextual one
+(10b), on which speaker orientation is a default that pragmatic factors override in any syntactic
+position. The attested readings and the items of the two experiments are the rows of
+`Data/Examples/HarrisPotts2009.json`, and `not_configurational` is the paper's refutation, since
+(11) and (12) are epithets in matrix clauses read from another's perspective. Experiment 1 extends
+this to appositives, read as the attitude subject's in 68% of unembedded and 86% of embedded trials,
+so that embedding facilitates the shift without being required for it; Experiment 2 finds a negative
+context raising subject-oriented readings of a matrix epithet from 7% to 17%; and the corpus study
 finds speaker orientation dominant, in 32 of the 34 embedded appositive relatives with agreed
 textual evidence.
 
@@ -49,14 +48,14 @@ namespace HarrisPotts2009
 open ConventionalImplicature (TwoDim)
 open Commitment
 
-/-- Whose commitment a conventional implicature expresses: the speaker, or another discourse
+/-- A conventional implicature expresses the commitment of the speaker or of another discourse
 participant. -/
 inductive Orientation (Person : Type) where
   | speaker
   | other (p : Person)
   deriving DecidableEq, Repr
 
-/-- An appositive or expressive: at-issue content, and conventional-implicature content that
+/-- An appositive or expressive has at-issue content and conventional-implicature content that
 depends on the value of the orientation variable, resolved in discourse. -/
 structure CIItem (Person W : Type) where
   /-- The conventional implicature under each orientation. -/
@@ -70,8 +69,8 @@ variable {Person W : Type} (item : CIItem Person W)
 def CIItem.resolve (o : Orientation Person) : TwoDim W (W → Prop) :=
   { atIssue := item.atIssue, notAtIssue := item.ciFor o }
 
-/-- Orientation is public commitment (§1): uttering the item with its orientation resolved
-to `o` commits the speaker to the at-issue content and `o` to the conventional implicature. -/
+/-- Orientation is public commitment (§1), so uttering the item with its orientation resolved to
+`o` commits the speaker to the at-issue content and `o` to the conventional implicature. -/
 def CIItem.utter (o : Orientation Person) (K : State (Orientation Person) W) :
     State (Orientation Person) W :=
   insert (.speaker, {w | item.atIssue w}) (insert (o, {w | item.ciFor o w}) K)
@@ -97,15 +96,15 @@ theorem commitmentSet_utter_other (p : Person) :
 
 /-! ### The configurational and the contextual hypothesis (10) -/
 
-/-- Whose view the content was taken to be: the response categories of (13) and (16). -/
+/-- The response categories of (13) and (16) record whose view the content was taken to be. -/
 inductive Response where
   | speaker
   | subject
   | both
   deriving DecidableEq, Repr
 
-/-- An attested reading: whether the item sits in the complement of an attitude or speech
-predicate, and to whom its content was attributed. -/
+/-- An attested reading records whether the item sits in the complement of an attitude or speech
+predicate and to whom its content was attributed. -/
 structure Reading where
   embedded : Bool
   response : Response
@@ -127,12 +126,12 @@ def Reading.ofDatum (ex : Datum) : Option Reading := do
 /-- The attested readings of §2 and §5. -/
 def readings : List Reading := Examples.all.filterMap Reading.ofDatum
 
-/-- (10a): non-speaker orientation arises only by semantic binding under an attitude
-predicate, so an unembedded item is read as the speaker's. -/
+/-- Non-speaker orientation arises only by semantic binding under an attitude predicate, so an
+unembedded item is read as the speaker's (10a). -/
 def Configurational (D : List Reading) : Prop :=
   ∀ r ∈ D, r.response ≠ .speaker → r.embedded = true
 
-/-- (11) and (12): an epithet in a matrix clause read from another's perspective. -/
+/-- An epithet in a matrix clause read from another's perspective (11) and (12). -/
 theorem exists_unembedded_subject :
     ∃ r ∈ readings, r.embedded = false ∧ r.response = .subject := by decide
 

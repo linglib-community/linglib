@@ -9,12 +9,12 @@ public import Linglib.Data.Examples.CondoravdiLauer2012
 # Condoravdi and Lauer 2012: imperatives as preferential commitments
 
 Condoravdi and Lauer give declaratives and imperatives one kind of conventional effect, a
-public commitment of the speaker, differing in the attitude committed to: a declarative commits
-the speaker to act as though believing its content, an imperative to act as though the content
-were a maximal element of the speaker's effective preference structure, the consistent ranking
-of propositions that guides action. The range of uses, from commands to wishes, permissions
+public commitment of the speaker, differing in the attitude committed to. A declarative commits
+the speaker to act as though believing its content, and an imperative to act as though the
+content were a maximal element of the speaker's effective preference structure, the consistent
+ranking of propositions that guides action. The range of uses, from commands to wishes, permissions
 and disinterested advice, comes from the context, while the constraints on every use come from
-the commitment: successive imperatives are consistent because the maximal elements of a
+the commitment. Successive imperatives are consistent because the maximal elements of a
 consistent structure are jointly realizable, the speaker cannot be insincere because the
 commitment is self-verifying, and a preference against the content survives a concession but
 not disinterested advice, since the addressee's goal enters the adviser's structure at the
@@ -24,23 +24,22 @@ source are checked as well.
 
 ## Implementation notes
 
-The information state of a preference structure is its world type, so the paper's consistency
-is `PreferenceStructure.Consistent Set.univ`; the theorems take an information state `B`, since
-the paper's incompatibility is relative to what the speaker believes. A public effective
-preference is a commitment keyed by the participant and `.preferential`; the doxastic reduction of a commitment to
-one's own preferential commitment, which the paper takes over from the authors' earlier work, is
-a hypothesis on the world-indexed commitment state. Disinterested advice identifies the content
-with the adopted goal, which the paper reaches through a means-end inference, and quantifies
-over the effective structure alone where cooperation by default ranges over all of the
-adviser's structures.
+The information state of a preference structure is its world type, so the paper's consistency is
+`PreferenceStructure.Consistent Set.univ`; the theorems take an information state `B`, since the
+paper's incompatibility is relative to what the speaker believes. A public effective preference is a
+commitment keyed by the participant and `.preferential`; the doxastic reduction of a commitment to
+one's own preferential commitment, which the paper takes over from the authors' earlier work, is a
+hypothesis on the world-indexed commitment state. Disinterested advice identifies the content with
+the adopted goal, which the paper reaches through a means-end inference, and quantifies over the
+effective structure alone where cooperation by default ranges over all of the adviser's structures.
 
 ## TODO
 
-* Informal in the paper and not formalized: the two preconditions and the re-ranking of a
-  permission, the second meaning component (36) that limits speaker involvement and excludes
-  promises, the two conditions on wish uses behind (37), the conditional preferences of offers
-  (41), and the practical reasoning step by which the preliminary semantics (32) is recovered
-  from the final (34).
+* The paper leaves informal, and this file does not formalize, the two preconditions and the
+  re-ranking of a permission, the second meaning component (36) that limits speaker involvement
+  and excludes promises, the two conditions on wish uses behind (37), the conditional preferences
+  of offers (41), and the practical reasoning step by which the preliminary semantics (32) is
+  recovered from the final (34).
 
 ## References
 
@@ -66,13 +65,13 @@ variable {A W : Type*} {P : A → W → PreferenceStructure W} {a : A} {p q : Se
 
 /-! ### Effective preferences and public commitments
 
-`Want P a p w` is the effective preference `EP_w(a, p)`: `p` is a maximal element of `a`'s
-effective preference structure `P a w`, the distinguished consistent structure that determines
-`a`'s action choices, (28) and (29). The public commitments of §3.2 are keyed by participant and
-attitude. A commitment of `(a, .doxastic)` to `p` is `PB(a, p)`, to act as though believing `p`,
-and one of `(a, .preferential)` is `PEP(a, p)`, to act as though `p` were a maximal effective
-preference; a speaker commits to an effective preference only when holding it, condition (iii) of
-§3.4, `Commitment.Sincere`. -/
+`Want P a p w` is the effective preference `EP_w(a, p)`, which holds when `p` is a maximal element
+of `a`'s effective preference structure `P a w`, the distinguished consistent structure that
+determines `a`'s action choices, (28) and (29). The public commitments of §3.2 are keyed by
+participant and attitude. A commitment of `(a, .doxastic)` to `p` is `PB(a, p)`, to act as though
+believing `p`, and one of `(a, .preferential)` is `PEP(a, p)`, to act as though `p` were a maximal
+effective preference; a speaker commits to an effective preference only when holding it, condition
+(iii) of §3.4, `Commitment.Sincere`. -/
 
 /-! ### The conventions -/
 
@@ -126,21 +125,21 @@ theorem directive_want_addressee {K : State (A × Force) W} {ad : A}
 /-! ### Consistency -/
 
 /-- The preferential commitments of a sincere speaker with consistent effective preferences are
-jointly realizable in the information state: successive imperatives are consistent, §2.1. -/
+jointly realizable in the information state, so successive imperatives are consistent (§2.1). -/
 theorem imperatives_consistent {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
     (hs : Sincere (effectivePreference P) K w) :
     (B ∩ K.commitmentSet (a, .preferential)).Nonempty :=
   hC.inter_sInter_maxElts_nonempty.mono
     (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter fun _ hp ↦ hs.want hp))
 
-/-- Two imperatives with incompatible contents are not both sincere at one time, (11) and (15):
-the second revises the speaker's effective preferences, (12) to (14). -/
+/-- Two imperatives with incompatible contents are not both sincere at one time, (11) and (15),
+since the second revises the speaker's effective preferences, (12) to (14). -/
 theorem imperatives_revise {K : State (A × Force) W} {B : Set W} (hC : (P a w).Consistent B)
     (hp : ((a, .preferential), p) ∈ K) (hq : ((a, .preferential), q) ∈ K)
     (h : B ∩ (p ∩ q) = ∅) : ¬ Sincere (effectivePreference P) K w :=
   fun hs ↦ (hC.inter_inter_nonempty_of_mem_maxElts (hs.want hp) (hs.want hq)).ne_empty h
 
-/-! ### Endorsement: advice, permission, concession -/
+/-! ### Endorsement by advice, permission, and concession -/
 
 /-- In disinterested advice ((39), (40)), an effective goal adopted by cooperation is consistent
 with every preference of the agent. -/
@@ -222,7 +221,7 @@ theorem coherent_iff [Nontrivial W] {u : Use} {d : Denial} :
 /-! ### Ordering-source affirmation -/
 
 /-- [schwager-2006]'s ordering-source affirmation, (19), read as a bouletic necessity of the
-content, predicts the consistency requirement: two affirmed contents share a best world. -/
+content, predicts the consistency requirement that two affirmed contents share a best world. -/
 theorem affirmation_consistent {f g : Background W}
     (hne : (bestWorlds f g w).Nonempty) (hp : necessity f g (· ∈ p) w)
     (hq : necessity f g (· ∈ q) w) : (p ∩ q).Nonempty :=
@@ -246,7 +245,7 @@ theorem todo_not_must {f g : Background W} {φ ψ : W → Prop} {u : W}
 
 /-! ### The rows
 
-The uses of (6) to (9), after [schmerling-1982]'s inventory, and the exclusions of (10) are
+The uses of (6) to (9), after Schmerling's inventory, and the exclusions of (10) are
 data; the sequences, follow-ups and challenges instantiate the theorems above. -/
 
 /-- The second utterance of a sequence. -/
