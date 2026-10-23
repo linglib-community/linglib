@@ -141,27 +141,31 @@ end HayKennedyLevin
 
 section KennedyLevin
 
+open KennedyLevin2008 Degree
+
 variable [LinearOrder D] {m : S → α → T → D} {b : D} {s₀ : S} {φ : α → E → Prop}
 
 /-- From a source below the maximum, the telic reading of a degree achievement on a scale closed
-above, on which the theme reaches the maximum ([kennedy-levin-2008]), is a quantized change to
-`⊤`, as for *straighten*. -/
-theorem quantizedChange_top_of_maxStandard [OrderTop D] (hb : b ≠ ⊤)
-    (h : ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
-      projIci (m s₀ x (τ e).fst) (m s₀ x (τ e).snd) = ⊤) :
-    QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ⊤ := fun x e hx ↦
-  let ⟨h₁, h₂⟩ := h x e hx
-  have h₃ := (KennedyLevin2008.maxStandard_iff (m s₀) x _ _ (h₁ ▸ hb)).1 h₂
-  ⟨s₀, rfl, h₁, hb.lt_top, h₃⟩
+above, on which the theme reaches the maximum ([kennedy-levin-2008]), is exactly a quantized
+change to `⊤`, as for *straighten*. -/
+theorem quantizedChange_top_iff_maxStandardPos [OrderTop D] (hb : b ≠ ⊤) :
+    QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ⊤ ↔
+      ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
+        MaxStandardPos (measureOfChange (m s₀) x (τ e).fst) (τ e).snd := by
+  refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
+  simp only [Result, exists_eq_left, hb.lt_top, true_and]
+  exact and_congr_right fun h ↦ (maxStandardPos_measureOfChange_iff (h ▸ hb)).symm
 
 /-- The atelic reading of a degree achievement, on which the theme ends above where it began
-([kennedy-levin-2008]), is a non-quantized change, as for *widen* or *cool*. -/
-theorem nonQuantizedChange_of_minStandard
-    (h : ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧ ⊥ < projIci (m s₀ x (τ e).fst) (m s₀ x (τ e).snd)) :
-    NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ := fun x e hx ↦
-  let ⟨h₁, h₂⟩ := h x e hx
-  have h₃ := (KennedyLevin2008.minStandard_iff (m s₀) x _ _).1 h₂
-  ⟨s₀, rfl, _, h₁, h₁ ▸ h₃, rfl⟩
+([kennedy-levin-2008]), is exactly a non-quantized change, as for *widen* or *cool*. -/
+theorem nonQuantizedChange_iff_minStandardPos :
+    NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
+      ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
+        MinStandardPos (measureOfChange (m s₀) x (τ e).fst) (τ e).snd := by
+  refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
+  simp only [Result, exists_eq_left, minStandardPos_measureOfChange_iff, exists_and_left,
+    exists_eq_right']
+  exact and_congr_right fun h ↦ by rw [h]
 
 end KennedyLevin
 
