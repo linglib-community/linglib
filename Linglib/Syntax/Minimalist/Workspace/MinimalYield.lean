@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Algebra.RootedTree.ConnesKreimer
 public import Linglib.Core.Combinatorics.RootedTree.Conservation
-public import Linglib.Syntax.Minimalist.Coproduct.Deletion
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.Deletion
 public import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 public import Mathlib.Order.OrderDual
 

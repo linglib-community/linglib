@@ -9,9 +9,9 @@ public import Linglib.Core.Algebra.RootedTree.BirkhoffFactorization
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Linglib.Core.RingTheory.HahnSeries.RotaBaxter
 public import Linglib.Syntax.Minimalist.Linearization.Replay
-public import Linglib.Syntax.Minimalist.Economy.Derivation
-public import Linglib.Syntax.Minimalist.Merge.MinimalSearch
-public import Linglib.Syntax.Minimalist.Merge.Sideward
+public import Linglib.Syntax.Minimalist.Workspace.Derivation
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.MinimalSearch
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.Sideward
 public import Linglib.Syntax.Minimalist.Label.Selection
 public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Mathlib.Combinatorics.Enumerative.Catalan.Tree
@@ -352,7 +352,7 @@ example :
         (of' ({eaten.val, theApple.val} : Forest (UnorderedTree Vertex))) =
       of' ({(merge eaten theD).val, UnorderedTree.node Vertex.bare {appleN.val}} :
         Forest (UnorderedTree Vertex)) := by
-  rw [Merge.mergeOpEps_one, Merge.mergeOp_eq_G, Merge.mergeOpG_sideward_2b Vertex.bare
+  rw [Merge.mergeOpEps_one, Merge.mergeOp, Merge.mergeOpG_sideward_2b Vertex.bare
       (by rw [val_mem_subtrees]; decide) (fun h ↦ (by decide : theD ≠ theApple) (Subtype.ext h)),
     filter_cutSummandsN_theApple, Multiset.map_singleton, Multiset.sum_singleton, merge_val,
     ← of'_singleton, ← of'_add]

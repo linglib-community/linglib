@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Data.UnorderedTree.Count
-public import Linglib.Syntax.Minimalist.Coproduct.TraceCut
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceCut
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Maps
 
@@ -215,12 +215,6 @@ noncomputable def mergePost (lbl : α) (S S' : UnorderedTree α) :
     ∘ₗ TensorProduct.map (graftBinaryAt (R := R) lbl S S') LinearMap.id
     ∘ₗ deltaMatch (R := R) S S'
 
-/-- The Merge operator `M_{S,S'}` of [marcolli-chomsky-berwick-2025] Definition 1.3.4 at the
-    pruning coproduct, with root label `lbl`. -/
-noncomputable def mergeOp (lbl : α) (S S' : UnorderedTree α) :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  mergePost (R := R) (α := α) lbl S S' ∘ₗ comulAlgHomN.toLinearMap
-
 /-- On a basis tensor `of' F ⊗ r`, the post-coproduct chain grafts `F` if it is `{S, S'}` and
     vanishes otherwise. -/
 theorem mergePost_basis_tensor (lbl : α) (S S' : UnorderedTree α)
@@ -317,11 +311,6 @@ noncomputable def mergePostUnit (β : UnorderedTree α) :
       ConnesKreimer R (UnorderedTree α) :=
   LinearMap.mul' R (ConnesKreimer R (UnorderedTree α)) ∘ₗ deltaMatchSingle (R := R) β
 
-/-- The unit stage `M_{β,1}` at the pruning coproduct. -/
-noncomputable def mergeOpUnit (β : UnorderedTree α) :
-    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  mergePostUnit (R := R) (α := α) β ∘ₗ comulAlgHomN.toLinearMap
-
 theorem mergePostUnit_basis_tensor (β : UnorderedTree α)
     (F : Forest (UnorderedTree α)) (r : ConnesKreimer R (UnorderedTree α)) :
     mergePostUnit (R := R) (α := α) β (of' F ⊗ₜ[R] r)
@@ -370,11 +359,16 @@ noncomputable def mergeOpUnitG (cuts : UnorderedTree α → Multiset (Forest
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   mergePostUnit (R := R) (α := α) β ∘ₗ (comulAlgHomNG cuts).toLinearMap
 
-theorem mergeOp_eq_G (lbl : α) (S S' : UnorderedTree α) :
-    mergeOp (R := R) lbl S S' = mergeOpG (R := R) cutSummandsN lbl S S' := rfl
+/-- The Merge operator `M_{S,S'}` of [marcolli-chomsky-berwick-2025] Definition 1.3.4, Merge at
+    the pruning cuts `cutSummandsN`, with root label `lbl`. -/
+noncomputable def mergeOp (lbl : α) (S S' : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
+  mergeOpG (R := R) cutSummandsN lbl S S'
 
-theorem mergeOpUnit_eq_G (β : UnorderedTree α) :
-    mergeOpUnit (R := R) β = mergeOpUnitG (R := R) cutSummandsN β := rfl
+/-- The unit stage `M_{β,1}` at the pruning cuts. -/
+noncomputable def mergeOpUnit (β : UnorderedTree α) :
+    ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
+  mergeOpUnitG (R := R) cutSummandsN β
 
 /-- Merge on a workspace `F` grafts `{S, S'}` beside the trunk of each forest cut of `F` with crown
     `{S, S'}` ([marcolli-chomsky-berwick-2025] (1.3.11)). -/

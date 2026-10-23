@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Merge.Internal
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.Internal
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Mathlib.Algebra.Order.Monoid.Multiset
 
@@ -458,7 +458,7 @@ theorem mergeOpEps_im_composition (ε : R) (lbl : α) (β T Q : UnorderedTree α
     (h_remainder : p0.2 = Q) (hTβ : T ≠ β) :
     mergeOpEps ε lbl Q β (mergeOpUnit (R := R) β (of' ({T} : Forest (UnorderedTree α)))) =
       of' ({UnorderedTree.node lbl {Q, β}} : Forest (UnorderedTree α)) := by
-  rw [mergeOpUnit_eq_G, mergeOpUnitG_apply_singleton_unique β T p0 h_filter hTβ, h_remainder,
+  rw [mergeOpUnit, mergeOpUnitG_apply_singleton_unique β T p0 h_filter hTβ, h_remainder,
     ← of'_singleton, ← of'_add, add_comm]
   exact mergeOpEps_pair ε lbl Q β
 

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Merge.External
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.External
 
 /-!
 # Sideward Merge

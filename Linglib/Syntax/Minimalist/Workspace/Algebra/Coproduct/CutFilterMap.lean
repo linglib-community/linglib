@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Coproduct.TraceCut
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceCut
 public import Linglib.Core.Data.UnorderedTree.FilterMap
 
 /-!

@@ -7,8 +7,8 @@ module
 
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Combinatorics.RootedTree.ContractUnary
-public import Linglib.Syntax.Minimalist.Coproduct.CutFilterMap
-public import Linglib.Syntax.Minimalist.Coproduct.Trace
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.CutFilterMap
+public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.Trace
 
 /-!
 # The deletion coproduct and the erasure of traces
