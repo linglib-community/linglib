@@ -24,6 +24,7 @@ when the phase of the lowest phase head whose complement contains it is complete
 * `Minimalist.complementDomain`, `Minimalist.wholePhaseDomain`: transfer domains.
 * `Minimalist.Pic1`, `Minimalist.Pic2`: when a phase head's domain is transferred.
 * `Minimalist.sealed`: the positions the transferred domains seal.
+* `Minimalist.transferSlice`: what a phase head transfers on its own, outside inner domains.
 * `Minimalist.phaseLevel`: the stage at which a position reaches its phase level.
 * `Minimalist.LinkLeaves`: a link of a chain leaves the positions a cut seals.
 
@@ -133,6 +134,23 @@ theorem pic1_of_pic2 (hp : Pic2 hd t Φ h s) : Pic1 hd t Φ h s :=
 /-- [chomsky-2001]'s condition seals less than [chomsky-2000]'s. -/
 theorem sealed_pic2_subset_pic1 : sealed Φ D (Pic2 hd t) s ⊆ sealed Φ D (Pic1 hd t) s :=
   fun _ ⟨h, hΦ, hσ, hq⟩ ↦ ⟨h, hΦ, pic1_of_pic2 hσ, hq⟩
+
+/-! ### What a phase head transfers on its own -/
+
+/-- The positions in the domain of `h` outside the domain of every phase head inside it: what the
+domain of `h` transfers on its own. -/
+def transferSlice (Φ : Finset TreePath) (D : TreePath → Set TreePath) (h : TreePath) :
+    Set TreePath :=
+  {q | q ∈ D h ∧ ∀ h' ∈ Φ, h' ∈ D h → q ∉ D h'}
+
+instance [∀ h, DecidablePred (· ∈ D h)] : DecidablePred (· ∈ transferSlice Φ D h) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ ∀ _ ∈ Φ, _))
+
+theorem transferSlice_subset : transferSlice Φ D h ⊆ D h := fun _ hq ↦ hq.1
+
+theorem disjoint_transferSlice {h' : TreePath} (hh' : h' ∈ Φ) (hin : h' ∈ D h) :
+    Disjoint (transferSlice Φ D h) (D h') :=
+  Set.disjoint_left.2 fun _ hq hq' ↦ hq.2 h' hh' hin hq'
 
 /-! ### The phase level -/
 

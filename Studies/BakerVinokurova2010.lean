@@ -1,6 +1,8 @@
 module
 
 public import Linglib.Syntax.Minimalist.Case.Dependent
+public import Linglib.Syntax.Minimalist.Case.SyntacticObject
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Data.Examples.BakerVinokurova2010
 
 /-!
@@ -30,6 +32,8 @@ only where a `v` probes.
   the covert agent and object shift are the free choices where the paper leaves them free.
 * `derive`, `Licensed`, `Agrees`, `Derivable`: assignment with the probes a row's morphology
   shows, the Case filter, the case–agreement link, and derivability under some choice.
+* `transitive`, `ditransitiveClause`, `possessedClause`, `derivedCases`: schematic derivations of
+  the constructions, and the cases the grammar reads off them.
 
 ## Main results
 
@@ -134,7 +138,8 @@ def cases (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP)
 
 /-! ### The constructions -/
 
-attribute [local simp] cases CaseAssigners.assign domainPass probePass
+attribute [local simp] cases CaseAssigners.assign CaseAssigners.domainPass
+  CaseAssigners.probePass
   Rules.dependentPass Rules.unmarkedPass Valuation.unvalued Valuation.fill Valuation.fillFrom
   lexicalValuation Valuation.initial CaseAssigners.derive CaseAssigners.rules
   CaseAssigners.agreeCase grammar pureMarantz PhasedNP.visible PhasedNP.spellOut subject internal
@@ -384,5 +389,71 @@ theorem rows_case :
 theorem pure_marantz_overgenerates :
     ∃ r ∈ Examples.all, r.judgment ≠ .acceptable ∧ Derivable pureMarantz false r := by
   decide
+
+/-! ### Case read off derivations
+
+The constructions' positions read off schematic head-final derivations: the phase heads are v, C
+and a D with a complement, and each phase sees what its complement transfers. -/
+
+/-- The phase heads: v, C, and a D that takes a complement. -/
+def IsPhaseHead (a : LexicalItem.Token) : Prop :=
+  a.item.cat = .v ∨ a.item.cat = .C ∨ a.item.cat = .D ∧ a.item.sel ≠ []
+
+instance : DecidablePred IsPhaseHead := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Schematic heads: three nominals, a transitive and a ditransitive verb, v, T and C, and a D
+with a possessor in its complement. -/
+def subjD : LexicalItem.Token := ⟨.of .D [], 1⟩
+@[inherit_doc subjD] def objD : LexicalItem.Token := ⟨.of .D [], 2⟩
+@[inherit_doc subjD] def goalD : LexicalItem.Token := ⟨.of .D [], 3⟩
+@[inherit_doc subjD] def verb : LexicalItem.Token := ⟨.of .V [.D], 4⟩
+@[inherit_doc subjD] def verb₂ : LexicalItem.Token := ⟨.of .V [.D, .D], 5⟩
+@[inherit_doc subjD] def littleV : LexicalItem.Token := ⟨.of .v [.V], 6⟩
+@[inherit_doc subjD] def tense : LexicalItem.Token := ⟨.of .T [.v], 7⟩
+@[inherit_doc subjD] def comp : LexicalItem.Token := ⟨.of .C [.T], 8⟩
+@[inherit_doc subjD] def possD : LexicalItem.Token := ⟨.of .D [], 9⟩
+@[inherit_doc subjD] def noun : LexicalItem.Token := ⟨.of .N [.D], 10⟩
+@[inherit_doc subjD] def det : LexicalItem.Token := ⟨.of .D [.N], 11⟩
+
+/-- A transitive clause, its object shifted to the edge of vP or not. -/
+def transitive (shifted : Bool) : Derivation :=
+  ⟨verb, [.em .left objD, .em .right littleV] ++ (if shifted then [.im objD .left] else []) ++
+    [.em .left subjD, .em .right tense, .em .right comp]⟩
+
+/-- A ditransitive clause, its theme shifted or not. -/
+def ditransitiveClause (shifted : Bool) : Derivation :=
+  ⟨verb₂, [.em .left objD, .em .left goalD, .em .right littleV] ++
+    (if shifted then [.im objD .left] else []) ++
+    [.em .left subjD, .em .right tense, .em .right comp]⟩
+
+/-- The possessed noun phrase `[D [possessor N]]`. -/
+def possessedNP : LinearizedSyntacticObject :=
+  .merge (.leaf det) (.merge (.leaf possD) (.leaf noun))
+
+/-- A transitive clause whose shifted object is a possessed noun phrase. -/
+def possessedClause : Derivation :=
+  ⟨verb, [.em .left possessedNP, .em .right littleV, .im possessedNP.toSyntacticObject .left,
+    .em .left subjD, .em .right tense, .em .right comp]⟩
+
+/-- The cases Sakha's grammar values on the nominals `xs` of a derivation. -/
+def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
+  d.externalize?.map fun t ↦
+    (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead (fun _ ↦ none)
+      xs).map (·.2.map (·.1))
+
+example : derivedCases (transitive true) [subjD, objD] = some [some .nom, some .acc] ∧
+    derivedCases (transitive false) [subjD, objD] = some [some .nom, none] := by
+  decide +kernel
+
+example :
+    derivedCases (ditransitiveClause true) [subjD, goalD, objD] =
+      some [some .nom, some .dat, some .acc] ∧
+    derivedCases (ditransitiveClause false) [subjD, goalD, objD] =
+      some [some .nom, some .dat, none] := by
+  decide +kernel
+
+example :
+    derivedCases possessedClause [subjD, possD, det] = some [some .nom, some .gen, some .acc] := by
+  decide +kernel
 
 end BakerVinokurova2010

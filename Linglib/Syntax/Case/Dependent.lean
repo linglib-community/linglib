@@ -24,6 +24,7 @@ domain.
 * `DependentCase.Rules`: the high, low and elsewhere cases of one domain, and
   `Rules.ofAlignment`, the rules of an alignment.
 * `Rules.dependentPass`, `Rules.unmarkedPass`: the passes, over the NPs a predicate selects.
+* `Rules.dependentPassOn`: the dependent pass over a c-command relation among the NPs.
 * `Rules.valuations`: the valuations the rules can assign.
 * `Rules.assign`, `assignCases`: the one-domain algorithm, and its form for an alignment.
 
@@ -33,6 +34,7 @@ domain.
   dependent rules do to an NP with a caseless NP below it, above it, or neither.
 * `Rules.extends_dependentPass`, `Rules.extends_unmarkedPass`, `Rules.extends_assign`: each pass
   extends the valuation by what the rules assign.
+* `Rules.dependentPassOn_eq_dependentPass`: on NPs listed in c-command order the two passes agree.
 * `Rules.assign_length`: the algorithm is total.
 * `Rules.assign_getElem?_of_some`: lexical case is kept, so it bleeds the dependent rules.
 * `Rules.case_mem_cases`: a caseless NP is valued only with a case the rules mention.
@@ -44,6 +46,8 @@ domain.
 ## Implementation notes
 
 List position encodes structural height: earlier is higher, and c-commands everything later.
+`Rules.dependentPassOn` takes c-command as a relation instead, for NPs that list order misplaces,
+such as one inside a PP, c-commanded but c-commanding nothing outside it.
 The NPs are of any type, identified by that type rather than by a label; a study's NPs are
 its own positions, and `Valuation.valueOf` reads off the case of one. The passes are
 `Valuation.fill`, so what they share (totality, persistence of values) comes from
@@ -150,6 +154,19 @@ def Rules.dependentPass (r : Rules) (P : α → Bool) (s : Valuation α (Case ×
       else none
     else none
 
+/-- The dependent rules over the NPs `P` selects, with `lt x y` saying that `x` c-commands `y`: the
+    high case goes to an unvalued NP c-commanding another and the low case to one c-commanded by
+    another. -/
+def Rules.dependentPassOn (r : Rules) (lt : α → α → Prop) [DecidableRel lt] (P : α → Bool)
+    (s : Valuation α (Case × Mechanism)) : Valuation α (Case × Mechanism) :=
+  let E := (s.filter fun p ↦ p.2.isNone && P p.1).map (·.1)
+  s.fill fun _ x ↦
+    if P x then
+      if r.high.isSome && E.any (fun y ↦ decide (lt x y)) then r.high.map (·, .dependent)
+      else if E.any (fun y ↦ decide (lt y x)) then r.low.map (·, .dependent)
+      else none
+    else none
+
 /-- The elsewhere case to the unvalued NPs `P` selects. -/
 def Rules.unmarkedPass (r : Rules) (P : α → Bool) (s : Valuation α (Case × Mechanism)) :
     Valuation α (Case × Mechanism) :=
@@ -189,6 +206,78 @@ theorem Rules.extends_dependentPass (r : Rules) (P : α → Bool)
       | cases hv
       | (obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hv
          first | exact .inl ⟨rfl, .inl hc⟩ | exact .inl ⟨rfl, .inr hc⟩)) s
+
+theorem Rules.extends_dependentPassOn (r : Rules) (lt : α → α → Prop) [DecidableRel lt]
+    (P : α → Bool) (s : Valuation α (Case × Mechanism)) :
+    s.Extends (· ∈ r.valuations) (r.dependentPassOn lt P s) :=
+  Valuation.extends_fill (fun _ _ v hv ↦ by
+    split_ifs at hv <;>
+      first
+      | cases hv
+      | (obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 hv
+         first | exact .inl ⟨rfl, .inl hc⟩ | exact .inl ⟨rfl, .inr hc⟩)) s
+
+/-- On NPs listed in c-command order the pass over the c-command relation is the pass over the
+    list. -/
+theorem Rules.dependentPassOn_eq_dependentPass (r : Rules) {lt : α → α → Prop} [DecidableRel lt]
+    {P : α → Bool} {s : Valuation α (Case × Mechanism)}
+    (h : ∀ (i j : ℕ) (x y : α), s[i]? = some (x, none) → P x → s[j]? = some (y, none) →
+      P y → (lt x y ↔ i < j)) :
+    r.dependentPassOn lt P s = r.dependentPass P s := by
+  refine List.ext_getElem? fun i ↦ ?_
+  rw [Rules.dependentPassOn, Rules.dependentPass, Valuation.fill_getElem?,
+    Valuation.fill_getElem?]
+  rcases hi : s[i]? with _ | ⟨x, _ | v⟩
+  · rfl
+  · have hmem : ∀ y, y ∈ (s.filter fun p ↦ p.2.isNone && P p.1).map (·.1) ↔
+        ∃ j : ℕ, s[j]? = some (y, none) ∧ P y := by
+      intro y
+      rw [List.mem_map]
+      constructor
+      · rintro ⟨⟨y', w⟩, hp, rfl⟩
+        obtain ⟨hp, hc⟩ := List.mem_filter.1 hp
+        obtain ⟨j, hj⟩ := List.mem_iff_getElem?.1 hp
+        simp only [Bool.and_eq_true, Option.isNone_iff_eq_none] at hc
+        obtain ⟨rfl, hP⟩ := hc
+        exact ⟨j, hj, hP⟩
+      · rintro ⟨j, hj, hP⟩
+        exact ⟨(y, none), List.mem_filter.2 ⟨List.mem_iff_getElem?.2 ⟨j, hj⟩, by simp [hP]⟩, rfl⟩
+    simp only [Option.map_some, Option.isNone_none, ↓reduceIte, Option.some.injEq, Prod.mk.injEq,
+      true_and]
+    by_cases hP : P x
+    · have hi' : i ∈ s.unvalued P := Valuation.mem_unvalued_iff.2 ⟨x, hi, hP⟩
+      have hhigh : (((s.filter fun p ↦ p.2.isNone && P p.1).map (·.1)).any
+          fun y ↦ decide (lt x y)) = (s.unvalued P).any (i < ·) := by
+        rw [Bool.eq_iff_iff, List.any_eq_true, List.any_eq_true]
+        constructor
+        · rintro ⟨y, hy, hxy⟩
+          obtain ⟨j, hj, hPy⟩ := (hmem y).1 hy
+          exact ⟨j, Valuation.mem_unvalued_iff.2 ⟨y, hj, hPy⟩,
+            decide_eq_true ((h i j x y hi hP hj hPy).1 (of_decide_eq_true hxy))⟩
+        · rintro ⟨j, hj, hij⟩
+          obtain ⟨y, hy, hPy⟩ := Valuation.mem_unvalued_iff.1 hj
+          exact ⟨y, (hmem y).2 ⟨j, hy, hPy⟩,
+            decide_eq_true ((h i j x y hi hP hy hPy).2 (of_decide_eq_true hij))⟩
+      have hlow : (((s.filter fun p ↦ p.2.isNone && P p.1).map (·.1)).any
+          fun y ↦ decide (lt y x)) = (s.unvalued P).any (· < i) := by
+        rw [Bool.eq_iff_iff, List.any_eq_true, List.any_eq_true]
+        constructor
+        · rintro ⟨y, hy, hyx⟩
+          obtain ⟨j, hj, hPy⟩ := (hmem y).1 hy
+          exact ⟨j, Valuation.mem_unvalued_iff.2 ⟨y, hj, hPy⟩,
+            decide_eq_true ((h j i y x hj hPy hi hP).1 (of_decide_eq_true hyx))⟩
+        · rintro ⟨j, hj, hji⟩
+          obtain ⟨y, hy, hPy⟩ := Valuation.mem_unvalued_iff.1 hj
+          exact ⟨y, (hmem y).2 ⟨j, hy, hPy⟩,
+            decide_eq_true ((h j i y x hy hPy hi hP).2 (of_decide_eq_true hji))⟩
+      simp only [hP, ↓reduceIte, hi', hhigh, hlow]
+    · have hi' : i ∉ s.unvalued P := fun hm ↦ by
+        obtain ⟨y, hy, hPy⟩ := Valuation.mem_unvalued_iff.1 hm
+        rw [hi] at hy
+        cases hy
+        exact hP hPy
+      simp [hP, hi']
+  · rfl
 
 theorem Rules.extends_unmarkedPass (r : Rules) (P : α → Bool)
     (s : Valuation α (Case × Mechanism)) :
