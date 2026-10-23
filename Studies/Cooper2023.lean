@@ -466,8 +466,6 @@ theorem congr (h : s.Matches ms r I T) (hT : r T T') : s.Matches ms r I T' := by
   | subtype h => exact .subtype ((ModalSystem.subtypeRelabel_congr hT).1 h)
   | pov h₁ hp h => exact .pov h₁ hp ((ModalSystem.subtypeRelabel_congr hT).1 h)
 
-/-- An attitude computed with fewer postulates holds with more, the postulates restricting the
-possibilities. -/
 theorem comp (h : s.Matches ms r I T) (ι : M' → M) : s.Matches (ms ∘ ι) r I T := by
   induction h with
   | subtype h => exact .subtype (h.comp ι)
@@ -617,8 +615,6 @@ theorem nonempty_purifyUniv_iff (P : Restricted E) (x : E) :
     Nonempty (PurifyUniv P x) ↔ ∀ c : P.restr x, Nonempty (P.body x c) :=
   Classical.nonempty_pi
 
-/-- For a pure property the two purifications agree, so `𝔓` and `𝔓∀` differ only under a non-trivial
-restriction. -/
 theorem Restricted.IsPure.nonempty_purify_iff_nonempty_purifyUniv {P : Restricted E}
     (h : P.IsPure) (x : E) : Nonempty (Purify P x) ↔ Nonempty (PurifyUniv P x) := by
   rw [nonempty_purify_iff, nonempty_purifyUniv_iff]
@@ -1422,7 +1418,6 @@ def Sentence (Catch : Ind → Ind → Type) : Type := SemNo DogChasesACat (Purif
 /-- The sentence is true when no dog catches anything. -/
 def noCatching : Sentence (fun _ _ ↦ Empty) := ⟨fun _ _ ⟨_, h⟩ ↦ h⟩
 
-/-- The sentence is false when every dog catches the cat it chases. -/
 theorem sentence_isEmpty : IsEmpty (Sentence Chase) :=
   ⟨fun ⟨f⟩ ↦ (f .dog₁ ⟨⟨⟩, .cat₁, ⟨⟩, ⟨⟩⟩ ⟨⟨⟨⟩, .cat₁, ⟨⟩, ⟨⟩⟩, ⟨⟩⟩).elim⟩
 

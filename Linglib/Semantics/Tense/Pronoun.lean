@@ -77,8 +77,6 @@ variable [LinearOrder T]
 instance : Decidable ((pronoun C k j).presup g w) :=
   inferInstanceAs (Decidable (g j ~[toSetRel C] g k))
 
-/-- With every index at one time, a pronominal tense is defined iff its cell admits
-coincidence. -/
 @[simp] theorem pronoun_presup_const (t₀ : T) :
     (pronoun C k j).presup (Function.const ℕ t₀) w ↔ .eq ∈ C := by
   simp

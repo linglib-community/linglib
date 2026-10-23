@@ -165,7 +165,6 @@ def infinitive (v : Verb) (i : Infinitive) : List Segment := surface (i.base (v.
 def infinitiveForms (v : Verb) (i : Infinitive) (c : Case) : List (List Segment) :=
   Nominal.realize (v.stem i) (i.endings c)
 
-/-- The nominative of an infinitive is its form before a case ending. -/
 @[simp] theorem infinitiveForms_nom (v : Verb) (i : Infinitive) :
     v.infinitiveForms i .nom = [v.infinitive i] := by
   simp [infinitiveForms, infinitive, Infinitive.endings, Nominal.realize, Nominal.continuations]

@@ -39,22 +39,16 @@ section Replicate
 
 variable {r : List α} {m n : ℕ}
 
-/-- A list whose head is not `a` is a sublist of `a :: r` exactly when it is a sublist of `r`:
-the `Iff` form of `List.Sublist.of_cons_of_ne`. -/
 theorem sublist_cons_iff_of_head?_ne (h : l.head? ≠ some a) : l <+ a :: r ↔ l <+ r := by
   rw [sublist_cons_iff]
   exact ⟨fun h' ↦ h'.resolve_right fun ⟨t, ht, _⟩ ↦ h (by simp [ht]), Or.inl⟩
 
-/-- A list whose head is not `a` is a sublist of `replicate m a ++ r` exactly when it is a
-sublist of `r`. -/
 theorem sublist_replicate_append_iff_of_head?_ne (h : l.head? ≠ some a) :
     l <+ replicate m a ++ r ↔ l <+ r := by
   induction m with
   | zero => simp
   | succ m ih => rw [replicate_succ, cons_append, sublist_cons_iff_of_head?_ne h, ih]
 
-/-- A list whose last element is not `b` is a sublist of `r ++ replicate n b` exactly when it is
-a sublist of `r`. -/
 theorem sublist_append_replicate_iff_of_getLast?_ne (h : l.getLast? ≠ some b) :
     l <+ r ++ replicate n b ↔ l <+ r := by
   rw [← reverse_sublist, reverse_append, reverse_replicate,
@@ -62,7 +56,6 @@ theorem sublist_append_replicate_iff_of_getLast?_ne (h : l.getLast? ≠ some b) 
 
 end Replicate
 
-/-- On a `Nodup` list, the pair-sublist relation is transitive. -/
 theorem Nodup.pair_sublist_trans {c : α} (hl : l.Nodup) (hab : [a, b] <+ l)
     (hbc : [b, c] <+ l) : [a, c] <+ l := by
   induction l with
@@ -76,14 +69,11 @@ theorem Nodup.pair_sublist_trans {c : α} (hl : l.Nodup) (hab : [a, b] <+ l)
     · exact (singleton_sublist.2 (hbc'.subset (by simp))).cons_cons a
     · exact absurd (hb.subset (by simp)) hl.1
 
-/-- On a `Nodup` list, the pair-sublist relation is a strict order. -/
 theorem Nodup.isStrictOrder_pair_sublist (hl : l.Nodup) :
     IsStrictOrder α fun a b ↦ [a, b] <+ l where
   irrefl a := nodup_iff_sublist.1 hl a
   trans _ _ _ := hl.pair_sublist_trans
 
-/-- A duplicate-free list whose members lie in a duplicate-free list, each of its pairs in the
-same order there, is a sublist of it. -/
 theorem sublist_of_forall_pair_sublist (hp : p.Nodup) (hq : q.Nodup) (hpq : p ⊆ q)
     (h : ∀ a b, [a, b] <+ p → [a, b] <+ q) : p <+ q := by
   induction q generalizing p with
@@ -151,21 +141,17 @@ theorem idxOf_lt_of_pair_sublist (hnd : l.Nodup) (h : [a, b] <+ l) :
       rw [idxOf_cons_self, idxOf_cons_ne _ hba]
       exact Nat.succ_pos _
 
-/-- On a `Nodup` list, the pair-sublist relation is the strict positional order. -/
 theorem pair_sublist_iff_idxOf_lt (hnd : l.Nodup) :
     [a, b] <+ l ↔ a ∈ l ∧ b ∈ l ∧ l.idxOf a < l.idxOf b :=
   ⟨fun h => ⟨h.subset (by simp), h.subset (by simp), idxOf_lt_of_pair_sublist hnd h⟩,
    fun ⟨ha, hb, hlt⟩ => pair_sublist_of_idxOf_lt ha hb hlt⟩
 
-/-- Two distinct members of a list occur in it in one order or the other. -/
 theorem pair_sublist_or_pair_sublist (ha : a ∈ l) (hb : b ∈ l) (hab : a ≠ b) :
     [a, b] <+ l ∨ [b, a] <+ l := by
   rcases Nat.lt_or_gt_of_ne (mt (idxOf_inj ha).mp hab) with h | h
   · exact .inl (pair_sublist_of_idxOf_lt ha hb h)
   · exact .inr (pair_sublist_of_idxOf_lt hb ha h)
 
-/-- On a `Nodup` list, an element positioned between two elements of an infix belongs to the
-infix. -/
 theorem IsInfix.mem_of_idxOf_le_of_le {m : List α} {z : α} (hm : m <:+: l) (hnd : l.Nodup)
     (ha : a ∈ m) (hb : b ∈ m) (hz : z ∈ l) (haz : l.idxOf a ≤ l.idxOf z)
     (hzb : l.idxOf z ≤ l.idxOf b) : z ∈ m := by

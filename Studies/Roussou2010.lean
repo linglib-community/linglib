@@ -81,8 +81,6 @@ def profile (c : Complementizer) : Option Spec :=
   else if c = na then some .inside
   else none
 
-/-- The fragment's lexical factivity is definiteness — the one definite complementizer is the
-one factive one, the factive reading of an *oti*-clause being the verb's. -/
 theorem factive_iff_definite :
     ∀ c ∈ complementizers,
       (c.factive = true ↔ profile c = some (.outside .definite)) := by
@@ -104,29 +102,20 @@ noncomputable def puClause (p : Set W) : W → SignType := p.indicator 1
 /-- The *an*-clause is the polar set of the proposition and its negation. -/
 def anClause (p : Set W) : Question W := Question.polar p
 
-/-- Factivity is the definite's presupposition — the *pu*-clause is defined at a world exactly
-when its content holds there. -/
 theorem puClause_ne_zero_iff (p : Set W) (w : W) : puClause p w ≠ 0 ↔ w ∈ p := by
   simp [puClause]
 
-/-- The presupposition of the *pu*-clause projects through negation, so denying it still
-commits to its content, while the *oti*-clause is defined everywhere and its denial carries no
-factive residue. -/
 theorem pu_projects_through_negation (p : Set W) (w : W) :
     ((-puClause p) w ≠ 0 ↔ w ∈ p) ∧ (-otiClause p) w ≠ 0 := by
   simp [puClause, otiClause]
 
-/-- The *pu*-clause strongly entails the *oti*-clause, strong presupposition against weak. -/
 theorem posExt_puClause_subset (p : Set W) :
     Trivalent.posExt (puClause p) ⊆ Trivalent.posExt (otiClause p) := fun w hw ↦ by
   simp_all [puClause, otiClause]
 
-/-- The *an*-clause asserts nothing, raising only the issue its binder must settle. -/
 theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
   Question.not_isInformative_polar p
 
-/-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
-is a property, so no composition mode combines them, whatever the merger returns. -/
 theorem comp_over_na_type_clash (b : Montague.Ty) :
     Montague.Ty.combine? (.fn .t b) (.fn .e .t) = none := by
   simp [Montague.Ty.combine?, Montague.Ty.mode?, Montague.Mode.functionalLeft?,
@@ -217,8 +206,6 @@ def Licensed (k : Config) : Prop :=
 
 instance (k : Config) : Decidable (Licensed k) := by unfold Licensed; infer_instance
 
-/-- The polar complementizer needs a binder — an interrogative predicate, or a matrix negation
-or question. -/
 theorem polar_needs_binder (k : Config) (hc : k.comp = an) (h : Licensed k) :
     k.cls = .interrogative ∨ k.negated ∨ k.question := by
   have hne : ∀ c ∈ [oti, pu, na], an ≠ c := by decide
@@ -229,7 +216,6 @@ theorem polar_needs_binder (k : Config) (hc : k.comp = an) (h : Licensed k) :
   · exact absurd (hc ▸ h₁) (hne pu (by simp))
   · exact absurd (hc ▸ h₁) (hne na (by simp))
 
-/-- An epistemic predicate takes *na* only in the present tense. -/
 theorem epistemic_na_present (k : Config) (b : Bool) (hc : k.comp = na)
     (hk : k.cls = .epistemic b) (h : Licensed k) : ¬ k.past := by
   have hne : ∀ c ∈ [oti, an, pu], na ≠ c := by decide
@@ -270,7 +256,6 @@ def datum (r : Datum) : Option (Config × Judgment) := do
 /-- The paper's examples. -/
 def data : List (Config × Judgment) := Examples.all.filterMap datum
 
-/-- Every row has its configuration. -/
 theorem data_length : data.length = Examples.all.length := by decide +kernel
 
 /-- The examples are acceptable exactly when their complementizer is licensed. -/

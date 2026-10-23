@@ -74,28 +74,22 @@ def ControlVerb.ofKratzer (base ordering : Background W)
 
 variable (v : ControlVerb E W Args)
 
-/-- The controller has the property in every situation the background selects. -/
 theorem ControlVerb.controller_has {P : E → W → Prop} {args : Args} {w : W}
     (h : v.sem P args w) : ∀ w' ∈ v.accessible args w, P (v.controller args) w' :=
   (v.control P args w).1 h
 
-/-- Over a reflexive background the controller has the property at the world itself. -/
 theorem ControlVerb.controller_has_self (hrefl : ∀ args w, w ∈ v.accessible args w)
     {P : E → W → Prop} {args : Args} {w : W} (h : v.sem P args w) : P (v.controller args) w :=
   v.controller_has h w (hrefl args w)
 
 /-! ### Visser's and Bach's generalizations (chapter IV) -/
 
-/-- Visser's generalization says that a faithful passive of a subject-control verb, one whose
-truth witnesses a truth of the active, can only guarantee that some entity has the property in
-the selected situations, since the argument the postulate would name is gone. -/
 theorem visser (v : SubjectControlVerb E W) (pass : (E → W → Prop) → W → Prop)
     (faithful : ∀ P w, pass P w → ∃ x, v.sem P x w) {P : E → W → Prop} {w : W}
     (h : pass P w) : ∃ x, ∀ w' ∈ v.accessible x w, P (v.controller x) w' :=
   let ⟨x, hx⟩ := faithful P w h
   ⟨x, v.controller_has hx⟩
 
-/-- Bach's generalization says the same of a faithful detransitive of an object-control verb. -/
 theorem bach (v : ObjectControlVerb E W) (detrans : (E → W → Prop) → E → W → Prop)
     (faithful : ∀ P y w, detrans P y w → ∃ args, v.sem P args w) {P : E → W → Prop} {y : E}
     {w : W} (h : detrans P y w) : ∃ args, ∀ w' ∈ v.accessible args w, P (v.controller args) w' :=
@@ -162,28 +156,18 @@ def controlVerbs : List Verb :=
   [try_.toVerb, manage.toVerb, begin_.toVerb, stop.toVerb, continue_.toVerb, fail.toVerb,
     persuade.toVerb, force.toVerb, want.toVerb, hope.toVerb, promise.toVerb]
 
-/-- Every control verb of the Fragment is a control verb in the dissertation's sense, with a
-participant controlling its complement. -/
 theorem fragment_control_verbs : ∀ v ∈ controlVerbs, v.HasController := by
   decide
 
-/-- Visser's generalization holds in the Fragment. The passive of a diathesis's frame blocks
-exactly when its controller is the subject, as for *try* and *promise Bill to come*, and not when
-it is the object, as for *persuade* and *force*. -/
 theorem blocks_passive_iff : ∀ v ∈ controlVerbs, ∀ d ∈ v.valency.diatheses,
     Blocks d (passive d.toArgumentFrame) ↔
       d.controllerRole = some .S ∨ d.controllerRole = some .A := by
   decide
 
-/-- Bach's generalization holds in the Fragment. The antipassive blocks exactly when the
-controller is the object, so *promise to come* stands beside *promise Bill to come*, and
-*persuade to come* does not. -/
 theorem blocks_antipassive_iff : ∀ v ∈ controlVerbs, ∀ d ∈ v.valency.diatheses,
     Blocks d antipassive ↔ d.controllerRole = some .P := by
   decide
 
-/-- At the Fragment's control verbs with one diathesis, the passivizability the postulate
-derives agrees with the stored flag. -/
 theorem passivizable_iff :
     ∀ v ∈ [try_.toVerb, persuade.toVerb, force.toVerb], ∀ d ∈ v.valency.basic?,
       Passivizable d ↔ v.passivizable = true := by
@@ -194,8 +178,6 @@ for a nonfinite one, the type distinction of chapter I. -/
 def complementTy (fr : ArgumentFrame) : Option Montague.Ty :=
   if fr.HasClausal then some (if fr.HasFinite then .t else .et) else none
 
-/-- Control verbs take property-denoting complements; *believe*, no control verb, takes a finite
-clause denoting a proposition. -/
 theorem control_complements_property :
     (∀ v ∈ [try_.toVerb, want.toVerb], v.valency.frames.head?.bind complementTy = some .et) ∧
       believe.toVerb.valency.frames.head?.bind complementTy = some .t ∧

@@ -23,8 +23,6 @@ namespace MeasureTheory.Measure
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β] {μ : Measure α}
 
-/-- The pushforward along `g` of a measure with density `f ∘ g` is the pushforward with
-density `f`. -/
 theorem map_withDensity_comp {f : β → ℝ≥0∞} {g : α → β} (hf : AEMeasurable f (μ.map g))
     (hg : AEMeasurable g μ) : (μ.withDensity (f ∘ g)).map g = (μ.map g).withDensity f :=
   ext fun s hs ↦ by

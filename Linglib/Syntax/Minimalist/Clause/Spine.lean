@@ -140,7 +140,6 @@ def below (s : ClauseSpine) (c : Cat) : List Cat := s.heads.takeWhile (· != c)
 CP of `s` and `[]` for a bare CP. -/
 def above (s : ClauseSpine) (c : Cat) : List Cat := s.heads.rtakeWhile (· != c)
 
-/-- A head is not in its own complement. -/
 theorem notMem_below_self (s : ClauseSpine) (c : Cat) : c ∉ s.below c := fun h ↦ by
   simpa using List.mem_takeWhile_imp h
 

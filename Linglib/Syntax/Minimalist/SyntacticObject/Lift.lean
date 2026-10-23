@@ -62,21 +62,18 @@ def mergeAlgebra [Mul β] [Zero β] (ℓ : L → β) (τ : Option L → β) :
   | .inr u, []         => τ u
   | .inr _, _          => 0
 
-/-- The trace of a token is a leaf: any daughters put it off the carrier. -/
 private theorem mergeAlgebra_some [Mul β] [Zero β] (ℓ : L → β)
     (τ : Option L → β) (tok : L) (l : List β) :
     mergeAlgebra ℓ τ (Sum.inr (some tok)) l = if l.isEmpty then τ (some tok) else 0 := by
   match l with
   | [] | [_] | [_, _] | _ :: _ :: _ :: _ => rfl
 
-/-- The index-free trace is a leaf: any daughters put it off the carrier. -/
 private theorem mergeAlgebra_none [Mul β] [Zero β] (ℓ : L → β)
     (τ : Option L → β)
     (l : List β) : mergeAlgebra ℓ τ (Sum.inr none) l = if l.isEmpty then τ none else 0 := by
   match l with
   | [] | [_] | [_, _] | _ :: _ :: _ :: _ => rfl
 
-/-- A daughter list of three or more is off the carrier. -/
 private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : L → β}
     {τ : Option L → β}
     {l : List β}
@@ -85,9 +82,6 @@ private theorem mergeAlgebra_big [Mul β] [Zero β] {ℓ : L → β}
   | _ :: _ :: _ :: _ => rfl
   | [] | [_] | [_, _] => simp at h
 
-/-- A list function symmetric on pairs and constant above length two is `Perm`-invariant:
-lengths at most one are rigid under permutation, pairs by the symmetry, longer lists by the
-constancy. -/
 private theorem perm_congr_arity₂ {β γ : Type*} {g : List β → γ} {c : γ}
     (hswap : ∀ x y, g [x, y] = g [y, x])
     (hbig : ∀ l : List β, 2 < l.length → g l = c)
@@ -111,8 +105,6 @@ section CommMagma
 
 variable [CommMagma β] [Zero β] (ℓ : L → β) (τ : Option L → β)
 
-/-- `mergeAlgebra` is invariant under permutation of the daughter values: only the
-    binary shape is order-sensitive, and there `mul_comm` applies. -/
 theorem mergeAlgebra_perm (a : Vertex L) {l₁ l₂ : List β} (h : l₁.Perm l₂) :
     mergeAlgebra ℓ τ a l₁ = mergeAlgebra ℓ τ a l₂ := by
   cases a with

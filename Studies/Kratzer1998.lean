@@ -84,13 +84,10 @@ abbrev zeroTense [LT T] (n : ℕ) : Semantics.Nominal (Assignment T) W T := pron
 variable resolves to it. -/
 def outOfTheBlue (t₀ : T) : Assignment T := Function.const ℕ t₀
 
-/-- Out of the blue a tense is defined iff its cell admits coincidence with the utterance time,
-as the present does and the past does not. -/
 theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (t₀ : T) (w : W) :
     (tense C n).presup (outOfTheBlue t₀) w ↔ .eq ∈ C :=
   pronoun_presup_const t₀
 
-/-- The zero tense has no presupposition. -/
 theorem zeroTense_presup [LinearOrder T] (n : ℕ) (g : Assignment T) (w : W) :
     (zeroTense n).presup g w := by
   simp
@@ -101,8 +98,6 @@ theorem zeroTense_abstract [LT T] (n : ℕ) (g : Assignment T) (t : T) (w : W) :
     lambdaAbsG n (fun g ↦ (zeroTense n).selector g w) g t = some t := by
   simp
 
-/-- An indexical tense cannot be abstracted over by another index. The binder leaves the tense
-with its own reference, which is why an attitude verb forces a zero tense. -/
 theorem tense_not_abstracted [LT T] (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m)
     (g : Assignment T) (t : T) (w : W) :
     lambdaAbsG m (fun g ↦ (tense C n).selector g w) g t = some (g n) := by
@@ -130,8 +125,6 @@ world. -/
 def star (P : W → Set (NonemptyInterval T)) (_ : W) (e : E) : Prop :=
   ∀ w', τ e ∈ P w'
 
-/-- The temporal de re is semantically forced, since `star P` does not depend on the evaluation
-world. -/
 theorem star_congr (P : W → Set (NonemptyInterval T)) (e : E) (w w' : W) :
     star P w e ↔ star P w' e := Iff.rfl
 
@@ -174,8 +167,6 @@ theorem denote_imperfective (P : W → E → Prop) :
 
 theorem denote_perfective (P : W → E → Prop) : AspectHead.perfective.denote P = PRFV P := rfl
 
-/-- The perfect entails the perfect viewpoint of the library, whose relation also admits an
-event that ends exactly when the reference time begins. -/
 theorem perfect_viewpointType {P : W → E → Prop} {w : W} {r : NonemptyInterval T} :
     r ∈ AspectHead.perfect.denote P w → r ∈ ViewpointType.perfect.denote P w :=
   fun h ↦ ofRel_mono (fun r s h ↦ (ViewpointType.perfect.ttTSitRelation_iff r s).2 <|
@@ -197,7 +188,6 @@ theorem AspectHead.isAnterior_iff [Nonempty T] (a : AspectHead) :
   · exact absurd (h (.pure t) (.pure t) le_rfl) (NonemptyInterval.precedes_irrefl _)
   · rfl
 
-/-- An anterior aspect describes an event that is over by the reference time. -/
 theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
     {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : r ∈ a.denote P w) :
     ∃ e : E, (τ e).Precedes r ∧ P w e :=
@@ -210,9 +200,6 @@ def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Pro
     (g : Assignment T) (w : W) : Prop :=
   (tense C n).presup g w ∧ .pure (g n) ∈ a.denote P w
 
-/-- A tense with an aspect is a chain of times from the utterance time, the time of index `0`:
-the reference time stands to it as the tense's cell says, and the time of some event of the
-property to the reference time as the aspect's cell says. -/
 theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (g : Assignment T) (w : W) :
     denote C a n P g w ↔ ∃ e : E, P w e ∧
@@ -222,15 +209,11 @@ theorem denote_iff_holdsAlong (C : Finset Ordering) (a : AspectHead) (n : ℕ)
   simp [denote, AspectHead.denote, ofRel, NonemptyInterval.IsPoint]
   exact ⟨fun ⟨hC, e, he, hP⟩ ↦ ⟨e, hP, hC, he⟩, fun ⟨e, hP, hC, he⟩ ↦ ⟨hC, e, he, hP⟩⟩
 
-/-- Out of the blue a tense with an aspect is true iff the tense admits coincidence with the
-utterance time and the aspect holds there. -/
 theorem denote_outOfTheBlue_iff (C : Finset Ordering) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (t₀ : T) (w : W) :
     denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ .pure t₀ ∈ a.denote P w := by
   rw [denote, tense_outOfTheBlue_iff]; rfl
 
-/-- Present tense with perfect aspect describes an event over by the utterance time, so a past
-event can be described with no past tense. -/
 theorem denote_present_perfect_outOfTheBlue_iff (n : ℕ) (P : W → E → Prop) (t₀ : T)
     (w : W) :
     denote ⟦present⟧ .perfect n P (outOfTheBlue t₀) w ↔ ∃ e : E, (τ e).snd < t₀ ∧ P w e := by
@@ -272,7 +255,6 @@ def southGerman : Variety where
       (.presentPerfect, ⟦past⟧, .imperfective), (.presentPerfect, ⟦past⟧, .perfective),
       (.presentPerfect, ⟦present⟧, .perfect), (.doublePerfect, ⟦past⟧, .perfect)]
 
-/-- The tables use the tense forms of the Fragments. -/
 theorem table_forms :
     (∀ x ∈ english.table, x.1 ∈ English.Tense.tenseForms) ∧
       (∀ x ∈ standardGerman.table, x.1 ∈ German.tenseForms) ∧
@@ -326,17 +308,12 @@ instance : Decidable v.IsPerfectCompositional := by unfold IsPerfectCompositiona
 
 end Variety
 
-/-- The Standard German table can be read off the make-up of the forms. -/
 theorem standardGerman_transparent :
     standardGerman.IsTenseFaithful ∧ standardGerman.IsPerfectCompositional := by decide +kernel
 
-/-- South German builds its perfects compositionally, the double perfect on the present perfect
-as a past, but its present perfect, a present inflection, spells out the past. -/
 theorem southGerman_transparent :
     ¬ southGerman.IsTenseFaithful ∧ southGerman.IsPerfectCompositional := by decide +kernel
 
-/-- English is neither, since the simple past, a past inflection that is the perfect of no
-form, spells out the present with the perfect. -/
 theorem english_transparent :
     ¬ english.IsTenseFaithful ∧ ¬ english.IsPerfectCompositional := by decide +kernel
 

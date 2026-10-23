@@ -213,8 +213,6 @@ instance : PartialOrder Figure5 := figure5.partialOrder Figure5.rank (by decide)
 
 instance : DecidableLE Figure5 := figure5.decidableLE [.nnCompound, .adjN] (by decide)
 
-/-- Only the prenominal PAL construction inherits, from the NN compound and adjectival
-modification. -/
 theorem isMother_iff (c m : Figure5) :
     figure5.IsMother c m ↔ c = .palN ∧ (m = .nnCompound ∨ m = .adjN) := by
   revert c m; decide
@@ -278,17 +276,12 @@ def selfEmbedding : Figure5 → Option SelfEmbedding
   | .adjN => some .banned
   | _ => none
 
-/-- Were PAL N to state neither whether its output is a word nor its stress, it would inherit
-both mothers' values of each. -/
 theorem mothers_conflict :
     inherited (Function.update lex .palN none) .palN = {true, false} ∧
       inherited (Function.update stress .palN none) .palN = {.modifier, .head} := by
   refine ⟨Set.ext fun v ↦ ?_, Set.ext fun v ↦ ?_⟩ <;>
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] <;> cases v <;> decide
 
-/-- Normal-mode inheritance computes PAL N's full specification, its own phrasal N′ and stress
-within the modifier, the prenominal slot from both mothers, which agree, and non-self-embedding
-from adjectival modification. -/
 theorem inherited_palN :
     inherited lex .palN = {false} ∧ inherited modPosition .palN = {.prenominal} ∧
       inherited stress .palN = {.modifier} ∧ inherited selfEmbedding .palN = {.banned} := by
@@ -322,11 +315,8 @@ the word-level modifier slot. -/
 def mustDoTask : PhraseStructure.Tree Unit Morphology.Word :=
   .node () [.node () [.leaf (.mk' "must" .AUX), .leaf (.mk' "do" .VERB)], .leaf (.mk' "task" .NOUN)]
 
-/-- The inventory licenses the PAL token. -/
 theorem demo_licenses_mustDoTask : Licenses demoInventory mustDoTask := by decide
 
-/-- Without the PAL construction the token is rejected, since nothing else licenses a phrase in a
-word-level modifier slot. PAL is load-bearing. -/
 theorem pal_load_bearing :
     ¬ Licenses (demoInventory.erase palConstruction) mustDoTask := by decide
 
@@ -351,9 +341,6 @@ the three universal combination schemata (see `Construction.IsFullyCompositional
 theorem pal_irreducible :
     ¬ palConstruction.IsFullyCompositional := by decide
 
-/-- The PAL modifier slot is a phrase in a word-level position — the typed
-content of "phrase-as-lemma". The NN compound's modifier slot is the
-minimal contrast, with the same zero-level position and a word filler. -/
 theorem pal_form_phrase_in_word_slot :
     ∃ s ∈ palConstruction.form, s.IsPhraseInWordSlot := by decide
 
@@ -423,8 +410,6 @@ def hostFrames : List PALHostFrame :=
 
 example : rows.length + hostFrames.length = Examples.all.length := by decide
 
-/-- A PAL need not resemble a compound; it need only fill a slot typical of single words, so both
-host frames are attested. -/
 theorem hostFrames_complete : ∀ f : PALHostFrame, f ∈ hostFrames := by decide
 
 end GoldbergShirtz2025

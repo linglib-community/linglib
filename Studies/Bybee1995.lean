@@ -72,12 +72,10 @@ def tokenFrequency (s : Schema P α) [DecidablePred s.Instantiates] (c : Multise
     ℕ :=
   c.countP s.Instantiates
 
-/-- Types are at most tokens. -/
 theorem typeFrequency_le_tokenFrequency (s : Schema P α) [DecidablePred s.Instantiates]
     (c : Multiset (P → α)) : typeFrequency s c ≤ tokenFrequency s c :=
   Multiset.countP_le_of_le _ (Multiset.dedup_le c)
 
-/-- A more general schema has the larger type frequency. -/
 theorem typeFrequency_mono {s t : Schema P α} [DecidablePred s.Instantiates]
     [DecidablePred t.Instantiates] (h : t.body ≤ s.body) (c : Multiset (P → α)) :
     typeFrequency s c ≤ typeFrequency t c := by
@@ -106,7 +104,6 @@ def strungSchema : Schema (Fin 3) (Flat String) := ⟨![⊥, ↑"ʌ", ⊥], {0}�
 def strungClass : Set (Fin 3 → Flat String) :=
   {Wordlist.strung.slots, Wordlist.stung.slots, Wordlist.flung.slots, Wordlist.hung.slots}
 
-/-- The dialectal new members fit the shape of the class. -/
 theorem struck_instantiates :
     strungSchema.Instantiates Wordlist.struck.slots ∧
       strungSchema.Instantiates Wordlist.snuck.slots ∧
@@ -133,7 +130,6 @@ def baseSub : Fin 3 → PairVar := ![.onset, .base, .coda]
 /-- The subscripting of the past's positions. -/
 def pastSub : Fin 3 → PairVar := ![.onset, .past, .coda]
 
-/-- *string* and *strung* are a paired instantiation of the source-oriented schema. -/
 theorem string_strung_pairs :
     sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
       (Sum.elim Wordlist.string.slots Wordlist.strung.slots) :=
@@ -141,8 +137,6 @@ theorem string_strung_pairs :
     λ v => by cases v <;> decide,
     funext λ p => by rcases p with p | p <;> fin_cases p <;> decide⟩
 
-/-- The new members are not: their bases lack /ɪ/, so no source-oriented schema pairs them,
-while the product-oriented schema admits them. -/
 theorem not_sourceOriented_pairs :
     ¬ sourceOriented.InstantiatesAt (Sum.elim baseSub pastSub)
         (Sum.elim Wordlist.strike.slots Wordlist.struck.slots) ∧

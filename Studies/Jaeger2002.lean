@@ -54,15 +54,12 @@ variable {F M α : Type*} [Preorder α] {pairs : Set (F × M)} {f : F × M → �
 
 /-! ### Lemma 1: uniqueness of the weak solution -/
 
-/-- A pair unblocked by `I` along the meaning axis but not by `I'` has a blocker in
-`I' \ I`. -/
 private theorem exists_lt_of_qUnblocked {I I' : Set (F × M)} {p : F × M}
     (hp : p ∈ qUnblockedSet pairs f I) (hp' : p ∉ qUnblockedSet pairs f I') :
     ∃ q ∈ I' \ I, f q < f p := by
   obtain ⟨q, hqI', hq, hlt⟩ : QBlocks f I' p := not_not.1 fun hb ↦ hp' ⟨hp.1, hb⟩
   exact ⟨q, ⟨hqI', fun hqI ↦ hp.2 ⟨q, hqI, hq, hlt⟩⟩, hlt⟩
 
-/-- A pair unblocked by `Q` along the form axis but not by `Q'` has a blocker in `Q' \ Q`. -/
 private theorem exists_lt_of_iUnblocked {Q Q' : Set (F × M)} {p : F × M}
     (hp : p ∈ iUnblockedSet pairs f Q) (hp' : p ∉ iUnblockedSet pairs f Q') :
     ∃ q ∈ Q' \ Q, f q < f p := by
@@ -110,10 +107,6 @@ theorem existsUnique_isFixedPt (h : (f '' pairs).IsWF) :
   ⟨superoptimalSet pairs f, (isFixedPt_superoptimalSet pairs f h).eq,
     fun _ hS ↦ eq_superoptimalSet_of_isFixedPt pairs f h hS⟩
 
-/-- Every x-optimal pair satisfies the I-principle of a weak solution. A profile-minimal
-x-optimal pair violating it is I-blocked by a pair of `Q`; that pair is not x-optimal, so
-some x-optimal pair blocks it, along the form axis (then it blocks the minimal pair by
-transitivity) or the meaning axis (then it is not in `I`, and is a smaller violator). -/
 private theorem superoptimalSet_subset_right (h : (f '' pairs).IsWF) {Q I : Set (F × M)}
     (hQI : IsWeakSolution pairs f Q I) : superoptimalSet pairs f ⊆ I := by
   obtain ⟨hQ, hI⟩ := hQI
@@ -133,8 +126,6 @@ private theorem superoptimalSet_subset_right (h : (f '' pairs).IsWF) {Q I : Set 
   · exact (hrq.trans hqp).not_ge
       (hmin ⟨hrX, fun hrI ↦ hqQ.2 ⟨r, hrI, hr, hrq⟩⟩ (hrq.trans hqp).le)
 
-/-- Every x-optimal pair satisfies the Q-principle of a weak solution; the mirror image of
-`superoptimalSet_subset_right`. -/
 private theorem superoptimalSet_subset_left (h : (f '' pairs).IsWF) {Q I : Set (F × M)}
     (hQI : IsWeakSolution pairs f Q I) : superoptimalSet pairs f ⊆ Q := by
   obtain ⟨hQ, hI⟩ := hQI
@@ -175,10 +166,6 @@ theorem inter_eq_superoptimalSet (h : (f '' pairs).IsWF) {Q I : Set (F × M)}
 The worked example opening the paper's transducer construction: three inputs and three outputs
 ordered by cost, with the constraint "be small" on each side. -/
 
-/-- With "be small" on inputs and on outputs, the bidirectionally optimal pairs are the
-diagonal: cheap inputs go with cheap outputs and expensive inputs with expensive outputs. This
-holds for the paper's ordering, the product order (`strictMono_id`), and for every other harmony
-strictly monotone in cost. -/
 theorem superoptimalSet_eq_diagonal {g : Fin 3 × Fin 3 → α} (hg : StrictMono g) :
     superoptimalSet Set.univ g = Set.diagonal (Fin 3) := by
   rw [superoptimalSet_eq_graphOn _ (OrderIso.refl _) hg Set.finite_univ.isWF (Set.subset_univ _)]

@@ -224,7 +224,6 @@ instance [DecidableEq S] :
     DecidableRel (identityFrame (S := S)).compat := fun a b ↦ by
   show Decidable (a = b); infer_instance
 
-/-- In the identity frame, `orthoNeg` is pointwise negation. -/
 theorem identityFrame_classical [DecidableEq S]
     (A : Set S) (x : S) :
     x ∈ orthoNeg (identityFrame (S := S)) A ↔ x ∉ A :=
@@ -288,7 +287,6 @@ theorem regularClosure_isClosed_iff_isRegular (F : CompatFrame S) (A : Set S) :
 
 /-! ### Closure properties of regular sets -/
 
-/-- The orthocomplement of any set is regular, whether or not the set is. -/
 theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
     IsRegular F (orthoNeg F A) := by
   intro x
@@ -302,7 +300,6 @@ theorem orthoNeg_isRegular (F : CompatFrame S) (A : Set S) :
     rw [mem_orthoNeg] at hzN
     exact hzN y (hyz.symm) hyA
 
-/-- Regular sets are closed under intersection. -/
 theorem inter_isRegular {F : CompatFrame S} {A B : Set S}
     (hA : IsRegular F A) (hB : IsRegular F B) : IsRegular F (A ∩ B) := by
   intro x
@@ -318,17 +315,14 @@ theorem inter_isRegular {F : CompatFrame S} {A B : Set S}
       · exact absurd hBx hxB
       · exact ⟨y, hxy, fun z hyz hz ↦ hy z hyz hz.2⟩
 
-/-- A disjunction is regular, being an orthocomplement. -/
 theorem disj_isRegular (F : CompatFrame S) (A B : Set S) :
     IsRegular F (disj F A B) :=
   orthoNeg_isRegular F _
 
-/-- The empty set is regular. -/
 theorem empty_isRegular (F : CompatFrame S) : IsRegular F (∅ : Set S) := by
   intro x
   exact Or.inr ⟨x, F.refl x, fun _ _ h ↦ h.elim⟩
 
-/-- The full set is regular. -/
 theorem univ_isRegular (F : CompatFrame S) : IsRegular F (Set.univ : Set S) :=
   fun _ ↦ Or.inl trivial
 
@@ -358,14 +352,12 @@ theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
 
 open Order
 
-/-- `orthoNeg` is the `upperPolar` of the orthogonality relation. -/
 theorem orthoNeg_eq_upperPolar (F : CompatFrame S) (A : Set S) :
     orthoNeg F A = upperPolar F.ortho A := by
   ext x
   exact ⟨fun hx a ha ↦ (F.ortho_iff a x).mpr fun hc ↦ hx a hc.symm ha,
     fun hx y hxy hyA ↦ (F.ortho_iff y x).mp (hx hyA) hxy.symm⟩
 
-/-- `IsRegular` is the double-orthonegation fixed-point condition. -/
 theorem isRegular_iff_orthoNeg_orthoNeg (F : CompatFrame S) (A : Set S) :
     IsRegular F A ↔ orthoNeg F (orthoNeg F A) = A :=
   ⟨orthoNeg_orthoNeg_of_isRegular F, fun h ↦ h ▸ orthoNeg_isRegular F _⟩
@@ -390,7 +382,6 @@ variable {F : CompatFrame S}
 def CompatFrame.regOf (F : CompatFrame S) (A : Set S) (h : IsRegular F A) : F.Regular :=
   Concept.ofIsExtent F.ortho A ((isRegular_iff_isExtent F A).mp h)
 
-/-- The underlying set of a regular proposition is regular. -/
 theorem CompatFrame.Regular.isRegular (A : F.Regular) : IsRegular F A :=
   (isRegular_iff_isExtent F A).mpr A.isExtent_extent
 
@@ -417,7 +408,6 @@ theorem CompatFrame.Regular.isRegular (A : F.Regular) : IsRegular F A :=
   show (Aᶜ).extent = orthoNeg F A.extent
   rw [orthoNeg_eq_upperPolar, Concept.extent_compl, ← Concept.upperPolar_extent]
 
-/-- The join of regular propositions is their De Morgan disjunction `disj`. -/
 @[simp] theorem CompatFrame.Regular.coe_sup (A B : F.Regular) :
     ((A ⊔ B : F.Regular) : Set S) = disj F (A : Set S) (B : Set S) := by
   rw [← InvolutiveCompl.compl_compl (A ⊔ B), InvolutiveCompl.compl_sup]

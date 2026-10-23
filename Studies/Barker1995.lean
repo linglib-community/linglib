@@ -55,8 +55,6 @@ possessor–possessee pairs agrees with counting possessors. -/
 
 variable {α : Type*}
 
-/-- With at most one possessee per possessor, the possessor–possessee pairs with a property
-are as many as the possessors with such a possessee. -/
 private theorem ncard_pair_eq (C A : α → Prop) (R : α → α → Prop)
     (huniq : ∀ x y y', A y → R x y → A y' → R x y' → y = y') (P : α → α → Prop) :
     {p : α × α | (C p.1 ∧ A p.2 ∧ R p.1 p.2) ∧ P p.1 p.2}.ncard =
@@ -149,13 +147,10 @@ theorem not_favorite_color_possessee_dominant :
     ¬ most (fun c ↦ isColor c ∧ ∃ p, isPerson p ∧ favors p c) isBlue := by
   decide
 
-/-- Each person favors at most one color. -/
 theorem favors_unique :
     ∀ x y y' : Fin 8, isColor y → favors x y → isColor y' → favors x y' →
       y = y' := by decide
 
-/-- The symmetric construal of the favorite-color sentence, derived from the
-possessor-dominant one through `symmetric_iff_possessor_dominant`. -/
 theorem favorite_color_symmetric :
     most (fun p : Fin 8 × Fin 8 ↦ isPerson p.1 ∧ isColor p.2 ∧ favors p.1 p.2)
       (fun p ↦ isBlue p.2) :=

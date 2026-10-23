@@ -31,7 +31,6 @@ private theorem numbers_eq :
     Levin1993.classes.map (·.number) = LevinClass.enumList.map numberString := by
   decide +kernel
 
-/-- Each class's entry carries the class's section number. -/
 theorem number_entry (c : LevinClass) : (entry c).number = c.numberString := by
   have h := congrArg (·[c.ctorIdx]?) numbers_eq
   simp only [List.getElem?_map, LevinClass.enumList_getElem?_ctorIdx_eq, Option.map_some] at h

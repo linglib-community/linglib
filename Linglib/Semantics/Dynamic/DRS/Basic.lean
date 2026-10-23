@@ -99,7 +99,6 @@ private theorem DRS.map_map_of_forall [DecidableEq W] [DecidableEq X] {g : W →
 
 namespace Condition
 
-/-- Renaming a condition along the identity is the identity. -/
 @[simp] theorem map_id [DecidableEq V] (c : Condition L V) : map id c = c := by
   induction c with
   | atom a => rfl
@@ -110,7 +109,6 @@ namespace Condition
   | dis l r ihl ihr =>
     exact congrArg₂ dis (DRS.map_id_of_forall ihl) (DRS.map_id_of_forall ihr)
 
-/-- Renaming a condition along a composite is the composite of the renamings. -/
 theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W)
     (c : Condition L V) : map g (map f c) = map (g ∘ f) c := by
   induction c with
@@ -128,7 +126,6 @@ end Condition
 
 namespace DRS
 
-/-- Extension along a renamed DRS is extension of the precompositions. -/
 theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : W → M) :
     (K.map e).Extends f g ↔ K.Extends (f ∘ e) (g ∘ e) := by
   simp only [Box.Extends, referents_map, Function.comp_apply]
@@ -137,8 +134,6 @@ theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : W → M) 
     hy (by simpa using Finset.mem_image_of_mem e hm)
   simpa using h (e.symm y) hx
 
-/-- The extensions of `f` at `K.map e` are the extensions of `f ∘ e` at `K`,
-via precomposition. -/
 theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W → M)
     (P : (V → M) → Prop) :
     (∃ g, (K.map e).Extends f g ∧ P (g ∘ e)) ↔ ∃ g, K.Extends (f ∘ e) g ∧ P g := by
@@ -147,7 +142,6 @@ theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W �
   have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
   exact key.symm ▸ ⟨hg, hp⟩
 
-/-- The `∀` analogue of `DRS.exists_extends_map`. -/
 theorem forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W → M)
     (P : (V → M) → Prop) :
     (∀ g, (K.map e).Extends f g → P (g ∘ e)) ↔ ∀ g, K.Extends (f ∘ e) g → P g := by
@@ -156,11 +150,9 @@ theorem forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W �
   have key : (g ∘ e.symm) ∘ e = g := by funext x; simp
   exact key ▸ H (g ∘ e.symm) (key.symm ▸ hg)
 
-/-- Renaming a DRS along the identity is the identity. -/
 @[simp] theorem map_id [DecidableEq V] (K : DRS L V) : map id K = K :=
   map_id_of_forall fun c _ => Condition.map_id c
 
-/-- Renaming a DRS along a composite is the composite of the renamings. -/
 theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K : DRS L V) :
     map g (map f K) = map (g ∘ f) K :=
   map_map_of_forall fun c _ => Condition.map_map g f c
@@ -230,7 +222,6 @@ namespace Condition
   | nil => simp
   | cons c cs ih => simp [ih, Finset.union_assoc]
 
-/-- A condition's occurring referents are among its list's. -/
 theorem varFinset_subset_varFinsetL {c : Condition L V} {cs : List (Condition L V)}
     (hc : c ∈ cs) : c.varFinset ⊆ varFinsetL cs := by
   induction cs with
@@ -259,7 +250,6 @@ theorem varFinset_subset_varFinsetL {c : Condition L V} {cs : List (Condition L 
   | nil => simp
   | cons c cs ih => simp [ih, Finset.union_assoc]
 
-/-- A condition's free referents are among its list's. -/
 theorem freeVarFinset_subset_freeVarFinsetL {c : Condition L V} {cs : List (Condition L V)}
     (hc : c ∈ cs) : c.freeVarFinset ⊆ freeVarFinsetL cs := by
   induction cs with
@@ -280,7 +270,6 @@ theorem varFinset_eq (K : DRS L V) :
     K.varFinset = K.referents ∪ Condition.varFinsetL K.conditions := by
   cases K; rfl
 
-/-- A DRS's conditions' occurring referents are among the DRS's. -/
 theorem varFinsetL_subset_varFinset (K : DRS L V) :
     Condition.varFinsetL K.conditions ⊆ K.varFinset := by
   rw [varFinset_eq]; exact Finset.subset_union_right
@@ -296,15 +285,12 @@ theorem coe_freeVarFinset (K : DRS L V) :
     (↑K.freeVarFinset : Set V) = ↑(Condition.freeVarFinsetL K.conditions) \ ↑K.referents := by
   rw [freeVarFinset_eq, Finset.coe_sdiff]
 
-/-- A box's free referents are supplied by `X` iff its conditions' are supplied by the
-grown base, the characteristic form of the referential presupposition. -/
 theorem freeVarFinset_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
     freeVarFinset ⟨U, conds⟩ ⊆ X ↔ Condition.freeVarFinsetL conds ⊆ X ∪ U := by
   rw [freeVarFinset_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
 
 end DRS
 
-/-- Free referents of a condition occur. -/
 theorem Condition.freeVarFinset_subset_varFinset (c : Condition L V) :
     c.freeVarFinset ⊆ c.varFinset := by
   have box {K : DRS L V} (h : ∀ c ∈ K.conditions, c.freeVarFinset ⊆ c.varFinset) :
@@ -323,11 +309,9 @@ theorem Condition.freeVarFinset_subset_varFinset (c : Condition L V) :
     exact Finset.union_subset_union (box iha) (Finset.sdiff_subset.trans (box ihc))
   | dis l r ihl ihr => exact Finset.union_subset_union (box ihl) (box ihr)
 
-/-- Free referents occur. -/
 theorem DRS.freeVarFinset_subset_varFinset (K : DRS L V) : K.freeVarFinset ⊆ K.varFinset :=
   Condition.freeVarFinset_subset_varFinset (.neg K)
 
-/-- The list analogue of `Condition.freeVarFinset_subset_varFinset`. -/
 theorem Condition.freeVarFinsetL_subset_varFinsetL (cs : List (Condition L V)) :
     Condition.freeVarFinsetL cs ⊆ Condition.varFinsetL cs := by
   induction cs with
@@ -352,8 +336,6 @@ theorem merge_assoc (K₁ K₂ K₃ : DRS L V) :
   simp only [merge, referents_mk, conditions_mk]
   rw [Finset.union_assoc, List.append_assoc]
 
-/-- A merge's free referents are supplied by `X` when the context's are and the increment's
-are supplied by the grown base. -/
 theorem freeVarFinset_merge_subset {X : Finset V} {K₁ K₂ : DRS L V}
     (h₁ : K₁.freeVarFinset ⊆ X) (h₂ : K₂.freeVarFinset ⊆ X ∪ K₁.referents) :
     (K₁.merge K₂).freeVarFinset ⊆ X := by

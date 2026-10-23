@@ -113,23 +113,17 @@ section Speaker
 
 variable (P : Measure S) [IsFiniteMeasure P] (E : Λ → Set S) (α c : ℝ)
 
-/-- The speaker produces a message at a state and a latent parameter exactly when it is true
-there and the state has positive prior. -/
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) (l : Λ) (u : Message) :
     S1 P E α c (s, l) {u} ≠ 0 ↔ s ∈ sem E l u ∧ P {s} ≠ 0 :=
   speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα (cost c) P (sem E l) u s
 
 variable {P E α}
 
-/-- The speaker treats alike two states of positive prior in the extension of a latent
-parameter. -/
 theorem S1_congr (hα : 0 < α) {s t : S} {l : Λ} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0)
     (hsl : s ∈ E l) (htl : t ∈ E l) : S1 P E α c (t, l) = S1 P E α c (s, l) :=
   speaker_listener_truthful_dirac_congr hα _ P (sem E l) hs ht fun u ↦ by
     cases u <;> simp [sem, hsl, htl]
 
-/-- At each latent parameter the speaker is no less likely to produce the positive form at a
-state that lies in its extension whenever another state does. -/
 theorem S1_real_positive_le (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0) {l : Λ}
     (h : s ∈ E l → t ∈ E l) :
     (S1 P E α c (s, l)).real {.positive} ≤ (S1 P E α c (t, l)).real {.positive} := by
@@ -162,7 +156,6 @@ instance : IsFiniteMeasure (update P ν E α c) := by
 
 variable {P ν E α}
 
-/-- The update depends on the prior only as a measure. -/
 private theorem update_congr {Q : Measure S} [IsFiniteMeasure Q] (h : Q = P) :
     update Q ν E α c = update P ν E α c := by
   subst h; rfl
@@ -176,14 +169,11 @@ noncomputable def production (s : S) : ℝ :=
 
 variable {P ν E α}
 
-/-- A state that lies in no more extensions than another has no greater production weight. -/
 theorem production_le_production (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0)
     (h : ∀ l, s ∈ E l → t ∈ E l) : production P ν E α c s ≤ production P ν E α c t :=
   Finset.sum_le_sum fun l _ ↦
     mul_le_mul_of_nonneg_left (S1_real_positive_le c hα hs ht (h l)) measureReal_nonneg
 
-/-- The production weight is strictly greater when a latent parameter of positive prior
-separates the two states. -/
 theorem production_lt_production [IsFiniteMeasure ν] (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0)
     (ht : P {t} ≠ 0) (h : ∀ l, s ∈ E l → t ∈ E l) {l₀ : Λ} (hl₀ : ν {l₀} ≠ 0) (hs₀ : s ∉ E l₀)
     (ht₀ : t ∈ E l₀) : production P ν E α c s < production P ν E α c t := by
@@ -198,7 +188,6 @@ theorem production_lt_production [IsFiniteMeasure ν] (hα : 0 < α) {s t : S} (
 
 variable [IsFiniteMeasure ν]
 
-/-- An assertable positive form is produced with positive probability. -/
 theorem Assertable.sum_pos (h : Assertable P ν E) (hα : 0 < α) :
     0 < ∑ p, (P.prod ν).real {p} * (S1 P E α c p).real {.positive} := by
   obtain ⟨s, l, hs, hl, hsl⟩ := h
@@ -213,7 +202,6 @@ theorem Assertable.sum_pos (h : Assertable P ν E) (hα : 0 < α) :
 
 variable [DiscreteMeasurableSpace Λ]
 
-/-- The update with an assertable positive form is a probability measure. -/
 theorem Assertable.isProbabilityMeasure_update (h : Assertable P ν E) (hα : 0 < α) :
     IsProbabilityMeasure (update P ν E α c) := by
   obtain ⟨s, l, hs, hl, hsl⟩ := h
@@ -224,14 +212,11 @@ theorem Assertable.isProbabilityMeasure_update (h : Assertable P ν E) (hα : 0 
   unfold update
   infer_instance
 
-/-- The posterior of a state is its prior times its production weight, normalized. -/
 theorem update_real_singleton (s : S) :
     (update P ν E α c).real {s} = P.real {s} * production P ν E α c s /
       ∑ p, (P.prod ν).real {p} * (S1 P E α c p).real {.positive} :=
   listener_prod_fst_real_singleton P ν _ _ s
 
-/-- The update keeps exactly the states of positive prior that lie in the extension of some
-latent parameter of positive prior. -/
 theorem update_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) :
     update P ν E α c {s} ≠ 0 ↔ P {s} ≠ 0 ∧ ∃ l, ν {l} ≠ 0 ∧ s ∈ E l := by
   rw [update, L1, listener_fst_apply_singleton_ne_zero_iff]
@@ -239,8 +224,6 @@ theorem update_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) :
   simp_rw [← Set.singleton_prod_singleton, Measure.prod_prod, mul_ne_zero_iff, hs, sem]
   exact ⟨fun ⟨l, ⟨h, hl⟩, hsl, _⟩ ↦ ⟨h, l, hl, hsl⟩, fun ⟨h, l, hl, hsl⟩ ↦ ⟨l, ⟨h, hl⟩, hsl, h⟩⟩
 
-/-- A further positive form is assertable against the updated prior when some state of positive
-prior lies in an extension of positive prior for each of the two forms. -/
 theorem assertable_update {Λ' : Type*} [MeasurableSpace Λ'] {ν' : Measure Λ'}
     {E' : Λ' → Set S} (hα : 0 < α) {s : S} {l : Λ} {l' : Λ'} (hs : P {s} ≠ 0) (hl : ν {l} ≠ 0)
     (hsl : s ∈ E l) (hl' : ν' {l'} ≠ 0) (hsl' : s ∈ E' l') :
@@ -248,8 +231,6 @@ theorem assertable_update {Λ' : Type*} [MeasurableSpace Λ'] {ν' : Measure Λ'
   ⟨s, l', (update_apply_singleton_ne_zero_iff c hα s).mpr ⟨hs, l, hl, hsl⟩,
     hl', hsl'⟩
 
-/-- The update shifts mass toward states that lie in more extensions, in that the ratio of posterior
-to prior is monotone in the set of latent parameters whose extension contains the state. -/
 theorem update_mul_le_mul (hα : 0 < α) {s t : S} (h : ∀ l, s ∈ E l → t ∈ E l) :
     (update P ν E α c).real {s} * P.real {t} ≤ (update P ν E α c).real {t} * P.real {s} := by
   rw [update_real_singleton, update_real_singleton]
@@ -266,8 +247,6 @@ theorem update_mul_le_mul (hα : 0 < α) {s t : S} (h : ∀ l, s ∈ E l → t �
             (Finset.sum_nonneg fun _ _ ↦ mul_nonneg measureReal_nonneg measureReal_nonneg))
     _ = P.real {t} * production P ν E α c t / Z * P.real {s} := by ring
 
-/-- The shift is strict between two states of positive prior separated by a latent parameter
-of positive prior. -/
 theorem update_mul_lt_mul (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0)
     (h : ∀ l, s ∈ E l → t ∈ E l) {l₀ : Λ} (hl₀ : ν {l₀} ≠ 0) (hs₀ : s ∉ E l₀) (ht₀ : t ∈ E l₀) :
     (update P ν E α c).real {s} * P.real {t} < (update P ν E α c).real {t} * P.real {s} := by
@@ -284,8 +263,6 @@ theorem update_mul_lt_mul (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t
         mul_lt_mul_of_pos_left (production_lt_production c hα hs ht h hl₀ hs₀ ht₀) hpos
     _ = P.real {t} * production P ν E α c t / Z * P.real {s} := by ring
 
-/-- A positive form whose extensions do not distinguish the states leaves a probability prior
-unchanged. -/
 theorem update_eq_self [IsProbabilityMeasure P] (hα : 0 < α) (hE : Assertable P ν E)
     (h : ∀ l s t, s ∈ E l → t ∈ E l) : update P ν E α c = P := by
   have := hE.isProbabilityMeasure_update c hα
@@ -335,30 +312,22 @@ noncomputable abbrev sequential (P : Measure S) [IsFiniteMeasure P] (νA : Measu
 variable {νA : Measure D} [IsFiniteMeasure νA] {νD : Measure D'} [IsFiniteMeasure νD]
   {mA : S → D} {mD : S → D'} (c' : ℝ)
 
-/-- A positive form shifts mass toward the states of higher measure. -/
 theorem positiveForm_mul_le_mul (hα : 0 < α) {s t : S} (h : mA s ≤ mA t) :
     (positiveForm P νA mA α c).real {s} * P.real {t}
       ≤ (positiveForm P νA mA α c).real {t} * P.real {s} :=
   update_mul_le_mul c hα fun _ hθ ↦ le_trans hθ h
 
-/-- The shift is strict between two states of positive prior when the higher measure is a
-threshold of positive prior. -/
 theorem positiveForm_mul_lt_mul (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0)
     (h : mA s < mA t) (hν : νA {mA t} ≠ 0) :
     (positiveForm P νA mA α c).real {s} * P.real {t}
       < (positiveForm P νA mA α c).real {t} * P.real {s} :=
   update_mul_lt_mul c hα hs ht (fun _ hθ ↦ le_trans hθ h.le) hν (not_le.mpr h) le_rfl
 
-/-- The conjunctive model is ordered by the two measures jointly, in that mass shifts toward a state
-only when it is at least as high on the adjective's scale and on the adverb's. -/
 theorem simultaneous_mul_le_mul (hα : 0 < α) {s t : S} (hA : mA s ≤ mA t) (hD : mD s ≤ mD t) :
     (simultaneous P νA νD mA mD α c).real {s} * P.real {t}
       ≤ (simultaneous P νA νD mA mD α c).real {t} * P.real {s} :=
   update_mul_le_mul c hα fun _ hθ ↦ ⟨le_trans hθ.1 hA, le_trans hθ.2 hD⟩
 
-/-- Relative to the original prior the backgrounded model is also ordered by the two measures
-jointly; relative to the backgrounded posterior its last update is ordered by the adjective's
-measure alone, by `positiveForm_mul_le_mul`. -/
 theorem sequential_mul_le_mul (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t) (hmD : mD s ≤ mD t) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
       ≤ (sequential P νA νD mA mD α c c').real {t} * P.real {s} := by
@@ -398,9 +367,6 @@ def Goldilocks (a : Degree.GradableAdjective) (excess : S → X) (m : S → D') 
 
 variable {a : Degree.GradableAdjective} {excess : S → X}
 
-/-- An intensifier with a negatively evaluative base shifts mass toward the states that are
-higher on the adjective's scale and more excessive, which is intensification to a high
-degree. -/
 theorem sequential_mul_le_mul_of_negative (ha : a.evaluativeValence = some .negative)
     (hm : Goldilocks a excess mD) (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t)
     (hx : excess s ≤ excess t) :
@@ -409,9 +375,6 @@ theorem sequential_mul_le_mul_of_negative (ha : a.evaluativeValence = some .nega
   rw [Goldilocks, ha] at hm
   exact sequential_mul_le_mul c c' hα hmA (hm s t hx)
 
-/-- An intensifier with a positively evaluative base shifts mass toward the states that are
-higher on the adjective's scale and less excessive, which is intensification to a moderate
-degree. -/
 theorem sequential_mul_le_mul_of_positive (ha : a.evaluativeValence = some .positive)
     (hm : Goldilocks a excess mD) (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t)
     (hx : excess t ≤ excess s) :
@@ -420,16 +383,12 @@ theorem sequential_mul_le_mul_of_positive (ha : a.evaluativeValence = some .posi
   rw [Goldilocks, ha] at hm
   exact sequential_mul_le_mul c c' hα hmA (hm t s hx)
 
-/-- The English fragment records *horrible* as negatively evaluative, so *horribly* intensifies
-to a high degree. -/
 theorem horribly_mul_le_mul (hm : Goldilocks English.Adjectives.horrible excess mD)
     (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t) (hx : excess s ≤ excess t) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
       ≤ (sequential P νA νD mA mD α c c').real {t} * P.real {s} :=
   sequential_mul_le_mul_of_negative c c' rfl hm hα hmA hx
 
-/-- The English fragment records *pleasant* as positively evaluative, so *pleasantly*
-intensifies to a moderate degree. -/
 theorem pleasantly_mul_le_mul (hm : Goldilocks English.Adjectives.pleasant excess mD)
     (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t) (hx : excess t ≤ excess s) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
@@ -444,9 +403,6 @@ variable {D D' : Type*} [LinearOrder D] [MeasurableSpace D] [LinearOrder D'] [Fi
   [MeasurableSpace D'] [DiscreteMeasurableSpace D'] {νA : Measure D} [IsFiniteMeasure νA]
   {νD : Measure D'} [IsFiniteMeasure νD] {mA : S → D} {mD : S → D'} (c' : ℝ)
 
-/-- An adverb whose measure function does not distinguish the states, as that of *usual* would
-not if it conveyed the prior, is a vacuous intensifier, and the intensified adjective is
-interpreted as the bare adjective. -/
 theorem sequential_eq_positiveForm [IsProbabilityMeasure P] (hα : 0 < α)
     (hD : Assertable P νD (atLeast mD)) (h : ∀ s t, mD s = mD t) :
     sequential P νA νD mA mD α c c' = positiveForm P νA mA α c :=

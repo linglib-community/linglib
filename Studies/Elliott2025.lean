@@ -143,7 +143,6 @@ def delta (f : α → Prop) : Prop := ∀ p ∈ X.parts, (f p.1 ↔ p.2)
 
 variable {X}
 
-/-- Parthood is inclusion of atomic parts. -/
 theorem le_iff_parts_subset {Y : PolarGroup α} : X ≤ Y ↔ X.parts ⊆ Y.parts := by
   refine ⟨fun h p hp ↦ Flat.coe_le_iff.1 (hp ▸ h p.1), fun h x ↦ ?_⟩
   cases hx : X x with
@@ -206,7 +205,6 @@ variable {N vp vp' : α → Prop} {X : PolarGroup α}
 @[simp] theorem negAtoms_polarize : (polarize N vp).negAtoms = {x | N x ∧ ¬ vp x} := by
   ext x; by_cases h : N x <;> simp [polarize, negAtoms, h]
 
-/-- Two polarizations of `N` agree exactly when their scopes agree on `N`. -/
 theorem polarize_eq_polarize_iff :
     polarize N vp = polarize N vp' ↔ ∀ x, N x → (vp x ↔ vp' x) := by
   simp only [funext_iff, polarize]
@@ -216,7 +214,6 @@ theorem polarize_eq_polarize_iff :
 theorem polarize_ne_bot_iff : polarize N vp ≠ ⊥ ↔ ∃ x, N x := by
   simp [← atoms_eq_empty_iff, Set.eq_empty_iff_forall_notMem]
 
-/-- A group is its atoms polarized by its positive atoms. -/
 theorem polarize_atoms_posAtoms (X : PolarGroup α) :
     polarize (· ∈ X.atoms) (· ∈ X.posAtoms) = X := by
   funext x
@@ -246,7 +243,6 @@ section Noun
 
 variable {N vp : α → Prop} {X : PolarGroup α}
 
-/-- The groups of a noun are those whose atoms are exactly its extension. -/
 theorem noun_iff : noun N X ↔ X.atoms = {x | N x} := by
   classical
   refine ⟨fun ⟨hP, hmax⟩ ↦ Set.Subset.antisymm hP fun x hN ↦ by_contra fun hb ↦ ?_, fun h ↦ ?_⟩
@@ -275,8 +271,6 @@ theorem setOf_noun : {X | noun N X} = Set.range (polarize N) := by
 theorem noun_iff_exists : noun N X ↔ ∃ S, polarize N S = X :=
   Set.ext_iff.1 setOf_noun X
 
-/-- On the groups of a noun, the ∆-operator for `vp` holds only of the noun's extension
-polarized by `vp`. -/
 theorem delta_iff_eq_polarize (hX : noun N X) : X.delta vp ↔ X = polarize N vp := by
   obtain ⟨S, rfl⟩ := noun_iff_exists.1 hX
   rw [delta_polarize_iff, polarize_eq_polarize_iff]
@@ -348,7 +342,6 @@ theorem lessThan_three_matches_judgments :
   simp [sentence_iff, Det.lessThan, ex_10, ex_12]
 
 open Examples in
-/-- The classical entry gets both judgments wrong. -/
 theorem classical_lessThan_three_misses_judgments :
     ¬ (ex_10.readings.lookup "true in the context" = some .acceptable ↔
       classicalSentence (·.card < 3) (⊤ : Fin 3 → Prop) ⊤) ∧
@@ -356,20 +349,17 @@ theorem classical_lessThan_three_misses_judgments :
       classicalSentence (·.card < 3) (⊤ : Fin 3 → Prop) ⊥) := by
   simp [classical_lessThan_iff_some, GQ.some, ex_10, ex_12]
 
-/-- *Zero* is *none*. -/
 theorem exactly_zero_eq_none [Finite α] : (Det.exactly 0 : Det α) = Det.none := by
   funext X
   simp only [Det.exactly, Det.none, Det.some, Pi.compl_apply, compl_iff_not, not_not]
   exact propext (Set.ncard_eq_zero (s := X.posAtoms))
 
-/-- *All* is the ∆-operator of the trivial property. -/
 theorem all_eq_delta_top : (Det.all : Det α) = (·.delta ⊤) := by
   funext X
   simp only [Det.all, delta, parts, negAtoms, Set.eq_empty_iff_forall_notMem, Set.mem_ofPred_eq,
     Prod.forall, Pi.top_apply, Prop.top_eq_true, true_iff]
   exact propext ⟨fun h x b hx ↦ by cases b <;> simp_all, fun h x hx ↦ by simpa using h x false hx⟩
 
-/-- *None* is the ∆-operator of the empty property. -/
 theorem none_eq_delta_bot : (Det.none : Det α) = (·.delta ⊥) := by
   funext X
   simp only [Det.none, Det.some, Pi.compl_apply, compl_iff_not, not_not, delta, parts, posAtoms,
@@ -377,7 +367,6 @@ theorem none_eq_delta_bot : (Det.none : Det α) = (·.delta ⊥) := by
     false_iff]
   exact propext ⟨fun h x b hx ↦ by cases b <;> simp_all, fun h x hx ↦ by simpa using h x true hx⟩
 
-/-- *Less than `n`* is the negation of *at least `n`*. -/
 theorem lessThan_eq_compl (n : ℕ) : (Det.lessThan n : Det α) = (Det.atLeast n)ᶜ := by
   funext X
   simp [Det.lessThan, Det.atLeast]
@@ -388,8 +377,6 @@ section GQ
 
 variable {Q : GQ α}
 
-/-- Mapped to a predicate and back, a generalized quantifier is evaluated at the restrictor and
-the part of the scope inside it. -/
 theorem toGQ_ofGQ (Q : GQ α) (R S : α → Prop) :
     (Det.ofGQ Q).toGQ R S ↔ Q R (fun x ↦ R x ∧ S x) := by
   rw [Det.toGQ, sentence_iff, Det.ofGQ, atoms_polarize, posAtoms_polarize]
@@ -414,7 +401,6 @@ theorem conservative_toGQ (D : Det α) : Conservative D.toGQ := fun R S ↦ by
   simp only [Det.toGQ, sentence_iff]
   rw [polarize_eq_polarize_iff.2 fun _ hx ↦ (and_iff_right hx).symm]
 
-/-- Mapped to a quantifier and back, a predicate is unchanged. -/
 theorem ofGQ_toGQ (D : Det α) : Det.ofGQ D.toGQ = D := by
   funext X
   simp only [Det.ofGQ, Det.toGQ, sentence_iff, polarize_atoms_posAtoms]
@@ -454,7 +440,6 @@ theorem ofGQ_atom {p q : α → Prop} (h : q ≤ p) :
 /-- The Härtig quantifier says that restrictor and scope have equally many members. -/
 noncomputable def hartig : GQ α := fun A B ↦ {x | A x}.ncard = {x | B x}.ncard
 
-/-- The Härtig quantifier is not conservative. -/
 theorem not_conservative_hartig [Finite α] [Nontrivial α] : ¬ Conservative (hartig : GQ α) := by
   intro h
   obtain ⟨a, b, hab⟩ := exists_pair_ne α
@@ -464,7 +449,6 @@ theorem not_conservative_hartig [Finite α] [Nontrivial α] : ¬ Conservative (h
     Set.eq_empty_iff_forall_notMem.2 fun x hx ↦ hab (hx.1 ▸ hx.2)] at h'
   simp at h'
 
-/-- Mapped to a predicate and back, the Härtig quantifier becomes the universal. -/
 theorem toGQ_ofGQ_hartig [Finite α] : (Det.ofGQ hartig).toGQ = (every : GQ α) := by
   funext R S
   refine propext ((toGQ_ofGQ hartig R S).trans ⟨fun h x hR ↦ ?_, fun h ↦ ?_⟩)
@@ -514,7 +498,6 @@ theorem most_eq_ofGQ : (Det.most : Det α) = Det.ofGQ GQ.most := by
   rw [← atoms_diff_posAtoms]
   rfl
 
-/-- *Two boys sneezed* says that at least two boys sneezed. -/
 theorem toGQ_atLeast (n : ℕ) : (Det.atLeast n : Det α).toGQ = GQ.atLeast n := by
   rw [atLeast_eq_ofGQ, toGQ_ofGQ_of_conservative (conservative_atLeast n)]
 
@@ -549,19 +532,15 @@ section Count
 
 variable [Fintype α]
 
-/-- There are `3 ^ n` groups on `n` individuals, one for each trivalent function. -/
 theorem card_polarGroup : Nat.card (PolarGroup α) = 3 ^ Fintype.card α := by
   rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Flat Bool), Fintype.card_flat,
     Nat.card_eq_fintype_card, Fintype.card_bool]
 
-/-- There are `3 ^ n - 1` nonempty groups on `n` individuals. -/
 theorem card_ne_bot : Nat.card {X : PolarGroup α // X ≠ ⊥} = 3 ^ Fintype.card α - 1 := by
   classical
   rw [Nat.card_eq_fintype_card, Fintype.card_subtype_compl, ← Nat.card_eq_fintype_card,
     card_polarGroup, Fintype.card_subtype_eq]
 
-/-- There are `2 ^ 3 ^ n` predicates of groups on `n` individuals, as many as Keenan and Stavi's
-conservative quantifiers. -/
 theorem card_det : Nat.card (Det α) = 2 ^ 3 ^ Fintype.card α := by
   rw [← Nat.card_congr consGQOrderIso.toEquiv, KeenanStavi1986.card_consGQ]
 
@@ -571,7 +550,6 @@ theorem card_predicates :
     Nat.card ({X : PolarGroup α // X ≠ ⊥} → Prop) = 2 ^ (3 ^ Fintype.card α - 1) := by
   rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop, card_ne_bot]
 
-/-- There are fewer predicates than generalized quantifiers. -/
 theorem card_predicates_lt_card_gq :
     Nat.card ({X : PolarGroup α // X ≠ ⊥} → Prop) < Nat.card (GQ α) := by
   rw [card_predicates, KeenanStavi1986.card_gq, pow_mul]
@@ -607,14 +585,12 @@ section Scope
 
 variable (N : α → Prop)
 
-/-- *All `N`* holds of a single group, the noun's extension polarized positively throughout. -/
 theorem all_inf_noun : Det.all ⊓ noun N = NP.ident (polarize N ⊤) := by
   rw [all_eq_delta_top]
   funext X
   exact propext ⟨fun ⟨h, hX⟩ ↦ (delta_iff_eq_polarize hX).1 h,
     fun h ↦ h ▸ ⟨(delta_iff_eq_polarize (noun_polarize N ⊤)).2 rfl, noun_polarize N ⊤⟩⟩
 
-/-- *No `N`* holds of a single group, the noun's extension polarized negatively throughout. -/
 theorem none_inf_noun : Det.none ⊓ noun N = NP.ident (polarize N ⊥) := by
   rw [none_eq_delta_bot]
   funext X
@@ -626,7 +602,6 @@ group, so it is scopeless and the universal force stays with the ∆-operator. -
 theorem all_scopeless : GQ.some (Det.all ⊓ noun N) = NP.individual (polarize N ⊤) :=
   NP.some_eq_individual_iff.2 (all_inf_noun N)
 
-/-- Existential raising of *no `N`* is scopeless. -/
 theorem none_scopeless : GQ.some (Det.none ⊓ noun N) = NP.individual (polarize N ⊥) :=
   NP.some_eq_individual_iff.2 (none_inf_noun N)
 
@@ -656,8 +631,6 @@ open Mereology
 
 variable {β : Type*} [PartialOrder β] {C N : β → Prop} {X : PolarGroup β}
 
-/-- On a group of a singular noun, a collective predicate, true of no atom, distributes exactly
-when the group has no positive atom. -/
 theorem delta_collective_iff (hC : ∀ x, C x → ¬ Atom x) (hX : noun (fun x ↦ Atom x ∧ N x) X) :
     X.delta C ↔ X.posAtoms = ∅ := by
   rw [noun_iff] at hX
@@ -692,7 +665,6 @@ theorem whichDeRe_eq_ker :
   rw [whichDeRe_iff, Setoid.ker_def, polarize_eq_polarize_iff]
   rfl
 
-/-- Every predicative sentence is relevant to the question, being a union of its answers. -/
 theorem sentence_relevant (D : Det E) :
     (whichDeRe G P w).Decides {v | sentence D (· ∈ extension G w) (· ∈ extension P v)} := by
   rw [whichDeRe_eq_ker, Setoid.decides_iff]

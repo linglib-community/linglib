@@ -143,7 +143,6 @@ theorem system2_overgenerates :
     WeakNecessity system2Premises (concl .b) ∧ WeakNecessity system2Premises (concl .c) := by
   decide
 
-/-- Neither conclusion is a strong necessity: high γ resists the fallacy altogether. -/
 theorem system2_not_strong :
     ¬ StrongNecessity system2Premises (concl .b) ∧
       ¬ StrongNecessity system2Premises (concl .c) := by
@@ -183,8 +182,6 @@ theorem gapNegation_eq_exh :
     exists_eq_left]
   revert w; decide
 
-/-- Under the strongly exhaustive reading the conclusion is valid: the absolving interpretation
-of the premise. -/
 theorem gapNegation_valid : {w | ∃ m ∈ system1P1, w = fillGaps m} ∩ A ⊆ B := by
   rw [← gapNegation_eq_exh, exhIE_conjDisjAlternatives ⟨fillGaps (model true true ⊥), by decide⟩
     ⟨fillGaps (model ⊥ ⊥ true), by decide⟩]
@@ -198,8 +195,6 @@ abbrev E : Set World := ((A ∩ B) ∪ C) ∩ A
 /-- The premises under the exclusive reading: the symmetric difference of the disjuncts. -/
 abbrev Exor : Set World := (((A ∩ B) \ C) ∪ (C \ (A ∩ B))) ∩ A
 
-/-- Under independent flat priors both posteriors are 2/3: conditioning on the premises cannot
-separate the attractive conclusion from the unattractive one. -/
 theorem flat_posterior :
     (uniformOn (univ : Set World))[|E].real B = 2 / 3 ∧
       (uniformOn (univ : Set World))[|E].real C = 2 / 3 := by
@@ -210,7 +205,6 @@ theorem flat_posterior :
   have h3 : E.ncard = 3 := by rw [Set.ncard_eq_toFinset_card']; decide
   rw [h1, h2, h3]; norm_num
 
-/-- Under the exclusive reading both posteriors are 1/2: still no separation. -/
 theorem exclusive_posterior :
     (uniformOn (univ : Set World))[|Exor].real B = 1 / 2 ∧
       (uniformOn (univ : Set World))[|Exor].real C = 1 / 2 := by
@@ -226,8 +220,6 @@ probability distribution. -/
 def PValid (E q : Set World) : Prop :=
   ∀ μ : Measure World, IsProbabilityMeasure μ → μ E ≤ μ q
 
-/-- A nonempty set of worlds verifying the premises, not all of which verify the conclusion,
-refutes p-validity: uniform on it, the premises are certain and the conclusion is not. -/
 theorem not_pValid_of {E q s : Set World} (hs : s.Nonempty) (hE : s ⊆ E) (hq : ¬ s ⊆ q) :
     ¬ PValid E q := fun h ↦ by
   have := isProbabilityMeasure_uniformOn s.toFinite hs
@@ -276,8 +268,6 @@ theorem confirmationD_inter_eq_mul (hd : MeasurableSet d) (hab : IndepSet a b μ
 
 variable [IsFiniteMeasure μ]
 
-/-- `D(c, d) = 0` when `c` and `d` are independent: the hint is orthogonal to the second
-disjunct. -/
 theorem confirmationD_eq_zero (hd : MeasurableSet d) (hcd : IndepSet c d μ) (h0 : μ d ≠ 0) :
     confirmationD μ c d = 0 := by
   have hd0 : μ.real d ≠ 0 := ENNReal.toReal_ne_zero.2 ⟨h0, measure_ne_top _ _⟩
@@ -291,7 +281,6 @@ theorem confirmationD_inter_pos (hd : MeasurableSet d) (hab : IndepSet a b μ)
   rw [confirmationD_inter_eq_mul hd hab hadb]
   exact mul_pos (ENNReal.toReal_pos hb (measure_ne_top _ _)) ha
 
-/-- In the indirect schema the first alternative is uniquely selected by confirmation. -/
 theorem indirect_bestConfirmed (hd : MeasurableSet d) (hab : IndepSet a b μ)
     (hadb : IndepSet (a ∩ d) b μ) (hcd : IndepSet c d μ) (h0 : μ d ≠ 0) (hb : μ b ≠ 0)
     (ha : 0 < confirmationD μ a d) :
@@ -304,7 +293,6 @@ theorem indirect_bestConfirmed (hd : MeasurableSet d) (hab : IndepSet a b μ)
     rw [confirmationD_eq_zero hd hcd h0]
     exact confirmationD_inter_pos hd hab hadb hb ha
 
-/-- The indirect illusion under selection by confirmation. -/
 theorem indirect_illusory_bestConfirmed (hd : MeasurableSet d) (hab : IndepSet a b μ)
     (hadb : IndepSet (a ∩ d) b μ) (hcd : IndepSet c d μ) (h0 : μ d ≠ 0) (hb : μ b ≠ 0)
     (ha : 0 < confirmationD μ a d) (hne : (a ∩ b ∩ d).Nonempty) (h : ((c ∩ d) \ b).Nonempty) :
@@ -383,7 +371,6 @@ private theorem indepSet_attic_brake : IndepSet attic brake (uniformOn univ) := 
 private theorem uniformOn_ne_zero {s : Set Situation} (hs : s.Nonempty) : uniformOn univ s ≠ 0 :=
   by rw [Ne, uniformOn_eq_zero_iff finite_univ, univ_inter]; exact hs.ne_empty
 
-/-- The brake confirms that the car slowed down: `D = 2/3 − 4/7 = 2/21`. -/
 theorem confirmationD_car_brake : confirmationD (uniformOn univ) car brake = 2 / 21 := by
   rw [confirmationD, uniformOn_cond finite_univ .of_discrete, univ_inter, uniformOn_real_apply,
     uniformOn_univ_real_apply, card_situation,

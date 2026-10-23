@@ -81,7 +81,6 @@ def agreeValue (P : α → Bool) (v : β) : Valuation α β → Valuation α β
     agreeValue P v (p :: s) =
       if p.2.isNone && P p.1 then (p.1, some v) :: s else p :: agreeValue P v s := rfl
 
-/-- Agree is `List.lookmap` of the update that values an unvalued NP in the domain. -/
 theorem agreeValue_eq_lookmap (s : Valuation α β) :
     agreeValue P v s =
       s.lookmap fun p ↦ if p.2.isNone && P p.1 then some (p.1, some v) else none := by
@@ -157,7 +156,6 @@ theorem extends_agreeValue {p : β → Prop} (hv : p v) :
 @[simp] theorem length_agreeValue : (agreeValue P v s).length = s.length :=
   ((extends_agreeValue (p := fun _ ↦ True) trivial s).length_eq).symm
 
-/-- Agree only adds values. -/
 theorem valuedLE_agreeValue (s : Valuation α β) : s.ValuedLE (agreeValue P v s) :=
   (extends_agreeValue (p := fun _ ↦ True) trivial s).valuedLE
 
@@ -182,8 +180,6 @@ theorem _root_.Case.Valuation.ValuedLE.agreeValue (h : s.ValuedLE t) :
     · exact .cons ⟨rfl, by simp⟩ ih
     · exact .cons ⟨rfl, by simp⟩ ih
 
-/-- Agree commutes with relabelling the NPs and the values, provided the relabelling keeps what
-    is in the domain and what is valued. -/
 theorem agreeValue_map {α' β' : Type*} {P' : α' → Bool} {v' : β'} (f : α → α') (g : β → β')
     (hP : ∀ x, P' (f x) = P x) (hv : g v = v') (s : List (α × Option β)) :
     agreeValue P' v' (s.map (Prod.map f (Option.map g))) =
@@ -317,7 +313,6 @@ theorem extends_domainPass (probes : List (Cat × Cat)) (c : Cat)
       extends_probePass g np (List.mem_of_mem_filter hmem) c) _).trans <|
       ((g.rules c).extends_unmarkedPass _ _).mono fun _ h ↦ g.rules_valuations_subset probes c h
 
-/-- A derivation extends the valuation by what the assigners value. -/
 theorem CaseAssigners.extends_derive (probes : List (Cat × Cat))
     (s : Valuation α (Case × Mechanism)) :
     s.Extends (· ∈ g.valuations probes) (g.derive np probes s) :=

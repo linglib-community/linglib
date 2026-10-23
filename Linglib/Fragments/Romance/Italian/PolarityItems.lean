@@ -143,7 +143,6 @@ def unoQualsiasi : PolarityItem :=
 def items : List PolarityItem :=
   [nessuno, niente, neanche, mai, alcuno, pur, affatto, qualsiasi, unoQualsiasi]
 
-/-- Every attested context of every entry admits it. -/
 theorem italian_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
   decide

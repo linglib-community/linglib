@@ -134,8 +134,6 @@ theorem independent (p p' : Prefix) (c c' : StemC) :
   intro k
   fin_cases k <;> first | exact .inl ⟨rfl, rfl⟩ | exact .inr ⟨rfl, rfl⟩
 
-/-- The Uniformity family sums to *[root m/n/ŋ, since a substituted candidate violates exactly
-the Uniformity constraint of its prefix. -/
 theorem sum_unif_eq_starRootNasal (c : Candidate) : ∑ q, unif q c = starRootNasal c := by
   revert c
   decide +kernel
@@ -147,8 +145,6 @@ in both columns, so that the lines of Figure 4 do not cross. -/
 def AcrossTheBoard {X : Type*} (sq : Square X) (r : X → ℝ) : Prop :=
   0 ≤ (r sq.tl - r sq.bl) * (r sq.tr - r sq.br)
 
-/-- A score with zero interaction, passed through a monotone link whose other argument (a noise
-scale, say) is insensitive to the rows, has across-the-board row effects. -/
 theorem acrossTheBoard_of_interaction_eq_zero {X S : Type*} {sq : Square X} {d : X → ℝ}
     {s : X → S} {F : S → ℝ → ℝ} (hF : ∀ x, Monotone (F (s x))) (hd : sq.interaction d = 0)
     (hs : sq.InsensitiveToRow s) : AcrossTheBoard sq fun x ↦ F (s x) (d x) := by
@@ -174,24 +170,18 @@ theorem maxEntSubst_eq (w : Fin 11 → ℝ) (x : Prefix × StemC) :
       sigmoid (harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) :=
   maxEnt_real_singleton_of_pair _ _ (a := SubSt.yes) (b := .no) (by decide) (by decide)
 
-/-- Any MaxEnt weighting has constant logit differences on every square, whatever the other
-candidates. -/
 theorem maxEnt_interaction_logOdds_eq_zero (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
     (square p p' c c').interaction (fun x ↦
       log ((maxEnt (constraints.comap (x, ·)).violations w).real {.yes} /
         (maxEnt (constraints.comap (x, ·)).violations w).real {.no})) = 0 :=
   (independent p p' c c').interaction_logOdds_maxEnt w .yes .no
 
-/-- The logit of substitution for /b/ exceeds that for /k/ by the weights of *[root n/ŋ and
-*[root ŋ less that of *NC̥, whatever the prefix. -/
 theorem harmony_b_sub_harmony_k (w : Fin 11 → ℝ) (p : Prefix) :
     harmonyScore constraints w ((p, .b), .yes) - harmonyScore constraints w ((p, .b), .no) -
       (harmonyScore constraints w ((p, .k), .yes) - harmonyScore constraints w ((p, .k), .no)) =
     w 3 + w 4 - w 1 := by
   cases p <;> simp [harmonyScore_eq_neg_sum, Fin.sum_univ_succ] <;> ring
 
-/-- For every weighting, MaxEnt's prefix effects are across the board at every pair of stems,
-and its stem effects at every pair of prefixes. -/
 theorem maxEnt_acrossTheBoard (w : Fin 11 → ℝ) (p p' : Prefix) (c c' : StemC) :
     AcrossTheBoard (square p p' c c') (maxEntSubst w) ∧
       AcrossTheBoard (square p p' c c').transpose (maxEntSubst w) := by
@@ -235,8 +225,6 @@ theorem dotProduct_violationDiff_self_p (q : Prefix) :
   rw [dotProduct_violationDiff_self_eq_diffSq]
   exact_mod_cast (show diffSq (q, .p) = 4 by cases q <;> decide +kernel)
 
-/-- The NHG probability of substitution is probit in the harmony difference between the
-substituted and unsubstituted candidates, with a noise scale fixed by the stem. -/
 private theorem weightNoiseSubst_eq (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) (x : Prefix × StemC) :
     weightNoiseSubst w v x =
       normalCDF ((harmonyScore constraints w (x, .yes) - harmonyScore constraints w (x, .no)) /
@@ -251,8 +239,6 @@ private theorem weightNoiseSubst_eq (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v �
     ← dotProduct_violationDiff_self_eq_diffSq x]
   rfl
 
-/-- Noisy Harmonic Grammar's prefix effects are across the board on every square, for every
-weighting and noise: its noise depends on the stem alone. -/
 theorem weightNoise_acrossTheBoard (w : Fin 11 → ℝ) {v : ℝ≥0} (hv : v ≠ 0) (p p' : Prefix)
     (c c' : StemC) :
     AcrossTheBoard (square p p' c c') (weightNoiseSubst w v) := by
@@ -293,8 +279,6 @@ private theorem measurable_race (a u : ℝ) :
 
 variable [IsProbabilityMeasure η]
 
-/-- The rate of the first candidate integrates, against the law of its constraint, the product of
-the distribution functions of the other two. -/
 theorem raceRate_eq (n a u : ℝ) :
     raceRate η n a u = ∫⁻ x, η (Iio (x - a)) * η (Iio (x - u)) ∂η.map (n + ·) := by
   have : ∀ j, SigmaFinite (![η.map (n + ·), η.map (a + ·), η.map (u + ·)] j) := fun j ↦ by
@@ -386,15 +370,11 @@ end StochasticOT
 
 /-! ### The decision-tree model -/
 
-/-- In a multiplicative model `p(x, y) = g(x) · h(y)`, the difference between two `h`-values
-grows with `g`: it vanishes at the floor and is largest at the ceiling, the paper's claws. -/
 theorem decision_tree_monotonic_diff (g₁ g₂ h₁ h₂ : ℚ) (hg : g₁ < g₂) (hh : h₁ < h₂) :
     g₁ * h₂ - g₁ * h₁ < g₂ * h₂ - g₂ * h₁ := by
   have key : g₁ * (h₂ - h₁) < g₂ * (h₂ - h₁) := mul_lt_mul_of_pos_right hg (by linarith)
   linarith [mul_sub g₁ h₂ h₁, mul_sub g₂ h₂ h₁]
 
-/-- In a multiplicative model the ratio of `h`-differences across two `g`-values is the ratio
-of the `g`-values. -/
 theorem decision_tree_diff_proportional (g₁ g₂ h₁ h₂ : ℚ) :
     (g₂ * h₂ - g₂ * h₁) * g₁ = (g₁ * h₂ - g₁ * h₁) * g₂ := by
   ring

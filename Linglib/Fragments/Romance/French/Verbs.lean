@@ -454,8 +454,6 @@ def allVerbs : List Verb :=
    naitre, rester, aboutir, atterrir, disparaitre, paraitre, grandir, survivre, exister,
    travailler, courir, nager]
 
-/-- Grevisse's gloss holds of the list, since every verb whose perfect takes *être* alone is
-telic or continues a state. -/
 theorem telic_or_continuation_of_perfectAuxiliaries_eq_be :
     ∀ v ∈ allVerbs, v.perfectAuxiliaries = {.be} →
       v.vendlerClass.map (·.telicity) = some .telic ∨ v.phasal = some .continuation := by

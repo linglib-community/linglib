@@ -104,8 +104,6 @@ def tableau {L : Type*} [DecidableEq L] (cand : L → Correspondence Role α) (l
     (ranking : List (ρ → ParadigmConstraint α)) (r : ρ) :=
   Tableau.ofList labels ((eval ranking r).map (Constraint.comap cand))
 
-/-- Candidates that share their base rate alike in the base's recursion, so recursive evaluation
-of them is evaluation of the derived word. -/
 theorem optimal_tableau_recursive {L : Type*} [DecidableEq L] {cand : L → Correspondence Role α}
     {labels : Finset L} {ranking : List (ρ → ParadigmConstraint α)} {r : ρ}
     (h : ∀ k ∈ ranking, ∀ x ∈ labels, ∀ y ∈ labels, (k r).atBase (cand x) = (k r).atBase (cand y)) :
@@ -174,8 +172,6 @@ dominant recursion. -/
 theorem underapplication :
     (tableau cand {.a, .b, .c, .d} recursive ranking ()).optimal = {.d} := by decide
 
-/-- Without recursion, overapplication in the base *L[a]rry ~ L[a]r* wins, since it satisfies
-OO-Identity and `*ær]σ` at the cost of low-ranked IO-Faith only. -/
 theorem overapplication_nonrecursive :
     (tableau cand {.a, .b, .c, .d} nonrecursive ranking ()).optimal = {.a} := by decide
 

@@ -189,12 +189,10 @@ theorem Formula.felicitous_disj (φ ψ : Formula V L P) :
     Expr.Felicitous M g (φ.disj ψ) ↔
       φ.Felicitous M g ∧ (¬ Formula.Realize M g φ → ψ.Felicitous M g) := Iff.rfl
 
-/-- `F(φ → ψ)` iff `Fφ ∧ (φ → Fψ)`. -/
 theorem Formula.felicitous_impl (φ ψ : Formula V L P) :
     Expr.Felicitous M g (φ.impl ψ) ↔
       φ.Felicitous M g ∧ (Formula.Realize M g φ → ψ.Felicitous M g) := Iff.rfl
 
-/-- `F(φ ↔ ψ)` iff `Fφ ∧ Fψ`. -/
 theorem Formula.felicitous_iff (φ ψ : Formula V L P) :
     Expr.Felicitous M g (φ.iff_ ψ) ↔ φ.Felicitous M g ∧ ψ.Felicitous M g := by
   show Expr.Felicitous M g (φ.impl ψ) ∧
@@ -209,7 +207,6 @@ theorem Formula.felicitous_iff (φ ψ : Formula V L P) :
   · rintro ⟨hφ, hψ⟩
     exact ⟨⟨hφ, fun _ => hψ⟩, fun _ => ⟨hψ, fun _ => hφ⟩⟩
 
-/-- `F(∀xφ)` iff `∀x Fφ`. -/
 theorem Formula.felicitous_forall (x : V) (φ : Formula V L P) :
     Expr.Felicitous M g (Formula.forall_ x φ) ↔
       ∀ g', Set.EqOn g' g {x}ᶜ → φ.Felicitous M g' := Iff.rfl
@@ -219,8 +216,6 @@ theorem Formula.felicitous_some (s t : Term V L P) :
     Expr.Felicitous M g (Formula.some_ s t) ↔ s.Felicitous M g ∧ t.Felicitous M g :=
   show (s.Felicitous M g ∧ t.Felicitous M g) ∧ True ↔ _ from (and_true _).to_iff
 
-/-- Felicity of a discourse extended by a sentence: `F Σw(γ ∧ φ)` iff, for every
-assignment of the world and the local variables, `Fγ ∧ (γ → Fφ)`. -/
 theorem Term.felicitous_sigma_conj (w : V) (γ φ : Formula V L P) :
     Expr.Felicitous M g (.sigma w (.conj γ φ)) ↔
       ∀ g', Set.EqOn g' g {y | y ∉ (Expr.conj γ φ).locals ∧ y ≠ w} →

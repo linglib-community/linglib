@@ -204,9 +204,6 @@ theorem possessed :
       [some .nom, some .gen, some .acc] := by
   simp
 
-/-- Without an elsewhere case, a caseless NP left in the verb phrase or a subject without an
-    agreeing head stays caseless — the Case filter's bite — where the configurational grammar
-    values both. -/
 theorem elsewhere_contrast :
     cases grammar finite [subject, internal false] = [some .nom, none] ∧
     cases grammar [] [subject] = [none] ∧

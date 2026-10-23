@@ -75,7 +75,6 @@ def Overlap (f g : Axes) : Prop := ∃ a, f a ≠ ⊥ ∧ g a ≠ ⊥
 
 instance (f g : Axes) : Decidable (Overlap f g) := inferInstanceAs (Decidable (∃ _a, _ ∧ _))
 
-/-- A bundle overlaps itself exactly when it records something. -/
 theorem overlap_self_iff {f : Axes} : Overlap f f ↔ f ≠ ⊥ := by
   simp [Overlap, Function.ne_iff]
 

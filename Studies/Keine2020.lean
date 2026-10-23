@@ -58,9 +58,6 @@ def forceP : ClauseSpine := ⟨[.V, .v, .T, .C, .Force]⟩
 
 /-! ### Upward Entailment -/
 
-/-- The book's clause sizes stand in the extension order, TP extending vP, CP and NmlzP extending
-TP and ForceP extending CP. Transparency is antitone in this order for every probe
-(`Probe.Profile.transparentTo_label_antitone`), which is Upward Entailment. -/
 theorem sizes_le :
     ClauseSpine.vP ≤ .tP ∧ ClauseSpine.tP ≤ .cP ∧ ClauseSpine.tP ≤ nmlzP ∧
       ClauseSpine.cP ≤ forceP := by
@@ -114,9 +111,6 @@ theorem hindi_table :
       row hindiSizes LanguageProbeConfig.hindi.ābar = [true, true, true, false] := by
   decide
 
-/-- NmlzP and CP are incomparable in the extension order, and each is opaque to a probe on C⁰
-that the other admits, so transparency does not order the clause sizes linearly and three
-locality profiles arise. -/
 theorem nmlzP_cP_incomparable :
     (¬ nmlzP ≤ ClauseSpine.cP ∧ ¬ ClauseSpine.cP ≤ nmlzP) ∧
       (LanguageProbeConfig.hindi.wh.TransparentTo nmlzP.label ∧
@@ -252,10 +246,6 @@ theorem a_movement_chain (L : Finset Cat) (hL : Cat.C ∈ L → Cat.T ∈ L) :
       (LanguageProbeConfig.english.aMove.TransparentTo L → lubukusuAProbe.TransparentTo L) := by
   simpa [LanguageProbeConfig.hindi, LanguageProbeConfig.english, lubukusuAProbe] using mt hL
 
-/-- Sections 3.4.3 and 6.2: the Ban on Improper Movement and the smuggling and remnant-movement
-restrictions are one fact about domains rather than items: a CP is opaque to every A-probe whose
-horizon it inherits, edge included, so nothing Ā-movement has placed in or under a CP is
-reachable by A-movement, while Ā-probes with no horizon or one outside the label are unaffected. -/
 theorem improper_movement (h : Cat) (hh : h ∈ ClauseSpine.cP) :
     ¬ (⟨.T, some h⟩ : Probe.Profile).TransparentTo ClauseSpine.cP.label := by
   simpa using hh

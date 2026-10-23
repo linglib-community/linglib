@@ -100,7 +100,6 @@ theorem IsStarFree.of_factorsThrough {β : Type*} {g : List α → β} {n : ℕ}
   · obtain ⟨w, rfl⟩ := L.syntacticClass_surjective x
     simpa [syntacticClass_flatten] using hcls (hpow w)
 
-/-- A star-free language cannot tell `n + 1` copies of a word from `n` copies, for some `n`. -/
 theorem IsStarFree.exists_flatten_replicate_succ_mem_iff (h : L.IsStarFree) :
     ∃ n, ∀ w : List α,
       (List.replicate (n + 1) w).flatten ∈ L ↔ (List.replicate n w).flatten ∈ L := by
@@ -108,7 +107,6 @@ theorem IsStarFree.exists_flatten_replicate_succ_mem_iff (h : L.IsStarFree) :
   exact ⟨n, fun w ↦ mem_iff_of_syntacticClass_eq <| by
     simpa [syntacticClass_flatten] using hn (L.syntacticClass w)⟩
 
-/-- The words of even length do not form a star-free language. -/
 theorem not_isStarFree_setOf_even_length [Nonempty α] :
     ¬ IsStarFree {w : List α | Even w.length} := fun h ↦ by
   obtain ⟨n, hn⟩ := h.exists_flatten_replicate_succ_mem_iff
@@ -130,11 +128,9 @@ theorem IsStarFree.preimage_filter (h : L.IsStarFree) (p : α → Bool) :
     IsStarFree {w | w.filter p ∈ L} :=
   h.comap (FreeMonoid.filter p)
 
-/-- The full language is star-free. -/
 theorem isStarFree_univ : IsStarFree (Set.univ : Language α) :=
   Monoid.aperiodicVariety.langs_univ
 
-/-- Star-free languages are closed under finitely-indexed intersections. -/
 theorem IsStarFree.iInter {ι : Type*} [Finite ι] {f : ι → Set (List α)}
     (h : ∀ i, IsStarFree (f i)) : IsStarFree (⋂ i, f i) := by
   have := Fintype.ofFinite ι

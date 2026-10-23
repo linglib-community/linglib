@@ -140,7 +140,6 @@ theorem range_le_of_mem {ts : List Term} {t : Term} (h : t ∈ ts) (R : String) 
     · exact le_max_left _ _
     · exact (ih h).trans (le_max_right _ _)
 
-/-- A pronoun-free formula demands no witnesses. -/
 theorem range_eq_zero_of_pronounFree : ∀ {φ : Formula}, φ.PronounFree → φ.range = 0
   | atom _ ts, h => by
     induction ts with
@@ -216,8 +215,6 @@ def Equiv (φ ψ : Formula) : Prop :=
 
 variable (M : Model E)
 
-/-- Satisfaction reads the sequence no further than the formula's contribution plus its
-demand. -/
 theorem sat_congr : ∀ (φ : Formula) {g : ℕ → E} {e e' : Stream' E},
     (∀ i < φ.domain + φ.range, e.get i = e'.get i) → (sat M g e φ ↔ sat M g e' φ)
   | atom R ts, g, e, e', h => by
@@ -261,7 +258,6 @@ theorem sat_impl (g : ℕ → E) (e : Stream' E) (φ ψ : Formula) :
   simp only [impl, sat, domain, Nat.add_zero, Stream'.drop_zero, not_exists, not_and, not_forall,
     not_not, exists_prop]
 
-/-- Universal quantification is truth of the scope under every value. -/
 theorem sat_forall (g : ℕ → E) (e : Stream' E) (x : ℕ) (φ : Formula) :
     sat M g e (forall_ x φ) ↔ ∀ b, IsTrue M (Function.update g x b) e φ := by
   simp only [forall_, sat, domain, Nat.zero_add, not_exists, not_and, not_forall, not_not,
@@ -294,8 +290,6 @@ theorem isTrue_exists (g : ℕ → E) (e : Stream' E) (x : ℕ) (φ : Formula) :
   · rintro ⟨b, c, hc, h⟩
     exact ⟨b :: c, by simp [hc, domain], by simpa [sat, Stream'.cons_append_stream] using h⟩
 
-/-- Truth of a conjunction step by step: witnesses for the first conjunct, then witnesses for
-the second in their context. -/
 theorem isTrue_conj_iff (g : ℕ → E) (e : Stream' E) (φ ψ : Formula) :
     IsTrue M g e (φ ⋀ ψ) ↔ ∃ b : List E, b.length = φ.domain ∧ sat M g (b ++ₛ e) φ ∧
       ∃ a : List E, a.length = ψ.domain ∧ sat M g (a ++ₛ (b ++ₛ e)) ψ := by
@@ -428,8 +422,6 @@ theorem not_idempotent :
   simp [φ, sat, domain, Term.eval, counterModel, counterSeq, Stream'.drop, Stream'.get,
     Stream'.head, Stream'.tail] at this
 
-/-- *Someone is `P`. He is `Q`* and *He is `Q`. Someone is `P`* differ: in the counter-model the
-first holds of the sequence `0, 1, …` and the second does not. -/
 theorem not_commutative :
     ¬ Equiv (exists_ 0 (atom "P" [.var 0]) ⋀ atom "Q" [.pron 0])
       (atom "Q" [.pron 0] ⋀ exists_ 0 (atom "P" [.var 0])) := by
@@ -519,8 +511,6 @@ def update (n j : ℕ) : Formula → Formula
   | exists_ _ φ => by simp only [update, domain, domain_update]
   | conj φ ψ => by simp only [update, domain, domain_update]
 
-/-- An updated formula against a sequence with `n` entries inserted after the `j` most recent
-context witnesses is the formula against the sequence without them. -/
 theorem sat_update (M : Model E) : ∀ (φ : Formula) (n j : ℕ) {g : ℕ → E}
     {c c' d : List E} {e : Stream' E}, c.length = φ.domain → c'.length = j → d.length = n →
     (sat M g (c ++ₛ (c' ++ₛ (d ++ₛ e))) (φ.update n j) ↔ sat M g (c ++ₛ (c' ++ₛ e)) φ)
@@ -706,7 +696,6 @@ theorem supports_iff_update_eq (φ : Formula) (g : ℕ → W → E) (γ : Stream
   rw [supports_iff, update_eq]
   exact DynamicSemantics.CCP.isFixedPt_up_iff.symm
 
-/-- A state supports a negation iff every update with the negated formula is absurd. -/
 theorem supports_neg_iff (φ : Formula) (g : ℕ → W → E) (γ : Stream' (W → E)) (σ : Set W) :
     Supports M g γ σ (.neg φ) ↔
       ∀ c : List (W → E), c.length = φ.domain → update M g (c ++ₛ γ) σ φ = ∅ := by

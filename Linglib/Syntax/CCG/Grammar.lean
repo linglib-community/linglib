@@ -115,8 +115,6 @@ inductive Grammar.Derives (G : Grammar T α) : Cat α → List T → Prop where
 def Grammar.language (G : Grammar T α) : Language T :=
   { w | G.Derives (.atom G.start) w }
 
-/-- Every derivable string is nonempty, since a lexical entry is a single token, so grammars are
-ε-free as in the normal form of [schiffer-maletti-2021]. -/
 theorem Grammar.Derives.ne_nil {G : Grammar T α} {c : Cat α} {w : List T}
     (h : G.Derives c w) : w ≠ [] := by
   induction h with

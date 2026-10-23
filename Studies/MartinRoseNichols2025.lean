@@ -102,7 +102,6 @@ structure CauseConcepts (E : Type*) where
 
 variable {E : Type*} (C : CauseConcepts E) {s o : E}
 
-/-- A non-physical relatum, an absence, a fact or a degree, produces nothing. -/
 theorem CauseConcepts.not_produces_of_not_physical (h : ¬C.Physical s) : ¬C.Produces s o :=
   fun hp ↦ h (C.physical_of_produces hp)
 
@@ -161,12 +160,10 @@ theorem production_constraint :
       {(.lexical, .production), (.periphrastic, .dependence)} := by
   decide
 
-/-- Under the production constraint the lexical form has only the production reading. -/
 theorem reading_eq_production_of_lexical :
     ∀ r, (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true) → r = .production := by
   decide
 
-/-- Under the production constraint periphrastic *cause* has only the dependence reading. -/
 theorem reading_eq_dependence_of_periphrastic :
     ∀ r, (Form.periphrastic, r) ∈ superoptimal transitivePairs (tableau true) →
       r = .dependence := by
@@ -209,17 +206,13 @@ def sunburn : CauseConcepts Sunburn where
   depends_of_produces h := ⟨.inl h.1, h.2⟩
   physical_of_produces h := by rintro rfl; cases h.1
 
-/-- *The sun burned her skin* holds under the production reading. -/
 theorem sunburn_sun : Reading.production.holds sunburn .sun .skin := ⟨rfl, rfl⟩
 
-/-- *The lack of sunscreen burned her skin* fails under every reading the production constraint
-leaves the lexical form. -/
 theorem sunburn_lexical (r : Reading)
     (hr : (Form.lexical, r) ∈ superoptimal transitivePairs (tableau true)) :
     ¬r.holds sunburn .lackOfSunscreen .skin :=
   not_holds_of_not_physical sunburn hr fun h ↦ h rfl
 
-/-- *The lack of sunscreen caused her skin to burn* holds under the reading left to *cause*. -/
 theorem sunburn_periphrastic (r : Reading)
     (hr : (Form.periphrastic, r) ∈ superoptimal transitivePairs (tableau true)) :
     r.holds sunburn .lackOfSunscreen .skin := by
@@ -242,14 +235,10 @@ def axle : CauseConcepts Axle where
   depends_of_produces h := ⟨.inl h.1, h.2⟩
   physical_of_produces _ := trivial
 
-/-- *The driving cracked the axle* holds, since a production cause satisfies both readings. -/
 theorem axle_driving : Reading.production.holds axle .driving .axle := ⟨rfl, rfl⟩
 
-/-- *The flat tire damaged the axle* holds under the thin verb's dependence reading. -/
 theorem axle_tire_dependence : Reading.dependence.holds axle .tire .axle := ⟨.inr rfl, rfl⟩
 
-/-- *The flat tire cracked the axle* fails, since the tire is physical but produces nothing;
-this is Wolff's directness constraint in its positive form as production. -/
 theorem axle_tire_not_production : ¬Reading.production.holds axle .tire .axle :=
   fun h ↦ Axle.noConfusion h.1
 
@@ -367,7 +356,6 @@ result state in the complement of `v`. -/
 def rootPosition (s : Sample) : Semantics.Root.Position :=
   if s ∈ causativeMannerVerbs then .adjoined else .complement
 
-/-- Only a thick verb has an adjoined root. -/
 theorem mem_thick_of_rootPosition {s : Sample} (h : s.rootPosition = .adjoined) : s ∈ thick := by
   unfold rootPosition at h
   split_ifs at h with hs

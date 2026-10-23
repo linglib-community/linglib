@@ -90,7 +90,6 @@ def dimensionalIncompatibility (dim : P → D) : SimpleGraph P where
 instance [DecidableEq P] [DecidableEq D] : DecidableRel (dimensionalIncompatibility dim).Adj :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- Two properties are compatible exactly when they are values of different dimensions. -/
 theorem compl_dimensionalIncompatibility :
     (dimensionalIncompatibility dim)ᶜ = (⊤ : SimpleGraph D).comap dim := by
   ext p q
@@ -98,7 +97,6 @@ theorem compl_dimensionalIncompatibility :
     SimpleGraph.top_adj]
   exact ⟨fun ⟨hne, h⟩ hd ↦ h ⟨hne, hd⟩, fun hd ↦ ⟨fun e ↦ hd (congrArg dim e), fun h ↦ hd h.2⟩⟩
 
-/-- The compatibility graph of a family of dimensions is complete multipartite. -/
 theorem isCompleteMultipartite_compl_dimensionalIncompatibility :
     (dimensionalIncompatibility dim)ᶜ.IsCompleteMultipartite := by
   rw [compl_dimensionalIncompatibility]
@@ -118,8 +116,6 @@ theorem isCompleteMultipartite_compl_iff :
   · rintro ⟨D, dim, rfl⟩
     exact isCompleteMultipartite_compl_dimensionalIncompatibility
 
-/-- The personae of a family of dimensions are the sets with exactly one value of each dimension
-that has values. -/
 theorem mem_maximalIndepSets_dimensionalIncompatibility_iff [Fintype P] [DecidableEq P]
     [DecidableEq D] {s : Finset P} :
     s ∈ (dimensionalIncompatibility dim).maximalIndepSets ↔
@@ -208,7 +204,6 @@ theorem Pole.incompatible_adj_iff {p q : Pole} :
     (dimensionalIncompatibility Pole.dimension).Adj p q ↔ q = p.opposite := by
   revert p q; decide
 
-/-- The personae are the sets with exactly one pole of each dimension. -/
 theorem Pole.mem_maximalIndepSets_iff (s : Finset Pole) :
     s ∈ (dimensionalIncompatibility Pole.dimension).maximalIndepSets ↔
       ∀ d, (s.filter (·.dimension = d)).card = 1 :=

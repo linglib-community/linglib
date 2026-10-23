@@ -205,7 +205,6 @@ theorem exists_denote_of_isSubterm {u : Template τ} {t : Template σ} (hu : u.I
   | causing _ ih => exact ih h.1
   | caused _ ih => obtain ⟨_, _, _, he⟩ := h; exact ih he
 
-/-- A template with `BECOME` describes only eventualities that involve a change. -/
 theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
     {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ s e, s ~[M.become] e := by
   induction t generalizing y x with
@@ -217,7 +216,6 @@ theorem exists_become_of_denote {t : Template σ} (ht : t.HasResultState)
     obtain ⟨hc, _, _, he⟩ := h
     exact ht.elim (ihc · hc) (ihe · he)
 
-/-- A template with `CAUSE` describes only eventualities that involve a causal relation. -/
 theorem exists_cause_of_denote {t : Template σ} (ht : t.HasCause)
     {v : σ.Carrier State Event} (h : t.denote M P Q y x v) : ∃ v e, v ~[M.cause] e := by
   induction t generalizing y x with

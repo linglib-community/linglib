@@ -106,11 +106,9 @@ variable (l : L) (x : α) (xs : List α)
 @[simp] theorem rState_nil : B.rState [] = B.rInit := rfl
 @[simp] theorem rState_cons : B.rState (x :: xs) = B.rStep (B.rState xs) x := rfl
 
-/-- Scanning past a prefix reseeds the left state. -/
 theorem lState_append (ys : List α) : B.lState (xs ++ ys) = B.lStateAfter (B.lState xs) ys :=
   List.foldl_append
 
-/-- A pending suffix reseeds the right state. -/
 theorem rState_append (ys : List α) :
     B.rState (xs ++ ys) = rState {B with rInit := B.rState ys} xs :=
   List.foldr_append
@@ -143,7 +141,6 @@ namespace LetterToLetter
 
 variable {B}
 
-/-- The run of a letter-to-letter bimachine has the length of its input. -/
 @[simp] theorem length_runFrom (w : B.LetterToLetter) (l : L) (xs : List α) :
     (B.runFrom l xs).length = xs.length := by
   induction xs generalizing l <;> simp [w.output_eq, *]
@@ -152,8 +149,6 @@ variable {B}
     (B.run xs).length = xs.length :=
   w.length_runFrom B.lInit xs
 
-/-- Output coordinate `i` reads the left state after the length-`i` prefix and the
-right state of the strict suffix. -/
 theorem getElem?_runFrom (w : B.LetterToLetter) (l : L) (xs : List α) (i : ℕ) :
     (B.runFrom l xs)[i]? = xs[i]?.map fun a ↦
       w.cell (B.lStateAfter l (xs.take i)) a (B.rState (xs.drop (i + 1))) := by
@@ -205,7 +200,6 @@ def map (eL : L ≃ L') (eR : R ≃ R') (B : Bimachine L R α β) : Bimachine L'
     (map eL eR B).run = B.run := by
   funext xs; simp [run]
 
-/-- Cells agree exactly when the underlying word-valued outputs do. -/
 theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
     {l l' : L} {a a' : α} {r r' : R} :
     w.cell l a r = w.cell l' a' r' ↔ B.output l a r = B.output l' a' r' := by
@@ -235,8 +229,6 @@ def reverse : Bimachine R L α β where
 @[simp] theorem reverse_reverse : B.reverse.reverse = B := by
   simp [reverse]
 
-/-- Appending a symbol restarts the right automaton of every earlier cell from the state that
-symbol leads to. -/
 private theorem runFrom_append_singleton (l : L) (xs : List α) (a : α) :
     B.runFrom l (xs ++ [a]) =
       ({ B with rInit := B.rStep B.rInit a } : Bimachine L R α β).runFrom l xs
@@ -301,8 +293,6 @@ def ofFlags_letterToLetter : (ofFlags pL pR out).LetterToLetter := ⟨out, fun _
 @[simp] theorem ofFlags_rState (xs : List α) : (ofFlags pL pR out).rState xs = xs.any pR := by
   induction xs <;> simp [*, Bool.or_comm]
 
-/-- Output `i` of a flag bimachine sees the input symbol and the two window-`any`
-flags. -/
 theorem getElem?_ofFlags_run (x : List α) (i : ℕ) :
     ((ofFlags pL pR out).run x)[i]?
       = x[i]?.map fun a ↦ out ((x.take i).any pL) a ((x.drop (i + 1)).any pR) := by
@@ -330,7 +320,6 @@ def Mealy.toBimachine : Bimachine σ Unit α β where
     T.toBimachine.runFrom s xs = T.runFrom s xs := by
   induction xs generalizing s <;> simp [*]
 
-/-- The bimachine view computes the same string function. -/
 @[simp] theorem Mealy.toBimachine_run : T.toBimachine.run = T.run :=
   funext fun xs ↦ T.toBimachine_runFrom T.start xs
 
@@ -344,8 +333,6 @@ def IsBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.run = f
 
-/-- Every finite-state bimachine computes a bimachine-computable function, whatever
-the universes of its state types. -/
 theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
     (B : Bimachine L R α β) : IsBimachineComputable B.run :=
   ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
@@ -367,8 +354,6 @@ def IsLengthPreservingBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),
     B.IsLetterToLetter ∧ B.run = f
 
-/-- Every finite letter-to-letter bimachine computes a length-preserving
-bimachine-computable function, whatever the universes of its state types. -/
 theorem Bimachine.isLengthPreservingBimachineComputable {L R : Type*} [Fintype L]
     [Fintype R] (B : Bimachine L R α β) (h : B.IsLetterToLetter) :
     IsLengthPreservingBimachineComputable B.run :=
@@ -376,19 +361,16 @@ theorem Bimachine.isLengthPreservingBimachineComputable {L R : Type*} [Fintype L
   ⟨Shrink L, inferInstance, Shrink R, inferInstance, B.map (equivShrink.{0} L) (equivShrink.{0} R),
     ⟨w.map _ _⟩, B.run_map _ _⟩
 
-/-- A length-preserving bimachine-computable function is bimachine-computable. -/
 theorem IsBimachineComputable.of_lengthPreserving {f : List α → List β}
     (h : IsLengthPreservingBimachineComputable f) : IsBimachineComputable f :=
   have ⟨L, _, R, _, B, _, hB⟩ := h
   ⟨L, ‹_›, R, ‹_›, B, hB⟩
 
-/-- Functions computed by letter-to-letter bimachines are length-preserving. -/
 theorem IsLengthPreservingBimachineComputable.length_eq {f : List α → List β}
     (h : IsLengthPreservingBimachineComputable f) (x : List α) : (f x).length = x.length :=
   have ⟨_, _, _, _, _, ⟨w⟩, hB⟩ := h
   hB ▸ w.length_run x
 
-/-- A Mealy-computable function is bimachine-computable (`Mealy.toBimachine`). -/
 theorem IsBimachineComputable.of_mealyComputable {f : List α → List β}
     (h : IsMealyComputable f) : IsBimachineComputable f :=
   have ⟨_, _, T, hT⟩ := h

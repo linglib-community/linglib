@@ -174,17 +174,14 @@ theorem mem_randomAssign_prop :
       · subst h; exact (State.updateProp_prop_self ..).symm
       · exact (hq q h).trans (State.updateProp_prop_of_ne _ h _).symm
 
-/-- A fixed propositional dref keeps its value across the update. -/
 theorem _root_.DynamicSemantics.Update.Fixes.prop_eq {D : Update (State W E)} (h : Fixes φ D)
     (hD : i ~[D] j) : j.prop φ = i.prop φ :=
   h i j hD
 
-/-- Introducing `p` with the value `s` runs the DRS `[p | C]` when the result satisfies `C`. -/
 theorem updateProp_mem_box {C : Condition (State W E)} (p : PVar) (s : Set W)
     (h : i.updateProp p s ∈ C) : i ~[box {p} C] i.updateProp p s :=
   mem_box_singleton.mpr ⟨updateProp_mem_randomAssign i p s, h⟩
 
-/-- An individual variable update fixes every propositional dref. -/
 theorem fixes_randomAssign_ivar (φ : PVar) (v : IVar) :
     Fixes φ (randomAssign (S := State W E) v) :=
   fun _ _ h ↦ (mem_randomAssign_indiv.mp h).1 φ
@@ -206,8 +203,6 @@ theorem mem_relUpdate :
     i ~[relUpdate φ v] j ↔ i ~[randomAssign v] j ∧ ∀ w, w ∈ j.prop φ ↔ j.indiv v w ≠ none :=
   mem_box_singleton
 
-/-- Introducing `υ` as the concept `e` is a relative update `[φ : υ]` when `e` has a referent
-at exactly the `φ`-worlds. -/
 theorem updateIndiv_mem_relUpdate (e : W → Option E) (h : ∀ w, w ∈ i.prop φ ↔ e w ≠ none) :
     i ~[relUpdate φ v] i.updateIndiv v e :=
   mem_relUpdate.mpr ⟨updateIndiv_mem_randomAssign i v e, by simpa using h⟩

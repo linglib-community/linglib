@@ -65,14 +65,12 @@ theorem isPiecewiseTestable_shuffleIdeal (hw : w.length ≤ k) :
     (shuffleIdeal w).IsPiecewiseTestable k :=
   fun _ _ e ↦ propext (subseqSet_eq_iff e hw)
 
-/-- Avoiding a pattern that fits in the window is piecewise testable. -/
 theorem isPiecewiseTestable_compl_shuffleIdeal (hw : w.length ≤ k) :
     (shuffleIdeal w)ᶜ.IsPiecewiseTestable k :=
   (isPiecewiseTestable_shuffleIdeal hw).compl
 
 /-! ### Regularity of shuffle ideals -/
 
-/-- Reading a letter `a` consumes a leading `a` of the pattern, if there is one. -/
 theorem leftQuotient_singleton_shuffleIdeal [DecidableEq α] (a : α) (w : List α) :
     (shuffleIdeal w).leftQuotient [a] =
       shuffleIdeal (if w.head? = some a then w.tail else w) := by
@@ -84,7 +82,6 @@ theorem leftQuotient_singleton_shuffleIdeal [DecidableEq α] (a : α) (w : List 
     · subst hb; simp [cons_sublist_cons]
     · simp [hb, sublist_cons_iff]
 
-/-- The left quotients of the shuffle ideal of `w` are shuffle ideals of suffixes of `w`. -/
 theorem exists_suffix_leftQuotient_shuffleIdeal (w x : List α) :
     ∃ s, s <:+ w ∧ (shuffleIdeal w).leftQuotient x = shuffleIdeal s := by
   classical

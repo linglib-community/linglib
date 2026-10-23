@@ -58,15 +58,11 @@ open Finset Degree
 
 /-! ### The comparative -/
 
-/-- MORE applied to the greatest degree to which `y` is ADJ₂, the meaning of *x is more ADJ₁ than
-y is ADJ₂*, holds of `x` exactly when the degree of `x` exceeds that of `y`. -/
 theorem more_iff {E F : Type*} (μ₁ : E → ℚ) (μ₂ : F → ℚ) (x : E) (y : F) :
     MaxComparative .gt (· = .inl x) (· = .inr y) (Sum.elim μ₁ μ₂) ↔
       x ∈ μ₁ ⁻¹' Set.Ioi (μ₂ y) :=
   maxComparative_eq_iff _ _ _
 
-/-- A member lowest on one scale is not more ADJ₁ than a member highest on another is ADJ₂, since
-its degree is at most one over the number of classes and the standard's is one. -/
 theorem not_more_of_least_of_greatest {D D' E F : Type*} [LinearOrder D] [DecidableEq D]
     [LinearOrder D'] [DecidableEq D'] {μ : E → D} {ν : F → D'} {C : Finset E} {C' : Finset F}
     {x : E} {y : F} (hx : x ∈ C) (hy : y ∈ C') (hmin : ∀ z ∈ C, μ x ≤ μ z)
@@ -119,8 +115,6 @@ theorem indirect_comparison :
     universalDegree_of_image_eq_Icc hi (by decide : Member.h ∈ original)]
   norm_num [beauty, intelligence]
 
-/-- The expanded committee assigns every member the universal degrees the original committee
-does, since each newcomer joins an existing class. -/
 theorem expanded :
     universalDegree beauty univ = universalDegree beauty original ∧
     universalDegree intelligence univ = universalDegree intelligence original :=
@@ -135,16 +129,12 @@ variable {E : Type*} {μ ν : E ⊕ ℕ → ℕ} {P : Finset E} {N : ℕ}
 /-- The comparison class of the people in `P` and the measurements from one to `N` inches. -/
 def withMeasurements (P : Finset E) (N : ℕ) : Finset (E ⊕ ℕ) := P.disjSum (Icc 1 N)
 
-/-- When each measurement measures itself and every person measures one of the measurements up
-to `N`, the classes are the measurements. -/
 theorem image_withMeasurements (hμ : ∀ n, μ (.inr n) = n) (hP : ∀ x ∈ P, μ (.inl x) ∈ Icc 1 N) :
     (withMeasurements P N).image μ = Icc 1 N := by
   refine Subset.antisymm (fun _ h ↦ ?_) fun n hn ↦ mem_image.2 ⟨.inr n, ?_, hμ n⟩
   · obtain ⟨y | n, hy, rfl⟩ := mem_image.1 h <;> simp_all [withMeasurements]
   · simp_all [withMeasurements]
 
-/-- With the measurements up to `N` in the comparison class, a person's universal degree is
-their measurement over `N`. -/
 theorem universalDegree_withMeasurements (hμ : ∀ n, μ (.inr n) = n)
     (hP : ∀ x ∈ P, μ (.inl x) ∈ Icc 1 N) {x : E} (hx : x ∈ P) :
     universalDegree μ (withMeasurements P N) (.inl x) = μ (.inl x) / N :=
@@ -184,8 +174,6 @@ def width : Person ⊕ ℕ → ℕ
 measurements up to eighty inches. -/
 def measured : Finset (Person ⊕ ℕ) := withMeasurements univ 80
 
-/-- Seymour's universal degrees are his measurements over eighty, so he is taller than he is
-wide and not wider than he is tall. -/
 theorem taller_than_wide :
     universalDegree height measured (.inl .s) = 62 / 80 ∧
     universalDegree width measured (.inl .s) = 36 / 80 ∧

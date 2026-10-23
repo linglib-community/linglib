@@ -221,7 +221,6 @@ theorem hungarian_fits (A : Analysis) : Fits A hungarian Examples.ex_10 :=
     (Nishigauchi), so denotes the plurality ((11)). -/
 def japanese : Antecedent := { grain := some .plurality }
 
-/-- A plural reflexive that cannot be bound leaves narrow scope only on every analysis. -/
 theorem japanese_fits (A : Analysis) : Fits A japanese Examples.ex_11 :=
   (fits_iff_of_none (B := relational) rfl rfl _).mpr (by decide)
 
@@ -283,7 +282,6 @@ theorem collective_narrow (A : Analysis) (exhaustive : Bool) (r : Scope) :
     distributive reading. -/
 def exhaustiveDistributive : Antecedent := pro true false true
 
-/-- Under exhaustive control a distributively read matrix subject leaves wide scope only. -/
 theorem exhaustiveDistributive_wide (A : Analysis) (r : Scope) :
     Available A exhaustiveDistributive r ↔ r = .wide := by
   cases r <;> simp [Available, exhaustiveDistributive, pro]

@@ -63,7 +63,6 @@ theorem cell_eq_of_rel (h : Q w v) : Q.cell w = Q.cell v :=
   Set.ext fun _ ↦ ⟨fun h' ↦ Q.trans' h' h, fun h' ↦ Q.trans' h' (Q.symm' h)⟩
 
 variable (Q) in
-/-- Two cells are equal or disjoint. -/
 theorem cell_eq_or_disjoint (w v : W) : Q.cell w = Q.cell v ∨ Disjoint (Q.cell w) (Q.cell v) := by
   by_cases h : Q w v
   · exact Or.inl (cell_eq_of_rel h)
@@ -119,7 +118,6 @@ theorem decides_iff : Q.Decides p ↔ ∀ w v, Q w v → (w ∈ p ↔ v ∈ p) :
 theorem Decides.iff (h : Q.Decides p) (hwv : Q w v) : w ∈ p ↔ v ∈ p :=
   decides_iff.1 h w v hwv
 
-/-- `Q` decides `p` iff each cell entails `p` or entails its negation. -/
 theorem decides_iff_forall_cell :
     Q.Decides p ↔ ∀ w, Q.cell w ⊆ p ∨ ∀ v ∈ Q.cell w, v ∉ p := by
   rw [decides_iff]
@@ -134,17 +132,13 @@ theorem decides_iff_forall_cell :
 instance [Fintype W] [DecidableRel Q] [DecidablePred (· ∈ p)] : Decidable (Q.Decides p) :=
   decidable_of_iff _ decides_iff.symm
 
-/-- A finer question decides whatever a coarser one does. -/
 theorem Decides.mono {Q' : Setoid W} (hQ : Q' ≤ Q) (h : Q.Decides p) : Q'.Decides p :=
   hQ.trans h
 
-/-- The finest question decides every proposition. -/
 theorem bot_decides : (⊥ : Setoid W).Decides p := bot_le
 
-/-- The polar question whether `p` decides `p`. -/
 theorem polar_decides : (polar p).Decides p := le_rfl
 
-/-- The coarsest question decides only the trivial propositions. -/
 theorem top_decides_iff : (⊤ : Setoid W).Decides p ↔ ∀ w v, (w ∈ p ↔ v ∈ p) := by
   simp [decides_iff, Setoid.top_def]
 
@@ -159,16 +153,12 @@ theorem Decides.inter (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∩ q
 theorem Decides.union (hp : Q.Decides p) (hq : Q.Decides q) : Q.Decides (p ∪ q) :=
   decides_iff.2 fun _ _ h ↦ or_congr (decides_iff.1 hp _ _ h) (decides_iff.1 hq _ _ h)
 
-/-- A question decides each of its cells. -/
 theorem decides_cell (w : W) : Q.Decides (Q.cell w) :=
   decides_iff.2 fun _ _ hab ↦ ⟨fun h ↦ Q.trans (Q.symm hab) h, fun h ↦ Q.trans hab h⟩
 
-/-- A cell of a question deciding `p` that meets `p` entails it. -/
 theorem Decides.cell_subset (h : Q.Decides p) (hw : w ∈ p) : Q.cell w ⊆ p :=
   fun _ hv ↦ (decides_iff.1 h _ _ hv).2 hw
 
-/-- A question settles the value of `f`, refining its kernel, exactly when it decides each fibre
-of `f`. -/
 theorem le_ker_iff_forall_decides {β : Type*} {f : W → β} :
     Q ≤ ker f ↔ ∀ b, Q.Decides (f ⁻¹' {b}) :=
   ⟨fun h _ ↦ decides_iff.2 fun _ _ hwv ↦ by simp [ker_def.1 (h hwv)],
@@ -177,7 +167,6 @@ theorem le_ker_iff_forall_decides {β : Type*} {f : W → β} :
 /-! ### Polar questions as coatoms -/
 
 variable (Q) in
-/-- A question is the meet of the polar questions of its cells. -/
 theorem iInf_polar_cell : ⨅ w, polar (Q.cell w) = Q := by
   ext v u
   simp only [Setoid.iInf_iff, polar_iff, mem_cell]
@@ -188,9 +177,6 @@ theorem polar_ne_top (hp : p.Nonempty) (hp' : p ≠ Set.univ) : polar p ≠ ⊤ 
   obtain ⟨u, hu⟩ := (Set.ne_univ_iff_exists_notMem p).1 hp'
   exact hu ((polar_iff.1 (show polar p v u from h ▸ trivial)).1 hv)
 
-/-- A polar question whether `p`, for `p` neither empty nor everything, is a coatom, since a
-coarser question relates a `p`-world `a` to a world outside `p`, and so relates every world to
-`a`. -/
 theorem isCoatom_polar (hp : p.Nonempty) (hp' : p ≠ Set.univ) : IsCoatom (polar p) := by
   refine ⟨polar_ne_top hp hp', fun R hR ↦ Setoid.eq_top_iff.2 fun x y ↦ ?_⟩
   obtain ⟨a, b, hab, h⟩ : ∃ a b, R a b ∧ ¬ polar p a b := by
@@ -199,8 +185,6 @@ theorem isCoatom_polar (hp : p.Nonempty) (hp' : p ≠ Set.univ) : IsCoatom (pola
   simp only [Setoid.le_def, polar_iff] at h hle
   grind [Setoid.trans', Setoid.symm']
 
-/-- The coatoms of the lattice of questions are exactly the polar questions whether `p`, for `p`
-neither empty nor everything. -/
 theorem isCoatom_iff : IsCoatom Q ↔ ∃ p : Set W, p.Nonempty ∧ p ≠ Set.univ ∧ Q = polar p := by
   refine ⟨fun h ↦ ?_, fun ⟨p, hp, hp', e⟩ ↦ e ▸ isCoatom_polar hp hp'⟩
   obtain ⟨w, hw⟩ : ∃ w, Q.cell w ≠ Set.univ := by
@@ -224,11 +208,9 @@ theorem ofProps_iff : ofProps ps w v ↔ ∀ p ∈ ps, (w ∈ p ↔ v ∈ p) := 
 instance [DecidableEq W] : DecidableRel (ofProps ps) :=
   fun _ _ ↦ decidable_of_iff _ (ofProps_iff ps).symm
 
-/-- The question raised by a family decides each of its members. -/
 theorem ofProps_decides {p : Finset W} (hp : p ∈ ps) : (ofProps ps).Decides ↑p :=
   iInf₂_le p hp
 
-/-- The question raised by a family is the coarsest question deciding all of its members. -/
 theorem le_ofProps_iff : Q ≤ ofProps ps ↔ ∀ p ∈ ps, Q.Decides ↑p :=
   le_iInf₂_iff
 

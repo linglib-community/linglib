@@ -104,8 +104,6 @@ theorem fits_iff (d : Dominance) :
       i.pluractional = pluractional d i) ↔ d = .replacive := by
   cases d <;> decide
 
-/-- The verbaliser overwrites the magnitude iconicity of lexical tone: *wùlàʃ* ‘wide open’ and
-*wúláʃ* ‘wide open of small thing’ differ only in tone and have the same verbs. -/
 theorem magnitude_overwritten :
     wulash.syllables.map TBU.seg = wulashSmall.syllables.map TBU.seg ∧
       wulash.tones ≠ wulashSmall.tones ∧ wulash.verb = wulashSmall.verb ∧
@@ -114,27 +112,19 @@ theorem magnitude_overwritten :
 
 /-! ### The descriptive generalisations -/
 
-/-- Every singular verb has M on every syllable, or M on every nonfinal syllable and H on the
-final one. -/
 theorem verb_melodies :
     ∀ i ∈ ideophones, ∀ v ∈ i.verb,
       v = i.tones.map (fun _ ↦ .M) ∨ v = i.tones.dropLast.map (fun _ ↦ .M) ++ [.H] := by
   decide
 
-/-- Which melody a singular verb has is lexical: *wùlàʃ* ‘wide open’ and *bɨ̀ʃɔ̀l* ‘shabbily
-dressed’ have the same tones and select different verbalisers. -/
 theorem verbalizer_lexical :
     wulash.tones = bishol.tones ∧ verbalizer wulash = some .m ∧ verbalizer bishol = some .mh := by
   decide
 
-/-- Every pluractional verb has M on every syllable of the reduplicant and H on every syllable
-of the base, whichever melody its singular verb has. -/
 theorem pluractional_eq :
     ∀ i ∈ ideophones, i.pluractional = i.tones.map (fun _ ↦ .M) ++ i.tones.map (fun _ ↦ .H) := by
   decide
 
-/-- Corresponding syllables of a pluractional verb's reduplicant and base never agree in tone,
-the disharmony that depicts distinguishable identity. -/
 theorem pluractional_disharmonic :
     ∀ i ∈ ideophones, List.Forall₂ (· ≠ ·) (i.pluractional.take i.tones.length)
       (i.pluractional.drop i.tones.length) := by
@@ -246,8 +236,6 @@ private theorem marks :
       [[2, 2, 2, 2, 0], [2, 2, 2, 2, 1], [1, 2, 0, 2, 0], [0, 2, 1, 2, 0], [0, 2, 0, 2, 1]] := by
   decide
 
-/-- The tableau selects the spreading of M exactly when MAX-Tone is below both M anchors. It does
-not rank L-ANCH-Mᵥ against R-ANCH-Mᵥ, which the paper reads off it. -/
 theorem optimal_iff (r : Ranking Con 5) :
     (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
       r.Dominates .lAnchorM .maxTone ∧ r.Dominates .rAnchorM .maxTone := by
@@ -297,8 +285,6 @@ private theorem marks :
         [0, 0, 2, 1, 1], [0, 0, 2, 2, 0]] := by
   decide
 
-/-- The tableau selects M then H exactly under R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ and
-R-ANCH-Mᵥ ≫ MAX-Tone. It does not rank L-ANCH-Mᵥ against R-ANCH-Mᵥ either. -/
 theorem optimal_iff (r : Ranking Con 5) :
     (Tableau.ofRanking con r candidates.toFinset).optimal = {candE} ↔
       r.Dominates .rAnchorH .rAnchorM ∧ r.Dominates .rAnchorM .lAnchorH ∧
@@ -353,9 +339,6 @@ private theorem marks :
         [0, 0, 0, 1, 2], [0, 0, 1, 1, 1]] := by
   decide
 
-/-- The tableau ranks no two constraints on its own: it selects M on the reduplicant and H on the
-base exactly when MAX-Tone is below a left anchor, a right anchor, and one of R-ANCH-Mᵥ and
-L-ANCH-Hᵥ. -/
 theorem optimal_iff (r : Ranking Con 5) :
     (Tableau.ofRanking con r candidates.toFinset).optimal = {candD} ↔
       (r.Dominates .lAnchorM .maxTone ∨ r.Dominates .lAnchorH .maxTone) ∧
@@ -398,15 +381,12 @@ theorem exists_selectsWinners_rAnchorM_lAnchorM :
       Con → ℕ) (by decide) rfl
   refine ⟨r, (selectsWinners_iff r).2 ?_, ?_⟩ <;> simp [hr]
 
-/-- The paper's ranking, L-ANCH-Mᵥ and R-ANCH-Hᵥ ≫ R-ANCH-Mᵥ ≫ L-ANCH-Hᵥ ≫ MAX-Tone, selects
-the printed verbs. -/
 theorem selectsWinners_of_dominates {r : Ranking Con 5}
     (h₁ : r.Dominates .lAnchorM .rAnchorM) (h₂ : r.Dominates .rAnchorH .rAnchorM)
     (h₃ : r.Dominates .rAnchorM .lAnchorH) (h₄ : r.Dominates .lAnchorH .maxTone) :
     SelectsWinners r :=
   (selectsWinners_iff r).2 ⟨h₂, h₃, _root_.trans h₃ h₄, _root_.trans h₁ (_root_.trans h₃ h₄)⟩
 
-/-- The winners surface as the printed verbs *wūlāʃ*, *hāŋlāɣáp*, and *jālpāt-jálpát*. -/
 theorem surface_winners :
     some (surface Tableau24.candE) = wulash.verb ∧ some (surface Tableau25.candE) = hanlaghap.verb ∧
       surface Tableau26.candD = jalpat.pluractional := by

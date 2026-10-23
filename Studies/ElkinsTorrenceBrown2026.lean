@@ -148,8 +148,6 @@ theorem mem_path {d : Dependency} {i : ℕ} {h : Head} :
   · rintro ⟨hi, hmem, hb⟩
     exact ⟨i, hi, h, ⟨hmem, hb⟩, rfl, rfl⟩
 
-/-- The reflex is licensed in a clause exactly when the clause contains a reflex host: every
-Voice⁰ or Dir⁰ crossed is an [Ā]-bearer and so a stopover. -/
 theorem licensed_iff {d : Dependency} {i : ℕ} :
     Licensed d i ↔ ∃ h ∈ d.getD i [], HostsReflex h := by
   simp only [Licensed, sites, List.mem_map, List.mem_filter, decide_eq_true_eq]
@@ -162,8 +160,6 @@ theorem licensed_iff {d : Dependency} {i : ℕ} :
     rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at hmem
     exact List.not_mem_nil hmem
 
-/-- A clause of a given size contains a reflex host exactly when the size projects Voice, since
-directionals come only with Voice. -/
 theorem exists_hostsReflex_spine_iff (s : ClauseSpine) (n : ℕ) :
     (∃ h ∈ spine s n, HostsReflex h) ↔ .Voice ∈ s := by
   simp only [spine, List.mem_flatMap, ClauseSpine.mem_def]
@@ -323,8 +319,6 @@ def Mover.ofSite : Mayan.ExtractionSite → Mover
   | .argument _ => .absolutive
   | .adjunct a => .adjunct a
 
-/-- At every extraction site the analysis licenses the enclitic on the verbal complex exactly
-when the Mam fragment does, the mover bearing [obl] and the clause of origin projecting Voice. -/
 theorem realizable_iff_mem_realize (s : Mayan.ExtractionSite) :
     Realizable (.ofSite s) [spine finiteClause 0] 0 ↔
       Reflex.morpheme .verbalComplex [Mam.Extraction.movementEnclitic] ∈
@@ -357,14 +351,12 @@ def voice : Voice.Head :=
 def eqYa : VocabularyItem FeatureVal String :=
   {⟨.oblique, true⟩} ⟷ toString Mam.Extraction.movementEnclitic
 
-/-- Agree with an [obl] mover followed by insertion yields the enclitic. -/
 theorem agree_spellout :
     (voice.features.applyAgree (.single .oblique true) .oblique).map
       (fun b ↦ subsetPrinciple [eqYa] (b.valued.toFinset : Finset FeatureVal)) =
         ↑(some "=(y)a'") := by
   decide
 
-/-- A mover without [obl], an absolutive argument or a temporal, transmits nothing to Voice⁰. -/
 theorem no_obl_no_agree : voice.features.applyAgree ⊥ .oblique = voice.features :=
   FeatureBundle.applyAgree_bot _ _
 

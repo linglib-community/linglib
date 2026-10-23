@@ -54,13 +54,9 @@ def Cat.toTy (τ : α → Ty) : Cat α → Ty
   | .rslash x _ y => y.toTy τ ⇒ x.toTy τ
   | .lslash x _ y => y.toTy τ ⇒ x.toTy τ
 
-/-- A forward type-raised category `T/(T\X)` denotes a function over functions from the
-type of `X`. -/
 @[simp] theorem Cat.toTy_forwardTypeRaise (τ : α → Ty) (x t : Cat α) :
     (x.forwardTypeRaise t).toTy τ = ((x.toTy τ ⇒ t.toTy τ) ⇒ t.toTy τ) := rfl
 
-/-- A backward type-raised category `T\(T/X)` denotes the same type as its forward
-counterpart. -/
 @[simp] theorem Cat.toTy_backwardTypeRaise (τ : α → Ty) (x t : Cat α) :
     (x.backwardTypeRaise t).toTy τ = ((x.toTy τ ⇒ t.toTy τ) ⇒ t.toTy τ) := rfl
 
@@ -138,7 +134,6 @@ theorem Derivation.interp_fapp_fcomp {x y z : Cat α} {m n : Modality}
   rcases d₁.interp lex with _ | m₁ <;> rcases d₂.interp lex with _ | m₂ <;>
     rcases d₃.interp lex with _ | m₃ <;> rfl
 
-/-- Reassociating a backward-composition chain preserves its interpretation. -/
 theorem Derivation.interp_bcomp_assoc {x y z w : Cat α} {m n p : Modality}
     (d₁ : Derivation T R (.lslash y p z)) (d₂ : Derivation T R (.lslash x n y))
     (d₃ : Derivation T R (.lslash w m x)) (h₁ : R x ⟨.left, n, y⟩ [⟨.left, p, z⟩])
@@ -150,7 +145,6 @@ theorem Derivation.interp_bcomp_assoc {x y z w : Cat α} {m n p : Modality}
   rcases d₁.interp lex with _ | m₁ <;> rcases d₂.interp lex with _ | m₂ <;>
     rcases d₃.interp lex with _ | m₃ <;> rfl
 
-/-- Applying twice has the interpretation of backward-composing first and then applying. -/
 theorem Derivation.interp_bapp_bcomp {x y w : Cat α} {m n : Modality}
     (d₁ : Derivation T R y) (d₂ : Derivation T R (.lslash x n y))
     (d₃ : Derivation T R (.lslash w m x)) (h₁ : R x ⟨.left, n, y⟩ [])

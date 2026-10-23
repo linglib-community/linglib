@@ -57,7 +57,6 @@ noncomputable def mcEstimate (f : ℝ → ℝ) (g : A → W → C → ℝ) (c : 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {L : Kernel C A} {g : A → W → C → ℝ}
   {c : C} {w : W} {V : ℕ → Ω → A}
 
-/-- A sampled alternative's score has the expected score as its mean. -/
 private theorem integral_score_comp {n : ℕ} (hV : Measurable (V n)) (hlaw : P.map (V n) = L c)
     (hint : Integrable (fun a ↦ g a w c) (L c)) :
     ∫ ω, g (V n ω) w c ∂P = ∫ a, g a w c ∂(L c) := by

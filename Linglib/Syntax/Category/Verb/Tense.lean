@@ -191,7 +191,6 @@ theorem length_of_chain (v : V) :
         simp [length_of_chain v ns h']
       · exact absurd h (by simp)
 
-/-- A realized tense form has one nonfinite verb for each nonfinite form in its make-up. -/
 theorem length_of_mem_realize {v : V} {f : Form} {x : String × List String}
     (h : x ∈ L.realize v f) : x.2.length = f.nonfinite.length := by
   unfold realize at h

@@ -46,8 +46,6 @@ variable [Fintype Ω] (κ : Kernel Ω 𝓧) (μ : Measure Ω) {ω ω' : Ω} (hne
   (hsupp : ∀ ω'', μ {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω')
 include hne hsupp
 
-/-- Under a prior carried by two atoms, the observation's marginal is the prior-weighted sum
-of the two likelihoods. -/
 theorem _root_.MeasureTheory.Measure.comp_real_singleton_of_pair [IsFiniteMeasure μ]
     [IsFiniteKernel κ] (x : 𝓧) :
     (κ ∘ₘ μ).real {x} = μ.real {ω} * (κ ω).real {x} + μ.real {ω'} * (κ ω').real {x} := by
@@ -55,7 +53,6 @@ theorem _root_.MeasureTheory.Measure.comp_real_singleton_of_pair [IsFiniteMeasur
   exact Fintype.sum_eq_add ω ω' hne fun c hc ↦ by
     rw [measureReal_def, of_not_not (mt (hsupp c) (not_or.mpr hc)), ENNReal.toReal_zero, zero_mul]
 
-/-- A probability measure carried by two atoms puts mass one on them together. -/
 theorem _root_.MeasureTheory.measureReal_singleton_add_singleton_of_pair
     [IsProbabilityMeasure μ] : μ.real {ω} + μ.real {ω'} = 1 := by
   have h := measure_univ (μ := μ)
@@ -64,8 +61,6 @@ theorem _root_.MeasureTheory.measureReal_singleton_add_singleton_of_pair
   rw [measureReal_def, measureReal_def,
     ← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _), h, ENNReal.toReal_one]
 
-/-- Under a probability prior carried by two atoms, an observation that both atoms emit with
-positive likelihood has positive marginal. -/
 theorem _root_.MeasureTheory.Measure.comp_apply_singleton_ne_zero_of_pair
     [IsProbabilityMeasure μ] {x : 𝓧} (hκω : κ ω {x} ≠ 0) (hκω' : κ ω' {x} ≠ 0) :
     (κ ∘ₘ μ) {x} ≠ 0 := by
@@ -97,7 +92,6 @@ theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω
   rw [hrect]
   ring
 
-/-- The posterior is positive at a state exactly when the prior and the likelihood are. -/
 theorem posterior_apply_singleton_ne_zero_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
     (κ†μ) x {ω} ≠ 0 ↔ μ {ω} ≠ 0 ∧ κ ω {x} ≠ 0 := by
   rw [posterior_apply_singleton κ μ hx, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or,
@@ -120,7 +114,6 @@ theorem posterior_deterministic_eq_cond [Countable Ω] {f : Ω → 𝓧} (hf : M
   · rw [Set.indicator_of_notMem (by simpa using h), mul_zero, ENNReal.zero_div,
       Set.inter_singleton_eq_empty.mpr (by simpa using h), measure_empty, mul_zero]
 
-/-- At an observation of positive mass, Bayes' rule holds on reals. -/
 theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
     ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} / (κ ∘ₘ μ).real {x} := by
   rw [measureReal_def, posterior_apply_singleton κ μ hx, ENNReal.toReal_div, ENNReal.toReal_mul,
@@ -139,8 +132,6 @@ theorem comp_real_mul_posterior_real [Fintype Ω] (ω : Ω) (x : 𝓧) :
   · rw [posterior_real_singleton κ μ hx, mul_div_cancel₀]
     rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
 
-/-- The posterior exceeds the prior at a state exactly when the state's likelihood of the
-observation exceeds the observation's marginal. -/
 theorem real_lt_posterior_real_singleton_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
     (hω : μ {ω} ≠ 0) :
     μ.real {ω} < ((κ†μ) x).real {ω} ↔ (κ ∘ₘ μ).real {x} < (κ ω).real {x} := by
@@ -148,8 +139,6 @@ theorem real_lt_posterior_real_singleton_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x}
   have hμ : 0 < μ.real {ω} := ENNReal.toReal_pos hω (measure_ne_top _ _)
   rw [posterior_real_singleton κ μ hx, lt_div_iff₀ hm, mul_lt_mul_iff_of_pos_left hμ]
 
-/-- The posterior falls below the prior at a state exactly when the state's likelihood of the
-observation falls below the observation's marginal. -/
 theorem posterior_real_singleton_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
     (hω : μ {ω} ≠ 0) :
     ((κ†μ) x).real {ω} < μ.real {ω} ↔ (κ ω).real {x} < (κ ∘ₘ μ).real {x} := by
@@ -168,8 +157,6 @@ section Expectation
 variable [Fintype Ω] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0)
 include hx
 
-/-- The posterior expectation of a statistic is the prior expectation of the
-likelihood-weighted statistic over the observation's marginal. -/
 theorem integral_posterior (f : Ω → ℝ) :
     ∫ ω, f ω ∂((κ†μ) x) = (∫ ω, f ω * (κ ω).real {x} ∂μ) / (κ ∘ₘ μ).real {x} := by
   rw [integral_fintype .of_finite, integral_fintype .of_finite, Finset.sum_div]
@@ -188,8 +175,6 @@ theorem integral_le_integral_posterior (hf : Monovary f fun ω ↦ (κ ω).real 
     hf.integral_mul_integral_le_measureReal_univ_mul_integral (μ := μ) .of_finite .of_finite
       .of_finite
 
-/-- Conditioning on an observation lowers the expectation of a statistic that antivaries with
-the observation's likelihood. -/
 theorem integral_posterior_le_integral (hf : Antivary f fun ω ↦ (κ ω).real {x}) :
     ∫ ω, f ω ∂((κ†μ) x) ≤ ∫ ω, f ω ∂μ := by
   have hm : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
@@ -231,8 +216,6 @@ variable [IsProbabilityMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (h
   (hω' : μ {ω'} ≠ 0)
 include hx hω hω'
 
-/-- Under a prior carried by two atoms, the posterior exceeds the prior at one of them exactly
-when its likelihood of the observation exceeds the other's. -/
 theorem real_lt_posterior_real_singleton_iff_of_pair :
     μ.real {ω} < ((κ†μ) x).real {ω} ↔ (κ ω').real {x} < (κ ω).real {x} := by
   have h1 := measureReal_singleton_add_singleton_of_pair μ hne hsupp
@@ -242,8 +225,6 @@ theorem real_lt_posterior_real_singleton_iff_of_pair :
     show μ.real {ω} = 1 - μ.real {ω'} by linarith]
   constructor <;> intro h <;> nlinarith
 
-/-- Under a prior carried by two atoms, the posterior falls below the prior at one of them
-exactly when its likelihood of the observation falls below the other's. -/
 theorem posterior_real_singleton_lt_iff_of_pair :
     ((κ†μ) x).real {ω} < μ.real {ω} ↔ (κ ω).real {x} < (κ ω').real {x} := by
   have h1 := measureReal_singleton_add_singleton_of_pair μ hne hsupp
@@ -260,7 +241,6 @@ section Const
 variable {Ω 𝓧 : Type*} {mΩ : MeasurableSpace Ω} {m𝓧 : MeasurableSpace 𝓧} [StandardBorelSpace Ω]
   [Nonempty Ω]
 
-/-- An observation whose law does not depend on the state leaves the prior unchanged. -/
 theorem posterior_const (ν : Measure 𝓧) [IsFiniteMeasure ν] (μ : Measure Ω)
     [IsProbabilityMeasure μ] :
     (Kernel.const Ω ν)†μ =ᵐ[ν] Kernel.const 𝓧 μ := by

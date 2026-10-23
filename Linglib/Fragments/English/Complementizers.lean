@@ -68,24 +68,19 @@ def infinitivalQuestion : ArgumentFrame :=
 
 /-! ### Selection -/
 
-/-- A mandative subjunctive is a *that*-clause. -/
 theorem subjunctiveClause_takes_that : ArgumentFrame.subjunctiveClause.Takes that := by
   decide
 
-/-- An infinitival interrogative takes *whether* and not *if*. -/
 theorem infinitivalQuestion_takes :
     infinitivalQuestion.Takes whether ∧ ¬ infinitivalQuestion.Takes if_ := by
   decide
 
-/-- *know* takes declaratives and interrogatives. -/
 theorem typers_know : Verbs.know.typers complementizers = [that, if_, whether] := by
   decide
 
-/-- *believe* takes declaratives only. -/
 theorem typers_believe : Verbs.believe.typers complementizers = [that] := by
   decide
 
-/-- *wonder* takes interrogatives only. -/
 theorem typers_wonder : Verbs.wonder.typers complementizers = [if_, whether] := by
   decide
 

@@ -65,11 +65,9 @@ variable [Preorder β] {f : S → β}
 def Blocked (alts : S → Set S) (f : S → β) (φ : S) : Prop :=
   ∃ φ' ∈ alts φ, f φ' < f φ
 
-/-- Blocking is monotone in the alternative source. -/
 theorem Blocked.mono (h : alts ≤ alts') (hb : Blocked alts f φ) : Blocked alts' f φ :=
   let ⟨φ', hφ', hlt⟩ := hb; ⟨φ', h φ hφ', hlt⟩
 
-/-- An expression at least as good as each of its alternatives is not blocked. -/
 theorem not_blocked_of_forall_le (h : ∀ φ' ∈ alts φ, f φ ≤ f φ') : ¬ Blocked alts f φ :=
   fun ⟨φ', hφ', hlt⟩ ↦ hlt.not_ge (h φ' hφ')
 
@@ -135,7 +133,6 @@ theorem mem_unblocked_iff_minimalFor :
   · rintro ⟨hw, h⟩
     exact ⟨hw, fun ψ hψ hwψ hle ↦ le_antisymm hle (h ⟨Or.inr hψ, hwψ⟩ hle)⟩
 
-/-- An expression blocked by no alternative is unblocked wherever its content holds. -/
 theorem unblocked_eq_self (h : ¬ Blocked alts content φ) : unblocked alts content φ = content φ :=
   sdiff_eq_left.2 <| Set.disjoint_left.2 fun _ _ ⟨_, ⟨⟨ψ, hψ, rfl⟩, hss⟩, _⟩ ↦ h ⟨ψ, hψ, hss⟩
 

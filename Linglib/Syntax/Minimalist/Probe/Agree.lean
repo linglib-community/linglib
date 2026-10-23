@@ -186,7 +186,6 @@ theorem agree_state :
     rw [agree_cons]
     by_cases hs : p.sat a <;> by_cases hi : p.int a <;> simp [hs, hi, ih]
 
-/-- An inspected goal is a member of the sequence. -/
 theorem mem_of_mem_inspected {a : α} (ha : a ∈ p.inspected goals) : a ∈ goals := by
   rcases List.mem_append.mp ha with h | h
   · exact List.takeWhile_subset _ h
@@ -196,15 +195,12 @@ theorem mem_of_mem_inspected {a : α} (ha : a ∈ p.inspected goals) : a ∈ goa
       simp only [hs, Option.toList_some, List.mem_singleton] at h
       exact h ▸ mem_of_search_eq_some hs
 
-/-- A probe that interacts with no goal leaves the state unchanged. -/
 theorem agree_state_eq_of_forall_not_int (h : ∀ a ∈ goals, ¬ p.int a) :
     (p.agree copy s goals).state = s := by
   rw [agree_state, agree_interacted, List.filter_eq_nil_iff.mpr]
   · rfl
   · exact fun a ha hi ↦ h a (mem_of_mem_inspected ha) (of_decide_eq_true hi)
 
-/-- When every interacting goal satisfies the probe, the only inspected goal that interacts is the
-goal of the probe. -/
 theorem inspected_filter_int_eq_goal (h : ∀ a, p.int a → p.sat a) :
     (p.inspected goals).filter (p.int ·) = (p.goal goals).toList := by
   rw [inspected, List.filter_append, List.filter_eq_nil_iff.mpr, List.nil_append]
@@ -221,7 +217,6 @@ theorem agree_interacted_eq_goal (h : ∀ a, p.int a → p.sat a) :
     (p.agree copy s goals).interacted = (p.goal goals).toList := by
   rw [agree_interacted, inspected_filter_int_eq_goal h]
 
-/-- A relativized probe flags the goal it finds. -/
 theorem relativized_agree_interacted (f : α → Prop) [DecidablePred f] :
     ((relativized f).agree copy s goals).interacted = ((relativized f).search goals).toList := by
   rw [agree_interacted_eq_goal (fun _ h ↦ h), relativized_goal]
@@ -358,7 +353,6 @@ abbrev relativized (f : F) : Spec F := ofGeometry f f
 
 variable {f g : F}
 
-/-- Interaction copies `f` and the features it dominates. -/
 @[simp] theorem ofGeometry_intFeatures :
     (ofGeometry f g).intFeatures feats a = feats a ∩ Finset.Ici f :=
   ofFeatures_intFeatures
@@ -428,8 +422,6 @@ theorem agree_empty (goals : List α) :
     dsimp only [toProbe, intFeatures, satFeatures] at ih ⊢
     split_ifs <;> dsimp only <;> rw [ih]
 
-/-- A goal bearing a feature marked for dynamic interaction resets the interaction condition,
-whatever it was. -/
 theorem dynamicUpdate_eq_of_nonempty {a : α} (h : (feats a ∩ dyn).Nonempty)
     (int int' : Finset (Finset F)) :
     dynamicUpdate feats dyn a int = dynamicUpdate feats dyn a int' := by

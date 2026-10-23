@@ -15,14 +15,12 @@ exponents.
 
 namespace Real
 
-/-- The share of `exp x` in `exp x + exp y` is the logistic function of `x - y`. -/
 theorem exp_div_add_exp_eq_sigmoid (x y : ℝ) : exp x / (exp x + exp y) = sigmoid (x - y) := by
   have hx := exp_pos x
   have hy := exp_pos y
   rw [sigmoid_def, neg_sub, exp_sub]
   field_simp
 
-/-- The sigmoid of the logarithm of odds `x` is the probability `x / (x + 1)`. -/
 theorem sigmoid_log {x : ℝ} (hx : 0 < x) : sigmoid (log x) = x / (x + 1) := by
   rw [sigmoid_def, exp_neg, exp_log hx]
   field_simp

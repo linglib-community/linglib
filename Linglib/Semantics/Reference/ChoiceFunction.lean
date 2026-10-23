@@ -68,7 +68,6 @@ theorem ext {f g : ChoiceFunction E} (h : ∀ P, f P = g P) : f = g :=
 theorem coe_mk (f : (E → Prop) → E) (h) : ⇑(⟨f, h⟩ : ChoiceFunction E) = f :=
   rfl
 
-/-- The pick of a nonempty property satisfies it. -/
 theorem apply_of_exists (f : ChoiceFunction E) {P : E → Prop} (h : ∃ x, P x) : P (f P) :=
   f.apply_of_exists' P h
 
@@ -79,7 +78,6 @@ noncomputable def epsilon [Nonempty E] : ChoiceFunction E :=
 instance [Nonempty E] : Nonempty (ChoiceFunction E) :=
   ⟨epsilon⟩
 
-/-- Every member of a property is the pick of some choice function. -/
 theorem exists_apply_eq {N : E → Prop} {x : E} (hx : N x) : ∃ f : ChoiceFunction E, f N = x := by
   classical
   have : Nonempty E := ⟨x⟩
@@ -122,8 +120,6 @@ theorem forall_apply_iff_every {N : E → Prop} (hN : ∃ x, N x) (VP : E → Pr
   ⟨fun h _ hx ↦ let ⟨f, hfx⟩ := exists_apply_eq hx; hfx ▸ h f,
     fun h f ↦ h _ (f.apply_of_exists hN)⟩
 
-/-- On an empty restrictor a choice function is unconstrained, so universal quantification over
-choice functions ranges over the whole domain, where the universal reading is vacuous. -/
 theorem forall_apply_iff_of_not_exists {N : E → Prop} (hN : ¬ ∃ x, N x) (VP : E → Prop) :
     (∀ f : ChoiceFunction E, VP (f N)) ↔ ∀ x, VP x := by
   classical

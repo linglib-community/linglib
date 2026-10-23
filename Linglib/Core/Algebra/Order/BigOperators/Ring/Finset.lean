@@ -32,7 +32,6 @@ section WeightedSum
 variable {R : Type*} [CommRing R] [LinearOrder R] [IsStrictOrderedRing R] {n M : ℕ}
   {w : Fin n → R}
 
-/-- Weights each exceeding `M` times the sum of the later weights are positive. -/
 theorem pos_of_forall_natCast_mul_sum_Ioi_lt (hw : ∀ k, (M : R) * ∑ i ∈ Ioi k, w i < w k)
     (k : Fin n) : 0 < w k := by
   induction k using WellFoundedGT.induction with
@@ -40,8 +39,6 @@ theorem pos_of_forall_natCast_mul_sum_Ioi_lt (hw : ∀ k, (M : R) * ∑ i ∈ Io
     exact (mul_nonneg M.cast_nonneg (sum_nonneg fun i hi ↦ (ih i (mem_Ioi.1 hi)).le)).trans_lt
       (hw k)
 
-/-- Weights each exceeding `M` times the sum of the later weights make the weighted sum strictly
-monotone for the lexicographic order on vectors with entries at most `M`. -/
 theorem strictMonoOn_sum_mul (hw : ∀ k, (M : R) * ∑ i ∈ Ioi k, w i < w k) :
     StrictMonoOn (fun v : Lex (Fin n → ℕ) ↦ ∑ i, w i * (ofLex v i : R))
       {v | ∀ i, ofLex v i ≤ M} := by
@@ -68,8 +65,6 @@ theorem strictMonoOn_sum_mul (hw : ∀ k, (M : R) * ∑ i ∈ Ioi k, w i < w k) 
     nlinarith [hpos i]
   linarith [hw k]
 
-/-- A weighted sum is strictly monotone for the lexicographic order on vectors with entries at
-most `M`, for `M ≥ 1`, iff each weight exceeds `M` times the sum of the later weights. -/
 theorem strictMonoOn_sum_mul_iff (hM : 0 < M) :
     StrictMonoOn (fun v : Lex (Fin n → ℕ) ↦ ∑ i, w i * (ofLex v i : R))
       {v | ∀ i, ofLex v i ≤ M} ↔ ∀ k, (M : R) * ∑ i ∈ Ioi k, w i < w k := by

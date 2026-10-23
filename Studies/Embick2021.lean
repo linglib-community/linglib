@@ -120,8 +120,6 @@ def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-! ### Nominalizations, (6)–(10) -/
 
-/-- The possessor reads as an agent exactly when the structure licenses one or the root is
-encyclopedically agentive: *destruction* and both gerunds, not *growth*. -/
 theorem agentive_possessor_rows :
     ∀ r ∈ rows, ∀ c, r.rootClass = some c →
       (r.judgment = .acceptable ↔ (AgentLicensed r.spine ∨ c = .agentive)) := by

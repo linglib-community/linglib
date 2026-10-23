@@ -140,13 +140,11 @@ theorem profile_tree (a : Attachment) (L : Lexicon W) :
   rw [mem_localSet_iff, localLabels_tree]
   rfl
 
-/-- **The two attachments give the Root one profile.** -/
 theorem profile_eq (L : Lexicon W) :
     profile (Attachment.complement.tree L) rootPos =
       profile (Attachment.modifier.tree L) rootPos := by
   rw [profile_tree, profile_tree]
 
-/-- Embedding a configured phrase leaves the profile of its Root unchanged. -/
 theorem profile_replaceAt {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt h).isSome)
     (a : Attachment) (L : Lexicon W) :
     profile (E.replaceAt h (a.tree L)) ⟨h ++ rootPos.toList⟩ = profile (a.tree L) rootPos := by
@@ -160,7 +158,6 @@ theorem profile_replaceAt_eq {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt 
       profile (E.replaceAt h (Attachment.modifier.tree L)) ⟨h ++ rootPos.toList⟩ := by
   rw [profile_replaceAt hE, profile_replaceAt hE, profile_eq]
 
-/-- **An argument in the specifier is not local to the Root.** -/
 theorem profile_specifier_ne (a : Attachment) (L : Lexicon W) :
     profile (specifierTree L) ⟨[1, 0, 0]⟩ ≠ profile (a.tree L) rootPos := by
   intro h
@@ -218,7 +215,6 @@ theorem injective_profile_rootProjects :
   obtain rfl := lexicon_eq_of_profile_eq hp
   cases a <;> cases a' <;> simp_all [rootProjects_complement, rootProjects_modifier]
 
-/-- Every observable is a function of the profile and of whether the Root labels a phrase. -/
 theorem factorsThrough_profile_rootProjects {X : Type*} (O : Observable W X) :
     Function.FactorsThrough (fun p : Attachment × Lexicon W ↦ O (p.1.tree p.2, rootPos))
       (fun p ↦ (profile (p.1.tree p.2) rootPos, rootProjects (p.1.tree p.2))) :=
@@ -239,8 +235,6 @@ theorem mayCondition'_argPos (a : Attachment) (L : Lexicon W) :
     MayCondition' (a.tree L) rootPos a.argPos := by
   cases a <;> exact of_decide_eq_true rfl
 
-/-- **No proform strands the argument from the Root**, under either attachment and in every
-context. -/
 theorem not_strands_argPos {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt h).isSome)
     (a : Attachment) (L : Lexicon W) (X : Cat) :
     ¬ Strands X (E.replaceAt h (a.tree L)) ⟨h ++ rootPos.toList⟩ ⟨h ++ a.argPos.toList⟩ :=
@@ -260,7 +254,6 @@ theorem strands_replaceAt_iff {E : Tree Cat W} {h : List ℕ} (hE : (E.subtreeAt
   obtain rfl | rfl | rfl := this
   exacts [absurd rfl hp0, rfl, rfl]
 
-/-- A proform of the categorizer's category strands an argument in its specifier from the Root. -/
 theorem strands_specifier (L : Lexicon W) :
     Strands (.cat L.x) (specifierTree L) ⟨[1, 0, 0]⟩ ⟨[0]⟩ :=
   ⟨⟨[1]⟩, by decide, _, rfl, rfl, rfl⟩
@@ -285,7 +278,6 @@ def StrandsArgument (X : Cat) : Observable W Prop :=
 def SelectsArgument (c : Cat) : Observable W Prop :=
   fun o ↦ ∃ β ∈ argPositions o.1, selector o.1 β = some c
 
-/-- Pronominalization factors through the profile, so it cannot tell the attachments apart. -/
 theorem factorsThrough_strandsArgument (X : Cat) :
     Function.FactorsThrough
       (fun p : Attachment × Lexicon W ↦ StrandsArgument X (p.1.tree p.2, rootPos))
@@ -296,8 +288,6 @@ theorem factorsThrough_strandsArgument (X : Cat) :
       mayCondition'_iff_forall_not_strands.mp (mayCondition'_argPos a L) X
   exact eq_iff_iff.mpr ⟨fun hc ↦ absurd hc (h _), fun hm ↦ absurd hm (h _)⟩
 
-/-- **Selection can decide.** An argument is merged with the Root under the complement attachment
-and not under the modifier attachment. -/
 theorem selectsArgument_root (a : Attachment) (L : Lexicon W) :
     SelectsArgument .root (a.tree L, rootPos) ↔ a = .complement := by
   simp only [SelectsArgument, argPositions_tree, List.mem_singleton, exists_eq_left]

@@ -126,8 +126,6 @@ theorem DRS.toRelAt_congr_left (X : Finset V) (K : DRS L V) {f f' g : V → M}
   simp only [DRS.toRelAt_mk]
   exact and_congr_left fun _ => ⟨fun he => he.trans h, fun he => he.trans h.symm⟩
 
-/-- A condition with free referents in `X` depends on the assignment only at
-`X`. -/
 theorem Condition.holdsAt_congr {X : Finset V} (c : Condition L V)
     (hfv : c.freeVarFinset ⊆ X) {g g' : V → M} (hgg' : Set.EqOn g g' ↑X) :
     Condition.holdsAt X c g ↔ Condition.holdsAt X c g' := by
@@ -152,7 +150,6 @@ theorem Condition.holdsAt_congr {X : Finset V} (c : Condition L V)
     exact exists_congr fun k =>
       or_congr (DRS.toRelAt_congr_left X l hgg') (DRS.toRelAt_congr_left X r hgg')
 
-/-- The list analogue of `Condition.holdsAt_congr`. -/
 theorem Condition.holdsAllAt_congr {X : Finset V} (cs : List (Condition L V))
     (hfv : Condition.freeVarFinsetL cs ⊆ X) {g g' : V → M} (hgg' : Set.EqOn g g' ↑X) :
     Condition.holdsAllAt X cs g ↔ Condition.holdsAllAt X cs g' := by
@@ -200,9 +197,6 @@ def DRS.transition (W : Type*) (K : DRS L V) (X : Finset V)
   Transition.ofTotal (Finset.coe_subset.mpr Finset.subset_union_left)
     fun _ => DRS.toRelAt X K
 
-/-- The empty DRS denotes the identity transition, repackaged to its source, so interpretation
-sends DRT's unit to the semantic unit. Nonempty entities are needed, since under
-extension-typing an empty domain separates the empty box from the identity. -/
 theorem DRS.transition_empty [Nonempty M] (W : Type*) (X : Finset V)
     (h : (DRS.empty : DRS L V).freeVarFinset ⊆ X)
     (he : X ∪ (DRS.empty : DRS L V).referents = X) :
@@ -222,7 +216,6 @@ theorem DRS.transition_empty [Nonempty M] (W : Type*) (X : Finset V)
       else Classical.arbitrary M, funext fun v => dite_eq_left v.2,
       funext fun v => dite_eq_left v.2, fun v _ => rfl, trivial⟩
 
-/-- Established referents persist along a DRS transition. -/
 theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
     (hK : K.freeVarFinset ⊆ X) : (K.transition (M := M) W X hK).IsExtension := by
   rintro w e e' ⟨f, g, rfl, rfl, hrel⟩
@@ -230,8 +223,6 @@ theorem DRS.transition_isExtension (W : Type*) (K : DRS L V) (X : Finset V)
   funext v
   exact (hrel.1 v.2).symm
 
-/-- Repackaging a DRS transition along an equality of context bases is the
-transition at the new base. -/
 theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
     (hX : X = X') (hK : K.freeVarFinset ⊆ X) (hK' : K.freeVarFinset ⊆ X') :
     (K.transition (M := M) W X hK).copy (Finset.coe_inj.mpr hX) (by rw [hX]) =
@@ -243,15 +234,12 @@ theorem DRS.transition_copy (W : Type*) {X X' : Finset V} (K : DRS L V)
 def DRS.state (W : Type*) (K : DRS L V) (hK : K.IsProper) : State W V M :=
   (K.transition W ∅ (Finset.subset_empty.mpr hK)).applyState ⊤
 
-/-- The state a DRS expresses lives in its referents' stratum. -/
 theorem DRS.uniformAt_state (W : Type*) (K : DRS L V) (hK : K.IsProper) :
     State.UniformAt ↑K.referents (K.state (M := M) W hK) := by
   have h := Transition.uniformAt_applyState
     (K.transition (M := M) W ∅ (Finset.subset_empty.mpr hK)) ⊤
   simpa [DRS.state] using h
 
-/-- A point survives in `⟦K⟧ˢ` iff it lives on the referents and its values are reached from some
-input. -/
 theorem DRS.mem_state {W : Type*} {K : DRS L V} {hK : K.IsProper}
     {q : Possibility W V (Flat M)} :
     q ∈ K.state W hK ↔ q.domain = (↑(∅ ∪ K.referents) : Set V) ∧
@@ -287,8 +275,6 @@ base referents needs no exclusion: persistence makes it inert. -/
   | nil => simp
   | cons c cs ih => simp [ih, and_assoc]
 
-/-- Overriding a `toRelAt`-output with the input's values on a fresh `Δ` yields an output at the
-grown base, agreeing with the original on the working base. -/
 private theorem DRS.toRelAt_adjust {X Δ U : Finset V} {conds : List (Condition L V)}
     (hΔU : Disjoint Δ U) (hfvc : Condition.freeVarFinsetL conds ⊆ X ∪ U)
     (hIH : ∀ k : V → M, Condition.holdsAllAt ((X ∪ U) ∪ Δ) conds k ↔
@@ -321,7 +307,6 @@ private theorem DRS.toRelAt_adjust {X Δ U : Finset V} {conds : List (Condition 
   · rw [Finset.union_right_comm]
     exact (hIH _).mpr ((Condition.holdsAllAt_congr conds hfvc hkk'.symm).mp hh)
 
-/-- An output at a base grown by fresh referents is an output at the working base. -/
 private theorem DRS.toRelAt_down {X Δ U : Finset V} {conds : List (Condition L V)}
     (hIH : ∀ k : V → M, Condition.holdsAllAt ((X ∪ U) ∪ Δ) conds k ↔
       Condition.holdsAllAt (X ∪ U) conds k)
@@ -333,7 +318,6 @@ private theorem DRS.toRelAt_down {X Δ U : Finset V} {conds : List (Condition L 
   exact (hIH k).mp hh
 
 mutual
-/-- A fresh base extension is invisible to a well-formed condition. -/
 theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
     (hocc : Disjoint Δ c.varFinset) (hfv : c.freeVarFinset ⊆ X) (g : V → M) :
     Condition.holdsAt (X ∪ Δ) c g ↔ Condition.holdsAt X c g := by
@@ -415,7 +399,6 @@ theorem Condition.holdsAt_union_fresh {X Δ : Finset V} (c : Condition L V)
     · rintro ⟨k, hk | hk⟩
       · exact ⟨_, Or.inl (DRS.toRelAt_adjust hΔUl hfvcl hIHl hk).1⟩
       · exact ⟨_, Or.inr (DRS.toRelAt_adjust hΔUr hfvcr hIHr hk).1⟩
-/-- The list analogue of `Condition.holdsAt_union_fresh`. -/
 theorem Condition.holdsAllAt_union_fresh {X Δ : Finset V}
     (cs : List (Condition L V)) (hocc : Disjoint Δ (Condition.varFinsetL cs))
     (hfv : Condition.freeVarFinsetL cs ⊆ X) (g : V → M) :
@@ -433,10 +416,6 @@ end
 
 /-! ### The Merging Lemma and the action equation -/
 
-/-- In the indexed semantics merge is sequencing. The side condition asks only that `K₂`'s
-universe not occur in `K₁`'s conditions (no capture); re-declaring context or `K₁`-universe
-referents is allowed, since persistence makes it inert. Contrast the flat lemma
-`DRS.toRel_merge`, whose freshness hypothesis also has to forbid re-declaration. -/
 theorem DRS.toRelAt_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.freeVarFinset ⊆ X)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (DRS.toRelAt X (K₁.merge K₂) : (V → M) → (V → M) → Prop) =
@@ -497,8 +476,6 @@ output, and a indexed output repairs, off the grown base, into a flat one.
 Reuse-freeness is needed — on a DRS that re-declares a referent the two
 diverge (Muskens's fn. 4; witness in `Studies/Muskens1996.lean`). -/
 
-/-- On a reuse-free box, agreement off the universe restricts to agreement on a disjoint base,
-so a flat output is an indexed one. -/
 private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition L V)}
     (hXU : Disjoint X U)
     (hIH : ∀ k : V → M, (∀ c ∈ conds, VerifiesCondition k c) ↔
@@ -510,8 +487,6 @@ private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition 
   exact ⟨fun x hx => hag x (Finset.disjoint_left.mp hXU (Finset.mem_coe.mp hx)),
     (hIH g').mp (verifies_mk U conds |>.mp hh)⟩
 
-/-- On a bounded box, an indexed output repaired off the grown base with the input's values is a
-flat output. -/
 private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition L V)}
     (hfvc : Condition.freeVarFinsetL conds ⊆ X ∪ U)
     (hIH : ∀ k : V → M, (∀ c ∈ conds, VerifiesCondition k c) ↔
@@ -535,8 +510,6 @@ private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition 
     ((hIH _).mpr ((Condition.holdsAllAt_congr conds hfvc heq).mpr hh))⟩, heq⟩
 
 mutual
-/-- On a reuse-free condition with free referents in the base, the flat set
-denotation and the indexed one coincide. -/
 theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     (hrf : Condition.ReuseFreeAt X c) (hfv : c.freeVarFinset ⊆ X) (g : V → M) :
     VerifiesCondition g c ↔ Condition.holdsAt X c g := by
@@ -609,7 +582,6 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     · rintro ⟨k, hk | hk⟩
       · exact Or.inl ⟨_, (DRS.toRel_of_toRelAt' hfvcl hIHl hk).1⟩
       · exact Or.inr ⟨_, (DRS.toRel_of_toRelAt' hfvcr hIHr hk).1⟩
-/-- The list analogue of `Condition.verifies_iff_holdsAt`. -/
 theorem Condition.verifiesAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L V))
     (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.freeVarFinsetL cs ⊆ X) (g : V → M) :
     (∀ c ∈ cs, VerifiesCondition g c) ↔ Condition.holdsAllAt X cs g := by
@@ -623,7 +595,6 @@ theorem Condition.verifiesAll_iff_holdsAllAt {X : Finset V} (cs : List (Conditio
       (Condition.verifiesAll_iff_holdsAllAt cs hrf.2 hfv.2 g)
 end
 
-/-- On a reuse-free DRS every flat output is an indexed output. -/
 theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
     (hfv : K.freeVarFinset ⊆ X) {g g' : V → M} (h : (g, g') ∈ DRS.toRel K) :
     DRS.toRelAt X K g g' := by
@@ -632,7 +603,6 @@ theorem DRS.toRelAt_of_toRel {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt
   exact DRS.toRelAt_of_toRel' hrf.1 (fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2
     (DRS.freeVarFinset_subset_iff.mp hfv) k) ((DRS.toRel_iff _ _ _).1 h)
 
-/-- On a reuse-free DRS an indexed output repairs, off the grown base, into a flat output. -/
 theorem DRS.toRel_of_toRelAt {X : Finset V} {K : DRS L V} (hrf : DRS.ReuseFreeAt X K)
     (hfv : K.freeVarFinset ⊆ X) {g g' : V → M} (h : DRS.toRelAt X K g g') :
     ∃ g'', (g, g'') ∈ DRS.toRel K ∧ Set.EqOn g'' g' ↑(X ∪ K.referents) := by

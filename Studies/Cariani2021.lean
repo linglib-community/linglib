@@ -204,7 +204,6 @@ propositions that agree at the world of evaluation. -/
 def DisplacesWorlds (O : (W × T → Prop) → W × T → Prop) : Prop :=
   ∃ (A B : W × T → Prop) (i : W × T), (∀ u, A (i.1, u) ↔ B (i.1, u)) ∧ O A i ∧ ¬ O B i
 
-/-- Symmetric *will* does not displace worlds. -/
 theorem not_displacesWorlds_linearWill :
     ¬ DisplacesWorlds fun (A : W × T → Prop) i ↦ linearWill (fun u ↦ A (i.1, u)) i.2 := by
   rintro ⟨A, B, i, hAB, hA, hB⟩
@@ -325,9 +324,6 @@ theorem not_accepts_will_and_might_not [R.IsRefl] {S B : Set W} (hS : IsEligible
 
 end FMC
 
-/-- Historical future-might contradictions are consistent at a world. In the Sports Fan model of
-[cariani-santorio-2018], at the Warriors-cap world *Cynthia will wear a Warriors cap* and *she
-might not* are both true over today's historical alternatives. -/
 theorem fmc_point_consistent (s : SelectionFunction CarianiSantorio2018.W) :
     CarianiSantorio2018.W.cw ∈
       s.modal (CarianiSantorio2018.frame.alt 0) CarianiSantorio2018.warriorsCap ∩
@@ -355,8 +351,6 @@ theorem not_will_and_might_not_will [R.IsTrans] :
     ¬ (□[R] p w ∧ ◇[R] (fun v ↦ ¬ □[R] p v) w) :=
   fun ⟨h, _, hv, hn⟩ ↦ hn (box_four h _ hv)
 
-/-- Over a Euclidean base *not will A and might will A* is inconsistent for a quantificational
-*will*. -/
 theorem not_not_will_and_might_will [IsEuclidean R] :
     ¬ (¬ □[R] p w ∧ ◇[R] (□[R] p) w) :=
   fun ⟨h, h'⟩ ↦ h (box_of_diamond_box h')
@@ -372,8 +366,6 @@ instance : fork.IsTrans := ⟨by decide⟩
 theorem not_isEuclidean_fork : ¬ IsEuclidean fork :=
   fun h ↦ absurd (h.eucl 0 1 2 (by decide) (by decide)) (by decide)
 
-/-- In the fork model, with `A` true at `1` and false at `2`, *not will A and might will A* is
-true at `0`. -/
 theorem fork_not_will_and_might_will :
     ¬ □[fork] (· = 1) 0 ∧ ◇[fork] (□[fork] (· = 1)) 0 :=
   ⟨fun h ↦ absurd (h 2 (by decide)) (by decide),
@@ -411,8 +403,6 @@ def neg : SortedProperty W E T := .temporal fun w t ↦ ¬ At t w Q
 
 variable {s MB Q}
 
-/-- At the present, selectional WOLL holds when the world selected from the base at the present
-has the property throughout the forward interval. -/
 @[simp] theorem pres_woll_iff :
     PRES now (woll s MB Q) w ↔ At (Interval.Ici ↑now) (s.sel w (MB w now)) Q := by
   rw [PRES, Interval.pure]
@@ -439,7 +429,6 @@ theorem pres_woll_iff_of_mem (h : w ∈ MB w now) :
     PRES now (woll s MB Q) w ↔ At (Interval.Ici ↑now) w Q := by
   rw [pres_woll_iff, s.centering w _ h]
 
-/-- Over a realistic base Condoravdi's universal WOLL entails selectional WOLL. -/
 theorem pres_woll_of_pres_WOLL (h : w ∈ MB w now) (hW : PRES now (WOLL MB Q) w) :
     PRES now (woll s MB Q) w :=
   (pres_woll_iff_of_mem h).2 (Condoravdi2002.pres_woll_iff.1 hW w h)

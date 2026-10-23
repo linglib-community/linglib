@@ -289,8 +289,6 @@ theorem objectMarker_setA_iff (h : c.WellFormed) (ht : c.base = .transitive)
   cases urn <;> cases absPos <;> rcases strategy with _ | (_ | _ | _) <;> by_cases hs : suffix <;>
     simp_all [objectMarker, object, Restricted, Base.HasExternal, Licensing.marker]
 
-/-- The progressive derivations assign the dissertation's Cases: absolutive to the subject and
-genitive to the object under the restriction, and the reverse without it. -/
 theorem case_eq_caseOf (h : c.WellFormed) (ht : c.base = .transitive)
     (hm : c.matrix = some .ajin ∨ c.matrix = some .aspectual)
     (ha : c.strategy ≠ some .antipassive) (hi : c.strategy ≠ some .incorporation) :

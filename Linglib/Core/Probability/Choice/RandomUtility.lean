@@ -125,8 +125,6 @@ theorem choiceProb_pi_eq_lintegral (ν : ι → Measure ℝ) [∀ j, SigmaFinite
     Set.pi univ fun _ ↦ Iio x by ext; simp, Measure.pi_pi]
   exact (prod_subtype (univ.erase i) (by simp) fun j ↦ ν j (Iio x)).symm
 
-/-- For atomless noise the choice probability integrates the product of the other alternatives'
-distribution functions. -/
 theorem choiceProb_pi_eq_lintegral_cdf (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)]
     [∀ j, NullSingletonClass (ν j)] (i : ι) :
     choiceProb (Measure.pi ν) i = ∫⁻ x, ENNReal.ofReal (∏ j ∈ univ.erase i, cdf (ν j) x) ∂ν i := by
@@ -167,15 +165,11 @@ variable {σ : ℝ}
 
 open Real
 
-/-- The binary probit choice probability `Φ (Δ / σ)` is the mass a Gaussian with mean `Δ` and
-standard deviation `σ` gives to the positive half-line. -/
 theorem gaussianReal_real_Ioi_zero (Δ : ℝ) (hσ : 0 < σ) :
     (gaussianReal Δ (.mk (σ ^ 2) (sq_nonneg σ))).real (Set.Ioi 0) = normalCDF (Δ / σ) := by
   have hv : NNReal.mk (σ ^ 2) (sq_nonneg σ) ≠ 0 := by simp [← NNReal.coe_eq_zero, hσ.ne']
   simp only [gaussianReal_real_Ioi Δ hv, NNReal.coe_mk, sqrt_sq hσ.le, sub_zero]
 
-/-- Two alternatives with independent Gaussian utilities of common standard deviation `σ` follow the
-probit rule with standard deviation `σ * √2`, that of the difference of the two utilities. -/
 theorem choiceProb_pi_gaussianReal_sq (u : Fin 2 → ℝ) (hσ : 0 < σ) :
     choiceProb (Measure.pi fun j ↦ gaussianReal (u j) (.mk (σ ^ 2) (sq_nonneg σ))) 0 =
       ENNReal.ofReal (normalCDF ((u 0 - u 1) / (σ * √2))) := by
@@ -220,9 +214,6 @@ theorem choiceProb_pi_gumbelMeasure (u : ι → ℝ) (hβ : β ≠ 0) (i : ι) :
 
 /-! ### Binary case: the logistic function -/
 
-/-- For two alternatives with Gumbel noise the choice probability is the logistic function
-`sigmoid ((u 0 - u 1) / β)`. The binary probit `choiceProb_pi_gaussianReal` is its Gaussian
-counterpart, and the two are indistinguishable on binary data alone. -/
 theorem choiceProb_pi_gumbelMeasure_fin_two (u : Fin 2 → ℝ) (hβ : β ≠ 0) :
     choiceProb (Measure.pi fun j ↦ gumbelMeasure (u j) β) 0 =
       ENNReal.ofReal (sigmoid ((u 0 - u 1) / β)) := by

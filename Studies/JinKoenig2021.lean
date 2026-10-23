@@ -75,7 +75,6 @@ theorem impossible_dual {W : Type*} (f g : Background W) (p : W → Prop)
   ⟨hp, w', (necessity_iff f g _ w).1 h w' hw'⟩
 
 open Modality in
-/-- The negation of *impossible p* is the possibility of `p`. -/
 theorem possibility_of_not_impossible {W : Type*} (f g : Background W)
     (p : W → Prop) (w : W) (h : ¬ necessity f g (fun w' ↦ ¬ p w') w) : possibility f g p w := by
   rw [necessity_iff] at h
@@ -118,7 +117,6 @@ instance : DecidablePred IsExpletiveNegationTrigger := fun _ ↦
 
 open English
 open English.Verbs hiding Verb
-/-- The English fragment's *fear*, *dread*, *worry*, *forget* and *prevent* are triggers. -/
 theorem english_triggers :
     IsExpletiveNegationTrigger fear.toVerb ∧ IsExpletiveNegationTrigger dread.toVerb ∧
       IsExpletiveNegationTrigger worry.toVerb ∧ IsExpletiveNegationTrigger forget.toVerb ∧
@@ -293,18 +291,14 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The examples of Sections 1, 2 and 6. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every example citing a negator is a row: its negator is one of its language's fragment. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (e.feature? "negator").isSome →
     (Row.ofDatum e).isSome := by
   decide
 
-/-- The negators the paper calls standard are the standard negators of the fragments. -/
 theorem kind_eq_standard_iff :
     ∀ r ∈ rows, r.kind = .standard ↔ r.negator ∈ r.language.standard := by
   decide
 
-/-- Mandarin's negator tracks the trigger, Sections 6.1.1 and 6.1.2. The imperative negator appears
-exactly under *fear* and the deontic negator exactly under the *regret* class. -/
 theorem mandarin_negators :
     ∀ r ∈ rows, r.language = .mandarin →
       (r.kind = .imperative ↔ r.concept = .fear) ∧
@@ -317,7 +311,6 @@ theorem french_ne_of_entrenched :
       r.negator = French.Negation.ne := by
   decide
 
-/-- Januubi's exemplified triggers, *barely* and *before*, take its standard negator *maa*. -/
 theorem januubi_maa : ∀ r ∈ rows, r.language = .januubi → r.negator = Januubi.Negation.maa := by
   decide
 
@@ -344,7 +337,6 @@ def blocking : Language → ENConcept → Option ENBlockingReason
   | .mandarin, .without | .zarmaSonrai, .without => some .analyticNegation
   | _, _ => none
 
-/-- No row exemplifies a class the paper reports as blocked. -/
 theorem blocking_eq_none_of_mem : ∀ r ∈ rows, blocking r.language r.concept = none := by decide
 
 end JinKoenig2021

@@ -91,8 +91,6 @@ theorem independent :
     ∀ m ∈ inventory, m ≠ zouKunnen → ∀ f ∈ m.forces, ∀ fl ∈ m.flavors, (f, fl) ∈ m.meaning := by
   decide
 
-/-- *zou/zouden ... kunnen* has a force and a flavour it does not combine, circumstantial
-necessity. -/
 theorem zouKunnen_not_independent :
     .necessity ∈ zouKunnen.forces ∧ .circumstantial ∈ zouKunnen.flavors ∧
       (.necessity, .circumstantial) ∉ zouKunnen.meaning := by

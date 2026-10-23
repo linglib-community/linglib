@@ -163,21 +163,17 @@ instance : IsFiniteKernel m.R0' :=
 
 variable [Finite R] [MeasurableSingletonClass R]
 
-/-- The base respondent gives a response positive probability iff it is true and safe. -/
 theorem Model.R0_apply_singleton_ne_zero_iff {q : Q} {w : W} {r : R} :
     m.R0 q w {r} ≠ 0 ↔ r ∈ m.trueSafe w q := by
   rw [R0_apply, Ne, uniformOn_eq_zero_iff (Set.toFinite _), Set.inter_singleton_eq_empty,
     not_not]
 
-/-- The truth-only base respondent gives a response positive probability iff it is true. -/
 theorem Model.R0'_apply_singleton_ne_zero_iff {w : W} {r : R} :
     m.R0' w {r} ≠ 0 ↔ w ∈ m.response r := by
   rw [R0'_apply, Ne, uniformOn_eq_zero_iff (Set.toFinite _), Set.inter_singleton_eq_empty,
     not_not]
   exact Iff.rfl
 
-/-- The base respondent gives each true and safe response the reciprocal of their number, and
-every other response nothing. -/
 theorem Model.R0_real_singleton (q : Q) (w : W) (r : R) [Decidable (r ∈ m.trueSafe w q)] :
     (m.R0 q w).real {r} = if r ∈ m.trueSafe w q then ((m.trueSafe w q).ncard : ℝ)⁻¹ else 0 := by
   rw [R0_apply, uniformOn_real_apply]
@@ -186,7 +182,6 @@ theorem Model.R0_real_singleton (q : Q) (w : W) (r : R) [Decidable (r ∈ m.true
       one_div]
   · rw [Set.inter_singleton_eq_empty.2 h, Set.ncard_empty, Nat.cast_zero, zero_div]
 
-/-- When every world admits a true and safe response, the base respondent always responds. -/
 theorem Model.isMarkovKernel_R0 {q : Q} (h : ∀ w, (m.trueSafe w q).Nonempty) :
     IsMarkovKernel (m.R0 q) :=
   ⟨fun w ↦ isProbabilityMeasure_uniformOn (Set.toFinite _) (h w)⟩
@@ -196,8 +191,6 @@ end
 variable [Fintype W] [MeasurableSingletonClass W] [Finite R] [MeasurableSingletonClass R] {d : D}
   [IsFiniteMeasure (m.prior d)]
 
-/-- Under a prior that gives every world positive mass, a world keeps positive mass after the
-truth-only update by a response iff the response is true there. -/
 theorem Model.listener_R0'_apply_singleton_ne_zero_iff (hπ : ∀ w, m.prior d {w} ≠ 0) {r : R}
     {w : W} : RSA.listener (m.prior d) m.R0' r {w} ≠ 0 ↔ w ∈ m.response r := by
   rw [RSA.listener_apply_singleton_ne_zero_iff, m.R0'_apply_singleton_ne_zero_iff]
@@ -237,8 +230,6 @@ noncomputable def policy (U : W → A → ℝ) (αℵ : ℝ) (π : Measure W) : 
 noncomputable def value (U : W → A → ℝ) (αℵ : ℝ) (π : Measure W) : ℝ :=
   ∑ a, policy U αℵ π a * ∫ w, U w a ∂π
 
-/-- Two beliefs under which the utility profile is almost surely the same have the same
-value. -/
 theorem value_eq_of_ae {π π' : Measure W} [IsProbabilityMeasure π] [IsProbabilityMeasure π']
     {U : W → A → ℝ} {c : A → ℝ} (αℵ : ℝ) (hU : ∀ᵐ w ∂π, U w = c) (hU' : ∀ᵐ w ∂π', U w = c) :
     value U αℵ π = value U αℵ π' := by
@@ -285,7 +276,6 @@ instance [Nonempty Q] : IsMarkovKernel (m.questioner p) :=
   Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary Q, EReal.coe_ne_bot _⟩)
     fun _ _ ↦ EReal.coe_ne_top _
 
-/-- The questioner asks every question with positive probability. -/
 theorem Model.questioner_apply_singleton_ne_zero (d : D) (q : Q) : m.questioner p d {q} ≠ 0 :=
   Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
 
@@ -329,7 +319,6 @@ noncomputable def Model.respondentScore (πW : Measure W) (q : Q) (r : R) : ERea
     ((p.β * ∫ d, value (m.utility d) p.αℵ (RSA.listener (m.prior d) m.R0' r)
         ∂(m.goalPosterior p πD q) - p.wc * m.cost r : ℝ) : EReal)
 
-/-- At `β = 1` the respondent weighs only action relevance and cost. -/
 theorem Model.respondentScore_of_beta_eq_one (hβ : p.β = 1) (πW : Measure W) (q : Q) (r : R) :
     m.respondentScore p πD πW q r =
       ((∫ d, value (m.utility d) p.αℵ (RSA.listener (m.prior d) m.R0' r)
@@ -448,7 +437,6 @@ instance (r : Resp) : DecidablePred (· ∈ cards.response r) :=
 instance (d : Goal) : IsProbabilityMeasure (cards.prior d) :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn Set.univ))
 
-/-- Polar answers to the question asked are safe, as are exhaustive lists. -/
 theorem polar_exhaustive_safe :
     (∀ S b, Safe (cards.question S) (cards.response (.polar S b))) ∧
       ∀ S T, Safe (cards.question S) (cards.response (.exhaustive T)) := by
@@ -470,8 +458,6 @@ theorem mention_safe_iff (S T : Finset Card) (hS : S.Nonempty) :
     exact .inl fun w hw ↦ ⟨t, Finset.mem_inter.2 ⟨(Finset.mem_inter.1 ht).2,
       hw (Finset.mem_inter.1 ht).1⟩⟩
 
-/-- Every world admits a true and safe response to every question, namely the true polar
-answer. -/
 theorem trueSafe_nonempty (w q : Finset Card) : (cards.trueSafe w q).Nonempty :=
   ⟨.polar q (decide (q ∩ w).Nonempty),
     show (q ∩ w).Nonempty ↔ decide (q ∩ w).Nonempty = true by simp,

@@ -150,7 +150,6 @@ theorem persona_ne [Nonempty P] : h.persona ≠ h.symm.persona := by
   have := congrArg (p ∈ ·.1) he
   simp [persona, h.indexes_eq_compl] at this
 
-/-- Two complementary variants are distinct. -/
 theorem ne [Nonempty P] : v ≠ w := by
   rintro rfl
   exact h.persona_ne rfl
@@ -173,7 +172,6 @@ theorem persona_mem_personae [Nonempty P] : h.persona ∈ F.personae v := by
   rw [h.personae_eq_compl, Finset.mem_compl, Finset.mem_singleton]
   exact h.persona_ne
 
-/-- A persona other than the two the variants index meets both. -/
 theorem mem_personae_of_ne {p : Persona G} (hp : p ≠ h.persona) (hp' : p ≠ h.symm.persona)
     {u : Variant} (hu : u = v ∨ u = w) : p ∈ F.personae u := by
   rcases hu with rfl | rfl
@@ -213,8 +211,6 @@ private theorem card_filter_dimension_polarity (d : Dimension) (s : SignType) :
       if s = 0 then 0 else 1 := by
   revert d s; decide
 
-/-- A variant grounds as a persona exactly when it indexes every dimension one way or the
-other. -/
 theorem ground_indexes_mem_maximalIndepSets_iff [Zero R] [LinearOrder R]
     {M : AssociationField Variant Dimension R} :
     M.ground.indexes v ∈ (dimensionalIncompatibility Pole.dimension).maximalIndepSets ↔

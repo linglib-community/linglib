@@ -197,8 +197,6 @@ theorem universal5_addressee (t : PCCType) :
       t ∈ [PCCType.strong, .weak, .youFirst, .aDescending, .none] := by
   revert t; decide +kernel
 
-/-- Every variety allows a participant IO with a third-person DO, the `⟨⊤, ⊥⟩` of the binary
-person scale, as the person-role universal 9b of [haspelmath-2021] requires. -/
 theorem participant_third_licit (t : PCCType) (io : Person) (h : io.IsSAP) :
     t.Licit ⟨io, .third⟩ := by
   revert h; cases t <;> cases io <;> decide
@@ -243,16 +241,11 @@ theorem typology (g : Grammar) : g.pattern = table57 g := by
   revert g
   decide +kernel
 
-/-- Satisfaction by [PART] absorbs dynamic interaction. A direct object bearing a dynamic
-feature bears [PART] and satisfies the probe first, so every column-one grammar of the table
-licenses exactly what the strong PCC does, for every pair of persons. -/
 theorem licit_of_sat_part (d : Finset PersonSegment) (s : Scenario Person) :
     Licit ⟨some .participant, d⟩ s ↔ Licit strong s := by
   revert d s
   decide +kernel
 
-/-- Off the diagonal, for objects of distinct person, the strictly descending PCC requires the
-indirect object to outrank the direct object on 1 > 2 > 3. -/
 theorem sd_off_diagonal_iff_outranks (s : Scenario Person)
     (h : s.high.prominence ≠ s.low.prominence) :
     Licit strictlyDescending s ↔ s.low.prominence < s.high.prominence := by

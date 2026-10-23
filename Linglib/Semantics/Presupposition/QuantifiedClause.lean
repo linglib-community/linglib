@@ -164,7 +164,6 @@ theorem truth_mem_continuations (n : ℕ∞) (k : Env Atom) : k.truth I ∈ k.co
   Set.mem_image2_of_mem (k.arg.truth_mem_continuations I _ _)
     (SyntacticEnvironment.truth_mem_continuations I n k.inner)
 
-/-- A later parsing point consults fewer continuations. -/
 theorem antitone_continuations (k : Env Atom) : Antitone (k.continuations I) := fun _ _ hmn ↦
   Set.image2_subset (k.arg.antitone_continuations I _ (tsub_le_tsub_right hmn _))
     (SyntacticEnvironment.antitone_continuations I _ hmn)

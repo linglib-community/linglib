@@ -73,21 +73,16 @@ def language (k : ℕ) (G : StrictlyPiecewiseGrammar α) : Language α :=
     w ∈ G.language k ↔ ∀ s, s.length ≤ k → s <+ w → s ∈ G :=
   Iff.rfl
 
-/-- SP languages are **sublist-closed**, since deleting symbols cannot create a subsequence
-that was not already there. -/
 theorem isSublistClosed_language (k : ℕ) (G : StrictlyPiecewiseGrammar α) :
     (G.language k).IsSublistClosed :=
   fun _ _ hvw hw s hlen hs ↦ hw s hlen (hs.trans hvw)
 
-/-- Conjoining grammars conjoins their languages. -/
 theorem language_inter (k : ℕ) (G₁ G₂ : StrictlyPiecewiseGrammar α) :
     (G₁ ∩ G₂).language k = G₁.language k ⊓ G₂.language k := by
   ext w
   exact ⟨fun h ↦ ⟨fun s hl hs ↦ (h s hl hs).1, fun s hl hs ↦ (h s hl hs).2⟩,
     fun h s hl hs ↦ ⟨h.1 s hl hs, h.2 s hl hs⟩⟩
 
-/-- The grammar of the subsequences whose images are permitted generates the preimage of the
-language under a letter-to-letter map. -/
 theorem language_preimage_map {β : Type*} (k : ℕ) (G : StrictlyPiecewiseGrammar α) (f : β → α) :
     language k (List.map f ⁻¹' G) = List.map f ⁻¹' G.language k := by
   ext w
@@ -96,8 +91,6 @@ theorem language_preimage_map {β : Type*} (k : ℕ) (G : StrictlyPiecewiseGramm
   refine ⟨fun h t ht ⟨s, hs, e⟩ ↦ e ▸ h s (by simpa [e] using ht) hs,
     fun h s hs hsw ↦ h _ (by simpa using hs) ⟨s, hsw, rfl⟩⟩
 
-/-- SP membership reduces to a check against `List.sublistsLen` — a `decide`-friendly
-characterisation used by the decidable-membership instance below. -/
 theorem mem_language_iff_forall_mem_sublistsLen (k : ℕ) (G : StrictlyPiecewiseGrammar α)
     (w : List α) :
     w ∈ G.language k ↔ ∀ j ≤ k, ∀ s ∈ w.sublistsLen j, s ∈ G := by
@@ -141,7 +134,6 @@ theorem IsStrictlyPiecewise.preimage_map {β : Type*} (h : L.IsStrictlyPiecewise
 theorem IsStrictlyPiecewise.isSublistClosed (h : L.IsStrictlyPiecewise k) : L.IsSublistClosed :=
   h ▸ StrictlyPiecewiseGrammar.isSublistClosed_language k L
 
-/-- A nonempty SP language contains the empty word. -/
 theorem IsStrictlyPiecewise.nil_mem (h : L.IsStrictlyPiecewise k) {w : List α}
     (hw : w ∈ L) : [] ∈ L :=
   h.isSublistClosed (nil_sublist w) hw

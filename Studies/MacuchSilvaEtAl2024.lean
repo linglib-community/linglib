@@ -80,7 +80,6 @@ def count : Adjective → ℕ
   | .right => s.nCorrect
   | .wrong => s.nTotal - s.nCorrect
 
-/-- No adjective counts more than the total. -/
 theorem count_le (a : Adjective) : s.count a ≤ s.nTotal := by
   have := s.nCorrect_le
   cases a <;> simp only [count] <;> omega
@@ -102,13 +101,10 @@ def difficulty (s : ExamStimulus) : Goal → ℚ
   | .highSuccess => 1 - s.proportion
   | .lowSuccess => s.proportion
 
-/-- The two framings of one table are complementary in difficulty. -/
 theorem difficulty_add (s : ExamStimulus) :
     difficulty s .highSuccess + difficulty s .lowSuccess = 1 := by
   simp [difficulty]
 
-/-- Difficulty orders the goal-congruent counts the other way: the harder the framing, the
-fewer answers the congruent adjective has to describe. -/
 theorem count_le_of_difficulty_le {s₁ s₂ : ExamStimulus} (g : Goal) (h : s₁.nTotal = s₂.nTotal)
     (hd : difficulty s₁ g ≤ difficulty s₂ g) : s₂.count g.adjective ≤ s₁.count g.adjective := by
   cases g
@@ -146,7 +142,6 @@ def Truthful (s : ExamStimulus) (a : Adjective) : Quantifier → Prop
 instance (s : ExamStimulus) (a : Adjective) : DecidablePred (Truthful s a) := λ q => by
   cases q <;> unfold Truthful <;> infer_instance
 
-/-- Truth is inherited down the scale: a quantifier below a truthful one is truthful. -/
 theorem Truthful.of_le {s : ExamStimulus} {a : Adjective} {q q' : Quantifier} (h : q' ≤ q)
     (hq : Truthful s a q) : Truthful s a q' := by
   have := s.nTotal_pos
@@ -161,7 +156,6 @@ def strongest (s : ExamStimulus) (a : Adjective) : WithBot Quantifier :=
   else if 0 < s.count a then ↑Quantifier.some_
   else ⊥
 
-/-- *None* is the strongest description exactly of a zero count. -/
 theorem strongest_eq_bot_iff (s : ExamStimulus) (a : Adjective) :
     strongest s a = ⊥ ↔ s.count a = 0 := by
   have := s.nTotal_pos
@@ -177,7 +171,6 @@ theorem strongest_truthful (s : ExamStimulus) (a : Adjective) {q : Quantifier}
   · cases WithBot.coe_inj.1 h; exact h3
   · exact absurd h WithBot.bot_ne_coe
 
-/-- Every truthful quantifier lies below the strongest one. -/
 theorem Truthful.le_strongest {s : ExamStimulus} {a : Adjective} {q : Quantifier}
     (hq : Truthful s a q) : ↑q ≤ strongest s a := by
   have := s.nCorrect_le

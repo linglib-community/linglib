@@ -117,8 +117,6 @@ def ClauseClass.HasOC (c : ClauseClass) (agr : Bool) : Prop :=
 instance (c : ClauseClass) (agr : Bool) : Decidable (c.HasOC agr) :=
   inferInstanceAs (Decidable (Clause.HasControl _))
 
-/-- OC obtains exactly on C-subjunctives (any Agr) and `[−Agr]`
-    F-subjunctives. -/
 theorem ClauseClass.hasOC_iff (c : ClauseClass) (agr : Bool) :
     c.HasOC agr ↔ c = .cSubjunctive ∨ (c = .fSubjunctive ∧ agr = false) := by
   cases c <;> cases agr <;> decide

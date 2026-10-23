@@ -116,8 +116,6 @@ theorem SepPerm.eq_single {i : ℕ} {l : List ℕ} (h : SepPerm i i l) : l = [i]
   | pos hu hv => have := hu.le; have := hv.le; omega
   | neg hu hv => have := hu.le; have := hv.le; omega
 
-/-- A separable permutation of `i…j` is a permutation of the canonical linearization: the
-leaves of a separating tree are determined by its shape and labels. -/
 theorem SepPerm.perm {i j : ℕ} {l : List ℕ} (h : SepPerm i j l) :
     l.Perm (List.range' i (j + 1 - i)) := by
   induction h with
@@ -263,8 +261,6 @@ theorem sepPerm_of_derives {n : ℕ} {c : Cat ℕ} {w : List ℕ}
 
 /-! ### The universal -/
 
-/-- CCG derives exactly the separable permutations, the paper's Theorems 1 and 2, at the
-forward slashing of the span category. -/
 theorem derives_fwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n) :
     (nodGrammar n).Derives (.rslash (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
   refine ⟨fun h ↦ ?_, fun h ↦ (derives_of_sepPerm h1 hn h).1⟩
@@ -273,7 +269,6 @@ theorem derives_fwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ 
     exact hsep
   · exact absurd hcat (by simp)
 
-/-- The mirror of `derives_fwd_iff`, at the backward slashing. -/
 theorem derives_bwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n) :
     (nodGrammar n).Derives (.lslash (.atom i) .dot (.atom (j + 1))) l ↔ SepPerm i j l := by
   refine ⟨fun h ↦ ?_, fun h ↦ (derives_of_sepPerm h1 hn h).2⟩
@@ -282,18 +277,15 @@ theorem derives_bwd_iff {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ 
   · obtain ⟨rfl, rfl⟩ : i = i' ∧ j = j' := by simpa using hcat
     exact hsep
 
-/-- The NOD grammar over `n` words derives only permutations of the canonical linearization. -/
 theorem perm_of_derives {n i j : ℕ} {l : List ℕ} (h1 : 1 ≤ i) (hn : j ≤ n)
     (h : (nodGrammar n).Derives (.rslash (.atom i) .dot (.atom (j + 1))) l) :
     l.Perm (List.range' i (j + 1 - i)) :=
   ((derives_fwd_iff h1 hn).mp h).perm
 
-/-- The four-word chain does not derive the order 2413, the paper's (g). -/
 theorem not_derives_2413 :
     ¬ (nodGrammar 4).Derives (.rslash (.atom 1) .dot (.atom 5)) [2, 4, 1, 3] :=
   mt (derives_fwd_iff le_rfl le_rfl).mp not_sepPerm_2413
 
-/-- The four-word chain does not derive the order 3142, the paper's (j). -/
 theorem not_derives_3142 :
     ¬ (nodGrammar 4).Derives (.rslash (.atom 1) .dot (.atom 5)) [3, 1, 4, 2] :=
   mt (derives_fwd_iff le_rfl le_rfl).mp not_sepPerm_3142
@@ -309,14 +301,10 @@ def nominalRank : Minimalist.Cat → ℕ
   | .N => 4
   | _ => 0
 
-/-- Every order of demonstrative, numeral, adjective and noun that [cinque-2005] attests is a
-separable permutation of the natural order of dominance. -/
 theorem cinque_attested_separable :
     ∀ r ∈ Cinque2005.table, r.Attested → SepPerm 1 4 (r.order.map nominalRank) := by
   decide
 
-/-- Among the twenty-four nominal orders, the non-separable ones are exactly the paper's (g)
-and (j), unattested in every survey. -/
 theorem cinque_not_sepPerm_iff :
     ∀ r ∈ Cinque2005.table, ¬ SepPerm 1 4 (r.order.map nominalRank) ↔
       r.order = [.Num, .N, .Dem, .A] ∨ r.order = [.A, .Dem, .N, .Num] := by

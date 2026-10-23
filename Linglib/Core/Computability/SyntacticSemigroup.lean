@@ -111,8 +111,6 @@ theorem syntacticSemigroupToMonoid_injective (L : Language α) :
 instance [Finite L.SyntacticMonoid] : Finite L.SyntacticSemigroup :=
   .of_injective _ L.syntacticSemigroupToMonoid_injective
 
-/-- Every element of the syntactic monoid is the class of the empty word or the image of an
-element of the syntactic semigroup. -/
 theorem eq_one_or_mem_range_syntacticSemigroupToMonoid (L : Language α) (s : L.SyntacticMonoid) :
     s = 1 ∨ s ∈ Set.range L.syntacticSemigroupToMonoid := by
   obtain ⟨x, rfl⟩ := Con.mk'_surjective s
@@ -157,7 +155,6 @@ theorem syntacticSemigroupCon_le_rightQuotient (L : Language α) (u : List α) :
     L.syntacticSemigroupCon ≤ (L.rightQuotient u).syntacticSemigroupCon :=
   fun {_ _} h ↦ L.syntacticCon_le_rightQuotient u h
 
-/-- The syntactic congruence on nonempty words depends on `L` only through its nonempty words. -/
 theorem syntacticSemigroupCon_congr {L' : Language α}
     (h : ∀ w : List α, w ≠ [] → (w ∈ L ↔ w ∈ L')) :
     L.syntacticSemigroupCon = L'.syntacticSemigroupCon :=
@@ -199,7 +196,6 @@ theorem recognizesSemigroup_iff :
     · rw [FreeMonoid.mapWithOne_ofList_cons]
       simpa [toFreeMonoid_mk_eq_cons] using hP ⟨c, l⟩
 
-/-- If `η` recognizes `L`, then `η.comp ψ` recognizes the inverse image of `L` under `ψ`. -/
 theorem RecognizesSemigroup.comap {β : Type*} (hrec : L.RecognizesSemigroup η)
     (ψ : FreeSemigroup β →ₙ* FreeSemigroup α) :
     RecognizesSemigroup (η.comp ψ) {w : List β | ∃ u : FreeSemigroup β,

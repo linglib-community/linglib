@@ -105,7 +105,6 @@ def apply (input : List α) : List β :=
 @[simp] lemma apply_singleton (x : α) : r.apply [x] = r.windowOutput [] x :=
   List.append_nil _
 
-/-- The window before each symbol is the last `k - 1` symbols of the output so far. -/
 theorem apply_append_singleton (u : List α) (x : α) :
     r.apply (u ++ [x]) = r.apply u ++ r.windowOutput ((r.apply u).rtake (k - 1)) x := by
   have h := windowRun_append_singleton (out := r.windowOutput) (upd := r.windowOutput)
@@ -139,8 +138,6 @@ theorem IsLeftOutputStrictlyLocal.isPrefix (hf : IsLeftOutputStrictlyLocal k f) 
   exact isPrefix_append_of_append_singleton (fun u x ↦ ⟨_, (r.apply_append_singleton u x).symm⟩)
     u v
 
-/-- The residuals of a `k`-OSL function factor through the last `k - 1` output symbols, so inputs
-whose outputs end alike have the same continuations. -/
 theorem IsLeftOutputStrictlyLocal.factorsThrough_residual (hf : IsLeftOutputStrictlyLocal k f) :
     f.residual.FactorsThrough fun u ↦ (f u).rtake (k - 1) := by
   obtain ⟨r, rfl⟩ := hf
@@ -206,13 +203,10 @@ theorem IsLeftOutputStrictlyLocal.isLeftSubsequential [Fintype β]
   obtain ⟨r, rfl⟩ := hf
   exact isLeftSubsequential_windowRun _ _ _
 
-/-- A rule emitting one symbol per input symbol is Mealy-computable, the bounded output window
-being the state. -/
 theorem OSLRule.isMealyComputable_apply [Fintype β] (r : OSLRule k α β)
     (hs : ∀ w x, (r.windowOutput w x).length = 1) : IsMealyComputable r.apply :=
   isMealyComputable_windowRun _ _ _ hs
 
-/-- Over a finite output alphabet, right-OSL functions are right-subsequential. -/
 theorem IsRightOutputStrictlyLocal.isRightSubsequential [Fintype β]
     (hf : IsRightOutputStrictlyLocal k f) : IsRightSubsequential f :=
   IsLeftOutputStrictlyLocal.isLeftSubsequential hf
@@ -237,7 +231,6 @@ private lemma windowRun_filter {n : ℕ} {out : List β → α → List β} (w :
 
 @[simp] lemma applyOnTier_nil : r.applyOnTier p [] = [] := rfl
 
-/-- The window before each symbol is the last `k - 1` on-tier symbols of the output so far. -/
 theorem applyOnTier_append_singleton (u : List α) (x : α) :
     r.applyOnTier p (u ++ [x]) = r.applyOnTier p u
       ++ r.windowOutput (((r.applyOnTier p u).filter (p ·)).rtake (k - 1)) x := by
@@ -245,13 +238,10 @@ theorem applyOnTier_append_singleton (u : List α) (x : α) :
     (upd := fun w x ↦ (r.windowOutput w x).filter (p ·)) (w := []) (Nat.zero_le (k - 1)) u x
   rwa [windowRun_filter, List.nil_append] at h
 
-/-- Over the total tier, `applyOnTier` is `apply`. -/
 theorem applyOnTier_true : r.applyOnTier (fun _ ↦ True) = r.apply := by
   simp [applyOnTier]
   rfl
 
-/-- Restricted to the tier, `applyOnTier` is `apply` on the tier projection of the input,
-provided each block stays on the tier exactly when its input symbol is on it. -/
 theorem filter_applyOnTier (r : OSLRule k α α) {p : α → Prop} [DecidablePred p]
     (hr : ∀ w x, ∀ y ∈ r.windowOutput w x, p y ↔ p x) (l : List α) :
     (r.applyOnTier p l).filter (p ·) = r.apply (l.filter (p ·)) := by
@@ -268,8 +258,6 @@ theorem filter_applyOnTier (r : OSLRule k α α) {p : α → Prop} [DecidablePre
         by simpa using mt (hr W x y hy).1 hx, List.filter_singleton, decide_eq_false hx,
         Bool.cond_false, List.append_nil, List.append_nil]
 
-/-- Over a finite output alphabet the rule run over a tier is left-subsequential, the bounded
-tier window being the state. -/
 theorem isLeftSubsequential_applyOnTier [Fintype β] :
     IsLeftSubsequential (r.applyOnTier p) :=
   isLeftSubsequential_windowRun _ _ _
@@ -341,8 +329,6 @@ theorem OSLRule.spread_not_isLeftInputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     List.drop_replicate, Nat.add_sub_cancel_left] at e
   exact hab (List.singleton_inj.mp e)
 
-/-- Spreading is not right-OSL, since scanned right to left its output on `b` is not a prefix of
-its output on `ba`. -/
 theorem OSLRule.spread_not_isRightOutputStrictlyLocal (hab : a ≠ b) (k : ℕ) :
     ¬ IsRightOutputStrictlyLocal k (spread a).apply := fun h ↦ by
   have e := IsLeftOutputStrictlyLocal.isPrefix h [b] [a]

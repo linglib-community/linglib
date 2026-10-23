@@ -72,15 +72,10 @@ variable {C R : Type*}
 probabilities, weighted by the probabilities of the relations. -/
 def mixture [Fintype C] (pCR bias : C → ℚ) : ℚ := ∑ c, pCR c * bias c
 
-/-- The mixture is affine in the expected relations: a change of expectations with the
-conditional biases fixed changes the next-mention probability by the change weighted by the
-biases. -/
 theorem mixture_sub [Fintype C] (p q bias : C → ℚ) :
     mixture q bias - mixture p bias = ∑ c, (q c - p c) * bias c := by
   simp only [mixture, ← sum_sub_distrib, sub_mul]
 
-/-- Without relation-conditioning the mixture over a distribution is the common bias, whatever
-the expectations: a heuristic account predicts no effect of the instructions. -/
 theorem mixture_const [Fintype C] (p : C → ℚ) (hp : ∑ c, p c = 1) (b : ℚ) :
     mixture p (fun _ ↦ b) = b := by
   simp only [mixture, ← sum_mul, hp, one_mul]
@@ -90,8 +85,6 @@ next. -/
 def relationExpectation [Fintype R] (pRef : R → ℚ) (crGiven : R → C → ℚ) (c : C) : ℚ :=
   ∑ r, pRef r * crGiven r c
 
-/-- A shift in next-mention expectations shifts the expected relations by the shift weighted by
-each referent's relation profile. -/
 theorem relationExpectation_sub [Fintype R] (p q : R → ℚ) (crGiven : R → C → ℚ) (c : C) :
     relationExpectation q crGiven c - relationExpectation p crGiven c =
       ∑ r, (q r - p r) * crGiven r c := by
@@ -102,8 +95,6 @@ next-mention prior, normalized by the overall probability of a pronoun. -/
 def posterior [Fintype R] (pRef pPron : R → ℚ) (r : R) : ℚ :=
   pPron r * pRef r / ∑ r', pPron r' * pRef r'
 
-/-- The overlaid bias: a referent is the pronoun's referent above its prior probability exactly
-when it is pronominalized above the overall rate of pronominalization. -/
 theorem posterior_gt_iff [Fintype R] (pRef pPron : R → ℚ) (r : R) (hr : 0 < pRef r)
     (hZ : 0 < ∑ r', pPron r' * pRef r') :
     pRef r < posterior pRef pPron r ↔ ∑ r', pPron r' * pRef r' < pPron r := by
@@ -132,8 +123,6 @@ private theorem sum_position (f : Position → ℚ) : ∑ p, f p = f .subject + 
 /-- Table 1: the Source interpretation rate by aspect. -/
 def aspectSource (a : Aspect) : ℕ := (sourceByAspect a).sourceInterpretation.hundredths.toNat
 
-/-- The event-structure hypothesis: the imperfective keeps the Source central, the perfective
-focuses the end state, so the imperfective draws more Source interpretations. -/
 theorem imperfective_more_source : aspectSource .perfective < aspectSource .imperfective := by
   decide
 
@@ -354,9 +343,6 @@ theorem pronounRate_strictMono : ∀ (v v' : Voice) r r',
     topichood v.toUD r < topichood v'.toUD r' → pronounRate v r < pronounRate v' r' := by
   decide
 
-/-- Production is not expectancy: without a pronoun prompt the passive's by-phrase referent is
-mentioned next far more often than its subject, yet it is pronominalized far less: the rate of
-pronominalization follows topichood, not the next-mention bias. -/
 theorem production_not_expectancy :
     subjectMention .passive < 100 - subjectMention .passive ∧
       pronominalized .passive .nonSubject < pronominalized .passive .subject := by
@@ -378,7 +364,6 @@ def brittany : Word :=
   ⟨"Brittany", .PROPN,
     Features.of (person := some .third) (number := some .singular) (gender := some .feminine)⟩
 
-/-- Both characters are candidate antecedents of the prompt *She*. -/
 theorem she_ambiguous_over_stimuli :
     English.Pronouns.she.toPronoun.CandidateAntecedent amanda ∧
       English.Pronouns.she.toPronoun.CandidateAntecedent brittany := by
@@ -396,13 +381,10 @@ def curActive : Utterance Word GrammaticalRole :=
 def curPassive : Utterance Word GrammaticalRole :=
   { realizations := [⟨amanda, .subject, true⟩, ⟨brittany, .other, false⟩] }
 
-/-- The backward-looking center is the same in both voices: the grammatical-role ranking does
-not see voice. -/
 theorem cb_invariant_under_voice :
     cb prevAmandaActive curActive = cb prevAmandaActive curPassive := by
   decide
 
-/-- Topichood does see it. -/
 theorem topichood_distinguishes_voice : topichood .Act .subject < topichood .Pass .subject := by
   decide
 

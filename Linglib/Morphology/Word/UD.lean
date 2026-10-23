@@ -62,7 +62,6 @@ theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p 
     p.toUD = u := by
   cases u <;> simp only [fromUD, Option.some.injEq, reduceCtorEq] at h <;> subst h <;> rfl
 
-/-- The annotation conflates the clusivity values. -/
 theorem ud_conflates_clusivity : Person.firstInclusive.toUD = Person.firstExclusive.toUD := rfl
 
 end Person
@@ -136,7 +135,6 @@ theorem isPartialInv_fromUD_toUD : Function.IsPartialInv fromUD toUD :=
 @[simp] theorem toUD_fromUD (u : UD.Gender) : (fromUD u).toUD = some u :=
   isPartialInv_fromUD_toUD.eq u
 
-/-- The labels with a tag round-trip. -/
 theorem fromUD_of_toUD_eq_some {g : Gender} {u : UD.Gender} (h : g.toUD = some u) :
     fromUD u = g :=
   (isPartialInv_fromUD_toUD u g).1 h

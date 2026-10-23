@@ -100,29 +100,22 @@ def Reaches (c : Clause) (v : Verb) : Height → Prop
 instance (c : Clause) (v : Verb) : DecidablePred (Reaches c v) := fun h ↦ by
   cases h <;> unfold Reaches Hosts Clause.AgrOpaque Clause.TenseOpaque <;> infer_instance
 
-/-- Long movement is short movement continued (the Head Movement Constraint). -/
 theorem reaches_tense_imp_agr {c : Clause} {v : Verb} (h : Reaches c v .tense) :
     Reaches c v .agr :=
   h.1
 
-/-- Reachability is downward closed. -/
 theorem reaches_of_le {c : Clause} {v : Verb} {h h' : Height} (hle : h' ≤ h)
     (hr : Reaches c v h) : Reaches c v h' := by
   cases h <;> cases h' <;>
     first | exact hr | exact trivial | exact hr.1 | exact absurd hle (by decide)
 
-/-- *Be* and *have* reach T in every clause of both languages. -/
 theorem auxiliary_reaches_tense (c : Clause) : Reaches c .auxiliary .tense :=
   ⟨Or.inr rfl, Or.inr rfl⟩
 
-/-- No lexical verb reaches nonfinite T, in French as in English: the restriction is not an
-English idiosyncrasy. -/
 theorem lexical_not_reaches_nonfinite_tense (l : Language) :
     ¬ Reaches ⟨l, false⟩ .lexical .tense :=
   fun h ↦ h.2.elim (· rfl) (nomatch ·)
 
-/-- A lexical verb moves at all exactly in French: the lexical restrictions on short movement
-in infinitives and on long movement in finite clauses are the same restriction. -/
 theorem lexical_reaches_agr_iff (c : Clause) : Reaches c .lexical .agr ↔ c.language = .french := by
   cases c with
   | mk l f => cases l <;> cases f <;> decide
@@ -147,7 +140,6 @@ def NeedsDo (c : Clause) (v : Verb) : Prop := c.finite = true ∧ top c v = .vp
 
 instance (c : Clause) (v : Verb) : Decidable (NeedsDo c v) := by unfold NeedsDo; infer_instance
 
-/-- Do-support arises exactly in English finite clauses with a lexical verb. -/
 theorem needsDo_iff (c : Clause) (v : Verb) :
     NeedsDo c v ↔ c = ⟨.english, true⟩ ∧ v = .lexical := by
   cases c with
@@ -169,8 +161,6 @@ def precedes (h : Height) : Diagnostic → Bool
   | .negation | .inversion => h = .tense
   | .adverb | .floatingQ => h ≠ .vp
 
-/-- The adverb and floating-quantifier diagnostics agree at every height, and negation and
-inversion agree at every height. -/
 theorem precedes_adverb_floatingQ (h : Height) :
     precedes h .adverb = precedes h .floatingQ ∧ precedes h .negation = precedes h .inversion := by
   cases h <;> decide

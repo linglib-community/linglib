@@ -84,25 +84,20 @@ def Presup (C : Finset Ordering) (π ref : NonemptyInterval T) : Prop := ref.pos
 
 instance : Decidable (Presup C π r) := inferInstanceAs (Decidable (_ ∈ C))
 
-/-- PRES presupposes that its reference overlaps the perspective. -/
 @[simp] theorem presup_present : Presup ⟦present⟧ π r ↔ r.Overlaps π := by
   simp [Presup, denote_present]
 
-/-- PAST presupposes that its reference precedes the perspective. -/
 @[simp] theorem presup_past : Presup ⟦past⟧ π r ↔ r.Precedes π := by
   simp [Presup, denote_past]
 
 @[simp] theorem presup_future : Presup ⟦future⟧ π r ↔ π.Precedes r := by
   simp [Presup, denote_future]
 
-/-- ⌈then⌉ presupposes that its reference is disjoint from the perspective. -/
 @[simp] theorem presup_compl_present : Presup ⟦present⟧ᶜ π r ↔ ¬ r.Overlaps π := by
   simp [Presup, denote_present]
 
-/-- A pronoun with the full cell, such as a deleted tense, presupposes nothing. -/
 @[simp] theorem presup_top : Presup ⊤ π r := Finset.mem_univ _
 
-/-- On point intervals the presupposition is the comparison of the points. -/
 @[simp] theorem presup_pure {p t : T} :
     Presup C (NonemptyInterval.pure p) (NonemptyInterval.pure t) ↔ compare t p ∈ C := by
   rw [Presup, NonemptyInterval.position_pure]
@@ -118,18 +113,15 @@ def toSetRel (C : Finset Ordering) : SetRel (NonemptyInterval T) (NonemptyInterv
 
 instance : Decidable (π ~[toSetRel C] r) := inferInstanceAs (Decidable (Presup C π r))
 
-/-- The relation of a cell on intervals is the converse of the Allen relation of its positions. -/
 theorem toSetRel_eq_inv (C : Finset Ordering) :
     (toSetRel C : SetRel (NonemptyInterval T) _) = (Allen.toSetRel (Allen.ofPosition C)).inv := by
   ext ⟨π, r⟩
   simp [Presup]
 
-/-- On point intervals the relation of a cell is its relation on points. -/
 theorem pure_mem_toSetRel {p t : T} :
     .pure p ~[toSetRel C] .pure t ↔ p ~[Tense.toSetRel C] t := by
   simp
 
-/-- On dense time the past relation on intervals composed with itself is the past relation. -/
 theorem toSetRel_past_comp_self [DenselyOrdered T] :
     (toSetRel ⟦past⟧ ○ toSetRel ⟦past⟧ : SetRel (NonemptyInterval T) (NonemptyInterval T)) =
       toSetRel ⟦past⟧ := by
@@ -140,8 +132,6 @@ theorem toSetRel_past_comp_self [DenselyOrdered T] :
 
 /-! ### Restriction by an adverb -/
 
-/-- An adverb restricts the reference of the tense it modifies, so if the tense is a present its
-cell must admit overlap with their common perspective. -/
 theorem eq_mem_of_presup_present (hr : Presup ⟦present⟧ π r) (hle : r ≤ th) (hth : Presup C π th) :
     .eq ∈ C := by
   have h : th.position π = .eq :=

@@ -55,7 +55,6 @@ def ena : Article := indefinite "ena"
 def inventory : Determiner.Inventory :=
   [o, i, to_, oi, ta, enas, mia, ena].map .article
 
-/-- A single article marks both strengths. -/
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Greek.StandardModern.Determiners

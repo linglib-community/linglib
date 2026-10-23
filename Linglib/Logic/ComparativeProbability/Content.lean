@@ -73,7 +73,6 @@ theorem nonneg (m : QualAddMeasure K W) (A : Set W) : 0 ≤ m A := m.nonneg' A
 
 @[simp] theorem total (m : QualAddMeasure K W) : m Set.univ = 1 := m.total'
 
-/-- Two events compare as their differences do, `μ(A) ≤ μ(B) ↔ μ(A ∖ B) ≤ μ(B ∖ A)`. -/
 theorem qualAdd (m : QualAddMeasure K W) (A B : Set W) :
     m A ≤ m B ↔ m (A \ B) ≤ m (B \ A) := m.qualAdd' A B
 
@@ -81,8 +80,6 @@ theorem qualAdd (m : QualAddMeasure K W) (A B : Set W) :
     induces. -/
 def inducedGe (m : QualAddMeasure K W) (A B : Set W) : Prop := m A ≥ m B
 
-/-- A qualitatively additive measure is monotone, `A ⊆ B → μ(A) ≤ μ(B)`, by qualitative
-    additivity, `μ(∅) = 0` and non-negativity. -/
 theorem mu_mono (m : QualAddMeasure K W) {A B : Set W} (h : A ⊆ B) :
     m A ≤ m B := by
   rw [m.qualAdd A B, Set.sdiff_eq_empty.mpr h, m.mu_empty]; exact m.nonneg (B \ A)
@@ -138,8 +135,6 @@ theorem strict_inducedGe_iff_real (μ : Measure W) [IsFiniteMeasure μ] {A B : S
   rw [Strict, μ.inducedGe_iff_real, μ.inducedGe_iff_real, not_le]
   exact ⟨And.right, fun h ↦ ⟨h.le, h⟩⟩
 
-/-- A finite measure on a discrete space compares two events as it compares their differences,
-    since `μ(A) = μ(A \ B) + μ(A ∩ B)` and `μ(B) = μ(B \ A) + μ(A ∩ B)`. -/
 theorem measure_le_iff_sdiff_le [DiscreteMeasurableSpace W] (μ : Measure W) [IsFiniteMeasure μ]
     (A B : Set W) : μ A ≤ μ B ↔ μ (A \ B) ≤ μ (B \ A) := by
   rw [← measure_sdiff_add_inter A (.of_discrete : MeasurableSet B),

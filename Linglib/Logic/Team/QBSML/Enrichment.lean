@@ -64,7 +64,6 @@ variable {W Domain : Type*} [DecidableEq W] [DecidableEq Var] [Fintype Var]
   [DecidableEq Domain] [Fintype Domain] {M : Model W Domain Const Pred}
   {φ : Formula Var Const Pred} {s : Finset (Index W Var Domain)} {pol : Bool}
 
-/-- A state supporting an enriched formula is non-empty. -/
 theorem nonempty_of_support_enrich (h : support M φ.enrich s) : s.Nonempty := by
   cases φ with
   | ne => exact h
@@ -124,12 +123,10 @@ theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol φ.enrich s) : eva
       exact ⟨f, hf, ih h'⟩
     · exact ih h.1
 
-/-- `[α]⁺ ⊨ α` for `NE`-free `α`. -/
 theorem support_of_support_enrich (hNE : φ.NEFree) (h : support M φ.enrich s) :
     support M φ s :=
   eval_of_eval_enrich hNE h
 
-/-- `[α]⁺ ⫤ α` for `NE`-free `α`, the anti-support half of `eval_of_eval_enrich`. -/
 theorem antiSupport_of_antiSupport_enrich (hNE : φ.NEFree) (h : antiSupport M φ.enrich s) :
     antiSupport M φ s :=
   eval_of_eval_enrich hNE h

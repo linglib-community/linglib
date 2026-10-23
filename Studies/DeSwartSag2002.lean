@@ -109,7 +109,6 @@ theorem not_isAntiAdditive_few : ¬ IsAntiAdditive (few fun _ : Fin 3 ↦ True) 
     eq_iff_iff.mp (h (· = 0) (· = 1))
   revert this; decide
 
-/-- *Some* is not anti-additive: of one individual, some is in `⊤ ∪ ⊥` but none is in `⊥`. -/
 theorem not_isAntiAdditive_some : ¬ IsAntiAdditive (GQ.some fun _ : PUnit.{u + 1} ↦ True) :=
   fun h ↦ by simpa [GQ.some] using eq_iff_iff.mp (h ⊤ ⊥)
 

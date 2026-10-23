@@ -33,7 +33,6 @@ variable {α : Type*} [MeasurableSpace α]
 
 instance (a : α) : IsZeroOneMeasure (dirac a) := ⟨fun _ _ ↦ dirac_apply_eq_zero_or_one⟩
 
-/-- A probability measure almost surely equal to a point is the Dirac measure at it. -/
 theorem eq_dirac_of_ae_eq [MeasurableSingletonClass α] {μ : Measure α} [IsProbabilityMeasure μ]
     {a : α} (h : ∀ᵐ x ∂μ, x = a) : μ = dirac a := by
   have h0 : μ {a}ᶜ = 0 := by have := ae_iff.1 h; exact this
@@ -50,21 +49,17 @@ end PointMass
 
 variable {β : Type*} [MeasurableSpace β] [Fintype β] [MeasurableSingletonClass β]
 
-/-- A finite sum of scaled Dirac measures gives a set the total weight of its points. -/
 theorem sum_smul_dirac_apply (w : β → ℝ≥0∞) (s : Set β) :
     (∑ b, w b • dirac b) s = ∑ b, s.indicator w b := by
   rw [finsetSum_apply]
   refine Finset.sum_congr rfl fun b _ ↦ ?_
   by_cases hb : b ∈ s <;> simp [hb]
 
-/-- A finite sum of scaled Dirac measures evaluates at a singleton to its weight. -/
 theorem sum_smul_dirac_apply_singleton (w : β → ℝ≥0∞) (b : β) :
     (∑ b', w b' • dirac b') {b} = w b := by
   classical
   simp [sum_smul_dirac_apply, Set.indicator_apply]
 
-/-- With nonnegative real weights, a finite sum of Dirac measures gives a set, on reals, the
-total weight of its points. -/
 theorem sum_ofReal_smul_dirac_real_apply {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (s : Set β) :
     (∑ b, ENNReal.ofReal (w b) • dirac b).real s = ∑ b, s.indicator w b := by
   rw [measureReal_def, sum_smul_dirac_apply, ENNReal.toReal_sum fun b _ ↦ by
@@ -72,7 +67,6 @@ theorem sum_ofReal_smul_dirac_real_apply {w : β → ℝ} (hw : ∀ b, 0 ≤ w b
   refine Finset.sum_congr rfl fun b _ ↦ ?_
   by_cases hb : b ∈ s <;> simp [hb, hw b]
 
-/-- Nonnegative real weights summing to one give a probability measure. -/
 theorem isProbabilityMeasure_sum_ofReal_smul_dirac {w : β → ℝ} (hw : ∀ b, 0 ≤ w b)
     (h : ∑ b, w b = 1) : IsProbabilityMeasure (∑ b, ENNReal.ofReal (w b) • dirac b) :=
   ⟨by rw [sum_smul_dirac_apply, Set.indicator_univ,
@@ -89,13 +83,11 @@ theorem ofWeights_apply_singleton_ne_zero {w : β → ℝ≥0∞} {b : β} (h : 
     ofWeights w {b} ≠ 0 := by
   rwa [ofWeights_apply_singleton]
 
-/-- The weight measure of a finite set is the sum of its points' weights. -/
 theorem ofWeights_apply_finset (w : β → ℝ≥0∞) (s : Finset β) :
     ofWeights w ↑s = ∑ b ∈ s, w b := by
   rw [← sum_measure_singleton]
   simp only [ofWeights_apply_singleton]
 
-/-- Finite weights give a finite measure. -/
 theorem isFiniteMeasure_ofWeights {w : β → ℝ≥0∞} (hw : ∀ b, w b ≠ ∞) :
     IsFiniteMeasure (ofWeights w) :=
   ⟨by rw [← Finset.coe_univ, ofWeights_apply_finset]; exact ENNReal.sum_lt_top.2 fun b _ ↦
@@ -104,7 +96,6 @@ theorem isFiniteMeasure_ofWeights {w : β → ℝ≥0∞} (hw : ∀ b, w b ≠ �
 instance (w : β → ℕ) : IsFiniteMeasure (ofWeights fun b ↦ (w b : ℝ≥0∞)) :=
   isFiniteMeasure_ofWeights fun _ ↦ ENNReal.natCast_ne_top _
 
-/-- On reals the weight measure gives a point its weight. -/
 theorem ofWeights_real_singleton (w : β → ℝ≥0∞) (b : β) :
     (ofWeights w).real {b} = (w b).toReal := by
   rw [measureReal_def, ofWeights_apply_singleton]
@@ -116,12 +107,10 @@ noncomputable def ofRealWeights (w : β → ℝ) : Measure β := ofWeights fun b
 instance (w : β → ℝ) : IsFiniteMeasure (ofRealWeights w) :=
   isFiniteMeasure_ofWeights fun _ ↦ ENNReal.ofReal_ne_top
 
-/-- With nonnegative weights the real weight measure gives a point its weight. -/
 theorem ofRealWeights_real_singleton {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (b : β) :
     (ofRealWeights w).real {b} = w b := by
   rw [ofRealWeights, ofWeights_real_singleton, ENNReal.toReal_ofReal (hw b)]
 
-/-- Nonnegative real weights summing to one give a probability measure. -/
 theorem isProbabilityMeasure_ofRealWeights {w : β → ℝ} (hw : ∀ b, 0 ≤ w b) (h : ∑ b, w b = 1) :
     IsProbabilityMeasure (ofRealWeights w) :=
   isProbabilityMeasure_sum_ofReal_smul_dirac hw h

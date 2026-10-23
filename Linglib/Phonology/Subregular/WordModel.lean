@@ -128,8 +128,6 @@ instance : (wordLanguage P).Structure (WordModel u R) where
     | .label p, x => p ∈ Labelling.labels (x 0).label
     | .ord, x => R (x 0) (x 1)
 
-/-- An assignment realizes the atoms another does when each of its positions carries the labels
-of the other's and it keeps the ordering between its variables. -/
 theorem mem_realizers_of_subset {n : ℕ} {T : Set ((wordLanguage P).Atom (Fin n))}
     {v : Fin n → WordModel u R} {v' : Fin n → WordModel u' R'}
     (hlabel : ∀ x, Labelling.labels (P := P) (v x).label ⊆ Labelling.labels (v' x).label)
@@ -141,8 +139,6 @@ theorem mem_realizers_of_subset {n : ℕ} {T : Set ((wordLanguage P).Atom (Fin n
   | label p => exact hlabel (args 0) h
   | ord => exact hord _ _ h
 
-/-- An assignment realizes the atoms another does when it reads the same symbols and keeps the
-ordering between its variables. -/
 theorem mem_realizers_of {n : ℕ} {T : Set ((wordLanguage P).Atom (Fin n))}
     {v : Fin n → WordModel u R} {v' : Fin n → WordModel u' R'}
     (hlabel : ∀ x, (v' x).label = (v x).label) (hord : ∀ x y, R (v x) (v y) → R' (v' x) (v' y))
@@ -155,7 +151,6 @@ section Precedence
 
 variable {w w' : List α}
 
-/-- The factors of a subsequence occur in the word. -/
 theorem factors_subset_of_sublist [Labelling α P] {k : ℕ} (h : w <+ w') :
     (wordLanguage P).factors k (WordModel w (· < ·)) ⊆
       (wordLanguage P).factors k (WordModel w' (· < ·)) := by
@@ -164,8 +159,6 @@ theorem factors_subset_of_sublist [Labelling α P] {k : ℕ} (h : w <+ w') :
   exact ⟨fun x ↦ show WordModel w' (· < ·) from e (v x),
     mem_realizers_of (fun x ↦ (he (v x)).symm) (fun x y h ↦ e.lt_iff_lt.2 h) hv⟩
 
-/-- A factor occurring in a word occurs in the subsequence its occurrence picks out, which has
-no more symbols than the factor has variables. -/
 theorem exists_sublist_of_occurs [Labelling α P] {k : ℕ} {f : (wordLanguage P).Factor k}
     (hf : f.Occurs (WordModel w (· < ·))) :
     ∃ s, s <+ w ∧ s.length ≤ k ∧ f.Occurs (WordModel s (· < ·)) := by
@@ -230,13 +223,11 @@ theorem diagram_occurs_iff_forall₂ [Labelling α P] {s : List α} {k : ℕ} (h
       mem_realizers_of_subset (fun i ↦ hget i i.2 (hlen ▸ i.2)) (fun i j h ↦ by exact h)
         (v := id) (fun _ ha ↦ ha)⟩
 
-/-- The diagram of a word occurs exactly in the words of which it is a subsequence. -/
 theorem diagram_occurs_iff {s : List α} {k : ℕ} (hs : s.length ≤ k) :
     (diagram α s hs).Occurs (WordModel w (· < ·)) ↔ s <+ w := by
   simp only [diagram_occurs_iff_forall₂, Labelling.labels_self, Set.singleton_subset_singleton,
     List.forall₂_eq_eq_eq, exists_eq_right']
 
-/-- A one-position diagram occurs exactly in the words with a symbol carrying its labels. -/
 theorem diagram_singleton_occurs_iff [Labelling α P] {d : α} {k : ℕ} (hk : [d].length ≤ k) :
     (diagram P [d] hk).Occurs (WordModel w (· < ·)) ↔
       ∃ x ∈ w, Labelling.labels (P := P) d ⊆ Labelling.labels x := by
@@ -250,16 +241,12 @@ theorem diagram_singleton_occurs_iff [Labelling α P] {d : α} {k : ℕ} (hk : [
   · rintro ⟨x, hx, hdx⟩
     exact ⟨[x], List.singleton_sublist.2 hx, .cons hdx .nil⟩
 
-/-- The factors of a word under precedence are those of its subsequences of at most `k`
-symbols. -/
 theorem factors_subset_of_subseqSet_subset {k : ℕ} (h : subseqSet k w ⊆ subseqSet k w') :
     (wordLanguage α).factors k (WordModel w (· < ·)) ⊆
       (wordLanguage α).factors k (WordModel w' (· < ·)) := fun _ hf ↦
   let ⟨_, hsw, hs, hfs⟩ := exists_sublist_of_occurs hf
   factors_subset_of_sublist (h ⟨hsw, hs⟩).1 hfs
 
-/-- Two words have the same factors under precedence exactly when they have the same
-subsequences of at most `k` symbols. -/
 theorem factors_eq_iff_subseqSet {k : ℕ} :
     (wordLanguage α).factors k (WordModel w (· < ·)) =
         (wordLanguage α).factors k (WordModel w' (· < ·)) ↔
@@ -288,7 +275,6 @@ variable {ι V : Type*}
 /-- A partial valuation, such as a segment, carries the values it gives its features. -/
 instance : Labelling (ι → Flat V) (ι × V) := ⟨fun s ↦ {p | s p.1 = p.2}⟩
 
-/-- A valuation carries the labels of another exactly when it lies above it. -/
 theorem labels_subset_labels_iff {s t : ι → Flat V} :
     Labelling.labels (P := ι × V) s ⊆ Labelling.labels t ↔ s ≤ t := by
   refine ⟨fun h i ↦ ?_, fun h p hp ↦ Flat.coe_le_iff.1 ((show s p.1 = p.2 from hp) ▸ h p.1)⟩
@@ -296,8 +282,6 @@ theorem labels_subset_labels_iff {s t : ι → Flat V} :
   | bot => exact bot_le
   | coe a => exact Flat.coe_le_iff.2 (h (show s (i, a).1 = (i, a).2 from hs))
 
-/-- Under feature-labelled precedence models the diagram of a word occurs exactly in the words
-with a subsequence lying above it position by position. -/
 theorem diagram_occurs_iff_forall₂_le {s w : List (ι → Flat V)} {k : ℕ} (hs : s.length ≤ k) :
     (diagram (ι × V) s hs).Occurs (WordModel w (· < ·)) ↔
       ∃ t, t <+ w ∧ List.Forall₂ (· ≤ ·) s t := by
@@ -311,8 +295,6 @@ section UnitSteps
 
 variable {n : ℕ} {T : Set ((wordLanguage P).Atom (Fin n))} {r : Fin n → WordModel u R}
 
-/-- Variables an atom relates are at most one position apart, when the ordering takes unit
-steps. -/
 theorem le_add_one_of_adj (hR : ∀ a b, R a b → (a : ℕ) ≤ b + 1 ∧ (b : ℕ) ≤ a + 1)
     (hr : r ∈ Atom.realizers (WordModel u R) T) {x y : Fin n} (h : (Atom.gaifman T).Adj x y) :
     ((r x).toFin : ℕ) ≤ (r y).toFin + 1 := by
@@ -329,8 +311,6 @@ theorem le_add_one_of_adj (hR : ∀ a b, R a b → (a : ℕ) ≤ b + 1 ∧ (b : 
       · exact absurd rfl hne
   rcases hxy with ⟨a, ha, hx, hy⟩ | ⟨a, ha, hy, hx⟩ <;> exact key a ha hx hy
 
-/-- An occurrence of a `k`-factor spans at most `k - 1` positions, when the ordering takes unit
-steps. -/
 theorem le_add_of_occurs {k : ℕ} {f : (wordLanguage P).Factor k}
     (hR : ∀ a b, R a b → (a : ℕ) ≤ b + 1 ∧ (b : ℕ) ≤ a + 1)
     {r : Fin f.n → WordModel u R} (hr : r ∈ Atom.realizers (WordModel u R) f.atoms)
@@ -355,12 +335,10 @@ end UnitSteps
 
 /-! ### Successor -/
 
-/-- Successor between positions takes unit steps. -/
 theorem covBy_unit {m : ℕ} (a b : Fin m) (h : a ⋖ b) : (a : ℕ) ≤ b + 1 ∧ (b : ℕ) ≤ a + 1 := by
   rw [Fin.covBy_iff, Nat.covBy_iff_add_one_eq] at h
   omega
 
-/-- The factors of an infix occur in the word under successor. -/
 theorem factors_subset_of_infix {k : ℕ} {c u : List β} (h : c <:+: u) :
     (wordLanguage P).factors k (WordModel c (· ⋖ ·)) ⊆
       (wordLanguage P).factors k (WordModel u (· ⋖ ·)) := by
@@ -377,8 +355,6 @@ theorem factors_subset_of_infix {k : ℕ} {c u : List β} (h : c <:+: u) :
     simp only [Fin.covBy_iff, Nat.covBy_iff_add_one_eq] at hab ⊢
     omega
 
-/-- An occurrence of a `k`-factor under successor lies in an infix of at most `k` symbols, the
-window it spans. -/
 theorem exists_infix_of_occurs {k : ℕ} {u : List β} {f : (wordLanguage P).Factor k}
     (hf : f.Occurs (WordModel u (· ⋖ ·))) :
     ∃ c, c <:+: u ∧ c.length ≤ k ∧ f.Occurs (WordModel c (· ⋖ ·)) := by
@@ -486,15 +462,11 @@ theorem succDiagram_occurs_iff_forall₂ {c u : List β} {k : ℕ} (hc : c.lengt
     change Fin.cast hlen i ⋖ Fin.cast hlen j
     simpa [Fin.covBy_iff] using h
 
-/-- The diagram of a word occurs under successor exactly in the words of which it is an
-infix. -/
 theorem succDiagram_occurs_iff {c u : List β} {k : ℕ} (hc : c.length ≤ k) :
     (succDiagram β c hc).Occurs (WordModel u (· ⋖ ·)) ↔ c <:+: u := by
   simp only [succDiagram_occurs_iff_forall₂, Labelling.labels_self, Set.singleton_subset_singleton,
     List.forall₂_eq_eq_eq, exists_eq_right']
 
-/-- Two words have the same factors under successor exactly when they have the same infixes of at
-most `k` symbols. -/
 theorem factors_eq_iff_infix {k : ℕ} {u u' : List β} :
     (wordLanguage β).factors k (WordModel u (· ⋖ ·)) =
         (wordLanguage β).factors k (WordModel u' (· ⋖ ·)) ↔
@@ -524,23 +496,19 @@ variable {s v : List α}
 @[simp] theorem length_anchor (w : List α) : (anchor w).length = w.length + 2 := by
   simp [anchor]
 
-/-- An infix that starts with the only occurrence of its first element is a prefix. -/
 private theorem prefix_of_infix_cons {β : Type*} {e : β} {c l : List β} (h : e :: c <:+: e :: l)
     (he : e ∉ l) : c <+: l := by
   rcases List.infix_cons_iff.1 h with h | h
   · exact (List.cons_prefix_cons.1 h).2
   · exact absurd (h.subset List.mem_cons_self) he
 
-/-- The symbols of a word occurring together in an anchored word occur together in the word. -/
 theorem infix_of_map_inl_infix_anchor (h : s.map .inl <:+: anchor v) : s <:+: v := by
   simpa [anchor, List.filterMap_map] using h.filterMap Sum.getLeft?
 
-/-- An infix of an anchored word starting at its left edge reads a prefix of the word. -/
 theorem prefix_of_infix_anchor (h : .inr .left :: s.map .inl <:+: anchor v) : s <+: v := by
   have := (prefix_of_infix_cons h (by simp)).filterMap Sum.getLeft?
   simpa [List.filterMap_map] using this
 
-/-- An infix of an anchored word ending at its right edge reads a suffix of the word. -/
 theorem suffix_of_infix_anchor (h : s.map .inl ++ [.inr .right] <:+: anchor v) : s <:+ v := by
   have h' : .inr .right :: (s.reverse.map .inl) <:+:
       .inr .right :: ((v.reverse.map .inl) ++ [(.inr .left : α ⊕ Edge)]) := by
@@ -548,7 +516,6 @@ theorem suffix_of_infix_anchor (h : s.map .inl ++ [.inr .right] <:+: anchor v) :
   have := (prefix_of_infix_cons h' (by simp)).filterMap Sum.getLeft?
   simpa [List.filterMap_map, List.reverse_prefix] using this
 
-/-- An anchored word is an infix of another only when the words are equal. -/
 theorem eq_of_anchor_infix_anchor {w : List α} (h : anchor w <:+: anchor v) : w = v := by
   have hp := prefix_of_infix_cons h (by simp)
   have hle : w.length ≤ v.length := by simpa using hp.length_le
@@ -560,7 +527,6 @@ theorem eq_of_anchor_infix_anchor {w : List α} (h : anchor w <:+: anchor v) : w
   have := List.append_cancel_right (hp.eq_of_length (by simpa using hlen))
   exact List.map_injective_iff.2 Sum.inl_injective this
 
-/-- Anchored words agree up to the end of a common prefix. -/
 theorem getElem_anchor_append_of_le {p q q' : List α} {i : ℕ} (hi : i ≤ p.length)
     (h₁ : i < (anchor (p ++ q)).length) (h₂ : i < (anchor (p ++ q')).length) :
     (anchor (p ++ q))[i] = (anchor (p ++ q'))[i] := by
@@ -570,7 +536,6 @@ theorem getElem_anchor_append_of_le {p q q' : List α} {i : ℕ} (hi : i ≤ p.l
     simp only [anchor, List.getElem_cons_succ, List.map_append, List.append_assoc]
     rw [List.getElem_append_left (by simp; omega), List.getElem_append_left (by simp; omega)]
 
-/-- Anchored words agree from the start of a common suffix. -/
 theorem getElem_anchor_append_of_ge {l l' p p' q : List α} (hl : l = p ++ q)
     (hl' : l' = p' ++ q) {i i' : ℕ} (hi : p.length + 1 ≤ i) (hi' : i' = i - p.length + p'.length)
     (h₁ : i < (anchor l).length) (h₂ : i' < (anchor l').length) :
@@ -602,7 +567,6 @@ theorem append_infix_anchor_iff : s.map .inl ++ [.inr .right] <:+: anchor v ↔ 
   obtain ⟨t, ht⟩ := h.map (Sum.inl : α → α ⊕ Edge)
   exact List.IsSuffix.isInfix ⟨.inr .left :: t, by rw [anchor, ← ht]; simp⟩
 
-/-- A list of left summands is the image of its left components. -/
 private theorem eq_map_inl_filterMap {c : List (α ⊕ Edge)} (h : ∀ x ∈ c, x.isLeft) :
     c = (c.filterMap Sum.getLeft?).map .inl := by
   induction c with
@@ -611,8 +575,6 @@ private theorem eq_map_inl_filterMap {c : List (α ⊕ Edge)} (h : ∀ x ∈ c, 
     obtain ⟨a, rfl⟩ : ∃ a, x = .inl a := Sum.isLeft_iff.1 (h x (by simp))
     simp [← ih fun y hy ↦ h y (by simp [hy])]
 
-/-- Every infix of an anchored word is the image of an infix of the word, possibly preceded by
-the left edge and followed by the right edge. -/
 theorem infix_anchor_cases {c : List (α ⊕ Edge)} (h : c <:+: anchor v) :
     ∃ s : List α, c = s.map .inl ∨ c = .inr .left :: s.map .inl ∨
       c = s.map .inl ++ [.inr .right] ∨ c = anchor s := by
@@ -645,8 +607,6 @@ private theorem suffix_rtake_iff {s : List α} {n : ℕ} :
   rw [List.rtake_eq_reverse_take_reverse, ← List.reverse_prefix, List.reverse_reverse,
     List.prefix_take_iff, List.reverse_prefix, List.length_reverse]
 
-/-- An infix of at most `k` symbols of a word of at least `k` symbols lies in a factor of exactly
-`k` symbols. -/
 private theorem exists_infix_length_eq {s : List α} (h : s <:+: w) (hs : s.length ≤ k)
     (hk : k ≤ w.length) : ∃ f, f <:+: w ∧ f.length = k ∧ s <:+: f := by
   obtain ⟨t, ht, hget⟩ := List.infix_iff_getElem?.1 h
@@ -657,7 +617,6 @@ private theorem exists_infix_length_eq {s : List α} (h : s <:+: w) (hs : s.leng
   congr 1
   omega
 
-/-- A word shorter than `k` is determined by its `k`-test vector. -/
 private theorem eq_of_kTestVector_eq (h : w.kTestVector k = v.kTestVector k) (hw : w.length < k) :
     w = v := by
   simp only [List.kTestVector, Prod.mk.injEq, Edge.takeAt_left, Edge.takeAt_right] at h
@@ -671,8 +630,6 @@ private theorem eq_of_kTestVector_eq (h : w.kTestVector k = v.kTestVector k) (hw
     omega
   rwa [List.take_of_length_le (by omega), List.take_of_length_le (by omega)] at hP
 
-/-- Two words have the same `k`-test vector exactly when their anchored words have the same
-infixes of at most `k` symbols. -/
 theorem kTestVector_eq_iff :
     w.kTestVector k = v.kTestVector k ↔
       {c | c <:+: anchor w ∧ c.length ≤ k} = {c | c <:+: anchor v ∧ c.length ≤ k} := by
@@ -740,8 +697,6 @@ section StrictlyLocal
 
 variable {u₁ v₁ u₂ v₂ x : List α} {k : ℕ}
 
-/-- A factor of `u₁ x v₂`, with `k - 1` symbols in `x`, is a factor of `u₁ x v₁` or of `u₂ x v₂`:
-an occurrence spans at most `k - 1` positions, so it misses `u₁` or `v₂`. -/
 theorem factors_crossover_subset (hx : x.length = k - 1) :
     (wordLanguage (α ⊕ Edge)).factors k (WordModel (anchor (u₁ ++ x ++ v₂)) (· ⋖ ·)) ⊆
       (wordLanguage (α ⊕ Edge)).factors k (WordModel (anchor (u₁ ++ x ++ v₁)) (· ⋖ ·)) ∪
@@ -776,8 +731,6 @@ theorem factors_crossover_subset (hx : x.length = k - 1) :
 
 variable {L : _root_.Language α}
 
-/-- A suffix-substitution-closed stringset contains every word whose factors under successor all
-occur in its members: the word is rebuilt from members a symbol at a time. -/
 theorem mem_of_factors_subset_biUnion (hL : L.SuffixSubstitutionClosed k) (hk : 2 ≤ k)
     {w : List α} (hw : (wordLanguage (α ⊕ Edge)).factors k (WordModel (anchor w) (· ⋖ ·)) ⊆
       ⋃ v ∈ L, (wordLanguage (α ⊕ Edge)).factors k (WordModel (anchor v) (· ⋖ ·))) :

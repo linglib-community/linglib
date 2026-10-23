@@ -73,7 +73,6 @@ variable {F X} {o : ι → ℕ}
 
 @[simp] theorem free_nil : X.Free [] := fun _ h => (List.not_mem_nil h).elim
 
-/-- A grammar tests its forbidden factors one by one. -/
 theorem free_cons {F : AR τ} {B : List (AR τ)} :
     X.Free (F :: B) ↔ ¬ F.FactorEmbeds X ∧ X.Free B :=
   List.forall_mem_cons
@@ -111,8 +110,6 @@ attribute [trans] FactorEmbeds.trans
 /-- `F ⊑ X` says that `F` embeds in `X`, in the notation of mathlib's `SimpleGraph.IsContained`. -/
 scoped infixl:50 " ⊑ " => FactorEmbeds
 
-/-- On a tier where the factor is nonempty, the window equations force the offset
-    in bounds. -/
 theorem IsFactorAt.offset_le (h : F.IsFactorAt X o) {i : ι} (hi : (F.word i).length ≠ 0) :
     o i ≤ (X.word i).length := by
   have h0 := (h.window i 0 (Nat.pos_of_ne_zero hi)).trans
@@ -120,8 +117,6 @@ theorem IsFactorAt.offset_le (h : F.IsFactorAt X o) {i : ι} (hi : (F.word i).le
   have := (List.getElem?_eq_some_iff.mp h0).1
   omega
 
-/-- Offsets clamp to the host's tier lengths; the clamp only moves offsets on
-    tiers where the factor is empty. -/
 theorem IsFactorAt.clamp (h : F.IsFactorAt X o) :
     F.IsFactorAt X fun i => min (o i) (X.word i).length where
   window i p hp := by

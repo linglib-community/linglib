@@ -47,10 +47,8 @@ def World.Thinks (w : World) : Prop := w.believes
 
 instance : DecidablePred World.Thinks := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
-/-- *Know* entails its complement, the defining property of a factive. -/
 theorem World.Knows.complement (h : w.Knows) : w.complement = true := h.2
 
-/-- *Know* entails *think*. -/
 theorem World.Knows.thinks (h : w.Knows) : w.Thinks := h.1
 
 /-- The two questions of the experiments, whether *X* believes the complement and whether it is

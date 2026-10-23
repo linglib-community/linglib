@@ -91,7 +91,6 @@ variable {M : KripkeModel W Atom} {φ ψ ψ₁ ψ₂ : Formula Atom} {w : W}
 @[simp] theorem realize_disj :
     Realize M (.disj ψ₁ ψ₂) w ↔ Realize M ψ₁ w ∨ Realize M ψ₂ w := Iff.rfl
 
-/-- The `◇` clause is `ModalLogic.Diamond` over `M.accessible`, definitionally. -/
 theorem realize_poss : Realize M (.poss ψ) w ↔ ∃ v ∈ M.access w, Realize M ψ v := Iff.rfl
 
 theorem realize_nec : Realize M ψ.nec w ↔ □[M.accessible] (Realize M ψ) w := by

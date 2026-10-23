@@ -75,7 +75,6 @@ variable {τ}
 
 theorem IsTemporalPart.le {e' e : β} (h : IsTemporalPart τ e' e) : e' ≤ e := h.1
 
-/-- A temporal part with a non-null runtime is a proper part. -/
 theorem IsTemporalPart.ne {e' e : β} (hτ : Monotone τ) (h : IsTemporalPart τ e' e)
     (h₀ : ∀ e'', e'' ≤ e → ¬ IsBot (τ e'')) : e' ≠ e := by
   rintro rfl
@@ -92,8 +91,6 @@ section Eat
 consumes. -/
 def eat (x e : Finset (Fin 3)) : Prop := x = e
 
-/-- The object relation of *eat* is strictly incremental and summative, with unique
-participants. -/
 theorem eat_sinc : SINC eat where
   ue _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2.symm⟩
   uo _ _ h _ hle := ⟨_, ⟨h ▸ hle, rfl⟩, fun _ hz ↦ hz.2⟩
@@ -115,8 +112,6 @@ theorem eat_two_apples_qua : QUA (VP eat (Finset.card · = 2)) :=
 
 end Eat
 
-/-- With a particular object, as in *eat it*, a strictly incremental verb phrase is
-quantized. -/
 theorem qua_vp_eq [SemilatticeSup α] [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
     (y : α) : QUA (VP θ (· = y)) :=
   vp_eq θ y ▸ h.uo.qua_of_mso h.mso y
@@ -188,24 +183,18 @@ def SEINC : Prop := EXP precedes θ ∧ MO θ
 variable {precedes θ} (h : SEINC precedes θ) (h₀ : ∀ x e, θ x e → ¬ IsBot x) {x : α} {e e' : β}
 include h h₀
 
-/-- Under a strictly expansive incremental relation, an object's events are initial parts
-of each other. -/
 theorem isInitialPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsInitialPart precedes e' e :=
   ⟨hle, fun ⟨e'', h'', hp⟩ ↦
     let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 y x e'' e' hθ hx' hp ⟨y, h₀ y e'' hθ, le_rfl, hy⟩⟩
 
-/-- Under a strictly expansive incremental relation, an object's events are final parts of
-each other. -/
 theorem isFinalPart_of_seinc (hx : θ x e) (hx' : θ x e') (hle : e' ≤ e) :
     IsFinalPart precedes e' e :=
   ⟨hle, fun ⟨e'', h'', hp⟩ ↦
     let ⟨y, hy, hθ⟩ := h.2 hx h''
     h.1 x y e' e'' hx' hθ hp ⟨y, h₀ y e'' hθ, hy, le_rfl⟩⟩
 
-/-- The events of a fixed object under a strictly expansive incremental relation form a
-telic predicate. -/
 theorem isTelic_of_seinc (x : α) : IsTelic precedes (θ x) :=
   fun _ _ hx hx' hle ↦
     ⟨isInitialPart_of_seinc h h₀ hx hx' hle, isFinalPart_of_seinc h h₀ hx hx' hle⟩
@@ -260,8 +249,6 @@ def Goal (y x : α) (e : β) : Prop :=
 
 variable {adjα adjβ precedes isPath θ}
 
-/-- A strict movement relation closed under sums of temporally ordered events is a movement
-relation. -/
 theorem mr_of_smr (h : SMR adjα adjβ isPath θ)
     (hClosed : ∀ x₁ x₂ e₁ e₂, θ x₁ e₁ → θ x₂ e₂ → precedes e₁ e₂ → θ (x₁ ⊔ x₂) (e₁ ⊔ e₂)) :
     MR adjα adjβ precedes isPath θ :=
@@ -373,7 +360,6 @@ theorem not_adj_alcatraz : ¬ ADJ pathAdj eventAdj (Movement alcatraz) := fun h 
 def Connected (x : Finset Seg) : Prop :=
   ∀ y ∈ x.powerset, y.Nonempty → y ≠ x → ∃ s ∈ y, ∃ t ∈ x \ y, s.adj t
 
-/-- The disconnected movement satisfies adjacency but its path is not connected. -/
 theorem adj_disconnected :
     ADJ pathAdj eventAdj (Movement disconnected) ∧ ¬ Connected {.a, .b, .e, .f} :=
   ⟨adj_movement_iff.2 (by decide),

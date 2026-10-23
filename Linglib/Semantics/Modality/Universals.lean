@@ -134,11 +134,9 @@ theorem forceFlavorIndependent_product : ForceFlavorIndependent (F ×ˢ Φ) :=
   .of_mk_mem fun _ hx _ hy ↦
     Finset.mk_mem_product (Finset.mem_product.1 hx).1 (Finset.mem_product.1 hy).2
 
-/-- A fixed-force modal ranging over flavors varies on a single axis. -/
 theorem singleAxis_singleton_product (fo : α) : SingleAxis ({fo} ×ˢ Φ) :=
   Or.inl ((Finset.card_le_card Finset.subset_product_image_fst).trans_eq (Finset.card_singleton fo))
 
-/-- A variable-force modal of one flavor varies on a single axis. -/
 theorem singleAxis_product_singleton (fl : β) : SingleAxis (F ×ˢ {fl}) :=
   Or.inr ((Finset.card_le_card Finset.subset_product_image_snd).trans_eq (Finset.card_singleton fl))
 

@@ -124,28 +124,21 @@ private theorem search_subject {c : Clause} (h : c.interacts = false) :
     eppProbe.search (goals c) = some .subject := by
   simp [Probe.search, goals, eppProbe, h]
 
-/-- No EPP ⇒ no raising, whatever the clause. -/
 theorem raisingOutcome_eq_noRaising (c : Clause) :
     raisingOutcome c false = .noRaising := rfl
 
-/-- A transparent clause (not an intervener) lets T reach the embedded
-    subject, which is ordinary raising. -/
 theorem raisingOutcome_eq_subjectRaises {c : Clause} (h : c.interacts = false) :
     raisingOutcome c true = .subjectRaises := by
   have : eppProbe.goal (goals c) = some .subject :=
     Probe.goal_eq_some_iff.mpr ⟨search_subject h, trivial⟩
   simp only [raisingOutcome, this, ite_true]
 
-/-- A φ-goal that satisfies the EPP raises as a whole clause; the
-    embedded subject does not move. -/
 theorem raisingOutcome_eq_clauseRaises {c : Clause} (hi : c.interacts = true)
     (he : c.canSatisfyEPP = true) : raisingOutcome c true = .clauseRaises := by
   have : eppProbe.goal (goals c) = some (.clause c) :=
     Probe.goal_eq_some_iff.mpr ⟨search_clause hi, he⟩
   simp only [raisingOutcome, this, ite_true]
 
-/-- A φ-goal that interacts but cannot satisfy the EPP absorbs the first
-    Agree; the licensed second probe reaches the embedded subject. -/
 theorem raisingOutcome_eq_hyperRaises {c : Clause} (hi : c.interacts = true)
     (ha : c.canAgree = true) (he : c.canSatisfyEPP = false) :
     raisingOutcome c true = .hyperRaises := by
@@ -153,8 +146,6 @@ theorem raisingOutcome_eq_hyperRaises {c : Clause} (hi : c.interacts = true)
     Probe.goal_eq_none_of_not_int (search_clause hi) (by simp [eppProbe, he])
   simp only [raisingOutcome, this, ha, ite_true]
 
-/-- A defective intervener (interacts, but T cannot Agree with it) stalls
-    the probe, with no second Agree and no raising. -/
 theorem raisingOutcome_eq_blocked {c : Clause} (hi : c.interacts = true)
     (ha : c.canAgree = false) (he : c.canSatisfyEPP = false) :
     raisingOutcome c true = .blocked := by
@@ -182,23 +173,11 @@ def uyghurDP : Clause := ⟨true, true, true⟩
     the EPP. -/
 def uyghurNP : Clause := ⟨true, true, false⟩
 
-/-- In the English raising profile ([halpert-2019]) raising is *required* out of
-    a nonfinite TP and *blocked* out of a finite CP. (Models the
-    `seem`/`be likely` predicates; the `tend`/`happen`/`keep` selection
-    matrix and the AP/NP-vs-VP small-clause split are not modelled.) -/
 theorem english_profile :
     raisingOutcome englishNonfiniteTP true = .subjectRaises ∧
     raisingOutcome englishFiniteCP true = .blocked :=
   ⟨raisingOutcome_eq_subjectRaises rfl, raisingOutcome_eq_blocked rfl rfl rfl⟩
 
-/-- The Zulu raising profile ([halpert-2019], building on [ura-1994]'s
-    hyper-raising) has hyper-raising out of a finite CP, the whole clause
-    raises out of a nonfinite TP (so the subject does not), and the
-    subject raises out of a small clause. The finite-CP case is in fact
-    *optional* — an expletive `ku-` non-raising variant coexists with
-    hyper-raising, and the `ku-`/`u-` morphology spells out first- vs.
-    second-Agree — an optionality this deterministic `RaisingOutcome`
-    abstracts over. -/
 theorem zulu_profile :
     raisingOutcome zuluFiniteCP true = .hyperRaises ∧
     raisingOutcome zuluInfinitiveTP true = .clauseRaises ∧
@@ -206,31 +185,20 @@ theorem zulu_profile :
   ⟨raisingOutcome_eq_hyperRaises rfl rfl rfl, raisingOutcome_eq_clauseRaises rfl rfl,
    raisingOutcome_eq_subjectRaises rfl⟩
 
-/-- In the Uyghur raising profile ([asarina-2011], [halpert-2019]) a
-    DP-nominalization raises whole and an NP-nominalization hyper-raises the
-    embedded subject. -/
 theorem uyghur_profile :
     raisingOutcome uyghurDP true = .clauseRaises ∧
     raisingOutcome uyghurNP true = .hyperRaises :=
   ⟨raisingOutcome_eq_clauseRaises rfl rfl, raisingOutcome_eq_hyperRaises rfl rfl rfl⟩
 
-/-- In Makhuwa and Matengo, removing just the EPP from the Zulu setting kills
-    raising entirely, even out of a finite-CP φ-goal. -/
 theorem makhuwa_no_raising (c : Clause) : raisingOutcome c false = .noRaising :=
   raisingOutcome_eq_noRaising c
 
 /-! ### Raising is unphased -/
 
-/-- The thesis is that a finite CP yields hyper-raising in Zulu but is blocked in
-    English — same clause "size", opposite outcomes — because the split is
-    φ-goal status (`canAgree`), not a size-driven phase boundary. -/
 theorem finite_cp_outcome_not_size_driven :
     raisingOutcome zuluFiniteCP true ≠ raisingOutcome englishFiniteCP true := by
   decide
 
-/-- Likewise, out of a nonfinite TP the whole clause raises in Zulu but the
-    subject raises in English, since the split is EPP-satisfaction
-    (`canSatisfyEPP`), not clause size. -/
 theorem nonfinite_tp_outcome_not_size_driven :
     raisingOutcome zuluInfinitiveTP true ≠ raisingOutcome englishNonfiniteTP true := by
   decide

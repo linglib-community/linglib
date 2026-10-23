@@ -46,9 +46,6 @@ namespace Schwarz2013
 
 /-! ### The German/Fering baseline (§3.1) -/
 
-/-- German and Fering each split the definite paradigm in two, Fering's A-form against its
-D-form and German's contracted against its full preposition-article forms, so both strengths are
-marked and by distinct articles. -/
 theorem german_fering_two_articles :
     (German.Determiners.inventory.strengths = Finset.univ ∧
       ¬ German.Determiners.inventory.IsSyncretic) ∧
@@ -66,8 +63,6 @@ theorem bridging_split :
 
 /-! ### Languages with exclusively anaphoric articles (§4.1) -/
 
-/-- Akan *nó* and Mauritian Creole *la* mark only anaphoric definites, weak definites being bare
-nominals. -/
 theorem exclusively_anaphoric :
     Akan.Determiners.inventory.strengths = {.familiarity} ∧
     MauritianCreole.Determiners.inventory.strengths = {.familiarity} :=
@@ -92,7 +87,6 @@ def lakhotaWeakStrongConstrual : Determiner.Inventory :=
     .article { form := "k'uŋ", definiteness := .definite, exponent := .dedicatedMorpheme,
                uses := {.anaphoric} } ]
 
-/-- Under the tentative construal, Lakhota patterns with German and Fering. -/
 theorem construal_two_articles :
     lakhotaWeakStrongConstrual.strengths = Finset.univ ∧
       ¬ lakhotaWeakStrongConstrual.IsSyncretic := by

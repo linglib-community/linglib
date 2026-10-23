@@ -59,8 +59,6 @@ variable {α : Type*} [LinearOrder α] {ml : MarginalScale α}
 
 /-! ### Marginal and large difference -/
 
-/-- Marginal difference is not transitive, since it is symmetric and irreflexive and
-Decomposition makes some degree marginally smaller than another. -/
 theorem not_isTrans_symmGen_marginallyLT (ml : MarginalScale α) :
     ¬ IsTrans α (Relation.SymmGen ml.MarginallyLT) := fun ⟨htr⟩ ↦ by
   obtain ⟨x, y, h⟩ := ml.exists_large
@@ -130,7 +128,6 @@ def Positive (norm : α) (w : C) (x : O) : Prop := ml.LargelyLT norm (μ w x)
 
 variable {ml μ} {norm : α} {w u v : C} {a b : O}
 
-/-- An object in the positive form's extension exceeds the standard of comparison. -/
 theorem setOf_positive_subset_gt_over :
     {x | Positive ml μ norm w x} ⊆ (μ w) ⁻¹' Set.Ioi norm :=
   fun _ h ↦ h.lt
@@ -193,8 +190,6 @@ nonstandard primitivist principle of §3. -/
 theorem clustered_positive : Clustered ml (Positive ml μ norm w) (μ w) := fun _ ↦
   ⟨fun h ↦ ⟨_, h, .refl _⟩, fun ⟨_, hy, hxy⟩ ↦ (positive_iff_of_atMostMarginal hxy).1 hy⟩
 
-/-- Under a representation, the positive form is the strict comparison of an object's block
-with the standard's block. -/
 theorem setOf_positive_eq_gt_over {f : α → ℚ ×ₗ ℤ} (hf : ml.IsHom (lex ℚ ℤ) f) :
     {x | Positive ml μ norm w x} =
       (fun x ↦ (ofLex (f (μ w x))).1) ⁻¹' Set.Ioi (ofLex (f norm)).1 :=

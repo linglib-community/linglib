@@ -166,8 +166,6 @@ noncomputable def nodePosterior (label : C → L) (ρ : Fin n → Option R) (x :
 variable (label : C → L) (ρ : Fin n → Option R) (x : Fin n → L)
 
 omit [Nonempty S] [Nonempty C] in
-/-- The joint mass of a box of per-node concept events: a sum over scenario assignments of
-the urn likelihood times the per-node masses. -/
 theorem joint_apply_univ_prod_pi (T : Fin n → Set C) :
     m.joint ρ (Set.univ ×ˢ Set.pi Set.univ T) =
       ∑ s, polyaUrn m.prior n {s} * ∏ i, m.emission (s i) (ρ i) (T i) := by
@@ -175,8 +173,6 @@ theorem joint_apply_univ_prod_pi (T : Fin n → Set C) :
     lintegral_fintype]
   exact Finset.sum_congr rfl λ s _ => by rw [emissions_apply, Measure.pi_pi, mul_comm]
 
-/-- The node posterior in closed form: the ratio of two scenario-assignment sums of per-node
-fibre masses — the quantity the paper estimates by sampling. -/
 theorem nodePosterior_apply (t : Fin n) (c : C)
     (hx : ∑ s, polyaUrn m.prior n {s} * ∏ i, m.emission (s i) (ρ i) (label ⁻¹' {x i}) ≠ 0) :
     m.nodePosterior label ρ x t {c} =
@@ -201,7 +197,6 @@ theorem nodePosterior_apply (t : Fin n) (c : C)
     joint_apply_univ_prod_pi, joint_apply_univ_prod_pi, ENNReal.div_eq_inv_mul]
 
 omit [Nonempty C] [MeasurableSingletonClass C] in
-/-- The scenario-assignment sums on reals: urn likelihoods times per-node real masses. -/
 theorem sum_toReal (T : Fin n → Set C) :
     (∑ s, polyaUrn m.prior n {s} * ∏ i, m.emission (s i) (ρ i) (T i)).toReal =
       ∑ s, polyaUrnProb m.prior (countVec s) * ∏ i, (m.emission (s i) (ρ i)).real (T i) := by
@@ -218,7 +213,6 @@ end SDS
 
 /-! ### Evaluation helpers -/
 
-/-- A sum over three-node scenario assignments, coordinatewise. -/
 private theorem sum_fin_three {S M : Type*} [Fintype S] [AddCommMonoid M]
     (f : (Fin 3 → S) → M) : ∑ s, f s = ∑ a, ∑ b, ∑ c, f ![a, b, c] := by
   rw [← (Fin.consEquiv λ _ => S).sum_comp, Fintype.sum_prod_type]
@@ -304,7 +298,6 @@ def batLabels : Fin 3 → BatLabel := ![.hold, .player, .bat]
 @[simp] theorem batSDS_scenario (α : ℝ) (hα : 0 < α) (s : BatScenario) :
     (batSDS α hα).scenario s = uniformOn ↑(batScenario s) := rfl
 
-/-- A role filler's distribution is uniform on the concepts its scenario and role agree on. -/
 theorem batSDS_poe (α : ℝ) (hα : 0 < α) (s : BatScenario) (r : BatRole) :
     (batSDS α hα).poe (s, r) = uniformOn (↑(batScenario s ∩ holdFiller) : Set BatConcept) :=
   Kernel.ofWeights_uniformOn_mul_uniformOn (λ p : BatScenario × BatRole => batScenario p.1)
@@ -315,7 +308,6 @@ private theorem sum_batScenario {M : Type*} [AddCommMonoid M] (f : BatScenario �
   rw [show (Finset.univ : Finset BatScenario) = {.BASEBALL, .GOTHIC} by decide,
     Finset.sum_pair (by decide)]
 
-/-- The real mass of a label fibre under the uniform measure on a finset. -/
 private theorem uniformOn_real_preimage {C L : Type*} [MeasurableSpace C]
     [MeasurableSingletonClass C] [DecidableEq C] [Fintype C] [DecidableEq L] (A : Finset C)
     (f : C → L) (y : L) :
@@ -332,7 +324,6 @@ private theorem polyaUrnProb_countVec_vecCons {S : Type*} [Fintype S] [Decidable
       polyaUrnProb θ (countVec seq) * polyaUrnPredictive θ (countVec seq) c :=
   polyaUrnProb_countVec_cons θ c seq
 
-/-- The fibre counts the bat sentence's masses reduce to, settled by `decide`. -/
 private theorem bat_cards :
     ((batScenario .BASEBALL).filter (batLabel · = .hold)).card = 1 ∧
     ((batScenario .GOTHIC).filter (batLabel · = .hold)).card = 1 ∧
@@ -352,9 +343,6 @@ private theorem bat_cards_num :
     ((batScenario .GOTHIC ∩ holdFiller).filter
       (λ c => batLabel c = .bat ∧ c = .BAT_STICK)).card = 0 := by decide
 
-/-- The observation likelihood of *a player was holding a bat*: `1/160`, independent of `α`
-(the observed labels pin the *player* node's scenario to BASEBALL, whose prior mass is `1/2`,
-and the remaining factors are constants). -/
 private theorem bat_den (α : ℝ) (hα : 0 < α) :
     (∑ s, polyaUrn (batSDS α hα).prior 3 {s} *
       ∏ i, (batSDS α hα).emission (s i) (batRoles i) (batLabel ⁻¹' {batLabels i})).toReal =
@@ -372,7 +360,6 @@ private theorem bat_den (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- The joint mass of the observed labels with BAT-STICK at the *bat* node. -/
 private theorem bat_num (α : ℝ) (hα : 0 < α) :
     (∑ s, polyaUrn (batSDS α hα).prior 3 {s} * ∏ i, (batSDS α hα).emission (s i) (batRoles i)
       {c' | batLabel c' = batLabels i ∧ (i = 2 → c' = .BAT_STICK)}).toReal =
@@ -505,7 +492,6 @@ def starRoles : Fin 3 → Option StarRole := ![some .marryAgent, none, some .mar
 /-- The observed labels `astronomer(_)`, `marry(_)`, `star(_)`. -/
 def starLabels : Fin 3 → StarLabel := ![.astronomer, .marry, .star]
 
-/-- A role filler's row is the weight kernel of scenario mass times MARRY's constraint. -/
 theorem starSDS_poe (α : ℝ) (hα : 0 < α) :
     (starSDS α hα).poe =
       Kernel.ofWeights λ p c => uniformOn ↑(starScenario p.1) {c} * marryFiller c := by
@@ -522,7 +508,6 @@ private theorem uniformOn_mul_marryFiller_ne_top (s : StarScenario) (c : StarCon
   · exact ENNReal.inv_ne_top.mpr (Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨c, h⟩).ne')
   · exact ENNReal.zero_ne_top
 
-/-- A role filler's real mass on a decidable event, as a ratio of weight sums. -/
 private theorem starSDS_poe_real (α : ℝ) (hα : 0 < α) (s : StarScenario) (r : StarRole)
     (p : StarConcept → Prop) [DecidablePred p] :
     ((starSDS α hα).poe (s, r)).real {c | p c} =
@@ -542,13 +527,11 @@ private theorem sum_starConcept {M : Type*} [AddCommMonoid M] (f : StarConcept �
     by decide, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
     Finset.sum_insert (by decide), Finset.sum_singleton]
 
-/-- The fibre counts the astronomer sentence's masses reduce to, settled by `decide`. -/
 private theorem star_cards :
     ((starScenario .STARGAZING).filter (starLabel · = .marry)).card = 1 ∧
     ((starScenario .STAGE).filter (starLabel · = .marry)).card = 1 ∧
     (starScenario .STARGAZING).card = 3 ∧ (starScenario .STAGE).card = 2 := by decide
 
-/-- The observation likelihood of *an astronomer married a star*. -/
 private theorem star_den (α : ℝ) (hα : 0 < α) :
     (∑ s, polyaUrn (starSDS α hα).prior 3 {s} *
       ∏ i, (starSDS α hα).emission (s i) (starRoles i) (starLabel ⁻¹' {starLabels i})).toReal =
@@ -568,7 +551,6 @@ private theorem star_den (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- The joint mass of the observed labels with STAR-PERSON at the *star* node. -/
 private theorem star_num (α : ℝ) (hα : 0 < α) :
     (∑ s, polyaUrn (starSDS α hα).prior 3 {s} * ∏ i, (starSDS α hα).emission (s i) (starRoles i)
       {c' | starLabel c' = starLabels i ∧ (i = 2 → c' = .STAR_PERSON)}).toReal =
@@ -589,7 +571,6 @@ private theorem star_num (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- The joint mass of the observed labels with STAR-SUN at the *star* node. -/
 private theorem star_num_sun (α : ℝ) (hα : 0 < α) :
     (∑ s, polyaUrn (starSDS α hα).prior 3 {s} * ∏ i, (starSDS α hα).emission (s i) (starRoles i)
       {c' | starLabel c' = starLabels i ∧ (i = 2 → c' = .STAR_SUN)}).toReal =
@@ -629,7 +610,6 @@ theorem starPerson_real (α : ℝ) (hα : 0 < α) :
   field_simp
   ring
 
-/-- The posterior probability of the *sun* sense of *star* is `(10α + 8) / (115α + 8)`. -/
 theorem starSun_real (α : ℝ) (hα : 0 < α) :
     ((starSDS α hα).nodePosterior starLabel starRoles starLabels 2).real {.STAR_SUN} =
       (10 * α + 8) / (115 * α + 8) := by

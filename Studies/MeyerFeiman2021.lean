@@ -57,8 +57,6 @@ def Spectrum (o : Finset Step) : Prop :=
 
 instance : DecidablePred Spectrum := λ _ => inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The spectrum has three points: both steps online, stored alternatives negated online, and a
-stored enriched reading. -/
 theorem spectrum_iff (o : Finset Step) :
     Spectrum o ↔ o = {.generate, .negate} ∨ o = {.negate} ∨ o = ∅ := by
   constructor
@@ -101,16 +99,12 @@ def spectrum (fc : Finset Step) : Category → Finset Step
   | .number => {.negate}
   | .freeChoice => fc
 
-/-- The only sub-computation online for both *some* and number words is negation, so the
-priming between them shows that negating alternatives can be primed. -/
 theorem negate_primeable {primeable fc : Finset Step}
     (h : Primes primeable (spectrum fc .some) (spectrum fc .number)) : .negate ∈ primeable := by
   obtain ⟨s, hs, -, h⟩ := h
   simp only [spectrum, Finset.mem_singleton] at h
   exact h ▸ hs
 
-/-- The hypothesis fits the data exactly when negation can be primed and the free-choice
-derivation shares no primeable sub-computation with *some*. -/
 theorem fits_iff (primeable fc : Finset Step) :
     Fits primeable (spectrum fc) ↔
       .negate ∈ primeable ∧ ¬ Primes primeable (spectrum fc .some) fc := by
@@ -133,16 +127,12 @@ theorem fits_iff (primeable fc : Finset Step) :
     · exact λ ⟨s, hs, h₁, h₂⟩ => hnum ⟨s, hs, h₂, h₁⟩
     · exact absurd rfl hab
 
-/-- The recursive-implicature derivation of free choice ([fox-2007]) negates alternatives, so
-it shares the primeable computation with *some* and number words and cannot fit the data. -/
 theorem recursive_not_fits (primeable : Finset Step) :
     ¬ Fits primeable (spectrum {.generate, .negate}) := by
   rw [fits_iff]
   rintro ⟨hn, h⟩
   exact h ⟨.negate, hn, by decide, by decide⟩
 
-/-- The alternative-asserting mechanism of [bar-lev-fox-2017] shares only generation with
-*some*, so it fits the data exactly when generation cannot be primed. -/
 theorem inclusion_fits_iff (primeable : Finset Step) :
     Fits primeable (spectrum {.generate, .assert}) ↔
       .negate ∈ primeable ∧ .generate ∉ primeable := by
@@ -151,8 +141,6 @@ theorem inclusion_fits_iff (primeable : Finset Step) :
   rintro hg ⟨s, hs, h₁, h₂⟩
   cases s <;> simp_all [spectrum]
 
-/-- A mechanism specific to modals and disjunction ([simons-2005]) runs no implicature
-sub-computation, so it fits the data whenever negation can be primed. -/
 theorem modal_fits_iff (primeable : Finset Step) :
     Fits primeable (spectrum ∅) ↔ .negate ∈ primeable := by
   rw [fits_iff]

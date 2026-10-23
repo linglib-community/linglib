@@ -220,13 +220,9 @@ section Validity
 open Function
 open ExpState (promote assert)
 
-/-- Rules can have exceptions, since learning `¬p` after *normally p* does not crash (3.10(i)). -/
 theorem ex310_exception : ((σ₀.promote atomP).assert (¬atomP ·)).info.Nonempty :=
   ⟨w₀, Set.mem_univ _, atomP_w₀⟩
 
-/-- The opposite rule is then unacceptable, since no normal world of `0[normally p]` is a
-`¬p`-world (3.10(i)). The update with *normally* does not crash here, so this is the
-acceptability condition rather than the crash. -/
 theorem ex310_conflict :
     ¬∃ w ∈ (σ₀.promote atomP).order.minimals Set.univ, ¬atomP w := by
   rintro ⟨w, hw, hnp⟩
@@ -234,7 +230,6 @@ theorem ex310_conflict :
   rw [minimals_refine_top atomP Set.univ ⟨w₁, Set.mem_univ _, atomP_w₁⟩] at hw'
   exact hnp hw'.2
 
-/-- *Normally p ⊩ presumably p* (3.10(ii)). -/
 theorem ex310_presumably : [(promote · atomP)] ⊩₁ presumablyTest atomP :=
   normally_presumably_succeeds atomP Set.univ ⟨w₁, Set.mem_univ _, atomP_w₁⟩
 
@@ -248,7 +243,6 @@ that `p` fails, and Veltman concentrates on validity₁ for this reason (§1.3).
 theorem not_valid₂_presumably : ¬[(promote · atomP)] ⊩₂ presumablyTest atomP :=
   fun h ↦ not_presumably_w₀ (h ⟨{w₀}, ⊤⟩)
 
-/-- Nor is it valid₃: a state that knows `¬p` accepts *normally p* without presuming `p`. -/
 theorem not_valid₃_presumably : ¬[(promote · atomP)] ⊩₃ presumablyTest atomP :=
   fun h ↦ not_presumably_w₀ <| h _ fun _ hψ ↦ by
     obtain rfl := List.mem_singleton.1 hψ; exact promote_promote_self _ atomP
@@ -256,12 +250,10 @@ theorem not_valid₃_presumably : ¬[(promote · atomP)] ⊩₃ presumablyTest a
 private theorem w₀_optimal : w₀ ∈ ((σ₀.promote atomP).assert (¬atomP ·)).optimal :=
   ⟨⟨Set.mem_univ _, atomP_w₀⟩, fun _ ⟨_, hnpv⟩ _ ↦ ⟨trivial, fun hpv ↦ absurd hpv hnpv⟩⟩
 
-/-- Exceptions defeat presumptions, *normally p, ¬p ⊮ presumably p* (3.10(ii)). -/
 theorem ex310_defeat :
     ¬[(promote · atomP), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomP :=
   fun h ↦ atomP_w₀ (isFixedPt_presumablyTest_iff.1 h w₀ w₀_optimal)
 
-/-- Exceptions do not defeat the rule, *normally p, ¬p ⊩ normally p* (3.10(ii)). -/
 theorem ex310_rule_persists :
     [(promote · atomP), (assert · (¬atomP ·))] ⊩₁ (promote · atomP) :=
   promote_respects_idempotent ((σ₀.promote atomP).assert (¬atomP ·)) atomP
@@ -275,42 +267,32 @@ theorem ex310_rule_persists_valid₃ :
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   exact ⟨ExpState.isAdditive_promote _, ExpState.isAdditive_assert _⟩
 
-/-- Irrelevant information does not block a presumption, *normally p, q ⊩ presumably p*
-(3.10(iii)). -/
 theorem ex310_irrelevant : [(promote · atomP), (assert · atomQ)] ⊩₁ presumablyTest atomP :=
   isFixedPt_presumablyTest_iff.2 fun _ ⟨_, hopt⟩ ↦ by_contra fun hnpw ↦
     hnpw ((hopt ⟨Set.mem_univ _, atomQ_w₃⟩ ⟨trivial, fun _ ↦ atomP_w₃⟩).2 atomP_w₃)
 
-/-- Information to the contrary does, *normally p, q, ¬p ⊮ presumably p* (3.10(iii)). -/
 theorem ex310_contrary :
     ¬[(promote · atomP), (assert · atomQ), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomP :=
   fun h ↦ atomP_w₂ <| isFixedPt_presumablyTest_iff.1 h w₂
     ⟨⟨⟨Set.mem_univ _, atomQ_w₂⟩, atomP_w₂⟩, fun _ hv _ ↦ ⟨trivial, fun hp ↦ absurd hp hv.2⟩⟩
 
-/-- Two rules each yield their presumption, *normally p, normally q ⊩ presumably p* (3.10(iv)). -/
 theorem ex310_two_rules :
     [(promote · atomP), (promote · atomQ)] ⊩₁ presumablyTest atomP :=
   isFixedPt_presumablyTest_iff.2 fun _ ⟨_, hopt⟩ ↦ by_contra fun hnpw ↦
     hnpw ((hopt (Set.mem_univ w₃) ⟨⟨trivial, fun _ ↦ atomP_w₃⟩, fun _ ↦ atomQ_w₃⟩).1.2 atomP_w₃)
 
-/-- An exception to one rule defeats its presumption, *normally p, normally q, ¬p ⊮ presumably p*
-(3.10(iv)). -/
 theorem ex310_two_rules_defeat :
     ¬[(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomP :=
   fun h ↦ atomP_w₂ <| isFixedPt_presumablyTest_iff.1 h w₂
     ⟨⟨Set.mem_univ _, atomP_w₂⟩,
       fun _ hv _ ↦ ⟨⟨trivial, fun hp ↦ absurd hp hv.2⟩, fun _ ↦ atomQ_w₂⟩⟩
 
-/-- But not the other rule's, since two rules are independent, *normally p, normally q, ¬p ⊩
-presumably q* (3.10(iv)). -/
 theorem ex310_independence :
     [(promote · atomP), (promote · atomQ), (assert · (¬atomP ·))] ⊩₁ presumablyTest atomQ :=
   isFixedPt_presumablyTest_iff.2 fun _ ⟨⟨_, hnpw⟩, hopt⟩ ↦
     by_contra fun hnqw ↦ hnqw ((hopt ⟨Set.mem_univ _, atomP_w₂⟩
       ⟨⟨trivial, fun hpw ↦ absurd hpw hnpw⟩, fun hqw ↦ absurd hqw hnqw⟩).2 atomQ_w₂)
 
-/-- The state *normally p, normally q, ¬(p ∧ q)* is ambiguous and presumes neither `p` nor `q`
-(3.10(v)). -/
 theorem ex310_ambiguity :
     let ψs : List (ExpState PQWorld → ExpState PQWorld) :=
       [(promote · atomP), (promote · atomQ), (assert · fun w ↦ ¬(atomP w ∧ atomQ w))]
@@ -339,7 +321,6 @@ theorem rain_or_snow :
   exact ((hopt ⟨Set.mem_univ _, atomP_w₂⟩ ⟨trivial, fun _ ↦ Or.inr atomQ_w₂⟩).2
     (Or.inr atomQ_w₂)).elim hnpw hnqw
 
-/-- Hence *normally p ⊮ normally (p ∨ q)*, since the second rule further refines the pattern. -/
 theorem normally_not_normally_or :
     ¬[(promote · atomP)] ⊩₁ (promote · fun w ↦ atomP w ∨ atomQ w) := by
   intro h
@@ -388,7 +369,6 @@ theorem Frame.ofRules_cons_of_ne (r : Rule W) (R : List (Rule W)) {d : Finset W}
       · exact absurd hc.2 h.symm
       · exact h' c ⟨hc', hc.2⟩⟩
 
-/-- The presented frame depends only on which rules have been accepted, not on their order. -/
 theorem Frame.ofRules_perm {R R' : List (Rule W)} (h : R.Perm R') :
     Frame.ofRules R = Frame.ofRules R' :=
   funext fun d ↦ by simp only [Frame.ofRules, h.mem_iff]
@@ -398,7 +378,6 @@ subdomain of `d` containing it, under that subdomain's pattern (Definition 4.3(i
 def Normal (π : Frame W) (d : Finset W) (w : W) : Prop :=
   w ∈ d ∧ ∀ d' ⊆ d, ∀ hw : w ∈ d', ∀ v, ∀ hv : v ∈ d', (π d').le ⟨w, hw⟩ ⟨v, hv⟩
 
-/-- In a presented frame, only the rules' own domains can disqualify a world. -/
 theorem normal_ofRules_iff (R : List (Rule W)) (d : Finset W) (w : W) :
     Normal (Frame.ofRules R) d w ↔ w ∈ d ∧ ∀ r ∈ R, r.domain ⊆ d → w ∈ r.domain →
       ∀ v ∈ r.domain, v ∈ r.default → w ∈ r.default :=
@@ -406,12 +385,10 @@ theorem normal_ofRules_iff (R : List (Rule W)) (d : Finset W) (w : W) :
     ⟨fun h r hr hsub hw v hv ↦ h r.domain hsub hw v hv r ⟨hr, rfl⟩,
      fun h d' hsub hw v hv r ⟨hr, hd⟩ ↦ by subst hd; exact h r hr hsub hw v hv⟩
 
-/-- A world normal in a domain is normal in every subdomain containing it. -/
 theorem Normal.mono {π : Frame W} {d d' : Finset W} {w : W} (h : Normal π d w) (hw : w ∈ d')
     (hd : d' ⊆ d) : Normal π d' w :=
   ⟨hw, fun _ hsub ↦ h.2 _ (hsub.trans hd)⟩
 
-/-- Accepting a rule can only remove normal worlds. -/
 theorem Normal.of_cons {r : Rule W} {R : List (Rule W)} {d : Finset W} {w : W}
     (h : Normal (Frame.ofRules (r :: R)) d w) : Normal (Frame.ofRules R) d w :=
   (normal_ofRules_iff ..).2 ⟨h.1, fun r' hr' ↦
@@ -441,14 +418,10 @@ already respects `e` (Definition 4.2(ii)). -/
 def IsDefault (π : Frame W) (d e : Finset W) : Prop :=
   (d ∩ e).Nonempty ∧ Respects (π d) (fun w ↦ w.1 ∈ e)
 
-/-- Every accepted rule with a nonempty domain-default intersection is a default of the
-presented frame. -/
 theorem isDefault_of_mem {R : List (Rule W)} {r : Rule W} (hr : r ∈ R)
     (hne : (r.domain ∩ r.default).Nonempty) : IsDefault (Frame.ofRules R) r.domain r.default :=
   ⟨hne, fun _ _ h hv ↦ h r ⟨hr, rfl⟩ hv⟩
 
-/-- Conjunction of Consequents holds, since once `φ ⇝ ψ` and `φ ⇝ χ` have been accepted the pattern
-at `⟦φ⟧` respects `ψ ∧ χ`, so `φ ⇝ (ψ ∧ χ)` refines nothing. -/
 theorem conjConsequents {R : List (Rule W)} {φ ψ χ : Finset W}
     (hψ : ⟨φ, ψ⟩ ∈ R) (hχ : ⟨φ, χ⟩ ∈ R) :
     Frame.ofRules (⟨φ, ψ ∩ χ⟩ :: R) = Frame.ofRules R := by
@@ -604,8 +577,6 @@ instance (prems : List (State W → State W)) (concl : State W → State W) :
     Decidable (Valid prems concl) :=
   inferInstanceAs (Decidable (State.Accepts _ _))
 
-/-- Conditional Identity holds, since `φ ⇝ φ` refines nothing and is accepted in the minimal state
-for nonempty `φ`. -/
 theorem rule_self {φ : Finset W} (hφ : φ.Nonempty) : Valid [] (rule φ φ) := by
   have hco : Coherent (Frame.ofRules [(⟨φ, φ⟩ : Rule W)]) := fun d ⟨w, hw⟩ ↦
     ⟨w, Finset.mem_filter.2 ⟨hw, (normal_ofRules_iff ..).2 ⟨hw, fun r hr ↦ by
@@ -671,42 +642,29 @@ adults are normally employed (`p ⇝ r`). John, a student, is presumably an unem
 theorem students : Valid [rule p r, rule q rᶜ, rule q p, fact q] (presumably (p ∩ rᶜ)) := by
   decide +kernel
 
-/-- An exception in one respect is not an exception in others, so a student who is employed is still
-presumably an adult. -/
 theorem independence : Valid [rule q p, rule q rᶜ, fact q, fact r] (presumably p) := by
   decide +kernel
 
-/-- Defeasible Modus Tollens is valid, `p ⇝ q`, `¬q ⊩ presumably ¬p`. -/
 theorem defeasibleModusTollens : Valid [rule p q, fact qᶜ] (presumably pᶜ) := by
   decide +kernel
 
-/-- On the cyclic net `p ⇝ q`, `q ⇝ ¬p`, Modus Ponens takes precedence over Modus Tollens:
-`p ⊩ presumably q`. -/
 theorem modusPonens_over_modusTollens :
     Valid [rule p q, rule q pᶜ, fact p] (presumably q) := by
   decide +kernel
 
-/-- Validity₁ is not closed under substitution, since `(*)` holds for independent predicates but
-substituting `¬q` for `r` defeats it. -/
 theorem substitution_fails : ¬Valid [rule q p, rule p qᶜ, fact q] (presumably qᶜ) := by
   decide +kernel
 
-/-- Hypothetical Syllogism fails although its defeasible version `(*)` holds, since the rule `q ⇝ r`
-is not accepted. -/
 theorem hypotheticalSyllogism_fails : ¬Valid [rule q p, rule p r] (rule q r) := by
   decide +kernel
 
-/-- Defeasible Modus Tollens holds but Contraposition fails. -/
 theorem contraposition_fails : ¬Valid [rule p q] (rule qᶜ pᶜ) := by
   decide +kernel
 
-/-- `p ⇝ q`, `p ∧ r ⊩ presumably q`, but Strengthening the Antecedent fails. -/
 theorem strengthening :
     Valid [rule p q, fact (p ∩ r)] (presumably q) ∧ ¬Valid [rule p q] (rule (p ∩ r) q) := by
   decide +kernel
 
-/-- Strengthening with a Consequent and Disjunction of Antecedents are almost valid, since the
-derived rule never crashes the state, though it is not accepted. -/
 theorem nearValid :
     (State.init |> rule p q |> rule p r |> rule (p ∩ q) r) ≠ State.absurd ∧
       ¬Valid [rule p q, rule p r] (rule (p ∩ q) r) ∧

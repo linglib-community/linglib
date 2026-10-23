@@ -169,9 +169,6 @@ def Language.discontinuous : Language → Option Bool
 
 /-! ### Strategy and valency -/
 
-/-- Wherever the review's valency indicators agree, they agree with the strategy's default,
-derived in the substrate from the detransitivizing coding-frame effect of reciprocalization;
-Tonga is the review's counterexample. -/
 theorem valency_follows_default :
     ∀ l : Language, ¬ l.construction.Mixed → l ≠ .tonga →
       l.construction.Unanimous l.construction.strategy.defaultValency := by
@@ -179,14 +176,11 @@ theorem valency_follows_default :
 
 variable {l : Language}
 
-/-- Nominal and argument strategies preserve valency: no nominal strategy reads monovalent
-on any indicator. -/
 theorem nominal_strategy_bivalent (hm : ¬ l.construction.Mixed) (ht : l ≠ .tonga)
     (h : l.construction.strategy.IsNominal) : ¬ l.construction.Reads .monovalent := fun hr ↦
   (Strategy.defaultValency_eq_monovalent_iff _).1
     (valency_follows_default l hm ht _ hr).symm h
 
-/-- Conversely, a monovalent reading comes only from a verb-marked strategy. -/
 theorem monovalent_implies_verbal (hm : ¬ l.construction.Mixed) (ht : l ≠ .tonga)
     (h : l.construction.Reads .monovalent) : ¬ l.construction.strategy.IsNominal :=
   (Strategy.defaultValency_eq_monovalent_iff _).1 (valency_follows_default l hm ht _ h).symm
@@ -201,7 +195,6 @@ theorem kuukThaayorre_mixed : Language.kuukThaayorre.construction.Mixed := by de
 
 theorem dalabon_mixed : Language.dalabon.construction.Mixed := by decide
 
-/-- Tonga contradicts the tendency: a verb-marked reciprocal whose object slot stays filled. -/
 theorem tonga_counterexample :
     ¬ Language.tonga.construction.strategy.IsNominal ∧
       Language.tonga.construction.Reads .bivalent := by
@@ -209,9 +202,6 @@ theorem tonga_counterexample :
 
 /-! ### Discontinuous reciprocals -/
 
-/-- Discontinuous reciprocals are possible exactly for lexically formed reciprocal verbs
-([siloni-2008], [siloni-2012]): every language with a formation locus and a discontinuity
-judgment satisfies the value the locus predicts. -/
 theorem siloni_discontinuity_prediction :
     ∀ l : Language, ∀ f ∈ l.formation, ∀ d ∈ l.discontinuous,
       (Siloni2012.Property.discontinuous.Holds f ↔ d = true) := by
@@ -434,8 +424,6 @@ section Realizes
 
 variable {A : Type*} [DecidableEq A] {R : A → A → Prop} {X : Finset A} {t : ReciprocityType}
 
-/-- Of the configurations that involve every participant, only the strong and the pairwise
-ones are mutual on every realized pair. -/
 theorem ReciprocityType.Realizes.symm_iff (h : t.Realizes R X) (ht : t ≠ .melee) :
     (Std.Symm fun a b : (X : Set A) ↦ R a b) ↔ t = .strong ∨ t = .pairwise := by
   cases t with
@@ -446,8 +434,6 @@ theorem ReciprocityType.Realizes.symm_iff (h : t.Realizes R X) (ht : t ≠ .mele
   | ring => exact iff_of_false (RingConfig.not_symm h) (by decide)
   | melee => exact absurd rfl ht
 
-/-- Every configuration but the melee involves each of two or more participants, as agent or as
-patient, so it satisfies the weakest scheme, Inclusive Alternative Ordering. -/
 theorem ReciprocityType.Realizes.inclusiveAlternativeOrdering (h : t.Realizes R X)
     (ht : t ≠ .melee) (hX : 2 ≤ X.card) : InclusiveAlternativeOrdering R X := by
   cases t with

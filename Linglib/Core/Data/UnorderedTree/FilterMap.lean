@@ -50,7 +50,6 @@ def filterMap (f : α → Option β) : UnorderedTree α → Option (UnorderedTre
     refine congrArg (Option.map · (f a)) (funext fun b ↦ ?_)
     rw [Function.comp_apply, ← node_mk_tree_list, List.map_filterMap]
 
-/-- Injecting on the left and then keeping the left labels is the identity. -/
 @[simp] theorem filterMap_getLeft?_map_inl (t : UnorderedTree α) :
     filterMap Sum.getLeft? (map (Sum.inl : α → α ⊕ β) t) = some t :=
   Quotient.inductionOn t fun t ↦ by

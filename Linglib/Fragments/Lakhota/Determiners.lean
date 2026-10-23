@@ -44,7 +44,6 @@ def inventory : Determiner.Inventory :=
                uses := {.anaphoric} },
     .article { form := "waŋ", definiteness := .indefinite, exponent := .dedicatedMorpheme } ]
 
-/-- A single article marks both strengths. -/
 theorem isSyncretic_inventory : inventory.IsSyncretic := by decide
 
 end Lakhota.Determiners

@@ -124,7 +124,6 @@ def ans₂ (q : W → Set (Set W)) (w : W) : Set W := {w' | ans₁ q w' = ans₁
 
 theorem ans₁_trueAnswers (H : Set (Set W)) : ans₁ (trueAnswers H) = weakAnswer H := rfl
 
-/-- On a Hamblin set the answer in the second sense is the strongly exhaustive answer. -/
 theorem ans₂_trueAnswers (H : Set (Set W)) (w : W) :
     ans₂ (trueAnswers H) w = strongAnswer H w := by
   rw [strongAnswer_eq_cell, ← ker_weakAnswer]
@@ -160,18 +159,12 @@ def generalizedKnow {α : Type*} (q : W → α) : Prop := w ∈ (Dox x).core {w'
 
 variable {Dox x w}
 
-/-- The generalized analysis is Groenendijk and Stokhof's entry on the kernel of the
-intension. -/
 theorem generalizedKnow_iff_know_ker {α : Type*} {q : W → α} :
     generalizedKnow Dox x w q ↔ GroenendijkStokhof1984.Knows (Dox x) (Setoid.ker q) w := Iff.rfl
 
-/-- On a Hamblin set the simplified analysis is [karttunen-1977]'s meaning postulate as the
-substrate states it. -/
 theorem Karttunen.simplifiedKnow_trueAnswers (H : Set (Set W)) :
     simplifiedKnow Dox x w (trueAnswers H) ↔ KnowsAnswer H w (Dox x) := Iff.rfl
 
-/-- On a Hamblin set the generalized analysis is Groenendijk and Stokhof's entry on the
-partition. -/
 theorem generalizedKnow_trueAnswers (H : Set (Set W)) :
     generalizedKnow Dox x w (trueAnswers H) ↔
       GroenendijkStokhof1984.Knows (Dox x) (partition H) w := Iff.rfl
@@ -240,8 +233,6 @@ theorem ker_which {S C : E → Set W} (hC : Function.Injective C) :
     Setoid.ker (Karttunen.which S C) = GroenendijkStokhof1984.whichDeDicto S C :=
   Setoid.ker_comp_of_injective (extension S C) hC.image_injective
 
-/-- The generalized Karttunen analysis and Groenendijk and Stokhof's agree on "which
-students called" under the injectivity premise. -/
 theorem generalizedKnow_which_iff {S C : E → Set W} (hC : Function.Injective C) :
     generalizedKnow Dox x w (Karttunen.which S C) ↔
       GroenendijkStokhof1984.Knows (Dox x) (GroenendijkStokhof1984.whichDeDicto S C) w := by
@@ -305,7 +296,6 @@ theorem not_generalizedKnow :
     Set.mem_singleton_iff.1 (this ▸ singleton_true_mem_which_true)
   exact absurd (Set.ext_iff.1 h1 false) (by simp)
 
-/-- Groenendijk and Stokhof agree with the generalized analysis here. -/
 theorem not_groenendijkStokhof_know :
     ¬ GroenendijkStokhof1984.Knows (agnostic ())
       (GroenendijkStokhof1984.whichDeDicto (fun _ ↦ Set.univ) called) false := by
@@ -480,7 +470,6 @@ def actual : World := (true, true)
 together. -/
 def john : Unit → SetRel World World := fun _ ↦ {p | p.2 = (false, true)}
 
-/-- The paper's premise fails, since Bill's and Sue's propositions coincide. -/
 theorem not_injective_livesWithSpouse : ¬ Function.Injective livesWithSpouse :=
   fun h ↦ Person.noConfusion (h (a₁ := .bill) (a₂ := .sue) rfl)
 
@@ -534,14 +523,11 @@ theorem ker_whichStructured (S C : E → Set W) :
     Setoid.ker (whichStructured S C) = GroenendijkStokhof1984.whichDeDicto S C :=
   Setoid.ker_comp_of_injective (extension S C) (Prod.mk_left_injective C).image_injective
 
-/-- With structured answers the generalized analysis is Groenendijk and Stokhof's, with no
-premise on the predicate. -/
 theorem generalizedKnow_whichStructured_iff {S C : E → Set W} :
     generalizedKnow Dox x w (whichStructured S C) ↔
       GroenendijkStokhof1984.Knows (Dox x) (GroenendijkStokhof1984.whichDeDicto S C) w := by
   rw [generalizedKnow_iff_know_ker, ker_whichStructured]
 
-/-- The unstructured answers are always recoverable from the structured intension. -/
 theorem Karttunen.which_eq_image_whichStructured (S C : E → Set W) (w : W) :
     which S C w = (fun p : E × (E → Set W) ↦ p.2 p.1) '' whichStructured S C w := by
   simp [which, whichStructured, Set.image_image]
@@ -560,8 +546,6 @@ theorem Spouses.not_generalizedKnow_structured :
   rw [generalizedKnow_iff_know_ker, ker_whichStructured]
   exact Spouses.not_groenendijkStokhof_know
 
-/-- The converse fails, since the structured intensions differ where the unstructured ones
-coincide. -/
 theorem Spouses.whichStructured_ne :
     whichStructured Spouses.student Spouses.livesWithSpouse (false, true) ≠
       whichStructured Spouses.student Spouses.livesWithSpouse Spouses.actual := by

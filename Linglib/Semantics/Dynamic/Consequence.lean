@@ -126,7 +126,6 @@ variable {σ : α} {ψs χs : List (α → α)} {φ f : α → α}
 
 theorem Entails.entailsFrom (h : Entails ψs φ) (σ : α) : EntailsFrom σ ψs φ := h σ
 
-/-- A single premise entails `φ` exactly when `φ` absorbs it. -/
 theorem entails_singleton_iff : Entails [f] φ ↔ φ ∘ f = f :=
   ⟨fun h ↦ funext h, fun h σ ↦ congrFun h σ⟩
 
@@ -141,12 +140,10 @@ theorem preservesAcceptance_iff :
     PreservesAcceptance ψs φ ↔ (⋂ ψ ∈ ψs, fixedPoints ψ) ⊆ fixedPoints φ := by
   simp only [PreservesAcceptance, Set.subset_def, Set.mem_iInter₂, mem_fixedPoints]
 
-/-- Acceptance preservation is monotone: adding premises preserves it. -/
 theorem PreservesAcceptance.mono (h : PreservesAcceptance ψs φ) (hsub : ψs ⊆ χs) :
     PreservesAcceptance χs φ :=
   fun σ hσ ↦ h σ fun ψ hψ ↦ hσ ψ (hsub hψ)
 
-/-- Entailment is left monotone: adding premises in front preserves it. -/
 theorem Entails.append_left (h : Entails ψs φ) (χs : List (α → α)) : Entails (χs ++ ψs) φ :=
   fun σ ↦ by rw [EntailsFrom, text_append]; exact h _
 
@@ -202,20 +199,17 @@ def IsAdditive (f : α → α) : Prop := ∀ σ, f σ = σ ⊓ f ⊤
 
 theorem IsAdditive.le (hf : IsAdditive f) (σ : α) : f σ ≤ σ := (hf σ).trans_le inf_le_left
 
-/-- A state accepts an additive update exactly when it lies below the update's content. -/
 theorem IsAdditive.isFixedPt_iff (hf : IsAdditive f) : IsFixedPt f σ ↔ σ ≤ f ⊤ := by
   rw [IsFixedPt, hf σ, inf_eq_left]
 
 theorem isAdditive_id : IsAdditive (id : α → α) := fun _ ↦ inf_top_eq _ |>.symm
 
-/-- Meeting with a fixed content is additive. -/
 theorem isAdditive_inf_right (a : α) : IsAdditive (· ⊓ a) := fun _ ↦ by simp
 
 theorem IsAdditive.comp (hg : IsAdditive g) (hf : IsAdditive f) : IsAdditive (g ∘ f) := fun σ ↦ by
   show g (f σ) = σ ⊓ g (f ⊤)
   rw [hg (f σ), hf σ, hg (f ⊤), inf_assoc]
 
-/-- A text of additive updates is additive. -/
 theorem isAdditive_text (h : ∀ ψ ∈ ψs, IsAdditive ψ) : IsAdditive (text ψs) := by
   induction ψs with
   | nil => exact isAdditive_id
@@ -274,10 +268,8 @@ section CCP
 
 variable {S : Type*} {u : CCP S} {c d s : Set S}
 
-/-- The static update with a content is additive. -/
 theorem CCP.isAdditive_up (c : Set S) : IsAdditive (CCP.up c) := fun s ↦ by simp [CCP.up]
 
-/-- A state accepts a static update exactly when it lies inside the content. -/
 theorem CCP.isFixedPt_up_iff : IsFixedPt (CCP.up c) s ↔ s ⊆ c := Set.inter_eq_left
 
 /-- On sets of possibilities the additive updates are the classical ones, eliminative and

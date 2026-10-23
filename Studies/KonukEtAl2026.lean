@@ -118,8 +118,6 @@ variable {s : I} {p : ι → I} {ν : ι → Measure Bool} [∀ i, IsProbability
 
 theorem causalStrength_ne_top [DecidableEq ι] : causalStrength s p w₀ E S ≠ ∞ := score_ne_top
 
-/-- With stability below one and priors strictly between zero and one, every nonempty event has
-positive probability. -/
 theorem sampling_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
     {A : Set (ι → Bool)} (hA : A.Nonempty) : sampling s p w₀ A ≠ 0 := by
   obtain ⟨w, hw⟩ := hA
@@ -130,8 +128,6 @@ theorem sampling_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p
 
 variable [DecidableEq ι]
 
-/-- With stability below one and priors strictly between zero and one, a nonempty plural cause
-may fail. -/
 theorem sampling_cause_lt_one (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1)
     (hS : S.Nonempty) : sampling s p w₀ (cause v S) < 1 := by
   obtain ⟨i, hi⟩ := hS
@@ -145,8 +141,6 @@ theorem sampling_compl_cause_ne_zero (hs : s < 1) (hp₀ : ∀ i, 0 < p i) (hp�
   rw [prob_compl_eq_one_sub .of_discrete]
   exact (tsub_pos_of_lt (sampling_cause_lt_one hs hp₀ hp₁ hS)).ne'
 
-/-- With stability below one and priors strictly between zero and one, when the outcome is that
-the urns `T` all show their actual draws, a larger part of `T` scores higher. -/
 theorem causalStrength_cause_lt_of_ssubset (hs : s < 1) (hp₀ : ∀ i, 0 < p i)
     (hp₁ : ∀ i, p i < 1) {S' : Finset ι} (hS : S.Nonempty) (h : S ⊂ S') (hS' : S' ⊆ T) :
     causalStrength s p w₀ (cause w₀ T) S < causalStrength s p w₀ (cause w₀ T) S' := by
@@ -178,8 +172,6 @@ variable [Fintype ι]
 `A + B + C ≥ 2` (p. 450). -/
 def twoOrMore : Set (ι → Bool) := {w | 2 ≤ (Finset.univ.filter fun i ↦ w i = true).card}
 
-/-- With three causes, all present in the actual round, removing two of them leaves the outcome
-exactly when one of the two stays present. -/
 theorem piecewise_mem_twoOrMore_iff (h3 : Fintype.card ι = 3) (hXY : X ≠ Y) (w : ι → Bool) :
     ({X, Y} : Finset ι).piecewise w (fun _ ↦ true) ∈ twoOrMore ↔ w X = true ∨ w Y = true := by
   have hsplit : (Finset.univ.filter fun i ↦
@@ -198,7 +190,6 @@ theorem piecewise_mem_twoOrMore_iff (h3 : Fintype.card ι = 3) (hXY : X ≠ Y) (
 
 end
 
-/-- Two urns agree when both show a colored ball or both a white one. -/
 theorem setOf_eq_eq_cause_union : {w : ι → Bool | w X = w Y} =
     cause (fun _ ↦ true) {X, Y} ∪ cause (fun _ ↦ false) {X, Y} := by
   ext w
@@ -230,7 +221,6 @@ theorem score_twoOrMore_pair (h3 : Fintype.card ι = 3) (hXY : X ≠ Y)
   rw [score, sufficiency_eq_one hforce hc, mul_one, mul_necessity, hnec, setOf_eq_eq_cause_union,
     measure_union hdisj .of_discrete]
 
-/-- The probability that two urns agree under the paper's sampling, the round all colored. -/
 theorem causalStrength_twoOrMore_pair_toReal (h3 : Fintype.card ι = 3) (hXY : X ≠ Y) {s : I}
     (hs : s < 1) {p : ι → I} (hp₀ : ∀ i, 0 < p i) (hp₁ : ∀ i, p i < 1) :
     (causalStrength s p (fun _ ↦ true) twoOrMore {X, Y}).toReal =
@@ -383,7 +373,6 @@ theorem not_mem_homogeneousLoss_iff_indet (hw : w ∉ win rule) :
       let ⟨j, hj, h'⟩ := hw D hD; ⟨j, hj, h'⟩⟩,
     fun ⟨D, hD, ⟨i, hi, h⟩, _⟩ ↦ ⟨D, hD, i, hi, h⟩⟩
 
-/-- In a losing round the homogeneous loss is a loss. -/
 theorem homogeneousLoss_subset_compl_win (h : w₀ ∉ win rule) :
     homogeneousLoss rule w₀ ⊆ (win rule)ᶜ := by
   rintro w hw ⟨D, hD, hall⟩
@@ -391,8 +380,6 @@ theorem homogeneousLoss_subset_compl_win (h : w₀ ∉ win rule) :
   by_contra h'
   simpa [hall i hi] using hw D hD i hi (by simpa using h')
 
-/-- When every urn appears in some condition, the homogeneous loss of a round is the plural cause
-of all its white balls. -/
 theorem homogeneousLoss_eq_cause [Fintype ι] (hcover : ∀ i, ∃ D ∈ rule, i ∈ D) :
     homogeneousLoss rule w₀ = cause w₀ (Finset.univ.filter (w₀ · = false)) := by
   ext w
@@ -416,8 +403,6 @@ theorem mem_win_pair_iff (hrule : rule = {{X, Y}, R}) {w : ι → Bool} :
   subst hrule
   simp [win, mem_cause]
 
-/-- Under the rule `X` and `Y`, or all of `R`, giving `X` a colored ball wins exactly when `Y` has
-one or all of `R` do. -/
 theorem preimage_update_true_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R) :
     (Function.update · X true) ⁻¹' win rule =
       cause (fun _ ↦ true) {Y} ∪ cause (fun _ ↦ true) R := by
@@ -425,8 +410,6 @@ theorem preimage_update_true_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (h
   simp [mem_win_pair_iff hrule, update_mem_cause_iff hXR, mem_cause,
     Function.update_of_ne hXY.symm]
 
-/-- Under the rule `X` and `Y`, or all of `R`, giving `X` a white ball wins exactly when all of
-`R` give colored balls. -/
 theorem preimage_update_false_win (hrule : rule = {{X, Y}, R}) (hXR : X ∉ R) :
     (Function.update · X false) ⁻¹' win rule = cause (fun _ ↦ true) R := by
   ext w
@@ -434,8 +417,6 @@ theorem preimage_update_false_win (hrule : rule = {{X, Y}, R}) (hXR : X ∉ R) :
 
 variable [Fintype ι] {ν : ι → Measure Bool} [∀ i, IsProbabilityMeasure (ν i)]
 
-/-- Under the rule `X` and `Y`, or all of `R`, the sufficiency of a colored ball from `X` for the
-win is the probability that `Y` gives a colored ball. -/
 theorem sufficiency_singleton_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R)
     (hYR : Y ∉ R) (hX : w₀ X = true) (hX' : ν X {false} ≠ 0)
     (hR : Measure.pi ν (cause (fun _ ↦ true) R)ᶜ ≠ 0) :
@@ -447,9 +428,6 @@ theorem sufficiency_singleton_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (
       simp only [mem_compl_iff, dependsOn_cause h]) (Finset.disjoint_singleton_left.2 hYR),
     measure_pi_cause, Finset.prod_singleton, ENNReal.mul_div_cancel_right hR (measure_ne_top _ _)]
 
-/-- Under the rule `X` and `Y`, or all of `R`, the sufficiency of a white ball from `X` for the
-classical loss is the probability that `Y` gives a colored ball and `R` not all of them, given that
-`Y` does or all of `R` do. -/
 theorem sufficiency_singleton_compl_win (hrule : rule = {{X, Y}, R}) (hXY : X ≠ Y) (hXR : X ∉ R)
     (hYR : Y ∉ R) (hX : w₀ X = false) (hX' : ν X {true} ≠ 0) :
     sufficiency (Measure.pi ν) w₀ (win rule)ᶜ {X} =
@@ -523,8 +501,6 @@ section Experiment2
 
 variable {s : I}
 
-/-- In a round where `X` gave a colored ball, its score is `P(X)` times the probability of a colored
-ball from its partner, plus the probability of its absence when the win depends on it. -/
 theorem causalStrength_singleton_win (hs : s < 1) (X : Urn₂) {w₀ : Urn₂ → Bool}
     (hX : w₀ X = true) :
     causalStrength s prior₂ w₀ (win conditions) {X} =
@@ -639,9 +615,6 @@ private theorem deflation_aux {x y K : ℝ} (hy : 0 < y) (hyx : y < x) (hx : x <
     positivity
   linarith
 
-/-- In the round where every urn gave a white ball, the score of a white ball from `X` for the
-classical loss, with `q` the probability of a colored ball, `Y` the partner of `X` and `K` the
-probability that the other color wins. -/
 theorem causalStrength_singleton_compl_win_toReal (hs : s < 1) (X : Urn₂) :
     let q i := (propensity s (prior₂ i) false).real {true}
     let K := ∏ i ∈ otherColor X, q i
@@ -698,8 +671,6 @@ theorem classical_abnormal_deflation (hs : s < 1) :
   constructor <;> apply deflation_aux <;>
     nlinarith [mul_pos (sub_pos.2 hs') (sub_pos.2 hs'), mul_nonneg hs₀ (sub_pos.2 hs').le]
 
-/-- In every losing round of Experiment 2 the homogeneous loss is the plural cause of the round's
-white balls. -/
 theorem homogeneousLoss_conditions (w₀ : Urn₂ → Bool) :
     homogeneousLoss conditions w₀ = cause w₀ (Finset.univ.filter (w₀ · = false)) :=
   homogeneousLoss_eq_cause (by decide)

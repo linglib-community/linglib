@@ -85,7 +85,6 @@ theorem smul (hf : IsDualPrimitive R f) (r : R) : IsDualPrimitive R (r • f) wh
   map_one_eq_zero := by simp [hf.map_one_eq_zero]
   leibniz a b := by simp [hf.leibniz, mul_add, mul_assoc, mul_left_comm]
 
-/-- A dual primitive vanishes on the product of two elements of counit zero. -/
 theorem map_mul_eq_zero (hf : IsDualPrimitive R f) (ha : counit (R := R) a = 0)
     (hb : counit (R := R) b = 0) : f (a * b) = 0 := by
   simp [hf.leibniz, ha, hb]
@@ -108,7 +107,6 @@ theorem convMul_apply_mul (hf : IsDualPrimitive R f) (hg : IsDualPrimitive R g) 
 
 end IsDualPrimitive
 
-/-- When addition on `R` cancels, the product rule alone makes a functional a dual primitive. -/
 theorem isDualPrimitive_iff_leibniz [IsCancelAdd R] :
     IsDualPrimitive R f ↔ ∀ a b, f (a * b) = f a * counit b + counit a * f b :=
   ⟨fun hf ↦ hf.leibniz, fun h ↦ ⟨by simpa using h 1 1, h⟩⟩

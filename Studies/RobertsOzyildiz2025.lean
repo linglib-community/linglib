@@ -57,7 +57,6 @@ noncomputable instance {U V : Type*} [Fintype V] [DecidableEq V]
     [M.IsAcyclic] (u : U) (c e : V) : Decidable (Upstream M u c e) :=
   inferInstanceAs (Decidable (_ ≠ _))
 
-/-- A variable with no directed path to another is not upstream of it. -/
 theorem not_upstream_of_not_reflTransGen {U V : Type*} [DecidableEq V]
     {M : CausalModel U V fun _ ↦ Bool} [M.IsAcyclic] {c e : V}
     (h : ¬ ReflTransGen M.graph.Adj c e) (u : U) : ¬ Upstream M u c e := fun hu ↦
@@ -115,18 +114,11 @@ def normative : Context := { expP := true, expNotP := true }
 
 /-! ### The Predicate Lexicalization Constraint -/
 
-/-- *Know* satisfies the constraint: the truth of the complement manipulates belief in it,
-through the indicator and acquaintance with it. -/
 theorem know_plc : Upstream beliefModel normative .p .beliefP := by decide
 
-/-- The hypothetical *contra* violates the constraint: the falsity of the complement does not
-manipulate belief in it, because a fact generates indicators only for itself, so no path runs
-from the falsity to the belief. -/
 theorem contra_plc : ¬ Upstream beliefModel normative .notP .beliefP :=
   not_upstream_of_not_reflTransGen (by decide) _
 
-/-- The template of the generalized constraint, oriented as the paper draws it: the fact does
-not manipulate belief in its negation. -/
 theorem contra_plc' : ¬ Upstream beliefModel normative .p .beliefNotP :=
   not_upstream_of_not_reflTransGen (by decide) _
 
@@ -139,8 +131,6 @@ def SatisfiesPLC : Profile → Prop
   | .strongContrafactive => Upstream beliefModel normative .notP .beliefP
   | .nonfactive | .weakContrafactive => True
 
-/-- The attestation table follows from the constraint: a profile is attested iff it
-satisfies the constraint where the constraint applies. -/
 theorem attested_iff : ∀ pr : Profile, pr.Attested ↔ SatisfiesPLC pr
   | .factive => ⟨fun _ ↦ know_plc, fun _ ↦ trivial⟩
   | .strongContrafactive => ⟨False.elim, fun h ↦ contra_plc h⟩
@@ -183,13 +173,9 @@ instance (eventive : Bool) : (wijsmaken eventive).IsAcyclic :=
 /-- The context in which the object did not already hold the belief. -/
 def noPriorBelief : WijsmakenContext := { notBeliefPrior := true }
 
-/-- *Wijsmaken* satisfies the constraint: the complement's falsity manipulates the object's
-belief, through the act of fooling. -/
 theorem wijsmaken_plc : Upstream (wijsmaken true) noPriorBelief .notRich .beliefRich := by
   decide
 
-/-- With the eventive node cut, the falsity presupposition is no longer upstream of the
-belief: the configuration of *contra*. -/
 theorem wijsmaken_cut : ¬ Upstream (wijsmaken false) noPriorBelief .notRich .beliefRich := by
   decide
 
@@ -220,13 +206,10 @@ instance (eventive : Bool) : DecidableRel (hallucinate eventive).graph.Adj := fu
 instance (eventive : Bool) : (hallucinate eventive).IsAcyclic :=
   Finite.wellFounded_of_irrefl_transGen (r := fun w v ↦ (w, v) ∈ hallucinateEdges) (by decide)
 
-/-- *Hallucinate* satisfies the constraint through the distortion. -/
 theorem hallucinate_plc :
     Upstream (hallucinate true) {} .notLoves .beliefLoves := by
   decide
 
-/-- With the distortion cut, the falsity presupposition is no longer upstream of the
-belief. -/
 theorem hallucinate_cut :
     ¬ Upstream (hallucinate false) {} .notLoves .beliefLoves := by
   decide

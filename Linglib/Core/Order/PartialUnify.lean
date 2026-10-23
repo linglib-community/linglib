@@ -67,8 +67,6 @@ theorem coe_mem_upperBounds_image_coe :
     (u : WithTop α) ∈ upperBounds ((↑) '' s) ↔ u ∈ upperBounds s := by
   simp only [mem_upperBounds, Set.forall_mem_image, coe_le_coe]
 
-/-- A coerced element is the least upper bound of a set of coerced elements iff it is the least
-upper bound of the set. -/
 theorem isLUB_image_coe_iff : IsLUB ((↑) '' s : Set (WithTop α)) u ↔ IsLUB s u := by
   refine and_congr coe_mem_upperBounds_image_coe ⟨fun h v hv ↦ ?_, fun h x hx ↦ ?_⟩
   · exact coe_le_coe.mp (h (coe_mem_upperBounds_image_coe.mpr hv))
@@ -76,7 +74,6 @@ theorem isLUB_image_coe_iff : IsLUB ((↑) '' s : Set (WithTop α)) u ↔ IsLUB 
     | top => exact le_top
     | coe v => exact coe_le_coe.mpr (h (coe_mem_upperBounds_image_coe.mp hx))
 
-/-- `⊤` is the least upper bound of a set of coerced elements iff the set is unbounded. -/
 theorem isLUB_image_coe_top_iff : IsLUB ((↑) '' s : Set (WithTop α)) ⊤ ↔ ¬ BddAbove s :=
   ⟨fun h ⟨v, hv⟩ ↦ absurd ((h.2 (coe_mem_upperBounds_image_coe.mpr hv)).trans_lt (coe_lt_top v))
     (lt_irrefl _),
@@ -220,26 +217,20 @@ instance : PartialUnify ((t : F) → S t) where
     rw [dite_eq_left h]
     exact WithTop.coe_ne_top
 
-/-- Bundles unify to `u` exactly when every coordinate unifies to `u`'s. -/
 theorem unify_pi_eq_coe_iff {f g u : (t : F) → S t} :
     unify f g = ↑u ↔ ∀ t, unify (f t) (g t) = ↑(u t) := by
   rw [unify_eq_coe_iff_isLUB, isLUB_pi]
   exact forall_congr' fun t ↦ by rw [unify_eq_coe_iff_isLUB, Set.image_pair]
 
-/-- Bundles fail to unify exactly when some coordinate's unification fails. -/
 theorem unify_pi_eq_top_iff {f g : (t : F) → S t} :
     unify f g = ⊤ ↔ ∃ t, unify (f t) (g t) = ⊤ := by
   simp only [unify_eq_top_iff, bddAbove_pi, Set.image_pair, not_forall]
 
-/-- Unification restricts along a reindexing `σ`: when two bundles unify, the reindexed bundles
-unify to the reindexing of the result. -/
 theorem unify_comp {G : Type*} [Fintype G] (σ : G → F) {f g u : (t : F) → S t}
     (h : unify f g = ↑u) :
     unify (fun i ↦ f (σ i)) (fun i ↦ g (σ i)) = ↑(fun i ↦ u (σ i)) :=
   unify_pi_eq_coe_iff.2 fun i ↦ unify_pi_eq_coe_iff.1 h (σ i)
 
-/-- Unifying with a bundle specified at one coordinate unifies at that coordinate and leaves the
-others in place. -/
 theorem unify_update_bot [∀ t, OrderBot (S t)] [DecidableEq F] (f : (t : F) → S t) (t : F)
     (x : S t) :
     unify f (Function.update ⊥ t x) = (unify (f t) x).map (Function.update f t) := by
@@ -308,7 +299,6 @@ instance : PartialUnify (WithBot α) where
 
 @[simp] theorem unify_coe_bot (a : α) : unify (a : WithBot α) ⊥ = ↑(a : WithBot α) := rfl
 
-/-- Coerced elements unify as in the carrier. -/
 @[simp] theorem unify_coe_coe (a b : α) :
     unify (a : WithBot α) (b : WithBot α) = (unify a b).map (↑) := rfl
 
@@ -361,14 +351,12 @@ variable {α : Type*}
 unification. An `abbrev`, so the `BddAbove` API applies. -/
 abbrev Compat [Preorder α] (a b : α) : Prop := BddAbove ({a, b} : Set α)
 
-/-- A common upper bound witnesses compatibility. -/
 theorem Compat.of_le [Preorder α] {a b u : α} (ha : a ≤ u) (hb : b ≤ u) : Compat a b :=
   ⟨u, mem_upperBounds_pair.mpr ⟨ha, hb⟩⟩
 
 theorem Compat.symm [Preorder α] {a b : α} (h : Compat a b) : Compat b a :=
   h.mono (Set.pair_comm b a).le
 
-/-- Compatibility persists downward. -/
 theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ d) (h : Compat b d) :
     Compat a c :=
   let ⟨_, hu⟩ := h
@@ -377,28 +365,22 @@ theorem Compat.mono [Preorder α] {a b c d : α} (h₁ : a ≤ b) (h₂ : c ≤ 
 
 theorem compat_self [Preorder α] (a : α) : Compat a a := .of_le le_rfl le_rfl
 
-/-- Compatibility on a Pi type is pointwise. -/
 theorem compat_pi_iff {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g : ∀ t, S t} :
     Compat f g ↔ ∀ t, Compat (f t) (g t) := by
   simp only [Compat, bddAbove_pi, Set.image_pair]
 
-/-- Compatibility on a product is componentwise. -/
 theorem compat_prod_iff {β : Type*} [Preorder α] [Preorder β] {a b : α × β} :
     Compat a b ↔ Compat a.1 b.1 ∧ Compat a.2 b.2 := by
   simp only [Compat, bddAbove_prod, Set.image_pair]
 
-/-- Compatibility of functions is pointwise. -/
 theorem Compat.apply {F : Type*} {S : F → Type*} [∀ t, Preorder (S t)] {f g : ∀ t, S t}
     (h : Compat f g) (t : F) : Compat (f t) (g t) :=
   compat_pi_iff.mp h t
 
-/-- `⊥` is a wildcard, compatible with everything. -/
 theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a := .of_le bot_le le_rfl
 
 theorem compat_bot [Preorder α] [OrderBot α] (a : α) : Compat a (⊥ : α) := .of_le le_rfl bot_le
 
-/-- Where every element other than `⊥` is maximal, two elements are incompatible exactly when
-both are present and distinct. -/
 theorem not_compat_iff_of_forall_isMax [PartialOrder α] [OrderBot α]
     (h : ∀ a : α, a ≠ ⊥ → IsMax a) {a b : α} : ¬ Compat a b ↔ a ≠ ⊥ ∧ b ≠ ⊥ ∧ a ≠ b := by
   constructor

@@ -124,7 +124,6 @@ def Nominal.nominality : Nominal → Nominality
   | .properName => .properName
   | .common _ => .commonNoun
 
-/-- The Nominal Hierarchy refines nominality. -/
 theorem Nominal.nominality_monotone : Monotone Nominal.nominality := by
   intro a b; revert a b; decide
 
@@ -148,8 +147,6 @@ variable (acc erg : H → Prop) [DecidablePred acc] [DecidablePred erg] (p : H)
 @[simp] theorem overt_split_P : overt (split acc erg) .P = {p | acc p} := by
   ext; simp [split]
 
-/-- A split fits the hierarchy exactly when its accusative marking is an upper set and its
-ergative marking a lower set. -/
 theorem fits_split_iff [Preorder H] :
     Fits (split acc erg) ↔ IsUpperSet {p | acc p} ∧ IsLowerSet {p | erg p} := by
   simp [Fits, and_comm]
@@ -168,14 +165,12 @@ theorem isNeutral_split_iff : IsNeutral (split acc erg · p) ↔ ¬ acc p ∧ ¬
 
 variable {acc erg p} {q : H}
 
-/-- In a split that fits, the pattern stays accusative above an accusative position. -/
 theorem IsAccusative.of_le [Preorder H] (h : Fits (split acc erg))
     (hp : IsAccusative (split acc erg · p)) (hpq : p ≤ q) : IsAccusative (split acc erg · q) := by
   rw [fits_split_iff] at h
   rw [isAccusative_split_iff] at *
   exact ⟨h.1 hpq hp.1, fun hq ↦ hp.2 (h.2 hpq hq)⟩
 
-/-- In a split that fits, the pattern stays ergative below an ergative position. -/
 theorem IsErgative.of_le [Preorder H] (h : Fits (split acc erg))
     (hq : IsErgative (split acc erg · q)) (hpq : p ≤ q) : IsErgative (split acc erg · p) := by
   rw [fits_split_iff] at h
@@ -291,8 +286,6 @@ function. -/
 def Feeds (π : Pivot) (d : Derivation) (r : ArgumentRole) : Prop :=
   ∃ g, d.apply r = some g ∧ π.Admits g
 
-/-- A common NP needs a derivation in a clause exactly when its function there is not a pivot
-function, O under an S/A pivot and A under an S/O pivot. -/
 theorem not_admits_iff :
     (∀ r ∈ ArgumentRole.core, ¬ Pivot.SA.Admits r ↔ r = .P) ∧
       ∀ r ∈ ArgumentRole.core, ¬ Pivot.SO.Admits r ↔ r = .A := by

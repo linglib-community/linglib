@@ -60,7 +60,6 @@ def mergeRanking (default sub : List (L × Constraint C)) :
   let subLabels := sub.map (·.1)
   sub ++ default.filter (fun c ↦ !subLabels.contains c.1)
 
-/-- An empty subranking produces the default ranking unchanged. -/
 theorem mergeRanking_empty_sub (default : List (L × Constraint C)) :
     mergeRanking default [] = default := by
   simp [mergeRanking]

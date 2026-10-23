@@ -62,8 +62,6 @@ abbrev Telic (P : β → Prop) : Prop := QUA P
 /-- (24): an atelic predicate is cumulative. -/
 abbrev Atelic (P : β → Prop) : Prop := CUM P
 
-/-- A predicate telic in this sense is telic in the initial and final part sense of
-[krifka-1998], where parts of an event neither precede nor follow it. -/
 theorem isTelic_of_telic {precedes : β → β → Prop} (h : NoPartPrecedes precedes) {P : β → Prop}
     (hP : Telic P) : IsTelic precedes P :=
   isTelic_of_qua h hP
@@ -79,7 +77,6 @@ property (19) — *run*, *watch*, *believe*. -/
 def Persistent (θ : α → β → Prop) : Prop := ∀ x e, θ x e → ∀ e', e' ≤ e → θ x e'
 
 omit [SemilatticeSup α] in
-/-- A telic verb forms a telic predicate with any object. -/
 theorem telic_of_quantized {θ : α → β → Prop} (h : Quantized θ) (OBJ : α → Prop) :
     Telic (VP θ OBJ) :=
   qua_of_forall λ _ _ ⟨_, _, hθ⟩ hlt ⟨_, _, hθ'⟩ => h _ _ hθ _ _ hlt hθ'
@@ -92,7 +89,6 @@ theorem not_telic_of_persistent {θ : α → β → Prop} (h : Persistent θ) (O
   let ⟨x, hx, hθ⟩ := he
   hQ ⟨x, hx, h x e hθ e' hlt.le⟩ he hlt.ne hlt.le
 
-/-- An atelic verb with a cumulative object forms a cumulative predicate. -/
 theorem atelic_of_persistent {θ : α → β → Prop} (hθ : SUM θ) {OBJ : α → Prop}
     (hObj : CUM OBJ) : Atelic (VP θ OBJ) :=
   vp_cum hθ hObj

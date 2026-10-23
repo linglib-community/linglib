@@ -150,7 +150,6 @@ theorem agreeingGender_cons_of_eq_none (hh : gender h = none) :
 theorem agreeingGender_singleton : agreeingGender gender default [h] = (gender h).getD default := by
   cases hg : gender h <;> simp [agreeingGender, genderProbe, Probe.search, hg]
 
-/-- Heads bearing no gender are invisible to the probe. -/
 theorem agreeingGender_append_of_forall_eq_none {l l' : List H}
     (hl : ∀ a ∈ l, gender a = none) :
     agreeingGender gender default (l ++ l') = agreeingGender gender default l' := by

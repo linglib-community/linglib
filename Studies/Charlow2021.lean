@@ -93,7 +93,6 @@ def relTest (u v : R) (r : E → E → Prop) : Update S := test {i | r (val u i)
 
 variable [PartialOrder E]
 
-/-- Maximizing a register just introduced under a test keeps its maximal values. -/
 theorem mem_maxAt_Evar_comp_test {u : R} {Q : E → Prop} {C : Condition S} {i j : S} :
     i ~[maxAt u (Evar u Q ○ test C)] j ↔
       ∃ y, j = extend i u y ∧ Maximal (fun y ↦ Q y ∧ extend i u y ∈ C) y := by
@@ -108,8 +107,6 @@ theorem mem_maxAt_Evar_comp_test {u : R} {Q : E → Prop} {C : Condition S} {i j
     rw [val_extend_self, val_extend_self] at hlt
     exact (maximal_iff_forall_gt.1 hm).2 hlt ⟨hy', hC'⟩
 
-/-- Maximizing a register introduced before an update that keeps it, given when the update has an
-output. -/
 theorem mem_maxAt_Evar_comp {v : R} {P Q : E → Prop} {D : Update S} (hD : Fixes v D) {i j : S}
     (hQ : ∀ x, P x → ((∃ k, extend i v x ~[D] k) ↔ Q x)) :
     i ~[maxAt v (Evar v P ○ D)] j ↔
@@ -478,7 +475,6 @@ theorem movies_seen (hw : σ.WellFormed) (ht : σ.Total) {X : Finset Ent} (hX : 
   let ⟨m, hm, _⟩ := (saw_seen hw ht hX.2).1 b hb
   ⟨⟨m, hm⟩, Finset.filter_subset _ _⟩
 
-/-- The movies some boys saw are the greatest plurality they saw. -/
 theorem maximal_saw_iff (hw : σ.WellFormed) (ht : σ.Total) {X Y : Finset Ent} (hX : σ.Boys X) :
     Maximal (fun Y ↦ σ.Movies Y ∧ σ.Saw Y X) Y ↔ Y = σ.seen X := by
   have hg : σ.Movies (σ.seen X) ∧ σ.Saw (σ.seen X) X := ⟨movies_seen hw ht hX, saw_seen hw ht hX.2⟩
@@ -512,7 +508,6 @@ abbrev St := Reg → Finset Ent
 
 variable {σ : Scenario} {a b : Reg}
 
-/-- The object's maximization stores the movies the subject's boys saw. -/
 theorem mem_maxAt_object (hab : a ≠ b) (hw : σ.WellFormed) (ht : σ.Total) {X : Finset Ent}
     (hX : σ.Boys X) {i k : St} :
     Function.update i a X ~[maxAt (S := St) b (Evar b σ.Movies ○ relTest b a σ.Saw)] k ↔
@@ -586,8 +581,6 @@ theorem mem_image_Evar {r : Reg} {P : Finset Ent → Prop} {s : Set St} {j : St}
     j ∈ (Evar (S := St) r P).image s ↔ ∃ i ∈ s, ∃ x, P x ∧ j = Function.update i r x := by
   simp only [mem_image, mem_Evar, extend_eq_update]
 
-/-- After the subject's dref and the object's dref and verb, the context holds every pair of
-boys and movies they saw. -/
 theorem mem_object_context {i j : St} :
     j ∈ CCP.seq (Evar (S := St) Reg.u σ.Movies).image (relTest Reg.u Reg.v σ.Saw).image
         ((Evar (S := St) Reg.v σ.Boys).image {i}) ↔
@@ -602,7 +595,6 @@ theorem mem_object_context {i j : St} :
   · rintro ⟨X, Y, hX, hY, hsaw, rfl⟩
     exact ⟨⟨_, ⟨i, rfl, X, hX, rfl⟩, Y, hY, rfl⟩, by simpa using hsaw⟩
 
-/-- Update-theoretic maximization of the object keeps the movies seen by all the boys. -/
 theorem mem_maxAtU_object (hw : σ.WellFormed) (ht : σ.Total) (hne : σ.boys.Nonempty) {i j : St} :
     j ∈ maxAtU Reg.u (CCP.seq (Evar (S := St) Reg.u σ.Movies).image
         (relTest Reg.u Reg.v σ.Saw).image) ((Evar (S := St) Reg.v σ.Boys).image {i}) ↔
@@ -690,7 +682,6 @@ theorem pseudoCumulative_scenarioA (i : St) :
   (mem_dom_pseudoCumulative (by decide) scenarioA_wellFormed scenarioA_total 3 5 i).2
     ⟨scenarioA.boys, ⟨by decide, fun _ hY _ ↦ hY.1.2⟩, by decide⟩
 
-/-- Of the boys of Scenario B who saw exactly five movies, `b1 ⊔ b2 ⊔ b3` is maximal. -/
 theorem maximal_b123 :
     Maximal (fun X ↦ scenarioB.Boys X ∧ (scenarioB.seen X).card = 5) {.b1, .b2, .b3} := by
   refine ⟨by decide, fun Y hY hXY ↦ ?_⟩
@@ -725,7 +716,6 @@ theorem cumulative_swap_scenarioB (i : St) :
   exact fun h ↦ absurd ((mem_dom_cumulative (by decide) scenarioB_swap_wellFormed
     scenarioB_swap_total (by decide) 5 3 i).1 h) (by decide)
 
-/-- Of the movies of Scenario B seen by exactly three boys, `m1 ⊔ ⋯ ⊔ m5` is maximal. -/
 theorem maximal_m12345 : Maximal (fun Y ↦ scenarioB.swap.Boys Y ∧ (scenarioB.swap.seen Y).card = 3)
     {.m1, .m2, .m3, .m4, .m5} := by
   refine ⟨by decide, fun Y hY hXY ↦ ?_⟩

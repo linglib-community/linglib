@@ -181,7 +181,6 @@ theorem isConcatenative_foldl_attach {t : Tree M} (ht : t.IsConcatenative) :
     rw [List.foldl_cons]
     exact isConcatenative_foldl_attach (by cases s <;> exact ht) rest
 
-/-- Attachment by side is concatenative, so `toList` is the segmentation. -/
 theorem isConcatenative_attachAll (root : M) (affixes : List (Morph.Side × M)) :
     (attachAll root affixes).IsConcatenative :=
   isConcatenative_foldl_attach (show (Tree.root root).IsConcatenative from trivial) affixes
@@ -193,7 +192,6 @@ side, an infix or a free form, is not attached. -/
 def attachMorphs (root : Morph) (ms : List Morph) : Tree Morph :=
   attachAll root (ms.filterMap fun m ↦ (m.kind.side?).map (·, m))
 
-/-- On sequences of morphs bound on a side, attachment records the morphs and their order. -/
 theorem attachMorphs_injOn (root : Morph) :
     Set.InjOn (attachMorphs root) {ms | ∀ m ∈ ms, m.kind.side?.isSome} := by
   intro l₁ h₁ l₂ h₂ h

@@ -76,9 +76,6 @@ not one, since wh-objects block elision while wh-possessors trigger it ((15c, f)
 theorem elision_not_factor_through_wh : ¬ Function.FactorsThrough elides secondIsWh :=
   fun h ↦ absurd (@h .verbWhObject .headWhPossessor rfl) (by decide)
 
-/-- On Kenstowicz's solution elision tracks government exactly, once apparently in-situ
-wh-objects are placed in the postverbal Focus position. The blockage is a syntactic discovery
-made by phonology. -/
 theorem elision_tracks_government : ∀ j, elides j = governed j := by
   intro j; cases j <;> rfl
 

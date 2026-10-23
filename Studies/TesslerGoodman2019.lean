@@ -127,7 +127,6 @@ theorem listener_generic_apply (w : W) :
 
 variable [IsProbabilityMeasure μ] {lam : ℝ} {w : W}
 
-/-- Silence returns the prior. -/
 theorem listener_silent_apply (w : W) : listener μ ν prev .silent {w} = μ {w} := by
   rw [listener, Kernel.ofDensity_apply_singleton]
   simp only [meaning, one_mul]
@@ -167,8 +166,6 @@ noncomputable def uniformThreshold : Measure ℝ := volume.restrict (Set.Icc 0 1
 instance : IsFiniteMeasure uniformThreshold :=
   ⟨by rw [uniformThreshold, Measure.restrict_apply_univ, Real.volume_Icc]; simp⟩
 
-/-- The uniform threshold prior's mass below a prevalence in the unit interval is the
-prevalence. -/
 theorem uniformThreshold_Iio {p : ℝ} (h1 : p ≤ 1) :
     uniformThreshold (Set.Iio p) = ENNReal.ofReal p := by
   rw [uniformThreshold, Measure.restrict_apply measurableSet_Iio,
@@ -181,8 +178,6 @@ theorem uniformThreshold_Iio {p : ℝ} (h1 : p ≤ 1) :
 
 variable {W : Type*}
 
-/-- Under the uniform threshold prior the marginalized meaning of the generalization is the
-prevalence. -/
 theorem meaning_uniformThreshold (prev : W → ℝ) (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1) (w : W) :
     meaning uniformThreshold prev .generic w = ENNReal.ofReal (prev w) :=
   uniformThreshold_Iio (hp w).2
@@ -230,13 +225,11 @@ theorem endorse_iff_expectation_lt (hlam : 0 < lam) (hp : ∀ w, 0 ≤ prev w �
     expectedMeaning_uniformThreshold prev μ hp, meaning_uniformThreshold prev hp,
     ENNReal.ofReal_lt_ofReal_iff_of_nonneg hZ.le]
 
-/-- A property whose prior mean lies below the referent prevalence is endorsed. -/
 theorem endorse_of_expectation_lt (hlam : 0 < lam) (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1)
     (hw : μ {w} ≠ 0) (hZ : 0 < expectedPrevalence μ prev)
     (h : expectedPrevalence μ prev < prev w) : Endorsed lam μ uniformThreshold prev w :=
   (endorse_iff_expectation_lt prev μ hlam hp hw hZ).2 h
 
-/-- A property whose prior mean lies at or above the referent prevalence is not endorsed. -/
 theorem not_endorse_of_le_expectation (hlam : 0 < lam) (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1)
     (hw : μ {w} ≠ 0) (hZ : 0 < expectedPrevalence μ prev)
     (h : prev w ≤ expectedPrevalence μ prev) : ¬ Endorsed lam μ uniformThreshold prev w :=
@@ -246,8 +239,6 @@ end Uniform
 
 /-! ### Table 1: symmetric and bimodal priors -/
 
-/-- A mixture of a probability measure with mass `φ` and another with mass `1 - φ` is a
-probability measure. -/
 theorem isProbabilityMeasure_mixture {W : Type*} [MeasurableSpace W] (ν₁ ν₀ : Measure W)
     [IsProbabilityMeasure ν₁] [IsProbabilityMeasure ν₀] {φ : ℝ} (h0 : 0 ≤ φ) (h1 : φ ≤ 1) :
     IsProbabilityMeasure (φ.toNNReal • ν₁ + (1 - φ).toNNReal • ν₀) :=
@@ -262,7 +253,6 @@ section Examples
 variable {W : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
   (prev : W → ℝ)
 
-/-- A prior invariant under a reflection of the scale about one half has mean one half. -/
 theorem expectedPrevalence_eq_half_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hμ : ∀ w, μ {σ w} = μ {w}) :
     expectedPrevalence μ prev = 1 / 2 := by
@@ -277,7 +267,6 @@ theorem expectedPrevalence_eq_half_of_symm (μ : Measure W) [IsProbabilityMeasur
   rw [this, h1, ← expectedPrevalence_eq_sum] at key
   linarith
 
-/-- The mean prevalence of a mixture is the mixture of the means. -/
 theorem expectedPrevalence_mixture (ν₁ ν₀ : Measure W) [IsFiniteMeasure ν₁] [IsFiniteMeasure ν₀]
     (c d : ℝ≥0) :
     expectedPrevalence (c • ν₁ + d • ν₀) prev =
@@ -286,8 +275,6 @@ theorem expectedPrevalence_mixture (ν₁ ν₀ : Measure W) [IsFiniteMeasure ν
   rw [integral_add_measure (.of_finite) (.of_finite), integral_smul_nnreal_measure,
     integral_smul_nnreal_measure, NNReal.smul_def, NNReal.smul_def, smul_eq_mul, smul_eq_mul]
 
-/-- For *robins are female*, a prior symmetric about one half puts a referent prevalence of
-one half exactly at the boundary, where the generalization and silence are produced alike. -/
 theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hμ : ∀ w, μ {σ w} = μ {w}) {lam : ℝ} (hlam : 0 < lam)
     (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1) {w : W} (hw : μ {w} ≠ 0) (hhalf : prev w = 1 / 2) :
@@ -308,8 +295,6 @@ theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ 
     exact lt_irrefl _
   exact le_antisymm (not_lt.1 h1) (not_lt.1 h2)
 
-/-- For *robins lay eggs*, mixing a prior symmetric about one half with a component at zero
-prevalence, the categories without the mechanism, at weight `1 - φ` gives mean `φ / 2`. -/
 theorem expectedPrevalence_bimodal (ν₁ : Measure W) [IsProbabilityMeasure ν₁] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hν : ∀ w, ν₁ {σ w} = ν₁ {w}) (w₀ : W)
     (hw₀ : prev w₀ = 0) {φ : ℝ} (h0 : 0 ≤ φ) :
@@ -318,9 +303,6 @@ theorem expectedPrevalence_bimodal (ν₁ : Measure W) [IsProbabilityMeasure ν�
     expectedPrevalence, integral_dirac, hw₀, Real.coe_toNNReal _ h0]
   ring
 
-/-- At a referent prevalence of one half the bimodal prior endorses the generalization
-whenever some categories lack the mechanism, `φ < 1`, while the symmetric prior alone,
-`φ = 1`, sits at the boundary. -/
 theorem endorse_of_mixture (ν₁ : Measure W) [IsProbabilityMeasure ν₁] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hν : ∀ w, ν₁ {σ w} = ν₁ {w}) (w₀ : W)
     (hw₀ : prev w₀ = 0) {φ : ℝ} (h0 : 0 < φ) (h1 : φ < 1) {lam : ℝ} (hlam : 0 < lam)

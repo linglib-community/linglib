@@ -85,7 +85,6 @@ private theorem Ioc_mem {a b : T} (h : a ≤ b) :
   ⟨a, b, h, rfl⟩
 
 variable [CanonicallyOrderedAdd α] in
-/-- A longer time has a longer duration. -/
 theorem duration_mono : Monotone (duration μ) := fun i j h ↦ by
   have : Nonempty T := ⟨i.fst⟩
   exact addContent_mono IsSetSemiring.Ioc (Ioc_mem i.fst_le_snd) (Ioc_mem j.fst_le_snd)
@@ -102,7 +101,6 @@ namespace IsTimeMeasure
 
 variable {μ} [IsTimeMeasure μ]
 
-/-- A span has positive measure exactly when it is nondegenerate. -/
 theorem pos_iff {a b : T} : 0 < μ (Ioc a b) ↔ a < b :=
   ⟨fun h ↦ not_le.1 fun hba ↦ h.ne' (by rw [Ioc_eq_empty (not_lt.2 hba), addContent_empty]),
     fun h ↦ pos h⟩
@@ -117,7 +115,6 @@ theorem strictAntiOn (s : T) : StrictAntiOn (fun l ↦ μ (Ioc l s)) (Iic s) :=
     exact lt_add_of_pos_left _ (pos hab)
 
 variable (μ) [CanonicallyOrderedAdd α] in
-/-- Every number measures a span ending at any given time. -/
 theorem exists_Ioc_eq (s : T) (n : α) : ∃ l ≤ s, μ (Ioc l s) = n := by
   rcases (zero_le : 0 ≤ n).eq_or_lt with rfl | hn
   · exact ⟨s, le_rfl, by rw [Ioc_self, addContent_empty]⟩
@@ -154,7 +151,6 @@ informative value, (92) with (75). -/
 def IsMIPLicensed {N : Type*} (φ : N → Set W) : Prop :=
   ∃ w, ∃! n, IsStrongestTrueAnswer (range φ) w (φ n)
 
-/-- A property that does not depend on the numeral is not licensed, the information collapse. -/
 theorem not_isMIPLicensed_of_forall_eq {N : Type*} [Nontrivial N] {φ : N → Set W}
     (h : ∀ n m, φ n = φ m) : ¬ IsMIPLicensed φ := by
   rintro ⟨w, n, hn, huniq⟩
@@ -162,7 +158,6 @@ theorem not_isMIPLicensed_of_forall_eq {N : Type*} [Nontrivial N] {φ : N → Se
   obtain ⟨hnw, hmin⟩ := isStrongestTrueAnswer_range_iff.1 hn
   exact hm (huniq m (isStrongestTrueAnswer_range_iff.2 ⟨h n m ▸ hnw, fun k hk ↦ h n m ▸ hmin k hk⟩))
 
-/-- An upward scalar property with no least true value is not licensed. -/
 theorem not_isMIPLicensed_of_not_isLeast {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : Monotone φ) (h : ∀ w n, ¬ IsLeast {m | w ∈ φ m} n) : ¬ IsMIPLicensed φ := by
   rintro ⟨w, n, hn, huniq⟩
@@ -171,7 +166,6 @@ theorem not_isMIPLicensed_of_not_isLeast {N : Type*} [LinearOrder N] {φ : N →
   exact hlt.ne (huniq m (isStrongestTrueAnswer_range_iff.2
     ⟨hm, fun k hk ↦ (hφ hlt.le).trans (hmin k hk)⟩))
 
-/-- A strictly downward scalar property with a greatest true value at some world is licensed. -/
 theorem isMIPLicensed_of_isGreatest {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictAnti φ) {w : W} (h : ∃ n, IsGreatest {m | w ∈ φ m} n) : IsMIPLicensed φ := by
   obtain ⟨n, hn⟩ :=
@@ -181,7 +175,6 @@ theorem isMIPLicensed_of_isGreatest {N : Type*} [LinearOrder N] {φ : N → Set 
   exacts [(isStrongestTrueAnswer_range_iff.1 hm).2 n (isStrongestTrueAnswer_range_iff.1 hn).1,
     (isStrongestTrueAnswer_range_iff.1 hn).2 m (isStrongestTrueAnswer_range_iff.1 hm).1]
 
-/-- A strictly upward scalar property with a least true value at some world is licensed. -/
 theorem isMIPLicensed_of_isLeast {N : Type*} [LinearOrder N] {φ : N → Set W}
     (hφ : StrictMono φ) {w : W} (h : ∃ n, IsLeast {m | w ∈ φ m} n) : IsMIPLicensed φ := by
   obtain ⟨n, hn⟩ :=
@@ -200,7 +193,6 @@ the event predicate the rest of the LF supplies ((78) for the simple past). -/
 def eTIA (Q : W → E → Prop) (n : α) : Set W :=
   {w | ∃ t, duration μ t = n ∧ ∃ e, Q w e ∧ τ e ≤ t}
 
-/-- The E-TIA property is upward scalar, since a longer time still includes the event. -/
 theorem eTIA_monotone (Q : W → E → Prop) : Monotone (eTIA μ Q) := by
   rintro n m hnm w ⟨t, rfl, e, he, het⟩
   obtain ⟨l, hl, hlm⟩ := IsTimeMeasure.exists_Ioc_eq_of_le hnm
@@ -227,8 +219,6 @@ theorem not_isMIPLicensed_eTIA [Nontrivial α] {Q : W → E → Prop}
   not_isMIPLicensed_of_forall_eq (eTIA_eq_of_hasSubintervalProperty μ hQ)
 
 omit [IsOrderedCancelAddMonoid α] [IsTimeMeasure μ] in
-/-- In the telic case, at a world whose shortest `Q`-event is `e₀`, the least true numeral is its
-duration. -/
 theorem isLeast_eTIA {Q : W → E → Prop} {w : W} {e₀ : E} (h₀ : Q w e₀)
     (hmin : ∀ e, Q w e → duration μ (τ e₀) ≤ duration μ (τ e)) :
     IsLeast {n | w ∈ eTIA μ Q n} (duration μ (τ e₀)) :=
@@ -236,8 +226,6 @@ theorem isLeast_eTIA {Q : W → E → Prop} {w : W} {e₀ : E} (h₀ : Q w e₀)
     ht ▸ (hmin e he).trans (duration_mono μ het)⟩
 
 omit [IsOrderedCancelAddMonoid α] [IsTimeMeasure μ] in
-/-- In *Mary wrote up a paper in three days*, when worlds differ in the event's duration, a telic
-VP is licensed at the world whose shortest event lasts the numeral's measure. -/
 theorem isMIPLicensed_eTIA {Q : W → E → Prop} (hφ : StrictMono (eTIA μ Q)) {w : W}
     {e₀ : E} (h₀ : Q w e₀) (hmin : ∀ e, Q w e → duration μ (τ e₀) ≤ duration μ (τ e)) :
     IsMIPLicensed (eTIA μ Q) :=
@@ -275,7 +263,6 @@ theorem exists_lt_of_mem_gTIA [DenselyOrdered T] {P : W → E → Prop} {s : T} 
     l', rfl, e, he, (Icc_subset_Ioo_iff (τ e).fst_le_snd).2 ⟨hl', hs⟩⟩
 
 omit [CanonicallyOrderedAdd α] in
-/-- There is no smallest open span including a closed run time. -/
 theorem not_isLeast_gTIA [DenselyOrdered T] (P : W → E → Prop) (s : T) (w : W) (n : α) :
     ¬ IsLeast {m | w ∈ gTIA μ P s m} n := fun ⟨hn, hlb⟩ ↦
   let ⟨_, _, hmn, hm⟩ := exists_lt_of_mem_gTIA μ hn
@@ -354,7 +341,6 @@ def uPerfGTIA (P : W → E → Prop) (s : T) (n : α) : Set W :=
   {w | ∃ t, duration μ t = n ∧
     ∃ l < s, Ioo l s ⊆ (t : Set T) ∧ ∃ e, P w e ∧ Ioo l s ⊆ (τ e : Set T)}
 
-/-- The E-perfect frame inherits the subinterval property. -/
 theorem hasSubintervalProperty_ePerfFrame {P : W → E → Prop} {s : T}
     (hP : HasSubintervalProperty P) : HasSubintervalProperty (ePerfFrame P s) :=
   hasSubintervalProperty_iff_witnesses.2 fun e w ⟨he, l, hei⟩ t ht ↦

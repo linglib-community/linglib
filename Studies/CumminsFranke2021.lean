@@ -94,7 +94,6 @@ private theorem real_prior_Iic {c : ℕ} (hc : c ≤ 200) : prior.real (Iic c) =
       ext x; simp only [mem_inter_iff, mem_Icc, mem_Iic, mem_Ioc]; omega,
     ncard_Ioc, Nat.sub_zero]
 
-/-- Given more than `a` registrations, the total is uniform on the counts above `a`. -/
 theorem real_cond_Ioi {a c : ℕ} (hac : a ≤ c) (hc : c ≤ 200) :
     (prior[|Ioi a]).real (Ioi c) = (200 - (c : ℝ)) / (200 - a) := by
   rw [cond_real_apply _ .of_discrete, Ioi_inter_Ioi, max_eq_right hac, real_prior_Ioi hc,
@@ -106,7 +105,6 @@ theorem real_cond_Ioi_of_le {a c : ℕ} (hca : c ≤ a) (ha : a < 200) :
   rw [real_prior_Ioi ha.le]
   exact div_ne_zero (sub_pos.2 (by exact_mod_cast ha)).ne' (by norm_num)
 
-/-- Given at most `a` registrations, the total is uniform on the counts up to `a`. -/
 theorem real_cond_Iic {a c : ℕ} (hca : c ≤ a) (ha : a ≤ 200) :
     (prior[|Iic a]).real (Ioi c) = ((a : ℝ) - c) / a := by
   rw [cond_real_apply _ .of_discrete, inter_comm, Ioi_inter_Iic, real_prior_Ioc hca ha,
@@ -114,8 +112,6 @@ theorem real_cond_Iic {a c : ℕ} (hca : c ≤ a) (ha : a ≤ 200) :
 
 /-! ### Truth conditions -/
 
-/-- Success is at least as probable given *more than 110* as given *more than 100*, since
-the totals that *more than 110* sheds are all failures. -/
 theorem cond_moreThan100_le_moreThan110 :
     prior[|Ioi 100] (Ioi 120) ≤ prior[|Ioi 110] (Ioi 120) :=
   cond_le_cond_of_subset _ .of_discrete .of_discrete (Ioi_subset_Ioi (by norm_num))
@@ -143,16 +139,12 @@ theorem toReal_bayesFactor_moreThan110 : (bayesFactor success (Ioi 110)).toReal 
     real_cond_Iic (by norm_num) (by norm_num)]
   norm_num
 
-/-- The paper's log 6 for *more than 100*. -/
 theorem relevance_moreThan100 : relevance success (Ioi 100) = Real.log 6 :=
   congrArg Real.log toReal_bayesFactor_moreThan100
 
-/-- Toward the stated goal *more than 110* has strength log 12, where the paper prints
-log 11. -/
 theorem relevance_moreThan110 : relevance success (Ioi 110) = Real.log 12 :=
   congrArg Real.log toReal_bayesFactor_moreThan110
 
-/-- The paper's log 11 is the strength of *more than 100* toward the goal *more than 110*. -/
 theorem relevance_moreThan100_toward110 :
     relevance ⟨Ioi 110, .of_discrete, prior⟩ (Ioi 100) = Real.log 11 := by
   rw [relevance, toReal_bayesFactor, real_cond_Ioi_of_le (by norm_num) (by norm_num),
@@ -190,8 +182,6 @@ noncomputable abbrev assertability (ρ : I) : Context (ℕ × Interpretation) :=
 /-- *more than n* is felicitously assertable iff it is true on the interpretation drawn. -/
 def assertable (n c : ℕ) : Set (ℕ × Interpretation) := {p | p.1 ∈ reading n c p.2}
 
-/-- Given the registration total, the probability that *more than n* is assertable is the
-paper's mixture of its readings' probabilities. -/
 theorem real_cond_assertable (ρ : I) (s : Set ℕ) (n c : ℕ) :
     ((prior.prod (hearer ρ))[|Prod.fst ⁻¹' s]).real (assertable n c) =
       (prior[|s]).real (Ioc n c) * ρ + (prior[|s]).real (Ioi n) * (1 - ρ) := by
@@ -200,8 +190,6 @@ theorem real_cond_assertable (ρ : I) (s : Set ℕ) (n c : ℕ) :
     Fintype.sum_eq_add .pragmatic .semantic (by decide) (by rintro (_ | _) <;> simp)]
   simp [reading]
 
-/-- Given failure, *more than n* is as probable to be assertable as to be true, when its
-implicature holds wherever the conference fails. -/
 theorem real_assertable_of_failure (ρ : I) (n : ℕ) {c : ℕ} (hc : 120 ≤ c) :
     ((assertability ρ).prior[|(assertability ρ).topicᶜ]).real (assertable n c) =
       (prior[|Iic 120]).real (Ioi n) := by
@@ -212,8 +200,6 @@ theorem real_assertable_of_failure (ρ : I) (n : ℕ) {c : ℕ} (hc : 120 ≤ c)
   rw [← preimage_compl, real_cond_assertable, compl_Ioi, h]
   ring
 
-/-- Given success, the probability that *more than n* is assertable, for `n` short of the goal,
-is the probability that the hearer does not draw an implicature *not more than c* that fails. -/
 theorem real_assertable_of_success (ρ : I) {n c : ℕ} (hn : n ≤ 120) (hnc : n ≤ c) :
     ((assertability ρ).prior[|(assertability ρ).topic]).real (assertable n c) =
       1 - ρ * (prior[|Ioi 120]).real (Ioi c) := by
@@ -223,9 +209,6 @@ theorem real_assertable_of_success (ρ : I) {n c : ℕ} (hn : n ≤ 120) (hnc : 
   rw [real_cond_assertable, real_cond_Ioi_of_le hn (by norm_num)] at *
   linear_combination (ρ : ℝ) * hdiff
 
-/-- The pragmatic Bayes factor of *more than n*, for `n` short of the goal, is the semantic one
-discounted by the enrichment rate times the probability, given success, that its implicature
-fails, when the implicature holds wherever the conference fails. -/
 theorem toReal_bayesFactor_assertable (ρ : I) {n c : ℕ} (hn : n ≤ 120) (hc : 120 ≤ c) :
     (bayesFactor (assertability ρ) (assertable n c)).toReal =
       (bayesFactor success (Ioi n)).toReal * (1 - ρ * (prior[|Ioi 120]).real (Ioi c)) := by
@@ -234,7 +217,6 @@ theorem toReal_bayesFactor_assertable (ρ : I) {n c : ℕ} (hn : n ≤ 120) (hc 
     compl_Ioi]
   ring
 
-/-- At enrichment rate zero the pragmatic measure is the semantic one. -/
 theorem bayesFactor_assertability_zero (n c : ℕ) :
     bayesFactor (assertability 0) (assertable n c) = bayesFactor success (Ioi n) := by
   have h (s : Set ℕ) : (prior.prod (hearer 0))[|Prod.fst ⁻¹' s] (assertable n c) =
@@ -251,9 +233,6 @@ theorem toReal_bayesFactor_assertable_moreThan100 (ρ : I) {c : ℕ} (hc : 120 �
     real_cond_Ioi hc hc']
   norm_num
 
-/-- The implicature of *more than 110*, *not more than 120*, fails on every successful total,
-so its pragmatic strength is its semantic strength 12 times the probability of a semantic
-interpretation. -/
 theorem toReal_bayesFactor_assertable_moreThan110 (ρ : I) :
     (bayesFactor (assertability ρ) (assertable 110 120)).toReal = 12 * (1 - ρ) := by
   rw [toReal_bayesFactor_assertable ρ (by norm_num) le_rfl, toReal_bayesFactor_moreThan110,
@@ -275,16 +254,12 @@ private theorem bayesFactor_assertable_ne_top (ρ : I) {n c : ℕ} (hn : n < 120
   rw [real_assertable_of_failure ρ n hc, real_cond_Iic hn.le (by norm_num)]
   exact div_ne_zero (sub_pos.2 (by exact_mod_cast hn)).ne' (by norm_num)
 
-/-- Pragmatically, *more than 100* with the implicature *not more than 150* remains positive
-evidence for success at every enrichment rate. -/
 theorem posRelevant_assertable_moreThan100 (ρ : I) :
     posRelevant (assertability ρ) (assertable 100 150) := by
   rw [posRelevant_iff_one_lt_toReal (bayesFactor_assertable_ne_top ρ (by norm_num)
     (by norm_num)), toReal_bayesFactor_assertable_moreThan100 ρ (by norm_num) (by norm_num)]
   linarith [le_one ρ]
 
-/-- Pragmatically, *more than 110* remains positive evidence for success iff the hearer
-enriches less than eleven times in twelve. -/
 theorem posRelevant_assertable_moreThan110_iff (ρ : I) :
     posRelevant (assertability ρ) (assertable 110 120) ↔ (ρ : ℝ) < 11 / 12 := by
   rw [posRelevant_iff_one_lt_toReal (bayesFactor_assertable_ne_top ρ (by norm_num)
@@ -303,18 +278,12 @@ theorem bayesFactor_assertable_lt_iff_of_le (ρ : I) {c : ℕ} (hc : 120 ≤ c) 
     toReal_bayesFactor_assertable_moreThan110, toReal_bayesFactor_assertable_moreThan100 ρ hc hc']
   constructor <;> intro <;> linarith
 
-/-- For the illustration's *not more than 150* the order of the two arguments reverses iff the
-hearer enriches more than eight times in eleven. The paper fixes the rate at nine in ten and
-does not state the threshold. -/
 theorem bayesFactor_assertable_lt_iff (ρ : I) :
     bayesFactor (assertability ρ) (assertable 110 120) <
         bayesFactor (assertability ρ) (assertable 100 150) ↔ 8 / 11 < (ρ : ℝ) := by
   rw [bayesFactor_assertable_lt_iff_of_le ρ (by norm_num) (by norm_num), Nat.cast_ofNat]
   constructor <;> intro <;> linarith
 
-/-- On the scale of tens *more than 100* implicates *not more than 110*, which fails on every
-successful total and on half the failures where the utterance is true, so *more than 110*
-stays at least as strong at every rate. -/
 theorem bayesFactor_assertable_moreThan100_tens_le (ρ : I) :
     bayesFactor (assertability ρ) (assertable 100 110) ≤
       bayesFactor (assertability ρ) (assertable 110 120) := by
@@ -335,9 +304,6 @@ theorem bayesFactor_assertable_moreThan100_tens_le (ρ : I) :
     toReal_bayesFactor, hS, hF, toReal_bayesFactor_assertable_moreThan110, div_le_iff₀ hpos]
   nlinarith [le_one ρ, nonneg ρ]
 
-/-- On the scales the paper names for *more than 100*, tens, 25s and hundreds, the implicatures
-*not more than 110*, *125* and *200* reverse the order at no rate, above sixteen in seventeen,
-and above one in two. -/
 theorem reversal_on_scales (ρ : I) :
     ¬ bayesFactor (assertability ρ) (assertable 110 120) <
         bayesFactor (assertability ρ) (assertable 100 110) ∧
@@ -356,9 +322,6 @@ numeral `m` above `n` at least as round as `n` on them. -/
 def enrichment (W : Finset ℤ) (n : ℕ) : Set ℕ :=
   Ioi n \ ⋃ m ∈ {m : ℕ | n < m ∧ AtLeastAsRound (OnScale W) (n : ℤ) m}, Ioi m
 
-/-- On scales of multiples, the pragmatic reading of *more than n* is *not more than n + w*,
-the next point of the coarsest scale through `n`, where `w` is the lcm of the widths of the
-scales through `n`. -/
 theorem enrichment_eq {W : Finset ℤ} (hW : 0 ∉ W) {n w : ℕ} (hw : (w : ℤ) = scaleLcm W n) :
     enrichment W n = Ioc n (n + w) := by
   have h := isLeast_atLeastAsRound_onScale hW n
@@ -376,9 +339,6 @@ theorem enrichment_eq {W : Finset ℤ} (hW : 0 ∉ W) {n w : ℕ} (hw : (w : ℤ
     have := h.1.1
     omega
 
-/-- On a single scale of width `w` through `n`, *more than n* implicates *not more than n + w*:
-on the scale of fifties *more than 100* implicates the illustration's *not more than 150*, and
-on the scale of tens *more than 110* implicates *not more than 120*. -/
 theorem enrichment_singleton {w n : ℕ} (hw : 0 < w) (h : w ∣ n) :
     enrichment {(w : ℤ)} n = Ioc n (n + w) :=
   enrichment_eq (fun h0 ↦ (Nat.cast_pos.2 hw).ne (Finset.mem_singleton.1 h0)) (by
@@ -389,9 +349,6 @@ theorem enrichment_singleton {w n : ℕ} (hw : 0 < w) (h : w ∣ n) :
 /-- The aligned decimal scales of units, tens, hundreds and thousands. -/
 def decimal : Finset ℤ := {1000, 100, 10, 1}
 
-/-- On the decimal scales, where each numeral is read at the coarsest scale through it,
-*more than 110* implicates the paper's *not more than 120* and *more than 100* the vacuous
-*not more than 200*. -/
 theorem enrichment_decimal :
     enrichment decimal 110 = Ioc 110 120 ∧ enrichment decimal 100 = Ioc 100 200 :=
   ⟨enrichment_eq (w := 10) (by decide) (by decide),
@@ -447,13 +404,11 @@ theorem relevance_reversal :
   · exact (ENNReal.toReal_ne_zero.mp (by
       rw [toReal_bayesFactor_assertable_moreThan110]; norm_num [nineTenths])).1
 
-/-- The paper's pragmatic log (21/8) for *more than 100*. -/
 theorem relevance_assertable_moreThan100_nineTenths :
     relevance (assertability nineTenths) (assertable 100 150) = Real.log (21 / 8) := by
   rw [relevance_assertable_moreThan100]
   norm_num [nineTenths]
 
-/-- The paper's pragmatic log (6/5) for *more than 110*. -/
 theorem relevance_assertable_moreThan110_nineTenths :
     relevance (assertability nineTenths) (assertable 110 120) = Real.log (6 / 5) := by
   rw [relevance_assertable_moreThan110]

@@ -115,11 +115,9 @@ def spatialCase : Type1985 → Option Case
   | .locative => some .loc
   | _ => none
 
-/-- Derived case is exactly the conjoined and particle types. -/
 theorem caseAssignment_eq_derived_iff :
     ∀ t : Type1985, t.caseAssignment = .derived ↔ t = .particle ∨ t = .conjoined := by decide
 
-/-- Adverbial encoding is exactly the spatial triad. -/
 theorem fixedEncoding_eq_adverbial_iff :
     ∀ t : Type1985, t.fixedEncoding = some .adverbial ↔ t.spatialCase.isSome := by decide
 
@@ -232,13 +230,10 @@ def direction : ChainType → Option Direction
   | .consecutiveAnterior => some .anterior
   | _ => none
 
-/-- A chain type has a conditionality exactly when it deranks. -/
 theorem conditionality_isSome_iff (ct : ChainType) :
     ct.conditionality.isSome ↔ ct.strategy = .deranking := by
   cases ct <;> decide
 
-/-- A chain type has a direction exactly when it is a deranked consecutive chain, since a
-simultaneous chain has no anterior or posterior predicate. -/
 theorem direction_isSome_iff (ct : ChainType) :
     ct.direction.isSome ↔ ct.temporality = .consecutive ∧ ct.strategy = .deranking := by
   cases ct <;> decide
@@ -266,7 +261,6 @@ instance (ct : ChainType) (t : Type1985) : Decidable (Models ct t) := by
     | exact isTrue (by constructor)
     | exact isFalse (by intro h; cases h)
 
-/-- Every comparative type is modelled on some chain type. -/
 theorem exists_models : ∀ t : Type1985, ∃ ct, Models ct t := by decide
 
 /-! ### The chaining-based universals (§5.2) -/
@@ -278,34 +272,23 @@ theorem universal1A (h : Models ct t) (hd : t.caseAssignment = .derived) :
     ct.strategy = .balancing := by
   revert ct t; decide
 
-/-- Universal 1B says that a fixed-case comparative is modelled on a deranked chain. -/
 theorem universal1B (h : Models ct t) (hf : t.caseAssignment = .fixed) :
     ct.strategy = .deranking := by
   revert ct t; decide
 
-/-- Universal 2A says that an exceed comparative is modelled on a conditionally deranked
-chain. -/
 theorem universal2A (h : Models ct .exceed) : ct.conditionality = some .conditional := by
   revert ct; decide
 
-/-- Universal 2B says that an adverbial comparative is modelled on an absolutely deranked
-chain. -/
 theorem universal2B (h : Models ct t) (ha : t.fixedEncoding = some .adverbial) :
     ct.conditionality = some .absolute := by
   revert ct t; decide
 
-/-- Universal 3A says that a separative comparative is modelled on the absolutely deranked
-anterior consecutive chain. -/
 theorem universal3A (h : Models ct .separative) : ct = .consecutiveAnterior := by
   revert ct; decide
 
-/-- Universal 3B says that an allative comparative is modelled on the absolutely deranked
-posterior consecutive chain. -/
 theorem universal3B (h : Models ct .allative) : ct = .consecutivePosterior := by
   revert ct; decide
 
-/-- Universal 3C says that a locative comparative is modelled on the absolutely deranked
-simultaneous chain. -/
 theorem universal3C (h : Models ct .locative) : ct = .simultaneousAbsolute := by
   revert ct; decide
 

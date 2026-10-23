@@ -197,14 +197,12 @@ def lexicalForce (_ : ModalItem) : ModalForce := .possibility
 /-- *O'qa* is a quantifier without a scale (§2.6). -/
 theorem oqa_scaleFree : ¬ HasScalemate lexicalForce NezPerce.modals NezPerce.oqa := by decide
 
-/-- *O'qa* is flexible in an upward-entailing context and not under negation. -/
 theorem oqa_flexible :
     (∀ g, ServesIn lexicalForce NezPerce.modals .positive NezPerce.oqa g) ∧
       ¬ ∀ g, ServesIn lexicalForce NezPerce.modals .negative NezPerce.oqa g := by
   simp only [ServesIn, flexible_iff]
   decide
 
-/-- The fragment records *o'qa*'s upward-entailing uses: the forces it serves for. -/
 theorem oqa_forces :
     ∀ g, g.classical ∈ NezPerce.oqa.classical.forces ↔
       Usable .positive (lexicalForce NezPerce.oqa)
@@ -227,7 +225,6 @@ def polarityTable : List (String × Polarity) :=
 def forceTable : List (String × ModalForce) :=
   [("possibility", .possibility), ("necessity", .necessity)]
 
-/-- Every row resolves its modal and environment. -/
 theorem rows_resolve :
     ∀ e ∈ Examples.all, (e.parse? "modal" modalTable).isSome ∧
       (e.parse? "environment" polarityTable).isSome := by

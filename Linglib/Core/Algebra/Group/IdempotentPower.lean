@@ -58,13 +58,10 @@ variable {M : Type*} [Monoid M]
 
 /-! ### Periodicity of powers -/
 
-/-- Multiplying both sides of a power equation by the same power preserves equality. -/
 private lemma pow_add_step {x : M} {a b : ℕ} (h : x ^ a = x ^ b) (k : ℕ) :
     x ^ (a + k) = x ^ (b + k) := by
   rw [pow_add, pow_add, h]
 
-/-- If `x ^ i = x ^ j` with `i ≤ j`, the powers of `x` from `i` on are periodic with period
-`j - i`. -/
 private lemma pow_period {x : M} {i j : ℕ} (h_le : i ≤ j) (h_eq : x ^ i = x ^ j)
     {n : ℕ} (hn : i ≤ n) (m : ℕ) : x ^ n = x ^ (n + m * (j - i)) := by
   induction m with
@@ -80,7 +77,6 @@ variable [Finite M]
 
 /-! ### Existence of an idempotent power -/
 
-/-- In a finite monoid the powers of an element repeat, so `x ^ i = x ^ j` for some `i < j`. -/
 theorem exists_pow_eq_pow_of_finite (x : M) :
     ∃ i j : ℕ, i < j ∧ x ^ i = x ^ j := by
   obtain ⟨i, j, hij, h_eq⟩ :=
@@ -117,12 +113,10 @@ variable {S : Type*} [Semigroup S]
 /-- `WithOne S` is `Option S`, so it inherits finiteness. -/
 instance instFinite [Finite S] : Finite (WithOne S) := inferInstanceAs (Finite (Option S))
 
-/-- Idempotency is detected by the coercion into `WithOne`. -/
 @[simp] theorem isIdempotentElem_coe {e : S} :
     IsIdempotentElem ((e : WithOne S)) ↔ IsIdempotentElem e := by
   rw [IsIdempotentElem, ← WithOne.coe_mul, WithOne.coe_inj]; rfl
 
-/-- A positive power of a coerced element of `WithOne S` is itself coerced. -/
 theorem exists_coe_pow (x : S) : ∀ n : ℕ, 0 < n → ∃ y : S, (x : WithOne S) ^ n = y
   | 1, _ => ⟨x, pow_one _⟩
   | n + 2, _ => by
@@ -135,8 +129,6 @@ namespace Semigroup
 
 variable {S T : Type*} [Semigroup S] [Semigroup T] [Finite S]
 
-/-- Every element of a finite semigroup has an idempotent positive power, computed in
-`WithOne S`. -/
 private theorem exists_pos_pow_isIdempotentElem_coe (x : S) :
     ∃ (n : ℕ) (e : S), 0 < n ∧ (x : WithOne S) ^ n = e ∧ IsIdempotentElem e := by
   obtain ⟨n, hn, hidem⟩ := Monoid.exists_pos_pow_isIdempotent (x : WithOne S)
@@ -164,7 +156,6 @@ theorem exists_isIdempotentElem_map_eq {f : S →ₙ* T} (hf : Function.Surjecti
 
 /-! ### Long products -/
 
-/-- An element fixed on the right by `u` is fixed on the right by an idempotent power of `u`. -/
 theorem exists_isIdempotentElem_mul_eq {p u : S} (h : p * u = p) :
     ∃ e, IsIdempotentElem e ∧ p * e = p := by
   obtain ⟨n, e, -, hu, he⟩ := exists_pos_pow_isIdempotentElem_coe u
@@ -211,7 +202,6 @@ namespace FreeSemigroup
 
 variable {α S : Type*} [Semigroup S] (f : FreeSemigroup α →ₙ* S)
 
-/-- An idempotent value of `f` is attained on words of every length. -/
 theorem exists_le_length_map_eq {u : FreeSemigroup α} (hu : IsIdempotentElem (f u)) (n : ℕ) :
     ∃ v, n ≤ v.length ∧ f v = f u := by
   induction n with

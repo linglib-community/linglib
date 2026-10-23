@@ -29,9 +29,6 @@ theorem prodMap_map_product (f : α → γ) (g : β → δ) (s : Multiset α) (t
   | empty => simp
   | cons a s ih => simp [cons_product, ih]
 
-/-- A map that sends a binary operation `f` to `f'` along `g₁` and `g₂` carries the `f`-image
-of a product to the `f'`-image of the product of the images (`Finset.image_image₂_distrib`
-analogue). -/
 theorem map_map_product_distrib {α' β' : Type*} {f : α × β → γ} {g : γ → δ} {f' : α' × β' → δ}
     {g₁ : α → α'} {g₂ : β → β'} (h : ∀ a b, g (f (a, b)) = f' (g₁ a, g₂ b))
     (s : Multiset α) (t : Multiset β) :

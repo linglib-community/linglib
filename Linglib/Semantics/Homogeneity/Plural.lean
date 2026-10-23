@@ -81,7 +81,6 @@ theorem sUnion_readings : ⋃₀ readings Q x = {w | ∃ z ≤ x, ¬ IsBot z ∧
   obtain ⟨z, -, hzx, hz, hw⟩ := hp ▸ hw
   exact ⟨z, hzx, hz, hw⟩
 
-/-- An atom has a single reading, since nothing short of it is a part. -/
 theorem readings_of_minimal (hx : Minimal (¬ IsBot ·) x) : readings Q x = {Q x} := by
   have key (U : UpperSet α) (hxU : x ∈ U) :
       {w | ∃ z ∈ U, z ≤ x ∧ ¬ IsBot z ∧ w ∈ Q z} = Q x := by
@@ -92,7 +91,6 @@ theorem readings_of_minimal (hx : Minimal (¬ IsBot ·) x) : readings Q x = {Q x
   refine ⟨fun ⟨U, hxU, hp⟩ ↦ hp ▸ key U hxU, fun hp ↦ ⟨⊥, trivial, ?_⟩⟩
   rw [hp, key ⊥ trivial]
 
-/-- The union of two readings is the reading of the union of their upper sets. -/
 theorem supClosed_readings : SupClosed (readings Q x) := by
   rintro _ ⟨U, hxU, rfl⟩ _ ⟨V, -, rfl⟩
   refine ⟨U ⊓ V, UpperSet.mem_inf_iff.2 (.inl hxU), ?_⟩
@@ -106,8 +104,6 @@ section Cumulative
 
 variable {α W : Type*} [SemilatticeSup α] {Q : α → Set W} {x : α}
 
-/-- For a cumulative predicate the intersection of two readings is the reading of the
-intersection of their upper sets, since the sum of two parts that are `Q` is `Q`. -/
 theorem infClosed_readings (hQ : ∀ w, SupClosed {z | w ∈ Q z}) : InfClosed (readings Q x) := by
   rintro _ ⟨U, hxU, rfl⟩ _ ⟨V, hxV, rfl⟩
   refine ⟨U ⊔ V, UpperSet.mem_sup_iff.2 ⟨hxU, hxV⟩, Set.ext fun w ↦ ⟨?_, ?_⟩⟩
@@ -170,36 +166,29 @@ plural rather than stipulated. -/
 def allPlural : W → SignType :=
   fun w ↦ SignType.ofProp (barePlural P x w = 1)
 
-/-- *all* eliminates the extension gap. -/
 theorem gapExt_allPlural : Trivalent.gapExt (allPlural P x) = ∅ :=
   Trivalent.gapExt_ofProp_eq_one _
 
-/-- The bare plural and the *all*-sentence are true in the same worlds. -/
 theorem posExt_allPlural : Trivalent.posExt (allPlural P x) = Trivalent.posExt (barePlural P x) :=
   Trivalent.posExt_ofProp_eq_one _
 
-/-- *all* absorbs the gap into the negative extension. -/
 theorem negExt_allPlural :
     Trivalent.negExt (allPlural P x) =
       Trivalent.negExt (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
   Trivalent.negExt_ofProp_eq_one _
 
-/-- *all*-sentences are bivalent. -/
 theorem isBivalent_allPlural : Trivalent.IsBivalent (allPlural P x) :=
   Trivalent.isBivalent_ofProp_eq_one _
 
-/-- An *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem allPlural_eq_one_iff (w : W) :
     allPlural P x w = 1 ↔ ∀ a ∈ x, P a w := by
   simp [allPlural, barePlural, SignType.supervaluation_eq_one_iff]
 
-/-- An *all*-sentence is false iff some atom fails `P`. -/
 theorem allPlural_eq_neg_one_iff (w : W) :
     allPlural P x w = -1 ↔ ¬ ∀ a ∈ x, P a w := by
   rw [← allPlural_eq_one_iff P x w]
   rcases isBivalent_allPlural P x w with h | h <;> simp [h]
 
-/-- `bivalentPred` of an *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem bivalentPred_allPlural_iff (w : W) :
     bivalentPred (allPlural P x) w = true ↔ ∀ a ∈ x, P a w := by
   simp only [bivalentPred, beq_iff_eq]
@@ -233,7 +222,6 @@ theorem allPlural_exceptions_unmentionable (q : Setoid W) (w : W) (a : Atom)
     (ha : a ∈ x) (h : usable q (allPlural P x) w) : P a w :=
   allPlural_prevents_nonmax P x q w h a ha
 
-/-- An *all*-sentence is never indefinite. -/
 theorem allPlural_ne_zero (w : W) : allPlural P x w ≠ 0 := by
   rcases isBivalent_allPlural P x w with h | h <;> simp [h]
 

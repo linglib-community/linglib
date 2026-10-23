@@ -32,8 +32,6 @@ theorem ofFunOfCountable_apply [Countable α] [MeasurableSingletonClass α] (f :
     (a : α) : ofFunOfCountable f a = f a := rfl
 
 open scoped Classical in
-/-- A kernel out of a countable type is the sum over points `a` of the kernel that is `κ a` at
-`a` and `0` elsewhere. -/
 theorem sum_piecewise_singleton_const [Countable α] [MeasurableSingletonClass α]
     (κ : Kernel α β) :
     (Kernel.sum fun a ↦ piecewise (measurableSet_singleton a) (const α (κ a)) 0) = κ := by
@@ -51,13 +49,9 @@ section Map
 variable {γ : Type*} [MeasurableSpace γ] [MeasurableSingletonClass γ] [Countable β]
   [MeasurableSingletonClass β] (κ : Kernel α β) (f : β → γ) (a : α) (c : γ)
 
-/-- On a countable space the mass a pushforward gives a point is the mass of the fibre over
-it. -/
 theorem map_apply_singleton : κ.map f a {c} = κ a (f ⁻¹' {c}) :=
   map_apply' κ (measurable_of_countable f) a (measurableSet_singleton c)
 
-/-- On a countable space a pushforward gives a point mass exactly when the kernel gives mass to
-a point of the fibre over it. -/
 theorem map_apply_singleton_ne_zero_iff : κ.map f a {c} ≠ 0 ↔ ∃ b, f b = c ∧ κ a {b} ≠ 0 := by
   rw [map_apply_singleton, ← Set.biUnion_of_singleton (f ⁻¹' {c}), ne_eq,
     measure_biUnion_null_iff (Set.to_countable _)]

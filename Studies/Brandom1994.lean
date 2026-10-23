@@ -82,7 +82,6 @@ instance : Std.Symm R.incompatible := R.incompatible_symm
 of the incompatibility relation that the claim generates. -/
 abbrev content (p : P) : Concept P P R.incompatible := .ofObject R.incompatible p
 
-/-- The content of `p` is the least concept containing `p`. -/
 theorem content_le_iff {c : Concept P P R.incompatible} : R.content p ≤ c ↔ p ∈ c :=
   Concept.ofObjects_le_iff.trans Set.singleton_subset_iff
 
@@ -131,13 +130,10 @@ theorem IsNegation.content_eq_compl (hR : R.Coherent) (h : R.IsNegation p n) :
   · exact R.mem_compl_content_iff.2 <| symm <| R.mem_content_iff.1 hr (symm h.1)
   · exact hR.content_le (h.2 (R.mem_compl_content_iff.1 hr)) (R.mem_content_self r)
 
-/-- To be incompatible with a claim is to incompatibility-entail its negation. -/
 theorem IsNegation.incompatible_iff (hR : R.Coherent) (h : R.IsNegation p n) :
     R.incompatible p r ↔ R.content r ≤ R.content n := by
   rw [h.content_eq_compl hR, content_le_iff, mem_compl_content_iff]
 
-/-- Negations of a claim agree in content, so a claim's negation is unique up to inferential
-equivalence. -/
 theorem IsNegation.content_eq (hR : R.Coherent) {n' : P} (h : R.IsNegation p n)
     (h' : R.IsNegation p n') : R.content n = R.content n' :=
   (h.content_eq_compl hR).trans (h'.content_eq_compl hR).symm
@@ -158,14 +154,12 @@ def ofWorlds (ι : P → Set W) : InferentialRole P where
 theorem coherent_ofWorlds (ι : P → Set W) : (ofWorlds ι).Coherent := fun _ _ (h : ι _ ⊆ ι _) ↦
   (content_le_iff _).2 <| (mem_content_iff _).2 fun _ (hr : Disjoint _ _) ↦ hr.mono_left h
 
-/-- On sets of worlds, incompatibility entailment is inclusion. -/
 theorem content_le_content_ofWorlds_id_iff {p q : Set W} :
     (ofWorlds id).content p ≤ (ofWorlds id).content q ↔ p ⊆ q :=
   ⟨fun h ↦ Set.disjoint_compl_right_iff_subset.1 <|
     (mem_content_iff _).1 ((content_le_iff _).1 h) (disjoint_compl_right (a := q)),
     fun h ↦ coherent_ofWorlds id h⟩
 
-/-- On sets of worlds, the complement is the negation. -/
 theorem isNegation_ofWorlds_id_compl (p : Set W) : (ofWorlds id).IsNegation p pᶜ :=
   ⟨disjoint_compl_right (a := p), fun _ (h : Disjoint p _) ↦
     .single (Set.subset_compl_iff_disjoint_left.2 h)⟩
@@ -340,8 +334,6 @@ theorem barn_entitled :
     Scorecard.not_entitled_of_incompatible (Scorecard.committed_of_mem (.inl rfl)) trivial⟩ <;>
   · rw [committed]; rintro (h | h) <;> cases h
 
-/-- Coherence cannot be dropped from `Scorecard.Entitled.of_committive`. Here `true` commits one to
-`false`, and the commitment to `false` precludes entitlement to it without precluding `true`. -/
 theorem exists_entitled_committive_not_entitled :
     ∃ (R : InferentialRole Bool) (c : Scorecard Bool),
       c.Entitled R true ∧ R.committive true false ∧ ¬ c.Entitled R false := by
@@ -383,7 +375,6 @@ def disavow (b : I) (p : P) : Score I P := fun k ↦
 
 @[simp] theorem assert_self : assert s b p k b = (s k b).avow p := by simp [assert]
 
-/-- A challenge leaves every commitment standing. -/
 @[simp] theorem acknowledged_challenge (i : I) :
     (challenge R s a q b p k i).acknowledged = (s k i).acknowledged := by
   by_cases h : i = b <;> simp [challenge, h]

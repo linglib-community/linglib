@@ -141,8 +141,6 @@ def hamblinType (p : Set W) : Set (Set W) := hamblinSet (WithAlternatives.focuse
 theorem hamblinType_eq_univ (p : Set W) : hamblinType p = Set.univ :=
   Set.eq_univ_of_forall fun q ↦ mem_hamblinSet.2 ⟨fun _ ↦ q, Set.mem_univ _, rfl⟩
 
-/-- Under type-theoretic alternatives the complete answer at `w` is total information about
-`w`, so the responder must supply every true proposition. -/
 theorem isStrongestTrueAnswer_hamblinType (p : Set W) (w : W) :
     IsStrongestTrueAnswer (hamblinType p) w {w} := by
   rw [hamblinType_eq_univ]
@@ -201,7 +199,6 @@ theorem hamblinCat_eq (p : Set W) : hamblinCat f g p = {p, pᶜ} := by
   simp only [WithAlternatives.mem_alternatives_map, withAlternatives_sigma]
   simp [den, Word.den, sigma, eq_comm]
 
-/-- The category-match Hamblin set is the alternative set of the polar interrogative. -/
 theorem hamblinCat_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
     hamblinCat f g p = alt (polar p) := by
   rw [hamblinCat_eq, alt_polar_of_nontrivial hne hnu]
@@ -219,7 +216,6 @@ theorem isStrongestTrueAnswer_hamblinCat {p : Set W} {w : W} (hw : w ∈ p) :
   refine ⟨⟨Set.mem_insert _ _, hw⟩, ?_⟩
   rintro q ⟨rfl | rfl, hwq⟩ <;> [exact le_rfl; exact absurd hw hwq]
 
-/-- And the negative answer when the positive one is false. -/
 theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p) :
     IsStrongestTrueAnswer (hamblinCat f g p) w pᶜ := by
   rw [hamblinCat_eq]

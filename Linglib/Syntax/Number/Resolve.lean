@@ -95,8 +95,6 @@ theorem ofCard_of_three_lt {n : ℕ} (h : 3 < n) : ns.ofCard n = .plural := by
   obtain ⟨k, rfl⟩ : ∃ k, n = k + 4 := ⟨n - 4, by omega⟩
   simp [ofCard, fromCard]
 
-/-- A referent's value has its cardinality exactly when the system has a determinate value for
-it. -/
 theorem exactCard_ofCard {n : ℕ} (hn : 0 < n) :
     (ns.ofCard n).exactCard = if fromCard n ∈ ns.values ∧ n ≤ 3 then some n else none := by
   by_cases h3 : n ≤ 3

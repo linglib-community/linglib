@@ -121,11 +121,9 @@ variable {S : Type*} [HasAssertion S W] (s : S) (φ ψ : Set W)
 
 attribute [simp] commonGround_initial commonGround_assert
 
-/-- The asserted proposition is accepted. -/
 theorem mem_commonGround_assert : φ ∈ commonGround (assert s φ) := by
   simp [le_principal_iff.1 inf_le_right]
 
-/-- Assertion strengthens the common ground. -/
 theorem commonGround_assert_le : commonGround (assert s φ) ≤ commonGround s := by
   simp [inf_le_left]
 
@@ -134,21 +132,17 @@ theorem commonGround_assert_le : commonGround (assert s φ) ≤ commonGround s :
 @[simp] theorem contextSet_assert : contextSet (assert s φ) = contextSet s ∩ φ := by
   simp [contextSet, HasCommonGround.contextSet]
 
-/-- Asserting in the initial state yields the principal common ground. -/
 @[simp] theorem commonGround_assert_initial :
     commonGround (assert (initial : S) φ) = 𝓟 φ := by simp
 
-/-- Two consecutive assertions add the conjunction. -/
 theorem commonGround_assert_assert :
     commonGround (assert (assert s φ) ψ) = commonGround s ⊓ 𝓟 (φ ∩ ψ) := by
   simp [inf_assoc, inf_principal]
 
-/-- Assertion order is irrelevant on the common ground. -/
 theorem commonGround_assert_comm :
     commonGround (assert (assert s φ) ψ) = commonGround (assert (assert s ψ) φ) := by
   simp only [commonGround_assert_assert, inter_comm]
 
-/-- Re-assertion is a no-op on the common ground. -/
 theorem commonGround_assert_idem :
     commonGround (assert (assert s φ) φ) = commonGround (assert s φ) := by
   simp
@@ -191,7 +185,6 @@ theorem commonGround_play_initial (h : List (Set W)) :
     commonGround (play (initial : S) h) = 𝓟 (⋂ p ∈ h, p) := by
   simp [commonGround_play]
 
-/-- A history asserting everything another asserts leaves a common ground at least as strong. -/
 theorem commonGround_play_le_of_subset {h₁ h₂ : List (Set W)} (hs : h₁ ⊆ h₂) :
     commonGround (play s h₂) ≤ commonGround (play s h₁) := by
   simp only [commonGround_play]

@@ -40,11 +40,9 @@ def Noun.Takes (n : Noun) (c : Classifier) : Prop :=
 instance (n : Noun) (c : Classifier) : Decidable (n.Takes c) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A noun that takes a classifier can be counted with *gè*. -/
 theorem Noun.takes_ge {n : Noun} (h : n.classifiers.Nonempty) : n.Takes Classifiers.ge :=
   .inr ⟨rfl, h⟩
 
-/-- A noun that takes no classifier takes none. -/
 theorem Noun.not_takes_of_eq_empty {n : Noun} (h : n.classifiers = ∅) (c : Classifier) :
     ¬ n.Takes c := by
   simp [Noun.Takes, h]
@@ -186,7 +184,6 @@ def nouns : List Noun :=
   [ren, wenti, xiansheng, gou, shou, yifu, hua, cao, feiji, che, deng, ma, niu, shu, chuang,
     zhuozi, dao, maobi, jian, she, yu, shengzi, lu, he, xinwen, falu, cai, dapao, tian, jiu, fan]
 
-/-- *Sān ge tiān* is out: *tiān* takes no classifier, not even *gè*. -/
 theorem not_takes_tian (c : Classifier) : ¬ tian.Takes c := Noun.not_takes_of_eq_empty rfl c
 
 /-! ### Proper names -/

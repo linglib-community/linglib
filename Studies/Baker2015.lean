@@ -104,9 +104,6 @@ theorem rows_case :
         Realizes v.1 v.2 o := by
   decide
 
-/-- Agreement does not enter the algorithm: a subject is ergative in a transitive clause and
-    unmarked in an intransitive one whether or not the verb agrees with it, as in Kewa and
-    Burushaski. -/
 theorem ergative_subject_independent_of_agreement :
     ∀ r ∈ Examples.all, alignment? r.language = some .ergative →
       ((assignCases .ergative (fun _ ↦ none) (domain r)).valueOf .subject).map (·.1) =

@@ -62,8 +62,6 @@ and then equals `{w ∈ c | Dox_a(w) + φ = Dox_a(w)}`. -/
 def believes : CCP.Partial W :=
   fun c ↦ ⟨∀ w ∈ c, φ.Admits (Dox a w), fun _ ↦ {w ∈ c | Dox a w ∈ φ (Dox a w)}⟩
 
-/-- By Karttunen's generalization, if `φ` presupposes `p`, then `a believes φ` presupposes that
-`a` believes `p`. -/
 theorem admits_believes_ofTrivalent :
     (believes Dox a (ofTrivalent p)).Admits c ↔
       ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) (· ∈ Function.support p) w :=

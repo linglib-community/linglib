@@ -57,11 +57,9 @@ def ixLoc (R : E → L → Prop) (o : L) : E → Prop := λ x => R x o
 spatial and the nominal restriction. -/
 noncomputable def that (R P : E → Prop) : Option E := iota (Modifier.intersective R P)
 
-/-- `that` refers exactly when there is a unique entity meeting both restrictions. -/
 theorem that_isSome_iff (R P : E → Prop) : (that R P).isSome ↔ ∃! x, P x ∧ R x := by
   simp [that, iota_isSome_iff, and_comm]
 
-/-- With a trivial nominal restriction (the ASL null pronoun), `that` is `ιx. R(x)`. -/
 theorem that_top (R : E → Prop) : that R ⊤ = iota R :=
   congrArg iota (inf_top_eq R)
 
@@ -76,8 +74,6 @@ def locatedAt (at_ : E → L) : E → L → Prop := λ x o => at_ x = o
 /-- Arbitrary association by introduction: `x` has been assigned locus `o`. -/
 def assigned (assoc : E → Option L) : E → L → Prop := λ x o => assoc x = some o
 
-/-- Under an injective assignment, the null demonstrative with `IX_a` refers whenever some
-entity was introduced at `a`. -/
 theorem that_assigned_isSome (assoc : E → Option L) (h : ∀ x y o, assoc x = some o →
     assoc y = some o → x = y) (o : L) :
     (that (ixLoc (assigned assoc) o) ⊤).isSome ↔ ∃ x, assoc x = some o := by
@@ -97,12 +93,10 @@ satisfies `P` and presupposes, use-conditionally, that exactly one entity is. -/
 def anaphoric (P : W → E → Prop) (R : W → E → L → Prop) (o : L) : TwoDim W (W → Prop) :=
   ⟨fun w ↦ ∃ x, R w x o ∧ P w x, fun w ↦ ∃! x, R w x o⟩
 
-/-- The association introduced by `IX_a` survives negation of the clause. -/
 theorem introducing_neg_notAtIssue (p : W → Prop) (R : W → E → L → Prop) (x : E) (o : L) :
     (introducing p R x o).neg.notAtIssue = fun w ↦ R w x o :=
   rfl
 
-/-- Given its presupposition, the anaphoric use predicates `P` of *the* entity at `o`. -/
 theorem anaphoric_atIssue (P : W → E → Prop) (R : W → E → L → Prop) (o : L) (w : W)
     (h : (anaphoric P R o).notAtIssue w) :
     (anaphoric P R o).atIssue w ↔ ∀ x, R w x o → P w x := by
@@ -134,7 +128,6 @@ def scenario : Entity → Locus → Prop
 instance : DecidableRel scenario := λ x o => by
   cases x <;> cases o <;> simp only [scenario] <;> infer_instance
 
-/-- `AHELPB` reads as Jin helped Sol and not as Sol helped Jin, from the points alone. -/
 theorem scenario_help (help : Entity → Entity → Prop) [DecidableRel help] (h : help .jin .sol) :
     incorporate help (ixLoc scenario .a) (ixLoc scenario .b) .jin .sol ∧
       ¬ incorporate help (ixLoc scenario .a) (ixLoc scenario .b) .sol .jin :=
@@ -171,8 +164,6 @@ def put : Verb := ⟨"PUT", .personal, .locational⟩
 def move : Verb := ⟨"MOVE", .locational, .locational⟩
 def dance : Verb := ⟨"DANCE", .unspecified, .unspecified⟩
 
-/-- Selection recovers the trichotomy: `HELP` agreeing, `PUT` and `MOVE` spatial, `DANCE`
-plain. -/
 theorem paddenClass_of_selection :
     help.paddenClass = .agreeing ∧ put.paddenClass = .spatial ∧ move.paddenClass = .spatial ∧
       dance.paddenClass = .plain := by decide
@@ -187,19 +178,16 @@ accept a sentence. -/
 
 open Examples
 
-/-- Without loci and without resolution, discourses are degraded. -/
 theorem unresolved_without_locus_degraded :
     ∀ row ∈ Examples.all, row.feature? "condition" = some "consultant" →
       row.feature? "locus" = some "false" → row.feature? "resolved" = some "false" →
       row.judgment ≠ .acceptable := by decide
 
-/-- Without loci, resolved discourses are fully acceptable. -/
 theorem resolved_without_locus_acceptable :
     ∀ row ∈ Examples.all, row.feature? "condition" = some "consultant" →
       row.feature? "locus" = some "false" → row.feature? "resolved" = some "true" →
       row.judgment = .acceptable := by decide
 
-/-- Locus-marked discourses are acceptable whether or not reference was already resolved. -/
 theorem locus_acceptable :
     ∀ row ∈ Examples.all, row.feature? "condition" = some "consultant" →
       row.feature? "locus" = some "true" → row.judgment = .acceptable := by

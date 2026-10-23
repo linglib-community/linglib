@@ -85,8 +85,6 @@ private theorem map_lt_map {β : Type*} {ranking : List (β → ℕ)} {p q : β}
     · exact absurd h hlt.ne
     · exact ⟨c, hc, hlt⟩
 
-/-- A ranking of constraints that each penalize the more marked pair gives a strictly monotone
-profile once every strictly less marked pair does strictly better on some constraint. -/
 theorem strictMono_profile [Preorder F] [Preorder M] {ranking : List (F × M → ℕ)}
     (hmono : ∀ c ∈ ranking, Monotone c) (hsep : ∀ ⦃p q⦄, p < q → ∃ c ∈ ranking, c p < c q) :
     StrictMono (profile ranking) :=
@@ -107,8 +105,6 @@ def IBlocks : Prop := ∃ q ∈ S, q.1 = p.1 ∧ f q < f p
 /-- `Blocks f S p` holds when a more harmonic pair of `S` shares `p`'s form or meaning. -/
 def Blocks : Prop := ∃ q ∈ S, (q.1 = p.1 ∨ q.2 = p.2) ∧ f q < f p
 
-/-- Bidirectional blocking is competition among the pairs of `S` that share a form or a
-meaning. -/
 theorem blocks_iff_blocked :
     Blocks f S p ↔ Competition.Blocked (fun p ↦ {q ∈ S | q.1 = p.1 ∨ q.2 = p.2}) f p :=
   ⟨fun ⟨q, hq, h, hlt⟩ ↦ ⟨q, ⟨hq, h⟩, hlt⟩, fun ⟨q, ⟨hq, h⟩, hlt⟩ ↦ ⟨q, hq, h, hlt⟩⟩
@@ -183,7 +179,6 @@ theorem strongOptimalSet_subset_superoptimalSet :
     strongOptimalSet pairs f ⊆ superoptimalSet pairs f :=
   le_gfp _ (unblockedSet_antitone pairs f (unblockedSet_subset pairs f))
 
-/-- The step exchanges the greatest and least fixed points of its square. -/
 theorem unblockedSet_superoptimalSet :
     unblockedSet pairs f (superoptimalSet pairs f) = (unblockedSq pairs f).lfp := by
   have hfix : ∀ S, unblockedSq pairs f S = S →
@@ -196,9 +191,6 @@ theorem unblockedSet_superoptimalSet :
         unblockedSet_antitone pairs f (le_gfp _ (hfix _ (unblockedSq pairs f).map_lfp).ge)
     _ = (unblockedSq pairs f).lfp := (unblockedSq pairs f).map_lfp
 
-/-- When the harmonies of the generator are well-founded, the least and greatest fixed points of
-the squared step coincide, since a minimal pair of their difference would be blocked by a still
-smaller one. -/
 theorem lfp_eq_superoptimalSet (h : (f '' pairs).IsWF) :
     (unblockedSq pairs f).lfp = superoptimalSet pairs f := by
   set G := superoptimalSet pairs f
@@ -224,8 +216,6 @@ theorem mem_superoptimalSet (h : (f '' pairs).IsWF) :
   conv_lhs => rw [← (isFixedPt_superoptimalSet pairs f h).eq]
   exact Iff.rfl
 
-/-- When the harmonies of the generator are well-founded, the blocking step has no fixed point
-but the super-optimal set. -/
 theorem eq_superoptimalSet_of_isFixedPt (h : (f '' pairs).IsWF)
     (hS : IsFixedPt (unblockedSet pairs f) S) : S = superoptimalSet pairs f := by
   have hsq : unblockedSq pairs f S = S := by
@@ -266,16 +256,12 @@ the pairs no pair of `Q` I-blocks. A pair of both is super-optimal. -/
 def IsWeakSolution (Q I : Set (F × M)) : Prop :=
   qUnblockedSet pairs f I = Q ∧ iUnblockedSet pairs f Q = I
 
-/-- The mutual recursion has a solution, the greatest fixed point of the monotone composite
-`qUnblockedSet ∘ iUnblockedSet` together with its image under `iUnblockedSet`. -/
 theorem exists_isWeakSolution : ∃ Q I, IsWeakSolution pairs f Q I :=
   let Φ : Set (F × M) →o Set (F × M) :=
     ⟨qUnblockedSet pairs f ∘ iUnblockedSet pairs f,
       (qUnblockedSet_antitone pairs f).comp (iUnblockedSet_antitone pairs f)⟩
   ⟨Φ.gfp, iUnblockedSet pairs f Φ.gfp, Φ.map_gfp, rfl⟩
 
-/-- Optimal pairs satisfy both principles of every weak solution, since a pair no pair of
-`pairs` blocks is blocked by no pair of `I` or of `Q`, both subsets of `pairs`. -/
 theorem strongOptimalSet_subset_inter {Q I : Set (F × M)} (h : IsWeakSolution pairs f Q I) :
     strongOptimalSet pairs f ⊆ Q ∩ I := fun p hp ↦ by
   obtain ⟨hQ, hI⟩ := h
@@ -298,8 +284,6 @@ open Set (univ mem_graphOn)
 variable [LinearOrder F] [LinearOrder M] (pairs : Set (F × M)) {f : F × M → α}
   {S : Set (F × M)} {p : F × M}
 
-/-- A harmony strictly monotone in the markedness of forms and of meanings blocks as markedness
-itself does: of two pairs sharing a form or a meaning, the less marked one is more harmonic. -/
 theorem blocks_iff_of_strictMono (hf : StrictMono f) : Blocks f S p ↔ Blocks id S p := by
   refine exists_congr fun q ↦ and_congr_right fun _ ↦ and_congr_right fun hqp ↦
     ⟨fun hlt ↦ ?_, @hf _ _⟩
@@ -316,8 +300,6 @@ theorem unblockedSet_eq_of_strictMono (hf : StrictMono f) :
   ext S p
   simp only [mem_unblockedSet, blocks_iff_of_strictMono hf]
 
-/-- Weak bidirection does not depend on how a strictly monotone harmony weighs the markedness of
-forms against that of meanings. -/
 theorem superoptimalSet_eq_of_strictMono (hf : StrictMono f) :
     superoptimalSet pairs f = superoptimalSet pairs id := by
   have : unblockedSq pairs f = unblockedSq pairs id := OrderHom.ext _ _ <| funext fun S ↦ by
@@ -409,7 +391,6 @@ fixed, which happens within `pairs.card` steps. Equality with a literal `Finset`
 `decide`. -/
 def superoptimal : Finset (F × M) := superoptimalAux pairs f pairs pairs.card
 
-/-- A monotone self-map of finsets that shrinks `s` is fixed on `s` within `s.card` steps. -/
 private theorem isFixedPt_iterate_card {β : Type*} {g : Finset β → Finset β} (hg : Monotone g)
     {s : Finset β} (hs : g s ⊆ s) : IsFixedPt g (g^[s.card] s) := by
   have hdesc : ∀ n, g^[n + 1] s ⊆ g^[n] s := fun n ↦ by

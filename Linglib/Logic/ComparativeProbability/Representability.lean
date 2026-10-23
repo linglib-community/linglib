@@ -48,8 +48,6 @@ theorem reduce_to_disjoint {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSp
   rw [qadd (r := r) A B]
   exact (h _ _ disjoint_sdiff_sdiff).trans (Measure.measure_le_iff_sdiff_le μ B A).symm
 
-/-- Removing a null element (`r ∅ {j}`) from both sides of a disjoint comparison preserves
-    it. -/
 theorem null_removal_disjoint {W : Type*} {r : Set W → Set W → Prop}
     [IsQualitativeProbability r] (j : W) (hj : r ∅ {j}) (C D : Set W) (hdisj : Disjoint C D) :
     r C D ↔ r (C \ {j}) (D \ {j}) := by
@@ -68,7 +66,6 @@ theorem null_removal_disjoint {W : Type*} {r : Set W → Set W → Prop}
     · exact ⟨fun h ↦ trans_of r h (mono _ _ Set.sdiff_subset), fun h ↦ trans_of r h (null_sub D)⟩
     · rw [Set.sdiff_singleton_eq_self hjD]
 
-/-- `Fin.succ '' (Fin.succ ⁻¹' S) = S \ {0}` for `S : Set (Fin (n+1))`. -/
 private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
     Fin.succ '' (Fin.succ ⁻¹' S) = S \ {(0 : Fin (n + 1))} := by
   rw [Set.image_preimage_eq_range_inter, Fin.range_succ]
@@ -107,7 +104,6 @@ theorem transfer_repr {W α : Type*} [MeasurableSpace W] [DiscreteMeasurableSpac
     Measure.map_apply (.of_discrete) (.of_discrete), ← Equiv.image_eq_preimage_symm,
     ← Equiv.image_eq_preimage_symm]
 
-/-- `j` is null in the transport of `r` along `σ` exactly when `σ.symm j` is null in `r`. -/
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n) (r : Set (Fin n) → Set (Fin n) → Prop)
     (j : Fin n) : (Set.preimage σ ⁻¹'o r) ∅ {j} ↔ r ∅ {σ.symm j} := by
   show r (σ ⁻¹' ∅) (σ ⁻¹' {j}) ↔ _

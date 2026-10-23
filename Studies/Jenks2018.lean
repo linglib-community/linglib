@@ -93,8 +93,6 @@ instance (inv : Inventory) (env : DefiniteDescription.Use) (t : Topic) :
 instance (inv : Inventory) (env : DefiniteDescription.Use) : Decidable (MarkedLicit inv env) := by
   unfold MarkedLicit; infer_instance
 
-/-- By Index!, with an index available and an indexed form in the inventory, a bare noun that is
-not a continuing topic is out. -/
 theorem not_bareLicit_of_indexAvailable {inv : Inventory} {env : DefiniteDescription.Use}
     {t : Topic}
     (h : IndexAvailable env) (hm : inv.Marks .familiarity) (ht : t ≠ .continuing) :
@@ -220,8 +218,6 @@ theorem table2 :
     Mandarin.Determiners.strengths_inventory, Cantonese.Determiners.isSyncretic_inventory,
     English.Determiners.isSyncretic_inventory⟩
 
-/-- An inventory whose marked presuppositions form an upper set, marking the anaphoric one wherever
-it marks the unique one, is not marked unique. -/
 theorem not_isMarkedUnique_of_isUpperSet (h : IsUpperSet (ds.strengths : Set Strength)) :
     ¬ IsMarkedUnique ds := fun hu ↦ by
   have := Strength.isUpperSet_iff.1 h

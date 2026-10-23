@@ -79,8 +79,6 @@ theorem forces_eq : ∀ m ∈ Tlingit.modals, m.forces = {lexicalForce m} ∧ m.
 
 /-! ### Scales -/
 
-/-- The future mode is the potential mode's scalemate, sharing its circumstantial flavor, and
-no Tlingit modal is a dubitative's: the language has no strong epistemic modal. -/
 theorem scalemates :
     Scalemates lexicalForce potentialMode futureMode ∧
       ∀ m ∈ dubitatives, ¬ HasScalemate lexicalForce Tlingit.modals m := by

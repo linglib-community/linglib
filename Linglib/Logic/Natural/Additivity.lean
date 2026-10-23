@@ -38,7 +38,6 @@ def IsAntiAdditive [SemilatticeSup α] [SemilatticeInf β] (f : α → β) : Pro
 def IsAntiMultiplicative [SemilatticeInf α] [SemilatticeSup β] (f : α → β) : Prop :=
   ∀ p q, f (p ⊓ q) = f p ⊔ f q
 
-/-- A join-preserving function is monotone. -/
 theorem monotone_of_map_sup [SemilatticeSup α] [SemilatticeSup β]
     {f : α → β} (h : ∀ p q, f (p ⊔ q) = f p ⊔ f q) : Monotone f := by
   intro p q hpq
@@ -46,7 +45,6 @@ theorem monotone_of_map_sup [SemilatticeSup α] [SemilatticeSup β]
     _ = f (p ⊔ q) := (h p q).symm
     _ = f q := by rw [sup_eq_right.mpr hpq]
 
-/-- A meet-preserving function is monotone. -/
 theorem monotone_of_map_inf [SemilatticeInf α] [SemilatticeInf β]
     {f : α → β} (h : ∀ p q, f (p ⊓ q) = f p ⊓ f q) : Monotone f := by
   intro p q hpq
@@ -54,7 +52,6 @@ theorem monotone_of_map_inf [SemilatticeInf α] [SemilatticeInf β]
     _ = f p ⊓ f q := h p q
     _ ≤ f q := inf_le_right
 
-/-- Anti-additive implies antitone. -/
 theorem IsAntiAdditive.antitone [SemilatticeSup α] [SemilatticeInf β]
     {f : α → β} (h : IsAntiAdditive f) : Antitone f := by
   intro p q hpq
@@ -62,7 +59,6 @@ theorem IsAntiAdditive.antitone [SemilatticeSup α] [SemilatticeInf β]
     _ = f p ⊓ f q := h p q
     _ ≤ f p := inf_le_left
 
-/-- Anti-multiplicative implies antitone. -/
 theorem IsAntiMultiplicative.antitone [SemilatticeInf α] [SemilatticeSup β]
     {f : α → β} (h : IsAntiMultiplicative f) : Antitone f := by
   intro p q hpq
@@ -103,13 +99,10 @@ theorem isAntiAdditive_iff_mem {f : Set γ → Set δ} :
   simp only [IsAntiAdditive, Set.sup_eq_union, Set.inf_eq_inter, Set.ext_iff,
     Set.mem_inter_iff]
 
-/-- The `Prop`-valued instance: anti-additivity is `f (p ∪ q) ↔ f p ∧ f q`. -/
 theorem isAntiAdditive_iff_gq {f : Set γ → Prop} :
     IsAntiAdditive f ↔ ∀ p q, f (p ∪ q) ↔ f p ∧ f q := by
   simp only [IsAntiAdditive, Set.sup_eq_union, inf_Prop_eq, eq_iff_iff]
 
-/-- Any function of the form `fun X y => ∀ x ∈ X, P x y` is anti-additive
-in `X`. -/
 theorem isAntiAdditive_forall_mem {α β : Type*} (P : α → β → Prop) :
     IsAntiAdditive (fun (X : Set α) (y : β) => ∀ x ∈ X, P x y) :=
   fun A B => funext fun y =>

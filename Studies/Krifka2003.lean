@@ -78,7 +78,6 @@ the number exceed one. -/
 def pluralize (den : CountNoun World Atom) : World → Set (Set Atom) :=
   fun w ↦ {x | ∃ n, x ∈ den w n}
 
-/-- The semantic plural is true of a single instance, so *Yes, one* answers *Do you have dogs?*. -/
 theorem mem_pluralize_of_withNumber {den : CountNoun World Atom} {n : ℕ} {w : World}
     {x : Set Atom} (h : x ∈ withNumber n den w) : x ∈ pluralize den w :=
   ⟨n, h⟩
@@ -159,17 +158,11 @@ since the shift applies at the trace. -/
 theorem movedNeutral_pred (P V : E → Prop) :
     movedNeutral (pred P) V = some (tv (¬ ∃ x, P x ∧ V x)) := rfl
 
-/-- A property cannot bind an entity variable: there is no wide-scope derivation for a bare
-noun phrase. -/
 theorem movedEntity_pred (P V : E → Prop) : movedEntity (pred P) V = none := rfl
 
-/-- In *A dog isn't barking* with a quantifier variable (71.c.ii), negation scopes over the
-quantifier. -/
 theorem movedNeutral_quant (Q : (E → Prop) → Prop) (V : E → Prop) :
     movedNeutral (quant Q) V = some (tv (¬ Q V)) := rfl
 
-/-- In *A dog isn't barking* with an entity variable (71.c.i), the quantifier scopes over
-negation. -/
 theorem movedEntity_quant (Q : (E → Prop) → Prop) (V : E → Prop) :
     movedEntity (quant Q) V = some (tv (Q fun x ↦ ¬ V x)) := rfl
 

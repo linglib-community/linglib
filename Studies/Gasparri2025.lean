@@ -43,8 +43,6 @@ namespace Gasparri2025
 
 open Quantifier Quantifier.GQ Quantifier.NP
 
-/-- A referential name shifted to its identity property and fed to the generic operator returns
-the token reading, so a generic use of a bare name needs the naming predicate. -/
 theorem referentialist_generic_is_token {E : Type} [Fintype E] [DecidableEq E] (j : E)
     (VP : E → Prop) :
     most (ident j) VP ↔ VP j :=
@@ -93,39 +91,30 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Out of the blue, a bare name has no acceptable generic reading. -/
 theorem recalcitrance : ∀ r ∈ rows, r.subject = .bareName → r.context = .outOfTheBlue →
     r.generic ≠ some .acceptable := by
   decide
 
-/-- The recalcitrance is specific to names: a common definite takes a simple generic reading out
-of the blue. -/
 theorem definiteCommon_simple_generic : ∃ r ∈ rows, r.subject = .definiteCommon ∧
     r.context = .outOfTheBlue ∧ r.qadv = false ∧ r.generic = some .acceptable := by
   decide
 
-/-- Against the ban on its narrow reading: a bare name in a simple generic. -/
 theorem bareName_simple_generic :
     ∃ r ∈ rows, r.subject = .bareName ∧ r.qadv = false ∧ r.generic = some .acceptable := by
   decide
 
-/-- Against the ban on its wide reading: a bare name under a quantificational adverb. -/
 theorem bareName_quantificational_generic :
     ∃ r ∈ rows, r.subject = .bareName ∧ r.qadv = true ∧ r.generic = some .acceptable := by
   decide
 
-/-- Kind-level generics stay closed to bare names. -/
 theorem bareName_kindLevel : ∀ r ∈ rows, r.subject = .bareName → r.level = .kindLevel →
     r.generic ≠ some .acceptable := by
   decide
 
-/-- Kind-level generics are open to quoted names. -/
 theorem quotedName_kindLevel : ∀ r ∈ rows, r.subject = .quotedName → r.level = .kindLevel →
     r.generic = some .acceptable := by
   decide
 
-/-- Common definites go both ways in kind-level generics, so the gap is no discrepancy peculiar
-to names. -/
 theorem definiteCommon_kindLevel_both :
     (∃ r ∈ rows, r.subject = .definiteCommon ∧ r.level = .kindLevel ∧
       r.generic = some .acceptable) ∧

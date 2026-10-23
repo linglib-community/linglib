@@ -117,8 +117,6 @@ theorem guaranteesException_every : GuaranteesException (every : GQ α) :=
 theorem guaranteesException_no : GuaranteesException (no : GQ α) :=
   fun A B _ ↦ ⟨A ⊓ B, isExceptionSet_no A B⟩
 
-/-- *Some* guarantees no exception, since when nothing in the restrictor is in the scope no
-subtraction helps. -/
 theorem not_guaranteesException_some : ¬ GuaranteesException (GQ.some : GQ α) := fun h ↦
   let ⟨_, ⟨_, _, hx⟩, _⟩ := h ⊤ ⊥ fun ⟨_, _, hx⟩ ↦ hx
   hx
@@ -150,8 +148,6 @@ theorem not_guaranteesException_most : ¬ GuaranteesException (most : GQ (Fin 5)
   let ⟨C, hC⟩ := h ⊤ attended fun hm ↦ absurd hm (by decide)
   not_isExceptionSet_most C hC
 
-/-- In the paper's limiting case, with two students John and Harry of whom only Harry
-attended, *most* has the exception set John. -/
 theorem isExceptionSet_most_two :
     IsExceptionSet most ⊤ (· = (0 : Fin 2)) (· = (1 : Fin 2)) := by
   refine ⟨by decide, fun S hS x hx ↦ ?_⟩

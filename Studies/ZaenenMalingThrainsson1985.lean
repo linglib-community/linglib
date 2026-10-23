@@ -155,8 +155,6 @@ def surfaceCase (r : List (Arg × Option GF)) (p : Arg × Option GF) : Option Ic
       | 1 => some .acc
       | _ => none
 
-/-- Idiosyncratic case is preserved under passive and raising: an argument bearing a function
-surfaces in its idiosyncratic case. -/
 theorem surfaceCase_lexical {r : List (Arg × Option GF)} {x : Arg} {g : GF} {c : Icelandic.Case}
     (h : x.lexicalCase = some c) : surfaceCase r (x, some g) = some c := by
   simp [surfaceCase, h]
@@ -207,7 +205,6 @@ def entries : List (List Arg × Icelandic.Verbs.Verb) :=
    (Thematic.leyna, leyna), (Thematic.leyna, svipta), (Thematic.bidja, bidja),
    (Thematic.lofa, lofa), (Thematic.lofa, skila), (Thematic.oska, oska)]
 
-/-- Every case array of the fragment is derived from its thematic structure. -/
 theorem fragment_cases : ∀ e ∈ entries, e.2.cases ∈ arrays e.1 .active := by decide
 
 /-- A dative experiencer subject leaves the nominative to the theme, (62b). -/
@@ -280,13 +277,10 @@ theorem ofTestRow_isSome :
     ∀ ex ∈ Examples.all, (ex.feature? "tested").isSome → (ofTestRow ex).isSome := by
   decide
 
-/-- Every case array the paper attests, active or passive, is one the principles derive. -/
 theorem rows_cases :
     ∀ ex ∈ Examples.all, ∀ r ∈ ofCasesRow ex, r.2.2 ∈ arrays r.1 r.2.1 := by
   decide
 
-/-- The subjecthood tests target SUBJ: the paper's judgment is acceptable exactly when the
-argument tested bears SUBJ under some association in that voice. -/
 theorem rows_subject :
     ∀ ex ∈ Examples.all, ∀ r ∈ ofTestRow ex,
       (ex.judgment = .acceptable ↔ IsSubject r.1 r.2.1 r.2.2) := by

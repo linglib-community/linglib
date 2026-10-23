@@ -87,9 +87,6 @@ def eachOtherLF (np : Finset A) (R : A → A → Prop) : Prop :=
 
 /-! ### The keystone (21) -/
 
-/-- On a plural antecedent the compositional each∘other analysis derives Strong
-    Reciprocity: HLM's truth conditions "coincide with those of the standard semantic
-    analyses". -/
 theorem eachOtherLF_iff_strongReciprocity {np : Finset A} (hnp : 1 < np.card)
     (R : A → A → Prop) : eachOtherLF np R ↔ StrongReciprocity R np := by
   rw [strongReciprocity_iff, and_iff_right (Finset.one_lt_card_iff_nontrivial.1 hnp)]
@@ -99,12 +96,6 @@ theorem eachOtherLF_iff_strongReciprocity {np : Finset A} (hnp : 1 < np.card)
   · intro h x hx z hz
     exact h hx hz.1 hz.2.symm
 
-/-- Distribution over a singleton yields a vacuously true reciprocal —
-    no reciprocal content at all. HLM derive the plural-antecedent
-    requirement (\**Mary saw each other*) more strongly: `·Π` is defined
-    only on sum counterdomains, so distributors cannot apply to singular
-    NPs; this vacuity is the semantic shadow of that definedness
-    restriction. -/
 theorem eachOtherLF_singleton (a : A) (R : A → A → Prop) :
     eachOtherLF {a} R := by
   intro x hx z hz

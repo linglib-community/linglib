@@ -77,16 +77,13 @@ presupposition of universals, which Strawson stipulated and Belnap derives. -/
 @[simp] theorem restrictedForall_eq_zero_iff : restrictedForall C B = 0 ↔ ∀ x, ¬ C x := by
   simp [restrictedForall]
 
-/-- ∀x(Cx/Bx) is true when something satisfies `C` and every such thing satisfies `B`. -/
 @[simp] theorem restrictedForall_eq_one_iff :
     restrictedForall C B = 1 ↔ (∃ x, C x) ∧ every C B := by
   simp [restrictedForall, every]
 
-/-- ∀x(Cx/Bx) is false when something satisfying `C` fails `B`. -/
 @[simp] theorem restrictedForall_eq_neg_one_iff : restrictedForall C B = -1 ↔ ¬ every C B := by
   simp [restrictedForall, every]
 
-/-- ∃x(Cx/Bx) is nonassertive exactly when nothing satisfies `C`. -/
 @[simp] theorem restrictedExists_eq_zero_iff : restrictedExists C B = 0 ↔ ∀ x, ¬ C x := by
   simp [restrictedExists]
 
@@ -95,7 +92,6 @@ when assertive, is exactly `GQ.some`. -/
 @[simp] theorem restrictedExists_eq_one_iff : restrictedExists C B = 1 ↔ GQ.some C B := by
   simp [restrictedExists, GQ.some]
 
-/-- ∃x(Cx/Bx) is false when something satisfies `C` and nothing satisfies both. -/
 @[simp] theorem restrictedExists_eq_neg_one_iff :
     restrictedExists C B = -1 ↔ (∃ x, C x) ∧ ¬ GQ.some C B := by
   simp [restrictedExists, GQ.some]

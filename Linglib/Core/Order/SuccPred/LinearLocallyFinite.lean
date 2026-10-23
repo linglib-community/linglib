@@ -17,7 +17,6 @@ the successor and predecessor structure of a locally finite order.
 
 @[expose] public section
 
-/-- A locally finite linear order embeds in `ℤ`. -/
 theorem nonempty_orderEmbedding_int (ι : Type*) [LinearOrder ι] [LocallyFiniteOrder ι] :
     Nonempty (ι ↪o ℤ) := by
   cases isEmpty_or_nonempty ι with

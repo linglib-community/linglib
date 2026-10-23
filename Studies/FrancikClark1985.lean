@@ -143,13 +143,10 @@ theorem Overcomes.mono (h : Overcomes q O) (hq : q ≤ q') : Overcomes q' O := h
 
 theorem Overcomes.anti (h : Overcomes q O) (hO : O' ⊆ O) : Overcomes q O' := hO.trans h
 
-/-- A direct request overcomes no obstacle. -/
 theorem overcomes_direct_iff : Overcomes .direct O ↔ O = ∅ := Set.subset_empty_iff
 
-/-- A conditional request overcomes the obstacles its condition bounds. -/
 theorem overcomes_condition_iff : Overcomes (.condition c) O ↔ c ∈ upperBounds O := Iff.rfl
 
-/-- The general request overcomes every obstacle. -/
 theorem overcomes_general : Overcomes .general O := Set.subset_univ O
 
 instance : Decidable (Overcomes q {c}) :=
@@ -158,8 +155,6 @@ instance : Decidable (Overcomes q {c}) :=
 theorem pinpoints_direct_iff : Pinpoints .direct O ↔ O = ∅ :=
   ⟨λ h => overcomes_direct_iff.1 h.1, λ h => ⟨overcomes_direct_iff.2 h, λ _ _ => bot_le⟩⟩
 
-/-- The principle of specificity: the conditional request that pinpoints an obstacle queries the
-least condition that every doubted condition is a way of satisfying. -/
 theorem pinpoints_condition_iff : Pinpoints (.condition c) O ↔ IsLUB O c := by
   refine ⟨λ ⟨h, hl⟩ => ⟨h, λ d hd => Query.condition_le_condition.1 (hl hd)⟩,
     λ h => ⟨h.1, ?_⟩⟩
@@ -170,8 +165,6 @@ theorem pinpoints_condition_iff : Pinpoints (.condition c) O ↔ IsLUB O c := by
   · exact Query.condition_le_condition.2 (h.2 hq)
   · exact le_top
 
-/-- The general request pinpoints exactly the obstacles no single condition bounds, as when the
-speaker cannot tell whether the hearer is unable or unwilling. -/
 theorem pinpoints_general_iff : Pinpoints .general O ↔ ¬ BddAbove O := by
   refine ⟨λ ⟨_, hl⟩ ⟨d, hd⟩ => ?_, λ h => ⟨overcomes_general, ?_⟩⟩
   · obtain ⟨e, he⟩ := exists_not_le d
@@ -228,12 +221,10 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The requests the paper finds appropriate are those that overcome the obstacle. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.appropriate = true ↔ Overcomes r.query {r.obstacle}) := by
   decide
 
-/-- The gradient of specificity descends the order on queries. -/
 theorem gradient_antitone : ((rows.filter (·.gradient)).map Row.query).Pairwise (· ≥ ·) := by
   decide
 
@@ -253,8 +244,6 @@ def TimeForm.ofDatum (ex : Datum) : Option TimeForm := do
 
 def timeForms : List TimeForm := Examples.all.filterMap TimeForm.ofDatum
 
-/-- Every form produced without the watch overcomes the doubt that the student can find out the
-time; the direct *What time is it?* was produced only with it. -/
 theorem time_produced_overcomes :
     ∀ r ∈ timeForms, 0 < r.high → Overcomes r.query {.source} := by
   decide
@@ -277,16 +266,12 @@ def Rating.ofDatum (ex : Datum) : Option Rating := do
 
 def ratings : List Rating := Examples.all.filterMap Rating.ofDatum
 
-/-- Each form is rated higher, at either level, in the scenario type whose obstacle it overcomes
-than in those whose obstacle it does not. -/
 theorem ratings_crossover :
     ∀ r ∈ ratings, ∀ r' ∈ ratings, r.query = r'.query →
       Overcomes r.query {r.obstacle} → ¬ Overcomes r'.query {r'.obstacle} →
         r'.high < r.high ∧ r'.low < r.low := by
   decide
 
-/-- The general forms are rated lower at the high obstacle level: they overcome every obstacle
-(`overcomes_general`) but pinpoint no single condition (`pinpoints_general_iff`). -/
 theorem ratings_general_lt : ∀ r ∈ ratings, r.query = .general → r.high < r.low := by
   decide
 

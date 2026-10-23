@@ -77,7 +77,6 @@ def a_face : Verb where
   morphs := [.free "a", .root "face"]
   valency := .ofFrame (⟨some .nominal, [.nominal, .clausal (coding := some .subjunctive)]⟩)
 
-/-- *a spera* takes both particles and *a vrea* only *să*. -/
 theorem a_spera_takes_both :
     a_spera.Takes sa ∧ a_spera.Takes ca ∧ a_vrea.Takes sa ∧ ¬ a_vrea.Takes ca := by
   decide

@@ -61,7 +61,6 @@ variable {n : ℕ} {g : Graph n}
 more than the gap degree. -/
 def blockDegree (g : Graph n) : ℕ := g.gapDegree + 1
 
-/-- A tree is projective iff its block-degree is 1. -/
 theorem isProjective_iff_blockDegree_eq_one :
     g.IsProjective ↔ blockDegree g = 1 := by
   rw [Graph.isProjective_iff_gapDegree_eq_zero, blockDegree]
@@ -113,16 +112,13 @@ def germanNested : Graph 7 :=
 theorem dutchCrossSerial_isTree : dutchCrossSerial.IsTree := by decide
 theorem germanNested_isTree : germanNested.IsTree := by decide
 
-/-- The cross-serial order is non-projective and the nested order is projective. -/
 theorem figure1_projectivity : ¬ dutchCrossSerial.IsProjective ∧ germanNested.IsProjective := by
   decide
 
-/-- Block-degree 2 against block-degree 1: the fan-out the extracted rule for *zag* needs. -/
 theorem figure1_blockDegree :
     blockDegree dutchCrossSerial = 2 ∧ blockDegree germanNested = 1 := by
   decide
 
-/-- Cross-serial dependencies are well-nested, though not planar. -/
 theorem dutchCrossSerial_isWellNested :
     dutchCrossSerial.IsWellNested ∧ ¬ dutchCrossSerial.IsPlanar := by
   decide +kernel
@@ -164,7 +160,6 @@ theorem figure11_wellNested :
       (fig11D2.IsWellNested ∧ ¬ fig11D2.IsProjective) := by
   decide +kernel
 
-/-- In `D₂` the overlapping yields belong to a node and its descendant. -/
 theorem fig11D2_interleave : fig11D2.Interleave 0 1 ∧ Dominates fig11D2 0 1 := by
   decide +kernel
 
@@ -173,8 +168,6 @@ theorem fig11D3_not_isWellNested : ¬ fig11D3.IsWellNested :=
   (not_isWellNested_iff_siblings (by decide)).2
     ⟨0, 1, 2, by decide, by decide, by decide, by decide +kernel⟩
 
-/-- Well-nestedness is independent of block-degree beyond 1: `D₂` and `D₃` both have
-block-degree 2. -/
 theorem figure11_blockDegree : blockDegree fig11D2 = 2 ∧ blockDegree fig11D3 = 2 := by
   decide
 
@@ -198,21 +191,16 @@ hundredths of a percent. -/
 def reductionBp (treebank : String) (item : Item) (c : Constraint) : ℤ :=
   round ((1 - (lost treebank item c : ℚ) / lost treebank item .projective) * 10000)
 
-/-- Fan-out 1 loses between 11.16% (Arabic) and 23.15% (Czech) of the trees. -/
 theorem treeLoss_projective :
     ∀ r ∈ rows, r.item = .trees → r.constraint = .projective →
       1116 ≤ lossBp r ∧ lossBp r ≤ 2315 := by
   decide +kernel
 
-/-- Fan-out 1 loses between 1.23% (Danish) and 1.75% (Slovene) of the rules, Arabic's
-printed total aside. -/
 theorem ruleLoss_projective :
     ∀ r ∈ rows, r.item = .rules → r.constraint = .projective → r.treebank ≠ "Arabic" →
       123 ≤ lossBp r ∧ lossBp r ≤ 175 := by
   decide +kernel
 
-/-- Allowing fan-out 2 reduces rule loss by 94.16% (Turkish) to 99.76% (Arabic) and tree loss
-by 94.31% (Turkish) to 99.39% (Arabic). -/
 theorem reduction_gapDegreeLe1 :
     ∀ r ∈ rows, r.constraint = .gapDegreeLe 1 →
       (r.item = .rules →
@@ -223,14 +211,11 @@ theorem reduction_gapDegreeLe1 :
           reductionBp r.treebank .trees (.gapDegreeLe 1) ≤ 9939) := by
   decide +kernel
 
-/-- Block-degree 2 costs Czech 0.02% of its rules and under 0.5% of its trees. -/
 theorem czech_gapDegreeLe1 :
     ∀ r ∈ rows, r.treebank = "Czech" → r.constraint = .gapDegreeLe 1 →
       (r.item = .rules → lossBp r = 2) ∧ (r.item = .trees → lossBp r < 50) := by
   decide +kernel
 
-/-- Well-nested rules of fan-out at most 2 still reduce rule loss by more than 92% relative
-to fan-out 1, up to 99.51% (Arabic). -/
 theorem reduction_wellNested :
     ∀ r ∈ rows, r.constraint = .gapDegreeLeWellNested 1 → r.item = .rules →
       9264 ≤ reductionBp r.treebank .rules (.gapDegreeLeWellNested 1) ∧

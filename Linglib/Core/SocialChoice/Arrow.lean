@@ -69,8 +69,6 @@ theorem decisive_of_decisiveOn {G : Finset ι} (hne : G.Nonempty)
 
 variable [Field K] [IsStrictOrderedRing K]
 
-/-- Under ordinal invariance and independence, the verdict on a pair depends only on how each
-individual orders the pair. -/
 theorem iff_of_pattern (hO : Invariant ordinal a) (hI : Independent a)
     {v w : Profile ι α K} {x y : α}
     (h : ∀ i, (v x i < v y i ↔ w x i < w y i) ∧ (v y i < v x i ↔ w y i < w x i)) :
@@ -105,8 +103,6 @@ theorem iff_of_pattern (hO : Invariant ordinal a) (hI : Independent a)
     _ ↔ a (w.transform (f w)) x y := hI _ _ x y (by rw [hx, hx]) hyw
     _ ↔ a w x y := by rw [hO (f w) (hf w) w]
 
-/-- In the first half of field expansion, a group almost decisive for `x, y` is decisive for `x, z`.
--/
 theorem decisiveOn_of_almost (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : Independent a)
     {G : Finset ι} {x y : α} (hxy : x ≠ y) (h : AlmostDecisiveOn a G x y) {z : α}
     (hzy : z ≠ y) : DecisiveOn a G x z := by
@@ -132,8 +128,6 @@ theorem decisiveOn_of_almost (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : 
   have h₃ : AsymmRel (a v') x z := (h v' hG hG').trans_le (hP v' y z hyz).1
   exact ⟨(hI v' v x z hx hz).1 h₃.1, fun hzx' ↦ h₃.2 ((hI v' v z x hz hx).2 hzx')⟩
 
-/-- In the second half of field expansion, a group almost decisive for `x, y` is decisive for `z,
-y`. -/
 theorem decisiveOn_of_almost' (hW : WeakOrderValued a) (hP : WeakPareto a) (hI : Independent a)
     {G : Finset ι} {x y : α} (hxy : x ≠ y) (h : AlmostDecisiveOn a G x y) {z : α}
     (hzx : z ≠ x) : DecisiveOn a G z y := by
@@ -161,8 +155,6 @@ theorem decisiveOn_of_almost' (hW : WeakOrderValued a) (hP : WeakPareto a) (hI :
 
 variable [Fintype α]
 
-/-- By field expansion, with three or more alternatives a group almost decisive for one pair is
-decisive for every pair. -/
 theorem decisiveOn_of_almost_of_ne (hW : WeakOrderValued a) (hP : WeakPareto a)
     (hI : Independent a) (h₃ : 3 ≤ Fintype.card α) {G : Finset ι} {x y : α} (hxy : x ≠ y)
     (h : AlmostDecisiveOn a G x y) {u w : α} (huw : u ≠ w) : DecisiveOn a G u w := by
@@ -199,8 +191,6 @@ theorem decisiveOn_of_almost_of_ne (hW : WeakOrderValued a) (hP : WeakPareto a)
   · exact hq
   · exact (A u q hqu.symm hq.almost w huw.symm hwq).1
 
-/-- By group contraction, a decisive group with two or more individuals has a decisive proper
-subgroup. -/
 theorem exists_decisive_ssubset (hO : Invariant ordinal a) (hW : WeakOrderValued a)
     (hP : WeakPareto a) (hI : Independent a) (h₃ : 3 ≤ Fintype.card α) {G : Finset ι}
     (hG : Decisive a G) (h₂ : 2 ≤ G.card) : ∃ G' ⊂ G, Decisive a G' := by

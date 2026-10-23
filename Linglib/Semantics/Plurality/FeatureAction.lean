@@ -142,7 +142,6 @@ theorem mem_containing_sdiff_containing_iff {X Y Z s : Finset α} :
   exact ⟨fun h ↦ ⟨h.1.1, h.1.2, fun hX ↦ h.2 ⟨h.1.1, hX⟩⟩,
     fun h ↦ ⟨⟨h.1, h.2.1⟩, fun h' ↦ h.2.2 h'.2⟩⟩
 
-/-- Disjoint atom sets give incomparable denotations, neither more specified than the other. -/
 theorem containing_not_subset_of_disjoint {X Y Z : Finset α} (hd : Disjoint X Y)
     (hX : X.Nonempty) (hXZ : X ⊆ Z) :
     ¬ containing X Z ⊆ containing Y Z := by

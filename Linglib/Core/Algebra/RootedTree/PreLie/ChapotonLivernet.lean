@@ -172,7 +172,6 @@ theorem of_mul_graft (T S U : UnorderedTree α) :
   rw [graft, ← Multiset.sum_map_mul_left, Multiset.map_bind, Multiset.sum_bind]
   simp only [of_mul_of, graft]
 
-/-- Grafting a leaf onto a leaf gives the two-vertex tree. -/
 theorem of_leaf_mul_of_leaf (a b : α) :
     (of (leaf a) : ChapotonLivernet R α) * of (leaf b) = of (mk (.node a [.leaf b])) := by
   rw [of_mul_of, graft, leaf, mk_insertSum, RoseTree.insertSum_leaf, Multiset.map_singleton,

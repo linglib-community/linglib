@@ -76,21 +76,16 @@ abbrev fig81c : Model (Finset Atom) Atom :=
   model fun _ ↦ ({{.p, .q}, {.q}} : Finset (Finset Atom)).powerset ∪
     ({{.p}, ∅} : Finset (Finset Atom)).powerset
 
-/-- In (a) the agent knows that `p`, hence knows whether `p`. -/
 theorem fig81a_knows :
     ∀ w, {w} ∈ support fig81a (.nec p) ∧ {w} ∈ support fig81a (.nec p.polarQ) := by
   decide
 
-/-- In (b) the agent wonders whether `p`. -/
 theorem fig81b_wonders : ∀ w, {w} ∈ support fig81b (wonders p.polarQ) := by decide
 
-/-- In (c) the agent neither knows whether `p` nor wonders about it. -/
 theorem fig81c_neither :
     ∀ w, {w} ∈ support fig81c ((Formula.nec p.polarQ).neg.conj (Formula.ent p.polarQ).neg) := by
   decide
 
-/-- `⊞` does not pseudo-commute: in (b) the agent entertains whether `p` without entertaining
-`p` or entertaining `¬p`. -/
 theorem fig81b_ent_polarQ_not_disj :
     ∀ w, {w} ∈ support fig81b (.ent p.polarQ) ∧
       {w} ∉ support fig81b ((Formula.ent p).disj (.ent p.neg)) := by

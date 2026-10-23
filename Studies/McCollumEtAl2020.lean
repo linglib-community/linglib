@@ -240,12 +240,10 @@ private theorem resolveLeft_eval (xs : List Mark) :
     | nil => rfl
     | cons y ys ih => simpa [resolveLeft] using ih x
 
-/-- The first pass keeps every vowel's height. -/
 private theorem isHigh_markRight_output (p : Bool × Bool) (s : Seg) :
     (markRight.output p s).isHigh = s.isHigh := by
   rcases s with ⟨h, _ | _⟩ | a <;> simp only [markRight] <;> (try split_ifs) <;> rfl
 
-/-- So the second pass reads the height of the initial vowel of the input. -/
 private theorem head?_take_markRight_runRight (w : List Seg) (i : ℕ) :
     ((markRight.runRight w).take i).head?.map Mark.isHigh = (w.take i).head?.map Seg.isHigh := by
   rcases i with _ | i

@@ -75,8 +75,6 @@ theorem real_next_softmaxModel (u : List α) (o : Option α) :
     ((softmaxModel d).next u).real {o} = softmax (fun o ↦ -d o u) o :=
   Kernel.softmax_coe_real_singleton (fun u o ↦ -d o u) u o
 
-/-- The surprisal of the softmax model is the difficulty plus the log partition function of the
-prefix. -/
 theorem surprisal_softmaxModel (u : List α) (o : Option α) :
     surprisal ((softmaxModel d).next u) o = d o u + log (∑ o', exp (-d o' u)) := by
   rw [surprisal, real_next_softmaxModel, log_softmax]
@@ -84,8 +82,6 @@ theorem surprisal_softmaxModel (u : List α) (o : Option α) :
 
 variable {d}
 
-/-- A nonnegative difficulty measure gives every next unit probability at least `exp (-d o u)`
-over the size of the extended alphabet. -/
 theorem le_next_softmaxModel (hd : ∀ o u, 0 ≤ d o u) (u : List α) (o : Option α) :
     ENNReal.ofReal (exp (-d o u)) / Fintype.card (Option α) ≤ (softmaxModel d).next u {o} := by
   rw [softmaxModel, Kernel.softmax_apply_singleton]
@@ -109,8 +105,6 @@ theorem isTight_softmaxModel (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
   · simp only [div_eq_mul_inv, ENNReal.tsum_mul_right, hdiv]
     exact ENNReal.top_mul (ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _))
 
-/-- The softmax model need not be a language model: an end difficulty growing linearly in the
-length of the prefix, with every other difficulty zero, leaves it non-tight. -/
 theorem not_isTight_softmaxModel_length [Nonempty α] :
     ¬ (softmaxModel fun (o : Option α) u ↦ o.elim ((u.length : ℝ) + 1) fun _ ↦ 0).IsTight := by
   set w : ℕ → ℝ≥0∞ := fun n ↦ ENNReal.ofReal (exp (-((n : ℝ) + 1)))
@@ -138,8 +132,6 @@ theorem not_isTight_softmaxModel_length [Nonempty α] :
         ENNReal.tsum_le_tsum fun n ↦ pow_le_pow_of_le_one bot_le hr.le n.le_succ
       _ < ∞ := by rw [ENNReal.tsum_geometric]; exact ENNReal.inv_lt_top.2 (tsub_pos_of_lt hr)
 
-/-- Under a tight softmax model, the surprisal of a unit under the next-unit law of the language
-model is the difficulty plus the log partition function of the prefix. -/
 theorem surprisal_next_ofMeasure_stringMeasure (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞)
     (u : List α) (o : Option α) :
@@ -150,9 +142,6 @@ theorem surprisal_next_ofMeasure_stringMeasure (hd : ∀ o u, 0 ≤ d o u) {f : 
       (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _) [] u
   rw [(isTight_softmaxModel hd hf hdiv).next_ofMeasure_stringMeasure hpos, surprisal_softmaxModel]
 
-/-- The tautology: a nonnegative difficulty measure whose end difficulty is bounded along a
-series with divergent exponentials is the surprisal of the next unit under some language model,
-up to a context-dependent baseline. -/
 theorem exists_difficulty_eq_surprisal (hd : ∀ o u, 0 ≤ d o u) {f : ℕ → ℝ}
     (hf : ∀ u, d none u ≤ f (u.length + 1)) (hdiv : ∑' t, ENNReal.ofReal (exp (-f (t + 1))) = ∞) :
     ∃ μ : Measure (List α), IsProbabilityMeasure μ ∧ ∃ b : List α → ℝ,
@@ -174,7 +163,6 @@ theorem lintegral_length_softmaxModel_le (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
     gcongr
     exact hC u
 
-/-- The softmax model of a bounded end difficulty has finite expected length. -/
 theorem lintegral_length_softmaxModel_ne_top (hd : ∀ o u, 0 ≤ d o u) {C : ℝ}
     (hC : ∀ u, d none u ≤ C) :
     ∫⁻ x, (x.length : ℝ≥0∞) ∂(softmaxModel d).stringMeasure ≠ ∞ :=

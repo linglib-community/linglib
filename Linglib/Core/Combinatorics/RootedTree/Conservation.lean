@@ -61,8 +61,6 @@ theorem hasExtractionCost_numNodes_cutSummandsN {F : Multiset (UnorderedTree α)
     s.HasExtractionCost UnorderedTree.numNodes 0 :=
   .of_mem_forestCutChoicesG hs fun x _ p hp _ ↦ by simpa using (cutSummandsN_numNodes x.1 p hp).symm
 
-/-- No pruning cut extracts the whole tree as its crown; the full-tree extraction is the
-    separate primitive term of the coproduct. -/
 theorem cutSummandsN_crown_ne_singleton (T : UnorderedTree α)
     (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T) :
     p.1 ≠ ({T} : Multiset (UnorderedTree α)) := by
@@ -92,7 +90,6 @@ theorem cutSummandsN_trunk_numNodes_lt {T : UnorderedTree α}
   have := t.numNodes_pos
   omega
 
-/-- A nonempty crown of a pruning cut has fewer edges in total than the tree. -/
 theorem cutSummandsN_crown_numEdges_lt {T : UnorderedTree α}
     {p : Multiset (UnorderedTree α) × UnorderedTree α} (hp : p ∈ cutSummandsN T)
     (h : p.1 ≠ 0) : (p.1.map UnorderedTree.numEdges).sum < T.numEdges := by
@@ -103,7 +100,6 @@ theorem cutSummandsN_crown_numEdges_lt {T : UnorderedTree α}
   have := T.numEdges_add_one
   omega
 
-/-- No pruning cut of `T` has `T` itself among its crown components. -/
 theorem cutSummandsN_self_not_mem_crown (T : UnorderedTree α)
     (p : Multiset (UnorderedTree α) × UnorderedTree α) (hp : p ∈ cutSummandsN T) :
     T ∉ p.1 :=

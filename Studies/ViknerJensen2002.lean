@@ -61,20 +61,16 @@ theorem clitic_apply (Q : NP E) (R : E → E → S → Prop) (s : S) (P : E → 
   rintro ⟨x, hx, -⟩
   exact ⟨x, (hx x).2 rfl⟩
 
-/-- Over a sortal noun `W` relationalized by `R`, the genitive is `PossNP` with possessee class
-`W` and relation `R`. -/
 theorem clitic_pi (Q : NP E) (W : E → S → Prop) (R : E → E → S → Prop) (s : S) :
     clitic Q (π W R) s = PossNP Q the (fun u x ↦ R u x s) (fun x ↦ W x s) := by
   funext P
   simp only [clitic, PossNP, dom, the, π_apply, Pi.inf_apply, inf_Prop_eq, true_and]
 
-/-- An individual's genitive entails that the individual has exactly one `R`. -/
 theorem existsUnique_of_clitic_individual {a : E} {R : E → E → S → Prop} {s : S}
     {P : E → Prop} (h : clitic (individual a) R s P) : ∃! y, R a y s := by
   obtain ⟨x, hx, -⟩ := (clitic_apply _ _ _ _).1 h
   exact ⟨x, (hx x).2 rfl, fun y hy ↦ (hx y).1 hy⟩
 
-/-- The genitive is false if the possessor bears `R` to nothing. -/
 theorem not_clitic_individual {a : E} {R : E → E → S → Prop} {s : S} (h : ∀ x, ¬ R a x s)
     (P : E → Prop) : ¬ clitic (individual a) R s P := by
   rw [clitic_apply]
@@ -88,7 +84,6 @@ possessor quantifier. -/
 def wideDefinite (Q : NP E) (R : E → E → S → Prop) (s : S) : NP E :=
   the (fun y ↦ Q (fun u ↦ R u y s))
 
-/-- With an individual possessor, `clitic` and `wideDefinite` agree. -/
 theorem clitic_individual (a : E) (R : E → E → S → Prop) (s : S) :
     clitic (individual a) R s = wideDefinite (individual a) R s := by
   funext P
@@ -185,7 +180,6 @@ def favourite (prefer : (S → Prop) → (S → Prop) → E → S → Prop) (R :
 
 variable {prefer : (S → Prop) → (S → Prop) → E → S → Prop}
 
-/-- A favourite relatum is a relatum, so *Anne's favourite sister* is a sister of Anne's. -/
 theorem favourite_rel {R : E → E → S → Prop} {y x : E} {s : S} (h : favourite prefer R y x s) :
     R y x s :=
   h.1
@@ -224,7 +218,6 @@ def sky (sky' : E → S → Prop) : Sense E S := ⟨.sortal sky', fun _ ↦ none
 
 variable (sister' : E → E → S → Prop) (movie' sky' : E → S → Prop) (make watch : E → E → S → Prop)
 
-/-- *Anne's sister* and *Anne's favourite sister* express the same relation. -/
 theorem sister_genitive_inherent : (sister sister').genitive ctrl .inherent = some sister' := rfl
 
 theorem sister_favourite :
@@ -245,7 +238,6 @@ theorem movie_favourite :
 telic quale. -/
 theorem sky_favourite : (sky sky').favourite prefer = none := rfl
 
-/-- The pragmatic reading of *Anne's favourite sky* is available all the same. -/
 theorem sky_pragmatic (relatedTo : E → E → S → Prop) :
     (sky sky').shiftWith relatedTo = some (π sky' relatedTo) := rfl
 

@@ -197,7 +197,6 @@ def Form.domainAlts : Form → Set (Set ℕ)
   | .bare _ => ∅
   | φ@(.modified _ _ _) => {D' | D' ⊂ {d | φ.tc d}}
 
-/-- Every subdomain alternative entails the form it is an alternative to. -/
 theorem Form.tc_of_mem_domainAlts {φ : Form} {D' : Set ℕ} (h : D' ∈ φ.domainAlts) {maxD : ℕ}
     (hm : maxD ∈ D') : φ.tc maxD := by
   obtain ⟨n⟩ | ⟨op, f, n⟩ := φ
@@ -205,8 +204,6 @@ theorem Form.tc_of_mem_domainAlts {φ : Form} {D' : Set ℕ} (h : D' ∈ φ.doma
   · simp only [Form.domainAlts, Set.mem_ofPred_eq] at h
     exact h.subset hm
 
-/-- The subsets of a modified form's finite truth set smaller than it are its subdomain
-alternatives. -/
 theorem coe_mem_domainAlts {op : Op} {f : Extent} {n k : ℕ} {T S : Finset ℕ}
     (hT : ∀ d, (Form.modified op f n).tc d ↔ d ∈ T) (hS : S ∈ T.powersetCard k)
     (hk : k < T.card) : (S : Set ℕ) ∈ (Form.modified op f n).domainAlts := by
@@ -233,8 +230,6 @@ def Form.withArg : Form → ℕ → Form
 def Form.scalarAlts (S : Set ℕ) (φ : Form) : Set (Set ℕ) :=
   (fun m ↦ {d | (φ.withArg m).tc d}) '' S
 
-/-- On a scale whose next point above `n` is `s`, *more than n* is exhaustified to the values up
-to `s`. -/
 theorem mem_exh_moreThan_iff {S : Set ℕ} {n s : ℕ} (hs : s ∈ S) (hns : n < s)
     (hnext : ∀ m ∈ S, n < m → s ≤ m) (maxD : ℕ) :
     maxD ∈ exh ((Form.moreThan n).scalarAlts S) {d | (Form.moreThan n).tc d} ↔
@@ -342,7 +337,6 @@ theorem nonempty_possibleValues [IsSerial R] : (possibleValues R μ w).Nonempty 
   let ⟨v, hv⟩ := IsSerial.serial (R := R) w
   ⟨μ v, v, hv, rfl⟩
 
-/-- Exactly one subdomain of size `k` contains the possible values iff there are `k` of them. -/
 theorem existsUnique_subset_iff (hT : possibleValues R μ w ⊆ T) (hk : k < T.card) :
     (∃! S : T.powersetCard k, possibleValues R μ w ⊆ (S : Finset ℕ)) ↔
       (possibleValues R μ w).ncard = k := by
@@ -389,8 +383,6 @@ theorem winner_iff [IsSerial R] : Winner R μ w ↔ (possibleValues R μ w).ncar
   rw [← Set.subset_singleton_iff_eq.trans (or_iff_right nonempty_possibleValues.ne_empty)]
   exact box_mem_iff (s := {x})
 
-/-- Total ignorance, free choice over the values of `T`, holds iff as many values are possible as
-`T` has. -/
 theorem freeChoice_iff (hT : □[R] (μ · ∈ (T : Set ℕ)) w) :
     FreeChoice R w T (μ · = ·) ↔ (possibleValues R μ w).ncard = T.card := by
   have hVT := box_mem_iff.1 hT
@@ -453,8 +445,6 @@ def zeroRuledOut : SetRel ℕ ℕ := {p | p.2 = 1 ∨ p.2 = 2}
 
 instance : IsSerial zeroRuledOut := ⟨fun _ ↦ ⟨1, .inl rfl⟩⟩
 
-/-- The 'loser' state survives the singleton parse open to *less than three* but not the full
-parse forced on *at most two*. -/
 theorem zeroRuledOut_domainImplicatures :
     DomainImplicatures zeroRuledOut id 0 (Finset.range 3) 1 ∧
       ¬ DomainImplicatures zeroRuledOut id 0 (Finset.range 3) 2 := by
@@ -486,8 +476,6 @@ pre-exhaustified against the others (her Ch. 5 (8)–(9)). -/
 def negExh (φ : Form) (D : ι → Set ℕ) (maxD : ℕ) : Prop :=
   ¬ φ.tc maxD ∧ ∀ i, ¬ exhAgainst (· ≠ ·) (fun j ↦ maxD ∉ D j) i
 
-/-- With two or more subdomain alternatives, exhaustifying the negated form says no more than the
-negated form. -/
 theorem negExh_iff [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) (maxD : ℕ) :
     negExh φ D maxD ↔ ¬ φ.tc maxD := by
   refine ⟨And.left, fun h ↦ ⟨h, fun i hi ↦ ?_⟩⟩

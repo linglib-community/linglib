@@ -109,8 +109,6 @@ def apply (w : List α) : List β :=
 
 variable {T} {w : List α} {n : ℕ}
 
-/-- A clause whose guard holds emits its block when every clause whose guard holds emits the
-same block. -/
 theorem emitAt_eq_of_mem {cl : WindowFormula α × List β} (hcl : cl ∈ T.clauses)
     (h : cl.1.Realize w n) (huniq : ∀ cl' ∈ T.clauses, cl'.1.Realize w n → cl'.2 = cl.2) :
     T.emitAt w n = cl.2 := by
@@ -135,14 +133,11 @@ theorem emitAt_congr {w w' : List α} {n n' : ℕ} (hn : n < w.length) (hn' : n'
   congrArg (fun o ↦ (o.map Prod.snd).getD []) <| List.find?_congr fun cl hcl ↦
     decide_eq_decide.2 <| WindowFormula.BackBounded.realize_congr hn hn' hlbl hedge (hT cl hcl)
 
-/-- Extending the input leaves a left-local transduction's blocks at the old positions. -/
 theorem emitAt_append {u : List α} (v : List α) {p : ℕ} (hp : p < u.length) :
     T.emitAt (u ++ v) p = T.emitAt u p :=
   hT.emitAt_congr (by simp; omega) hp (fun _ _ ↦ List.getElem?_append_left (by omega))
     fun _ _ ↦ Iff.rfl
 
-/-- The block a left-local transduction emits at position `p` is the block it emits at the end
-of the `r + 1` input symbols ending at `p`. -/
 theorem emitAt_eq_emitAt_rtake {w : List α} {p : ℕ} (hp : p < w.length) :
     T.emitAt w p = T.emitAt ((w.take (p + 1)).rtake (r + 1)) (min r p) := by
   have hlen : (w.take (p + 1)).length = p + 1 := by simp; omega
@@ -151,8 +146,6 @@ theorem emitAt_eq_emitAt_rtake {w : List α} {p : ℕ} (hp : p < w.length) :
   congr 1
   omega
 
-/-- Appending a symbol to the input of a left-local transduction appends the block at its
-end. -/
 theorem apply_append_singleton (u : List α) (x : α) :
     T.apply (u ++ [x]) = T.apply u ++ T.emitAt (u ++ [x]) u.length := by
   rw [apply, List.length_append, List.length_singleton, List.range_succ, List.flatMap_append,
@@ -211,8 +204,6 @@ theorem leftLocal_toTransduction : (ρ.toTransduction alphabet).LeftLocal r := b
 
 variable [DecidableEq α]
 
-/-- At an in-range position of a word over the alphabet, the transduction of an ISL rule emits the
-block the rule emits after the window there. -/
 theorem emitAt_toTransduction {w : List α} (hw : ∀ a ∈ w, a ∈ alphabet) {p : ℕ}
     (hp : p < w.length) :
     (ρ.toTransduction alphabet).emitAt w p = ρ.windowOutput ((w.take p).rtake r) w[p] := by

@@ -149,13 +149,10 @@ def copular : LinearizedSyntacticObject := be * smallClause
 /-- (18): *lightning* raised over the copula, leaving its lower copy in the small clause. -/
 def copularRaised : LinearizedSyntacticObject := lightning * (be * smallClause)
 
-/-- A root does not qualify as a label, so the nominalizer labels its merge with the root. -/
 theorem nominalizer_root_isLabeled :
     IsLabeled copular (n₁ * lightningRoot : LinearizedSyntacticObject) := by
   decide +kernel
 
-/-- The small clause is two phrases whose determiners match in category but do not agree, neither
-bearing a probe, so it is unlabeled. -/
 theorem smallClause_not_isLabeled :
     d₁.item.cat = the.item.cat ∧ ¬ Agreed copular .phi d₁ the ∧
       ¬ IsLabeled copular smallClause := by
@@ -251,7 +248,6 @@ theorem ex20_ex21 :
       (Examples.ex21.judgment = .acceptable ↔ IsLabeled thoughtAlpha alpha) := by
   decide +kernel
 
-/-- Moving on, the wh-phrase leaves `α` to C: successive-cyclic movement is forced. -/
 theorem alpha_isLabeledBy_of_raising : movedOn.IsLabeledBy alpha c := by
   decide +kernel
 

@@ -96,7 +96,6 @@ def blur : Display where
   kind := d.kind
   has := Finset.univ.filter fun o ↦ ∃ o', d.kind o' = d.kind o ∧ o' ∈ d.has
 
-/-- A blurred display never shows a contrast within a kind. -/
 theorem contrastive_blur : d.blur.contrastive = ∅ := by
   rw [contrastive, Finset.filter_eq_empty_iff]
   rintro o ho ⟨o', hk, hn⟩
@@ -110,7 +109,6 @@ end Display
 it, and to the target. -/
 def Anticipates (S : Finset Object) : Prop := iota (· ∈ S) = some .target
 
-/-- An interpretation anticipates the noun exactly when it is the target alone. -/
 theorem anticipates_iff {S : Finset Object} : Anticipates S ↔ S = {.target} := by
   rw [Anticipates, iota_eq_some_iff, Finset.eq_singleton_iff_unique_mem]
 
@@ -135,14 +133,10 @@ def display : Condition → Display
   | .contrast => contrastDisplay
   | .noContrast => noContrastDisplay
 
-/-- The contrastive interpretation of the contrast display singles out the target before the
-noun, since the competitor has the property but no object of its kind lacks it. -/
 theorem contrastive_contrast : contrastDisplay.contrastive = {.target} := by decide
 
-/-- The descriptive interpretation leaves the target and the competitor. -/
 theorem descriptive_contrast : contrastDisplay.descriptive = {.target, .competitor} := by decide
 
-/-- Without a contrasting object the contrastive interpretation finds nothing. -/
 theorem contrastive_noContrast : noContrastDisplay.contrastive = ∅ := by decide
 
 theorem descriptive_noContrast : noContrastDisplay.descriptive = {.target, .competitor} := by
@@ -207,12 +201,10 @@ def Account.PredictsEffect (a : Account) (t : AdjType) : Prop :=
 instance (a : Account) (t : AdjType) : Decidable (a.PredictsEffect t) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The pragmatic account predicts a contrast effect exactly for the informative types. -/
 theorem pragmatic_predictsEffect_iff (t : AdjType) :
     pragmatic.PredictsEffect t ↔ Informative t := by
   cases t <;> decide
 
-/-- The perceptual account predicts a contrast effect exactly for the salient contrasts. -/
 theorem perceptual_predictsEffect_iff (t : AdjType) :
     perceptual.PredictsEffect t ↔ Salient t := by
   cases t <;> decide
@@ -261,8 +253,6 @@ theorem baseline_higher_iff_not_relative :
     ∀ t, BaselineHigherThanScalar t ↔ t.adjectiveClass ≠ .relative := by
   decide +kernel
 
-/-- Salience does not explain the baseline, since material adjectives, whose contrast is not
-salient, still draw more looks than scalar ones. -/
 theorem salience_not_baseline : ¬ ∀ t, BaselineHigherThanScalar t → Salient t := by
   decide +kernel
 

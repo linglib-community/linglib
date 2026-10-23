@@ -131,8 +131,6 @@ posterior, the prior conditioned on the states that send it. -/
 def IsNashEquilibrium [Fintype T] (σ : T → M) (ρ : M → T) : Prop :=
   (∀ t m, ρ m = t → ρ (σ t) = t) ∧ ∀ m, ρ m ∈ univ.argmax fun t ↦ G.prior[|σ ⁻¹' {m}] {t}
 
-/-- With positive priors, a profile under which the receiver recovers every state from its
-message is a Nash equilibrium. -/
 theorem isNashEquilibrium_of_leftInverse [Fintype T] [MeasurableSingletonClass T]
     [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0) {σ : T → M} {ρ : M → T}
     (h : LeftInverse ρ σ) : G.IsNashEquilibrium σ ρ := by
@@ -194,15 +192,11 @@ def IncompetencePrior (prior : T → ℝ) : Prop :=
 
 variable {table} {prior : T → ℝ}
 
-/-- Under competence the most probable states of a set are the ones undecided about fewest
-alternatives. -/
 theorem CompetencePrior.argmax_eq (h : CompetencePrior table prior) (s : Finset T) :
     s.argmax prior = s.argmax (OrderDual.toDual ∘ uncertaintyCount table) := by
   obtain ⟨f, hf, rfl⟩ := h
   exact argmax_comp_strictMono (g := f ∘ OrderDual.ofDual) hf.dual_left
 
-/-- Under incompetence the most probable states of a set are the ones undecided about most
-alternatives. -/
 theorem IncompetencePrior.argmax_eq (h : IncompetencePrior table prior) (s : Finset T) :
     s.argmax prior = s.argmax (uncertaintyCount table) := by
   obtain ⟨f, hf, rfl⟩ := h
@@ -262,7 +256,6 @@ theorem bestResponseBy_subset (c : γ) : bestResponseBy key lit X c ⊆ bestResp
   unfold bestResponseBy bestResponse; split_ifs
   exacts [le_rfl, argmax_subset]
 
-/-- A secondary criterion that ranks all points alike refines nothing. -/
 theorem bestResponseBy_of_forall_eq (h : ∀ a b, key a = key b) :
     bestResponseBy key lit = bestResponse lit := by
   funext X c; unfold bestResponseBy bestResponse; split_ifs
@@ -573,8 +566,6 @@ theorem receiverChain_one_either :
     receiverChain game.trueStates 1 .either = {.onlyA, .onlyB, .both} := by
   decide
 
-/-- The chain from the literal receiver never reaches the crossed play, although it respects
-literal meaning as well. -/
 theorem receiverChain_ne_crossed (n : ℕ) :
     receiverChain game.trueStates n ≠ fun m ↦ {crossedReceiver m} := by
   obtain ⟨h2, -, hfix⟩ := free_choice
@@ -647,8 +638,6 @@ theorem strong {p : State → ℝ} (hp : CompetencePrior table p) :
     senderChainBy_congr _ hp.argmax_eq]
   decide
 
-/-- Under every incompetence prior both chains read "some" as the speaker undecided about
-"all". -/
 theorem weak {p : State → ℝ} (hp : IncompetencePrior table p) :
     receiverChainBy game.trueStates p 1 .some = {.t1u} ∧
       IsFixedPt (receiverStepBy game.trueStates p ∘ senderStep game.trueStates)
@@ -716,8 +705,6 @@ theorem ignorance :
         receiverChain game.trueStates 1 := by
   decide
 
-/-- Under every competence prior the fixed point of both chains keeps the ignorance reading and
-reads a single disjunct as knowledge that the other is false. -/
 theorem ignorance_of_competencePrior {p : State → ℝ} (hp : CompetencePrior table p) :
     receiverChainBy game.trueStates p 1 = (fun m ↦ match m with
       | .first => {.t101} | .second => {.t011} | .either => {.tuu1}) ∧
@@ -729,8 +716,6 @@ theorem ignorance_of_competencePrior {p : State → ℝ} (hp : CompetencePrior t
     senderChainBy_congr _ hp.argmax_eq]
   decide
 
-/-- Under every incompetence prior the fixed point of both chains keeps the ignorance reading
-and reads a single disjunct as uncertainty about the other. -/
 theorem ignorance_of_incompetencePrior {p : State → ℝ} (hp : IncompetencePrior table p) :
     receiverChainBy game.trueStates p 1 = (fun m ↦ match m with
       | .first => {.t1u1} | .second => {.tu11} | .either => {.tuu1}) ∧
@@ -768,8 +753,6 @@ noncomputable def game : InterpGame State Message :=
     | _, .either | .both, _ | .onlyA, .first | .onlyB, .second => .yes
     | _, _ => .no) (uniformOn Set.univ)
 
-/-- In the fixed point of both chains no state sends the disjunction, so it is a surprise
-message, read literally. -/
 theorem disjunction_surprise :
     receiverChain game.trueStates 1 = (fun m ↦ match m with
       | .first => {.onlyA} | .second => {.onlyB} | .both => {.both}
@@ -809,8 +792,6 @@ noncomputable def game : InterpGame State Message :=
     | .t1101, .first | .t1101, .second => .yes
     | _, _ => .no) (uniformOn Set.univ)
 
-/-- From the literal receiver the chain reaches at level 4 a fixed point reading the
-disjunction as free choice without joint permission. -/
 theorem freeChoice_exclusivity :
     receiverChain game.trueStates 2 = (fun m ↦ match m with
       | .first => {.t1001} | .second => {.t0101} | .both => {.t1111} | .either => {.t1101}) ∧
@@ -850,8 +831,6 @@ noncomputable def game : InterpGame State Message :=
     | .t1011, .both | .t0111, .both | .t1111, .both => .yes
     | _, _ => .no) (uniformOn Set.univ)
 
-/-- Both chains reach a fixed point reading the disjunctive antecedent as both conditionals true
-and the conjunctive one false. -/
 theorem sda_exclusivity :
     receiverChain game.trueStates 2 .either = {.t1101} ∧
       IsFixedPt (receiverStep game.trueStates ∘ senderStep game.trueStates)
@@ -920,8 +899,6 @@ theorem exclusivity_of_competencePrior {p : State → ℝ} (hp : CompetencePrior
   rw [receiverStepBy_congr _ hp.argmax_eq, senderChainBy_congr _ hp.argmax_eq]
   decide
 
-/-- Under every incompetence prior the disjunction conveys that the speaker is undecided about
-`A ∧ B`. -/
 theorem exclusivity_of_incompetencePrior {p : State → ℝ} (hp : IncompetencePrior table p) :
     receiverStepBy game.trueStates p (senderChainBy game.trueStates p 1) .either = {.tuuu1} := by
   rw [receiverStepBy_congr _ hp.argmax_eq, senderChainBy_congr _ hp.argmax_eq]
@@ -963,9 +940,6 @@ def cost : Message → ℕ
   | .johnOrBoth => 1
   | _ => 0
 
-/-- Under every competence prior, with costs breaking the sender's ties, the chain from the
-literal receiver reaches at level 4 a fixed point reading the disjunction as the speaker knowing
-that John came and being undecided about Mary. -/
 theorem possibility_of_competencePrior {p : State → ℝ} (hp : CompetencePrior table p) :
     let round := receiverStepBy game.trueStates p ∘ senderStepBy game.trueStates
       (OrderDual.toDual ∘ cost)
@@ -1072,8 +1046,6 @@ theorem unbiased_real_pos_iff : 0 < (unbiased X a).real {c} ↔ c ∈ X a := by
 
 variable [Fintype γ]
 
-/-- The unbiased belief at an argument is a probability over the choices when the type allows
-one, and zero otherwise. -/
 theorem sum_unbiased_real (a : α) :
     ∑ c, (unbiased X a).real {c} = if (X a).Nonempty then 1 else 0 := by
   simp_rw [unbiased_real_singleton, sum_ite_mem, univ_inter, sum_const, nsmul_eq_mul]
@@ -1084,8 +1056,6 @@ theorem sum_unbiased_real (a : α) :
 theorem sum_unbiased_real_le_one (a : α) : ∑ c, (unbiased X a).real {c} ≤ 1 := by
   rw [sum_unbiased_real]; split_ifs <;> norm_num
 
-/-- Under the unbiased belief in a type choosing the maximisers of `f` on `s`, the expectation of
-`f` is its maximum. -/
 theorem sum_unbiased_real_mul_of_eq_argmax {s : Finset γ} {f : γ → ℝ} (hX : X a = s.argmax f)
     {c₀ : γ} (h : c₀ ∈ s.argmax f) : ∑ c, (unbiased X a).real {c} * f c = f c₀ := by
   have hf : ∀ c ∈ s.argmax f, f c = f c₀ := fun c hc ↦ le_antisymm
@@ -1096,8 +1066,6 @@ theorem sum_unbiased_real_mul_of_eq_argmax {s : Finset γ} {f : γ → ℝ} (hX 
 
 end Unbiased
 
-/-- A sub-probability average of a nonnegative `f`, with weights supported on `s`, is at most the
-maximum of `f` on `s`. -/
 private theorem sum_mul_le_of_support {α : Type*} [Fintype α] {s : Finset α} (w f : α → ℝ)
     (hw : ∀ a, 0 ≤ w a) (hsum : ∑ a, w a ≤ 1) (hsupp : ∀ a, a ∉ s → w a = 0)
     (hf : ∀ a, 0 ≤ f a) {a₀ : α} (h : a₀ ∈ s.argmax f) : ∑ a, w a * f a ≤ f a₀ :=
@@ -1186,7 +1154,6 @@ theorem senderResponse_subset (R : M → Finset T) (t : T) :
   argmax_subset
 
 omit [Fintype M] in
-/-- With positive priors the receiver only chooses states that send the message. -/
 theorem receiverResponse_subset_inverse [IsFiniteMeasure G.prior] (hprior : ∀ t, G.prior {t} ≠ 0)
     {S : T → Finset M} {m : M} (hm : inverse S m ≠ ∅) :
     receiverResponse G S m ⊆ inverse S m := by
@@ -1229,9 +1196,6 @@ theorem senderResponse_eq_senderStep {R : M → Finset T} (hR : ∀ m, R m ⊆ G
         (by exact_mod_cast card_pos.mpr ⟨t, mem_inverse.mp hm⟩), Nat.cast_le]
 
 omit [DecidableEq T] in
-/-- Under near-flat priors the states maximising the prior times the probability of sending `m`
-are the most probable of the light receiver's states, since sending fewer messages outweighs
-any difference in prior. -/
 theorem argmax_prior_mul_uniform_of_nearFlat [IsFiniteMeasure G.prior]
     (hprior : ∀ t, G.prior {t} ≠ 0) (hnf : NearFlat G)
     {S : T → Finset M} {m : M} (hne : inverse S m ≠ ∅) :
@@ -1404,8 +1368,6 @@ theorem expectedGain_le_receiverResponse (S : T → Finset M) (R : M → Finset 
       (fun t ↦ mul_nonneg measureReal_nonneg measureReal_nonneg) ht₀
 
 omit [DecidableEq T] in
-/-- If the sender's response to `R₁` does as well against `R₂` as the response to `R₂`, then
-every message the first sends the second sends too. -/
 theorem senderResponse_subset_of_expectedGain_eq (hprior : ∀ t, G.prior {t} ≠ 0)
     {R₁ R₂ : M → Finset T}
     (h : expectedGain G (senderResponse G R₁) R₂ = expectedGain G (senderResponse G R₂) R₂)
@@ -1508,9 +1470,6 @@ theorem exists_isFixedPt_senderLevel (hprior : ∀ t, G.prior {t} ≠ 0) :
 end Convergence
 
 
-/-- Under a competence prior that is nearly flat, the heavy receiver chain is the light chain
-refined by fewest undecided alternatives, so the competence results below are predictions of the
-heavy system. -/
 theorem receiverLevel_ofTable_of_competencePrior {table : T → M → BeliefValue} {p : Measure T}
     [IsFiniteMeasure p] (hp : CompetencePrior table fun t ↦ p.real {t}) (hpos : ∀ t, p {t} ≠ 0)
     (hnf : NearFlat (ofTable table p)) (n : ℕ) : receiverLevel (ofTable table p) n =
@@ -1632,8 +1591,6 @@ theorem exists_isFixedPt_receiverChain (den : M → Finset T) :
   rwa [IsFixedPt, comp_apply, senderResponse_eq_senderStep hR,
     receiverResponse_eq_receiverStep hprior hflat, hden] at hn
 
-/-- Counting reasoning reaches a fixed point along the chain from the literal sender, for every
-denotation (Theorems 1 and 3), as the heavy chain of a flat prior. -/
 theorem exists_isFixedPt_senderChain (den : M → Finset T) :
     ∃ n, IsFixedPt (senderStep den ∘ receiverStep den) (senderChain den n) := by
   let : MeasurableSpace T := ⊤
@@ -1760,7 +1717,6 @@ theorem ltALT_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined 
      fun h a ha ↦ (Set.mem_insert_iff.mp ha).elim (fun e ↦ e ▸ hA w v h) (h a)⟩
   funext w v; simp only [ltALT, key]
 
-/-- Exhaustification by minimal models ignores a monotonically determined alternative. -/
 theorem exhMW_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined ALT A) :
     exhMW (insert A ALT) φ = exhMW ALT φ := by
   unfold exhMW; rw [ltALT_insert_of_monotoneDetermined ALT hA]

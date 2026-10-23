@@ -129,7 +129,6 @@ otherwise leaves the domain unchanged. -/
 def apply (rule : ObliterationRule Bundle) : SpelloutDomain Bundle → SpelloutDomain Bundle :=
   rewriteFirst rule.condition fun n ↦ n.leftCtx.reverse ++ n.rightCtx
 
-/-- Obliteration never increases the number of terminals. -/
 theorem length_apply_le (rule : ObliterationRule Bundle)
     (d : SpelloutDomain Bundle) : (rule.apply d).length ≤ d.length :=
   length_rewriteFirst_le (fun n ↦ by simp [Neighborhood.toList]) d
@@ -157,7 +156,6 @@ def apply (rule : TerminalMetathesisRule Bundle) :
     | ⟨t₁, l, t₂ :: r⟩ => l.reverse ++ t₂ :: t₁ :: r
     | n => n.toList
 
-/-- Terminal metathesis preserves the number of terminals. -/
 @[simp] theorem length_apply (rule : TerminalMetathesisRule Bundle)
     (d : SpelloutDomain Bundle) : (rule.apply d).length = d.length :=
   length_rewriteFirst (fun | ⟨_, _, _ :: _⟩ => by simp [Neighborhood.toList]
@@ -177,7 +175,6 @@ def applyFirstAdjacent (rule : FusionRule F) :
     | ⟨p, l, q :: r⟩ => l.reverse ++ (p ∪ q) :: r
     | n => n.toList
 
-/-- Fusion never increases the number of terminals. -/
 theorem length_applyFirstAdjacent_le (rule : FusionRule F) (d : SpelloutDomain (Finset F)) :
     (rule.applyFirstAdjacent d).length ≤ d.length :=
   length_rewriteFirst_le (fun | ⟨_, _, _ :: _⟩ => by simp [Neighborhood.toList]
@@ -193,7 +190,6 @@ def runModules (modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle)
     (d : SpelloutDomain Bundle) : SpelloutDomain Bundle :=
   modules.foldl (fun d m ↦ m d) d
 
-/-- Module sequences compose by concatenation. -/
 theorem runModules_append
     (m₁ m₂ : List (SpelloutDomain Bundle → SpelloutDomain Bundle))
     (d : SpelloutDomain Bundle) :

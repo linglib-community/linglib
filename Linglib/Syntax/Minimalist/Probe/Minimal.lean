@@ -88,7 +88,6 @@ theorem Finds.mem (h : p.Finds s key a) : a ∈ s := h.inspects.1
 
 theorem Inspects.mem (h : p.Inspects s key a) : a ∈ s := h.1
 
-/-- In a linearly ordered key, a found goal is at least as close as every satisfier. -/
 theorem Finds.le {β : Type*} [LinearOrder β] {key : α → β} (h : p.Finds s key a) (hb : b ∈ s)
     (hs : p.sat b) : key a ≤ key b :=
   MinimalFor.le h ⟨hb, hs⟩
@@ -121,13 +120,11 @@ theorem agreesWith_iff_finds (hp : ∀ a, p.int a → p.sat a) :
   rw [AgreesWith, finds_iff]
   exact ⟨fun ⟨h, hi⟩ ↦ ⟨⟨h, hp a hi⟩, hi⟩, fun ⟨⟨h, _⟩, hi⟩ ↦ ⟨h, hi⟩⟩
 
-/-- A relativized probe agrees with what it finds. -/
 theorem agreesWith_relativized_iff {f : α → Prop} [DecidablePred f] :
     (relativized f).AgreesWith s key a ↔ (relativized f).Finds s key a := by
   rw [agreesWith_iff_finds fun _ h ↦ h]
   exact ⟨And.left, fun h ↦ ⟨h, h.sat⟩⟩
 
-/-- An insatiable probe inspects its whole domain, Multiple Agree ([hiraiwa-2001]). -/
 theorem inspects_insatiable_iff {f : α → Prop} [DecidablePred f] :
     (insatiable f).Inspects s key a ↔ a ∈ s := by
   simp [Inspects]
@@ -214,7 +211,6 @@ end Closeness
 
 /-! ### The list search, keyed by position -/
 
-/-- The list search finds the inspected goal that satisfies the probe. -/
 theorem search_eq_some_iff_mem_inspected {l : List α} :
     p.search l = some a ↔ a ∈ p.inspected l ∧ p.sat a := by
   rw [Probe.inspected, List.mem_append]

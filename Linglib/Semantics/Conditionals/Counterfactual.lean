@@ -81,13 +81,11 @@ variable {ord p q w}
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
   simp [homogeneityCounterfactual]
 
-/-- The presupposition is symmetric in the consequent and its negation. -/
 theorem support_homogeneityCounterfactual_compl :
     Function.support (homogeneityCounterfactual ord p qᶜ) =
       Function.support (homogeneityCounterfactual ord p q) := by
   ext; simp [and_comm]
 
-/-- With closest antecedent-worlds, negating the consequent negates the verdict. -/
 theorem homogeneityCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
     homogeneityCounterfactual ord p qᶜ w = -homogeneityCounterfactual ord p q w := by
   obtain ⟨v, hv⟩ := h
@@ -128,7 +126,6 @@ theorem selectionalCounterfactual_eq_zero_iff :
       w ∉ closestImp ord p q ∧ w ∉ closestImp ord p qᶜ := by
   simp [selectionalCounterfactual, SignType.supervaluation_eq_zero_iff, Set.not_subset, and_comm]
 
-/-- With closest antecedent-worlds, negating the consequent negates the verdict. -/
 theorem selectionalCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
     selectionalCounterfactual ord p qᶜ w = -selectionalCounterfactual ord p q w := by
   simpa [selectionalCounterfactual] using
@@ -136,7 +133,6 @@ theorem selectionalCounterfactual_compl (h : ((ord w).minimals p).Nonempty) :
 
 variable (ord p q w)
 
-/-- The selectional disjunction of *if p, q* and *if p, not q* is never false. -/
 theorem cem_selectional :
     selectionalCounterfactual ord p q w ⊔ selectionalCounterfactual ord p qᶜ w ≠ -1 := by
   rcases ((ord w).minimals p).eq_empty_or_nonempty with h | h
@@ -178,8 +174,6 @@ Distribution of a counterfactual over a disjunctive consequent fails for the uni
 which quantifies over every closest world, and holds for the selectional theory when there is at
 most one closest world ([stalnaker-1981]). -/
 
-/-- With at most one closest world, the selectional counterfactual distributes over a disjunctive
-consequent. -/
 theorem distribution_selectional (h_unique : ((ord w).minimals p).Subsingleton)
     (h : selectionalCounterfactual ord p (q ∪ r) w = 1) :
     selectionalCounterfactual ord p q w = 1 ∨ selectionalCounterfactual ord p r w = 1 := by
@@ -188,8 +182,6 @@ theorem distribution_selectional (h_unique : ((ord w).minimals p).Subsingleton)
   · simp [h0]
   · simpa only [hv, Set.singleton_subset_iff, Set.mem_union] using h
 
-/-- The conditional of the closest worlds does not distribute over a disjunctive consequent when
-one closest world is a `q`-world and another an `r`-world. -/
 theorem distribution_fails_universal :
     ∃ (ord : Fin 3 → Preorder (Fin 3)) (p q r : Set (Fin 3)) (w : Fin 3),
       w ∈ closestImp ord p (q ∪ r) ∧ w ∉ closestImp ord p q ∧ w ∉ closestImp ord p r :=
@@ -221,15 +213,11 @@ noncomputable def superCounterfactual : SignType :=
 variable {ord p q w} [Fintype W] [∀ w, DecidableRel (ord w).le]
   [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
 
-/-- The selectional counterfactual is true iff the selection conditional is true on every
-completion. -/
 theorem selectionalCounterfactual_eq_one_iff_forall_compatible (hc : IsCentered ord) :
     selectionalCounterfactual ord p q w = 1 ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∈ selectionConditional s p q :=
   selectionalCounterfactual_eq_one_iff.trans (mem_closestImp_iff_forall_compatible hc)
 
-/-- The selectional counterfactual is false iff the selection conditional is false on every
-completion. -/
 theorem selectionalCounterfactual_eq_neg_one_iff_forall_compatible (hc : IsCentered ord) :
     selectionalCounterfactual ord p q w = -1 ↔
       ∀ s : SelectionFunction W, s.Compatible ord → w ∉ selectionConditional s p q := by
@@ -258,8 +246,6 @@ theorem superCounterfactual_eq_selectionalCounterfactual (hc : IsCentered ord) :
     ← selectionalCounterfactual_eq_neg_one_iff_forall_compatible hc]
   cases selectionalCounterfactual ord p q w <;> simp
 
-/-- Under the uniqueness assumption of [stalnaker-1981], at most one closest antecedent-world, any
-compatible selection function decides the selectional counterfactual. -/
 theorem selectionalCounterfactual_eq_ofProp {s : SelectionFunction W} (hs : s.Compatible ord)
     (hu : ((ord w).minimals p).Subsingleton) (hp : p.Nonempty) :
     selectionalCounterfactual ord p q w = SignType.ofProp (s.sel w p ∈ q) := by
@@ -270,8 +256,6 @@ end Supervaluation
 
 /-! ### Ties -/
 
-/-- With two antecedent-worlds tied for closest, a compatible selection function makes *if p, q*
-true while the conditional of the closest worlds does not ([lewis-1973], [stalnaker-1981]). -/
 theorem stalnaker_lewis_would_diverge :
     ∃ (ord : Fin 3 → Preorder (Fin 3)) (s : SelectionFunction (Fin 3)), IsCentered ord ∧
       s.Compatible ord ∧ (0 : Fin 3) ∈ selectionConditional s {1, 2} {1} ∧

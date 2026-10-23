@@ -79,19 +79,16 @@ theorem catathesisCount_cons :
       (if ap.TriggersCatathesis then 1 else 0) + catathesisCount aps := by
   by_cases h : ap.TriggersCatathesis <;> simp [catathesisCount, h, Nat.add_comm]
 
-/-- No bitonal accent, no catathesis. -/
 theorem catathesisCount_eq_zero_iff :
     catathesisCount aps = 0 ↔ ∀ ap ∈ aps, ¬ap.TriggersCatathesis := by
   simp [catathesisCount, List.filter_eq_nil_iff]
 
-/-- Catathesis only compresses: no node of a sequence raises the register. -/
 theorem pitchEffect_registerSpecs_nonpos {t : TRN} (h : t ∈ registerSpecs aps) :
     t.pitchEffect ≤ 0 := by
   simp only [registerSpecs, List.mem_map] at h
   obtain ⟨ap, _, rfl⟩ := h
   split <;> decide
 
-/-- The net shift of a sequence: one step down per bitonal accent. -/
 theorem sum_pitchEffect_registerSpecs :
     ((registerSpecs aps).map TRN.pitchEffect).sum = -(catathesisCount aps : Int) := by
   induction aps with
@@ -101,8 +98,6 @@ theorem sum_pitchEffect_registerSpecs :
     rw [ih]
     split <;> (simp only [pitchEffect_downstep, pitchEffect_empty]; omega)
 
-/-- The staircase: each accentual phrase is realized one step below the baseline for every
-bitonal accent up to and including it. -/
 theorem realizePitch_registerSpecs {i : ℕ} (hi : i < aps.length) :
     (realizePitch b (registerSpecs aps))[i]? = some (b - catathesisCount (aps.take (i + 1))) := by
   induction aps generalizing b i with
@@ -120,8 +115,6 @@ theorem realizePitch_registerSpecs {i : ℕ} (hi : i < aps.length) :
       rw [show List.map _ aps = registerSpecs aps from rfl, ih _ (by simpa using hi)]
       split <;> (simp only [pitchEffect_downstep, pitchEffect_empty, Option.some.injEq]; omega)
 
-/-- One chain: a sequence followed by another is the first followed by the second
-continued from the compressed register. -/
 theorem realizePitch_registerSpecs_append :
     realizePitch b (registerSpecs (aps₁ ++ aps₂)) =
       realizePitch b (registerSpecs aps₁) ++
@@ -130,8 +123,6 @@ theorem realizePitch_registerSpecs_append :
     List.map_append ..
   rw [h, realizePitch_append, sum_pitchEffect_registerSpecs, Int.sub_eq_add_neg]
 
-/-- An intermediate-phrase boundary resets the register, so every level after it is at
-least what continuing the chain would give. -/
 theorem boundary_raises :
     List.Forall₂ (· ≤ ·) (realizePitch (b - catathesisCount aps₁) (registerSpecs aps₂))
       (realizePitch b (registerSpecs aps₂)) :=
@@ -229,8 +220,6 @@ theorem mem_english_accentShapes_iff (a : PitchAccent) :
     a ∈ english.accentShapes ↔ a.tones.Nodup := by
   revert a; decide
 
-/-- Every Japanese accent triggers catathesis, since its one shape is bitonal; an English
-accent need not, since H* and L* are monotonal. -/
 theorem triggers_differ :
     (∀ a ∈ japanese.accentShapes, registerSpecs [⟨some a, 1⟩] = [TRN.downstep]) ∧
       ∃ a ∈ english.accentShapes, registerSpecs [⟨some a, 1⟩] = [TRN.empty] := by
@@ -253,7 +242,6 @@ def AccentualPhrase.ofWords (ws : List ProsodicEntry) : AccentualPhrase :=
   { accent := if ∃ w ∈ ws, w.Accented then some (.trailing .H .L) else none
     nWords := ws.length }
 
-/-- A phrase of words triggers catathesis iff some word is accented. -/
 theorem ofWords_triggersCatathesis_iff (ws : List ProsodicEntry) :
     (AccentualPhrase.ofWords ws).TriggersCatathesis ↔ ∃ w ∈ ws, w.Accented := by
   unfold AccentualPhrase.ofWords AccentualPhrase.TriggersCatathesis

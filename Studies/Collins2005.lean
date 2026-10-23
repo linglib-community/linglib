@@ -300,8 +300,6 @@ theorem converges_iff_not_obeysFreezing (a : Analysis) :
       ex9.patient ex9.agent by decide).not_obeysFreezing_append_im .left
   all_goals decide
 
-/-- θ-uniformity in the structure: at the vP stage of the active and of the passive alike, the
-external argument c-commands the internal one. -/
 theorem agent_over_patient_at_vP :
     ex9.active.CCommandsAt (ex9.vP false).length ex9.agent ex9.patient ∧
       (ex9.passive .partP false).CCommandsAt (ex9.vP false).length ex9.agent ex9.patient := by
@@ -352,9 +350,6 @@ def Order.ofRow (row : Datum) : Option Order := do
       [("partP", .partP), ("headMovement", .headMovement), ("inSitu", .inSitu)],
     (row.parse? "evacuated" bools).getD false⟩
 
-/-- A word-order row is grammatical exactly when the analysis that derives its string
-converges: PartP movement does, head movement and no movement leave the external argument
-between Infl and the object. -/
 theorem order_rows : ∀ row ∈ Examples.all, ∀ o ∈ Order.ofRow row,
     (row.judgment ≠ .ungrammatical ↔ o.clause.Converges o.analysis o.evacuated) := by
   decide +kernel

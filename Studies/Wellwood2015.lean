@@ -105,7 +105,6 @@ def matrixClause (role : Ent → α → Prop) (P : α → Prop) (μ : α → ℚ
     (δ : ℚ) : Prop :=
   ∃ e, role a e ∧ P e ∧ matrixDegP μ δ e
 
-/-- Filling the standard with the maximal than-clause degree is the comparative. -/
 theorem derivation_eq_comparativeTruth {Measured : Type*} (role : Ent → α → Prop)
     (P : α → Prop) (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) :
     (∃ δ, IsGreatest (thanClause role P (fun e ↦ μ (extract e)) b) δ ∧
@@ -222,8 +221,6 @@ variable {α : Type*}
 def NontriviallyStructured [PartialOrder α] (P : α → Prop) : Prop :=
   ∃ x y, P x ∧ P y ∧ x < y
 
-/-- A quantized domain, that of a singular count noun, a telic verb phrase or a non-gradable
-adjective, is not non-trivially structured. -/
 theorem not_nontriviallyStructured_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) :
     ¬ NontriviallyStructured P :=
   fun ⟨_, _, hx, hy, hlt⟩ ↦ hQ hx hy hlt.ne hlt.le
@@ -237,13 +234,10 @@ theorem nontriviallyStructured_of_cum [SemilatticeSup α] {P : α → Prop} (hC 
   · have hle : y ≤ x := sup_eq_left.mp (le_sup_left.eq_of_not_lt h).symm
     exact ⟨y, x, hy, hx, lt_of_le_of_ne hle hne.symm⟩
 
-/-- On a quantized domain every measure is monotonic vacuously. -/
 theorem strictMonoOn_of_qua [PartialOrder α] {P : α → Prop} (hQ : QUA P) (μ : α → ℚ) :
     StrictMonoOn μ {x | P x} :=
   fun _ hx _ hy hlt ↦ absurd hlt.le (hQ hx hy hlt.ne)
 
-/-- On a non-trivially structured domain a monotonic measure separates some pair, so the
-preservation of structure is non-trivial. -/
 theorem exists_lt_of_strictMonoOn [PartialOrder α] {P : α → Prop}
     (hP : NontriviallyStructured P) {μ : α → ℚ} (hμ : StrictMonoOn μ {x | P x}) :
     ∃ x y, P x ∧ P y ∧ μ x < μ y :=

@@ -110,8 +110,6 @@ theorem temporal_radical_apply :
       i = o ∧ compare (s o).time (s' o).time ∈ cell ∧ P (s o) := by
   rw [temporal, radical, test_comp_test]; exact Iff.rfl
 
-/-- A temporal morpheme over a radical is a test, which neither introduces nor retrieves drefs.
--/
 theorem isTest_temporal_radical : IsTest (temporal cell (radical P) s s') :=
   (isTest_test _).comp (isTest_test _)
 
@@ -165,18 +163,12 @@ theorem sfForm_true_at :
     forall_exists_index, and_imp, forall_apply_eq_imp_iff₂, exists_and_left, exists_eq_left']
   simp
 
-/-- *If Ivan leaves the room smiling, the interview went well* is true iff in every later
-historical alternative of the anchor where Ivan leaves, the interview situation lies in its world,
-earlier, and went well. -/
 theorem conditional_true_at (leaves wentWell : Index W T → Prop) :
     i ∈ (conditional history leaves wentWell).dom ↔
       ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → leaves e →
         (i 2).world = e.world ∧ (i 2).time < e.time ∧ wentWell (i 2) := by
   simp only [conditional, sfForm_true_at, Tense.compare_mem_past]
 
-/-- *Every candidate who delivers a good job talk has an equal chance of being hired* is true
-iff in every later historical alternative of the anchor where the talk is delivered, the
-hiring situation lies in its world, at its time, and gives an equal chance. -/
 theorem relativeClause_true_at (delivers chance : Index W T → Prop) :
     i ∈ (relativeClause history delivers chance).dom ↔
       ∀ e ∈ historicalBase history (i 0), (i 0).time < e.time → delivers e →

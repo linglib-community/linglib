@@ -286,7 +286,6 @@ def palatalize (s : List String) : List String :=
     else s
   | none => s
 
-/-- The second palatalization leaves a stem that is not velar as it is. -/
 theorem palatalize_of_not_isVelar {s : List String} (h : ¬ IsVelar s) : palatalize s = s := by
   unfold palatalize
   split <;> simp_all [IsVelar]

@@ -83,7 +83,6 @@ theorem isStrong_iff (c : Cell) : c.IsStrong ↔ c = .strongRelative ∨ c = .st
 theorem isRelative_iff (c : Cell) : c.IsRelative ↔ c = .weakRelative ∨ c = .strongRelative := by
   cases c <;> decide
 
-/-- Only the weak absolute pair lacks a gap. -/
 theorem hasGap_iff (c : Cell) : c.HasGap ↔ c ≠ .weakAbsolute := by
   cases c <;> decide
 
@@ -146,8 +145,6 @@ def simpleOf : AntonymForm → AntonymForm
 def deviation (nach : Bool) (f : AntonymForm) : ℕ :=
   complexity nach f - complexity nach (simpleOf f)
 
-/-- Without NACH both negated forms deviate equally from their antonyms; with it
-    *not small* deviates more from *large* than *not large* does from *small*. -/
 theorem deviation_nach :
     deviation false .notPositive = deviation false .notNegative ∧
     deviation true .notPositive < deviation true .notNegative := by
@@ -193,24 +190,19 @@ def finding : Cell → Asymmetry
   | .weakRelative => .asymmetric
   | _ => .symmetric
 
-/-- Horn is confirmed wherever it applies to a weak pair. -/
 theorem horn_confirmed_on_weak :
     ∀ c : Cell, ¬ c.IsStrong → ∀ p ∈ horn c, p = finding c := by
   decide
 
-/-- Horn's asymmetry for strong pairs is not observed. -/
 theorem horn_unsupported_on_strong :
     ∀ c : Cell, c.IsStrong → horn c ≠ some (finding c) := by
   decide
 
-/-- Krifka's original account fails on weak relatives, its NACH extension on weak
-    absolutes. -/
 theorem krifka_refuted :
     krifka false .weakRelative ≠ some (finding .weakRelative) ∧
     krifka true .weakAbsolute ≠ some (finding .weakAbsolute) := by
   decide
 
-/-- A semantic extension gap is a precondition for negative strengthening. -/
 theorem gap_precondition : ∀ c : Cell, finding c = .asymmetric → c.HasGap := by
   decide
 
@@ -235,15 +227,12 @@ def formOf (row : Datum) : Option AntonymForm :=
   | some "negative", some "negated" => some .notNegative
   | _, _ => none
 
-/-- Each row's design factors are its adjective's in the Fragment, which is strong exactly when
-its standard is extreme and relative exactly when its scale is. -/
 theorem row_factors :
     ∀ row ∈ Examples.all, ∀ a ∈ (row.feature? "adjective").bind entryOf,
       (row.feature? "strength" = some "strong" ↔ a.standard = .extreme) ∧
         (row.feature? "adjectiveType" = some "relative" ↔ a.boundedness.IsRelative) := by
   decide
 
-/-- A statement is in a negated condition exactly when it contains *not*. -/
 theorem negated_iff_not :
     ∀ row ∈ Examples.all, ∀ n ∈ row.feature? "negation",
       (n = "negated" ↔ " not ".toList <:+: row.primaryText.toList) := by

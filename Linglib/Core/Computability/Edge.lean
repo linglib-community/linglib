@@ -105,43 +105,34 @@ def takeAt : List α :=
 
 @[simp] lemma takeAt_right : Edge.right.takeAt k xs = xs.rtake k := rfl
 
-/-- An edge substring has length `min k xs.length`. -/
 lemma length_takeAt : (e.takeAt k xs).length = min k xs.length := by
   cases e <;> simp
 
-/-- For a short string the edge substring is the whole string. -/
 lemma takeAt_of_length_le {k : ℕ} {xs : List α} (h : xs.length ≤ k) :
     e.takeAt k xs = xs := by
   cases e with
   | left => exact List.take_of_length_le h
   | right => exact List.rtake_of_length_le h
 
-/-- The left-`k`-prefix of `p ++ rest` is that of `p`, when `k ≤ p.length`. -/
 lemma takeAt_left_append_of_le_length {k : ℕ} (p rest : List α) (h : k ≤ p.length) :
     Edge.left.takeAt k (p ++ rest) = Edge.left.takeAt k p :=
   List.take_append_of_le_length h
 
-/-- The right-`k`-suffix of `x ++ rest` is that of `rest`, when `k ≤ rest.length`. -/
 lemma takeAt_right_append_of_le_length {k : ℕ} (x rest : List α) (h : k ≤ rest.length) :
     Edge.right.takeAt k (x ++ rest) = Edge.right.takeAt k rest :=
   List.rtake_append_of_le_length h
 
-/-- `takeAt k` is idempotent, since its output already has length at most `k`. -/
 lemma takeAt_idem : e.takeAt k (e.takeAt k xs) = e.takeAt k xs :=
   takeAt_of_length_le e (by rw [length_takeAt]; exact min_le_left _ _)
 
-/-- A shorter edge substring of a longer one is the shorter edge substring. -/
 lemma takeAt_takeAt_of_le {k k' : ℕ} (h : k ≤ k') (xs : List α) :
     e.takeAt k (e.takeAt k' xs) = e.takeAt k xs := by
   cases e <;> simp [List.take_take, List.rtake_rtake, h]
 
-/-- Words with the same edge substring of some length have the same shorter ones. -/
 lemma takeAt_eq_of_le {k k' : ℕ} (h : k ≤ k') {xs xs' : List α}
     (hxs : e.takeAt k' xs = e.takeAt k' xs') : e.takeAt k xs = e.takeAt k xs' := by
   rw [← takeAt_takeAt_of_le e h, hxs, takeAt_takeAt_of_le e h]
 
-/-- Truncating the first factor of a concatenation to its edge substring leaves the edge substring
-of the whole unchanged. -/
 lemma takeAt_takeAt_append (ys : List α) :
     e.takeAt k (e.takeAt k xs ++ ys) = e.takeAt k (xs ++ ys) := by
   cases e with
@@ -151,13 +142,10 @@ lemma takeAt_takeAt_append (ys : List α) :
     · simp [List.take_of_length_le h]
   | right => exact List.rtake_append_rtake k xs ys
 
-/-- Words with the same edge substring keep the same one after appending a word. -/
 lemma takeAt_append_congr {k : ℕ} {xs xs' : List α} (h : e.takeAt k xs = e.takeAt k xs')
     (ys : List α) : e.takeAt k (xs ++ ys) = e.takeAt k (xs' ++ ys) := by
   rw [← takeAt_takeAt_append, h, takeAt_takeAt_append]
 
-/-- Truncating the second factor of a concatenation to its edge substring leaves the edge
-substring of the whole unchanged. -/
 lemma takeAt_append_takeAt (ys : List α) :
     e.takeAt k (xs ++ e.takeAt k ys) = e.takeAt k (xs ++ ys) := by
   cases e with
@@ -167,16 +155,13 @@ lemma takeAt_append_takeAt (ys : List α) :
     · simp [List.rtake_append_of_le_length, List.rtake_rtake, h]
     · simp [List.rtake_of_length_le h]
 
-/-- Words with the same edge substring keep the same one after prepending a word. -/
 lemma takeAt_append_congr_right {k : ℕ} {ys ys' : List α} (h : e.takeAt k ys = e.takeAt k ys')
     (xs : List α) : e.takeAt k (xs ++ ys) = e.takeAt k (xs ++ ys') := by
   rw [← takeAt_append_takeAt, h, takeAt_append_takeAt]
 
-/-- Mapping a function over a word maps it over the edge substring. -/
 lemma takeAt_map {β : Type*} (g : α → β) : e.takeAt k (xs.map g) = (e.takeAt k xs).map g := by
   cases e <;> simp [List.rtake, List.map_take, List.map_drop]
 
-/-- Over a finite alphabet there are finitely many edge substrings of a given length. -/
 lemma finite_range_takeAt [Finite α] : (Set.range (e.takeAt (α := α) k)).Finite :=
   (List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp [length_takeAt])
 
@@ -221,8 +206,6 @@ theorem revConj_comp (g : List β → List γ) (f : List α → List β) :
 @[simp] theorem revConj_map (h : α → β) : revConj (List.map h) = List.map h := by
   funext xs; simp [revConj]
 
-/-- Pulling a language back along a reverse-conjugate reverses the pullback of the
-reversed language. -/
 theorem preimage_revConj (f : List α → List β) (L : Language β) :
     revConj f ⁻¹' L = Language.reverse (f ⁻¹' L.reverse) :=
   rfl

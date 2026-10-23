@@ -87,8 +87,6 @@ theorem destutter_replicate (h : ¬R a a) (n : ℕ) : (replicate (n + 1) a).dest
 section IsEquiv
 variable [IsEquiv α Rᶜ]
 
-/-- `List.destutter'` on a relation like `≠`, whose negation is an equivalence, keeps the same
-elements after the first if the first elements are not related. -/
 theorem tail_destutter'_congr (hab : ¬R a b) (l : List α) :
     (l.destutter' R a).tail = (l.destutter' R b).tail := by
   induction l with

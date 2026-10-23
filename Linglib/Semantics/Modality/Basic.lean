@@ -97,12 +97,9 @@ def classical : ModalForce → ModalForce
 
 variable {f : ModalForce}
 
-/-- The classical dual is blind to the weak–strong distinction. -/
 @[simp]
 theorem dual_classical : f.classical.dual = f.dual := by cases f <;> rfl
 
-/-- The double dual of a force is its classical force: dualizing twice closes weak necessity
-up to necessity. -/
 theorem dual_dual : f.dual.dual = f.classical := by cases f <;> rfl
 
 @[simp]

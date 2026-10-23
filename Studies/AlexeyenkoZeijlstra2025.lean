@@ -164,14 +164,10 @@ def PhiKappaComplete (l : Language) : Prop :=
 instance (l : Language) : Decidable l.PhiKappaComplete := by
   unfold PhiKappaComplete; infer_instance
 
-/-- Greek, Russian, Latin and Kalaallisut alone are φ/κ-complete: Italian lacks case,
-German, Dutch, Icelandic and Serbo-Croatian share no form between the two uses, and the
-rest are uninflected. -/
 theorem phiKappaComplete_iff (l : Language) :
     l.PhiKappaComplete ↔ l = .greek ∨ l = .russian ∨ l = .latin ∨ l = .kalaallisut := by
   cases l <;> decide
 
-/-- A language whose adjectives are not φ/κ-complete has an attributivizer. -/
 theorem attributivizer_ne_none (l : Language) (h : ¬ l.PhiKappaComplete) :
     l.attributivizer ≠ none := by
   revert h; cases l <;> decide
@@ -185,8 +181,6 @@ def Possible (l : Language) (s : Side) : Prop :=
 instance (l : Language) (s : Side) : Decidable (l.Possible s) :=
   inferInstanceAs (Decidable (_ ∧ (_ ∨ ∃ a ∈ _, _)))
 
-/-- The Modifier-Noun Adjacency Generalization: intervention only under φ/κ-complete
-adjectives or an independent attributivizer. -/
 theorem mag (l : Language) (s : Side) (h : l.Possible s) :
     l.PhiKappaComplete ∨ ∃ a ∈ l.attributivizer, ¬ a.Adjacent :=
   h.2
@@ -240,8 +234,6 @@ theorem table3_predicted :
     ∀ s ∈ table3, ∀ l ∈ languageOf s.glottocode, (l.Possible s.side ↔ s.intervention) := by
   decide +kernel
 
-/-- The side of the noun alone decides nothing. Each block of the table holds both verdicts, so
-no filter stated on the side, the Head-Final Filter or its mirror, fits the sample. -/
 theorem side_insufficient (side : Side) :
     ∃ s ∈ table3, ∃ t ∈ table3, s.side = side ∧ t.side = side ∧ s.intervention ∧
       ¬ t.intervention := by
@@ -330,9 +322,6 @@ example : orderOf Examples.az2025_36b = some .nAXp := by decide +kernel
 example : orderOf Examples.az2025_41b = some .xpAN := by decide +kernel
 example : orderOf Examples.az2025_71c = some .aDegN := by decide +kernel
 
-/-- Every attributive row stands on a side of the noun the language allows, every predicative
-order attested is in the language's AP orders, and every judgment on an intervening order is the
-generalization's; relative-clause paraphrases are outside the generalization. -/
 theorem rows_agree :
     ∀ row ∈ Examples.all, ∀ l ∈ languageOf row.language, row.feature? "construction" = none →
       ∀ o ∈ orderOf row,
@@ -344,8 +333,6 @@ theorem rows_agree :
         (o = .nXpA → (row.judgment = .acceptable ↔ l.Possible .postnominal)) := by
   decide +kernel
 
-/-- A degree word between adjective and noun is tolerated exactly by a null
-    attributivizer. -/
 theorem degree_rows :
     ∀ row ∈ Examples.all, orderOf row = some .aDegN →
       ∀ s ∈ attributivizerOf row, (row.judgment = .acceptable ↔ s.MayHost .degreeWord) := by

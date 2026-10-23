@@ -160,32 +160,22 @@ theorem cluster_of_not_trigger :
     ∀ x ∈ consonants ∪ vowels, ¬ trigger ≤ x → cluster [] [x] = [ŋ, x] := by
   decide
 
-/-- The prefix nasal is a phoneme before every consonant, the nasal of the consonant's place
-before an oral consonant and the velar nasal otherwise. -/
 theorem cluster_head_mem :
     ∀ x ∈ consonants, ∀ N ∈ (cluster [] [x]).head?, N ∈ ({m, n, ŋ} : Finset Segment) := by
   decide
 
 /-! ### Examples -/
 
-/-- *mamigáj* 'to distribute' from *bigáj*, with substitution. -/
 theorem mamigaj : substituted [m, a] [b, i, g, a, j] = [m, a, m, i, g, a, j] := by decide
 
-/-- *pantabój* 'to goad' from *tabój*, with assimilation alone. -/
 theorem pantaboj : cluster [p, a] [t, a, b, o, j] = [p, a, n, t, a, b, o, j] := by decide
 
-/-- *pansúlat* 'writing instrument' from *súlat*, with an alveolar nasal before `s`. -/
 theorem pansulat : cluster [p, a] [s, u, l, a, t] = [p, a, n, s, u, l, a, t] := by decide
 
-/-- *panlabás* 'external' from *labás*, with assimilation to the lateral. -/
 theorem panlabas : cluster [p, a] [l, a, b, a, s] = [p, a, n, l, a, b, a, s] := by decide
 
-/-- *maŋulól* 'to fool someone' from *ʔulól*, with substitution of the glottal stop. -/
 theorem mangulol : substituted [m, a] [«ʔ», u, l, o, l] = [m, a, ŋ, u, l, o, l] := by decide
 
-/-- *mapaŋamkám* 'rapacious' from *kamkám*. Substitution takes the stem-initial `k` and leaves
-the cluster inside the stem, which is not homorganic, so that assimilation is confined to the
-prefix as well. -/
 theorem mapangamkam :
     substituted [m, a, p, a] [k, a, m, k, a, m] = [m, a, p, a, ŋ, a, m, k, a, m] ∧
       assimilate [k, a, m, k, a, m] ≠ [k, a, m, k, a, m] := by

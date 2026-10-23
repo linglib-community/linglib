@@ -178,7 +178,6 @@ def toyWords : String → Option ((ty : Ty) × FirstOrderConstant toyLang ty)
 /-- The toy lexicon is the lexicon the toy words induce over the toy model. -/
 def toyLexicon : Lexicon ToyEntity Unit := toyModel.lexicon toyWords ()
 
-/-- The toy lexicon has entries of the three first-order lexical types only. -/
 theorem toyLexicon_fst {s : String} {d : Denotation ToyEntity Unit} (h : toyLexicon s = some d) :
     d.1 = .e ∨ d.1 = (.e ⇒ .t) ∨ d.1 = (.e ⇒ .e ⇒ .t) := by
   simp only [toyLexicon, Model.lexicon, Option.map_eq_some_iff] at h
@@ -231,7 +230,6 @@ def quantifierReading : QuantityWord → Option (Denotation ToyEntity Unit)
   | .some_ => some (toDenotation Family.some ToyEntity Unit)
   | _ => none
 
-/-- Each chosen terminal is among the terminals of the word's available readings. -/
 theorem quantifierReading_mem {w : QuantityWord} {d : Denotation ToyEntity Unit}
     (h : quantifierReading w = some d) : d ∈ terminals ⟦w⟧ ToyEntity Unit := by
   cases w <;> simp only [quantifierReading, Option.some.injEq, reduceCtorEq] at h <;> subst h <;>
@@ -309,7 +307,6 @@ theorem interp_of_denotes {lex : L → Option (Denotation E W)} {g : Assignment 
     funext x
     simp [ih x, valueAt]
 
-/-- The book's rules are deterministic. -/
 theorem Denotes.unique {lex : L → Option (Denotation E W)} {g : Assignment E} {t : Tree C L}
     {d d' : Denotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
   Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
@@ -325,14 +322,11 @@ individual and is undefined elsewhere. -/
 noncomputable def the : Ty.PDomain E W ((.e ⇒ .t) ⇒ .e) S :=
   fun P ↦ ⟨∃! x, True ∈ P x, fun h ↦ Classical.choose h⟩
 
-/-- The definite article is defined exactly on the predicates true of one individual. -/
 theorem the_dom (P : E →. Prop) : (the (W := W) (S := S) P).Dom ↔ ∃! x, True ∈ P x := Iff.rfl
 
-/-- A total predicate is true of an individual where it holds. -/
 @[simp] theorem true_mem_lift (P : E → Prop) (x : E) : True ∈ PFun.lift P x ↔ P x := by
   simp [PFun.lift, Part.mem_some_iff]
 
-/-- On a total predicate true of exactly one individual, the definite article picks it. -/
 theorem the_lift_eq_some {P : E → Prop} {a : E} (h : ∀ x, P x ↔ x = a) :
     the (W := W) (S := S) (PFun.lift P) = Part.some a := by
   have hu : ∃! x, True ∈ PFun.lift P x := ⟨a, (true_mem_lift P a).mpr ((h a).mpr rfl),
@@ -453,12 +447,10 @@ theorem interp_of_denotes {lex : L → Option (PDenotation E W)} {g : Assignment
     funext x
     simp [ih x, valueAtPartial]
 
-/-- The book's revised rules are deterministic. -/
 theorem Denotes.unique {lex : L → Option (PDenotation E W)} {g : Assignment E} {t : Tree C L}
     {d d' : PDenotation E W} (h : Denotes lex g t d) (h' : Denotes lex g t d') : d = d' :=
   Option.some.inj ((interp_of_denotes h).symm.trans (interp_of_denotes h'))
 
-/-- *The pizza* denotes the pizza by the book's own rules. -/
 theorem denotes_the_pizza :
     Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza")) ⟨.e, Part.some .pizza⟩ := by
   have h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "pizza"))
@@ -467,14 +459,12 @@ theorem denotes_the_pizza :
       (.tn rfl) (.tn rfl)
   rwa [the_lift_eq_some (P := Toy.pizza) (a := .pizza) fun _ ↦ Iff.rfl] at h
 
-/-- Whatever value the book's rules assign *the student* is undefined. -/
 theorem denotes_the_student {v : Part ToyEntity}
     (h : Denotes partialLex g₀ (.bin (.leaf "the") (.leaf "student")) ⟨.e, v⟩) : ¬ v.Dom := by
   obtain ⟨d, hd, hdom⟩ := the_student_fails
   cases Option.some.inj ((interp_of_denotes h).symm.trans hd)
   exact hdom
 
-/-- The toy lexicon lifted entrywise never fails, since its entries are first order. -/
 theorem toyLexicon_toPartial_noFailure (g : Assignment ToyEntity) (t : Tree Unit String) :
     ¬ PresupFailure (fun w ↦ (toyLexicon w).map Denotation.toPartial) g t :=
   not_presupFailure_map_toPartial (fun _ _ h ↦ by
@@ -521,8 +511,6 @@ theorem interp_studentWhoSleeps (g : Assignment ToyEntity) :
     interp toyLexicon g tree_studentWhoSleeps =
       some ⟨.e ⇒ .t, (Modifier.intersective student Toy.sleeps : ToyEntity → Prop)⟩ := rfl
 
-/-- The noun phrase is a derivation in the book's rules, Predicate Modification over the noun and
-the Predicate Abstraction of the clause. -/
 theorem denotes_studentWhoSleeps (g : Assignment ToyEntity) :
     Denotes toyLexicon g tree_studentWhoSleeps ⟨.e ⇒ .t, fun x ↦ student x ∧ Toy.sleeps x⟩ :=
   .pm (.tn rfl) <| .pa (τ := .t) fun x ↦ .nn <|
@@ -532,8 +520,6 @@ theorem denotes_studentWhoSleeps (g : Assignment ToyEntity) :
 theorem interp_johnSeesT (g : Assignment ToyEntity) :
     interp toyLexicon g tree_johnSeesT = some ⟨.t, Toy.sees (g 1) .john⟩ := rfl
 
-/-- The open sentence has no assignment-independent value, since John sees Mary but not
-himself. -/
 theorem interp_johnSeesT_ne :
     interp toyLexicon (g₀[1 ↦ .mary]) tree_johnSeesT ≠ interp toyLexicon g₀ tree_johnSeesT := by
   simp only [interp_johnSeesT, Function.update_self, ne_eq, Option.some.injEq, Sigma.mk.inj_iff,
@@ -541,8 +527,6 @@ theorem interp_johnSeesT_ne :
   intro h
   rcases cast h (.inl ⟨rfl, rfl⟩) with ⟨_, h⟩ | ⟨h, _⟩ <;> cases h
 
-/-- The object relative denotes the property of being seen by John at every assignment, the value
-of none of its subtrees. -/
 theorem interp_whichJohnSees (g : Assignment ToyEntity) :
     interp toyLexicon g tree_whichJohnSees = some ⟨.e ⇒ .t, fun x ↦ Toy.sees x .john⟩ := rfl
 
@@ -556,8 +540,6 @@ theorem denotes_whichJohnSees (g : Assignment ToyEntity) :
       .faLeft (lex := toyLexicon) (σ := .e) (τ := .e ⇒ .t) (f := Toy.sees) (a := x) (.tn rfl)
         .trace
 
-/-- *The student who sleeps* denotes John by the book's revised rules, the article applying to the
-noun phrase that the relative clause restricts. -/
 theorem Partial.denotes_the_student_who_sleeps :
     Partial.Denotes partialLex g₀ (.bin (.leaf "the") tree_studentWhoSleeps)
       ⟨.e, Part.some .john⟩ := by
@@ -626,28 +608,22 @@ abbrev surfaceScopeProp : Prop :=
 abbrev inverseScopeProp : Prop :=
   inverseScope every GQ.some person person fun x y ↦ Toy.sees y x
 
-/-- Surface scope is true in the toy model, where John and Mary see each other. -/
 theorem surface_scope_true : surfaceScopeProp := by
   rintro x (rfl | rfl)
   · exact ⟨.mary, .inr rfl, .inl ⟨rfl, rfl⟩⟩
   · exact ⟨.john, .inl rfl, .inr ⟨rfl, rfl⟩⟩
 
-/-- Inverse scope is false in the toy model, where no one sees themselves. -/
 theorem inverse_scope_false : ¬inverseScopeProp := by
   rintro ⟨y, (rfl | rfl), hall⟩
   · exact nomatch hall .john (.inl rfl)
   · exact nomatch hall .mary (.inr rfl)
 
-/-- The inverse reading entails the surface one, so a model can separate them only in the
-direction the toy model does. -/
 theorem inverse_entails_surface : inverseScopeProp → surfaceScopeProp :=
   iterate_every_some_of_some_every _ _ _
 
-/-- On the surface-scope tree the engine computes the surface reading. -/
 theorem interp_computes_surface :
     interp lex g₀ tree_surface = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
-/-- On the inverse-scope tree the engine computes the inverse reading. -/
 theorem interp_computes_inverse :
     interp lex g₀ tree_inverse = some ⟨Ty.t, inverseScopeProp⟩ := rfl
 
@@ -658,8 +634,6 @@ theorem scope_ambiguity_computed : interp lex g₀ tree_surface ≠ interp lex g
   have : surfaceScopeProp = inverseScopeProp := by injection h with h'; injection h'
   exact inverse_scope_false (this ▸ surface_scope_true)
 
-/-- The surface-scope reading is a derivation in the book's rules, Functional Application around
-two Predicate Abstractions with the quantifier words as terminals. -/
 theorem denotes_surface : Denotes lex g₀ tree_surface ⟨Ty.t, surfaceScopeProp⟩ := by
   show Denotes lex g₀ tree_surface
     ⟨Ty.t, every person fun x ↦ GQ.some person fun y ↦ Toy.sees y x⟩
@@ -687,14 +661,12 @@ the toy fragment's words through the toy lexicon. -/
 def lexReadings : QuantityWord ⊕ String → Set (Denotation ToyEntity Unit) :=
   Sum.elim (fun w ↦ terminals ⟦w⟧ ToyEntity Unit) fun s ↦ {d | toyLexicon s = some d}
 
-/-- The study's leaf interpretation chooses among the available readings. -/
 theorem lex_mem_lexReadings (w : QuantityWord ⊕ String) (d : Denotation ToyEntity Unit)
     (h : lex w = some d) : d ∈ lexReadings w := by
   cases w with
   | inl w => exact quantifierReading_mem h
   | inr s => exact h
 
-/-- The surface-scope reading is among the readings of the surface tree. -/
 theorem surfaceScopeProp_mem_readings :
     ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexReadings g₀ tree_surface :=
   Tree.interp_mem_readings lex_mem_lexReadings interp_computes_surface
@@ -721,7 +693,6 @@ def resolve (object : QuantityWord → Prop) [DecidablePred object] :
   Sum.elim (fun w ↦ if object w then (quantifierReading w).bind objectShift?
     else quantifierReading w) toyLexicon
 
-/-- Every resolution chooses among the readings the lexical rule makes available. -/
 theorem resolve_mem_lexFlex (object : QuantityWord → Prop) [DecidablePred object]
     (w : QuantityWord ⊕ String) (d : Denotation ToyEntity Unit) (h : resolve object w = some d) :
     d ∈ lexFlex w := by
@@ -740,12 +711,9 @@ def tree_inSitu : Tree Unit (QuantityWord ⊕ String) :=
   .bin (.bin (.leaf (.inl .every)) (.leaf (.inr "person")))
     (.bin (.leaf (.inr "sees")) (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))))
 
-/-- Under the book's subscripts, the object-position entry for *some* alone, the in-situ tree
-composes by Functional Application alone to the surface-scope reading. -/
 theorem interp_computes_inSitu :
     interp (resolve (· = .some_)) g₀ tree_inSitu = some ⟨Ty.t, surfaceScopeProp⟩ := rfl
 
-/-- The in-situ and QR derivations compute the same reading. -/
 theorem inSitu_eq_surface :
     interp (resolve (· = .some_)) g₀ tree_inSitu = interp lex g₀ tree_surface :=
   interp_computes_inSitu.trans interp_computes_surface.symm
@@ -755,8 +723,6 @@ theorem surfaceScopeProp_mem_readings_inSitu :
     ⟨Ty.t, surfaceScopeProp⟩ ∈ Tree.readings lexFlex g₀ tree_inSitu :=
   Tree.interp_mem_readings (resolve_mem_lexFlex _) interp_computes_inSitu
 
-/-- An object-position entry in subject position leaves its mother uninterpretable, `[S [DP
-some person] [VP sleeps]]` with *some* resolved to its object-position entry. -/
 theorem object_entry_in_subject_uninterpretable :
     interp (resolve (· = .some_)) g₀
       (.bin (.bin (.leaf (.inl .some_)) (.leaf (.inr "person"))) (.leaf (.inr "sleeps"))) =
@@ -799,8 +765,6 @@ def everyStudentSleeps : Tree Unit String :=
   .bin (.bin (.leaf "every") (.leaf "student")) (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
 
 open Toy in
-/-- In the logical form of *every student sleeps* the determiner applies forward to the noun and
-to the abstraction over the trace, which the verb applies backward to. -/
 theorem translate_everyStudentSleeps : Tree.translate toyVocabulary everyStudentSleeps =
     some ⟨.t, .comp .functionalLeft
       (.comp .functionalLeft (.const .every) (.const (.rel₁ studentRel)))

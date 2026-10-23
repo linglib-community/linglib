@@ -55,9 +55,6 @@ theorem IsLowerSet.sups (hs : IsLowerSet s) (ht : IsLowerSet t) : IsLowerSet (s 
   exact Set.mem_sups.mpr ⟨c ⊓ a, hs inf_le_right ha, c ⊓ b, ht inf_le_right hb,
     by rw [← inf_sup_left, inf_eq_left.mpr hc]⟩
 
-/-- Pointwise sups of convex sets are convex when both sets are sup-closed: an element
-    `x` between `a ⊔ b` and `c ⊔ d` splits as `(a ⊔ c) ⊓ x ⊔ (b ⊔ d) ⊓ x`, each part lying
-    between `a` and `a ⊔ c`, respectively `b` and `b ⊔ d`. -/
 theorem Set.OrdConnected.sups (hs : s.OrdConnected) (ht : t.OrdConnected) (hs' : SupClosed s)
     (ht' : SupClosed t) : (s ⊻ t).OrdConnected := by
   rw [Set.ordConnected_iff]
@@ -77,7 +74,6 @@ namespace Set
 
 variable {α : Type*} [CompleteLattice α] {s t : Set α}
 
-/-- The supremum of `s ⊻ t` is `sSup s ⊔ sSup t` when `s` and `t` are nonempty. [UPSTREAM] -/
 theorem sSup_sups (hs : s.Nonempty) (ht : t.Nonempty) : sSup (s ⊻ t) = sSup s ⊔ sSup t := by
   obtain ⟨a, ha⟩ := hs
   obtain ⟨b, hb⟩ := ht
@@ -101,8 +97,6 @@ theorem mem_iSups : a ∈ iSups s ↔ ∃ f : ι → α, (∀ i, f i ∈ s i) �
 theorem iSup_mem_iSups {f : ι → α} (hf : ∀ i, f i ∈ s i) : ⨆ i, f i ∈ iSups s :=
   mem_iSups.2 ⟨f, hf, rfl⟩
 
-/-- An element of one member of a family of nonempty sets lies below an element of their pointwise
-supremum. [UPSTREAM] -/
 theorem exists_mem_iSups_ge (hs : ∀ j, (s j).Nonempty) {i : ι} (ha : a ∈ s i) :
     ∃ b ∈ iSups s, a ≤ b := by
   classical
@@ -114,8 +108,6 @@ theorem exists_mem_iSups_ge (hs : ∀ j, (s j).Nonempty) {i : ι} (ha : a ∈ s 
     · simpa [f, h] using (hs j).some_mem
   exact ⟨_, iSup_mem_iSups hf, by simpa [f] using le_iSup f i⟩
 
-/-- The supremum of `Set.iSups s` is the supremum of the suprema of the `s i` when each is
-nonempty. [UPSTREAM] -/
 theorem sSup_iSups (hs : ∀ i, (s i).Nonempty) : sSup (iSups s) = ⨆ i, sSup (s i) := by
   refine le_antisymm (sSup_le fun _ ha ↦ ?_) (iSup_le fun i ↦ sSup_le fun b hb ↦ ?_)
   · obtain ⟨f, hf, rfl⟩ := mem_iSups.1 ha
@@ -123,8 +115,6 @@ theorem sSup_iSups (hs : ∀ i, (s i).Nonempty) : sSup (iSups s) = ⨆ i, sSup (
   · obtain ⟨c, hc, hbc⟩ := exists_mem_iSups_ge hs hb
     exact hbc.trans (le_sSup hc)
 
-/-- The upper closure of `Set.iSups s` is the meet of the upper closures of the `s i`, as upper
-sets. [UPSTREAM] -/
 theorem upperClosure_iSups : upperClosure (iSups s) = ⨆ i, upperClosure (s i) := by
   refine SetLike.ext fun a ↦ ?_
   rw [mem_upperClosure, UpperSet.mem_iSup_iff]

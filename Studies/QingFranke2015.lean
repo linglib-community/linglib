@@ -146,7 +146,6 @@ instance (g : Goal) (μ : Measure Object) (lam c : ℝ) : IsFiniteKernel (speake
   · exact inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
   · exact inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
-/-- At the uniform prior the literal listener is Frank and Goodman's. -/
 theorem literal_uniform : literal (uniformOn .univ) = FrankGoodman2012.literal M :=
   rfl
 
@@ -187,8 +186,6 @@ theorem speaker_lt_iff (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (
     ⟨u, by rw [ite_eq_left hu]; exact EReal.coe_ne_bot _⟩, ite_eq_left hu, ite_eq_left hu',
     EReal.coe_lt_coe_iff, mul_lt_mul_iff_right₀ hlam]
 
-/-- An object has two true words, the one for its colour and the one for its shape, and the share
-of one is the logistic function of its utility over the other's, scaled by the rationality. -/
 theorem speaker_real_singleton (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
     (hu' : t ∈ ⟦u'⟧ᴹ) (h : u.1 ≠ u'.1) :
     (speaker g μ lam c t).real {u} =
@@ -215,8 +212,6 @@ At the uniform prior a word is worth the goal's measure of the reciprocal of its
 Every word of the context is true of one object or of two, and the difference in their worth is
 `log 2` to the belief-oriented speaker and `1/2` to the action-oriented one. -/
 
-/-- At the uniform prior the literal listener gives each object in the extension of a word the
-reciprocal of the extension's size. -/
 theorem literal_uniform_real (h : t ∈ ⟦u⟧ᴹ) :
     (literal (uniformOn .univ) u).real {t} = (⟦u⟧ᴹ.card : ℝ)⁻¹ := by
   rw [literal_uniform, FrankGoodman2012.literal, listener_uniformOn_truthful_real_singleton,
@@ -236,7 +231,6 @@ noncomputable def Goal.gap (g : Goal) : ℝ :=
 theorem Goal.gap_pos (g : Goal) : 0 < g.gap := by
   cases g <;> simp [log_pos]
 
-/-- The gap exceeds every cost in the paper's support `(-0.4, 0.4)`. -/
 theorem Goal.support_lt_gap (g : Goal) : 0.4 < g.gap := by
   cases g
   · linarith [gap_belief, log_two_gt_d9]
@@ -281,8 +275,6 @@ theorem prefers_noun_iff (hlam : 0 < lam) (g : Goal) :
 
 /-! ### The belief-oriented speaker who heeds salience -/
 
-/-- At the salience prior the literal listener gives each object in the extension of a word its
-share of the extension's salience. -/
 theorem literal_salience_real (h : t ∈ ⟦u⟧ᴹ) :
     (literal salience u).real {t} = (listenerChoice .salience t).count /
       ∑ t' ∈ ⟦u⟧ᴹ, ((listenerChoice .salience t').count : ℝ) := by

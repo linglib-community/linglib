@@ -80,7 +80,6 @@ section Conflation
 
 variable [Conflation B] [NegConfComm B]
 
-/-- Exact valuations evaluate to exact values ([fitting-2021] Prop 8.6.3). -/
 theorem eval_isExact {v : α → B} (hv : ∀ p, IsExact (v p)) :
     ∀ φ : Fml α, IsExact (φ.eval v)
   | .atom p => hv p
@@ -90,7 +89,6 @@ theorem eval_isExact {v : α → B} (hv : ∀ p, IsExact (v p)) :
 
 variable [Negation B] [IsInterlaced B]
 
-/-- Anticonsistent valuations evaluate to anticonsistent values ([fitting-2021] Prop 8.6.3). -/
 theorem eval_isAnticonsistent {v : α → B} (hv : ∀ p, IsAnticonsistent (v p)) :
     ∀ φ : Fml α, IsAnticonsistent (φ.eval v)
   | .atom p => hv p
@@ -102,7 +100,6 @@ end Conflation
 
 variable [Negation B] [IsInterlaced B]
 
-/-- Evaluation is knowledge-monotone in the valuation ([fitting-2021] Prop 8.6.4). -/
 theorem eval_kLE_eval {v w : α → B} (h : ∀ p, v p ≤ₖ w p) :
     ∀ φ : Fml α, φ.eval v ≤ₖ φ.eval w
   | .atom p => h p
@@ -143,14 +140,12 @@ structure PrimeBifilter (B : Type*) [Lattice B] [Lattice (Know B)] where
 
 instance : Membership B (PrimeBifilter B) := ⟨fun F a ↦ a ∈ F.carrier⟩
 
-/-- Prime bifilters are upward closed in the knowledge order ([fitting-2021] Prop 8.6.6). -/
 theorem PrimeBifilter.mem_of_kLE (F : PrimeBifilter B) {a b : B} (ha : a ∈ F) (h : a ≤ₖ b) :
     b ∈ F := by
   have hab : a ⊔ₖ b = b :=
     toKnow.injective (by simpa only [toKnow_kSup] using sup_eq_right.mpr h)
   exact hab ▸ F.kSup_mem_iff.mpr (Or.inl ha)
 
-/-- Prime bifilters are upward closed in the truth order ([fitting-2021] Prop 8.6.6). -/
 theorem PrimeBifilter.mem_of_le (F : PrimeBifilter B) {a b : B} (ha : a ∈ F) (h : a ≤ b) :
     b ∈ F :=
   sup_eq_right.mpr h ▸ F.sup_mem_iff.mpr (Or.inl ha)
@@ -207,12 +202,6 @@ section Interlaced
 
 variable [Negation B] [IsInterlaced B] [NegConfComm B]
 
-/-- The strict/tolerant and classical logics of a logical bilattice validate exactly the same
-sequents ([fitting-2021] Prop 8.7.2). Both directions are model correspondences
-(`Consequence.MixedConsequence.comap`). Every exact valuation is anticonsistent, and below every
-anticonsistent valuation lies an exact one on which strict premises agree, whose strict
-conclusions lift along knowledge-monotonicity and bifilter closure. This replaces the chapter's
-contraposition. -/
 theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
     STValid F Γ Δ ↔ CValid F Γ Δ := by
   refine ⟨fun h ↦ h.comap (fun v ↦ ⟨v, fun p ↦ (v.2 p).isAnticonsistent⟩) (fun _ _ _ ↦ id)
@@ -225,17 +214,12 @@ theorem stValid_iff_cValid (F : PrimeBifilter B) (Γ Δ : List (Fml α)) :
 
 end Interlaced
 
-/-- Cut is locally valid in `C⟨B, F⟩`, so a valuation satisfying both premises of a cut instance
-satisfies its conclusion ([fitting-2021] Prop 8.7.3). -/
 theorem cut_cSatisfies (F : PrimeBifilter B) {Γ Δ : List (Fml α)} {A : Fml α} {v : α → B}
     (h₁ : CSatisfies F v (A :: Γ) Δ) (h₂ : CSatisfies F v Γ (A :: Δ)) : CSatisfies F v Γ Δ :=
   Consequence.Satisfies.cut id h₁ h₂
 
 variable [BoundedOrder (Know B)]
 
-/-- The cut scheme fails locally in `ST⟨B, F⟩` when the knowledge order is nontrivial, the `ST`
-half of [fitting-2021] Prop 8.7.3. The countermodel sends a letter to the knowledge top — designated
-and anticonsistent but not exact — so both cut premises hold while the empty conclusion fails. -/
 theorem cut_not_local_stValid (F : PrimeBifilter B) (p : α) (hbt : (⊥ : Know B) ≠ ⊤) :
     ¬ ∀ v : α → B, (∀ q, IsAnticonsistent (v q)) →
       STSatisfies F v [.atom p] [] → STSatisfies F v [] [.atom p] →
@@ -321,12 +305,10 @@ instance (D : PrimeFilter L) [DecidablePred (· ∈ D)] : DecidablePred (· ∈ 
 
 variable [InvolutiveCompl L]
 
-/-- In `D × L` the strictly designated values are the exact pairs `⟨a, aᶜ⟩` with `a ∈ D`. -/
 theorem strictlyDesignated_prod_iff (D : PrimeFilter L) (x : L ⊙ L) :
     StrictlyDesignated D.prod x ↔ x.pro ∈ D ∧ x.con = x.proᶜ :=
   and_congr Iff.rfl (Product.isExact_iff x)
 
-/-- In `D × L` the tolerantly designated values are the anticonsistent pairs with `a ∈ D`. -/
 theorem tolerantlyDesignated_prod_iff (D : PrimeFilter L) (x : L ⊙ L) :
     TolerantlyDesignated D.prod x ↔ x.pro ∈ D ∧ x.proᶜ ≤ x.con :=
   and_congr Iff.rfl (Product.isAnticonsistent_iff x)
@@ -353,12 +335,10 @@ def exactVal (v : α → L) (p : α) : L ⊙ L := mk (v p) (v p)ᶜ
 theorem exactVal_isExact (v : α → L) (p : α) : IsExact (exactVal v p) :=
   (Product.isExact_iff _).2 rfl
 
-/-- Exact valuations are exactly the `exactVal`s. -/
 theorem eq_exactVal_of_isExact {v : α → L ⊙ L} (hv : ∀ p, IsExact (v p)) :
     v = exactVal fun p ↦ (v p).pro :=
   funext fun p ↦ Product.ext rfl ((Product.isExact_iff _).1 (hv p))
 
-/-- Evaluation in `L ⊙ L` along an exact valuation is evaluation in `L`. -/
 theorem eval_exactVal (v : α → L) : ∀ φ : Fml α, φ.eval (exactVal v) = mk (φ.evalL v) (φ.evalL v)ᶜ
   | .atom _ => rfl
   | .and φ ψ => by
@@ -372,8 +352,6 @@ theorem eval_exactVal (v : α → L) : ∀ φ : Fml α, φ.eval (exactVal v) = m
 
 variable [BoundedOrder L]
 
-/-- `C⟨L ⊙ L, D × L⟩` is the logic `⟨L, D⟩` ([fitting-2021] Prop 8.9.3). The two validate the
-same sequents, the exact values of the product corresponding to `L` and `(D × L) ∩ E` to `D`. -/
 theorem cValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
     CValid D.prod Γ Δ ↔ LValid D Γ Δ := by
   have hval (v : α → L) (φ : Fml α) : φ.eval (exactVal v) ∈ D.prod ↔ φ.evalL v ∈ D := by
@@ -389,14 +367,10 @@ theorem cValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
 
 /-! ### Generating strict/tolerant examples (§8.10) -/
 
-/-- The strict/tolerant counterpart `ST⟨L ⊙ L, D × L⟩` of a logical De Morgan algebra `⟨L, D⟩`
-has the same consequence relation ([fitting-2021] Prop 8.10.1). -/
 theorem stValid_prod_iff (D : PrimeFilter L) (Γ Δ : List (Fml α)) :
     STValid D.prod Γ Δ ↔ LValid D Γ Δ :=
   (stValid_iff_cValid _ _ _).trans (cValid_prod_iff D Γ Δ)
 
-/-- The strict/tolerant counterpart differs at the metaconsequence level, since cut fails locally
-in it ([fitting-2021] Prop 8.10.1). -/
 theorem cut_not_local_prod [Nontrivial L] (D : PrimeFilter L) (p : α) :
     ¬ ∀ v : α → L ⊙ L, (∀ q, IsAnticonsistent (v q)) →
       STSatisfies D.prod v [.atom p] [] → STSatisfies D.prod v [] [.atom p] →
@@ -442,7 +416,6 @@ theorem four_stValid_iff_cValid {α : Type*} (Γ Δ : List (Fml α)) :
     STValid fourBifilter Γ Δ ↔ CValid fourBifilter Γ Δ :=
   stValid_iff_cValid fourBifilter Γ Δ
 
-/-- And cut fails locally in `ST` over `FOUR`. -/
 theorem four_cut_not_local {α : Type*} (p : α) :
     ¬ ∀ v : α → FOUR, (∀ q, IsAnticonsistent (v q)) →
       STSatisfies fourBifilter v [.atom p] [] → STSatisfies fourBifilter v [] [.atom p] →

@@ -64,14 +64,11 @@ def enrich : Formula Atom → Formula Atom
   | .disj φ ψ => .conj (.disj (enrich φ) (enrich ψ)) .ne
   | .poss φ => .conj (.poss (enrich φ)) .ne
 
-/-- A team supporting an enriched formula is non-empty. -/
 theorem nonempty_of_support_enrich (h : support M (enrich φ) t) : t.Nonempty := by
   cases φ with
   | ne => exact h
   | _ => exact h.2
 
-/-- Only the empty team anti-supports `NE`, so anti-support of `φ ∧ NE` reduces to
-anti-support of `φ`. -/
 theorem antiSupport_conj_ne (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     antiSupport M (.conj φ .ne) t ↔ antiSupport M φ t where
   mp := fun ⟨_, h, _, h₂, hu⟩ ↦ by
@@ -79,8 +76,6 @@ theorem antiSupport_conj_ne (M : KripkeModel W Atom) (φ : Formula Atom) (t : Fi
     simpa [← hu] using h
   mpr h := ⟨t, h, ∅, rfl, Finset.union_empty t⟩
 
-/-- `[¬¬φ]⁺` and `[φ]⁺` have the same support, since the two `NE` conjuncts added by the
-negations are absorbed. -/
 theorem support_enrich_neg_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (enrich (.neg (.neg φ))) t ↔ support M (enrich φ) t where
   mp h := (antiSupport_conj_ne M _ t).mp h.1
@@ -173,9 +168,6 @@ theorem not_equivalent_neg_neg_enrich (hNE : φ.NEFree) :
 def ConsequencePlus (φ ψ : Formula Atom) : Prop :=
   Consequence (W := W) (enrich φ) (enrich ψ)
 
-/-- On classical positive formulas, those with neither `NE` nor negation, support of the
-enrichment is BSML* support on a non-empty team. The `NE` conjunct at each subformula is the
-exclusion of `∅` from each split. -/
 theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
   induction φ generalizing t with

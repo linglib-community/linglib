@@ -165,7 +165,6 @@ inductive Eval (P : Program α F) (w : List α) : ℕ → Expr α F → Bool →
 variable {P : Program α F} {w w' : List α} {i v : ℕ} {t u : Walk}
   {e e₁ e₂ : Expr α F} {b b' b₁ b₂ : Bool}
 
-/-- Boolean-form introduction for the initial test. -/
 theorem Eval.initial (h : t.eval w i = some v) : Eval P w i (.initial t) (decide (v = 0)) := by
   rcases Nat.eq_zero_or_pos v with rfl | hv
   · simpa using Eval.initial_true (P := P) h
@@ -202,7 +201,6 @@ theorem Eval.not (h : Eval P w i e b) : Eval P w i e.not (!b) := by
   cases b
   exacts [.ite_false h .tru, .ite_true h .fls]
 
-/-- The derivation system is deterministic, giving an expression at most one value. -/
 theorem Eval.deterministic (h : Eval P w i e b) (h' : Eval P w i e b') : b = b' := by
   induction h generalizing b' with
   | call h he ih => cases h' with
@@ -221,13 +219,11 @@ def Program.TotalOn (P : Program α F) (w : List α) : Prop :=
 
 /-! ### Substitution -/
 
-/-- Walk reads sequence through composition. -/
 private theorem eval_comp_of {z : ℕ} (hu : u.eval w i = some v) (h : t.eval w v = some z) :
     (t.comp u).eval w i = some z := by
   rw [Walk.eval_comp, hu]
   exact h
 
-/-- Evaluating `e[u/x]` at `i` is evaluating `e` at the position `u` reads. -/
 theorem Eval.subst (hu : u.eval w i = some v) (h : Eval P w v e b) :
     Eval P w i (e.subst u) b := by
   induction h with
@@ -250,9 +246,6 @@ left-subsequentially and predecessor-free programs right-subsequentially, and th
 locality below is what those inclusions rest on. Equal length is load-bearing: walks and the
 `max` test read `w.length`. -/
 
-/-- **Locality.** If every walk of `P` and of `e` satisfies `p`, and a `p`-walk read from `j`
-reaches only positions `r`-related to `j` for a transitive `r`, then equal-length words agreeing
-on the positions `r`-related to `i` evaluate `e` at `i` alike. -/
 theorem Eval.congr_of_allWalks {p : Walk → Prop} {r : ℕ → ℕ → Prop} [IsTrans ℕ r]
     (hp : ∀ {t j v}, p t → t.eval w j = some v → r v j) (hP : ∀ f, (P f).AllWalks p)
     (hlen : w.length = w'.length) (h : Eval P w i e b) :
@@ -320,7 +313,6 @@ def Program.approx (P : Program α F) (w : List α) : ℕ → F → ℕ → Opti
   | 0, _, _ => none
   | k + 1, f, i => (P f).evalWith w (P.approx w k) i
 
-/-- A round against a larger table finds the same values. -/
 theorem Expr.evalWith_mono (hV : ∀ f j b, V f j = some b → V' f j = some b) :
     e.evalWith w V i = some b → e.evalWith w V' i = some b := by
   induction e generalizing b with
@@ -333,7 +325,6 @@ theorem Expr.evalWith_mono (hV : ∀ f j b, V f j = some b → V' f j = some b) 
     exacts [⟨false, ihc hc, ih₂ h⟩, ⟨true, ihc hc, ih₁ h⟩]
   | _ => exact id
 
-/-- A round reads its table only at positions of the word. -/
 theorem Expr.evalWith_congr (hV : ∀ f, ∀ j < w.length, V f j = V' f j) (e : Expr α F) :
     e.evalWith w V i = e.evalWith w V' i := by
   induction e with
@@ -351,7 +342,6 @@ theorem approx_succ_of_eq_some : ∀ {k : ℕ} {f : F} {j : ℕ} {b : Bool},
     P.approx w k f j = some b → P.approx w (k + 1) f j = some b
   | _ + 1, _, _, _, h => Expr.evalWith_mono (fun _ _ _ ↦ approx_succ_of_eq_some) h
 
-/-- Rounds only add values. -/
 theorem approx_mono (hkm : k ≤ m) {f : F} {j : ℕ} (h : P.approx w k f j = some b) :
     P.approx w m f j = some b := by
   induction m, hkm using Nat.le_induction with
@@ -362,7 +352,6 @@ theorem evalWith_approx_mono (hkm : k ≤ m) :
     e.evalWith w (P.approx w k) i = some b → e.evalWith w (P.approx w m) i = some b :=
   Expr.evalWith_mono fun _ _ _ ↦ approx_mono hkm
 
-/-- A round against a table of derived values derives every value it finds. -/
 theorem eval_of_evalWith (hV : ∀ f j b, V f j = some b → Eval P w j (P f) b) :
     e.evalWith w V i = some b → Eval P w i e b := by
   induction e generalizing b with
@@ -389,12 +378,10 @@ theorem eval_of_evalWith (hV : ∀ f j b, V f j = some b → Eval P w j (P f) b)
     rintro ⟨_ | _, hc, h⟩
     exacts [.ite_false (ihc hc) (ih₂ h), .ite_true (ihc hc) (ih₁ h)]
 
-/-- Every value a round finds is derived. -/
 theorem eval_of_approx : ∀ {k : ℕ} {f : F} {j : ℕ} {b : Bool},
     P.approx w k f j = some b → Eval P w j (P f) b
   | _ + 1, _, _, _, h => eval_of_evalWith (fun _ _ _ ↦ eval_of_approx) h
 
-/-- Every derived value is found by some round. -/
 theorem exists_evalWith_approx (h : Eval P w i e b) :
     ∃ k, e.evalWith w (P.approx w k) i = some b := by
   induction h with
@@ -418,7 +405,6 @@ theorem exists_evalWith_approx (h : Eval P w i e b) :
     exact ⟨max k₁ k₂, Option.bind_eq_some_iff.mpr ⟨false,
       evalWith_approx_mono (le_max_left _ _) hk₁, evalWith_approx_mono (le_max_right _ _) hk₂⟩⟩
 
-/-- Once a round changes no value on the word, no later round does. -/
 private theorem approx_eq_of_settled
     (hk : ∀ f, ∀ j < w.length, P.approx w (k + 1) f j = P.approx w k f j) (hkm : k ≤ m) :
     ∀ f, ∀ j < w.length, P.approx w m f j = P.approx w k f j := by
@@ -429,8 +415,6 @@ private theorem approx_eq_of_settled
     rw [← hk f j hj]
     exact Expr.evalWith_congr ih (P f)
 
-/-- On a word of length `n` the rounds settle by round `card F * n`, since each round before
-they settle gives a value to a new pair of a head and a position. -/
 theorem approx_eq_approx_card_mul_length [Fintype F] (hk : Fintype.card F * w.length ≤ k) :
     ∀ f, ∀ j < w.length, P.approx w k f j = P.approx w (Fintype.card F * w.length) f j := by
   let cells := (Finset.univ : Finset F) ×ˢ Finset.range w.length

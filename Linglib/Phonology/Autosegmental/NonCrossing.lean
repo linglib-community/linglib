@@ -121,7 +121,6 @@ theorem isNonCrossing_iff_isChain : IsNonCrossing R ↔ IsChain (· ≤ ·) R :=
   · exact ((h ha hb fun h ↦ hab.ne (congrArg Prod.fst h)).resolve_right
       fun hba ↦ hba.1.not_gt hab).2
 
-/-- On linear tiers, the inverse of a non-crossing relation is non-crossing. -/
 @[simp] theorem isNonCrossing_inv : IsNonCrossing R.inv ↔ IsNonCrossing R := by
   rw [IsNonCrossing, SetRel.inv, ← image_swap_eq_preimage_swap, monovaryOn_image]
   exact monovaryOn_comm
@@ -165,8 +164,6 @@ theorem IsNonCrossing.insert_of_mem_window (h : IsNonCrossing R) (hj : j ∈ win
     IsNonCrossing (insert (m, j) R) :=
   isNonCrossing_insert_iff_mem_window.2 ⟨h, hj⟩
 
-/-- In a non-crossing relation, every position linked from the left of `m` lies at or before
-every position linked from its right. -/
 theorem IsNonCrossing.le_of_mem_image (h : IsNonCrossing R) (hx : x ∈ R.image (Iio m))
     (hy : y ∈ R.image (Ioi m)) : x ≤ y := by
   obtain ⟨n, hn, hx⟩ := hx

@@ -51,21 +51,17 @@ theorem hypergeometricCount_ne_zero_iff :
     hypergeometricCount N K n k ≠ 0 ↔ k ≤ n ∧ k ≤ K ∧ n - k ≤ N - K := by
   simp [hypergeometricCount, Nat.choose_ne_zero_iff]
 
-/-- Drawing nothing is possible whatever the number of marked objects. -/
 @[simp] theorem hypergeometricCount_zero_zero (N K : ℕ) : hypergeometricCount N K 0 0 = 1 := by
   simp [hypergeometricCount]
 
-/-- Drawing every object yields exactly the marked ones. -/
 theorem hypergeometricCount_self (hK : K ≤ N) (k : ℕ) :
     hypergeometricCount N K N k = if k = K then 1 else 0 := by
   grind [hypergeometricCount_ne_zero_iff, hypergeometricCount, Nat.choose_self]
 
-/-- When every object is marked, every object drawn is. -/
 theorem hypergeometricCount_top (k : ℕ) :
     hypergeometricCount N N n k = if k = n then N.choose n else 0 := by
   grind [hypergeometricCount_ne_zero_iff, hypergeometricCount]
 
-/-- The draws are counted by the number of marked objects in them, by Vandermonde's identity. -/
 theorem sum_hypergeometricCount (hK : K ≤ N) (hn : n ≤ N) :
     ∑ k : Fin (N + 1), hypergeometricCount N K n k = N.choose n :=
   calc ∑ k : Fin (N + 1), hypergeometricCount N K n k
@@ -95,7 +91,6 @@ theorem hypergeometric_self : hypergeometric N N = Kernel.id :=
     simp [hypergeometricCount_self (Nat.lt_succ_iff.1 K.isLt), Fin.ext_iff]).trans
       (Kernel.id_apply K).symm
 
-/-- When every object is marked, every object drawn is. -/
 theorem hypergeometric_last (hn : n ≤ N) :
     hypergeometric N n (Fin.last N) = Measure.dirac ⟨n, Nat.lt_succ_of_le hn⟩ :=
   Kernel.ofWeights_apply_eq_dirac (c := (N.choose n : ℝ≥0∞))
@@ -106,7 +101,6 @@ section Kernel
 
 variable (K k : Fin (N + 1))
 
-/-- A number of marked draws is possible exactly when some draw has it. -/
 theorem hypergeometric_apply_singleton_ne_zero_iff :
     hypergeometric N n K {k} ≠ 0 ↔ hypergeometricCount N K n k ≠ 0 := by
   rw [hypergeometric, Kernel.ofWeights_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or,

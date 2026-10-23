@@ -133,8 +133,6 @@ def realizePitch (level : Int) (ts : List TRN) : List Int :=
     (realizePitch level ts).length = ts.length := by
   simp [realizePitch]
 
-/-- A sequence realizes piecewise: the second part continues from the register the first
-part leaves. -/
 theorem realizePitch_append (level : Int) (ts us : List TRN) :
     realizePitch level (ts ++ us) =
       realizePitch level ts ++ realizePitch (level + (ts.map TRN.pitchEffect).sum) us := by
@@ -143,18 +141,15 @@ theorem realizePitch_append (level : Int) (ts us : List TRN) :
 /-- The register shifts from the start: no privileged pitch, only the differences. -/
 def pitchDeltas (ts : List TRN) : List Int := realizePitch 0 ts
 
-/-- A baseline only shifts the deltas. -/
 theorem realizePitch_eq_pitchDeltas_shift (level : Int) (ts : List TRN) :
     realizePitch level ts = (pitchDeltas ts).map (· + level) := by
   simpa [pitchDeltas, realizePitch] using terrace_add 0 level (ts.map TRN.pitchEffect)
 
-/-- Pointwise lower shifts and a lower baseline give pointwise lower pitch. -/
 theorem realizePitch_mono {ts₁ ts₂ : List TRN}
     (hts : List.Forall₂ ((· ≤ ·) on TRN.pitchEffect) ts₁ ts₂) {n m : Int}
     (hnm : n ≤ m) : List.Forall₂ (· ≤ ·) (realizePitch n ts₁) (realizePitch m ts₂) :=
   terrace_mono (List.forall₂_map_right_iff.2 <| List.forall₂_map_left_iff.2 hts) hnm
 
-/-- A higher baseline gives pointwise higher pitch for a fixed sequence. -/
 theorem realizePitch_baseline_mono (ts : List TRN) {n m : Int} (h : n ≤ m) :
     List.Forall₂ (· ≤ ·) (realizePitch n ts) (realizePitch m ts) :=
   realizePitch_mono (List.forall₂_same.mpr fun _ _ => le_rfl) h

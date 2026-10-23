@@ -131,7 +131,6 @@ open Classical in
 
 theorem contextFree_ofSet (p : Set W) : ContextFree (ofSet p) := fun _ _ _ ↦ rfl
 
-/-- Cooper negation is Kleene's, pointwise. -/
 @[simp] theorem neg_apply (φ : Sentence W) (s : Set W) (w : W) : (-φ) s w = -φ s w := rfl
 
 theorem neg_ofSet (p : Set W) : -ofSet p = ofSet pᶜ := by
@@ -195,8 +194,6 @@ theorem update_subset_restrict (s : Set W) (φ : Sentence W) : update s φ ⊆ r
   · exact subset_rfl
   · exact Set.empty_subset _
 
-/-- A world survives the update exactly when it survives the restriction and the restriction
-accepts the sentence. -/
 theorem mem_update_iff {s : Set W} {φ : Sentence W} {w : W} :
     w ∈ update s φ ↔ w ∈ restrict s φ ∧ ∀ w' ∈ restrict s φ, 0 ≤ φ (restrict s φ) w' := by
   rw [update]
@@ -247,13 +244,11 @@ theorem dia_apply_of_mem (h : w ∈ s) :
     dia φ s w = existsHaug (s.indicator fun w' ↦ φ s w') := by
   rw [dia, ctx_of_mem h]
 
-/-- `□A` is false at a context exactly when `A` is false somewhere in it. -/
 theorem box_eq_neg_one_iff (h : w ∈ s) : box φ s w = -1 ↔ ∃ w' ∈ s, φ s w' = -1 := by
   rw [box_apply_of_mem h, forallHaug_eq_neg_one_iff]
   exact exists_congr fun w' ↦ by
     by_cases hw' : w' ∈ s <;> simp [hw']
 
-/-- `□A` is void at a context exactly when `A` is void throughout it. -/
 theorem box_eq_zero_iff (h : w ∈ s) : box φ s w = 0 ↔ ∀ w' ∈ s, φ s w' = 0 := by
   rw [box_apply_of_mem h, forallHaug_eq_zero_iff]
   constructor
@@ -261,13 +256,11 @@ theorem box_eq_zero_iff (h : w ∈ s) : box φ s w = 0 ↔ ∀ w' ∈ s, φ s w'
   · intro hall w'
     by_cases hw' : w' ∈ s <;> simp [hw', hall]
 
-/-- `◇A` is true at a context exactly when `A` is true somewhere in it. -/
 theorem dia_eq_one_iff (h : w ∈ s) : dia φ s w = 1 ↔ ∃ w' ∈ s, φ s w' = 1 := by
   rw [dia_apply_of_mem h, existsHaug_eq_one_iff]
   exact exists_congr fun w' ↦ by
     by_cases hw' : w' ∈ s <;> simp [hw']
 
-/-- `◇A` is void at a context exactly when `A` is void throughout it. -/
 theorem dia_eq_zero_iff (h : w ∈ s) : dia φ s w = 0 ↔ ∀ w' ∈ s, φ s w' = 0 := by
   rw [dia_apply_of_mem h, existsHaug_eq_zero_iff]
   constructor
@@ -275,14 +268,12 @@ theorem dia_eq_zero_iff (h : w ∈ s) : dia φ s w = 0 ↔ ∀ w' ∈ s, φ s w'
   · intro hall w'
     by_cases hw' : w' ∈ s <;> simp [hw', hall]
 
-/-- The modals are uniform across their context. -/
 theorem box_apply_congr {w' : W} (h : w ∈ s) (h' : w' ∈ s) : box φ s w = box φ s w' := by
   rw [box_apply_of_mem h, box_apply_of_mem h']
 
 theorem dia_apply_congr {w' : W} (h : w ∈ s) (h' : w' ∈ s) : dia φ s w = dia φ s w' := by
   rw [dia_apply_of_mem h, dia_apply_of_mem h']
 
-/-- `◇` is the dual of `□`, as the definition `◇A := ¬□¬A` demands. -/
 theorem dia_eq_neg_box_neg (φ : Sentence W) : dia φ = -box (-φ) := by
   funext s w
   refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
@@ -293,7 +284,6 @@ theorem dia_eq_neg_box_neg (φ : Sentence W) : dia φ = -box (-φ) := by
       forallHaug_eq_neg_one_iff]
     exact exists_congr fun w' ↦ by by_cases h : w' ∈ ctx s w <;> simp [h]
 
-/-- `□` is the dual of `◇`. -/
 theorem box_eq_neg_dia_neg (φ : Sentence W) : box φ = -dia (-φ) := by
   rw [dia_eq_neg_box_neg, neg_neg, neg_neg]
 
@@ -348,21 +338,16 @@ variable {φ ψ : Sentence W} {s : Set W}
 
 @[simp] theorem accepts_empty (φ : Sentence W) : Accepts ∅ φ := fun _ h ↦ absurd h (by simp)
 
-/-- An update accepts the sentence it updates on, the property that sets updates apart from
-restrictions. -/
 theorem accepts_update (s : Set W) (φ : Sentence W) : Accepts (update s φ) φ := by
   rw [update]
   split_ifs with h
   · exact h
   · exact accepts_empty φ
 
-/-- A context that accepts a sentence survives the update on it whole. -/
 theorem update_eq_self_of_accepts (h : Accepts s φ) : update s φ = s := by
   have hr : restrict s φ = s := Set.sep_eq_self_iff_mem_true.2 h
   rw [update_eq_restrict (by rw [hr]; exact h), hr]
 
-/-- A context collapses under the update on a sentence that is uniform across it and that it
-does not accept. -/
 theorem update_eq_empty_of_uniform (hu : ∀ w ∈ s, ∀ w' ∈ s, φ s w = φ s w')
     (h : ¬ Accepts s φ) : update s φ = ∅ := by
   obtain ⟨w₀, hw₀, hneg⟩ : ∃ w₀ ∈ s, ¬ 0 ≤ φ s w₀ := by simpa [Accepts] using h
@@ -370,7 +355,6 @@ theorem update_eq_empty_of_uniform (hu : ∀ w ∈ s, ∀ w' ∈ s, φ s w = φ 
   rintro w ⟨hw, hle⟩
   exact hneg (hu w hw w₀ hw₀ ▸ hle)
 
-/-- No nonempty context accepting a sentence, every update on it collapses. -/
 theorem update_eq_empty_of_forall_not_accepts (h : ∀ t : Set W, t.Nonempty → ¬ Accepts t φ)
     (s : Set W) : update s φ = ∅ :=
   Set.not_nonempty_iff_eq_empty.1 fun hne ↦ h _ hne (accepts_update s φ)
@@ -386,7 +370,6 @@ theorem accepts_box_iff : Accepts s (box φ) ↔ Accepts s φ := by
     obtain ⟨w', hw', h'⟩ := (box_eq_neg_one_iff hw).1 hc
     exact SignType.nonneg_iff_ne_neg_one.1 (h w' hw') h'
 
-/-- A context accepts `◇A` exactly when `A` is true somewhere in it or void throughout it. -/
 theorem accepts_dia_iff : Accepts s (dia φ) ↔ (∃ w ∈ s, φ s w = 1) ∨ ∀ w ∈ s, φ s w = 0 := by
   constructor
   · intro h
@@ -406,7 +389,6 @@ theorem accepts_dia_iff : Accepts s (dia φ) ↔ (∃ w ∈ s, φ s w = 1) ∨ �
 theorem update_box_of_accepts (h : Accepts s φ) : update s (box φ) = s :=
   update_eq_self_of_accepts (accepts_box_iff.2 h)
 
-/-- ... and collapses it otherwise. -/
 theorem update_box_of_not_accepts (h : ¬ Accepts s φ) : update s (box φ) = ∅ :=
   update_eq_empty_of_uniform (fun _ hw _ hw' ↦ box_apply_congr hw hw') (mt accepts_box_iff.1 h)
 
@@ -415,12 +397,10 @@ theorem update_box_of_not_accepts (h : ¬ Accepts s φ) : update s (box φ) = �
 theorem update_dia_of (h : (∃ w ∈ s, φ s w = 1) ∨ ∀ w ∈ s, φ s w = 0) : update s (dia φ) = s :=
   update_eq_self_of_accepts (accepts_dia_iff.2 h)
 
-/-- ... and collapses it otherwise. -/
 theorem update_dia_of_not (h : ¬ ((∃ w ∈ s, φ s w = 1) ∨ ∀ w ∈ s, φ s w = 0)) :
     update s (dia φ) = ∅ :=
   update_eq_empty_of_uniform (fun _ hw _ hw' ↦ dia_apply_congr hw hw') (mt accepts_dia_iff.1 h)
 
-/-- A context accepts `A → B` exactly when its update on `A` accepts `B`. -/
 theorem accepts_cond_iff : Accepts s (cond φ ψ) ↔ Accepts (update s φ) ψ := by
   constructor
   · intro h w hw
@@ -443,7 +423,6 @@ def ofCooper (p : W → SignType) : Sentence W := fun _ ↦ p
 
 theorem contextFree_ofCooper (p : W → SignType) : ContextFree (ofCooper p) := fun _ _ _ ↦ rfl
 
-/-- A nonmodal sentence is the sentence of its Cooper values. -/
 theorem ContextFree.eq_ofCooper {φ : Sentence W} (h : ContextFree φ) :
     φ = ofCooper fun w ↦ φ ∅ w :=
   funext fun s ↦ funext fun w ↦ h s ∅ w
@@ -512,7 +491,6 @@ variable {φ ψ χ : Sentence W} {s : Set W} {Γ Δ Θ : Set (Sentence W)}
 def Entails (Γ : Set (Sentence W)) (ψ : Sentence W) : Prop :=
   ∀ s, (∀ φ ∈ Γ, Accepts s φ) → Accepts s ψ
 
-/-- A context accepting `A → B` and `A` accepts `B`. -/
 theorem Sentence.Accepts.of_cond (h₁ : Accepts s (cond φ ψ)) (h₂ : Accepts s φ) :
     Accepts s ψ := by
   rwa [accepts_cond_iff, update_eq_self_of_accepts h₂] at h₁
@@ -526,7 +504,6 @@ half)... -/
 theorem accepts_cond_box_iff : Accepts s (cond φ (box ψ)) ↔ Accepts s (cond φ ψ) := by
   rw [accepts_cond_iff, accepts_cond_iff, accepts_box_iff]
 
-/-- ... and exactly when it accepts `□(A → B)`. -/
 theorem accepts_box_cond_iff : Accepts s (box (cond φ ψ)) ↔ Accepts s (cond φ ψ) :=
   accepts_box_iff
 
@@ -647,7 +624,6 @@ theorem Agrees.box (h : Agrees φ ψ) : Agrees (box φ) ψ.must := by
   rw [box_eq_neg_dia_neg, Yalcin2007.Sentence.must_eq_compl_might_compl]
   exact h.neg.dia.neg
 
-/-- Agreeing sentences are accepted in the same contexts. -/
 theorem Agrees.accepts_iff (h : Agrees φ ψ) {s : Set W} : Accepts s φ ↔ ψ.AcceptedIn s :=
   forall₂_congr fun w hw ↦ by rw [h s w hw, zero_le_ofProp_iff]
 
@@ -662,7 +638,6 @@ theorem not_accepts_contra' {s : Set W} (hs : s.Nonempty) (q : Set W) :
 theorem update_contra' (s q : Set W) : update s (conj (ofSet q) (dia (-ofSet q))) = ∅ :=
   update_eq_empty_of_forall_not_accepts (fun _ ht ↦ not_accepts_contra' ht q) s
 
-/-- The epistemic contradiction `¬p ∧ ◇p` is [yalcin-2007]'s `contra`... -/
 theorem not_accepts_contra {s : Set W} (hs : s.Nonempty) (p : Set W) :
     ¬ Accepts s (conj (-ofSet p) (dia (ofSet p))) := by
   rw [((agrees_ofSet p).neg.conj (agrees_ofSet p).dia).accepts_iff]
@@ -724,7 +699,6 @@ theorem accepts_dia_ofSet_iff {p : Set W} :
   rw [(agrees_ofSet p).dia.accepts_iff]
   exact ⟨fun h ⟨w, hw⟩ ↦ h w hw, fun h w hw ↦ h ⟨w, hw⟩⟩
 
-/-- A conditional with an impossible antecedent is void everywhere. -/
 theorem cond_ofSet_empty (φ : Sentence W) : cond (ofSet ∅) φ = 0 := by
   funext s w
   rw [Sentence.cond, ite_eq_right (by simp)]
@@ -835,7 +809,6 @@ theorem modus_tollens (a b : Set W) :
   rw [neg_ofSet, accepts_ofSet_iff] at h₂ ⊢
   exact fun w hw hwa ↦ h₂ hw (h₁ ⟨hw, hwa⟩)
 
-/-- ... but fails once the consequent may be void, at a true antecedent with a void consequent. -/
 theorem not_modus_tollens_void :
     ¬ Entails {cond (ofSet (Set.univ : Set Unit)) (cond (ofSet ∅) (ofSet ∅)),
       -cond (ofSet ∅) (ofSet ∅)} (-ofSet Set.univ) := by
@@ -873,7 +846,6 @@ theorem not_modus_tollens_box :
     · exact marble_not_must
   exact absurd (accepts_ofSet_iff.1 this (Set.mem_univ false)) (by simp)
 
-/-- The marble also refutes contraposition, since `¬A → □B ⊭ ¬□B → A`. -/
 theorem not_contraposition_box :
     ¬ Entails {cond (-ofSet {true}) (box (ofSet {false}))}
       (cond (-box (ofSet {false})) (ofSet ({true} : Set Bool))) := by
@@ -888,7 +860,6 @@ theorem entails_disj_ofSet (p q : Set W) : Entails {ofSet p} (disj (ofSet p) (of
   rw [disj_ofSet, accepts_ofSet_iff]
   exact (accepts_ofSet_iff.1 (h _ rfl)).trans Set.subset_union_left
 
-/-- ... but not when a void conditional is substituted for `p`. -/
 theorem not_entails_disj_cond :
     ¬ Entails {cond (ofSet (∅ : Set Unit)) (ofSet ∅)}
       (disj (cond (ofSet ∅) (ofSet ∅)) (ofSet ∅)) := by
@@ -914,7 +885,6 @@ theorem entails_cond_iff_disj (p q : Set W) :
     · exact .inl hp
   · exact fun w hw ↦ (h₀ hw.1).resolve_left (not_not.2 hw.2)
 
-/-- ... but their negations are not. -/
 theorem not_entails_neg_cond_neg_disj :
     ¬ Entails {-cond (ofSet (∅ : Set Unit)) (ofSet ∅)} (-disj (-ofSet ∅) (ofSet ∅)) := by
   intro h
@@ -950,8 +920,6 @@ theorem not_entails_cond_of_dia_neg :
   rw [accepts_cond_ofSet_iff, neg_ofSet, Set.compl_univ, accepts_ofSet_iff] at this
   exact this ⟨Set.mem_univ true, rfl⟩
 
-/-- Footnote 18 prints the premise as `q ∧ ¬◇p`, which its own model does not accept; the main
-text's `◇¬p` is meant. -/
 theorem not_accepts_fn18_printed :
     ¬ Accepts Set.univ (conj (ofSet (Set.univ : Set Bool)) (-dia (ofSet {true}))) := by
   intro h
@@ -980,7 +948,6 @@ variable [MeasurableSpace W] {μ : Measure W} {s : Set W} {φ ψ : Sentence W}
 /-- A credence mirrors a context when its positive-weight worlds are exactly the context's. -/
 def Mirrors (μ : Measure W) (s : Set W) : Prop := ∀ w, μ {w} ≠ 0 ↔ w ∈ s
 
-/-- Under mirroring, a set is null exactly when it misses the context. -/
 theorem Mirrors.measure_eq_zero_iff [Countable W] (h : Mirrors μ s) {t : Set W} :
     μ t = 0 ↔ ∀ w ∈ t, w ∉ s := by
   rw [measure_null_iff_singleton t.to_countable]
@@ -1006,7 +973,6 @@ theorem Mirrors.prob_eq_one_iff [IsFiniteMeasure μ] (h : Mirrors μ s) :
   rw [h.prob_eq_one_iff']
   exact forall₂_congr fun _ _ ↦ SignType.nonneg_iff_ne_neg_one.symm
 
-/-- A sentence uniform across the context has probability 0 or 1 under a credence mirroring it. -/
 theorem Mirrors.prob_eq_zero_or_one [IsFiniteMeasure μ] (h : Mirrors μ s) {f : W → SignType}
     (hu : ∀ w ∈ s, ∀ w' ∈ s, f w = f w') : prob μ f = 0 ∨ prob μ f = 1 := by
   by_cases hacc : ∀ w ∈ s, f w ≠ -1
@@ -1022,7 +988,6 @@ theorem prob_box_eq_zero_or_one [IsFiniteMeasure μ] (h : Mirrors μ s) :
     prob μ (box φ s) = 0 ∨ prob μ (box φ s) = 1 :=
   h.prob_eq_zero_or_one fun _ hw _ hw' ↦ box_apply_congr hw hw'
 
-/-- ... and so do *might* sentences. -/
 theorem prob_dia_eq_zero_or_one [IsFiniteMeasure μ] (h : Mirrors μ s) :
     prob μ (dia φ s) = 0 ∨ prob μ (dia φ s) = 1 :=
   h.prob_eq_zero_or_one fun _ hw _ hw' ↦ dia_apply_congr hw hw'
@@ -1089,11 +1054,9 @@ theorem not_prob_cond_box_eq_of_literal :
 
 variable [Finite W]
 
-/-- The uniform credence on a finite context mirrors it. -/
 theorem mirrors_uniformOn (s : Set W) : Mirrors (uniformOn s) s := fun w ↦ by
   rw [Ne, uniformOn_eq_zero_iff s.toFinite, Set.inter_singleton_eq_empty, not_not]
 
-/-- A finite nonempty context has a mirroring credence, the uniform one. -/
 theorem exists_mirrors (hs : s.Nonempty) : ∃ μ : Measure W, IsProbabilityMeasure μ ∧ Mirrors μ s :=
   ⟨uniformOn s, isProbabilityMeasure_uniformOn' s.toFinite hs .of_discrete, mirrors_uniformOn s⟩
 

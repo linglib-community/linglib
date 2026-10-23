@@ -118,8 +118,6 @@ def toSimpleGraph : SimpleGraph (Fin n) := g.toDigraph.toSimpleGraphInclusive
 instance : DecidableRel g.toSimpleGraph.Adj :=
   fun v w ↦ decidable_of_iff _ (g.toSimpleGraph_adj v w).symm
 
-/-- Off the diagonal the two undirected views agree; they can differ only on
-self-arcs, which `toSimpleGraph` drops and `Linked` keeps. -/
 theorem toSimpleGraph_adj_of_ne {g : Graph n} {v w : Fin n} (h : v ≠ w) :
     g.toSimpleGraph.Adj v w ↔ g.Linked v w := by simp [h]
 
@@ -145,8 +143,6 @@ def arcsLabel (arcs : List (Fin n × Fin n × UD.DepRel)) (v w : Fin n) :
     Option UD.DepRel :=
   (arcs.find? fun a ↦ a.1 == v && a.2.1 == w).map (·.2.2)
 
-/-- An arc list labels a pair exactly when some triple mentions it; which
-relation wins on duplicates is `arcsLabel`'s business, not whether. -/
 theorem arcsLabel_isSome_iff {arcs : List (Fin n × Fin n × UD.DepRel)}
     {v w : Fin n} : (arcsLabel arcs v w).isSome ↔ ∃ r, (v, w, r) ∈ arcs := by
   simp only [arcsLabel, Option.isSome_map, List.find?_isSome, Bool.and_eq_true,
@@ -197,8 +193,6 @@ instance {n : ℕ} (b e : Graph n) (w : Fin n) :
     Decidable (HasUnrepresentedArg b e w) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-/-- An arc that enhancement adds to a position lacking it in the basic graph is an
-unrepresented argument relation. -/
 theorem hasUnrepresentedArg_enhance {n : ℕ} (g : Graph n) {x w : Fin n} (r : UD.DepRel)
     (extra : List (Fin n × Fin n × UD.DepRel)) (hmem : (x, w, r) ∈ extra) (h : ¬ g.Adj x w) :
     HasUnrepresentedArg g (g.enhance extra) w :=

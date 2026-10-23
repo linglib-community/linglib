@@ -54,7 +54,6 @@ theorem undefined_of_masculine (hfem : e.gender = some .feminine) (h : g n ∈ G
     (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
   simp [hfem, h]
 
-/-- *She* is undefined of a referent gendered masculine. -/
 theorem she_undefined_of_masculine (h : g n ∈ Gendered.masculine) :
     (she.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
   undefined_of_masculine she g n c scope rfl h
@@ -64,7 +63,6 @@ theorem undefined_of_not_agent (hp : e.referentialPerson = some .first) (h : ¬ 
     (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
   simp [hp, h]
 
-/-- *I* is undefined of a referent that does not include the agent. -/
 theorem i_undefined_of_not_agent (h : ¬ c.agent ≤ g n) :
     (i.denote n c).toTrivalent scope g ⟨⟩ = 0 :=
   undefined_of_not_agent i g n c scope (by decide) h
@@ -78,7 +76,6 @@ theorem defined_of_unmarked_features (hp : e.referentialPerson = some .third)
     (e.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 := by
   simp [hp, hn, hg]
 
-/-- *They* is defined of a referent of any gender. -/
 theorem they_defined_regardless_of_gender :
     (they.denote n c).toTrivalent scope g ⟨⟩ ≠ 0 :=
   defined_of_unmarked_features they g n c scope (by decide) (by decide) rfl

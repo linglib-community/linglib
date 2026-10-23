@@ -148,7 +148,6 @@ theorem speaker_prefers_strong_parse {α : ℝ} (hα : 0 < α) {s : State} (hs :
   speaker_uniformOn_dirac_real_singleton_lt_of_card_lt sem hα
     (mem_sem.mpr (by revert s hs; decide)) (mem_sem.mpr hs) (by decide)
 
-/-- Hearing *may any*, the listener assigns no posterior to Only S under any parse. -/
 theorem mayAny_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener υ α .mayAny {(.onlyS, p)} = 0 := by
   by_contra h
@@ -156,7 +155,6 @@ theorem mayAny_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
   exact hs (speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _
     (by revert hp; cases p <;> decide))
 
-/-- Hearing *may every*, the listener assigns no posterior to Only S under any parse. -/
 theorem mayEvery_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener υ α .mayEvery {(.onlyS, p)} = 0 := by
   by_contra h

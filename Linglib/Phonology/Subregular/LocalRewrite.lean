@@ -264,13 +264,11 @@ theorem matchesLeft_rtake (ctx : List ContextElem) (left : List Segment) :
     simp [List.rtake_eq_reverse_take_reverse]
   rw [MatchesLeft, h, matchesRight_take, MatchesLeft]
 
-/-- Any window at least as long as the context reads the same. -/
 theorem matchesLeft_rtake_of_le (ctx : List ContextElem) {n : ℕ} (h : ctx.length ≤ n)
     (left : List Segment) : MatchesLeft ctx (left.rtake n) ↔ MatchesLeft ctx left := by
   rw [← matchesLeft_rtake ctx (left.rtake n), List.rtake_rtake, min_eq_left h,
     matchesLeft_rtake]
 
-/-- A suffix at least as long as the context reads the same as its extensions. -/
 theorem matchesRight_append_of_le (ctx : List ContextElem) {d : List Segment}
     (d' : List Segment) (h : ctx.length ≤ d.length) :
     MatchesRight ctx (d ++ d') ↔ MatchesRight ctx d := by
@@ -288,7 +286,6 @@ def Rule.verdict (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) 
     (r.effect.apply w s d).toList
   else [s]
 
-/-- `Rule.apply` emits one `Rule.verdict` per input position. -/
 theorem Rule.apply_go_cons (r : Rule) (left : List Segment) (s : Segment)
     (right : List Segment) :
     Rule.apply.go r left (s :: right)
@@ -297,14 +294,12 @@ theorem Rule.apply_go_cons (r : Rule) (left : List Segment) (s : Segment)
       MatchesRight r.rightContext right <;>
     cases he : r.effect.apply left s right <;> simp [Rule.apply.go, Rule.verdict, hc, he]
 
-/-- The verdict reads only the last `leftReach` symbols of the prefix. -/
 theorem Rule.verdict_rtake (r : Rule) (w : List Segment) (s : Segment) (d : List Segment) :
     r.verdict (w.rtake r.leftReach) s d = r.verdict w s d := by
   simp only [Rule.verdict,
     matchesLeft_rtake_of_le r.leftContext (n := r.leftReach) (le_max_left _ _),
     Effect.apply_rtake r.effect (n := r.leftReach) (le_max_right _ _)]
 
-/-- The verdict reads only the first `rightReach` symbols of the suffix. -/
 theorem Rule.verdict_append (r : Rule) (w : List Segment) (s : Segment) (d e : List Segment)
     (h : r.rightReach ≤ d.length) : r.verdict w s (d ++ e) = r.verdict w s d := by
   simp only [Rule.verdict,
@@ -316,7 +311,6 @@ theorem Rule.verdict_append (r : Rule) (w : List Segment) (s : Segment) (d e : L
 
 A rule whose effect is not deletion rewrites each segment to one segment. -/
 
-/-- An effect other than deletion yields a segment. -/
 theorem Effect.isSome_apply {e : Effect} (h : e ≠ .delete) (w : List Segment) (s : Segment)
     (d : List Segment) : (e.apply w s d).isSome := by
   cases e <;> first | rfl | exact absurd rfl h
@@ -359,7 +353,6 @@ def Rule.scan (r : Rule) (w : List Segment) : List Segment → List Segment
   | [] => []
   | s :: right => r.verdict w s right ++ r.scan ((w ++ [s]).rtake r.leftReach) right
 
-/-- Truncating the prefix to the rule's left reach loses nothing. -/
 theorem Rule.scan_rtake (r : Rule) (left right : List Segment) :
     r.scan (left.rtake r.leftReach) right = Rule.apply.go r left right := by
   induction right generalizing left with
@@ -367,7 +360,6 @@ theorem Rule.scan_rtake (r : Rule) (left right : List Segment) :
   | cons s right ih =>
     rw [Rule.scan, Rule.verdict_rtake, List.rtake_append_rtake, ih, Rule.apply_go_cons]
 
-/-- `Rule.apply` is the bounded-window scan started from the empty window. -/
 theorem Rule.apply_eq_scan (r : Rule) : r.apply = r.scan [] := by
   funext input
   show Rule.apply.go r [] input = _
@@ -440,8 +432,6 @@ def Rule.toSubsequentialTransducer (r : Rule) :
       r.verdict s.1.val b ((s.2.val ++ [x]).rtake r.rightReach)
   finalOutput s := r.scan s.1.val s.2.val
 
-/-- From any state the delayed transducer judges the buffer and the remaining input together,
-so the delay is invisible in the total output. -/
 theorem Rule.runFrom_toSubsequentialTransducer (r : Rule) (s : r.State)
     (input : List Segment) :
     r.toSubsequentialTransducer.runFrom s input = r.scan s.1.val (s.2.val ++ input) := by
@@ -465,7 +455,6 @@ theorem Rule.runFrom_toSubsequentialTransducer (r : Rule) (s : r.State)
         List.cons_append, Rule.scan, r.verdict_append w b rest xs hrest.ge]
       simp
 
-/-- The delayed transducer computes the rule. -/
 theorem Rule.run_toSubsequentialTransducer (r : Rule) :
     r.toSubsequentialTransducer.run = r.apply := by
   funext input

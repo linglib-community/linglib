@@ -162,7 +162,6 @@ def Number.tally : ℕ → Number
   | zero => rfl
   | succ n ih => simp [tally, value, ih, add_comm]
 
-/-- The grammar names exactly the positive numbers. -/
 theorem Number.range_value : Set.range value = {n | 0 < n} := by
   ext n
   refine ⟨fun ⟨e, he⟩ ↦ he ▸ e.value_pos, fun hn ↦ ⟨tally (n - 1), ?_⟩⟩
@@ -180,7 +179,6 @@ def M.tenPow : ℕ → M
   | zero => rfl
   | succ k => simp [tenPow, value]
 
-/-- A digit times a base-power M, as in *four hundred*, has value `(m + 1) × 10 ^ (k + 1)`. -/
 theorem Phrase.value_tally_tenPow (m k : ℕ) :
     (Phrase.mk (.tally m) (.tenPow k)).value = (m + 1) * 10 ^ (k + 1) := by
   simp [value]
@@ -205,7 +203,6 @@ theorem M.isHighestUnder_iff {v : ℕ} {m : M} :
 theorem M.IsHighestUnder.value_le {v : ℕ} {m : M} (h : m.IsHighestUnder L v) : m.value ≤ v :=
   (isHighestUnder_iff.1 h).2.1
 
-/-- A lexical M above the highest one under a ceiling is above the ceiling. -/
 theorem M.IsHighestUnder.lt_value {v : ℕ} {m m' : M} (h : m.IsHighestUnder L v) (hm' : m' ∈ L)
     (hlt : m.value < m'.value) : v < m'.value :=
   lt_of_not_ge fun hv ↦ (h.2.2 ⟨m', ⟨hm', hv⟩, rfl⟩).not_gt hlt
@@ -214,7 +211,6 @@ theorem M.IsHighestUnder.eq (hL : Set.InjOn value L) {v : ℕ} {m m' : M}
     (h : m.IsHighestUnder L v) (h' : m'.IsHighestUnder L v) : m = m' :=
   hL h.1 h'.1 (h.2.unique h'.2)
 
-/-- Wherever some lexical M fits under the ceiling, a highest one does. -/
 theorem M.exists_isHighestUnder {v : ℕ} {m₀ : M} (hm₀ : m₀ ∈ L) (hv : m₀.value ≤ v) :
     ∃ m : M, m.IsHighestUnder L v := by
   have hS := Set.Nonempty.isGreatest_csSup (s := value '' {m ∈ L | m.value ≤ v})
@@ -256,8 +252,6 @@ instance Number.decidablePacked (L : List M) : DecidablePred (Packed {m | m ∈ 
     inferInstanceAs (Decidable (m.IsHighestUnder {m | m ∈ L} (n.value * m.value + r.value) ∧
       r.value < m.value ∧ n.Packed {m | m ∈ L} ∧ r.Packed {m | m ∈ L}))
 
-/-- The Packing Strategy admits the tally of `n + 1` marks exactly when every lexical M is
-higher. -/
 theorem Number.packed_tally_iff {n : ℕ} : (tally n).Packed L ↔ ∀ m ∈ L, n + 1 < m.value := by
   induction n with
   | zero =>
@@ -268,7 +262,6 @@ theorem Number.packed_tally_iff {n : ℕ} : (tally n).Packed L ↔ ∀ m ∈ L, 
     exact ⟨fun h m hm ↦ by have := h.1 m hm; omega,
       fun h ↦ ⟨fun m hm ↦ by have := h m hm; omega, fun m hm ↦ by have := h m hm; omega⟩⟩
 
-/-- Below the lowest lexical M the only packed NUMBER is the tally. -/
 theorem Number.Packed.eq_tally : ∀ {e : Number}, e.Packed L → (∀ m ∈ L, e.value < m.value) →
     e = tally (e.value - 1)
   | .one, _, _ => rfl
@@ -281,16 +274,12 @@ theorem Number.Packed.eq_tally : ∀ {e : Number}, e.Packed L → (∀ m ∈ L, 
   | .phrase (.mk _ m), ⟨hm, _⟩, hlow => absurd (hlow m hm.1) hm.value_le.not_gt
   | .phraseAnd (.mk _ m) _, ⟨hm, _⟩, hlow => absurd (hlow m hm.1) hm.value_le.not_gt
 
-/-- When the groups of the highest lexical M under `v` exhaust `v`, a packed NUMBER for their
-number makes one for `v`. -/
 theorem Number.packed_phrase {v : ℕ} {m : M} (hm : m.IsHighestUnder L v) (hmv : m.value ∣ v)
     {n : Number} (hn : n.Packed L) (hnv : n.value = v / m.value) :
     (phrase (.mk n m)).Packed L ∧ (phrase (.mk n m)).value = v := by
   simp only [Packed, Number.value, Phrase.value, hnv, Nat.div_mul_cancel hmv, and_true]
   exact ⟨hm, hn⟩
 
-/-- Packed NUMBERs for the number of groups of the highest lexical M under `v` and for the
-remainder make one for `v`. -/
 theorem Number.packed_phraseAnd {v : ℕ} {m : M} (hm : m.IsHighestUnder L v) {n r : Number}
     (hn : n.Packed L) (hnv : n.value = v / m.value) (hr : r.Packed L)
     (hrv : r.value = v % m.value) :
@@ -298,8 +287,6 @@ theorem Number.packed_phraseAnd {v : ℕ} {m : M} (hm : m.IsHighestUnder L v) {n
   simp only [Packed, Number.value, Phrase.value, hnv, hrv, Nat.div_add_mod', and_true]
   exact ⟨hm, Nat.mod_lt _ m.value_pos, hn, hr⟩
 
-/-- Every positive number has a packed NUMBER, built from the highest lexical M under it, the
-number of copies of that M that fit, and the remainder. -/
 theorem Number.exists_packed (L : Set M) {v : ℕ} (hv : 0 < v) :
     ∃ e : Number, e.Packed L ∧ e.value = v := by
   induction v using Nat.strong_induction_on with
@@ -319,7 +306,6 @@ theorem Number.exists_packed (L : Set M) {v : ℕ} (hv : 0 < v) :
   · obtain ⟨r, hr', hrv⟩ := ih (v % m.value) ((Nat.mod_lt _ (by omega)).trans_le hmv) hr
     exact ⟨_, packed_phraseAnd hm hn hnv hr' hrv⟩
 
-/-- A packed NUMBER is determined by its value, given a lexicon whose Ms have distinct values. -/
 theorem Number.Packed.eq_of_value_eq (hL : Set.InjOn M.value L) {e e' : Number}
     (he : e.Packed L) (he' : e'.Packed L) (h : e.value = e'.value) : e = e' := by
   induction hv : e.value using Nat.strong_induction_on generalizing e e' with

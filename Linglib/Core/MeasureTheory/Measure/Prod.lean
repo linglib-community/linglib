@@ -38,7 +38,6 @@ section Fibers
 variable [MeasurableSingletonClass β] [Fintype β] (μ : Measure α) (ν : Measure β)
   {f : β → Set α}
 
-/-- The product measure at a set given by its fibers over a finite second coordinate. -/
 theorem prod_apply_fibers [SFinite ν] (hf : ∀ b, MeasurableSet (f b)) :
     (μ.prod ν) {p | p.1 ∈ f p.2} = ∑ b, μ (f b) * ν {b} := by
   rw [show {p : α × β | p.1 ∈ f p.2} = ⋃ b, f b ×ˢ {b} by ext ⟨a, b⟩; simp,
@@ -46,7 +45,6 @@ theorem prod_apply_fibers [SFinite ν] (hf : ∀ b, MeasurableSet (f b)) :
       fun b ↦ (hf b).prod (.singleton b), tsum_fintype]
   simp only [prod_prod]
 
-/-- `prod_apply_fibers` on reals. -/
 theorem prod_real_fibers [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hf : ∀ b, MeasurableSet (f b)) :
     (μ.prod ν).real {p | p.1 ∈ f p.2} = ∑ b, μ.real (f b) * ν.real {b} := by
   rw [measureReal_def, prod_apply_fibers μ ν hf,
@@ -69,13 +67,11 @@ theorem snd_apply_singleton [Fintype α] (ρ : Measure (α × β)) (b : β) :
     ρ.snd {b} = ∑ a, ρ {(a, b)} := by
   rw [snd_apply (.singleton b), measure_preimage_snd_singleton_eq_sum]
 
-/-- The first marginal at a singleton is the mass of the corresponding product event. -/
 theorem fst_real_singleton [Fintype β] (ρ : Measure (α × β)) (a : α) :
     ρ.fst.real {a} = ρ.real ↑(({a} : Finset α) ×ˢ (Finset.univ : Finset β)) := by
   rw [measureReal_def, measureReal_def, fst_apply_singleton, ← sum_measure_singleton,
     Finset.sum_product, Finset.sum_singleton]
 
-/-- The second marginal at a singleton is the mass of the corresponding product event. -/
 theorem snd_real_singleton [Fintype α] (ρ : Measure (α × β)) (b : β) :
     ρ.snd.real {b} = ρ.real ↑((Finset.univ : Finset α) ×ˢ ({b} : Finset β)) := by
   rw [measureReal_def, measureReal_def, snd_apply_singleton, ← sum_measure_singleton,
@@ -90,8 +86,6 @@ theorem snd_real_singleton_eq_sum [Fintype α] (ρ : Measure (α × β)) [IsFini
     (b : β) : ρ.snd.real {b} = ∑ a, ρ.real {(a, b)} := by
   simp [measureReal_def, snd_apply_singleton, ENNReal.toReal_sum, measure_ne_top]
 
-/-- A joint on a countable product is absolutely continuous with respect to the product of
-its marginals. -/
 theorem absolutelyContinuous_fst_prod_snd [Countable α] [Countable β] (ρ : Measure (α × β))
     [SFinite ρ] : ρ ≪ ρ.fst.prod ρ.snd := by
   refine absolutelyContinuous_of_forall_singleton fun ⟨a, b⟩ h ↦ ?_

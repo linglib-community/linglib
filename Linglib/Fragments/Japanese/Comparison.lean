@@ -33,7 +33,6 @@ def yori : Comparative :=
   , fixedEncoding := some .adverbial
   , standardCase := some .abl }
 
-/-- The case of the standard is a function the postposition is entered with. -/
 theorem standardCase_mem_functions : ∀ k ∈ yori.standardCase, k ∈ Adpositions.yori.functions := by
   decide
 

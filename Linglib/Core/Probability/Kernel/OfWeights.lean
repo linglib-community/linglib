@@ -37,7 +37,6 @@ namespace ProbabilityTheory.Kernel
 
 variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
 
-/-- Two uniform experts weight a point by `(#A · #B)⁻¹` on their agreement set and `0` off it. -/
 private theorem uniformOn_mul_uniformOn_apply_singleton [MeasurableSingletonClass β] [DecidableEq β]
     (A B : Finset β) (b : β) :
     uniformOn ↑A {b} * uniformOn ↑B {b} =
@@ -55,8 +54,6 @@ the zero measure. -/
 noncomputable def ofWeights (w : α → β → ℝ≥0∞) : Kernel α β :=
   ofFunOfCountable fun a ↦ (∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b
 
-/-- Weight-kernel rows are subprobabilities, since normalization gives mass 1 on positive finite
-total weight and 0 otherwise. -/
 theorem ofWeights_apply_univ_le_one (w : α → β → ℝ≥0∞) (a : α) :
     ofWeights w a Set.univ ≤ 1 := by
   show ((∑ b, w a b)⁻¹ • ∑ b, w a b • Measure.dirac b) Set.univ ≤ 1
@@ -71,7 +68,6 @@ theorem ofWeights_apply_univ_le_one (w : α → β → ℝ≥0∞) (a : α) :
 instance (w : α → β → ℝ≥0∞) : IsFiniteKernel (ofWeights w) :=
   ⟨⟨1, ENNReal.one_lt_top, ofWeights_apply_univ_le_one w⟩⟩
 
-/-- A row with a positive entry and finite entries normalizes to a probability measure. -/
 theorem isProbabilityMeasure_ofWeights {w : α → β → ℝ≥0∞} {a : α} (h0 : ∃ b, w a b ≠ 0)
     (htop : ∀ b, w a b ≠ ∞) : IsProbabilityMeasure (ofWeights w a) := by
   refine ⟨?_⟩
@@ -84,7 +80,6 @@ theorem isProbabilityMeasure_ofWeights {w : α → β → ℝ≥0∞} {a : α} (
     measure_univ, smul_eq_mul, mul_one]
   exact ENNReal.inv_mul_cancel hZ0 hZtop
 
-/-- A kernel whose rows each have a positive entry and finite entries is a Markov kernel. -/
 theorem isMarkovKernel_ofWeights {w : α → β → ℝ≥0∞}
     (h0 : ∀ a, ∃ b, w a b ≠ 0) (htop : ∀ a b, w a b ≠ ∞) :
     IsMarkovKernel (ofWeights w) :=
@@ -98,18 +93,15 @@ variable [MeasurableSingletonClass β]
   rw [Measure.smul_apply, smul_eq_mul, Measure.sum_smul_dirac_apply_singleton,
     ENNReal.div_eq_inv_mul]
 
-/-- A zero weight gives zero mass. -/
 theorem ofWeights_apply_singleton_eq_zero {w : α → β → ℝ≥0∞} {a : α} {b : β} (h : w a b = 0) :
     ofWeights w a {b} = 0 := by
   rw [ofWeights_apply_singleton, h, ENNReal.zero_div]
 
-/-- A nonzero weight in a row of finite weights gives positive mass. -/
 theorem ofWeights_apply_singleton_ne_zero {w : α → β → ℝ≥0∞} {a : α} {b : β} (h : w a b ≠ 0)
     (htop : ∀ c, w a c ≠ ∞) : ofWeights w a {b} ≠ 0 := by
   rw [ofWeights_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
   exact ⟨h, ENNReal.sum_ne_top.mpr fun c _ ↦ htop c⟩
 
-/-- A row of finite weights that dominates a probability measure is a probability measure. -/
 theorem isProbabilityMeasure_ofWeights_of_absolutelyContinuous {w : α → β → ℝ≥0∞} {a : α}
     {μ : Measure β} [IsProbabilityMeasure μ] (htop : ∀ b, w a b ≠ ∞) (hμ : μ ≪ ofWeights w a) :
     IsProbabilityMeasure (ofWeights w a) := by
@@ -119,21 +111,17 @@ theorem isProbabilityMeasure_ofWeights_of_absolutelyContinuous {w : α → β �
   exact isProbabilityMeasure_ofWeights
     ⟨b, fun h ↦ hb (hμ (ofWeights_apply_singleton_eq_zero h))⟩ htop
 
-/-- Two rows whose weights differ by a positive finite factor are the same row. -/
 theorem ofWeights_apply_eq_of_mul {w : α → β → ℝ≥0∞} {a₁ a₂ : α} {c : ℝ≥0∞} (hc0 : c ≠ 0)
     (hc : c ≠ ∞) (h : ∀ b, w a₂ b = w a₁ b * c) : ofWeights w a₂ = ofWeights w a₁ :=
   Measure.ext_of_singleton fun b ↦ by
     simp only [ofWeights_apply_singleton, h, ← Finset.sum_mul, ENNReal.mul_div_mul_right _ _ hc0 hc]
 
-/-- Two weight functions differing by a positive finite factor per row give the same kernel. -/
 theorem ofWeights_eq_of_mul {w w' : α → β → ℝ≥0∞} {c : α → ℝ≥0∞} (hc0 : ∀ a, c a ≠ 0)
     (hc : ∀ a, c a ≠ ∞) (h : ∀ a b, w' a b = w a b * c a) : ofWeights w' = ofWeights w :=
   Kernel.ext fun a ↦ Measure.ext_of_singleton fun b ↦ by
     simp only [ofWeights_apply_singleton, h, ← Finset.sum_mul,
       ENNReal.mul_div_mul_right _ _ (hc0 a) (hc a)]
 
-/-- In a row with exactly two nonzero weights, both finite, the real mass of one is its share
-of the two. -/
 theorem ofWeights_real_singleton_of_pair {w : α → β → ℝ≥0∞} (a : α) {b b' : β} (hbb' : b ≠ b')
     (htop : ∀ c, w a c ≠ ∞) (hsupp : ∀ c, w a c ≠ 0 → c = b ∨ c = b') :
     (ofWeights w a).real {b} = (w a b).toReal / ((w a b).toReal + (w a b').toReal) := by
@@ -141,7 +129,6 @@ theorem ofWeights_real_singleton_of_pair {w : α → β → ℝ≥0∞} (a : α)
     Fintype.sum_eq_add b b' hbb' (fun c hc ↦ of_not_not (mt (hsupp c) (not_or.mpr hc))),
     ENNReal.toReal_div, ENNReal.toReal_add (htop b) (htop b')]
 
-/-- A row whose weight is concentrated at one point is the Dirac measure there. -/
 theorem ofWeights_apply_eq_dirac [DecidableEq β] {w : α → β → ℝ≥0∞} {a : α} {b₀ : β} {c : ℝ≥0∞}
     (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ b, w a b = if b = b₀ then c else 0) :
     ofWeights w a = Measure.dirac b₀ := by
@@ -159,20 +146,17 @@ theorem ofWeights_apply_finset (w : α → β → ℝ≥0∞) (a : α) (E : Fins
   rw [← sum_measure_singleton, div_eq_mul_inv, Finset.sum_mul]
   exact Finset.sum_congr rfl fun b _ ↦ by rw [ofWeights_apply_singleton, div_eq_mul_inv]
 
-/-- A weight-kernel row is carried by the support of its weights. -/
 theorem ofWeights_apply_setOf_eq_zero (w : α → β → ℝ≥0∞) (a : α) :
     ofWeights w a {b | w a b = 0} = 0 := by
   rw [show {b | w a b = 0} = ↑(Finset.univ.filter fun b ↦ w a b = 0) by ext; simp,
     ofWeights_apply_finset, Finset.sum_filter, Finset.sum_eq_zero fun b _ ↦ ?_, ENNReal.zero_div]
   split_ifs with h <;> simp [h]
 
-/-- The real mass of a finite event under a weight-kernel row with finite weights. -/
 theorem ofWeights_real_finset (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (E : Finset β) :
     (ofWeights w a).real ↑E = (∑ b ∈ E, (w a b).toReal) / ∑ b, (w a b).toReal := by
   rw [measureReal_def, ofWeights_apply_finset, ENNReal.toReal_div,
     ENNReal.toReal_sum fun b _ ↦ hw b, ENNReal.toReal_sum fun b _ ↦ hw b]
 
-/-- The real mass of an atom under a weight-kernel row with finite weights. -/
 theorem ofWeights_real_singleton (w : α → β → ℝ≥0∞) (a : α) (hw : ∀ b, w a b ≠ ∞) (b : β) :
     (ofWeights w a).real {b} = (w a b).toReal / ∑ b', (w a b').toReal := by
   rw [← Finset.coe_singleton, ofWeights_real_finset w a hw, Finset.sum_singleton]

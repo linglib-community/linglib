@@ -45,16 +45,13 @@ variable (Rs G) in
 members' accessibility. -/
 def CommonKnowledge (p : W → Prop) (w : W) : Prop := □[transGen (⋃ i ∈ G, Rs i)] p w
 
-/-- What is common knowledge is known by every member. -/
 theorem box_of_commonKnowledge (hi : i ∈ G) (h : CommonKnowledge Rs G p w) : □[Rs i] p w :=
   box_restrict p ((Set.subset_biUnion_of_mem (u := Rs) hi).trans subset_transGen) w h
 
-/-- Common knowledge is the infinite conjunction `E_G p ∧ E_G (E_G p) ∧ ⋯`. -/
 theorem commonKnowledge_iff_forall_iterate :
     CommonKnowledge Rs G p w ↔ ∀ n, (□[⋃ i ∈ G, Rs i])^[n + 1] p w :=
   box_transGen_iff _
 
-/-- Common knowledge is veridical once some member's accessibility is reflexive. -/
 theorem commonKnowledge_imp (hi : i ∈ G) [(Rs i).IsRefl] (h : CommonKnowledge Rs G p w) : p w :=
   box_T (box_of_commonKnowledge hi h)
 
@@ -70,8 +67,6 @@ among `G` ([stalnaker-2002]). -/
 def GroundedIn (cg : Filter W) (Rs : E → SetRel W W) (G : Set E) : Prop :=
   ∀ w, w ∈ cg.ker ↔ ∀ p ∈ cg, ModalLogic.CommonKnowledge Rs G (· ∈ p) w
 
-/-- An accepted proposition of a grounded common ground is common knowledge throughout its
-context set. -/
 theorem GroundedIn.commonKnowledge {cg : Filter W} {Rs : E → SetRel W W} {G : Set E}
     (h : cg.GroundedIn Rs G) {w : W} (hw : w ∈ cg.ker) {p : Set W} (hp : p ∈ cg) :
     ModalLogic.CommonKnowledge Rs G (· ∈ p) w :=

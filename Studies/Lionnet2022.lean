@@ -68,7 +68,6 @@ node, with no register state. -/
 def absolutePitch (t : TRN) : Int :=
   (if t.upper = some true then 2 else 0) + if t.raised = some true then 1 else 0
 
-/-- `L < M < H`, with the gap above `H`. -/
 theorem absolutePitch_ordered :
     absolutePitch TRN.L = 0 ∧ absolutePitch TRN.M = 1 ∧ absolutePitch TRN.H = 2 ∧
       absolutePitch TRN.superHigh = 3 := by
@@ -76,25 +75,17 @@ theorem absolutePitch_ordered :
 
 /-! ### M-exclusivity: `*MX/XM` (§3, §5.4) -/
 
-/-- **M-exclusivity** (`*MX/XM`). An attested stem melody containing M is *all* M, so M never
-co-occurs with a different tone at stem level. -/
 theorem M_exclusive :
     ∀ m ∈ attestedMelodies, Tone.M ∈ m → ∀ t ∈ m, t = Tone.M := by decide
 
 /-! ### M-lowering as `[−raised]` assimilation (§5.2) -/
 
-/-- M-lowering is `[−raised]` assimilation. An L trigger (`[−raised]`) spreads its
-`[raised]` value onto M (the only `[+raised]` tone), turning it into L. -/
 theorem mLowering_from_L : TRN.assimilate .raised TRN.L TRN.M = TRN.L := by decide
 
-/-- M-lowering from a `[−raised]` H trigger likewise turns M into L. -/
 theorem mLowering_from_H : TRN.assimilate .raised TRN.H TRN.M = TRN.L := by decide
 
-/-- Only M is targeted. H is inert under `[−raised]` assimilation, being already
-`[−raised]`, which is why H- and L-toned roots never lower. -/
 theorem H_stable : TRN.assimilate .raised TRN.L TRN.H = TRN.H := by decide
 
-/-- L is likewise inert under `[−raised]` assimilation. -/
 theorem L_stable : TRN.assimilate .raised TRN.H TRN.L = TRN.L := by decide
 
 /-! ### The ventive suffix (§5.5) -/
@@ -118,23 +109,13 @@ theorem superHigh_is_the_gap : TRN.superHigh ∉ laalToneInventory := by decide
 
 /-! ### The optional OCP-`[raised]` merger (§5.2, ex. 53–55, 58) -/
 
-/-- The paper (exx. 54–55, 58) mentions, without adopting, an optional OCP-`[raised]`
-economy under which two adjacent identical `[−raised]` autosegments fuse into one
-multiply-linked autosegment; for fully identical adjacent tones that fusion is
-`OCP.collapse`. -/
 theorem ocp_raised_merge_LL :
     OCP.collapse [TRN.L, TRN.L] = [TRN.L] := by decide
 
-/-- OCP-`[raised]` is **tier-relative**. It constrains the `[raised]`-projected tier
-(`IsCleanOn` reading `.raised`), not whole TRNs. H and L
-are distinct *tones* but both `[−raised]`, so adjacent they violate OCP-`[raised]`
-even though `[TRN.H, TRN.L]` is clean as a whole-TRN tier. -/
 theorem ocp_raised_is_tier_relative :
     ¬ OCP.IsCleanOn (fun _ : TRN ↦ True) (·.raised) [TRN.H, TRN.L] ∧
       OCP.IsClean [TRN.H, TRN.L] := by decide
 
-/-- Under the optional economy, fusing adjacent identical `[raised]` autosegments leaves
-the `[raised]`-projected tier OCP-clean. -/
 theorem ocp_raised_merge_clean (tier : List TRN) :
     OCP.IsClean (OCP.collapse (tier.map (·.raised))) :=
   OCP.isClean_collapse _
@@ -168,7 +149,6 @@ instance (i j : Fin 4) (p q : ℕ) : Decidable (laalSpokes i j p q) :=
 /-- The M-toned form on the multi-tier substrate. -/
 def mForm : AR laalTier := AR.fromRel laalWords laalSpokes
 
-/-- The form obeys the NCC, each spoke being a single association. -/
 theorem mForm_noCrossing : mForm.NoCrossing := by decide
 
 /-- Delinking a feature acts on one tier-pair layer alone (**partial activity**, §5), here
@@ -190,7 +170,6 @@ theorem partial_indep_of_full (p q : ℕ) :
     delinkRaised.Link 2 3 p q ↔ mForm.Link 2 3 p q := by
   simp [delinkRaised, mForm, delink, laalSpokes]
 
-/-- And it does remove the `[raised]`↔TRN association. -/
 theorem delinkRaised_erases (p q : ℕ) : ¬ delinkRaised.Link 1 2 p q := by
   rw [delinkRaised, AR.link_fromRel]
   rintro ⟨-, -, -, ⟨hne, -⟩ | ⟨-, h2, -⟩⟩

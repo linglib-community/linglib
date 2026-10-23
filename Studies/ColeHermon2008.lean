@@ -313,12 +313,9 @@ example :
 
 /-! ### Every clause goes through a VOS stage (§5) -/
 
-/-- The SVO derivation extends the VOS derivation. -/
 theorem svo_take_vos (c : Clause) (σ : Sides) : (c.svo σ).take (c.vos σ).length = c.vos σ :=
   Derivation.take_length_append _ _
 
-/-- Freezing is the same in SVO and VOS clauses: the further raising of the pivot, a leaf,
-freezes nothing. -/
 theorem frozen_svo_iff (c : Clause) (σ : Sides) (x : SyntacticObject) :
     (c.svo σ).Frozen x ↔ (c.vos σ).Frozen x := by
   simp [Clause.svo, Derivation.frozen_append_iff]
@@ -465,8 +462,6 @@ def BindingTheory.Licenses (th : BindingTheory) (a : Reflexivization) : Prop :=
 instance (th : BindingTheory) (a : Reflexivization) : Decidable (th.Licenses a) := by
   cases th <;> (unfold BindingTheory.Licenses BindingTheory.configuration; infer_instance)
 
-/-- C-command at some stage licenses whatever c-command at the surface or at the last SVO stage
-licenses, so the paper's condition is the weakest of the configurational candidates. -/
 theorem BindingTheory.Licenses.derivational {th : BindingTheory} {a : Reflexivization}
     (hth : th ≠ .semanticHierarchy) (h : th.Licenses a) :
     BindingTheory.derivational.Licenses a := by
@@ -535,7 +530,6 @@ example :
 
 /-! ### Merge is unordered (§6) -/
 
-/-- Up to the sides of its Merges, the VOS derivation is one derivation. -/
 theorem vos_leftward (c : Clause) (σ σ' : Sides) :
     (c.vos σ).leftward = (c.vos σ').leftward := by
   simp [Derivation.leftward, Derivation.append, Clause.vos, Clause.svoStage, Clause.base]
@@ -546,7 +540,6 @@ theorem stageAt_sides (c : Clause) (σ σ' : Sides) (n : ℕ) :
     (c.vos σ).stageAt n = (c.vos σ').stageAt n := by
   rw [← Derivation.stageAt_leftward, vos_leftward c σ σ', Derivation.stageAt_leftward]
 
-/-- Nor can freezing, which reads the movers. -/
 theorem frozen_sides (c : Clause) (σ σ' : Sides) (x : SyntacticObject) :
     (c.vos σ).Frozen x ↔ (c.vos σ').Frozen x := by
   rw [← Derivation.frozen_leftward_iff, vos_leftward c σ σ', Derivation.frozen_leftward_iff]

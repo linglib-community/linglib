@@ -64,12 +64,9 @@ each position. -/
 def lateSpellout : Spellout (Finset Harley2014.SiteFeature) String :=
   ⟨[], fun n ↦ (subsetPrinciple Harley2014.vocabulary n).toList⟩
 
-/-- The syntax hands over no phonology: the clause's terminals are silent. -/
 theorem pfPhon_clause : ∀ r ∈ [Harley2014.run, Harley2014.walk, Harley2014.kill, Harley2014.sing],
     ∀ n, pfPhon (clause r n) = [] := by decide
 
-/-- The architecture end to end: the clause handed over and realized late gives the verb exactly
-what Harley's insertion site gives it, the suppletive form for the internal argument's number. -/
 theorem pf_clause : ∀ r ∈ [Harley2014.run, Harley2014.walk, Harley2014.kill, Harley2014.sing],
     ∀ n, lateSpellout.pf (SpelloutDomain.ofLinearized feats (clause r n))
       = [[], (Harley2014.spellout (unaccusative n) r).toList] := by
@@ -87,9 +84,6 @@ example :
 def earlyVerbTok (phon : Root → String) (r : Root) : LexicalItem.Token :=
   ⟨.of .V [.D] (phon r), r.1⟩
 
-/-- Early root insertion fails on suppletion: no assignment of one listed form per root realizes
-*vuite* in the singular and *tenne* in the plural, since the early pipeline's exponent at the
-verb is the listed form whatever the neighborhood. -/
 theorem no_early_insertion :
     ¬ ∃ phon : Root → String, ∀ n,
       ((earlySpellout [subjTok n, earlyVerbTok phon Harley2014.run]).pf

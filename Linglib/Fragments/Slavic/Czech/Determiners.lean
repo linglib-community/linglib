@@ -91,7 +91,6 @@ end QuantityWord
 def inventory : Determiner.Inventory :=
   .demonstrative ten :: QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-/-- No strength is marked. -/
 theorem strengths_inventory : inventory.strengths = ∅ := by decide
 
 end Czech.Determiners

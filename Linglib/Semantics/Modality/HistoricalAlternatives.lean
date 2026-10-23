@@ -133,7 +133,6 @@ theorem time_lt_of_mem_futureHistoryBase [Preorder T] (h : s' ∈ futureHistoryB
     s.time < s'.time :=
   (mem_futureHistoryBase.1 h).2
 
-/-- Bases oriented by the join of two cells are the union of the bases. -/
 theorem orientedBase_sup [LT T] (C D : Finset Ordering) :
     orientedBase history s (C ⊔ D) = orientedBase history s C ∪ orientedBase history s D := by
   ext

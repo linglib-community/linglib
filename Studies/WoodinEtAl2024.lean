@@ -61,7 +61,6 @@ def Property.Holds (n : ℕ) : Property → Prop
 instance (n : ℕ) : DecidablePred (Property.Holds n) := fun p ↦ by
   cases p <;> unfold Property.Holds <;> infer_instance
 
-/-- 10-ness, 2-ness and 5-ness make a number a multiple of ten. -/
 theorem dvd_ten_of_holds {κ : Kness} {n : ℕ} (hκ : κ ≠ .twoAndAHalf) (h : κ.Holds 1 n) :
     10 ∣ n := by
   cases κ with
@@ -99,14 +98,11 @@ variable (M : Model)
 noncomputable def predicted (n : ℕ) : ℝ :=
   M.magnitude * Real.logb 10 n + ∑ p ∈ profile Property.Holds n, M.weight p
 
-/-- With non-negative weights, the roundness term is monotone in the roundness ordering. -/
 theorem sum_weight_le_of_atLeastAsRound (hw : ∀ p, 0 ≤ M.weight p) {n m : ℕ}
     (h : AtLeastAsRound Property.Holds n m) :
     ∑ p ∈ profile Property.Holds n, M.weight p ≤ ∑ p ∈ profile Property.Holds m, M.weight p :=
   sum_le_sum_of_subset_of_nonneg (profile_subset_profile.2 h) fun p _ _ ↦ hw p
 
-/-- At equal roundness, a negative magnitude coefficient predicts the smaller number more
-frequent. -/
 theorem predicted_anti (hM : M.magnitude ≤ 0) {n m : ℕ} (hn : 0 < n) (hnm : n ≤ m)
     (h : profile Property.Holds n = profile Property.Holds m) : M.predicted m ≤ M.predicted n := by
   unfold predicted

@@ -94,8 +94,6 @@ section Profile
 
 variable [DecidableEq E]
 
-/-- The words true of an object are the one that names its colour and the one that names its
-shape. -/
 theorem filter_mem_denote (r : E) :
     (Finset.univ.filter fun w : Word C S ↦ r ∈ ⟦w⟧ᴹ) =
       {⟨.colour, M r .colour⟩, ⟨.shape, M r .shape⟩} := by
@@ -133,12 +131,10 @@ instance (α : ℝ) : IsFiniteKernel (speaker M α) :=
 
 variable {α : ℝ} {w w₁ w₂ : Word C S} {r r' : E}
 
-/-- The speaker never uses a word for an object it is false of. -/
 theorem speaker_real_singleton_eq_zero (hα : 0 < α) (h : r ∉ ⟦w⟧ᴹ) :
     (speaker M α r).real {w} = 0 :=
   RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ h
 
-/-- The speaker uses every word true of an object with positive probability. -/
 theorem speaker_real_singleton_pos (hα : 0 ≤ α) (h : r ∈ ⟦w⟧ᴹ) : 0 < (speaker M α r).real {w} :=
   ENNReal.toReal_pos (RSA.speaker_dirac_apply_singleton_ne_zero hα
     ((RSA.listener_truthful_apply_singleton_ne_zero_iff _ _ _ _).2
@@ -146,8 +142,6 @@ theorem speaker_real_singleton_pos (hα : 0 ≤ α) (h : r ∈ ⟦w⟧ᴹ) : 0 <
 
 variable [DecidableEq E]
 
-/-- The literal listener gives an object in the extension of a word the reciprocal of the size
-of the extension, the paper's `|w|`. -/
 theorem literal_apply_singleton (w : Word C S) (r : E) :
     literal M w {r} = if r ∈ ⟦w⟧ᴹ then (⟦w⟧ᴹ.card : ℝ≥0∞)⁻¹ else 0 :=
   RSA.listener_uniformOn_truthful_apply_singleton _ w r
@@ -260,7 +254,6 @@ theorem narrowing_blue (hα : 0 < α) :
   (speaker_real_singleton_lt_iff M hα (by decide) (by decide) (b := .shape) (by decide)).2
     (by decide)
 
-/-- *Square* is likewise used less for the green square, which *green* identifies. -/
 theorem narrowing_square (hα : 0 < α) :
     (speaker M α .greenSquare).real {.square} < (speaker M α .blueSquare).real {.square} :=
   (speaker_real_singleton_lt_iff M hα (by decide) (by decide) (b := .colour) (by decide)).2
@@ -274,20 +267,16 @@ theorem listener_narrows_blue (hα : 0 < α) :
   (listener_real_singleton_lt_iff M hα Measure.count (by decide) (by decide) (by simp) (by simp)
     (b := .shape) (by decide)).2 (by decide)
 
-/-- *Green* is never used for the blue square and is used for the green square, so a listener
-hearing it identifies the green square. -/
 theorem unique_green (hα : 0 < α) :
     (speaker M α .blueSquare).real {.green} < (speaker M α .greenSquare).real {.green} := by
   rw [speaker_real_singleton_eq_zero M hα (by decide)]
   exact speaker_real_singleton_pos M hα.le (by decide)
 
-/-- Unique reference for *circle*. -/
 theorem unique_circle (hα : 0 < α) :
     (speaker M α .blueSquare).real {.circle} < (speaker M α .blueCircle).real {.circle} := by
   rw [speaker_real_singleton_eq_zero M hα (by decide)]
   exact speaker_real_singleton_pos M hα.le (by decide)
 
-/-- As rationality grows without bound the speaker puts all its mass on *circle*. -/
 theorem fully_rational_picks_circle :
     Filter.Tendsto (fun α ↦ (speaker M α .blueCircle).real {.circle}) Filter.atTop (𝓝 1) := by
   refine RSA.tendsto_speaker_dirac_real_singleton_atTop ?_ fun u hu ↦ ?_

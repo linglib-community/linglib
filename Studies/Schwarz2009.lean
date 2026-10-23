@@ -196,8 +196,6 @@ theorem exists_le_of_shift (hR : IsLocal R) (h : shift R g s x) :
   let ⟨y, hy, ho⟩ := h
   ⟨y, hR y x y hy, hy, ho⟩
 
-/-- A whole that is part of the situation overlaps it, as the fridge does in part-whole
-bridging. -/
 theorem shift_of_le (hy : R y x y) (hys : y ≤ s) (hb : ¬ IsBot y) : shift R g s x :=
   ⟨y, hy, (Overlap.of_le hb hys).symm⟩
 
@@ -250,7 +248,6 @@ def novel : Restrictor Sit Sit := fun _ _ x ↦ x = {.novel} ∨ x = {.coauthore
 
 theorem isLocal_authorOf : IsLocal authorOf := fun _ _ _ h ↦ h.2
 
-/-- An author is not part of what they wrote. -/
 theorem not_le_of_authorOf {y x s : Sit} (h : authorOf y x s) : ¬ x ≤ y := by
   obtain ⟨⟨rfl, rfl⟩ | ⟨rfl, rfl | rfl⟩, -⟩ := h <;> decide
 

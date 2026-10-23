@@ -139,8 +139,6 @@ theorem table2 :
       ¬ spanish.AllSame ∧ spanish.Recycled ∧ ¬ blackfoot.AllSame ∧ blackfoot.Mixed := by
   decide
 
-/-- Akɔɔse has the human gender as its core and at least seven other remainder genders, so
-its remainder takes different, novel genders. -/
 theorem akoose_cell (r : Remainder ℕ) (hcore : r.core = {1}) (hcard : 7 ≤ r.remainder.card)
     (h : 1 ∉ r.remainder) : ¬ r.AllSame ∧ r.Novel :=
   ⟨fun h₁ ↦ by unfold AllSame at h₁; omega,
@@ -177,7 +175,6 @@ false. -/
 theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gender := by
   decide
 
-/-- In its valid direction, every feminine noun outside the semantic core ends in *-ā*. -/
 theorem feminine_remainder_aa :
     ∀ n ∈ Hausa.allNouns,
       ¬ n.IsNaturalGender id → n.gender = .feminine → n.EndsInAa := by
@@ -223,8 +220,6 @@ def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
     decide (n.naturalGender = some .feminine),
     decide (n.naturalGender = none ∧ n.gender = .fem)⟩
 
-/-- The lexical account recovers the gender of every noun of the Fragment's shape but a
-hybrid. -/
 theorem lexical_faithful (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     (lexicalEntry n).humanGender.gender = n.gender.toLabel := by
   obtain ⟨⟨_, g, b⟩, _⟩ := n
@@ -232,7 +227,6 @@ theorem lexical_faithful (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     simp_all [IsHybrid, lexicalEntry, LexicalEntry.humanGender, LexicalEntry.gender,
       Value.toLabel]
 
-/-- No noun of the Fragment is a hybrid, so the lexical account recovers the gender of each. -/
 theorem allNouns_not_hybrid : ∀ n ∈ allNouns, ¬ IsHybrid n := by
   decide
 
@@ -243,7 +237,6 @@ theorem estudiante_cloned :
       [.masculine, .feminine] := by
   decide
 
-/-- *persona*, listed with [f], stays feminine under Human Cloning. -/
 theorem persona_cloned_feminine :
     (lexicalEntry persona).humanCloning.map (·.humanGender.gender) =
       [.feminine, .feminine] := by
@@ -295,17 +288,12 @@ def determiners : List (VocabularyItem DetFeature String) :=
 def determiner (ch : Categorizer.Head) : Option String :=
   subsetPrinciple determiners (determinerFeatures ch)
 
-/-- A determiner with [−fem] and one with no gender feature both take
-*el*: *la* carries a feature neither bears. -/
 theorem determiner_iMasc_eq_plain :
     determiner .n_iMasc = some "el" ∧ determiner .n_plain = some "el" := by decide
 
-/-- Natural and arbitrary feminine share *la*, since both bear [+fem]. -/
 theorem determiner_iFem_eq_uFem :
     determiner .n_iFem = some "la" ∧ determiner .n_uFem = some "la" := by decide
 
-/-- The structural account recovers the Fragment's singular definite article for every noun of
-its shape. -/
 theorem structural_faithful (n : Spanish.Gender.Noun) :
     determiner (nHead n) = some (n.gender.definiteArticle (numberSystem.value .singular)) := by
   obtain ⟨⟨_, g, b⟩, _⟩ := n; cases g <;> rcases b with _ | l <;> (try cases l) <;>
@@ -324,8 +312,6 @@ theorem lexical_eq_structural (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
 morphologically masculine Class I noun, take both genders in one phrase. -/
 def hybridTargets : List (String × Gender) := [("xoroš-aja", .feminine), ("glavn-yj", .masculine)]
 
-/-- No lexical entry fits agreement targets of both genders, since an entry has one gender;
-the structural account adds a second source of gender features above n. -/
 theorem no_lexical_hybrid {targets : List (String × Gender)}
     (hf : ∃ t ∈ targets, t.2 = .feminine) (hm : ∃ t ∈ targets, t.2 = .masculine) :
     ¬ ∃ e : LexicalEntry, ∀ t ∈ targets, t.2 = e.gender := by
@@ -353,9 +339,6 @@ instance (fs : List GenderFeature) : Decidable (RadicallyInterpretable fs) := by
 theorem spanish_radicallyInterpretable :
     RadicallyInterpretable (spanishHeads.filterMap (·.gender)) := by decide
 
-/-- Under radical interpretability a language with gender features has an
-interpretable one, so some nouns are gendered semantically: the semantic
-core, from the structural account. -/
 theorem exists_interpretable {fs : List GenderFeature} (h : RadicallyInterpretable fs)
     (hne : fs ≠ []) : ∃ gf ∈ fs, gf.interp = .interpretable := by
   obtain ⟨gf, hgf⟩ := List.exists_mem_of_ne_nil fs hne
@@ -363,9 +346,6 @@ theorem exists_interpretable {fs : List GenderFeature} (h : RadicallyInterpretab
   | interpretable => exact ⟨gf, hgf, hi⟩
   | uninterpretable => obtain ⟨gf', h₁, h₂, -⟩ := h gf hgf hi; exact ⟨gf', h₁, h₂⟩
 
-/-- The lexical account excludes nothing, since a lexicon whose two agreement
-classes track no semantic feature is well formed, though no such language
-is attested. -/
 theorem lexical_allows_arbitrary_only :
     ∃ L : List LexicalEntry, (∀ e ∈ L, e.human = false) ∧
       (∃ e ∈ L, e.gender = .feminine) ∧ ∃ e ∈ L, e.gender = .masculine :=

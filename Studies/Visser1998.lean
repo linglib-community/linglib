@@ -55,12 +55,10 @@ the existential is agreement off `x`, the substrate's `randomAssign`
 (`mem_randomAssign_iff_eqOn`). -/
 def agreeOn (V : Set ℕ) : Update (Assignment E) := {(f, g) | Set.EqOn f g V}
 
-/-- A relation embeds in its composition with agreement on either side. -/
 theorem subset_agreeOn_comp (R : Update (Assignment E)) (V W : Set ℕ) :
     R ⊆ agreeOn V ○ (R ○ agreeOn W) :=
   fun ⟨f, g⟩ hR ↦ ⟨f, Set.eqOn_refl _ _, g, hR, Set.eqOn_refl _ _⟩
 
-/-- Agreements compose to agreement on the intersection. -/
 theorem agreeOn_comp_agreeOn (V W : Set ℕ) :
     agreeOn V ○ agreeOn W = agreeOn (E := E) (V ∩ W) := by
   classical
@@ -69,13 +67,11 @@ theorem agreeOn_comp_agreeOn (V W : Set ℕ) :
     fun hVW ↦ ⟨V.piecewise f h, (V.piecewise_eqOn f h).symm,
       V.eqOn_piecewise.mpr ⟨fun v hv ↦ hVW ⟨hv.2, hv.1⟩, fun _ _ ↦ rfl⟩⟩⟩
 
-/-- Agreements meet in agreement on the union. -/
 theorem agreeOn_inter_agreeOn (V W : Set ℕ) :
     agreeOn V ∩ agreeOn W = agreeOn (E := E) (V ∪ W) := by
   ext ⟨f, g⟩
   exact Set.eqOn_union.symm
 
-/-- Agreement on no variables is trivial. -/
 theorem agreeOn_empty : agreeOn (E := E) ∅ = Set.univ := by
   ext ⟨f, g⟩
   exact ⟨fun _ ↦ trivial, fun _ ↦ Set.eqOn_empty f g⟩

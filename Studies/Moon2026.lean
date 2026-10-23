@@ -81,15 +81,10 @@ theorem ConnectedLiquid.selfConnected [PartialOrder α] {C : α → α → Prop}
 
 variable [SemilatticeSup α] {C : α → α → Prop} {P : α → Prop}
 
-/-- A predicate entailing self-connection is not cumulative once two instances have a
-disconnected sum, so that non-cumulativity comes from connection rather than from quantization
-(`qua_cum_incompatible`). -/
 theorem connectivity_breaks_cum (hConn : ∀ x, P x → SelfConnected C x) {x y : α} (hx : P x)
     (hy : P y) (hDisc : ¬ SelfConnected C (x ⊔ y)) : ¬ CUM P :=
   fun hCum ↦ hDisc (hConn _ (hCum hx hy))
 
-/-- With a proper part that is also an instance, such a predicate is neither cumulative
-nor quantized. -/
 theorem connectivity_middle_ground (hConn : ∀ x, P x → SelfConnected C x) {a b : α}
     (ha : P a) (hb : P b) (hDisc : ¬ SelfConnected C (a ⊔ b)) {x y : α} (hx : P x) (hy : P y)
     (hlt : y < x) : ¬ CUM P ∧ ¬ QUA P :=
@@ -147,21 +142,15 @@ theorem selfConnected_of_mixedDrinkDen {x : α} (hx : mixedDrinkDen C recipe μ 
     SelfConnected C x :=
   hx.some.connected.selfConnected
 
-/-- Two margaritas in separate glasses do not sum to a margarita, since the sum is not a
-connected liquid. -/
 theorem not_mixedDrinkDen_of_not_selfConnected {x : α} (hDisc : ¬ SelfConnected C x) :
     ¬ mixedDrinkDen C recipe μ phase x :=
   fun hx ↦ hDisc (selfConnected_of_mixedDrinkDen hx)
 
-/-- A single ingredient is not the drink, since with at least two ingredients whose extensions
-are exclusive of one another's parts, an entity all of whose parts are ingredient `i`
-fills no other slot. -/
 theorem not_mixedDrinkDen_of_exclusive {recipe : Recipe α K (n + 2)} {y : α} (i : Fin (n + 2))
     (hExcl : ∀ j ≠ i, ∀ z ≤ y, ¬ recipe.ingredients j z) :
     ¬ mixedDrinkDen C recipe μ phase y :=
   fun ⟨w⟩ ↦ let ⟨j, hj⟩ := exists_ne i; hExcl j hj _ (w.part_le j) (w.satisfies j)
 
-/-- A mixed drink has at least two disjoint non-null parts, so it is not an atom. -/
 theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
     (hx : mixedDrinkDen C recipe μ phase x) : ¬ Atom x := by
   intro hAtom
@@ -172,31 +161,21 @@ theorem mixedDrink_not_atom {recipe : Recipe α K (n + 2)} {x : α}
   rw [h0, h1] at hDisj
   exact hDisj (Overlap.refl hAtom.not_isBot)
 
-/-- The atoms restriction, individuation as atom-based count theories construe it, excludes
-mixed drinks, whose unit of individuation is not atomicity but the measured part. -/
 theorem atomsOf_excludes_mixed_drinks {recipe : Recipe α K (n + 2)} (DRINK : α → Prop) {x : α}
     (hx : mixedDrinkDen C recipe μ phase x) : ¬ Number.atomsOf DRINK x :=
   fun ⟨_, hAtom⟩ ↦ mixedDrink_not_atom hx hAtom
 
-/-- Half a margarita with its ratios and connectivity preserved is a margarita, so the
-denotation is not quantized. -/
 theorem mixedDrink_not_qua {x y : α} (hx : mixedDrinkDen C recipe μ phase x)
     (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
     ¬ QUA (mixedDrinkDen C recipe μ phase) :=
   fun hQ ↦ hQ hy hx hlt.ne hlt.le
 
-/-- Mixed drinks occupy [filip-2012]'s middle ground, neither cumulative nor quantized,
-as an instance of `connectivity_middle_ground`. -/
 theorem mixedDrink_middle_ground {a b : α} (ha : mixedDrinkDen C recipe μ phase a)
     (hb : mixedDrinkDen C recipe μ phase b) (hDisc : ¬ SelfConnected C (a ⊔ b)) {x y : α}
     (hx : mixedDrinkDen C recipe μ phase x) (hy : mixedDrinkDen C recipe μ phase y) (hlt : y < x) :
     ¬ CUM (mixedDrinkDen C recipe μ phase) ∧ ¬ QUA (mixedDrinkDen C recipe μ phase) :=
   connectivity_middle_ground (fun _ ↦ selfConnected_of_mixedDrinkDen) ha hb hDisc hx hy hlt
 
-/-- Neither cumulativity nor quantization of the object propagates to the VP, so neither
-`vp_cum` nor `vp_qua` fires; the gap itself propagates. Two objects whose
-sum is not an object witness the failure of cumulativity on the VP, since the sum event's
-object would have to be their sum. -/
 private theorem not_cum_vp {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} {OBJ : α → Prop}
     (hs : SUM θ) (hU : UP θ) {x y : α}
     {e₁ e₂ : β} (hx : OBJ x) (hy : OBJ y) (hθ₁ : θ x e₁) (hθ₂ : θ y e₂) (hSum : ¬ OBJ (x ⊔ y)) :
@@ -205,9 +184,6 @@ private theorem not_cum_vp {β : Type*} [SemilatticeSup β] {θ : α → β → 
   obtain ⟨z, hz_obj, hz_θ⟩ := hCum ⟨x, hx, hθ₁⟩ ⟨y, hy, hθ₂⟩
   exact hSum (hU hz_θ (hs hθ₁ hθ₂) ▸ hz_obj)
 
-/-- With a strictly incremental verb, an object neither cumulative nor quantized yields a VP
-neither cumulative nor quantized, as the sum witnesses refute cumulativity and a proper object
-part, mapped to a proper subevent, refutes quantization. -/
 theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : α → β → Prop} (h : SINC θ)
     (hU : UP θ) (hs : SUM θ) {OBJ : α → Prop} {a b : α} {e_a e_b : β} (ha : OBJ a) (hb : OBJ b)
     (hθ_a : θ a e_a) (hθ_b : θ b e_b) (hSum : ¬ OBJ (a ⊔ b)) {x y : α} {e_x : β} (hx : OBJ x)
@@ -216,8 +192,6 @@ theorem middle_ground_stable {β : Type*} [SemilatticeSup β] {θ : α → β �
   obtain ⟨e_y, he_y_lt, hθ_y⟩ := h.mse hθ_x hlt
   exact hQua ⟨y, hy, hθ_y⟩ ⟨x, hx, hθ_x⟩ he_y_lt.ne he_y_lt.le
 
-/-- The middle ground propagates to VPs, so a strictly incremental drinking verb with a
-mixed-drink object is neither cumulative nor quantized (`middle_ground_stable`). -/
 theorem mixedDrink_VP_propagation_gap {β : Type*} [SemilatticeSup β] {drinkTheme : α → β → Prop}
     (h : SINC drinkTheme) (hU : UP drinkTheme) (hs : SUM drinkTheme) {a b : α} {e_a e_b : β}
     (ha : mixedDrinkDen C recipe μ phase a) (hb : mixedDrinkDen C recipe μ phase b)

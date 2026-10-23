@@ -88,8 +88,6 @@ def IsBounded [OrderTop D] : Prop := s.strongThreshold = ⊤
 
 end LexicalScale
 
-/-- On a linear dimension the inference is the interval from the weak threshold up to the
-strong one. -/
 theorem LexicalScale.upperBounded_eq_Ico {L : Type*} [LinearOrder L] (s : LexicalScale L) :
     s.upperBounded = Set.Ico s.weakThreshold s.strongThreshold := by
   ext d
@@ -116,7 +114,6 @@ end Bounded
 /-- The uniformity assumption: every scale gives rise to the inference at the same rate. -/
 def Uniform {ι : Type*} (rate : ι → ℚ) : Prop := ∀ s t, rate s = rate t
 
-/-- Two scales with different rates refute uniformity. -/
 theorem not_uniform_of_ne {ι : Type*} {rate : ι → ℚ} {s t : ι} (h : rate s ≠ rate t) :
     ¬ Uniform rate :=
   λ hu => h (hu s t)

@@ -112,7 +112,6 @@ theorem antitone_mem_condition_underspecified (hd : Antitone d) :
     Antitone fun i ↦ d i ∈ Kind.underspecified.condition U P :=
   (Set.monotone_mem.2 isUpperSet_condition_underspecified).comp_antitone hd
 
-/-- As a discourse asserts more, personal *they*, once licensed, stays licensed. -/
 theorem monotone_mem_condition_personal (hd : Antitone d) :
     Monotone fun i ↦ d i ∈ Kind.personal.condition U P :=
   (Set.antitone_mem.2 isLowerSet_condition_personal).comp hd
@@ -205,15 +204,12 @@ def Agrees (e : Datum) (c : Filter W) : Prop :=
   (∀ v ∈ e.feature? "representation", c ∈ U ↔ v = "underspecified") ∧
     (e.feature? "pronouns" = some "they/them" → P ∈ c)
 
-/-- Each underspecified row describes the representation, as underspecified unless the paper
-flags the row. -/
 private theorem rows_underspecified : ∀ e ∈ Examples.all, Kind.ofRow? e = some .underspecified →
     (e.feature? "representation").isSome ∧
       (e.feature? "representation" = some "underspecified" ↔
         e.feature? "counterexample" = none) := by
   decide +kernel
 
-/-- Each personal row records the they/them pronouns, and the paper flags none. -/
 private theorem rows_personal : ∀ e ∈ Examples.all, Kind.ofRow? e = some .personal →
     e.feature? "pronouns" = some "they/them" ∧ e.feature? "counterexample" = none := by
   decide +kernel

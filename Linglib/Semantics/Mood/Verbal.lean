@@ -97,8 +97,6 @@ theorem indicative_ne_subjunctive :
   ⟨sepState, State.sepProp, ⟨false, Set.mem_univ false, fun _ _ hv ↦ hv rfl⟩,
     fun h ↦ Bool.noConfusion (h true (Set.mem_univ true))⟩
 
-/-- Targeting is injective. Portner states his principles from the modal to the form; the
-injectivity here reflects only that two moods go to two components. -/
 theorem target_injective : Function.Injective target := by decide
 
 end Grammatical

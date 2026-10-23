@@ -140,8 +140,6 @@ theorem universal_9 :
         (·.adposition = .postpositions) ["Thai", "Yoruba"] := by
   decide
 
-/-- A question particle placed by reference to a word follows it, Yoruba excepted, and no
-verb-initial language has one (Universal 10). -/
 theorem universal_10 :
     UniversalExcept (·.questionParticleWord ≠ none) (·.questionParticleWord = some .follows)
         ["Yoruba"] ∧
@@ -233,8 +231,6 @@ instance (P Q : OrderType → Prop) [DecidablePred P] [DecidablePred Q] :
     Decidable (TypeUniversal P Q) :=
   inferInstanceAs (Decidable (∀ t ∈ attested, P t → Q t))
 
-/-- The prepositional types with a preposed genitive are the paper's 3, 11, 12, and 19, and the
-postpositional types with a postposed genitive its 14 and 21, the exceptions to Universal 2. -/
 theorem universal_2_types :
     TypeUniversal (fun t ↦ t.adposition = .prepositions ∧ t.genitive = .dependentFirst)
         (·.index ∈ [3, 11, 12, 19]) ∧
@@ -242,28 +238,20 @@ theorem universal_2_types :
         (·.index ∈ [14, 21]) := by
   decide
 
-/-- No postpositional verb-initial type is attested (Universal 3). The paper's additional note
-records Papago as the one exception it learned of. -/
 theorem universal_3_types :
     TypeUniversal (·.basicOrder.IsInitial .verb) (·.adposition = .prepositions) := by
   decide
 
-/-- The prepositional verb-final types, the exceptions to Universal 4, are 17, Persian's, and 19,
-Amharic's. -/
 theorem universal_4_types :
     TypeUniversal (fun t ↦ t.basicOrder.IsFinal .verb ∧ t.adposition = .prepositions)
       (·.index ∈ [17, 19]) := by
   decide
 
-/-- A verb-final type with a postposed genitive has the adjective after the noun, the types 18
-and 22 being empty (Universal 5). -/
 theorem universal_5_types :
     TypeUniversal (fun t ↦ t.basicOrder.IsFinal .verb ∧ t.genitive = .nounFirst)
       (·.adjective = .nounFirst) := by
   decide
 
-/-- The verb-initial types with the adjective before the noun, the exceptions to Universal 17,
-are 2 and 3. -/
 theorem universal_17_types :
     TypeUniversal (fun t ↦ t.basicOrder.IsInitial .verb ∧ t.adjective = .dependentFirst)
       (·.index ∈ [2, 3]) := by

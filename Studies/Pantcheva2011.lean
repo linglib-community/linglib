@@ -69,14 +69,10 @@ instance (p : Pattern) : Decidable (Possible p) := inferInstanceAs (Decidable (_
 a form lie on the same side of the seam. -/
 def RespectsSeam (p : Pattern) : Prop := ∀ i j, p i = p j → (i ≤ 1 ↔ j ≤ 1)
 
-/-- Under contiguity, distinct Goal and Source forms keep every form on one side of the
-seam. -/
 private theorem ne_of_seam {p : Pattern} (hc : IsContiguous p) (hgs : ¬ GoalSourceMerged p)
     {i j : Fin 4} (hi : i ≤ 1) (hj : 2 ≤ j) : p i ≠ p j := λ h =>
   hgs ((hc hi (le_trans (by decide) hj) h).symm.trans (hc (le_trans hi (by decide)) hj h))
 
-/-- The two constraints together say exactly that no syncretism crosses the Goal–Source
-seam. -/
 theorem possible_iff_respectsSeam (p : Pattern) : Possible p ↔ RespectsSeam p := by
   constructor
   · rintro ⟨hc, hgs⟩ i j h
@@ -124,7 +120,6 @@ The Source structure contains the Goal structure, visible where the Source marke
 Goal marker, as in Quechua *-man* against *-man-da*, the shell containment of
 `Spatial.Path.Direction`. -/
 
-/-- Source contains Goal contains Place, as shell-stack inclusion. -/
 theorem source_contains_goal :
     Spatial.Path.Direction.place.shells ⊂ Spatial.Path.Direction.goal.shells ∧
       Spatial.Path.Direction.goal.shells ⊂ Spatial.Path.Direction.source.shells ∧
@@ -136,9 +131,6 @@ theorem georgian_loc_goal_possible : Possible ![0, 0, 1, 2] := by decide
 
 /-! ### The semantic ground of *A&¬A (§5.4) -/
 
-/-- A Source path is a Goal path traversed the other way, so no path is both, and a single
-marker for Goal and Source would denote a path and its reverse at once, the ground of the
-*A&¬A constraint. -/
 theorem goalSource_disjoint {ι α : Type*} [LinearOrder ι] [BoundedOrder ι] (R : Set α)
     (γ : ι → α) : Spatial.Path.IsCofinal R γ → ¬ Spatial.Path.IsCoinitial R γ :=
   Spatial.Path.IsCofinal.not_isCoinitial

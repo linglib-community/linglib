@@ -88,8 +88,6 @@ theorem link_prod_map (i j : ι) (w : List S) (p q : ℕ) :
         exact .inr ⟨by omega, by omega, k, by simpa using hk, by omega, by omega,
           by simpa [Nat.sub_sub] using h⟩
 
-/-- With one tier-`j` position per symbol, the tier-`j` positions of a realization are the
-string's positions: a line at position `q` lies inside the `q`-th symbol's primitive. -/
 theorem link_prod_map_of_length_eq_one {j : ι} (hj : ∀ s, ((g₀ s).word j).length = 1)
     (i : ι) (w : List S) (p q : ℕ) :
     (w.map g₀).prod.Link i j p q ↔

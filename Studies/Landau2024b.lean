@@ -114,20 +114,15 @@ theorem john_mem_copyRel : (john, john') ∈ arrangedToMeet.copyRel :=
 and an associate, `1`. -/
 def pcReading (x : SyntacticObject) : Set ℕ := if x = john' then {0, 1} else {0}
 
-/-- The partial reading is partial on the copy relation, since the controlled subject's group
-strictly contains John. -/
 theorem isPartial_pcReading : IsPartial pcReading arrangedToMeet.copyRel :=
   ⟨john, john', john_mem_copyRel, by
     have hne : john ≠ john' := by simp [john, john', renumber]
     simp only [pcReading, hne, ↓reduceIte]
     exact (Set.ssubset_iff_of_subset (by simp)).2 ⟨1, by simp, by simp⟩⟩
 
-/-- So it is no interpretation Form Copy assigns, which gives copies one value. -/
 theorem not_isExhaustive_pcReading : ¬ IsExhaustive pcReading arrangedToMeet.copyRel :=
   fun h ↦ h.not_isPartial isPartial_pcReading
 
-/-- A partial reading of Form Copy's relation lives on a repetition. The copy Internal Merge
-leaves is one object at two positions, which no valuation splits. -/
 theorem exists_isRepetition_of_isPartial {Ref : Type*} [Preorder Ref]
     {val : SyntacticObject → Ref} {s : SyntacticObject} (h : IsPartial val s.copyRel) :
     ∃ x y, (x, y) ∈ s.copyRel ∧ IsRepetition x y ∧ val x < val y :=
@@ -143,11 +138,9 @@ noncomputable def appearedToGather : SyntacticObject :=
   merge chair (merge (leaf ⟨.of .V [.T] "appeared", 1⟩) (merge (leaf ⟨.of .T [.V] "to", 2⟩)
     (merge chair (leaf ⟨.of .V [] "be gathering", 3⟩))))
 
-/-- Form Copy relates the raised subject to its Internal Merge copy. -/
 theorem chair_mem_copyRel : (chair, chair) ∈ appearedToGather.copyRel :=
   self_mem_copyRel_merge (by simp [containsOrEq_iff_eq_or_contains])
 
-/-- Distinct tokens of `appearedToGather` inscribe distinct items. -/
 theorem hasDistinctItems_appearedToGather : appearedToGather.HasDistinctItems := by
   intro a b ha hb hab
   simp only [appearedToGather, chair, terms_merge, terms_leaf, Multiset.mem_cons, Multiset.mem_add,
@@ -156,13 +149,10 @@ theorem hasDistinctItems_appearedToGather : appearedToGather.HasDistinctItems :=
   rcases ha with rfl | rfl | rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl | rfl | rfl <;>
     first | rfl | simp [LexicalItem.of] at hab
 
-/-- So every valuation interprets the copies of `appearedToGather` alike: on a raising structure
-the semantic clause of Form Copy holds for free. -/
 theorem isExhaustive_appearedToGather {Ref : Type*} (val : SyntacticObject → Ref) :
     IsExhaustive val appearedToGather.copyRel :=
   .of_subset_id (copyRel_subset_id hasDistinctItems_appearedToGather)
 
-/-- There is no partial raising. -/
 theorem not_isPartial_appearedToGather {Ref : Type*} [Preorder Ref]
     (val : SyntacticObject → Ref) : ¬ IsPartial val appearedToGather.copyRel :=
   (isExhaustive_appearedToGather val).not_isPartial
@@ -201,8 +191,6 @@ theorem profile_pro_eq_univ : profile .pro = Set.univ :=
 theorem profile_forNP_eq_empty : profile .forNP = ∅ :=
   ofAttested_eq_empty_iff.2 <| by decide +kernel
 
-/-- Deleting the *for*-subject leaves the readings of the source in place, so the Form Copy theory
-predicts partial control to have the profile of its source. It does not. -/
 theorem profile_pro_ne_profile_forNP : profile .pro ≠ profile .forNP := by
   rw [profile_pro_eq_univ, profile_forNP_eq_empty]
   exact (Set.nonempty_of_mem (Set.mem_univ Landau2013.Clause74.codependent)).ne_empty

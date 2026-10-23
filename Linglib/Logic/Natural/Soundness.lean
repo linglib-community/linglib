@@ -66,8 +66,6 @@ def Relation.Atom.Holds {α : Type*} [Lattice α] [BoundedOrder α] :
   | .disjoint => Disjoint
   | .codisjoint => Codisjoint
 
-/-- A relation's content is the conjunction of its constraint atoms:
-`constraints` is the single source of truth for `Holds`. -/
 theorem Relation.holds_iff {α : Type*} [Lattice α] [BoundedOrder α]
     {R : Relation} {x y : α} :
     R.Holds x y ↔ ∀ a ∈ R.constraints, a.Holds x y := by
@@ -138,7 +136,6 @@ def Signature.SoundFor (σ : Signature) (f : α → β) : Prop :=
   ∀ (R : Relation) (x y : α), R.Holds x y →
     (Signature.project R σ).Holds (f x) (f y)
 
-/-- The `.mono` row is sound for exactly the monotone functions. -/
 theorem soundFor_mono_iff {f : α → β} :
     Signature.SoundFor .mono f ↔ Monotone f := by
   constructor
@@ -151,7 +148,6 @@ theorem soundFor_mono_iff {f : α → β} :
     | reverse => exact h hR
     | negation | alternation | cover | independent => trivial
 
-/-- The `.anti` row is sound for exactly the antitone functions. -/
 theorem soundFor_anti_iff {f : α → β} :
     Signature.SoundFor .anti f ↔ Antitone f := by
   constructor
@@ -164,13 +160,11 @@ theorem soundFor_anti_iff {f : α → β} :
     | reverse => exact h hR
     | negation | alternation | cover | independent => trivial
 
-/-- A signature of upward polarity is sound only for monotone functions. -/
 theorem Signature.SoundFor.monotone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
     (hσ : σ.sign = 1) : Monotone f := by
   intro x y hxy
   cases σ <;> first | exact h .forward x y hxy | exact absurd hσ (by decide)
 
-/-- A signature of downward polarity is sound only for antitone functions. -/
 theorem Signature.SoundFor.antitone {σ : Signature} {f : α → β} (h : σ.SoundFor f)
     (hσ : σ.sign = -1) : Antitone f := by
   intro x y hxy
@@ -189,8 +183,6 @@ theorem soundFor_additive_iff {f : α → β} :
   | cover => exact hc hR
   | alternation | independent => trivial
 
-/-- The `.mult` row is sound exactly for the monotone functions sending disjoint pairs to
-disjoint pairs. -/
 theorem soundFor_mult_iff {f : α → β} :
     Signature.SoundFor .mult f ↔ Monotone f ∧ ∀ ⦃x y⦄, Disjoint x y → Disjoint (f x) (f y) := by
   refine ⟨fun h ↦ ⟨fun x y ↦ h .forward x y, fun x y ↦ h .alternation x y⟩,
@@ -202,8 +194,6 @@ theorem soundFor_mult_iff {f : α → β} :
   | alternation => exact hd hR
   | cover | independent => trivial
 
-/-- The `.antiAdd` row is sound exactly for the antitone functions sending codisjoint pairs to
-disjoint pairs. -/
 theorem soundFor_antiAdd_iff {f : α → β} :
     Signature.SoundFor .antiAdd f ↔
       Antitone f ∧ ∀ ⦃x y⦄, Codisjoint x y → Disjoint (f x) (f y) := by
@@ -215,8 +205,6 @@ theorem soundFor_antiAdd_iff {f : α → β} :
   | cover => exact hc hR
   | alternation | independent => trivial
 
-/-- The `.antiMult` row is sound exactly for the antitone functions sending disjoint pairs to
-codisjoint pairs. -/
 theorem soundFor_antiMult_iff {f : α → β} :
     Signature.SoundFor .antiMult f ↔
       Antitone f ∧ ∀ ⦃x y⦄, Disjoint x y → Codisjoint (f x) (f y) := by
@@ -229,8 +217,6 @@ theorem soundFor_antiMult_iff {f : α → β} :
   | alternation => exact hd hR
   | cover | independent => trivial
 
-/-- The `.addMult` row is sound exactly for the monotone functions preserving disjointness and
-codisjointness. -/
 theorem soundFor_addMult_iff {f : α → β} :
     Signature.SoundFor .addMult f ↔ Monotone f ∧
       (∀ ⦃x y⦄, Disjoint x y → Disjoint (f x) (f y)) ∧
@@ -261,24 +247,20 @@ theorem soundFor_antiAddMult_iff {f : α → β} :
   | cover => exact hc hR
   | independent => trivial
 
-/-- Joins and `⊤` preserved carry codisjoint pairs to codisjoint pairs. -/
 private theorem codisjoint_map_of_map_sup {f : α → β}
     (h : (∀ p q, f (p ⊔ q) = f p ⊔ f q) ∧ f ⊤ = ⊤) {x y : α} (hxy : Codisjoint x y) :
     Codisjoint (f x) (f y) :=
   codisjoint_iff.2 (by rw [← h.1, hxy.eq_top, h.2])
 
-/-- Meets and `⊥` preserved carry disjoint pairs to disjoint pairs. -/
 private theorem disjoint_map_of_map_inf {f : α → β}
     (h : (∀ p q, f (p ⊓ q) = f p ⊓ f q) ∧ f ⊥ = ⊥) {x y : α} (hxy : Disjoint x y) :
     Disjoint (f x) (f y) :=
   disjoint_iff.2 (by rw [← h.1, hxy.eq_bot, h.2])
 
-/-- Joins sent to meets and `⊤` to `⊥` carry codisjoint pairs to disjoint pairs. -/
 private theorem disjoint_map_of_isAntiAdditive {f : α → β} (h : IsAntiAdditive f ∧ f ⊤ = ⊥)
     {x y : α} (hxy : Codisjoint x y) : Disjoint (f x) (f y) :=
   disjoint_iff.2 (by rw [← h.1, hxy.eq_top, h.2])
 
-/-- Meets sent to joins and `⊥` to `⊤` carry disjoint pairs to codisjoint pairs. -/
 private theorem codisjoint_map_of_isAntiMultiplicative {f : α → β}
     (h : IsAntiMultiplicative f ∧ f ⊥ = ⊤) {x y : α} (hxy : Disjoint x y) :
     Codisjoint (f x) (f y) :=
@@ -314,20 +296,16 @@ theorem soundFor_antiAddMult {f : α → β}
     fun _ _ ↦ codisjoint_map_of_isAntiMultiplicative ham,
     fun _ _ ↦ disjoint_map_of_isAntiAdditive haa⟩
 
-/-- A bounded lattice homomorphism realizes the morphism row. -/
 theorem soundFor_addMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α β]
     [BoundedLatticeHomClass F α β] (f : F) : Signature.SoundFor .addMult f :=
   soundFor_addMult_iff.2 ⟨OrderHomClass.mono f, fun _ _ h ↦ h.map f, fun _ _ h ↦ h.map f⟩
 
-/-- A bounded lattice homomorphism into the order dual realizes the anti-morphism row. -/
 theorem soundFor_antiAddMult_of_boundedLatticeHomClass {F : Type*} [FunLike F α βᵒᵈ]
     [BoundedLatticeHomClass F α βᵒᵈ] (f : F) :
     Signature.SoundFor .antiAddMult (OrderDual.ofDual ∘ f) :=
   soundFor_antiAddMult_iff.2 ⟨fun _ _ h ↦ OrderHomClass.mono f h,
     fun _ _ h ↦ codisjoint_ofDual_iff.2 (h.map f), fun _ _ h ↦ disjoint_ofDual_iff.2 (h.map f)⟩
 
-/-- Every function realizes the • row, the no-property signature projecting every relation to
-`#`. -/
 theorem soundFor_all (f : α → β) : Signature.SoundFor .all f := by
   intro R x y hR
   cases R
@@ -348,7 +326,6 @@ theorem _root_.NaturalLogic.Relation.Holds.of_le
     | exact le_of_eq h
     | exact le_of_eq (Eq.symm h)
 
-/-- A relation between functions holds pointwise. -/
 theorem _root_.NaturalLogic.Relation.Holds.apply {ι : Type*} {R : Relation} {f g : ι → β}
     (h : R.Holds f g) (i : ι) : R.Holds (f i) (g i) := by
   cases R with
@@ -361,21 +338,15 @@ theorem _root_.NaturalLogic.Relation.Holds.apply {ι : Type*} {R : Relation} {f 
   | cover => exact codisjoint_iff.2 (congrFun (codisjoint_iff.1 h) i)
   | independent => trivial
 
-/-- A signature sound for a two-place function is sound for it at any fixed second
-argument, the lattice operations on functions being pointwise. -/
 theorem Signature.SoundFor.apply {ι : Type*} {σ : Signature} {f : α → ι → β}
     (h : σ.SoundFor f) (i : ι) : σ.SoundFor (f · i) :=
   fun R x y hR => (h R x y hR).apply i
 
-/-- A more specific signature projects every relation at least as informatively. -/
 theorem Signature.project_mono (R : Relation) :
     Monotone (Signature.project R) := by
   intro σ τ h
   revert h; cases σ <;> cases τ <;> cases R <;> decide
 
-/-- Signature-order soundness: if σ refines τ (every σ-function is a
-τ-function), σ-soundness implies τ-soundness. This is the theorem that
-makes the refinement order mean class inclusion. -/
 theorem Signature.SoundFor.of_le {σ τ : Signature} {f : α → β}
     (h : σ.SoundFor f) (hστ : σ ≤ τ) : τ.SoundFor f :=
   fun R x y hR => (h R x y hR).of_le (Signature.project_mono R hστ)
@@ -394,13 +365,9 @@ theorem Signature.SoundFor.comp {ψ φ : Signature} {f : β → γ}
   have h := hf (Signature.project R φ) (g x) (g y) (hg R x y hR)
   rwa [projection_composition] at h
 
-/-- The identity context is sound for the identity signature `.addMult`. -/
 theorem soundFor_addMult_id : Signature.SoundFor .addMult (id : α → α) :=
   soundFor_addMult ⟨fun _ _ => rfl, rfl⟩ ⟨fun _ _ => rfl, rfl⟩
 
-/-- A path of (signature, context) pairs, each sound, yields a context sound for
-`contextProjectivity` of the signature path, the semantic counterpart of [icard-2012]'s marking
-algorithm. Signatures are listed outermost-first, matching `contextProjectivity`. -/
 theorem soundFor_contextProjectivity :
     ∀ (l : List (Signature × (α → α))),
       (∀ p ∈ l, p.1.SoundFor p.2) →
@@ -429,7 +396,6 @@ section ComplInstance
 
 variable {α : Type*} [BooleanAlgebra α]
 
-/-- Complementation realizes the anti-morphism row. -/
 theorem compl_soundFor_antiAddMult :
     Signature.SoundFor .antiAddMult (compl : α → α) :=
   soundFor_antiAddMult_of_boundedLatticeHomClass (OrderIso.compl α)
@@ -440,8 +406,6 @@ lookup. -/
 example : Signature.SoundFor .addMult ((compl : α → α) ∘ compl) :=
   compl_soundFor_antiAddMult.comp compl_soundFor_antiAddMult
 
-/-- Propositional negation realizes the anti-morphism row at the `Prop`
-instance. -/
 theorem not_soundFor_antiAddMult : Signature.SoundFor .antiAddMult Not :=
   compl_soundFor_antiAddMult
 
@@ -477,9 +441,6 @@ def Signature₂.SoundFor (σ : Signature₂) (f : α → β → γ) : Prop :=
   (∀ y, σ.restrictor.SoundFor (fun x => f x y)) ∧
   (∀ x, σ.scope.SoundFor (f x))
 
-/-- Composing a sound outer context into a sound two-place operator
-composes the profile componentwise — the two-place form of
-`Signature.SoundFor.comp`. -/
 theorem Signature.SoundFor.comp₂ {ψ : Signature} {g : γ → δ}
     {σ : Signature₂} {f : α → β → γ} (hg : ψ.SoundFor g) (hf : σ.SoundFor f) :
     Signature₂.SoundFor ⟨ψ * σ.restrictor, ψ * σ.scope⟩ (fun x y => g (f x y)) :=
@@ -526,9 +487,6 @@ theorem Signature.soundFor_of_holdsFor {σ : Signature} {f : α → β}
       exact soundFor_antiAddMult (h .antiAdditive (by decide))
         (h .antiMultiplicative (by decide))
 
-/-- The class of a more specific signature is included in the class of a
-less specific one — the sound direction of the refinement order, with the
-converse in `Logic/Natural/Completeness.lean` (`le_iff_holdsFor`). -/
 theorem Signature.HoldsFor.of_le {σ τ : Signature} {f : α → β}
     (h : σ.HoldsFor f) (hστ : σ ≤ τ) : τ.HoldsFor f :=
   λ p hp => h p (Signature.le_iff.mp hστ hp)
@@ -549,8 +507,6 @@ theorem Signature.holdsFor_antiAddMult_iff {f : α → β} :
     forall_eq_or_imp, forall_eq, Signature.Property.HoldsFor]
   exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.1.antitone, h⟩⟩
 
-/-- A map with adjoints on both sides is in the morphism class ⊕⊞ — the
-Lawvere reading of the signature: bi-adjoints preserve everything. -/
 theorem Signature.holdsFor_addMult_of_galoisConnection {f u l : α → α}
     (gc₁ : GaloisConnection f u) (gc₂ : GaloisConnection l f) :
     Signature.HoldsFor .addMult f := by
@@ -561,8 +517,6 @@ theorem Signature.holdsFor_addMult_of_galoisConnection {f u l : α → α}
   | multiplicative => exact ⟨λ _ _ => gc₂.u_inf, gc₁.l_bot⟩
   | antitone | antiAdditive | antiMultiplicative => exact absurd hp (by decide)
 
-/-- Complementation, the self-dual adjoint pair, is in the anti-morphism
-class ◇⊟. -/
 theorem Signature.holdsFor_antiAddMult_compl {γ : Type*} [BooleanAlgebra γ] :
     Signature.HoldsFor .antiAddMult (compl : γ → γ) := by
   intro p hp

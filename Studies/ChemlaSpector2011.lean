@@ -134,14 +134,11 @@ instance [Fintype ι] : (ℓ : ReadingLabel) → (p : ι → Triangle) → Decid
   | .global, _ => inferInstanceAs (Decidable (_ ∧ _))
   | .local_, _ => inferInstanceAs (Decidable (∀ _, _))
 
-/-- The local reading is the literal one with *all* denied of every letter. -/
 theorem reading_local_iff (p : ι → Triangle) :
     reading .local_ p ↔ reading .literal p ∧ ∀ i, p i < ⊤ := by
   simp only [reading, ← forall_and]
   exact forall_congr' fun i ↦ by cases p i <;> decide
 
-/-- Under the universal the local reading entails the literal one, which keeps the unrestricted
-globalist abreast of the localist throughout Experiment 1. -/
 theorem local_globallyDerivable : GloballyDerivable (reading (ι := ι)) .local_ :=
   fun p h ↦ ((reading_local_iff p).1 h).1
 
@@ -318,9 +315,6 @@ theorem localist_weak_ssubset_strong :
       availableAt Exp1Some.reading .localist (Exp1Condition.witness .strong) := by
   decide
 
-/-- The unrestricted globalist agrees with the localist on every condition of Experiment 1,
-the local reading being within its reach there, which is why the experiment cannot separate
-them. -/
 theorem localist_eq_unrestrictedGlobalist_exp1 (c : Exp1Condition) :
     availableAt Exp1Some.reading .localist c.witness =
       availableAt Exp1Some.reading .unrestrictedGlobalist c.witness := by
@@ -354,13 +348,11 @@ theorem unrestrictedGlobalist_local_eq_false :
       availableAt Exp2Some.reading .unrestrictedGlobalist (Exp2Condition.witness .false_) := by
   decide +kernel
 
-/-- The localist keeps the two apart and predicts the observed gap. -/
 theorem localist_false_ssubset_local :
     availableAt Exp2Some.reading .localist (Exp2Condition.witness .false_) ⊂
       availableAt Exp2Some.reading .localist (Exp2Condition.witness .local_) := by
   decide
 
-/-- Where Experiment 1 could not separate the two theories, Experiment 2 does. -/
 theorem localist_ne_unrestrictedGlobalist_local :
     availableAt Exp2Some.reading .unrestrictedGlobalist (Exp2Condition.witness .local_) ≠
       availableAt Exp2Some.reading .localist (Exp2Condition.witness .local_) := by

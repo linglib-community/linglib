@@ -110,14 +110,11 @@ theorem syntacticosemantic_lei_formal :
 /-- The Italian grammars are Weak for most speakers and Strong for those rejecting 1>2 and 2>1. -/
 def grammars : List Grammar := [weakGrammar, strongGrammar]
 
-/-- Second over third and third over third are licit and third over second is not, on either
-valuation and either grammar. -/
 theorem baseline : ∀ g ∈ grammars,
     Syntacticosemantic (IsLicit g) tu lei ∧ Syntacticosemantic (IsLicit g) lui lei ∧
       ¬ Syntacticosemantic (IsLicit g) lui tu := by
   decide
 
-/-- LEI as dative over a third person accusative is licit on both valuations. -/
 theorem lei_dative : ∀ g ∈ grammars,
     Morphosyntactic (IsLicit g) lei_formal lei ∧
       Syntacticosemantic (IsLicit g) lei_formal lei := by
@@ -157,8 +154,6 @@ theorem resolved_person :
       lei_formal.person.map (· ⊔ .third) = some .third :=
   ⟨rfl, rfl⟩
 
-/-- A first person dative over accusative LEI is licit on the Weak grammar and banned on the Strong
-one, exactly as over *ti*; some Weak speakers nonetheless reject it. -/
 theorem first_dative_lei :
     Syntacticosemantic (IsLicit weakGrammar) io lei_formal ∧
       ¬ Syntacticosemantic (IsLicit strongGrammar) io lei_formal := by

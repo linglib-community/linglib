@@ -60,8 +60,6 @@ def FocusesPreliminaryStages (v : ViewpointType) : Prop :=
   ∀ {T : Type} [LinearOrder T] {tt tsit : NonemptyInterval T},
     v.ttTSitRelation tt tsit → tt < tsit
 
-/-- A visibility property of a viewpoint, that every topic time and situation time it relates
-stand in the cell `D`, is the inclusion of the viewpoint's realizable relations in `D`. -/
 private theorem forall_imp_iff {D : Finset Allen.Relation}
     {P : ∀ {T : Type} [LinearOrder T], NonemptyInterval T → NonemptyInterval T → Prop}
     (hP : ∀ {T : Type} [LinearOrder T] (tt tsit : NonemptyInterval T),
@@ -135,8 +133,6 @@ theorem neutral_no_preliminary_stages :
   refine ⟨?_, (focusesPreliminaryStages_iff _).mpr rfl⟩
   rw [focusesPreliminaryStages_iff]; decide
 
-/-- The neutral viewpoint sides with the perfective on the initial point and with the
-imperfective on the final point. -/
 theorem neutral_between_perf_imperf :
     (ShowsInitialPoint .neutral ↔ ShowsInitialPoint .perfective) ∧
       (ShowsFinalPoint .neutral ↔ ShowsFinalPoint .imperfective) :=
@@ -189,7 +185,6 @@ theorem completion_iff_telic (c : VendlerClass) :
     perfectiveEffect ⟨c, .perfective⟩ = .completion ↔ c.telicity = .telic := by
   cases c <;> decide
 
-/-- The imperfective conveys neither completion nor termination. -/
 theorem imperfective_noEffect (c : VendlerClass) :
     perfectiveEffect ⟨c, .imperfective⟩ = .noEffect := rfl
 
@@ -236,8 +231,6 @@ def Language.system : Language → AspectualSystem
   | .mandarin => ⟨[.perfective, .imperfective, .neutral], .nonStativeOnly, .excluded⟩
   | .navajo => ⟨[.perfective, .imperfective, .neutral], .nonStativeOnly, .excluded⟩
 
-/-- A language whose perfective does not apply to statives keeps them outside its viewpoint
-system, and conversely. -/
 theorem excluded_iff_nonStativeOnly (l : Language) :
     l.system.perfectiveStative = .excluded ↔ l.system.interaction = .nonStativeOnly := by
   cases l <;> decide

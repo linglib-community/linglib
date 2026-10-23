@@ -170,8 +170,6 @@ noncomputable def expectedPayoff (P : Measure Θ) (ν : Measure 𝓨) : ℝ :=
 def MaximizesPayoff (P : Measure Θ) (ν : Measure 𝓨) : Prop :=
   ∀ ν' : Measure 𝓨, IsProbabilityMeasure ν' → expectedPayoff U P ν' ≤ expectedPayoff U P ν
 
-/-- Without data, a randomized action is a Bayes estimator for `π` iff no randomized action has
-smaller average risk. -/
 theorem isBayesEstimator_discard_const_iff {ℓ : Θ → 𝓨 → ℝ≥0∞} {ν : Measure 𝓨}
     [IsProbabilityMeasure ν] {π : Measure Θ} :
     IsBayesEstimator ℓ (Kernel.discard Θ) (Kernel.const Unit ν) π ↔
@@ -207,8 +205,6 @@ theorem expectedPayoff_eq_sum (P : Measure Θ) [IsFiniteMeasure P] (ν : Measure
     expectedPayoff U P ν = ∑ θ, P.real {θ} * mixedPayoff U ν θ := by
   simp [expectedPayoff, integral_fintype .of_finite]
 
-/-- A randomized action that pays more at every parameter has a larger expected payoff under every
-belief. -/
 theorem expectedPayoff_lt_of_forall_lt (P : Measure Θ) [IsProbabilityMeasure P]
     {ν ν' : Measure 𝓨} (h : ∀ θ, mixedPayoff U ν θ < mixedPayoff U ν' θ) :
     expectedPayoff U P ν < expectedPayoff U P ν' := by
@@ -229,8 +225,6 @@ section Loss
 variable {ℓ : Θ → 𝓨 → ℝ≥0∞} (hℓ : ∀ θ y, ℓ θ y ≠ ∞)
 
 include hℓ in
-/-- A Bayes action for some prior is not strictly dominated, since a dominating action would
-have smaller average risk. -/
 private theorem not_isStrictlyDominated_of_bayes {ν : Measure 𝓨} [IsProbabilityMeasure ν]
     {π : Measure Θ} [IsProbabilityMeasure π]
     (hπ : ∀ ν' : Measure 𝓨, IsProbabilityMeasure ν' →
@@ -250,8 +244,6 @@ private theorem not_isStrictlyDominated_of_bayes {ν : Measure 𝓨} [IsProbabil
     ⟨θ₀, Finset.mem_univ _, mul_lt_mul_of_pos_left (hlt' θ₀) hθ₀⟩
 
 include hℓ in
-/-- If no pure action has smaller average risk than `ν` under real weights `x`, then `ν` is a
-Bayes action for the prior with those weights. -/
 private theorem bayes_of_real {ν : Measure 𝓨} [IsProbabilityMeasure ν] {x : Θ → ℝ}
     (hx : ∀ θ, 0 ≤ x θ) (hx1 : ∑ θ, x θ = 1)
     (hD : ∀ y, ∑ θ, x θ * ((∫⁻ y, ℓ θ y ∂ν).toReal - (ℓ θ y).toReal) ≤ 0) :

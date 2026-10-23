@@ -74,7 +74,6 @@ def existsInDomain {World Entity : Type*} (D : Set Entity) (P : Entity → Set W
     Set World :=
   fun w ↦ ∃ x ∈ D, P x w
 
-/-- Widening the domain weakens the existential. -/
 theorem existsInDomain_mono {World Entity : Type*} {D D' : Set Entity} (P : Entity → Set World)
     (h : D ⊆ D') : existsInDomain D P ⊆ existsInDomain D' P :=
   fun _ ⟨x, hx, hP⟩ ↦ ⟨x, h hx, hP⟩
@@ -272,8 +271,6 @@ def isDomainVague {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity) : Prop :=
   ¬isDomainPrecise X apply
 
-/-- If every precisification equals the precise part, the restriction is
-domain precise — the case of *every* and *no*. -/
 theorem isDomainPrecise_of_forall_eq {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
     (h : ∀ v ∈ X.precisifications, v = X.precise) :
@@ -291,8 +288,6 @@ def widenAlong {Property : Type*} (X : VagueRestriction Property)
     exact ⟨X.extends_precise v hv hPprec, hPnot⟩
   precise_mem := ⟨X.precise, X.precise_mem, rfl⟩
 
-/-- Widening weakens the restriction, the widened precise part being a subset of the
-original. -/
 theorem widenAlong_weakens_precise {Property : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop) :
     (widenAlong X onDimension).precise ⊆ X.precise :=
@@ -351,8 +346,6 @@ theorem any_cn_dimensionally_universal {Property Entity : Type*}
     dimensionallyUniversal (widenAlong X onDimension) apply baseDenotation :=
   ⟨onDimension, hNT, fun _ he P ⟨⟨hPprec, hPnot⟩, _⟩ ↦ hBase he P ⟨hPprec, hPnot⟩⟩
 
-/-- If every precise property is on the dimension, widening empties the precise part, K&L's case
-where *any CN* becomes not only universal with respect to the dimension but truly universal. -/
 theorem widenAlong_precise_eq_empty {Property : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (hAllOnDim : ∀ P ∈ X.precise, onDimension P) :
@@ -407,10 +400,6 @@ theorem domain_vague_allows_exceptions {Property Entity : Type*}
   obtain ⟨v, hv, hne⟩ := hVague
   exact ⟨v, hv, X.precise, X.precise_mem, hne⟩
 
-/-- K&L explain exception tolerance. If the restriction is domain vague and the generic is
-subvaluationistically true, then there are precisifications with different domains and the generic
-holds under one of them, so an apparent counterexample may fall outside the domain under the
-operative precisification. -/
 theorem domain_vagueness_explains_gen_exceptions {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
     (R : Set Entity) (scope : Entity → Prop) (hVague : isDomainVague X apply)
@@ -432,8 +421,6 @@ specification space, and the exception-tolerance zone — sub-true but not
 super-true — is exactly Fine's borderline status, supervaluation value `0`. "A poodle gives
 live birth" is Fine-indefinite and K&L-assertable. -/
 
-/-- On a finite precisification space, K&L's supervaluationist truth is
-[fine-1975]'s super-truth. -/
 theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
     (R : Set Entity) (scope : Entity → Prop) [DecidablePred (genericTrue apply R scope)]

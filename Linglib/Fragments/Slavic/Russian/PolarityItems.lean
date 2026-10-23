@@ -79,8 +79,6 @@ def items : List PolarityItem :=
 
 /-! ### Verification -/
 
-/-- The negative concord items are licensed exactly by the contexts carrying anti-morphic strength,
-clausal negation alone among the named contexts. -/
 theorem niSeries_licensing_characterized :
     ∀ e ∈ [nikto, nichego, nikogda], ∀ c : LicensingContext,
       c.licenser.Licenses e ↔ c.licenser.Carries .antiMorphic := by
@@ -89,7 +87,6 @@ theorem niSeries_licensing_characterized :
   rcases he with rfl | rfl | rfl <;>
     exact Licenser.licenses_iff_carries rfl (by decide) (by decide)
 
-/-- Every attested context of every entry admits it. -/
 theorem russian_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
   decide

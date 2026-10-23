@@ -118,8 +118,6 @@ second. -/
 def preverbTemplate : AffixTemplate PreverbGroup where
   prefixSlots := [.localization, .direction]
 
-/-- The template licenses a string of preverbs exactly when it has at most one of each group, the
-first group's before the second's. -/
 theorem licensed_preverbTemplate_iff {E : PreverbGroup → Type*} {w : List (Σ σ, E σ)} :
     preverbTemplate.Licensed w ↔ (w.map Sigma.fst).Sublist [.localization, .direction] :=
   AffixTemplate.mem_language_iff_sublist rfl

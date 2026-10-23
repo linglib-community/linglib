@@ -117,8 +117,6 @@ theorem unattested_iff (c : Cell) :
     (∀ t : Theory, t.cell ≠ c) ↔ c.lexicalism = .nonLexicalist ∧ c.exponence = .processBased := by
   revert c; decide
 
-/-- Distributed Morphology and Nanosyntax share a cell; they differ in mechanism, phrasal against
-terminal spellout, not in these dimensions. -/
 theorem dm_nanosyntax_cell :
     Theory.distributedMorphology.cell = Theory.nanosyntax.cell := rfl
 
@@ -207,8 +205,6 @@ def msBoundness : MorphStatus → MSBoundness
 theorem msBoundness_eq_bound_iff (s : MorphStatus) : msBoundness s = .bound ↔ s.IsAffix := by
   cases s <;> simp [msBoundness, MorphStatus.IsAffix]
 
-/-- The English plural is a canonical affix and the auxiliary clitic a simple clitic: their
-morphosyntactic side from [zwicky-pullum-1983]'s profiles, both phonologically bound. -/
 theorem plural_s_canonicalAffix :
     (WordhoodProfile.mk (msBoundness ZwickyPullum1983.affixPluralS.classify) .bound).classify =
         .canonicalAffix ∧
@@ -250,7 +246,6 @@ def WordhoodRow.ofDatum (e : Datum) : Option WordhoodRow := do
 *-s*; the fourth, the non-cohering affixes, it describes in prose only. -/
 def wordhoodRows : List WordhoodRow := Examples.all.filterMap WordhoodRow.ofDatum
 
-/-- Each example sits in the cell its boundnesses give. -/
 theorem rows_cells : ∀ r ∈ wordhoodRows, r.profile.classify = r.cell := by decide
 
 /-! ### Form-meaning mappings (Section 4) -/
@@ -306,7 +301,6 @@ instance (m : MappingType) (r : Representative) : Decidable (HandlesNatively m r
 theorem mas_reanalyses (m : MappingType) (h : m ≠ .oneToOne) : table4 m .mas = [.no] := by
   cases m <;> first | exact absurd rfl h | rfl
 
-/-- No theory treats a morphological gap natively. -/
 theorem no_theory_handles_gaps (r : Representative) : table4 .morphologicalGap r = [.no] := by
   cases r <;> rfl
 
@@ -317,9 +311,6 @@ theorem handlesNatively_iff_realizational (r : Representative) :
     (∃ m, m ≠ .oneToOne ∧ HandlesNatively m r) ↔ r.theory.cell.mapping = .realizational := by
   revert r; decide
 
-/-- Distributed Morphology alone treats allomorphy natively, by contextual Vocabulary
-Insertion, and Paradigm Function Morphology alone multiple exponence, by independent rule
-blocks, Sections 4.1 and 4.2. -/
 theorem allomorphy_multipleExponence (r : Representative) :
     (HandlesNatively .allomorphy r ↔ r = .dm) ∧
       (HandlesNatively .multipleExponence r ↔ r = .pfm) := by

@@ -36,17 +36,13 @@ def numEdges (t : UnorderedTree α) : ℕ := t.numNodes - 1
 
 theorem numEdges_eq_numNodes_sub_one (t : UnorderedTree α) : t.numEdges = t.numNodes - 1 := rfl
 
-/-- Euler's relation for a rooted tree: `#V = 1 + #E`. -/
 theorem numEdges_add_one (t : UnorderedTree α) : t.numEdges + 1 = t.numNodes :=
   Nat.succ_pred_eq_of_pos t.numNodes_pos
 
-/-- The edges of a node are the root-to-child edges plus each child's own: the total
-    vertex count of the children. -/
 theorem numEdges_node (a : α) (F : Multiset (UnorderedTree α)) :
     (node a F).numEdges = (F.map numNodes).sum := by
   simp [numEdges]
 
-/-- Adjoining a root above a pair of trees adds two edges. -/
 theorem numEdges_node_pair (a : α) (l r : UnorderedTree α) :
     (node a {l, r}).numEdges = l.numEdges + r.numEdges + 2 := by
   rw [numEdges_node]
@@ -54,7 +50,6 @@ theorem numEdges_node_pair (a : α) (l r : UnorderedTree α) :
     Multiset.sum_cons, Multiset.sum_singleton, ← numEdges_add_one]
   omega
 
-/-- Adjoining a root above a pair of trees adds one vertex. -/
 theorem numNodes_node_pair (a : α) (l r : UnorderedTree α) :
     (node a {l, r}).numNodes = l.numNodes + r.numNodes + 1 := by
   rw [numNodes_node]

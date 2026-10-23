@@ -140,8 +140,6 @@ def dist (D : Update (Set S)) : Update (Set S) :=
   {(I, J) | ∃ ρ : SetRel S (Set S), ρ.Nonempty ∧ ρ.dom = I ∧ ⋃₀ ρ.cod = J ∧
     ∀ p ∈ ρ, ({p.1}, p.2) ∈ D}
 
-/-- `dist D` is true of a state exactly when the state is nonempty and `D` is true of each of its
-singletons. -/
 theorem dom_dist (D : Update (Set S)) :
     (dist D).dom = {I | I.Nonempty ∧ ∀ k ∈ I, {k} ∈ D.dom} := by
   ext I
@@ -217,8 +215,6 @@ theorem singleton_mem_lex₂_iff {P : E → E → Prop} {j : S} :
     {j} ∈ lex₂ P u u' ↔ P (val u j) (val u' j) := by
   simp [lex₂]
 
-/-- From a single assignment, introducing `u` and testing `C` before `D` tries each value of
-`u`. -/
 theorem singleton_mem_dom_intro_comp_iff :
     {i} ∈ (intro u ○ test C ○ D).dom ↔ ∃ x, {extend i u x} ∈ C ∧ {extend i u x} ∈ D.dom := by
   simp only [mem_dom, mem_comp, singleton_mem_intro_iff, mem_test_iff_left]
@@ -239,8 +235,6 @@ theorem singleton_mem_dom_vp_iff (huu' : u ≠ u') :
   simp only [vp, singleton_mem_dom_intro_comp_iff, Set.mem_inter_iff, singleton_mem_lex_iff,
     singleton_mem_lex₂_iff, val_extend_self, val_extend_of_ne _ _ _ _ huu', dom_test, and_assoc]
 
-/-- Introducing `u'` at the split of an assignment gives `u'` a value at each atomic part of its
-value of `u`. -/
 theorem image_mem_intro_iff {A : Set E} {K : Set S} :
     (extend k u ·) '' A ~[intro u'] K ↔
       ∃ b : E → E, K = (fun a ↦ extend (extend k u a) u' (b a)) '' A := by
@@ -289,7 +283,6 @@ theorem mem_atomic_inter_unique_iff (hI : I.Nonempty) (hu : ∀ i ∈ I, ¬ IsBo
       exact ha.eq (hlub.1 (Set.mem_image_of_mem _ hi)) (hu i hi)
     exact ⟨h.trans (Set.singleton_subset_iff.2 ha), Set.subsingleton_singleton.anti h⟩
 
-/-- On a single assignment uniqueness holds, and the singular is atomicity. -/
 theorem singleton_mem_atomic_inter_unique_iff : {i} ∈ atomic u ∩ unique u ↔ Atom (val u i) := by
   simp [atomic, unique]
 
@@ -324,7 +317,6 @@ theorem atom_of_mem_split {j : S} (h : j ∈ split u I) : Atom (val u j) := by
   rw [val_extend_self]
   exact ha.1
 
-/-- The values of the split of an assignment are the atomic parts of its value. -/
 theorem image_val_split_singleton : val u '' split u {i} = atomsBelow (val u i) := by
   rw [split_singleton, Set.image_image]
   simp [val_extend_self]
@@ -388,7 +380,6 @@ theorem singleton_mem_dom_distW_test_iff :
     unique, Set.mem_ofPred_eq, image_val_split_singleton]
   exact ⟨And.right, fun h ↦ ⟨fun _ ha ↦ ha.1, h⟩⟩
 
-/-- Under strong distributivity it requires only an atomic part. -/
 theorem singleton_mem_dom_distS_test_iff :
     {k} ∈ (distS u (test (atomic u ∩ unique u))).dom ↔ (atomsBelow (val u k)).Nonempty := by
   rw [singleton_mem_dom_distS_iff]
@@ -398,8 +389,6 @@ theorem singleton_mem_dom_distS_test_iff :
 
 /-! ### Truth conditions (§6) -/
 
-/-- At the split of an assignment, introducing `u'` and testing `C` before `D` tries a value of
-`u'` at each atomic part of the value of `u`. -/
 theorem singleton_mem_dom_distW_intro_iff :
     {k} ∈ (distW u (intro u' ○ test C ○ D)).dom ↔
       ∃ b : E → E, (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ C ∧
@@ -516,7 +505,6 @@ theorem hats_verb_iff {x y : Finset Thing} :
     hats.verb x y ↔ x.Nonempty ∧ (∀ a ∈ x, ∃ b ∈ y, Wears a b) ∧ ∀ b ∈ y, ∃ a ∈ x, Wears a b := by
   simp [hats, Plurality.Cumulativity.cumulation_map_singleton, Set.LiftRel]
 
-/-- A single girl wears a single hat. -/
 theorem exists_eq_singleton_of_verb {g : Thing} {y : Finset Thing} (h : hats.verb {g} y) :
     ∃ b, y = {b} := by
   rw [hats_verb_iff] at h

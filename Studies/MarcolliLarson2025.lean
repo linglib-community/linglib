@@ -45,7 +45,6 @@ leaf carrying the full giver grid. -/
 def giveComb : Bud.Tree (Color Unit) :=
   comb [] .agent [.theme, .goal]
 
-/-- The *give* comb is derivable in the complete theta bud system. -/
 theorem giveComb_derivable :
     (system (L := Unit) giveHier).Derives (.leaf .nontheta) giveComb :=
   comb_derivable [] .agent [.theme, .goal] (List.isChain_pair.mpr ⟨rfl, rfl⟩)
@@ -63,8 +62,6 @@ def moveRule : Bud.Tree (Color Unit) :=
 theorem moveRule_mem : moveRule ∈ (system (L := Unit) giveHier).rules :=
   Bud.System.cherry_mem_ofCherries.2 ⟨[], rfl, .inl (.move _ (by simp))⟩
 
-/-- Movement lands only in non-theta positions: above the residual agent grid and a landing site,
-the only root color the rules admit is the non-theta marker. -/
 theorem eq_nontheta_of_cherry_mem {c : Color Unit}
     (h : cherry c (.free (upGrid [.agent])) .emptyTree ∈ (system giveHier).rules) :
     c = .nontheta :=
@@ -84,8 +81,6 @@ def parasiticGen : Bud.Tree (Color Unit) :=
   cherry .nontheta (.free [.down .experiencer, .down .agent])
     (.free (upGrid [.experiencer, .agent]))
 
-/-- The standard theta bud system contains no parasitic generator: every generator discharges at
-most one role per argument. -/
 theorem parasiticGen_notMem : parasiticGen ∉ (system (L := Unit) giveHier).rules := by
   rw [parasiticGen, Bud.System.cherry_mem_ofCherries]
   rintro ⟨g₀, hc, hg | hg⟩ <;> cases hg <;>
@@ -114,7 +109,6 @@ theorem parasiticGen_not_derivable :
 
 /-! ### Realization -/
 
-/-- An adjunct attaches to the *give* comb by colored Merge, staying derivable. -/
 theorem giveComb_adjunct_derivable :
     (system (L := Unit) giveHier).Derives (.leaf .nontheta)
       (.node .nontheta giveComb (.leaf .nontheta)) :=
@@ -142,8 +136,6 @@ theorem anchoredGiveComb_mem_language :
   · exact .inl <| .discharge [.agent, .theme] .goal (by simp) (by simp [giveHier]) (by simp)
       (by simp [upGrid])
 
-/-- Pruning the colors realizes the anchored comb as the bare Merge structure of *Brian gave the
-book to Mary*. -/
 theorem realize_anchoredGiveComb :
     realize (anchoredGiveComb brian gave theBook toMary) =
       some ((SyntacticObject.leaf brian).merge
@@ -151,7 +143,6 @@ theorem realize_anchoredGiveComb :
           ((SyntacticObject.leaf toMary).merge
             (SyntacticObject.leaf gave)))) := rfl
 
-/-- A movement landing site above the anchored comb realizes to the same syntactic object. -/
 theorem realize_anchored_move_landing :
     realize (.node .nontheta (anchoredGiveComb brian gave theBook toMary)
         (.leaf .emptyTree)) =

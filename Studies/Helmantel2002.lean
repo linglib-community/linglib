@@ -89,12 +89,10 @@ def pointLocatives : List Dutch.Adposition := [naar, tot, van]
 def extendedLocatives : List Dutch.Adposition :=
   [door, langs, om, over₁, rond, uit, via]
 
-/-- The classified adpositions are the spatial ones. -/
 theorem classes_spatial :
     ∀ a ∈ narrowLocatives ++ pointLocatives ++ extendedLocatives, a.IsSpatial := by
   decide
 
-/-- The two core adpositions that do not fit the classification are non-spatial. -/
 theorem met_zonder_not_spatial : ¬ met.IsSpatial ∧ ¬ zonder.IsSpatial := by
   decide
 
@@ -154,7 +152,6 @@ theorem linearization_eq_post_iff : linearization dirP inherent = .post ↔ dirP
 theorem linearization_eq_pre_of_inherent (h : inherent) : linearization dirP inherent = .pre := by
   unfold linearization DPRaises; split <;> simp_all
 
-/-- A phrase in the postpositional order is directional. -/
 theorem dirP_of_linearization_eq_post (h : linearization dirP inherent = .post) : dirP :=
   (linearization_eq_post_iff.1 h).1
 

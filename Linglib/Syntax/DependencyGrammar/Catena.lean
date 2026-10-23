@@ -55,13 +55,10 @@ instance (g : Graph n) (s : Finset (Fin n)) : Decidable (IsCatena g s) :=
 instance (g : Graph n) (s : Finset (Fin n)) : Decidable (IsConstituent g s) :=
   inferInstanceAs (Decidable (∃ _, _))
 
-/-- Every single word is a catena. -/
 theorem singleton_isCatena (g : Graph n) (v : Fin n) : IsCatena g {v} := by
   rw [IsCatena, Finset.coe_singleton]
   exact .of_subsingleton
 
-/-- The dominance cone of a position induces a connected subgraph of the undirected view, since
-each dominated position is reached along its own dominance path, which never leaves the cone. -/
 theorem connected_induce_cone (g : Graph n) (v : Fin n) :
     (g.toSimpleGraph.induce {x | Dominates g v x}).Connected := by
   refine (SimpleGraph.connected_iff_exists_forall_reachable _).mpr ⟨⟨v, .refl⟩, ?_⟩
@@ -81,7 +78,6 @@ theorem IsConstituent.isCatena {g : Graph n} {s : Finset (Fin n)}
   rw [IsCatena, show (↑s : Set (Fin n)) = {x | Dominates g v x} from Set.ext hv]
   exact connected_induce_cone g v
 
-/-- A head with one of its dependents is a catena. -/
 theorem isCatena_pair (g : Graph n) {v w : Fin n} (h : g.Adj v w) (hne : v ≠ w) :
     IsCatena g {v, w} := by
   rw [IsCatena, Finset.coe_pair]
@@ -100,12 +96,10 @@ theorem not_isConstituent_pair {g : Graph n} (hF : g.IsForest) {v w u : Fin n} (
   · rw [Finset.mem_singleton] at hcw; subst hcw
     exact hF.not_dominates_of_adj hw ((hc v).1 (by simp))
 
-/-- The whole sentence is a constituent, the dominance cone of the root. -/
 theorem isConstituent_univ {g : Graph n} (hT : g.IsTree) :
     IsConstituent g Finset.univ :=
   ⟨g.root, fun w ↦ ⟨fun _ ↦ hT.root_dominates w, fun _ ↦ Finset.mem_univ w⟩⟩
 
-/-- The whole sentence is a catena. -/
 theorem isCatena_univ {g : Graph n} (hT : g.IsTree) : IsCatena g Finset.univ :=
   (isConstituent_univ hT).isCatena
 

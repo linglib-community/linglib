@@ -64,8 +64,6 @@ theorem posterior_incremental [IsFiniteMeasure P] :
 
 variable [MeasurableSpace W] [MeasurableSingletonClass W]
 
-/-- The posterior's mass on the structures consistent with the next word is the word's
-probability under the next-word law. -/
 theorem posterior_consistent_append :
     posterior P str ws (consistent str (ws ++ [w])) = (ofMeasure (P.map str)).next ws {some w} :=
   (next_ofMeasure_map_apply_some str P ws w).symm

@@ -61,7 +61,6 @@ theorem standard_of_lexicalStandard_eq_none (h : g.lexicalStandard = none) :
     g.standard = g.boundedness.defaultStandard := by
   simp [standard, h]
 
-/-- Without a lexical standard, the standard is one the scale admits. -/
 theorem admits_standard (h : g.lexicalStandard = none) : g.boundedness.Admits g.standard :=
   standard_of_lexicalStandard_eq_none h ▸ Boundedness.admits_defaultStandard _
 

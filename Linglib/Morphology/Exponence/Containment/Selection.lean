@@ -92,8 +92,6 @@ theorem spellout_eq_none_of_le (h : spellout v g = none) (hg : g ≤ g') : spell
   Option.map_eq_none_iff.mpr <| RuleSet.selectBy_eq_none_of_applies
     (fun _ _ hs ↦ le_trans hg hs) (Option.map_eq_none_iff.mp h)
 
-/-- The entry selected at a grade is selected at every higher grade its constituent contains, so
-Superset spellout plateaus up to the stored grade. -/
 theorem spellout_eq_of_le_spans (h : v.selectBy (fun e ↦ OrderDual.toDual e.spans) g = some e)
     (hg : g ≤ g') (he : g' ≤ e.spans) : spellout v g' = spellout v g :=
   congrArg (Option.map _) <|

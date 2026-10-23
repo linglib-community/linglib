@@ -60,7 +60,6 @@ def liftMulHom (f : F) (H : c ≤ Con.ker f) : c.Quotient →ₙ* N where
 @[simp] theorem liftMulHom_comp_mkMulHom (f : F) (H : c ≤ Con.ker f) :
     (c.liftMulHom f H).comp (mkMulHom c) = (f : M →ₙ* N) := rfl
 
-/-- The quotient map is surjective. -/
 theorem mkMulHom_surjective : Function.Surjective (mkMulHom c) := Quotient.mk''_surjective
 
 variable {c} in
@@ -75,7 +74,6 @@ theorem liftMulHom_injective {f : F} {H : c ≤ Con.ker f} (H' : Con.ker f ≤ c
     Function.Injective (c.liftMulHom f H) := fun x y =>
   Con.induction_on₂ x y fun _ _ h => c.eq.2 <| H' <| (Con.ker_rel f).mpr h
 
-/-- Every homomorphism out of the quotient is the lift of its restriction. -/
 theorem liftMulHom_apply_mkMulHom (f : c.Quotient →ₙ* N) :
     (c.liftMulHom (f.comp (mkMulHom c)) fun _ _ h => congrArg f (c.eq.2 h)) = f := by
   ext x; rcases x with ⟨⟩; rfl

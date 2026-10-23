@@ -118,7 +118,6 @@ def dirItem : VocabularyItem (Feature ⊕ Root) Exponent := {.inl .caus₁} ⟷ 
 def vocabulary (ρ : Root) : RuleSet (VocabularyItem (Feature ⊕ Root) Exponent) :=
   [lexicalItem ρ, dirItem]
 
-/-- The vocabulary is listed in order of decreasing specificity. -/
 private theorem vocabulary_pairwise (ρ : Root) :
     (vocabulary ρ).Pairwise fun i j ↦ j.specificity ≤ i.specificity := by
   have hlt : applySet (lexicalItem ρ) ⊂ applySet dirItem := by

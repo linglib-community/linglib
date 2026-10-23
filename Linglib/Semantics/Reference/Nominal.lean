@@ -67,8 +67,6 @@ noncomputable def resolve (nd : Nominal Ctx W E) (scope : E → W → Prop) (c :
     W → SignType :=
   presupOfReferent (nd.selector c) scope
 
-/-- An `ofReferent` resolved is exactly the canonical `presupOfReferent` — the
-bridge every definite denotation folds across. -/
 theorem ofReferent_resolve (referent : W → Option E) (scope : E → W → Prop) :
     (ofReferent referent).resolve scope ⟨⟩ = presupOfReferent referent scope :=
   rfl
@@ -95,7 +93,6 @@ variable {nd : Nominal Ctx W E} {scope : E → W → Prop} {c : Ctx} {w : W}
 
 end Values
 
-/-- A `Nominal` is determined by its presupposition and its selector. -/
 @[ext] theorem ext {nd₁ nd₂ : Nominal Ctx W E}
     (hp : nd₁.presup = nd₂.presup) (hs : nd₁.selector = nd₂.selector) : nd₁ = nd₂ := by
   cases nd₁; cases nd₂; cases hp; cases hs; rfl
@@ -125,8 +122,6 @@ def toNominal (χ : Character C W E) : Nominal C W E where
     χ.toNominal.selector c w = some (χ c w) :=
   rfl
 
-/-- A character is directly referential iff its nominal's selector is rigid at every
-context, so that the referent does not vary with the world of evaluation. -/
 theorem isDirectlyReferential_iff (χ : Character C W E) :
     χ.IsDirectlyReferential ↔ ∀ c, IsRigid (χ.toNominal.selector c) :=
   forall_congr' fun _ ↦

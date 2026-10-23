@@ -96,8 +96,6 @@ theorem licenses_nominal_and_verbal_iff :
     Licenses .nominal κ ∧ Licenses .verbal κ ↔ κ = none := by
   cases κ <;> grind [Licenses]
 
-/-- A core that occurs as an adjective occurs in no other extended projection, since the
-adjectival extended projection takes no root and an adjective is categorized. -/
 theorem Licenses.eq_adjectival (hA : Licenses .adjectival κ) (h : Licenses e κ) :
     e = .adjectival := by
   cases κ <;> simp_all
@@ -253,15 +251,10 @@ def DMWord.ofDatum (d : Datum) : Option DMWord := do
 /-- The words of the renderings of Distributed Morphology. -/
 def dmWords : List DMWord := Examples.all.filterMap DMWord.ofDatum
 
-/-- Every example is a judgment of the paradigm or a word in one of the two representations. -/
 theorem isSome_ofDatum : ∀ d ∈ Examples.all,
     (Row.ofDatum d).isSome || (Word.ofDatum d).isSome || (DMWord.ofDatum d).isSome := by
   decide +kernel
 
-/-- A root selects only the realization of what attaches to it directly, since selection is local
-and every exceptional realization is listed with a root: *-ate*, *-ify* and *-ment* attach to
-their roots, while the past tense of *instantiated* and the plural of *formations* attach to a
-derivative and take their defaults. -/
 theorem complement_eq_none_of_rootSelected :
     ∀ w ∈ words, w.choice = .rootSelected → complement w.terminals w.target = none := by
   decide +kernel
@@ -279,11 +272,6 @@ theorem complement_ne_none_of_wellFormed {ts : List Terminal} (hw : WellFormed L
   rw [h] at this
   rcases ht with ht | ⟨p, ht⟩ <;> simp [ht, Terminal.Takes] at this
 
-/-- The words that the resolution rules out are those that put a functor taking adjectives
-directly on a root: the verbs of *fattened* and of the problem cases *clarify* and *enlarge*,
-which do select their realizations, and *abilities* and *weaknesses*, which the section on zero
-categorizers brackets so before the section on adjectives treats their bases as born
-adjectives. -/
 theorem not_wellFormed_iff :
     ∀ w ∈ words, ¬ WellFormed Licenses w.terminals ↔
       ∃ p ∈ [CatFamily.verbal, .nominal], w.terminals.head? = some (.functor p [.adjectival]) := by

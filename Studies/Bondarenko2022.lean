@@ -111,7 +111,6 @@ instance : ∀ (d : Diagnostic) (s : NominalSort), Decidable (d.accepts s)
   | .truth, s => inferInstanceAs (Decidable s.truthEvaluable)
   | .occurrence, s => inferInstanceAs (Decidable s.occurrenceCompatible)
 
-/-- The sort asymmetries reproduce every co-occurrence judgment. -/
 theorem sort_predicts_cooccurrence :
     ∀ d ∈ cooccurrenceData, d.acceptable = true ↔ d.diagnostic.accepts d.sort := by
   decide
@@ -129,14 +128,10 @@ theorem existentialContent_of_comp {xc : ContentIndividual W} {p : W → Prop}
     (hne : ∃ w, xc.cont w) (h : comp p xc) : ExistentialContent xc p :=
   let ⟨w, hw⟩ := hne; ⟨w, hw, h ▸ hw⟩
 
-/-- Equality makes CONT a function, so one individual cannot carry two
-contents — no clausal conjunction under a content individual. -/
 theorem eq_of_comp_of_comp {xc : ContentIndividual W} {p q : W → Prop}
     (hp : comp p xc) (hq : comp q xc) : p = q :=
   hp.symm.trans hq
 
-/-- Subset semantics does not make CONT a function, since a content entails every superset
-of itself. -/
 theorem entails_not_functional :
     ¬ ∀ (xc : ContentIndividual Bool) (p q : Bool → Prop),
       xc.entails p → xc.entails q → p = q :=
@@ -153,11 +148,9 @@ variable {S : Type*}
 def ReferentiallyTransparentAt (clause : (S → Prop) → S → Prop) (s : S) : Prop :=
   ∀ p q : S → Prop, (p s ↔ q s) → (clause p s ↔ clause q s)
 
-/-- A Sit-CP is evaluated at the situation itself, hence transparent. -/
 theorem sit_transparentAt (s : S) : ReferentiallyTransparentAt (fun p s' => p s') s :=
   fun _ _ h => h
 
-/-- A Cont-CP is opaque, since content identity is not settled at one world. -/
 theorem comp_not_transparentAt :
     ¬ ∀ (xc : ContentIndividual Bool) (w : Bool),
       ReferentiallyTransparentAt (fun p _ => comp p xc) w :=
@@ -185,7 +178,6 @@ def substitutionDatum (e : Datum) : Option SubstitutionDatum := do
 /-- The substitution-test conclusions of §2.2.3. -/
 def substitutionData : List SubstitutionDatum := Examples.all.filterMap substitutionDatum
 
-/-- Substitution goes through exactly under situation nouns. -/
 theorem substitution_valid_iff_situation :
     ∀ d ∈ substitutionData, d.valid = true ↔ d.sort = .situation := by
   decide
@@ -227,7 +219,6 @@ theorem bareCP_satisfies_no_theta (θ : ThetaHead) :
     ¬ saturatesTheta .predicateOfSituations θ :=
   SemType.noConfusion
 
-/-- Nominalized CPs satisfy every Θ-head. -/
 theorem nominalizedCP_satisfies_every_theta (θ : ThetaHead) :
     saturatesTheta .predicateOfIndividuals θ :=
   rfl
@@ -264,8 +255,6 @@ def transparentSSMapping : ClauseStructurePath → Prop
   | .nominalizedModifier => composesViaPM .predicateOfIndividuals
   | .nominalizedArgument => ∃ θ, saturatesTheta .predicateOfIndividuals θ
 
-/-- Bare clauses are never arguments — the cell [angelopoulos-2026]
-contests. -/
 theorem not_transparentSSMapping_bareArgument :
     ¬ transparentSSMapping .bareArgument :=
   fun ⟨θ, h⟩ => bareCP_satisfies_no_theta θ h
@@ -285,8 +274,6 @@ situation and exactly verifies `p`. -/
 def compHead [Preorder S] (p : Set S) (x s : S) : Prop :=
   x ≤ s ∧ x ∈ p
 
-/-- Exact exemplification by a part is inexact verification, membership in the upper closure of
-the exact verifiers. -/
 theorem mem_upperClosure_of_compHead [Preorder S] {p : Set S} {x s : S}
     (h : compHead p x s) : s ∈ upperClosure p :=
   mem_upperClosure.2 ⟨x, h.2, h.1⟩
@@ -333,8 +320,6 @@ def koreanAnalysis : ContCompAnalysis where
   licenser_compAllomorph := by decide
   cover := by decide
 
-/-- In Buryat the Cont exponent is exactly the bare say-root. This is no law of
-`ContAnalysis`, since Korean's *-ta* is itself a suffix. -/
 theorem mem_buryatContExponent_iff :
     ∀ c ∈ complementizers,
       (c ∈ buryatAnalysis.contExponent ↔ ∀ m ∈ c.morphs, m.kind = .root) := by
@@ -366,8 +351,6 @@ def shapeDatum (e : Datum) : Option ShapeDatum := do
 /-- The Buryat clause shapes of §4.3.1. -/
 def shapeData : List ShapeDatum := Examples.all.filterMap shapeDatum
 
-/-- A clause denotes content exactly when the Cont exponent is among its
-typers — the thesis's argument that *gɘ* expones Cont. -/
 theorem content_iff_contExponent_mem :
     ∀ d ∈ shapeData, ∀ c ∈ buryatAnalysis.contExponent, (d.sort = .content ↔ c ∈ d.typers) := by
   decide
@@ -381,8 +364,6 @@ theorem hanaxa_typers :
       hanaxa.typers complementizers = [aasha, zha] := by
   decide
 
-/-- *hanaxa* is nonveridical on the bare frame, where it means 'think', and veridical on
-the nominalized one, where it means 'remember'. -/
 theorem hanaxa_frame_conditioned_attitude :
     hanaxa.attitudeOn ArgumentFrame.finiteClause = some (.doxastic .nonVeridical) ∧
       hanaxa.attitudeOn nominalizedFrame = some (.doxastic .veridical) := by

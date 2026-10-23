@@ -65,7 +65,6 @@ theorem langs_iff : V.langs L ↔ L.IsRegular ∧ V.mem L.SyntacticMonoid :=
   ⟨fun h ↦ ⟨V.langs_isRegular h, h⟩, And.right⟩
 
 variable {V} in
-/-- The languages of `V` are upward closed in the order of syntactic congruences. -/
 theorem langs_of_syntacticCon_le (h : V.langs L) (hle : L.syntacticCon ≤ M.syntacticCon) :
     V.langs M :=
   V.mem_quotient_of_le hle h
@@ -134,7 +133,6 @@ theorem langs_iff : V.langs L ↔ L.IsRegular ∧ V.mem L.SyntacticSemigroup :=
   ⟨fun h ↦ ⟨V.langs_isRegular h, h⟩, And.right⟩
 
 variable {V} in
-/-- The languages of `V` are upward closed in the order of syntactic congruences. -/
 theorem langs_of_syntacticSemigroupCon_le (h : V.langs L)
     (hle : L.syntacticSemigroupCon ≤ M.syntacticSemigroupCon) : V.langs M :=
   V.mem_quotient_of_le hle h

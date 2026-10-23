@@ -164,7 +164,6 @@ theorem marginOrder_semitransitive (h₁ : marginOrder μ ε x y)
     marginOrder μ ε x v ∨ marginOrder μ ε v z := by
   simp only [marginOrder] at *; omega
 
-/-- At `ε = 0` the margin order is plain measure comparison. -/
 theorem marginOrder_zero_iff : marginOrder μ 0 x y ↔ μ y < μ x := by
   simp [marginOrder]
 
@@ -180,7 +179,6 @@ theorem crisp_pair_not_marginOrder (hε : 1 ≤ ε) (hclose : μ x = μ y + 1) :
     ¬ marginOrder μ ε x y := by
   simp only [marginOrder]; omega
 
-/-- The same pair satisfies explicit comparison, since `-er` needs only a nonzero difference. -/
 theorem crisp_pair_marginOrder_zero (hclose : μ x = μ y + 1) :
     marginOrder μ 0 x y := by
   simp only [marginOrder]; omega

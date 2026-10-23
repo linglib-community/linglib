@@ -66,10 +66,8 @@ end Context
 
 variable {α W : Type*} {r : Set W → Set W → Prop}
 
-/-- Every set is at least as likely as `∅`. -/
 theorem rel_empty [IsLikelihoodMono r] (A : Set W) : r A ∅ := rel_bot (r := r) A
 
-/-- The whole space is strictly more likely than `∅`. -/
 theorem not_rel_empty_univ [IsNontrivial r] : ¬r ∅ Set.univ :=
   IsNontrivial.bot_not_ge_top (r := r)
 

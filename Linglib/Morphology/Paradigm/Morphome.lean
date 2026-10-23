@@ -95,16 +95,12 @@ or semantic characterization ([aronoff-1994]'s "morphology by itself").
 def IsMorphome (p : Cell → F) (Natural : Set Cell → Prop) (c : Set Cell) : Prop :=
   c ∈ (Setoid.ker p).classes ∧ c.Nontrivial ∧ ¬ Natural c
 
-/-- The syncretism class of `a` is a morphome once it is nontrivial and
-unnatural — the shape a concrete paradigm instantiates. -/
 theorem isMorphome_syncretismClass (p : Cell → F) (Natural : Set Cell → Prop)
     (a : Cell) (hnt : (syncretismClass p a).Nontrivial)
     (hnat : ¬ Natural (syncretismClass p a)) :
     IsMorphome p Natural (syncretismClass p a) :=
   ⟨syncretismClass_mem_classes p a, hnt, hnat⟩
 
-/-- The `Finset` face of `isMorphome_syncretismClass`: the cells a form realizes are a
-morphome once there are at least two of them and they are not a natural class. -/
 theorem isMorphome_of_formCells [Fintype Cell] [DecidableEq F] (p : Cell → F) (a : Cell)
     (Natural : Set Cell → Prop) {X : Finset Cell} (hX : formCells p (p a) = X)
     (hnt : 1 < X.card) (hnat : ¬ Natural ↑X) : IsMorphome p Natural ↑X := by
@@ -127,8 +123,6 @@ the cells agreeing with some cell on some of the features. -/
 def IsValueConjunction (feats : ι → Setoid Cell) (X : Set Cell) : Prop :=
   ∃ (S : Finset ι) (c₀ : Cell), X = {c | ∀ i ∈ S, feats i c c₀}
 
-/-- On a finite paradigm, being a value conjunction is a finite search over the features and
-the witness cell. -/
 theorem isValueConjunction_coe_iff [Fintype Cell] [DecidableEq Cell] (feats : ι → Setoid Cell)
     [∀ i, DecidableRel (feats i)] (X : Finset Cell) :
     IsValueConjunction feats ↑X ↔

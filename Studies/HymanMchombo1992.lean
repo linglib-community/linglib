@@ -526,7 +526,6 @@ def spell : Stem → String
   | intensive :: s => "-" ++ intensiveForm ++ intensiveForm ++ spell s
   | f :: s => "-" ++ f.form ++ spell s
 
-/-- Every row names a root and its suffixes, and a scope or an applied role. -/
 theorem rows_parse :
     ∀ r ∈ Examples.all, (root? r).isSome ∧ (suffixes? r).isSome ∧
       ((scope? r).isSome ∨ (role? r).isSome) := by

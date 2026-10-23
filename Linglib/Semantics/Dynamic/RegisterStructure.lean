@@ -149,8 +149,6 @@ open CylindricAlgebra
 
 @[simp] theorem mem_diag : i ∈ (diag r r' : Set S) ↔ val r i = val r' i := Iff.rfl
 
-/-- A register lies outside the dimension set of a condition exactly when updating it never
-changes whether the condition holds. -/
 theorem notMem_dimSet_iff : r ∉ dimSet C ↔ ∀ i e, extend i r e ∈ C ↔ i ∈ C := by
   rw [notMem_dimSet]
   refine ⟨fun h i e ↦ ⟨fun hC ↦ h ▸ ⟨e, hC⟩, fun hi ↦ h ▸ ⟨val r i, ?_⟩⟩, fun h ↦ ?_⟩
@@ -166,7 +164,6 @@ theorem dimSet_preimage_subset {α : Type*} {s : Set R} (f : S → α)
   fun r hr ↦ by_contra fun hrs ↦ (notMem_dimSet_iff.2 fun i e ↦ by
     simp only [Set.mem_preimage, hf r hrs]) hr
 
-/-- A condition on the value of one register has its dimension set inside that register. -/
 theorem dimSet_preimage_val_subset (u : R) (P : Set E) : dimSet (val u ⁻¹' P : Set S) ⊆ {u} :=
   dimSet_preimage_subset _ (fun _ hr _ _ ↦ val_extend_of_ne _ _ _ _ fun h ↦ hr (h ▸ rfl)) P
 
@@ -258,11 +255,9 @@ the clause of [groenendijk-stokhof-1991] for the universal. -/
 def dforall (r : R) (D : Update S) : Condition S :=
   impl (randomAssign r) D
 
-/-- An existential runs its scope from some update of the input at `r`. -/
 theorem mem_dexists {D : Update S} : i ~[dexists r D] j ↔ ∃ e, extend i r e ~[D] j :=
   ⟨by rintro ⟨_, ⟨e, rfl⟩, hD⟩; exact ⟨e, hD⟩, fun ⟨e, hD⟩ ↦ ⟨_, ⟨e, rfl⟩, hD⟩⟩
 
-/-- A universal holds when its scope has an output from every update of the input at `r`. -/
 theorem mem_dforall {D : Update S} : i ∈ dforall r D ↔ ∀ e, extend i r e ∈ D.dom :=
   ⟨fun h e ↦ h ⟨e, rfl⟩, by rintro h _ ⟨e, rfl⟩; exact h e⟩
 
@@ -285,7 +280,6 @@ theorem fixes_id (r : R) : Fixes r (SetRel.id : Update S) :=
 theorem fixes_test (r : R) (C : Condition S) : Fixes r (test C) :=
   fun _ _ h ↦ h.1 ▸ rfl
 
-/-- A random assignment fixes every other register. -/
 theorem fixes_randomAssign_of_ne (h : r' ≠ r) : Fixes r' (randomAssign (S := S) r) :=
   fun _ _ ⟨e, he⟩ ↦ he ▸ val_extend_of_ne _ r r' e h
 
@@ -298,8 +292,6 @@ theorem Fixes.maxBy {α : Type*} [Preorder α] {f : S → α} {D : Update S} (h 
     Fixes r (maxBy f D) :=
   fun _ _ hD ↦ h _ _ hD.1
 
-/-- Maximizing a register an update fixes is vacuous, since every output agrees with the input
-there. -/
 theorem maxAt_eq_of_fixes [Preorder E] {D : Update S} (h : Fixes r D) : maxAt r D = D :=
   maxBy_eq_self h
 
@@ -313,22 +305,17 @@ def box (s : Finset R) (C : Condition S) : Update S :=
 @[simp] theorem box_empty (C : Condition S) : box (∅ : Finset R) C = test C := by
   simp [box]
 
-/-- A one-register box is an existential over a test. -/
 theorem box_singleton (r : R) (C : Condition S) : box {r} C = dexists r (test C) := by
   rw [box, Finset.noncommProd_singleton, mul_def, dexists]
 
-/-- The box `[r | C]` assigns `r` at random and then tests `C`. -/
 theorem mem_box_singleton : i ~[box {r} C] j ↔ i ~[randomAssign r] j ∧ j ∈ C := by
   rw [box_singleton, dexists, mem_comp_test]
 
-/-- A box commutes with a random assignment whose register lies outside the dimension set of its
-condition. -/
 theorem commute_box_randomAssign (s : Finset R) (h : r ∉ dimSet C) :
     Commute (box s C) (randomAssign r) :=
   .mul_left (Finset.noncommProd_commute _ _ _ _ fun r' _ ↦ commute_randomAssign r r').symm
     (commute_test_randomAssign_iff.2 h)
 
-/-- A box fixes every register outside it. -/
 theorem fixes_box {s : Finset R} (h : r ∉ s) (C : Condition S) : Fixes r (box s C) := by
   classical
   induction s using Finset.induction_on with
@@ -340,7 +327,6 @@ theorem fixes_box {s : Finset R} (h : r ∉ s) (C : Condition S) : Fixes r (box 
 
 variable [DecidableEq R]
 
-/-- Prefixing a random assignment adds its register to a box. -/
 theorem box_insert (r : R) (s : Finset R) (C : Condition S) :
     box (insert r s) C = randomAssign r ○ box s C := by
   by_cases hr : r ∈ s
@@ -358,13 +344,11 @@ theorem mem_box_insert {s : Finset R} :
     i ~[box (insert r s) C] j ↔ ∃ e, extend i r e ~[box s C] j := by
   rw [box_insert, ← dexists, mem_dexists]
 
-/-- A random assignment to `r` followed by a box gives the box with `r` added. -/
 theorem mem_box_insert_of_mem {s : Finset R} {k : S} (hk : i ~[randomAssign r] k)
     (hj : k ~[box s C] j) : i ~[box (insert r s) C] j := by
   rw [box_insert]
   exact ⟨k, hk, hj⟩
 
-/-- The weakest precondition of a box quantifies over each of its registers. -/
 theorem preimage_box_insert (r : R) (s : Finset R) (C t : Condition S) :
     (box (insert r s) C).preimage t = cyl r ((box s C).preimage t) := by
   rw [box_insert, preimage_comp, preimage_randomAssign]
@@ -382,7 +366,6 @@ theorem box_comp_box {s t : Finset R} {C' : Condition S} (h : ∀ r ∈ t, r ∉
       mul_assoc]
     rfl
 
-/-- The registers `u₀, …, uₙ` are `u₀` and the rest. -/
 private theorem map_univ_succ {n : ℕ} (u : Fin (n + 1) ↪ R) :
     Finset.univ.map u = insert (u 0) (Finset.univ.map ((Fin.succEmb n).trans u)) := by
   ext r
@@ -448,7 +431,6 @@ theorem mem_box_iff {s : Finset V} {C : Condition (V → E)} :
       · simp
       · rw [hh y ⟨hyx, hys⟩, Function.update_of_ne hyx]
 
-/-- At the canonical register structure, random assignment at `x` is agreement off `x`. -/
 theorem mem_randomAssign_iff_eqOn : g ~[randomAssign x] h ↔ Set.EqOn g h {x}ᶜ :=
   ⟨by rintro ⟨e, rfl⟩ v hv; exact (Function.update_of_ne hv e g).symm,
     fun hk ↦ ⟨h x, (Function.update_eq_iff.mpr ⟨rfl, fun _ hv ↦ hk hv⟩).symm⟩⟩

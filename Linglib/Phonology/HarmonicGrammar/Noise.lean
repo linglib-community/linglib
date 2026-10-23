@@ -84,14 +84,11 @@ of `a` under the law of the noisy harmonies. -/
 noncomputable def weightNoiseChoiceProb [Fintype C] (a : C) : ℝ≥0∞ :=
   choiceProb ((weightNoise ι v).map fun η c ↦ harmonyScore con (w + η) c) a
 
-/-- The probability that `a` has the highest noisy harmony, as an event of the weight noise. -/
 theorem weightNoiseChoiceProb_eq [Fintype C] (a : C) :
     weightNoiseChoiceProb con w v a =
       weightNoise ι v {η | ∀ b, b ≠ a → harmonyScore con (w + η) b < harmonyScore con (w + η) a} :=
   choiceProb_map _ (measurable_pi_iff.mpr (measurable_harmonyScore_add con w)) a
 
-/-- Noise on the weights moves the harmony difference of two candidates by the noise against their
-violation difference. -/
 theorem harmonyScore_add_sub (η : ι → ℝ) (a b : C) :
     harmonyScore con (w + η) a - harmonyScore con (w + η) b =
       harmonyScore con w a - harmonyScore con w b + ∑ i, -con.violationDiff a b i * η i := by

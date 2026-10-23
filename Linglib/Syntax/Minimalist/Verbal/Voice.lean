@@ -205,16 +205,12 @@ def antipassive : Head := { agentive with operation := some .antipassive }
 
 /-! ### Verification -/
 
-/-- The θ-assigning heads are the thematic active ones; the anticausative, the middle and the
-passive assign none. -/
 theorem assignsTheta_cells :
     agentive.AssignsTheta ∧ causer.AssignsTheta ∧ experiencer.AssignsTheta ∧
       reflexive.AssignsTheta ∧ reciprocal.AssignsTheta ∧ antipassive.AssignsTheta ∧
       ¬ anticausative.AssignsTheta ∧ ¬ middle.AssignsTheta ∧ ¬ passive.AssignsTheta := by
   decide
 
-/-- The passive is thematic with an implicit agent; the anticausative is expletive with a
-specifier, the core claim of [munoz-perez-2026] that *se* is a PF phenomenon. -/
 theorem passive_anticausative :
     passive.IsThematic ∧ passive.ExternalImplicit ∧ ¬ anticausative.IsThematic ∧
       anticausative.HasD := by
@@ -227,8 +223,6 @@ theorem canonical_dCoherent :
       reciprocal.DCoherent ∧ antipassive.DCoherent := by
   decide
 
-/-- Agentive and causer Voice are phase heads, v*; the anticausative, the middle and the passive
-are not. -/
 theorem phasal_cells :
     agentive.IsPhasal ∧ causer.IsPhasal ∧ ¬ anticausative.IsPhasal ∧ ¬ middle.IsPhasal ∧
       ¬ passive.IsPhasal := by

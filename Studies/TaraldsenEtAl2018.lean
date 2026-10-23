@@ -118,8 +118,6 @@ theorem stacks_iff_no_entry (h : treeSpellout L (leaf (some .num)) = none) {r : 
   · simp [hb] at hr
     simp [← hr]
 
-/-- The outer prefix of a stack lexicalizes a plural Specifier, so a singular prefix never
-stacks on a plural one (section 4.5). -/
 theorem outer_prefix_is_plural (h : treeSpellout L (leaf (some .num)) = none)
     {outer inner : String} (hr : pluralPrefixes L base spec = some [outer, inner]) :
     ∃ e ∈ L, e.Matches (plTree spec) ∧ e.exponent = outer := by
@@ -211,7 +209,6 @@ theorem xhosa_genderA :
       exponents xhosaPrefixes [.cls 1, .num] = some ["ba"] := by
   decide
 
-/-- Genders A, D and E share their classifier and B and C do not (section 2). -/
 theorem xhosa_sharesClassifierN (g : Xhosa.Gender) :
     SharesClassifierN (xhosaSg g) (xhosaPl g) ↔ g ∈ [.genderA, .genderD, .genderE] := by
   cases g <;> decide

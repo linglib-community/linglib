@@ -102,7 +102,6 @@ private theorem antipodeRightTreeN_unfold (T : UnorderedTree α) :
   exact congrArg (fun s ↦ -ofTree T - s.sum) (Multiset.attach_map_val' _
     fun p : Forest (UnorderedTree α) × UnorderedTree α ↦ of' p.1 * antipodeRightTreeN (R := R) p.2)
 
-/-- `id ⋆ R = 1`, since the empty cut contributes `R(T)`, which cancels the rest. -/
 private theorem id_convMul_aeval_antipodeRightTreeN :
     toConv (AlgHom.id R _) * toConv (aeval (antipodeRightTreeN (R := R) (α := α))) = 1 := by
   refine ofConv_injective (algHom_ext_ofTree fun T ↦ ?_)

@@ -45,7 +45,6 @@ theorem DependsOn.inter (hs : DependsOn f s) (ht : DependsOn f t) : DependsOn f 
   · simp [his, h i ⟨his, hi⟩]
   · simp [his]
 
-/-- A function that depends on each of finitely many sets depends on their intersection. -/
 theorem DependsOn.biInter {κ : Type*} {u : Set κ} (hu : u.Finite) {t : κ → Set ι}
     (h : ∀ k ∈ u, DependsOn f (t k)) : DependsOn f (⋂ k ∈ u, t k) := by
   induction u, hu using Set.Finite.induction_on with
@@ -75,8 +74,6 @@ theorem isLeast_dependsOn (hs : s.Finite) (hf : DependsOn f s) :
     exact (mem_iInter₂.1 hi i ⟨his, hdep⟩) rfl
   · simpa using hit
 
-/-- A function of finitely many coordinates depends on the coordinates it does not ignore, and
-every set it depends on contains them. -/
 theorem isLeast_dependsOn_of_finite [Finite ι] (f : (Π i, α i) → β) :
     IsLeast {t | DependsOn f t} {i | ¬ DependsOn f {i}ᶜ} :=
   isLeast_dependsOn finite_univ (dependsOn_univ f)

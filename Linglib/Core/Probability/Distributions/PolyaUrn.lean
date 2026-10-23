@@ -68,7 +68,6 @@ theorem isProbabilityMeasure_polyaUrn (n : ℕ) : IsProbabilityMeasure (polyaUrn
   have := isMarkovKernel_polyaUrnRule hθ
   isProbabilityMeasure_seqLaw n
 
-/-- The probability that the urn draws the sequence `s` is `polyaUrnProb θ (countVec s)`. -/
 theorem polyaUrn_singleton : ∀ {n : ℕ} (s : Fin n → α),
     polyaUrn θ n {s} = ENNReal.ofReal (polyaUrnProb θ (countVec s))
   | 0, s => by simp [polyaUrn, Subsingleton.elim s default]

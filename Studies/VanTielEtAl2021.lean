@@ -155,7 +155,6 @@ noncomputable def withConfusion [MeasurableSpace M] (S : Kernel (State n) M)
     (cf : Kernel (State n) (State n)) : Kernel (State n) M :=
   S ∘ₖ cf
 
-/-- Exact number representation changes nothing. -/
 theorem withConfusion_id [MeasurableSpace M] (S : Kernel (State n) M) :
     withConfusion S Kernel.id = S :=
   Kernel.comp_id S
@@ -189,8 +188,6 @@ theorem speakerLit_real_eq_of_eq (L : Lexicon n M) (sal : M → ℝ) {m m' : M} 
   rw [speakerLit, Kernel.ofWeights_real_singleton _ _ (fun _ ↦ ENNReal.ofReal_ne_top),
     Kernel.ofWeights_real_singleton _ _ (fun _ ↦ ENNReal.ofReal_ne_top), hL, hs]
 
-/-- Under the threshold semantics the literal listener recovers a state from a word true there
-with the reciprocal of the size of the word's extension. -/
 theorem listenerLit_real_gq (mono : M → Monotonicity) (θ : M → ℕ) {m : M} {t : State n}
     (h : gq mono θ m t = 1) :
     (listenerLit (gq mono θ) m).real {t} = 1 / (extension n mono θ m).card := by

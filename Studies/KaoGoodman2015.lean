@@ -100,9 +100,6 @@ noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Meas
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
   [IsProbabilityMeasure ν] (α : ℝ)
 
-/-- A meaning is a possible interpretation of an utterance exactly when it has positive prior
-and, under some question of positive prior, shares its answer with a meaning of positive prior
-at which the utterance is literally true. -/
 theorem listener_ne_zero_iff (hα : 0 < α) (u : Weather) (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by

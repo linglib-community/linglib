@@ -179,8 +179,6 @@ below a cause, whose postulate entails change, and adds no manner or cause. -/
   | mannerOfCause =>
     exact h .mannerOfCause (by simpa [Postulate.trigger, Finset.insert_subset_iff, hm, hc] using hp)
 
-/-- An interpretation that respects a signature whose closure has a result satisfies the
-postulate of change. -/
 theorem Respects.entailsChange (h : M.Respects P Q ks)
     (hr : Root.Kind.result ∈ Root.Kinds.close ks) : M.EntailsChange P :=
   respects_close.2 h .change (Finset.singleton_subset_iff.2 hr)

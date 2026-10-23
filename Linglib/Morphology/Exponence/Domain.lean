@@ -58,7 +58,6 @@ instance : Rule (DomainRule Ctx E) Ctx E := ⟨DomainRule.exponent, fun r c ↦ 
 
 @[simp] theorem rule_exponent : Rule.exponent r = r.exponent := rfl
 
-/-- A rule's domain is the set of contexts it applies in. -/
 theorem coe_dom : (r.dom : Set Ctx) = applySet r := rfl
 
 /-- A domain rule's applicability factors through `A` exactly when its domain is a union of

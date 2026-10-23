@@ -113,14 +113,10 @@ def domainAlternatives (p : V → Set (NonemptyInterval T)) (τ : NonemptyInterv
     Set (Set V) :=
   (fun τ' ↦ {v | τ' ∈ p v}) '' Set.Iic τ
 
-/-- A claim with the subinterval property entails its domain alternatives, so exhaustifying them
-is vacuous. -/
 theorem exh_domainAlternatives_eq_self (hp : ∀ v, IsLowerSet (p v)) :
     exh (domainAlternatives p τ) {v | τ ∈ p v} = {v | τ ∈ p v} :=
   exh_eq_self <| by rintro _ ⟨τ', hτ', rfl⟩ v hv; exact hp v hτ' hv
 
-/-- When the claim at one span entails it at another exactly when the second contains the first,
-exhaustification negates the claim at every proper subinterval. -/
 theorem mem_exh_domainAlternatives_iff
     (hp : ∀ τ₁ τ₂, {v | τ₁ ∈ p v} ⊆ {v | τ₂ ∈ p v} ↔ τ₁ ≤ τ₂) {v : V} :
     v ∈ exh (domainAlternatives p τ) {v | τ ∈ p v} ↔ τ ∈ p v ∧ ∀ τ' < τ, τ' ∉ p v := by
@@ -149,8 +145,6 @@ section Perfective
 
 variable {V : Type*} {P : V → E → Prop} {τ : NonemptyInterval T}
 
-/-- Where every extension is available and the event domain is rich, the perfective claim at one
-span entails it at another exactly when the second contains the first. -/
 theorem prfv_subset_prfv_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
     {v | τ₁ ∈ PRFV P v} ⊆ {v | τ₂ ∈ PRFV P v} ↔ τ₁ ≤ τ₂ := by
@@ -160,8 +154,6 @@ theorem prfv_subset_prfv_iff (hP : Function.Surjective P)
   obtain ⟨e, he, heq⟩ := h (a := v) ⟨e₀, he₀.le, (congrFun hv e₀).mpr he₀⟩
   exact (congrFun hv e).mp heq ▸ he
 
-/-- Exhaustified, the positive perfective claim requires an event filling the span and none
-inside a proper subinterval. -/
 theorem mem_exh_prfv_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
     v ∈ exh (domainAlternatives (PRFV P) τ) {v | τ ∈ PRFV P v} ↔
@@ -189,7 +181,6 @@ theorem negated_perfective_exh_vacuous :
 
 end Perfective
 
-/-- Negating the extension of the event predicate reaches every extension. -/
 theorem surjective_not : Function.Surjective fun (v : E → Prop) e ↦ ¬ v e :=
   fun u ↦ ⟨fun e ↦ ¬ u e, funext fun _ ↦ propext not_not⟩
 
@@ -214,14 +205,12 @@ def Widened (F : Set (NonemptyInterval T)) (P : W → E → Prop) (w : W)
 
 variable {F : Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {τ τ' : NonemptyInterval T}
 
-/-- Spans ending at the same time are nested. -/
 theorem isChain_rb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | τ.snd = t} := by
   intro τ₁ h₁ τ₂ h₂ _
   rcases le_total τ₂.fst τ₁.fst with h | h
   · exact .inl (le_def.2 ⟨h, (h₁.trans h₂.symm).le⟩)
   · exact .inr (le_def.2 ⟨h, (h₂.trans h₁.symm).le⟩)
 
-/-- Spans starting at the same time are nested. -/
 theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | τ.fst = t} := by
   intro τ₁ h₁ τ₂ h₂ _
   rcases le_total τ₁.snd τ₂.snd with h | h
@@ -237,7 +226,6 @@ theorem widened_iff_maximal (hF : IsChain (· ≤ ·) F) :
   · exact le_rfl
   · exact (hF hτ'.1 h.1.1 hne).elim id (h.2 hτ')
 
-/-- Every wider span with the fixed boundary contains an event. -/
 theorem Widened.prfv (h : Widened F P w τ) (hτ' : τ' ∈ F) (hlt : τ < τ') : τ' ∈ PRFV P w :=
   by_contra fun hfree ↦ hlt.not_ge (h.2 ⟨hτ', hfree⟩)
 
@@ -347,8 +335,6 @@ theorem not_unbounded_subset_iff (hP : Function.Surjective P)
   exact h (a := v) (fun ⟨e, he, heq⟩ ↦ hle ((congrFun hv e).mp heq ▸ he))
     ⟨e₀, he₀.ge, (congrFun hv e₀).mpr he₀⟩
 
-/-- Exhaustifying the not-throughout claim makes the predicate hold throughout every proper
-subinterval. -/
 theorem mem_exh_not_unbounded_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
     v ∈ exh (domainAlternatives (fun v ↦ (UNBOUNDED P v)ᶜ) τ) {v | τ ∉ UNBOUNDED P v} ↔
@@ -356,8 +342,6 @@ theorem mem_exh_not_unbounded_iff (hP : Function.Surjective P)
   (mem_exh_domainAlternatives_iff (p := fun v ↦ (UNBOUNDED P v)ᶜ)
     fun _ _ ↦ not_unbounded_subset_iff hP hrich).trans <| by simp
 
-/-- Where overlapping events sum to an event and the span has an interior point, a predicate
-holding throughout every proper subinterval holds throughout the span. -/
 theorem unbounded_of_forall_lt {v : V}
     (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).Overlaps (Event.τ e₂) →
       ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)

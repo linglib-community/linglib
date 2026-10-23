@@ -57,13 +57,11 @@ open RoseTree UnorderedTree SyntacticObject
 
 variable {side : Edge}
 
-/-- A leaf's linearized form is its harmonic linearization. -/
 theorem linearize?_of_toLinearizedLeaf? {s : SyntacticObject} {p : LinearizedSyntacticObject}
     (h : s.toLinearizedLeaf? = some p) : s.linearize? side = some p := by
   rcases s.exists_form with ⟨tok, rfl⟩ | rfl | ⟨tok, rfl⟩ | ⟨l, r, rfl⟩ <;>
     simp [toLinearizedLeaf?, merge_val] at h <;> subst h <;> rfl
 
-/-- The trace a mover leaves is linearized as its linearized trace. -/
 theorem linearize?_headTrace (s : SyntacticObject)
     (τ : SyntacticObject → Option LexicalItem.Token) :
     (s.headTrace τ).linearize? side = some (s.traceLinearized τ) := by
@@ -132,7 +130,6 @@ theorem replay?_append_singleton (d : Derivation) (step : Step) :
   funext c
   cases step.replay? c <;> rfl
 
-/-- A derivation of Merge steps leaves nothing on the stack. -/
 theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObject}
     (hm : ∀ step ∈ d.steps, step.IsMerge) (h : d.replay? τ = some c) : c.stack = [] := by
   obtain ⟨p, -, h⟩ := Option.bind_eq_some_iff.1 h
@@ -158,7 +155,6 @@ theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObj
 
 end Derivation
 
-/-- A successful replay step forgets to `Step.run`. -/
 private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step : Step}
     (h : step.replay? c τ = some c') :
     c'.map LinearizedSyntacticObject.toSyntacticObject
@@ -202,8 +198,6 @@ theorem Derivation.externalize?_faithful (d : Derivation) {p : LinearizedSyntact
   obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.1 h
   rw [Derivation.final, ← d.replay?_faithful hc, Cfg.map_current]
 
-/-- Faithfulness holds for prefixes, since a successful replay of the first `n` steps forgets to
-    stage `n`. -/
 theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
     {p : LinearizedSyntacticObject} (h : (d.take n).externalize? τ = some p) :
     p.toSyntacticObject = d.stageAt n τ :=
@@ -217,7 +211,6 @@ the harmonic linearization of its object (`Derivation.externalize?_eq_linearize?
 
 namespace SyntacticObject
 
-/-- Replacing an object by one with its selection state, at the root. -/
 private theorem linearizationState_replace_self {cur t : SyntacticObject} {σ}
     {pc pt : LinearizedSyntacticObject} (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
     (ht : t.linearize? side = some pt) (hsel : t.selCheck = cur.selCheck) :
@@ -232,7 +225,6 @@ private theorem linearizationState_replace_self {cur t : SyntacticObject} {σ}
   cases hsel
   exact hst
 
-/-- Replacing in a leaf, which is the target or is kept. -/
 private theorem linearizationState_replace_leaf {cur m t : SyntacticObject} {a : Vertex} {σ}
     {pc pt : LinearizedSyntacticObject} (hs : cur.val = UnorderedTree.leaf a)
     (hpv : pc.val = .node a []) (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
@@ -245,8 +237,6 @@ private theorem linearizationState_replace_leaf {cur m t : SyntacticObject} {a :
     rw [replace_of_val_eq_leaf hs heq, LinearizedSyntacticObject.replace_of_val_eq_leaf hpv
       (by rwa [toSyntacticObject_of_linearize? hpc]), hc]
 
-/-- Replacing a term by an object with its selection state keeps the selection state, and the
-    linearization changes by the same replacement. -/
 theorem linearizationState_replace {cur m t : SyntacticObject} {σ}
     {pc pt : LinearizedSyntacticObject} (hc : cur.linearizationState side = ⟨some (σ, pc)⟩)
     (ht : t.linearize? side = some pt) (hsel : t.selCheck = m.selCheck) :
@@ -284,7 +274,6 @@ theorem linearizationState_replace {cur m t : SyntacticObject} {σ}
       · rw [LinearizedSyntacticObject.replace_attach (by rw [hl', hr']; exact heq)]
         rfl
 
-/-- The occurrence the replay finds in a harmonic linearization is the mover's own. -/
 theorem linearize?_of_find? {cur m : SyntacticObject} {pc s : LinearizedSyntacticObject}
     (hc : cur.linearize? side = some pc) (hf : pc.find? m = some s) :
     m.linearize? side = some s := by
@@ -313,7 +302,6 @@ def Step.HarmonicList (side : Edge) (τ : SyntacticObject → Option LexicalItem
   | [], _ => True
   | step :: steps, c => step.Harmonic side τ c ∧ HarmonicList side τ steps (step.run c τ)
 
-/-- The remainder of a harmonic movement is the replaced linearization. -/
 private theorem linearize?_deleteAccessible {cur mover : SyntacticObject}
     {pc : LinearizedSyntacticObject} (hc : cur.linearize? side = some pc)
     (hsel : (mover.headTrace τ).selCheck = mover.selCheck) :
@@ -324,7 +312,6 @@ private theorem linearize?_deleteAccessible {cur mover : SyntacticObject}
     linearizationState_replace hs (linearize?_headTrace mover τ) hsel,
     LinearizationState.linearized?]
 
-/-- A harmonic step replays to the harmonic linearization of the configuration it reaches. -/
 theorem Step.replay?_of_harmonic {step : Step} {c : Cfg SyntacticObject}
     {q : Cfg LinearizedSyntacticObject} (h : step.Harmonic side τ c)
     (hq : c.map (·.linearize? side) = q.map some) :
@@ -373,8 +360,6 @@ theorem Step.replay?_of_harmonic {step : Step} {c : Cfg SyntacticObject}
     simp only [Cfg.map, Step.run, Cfg.mk.injEq, hst', and_true]
     exact linearize?_merge hqm hc hside
 
-/-- A harmonic list of steps replays to the harmonic linearization of the configuration it
-    reaches. -/
 theorem foldlM_replay?_of_harmonicList : ∀ {steps : List Step} {c : Cfg SyntacticObject}
     {q : Cfg LinearizedSyntacticObject}, Step.HarmonicList side τ steps c →
       c.map (·.linearize? side) = q.map some →

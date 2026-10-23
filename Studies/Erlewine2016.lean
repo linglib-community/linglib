@@ -227,7 +227,6 @@ def Candidate.AFSuffix (args : List Arg) (c : Candidate) : Prop := ∃ a ∈ arg
 instance (args : List Arg) (c : Candidate) : Decidable (c.AFSuffix args) := by
   unfold Candidate.AFSuffix; infer_instance
 
-/-- The AF suffix marks a violation of XRef. -/
 theorem afSuffix_iff_xref_pos (i : Input) (c : Candidate) :
     c.AFSuffix i.args ↔ 0 < xref i c := by
   simp [Candidate.AFSuffix, xref, List.length_pos_iff_exists_mem, List.mem_filter]
@@ -237,8 +236,6 @@ Spec,TP. -/
 def Candidate.form (args : List Arg) (c : Candidate) : Mayan.VerbForm :=
   if c.AFSuffix args then .agentFocus else .transitive
 
-/-- Among the candidates of a transitive clause, the AF form is exactly the absence of the Set
-A probe: the derivation that skips Spec,TP loses Set A and gains the suffix. -/
 theorem form_hasSetA (o : Bool) :
     ∀ c ∈ candidatesOf true o, ((c.form (argsOf true)).HasSetA ↔ c.aProbe = true) := by
   cases o <;> decide

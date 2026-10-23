@@ -90,16 +90,13 @@ def combine (pin a b : Bool) : Bool := if pin then a && b else a || b
 programs make it. -/
 def combineC (pin a b : Bool) : Bool := if pin then a || b else a && b
 
-/-- On a true input, ⊙ is conjunction. -/
 @[simp] theorem combine_true (a b : Bool) : combine true a b = (a && b) := rfl
 
 /-- On a false input, ⊙ is disjunction, the collapse behind (5.15). -/
 @[simp] theorem combine_false (a b : Bool) : combine false a b = (a || b) := rfl
 
-/-- On a true input, ⊘ is disjunction. -/
 @[simp] theorem combineC_true (a b : Bool) : combineC true a b = (a || b) := rfl
 
-/-- On a false input, ⊘ is conjunction. -/
 @[simp] theorem combineC_false (a b : Bool) : combineC false a b = (a && b) := rfl
 
 /-- A ⊙-value differs from the input iff one of the components does (Prop. 4.2). -/
@@ -117,7 +114,6 @@ theorem combine_assoc (pin a b c : Bool) :
 /-- The input itself is a ⊙-identity (Prop. 4.4 (iii)). -/
 theorem combine_id (pin a : Bool) : combine pin a pin = a := by decide +revert
 
-/-- ⊘ is the De Morgan dual of ⊙, negating the two output values but not the input. -/
 theorem combineC_eq_not_combine (pin a b : Bool) :
     combineC pin a b = !combine pin (!a) (!b) := by decide +revert
 
@@ -209,7 +205,6 @@ def sourGrapes (w : List SG) : List SG :=
   w.mapIdx fun i σ ↦
     if σ = .minus ∧ .plus ∈ w.take i ∧ .blk ∉ w.drop i then .plus else σ
 
-/-- The middle of the flank witness spreads iff the head triggers and the tail is clear. -/
 private theorem sourGrapes_flankWord_mid {u v : SG} {d : ℕ} :
     (sourGrapes (flankWord u .minus v (2 * d + 1)))[d + 1]? =
       some (if u = .plus ∧ v ≠ .blk then .plus else .minus) := by
@@ -301,8 +296,6 @@ theorem bemba_map_forms : ∀ a ∈ Wordlist.analyses, ∀ p ∈ ofAnalysis a, b
 number of vowels. -/
 example : (Wordlist.analyses.filterMap ofAnalysis).length = 4 := by decide
 
-/-- In the lone-trigger flank word the middle surfaces, since the initial H is the last H and
-the unbounded spread reaches it. -/
 private theorem bembaSurfaces_flankWord_HL {d : ℕ} :
     bembaSurfaces (flankWord .H .L .L (2 * d + 4)) (d + 3) := by
   refine ⟨by rw [length_flankWord]; omega,
@@ -311,8 +304,6 @@ private theorem bembaSurfaces_flankWord_HL {d : ℕ} :
   rw [getElem?_flankWord] at hkH
   split_ifs at hkH <;> first | omega | exact BTone.noConfusion (Option.some.inj hkH)
 
-/-- With a second H at the end the middle does not surface, since the bounded spread stops two
-TBUs in and the unbounded spread now belongs to the final H. -/
 private theorem not_bembaSurfaces_flankWord_HH {d : ℕ} :
     ¬ bembaSurfaces (flankWord .H .L .H (2 * d + 4)) (d + 3) := by
   rintro ⟨-, h | ⟨j, hj, hjH, hspread⟩ | ⟨j, hj, hjH, hlast⟩⟩
@@ -326,7 +317,6 @@ private theorem not_bembaSurfaces_flankWord_HH {d : ℕ} :
     have := hlast (2 * d + 5) (by rw [length_flankWord]; omega) getElem?_flankWord_last
     omega
 
-/-- With no trigger at all, the middle does not surface. -/
 private theorem not_bembaSurfaces_flankWord_LL {d : ℕ} :
     ¬ bembaSurfaces (flankWord .L .L .L (2 * d + 4)) (d + 3) := by
   have hnoH : ∀ k, (flankWord BTone.L .L .L (2 * d + 4))[k]? ≠ some BTone.H := fun k ↦ by

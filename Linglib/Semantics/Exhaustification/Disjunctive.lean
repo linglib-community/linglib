@@ -47,9 +47,6 @@ section Family
 
 variable {A : Set (Set World)}
 
-/-- A world verifying exactly the disjunct `i` is minimal among the disjunction's worlds,
-relative to a family whose alternatives true at that world are disjunctions over subsets and
-which separates every other index from `i`. -/
 theorem isMinimal_of_single {i : ι} (hi : i ∈ I) {w : World}
     (hA : ∀ q ∈ A, w ∈ q → ∃ S ⊆ I, q = ⋃ j ∈ S, p j)
     (hsplit : ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ A ∧ j ∈ S ∧ i ∉ S)
@@ -72,8 +69,6 @@ variable (hA : A ⊆ supClosure (p '' I))
   (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
 include hA hsplit hsep
 
-/-- Nothing is innocently excludable, since each alternative holds at the minimal world of one
-of its disjuncts. -/
 theorem not_isInnocentlyExcludable_of_subset_supClosure (q : Set World) :
     ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q := by
   intro hq
@@ -85,7 +80,6 @@ theorem not_isInnocentlyExcludable_of_subset_supClosure (q : Set World) :
       (hsplit i (hS hi)) hw)
     (Set.mem_biUnion hi ((hw i (hS hi)).2 rfl))
 
-/-- With a world verifying every disjunct, the cell is consistent. -/
 theorem cell_nonempty_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
     (cell A (⋃ i ∈ I, p i)).Nonempty := by
   obtain ⟨w, hw⟩ := hall
@@ -96,7 +90,6 @@ theorem cell_nonempty_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ 
   obtain ⟨S, ⟨j, hj⟩, hS, rfl⟩ := Set.mem_supClosure_image.1 (hA hr)
   exact Set.mem_biUnion hj (hw j (hS hj))
 
-/-- Every alternative is innocently includable. -/
 theorem II_eq_self_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
     II A (⋃ i ∈ I, p i) = A := by
   rw [II_eq_nonExcludable_of_cell_nonempty _ _
@@ -104,7 +97,6 @@ theorem II_eq_self_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ i �
   ext q
   exact and_iff_left (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q)
 
-/-- Exhaustification asserts the disjunction and every alternative. -/
 theorem exhIEII_eq_inter_sInter (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
     exhIEII A (⋃ i ∈ I, p i) = (⋃ i ∈ I, p i) ∩ ⋂₀ A := by
   rw [exhIEII_eq_cell_of_cell_nonempty _ _
@@ -126,7 +118,6 @@ theorem hsplit_supClosure :
   fun _ _ j hj hji ↦ ⟨{j}, by simpa, Set.mem_supClosure_image.2 ⟨{j}, by simp, by simpa, rfl⟩,
     by simp, by simpa using hji.symm⟩
 
-/-- The closure under disjunction strengthens the disjunction to the conjunction. -/
 theorem exhIEII_supClosure (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hI : I.Nonempty)
     (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
     exhIEII (supClosure (p '' I)) (⋃ i ∈ I, p i) = ⋂ i ∈ I, p i := by
@@ -154,8 +145,6 @@ theorem hsplit_subDisjsOfCard [DecidableEq ι] {m : ℕ} (hm : 0 < m) (hmI : m <
     · exact hji rfl
     · exact (Finset.mem_erase.1 (Finset.mem_erase.1 (hS' h)).2).1 rfl
 
-/-- Every size-`m` subset of `I` meets `T ⊆ I` iff fewer than `m` elements of `I` lie outside
-`T`. -/
 theorem forall_card_eq_exists_mem_iff [DecidableEq ι] {T : Finset ι} (hT : T ⊆ I) {m : ℕ} :
     (∀ S ⊆ I, S.card = m → ∃ i ∈ S, i ∈ T) ↔ I.card < m + T.card := by
   constructor
@@ -174,7 +163,6 @@ theorem forall_card_eq_exists_mem_iff [DecidableEq ι] {T : Finset ι} (hT : T �
     rw [Finset.card_sdiff_of_subset hT, hcard] at h₁
     omega
 
-/-- The size-`|I|` alternatives are the disjunction itself. -/
 theorem subDisjsOfCard_card : subDisjsOfCard I p I.card = {⋃ i ∈ I, p i} := by
   ext q
   simp only [subDisjsOfCard, Set.mem_insert_iff, Set.mem_ofPred_eq, Set.mem_singleton_iff,
@@ -182,8 +170,6 @@ theorem subDisjsOfCard_card : subDisjsOfCard I p I.card = {⋃ i ∈ I, p i} := 
   rintro ⟨S, hS, hcard, rfl⟩
   rw [Finset.eq_of_subset_of_card_le hS hcard.ge]
 
-/-- Keeping only the size-`m` alternatives strengthens the disjunction to "at least
-`|I| + 1 - m` disjuncts hold". -/
 theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
     (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) {m : ℕ}
     (hm : 0 < m) (hmI : m ≤ I.card) :
@@ -227,8 +213,6 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
     · obtain ⟨j, hj, _, hwj⟩ := h S' hS' hcard'
       exact Set.mem_biUnion hj hwj
 
-/-- With the conjunction of the disjuncts among the alternatives, it is innocently excludable
-whenever there are two disjuncts, and exhaustification then denies it. -/
 theorem isInnocentlyExcludable_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
     (h2 : 2 ≤ I.card) :
     IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (supClosure (p '' I))) (⋃ i ∈ I, p i)
@@ -253,8 +237,6 @@ section Pair
 
 variable {φ d₁ d₂ c : Set World} {w₁ w₂ : World}
 
-/-- Two worlds verifying the prejacent with exactly one of two alternatives that cover it
-represent its minimal worlds. -/
 theorem isMinimalCover_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : w₁ ∈ φ ∩ d₁ ∧ w₁ ∉ d₂ ∪ c)
     (h₂ : w₂ ∈ φ ∩ d₂ ∧ w₂ ∉ d₁ ∪ c) : IsMinimalCover {φ, d₁, d₂, c} φ {w₁, w₂} := by
   obtain ⟨⟨hw₁, hw₁₁⟩, hw₁'⟩ := h₁
@@ -278,10 +260,6 @@ theorem isMinimalCover_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : w₁ ∈ φ �
     · exact absurd (huv d₁ (by simp) hw₁₁) hw₂'.1
     · exact leALT_refl _ _
 
-/-- When a prejacent is covered by two alternatives, each verifiable alone, and a third
-alternative is false wherever only one of them holds, exhaustification asserts both and denies
-the third, provided that is consistent. This is free choice and the simplification of
-disjunctive antecedents. -/
 theorem exhIEII_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) :
     exhIEII {φ, d₁, d₂, c} φ = (φ ∩ d₁ ∩ d₂) \ c := by
@@ -298,8 +276,6 @@ theorem exhIEII_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁
     tauto
   · simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁'.1, hw₁'.2, hw₂'.1, hw₂'.2, hw₀, hw₀₁, hw₀₂, hw₀c]
 
-/-- With the conjunction of the two alternatives itself among the alternatives, exhaustification
-denies it and includes nothing. -/
 theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁) : exhIEII {φ, d₁, d₂, d₁ ∩ d₂} φ = φ \ (d₁ ∩ d₂) := by
   obtain ⟨w₁, ⟨hw₁, hw₁₁⟩, hw₁'⟩ := h₁
@@ -351,7 +327,6 @@ theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ �
       · exact hw
       · exact absurd (h ▸ hw₁₁) hw₁'
 
-/-- The cell of a disjunction whose alternatives include the conjunction is contradictory. -/
 theorem cell_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁) : cell {φ, d₁, d₂, d₁ ∩ d₂} φ = ∅ := by
   obtain ⟨w₁, ⟨hw₁, hw₁₁⟩, hw₁'⟩ := h₁
@@ -362,7 +337,6 @@ theorem cell_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d
   simp [hw₁, hw₂, hw₁₁, hw₂₂, hw₁', hw₂']
   tauto
 
-/-- The includable alternatives are the prejacent and the two covering alternatives. -/
 theorem II_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) (h : ∃ w ∈ φ ∩ d₁ ∩ d₂, w ∉ c) :
     II {φ, d₁, d₂, c} φ = {φ, d₁, d₂} := by
@@ -386,7 +360,6 @@ theorem II_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w �
     · exact absurd h (not_or.2 ⟨hw₁'.2, hw₂'.2⟩)
   · rintro (rfl | rfl | rfl) <;> simp [hw₁, hw₂, hw₁₁, hw₂₂]
 
-/-- The third alternative is the only innocently excludable one. -/
 theorem isInnocentlyExcludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
     (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) {q : Set World} :
     IsInnocentlyExcludable {φ, d₁, d₂, c} φ q ↔ q = c := by
@@ -410,8 +383,6 @@ section Cover
 
 variable {φ : Set World} {x : ι → Set World}
 
-/-- When a prejacent is covered by alternatives each verifiable alone, exhaustification asserts
-all of them, provided that is consistent. -/
 theorem exhIEII_insert_range (hcov : φ ⊆ ⋃ i, x i)
     (hsep : ∀ i, ∃ w ∈ φ ∩ x i, ∀ j, j ≠ i → w ∉ x j) (h : ∃ w ∈ φ, ∀ i, w ∈ x i) :
     exhIEII (insert φ (Set.range x)) φ = φ ∩ ⋂ i, x i := by

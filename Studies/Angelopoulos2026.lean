@@ -205,7 +205,6 @@ theorem rows_sort_diagnostics :
         (r.judgment = .acceptable ↔ s.occurrenceCompatible)) := by
   decide +kernel
 
-/-- The situation-sorted complementizer is the lexically factive one. -/
 theorem situation_clause_factive :
     ∀ c ∈ complementizers, clauseSort c = some .situation → c.factive = true := by
   decide
@@ -239,8 +238,6 @@ theorem content_report_not_factive :
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
-/-- A clitic-doubled bare *oti*-clause is a complement with the explanans reading, composing
-as a modifier: the cell [bondarenko-2022]'s transparent mapping leaves empty is filled. -/
 theorem transparency_conflates_axes :
     ¬ Bondarenko2022.transparentSSMapping .bareArgument ∧
       ∃ r ∈ Examples.all, r.feature? "position" = some "internal_argument" ∧

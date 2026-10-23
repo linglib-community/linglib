@@ -191,7 +191,6 @@ theorem mem_extend_iff_covBy : i ~[extend u] o ↔ i ⋖ o ∧ i u ≠ o u := by
   obtain rfl : x = u := by_contra fun hxu ↦ hne (h u (Ne.symm hxu))
   exact ⟨hi, ho, h⟩
 
-/-- Partial introduction is a random assignment that genuinely values `u`. -/
 theorem extend_subset_randomAssign [DecidableEq Var] :
     extend u ⊆ Update.randomAssign (S := PartialAssign Var D) u := by
   rintro ⟨i, o⟩ ⟨-, -, h⟩

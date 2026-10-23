@@ -109,7 +109,6 @@ private theorem flatten_replicate_succ (l : List T) (n : ℕ) :
   rw [List.replicate_succ', List.flatten_append, List.flatten_cons, List.flatten_nil,
     List.append_nil]
 
-/-- A licensed tree from the start symbol whose yield reaches the pumping constant pumps. -/
 theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses)
     (hroot : t.value = .nonterminal g.initial) (hlong : g.pumpingConstant ≤ t.yield.length) :
     ∃ u v x y z : List T, t.yield = u ++ v ++ x ++ y ++ z ∧

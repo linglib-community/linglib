@@ -116,15 +116,12 @@ theorem IsResolved.isNeutral (h : IsResolved K p) : IsNeutral K p :=
 
 theorem IsNeutral.not_isBiased (h : IsNeutral K p) : ¬ IsBiased K p := λ hb => h.2 hb.1
 
-/-- In a neutral, unresolved, nonempty context no participant is committed either way. -/
 theorem IsNeutral.not_subset (h : IsNeutral K p) (hu : ¬ IsResolved K p)
     (hne : ∀ x, (commitmentSet K x).Nonempty) (x : Discourse.Role) :
     ¬ commitmentSet K x ⊆ p ∧ ¬ commitmentSet K x ⊆ pᶜ :=
   ⟨λ hx => h.2 ⟨⟨x, hne x, by simpa using hx⟩, by simpa using hu, hne⟩,
     λ hx => h.1 ⟨⟨x, hne x, hx⟩, hu, hne⟩⟩
 
-/-- Narrowing one participant's commitment set to `p` and leaving the other's alone, in a
-neutral, unresolved, nonempty context, biases it toward `p`. -/
 theorem isBiased_of_commitmentSet_eq {K' : State Discourse.Role W} {y : Discourse.Role}
     (h : IsNeutral K p) (hu : ¬ IsResolved K p) (hne : ∀ x, (commitmentSet K x).Nonempty)
     (hy : commitmentSet K' y = p ∩ commitmentSet K y)

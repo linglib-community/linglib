@@ -218,17 +218,14 @@ def peak (g : Grid) : ℕ := g.foldr max 0
 
 @[simp] theorem peak_nil : peak [] = 0 := rfl
 
-/-- Every column is at most the peak. -/
 theorem le_peak {h : ℕ} (hh : h ∈ g) : h ≤ peak g := List.le_max_of_le' 0 hh le_rfl
 
-/-- The peak is bounded by any common bound on the columns. -/
 theorem peak_le {n : ℕ} (h : ∀ x ∈ g, x ≤ n) : peak g ≤ n := List.max_le_of_forall_le _ n h
 
 @[simp] theorem peak_reverse : peak g.reverse = peak g :=
   le_antisymm (peak_le fun _ hx ↦ le_peak (List.mem_reverse.1 hx))
     (peak_le fun _ hx ↦ le_peak (List.mem_reverse.2 hx))
 
-/-- Every column height, read with default `0`, is at most the peak. -/
 theorem getD_le_peak (i : ℕ) : g.getD i 0 ≤ peak g := by
   rw [List.getD_eq_getElem?_getD]
   rcases lt_or_ge i g.length with h | h
@@ -396,9 +393,6 @@ inductive IsHeadTerminal : Tree → Tree → Prop
   | head {a cs c leaf} : c ∈ cs → c.value.isHead →
       IsHeadTerminal c leaf → IsHeadTerminal (.node a cs) leaf
 
-/-- By **soundness of `headTerminals`** ([liberman-prince-1977]), every head terminal the
-    projection computes really is one, reached from the root by an all-head descent. (The
-    `decide`-verified lists give the converse concretely, so the full iff is not needed.) -/
 theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
     IsHeadTerminal t leaf := by
   induction t using Tree.recLeafBranch with
@@ -417,8 +411,6 @@ theorem headTerminal_sound {t leaf : Tree} (h : leaf ∈ headTerminals t) :
 Reading a `Foot`'s grid recovers its head — the height-1 core of the transport story: its column
 heights are `2` at the head σ and `1` elsewhere, so the grid peaks at `2`. -/
 
-/-- By **head-preservation for a foot** ([liberman-prince-1977]), projecting a foot's prosodic
-    tree recovers its metrical grid, the commuting square `columns ∘ toProsTree = toGrid`. -/
 theorem columns_toProsTree {S : Type*} (w : S → Syllable.Weight) (f : Foot S) :
     columns (f.toProsTree w) = Foot.toGrid f := by
   rw [Foot.toProsTree, columns_node, ite_eq_right (by simp [Constituent.level]),
@@ -460,7 +452,6 @@ metrical primary stress is the tallest column. Recursion is the sole obstruction
 [hayes-1995] §3.4.2(C)'s "the higher grid mark may only be assigned to a syllable that already bears
 stress" — the peak sits atop a foot head. -/
 
-/-- Non-recursive word children (feet and stray σ) have height at most `2` — the ω→f→σ hierarchy. -/
 private theorem height_word_child_le {ch : Tree}
     (h : IsFoot ch ∨ (ch.value.level = .syl ∧ ch.children = [])) : ch.height ≤ 2 := by
   rcases h with hfoot | ⟨_, hcs⟩
@@ -478,8 +469,6 @@ private theorem height_word_child_le {ch : Tree}
     simp only [RoseTree.children_node] at hcs; subst hcs
     exact Nat.le_succ_of_le (le_of_eq rfl)
 
-/-- Grid column heights are positive and bounded by the tree height, since the RPPR count is at
-    least `1` and grows by at most one per head edge. -/
 private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c ≤ t.height := by
   induction t using Tree.recLeafBranch with
   | leaf a ha =>
@@ -502,16 +491,12 @@ private theorem toGrid_bounds {t : Tree} : ∀ c ∈ columns t, 1 ≤ c ∧ c �
       have := IH ch hch x.height (List.mem_map.mpr ⟨x, hx, rfl⟩)
       by_cases hs : x.onSpine <;> simp [hs] <;> omega
 
-/-- Head-terminal heights are a sublist of the columns. -/
 theorem headHeights_sublist_columns (t : Tree) : (headHeights t).Sublist (columns t) :=
   List.filter_sublist.map _
 
-/-- Every head-terminal height is at most the peak. -/
 theorem headHeight_le_peak {t : Tree} {h : ℕ} (hh : h ∈ headHeights t) : h ≤ peak (columns t) :=
   le_peak ((headHeights_sublist_columns t).subset hh)
 
-/-- An edge column is either a child column or a head height of the edge — the algebraic split that
-    replaces the foot-internal case analysis. -/
 theorem mem_toGrid_edge {h : Bool} {b : MarkedGrid Tree} {c : ℕ}
     (hc : c ∈ (edge h b).toGrid) : c ∈ b.toGrid ∨ c ∈ (edge h b).headHeights := by
   cases h with
@@ -527,8 +512,6 @@ theorem mem_toGrid_edge {h : Bool} {b : MarkedGrid Tree} {c : ℕ}
     · simp only [Bool.not_eq_true] at hs
       exact .inl (List.mem_map.mpr ⟨x, hx, by simp [hs]⟩)
 
-/-- In a word every column is `≤ 2` unless it is a head-terminal height — the genuine non-recursion
-    content, now one algebraic split (`mem_toGrid_edge`) plus the height bound. -/
 theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
     ∀ c ∈ columns t, c ≤ 2 ∨ c ∈ headHeights t := by
   obtain ⟨a, cs⟩ := t
@@ -543,7 +526,6 @@ theorem col_le_two_or_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0) :
     rw [headHeights_node, ite_eq_right (by simp [hσ]), List.mem_flatMap]
     exact ⟨ch, hch, by rwa [headHeights_edge] at hhead⟩
 
-/-- In a word the head terminal sits below ω, so its height is at least `2`. -/
 theorem two_le_head {t : Tree} (hw : IsWord t) (hr : noRec t = 0)
     {h : ℕ} (hh : h ∈ headHeights t) : 2 ≤ h := by
   obtain ⟨a, cs⟩ := t

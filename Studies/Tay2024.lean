@@ -124,8 +124,6 @@ theorem nullAffix_of_agent {R2 R1 : E → (Fin 1 → D) → Prop} {y : D} (hc : 
     (h2 : R2 e₂ ![y]) (h1 : R1 e₁ ![y]) : nullAffix M R2 R1 e ![y] :=
   nullAffix_of hc h2 h1
 
-/-- A change has one crucial contributory factor (chapter 8, section 3.3): two transitive
-compounds describing the same macroevent name the same external argument. -/
 theorem ccf_unique {n' m' : ℕ} {R2' : E → (Fin n' → D) → Prop} {R1' : E → (Fin m' → D) → Prop}
     {ys' : Fin n' → D} (h : nullAffixC M R2 R1 e c ys) (h' : nullAffixC M R2' R1' e c' ys') :
     c = c' :=
@@ -216,7 +214,6 @@ def sinkingModel (v1 : SinkingEvent) : Model SinkingEvent Participant where
     (rush, .cruiser), (descend, .cruiser), (below, .cruiser)]
   chain e := if e = sink then chain else ∅
 
-/-- On every model the factor takes part in the initial event of the chain, the striking. -/
 theorem sinkingModel_ccfInitial (v1 : SinkingEvent) : (sinkingModel v1).CcfInitial := by
   intro e c e₀ hc h₀
   obtain rfl : e = sink := by by_contra he; simp [sinkingModel, he] at hc
@@ -224,12 +221,10 @@ theorem sinkingModel_ccfInitial (v1 : SinkingEvent) : (sinkingModel v1).CcfIniti
   obtain rfl := h₀.unique onsetCondition_strike
   simp [sinkingModel]
 
-/-- *jī-chén* satisfies the Onset Condition. -/
 theorem sinkingModel_strike_onset : (sinkingModel strike).Onset := by
   rintro e e₁ e₂ ⟨rfl, rfl, rfl⟩
   simpa [sinkingModel] using onsetCondition_strike
 
-/-- *\*chōng-chén* violates it. -/
 theorem not_sinkingModel_rush_onset : ¬ (sinkingModel rush).Onset := fun h ↦
   not_onsetCondition_rush (by simpa [sinkingModel] using h sink rush below ⟨rfl, rfl, rfl⟩)
 
@@ -268,8 +263,6 @@ example : externalArgument? Examples.ex_146 = some .pureCauser := rfl
 
 example : externalArgument? Examples.ex_150 = some .subjectMatter := rfl
 
-/-- A transitive compound is ungrammatical exactly where its external argument is a pure
-causer, as `participant_of_nullAffixC` predicts. -/
 theorem ungrammatical_iff_pureCauser :
     ∀ ex ∈ Examples.all, ∀ a ∈ externalArgument? ex,
       ex.judgment = .ungrammatical ↔ a = .pureCauser := by
@@ -327,7 +320,6 @@ def vvTree (v1 v2 : Morph) : Word.Tree Morph :=
 /-- The word V1-∅-V2 of a compound of the fragment. -/
 def word (c : Resultative) : Word.Tree Morph := vvTree (.root c.v1.form) (.root c.v2.form)
 
-/-- The word differs from the fragment's root compound by the null affix alone. -/
 theorem toList_word_erase (c : Resultative) :
     (word c).toList.erase nullMorph = c.tree.toList.map (Morph.root ·.form) := by
   simp [word, nullMorph, Morph.root, Morph.pref]

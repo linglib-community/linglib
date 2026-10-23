@@ -91,7 +91,6 @@ theorem regularizedObjective_replicate (con : ConstraintSet (I × O) (Fin n)) (w
   rw [hσ']
   field_simp
 
-/-- The same weights maximize the objective before and after replication. -/
 theorem regularizedObjective_replicate_le_iff (con : ConstraintSet (I × O) (Fin n))
     (w w' : Fin n → ℝ) (data : List (I × O)) {r : ℕ} (hr : 0 < r) {σ σ' : ℝ} (hσ : 0 < σ)
     (h : (r : ℝ) * σ' ^ 2 = σ ^ 2) :
@@ -220,8 +219,6 @@ theorem maxEnt_pairConstraintSet_real_zero (w : Fin n → ℝ) (win lose : Fin n
     one_ne_zero, mul_sub, Finset.sum_sub_distrib]
   ring
 
-/-- Two candidate pairs with the same difference vector get the same winner probability under
-every weighting. -/
 theorem maxEnt_pairConstraintSet_real_zero_eq_of_diff_eq (w : Fin n → ℝ)
     {win lose win' lose' : Fin n → ℕ}
     (h : (fun j ↦ (lose j : ℤ) - win j) = fun j ↦ (lose' j : ℤ) - win' j) :
@@ -288,7 +285,6 @@ example : rows.length = Examples.all.length := by decide
 theorem rows_collapse : ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁.winner ≠ r₂.winner ∧ r₁.diff = r₂.diff := by
   decide
 
-/-- The two classes receive the same winner probability under every weighting. -/
 theorem rows_collapse_prob :
     ∃ r₁ ∈ rows, ∃ r₂ ∈ rows, r₁ ≠ r₂ ∧
       ∀ w, (maxEnt (pairConstraintSet r₁.winner r₁.loser).violations w).real {0} =

@@ -66,7 +66,6 @@ def shape? : Case → Option Spatial.Path.Shape
   | .ter => some .terminative
   | _ => none
 
-/-- A directional case's shape has the case's direction. -/
 theorem dirOf_eq_of_shape?_eq {c : Case} {s : Spatial.Path.Shape} (h : c.shape? = some s) :
     c.dirOf = some s.direction := by
   cases c <;> simp_all [shape?] <;> subst h <;> rfl

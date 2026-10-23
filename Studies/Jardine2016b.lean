@@ -63,11 +63,9 @@ def input : Pair → Seg
 def output : Pair → Seg
   | aa => .a | pb => .b | pp => .p | bb => .b | lb => .lb | rb => .rb
 
-/-- A primitive is its input–output pair. -/
 theorem ext {x y : Pair} (hi : x.input = y.input) (ho : x.output = y.output) : x = y := by
   cases x <;> cases y <;> simp_all [input, output]
 
-/-- A Γ-string is determined by the strings it spells. -/
 theorem map_injective {γs γs' : List Pair} (hi : γs.map input = γs'.map input)
     (ho : γs.map output = γs'.map output) : γs = γs' := by
   induction γs generalizing γs' with
@@ -128,7 +126,6 @@ theorem spell_eq_some {w v : List Seg} {γs : List Pair} (h : spell w v = some �
         simp [ih hγs]
       · exact absurd h (by simp)
 
-/-- A pair is spelled by a Γ-string exactly when it is the string's input and output. -/
 theorem spell_eq_some_iff {w v : List Seg} {γs : List Pair} :
     spell w v = some γs ↔ γs.map Pair.input = w ∧ γs.map Pair.output = v :=
   ⟨spell_eq_some, λ ⟨hw, hv⟩ => hw ▸ hv ▸ spell_map γs⟩
@@ -236,7 +233,6 @@ def voiceRule (w : List Seg) : List Seg :=
   w.mapIdx λ i x =>
     if x = .p ∧ w[i - 1]? = some .a ∧ i ≠ 0 ∧ w[i + 1]? = some .a then .b else x
 
-/-- `Rvoice` is the rule's graph on the paper's pairs. -/
 theorem voiceRule_rows : ∀ r ∈ rows, voiceRule r.input = r.output ↔ r.inRvoice = true := by
   decide
 

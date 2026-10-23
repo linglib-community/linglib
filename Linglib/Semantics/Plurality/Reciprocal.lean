@@ -164,7 +164,6 @@ theorem oneWayWeakReciprocity_iff :
     simp only [Subtype.forall, Subtype.exists, ne_eq, Subtype.mk.injEq, Finset.mem_coe,
       exists_prop]
 
-/-- On two members, Strong Reciprocity relates each to the other. -/
 theorem strongReciprocity_pair [DecidableEq α] {a b : α} :
     StrongReciprocity R {a, b} ↔ a ≠ b ∧ R a b ∧ R b a := by
   rw [strongReciprocity_iff, Finset.Nontrivial, Finset.coe_pair, Set.pairwise_pair]

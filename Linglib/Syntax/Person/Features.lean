@@ -106,7 +106,6 @@ theorem wellFormed_iff_isIntent (t : Features) :
   simp only [mem_upperPolar_lowerPolar, Finset.mem_coe]
   revert t; decide
 
-/-- The author feature alone closes to both features. -/
 theorem intentClosure_singleton_author :
     intentClosure Bears {Feature.author} = Set.univ := by
   ext f; cases f
@@ -114,7 +113,6 @@ theorem intentClosure_singleton_author :
     exact fun _ h ↦ ⟨_, h⟩
   · simp [intentClosure, mem_upperPolar_iff, mem_lowerPolar_iff, Bears]
 
-/-- The bundle with the author feature alone violates containment. -/
 theorem not_wellFormed_singleton_author :
     ¬ IsLowerSet (↑({.author} : Features) : Set Feature) := by
   decide
@@ -129,7 +127,6 @@ theorem card_wellFormed : Fintype.card {pf : Features // IsLowerSet (↑pf : Set
 def toFeatures (p : Person) : Features :=
   univ.filter fun f ↦ ∀ s ∈ p.participantSets, Bears s f
 
-/-- A value's bundle is the intent of its participant sets. -/
 theorem coe_toFeatures (p : Person) :
     (p.toFeatures : Set Feature) = upperPolar Bears (p.participantSets : Set (Finset Role)) := by
   ext f; simp [toFeatures, mem_upperPolar_iff]
@@ -142,7 +139,6 @@ theorem coe_toFeatures (p : Person) :
 @[simp] theorem toFeatures_second : toFeatures .second = {.participant} := by decide
 @[simp] theorem toFeatures_third : toFeatures .third = ∅ := by decide
 
-/-- Coarsening does not change a value's bundle, since the features do not see clusivity. -/
 @[simp] theorem toFeatures_coarsen (p : Person) : p.coarsen.toFeatures = p.toFeatures := by
   cases p <;> decide
 
@@ -150,15 +146,12 @@ theorem coe_toFeatures (p : Person) :
 theorem toFeatures_sup (p q : Person) : (p ⊔ q).toFeatures = p.toFeatures ∪ q.toFeatures := by
   revert p q; decide
 
-/-- Every bundle is well-formed. -/
 theorem toFeatures_wellFormed (p : Person) : IsLowerSet (↑p.toFeatures : Set Feature) := by
   revert p; decide
 
-/-- `IsSAP` is featural participanthood. -/
 theorem isSAP_iff_participant {p : Person} : p.IsSAP ↔ .participant ∈ p.toFeatures := by
   revert p; decide
 
-/-- `IncludesSpeaker` is featural authorhood. -/
 theorem includesSpeaker_iff_author {p : Person} : p.IncludesSpeaker ↔ .author ∈ p.toFeatures := by
   revert p; decide
 
@@ -168,7 +161,6 @@ theorem mem_participantSets_iff {p : Person} (hp : p.coarsen = p) (s : Finset Ro
     s ∈ p.participantSets ↔ univ.filter (Bears s) = p.toFeatures := by
   revert p s; decide
 
-/-- Two participant sets have the same tripartition person iff they bear the same features. -/
 theorem coarsen_ofParticipants_eq_iff (s t : Finset Role) :
     (ofParticipants s).coarsen = (ofParticipants t).coarsen ↔
       univ.filter (Bears s) = univ.filter (Bears t) := by
@@ -229,11 +221,9 @@ def toFeatures (c : Category) : Features := univ.filter (Bears c.participants)
     .participant ∈ c.toFeatures ↔ c.IncludesSpeaker ∨ c.IncludesAddressee := by
   cases c <;> decide +kernel
 
-/-- The bundle of a category is the bundle of its person. -/
 theorem toFeatures_person (c : Category) : c.person.toFeatures = c.toFeatures := by
   cases c <;> decide
 
-/-- Every category yields a well-formed bundle. -/
 theorem toFeatures_wellFormed (c : Category) : IsLowerSet (↑c.toFeatures : Set Feature) := by
   cases c <;> decide +kernel
 

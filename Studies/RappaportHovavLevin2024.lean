@@ -136,13 +136,9 @@ instruments. -/
 def Sense.Agentive (s : Sense) : Prop :=
   ∀ i : Event, i.sense = s → i.WellFormed → ∃ c ∈ i.causer, c.Manipulates
 
-/-- Obligatory agentivity: lexicalizing an instrument as the moving entity requires an agent
-to manipulate it. -/
 theorem agentive_of_saturated {s : Sense} (h : s.saturated = true) : s.Agentive :=
   λ _ hi ⟨h₁, h₂⟩ => h₂ (by rw [h₁ (hi ▸ h)]; rfl)
 
-/-- Variable agentivity: a sense whose moving entity is free describes events, *the north wind
-swept the open tundra*, with no agent at all. -/
 theorem not_agentive_of_free {s : Sense} (h : s.saturated = false) : ¬ s.Agentive := λ ha => by
   simpa using ha ⟨s, .naturalPhenomenon, none⟩ rfl ⟨by simp [h], by simp [Kind.energy]⟩
 
@@ -150,8 +146,6 @@ theorem not_agentive_of_free {s : Sense} (h : s.saturated = false) : ¬ s.Agenti
 of agents, so a routine sense is agentive. -/
 def Sense.Licit (s : Sense) : Prop := s.routine = true → s.Agentive
 
-/-- Among senses of motion and sustained contact, only one that lexicalizes an instrument can
-name a routine activity: basic-*sweep* is never found with unspecified objects. -/
 theorem Sense.Licit.saturated_of_routine {s : Sense} (h : s.Licit) (hr : s.routine = true) :
     s.saturated = true :=
   by_contra λ hs => not_agentive_of_free (Bool.eq_false_iff.mpr hs) (h hr)
@@ -302,41 +296,28 @@ def unaccusativePP : Slots := ⟨.subject, .pathObject, .unexpressed, .direction
 
 /-! ### Basic-*sweep* -/
 
-/-- The contact predicate realizes an event without a causer as a simple transitive exactly
-when the moving entity is self-energetic: a natural phenomenon or a projectile, not a brush. -/
 theorem basicSweep_simpleTransitive_iff (k : Kind) :
     Licensed ⟨basicSweep, k, none⟩ .contact simpleTransitive ↔ k.energy.IsSelfEnergetic := by
   cases k <;> decide
 
-/-- With a causer, the contact predicate puts the moving entity in a *with* phrase, and a
-moving entity that draws its energy from its user needs a causer that manipulates it. -/
 theorem basicSweep_withFrame_iff (k c : Kind) :
     Licensed ⟨basicSweep, k, some c⟩ .contact withFrame ↔
       (k.energy = .instrumental → c.Manipulates) := by
   cases k <;> cases c <;> decide
 
-/-- The *with* phrase is obligatory: *Miriam gently swept the strings of her harp ??(with
-slim, white fingers)*. -/
 theorem basicSweep_not_instrumentTransitive (k c : Kind) :
     ¬ Licensed ⟨basicSweep, k, some c⟩ .contact instrumentTransitive := by
   cases k <;> cases c <;> decide
 
-/-- The motion predicate realizes an event without a causer as an unaccusative exactly
-when the moving entity is self-energetic: *fire swept through their home*, but not *the brush
-swept through her hair*. -/
 theorem basicSweep_unaccusativePP_iff (k : Kind) :
     Licensed ⟨basicSweep, k, none⟩ .motion unaccusativePP ↔ k.energy.IsSelfEnergetic := by
   cases k <;> decide
 
-/-- With a causer, the motion predicate yields the transitive+PP frame for any moving entity,
-an instrument or body part requiring a causer that manipulates it. -/
 theorem basicSweep_transitivePP_iff (k c : Kind) :
     Licensed ⟨basicSweep, k, some c⟩ .motion transitivePP ↔
       (k.energy = .instrumental → c.Manipulates) := by
   cases k <;> cases c <;> decide
 
-/-- Both elements of the small clause are obligatory: the moving entity and the path are
-expressed whenever the motion predicate determines realization. -/
 theorem motion_smallClause {i : Event} {σ : Slots} (h : Licensed i .motion σ) :
     σ.mover ≠ .unexpressed ∧ σ.path = .directionalPP := by
   obtain ⟨-, r, hr, hm, hp, -⟩ := h
@@ -349,7 +330,6 @@ theorem motion_smallClause {i : Event} {σ : Slots} (h : Licensed i .motion σ) 
     simp only [Requirement.Satisfied, Position.slot] at hm
     split at hm <;> simp at hm
 
-/-- Basic-*sweep* is never found with an unspecified object, in any frame. -/
 theorem basicSweep_not_unspecifiedObject (i : Event) (h : i.sense = basicSweep) (p : Predicate) :
     ¬ Licensed i p unspecifiedObject := by
   obtain ⟨s, k, c⟩ := i
@@ -359,31 +339,24 @@ theorem basicSweep_not_unspecifiedObject (i : Event) (h : i.sense = basicSweep) 
 
 /-! ### Broom-*sweep* -/
 
-/-- A saturated moving entity cannot form a small clause, so no frame arises from the motion
-predicate: broom-*sweep* has neither the transitive+PP nor the unaccusative+PP frame. -/
 theorem not_licensed_motion_of_saturated {i : Event} (h : i.sense.saturated = true)
     (σ : Slots) : ¬ Licensed i .motion σ := by
   simp [Licensed, realize, h]
 
-/-- Broom-*sweep* is transitive with the surface as object exactly when its subject can
-manipulate a broom: *#The wind swept the floor*. -/
 theorem broomSweep_instrumentTransitive_iff (c : Kind) :
     Licensed ⟨broomSweep, .instrument, some c⟩ .contact instrumentTransitive ↔
       c.Manipulates := by
   cases c <;> decide
 
-/-- The lexicalized broom may be expressed in a *with* phrase. -/
 theorem broomSweep_withFrame_iff (c : Kind) :
     Licensed ⟨broomSweep, .instrument, some c⟩ .contact withFrame ↔ c.Manipulates := by
   cases c <;> decide
 
-/-- The routine activity licenses the unspecified object frame. -/
 theorem broomSweep_unspecifiedObject_iff (c : Kind) :
     Licensed ⟨broomSweep, .instrument, some c⟩ .contact unspecifiedObject ↔
       c.Manipulates := by
   cases c <;> decide
 
-/-- Broom-*sweep* lacks the anticausative: *Danny swept the floor* but not *the floor swept*. -/
 theorem broomSweep_not_uncaused (p : Predicate) (σ : Slots) :
     ¬ Licensed ⟨broomSweep, .instrument, none⟩ p σ :=
   λ ⟨⟨_, h⟩, _⟩ => by simpa using h rfl
@@ -434,8 +407,6 @@ def ResultativeRestriction : Prop :=
   ∀ i p σ, Licensed i p σ → i.causer = none → ¬ i.mover.Manipulates →
     σ.mover = .subject → σ.path = .directionalPP
 
-/-- *The north wind swept the open tundra*: a non-agentive subject in the simple transitive
-frame, with no small clause and no result. -/
 theorem not_resultativeRestriction : ¬ ResultativeRestriction := λ h =>
   absurd (h ⟨basicSweep, .naturalPhenomenon, none⟩ .contact simpleTransitive (by decide) rfl
     (by decide) rfl) (by decide)
@@ -501,20 +472,15 @@ def Row.ofDatum (e : Datum) : Option Row := do
                     causer := ← slot? e "causerSlot", path := ← slot? e "path" }
          judgment := e.judgment }
 
-/-- Every example is read. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- A sentence is acceptable exactly when one of the two predicates licenses it for the event
-it describes. -/
 theorem acceptable_iff_licensed :
     ∀ d ∈ data, (d.judgment = .acceptable ↔ ∃ p, Licensed d.event p d.slots) := by
   decide
 
-/-- *Rub* and *scrape* show the constellation of frames of basic-*sweep*: each of the three
-verbs is attested in the simple transitive, transitive+PP and unaccusative+PP frames. -/
 theorem frames_shared :
     ∀ v ∈ [Verb.sweep, .rub, .scrape],
       ∀ σ ∈ [simpleTransitive, transitivePP, unaccusativePP],

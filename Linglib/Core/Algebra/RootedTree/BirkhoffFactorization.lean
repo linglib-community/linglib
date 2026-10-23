@@ -166,8 +166,6 @@ theorem birkhoffPlus_of'_mem_range (hP : IsRotaBaxter (1 : ℕ) ⇑P)
   rintro _ ⟨T, -, rfl⟩
   exact ⟨_, by rw [birkhoffPlusTree, birkhoffMinusTree_eq]⟩
 
-/-- If `P` kills `φ` on every tree, the negative part vanishes: the empty cut contributes
-`P (φ T) = 0`, and every other cut has a crown tree, where `φ₋` vanishes by recursion. -/
 theorem birkhoffMinusTree_eq_zero (h : ∀ T, P (φ (ofTree T)) = 0) (T : UnorderedTree α) :
     birkhoffMinusTree φ P T = 0 := by
   rw [birkhoffMinusTree_eq, birkhoffPrepTree, map_multiset_sum]
@@ -183,7 +181,6 @@ theorem birkhoffMinusTree_eq_zero (h : ∀ T, P (φ (ofTree T)) = 0) (T : Unorde
 termination_by T.numNodes
 decreasing_by exact cutSummandsN_crown_numNodes_lt hp ht
 
-/-- If `P` kills `φ` on every tree, the renormalized part on a tree is the value of `φ`. -/
 theorem birkhoffPlusTree_eq_of_forall (h : ∀ T, P (φ (ofTree T)) = 0) (T : UnorderedTree α) :
     birkhoffPlusTree φ P T = φ (ofTree T) := by
   rw [birkhoffPlusTree, birkhoffMinusTree_eq_zero h, add_zero, birkhoffPrepTree,
@@ -211,7 +208,6 @@ section NegId
 
 variable {R ℛ : Type*} [CommSemiring R] [CommRing ℛ] [Algebra R ℛ] {α : Type*}
 
-/-- At `P = -id` the renormalized part vanishes on every tree, `φ₊(T) = φ̃(T) - φ̃(T)`. -/
 theorem birkhoffPlusTree_neg_id (φ : ConnesKreimer R (UnorderedTree α) →ₗ[R] ℛ)
     (T : UnorderedTree α) : birkhoffPlusTree φ (-AddMonoidHom.id ℛ) T = 0 := by
   rw [birkhoffPlusTree, birkhoffMinusTree_eq, AddMonoidHom.neg_apply, AddMonoidHom.id_apply,

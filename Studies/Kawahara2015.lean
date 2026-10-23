@@ -189,7 +189,6 @@ length. -/
     `(H, L)` among adjacent pairs. -/
 def hlFallCount (l : List LevelTone) : ℕ := (l.zip l.tail).count (.H, .L)
 
-/-- An L head opens no fall. -/
 theorem hlFallCount_L_cons (l : List LevelTone) :
     hlFallCount (.L :: l) = hlFallCount l := by
   cases l <;> simp [hlFallCount]
@@ -199,7 +198,6 @@ theorem hlFallCount_cons_cons (t u : LevelTone) (l : List LevelTone) :
       hlFallCount (u :: l) + if t = .H ∧ u = .L then 1 else 0 := by
   cases t <;> cases u <;> simp [hlFallCount]
 
-/-- Every fall consumes an L strictly after the first position. -/
 theorem hlFallCount_le_count_tail :
     ∀ l : List LevelTone, hlFallCount l ≤ l.tail.count .L
   | [] => Nat.le_refl _
@@ -211,13 +209,10 @@ theorem hlFallCount_le_count_tail :
       cases t <;> cases u <;> simp_all
       omega
 
-/-- Stuttering a tone creates no fall. -/
 theorem hlFallCount_cons_self (t : LevelTone) (l : List LevelTone) :
     hlFallCount (t :: t :: l) = hlFallCount (t :: l) := by
   cases t <;> simp [hlFallCount]
 
-/-- Spreading is fall-invariant, since copying a tone neither creates nor
-    destroys an HL fall. -/
 theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone) :
     hlFallCount (x :: spec.scanl (fun t o ↦ o.getD t) t) =
       hlFallCount (x :: t :: spec.reduceOption) := by
@@ -232,21 +227,15 @@ theorem hlFallCount_cons_scanl (spec : List (Option LevelTone)) (x t : LevelTone
       simp only [List.scanl_cons, Option.getD_none, List.reduceOption_cons_of_none]
       rw [hlFallCount_cons_cons, hlFallCount_cons_cons, ih t t, hlFallCount_cons_self]
 
-/-- Mora 0 is always specified, as H under initial accent and otherwise as
-    the initial-rise L. -/
 theorem toneSpec_zero (a : Option ℕ) :
     toneSpec a 0 = some (if a = some 0 then .H else .L) := by
   by_cases h : a = some 0 <;> simp [toneSpec, accentualHL, initialRise, h]
 
-/-- After mora 0, the only source of a specified L is the post-accent L,
-    which pins the accent location. -/
 theorem toneSpec_eq_L {a : Option ℕ} {j : ℕ} (hj : 1 ≤ j) :
     toneSpec a j = some .L ↔ a.map (· + 1) = some j := by
   unfold toneSpec accentualHL initialRise
   split_ifs with h1 h2 <;> simp_all [Option.or]
 
-/-- The specified tones after mora 0 contain at most one L, since the
-    post-accent L pins the accent location and positions are distinct. -/
 theorem count_L_toneSpec_dense (a : Option ℕ) (l : List ℕ) (hnd : l.Nodup)
     (hpos : ∀ j ∈ l, 1 ≤ j) :
     (l.filterMap (toneSpec a)).count .L ≤ 1 := by
@@ -327,8 +316,6 @@ theorem sin_yokohama_compound : longN2CompoundAccent 2 4 none = some 2 := rfl
     its nonfinal accent ((24a)). -/
 theorem sin_tamanegi_compound : longN2CompoundAccent 2 4 (some 2) = some 4 := rfl
 
-/-- `nonFinality` is satisfied exactly when the accent's successor is not
-    the mora count. -/
 @[simp] theorem nonFinality_eq_zero {acc : Option ℕ} {n : ℕ} :
     nonFinality (acc, n) = 0 ↔ acc.map (· + 1) ≠ some n := by
   simp [nonFinality, Constraint.binary]
@@ -393,8 +380,6 @@ def Recessive (x : Affix) : Prop :=
 def Dominant (x : Affix) : Prop :=
   ∀ n (a b : Option (Fin (n + 1))), x.accent n a = x.accent n b
 
-/-- No affix is both recessive and dominant: on a root of two syllables, keeping either
-accent in place gives two different words. -/
 theorem Recessive.not_dominant {x : Affix} (h : x.Recessive) : ¬x.Dominant := fun hd ↦ by
   simpa using (h 1 0).symm.trans ((hd 1 (some 0) (some 1)).trans (h 1 1))
 
@@ -469,8 +454,6 @@ theorem tekiSuffix_dominant : tekiSuffix.Dominant := fun _ _ _ ↦ rfl
 
 theorem zuSuffix_dominant : zuSuffix.Dominant := fun _ _ _ ↦ rfl
 
-/-- The accent-shifting suffix is neither recessive nor dominant: it acts only on accented
-roots, the mirror image of a recessive affix. -/
 theorem monoSuffix_not_recessive_not_dominant :
     ¬monoSuffix.Recessive ∧ ¬monoSuffix.Dominant :=
   ⟨fun h ↦ by simpa [monoSuffix] using h 1 0,

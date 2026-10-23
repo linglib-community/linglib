@@ -123,9 +123,6 @@ def HasEpithet (φ : Tree Cat EWord) : Prop := ∃ s ∈ φ.subtrees, IsEpithet 
 
 instance : DecidablePred HasEpithet := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- Out of the blue no structural alternative of the bare sentence contains a determiner
-phrase with two or more daughters, since no source item has one, the sentence has none, and the
-operations cannot widen a phrase. -/
 theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
     (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t :=
   subtree_preservation _ WideDP (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
@@ -134,7 +131,6 @@ theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
     (fun _ cs _ _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa [List.length_set] using h2⟩)
     (fun _ _ _ _ _ ⟨_, h2⟩ ↦ by simp at h2) (by decide) h
 
-/-- Out of the blue, the epithet sentence is not a structural alternative. -/
 theorem epithet_not_alternative_outOfBlue :
     bastardJohnArrived ∉ structuralAlternatives epithetLex johnArrived :=
   fun h ↦ no_wideDP_outOfBlue h (Tree.node .Det [.terminal .Det .that_, .terminal .N .bastard,
@@ -192,18 +188,13 @@ theorem priorMention_yes_ACI :
     Blocked (structuralAlternatives priorContextLex) expressiveCI johnArrived :=
   ⟨bastardJohnArrived, epithet_alternative_priorMention, epithet_ciStronger_than_bare⟩
 
-/-- The bare sentence's conventionally implied content is trivial. -/
 private theorem expressiveCI_johnArrived : expressiveCI johnArrived = Set.univ :=
   Set.eq_univ_of_forall fun _ h ↦ absurd h (by decide)
 
-/-- Out of the blue the bare sentence is used whatever the speaker's attitude, so it carries no
-anti-conventional implicature. -/
 theorem unblocked_outOfBlue :
     unblocked (structuralAlternatives epithetLex) expressiveCI johnArrived = Set.univ := by
   rw [unblocked_eq_self outOfBlue_no_ACI, expressiveCI_johnArrived]
 
-/-- After the mention the bare sentence is used exactly where the speaker does not hold the
-attitude, the anti-conventional implicature that John is no bastard in the speaker's eyes. -/
 theorem unblocked_priorMention :
     unblocked (structuralAlternatives priorContextLex) expressiveCI johnArrived = {false} := by
   ext w

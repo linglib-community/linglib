@@ -70,7 +70,6 @@ theorem mem_timeTrace_pure {a t : T} :
     t ∈ timeTrace {NonemptyInterval.pure a} ↔ t = a := by
   simp
 
-/-- A stative clause covers the times of the interval it holds throughout. -/
 @[simp] theorem timeTrace_Iic (i : NonemptyInterval T) : timeTrace (Set.Iic i) = (i : Set T) :=
   Set.ext fun _ ↦ ⟨fun ⟨_, hj, ht⟩ ↦ NonemptyInterval.coe_subset_coe.2 hj ht,
     fun ht ↦ ⟨i, Set.mem_Iic.2 le_rfl, ht⟩⟩

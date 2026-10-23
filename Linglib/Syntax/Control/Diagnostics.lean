@@ -73,22 +73,17 @@ def admits (p : Set ι) : Set Diagnostic := excludedBy ⁻¹' pᶜ
 instance [DecidablePred (· ∈ p)] : DecidablePred (· ∈ admits p) :=
   fun d ↦ decidable_of_iff (excludedBy d ∉ p) Iff.rfl
 
-/-- The more clauses hold, the fewer diagnostics are admitted. -/
 @[gcongr] theorem admits_anti : Antitone (admits (ι := ι)) :=
   fun _ _ h ↦ Set.preimage_mono (Set.compl_subset_compl.2 h)
 
-/-- Obligatory control, every clause holding, admits no diagnostic. -/
 theorem admits_eq_empty_iff : admits p = ∅ ↔ p = Set.univ := by
   simp [admits, Set.eq_empty_iff_forall_notMem, Set.eq_univ_iff_forall,
     (Excludes.surjective (ι := ι)).forall]
 
-/-- Non-obligatory control, no clause holding, admits every diagnostic. -/
 theorem admits_eq_univ_iff : admits p = Set.univ ↔ p = ∅ := by
   simp [admits, Set.eq_univ_iff_forall, Set.eq_empty_iff_forall_notMem,
     (Excludes.surjective (ι := ι)).forall]
 
-/-- The battery encodes the profile faithfully, since distinct profiles admit distinct
-diagnostic sets. -/
 theorem admits_injective : Function.Injective (admits (ι := ι)) :=
   (Set.preimage_injective.2 Excludes.surjective).comp compl_injective
 
@@ -100,16 +95,13 @@ instance [DecidableEq ι] [DecidablePred (· ∈ A)] :
     DecidablePred (· ∈ ofAttested (ι := ι) A) :=
   fun c ↦ decidable_of_iff (∀ d ∈ A, excludedBy d ≠ c) (by simp [ofAttested])
 
-/-- Attested diagnostics are admitted. -/
 theorem subset_admits_ofAttested : A ⊆ admits (ofAttested (ι := ι) A) := by
   rw [admits, ofAttested, compl_compl]
   exact Set.subset_preimage_image _ _
 
-/-- With nothing attested every clause holds. -/
 @[simp] theorem ofAttested_eq_univ_iff : ofAttested (ι := ι) A = Set.univ ↔ A = ∅ := by
   rw [ofAttested, Set.compl_univ_iff, Set.image_eq_empty]
 
-/-- No clause holds exactly when every clause is refuted by some attested diagnostic. -/
 @[simp] theorem ofAttested_eq_empty_iff :
     ofAttested (ι := ι) A = ∅ ↔ ∀ c : ι, ∃ d ∈ A, excludedBy d = c := by
   simp [ofAttested, Set.eq_univ_iff_forall]

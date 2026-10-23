@@ -191,10 +191,6 @@ theorem melt_build : ∀ v ∈ [melt, build],
     (∃ a, v.Alternates (.leaveImplicit .np 0 (some a))) ∧ .np_np ∈ v.valency.frames := by
   decide +kernel
 
-/-- Appl takes a verb with an open individual argument, of type ⟨e,⟨s,t⟩⟩, then the theme, the
-recipient and the event, so a verb whose object ∃ has closed off, of type ⟨s,t⟩, cannot combine
-with it, and a simple transitive's implicit object is not available in the double object
-construction. -/
 theorem combine?_appl :
     Ty.combine? (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.eet = some (.e ⇒ .e ⇒ Ty.et) ∧
       Ty.combine? (Ty.eet ⇒ .e ⇒ .e ⇒ Ty.et) Ty.et = none := by

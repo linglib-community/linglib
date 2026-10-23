@@ -45,8 +45,6 @@ abbrev featureLanguage : FirstOrder.Language := wordLanguage (Phonology.Feature 
 /-- The class of the sibilants is [+strident]. -/
 def strident : Segment := .ofSpecs [(.strident, true)]
 
-/-- A one-position subfactor occurs exactly where a segment of its natural class does, so the
-[+strident] subfactor occurs in the words with a sibilant. -/
 theorem strident_occurs_iff (w : List Segment) :
     (diagram (Phonology.Feature × Bool) [strident] (k := 1) le_rfl).Occurs
       (WordModel w (· < ·)) ↔ ∃ x ∈ w, x.IsSibilant := by
@@ -82,7 +80,6 @@ theorem mem_language_iff (w : List Segment) :
     Set.mem_singleton_iff]
   exact ⟨fun h ho ↦ h _ ho rfl, fun h _ hx hxe ↦ h (hxe ▸ hx)⟩
 
-/-- A two-position diagram occurs exactly where a subsequence of two segments lies above it. -/
 theorem diagram_pair_occurs_iff (d e : Segment) (w : List Segment) :
     (diagram (Phonology.Feature × Bool) [d, e] (k := 2) le_rfl).Occurs (WordModel w (· < ·)) ↔
       ∃ a b, [a, b] <+ w ∧ d ≤ a ∧ e ≤ b := by
@@ -110,7 +107,6 @@ theorem postalveolar_le_iff (x : Segment) : postalveolar ≤ x ↔ sibilantClass
   · simp_all [Segment.IsSibilant, Segment.HasValue]
   · simp_all [Segment.IsSibilant, Segment.HasValue]
 
-/-- One feature-labelled subfactor stands for the four segment factors sʃ, zʃ, sʒ and zʒ. -/
 theorem antPost_occurs_sibilant_pairs :
     ∀ x ∈ [s, z], ∀ y ∈ [esh, ezh], antPost.Occurs (WordModel [x, y] (· < ·)) := by
   intro x hx y hy
@@ -122,8 +118,6 @@ theorem antPost_occurs_sibilant_pairs :
 
 /-! ### Symmetric harmony -/
 
-/-- Hansson's Navajo sibilant harmony is the language of the paper's forbidden subfactor
-together with its mirror image. -/
 theorem mem_navajoSibilantHarmony_iff (w : List Segment) :
     w ∈ navajoSibilantHarmony.language ↔
       ¬ antPost.Occurs (WordModel w (· < ·)) ∧ ¬ postAnt.Occurs (WordModel w (· < ·)) := by
@@ -154,8 +148,6 @@ theorem mem_navajoSibilantHarmony_iff (w : List Segment) :
     · exact absurd hv (h.1 a b hab hu)
     · rfl
 
-/-- The paper's subfactor alone admits a postalveolar sibilant before an alveolar one, which
-Navajo's symmetric harmony bans. -/
 theorem esh_s_mem_language : [esh, s] ∈ language ∧ [esh, s] ∉ navajoSibilantHarmony.language := by
   refine ⟨(mem_language_iff _).2 fun h ↦ ?_, fun h ↦ ?_⟩
   · obtain ⟨a, b, hab, ha, -⟩ := (diagram_pair_occurs_iff _ _ _).1 h

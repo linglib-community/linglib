@@ -66,16 +66,13 @@ theorem mem_partialAnswers {p : Finset W} :
     p ∈ partialAnswers Q ↔ ∃ s, s ≠ ∅ ∧ s ⊆ Q.parts ∧ s.sup id = p := by
   simp [partialAnswers, and_assoc, nonempty_iff_ne_empty]
 
-/-- A complete answer is a partial answer. -/
 theorem parts_subset_partialAnswers : Q.parts ⊆ partialAnswers Q := λ q hq =>
   mem_partialAnswers.2 ⟨{q}, singleton_ne_empty q, singleton_subset_iff.2 hq, sup_singleton⟩
 
-/-- A partial answer lies within the background information. -/
 theorem subset_of_mem_partialAnswers {p : Finset W} (hp : p ∈ partialAnswers Q) : p ⊆ acc := by
   obtain ⟨s, -, hs, rfl⟩ := mem_partialAnswers.1 hp
   exact Finset.sup_le λ q hq => Q.le (hs hq)
 
-/-- A partial answer is nonempty. -/
 theorem nonempty_of_mem_partialAnswers {p : Finset W} (hp : p ∈ partialAnswers Q) :
     p.Nonempty := by
   obtain ⟨s, hne, hs, rfl⟩ := mem_partialAnswers.1 hp
@@ -144,14 +141,11 @@ theorem mem_PBEST {p : Finset W} :
 
 /-! ### Inheritance and dilemmas (§3.3, §8.1, §10) -/
 
-/-- Inheritance: an *ought* passes to whatever its prejacent entails. -/
 theorem inheritance {φ ψ : W → Prop} (h : ∀ v, φ v → ψ v) (hφ : Ought ord w Q φ) :
     Ought ord w Q ψ :=
   let ⟨p, hp, hpφ⟩ := hφ
   ⟨p, hp, λ v hv => h v (hpφ v hv)⟩
 
-/-- No dilemma: where *ought* is defined, ⌜ought φ⌝ and ⌜ought ¬φ⌝ are never both true,
-since their witnesses share a world. -/
 theorem no_dilemma {φ : W → Prop} (hdef : Defined ord w Q) (h₁ : Ought ord w Q φ)
     (h₂ : Ought ord w Q (¬ φ ·)) : False :=
   let ⟨p, hp, hpφ⟩ := h₁
@@ -162,7 +156,6 @@ theorem no_dilemma {φ : W → Prop} (hdef : Defined ord w Q) (h₁ : Ought ord 
 /-! ### Deontic *ought* is a box (Facts 2–4) -/
 
 omit [∀ w, DecidableRel (ord w)] in
-/-- Anything at least as good as an undominated answer is undominated. -/
 theorem not_better_of_le [IsTrans (Finset W) (ord w)] {p q : Finset W}
     (hp : ∀ r ∈ partialAnswers Q, ¬ Better ord w r p) (hqp : ord w q p) :
     ∀ r ∈ partialAnswers Q, ¬ Better ord w r q :=
@@ -219,8 +212,6 @@ instance (w : W) : DecidableRel (threshold μ T w) :=
 
 variable {μ T}
 
-/-- Two propositions each likelier than not overlap: the pairwise consistency of the best
-answers is a consequence of probability theory. -/
 theorem inter_nonempty_of_half_lt {acc p q : Finset W} (hp : p ⊆ acc) (hq : q ⊆ acc)
     (h₁ : acc.sum μ < 2 * p.sum μ) (h₂ : acc.sum μ < 2 * q.sum μ) : (p ∩ q).Nonempty := by
   by_contra h
@@ -231,8 +222,6 @@ theorem inter_nonempty_of_half_lt {acc p q : Finset W} (hp : p ⊆ acc) (hq : q 
 
 variable {acc : Finset W} {Q : Finpartition acc} {w : W}
 
-/-- Once some partial answer passes the threshold, the best answers are exactly those that
-do: a threshold ordering ranks every one of them above every complete answer below it. -/
 theorem mem_PBEST_threshold (hex : ∃ q ∈ partialAnswers Q, T < 2 * q.sum μ)
     {p : Finset W} :
     p ∈ PBEST (threshold μ T) w Q ↔ p ∈ partialAnswers Q ∧ T < 2 * p.sum μ := by
@@ -243,8 +232,6 @@ theorem mem_PBEST_threshold (hex : ∃ q ∈ partialAnswers Q, T < 2 * q.sum μ)
     exact hund q hq ⟨.inl hqT, λ hpq => hpq.elim h λ hle => h (by omega)⟩
   · exact hqp.2 (.inl hT)
 
-/-- The definedness condition holds for a threshold ordering at half the information's
-weight. -/
 theorem defined_threshold (hT : acc.sum μ = T)
     (hex : ∃ q ∈ partialAnswers Q, T < 2 * q.sum μ) :
     Defined (threshold μ T) w Q := λ _ hp _ hq =>
@@ -337,8 +324,6 @@ theorem not_everyone_should_be_in :
 theorem not_alice_should_be_out :
     ¬ Ought ordering (true, true) question (¬ aliceIn ·) := by decide +kernel
 
-/-- Assumption 3: the epistemic ordering violates the deontic constraint, *Alice is in*
-outranking every complete answer inside it. -/
 theorem not_isDeontic : ¬ IsDeontic ordering (true, true) question := by decide +kernel
 
 /-- Fact 5: parameters on which two *ought*s are true and their conjunction false. -/
@@ -406,19 +391,13 @@ def what : Finpartition (univ : Finset World) := Finpartition.ofSetoid (Setoid.k
 lumped together. -/
 def howGood : Finpartition (univ : Finset World) := Finpartition.ofSetoid (Setoid.ker value)
 
-/-- The ordering is deontic for either question. -/
 theorem isDeontic : IsDeontic ordering .pie what ∧ IsDeontic ordering .pie howGood := by
   decide +kernel
 
-/-- Under *what will I do?* the best answers, pie and cannoli, are inconsistent, so *ought* is
-undefined: only the coarser question is a possible parameter. -/
 theorem what_undefined : ¬ Defined ordering .pie what := by decide +kernel
 
-/-- Under *how good?* *ought* is defined. -/
 theorem howGood_defined : Defined ordering .pie howGood := by decide +kernel
 
-/-- Indifference: I ought to have pie or cannoli, and neither I ought to have pie nor I ought
-to have cannoli. -/
 theorem indifference :
     Ought ordering .pie howGood (λ v => v = .pie ∨ v = .cannoli) ∧
       ¬ Ought ordering .pie howGood (· = .pie) ∧

@@ -145,8 +145,6 @@ theorem fragment_pairs_table61 :
 
 /-! ### Interpretive Economy (§4.2–§4.3) -/
 
-/-- An open scale offers no endpoint, so its standard is contextual and the adjective needs a
-comparison class. -/
 theorem open_requires_comparison_class :
     Boundedness.IsRelative .open_ :=
   trivial

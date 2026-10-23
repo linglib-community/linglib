@@ -132,7 +132,6 @@ def IsSegment : Label C W → Prop
 instance : DecidablePred (IsSegment (C := C) (W := W)) := fun l ↦ by
   cases l <;> unfold IsSegment <;> infer_instance
 
-/-- Relabelling the words changes no label's licensed daughters. -/
 @[simp] theorem licenses_mapWord (f : W → W') (l : Label C W) (ks : List (Label C W)) :
     Licenses (l.mapWord f) (ks.map (mapWord f)) ↔ Licenses l ks := by
   cases l <;> simp [Licenses, mapWord]
@@ -488,7 +487,6 @@ yield is precedence (`RoseTree.pairwise_precedes_positionedLeaves`). -/
 def positionedTerminals (t : Tree C W) : List (TreePath × (C × W)) :=
   t.positionedLeaves.filterMap fun x ↦ x.2.terminal?.map (x.1, ·)
 
-/-- Forgetting the positions leaves the terminals. -/
 theorem map_snd_positionedTerminals (t : Tree C W) :
     t.positionedTerminals.map Prod.snd = t.terminals := by
   rw [positionedTerminals, List.map_filterMap, terminals, ← RoseTree.map_snd_positionedLeaves,
@@ -497,7 +495,6 @@ theorem map_snd_positionedTerminals (t : Tree C W) :
   funext x
   simp [Option.map_map, Function.comp_def]
 
-/-- Each listed position holds its terminal. -/
 theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C × W)}
     (h : x ∈ t.positionedTerminals) :
     RoseTree.subtreeAt t x.1.toList = some (terminal x.2.1 x.2.2) := by
@@ -508,7 +505,6 @@ theorem subtreeAt_of_mem_positionedTerminals {t : Tree C W} {x : TreePath × (C 
     exact RoseTree.subtreeAt_of_mem_positionedLeaves hl
   | _ => simp [Label.terminal?] at hx
 
-/-- Every terminal position is listed. -/
 theorem mem_positionedTerminals_of_subtreeAt {t : Tree C W} {p : List ℕ} {c : C} {w : W}
     (h : RoseTree.subtreeAt t p = some (terminal c w)) :
     (⟨p⟩, (c, w)) ∈ t.positionedTerminals :=

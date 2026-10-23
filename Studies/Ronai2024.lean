@@ -106,8 +106,6 @@ theorem compatible_iff_not_strong (m : ι → Triangle) :
   simp only [compatible, Inference.den, not_forall]
   exact exists_congr fun i ↦ by cases m i <;> decide
 
-/-- *Some N was Q* does not entail *every N was P*, as an individual at `A` beside one at `E`
-shows. -/
 theorem compatible_not_literal :
     ∃ m : Bool → Triangle, compatible m ∧ ¬ Exp1Some.reading .literal m :=
   ⟨fun b ↦ if b then .A else .E, by decide⟩
@@ -147,7 +145,6 @@ theorem supports_iff (ℓ : ReadingLabel) (n : Inference) : Supports ℓ n ↔ n
 instance (ℓ : ReadingLabel) (n : Inference) : Decidable (Supports ℓ n) :=
   decidable_of_iff _ (supports_iff ℓ n).symm
 
-/-- Only the local reading supports the strong inference. -/
 theorem supports_strong_iff (ℓ : ReadingLabel) : Supports ℓ .strong ↔ ℓ = .local_ := by
   cases ℓ <;> simp [supports_iff, supported]
 
@@ -184,14 +181,10 @@ theorem exp1_monotone :
 
 /-! ### Experiment 2 (§4) -/
 
-/-- The compatible control is consistent with the sentence, since a domain of individuals at
-`all` verifies both *every N was P* and *some N was Q*. -/
 theorem literal_and_compatible :
     ∃ m : Unit → Triangle, Exp1Some.reading .literal m ∧ compatible m :=
   ⟨fun _ ↦ .A, by decide⟩
 
-/-- Once the strong inference is computed the compatible control is false, the local reading
-excluding it, which is why Experiment 2 replaces the baseline by an inference task. -/
 theorem not_compatible_of_local {m : ι → Triangle} (h : Exp1Some.reading .local_ m) :
     ¬ compatible m :=
   fun ⟨i, hi⟩ ↦ absurd hi (by rw [h i]; decide)

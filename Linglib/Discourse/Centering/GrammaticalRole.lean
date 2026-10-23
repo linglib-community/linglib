@@ -59,8 +59,6 @@ def ofArgumentRole : ArgumentRole → GrammaticalRole
   | .S | .A => .subject
   | .P | .R | .T => .object
 
-/-- The coding slots the role-reference association marks as high are the subject or an
-object, never other. -/
 theorem ofArgumentRole_ne_other (r : ArgumentRole) : ofArgumentRole r ≠ other := by
   cases r <;> decide
 

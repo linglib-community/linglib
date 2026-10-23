@@ -90,9 +90,6 @@ def rowGrammar (t : Tableau C n) (w : C)
     r ∈ (rowGrammar t w h).legs ↔ ∀ α ∈ rowERCs t w, ERC.SatisfiedBy r α := by
   simp only [rowGrammar, Grammar.legs_ofERCs, ERC.mem_linearExtensions]
 
-/-- A row's grammar consists of the rankings under which `w`'s violation profile, read in rank
-order, is lexicographically at most every competitor's, the rankings that select `w` as optimal
-([prince-smolensky-1993]). -/
 theorem mem_rowGrammar_legs_iff_lex {t : Tableau C n} {w : C}
     {h : (ERC.linearExtensions (rowERCs t w)).Nonempty} {r : Ranking (Fin n) n} :
     r ∈ (rowGrammar t w h).legs ↔
@@ -159,15 +156,11 @@ theorem le_gepoRel : π ≤ gepoRel π c := le_sup_left
 theorem PrefixSwap.gepoRel {r s : Ranking ι n} (h : PrefixSwap c r s) : gepoRel π c r s :=
   (le_sup_right : Relation.EqvGen.setoid (PrefixSwap c) ≤ _) (Relation.EqvGen.rel _ _ h)
 
-/-- A GEPO-equivalence step on the right stays within the hypertransitive closure. -/
 theorem HtcLT.trans_gepoRel {r s t : Ranking ι n} (h : HtcLT π c r s)
     (hst : gepoRel π c s t) : HtcLT π c r t := by
   obtain ⟨b, hrb, μ, ν, hbμ, hμν, hνs⟩ := Relation.TransGen.tail'_iff.1 h
   exact Relation.TransGen.tail' hrb ⟨μ, ν, hbμ, hμν, (gepoRel π c).iseqv.trans hνs hst⟩
 
-/-- The hypertransitive closure is irreflexive when a family of functions, each constant on
-GEPO-equivalent legs, weakly increases across every border pair and strictly increases across it
-somewhere in the family. -/
 theorem irreflexive_htcLT_of_forall {κ : Type*} (g : κ → Ranking ι n → ℕ)
     (hg : ∀ j, gepoRel π c ≤ Setoid.ker (g j))
     (hle : ∀ r s, BorderLT π c r s → ∀ j, g j r ≤ g j s)
@@ -204,9 +197,6 @@ theorem exists_instantiates_iff [Fintype ι] [DecidableEq ι] :
 
 /-! #### Filtration by instantiating functions -/
 
-/-- Bubbling `c` up to rank position `k`, by transposing it with the constraint above it at
-positions from `k` on, leaves the positions above `k` fixed, and preserves any reflexive
-transitive relation `P` that each such transposition preserves. -/
 private theorem exists_bubble (P : Ranking ι n → Ranking ι n → Prop) (hrefl : ∀ μ, P μ μ)
     (htrans : ∀ a b d, P a b → P b d → P a d) (c : ι) (k : ℕ) (μ₀ : Ranking ι n)
     (hstep : ∀ μ : Ranking ι n, ∀ m (hm : m + 1 < n), k ≤ m → μ ⟨m + 1, hm⟩ = c →
@@ -228,8 +218,6 @@ private theorem exists_bubble (P : Ranking ι n → Ranking ι n → Prop) (href
       fun j hj ↦ by rw [Ranking.swapAt_apply_of_ne (by omega) (by omega)]; exact hpre j hj
     exact ⟨μ', h₁, h₂, htrans _ _ _ (hstep μ (k + d) hm (Nat.le_add_right k d) hc hpre) h₃⟩
 
-/-- The constraint that `l` ranks at position `t` sits at position `t` or below in any leg that
-agrees with `l` above `t`. -/
 private theorem le_symm_apply {l ν : Ranking ι n} {t : ℕ} {c : ι} (ht : t < n)
     (hc : l ⟨t, ht⟩ = c) (hν : ∀ j : Fin n, j.val < t → ν j = l j) : t ≤ (ν.symm c).val := by
   subst hc
@@ -240,8 +228,6 @@ private theorem le_symm_apply {l ν : Ranking ι n} {t : ℕ} {c : ι} (ht : t <
   simp only at this
   omega
 
-/-- A leg that agrees with `l` above position `k` and ranks `l`'s `k`-th constraint at `k` agrees
-with `l` down to `k`. -/
 private theorem apply_eq_of_lt_succ {l ν : Ranking ι n} {k : ℕ} {c : ι} (hk : k < n)
     (hc : l ⟨k, hk⟩ = c) (hpos : (ν.symm c).val = k) (hν : ∀ j : Fin n, j.val < k → ν j = l j)
     (j : Fin n) (hj : j.val < k + 1) : ν j = l j := by
@@ -252,8 +238,6 @@ private theorem apply_eq_of_lt_succ {l ν : Ranking ι n} {k : ℕ} {c : ι} (hk
 
 variable {f : ι → Ranking ι n → ℕ}
 
-/-- An instantiating function of `c` is constant on the legs that agree with `l` down to the
-position of `c` in `l`. -/
 private theorem eq_of_forall_apply_eq (hf : Instantiates π c (f c)) (l : Ranking ι n) (k : ℕ)
     (hk : k < n) (hc : l ⟨k, hk⟩ = c) :
     ∀ d t, t + d = n → k < t → ∀ ν : Ranking ι n, (∀ j : Fin n, j.val < t → ν j = l j) →
@@ -340,9 +324,6 @@ theorem toLex_lt_of_not_rel (hf : ∀ c, Instantiates π c (f c)) (l : Ranking �
   · obtain rfl : μ' = l := Equiv.ext fun j ↦ hpre j j.isLt
     exact absurd (π.iseqv.symm hμμ') h
 
-/-- At a border point pair across which the winners of an input change, the two legs' winners
-agree on the constraints above the transposed pair, and the transposed constraint ranked higher
-in the first leg decides between them. -/
 private theorem exists_lt_of_language_ne {I O : Type*} (S : ConstraintSystem I O ι)
     {r : Ranking ι n} {k : ℕ} (hk : k + 1 < n) {i : I}
     (hne : S.language r i ≠ S.language (r.swapAt k hk) i) :
@@ -509,7 +490,6 @@ def uvt166 : ConstraintSystem Unit Row Con where
     | .Y, .gb => 1
     | _, _ => 0
 
-/-- Each leg selects `GB` iff it ranks `X` above `Y`. -/
 theorem language_uvt166 (r : Ranking Con 3) :
     uvt166.language r () = {if r.Dominates .X .Y then .gb else .go} := by
   revert r

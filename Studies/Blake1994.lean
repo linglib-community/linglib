@@ -154,8 +154,6 @@ theorem mem_gaps : q ∈ gaps inv ↔ q ∉ positions inv ∧ ∃ p ∈ position
 instance : Decidable (Conforms inv) :=
   inferInstanceAs (Decidable (∀ a b : Position, b ≤ a → a ∈ positions inv → b ∈ positions inv))
 
-/-- Conformity in Blake's own wording, that a language with a case at some position has a case at
-each position to its left. -/
 theorem conforms_iff :
     Conforms inv ↔
       ∀ c ∈ inv, ∀ p, position c = some p → ∀ q < p, ∃ d ∈ inv, position d = some q := by
@@ -184,7 +182,6 @@ theorem Conforms.total (h : Conforms inv) (h' : Conforms inv') :
     positions inv ⊆ positions inv' ∨ positions inv' ⊆ positions inv := by
   simpa using IsLowerSet.total h h'
 
-/-- The vocative is off the hierarchy, so adding it changes nothing. -/
 theorem positions_insert_voc : positions (insert .voc inv) = positions inv := by
   simp [positions, Finset.biUnion_insert, position]
 
@@ -238,7 +235,6 @@ of many functions whose label is somewhat arbitrary. -/
 /-- The Latin case labels skip the locative. -/
 theorem gaps_latin_labels : gaps (Finset.univ.image Latin.Case.label) = {.loc} := by decide
 
-/-- The functions the Latin cases express fill every position. -/
 theorem positions_latin_functions :
     positions (Finset.univ.biUnion Latin.Case.functions) = Finset.univ := by
   decide
@@ -246,7 +242,6 @@ theorem positions_latin_functions :
 theorem conforms_latin_functions : Conforms (Finset.univ.biUnion Latin.Case.functions) := by
   decide
 
-/-- The Latin gap is apparent, the locative being a function of a case labelled for another. -/
 theorem gaps_latin_labels_subset :
     gaps (Finset.univ.image Latin.Case.label) ⊆
       positions (Finset.univ.biUnion Latin.Case.functions) \

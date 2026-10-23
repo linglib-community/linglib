@@ -44,8 +44,6 @@ variable {v : RuleSet R} {c : Ctx} {r s : R} {φ : E}
 
 /-! ### Elsewhere winners -/
 
-/-- Two comparable elements minimal for the same predicate and key have equivalent keys.
-[UPSTREAM] candidate for `Mathlib/Order/Minimal.lean`. -/
 theorem _root_.MinimalFor.antisymmRel {ι α : Type*} [Preorder α] {P : ι → Prop} {f : ι → α}
     {i j : ι} (hi : MinimalFor P f i) (hj : MinimalFor P f j) (h : f j ≤ f i ∨ f i ≤ f j) :
     AntisymmRel (· ≤ ·) (f i) (f j) :=
@@ -60,13 +58,11 @@ abbrev IsElsewhereWinner (v : RuleSet R) (key : R → κ) (c : Ctx) (r : R) : Pr
 def Coherent (v : RuleSet R) (key : R → κ) : Prop :=
   ∀ r ∈ v, ∀ s ∈ v, AntisymmRel (· ≤ ·) (key r) (key s) → exponent r = exponent s
 
-/-- Comparable winners of a coherent rule set carry the same exponent. -/
 theorem IsElsewhereWinner.exponent_eq (hv : v.Coherent key) (hr : v.IsElsewhereWinner key c r)
     (hs : v.IsElsewhereWinner key c s) (h : key s ≤ key r ∨ key r ≤ key s) :
     exponent r = exponent s :=
   hv r hr.1.1 s hs.1.1 (hr.antisymmRel hs h)
 
-/-- A rule set with an applicable rule has an Elsewhere winner. -/
 theorem exists_isElsewhereWinner (h : ∃ r ∈ v, Applies r c) :
     ∃ r, v.IsElsewhereWinner key c r :=
   (v.finite_toSet.subset fun _ hr ↦ hr.1).exists_minimalFor key _ h
@@ -96,8 +92,6 @@ def Antihomophonous (v : RuleSet R) : Prop :=
 instance [DecidableEq R] [DecidableEq E] (v : RuleSet R) : Decidable v.Antihomophonous :=
   inferInstanceAs (Decidable (∀ r ∈ v, ∀ s ∈ v, exponent r = exponent s → r = s))
 
-/-- A winner at a context that applies at a smaller context, in the sense that every rule
-applicable there is applicable at the larger, is a winner at the smaller. -/
 theorem IsElsewhereWinner.of_applies {c' : Ctx} (h : ∀ s ∈ v, Applies s c' → Applies s c)
     (hr : v.IsElsewhereWinner key c r) (hc' : Applies r c') : v.IsElsewhereWinner key c' r :=
   hr.anti (fun s hs ↦ ⟨hs.1, h s hs.1 hs.2⟩) ⟨hr.1.1, hc'⟩

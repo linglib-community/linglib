@@ -221,7 +221,6 @@ theorem reduce_of_none {c : Cophonology} (h : c.dhr = false) (h' : c.ddr = false
   unfold reduce
   split <;> simp_all
 
-/-- A cycle whose cophonology is the word-level shifts stress alone. -/
 theorem cycle_of_cophonology_eq (d : Dialect) (h : cophonology d base s = wordLevel) :
     cycle d base s = base ++ s.segs := by
   unfold cycle
@@ -271,7 +270,6 @@ theorem cycle_word_of_not_misaligned (d : Dialect) (h : s.stratum = .word)
     (hm : ¬ Misaligned base s.segs) : cycle d base s = base ++ s.segs :=
   cycle_of_cophonology_eq base s d (cophonology_word_of_not_misaligned base s d h hm)
 
-/-- Derivation, and inflection over an aligned Prosodic Stem, run alike in the two dialects. -/
 theorem cycle_dialect_eq (h : s.stratum = .stem ∨ ¬ Misaligned base s.segs) :
     cycle .eastern base s = cycle .western base s := by
   unfold cycle

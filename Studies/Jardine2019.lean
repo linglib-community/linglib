@@ -101,7 +101,6 @@ abbrev unmerged (w : List Sym) :=
   AR.ofWords (w.map Sym.melody).flatten (w.map fun _ => [μ]).flatten
     (BlockLinks Sym.melody (fun _ => [μ]) (fun _ _ _ => True) w)
 
-/-- The primitives of `gT` are OCP-clean. -/
 theorem isCleanAt_gT (s : Sym) : (gT s).IsCleanAt true := by
   cases s <;> simp [AR.IsCleanAt, gT, Sym.melody, show H ≠ L by decide]
 
@@ -209,18 +208,12 @@ instance (g : Grammar) (w : List Sym) : Decidable (w ∈ g.set) := by
 spans two morae, and `B_UTP` admits the strings of `L_UTP`, (32). -/
 theorem rows_agree : ∀ r ∈ rows, r.string ∈ r.grammar.set ↔ r.member = true := by decide +kernel
 
-/-- `HLH` is excluded, its melody being `H L H`. -/
 theorem HLH_not_mem_ASL_utp : [.H, .L, .H] ∉ ASL utpGrammar := by decide
 
-/-- `LHHLH` is excluded, since the `HH` plateau fuses and the melody reads `L H L H`. -/
 theorem LHHLH_not_mem_ASL_utp : [.L, .H, .H, .L, .H] ∉ ASL utpGrammar := by decide
 
-/-- The unbounded plateau `HHLLHH` is excluded, since both plateaus fuse and the melody reads
-`H L H` at any widths. -/
 theorem HHLLHH_not_mem_ASL_utp : [.H, .H, .L, .L, .H, .H] ∉ ASL utpGrammar := by decide
 
-/-- The same string is free of `B_UTP` under the unmerged realization, whose melody
-`H H L L H H` has no three adjacent nodes spelling `H L H`. -/
 theorem HHLLHH_free_prod_map_gT :
     (([.H, .H, .L, .L, .H, .H] : List Sym).map gT).prod.Free utpGrammar := by
   rw [prod_map_gT]
@@ -229,8 +222,6 @@ theorem HHLLHH_free_prod_map_gT :
 
 /-! ### Theorem 3: contours contain their pure counterparts -/
 
-/-- `gT(HL)` is a subgraph of `gT(HF)`, since the falling contour on the second mora contains
-the `L` on it. -/
 theorem realize_HL_embeds_HF :
     (MergeAR.toAR (realize [.H, .L])).FactorEmbeds (MergeAR.toAR (realize [.H, .F])) := by
   rw [toAR_realize, toAR_realize]
@@ -244,8 +235,6 @@ theorem not_mem_ASL_HF_of_not_mem_ASL_HL (B : List (AR (TwoTier TRN TBUKind)))
 
 /-! ### The link-free fragment of the unmerged class is star-free -/
 
-/-- The melody constraint of `B_UTP` is link-free, so under the unmerged realization it
-specifies a star-free set. -/
 theorem isStarFree_free_prod_map_hlh :
     (Language.bannedSubgraph (fun w ↦ (w.map gT).prod) [hlh]).IsStarFree :=
   Language.isStarFree_bannedSubgraph_prod_map gT _ fun F hF => by
@@ -260,7 +249,6 @@ and membership in `L_UTP` depends only on the merged melody. With `x = L^{k−1}
 `x·H` are in `L_UTP` and `H L·x·H` is not, which breaks suffix substitution at every width; and
 every symbol is visible, so a tier-based grammar would have to be strictly local. -/
 
-/-- In an `F`-free string each mora carries its own symbol's tone. -/
 private theorem eq_of_blockLinks {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) {p q : ℕ}
     (h : BlockLinks Sym.melody (fun _ => [μ]) (fun _ _ _ => True) w p q) : p = q := by
   induction w generalizing p q with
@@ -273,7 +261,6 @@ private theorem eq_of_blockLinks {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) {p 
     · have := ih (fun t ht => hw t (List.mem_cons_of_mem _ ht)) h
       simp only [hs, List.length_singleton] at hp hq this; omega
 
-/-- An `F`-free string has no contour. -/
 theorem not_fall_factorEmbeds_merged {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) :
     ¬ fall.FactorEmbeds (merged w) := by
   rw [AR.factorEmbeds_ofWords_iff]
@@ -285,7 +272,6 @@ theorem not_fall_factorEmbeds_merged {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F)
   subst e₁; subst e₂
   omega
 
-/-- The melody `H L H` occurs iff it is an infix of the merged melody. -/
 theorem hlh_factorEmbeds_merged_iff (w : List Sym) :
     hlh.FactorEmbeds (merged w) ↔ [H, L, H] <:+: OCP.collapse (w.map Sym.melody).flatten := by
   rw [AR.factorEmbeds_iff_infix_of_link_free AR.not_link_ofWords_false]
@@ -350,7 +336,6 @@ theorem not_isStrictlyLocal_ASL_utp (k : ℕ) : ¬ (ASL utpGrammar).IsStrictlyLo
     (List.replicate (k - 1) .L) (by simp) (by simpa using mem_ASL_utp_HL_replicate (k - 1))
     (by simpa using mem_ASL_utp_replicate_H (k - 1)))
 
-/-- Every symbol is visible in `L_UTP`, deleting it from some string changing membership. -/
 theorem ASL_utp_visible :
     ∀ a : Sym, ∃ u v, ¬ (u ++ a :: v ∈ ASL utpGrammar ↔ u ++ v ∈ ASL utpGrammar)
   | .H => ⟨[.H, .L], [], by decide⟩

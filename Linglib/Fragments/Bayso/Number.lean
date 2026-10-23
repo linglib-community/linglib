@@ -65,16 +65,13 @@ def Gender.concord : Gender → nounNumbers → Concord
   | _, ⟨.minimal, h⟩ | _, ⟨.augmented, h⟩ | _, ⟨.unitAugmented, h⟩ | _, ⟨.globalPlural, h⟩ =>
     absurd h (by decide)
 
-/-- General and singular nouns take their gender's concord. -/
 @[simp] theorem Gender.concord_general (g : Gender) :
     g.concord ⟨.general, by decide⟩ = g.concord ⟨.singular, by decide⟩ := by
   cases g <;> rfl
 
-/-- Paucal nouns take the plural concord. -/
 @[simp] theorem Gender.concord_paucal (g : Gender) : g.concord ⟨.paucal, by decide⟩ = .plural := by
   cases g <;> rfl
 
-/-- Plural nouns take the masculine concord. -/
 @[simp] theorem Gender.concord_plural (g : Gender) : g.concord ⟨.plural, by decide⟩ = .masc := by
   cases g <;> rfl
 

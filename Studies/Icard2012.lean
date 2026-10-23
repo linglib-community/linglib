@@ -199,7 +199,6 @@ theorem eval_fill : ∀ {τ} (c : Ctx L σ τ) (s : Term L σ),
   | _, .appL c u, s => congrArg (· (eval M u)) (eval_fill c s)
   | _, .appR f c, s => congrArg (eval M f) (eval_fill c s)
 
-/-- Every term denotes a value of its markings. -/
 theorem mem_eval : ∀ {τ} (t : Term L τ), Mem t.marks τ (eval M t)
   | _, .const c => M.mem c
   | _, .app s u => by
@@ -306,8 +305,6 @@ inductive Assumption : ∀ {τ}, Term lexicon τ → Relation → Term lexicon �
   | safeAltDangerous : Assumption (k .safe) .alternation (k .dangerous)
   | squidLeCephalopod : Assumption (k .giantSquid) .forward (k .cephalopod)
 
-/-- *no* ⊑ *not every* needs no extra postulate, following by Composition on *no* | *every*
-and *every* ^ *not every*, with `| ⋈ ^ = ⊑`. -/
 theorem derives_no_forward_notEvery : Derives Assumption (k .no) .forward (k .notEvery) :=
   .comp (.ax Assumption.noAltEvery) (.ax Assumption.everyNegNotEvery)
 
@@ -346,11 +343,6 @@ example : adjectiveCtx.pro = .mult := rfl
 example : nounCtx.pro = .antiAdd := rfl
 example : determinerCtx.pro = .addMult := rfl
 
-/-- In the main example, *Every job that involves a giant squid is dangerous* ⊑ *Not every job that
-involves a cephalopod is safe* (the paper misprints *giant squid* in the conclusion). Substituting
-*safe* for *dangerous* under `⊞` keeps `|`, *cephalopod* for *giant squid* under `◇` turns `⊑` into
-`⊒`, and *not every* for *every* under `⊕⊞` keeps `^`; Composition then gives `| ⋈ ⊒ = |` and `| ⋈ ^
-= ⊑`. -/
 theorem derives_squid : Derives Assumption t₀ .forward t₀' :=
   have h₁ : Derives Assumption t₀ .alternation u₀ :=
     .subst adjectiveCtx (.symm_alternation (.ax Assumption.safeAltDangerous))
@@ -380,7 +372,6 @@ def Licenses (level : Negation.Strength) (σ : Signature) : Prop :=
 instance (level : Negation.Strength) (σ : Signature) : Decidable (Licenses level σ) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
-/-- A downward signature licenses the weak items. -/
 theorem licenses_weak {σ : Signature} (h : σ.sign = -1) :
     Licenses .weak σ := by
   cases σ <;> first | decide | exact absurd h (by decide)

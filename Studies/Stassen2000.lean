@@ -181,8 +181,6 @@ theorem not_isAnd_of_forall_notMem (h : ∀ e ∈ l.encodings, .distinctMarker �
   fun ⟨e, he, hle⟩ ↦ h e he (hle distinctMarker_mem_relevant)
 
 variable (l) in
-/-- The most advanced hybrid, with every relevant feature but the linker, is one feature short of
-the coordinate strategy. -/
 theorem erase_distinctMarker_covBy : l.relevant.erase .distinctMarker ⋖ l.relevant :=
   Finset.erase_covBy distinctMarker_mem_relevant
 
@@ -279,8 +277,6 @@ theorem adjacent_scheme_vso : (scheme .vso).Adjacent .subject .comitative := by 
 the comitative phrase, which moves the comitative phrase across a medial verb. -/
 def shift (s : Arrangement Slot 3) : Arrangement Slot 3 := (Equiv.swap .verb .comitative).trans s
 
-/-- Where the verb is medial, the shift makes the subject and the comitative phrase contiguous,
-so that the string can be reanalyzed as a constituent. -/
 theorem adjacent_shift {s : Arrangement Slot 3} (h : s.IsMedial .verb) :
     (shift s).Adjacent .subject .comitative := by
   refine (Arrangement.adjacent_iff_not_isMedial (z := Slot.verb) (by decide) (by decide)

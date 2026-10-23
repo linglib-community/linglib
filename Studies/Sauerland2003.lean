@@ -59,20 +59,15 @@ section Number
 
 variable [SemilatticeSup E] {a b : E}
 
-/-- The φ-head above a coordination of two distinct atoms cannot carry `[Sg]`. -/
 theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
   (Number.mem_dom_singular _).not.2 (not_atom_sup_of_ne ha hb hne)
 
-/-- The Feature-Subset Principle for number makes the domain of `[Sg]` a proper subset of
-the domain of `[Pl]`. -/
 theorem sg_domain_ssubset_pl (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     Number.dom (E := E) (some .singular) ⊂ Number.dom (some .plural) := by
   rw [Number.dom_plural]
   exact ⟨Set.subset_univ _, fun h ↦ coordination_plural ha hb hne (h (Set.mem_univ _))⟩
 
-/-- `DER` is well defined on a cumulative restrictor, since `*R` has at most one maximal
-element. -/
 theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)
     (h₂ : Maximal (AlgClosure R) m₂) : m₁ = m₂ :=
   cum_maximal_unique algClosure_cum h₁ h₂
@@ -80,7 +75,6 @@ theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure 
 /-- The two number features that can head a φP are each other's alternatives. -/
 def numberAlts : Option Number → Set (Option Number) := fun _ ↦ {some .singular, some .plural}
 
-/-- `[Sg]` is used exactly at the atoms. -/
 theorem unblocked_singular :
     unblocked numberAlts Number.dom (some .singular) = {x : E | Atom x} := by
   rw [unblocked_eq_self]
@@ -90,8 +84,6 @@ theorem unblocked_singular :
     · exact hss.ne rfl
     · exact hss.not_subset fun x _ ↦ by rw [Number.dom_plural]; trivial
 
-/-- `[Pl]` is used exactly at the non-atoms, the non-atomicity derived from Maximize
-Presupposition. -/
 theorem unblocked_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     unblocked numberAlts Number.dom (some .plural) = {x : E | ¬ Atom x} := by
   rw [unblocked_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
@@ -109,7 +101,6 @@ theorem unblocked_plural_of_singular_blocked :
   rw [Set.mem_singleton_iff.1 hψ] at hss
   exact hss.ne rfl
 
-/-- At an atom `[Pl]` is unusable while `[Sg]` competes and usable once it is blocked. -/
 theorem atom_mem_unblocked_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     a ∉ unblocked numberAlts Number.dom (some .plural) ∧
       a ∈ unblocked (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
@@ -135,7 +126,6 @@ theorem dom_first_ssubset_dom_second (h : ¬ c.agent ≤ c.addressee) :
   exact (Person.mem_dom_first c _).1 (hsub ((Person.mem_dom_second c c.addressee).2
     (Or.inr le_rfl)))
 
-/-- The first person is used on its whole domain. -/
 theorem unblocked_first :
     unblocked personAlts (Person.dom c) (some .first) = Person.dom c (some .first) := by
   refine unblocked_eq_self ?_
@@ -147,8 +137,6 @@ theorem unblocked_first :
       (Person.mem_dom_second c x).2 (Or.inl ((Person.mem_dom_first c x).1 hx))
   · exact hss.not_subset (Person.dom_third c ▸ Set.subset_univ _)
 
-/-- Unless the speaker is part of the addressee, the second person is used in its domain outside
-the first person's. -/
 theorem unblocked_second (h : ¬ c.agent ≤ c.addressee) :
     unblocked personAlts (Person.dom c) (some .second) =
       Person.dom c (some .second) \ Person.dom c (some .first) := by
@@ -160,8 +148,6 @@ theorem unblocked_second (h : ¬ c.agent ≤ c.addressee) :
   · exact absurd rfl hss.ne
   · exact absurd (Person.dom_third c ▸ Set.subset_univ _) hss.not_subset
 
-/-- When the speaker is part of the addressee, the first and second person domains coincide and
-competition leaves the second person usable on its whole domain. -/
 theorem unblocked_second_of_degenerate (h : c.agent ≤ c.addressee) :
     unblocked personAlts (Person.dom c) (some .second) = Person.dom c (some .second) := by
   refine unblocked_eq_self ?_
@@ -208,25 +194,17 @@ at each. -/
 noncomputable def JE (X : E) (P : E → SignType) : SignType :=
   forallWeak fun a : {a // Atom a ∧ a ≤ X} ↦ P a
 
-/-- When the atoms below `maxR` are exactly the `R`-elements, `JE` with a bivalent scope asserts
-the ordinary universal. -/
 theorem je_eq_one_iff_forall {R Q : E → Prop} [DecidablePred Q] {maxR : E}
     (hR : ∀ x, R x ↔ Atom x ∧ x ≤ maxR) :
     JE maxR (fun x ↦ SignType.ofProp (Q x)) = 1 ↔ ∀ x, R x → Q x := by
   simp [JE, hR]
 
-/-- `JE` projects its scope's presupposition universally and the indefinite existentially. With
-a restrictor atom `a₂ ≤ boys` outside the scope's domain and some `R`-individual inside it,
-*a boy invited his sister* is defined and *every boy invited his sister* is not. -/
 theorem projection_asymmetry {boys a₁ a₂ : E} {R : E → Prop} {S : E → SignType}
     (ha₂ : Atom a₂) (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : S a₁ ≠ 0) (hdom₂ : S a₂ = 0) :
     aSem R S ≠ 0 ∧ JE boys S = 0 :=
   ⟨fun h ↦ hdom₁ (existsHaug_eq_zero_iff.1 h ⟨a₁, hR₁⟩),
     forallWeak_eq_zero_iff.2 ⟨⟨a₂, ha₂, h₂⟩, hdom₂⟩⟩
 
-/-- Under the weak plural *Lina didn't harvest tomatoes* entails *Lina didn't harvest a tomato*
-wherever the latter is defined, the singular indefinite restricting the plural's assertion to
-atoms. -/
 theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} [DecidablePred harvest]
     (h : aSem starR (fun x ↦ SignType.ofProp (harvest x)) = -1)
     (hsg : aSem (fun x ↦ Atom x ∧ starR x) (fun x ↦ SignType.ofProp (harvest x)) ≠ 0) :
@@ -235,7 +213,6 @@ theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} [DecidablePre
 
 end Every
 
-/-- On a bivalent scope `JE` is [link-1987]'s distributivity operator. -/
 theorem je_eq_one_iff_D [SemilatticeSup E] (X : E) (P : E → Prop) [DecidablePred P] :
     JE X (fun x ↦ SignType.ofProp (P x)) = 1 ↔ D P X := by
   simp only [JE, forallWeak_eq_one_iff, SignType.ofProp_eq_one_iff, Subtype.forall, and_imp, D]
@@ -262,8 +239,6 @@ def janVera : Finset Conjunct := {.man, .woman}
 def matkaDite : Finset Conjunct := {.woman, .child}
 def otecDite : Finset Conjunct := {.man, .child}
 
-/-- Of Sauerland's Czech coordinations, *Jan a Věra* excludes feminine, *Matka a její dítě* takes
-feminine but not neuter, and *Otec a jeho dítě* takes only the vacuous masculine. -/
 theorem czech_gender :
     janVera ∉ Gender.dom (some .feminine) ∧
       matkaDite ∈ Gender.dom (some .feminine) ∧
@@ -276,8 +251,6 @@ theorem czech_gender :
 
 /-! ### Politeness -/
 
-/-- Polite address recruits the semantically unmarked values, plural and third person, whose
-vacuous presuppositions hold of any addressee (German *Sie*). -/
 theorem politeness_unmarked {W P T : Type*} [PartialOrder E] (c : Kaplan.Context W E P T) :
     Number.dom (E := E) (some .plural) = Set.univ ∧ Person.dom c (some .third) = Set.univ :=
   ⟨rfl, rfl⟩

@@ -74,7 +74,6 @@ instance : IsFiniteKernel (baselineSpeaker M) :=
 noncomputable def baselineListener (P : Measure E) : Kernel (Word C S) E :=
   RSA.listener P (baselineSpeaker M)
 
-/-- Every object has two true words, so the baseline speaker gives each of them one half. -/
 theorem baselineSpeaker_real_singleton (r : E) (w : Word C S) :
     (baselineSpeaker M r).real {w} = (if r ∈ ⟦w⟧ᴹ then 1 else 0) / 2 := by
   have hsum : (∑ w' : Word C S, if r ∈ ⟦w'⟧ᴹ then (1 : ℝ≥0∞) else 0) = 2 := by
@@ -152,8 +151,6 @@ theorem pragmatic_iff (hα : 0 < α) {b : Attribute} (hb : b ≠ w.1) :
   refine exists_congr fun r ↦ and_congr_right fun h ↦ exists_congr fun r' ↦
     and_congr_right fun h' ↦ listener_count_lt_iff M hα h h' hb
 
-/-- A condition is pragmatically solvable exactly when it is pragmatic and one object the word is
-true of shares its other feature with more objects than every other. -/
 theorem pragmaticallySolvable_iff (hα : 0 < α) {b : Attribute} (hb : b ≠ w.1) :
     PragmaticallySolvable M α w ↔ Pragmatic M α w ∧ ∃ r ∈ ⟦w⟧ᴹ, ∀ r' ∈ ⟦w⟧ᴹ, r' ≠ r →
       ⟦(⟨b, M r' b⟩ : Word C S)⟧ᴹ.card < ⟦(⟨b, M r b⟩ : Word C S)⟧ᴹ.card := by

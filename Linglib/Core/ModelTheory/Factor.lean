@@ -72,7 +72,6 @@ theorem occurs_iff_nonempty_hom [L.IsRelational] :
   ⟨fun ⟨v, hv⟩ ↦ ⟨(Atom.Canonical.homEquiv _).symm ⟨v, hv⟩⟩,
     fun ⟨φ⟩ ↦ ⟨_, (Atom.Canonical.homEquiv _ φ).2⟩⟩
 
-/-- A homomorphism carries an occurrence of a factor to an occurrence. -/
 theorem Occurs.hom (φ : M →[L] N) : f.Occurs M → f.Occurs N :=
   fun ⟨v, hv⟩ ↦ ⟨φ ∘ v, Atom.comp_mem_realizers φ hv⟩
 

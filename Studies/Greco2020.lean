@@ -281,7 +281,6 @@ def Allows (p : LexicalItem.Token) : Requirement → Prop
 instance (p : LexicalItem.Token) (q : Requirement) : Decidable (Allows p q) := by
   unfold Allows; cases q <;> infer_instance
 
-/-- The predictions depend on the phase head only through `Closed`. -/
 theorem allows_of_closed {p p' : LexicalItem.Token} (hp : Closed p) (hp' : Closed p')
     (q : Requirement) :
     Allows p q ↔ Allows p' q := by
@@ -292,8 +291,6 @@ private theorem rows_sneg_fin :
       (r.judgment = .acceptable ↔ Allows fin q) := by
   decide
 
-/-- Sections 2 and 4: under any admissible CP-phase head, a Sneg row is acceptable exactly when
-the representation meets the requirement of the construction it tests. -/
 theorem rows_sneg {p : LexicalItem.Token} (hp : Closed p) :
     ∀ r ∈ rows, r.construction = .sneg → ∀ q, r.requirement = some q →
       (r.judgment = .acceptable ↔ Allows p q) :=

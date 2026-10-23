@@ -102,8 +102,6 @@ theorem exists_low_of_high (girl : Entity → Prop) (μ : Entity → D) (U : Set
     HighScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) → LowScope (MaxIn U) (GQ.some girl) (Iic ∘ μ) :=
   lowScope_some_of_highScope
 
-/-- For two girls, one exactly the standard's height in inches and one taller, the degrees to
-which every girl is tall are those up to the shorter. -/
 private theorem scopeDegrees_heights :
     scopeDegrees (every fun _ : Fin 2 ↦ True) (Iic ∘ ![49, 50]) = Iic 49 := by
   ext d

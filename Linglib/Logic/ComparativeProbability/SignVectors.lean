@@ -97,7 +97,6 @@ private lemma neg_one_le_mul (a b : SignType) : -1 ≤ (a : ℤ) * b := by
 private lemma mul_self_eq_one {a : SignType} (h : a ≠ 0) : (a : ℤ) * a = 1 := by
   revert h; revert a; decide
 
-/-- A non-mergeable pair carries the same nonzero sign at some coordinate. -/
 private lemma exists_eq_of_not_mergeable {v w : Fin 4 → SignType} (h : ¬Mergeable v w) :
     ∃ j s, s ≠ 0 ∧ v j = s ∧ w j = s := by
   rw [Mergeable, not_and_or, Set.not_disjoint_iff, Set.not_disjoint_iff] at h
@@ -106,9 +105,6 @@ private lemma exists_eq_of_not_mergeable {v w : Fin 4 → SignType} (h : ¬Merge
 
 /-! ### At most three members -/
 
-/-- A balanced family inside `{a, b, c}` cannot contain `a` when `a` shares the nonzero sign
-`s₁` with `b` at `j₁` and `s₂` with `c` at `j₂`, since `s₁ e_{j₁} + s₂ e_{j₂}` is `2` at `a`
-and nonnegative at `b` and `c`. -/
 private lemma false_of_subset_triple (hS : NoWitness S) {a b c : Fin 4 → SignType} (ha : a ∈ S)
     (hsub : S ⊆ {a, b, c}) {j₁ j₂ : Fin 4} {s₁ s₂ : SignType} (hs₁ : s₁ ≠ 0) (hs₂ : s₂ ≠ 0)
     (ha₁ : a j₁ = s₁) (hb₁ : b j₁ = s₁) (ha₂ : a j₂ = s₂) (hc₂ : c j₂ = s₂) : False := by
@@ -166,7 +162,6 @@ private lemma coe_pos (w : Fin 4 → SignType) : (pos w : Set (Fin 4)) = posSupp
 private lemma disjoint_pos_neg (w : Fin 4 → SignType) : Disjoint (pos w) (neg w) :=
   disjoint_filter.2 fun i _ h1 h2 ↦ by simp [h1] at h2
 
-/-- The `𝟙`-functional of a comparison counts positives minus negatives. -/
 private lemma one_dotProduct_eq (w : Fin 4 → SignType) :
     ((1 : Fin 4 → ℤ) ⬝ᵥ fun i ↦ (w i : ℤ)) = #(pos w) - #(neg w) := by
   have key (a : SignType) : (a : ℤ) = (if a = 1 then 1 else 0) - (if a = -1 then 1 else 0) := by
@@ -175,7 +170,6 @@ private lemma one_dotProduct_eq (w : Fin 4 → SignType) :
     Nat.cast_zero, ← sum_sub_distrib]
   exact sum_congr rfl fun i _ ↦ key (w i)
 
-/-- A comparison has at most four signed coordinates, and at most three if one is zero. -/
 private lemma card_pos_add_card_neg_le (w : Fin 4 → SignType) {z : Fin 4} (hz : w z = 0) :
     #(pos w) + #(neg w) ≤ 3 := by
   rw [← card_union_of_disjoint (disjoint_pos_neg w)]
@@ -187,8 +181,6 @@ private lemma card_pos_add_card_neg_le_four (w : Fin 4 → SignType) : #(pos w) 
   rw [← card_union_of_disjoint (disjoint_pos_neg w)]
   exact (card_le_univ _).trans_eq (Fintype.card_fin 4)
 
-/-- No member of a balanced non-mergeable family has two zero coordinates, since the member,
-read as a functional, is then nonnegative on the family and positive on itself. -/
 private lemma at_most_one_zero (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     {v : Fin 4 → SignType} (hvS : v ∈ S) {i₁ i₂ : Fin 4} (hne : i₁ ≠ i₂)
@@ -269,8 +261,6 @@ private lemma negSupport_eq_pair {x : Fin 4 → SignType} {p ζ i j : Fin 4}
   · exact .inl rfl
   · exact .inr rfl
 
-/-- Against a singleton-positive weight-3 member, non-mergeability and non-anti-domination
-become coordinatewise sign constraints. -/
 private lemma constraints_of_sp3 (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     (hno : (S : Set (Fin 4 → SignType)).Pairwise (¬AntiDominating · ·))
     {x w : Fin 4 → SignType} (hxS : x ∈ S) (hwS : w ∈ S) (hxw : x ≠ w)
@@ -298,8 +288,6 @@ private lemma constraints_of_sp3 (hmerge : (S : Set (Fin 4 → SignType)).Pairwi
     · exact .inl rfl
     · exact .inr rfl
 
-/-- Under the pair constraints with the pinned 3-cycle, every admissible sign pattern has
-nonnegative witness value. -/
 private lemma wt3_witness_bound (wp wi wj wz : SignType)
     (h1 : wp = 1 ∨ wi = 1 ∨ wj = 1 ∨ wz = 1)
     (h2p : wp = 0 → wi ≠ 0 ∧ wj ≠ 0 ∧ wz ≠ 0)
@@ -314,9 +302,6 @@ private lemma wt3_witness_bound (wp wi wj wz : SignType)
     0 ≤ (wp : ℤ) + wi + wz - wj := by
   cases wp <;> cases wi <;> cases wj <;> cases wz <;> simp_all +decide
 
-/-- A singleton-positive weight-3 member forces an *s-shape* companion, which is zero at the
-    member's positive coordinate, `-1` at its zero coordinate, and splits ±1 on the remaining
-    two. -/
 private lemma s_shape_forcing (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     (hno : (S : Set (Fin 4 → SignType)).Pairwise (¬AntiDominating · ·))
@@ -370,8 +355,6 @@ private lemma s_shape_forcing (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v
     · exact hmy
   exact ⟨y, hyS, i, j, hip, hiζ, hjp, hjζ, Ne.symm hji, hyp, hyζ, hyi, hyj⟩
 
-/-- No member is singleton-positive of weight 3, since the s-shape chain closes into a 3-cycle
-    whose witness is nonnegative on all of `S` and positive at `x`. -/
 private lemma sp3_kill (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
     (hmerge : (S : Set (Fin 4 → SignType)).Pairwise (¬Mergeable · ·))
     (hno : (S : Set (Fin 4 → SignType)).Pairwise (¬AntiDominating · ·))
@@ -469,12 +452,10 @@ private lemma sp3_kill (hS : NoWitness S) (hposne : ∀ v ∈ S, ∃ i, v i = 1)
 private def pairClass (P : Finset (Fin 4)) : Fin 3 :=
   if P = {0, 1} ∨ P = {2, 3} then 0 else if P = {0, 2} ∨ P = {1, 3} then 1 else 2
 
-/-- Distinct 2-subsets in the same complement class are complementary, hence disjoint. -/
 private lemma pairClass_eq_disjoint : ∀ P Q : Finset (Fin 4),
     #P = 2 → #Q = 2 → P ≠ Q → pairClass P = pairClass Q → P ∩ Q = ∅ := by
   decide
 
-/-- A full-support pair with disjoint positive supports is anti-dominating. -/
 private lemma antiDominating_of_ne_zero {v w : Fin 4 → SignType} (hv : ∀ i, v i ≠ 0)
     (hw : ∀ i, w i ≠ 0) (hdisj : Disjoint (posSupport v) (posSupport w)) :
     AntiDominating v w := by

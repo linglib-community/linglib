@@ -87,7 +87,6 @@ variable {k : ι → K} {v : Profile ι α K} {spatial : α → K} {x y : α}
 theorem degree_eq_one_iff (hs : spatial x ≠ 0) : degree k v spatial x = 1 ↔ k ⬝ᵥ v x = spatial x :=
   div_eq_one_iff_eq hs
 
-/-- Under a respect phrase the degree is the extent along the named dimension. -/
 theorem degree_respect [DecidableEq ι] {i : ι} :
     degree (respect i) v spatial x = v x i / spatial x := by
   rw [degree, respect, single_dotProduct, one_mul]
@@ -106,9 +105,6 @@ theorem degree_nonneg (hk : ∀ i, 0 ≤ k i) (hv : ∀ i, 0 ≤ v x i) (hs : 0 
     0 ≤ degree k v spatial x :=
   div_nonneg (sum_nonneg fun i _ ↦ mul_nonneg (hk i) (hv i)) hs
 
-/-- The lower bound is the existence of a disturbance (section 3.4). Under a weighting positive
-on every dimension, the host has a positive degree exactly when some disturbance has positive
-extent. -/
 theorem degree_pos_iff (hk : ∀ i, 0 < k i) (hv : ∀ i, 0 ≤ v x i) (hs : 0 < spatial x) :
     0 < degree k v spatial x ↔ ∃ i, 0 < v x i := by
   rw [degree, div_pos_iff_of_pos_right hs, dotProduct,
@@ -118,26 +114,19 @@ theorem degree_pos_iff (hk : ∀ i, 0 < k i) (hv : ∀ i, 0 ≤ v x i) (hs : 0 <
   exact exists_congr fun i ↦ by
     simp only [mem_univ, true_and, mul_ne_zero_iff_left (hk i).ne', (hv i).lt_iff_ne']
 
-/-- Unmodified predication is objective (section 3.2.1), since whether the host is disturbed at
-all does not depend on the weighting of the dimensions. -/
 theorem degree_pos_iff_degree_pos {k' : ι → K} (hk : ∀ i, 0 < k i) (hk' : ∀ i, 0 < k' i)
     (hv : ∀ i, 0 ≤ v x i) (hs : 0 < spatial x) :
     0 < degree k v spatial x ↔ 0 < degree k' v spatial x := by
   rw [degree_pos_iff hk hv hs, degree_pos_iff hk' hv hs]
 
-/-- The upper bound is the spatial extent of the host (section 3.4), so a disturbance within the
-host's extent has degree at most one. -/
 theorem degree_le_one (h : k ⬝ᵥ v x ≤ spatial x) (hs : 0 < spatial x) :
     degree k v spatial x ≤ 1 :=
   (div_le_one₀ hs).2 h
 
-/-- The same disturbance on a smaller host is a higher degree of disturbance. -/
 theorem degree_lt_degree_of_lt {spatial' : α → K} (h0 : 0 < k ⬝ᵥ v x) (hs : 0 < spatial' x)
     (h : spatial' x < spatial x) : degree k v spatial x < degree k v spatial' x :=
   div_lt_div_of_pos_left h0 hs h
 
-/-- At equal spatial extents the comparative is the utilitarian rule of the weighting on the
-extent profile. -/
 theorem more_iff_utilitarian (hs : spatial x = spatial y) (hs0 : 0 < spatial x) :
     More k v spatial x y ↔ utilitarian k v x y ∧ ¬ utilitarian k v y x := by
   rw [More, degree, degree, ← hs, div_lt_div_iff_of_pos_right hs0, utilitarian, utilitarian,
@@ -191,9 +180,6 @@ def Verb (d : K) (e : Event μ std) : Prop := d ≤ e.diff
 adjectival state at the root's standard, whatever its difference degree. -/
 theorem Verb.pos_final {d : K} {e : Event μ std} (_ : Verb d e) : std ≤ μ e.final := e.std_le
 
-/-- *Badly cracked* holds without *cracked badly* (section 5.2). A windshield with a pre-existing
-crack that grows a little is badly cracked at the end, yet did not crack badly, since the
-difference degree is small. -/
 theorem Event.pos_not_verb {d : K} (e : Event μ std) (hd : d ≤ μ e.final) (h : e.diff < d) :
     d ≤ μ e.final ∧ ¬ Verb d e :=
   ⟨hd, not_le.2 h⟩

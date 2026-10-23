@@ -195,12 +195,9 @@ def Item.class : Item → DistMaxClass
   | .jederDP | .jederDistance => .distMax
   | .jeweils => .distNonMax
 
-/-- Their question Q has a negative answer, since *jeweils* is obligatorily distributive and
-permits exceptions. -/
 theorem jeweils_answers_Q :
     Item.jeweils.class.isDistributive ∧ ¬ Item.jeweils.class.isMaximal := by decide
 
-/-- Every cell of the classification is filled, the fourth by *jeweils*. -/
 theorem four_cells : ∀ c : DistMaxClass, ∃ i : Item, i.class = c
   | .distMax => ⟨.jederDP, rfl⟩
   | .distNonMax => ⟨.jeweils, rfl⟩
@@ -255,8 +252,6 @@ theorem jeweils_accepts_magnets :
     () ∈ tolerant (· ≤ ·) (fun z ↦ {_u | ∀ b ∈ z, hasTwoMagnets b}) (Finset.univ : Finset Box) :=
   ⟨{0, 1, 2, 3}, Finset.subset_univ _, isBot_iff_eq_bot.not.2 (by decide), by decide⟩
 
-/-- The speakers who reject *jeweils* in the scenario are those whose tolerance is the identity,
-for whom it coincides with *jeder*. -/
 theorem jeweils_identity_rejects_magnets :
     () ∉ tolerant (· = ·) (fun z ↦ {_u | ∀ b ∈ z, hasTwoMagnets b}) (Finset.univ : Finset Box) := by
   rw [tolerant_eq (isBot_iff_eq_bot.not.2 (by decide))]

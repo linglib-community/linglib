@@ -61,8 +61,6 @@ instance : Nonempty Utterance := ⟨.silent⟩
 
 variable {D : Type*} [LinearOrder D]
 
-/-- The material sorites is valid, in that the bottom member is tall if the top member is tall and
-no gap holds the threshold. -/
 theorem sorites_valid (x : ℕ → D) (n : ℕ) {θ : D} (hθ : θ < x n)
     (hgap : ∀ i ∈ Finset.range n, θ ∉ Set.Ico (x i) (x (i + 1))) : θ < x 0 := by
   induction n with
@@ -115,24 +113,18 @@ noncomputable def L1 (μ : Measure D) [IsProbabilityMeasure μ]
 variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α : ℝ)
   (cost : Utterance → ℝ)
 
-/-- The speaker produces an utterance at a degree and assignment exactly when it is true there
-and the degree has positive prior. -/
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (d : D) (θ : D × D) (u : Utterance) :
     S1 μ α cost (d, θ) {u} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
   speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
 
 variable [IsProbabilityMeasure ν]
 
-/-- The pragmatic listener is truthful, putting positive mass on a degree and assignment exactly
-when both have positive prior and the utterance is true at the degree under the assignment. -/
 theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) (u : Utterance) (d : D) (θ : D × D) :
     L1 μ ν α cost u {(d, θ)} ≠ 0 ↔ μ {d} ≠ 0 ∧ ν {θ} ≠ 0 ∧ d ∈ sem θ u := by
   rw [L1, listener_apply_singleton_ne_zero_iff, ← Set.singleton_prod_singleton,
     Measure.prod_prod, mul_ne_zero_iff, S1_apply_singleton_ne_zero_iff μ α cost hα d θ u]
   tauto
 
-/-- The pragmatic listener is a probability measure at an utterance true at a degree of positive
-prior under an assignment of positive prior. -/
 theorem isProbabilityMeasure_L1 (hα : 0 < α) {u : Utterance} {d : D} {θ : D × D}
     (hd : μ {d} ≠ 0) (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
     IsProbabilityMeasure (L1 μ ν α cost u) :=
@@ -145,7 +137,6 @@ first coordinate of the assignment. -/
 noncomputable def thresholdPosterior (u : Utterance) : Measure D :=
   (L1 μ ν α cost u).snd.fst
 
-/-- The threshold posterior is a probability measure wherever the listener is. -/
 theorem isProbabilityMeasure_thresholdPosterior (hα : 0 < α) {u : Utterance} {d : D} {θ : D × D}
     (hd : μ {d} ≠ 0) (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
     IsProbabilityMeasure (thresholdPosterior μ ν α cost u) := by
@@ -157,8 +148,6 @@ theorem isProbabilityMeasure_thresholdPosterior (hα : 0 < α) {u : Utterance} {
 (eq. 32) is the mass of thresholds below it. -/
 noncomputable def metalinguistic (ρ : Measure D) (d : D) : ℝ≥0∞ := ρ (Set.Iio d)
 
-/-- The metalinguistic probability marginalizes the joint posterior over the degree and the
-antonym's threshold. -/
 theorem metalinguistic_thresholdPosterior (u : Utterance) (d : D) :
     metalinguistic (thresholdPosterior μ ν α cost u) d
       = L1 μ ν α cost u {p | p.2.1 < d} := by
@@ -182,7 +171,6 @@ variable (ρ : Measure D)
 threshold falls between two adjacent members. -/
 noncomputable def gapMass (a b : D) : ℝ≥0∞ := ρ (Set.Ico a b)
 
-/-- Along a monotone sequence the gap masses sum to the mass of the whole range. -/
 theorem sum_gapMass (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
     ∑ i ∈ Finset.range n, gapMass ρ (x i) (x (i + 1)) = gapMass ρ (x 0) (x n) := by
   induction n with
@@ -192,8 +180,6 @@ theorem sum_gapMass (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
       ← measure_union Set.Ico_disjoint_Ico_same .of_discrete,
       Set.Ico_union_Ico_eq_Ico (hx (Nat.zero_le n)) (hx n.le_succ)]
 
-/-- Adams's theorem bounds the uncertainty of the conclusion of a valid argument by the summed
-uncertainty of its premises. -/
 theorem adams {Ω ι : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (s : Finset ι) (A : ι → Set Ω) (hA : ∀ i ∈ s, MeasurableSet (A i)) {C : Set Ω}
     (hC : ⋂ i ∈ s, A i ⊆ C) : 1 - μ C ≤ ∑ i ∈ s, (1 - μ (A i)) := by
@@ -206,8 +192,6 @@ theorem adams {Ω ι : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabil
 
 variable [IsProbabilityMeasure ρ]
 
-/-- The uncertainty of the sorites conclusion is bounded by the uncertainty that the top member
-is tall plus the summed gap masses, which is the mass of the whole range. -/
 theorem sorites_uncertainty (x : ℕ → D) (hx : Monotone x) (n : ℕ) :
     1 - metalinguistic ρ (x 0) ≤ (1 - metalinguistic ρ (x n)) + gapMass ρ (x 0) (x n) := by
   have h := adams ρ (Finset.range (n + 1))

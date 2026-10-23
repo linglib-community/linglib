@@ -31,7 +31,6 @@ def bi : Comparative :=
   , caseAssignment := .fixed
   , fixedEncoding := some .directObject }
 
-/-- The *bǐ*-comparative is an exceed comparative. -/
 theorem bi_type : bi.type = .exceed := rfl
 
 end Mandarin.Comparison

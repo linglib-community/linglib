@@ -74,13 +74,10 @@ def Middling (t : D) : Prop := Pos μ x w s ∧ ¬ Pos μ x w t
 
 variable {Acc pursued μ x w s}
 
-/-- An object pursued in the world of evaluation meets its own standard. -/
 theorem pos_of_pursued (hs : IsNecessityStandard Acc pursued μ x w s) (hw : w ∈ Acc w)
     (hp : pursued x w) : Pos μ x w s :=
   hs.1 ⟨w, ⟨hw, hp⟩, rfl⟩
 
-/-- Existential force: on a scale open above, a standard exists only if the object is pursued
-in some accessible world, since otherwise every degree is a lower bound. -/
 theorem exists_pursued [NoMaxOrder D] (hs : IsNecessityStandard Acc pursued μ x w s) :
     ∃ w' ∈ Acc w, pursued x w' := by
   by_contra h
@@ -91,8 +88,6 @@ theorem exists_pursued [NoMaxOrder D] (hs : IsNecessityStandard Acc pursued μ x
   obtain ⟨t, ht⟩ := exists_gt s
   exact lt_irrefl s (ht.trans_le (hs t))
 
-/-- Context sensitivity: widening the circumstances, hence the pursued worlds, can only lower
-the standard. -/
 theorem standard_antitone {Acc' : W → Set W} {s' : D}
     (hs : IsNecessityStandard Acc pursued μ x w s) (hs' : IsNecessityStandard Acc' pursued μ x w s')
     (h : Acc w ⊆ Acc' w) : s' ≤ s :=
@@ -103,8 +98,6 @@ theorem standard_antitone {Acc' : W → Set W} {s' : D}
 /-! ### Force and the zone of indifference -/
 
 variable (x w) in
-/-- When circumstantial alternatives leave the object's value fixed, *acceptable* says
-exactly that some accessible world pursues it. -/
 theorem acceptable_iff [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x w) :
     Acceptable Acc pursued μ x w ↔ ∃ w' ∈ Acc w, pursued x w' := by
   refine ⟨fun ⟨_, hs, _⟩ ↦ exists_pursued hs, fun ⟨w', hw', hp⟩ ↦ ⟨μ x w, ?_, le_rfl⟩⟩
@@ -115,21 +108,16 @@ theorem acceptable_iff [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x w)
   exact isGLB_singleton
 
 variable (x w) in
-/-- "Neither acceptable nor unacceptable" is defective: the first conjunct denies that any
-accessible world pursues the object, the second that none does. -/
 theorem neither_defective [NoMaxOrder D] (hμ : ∀ w' ∈ Acc w, μ x w' = μ x w) :
     ¬ (¬ Acceptable Acc pursued μ x w ∧ ¬ Unacceptable Acc pursued x w) := by
   rw [acceptable_iff x w hμ]
   simp [Unacceptable]
 
-/-- *good* and *bad* on [kennedy-2007]'s two standards leave a zone of indifference between
-them, which the necessity standard's single point does not. -/
 theorem good_gap (tp : Degree.ThresholdPair D) (h : tp.neg ≤ tp.pos) : tp.gap.Nonempty :=
   tp.gap_nonempty_iff.2 h
 
 /-! ### Against the minimum-standard analysis -/
 
-/-- Under a minimum standard the comparative entails the positive form. -/
 theorem comparative_entails_minStandardPos [OrderBot D] {y : E} (h : μ y w < μ x w) :
     Degree.MinStandardPos (μ · w) x :=
   bot_le.trans_lt h
@@ -140,20 +128,14 @@ theorem comparative_not_entails_pos {y : E} (h : μ y w < μ x w) (hs : μ x w <
     μ y w < μ x w ∧ ¬ Pos μ x w s :=
   ⟨h, not_le_of_gt hs⟩
 
-/-- *slightly* diagnoses a standard at the scale minimum; an attained necessity standard lies
-above it whenever every pursued value does. -/
 theorem bot_lt_standard [OrderBot D] (hs : IsLeast (pursuedValues Acc pursued μ x w) s)
     (h : ∀ v ∈ pursuedValues Acc pursued μ x w, ⊥ < v) : ⊥ < s :=
   h s hs.1
 
 /-! ### The middling inference -/
 
-/-- With *good*'s standard above the necessity standard, *good* entails *decent*, so
-*decent* implicates *not good*. -/
 theorem pos_of_pos_of_le {t : D} (h : s ≤ t) (ht : Pos μ x w t) : Pos μ x w s := h.trans ht
 
-/-- The implicature is cancelable: meeting the higher standard is consistent with meeting the
-lower one, so *decent, in fact good* is consistent. -/
 theorem middling_cancelable {t : D} (h : s ≤ t) (ht : Pos μ x w t) :
     Pos μ x w s ∧ Pos μ x w t :=
   ⟨pos_of_pos_of_le h ht, ht⟩
@@ -164,7 +146,6 @@ section Linear
 
 variable [LinearOrder D] {μ : E → W → D} {x : E} {w : W} {s : D}
 
-/-- A single crisp point: below the standard the positive form fails outright. -/
 theorem not_pos_iff : ¬ Pos μ x w s ↔ μ x w < s := not_le
 
 end Linear

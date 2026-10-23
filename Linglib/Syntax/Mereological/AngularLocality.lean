@@ -60,7 +60,6 @@ theorem descendant_of_canSubjoin (h : P.CanSubjoin γ β) : P.Descendant γ β :
   let ⟨_, _, h₁, h₂⟩ := h
   (descendant_of_nPart h₁).trans (descendant_of_nPart h₂)
 
-/-- The target of a subjunction already has a 1-part. -/
 theorem isSome_onePart_of_canSubjoin (h : P.CanSubjoin γ β) : (P.onePart β).isSome :=
   let ⟨_, _, _, h₂⟩ := h
   let ⟨c, _, hc⟩ := TransGen.tail'_iff.1 h₂
@@ -100,8 +99,6 @@ namespace IsDomain
 
 variable {S : Set α} {b x y : α}
 
-/-- An `n`-part chain from inside a domain to outside it runs in the second dimension and starts
-on the edge of `b`. -/
 theorem exit_of_nPart (hD : P.IsDomain S b) (h : P.NPart n x y) (hx : x ∈ S) (hy : y ∉ S) :
     n = .two ∧ (x = b ∨ P.NPart .two x b) := by
   revert hx
@@ -114,7 +111,6 @@ theorem exit_of_nPart (hD : P.IsDomain S b) (h : P.NPart n x y) (hx : x ∈ S) (
       exact ⟨rfl, .inr (hcb.elim (fun e ↦ e ▸ .single h') (.head h'))⟩
     · exact hD.exit a hx _ _ h' hc
 
-/-- An object inside a domain subjoins outside it only from the edge of `b`. -/
 theorem eq_or_nPart_two_of_canSubjoin (hD : P.IsDomain S b) (hγ : γ ∈ S) (hβ : β ∉ S)
     (h : P.CanSubjoin γ β) : γ = b ∨ P.NPart .two γ b := by
   obtain ⟨_, a, hγa, haβ⟩ := h
@@ -124,7 +120,6 @@ theorem eq_or_nPart_two_of_canSubjoin (hD : P.IsDomain S b) (hγ : γ ∈ S) (h�
 
 end IsDomain
 
-/-- A 2-part of the 2-part `b` of `d` subjoins to anything `d` is a 1-part of. -/
 theorem canSubjoin_of_nPart_two {b d : α} (hγ : P.NPart .two γ b) (hbd : P.Imm .two b d)
     (hd : P.NPart .one d β) : P.CanSubjoin γ β :=
   ⟨.two, d, hγ.tail hbd, hd⟩

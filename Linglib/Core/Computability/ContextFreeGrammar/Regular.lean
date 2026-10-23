@@ -82,7 +82,6 @@ theorem mem_rules_toContextFreeGrammar {r : ContextFreeRule α σ} :
   unfold toContextFreeGrammar
   simp [eq_comm]
 
-/-- The grammar of `M` derives every word followed by the state `M` reaches on it. -/
 theorem derives_toContextFreeGrammar (w : List α) :
     M.toContextFreeGrammar.Derives [nonterminal M.start]
       (w.map terminal ++ [nonterminal (M.eval w)]) := by
@@ -94,8 +93,6 @@ theorem derives_toContextFreeGrammar (w : List α) :
         mem_rules_toContextFreeGrammar.2 (.inl ⟨a, rfl⟩), rfl, ?_⟩)
     simp [eval_append_singleton]
 
-/-- The sentential forms of the grammar of `M` are a word followed by the state `M` reaches on it,
-and the words `M` accepts. -/
 theorem derives_toContextFreeGrammar_iff {v : List (Symbol α σ)} :
     M.toContextFreeGrammar.Derives [nonterminal M.start] v ↔ ∃ w,
       v = w.map terminal ++ [nonterminal (M.eval w)] ∨
@@ -158,7 +155,6 @@ theorem append (h₁ : Annotates M p l₁ out₁ q) (h₂ : Annotates M q l₂ o
   | terminal a _ ih => exact .terminal a (ih h₂)
   | nonterminal A _ ih => exact .nonterminal A (ih h₂)
 
-/-- An annotation of a concatenation splits at the concatenation. -/
 theorem split_out (h : Annotates M p l (out₁ ++ out₂) r) :
     ∃ l₁ l₂ q, l = l₁ ++ l₂ ∧ Annotates M p l₁ out₁ q ∧ Annotates M q l₂ out₂ r := by
   induction out₁ generalizing l p with
@@ -192,7 +188,6 @@ theorem map_terminal (p : σ) (w : List T) :
   | nil => exact .nil p
   | cons a w ih => exact .terminal a (ih (M.step p a))
 
-/-- A word annotates only itself, and ends where the automaton ends. -/
 theorem eq_of_map_terminal_right {w : List T} (h : Annotates M p l (w.map .terminal) q) :
     l = w.map .terminal ∧ q = M.evalFrom p w := by
   induction w generalizing l p with
@@ -201,7 +196,6 @@ theorem eq_of_map_terminal_right {w : List T} (h : Annotates M p l (w.map .termi
     cases h with
     | terminal _ h => obtain ⟨rfl, rfl⟩ := ih h; exact ⟨rfl, rfl⟩
 
-/-- A word is annotated only by itself, and ends where the automaton ends. -/
 theorem eq_of_map_terminal_left {w : List T} (h : Annotates M p (w.map .terminal) out q) :
     out = w.map .terminal ∧ q = M.evalFrom p w := by
   induction w generalizing out p with
@@ -306,7 +300,6 @@ theorem mem_inter_rules {r' : ContextFreeRule T (G.inter M).NT} :
 
 /-! ### The grammar generates the intersection -/
 
-/-- A step of `G.inter M` on an annotated form is a step of `G` on the form it annotates. -/
 theorem Produces.of_inter {l' t' : List (Symbol T (G.inter M).NT)}
     (step : (G.inter M).Produces l' t') {p q : σ} {out : List (Symbol T G.NT)}
     (h : Annotates M p l' out q) : ∃ out', G.Produces out out' ∧ Annotates M p t' out' q := by
@@ -321,8 +314,6 @@ theorem Produces.of_inter {l' t' : List (Symbol T (G.inter M).NT)}
     exact ⟨out₁ ++ r.output ++ out₃, ⟨r, hr, ContextFreeRule.rewrites_of_exists_parts r out₁ out₃⟩,
       (h₁.append hbody).append h₃⟩
 
-/-- A derivation of `G.inter M` from an annotated form is a derivation of `G` from the form it
-annotates. -/
 theorem Derives.of_inter {l' t' : List (Symbol T (G.inter M).NT)}
     (hd : (G.inter M).Derives l' t') {p q : σ} {out : List (Symbol T G.NT)}
     (h : Annotates M p l' out q) : ∃ out', G.Derives out out' ∧ Annotates M p t' out' q := by
@@ -345,8 +336,6 @@ theorem language_inter_le : (G.inter M).language ≤ G.language ⊓ M.accepts :=
       exact ⟨(mem_language_iff _ _).mpr hdG, hq⟩
     · simp [hin] at hi
 
-/-- Every derivation of `G` of a word is the projection of a derivation of `G.inter M` from an
-annotation of its start, for any entry state. -/
 theorem exists_annotates_of_derives {out : List (Symbol T G.NT)} {w : List T}
     (hd : G.Derives out (w.map .terminal)) (p : σ) :
     ∃ l, Annotates M p l out (M.evalFrom p w) ∧ (G.inter M).Derives l (w.map .terminal) := by

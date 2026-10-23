@@ -125,8 +125,6 @@ def entry : Predicate → Verb
   | .suggest => suggest.toVerb
   | .think => think.toVerb
 
-/-- Every predicate takes a finite clause complement, as the polar questions of the stimuli
-require. -/
 theorem all_predicates_take_clause_complement (p : Predicate) :
     ∃ fr ∈ (entry p).valency.frames, fr.HasFinite := by
   cases p <;> decide

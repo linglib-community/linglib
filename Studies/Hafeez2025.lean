@@ -181,7 +181,6 @@ def Clip.scene (c : Clip) : Scene where
     | .o => .inanimate
   mediation := if c.third.isSome then .indirect else .direct
 
-/-- Every clip is a scene the design can stage. -/
 theorem clips_stageable : ∀ c ∈ clips, c.scene.Stageable := by decide
 
 /-- The predictor table as printed (Table 4) disagrees with the clip names on five clips: it
@@ -214,7 +213,6 @@ def Tree.leaves : Tree → ℕ → List (ℕ × List (Predictor × Sign))
       (p.leaves (n + 1)).map (Prod.map id (l :: ·)) ++
         (f.leaves (n + 1 + p.size)).map (Prod.map id (negate l :: ·))
 
-/-- The leaves of a tree partition the scenes: each scene falls under exactly one leaf. -/
 theorem Tree.countP_leaves (t : Tree) (n : ℕ) (s : Scene) :
     (t.leaves n).countP (fun p ↦ s.Fits p.2) = 1 := by
   induction t generalizing n with
@@ -266,11 +264,9 @@ theorem leaves_partition (r : ResponseType) (t : Tree) (h : tree r = some t) (s 
 /-- The number of clips whose scene falls under a scene type. -/
 def clipCount (t : List (Predictor × Sign)) : ℕ := clips.countP fun c ↦ c.scene.Fits t
 
-/-- Under the clip names, no leaf holds more responses than the twelve raters give its clips. -/
 theorem responses_le : ∀ l ∈ leaves, l.responses ≤ raters * clipCount (leafPath l) := by
   decide
 
-/-- Every leaf holds exactly the responses of its clips but three, which fall short. -/
 theorem responses_shortfall :
     ((leaves.filter fun l ↦ l.responses ≠ raters * clipCount (leafPath l)).map
       fun l ↦ (l.responseType, l.node)) = [(.lexInst, 8), (.lexDat, 5), (.ncrA, 7)] := by
@@ -298,8 +294,6 @@ theorem table4_exceeded :
       fun l ↦ (l.responseType, l.node)) = [(.lexInst, 4), (.adv, 5), (.nca, 3)] := by
   decide
 
-/-- Every printed percentage is some count of the leaf's responses, rounded, except the 0.08 of
-the LEX-INST tree, which no count out of 252 rounds to. -/
 theorem attainablePercent_iff :
     ∀ l ∈ leaves, l.ceilingPercent.AttainablePercent l.responses ↔
       ¬(l.responseType = .lexInst ∧ l.node = 4) := by
@@ -321,14 +315,10 @@ def Prototypical (r : ResponseType) (s : Scene) : Prop := ∃ t ∈ prototype r,
 instance (r : ResponseType) : DecidablePred (Prototypical r) := fun s ↦
   decidable_of_iff (∃ t ∈ (prototype r).toList, s.Fits t) (by simp [Prototypical])
 
-/-- LEX-DAT, whose peak is 41.7%, has no prototype; the response types the acceptability study
-did not test have none either. -/
 theorem prototype_eq_none_iff (r : ResponseType) :
     prototype r = none ↔ r ∈ [.lexNom, .lexDat, .acc, .impCausRel] := by
   cases r <;> decide +kernel
 
-/-- Every prototype holds of a clip, so the statements about prototypical scenes below are not
-vacuous. -/
 theorem exists_clip_prototypical (r : ResponseType) (hr : prototype r ≠ none) :
     ∃ c ∈ clips, Prototypical r c.scene := by
   cases r <;> first | decide +kernel | exact absurd (by decide +kernel) hr
@@ -350,28 +340,21 @@ theorem summary_prototype_eq : ∀ row ∈ summary,
     ∃ c ∈ comparison, c.responseType = row.responseType ∧ c.prototype = row.prototype := by
   decide +kernel
 
-/-- The printed prototypes denote the derived ones on the scenes the design can stage, ADV's
-excepted. -/
 theorem summary_iff_prototype :
     ∀ row ∈ comparison, row.responseType ≠ .adv → ∀ s : Scene, s.Stageable →
       ((∃ t ∈ row.prototype, s.Fits t) ↔ Prototypical row.responseType s) := by
   decide +kernel
 
-/-- Apart from LEX-ERG's and ADV's, the printed prototypes denote the derived ones on every
-scene. -/
 theorem summary_iff_prototype_of_ne :
     ∀ row ∈ comparison, row.responseType ≠ .adv → row.responseType ≠ .lexErg → ∀ s : Scene,
       ((∃ t ∈ row.prototype, s.Fits t) ↔ Prototypical row.responseType s) := by
   decide +kernel
 
-/-- LEX-ERG's printed prototype [+IHCr, +InanCEAF] drops its leaf's [-Mediation]: it also holds
-of a mediated scene with an inanimate second participant, which the design never stages. -/
 theorem lexErg_summary_not_prototype :
     ∃ s : Scene, ¬s.Stageable ∧ s.Fits [(.ihcr, .plus), (.inanCEAF, .plus)] ∧
       ¬Prototypical .lexErg s :=
   ⟨⟨.intentionalHuman, .inanimate, .indirect⟩, by decide +kernel⟩
 
-/-- ADV's printed prototype [+InanCEAF] is the complement of the derived one. -/
 theorem adv_summary_iff_not_prototype :
     ∀ row ∈ comparison, row.responseType = .adv → ∀ s : Scene,
       ((∃ t ∈ row.prototype, s.Fits t) ↔ ¬Prototypical .adv s) := by
@@ -399,31 +382,24 @@ def CauseeAffectee.degree : CauseeAffectee → Option Degree
   | .physicallyImpacted | .psychologicallyImpacted => some .marginal
   | .inanimate => none
 
-/-- LEX-ERG expresses the highest degree of agentivity: an intentional causer. -/
 theorem lexErg_full : ∀ s, Prototypical .lexErg s → s.causer.degree = some .full := by
   decide +kernel
 
-/-- LEX-INST expresses marginal agentivity or none. -/
 theorem lexInst_marginal : ∀ s, Prototypical .lexInst s →
     s.causer.degree ≠ some .full ∧ s.causeeAffectee.degree = none := by
   decide +kernel
 
-/-- MCV is causation by communication: an intentional causer and a causee in control. -/
 theorem mcv_full_induced : ∀ s, Prototypical .mcv s →
     s.causer.degree = some .full ∧ s.causeeAffectee.degree = some .induced := by
   decide +kernel
 
-/-- ADV wants an agentive second participant, partially or marginally. -/
 theorem adv_agentive : ∀ s, Prototypical .adv s → s.causeeAffectee.degree ≠ none := by
   decide +kernel
 
-/-- NCA wants an agentive causer, fully or marginally, and an agentive second participant,
-partially or marginally. -/
 theorem nca_agentive : ∀ s, Prototypical .nca s →
     s.causer.degree ≠ none ∧ s.causeeAffectee.degree ≠ none := by
   decide +kernel
 
-/-- NCrA wants a non-agentive causer and an agentive second participant. -/
 theorem ncrA_nonagentive : ∀ s, Prototypical .ncrA s →
     s.causer.degree = none ∧ s.causeeAffectee.degree ≠ none := by
   decide +kernel
@@ -447,13 +423,10 @@ theorem nca_combined_not_le_prototype :
 
 /-! ### Compactness and directness -/
 
-/-- The LEX-ERG prototype is unmediated and the MCV prototype mediated. -/
 theorem lexErg_mcv_mediation :
     ∀ s₁ s₂, Prototypical .lexErg s₁ → Prototypical .mcv s₂ → s₁.mediation < s₂.mediation := by
   decide +kernel
 
-/-- The lexical LEX-ERG and the morphological MCV, located by the mediation of their prototypes,
-satisfy [comrie-1989]'s monotonicity strictly. -/
 theorem lexErg_mcv_comrieMonotone (s₁ s₂ : Scene) (h₁ : Prototypical .lexErg s₁)
     (h₂ : Prototypical .mcv s₂) :
     CausativeConstruction.ComrieMonotone ⟨.lexical, s₁.mediation⟩ ⟨.morphological, s₂.mediation⟩ :=

@@ -103,7 +103,6 @@ theorem root_concat {d : Derivation F} (hd : d ≠ []) (t : RoseTree (Option F))
   obtain ⟨s, ts, rfl⟩ := List.exists_cons_of_ne_nil hd
   simp [root]
 
-/-- The root of a row of two or more constituents is unlabelled. -/
 theorem value_eq_none_of_root {d : Derivation F} {t : RoseTree (Option F)} (h : root d = some t)
     (hd : 2 ≤ d.length) : t.value = none := by
   induction d using List.reverseRecOn with
@@ -136,14 +135,11 @@ theorem mem_mergeOptions {d d' : Derivation F} :
   exact ⟨fun ⟨j, hj, x, hx, h⟩ ↦ ⟨j, hj, ⟨x, hx⟩, h.symm⟩,
     fun ⟨j, hj, ⟨x, hx⟩, h⟩ ↦ ⟨j, hj, x, hx, h.symm⟩⟩
 
-/-- The first feature is lexicalized as a phrase of its own. -/
 theorem mergeOptions_nil (L : RuleSet (LexicalEntry (Option F) α)) (f : F) :
     mergeOptions L [] f =
       ((treeSpellout L (leaf (some f))).map fun _ ↦ [leaf (some f)]).toList := by
   cases h : treeSpellout L (leaf (some f)) <;> simp [mergeOptions, h]
 
-/-- A feature merged with a single constituent is lexicalized together with it, or else the
-constituent evacuates and the feature is lexicalized alone, as a suffix. -/
 theorem mergeOptions_singleton (L : RuleSet (LexicalEntry (Option F) α))
     (t : RoseTree (Option F)) (f : F) :
     mergeOptions L [t] f =
@@ -152,9 +148,6 @@ theorem mergeOptions_singleton (L : RuleSet (LexicalEntry (Option F) α))
   cases h : treeSpellout L (merge f t) <;> cases h' : treeSpellout L (leaf (some f)) <;>
     simp [mergeOptions, List.range_succ, h, h']
 
-/-- On a lexicon whose stored trees have no unlabelled node a merger never fuses constituents.
-It grows the last one, everything before it evacuating, or adds one, everything evacuating,
-which are the specifier-to-specifier and complement movements of Starke's original steps. -/
 theorem length_le_of_mem_mergeOptions
     (hL : ∀ e ∈ L, ∀ t, IsSubtree t e.tree → t.value ≠ none) {d d' : Derivation F}
     (h : d' ∈ mergeOptions L d f) : d.length ≤ d'.length := by
@@ -234,7 +227,6 @@ theorem spell_concat (d : Derivation F) (t : RoseTree (Option F)) :
     spell L [t] = (treeSpellout L t).map fun x ↦ [x] := by
   cases h : treeSpellout L t <;> simp [spell, spellAux, h]
 
-/-- A row is pronounced as soon as each of its constituents is lexicalized. -/
 theorem spell_isSome {d : Derivation F} (h : ∀ t ∈ d, (treeSpellout L t).isSome) :
     (spell L d).isSome := by
   induction d using List.reverseRecOn with
@@ -290,9 +282,6 @@ theorem exponents_singleton (L : RuleSet (LexicalEntry (Option F) α)) (f : F) :
   simp only [exponents, lexicalize, derivations_singleton, mergeOptions_nil]
   cases h : treeSpellout L (leaf (some f)) <;> simp [h]
 
-/-- A sequence of two features gets one exponent for its whole phrase, or else the exponent
-of its first feature followed by a suffix for the second, unless an entry matches the two
-phrases together. -/
 theorem exponents_pair (L : RuleSet (LexicalEntry (Option F) α)) (f₁ f₂ : F) :
     exponents L [f₁, f₂] = (treeSpellout L (leaf (some f₁))).bind fun x ↦
       ((treeSpellout L (merge f₂ (leaf (some f₁)))).map fun y ↦ [y]) <|>
@@ -314,15 +303,11 @@ theorem exponents_pair (L : RuleSet (LexicalEntry (Option F) α)) (f₁ f₂ : F
 
 /-! ### Lexicons without suffixes -/
 
-/-- Where no entry lexicalizes a feature alone, merging it with a single constituent can only
-grow the constituent. -/
 theorem mergeOptions_singleton_of_leaf (h : treeSpellout L (leaf (some f)) = none)
     (t : RoseTree (Option F)) :
     mergeOptions L [t] f = ((treeSpellout L (merge f t)).map fun _ ↦ [merge f t]).toList := by
   simp [mergeOptions_singleton, h]
 
-/-- Where no entry lexicalizes a feature above the bottom alone, the algorithm never evacuates,
-and the sequence has at most one derivation, its one phrase lexicalized whole. -/
 theorem derivations_cons_of_forall_leaf (f₀ : F) {fs : List F}
     (h : ∀ f ∈ fs, treeSpellout L (leaf (some f)) = none) :
     derivations L [] (f₀ :: fs) =

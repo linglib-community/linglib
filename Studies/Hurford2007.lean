@@ -102,7 +102,6 @@ theorem packed_iff_eq_count {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) 
   obtain ⟨hc, hcv⟩ := packed_count L e.value_pos
   exact ⟨fun he ↦ he.eq_of_value_eq hL hc hcv.symm, fun he ↦ he ▸ hc⟩
 
-/-- Counting reaches every packed numeral, over bases with distinct values. -/
 theorem count_eq_of_packed {L : List M} (hL : Set.InjOn M.value {m | m ∈ L}) {e : Number} {v : ℕ}
     (he : e.Packed {m | m ∈ L}) (hv : e.value = v) : count L v = e :=
   hv ▸ ((packed_iff_eq_count hL).1 he).symm
@@ -157,7 +156,6 @@ def twoThousandOneHundred : Number :=
 def twentyOneHundred : Number :=
   .phrase (.mk (.phraseAnd (.mk (digit 2) .ten) (digit 1)) hundred)
 
-/-- In additive constructions the higher-valued PHRASEs are packed nearer the top. -/
 theorem count_eq_fiveMillionTwoThousandSixHundred :
     count bases 5002600 = fiveMillionTwoThousandSixHundred :=
   count_eq_of_packed injOn_bases (by decide) rfl
@@ -167,7 +165,6 @@ example : sixHundredTwoThousandFiveMillion.value = fiveMillionTwoThousandSixHund
 theorem not_packed_sixHundredTwoThousandFiveMillion :
     ¬ sixHundredTwoThousandFiveMillion.Packed {m | m ∈ bases} := by decide
 
-/-- In multiplicative constructions the higher-valued bases are packed nearer the top. -/
 theorem count_eq_sixHundredThousand : count bases 600000 = sixHundredThousand :=
   count_eq_of_packed injOn_bases (by decide) rfl
 
@@ -224,7 +221,6 @@ theorem count_eq_numeral7999 : count bases 7999 = numeral7999 :=
 
 example : transposed.value = numeral7999.value := rfl
 
-/-- Transposing the two Ms loses well-formedness. -/
 theorem not_packed_transposed : ¬ transposed.Packed {m | m ∈ bases} := by decide
 
 end Mixtec

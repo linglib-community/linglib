@@ -158,13 +158,10 @@ end Decidable
 
 variable {M}
 
-/-- A sufficient set contains its effect, so a situation that realizes one settles the effect. -/
 theorem IsSufficient.eq_of_le {S s : Situation V} {y : V} {b : Bool}
     (h : IsSufficient M S y b) (hle : S ≤ s) : s y = ↑b :=
   Flat.coe_le_iff.1 (h.2.1 ▸ hle y)
 
-/-- A situation that leaves the culmination condition unsettled neither culminates nor
-terminates: every sufficient set contains its effect. -/
 theorem not_cul_or_term {c : V} {s : Situation V} (h : s c = ⊥) :
     ¬ (Cul M c s ∨ Term M c s) := by
   rintro (⟨S, hS, hle⟩ | ⟨S, hS, hle⟩) <;> exact Flat.coe_ne_bot ((hS.eq_of_le hle).symm.trans h)

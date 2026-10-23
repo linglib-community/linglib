@@ -94,12 +94,10 @@ private theorem matchesRight_map_seg (l : List Segment) :
   | nil => trivial
   | cons a l ih => simp [MatchesRight, ih]
 
-/-- A stem meets its own word-specific rule. -/
 theorem matchesLeft_wordSpecific : MatchesLeft (wordSpecific stem) stem := by
   simp only [wordSpecific, MatchesLeft, List.reverse_cons, ← List.map_reverse]
   exact matchesRight_map_seg _
 
-/-- A description one segment long is met by exactly the segments it subsumes. -/
 theorem matchesLeft_single_iff (k x : Segment) : MatchesLeft [.seg k] [x] ↔ k ≤ x := by
   simp [MatchesLeft, MatchesRight]
 
@@ -116,7 +114,6 @@ private theorem mgRev_comm (r₁ r₂ : List ContextElem) : mgRev r₁ r₂ = mg
       · subst_vars; simp [ih]
       · rename_i h; rw [ite_eq_right (Ne.symm h), inf_comm]
 
-/-- Minimal generalization is symmetric. -/
 theorem mg_comm : mg c₁ c₂ = mg c₂ c₁ := by simp [mg, mgRev_comm]
 
 private theorem matchesRight_mgRev {r₁ r₂ : List ContextElem} {l : List Segment}
@@ -145,8 +142,6 @@ private theorem matchesRight_mgRev {r₁ r₂ : List ContextElem} {l : List Segm
           | nil => trivial
           | cons s ss => exact h.elim
 
-/-- The generalized rule covers everything either rule covered, so generalization only
-widens. -/
 theorem matchesLeft_mg_left (h : MatchesLeft c₁ stem) : MatchesLeft (mg c₁ c₂) stem := by
   simp only [MatchesLeft, mg, List.reverse_reverse] at h ⊢
   exact matchesRight_mgRev h
@@ -154,8 +149,6 @@ theorem matchesLeft_mg_left (h : MatchesLeft c₁ stem) : MatchesLeft (mg c₁ c
 theorem matchesLeft_mg_right (h : MatchesLeft c₂ stem) : MatchesLeft (mg c₁ c₂) stem :=
   mg_comm ▸ matchesLeft_mg_left h
 
-/-- A description one segment long reads the final segment alone, the structured similarity a
-rule is confined to. -/
 theorem matchesLeft_rtake_one (h : c.length ≤ 1) :
     MatchesLeft c stem ↔ MatchesLeft c (stem.rtake 1) :=
   (matchesLeft_rtake_of_le c h stem).symm
@@ -184,7 +177,6 @@ variable {C : Type*} [DecidableEq C] (ch : C) (lex : List (List Segment × C))
 theorem hits_le_scope : (Stats.ofLexicon ch c lex).hits ≤ (Stats.ofLexicon ch c lex).scope :=
   List.length_filter_le _ _
 
-/-- Generalization never loses a form. -/
 theorem scope_mono :
     (Stats.ofLexicon ch c₁ lex).scope ≤ (Stats.ofLexicon ch (mg c₁ c₂) lex).scope :=
   (List.monotone_filter_right lex fun _ h ↦
@@ -230,8 +222,6 @@ def laugh : List Segment := [l, æ, f]
 def fill : List Segment := [f, smallCapitalI, l]
 def pick : List Segment := [p, smallCapitalI, k]
 
-/-- The stems of an inventory that a description one segment long covers are the natural class
-of its featural term. -/
 theorem filter_matchesLeft_single (k : Segment) (I : Finset Segment) :
     I.filter (fun x ↦ MatchesLeft [.seg k] [x]) = k.naturalClass I := by
   simp only [matchesLeft_single_iff]; rfl
@@ -357,14 +347,11 @@ theorem regulars_ior :
       MeanGT "production" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by
   decide
 
-/-- Islands of reliability for irregulars, likewise. -/
 theorem irregulars_ior :
     MeanGT "adjustedRating" (rows false (·.iorForIrregular)) (rows false (!·.iorForIrregular)) ∧
       MeanGT "production" (rows false (·.iorForIrregular)) (rows false (!·.iorForIrregular)) := by
   decide
 
-/-- The single-default-rule prediction, that novel regular ratings do not vary with the stem's
-cell, fails on the Core data: the regulars-only and irregulars-only cells differ. -/
 theorem regulars_not_cell_invariant :
     total "adjustedRating" (rows true (· = ⟨true, false⟩)) *
         (rows true (· = ⟨false, true⟩)).length ≠
@@ -372,8 +359,6 @@ theorem regulars_not_cell_invariant :
         (rows true (· = ⟨true, false⟩)).length := by
   decide
 
-/-- Trade-off (Figs. 3–4): a past is rated higher when its rival is not in an island, for
-regulars and irregulars alike. -/
 theorem tradeoff :
     MeanGT "adjustedRating" (rows true (· = ⟨true, false⟩)) (rows true (· = ⟨true, true⟩)) ∧
       MeanGT "adjustedRating" (rows true (· = ⟨false, false⟩)) (rows true (· = ⟨false, true⟩)) ∧
@@ -382,8 +367,6 @@ theorem tradeoff :
         (rows false (· = ⟨true, false⟩)) := by
   decide
 
-/-- The rule-based model's predicted regular ratings are higher in the regular islands: the
-stimuli were chosen by the model. -/
 theorem ruleBased_islands :
     MeanGT "ruleBased" (rows true (·.iorForRegular)) (rows true (!·.iorForRegular)) := by decide
 
@@ -398,8 +381,6 @@ theorem analogical_misses_islands :
 /-- The pseudo-*burnt* irregulars of (15). -/
 def burnt : List Datum := Examples.all.filter (·.feature? "set" = some "burnt")
 
-/-- The rule-based model's one systematic error: it underrates the *burnt*-class forms, which
-the analogical model overrates. -/
 theorem burnt_underestimated :
     total "ruleBased" burnt < total "adjustedRating" burnt ∧
       total "adjustedRating" burnt < total "analogical" burnt := by

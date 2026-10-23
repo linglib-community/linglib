@@ -32,7 +32,6 @@ namespace Finset
 variable {k V P V₂ P₂ ι : Type*} [DivisionRing k] [AddCommGroup V] [Module k V] [AffineSpace V P]
   [AddCommGroup V₂] [Module k V₂] [AffineSpace V₂ P₂] (s : Finset ι)
 
-/-- Affine maps commute with centroids, if the number of points, converted to `k`, is not zero. -/
 theorem map_centroid_of_cast_card_ne_zero (p : ι → P) (f : P →ᵃ[k] P₂) (h : (#s : k) ≠ 0) :
     f (s.centroid k p) = s.centroid k (f ∘ p) := by
   rw [centroid_def, centroid_def,

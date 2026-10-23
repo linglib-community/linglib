@@ -124,7 +124,6 @@ theorem WithinProjection.mem_terms (h : WithinProjection T ℓ x) : x ∈ T.term
   let ⟨_, hp, _, hpx⟩ := h
   terms_subset_terms (SyntacticObject.mem_terms.1 hp) (SyntacticObject.mem_terms.2 hpx)
 
-/-- What lies within the complement lies within the projection. -/
 theorem WithinComplement.withinProjection (h : WithinComplement T ℓ x) : WithinProjection T ℓ x :=
   let ⟨_, _, ⟨m, hm, hℓ, _, hz, _⟩, hzx⟩ := h
   ⟨m, hm, hℓ, .head hz hzx⟩
@@ -143,7 +142,6 @@ theorem WithinComplement.trans (hx : WithinComplement T ℓ x) (hxy : ContainsOr
   let ⟨z, hz, hc, hzx⟩ := hx
   ⟨z, hz, hc, hzx.trans hxy⟩
 
-/-- The head c-commands what lies within its complement. -/
 theorem WithinComplement.cCommands (h : WithinComplement T ℓ x) : T.CCommands (leaf ℓ) x :=
   let ⟨z, hz, ⟨m, hm, _, hmℓ, hmz, hne⟩, hzx⟩ := h
   ⟨z, hz, ⟨m, hm, hmℓ, hmz, hne.symm⟩, hzx⟩
@@ -158,8 +156,6 @@ theorem WithinComplement.cCommands (h : WithinComplement T ℓ x) : T.CCommands 
     x ∈ T.phaseEdge ℓ ↔ WithinProjection T ℓ x ∧ ¬ WithinComplement T ℓ x :=
   Multiset.mem_filter.trans (and_congr mem_phase (not_congr mem_phaseInterior))
 
-/-- A head projects exactly when it has a complement, since an object merged with itself has no
-head. -/
 theorem isPhaseHead_iff_exists_isComplementOf : IsPhaseHead T ℓ ↔ ∃ z, IsComplementOf T ℓ z := by
   refine ⟨fun ⟨m, hm, hℓ, hmℓ⟩ ↦ ?_, fun ⟨_, m, hm, hℓ, hmℓ, _⟩ ↦ ⟨m, hm, hℓ, hmℓ⟩⟩
   induction m using SyntacticObject.ind with

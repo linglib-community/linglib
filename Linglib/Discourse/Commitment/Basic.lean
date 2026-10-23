@@ -153,7 +153,6 @@ theorem contextSet_subset_of_mem_slate {φ : Set W} (h : φ ∈ slate K) : conte
   rw [← ker_slate, ker_def]
   exact Set.biInter_subset_of_mem h
 
-/-- A consistent commitment set committed to `¬φ` does not entail `φ`. -/
 theorem not_mem_slate_of_compl_mem {φ : Set W} (h : φᶜ ∈ contents K)
     (hne : (contextSet K).Nonempty) : φ ∉ slate K := fun hφ ↦
   let ⟨_, hw⟩ := hne
@@ -181,7 +180,6 @@ theorem contents_insert_of_refuse {c : Commitment A W} (h : c.stance = .refuse) 
     contents (insert c K) = contents K :=
   congrArg (content '' ·) (Set.insert_inter_of_notMem fun hc ↦ Stance.noConfusion (hc.symm.trans h))
 
-/-- A new commitment adds its content to the slate. -/
 theorem slate_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
     slate (insert c K) = slate K ⊓ 𝓟 c.content := by
   rw [slate, slate, contents_insert_of_commit h, Filter.generate_insert]
@@ -217,7 +215,6 @@ theorem contents_union (K L : State A W) :
     contents (K ∪ L) = contents K ∪ contents L :=
   (congrArg (content '' ·) (Set.union_inter_distrib_right ..)).trans (Set.image_union ..)
 
-/-- Context sets intersect across a union of commitment sets. -/
 theorem contextSet_union (K L : State A W) :
     contextSet (K ∪ L) = contextSet K ∩ contextSet L := by
   rw [contextSet, contents_union, Set.sInter_union]; rfl
@@ -230,13 +227,11 @@ theorem contextSet_eq_inter_ofForce :
   ext c
   cases h : c.force <;> simp [ofForce, h]
 
-/-- The contents of a family of commitments by `a` are the family's contents. -/
 theorem contents_image_commit {ι : Type*} (a : A) (p : ι → Set W) (s : Set ι) :
     contents ((fun i ↦ commit a (p i)) '' s) = p '' s := by
   rw [contents, Set.sep_eq_self_iff_mem_true.2 (by rintro _ ⟨i, -, rfl⟩; rfl), Set.image_image]
   rfl
 
-/-- A refusal leaves the context set alone. -/
 theorem contextSet_insert_of_refuse {c : Commitment A W} (h : c.stance = .refuse) :
     contextSet (insert c K) = contextSet K := by
   simp [contextSet, contents_insert_of_refuse h]

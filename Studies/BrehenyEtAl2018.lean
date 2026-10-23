@@ -92,10 +92,6 @@ variable {W : Type*}
 
 /-! ### The shape of the arguments -/
 
-/-- When the formal alternatives of `φ` are among `φ`, an alternative `p`, its negation, and the
-negation of `φ`, with `p` and its negation both formal, every domain holding either holds both
-by closure, neither is innocently excludable when `φ` is compatible with both, and
-exhaustification is vacuous on every domain. -/
 theorem exhIE_eq_self_of_isDomain {F C : Set (Set W)} {φ p : Set W}
     (hF : F ⊆ {φ, p, pᶜ, φᶜ}) (hp : p ∈ F) (hpc : pᶜ ∈ F) (hC : IsDomain F φ C)
     (h₁ : (φ ∩ p).Nonempty) (h₂ : (φ ∩ pᶜ).Nonempty) : exhIE C φ = φ := by
@@ -236,8 +232,6 @@ theorem isDomain_notFull_notHalf {e l : W} (he : e ∈ fullᶜ ∩ empty ∩ hal
     rintro _ (rfl | rfl) <;> simp [he.1.1, he.2, hl.1.1, hl.2]
   · exact Or.inr rfl
 
-/-- On that domain exhaustification of *not full* asserts *half full*, given a glass half but
-not fully filled. -/
 theorem exhIE_notFull_notHalf (hm : (fullᶜ ∩ half).Nonempty) :
     exhIE {fullᶜ, halfᶜ} fullᶜ = fullᶜ ∩ half := by
   rw [exhIE_pair_sdiff fullᶜ (by rwa [sdiff_compl]), sdiff_compl]

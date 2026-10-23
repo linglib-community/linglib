@@ -34,8 +34,6 @@ namespace WellFounded
 
 variable {ι : Type*} {β : ι → Type*} {r : ι → ι → Prop} {F G : (∀ i, β i) → ∀ i, β i}
 
-/-- After `k` rounds of `F`, a coordinate ranked below `k` no longer depends on the family the
-rounds started from. -/
 theorem iterate_apply_eq_of_dependsOn (hF : ∀ i, DependsOn (F · i) {j | r j i})
     (rk : r →r ((· < ·) : ℕ → ℕ → Prop)) {k : ℕ} {i : ι} (hi : rk i < k) (x y : ∀ i, β i) :
     F^[k] x i = F^[k] y i := by
@@ -87,8 +85,6 @@ theorem fixedPoint_eq_iterate (rk : r →r ((· < ·) : ℕ → ℕ → Prop)) {
 
 omit hF [∀ i, Nonempty (β i)] in
 open Classical in
-/-- On a finite index type, counting strict predecessors ranks a well-founded relation below the
-number of indices. -/
 theorem exists_relHom_lt_card [Fintype ι] (hr : WellFounded r) :
     ∃ rk : r →r ((· < ·) : ℕ → ℕ → Prop), ∀ i, rk i < Fintype.card ι := by
   have hT := hr.transGen

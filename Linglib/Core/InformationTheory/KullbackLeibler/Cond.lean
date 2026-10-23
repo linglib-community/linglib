@@ -30,9 +30,6 @@ open scoped ENNReal ProbabilityTheory
 
 namespace InformationTheory
 
-/-- The Kullback-Leibler divergence of the conditional measure `μ[|s]` from
-`μ` is the information content of the event: `−log μ(s)`. The core of
-[levy-2008]'s equivalence of relative-entropy difficulty and surprisal. -/
 theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     {s : Set Ω} (hs : MeasurableSet s) (hs0 : μ s ≠ 0) :
@@ -51,8 +48,6 @@ theorem klDiv_cond_self {Ω : Type*} [MeasurableSpace Ω]
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsFiniteMeasure μ] {s t : Set Ω}
 
-/-- The divergence between two conditionings of one measure, the first on an event almost
-contained in the second, is the log of the ratio of the events' masses. -/
 theorem klDiv_cond_cond (hs : MeasurableSet s) (ht : MeasurableSet t) (hs0 : μ s ≠ 0)
     (hst : s ≤ᵐ[μ] t) :
     klDiv μ[|s] μ[|t] = ENNReal.ofReal (Real.log (μ.real t / μ.real s)) := by
@@ -64,8 +59,6 @@ theorem klDiv_cond_cond (hs : MeasurableSet s) (ht : MeasurableSet t) (hs0 : μ 
     ENNReal.toReal_mul, ENNReal.toReal_inv, ← measureReal_def, ← measureReal_def, inv_mul_eq_div,
     ← Real.log_inv, inv_div]
 
-/-- Among the events almost containing `s`, the one of smaller mass has its conditional closer
-to `μ[|s]`. -/
 theorem klDiv_cond_cond_lt_iff {t' : Set Ω} (hs : MeasurableSet s) (ht : MeasurableSet t)
     (ht' : MeasurableSet t') (hs0 : μ s ≠ 0) (hst : s ≤ᵐ[μ] t) (hst' : s ≤ᵐ[μ] t') :
     klDiv μ[|s] μ[|t] < klDiv μ[|s] μ[|t'] ↔ μ t < μ t' := by
@@ -79,8 +72,6 @@ theorem klDiv_cond_cond_lt_iff {t' : Set Ω} (hs : MeasurableSet s) (ht : Measur
     div_lt_div_iff_of_pos_right hpos, measureReal_def, measureReal_def,
     ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)]
 
-/-- The divergence between two conditionings of one measure is infinite exactly when the first
-event is not almost contained in the second. -/
 theorem klDiv_cond_cond_eq_top_iff (hs : MeasurableSet s) (ht : MeasurableSet t) :
     klDiv μ[|s] μ[|t] = ∞ ↔ ¬ s ≤ᵐ[μ] t := by
   refine ⟨fun h hst ↦ ?_, fun h ↦

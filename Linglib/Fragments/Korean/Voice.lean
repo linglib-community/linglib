@@ -81,7 +81,6 @@ theorem coding_causative : (causative t).coding = .synthetic := by
 theorem coding_causativeOfTransitive : (causativeOfTransitive t).coding = .synthetic := by
   simp [causativeOfTransitive, Voice.Coding.ofMarker]
 
-/-- The causative of an intransitive verb adds a core term. -/
 theorem isValencyIncreasing_causative : (causative t).IsValencyIncreasing :=
   Voice.causative_isValencyIncreasing
 

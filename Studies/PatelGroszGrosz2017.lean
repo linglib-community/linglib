@@ -106,18 +106,12 @@ section Divergence
 
 variable {E W : Type} {R : Restrictor E W} {i : ℕ} {g : Assignment E} {s : W}
 
-/-- The strong series is anaphoric in a way the weak one is not. Where the restrictor has a
-satisfier besides the antecedent, the weak description of *er* fails uniqueness while the strong
-description of *der* reads its referent off the discourse index. -/
 theorem der_er_can_diverge {y : E} (hi : R g s (g i)) (hy : R g s y) (hne : y ≠ g i) :
     ⟦DefiniteDescription.ofStrength .uniqueness R i⟧ g s ≠
       ⟦DefiniteDescription.ofStrength .familiarity R i⟧ g s := by
   obtain ⟨hw, hs⟩ := Schwarz2009.weak_eq_none_strong_eq_some hi hy hne
   exact fun h ↦ Option.some_ne_none _ ((hs.symm.trans h.symm).trans hw)
 
-/-- The strong description of *der* is the weak description of *er* when every satisfier of the
-restrictor is the antecedent, so the index is the whole difference between the series, DEM = PER
-+ index. -/
 theorem der_eq_er_of_unique (hUniq : ∀ y, R g s y → y = g i) :
     ⟦DefiniteDescription.ofStrength .familiarity R i⟧ g s =
       ⟦DefiniteDescription.ofStrength .uniqueness R i⟧ g s :=
@@ -153,9 +147,6 @@ DP shells. -/
 def Series.Optimal (needsIndex : Prop) (s : Series) : Prop :=
   s.Achieves needsIndex ∧ ∀ s' : Series, s'.Achieves needsIndex → s.shells ≤ s'.shells
 
-/-- The weak series is the default and the strong series surfaces exactly when the index does
-pragmatic work: a series is optimal for an interpretation iff it is the strong series
-precisely when the interpretation needs the index. -/
 theorem optimal_iff (needsIndex : Prop) (s : Series) :
     s.Optimal needsIndex ↔ (needsIndex ↔ s = .strong) := by
   constructor

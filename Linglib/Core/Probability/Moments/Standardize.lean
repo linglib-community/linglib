@@ -78,8 +78,6 @@ theorem standardize_const_mul_add_const [IsProbabilityMeasure μ] (hX : MemLp X 
     Real.sqrt_mul' _ (variance_nonneg _ _), Real.sqrt_sq ha.le,
     show a * X ω + b - (a * μ[X] + b) = a * (X ω - μ[X]) by ring, mul_div_mul_left _ _ ha.ne']
 
-/-- The mean of the standardized values under a probability measure `ν` is the standardized
-mean under `ν`. -/
 theorem integral_standardize_eq [IsProbabilityMeasure ν] (hX : Integrable X ν) :
     ν[standardize X μ] = (ν[X] - μ[X]) / √Var[X; μ] := by
   simp only [standardize_apply]

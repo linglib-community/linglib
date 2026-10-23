@@ -132,21 +132,17 @@ instance : DecidableLE GramCategory :=
 instance : DecidableLT GramCategory :=
   fun a b ↦ inferInstanceAs (Decidable (a.scopeLevel < b.scopeLevel))
 
-/-- Epistemic modality outscopes deontic modality. -/
 theorem epistemic_outscopes_deontic : GramCategory.deontic1 < GramCategory.epistemic1 := by
   decide
 
-/-- Dynamic modality (ability) has narrower scope than deontic. -/
 theorem dynamic_below_deontic : GramCategory.dynamicModality < GramCategory.deontic1 := by
   decide
 
-/-- Mood outscopes all levels of modality proper. -/
 theorem mood_outscopes_modality :
     GramCategory.epistemic3 ≤ GramCategory.volitiveMood ∧
     GramCategory.deontic2 < GramCategory.volitiveMood := by
   exact ⟨by decide, by decide⟩
 
-/-- Illocutionary modification is the widest-scope category. -/
 theorem im_is_widest (c : GramCategory) : c ≤ GramCategory.illocutionaryMod := by
   cases c <;> decide
 
@@ -206,18 +202,14 @@ instance : DecidablePred IsTarget := fun _ ↦ inferInstanceAs (Decidable (_ ∈
 
 end GramCategory
 
-/-- Every category that is only a source has strictly narrower scope than every category that
-is only a target, the structural precondition for category climbing. -/
 theorem source_below_target (c d : GramCategory) (hc : c.IsSource) (hc' : ¬ c.IsTarget)
     (hd : d.IsTarget) (hd' : ¬ d.IsSource) : c < d := by
   revert hc hc' hd hd'; cases c <;> cases d <;> decide
 
-/-- The categories that are only sources are event-oriented. -/
 theorem source_is_event_oriented (c : GramCategory) (hc : c.IsSource) (hc' : ¬ c.IsTarget) :
     c.toOrientation = .eventOriented := by
   revert hc hc'; cases c <;> decide
 
-/-- The categories that are only targets are speech act-oriented. -/
 theorem target_is_speech_act_oriented (c : GramCategory) (hc : c.IsTarget)
     (hc' : ¬ c.IsSource) : c.toOrientation = .speechActOriented := by
   revert hc hc'; cases c <;> decide
@@ -230,16 +222,12 @@ event-oriented pole. -/
 def minOrientation (m : Narrog2010.Meaning) : SpeechActOrientation :=
   if m.IsMood then ⊤ else ⊥
 
-/-- Every tabulated change into mood conforms to the directionality hypothesis wherever the
-source use lay. -/
 theorem le_minOrientation_of_isMood :
     ∀ c ∈ Narrog2010.commonChanges, c.target.IsMood →
       ∀ o : SpeechActOrientation, o ≤ minOrientation c.target := by
   intro c _ hc o
   simp only [minOrientation, hc, ↓reduceIte, le_top]
 
-/-- A change out of mood would not conform unless its target were again speech act-oriented;
-none is tabulated (`Narrog2010.source_not_isMood`). -/
 theorem not_minOrientation_le {m : Narrog2010.Meaning} (hm : m.IsMood)
     {o : SpeechActOrientation} (ho : o < ⊤) : ¬ minOrientation m ≤ o := by
   simp only [minOrientation, hm, ↓reduceIte, top_le_iff]

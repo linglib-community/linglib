@@ -128,15 +128,12 @@ theorem docDativeShift_externalize? :
     docDativeShift.externalize? (fun _ ↦ none) = some docDativeShiftTree := by
   decide
 
-/-- In the double object construction the indirect object c-commands the theme. -/
 theorem doc_io_ccommands_do :
     CCommands docDativeShiftTree DP_mary DP_letter := by decide
 
-/-- And the theme does not c-command the indirect object. -/
 theorem doc_do_not_ccommands_io :
     ¬ CCommands docDativeShiftTree DP_letter DP_mary := by decide
 
-/-- Dative shift is one internal merge, of the indirect object. -/
 theorem dativeShift_has_one_im :
     docDativeShift.movedItems = [DP_mary] := by decide
 
@@ -168,7 +165,6 @@ theorem passive_object_ccommands_subject :
 theorem passive_subject_not_ccommands_object :
     ¬ CCommands standardPassiveTree DP_john DP_ball := by decide
 
-/-- Passive is one internal merge, of the object. -/
 theorem passive_has_one_im :
     standardPassive.movedItems = [DP_ball] := by decide
 
@@ -203,8 +199,6 @@ def contribute_entry : DativeVerbEntry := { verb := "contribute", ioRoles := [] 
 def allDativeVerbs : List DativeVerbEntry :=
   [give_entry, send_entry, promise_entry, donate_entry, distribute_entry, contribute_entry]
 
-/-- *give*, *send*, and *promise* assign a goal and shift; *donate*, *distribute*, and
-*contribute* do not. -/
 theorem recoverability :
     recoverable give_entry = true ∧ recoverable send_entry = true ∧
       recoverable promise_entry = true ∧ recoverable donate_entry = false ∧
@@ -250,7 +244,6 @@ theorem indirectPassive_externalize? :
 theorem indirect_passive_io_ccommands_do :
     CCommands indirectPassiveTree DP_mary2 DP_letter2 := by decide
 
-/-- The indirect passive is two internal merges. -/
 theorem indirect_passive_two_im :
     indirectPassive.movedItems.length = 2 := by decide
 

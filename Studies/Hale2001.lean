@@ -60,18 +60,13 @@ variable {T W : Type*} [MeasurableSpace T] (P : Measure T) (str : T → List W) 
 incompatible with the prefix. -/
 noncomputable def disconfirmed : ℝ≥0∞ := P (consistent str ws)ᶜ
 
-/-- No analysis has been disconfirmed before any input is seen. -/
 @[simp] theorem disconfirmed_nil : disconfirmed P str [] = 0 := by
   simp [disconfirmed]
 
-/-- Disconfirmed mass grows along a sentence: an extension has disconfirmed at least what its
-prefix has, so prefix-level load never decreases. -/
 theorem disconfirmed_mono {ws ws' : List W} (h : ws <+: ws') :
     disconfirmed P str ws ≤ disconfirmed P str ws' :=
   measure_mono (Set.compl_subset_compl.2 (consistent_anti str h))
 
-/-- For a consistent grammar the disconfirmed mass is one minus the prefix probability
-(section 3). -/
 theorem disconfirmed_eq_one_sub [DiscreteMeasurableSpace T] [IsProbabilityMeasure P] :
     disconfirmed P str ws = 1 - P (consistent str ws) :=
   prob_compl_eq_one_sub .of_discrete
@@ -85,8 +80,6 @@ noncomputable def totalSurprisal (acc rest : List W) : ℝ :=
 
 variable [DiscreteMeasurableSpace T] [MeasurableSingletonClass W]
 
-/-- Word-level cognitive load (section 4): a word's surprisal is the log of the ratio of the
-prefix probability before the word to the prefix probability after it. -/
 theorem surprisal_next_eq_log_div :
     surprisal ((ofMeasure (P.map str)).next ws) (some w) =
       Real.log (P.real (consistent str ws) / P.real (consistent str (ws ++ [w]))) := by
@@ -95,8 +88,6 @@ theorem surprisal_next_eq_log_div :
     ENNReal.toReal_div, ← Real.log_inv, inv_div]
   rfl
 
-/-- Surprisal in disconfirmation form: the log of one plus the ratio of the mass disconfirmed
-at the word to the mass surviving it. -/
 theorem surprisal_next_eq_log_one_add (ha : 0 < P.real (consistent str (ws ++ [w]))) :
     surprisal ((ofMeasure (P.map str)).next ws) (some w) =
       Real.log (1 + (P.real (consistent str ws) - P.real (consistent str (ws ++ [w])))
@@ -106,9 +97,6 @@ theorem surprisal_next_eq_log_one_add (ha : 0 < P.real (consistent str (ws ++ [w
   field_simp
   ring
 
-/-- Garden-pathing (section 6.1): if the mass disconfirmed at a word is at least `k` times
-the surviving mass, the word's surprisal is at least `log (1 + k)`; difficulty spikes exactly
-where the disconfirmable analyses comprise a great amount of probability. -/
 theorem log_le_surprisal_next {k : ℝ} (hk : 0 ≤ k)
     (ha : 0 < P.real (consistent str (ws ++ [w])))
     (hdis : k * P.real (consistent str (ws ++ [w])) ≤
@@ -125,9 +113,6 @@ theorem log_le_surprisal_next {k : ℝ} (hk : 0 ≤ k)
 
 variable [IsProbabilityMeasure P]
 
-/-- Word surprisals telescope: by the chain rule of the language model, reading `rest` after
-`acc` costs the log of the ratio of the masses before and after, whenever the whole string has
-positive mass. -/
 theorem totalSurprisal_eq {acc rest : List W}
     (hpos : 0 < P.real (consistent str (acc ++ rest))) :
     totalSurprisal P str acc rest =
@@ -142,8 +127,6 @@ theorem totalSurprisal_eq {acc rest : List W}
     Real.log_div hpos.ne' h₀.ne']
   ring
 
-/-- The linking hypothesis at the sentence level (section 4): the total surprisal of a sentence
-is the negative log of its prefix mass, the whole disconfirmed mass paid out word by word. -/
 theorem totalSurprisal_nil_eq {ws : List W} (hpos : 0 < P.real (consistent str ws)) :
     totalSurprisal P str [] ws = -Real.log (P.real (consistent str ws)) := by
   rw [totalSurprisal_eq P str (by simpa using hpos), consistent_nil, probReal_univ]

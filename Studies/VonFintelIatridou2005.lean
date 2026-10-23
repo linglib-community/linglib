@@ -112,8 +112,6 @@ abbrev goHoboken : Conflict → Prop := (· = pathTrain)
 goal of going to Harlem added. -/
 abbrev saebo : Background Conflict := fun _ ↦ {goHoboken, goHarlem}
 
-/-- Sæbø's analysis makes the Harlem sentence false, since with the two goals inconsistent the
-best worlds achieve either, and not all take the A train. -/
 theorem not_saebo : ¬ necessity ⊥ saebo takeA aTrain := by
   simp only [necessity_iff, bestWorlds, Preorder.mem_minimals_iff, Background.mem_accessibleWorlds,
     Preorder.ofCriteria_le_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
@@ -186,8 +184,6 @@ def oughtTo (f g : Background W) (p q : W → Prop) (w : W) : Prop :=
 theorem haveTo_iff : haveTo f p q w ↔ ∀ v ∈ f.accessibleWorlds w, p v → q v :=
   (restrictor_eq_strict f p q w).trans Conditional.mem_strictImp_forall
 
-/-- Sloman's insight is that *have to* entails *ought to* whatever the ancillary
-considerations. -/
 theorem oughtTo_of_haveTo (h : haveTo f p q w) : oughtTo f g p q w := by
   rw [oughtTo, conditionalNecessity, necessity_iff]
   intro v hv
@@ -231,7 +227,6 @@ namespace Ruud
 abbrev takeA : Ruud → Prop := (· = aTrain)
 abbrev meetRuud : Ruud → Prop := takeA
 
-/-- You do not have to take the A train, but given that you want to meet Ruud you ought to. -/
 theorem not_haveTo_and_oughtTo :
     ¬ haveTo ⊥ (fun _ ↦ True) takeA aTrain ∧
       oughtTo ⊥ (fun _ ↦ {meetRuud}) (fun _ ↦ True) takeA aTrain := by
@@ -261,8 +256,6 @@ namespace Pedro
 abbrev goHarlem : Pedro → Prop := fun w ↦ w = aTrain ∨ w = cTrainKiss
 abbrev kissPedro : Pedro → Prop := (· = cTrainKiss)
 
-/-- The designated-goal semantics predicts *to go to Harlem, you ought to kiss Pedro Martinez*
-true, contrary to fact. -/
 theorem oughtTo_kissPedro : oughtTo ⊥ (fun _ ↦ {kissPedro}) goHarlem kissPedro aTrain := by
   simp only [oughtTo, conditionalNecessity, necessity_iff, bestWorlds, Preorder.mem_minimals_iff,
     Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,

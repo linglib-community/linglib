@@ -96,7 +96,6 @@ theorem eq_atoms_of_minimal (hx : x.Nonempty)
   (hmin.eq_of_le ((algClosure_image_singleton _ x).2 ⟨hx, subset_rfl⟩)
     (by rintro _ ⟨a, ha, rfl⟩; exact hat a ha)).symm
 
-/-- A minimal cover containing `x`, (24b-ii), is `{x}`. -/
 theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ AlgClosure (· ∈ C) x) C)
     (hxC : x ∈ C) : C = {x} :=
   (hmin.eq_of_le (y := {x}) (.base (Set.mem_singleton x)) (Set.singleton_subset_iff.2 hxC)).symm

@@ -147,21 +147,12 @@ end Language
 
 /-! ### The generalizations -/
 
-/-- Same-subject medial forms leave the subject unindexed and different-subject forms index
-it: Nungon's same-subject verb is the bare dependent stem with the medial suffix while its
-different-subject verb carries a subject desinence, and no Manambu same-subject marker
-follows subject cross-referencing while both different-subject markers do, so agreement on
-medial verbs is restricted in both. -/
 theorem ss_forms_lack_subject_marking :
     MedialForm.SSUnmarked Nungon.Medial ∧ MedialForm.SSUnmarked Manambu.MedialMarker ∧
       MedialForm.agreement Nungon.Medial = .restricted ∧
       MedialForm.agreement Manambu.MedialMarker = .restricted := by
   decide
 
-/-- Manambu's switch-reference markers each encode a temporal or logical relation, and some
-of the relations lie beyond the temporal ones; Nungon's switch-reference forms encode no
-relation, and completion before the next event is marked by the perfect, which is neutral to
-switch-reference. -/
 theorem relations_fused_with_sr :
     (∀ m : Manambu.MedialMarker, m.sr ≠ none → m.relations.Nonempty) ∧
       (∃ r ∈ MedialForm.relationsMarked Manambu.MedialMarker, ¬ r.Temporal) ∧
@@ -169,20 +160,13 @@ theorem relations_fused_with_sr :
       ∃ m : Nungon.Medial, m.sr = none ∧ m.relations.Nonempty := by
   decide
 
-/-- The chain's tense comes from the final verb in Nungon, whose medial verbs bear no tense,
-and Manambu's medial tense is relative; Korean admits tense before some but not all of its
-medial suffixes. -/
 theorem tense_from_final_verb :
     Language.tense .nungon = .absent ∧ Language.tense .manambu = .restricted ∧
       Language.tense .korean = .restricted := by
   decide
 
-/-- Turkish negates medial clauses individually, since every converb admits the negative
-before it or is negative itself. -/
 theorem negated_individually : Language.polarity .turkish = .full := by decide
 
-/-- The medial verbs of the languages without switch-reference are converbs, as their
-fragments record them. -/
 theorem converb_form :
     (Language.medialMorph .korean).udVerbForm = .Conv ∧
       (Language.medialMorph .turkish).udVerbForm = .Conv ∧
@@ -190,9 +174,6 @@ theorem converb_form :
       ∀ c : Turkish.Converb, c.verbForm = (Language.medialMorph .turkish).udVerbForm := by
   decide
 
-/-- Switch-reference goes with the Papuan systems of the sample and its absence with the
-converbal ones, and the systems with switch-reference are the ones whose medial verbs lose
-tense or reduce it to relative tense. -/
 theorem sr_and_tense : ∀ L : Language, MedialForm.HasSR L.Forms → L.tense ≠ .full := by
   decide
 

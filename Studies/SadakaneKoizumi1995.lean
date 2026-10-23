@@ -216,7 +216,6 @@ theorem passes_insertion {t : Test} : insertion.Passes t ↔ t = .cleftWithoutPa
 theorem not_passes_copula (t : Test) : ¬ copula.Passes t := by
   decide +revert
 
-/-- The three tests tell the four particles apart. -/
 theorem passes_injective : Function.Injective Passes := by
   intro p q h
   have key (t : Test) : p.Passes t ↔ q.Passes t := by rw [h]
@@ -371,14 +370,11 @@ theorem judgment_eq_acceptable_iff_affected {x : Datum} (hx : x ∈ Examples.all
     · cases h
   · exact fun h ↦ ⟨_, ⟨_, h, rfl⟩, rfl⟩
 
-/-- The case markers of the examples have the forms of the fragment's case particles. -/
 theorem caseMarker_form :
     ∀ x ∈ Examples.all, ∀ s, x.feature? "form" = some s → caseMarker ∈ particles x →
       ∃ c : Japanese.Case, s ∈ c.exponents.map (·.form) := by
   decide +kernel
 
-/-- The postpositions of the examples have the forms of the fragment's postpositions or the form
-of the dative *ni*, of which the paper's postposition *ni* is a homophone. -/
 theorem postposition_form :
     ∀ x ∈ Examples.all, ∀ s, x.feature? "form" = some s → postposition ∈ particles x →
       s ∈ Japanese.Case.dat.exponents.map (·.form) ∨

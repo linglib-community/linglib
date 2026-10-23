@@ -215,9 +215,6 @@ noncomputable def pullback : BoundedLatticeHom (Finset {m // IsEFOLPattern m}) (
   map_top' := by simp
   map_bot' := by simp
 
-/-- The octagon for knowledge representation is the octagon for subject negation pulled back
-along `pattern`, so `x` lies in a set iff the canonical model of its pattern makes the
-corresponding statement true. -/
 theorem knowledgeRep_eq : knowledgeRep R S = pullback hS hSc hR hRc ∘ subjectNegation := by
   funext i
   ext x
@@ -233,8 +230,6 @@ noncomputable def knowledgeRepIso (h : Surjective (pattern hS hSc hR hRc)) :
     fun _ _ hst ↦ Finset.coe_injective ((Set.preimage_injective.2 h) hst)
 
 open Classical in
-/-- When every pattern is realized, the octagon for knowledge representation induces a partition
-of seven cells. -/
 theorem card_minterms_knowledgeRep (h : Surjective (pattern hS hSc hR hRc)) :
     #(Finpartition.minterms (knowledgeRep R S)).parts = 7 :=
   card_minterms_subjectNegation ▸ ((BooleanSubalgebra.nonempty_orderIso_closure_iff _ _).1
@@ -255,7 +250,6 @@ def Consistent (σ : Fin 8 → Bool) : Prop :=
 
 instance : DecidablePred Consistent := fun _ ↦ by unfold Consistent; infer_instance
 
-/-- Seven polarity assignments are consistent with the Keynes–Johnson configuration. -/
 theorem card_filter_consistent : #(univ.filter Consistent) = 7 := by decide +kernel
 
 /-- The meets of two corners among the consistent minterms. -/
@@ -346,7 +340,6 @@ private theorem image_polarity_subset :
   image_subset_iff.2 fun _ ht ↦ mem_filter.2 ⟨mem_univ _, minterm_polarity_ne_bot hD hL ht⟩
 
 include hD hC hL in
-/-- With seven cells, the nonzero minterms are exactly the consistent ones. -/
 private theorem minterm_ne_bot_iff_consistent (h : #(Finpartition.minterms ψ).parts = 7)
     (σ : Fin 8 → Bool) : minterm ψ σ ≠ ⊥ ↔ Consistent σ := by
   have := eq_of_subset_of_card_le (filter_minterm_ne_bot_subset hD hC hL) <| by
@@ -354,7 +347,6 @@ private theorem minterm_ne_bot_iff_consistent (h : #(Finpartition.minterms ψ).p
   simpa using congrArg (σ ∈ ·) this
 
 include hD hL in
-/-- With six cells, the nonzero minterms are exactly the six meets of two corners. -/
 private theorem minterm_ne_bot_iff_mem_image (h : #(Finpartition.minterms ψ).parts = 6)
     (σ : Fin 8 → Bool) : minterm ψ σ ≠ ⊥ ↔ σ ∈ pairs.image polarity := by
   have := eq_of_subset_of_card_le (image_polarity_subset hD hL) <| by

@@ -143,7 +143,6 @@ theorem pf_gripa_pst : pf gripa {ind, pst, p2, sg} = ("greipst", {ind, pst, p2, 
 /-- The conflict among (7c)–(7e) at `⟨GRÍPA, {ind pst 1sg}⟩` resolves to the three-cell rule. -/
 theorem stem_gripa_pst : stemChoice (gripa, {ind, pst, p1, sg}) = "greip" := by decide
 
-/-- A strong verb's Block I has no applicable rule of exponence, so the IFD leaves the stem. -/
 theorem blockI_gripa : evalBlock (lindex gripa) blockI ("gríp", {ind, prs, p1, sg})
     = ("gríp", {ind, prs, p1, sg}) := by decide
 

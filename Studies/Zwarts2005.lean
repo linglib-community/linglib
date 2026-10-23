@@ -75,7 +75,6 @@ def Cumulative (C : α → α → α → Prop) (X : Set α) : Prop :=
 def Bounded (C : α → α → α → Prop) (X : Set α) : Prop :=
   ¬ Cumulative C X
 
-/-- A set with no concatenable pairs at all is bounded. -/
 theorem bounded_of_no_pairs {C : α → α → α → Prop} {X : Set α}
     (h : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, C p q r) : Bounded C X :=
   λ hc => h hc.1
@@ -90,7 +89,6 @@ Zwarts shows neither characterizes boundedness. Quantization is
 def TelicK (X : Set (Path Loc)) : Prop :=
   ∀ p ∈ X, ∀ q ∈ X, p ≤ q → p.source = q.source ∧ p.goal = q.goal
 
-/-- Quantized sets are telic in Krifka's sense. -/
 theorem quantized_telicK {X : Set (Path Loc)} (h : QUA (· ∈ X)) :
     TelicK X := by
   intro p hp q hq hle
@@ -102,7 +100,6 @@ theorem quantized_telicK {X : Set (Path Loc)} (h : QUA (· ∈ X)) :
 def loops (A : Loc) : Set (Path Loc) :=
   {p | p.source = A ∧ p.goal = A ∧ p.steps ≠ []}
 
-/-- Loop sets are telic in Krifka's sense, since all members share both endpoints. -/
 theorem loops_telicK (A : Loc) : TelicK (loops (Loc := Loc) A) :=
   λ _ hp _ hq _ => ⟨hp.1.trans hq.1.symm, hp.2.1.trans hq.2.1.symm⟩
 
@@ -135,8 +132,6 @@ def toPP (x : Loc) : Set (Path Loc) := {p | p.goal = x ∧ p.source ≠ x}
 reference object and does not end there. -/
 def fromPP (x : Loc) : Set (Path Loc) := {p | p.source = x ∧ p.goal ≠ x}
 
-/-- No two *to x* paths concatenate, since the first ends at `x` and the second never starts
-there. -/
 theorem toPP_no_pairs (x : Loc) :
     ¬ ∃ p ∈ toPP x, ∃ q ∈ toPP x, ∃ r, Path.IsConcat p q r := by
   rintro ⟨p, hp, q, hq, r, hr⟩
@@ -168,7 +163,6 @@ starts. -/
 def awayFromPP [Preorder α] (d : Loc → α) : Set (Path Loc) :=
   {p | d p.source < d p.goal}
 
-/-- *Towards* is closed under concatenation, since distance decreases across each concatenant. -/
 theorem towardsPP_concat_closed [Preorder α] (d : Loc → α) :
     ∀ p ∈ towardsPP d, ∀ q ∈ towardsPP d, ∀ r, Path.IsConcat p q r →
       r ∈ towardsPP d := by
@@ -177,7 +171,6 @@ theorem towardsPP_concat_closed [Preorder α] (d : Loc → α) :
   rw [hr.goal_eq, hr.source_eq]
   exact hq.trans_le (hr.1 ▸ hp.le)
 
-/-- *Away from* is closed under concatenation, mirroring *towards*. -/
 theorem awayFromPP_concat_closed [Preorder α] (d : Loc → α) :
     ∀ p ∈ awayFromPP d, ∀ q ∈ awayFromPP d, ∀ r, Path.IsConcat p q r →
       r ∈ awayFromPP d := by
@@ -243,8 +236,6 @@ def vpp (V : Set E) (X : Set (Path Loc)) : Set E :=
 
 variable {C}
 
-/-- Closure of the verb and of the phrase transfers to the verb phrase, so *walk along the river*
-is cumulative because *walk* and *along the river* are. -/
 theorem vpp_concat_closed (hhom : IsTraceHom (E := E) C) {V : Set E}
     {X : Set (Path Loc)}
     (hV : ∀ e ∈ V, ∀ e' ∈ V, ∀ f, C e e' f → f ∈ V)
@@ -253,8 +244,6 @@ theorem vpp_concat_closed (hhom : IsTraceHom (E := E) C) {V : Set E}
   λ e he e' he' f hf =>
     ⟨hV e he.1 e' he'.1 f hf, hX _ he.2 _ he'.2 _ (hhom e e' f hf)⟩
 
-/-- If no two paths of the phrase concatenate, no two events of the verb phrase fuse, so *walk to
-the house* is bounded because *to the house* has no concatenable pairs. -/
 theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom (E := E) C) {V : Set E}
     {X : Set (Path Loc)}
     (hX : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, Path.IsConcat p q r) :

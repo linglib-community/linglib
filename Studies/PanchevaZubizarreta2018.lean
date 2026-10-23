@@ -171,16 +171,12 @@ theorem restricted_participant_surfaces_as_strong :
 
 /-! ### Containment among the attested varieties (§4.5) -/
 
-/-- Activating P-Primacy only enlarges the licit region. -/
 theorem strong_le_ultra : strongGrammar ≤ ultraStrongGrammar := by decide
 
-/-- Dropping P-Uniqueness enlarges it further. -/
 theorem ultra_le_weak : ultraStrongGrammar ≤ weakGrammar := by decide
 
 theorem strong_le_weak : strongGrammar ≤ weakGrammar := strong_le_ultra.trans ultra_le_weak
 
-/-- The [+participant] threshold of the super-strong variety is stricter than the
-[+proximate] threshold of the strong one. -/
 theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 
 /-! ### Logophoric roles (§6.2) -/
@@ -192,8 +188,6 @@ def prominenceToSellsRole : ProminenceThreshold → LogophoricRole
   | .participant => .self
   | .author => .source
 
-/-- On the role hierarchy the strong family requires a pivot, the super-strong variety a self,
-and me-first and the [+author] predicted variety a source. -/
 theorem family_logophoric_assignments :
     prominenceToSellsRole strongGrammar.prominence = .pivot ∧
       prominenceToSellsRole ultraStrongGrammar.prominence = .pivot ∧
@@ -205,15 +199,12 @@ theorem family_logophoric_assignments :
 
 /-! ### The paper's examples (§4) -/
 
-/-- Italian dative *gli* is third person and accusative *ti* second, so the weak PCC bans the
-pair. -/
 theorem italian_weak_glidat_tiacc :
     .dat ∈ Italian.Pronouns.gli.cases ∧ .acc ∈ Italian.Pronouns.ti.cases ∧
       ∃ io ∈ Italian.Pronouns.gli.person, ∃ do_ ∈ Italian.Pronouns.ti.person,
         ¬ IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
-/-- Italian *ti la*, second-person dative over third-person accusative, is licit. -/
 theorem italian_weak_tidat_lacl :
     .dat ∈ Italian.Pronouns.ti.cases ∧ .acc ∈ Italian.Pronouns.la.cases ∧
       ∃ io ∈ Italian.Pronouns.ti.person, ∃ do_ ∈ Italian.Pronouns.la.person,
@@ -228,7 +219,6 @@ theorem spanish_weak_tedat_meacc :
         IsLicit weakGrammar ⟨io, do_⟩ := by
   decide
 
-/-- Spanish *me te*, first-person dative over second-person accusative, is licit as well. -/
 theorem spanish_weak_medat_teacc :
     .dat ∈ Spanish.Clitics.me.cases ∧ .acc ∈ Spanish.Clitics.te.cases ∧
       ∃ io ∈ Spanish.Clitics.me.person, ∃ do_ ∈ Spanish.Clitics.te.person,

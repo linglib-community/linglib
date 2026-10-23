@@ -66,7 +66,6 @@ noncomputable def environments : List Licenser :=
     few.licenser, atMost.licenser, materialAntecedent, beforeClause.licenser, tooTo.licenser,
     clausalComparative.licenser]
 
-/-- Every environment credited to the dissertation is downward entailing. -/
 theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c := by
   simp only [environments, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
     forall_eq]
@@ -78,12 +77,8 @@ theorem cited_environments_de : ∀ c ∈ environments, IsDownwardEntailing c :=
     (holds_tooTo_iff (s := .weak)).2 (by decide),
     (holds_clausalComparative_iff (s := .weak)).2 (by decide)⟩
 
-/-- Questions are not downward entailing. -/
 theorem question_not_de : ¬ IsDownwardEntailing question.licenser := id
 
-/-- A downward-entailing environment licenses the weak polarity items, the dissertation's
-generalization, which the library takes as its definition of licensing by strengthening once the
-environment is not downward entailing by being constant. -/
 theorem ladusaw_generalization (L : Licenser) (hc : IsDownwardEntailing L)
     (hn : ¬ L.IsStrawsonUE) (e : PolarityItem) (he : e.licensor = some .weak) :
     L.Licenses e :=
@@ -91,8 +86,6 @@ theorem ladusaw_generalization (L : Licenser) (hc : IsDownwardEntailing L)
 
 variable {α : Type*}
 
-/-- *no* reverses entailment in both arguments, *few* in its scope, and *every* in its restrictor
-but not its scope, which is where each licenses a polarity item. -/
 theorem determiner_monotonicity [Fintype α] [Nonempty α] :
     ScopeAntitone (no : GQ α) ∧ RestrictorAntitone (no : GQ α) ∧ ScopeAntitone (few : GQ α) ∧
       RestrictorAntitone (every : GQ α) ∧ ¬ ScopeAntitone (every : GQ α) :=

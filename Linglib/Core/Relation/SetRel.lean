@@ -40,12 +40,10 @@ theorem core_compl (R : SetRel α β) (t : Set β) : R.core tᶜ = (R.preimage t
 theorem preimage_compl (R : SetRel α β) (t : Set β) : R.preimage tᶜ = (R.core t)ᶜ := by
   rw [← compl_compl (R.preimage _), ← core_compl, compl_compl]
 
-/-- The core along a union of relations is the intersection of the cores. -/
 theorem core_iUnion {ι : Sort*} (R : ι → SetRel α β) (t : Set β) :
     core (⋃ i, R i) t = ⋂ i, (R i).core t := by
   ext; simp only [mem_core, Set.mem_iUnion, Set.mem_iInter]; grind
 
-/-- Restricting the relation enlarges the core. -/
 @[gcongr]
 theorem core_subset_core_left (h : R₁ ⊆ R₂) : R₂.core t ⊆ R₁.core t :=
   fun _ ha _ hb ↦ ha (h hb)
@@ -88,8 +86,6 @@ instance isIrrefl_asymmetrize : R.asymmetrize.IsIrrefl := ⟨fun _ h ↦ h.2 h.1
 instance [DecidablePred (· ∈ R)] : DecidablePred (· ∈ R.asymmetrize) := fun p ↦
   inferInstanceAs (Decidable (p ∈ R ∧ ¬ (p.2, p.1) ∈ R))
 
-/-- Under an injective map the asymmetric part of the image is the image of the asymmetric
-part. -/
 theorem asymmetrize_image_prodMap {β : Type*} {f : α → β} (hf : Function.Injective f) :
     asymmetrize (Prod.map f f '' R) = Prod.map f f '' R.asymmetrize := by
   ext ⟨x, y⟩
@@ -140,7 +136,6 @@ instance : R.transGen.IsTrans where
 theorem core_transGen_subset_core : R.transGen.core s ⊆ R.core s :=
   core_subset_core_left subset_transGen
 
-/-- The core of the transitive closure is the intersection of the iterated cores. -/
 theorem core_transGen : R.transGen.core s = ⋂ n, R.core^[n + 1] s := by
   ext a
   simp only [Set.mem_iInter]

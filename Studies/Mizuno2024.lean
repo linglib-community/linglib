@@ -151,11 +151,9 @@ theorem mem_live_ofDatedFacts {facts : List (ℤ × Set W)} {time : ℤ} {A C : 
     Set.mem_iInter, List.mem_map, List.mem_filter, decide_eq_true_eq]
   exact ⟨fun h f hf ht ↦ h _ ⟨f, ⟨hf, ht⟩, rfl⟩, fun h _ ⟨f, ⟨hf, ht⟩, hp⟩ ↦ hp ▸ h f hf ht⟩
 
-/-- The live possibilities only shrink. -/
 theorem antitone_live : Antitone S.live :=
   Filter.ker_mono.comp_antitone S.antitone_commonGround
 
-/-- An antecedent open among the live possibilities is undecided by the common ground. -/
 theorem not_decidedBy_of_open (h₁ : ¬ S.domain ⊆ S.antecedent)
     (h₂ : ¬ Disjoint S.antecedent S.domain) :
     ¬ (Question.polar S.antecedent).DecidedBy (S.commonGround S.time) := by
@@ -164,16 +162,12 @@ theorem not_decidedBy_of_open (h₁ : ¬ S.domain ⊆ S.antecedent)
   · exact h₁ (Filter.subset_ker.1 subset_rfl _ h)
   · exact h₂ (Set.subset_compl_iff_disjoint_right.1 (Filter.subset_ker.1 subset_rfl _ h)).symm
 
-/-- In a context leaving the antecedent open, and with no participant committed to it, only the
-hypothetical reading is felicitous ([iatridou-1991], [haegeman-2003]). -/
 theorem felicitous_iff_of_open {A : Type*} {K : Commitment.Table A W}
     (hK : K.commonGround = S.commonGround S.time) (h : ∀ a, S.antecedent ∉ K.discourseCommitments a)
     (h₁ : ¬ S.domain ⊆ S.antecedent) (h₂ : ¬ Disjoint S.antecedent S.domain) {ct : Reading} :
     ct.Felicitous K S.antecedent ↔ ct = .hypothetical :=
   Reading.felicitous_iff_of_not_decidedBy h (hK ▸ not_decidedBy_of_open h₁ h₂)
 
-/-- Where the antecedent is live and the domain can be expanded so as to leave the consequent
-open, X-marking is felicitous exactly when it does not signal strong counterfactuality. -/
 theorem xFelicitous_iff (hA : ¬ Disjoint S.antecedent S.domain)
     (hX : ∃ D, S.domain ⊂ D ∧ ¬ D ⊆ S.consequent) : S.XFelicitous κ ↔ κ = .weak := by
   cases κ <;> simp [XFelicitous, Counterfactuality.Admits, hA, hX]
@@ -185,12 +179,9 @@ theorem xFelicitous_iff_xFelicitous {W' : Type*} {S' : Scenario W'}
     S.XFelicitous κ ↔ S'.XFelicitous κ := by
   rw [xFelicitous_iff hA hX, xFelicitous_iff hA' hX']
 
-/-- Where the consequent is open among the live possibilities, O-marking is felicitous. -/
 theorem oFelicitous_of_not_subset (h : ¬ S.domain ⊆ S.consequent) : S.OFelicitous κ :=
   ⟨_, .inl rfl, h⟩
 
-/-- Where the consequent is settled among the live possibilities, O-marking is felicitous exactly
-when X-marking is not and the consequent was open at an earlier time. -/
 theorem oFelicitous_iff_of_subset (h : S.domain ⊆ S.consequent) :
     S.OFelicitous κ ↔ ¬ S.XFelicitous κ ∧ ∃ t < S.time, ¬ S.live t ⊆ S.consequent := by
   constructor
@@ -278,7 +269,6 @@ theorem oFelicitous_jones_iff {κ : Counterfactuality} : jones.OFelicitous κ �
   · simp
   · exact iff_of_true ⟨nofun, 0, zero_lt_one, not_live_zero_subset_consequent⟩ rfl
 
-/-- An Anderson conditional takes exactly one strategy. -/
 theorem oFelicitous_jones_iff_not {κ : Counterfactuality} :
     jones.OFelicitous κ ↔ ¬ jones.XFelicitous κ := by
   rw [oFelicitous_jones_iff, xFelicitous_jones_iff]
@@ -318,7 +308,6 @@ def party : Scenario Party :=
 theorem mem_domain_party {v : Party} : v ∈ party.domain ↔ v ≠ .cancelled := by
   simp [party, Scenario.mem_live_ofDatedFacts]
 
-/-- The consequent is open over `D`, so O-marking is not trivial. -/
 theorem not_domain_subset_consequent_party : ¬ party.domain ⊆ party.consequent :=
   fun h ↦ absurd (h ((mem_domain_party (v := .dull)).2 nofun)) (by simp [party])
 
@@ -326,7 +315,6 @@ theorem not_domain_subset_consequent_party : ¬ party.domain ⊆ party.consequen
 theorem antecedent_live_party : ¬ Disjoint party.antecedent party.domain :=
   Set.not_disjoint_iff.2 ⟨.johnComes, rfl, mem_domain_party.2 nofun⟩
 
-/-- X-marking can expand the domain to the cancelled party, leaving the consequent open. -/
 theorem exists_ssuperset_party : ∃ D, party.domain ⊂ D ∧ ¬ D ⊆ party.consequent :=
   ⟨Set.univ, Set.ssubset_univ_iff.2 fun h ↦ mem_domain_party.1 (h ▸ trivial) rfl,
     fun h ↦ absurd (h (Set.mem_univ Party.dull)) (by simp [party])⟩
@@ -386,7 +374,6 @@ def constructionOf (e : Datum) : Option Construction :=
 def strategyOf (e : Datum) : Option MarkingStrategy :=
   e.parse? "strategy" [("x-marking", .xMarking), ("o-marking", .oMarking)]
 
-/-- Every Anderson and future-less-vivid row names its strategy and a sampled language. -/
 theorem rows_parsed : ∀ e ∈ Examples.all, (constructionOf e).isSome →
     (strategyOf e).isSome ∧ (counterfactuality e.language).isSome := by
   decide
@@ -426,8 +413,6 @@ Both scenarios leave the antecedent open, so with no participant committed to it
 is read hypothetically, and the markers heading the rows are attested marking hypothetical
 conditionals. -/
 
-/-- Only the hypothetical reading is felicitous for the Anderson antecedent, given that no
-participant is committed to it. -/
 theorem felicitous_jones_iff {A : Type*} {K : Commitment.Table A Jones}
     (hK : K.commonGround = jones.commonGround jones.time)
     (h : ∀ a, jones.antecedent ∉ K.discourseCommitments a) {ct : Reading} :
@@ -435,8 +420,6 @@ theorem felicitous_jones_iff {A : Type*} {K : Commitment.Table A Jones}
   Scenario.felicitous_iff_of_open hK h
     (fun h' ↦ absurd (h' mimic_mem_domain) nofun) antecedent_live_jones
 
-/-- Only the hypothetical reading is felicitous for the future-less-vivid antecedent, given that
-no participant is committed to it. -/
 theorem felicitous_party_iff {A : Type*} {K : Commitment.Table A Party}
     (hK : K.commonGround = party.commonGround party.time)
     (h : ∀ a, party.antecedent ∉ K.discourseCommitments a) {ct : Reading} :
@@ -453,7 +436,6 @@ def markerOf : Glottocode → Option Conditional.Marker
   | "mand1415" => some Mandarin.Conditionals.ruguo
   | _ => none
 
-/-- Every row's marker is attested marking hypothetical conditionals. -/
 theorem rows_marker_hypothetical :
     ∀ e ∈ Examples.all, ∀ m ∈ markerOf e.language, .hypothetical ∈ m.readings.fst := by
   decide

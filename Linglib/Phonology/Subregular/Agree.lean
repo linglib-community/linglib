@@ -92,8 +92,6 @@ section Transitive
 
 variable (hR : ∀ a b c, p a → p b → p c → ¬ R a b → ¬ R b c → ¬ R a c)
 include hR
-/-- If the permitted pairs are transitive on the tier, membership is permission of *all* pairs
-of on-tier symbols, not just the tier-adjacent ones. -/
 theorem TierStrictlyLocalGrammar.mem_ofForbiddenPairs_language_iff_forall_sublist_pair
     (w : List α) :
     w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R p).language ↔
@@ -162,8 +160,6 @@ section Agree
 
 variable [DecidableEq α] (p : α → Prop) [DecidablePred p]
 
-/-- Membership in the AGREE language is agreement of *all* pairs of on-tier symbols,
-not just the tier-adjacent ones. -/
 theorem TierStrictlyLocalGrammar.mem_agree_language_iff_forall_sublist_pair (w : List α) :
     w ∈ (TierStrictlyLocalGrammar.agree p).language ↔ ∀ a b, [a, b] <+ w → p a → p b → a = b :=
   (mem_ofForbiddenPairs_language_iff_forall_sublist_pair not_ne_trans w).trans <| by
@@ -175,7 +171,6 @@ theorem TierStrictlyLocalGrammar.agree_language_eq_strictlyPiecewise :
     (TierStrictlyLocalGrammar.agree p).language = (StrictlyPiecewiseGrammar.agree p).language 2 :=
   ofForbiddenPairs_language_eq_strictlyPiecewise not_ne_trans
 
-/-- Every AGREE language is strictly 2-piecewise. -/
 theorem TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise :
     ((TierStrictlyLocalGrammar.agree p).language).IsStrictlyPiecewise 2 :=
   ofForbiddenPairs_language_isStrictlyPiecewise not_ne_trans

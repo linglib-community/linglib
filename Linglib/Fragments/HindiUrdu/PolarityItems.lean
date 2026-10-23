@@ -79,7 +79,6 @@ def kabhiiBhii : PolarityItem :=
 def bhiiItems : List PolarityItem :=
   [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii]
 
-/-- Every attested context of every entry admits it. -/
 theorem hindi_licensing_sound :
     ∀ e ∈ bhiiItems, ∀ c ∈ e.licensingContexts, c.licenser.Admits e := by
   decide

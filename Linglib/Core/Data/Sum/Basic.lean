@@ -35,8 +35,6 @@ theorem FactorsThrough.sumElim (h₁ : g₁.FactorsThrough f₁)
   | inr _, inl _, e => (h _ _ e.symm).symm
   | inr _, inr _, e => h₂ e
 
-/-- The sum of two functions factors through the sum of two others exactly when each factors
-through its own and the two agree wherever the latter coincide. -/
 theorem factorsThrough_sumElim_iff :
     (Sum.elim g₁ g₂).FactorsThrough (Sum.elim f₁ f₂) ↔
       g₁.FactorsThrough f₁ ∧ g₂.FactorsThrough f₂ ∧

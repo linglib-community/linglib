@@ -253,8 +253,6 @@ theorem affected_licensed_with_any : applAffected.Licensed v := fun h ↦ absurd
 theorem high_licensed_of_assignsTheta (h : v.AssignsTheta) : applHigh.Licensed v :=
   fun _ ↦ h.isThematic
 
-/-- High Appl is blocked with middle Voice, which has no event semantics, while a possessive
-dative survives there ([pylkkanen-2008]). -/
 theorem ethical_possessive_middle_asymmetry :
     ¬ applHigh.Licensed Voice.middle ∧ applLowPossessor.Licensed Voice.middle := by decide
 

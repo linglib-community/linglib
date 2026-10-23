@@ -126,7 +126,6 @@ open Opposite
 
 variable {W M V : Type*} {X Y : Set V}
 
-/-- The action of `possibilities` on a lattice inequality, elementwise. -/
 @[simp] theorem possibilities_map_apply (h : X ≤ Y)
     (p : (possibilities W M V).obj (op Y)) :
     (possibilities W M V).map (homOfLE h).op p =

@@ -110,7 +110,6 @@ theorem applies_causativeVoice (hv : ∀ fr ∈ v.valency.frames, fr = .intransi
     · exact ⟨_, hfr, le_rfl⟩
     · exact absurd ⟨_, hfr, by decide⟩ h
 
-/-- The passive applies to a transitive verb. -/
 theorem applies_passive (h : ArgumentFrame.np ∈ v.valency.frames) (sfx : passiveSuffixes) :
     Applies (passive sfx) v :=
   ⟨_, h, le_rfl⟩

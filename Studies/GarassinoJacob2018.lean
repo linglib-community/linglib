@@ -68,9 +68,6 @@ variable {W F : Type*}
 
 /-! ### Polarity focus as a polar question under discussion -/
 
-/-- A polarity-focus utterance is a congruent answer to the polar question of its proposition:
-its focus value, the polarity alternatives of the proposition, is the set of alternatives of that
-question. -/
 theorem orbit_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
     MulAction.orbit Polarity p = alt (ofSet p).query := by
   rw [query_ofSet, alt_polar_eq_orbit hp.ne_empty (Set.nonempty_compl.mp hpc)]
@@ -82,7 +79,6 @@ polar question for each candidate. -/
 def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
   .node (fromSetoid (partition (Set.range P))) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
 
-/-- The polar subquestions for all candidates jointly resolve the *wh*-question. -/
 theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
     (P : F → Set W) : (agentStrategy agents P).IsComplete := by
   refine .node (fun _ ↦ ?_) (fun c hc ↦ ?_)
@@ -186,22 +182,15 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Polarity focus after a denial of the proposition is attested in situational identity and in
-situational analogy alike: presupposing the negation does not decide the relation to the
-antecedent. -/
 theorem rows_denies_identity_and_analogy :
     (∃ r ∈ rows, r.antecedent.Denies ∧ r.relation = .identity) ∧
       ∃ r ∈ rows, r.antecedent.Denies ∧ r.relation = .analogy := by
   decide
 
-/-- Every attested French *si* answers a preceding opposite turn: it is a [reverse, +]
-response. -/
 theorem rows_si_mem_reversePositive : ∀ r ∈ rows, r.means = .siParticle →
     ∃ x ∈ r.antecedent.response, x ∈ FarkasBruce2010.reversePositive := by
   decide
 
-/-- *Sì che* and *sí que* are attested in responses that are not [reverse, +], after a polar
-question and after a positive statement: they are not limited to answering an opposite turn. -/
 theorem rows_siChe_siQue_not_mem_reversePositive :
     (∃ r ∈ rows, r.means = .siChe ∧
       ∃ x ∈ r.antecedent.response, x ∉ FarkasBruce2010.reversePositive) ∧
@@ -209,8 +198,6 @@ theorem rows_siChe_siQue_not_mem_reversePositive :
       ∃ x ∈ r.antecedent.response, x ∉ FarkasBruce2010.reversePositive := by
   decide
 
-/-- Every utterance the chapter reads as answering a subquestion stands in situational analogy to
-its antecedent, the interrelation of its criteria it states; the converse fails. -/
 theorem rows_subquestion_analogy :
     (∀ r ∈ rows, r.subquestion = true → r.relation = .analogy) ∧
       ∃ r ∈ rows, r.relation = .analogy ∧ r.subquestion = false := by

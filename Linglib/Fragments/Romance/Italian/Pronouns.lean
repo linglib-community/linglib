@@ -221,14 +221,10 @@ def accusative : Finset PersonalPronoun := {mi, ti, lo, la, ci, vi, li, le_acc}
 /-- The dative series. -/
 def dative : Finset PersonalPronoun := {mi, ti, gli, le_dat, ci, vi, loro_dat}
 
-/-- *le* fills the third person singular feminine dative and the third person plural feminine
-accusative, cells that differ in number and in case, so it is two entries: one entry with both
-cases and both numbers would also claim the singular accusative and the plural dative. -/
 theorem formCellsOf_atonic_le :
     Morphology.formCellsOf atonic "le" = {(.sg3f, .dat), (.pl3f, .acc)} := by
   decide
 
-/-- The series give each case the forms of its column of the table. -/
 theorem forms_accusative_dative :
     accusative.image (·.form) = Finset.univ.biUnion (fun r ↦ atonic (r, .acc)) ∧
       dative.image (·.form) = Finset.univ.biUnion (fun r ↦ atonic (r, .dat)) := by

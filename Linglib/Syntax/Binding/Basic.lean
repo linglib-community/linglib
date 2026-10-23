@@ -258,7 +258,6 @@ theorem LocallyBound.locallyCommanded (h : s.LocallyBound L b) : s.LocallyComman
 theorem not_locallyBound_of_mem_exempt (hb : b ∈ s.exempt) : ¬ s.LocallyBound L b :=
   fun h ↦ hb h.locallyCommanded
 
-/-- A position whose only antecedents are `a` and itself is bound exactly when `a` binds it. -/
 theorem bound_iff_binds (h : ∀ x, L x b → x = a ∨ x = b) : s.Bound L b ↔ s.Binds L a b :=
   ⟨fun ⟨x, hx⟩ ↦ (h x hx.2.1).elim (· ▸ hx) (absurd · hx.1), fun h ↦ ⟨a, h⟩⟩
 
@@ -270,13 +269,9 @@ theorem binds_pair_iff (hab : a ≠ b) : s.Binds (pair a b) x b ↔ x = a ∧ s.
   · rintro ⟨rfl, hc⟩
     exact ⟨hab, .inl ⟨rfl, rfl⟩, hc⟩
 
-/-- Under the dependency relating `a` and `b` alone, `b` is bound exactly when `a` commands
-it. -/
 theorem bound_pair_iff (hab : a ≠ b) : s.Bound (pair a b) b ↔ s.commands a b :=
   ⟨fun ⟨_, h⟩ ↦ ((binds_pair_iff hab).1 h).2, fun hc ↦ ⟨a, (binds_pair_iff hab).2 ⟨rfl, hc⟩⟩⟩
 
-/-- Under the dependency relating `a` and `b` alone, `b` is locally bound exactly when `a` lies
-in its domain and commands it. -/
 theorem locallyBound_pair_iff (hab : a ≠ b) :
     s.LocallyBound (pair a b) b ↔ a ∈ s.domain b ∧ s.commands a b := by
   constructor
@@ -296,7 +291,6 @@ theorem condition_iff_not_condition_pronoun (hc : c.IsAnaphor) (hb : b ∉ E) :
     s.Condition L E b c ↔ ¬ s.Condition L E b .pronoun := by
   rw [condition_anaphor hc, Condition, not_not, or_iff_right hb]
 
-/-- At an exempt position an anaphor meets its condition under any dependency. -/
 theorem condition_of_mem (hc : c.IsAnaphor) (hb : b ∈ E) : s.Condition L E b c :=
   (condition_anaphor hc).2 (.inl hb)
 
@@ -307,21 +301,16 @@ theorem condition_exempt_iff (hc : c.IsAnaphor) :
   rw [condition_anaphor hc, imp_iff_not_or]
   rfl
 
-/-- Without exemption an anaphor meets its condition exactly when it meets it under the
-structural exemption and something in its domain commands it. -/
 theorem condition_empty_iff (hc : c.IsAnaphor) :
     s.Condition L ∅ b c ↔ s.Condition L s.exempt b c ∧ s.LocallyCommanded b := by
   rw [condition_anaphor hc, condition_exempt_iff hc]
   exact ⟨fun h ↦ ⟨fun _ ↦ h.resolve_left id, (h.resolve_left id).locallyCommanded⟩,
     fun h ↦ .inr (h.1 h.2)⟩
 
-/-- A position that meets Condition C meets Condition B, since a position that is not bound is
-not bound in its domain. -/
 theorem condition_pronoun_of_rExpression (h : s.Condition L E b .rExpression) :
     s.Condition L E b .pronoun :=
   fun hb ↦ h hb.bound
 
-/-- Exempting more positions weakens the theory. -/
 theorem Satisfies.mono_exempt (hE : E ⊆ E') (h : s.Satisfies L E cls) : s.Satisfies L E' cls := by
   intro b c hbc
   have := h b c hbc
@@ -366,8 +355,6 @@ theorem binds_comap (hf : f.Injective) :
     (s.comap f).Binds (L on f) a b ↔ s.Binds L (f a) (f b) := by
   simp only [Binds, comap, ne_eq, hf.eq_iff]
 
-/-- A position is bound in its domain when a position `f` reaches binds it there or one that
-`f` does not reach does. -/
 theorem locallyBound_comap_or (hf : f.Injective) :
     (s.comap f).LocallyBound (L on f) b ∨ b ∈ s.covertlyBound L f ↔ s.LocallyBound L (f b) := by
   constructor
@@ -398,30 +385,21 @@ theorem condition_comap (hf : f.Injective) (hc : c.IsAnaphor) :
   rw [condition_anaphor hc, condition_anaphor hc, ← locallyBound_comap_or hf, Set.mem_union,
     Set.mem_preimage, or_assoc, or_comm (a := b ∈ s.covertlyBound L f)]
 
-/-- An anaphor that meets Condition A among all positions with nothing exempt, and that no
-position `f` reaches binds in its domain, is covertly bound. -/
 theorem mem_covertlyBound_of_condition (hf : f.Injective) (hc : c.IsAnaphor)
     (h : s.Condition L ∅ (f b) c) (hb : ¬ (s.comap f).LocallyBound (L on f) b) :
     b ∈ s.covertlyBound L f :=
   ((locallyBound_comap_or hf).2 (((condition_anaphor hc).1 h).resolve_left id)).resolve_left hb
 
-/-- A pronominal meets Condition B among all positions exactly when it meets it among those `f`
-reaches and no position left out binds it in its domain. -/
 theorem condition_pronoun_comap (hf : f.Injective) {F : Set κ} :
     (s.comap f).Condition (L on f) F b .pronoun ∧ b ∉ s.covertlyBound L f ↔
       s.Condition L E (f b) .pronoun := by
   simp only [Condition, ← locallyBound_comap_or hf, not_or]
 
-/-- An R-expression meets Condition C among all positions exactly when it meets it among those
-`f` reaches and no position left out binds it. -/
 theorem condition_rExpression_comap (hf : f.Injective) {F : Set κ} :
     (s.comap f).Condition (L on f) F b .rExpression ∧ (¬ ∃ x ∉ Set.range f, s.Binds L x (f b)) ↔
       s.Condition L E (f b) .rExpression := by
   simp only [Condition, ← bound_comap_or hf, not_or]
 
-/-- Two covertly bound positions whose domains hold at most one position left out between them
-have the same binder, so a symmetric and transitive dependency, as coindexation is, relates
-them. -/
 theorem rel_of_mem_covertlyBound (hs : ∀ ⦃x y⦄, L x y → L y x)
     (ht : ∀ ⦃x y z⦄, L x y → L y z → L x z)
     (h : ∀ x ∈ s.domain (f a), ∀ y ∈ s.domain (f b), x ∉ Set.range f → y ∉ Set.range f → x = y)

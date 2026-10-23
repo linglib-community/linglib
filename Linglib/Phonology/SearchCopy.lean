@@ -185,24 +185,20 @@ theorem emit_of_isTarget {s : α} (h : r.IsTarget s) (w : Option α) :
     r.emit w s = (r.copied s w).elim s (r.write · s) :=
   ite_eq_left h
 
-/-- Where the targets are visible, an invisible segment is emitted unchanged. -/
 theorem emit_of_not_tier (h : ∀ s, r.IsTarget s → r.tier s) {s : α} (hs : ¬ r.tier s)
     (w : Option α) : r.emit w s = s :=
   r.emit_of_not_isTarget (mt (h s) hs) w
 
-/-- A target whose search finds nothing is left unchanged when there is no default. -/
 theorem emit_of_found_eq_none (hd : r.default = none) {s : α} {w : Option α}
     (hf : r.found s w = none) : r.emit w s = s := by
   unfold emit copied; rw [hf, hd]; split_ifs <;> rfl
 
-/-- A target already carrying the value its search finds is emitted unchanged. -/
 theorem emit_eq_self {s : α} {w : Option α} {v : Bool} (hf : r.found s w = some v)
     (h : r.value s = some (r.relation.act v)) : r.emit w s = s := by
   unfold emit copied; rw [hf]; split_ifs with ht
   · simp [r.write_value _ s ht h]
   · rfl
 
-/-- When writes preserve visibility, a segment is emitted as visible as it was read. -/
 theorem tier_emit_iff (hw : r.PreservesTier) (w : Option α) (s : α) :
     r.tier (r.emit w s) ↔ r.tier s := by
   unfold emit; split_ifs with ht

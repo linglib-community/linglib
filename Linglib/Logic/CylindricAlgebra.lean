@@ -115,7 +115,6 @@ theorem cyl_eq_bot : cyl i x = ⊥ ↔ x = ⊥ :=
 theorem cyl_cyl_inf (i : ι) (x y : A) : cyl i (cyl i x ⊓ y) = cyl i x ⊓ cyl i y := by
   rw [inf_comm, cyl_inf_cyl, inf_comm]
 
-/-- The complement of a cylinder is a cylinder. -/
 @[simp]
 theorem cyl_compl_cyl : cyl i (cyl i x)ᶜ = (cyl i x)ᶜ := by
   refine (le_cyl ..).antisymm' ?_
@@ -230,7 +229,6 @@ theorem subst_top (i j : ι) : subst i j (⊤ : A) = ⊤ := by
 theorem subst_bot (i j : ι) : subst i j (⊥ : A) = ⊥ := by
   rw [← compl_top, subst_compl, subst_top]
 
-/-- Substitution for a variable that `x` does not depend on leaves `x` unchanged. -/
 theorem subst_eq_self (h : i ∉ dimSet x) (j : ι) : subst i j x = x := by
   obtain rfl | hij := eq_or_ne i j
   · simp

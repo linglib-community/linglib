@@ -90,7 +90,6 @@ theorem collapse_eq_destutter (xs : List α) : collapse xs = xs.destutter (· �
 
 @[simp] theorem collapse_singleton (x : α) : collapse [x] = [x] := by simp [collapse]
 
-/-- `collapse` fuses a constant run into its single autosegment. -/
 @[simp] theorem collapse_replicate (n : ℕ) (a : α) :
     collapse (List.replicate (n + 1) a) = [a] :=
   List.destutter_replicate (fun h ↦ h rfl) n
@@ -99,7 +98,6 @@ theorem collapse_eq_destutter (xs : List α) : collapse xs = xs.destutter (· �
 theorem isClean_collapse (xs : List α) : IsClean (collapse xs) :=
   List.isChain_destutter _ xs
 
-/-- `collapse` fixes OCP-clean lists. -/
 protected theorem IsClean.collapse_eq {xs : List α} (h : IsClean xs) : collapse xs = xs :=
   List.destutter_of_isChain _ xs h
 
@@ -108,7 +106,6 @@ onto them. -/
 @[simp] theorem collapse_eq_self_iff (xs : List α) : collapse xs = xs ↔ IsClean xs :=
   List.destutter_eq_self_iff _ xs
 
-/-- The fusion repair is a retraction onto the OCP-clean set. -/
 @[simp] theorem collapse_idem (xs : List α) : collapse (collapse xs) = collapse xs :=
   List.destutter_idem _ _
 
@@ -117,7 +114,6 @@ onto them. -/
 @[simp] theorem collapse_eq_nil {xs : List α} : collapse xs = [] ↔ xs = [] :=
   List.destutter_eq_nil _
 
-/-- The output of the fusion repair is a sublist of its input. -/
 theorem collapse_sublist (xs : List α) : (collapse xs).Sublist xs :=
   List.destutter_sublist _ xs
 
@@ -228,7 +224,6 @@ theorem mergeIdx_lt {p : ℕ} (h : p < xs.length + ys.length) :
     omega
   all_goals omega
 
-/-- On clean words, merging at the seam is collapsing the concatenation. -/
 theorem collapse_append_of_isClean (hx : IsClean xs) (hy : IsClean ys) :
     collapse (xs ++ ys) = mergeAppend xs ys :=
   List.IsChain.destutter_ne_append hx hy
@@ -240,7 +235,6 @@ theorem collapse_append (xs ys : List α) :
   rw [← collapse_append_of_isClean (isClean_collapse xs) (isClean_collapse ys)]
   exact (List.destutter_append_destutter xs ys).symm
 
-/-- Fusion keeps the last element. -/
 @[simp] theorem getLast?_collapse (xs : List α) : (collapse xs).getLast? = xs.getLast? := by
   induction xs using List.reverseRecOn with
   | nil => rfl
@@ -248,7 +242,6 @@ theorem collapse_append (xs ys : List α) :
     rw [collapse_append, collapse_singleton, getLast?_mergeAppend (List.cons_ne_nil _ _)]
     simp
 
-/-- A symbol appended to a word fuses with the word's last element when it repeats it. -/
 theorem collapse_append_singleton (xs : List α) (x : α) :
     collapse (xs ++ [x]) = if xs.getLast? = some x then collapse xs else collapse xs ++ [x] := by
   rw [collapse_append, collapse_singleton, mergeAppend, getLast?_collapse]
@@ -263,7 +256,6 @@ theorem collapse_append_singleton (xs : List α) (x : α) :
     · simpa [ih] using fun hax ↦ hax ▸ List.mem_of_getLast? h
     · simp [ih]
 
-/-- Merging at the seam keeps clean words clean. -/
 theorem isClean_mergeAppend (hx : IsClean xs) (hy : IsClean ys) : IsClean (mergeAppend xs ys) :=
   collapse_append_of_isClean hx hy ▸ isClean_collapse _
 
@@ -278,7 +270,6 @@ variable {α : Type*} [DecidableEq α] {xs ys : List α}
 elements containing it, one less than the number of runs in `xs.take (k + 1)`. -/
 def runIdx (xs : List α) (k : ℕ) : ℕ := (collapse (xs.take (k + 1))).length - 1
 
-/-- Later positions sit in the same or later runs. -/
 theorem runIdx_monotone (xs : List α) : Monotone (runIdx xs) := by
   intro a b hab
   unfold runIdx
@@ -288,7 +279,6 @@ theorem runIdx_monotone (xs : List α) : Monotone (runIdx xs) := by
   simp only [collapse_eq_destutter] at hlen ⊢
   omega
 
-/-- The collapse of a nonempty prefix has its top run index plus one elements. -/
 private theorem length_collapse_take_succ {m : ℕ} (hm : m < xs.length) :
     (collapse (xs.take (m + 1))).length = runIdx xs m + 1 := by
   have hpos : 0 < (collapse (xs.take (m + 1))).length := by
@@ -298,7 +288,6 @@ private theorem length_collapse_take_succ {m : ℕ} (hm : m < xs.length) :
   unfold runIdx
   omega
 
-/-- An in-bounds position has an in-bounds run index in the collapsed tier. -/
 theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) :
     runIdx xs k < (collapse xs).length := by
   have hsub : (collapse (xs.take (k + 1))).Sublist xs :=
@@ -307,7 +296,6 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
   rw [← collapse_eq_destutter, length_collapse_take_succ hk] at hlen
   omega
 
-/-- On a constant tier every position lies in the single run. -/
 @[simp] theorem runIdx_replicate (n : ℕ) (a : α) (k : ℕ) :
     runIdx (List.replicate n a) k = 0 := by
   unfold runIdx
@@ -316,7 +304,6 @@ theorem runIdx_lt_collapse_length (xs : List α) {k : ℕ} (hk : k < xs.length) 
   | zero => simp
   | succ m => rw [collapse_replicate, List.length_singleton]
 
-/-- On a clean tier `runIdx` is the identity. -/
 theorem runIdx_clean (hc : IsClean xs) {k : ℕ} (h : k < xs.length) : runIdx xs k = k := by
   unfold runIdx
   rw [IsClean.collapse_eq (hc.take (k + 1)), List.length_take_of_le (by omega)]

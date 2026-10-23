@@ -115,8 +115,6 @@ def teleological : Normality Bool Bool := .ofAccess fun _ ↦ {true}
 /-- On the statistical construal a turtle's normal worlds are those where it dies young. -/
 def statistical : Normality Bool Bool := .ofAccess fun _ ↦ {false}
 
-/-- *Turtles live to be 100* is true under the teleological construal and false under the
-statistical one. -/
 theorem turtles (w : Bool) :
     w ∈ teleological.gen Set.univ {true} ∧ w ∉ statistical.gen Set.univ {true} :=
   ⟨fun _ hx ↦ hx.1, fun h ↦ by simpa using h ⟨rfl, Set.mem_univ false⟩⟩
@@ -129,8 +127,6 @@ there. -/
 def existentialReading (Alt : Set (E → Set W)) (T : E → Set W) (c : E) (w : W) : Prop :=
   ∀ P ∈ Alt, w ∈ n.gen (P c) {_v | P = T}
 
-/-- An alternative that applies makes the reading defeasibly entail that typhoons arise
-there: throughout that alternative's normal worlds. -/
 theorem existentialReading.normal_subset {Alt : Set (E → Set W)} {T : E → Set W} {c : E} {w : W}
     (h : existentialReading n Alt T c w) {P : E → Set W} (hP : P ∈ Alt) :
     n.normal w (P c) ⊆ T c := by
@@ -145,8 +141,6 @@ def doubleGeneric {Ev : Type*} (φ : E → Set W) (C : Ev → Set W) (ψ : E →
     Prop :=
   generic n φ (fun a ↦ {v | ∀ e, v ∈ n.gen (C e) (ψ a e)}) w
 
-/-- Without a circumstance restriction, and with logical truths selecting the world of
-evaluation, double genericity is ordinary genericity over every circumstance. -/
 theorem doubleGeneric_univ {Ev : Type*} (h : ∀ v, n.normal v Set.univ = {v}) (φ : E → Set W)
     (ψ : E → Ev → Set W) (w : W) :
     doubleGeneric n φ (fun _ ↦ Set.univ) ψ w ↔ generic n φ (fun a ↦ {v | ∀ e, v ∈ ψ a e}) w := by
@@ -159,8 +153,6 @@ def tailed : Fin 20 → Prop := fun w ↦ w.val < 11
 
 instance : DecidablePred tailed := fun w ↦ Nat.decLt w.val 11
 
-/-- The majority account verifies *Cats have tails* on a margin just over half; the modal
-account with every case equally normal does not, since a normal case lacks a tail. -/
 theorem cohen_too_weak :
     Cohen1999.gen (Finset.univ : Finset (Fin 20)) (fun _ ↦ True) (fun _ ↦ True) tailed ∧
       (0 : Fin 20) ∉ (⊤ : Normality (Fin 20) (Fin 20)).gen Set.univ {w | tailed w} := by
@@ -190,8 +182,6 @@ theorem cond_eq_of_conditionalizes {a b c : Set Ω} (ha : MeasurableSet a)
   rw [← hc]
   exact htot.symm
 
-/-- The probabilistic generic, under conditionalization, says only that the scope is more
-    likely than not. -/
 theorem cohen_iff_scope {a b c : Set Ω} (ha : MeasurableSet a) (hb : MeasurableSet b)
     (h : Conditionalizes μ a b c) (h₁ : μ (a ∩ b) ≠ 0) :
     1 / 2 < μ[b | a] ↔ 1 / 2 < μ b := by

@@ -106,7 +106,6 @@ theorem Externalizable.not_orderingSubjective (h : Externalizable μ) :
   let ⟨_, hν⟩ := h
   ((hν c a b).1 h₁).not_gt ((hν c' b a).1 h₂)
 
-/-- In an externalizable family a comparative true in one context is true in all. -/
 theorem Externalizable.settled_iff (h : Externalizable μ) (c : C) :
     Settled μ a b ↔ μ c b < μ c a :=
   let ⟨_, hν⟩ := h
@@ -114,14 +113,11 @@ theorem Externalizable.settled_iff (h : Externalizable μ) (c : C) :
 
 end Preorder
 
-/-- Ordering subjectivity is incomparability of the two individuals' measures across contexts,
-a trade-off with the contexts as dimensions. -/
 theorem orderingSubjective_iff_incompRel [LinearOrder K] {μ : C → E → K} {a b : E} :
     OrderingSubjective μ a b ↔ IncompRel (· ≤ ·) (fun c ↦ μ c a) (fun c ↦ μ c b) := by
   simp only [OrderingSubjective, IncompRel, Pi.le_def, not_forall, not_le]
   exact ⟨fun ⟨c, c', h, h'⟩ ↦ ⟨⟨c, h⟩, c', h'⟩, fun ⟨⟨c, h⟩, c', h'⟩ ↦ ⟨c, c', h, h'⟩⟩
 
-/-- A family whose contexts differ by positive factors is externalizable. -/
 theorem Externalizable.of_forall_eq_smul [Field K] [LinearOrder K] [IsStrictOrderedRing K]
     {μ : C → E → K} (h : ∀ c c', ∃ k : K, 0 < k ∧ μ c' = k • μ c) : Externalizable μ := by
   rcases isEmpty_or_nonempty C with hC | ⟨⟨c₀⟩⟩
@@ -136,8 +132,6 @@ section Additive
 
 variable [AddCommMonoid E] [Field K] [LinearOrder K] [IsStrictOrderedRing K] [Archimedean K]
 
-/-- A rational strictly between the ratios of `x` to the standard `u` under two measures yields a
-reversal between multiples of `x` and of `u`. -/
 private theorem not_div_lt_div {μ μ' : E →+ K} {u : E} (hu : 0 < μ u) (hu' : 0 < μ' u)
     (h : ∀ a b, μ b < μ a → μ' b ≤ μ' a) (x : E) : ¬ μ x / μ u < μ' x / μ' u := by
   intro hlt
@@ -212,7 +206,6 @@ variable [Field K] {X : Type*} {content capacity : X → E}
 def fullness (vol : E → K) (content capacity : X → E) (x : X) : K :=
   vol (content x) / vol (capacity x)
 
-/-- The unit of volume cancels in fullness. -/
 theorem fullness_smul {k : K} (hk : k ≠ 0) (vol : E → K) :
     fullness (k • vol) content capacity = fullness vol content capacity := by
   funext x
@@ -236,8 +229,6 @@ theorem externalizable_derived {ι : Type*} {m : C → ι → E → K} {f : (ι 
 
 variable [AddCommMonoid E] [Archimedean K] {μ : C → E →+ K} {u : E}
 
-/-- *Full* inherits the objectivity of volume, since an additive family of volume measures
-without ordering subjectivity determines one fullness measure for every context. -/
 theorem fullness_eq (hu : ∀ c, 0 < μ c u)
     (h : ∀ a b, ¬ OrderingSubjective (fun c ↦ ⇑(μ c)) a b) (c c' : C) :
     fullness (μ c') content capacity = fullness (μ c) content capacity := by
@@ -266,25 +257,18 @@ theorem dirty_eq (k : {k : ι → K // ∀ i, 0 < k i}) (x : E) :
 
 variable [IsStrictOrderedRing K]
 
-/-- Every weighting ranks `a` at most as dirty as `b` exactly when `b` carries at least as much
-of every kind of dirt per unit of size, so the Pareto rule is the verdict all weightings share. -/
 theorem forall_dirty_le_iff :
     (∀ k, dirty amount size k a ≤ dirty amount size k b) ↔
       (size a)⁻¹ • amount a ≤ (size b)⁻¹ • amount b := by
   simp only [dirty_eq, Subtype.forall]
   exact (paretoRule_iff_forall_utilitarian (v := fun x ↦ (size x)⁻¹ • amount x)).symm
 
-/-- Two weightings rank `a` and `b` oppositely exactly when neither carries at least as much of
-every kind of dirt per unit of size, as with the shirt clean but for a grass stain and the dingy
-one of section 3. -/
 theorem orderingSubjective_dirty_iff :
     OrderingSubjective (dirty amount size) a b ↔
       IncompRel (· ≤ ·) ((size a)⁻¹ • amount a) ((size b)⁻¹ • amount b) := by
   rw [orderingSubjective_iff_incompRel]
   exact and_congr (not_congr forall_dirty_le_iff) (not_congr forall_dirty_le_iff)
 
-/-- Every weighting ranks `a` dirtier than `b` exactly when `a` carries at least as much of every
-kind of dirt per unit of size, and more of some. -/
 theorem settled_dirty_iff :
     Settled (dirty amount size) a b ↔ (size b)⁻¹ • amount b < (size a)⁻¹ • amount a := by
   have := asymmRel_paretoRule_iff_forall_utilitarian
@@ -310,8 +294,6 @@ theorem orderingSubjective_of_surjective [Nontrivial K] (hμ : Function.Surjecti
   obtain ⟨j', hj'⟩ := hμ fun x ↦ if x = a then d else d'
   exact ⟨j, j', by simp [hj, hab.symm, hd], by simp [hj', hab.symm, hd]⟩
 
-/-- No comparative of a judge-dependent adjective is settled, since some judge ranks every pair
-alike. -/
 theorem not_settled_of_surjective [Nonempty K] (hμ : Function.Surjective μ) :
     ¬ Settled μ a b := fun h ↦
   let ⟨j, hj⟩ := hμ fun _ ↦ Classical.arbitrary K

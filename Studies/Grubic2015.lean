@@ -113,8 +113,6 @@ noncomputable def har (CG : Set W) (alt : Set W → Set (Set W)) : W → SignTyp
   {w | ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q'}.indicator fun w ↦
     SignType.ofProp (w ∈ p)
 
-/-- At a world of the common ground where the prejacent holds, the implication *har('i)*
-presupposes holds as well, so the scale is anchored by a true alternative. -/
 theorem har_impl_holds {CG : Set W} {alt : Set W → Set (Set W)} {w : W} (hw : w ∈ CG)
     (hp : w ∈ p) (h : har S p CG alt w ≠ 0) : ∃ q, CImpl p CG q ∧ w ∈ q :=
   let ⟨q, hq, _⟩ := Set.mem_of_indicator_ne_zero h

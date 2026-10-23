@@ -186,19 +186,14 @@ def authorGen : ConceptGenerator Wld Ind := fun _ ↦ authorConcept
 /-- John's salient acquaintance relation is reading the paper of its author. -/
 def s1Acq : Set (Ind → Centered Wld Ind → Prop) := {fun y p ↦ y = authorConcept p}
 
-/-- The de se reading is false, since at John's alternative the center, John, is not clever. -/
 theorem deSe_false : ¬ SayDeSe sayAlts cleverP := by
   simp [SayDeSe, sayAlts, cleverP, john, auth]
 
-/-- The author generator is suitable for John, being reliable, as it returns John in the actual
-world, and acquainted through reading the paper. -/
 theorem authorGen_suitable : Suitable s1Acq sayAlts authorGen john actual {john} :=
   ⟨by simp [Reliable, authorGen, authorConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
       ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩
 
-/-- The de re reading is true, since through the author concept the individual picked at John's
-alternative is clever. -/
 theorem deRe_true : SayDeRe s1Acq sayAlts cleverP john actual {john} :=
   ⟨authorGen, authorGen_suitable, by
     simp [sayAlts, cleverP, authorGen, authorConcept, actual, bel, auth]⟩
@@ -249,17 +244,12 @@ def patientGen : ConceptGenerator Wld Ind := fun _ ↦ patientConcept
 bears to himself. -/
 def johnAcq : Set (Ind → Centered Wld Ind → Prop) := {fun y p ↦ y = patientConcept p}
 
-/-- *John claims he is delusional* is true de re, since the center, John, fed to the patient
-generator, is the delusional patient at the alternative. -/
 theorem claimsHe_true : SayDeRe johnAcq claimAlts delusionalP john actualN {john} :=
   ⟨patientGen, ⟨by simp [Reliable, patientGen, patientConcept],
     fun _ _ ↦ ⟨_, rfl, fun p _ ↦
       ⟨congrFun (relatum_eq _) p, fun _ ↦ congrFun (relatum_eq _) p⟩⟩⟩,
     by simp [claimAlts, delusionalP, patientGen, patientConcept, actualN, belN, patient]⟩
 
-/-- *John claims Napoleon is delusional* is false, since Napoleon is not an epistemic alternative
-of John and the only relation of acquaintance John bears, seeing on television, he bears in the
-actual world to himself. -/
 theorem claimsNapoleon_false :
     ¬ ClaimDeRe johnAcq claimAlts delusionalP napoleon john actualN {napoleon} := by
   intro h

@@ -150,9 +150,6 @@ theorem isGreatest_two :
 /-- The statistic of all three constraints. -/
 def threeFeatures (φ : Phrase) : Fin 2 → ℝ := ![dansOrEn φ, dansOrÀ φ]
 
-/-- A positive distribution of the five phrases in which *au cours de* and *pendant* are equally
-likely and `p(en) p(à) = p(dans) p(au cours de)` is the exponential model of `threeFeatures`, the
-exponentials of the two multipliers being `p(en)/p(au cours de)` and `p(à)/p(au cours de)`. -/
 theorem maxEnt_three_real_singleton {d e a c : ℝ} (he : 0 < e) (ha : 0 < a) (hc : 0 < c)
     (hR : e * a = d * c) (hN : d + e + a + 2 * c = 1) :
     (maxEnt threeFeatures ![-log (e / c), -log (a / c)]).real {dans} = d ∧

@@ -65,7 +65,6 @@ def At (t : Interval (WithTop T)) (w : W) : SortedProperty W E T → Prop
 
 variable {P : W → E → Prop} {Q : SortedProperty W E T} {r r' : Interval (WithTop T)} {w : W}
 
-/-- An eventuality instantiated at an interval gives the interval a time. -/
 theorem exists_mem_of_at (hQ : Q.IsEventuality) (h : At r w Q) : ∃ x, x ∈ r := by
   cases Q with
   | eventive R => obtain ⟨e, -, hle⟩ := h; exact ⟨_, (Interval.coe_le_iff.1 hle).1⟩
@@ -75,7 +74,6 @@ theorem exists_mem_of_at (hQ : Q.IsEventuality) (h : At r w Q) : ∃ x, x ∈ r 
     exact ⟨x, hx⟩
   | temporal R => exact hQ.elim
 
-/-- Nothing is instantiated at the null interval but a property of times. -/
 theorem not_at_bot (hQ : Q.IsEventuality) : ¬ At ⊥ w Q :=
   fun h ↦ let ⟨_, hx⟩ := exists_mem_of_at hQ h; Interval.notMem_bot hx
 
@@ -103,8 +101,6 @@ theorem at_eventive_withTop_iff_prfv {i : NonemptyInterval T} :
     At ↑i.withTop w (.eventive P) ↔ i ∈ PRFV P w := by
   simp [At, mem_prfv, and_comm]
 
-/-- The imperfective viewpoint entails stative instantiation, since proper inclusion of the interval
-in the runtime gives overlap. -/
 theorem at_stative_withTop_of_impf {i : NonemptyInterval T} (h : i ∈ IMPF P w) :
     At ↑i.withTop w (.stative P) := by
   obtain ⟨e, hlt, he⟩ := h

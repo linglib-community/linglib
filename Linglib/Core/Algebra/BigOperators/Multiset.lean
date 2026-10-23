@@ -19,8 +19,6 @@ and `Finset.sum_mul_sum`.
 
 namespace Multiset
 
-/-- The product over a filter is the product of the indicator (`Finset.prod_filter`
-analogue). -/
 @[to_additive /-- The sum over a filter is the sum of the indicator (`Finset.sum_filter`
 analogue). -/]
 theorem prod_map_filter {ι M : Type*} [CommMonoid M] (p : ι → Prop) [DecidablePred p]
@@ -30,8 +28,6 @@ theorem prod_map_filter {ι M : Type*} [CommMonoid M] (p : ι → Prop) [Decidab
   | empty => simp
   | cons a s ih => by_cases h : p a <;> simp [h, ih]
 
-/-- Sum of a pointwise product over a cartesian product factors as a
-    product of sums. -/
 theorem sum_map_product_mul {α β M : Type*} [NonUnitalNonAssocSemiring M]
     (s : Multiset α) (t : Multiset β) (f : α → M) (g : β → M) :
     ((s ×ˢ t).map (fun p => f p.1 * g p.2)).sum = (s.map f).sum * (t.map g).sum := by

@@ -166,30 +166,24 @@ def PolymorphicAnalysis.Covers (a : PolymorphicAnalysis) (sf : SemanticFunction)
 instance (a : PolymorphicAnalysis) (sf : SemanticFunction) : Decidable (a.Covers sf) :=
   inferInstanceAs (Decidable (_ = true))
 
-/-- Every derivation composes from the lexical type to the function's type. -/
 theorem analyses_well_typed (a : PolymorphicAnalysis) (sf : SemanticFunction) :
     ∀ ops ∈ a.path sf, wellTyped a.lexicalType ops = some sf.targetType := by
   cases a <;> cases sf <;> decide
 
-/-- Contextualism derives every function. -/
 theorem contextualism_covers_all (sf : SemanticFunction) :
     PolymorphicAnalysis.contextualism.Covers sf := by
   cases sf <;> decide
 
-/-- Substantivalism derives none of the token, kind and taxonomic uses, the problem cases of
-section 3. -/
 theorem substantivalism_gap :
     ∀ sf ∈ [SemanticFunction.tokenRef, .tokenPredicate, .kindRef, .taxonomic],
       ¬ PolymorphicAnalysis.substantivalism.Covers sf := by
   decide
 
-/-- Nor does Adjectivalism. -/
 theorem adjectivalism_gap :
     ∀ sf ∈ [SemanticFunction.tokenRef, .tokenPredicate, .kindRef, .taxonomic],
       ¬ PolymorphicAnalysis.adjectivalism.Covers sf := by
   decide
 
-/-- Contextualism covers whatever either rival covers, and more. -/
 theorem contextualism_strictly_extends (a : PolymorphicAnalysis) :
     (∀ sf, a.Covers sf → PolymorphicAnalysis.contextualism.Covers sf) ∧
       (a ≠ .contextualism → ∃ sf, PolymorphicAnalysis.contextualism.Covers sf ∧ ¬ a.Covers sf) :=
@@ -218,8 +212,6 @@ structure TwoToken where
 system, and each class is a subkind of TWO. -/
 abbrev kfTWO : Setoid TwoToken := Setoid.ker TwoToken.system
 
-/-- Tokens of distinct number systems instantiate distinct subkinds of TWO, the distinctness of
-twos from different systems that section 3.4 draws from the Disjointness Condition. -/
 theorem subkinds_distinct {t₁ t₂ : TwoToken} (h : t₁.system ≠ t₂.system) :
     (⟦t₁⟧ : Quotient kfTWO) ≠ ⟦t₂⟧ :=
   fun e ↦ h (Quotient.exact e)
@@ -250,9 +242,6 @@ theorem sharvyIota_eq_some_iff {domain : List α} {P : α → Bool} {j : α} :
     | nil => rw [hf] at h; injection h with hj; rw [hj]
     | cons _ _ => rw [hf] at h; cases h
 
-/-- Close appositives whose first nouns are disjoint refer to distinct entities when both are
-defined: the modifiers *von Neumann ordinal* and *Zermelo ordinal* restrict the extension of
-*two* to disjoint subkinds. -/
 theorem closeAppositive_ne_of_disjoint {domain : List α} {m₁ m₂ n : α → Bool} {j₁ j₂ : α}
     (hDisj : ∀ x, ¬ (m₁ x = true ∧ m₂ x = true)) (h₁ : closeAppositive domain m₁ n = some j₁)
     (h₂ : closeAppositive domain m₂ n = some j₂) : j₁ ≠ j₂ := by
@@ -274,7 +263,6 @@ def inSubkind (s : MathSystem) (t : TwoToken) : Bool := decide (t.system = s)
 /-- The board of section 1: one token of two per number system. -/
 def board : List TwoToken := [⟨.nat, 0⟩, ⟨.int, 0⟩, ⟨.rat, 0⟩, ⟨.real, 0⟩]
 
-/-- The close appositive *the s number two* on the board refers to the token of that system. -/
 theorem closeAppositive_board (s : MathSystem) :
     closeAppositive board (inSubkind s) (λ _ => true) = some ⟨s, 0⟩ := by
   cases s <;> rfl
@@ -316,7 +304,6 @@ theorem red_subkinds_distinct {t₁ t₂ : RedToken} (h : t₁.shade ≠ t₂.sh
 
 /-! ### The examples -/
 
-/-- Every semantic function is attested by an example row carrying its label. -/
 theorem functions_attested (sf : SemanticFunction) :
     ∃ ex ∈ Examples.all, ex.feature? "function" = some sf.label := by
   cases sf <;> decide

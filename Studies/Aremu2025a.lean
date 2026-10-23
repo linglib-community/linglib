@@ -118,7 +118,6 @@ def reflexes (a : Answer) : Finset (Reflex TreePathᵒᵈ) :=
 theorem reflexes_eq_empty (h : a.fronted = none) : a.reflexes = ∅ := by
   simp [reflexes, h]
 
-/-- Every reflex of a fronted answer is hosted by what it fronts. -/
 theorem exactlyTargets_reflexes (h : a.fronted = some m) :
     ExactlyTargets a.reflexes (toDual m) := by
   intro ρ hρ
@@ -170,25 +169,20 @@ end Answer
 
 open Answer
 
-/-- In *Tolú ni ó jẹ iṣu* 'TOLÚ ATE YAM', answering *what happened?*, the subject of the focused
-clause is fronted. -/
 theorem antiPiedPipes_clause :
     ({ focus := clause, fronted := some subject } : Answer).Licensed ∧
       AntiPiedPipes ({ focus := clause, fronted := some subject } : Answer).reflexes
         (toDual clause) :=
   ⟨by decide, antiPiedPipes_iff.2 ⟨subject, rfl, by decide⟩⟩
 
-/-- A focused verb phrase does not anti-pied-pipe. -/
 theorem not_antiPiedPipes_vp (h : a.Licensed) (hvp : a.focus = vp) :
     ¬ AntiPiedPipes a.reflexes (toDual a.focus) :=
   fun hap ↦ absurd ((focus_eq_clause_of_antiPiedPipes h hap).symm.trans hvp) (by decide)
 
-/-- *#Eku ni Tolú pa* fronts the object of a focused verb phrase. -/
 theorem not_licensed_vp_object :
     ¬ ({ focus := vp, fronted := some object } : Answer).Licensed := by
   decide
 
-/-- *#Adé rà bàtà* leaves a focused subject in place. -/
 theorem not_licensed_subject_inSitu :
     ¬ ({ focus := subject, fronted := none } : Answer).Licensed := by
   decide

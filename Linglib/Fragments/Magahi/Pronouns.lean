@@ -191,7 +191,6 @@ theorem thirdSingular_eq_iff (c : Case) (g h : Grade) :
       c = .nom ∨ g = h ∨ .nonhonorific < g ∧ .nonhonorific < h := by
   revert c g h; decide
 
-/-- Every pronoun table assigns each form a contiguous range of grades. -/
 theorem isContiguous_tables (c : Case) :
     IsContiguous (secondSingular c) ∧ IsContiguous (secondPlural c) ∧
       IsContiguous (thirdSingular c) ∧ IsContiguous (thirdPlural c) := by

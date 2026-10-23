@@ -118,8 +118,6 @@ inductive Strength where
 uniqueness < familiarity. -/
 instance : LinearOrder Strength := LinearOrder.lift' Strength.ctorIdx (by decide)
 
-/-- A set of strengths is an upper set iff it contains familiarity whenever it contains
-uniqueness. -/
 theorem Strength.isUpperSet_iff {s : Set Strength} :
     IsUpperSet s ↔ (.uniqueness ∈ s → .familiarity ∈ s) :=
   ⟨fun h hu ↦ h (by decide) hu, fun h a b hab ha ↦ by

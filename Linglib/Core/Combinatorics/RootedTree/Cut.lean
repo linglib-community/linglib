@@ -121,13 +121,11 @@ variable (extract : RoseTree α → Option (List (RoseTree α)))
       + (cutSummandsG extract t).map fun p ↦ (p.1, [p.2]) := by
   conv_lhs => unfold augActionG
 
-/-- Where the policy forbids a cut, the only choices at a child are the cuts inside it. -/
 theorem augActionG_eq_none (t : RoseTree α) (h : extract t = none) :
     augActionG extract t = (cutSummandsG extract t).map fun p ↦ (p.1, [p.2]) := by
   rw [augActionG_eq, h]
   simp
 
-/-- Where the policy allows a cut, cutting the child itself is one of the choices. -/
 theorem augActionG_eq_some (t : RoseTree α) (r : List (RoseTree α)) (h : extract t = some r) :
     augActionG extract t =
       (({t} : Multiset (RoseTree α)), r) ::ₘ
@@ -145,8 +143,6 @@ When every remainder the policy leaves has `k` vertices in total, a cut conserve
 
 mutual
 
-/-- The crown and the trunk of a cut have the vertices of the tree, plus `k` for each crown
-    component. -/
 theorem cutSummandsG_numNodes {k : ℕ}
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numNodes).sum = k) :
     ∀ (t : RoseTree α), ∀ p ∈ cutSummandsG extract t,
@@ -266,7 +262,6 @@ private theorem augActionG_proj_congr (hExt : ExtractInvariant extract) {t s : R
       (q.1, ({q.2} : Multiset (UnorderedTree α)))) h
     simpa [Multiset.map_map, Function.comp_def, projForest, projSummand] using h'
 
-/-- Combining three pairs is symmetric in the first two. -/
 theorem combinerProjG_swap_args
     (a b c : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)) :
     combinerProjG (a, combinerProjG (b, c)) = combinerProjG (b, combinerProjG (a, c)) := by
@@ -275,7 +270,6 @@ theorem combinerProjG_swap_args
   obtain ⟨Fc, mc⟩ := c
   simp only [combinerProjG, add_left_comm]
 
-/-- The combination of three multisets of pairs is symmetric in the first two. -/
 theorem swap_double_combinerProjG
     (A B C : Multiset (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))) :
     (A ×ˢ (B ×ˢ C).map combinerProjG).map combinerProjG =
@@ -479,8 +473,6 @@ theorem forestCutChoicesG_cons (T : UnorderedTree α) (F : Multiset (UnorderedTr
   rw [forestCutChoicesG, Multiset.map_cons, Multiset.sections_cons, Multiset.bind_map]
   rfl
 
-/-- Gathering the crowns and the trunks of a choice of cuts gives a forest cut, and every forest
-    cut arises this way. -/
 theorem forestCutsG_eq_map_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
     forestCutsG cuts F = (forestCutChoicesG cuts F).map fun s ↦ (s.crown, s.trunk) := by
   change _ = (forestCutChoicesG cuts F).map fun s ↦ (s.map Prod.snd).sum
@@ -497,7 +489,6 @@ theorem forestCutsG_eq_map_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
 variable {cuts} {F G : Multiset (UnorderedTree α)} {s t : CutChoice α}
   {x : UnorderedTree α × (Multiset (UnorderedTree α) × Multiset (UnorderedTree α))}
 
-/-- A cut of a tree takes the whole tree into the crown, or cuts it and leaves one trunk. -/
 theorem mem_treeCutsG {T : UnorderedTree α}
     {a : Multiset (UnorderedTree α) × Multiset (UnorderedTree α)} :
     a ∈ treeCutsG cuts T ↔ a = ({T}, 0) ∨ ∃ p ∈ cuts T, (p.1, {p.2}) = a := by
@@ -530,19 +521,16 @@ theorem mem_treeCutsG_of_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cut
     rcases Multiset.mem_cons.mp hx with rfl | hx
     exacts [ha, ih hs' hx]
 
-/-- A tree that leaves no trunk was taken whole into the crown. -/
 theorem snd_eq_of_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s)
     (h : x.2.2 = 0) : x.2 = ({x.1}, 0) := by
   rcases mem_treeCutsG.mp (mem_treeCutsG_of_mem_forestCutChoicesG hs hx) with h' | ⟨p, -, h'⟩
   · exact h'
   · rw [← h'] at h; exact absurd h (Multiset.singleton_ne_zero _)
 
-/-- A tree taken whole lies in the crown. -/
 theorem CutChoice.fst_mem_crown (hs : s ∈ forestCutChoicesG cuts F) (hx : x ∈ s)
     (h : x.2.2 = 0) : x.1 ∈ s.crown :=
   mem_crown.mpr ⟨x, hx, by simp [snd_eq_of_mem_forestCutChoicesG hs hx h]⟩
 
-/-- A choice has extraction cost `k` when each cut it makes does. -/
 theorem CutChoice.HasExtractionCost.of_mem_forestCutChoicesG {μ : UnorderedTree α → ℕ} {k : ℕ}
     (hs : s ∈ forestCutChoicesG cuts F)
     (h : ∀ x ∈ s, ∀ p ∈ cuts x.1, (p.1, {p.2}) = x.2 →
@@ -558,7 +546,6 @@ section DecidableEq
 
 variable [DecidableEq (UnorderedTree α)]
 
-/-- Every tree of a forest leaves one trunk, except the trees taken whole into the crown. -/
 theorem CutChoice.card_trunk_add_numWhole (hs : s ∈ forestCutChoicesG cuts F) :
     Multiset.card s.trunk + s.numWhole = Multiset.card F := by
   induction F using Multiset.induction generalizing s with
@@ -570,8 +557,6 @@ theorem CutChoice.card_trunk_add_numWhole (hs : s ∈ forestCutChoicesG cuts F) 
     have := ih hs'
     rcases mem_treeCutsG.mp ha with rfl | ⟨p, -, rfl⟩ <;> simp <;> omega
 
-/-- The crown of a tree that is cut lies in the crown of the choice beside the trees taken
-    whole. -/
 theorem CutChoice.card_add_numWhole_le_card_crown (hs : s ∈ forestCutChoicesG cuts F)
     (hx : x ∈ s) (h : x.2.2 ≠ 0) : Multiset.card x.2.1 + s.numWhole ≤ Multiset.card s.crown := by
   obtain ⟨t, rfl⟩ := Multiset.exists_cons_of_mem hx
@@ -620,13 +605,11 @@ theorem CutChoice.HasExtractionCost.sum_map_add_mul_numWhole {μ : UnorderedTree
 
 end DecidableEq
 
-/-- Choices of cuts for two forests combine to a choice for their sum. -/
 theorem add_mem_forestCutChoicesG (hs : s ∈ forestCutChoicesG cuts F)
     (ht : t ∈ forestCutChoicesG cuts G) : s + t ∈ forestCutChoicesG cuts (F + G) := by
   rw [forestCutChoicesG, Multiset.map_add, Multiset.sections_add]
   exact Multiset.mem_bind.mpr ⟨s, hs, Multiset.mem_map.mpr ⟨t, ht, rfl⟩⟩
 
-/-- Every tree of a forest can be taken whole. -/
 theorem map_whole_mem_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
     F.map (fun T ↦ (T, ({T}, 0))) ∈ forestCutChoicesG cuts F := by
   induction F using Multiset.induction with
@@ -635,7 +618,6 @@ theorem map_whole_mem_forestCutChoicesG (F : Multiset (UnorderedTree α)) :
     rw [forestCutChoicesG_cons, Multiset.map_cons]
     exact Multiset.mem_bind.mpr ⟨_, Multiset.mem_cons_self _ _, Multiset.mem_map.mpr ⟨_, ih, rfl⟩⟩
 
-/-- Every tree of a forest can be left uncut, when the empty cut is among its cuts. -/
 theorem map_uncut_mem_forestCutChoicesG
     (h : ∀ T ∈ F, ((0 : Multiset (UnorderedTree α)), T) ∈ cuts T) :
     F.map (fun T ↦ (T, (0, {T}))) ∈ forestCutChoicesG cuts F := by
@@ -653,7 +635,6 @@ namespace CutChoice
 
 variable (F : Multiset (UnorderedTree α))
 
-/-- Taking every tree of a forest whole puts the forest in the crown. -/
 @[simp] theorem crown_map_whole : crown (F.map fun T ↦ (T, ({T}, 0))) = F := by
   induction F using Multiset.induction <;> simp_all [Multiset.singleton_add]
 
@@ -664,14 +645,12 @@ variable (F : Multiset (UnorderedTree α))
     numWhole (F.map fun T ↦ (T, ({T}, 0))) = Multiset.card F := by
   induction F using Multiset.induction <;> simp_all
 
-/-- Leaving every tree of a forest uncut puts the forest in the trunk. -/
 @[simp] theorem crown_map_uncut : crown (F.map fun T ↦ (T, (0, {T}))) = 0 := by
   induction F using Multiset.induction <;> simp_all
 
 @[simp] theorem trunk_map_uncut : trunk (F.map fun T ↦ (T, (0, {T}))) = F := by
   induction F using Multiset.induction <;> simp_all [Multiset.singleton_add]
 
-/-- A choice taking every tree whole extracts nothing, so it has every extraction cost. -/
 theorem hasExtractionCost_map_whole (μ : UnorderedTree α → ℕ) (k : ℕ) :
     HasExtractionCost μ k (F.map fun T ↦ (T, ({T}, 0))) := by
   intro x hx h
@@ -694,7 +673,6 @@ theorem cutSummandsG_filter_empty :
     simp only [Function.comp_def]
     rw [cutListSummandsG_filter_empty cs, Multiset.map_singleton]
 
-/-- The empty cut is the unique cut of a list of children with empty crown. -/
 theorem cutListSummandsG_filter_empty :
     ∀ (cs : List (RoseTree α)),
       (cutListSummandsG extract cs).filter (fun p ↦ p.1.card = 0) =
@@ -710,7 +688,6 @@ theorem cutListSummandsG_filter_empty :
       augActionG_filter_empty t, cutListSummandsG_filter_empty ts]
     rfl
 
-/-- Keeping the child whole is the unique choice at a child with empty crown. -/
 theorem augActionG_filter_empty :
     ∀ (t : RoseTree α),
       (augActionG extract t).filter (fun p ↦ p.1.card = 0) =
@@ -747,7 +724,6 @@ def cutSummandsN : UnorderedTree α → Multiset (Multiset (UnorderedTree α) ×
 @[simp] theorem cutSummandsN_mk (T : RoseTree α) :
     cutSummandsN (UnorderedTree.mk T) = (cutSummandsG pruning T).map projSummand := rfl
 
-/-- A leaf has only the empty cut. -/
 theorem cutSummandsN_leaf (a : α) :
     cutSummandsN (UnorderedTree.leaf a : UnorderedTree α) =
       ({((0 : Multiset (UnorderedTree α)), UnorderedTree.leaf a)} : Multiset _) := by
@@ -788,7 +764,6 @@ private theorem forestCutsG_cutSummandsN_coe (ps : List (RoseTree α)) :
 def emptyCuts (T : UnorderedTree α) : Multiset (Multiset (UnorderedTree α) × UnorderedTree α) :=
   {(0, T)}
 
-/-- The forest cuts of the empty-cut enumeration split a forest into two subforests. -/
 theorem forestCutsG_emptyCuts (F : Multiset (UnorderedTree α)) :
     forestCutsG emptyCuts F = Multiset.antidiagonal F := by
   induction F using Multiset.induction with
@@ -800,7 +775,6 @@ theorem forestCutsG_emptyCuts (F : Multiset (UnorderedTree α)) :
       Multiset.map_map, add_comm]
     congr 1 <;> exact Multiset.map_congr rfl fun x _ ↦ by simp [combinerProjG, Prod.map]
 
-/-- The empty cut is the unique pruning cut with empty crown. -/
 theorem cutSummandsN_filter_empty (T : UnorderedTree α) :
     (cutSummandsN T).filter (fun p ↦ p.1.card = 0) = {((0 : Multiset (UnorderedTree α)), T)} :=
   Quotient.inductionOn T fun t ↦ by

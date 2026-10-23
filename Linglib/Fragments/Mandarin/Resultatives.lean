@@ -155,7 +155,6 @@ def tree (c : Resultative) : Morphology.Word.Tree Verb := .compound (.root c.v1)
 
 @[simp] theorem toList_tree (c : Resultative) : c.tree.toList = [c.v1, c.v2] := rfl
 
-/-- The result verb of every compound is monovalent. -/
 theorem valency_v2 : ∀ c ∈ resultatives, ∀ fr ∈ c.v2.valency.frames, fr.valency = 1 := by decide
 
 end Resultative

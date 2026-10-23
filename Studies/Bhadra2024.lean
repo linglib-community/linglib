@@ -123,7 +123,6 @@ def OutcomeClass.tier : OutcomeClass → OutcomeCardinality
   | .noChange => .empty
   | _ => .singleton
 
-/-- Potential-for-change roots are the only class whose outcome sets are multi-membered. -/
 theorem tier_eq_multi_iff (c : OutcomeClass) :
     c.tier = .multi ↔ c = .potentialForChange := by
   cases c <;> decide
@@ -204,7 +203,6 @@ theorem empty_blocks_un (k : StateFunction Entity State T)
   subsingleton_blocks_un k vro
     (by rw [Set.not_nontrivial_iff, hs]; exact Set.subsingleton_empty) e x
 
-/-- Hosting *un-* forces a root's outcome set into the multi-membered tier. -/
 theorem un_requires_multi (k : StateFunction Entity State T)
     (vro : VerbOutcomes E Entity State) (e : E) (x : Entity)
     (h : unSem k vro e x) : vro.cardinality = .multi :=
@@ -266,7 +264,6 @@ theorem fold_outcomes_multi : foldVRO.outcomes.Nontrivial :=
 theorem fold_un : unSem (andBack .flat .folded) foldVRO ev₂ () :=
   ⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl, fold_outcomes_multi, rfl⟩
 
-/-- *Re-* attaches to *fold* as well, on the multi-membered tier. -/
 theorem fold_re : reSem (twice .flat .folded) foldVRO ev₂ () :=
   ⟨⟨ev₁, acts_ev₁, ev₁_precedes_ev₂, rfl,
       by simp [foldVRO, resState, twice, ev₁]⟩, acts_ev₂⟩
@@ -360,7 +357,6 @@ theorem shatter_not_re (e : NonemptyInterval ℤ) :
   not_reSem_of_outcome_not_threshold _ _ () (fun e' he' ↦ by
     rcases he' with rfl | rfl <;> simp [shatterVRO, resState, twice, ev₁, ev₂]) e
 
-/-- *Re-* is indifferent to outcome cardinality, attaching to a root with a single outcome. -/
 theorem re_on_singleton :
     loadVRO.cardinality = .singleton ∧ reSem (twice .empty .full) loadVRO ev₂ () :=
   ⟨by simp [VerbOutcomes.cardinality, loadVRO], load_re⟩

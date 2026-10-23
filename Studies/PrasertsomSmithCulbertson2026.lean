@@ -53,8 +53,6 @@ namespace PrasertsomSmithCulbertson2026
 
 /-! ### The typological premise (§1) -/
 
-/-- Every noun class or numeral classifier device of the sample has animacy, humanness, or sex
-among its basic semantic parameters, and none has colour. -/
 theorem animacy_not_colour (l : Aikhenvald2000.Language)
     (hk : l.device = some .nounClass ∨ l.device = some .numeralClassifier) :
     (∃ p ∈ l.semantics, p = .animacy ∨ p = .humanness ∨ p = .sex) ∧ .colour ∉ l.semantics :=
@@ -184,8 +182,6 @@ def Colour.toAnimacy : Colour → Animacy
 def mirror : Animacy × Colour → Animacy × Colour
   | (a, c) => (c.toAnimacy, a.toColour)
 
-/-- The two sets are mirror images of each other, each being the other with the animacy and
-colour columns exchanged. -/
 theorem mirror_images :
     ∀ p, predictiveColour (mirror p) = predictiveAnimacy p
       ∧ predictiveAnimacy (mirror p) = predictiveColour p := by
@@ -199,7 +195,6 @@ private theorem negMulLog_half_pos : 0 < negMulLog (1 / 2 : ℝ) := by
   rw [negMulLog, show (1 / 2 : ℝ) = 2⁻¹ by norm_num, Real.log_inv]
   nlinarith [Real.log_pos (by norm_num : (1 : ℝ) < 2)]
 
-/-- In the predictive-animacy set, animacy predicts horn type better than colour does. -/
 theorem predictiveAnimacy_horn :
     H[Body.horn ∘ predictiveAnimacy | Prod.fst ; uniformOn Set.univ]
       < H[Body.horn ∘ predictiveAnimacy | Prod.snd ; uniformOn Set.univ] := by
@@ -209,7 +204,6 @@ theorem predictiveAnimacy_horn :
   norm_num
   linarith [negMulLog_half_pos]
 
-/-- In the predictive-animacy set, animacy predicts body shape better than colour does. -/
 theorem predictiveAnimacy_shape :
     H[Body.shape ∘ predictiveAnimacy | Prod.fst ; uniformOn Set.univ]
       < H[Body.shape ∘ predictiveAnimacy | Prod.snd ; uniformOn Set.univ] := by
@@ -219,7 +213,6 @@ theorem predictiveAnimacy_shape :
   norm_num
   linarith [negMulLog_half_pos]
 
-/-- In the predictive-animacy set, animacy predicts appendage shape better than colour does. -/
 theorem predictiveAnimacy_appendages :
     H[Body.appendages ∘ predictiveAnimacy | Prod.fst ; uniformOn Set.univ]
       < H[Body.appendages ∘ predictiveAnimacy | Prod.snd ; uniformOn Set.univ] := by
@@ -229,7 +222,6 @@ theorem predictiveAnimacy_appendages :
   norm_num
   linarith [negMulLog_half_pos]
 
-/-- In the predictive-colour set, colour predicts horn type better than animacy does. -/
 theorem predictiveColour_horn :
     H[Body.horn ∘ predictiveColour | Prod.snd ; uniformOn Set.univ]
       < H[Body.horn ∘ predictiveColour | Prod.fst ; uniformOn Set.univ] := by
@@ -239,7 +231,6 @@ theorem predictiveColour_horn :
   norm_num
   linarith [negMulLog_half_pos]
 
-/-- In the predictive-colour set, colour predicts body shape better than animacy does. -/
 theorem predictiveColour_shape :
     H[Body.shape ∘ predictiveColour | Prod.snd ; uniformOn Set.univ]
       < H[Body.shape ∘ predictiveColour | Prod.fst ; uniformOn Set.univ] := by
@@ -249,7 +240,6 @@ theorem predictiveColour_shape :
   norm_num
   linarith [negMulLog_half_pos]
 
-/-- In the predictive-colour set, colour predicts appendage shape better than animacy does. -/
 theorem predictiveColour_appendages :
     H[Body.appendages ∘ predictiveColour | Prod.snd ; uniformOn Set.univ]
       < H[Body.appendages ∘ predictiveColour | Prod.fst ; uniformOn Set.univ] := by

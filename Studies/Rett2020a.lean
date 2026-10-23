@@ -121,14 +121,12 @@ theorem timeTrace_completive (p : Set (NonemptyInterval T)) :
 
 variable {A B : Set (NonemptyInterval T)} {m : T}
 
-/-- Against an embedded clause with a first time, *before* is precedence of that time. -/
 theorem before_iff_of_isLeast (h : IsLeast (timeTrace B) m) :
     before A B ↔ ∃ t ∈ timeTrace A, t < m := by
   simp only [before, maxOnScale_lt_eq, Set.mem_ofPred_eq]
   exact ⟨fun ⟨t, ht, _, hm, htm⟩ ↦ ⟨t, ht, hm.unique h ▸ htm⟩,
     fun ⟨t, ht, htm⟩ ↦ ⟨t, ht, m, h, htm⟩⟩
 
-/-- Against an embedded clause with a last time, *after* is succession of that time. -/
 theorem after_iff_of_isGreatest (h : IsGreatest (timeTrace B) m) :
     after A B ↔ ∃ t ∈ timeTrace A, m < t := by
   simp only [after, maxOnScale_gt_eq, Set.mem_ofPred_eq]
@@ -145,23 +143,19 @@ theorem timeTrace_inchoative_of_isLeast (h : IsLeast (timeTrace B) m) :
   rw [timeTrace_inchoative]
   exact Set.eq_singleton_iff_unique_mem.mpr ⟨h, fun _ hx ↦ hx.unique h⟩
 
-/-- Completive coercion turns *before* into precedence of the telos. -/
 theorem before_completive_iff (h : IsGreatest (timeTrace B) m) :
     before A (completive B) ↔ ∃ t ∈ timeTrace A, t < m :=
   before_iff_of_isLeast (by rw [timeTrace_completive_of_isGreatest h]; exact isLeast_singleton)
 
-/-- Inchoative coercion turns *after* into succession of the onset. -/
 theorem after_inchoative_iff (h : IsLeast (timeTrace B) m) :
     after A (inchoative B) ↔ ∃ t ∈ timeTrace A, m < t :=
   after_iff_of_isGreatest (by rw [timeTrace_inchoative_of_isLeast h]; exact isGreatest_singleton)
 
-/-- Inchoative coercion leaves *before* as it is, since the onset is already its point. -/
 theorem before_inchoative_iff (h : IsLeast (timeTrace B) m) :
     before A (inchoative B) ↔ before A B := by
   rw [before_iff_of_isLeast h, before_iff_of_isLeast (B := inchoative B)]
   rw [timeTrace_inchoative_of_isLeast h]; exact isLeast_singleton
 
-/-- Completive coercion leaves *after* as it is, since the telos is already its point. -/
 theorem after_completive_iff (h : IsGreatest (timeTrace B) m) :
     after A (completive B) ↔ after A B := by
   rw [after_iff_of_isGreatest h, after_iff_of_isGreatest (B := completive B)]
@@ -229,16 +223,12 @@ theorem after_culmination :
     (after_completive_iff (isGreatest_timeTrace_accomplishment i)).trans
       (after_iff_of_isGreatest (isGreatest_timeTrace_accomplishment i))⟩
 
-/-- A stative main clause is *before* an embedded clause with a first time iff its onset
-precedes that time. -/
 theorem before_stative_iff (h : IsLeast (timeTrace B) m) :
     before (Set.Iic i) B ↔ i.fst < m := by
   rw [before_iff_of_isLeast h]
   exact ⟨fun ⟨_, ht, htm⟩ ↦ (mem_timeTrace_Iic.mp ht).1.trans_lt htm,
     fun h ↦ ⟨i.fst, (isLeast_timeTrace_stative i).1, h⟩⟩
 
-/-- A stative main clause is *after* an embedded clause with a last time iff its end follows
-that time. -/
 theorem after_stative_iff (h : IsGreatest (timeTrace B) m) :
     after (Set.Iic i) B ↔ m < i.snd := by
   rw [after_iff_of_isGreatest h]
@@ -302,19 +292,16 @@ private theorem timeTrace_image_dual (A : Set (NonemptyInterval T)) :
     OrderDual.toDual_le, OrderDual.le_toDual]
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦ and_comm
 
-/-- *After* is *before* on the reversed time line. -/
 theorem after_iff_before_dual :
     after A B ↔ before (NonemptyInterval.dual '' A) (NonemptyInterval.dual '' B) := by
   simp only [after, before, timeTrace_image_dual, maxOnScale_lt_eq, maxOnScale_gt_eq]
   exact Iff.rfl
 
-/-- *Before* is veridical, relating its main clause to a time of the embedded clause. -/
 theorem nonempty_of_before : before A B → (timeTrace B).Nonempty := by
   rintro ⟨-, -, m, hm, -⟩
   rw [maxOnScale_lt_eq, Set.mem_ofPred_eq] at hm
   exact ⟨m, hm.1⟩
 
-/-- So is *after*, being *before* on the reversed time line. -/
 theorem nonempty_of_after (h : after A B) : (timeTrace B).Nonempty := by
   obtain ⟨t, ht⟩ := nonempty_of_before (after_iff_before_dual.1 h)
   rw [timeTrace_image_dual] at ht
@@ -324,8 +311,6 @@ end Duality
 
 /-! ### Monotonicity -/
 
-/-- *Before* on its default reading is downward entailing in the embedded clause, since a
-sub-eventuality with a first time starts no earlier. -/
 theorem before_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsLeast (timeTrace B') m') : before A B → before A B' := by
   rintro ⟨t, ht, m, hm, htm⟩
@@ -333,8 +318,6 @@ theorem before_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ ti
   rw [maxOnScale_lt_eq] at hm
   exact ⟨t, ht, m', by rw [maxOnScale_lt_eq]; exact hm', htm.trans_le (hm.2 (h hm'.1))⟩
 
-/-- *After* on its default reading is downward entailing in the embedded clause, being *before*
-on the reversed time line. -/
 theorem after_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsGreatest (timeTrace B') m') : after A B → after A B' := by
   obtain ⟨m', hm'⟩ := hB'
@@ -366,14 +349,10 @@ theorem not_before_completive_antitone (h₃ : ∃ a b c : T, a < b ∧ b < c) :
 
 /-! ### Anscombe -/
 
-/-- Anscombe's *before*, a time of the main clause before every time of the embedded clause,
-is the default reading whenever the embedded clause has a first time. -/
 theorem before_iff_beforeEver (h : IsLeast (timeTrace B) m) :
     before A B ↔ Tense.beforeEver A B :=
   (before_iff_of_isLeast h).trans (beforeEver_iff_lt_least h).symm
 
-/-- *After* entails Anscombe's existential *after*, a time of the main clause after some time
-of the embedded clause. -/
 theorem after_imp_after : after A B → Anscombe.after A B := by
   rintro ⟨t, ht, m, hm, htm⟩
   exact ⟨t, ht, m, hm.1, htm⟩
@@ -382,9 +361,6 @@ section Divergence
 
 variable {A}
 
-/-- Against a clause with a last time, *after* agrees with Anscombe's existential *after* exactly
-when the clause is instantaneous, since *after* reads the clause against its end and Anscombe's
-against its onset. -/
 theorem forall_after_iff_after (hB : IsGreatest (timeTrace B) m) :
     (∀ A, after A B ↔ Anscombe.after A B) ↔ Instantaneous B := by
   refine ⟨fun h ↦ ⟨m, Set.eq_singleton_iff_unique_mem.2 ⟨hB.1, fun t ht ↦ ?_⟩⟩, fun ⟨t, ht⟩ A ↦ ?_⟩
@@ -398,8 +374,6 @@ theorem forall_after_iff_after (hB : IsGreatest (timeTrace B) m) :
 
 /-! ### Beaver and Condoravdi -/
 
-/-- *Before* is the uniform *before* of Beaver and Condoravdi, the least time of the clause on
-the *before* scale being its earliest. -/
 theorem before_iff_uniform :
     before A B ↔ BeaverCondoravdi2003.uniform (· < ·) (timeTrace A) (timeTrace B) := by
   simp only [before, BeaverCondoravdi2003.uniform, maxOnScale_lt_eq, Set.mem_ofPred_eq]
@@ -451,8 +425,6 @@ def Marking.bound : Marking → Bound
   | .nonCulminating => .initial
   | .culminating => .final
 
-/-- Against a culmination, *before* under a marking is precedence of the bound the marking
-selects. -/
 theorem before_select (m : Marking) :
     before A (m.select {i}) ↔ ∃ t ∈ timeTrace A, t < m.bound.time i := by
   cases m
@@ -472,7 +444,6 @@ def bounds (r : Datum) : List Bound :=
     | "before-finish" => some .final
     | _ => none
 
-/-- A marked *before* sentence has the one reading its marking selects. -/
 theorem rows_marking : ∀ r ∈ Examples.all, ∀ m ∈ marking? r, bounds r = [m.bound] := by
   decide
 

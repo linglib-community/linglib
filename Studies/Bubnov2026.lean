@@ -115,9 +115,6 @@ theorem specificUnknown_not_atomic {V E : Type*} [Nontrivial E] {v x : V} (hvx :
 
 /-! ### Diachrony as weakening -/
 
-/-- The attested changes weaken the restriction, so the form comes to cover more of the map. A
-specific unknown form becomes epistemic, a non-specific form becomes epistemic, as German
-*irgend-* did ([aloni-port-2015]), and an epistemic form becomes unmarked. -/
 theorem attested_changes_are_weakenings {V E : Type*} (T : Finset (V → E)) (v x : V) :
     (IndefiniteType.specificUnknown.Requires T v x → IndefiniteType.epistemic.Requires T v x) ∧
       (IndefiniteType.nonSpecific.Requires T v x → IndefiniteType.epistemic.Requires T v x) ∧
@@ -162,7 +159,6 @@ def LossDerives (ℓ : SpecificityFunction → Fin n) (t t' : IndefiniteType) : 
 
 namespace LossDerives
 
-/-- A form keeps its functions when other entries are lost. -/
 theorem profile_subset (h : LossDerives ℓ t t') : t.profile ⊆ t'.profile := by
   obtain ⟨L, lost, φ, hL, ht, ht'⟩ := h
   obtain ⟨u', hu'⟩ := t'.profile_nonempty
@@ -171,7 +167,6 @@ theorem profile_subset (h : LossDerives ℓ t t') : t.profile ⊆ t'.profile := 
   rw [← ht] at hu
   exact mem_coverage.2 (RuleSet.realize_filter_eq_some hL (mem_coverage.1 hu) (mem_coverage.1 hu'))
 
-/-- A function gained through entry loss lies below every function the form had. -/
 theorem lt_of_mem_sdiff (h : LossDerives ℓ t t') (hu' : u' ∈ t'.profile \ t.profile)
     (hu : u ∈ t.profile) : ℓ u' < ℓ u := by
   obtain ⟨L, lost, φ, hL, ht, ht'⟩ := h
@@ -211,16 +206,12 @@ theorem entry_loss_derives_downward_changes :
     ⟨[⟨"A", 0⟩, ⟨"B", 1⟩, ⟨"C", 2⟩], {⟨"B", 1⟩}, "C", by decide, by decide, by decide⟩,
     ⟨[⟨"A", 0⟩, ⟨"C", 2⟩], {⟨"A", 0⟩}, "C", by decide, by decide, by decide⟩⟩
 
-/-- It derives neither of the attested changes that extend a form up the hierarchy, a
-non-specific form becoming epistemic and an epistemic form unmarked. -/
 theorem entry_loss_misses_upward_changes :
     ¬ LossDerives layer .nonSpecific .epistemic ∧ ¬ LossDerives layer .epistemic .unmarked :=
   ⟨fun h ↦ no_hierarchy_derives_both_changes _ ⟨entry_loss_derives_downward_changes.1, h⟩,
     fun h ↦ absurd (h.lt_of_mem_sdiff (u' := .specificKnown) (u := .nonSpecific)
       (by decide) (by decide)) (by decide)⟩
 
-/-- The reversed hierarchy, with the non-specific layer on top, derives those two changes and
-loses the change from a specific unknown form to an epistemic one. -/
 theorem entry_loss_on_reversed_hierarchy :
     LossDerives (Fin.rev ∘ layer) .nonSpecific .epistemic ∧
       LossDerives (Fin.rev ∘ layer) .epistemic .unmarked ∧
@@ -250,10 +241,6 @@ theorem coexpression_is_underspecification :
         s.toSeries = Russian.Indefinites.koeSeries ∧ Instantiates s .specificKnown := by
   decide
 
-/-- The nanosyntactic lexicon gives Russian *-to* the profile of the specific unknown type,
-where the map makes it epistemic. The form shares the non-specific function with *-nibud'*, and
-spellout, which gives a layer one form, hands that layer to *-nibud'* by the Elsewhere
-Principle. -/
 theorem to_is_specificUnknown_under_spellout :
     coverage layer (lexicon russian) Russian.Indefinites.toSeries.name =
       IndefiniteType.specificUnknown.profile := by

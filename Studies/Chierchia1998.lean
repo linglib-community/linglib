@@ -154,7 +154,6 @@ theorem argOnly_blocks_nothing :
       ¬ l.determiners.Blocks .iota ∧ ¬ l.determiners.Blocks .exists := by
   decide
 
-/-- Mandarin and Japanese admit every bare nominal as an argument. -/
 theorem argOnly_licensesBare (down : Prop) :
     (nominalMapping .mandarin).LicensesBare (determiners .mandarin) down ∧
       (nominalMapping .japanese).LicensesBare (determiners .japanese) down := by
@@ -165,7 +164,6 @@ theorem predOnly_blocks_iota :
     ∀ l : Language, l.nominalMapping = .predOnly → l.determiners.Blocks .iota := by
   decide
 
-/-- French and Italian admit no bare nominal as an argument, since their nouns need D. -/
 theorem predOnly_not_licensesBare (down : Prop) :
     ¬ (nominalMapping .french).LicensesBare (determiners .french) down ∧
       ¬ (nominalMapping .italian).LicensesBare (determiners .italian) down := by

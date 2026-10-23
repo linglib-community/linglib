@@ -124,7 +124,6 @@ def structuredApp {F : Type u → Type v} [Applicative F] (star : σ → τ → 
     (e₂ : F τ) : F ω :=
   pure star <*> e₁ <*> e₂
 
-/-- Structured application at forward application is the applicative's `<*>`. -/
 theorem structuredApp_fa {F : Type u → Type v} [Applicative F] [LawfulApplicative F]
     (f : F (α → β)) (x : F α) : structuredApp fa f x = f <*> x := by
   rw [structuredApp, pure_seq]
@@ -224,7 +223,6 @@ def counitMode (adj : ofTypeFunctor Ω ⊣ ofTypeFunctor Γ) {σ τ ω : Type u}
     (e₁ : Ω σ) (e₂ : Γ τ) : ω :=
   adj.counit.app ω ((fun l => (fun r => star l r) <$> e₂) <$> e₁ : Ω (Γ ω))
 
-/-- Under `W ⊣ R` the co-unit mode feeds the stored datum to the reader. -/
 theorem counitMode_outputInput {σ τ ω : Type u} (star : σ → τ → ω) (p : Output ι σ)
     (r : ReaderM ι τ) : counitMode (outputInput ι) star p r = star p.1 (r p.2) := rfl
 

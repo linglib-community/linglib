@@ -191,8 +191,6 @@ def IsSpatial : Prop :=
 
 instance : DecidablePred IsSpatial := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
-/-- *kːumi-li-ja-r-sele* 'from the bridge hither' is the super-elative with the direction
-*hither*, a spatial form whose suffixes the slots derive. -/
 theorem super_elative_hither :
     IsSpatial ⟨.super, .elative, some .hither⟩ ∧
       (⟨.super, .elative, some .hither⟩ : LocativeForm).morphs .b =
@@ -205,20 +203,16 @@ variable {l : Localization}
 theorem not_isSpatial_elative_none (l : Localization) : ¬ IsSpatial ⟨l, .elative, none⟩ :=
   fun h ↦ h.2.1 rfl rfl
 
-/-- The essive of every localization but *post* is spatial. -/
 theorem isSpatial_essive (h : l ≠ .post) : IsSpatial ⟨l, .essive, none⟩ :=
   ⟨fun _ ↦ rfl, nofun, nofun, fun hl ↦ absurd hl h⟩
 
-/-- The lative of every localization but *post* is spatial, with or without a direction. -/
 theorem isSpatial_lative (d : Option Direction) (h : l ≠ .post) : IsSpatial ⟨l, .lative, d⟩ :=
   ⟨nofun, nofun, nofun, fun hl ↦ absurd hl h⟩
 
-/-- The elative with a direction of every localization but *post* is spatial. -/
 theorem isSpatial_elative_some (d : Direction) (h : l ≠ .post) :
     IsSpatial ⟨l, .elative, some d⟩ :=
   ⟨nofun, fun _ ↦ nofun, nofun, fun hl ↦ absurd hl h⟩
 
-/-- The translative is spatial exactly with the localizations that take it. -/
 theorem isSpatial_translative_iff {d : Option Direction} :
     IsSpatial ⟨l, .translative, d⟩ ↔ l.TakesTranslative :=
   ⟨fun h ↦ h.2.2.1 rfl, fun h ↦ ⟨nofun, nofun, fun _ ↦ h, fun _ ↦ rfl⟩⟩
@@ -259,7 +253,6 @@ end LocativeForm
 /-- The super-elative without a direction marker of the standard of comparison. -/
 def comparisonStandard : LocativeForm := ⟨.super, .elative, none⟩
 
-/-- The standard of comparison is not a spatial form. -/
 theorem not_isSpatial_comparisonStandard : ¬ comparisonStandard.IsSpatial :=
   LocativeForm.not_isSpatial_elative_none _
 

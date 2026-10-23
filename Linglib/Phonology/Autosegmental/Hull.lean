@@ -60,7 +60,6 @@ theorem link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ} (hq : q < (X.word j).
     exact ⟨hj, h₁.lt_left, hq,
       .inl (.inl ⟨rfl, q₁, h₁.lt_right, q₂, h₂.lt_right, h₁, h₂, hle₁, hle₂⟩)⟩
 
-/-- Lines not involving the melody tier pass through the hull unchanged. -/
 theorem link_hull_of_ne {i j : ι} (hi : i ≠ m) (hj : j ≠ m) (p q : ℕ) :
     (X.hull m).Link i j p q ↔ X.Link i j p q := by
   rw [hull, link_fromRel]

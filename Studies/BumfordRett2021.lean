@@ -180,8 +180,6 @@ instance (c : Option Comparison) (u : Utterance) (σ : Finset.Icc (-4 : ℤ) 4) 
     Decidable (Holds c u σ w) := by
   cases u <;> unfold Holds <;> infer_instance
 
-/-- Reversing the height scale about Keisha's height, and the threshold offset with it, exchanges
-the antonyms of every construction. -/
 theorem holds_reflect (c : Option Comparison) (u : Utterance) (σ : Finset.Icc (-4 : ℤ) 4)
     (w : World) : Holds c u.antonym (negate σ) w.reflect ↔ Holds c u σ w := by
   obtain ⟨⟨d, hd⟩, ⟨m, hm⟩⟩ := w
@@ -192,7 +190,6 @@ theorem holds_reflect (c : Option Comparison) (u : Utterance) (σ : Finset.Icc (
       simp [Holds, Utterance.antonym, measured, World.reflect, World.height, keishaHeight] <;> omega
   · rfl
 
-/-- Every utterance of every construction is true at some world under some offset. -/
 theorem exists_holds (c : Option Comparison) (u : Utterance) :
     ∃ (w : World) (σ : Finset.Icc (-4 : ℤ) 4), Holds c u σ w := by
   rcases u with p | _
@@ -227,7 +224,6 @@ theorem prior_singleton_ne_zero (w : World) : prior {w} ≠ 0 := by
   rw [prior_singleton]
   exact (ENNReal.ofReal_pos.mpr (gaussianPDFReal_pos _ _ _ (by norm_num))).ne'
 
-/-- The prior depends on a world through the square of its deviation alone. -/
 theorem prior_singleton_congr {w w' : World} (h : (w.deviation : ℤ) ^ 2 = (w'.deviation : ℤ) ^ 2) :
     prior {w} = prior {w'} := by
   have h' : ((w.height : ℝ) - ((w.centre : ℤ) : ℝ)) ^ 2
@@ -297,7 +293,6 @@ private theorem literal_ne_zero {c σ u w} (h : Holds c u σ w) : literal c σ u
 private theorem literal_eq_zero {c σ u w} (h : ¬ Holds c u σ w) : literal c σ u {w} = 0 :=
   RSA.listener_truthful_apply_singleton_of_notMem prior (fun u ↦ {w | Holds c u σ w}) h
 
-/-- Every utterance of every construction has positive probability of being produced. -/
 theorem comp_speaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance) :
     (speaker c α cost ∘ₘ prior.prod Measure.count) {u} ≠ 0 := by
   obtain ⟨w, σ, h⟩ := exists_holds c u
@@ -306,8 +301,6 @@ theorem comp_speaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u : Utter
   rw [speaker_apply]
   exact RSA.speaker_dirac_apply_singleton_ne_zero hα (literal_ne_zero h)
 
-/-- The listener's mass on a world pools the speaker's production of the utterance over the
-offsets, weighted by the world's prior. -/
 private theorem listener_fst_real_singleton (c : Option Comparison) (u : Utterance) (w : World) :
     (listener c α cost u).fst.real {w} =
       (prior {w}).toReal * (∑ σ, (RSA.speaker α cost (literal c σ) Measure.dirac w).real {u}) /
@@ -315,8 +308,6 @@ private theorem listener_fst_real_singleton (c : Option Comparison) (u : Utteran
   rw [listener, Measure.comp_real_singleton, RSA.listener_prod_fst_real_singleton]
   simp [measureReal_def]
 
-/-- A world produces an utterance at least as often as another if it verifies the utterance whenever
-the other does and then verifies only alternatives the other verifies. -/
 private theorem speaker_real_le (hα : 0 < α) {c σ u} {w₁ w₂ : World}
     (hu : Holds c u σ w₁ → Holds c u σ w₂)
     (halt : Holds c u σ w₁ → ∀ u', Holds c u' σ w₂ → Holds c u' σ w₁) :
@@ -328,9 +319,6 @@ private theorem speaker_real_le (hα : 0 < α) {c σ u} {w₁ w₂ : World}
       (prior_singleton_ne_zero w₂) (halt h₁) (hu h₁)
   · rw [RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h₁)]; exact zero_le
 
-/-- Of two worlds of equal prior, the listener weights the second at least as much as the first if,
-under every offset at which the first verifies the utterance, the second verifies it too and
-verifies only alternatives the first verifies. -/
 private theorem listener_fst_real_le (hα : 0 < α) {c u} {w₁ w₂ : World}
     (hp : prior {w₁} = prior {w₂})
     (hu : ∀ σ, Holds c u σ w₁ → Holds c u σ w₂)
@@ -341,8 +329,6 @@ private theorem listener_fst_real_le (hα : 0 < α) {c u} {w₁ w₂ : World}
     (Finset.sum_le_sum fun σ _ ↦ speaker_real_le hα (hu σ) (halt σ)) ENNReal.toReal_nonneg)
     measureReal_nonneg
 
-/-- The listener weights the second world strictly more when, in addition, some offset makes the
-utterance true at the second world only. -/
 private theorem listener_fst_real_lt (hα : 0 < α) {c u} {w₁ w₂ : World}
     (hp : prior {w₁} = prior {w₂})
     (hu : ∀ σ, Holds c u σ w₁ → Holds c u σ w₂)
@@ -360,8 +346,6 @@ private theorem listener_fst_real_lt (hα : 0 < α) {c u} {w₁ w₂ : World}
   exact ENNReal.toReal_pos (RSA.speaker_dirac_apply_singleton_ne_zero hα.le (literal_ne_zero h₂))
     (measure_ne_top _ _)
 
-/-- An odd statistic has positive expectation under a measure that dominates its reflection
-wherever the statistic is positive, strictly somewhere. -/
 private theorem integral_pos_of_involutive {β : Type*} [Fintype β] [MeasurableSpace β]
     [MeasurableSingletonClass β] (P : Measure β) [IsFiniteMeasure P] (X : β → ℝ) {R : β → β}
     (hR : Function.Involutive R) (hX : ∀ b, X (R b) = -X b)
@@ -395,8 +379,6 @@ theorem literal_antonym (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) (
   RSA.listener_truthful_apply_singleton_of_equiv World.reflect_involutive.toPerm prior_reflect
     (fun w ↦ by simp only [Function.Involutive.coe_toPerm, Set.mem_ofPred_eq, holds_reflect]) w
 
-/-- Reversing the height scale carries the listener after an antonym to the listener after the
-other antonym, with the costs of the antonyms exchanged. -/
 theorem listener_antonym (c : Option Comparison) (u : Utterance) (w : World)
     (σ : Finset.Icc (-4 : ℤ) 4) :
     listener c α cost u.antonym {(w.reflect, negate σ)} =
@@ -433,9 +415,6 @@ theorem expectedDeviation_antonym (c : Option Comparison) (p : Polarity) :
     listener_antonym c (.say p) q.1 q.2, measured_reflect]
   push_cast; ring
 
-/-- With equal costs the two antonyms of every construction have opposite expected deviations. The
-paper remarks this of the comparative, whose antonyms do not come out opposite in its simulations
-only because of their costs. -/
 theorem expectedDeviation_negative_of_cost_eq
     (hc : cost (.say .positive) = cost (.say .negative)) (c : Option Comparison) :
     expectedDeviation c α cost .negative = -expectedDeviation c α cost .positive := by
@@ -451,7 +430,6 @@ section Evaluative
 
 variable {α : ℝ} {cost : Utterance → ℝ}
 
-/-- After *Jane is tall* the listener expects Jane above the centre of the class. -/
 private theorem positive_tall (hα : 0 < α) :
     0 < expectedDeviation none α cost .positive := by
   refine integral_pos_of_involutive _ _ World.mirror_involutive (fun w ↦ ?_) (fun w hw ↦ ?_)
@@ -471,8 +449,6 @@ private theorem positive_tall (hα : 0 < α) :
     rcases u' with ⟨_ | _⟩ | _ <;>
       simp [Holds, measured, World.mirror, World.height] at * <;> omega
 
-/-- After *Jane is exactly as tall as Keisha* the listener expects Keisha above the centre of the
-class. -/
 private theorem exactEquative_tall (hα : 0 < α) :
     0 < expectedDeviation (some .eq) α cost .positive := by
   refine integral_pos_of_involutive _ _ World.reflect_involutive
@@ -552,8 +528,6 @@ private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 
     (fun u ↦ {w | Holds none u σ w}) (prior_singleton_ne_zero w) (prior_singleton_ne_zero _)
     fun u ↦ (holds_none_recentre m m' u σ w).symm)) _
 
-/-- Hearing the positive construction, the listener learns nothing about the class, whose centre
-stays uniformly distributed. -/
 theorem positive_centre_uniform (hα : 0 < α) (u : Utterance) :
     (listener none α cost u).fst.map World.centre = uniformOn Set.univ := by
   have : IsProbabilityMeasure (listener none α cost u) :=
@@ -587,8 +561,6 @@ section Balance
 
 variable {α : ℝ} {cost : Utterance → ℝ}
 
-/-- The speakers produce a probability distribution over the utterances at every world and
-offset, since silence is true everywhere. -/
 theorem isMarkovKernel_speaker (hα : 0 ≤ α) (c : Option Comparison) :
     IsMarkovKernel (speaker c α cost) :=
   ⟨fun q ↦ by
@@ -717,8 +689,6 @@ theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) {c : Option 
   rw [listener_fst_real_singleton, listener_fst_real_singleton]
   simp only [measureReal_def, hS, hM]
 
-/-- The marked comparative is the unmarked comparative reflected, at the marked antonym's cost,
-so markedness acts on the comparative only through the antonym's own cost. -/
 theorem comparative_negative_eq_neg (hα : 0 < α)
     (hp : cost' (.say .positive) = cost (.say .negative)) (hs : cost' .silence = cost .silence) :
     expectedDeviation (some .gt) α cost .negative =

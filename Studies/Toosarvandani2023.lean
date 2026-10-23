@@ -230,7 +230,6 @@ instance : LinearOrder Pronoun := LinearOrder.lift' (fun p ↦ OrderDual.toDual 
 
 theorem Pronoun.le_iff_top_le {p q : Pronoun} : p ≤ q ↔ q.top ≤ p.top := Iff.rfl
 
-/-- A pronoun is at least as high as another exactly when it has all of the other's features. -/
 theorem Pronoun.le_iff_features_subset {p q : Pronoun} : p ≤ q ↔ p.features ⊆ q.features :=
   ⟨fun h _ hf ↦ mem_filter.2 ⟨mem_univ _, (le_iff_top_le.1 h).trans (mem_filter.1 hf).2⟩,
     fun h ↦ le_iff_top_le.2 (mem_filter.1 (h (mem_filter.2 ⟨mem_univ _, le_refl _⟩))).2⟩
@@ -282,8 +281,6 @@ theorem laxopa_human_elder :
       ¬ Agrees ⟨.thirdHuman, .thirdElder⟩ := by
   decide
 
-/-- The Zoogocho probe sees only *animate* among the animacy features, so any animate
-clitics combine. -/
 theorem zoogocho_animal_elder :
     AgreesUnder {.speaker, .participant, .animate, .pi} ⟨.thirdAnimal, .thirdElder⟩ := by
   decide

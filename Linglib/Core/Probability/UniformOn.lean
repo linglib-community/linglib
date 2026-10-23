@@ -25,21 +25,17 @@ private theorem ncard_ne_zero_of_nonempty {W : Type*} {s : Set W} (hs : s.Finite
 
 variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W]
 
-/-- The uniform measure on a finset gives a singleton `1 / #A` on `A` and `0` off it. -/
 theorem uniformOn_finset_apply_singleton [DecidableEq W] (A : Finset W) (w : W) :
     uniformOn ↑A {w} = if w ∈ A then (A.card : ℝ≥0∞)⁻¹ else 0 := by
   rw [← Finset.coe_singleton, uniformOn_apply_finset]
   by_cases h : w ∈ A <;> simp [Finset.inter_singleton_of_mem, Finset.inter_singleton_of_notMem, h,
     div_eq_mul_inv]
 
-/-- On reals, the uniform measure on a finset gives a singleton `1 / #A` on `A` and `0` off it. -/
 theorem uniformOn_finset_real_singleton [DecidableEq W] (A : Finset W) (w : W) :
     (uniformOn (A : Set W)).real {w} = if w ∈ A then (A.card : ℝ)⁻¹ else 0 := by
   rw [measureReal_def, uniformOn_finset_apply_singleton]
   split_ifs <;> simp
 
-/-- At a point of both finsets, the uniform measure on `A` gives the point at most the mass the
-uniform measure on `B` gives it exactly when `B` is no larger than `A`. -/
 theorem uniformOn_finset_real_singleton_le_iff [DecidableEq W] {A B : Finset W} {w : W}
     (hA : w ∈ A) (hB : w ∈ B) :
     (uniformOn (A : Set W)).real {w} ≤ (uniformOn (B : Set W)).real {w} ↔ B.card ≤ A.card := by
@@ -47,15 +43,12 @@ theorem uniformOn_finset_real_singleton_le_iff [DecidableEq W] {A B : Finset W} 
     ite_eq_left hB, inv_le_inv₀ (by exact_mod_cast Finset.card_pos.mpr ⟨w, hA⟩)
       (by exact_mod_cast Finset.card_pos.mpr ⟨w, hB⟩), Nat.cast_le]
 
-/-- The uniform measure on a proper subset gives each of its points more mass. -/
 theorem uniformOn_finset_real_singleton_lt_of_ssubset [DecidableEq W] {A B : Finset W} {w : W}
     (h : B ⊂ A) (hw : w ∈ B) :
     (uniformOn (A : Set W)).real {w} < (uniformOn (B : Set W)).real {w} :=
   lt_of_not_ge fun hle ↦
     (Finset.card_lt_card h).not_ge ((uniformOn_finset_real_singleton_le_iff hw (h.1 hw)).mp hle)
 
-/-- The uniform measure on a finite set gives a set, on reals, the proportion of the atoms of `s`
-lying in `e`, with `0 / 0 = 0` when `s` is empty. -/
 theorem uniformOn_real_apply_of_finite {s : Set W} (hs : s.Finite) (e : Set W) :
     (uniformOn s).real e = (s ∩ e).ncard / s.ncard := by
   rw [measureReal_def, uniformOn, cond_apply hs.measurableSet,
@@ -68,8 +61,6 @@ theorem uniformOn_real_apply [Finite W] (s e : Set W) :
     (uniformOn s).real e = (s ∩ e).ncard / s.ncard :=
   uniformOn_real_apply_of_finite s.toFinite e
 
-/-- The uniform measure on a finset gives a predicate, on reals, the proportion of the finset
-satisfying it. -/
 theorem uniformOn_finset_real_setOf [Finite W] (A : Finset W) (p : W → Prop) [DecidablePred p] :
     (uniformOn (A : Set W)).real {w | p w} = (A.filter p).card / A.card := by
   rw [uniformOn_real_apply, Set.ncard_coe_finset]
@@ -77,8 +68,6 @@ theorem uniformOn_finset_real_setOf [Finite W] (A : Finset W) (p : W → Prop) [
   rw [← Set.ncard_coe_finset, Finset.coe_filter]
   rfl
 
-/-- The uniform measure on a subset of a finite set is absolutely continuous with respect to
-the uniform measure on the set. -/
 theorem uniformOn_absolutelyContinuous_of_subset {A B : Set W} (hB : B.Finite) (hAB : A ⊆ B) :
     uniformOn A ≪ uniformOn B := fun s hs ↦ by
   rw [uniformOn_eq_zero_iff hB] at hs
@@ -94,15 +83,12 @@ section Finite
 
 variable {s t : Set W}
 
-/-- The uniform measure on a finite set gives a set the proportion of `s` lying in it. -/
 theorem uniformOn_apply_of_finite (hs : s.Finite) (t : Set W) :
     uniformOn s t = (s ∩ t).ncard / s.ncard := by
   rw [uniformOn, cond_apply hs.measurableSet, Measure.count_apply_finite _ hs,
     Measure.count_apply_finite _ (hs.inter_of_left t), ← Set.ncard_eq_toFinset_card _ hs,
     ← Set.ncard_eq_toFinset_card _ (hs.inter_of_left t), ENNReal.div_eq_inv_mul]
 
-/-- The uniform measure on a finset gives a predicate the proportion of the finset satisfying
-it. -/
 theorem uniformOn_finset_setOf (F : Finset W) (p : W → Prop) [DecidablePred p] :
     uniformOn (F : Set W) {x | p x} = (F.filter p).card / F.card := by
   have : (F : Set W) ∩ {x | p x} = ↑(F.filter p) := by rw [Finset.coe_filter]; rfl
@@ -113,26 +99,18 @@ theorem le_uniformOn_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
   rw [uniformOn_apply_of_finite hs, ENNReal.le_div_iff_mul_le
     (.inl (ncard_ne_zero_of_nonempty hs hne)) (.inl (by simp))]
 
-/-- Conditioning the uniform measure on `s` by `t` gives the uniform measure on `s ∩ t`, so
-chained conditioning collapses, as `cond_cond_eq_cond_inter` does for `cond`. -/
 theorem uniformOn_cond (hs : s.Finite) (ht : MeasurableSet t) :
     (uniformOn s)[|t] = uniformOn (s ∩ t) := by
   rw [uniformOn, uniformOn,
     cond_cond_eq_cond_inter' hs.measurableSet ht (Measure.count_apply_lt_top.2 hs).ne]
 
-/-- Conditioning the uniform measure on a finite type by a set gives the uniform measure on the
-set. -/
 theorem uniformOn_univ_cond [Finite W] (A : Set W) :
     (uniformOn (Set.univ : Set W))[|A] = uniformOn A := by
   rw [uniformOn_cond Set.finite_univ (Set.toFinite A).measurableSet, Set.univ_inter]
 
-/-- The uniform measure on a nonempty finite set gives `t` the measure `1` exactly when `t`
-contains it. -/
 theorem uniformOn_eq_one_iff (hs : s.Finite) (hne : s.Nonempty) : uniformOn s t = 1 ↔ s ⊆ t :=
   ⟨pred_true_of_uniformOn_eq_one, uniformOn_eq_one_of hs hne⟩
 
-/-- The uniform measure on a nonempty finite set gives `t` the measure `1 / |s|` exactly when
-one member of `s` lies in `t`. -/
 theorem uniformOn_eq_inv_ncard_iff (hs : s.Finite) (hne : s.Nonempty) :
     uniformOn s t = (s.ncard : ℝ≥0∞)⁻¹ ↔ (s ∩ t).ncard = 1 := by
   rw [uniformOn_apply_of_finite hs, ENNReal.div_eq_inv_mul]
@@ -154,7 +132,6 @@ theorem uniformOn_univ_singleton_ne_zero (w : W) : uniformOn (Set.univ : Set W) 
   rw [uniformOn_univ_apply_singleton]
   exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
 
-/-- Under the uniform measure on a finite type, almost everywhere is everywhere. -/
 theorem uniformOn_univ_ae_iff {p : W → Prop} :
     (∀ᵐ w ∂uniformOn (Set.univ : Set W), p w) ↔ ∀ w, p w := by
   rw [ae_iff_of_countable]
@@ -174,12 +151,10 @@ theorem uniformOn_univ_real_coe_finset (s : Finset W) :
   rw [measureReal_def, uniformOn_univ, Measure.count_apply_finset, ENNReal.toReal_div,
     ENNReal.toReal_natCast, ENNReal.toReal_natCast]
 
-/-- On a finite type the uniform measure gives a set, on reals, the proportion of atoms in it. -/
 theorem uniformOn_univ_real_apply (A : Set W) :
     (uniformOn (Set.univ : Set W)).real A = A.ncard / Fintype.card W := by
   rw [uniformOn_real_apply, Set.univ_inter, Set.ncard_univ, Nat.card_eq_fintype_card]
 
-/-- The uniform measure on a nonempty finite type compares two sets as their cardinalities. -/
 theorem uniformOn_univ_le_iff [Nonempty W] {A B : Set W} :
     uniformOn (Set.univ : Set W) A ≤ uniformOn Set.univ B ↔ A.ncard ≤ B.ncard := by
   rw [← ENNReal.toReal_le_toReal (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,

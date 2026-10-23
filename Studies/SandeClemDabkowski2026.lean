@@ -134,7 +134,6 @@ instance : Decidable c.Harmony := inferInstanceAs (Decidable (_ ∈ _))
 theorem harmony_iff_hasAux : c.Harmony ↔ c.hasAux = true := by
   grind [Harmony, vP, verbInV, remnantVP]
 
-/-- Under harmony the particle and the verb are adjacent in the vP Spell-out. -/
 theorem isInfix_vP (h : c.Harmony) : [.particle, .verb] <:+: c.vP := by
   grind [Harmony, vP, verbInV, remnantVP]
 
@@ -164,7 +163,6 @@ theorem Discontinuous.exists_notMem {α : Type*} {phases : List (List α)} {a b 
   obtain ⟨q, hq, x, h₁, h₂⟩ := h.separated
   exact ⟨p, hp, hab, q, hq, x, h₁.subset (by simp), h.consistent.notMem_of_isInfix hp hq hab h₁ h₂⟩
 
-/-- The fronted clause with an auxiliary is discontinuous harmony, the target moving. -/
 theorem discontinuous_partSAuxOV :
     Discontinuous (Clause.mk true true).phases .particle .verb where
   consistent := Clause.consistent _
@@ -313,7 +311,6 @@ theorem spellouts_eq_phases :
       Terminal.ofToken?) = c.phases := by
   obtain ⟨_ | _, _ | _⟩ := c <;> decide
 
-/-- Every clause's derivation linearizes. -/
 theorem linearizes : c.derivation.Linearizes (vPSchedule c.derivation) := by
   obtain ⟨_ | _, _ | _⟩ := c <;> decide +kernel
 
@@ -356,14 +353,11 @@ def verbs : List (String × Morpheme) := [("ni", ni), ("ngwOsa", ngwOsa)]
 
 def atrs : List (String × Bool) := [("plus", true), ("minus", false)]
 
-/-- A Guébie row's word order is acceptable exactly when some clause spells it out. -/
 theorem order_rows :
     ∀ x ∈ rowsIn "gabo1234", ∀ p ∈ x.parse? "pattern" patterns,
       (x.judgment = .acceptable ↔ ∃ c : Clause, c.cP = p) := by
   decide +kernel
 
-/-- In every Guébie row the particle /jɔkʊ/ bears the value of the clause that spells out the
-row's order, and the material the row records between the particle and the verb does not. -/
 theorem harmony_rows :
     ∀ x ∈ rowsIn "gabo1234", ∀ p ∈ x.parse? "pattern" patterns, ∀ v ∈ x.parse? "verb" verbs,
       ∀ c : Clause, c.cP = p →
@@ -390,14 +384,11 @@ def relClause : List Nominal := [.noun, .rel, .stative, .dem]
 
 def shapes : List (String × List Nominal) := [("localDP", dP), ("relClause", relClause)]
 
-/-- The relative clause is discontinuous harmony, the trigger moving. -/
 theorem discontinuous_relClause : Discontinuous [dP, relClause] .noun .dem where
   consistent := by decide
   adjacent := ⟨dP, by simp, by simp [dP]⟩
   separated := ⟨relClause, by simp, .stative, by decide, by decide⟩
 
-/-- Every Wolof row's shape linearizes with the DP Spell-out, and its demonstrative bears the
-head noun's value whatever the stative verb between them bears. -/
 theorem wolof_rows :
     ∀ x ∈ rowsIn "nucl1347", (∀ s ∈ x.parse? "shape" shapes, Consistent [dP, s]) ∧
       ∀ h ∈ x.parse? "headATR" atrs, ∀ d ∈ x.parse? "demATR" atrs, d = h := by

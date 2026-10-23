@@ -43,23 +43,15 @@ open Subregular Hansson2010
 
 /-! ### Transparent harmony: Navajo is SP_2 as well as TSL_2 -/
 
-/-- **Navajo sibilant harmony is strictly 2-piecewise.** The subject is the very language
-`Studies/Hansson2010.lean` builds as TSL_2, the inverse image of agreement among the sibilant
-classes, and agreement is strictly 2-piecewise. -/
 theorem navajoSibilantHarmony_lang_isSP2 :
     navajoSibilantHarmony.language.IsStrictlyPiecewise 2 := by
   rw [language_eq_preimage]
   exact (TierStrictlyLocalGrammar.agree_language_isStrictlyPiecewise _).preimage_map _
 
-/-- The tier-based and subsequence-based grammars for Navajo generate the same language, read
-through the sibilant classes. -/
 theorem navajoSibilantHarmony_language_eq_strictlyPiecewise : navajoSibilantHarmony.language =
     List.map sibilantClass ⁻¹' (StrictlyPiecewiseGrammar.agree (·.isSome)).language 2 := by
   rw [language_eq_preimage, TierStrictlyLocalGrammar.agree_language_eq_strictlyPiecewise]
 
-/-- Under the SP_2 description Hansson's minimal pair comes out as before, the pre-harmony
-/si-dʒéːʔ/ rejected and the surface [ʃidʒéːʔ] accepted. Both transfer along the equality of
-languages rather than being recomputed. -/
 theorem ur_ex6a_ii_violates_sp :
     ur Examples.ex6a_ii ∉
       List.map sibilantClass ⁻¹' (StrictlyPiecewiseGrammar.agree (·.isSome)).language 2 :=
@@ -109,32 +101,19 @@ def blockingLang : Language BSeg :=
 theorem blockingLang_isTSL2 : Language.IsTierStrictlyLocal 2 blockingLang :=
   ⟨_, rfl⟩
 
-/-- Transparent material does not license a mixed pair, since the projection deletes it and
-leaves the two series tier-adjacent. -/
 theorem transparent_not_mem : [BSeg.ant, .transparent, .post] ∉ blockingLang := by
   unfold blockingLang; decide
 
-/-- A blocker does license it, since the blocker projects and the two series are no longer
-tier-adjacent. -/
 theorem blocked_mem : [BSeg.ant, .blocker, .post] ∈ blockingLang := by
   unfold blockingLang; decide
 
-/-- Deleting the blocker leaves an illegal word — the configuration no subsequence
-grammar can distinguish. -/
 theorem unblocked_not_mem : [BSeg.ant, .post] ∉ blockingLang := by
   unfold blockingLang; decide
 
-/-- **Blocking is not strictly piecewise, at any width** ([mcmullin-2016]). SP
-languages are subsequence-closed, so a legal word whose blocker-deletion is illegal
-rules out every SP grammar at once. -/
 theorem blockingLang_not_isStrictlyPiecewise (k : ℕ) :
     ¬ blockingLang.IsStrictlyPiecewise k :=
   fun h ↦ unblocked_not_mem (h.isSublistClosed (by decide) blocked_mem)
 
-/-- **The tier buys expressive power** ([mcmullin-2016]). Some TSL_2 language is
-strictly piecewise at no width. With `navajoSibilantHarmony_lang_isSP2` — where the two
-descriptions do coincide — this is the thesis's typological argument in miniature, that SP
-suffices for transparency, and only for transparency. -/
 theorem exists_isTierStrictlyLocal_not_isStrictlyPiecewise :
     ∃ L : Language BSeg,
       Language.IsTierStrictlyLocal 2 L ∧ ∀ k, ¬ L.IsStrictlyPiecewise k :=

@@ -102,17 +102,12 @@ theorem felicitous_some_negative_iff (ev : SignType) :
     Felicitous (some .negative) ev ↔ CompellingAgainst ev := by
   decide +revert
 
-/-- A positive question is barred by compelling evidence against `p` — *Is it sunny?* asked of
-someone in a dripping raincoat. -/
 theorem not_felicitous_none_neg_one : ¬ Felicitous none (-1) := by decide
 
-/-- An inner-negation question is felicitous only against `p`, the neutral context included in the
-exclusion. -/
 theorem felicitous_some_negative_iff_eq (ev : SignType) :
     Felicitous (some .negative) ev ↔ ev = -1 := by
   decide +revert
 
-/-- An outer-negation question tolerates a neutral context, unlike an inner-negation one. -/
 theorem felicitous_some_positive_zero_not_negative :
     Felicitous (some .positive) 0 ∧ ¬ Felicitous (some .negative) 0 := by
   decide

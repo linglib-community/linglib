@@ -72,7 +72,6 @@ def Value.toLabel : Value → Option Gender
   | .masculine => some .masculine
   | _ => none
 
-/-- The clitics alone distinguish the six genders. -/
 theorem clitic_injective : Function.Injective Value.clitic := by decide
 
 end Gender
@@ -156,7 +155,6 @@ theorem nonclitic_categories :
       clitics.biUnion (·.referential) \ {.speakerAddresseeOthers, .other, .others} := by
   decide
 
-/-- A gender's clitic also serves the plural exactly when the gender has no plural clitic. -/
 theorem clitic_mem_paradigm_others_iff (g : Gender.Value) :
     g.clitic ∈ paradigm .others ↔ g.pluralClitic = none := by
   revert g; decide

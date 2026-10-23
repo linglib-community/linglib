@@ -98,8 +98,6 @@ theorem division_of_labour :
       {(.simple, .approximate), (.complex, .precise)} := by
   decide
 
-/-- The division of labour survives the objection that the simple form cannot truthfully compete
-for the precise meaning: dropping that pair leaves the same winners. -/
 theorem division_of_labour_without_simple_precise :
     superoptimal (Finset.univ.erase (.simple, .precise))
       (profile [simpleExpression, approximateInterpretation]) =
@@ -188,8 +186,6 @@ private theorem indistinguishable_forty {i' : ℕ} :
   unfold Indistinguishable Nat.dist
   omega
 
-/-- With *forty* the cheapest word of its halo, *forty* is consistent with the approximate
-reading and *thirty-eight* is not, so *thirty-eight* signals the precise one. -/
 theorem forty_approximate_thirtyEight_precise {c : ℕ → ℕ}
     (hc : ∀ i, 36 ≤ i → i ≤ 44 → i ≠ 40 → c 40 < c i) :
     ConsistentWithApproximation c 40 ∧ ¬ ConsistentWithApproximation c 38 := by
@@ -207,14 +203,10 @@ private theorem uniformOn_Icc_apply (t : Finset ℕ) :
   rw [uniformOn_apply_finset]
   simp
 
-/-- On the uniform prior over the reportable values, the precise reading of *forty* has mass one
-in a hundred. -/
 theorem precise_mass : uniformOn (Finset.Icc 1 100 : Set ℕ) {40} = 1 / 100 := by
   rw [← Finset.coe_singleton, uniformOn_Icc_apply,
     Finset.inter_singleton_of_mem (by simp), Finset.card_singleton, Nat.cast_one]
 
-/-- The approximate reading of *forty* covers its halo, nine values; the paper prints 0.08, the
-width of the halo. -/
 theorem approximate_mass :
     uniformOn (Finset.Icc 1 100 : Set ℕ) (Set.Icc 36 44) = 9 / 100 := by
   rw [← Finset.coe_Icc, uniformOn_Icc_apply,
@@ -248,8 +240,6 @@ variable {W : Finset ℤ} (μs : Measure W) (ν : Measure ℝ) {r : ℝ≥0∞} 
 def reportedOn (w : W) (n : ℤ) : Set (W × ℝ) :=
   {w} ×ˢ (representative ((w : ℤ) : ℝ) ⁻¹' {(n : ℝ)})
 
-/-- A report on a scale through `n` has the mass of the scale times the cell around `n`, under a
-scale prior `μs` and a value prior of density `r` on `I`. -/
 theorem measure_reportedOn_of_dvd [SFinite ν]
     (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s) {w : W} (hw : 0 < (w : ℤ))
     (hI : Set.Ico ((n : ℝ) - (w : ℤ) / 2) (n + (w : ℤ) / 2) ⊆ I) (h : (w : ℤ) ∣ n) :
@@ -259,7 +249,6 @@ theorem measure_reportedOn_of_dvd [SFinite ν]
   congr 3
   ring
 
-/-- A value is never reported on a scale it does not lie on. -/
 theorem measure_reportedOn_of_not_dvd {w : W} (h : ¬ (w : ℤ) ∣ n) :
     (μs.prod ν) (reportedOn w n) = 0 := by
   rw [reportedOn, preimage_representative_of_notMem (mt intCast_mem_zmultiples_iff.1 h),
@@ -305,8 +294,6 @@ theorem coarsest_scale_most_probable [SFinite ν]
 /-- The minute scales count hours, half hours, quarter hours, five minutes and minutes. -/
 def minuteScales : Finset ℤ := {60, 30, 15, 5, 1}
 
-/-- On the minute scales, 45 is read at the quarter hours and 40 at the five minutes, the
-coarsest scales each lies on. -/
 theorem fortyFive_quarterHours_forty_fiveMinutes :
     scaleLcm minuteScales 45 = 15 ∧ scaleLcm minuteScales 40 = 5 := by decide
 
@@ -316,24 +303,16 @@ theorem fortyFive_quarterHours_forty_fiveMinutes :
 def averageSyllables (s : SyllableScale) : ℚ :=
   (syllableCounts s).syllables / (syllableCounts s).words
 
-/-- Among the decimal scales the coarser the scale, the simpler its number words on average,
-while the scale of threes, which no refinement of decimal granularity yields, is costlier than
-all of them. -/
 theorem ser_decimal_scales :
     averageSyllables .tens < averageSyllables .fives ∧
       averageSyllables .fives < averageSyllables .ones ∧
         averageSyllables .ones < averageSyllables .threes := by
   norm_num [averageSyllables, syllableCounts]
 
-/-- The scales for children's ages in months break the alignment, the coarser scale having the
-costlier words. -/
 theorem months_violate_ser :
     averageSyllables .monthsByOne < averageSyllables .monthsCoarse := by
   norm_num [averageSyllables, syllableCounts]
 
-/-- In decimal Norwegian the word for fifty is used more than those for forty and sixty; in
-vigesimal Danish, where fifty is the complex half-score form, less. Approximate use follows the
-simple forms of the language itself. -/
 theorem fifty_follows_the_language :
     ((counts .foerti).count < (counts .femti).count ∧
       (counts .seksti).count < (counts .femti).count) ∧
@@ -343,8 +322,6 @@ theorem fifty_follows_the_language :
 
 /-! ### Refining by half -/
 
-/-- Halving the scale of tens, the optimal refinement, adds exactly the values the tens distort
-most, those reported a full five away. -/
 theorem halving_adds_most_distorted {d : ℝ} :
     |d - representative 10 d| = 5 ↔
       d ∈ AddSubgroup.zmultiples (5 : ℝ) ∧ d ∉ AddSubgroup.zmultiples (10 : ℝ) := by

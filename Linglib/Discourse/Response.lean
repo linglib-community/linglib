@@ -105,7 +105,6 @@ section Smul
 
 variable {X : Type*} [MulAction Polarity X] {r : Polarity}
 
-/-- The relative polarity of a response takes the antecedent's proposition to the response's. -/
 @[simp] theorem relative_smul_antecedent_smul (x : Response) (a : X) :
     x.relative • x.antecedent • a = x.polarity • a := by
   rw [smul_smul, relative, div_mul_cancel]

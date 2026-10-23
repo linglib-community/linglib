@@ -137,7 +137,6 @@ theorem pastParticiple_particle (p : String) (v : Verb) :
 theorem pastParticiple_prefix (p : String) (v : Verb) :
     (prefixVerb p v).pastParticiple = p ++ v.participle := rfl
 
-/-- A verb formed with a particle is separable and one formed with a prefix is not. -/
 theorem isSeparable_particleVerb_not_prefixVerb (p : String) (v : Verb) :
     (particleVerb p v).IsSeparable ∧ ¬ (prefixVerb p v).IsSeparable :=
   ⟨⟨p, rfl⟩, fun ⟨_, h⟩ ↦ by simp [prefixVerb] at h⟩
@@ -347,11 +346,8 @@ theorem perfectAuxiliary_mem : ∀ v ∈ inventory, v.perfectAuxiliaries.Nonempt
     perfectAuxiliary v (v.valency.frames.headD .intransitive) ∈ v.perfectAuxiliaries := by
   decide
 
-/-- Every entry is cited by its infinitive. -/
 theorem form_eq_infinitive : ∀ v ∈ inventory, v.form = v.infinitive := by decide
 
-/-- Every verb of manner of motion selects a directional phrase, so that all of them take *zijn*
-under one that bounds the path. -/
 theorem takesSpatial_of_direction_eq_place :
     ∀ v ∈ inventory, v.direction = some .place → v.TakesSpatial := by
   decide
@@ -366,8 +362,6 @@ theorem ontdekt :
     ontdekken.pastParticiple = "ontdekt" ∧ verdienen.pastParticiple = "verdiend" := by
   decide
 
-/-- An entry's participle has *ge-* after its particle or prefix exactly when the entry is
-separable or simplex. -/
 theorem ge_after_formation_iff :
     ∀ v ∈ inventory,
       (['g', 'e'] <+: (v.pastParticiple.toList.drop v.formation.form.length) ↔

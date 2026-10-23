@@ -64,7 +64,6 @@ abbrev universalAccess : SetRel Bool Bool := .univ
 paradigm where the scope ambiguity is invisible to truth conditions. -/
 theorem poss_union_eq : R.preimage (A ∪ B) = R.preimage A ∪ R.preimage B := preimage_union ..
 
-/-- The wide-scope LF does not entail free choice: one possible disjunct suffices for it. -/
 theorem exists_not_poss_union_subset_inter :
     ∃ A B : Set Bool,
       ¬ universalAccess.preimage A ∪ universalAccess.preimage B ⊆
@@ -75,7 +74,6 @@ theorem exists_not_poss_union_subset_inter :
 disjunction of obligations. -/
 theorem nec_union_subset_nec_union : R.core A ∪ R.core B ⊆ R.core (A ∪ B) := core_union_subset
 
-/-- But not conversely: a disjunctive obligation leaves open which disjunct is met. -/
 theorem exists_not_nec_union_subset :
     ∃ A B : Set Bool,
       ¬ universalAccess.core (A ∪ B) ⊆ universalAccess.core A ∪ universalAccess.core B :=
@@ -127,8 +125,6 @@ over, so concord across negation checks the negated feature (§4.2, footnote 7, 
 [grosz-2010] and [anand-brasoveanu-2010]). -/
 def ModalFeature.negated (f : ModalFeature) : ModalFeature := ⟨f.force.dual, f.interp⟩
 
-/-- Concord across negation succeeds exactly between the two classes: an interpretable feature
-checks a negated uninterpretable one iff their forces fall in different classes. -/
 theorem ModalFeature.checks_negated_iff {checker checked : ModalFeature}
     (hi : checker.interp = .interpretable) (hu : checked.interp = .uninterpretable) :
     checker.Checks checked.negated ↔ ¬ (checker.force.IsUniversal ↔ checked.force.IsUniversal) := by
@@ -151,12 +147,10 @@ def Concord (f₁ f₂ : ModalFeature) : Prop :=
 
 instance : DecidableRel Concord := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ (_ ↔ _)))
 
-/-- The silent operator: an interpretable feature of the shared class checks both features. -/
 theorem exists_checks_of_concord {f₁ f₂ : ModalFeature} (h : Concord f₁ f₂) :
     ∃ op : ModalFeature, op.interp = .interpretable ∧ op.Checks f₁ ∧ op.Checks f₂ :=
   ⟨⟨f₁.force, .interpretable⟩, rfl, ⟨rfl, h.1, Iff.rfl⟩, ⟨rfl, h.2.1, h.2.2⟩⟩
 
-/-- Conversely, two features one operator checks are in concord. -/
 theorem concord_of_checks {op f₁ f₂ : ModalFeature} (h₁ : op.Checks f₁) (h₂ : op.Checks f₂) :
     Concord f₁ f₂ :=
   ⟨h₁.2.1, h₂.2.1, h₁.2.2.symm.trans h₂.2.2⟩
@@ -202,22 +196,17 @@ def featuresOf : String → Finset ModalFeature
   | "demand" | "be required" => {⟨.necessity, .interpretable⟩}
   | _ => ∅
 
-/-- A coordination of two modals has a narrow-scope reading exactly when their features are in
-concord. -/
 theorem coordination_rows :
     ∀ e ∈ Examples.all, ∀ m₁ ∈ e.feature? "modal1", ∀ m₂ ∈ e.feature? "modal2",
       ∀ f₁ ∈ featuresOf m₁, ∀ f₂ ∈ featuresOf m₂,
         (e.feature? "narrowReading" ≠ none ↔ Concord f₁ f₂) := by
   decide
 
-/-- The narrow-scope reading a row names is among its available readings. -/
 theorem narrow_reading_available :
     ∀ e ∈ Examples.all, ∀ n ∈ e.feature? "narrowReading",
       ∃ r ∈ e.readings, r.1 = n ∧ r.2 = .acceptable := by
   decide
 
-/-- Modal concord between a higher and a lower modal is available exactly when the higher
-feature checks the lower one, negated when negation intervenes. -/
 theorem concord_rows :
     ∀ e ∈ Examples.all, ∀ c ∈ e.feature? "checker", ∀ k ∈ e.feature? "checked",
       ∀ op ∈ featuresOf c, ∀ f ∈ featuresOf k,

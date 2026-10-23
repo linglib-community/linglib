@@ -100,8 +100,6 @@ theorem exhIE_insert_range {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i, �
       fun h ↦ ⟨fun _ ↦ subset_rfl, fun i hx ↦ (h i hx).elim⟩⟩
   rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ h), hexh]
 
-/-- The Mismatch Hypothesis against a family of alternatives that `φ` can hold without: `φ` is
-odd exactly when common knowledge makes it entail one of them. -/
 theorem odd_insert_range_iff {ι : Type*} {ψP : ι → Set W} (h : (φ \ ⋃ i, ψP i).Nonempty) :
     Odd Wck (insert φ (range ψP)) φ ↔ φ ∩ Wck ⊆ ⋃ i, ψP i := by
   rw [Odd, exhIE_insert_range h, disjoint_diff_iff]
@@ -324,7 +322,6 @@ def sometimes (live : E → T → Prop) (j : E) (C : T → Prop) : Set (E → T 
 def always (live : E → T → Prop) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
   {f | GQ.every (fun t ↦ live j t ∧ C t) (f j)}
 
-/-- A world where John is tall at `t₁` only, so tall sometimes but not always. -/
 private theorem mem_sometimes_sdiff_always (h₁ : live j t₁ ∧ C t₁) (h₂ : live j t₂ ∧ C t₂)
     (hne : t₁ ≠ t₂) : (fun _ t ↦ t = t₁) ∈ sometimes live j C \ always live j C :=
   ⟨⟨t₁, h₁, rfl⟩, fun h ↦ hne (h t₂ h₂).symm⟩

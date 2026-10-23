@@ -79,7 +79,6 @@ instance [DecidableEq C] (t : Tree C W) (α β : TreePath) : Decidable (MayCondi
 instance (t : Tree C W) (α β : TreePath) : Decidable (MayCondition' t α β) :=
   List.decidableBAll _ _
 
-/-- The refined formulation is the stricter one. -/
 theorem MayCondition'.mayCondition [DecidableEq C] {t : Tree C W} {α β : TreePath}
     (h : MayCondition' t α β) : MayCondition t α β :=
   fun p hp ↦ .inl (h p hp)
@@ -168,7 +167,6 @@ theorem isHeadAt_replaceAt_append (hE : (E.subtreeAt h).isSome) (q : List ℕ) :
     IsHeadAt (E.replaceAt h t) ⟨h ++ q⟩ ↔ IsHeadAt t ⟨q⟩ := by
   simp only [IsHeadAt, RoseTree.subtreeAt_replaceAt_append hE]
 
-/-- Within an embedded phrase, locality is what it was in the phrase. -/
 theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : List ℕ) :
     MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ ⟨h ++ γ⟩ ↔ MayCondition' t ⟨α⟩ ⟨γ⟩ := by
   simp only [mayCondition'_iff]
@@ -182,7 +180,6 @@ theorem mayCondition'_replaceAt_append (hE : (E.subtreeAt h).isSome) (α γ : Li
     · exact (isHeadAt_replaceAt_append hE p).mpr (hm ⟨p⟩ (TreePath.le_def.mpr hp)
         (fun h' ↦ hγ (by simpa [TreePath.le_def] using TreePath.le_def.mp h')))
 
-/-- Nothing outside an embedded phrase with a phrasal root may condition a head within it. -/
 theorem not_mayCondition'_replaceAt (hE : (E.subtreeAt h).isSome) (ht : isHead t = false)
     (α : List ℕ) {β : TreePath} (hβ : ¬ (⟨h⟩ : TreePath) ≤ β) :
     ¬ MayCondition' (E.replaceAt h t) ⟨h ++ α⟩ β := fun hm ↦ by
@@ -258,8 +255,6 @@ private theorem sig_replaceAt_of_prefix {t₁ t₂ : Tree C W} (hE : (E.subtreeA
   | nil => simp [hv]
   | cons i d => simp
 
-/-- Two phrases with phrasal roots of one label and the same nodes along the path to `α` are
-stranded alike from `α`, wherever they are embedded. -/
 theorem strands_replaceAt_congr {t₁ t₂ : Tree C W} (hE : (E.subtreeAt h).isSome)
     (h₁ : isHead t₁ = false) (h₂ : isHead t₂ = false) (hv : t₁.value = t₂.value) {α : List ℕ}
     (hα : ∀ p, p <+: α → p ≠ [] → t₁.subtreeAt p = t₂.subtreeAt p) (X : C) (β : TreePath) :

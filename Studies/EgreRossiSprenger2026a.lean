@@ -101,8 +101,6 @@ section ValueLaws
 
 variable {a b c d : SignType}
 
-/-- Cooper's conditional at a Cooper conjunction is the conditional at the Strong Kleene
-conjunction: both are designated exactly when both conjuncts are. -/
 theorem condAssert_lp_meetBelnap_left :
     condAssert .lp (meetBelnap a b) c = condAssert .lp (a ⊓ b) c :=
   condAssert_congr_left (by simp) c
@@ -145,7 +143,6 @@ theorem condAssert_condAssert_material (hb : b ≠ 0) :
     condAssert .lp (condAssert .lp a b) c = condAssert .lp (joinBelnap (-a) b) c := by
   revert hb; cases a <;> cases b <;> cases c <;> decide
 
-/-- Left-Nesting fails for a void consequent. -/
 theorem left_nesting_needs_boolean :
     ¬ ∀ a b c : SignType,
       condAssert .lp (condAssert .lp a b) c = condAssert .lp (joinBelnap (-a) b) c := by
@@ -157,14 +154,11 @@ theorem condAssert_k3_left_eq_nested (ha : a ≠ 0) (hb : b ≠ 0) :
     condAssert .k3 (condAssert .k3 a b) c = condAssert .k3 a (condAssert .k3 b c) := by
   revert ha hb; cases a <;> cases b <;> cases c <;> decide
 
-/-- ... and it fails Cooper's Left-Nesting law. -/
 theorem condAssert_k3_fails_left_nesting :
     ¬ ∀ a b c : SignType, b ≠ 0 →
       condAssert .k3 (condAssert .k3 a b) c = condAssert .k3 (joinBelnap (-a) b) c := by
   decide
 
-/-- For classical values `(A → B) → (C → D)` reduces to `((A ⊃ B) ∧ C) → D`, the nested case of
-the Reduction Theorem. -/
 theorem condAssert_condAssert_condAssert (ha : a ≠ 0) (hb : b ≠ 0) (hc : c ≠ 0) (hd : d ≠ 0) :
     condAssert .lp (condAssert .lp a b) (condAssert .lp c d) =
       condAssert .lp (meetBelnap (joinBelnap (-a) b) c) d := by
@@ -248,8 +242,6 @@ def NoCond : Formula ι → Prop
   | .conj φ ψ | .disj φ ψ => NoCond φ ∧ NoCond ψ
   | .cond _ _ => False
 
-/-- Valuations are atom-classical and the conditional is the only source of the third value, so
-conditional-free formulas take classical values. -/
 theorem NoCond.cooperEval_ne_zero {φ : Formula ι} (h : NoCond φ) (v : ι → Bool) :
     cooperEval v φ ≠ 0 := by
   induction φ with
@@ -402,14 +394,12 @@ abbrev value (t : W → ι → Bool) (φ : Formula ι) : W → SignType := fun w
 
 variable {μ : Measure W} {t : W → ι → Bool}
 
-/-- `⊤` is certain, the first principle. -/
 theorem prob_value_top [IsProbabilityMeasure μ] (i : ι) :
     Trivalent.prob μ (value t (top i)) = 1 := by
   have : value t (top i) = fun w ↦ ofProp True := funext fun w ↦ cooperEval_top i
   rw [this, Trivalent.prob_ofProp]
   simp
 
-/-- `⊥` is impossible, the first principle. -/
 theorem prob_value_bot [IsProbabilityMeasure μ] (i : ι) :
     Trivalent.prob μ (value t (bot i)) = 0 := by
   have : value t (bot i) = fun w ↦ ofProp False := funext fun w ↦ cooperEval_bot i
@@ -464,8 +454,6 @@ theorem stalnaker_thesis (A B C : Formula ι) :
   rw [show value t (.cond A (.cond B C)) = value t (.cond (.conj A B) C) from
     funext fun w ↦ equiv_cond_cond A B C (t w)]
 
-/-- In antecedent position a simple indicative and its material conditional are designated
-together. -/
 theorem designated_cond_iff_material {A B : Formula ι} (hA : NoCond A) (hB : NoCond B)
     (v : ι → Bool) : 0 ≤ cooperEval v (.cond A B) ↔ 0 ≤ cooperEval v (material A B) := by
   have ha := hA.cooperEval_ne_zero v
@@ -566,8 +554,6 @@ theorem prob_cond_eq_one_of_cEntails [IsFiniteMeasure μ] {A B : Formula ι}
   rw [hB] at h0
   exact absurd h0 (by decide)
 
-/-- Where C refutes the consequent and the conditional is not void almost surely, the conditional
-probability is 0, which is axiom 2′ repaired with properness. -/
 theorem prob_cond_eq_zero_of_cEntails_neg {A B : Formula ι} (h : CEntails [] (.neg B))
     (hproper : μ (Function.support (value t (.cond A B))) ≠ 0) :
     Trivalent.prob μ (value t (.cond A B)) = 0 := by
@@ -663,8 +649,6 @@ theorem ofAdams_eq_ofAdams_iff {φ ψ : Adams1975.Formula W} :
   rw [ofAdams_eq_indicator, ofAdams_eq_indicator, indicator_ofProp_eq_indicator_ofProp_iff]
   rfl
 
-/-- A simple conditional of conditional-free formulas denotes the Adams formula of their truth
-sets. -/
 theorem value_cond_eq_ofAdams {A B : Formula ι} (hA : NoCond A) (hB : NoCond B)
     (t : W → ι → Bool) :
     value t (.cond A B) = ofAdams ⟨{w | cooperEval (t w) A = 1}, {w | cooperEval (t w) B = 1}⟩ := by
@@ -715,7 +699,6 @@ partition die, Edgington's coin, and the two-world model where `p(X ∧ Y) ≤ p
 
 section Examples
 
-/-- Cross-multiplication for the finite fractions of the examples. -/
 private theorem ennreal_div_eq {a b c d : ℝ≥0∞} (hb0 : b ≠ 0) (hb : b ≠ ⊤) (hd0 : d ≠ 0)
     (hd : d ≠ ⊤) (h : a * d = c * b) : a / b = c / d :=
   (ENNReal.div_eq_div_iff hd0 hd hb0 hb).2 (by rw [mul_comm d a, h, mul_comm c b])

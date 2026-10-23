@@ -71,8 +71,6 @@ theorem Claim.consistent_with_inclusion :
   ⟨⟨{true}, {false}, Set.univ, Set.subset_univ _, by simp [Excludes]⟩,
     Set.subset_univ _, Set.singleton_nonempty _, Set.singleton_nonempty _⟩
 
-/-- The situation itself excludes the speaker's only when the speaker's coordinate lies
-outside it, which the feature does not assert. -/
 theorem Claim.excludes_situation_iff (c : Claim X) :
     Excludes c.situation c.speaker ↔ ∀ x ∈ c.speaker, x ∉ c.situation :=
   Set.disjoint_right
@@ -139,12 +137,9 @@ theorem readings_ilStative : readings .ilStative = {.presCF} := by decide
 /-- A stage-level stative yields either reading, (64). -/
 theorem readings_slStative : readings .slStative = {.flv, .presCF} := by decide
 
-/-- A single feature never yields the past counterfactual. -/
 theorem pastCF_notMem_readings (a : Aktionsart) : .pastCF ∉ readings a := by
   cases a <;> decide
 
-/-- The counterfactuals with one feature on some predicate are those whose only feature ranges
-over worlds. -/
 theorem exists_mem_readings_iff (c : CounterfactualType) :
     (∃ a, c ∈ readings a) ↔ c.dimensions = {.modal} := by
   cases c <;> decide
@@ -174,7 +169,6 @@ def AspectLanguage.cfAspect : AspectLanguage → CFAspect
   | .english => .none
   | .polish => .either
 
-/-- The imperfective is not an ingredient of counterfactuality. -/
 theorem imperfective_not_universal : ¬ ∀ l, AspectLanguage.cfAspect l = .imperfective :=
   fun h ↦ absurd (h .english) (by decide)
 
@@ -202,7 +196,6 @@ theorem antecedentForm_eq_subjunctive_iff {p : SubjunctiveParadigm} :
 indicative, (99). -/
 theorem antecedent_french : antecedentForm .nonpastOnly = .indicative := rfl
 
-/-- German and Italian have a past subjunctive and use it. -/
 theorem antecedent_german : antecedentForm .past = .subjunctive := rfl
 
 end Iatridou2000

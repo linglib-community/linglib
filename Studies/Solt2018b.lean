@@ -65,14 +65,11 @@ theorem proportionalMeasure_zero (tot y : α) (h : μ tot = 0) :
     proportionalMeasure μ tot y = 0 := by
   rw [proportionalMeasure_eq, h, div_zero]
 
-/-- The totality is the whole of itself. -/
 theorem proportionalMeasure_self_eq_one (tot : α) (htot : 0 < μ tot) :
     proportionalMeasure μ tot tot = 1 := by
   rw [proportionalMeasure_eq]
   exact div_self htot.ne'
 
-/-- The monotonicity constraint on the measure `Meas` introduces (mathlib's
-`StrictMono`) is inherited by the proportional measure. -/
 theorem proportionalMeasure_monotonic [Preorder α] (hμ : StrictMono μ)
     (tot : α) {y z : α} (htot : 0 < μ tot) (hyz : y < z) :
     proportionalMeasure μ tot y < proportionalMeasure μ tot z := by
@@ -88,14 +85,11 @@ theorem proportionalMeasure_le_one [Preorder α] (hμ : Monotone μ)
     proportionalMeasure μ tot y ≤ 1 :=
   div_le_one_of_le₀ (hμ hy) htot.le
 
-/-- A part of the totality measures between 0 and 1 on the proportional scale. -/
 theorem proportionalMeasure_mem_unit_interval [Preorder α]
     (hnn : ∀ x, 0 ≤ μ x) (hμ : Monotone μ) (tot y : α) (hy : y ≤ tot) (htot : 0 < μ tot) :
     proportionalMeasure μ tot y ∈ Set.Icc (0 : ℚ) 1 :=
   ⟨proportionalMeasure_nonneg μ hnn tot y, proportionalMeasure_le_one μ hμ tot y hy htot⟩
 
-/-- Rescaling the underlying measure leaves proportions unchanged, so only the cardinal reading
-depends on the unit of measurement. -/
 theorem proportionalMeasure_const_mul (k : ℚ) (hk : k ≠ 0) (tot y : α) :
     proportionalMeasure (fun x ↦ k * μ x) tot y = proportionalMeasure μ tot y :=
   mul_div_mul_left _ _ hk
@@ -175,16 +169,11 @@ available kind yields it. -/
 def Licensed (allowed : MeasureKind → Prop) (f : QForm) (r : Reading) : Prop :=
   ∃ k, allowed k ∧ reading f k = r
 
-/-- With every kind available, as under a stage-level predicate, both forms have both readings,
-as in *few egg-laying mammals were found in our survey, perhaps because there are few*. -/
 theorem unrestricted_licensed (f : QForm) (r : Reading) : Licensed (fun _ ↦ True) f r := by
   cases f <;> cases r <;> first
     | exact ⟨.unrestricted, trivial, rfl⟩
     | exact ⟨.proportional, trivial, rfl⟩
 
-/-- With only restricted kinds available, as under an individual-level predicate, which forces
-a domain-restricted measure, the positive form is proportional, so *few egg-laying mammals suckle
-their young* cannot mean that there are few. -/
 theorem restricted_positive_iff (r : Reading) :
     Licensed MeasureKind.IsRestricted .positive r ↔ r = .proportional := by
   constructor

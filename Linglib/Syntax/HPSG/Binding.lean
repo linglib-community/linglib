@@ -138,8 +138,6 @@ def principleB : Desc sig :=
 /-- The grammar of the binding fragment. -/
 def grammar : Grammar sig := [principleA, principleB]
 
-/-- The two principles are closed, whereas the binding condition they quantify over has both of
-its variables free. -/
 theorem freeVars_grammar : ∀ d ∈ grammar, d.freeVars = ∅ := by decide
 
 example : (locallyOBinds 1 0).freeVars = {0, 1} := by decide
@@ -183,15 +181,12 @@ variable {I} {r : U}
 
 open _root_.Binding.Configuration
 
-/-- At a root, Principle A says that every anaphor that something locally o-commands has a
-codependent local o-commander. -/
 theorem satisfies_principleA_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
     I.Satisfies g r principleA ↔ ∀ x, I.S x = .ana → ∀ y, I.R .locO ![y, x] →
       ∃ z, I.R .locO ![z, x] ∧ Codependent I z x := by
   simp [principleA, locallyOBinds, coindexed, agrees, hr _, le_ana_iff, comp_vecCons₂,
     Codependent]
 
-/-- At a root, Principle B says that no personal pronoun has a codependent local o-commander. -/
 theorem satisfies_principleB_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
     I.Satisfies g r principleB ↔ ∀ x, I.S x = .ppro → ∀ y, I.R .locO ![y, x] →
       ¬ Codependent I y x := by
@@ -220,8 +215,6 @@ theorem satisfies_grammar_iff (hr : I.IsRootedAt r) (hirr : ∀ x, ¬ I.R .locO 
     exact ⟨z, hz, hc⟩
   · exact h x _ (.inr ⟨hx, rfl⟩) ⟨y, trivial, hne hy, hc, hy⟩
 
-/-- A model of the principles rooted at an entity satisfies the framework-neutral Conditions A
-and B, provided nothing locally o-commands itself. -/
 theorem satisfies_of_models (hI : I.Models grammar) (hr : I.IsRootedAt r)
     (hirr : ∀ x, ¬ I.R .locO ![x, x]) :
     (configuration I).Satisfies (Codependent I) (configuration I).exempt

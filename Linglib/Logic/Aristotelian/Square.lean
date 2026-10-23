@@ -113,10 +113,8 @@ theorem mem_corners_I {t : Triangle} : t ∈ corners.I ↔ ⊥ < t := by decide 
 /-- *All* holds at the top vertex. -/
 theorem mem_corners_A {t : Triangle} : t ∈ corners.A ↔ t = ⊤ := by decide +revert
 
-/-- *Not all* holds below the top vertex. -/
 theorem mem_corners_O {t : Triangle} : t ∈ corners.O ↔ t < ⊤ := by decide +revert
 
-/-- *None* holds at the bottom vertex. -/
 theorem mem_corners_E {t : Triangle} : t ∈ corners.E ↔ t = ⊥ := by decide +revert
 
 end Triangle
@@ -153,18 +151,12 @@ theorem subcontrIO (h : SquareRelations sq) : Codisjoint sq.I sq.O := by
   rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, codisjoint_iff, ← compl_inf,
     disjoint_iff.mp h.contraryAE.symm, compl_bot]
 
-/-- When the particulars are the complements of the opposite universals (`I = Eᶜ`, `O = Aᶜ`),
-the diagonals are contradictory outright, so `Disjoint A E` gives the whole square. Under the
-Boolean reading contrariety is where existential import lives. It fails when the universals
-hold vacuously (an empty subject term, or modally a dead-end world), and the assumption ruling
-that out, a non-empty term or seriality, enters through this hypothesis. -/
 theorem of_disjoint (hI : sq.I = sq.Eᶜ) (hO : sq.O = sq.Aᶜ) (h : Disjoint sq.A sq.E) :
     SquareRelations sq :=
   ⟨hO ▸ isCompl_compl, hI ▸ isCompl_compl, h⟩
 
 /-! ### The cells -/
 
-/-- The middle cell is the complement of the join of the contraries. -/
 theorem inf_IO_eq (h : SquareRelations sq) : sq.I ⊓ sq.O = (sq.A ⊔ sq.E)ᶜ := by
   rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, compl_sup, inf_comm]
 

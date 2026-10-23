@@ -68,8 +68,6 @@ def realize : Mayan.ExtractionSite → Finset (Reflex Mayan.Host)
 
 @[simp] theorem realize_adjunct_temporal : realize (.adjunct .temporal) = ∅ := rfl
 
-/-- The extraction of an argument is unmarked unless it is the transitive subject or the
-recipient. -/
 theorem realize_argument_eq_empty_iff (r : ArgumentRole) :
     realize (.argument r) = ∅ ↔ r ≠ .A ∧ r ≠ .R := by
   decide +revert
@@ -79,7 +77,6 @@ theorem realize_adjunct_of_ne_temporal {a : Mayan.Adjunct} (h : a ≠ .temporal)
       {.morpheme .verbalComplex [movementEnclitic], .morpheme .directional [movementEnclitic]} := by
   decide +revert
 
-/-- The temporals are the one adjunct class whose extraction licenses no reflex. -/
 theorem realize_adjunct_nonempty_iff (a : Mayan.Adjunct) :
     (realize (.adjunct a)).Nonempty ↔ a ≠ .temporal := by
   decide +revert
@@ -100,7 +97,6 @@ theorem enclitic_directional_mem_realize_iff (s : Mayan.ExtractionSite) :
       Reflex.morpheme .verbalComplex [movementEnclitic] ∈ realize s := by
   decide +revert
 
-/-- Every Mam reflex is overt. -/
 theorem isOvert_of_mem_realize (s : Mayan.ExtractionSite) : ∀ ρ ∈ realize s, ρ.IsOvert := by
   decide +revert
 

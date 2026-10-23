@@ -90,8 +90,6 @@ theorem bare_no_wide_scope :
 
 /-! ### The class-B quantifiers, §3.2 -/
 
-/-- The wide-scope reading of *wani faasinjèe bài daurà wàndà ba*, some passenger did not
-buckle their seatbelt, (69ii): Càdi is the witness. -/
 theorem wani_wide_scope : GQ.some (λ _ : Faasinjee => True) (¬ Daura ·) :=
   ⟨.cadi, trivial, id⟩
 
@@ -150,8 +148,6 @@ theorem neg_duk_iff (R : Finset α) (P : α → Prop) :
     ¬ dukSem R (λ s => ∀ x ∈ s, P x) ↔ ¬ every (· ∈ R) P := by
   simp [dukSem, every]
 
-/-- *Kōwānè faasinjèe yā daurà wàndà* 'every passenger buckled their seatbelt' is false on the
-model: Càdi did not. -/
 theorem kowWh_daura_false : ¬ kowWhSem (λ _ : Faasinjee => True) Daura :=
   λ h => h .cadi trivial
 

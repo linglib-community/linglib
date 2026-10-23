@@ -71,8 +71,6 @@ variable {R Ctx F M C K T X : Type*}
 
 /-! ### The constancy pair as a negation dichotomy -/
 
-/-- Constancy and variance of a contextual map are exact complements: a
-strengthening of `not_isConstantIn_of_isVariantIn` to an `Iff`. -/
 theorem isConstantIn_iff_not_isVariantIn {g : R → Ctx → Finset X} {r : R} :
     IsConstantIn g r ↔ ¬ IsVariantIn g r := by
   constructor
@@ -101,9 +99,6 @@ def HasNonemptyCores (S : Realization R Ctx F) (extract : F → Finset C)
     [DecidableEq C] : Prop :=
   ∀ r c, S.IsLicensed r c → (cellCores S extract r c).Nonempty
 
-/-- An extraction that never returns an empty core certifies atomicity: the
-`Option`-shaped and total realizations are atomic under any pointwise-nonempty
-`extract` (e.g. a stem projection). -/
 theorem hasNonemptyCores_of_extract_nonempty (S : Realization R Ctx F)
     (extract : F → Finset C) [DecidableEq C] (hne : ∀ f, (extract f).Nonempty) :
     HasNonemptyCores S extract := by
@@ -127,8 +122,6 @@ def IsAffixallyInflected (S : Realization R Ctx F) (extract : F → Finset C)
     [DecidableEq C] (r : R) : Prop :=
   S.IsSuppletive r ∧ IsConstantIn (cellCores S extract) r
 
-/-- Affixal inflection is exactly form-variance without a suppletive core:
-the two core-axis outcomes are mutually exclusive. -/
 theorem isAffixallyInflected_iff (S : Realization R Ctx F) (extract : F → Finset C)
     [DecidableEq C] {r : R} :
     IsAffixallyInflected S extract r ↔
@@ -156,10 +149,6 @@ theorem suppletive_taxonomy (S : Realization R Ctx F) (extract : F → Finset C)
       (IsAffixallyInflected S extract r ∨ HasSuppletiveCore S extract r) :=
   ⟨S.isSuppletive_iff.mp h, suppletive_core_dichotomy S extract h⟩
 
-/-- Under the identity core-extraction (a monomorphemic form is its own core),
-having a suppletive core coincides with form-suppletion: whole-root alternations
-like *go*/*went* are suppletive-cored. The bridge that lets a study certify a
-suppletive inventory without recomputing its fibers. -/
 theorem hasSuppletiveCore_singleton (S : Realization R Ctx F) [DecidableEq F]
     (r : R) : HasSuppletiveCore S (fun f => {f}) r ↔ S.IsSuppletive r := by
   have h : cellCores S (fun f => {f}) = S.realize := by

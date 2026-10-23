@@ -84,13 +84,10 @@ theorem hasSubintervalProperty_iff_witnesses :
 
 namespace HasSubintervalProperty
 
-/-- Under the subinterval property an interval inside the run time of an event of the predicate
-is a run time of the predicate. -/
 theorem mem_image_of_unbounded (h : HasSubintervalProperty P) (ht : t ∈ UNBOUNDED P w) :
     t ∈ τ '' {e | P w e} :=
   let ⟨e, hle, hP⟩ := ht; h w hle ⟨e, hP, rfl⟩
 
-/-- Under the subinterval property the non-strict imperfective entails the perfective. -/
 theorem unbounded_subset_prfv (h : HasSubintervalProperty P) (w : W) :
     UNBOUNDED P w ⊆ PRFV P w := fun _ ht ↦
   let ⟨e, hP, hτ⟩ := h.mem_image_of_unbounded ht; ⟨e, hτ.le, hP⟩
@@ -145,7 +142,6 @@ theorem isLowerSet_compl_prfv : IsLowerSet (PRFV P w)ᶜ :=
 variable {p : W → Set (NonemptyInterval T)}
 
 variable (p w) in
-/-- A durative claim has the subinterval property whatever the interval property. -/
 theorem isLowerSet_durative : IsLowerSet (durative p w) :=
   fun _ _ hle h ↦ (Set.Iic_subset_Iic.2 hle).trans h
 

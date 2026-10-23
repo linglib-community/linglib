@@ -315,14 +315,11 @@ theorem iterations : problem.iterate .agree problem.alphabet.length problem.alph
 elsewhere. -/
 def rule33 : SearchCopy Seg := problem.candidate sibTier [.sh, .s, .S] .agree .left (some true)
 
-/-- D2L accepts the third iteration and no earlier one under any criterion that rejects
-seven exceptions in eight and four in eight and accepts none in seven. -/
 theorem learn (sat : ℕ → ℕ → Prop) [DecidableRel sat] (h1 : ¬ sat 8 7) (h2 : ¬ sat 8 4)
     (h3 : sat 7 0) : problem.learn .agree sat = some rule33 := by
   simp [D2L.Problem.learn, iterations, D2L.Problem.rule, D2L.Iteration.summary,
     D2L.Iteration.contexts, h1, h2, h3, rule33]
 
-/-- The parallel search for a dissimilatory rule ends with the tiers Σ, [+sib] and {S}. -/
 theorem iterations_disagree :
     problem.iterate .disagree problem.alphabet.length problem.alphabet [] =
     [{ tier := alphabet, contextsL := [.u, .a, .o, .i, .t], contextsR := [.i],
@@ -337,8 +334,6 @@ theorem iterations_disagree :
        chosen := .left, default := none, deletion := [.u, .a, .o, .t, .i, .sh, .s] }] := by
   decide
 
-/-- The dissimilatory search finds no rule under any criterion that rejects eight
-exceptions in eight and five in seven. -/
 theorem learn_disagree (sat : ℕ → ℕ → Prop) [DecidableRel sat] (h1 : ¬ sat 8 8)
     (h2 : ¬ sat 7 5) : problem.learn .disagree sat = none := by
   simp [D2L.Problem.learn, iterations_disagree, D2L.Iteration.summary, h1, h2]
@@ -347,7 +342,6 @@ end Toy
 
 /-! ### Tolerance at the toy's iterations -/
 
-/-- Seven exceptions among eight applications are not tolerated, since `7 > 8 / ln 8`. -/
 theorem not_tolerates_8_7 : ¬ Yang2016.tolerates 8 7 := by
   unfold Yang2016.tolerates Yang2016.threshold
   have h8 : Real.log ((8 : ℕ) : ℝ) = 3 * Real.log 2 := by
@@ -356,7 +350,6 @@ theorem not_tolerates_8_7 : ¬ Yang2016.tolerates 8 7 := by
   push_cast
   linarith [Real.log_two_gt_d9]
 
-/-- Four exceptions among eight applications are not tolerated, since `4 > 8 / ln 8`. -/
 theorem not_tolerates_8_4 : ¬ Yang2016.tolerates 8 4 := by
   unfold Yang2016.tolerates Yang2016.threshold
   have h8 : Real.log ((8 : ℕ) : ℝ) = 3 * Real.log 2 := by
@@ -420,7 +413,6 @@ def latinDissimRule : SearchCopy LatSeg where
   value_write := fun v _ _ ↦ by cases v <;> rfl
   write_value := fun _ seg h hv ↦ by subst h; simp [LatSeg.isLat] at hv
 
-/-- The rule is subsequential, as every search-and-copy rule is. -/
 theorem latinDissimRule_isSubsequential : IsSubsequential .left latinDissimRule.apply :=
   latinDissimRule.apply_isSubsequential
 
@@ -447,8 +439,6 @@ theorem latin_rows : ∀ e ∈ latinRows, e.id ≠ "belth2026_53b2" →
     latinDissimRule.apply (latinUR e) = latinSR e := by
   decide
 
-/-- In *lunaris* the tier-adjacent consonant is the nasal `n`, so the rule predicts `[l]`,
-and the form is one of the exceptions the Tolerance Principle absorbs. -/
 theorem lunaris_mispredicted :
     latinDissimRule.apply (latinUR Examples.ex_53b2) ≠ latinSR Examples.ex_53b2 ∧
       latinDissimRule.apply (latinUR Examples.ex_53b2) = latinSegments "lunalis" := by

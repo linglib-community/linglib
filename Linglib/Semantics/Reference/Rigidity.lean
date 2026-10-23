@@ -60,7 +60,6 @@ theorem IsRigidOn.mono (h : IsRigidOn f S) (hT : T ⊆ S) : IsRigidOn f T :=
 theorem IsRigid.isRigidOn {f : W → τ} (h : IsRigid f) (S : Set W) : IsRigidOn f S :=
   fun w₁ _ w₂ _ => h w₁ w₂
 
-/-- A rigid intension is the constant function of its value at any index. -/
 theorem IsRigid.eq_const {f : W → τ} (h : IsRigid f) (w : W) : f = fun _ => f w :=
   funext fun w' => h w' w
 
@@ -69,7 +68,6 @@ theorem IsRigid.eq_of_apply_eq {f g : W → τ} (hf : IsRigid f) (hg : IsRigid g
     (h : f w = g w) : f = g :=
   funext fun w' => (hf w' w).trans (h.trans (hg w w'))
 
-/-- A non-rigid intension differs from the constant function of any of its values. -/
 theorem const_ne_of_not_isRigid {f : W → τ} (h : ¬ IsRigid f) (w : W) :
     (fun _ => f w) ≠ f :=
   fun e => h (e ▸ isRigid_const (f w))

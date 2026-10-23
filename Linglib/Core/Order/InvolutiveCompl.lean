@@ -105,7 +105,6 @@ def complOrderIso : α ≃o αᵒᵈ where
 
 end LE
 
-/-- The complement is antitone (bundled form of the `compl_le_compl` field). -/
 protected theorem compl_anti [Preorder α] [InvolutiveCompl α] : Antitone (compl : α → α) :=
   fun _ _ h ↦ InvolutiveCompl.compl_le_compl h
 

@@ -62,7 +62,6 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### Adjoint through the second tensor slot -/
 
-/-- `B⁺_a` on the second tensor factor transposes to `B⁻_a` on the second slot of `pairing₂`. -/
 private lemma pairing₂_lTensor_bPlusLin (a : α)
     (u v : ConnesKreimer R (UnorderedTree α))
     (V : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
@@ -77,8 +76,6 @@ private lemma pairing₂_lTensor_bPlusLin (a : α)
 
 /-! ### Tensor-square of the pairing product rule -/
 
-/-- The product rule of the pairing holds through both slots of `pairing₂`, where pairing two
-basis forests against a product splits each of them over its antidiagonal. -/
 private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
     (U V : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₂ (R := R) (ConnesKreimer.of' B ⊗ₜ[R] ConnesKreimer.of' A) (U * V) =
@@ -174,7 +171,6 @@ theorem pairing_product_assoc (x y z : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (product (product x y) z) = pairing (product x (product y z)) :=
   toConv_injective <| by simp only [toConv_pairing_product, mul_assoc]
 
-/-- `Δ^ρ` is the generic admissible-cut coproduct at the pruning cuts. -/
 theorem comulAlgHomN_eq_G {R : Type*} [CommSemiring R] {α : Type*} :
     comulAlgHomN (R := R) (α := α) = comulAlgHomNG (R := R) cutSummandsN := rfl
 

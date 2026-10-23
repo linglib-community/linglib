@@ -126,8 +126,6 @@ theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ Morphology.Exponence.App
       simpa using h i hi
   simp [realize, this]
 
-/-- A form other than the elsewhere form is the exponent of an item that applies in the
-context. -/
 theorem exists_item_of_realize_ne (h : v.realize c ≠ v.elsewhere) :
     ∃ i ∈ v.items, Morphology.Exponence.Applies i (.ofBundle {c}) ∧ i.exponent = v.realize c := by
   cases hs : subsetPrinciple v.items (.ofBundle {c}) with

@@ -154,21 +154,16 @@ def Schema.possessorCase (s : Schema) : Option Case :=
 
 /-! The contrastive properties of the schemas follow from their formulas. -/
 
-/-- Only the Action Schema has a lexical predicate nucleus. -/
 theorem isLexical_iff (s : Schema) : s.formula.nucleus.IsLexical ↔ s = .action := by
   cases s <;> decide
 
-/-- Action and Location are the basic schemas. -/
 theorem isBasic_iff (s : Schema) : s.IsBasic ↔ s = .action ∨ s = .location := by
   cases s <;> decide
 
-/-- Action and Companion encode the possessor as the subject. -/
 theorem subject_possessor_iff (s : Schema) :
     s.formula.subject = .possessor ↔ s = .action ∨ s = .companion := by
   cases s <;> decide
 
-/-- A schema marks its possessor by a case exactly when the possessor is not the subject and
-is not merely topicalized. -/
 theorem possessorCase_isSome_iff (s : Schema) :
     s.possessorCase.isSome ↔ s.formula.subject = .possessee ∧ s ≠ .topic := by
   cases s <;> decide
@@ -197,8 +192,6 @@ stage is meaningless. -/
 def Gradual (f : ℕ → Finset Meaning) : Prop :=
   ∀ i, (f i).Nonempty ∧ (symmDiff (f i) (f (i + 1))).card ≤ 1
 
-/-- A gradual development from the source meaning alone to the target meaning alone passes
-through the overlap stage. -/
 theorem overlap_of_gradual (f : ℕ → Finset Meaning) (hf : Gradual f) (h0 : f 0 = stage 0)
     {n : ℕ} (hn : f n = stage 2) : ∃ i ≤ n, f i = stage 1 := by
   have hex : ∃ i, Meaning.target ∈ f i := ⟨n, by simp [hn, stage]⟩
@@ -267,9 +260,6 @@ def teluguData : List (Schema × Notion) :=
   (Examples.all.filter fun r ↦ r.language = "telu1262").filterMap fun r ↦ do
     pure (← schema r, ← notion r)
 
-/-- Telugu divides the notions between two schemas as the chapter's generalizations expect. The
-Location Schema expresses physical possession, and the Goal Schema, an Existence schema, expresses
-the permanent and inalienable notions but never the physical one. -/
 theorem telugu_notions : ∀ d ∈ teluguData, d.1 = .location ↔ d.2 = .physical := by
   decide +kernel
 

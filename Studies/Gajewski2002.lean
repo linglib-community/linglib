@@ -157,8 +157,6 @@ theorem permutationInvariant_et_iff {P : E → Prop} :
     · exact Or.inl (funext fun x ↦ eq_true (Set.eq_univ_iff_forall.1 hu x))
   · rintro (rfl | rfl) π <;> rfl
 
-/-- Van Benthem invariance at the determiner type is Mostowski's quantity invariance, the
-form the Quantification substrate states on `GQ`. -/
 theorem permutationInvariant_det_iff {Q : GQ E} :
     PermutationInvariant Ty.det Q ↔ QuantityInvariant Q := by
   constructor
@@ -241,8 +239,6 @@ def IsLContradiction : Prop := ∀ g, ¬ S.interpret g
 /-- A skeleton is L-analytic (28) when it has the same truth value under every assignment. -/
 def IsLAnalytic : Prop := S.IsLTautology ∨ S.IsLContradiction
 
-/-- In Davidson's formulation the truth value survives every significant rewriting of the
-non-logical parts. -/
 theorem isLAnalytic_iff : S.IsLAnalytic ↔ ∀ g g', S.interpret g ↔ S.interpret g' := by
   refine ⟨fun h g g' ↦ ?_, fun h ↦ ?_⟩
   · rcases h with h | h
@@ -304,7 +300,6 @@ theorem exceptiveSkeleton_isLContradiction {Q : GQ E} (h : RestrictorMonotone Q)
     (exceptiveSkeleton Q).IsLContradiction :=
   fun _ hg ↦ hg.1.elim fun x hx ↦ (IsExceptionSet.eq_bot_of_restrictorMonotone h hg.2).le x hx
 
-/-- No exceptive skeleton is an L-tautology, since an empty exception set falsifies it. -/
 theorem exceptiveSkeleton_not_isLTautology (Q : GQ E) :
     ¬ (exceptiveSkeleton Q).IsLTautology :=
   fun h ↦ (h ![fun _ ↦ True, fun _ ↦ False, fun _ ↦ True]).1.elim fun _ hx ↦ hx
@@ -316,8 +311,6 @@ theorem exceptiveSkeleton_every_not_isLContradiction (a : E) :
   h ![fun _ ↦ True, (· = a), (· ≠ a)]
     ⟨⟨a, rfl⟩, fun _ hx ↦ hx.2, fun _ hS x hx ↦ by_contra fun hs ↦ hS x ⟨trivial, hs⟩ hx⟩
 
-/-- With *no* the exceptive skeleton is true when the exception is the one individual inside
-the scope. -/
 theorem exceptiveSkeleton_no_not_isLContradiction (a : E) :
     ¬ (exceptiveSkeleton (no : GQ E)).IsLContradiction := fun h ↦
   h ![fun _ ↦ True, (· = a), (· = a)]

@@ -60,8 +60,6 @@ theorem want_iff : Want μ V θ bel p ↔ θ < expectedValue μ V bel p := Iff.r
 
 variable {μ V θ bel p q} [IsFiniteMeasure μ]
 
-/-- The mass of the compatible worlds of `p` times the expected value of `p` is the integral of
-the value function over those worlds. -/
 theorem measureReal_mul_expectedValue :
     μ.real (bel ∩ p) * expectedValue μ V bel p = ∫ w in bel ∩ p, V w ∂μ := by
   rw [expectedValue, ProbabilityTheory.cond, integral_smul_measure, smul_eq_mul, ← mul_assoc]
@@ -75,8 +73,6 @@ private theorem measureReal_pos (h : HasPositiveBeliefMass μ bel p) : 0 < μ.re
 
 variable [Finite W] [MeasurableSingletonClass W]
 
-/-- Over finitely many worlds, the expected value of `p` is the prior-weighted average of the
-value function over the worlds of `p` compatible with the beliefs. -/
 theorem expectedValue_eq_sum [Fintype W] [DecidablePred (· ∈ bel ∩ p)] :
     expectedValue μ V bel p =
       (∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} * V w) /
@@ -140,8 +136,6 @@ theorem Want.union (hp' : HasPositiveBeliefMass μ bel p) (hq' : HasPositiveBeli
     Want μ V θ bel (p ∪ q) :=
   lt_of_lt_of_le (lt_min hp hq) (expectedValue_intermediate hp' hq' hd).1
 
-/-- A disjoint union above threshold with one part at or below it has the other part
-above it. -/
 theorem Want.resolve_left (hp' : HasPositiveBeliefMass μ bel p)
     (hq' : HasPositiveBeliefMass μ bel q) (hd : Disjoint p q) (h : Want μ V θ bel (p ∪ q))
     (hp : ¬ Want μ V θ bel p) : Want μ V θ bel q :=

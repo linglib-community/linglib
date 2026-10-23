@@ -160,13 +160,10 @@ def storksReading : Level → Prop
 instance : ∀ l, Decidable (storksReading l) := fun l ↦ by
   cases l <;> (unfold storksReading; infer_instance)
 
-/-- The two levels yield distinct readings: no single area serves most storks, while
-every stork has its own. -/
 theorem storksReading_word_ne_phrase :
     ¬ storksReading .word ∧ storksReading .phrase := by
   constructor <;> decide +kernel
 
-/-- Predicate Transfer makes a true reading available: the sentence is felicitous. -/
 theorem storks_true_reading_available :
     ∃ l, Device.predicateTransfer.AppliesAt l ∧ storksReading l :=
   ⟨.phrase, trivial, storksReading_word_ne_phrase.2⟩
@@ -193,14 +190,10 @@ def cigaretteReading : Level → Prop
 instance : ∀ l, Decidable (cigaretteReading l) := fun l ↦ by
   cases l <;> (unfold cigaretteReading; infer_instance)
 
-/-- The two levels yield distinct readings: no one cigarette is smoked at most
-occasions, while each occasion has its cigarette. -/
 theorem cigaretteReading_word_ne_phrase :
     ¬ cigaretteReading .word ∧ cigaretteReading .phrase := by
   constructor <;> decide +kernel
 
-/-- The shift's locality leaves no true reading available, which is the oddness of the
-restrictorless habitual. -/
 theorem cigarette_no_true_reading_available :
     ∀ l, Device.typeShift.AppliesAt l → ¬ cigaretteReading l := by
   intro l hl

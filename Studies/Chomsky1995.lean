@@ -112,8 +112,6 @@ instance [Fintype α] [DecidableEq α] [DecidableLE α] [DecidablePred (· ∈ R
     Precedes R a c) := inferInstance
   decidable_of_iff' _ linearizes_iff
 
-/-- An order isomorphism carries the LCA for `R` on `T` to the LCA for the image of `R` on the
-image of `T`. -/
 theorem linearizes_image_iff {β : Type*} [PartialOrder β] (e : α ≃o β) :
     Linearizes (Prod.map e e '' R) (e '' T) ↔ Linearizes R T := by
   have he : ∀ a b, Precedes (Prod.map e e '' R) (e a) (e b) ↔ Precedes R a b := fun a b ↦ by
@@ -143,8 +141,6 @@ theorem mem_bareCCommand : a ~[bareCCommand H] b ↔
     IsVisible H a ∧ ¬ a ≤ b ∧ ¬ b ≤ a ∧ ∀ x < a, x ≤ b := by
   simp [bareCCommand, mem_commandRelation]
 
-/-- An order isomorphism carrying the head relation `H` to `H'` carries bare c-command for `H`
-to bare c-command for `H'`. -/
 theorem image_bareCCommand {β : Type*} [PartialOrder β] {H' : β → β → Prop} (e : α ≃o β)
     (hH : ∀ a b, H' (e a) (e b) ↔ H a b) : Prod.map e e '' bareCCommand H = bareCCommand H' := by
   have hv : ∀ a, IsVisible H' (e a) ↔ IsVisible H a := fun a ↦ by
@@ -165,13 +161,11 @@ theorem linearizes_bareCCommand_image_iff {β : Type*} [PartialOrder β] {H' : �
     Linearizes (bareCCommand H') (e '' T) ↔ Linearizes (bareCCommand H) T := by
   rw [← image_bareCCommand e hH, linearizes_image_iff]
 
-/-- A terminal is a minimal projection, so visible, when head daughters are daughters. -/
 theorem isVisible_of_isMax (hH : ∀ m d, H m d → m ⋖ d) (hx : IsMax x) : IsVisible H x :=
   .inl fun d hd ↦ (hH x d hd).lt.not_ge (hx (hH x d hd).le)
 
 variable [IsLeftLinear α]
 
-/-- A visible daughter c-commands its sister. -/
 theorem mem_bareCCommand_of_covBy (ha : m ⋖ a) (hb : m ⋖ b) (hab : a ≠ b)
     (hv : IsVisible H a) : a ~[bareCCommand H] b :=
   ⟨hv, not_le_of_covBy ha hb hab, not_le_of_covBy hb ha hab.symm,
@@ -300,7 +294,6 @@ def pronounced : Set t.val.Positions := {p | (t.termAt p).token?.isSome}
 
 instance : DecidablePred (· ∈ pronounced t) := fun _ ↦ inferInstanceAs (Decidable (_ = _))
 
-/-- Unless traces are exempt, the LCA fails on every syntactic object built by Merge. -/
 theorem not_linearizes (ht : ¬ IsMax (⊥ : t.val.Positions)) :
     ¬ Linearizes (bareCCommand (HeadDaughterAt t)) {p | IsMax p} :=
   not_linearizes_of_not_isMax (fun _ _ ↦ headDaughterAt_covBy t)

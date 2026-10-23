@@ -70,8 +70,6 @@ instance (x : Cat α) (a : Cat.Arg α) (β : List (Cat.Arg α)) :
   inferInstanceAs (Decidable (β.length ≤ 2 ∧ β.Pairwise (·.side = ·.side) ∧
     ∀ b ∈ β, a.modality ≤ if b.side = a.side then .diamond else .cross))
 
-/-- First-order composition is harmonic when the secondary's argument looks the primary's way
-and crossing otherwise. -/
 @[simp] theorem RuleSystem.multimodal_singleton {x : Cat α} {a b : Cat.Arg α} :
     multimodal x a [b] ↔ a.modality ≤ if b.side = a.side then .diamond else .cross := by
   simp [multimodal]
@@ -157,7 +155,6 @@ theorem yield_ne_nil {c : Cat α} (d : Derivation T R c) : d.yield ≠ [] := by
   | lex => simp [yield]
   | node _ d₁ d₂ ih₁ _ => simp [yield, ih₁]
 
-/-- A derivation spelling out a single token is that token's leaf. -/
 theorem eq_lex_of_yield_eq_singleton {c : Cat α} {d : Derivation T R c} {t : T}
     (h : d.yield = [t]) : d = .lex t c := by
   cases d with
@@ -184,7 +181,6 @@ instance LexIn.decidable [DecidableEq T] [DecidableEq α] (L : List (T × Cat α
 
 /-! ### The count invariant -/
 
-/-- Every combinatory rule preserves the count of every atom. -/
 theorem _root_.CCG.Rule.count_eq [DecidableEq α] (a : α) {l r c : Cat α}
     (ru : Rule R l r c) : c.count a = l.count a + r.count a := by
   cases ru <;> simp only [Cat.count_pushArgs, Cat.count_rslash, Cat.count_lslash] <;> omega

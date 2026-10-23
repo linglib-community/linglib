@@ -64,8 +64,6 @@ section SemilatticeSup
 
 variable [SemilatticeSup α] (c : SupCon α) {x y z w : α}
 
-/-- An element joins into the class of `y` with the join of two elements iff it does so with
-each. -/
 theorem r_sup_sup_iff : c.r (z ⊔ w ⊔ y) y ↔ c.r (z ⊔ y) y ∧ c.r (w ⊔ y) y := by
   refine ⟨fun h ↦ ⟨?_, ?_⟩, fun ⟨hz, hw⟩ ↦ ?_⟩
   · have := c.sup h (c.iseqv.refl (z ⊔ y))
@@ -85,14 +83,11 @@ def sepHom (y : α) : SupHom α Prop where
 
 @[simp] theorem sepHom_apply (y z : α) : c.sepHom y z ↔ ¬ c.r (z ⊔ y) y := Iff.rfl
 
-/-- The congruence is contained in the kernel of each separating homomorphism. -/
 theorem le_ker_sepHom (y : α) : c.toSetoid ≤ Setoid.ker (c.sepHom y) := fun a b h ↦ by
   have hab := c.sup h (c.iseqv.refl y)
   refine Setoid.ker_def.mpr (propext ?_)
   exact not_congr ⟨fun h' ↦ c.iseqv.trans (c.iseqv.symm hab) h', fun h' ↦ c.iseqv.trans hab h'⟩
 
-/-- In a finite join-semilattice, the elements whose join with `y` stays in the class of `y` are
-the down-set of some element. -/
 theorem exists_iff_le [Finite α] (y : α) : ∃ a, ∀ z, z ≤ a ↔ c.r (z ⊔ y) y := by
   classical
   have := Fintype.ofFinite α

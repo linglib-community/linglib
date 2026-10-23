@@ -46,7 +46,6 @@ def maximalProjections : Set TreePath := {x | IsMaximalProjection (headDaughterR
 instance : DecidablePred (· ∈ maximalProjections hd t) :=
   fun x ↦ inferInstanceAs (Decidable (IsMaximalProjection (headDaughterRel (hd t)) x))
 
-/-- The maximal projections are those of the head relation, with no adjunction. -/
 theorem maximalProjections_eq :
     maximalProjections hd t = PhraseStructure.maximalProjections (headDaughterRel (hd t)) ⊥ :=
   PhraseStructure.maximalProjections_bot.symm

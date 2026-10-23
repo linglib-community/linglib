@@ -52,7 +52,6 @@ variable (μ : Measure ℝ) [IsProbabilityMeasure μ] {x : ℝ}
 theorem continuousAt_cdf_iff : ContinuousAt (cdf μ) x ↔ μ {x} = 0 := by
   rw [StieltjesFunction.continuousAt_iff_measure_singleton_eq_zero, measure_cdf]
 
-/-- The cdf of a measure without atoms is continuous. -/
 theorem continuous_cdf [NullSingletonClass μ] : Continuous (cdf μ) :=
   (cdf μ).continuous_iff_nullSingletonClass.2 (by rw [measure_cdf]; infer_instance)
 
@@ -70,7 +69,6 @@ theorem cdf_neg [μ.IsNegInvariant] (hx : μ {x} = 0) : cdf μ (-x) = 1 - cdf μ
   rw [← measureReal_Ioi_eq_cdf_neg μ hx, ← compl_Iic, probReal_compl_eq_one_sub measurableSet_Iic,
     cdf_eq_real]
 
-/-- A negation-invariant measure with no atom at `0` has median `0`. -/
 theorem cdf_zero [μ.IsNegInvariant] (h : μ {0} = 0) : cdf μ 0 = 2⁻¹ := by
   linarith [cdf_neg μ h, congrArg (cdf μ) neg_zero]
 

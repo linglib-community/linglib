@@ -420,7 +420,6 @@ def construction : Node → Construction Sem
   | .resultative => resultative
   | .conative => conative
 
-/-- Every construction of the network has a slot the verb must supply. -/
 theorem obligatory_ne_nil (n : Node) : (construction n).meaning.link.obligatory ≠ [] := by
   revert n; decide
 
@@ -465,7 +464,6 @@ instance : DecidableLE Node :=
 intransitive motion is a proper subpart of caused motion. -/
 theorem network_wellTyped : network.WellTyped := by decide
 
-/-- The links make caused motion the resultative's only mother. -/
 theorem isMother_resultative_iff (n : Node) :
     network.IsMother .resultative n ↔ n = .causedMotion := by
   revert n; decide

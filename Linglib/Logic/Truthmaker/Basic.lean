@@ -120,8 +120,6 @@ theorem isConjunctivePart_singleton_right_iff (ht : t.Nonempty) {a : S} :
     exact ⟨Set.singleton_subset_iff.2 (mem_upperClosure.2 ⟨b, hb, h b hb⟩),
       fun c hc ↦ mem_lowerClosure.2 ⟨a, rfl, h c hc⟩⟩
 
-/-- The proposition verified by `b` alone is a conjunctive part of a proposition with a verifier
-exactly when `b` is part of each of its verifiers. -/
 theorem isConjunctivePart_singleton_left_iff (hs : s.Nonempty) {b : S} :
     IsConjunctivePart {b} s ↔ ∀ a ∈ s, b ≤ a := by
   refine ⟨fun h a ha ↦ ?_, fun h ↦ ?_⟩
@@ -154,11 +152,9 @@ theorem isConjunctivePart_sups_left (ht : t.Nonempty) : IsConjunctivePart s (s �
   ⟨Set.sups_subset_iff.2 fun a ha _ _ ↦ mem_upperClosure.2 ⟨a, ha, le_sup_left⟩,
     fun a ha ↦ mem_lowerClosure.2 ⟨a ⊔ b, Set.sup_mem_sups ha hb, le_sup_left⟩⟩
 
-/-- A conjunct is a conjunctive part of a conjunction whose other conjunct has a verifier. -/
 theorem isConjunctivePart_sups_right (hs : s.Nonempty) : IsConjunctivePart t (s ⊻ t) :=
   Set.sups_comm t s ▸ isConjunctivePart_sups_left hs
 
-/-- A sup-closed proposition that contains `s` and `t` contains their conjunction. -/
 theorem IsConjunctivePart.sups {u : Set S} (hu : SupClosed u) (hs : IsConjunctivePart s u)
     (ht : IsConjunctivePart t u) : IsConjunctivePart (s ⊻ t) u := by
   refine ⟨fun x hx ↦ ?_, Set.sups_subset_iff.2 fun a ha b hb ↦ ?_⟩
@@ -184,14 +180,11 @@ section CompleteLattice
 
 variable [CompleteLattice S] {s t u : Set S}
 
-/-- A conjunctive part of `s` has a subject-matter that is part of the subject-matter of `s`. -/
 theorem IsConjunctivePart.sSup_le (h : IsConjunctivePart t s) : sSup t ≤ sSup s :=
   _root_.sSup_le fun _ hb ↦
     let ⟨_, ha, hba⟩ := mem_lowerClosure.1 (h.2 hb)
     hba.trans (le_sSup ha)
 
-/-- If `s` contains the fusion of its verifiers, `s` contains `t` exactly when every verifier of
-`s` contains a verifier of `t` and the subject-matter of `t` is part of that of `s`. -/
 theorem isConjunctivePart_iff_sSup_le (hs : sSup s ∈ s) :
     IsConjunctivePart t s ↔ s ⊆ upperClosure t ∧ sSup t ≤ sSup s :=
   ⟨fun h ↦ ⟨h.1, h.sSup_le⟩, fun ⟨h₁, h₂⟩ ↦
@@ -259,8 +252,6 @@ theorem isClosed_regularClosure_iff :
   obtain ⟨a, ha, hax⟩ := mem_upperClosure.1 hx₁
   exact ho.out ha (hc s le_rfl ⟨a, ha⟩) ⟨hax, hx₂⟩
 
-/-- A proposition is regular exactly when it is convex and contains the fusion of its verifiers,
-if it has any. -/
 theorem isClosed_regularClosure_iff' :
     regularClosure.IsClosed s ↔ s.OrdConnected ∧ (s.Nonempty → sSup s ∈ s) := by
   rw [isClosed_regularClosure_iff]
@@ -339,7 +330,6 @@ theorem regularClosure_iSups {ι : Type*} {s : ι → Set S} (hs : ∀ i, (s i).
     rw [Set.sSup_iSups hs]
     exact iSup_mono fun i ↦ (hg i).2
 
-/-- In a distributive space, the conjunction of regular propositions is regular. -/
 theorem isClosed_regularClosure_sups (hs : regularClosure.IsClosed s)
     (ht : regularClosure.IsClosed t) : regularClosure.IsClosed (s ⊻ t) := by
   rcases s.eq_empty_or_nonempty with rfl | hs'
@@ -349,7 +339,6 @@ theorem isClosed_regularClosure_sups (hs : regularClosure.IsClosed s)
   rw [ClosureOperator.isClosed_iff_closure_le, regularClosure_sups hs' ht', hs.closure_eq,
     ht.closure_eq]
 
-/-- Conjunction distributes over disjunction in a regular domain. -/
 theorem regularClosure_sups_union (hs : s.Nonempty) (htu : (t ∪ u).Nonempty) :
     regularClosure s ⊻ regularClosure (t ∪ u) = regularClosure (s ⊻ t ∪ s ⊻ u) := by
   rw [← regularClosure_sups hs htu, Set.sups_union_right]

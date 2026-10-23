@@ -94,8 +94,6 @@ def Structure.site (s : Structure) : Minimalist.NullSite Minimalist.Ellipsis.nom
 /-- The depth of the gap, read from the Minimalist model of null sites. -/
 def Structure.depth (s : Structure) : Anaphor.Depth := Anaphor.DepthModel.depth s.site
 
-/-- The gap has internal structure exactly when it contains the noun's position, where the noun's
-arguments and any sub-extracted material originate. -/
 theorem Structure.hasInternalStructure_depth_iff (s : Structure) :
     s.depth.HasInternalStructure ↔ s.site.Silences (.head .N) := by
   revert s; decide
@@ -118,13 +116,9 @@ def Nominal.number (c : Number) : Nominal → Number
 /-- The verb agrees with the Num head, whose number is that of its complement. -/
 def Structure.agreement (s : Structure) (c : Number) : Number := s.head.number c
 
-/-- Nothing in the equative structure can be elided, since the coda has no licensor and the
-index is atomic. -/
 theorem equative_not_elidable (x : Nominal) : ¬ equative.Elidable x := by
   cases x <;> decide
 
-/-- The quantificational structure elides its coda and not the quantity noun; the descriptive
-structure the reverse. -/
 theorem quantificational_descriptive_elidable :
     quantificational.Elidable .coda ∧ ¬ quantificational.Elidable .first ∧
       descriptive.Elidable .first ∧ ¬ descriptive.Elidable .coda := by
@@ -144,8 +138,6 @@ def structureOf : BinominalType → Reading → Structure
   | _, .quantificational => quantificational
   | _, .descriptive => descriptive
 
-/-- With a plural coda, a quantity noun can be elided exactly when the verb agrees in the
-singular: both follow from the noun heading the projection. -/
 theorem elidable_first_iff_singular (b : BinominalType) (r : Reading) (hb : b ≠ .qualitative) :
     (structureOf b r).Elidable .first ↔ (structureOf b r).agreement .plural = .singular := by
   cases b <;> cases r <;> decide
@@ -177,25 +169,18 @@ def EllipsisAcceptable (x : Datum) : Prop :=
 instance (x : Datum) : Decidable (EllipsisAcceptable x) := by
   unfold EllipsisAcceptable; infer_instance
 
-/-- Every row names a first noun of the fragment, so each of the theorems below speaks about all
-the rows. -/
 theorem structure?_isSome : ∀ x ∈ Examples.all, (structure? x).isSome := by decide +kernel
 
-/-- In the rows that elide a nominal, the ellipsis reading is acceptable exactly when the row's
-structure licenses eliding that nominal. -/
 theorem ellipsis_matches :
     ∀ x ∈ Examples.all, ∀ s, structure? x = some s → ∀ e, x.parse? "elided" nominals = some e →
       (EllipsisAcceptable x ↔ s.Elidable e) := by
   decide +kernel
 
-/-- The rows that record verbal agreement agree with the Num head of the row's structure. -/
 theorem agreement_matches :
     ∀ x ∈ Examples.all, ∀ s, structure? x = some s → (x.feature? "agreement").isSome →
       x.parse? "agreement" numbers = (x.parse? "codaNumber" numbers).map s.agreement := by
   decide +kernel
 
-/-- In the diagnostic rows, sub-extraction and argument structure succeed exactly when the gap
-has internal structure, and resolution by the context exactly when it is a deep anaphor. -/
 theorem diagnostics_match :
     ∀ x ∈ Examples.all, ∀ s, structure? x = some s →
       (x.feature? "diagnostic" = some "subextraction" ∨

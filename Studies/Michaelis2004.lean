@@ -121,8 +121,6 @@ theorem progressive_coinstantiation : refGroupCount progressive.form = 1 := by
 def PreservesType (r : CompositionRule VendlerClass) : Prop :=
   ∀ p q, r [p] = some q → q = p
 
-/-- The frame adverbial is a concord construction: it denotes the telic
-event type it selects. -/
 theorem frameAdverbial_concord : PreservesType frameAdverbialRule := by
   intro p q h
   simp only [frameAdverbialRule] at h
@@ -130,8 +128,6 @@ theorem frameAdverbial_concord : PreservesType frameAdverbialRule := by
   · exact (Option.some_inj.mp h).symm
   · exact absurd h (by simp)
 
-/-- The progressive is a shift construction: it selects activities but
-denotes states. -/
 theorem progressive_shift : ¬ PreservesType progressiveRule := λ h =>
   absurd (h .activity .state (by decide)) (by decide)
 
@@ -174,8 +170,6 @@ theorem progressive_coerces_state :
     progressiveRule.override [conformToActivity] [.state]
       = [.state] := by decide
 
-/-- "They were baking a cake": a telic complement is construed as its
-process, so the culmination is not entailed. -/
 theorem progressive_coerces_telic :
     progressiveRule.override [conformToActivity] [.accomplishment]
       = [.state] := by decide

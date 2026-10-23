@@ -93,12 +93,10 @@ def Monotonic [PartialOrder E] (x : Entity) : Prop := StrictMonoOn v.μint (stat
 
 variable {v frame} {α β x y : Entity}
 
-/-- The comparative entails the matrix positive. -/
 theorem intensityComparative.exists_matrix (h : intensityComparative v frame α β x y) :
     ∃ e, themed v frame α x e :=
   let ⟨_, _, e, he, _⟩ := h; ⟨e, he⟩
 
-/-- With unique witnesses on both sides the comparative compares the two intensities. -/
 theorem intensityComparative_unique {ea eb : E} (ha : themed v frame α x ea)
     (ha' : ∀ e, themed v frame α x e → e = ea) (hb : themed v frame β y eb)
     (hb' : ∀ e, themed v frame β y e → e = eb) :

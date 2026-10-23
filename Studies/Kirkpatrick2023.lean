@@ -88,7 +88,6 @@ theorem update_empty : update N R ∅ = N.normal () R := by
 /-- Expansion is one-way, fn. 24: the horizon never shrinks. -/
 theorem subset_update : σ ⊆ update N R σ := subset_union_left
 
-/-- A second assertion of the same generic expands nothing. -/
 theorem update_update : update N R (update N R σ) = update N R σ := by
   by_cases h : ∃ y ∈ σ, y ∈ R
   · rw [update_of_exists h, update_of_exists h]
@@ -133,9 +132,6 @@ theorem static_perm (truth : GenericSentence E → Prop) {gs gs' : List (Generic
 
 /-! ### Generic Sobel sequences, §5 -/
 
-/-- Two generics true on their own, the second of which finds no instance of its restrictor
-among the first's normal instances, are consistent in that order: the second expands the
-horizon and is evaluated on its own normal instances. -/
 theorem consistent_pair {g₁ g₂ : GenericSentence E} (h₁ : holds N g₁ ∅) (h₂ : holds N g₂ ∅)
     (hdis : ∀ e ∈ N.normal () g₁.restrictor, e ∉ g₂.restrictor) : Consistent N [g₁, g₂] := by
   refine ⟨h₁, fun x ⟨hx, hxR⟩ ↦ ?_, trivial⟩
@@ -226,7 +222,6 @@ def ravensAreBlack : GenericSentence Raven := ⟨univ, Raven.black⟩
 /-- *Albino ravens aren't black*. -/
 def albinoRavensArentBlack : GenericSentence Raven := ⟨{.albino}, Raven.blackᶜ⟩
 
-/-- The normal ravens are not albino. -/
 theorem ne_albino_of_mem_normal {x : Raven} (hx : x ∈ ravenNormality.normal () univ) :
     x ≠ .albino := by
   rintro rfl
@@ -235,7 +230,6 @@ theorem ne_albino_of_mem_normal {x : Raven} (hx : x ∈ ravenNormality.normal ()
     (show Raven.rank .normal₁ ≤ Raven.rank .albino by decide)
   exact absurd (h : Raven.rank .albino ≤ Raven.rank .normal₁) (by decide)
 
-/-- The normal albino ravens are the albino. -/
 theorem mem_normal_albino {x : Raven} :
     x ∈ ravenNormality.normal () {.albino} ↔ x = .albino :=
   ⟨fun hx ↦ (Preorder.mem_minimals_iff.1 hx).1.2, fun hx ↦ hx ▸ Preorder.mem_minimals_iff.2

@@ -111,34 +111,24 @@ theorem mem_consistentTotalOrders {r : Fin n → Fin n → Prop} [DecidableRel r
     σ ∈ consistentTotalOrders r ↔ IsConsistent r σ := by
   simp [consistentTotalOrders]
 
-/-- The ranking `g * σ` extends `r` iff `σ` extends the `g`-pullback of `r`, so consistency
-    transports along constraint relabeling. -/
 theorem isConsistent_mul_iff {r : Fin n → Fin n → Prop} {g σ : Ranking (Fin n) n} :
     IsConsistent r (g * σ) ↔ IsConsistent (fun a b => r (g a) (g b)) σ :=
   ⟨fun h a b hab => by simpa using h (g a) (g b) hab,
    fun h a b hab => by simpa using h (g⁻¹ a) (g⁻¹ b) (by simpa using hab)⟩
 
-/-- The linear extensions of a grammar are closed under its symmetries, since a relabeling that
-    preserves `r` acts on the consistent rankings. -/
 theorem IsConsistent.mul {r : Fin n → Fin n → Prop} {g σ : Ranking (Fin n) n}
     (hg : ∀ a b, r (g a) (g b) ↔ r a b) (hσ : IsConsistent r σ) :
     IsConsistent r (g * σ) :=
   isConsistent_mul_iff.mpr fun a b hab => hσ a b ((hg a b).mp hab)
 
-/-- For the discrete grammar, every permutation is a linear extension. -/
 theorem consistentTotalOrders_discrete (n : ℕ) :
     consistentTotalOrders (· = · : Fin n → Fin n → Prop) = Finset.univ :=
   Finset.eq_univ_of_forall fun _ =>
     mem_consistentTotalOrders.mpr fun _ _ h => h ▸ le_refl _
 
-/-- σ is consistent with the total order it induces — reflexivity of the
-    relation lattice. -/
 theorem isConsistent_toRel (σ : Ranking (Fin n) n) : IsConsistent σ.toRel σ :=
   le_refl σ.toRel
 
-/-- A ranking-induced order has its ranking as *unique* consistent linear
-    extension, by the rigidity of `Ranking.toRel`
-    (`Ranking.toRel_le_toRel_iff`). -/
 @[simp]
 theorem consistentTotalOrders_toRel (σ : Ranking (Fin n) n) :
     consistentTotalOrders σ.toRel = {σ} := by
@@ -150,9 +140,6 @@ theorem consistentTotalOrders_toRel (σ : Ranking (Fin n) n) :
 
 /-! ### Szpilrajn — every grammar has a consistent linear extension -/
 
-/-- Every grammar has a consistent linear extension, since Szpilrajn's theorem
-    (`extend_partialOrder`) extends `r` to a linear order, which is the induced order of some
-    ranking (`Ranking.exists_toRel_eq`). -/
 theorem exists_isConsistent (r : Fin n → Fin n → Prop)
     [IsPartialOrder (Fin n) r] :
     ∃ σ : Ranking (Fin n) n, IsConsistent r σ := by
@@ -195,8 +182,6 @@ def stratified (stratumOf : Fin n → Fin s) (inner : Fin n → Fin n → Prop) 
 variable {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
   {d d' : Fin n} {σ : Ranking (Fin n) n}
 
-/-- Dominance in a stratified grammar holds iff a's stratum strictly precedes
-    b's, or they share a stratum and the inner order relates them. -/
 theorem stratified_iff {a b : Fin n} :
     stratified stratumOf inner a b ↔
       stratumOf a < stratumOf b ∨ stratumOf a = stratumOf b ∧ inner a b :=
@@ -211,16 +196,12 @@ instance [IsPartialOrder (Fin n) inner] :
 instance [DecidableRel inner] : DecidableRel (stratified stratumOf inner) :=
   fun _ _ => decidable_of_iff _ stratified_iff.symm
 
-/-- Under a stratified grammar, an earlier-stratum constraint occupies a
-    strictly earlier position in every consistent ranking. -/
 theorem IsConsistent.symm_lt_of_stratum_lt
     (hσ : IsConsistent (stratified stratumOf inner) σ) {a b : Fin n}
     (h : stratumOf a < stratumOf b) : σ.symm a < σ.symm b :=
   lt_of_le_of_ne (hσ a b (stratified_iff.mpr (Or.inl h)))
     (fun heq => absurd (σ.symm.injective heq ▸ h) (lt_irrefl _))
 
-/-- Swapping two constraints of a stratum on which the inner order is trivial
-    is a symmetry of the stratified grammar. -/
 theorem stratified_swap_apply_iff [Std.Refl inner]
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (hd : stratumOf d = k) (hd' : stratumOf d' = k) (a b : Fin n) :
@@ -249,8 +230,6 @@ theorem stratified_swap_apply_iff [Std.Refl inner]
       Equiv.swap_apply_of_ne_of_ne (fun h => (heq ▸ hk) (by rw [h]; exact hd))
         (fun h => (heq ▸ hk) (by rw [h]; exact hd'))]
 
-/-- Consistent rankings of a stratified grammar are closed under swapping two
-    constraints of a stratum on which the inner order is trivial. -/
 theorem isConsistent_swap_mul [Std.Refl inner]
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (hd : stratumOf d = k) (hd' : stratumOf d' = k)
@@ -279,8 +258,6 @@ theorem mem_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r] {α : ERC (Fi
     α ∈ toERCs r ↔ ∃ a b, r a b ∧ simpleERC a b = α := by
   simp [toERCs, Prod.exists]
 
-/-- A ranking satisfies `toERCs r` exactly when it is a linear extension of
-`r`: per pair, satisfaction of `simpleERC a b` *is* `σ.toRel a b`. -/
 theorem satisfiedBy_toERCs {r : Fin n → Fin n → Prop} [DecidableRel r]
     {σ : Ranking (Fin n) n} :
     (∀ α ∈ toERCs r, ERC.SatisfiedBy σ α) ↔ IsConsistent r σ := by
@@ -309,14 +286,12 @@ a Birkhoff antimatroid whose feasible sets are exactly the order ideals of `r`
 variable (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] [DecidableRel r]
 
 omit [IsPartialOrder (Fin n) r] in
-/-- Every member of `toERCs r` is a simple ERC or (on the diagonal) trivial. -/
 theorem toERCs_isSimple_or_isTrivial :
     ∀ α ∈ toERCs r, α.IsSimple ∨ α.IsTrivial := by
   intro α hα
   obtain ⟨a, b, _, rfl⟩ := mem_toERCs.mp hα
   exact simpleERC_isSimple_or_isTrivial a b
 
-/-- Some linear extension of `r` satisfies `toERCs r`, so it is consistent. -/
 theorem toERCs_consistent : (ERC.linearExtensions (toERCs r)).Nonempty := by
   obtain ⟨σ, hσ⟩ := exists_isConsistent r
   exact ⟨σ, ERC.mem_linearExtensions.mpr (satisfiedBy_toERCs.mpr hσ)⟩
@@ -326,8 +301,6 @@ ERCs, whose feasible sets are its order ideals (`orderIdealAntimatroid_isFeasibl
 def orderIdealAntimatroid : Antimatroid (Fin n) :=
   ERC.toAntimatroid _ ((ERC.linearExtensions_nonempty_iff _).mp (toERCs_consistent r))
 
-/-- A set is feasible for each ERC of the encoding of `r` exactly when it is an order ideal of
-`r`, containing every constraint above one of its members. -/
 theorem forall_isFeasible_toERCs_iff {S : Finset (Fin n)} :
     (∀ α ∈ toERCs r, ERC.IsFeasible {α} (S : Set (Fin n))) ↔ ∀ a b, r a b → b ∈ S → a ∈ S := by
   obtain ⟨σ, hσ⟩ := toERCs_consistent r
@@ -347,7 +320,6 @@ theorem forall_isFeasible_toERCs_iff {S : Finset (Fin n)} :
     rw [(simpleERC_eq_L_iff hab l).mp hlL] at hlS
     exact ⟨a, h a b hrel hlS, simpleERC_apply_W⟩
 
-/-- The feasible sets of `orderIdealAntimatroid` are the order ideals of `r`. -/
 @[simp] theorem orderIdealAntimatroid_isFeasible_iff {S : Finset (Fin n)} :
     (orderIdealAntimatroid r).IsFeasible (↑S : Set (Fin n)) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
@@ -425,20 +397,15 @@ def PicksAt {ι : Type*} (S : ConstraintSystem Input Output ι) (σ : Ranking ι
     (o : Output) : Prop :=
   S.language σ i = {o}
 
-/-- σ picks `o` iff `o` is a candidate whose violations, read in σ's order, are lexicographically
-    below every rival's. -/
 theorem picksAt_iff {ι : Type*} {S : ConstraintSystem Input Output ι} {σ : Ranking ι n} :
     PicksAt S σ i o ↔ o ∈ S.gen i ∧ ∀ o' ∈ S.gen i, o' ≠ o →
       toLex (fun k ↦ S.con (σ k) (i, o)) < toLex (fun k ↦ S.con (σ k) (i, o')) :=
   ConstraintSystem.language_eq_singleton_iff
 
-/-- A ranking picks at most one output. -/
 theorem picksAt_unique {ι : Type*} {S : ConstraintSystem Input Output ι} {σ : Ranking ι n}
     (h : PicksAt S σ i o) (h' : PicksAt S σ i o') : o = o' :=
   Finset.singleton_injective (h.symm.trans h')
 
-/-- With pairwise-distinct violation profiles, every ranking picks some output, since the
-    winners of a tableau all share one profile. -/
 theorem exists_picksAt (h_ne : (S.gen i).Nonempty)
     (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) (σ : Ranking (Fin n) n) :
     ∃ o ∈ S.gen i, PicksAt S σ i o := by
@@ -459,9 +426,6 @@ instance {ι : Type*} (S : ConstraintSystem Input Output ι) (σ : Ranking ι n)
     (o : Output) : Decidable (PicksAt S σ i o) :=
   decidable_of_iff _ picksAt_iff.symm
 
-/-- With pairwise-distinct violation profiles the picks-fibers over the
-    candidate set partition the consistent extensions, the division-free form of
-    `sum_measure_setOf_picksAt`. -/
 theorem sum_card_filter_picksAt [DecidableRel r]
     (h_ne : (S.gen i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (S.con · (i, o))) (S.gen i)) :
     ∑ o ∈ S.gen i, ((consistentTotalOrders r).filter
@@ -489,8 +453,6 @@ theorem sum_card_filter_picksAt [DecidableRel r]
         (Finset.card_biUnion h_disjoint).symm
     _ = (consistentTotalOrders r).card := by rw [h_union]
 
-/-- Two distinct candidates with distinct violation profiles partition the
-    consistent rankings. -/
 theorem card_filter_picksAt_binary_add [DecidableRel r]
     {o₁ o₂ : Output} (h_two : S.gen i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
     (h_vp : (S.con · (i, o₁)) ≠ (S.con · (i, o₂))) :
@@ -534,8 +496,6 @@ profiles differ. So `chosen` wins exactly when the σ-earliest constraint of
 competitions without enumerating rankings. -/
 
 omit [DecidableEq Output] in
-/-- The output `o` lex-dominates `o'` under `σ` exactly when the σ-earliest active constraint
-favors `o`: the winner–loser ERC of the pair is satisfied, and some constraint is active. -/
 theorem lex_lt_iff_exists_favoring_isMinOn (σ : Ranking (Fin n) n) :
     toLex (fun k : Fin n => con (σ k) (i, o)) < toLex (fun k : Fin n => con (σ k) (i, o')) ↔
     ∃ x ∈ favoring con i o o' ∩ active con i o o', IsMinOn σ.symm (active con i o o') x := by
@@ -612,9 +572,6 @@ A binary competition whose variants tie on every stratum before `k` is decided w
 sub-grammar. -/
 
 omit [DecidableEq Output] in
-/-- On a consistent ranking of a stratified grammar, the σ-earliest active constraint is the
-σ-earliest active constraint of the deciding stratum `k`, since earlier strata are inactive
-(`h_tie`) and every constraint of stratum `k` precedes the later strata. -/
 theorem isMinOn_active_iff_isMinOn_filter_stratum
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop} {k : Fin s}
     (hσ : IsConsistent (stratified stratumOf inner) σ)
@@ -636,11 +593,6 @@ theorem isMinOn_active_iff_isMinOn_filter_stratum
     · exact isMinOn_iff.1 hmin y (mem_filter.2 ⟨hy, heq⟩)
     · exact (hσ.symm_lt_of_stratum_lt (by rw [(mem_filter.1 hx).2]; exact hgt)).le
 
-/-- Under a stratified grammar, a binary competition whose variants tie on every stratum before
-`k`, with `k` freely ranked internally (`h_triv`) and containing an active constraint (`h_dec`),
-is decided within stratum `k`. The rankings picking `chosen`, times the active constraints `Dₖ`
-of that stratum, equal all consistent rankings times those favoring `chosen`, and later strata
-cannot affect the outcome. -/
 theorem card_filter_picksAt_stratified_binary
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
@@ -697,8 +649,6 @@ theorem uniformOn_real_picksAt_stratified_binary
 /-! ### Categorical outcomes under stratified grammars -/
 
 omit [DecidableEq Output] in
-/-- Under a stratified grammar, a consistent ranking picks `o` when, against every rival, the
-first stratum on which they differ has all its active constraints favoring `o`. -/
 theorem picksAt_stratified_of_dominates
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     (hσ : IsConsistent (stratified stratumOf inner) σ) (ho : o ∈ S.gen i)

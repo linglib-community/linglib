@@ -82,7 +82,6 @@ def grant : Space (State A W) := C.denegate (C.assert a φᶜ)
 
 @[simp] theorem root_grant : (grant C a φ).root = C.root := rfl
 
-/-- A grant keeps the root and the states in which `a` has not asserted `¬φ`. -/
 theorem mem_grant : d ∈ grant C a φ ↔ d = C.root ∨ d ∈ C ∧ commit a φᶜ ∉ d := by
   rw [grant, mem_denegate, SetLike.mem_coe, mem_assert]
   refine or_congr_right (and_congr_right fun hd ↦ ⟨fun h hk ↦ h (Or.inr ⟨hd, hk⟩), fun h ↦ ?_⟩)
@@ -120,8 +119,6 @@ def denials : State A W := (fun m ↦ commit a (φ m)ᶜ) '' s
 `m ∈ s` at once ((46), (51)). -/
 def exclude : Space (State A W) := C.update (denials a φ s)
 
-/-- When the space projects the root with the denials, that state is the root of the
-exclusion. -/
 theorem root_exclude (hK : denials a φ s ∪ C.root ∈ C) :
     (exclude C a φ s).root = denials a φ s ∪ C.root :=
   C.root_update_of_mem hK
@@ -133,7 +130,6 @@ theorem denials_eq_sSup :
     denials a φ s = sSup ((fun m ↦ ({commit a (φ m)ᶜ} : State A W)) '' s) := by
   rw [Set.sSup_eq_sUnion, Set.sUnion_image, denials, Set.image_eq_iUnion]
 
-/-- The exclusion denies `φ(m)` exactly for the excluded values. -/
 theorem commit_mem_root_exclude_iff (hK : denials a φ s ∪ C.root ∈ C)
     (hroot : ∀ m, commit a (φ m)ᶜ ∉ C.root) (hinj : Function.Injective φ) {m : ι} :
     commit a (φ m)ᶜ ∈ (exclude C a φ s).root ↔ m ∈ s := by

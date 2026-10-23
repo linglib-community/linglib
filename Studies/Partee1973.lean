@@ -59,12 +59,9 @@ def Past (n : ℕ) (P : NonemptyInterval T → Prop) (σ : NonemptyInterval T) :
 theorem past_iff : Past n P σ g ↔ (g n).Precedes σ ∧ P (g n) := by
   simp [Past]
 
-/-- A past tense is free in its clause, which depends on the context only for the time of the
-tense's index. -/
 theorem dependsOn_past : DependsOn (Past n P σ) {n} := fun g g' h ↦ by
   simp only [Past, h n rfl]
 
-/-- What held at the time of a past tense held at some past time. -/
 theorem Past.sometime (h : Past n P σ g) : ◇[Perspective.toSetRel ⟦past⟧] P σ :=
   ⟨_, h.1, h.2⟩
 

@@ -162,7 +162,6 @@ theorem KK_star_dox (h : S.dox a μ ν) (hp : K a p ∈ (μ : Set (Formula V A))
     K a p ∈ (ν : Set (Formula V A)) :=
   S.KK_star (S.dox_le_epi a μ ν h) hp
 
-/-- (C.K*dox). -/
 theorem K_star_dox (h : S.dox a μ ν) (hp : K a p ∈ (μ : Set (Formula V A))) :
     p ∈ (ν : Set (Formula V A)) :=
   (S.isModelSet ν).know (S.KK_star_dox h hp)
@@ -368,7 +367,6 @@ consequence of the conditions (Sections 3.7 and 3.8). -/
 
 variable (a b : A) (p : Formula V A)
 
-/-- (C.KB): `K a p` virtually implies `B a (K a p)`. -/
 theorem virtuallyImplies_K_B_K : VirtuallyImplies (K a p) (B a (K a p)) :=
   virtuallyImplies_of_indefensible <| by
     rintro ⟨S, μ, hμ⟩
@@ -394,7 +392,6 @@ abbrev mK : Model Unit (Fin 2) (Fin 3) where
   dox_trans _ := ⟨by decide +revert⟩
   dox_le_epi a := by rintro ⟨w, v⟩ h; revert a w v h; decide
 
-/-- (C.BK) rejected: `B a p` does not virtually imply `K a (P a p)`. -/
 theorem not_virtuallyImplies_B_K_P : ¬ VirtuallyImplies (B 0 𝐩) (K 0 (P 0 𝐩)) :=
   mK.not_virtuallyImplies_of_sat (w := 0) (by decide)
 
@@ -678,7 +675,6 @@ theorem virtuallyImplies_K_KK : VirtuallyImplies (K a p) (K a (K a p)) :=
       (hμ (Set.mem_insert_of_mem _ (Set.mem_singleton _))))
     exact (S.isModelSet ν).neg (S.KK_star hν (hμ (Set.mem_insert _ _))) h
 
-/-- `K a (K a p)` virtually implies `K a p`, by (C.K) and (C.∼). -/
 theorem virtuallyImplies_KK_K : VirtuallyImplies (K a (K a p)) (K a p) :=
   virtuallyImplies_of_indefensible <| by
     rintro ⟨S, μ, hμ⟩

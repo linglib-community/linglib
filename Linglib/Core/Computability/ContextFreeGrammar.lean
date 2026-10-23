@@ -117,13 +117,10 @@ theorem Rewrites.append_split {r : ContextFreeRule T N} :
       · exact .inl ⟨x :: v₁, by simp, .cons x hrw₁⟩
       · exact .inr ⟨v₂, by simp, hrw₂⟩
 
-/-- No rule rewrites a word of terminals. -/
 theorem Rewrites.not_map_terminal {r : ContextFreeRule T N} {w : List T}
     {v : List (Symbol T N)} : ¬ r.Rewrites (w.map .terminal) v := fun h ↦ by
   simpa using h.nonterminal_input_mem
 
-/-- A rewrite of a word with a single nonterminal replaces that nonterminal by the output of a
-rule with that input. -/
 theorem rewrites_map_terminal_append_singleton_append_iff {r : ContextFreeRule T N} {A : N}
     {w u : List T} {v : List (Symbol T N)} :
     r.Rewrites (w.map .terminal ++ [.nonterminal A] ++ u.map .terminal) v ↔
@@ -138,7 +135,6 @@ theorem rewrites_map_terminal_append_singleton_append_iff {r : ContextFreeRule T
       | cons _ h => cases h
   · exact h₂.not_map_terminal.elim
 
-/-- A rewrite of a single nonterminal replaces it by the output of a rule with that input. -/
 theorem rewrites_singleton_iff {r : ContextFreeRule T N} {A : N} {v : List (Symbol T N)} :
     r.Rewrites [.nonterminal A] v ↔ r.input = A ∧ v = r.output := by
   simpa using rewrites_map_terminal_append_singleton_append_iff (r := r) (A := A) (w := [])
@@ -154,8 +150,6 @@ variable {T : Type*} {g : ContextFreeGrammar T}
 abbrev RulesWithLHS (g : ContextFreeGrammar T) [DecidableEq g.NT] (a : g.NT) :=
   {r : ContextFreeRule T g.NT // r ∈ g.rules.filter (·.input = a)}
 
-/-- A grammar has rules with left-hand side `a` exactly when `a` is the input of one of its
-rules. -/
 theorem nonempty_rulesWithLHS_iff [DecidableEq g.NT] {a : g.NT} :
     Nonempty (g.RulesWithLHS a) ↔ a ∈ g.rules.image (·.input) := by
   simp [Finset.mem_image]
@@ -185,7 +179,6 @@ theorem Derives.append_split {u₁ u₂ v : List (Symbol T g.NT)} (h : g.Derives
     · exact ⟨v₁, w₂, hv, hd₁.trans_produces hp₁, hd₂⟩
     · exact ⟨w₁, v₂, hv, hd₁, hd₂.trans_produces hp₂⟩
 
-/-- A word of terminals produces nothing. -/
 theorem not_produces_map_terminal {w : List T} {v : List (Symbol T g.NT)} :
     ¬ g.Produces (w.map .terminal) v := fun ⟨_, _, h⟩ ↦ h.not_map_terminal
 
@@ -197,15 +190,12 @@ theorem produces_map_terminal_append_singleton_append_iff {A : g.NT} {w u : List
       ∃ r ∈ g.rules, r.input = A ∧ v = w.map .terminal ++ r.output ++ u.map .terminal := by
   simp only [Produces, ContextFreeRule.rewrites_map_terminal_append_singleton_append_iff]
 
-/-- A word ending in its only nonterminal produces exactly the words obtained by replacing that
-nonterminal with the output of one of its rules, the step of right-linear grammars. -/
 theorem produces_map_terminal_append_singleton_iff {A : g.NT} {w : List T}
     {v : List (Symbol T g.NT)} :
     g.Produces (w.map .terminal ++ [.nonterminal A]) v ↔
       ∃ r ∈ g.rules, r.input = A ∧ v = w.map .terminal ++ r.output := by
   simpa using produces_map_terminal_append_singleton_append_iff (A := A) (w := w) (u := []) (v := v)
 
-/-- A single nonterminal produces exactly the outputs of its rules. -/
 theorem produces_singleton_iff {A : g.NT} {v : List (Symbol T g.NT)} :
     g.Produces [.nonterminal A] v ↔ ∃ r ∈ g.rules, r.input = A ∧ v = r.output := by
   simp only [Produces, ContextFreeRule.rewrites_singleton_iff]

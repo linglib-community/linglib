@@ -140,7 +140,6 @@ theorem isSome_eval_iff :
     · cases f <;> simp only [Feature.apply, pred, Option.map_some, Option.bind_some, ih] <;>
         cases fs <;> simp
 
-/-- Every feature of a structure removes a layer. -/
 theorem length_preds_add_length_le (h : S.eval fs = some T) :
     T.preds.length + fs.length ≤ S.preds.length := by
   induction fs generalizing S with
@@ -153,7 +152,6 @@ theorem eval_eq_some_self_iff : S.eval fs = some S ↔ fs = [] :=
   ⟨fun h ↦ List.length_eq_zero_iff.1 (by have := length_preds_add_length_le h; omega),
     fun h ↦ h ▸ rfl⟩
 
-/-- The features commute with a map of sets that preserves differences. -/
 theorem eval_map (hg : ∀ s t, g (s \ t) = g s \ g t) (S : Layered β) (fs : List Feature) :
     (S.map g).eval fs = (S.eval fs).map (map g) := by
   induction fs generalizing S with
@@ -202,7 +200,6 @@ def atom : Role → α
 theorem speaker_ne_addressee : S.speaker ≠ S.addressee := fun h ↦
   S.addressee_notMem (h ▸ S.speaker_mem)
 
-/-- `Sᵢ₊ᵤ` has two obligatory members, the speaker and an addressee. -/
 theorem nontrivial_Siu : S.Siu.Nontrivial :=
   ⟨_, S.Si_subset S.speaker_mem, _, S.addressee_mem, S.speaker_ne_addressee⟩
 
@@ -254,8 +251,6 @@ theorem eq_nil_or_of_eval (h : S.layered.eval fs = some L) :
   simpa using (isSome_eval_layered_iff S).1 (Option.isSome_of_eq_some h)
 
 variable {S} in
-/-- Every structure but `[DIST]` delivers a nonempty set, the two inner sets having an obligatory
-member each. -/
 theorem nonempty_of_eval (h : S.layered.eval fs = some L) (hfs : fs ≠ third) : L.set.Nonempty := by
   rcases eq_nil_or_of_eval h with rfl | rfl | rfl | rfl | rfl <;> obtain rfl := Option.some.inj h
   exacts [S.nontrivial_Siuo.nonempty, S.nontrivial_Siu.nonempty, ⟨_, S.speaker_mem⟩,
@@ -271,8 +266,6 @@ the speaker and the addressee alone. -/
 def participants (fs : List Feature) : Option (Finset Role) :=
   ((⟨.univ, [.univ, {.speaker}]⟩ : Layered (Finset Role)).eval fs).map (·.set)
 
-/-- In every person space the participants in the set a feature structure delivers are its
-`participants`. -/
 theorem preimage_atom_eval (fs : List Feature) :
     (S.layered.eval fs).map (S.atom ⁻¹' ·.set) = (participants fs).map (↑) := by
   have h : S.layered.map (S.atom ⁻¹' ·) =
@@ -284,8 +277,6 @@ theorem preimage_atom_eval (fs : List Feature) :
   rw [h, Layered.eval_map (g := ((↑) : Finset Role → Set Role)) Finset.coe_sdiff] at h₁
   simpa [participants, Function.comp_def, Layered.map] using congrArg (·.map (·.set)) h₁.symm
 
-/-- The four person structures deliver the participants of the four persons of the
-quadripartition. -/
 theorem ofParticipants_participants :
     (participants first).map Person.ofParticipants = some .firstExclusive ∧
       (participants inclusive).map Person.ofParticipants = some .firstInclusive ∧
@@ -305,8 +296,6 @@ not on their input. -/
 def PersonSpace.PluralDefined (S : PersonSpace α) (L : Layered (Set α)) : Prop :=
   L.set.Nontrivial ∧ L ≠ S.layered
 
-/-- `PL` is defined on the output of a feature structure with more than one member, unless the
-structure has no feature. -/
 theorem PersonSpace.pluralDefined_iff {S : PersonSpace α} {fs : List Feature}
     {L : Layered (Set α)} (h : S.layered.eval fs = some L) :
     S.PluralDefined L ↔ L.set.Nontrivial ∧ fs ≠ [] :=
@@ -369,8 +358,6 @@ features deliver that are groups exactly when it is plural. -/
 def Pronoun.categories (p : Pronoun) : Finset Person.Category :=
   {c | participants p.person = some c.participants ∧ (c.IsGroup ↔ p.plural)}
 
-/-- The seven pronouns cover the eight referential categories between them, the inclusive
-covering the speaker and addressee both alone and with others. -/
 theorem map_categories_inventory :
     inventory.map Pronoun.categories =
       [{.speaker}, {.addressee}, {.other}, {.speakerAddressee, .speakerAddresseeOthers},
@@ -436,32 +423,24 @@ section NaturalClasses
 
 variable {r : SpellOut E} {n : Bool}
 
-/-- The second person shares `PROX` with the first and `DIST` with the third, which share
-nothing. -/
 theorem shared_features :
     (first : Multiset Feature) ∩ second = {.prox} ∧ (second : Multiset Feature) ∩ third = {.dist} ∧
       (first : Multiset Feature) ∩ third = 0 := by
   decide
 
-/-- A rule applying to two pronouns of one number applies to any pronoun of that number with the
-features they share. -/
 theorem applies_of_inter_le {fs gs hs : List Feature} (hf : Applies r (⟨fs, n⟩ : Pronoun))
     (hg : Applies r (⟨gs, n⟩ : Pronoun)) (h : (fs : Multiset Feature) ∩ gs ≤ hs) :
     Applies r (⟨hs, n⟩ : Pronoun) :=
   ⟨(Multiset.le_inter hf.1 hg.1).trans h, hf.2⟩
 
-/-- No rule singles out the first and the third person against the second. -/
 theorem applies_second_of_first_of_third (h₁ : Applies r (⟨first, n⟩ : Pronoun))
     (h₃ : Applies r (⟨third, n⟩ : Pronoun)) : Applies r (⟨second, n⟩ : Pronoun) :=
   applies_of_inter_le h₁ h₃ (by decide)
 
-/-- No rule singles out the inclusive and the second person against the exclusive. -/
 theorem applies_first_of_inclusive_of_second (h₁ : Applies r (⟨inclusive, n⟩ : Pronoun))
     (h₂ : Applies r (⟨second, n⟩ : Pronoun)) : Applies r (⟨first, n⟩ : Pronoun) :=
   applies_of_inter_le h₁ h₂ (by decide)
 
-/-- A rule not mentioning `PL` applies to the exclusive exactly when it applies to the first
-singular, the two sharing their person structure. -/
 theorem applies_exclusive_iff_first (h : r.plural = false) :
     Applies r (⟨first, true⟩ : Pronoun) ↔ Applies r ⟨first, false⟩ := by
   simp [Applies, h]
@@ -492,8 +471,6 @@ theorem dutch_referential : ∀ r ∈ dutch, ∀ c,
 /-- A rule set with a rule mentioning two `PROX` and a rule mentioning one, both with `PL`. -/
 def clusive (a b : E) : RuleSet (SpellOut E) := [⟨{.prox, .prox}, true, a⟩, ⟨{.prox}, true, b⟩]
 
-/-- A rule mentioning two `PROX` gives the exclusive a form of its own. It blocks the rule
-mentioning one on the exclusive and cannot apply to the inclusive. -/
 theorem clusive_split (a b : E) :
     (clusive a b).realize SpellOut.size ⟨first, true⟩ = some a ∧
       (clusive a b).realize SpellOut.size ⟨inclusive, true⟩ = some b :=

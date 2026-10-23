@@ -86,7 +86,6 @@ def ofState (A : State W V M) : FCP W V M := fun F : State W V M ↦ Part.some (
 
 theorem mem_ofState : F' ∈ ofState A F ↔ F' = F * A := Part.mem_some_iff
 
-/-- Updating by the initial state changes nothing. -/
 theorem ofState_one : ofState (1 : State W V M) = PFun.id _ := funext fun _ ↦ by simp
 
 /-- Assertive update is the regular action of the merge monoid: updating by
@@ -94,7 +93,6 @@ theorem ofState_one : ofState (1 : State W V M) = PFun.id _ := funext fun _ ↦ 
 theorem ofState_mul : ofState (A * B) = (ofState A).seq (ofState B) :=
   funext fun _ ↦ by simp [PartialUpdate.seq, PFun.comp_apply, mul_assoc]
 
-/-- Principle (A) at an assertive update: merging only adds information. -/
 theorem ofState_le (h : F' ∈ ofState A F) : F' ≤ F := mem_ofState.mp h ▸ State.mul_le_left
 
 /-- Up to informational equivalence, assertion is additive in the sense of
@@ -119,7 +117,6 @@ def atomW (pred : W → Prop) : FCP W V M :=
 stratum `{x}`. -/
 def atomVar (pred : M → Prop) (x : V) : FCP W V M := ofState (State.atomAt x fun _ ↦ pred)
 
-/-- The world atom filters the file by its predicate. -/
 theorem atomW_eq (pred : W → Prop) : atomW pred F = Part.some {p ∈ F | pred p.world} := by
   rw [atomW, ofState_apply, State.mul_eq_sep_of_uniformAt fun _ h ↦ h.1, State.mul_stratum_empty]
   congr 1
@@ -176,8 +173,6 @@ def def_ (x : V) (N : FCP W V M) : FCP W V M :=
 
 @[simp] theorem admits_neg : (neg φ).Admits F ↔ φ.Admits F := Iff.rfl
 
-/-- The conditional admits a file iff its antecedent does and its consequent
-admits the antecedent's update. -/
 theorem admits_cond :
     (cond φ ψ).Admits F ↔ ∃ h : φ.Admits F, ψ.Admits ((φ F).get h) := Iff.rfl
 
@@ -197,7 +192,6 @@ theorem admits_def_ (N : FCP W V M) :
 theorem def_apply (N : FCP W V M) (h : State.Familiar F x ∧ N.supports F) :
     def_ x N F = Part.some F := Part.assert_pos h
 
-/-- Negation only discards points. -/
 theorem subset_of_mem_neg (h : F' ∈ neg φ F) : F' ⊆ F := by
   obtain ⟨_, -, rfl⟩ := (Part.mem_map_iff _).mp h
   exact fun _ hp ↦ hp.1
@@ -226,7 +220,6 @@ theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.indef [DecidableEq V
 theorem isEliminative_def_ (x : V) (N : FCP W V M) : (def_ x N).IsEliminative :=
   fun _ _ hF' ↦ let ⟨_, hF'⟩ := Part.mem_assert_iff.mp hF'; le_of_eq (Part.mem_some_iff.mp hF')
 
-/-- Once false, always false: an eliminative update of the absurd file is absurd. -/
 theorem _root_.DynamicSemantics.PartialUpdate.IsEliminative.eq_empty_of_mem
     (h : φ.IsEliminative) (hF' : F' ∈ φ ∅) : F' = ∅ :=
   State.eq_empty_of_le_bot (h ∅ F' hF')
@@ -243,12 +236,10 @@ defined and consistent. Existential quantification is built into truth, so
 indefinites need no existential closure. -/
 def trueIn (F : State W V M) (φ : FCP W V M) : Prop := ∃ F' ∈ φ F, F'.Nonempty
 
-/-- Truth implies definedness. -/
 theorem trueIn_admits (h : trueIn F φ) : φ.Admits F :=
   let ⟨F', hF', _⟩ := h
   Part.dom_iff_mem.mpr ⟨F', hF'⟩
 
-/-- A consistent file is true at what it supports. -/
 theorem trueIn_of_supports (hsup : φ.supports F) (hcons : F.Nonempty) :
     trueIn F φ :=
   ⟨F, hsup, hcons⟩

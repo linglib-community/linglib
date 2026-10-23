@@ -284,7 +284,6 @@ theorem joinM_lawyerOuter :
     joinM (lawyerOuter lawyer rel visits) = pure visits <*> rel <*> lawyer := by
   ext q; simp [lawyerOuter, joinM, Set.bind_def, Set.seq_eq_set_seq, Set.mem_seq_iff]; aesop
 
-/-- Flattening the other higher-order island gives the same point-wise island. -/
 theorem joinM_relativeOuter :
     joinM (relativeOuter lawyer rel visits) = pure visits <*> rel <*> lawyer := by
   ext q; simp [relativeOuter, joinM, Set.bind_def, Set.seq_eq_set_seq, Set.mem_seq_iff]; aesop
@@ -424,7 +423,6 @@ theorem paper_wide_beta :
       paperBy paper wrote >>= fun x ↦ det GQ.no cand fun y ↦ pure (subm x y) :=
   rfl
 
-/-- The wide reading reads the pronoun's index. -/
 theorem dependsOn_paper_wide :
     DependsOn (paperBy paper wrote >>= fun x ↦ det GQ.no cand (beta 0 fun y ↦ pure (subm x y)))
       {0} := by
@@ -439,7 +437,6 @@ theorem paper_narrow :
       fun _ ↦ {¬ ∃ y ∈ cand, ∃ x ∈ paper, wrote x y ∧ subm x y} := by
   funext g; simp [paperBy, det, GQ.no, sSup_Prop_eq, -eq_iff_iff]
 
-/-- The narrow reading depends on no index. -/
 theorem dependsOn_paper_narrow :
     DependsOn (det GQ.no cand (beta 0 fun y ↦ paperBy paper wrote >>= fun x ↦ pure (subm x y)))
       ∅ := by

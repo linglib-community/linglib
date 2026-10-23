@@ -104,7 +104,6 @@ def meaning (es : List (NegElement α)) (P : List α → Prop) : Prop :=
 
 /-! ### Strict concord -/
 
-/-- With every feature uninterpretable, the markers contribute nothing. -/
 theorem interp_filter_isNword {es : List (NegElement α)} (hu : ∀ e ∈ es, e.feature = .u)
     (P : List α → Prop) : interp es P ↔ interp (es.filter NegElement.isNword) P := by
   induction es generalizing P with
@@ -173,9 +172,6 @@ theorem meaning_dn_iff_iteration :
       DeSwartSag2002.reading .iteration A B fun x y ↦ P [x, y] := by
   simp [meaning, interp, NegElement.feature, DeSwartSag2002.reading, iterate]
 
-/-- Unlike de Swart and Sag's, Zeijlstra's analysis gives a concord clause with two n-words no
-double negation reading: of one individual who called no one, its meaning holds and the
-iteration of *no* fails. -/
 theorem meaning_concord_and_not_iteration :
     meaning [.nword .u (fun _ : Fin 1 ↦ True), .nword .u fun _ ↦ True] (fun _ ↦ False) ∧
       ¬ DeSwartSag2002.reading .iteration (fun _ : Fin 1 ↦ True) (fun _ ↦ True)
@@ -192,8 +188,6 @@ Zeijlstra's is the one that is upward monotone in its scope. -/
 
 section Readings
 
-/-- *No* is not upward monotone in its scope: of one individual, none is in `⊥` but one is in
-`⊤`. -/
 theorem not_scopeMonotone_no : ¬ ScopeMonotone (no : GQ PUnit.{u + 1}) := fun h ↦ by
   simpa [no] using h (fun _ ↦ True) (bot_le (a := fun _ ↦ True))
 
@@ -206,8 +200,6 @@ theorem mem_nessuno_and_scopeMonotone_iff {d : GQ.Family.{u}} :
     fun h ↦ h ▸ ⟨.inr rfl, fun _ _ ↦ scopeMonotone_some⟩⟩
   subst hn; exact not_scopeMonotone_no (h PUnit)
 
-/-- Of the readings of Czech *žádný*, the one upward monotone in its scope on every finite
-domain is the indefinite. -/
 theorem mem_zadny_and_scopeMonotone_iff {d : GQ.Family.{u}} :
     (d ∈ ⟦Czech.Determiners.QuantityWord.zadny⟧ ∧
       ∀ (β : Type u) [Fintype β], ScopeMonotone (d β)) ↔ d = GQ.Family.some := by

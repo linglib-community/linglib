@@ -111,7 +111,6 @@ theorem isProjectionOf_iff_eq_or {h p : α} :
     IsProjectionOf H h p ↔ p = h ∨ ∃ d, H p d ∧ IsProjectionOf H h d :=
   Relation.ReflTransGen.cases_head_iff
 
-/-- A maximal projection is a projection of nothing but itself. -/
 theorem IsMaximalProjection.eq_of_isProjectionOf {h p : α} (hp : IsMaximalProjection H p)
     (hph : IsProjectionOf H p h) : h = p := by
   rcases Relation.ReflTransGen.cases_tail hph with rfl | ⟨c, _, hcp⟩
@@ -138,14 +137,11 @@ variable {α : Type*} [PartialOrder α] (H : α → α → Prop)
 variable {H} (hH : ∀ m d, H m d → m ⋖ d)
 include hH
 
-/-- A projection dominates what it projects from. -/
 theorem IsProjectionOf.le {h p : α} (hp : IsProjectionOf H h p) : p ≤ h := by
   induction hp with
   | refl => exact le_rfl
   | tail _ hbc ih => exact ih.trans (hH _ _ hbc).le
 
-/-- Projection lines are intervals, so everything between a projection and its head is a
-projection of the head. -/
 theorem IsProjectionOf.of_le_of_le [IsLeftLinear α] {h p x : α} (hp : IsProjectionOf H h p)
     (hpx : p ≤ x) (hxh : x ≤ h) : IsProjectionOf H h x := by
   induction hp using Relation.ReflTransGen.head_induction_on with
@@ -160,7 +156,6 @@ theorem IsProjectionOf.of_le_of_le [IsLeftLinear α] {h p x : α} (hp : IsProjec
             absurd hxd ((hH _ _ hpd).2 hlt)
       exact ih hdx
 
-/-- Of two projections of one head, the higher is reached from the lower through head daughters. -/
 theorem IsProjectionOf.reflTransGen_of_le [IsLeftLinear α] {h p q : α}
     (hp : IsProjectionOf H h p) (hq : IsProjectionOf H h q) (hpq : p ≤ q) :
     Relation.ReflTransGen H p q := by
@@ -175,7 +170,6 @@ theorem IsProjectionOf.reflTransGen_of_le [IsLeftLinear α] {h p q : α}
       · exact (eq_or_lt_of_le h).elim (fun e ↦ e ▸ le_rfl) fun hqd ↦
           absurd hqd ((hH _ _ hpd).2 hlt)
 
-/-- A projection of `h` below another one is a head daughter. -/
 theorem IsProjectionOf.exists_of_lt [IsLeftLinear α] {h p q : α} (hp : IsProjectionOf H h p)
     (hq : IsProjectionOf H h q) (hpq : p < q) : ∃ m, H m q := by
   rcases Relation.ReflTransGen.cases_tail (hp.reflTransGen_of_le hH hq hpq.le) with
@@ -232,7 +226,6 @@ variable {A}
 theorem mem_segments_comm {x y : α} : y ∈ segments A x ↔ x ∈ segments A y :=
   ⟨Relation.EqvGen.symm _ _, Relation.EqvGen.symm _ _⟩
 
-/-- Segments of one category have the same segments. -/
 theorem segments_eq_of_mem {x y : α} (h : y ∈ segments A x) : segments A y = segments A x :=
   Set.ext fun _ ↦ ⟨fun hz ↦ Relation.EqvGen.trans _ _ _ h hz,
     fun hz ↦ Relation.EqvGen.trans _ _ _ (Relation.EqvGen.symm _ _ h) hz⟩
@@ -243,7 +236,6 @@ theorem mem_segments_of_reflTransGen {x y : α} (h : Relation.ReflTransGen A x y
   | refl => exact mem_segments_self x
   | tail _ hbc ih => exact Relation.EqvGen.trans _ _ _ ih (Relation.EqvGen.rel _ _ hbc)
 
-/-- Without adjunction every category has one segment. -/
 @[simp] theorem segments_bot (x : α) : segments (⊥ : α → α → Prop) x = {x} := by
   ext y
   refine ⟨fun h ↦ ?_, fun h ↦ by rw [Set.mem_singleton_iff.1 h]; exact mem_segments_self x⟩
@@ -286,29 +278,24 @@ theorem excludes_congr {x x' y : α} (h : x' ∈ segments A x) :
 @[simp] theorem excludes_bot {x y : α} : Excludes (⊥ : α → α → Prop) x y ↔ ¬ x ≤ y := by
   simp [Excludes]
 
-/-- The category an adjunct adjoins to contains it. -/
 theorem contains_of_covBy {m a : α} (ha : m ⋖ a) : Contains A m a :=
   ⟨m, mem_segments_self m, ha.lt.le⟩
 
-/-- On a left-linear order a node covers at most one node: it has one mother. -/
 theorem eq_of_covBy_covBy [IsLeftLinear α] {m m' d : α} (hm : m ⋖ d) (hm' : m' ⋖ d) :
     m = m' := by
   rcases IsLeftLinear.comparable_of_le_common hm.le hm'.le with h | h
   · exact (eq_or_lt_of_le h).elim id fun hlt ↦ absurd hm'.lt (hm.2 hlt).elim
   · exact ((eq_or_lt_of_le h).elim Eq.symm fun hlt ↦ absurd hm.lt (hm'.2 hlt).elim)
 
-/-- Two distinct daughters of one mother are incomparable. -/
 theorem not_le_of_covBy {m a d : α} (ha : m ⋖ a) (hd : m ⋖ d) (had : a ≠ d) : ¬ a ≤ d :=
   fun h ↦ had ((hd.eq_or_eq ha.lt.le h).resolve_left (ne_of_gt ha.lt))
 
 variable (hA : ∀ m d, A m d → m ⋖ d)
 include hA
 
-/-- An adjunction relation on a left-linear order has unique mothers. -/
 theorem leftUnique_of_covBy [IsLeftLinear α] : Relator.LeftUnique A :=
   fun _ _ _ hm hm' ↦ eq_of_covBy_covBy (hA _ _ hm) (hA _ _ hm')
 
-/-- A segment lies above or below every segment of its category. -/
 theorem mem_segments_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
     y ∈ segments A x ↔ Relation.ReflTransGen A x y ∨ Relation.ReflTransGen A y x := by
   have hL : Relator.RightUnique (Function.swap A) := fun _ _ _ h h' ↦
@@ -367,8 +354,6 @@ theorem excludes_iff [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
   · exact h x .refl ((IsProjectionOf.le hA hs).trans hsy)
   · exact h s hs hsy
 
-/-- In the form that decides it, inclusion says that `x` dominates `y` and that every segment below
-`x` that dominates `y` hands that on to its host. -/
 theorem includes_iff_forall_le [IsLeftLinear α] (hU : Relator.RightUnique A) {x y : α} :
     Includes A x y ↔ x ≤ y ∧ ∀ q, Relation.ReflTransGen A x q → q ≤ y → ∀ d, A q d → d ≤ y := by
   rw [includes_iff hA hU]
@@ -412,7 +397,6 @@ theorem isMaximalCategory_congr {x x' : α} (h : x' ∈ segments A x) :
 theorem IsMaximalCategory.isMaximalProjection {x : α} (h : IsMaximalCategory P A x) :
     IsMaximalProjection P x := h x (mem_segments_self x)
 
-/-- Without adjunction a maximal category is a maximal projection. -/
 @[simp] theorem isMaximalCategory_bot {x : α} :
     IsMaximalCategory P (⊥ : α → α → Prop) x ↔ IsMaximalProjection P x := by
   simp [IsMaximalCategory]
@@ -421,8 +405,6 @@ theorem IsMaximalCategory.isMaximalProjection {x : α} (h : IsMaximalCategory P 
     maximalProjections P (⊥ : α → α → Prop) = {x | IsMaximalProjection P x} := by
   ext x; simp [maximalProjections, IsMinimalProjection]
 
-/-- Along the head relation from the lowest segment of a maximal category, no node below is
-another maximal category: the path would leave the first category by a projection step. -/
 theorem eq_of_reflTransGen_sup {b x : α} (hb : IsMinimalProjection A b)
     (hbx : Relation.ReflTransGen (P ⊔ A) b x) (hx : IsMaximalCategory P A x) : x = b := by
   induction hbx with
@@ -451,8 +433,6 @@ theorem maxCommand_adjunct [IsLeftLinear α] {m d a b : α} (hmd : A m d) (ha : 
   ⟨mem_commandRelation_of_covBy ha ((hA _ _ hmd).lt.le.trans hdb.le), fun h ↦
     not_le_of_covBy (hA _ _ hmd) ha had.symm (h hd hdb)⟩
 
-/-- Only the segments at or above a node decide whether its category is maximal, since a segment
-with a host is no node's projection daughter. -/
 theorem isMaximalCategory_iff_forall_above [IsLeftLinear α] (hP : ∀ m d, P m d → m ⋖ d)
     (hU : Relator.RightUnique A) (hdisj : ∀ m d, A m d → ¬ P m d) {x : α} :
     IsMaximalCategory P A x ↔ ∀ s, Relation.ReflTransGen A s x → IsMaximalProjection P s := by
@@ -531,8 +511,6 @@ theorem isMaximalProjection_headDaughterRel_iff {p : TreePath} :
 instance (p : TreePath) : Decidable (IsMaximalProjection (headDaughterRel hd) p) :=
   decidable_of_iff _ (isMaximalProjection_headDaughterRel_iff hd).symm
 
-/-- `p` is a projection of `h` exactly when it dominates `h` and every position strictly below
-`p` down to `h` is the head daughter of its parent. -/
 theorem isProjectionOf_headDaughterRel_iff {h p : TreePath} :
     IsProjectionOf (headDaughterRel hd) h p ↔
       p ≤ h ∧ ∀ q ∈ h.toList.inits.map TreePath.mk, p < q → headDaughterRel hd q.parent q := by
@@ -627,7 +605,6 @@ def projectionIndex (p : TreePath) : Option ℕ := if seg p then none else hd p
 /-- The head daughter of a segment, its host. -/
 def adjunctionIndex (p : TreePath) : Option ℕ := if seg p then hd p else none
 
-/-- The head relation is projection together with adjunction. -/
 theorem headDaughterRel_eq_sup :
     headDaughterRel hd =
       headDaughterRel (projectionIndex hd seg) ⊔ headDaughterRel (adjunctionIndex hd seg) := by

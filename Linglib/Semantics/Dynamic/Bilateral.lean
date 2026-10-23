@@ -129,14 +129,12 @@ def assertable (φ : BilateralDen W V E)
     (c : Set (Possibility W V (Flat E))) : Prop :=
   φ.unknownUpdate c = ∅
 
-/-- The unknown update is invariant under negation. -/
 theorem unknownUpdate_neg (φ : BilateralDen W V E) (s) :
     (~φ).unknownUpdate s = φ.unknownUpdate s := by
   ext p
   simp only [unknownUpdate, neg, Set.mem_ofPred_eq,
     and_comm (a := p ∉ lowerClosure (φ.negative s))]
 
-/-- Worldly atoms never gap. -/
 theorem unknownUpdate_atom (pred : W → Prop) (s) :
     (atom pred (V := V) (E := E)).unknownUpdate s = ∅ := by
   ext p
@@ -196,7 +194,6 @@ def disj (φ ψ : BilateralDen W V E) : BilateralDen W V E where
 
 @[inherit_doc] scoped infixl:60 " ⊕ " => disj
 
-/-- Conjunction associates in the positive dimension. -/
 theorem conj_assoc_positive (φ ψ χ : BilateralDen W V E) (s) :
     ((φ ⊙ ψ) ⊙ χ).positive s = (φ ⊙ (ψ ⊙ χ)).positive s := rfl
 

@@ -103,7 +103,6 @@ section Article
 
 open Quantifier Quantifier.GQ Quantifier.NP
 
-/-- The iota of Partee's singleton property `ident j` is `j`. -/
 theorem iota_ident (j : E) : iota (ident j) = some j :=
   (iota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ h⟩
 

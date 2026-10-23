@@ -108,8 +108,6 @@ def Stimulus.profile (s : Stimulus) : ℕ × ℕ × ℕ × ℕᵒᵈ :=
   (s.span.length, (s.span.map Word.boundary).sum, (s.span.map Word.load).sum,
     toDual s.filler.ease)
 
-/-- Whatever the span, the which-N filler is easier than the bare one, since the profiles agree
-on every cost and differ on ease alone. -/
 theorem which_easier (span : List Word) :
     (Stimulus.mk .whichN span).profile < (Stimulus.mk .bare span).profile :=
   lt_of_le_of_ne (by simp [Stimulus.profile, Filler.ease]) (by simp [Stimulus.profile, Filler.ease])
@@ -153,7 +151,6 @@ theorem cnpc_definite_harder (f : Filler) :
     (cnpc f .indefinite).profile < (cnpc f .definite).profile := by
   cases f <;> decide
 
-/-- The plural and singular indefinites carry the same load. -/
 theorem cnpc_plural_eq_indefinite (f : Filler) :
     (cnpc f .plural).profile = (cnpc f .indefinite).profile := rfl
 
@@ -170,14 +167,9 @@ def whIslandBaseline : Stimulus := ⟨.bare, [.other, .name, .other, .that, .pro
 theorem whIsland_which_easier : (whIsland .whichN).profile < (whIsland .bare).profile :=
   which_easier _
 
-/-- The bare wh-island is harder than its baseline, since it crosses an interrogative
-boundary. -/
 theorem whIsland_bare_harder_than_baseline :
     whIslandBaseline.profile < (whIsland .bare).profile := by decide
 
-/-- The which-N wh-island and the bare baseline trade the interrogative boundary against the
-richer filler, which Pareto dominance leaves undecided. The experiment found the two read alike
-after the embedded verb. -/
 theorem whIsland_which_incomparable :
     IncompRel (· ≤ ·) (whIsland .whichN).profile whIslandBaseline.profile := by decide
 

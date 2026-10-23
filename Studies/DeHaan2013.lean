@@ -72,13 +72,10 @@ theorem ofCovers_perm {cs cs' : List (Finset Parameter)} (h : cs.Perm cs') :
     ofCovers cs = ofCovers cs' := by
   simp only [ofCovers, h.mem_iff]
 
-/-- Among Aikhenvald's kinds of system, A5 alone has direct terms only. -/
 theorem ofCovers_rows_eq_none_iff (k : Aikhenvald2004.Kind) :
     ∀ r ∈ k.rows, ofCovers (r.map Prod.snd) = none ↔ k = .A5 := by
   revert k; decide +kernel
 
-/-- An inventory realizing one of Aikhenvald's kinds is off the map exactly when the kind is A5,
-auditory against everything else. -/
 theorem value?_eq_none_iff {es : List Evidential} {k : Aikhenvald2004.Kind}
     (h : Aikhenvald2004.Realizes es k) : value? es = none ↔ k = .A5 := by
   obtain ⟨r, hr, hp⟩ := h
@@ -119,21 +116,15 @@ def Language.evidentials : Language → List Evidential
   | .tuyuca => Tuyuca.Evidentiality.evidentials
   | .kashaya => Kashaya.Evidentiality.paradigm .spontaneous .imperfective
 
-/-- No Fragment language has direct evidentials without indirect ones, as no language of the
-chapter's sample does. -/
 theorem value?_isSome (l : Language) : (value? l.evidentials).isSome := by
   revert l; decide +kernel
 
-/-- The map has a value for every Fragment language, which is the inventory's value unless the
-Fragment has no evidentials where the map has some, or no direct evidential where the map has
-one. -/
 theorem exists_mem_lookup_walsCode (l : Language) :
     ∃ v ∈ allData.lookup l.walsCode, value? l.evidentials = some v ∨
       l.evidentials = [] ∧ v ≠ .noGrammaticalEvidentials ∨
       value? l.evidentials = some .indirectOnly ∧ v = .directAndIndirect := by
   revert l; decide +kernel
 
-/-- West Greenlandic's reported evidentials give it the map's value. -/
 theorem westGreenlandic :
     value? WestGreenlandic.Evidentiality.evidentials = allData.lookup "grw" := by
   decide +kernel
@@ -142,15 +133,11 @@ theorem westGreenlandic :
 Aikhenvald reads as evidentiality-neutral, taken as a firsthand term for what the speaker saw. -/
 def di : Evidential := { morphs := [.suff "DI"], covers := {.visual} }
 
-/-- With the witnessed past as a direct evidential, Turkish takes the map's value, and its system
-is Aikhenvald's A1 rather than the A2 she gives it. -/
 theorem turkish_di :
     value? (di :: Turkish.Evidentiality.evidentials) = allData.lookup "tur" ∧
       Aikhenvald2004.Realizes (di :: Turkish.Evidentiality.evidentials) .A1 := by
   decide +kernel
 
-/-- Euchee's auditory evidential, an A5 system, is off the map, which codes the language as
-having no evidentials after Wagner's grammar. -/
 theorem euchee :
     value? [Aikhenvald2004.eucheeKe] = none ∧
       allData.lookup "yuc" = some .noGrammaticalEvidentials :=

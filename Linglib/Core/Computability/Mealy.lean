@@ -139,7 +139,6 @@ theorem runFrom_append :
     T.runFrom s (xs ++ ys) = T.runFrom s xs ++ T.runFrom (T.evalFrom s xs) ys := by
   induction xs generalizing s <;> simp [*]
 
-/-- The run is length-preserving (one output symbol per input symbol). -/
 @[simp] theorem length_runFrom : (T.runFrom s xs).length = xs.length := by
   induction xs generalizing s <;> simp [*]
 
@@ -152,14 +151,10 @@ theorem runFrom_append :
 
 @[simp] theorem runRight_nil : T.runRight [] = [] := rfl
 
-/-- The right-to-left pass emits the head output at the state reached over the entire
-reversed tail, so the right scan reads the future. -/
 @[simp] theorem runRight_cons :
     T.runRight (x :: xs) = T.output (T.eval xs.reverse) x :: T.runRight xs := by
   simp [runRight, run, eval, runFrom_append]
 
-/-- Output coordinate `i` of the run is the output at the state reached after the
-first `i` input symbols. -/
 theorem getElem?_runFrom (i : ℕ) :
     (T.runFrom s xs)[i]? = xs[i]?.map (T.output (T.evalFrom s (xs.take i))) := by
   induction xs generalizing s i <;> cases i <;> simp [*]
@@ -170,7 +165,6 @@ theorem getElem?_run (i : ℕ) :
     (T.run xs)[i]? = xs[i]?.map (T.output (T.eval (xs.take i))) :=
   T.getElem?_runFrom T.start xs i
 
-/-- From any state, the run of a prefix is the prefix of the run. -/
 theorem runFrom_take (n : ℕ) : T.runFrom s (xs.take n) = (T.runFrom s xs).take n := by
   induction xs generalizing s n <;> cases n <;> simp [*]
 

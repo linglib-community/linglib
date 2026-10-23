@@ -87,7 +87,6 @@ the Cause, *John killed Mary by PRO poisoning her*, (323). -/
 theorem OnsetCondition.eq (h : OnsetCondition s e) (h' : OnsetCondition s e') : e = e' :=
   IsLeast.unique h h'
 
-/-- An event downstream of the onset cannot be integrated into the predicate. -/
 theorem not_onsetCondition_of_lt (h : OnsetCondition s e) (hlt : e < e') : ¬ OnsetCondition s e' :=
   fun h' ↦ (h.eq h' ▸ hlt).false
 
@@ -170,12 +169,9 @@ instance : DecidablePred IsEventive := fun c ↦ inferInstanceAs (Decidable (c �
 
 instance : DecidablePred IsMindInternal := fun c ↦ inferInstanceAs (Decidable (percept < c))
 
-/-- A Class II verb's Cause refers to one of the causes of the emotion, the percept or the subject
-matter, so the chain yields just the eventive and the stative reading. -/
 theorem eq_percept_or_eq_subjectMatter (h : c < emotion) : c = percept ∨ c = subjectMatter := by
   revert c; decide
 
-/-- The eventive reading is the one whose Cause refers to the percept. -/
 theorem isEventive_iff : c.IsEventive ↔ c = percept := by
   revert c; decide
 
@@ -184,8 +180,6 @@ is stative. Both properties are fixed by the member of the chain the Cause refer
 theorem isMindInternal_iff_not_isEventive : c.IsMindInternal ↔ ¬ c.IsEventive :=
   lt_iff_not_ge
 
-/-- Every reading's chain contains the subject matter: on the eventive reading the percept gives
-rise to one, however fleeting, and on the stative reading it is the Cause. -/
 theorem subjectMatter_mem_Ici (h : c < emotion) : subjectMatter ∈ Set.Ici c := by
   revert c; decide
 

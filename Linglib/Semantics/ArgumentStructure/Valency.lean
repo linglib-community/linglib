@@ -90,14 +90,10 @@ def IsTransitive (v : Valency) : Prop := v = {.internal, .external}
 instance (v : Valency) : Decidable v.IsTransitive :=
   inferInstanceAs (Decidable (_ = _))
 
-/-- Root and Voice valencies are disjoint, so under the division of
-    labor the two loci partition a transitive clause's core positions. -/
 theorem isRootValency_inter_isVoiceValency :
     ∀ v v' : Valency, v.IsRootValency → v'.IsVoiceValency →
       v ∩ v' = ∅ := by decide
 
-/-- A root valency and a Voice valency compose to a transitive clause
-    iff each introduces its position. -/
 theorem isTransitive_union_iff :
     ∀ v v' : Valency, v.IsRootValency → v'.IsVoiceValency →
       ((v ∪ v').IsTransitive ↔
@@ -120,15 +116,10 @@ def role (v : Valency) (p : ArgPosition) : Option ArgumentRole :=
 /-- The roles a valency's arguments bear. -/
 def label (v : Valency) : Finset ArgumentRole := {r | ∃ p, v.role p = some r}
 
-/-- S surfaces exactly for the two singleton valencies — the
-    unaccusative (internal) and unergative (external) S, which
-    split-intransitive systems mark differently. -/
 theorem s_mem_label_iff :
     ∀ v : Valency, .S ∈ label v ↔
       v = {.internal} ∨ v = {.external} := by decide
 
-/-- Labels are relational, not positional, since adding a co-argument relabels S to A or P, so
-`label` is not monotone in the lattice. -/
 theorem label_not_monotone : ¬ Monotone label := by decide
 
 end Valency

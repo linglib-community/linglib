@@ -103,7 +103,6 @@ if its Case is unvalued; an inactive closest nominal absorbs the probe ((9)). -/
 def agreeWith (f : Nominal → Nominal) (ns : List Nominal) : List Nominal :=
   ns.modifyHead fun n ↦ if n.isActive then f n else n
 
-/-- `agreeWith f` updates exactly the goal `phiProbe` Agrees with. -/
 theorem agreeWith_eq (f : Nominal → Nominal) (ns : List Nominal) :
     agreeWith f ns = match phiProbe.goal ns with
       | some n => f n :: ns.tail
@@ -115,8 +114,6 @@ theorem agreeWith_eq (f : Nominal → Nominal) (ns : List Nominal) :
       List.head?_cons, Option.filter_some, Probe.ofInt_int, List.tail_cons]
     by_cases h : n.isActive <;> simp [h]
 
-/-- `agreeWith f` applies `f` to the goal `phiProbe` Agrees with and leaves the other nominals as
-they are. -/
 theorem agreeWith_eq_map (f : Nominal → Nominal) {ns : List Nominal} (hns : ns.Nodup) :
     agreeWith f ns = ns.map fun n ↦ if phiProbe.goal ns = some n then f n else n := by
   cases ns with

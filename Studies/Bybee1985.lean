@@ -141,8 +141,6 @@ theorem valence_lowest_when_inflectional :
     ∀ c : BybeeCategory, inflectionalCount50 .valence ≤ inflectionalCount50 c := by
   decide
 
-/-- In the deriv+infl survey (Fig 2), gender agreement, the last category of Bybee's
-diagram of relevance, is the least frequent. -/
 theorem gender_lowest_when_derivOrInfl :
     ∀ c : BybeeCategory, derivOrInflCount50 .genderAgr ≤ derivOrInflCount50 c := by
   decide
@@ -211,9 +209,6 @@ theorem aspect_categorical_against_tense_and_mood :
       p.furtherCount = 0 := by
   decide
 
-/-- Mood vs. person is the freest pair — "the ordering of mood and person is
-somewhat freer" — cross-multiplied: every other tested pair has a strictly
-smaller counterexample rate. -/
 theorem mood_person_ordering_is_freest :
     ∀ p ∈ orderPairs, ∀ q ∈ orderPairs,
       q.closer = .mood → p.closer ≠ .mood →
@@ -267,8 +262,6 @@ def Surveyed (c : BybeeCategory) : Prop :=
 instance : DecidablePred Surveyed := fun _ =>
   inferInstanceAs (Decidable (∃ _ ∈ orderPairs, _))
 
-/-- `SurveyedCloser` is irreflexive: no tested pair ranks a category against
-itself. -/
 theorem surveyedCloser_irrefl : ∀ a : BybeeCategory, ¬ SurveyedCloser a a := by
   decide
 

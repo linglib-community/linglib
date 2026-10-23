@@ -91,22 +91,17 @@ the sentence's meta-intensionalization. -/
 def Commensurate (s : Denotation W) (f : Set W → Set W) : Prop :=
   ∀ c, Compatible s c → f c ∈ MI s
 
-/-- The meta-intensionalization of a proposition is its downward closure. -/
 theorem MI_plain (p : Set W) : MI (plain p) = {i | i ⊆ p} := by
   ext i; simp [MI, plain, Set.subset_def]
 
-/-- A nonempty state is in the meta-intensionalization of *might* exactly when it contains a
-prejacent world, since the outer quantifier is vacuous. -/
 theorem mem_MI_might {p i : Set W} (hi : i.Nonempty) : i ∈ MI (might p) ↔ (i ∩ p).Nonempty :=
   let ⟨w, hw⟩ := hi
   ⟨fun h ↦ h w hw, fun h _ _ ↦ h⟩
 
-/-- The meta-intensionalization of *must* is that of its prejacent. -/
 theorem MI_must (p : Set W) : MI (must p) = MI (plain p) := by
   ext i
   exact ⟨fun h w hw ↦ h w hw hw, fun h _ _ v hv ↦ h v hv⟩
 
-/-- A context is compatible with a proposition exactly when it has a world of it. -/
 theorem compatible_plain {p c : Set W} : Compatible (plain p) c ↔ (c ∩ p).Nonempty := by
   constructor
   · rintro ⟨c', hc'c, ⟨w, hw⟩, hMI⟩
@@ -115,7 +110,6 @@ theorem compatible_plain {p c : Set W} : Compatible (plain p) c ↔ (c ∩ p).No
     exact ⟨{w}, Set.singleton_subset_iff.2 hwc, Set.singleton_nonempty w,
       fun v hv ↦ Set.mem_singleton_iff.1 hv ▸ hwp⟩
 
-/-- A context is compatible with *might* exactly when it has a prejacent world. -/
 theorem compatible_might {p c : Set W} : Compatible (might p) c ↔ (c ∩ p).Nonempty := by
   constructor
   · rintro ⟨c', hc'c, hne, hMI⟩
@@ -124,19 +118,14 @@ theorem compatible_might {p c : Set W} : Compatible (might p) c ↔ (c ∩ p).No
     have hc : c.Nonempty := h.mono Set.inter_subset_left
     exact ⟨c, subset_rfl, hc, (mem_MI_might hc).2 h⟩
 
-/-- Rejecting a proposition presents the rejector as knowing it false. -/
 theorem rejectionLicensed_plain {p i : Set W} : RejectionLicensed (plain p) i ↔ i ∩ p = ∅ := by
   rw [RejectionLicensed, compatible_plain, Set.not_nonempty_iff_eq_empty]
 
-/-- The Stalnakerian biconditional between truth and acceptance holds for propositions, so a
-proposition may be rejected exactly when its negation is known. -/
 theorem rejectionLicensed_plain_iff {p i : Set W} :
     RejectionLicensed (plain p) i ↔ i ∈ MI (plain pᶜ) := by
   rw [rejectionLicensed_plain, MI_plain, Set.mem_ofPred_eq, Set.subset_compl_iff_disjoint_right,
     Set.disjoint_iff_inter_eq_empty]
 
-/-- Rejecting *might* presents the rejector as having no prejacent world, whatever the
-assertor's state. -/
 theorem rejectionLicensed_might {p i : Set W} : RejectionLicensed (might p) i ↔ i ∩ p = ∅ := by
   rw [RejectionLicensed, compatible_might, Set.not_nonempty_iff_eq_empty]
 
@@ -148,8 +137,6 @@ def plainUpdate (p c : Set W) : Set W := c ∩ p
 theorem plainUpdate_commensurate (p : Set W) : Commensurate (plain p) (plainUpdate p) :=
   fun _ _ _ h ↦ h.2
 
-/-- Intersection is the most conservative commensurate update, since every refinement of the context
-in the meta-intensionalization lies inside it. -/
 theorem plainUpdate_greatest {p c c' : Set W} (hc' : c' ⊆ c) (h : c' ∈ MI (plain p)) :
     c' ⊆ plainUpdate p c :=
   fun w hw ↦ ⟨hc' hw, h w hw⟩
@@ -158,11 +145,9 @@ theorem plainUpdate_greatest {p c c' : Set W} (hc' : c' ⊆ c) (h : c' ∈ MI (p
 context otherwise. -/
 def mightUpdate (p c : Set W) : Set W := {w ∈ c | (c ∩ p).Nonempty}
 
-/-- The consistency test leaves a context with a prejacent world as it is. -/
 theorem mightUpdate_of_nonempty {p c : Set W} (h : (c ∩ p).Nonempty) : mightUpdate p c = c := by
   ext w; simp [mightUpdate, h]
 
-/-- The consistency test makes a context without a prejacent world anomalous. -/
 theorem mightUpdate_of_empty {p c : Set W} (h : c ∩ p = ∅) : mightUpdate p c = ∅ := by
   ext w; simp [mightUpdate, h]
 
@@ -172,20 +157,15 @@ theorem mightUpdate_commensurate (p : Set W) : Commensurate (might p) (mightUpda
   rw [mightUpdate_of_nonempty h]
   exact (mem_MI_might (h.mono Set.inter_subset_left)).2 h
 
-/-- The test is the most conservative commensurate update, since every nonempty refinement of the
-context in the meta-intensionalization lies inside it. -/
 theorem mightUpdate_greatest {p c c' : Set W} (hc' : c' ⊆ c) (hne : c'.Nonempty)
     (h : c' ∈ MI (might p)) : c' ⊆ mightUpdate p c :=
   fun _ hw ↦ ⟨hc' hw, ((mem_MI_might hne).1 h).mono (Set.inter_subset_inter_left p hc')⟩
 
-/-- *must* updates as its prejacent does. -/
 theorem must_updates_as_plain (p : Set W) : Commensurate (must p) (plainUpdate p) := by
   intro c _
   rw [MI_must]
   exact fun _ h ↦ h.2
 
-/-- Truth and acceptance come apart for *might*, since the assertor, with a prejacent world, knows
-the claim, while the rejector, with none, is licensed to reject it. -/
 theorem dissociation {p a r : Set W} (ha : (a ∩ p).Nonempty) (hr : r ∩ p = ∅) :
     a ∈ MI (might p) ∧ RejectionLicensed (might p) r :=
   ⟨fun _ _ ↦ ha, rejectionLicensed_might.2 hr⟩
@@ -240,9 +220,6 @@ theorem mightOrdUpdate_of_compatible {p : Set W} {c : OrdState W} (h : (c.base �
     mightOrdUpdate p c = ⟨c.base, insert (· ∈ p) c.ordering⟩ := by
   rw [mightOrdUpdate, ite_eq_left h]
 
-/-- Adding the prejacent to the ordering source is commensurate. With the prejacent among the
-ordering propositions only a prejacent world can better a prejacent world, so a prejacent world best
-among the prejacent worlds of the base is best in the base. -/
 theorem mightOrdUpdate_commensurate [Finite W] {p : Set W} {c : OrdState W}
     (h : (c.base ∩ p).Nonempty) : mightOrdUpdate p c ∈ MIOrd (mightOrd p) := by
   rw [mightOrdUpdate_of_compatible h]
@@ -258,9 +235,6 @@ theorem mightOrdUpdate_commensurate [Finite W] {p : Set W} {c : OrdState W}
   · exact hm.2 ⟨hv, hvp⟩ hvm
   · exact absurd (hvm (· ∈ p) (Set.mem_insert _ _) hm.1.2) hvp
 
-/-- Compatibility with *might* under the ordering semantics is again having a prejacent world in the
-base, since the refinement whose ordering source is the prejacent alone makes the prejacent worlds
-best. -/
 theorem compatibleOrd_might {p : Set W} {c : OrdState W} :
     CompatibleOrd (mightOrd p) c ↔ (c.base ∩ p).Nonempty := by
   constructor
@@ -273,8 +247,6 @@ theorem compatibleOrd_might {p : Set W} {c : OrdState W} :
     rw [Preorder.minimals_ofCriteria_eq ⟨w, hwb, by simpa using hwp⟩]
     exact ⟨hwb, by simpa using hwp⟩
 
-/-- Rejection of *might* is licensed, as before, by the rejector's lack of a prejacent
-world. -/
 theorem rejectionOrd_might {p : Set W} {i : OrdState W} :
     ¬ CompatibleOrd (mightOrd p) i ↔ i.base ∩ p = ∅ := by
   rw [compatibleOrd_might, Set.not_nonempty_iff_eq_empty]
@@ -289,8 +261,6 @@ noncomputable def mustOrdUpdate (p : Set W) (c : OrdState W) : OrdState W :=
     ⟨c.base, insert (· ∈ p) {q ∈ c.ordering | ∃ w ∈ p, q w}⟩
   else ⟨∅, c.ordering⟩
 
-/-- With the prejacent as the whole ordering source, the best worlds are the prejacent worlds
-of the base. -/
 theorem mustOrd_singleton {p : Set W} {c : OrdState W} (h : (c.base ∩ p).Nonempty) :
     (⟨c.base, {(· ∈ p)}⟩ : OrdState W) ∈ MIOrd (mustOrd p) := by
   obtain ⟨w, hwb, hwp⟩ := h
@@ -299,8 +269,6 @@ theorem mustOrd_singleton {p : Set W} {c : OrdState W} (h : (c.base ∩ p).Nonem
   rw [Preorder.minimals_ofCriteria_eq ⟨w, hwb, by simpa using hwp⟩] at hv
   simpa using hv.2
 
-/-- Compatibility with *must* under the ordering semantics is having a prejacent world in
-the base, given a best world in every nonempty base. -/
 theorem compatibleOrd_must [Finite W] {p : Set W} {c : OrdState W} :
     CompatibleOrd (mustOrd p) c ↔ (c.base ∩ p).Nonempty := by
   constructor
@@ -320,23 +288,16 @@ scoped macro "decide_states" : tactic =>
       false_implies,
       implies_true, true_and, and_true, forall_const]; decide))
 
-/-- In the paper's first scenario the ordering source is empty and every world of the base is best,
-so a context with a prejacent world is compatible with *must* yet not in its meta-intensionalization
-until the prejacent is added. -/
 theorem must_needs_prejacent :
     (⟨Set.univ, ∅⟩ : OrdState (Fin 3)) ∉ MIOrd (mustOrd {0, 1}) ∧
       (⟨Set.univ, {(· ∈ ({0, 1} : Set (Fin 3)))}⟩ : OrdState (Fin 3)) ∈ MIOrd (mustOrd {0, 1}) := by
   decide_states
 
-/-- In the paper's second scenario a proposition disjoint from the prejacent keeps a non-prejacent
-world best even after the prejacent is added, so it has to be removed. -/
 theorem must_needs_removal :
     (⟨Set.univ, {(· ∈ ({0, 1} : Set (Fin 3))), (· ∈ ({2} : Set (Fin 3)))}⟩ : OrdState (Fin 3)) ∉
       MIOrd (mustOrd {0, 1}) := by
   decide_states
 
-/-- On the second scenario the *must* update removes the disjoint proposition and lands in
-the meta-intensionalization. -/
 theorem mustOrdUpdate_removal :
     mustOrdUpdate ({0, 1} : Set (Fin 3)) ⟨Set.univ, {(· ∈ ({2} : Set (Fin 3)))}⟩ ∈
       MIOrd (mustOrd {0, 1}) := by
@@ -350,8 +311,6 @@ theorem mustOrdUpdate_removal :
   rw [mustOrdUpdate, ite_eq_left ⟨0, Set.mem_univ _, by simp⟩, h, insert_empty_eq]
   exact must_needs_prejacent.2
 
-/-- Removing the disjoint propositions does not suffice, since two propositions that each overlap
-the prejacent can jointly keep a non-prejacent world best. -/
 theorem overlapping_not_sufficient :
     ∃ o : Set (Fin 3 → Prop), (∀ q ∈ o, ∃ w ∈ ({0, 1} : Set (Fin 3)), q w) ∧
       (⟨Set.univ, insert (· ∈ ({0, 1} : Set (Fin 3))) o⟩ : OrdState (Fin 3)) ∉ MIOrd (mustOrd {0,
@@ -366,21 +325,15 @@ def mightRel (f : W → Set W) (p : Set W) (w : W) : Prop := (f w ∩ p).Nonempt
 /-- Epistemic closure says that from every world of the state the whole state is accessible. -/
 def Closed (f : W → Set W) (i : Set W) : Prop := ∀ w ∈ i, f w = i
 
-/-- Under closure the relational *might* is known in a nonempty state exactly when the state
-has a prejacent world, as on the domain semantics. -/
 theorem relational_might {f : W → Set W} {p i : Set W} (hf : Closed f i) (hi : i.Nonempty) :
     (∀ w ∈ i, mightRel f p w) ↔ (i ∩ p).Nonempty := by
   obtain ⟨v, hv⟩ := hi
   exact ⟨fun h ↦ hf v hv ▸ h v hv, fun h w hw ↦ by rw [mightRel, hf w hw]; exact h⟩
 
-/-- Under closure the relational *must* is known exactly when the state lies in the
-prejacent. -/
 theorem relational_must {f : W → Set W} {p i : Set W} (hf : Closed f i) :
     (∀ w ∈ i, f w ⊆ p) ↔ i ⊆ p :=
   ⟨fun h w hw ↦ h w hw (hf w hw ▸ hw), fun h w hw ↦ (hf w hw).symm ▸ h⟩
 
-/-- Under closure of the accessibility and ordering functions, the relational ordering
-*might* is known exactly when the domain version is. -/
 theorem relational_ordering {f : W → Set W} {g : W → Set (W → Prop)} {p : Set W}
     {i : OrdState W} (hf : Closed f i.base) (hg : ∀ w ∈ i.base, g w = i.ordering)
     (hi : i.base.Nonempty) :

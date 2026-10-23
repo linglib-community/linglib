@@ -168,7 +168,6 @@ theorem donkey_universal_reading (a : ℕ → M) :
     exact ⟨a, fun _ _ ↦ rfl, fun v' _ ⟨hf, hd, ho⟩ ↦
       ⟨v', fun _ _ ↦ rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
 
-/-- The donkey DRS is proper, the antecedent supplying the consequent's referents. -/
 theorem donkey_proper : donkey.IsProper := by decide
 
 /-- The (2.45)-style consequent `[u₃ | u₃ = u₂, beats u₁ u₃]`, in which the pronoun *it*
@@ -177,8 +176,6 @@ def donkeyPronounCons : DRS krLang ℕ := .mk {3} [.eq 3 2, .atom ⟨.beats, ![1
 /-- (2.47) with the pronoun completed by referent-plus-equation. -/
 def donkeyPronoun : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyPronounCons]
 
-/-- The pronoun-completed conditional has the same universal truth conditions, the equation
-forcing the new referent to the donkey's value. -/
 theorem donkeyPronoun_tc (a : ℕ → M) :
     DRS.trueRel donkeyPronoun a ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
@@ -211,7 +208,6 @@ extended by Def. 2.1.2). -/
 theorem donkey_antecedent_subordinate : DirectlySubordinate donkeyAnte donkey :=
   .impAnte (c := donkeyCons) (by simp [donkey])
 
-/-- The consequent box is likewise directly subordinate to the donkey DRS. -/
 theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkey :=
   .impCons (a := donkeyAnte) (by simp [donkey])
 
@@ -220,7 +216,6 @@ theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkey :=
 theorem donkey_antecedent_accessible : AccessibleTo donkey donkeyAnte donkeyCons :=
   ⟨[donkeyCons, donkeyAnte, donkey], .single (.impCons (by simp [donkey])), by simp⟩
 
-/-- The consequent is not among the boxes accessible at the antecedent, the `⇒` asymmetry. -/
 theorem donkey_not_consequent_accessible : ¬ AccessibleTo donkey donkeyCons donkeyAnte := by
   rintro ⟨bs, h, hmem⟩
   rw [Occurrence, ← DRS.mem_occurrences_iff] at h
@@ -264,8 +259,6 @@ instance : krLang.Structure Bool where
     | 2, .owns => fun args ↦ args 0 = false ∧ args 1 = true
     | _, _ => fun _ ↦ False
 
-/-- The donkey conditional is false when the owning pair goes unbeaten, here with farmer
-`false` owning donkey `true` and `beats` empty. -/
 theorem donkey_false_in_model (a : ℕ → Bool) : ¬ DRS.trueRel donkey a := by
   rw [donkey_universal_reading]
   exact fun h ↦ h false true ⟨rfl, rfl, rfl, rfl⟩

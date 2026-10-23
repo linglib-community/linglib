@@ -75,14 +75,11 @@ theorem canonical_verb_chain :
       discoverAgentivity < lookAtAgentivity ∧ lookAtAgentivity < assassinateAgentivity := by
   decide
 
-/-- Every node of the chain respects the one relation among the properties, volition
-entails sentience. -/
 theorem canonical_verbs_valid :
     sitAgentivity.Valid ∧ knowAgentivity.Valid ∧ discoverAgentivity.Valid ∧
       lookAtAgentivity.Valid ∧ assassinateAgentivity.Valid := by
   decide
 
-/-- The projection of [dowty-1991]'s perception profile lands on the chain at *see*. -/
 theorem see_subject_agentivity :
     perception.subjectProfile.toAgentivity = knowAgentivity := by decide
 
@@ -117,7 +114,6 @@ theorem kill_subject_range {n : ParticipantType} (h : minimalInstigator ≤ n) :
     n.toCaseRegion = .nomErg :=
   (ParticipantType.toCaseRegion_eq_nomErg_iff n).mpr h
 
-/-- The endpoints of the range are electricity, with instigation alone, and the assassin. -/
 theorem kill_subject_endpoints :
     minimalInstigator.toCaseRegion = .nomErg ∧ (⊤ : ParticipantType).toCaseRegion = .nomErg :=
   ⟨kill_subject_range le_rfl, kill_subject_range le_top⟩
@@ -157,8 +153,6 @@ theorem transitivity_hierarchy :
       effectorAgent.toCaseRegion = .nomErg ∧ pursuitAgent.toCaseRegion = .nomErg := by
   decide
 
-/-- The patients of the two effective classes fall in the accusative or absolutive region and the
-pursuit patient does not. -/
 theorem transitivity_patient_regions :
     TransitivityRank.resultativeEffective.patientType.toCaseRegion = .accAbs ∧
       TransitivityRank.contact.patientType.toCaseRegion = .accAbs ∧
@@ -225,8 +219,6 @@ theorem genitive_accusative_alternation (d : Definiteness) :
       (opacityObject d = ⊥ ↔ ¬ d.Referring) := by
   cases d <;> decide
 
-/-- The alternation is limited to verbs without existential persistence entailments on their
-object: any node inside the transitivity region lies above the genitive's. -/
 theorem genitive_outside_region (n : ParticipantType) (h : n.InTransitiveRegion) :
     n ≠ ⊥ :=
   fun hn ↦ absurd h (hn ▸ by decide)

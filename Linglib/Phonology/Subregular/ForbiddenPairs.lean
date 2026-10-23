@@ -57,8 +57,6 @@ variable {α : Type*} (R : α → α → Prop)
 def forbiddenPairs : Set (Augmented α) :=
   { f | ∃ a b, R a b ∧ f = [some a, some b] }
 
-/-- A list has no forbidden 2-factor iff each adjacent pair is permitted, a boundary `none`
-permitting anything. -/
 private lemma forbiddenPairFree_iff_isChain (xs : Augmented α) :
     (∀ f ∈ List.kFactors 2 xs, f ∉ forbiddenPairs R) ↔
       xs.IsChain (fun u v ↦ ∀ a ∈ u, ∀ b ∈ v, ¬ R a b) := by
@@ -117,8 +115,6 @@ lemma map_mem_ofForbiddenPairs_language_iff {β : Type*} {f : β → α} {p : α
   simp only [mem_ofForbiddenPairs_language_iff, List.filter_map, List.isChain_map]
   rfl
 
-/-- Forbidding `R₁ ∨ R₂` on one tier is conjunctive membership in the two languages.
-Cross-tier composition needs MTSL, not this constructor. -/
 lemma mem_ofForbiddenPairs_or_language_iff {R₁ R₂ : α → α → Prop} {p : α → Prop}
     [DecidablePred p] {w : List α} :
     w ∈ (ofForbiddenPairs (fun a b ↦ R₁ a b ∨ R₂ a b) p).language ↔

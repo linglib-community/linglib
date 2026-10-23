@@ -160,8 +160,6 @@ def c10 : Utt := ⟨[pron .betsy .subject, name .susan .object]⟩
 
 end D7
 
-/-- Susan is the backward-looking center of (b) in every variant: the ranking of the
-forward-looking centers, not the choice of realization, fixes it. -/
 theorem susan_cb : cb D7.b D7.c7 = some .susan ∧ cb D7.b D7.c8 = some .susan ∧
     cb D7.b D7.c9 = some .susan ∧ cb D7.b D7.c10 = some .susan := by
   decide
@@ -336,8 +334,6 @@ theorem d34_jeff_cb : cb D34.a D34.b = some .jeff ∧ cb D34.b D34.c = some .jef
     PronominalizationConstraint D34.b D34.c := by
   decide
 
-/-- With two pronouns, as in the paper's variant, the rules still hold, constraining only the
-highest-ranked forward-looking center, Carl. -/
 theorem d34_two_pronouns : cb D34.b D34.c' = some .carl ∧
     PronominalizationConstraint D34.b D34.c' := by
   decide

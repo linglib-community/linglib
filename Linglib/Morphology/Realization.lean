@@ -95,8 +95,6 @@ theorem not_isConstantIn_of_isVariantIn {g : R → Ctx → Finset X} {r : R}
   obtain ⟨c, c', x, hx, x', hx', hne⟩ := h
   exact fun hc => hne (hc x hx x' hx')
 
-/-- Constancy at an index is subsingletonhood of the index's total image —
-the bridge to mathlib's `Set.Subsingleton` ecosystem. -/
 theorem isConstantIn_iff_subsingleton {g : R → Ctx → Finset X} {r : R} :
     IsConstantIn g r ↔ {x | ∃ c, x ∈ g r c}.Subsingleton := by
   constructor
@@ -146,12 +144,10 @@ differ, as √GO has *go* and *went*, the case behind [harley-2014]'s argument
 that indices, not forms, individuate. -/
 def IsSuppletive (r : R) : Prop := IsVariantIn S.realize r
 
-/-- A suppletive root is not invariant. -/
 theorem not_isInvariant_of_isSuppletive {r : R} (h : S.IsSuppletive r) :
     ¬ S.IsInvariant r :=
   not_isConstantIn_of_isVariantIn h
 
-/-- Invariance is subsingletonhood of the allomorph set. -/
 theorem isInvariant_iff_subsingleton_exponents {r : R} :
     S.IsInvariant r ↔ (S.exponents r).Subsingleton :=
   isConstantIn_iff_subsingleton
@@ -253,7 +249,6 @@ def comp {G : Type*} [DecidableEq G] (S : Realization R Ctx F)
     (T : Realization F Ctx G) : Realization R Ctx G :=
   ⟨fun r c => (S.realize r c).biUnion (fun f => T.realize f c)⟩
 
-/-- Totality is closed under pipelining. -/
 theorem comp_isTotal {G : Type*} [DecidableEq G] {S : Realization R Ctx F}
     {T : Realization F Ctx G} (hS : S.IsTotal) (hT : T.IsTotal) :
     (S.comp T).IsTotal := by
@@ -293,7 +288,6 @@ def Hom.comp {S₁ : Realization R₁ C₁ F} {S₂ : Realization R₂ C₂ F}
    fun r c => (f.realize_eq r c).trans
      (g.realize_eq (f.onRoot r) (f.onCtx r c))⟩
 
-/-- Homs preserve licensing. -/
 theorem Hom.isLicensed {S : Realization R₁ C₁ F} {T : Realization R₂ C₂ F}
     (φ : Hom S T) {r : R₁} {c : C₁} (h : S.IsLicensed r c) :
     T.IsLicensed (φ.onRoot r) (φ.onCtx r c) := by
@@ -335,7 +329,6 @@ def IsIntrinsic (r : R) : Prop := IsConstantIn S.interp r
 failure of intrinsic meaning. -/
 def IsAllosemous (r : R) : Prop := IsVariantIn S.interp r
 
-/-- An allosemous root has no intrinsic meaning. -/
 theorem not_isIntrinsic_of_isAllosemous {r : R} (h : S.IsAllosemous r) :
     ¬ S.IsIntrinsic r :=
   not_isConstantIn_of_isVariantIn h
@@ -372,20 +365,12 @@ def Hom.toRealizationHom {S : Interpreted R₁ C₁ F M} {T : Interpreted R₂ C
     (φ : Hom S T) : Realization.Hom S.toRealization T.toRealization :=
   ⟨φ.onRoot, fun _ c => φ.onCtx c, φ.realize_eq⟩
 
-/-- Merged roots agree contextwise in interpretation, the keystone separating
-identity from accidental homophony. A strict hom identifying two indices forces
-their interpretations to coincide in every context, so *bank₁* and *bank₂*
-never merge. -/
 theorem Hom.interp_eq_of_onRoot_eq {S : Interpreted R₁ C₁ F M}
     {T : Interpreted R₂ C₂ F M} (φ : Hom S T) {r r' : R₁}
     (h : φ.onRoot r = φ.onRoot r') (c : C₁) :
     S.interp r c = S.interp r' c := by
   rw [φ.interp_eq r c, φ.interp_eq r' c, h]
 
-/-- Merged roots agree contextwise in realization, the realization analog of
-`interp_eq_of_onRoot_eq`. The result is unavailable for the transport tier
-`Realization.Hom`, whose index-dependent context translation can separate the
-merged roots' contexts. -/
 theorem Hom.realize_eq_of_onRoot_eq {S : Interpreted R₁ C₁ F M}
     {T : Interpreted R₂ C₂ F M} (φ : Hom S T) {r r' : R₁}
     (h : φ.onRoot r = φ.onRoot r') (c : C₁) :

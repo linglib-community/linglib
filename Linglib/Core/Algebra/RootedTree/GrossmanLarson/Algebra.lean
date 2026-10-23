@@ -55,7 +55,6 @@ open ConnesKreimer
 
 variable {α : Type*}
 
-/-- Associativity over `ℤ`, from the pairing duality and the separation of points. -/
 private theorem product_assoc_int [DecidableEq α] (x y z : ConnesKreimer ℤ (UnorderedTree α)) :
     product (product x y) z = product x (product y z) :=
   ext_pairing_right fun w ↦ congr($(pairing_product_assoc x y z) w)

@@ -36,8 +36,6 @@ transposing adjacent positions agree before those positions and are ordered oppo
 
 namespace Pi
 
-/-- Reindexing both tuples along an equivalence `e : κ ≃ ι` transports the index relation of
-the lexicographic order to its preimage along `e.symm`. -/
 theorem lex_comp_equiv {κ ι β : Type*} (e : κ ≃ ι) (r : κ → κ → Prop) (s : β → β → Prop)
     (x y : ι → β) :
     Pi.Lex r (fun {_} ↦ s) (x ∘ e) (y ∘ e) ↔
@@ -54,7 +52,6 @@ namespace Pi
 
 variable {α : Type*} [LinearOrder α] {n : ℕ}
 
-/-- The lexicographic order on `Fin (n + 1)`-tuples compares heads, then tails. -/
 theorem toLex_lt_toLex_iff_succ (f g : Fin (n + 1) → α) :
     toLex f < toLex g ↔ f 0 < g 0 ∨ f 0 = g 0 ∧ toLex (Fin.tail f) < toLex (Fin.tail g) := by
   constructor
@@ -70,7 +67,6 @@ theorem toLex_lt_toLex_iff_succ (f g : Fin (n + 1) → α) :
       · exact h0
       · exact hb j' (Fin.succ_lt_succ_iff.mp hj)
 
-/-- The lexicographic order on `Fin (n + 1)`-tuples compares heads, then tails. -/
 theorem toLex_le_toLex_iff_succ (f g : Fin (n + 1) → α) :
     toLex f ≤ toLex g ↔ f 0 < g 0 ∨ f 0 = g 0 ∧ toLex (Fin.tail f) ≤ toLex (Fin.tail g) := by
   have h : f = g ↔ f 0 = g 0 ∧ Fin.tail f = Fin.tail g :=
@@ -85,7 +81,6 @@ namespace List
 
 variable {α : Type*} [LinearOrder α]
 
-/-- The lexicographic order on `Fin n`-tuples is the lexicographic order on their lists. -/
 theorem ofFn_lex_lt_iff : ∀ {n : ℕ} (f g : Fin n → α),
     Lex (· < ·) (ofFn f) (ofFn g) ↔ toLex f < toLex g
   | 0, f, g => by
@@ -101,7 +96,6 @@ theorem ofFn_lt_ofFn_iff {n : ℕ} (f g : Fin n → α) : ofFn f < ofFn g ↔ to
 theorem ofFn_le_ofFn_iff {n : ℕ} (f g : Fin n → α) : ofFn f ≤ ofFn g ↔ toLex f ≤ toLex g := by
   rw [← not_lt, ← not_lt, ofFn_lt_ofFn_iff]
 
-/-- The lexicographic order on lists compares heads, then tails. -/
 theorem cons_le_cons_iff' {a b : α} {l₁ l₂ : List α} :
     a :: l₁ ≤ b :: l₂ ↔ a < b ∨ a = b ∧ l₁ ≤ l₂ := by
   rw [← not_lt, ← not_lt (a := l₂) (b := l₁),
@@ -130,8 +124,6 @@ namespace Pi
 
 variable {α : Type*} [LinearOrder α] {m : ℕ}
 
-/-- A tuple is lexicographically at most another iff every coordinate where it strictly exceeds
-the other is preceded by one where it is strictly below. -/
 theorem lex_le_iff_forall (A B : Fin m → α) :
     toLex A ≤ toLex B ↔ ∀ p, B p < A p → ∃ p' < p, A p' < B p' := by
   rw [← not_lt]
@@ -169,8 +161,6 @@ theorem lex_le_iff_forall (A B : Fin m → α) :
     obtain ⟨p', hp'lt, hp'⟩ := hY i hi
     exact absurd (hpre p' hp'lt).symm (ne_of_lt hp')
 
-/-- A tuple is lexicographically at most another iff it is strictly below at the first
-coordinate where they differ, when one exists. -/
 theorem lex_le_iff_find (A B : Fin m → α) [DecidablePred fun i ↦ B i ≠ A i] :
     toLex A ≤ toLex B ↔ ∀ he : ∃ i, B i ≠ A i, A (Fin.find _ he) < B (Fin.find _ he) := by
   rw [lex_le_iff_forall]
@@ -193,15 +183,11 @@ section Reindex
 
 variable {ι κ β : Type*} [LinearOrder κ] [LinearOrder β] (e : κ ≃ ι) {v w : ι → β}
 
-/-- Reading two vectors along an enumeration of their coordinates, the product order embeds in
-the lexicographic order. -/
 theorem toLex_comp_strictMono [WellFoundedLT κ] : StrictMono fun v : ι → β ↦ toLex (v ∘ e) :=
   fun v w h ↦ Pi.toLex_strictMono <| by
     obtain ⟨hle, i, hi⟩ := Pi.lt_def.1 h
     exact Pi.lt_def.2 ⟨fun k ↦ hle (e k), e.symm i, by simpa using hi⟩
 
-/-- Transposing a covering pair `a ⋖ b` reverses the order of two positions only if they are
-`a` and `b`. -/
 private theorem eq_and_eq_of_swap_lt_swap [DecidableEq κ] {a b x y : κ} (hab : a ⋖ b)
     (hxy : x < y) (h : Equiv.swap a b y < Equiv.swap a b x) : x = a ∧ y = b := by
   have hlt : ∀ z, z ≠ a → z < b → z < a := fun z hza hzb ↦ (hab.le_of_lt hzb).lt_of_ne hza
@@ -225,8 +211,6 @@ private theorem eq_and_eq_of_swap_lt_swap [DecidableEq κ] {a b x y : κ} (hab :
 
 variable [WellFoundedLT κ]
 
-/-- Read along an enumeration, one vector is lexicographically below another iff some coordinate
-where it is below comes before every coordinate where it is above. -/
 theorem toLex_comp_lt_iff_exists :
     toLex (v ∘ e) < toLex (w ∘ e) ↔ ∃ i, v i < w i ∧ ∀ j, w j < v j → e.symm i < e.symm j := by
   refine ⟨fun hlt ↦ ?_, fun ⟨i, hi, hd⟩ ↦ ?_⟩
@@ -241,8 +225,6 @@ theorem toLex_comp_lt_iff_exists :
       exact absurd (hj i (hd j hlt)) hi.ne'
     · simpa using congrArg (· (e.symm i)) heq
 
-/-- Read along an enumeration, one vector is lexicographically at most another iff every
-coordinate where it is above is preceded by one where it is below. -/
 theorem toLex_comp_le_iff_forall_exists :
     toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∀ j, w j < v j → ∃ i, v i < w i ∧ e.symm i < e.symm j := by
   rw [← not_lt, toLex_comp_lt_iff_exists]
@@ -252,8 +234,6 @@ theorem toLex_comp_le_iff_forall_exists :
   obtain rfl := e.symm.injective heq
   exact lt_asymm hi hj
 
-/-- Read along an enumeration, one vector is lexicographically at most another iff a single
-coordinate where it is below precedes every coordinate where it is above. -/
 theorem toLex_comp_le_iff_exists_forall [Nonempty κ] :
     toLex (v ∘ e) ≤ toLex (w ∘ e) ↔ ∃ i, ∀ j, w j < v j → v i < w i ∧ e.symm i < e.symm j := by
   refine ⟨fun h ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
@@ -268,9 +248,6 @@ theorem toLex_comp_le_iff_exists_forall [Nonempty κ] :
     · push Not at hv
       exact Pi.toLex_monotone fun k ↦ hv (e k)
 
-/-- Two vectors ordered oppositely along two enumerations that differ by transposing a covering
-pair `a ⋖ b` agree at every position before `a`, and are ordered as the first enumeration orders
-them at `a` and as the second does at `b`. -/
 theorem eq_and_lt_and_gt_of_toLex_comp_swap [DecidableEq κ] {a b : κ} (hab : a ⋖ b)
     (h : toLex (v ∘ e) < toLex (w ∘ e))
     (h' : toLex (w ∘ (Equiv.swap a b).trans e) < toLex (v ∘ (Equiv.swap a b).trans e)) :
@@ -296,7 +273,6 @@ section Enumerations
 
 variable {ι β : Type*} [Fintype ι] [LinearOrder β] {n : ℕ} {v w : ι → β}
 
-/-- Any coordinate can be enumerated first. -/
 private theorem exists_equiv_fin_symm_lt (i : ι) (hn : Fintype.card ι = n) :
     ∃ e : Fin n ≃ ι, ∀ j, j ≠ i → e.symm i < e.symm j := by
   classical
@@ -308,8 +284,6 @@ private theorem exists_equiv_fin_symm_lt (i : ι) (hn : Fintype.card ι = n) :
   exact Nat.pos_of_ne_zero fun h0 ↦ hj <| r.symm.injective <|
     Fin.ext (h0.trans (congrArg Fin.val hi).symm)
 
-/-- One vector is lexicographically below another under some enumeration of the coordinates iff
-it is below it at some coordinate. -/
 theorem exists_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
     (∃ e : Fin n ≃ ι, toLex (v ∘ e) < toLex (w ∘ e)) ↔ ∃ i, v i < w i := by
   refine ⟨fun ⟨e, he⟩ ↦ ?_, fun ⟨i, hi⟩ ↦ ?_⟩
@@ -319,8 +293,6 @@ theorem exists_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
     exact ⟨e, (toLex_comp_lt_iff_exists e).2
       ⟨i, hi, fun j hj ↦ he j fun hji ↦ (hji ▸ hj).asymm hi⟩⟩
 
-/-- The product order is the intersection of the lexicographic orders under all enumerations of
-the coordinates. -/
 theorem forall_toLex_comp_lt_iff (hn : Fintype.card ι = n) :
     (∀ e : Fin n ≃ ι, toLex (v ∘ e) < toLex (w ∘ e)) ↔ v < w := by
   refine ⟨fun h ↦ Pi.lt_def.2 ⟨fun i ↦ not_lt.1 fun hi ↦ ?_, ?_⟩,

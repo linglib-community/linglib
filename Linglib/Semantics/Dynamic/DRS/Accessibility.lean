@@ -70,7 +70,6 @@ accessible boxes are `bs`. -/
 abbrev Occurrence (host : DRS L V) : List (DRS L V) × DRS L V → Prop :=
   Relation.ReflTransGen ScopeStep ([host], host)
 
-/-- The occurrence of a box is an occurrence of a sub-DRS of the host. -/
 theorem Occurrence.weakSubordinate {host K : DRS L V} {bs : List (DRS L V)}
     (h : Occurrence host (bs, K)) : WeakSubordinate K host := by
   suffices ∀ {p q}, Relation.ReflTransGen ScopeStep p q → WeakSubordinate q.2 p.2 from this h
@@ -166,7 +165,6 @@ theorem DRS.mem_occurrences {bs : List (DRS L V)} {K : DRS L V} {p : List (DRS L
       p = (bs, K) ∨ ∃ c ∈ K.conditions, p ∈ Condition.occurrences c bs := by
   simp [DRS.occurrences, Condition.mem_occurrencesList]
 
-/-- Everything listed below a condition of `D` is reached by the walk from `(bs, D)`. -/
 theorem Condition.occurrence_of_mem (c : Condition L V) :
     ∀ {bs : List (DRS L V)} {D : DRS L V} {p}, c ∈ D.conditions →
       p ∈ Condition.occurrences c bs → Relation.ReflTransGen ScopeStep (bs, D) p := by
@@ -198,7 +196,6 @@ theorem Condition.occurrence_of_mem (c : Condition L V) :
     · exact .single (.disR hc)
     · exact .head (.disR hc) (ihr d hd hd hp)
 
-/-- One step from `(bs, D)` lands in `D`'s list. -/
 private theorem mem_occurrences_of_step_head {bs : List (DRS L V)} {D : DRS L V}
     {q : List (DRS L V) × DRS L V} (hs : ScopeStep (bs, D) q) : q ∈ DRS.occurrences bs D := by
   rw [DRS.mem_occurrences]; right
@@ -220,7 +217,6 @@ private theorem mem_occurrences_of_step_head {bs : List (DRS L V)} {D : DRS L V}
       rw [Condition.occurrences_dis, List.mem_append, DRS.mem_occurrences, DRS.mem_occurrences]
       exact .inr (.inl rfl)⟩
 
-/-- The occurrences listed below a condition are closed under steps. -/
 private theorem Condition.mem_occurrences_of_step (c : Condition L V) :
     ∀ {bs : List (DRS L V)} {p q}, p ∈ Condition.occurrences c bs → ScopeStep p q →
       q ∈ Condition.occurrences c bs := by

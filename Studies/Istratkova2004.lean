@@ -344,8 +344,6 @@ theorem attested_wellFormed : ∀ a ∈ attested, WellFormed a.prefixes := by de
 /-- The starred stacks are ill-formed. -/
 theorem starred_not_wellFormed : ∀ a ∈ starred, ¬ WellFormed a.prefixes := by decide
 
-/-- The starred stacks with *po-* below another head are ill-formed on the distributive
-classification too, for want of *iz-*. -/
 theorem starred_distributive_not_wellFormed :
     ¬ WellFormed [(na, .superlexical .cumulative), (po, .superlexical .distributive),
       (pro, .lexical)] ∧

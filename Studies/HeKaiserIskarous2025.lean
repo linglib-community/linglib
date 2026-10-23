@@ -123,7 +123,6 @@ theorem fuzzy_nonneg {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (hσ0 : 0 ≤ 
     (u : Utterance) (st : State) : 0 ≤ fuzzy n σ u st := by
   cases u <;> cases st <;> simp [fuzzy] <;> linarith
 
-/-- The Boolean meaning is the fuzzy meaning of full degrees. -/
 theorem fuzzy_one_one : fuzzy 1 1 = boolean := by
   funext u st; cases u <;> cases st <;> simp [fuzzy, boolean]
 
@@ -150,8 +149,6 @@ noncomputable def eval (x : ℝ) : ℝ := θ.L * Real.sigmoid (θ.k * (x - θ.x0
 noncomputable def threshold : ℝ :=
   θ.x0 + Real.log ((1 / 2 - θ.c) / (θ.L + θ.c - 1 / 2)) / θ.k
 
-/-- A rising sigmoid whose range straddles one half is below one half exactly below its
-threshold prior. -/
 theorem eval_lt_half_iff (hk : 0 < θ.k) (hL : 0 < θ.L) (hc : θ.c < 1 / 2)
     (hLc : 1 / 2 < θ.L + θ.c) (x : ℝ) : θ.eval x < 1 / 2 ↔ x < θ.threshold := by
   have ht0 : 0 < (1 / 2 - θ.c) / θ.L := div_pos (by linarith) hL
@@ -172,7 +169,6 @@ noncomputable def bestFit : Sigmoid := ⟨7 / 10, 6, 7 / 20, 3 / 10⟩
 /-- The best-fit degree of the negative sentence at its state, §4.2. -/
 noncomputable def bestFitNeg : ℝ := 4 / 5
 
-/-- The threshold prior of the best-fit sigmoid, about `0.197`. -/
 theorem bestFit_threshold : bestFit.threshold = 7 / 20 - Real.log (5 / 2) / 6 := by
   rw [Sigmoid.threshold, show (1 / 2 - bestFit.c) / (bestFit.L + bestFit.c - 1 / 2) = (5 / 2)⁻¹ by
     norm_num [bestFit], Real.log_inv]
@@ -269,8 +265,6 @@ theorem L0_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} �
 variable (hm : ∀ u st, 0 ≤ m u st)
 include hm
 
-/-- On reals, the literal listener at a state is the prior weighted by the meaning, normalized
-over the row. -/
 theorem L0_real (u : Utterance) (st : State) :
     (L0 P m u {st}).toReal = m u st * P.real {st} / ∑ st', m u st' * P.real {st'} := by
   rw [L0, Kernel.ofDensity_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
@@ -292,7 +286,6 @@ noncomputable def speaker : Kernel State Utterance := RSA.speaker s.α s.cost (L
 
 instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
-/-- An utterance not holding at a state is never used there. -/
 theorem speaker_eq_zero {u : Utterance} {st : State} (h : m u st = 0) :
     speaker P m s st {u} = 0 :=
   RSA.speaker_dirac_apply_singleton_eq_zero s.α_pos (L0_eq_zero P m h)
@@ -303,7 +296,6 @@ theorem speaker_real_eq_zero {u : Utterance} {st : State} (h : m u st = 0) :
 
 variable [IsFiniteMeasure P]
 
-/-- An utterance holding at a state is used there. -/
 theorem speaker_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
     speaker P m s st {u} ≠ 0 :=
   RSA.speaker_dirac_apply_singleton_ne_zero s.α_pos.le (L0_ne_zero P m h hst)
@@ -321,8 +313,6 @@ theorem speaker_real_lt_iff {u v : Utterance} {st : State} (hu : 0 < m u st) (hv
   RSA.speaker_dirac_real_singleton_lt_iff_log s.α_pos (L0_ne_zero P m hu hst)
     (L0_ne_zero P m hv hst)
 
-/-- When exactly two utterances hold at a state, the speaker's use of one is the logistic
-function of the scaled utility difference. -/
 theorem speaker_real_of_pair (hm : ∀ u st, 0 ≤ m u st) {u v : Utterance} {st : State}
     (huv : u ≠ v) (hu : 0 < m u st) (hv : 0 < m v st) (hsupp : ∀ x, 0 < m x st → x = u ∨ x = v)
     (hst : P {st} ≠ 0) :
@@ -341,8 +331,6 @@ section Boolean
 
 variable (P : Measure State) [IsProbabilityMeasure P] (hP : ∀ st, P {st} ≠ 0) (s : Setting)
 
-/-- Silence leaves the literal listener at the prior, under any meaning where it holds
-everywhere. -/
 theorem L0_null_real (m : Meaning) (hm : ∀ u st, 0 ≤ m u st) (hnull : ∀ st, m .null st = 1)
     (st : State) : (L0 P m .null {st}).toReal = P.real {st} := by
   rw [L0_real P m hm]
@@ -350,15 +338,12 @@ theorem L0_null_real (m : Meaning) (hm : ∀ u st, 0 ≤ m u st) (hnull : ∀ st
 
 include hP
 
-/-- The sentence of a state puts the Boolean literal listener at that state. -/
 theorem L0_boolean_utterance_real (st : State) :
     (L0 P boolean st.utterance {st}).toReal = 1 := by
   rw [L0_real P boolean boolean_nonneg, sum_state]
   cases st <;> simp only [boolean, State.utterance, one_mul, zero_mul, add_zero, zero_add] <;>
     exact div_self (ENNReal.toReal_pos (hP _) (measure_ne_top _ _)).ne'
 
-/-- The Boolean speaker uses a state's sentence at that state with the logistic function of the
-cost saved by silence less the log prior of the state, scaled by the rationality. -/
 theorem speaker_boolean_real (st : State) :
     (speaker P boolean s st).real {st.utterance} =
       Real.sigmoid (s.α * (s.cost .null - s.cost st.utterance - Real.log (P.real {st}))) := by
@@ -385,15 +370,11 @@ noncomputable abbrev speaker (m : Meaning) : Kernel State Utterance :=
 state. -/
 noncomputable def likelihood (m : Meaning) (st : State) : ℝ := (s.speaker m st).real {st.utterance}
 
-/-- Under the Boolean meaning, the likelihood of a polarity is the logistic function of the
-cost saved by silence less the log prior of its state, scaled by the rationality. -/
 theorem likelihood_boolean (st : State) :
     s.likelihood boolean st =
       Real.sigmoid (s.α * (s.cost .null - s.cost st.utterance - Real.log (s.statePrior st))) := by
   rw [likelihood, speaker, speaker_boolean_real s.prior s.prior_ne_zero s st, prior_real_singleton]
 
-/-- The Boolean likelihood of a polarity falls as its state's prior rises, the main effect of
-the state prior. -/
 theorem likelihood_boolean_lt {s' : Setting} (hα : s.α = s'.α) (hc : s.cost = s'.cost)
     {st : State} (h : s.statePrior st < s'.statePrior st) :
     s'.likelihood boolean st < s.likelihood boolean st := by
@@ -401,8 +382,6 @@ theorem likelihood_boolean_lt {s' : Setting} (hα : s.α = s'.α) (hc : s.cost =
   exact Real.sigmoid_lt (mul_lt_mul_of_pos_left
     (by linarith [Real.log_lt_log (s.statePrior_pos st) h]) s.α_pos)
 
-/-- At equal state priors, rationality and costs, the negative polarity is the less likely
-exactly when its sentence is the costlier, the main effect of polarity. -/
 theorem likelihood_boolean_neg_lt_pos_iff {s' : Setting} (hα : s.α = s'.α) (hc : s.cost = s'.cost)
     (hp : s'.statePrior .neg = s.statePrior .pos) :
     s'.likelihood boolean .neg < s.likelihood boolean .pos ↔ s.cost .pos < s.cost .neg := by
@@ -411,8 +390,6 @@ theorem likelihood_boolean_neg_lt_pos_iff {s' : Setting} (hα : s.α = s'.α) (h
   simp only [State.utterance]
   constructor <;> intro h <;> linarith
 
-/-- At equal costs the two polarities are equally likely at equal state priors (the paper's
-second simulation). -/
 theorem likelihood_boolean_neg_eq_pos {s' : Setting} (hα : s.α = s'.α) (hc : s.cost = s'.cost)
     (hp : s'.statePrior .neg = s.statePrior .pos) (hcost : s.cost .pos = s.cost .neg) :
     s'.likelihood boolean .neg = s.likelihood boolean .pos := by
@@ -432,8 +409,6 @@ theorem speaker_boolean_pos_lt_null_iff :
     statePrior, ← Real.lt_log_iff_exp_lt s.p_pos]
   constructor <;> intro h <;> linarith
 
-/-- An utterance holding at a state and its complement to degrees summing to one informs the
-literal listener about the state exactly when its degree there exceeds one half. -/
 theorem statePrior_lt_L0_real_iff {m : Meaning} (hm : ∀ u st, 0 ≤ m u st) {u : Utterance}
     (hsum : m u .pos + m u .neg = 1) (st : State) :
     s.statePrior st < (L0 s.prior m u {st}).toReal ↔ 1 / 2 < m u st := by
@@ -457,14 +432,10 @@ theorem statePrior_lt_L0_real_iff {m : Meaning} (hm : ∀ u st, 0 ≤ m u st) {u
     rw [lt_div_iff₀ hden]
     constructor <;> intro h <;> nlinarith
 
-/-- The fuzzy positive sentence informs the literal listener about the positive state exactly
-when its degree there exceeds one half. -/
 theorem p_lt_L0_fuzzy_pos_iff {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (hσ0 : 0 ≤ σ) (hσ1 : σ ≤ 1) :
     s.p < (L0 s.prior (fuzzy n σ) .pos {.pos}).toReal ↔ 1 / 2 < σ :=
   s.statePrior_lt_L0_real_iff (fuzzy_nonneg hn0 hn1 hσ0 hσ1) (u := .pos) (by simp [fuzzy]) .pos
 
-/-- The fuzzy negative sentence informs the literal listener about the negative state exactly
-when its degree there exceeds one half, at every prior. -/
 theorem one_sub_p_lt_L0_fuzzy_neg_iff {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (hσ0 : 0 ≤ σ)
     (hσ1 : σ ≤ 1) :
     1 - s.p < (L0 s.prior (fuzzy n σ) .neg {.neg}).toReal ↔ 1 / 2 < n :=
@@ -602,7 +573,6 @@ prior of (16). -/
 noncomputable def wonkyListener (m : World → Meaning) (ω : ℝ) : Kernel Utterance (State × World) :=
   listener (s.wonkyJoint ω) (s.wonkySpeaker m)
 
-/-- The Boolean wonky listener is a probability measure after a state's sentence. -/
 theorem isProbabilityMeasure_wonkyListener_boolean {ω : ℝ} (hω0 : 0 < ω) (st : State) :
     IsProbabilityMeasure (s.wonkyListener (fun _ ↦ boolean) ω st.utterance) :=
   isProbabilityMeasure_listener_of_ne_zero (w := (st, World.wonky)) _ _
@@ -622,7 +592,6 @@ over worlds after the state's sentence. -/
 noncomputable def expectedTypicality (m : World → Meaning) (ω : ℝ) (st : State) : ℝ :=
   ∑ w, (s.wonkyListener m ω st.utterance).snd.real {w} * (s.worldPrior w).real {st}
 
-/-- The expected typicality moves the state's prior toward one half by the wonkiness. -/
 theorem expectedTypicality_eq (m : World → Meaning) (ω : ℝ) (st : State)
     [IsProbabilityMeasure (s.wonkyListener m ω st.utterance)] :
     s.expectedTypicality m ω st =
@@ -634,9 +603,6 @@ theorem expectedTypicality_eq (m : World → Meaning) (ω : ℝ) (st : State)
   rw [expectedTypicality, sum_world, worldPrior_real_normal, worldPrior_real_wonky, wonkiness]
   linear_combination s.statePrior st * h1
 
-/-- After a state's sentence, the posterior wonkiness of the Boolean wonky listener is the
-wonkiness-weighted share of the wonky speaker's use of the sentence against the normal
-speaker's. -/
 theorem wonkiness_boolean {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
     s.wonkiness (fun _ ↦ boolean) ω st =
       ω * (HeKaiserIskarous2025.speaker (s.worldPrior .wonky) boolean s st).real {st.utterance} /
@@ -712,8 +678,6 @@ theorem statePrior_lt_expectedTypicality_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : 
   rw [expectedTypicality_eq, lt_add_iff_pos_right,
     mul_pos_iff_of_pos_left (s.wonkiness_boolean_pos hω0 hω1 st), sub_pos]
 
-/-- The wonkiness after a sentence depends on its polarity only through its cost, so at equal
-state priors, rationality and costs the two polarities update it alike. -/
 theorem wonkiness_boolean_neg_eq_pos {s' : Setting} {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1)
     (hα : s.α = s'.α) (hc : s.cost = s'.cost) (hp : s'.statePrior .neg = s.statePrior .pos)
     (hcost : s.cost .pos = s.cost .neg) :

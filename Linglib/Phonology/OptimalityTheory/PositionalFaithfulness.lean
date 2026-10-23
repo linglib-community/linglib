@@ -58,7 +58,6 @@ def maxAt : Constraint (Finset ℕ) := fun D ↦ (D.filter P).card
 @[simp] theorem maxAt_true (D : Finset ℕ) : maxAt (fun _ ↦ True) D = D.card := by
   simp [maxAt]
 
-/-- Deleting one more position adds a violation exactly when the position lies in `P`. -/
 theorem maxAt_insert {k : ℕ} {D : Finset ℕ} (hk : k ∉ D) :
     maxAt P (insert k D) = maxAt P D + if P k then 1 else 0 := by
   simp only [maxAt, Finset.filter_insert]
@@ -99,8 +98,6 @@ theorem positionalMax_lt_positionalMax_iff (hc : del c = {k}) (hd : del d = {k'}
   simp only [positionalMax_apply, hc, hd, maxAt_singleton]
   split_ifs <;> simp_all
 
-/-- One single deletion is below another on every constraint exactly when the constraints
-protecting its position are a proper subset of those protecting the other's. -/
 theorem positionalMax_lt_iff (hc : del c = {k}) (hd : del d = {k'}) :
     (positionalMax P del · c) < (positionalMax P del · d) ↔ {i | P i k} ⊂ {i | P i k'} := by
   rw [Pi.lt_def, Set.ssubset_def, Set.not_subset]
@@ -111,8 +108,6 @@ theorem positionalMax_lt_iff (hc : del c = {k}) (hd : del d = {k'}) :
 
 variable [DecidableEq C] {n : ℕ} {cands : Finset C}
 
-/-- Of two single deletions, one is the sole optimum under a ranking exactly when some constraint
-protecting only the other position outranks every constraint protecting only its own. -/
 theorem optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d}) (hne : c ≠ d)
     (hc : del c = {k}) (hd : del d = {k'}) (r : Ranking ι n) :
     (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c} ↔
@@ -134,8 +129,6 @@ theorem exists_mem_optimal_positionalMax_iff (hcand : cands = {c, d})
       ¬ {i | P i k'} ⊂ {i | P i k} := by
   rw [Tableau.exists_mem_ofRanking_optimal_iff_pair hn hcand, positionalMax_lt_iff hd hc]
 
-/-- Of two single deletions, one is the sole optimum under some ranking exactly when some
-constraint protects the other position and not its own. -/
 theorem exists_optimal_eq_singleton_positionalMax_iff (hcand : cands = {c, d})
     (hne : c ≠ d) (hc : del c = {k}) (hd : del d = {k'}) :
     (∃ r : Ranking ι n, (Tableau.ofRanking (positionalMax P del) r cands).optimal = {c}) ↔

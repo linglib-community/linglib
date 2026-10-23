@@ -115,19 +115,13 @@ instance (c : Constraint) (f : EvidentialFrame T) : Decidable (c.Holds f) :=
 acquisition and of the acquisition to speech compose to. -/
 def derived (c : Constraint) : Finset Ordering := comp c.eventToAcquisition c.acquisitionToSpeech
 
-/-- At a frame where a constraint holds, the event stands to speech in the composition of the
-other two cells. -/
 theorem compare_mem_derived (h : c.Holds f) : compare f.eventTime f.speechTime ∈ c.derived :=
   compare_mem_comp h.1 h.2.1
 
-/-- A constraint whose cell of the event relative to the acquisition lies within the nonfuture
-requires downstream evidence. -/
 theorem downstream_of_holds (hc : c.eventToAcquisition ≤ ⟦future⟧ᶜ) (h : c.Holds f) :
     f.Downstream :=
   f.downstream_iff.2 (hc h.1)
 
-/-- A constraint whose cell of the event relative to the acquisition is a join holds exactly
-when it holds with one of the two cells. -/
 theorem holds_eventToAcquisition_sup {C D : Finset Ordering} :
     ({ c with eventToAcquisition := C ⊔ D } : Constraint).Holds f ↔
       ({ c with eventToAcquisition := C } : Constraint).Holds f ∨

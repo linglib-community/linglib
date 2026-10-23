@@ -377,7 +377,6 @@ syntagmatic one. -/
 def SynThenPara (rs : List Rule) : Prop :=
   rs.Pairwise fun r r' ↦ r'.Syntagmatic → r.Syntagmatic
 
-/-- A paradigmatic block followed by a syntagmatic block respects the architecture. -/
 theorem paraThenSyn_append {A B : List Rule} (hA : ∀ r ∈ A, r.Paradigmatic)
     (hB : ∀ r ∈ B, r.Syntagmatic) : ParaThenSyn (A ++ B) :=
   List.pairwise_append.mpr
@@ -385,15 +384,12 @@ theorem paraThenSyn_append {A B : List Rule} (hA : ∀ r ∈ A, r.Paradigmatic)
      List.pairwise_of_forall_mem_list fun _ _ r' hr' h ↦ absurd h (hB r' hr'),
      fun r hr _ _ _ ↦ hA r hr⟩
 
-/-- A paradigmatic and a syntagmatic rule have exactly one order that respects the
-architecture. -/
 theorem ParaThenSyn.eq_of_perm {p s : Rule} (hp : p.Paradigmatic) (hs : s.Syntagmatic)
     {l : List Rule} (hl : ParaThenSyn l) (hperm : l.Perm [p, s]) : l = [p, s] := by
   rcases List.perm_pair.mp hperm with rfl | rfl
   · rfl
   · exact absurd ((List.pairwise_cons.mp hl).1 p (List.mem_singleton_self p) hp) hs
 
-/-- Under the block architecture, a paradigmatic and a syntagmatic rule apply in that order. -/
 theorem run_eq_of_paraThenSyn {p s : Rule} (hp : p.Paradigmatic) (hs : s.Syntagmatic)
     {l : List Rule} (hl : ParaThenSyn l) (hperm : l.Perm [p, s]) (q : Prefix) :
     run l q = run [p, s] q := by
@@ -774,7 +770,6 @@ theorem case2_singular_para_syn :
 /-- (35) removes the singular agent that (36a) needs, so applying it first bleeds (36a). -/
 theorem r40_bleeds_r45b : Bleeds Rule.apply Rule.Fires r40 r45b prefix3Sno := by decide
 
-/-- The block architecture keeps the dummy object. -/
 theorem case2_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r40, r45b]) :
     (run l prefix3Sno).object = [.dummy] := by
   rw [run_eq_of_paraThenSyn r40_paradigmatic r45b_syntagmatic hl hperm, case2_dummy_para_syn]
@@ -785,7 +780,6 @@ The 2S:3S transitive prefix *o* differs from the 2S intransitive *ǫ* (Table 17)
 agents differ at Vocabulary Insertion. (46) makes them differ by deleting `[+minimal]` from the
 transitive agent, and needs the `[+participant]` that (11a) deletes. -/
 
-/-- The transitive and intransitive 2S prefixes differ. -/
 theorem form_2S3S_ne_form_2S :
     Taos.form ⟨some (.second, .singular), none, some (.third .singular)⟩ ≠
       Taos.form ⟨some (.second, .singular), none, none⟩ := by
@@ -800,7 +794,6 @@ theorem case3_para_syn : (run [r11a, r46] prefix2S3S).agent = (run [r11a] prefix
 /-- (39) removes the `[+participant]` that (37) needs, so applying it first bleeds (37). -/
 theorem r11a_bleeds_r46 : Bleeds Rule.apply Rule.Fires r11a r46 prefix2S3S := by decide
 
-/-- The block architecture makes the transitive and intransitive 2S agents identical. -/
 theorem case3_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r11a, r46]) :
     (run l prefix2S3S).agent = (run [r11a] prefix2S).agent := by
   rw [run_eq_of_paraThenSyn r11a_paradigmatic r46_syntagmatic hl hperm, case3_para_syn]
@@ -810,7 +803,6 @@ theorem case3_block (l : List Rule) (hl : ParaThenSyn l) (hperm : l.Perm [r11a, 
 The 1S:3S possessive prefix is *ôn* (Table 22), with no *m*: the object's third person is
 deleted by (32), which needs the singular goal that (26) makes non-singular. -/
 
-/-- The 1S:3S possessive prefix has no *m*. -/
 theorem form_1S3S :
     Taos.form ⟨none, some (.first, .singular), some (.third .singular)⟩ = some "ôn" ∧
       'm' ∉ "ôn".toList := by
@@ -839,7 +831,6 @@ theorem r33_bleeds_r32 :
       (run [r32, r33] prefix1D3S3S).object = singular := by
   decide
 
-/-- The 1D:3S:3S ditransitive prefix keeps *m*. -/
 theorem form_1D3S3S :
     Taos.form ⟨some (.first, .dual), some (.third, .singular), some (.third .singular)⟩ =
         some "opénôm" ∧
@@ -851,7 +842,6 @@ theorem form_1D3S3S :
 The 1S:3I possessive prefix *ónôm* keeps *n*, the exponent of `[+minimal]` (20): (26) deletes
 the goal's `[+atomic]` first and bleeds (29), which would delete the `[+minimal]`. -/
 
-/-- The 1S:3I possessive prefix keeps *n*. -/
 theorem form_1S3I :
     Taos.form ⟨none, some (.first, .singular), some (.third .inverse)⟩ = some "ónôm" ∧
       'n' ∈ "ónôm".toList := by
@@ -1280,7 +1270,6 @@ theorem derive_eq_form :
       r.2 = derive false r.1 ∨ r.2 = derive true r.1 := by
   decide +kernel
 
-/-- What the pipeline gives the unaccounted cells. -/
 theorem derive_unaccounted :
     unaccounted.map (derive false) =
       ["kǫ", "kǫ", "kǫ", "kǫ", "îw", "ímo", "ónóm", "ónóm", "ónów"] := by
@@ -1399,7 +1388,6 @@ def ergativeMetathesis : SpelloutDomain Terminal → SpelloutDomain Terminal :=
       | some e => n.leftCtx.reverse ++ e :: n.focus :: n.rightCtx.erase e
       | none => n.toList
 
-/-- Ergative Metathesis preserves the number of terminals. -/
 theorem length_ergativeMetathesis (d : SpelloutDomain Terminal) :
     (ergativeMetathesis d).length = d.length := by
   unfold ergativeMetathesis
@@ -1443,8 +1431,6 @@ def auxiliary19 : SpelloutDomain Terminal :=
   [pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩]),
    clitic .erg (firstφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])]
 
-/-- In Ondarru with markedness first, Participant Dissimilation obliterates the absolutive clitic,
-leaving T initial, and Ergative Metathesis then fronts the ergative clitic, giving *s-endu-n*. -/
 theorem ondarru_markedness_then_linear :
     markednessThenLinear ondarru auxiliary17 =
       [clitic .erg (secondφ ++ [⟨.atomic, true⟩, ⟨.minimal, true⟩]), pastT] := by
@@ -1464,8 +1450,6 @@ theorem ondarru_feeds :
       m d ≠ d) ondarru ergativeMetathesis auxiliary17 := by
   decide
 
-/-- In Zamudio with markedness first, Participant Dissimilation obliterates the ergative clitic, so
-no ergative is left to front and L-Support repairs the initial T, giving *y-a-tzu-e-n*. -/
 theorem zamudio_markedness_then_linear :
     markednessThenLinear zamudio auxiliary19 =
       [lSupport, pastT, clitic .dat (secondφ ++ [⟨.atomic, false⟩, ⟨.minimal, false⟩])] := by

@@ -90,7 +90,6 @@ def Conventionalised (c : Construction) : Prop :=
 instance (c : Construction) : Decidable (Conventionalised c) := by
   unfold Conventionalised; infer_instance
 
-/-- *Pouvez-vous VP?* is conventionalised as a request and *Est-il possible de VP?* is not. -/
 theorem conventionalised : Conventionalised .canYou ∧ ¬ Conventionalised .isItPossible := by
   decide +kernel
 
@@ -116,8 +115,6 @@ instance (c : Construction) : Decidable (Literalist.DirectivePrimary c) := by
 instance (c : Construction) : Decidable (NonLiteralist.DirectivePrimary c) := by
   unfold NonLiteralist.DirectivePrimary; infer_instance
 
-/-- The accounts agree on the constructions without a modal and on the conventionalised
-request, and differ on every other modal construction. -/
 theorem accounts_differ (c : Construction) :
     (Literalist.DirectivePrimary c ↔ NonLiteralist.DirectivePrimary c) ↔
       c.modal = none ∨ Conventionalised c := by
@@ -136,27 +133,18 @@ def Unactivated (r : Interpretation) : Prop := r.answerActivity = some .no
 
 instance (r : Interpretation) : Decidable (Unactivated r) := by unfold Unactivated; infer_instance
 
-/-- Every construction that received directive interpretations received them without
-activating the force its sentence type encodes. -/
 theorem directive_unactivated : ∀ r ∈ interpretations, Directive r → Unactivated r := by
   decide +kernel
 
-/-- Non-literalism predicts primary directive readings for exactly the constructions that
-received directive interpretations. -/
 theorem nonLiteralist_predicts :
     ∀ r ∈ interpretations, Directive r ↔ NonLiteralist.DirectivePrimary r.construction := by
   decide +kernel
 
-/-- Literalism is refuted on both of the paper's predictions. The non-conventionalised
-*Est-il possible de VP?* and the deontic *Vous devez VP*, like the two possibility
-declaratives, received directive interpretations without activating the question or the
-assertion, although literalism makes those readings secondary. -/
 theorem literalist_refuted :
     ∀ r ∈ interpretations, ¬ Literalist.DirectivePrimary r.construction → Directive r →
       Unactivated r := by
   decide +kernel
 
-/-- The secondary readings literalism posits are the ones the experiments found primary. -/
 theorem literalist_secondary_found :
     ∀ c, c = .isItPossible ∨ c = .youMust ∨ c = .youCan ∨ c = .itIsPossible →
       ¬ Literalist.DirectivePrimary c ∧
@@ -168,8 +156,6 @@ when the paper reports one. -/
 def rt (s : Study) (c : Construction) (r : Response) : Option ℕ :=
   (responseTimes.find? fun x ↦ x.study = s ∧ x.construction = c ∧ x.response = r).map (·.estimate)
 
-/-- Answering the conventionalised request as a question is slower than answering a control
-question, which the paper reads as interference from its entrenched directive use. -/
 theorem canYou_question_slower :
     ∃ a ∈ rt .one .controlInterrogative .yes, ∃ b ∈ rt .one .canYou .yes, a < b := by
   decide +kernel

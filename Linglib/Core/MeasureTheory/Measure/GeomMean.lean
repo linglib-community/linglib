@@ -57,7 +57,6 @@ theorem geomMean_rpow (μ : Measure α) (f : α → ℝ≥0∞) {r : ℝ} (hr : 
 theorem geomMean_mono (h : ∀ a, f a ≤ g a) : μ.geomMean f ≤ μ.geomMean g :=
   Finset.prod_le_prod fun a _ ↦ ENNReal.rpow_le_rpow (h a) measureReal_nonneg
 
-/-- The geometric mean depends on the function only at the atoms of positive mass. -/
 theorem geomMean_congr (h : ∀ a, μ {a} ≠ 0 → f a = g a) : μ.geomMean f = μ.geomMean g :=
   Finset.prod_congr rfl fun a _ ↦ by
     rcases eq_or_ne (μ {a}) 0 with h0 | h0

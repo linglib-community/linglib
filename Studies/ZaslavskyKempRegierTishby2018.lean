@@ -102,7 +102,6 @@ instance : IsMarkovKernel (decoder meanings source encoder) := by
   unfold decoder; infer_instance
 
 omit [IsMarkovKernel meanings] in
-/-- The interpretations, weighted by the word marginal, recover the environment marginal. -/
 theorem decoder_comp :
     decoder meanings source encoder ∘ₘ (encoder ∘ₘ source) = meanings ∘ₘ source := by
   rw [decoder, ← Measure.comp_assoc, posterior_comp_self]
@@ -135,8 +134,6 @@ theorem complexity_eq :
   measureMutualInfo_compProd encoder source
 
 omit [Nonempty M] in
-/-- A lexicon that ignores the meaning, such as a single word for every meaning, has the minimal
-complexity `0`. -/
 theorem complexity_const (ν : Measure W) [IsProbabilityMeasure ν] :
     complexity source (Kernel.const M ν) = 0 := by
   rw [complexity, Measure.compProd_const, measureMutualInfo_prod]
@@ -151,8 +148,6 @@ private theorem integral_compProd (f : M × W → ℝ) :
   refine sum_congr rfl fun w _ => ?_
   rw [Measure.compProd_real_singleton, smul_eq_mul, mul_assoc]
 
-/-- Reweighting each word's posterior over meanings by the word marginal recovers the joint
-distribution of meanings and words. -/
 private theorem integral_compProd_eq_sum_posterior (f : M × W → ℝ) :
     ∫ p, f p ∂(source ⊗ₘ encoder)
       = ∑ w, (encoder ∘ₘ source).real {w} * ∑ m, ((encoder†source) w).real {m} * f (m, w) := by
@@ -161,9 +156,6 @@ private theorem integral_compProd_eq_sum_posterior (f : M × W → ℝ) :
   exact sum_comm
 
 omit [Fintype W] [MeasurableSingletonClass W] in
-/-- At each word, the posterior average of the divergences of the meanings from a reference
-measure exceeds the average from the word's interpretation by the divergence of the
-interpretation from the reference. -/
 private theorem sum_posterior_toReal_klDiv (w : W) (ν : Measure U) [IsProbabilityMeasure ν]
     (hν : ∀ m, (encoder†source) w {m} ≠ 0 → meanings m ≪ ν) :
     ∑ m, ((encoder†source) w).real {m} * (klDiv (meanings m) ν).toReal
@@ -207,13 +199,10 @@ theorem distortion_le (d : Kernel W U) [IsMarkovKernel d] (hd : ∀ m w, meaning
 
 /-! ### The information plane -/
 
-/-- Accuracy is bounded by the information the meanings carry about the environment. -/
 theorem accuracy_le_sourceInfo : accuracy meanings source encoder ≤ sourceInfo meanings source := by
   have : 0 ≤ distortion meanings source encoder := integral_nonneg fun _ => ENNReal.toReal_nonneg
   linarith [distortion_eq meanings source encoder]
 
-/-- Accuracy is bounded by complexity: the words carry no more information about the environment
-than about the meanings they compress. -/
 theorem accuracy_le_complexity : accuracy meanings source encoder ≤ complexity source encoder := by
   rw [accuracy, complexity, decoder, ← Measure.parallelComp_comp_compProd,
     ← measureMutualInfo_map_swap (source ⊗ₘ encoder), ← compProd_posterior_eq_map_swap]
@@ -229,8 +218,6 @@ noncomputable def objective (β : ℝ) : ℝ :=
 noncomputable def costPair : CostPair :=
   ⟨distortion meanings source encoder, complexity source encoder⟩
 
-/-- Up to the encoder-independent constant `β I(M;U)`, the objective is the β-scalarized cost
-of distortion and complexity. -/
 theorem objective_eq_weightedCost (β : ℝ) :
     objective meanings source encoder β
       = weightedCost (costPair meanings source encoder) β - β * sourceInfo meanings source := by
@@ -280,8 +267,6 @@ theorem ibUpdate_real_singleton (β : ℝ) (m : M) (w : W) :
   tilted_real_singleton _ _ w
 
 omit [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
-/-- At finite `β` the IB optima induce soft categories: a word in use has positive probability
-under every meaning. -/
 theorem IsIBOptimum.real_pos {β : ℝ} (h : IsIBOptimum meanings source encoder β) {w : W}
     (hw : (encoder ∘ₘ source) {w} ≠ 0) (m : M) : 0 < (encoder m).real {w} := by
   rw [DFunLike.congr_fun h m]
@@ -289,8 +274,6 @@ theorem IsIBOptimum.real_pos {β : ℝ} (h : IsIBOptimum meanings source encoder
     (measure_ne_top _ _)
 
 omit [IsMarkovKernel meanings] [Fintype W] [MeasurableSingletonClass W] in
-/-- With meanings of full support, every meaning is absolutely continuous with respect to every
-interpretation. -/
 private theorem absolutelyContinuous_decoder (hmeanings : ∀ m u, meanings m {u} ≠ 0) (m : M)
     (w : W) : meanings m ≪ decoder meanings source encoder w := by
   refine Measure.absolutelyContinuous_of_forall_singleton fun u hu => absurd hu ?_
@@ -304,9 +287,6 @@ private theorem absolutelyContinuous_decoder (hmeanings : ∀ m u, meanings m {u
   exact fun h => mul_ne_zero hm' (hmeanings m' u) (sum_eq_zero_iff.1 h m' (mem_univ m'))
 
 omit [Nonempty M] [IsMarkovKernel meanings] [Fintype U] [MeasurableSingletonClass U] in
-/-- The source average of the negative free energies of an encoder's rows, tilted by `−β` times
-the divergences under a decoder `d`, splits into the average divergence of the rows from the
-reference `ρ` and `β` times the expected distortion under `d`. -/
 private theorem neg_sum_freeEnergy (q : Kernel M W) [IsMarkovKernel q] (ρ : Measure W)
     (d : Kernel W U) (β : ℝ) :
     -∑ m, source.real {m}
@@ -320,8 +300,6 @@ private theorem neg_sum_freeEnergy (q : Kernel M W) [IsMarkovKernel q] (ρ : Mea
   congr 1
   exact sum_congr rfl fun w _ => by ring
 
-/-- `F_β + β I(M;U)` is the source average of the negative free energies of the encoder's rows
-against its own word marginal and Bayesian decoder. -/
 private theorem objective_add_eq (β : ℝ) :
     objective meanings source encoder β + β * sourceInfo meanings source
       = -∑ m, source.real {m} * (encoder ∘ₘ source).freeEnergy
@@ -330,8 +308,6 @@ private theorem objective_add_eq (β : ℝ) :
   rw [neg_sum_freeEnergy, ← complexity_eq, ← distortion, distortion_eq, objective]
   ring
 
-/-- Against any reference word marginal and any decoder whose interpretations allow every state,
-`F_β + β I(M;U)` is at most the source average of the negative free energies of the rows. -/
 private theorem objective_add_le (q : Kernel M W) [IsMarkovKernel q] (ρ : Measure W)
     [IsProbabilityMeasure ρ] (hq : ∀ m, q m ≪ ρ) (d : Kernel W U) [IsMarkovKernel d]
     (hd : ∀ m w, meanings m ≪ d w) {β : ℝ} (hβ : 0 ≤ β) :
@@ -388,8 +364,6 @@ variable (encoder' : Kernel M W) [IsMarkovKernel encoder']
 noncomputable def deviation (β : ℝ) : ℝ :=
   objective meanings source encoder β - objective meanings source encoder' β
 
-/-- The deviation of the lexicon from a reference encoder over the same meanings and source is
-the substrate's efficiency loss at `β`. -/
 theorem deviation_eq_efficiencyLossAt (β : ℝ) :
     deviation meanings source encoder encoder' β = efficiencyLossAt
       (costPair meanings source encoder) (costPair meanings source encoder') β := by
@@ -402,7 +376,6 @@ noncomputable def efficiencyLoss (β : ℝ) : ℝ :=
 
 omit [IsMarkovKernel meanings] [Fintype U] [Fintype W] [MeasurableSingletonClass U]
   [MeasurableSingletonClass W] in
-/-- Against an optimal encoder at a positive `β`, the efficiency loss is nonnegative. -/
 theorem efficiencyLoss_nonneg {β : ℝ} (hβ : 0 < β)
     (hmin : ∀ (q : Kernel M W) [IsMarkovKernel q],
       objective meanings source encoder' β ≤ objective meanings source q β) :
@@ -423,16 +396,12 @@ def IsLeastInformative : Prop :=
       ≤ Hm[source] - H[Prod.fst | Prod.snd ; source ⊗ₘ encoder]
 
 omit [Nonempty M] in
-/-- SI eq. S11: the objective of a least informative prior is the complexity of the lexicon under
-that prior, the information the words carry about the meanings. -/
 theorem measureEntropy_sub_condEntropy :
     Hm[source] - H[Prod.fst | Prod.snd ; source ⊗ₘ encoder] = complexity source encoder := by
   rw [condEntropy_fst_snd, Measure.fst_compProd, complexity]
   ring
 
 omit [Nonempty M] in
-/-- SI eq. S11: the least informative priors are the capacity-achieving priors of the naming
-distribution, under which the lexicon is maximally complex. -/
 theorem isLeastInformative_iff :
     IsLeastInformative source encoder ↔ complexity source encoder = channelCapacity encoder := by
   rw [IsLeastInformative, measureEntropy_sub_condEntropy]
@@ -442,9 +411,6 @@ theorem isLeastInformative_iff :
   rw [h]
   exact measureMutualInfo_compProd_le_channelCapacity encoder p
 
-/-- SI eq. S12: the complexity is the word average of the divergence of the posterior over
-meanings from the prior, so a least informative prior keeps the posteriors as far from it as
-the lexicon allows. -/
 theorem complexity_eq_sum_klDiv_posterior :
     complexity source encoder
       = ∑ w, (encoder ∘ₘ source).real {w} * (klDiv ((encoder†source) w) source).toReal := by

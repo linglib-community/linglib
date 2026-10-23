@@ -68,7 +68,6 @@ def subtreeAt (t : RoseTree α) : List ℕ → Option (RoseTree α)
 @[simp] theorem subtreeAt_cons (t : RoseTree α) (i : ℕ) (rest : List ℕ) :
     t.subtreeAt (i :: rest) = t.children[i]?.bind fun c ↦ c.subtreeAt rest := rfl
 
-/-- Descending along `p ++ q` is descending along `p`, then along `q` from there. -/
 theorem subtreeAt_append (t : RoseTree α) (p q : List ℕ) :
     t.subtreeAt (p ++ q) = (t.subtreeAt p).bind (·.subtreeAt q) := by
   induction p generalizing t with
@@ -83,7 +82,6 @@ theorem subtreeAt_cons_eq_some_iff {t s : RoseTree α} {i : ℕ} {p : List ℕ} 
     t.subtreeAt (i :: p) = some s ↔ ∃ c, t.children[i]? = some c ∧ c.subtreeAt p = some s := by
   simp [Option.bind_eq_some_iff]
 
-/-- Every prefix of an address inside the tree is inside the tree. -/
 theorem subtreeAt_take_isSome {t s : RoseTree α} {p : List ℕ} (h : t.subtreeAt p = some s)
     (k : ℕ) : (t.subtreeAt (p.take k)).isSome := by
   rw [← List.take_append_drop k p, subtreeAt_append] at h
@@ -114,7 +112,6 @@ instance (t : RoseTree α) : DecidablePred (· ∈ t.validPaths) :=
 theorem bot_mem_validPaths (t : RoseTree α) : (⊥ : TreePath) ∈ t.validPaths := by
   simp [validPaths]
 
-/-- A non-root position descends to one child and is a position there. -/
 theorem mem_validPaths_cons {t : RoseTree α} {i : ℕ} {rest : List ℕ} :
     (⟨i :: rest⟩ : TreePath) ∈ t.validPaths ↔
       ∃ c, t.children[i]? = some c ∧ (⟨rest⟩ : TreePath) ∈ c.validPaths := by
@@ -132,8 +129,6 @@ theorem validPaths_prefix_closed {t : RoseTree α} {p q : TreePath} (hq : q ∈ 
 theorem isLowerSet_validPaths (t : RoseTree α) : IsLowerSet t.validPaths :=
   fun _ _ hpq hq ↦ validPaths_prefix_closed hq hpq
 
-/-- The daughters of a position are its extensions by an index below the arity of its
-subtree. -/
 theorem mem_validPaths_append_singleton_iff {t : RoseTree α} {p : List ℕ} {i : ℕ} :
     (⟨p ++ [i]⟩ : TreePath) ∈ t.validPaths ↔
       ∃ s, t.subtreeAt p = some s ∧ i < s.children.length := by
@@ -144,7 +139,6 @@ theorem mem_validPaths_append_singleton_iff {t : RoseTree α} {p : List ℕ} {i 
 
 /-! ### Height and size along addresses -/
 
-/-- A node of height above `1` has a child one shorter. -/
 theorem exists_mem_children_height_add_one {t : RoseTree α} (h : 1 < t.height) :
     ∃ c ∈ t.children, c.height + 1 = t.height := by
   cases t with
@@ -254,12 +248,10 @@ theorem isSubtree_node_iff {s : RoseTree α} {a : α} {cs : List (RoseTree α)} 
     IsSubtree s (leaf a) ↔ s = leaf a := by
   simp [isSubtree_node_iff]
 
-/-- A subtree is no larger than its tree. -/
 theorem IsSubtree.numNodes_le {s t : RoseTree α}
     (h : IsSubtree s t) : s.numNodes ≤ t.numNodes :=
   let ⟨_, hp⟩ := isSubtree_iff_exists_subtreeAt.1 h; numNodes_le_of_subtreeAt hp
 
-/-- A subtree as large as its tree is the tree. -/
 theorem IsSubtree.eq_of_numNodes_le {s t : RoseTree α}
     (h : IsSubtree s t) (hn : t.numNodes ≤ s.numNodes) : s = t := by
   obtain ⟨_ | ⟨i, p⟩, hp⟩ := isSubtree_iff_exists_subtreeAt.1 h
@@ -512,7 +504,6 @@ theorem replaceAt_cons (a : α) (cs : List (RoseTree α)) (i : ℕ) (p : List �
     (new : RoseTree α) :
     (node a cs).replaceAt (i :: p) new = node a (cs.modify i (·.replaceAt p new)) := rfl
 
-/-- Replacing below the root replaces inside one child. -/
 @[simp] theorem children_replaceAt_cons (t : RoseTree α) (i : ℕ) (p : List ℕ)
     (new : RoseTree α) :
     (t.replaceAt (i :: p) new).children = t.children.modify i (·.replaceAt p new) := by
@@ -522,7 +513,6 @@ theorem replaceAt_cons (a : α) (cs : List (RoseTree α)) (i : ℕ) (p : List �
     (t.replaceAt (i :: p) new).value = t.value := by
   cases t; rfl
 
-/-- Replacing a subtree by one with the same root value keeps the root value. -/
 theorem value_replaceAt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt t p = some s)
     {new : RoseTree α} (hv : new.value = s.value) : (t.replaceAt p new).value = t.value := by
   cases p with
@@ -576,7 +566,6 @@ theorem subtreeAt_replaceAt_of_prefix {t new : RoseTree α} {p q : List ℕ} (hq
     obtain ⟨a, cs⟩ := t
     cases hc : cs[j]? <;> simp [replaceAt_cons, hc, ih h]
 
-/-- At an address below the replaced one, the subtree is that of the replacement. -/
 theorem subtreeAt_replaceAt_append {t new : RoseTree α} {p : List ℕ} (hp : (t.subtreeAt p).isSome)
     (q : List ℕ) : (t.replaceAt p new).subtreeAt (p ++ q) = new.subtreeAt q := by
   rw [subtreeAt_append, subtreeAt_replaceAt_of_prefix (List.prefix_refl p)]

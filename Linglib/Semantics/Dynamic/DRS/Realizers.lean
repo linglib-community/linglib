@@ -93,8 +93,6 @@ theorem verifies_toDRS_iff {g : V → M} : Verifies g s.toDRS ↔ g ∘ Subtype.
   unfold Literal.toCondition
   cases l.pos <;> simp [Box.Extends, ← funext_iff]
 
-/-- For a theory of positive literals, an embedding realizes the theory on the context's referents
-exactly when it realizes the atoms of the theory. -/
 theorem comp_val_mem_realizers_iff (hpos : ∀ l ∈ s.lits, l.pos) {g : V → M} :
     g ∘ Subtype.val ∈ s.realizers M ↔
       g ∈ Atom.realizers M (Literal.atom '' (s.lits : Set (Literal c))) := by
@@ -104,7 +102,6 @@ theorem comp_val_mem_realizers_iff (hpos : ∀ l ∈ s.lits, l.pos) {g : V → M
 
 variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
-/-- Restricting a theory along a context morphism keeps the restrictions of its realizers. -/
 theorem comp_mem_realizers_restrict {f : c ⟶ c'} {s : Theory c'} {g : c'.vars → M}
     (h : g ∈ s.realizers M) : g ∘ f.map ∈ (s.restrict f).realizers M :=
   fun _ hl ↦ h _ (mem_restrict.1 hl)

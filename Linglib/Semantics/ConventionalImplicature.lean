@@ -115,8 +115,6 @@ instance : Monad (TwoDim W) where
 @[simp] theorem seq_notAtIssue (f : TwoDim W (α → β)) (p : TwoDim W α) :
     (f <*> p).notAtIssue = f.notAtIssue ⊓ p.notAtIssue := rfl
 
-/-- The at-issue value of a composition depends on the input's at-issue value alone, so
-not-at-issue content never flows into the at-issue dimension ([potts-2005]). -/
 @[simp] theorem bind_atIssue (p : TwoDim W α) (f : α → TwoDim W β) :
     (p >>= f).atIssue = (f p.atIssue).atIssue := rfl
 
@@ -184,18 +182,14 @@ def ofWriter (m : Writer (List (W → Prop)) α) : TwoDim W α :=
 @[simp] theorem ofWriter_pure (a : α) : ofWriter (pure a : Writer (List (W → Prop)) α) = pure a :=
   TwoDim.ext rfl (funext fun _ ↦ propext (by simp))
 
-/-- Composing node by node and collecting at the root agree, since `ofWriter` is a monad
-morphism. -/
 theorem ofWriter_bind (m : Writer (List (W → Prop)) α) (f : α → Writer (List (W → Prop)) β) :
     ofWriter (m >>= f) = ofWriter m >>= fun a ↦ ofWriter (f a) :=
   TwoDim.ext rfl (funext fun _ ↦ propext List.forall_mem_append)
 
-/-- A CI logged twice contributes what it contributes logged once. -/
 theorem ofWriter_mk_cons_self (a : α) (c : W → Prop) (l : List (W → Prop)) :
     ofWriter (Writer.mk a (c :: c :: l)) = ofWriter (Writer.mk a (c :: l)) :=
   TwoDim.ext rfl (funext fun _ ↦ propext (by simp))
 
-/-- Conjoining the log forgets how often a CI was contributed. -/
 theorem ofWriter_not_injective [Nonempty α] :
     ¬ Function.Injective (ofWriter : Writer (List (W → Prop)) α → TwoDim W α) := fun h ↦ by
   simpa using congrArg Writer.log (h (ofWriter_mk_cons_self (Classical.arbitrary α) ⊤ []))
@@ -223,37 +217,28 @@ noncomputable def toTrivalent : W → SignType :=
 @[simp] theorem toTrivalent_eq_zero_iff : p.toTrivalent w = 0 ↔ ¬ p.notAtIssue w := by
   simp [toTrivalent]
 
-/-- Negation evaluates to Kleene's negation. -/
 theorem toTrivalent_neg : p.neg.toTrivalent = -p.toTrivalent := by
   funext w; by_cases h : p.notAtIssue w <;> by_cases a : p.atIssue w <;> simp [toTrivalent, h, a]
 
-/-- Conjunction evaluates to Weak Kleene conjunction. -/
 theorem toTrivalent_and : (p.and q).toTrivalent w = (p.toTrivalent w).meetWeak (q.toTrivalent w) :=
   by by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
     by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b] <;> rfl
 
-/-- Disjunction evaluates to Weak Kleene disjunction. -/
 theorem toTrivalent_or : (p.or q).toTrivalent w = (p.toTrivalent w).joinWeak (q.toTrivalent w) :=
   by by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
     by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b] <;> rfl
 
-/-- Implication evaluates to the Weak Kleene material conditional. -/
 theorem toTrivalent_imp :
     (p.imp q).toTrivalent w = (-p.toTrivalent w).joinWeak (q.toTrivalent w) := by
   by_cases h : p.notAtIssue w <;> by_cases h' : q.notAtIssue w <;> by_cases a : p.atIssue w <;>
     by_cases b : q.atIssue w <;> simp [toTrivalent, h, h', a, b, himp_eq] <;> rfl
 
-/-- A filtering conditional presupposes at most what the antecedent and consequent presuppose
-together. -/
 theorem imp_notAtIssue_subset_support :
     {w | (p.imp q).notAtIssue w} ⊆
       Function.support fun w ↦ (-p.toTrivalent w).joinMiddle (q.toTrivalent w) := fun w h ↦ by
   simp only [Set.mem_ofPred_eq, imp_notAtIssue, Pi.inf_apply, inf_Prop_eq] at h
   simp [h.1, h.2]
 
-/-- Filtering is no composition of two-dimensional meanings. A filtering conditional's
-presupposition depends on its antecedent's at-issue content, which no at-issue operator passes to
-the not-at-issue dimension ([karttunen-1973]). -/
 theorem exists_notAtIssue_ne_support [Nonempty W] :
     ∃ p q : TwoDim W (W → Prop), ∀ f : (W → Prop) → (W → Prop) → W → Prop,
       {w | (f <$> p <*> q).notAtIssue w} ≠
@@ -271,7 +256,6 @@ experimental support. -/
 def orKPSymmetric : TwoDim W (W → Prop) :=
   ⟨p.atIssue ⊔ q.atIssue, fun w ↦ (q.atIssue w ∨ p.notAtIssue w) ∧ (p.atIssue w ∨ q.notAtIssue w)⟩
 
-/-- The symmetric disjunction is invariant under swapping its disjuncts. -/
 theorem orKPSymmetric_comm : orKPSymmetric p q = orKPSymmetric q p :=
   TwoDim.ext (sup_comm ..) (funext fun _ ↦ propext and_comm)
 
@@ -284,9 +268,6 @@ theorem orKPSymmetric_atIssue_of_conflict (h : ¬ (p.notAtIssue w ∧ q.notAtIss
   · exact Or.inl (h₂.resolve_right fun hq ↦ h ⟨hp, hq⟩)
   · exact Or.inr (h₁.resolve_right hp)
 
-/-- The symmetric disjunction is no trivalent operation. No binary operation on `SignType`
-computes its value from its disjuncts' values, since its presupposition reads their at-issue
-content where their presuppositions fail. -/
 theorem orKPSymmetric_not_trivalent (w : W) :
     ¬ ∃ f : SignType → SignType → SignType,
       ∀ p q : TwoDim W (W → Prop),

@@ -376,8 +376,6 @@ variable {L : Language.{u, u}} {C : Type} {X : Type*}
 
 variable {words : X → Option (Σ ty, FirstOrderConstant L ty)}
 
-/-- A tree that translates to a logical form of type `t` holds where the logical form is
-true. -/
 theorem holdsAt_iff_eval (m : Model L) (w : m.W) {t : Tree C X}
     {u : Term (FirstOrderConstant L) .t} (h : Tree.translate words t = some ⟨.t, u⟩)
     (g : Assignment m.E) :

@@ -63,12 +63,10 @@ variable {node} {a b : N} {f : F}
 theorem mem_featureClass : f ∈ featureClass node a ↔ ∃ m ∈ node f, a ≤ m := by
   simp [featureClass]
 
-/-- A node whose class contains a feature lies at or above the feature's own node. -/
 theorem le_of_mem_featureClass {m : N} (h : f ∈ featureClass node a) (hf : node f = some m) :
     a ≤ m := by
   simpa [mem_featureClass, hf] using h
 
-/-- The root's class is every placed feature, so spreading the root is total assimilation. -/
 theorem mem_featureClass_bot [OrderBot N] : f ∈ featureClass node ⊥ ↔ (node f).isSome := by
   simp [mem_featureClass, Option.isSome_iff_exists]
 

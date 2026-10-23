@@ -69,7 +69,6 @@ theorem argmax_subset : s.argmax f ⊆ s :=
 theorem argmax_empty : (∅ : Finset α).argmax f = ∅ :=
   filter_empty _
 
-/-- A score that is constant on `s` has all of `s` as argmax. -/
 @[to_dual /-- A score that is constant on `s` has all of `s` as argmin. -/]
 theorem argmax_eq_self_of_forall_le (h : ∀ a ∈ s, ∀ b ∈ s, f b ≤ f a) : s.argmax f = s :=
   filter_true_of_mem h
@@ -78,15 +77,11 @@ theorem argmax_eq_self_of_forall_le (h : ∀ a ∈ s, ∀ b ∈ s, f b ≤ f a) 
 theorem argmax_const (c : β) : s.argmax (fun _ ↦ c) = s :=
   argmax_eq_self_of_forall_le fun _ _ _ _ ↦ le_rfl
 
-/-- Scores that order `s` oppositely swap argmin and argmax. -/
 theorem argmin_eq_argmax_of_le_iff [Preorder γ] [DecidableLE γ] {f' : α → γ}
     (h : ∀ a ∈ s, ∀ b ∈ s, f a ≤ f b ↔ f' b ≤ f' a) : s.argmin f = s.argmax f' := by
   ext a; simp only [mem_argmin, mem_argmax]
   exact and_congr_right fun ha ↦ forall₂_congr fun b hb ↦ h a ha b hb
 
-/-- For a surjection `e`, `a` maximizes `φ ∘ e` over `univ` iff `e a` maximizes `φ`. This
-collapses an argmax over a function space to an argmax over values when the objective factors
-through evaluation. -/
 theorem mem_argmax_comp_surjective {α' : Type*} [Fintype α] [Fintype α']
     {e : α → α'} (he : Function.Surjective e) (φ : α' → β) {a : α} :
     a ∈ Finset.univ.argmax (φ ∘ e) ↔ e a ∈ Finset.univ.argmax φ := by
@@ -132,8 +127,6 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] {κ : ι → Type*} {K : Typ
   [PartialOrder K] [IsOrderedCancelAddMonoid K] [DecidableLE K] (s : ∀ i, Finset (κ i))
   (φ : ∀ i, κ i → K) {g : ∀ i, κ i}
 
-/-- The maximizers of a sum of independent scores over a product of finsets are the families of
-maximizers of the summands. -/
 theorem mem_argmax_piFinset_sum :
     g ∈ (Fintype.piFinset s).argmax (fun g' ↦ ∑ i, φ i (g' i)) ↔
       ∀ i, g i ∈ (s i).argmax (φ i) := by
@@ -149,8 +142,6 @@ theorem mem_argmax_piFinset_sum :
     ← add_sum_erase _ (fun k ↦ φ k (g k)) (mem_univ i)] at key
   exact le_of_add_le_add_right key
 
-/-- The minimizers of a sum of independent scores over a product of finsets are the families of
-minimizers of the summands. -/
 theorem mem_argmin_piFinset_sum :
     g ∈ (Fintype.piFinset s).argmin (fun g' ↦ ∑ i, φ i (g' i)) ↔
       ∀ i, g i ∈ (s i).argmin (φ i) := by
@@ -172,8 +163,6 @@ section LinearOrder
 
 variable [LinearOrder β] [LinearOrder γ]
 
-/-- The argmax of a score that is positive on a nonempty `t ⊆ s` and zero on
-the rest of `s` is the argmax over `t`. -/
 theorem argmax_eq_argmax_of_support [Zero β] {t : Finset α} (hts : t ⊆ s) (hne : t.Nonempty)
     (hpos : ∀ a ∈ t, 0 < f a) (hzero : ∀ a ∈ s, a ∉ t → f a = 0) : s.argmax f = t.argmax f := by
   obtain ⟨a₀, ha₀⟩ := hne
@@ -197,9 +186,6 @@ theorem argmax_comp_strictMono {g : β → γ} (hg : StrictMono g) :
   ext a
   simp only [mem_argmax, Function.comp_apply, hg.le_iff_le]
 
-/-- Membership in the argmax of a coordinatewise sum over a finite pi type:
-`g` maximizes `∑ i, φ i (g i)` iff every coordinate maximizes its own
-summand. The additive-separability workhorse for best responses in games. -/
 theorem mem_argmax_pi_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
     {Y : ι → Type*} [∀ i, Fintype (Y i)] {K : Type*} [AddCommMonoid K]
     [LinearOrder K] [IsOrderedCancelAddMonoid K]

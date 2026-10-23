@@ -22,27 +22,19 @@ the plain `Setoid.ker` they specialize. [UPSTREAM]
 
 @[expose] public section
 
-/-- If `g` factors through `f`, then the kernel of `f` refines the kernel
-of `g` — the `Setoid` primitive of `LinearMap.ker_le_ker_comp`. [UPSTREAM] -/
 theorem Setoid.ker_le_ker_comp {α β γ : Type*} (f : α → β) (h : β → γ) :
     Setoid.ker f ≤ Setoid.ker (h ∘ f) :=
   Setoid.le_def.mpr fun hxy => congrArg h hxy
 
-/-- The kernel of a map followed by an injection is the kernel of the map, the `Setoid`
-primitive of `RingHom.ker_comp_of_injective`. [UPSTREAM] -/
 theorem Setoid.ker_comp_of_injective {α β γ : Type*} (f : α → β) {g : β → γ}
     (hg : Function.Injective g) : Setoid.ker (g ∘ f) = Setoid.ker f :=
   Setoid.ext fun _ _ ↦ hg.eq_iff
 
-/-- Two elements are related by an indexed meet of setoids when every setoid relates them.
-[UPSTREAM] -/
 theorem Setoid.iInf_iff {α : Type*} {ι : Sort*} {f : ι → Setoid α} {a b : α} :
     (⨅ i, f i) a b ↔ ∀ i, f i a b := by
   rw [iInf, Setoid.sInf_iff]
   simp
 
-/-- The classes of a meet of setoids are the nonempty intersections of their classes.
-[UPSTREAM] -/
 theorem Setoid.classes_inf {α : Type*} (r s : Setoid α) :
     (r ⊓ s).classes = {c | ∃ a ∈ r.classes, ∃ b ∈ s.classes, c = a ∩ b ∧ c.Nonempty} := by
   ext c
@@ -57,8 +49,6 @@ theorem Setoid.classes_inf {α : Type*} (r s : Setoid α) :
         Setoid.inf_iff_and.2 ⟨r.trans' h₁ (r.symm' hzx), s.trans' h₂ (s.symm' hzy)⟩,
       fun h ↦ let ⟨h₁, h₂⟩ := Setoid.inf_iff_and.1 h; ⟨r.trans' h₁ hzx, s.trans' h₂ hzy⟩⟩
 
-/-- One setoid is finer than another when each of its classes lies in a class of the other.
-[UPSTREAM] -/
 theorem Setoid.le_iff_forall_classes {α : Type*} {r s : Setoid α} :
     r ≤ s ↔ ∀ a ∈ r.classes, ∃ b ∈ s.classes, a ⊆ b := by
   refine ⟨?_, fun h ↦ Setoid.le_def.2 fun {x y} hxy ↦ ?_⟩

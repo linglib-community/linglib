@@ -178,8 +178,6 @@ theorem shan_numClf_fails :
 
 /-! ### One denotation for *two dogs* -/
 
-/-- Measure modification by the atom count is quantized, since `Finset.card` is strictly
-monotone. -/
 theorem qmod_dogs_qua (n : ℕ) : QUA (QMOD (dogs dog) Finset.card n) :=
   qmod_qua (Finset.card_strictMono.strictMonoOn _) n
 

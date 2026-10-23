@@ -120,10 +120,8 @@ theorem result_iff_not_prior {t : Phasal} (ht : t ≠ continuation) :
   · exact not_not.symm
   · exact absurd rfl ht
 
-/-- A continuation is no change, the result state having the polarity of the prior state. -/
 theorem result_continuation_eq_prior : continuation.Result = continuation.Prior := rfl
 
-/-- No state is left by one transition and continued by another. -/
 theorem not_transition_cessation_of_continuation (h : continuation.Transition p q) :
     ¬ cessation.Transition p q :=
   fun h' ↦ h'.2 h.2
@@ -146,24 +144,18 @@ theorem denote_eq_one_iff : t.denote R P i = 1 ↔ ∃ i', i ~[R] i' ∧ t.Trans
     SignType.ofProp_eq_one_iff]
   exact ⟨fun ⟨⟨i', hr, hp⟩, hq⟩ ↦ ⟨i', hr, hp, hq⟩, fun ⟨i', hr, hp, hq⟩ ↦ ⟨⟨i', hr, hp⟩, hq⟩⟩
 
-/-- An inception that is true is a becoming. -/
 theorem denote_inception_eq_one_iff : inception.denote R P i = 1 ↔ Become R P i := by
   simp [denote, Become]
 
-/-- A continuation is *again* applied to the state. -/
 theorem denote_continuation : continuation.denote R P = again R P := rfl
 
-/-- A cessation is the negation of a continuation, the two sharing the presupposition that the
-state held. -/
 theorem denote_cessation_eq_neg : cessation.denote R P = -continuation.denote R P :=
   funext fun _ ↦ SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [denote])
 
-/-- A cessation is the inception of the complementary state. -/
 theorem denote_cessation_eq_inception :
     cessation.denote R P = inception.denote R (fun i ↦ ¬ P i) :=
   funext fun _ ↦ SignType.eq_of_eq_zero_iff_of_eq_one_iff (by simp) (by simp [denote])
 
-/-- A cessation that is true is the becoming of the complementary state. -/
 theorem denote_cessation_eq_one_iff :
     cessation.denote R P i = 1 ↔ Become R (fun i ↦ ¬ P i) i := by
   rw [denote_cessation_eq_inception, denote_inception_eq_one_iff]

@@ -78,11 +78,9 @@ ending when there is none. -/
 def ending (p : Preceding) (x : GenderNumber) (c : Case) : String :=
   if p.HasEnding x c then weak x c else strong x c
 
-/-- With no determiner an adjective takes the strong endings. -/
 @[simp] theorem ending_none : ending .none = strong := by
   funext x c; simp [ending, Preceding.HasEnding]
 
-/-- After a determiner with an ending in every cell an adjective takes the weak endings. -/
 @[simp] theorem ending_inflected : ending .inflected = weak := by
   funext x c; simp [ending, Preceding.HasEnding]
 

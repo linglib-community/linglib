@@ -239,8 +239,6 @@ def markerOf : TermRole → Option MarkerSet
   | .P => some .setB
   | .S | .X => none
 
-/-- The marker assignment respects the hierarchy: the participant of the earlier subevent is
-realized as A and takes set A, the participant of the later one as P and takes set B. -/
 theorem markerOf_termRole_of_lt {a b : Subevent} (h : a < b) :
     markerOf (termRole a) = some .setA ∧ markerOf (termRole b) = some .setB := by
   revert a b; decide
@@ -408,8 +406,6 @@ theorem suffix_not_predictable :
     balak'.stemClass = péek.stemClass ∧ balak'.causationType = péek.causationType ∧
     transitivizerSuffix balak' ≠ transitivizerSuffix péek := ⟨rfl, rfl, by decide⟩
 
-/-- Every documented verb links by its causation type: those with internally-caused bases add a P,
-the rest an A. -/
 theorem documented_linking :
     documented.all (fun v ↦
       addedTermRole v == some (if v.causationType == .internal then .P else .A)) = true := by
@@ -536,22 +532,16 @@ sound-emission actives, the positionals ((25)) and the inactive degree achieveme
 def externallyCaused : List Verb :=
   [chíik, háarax, húuy, mosòon, pirix, walak', chiltal, xoltal, la'b, t'íil, ts'u'k, ka'n, na'k]
 
-/-- Each of them is externally caused whatever its stem class, and so adds an instigator as A:
-stem class varies across the list while the linking does not. -/
 theorem externally_caused_causativize :
     externallyCaused.all (fun v ↦
       v.causationType == .external && addedTermRole v == some .A) = true := by decide
 
 /-! ### Bridge to split ergativity -/
 
-/-- The linking-by-viewpoint mechanism derives the alignment the fragment records for each
-status category. -/
 theorem linking_consistent_with_split :
     Yukatek.alignment .completive = .ergative ∧ Yukatek.alignment .incompletive = .accusative :=
   ⟨rfl, rfl⟩
 
-/-- Yukatek's split is aspect-conditioned like that of Hindi-Urdu, the completive aligning as the
-Hindi-Urdu perfective does. -/
 theorem aspect_conditioned_split_family :
     Yukatek.alignment .completive = HindiUrdu.alignment .perfective := rfl
 

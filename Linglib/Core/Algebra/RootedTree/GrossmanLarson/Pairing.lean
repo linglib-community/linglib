@@ -82,7 +82,6 @@ theorem pairing_symm (x y : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) x 0 = 0 :=
   LinearMap.map_zero _
 
-/-- Pairing against the unit gives the counit, the coefficient of the empty forest. -/
 theorem pairing_one_right (w : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) w (1 : ConnesKreimer R (UnorderedTree α)) =
       (ConnesKreimer.counit : ConnesKreimer R (UnorderedTree α) →ₐ[R] R) w := by
@@ -100,7 +99,6 @@ theorem pairing_of' (F : Forest (UnorderedTree α)) :
   · simp [ConnesKreimer.coeff_of']
   · simp [ConnesKreimer.coeff_of', h, h.symm]
 
-/-- Pairing against `of' G` gives the coefficient of `G`, weighted by the symmetries of `G`. -/
 theorem pairing_apply_of' (x : ConnesKreimer R (UnorderedTree α))
     (G : Forest (UnorderedTree α)) :
     pairing (R := R) x (ConnesKreimer.of' G) =
@@ -125,7 +123,6 @@ theorem pairing_nondegenerate
 section Ring
 variable {R : Type*} [CommRing R] [CharZero R] [NoZeroDivisors R]
 
-/-- Elements that pair equally against everything are equal. -/
 theorem ext_pairing_right {x y : ConnesKreimer R (UnorderedTree α)}
     (h : ∀ z, pairing (R := R) x z = pairing y z) : x = y :=
   sub_eq_zero.mp <| pairing_nondegenerate _ fun z => by
@@ -138,7 +135,6 @@ end Ring
 Pairing against a Connes–Kreimer product splits the basis forest over its antidiagonal; the
 weights recombine by `UnorderedTree.forestAutCard_add`. -/
 
-/-- `⟨W, C₁ · C₂⟩` is the sum, over the splittings `W = W₁ + W₂`, of `⟨W₁, C₁⟩ · ⟨W₂, C₂⟩`. -/
 theorem pairing_of'_mul_of' (W C₁ C₂ : Forest (UnorderedTree α)) :
     pairing (R := R) (ConnesKreimer.of' W)
         (ConnesKreimer.of' C₁ * ConnesKreimer.of' C₂) =

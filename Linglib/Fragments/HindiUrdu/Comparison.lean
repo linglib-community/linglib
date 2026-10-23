@@ -29,7 +29,6 @@ def se : Comparative :=
   , standardCase := some .abl
   , degreeMarkers := [.free "zyaadaa"] }
 
-/-- The case of the standard is a function the postposition is entered with. -/
 theorem standardCase_mem_functions : ∀ k ∈ se.standardCase, k ∈ Adpositions.se.functions := by
   decide
 

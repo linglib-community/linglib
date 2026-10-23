@@ -50,15 +50,12 @@ def consistent (ws : List W) : Set T := str ⁻¹' {l | ws <+: l}
 @[simp] theorem consistent_nil : consistent str ([] : List W) = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ List.nil_prefix
 
-/-- Longer prefixes select fewer structures. -/
 theorem consistent_anti {ws ws' : List W} (h : ws <+: ws') :
     consistent str ws' ⊆ consistent str ws :=
   fun _ ht ↦ h.trans ht
 
 variable [MeasurableSpace T] [DiscreteMeasurableSpace T] (P : Measure T)
 
-/-- The language model of a process gives the strings extending a prefix the mass of the
-structures consistent with it. -/
 theorem map_apply_setOf_prefix (ws : List W) :
     P.map str {l | ws <+: l} = P (consistent str ws) :=
   Measure.map_apply .of_discrete .of_discrete

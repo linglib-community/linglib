@@ -74,8 +74,6 @@ def materialImp (p q : Set W) : Set W := {w | w ∈ p → w ∈ q}
 @[simp]
 theorem mem_materialImp : w ∈ materialImp p q ↔ (w ∈ p → w ∈ q) := Iff.rfl
 
-/-- Contraposition is valid for the material conditional, though not for the indicative
-conditional of [stalnaker-1975]. -/
 theorem contraposition : materialImp p q ⊆ materialImp qᶜ pᶜ :=
   fun _ h hq hp ↦ hq (h hp)
 
@@ -111,7 +109,6 @@ theorem ofDomain_eq_core : ofDomain D p q = (SetRel.ofSuccessors (D · p)).core 
 theorem ofDomain_mono_right (hq : q ⊆ q') : ofDomain D p q ⊆ ofDomain D p q' :=
   fun _ h ↦ h.trans hq
 
-/-- A conditional holds of a conjunctive consequent iff it holds of both conjuncts. -/
 theorem ofDomain_inter : ofDomain D p (q ∩ r) = ofDomain D p q ∩ ofDomain D p r :=
   Set.ext fun _ ↦ Set.subset_inter_iff
 
@@ -123,45 +120,32 @@ domain of the weaker. -/
 theorem ofDomain_anti_left (hD : ∀ i, D i p' ⊆ D i p) : ofDomain D p q ⊆ ofDomain D p' q :=
   fun i h ↦ (hD i).trans h
 
-/-- A conditional holding of two antecedents holds of their disjunction when the domain of the
-disjunction lies within theirs. -/
 theorem mem_ofDomain_union (hD : D i (p ∪ p') ⊆ D i p ∪ D i p') (hp : i ∈ ofDomain D p q)
     (hp' : i ∈ ofDomain D p' q) : i ∈ ofDomain D (p ∪ p') q :=
   fun _ hv ↦ (hD hv).elim (hp ·) (hp' ·)
 
-/-- A conditional over a domain with at most one world distributes over a disjunctive
-consequent. -/
 theorem mem_ofDomain_or (h : (D i p).Subsingleton) (hq : i ∈ ofDomain D p (q ∪ r)) :
     i ∈ ofDomain D p q ∨ i ∈ ofDomain D p r := by
   rcases h.eq_empty_or_singleton with h0 | ⟨v, hv⟩
   · exact .inl (by simp [h0])
   · simpa only [mem_ofDomain, hv, Set.singleton_subset_iff, Set.mem_union] using hq
 
-/-- A conditional over a domain with at most one world satisfies Conditional Excluded
-Middle. -/
 theorem mem_ofDomain_or_compl (h : (D i p).Subsingleton) :
     i ∈ ofDomain D p q ∨ i ∈ ofDomain D p qᶜ :=
   mem_ofDomain_or h (by simp)
 
-/-- Two worlds of the domain that disagree on the consequent refute both *if p, q* and
-*if p, not q*. -/
 theorem not_mem_ofDomain_and_compl {v v' : W} (hv : v ∈ D i p) (hv' : v' ∈ D i p) (hq : v ∈ q)
     (hq' : v' ∉ q) : i ∉ ofDomain D p q ∧ i ∉ ofDomain D p qᶜ :=
   ⟨fun h ↦ hq' (h hv'), fun h ↦ h hv hq⟩
 
-/-- Conditional Excluded Middle for every consequent characterizes the domains with at most one
-world, the Alt₁ correspondence along the relation of the domain. -/
 theorem forall_mem_ofDomain_or_compl_iff :
     (∀ r : Set W, i ∈ ofDomain D p r ∨ i ∈ ofDomain D p rᶜ) ↔ (D i p).Subsingleton :=
   ModalLogic.box_or_box_not_at_iff (R := SetRel.ofSuccessors (D · p))
 
-/-- Modus ponens holds when every antecedent-world lies in its own domain. -/
 theorem ofDomain_subset_materialImp {D : W → Set W → Set W} (hD : ∀ w ∈ p, w ∈ D w p) :
     ofDomain D p q ⊆ materialImp p q :=
   fun w h hp ↦ h (hD w hp)
 
-/-- The material conditional quantifies over the evaluation world when it is an
-antecedent-world. -/
 theorem materialImp_eq_ofDomain : materialImp p q = ofDomain (fun w p ↦ {w} ∩ p) p q :=
   Set.ext fun _ ↦ ⟨fun h _ hv ↦
       (Set.mem_singleton_iff.1 hv.1) ▸ h ((Set.mem_singleton_iff.1 hv.1) ▸ hv.2),
@@ -180,45 +164,33 @@ def strictImp (access : I → Set W) (p q : Set W) : Set I :=
 @[simp]
 theorem mem_strictImp : i ∈ strictImp access p q ↔ access i ∩ p ⊆ q := Iff.rfl
 
-/-- The quantifier reading of the strict conditional. -/
 theorem mem_strictImp_forall :
     i ∈ strictImp access p q ↔ ∀ w ∈ access i, w ∈ p → w ∈ q :=
   ⟨fun h _ hw hp ↦ h ⟨hw, hp⟩, fun h w hw ↦ h w hw.1 hw.2⟩
 
-/-- The strict conditional is monotone in its consequent. -/
 theorem strictImp_mono_right (hq : q ⊆ q') :
     strictImp access p q ⊆ strictImp access p q' :=
   ofDomain_mono_right hq
 
-/-- The strict conditional is antitone in its antecedent, the antecedent strengthening that
-the variably strict conditional of [lewis-1973] rejects. -/
 theorem strictImp_anti_left (hp : p' ⊆ p) :
     strictImp access p q ⊆ strictImp access p' q :=
   ofDomain_anti_left fun _ ↦ Set.inter_subset_inter_right _ hp
 
-/-- The strict conditional with a disjunctive antecedent is the conjunction of the conditionals of
-the disjuncts, the anti-additivity of the antecedent position. -/
 theorem strictImp_union_left :
     strictImp access (p ∪ p') q = strictImp access p q ∩ strictImp access p' q :=
   Set.ext fun _ ↦ by
     simp only [mem_strictImp, Set.inter_union_distrib_left, Set.union_subset_iff,
       Set.mem_inter_iff]
 
-/-- A strict conditional whose consequent holds throughout the accessible worlds is true for
-every antecedent ([stalnaker-1975], [von-fintel-1999], [mizuno-2024]). -/
 theorem mem_strictImp_of_subset (h : access i ⊆ q) :
     i ∈ strictImp access p q :=
   Set.inter_subset_left.trans h
 
-/-- A true strict conditional whose consequent does not hold throughout the accessible worlds
-has an antecedent that excludes some accessible world ([mizuno-2024]). -/
 theorem not_subset_of_mem_strictImp
     (hm : i ∈ strictImp access p q) (hq : ¬ access i ⊆ q) :
     ¬ access i ⊆ p :=
   fun hp ↦ hq (fun _ hw ↦ hm ⟨hw, hp hw⟩)
 
-/-- With reflexive access, the strict conditional entails the material conditional at the
-evaluation world. -/
 theorem strict_implies_material {R : W → Set W} (h_refl : w ∈ R w)
     (h : w ∈ strictImp R p q) : w ∈ materialImp p q :=
   fun hp ↦ h ⟨h_refl, hp⟩
@@ -259,18 +231,15 @@ world in its own preorder, [lewis-1973]'s requirement that each world be closer 
 any other world is. -/
 def IsCentered (ord : W → Preorder W) : Prop := ∀ w w' : W, w ≠ w' → (ord w).lt w w'
 
-/-- Under strong centering every world is at least as close to itself as any world is. -/
 theorem IsCentered.le (hc : IsCentered ord) (w w' : W) : (ord w).le w w' := by
   let := ord w
   rcases eq_or_ne w w' with rfl | h
   exacts [le_rfl, (hc w w' h).le]
 
-/-- Under strong centering no other world is as close to a world as the world itself. -/
 theorem IsCentered.not_le (hc : IsCentered ord) {w w' : W} (h : w ≠ w') : ¬ (ord w).le w' w :=
   let := ord w
   (hc w w' h).not_ge
 
-/-- Under strong centering a world is its own unique closest world in any set containing it. -/
 theorem IsCentered.minimals_eq_singleton (hc : IsCentered ord) (hw : w ∈ p) :
     (ord w).minimals p = {w} := by
   refine Set.eq_singleton_iff_unique_mem.2 ⟨⟨hw, fun u _ _ ↦ hc.le w u⟩, fun u hu ↦ ?_⟩
@@ -299,8 +268,6 @@ def closestImp (ord : W → Preorder W) (p q : Set W) : Set W :=
 @[simp]
 theorem mem_closestImp : w ∈ closestImp ord p q ↔ (ord w).minimals p ⊆ q := Iff.rfl
 
-/-- Membership in `closestImp` over a finite type, decided by filtering the antecedent-worlds once
-rather than quantifying over every world. -/
 theorem mem_closestImp_iff_forall_filter [Fintype W] [DecidablePred (· ∈ p)] :
     w ∈ closestImp ord p q ↔ ∀ v ∈ Finset.univ.filter (· ∈ p),
       (∀ u ∈ Finset.univ.filter (· ∈ p), (ord w).le u v → (ord w).le v u) → v ∈ q := by
@@ -311,8 +278,6 @@ instance [Fintype W] [DecidableRel (ord w).le] [DecidablePred (· ∈ p)] [Decid
     Decidable (w ∈ closestImp ord p q) :=
   decidable_of_iff _ mem_closestImp_iff_forall_filter.symm
 
-/-- On a total ordering the variably strict conditional entails the conditional of the closest
-antecedent-worlds. -/
 theorem variablyStrictImp_subset_closestImp (htot : ∀ w, Std.Total (ord w).le) :
     variablyStrictImp ord p q ⊆ closestImp ord p q := by
   rintro w (rfl | h) u hu
@@ -332,14 +297,11 @@ theorem closestImp_eq_variablyStrictImp (htot : ∀ w, Std.Total (ord w).le)
   exact .inr ((OrderingSemantics.isGoodPossibility_iff_of_least hv.1 hv.2).2
     ((OrderingSemantics.minimals_subset_iff_of_least hv.1 hv.2).1 hw))
 
-/-- On a total ordering the two conditionals coincide for a finite antecedent, which satisfies
-the Limit Assumption. -/
 theorem closestImp_eq_variablyStrictImp_of_finite (htot : ∀ w, Std.Total (ord w).le)
     (hp : p.Finite) :
     closestImp ord p q = variablyStrictImp ord p q :=
   closestImp_eq_variablyStrictImp htot fun w ↦ (ord w).minimals_nonempty_of_finite hp
 
-/-- Without closest antecedent-worlds the conditional of the closest worlds is vacuously true. -/
 theorem mem_closestImp_of_closest_eq_empty (h : (ord w).minimals p = ∅) :
     w ∈ closestImp ord p q :=
   (mem_closestImp.2 (h ▸ Set.empty_subset q))
@@ -358,14 +320,10 @@ theorem mem_variablyStrictImp_compl_singleton (h : (ord w).minimals p = ∅) (v 
     exact .inr ⟨x, hx, fun y _ hyx hyv ↦ hvx (hyv ▸ hyx)⟩
   · exact .inr ⟨u, hu, fun y hy _ hyv ↦ hv (hyv ▸ hy)⟩
 
-/-- So no world is one that `p` might have been, [stalnaker-1981]'s objection to [lewis-1973]
-without the Limit Assumption. -/
 theorem notMem_might_variablyStrictImp_singleton (h : (ord w).minimals p = ∅) (v : W) :
     w ∉ might (variablyStrictImp ord) p {v} :=
   fun hm ↦ hm (mem_variablyStrictImp_compl_singleton h v)
 
-/-- Under strong centering the conditional of the closest worlds entails the material
-conditional. -/
 theorem closestImp_subset_materialImp (hc : IsCentered ord) :
     closestImp ord p q ⊆ materialImp p q :=
   ofDomain_subset_materialImp fun w hw ↦ ⟨hw, fun u _ _ ↦ hc.le w u⟩
@@ -378,13 +336,10 @@ theorem variablyStrictImp_subset_materialImp (hc : IsCentered ord) :
 theorem closestImp_eq_univ_of_subset (h : p ⊆ q) : closestImp ord p q = Set.univ :=
   Set.eq_univ_of_forall fun _ ↦ (Preorder.minimals_subset _ p).trans h
 
-/-- A conditional holding of each of two antecedents holds of their disjunction. -/
 theorem mem_closestImp_union (hp : w ∈ closestImp ord p r) (hq : w ∈ closestImp ord q r) :
     w ∈ closestImp ord (p ∪ q) r :=
   fun _ hu ↦ (Preorder.minimals_union_subset hu).elim (hp ·) (hq ·)
 
-/-- On a total ordering, a conditional with a disjunctive antecedent entails the conditional of
-one of the disjuncts. -/
 theorem mem_closestImp_or_of_mem_union (htot : ∀ w, Std.Total (ord w).le)
     (h : w ∈ closestImp ord (p ∪ q) r) :
     w ∈ closestImp ord p r ∨ w ∈ closestImp ord q r := by
@@ -398,14 +353,10 @@ theorem mem_closestImp_or_of_mem_union (htot : ∀ w, Std.Total (ord w).le)
   · refine hyr (h ((Preorder.mem_minimals_iff_forall_le (htot _)).2 ⟨.inr hy.1, ?_⟩))
     exact fun u hu ↦ hu.elim (fun hu ↦ (ord w).le_trans y x u hyx (hx.2 u hu)) (hy.2 u)
 
-/-- With a unique closest antecedent-world, Lewis's *might* coincides with *would*. -/
 theorem mem_might_closestImp_iff_of_closest_eq_singleton {v : W} (h : (ord w).minimals p = {v}) :
     w ∈ might (closestImp ord) p q ↔ w ∈ closestImp ord p q := by
   simp [h]
 
-/-- When the antecedent has closest worlds and Conditional Excluded Middle holds, Lewis's *might*
-coincides with *would*, [lewis-1973]'s objection to a semantics validating it as
-[stalnaker-1981] reports it. -/
 theorem mem_might_closestImp_iff_of_cem (h_nonempty : ((ord w).minimals p).Nonempty)
     (h_cem : w ∈ closestImp ord p q ∨ w ∈ closestImp ord p qᶜ) :
     w ∈ might (closestImp ord) p q ↔ w ∈ closestImp ord p q := by
@@ -439,12 +390,9 @@ def orderingImp (access : I → Set W) (ord : I → Preorder W) (p q : Set W) : 
 theorem mem_orderingImp :
     i ∈ orderingImp access ord p q ↔ (ord i).minimals (access i ∩ p) ⊆ q := Iff.rfl
 
-/-- The strict conditional is the conditional over the preorder relating every two worlds. -/
 theorem strictImp_eq_orderingImp : strictImp access p q = orderingImp access (fun _ ↦ ⊤) p q := by
   ext; simp [strictImp]
 
-/-- The conditional of the closest worlds is the conditional in which every world is
-accessible. -/
 theorem closestImp_eq_orderingImp {ord : W → Preorder W} :
     closestImp ord p q = orderingImp (fun _ ↦ Set.univ) ord p q := by
   ext; simp
@@ -478,7 +426,6 @@ theorem isRational_closestImp (hwf : WellFounded (ord w).lt) (htot : Std.Total (
     Nonmonotonic.IsRational fun p q ↦ w ∈ closestImp ord p q :=
   Nonmonotonic.isRational_entails hwf htot
 
-/-- On a preorder that is not total the conditional need not satisfy rational monotonicity. -/
 theorem exists_not_isRational_closestImp :
     ∃ ord : Fin 3 → Preorder (Fin 3),
       ¬ Nonmonotonic.IsRational fun p q ↦ (0 : Fin 3) ∈ closestImp ord p q :=

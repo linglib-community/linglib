@@ -130,15 +130,11 @@ def Situation.restrictors : Heuristic →o Set E where
       | exact s.salient_subset_available v
       | exact (s.manipulable_subset_salient v).trans (s.salient_subset_available v)
 
-/-- The top of the scale leaves the domain unrestricted. -/
 theorem Situation.restrictors_top : s.restrictors v ⊤ = Set.univ := rfl
 
 /-- A restriction is a default in a situation when a heuristic delivers it. -/
 def Situation.IsDefault (C : Set E) : Prop := ∃ h, s.restrictors v h = C
 
-/-- Every default restriction, short of no restriction, keeps to what is present at the
-viewpoint's location and time: this is why the here and now are the default restriction
-possibilities. -/
 theorem default_subset_present {h : Heuristic} (hh : h ≠ ⊤) :
     s.restrictors v h ⊆ s.present v := by
   cases h with
@@ -149,8 +145,6 @@ theorem default_subset_present {h : Heuristic} (hh : h ≠ ⊤) :
     exact (s.manipulable_subset_salient v).trans
       ((s.salient_subset_available v).trans (s.available_subset_present v))
 
-/-- A restriction reaching beyond the here and now is no default, so the displaced readings of
-the paper's section 4.1 come from applying the heuristics at another viewpoint. -/
 theorem not_isDefault_of_not_subset {C : Set E} (hC : ¬ C ⊆ s.present v) (hu : C ≠ Set.univ) :
     ¬ s.IsDefault v C := by
   rintro ⟨h, rfl⟩
@@ -184,11 +178,9 @@ def Situation.domain : Purpose E → Set E
   | .minimal h => s.restrictors v h
   | .specific relevant => relevant
 
-/-- Under the minimal aims the domain is a default. -/
 theorem isDefault_domain_minimal (h : Heuristic) : s.IsDefault v (s.domain v (.minimal h)) :=
   ⟨h, rfl⟩
 
-/-- A non-default domain requires a specific purpose. -/
 theorem exists_specific_of_not_isDefault {p : Purpose E} (hp : ¬ s.IsDefault v (s.domain v p)) :
     ∃ relevant, p = .specific relevant := by
   cases p with
@@ -263,21 +255,15 @@ def Row.ofDatum (e : Datum) : Option Row := do
      ("directive", .directive), ("priorGoal", .priorGoal), ("displacement", .displacement)]
   pure ⟨r, a, s, e.judgment⟩
 
-/-- Every example is read. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Every restriction acceptable without conversational setup is a default one, so a
-non-default restriction is available only through a discourse move, a prior plan or
-displacement. -/
 theorem default_of_acceptable :
     ∀ d ∈ data, d.setup = .none → d.judgment = .acceptable → d.IsDefault := by
   decide
 
-/-- Non-default restrictions do become available, and defaults are attested without
-setup. -/
 theorem nondefault_attested :
     (∃ d ∈ data, ¬ d.IsDefault ∧ d.judgment = .acceptable) ∧
       ∃ d ∈ data, d.IsDefault ∧ d.setup = .none ∧ d.judgment = .acceptable := by

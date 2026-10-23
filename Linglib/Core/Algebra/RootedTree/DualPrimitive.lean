@@ -99,7 +99,6 @@ theorem isDualPrimitive_iff :
       simp [coalgebra_counit_apply, ← of'_add, hF, hG, h _ hFG]
     exact ⟨h₁, fun a b ↦ by simpa using congr($key a b)⟩
 
-/-- The delta functional of a single tree is a dual primitive. -/
 theorem isDualPrimitive_lcoeff_singleton (T : UnorderedTree α) :
     IsDualPrimitive R (lcoeff R ({T} : Forest (UnorderedTree α))) := by
   classical
@@ -108,7 +107,6 @@ theorem isDualPrimitive_lcoeff_singleton (T : UnorderedTree α) :
   rintro rfl
   simp at hF
 
-/-- Among the delta functionals of forests, the dual primitives are those of the single trees. -/
 theorem isDualPrimitive_lcoeff_iff [Nontrivial R] :
     IsDualPrimitive R (lcoeff R F) ↔ F.card = 1 := by
   refine ⟨fun h ↦ by_contra fun hF ↦ one_ne_zero (α := R) ?_, fun hF ↦ ?_⟩
@@ -118,8 +116,6 @@ theorem isDualPrimitive_lcoeff_iff [Nontrivial R] :
 
 variable [DecidableEq α] (T T₁ T₂ : UnorderedTree α)
 
-/-- The convolution product of two single-tree deltas takes a tree `T` to the number of single
-cuts of `T` with crown `T₁` and trunk `T₂`. -/
 theorem convMul_lcoeff_singleton_apply_ofTree :
     (toConv (lcoeff R {T₁}) * toConv (lcoeff R ({T₂} : Forest (UnorderedTree α)))) (ofTree T) =
       countSingleCutsRho T T₁ T₂ := by
@@ -132,8 +128,6 @@ theorem convMul_lcoeff_singleton_apply_ofTree :
   rw [countSingleCutsRho, Multiset.countP_eq_card_filter, ← Multiset.sum_map_filter,
     Multiset.map_const', Multiset.sum_replicate, nsmul_one]
 
-/-- The convolution product of two single-tree deltas takes the forest of the two trees to `1`, or
-to `2` when the trees are equal, so the product of two dual primitives need not be one. -/
 theorem convMul_lcoeff_singleton_apply_mul :
     (toConv (lcoeff R {T₁}) * toConv (lcoeff R ({T₂} : Forest (UnorderedTree α))))
         (ofTree T₁ * ofTree T₂) = if T₁ = T₂ then 2 else 1 := by
@@ -193,8 +187,6 @@ theorem isDualPrimitive_pairing {x : GrossmanLarson R α} (hx : IsPrimitiveElem 
     (fun a ↦ (pairing_symm 1 a).trans (pairing_one_right a)) (fun _ ↦ pairing_one_right _)
     fun z w ↦ by simp only [h, toConv_pairing_mul]
 
-/-- Among the basis forests of the Grossman–Larson bialgebra, the primitive ones are the single
-trees. -/
 theorem isPrimitiveElem_of_iff [CharZero R] {F : Forest (UnorderedTree α)} :
     IsPrimitiveElem R (of F : GrossmanLarson R α) ↔ F.card = 1 := by
   refine ⟨fun h ↦ by_contra fun hF ↦ (forestAutCard_pos F).ne' ?_, fun hF ↦ ?_⟩

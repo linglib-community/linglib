@@ -67,8 +67,6 @@ namespace SteinertThrelkeldImelGuo2023
 
 open Modality SimpleGraph
 
-/-- Washo *-eʔ*, which leaves force and flavor to context, varies on both axes, against Nauze's
-universal, and is a product. -/
 theorem washo_modalEq :
     ¬ SingleAxis Washo.modalEq.meaning ∧
       ForceFlavorIndependent Washo.modalEq.meaning := by
@@ -100,16 +98,11 @@ theorem washoAttested_gaps :
       {p ∈ washoAttested | p.force = .weakNecessity} = {(.weakNecessity, .bouletic)} := by
   decide
 
-/-- The attested uses of *-eʔ* vary on both axes but fail the universal, which holds of the
-entry predicting the unreported pairs. -/
 theorem washo_attested :
     ¬ SingleAxis washoAttested ∧ ¬ ForceFlavorIndependent washoAttested ∧
       washoAttested ⊂ Washo.modalEq.meaning := by
   decide
 
-/-- Koryak *ivək*, on the lexical entry of [mocnik-abramovitz-2019], expresses all four pairs of
-two forces and its doxastic and assertive flavors, so it varies on both axes and satisfies the
-universal. -/
 theorem ivek_forceFlavorIndependent :
     ForceFlavorIndependent MocnikAbramovitz2019.meaning ∧
       ¬ SingleAxis MocnikAbramovitz2019.meaning :=
@@ -123,7 +116,6 @@ theorem ivek_attested :
       PathConnected MocnikAbramovitz2019.attested := by
   decide
 
-/-- Paciran Javanese *mesthi*, *oleh* and *iso* express one pair each. -/
 theorem javanese_singletons :
     ForceFlavorIndependent Javanese.Paciran.mesthi.meaning ∧
       ForceFlavorIndependent Javanese.Paciran.oleh.meaning ∧
@@ -158,7 +150,6 @@ theorem table1a_forceFlavorIndependent :
 one coordinate are adjacent. -/
 abbrev rookGraph : SimpleGraph ForceFlavor := (⊤ : SimpleGraph ModalForce) □ ⊤
 
-/-- Two pairs of a meaning sharing a coordinate are joined in the rook's graph. -/
 theorem reachable_of_fst_eq_or_snd_eq {m : Finset ForceFlavor} {p q : ForceFlavor} (hp : p ∈ m)
     (hq : q ∈ m) (h : p.1 = q.1 ∨ p.2 = q.2) :
     (rookGraph.induce ↑m).Reachable ⟨p, hp⟩ ⟨q, hq⟩ := by
@@ -189,7 +180,6 @@ theorem table1b_connected_not_pathConnected :
       (rookGraph.induce ↑table1b).Connected := by
   decide +kernel
 
-/-- *mighst*, the third modal, is disconnected on either reading. -/
 theorem mighst_not_connected :
     ¬ PathConnected mighst ∧ ¬ (rookGraph.induce ↑mighst).Connected := by
   decide +kernel

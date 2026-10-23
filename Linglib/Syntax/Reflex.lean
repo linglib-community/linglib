@@ -185,11 +185,9 @@ instance [DecidableLT C] : Decidable (AntiPiedPipes s target) :=
 
 variable {s target}
 
-/-- A pied-piping reflex set does not exactly target its designee. -/
 theorem PiedPipes.not_exactlyTargets (h : PiedPipes s target) : ¬ ExactlyTargets s target :=
   fun he ↦ let ⟨ρ, hρ, hlt⟩ := h; (he ρ hρ ▸ hlt).false
 
-/-- An anti-pied-piping reflex set does not exactly target its designee. -/
 theorem AntiPiedPipes.not_exactlyTargets (h : AntiPiedPipes s target) :
     ¬ ExactlyTargets s target :=
   fun he ↦ let ⟨ρ, hρ, hlt⟩ := h; (he ρ hρ ▸ hlt).false

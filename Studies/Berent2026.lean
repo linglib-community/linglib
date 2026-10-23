@@ -83,8 +83,6 @@ theorem onsetRise_setFeature_left {f : Feature} (hf : f ∉ Sonority.features) (
     onsetRise (c₁.setFeature f v) c₂ = onsetRise c₁ c₂ := by
   rw [onsetRise, Sonority.ofSegment_setFeature hf, onsetRise]
 
-/-- Changing a feature that sonority does not read in the second consonant leaves the rise
-unchanged. -/
 theorem onsetRise_setFeature_right {f : Feature} (hf : f ∉ Sonority.features) (v : Bool) :
     onsetRise c₁ (c₂.setFeature f v) = onsetRise c₁ c₂ := by
   rw [onsetRise, Sonority.ofSegment_setFeature hf, onsetRise]
@@ -97,8 +95,6 @@ theorem sonority_cline :
     0 < onsetRise b n ∧ onsetRise b n < onsetRise b l ∧ onsetRise b d = 0 ∧ onsetRise l b < 0 := by
   decide
 
-/-- The labial onsets of plik, pnik and ptik, heard under suppression of the lips or the
-tongue, have the rises of the onsets of blif, bnif and bdif. -/
 theorem onsetRise_labial :
     onsetRise p l = onsetRise b l ∧ onsetRise p n = onsetRise b n ∧
       onsetRise p t = onsetRise b d :=
@@ -132,8 +128,6 @@ theorem initialIdentity_map (hf : Function.Injective f) (r : ConsonantalRoot α)
     InitialIdentity ⟨r.segments.map f⟩ ↔ InitialIdentity r := by
   simp only [InitialIdentity, OCP.IsClean, ← List.map_take, List.isChain_map, hf.ne_iff]
 
-/-- The root of kathath ends in identical consonants and the root of thathak begins with
-them, so the restriction rejects thathak alone, although /θ/ is not a Hebrew consonant. -/
 theorem initialIdentity_theta :
     ¬ InitialIdentity (⟨[English.Phonology.k, English.Phonology.θ, English.Phonology.θ]⟩ :
         ConsonantalRoot Phonology.Segment) ∧

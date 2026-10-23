@@ -48,7 +48,6 @@ correspondence representations. -/
 def relRep (CG : Rep S T → Prop) (w : List S) (v : List T) : Prop :=
   ∃ G : Rep S T, CG G ∧ G.word true = w ∧ G.word false = v
 
-/-- More correspondence graphs realize a larger relation. -/
 theorem relRep_mono {CG CG' : Rep S T → Prop} (h : ∀ G, CG G → CG' G) {w v} :
     relRep CG w v → relRep CG' w v := by
   rintro ⟨G, hG, hi, ho⟩

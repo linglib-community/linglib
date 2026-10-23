@@ -227,14 +227,9 @@ theorem range_linearization :
 
 /-! ### Extraction -/
 
-/-- The nominal complement of a plain preposition stays behind and cannot be extracted, which is
-the resistance to preposition stranding, while the raised complement of a directional
-postposition can be. -/
 theorem extractable_nominal_iff (d : Spatial.Path.Direction) : Extractable .nominal d ↔ d ≠ .place :=
   extractable_iff_raises
 
-/-- An R-pronoun has raised and can be extracted, whether the adposition it leaves behind is
-stranded or pied-piped. -/
 theorem extractable_rPronoun (d : Spatial.Path.Direction) : Extractable .rPronoun d :=
   extractable_iff_raises.2 trivial
 
@@ -248,10 +243,6 @@ theorem extractable_of_linearization_ne_pre {k : ComplementKind} {d : Spatial.Pa
     (h : linearization (some k) d ≠ some .pre) : Extractable k d := by
   revert h; cases k <;> cases d <;> decide
 
-/-- A circumposition's nominal complement is the complement of the raised prepositional phrase, a
-plain prepositional phrase, so its extractability is settled inside that phrase: like any
-prepositional complement it cannot be extracted, while an R-pronoun in the same position can.
-This is why circumpositions pattern with prepositions rather than with postpositions. -/
 theorem circumP_patterns_with_preP :
     ¬ Extractable .nominal .place ∧ Extractable .rPronoun .place :=
   ⟨fun h ↦ (extractable_nominal_iff _).1 h rfl, extractable_rPronoun _⟩
@@ -299,14 +290,9 @@ theorem postP_subset_preP :
     ∀ a ∈ inventory, a.IsPostposition → a.IsPreposition ∨ a.toAdposition = af.toAdposition :=
   pre_of_post
 
-/-- The second elements *af* and *heen* of *van … af* and *over … heen* are not prepositions on
-their own, as the chapter notes, and head the raised phrase as postpositions. -/
 theorem circumP_parts_not_preP : ¬ af.IsPreposition ∧ ¬ heen.IsPreposition := by
   decide
 
-/-- An adposition with both orders is locational before its complement, *op de berg* 'on the
-mountain' against *de berg op* 'up the mountain', unless it is one of the grammar's directional
-prepositions, *over* 'across' and *voorbij* 'past', whose complement raises in either order. -/
 theorem postP_has_both_readings :
     ∀ a ∈ inventory, a.IsAmbiposition →
       a.direction .pre = .place ∨ a.toAdposition = over₁.toAdposition ∨
@@ -319,14 +305,10 @@ theorem circumP_complement_nominal :
     ∀ a ∈ inventory, a.IsCircumposition → a.complements = {some .np} :=
   complements_of_circum
 
-/-- Every postposition takes a nominal complement, the one that raises; *door* also takes a clause,
-in its prepositional use only. -/
 theorem postP_complement_np :
     ∀ a ∈ inventory, a.IsPostposition → a.Takes .np := by
   decide
 
-/-- The morphologically complex prepositions resist R-pronominalization: *tijdens het journaal*
-'during the news' but not *er tijdens*. -/
 theorem complex_no_rPron :
     tijdens.rPronoun = false ∧ ondanks.rPronoun = false ∧ zonder.rPronoun = false :=
   ⟨rfl, rfl, rfl⟩
@@ -338,8 +320,6 @@ theorem no_rPron_not_postP :
 
 /-! ### Directional phrases and the perfect auxiliary -/
 
-/-- *Op* denotes a goal path after its complement and *van* a source path before it, so the two
-path shapes are independent of the order. -/
 theorem op_van_paths : op.direction .post = .goal ∧ van.direction .pre = .source := ⟨rfl, rfl⟩
 
 /-- A path complementive makes the event of a verb of motion a change of location and the verb
@@ -347,8 +327,6 @@ unaccusative, and a location complementive leaves it unergative. -/
 def verbClass (d : Spatial.Path.Direction) : TransitivityClass :=
   if d = .place then .unergative else .unaccusative
 
-/-- Whatever auxiliary reflexives take, the verb takes *zijn* 'be' exactly when its complementive
-denotes a path. -/
 theorem selection_verbClass_eq_be_iff (r : PerfectAuxiliary) (d : Spatial.Path.Direction) :
     (verbClass d).selection r = .be ↔ d ≠ .place := by
   unfold verbClass; split <;> simp [*, TransitivityClass.selection]

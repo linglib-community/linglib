@@ -135,7 +135,6 @@ def object? : Option (Case × Mechanism) :=
   | .chain _ => ((r.assign id (c.chains v)).map (·.2)).getD 1 none
   | .trace | .unfilled => none
 
-/-- A case a lexical head determines is kept, under any rules. -/
 theorem subject_of_lexical {l : Case} (h : c.subjectCase = some l) :
     c.subject r v = some (l, .lexical) := by
   obtain ⟨t, s, o⟩ := c
@@ -247,8 +246,6 @@ def basque : Setting := ⟨.ofAlignment .ergative, .always, id⟩
 /-- Inuktitut assigns the ergative and never sees an unfilled position. -/
 def inuktitut : Setting := ⟨.ofAlignment .ergative, .never, id⟩
 
-/-- The subject of an unergative clause is ergative in Basque, ergative or not in the Hindi
-perfect, and never ergative in Inuktitut. -/
 theorem unergative_subjectCases :
     basque.subjectCases .unergative = {some .erg} ∧
     (hindi .perfective).subjectCases .unergative = {some .erg, some .nom} ∧

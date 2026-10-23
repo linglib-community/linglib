@@ -238,8 +238,6 @@ theorem governs_cons_iff (h : ¬ Enclosed y r) :
     Governs p ((y, b) :: r) ↔ Acts p ((y, b) :: r) := by
   simp only [Governs, h, false_and, or_false]
 
-/-- The silence of a floating melody is licensed exactly when the nuclei after it govern it or it
-ends a domain whose final nucleus may be empty. -/
 theorem silenceLicensed_of_floating (hx : x.melody = .floating) :
     SilenceLicensed p x r ↔ Governs p r ∨ (r = [] ∧ p.empty = true) := by
   have he : ¬ Enclosed x r := fun h ↦ by rw [h.melody_eq_empty] at hx; cases hx

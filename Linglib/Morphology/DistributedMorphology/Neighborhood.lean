@@ -156,7 +156,6 @@ def window (k : ℕ) (n : Neighborhood Bundle) : Neighborhood Bundle :=
     (n.window m).window k = n.window (min k m) := by
   simp [window, List.take_take]
 
-/-- The window of radius `k` agrees with the neighborhood up to offset `k`. -/
 theorem nth_window [Inhabited Bundle] (n : Neighborhood Bundle) {k : ℕ} {i : ℤ}
     (hi : i.natAbs ≤ k) : (n.window k).nth i = n.nth i := by
   obtain ⟨m, rfl | rfl⟩ := Int.eq_nat_or_neg i
@@ -192,7 +191,6 @@ def along : List (Neighborhood Bundle) := d.mapIdx (around d)
 
 @[simp] theorem focus_around : (around d i b).focus = b := rfl
 
-/-- Reassembling the neighborhood of position `i` gives the string with `b` at `i`. -/
 theorem toList_around (h : i < d.length) : (around d i b).toList = d.set i b := by
   simp [toList, around, List.set_eq_take_append_cons_drop, h]
 

@@ -51,8 +51,6 @@ variable {W : Type*} [DecidableEq W] {A : Type*} {M : KripkeModel W A} {α β φ
 
 /-! ### Free-choice facts -/
 
-/-- An enriched split disjunction has a non-empty witness subteam for each disjunct,
-`[α ∨ β]⁺ ⊨ (α ∧ NE) ∨ (β ∧ NE)`. -/
 theorem witnesses_of_enrich_disj (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.disj α β)) t) :
     (∃ s ⊆ t, s.Nonempty ∧ support M α s) ∧ ∃ s ⊆ t, s.Nonempty ∧ support M β s :=
@@ -81,8 +79,6 @@ theorem narrowScopeFC (hα : α.NEFree) (hβ : β.NEFree)
     have ⟨_, hs, _, h'⟩ := h.1 w hw
     (witnesses_of_enrich_disj hα hβ h').2.imp fun _ ⟨hs', hne, h₂⟩ ↦ ⟨hs'.trans hs, hne, h₂⟩⟩
 
-/-- Free choice for logically dependent disjuncts is
-`[◇(α ∨ (α ∧ β))]⁺ ⊨ ◇α ∧ ◇(α ∧ β)`. -/
 theorem narrowScopeFC_dependent (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (enrich (.poss (.disj α (.conj α β)))) t) :
     support M (.poss α) t ∧ support M (.poss (.conj α β)) t :=

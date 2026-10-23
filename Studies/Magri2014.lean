@@ -84,14 +84,11 @@ configuration of the paper. -/
 def strengthened (mates : ι → Finset ι) (m : ι → Finset W) : ι → Finset W :=
   (exh mates)^[2] m
 
-/-- Relabeling the items by a permutation, with the Horn-mates carried along, relabels the
-exhaustified meanings. -/
 theorem exh_comp_equiv (σ : ι ≃ ι) (mates : ι → Finset ι) (m : ι → Finset W) :
     exh (fun i ↦ (mates (σ i)).image σ.symm) (m ∘ σ) = exh mates m ∘ σ := by
   funext i
   simp [exh, image_image, comp_def]
 
-/-- Relabeling commutes with strengthening. -/
 theorem strengthened_comp_equiv (σ : ι ≃ ι) (mates : ι → Finset ι) (m : ι → Finset W) :
     strengthened (fun i ↦ (mates (σ i)).image σ.symm) (m ∘ σ) = strengthened mates m ∘ σ := by
   show exh _ (exh _ (m ∘ σ)) = exh mates (exh mates m) ∘ σ
@@ -131,17 +128,14 @@ def dual (wk st : Finset W) : Item → Finset W := primal st wk ∘ swap
 
 variable {wk st : Finset W}
 
-/-- Negating each meaning of the primal theory negates its poles. -/
 theorem compl_comp_primal : compl ∘ primal wk st = primal wkᶜ stᶜ := by
   funext i
   cases i <;> rfl
 
-/-- Negating each meaning of the dual theory negates its poles. -/
 theorem compl_comp_dual : compl ∘ dual wk st = dual wkᶜ stᶜ := by
   funext i
   cases i <;> rfl
 
-/-- The dual computations are the primal ones with the poles exchanged. -/
 theorem strengthened_dual : strengthened dualMates (dual wk st) =
     strengthened primalMates (primal st wk) ∘ swap := by
   have : dualMates = fun i ↦ (primalMates (swap i)).image swap.symm := by
@@ -151,13 +145,11 @@ theorem strengthened_dual : strengthened dualMates (dual wk st) =
   rw [this]
   exact strengthened_comp_equiv swap primalMates (primal st wk)
 
-/-- The item has nothing to exclude at the inner level: its only Horn-mate means the same. -/
 theorem exh_primal_mystery : exh primalMates (primal wk st) .mystery = wk := by
   show innocent.exh (({.weak} : Finset Item).image (primal wk st)) wk = wk
   rw [image_singleton]
   exact innocent_exh_eq_self_of_forall_subset (by simp [primal])
 
-/-- The weak pole denies the strong one when it can. -/
 theorem exh_primal_weak (h : (wk \ st).Nonempty) :
     exh primalMates (primal wk st) .weak = wk \ st := by
   have hne : wk ≠ st := fun e ↦ by simp [e] at h
@@ -180,7 +172,6 @@ theorem strengthened_primal_mystery (h₁ : (wk \ st).Nonempty) (h₂ : (wk ∩ 
     innocent_exh_singleton (by rwa [sdiff_sdiff_right_self, inf_eq_inter]), sdiff_sdiff_right_self,
     inf_eq_inter]
 
-/-- With nothing to exclude at either level the item keeps its plain meaning. -/
 theorem strengthened_primal_mystery_of_subset (h : wk ⊆ st) :
     strengthened primalMates (primal wk st) .mystery = wk := by
   show innocent.exh (({.weak} : Finset Item).image (exh primalMates (primal wk st)))
@@ -217,15 +208,12 @@ theorem strengthened_dual_not_mystery (h : st ⊆ wk) (h₁ : (wk \ st).Nonempty
       (by rwa [inter_eq_right.2 (compl_subset_compl.2 h)]),
     inter_eq_right.2 (compl_subset_compl.2 h)]
 
-/-- The homogeneity gap of the primal theory: the worlds where neither the item nor its
-negation is true after strengthening are those where the weak pole holds without the strong. -/
 theorem primal_gap (h : st ⊆ wk) (hne : st.Nonempty) :
     (strengthened primalMates (primal wk st) .mystery)ᶜ ∩
       (strengthened primalMates (compl ∘ primal wk st) .mystery)ᶜ = wk \ st := by
   rw [strengthened_primal_mystery_eq_strong h hne, strengthened_primal_not_mystery h, compl_compl,
     inter_comm, ← inf_eq_inter, ← sdiff_eq]
 
-/-- The homogeneity gap of the dual theory is the same. -/
 theorem dual_gap (h : st ⊆ wk) (h₁ : (wk \ st).Nonempty) (h₂ : wkᶜ.Nonempty) :
     (strengthened dualMates (dual wk st) .mystery)ᶜ ∩
       (strengthened dualMates (compl ∘ dual wk st) .mystery)ᶜ = wk \ st := by
@@ -265,7 +253,6 @@ theorem mem_all {s : Finset D} : s ∈ all D ↔ s = univ := by
 theorem atLeast_subset_atLeast {m n : ℕ} (h : m ≤ n) : atLeast D n ⊆ atLeast D m := fun _ hs ↦
   mem_atLeast.2 (h.trans (mem_atLeast.1 hs))
 
-/-- A threshold within the domain is satisfiable. -/
 theorem atLeast_nonempty {n : ℕ} (h : n ≤ Fintype.card D) : (atLeast D n).Nonempty :=
   ⟨univ, mem_atLeast.2 (Finset.card_univ (α := D) ▸ h)⟩
 
@@ -287,7 +274,6 @@ theorem not_the_eq_not_some [Nonempty D] :
     strengthened primalMates (compl ∘ primal (some D) (all D)) .mystery = (some D)ᶜ :=
   strengthened_primal_not_mystery (atLeast_subset_atLeast Fintype.card_pos)
 
-/-- The definite's homogeneity gap: the worlds where some but not all boys were seen. -/
 theorem the_gap [Nonempty D] :
     (strengthened primalMates (primal (some D) (all D)) .mystery)ᶜ ∩
       (strengthened primalMates (compl ∘ primal (some D) (all D)) .mystery)ᶜ =
@@ -411,7 +397,6 @@ theorem strengthened_not_andUnF :
     strengthened conjMates (compl ∘ conj) .andUnF = (some Boy)ᶜ := by
   decide
 
-/-- The enriched computation and the abstract dual one agree. -/
 theorem strengthened_not_andUnF_eq :
     strengthened conjMates (compl ∘ conj) .andUnF =
       strengthened dualMates (compl ∘ dual (some Boy) (all Boy)) .mystery := by

@@ -90,10 +90,8 @@ def setBExponent : ExponentTable :=
    (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "on"]),
    (.personNumber .second .plural, [.suff "ex"]), (.personNumber .third .plural, [.free "heb'"])]
 
-/-- 3rd person absolutive has zero exponence. -/
 theorem p3sg_abs_null : setBExponent.realize (.personNumber .third .singular) = some [] := rfl
 
-/-- 3rd person ergative is *s-* pre-consonantally, *y-* pre-vocalically. -/
 theorem p3sg_erg_allomorphy :
     (setAExponent .consonant).realize (.personNumber .third .singular) = some [.pref "s"] ∧
     (setAExponent .vowel).realize (.personNumber .third .singular) = some [.pref "y"] := ⟨rfl, rfl⟩

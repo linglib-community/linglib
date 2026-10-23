@@ -55,13 +55,10 @@ variable {W E : Type*}
 def IsNonVacuous (P : Property W E) (w : W) (d : E → Prop) : Prop :=
   (∃ x, d x ∧ P w x) ∧ (∃ x, d x ∧ ¬ P w x)
 
-/-- `IsNonVacuous` is monotone in the local domain. -/
 theorem IsNonVacuous.mono {P : Property W E} {w : W} {d d' : E → Prop}
     (h : IsNonVacuous P w d) (hdd' : d ≤ d') : IsNonVacuous P w d' :=
   ⟨h.1.imp fun x hx ↦ ⟨hdd' x hx.1, hx.2⟩, h.2.imp fun x hx ↦ ⟨hdd' x hx.1, hx.2⟩⟩
 
-/-- A predicate disjoint from `Q` is non-vacuous in any domain that holds an instance of it and
-an instance of `Q`. -/
 theorem isNonVacuous_of_disjoint {P Q : Property W E} {w : W} {d : E → Prop} (h : Disjoint P Q)
     (hP : ∃ x, d x ∧ P w x) (hQ : ∃ x, d x ∧ Q w x) : IsNonVacuous P w d :=
   ⟨hP, hQ.imp fun _ hx ↦ ⟨hx.1, fun hPx ↦ h.le_bot w _ ⟨hPx, hx.2⟩⟩⟩
@@ -78,8 +75,6 @@ theorem not_isNonVacuous_of_isPrivative {adj : Modifier (Property W E)}
 theorem not_isNonVacuous_self (P : Property W E) (w : W) : ¬ IsNonVacuous P w (P w) :=
   fun h ↦ h.2.elim fun _ hx ↦ hx.2 hx.1
 
-/-- Within a domain widened by its own extension, a predicate is non-vacuous exactly when it
-holds somewhere and fails somewhere in the original domain. -/
 theorem isNonVacuous_sup_self_iff {P : Property W E} {w : W} {d : E → Prop} :
     IsNonVacuous P w (d ⊔ P w) ↔ (∃ x, P w x) ∧ ∃ x, d x ∧ ¬ P w x :=
   ⟨fun ⟨⟨x, _, hx⟩, ⟨y, hy, hny⟩⟩ ↦ ⟨⟨x, hx⟩, y, hy.resolve_right hny, hny⟩,

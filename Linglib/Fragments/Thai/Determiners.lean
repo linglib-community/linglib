@@ -30,7 +30,6 @@ def inventory : Determiner.Inventory :=
         uses := {.anaphoric} },
     .possessive { form := "khong" } ]
 
-/-- Only familiarity is marked. -/
 theorem strengths_inventory : inventory.strengths = {.familiarity} := by decide
 
 end Thai.Determiners

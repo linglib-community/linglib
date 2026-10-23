@@ -294,8 +294,6 @@ def englishWhomOblique : RC :=
 def hebrewResumptiveGenitive : RC :=
   ⟨.restrictive, .matching, .embedded, .resumptive, .genitive⟩
 
-/-- The gap realizations are what the English Fragment's *that* records at the direct object;
-the amount relative reconstructs, the other does not. -/
 theorem englishThat_attested :
     englishThatObject.WellFormed ∧ englishThatAmount.WellFormed ∧
       ¬ englishThatObject.Reconstructs ∧ englishThatAmount.Reconstructs ∧
@@ -303,8 +301,6 @@ theorem englishThat_attested :
         English.Relativization.relThat.realize .directObject := by
   decide
 
-/-- The oblique relative pronoun is what the English Fragment's *whom* records, and the
-pied-piped Head is no gap. -/
 theorem englishWhomOblique_attested :
     englishWhomOblique.WellFormed ∧
       ¬ { englishWhomOblique with strategy := .invariantRelativizer }.WellFormed ∧
@@ -312,7 +308,6 @@ theorem englishWhomOblique_attested :
         English.Relativization.relWhom.realize englishWhomOblique.position := by
   decide
 
-/-- The genitive resumptive is what the Hebrew Fragment's *she-* records. -/
 theorem hebrewResumptiveGenitive_attested :
     hebrewResumptiveGenitive.WellFormed ∧
       hebrewResumptiveGenitive.strategy.toNPRel ∈

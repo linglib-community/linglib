@@ -48,7 +48,6 @@ theorem IsOfType.eq (h : e.IsOfType t) (h' : e.IsOfType t') : t = t' := by
   obtain ⟨p, hp⟩ := h.1
   exact (EvidenceType.mem_block.1 (h.2 hp)).symm.trans (EvidenceType.mem_block.1 (h'.2 hp))
 
-/-- `evidenceType?` is the type a term is of. -/
 theorem evidenceType?_eq_some_iff : e.evidenceType? = some t ↔ e.IsOfType t := by
   unfold evidenceType?
   split_ifs with h₁ h₂ h₃ <;> simp only [Option.some.injEq, false_iff]

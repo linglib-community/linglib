@@ -58,14 +58,10 @@ theorem homogeneous_coe_iff (s : Finset (Set W)) [DecidablePred fun α : Set W �
   rw [Ne, SignType.supervaluation_eq_zero_iff]
   grind [Homogeneous]
 
-/-- Under homogeneity, a proposition between the meet and the join of `S` is true where every
-member of `S` is. -/
 theorem Homogeneous.mem_iff (h : Homogeneous S w) (hl : ⋂₀ S ⊆ φ) (hu : φ ⊆ ⋃₀ S) :
     w ∈ φ ↔ ∀ α ∈ S, w ∈ α := by
   grind [Homogeneous]
 
-/-- Under homogeneity, a proposition between the meet and the join of `S` is false where every
-member of `S` is. -/
 theorem Homogeneous.notMem_iff (h : Homogeneous S w) (hl : ⋂₀ S ⊆ φ) (hu : φ ⊆ ⋃₀ S) :
     w ∉ φ ↔ ∀ α ∈ S, w ∉ α := by
   grind [Homogeneous]

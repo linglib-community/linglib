@@ -63,8 +63,6 @@ def phiDom : Set E :=
         x ∈ Gender.dom e.gender := by
   simp only [phiDom, Set.mem_inter_iff, and_assoc]
 
-/-- The φ-domain depends on the referential categories and the gender alone, not on the
-agreement person and number. -/
 theorem phiDom_congr {e₁ e₂ : PersonalPronoun} (hr : e₁.referential = e₂.referential)
     (hg : e₁.gender = e₂.gender) : e₁.phiDom c = e₂.phiDom c := by
   simp only [phiDom, referentialPerson, referentialNumber, hr, hg]
@@ -93,7 +91,6 @@ instance : Semantics.Denotes PersonalPronoun
     (e.denote i c).selector g w = some (g i) :=
   rfl
 
-/-- A pronoun's selector is rigid, so its referent does not vary with the world. -/
 theorem isRigid_denote_selector (g : Assignment E) :
     IsRigid ((e.denote i c).selector g) :=
   isRigid_const _

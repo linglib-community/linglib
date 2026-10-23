@@ -109,7 +109,6 @@ theorem mem_of_mulEquiv {M N : Type u} [Monoid M] [Monoid N] (e : M ≃* N) (h :
     V.mem N :=
   V.quot (f := e.toMonoidHom) e.surjective h
 
-/-- A subquotient of a member is a member. -/
 theorem mem_of_isSubquotient {M N : Type u} [Monoid M] [Monoid N] (h : IsSubquotient M N)
     (hN : V.mem N) : V.mem M := by
   obtain ⟨P, f, hf⟩ := h

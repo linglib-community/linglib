@@ -140,15 +140,11 @@ theorem edge_trapped_at_completion :
     ¬ ObeysTransfer (derivation .edge) (wholePhaseDomain .raising) (Pic1 .raising) := by
   decide +kernel
 
-/-- Transferred whole once the next phase is complete, the phases let what moves through their
-edges out, as the transfer of complements does. -/
 theorem transfer_after_next_phase :
     ObeysTransfer (derivation .edge) (wholePhaseDomain .raising) AfterNextPhase ∧
       ObeysTransfer (derivation .edge) (complementDomain .raising · ∅) (Pic1 .raising) := by
   decide +kernel
 
-/-- Skipping the edge of vP₁ is no violation of full-phase transfer, though it is one of the
-transfer of complements: under full-phase transfer the edge effects are spell-out order's alone. -/
 theorem skip_obeys_transfer :
     ObeysTransfer (derivation .skip) (wholePhaseDomain .raising) AfterNextPhase ∧
       ¬ ObeysTransfer (derivation .skip) (complementDomain .raising · ∅) (Pic1 .raising) := by

@@ -118,11 +118,9 @@ theorem second_nom_eq_iff (g h : Grade) :
     second .nom g = second .nom h ↔ g = h ∨ g < .honorific ∧ h < .honorific := by
   revert g h; decide
 
-/-- The second-person nominative assigns each form a contiguous range of grades. -/
 theorem isContiguous_second_nom : IsContiguous (second .nom) := by
   unfold IsContiguous; decide
 
-/-- The two third-person grades share the nominative and differ in the accusative. -/
 theorem third_nom_eq_acc_ne :
     third .nom .nonhonorific = third .nom .honorific ∧
       third .acc .nonhonorific ≠ third .acc .honorific := by

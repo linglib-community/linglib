@@ -73,7 +73,6 @@ theorem cover_and_noOverlap_iff {c : Set (Set E)} :
 in the next room* counts. -/
 def realized (c : Set (Set E)) (X : Set E) : Set (Set E) := {y ∈ c | (y ∩ X).Nonempty}
 
-/-- The subkinds of a partition realized among `X` are the cells of the members of `X`. -/
 theorem realized_classes (s : Setoid E) (X : Set E) :
     realized s.classes X = (fun x ↦ {z | s z x}) '' X := by
   ext y

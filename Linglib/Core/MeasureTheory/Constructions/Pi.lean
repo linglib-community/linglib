@@ -78,7 +78,6 @@ theorem measurePreserving_piSplitAt {m : ∀ i, MeasurableSpace (α i)} (μ : �
   · subst hj; simpa [e] using h.1
   · simpa [e, hj] using h.2 j hj
 
-/-- `measurePreserving_piSplitAt` for `volume`. -/
 theorem volume_preserving_piSplitAt (α : ι → Type u) [∀ i, MeasureSpace (α i)]
     [∀ i, SigmaFinite (volume : Measure (α i))] (i : ι) :
     MeasurePreserving (MeasurableEquiv.piSplitAt α i) :=

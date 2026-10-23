@@ -116,7 +116,6 @@ def State.toUD : State → UD.Definite
   | .construct => .Cons
   | .indefinite => .Ind
 
-/-- Distinct states have distinct tags. -/
 theorem State.toUD_injective : Function.Injective State.toUD := by
   decide
 

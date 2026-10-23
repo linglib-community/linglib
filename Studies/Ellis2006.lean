@@ -61,8 +61,6 @@ private theorem one_dotProduct_cue (v : Cue → ℝ) : 1 ⬝ᵥ v = v .adverb + 
 
 /-! ### Overshadowing -/
 
-/-- After `n` utterances a learner starting from nothing holds, for each cue, its salience times
-a strength common to both cues. -/
 theorem iterate_update_zero_apply (n : ℕ) (c : Cue) :
     (update α β 1 lam)^[n] 0 c j =
       α c * (lam j * β j * ∑ k ∈ range n, (1 - (α .adverb + α .inflection) * β j) ^ k) := by
@@ -97,8 +95,6 @@ theorem blocking {V : Matrix Cue κ ℝ} (hV : V .adverb + V .inflection = lam) 
   ext j
   simp [vecMul, one_dotProduct_cue, ← hV]
 
-/-- The same utterances teach the inflection to a learner for whom both cues are new, as they are
-for a child. -/
 theorem inflection_pos (hα : 0 < α .inflection) (hβ : 0 < β j) (hlam : 0 < lam j)
     (h : (α .adverb + α .inflection) * β j < 2) {n : ℕ} (hn : n ≠ 0) :
     0 < (update α β 1 lam)^[n] 0 .inflection j := by

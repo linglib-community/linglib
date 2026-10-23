@@ -145,7 +145,6 @@ variable {F} [IsRRegular F R]
 
 @[simp] theorem coe_necHom (A : F.Regular) : (F.necHom R A : Set S) = R.core A := rfl
 
-/-- `◇` of the modal ortholattice is `diamond`. -/
 theorem coe_diamondHom_necHom (A : F.Regular) :
     (diamondHom (F.necHom R) A : Set S) = diamond F R A := by
   simp only [diamondHom_apply, Regular.coe_compl, coe_necHom, diamond]
@@ -156,7 +155,6 @@ possibility accessing a refinement of itself). -/
 theorem necHom_le [R.IsRefl] (A : F.Regular) : F.necHom R A ≤ A :=
   Concept.extent_subset_extent_iff.mp fun x hx ↦ hx (R.refl x)
 
-/-- Over a transitive relation `□A ≤ □□A`, which is the 4 principle. -/
 theorem necHom_le_necHom_necHom [R.IsTrans] (A : F.Regular) :
     F.necHom R A ≤ F.necHom R (F.necHom R A) :=
   Concept.extent_subset_extent_iff.mp fun _ hx _ hxy _ hyz ↦ hx (R.trans hxy hyz)

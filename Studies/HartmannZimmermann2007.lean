@@ -119,9 +119,6 @@ def ctx (u : Use) : Antecedent Alt :=
 def answer : WithAlternatives (Set Alt) :=
   pairAnswer Alt.ans Alt.alt
 
-/-- Every cell's context fully resolves against the composed answer —
-all squiggle clauses, plus the correction clause for the corrective
-cells. One semantics, four pragmatic uses. -/
 theorem ctx_resolves (u : Use) :
     (ctx u).Resolves answer.ordinary answer.alternatives :=
   use_model_resolves (d := Alt.ans) (d' := Alt.alt) nofun u
@@ -275,7 +272,6 @@ def exSitu_subject_future : FocusUtterance :=
 theorem exSitu_subject_future_IsHausaLicensed :
     exSitu_subject_future.IsHausaLicensed := by decide
 
-/-- No fronted subjunctive is licensed, since the subjunctive has no Rel counterpart. -/
 theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle) (g : Option Gender)
     (hs : Bool) : ¬ (mkExSitu .subjunctive t c g hs).Licensed :=
   fun h ↦ by simpa [mkExSitu, TAM.relCounterparts] using h.2 rfl
@@ -318,8 +314,6 @@ theorem hausa_falsifies_UniversalBFR : ¬ UniversalBFR :=
 theorem exSitu_subject_future_no_reflex :
     ¬ exSitu_subject_future.HasMorphosyntacticReflex := by decide
 
-/-- Every Hausa focus reflex is morphosyntactic, so a morphosyntactic reflex is just an overt
-one. -/
 theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
     u.HasMorphosyntacticReflex ↔ u.reflexes.Nonempty := by
   refine ⟨fun ⟨ρ, hρ, _⟩ ↦ ⟨ρ, hρ⟩, fun ⟨ρ, hρ⟩ ↦ ⟨ρ, hρ, ?_⟩⟩
@@ -327,9 +321,6 @@ theorem hasMorphosyntacticReflex_iff (u : FocusUtterance) :
   split_ifs at hρ <;> simp only [Finset.mem_singleton, Finset.notMem_empty, or_false, false_or,
     or_assoc, or_self] at hρ <;> rcases hρ with rfl | rfl | rfl <;> nofun
 
-/-- Hausa refutes the universalist claim that every (licensed) focus
-receives an overt reflex — the same shape Tangale refutes in
-`HartmannZimmermann2004.lean`. -/
 theorem hausa_refutes_perceptibility :
     ¬ Reflex.Perceptible fun u : {u : FocusUtterance // u.IsHausaLicensed} ↦ u.1.reflexes :=
   fun h ↦ absurd
@@ -381,7 +372,6 @@ def cellRows :
    (starred_inSitu_subject, Examples.ex17a2),
    (licensed_exSitu_subject, Examples.ex17a1)]
 
-/-- Every cell's tags agree with its row's `paperFeatures`. -/
 theorem cells_match_rows :
     ∀ p ∈ cellRows,
       p.2.feature? "strategy" = some (strategyLabel p.1.cfg.strategy) ∧
@@ -409,16 +399,12 @@ def tamLabel : TAM → String
   | .habitual => "habitual"
   | .subjunctive => "subjunctive"
 
-/-- The rows that tag a TAM tag the clause's TAM, not its PAC's, as (17 A1) is continuous with a
-Rel-continuous PAC. -/
 theorem tam_matches_rows :
     ∀ p ∈ [(exSitu_subject_future, Examples.ex8), (licensed_exSitu_subject, Examples.ex17a1),
       (starred_inSitu_subject, Examples.ex17a2)],
       p.2.feature? "tam" = some (tamLabel p.1.cfg.tam) := by
   decide
 
-/-- The row the paper stars is the cell the licensing predicate
-rejects. -/
 theorem starred_row_is_the_unlicensed_cell :
     Examples.ex17a2.judgment = .ungrammatical ∧
     ¬ starred_inSitu_subject.IsHausaLicensed := ⟨rfl, by decide⟩

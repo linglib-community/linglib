@@ -46,7 +46,6 @@ def asSetOfSets (E : Finset (Finset W)) : Set (Set W) :=
 theorem finite_asSetOfSets (E : Finset (Finset W)) : (asSetOfSets E).Finite :=
   (Finset.finite_toSet E).image _
 
-/-- Every subfamily of a finite family is the coercion of a finite subfamily. -/
 theorem exists_asSetOfSets_eq {ALT : Finset (Finset W)} {X : Set (Set W)}
     (h : X ⊆ asSetOfSets ALT) : ∃ M ⊆ ALT, asSetOfSets M = X := by
   classical
@@ -92,7 +91,6 @@ instance (ALT : Finset (Finset W)) (φ : Finset W) (M : Finset (Finset W)) :
     Decidable (IsMaximalExclusion ALT φ M) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ M' ∈ ALT.powerset, _))
 
-/-- The finite maximal exclusions are the maximal consistent exclusions. -/
 theorem isMaximalExclusion_iff {ALT M : Finset (Finset W)} {φ : Finset W} :
     IsMaximalExclusion ALT φ M ↔
       Maximal (IsConsistentExclusion (asSetOfSets ALT) ↑φ) (asSetOfSets M) := by
@@ -115,7 +113,6 @@ end MaximalExclusion
 
 variable [Fintype W] [DecidableEq W]
 
-/-- The tolerant excluder is `exh` over finite alternatives. -/
 theorem coe_tolerant_exh (ALT : Finset (Finset W)) (φ : Finset W) :
     (↑(tolerant.exh ALT φ) : Set W) = exh (asSetOfSets ALT) ↑φ := by
   ext w
@@ -124,8 +121,6 @@ theorem coe_tolerant_exh (ALT : Finset (Finset W)) (φ : Finset W) :
   exact and_congr_right fun _ ↦ forall₂_congr fun _ _ ↦
     ⟨fun h hw ↦ not_not.1 fun hs ↦ h hs hw, fun h hs hw ↦ hs (h hw)⟩
 
-/-- An excluder denying only alternatives the prejacent does not entail is `exh` over the
-alternatives it selects. -/
 theorem Excluder.coe_exh (E : Excluder W) (ALT : Finset (Finset W)) (φ : Finset W)
     (h : ∀ a ∈ E.excluded ALT φ, ¬ φ ⊆ a) :
     (↑(E.exh ALT φ) : Set W) = Exhaustification.exh (asSetOfSets (E.excluded ALT φ)) ↑φ := by
@@ -163,7 +158,6 @@ def innocentlyExcludable : Finset (Finset W) :=
 theorem innocentlyExcludable_subset (ALT : Finset (Finset W)) (φ : Finset W) :
     innocentlyExcludable ALT φ ⊆ ALT := Finset.filter_subset _ _
 
-/-- Innocent excludability over a finite family is membership in `innocentlyExcludable`. -/
 theorem isInnocentlyExcludable_iff (a : Finset W) :
     IsInnocentlyExcludable (asSetOfSets ALT) ↑φ ↑a ↔ a ∈ innocentlyExcludable ALT φ := by
   have haALT : (↑a : Set W) ∈ asSetOfSets ALT ↔ a ∈ ALT := by
@@ -189,7 +183,6 @@ def cellFinset : Finset W :=
     (∀ a ∈ innocentlyExcludable ALT φ, w ∉ a) ∧
     (∀ r ∈ ALT \ innocentlyExcludable ALT φ, w ∈ r)
 
-/-- Membership in `cellFinset` is membership in the cell. -/
 theorem mem_cellFinset_iff (w : W) :
     w ∈ cellFinset ALT φ ↔ cell (asSetOfSets ALT) (↑φ) w := by
   unfold cellFinset cell nonExcludable
@@ -242,7 +235,6 @@ def innocent {W : Type*} [Fintype W] [DecidableEq W] : Excluder W where
   excluded := innocentlyExcludable
   excluded_subset := innocentlyExcludable_subset
 
-/-- The innocent excluder computes `exhIE`. -/
 theorem coe_innocent_exh : (↑(innocent.exh ALT φ) : Set W) = exhIE (asSetOfSets ALT) ↑φ := by
   ext w
   rw [Finset.mem_coe, Excluder.mem_exh_iff, mem_exhIE_iff]
@@ -251,7 +243,6 @@ theorem coe_innocent_exh : (↑(innocent.exh ALT φ) : Set W) = exhIE (asSetOfSe
   obtain ⟨b, hb, rfl⟩ := mem_asSetOfSets.1 ha.1
   exact h b ((isInnocentlyExcludable_iff ALT φ b).1 ha)
 
-/-- With nothing innocently excludable, exhaustification is vacuous. -/
 theorem innocent_exh_eq_phi_of_innocentlyExcludable_empty
     {ALT : Finset (Finset W)} {φ : Finset W}
     (h : innocentlyExcludable ALT φ = ∅) :
@@ -262,8 +253,6 @@ theorem innocent_exh_eq_phi_of_innocentlyExcludable_empty
 
 /-! ### Tolerant exhaustification -/
 
-/-- Tolerant exhaustification is contradictory when every prejacent world lies in a
-non-entailed alternative. -/
 theorem tolerant_exh_eq_empty_of_covered
     {ALT : Finset (Finset W)} {φ : Finset W}
     (h : ∀ w ∈ φ, ∃ α ∈ ALT, ¬ φ ⊆ α ∧ w ∈ α) :
@@ -275,8 +264,6 @@ theorem tolerant_exh_eq_empty_of_covered
   obtain ⟨α, hα_ALT, hα_neg, hw_α⟩ := h w hw_phi
   exact hw_neg α hα_ALT hα_neg hw_α
 
-/-- A contradictory tolerant exhaustification covers the prejacent by non-entailed
-alternatives. -/
 theorem covered_of_tolerant_exh_eq_empty
     {ALT : Finset (Finset W)} {φ : Finset W}
     (h : tolerant.exh ALT φ = ∅) (w : W) (hw : w ∈ φ) :
@@ -289,15 +276,12 @@ theorem covered_of_tolerant_exh_eq_empty
     exact hcon α hα_ALT hα_neg hw_α
   simp [h] at hw_exh
 
-/-- Tolerant exhaustification is contradictory iff the non-entailed alternatives cover the
-prejacent. -/
 theorem tolerant_exh_eq_empty_iff (ALT : Finset (Finset W)) (φ : Finset W) :
     tolerant.exh ALT φ = ∅ ↔ ∀ w ∈ φ, ∃ α ∈ ALT, ¬ φ ⊆ α ∧ w ∈ α :=
   ⟨covered_of_tolerant_exh_eq_empty, tolerant_exh_eq_empty_of_covered⟩
 
 /-! ### Innocent exhaustification -/
 
-/-- The tolerant excluder denies every alternative the innocent one does. -/
 theorem tolerant_exh_subset_innocent_exh
     (ALT : Finset (Finset W)) (φ : Finset W) :
     tolerant.exh ALT φ ⊆ innocent.exh ALT φ := by
@@ -325,8 +309,6 @@ theorem tolerant_exh_subset_innocent_exh
         hfin hsat h_subset_set hSet
   · exact hw_a
 
-/-- When some prejacent world lies in no alternative, every alternative is innocently
-excludable and exhaustification removes their union. -/
 theorem innocent_exh_pairwise_disjoint_partial
     {ALT : Finset (Finset W)} {φ : Finset W}
     (hcompat : (φ \ ALT.sup id).Nonempty) :
@@ -352,12 +334,10 @@ theorem innocent_exh_pairwise_disjoint_partial
   show φ \ ((innocentlyExcludable ALT φ).biUnion id) = φ \ ALT.sup id
   rw [h_ie_eq, ← Finset.sup_eq_biUnion]
 
-/-- A single alternative whose denial is consistent with the prejacent is denied. -/
 theorem innocent_exh_singleton {α φ : Finset W} (h : (φ \ α).Nonempty) :
     innocent.exh ({α} : Finset (Finset W)) φ = φ \ α := by
   simpa using innocent_exh_pairwise_disjoint_partial (ALT := {α}) (by simpa)
 
-/-- With every alternative entailed by the prejacent, exhaustification is vacuous. -/
 theorem innocent_exh_eq_self_of_forall_subset {ALT : Finset (Finset W)} {φ : Finset W}
     (h : ∀ a ∈ ALT, φ ⊆ a) : innocent.exh ALT φ = φ := by
   rcases φ.eq_empty_or_nonempty with rfl | hne
@@ -368,8 +348,6 @@ theorem innocent_exh_eq_self_of_forall_subset {ALT : Finset (Finset W)} {φ : Fi
     (hne.imp fun _ h => h) (Finset.coe_subset.2 (h a (innocentlyExcludable_subset ALT φ ha)))
     ((isInnocentlyExcludable_iff ALT φ a).2 ha)
 
-/-- Dropping an alternative the prejacent entails leaves the minimal worlds unchanged, since it
-holds at every prejacent world. -/
 theorem minimalWorlds_erase_of_subset {ALT : Finset (Finset W)} {a φ : Finset W} (h : φ ⊆ a) :
     minimalWorlds (ALT.erase a) φ = minimalWorlds ALT φ := by
   ext u
@@ -383,8 +361,6 @@ theorem minimalWorlds_erase_of_subset {ALT : Finset (Finset W)} {a φ : Finset W
     · exact hca ▸ h hu
     · exact hvu c ⟨hca, hc⟩ hvc
 
-/-- An alternative entailed by the prejacent can be dropped without changing the
-exhaustification. -/
 theorem innocent_exh_erase_entailed
     {ALT : Finset (Finset W)} {a φ : Finset W}
     (h_entails : φ ⊆ a) (hphi_nonempty : φ.Nonempty) :
@@ -419,9 +395,6 @@ private theorem innocent_exh_at_symmetric_pair :
 private theorem preFilter_innocent_exh_at_symmetric_pair :
     (innocent.preFilter cPred).exh cAlt cPhi = cPsi := by decide
 
-/-- Filtering the alternatives before exclusion can license an implicature the unfiltered
-excluder does not, since removing one of two symmetric alternatives makes the other excludable
-([fox-katzir-2011]'s formal alternative source can break symmetry). -/
 theorem preFilter_can_create_implicature :
     ∃ (E : Excluder Bool) (ALT : Finset (Finset Bool)) (φ ψ : Finset Bool)
       (P : Finset Bool → Bool),

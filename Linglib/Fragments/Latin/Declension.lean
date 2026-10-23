@@ -193,12 +193,9 @@ theorem singular_nom_voc_syncretic_iff :
       n.singular .nom = n.singular .voc ↔ ¬ (n.cls = .second ∧ ¬ n.IsNeuter) := by
   decide
 
-/-- No plural distinguishes nominative and vocative. -/
 theorem plural_nom_voc_syncretic : ∀ n ∈ nouns, n.plural .nom = n.plural .voc := by
   decide
 
-/-- The plurals of the consonant stems, the u-stems and the ē-stems do not distinguish
-nominative and accusative, and with its consonant-stem accusative neither does *cīvis*. -/
 theorem plural_nom_acc_syncretic :
     (∀ n ∈ nouns, n.cls = .thirdConsonant ∨ n.cls = .fourth ∨ n.cls = .fifth →
       n.plural .nom = n.plural .acc) ∧

@@ -179,7 +179,6 @@ theorem rel_neg (v : SignType) (m : StateSet D SignType) :
   exact ⟨fun ⟨t, ht, hp⟩ ↦ by rwa [← ht, neg_neg],
     fun hp ↦ ⟨-v, neg_neg v, hp⟩⟩
 
-/-- Negation permutes the extensions by strong Kleene negation (Obs. 2.1). -/
 theorem extension_neg (v : SignType) (m : StateSet D SignType) (g : PartialAssign ℕ D) :
     extension v (neg m) g = extension (-v) m g :=
   Set.ext fun h ↦ Set.ext_iff.1 (rel_neg v m) (g, h)
@@ -198,7 +197,6 @@ theorem neg_conj (m n : StateSet D SignType) : neg (conj m n) = disj (neg m) (ne
   simp only [neg, disj, conj, map_seq, seq_map_assoc, Functor.map_map,
     Function.comp_def, SignType.neg_inf]
 
-/-- Material implication is the disjunction of the negated antecedent with the consequent. -/
 theorem imp_eq_disj_neg (m n : StateSet D SignType) : imp m n = disj (neg m) n := by
   simp only [imp, disj, neg, Functor.map_map]
 
@@ -267,7 +265,6 @@ theorem extension_false_positiveClosure (m : StateSet D SignType) (g : PartialAs
   · rintro (⟨⟨⟩, -⟩ | ⟨hf, -, rfl⟩ | ⟨-, ⟨⟩, -⟩); exact ⟨hf, rfl⟩
   · rintro ⟨hf, rfl⟩; exact Or.inr (Or.inl ⟨hf, by simp⟩)
 
-/-- The DPL existential and negation commute (Obs. 2.3). -/
 theorem dplExists_neg (e : Existential) (n : ℕ) (m : StateSet D SignType) :
     dplExists e n (neg m) = neg (dplExists e n m) := by
   funext g; ext ⟨v, h⟩
@@ -280,7 +277,6 @@ theorem dplExists_neg (e : Existential) (n : ℕ) (m : StateSet D SignType) :
     · exact .inl ⟨hf, x, t, ht, rfl⟩
     · exact .inr ⟨hf, rfl, rfl⟩
 
-/-- A guarded existential over a valued variable is maybe at the input. -/
 theorem exists_guarded_of_ne_bot {n : ℕ} {m : StateSet D SignType} {g : PartialAssign ℕ D}
     (hg : g n ≠ ⊥) : exists_ .guarded n m g = {(0, g)} := by
   have heps : dplExists .guarded n m g = {(0, g)} := by
@@ -303,7 +299,6 @@ existential decomposes, a random reset bound to its scope, but positive closure 
 /-- Random assignment, resetting `n` to any individual. -/
 def reset (n : ℕ) : StateSet D PUnit := fun g ↦ {q | ∃ x, q = ((), g.update n x)}
 
-/-- The destructive DPL existential is a random reset bound to its scope. -/
 theorem dplExists_destructive (n : ℕ) (m : StateSet D SignType) :
     dplExists .destructive n m = reset n >>= fun _ ↦ m := by
   funext g
@@ -418,7 +413,6 @@ theorem mem_extension_false_conj {m n : StateSet D SignType} {g i : PartialAssig
 
 /-! ### Egli's theorem -/
 
-/-- A conjunction's positive extension, from `rel_true_conj`. -/
 theorem mem_extension_true_conj {m n : StateSet D SignType} {g i : PartialAssign ℕ D} :
     i ∈ extension 1 (conj m n) g ↔ ∃ h ∈ extension 1 m g, i ∈ extension 1 n h := by
   have : (g, i) ∈ StateT.rel (conj m n) 1 ↔
@@ -460,7 +454,6 @@ theorem mem_atom_update (x : D) {v : SignType} {h : PartialAssign ℕ D} :
     (v, h) ∈ atom W n (g.update n x) ↔ v = ofProp (x ∈ W) ∧ h = g.update n x := by
   rw [mem_atom, valueAt_of_eq_coe W (PartialAssign.update_self n x g), Prod.mk.injEq]
 
-/-- The negation of an atom is the atom of the complement. -/
 theorem neg_atom (n : ℕ) : neg (atom W n) = atom Wᶜ n := by
   funext g
   have key : -valueAt W g n = valueAt Wᶜ g n := by
@@ -519,7 +512,6 @@ theorem isFalse_dplExists_atom_iff [Nonempty D] (hf : e.Fresh g n) :
     exact ⟨Set.eq_empty_iff_forall_notMem.2 fun _ ⟨x, hx, _⟩ ↦ by simp [hW] at hx,
       ⟨g.update n x, x, by simp [hW], rfl⟩⟩
 
-/-- The negative extension of `∃ₙ W n` is the input, when nothing is a `W`. -/
 theorem extension_false_exists_atom [Nonempty D] (hf : e.Fresh g n) :
     extension (-1) (exists_ e n (atom W n)) g = {h | h = g ∧ W = ∅} := by
   rw [exists_, extension_false_positiveClosure]
@@ -579,7 +571,6 @@ theorem extension_true_bathroom [Nonempty D] (hf : e.Fresh g 1) :
         rw [extension_false_neg_exists_atom B hf]; exact ⟨x, hxB, rfl⟩
       · rw [mem_extension, mem_atom_update]; exact ⟨by simp [hxU], rfl⟩
 
-/-- The bathroom sentence is falsified by the resets of 1 to a bathroom that is not upstairs. -/
 theorem extension_false_bathroom (hf : e.Fresh g 1) :
     extension (-1) (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g =
       {h | ∃ x ∈ B, x ∉ U ∧ h = g.update 1 x} := by
@@ -617,8 +608,6 @@ theorem extension_true_conj_atom_exists (P Q : Set D) (hg : g 1 = ⊥) :
   rw [mem_extension, mem_atom, valueAt_of_eq_bot P hg] at hh
   simp at hh
 
-/-- An indefinite before its pronoun, `∃₁ P 1 ∧ Q 1`, is verified by the resets of 1 to a `P`
-that is a `Q`, as in DPL. -/
 theorem extension_true_conj_exists_atom (P Q : Set D) (hf : e.Fresh g 1) :
     extension 1 (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g =
       {h | ∃ x ∈ P, x ∈ Q ∧ h = g.update 1 x} := by
@@ -755,7 +744,6 @@ theorem Expanding.positiveClosure {m : StateSet D SignType} (hm : Expanding m) :
 theorem Expanding.exists_ {e : Existential} {n : ℕ} {m : StateSet D SignType} (hm : Expanding m) :
     Expanding (exists_ e n m) := hm.dplExists.positiveClosure
 
-/-- Every positive output of an existential values its variable. -/
 theorem ne_bot_of_mem_extension_true_exists {e : Existential} {n : ℕ} {m : StateSet D SignType}
     (hm : Expanding m) {g h : PartialAssign ℕ D} (hh : h ∈ extension 1 (exists_ e n m) g) :
     h n ≠ ⊥ := by
@@ -786,7 +774,6 @@ def HurfordOdd {M : Type*} (φ ψ : M → StateSet D SignType) : Prop :=
   (∀ x g, extension 1 (conj (neg (φ x)) (ψ x)) g = ∅) ∨
     ∀ x g, extension 1 (conj (φ x) (neg (ψ x))) g = ∅
 
-/-- An output making `¬ ∃ₙ φ` true is the input, which `∃ₙ φ` found false. -/
 theorem eq_and_isFalse_of_mem_extension_true_neg_exists {e : Existential} {n : ℕ}
     {m : StateSet D SignType} {g h : PartialAssign ℕ D}
     (hh : h ∈ extension 1 (neg (exists_ e n m)) g) :
@@ -794,7 +781,6 @@ theorem eq_and_isFalse_of_mem_extension_true_neg_exists {e : Existential} {n : �
   rw [extension_neg, exists_, extension_false_positiveClosure] at hh
   exact ⟨hh.2, hh.1⟩
 
-/-- A false DPL existential found its variable fresh. -/
 theorem fresh_of_isFalse_dplExists {e : Existential} {n : ℕ} {m : StateSet D SignType}
     {g : PartialAssign ℕ D} (h : IsFalse (dplExists e n m) g) : e.Fresh g n := by
   by_contra hf
@@ -957,7 +943,6 @@ section Bridge
 
 open Classical
 
-/-- A conjunction of atoms of one variable is the atom of their intersection. -/
 theorem conj_atom_atom (L H : Set D) (n : ℕ) : conj (atom L n) (atom H n) = atom (L ∩ H) n := by
   funext g
   have key : valueAt L g n ⊓ valueAt H g n = valueAt (L ∩ H) g n := by
@@ -974,7 +959,6 @@ theorem conj_atom_atom (L H : Set D) (n : ℕ) : conj (atom L n) (atom H n) = at
   · rintro ⟨rfl, rfl⟩
     exact ⟨_, _, ⟨rfl, rfl⟩, _, ⟨rfl, rfl⟩, key.symm⟩
 
-/-- An existential over an atom has an output at every input. -/
 theorem nonempty_exists_atom [Nonempty D] (e : Existential) (W : Set D) (n : ℕ)
     (g : PartialAssign ℕ D) : (exists_ e n (atom W n) g).Nonempty := by
   by_cases hf : e.Fresh g n
@@ -996,7 +980,6 @@ theorem mem_atomConst_iff {P : Set D} {c : D} {v : SignType} {h : PartialAssign 
     (v, h) ∈ atomConst P c g ↔ v = ofProp (c ∈ P) ∧ h = g := by
   rw [mem_atomConst, Prod.mk.injEq]
 
-/-- A negated existential over an atom is true or false at an input not valuing its variable. -/
 theorem isTrue_or_isFalse_neg_exists_atom [Nonempty D] (W : Set D) {n : ℕ} (hf : e.Fresh g n) :
     IsTrue (neg (exists_ e n (atom W n))) g ∨ IsFalse (neg (exists_ e n (atom W n))) g := by
   rcases Set.eq_empty_or_nonempty W with hW | ⟨x, hx⟩
@@ -1005,7 +988,6 @@ theorem isTrue_or_isFalse_neg_exists_atom [Nonempty D] (W : Set D) {n : ℕ} (hf
     rw [extension_true_neg_exists_atom W hf]
     exact Set.eq_empty_iff_forall_notMem.2 fun h hh ↦ (Set.nonempty_of_mem hx).ne_empty hh.2
 
-/-- An indefinite before its pronoun is true or false at an input not valuing the variable. -/
 theorem isTrue_or_isFalse_conj_exists_atom [Nonempty D] (P Q : Set D) (hf : e.Fresh g 1) :
     IsTrue (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g ∨
       IsFalse (conj (exists_ e 1 (atom P 1)) (atom Q 1)) g := by
@@ -1023,7 +1005,6 @@ theorem defined_initial_someone_and_they [Nonempty D] (P Q : W → Set D) :
   fun _ hp ↦ isTrue_or_isFalse_conj_exists_atom _ _
     (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
 
-/-- The bathroom sentence is true or false at an input not valuing the variable. -/
 theorem isTrue_or_isFalse_bathroom [Nonempty D] (B U : Set D) (hf : e.Fresh g 1) :
     IsTrue (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g ∨
       IsFalse (disj (neg (exists_ e 1 (atom B 1))) (atom U 1)) g := by
@@ -1049,8 +1030,6 @@ theorem not_familiar_update_neg_exists [Nonempty D] (P : W → Set D) {w : W} (h
   · show ⊥ ∈ extension 1 (neg (exists_ e 1 (atom (P w) 1))) ⊥
     rw [extension_true_neg_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨rfl, hw⟩
 
-/-- A disjunction of an existential and a constant atom is true or false at an input not valuing
-the existential's variable. -/
 theorem isTrue_or_isFalse_disj_exists_atomConst [Nonempty D] (A P : Set D) (c : D)
     (hf : e.Fresh g 1) :
     IsTrue (disj (exists_ e 1 (atom A 1)) (atomConst P c)) g ∨
@@ -1109,8 +1088,6 @@ theorem familiar_update_update_disj (A Dis : W → Set D) (ev : D) :
   · rw [mem_extension, mem_atomConst_iff] at hj
     exact absurd (hev.trans hj.1.symm) (by decide)
 
-/-- In a world where someone was in the audience and the event was no disaster, the witness
-survives both updates of Rothschild's discourse, so its final state is not empty. -/
 theorem mem_update_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w : W} {x : D}
     (hx : x ∈ A w) (hev : ev ∉ Dis w) :
     (⟨w, (⊥ : PartialAssign ℕ D).update 1 x⟩ : Possibility W ℕ (Flat D)) ∈
@@ -1148,7 +1125,6 @@ theorem familiar_update_stone (L P H : W → Set D) :
   · exact ne_bot_of_mem_extension_true_exists (hexp _) hi
 
 
-/-- When nothing is a `W`, every output of `∃ₙ W n` is the input. -/
 theorem snd_eq_of_mem_exists_atom {W : Set D} {n : ℕ} (hW : W = ∅) (hf : e.Fresh g n)
     {p : SignType × PartialAssign ℕ D} (hp : p ∈ exists_ e n (atom W n) g) : p.2 = g := by
   rw [exists_, mem_positiveClosure] at hp
@@ -1162,8 +1138,6 @@ theorem snd_eq_of_mem_exists_atom {W : Set D} {n : ℕ} (hW : W = ∅) (hf : e.F
     simp [hW] at hx
   all_goals rfl
 
-/-- A disjunction of two existentials over atoms is true or false at an input not valuing the
-variable. -/
 theorem isTrue_or_isFalse_disj_exists_atom [Nonempty D] (A B : Set D) (hg : g 1 = ⊥) :
     IsTrue (disj (exists_ e 1 (atom A 1)) (exists_ e 1 (atom B 1))) g ∨
       IsFalse (disj (exists_ e 1 (atom A 1)) (exists_ e 1 (atom B 1))) g := by
@@ -1191,8 +1165,6 @@ theorem isTrue_or_isFalse_disj_exists_atom [Nonempty D] (A B : Set D) (hg : g 1 
     refine .inl ⟨i, mem_extension_true_disj.2 (.inl ⟨g.update 1 x, ?_, u, hu⟩)⟩
     rw [extension_true_exists_atom A hf]; exact ⟨x, hx, rfl⟩
 
-/-- In a world with a linguist here a Stone disjunction has an output, so the state after it is
-not empty. -/
 theorem exists_mem_update_stone [Nonempty D] (L P H : W → Set D) {w : W} {x : D}
     (hx : x ∈ L w ∩ H w) :
     ∃ i, (⟨w, i⟩ : Possibility W ℕ (Flat D)) ∈ update (⊤ : State W ℕ D) fun w ↦

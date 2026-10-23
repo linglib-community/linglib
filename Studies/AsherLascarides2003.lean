@@ -92,8 +92,6 @@ def example17 : SDRS ℕ where
     ⟨7, 3, 4, .narration⟩]
   last := 5
 
-/-- The frontier of the narrative is the competition, the constituent containing it, the
-    evening it elaborates, and the root. -/
 theorem available17_iff (γ : ℕ) : example17.Available γ ↔ γ ∈ [0, 1, 5, 6] := by
   constructor
   · intro h
@@ -117,7 +115,6 @@ def antecedentLabel? (r : Datum) : Option ℕ :=
   | some "3" => some 3
   | _ => none
 
-/-- A continuation whose pronoun needs an antecedent off the frontier is not acceptable. -/
 theorem rows_continuation :
     ∀ r ∈ Examples.all, ∀ a ∈ antecedentLabel? r,
       (r.judgment = .acceptable ↔ example17.Available a) := by
@@ -130,8 +127,6 @@ def example21 : SDRS ℕ where
   edges := [⟨0, 3, 4, .topic⟩, ⟨4, 1, 2, .background⟩]
   last := 2
 
-/-- The frontier is the last label, the constituent containing it, the topic above that, and
-    the root; the Background sibling `1` is not on it. -/
 theorem available21_iff (γ : ℕ) : example21.Available γ ↔ γ ∈ [0, 2, 3, 4] := by
   constructor
   · intro h

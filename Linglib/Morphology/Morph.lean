@@ -352,8 +352,6 @@ theorem wordsAt_append {ms ns : List Morph}
     wordsAt l (ms ++ ns) = wordsAt l ms ++ wordsAt l ns :=
   List.splitBy_append fun x hx y hy ↦ decide_eq_false (h x hx y hy)
 
-/-- After a morph not bound before its host, a joined run continues with morphs bound after or
-inside their hosts. -/
 private theorem bound_back_of_isChain_joinsAt {a : Morph} {t : List Morph}
     (h : (a :: t).IsChain fun m₁ m₂ ↦ decide (JoinsAt l m₁ m₂))
     (ha : a.kind.position? ≠ some .before) :
@@ -368,7 +366,6 @@ private theorem bound_back_of_isChain_joinsAt {a : Morph} {t : List Morph}
     · exact ⟨p, by simp [hp], hpb⟩
     · exact ih h.2 (by simpa [hp] using hpb) c hc
 
-/-- A joined run has at most one morph that is not bound. -/
 theorem countP_le_one_of_isChain_joinsAt {w : List Morph}
     (h : w.IsChain fun m₁ m₂ ↦ decide (JoinsAt l m₁ m₂)) :
     w.countP (fun m ↦ m.kind.position? = none) ≤ 1 := by

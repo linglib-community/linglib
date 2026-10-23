@@ -132,8 +132,6 @@ theorem L0_apply (A : Finset World) (q : Question) (u : Utt) (w : World) :
     Measure.restrict_apply .of_discrete, Measure.restrict_apply .of_discrete, e1, e2,
     Measure.count_apply_finset, Measure.count_apply_finset, l0]
 
-/-- A speaker who assumes the complement interprets negated *know* and negated *think* alike,
-since within the assumption set the belief is false under both. -/
 theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) :
     L0 A q .knowNeg = L0 A q .thinkNeg := by
   have h : A ∩ sem .knowNeg = A ∩ sem .thinkNeg := by
@@ -171,8 +169,6 @@ theorem L0_knowNeg_bel_eq_one {A : Finset World} (hA : A ⊆ sem .cPos) {w : Wor
     revert hc hl
     cases b <;> cases c <;> cases c₀ <;> decide
 
-/-- Without assumptions, negated *think* answers the belief question fully at a world in which
-Cole does not believe the complement. -/
 theorem L0_univ_bel_thinkNeg {w : World} (hb : w.believes = false) :
     L0 Finset.univ .belief .thinkNeg {Question.answer .belief w} = 1 := by
   obtain ⟨b, c⟩ := w
@@ -182,8 +178,6 @@ theorem L0_univ_bel_thinkNeg {w : World} (hb : w.believes = false) :
     show l0 Finset.univ .belief .thinkNeg ⟨false, c⟩ = (2, 2) from by cases c <;> decide]
   exact ENNReal.div_self (by norm_num) (by norm_num)
 
-/-- Without assumptions, negated *know* leaves the belief question open at such a world, since
-it is also true where Cole believes a false complement. -/
 theorem L0_univ_bel_knowNeg {w : World} (hb : w.believes = false) :
     L0 Finset.univ .belief .knowNeg {Question.answer .belief w} = 2 / 3 := by
   obtain ⟨b, c⟩ := w

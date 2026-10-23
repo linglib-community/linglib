@@ -69,13 +69,10 @@ theorem inner_sqrtMass_nonneg (μ ν : Measure α) : 0 ≤ ⟪μ.sqrtMass, ν.sq
 
 variable [MeasurableSingletonClass α]
 
-/-- The squared norm of the square-root mass vector of a finite measure is its total mass. -/
 theorem norm_sqrtMass_sq (μ : Measure α) [IsFiniteMeasure μ] :
     ‖μ.sqrtMass‖ ^ 2 = μ.real univ := by
   simp [EuclideanSpace.real_norm_sq_eq, sq_sqrt measureReal_nonneg]
 
-/-- Against a Dirac mass the inner product is the square root of the other measure's mass at the
-atom. -/
 theorem inner_sqrtMass_dirac_left (a : α) (ν : Measure α) :
     ⟪(dirac a).sqrtMass, ν.sqrtMass⟫_ℝ = √(ν.real {a}) := by
   rw [EuclideanSpace.inner_eq_star_dotProduct, dotProduct,

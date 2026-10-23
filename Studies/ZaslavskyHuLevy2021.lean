@@ -146,7 +146,6 @@ section Support
 variable [IsFiniteMeasure P] (hP : ∀ m, P {m} ≠ 0) (hl : ∀ u m, l u m ≠ ∞) (hα : 0 ≤ α)
 include hP hl hα
 
-/-- No listener of the recursion rules out a meaning the utterance applies to. -/
 theorem listener_apply_singleton_ne_zero (h : l u m ≠ 0) : ∀ t, listener P C α l t u {m} ≠ 0
   | 0 => by
     rw [listener, Kernel.ofDensity_apply_singleton]
@@ -157,8 +156,6 @@ theorem listener_apply_singleton_ne_zero (h : l u m ≠ 0) : ∀ t, listener P C
     exact RSA.listener_apply_singleton_ne_zero (hP m)
       (RSA.speaker_dirac_apply_singleton_ne_zero hα (listener_apply_singleton_ne_zero h t))
 
-/-- Every speaker of the recursion is a probability kernel when every meaning has an utterance
-that applies to it. -/
 theorem isMarkovKernel_speaker_listener (hm : ∀ m, ∃ u, l u m ≠ 0) (t : ℕ) :
     IsMarkovKernel (RSA.speaker α C (listener P C α l t) Measure.dirac) :=
   RSA.isMarkovKernel_speaker_dirac hα C _ fun m ↦

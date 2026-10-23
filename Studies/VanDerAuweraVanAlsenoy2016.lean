@@ -95,8 +95,6 @@ def Strategy.toWALS : Strategy → F115A.NegativeIndefiniteType
   | .negativeIndefiniteAlone => .noPredicateNegation
   | .other => .negativeExistentialConstruction
 
-/-- WALS co-occurrence is not negative concord: it is any strategy with a verbal negator, so the
-frequency of the WALS value does not measure the frequency of concord. -/
 theorem toWALS_eq_predicateNegationAlsoPresent_iff (s : Strategy) :
     s.toWALS = .predicateNegationAlsoPresent ↔
       s = .verbalNegatorNeutral ∨ s = .verbalNegatorPolar ∨ s = .concord := by
@@ -172,11 +170,8 @@ Spanish and older Slavic to modern Slavic and Romanian, with strict concord. -/
 def stages : List Pattern :=
   [(.excluded, .excluded), (.excluded, .optional), spanish, olderSlavic, (.obligatory, .obligatory)]
 
-/-- The diachrony ascends the strictness scale in both positions. -/
 theorem stages_isChain : stages.IsChain (· ≤ ·) := by decide
 
-/-- Every stage respects Negative Early: the verbal negator appears with the postverbal negative
-indefinite before it appears with the preverbal one. -/
 theorem negativeEarly_of_mem_stages : ∀ p ∈ stages, p.NegativeEarly := by decide
 
 /-- (29): informal Catalan has the Spanish subtype, formal Catalan strict concord. -/
@@ -184,8 +179,6 @@ def informalCatalan : Pattern := spanish
 
 def formalCatalan : Pattern := (.obligatory, .obligatory)
 
-/-- Catalan is changing from strict to Spanish-style concord, down the strictness scale: the
-diachrony has no single direction. -/
 theorem informalCatalan_lt_formalCatalan :
     informalCatalan ≤ formalCatalan ∧ informalCatalan ≠ formalCatalan := by decide
 

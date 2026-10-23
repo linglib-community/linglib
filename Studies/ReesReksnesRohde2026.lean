@@ -97,21 +97,15 @@ theorem spoke_real_true (p : Past) :
 
 variable {s} {t : Speaker} (μ : Measure Past)
 
-/-- The prior probability that the speaker speaks is that of the pasts in which the remark is
-worth it to her. -/
 theorem spoke_comp_apply_true : (s.spoke ∘ₘ μ) {true} = μ {p | s.bar ≤ s.worth p} := by
   rw [← preimage_spoke, ← Measure.map_apply .of_discrete (measurableSet_singleton _),
     ← Measure.deterministic_comp_eq_map]
   rfl
 
-/-- A quieter speaker with the same view of the situation finds trivial whatever a more
-talkative one does. -/
 theorem Trivial.mono (h : s.Trivial) (hw : s.worth = t.worth) (hb : s.bar ≤ t.bar) :
     t.Trivial :=
   lt_of_lt_of_le (hw ▸ h) hb
 
-/-- A speaker who does not know the situation over time would stay silent about a trivial
-remark whatever its past, so no past explains her making it. -/
 theorem spoke_comp_apply_true_eq_zero (hk : ¬ s.Knowledgeable) (ht : s.Trivial) :
     (s.spoke ∘ₘ μ) {true} = 0 := by
   have h₁ : s.worth .same < s.bar := ht
@@ -125,7 +119,6 @@ private theorem pair_support : ∀ p, μ {p} ≠ 0 → p = Past.different ∨ p 
 
 variable [IsProbabilityMeasure μ]
 
-/-- Hearing the remark conditions the prior on the pasts in which the speaker would make it. -/
 theorem posterior_spoke (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) :
     (s.spoke†μ) true = μ[|{p | s.bar ≤ s.worth p}] := by
   have := posterior_deterministic_eq_cond μ (f := fun p ↦ decide (s.bar ≤ s.worth p))
@@ -156,8 +149,6 @@ theorem posterior_eq_prior_of_not_knowledgeable (hk : ¬ s.Knowledgeable)
     simp [spoke_comp_apply_true, h]
   rw [posterior_spoke μ hx, hpre, cond_univ]
 
-/-- In particular such a speaker never licenses the inference that the situation changed, as
-Suzy cannot at the Prime Minister's office. -/
 theorem not_prior_lt_posterior_of_not_knowledgeable (hk : ¬ s.Knowledgeable)
     (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) :
     ¬ μ.real {.different} < ((s.spoke†μ) true).real {.different} := by
@@ -231,17 +222,12 @@ namespace ResponseModel
 
 variable (m : ResponseModel)
 
-/-- In Experiment 3 the inference-endorsing *no* is slower than *yes* by the cost of considering
-the alternative. -/
 theorem exp3_contrast : m.rt .same false - m.rt .same true = m.alternative := by
   simp [rt, ConsidersAlternative, Endorses, asserted]
 
-/-- In Experiment 4 *yes* and *no* take equally long. -/
 theorem exp4_yes_eq_no : m.rt .different true = m.rt .different false := by
   simp [rt, ConsidersAlternative, Endorses, asserted]
 
-/-- The inference-endorsing *yes* of Experiment 4 is slower than the *yes* of Experiment 3 by
-the cost of considering the alternative. -/
 theorem yes_contrast : m.rt .different true - m.rt .same true = m.alternative := by
   simp [rt, ConsidersAlternative, Endorses, asserted]
 
@@ -256,13 +242,9 @@ namespace AdditiveModel
 
 variable (m : AdditiveModel)
 
-/-- In Experiment 3 the contrast between *no* and *yes* confounds the cost of the inference with
-that of a negative answer. -/
 theorem exp3_confounded : m.rt .same false - m.rt .same true = m.negative + m.inference := by
   simp [rt, Endorses, asserted]; ring
 
-/-- The contrast between the *yes* answers of the two experiments isolates the cost of the
-inference. -/
 theorem yes_contrast : m.rt .different true - m.rt .same true = m.inference := by
   simp [rt, Endorses, asserted]
 

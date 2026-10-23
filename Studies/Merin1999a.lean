@@ -84,7 +84,6 @@ structure IndepConfirmers (ctx : Context W) (a b : Set W) : Prop where
   ne_top_left : bayesFactor ctx a ≠ ⊤
   ne_top_right : bayesFactor ctx b ≠ ⊤
 
-/-- A finite confirmer is possible under ¬H. -/
 private theorem cond_compl_ne_zero {ctx : Context W} {e : Set W} (hp : posRelevant ctx e)
     (ht : bayesFactor ctx e ≠ ⊤) : ctx.prior[|ctx.topicᶜ] e ≠ 0 := by
   intro h0
@@ -149,8 +148,6 @@ private theorem ncard₁ :
   simp only [Set.symmDiff_def, Set.ncard_eq_toFinset_card']
   decide
 
-/-- The first countermodel: H is one world where A and B both hold, and off the issue A and B
-are fair independent coins, so each confirms H by a factor of two. -/
 private theorem indepConfirmers₁ :
     IndepConfirmers ⟨H₁, .of_discrete, .count⟩ A₁ B₁ := by
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, -, -⟩ := ncard₁
@@ -222,8 +219,6 @@ private noncomputable abbrev ctx₂ : Context World₂ := ⟨H₂, .of_discrete,
 private theorem ne_top₂ {e : Set World₂} (h : (H₂ᶜ ∩ e).Nonempty) : bayesFactor ctx₂ e ≠ ⊤ :=
   bayesFactor_count_ne_top h
 
-/-- The second countermodel: under H, A is a fair coin and B certain; off the issue, A holds with
-probability 1/3 and B is a fair coin, independently. -/
 private theorem indepConfirmers₂ : IndepConfirmers ctx₂ A₂ B₂ := by
   obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, -⟩ := ncard₂
   have ta := ne_top₂ (e := A₂) ⟨.off 0 false, by simp [World₂.h, World₂.a]⟩
@@ -285,8 +280,6 @@ def EvenFelicitous (ctx : Context W) (a b : Set W) : Prop :=
   ctx.topic ≠ b ∧ posRelevant ctx a ∧
     Focus.Particles.evenPresup (fun e ↦ OrderDual.toDual (bayesFactor ctx e)) b {a}
 
-/-- Prediction 3: *\*Kim splurbs but Kim even glurbs*. With one issue per reading, *but* needs B
-to disconfirm it and *even* needs B to confirm it more than A does. -/
 theorem not_butFelicitous_and_evenFelicitous (ctx : Context W) (a b : Set W) :
     ¬ (ButFelicitous ctx a b ∧ EvenFelicitous ctx a b) := by
   rintro ⟨⟨-, hb, -⟩, -, ha, he⟩
@@ -461,7 +454,6 @@ theorem not_butFelicitous_defaultButCtx {E : Type*} (μ : Measure W) [IsProbabil
 def IsPresupposed (μ : Measure W) (a : Set W) : Prop :=
   μ[|a] = μ
 
-/-- A presupposition is a proposition of probability one. -/
 theorem isPresupposed_iff {μ : Measure W} [IsProbabilityMeasure μ] {a : Set W}
     (ha : MeasurableSet a) : IsPresupposed μ a ↔ μ a = 1 := by
   constructor
@@ -487,7 +479,6 @@ theorem IsPresupposed.bayesFactor_inter [IsProbabilityMeasure ctx.prior]
     measure_inter_conull (cond_absolutelyContinuous hc),
     measure_inter_conull (cond_absolutelyContinuous hc)]
 
-/-- A presupposed proposition is irrelevant to every live issue. -/
 theorem IsPresupposed.irrelevant [IsProbabilityMeasure ctx.prior] [ctx.Nondegenerate]
     (h : IsPresupposed ctx.prior a) (ha : MeasurableSet a) : irrelevant ctx a := by
   have hc := (prob_compl_eq_zero_iff ha).mpr ((isPresupposed_iff ha).mp h)
@@ -538,8 +529,6 @@ the issue. -/
 def ProperlyAccommodable (ctx : Context W) (φ : Set W) : Prop :=
   0 < ctx.prior φ ∧ ctx.prior φ < 1 ∧ irrelevant ctx φ
 
-/-- *Also* resists accommodation: its antecedent must have been relevant just before becoming
-presupposed, so it was not properly accommodable then. -/
 theorem TopicAnaphoricallySalient.not_properlyAccommodable {ctx₀ : Context W} {d e : Set W}
     (h : TopicAnaphoricallySalient ctx₀ ctx d e) : ¬ ProperlyAccommodable ctx₀ d :=
   fun hacc ↦ h.wasRelevant hacc.2.2
@@ -555,8 +544,6 @@ theorem IsPresupposed.not_primaFacieCause {μ : Measure W} (h : IsPresupposed μ
   rw [PrimaFacieCause, h]
   exact lt_irrefl _
 
-/-- Prediction 4: in *Kim fell and she also broke her arm*, *also* removes the causal
-implicature, since its antecedent is presupposed. -/
 theorem AlsoFelicitous.not_primaFacieCause {ctx₀ : Context W} {ba bb : Set W}
     (h : AlsoFelicitous ctx₀ ctx ba bb) : ¬ PrimaFacieCause ctx.prior ba bb :=
   h.1.presupposed.not_primaFacieCause bb

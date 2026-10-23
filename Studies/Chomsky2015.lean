@@ -63,7 +63,6 @@ def agreementOf : String → Option Agreement
   | "ital1282" => some .rich
   | _ => none
 
-/-- The paper's examples are English, where agreement is weak. -/
 theorem agreementOf_examples : ∀ r ∈ Examples.all, agreementOf r.language = some .weak := by
   decide
 
@@ -151,13 +150,10 @@ def n₁ := tok 101 .n (sel := [.N])
 def the₁ := tok 102 .D "the" (sel := [.n])
 def dogRoot := tok 103 .N "dog"
 
-/-- A categorizer labels its merge with a root, in either language. -/
 theorem categorizer_root_isLabeled (ag : Agreement) :
     IsLabeled ag (n₁ * dogRoot) (n₁ * dogRoot : LinearizedSyntacticObject) := by
   cases ag <;> decide +kernel
 
-/-- Other head–head merges are unlabeled, even in the sister of v*: a determiner does not
-categorize the root. -/
 theorem determiner_root_not_isLabeled (ag : Agreement) :
     ¬ IsLabeled ag (vStar * (the₁ * dogRoot)) (the₁ * dogRoot : LinearizedSyntacticObject) := by
   cases ag <;> decide +kernel
@@ -185,7 +181,6 @@ def alpha : LinearizedSyntacticObject := tom * (t * beta)
 /-- (2): *Tom read a book*, `[δ C [α Tom T [β t v* …]]]`. -/
 def clause : LinearizedSyntacticObject := c * alpha
 
-/-- T alone labels its merge with its complement only where agreement is rich. -/
 theorem tBeta_isLabeled_iff (ag : Agreement) : IsLabeled ag tBeta tBeta ↔ ag = .rich := by
   cases ag <;> decide +kernel
 
@@ -209,9 +204,6 @@ def tUnacc : LinearizedSyntacticObject := t * vUnacc
 /-- The internal argument raised over T. -/
 def unaccRaised : LinearizedSyntacticObject := aDog * (t * vUnacc)
 
-/-- Without an external argument, the crucial case of the EPP: T labels its merge with the verb
-phrase only where agreement is rich, and the internal argument raised over it agrees with it in
-either language. -/
 theorem unaccusative_epp (ag : Agreement) :
     (IsLabeled ag tUnacc tUnacc ↔ ag = .rich) ∧ IsLabeled ag unaccRaised unaccRaised := by
   cases ag <;> decide +kernel
@@ -230,9 +222,6 @@ def whoThinkDirect : LinearizedSyntacticObject := who * (think * (c * alphaWho))
 /-- (2′): *who do you think that read the book*, *who* moved on through the specifier of C. -/
 def whoThink : LinearizedSyntacticObject := who * (think * (who * (c * alphaWho)))
 
-/-- (2′): the complement of C is transferred, so *who* moves on through the specifier of C, and at
-the phase level leaves T alone in `α`, which labels it in Italian but not in English: the ECP, and
-its absence where agreement is rich. -/
 theorem ex2prime :
     ViolatesPic Invisible whoThinkDirect whoD ∧ ¬ ViolatesPic Invisible whoThink whoD ∧
       (∀ ag ∈ agreementOf Examples.ex2prime.language,
@@ -298,10 +287,6 @@ def alphaWhoObject : LinearizedSyntacticObject :=
 external argument *you* in the specifier of v*. -/
 def whoExpect : LinearizedSyntacticObject := who * (doT * (you * (vStar * alphaWhoObject)))
 
-/-- (3′): v*, invisible once the root raises to it, passes its phasehood to the root, whose
-complement alone is transferred, so *who* moves on from the specifier of *expect*, where a visible
-v* would seal it. `α`, labeled at the phase level by the φ-features the root and *who* agree in,
-stays labeled, though at the last stage the root is alone: the ECP holds in no language. -/
 theorem ex3prime : ¬ ViolatesPic Invisible whoExpect whoD ∧
     ViolatesPic (· = cNull) whoExpect whoD ∧ ¬ IsLabeled .weak whoExpect alphaWhoObject ∧
     ∀ ag ∈ agreementOf Examples.ex3prime.language,
@@ -331,8 +316,6 @@ def wonderInSitu : LinearizedSyntacticObject := wonder * alphaQ
 /-- (1): *which dog do you wonder John likes*, *which dog* raised out of its criterial position. -/
 def wonderRaised : LinearizedSyntacticObject := whichDog * (wonder * alphaQ)
 
-/-- In its criterial position, *which dog* and the interrogative C agree in the interrogative
-feature, which labels `α`, an indirect question; the embedded clause is labeled by φ-features. -/
 theorem alphaQ_isLabeledByFeature :
     wonderInSitu.IsLabeledByFeature (Agreed wonderInSitu) alphaQ .Q ∧
       IsLabeledAtPhase .weak wonderInSitu likes := by

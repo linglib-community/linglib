@@ -102,7 +102,6 @@ def check (p : Presup) : M CI Presup PUnit := monadLift (tell [p] : Writer (List
 @[simp] theorem presupLog_check (p : Presup) : presupLog (check p : M CI Presup PUnit) = [p] :=
   rfl
 
-/-- The side-issue log is only extended, so no item can revise an implicature already logged. -/
 theorem ciLog_prefix_bind (m : M CI Presup A) (f : A → M CI Presup B) :
     ciLog m <+: ciLog (m >>= f) :=
   ⟨ciLog (f (atIssue m)), rfl⟩

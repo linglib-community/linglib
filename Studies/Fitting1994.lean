@@ -108,7 +108,6 @@ end Formula
 
 /-! ### The guard connective (§5) -/
 
-/-- On `FOUR`, `P : Q` is `Q` when `P` is at least true and `⊥` otherwise. -/
 theorem guard_four :
     ∀ x y : FOUR, guard x y = if FOUR.T ≤ₖ x then y else FOUR.U := by decide
 
@@ -184,18 +183,14 @@ theorem kInf_guard_self : x ⊓ₖ guard y x = guard y x := by
 
 variable {x y z}
 
-/-- The guard is truth-monotone in its second input. -/
 theorem guard_le_guard_right (h : y ≤ z) : guard x y ≤ guard x z :=
   ⟨inf_le_inf_left _ h.1, inf_le_inf_left _ h.2⟩
 
-/-- In the "curious property" of the guard, `P₁ ≤ₜ P₂` gives `(P₁ : Q) ≤ₖ (P₂ : Q)`. -/
 theorem guard_kLE_guard_of_le (h : x ≤ y) : guard x z ≤ₖ guard y z :=
   ⟨inf_le_inf_right _ h.1, inf_le_inf_right _ h.1⟩
 
 end Guard
 
-/-- The guard is not truth-monotone in its first input, since `⊥ ≤ₜ true` in `FOUR` while
-`⊥ : false = ⊥` is not below `true : false = false`. -/
 theorem not_guard_le_guard_left :
     ¬ ∀ x y z : FOUR, x ≤ y → guard x z ≤ guard y z :=
   fun h ↦ absurd (h FOUR.U FOUR.T FOUR.F (by decide)) (by decide)
@@ -222,8 +217,6 @@ def lorW (x y : L ⊙ L) : L ⊙ L := lorL x y ⊓ₖ lorL y x
 
 variable (x y : L ⊙ L)
 
-/-- Strong Kleene conjunction is the gullible combination of the two Lisp evaluations,
-`P ∧ Q = (P ∧⃗ Q) ⊔ₖ (Q ∧⃗ P)`, in every product. -/
 theorem inf_eq_landL_kSup_landL : x ⊓ y = landL x y ⊔ₖ landL y x := by
   ext
   · simp only [landL, Product.guard, pro_kSup, pro_inf, pro_mk]
@@ -233,8 +226,6 @@ theorem inf_eq_landL_kSup_landL : x ⊓ y = landL x y ⊔ₖ landL y x := by
       (sup_le (sup_le le_sup_left (inf_le_right.trans le_sup_right))
         (sup_le le_sup_right (inf_le_right.trans le_sup_left)))
 
-/-- Strong Kleene disjunction is the gullible combination of the two Lisp evaluations,
-`P ∨ Q = (P ∨⃗ Q) ⊔ₖ (Q ∨⃗ P)`. -/
 theorem sup_eq_lorL_kSup_lorL : x ⊔ y = lorL x y ⊔ₖ lorL y x := by
   ext
   · simp only [lorL, Product.guard, pro_kSup, pro_sup, pro_mk, pro_compl]
@@ -246,29 +237,23 @@ theorem sup_eq_lorL_kSup_lorL : x ⊔ y = lorL x y ⊔ₖ lorL y x := by
 
 end Lisp
 
-/-- On Kleene's values Lisp conjunction is the middle Kleene conjunction of [peters-1979]. -/
 theorem landL_toFour : ∀ a b : SignType, landL (toFour a) (toFour b) =
     toFour (SignType.meetMiddle a b) := by decide
 
-/-- On Kleene's values Lisp disjunction is middle Kleene disjunction. -/
 theorem lorL_toFour : ∀ a b : SignType, lorL (toFour a) (toFour b) =
     toFour (SignType.joinMiddle a b) := by decide
 
-/-- On Kleene's values `∧ʷ` is weak Kleene conjunction. -/
 theorem landW_toFour : ∀ a b : SignType, landW (toFour a) (toFour b) =
     toFour (SignType.meetWeak a b) := by decide
 
-/-- On Kleene's values `∨ʷ` is weak Kleene disjunction. -/
 theorem lorW_toFour : ∀ a b : SignType, lorW (toFour a) (toFour b) =
     toFour (SignType.joinWeak a b) := by decide
 
-/-- Lisp conjunction distributes over Lisp disjunction on three values. -/
 theorem meetMiddle_joinMiddle_distrib : ∀ a b c : SignType,
     SignType.meetMiddle a (SignType.joinMiddle b c) =
       SignType.joinMiddle (SignType.meetMiddle a b) (SignType.meetMiddle a c) := by
   decide
 
-/-- The distributivity law fails on four values, `P = R = ⊤` and `Q = ⊥` falsifying it. -/
 theorem not_landL_lorL_distrib :
     ¬ ∀ x y z : FOUR, landL x (lorL y z) = lorL (landL x y) (landL x z) :=
   fun h ↦ absurd (h FOUR.I FOUR.U FOUR.I) (by decide)
@@ -490,7 +475,6 @@ variable [BoundedOrder L]
 /-- The embedding of `FOUR` into `L ⊙ L` sends the Boolean coordinates to the bounds. -/
 def ofFour (z : FOUR) : L ⊙ L := mk (if z.pro then ⊤ else ⊥) (if z.con then ⊤ else ⊥)
 
-/-- `θ_⊤` reads `ofFour` back. -/
 theorem theta_top_ofFour [Nontrivial L] (z : FOUR) : theta (⊤ : L) (ofFour z) = z := by
   ext
   · show decide ((⊤ : L) ≤ if z.pro then ⊤ else ⊥) = z.pro

@@ -208,7 +208,6 @@ def devojče : Noun :=
   { decl := .I, concord := ⟨.singular, .neuter⟩, index := ⟨.third, .singular, .neuter⟩,
     sex := .female, count := some .one }
 
-/-- The regular nouns satisfy the whole chain. -/
 theorem regular_lexicon :
     Regular knjiga ∧ Regular rad ∧ Regular žena ∧ Regular muž ∧ Regular sudijaFemale ∧
       Regular mušterijaUnsexed := by
@@ -246,8 +245,6 @@ instance : DecidablePred IsInitialSegment := λ _ => inferInstanceAs (Decidable 
 /-- Seven patterns a priori (n. 3). -/
 theorem seven_patterns : bipartitions.card = 7 := by decide
 
-/-- The predicted patterns are the three single breaks, and they are attested by *Steva*,
-*deca* and *makaze*. -/
 theorem predicted_patterns :
     bipartitions.filter IsInitialSegment = Finset.univ.image cell ∧
       (Finset.univ.image cell).card = 3 ∧
@@ -320,8 +317,6 @@ theorem deca_mixed_agreement :
 anything. -/
 theorem kojih_agrees : ConcordAgrees kojih deca .gen := by decide
 
-/-- On a noun whose concord and index match, number agreement with the index is number
-agreement with the concord: the single-bundle illusion of regular nouns. -/
 theorem compat_number_indexTarget_iff (n : Noun) (hn : ConInd n) (t : Bundle) :
     Compat (t .number) (n.indexTarget .number) ↔
       Compat (t .number) (n.concordAt .nom .number) := by
@@ -342,9 +337,6 @@ def readsIndex (predicate : Bool) : Position → Prop
 instance (p : Bool) : DecidablePred (readsIndex p) := λ t => by
   cases t <;> simp only [readsIndex] <;> infer_instance
 
-/-- The index readers form a lower set of the hierarchy, whichever way the predicate position
-resolves: semantic agreement, which only the index connects to, surfaces on a more syntactic
-target only if it surfaces on the more semantic ones. -/
 theorem indexReaders_lowerSet (p : Bool) : IsLowerSet {t | readsIndex p t} := by
   intro t u hle hmem
   revert t u

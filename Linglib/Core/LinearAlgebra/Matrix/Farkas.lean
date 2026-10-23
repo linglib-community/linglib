@@ -70,7 +70,6 @@ private lemma fmMatrix_mulVec_inr (A : Matrix ι (Fin (n + 1)) K) (v : ι → K)
   simp only [mulVec, dotProduct, fmMatrix, of_apply]
   split_ifs with h <;> simp [add_mul, sum_add_distrib]
 
-/-- The last column of `fmMatrix A * A` vanishes. -/
 private lemma fmMatrix_mul_last (A : Matrix ι (Fin (n + 1)) K) (r : ι ⊕ ι × ι) :
     (fmMatrix A * A) r (Fin.last n) = 0 := by
   have h : (fmMatrix A * A) r (Fin.last n) = (fmMatrix A *ᵥ fun k ↦ A k (Fin.last n)) r := rfl
@@ -87,8 +86,6 @@ private lemma fmLhs_mulVec (A : Matrix ι (Fin (n + 1)) K) (x : Fin n → K) :
     fmLhs A *ᵥ x = fmMatrix A *ᵥ (A.submatrix id Fin.castSucc *ᵥ x) := by
   rw [mulVec_mulVec]; rfl
 
-/-- Two families of bounds, each lower bound below each upper bound, admit a value between
-them. -/
 private lemma exists_between_finset {α : Type*} {s t : Finset α} (f g : α → K)
     (h : ∀ a ∈ s, ∀ b ∈ t, f a ≤ g b) : ∃ x, (∀ a ∈ s, f a ≤ x) ∧ ∀ b ∈ t, x ≤ g b := by
   by_cases hs : s.Nonempty
@@ -110,7 +107,6 @@ private lemma fmMatrix_nonneg (A : Matrix ι (Fin (n + 1)) K) (r : ι ⊕ ι × 
     exact add_nonneg (by split_ifs <;> linarith [h.2]) (by split_ifs <;> linarith [h.1])
   · simp [h]
 
-/-- A solution of the eliminated system extends to the original system. -/
 private lemma exists_mulVec_le_of_fmLhs {A : Matrix ι (Fin (n + 1)) K} {b : ι → K}
     {x : Fin n → K} (hx : fmLhs A *ᵥ x ≤ fmMatrix A *ᵥ b) : ∃ x, A *ᵥ x ≤ b := by
   set r : ι → K := A.submatrix id Fin.castSucc *ᵥ x with hr
@@ -141,7 +137,6 @@ private lemma exists_mulVec_le_of_fmLhs {A : Matrix ι (Fin (n + 1)) K} {b : ι 
     rw [le_div_iff₀ hi] at this
     linarith
 
-/-- A certificate for the eliminated system lifts to the original system. -/
 private lemma exists_cert_of_fmLhs {A : Matrix ι (Fin (n + 1)) K} {b : ι → K}
     {y : ι ⊕ ι × ι → K} (hy : 0 ≤ y) (hyA : y ᵥ* fmLhs A = 0)
     (hyb : y ⬝ᵥ (fmMatrix A *ᵥ b) < 0) :
@@ -154,7 +149,6 @@ private lemma exists_cert_of_fmLhs {A : Matrix ι (Fin (n + 1)) K} {b : ι → K
   · simp [vecMul, dotProduct, fmMatrix_mul_last]
   · exact congrFun hyA j
 
-/-- Farkas' lemma for `Fin n` variables, by Fourier–Motzkin elimination. -/
 private theorem farkas_fin : ∀ {n : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : Matrix ι (Fin n) K) (b : ι → K),
     (∃ x, A *ᵥ x ≤ b) ∨ ∃ y, 0 ≤ y ∧ y ᵥ* A = 0 ∧ y ⬝ᵥ b < 0

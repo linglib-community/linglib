@@ -132,20 +132,15 @@ variable {G N s bel p} {q : Set W}
 theorem Want.mono (hpq : p ⊆ q) (h : Want G s bel p) : Want G s bel q :=
   fun w hw ↦ (h w hw).trans hpq
 
-/-- A best live answer exists whenever some answer is live. -/
 theorem exists_best [Finite W] (h : ∃ w, Live s bel w) :
     ∃ w, MaximalFor (Live s bel) (entailed G s) w :=
   Set.Finite.exists_maximalFor _ {w | Live s bel w} (Set.toFinite _) h
 
-/-- Without a `p`-answer the ascription is false as soon as some answer is live, which the
-diversity constraint against vacuous falsity rules out. -/
 theorem not_want_of_not_exists [Finite W] (hlive : ∃ w, Live s bel w)
     (hp : ¬ ∃ w, s.cell w ⊆ p) : ¬ Want G s bel p := fun hw ↦
   let ⟨w, hb⟩ := exists_best (G := G) hlive
   hp ⟨w, hw w hb⟩
 
-/-- With the question deciding `p` and no `¬p`-answer the ascription is true, which the diversity
-constraint against vacuous truth rules out. -/
 theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell w ⊆ pᶜ) :
     Want G s bel p := fun w _ ↦
   (Setoid.decides_iff_forall_cell.1 hc w).resolve_right fun h ↦ hnp ⟨w, h⟩
@@ -307,10 +302,6 @@ theorem deckstacked_excluded :
       ∀ q : Finset LuWorld, (∃ w, qFair.cell w ⊆ ↑q) → qFair.Decides ↑q := by
   decide +kernel
 
-/-- Read with `q` ranging over all propositions, the Anti-deckstacking Constraint admits only
-the finest partition. Two worlds in one cell, with a second cell available, are equal, since
-the union of the second cell with the first minus one of the worlds is entailed by an answer
-and decided by none. -/
 theorem antiDeckstacking_univ_singleton {W : Type*} {s : Setoid W}
     (h : ∀ q : Set W, (∃ w, s.cell w ⊆ q) → s.Decides q) {w₁ w₂ w₃ : W} (h₁₂ : s w₁ w₂)
     (h₁₃ : ¬ s w₁ w₃) : w₁ = w₂ := by

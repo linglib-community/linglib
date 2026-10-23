@@ -86,8 +86,6 @@ theorem card_range_le_prod [Finite N] [Fintype T] (agr : N → T → F) :
   exact Nat.card_le_card_of_injective (fun f t ↦ ⟨f.1 t, f.2.imp fun n hn ↦ congrFun hn t⟩)
     fun f g h ↦ Subtype.ext (funext fun t ↦ congrArg Subtype.val (congrFun h t))
 
-/-- When noun-level agreement is the per-gender behaviour of a faithful carrier, the
-agreement classes are the fibres of the assignment, so the genders are the agreement classes. -/
 theorem agreementClasses_eq_ker_of_faithful {G : Type*} {assign : N → G}
     {nounAgr : N → T → F} {agr : G → T → F} (med : nounAgr = agr ∘ assign)
     (faith : Faithful agr) : agreementClasses nounAgr = Setoid.ker assign :=
@@ -158,15 +156,12 @@ instance [Fintype G] [Fintype T] [DecidableEq G] [DecidableEq T] [DecidableEq F]
     Decidable (Polar f) := by
   unfold Polar; infer_instance
 
-/-- Polarity is symmetric in the two features. -/
 theorem Polar.flip (h : Polar f) : Polar (flip f) :=
   fun t t' g g' ↦ (h g g' t t').trans Iff.comm
 
-/-- Within one value of the other feature, a polar exponent keeps every distinction. -/
 theorem Polar.injective (h : Polar f) (t : T) : Function.Injective (f · t) :=
   fun _ _ e ↦ ((h _ _ t t).mp e).mpr rfl
 
-/-- A polar exponent is faithful to its first feature. -/
 theorem Polar.faithful [Nonempty T] (h : Polar f) : Faithful f :=
   fun _ _ e ↦ h.injective (Classical.arbitrary T) (congrFun e _)
 
@@ -181,11 +176,9 @@ theorem Polar.card_le_two [Fintype G] [Nontrivial T] (h : Polar f) :
   have e₃ : f g₃ t = f g₂ t' := (h g₃ g₂ t t').mpr (iff_of_false h₂₃.symm ht)
   exact h₁₃ (h.injective t (e₁.trans e₃.symm))
 
-/-- The other feature likewise. -/
 theorem Polar.card_le_two' [Fintype T] [Nontrivial G] (h : Polar f) : Fintype.card T ≤ 2 :=
   h.flip.card_le_two
 
-/-- Polar features are two-valued. -/
 theorem Polar.card_eq_two [Fintype G] [Nontrivial G] [Nontrivial T] (h : Polar f) :
     Fintype.card G = 2 :=
   le_antisymm h.card_le_two Fintype.one_lt_card

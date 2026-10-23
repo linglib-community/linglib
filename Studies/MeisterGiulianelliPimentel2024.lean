@@ -52,13 +52,9 @@ alternatives to the target. -/
 noncomputable def simAdjSurprisal (L : Kernel C A) (z : A → W → C → ℝ) (c : C) (w : W) : ℝ :=
   -log (∫ a, z a w c ∂(L c))
 
-/-- Similarity-adjusted surprisal is the generalized surprisal model with the negative logarithm
-and the similarity as the score. -/
 theorem simAdjSurprisal_eq_genSurprisal (L : Kernel C A) (z : A → W → C → ℝ) (c : C) (w : W) :
     simAdjSurprisal L z c w = genSurprisal L (fun x ↦ -log x) z c w := rfl
 
-/-- With the identity similarity, which regards different words as completely distinct,
-similarity-adjusted surprisal is surprisal. -/
 theorem simAdjSurprisal_indicatorScore [MeasurableSpace W] [MeasurableSingletonClass W]
     (L : Kernel C W) (c : C) (w : W) :
     simAdjSurprisal L indicatorScore c w = surprisal (L c) w :=
@@ -66,16 +62,11 @@ theorem simAdjSurprisal_indicatorScore [MeasurableSpace W] [MeasurableSingletonC
 
 variable (L : Kernel C A) [IsMarkovKernel L] (d : A → W → C → ℝ)
 
-/-- Under the similarity one minus a distance, similarity-adjusted surprisal is the negative
-logarithm of one minus the information value. -/
 theorem simAdjSurprisal_one_sub {c : C} {w : W} (hd : Integrable (fun a ↦ d a w c) (L c)) :
     simAdjSurprisal L (fun a w c ↦ 1 - d a w c) c w = -log (1 - informationValue L d c w) := by
   simp only [simAdjSurprisal, informationValue, integral_sub (integrable_const 1) hd,
     integral_const, probReal_univ, one_smul]
 
-/-- Under the similarity one minus a distance, similarity-adjusted surprisal and information value
-order any two target–context pairs alike: the two measures are in a strictly increasing
-relationship. -/
 theorem simAdjSurprisal_lt_simAdjSurprisal_iff {c c' : C} {w w' : W}
     (hd : Integrable (fun a ↦ d a w c) (L c)) (hd' : Integrable (fun a ↦ d a w' c') (L c'))
     (h : informationValue L d c w < 1) (h' : informationValue L d c' w' < 1) :

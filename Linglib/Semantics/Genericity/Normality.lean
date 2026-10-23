@@ -85,12 +85,9 @@ def gen (R S : Set X) : Set I := ofDomain N.normal R S
 @[simp]
 theorem mem_gen : i ∈ N.gen R S ↔ N.normal i R ⊆ S := Iff.rfl
 
-/-- A universal generalization is a generic one. -/
 theorem gen_eq_univ_of_subset (h : R ⊆ S) : N.gen R S = univ :=
   ofDomain_eq_univ fun i ↦ (N.normal_subset i R).trans h
 
-/-- Two generics with disjoint matrices select disjoint normal cases of their restrictors: if
-birds fly and penguins don't, no bird is both a normal bird and a normal penguin. -/
 theorem disjoint_normal_of_disjoint {R' : Set X} (hS : i ∈ N.gen R S) (hS' : i ∈ N.gen R' S')
     (h : Disjoint S S') : Disjoint (N.normal i R) (N.normal i R') :=
   h.mono hS hS'
@@ -110,7 +107,6 @@ theorem mem_gen_of_disjoint (hS : i ∈ N.gen R S) (hS' : i ∈ N.gen R S') (h :
 /-- The normality on which every case of a restrictor is normal. -/
 instance : Top (Normality I X) := ⟨⟨fun _ R ↦ R, fun _ _ ↦ subset_rfl⟩⟩
 
-/-- When every case is normal GEN is the universal. -/
 @[simp]
 theorem mem_gen_top : i ∈ (⊤ : Normality I X).gen R S ↔ R ⊆ S := Iff.rfl
 
@@ -119,7 +115,6 @@ are its cases in a fixed set. -/
 def ofAccess (B : I → Set X) : Normality I X :=
   ⟨fun i R ↦ B i ∩ R, fun _ _ ↦ inter_subset_right⟩
 
-/-- Under a fixed set of normal cases GEN is the strict conditional. -/
 theorem gen_ofAccess (B : I → Set X) : (ofAccess B).gen = strictImp B := rfl
 
 /-- (79): restricted to the cases of its own matrix, every generic is true, so relevant
@@ -140,7 +135,6 @@ def ofOrdering (access : I → Set X) (ord : I → Preorder X) : Normality I X :
   ⟨fun i R ↦ (ord i).minimals (access i ∩ R),
     fun i _ ↦ ((ord i).minimals_subset _).trans inter_subset_right⟩
 
-/-- Under a preorder GEN is the conditional of the best accessible cases. -/
 theorem gen_ofOrdering (access : I → Set X) (ord : I → Preorder X) :
     (ofOrdering access ord).gen = orderingImp access ord := rfl
 

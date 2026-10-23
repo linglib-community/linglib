@@ -110,20 +110,17 @@ clause, the bare definite does not. -/
 def Supports (c : ReferentialContext) (d : Disambiguation) : Prop :=
   (iota (c.restrictor d)).isSome ∧ (d.IsRelative → iota c.Woman = none)
 
-/-- *The woman* refers exactly when the context has one woman. -/
 theorem iota_woman_isSome_iff (c : ReferentialContext) :
     (iota c.Woman).isSome ↔ c = .uniqueReferent := by
   rw [iota_isSome_iff]
   cases c <;> simp [Woman, ExistsUnique]
   decide
 
-/-- *The woman* fails to refer exactly when the context has two women. -/
 theorem iota_woman_eq_none_iff (c : ReferentialContext) :
     iota c.Woman = none ↔ c = .nonUniqueReferents := by
   rw [← Option.not_isSome_iff_eq_none, iota_woman_isSome_iff]
   cases c <;> simp
 
-/-- *The woman that he'd risked his life for* refers in either context. -/
 theorem iota_restrictor_isSome (c : ReferentialContext) {d : Disambiguation}
     (hd : d.IsRelative) : (iota (c.restrictor d)).isSome := by
   have hw : c.Woman .rescued := by cases c <;> simp [Woman]
@@ -347,14 +344,12 @@ theorem integral_disambiguating_tree : ∫ o, k.disambiguating o ∂tree p =
     Costs.disambiguating, smul_eq_mul]
   ring
 
-/-- The mean cost at the spillover region is the covert reanalysis cost on postponed trials. -/
 theorem integral_spillover_tree : ∫ o, k.spillover o ∂tree p =
     p.attentive * p.gardenPath * (1 - p.triage) * p.covert * p.postpone * k.covert := by
   simp only [tree, integral_node, integral_bernoulliMeasure, integral_dirac, Costs.spillover,
     smul_eq_mul]
   ring
 
-/-- A lower garden-path probability never raises the mean cost at the disambiguating region. -/
 theorem monotone_integral_gardenPath :
     Monotone fun g ↦ ∫ o, k.disambiguating o ∂tree {p with gardenPath := g} := by
   intro g g' h
@@ -366,7 +361,6 @@ theorem monotone_integral_gardenPath :
   gcongr
   unit_interval
 
-/-- A lower covert reanalysis cost never raises the mean cost at the disambiguating region. -/
 theorem monotone_integral_covert :
     Monotone fun c ↦ ∫ o, Costs.disambiguating {k with covert := c} o ∂tree p := by
   refine fun c c' h ↦ integral_mono .of_finite .of_finite fun o ↦ ?_

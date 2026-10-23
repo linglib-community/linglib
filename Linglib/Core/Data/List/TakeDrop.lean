@@ -26,56 +26,43 @@ namespace List
 
 variable {α : Type*} {l l₁ l₂ : List α} {a : α} {n : ℕ}
 
-/-- An element of `l.take n` is an entry of `l` at an index below `n`. -/
 theorem mem_take_iff_getElem? : a ∈ l.take n ↔ ∃ i < n, l[i]? = some a := by
   simp [mem_iff_getElem?, getElem?_take]
 
-/-- An element of `l.drop n` is an entry of `l` at an index at least `n`. Unlike
-`List.mem_drop_iff_getElem`, the index is into `l`, not into the suffix. -/
 theorem mem_drop_iff_getElem? : a ∈ l.drop n ↔ ∃ i ≥ n, l[i]? = some a := by
   simp only [mem_iff_getElem?, getElem?_drop]
   exact ⟨fun ⟨i, h⟩ ↦ ⟨n + i, Nat.le_add_right n i, h⟩,
     fun ⟨i, hn, h⟩ ↦ ⟨i - n, by rwa [Nat.add_sub_cancel' hn]⟩⟩
 
-/-- Lists agreeing at every index below `n` have the same prefix of length `n`. -/
 theorem ext_take_getElem? (h : ∀ k < n, l₁[k]? = l₂[k]?) : l₁.take n = l₂.take n :=
   ext_getElem? fun k ↦ by
     rcases Nat.lt_or_ge k n with hk | hk
     · simpa only [getElem?_take_of_lt hk] using h k hk
     · simp [getElem?_take_eq_none hk]
 
-/-- Lists agreeing at every index from `n` on have the same suffix from `n`. -/
 theorem ext_drop_getElem? (h : ∀ k, n ≤ k → l₁[k]? = l₂[k]?) : l₁.drop n = l₂.drop n :=
   ext_getElem? fun k ↦ by simpa only [getElem?_drop] using h (n + k) (Nat.le_add_right n k)
 
-/-- Two lists have the same prefix of length `n` exactly when they agree at every index below
-`n`. -/
 theorem take_eq_take_iff_getElem? : l₁.take n = l₂.take n ↔ ∀ k < n, l₁[k]? = l₂[k]? :=
   ⟨fun h k hk ↦ by rw [← getElem?_take_of_lt hk, h, getElem?_take_of_lt hk], ext_take_getElem?⟩
 
-/-- Two lists have the same suffix from `n` exactly when they agree at every index from `n` on. -/
 theorem drop_eq_drop_iff_getElem? : l₁.drop n = l₂.drop n ↔ ∀ k, n ≤ k → l₁[k]? = l₂[k]? := by
   refine ⟨fun h k hk ↦ ?_, ext_drop_getElem?⟩
   obtain ⟨j, rfl⟩ := Nat.exists_eq_add_of_le hk
   rw [← getElem?_drop, h, getElem?_drop]
 
-/-- Lists with the same prefix of length `m` have the same shorter prefixes. -/
 theorem take_eq_take_of_le {m : ℕ} (h : l₁.take m = l₂.take m) (hnm : n ≤ m) :
     l₁.take n = l₂.take n := by
   rw [← Nat.min_eq_left hnm, ← take_take, h, take_take]
 
-/-- Lists with the same suffix from `m` have the same suffixes from every later index. -/
 theorem drop_eq_drop_of_le {m : ℕ} (h : l₁.drop m = l₂.drop m) (hmn : m ≤ n) :
     l₁.drop n = l₂.drop n := by
   rw [← Nat.add_sub_cancel' hmn, ← drop_drop, h, drop_drop]
 
-/-- Truncating the right operand to length `n` before taking the length-`n` prefix of an append
-is a no-op. -/
 theorem take_append_take (n : ℕ) (l₁ l₂ : List α) :
     (l₁ ++ l₂.take n).take n = (l₁ ++ l₂).take n := by
   simp [take_append, take_take]
 
-/-- A nonempty suffix starts inside the list. -/
 theorem lt_length_of_mem_drop (h : a ∈ l.drop n) : n < l.length :=
   Nat.not_le.mp (drop_eq_nil_iff.not.mp (ne_nil_of_mem h))
 

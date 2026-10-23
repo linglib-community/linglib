@@ -126,9 +126,6 @@ example : tenseForms.Perm
       .pastPerfect, Tense.Form.presentProgressive.perfect, Tense.Form.pastProgressive.perfect] := by
   decide
 
-/-- The chains English builds over a lexical verb are the empty one, the perfect, the
-progressive, and the perfect of the progressive, and each leaves the lexical verb, *have*, *be*
-and *have* to be inflected. -/
 theorem chain_eq_some {c : Cell} {v : Verbs.Verb} :
     ∀ {ns : List Tense.Form.Nonfinite} {ws : List String} {u : TenseVerb},
       (periphrasis c).chain (.lexical v) ns = some (ws, u) →

@@ -78,14 +78,11 @@ noncomputable def measure : Condition G → O → ℝ
 theorem measure_explicit (g : G) (o : O) :
     measure N γ (.explicit g) o = γ * N.cat o + (1 - γ) * N.feature g o := rfl
 
-/-- The plausibility-weighted feature lies on the unit interval. -/
 theorem mix_mem_Icc (o : O) : ∑ g, N.plausibility g * N.feature g o ∈ Set.Icc 0 1 :=
   ⟨Finset.sum_nonneg fun g _ ↦ mul_nonneg (N.plausibility_nonneg g) (N.feature_mem g o).1,
     (Finset.sum_le_sum fun g _ ↦ mul_le_of_le_one_right (N.plausibility_nonneg g)
       (N.feature_mem g o).2).trans_eq N.plausibility_sum⟩
 
-/-- For `γ` on the unit interval the measure lies on the unit interval, as the threshold reads
-it. -/
 theorem measure_mem_Icc (hγ0 : 0 ≤ γ) (hγ1 : γ ≤ 1) (c : Condition G) (o : O) :
     measure N γ c o ∈ Set.Icc 0 1 := by
   have hc := N.cat_mem o
@@ -121,7 +118,6 @@ theorem prohibitionPosterior_eq {m : ℝ} (hm1 : m ≤ 1) :
   rw [prohibitionPosterior, ← mul_add, add_tsub_cancel_of_le h1, mul_one, meetsProb_eq,
     ENNReal.mul_div_right_comm, ENNReal.div_self (by norm_num) (by norm_num), one_mul]
 
-/-- Every prediction is a comparison of measures. -/
 theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hm1' : m' ≤ 1) :
     prohibitionPosterior m < prohibitionPosterior m' ↔ m < m' := by
   rw [prohibitionPosterior_eq hm1, prohibitionPosterior_eq hm1',
@@ -129,20 +125,15 @@ theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1)
 
 /-! ### Goal sensitivity (§4.3) -/
 
-/-- Under the Goal Insensitive hypothesis, `γ = 1`, no condition moves any object. -/
 theorem measure_one (c c' : Condition G) (o : O) : measure N 1 c o = measure N 1 c' o := by
   rcases c with _ | g <;> rcases c' with _ | g' <;> simp [measure]
 
-/-- Under Goal Sensitivity, an object's measure across explicit goals orders by its
-goal-relevant features. -/
 theorem measure_explicit_lt (hγ : γ < 1) {g g' : G} {o : O}
     (h : N.feature g o < N.feature g' o) :
     measure N γ (.explicit g) o < measure N γ (.explicit g') o := by
   rw [measure_explicit, measure_explicit]
   nlinarith
 
-/-- An explicit goal moves an object away from the neutral baseline by the goal weight times
-the excess of the goal's feature over the plausibility-weighted mix. -/
 theorem measure_explicit_sub_neutral (g : G) (o : O) :
     measure N γ (.explicit g) o - measure N γ .neutral o =
       (1 - γ) * (N.feature g o - ∑ g', N.plausibility g' * N.feature g' o) := by
@@ -150,9 +141,6 @@ theorem measure_explicit_sub_neutral (g : G) (o : O) :
   simp only [measure]
   ring
 
-/-- Under Goal Sensitivity one goal raises an object whose feature exceeds
-the mix and lowers one whose feature falls short of it, the flashlight and the boombox under
-the goal of limiting light. -/
 theorem measure_bidirectional (hγ : γ < 1) {g : G} {o o' : O}
     (ho : ∑ g', N.plausibility g' * N.feature g' o < N.feature g o)
     (ho' : N.feature g o' < ∑ g', N.plausibility g' * N.feature g' o') :

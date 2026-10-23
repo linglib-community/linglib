@@ -57,7 +57,6 @@ def FactorEquative {Entity D : Type*} [Mul D]
     (μ : Entity → D) (a b : Entity) (factor : D) : Prop :=
   μ a = factor * μ b
 
-/-- A positive differential entails the bare comparative. -/
 theorem differentialComparative_lt_of_pos {Entity D : Type*}
     [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D]
     (μ : Entity → D) (a b : Entity) {diff : D} (hdiff : 0 < diff)
@@ -70,8 +69,6 @@ section Differential
 
 variable {E D : Type*}
 
-/-- A differential survives any injective change of scale that commutes with adding its
-amount. -/
 theorem differentialComparative_comp_of_commute [AddGroup D] {g : D → D} (hg : Injective g)
     {d : D} (hc : Function.Commute g (d + ·)) (μ : E → D) (a b : E) :
     DifferentialComparative (g ∘ μ) a b d ↔ DifferentialComparative μ a b d := by
@@ -79,7 +76,6 @@ theorem differentialComparative_comp_of_commute [AddGroup D] {g : D → D} (hg :
   rw [DifferentialComparative, DifferentialComparative, comp_apply, comp_apply,
     sub_eq_iff_eq_add, sub_eq_iff_eq_add, ← h, hg.eq_iff]
 
-/-- A differential survives translating the scale. -/
 theorem differentialComparative_add_const [AddGroup D] (μ : E → D) (c : D) (a b : E) (d : D) :
     DifferentialComparative (fun x ↦ μ x + c) a b d ↔ DifferentialComparative μ a b d :=
   differentialComparative_comp_of_commute (g := (· + c)) (add_left_injective c)
@@ -115,15 +111,12 @@ section Factor
 
 variable {E D : Type*}
 
-/-- A factor phrase survives any injective change of scale that commutes with multiplying by its
-factor. -/
 theorem factorEquative_comp_of_commute [Mul D] {g : D → D} (hg : Injective g) {n : D}
     (hc : Function.Commute g (n * ·)) (μ : E → D) (a b : E) :
     FactorEquative (g ∘ μ) a b n ↔ FactorEquative μ a b n := by
   have h : g (n * μ b) = n * g (μ b) := hc (μ b)
   simp only [FactorEquative, comp_apply, ← h, hg.eq_iff]
 
-/-- A factor phrase survives scaling the measure. -/
 theorem factorEquative_const_mul [CommMonoidWithZero D] [IsCancelMulZero D] (μ : E → D) {c : D}
     (hc : c ≠ 0) (a b : E) (n : D) :
     FactorEquative (fun x ↦ c * μ x) a b n ↔ FactorEquative μ a b n :=

@@ -48,14 +48,10 @@ now. -/
     (embeddedR embeddedE : T) : ReichenbachFrame T :=
   ⟨matrixFrame.speechTime, matrixFrame.eventTime, embeddedR, embeddedE⟩
 
-/-- The simultaneous reading is the zero-tense reading, since a zero tense bound by the attitude
-denotes its now. -/
 theorem zeroTense_simultaneous {W T : Type*} [LT T] (g : Assignment T) (n : ℕ) (now : T)
     (w : W) : (pronoun ⊤ n 0).selector (Function.update g n now) w = some now := by
   simp
 
-/-- The shifted reading is the genuine-past reading, since a pronominal past whose presupposition
-holds precedes its evaluation time. -/
 theorem genuinePast_shifted {W T : Type*} [LinearOrder T] {k j : ℕ} {g : Assignment T} {w : W}
     (h : (pronoun ⟦past⟧ k j).presup g w) : compare (g k) (g j) = .lt := by
   simpa [compare_lt_iff_lt] using h
@@ -73,22 +69,16 @@ def embeddedByookiDatta : ReichenbachFrame ℤ := embeddedFrame matrixItta (-5) 
 yesterday*, is past relative to the embedded perspective, and perfect. -/
 def pluperfectShifted : ReichenbachFrame ℤ := embeddedFrame matrixItta (-4) (-5)
 
-/-- The embedded Japanese past is evaluated from the matrix event, not the speech time. -/
 theorem japanese_relative_perspective :
     embeddedByookiDatta.perspectiveTime = matrixItta.eventTime := rfl
 
-/-- The embedded Japanese past has only the shifted reading. -/
 theorem byookiDatta_shifted : embeddedByookiDatta.referencePosition = .lt := by decide
 
-/-- The Japanese past under a past takes a position open to a language without the Sequence of
-Tense rule. -/
 theorem byookiDatta_mem : embeddedByookiDatta.referencePosition ∈ pastUnderPast False := by
   decide
 
-/-- The past perfect is perfect, its event preceding its reference time. -/
 theorem pluperfect_is_perfect : pluperfectShifted.eventPosition = .lt := by decide
 
-/-- The past perfect is past relative to the embedded perspective. -/
 theorem pluperfect_is_past : pluperfectShifted.referencePosition = .lt := by decide
 
 end Ogihara1996

@@ -245,7 +245,6 @@ instance (c : AlternationContrast) : Decidable (MapHolds c) := by
 of its direct counterpart or, as in (75), the same role. -/
 theorem MAP_holds_all_alternations : ∀ c ∈ allContrasts, MapHolds c := by decide
 
-/-- Under the MAP the direct degree dominates the oblique one. -/
 theorem MapHolds.oblique_le {c : AlternationContrast} (h : MapHolds c) :
     c.obliqueDegree ≤ c.directDegree :=
   MAP.oblique_le h
@@ -333,8 +332,6 @@ theorem conative_data_attested :
     Levin1993.Examples.con_cut.judgment = .acceptable ∧
     Levin1993.Examples.con_hit.judgment = .acceptable := ⟨rfl, rfl⟩
 
-/-- *Break* does not take the conative, since its object's quantized change is inherent to the
-verb's meaning and the weakening is blocked. -/
 theorem break_no_conative :
     Levin1993.Examples.con_break.judgment = .ungrammatical := rfl
 

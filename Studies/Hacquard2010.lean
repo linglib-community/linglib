@@ -150,8 +150,6 @@ def flavor : CinqueHead → Option ModalFlavor
   | .modRoot => some .circumstantial
   | _ => none
 
-/-- In the hierarchy the correlation of height and flavor is built in, since the high modal head
-is the epistemic one and the root head is below aspect. -/
 theorem isHigh_iff (h : CinqueHead) : h.IsHigh ↔ h.flavor = some .epistemic := by
   cases h <;> decide
 

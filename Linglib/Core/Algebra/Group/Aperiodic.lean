@@ -52,12 +52,10 @@ def IsAperiodic : Prop := ∃ n : ℕ, ∀ x : M, x ^ (n + 1) = x ^ n
 
 variable {M}
 
-/-- A subsingleton monoid is aperiodic (take `n = 0`). -/
 @[to_additive]
 theorem IsAperiodic.of_subsingleton [Subsingleton M] : IsAperiodic M :=
   ⟨0, fun _ ↦ Subsingleton.elim _ _⟩
 
-/-- If `x ^ (n + 1) = x ^ n` then the power stabilizes at every `m ≥ n`. -/
 @[to_additive]
 theorem pow_succ_stabilizes {x : M} {n : ℕ} (h : x ^ (n + 1) = x ^ n) :
     ∀ m, n ≤ m → x ^ (m + 1) = x ^ m := by
@@ -107,7 +105,6 @@ theorem IsAperiodic.prod {N : Type*} [Monoid N] (hM : IsAperiodic M) (hN : IsApe
   · exact pow_succ_stabilizes (hnM x.1) _ (le_max_left _ _)
   · exact pow_succ_stabilizes (hnN x.2) _ (le_max_right _ _)
 
-/-- Aperiodicity transports across a monoid isomorphism. -/
 @[to_additive]
 theorem IsAperiodic.of_mulEquiv {N : Type*} [Monoid N] (e : M ≃* N) (hM : IsAperiodic M) :
     IsAperiodic N :=

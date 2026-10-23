@@ -150,12 +150,10 @@ def Strategy.defaultValency (s : Strategy) : Valency :=
   | some a => if a.derived.IsTransitive then .bivalent else .monovalent
   | none => .bivalent
 
-/-- Nominal strategies preserve valency by default. -/
 theorem Strategy.defaultValency_eq_bivalent_iff (s : Strategy) :
     s.defaultValency = .bivalent ↔ s.IsNominal := by
   cases s <;> decide
 
-/-- Predicate-marking strategies reduce valency by default. -/
 theorem Strategy.defaultValency_eq_monovalent_iff (s : Strategy) :
     s.defaultValency = .monovalent ↔ ¬ s.IsNominal := by
   cases s <;> decide

@@ -81,15 +81,12 @@ variable [PartialOrder α] {P : α → Prop}
 `P`. -/
 abbrev QUA (P : α → Prop) : Prop := IsAntichain (· ≤ ·) {x | P x}
 
-/-- Quantization in the paper's form holds if no `P`-element lies strictly below another. -/
 theorem qua_of_forall (h : ∀ x y, P x → y < x → ¬ P y) : QUA P :=
   fun _ ha _ hb hne hle ↦ h _ _ hb (lt_of_le_of_ne hle hne) ha
 
-/-- A singleton predicate is quantized ([krifka-1989] (T 1)). -/
 theorem singleton_qua (n : α) : QUA (· = n) :=
   Set.Subsingleton.isAntichain (fun _ ha _ hb ↦ ha.trans hb.symm) _
 
-/-- Quantization pulls back along strictly monotone maps. -/
 theorem qua_pullback [PartialOrder β] {d : α → β} (hd : StrictMono d) {P : β → Prop}
     (hP : QUA P) : QUA (P ∘ d) :=
   hP.preimage_strictMono hd
@@ -97,7 +94,6 @@ theorem qua_pullback [PartialOrder β] {d : α → β} (hd : StrictMono d) {P : 
 /-- The `P`-atoms ([krifka-1989]) are the minimal `P`-elements. -/
 abbrev atomize (P : α → Prop) : α → Prop := Minimal P
 
-/-- The `P`-atoms are quantized. -/
 theorem atomize_qua : QUA (atomize P) := setOfPred_minimal_antichain P
 
 end PartialOrder
@@ -125,14 +121,11 @@ theorem qua_cum_incompatible (hQ : QUA P) {x y : α} (hx : P x) (hy : P y) (hne 
     · exact hQ hy hxy hy_lt.ne hy_lt.le
   · exact hQ hx hxy hx_lt.ne hx_lt.le
 
-/-- A maximal element of a cumulative predicate is its greatest element, the supremum of
-[champollion-krifka-2016]. -/
 theorem cum_maximal_iff_isGreatest (hCum : CUM P) {x : α} :
     Maximal P x ↔ IsGreatest {y | P y} x :=
   ⟨fun hx ↦ ⟨hx.1, fun _ hy ↦ le_sup_right.trans (hx.2 (hCum hx.1 hy) le_sup_left)⟩,
     fun hx ↦ ⟨hx.1, fun _ hy _ ↦ hx.2 hy⟩⟩
 
-/-- A cumulative predicate has at most one maximal element. -/
 theorem cum_maximal_unique (hCum : CUM P) {x y : α} (hx : Maximal P x) (hy : Maximal P y) :
     x = y :=
   ((cum_maximal_iff_isGreatest hCum).1 hx).unique ((cum_maximal_iff_isGreatest hCum).1 hy)
@@ -157,25 +150,21 @@ theorem algClosure_mono {Q : α → Prop} (h : ∀ x, P x → Q x) :
   | base hp => exact .base (h _ hp)
   | sum _ _ ih₁ ih₂ => exact .sum ih₁ ih₂
 
-/-- `*P` contains the sum of every nonempty finite family from `*P`. -/
 theorem algClosure_finsetSup' {ι : Type*} {s : Finset ι} (hs : s.Nonempty) {f : ι → α}
     (hf : ∀ i ∈ s, AlgClosure P (f i)) : AlgClosure P (s.sup' hs f) :=
   SupClosed.finsetSup'_mem algClosure_cum hs hf
 
-/-- Every element of `*P` has a `P`-element below it. -/
 theorem algClosure_has_base {x : α} (h : AlgClosure P x) : ∃ a, P a ∧ a ≤ x := by
   induction h with
   | base hp => exact ⟨_, hp, le_rfl⟩
   | sum _ _ ih₁ _ => obtain ⟨a, ha, hle⟩ := ih₁; exact ⟨a, ha, hle.trans le_sup_left⟩
 
-/-- A cumulative predicate is its own closure ([champollion-krifka-2016]). -/
 theorem algClosure_of_cum (hCum : CUM P) {x : α} : AlgClosure P x ↔ P x :=
   ⟨fun h ↦ by induction h with
     | base h => exact h
     | sum _ _ ihx ihy => exact hCum ihx ihy,
    .base⟩
 
-/-- `*P` is mathlib's `supClosure` of the extension of `P`. -/
 theorem setOf_algClosure (P : α → Prop) : {x | AlgClosure P x} = supClosure {x | P x} :=
   Set.Subset.antisymm
     (fun _ h ↦ by
@@ -184,9 +173,6 @@ theorem setOf_algClosure (P : α → Prop) : {x | AlgClosure P x} = supClosure {
       | sum _ _ ihx ihy => exact supClosed_supClosure ihx ihy)
     (supClosure_min (fun _ ↦ .base) algClosure_cum)
 
-/-- `*P` holds of exactly the sums of nonempty finite families of `P`-elements, the finite case
-of the closure of [champollion-krifka-2016] and [champollion-2017] under sums of nonempty
-subsets. -/
 theorem algClosure_iff_exists_sup' (P : α → Prop) (x : α) :
     AlgClosure P x ↔ ∃ (t : Finset α) (ht : t.Nonempty), (∀ y ∈ t, P y) ∧ t.sup' ht id = x := by
   rw [← Set.mem_ofPred_eq (p := AlgClosure P), setOf_algClosure]
@@ -205,7 +191,6 @@ theorem fullAlgClosure_bot (P : α → Prop) : FullAlgClosure P ⊥ := .inr rfl
 
 theorem AlgClosure.fullAlgClosure {x : α} (h : AlgClosure P x) : FullAlgClosure P x := .inl h
 
-/-- `×P` holds of exactly the sums of finite families of `P`-elements. -/
 theorem fullAlgClosure_iff_exists_sup (P : α → Prop) (x : α) :
     FullAlgClosure P x ↔ ∃ t : Finset α, (∀ y ∈ t, P y) ∧ t.sup id = x := by
   rw [FullAlgClosure, algClosure_iff_exists_sup']
@@ -247,12 +232,9 @@ theorem Atom.not_isBot (h : Atom x) : ¬ IsBot x := h.1
 theorem Atom.eq (h : Atom x) (hle : y ≤ x) (hy : ¬ IsBot y) : y = x :=
   le_antisymm hle (h.2 hy hle)
 
-/-- A predicate holding only of atoms is quantized. -/
 theorem qua_of_atom {P : α → Prop} (h : ∀ ⦃x⦄, P x → Atom x) : QUA P :=
   (atomize_qua (P := (¬ IsBot ·))).subset h
 
-/-- In a well-founded part order every non-null element has an atom below it, so finite
-carriers are atomic ([champollion-krifka-2016]). -/
 theorem exists_atom_le [WellFoundedLT α] (hy : ¬ IsBot y) : ∃ a, Atom a ∧ a ≤ y := by
   obtain ⟨a, ⟨ha, hay⟩, hmin⟩ :=
     WellFounded.has_min wellFounded_lt {z | ¬ IsBot z ∧ z ≤ y} ⟨y, hy, le_rfl⟩
@@ -263,7 +245,6 @@ def atomsBelow (x : α) : Set α := {a | Atom a ∧ a ≤ x}
 
 @[simp] theorem mem_atomsBelow : y ∈ atomsBelow x ↔ Atom y ∧ y ≤ x := Iff.rfl
 
-/-- An atom is its own only atomic part. -/
 theorem atomsBelow_of_atom (h : Atom x) : atomsBelow x = {x} :=
   Set.ext fun _ ↦ ⟨fun hy ↦ h.eq hy.2 hy.1.not_isBot, by rintro rfl; exact ⟨h, le_rfl⟩⟩
 
@@ -284,7 +265,6 @@ theorem Overlap.not_isBot_left (h : Overlap x y) : ¬ IsBot x :=
 
 theorem Overlap.not_isBot_right (h : Overlap x y) : ¬ IsBot y := h.symm.not_isBot_left
 
-/-- A non-null part of `y` overlaps `y`. -/
 theorem Overlap.of_le (hx : ¬ IsBot x) (h : x ≤ y) : Overlap x y := ⟨x, hx, le_rfl, h⟩
 
 theorem Overlap.mono {x' y' : α} (hx : x ≤ x') (hy : y ≤ y') (h : Overlap x y) : Overlap x' y' :=
@@ -292,7 +272,6 @@ theorem Overlap.mono {x' y' : α} (hx : x ≤ x') (hy : y ≤ y') (h : Overlap x
 
 end Atoms
 
-/-- The sum of two distinct atoms is not an atom. -/
 theorem not_atom_sup_of_ne [SemilatticeSup α] {x y : α} (hx : Atom x) (hy : Atom y) (hne : x ≠ y) :
     ¬ Atom (x ⊔ y) :=
   fun h ↦ hne ((h.eq le_sup_left hx.not_isBot).trans (h.eq le_sup_right hy.not_isBot).symm)
@@ -308,12 +287,9 @@ variable [SemilatticeSup α] {P : α → Prop} {x : α}
 def IsPlural (P : α → Prop) (x : α) : Prop :=
   AlgClosure P x ∧ ∃ a < x, ∃ b < x, P a ∧ P b ∧ a ≠ b
 
-/-- A predicate with at most one member has no plurality. -/
 theorem not_isPlural_of_subsingleton (h : ∀ a b, P a → P b → a = b) (x : α) : ¬ IsPlural P x :=
   fun ⟨_, _, _, _, _, ha, hb, hne⟩ ↦ hne (h _ _ ha hb)
 
-/-- An atom in the closure of a predicate is one of its members, since an atom is not a proper
-sum. -/
 theorem of_algClosure_of_atom (hx : AlgClosure P x) (h : Atom x) : P x := by
   induction hx with
   | base hp => exact hp
@@ -325,7 +301,6 @@ theorem of_algClosure_of_atom (hx : AlgClosure P x) (h : Atom x) : P x := by
       rw [← heq] at h ⊢
       exact iha h
 
-/-- For a predicate holding only of atoms, a plurality is a non-atomic element of the closure. -/
 theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
     IsPlural P x ↔ AlgClosure P x ∧ ¬ Atom x := by
   constructor
@@ -348,7 +323,6 @@ theorem isPlural_iff_of_atom (hP : ∀ ⦃a⦄, P a → Atom a) :
       · obtain ⟨a, ha, b, hb, hPa, hPb, hab⟩ := ihy hay
         exact ⟨a, ha.trans_le le_sup_left, b, hb.trans_le le_sup_left, hPa, hPb, hab⟩
 
-/-- Atomizing the closure of a predicate holding only of atoms gives back the predicate. -/
 theorem atomize_algClosure (hP : ∀ ⦃a⦄, P a → Atom a) : atomize (AlgClosure P) = P := by
   funext x
   refine propext ⟨fun hx ↦ ?_, fun hx ↦ ⟨.base hx, fun y hy hyx ↦ ?_⟩⟩
@@ -378,7 +352,6 @@ theorem overlap_iff_not_disjoint : Overlap x y ↔ ¬ Disjoint x y := by
     exact hd fun z hzx hzy ↦ le_bot_iff.mpr
       (by_contra fun hz ↦ h ⟨z, mt isBot_iff_eq_bot.1 hz, hzx, hzy⟩)
 
-/-- The atoms of the non-null predicate on a bounded carrier are its `IsAtom`s. -/
 theorem atomize_ne_bot : atomize (· ≠ (⊥ : α)) = IsAtom := by
   funext x; exact propext isAtom_iff_le_of_ge.symm
 
@@ -400,7 +373,6 @@ theorem atomCount_finset {β : Type*} (s : Finset β) : atomCount (Finset β) s 
   rw [atomCount, atomsBelow_finset, Set.ncard_image_of_injective _ Finset.singleton_injective,
     Set.ncard_coe_finset]
 
-/-- Without a null individual, the atoms are the minimal elements. -/
 theorem atom_iff_isMin [PartialOrder α] [NoBotOrder α] {x : α} : Atom x ↔ IsMin x :=
   ⟨fun h _ hy ↦ h.2 (not_isBot _) hy, fun h ↦ ⟨not_isBot x, fun _ _ hy ↦ h hy⟩⟩
 
@@ -452,18 +424,14 @@ variable [IsClassicalMereology α] {x y u : α}
 theorem exists_isFusion (P : α → Prop) (h : ∃ x, P x) : ∃ t, IsFusion P t :=
   (existsUnique_isFusion P h).exists
 
-/-- A classical mereology has no null individual, since the predicate true of it alone would
-have no sum. -/
 theorem not_isBot (x : α) : ¬ IsBot x := fun hx ↦ by
   obtain ⟨t, ht⟩ := exists_isFusion (· = x) ⟨x, rfl⟩
   obtain ⟨_, rfl, w, hw, -, hwx⟩ := ht.2 t le_rfl
   exact hw (hx.mono hwx)
 
-/-- In a classical mereology, overlap is sharing a part. -/
 theorem overlap_iff : Overlap x y ↔ ∃ z, z ≤ x ∧ z ≤ y :=
   ⟨fun ⟨z, _, hzx, hzy⟩ ↦ ⟨z, hzx, hzy⟩, fun ⟨z, hzx, hzy⟩ ↦ ⟨z, not_isBot z, hzx, hzy⟩⟩
 
-/-- Each element is the sum of itself. -/
 theorem isFusion_eq (x : α) : IsFusion (· = x) x :=
   ⟨fun _ h ↦ h.le, fun z hz ↦ ⟨x, rfl, z, not_isBot z, le_rfl, hz⟩⟩
 
@@ -471,20 +439,15 @@ end IsClassicalMereology
 
 variable [IsClassicalMereology α] {P : α → Prop} {s t x y u : α}
 
-/-- Sums are unique. -/
 theorem IsFusion.unique (hs : IsFusion P s) (ht : IsFusion P t) : s = t :=
   let ⟨x, hx, _⟩ := hs.2 s le_rfl
   (IsClassicalMereology.existsUnique_isFusion P ⟨x, hx⟩).unique hs ht
 
-/-- A proper part of `y` leaves a part of `y` that does not overlap it (weak supplementation),
-since otherwise `y` would be a second sum of the part alone. -/
 theorem IsClassicalMereology.weak_supplementation (h : x < y) : ∃ z ≤ y, ¬ Overlap z x := by
   by_contra! hall
   exact h.ne ((IsClassicalMereology.isFusion_eq x).unique
     ⟨fun _ h' ↦ h' ▸ h.le, fun z hz ↦ ⟨x, rfl, hall z hz⟩⟩)
 
-/-- A sum is a least upper bound, since weak supplementation forces the sum, an upper bound by
-definition, to be the least one. -/
 theorem IsFusion.isLUB (h : IsFusion P t) : IsLUB {x | P x} t := by
   refine ⟨fun a ha ↦ h.1 a ha, fun w hw ↦ ?_⟩
   obtain ⟨v, hv⟩ :=
@@ -503,8 +466,6 @@ theorem IsFusion.isLUB (h : IsFusion P t) : IsLUB {x | P x} t := by
 
 namespace IsClassicalMereology
 
-/-- If `y` is not part of `u`, some part of `y` does not overlap `u` (strong
-supplementation). -/
 theorem strong_supplementation (h : ¬ y ≤ u) : ∃ v ≤ y, ¬ Overlap v u := by
   obtain ⟨s, hs⟩ := exists_isFusion (fun w ↦ w = y ∨ w = u) ⟨y, .inl rfl⟩
   have hus : u < s := lt_of_le_of_ne (hs.1 u (.inr rfl)) fun he ↦ h (he ▸ hs.1 y (.inl rfl))
@@ -514,8 +475,6 @@ theorem strong_supplementation (h : ¬ y ≤ u) : ∃ v ≤ y, ¬ Overlap v u :=
     exact ⟨v, hvy, fun ⟨q, hq, hqv, hqu⟩ ↦ hwu ⟨q, hq, hqv.trans hvw, hqu⟩⟩
   · exact absurd hov hwu
 
-/-- A classical mereology satisfies the remainder principle, since the sum of the parts of `y`
-that do not overlap `x` completes `x` to `y`. -/
 theorem exists_remainder (h : x < y) : ∃ z, ¬ Overlap z x ∧ IsLUB {x, z} y := by
   obtain ⟨w₀, hw₀y, hw₀x⟩ := weak_supplementation h
   obtain ⟨z, hz⟩ := exists_isFusion (fun w ↦ w ≤ y ∧ ¬ Overlap w x) ⟨w₀, hw₀y, hw₀x⟩
@@ -534,14 +493,11 @@ theorem exists_remainder (h : x < y) : ∃ z, ¬ Overlap z x ∧ IsLUB {x, z} y 
 /-- A classical mereology has no bottom element. -/
 instance : NoBotOrder α := ⟨fun x ↦ not_forall.1 (not_isBot x)⟩
 
-/-- An element all of whose parts overlap `u` is part of `u` (extensionality). -/
 theorem le_of_forall_overlap (h : ∀ v ≤ y, Overlap v u) : y ≤ u := by
   by_contra hyu
   obtain ⟨v, hvy, hvu⟩ := strong_supplementation hyu
   exact hvu (h v hvy)
 
-/-- The remainder of a proper part is unique, since each of two remainders lies in `y` and so
-has every part overlapping `x` or the other remainder. -/
 theorem remainder_unique {z z' : α} (hz : ¬ Overlap z x) (hlub : IsLUB {x, z} y)
     (hz' : ¬ Overlap z' x) (hlub' : IsLUB {x, z'} y) : z = z' := by
   have key : ∀ {z z' : α}, ¬ Overlap z x → IsLUB {x, z} y → IsLUB {x, z'} y → z ≤ z' := by
@@ -562,7 +518,6 @@ theorem existsUnique_remainder (h : x < y) : ∃! z, ¬ Overlap z x ∧ IsLUB {x
   let ⟨z, hz, hlub⟩ := exists_remainder h
   ⟨z, ⟨hz, hlub⟩, fun _ ⟨hz', hlub'⟩ ↦ remainder_unique hz' hlub' hz hlub⟩
 
-/-- Every pair has a least upper bound, the sum of the pair. -/
 theorem exists_isLUB_pair (a b : α) : ∃ s, IsLUB {a, b} s := by
   obtain ⟨t, ht⟩ := exists_isFusion (fun u ↦ u = a ∨ u = b) ⟨a, Or.inl rfl⟩
   refine ⟨t, ?_⟩
@@ -644,8 +599,6 @@ theorem qmod_qua {M : Type*} [PartialOrder α] [Preorder M] {R : α → Prop} {�
     (hμ : StrictMonoOn μ {x | R x}) (n : M) : QUA (QMOD R μ n) :=
   fun _ hx _ hy hne hle ↦ (hμ hx.1 hy.1 (lt_of_le_of_ne hle hne)).ne (hx.2.trans hy.2.symm)
 
-/-- On a finite carrier the atom count is strictly monotone on the closure of a predicate that
-holds only of atoms. -/
 theorem atomCount_strictMonoOn [SemilatticeSup α] [Fintype α] {P : α → Prop}
     (hP : ∀ ⦃a⦄, P a → Atom a) : StrictMonoOn (atomCount α) {x | AlgClosure P x} := by
   intro x _ y hy hxy
@@ -736,7 +689,6 @@ theorem isMaxDisjointIn_iff_maximal (D P : Set α) :
 /-- The null individuation schema of `P` is the union of its maximally disjoint subsets. -/
 def nullSchema (P : Set α) : Set α := {x | ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D}
 
-/-- The union of two distinct maximally disjoint subsets overlaps. -/
 theorem overlapPred_union_of_maxDisjoint_ne {D₁ D₂ P : Set α} (h₁ : IsMaxDisjointIn ov D₁ P)
     (h₂ : IsMaxDisjointIn ov D₂ P) (hne : D₁ ≠ D₂) : OverlapPred ov (D₁ ∪ D₂) := by
   obtain ⟨x, hx₂, hx₁⟩ | ⟨x, hx₁, hx₂⟩ :
@@ -751,19 +703,15 @@ theorem overlapPred_union_of_maxDisjoint_ne {D₁ D₂ P : Set α} (h₁ : IsMax
       (Set.insert_subset_iff.mpr ⟨Or.inl hx₁, fun a ha ↦ Or.inr ha⟩)
       (h₂.2.2 x (h₁.1 hx₁) hx₂)
 
-/-- The null schema of a predicate with two distinct perspectives overlaps. -/
 theorem overlapPred_nullSchema {D₁ D₂ P : Set α} (h₁ : IsMaxDisjointIn ov D₁ P)
     (h₂ : IsMaxDisjointIn ov D₂ P) (hne : D₁ ≠ D₂) : OverlapPred ov (nullSchema ov P) :=
   overlapPred_mono ov
     (Set.union_subset (fun _ ha ↦ ⟨D₁, h₁, ha⟩) (fun _ ha ↦ ⟨D₂, h₂, ha⟩))
     (overlapPred_union_of_maxDisjoint_ne ov h₁ h₂ hne)
 
-/-- A disjoint predicate is its own unique perspective. -/
 theorem isMaxDisjointIn_self {P : Set α} (h : DisjointPred ov P) : IsMaxDisjointIn ov P P :=
   ⟨Set.Subset.rfl, h, fun _ hy hny ↦ absurd hy hny⟩
 
-/-- Every member of a predicate lies in some perspective on it, since a disjoint subset
-containing it extends to a maximal one. -/
 theorem exists_isMaxDisjointIn_mem {P : Set α} {x : α} (hx : x ∈ P) :
     ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D := by
   obtain ⟨D, hxD, hD⟩ := zorn_subset_nonempty {D | D ⊆ P ∧ DisjointPred ov D}
@@ -787,8 +735,6 @@ theorem nullSchema_eq (P : Set α) : nullSchema ov P = P :=
 
 end Individuation
 
-/-- On a carrier with a null individual, a predicate is disjoint iff its members are pairwise
-disjoint in the lattice sense. -/
 theorem disjointPred_overlap_iff [PartialOrder α] [OrderBot α] {P : Set α} :
     DisjointPred Overlap P ↔ P.PairwiseDisjoint id := by
   simp only [disjointPred_iff_pairwise, overlap_iff_not_disjoint, not_not]

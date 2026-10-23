@@ -124,7 +124,6 @@ noncomputable instance instBialgebra : Bialgebra R (GrossmanLarson R α) :=
 
 /-! ### Primitive elements -/
 
-/-- A one-tree forest is primitive. -/
 theorem isPrimitiveElem_of_singleton (T : UnorderedTree α) :
     Bialgebra.IsPrimitiveElem R (of {T} : GrossmanLarson R α) where
   counit_eq_zero := by simp

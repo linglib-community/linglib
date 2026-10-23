@@ -70,7 +70,6 @@ def histories (m : M) : Set (Flag M) := {h | m ∈ h}
 
 @[simp] theorem mem_histories {m : M} {h : Flag M} : h ∈ histories m ↔ m ∈ h := Iff.rfl
 
-/-- Every moment lies on a history. -/
 theorem histories_nonempty (m : M) : (histories m).Nonempty :=
   let ⟨s, hs⟩ := Flag.exists_mem m; ⟨s, hs⟩
 
@@ -157,8 +156,6 @@ variable {φ} {m : M} {h : Flag M}
 @[simp] theorem settled_atom (φ : Set M) : settled (atom φ) = atom φ :=
   Set.ext fun p ↦ ⟨fun H ↦ let ⟨h', hh'⟩ := histories_nonempty p.1; H h' hh', fun hφ _ _ ↦ hφ⟩
 
-/-- The settled past of an atom is the Peircean past, since the past does not depend on the
-history. -/
 theorem settled_past_atom (φ : Set M) : settled (past (atom φ)) = atom (Peircean.past φ) :=
   Set.ext fun p ↦ ⟨fun H ↦ let ⟨h', hh'⟩ := histories_nonempty p.1; H h' hh', fun hφ _ _ ↦ hφ⟩
 

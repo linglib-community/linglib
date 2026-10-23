@@ -111,8 +111,6 @@ variable {b p : I}
 private theorem toNNReal_ne_zero {x : I} (hx : x ≠ 0) : toNNReal x ≠ 0 :=
   fun h ↦ hx (Subtype.ext (by simpa using congrArg NNReal.toReal h))
 
-/-- Under the factive reading the updated common ground is the world where the complement is
-believed and true. -/
 theorem update_factive (hb : b ≠ 0) (hp : p ≠ 0) : update b p .factive = dirac (true, true) := by
   have hK : {w : World | clauseEmbeddingSem .factive w} = {true} ×ˢ {true} := by
     ext ⟨x, y⟩; simp [clauseEmbeddingSem, World.Knows]
@@ -124,8 +122,6 @@ theorem update_factive (hb : b ≠ 0) (hp : p ≠ 0) : update b p .factive = dir
   obtain ⟨x, y⟩ := w
   cases x <;> cases y <;> simp [ENNReal.inv_mul_cancel h0 (measure_ne_top _ _)]
 
-/-- Under the non-factive reading the updated common ground fixes belief and keeps the prior on
-the complement. -/
 theorem update_nonfactive (hb : b ≠ 0) :
     update b p .nonfactive = (dirac true).prod Ber(true, false, p) := by
   have hT : {w : World | clauseEmbeddingSem .nonfactive w} = {true} ×ˢ Set.univ := by
@@ -142,13 +138,10 @@ theorem update_nonfactive (hb : b ≠ 0) :
 private theorem setOf_complement : {w : World | w.complement} = Set.univ ×ˢ {true} := by
   ext ⟨_, _⟩; simp
 
-/-- *Know* entails its complement, so the complement is certain under the factive reading. -/
 theorem likely_update_factive (hb : b ≠ 0) (hp : p ≠ 0) :
     likely (update b p .factive) {w | w.complement} = 1 := by
   ext; simp [update_factive hb hp]
 
-/-- Belief is independent of the complement, so the complement keeps its prior under the
-non-factive reading. -/
 theorem likely_update_nonfactive (hb : b ≠ 0) :
     likely (update b p .nonfactive) {w | w.complement} = p := by
   ext; simp [update_nonfactive hb, setOf_complement, measureReal_def, Measure.prod_prod]
@@ -216,8 +209,6 @@ section Completion
 
 variable (τ : I) (ν : Measure I)
 
-/-- Resolved factivity is a mixture of the endpoint `1`, with weight `τ`, and the norming
-model. -/
 theorem resolvedFactivity_eq : resolvedFactivity τ ν = toNNReal τ • dirac 1 + toNNReal (σ τ) • ν :=
   bernoulliMeasure_bind _ _ _ .of_discrete
 
@@ -231,8 +222,6 @@ instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (resolvedFactivity τ 
 instance [IsProbabilityMeasure ν] : IsProbabilityMeasure (unresolvedFactivity τ ν) :=
   (isProbabilityMeasure_map_iff (measurable_disjunction τ).aemeasurable).mpr ‹_›
 
-/-- At `τ = 0` each completion is the norming model it completes, and at `τ = 1` every model
-answers `1`. -/
 @[simp] theorem resolvedFactivity_zero : resolvedFactivity 0 ν = ν := by
   simp [resolvedFactivity_eq]
 

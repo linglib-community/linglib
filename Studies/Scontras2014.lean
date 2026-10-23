@@ -100,8 +100,6 @@ theorem containerReading_subset (P : E → Prop) (filledWith : E → E → Prop)
 theorem measureReading_subset (μ : E → D) (k : E → Prop) (n : D) :
     ∀ x, measureReading μ k n x → k x := fun _ h ↦ h.1
 
-/-- The measure reading with numeral `n` is quantity-uniform under the term's measure, since the
-measure takes the single value `n` on it. -/
 theorem measureReading_quantity_uniform (μ : E → D) (k : E → Prop) (n : D) :
     (μ '' {x | measureReading μ k n x}).Subsingleton := by
   rintro _ ⟨_, hx, rfl⟩ _ ⟨_, hy, rfl⟩
@@ -115,7 +113,6 @@ def shiftCM (P : E → Prop) (filledWith : E → E → Prop) (card : E → ℕ) 
     (x : E) : Prop :=
   k x ∧ ∃ y, P y ∧ filledWith x y ∧ card y = n
 
-/-- A shifted container noun yields a measure reading, which refers to the substance. -/
 theorem shiftCM_subset (P : E → Prop) (filledWith : E → E → Prop) (card : E → ℕ) (k : E → Prop)
     (n : ℕ) : ∀ x, shiftCM P filledWith card k n x → k x := fun _ h ↦ h.1
 
@@ -125,7 +122,6 @@ def shiftMC [Preorder D] [One D] (μ : E → D) (filledWith : E → E → Prop)
     (x : E) : Prop :=
   ∃ (k : E → Prop) (y : E), measureReading μ k 1 y ∧ filledWith y x
 
-/-- A shifted measure term with an *of*-phrase yields a container reading. -/
 theorem containerReading_shiftMC [Preorder D] [One D] (μ : E → D)
     (filledWith : E → E → Prop) (k : E → Prop) (x : E) :
     containerReading (shiftMC μ filledWith) filledWith k x ↔
@@ -152,8 +148,6 @@ noncomputable def pAtomMeasure (Q : E → Prop) (y : E) : ℕ :=
 
 variable {C}
 
-/-- The members of a maximally self-connected partition form an antichain, so one cannot be a
-proper part of another. -/
 theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition C k Q) :
     IsAntichain (· ≤ ·) {x | Q x} :=
   (setOfPred_maximal_antichain _).subset h
@@ -163,7 +157,6 @@ theorem isAntichain_of_disjointPred [NoBotOrder E] {Q : E → Prop}
     (h : DisjointPred Overlap {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
   fun x hx y hy hxy hle ↦ h ⟨x, hx, y, hy, hxy, .of_le (not_isBot x) hle⟩
 
-/-- In an antichain every member is its only atom below itself. -/
 theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
     (hy : Q y) : {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x} = {y} := by
   ext x
@@ -175,7 +168,6 @@ theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q 
   · rintro rfl
     exact ⟨hy, le_rfl, fun ⟨z, hz, hzy⟩ ↦ h hz hy hzy.ne hzy.le⟩
 
-/-- Each member of a partition measures one relative atom, so cardinal numerals count them. -/
 theorem pAtomMeasure_eq_one {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
     (hy : Q y) : pAtomMeasure Q y = 1 := by
   rw [pAtomMeasure, atoms_eq_singleton h hy, Set.ncard_singleton]
@@ -222,8 +214,6 @@ def nounClass? (e : Datum) : Option QuantizingNounClass :=
   | some "atomizer" => some .atomizer
   | _ => none
 
-/-- The fragment lists each example's noun among the nouns of the class the chapter assigns
-it. -/
 theorem rows_nounClass :
     ∀ e ∈ Examples.all, ∃ c ∈ nounClass? e, ∃ s ∈ e.feature? "noun", s ∈ c.forms := by
   decide +kernel

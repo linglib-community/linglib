@@ -96,7 +96,6 @@ section Reinterpret
 
 variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred)
 
-/-- Reinterpretation stays in the NE-free fragment. -/
 theorem reinterpret_neFree {φ : Formula Var Const Pred} (h : φ.NEFree) :
     (reinterpret sub P φ).NEFree :=
   h.mapAtoms
@@ -111,7 +110,6 @@ theorem reinterpret_neFree {φ : Formula Var Const Pred} (h : φ.NEFree) :
       · exact .disj (.conj (.predc _ _) (.predc _ _)) (.conj (.neg (.predc _ _)) (.predc _ _))
       · exact .predc _ _)
 
-/-- The reinterpreted want `□∃x‖Qx‖_P` is the disjunctive want. -/
 theorem reinterpret_nec_exi {Q : Pred} (h : sub P Q) (x : Var) :
     reinterpret sub P (Formula.nec (.exi x (.pred Q x)) : Formula Var Const Pred) =
       Formula.nec (.exi x (.disj (within P Q x) (without P Q x))) := by
@@ -206,9 +204,6 @@ private theorem eval_predc_disj (P Q : Pred) (c : Const) (b : Bool)
 variable (sub : Pred → Pred → Prop) [DecidableRel sub] (P : Pred) (φ : Formula Var Const Pred)
   (s : Finset (Index W Var Domain))
 
-/-- Reinterpretation is bilaterally equivalent to the original. `‖φ‖_P` and `φ` are
-supported and anti-supported by the same states, for any `sub`, since the sub-predicate and
-salience conditions govern felicity rather than truth. -/
 theorem eval_reinterpret_iff (b : Bool) : eval M b (reinterpret sub P φ) s ↔ eval M b φ s :=
   eval_mapAtoms_iff M
     (λ Q x b s => by
@@ -267,8 +262,6 @@ theorem fc_of_reinterpret {sub : Pred → Pred → Prop} [DecidableRel sub] {P Q
   rw [reinterpret_nec_exi sub P hsub] at h
   exact boxExiFC M (within_neFree _ _ _) (without_neFree _ _ _) h
 
-/-- The enriched want of a constant atom is supported at a nonempty state each of whose
-indices sees some world, all of them verifying the atom. -/
 theorem support_enrich_nec_predc {A : Pred} {c : Const} (hs : s.Nonempty)
     (hacc : ∀ i ∈ s, (M.access i.world).Nonempty)
     (hA : ∀ i ∈ s, ∀ w ∈ M.access i.world,
@@ -279,8 +272,6 @@ theorem support_enrich_nec_predc {A : Pred} {c : Const} (hs : s.Nonempty)
   obtain ⟨w, hw⟩ := hacc i hi
   exact ⟨(w, i.assign), State.mem_modalLift.mpr ⟨hw, rfl⟩⟩
 
-/-- The enriched disjunctive want `[□(A c ∨ B c)]⁺` is unsupported at a nonempty state none
-of whose accessible worlds verifies `B c`. -/
 theorem not_support_enrich_nec_disj {A B : Pred} {c : Const} (hs : s.Nonempty)
     (hB : ∀ i ∈ s, ∀ w ∈ M.access i.world,
       ¬ M.relInterp₁ (predSymb B) w (M.constInterp ((Language.monadic Pred).con c) w)) :
@@ -290,8 +281,6 @@ theorem not_support_enrich_nec_disj {A B : Pred} {c : Const} (hs : s.Nonempty)
   obtain ⟨X, hX, ⟨w, hw⟩, hsupp⟩ := (boxFC M (.predc _ _) (.predc _ _) h).2 i hi
   exact hB i hi w (hX hw) (hsupp (w, i.assign) (State.mem_modalLift.mpr ⟨hw, rfl⟩))
 
-/-- The enriched want `[□∃x(P x ∧ Q x)]⁺` is supported at a nonempty state each of whose
-indices sees some world, all of them holding an individual that is `P` and `Q`. -/
 theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
     (hacc : ∀ i ∈ s, (M.access i.world).Nonempty)
     (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world,
@@ -321,8 +310,6 @@ theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
   · obtain ⟨j, -, d, hd, rfl⟩ := State.mem_extendFunctional.mp hj'
     exact ⟨d, by simp, ((Finset.mem_filter.mp hd).2).2⟩
 
-/-- The enriched premise supports the enriched unreinterpreted conclusion, since the same
-witnesses serve `[□∃x Q x]⁺`. -/
 theorem support_enrich_nec_exi_pred_of_within {P Q : Pred} {x : Var}
     (h : support M (Formula.enrich (Formula.nec (.exi x (within P Q x)))) s) :
     support M (Formula.enrich (Formula.nec (.exi x (.pred Q x)))) s := by
@@ -331,9 +318,6 @@ theorem support_enrich_nec_exi_pred_of_within {P Q : Pred} {x : Var}
   obtain ⟨⟨hf, hfne, ⟨⟨-, hQ⟩, -⟩⟩, hL⟩ := h.1 i hi
   exact ⟨⟨hf, hfne, hQ⟩, hL⟩
 
-/-- The enriched reinterpreted want `[□∃x‖Q x‖_P]⁺` is unsupported at a nonempty state whose
-accessible worlds have every `Q` within `P`: by free choice it would need an accessible `Q`
-outside `P`. -/
 theorem not_support_enrich_reinterpret {sub : Pred → Pred → Prop} [DecidableRel sub]
     {P Q : Pred} {x : Var} (hsub : sub P Q) (hs : s.Nonempty)
     (hPQ : ∀ i ∈ s, ∀ w ∈ M.access i.world,
@@ -394,13 +378,10 @@ theorem ross_fc {s : Finset (Index Unit Var Unit)}
     support rossModel (.poss sendL) s ∧ support rossModel (.poss burnL) s :=
   boxFC rossModel (.predc _ _) (.predc _ _) h
 
-/-- The enriched premise `[□SEND a]⁺` is supported at John's desire state. -/
 theorem ross_premise : support rossModel (Formula.enrich sendL.nec) rossState :=
   support_enrich_nec_predc rossModel (Finset.singleton_nonempty _)
     (λ _ _ => Finset.singleton_nonempty _) (λ _ _ _ _ => rfl)
 
-/-- The enriched disjunctive want `[□(SEND a ∨ BURN a)]⁺` is not supported there, since free
-choice would require an accessible burn world. -/
 theorem ross_blocked : ¬ support rossModel (Formula.enrich (sendL.disj burnL).nec) rossState :=
   not_support_enrich_nec_disj rossModel (Finset.singleton_nonempty _)
     (λ _ _ _ _ h => RossPred.noConfusion h)
@@ -424,11 +405,9 @@ def desireModel (Q : Pred) : Model Bool Unit Unit Pred :=
 /-- The desire state is the desire world with the empty assignment. -/
 def desireState : Finset (Index Bool Var Unit) := {(true, ⊥)}
 
-/-- Any other predicate is a sub-predicate of `Q` in `desireModel Q`. -/
 theorem isSubPred_desireModel {P Q : Pred} (h : P ≠ Q) : IsSubPred (desireModel Q) P Q :=
   ⟨λ _ _ _ => Or.inl rfl, false, (), Or.inl rfl, λ h' => h'.elim h Bool.false_ne_true⟩
 
-/-- The enriched premise `[□∃x(P x ∧ Q x)]⁺` is supported at the desire state. -/
 theorem desireModel_premise (P Q : Pred) :
     support (desireModel Q) (Formula.enrich (Formula.nec (.exi Var.x (within P Q .x))))
       desireState :=
@@ -436,15 +415,11 @@ theorem desireModel_premise (P Q : Pred) :
     (λ _ _ => Finset.singleton_nonempty _)
     (λ _ _ _ hw => ⟨(), Or.inr (Finset.mem_singleton.mp hw), Or.inr (Finset.mem_singleton.mp hw)⟩)
 
-/-- The enriched unreinterpreted conclusion `[□∃x Q x]⁺` is supported at the desire state. -/
 theorem desireModel_concl_enriched (P Q : Pred) :
     support (desireModel Q) (Formula.enrich (Formula.nec (.exi Var.x (.pred Q .x))))
       desireState :=
   support_enrich_nec_exi_pred_of_within _ (desireModel_premise P Q)
 
-/-- The enriched reinterpreted conclusion `[□∃x‖Q x‖_P]⁺` is not supported at the desire
-state: every `Q` in the desire world is `P`. The two classically equivalent conclusions part
-under enrichment. -/
 theorem desireModel_blocked {sub : Pred → Pred → Prop} [DecidableRel sub] {P Q : Pred}
     (hsub : sub P Q) :
     ¬ support (desireModel Q)
@@ -497,8 +472,6 @@ theorem asher_concl_enriched :
     support (desireModel AsherPred.trip) (Formula.enrich asherConcl) desireState :=
   desireModel_concl_enriched .free _
 
-/-- Nicholas's desire state supports the enriched premise but not the enriched reinterpreted
-conclusion: being ok with a non-free trip is licensed only by a premise never granted. -/
 theorem asher_blocked :
     ¬ support (desireModel AsherPred.trip)
       (Formula.enrich (reinterpret subFree .free asherConcl)) desireState :=

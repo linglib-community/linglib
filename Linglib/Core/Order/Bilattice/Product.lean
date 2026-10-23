@@ -107,23 +107,15 @@ instance [DecidableEq L] [DecidableEq R] : DecidableEq (L ⊙ R) :=
 instance [Fintype L] [Fintype R] : Fintype (L ⊙ R) :=
   inferInstanceAs (Fintype (L × Rᵒᵈ))
 
-/-- In the truth order a pair lies higher with more evidence for and less against
-([avron-1996] Def 2.4(ii)). -/
 @[simp] theorem mk_le_mk [Preorder L] [Preorder R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ≤ mk a₂ b₂ ↔ a₁ ≤ a₂ ∧ b₂ ≤ b₁ := Iff.rfl
 
-/-- The truth meet meets the evidence for and joins the evidence against ([avron-1996]
-Def 2.4(iv)). -/
 @[simp] theorem mk_inf_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊓ mk a₂ b₂ = mk (a₁ ⊓ a₂) (b₁ ⊔ b₂) := rfl
 
-/-- The truth join joins the evidence for and meets the evidence against ([avron-1996]
-Def 2.4(iii)). -/
 @[simp] theorem mk_sup_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊔ mk a₂ b₂ = mk (a₁ ⊔ a₂) (b₁ ⊓ b₂) := rfl
 
-/-- A pair lies below another in the truth order when it has less evidence for and more
-against. -/
 theorem le_def [Preorder L] [Preorder R] {x y : L ⊙ R} :
     x ≤ y ↔ x.pro ≤ y.pro ∧ y.con ≤ x.con := Iff.rfl
 
@@ -170,16 +162,12 @@ instance [Preorder L] [Preorder R] [DecidableLE L] [DecidableLE R] :
     DecidableLE (Know (L ⊙ R)) :=
   inferInstanceAs (DecidableLE (L × R))
 
-/-- In the knowledge order a pair lies higher with more evidence both ways ([avron-1996]
-Def 2.4). -/
 @[simp] theorem mk_kLE_mk [Preorder L] [Preorder R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ≤ₖ mk a₂ b₂ ↔ a₁ ≤ a₂ ∧ b₁ ≤ b₂ := Iff.rfl
 
-/-- The knowledge meet, consensus, meets both coordinates ([avron-1996] Def 2.4). -/
 @[simp] theorem mk_kInf_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊓ₖ mk a₂ b₂ = mk (a₁ ⊓ a₂) (b₁ ⊓ b₂) := rfl
 
-/-- The knowledge join, gullibility, joins both coordinates ([avron-1996] Def 2.4). -/
 @[simp] theorem mk_kSup_mk [Lattice L] [Lattice R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ⊔ₖ mk a₂ b₂ = mk (a₁ ⊔ a₂) (b₁ ⊔ b₂) := rfl
 
@@ -220,10 +208,8 @@ instance : Compl (L ⊙ L) := ⟨fun x ↦ mk x.con x.pro⟩
 @[simp] theorem mk_compl (a b : L) : (mk a b)ᶜ = mk b a := rfl
 @[simp] protected theorem compl_compl (x : L ⊙ L) : xᶜᶜ = x := rfl
 
-/-- Negation reverses the truth order ([avron-1996] Def 2.3(ii)). -/
 protected theorem compl_le_compl [Preorder L] {x y : L ⊙ L} (h : x ≤ y) : yᶜ ≤ xᶜ := ⟨h.2, h.1⟩
 
-/-- Negation preserves the knowledge order ([avron-1996] Def 2.3(iii)). -/
 protected theorem compl_kLE_compl [Preorder L] {x y : L ⊙ L} (h : x ≤ₖ y) : xᶜ ≤ₖ yᶜ :=
   ⟨h.2, h.1⟩
 
@@ -295,8 +281,6 @@ involution, disjointness is the only notion available. -/
 
 section Disjoint
 
-/-- On pairs with disjoint coordinates negation satisfies the Kleene law, since a contradiction
-`x ⊓ xᶜ` has no evidence for and an excluded middle `y ⊔ yᶜ` no evidence against. -/
 theorem inf_compl_le_sup_compl_of_disjoint [Lattice L] [OrderBot L] {x y : L ⊙ L}
     (hx : Disjoint x.pro x.con) (hy : Disjoint y.pro y.con) : x ⊓ xᶜ ≤ y ⊔ yᶜ :=
   ⟨hx.le_bot.trans bot_le, hy.symm.le_bot.trans bot_le⟩

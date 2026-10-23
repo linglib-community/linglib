@@ -102,8 +102,6 @@ theorem marking_cases :
 
 variable {m}
 
-/-- No marking is accusative and ergative at once, since it identifies S with at most one of A
-and P. -/
 theorem IsAccusative.not_isErgative (h : IsAccusative m) : ¬ IsErgative m := fun h' ↦ h.2 h'.1
 
 theorem IsErgative.not_isAccusative (h : IsErgative m) : ¬ IsAccusative m := fun h' ↦ h.2 h'.1
@@ -182,10 +180,8 @@ theorem isErgative_ergative : IsErgative ergative := ⟨rfl, nofun⟩
 
 theorem isTripartite_tripartite : IsTripartite tripartite := ⟨nofun, nofun, nofun⟩
 
-/-- Extended ergativity is accusative alignment in genitive clothing. -/
 theorem isAccusative_extendedErgative : IsAccusative extendedErgative := ⟨rfl, nofun⟩
 
-/-- The inverted marking is likewise an accusative alignment. -/
 theorem isAccusative_invertedErgative : IsAccusative invertedErgative := ⟨rfl, nofun⟩
 
 /-! ### The observational classification -/

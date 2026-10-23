@@ -72,14 +72,12 @@ variable {m tones tbus links} in
     p ∈ (melody m tones tbus links).links ↔ (p.1.val, p.2.val) ∈ links := by
   simp [melody]
 
-/-- Every autosegment of a melody is sponsored by its morpheme. -/
 @[simp] theorem melody_upper_morpheme (k : Fin (melody m tones tbus links).upper.length) :
     (melody m tones tbus links).upper[k].morpheme = m := by
   obtain ⟨x, -, hx⟩ := List.mem_map.1 (List.getElem_mem (l := (melody m tones tbus links).upper)
     k.isLt)
   rw [Fin.getElem_fin, ← hx]
 
-/-- Every slot of a melody is sponsored by its morpheme. -/
 @[simp] theorem melody_lower_morpheme (i : Fin (melody m tones tbus links).lower.length) :
     (melody m tones tbus links).lower[i].morpheme = m := by
   obtain ⟨x, -, hx⟩ := List.mem_map.1 (List.getElem_mem (l := (melody m tones tbus links).lower)

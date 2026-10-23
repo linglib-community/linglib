@@ -132,16 +132,12 @@ def sem (i : Interp) (u : Utterance) : Finset FCState := Finset.univ.filter (int
 @[simp] theorem mem_sem {i : Interp} {u : Utterance} {w : FCState} :
     w ∈ sem i u ↔ interpMeaning i u w := by simp [sem]
 
-/-- Exhaustification only strengthens. -/
 theorem I2_refines_I1 : ∀ u w, I2 u w → I1 u w := by decide
 
-/-- The classical disjunction is true everywhere — maximally uninformative. -/
 theorem I1_or_everywhere : ∀ w, I1 .or_ w := by decide
 
-/-- The exhaustified disjunction excludes exactly Only Both. -/
 theorem I2_or_excludes_onlyBoth : ∀ w, I2 .or_ w ↔ w ≠ .onlyBoth := by decide
 
-/-- The exhaustified disjunct singles out exactly Only A — the risk the speaker avoids. -/
 theorem I2_a_singleton : ∀ w, I2 .a w ↔ w = .onlyA := by decide
 
 /-! ### The model (8) -/
@@ -172,13 +168,11 @@ theorem speaker_or_onlyOne_exh {α : ℝ} (hα : 0 < α) :
   speaker_listener_truthful_dirac_eq_one hα _ _ _ (uniformOn_univ_singleton_ne_zero _) (by decide)
     (by decide)
 
-/-- Under the exhaustified function at Any Number, *or* is the only true utterance. -/
 theorem speaker_or_anyNumber_exh {α : ℝ} (hα : 0 < α) :
     speaker υ .exhaustified α .anyNumber {.or_} = 1 :=
   speaker_listener_truthful_dirac_eq_one hα _ _ _ (uniformOn_univ_singleton_ne_zero _) (by decide)
     (by decide)
 
-/-- Under the exhaustified function at Only Both, *or* is false. -/
 theorem speaker_or_onlyBoth_exh {α : ℝ} (hα : 0 < α) :
     speaker υ .exhaustified α .onlyBoth {.or_} = 0 :=
   speaker_listener_truthful_dirac_apply_singleton_eq_zero hα _ _ _ (by decide)
@@ -343,7 +337,6 @@ def negSem (i : Interp) (u : NegUtterance) : Finset NegState :=
 @[simp] theorem mem_negSem {i : Interp} {u : NegUtterance} {w : NegState} :
     w ∈ negSem i u ↔ negMeaning i u w := by simp [negSem]
 
-/-- The negated disjunction is unambiguous, true exactly at Neither under both functions. -/
 theorem negSem_notOr : ∀ i, negSem i .notOr = {.neither} := by decide
 
 /-- The listener of the negation model. -/

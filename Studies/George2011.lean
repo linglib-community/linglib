@@ -164,7 +164,6 @@ theorem weakAnswer_mem_trueAnswers_weaklyExhaustive_iff (v : W) :
 
 /-! ### Negation: (9) -/
 
-/-- Relabelling extensions bijectively leaves the strongly exhaustive answers fixed. -/
 theorem stronglyExhaustive_comp {τ' : Type*} {f : Set τ → Set τ'} (hf : f.Bijective) :
     stronglyExhaustive (f ∘ α) = stronglyExhaustive α := by
   unfold stronglyExhaustive
@@ -217,7 +216,6 @@ section State
 
 variable {α} {σ : Set W}
 
-/-- A state supports a strongly exhaustive answer exactly when the extension is constant on it. -/
 theorem supported_stronglyExhaustive_nonempty_iff :
     (supported (stronglyExhaustive α) σ).Nonempty ↔ (α '' σ).Subsingleton := by
   constructor
@@ -522,7 +520,6 @@ private def robinRejected : World := ![.admitted, .admitted, .rejected, .notAppl
 
 private def robinAbsent : World := ![.admitted, .admitted, .notApplicant, .notApplicant]
 
-/-- Maggie does not know who the applicants are, since Robin may or may not have applied. -/
 theorem applicant_image_not_subsingleton : ¬ (applicant '' listed).Subsingleton := fun h ↦
   have h₁ : applicant robinRejected = applicant robinAbsent :=
     h ⟨robinRejected, by decide, rfl⟩ ⟨robinAbsent, by decide, rfl⟩
@@ -548,7 +545,6 @@ theorem maggie_not_knows_notAdmitted_mentionSome :
   have hx : x ∈ notAdmittedApplicant robinAbsent := h (show robinAbsent ∈ listed by decide)
   exact absurd hx (by clear h hx; revert x; decide)
 
-/-- Rupert knows which of his four students were admitted. -/
 theorem rupert_knows_admitted : (supported (stronglyExhaustive admitted) listed).Nonempty :=
   supported_stronglyExhaustive_nonempty_iff.2 admitted_image_subsingleton
 

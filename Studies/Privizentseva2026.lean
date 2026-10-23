@@ -115,7 +115,6 @@ def caseSite : Site → List Feature → Option Site
   | .rc, .mergeCP :: fs => caseSite .matrix fs
   | _, _ => none
 
-/-- The order of the languages with ICA values the head's case inside the relative clause. -/
 theorem caseSite_ica : caseSite .rc [.case, .mergeCP] = some .rc := rfl
 
 /-- The reverse order, that of languages without ICA such as German and Polish
@@ -240,8 +239,6 @@ def boundRows : List (HeadCase × Bool) := Examples.all.filterMap fun ex ↦ do
 
 example : boundRows.length = 16 := by decide
 
-/-- Variable binding by a pronoun and crossover show no contrast: the bound reading is accepted
-whatever the case on the head, so these diagnostics do not tell the derivations apart. -/
 theorem pronounVariable_and_crossover_uniform :
     (∀ r ∈ boundRows, r.2 = true) ∧ (∃ r ∈ boundRows, r.1 = .internal) ∧
       ∃ r ∈ boundRows, r.1 = .external := by
@@ -289,9 +286,6 @@ theorem raising_only_fails :
     ∃ r ∈ rows, r.headCase = .external ∧ ¬ (Derivation.raising [.mergeCP, .case]).Fits r := by
   decide
 
-/-- The case probe valued inside the relative clause leaves no late-merger site above a pronoun
-there, so a head with ICA cannot obviate Condition C in the relative clause; valued after
-movement, it can, as raising relatives with external case do. -/
 theorem obviatesAt_rc :
     ¬ (analysis .internal).ObviatesAt .rc ∧
       (Derivation.raising [.mergeCP, .case]).ObviatesAt .rc := by
@@ -463,11 +457,6 @@ def subextractionRelative : Minimalist.Derivation :=
   ⟨headNoun, [.em .left kona, .em .left rcVerb, .em .left rcTense, .em .left relC,
     .im konaPhrase, .im headNoun, .em .left externalD]⟩
 
-/-- Footnote 14 of the article: selection before saturation licenses the subextraction too, *kona*'s
-phrase leaving the trace of *kona*, but the noun then moves out of a moved phrase, against
-Freezing, and once *kona*'s phrase has moved neither the noun nor the complementizer c-commands
-the other, so the complementizer's search no longer finds the noun, which the book's derivation
-copies while the complementizer still c-commands it. -/
 theorem subextractionRelative_costs :
     subextractionRelative.LicensedBy pendingHom ∧ ¬ subextractionRelative.ObeysFreezing ∧
       subextractionRelative.CCommandsAt 4 relC headNoun ∧
@@ -562,7 +551,6 @@ theorem fits_ica_iff (p : Relativization.Placement) :
     ReadingsFit p .ica ↔ p = .postNominal ∨ p = .preNominal := by
   revert p; decide
 
-/-- Correlatives reject both tested readings, which only the correlative placement predicts. -/
 theorem fits_correlative_iff (p : Relativization.Placement) :
     ReadingsFit p .correlative ↔ p = .correlative := by
   revert p; decide
@@ -585,8 +573,6 @@ def konaRows : List (Case × Case × Bool) := Examples.all.filterMap fun ex ↦ 
 example : konaRows.length = 34 := by decide
 
 attribute [local instance high] List.decidableBAll in
-/-- In an accepted relative with ICA the head and *kona* share their case exactly when *kona* has
-it, and *kona* inflected for a case it lacks is rejected. -/
 theorem konaRows_case :
     (∀ x ∈ konaRows, x.2.2 = true → (x.1 = x.2.1 ↔ x.1 ∈ konaCases)) ∧
       ∀ x ∈ konaRows, x.2.1 ∉ konaCases → x.2.2 = false := by

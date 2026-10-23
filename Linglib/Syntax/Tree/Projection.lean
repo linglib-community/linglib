@@ -70,8 +70,6 @@ abbrev ProjectsAt (t : Tree C W) : TreePath → TreePath → Prop :=
 abbrev AdjoinsAt (t : Tree C W) : TreePath → TreePath → Prop :=
   headDaughterRel (adjunctionIndex t.headIndexAt (IsSegmentAt t))
 
-/-- The head daughter of a node is the daughter it projects from or the host it is a segment
-above. -/
 theorem headDaughterAt_eq_sup (t : Tree C W) : HeadDaughterAt t = ProjectsAt t ⊔ AdjoinsAt t :=
   headDaughterRel_eq_sup _ _
 
@@ -98,7 +96,6 @@ abbrev maxCommand (t : Tree C W) : SetRel TreePath TreePath :=
 
 @[simp] theorem headIndex?_terminal (c : C) (w : W) : (terminal c w).headIndex? = none := rfl
 
-/-- The head daughter has its mother's category. -/
 theorem cat_eq_of_headIndex? {t : Tree C W} {i : ℕ} (h : headIndex? t = some i) :
     ∃ d, t.children[i]? = some d ∧ Tree.cat d = t.cat := by
   unfold headIndex? at h
@@ -156,8 +153,6 @@ theorem allHeads_iff : ∀ l : List (Tree C W), allHeads l = true ↔ ∀ x ∈ 
   | [] => by simp [allHeads]
   | t :: ts => by simp [allHeads, allHeads_iff ts]
 
-/-- What a head-level node contains is head-level: a head-level tree with `t` inside has `t`
-head-level. -/
 theorem isHead_of_isHead_replaceAt : ∀ (s : Tree C W) (q : List ℕ) (t : Tree C W),
     (s.subtreeAt q).isSome → isHead (s.replaceAt q t) = true → isHead t = true
   | _, [], t, _, h => by simpa using h

@@ -357,11 +357,8 @@ instance : fn4Lang.Structure (Fin 2) where
 
 theorem fn4_isProper : fn4.IsProper := by decide
 
-/-- The consequent re-declares `0`. -/
 theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by decide
 
-/-- In Muskens's semantics every input verifies the witness, since the re-declared referent may
-take a new value and some mortal suffices. -/
 theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   refine (DRS.trueRel_iff_exists_extends _ _).2 ⟨g, fun _ _ ↦ rfl, ?_⟩
   rw [verifies_iff]
@@ -380,8 +377,6 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   show Function.update g₁ 0 1 0 = 1
   simp
 
-/-- In the persistence semantics no output verifies the witness, since the re-declared referent
-keeps its value, a man who is not mortal. -/
 theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g' := by
   rintro ⟨g', hg'⟩
   have himp : Condition.holdsAt (∅ ∪ ∅) (.imp fn4Ante fn4Cons) g' := hg'.2.1

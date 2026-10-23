@@ -73,8 +73,6 @@ def branch (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Pr
     Q₁ A (fun x ↦ B (f x) ∧ R x (f x)) ∧
     Q₂ B (fun y ↦ A (g y) ∧ R (g y) y)
 
-/-- The iteration of *no* with *no* is the iteration of *every* with *some*, the two negations
-cancelling. -/
 theorem iterate_no_no_iff : iterate no no A B R ↔ iterate every GQ.some A B R := by
   simp [iterate, no, every, GQ.some]
 

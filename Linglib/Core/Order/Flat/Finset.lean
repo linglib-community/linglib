@@ -28,7 +28,6 @@ open Finset
 
 variable {α ι : Type*} [DecidableEq α] {x : Flat α} {s : Finset α} {a : α}
 
-/-- Two distinct values have no common flat value but `⊥`. -/
 theorem inf'_coe_eq_bot (hs : s.Nontrivial) : s.inf' hs.nonempty (↑) = (⊥ : Flat α) := by
   obtain ⟨a, ha, b, hb, hab⟩ := hs
   refine le_bot_iff.1 (le_of_le_of_eq (le_inf (inf'_le _ ha) (inf'_le _ hb)) ?_)

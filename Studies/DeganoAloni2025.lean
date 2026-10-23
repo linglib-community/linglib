@@ -95,7 +95,6 @@ def profile : IndefiniteType → Finset SpecificityFunction
 
 theorem profile_injective : Function.Injective profile := by decide
 
-/-- The seven types are the seven non-empty sets of uses. -/
 theorem exists_profile_eq {s : Finset SpecificityFunction} (hs : s.Nonempty) :
     ∃ t, profile t = s := by
   revert s; decide
@@ -131,12 +130,9 @@ def IndefiniteType.Requires (T : Finset (V → E)) (v x : V) : IndefiniteType �
   | .skPlusNS => Dep T ∅ x ∨ Var T {v} x
   | .specificUnknown => Dep T {v} x ∧ Var T ∅ x
 
-/-- Constancy across the team is constancy within a world, which excludes variation there, so
-the two atoms of the unattested type cannot hold together. -/
 theorem not_var_of_dep_empty (h : Dep T ∅ x) : ¬ Var T {v} x :=
   (h.mono (Finset.empty_subset _)).not_var
 
-/-- No team renders two uses. -/
 theorem renders_unique (h : Renders T v x u) (h' : Renders T v x u') : u = u' := by
   cases u <;> cases u' <;> first
     | rfl
@@ -147,9 +143,6 @@ theorem renders_unique (h : Renders T v x u) (h' : Renders T v x u') : u = u' :=
     | exact absurd h' h.1.not_var
     | exact absurd h h'.1.not_var
 
-/-- A team meets a type's requirement exactly when it renders a use of the type's profile. For
-the specific and the epistemic type this is the collapse of the disjunction of two adjacent
-uses into a single atom. -/
 theorem IndefiniteType.requires_iff :
     t.Requires T v x ↔ ∃ u ∈ t.profile, Renders T v x u := by
   have h : Dep T ∅ x → Dep T {v} x := Dep.mono (Finset.empty_subset _)
@@ -189,8 +182,6 @@ theorem monotone_use (v x : V) : Monotone (use (E := E) · v x) := fun T T' hT �
   dsimp only [use]
   split_ifs <;> first | decide | simp_all
 
-/-- A team meets a type's requirement exactly when the type's profile lists the use it
-renders. -/
 theorem IndefiniteType.requires_iff_use_mem : t.Requires T v x ↔ use T v x ∈ t.profile := by
   simp [requires_iff, renders_iff]
 
@@ -206,8 +197,6 @@ Over a domain with two individuals `a` and `b` each use has a team: one assignme
 specific known use, the two constant assignments for the specific unknown use, and those two
 with a variant of the first at the individual variable for the non-specific use. -/
 
-/-- A specific known team lies below a specific unknown team, which lies below a non-specific
-one, given two individuals and distinct world and individual variables. -/
 theorem exists_subset_renders [Nontrivial E] (hvx : v ≠ x) :
     ∃ T₁ T₂ T₃ : Finset (V → E), T₁ ⊆ T₂ ∧ T₂ ⊆ T₃ ∧ Renders T₁ v x .specificKnown ∧
       Renders T₂ v x .specificUnknown ∧ Renders T₃ v x .nonSpecific := by
@@ -221,7 +210,6 @@ theorem exists_subset_renders [Nontrivial E] (hvx : v ≠ x) :
       by simpa using hab⟩⟩
   simp [hab, hab.symm]
 
-/-- The teams can be chosen to grow with the use they render. -/
 theorem exists_monotone_renders [Nontrivial E] (hvx : v ≠ x) :
     ∃ g : SpecificityFunction → Finset (V → E), Monotone g ∧ ∀ u, Renders (g u) v x u := by
   obtain ⟨T₁, T₂, T₃, h₁₂, h₂₃, h₁, h₂, h₃⟩ := exists_subset_renders (E := E) hvx
@@ -247,7 +235,6 @@ theorem IndefiniteType.ordConnected_profile_iff :
     (t.profile : Set SpecificityFunction).OrdConnected ↔ t ≠ .skPlusNS := by
   cases t <;> decide
 
-/-- A type whose uses form an interval has a convex requirement. -/
 theorem IndefiniteType.ordConnected_requires
     (h : (t.profile : Set SpecificityFunction).OrdConnected) (v x : V) :
     {T : Finset (V → E) | t.Requires T v x}.OrdConnected := by
@@ -271,8 +258,6 @@ theorem IndefiniteType.ordConnected_requires_iff [Nontrivial E] (hvx : v ≠ x) 
   rw [setOf_requires]
   exact ⟨fun h ↦ by simpa only [hs] using h.preimage_mono hg, (·.preimage_mono (monotone_use v x))⟩
 
-/-- A requirement is closed under subteams exactly when its profile is closed under earlier
-uses. -/
 theorem IndefiniteType.isLowerSet_requires_iff [Nontrivial E] (hvx : v ≠ x) :
     IsLowerSet {T : Finset (V → E) | t.Requires T v x} ↔
       IsLowerSet (t.profile : Set SpecificityFunction) := by
@@ -281,8 +266,6 @@ theorem IndefiniteType.isLowerSet_requires_iff [Nontrivial E] (hvx : v ≠ x) :
   rw [setOf_requires]
   exact ⟨fun h ↦ by simpa only [hs] using h.preimage hg, (·.preimage (monotone_use v x))⟩
 
-/-- A requirement is closed under superteams exactly when its profile is closed under later
-uses. -/
 theorem IndefiniteType.isUpperSet_requires_iff [Nontrivial E] (hvx : v ≠ x) :
     IsUpperSet {T : Finset (V → E) | t.Requires T v x} ↔
       IsUpperSet (t.profile : Set SpecificityFunction) := by
@@ -291,8 +274,6 @@ theorem IndefiniteType.isUpperSet_requires_iff [Nontrivial E] (hvx : v ≠ x) :
   rw [setOf_requires]
   exact ⟨fun h ↦ by simpa only [hs] using h.preimage hg, (·.preimage (monotone_use v x))⟩
 
-/-- One requirement entails another exactly when every use of the first type is a use of the
-second, so semantic weakening is inclusion of profiles. -/
 theorem IndefiniteType.setOf_requires_subset_iff [Nontrivial E] (hvx : v ≠ x)
     {t t' : IndefiniteType} :
     {T : Finset (V → E) | t.Requires T v x} ⊆ {T | t'.Requires T v x} ↔ t.profile ⊆ t'.profile := by
@@ -301,8 +282,6 @@ theorem IndefiniteType.setOf_requires_subset_iff [Nontrivial E] (hvx : v ≠ x)
   rw [setOf_requires, setOf_requires, ← Finset.coe_subset]
   exact ⟨fun h ↦ by simpa only [hs] using Set.preimage_mono (f := g) h, Set.preimage_mono⟩
 
-/-- The unattested requirement is not convex, since a specific known team lies below a specific
-unknown team, which lies below a non-specific one. -/
 theorem IndefiniteType.not_ordConnected_skPlusNS [Nontrivial E] (hvx : v ≠ x) :
     ¬ {T : Finset (V → E) | skPlusNS.Requires T v x}.OrdConnected :=
   mt (ordConnected_requires_iff hvx).1 (by decide)
@@ -338,8 +317,6 @@ def Instantiates (s : Series) (t : IndefiniteType) : Prop :=
 instance (s : Series) (t : IndefiniteType) : Decidable (Instantiates s t) :=
   inferInstanceAs (Decidable (specificityFunctions s.functions = t.profile))
 
-/-- A type's uses form a connected region of the map exactly when they form an interval, the
-three specificity functions lying on the map as a path. -/
 theorem connected_profile_iff {t : IndefiniteType} :
     (implicationalMap.induce ↑(t.profile.image SpecificityFunction.toFunction)).Connected ↔
       (t.profile : Set SpecificityFunction).OrdConnected := by
@@ -384,9 +361,6 @@ theorem sample_instantiates_ordConnected {V E : Type*} (v x : V) :
     ⟨t, ht.symm, IndefiniteType.ordConnected_requires
       (ht ▸ ordConnected_specificityFunctions (Haspelmath1997.sample_connected p hp s hs)) v x⟩
 
-/-- The paper's examples instantiate the six attested types on the map, Italian *qualche-* the
-unmarked one, Georgian *-γac* the specific, Russian *-nibud'* the non-specific, German *irgend-*
-the epistemic, Russian *koe-* the specific known and Kannada *-oo* the specific unknown. -/
 theorem examples :
     (∃ s ∈ Haspelmath1997.italian,
         s.toSeries = Italian.Indefinites.qualcheSeries ∧ Instantiates s .unmarked) ∧

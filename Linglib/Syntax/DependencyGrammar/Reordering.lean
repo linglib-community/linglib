@@ -191,7 +191,6 @@ section Projective
 variable {g v} (hT : g.IsTree) (hP : g.IsProjective)
 include hT hP
 
-/-- A dependent after the head has its whole phrase after the head. -/
 theorem Graph.lt_of_adj_of_mem_yield {d x : Fin n} (hd : g.Adj v d) (hvd : v < d)
     (hx : x ∈ g.yield d) : v < x := by
   by_contra h
@@ -204,7 +203,6 @@ theorem Graph.lt_of_adj_of_mem_yield' {d x : Fin n} (hd : g.Adj v d) (hdv : d < 
   exact hT.not_dominates_of_adj hd ((hP d).uIcc_subset ReflTransGen.refl hx
     (Set.mem_uIcc.2 (Or.inl ⟨hdv.le, not_lt.1 h⟩)))
 
-/-- The phrases of two dependents lie in the order of their heads. -/
 theorem Graph.lt_of_mem_yield_of_mem_yield {c d y x : Fin n} (hc : g.Adj v c) (hd : g.Adj v d)
     (hcd : c < d) (hy : y ∈ g.yield c) (hx : x ∈ g.yield d) : y < x := by
   have hdis := hT.disjoint_yield_of_adj hc hd hcd.ne
@@ -215,7 +213,6 @@ theorem Graph.lt_of_mem_yield_of_mem_yield {c d y x : Fin n} (hc : g.Adj v c) (h
   · exact Set.disjoint_left.1 hdis
       ((hP c).uIcc_subset ReflTransGen.refl hy (Set.mem_uIcc.2 (Or.inl ⟨hcx.le, not_lt.1 h⟩))) hx
 
-/-- Two positions of the yield of `v` in distinct blocks are ordered as their blocks. -/
 theorem Graph.lt_iff_blockHead_lt {x y : Fin n} (hx : x ∈ g.yield v) (hy : y ∈ g.yield v)
     (hne : g.blockHead v y ≠ g.blockHead v x) :
     y < x ↔ (g.blockHead v y : Fin n) < g.blockHead v x := by
@@ -324,7 +321,6 @@ theorem Graph.reorderRank_of_notMem {x : Fin n} (hx : x ∉ g.yield v) :
     card_union_of_disjoint]
   exact disjoint_filter.2 fun y _ h₁ h₂ ↦ h₁.1 h₂.1
 
-/-- Outside the yield, the rank does not depend on `σ`. -/
 theorem Graph.reorderRank_of_notMem_eq {x : Fin n} (hx : x ∉ g.yield v)
     (τ : Equiv.Perm (g.siblings v)) : g.reorderRank v σ x = g.reorderRank v τ x :=
   Fin.ext (by rw [Graph.reorderRank_of_notMem σ hx, Graph.reorderRank_of_notMem τ hx])
@@ -338,8 +334,6 @@ section One
 variable {g v} (hT : g.IsTree) (hP : g.IsProjective)
 include hP
 
-/-- A position outside the yield of `v` is before `v` exactly when it is before any position of
-the yield. -/
 theorem Graph.lt_iff_lt_of_notMem_yield {x y : Fin n} (hx : x ∈ g.yield v) (hy : y ∉ g.yield v) :
     y < x ↔ y < v := by
   constructor <;> intro h <;> by_contra h'
@@ -463,8 +457,6 @@ omit hT in
 private theorem nr_injective : Function.Injective fun c ↦ (nr c) :=
   (g.siblingRank_strictMono v).injective.comp σ.injective
 
-/-- Before a dependent after the head come the words before the head, the head, and the blocks
-between. -/
 private theorem before_eq_of_lt {c : g.siblings v} (hvc : (nr v') < (nr c)) :
     before g v σ c = before g v σ v' +
       boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
@@ -494,8 +486,6 @@ private theorem before_eq_of_lt {c : g.siblings v} (hvc : (nr v') < (nr c)) :
     have h1 := lt_or_gt_of_ne hne
     split_ifs <;> first | rfl | omega
 
-/-- When `c` precedes the head, before the head come the words before `c`, the block of `c`, and
-the blocks between. -/
 private theorem before_eq_of_gt {c : g.siblings v} (hcv : (nr c) < (nr v')) :
     before g v σ v' + 1 = before g v σ c + size g v c +
       boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c := by
@@ -551,7 +541,6 @@ private theorem before_self_eq (hs : SameSide (σ := σ)) : before g v σ v' = b
 
 include hP
 
-/-- Under a same-side reordering the head keeps its position. -/
 private theorem Graph.reorderRank_head (hs : SameSide (σ := σ)) : g.reorderRank v σ v = v := by
   have h1 := Graph.reorderRank_of_mem σ (ReflTransGen.refl (r := g.Adj) (a := v))
   have h2 := Graph.reorderRank_of_mem 1 (ReflTransGen.refl (r := g.Adj) (a := v))
@@ -561,8 +550,6 @@ private theorem Graph.reorderRank_head (hs : SameSide (σ := σ)) : g.reorderRan
   rw [before_self_eq (σ := σ) hs] at h1
   exact Fin.ext (h1.trans h2.symm)
 
-/-- An arc below the head keeps its length, since both ends are fixed or both lie in one
-block. -/
 private theorem Graph.dist_reorderRank_of_ne (hs : SameSide (σ := σ)) {u w : Fin n} (hu : u ≠ v)
     (huw : g.Adj u w) :
     Nat.dist (g.reorderRank v σ u) (g.reorderRank v σ w) = Nat.dist u w := by
@@ -589,8 +576,6 @@ private theorem Graph.dist_reorderRank_of_ne (hs : SameSide (σ := σ)) {u w : F
       rw [Graph.reorderRank_head (σ := σ) hT hP hs]
     · rw [Graph.reorderRank_of_notMem_yield (σ := σ) hT hP hwY]
 
-/-- On the head's arcs the head-to-head distance exceeds the boundary distance by the words of the
-dependent's phrase on the head's side, which the reordering keeps. -/
 private theorem Graph.dist_reorderRank_add_boundaryDist (hs : SameSide (σ := σ))
     (c : g.siblings v) :
     Nat.dist (g.reorderRank v σ v) (g.reorderRank v σ c) +
@@ -692,8 +677,6 @@ theorem Graph.totalLength_reorderDependents_add
         ∑ c, boundaryDist (σ.trans (g.siblingArrangement v)) (fun c ↦ g.phraseLength c) v' c :=
   Graph.totalLength_reorderDependents_add_of_sameSide σ hT hP (sameSide_of_support_subset_after hσ)
 
-/-- Behaghel's law for a projective tree. When the phrases after a head grow outward, moving them
-about (each as a block) cannot shorten total dependency length. -/
 theorem Graph.totalLength_le_reorderDependents
     (hσ : σ.support ⊆ (g.siblingArrangement v).after v')
     (h : MonovaryOn (fun c : g.siblings v ↦ g.phraseLength c) (g.siblingArrangement v)

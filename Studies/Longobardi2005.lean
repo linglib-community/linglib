@@ -120,26 +120,19 @@ def HeadClass.kindReference : HeadClass → Access
   | .pronoun | .properName => .never
   | .specialCommon | .commonNoun => .always
 
-/-- Access to the raising strategy decreases along the scale of properness. -/
 theorem objectReference_antitone : Antitone HeadClass.objectReference := fun a b h ↦ by
   cases a <;> cases b <;> first | decide | exact absurd h (by decide)
 
-/-- Predicative use increases along the scale. -/
 theorem predicative_monotone : Monotone HeadClass.predicative := fun a b h ↦ by
   cases a <;> cases b <;> first | decide | exact absurd h (by decide)
 
-/-- Kind reference increases along the scale. -/
 theorem kindReference_monotone : Monotone HeadClass.kindReference := fun a b h ↦ by
   cases a <;> cases b <;> first | decide | exact absurd h (by decide)
 
-/-- The major divide runs between the proper names and the special common nouns: kind reference
-is available from the special common nouns down the scale and to nothing above them. -/
 theorem kindReference_ne_never_iff (c : HeadClass) :
     c.kindReference ≠ .never ↔ .specialCommon ≤ c := by
   cases c <;> decide
 
-/-- The special common nouns alone have both object and kind reference, the former only under
-marked conditions. -/
 theorem objectReference_and_kindReference_iff (c : HeadClass) :
     c.objectReference ≠ .never ∧ c.kindReference ≠ .never ↔ c = .specialCommon := by
   cases c <;> decide
@@ -202,7 +195,6 @@ theorem isVariable_of_empty (h : n.Denotes) (hd : n.d = .empty) : n.IsVariable :
 theorem isVariable_of_not_isConstant (h : n.Denotes) (hc : ¬ n.IsConstant) : n.IsVariable :=
   h.resolve_left hc
 
-/-- A D occupied by a lexical determiner or quantifier is translated into a variable. -/
 theorem isVariable_of_operator (h : n.Denotes) (hd : n.d = .operator) : n.IsVariable :=
   h.resolve_left fun hc ↦ DContent.noConfusion (hd.symm.trans hc)
 

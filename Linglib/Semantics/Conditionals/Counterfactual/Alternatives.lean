@@ -69,7 +69,6 @@ theorem mem_distributiveImp_pair {A B : Finset W} :
     w ∈ distributiveImp ord {A, B} C ↔ w ∈ closestImp ord ↑A C ∧ w ∈ closestImp ord ↑B C := by
   simp
 
-/-- Each proposition's counterfactual entails the counterfactual over the union for a pair. -/
 theorem mem_disjunctiveImp_pair_of_mem_distributiveImp {A B : Finset W}
     (h : w ∈ distributiveImp ord {A, B} C) : w ∈ disjunctiveImp ord {A, B} C := by
   rw [disjunctiveImp_pair]

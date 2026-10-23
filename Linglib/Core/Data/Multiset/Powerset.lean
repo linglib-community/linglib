@@ -79,15 +79,12 @@ theorem bind_revzip_sublists'_assoc {β : Type*} (l : List α)
     rw [ih fun r r' s => K r r' (a :: s), ih fun r r' s => K r (a :: r') s,
       ih fun r r' s => K (a :: r) r' s, add_assoc]
 
-/-- Three nested binds, the outermost two dependent, commute with an independent third. -/
 theorem bind_bind_bind_comm {β γ δ : Type*} (m : Multiset α) (n : α → Multiset β)
     (o : Multiset γ) (f : α → β → γ → Multiset δ) :
     (m.bind fun a => (n a).bind fun b => o.bind fun c => f a b c) =
       o.bind fun c => m.bind fun a => (n a).bind fun b => f a b c :=
   (Multiset.bind_congr fun a _ => Multiset.bind_bind (n a) o).trans (Multiset.bind_bind m o)
 
-/-- Handing a bucket to a chooser `S` and then splitting the rest gives the same triples as
-splitting first and handing the second part's first bucket to `S`. -/
 theorem bind_revzip_sublists'_bind_assoc {β γ : Type*} (l : List α) (S : List α → Multiset β)
     (F : β → List α → List α → Multiset γ) :
     (l.sublists'.revzip : Multiset (List α × List α)).bind (fun p => (S p.1).bind fun a =>
@@ -104,7 +101,6 @@ theorem bind_revzip_sublists'_bind_assoc {β γ : Type*} (l : List α) (S : List
     rw [ih S fun a r s => F a r (x :: s), ih S fun a r s => F a (x :: r) s,
       ih (fun r => S (x :: r)) F, add_right_comm]
 
-/-- `bind_revzip_sublists'_bind_assoc` with the chooser's bucket taken from the first part. -/
 theorem bind_revzip_sublists'_bind_assoc' {β γ : Type*} (l : List α)
     (S : List α → Multiset β)
     (F : β → List α → List α → Multiset γ) :
@@ -122,8 +118,6 @@ theorem bind_revzip_sublists'_bind_assoc' {β γ : Type*} (l : List α)
 
 variable [DecidableEq α]
 
-/-- The product in `count_powerset_of_le` and `count_powerset` may be taken over any fixed
-    `Finset` containing the supports of both multisets. -/
 private theorem count_powerset_subset {S : Finset α} {t s : Multiset α} (ht : t.toFinset ⊆ S)
     (hs : s.toFinset ⊆ S) : t.powerset.count s = ∏ x ∈ S, (t.count x).choose (s.count x) := by
   induction t using Multiset.induction_on generalizing s hs with

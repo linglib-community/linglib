@@ -140,8 +140,6 @@ theorem ex6 : (Examples.ex6a.judgment = .acceptable ↔ Derived Examples.ex6a su
     (Examples.ex6b_that.judgment = .acceptable ↔ Derived Examples.ex6b_that objectHid) := by
   decide +kernel
 
-/-- Bundling C and T is what saves subject extraction: with split C, null or overt, it is too
-short. -/
 theorem subject_needs_bundling (k : Comp) :
     ObeysAntiLocality (subjectHid.build k) ↔ k = .bundled := by
   cases k <;> decide +kernel

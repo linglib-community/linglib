@@ -56,7 +56,6 @@ def functions : Case → Finset _root_.Case
 theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
   cases c <;> decide
 
-/-- The dative function outlives the dative case. -/
 theorem biUnion_functions_eq_insert_dat :
     Finset.univ.biUnion functions = insert .dat (Finset.univ.image label) := by
   decide

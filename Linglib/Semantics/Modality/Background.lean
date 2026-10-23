@@ -61,15 +61,12 @@ def accessibleWorlds (f : Background W) (w : W) : Set W := {v | sInf (f w) v}
 @[simp] theorem mem_accessibleWorlds : v ∈ f.accessibleWorlds w ↔ ∀ p ∈ f w, p v := by
   simp [accessibleWorlds]
 
-/-- More premises leave fewer accessible worlds. -/
 theorem accessibleWorlds_anti (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
   fun v hv ↦ sInf_le_sInf h v hv
 
 @[simp] theorem accessibleWorlds_bot (w : W) : (⊥ : Background W).accessibleWorlds w = .univ :=
   Set.eq_univ_of_forall fun _ ↦ by simp [accessibleWorlds]
 
-/-- The worlds accessible under two backgrounds together are those accessible under the first
-that verify every premise of the second. -/
 theorem accessibleWorlds_sup (f g : Background W) (w : W) :
     (f ⊔ g).accessibleWorlds w = {v ∈ f.accessibleWorlds w | ∀ p ∈ g w, p v} := by
   ext v
@@ -132,22 +129,16 @@ theorem mem_bestWorlds {f g : Background W} {w u : W} :
       u ∈ f.accessibleWorlds w ∧ ∀ v ∈ f.accessibleWorlds w, (v ≤[g w] u) → (u ≤[g w] v) :=
   Iff.rfl
 
-/-- With the empty ordering source the best worlds are the accessible ones. -/
 @[simp] theorem bestWorlds_bot (f : Background W) (w : W) :
     bestWorlds f ⊥ w = f.accessibleWorlds w := by
   simp [bestWorlds]
 
-/-- When some accessible world verifies every premise of the ordering source, the best worlds are
-the worlds accessible under the two backgrounds together. -/
 theorem bestWorlds_eq_accessibleWorlds_sup {f g : Background W} {w : W}
     (h : ((f ⊔ g).accessibleWorlds w).Nonempty) :
     bestWorlds f g w = (f ⊔ g).accessibleWorlds w := by
   rw [Background.accessibleWorlds_sup] at h ⊢
   exact Preorder.minimals_ofCriteria_eq h
 
-/-- A best world verifying a member of the ordering source that excludes `p` stays best when `p` is
-added, because no `p`-world is at least as good, since it fails the member, and the other worlds are
-ordered as before. -/
 theorem mem_bestWorlds_insert {f g : Background W} {p q : W → Prop} {w u : W}
     (hq : q ∈ g w) (hpq : ∀ v, q v → ¬ p v) (hu : u ∈ bestWorlds f g w) (huq : q u) :
     u ∈ bestWorlds f (fun v ↦ insert p (g v)) w := by
@@ -158,8 +149,6 @@ theorem mem_bestWorlds_insert {f g : Background W} {p q : W → Prop} {w u : W}
   · exact fun hrv ↦ absurd hrv (hpq v hvq)
   · exact hu.2 hv (fun r' hr' ↦ hvu r' (Set.mem_insert_of_mem p hr')) r hr
 
-/-- A best world of a modal base is a best world of any narrower modal base it is accessible
-under. -/
 theorem mem_bestWorlds_of_subset {f f' g : Background W} {w u : W}
     (h : f'.accessibleWorlds w ⊆ f.accessibleWorlds w) (hu : u ∈ bestWorlds f g w)
     (hu' : u ∈ f'.accessibleWorlds w) : u ∈ bestWorlds f' g w :=

@@ -72,7 +72,6 @@ theorem flatMap_applyHom_map_terminal (h : T → List T') (w : List T) :
   | nil => rfl
   | cons a w ih => simp [ih]
 
-/-- A word of the image grammar comes from a word of the source. -/
 theorem eq_map_terminal_of_flatMap_applyHom {h : T → List T'} :
     ∀ {l : List (Symbol T N)} {w' : List T'}, l.flatMap (applyHom h) = w'.map terminal →
       ∃ w : List T, l = w.map terminal ∧ w.flatMap h = w'
@@ -85,8 +84,6 @@ theorem eq_map_terminal_of_flatMap_applyHom {h : T → List T'} :
     obtain ⟨w, rfl, rfl⟩ := eq_map_terminal_of_flatMap_applyHom h₂.symm
     exact ⟨a :: w, rfl, by simp⟩
 
-/-- A nonterminal in the image of a sentential form comes from the same nonterminal in the
-source. -/
 theorem exists_eq_of_flatMap_applyHom {h : T → List T'} :
     ∀ {l : List (Symbol T N)} {p q : List (Symbol T' N)} {X : N},
       l.flatMap (applyHom h) = p ++ [nonterminal X] ++ q →
@@ -170,8 +167,6 @@ theorem Derives.applyHom {u v : List (Symbol T G.NT)} (huv : G.Derives u v) :
   | refl => exact .refl _
   | tail _ step ih => exact ih.trans_produces (step.applyHom h)
 
-/-- A step of the image grammar from the image of a sentential form is the image of a step of
-the source grammar. -/
 theorem Produces.of_applyHom {l : List (Symbol T G.NT)} {t' : List (Symbol T' G.NT)}
     (hp : (G.applyHom h).Produces (l.flatMap (Symbol.applyHom h)) t') :
     ∃ t, G.Produces l t ∧ t.flatMap (Symbol.applyHom h) = t' := by

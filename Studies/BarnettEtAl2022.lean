@@ -92,14 +92,12 @@ theorem cons_mem_longer {u : Fin 9} {x : Fin n → Fin 9} :
     Fin.cons u x ∈ longer n ↔ 5 * (n + 1) ≤ length u + ∑ i, length (x i) := by
   simp [longer, Fin.sum_univ_succ]
 
-/-- Which position holds the shown stick does not matter to the verdict. -/
 theorem insertNth_mem_longer (i : Fin (n + 1)) (u : Fin 9) (x : Fin n → Fin 9) :
     Fin.insertNth i u x ∈ longer n ↔ Fin.cons u x ∈ longer n := by
   simp only [longer, Set.mem_ofPred_eq]
   rw [Fin.sum_univ_succAbove _ i, Fin.sum_univ_succ]
   simp
 
-/-- Every total between `n` and `9 * n` inches is the total of some `n` sticks. -/
 theorem exists_sum_length_eq {t : ℕ} (h₁ : n ≤ t) (h₂ : t ≤ 9 * n) :
     ∃ x : Fin n → Fin 9, ∑ i, length (x i) = t := by
   induction n generalizing t with
@@ -113,7 +111,6 @@ theorem exists_sum_length_eq {t : ℕ} (h₁ : n ≤ t) (h₂ : t ≤ 9 * n) :
     simp only
     omega
 
-/-- Sums over `n + 1` sticks are sums over the first stick and the other `n`. -/
 theorem sum_cons {M : Type*} [AddCommMonoid M] (f : (Fin (n + 1) → Fin 9) → M) :
     ∑ w, f w = ∑ u, ∑ x : Fin n → Fin 9, f (Fin.cons u x) := by
   rw [← (Fin.consEquiv fun _ ↦ Fin 9).sum_comp, Fintype.sum_prod_type]
@@ -146,7 +143,6 @@ theorem literal_eq_card (u : Fin 9) :
   push_cast
   rfl
 
-/-- The prior belief in *longer* is the average of the literal beliefs over the stick shown. -/
 theorem prior_eq_average :
     (uniformOn Set.univ).real (longer n) = (∑ u, literal n u) / 9 := by
   have h : #{w : Fin (n + 1) → Fin 9 | w ∈ longer n} =
@@ -159,8 +155,6 @@ theorem prior_eq_average :
   push_cast
   rw [← sum_div, div_div, pow_succ]
 
-/-- A sum over all tuples weighted by the number of sticks of length `u` is a sum over the other
-sticks with `u` in front, for a weight that does not depend on where `u` is. -/
 private theorem sum_card_filter_mul {u : Fin 9} {G : (Fin (n + 1) → Fin 9) → ℝ}
     (hG : ∀ i x, G (Fin.insertNth i u x) = G (Fin.cons u x)) :
     ∑ w, (#{i | w i = u} : ℝ) * G w = (n + 1) * ∑ x : Fin n → Fin 9, G (Fin.cons u x) := by
@@ -218,7 +212,6 @@ theorem literal_pos (u : Fin 9) : 0 < literal n u := by
     card_univ, Fintype.card_fin, smul_eq_mul]
   omega
 
-/-- Literal support for *longer* grows strictly with the stick shown. -/
 theorem literal_strictMono : StrictMono (literal n) := fun u v huv ↦ by
   have hn := NeZero.ne n
   have hv : 1 ≤ (v : ℕ) := lt_of_le_of_lt (Nat.zero_le _) huv
@@ -244,8 +237,6 @@ variable (n) in
 noncomputable def reveal (β : ℝ) : Kernel (Fin (n + 1) → Fin 9) (Fin (n + 1)) :=
   Kernel.ofWeights fun w i ↦ ENNReal.ofReal (literal n (w i) ^ β)
 
-/-- The revealing speaker is the RSA speaker whose utility is `β` times the log of the literal
-support for *longer*. -/
 theorem reveal_eq_softmax (β : ℝ) :
     reveal n β = Kernel.softmax fun w i ↦ ((β * Real.log (literal n (w i)) : ℝ) : EReal) := by
   unfold reveal Kernel.softmax
@@ -302,8 +293,6 @@ theorem share_pos (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) : 0 < share n β 
     (add_pos_of_pos_of_nonneg (rpow_literal_pos β u)
       (sum_nonneg fun _ _ ↦ (rpow_literal_pos β _).le))
 
-/-- The pragmatic listener's belief in *longer* is the share-weighted proportion of the other
-sticks on which the shown stick makes *longer* true, as in the authors' code. -/
 theorem pragmaticListener_real_longer (β : ℝ) (u : Fin 9) :
     (pragmaticListener n β u).real (longer n) =
       (∑ x with Fin.cons u x ∈ longer n, share n β u x) / ∑ x, share n β u x := by
@@ -340,7 +329,6 @@ private theorem add_sum_rpow_pos (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) :
     0 < literal n u ^ β + ∑ i, literal n (x i) ^ β :=
   add_pos_of_pos_of_nonneg (rpow_literal_pos β u) (sum_nonneg fun _ _ ↦ (rpow_literal_pos β _).le)
 
-/-- The share of the shown stick falls as the other sticks grow. -/
 theorem share_antitone {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9) : Antitone (share n β u) :=
   fun x _ hxy ↦ div_le_div_of_nonneg_left (rpow_literal_pos β u).le (add_sum_rpow_pos β u x)
     (add_le_add le_rfl (sum_rpow_mono hβ hxy))
@@ -351,8 +339,6 @@ private theorem mul_le_mul_of_add_eq {p q a b m M : ℝ} (hpq : p ≤ q) (ha : m
   nlinarith [mul_nonneg (sub_nonneg.2 ha) (sub_nonneg.2 hpq),
     mul_nonneg (sub_nonneg.2 ha) (sub_nonneg.2 hb)]
 
-/-- For `u ≤ v` the shares of showing `u` and of showing `v` satisfy the condition of Holley's
-inequality, so a longer shown stick moves the share up the lattice of the other sticks. -/
 theorem share_mul_share_le {β : ℝ} (hβ : 0 ≤ β) {u v : Fin 9} (huv : u ≤ v)
     (x y : Fin n → Fin 9) :
     share n β u x * share n β v y ≤ share n β u (x ⊓ y) * share n β v (x ⊔ y) := by
@@ -378,7 +364,6 @@ theorem pragmaticListener_real_le_literal {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9
   push_cast at h ⊢
   linarith
 
-/-- Without a persuasive goal the pragmatic listener is the literal one. -/
 theorem pragmaticListener_zero (u : Fin 9) :
     (pragmaticListener n 0 u).real (longer n) = literal n u := by
   have h (x : Fin n → Fin 9) : share n 0 u x = 1 / (n + 1) := by
@@ -439,8 +424,6 @@ private theorem tendsto_div_rpow (w : Fin (n + 1) → Fin 9) (j : Fin (n + 1)) :
       ((div_lt_one (literal_pos _)).2
         (literal_strictMono (lt_of_le_of_ne (le_sup (mem_univ j)) h)))
 
-/-- As the bias grows the speaker reveals one of the longest sticks, each with equal
-probability. -/
 theorem tendsto_reveal_real_singleton_atTop (w : Fin (n + 1) → Fin 9) (i : Fin (n + 1)) :
     Tendsto (fun β ↦ (reveal n β w).real {i}) atTop
       (𝓝 ((if w i = univ.sup w then 1 else 0) / #{j | w j = univ.sup w})) := by
@@ -499,8 +482,6 @@ theorem tendsto_pragmaticListener_real_atTop (u : Fin 9) (E : Set (Fin (n + 1) �
 
 end NeZero
 
-/-- A listener who expects the longest stick to be shown conditions the uniform prior on the
-shown stick being the longest. -/
 theorem listener_dirac_sup (u : Fin 9) :
     RSA.listener (uniformOn Set.univ)
         (fun w : Fin (n + 1) → Fin 9 ↦ Measure.dirac (univ.sup w)) u =
@@ -552,8 +533,6 @@ private theorem card_tails {m : ℕ} (hm : m ≤ 9) (k : ℕ) :
       generalize m * n = p at *
       omega
 
-/-- The tuples whose longest stick is `u` are those of sticks at most `u` that are not all
-shorter than `u`. -/
 private theorem card_sup_eq (u : Fin 9) (E : (Fin (n + 1) → Fin 9) → Prop) [DecidablePred E] :
     #{w | univ.sup w = u ∧ E w} =
       #{w | (∀ i, (w i : ℕ) < u + 1) ∧ E w} - #{w | (∀ i, (w i : ℕ) < u) ∧ E w} := by
@@ -583,15 +562,12 @@ private theorem tails_nine_four : ∀ u : Fin 9, (tails 9 4).getD (25 - length u
       ![1680, 2100, 2556, 3036, 3525, 4005, 4461, 4881, 5256] u := by
   decide +kernel
 
-/-- The other four sticks on which each stick shown makes *longer* true. -/
 theorem card_cons_mem_longer (u : Fin 9) : #{x : Fin 4 → Fin 9 | Fin.cons u x ∈ longer 4} =
     ![1680, 2100, 2556, 3036, 3525, 4005, 4461, 4881, 5256] u := by
   rw [← tails_nine_four, ← card_tails le_rfl]
   exact congrArg card (filter_congr fun x _ ↦ by
     simp [cons_mem_longer, add_comm, Fin.is_lt])
 
-/-- The literal listener's belief in *longer* for each stick shown, the `β = 0` column of the
-simulation. -/
 theorem literal_eq (u : Fin 9) :
     literal 4 u = ![1680, 2100, 2556, 3036, 3525, 4005, 4461, 4881, 5256] u / 6561 := by
   rw [literal_eq_card, card_cons_mem_longer]
@@ -602,7 +578,6 @@ theorem prior_eq : (uniformOn Set.univ).real (longer 4) = 3500 / 6561 := by
   simp only [literal_eq, Fin.sum_univ_succ]
   norm_num
 
-/-- The sticks of length five and up are literal evidence for *longer*. -/
 theorem prior_lt_literal_iff {u : Fin 9} :
     (uniformOn Set.univ).real (longer 4) < literal 4 u ↔ 5 ≤ length u := by
   rw [prior_eq, literal_eq]
@@ -624,8 +599,6 @@ private theorem tails_five : ∀ u : Fin 9,
       ![1, 31, 211, 781, 2101, 4651, 9031, 15961, 26281] u) := by
   decide +kernel
 
-/-- The belief in *longer* given that the longest of the five sticks has length `u`, the limit of
-the pragmatic listener's belief as the bias grows. -/
 theorem limit_eq (u : Fin 9) :
     (uniformOn {w : Fin 5 → Fin 9 | univ.sup w = u}).real (longer 4) =
       ![0, 0, 0, 0, 1 / 2101, 251 / 4651, 2471 / 9031, 8821 / 15961, 19956 / 26281] u := by

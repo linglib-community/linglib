@@ -70,20 +70,16 @@ instance [Nonempty C] : IsMarkovKernel (listener γ d q) :=
   Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary C, EReal.coe_ne_bot _⟩)
     fun _ _ ↦ EReal.coe_ne_top _
 
-/-- The listener's probability of a concept is the softmax of the negative scaled distances. -/
 theorem real_listener (w : W) (c : C) :
     (listener γ d q w).real {c} = Real.softmax (fun c ↦ -γ * d c (q w)) c :=
   Kernel.softmax_coe_real_singleton _ w c
 
-/-- Under a form, a concept closer to the prototype is less surprising to the listener, so it
-incurs less information loss. -/
 theorem surprisal_listener_le [Nonempty C] (hγ : 0 ≤ γ) {w : W} {c c' : C}
     (h : d c (q w) ≤ d c' (q w)) :
     surprisal (listener γ d q w) c ≤ surprisal (listener γ d q w) c' := by
   rw [surprisal, surprisal, real_listener, real_listener, neg_le_neg_iff]
   exact Real.log_le_log (Real.softmax_pos _ _) (Real.softmax_le_softmax_iff.2 (by nlinarith))
 
-/-- With no sensitivity the listener is uniform. -/
 theorem real_listener_zero (w : W) (c : C) :
     (listener 0 d q w).real {c} = 1 / Fintype.card C := by
   simp [real_listener, Real.softmax_apply]
@@ -106,14 +102,12 @@ length of the form. -/
 noncomputable def itemObjective (l : W → ℝ) (m : Kernel W C) (β : ℝ) (c : C) (w : W) : ℝ :=
   surprisal (m w) c + β * l w
 
-/-- The combined objective is the need-weighted sum of the item-level objectives. -/
 theorem weightedCost_costs (p : C → ℝ) (l : W → ℝ) (m : Kernel W C) (f : C → W) (β : ℝ) :
     weightedCost (costs p l m f) β = ∑ c, p c * itemObjective l m β c (f c) := by
   simp only [weightedCost, costs, itemObjective, mul_add, sum_add_distrib, mul_sum]
   congr 1
   exact sum_congr rfl fun _ _ ↦ by ring
 
-/-- An encoding that is optimal for every concept is optimal overall. -/
 theorem weightedCost_le_of_forall {p : C → ℝ} (hp : ∀ c, 0 ≤ p c) (l : W → ℝ) (m : Kernel W C)
     {f g : C → W} (β : ℝ) (h : ∀ c, itemObjective l m β c (f c) ≤ itemObjective l m β c (g c)) :
     weightedCost (costs p l m f) β ≤ weightedCost (costs p l m g) β := by
@@ -131,7 +125,6 @@ variable {A C Q : Type*}
 /-- A compound concatenates two existing forms. -/
 def compound (w₁ w₂ : List A) : List A := w₁ ++ w₂
 
-/-- A compound is longer than a constituent it could have reused. -/
 theorem length_compound (w₁ : List A) {w₂ : List A} (h : w₂ ≠ []) :
     w₁.length < (compound w₁ w₂).length := by
   simp [compound, List.length_pos_iff_ne_nil.2 h]

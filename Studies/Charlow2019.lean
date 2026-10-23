@@ -84,8 +84,6 @@ theorem mem_indefinites_iff (n : ℕ) :
   · rintro ⟨⟨x, hP⟩, y, hQ, rfl⟩
     exact ⟨_, ⟨_, ⟨x, rfl⟩, rfl, by simpa using hP⟩, _, ⟨y, rfl⟩, by simp, by simpa using hQ⟩
 
-/-- Overwriting costs no truth conditions: the text is true iff each indefinite has a
-witness. -/
 theorem mem_dom_indefinites_iff (n : ℕ) :
     g ∈ (dexists n (test {k | P (k n)}) ○ dexists n (test {k | Q (k n)})).dom ↔
       (∃ x, P x) ∧ ∃ y, Q y :=
@@ -172,11 +170,9 @@ the one to the other (24). -/
 def reachable (g h : Assignment E) : Prop :=
   ∃ φ : Formula L ℕ, g ~[φ.eval E] h
 
-/-- Reachability is reflexive, by the tautology. -/
 theorem reachable_refl (g : Assignment E) : reachable L g g :=
   ⟨.top, rfl⟩
 
-/-- Reachability is transitive, by conjunction. -/
 theorem reachable_trans (hgh : reachable L g h) (hhk : reachable L h k) : reachable L g k := by
   obtain ⟨φ, hφ⟩ := hgh
   obtain ⟨ψ, hψ⟩ := hhk
@@ -226,7 +222,6 @@ variable {S : Type*} {φ : CCP S} {s : Set S}
 def distNeg (φ : CCP S) : CCP S :=
   fun s ↦ {i ∈ s | φ {i} = ∅}
 
-/-- The pointwise negation is the image of a test, of the points with no output. -/
 theorem distNeg_eq_image (φ : CCP S) : distNeg φ = (test (Update.neg (CCP.lower φ))).image := by
   funext s
   rw [image_test]
@@ -237,16 +232,12 @@ theorem distNeg_eq_image (φ : CCP S) : distNeg φ = (test (Update.neg (CCP.lowe
 theorem isDistributive_distNeg (φ : CCP S) : CCP.IsDistributive (distNeg φ) :=
   distNeg_eq_image φ ▸ image_isDistributive _
 
-/-- The negation that removes survivors gets a negated possibility right: it rejects a state
-compatible with the prejacent and accepts one that is not. -/
 theorem neg_might_of_nonempty (h : (φ s).Nonempty) : CCP.neg (CCP.might φ) s = ∅ := by
   simp [CCP.neg, CCP.might, CCP.guard_pos (C := fun s ↦ (φ s).Nonempty) h]
 
 theorem neg_might_of_eq_empty (h : φ s = ∅) : CCP.neg (CCP.might φ) s = s := by
   simp [CCP.neg, CCP.might, CCP.guard_neg (C := fun s ↦ (φ s).Nonempty) (s := s) (by simp [h])]
 
-/-- Once an update modifies points, so that none of the input survives in the output, the
-negation that removes survivors removes nothing. -/
 theorem neg_eq_self_of_disjoint (h : Disjoint s (φ s)) : CCP.neg φ s = s :=
   sdiff_eq_left.mpr h
 
@@ -277,13 +268,10 @@ descendant (34) having the same world and an anaphoric context above. -/
 def descNeg [Preorder A] (φ : CCP (W × A)) : CCP (W × A) :=
   fun s ↦ {i ∈ s | ¬∃ i' ∈ φ s, i.1 = i'.1 ∧ i.2 ≤ i'.2}
 
-/-- Descent removes at least the surviving points. -/
 theorem descNeg_subset_neg [Preorder A] (φ : CCP (W × A)) (s : Set (W × A)) :
     descNeg φ s ⊆ CCP.neg φ s :=
   fun i ⟨hi, hno⟩ ↦ ⟨hi, fun hφ ↦ hno ⟨i, hφ, rfl, le_rfl⟩⟩
 
-/-- Descent removes the points that subsist in the output without being in it: a point with an
-output, under an update that keeps the world and grows the anaphoric context. -/
 theorem descNeg_image_subset [Preorder A] {D : Update (W × A)}
     (hD : ∀ ⦃i j⦄, i ~[D] j → i.1 = j.1 ∧ i.2 ≤ j.2) (s : Set (W × A)) :
     descNeg D.image s ⊆ s \ D.dom :=
@@ -306,11 +294,9 @@ theorem subset_of_mem_part {t : Set (W × A)} (ht : t ∈ Part s) : t ⊆ s := b
   obtain ⟨-, g, rfl⟩ := ht
   exact Set.sep_subset _ _
 
-/-- Every point of a state lies in the cell of its anaphoric context. -/
 theorem mem_part_of_mem {i : W × A} (hi : i ∈ s) : {j ∈ s | j.2 = i.2} ∈ Part s :=
   ⟨⟨i, hi, rfl⟩, i.2, rfl⟩
 
-/-- A cell is its own only cell. -/
 theorem part_of_mem_part {t : Set (W × A)} (ht : t ∈ Part s) : Part t = {t} := by
   obtain ⟨⟨i, hi⟩, g, rfl⟩ := ht
   ext u
@@ -334,7 +320,6 @@ theorem isAnaphoricallyDistributive_slice (ψ : CCP (W × A)) :
   · rintro ⟨t, ht, hp⟩
     exact ⟨t, ht, t, by rw [part_of_mem_part ht]; rfl, hp⟩
 
-/-- A distributive transformer is anaphorically distributive. -/
 theorem _root_.DynamicSemantics.CCP.IsDistributive.isAnaphoricallyDistributive
     {φ : CCP (W × A)} (hφ : CCP.IsDistributive φ) : IsAnaphoricallyDistributive φ := by
   funext s

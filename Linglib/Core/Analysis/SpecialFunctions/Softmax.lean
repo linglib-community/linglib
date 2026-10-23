@@ -177,7 +177,6 @@ theorem softmax_update_strictMono (s : ι → ℝ) (i : ι) :
   rw [div_lt_div_iff₀ (by positivity) (by positivity)]
   nlinarith [mul_lt_mul_of_pos_right (exp_lt_exp.2 hxy) hR]
 
-/-- Raising one score while holding the others fixed raises its probability. -/
 theorem softmax_lt_softmax_of_single_lt {s s' : ι → ℝ} {i : ι} (hlt : s i < s' i)
     (heq : ∀ j ≠ i, s' j = s j) : softmax s i < softmax s' i := by
   rw [show s' = Function.update s i (s' i) from Function.eq_update_iff.2 ⟨rfl, heq⟩]
@@ -222,7 +221,6 @@ theorem softmax_eq_sigmoid_of_univ_eq_pair [DecidableEq ι] {i j : ι} (hij : i 
 theorem softmax_fin_two (s : Fin 2 → ℝ) : softmax s 0 = sigmoid (s 0 - s 1) :=
   softmax_eq_sigmoid_of_univ_eq_pair zero_ne_one (by decide) s
 
-/-- With two alternatives, the log-odds are the score difference. -/
 theorem logit_softmax_fin_two (s : Fin 2 → ℝ) : logit (softmax s 0) = s 0 - s 1 := by
   rw [softmax_fin_two, logit_sigmoid]
 

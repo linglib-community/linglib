@@ -130,9 +130,6 @@ end KPSSystem
 
 /-! ### Padding with null atoms -/
 
-/-- Padding reflects representability. Pulling `r` back along the preimage of `Fin.castSucc`
-    adds a null atom `Fin.last n`; a measure for the padded relation gives that atom measure
-    zero, and its restriction along `Fin.castSucc` represents `r`. -/
 theorem representable_of_pad {n : ℕ} {r : Set (Fin n) → Set (Fin n) → Prop} [Std.Refl r]
     (h : Representable (Set.preimage Fin.castSucc ⁻¹'o r)) : Representable r := by
   obtain ⟨μ, hμ, hm⟩ := h
@@ -256,8 +253,6 @@ end Repr
 
 /-! ### Qualitative and finite additivity -/
 
-/-- Adding a set `C` disjoint from `A` to both sides of a difference leaves `A \ B`
-    unchanged, `(A ∪ C) \ (B ∪ C) = A \ B`. -/
 private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
     (hAC : ∀ x, x ∈ A → x ∉ C) : (A ∪ C) \ (B ∪ C) = A \ B := by
   ext x; simp only [Set.mem_sdiff, Set.mem_union]

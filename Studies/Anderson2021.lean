@@ -59,8 +59,6 @@ theorem updateCG_zero (cg post : Measure W) : updateCG cg post 0 = cg := by
 theorem updateCG_one (cg post : Measure W) : updateCG cg post 1 = post := by
   rw [updateCG, tsub_self, zero_smul, one_smul, zero_add]
 
-/-- At learning rate one the update is Stalnakerian intersection, so a world the posterior
-rules out leaves the context set. -/
 theorem notMem_contextSet_updateCG_one (cg post : Measure W) {w : W} (h : post {w} = 0) :
     w ∉ HasCommonGround.contextSet (updateCG cg post 1) := by
   rw [updateCG_one, HasCommonGround.contextSet_measure]
@@ -195,13 +193,11 @@ section Agents
 
 variable {cg : Measure World}
 
-/-- A world the utterance rules out gets no listener mass. -/
 theorem L1_apply_singleton_eq_zero {u : Utterance} {w : World} (hw : w ∉ sem u) :
     L1 cg u {w} = 0 :=
   listener_apply_singleton_eq_zero (speaker_dirac_apply_singleton_eq_zero one_pos
     (listener_truthful_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw)))
 
-/-- The speaker's real share of an utterance, as a ratio of literal-listener values. -/
 theorem S1_real_singleton (w : World) (u : Utterance) :
     (S1 cg w).real {u} = (L0 cg u {w}).toReal / ∑ u', (L0 cg u' {w}).toReal := by
   rw [S1, speaker_dirac_zero_real_singleton zero_le_one]
@@ -223,7 +219,6 @@ theorem S1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
     (hcg : cg {w} ≠ 0) : S1 cg w {u} ≠ 0 :=
   speaker_dirac_apply_singleton_ne_zero zero_le_one (L0_apply_singleton_ne_zero hw hcg)
 
-/-- A world the utterance allows, with positive prior mass, keeps positive listener mass. -/
 theorem L1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
     (hcg : cg {w} ≠ 0) : L1 cg u {w} ≠ 0 :=
   listener_apply_singleton_ne_zero hcg (S1_apply_singleton_ne_zero hw hcg)
@@ -255,13 +250,9 @@ theorem s1_turn1_informativity :
     speaker_uniformOn_dirac_real_singleton sem one_pos, ite_eq_left (by decide),
     ite_eq_left (by decide), show (sem .studyHumanity).card = (sem .likeOutdoors).card by decide]
 
-/-- At the first turn every world has the same profile, two true specific utterances of
-extension size two and the null utterance. -/
 theorem profile_eq (w w' : World) : profile sem Finset.univ w = profile sem Finset.univ w' := by
   cases w <;> cases w' <;> decide
 
-/-- For the first listener, *they study a humanity* rules out Ina and keeps Nancy, and *they
-like being outdoors* leaves Katie and Nancy tied. -/
 theorem l1_turn1_inferences :
     L1 cg₁ .studyHumanity {.ina} = 0 ∧ L1 cg₁ .studyHumanity {.nancy} ≠ 0 ∧
     L1 cg₁ .likeOutdoors {.katie} = L1 cg₁ .likeOutdoors {.nancy} :=
@@ -272,7 +263,6 @@ theorem l1_turn1_inferences :
         (u := .likeOutdoors) (by decide) (by decide))
       (uniformOn_univ_singleton_eq _ _)⟩
 
-/-- The null utterance conveys nothing, and the listener stays uniform. -/
 theorem l1_null_uniform (w w' : World) : L1 cg₁ .null {w} = L1 cg₁ .null {w'} :=
   listener_apply_singleton_congr _ _
     (speaker_uniformOn_dirac_apply_singleton_of_profile_eq sem one_pos (profile_eq _ _) (u := .null)
@@ -376,9 +366,6 @@ theorem s1_prefers_new :
       Finset.sum_pair (by decide), ← hik, ← hns]
     exact ENNReal.add_lt_add_left (measure_ne_top μ _) hlt
 
-/-- *They like being outdoors* now favours Nancy over Katie. Nancy's world carries more of the
-common ground, and Nancy's speaker also produces the utterance more readily, since her other
-true utterance discriminates less than Katie's. -/
 theorem l1_katie_lt_nancy :
     (L1 μ .likeOutdoors).real {.katie} < (L1 μ .likeOutdoors).real {.nancy} := by
   rw [listener_real_singleton_lt_iff, S1_real_singleton, S1_real_singleton,
@@ -423,8 +410,6 @@ theorem l1_katie_lt_nancy :
 
 end Shaped
 
-/-- *They like being outdoors* tied Katie and Nancy at the first turn, and at the updated common
-ground it favours Nancy, the key multi-turn prediction. -/
 theorem turn2_breaks_symmetry :
     L1 cg₁ .likeOutdoors {.katie} = L1 cg₁ .likeOutdoors {.nancy} ∧
     (L1 cg₂ .likeOutdoors).real {.katie} < (L1 cg₂ .likeOutdoors).real {.nancy} :=

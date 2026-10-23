@@ -153,8 +153,6 @@ theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n :=
   funext fun x ↦ propext (maxIn_singleton.trans
     ⟨fun h ↦ (h.1 : n = x).symm, fun h ↦ h ▸ isGreatest_singleton⟩)
 
-/-- Lowering forgets the upper bound, since `BE` sends the exactly-reading quantifier where it sends
-the lower-bound one. -/
 theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (individual n) := by
   rw [BE_maxIn_singleton, BE_individual]
 
@@ -162,7 +160,6 @@ theorem BE_maxIn_singleton_eq_BE_individual (n : ℕ) : BE (MaxIn {n}) = BE (ind
 theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (MaxIn {n})) = some n := by
   rw [BE_maxIn_singleton_eq_BE_individual]; exact Partee1987.iota_BE_lift n
 
-/-- The exactly-reading quantifier determines the numeral, since lowering recovers it. -/
 theorem maxIn_singleton_injective : Function.Injective fun n : ℕ ↦ MaxIn {n} :=
   fun a b (h : MaxIn {a} = MaxIn {b}) ↦
     ident_injective (by rw [← BE_maxIn_singleton, ← BE_maxIn_singleton, h])
@@ -210,7 +207,6 @@ def zeroWithMAX : PolarityItem.Licenser :=
       fun p B ↦ individual 0 (countDegrees p.A (plural B))⟩,
     fun p B ↦ MAX (individual 0) (countDegrees p.A (plural B))⟩
 
-/-- It is the *zero* of [bylinina-nouwen-2018], since `MAX` is exhaustification at its site. -/
 theorem zeroWithMAX_eq_zero : zeroWithMAX = BylininaNouwen2018.zero := by
   simp only [zeroWithMAX, BylininaNouwen2018.zero]
   congr

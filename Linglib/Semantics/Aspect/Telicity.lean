@@ -97,7 +97,6 @@ theorem isInitialPart_self (h : NoPartPrecedes precedes) (e : β) :
 theorem isFinalPart_self (h : NoPartPrecedes precedes) (e : β) : IsFinalPart precedes e e :=
   isInitialPart_self h.flip e
 
-/-- A predicate telic for a precedence is telic for its converse. -/
 theorem IsTelic.flip {P : β → Prop} (h : IsTelic precedes P) : IsTelic (flip precedes) P :=
   fun e e' he he' hle ↦ ⟨(h e e' he he' hle).2, (h e e' he he' hle).1⟩
 
@@ -107,7 +106,6 @@ theorem isTelic_of_qua (h : NoPartPrecedes precedes) {P : β → Prop} (hP : QUA
   obtain rfl : e' = e := by_contra fun hne ↦ hP he' he hne hle
   exact ⟨isInitialPart_self h _, isFinalPart_self h _⟩
 
-/-- Among contemporaneous events every predicate is telic. -/
 theorem isTelic_of_not_precedes (h : ∀ a b, ¬ precedes a b) (P : β → Prop) :
     IsTelic precedes P :=
   fun _ _ _ _ hle ↦ ⟨⟨hle, fun ⟨_, _, hp⟩ ↦ h _ _ hp⟩, ⟨hle, fun ⟨_, _, hp⟩ ↦ h _ _ hp⟩⟩
@@ -182,7 +180,6 @@ def Incrementality.Holds : Incrementality → (α → β → Prop) → Prop
   | .incremental, θ => INC θ
   | .cumulative, θ => SUM θ
 
-/-- The incremental class is included in the cumulative one. -/
 theorem Incrementality.Holds.cumulative (h : Incrementality.incremental.Holds θ) :
     Incrementality.cumulative.Holds θ :=
   INC.sum h
@@ -212,12 +209,10 @@ theorem vp_qua (hU : UP θ) (hm : MSO θ) (hObj : QUA OBJ) : QUA (VP θ OBJ) :=
     hObj (hU hθz hθ' ▸ hz) hy hlt'.ne hlt'.le
 
 omit [SemilatticeSup α] [SemilatticeSup β] in
-/-- The verb phrase of a particular object is the object's event predicate. -/
 theorem vp_eq (θ : α → β → Prop) (y : α) : VP θ (· = y) = θ y :=
   funext fun _ ↦ propext ⟨fun ⟨_, h, hθ⟩ ↦ h ▸ hθ, fun h ↦ ⟨y, rfl, h⟩⟩
 
 omit [SemilatticeSup α] [SemilatticeSup β] in
-/-- The verb phrase along a thematic function is the object predicate pulled back along it. -/
 theorem vp_graph (f : β → α) (OBJ : α → Prop) : VP (· = f ·) OBJ = OBJ ∘ f :=
   funext fun _ ↦ propext ⟨by rintro ⟨_, h, rfl⟩; exact h, fun h ↦ ⟨_, h, rfl⟩⟩
 

@@ -89,15 +89,11 @@ scoped macro "decide_worlds" : tactic =>
       circumstances, desires, Function.const_apply, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq, false_implies, implies_true, and_true]; decide))
 
-/-- By the paper's clause (c), the world of going to the pub and becoming mayor and the world of
-staying home are incomparable, so the ordering is not connected. -/
 theorem mayor_pub_incomparable :
     ¬ ((true, true) ≤[desires w₀] (false, false)) ∧
       ¬ ((false, false) ≤[desires w₀] (true, true)) := by
   decide_worlds
 
-/-- By clause (f), the accessible world where the speaker goes to the pub and still fails to
-become mayor is strictly worse than either ideal-realizing world. -/
 theorem pub_no_mayor_worst :
     ∀ v ∈ ({(true, true), (false, false)} : Set World),
       (v ≤[desires w₀] (false, true)) ∧
@@ -105,22 +101,17 @@ theorem pub_no_mayor_worst :
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
   decide_worlds
 
-/-- No accessible world is at least as good as every accessible world, so on the dominance
-reading of "best" the example would have no best world at all. -/
 theorem no_dominant_world :
     ¬ ∃ w ∈ circumstances.accessibleWorlds w₀,
       ∀ v ∈ circumstances.accessibleWorlds w₀, (w ≤[desires w₀] v) := by
   decide_worlds
 
-/-- The best worlds are the two ideal-realizing ones. -/
 theorem mem_bestWorlds_iff (w : World) :
     w ∈ bestWorlds circumstances desires w₀ ↔ w = (true, true) ∨ w = (false, false) := by
   revert w
   simp only [mem_bestWorlds]
   decide_worlds
 
-/-- The example satisfies the Limit Assumption, so the paper's limit-free operators are
-quantification over `bestWorlds`. -/
 theorem limitAssumption : LimitAssumption circumstances desires w₀ :=
   .of_finite _ _ _
 
@@ -130,25 +121,19 @@ scoped macro "decide_verdict" : tactic =>
       necessity, ModalLogic.Box, mem_bestAccessible, mem_bestWorlds_iff, forall_eq_or_imp,
       forall_eq]; decide))
 
-/-- Conclusion one fails, as the speaker need not go to the pub. -/
 theorem not_must_pub : ¬ humanNecessity circumstances desires (·.2 = true) w₀ := by
   decide_verdict
 
-/-- Conclusion two fails, as the speaker need not avoid the pub. -/
 theorem not_must_avoid : ¬ humanNecessity circumstances desires (·.2 = false) w₀ := by
   decide_verdict
 
-/-- Conclusion three fails, since becoming mayor without the pub is not even accessible and
-wishes cannot override facts. -/
 theorem not_can_mayor_without_pub :
     ¬ humanPossibility circumstances desires (fun w ↦ w.1 = true ∧ w.2 = false) w₀ := by
   decide_verdict
 
-/-- Conclusion four holds, as the speaker could go to the pub. -/
 theorem can_pub : humanPossibility circumstances desires (·.2 = true) w₀ := by
   decide_verdict
 
-/-- Conclusion five holds, as the speaker could avoid the pub. -/
 theorem can_avoid : humanPossibility circumstances desires (·.2 = false) w₀ := by
   decide_verdict
 
@@ -160,21 +145,16 @@ differ in the settings of the two backgrounds. -/
 
 open Conditional.Restrictor
 
-/-- A totally realistic modal base and an empty ordering source give material implication. -/
 theorem material_implication {W : Type*} {f : Background W} (hf : f.IsTotallyRealistic)
     (α β : W → Prop) (w : W) :
     conditionalNecessity f ⊥ α β w ↔ (α w → β w) :=
   material_from_restrictor f α β w (hf w)
 
-/-- An empty modal base and an empty ordering source give strict implication, the conditional
-holding iff the antecedent logically implies the consequent. -/
 theorem strict_implication {W : Type*} (α β : W → Prop) (w : W) :
     conditionalNecessity ⊥ ⊥ α β w ↔ ∀ v, α v → β v := by
   rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, Background.accessibleWorlds_bot]
   simp
 
-/-- Under an analysis of conditionals as modalized material implications, a necessity that
-the antecedent fail makes every conditional with that antecedent vacuously true. -/
 theorem traditional_vacuous {W : Type*} (f : Background W) (α β : W → Prop) (w : W)
     (h : simpleNecessity f (fun v ↦ ¬ α v) w) : simpleNecessity f (fun v ↦ α v → β v) w :=
   fun v hv hα ↦ absurd hα (h v hv)
@@ -223,15 +203,12 @@ scoped macro "decide_situations" : tactic =>
       Background.restrict, Pi.bot_apply, Set.bot_eq_empty, Set.mem_empty_iff_false,
       or_false]; decide))
 
-/-- With an empty base, the situation closest to the good is the one without injustice. -/
 theorem mem_bestWorlds_good_iff (s : Situation) :
     s ∈ bestWorlds ⊥ morallyGood none ↔ s = none := by
   revert s
   simp only [mem_bestWorlds]
   decide_situations
 
-/-- Among the situations with injustice, the one closest to the good is the one where it is
-amended for. -/
 theorem mem_bestWorlds_injustice_iff (s : Situation) :
     s ∈ bestWorlds (Background.restrict ⊥ injustice) morallyGood none ↔
       s = some .amended := by
@@ -239,8 +216,6 @@ theorem mem_bestWorlds_injustice_iff (s : Situation) :
   simp only [mem_bestWorlds]
   decide_situations
 
-/-- The restricted base satisfies the Limit Assumption, so the verdicts below are those of the
-paper's human necessity as well. -/
 theorem limitAssumption_injustice :
     LimitAssumption (Background.restrict ⊥ injustice) morallyGood none :=
   .of_finite _ _ _

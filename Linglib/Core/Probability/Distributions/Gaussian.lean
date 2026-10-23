@@ -59,7 +59,6 @@ variable {μ : ℝ} {v : ℝ≥0}
 instance [NeZero v] : NullSingletonClass (gaussianReal μ v) :=
   nullSingletonClass_gaussianReal (NeZero.ne v)
 
-/-- A nondegenerate Gaussian charges every nonempty open set. -/
 lemma isOpenPosMeasure_gaussianReal (hv : v ≠ 0) : (gaussianReal μ v).IsOpenPosMeasure :=
   (gaussianReal_absolutelyContinuous' μ hv).isOpenPosMeasure
 
@@ -99,7 +98,6 @@ theorem continuous_normalCDF : Continuous normalCDF := continuous_cdf _
 @[simp]
 theorem range_normalCDF : range normalCDF = Ioo 0 1 := range_cdf _
 
-/-- The reflection formula `Φ (-x) = 1 - Φ x`. -/
 theorem normalCDF_neg (x : ℝ) : normalCDF (-x) = 1 - normalCDF x :=
   cdf_neg _ (measure_singleton x)
 

@@ -68,8 +68,6 @@ def Tier.Realizes {Pos Ref : Type*} (val : Pos → Ref) : Tier → SetRel Pos Po
   | .predicative, d => IsSaturating val d
   | .logophoric, d => ∃ bind pred, d = bind ○ pred ∧ IsSaturating val pred
 
-/-- A partial reading of logophoric control sits on its binding leg, since the predication of
-*pro* is exhaustive. -/
 theorem isPartial_bind_of_logophoric {Pos Ref : Type*} [Preorder Ref] {val : Pos → Ref}
     {bind pred : SetRel Pos Pos} (hp : IsSaturating val pred) (h : IsPartial val (bind ○ pred)) :
     IsPartial val bind :=
@@ -150,16 +148,11 @@ def Table80Row.Available : Table80Row → Tier → Prop
   | .splitControl, t => ∃ (Pos : Type) (val : Pos → ℕ) (d : SetRel Pos Pos),
       t.Realizes val d ∧ IsSplit d
 
-/-- A logophoric dependency with two controllers binding one *pro*, `0` and `1` binding `2`,
-which is predicated of PRO, `3`; the controllers denote singletons and PRO their pair. -/
 private theorem realizes_logophoric_witness :
     Tier.logophoric.Realizes ![1, 1, 2, 2]
       ({(0, 2), (1, 2)} ○ ({(2, 3)} : SetRel (Fin 4) (Fin 4))) := by
   refine ⟨_, _, rfl, ⟨⟨fun a b c ↦ ?_, fun a b c ↦ ?_⟩, fun ⟨a, b⟩ h ↦ ?_⟩⟩ <;> simp_all
 
-/-- The saturation rows are available exactly under logophoric control. Predication is exhaustive
-and bi-unique, so it admits no partial reading and no second controller; the binding leg of
-logophoric control admits both. -/
 theorem available_iff_logophoric {r : Table80Row}
     (hr : r = .controlShift ∨ r = .partialControl ∨ r = .splitControl) (t : Tier) :
     r.Available t ↔ t = .logophoric := by
@@ -258,18 +251,14 @@ def partialControlVerbs : List Verb :=
   [want.toVerb, hope.toVerb, promise.toVerb, persuade.toVerb, regret.toVerb, know.toVerb,
     believe.toVerb, think.toVerb, wonder.toVerb]
 
-/-- The exhaustive-control verbs derive a class on the predicative tier. -/
 theorem exhaustiveControlVerbs_predicative :
     ∀ v ∈ exhaustiveControlVerbs, (derivedLandauClass v).map (·.tier) = some .predicative := by
   decide
 
-/-- The partial-control verbs derive a class on the logophoric tier. -/
 theorem partialControlVerbs_logophoric :
     ∀ v ∈ partialControlVerbs, (derivedLandauClass v).map (·.tier) = some .logophoric := by
   decide
 
-/-- *try* carries none of the deciding fields: trying entails no success and reports no
-attitude. -/
 theorem try_unclassifiable : derivedLandauClass try_.toVerb = none := rfl
 
 end Verbs

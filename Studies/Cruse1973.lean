@@ -68,8 +68,6 @@ def Feature.energySource : Feature → Option EnergySource
   | .effective => some .imparted
   | .volitive | .initiative => none
 
-/-- The sources the features attribute are the self-energetic ones: an instrument, whose user
-supplies its energy, is no doer. -/
 theorem isSelfEnergetic_iff_exists_energySource_eq (s : EnergySource) :
     s.IsSelfEnergetic ↔ ∃ f : Feature, f.energySource = some s := by
   cases s <;> decide
@@ -134,9 +132,6 @@ inductive VerbClass where
 
 /-! ### Gruber's criteria -/
 
-/-- Gruber's criteria of agentivity, as the paper reanalyzes them, pick out strictly nested
-classes of nouns: *carefully* detects the volitive and the agentive together, the purpose
-phrase the volitive, and the *do* form any feature. -/
 theorem carefully_lt_purpose_lt_doForm :
     Frame.carefully.Normal < Frame.purpose.Normal ∧ Frame.purpose.Normal < Frame.doForm.Normal :=
   ⟨lt_of_le_not_ge (fun _ h ↦ h.1) fun h ↦ absurd (h {.volitive} (by decide)) (by decide),
@@ -186,45 +181,34 @@ def Row.ofDatum (e : Datum) : Option Row := do
          judgment := e.judgment
          denied := decide (e.feature? "entailment" = some "denied") }
 
-/-- Every example names its frame. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The paper reports a sentence normal in its frame, printing it unmarked and not denying its
-entailment, exactly when its noun's profile predicts it, neutralization aside. -/
 theorem acceptable_iff_normal : ∀ d ∈ data, d.neutralized = false →
     ∀ p ∈ d.profile, (d.judgment = .acceptable ∧ d.denied = false ↔ d.frame.Normal p) := by
   decide
 
-/-- Where *do* and *happen* are neutralized, the *do* form is normal though the noun bears no
-feature: why does the door do that? -/
 theorem exists_neutralized_doForm : ∃ d ∈ data, d.neutralized = true ∧ d.profile = some ∅ ∧
     d.frame = .doForm ∧ d.judgment = .acceptable := by
   decide
 
 /-! ### Against the received opinions -/
 
-/-- An inanimate noun is a doer: the wind, the computer, the bullet. -/
 theorem exists_inanimate_doer :
     ∃ d ∈ data, d.inanimate = true ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by decide
 
-/-- A process verb has a *do*-interpretation: dying in order to save us. -/
 theorem exists_process_doer :
     ∃ d ∈ data, d.verbClass = some .process ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
   decide
 
-/-- A stative verb has a *do*-interpretation: standing, having one's passport ready. -/
 theorem exists_stative_doer :
     ∃ d ∈ data, d.verbClass = some .stative ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
   decide
 
 /-! ### The heterogeneity of doing -/
 
-/-- The volitive and the effective each make a doer alone on the paper's own attribution:
-drifting so as to avoid enemy territory, the flying stone breaking the window. The agentive
-alone, as in sneezing, rests on the study's attribution. -/
 theorem exists_doer_of_feature : ∀ f ∈ [Feature.volitive, .effective], ∃ d ∈ data,
     d.inferred = false ∧ d.profile = some {f} ∧ d.frame = .doForm ∧ d.judgment = .acceptable := by
   decide

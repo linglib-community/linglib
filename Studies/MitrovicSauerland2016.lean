@@ -81,7 +81,6 @@ def shift (a : α) : α → Prop := (· = a)
 is a universal quantifier, (15). -/
 theorem mu_eq_every : (mu : GQ α) = GQ.every := rfl
 
-/-- μ of a shifted individual is its Montague lift. -/
 theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=
   funext fun _ ↦ propext ⟨fun h ↦ h a rfl, fun h _ hx ↦ hx ▸ h⟩
 
@@ -98,8 +97,6 @@ theorem conjunction_apply {j : Coordinator} (hj : j.role = .conjunctive) (a b : 
     (P : α → Prop) : j.denote {mu (shift a), mu (shift b)} P ↔ P a ∧ P b := by
   rw [conjunction_eq hj]; rfl
 
-/-- J′ cannot apply to the shifted individuals without μ, since the intersection of two
-singletons is empty unless the conjuncts are identical. -/
 theorem shift_inf_shift_eq_bot_iff {a b : α} : shift a ⊓ shift b = ⊥ ↔ a ≠ b := by
   simp [funext_iff, shift]
 
@@ -115,8 +112,6 @@ variable {α : Type*} [SemilatticeSup α] {x y : α} {P : α → Prop}
 `x` is a part. -/
 def muPrime (x : α) (P : α → Prop) : Prop := ∃ y, y ⊔ x = y ∧ P y
 
-/-- μ′ of an individual holds of a predicate when the individual is below some element of its
-extension. -/
 theorem muPrime_iff_mem_lowerClosure : muPrime x P ↔ x ∈ lowerClosure {y | P y} := by
   simp [muPrime, and_comm]
 
@@ -127,8 +122,6 @@ collective reading of (19). -/
 theorem muPrime_of_collective {a b : α} (h : P (a ⊔ b)) : muPrime a P ∧ muPrime b P :=
   ⟨muPrime_of_le le_sup_left h, muPrime_of_le le_sup_right h⟩
 
-/-- The conjunction of two μ′ phrases holds of a predicate true of each conjunct, the distributive
-reading. -/
 theorem muPrime_of_distributive {a b : α} (ha : P a) (hb : P b) : muPrime a P ∧ muPrime b P :=
   ⟨muPrime_of_le le_rfl ha, muPrime_of_le le_rfl hb⟩
 

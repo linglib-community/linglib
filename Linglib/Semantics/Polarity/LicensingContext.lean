@@ -94,17 +94,14 @@ theorem exhaustified_iff : exhaustified Q C A P ↔ Q A P ∧ ∀ Q' ∈ C, Q' A
   ⟨fun ⟨h, h'⟩ ↦ ⟨h, fun Q' hQ' hP ↦ h' _ ⟨Q', hQ', rfl⟩ hP⟩,
     fun ⟨h, h'⟩ ↦ ⟨h, by rintro _ ⟨Q', hQ', rfl⟩ hP; exact h' Q' hQ' hP⟩⟩
 
-/-- A scale-mate holding but not entailed is excluded. -/
 theorem not_exhaustified_of_not_le (hQ' : Q' ∈ C) (hP : Q' A P) (h : ¬ Q A ≤ Q' A) :
     ¬ exhaustified Q C A P :=
   fun he ↦ h ((exhaustified_iff.1 he).2 Q' hQ' hP)
 
-/-- At the bottom of its scale a determiner is its own exhaustification. -/
 theorem exhaustified_eq_of_forall_le (h : ∀ Q' ∈ C, ∀ P, Q' A P → Q A ≤ Q' A) :
     exhaustified Q C A = Q A :=
   Exhaustification.exh_eq_self_iff.2 (by rintro _ ⟨Q', hQ', rfl⟩ ⟨P, _, hP⟩; exact h Q' hQ' P hP)
 
-/-- *No* is the bottom of its scale, so exhaustified *no* is *no*. -/
 theorem exhaustified_no : exhaustified (no : GQ α) {everyᶜ} = no := by
   funext A
   refine exhaustified_eq_of_forall_le fun Q' hQ' P hP ↦ ?_

@@ -75,8 +75,6 @@ def informativeBounds (X : Set D) : Set D := {x | IsGLB X x ∨ IsLUB X x}
 one of its own, so a relation to the informative bound is insensitive to negation. -/
 def SharesBounds (X : Set D) : Prop := informativeBounds Xᶜ ⊆ informativeBounds X
 
-/-- On an open scale, the degrees an individual does not reach share their only informative
-bound, the individual's degree, with those it reaches. -/
 theorem sharesBounds_Iic [DenselyOrdered D] [NoMaxOrder D] (a : D) :
     SharesBounds (Set.Iic a) := by
   intro x hx
@@ -85,8 +83,6 @@ theorem sharesBounds_Iic [DenselyOrdered D] [NoMaxOrder D] (a : D) :
   · exact Or.inr (hx.unique isGLB_Ioi ▸ isLUB_Iic)
   · exact (not_bddAbove_Ioi a hx.bddAbove).elim
 
-/-- On a scale with a top, the degrees an individual below the top does not reach acquire the
-top as a second informative bound, which is not a bound of the degrees it reaches. -/
 theorem not_sharesBounds_Iic [OrderTop D] {a : D} (ha : a < ⊤) : ¬ SharesBounds (Set.Iic a) := by
   intro h
   have htop : ⊤ ∈ informativeBounds (Set.Iic a)ᶜ := by
@@ -115,7 +111,6 @@ theorem tallerNeg_iff [DenselyOrdered D] : tallerNeg μ a b ↔ μ b < μ a :=
   ⟨fun ⟨_, _, h', h, hlt⟩ ↦ by rwa [h.unique isGLB_Ioi, h'.unique isLUB_Iic] at hlt,
     fun h ↦ ⟨μ a, μ b, isLUB_Iic, isGLB_Ioi, h⟩⟩
 
-/-- The comparative is fixed-point ambidirectional, since negating the standard changes nothing. -/
 theorem tallerNeg_iff_taller [DenselyOrdered D] : tallerNeg μ a b ↔ taller μ a b :=
   (tallerNeg_iff μ a b).trans (taller_iff μ a b).symm
 
@@ -123,8 +118,6 @@ theorem tallerNeg_iff_taller [DenselyOrdered D] : tallerNeg μ a b ↔ taller μ
 theorem taller_antitone {c : E} (h : μ b ≤ μ a) : taller μ c a → taller μ c b :=
   fun ht ↦ (taller_iff μ c b).mpr (h.trans_lt ((taller_iff μ c a).mp ht))
 
-/-- So is the comparative with a negated standard, since the negation reverses the scale on which
-the entailment is computed but not the truth conditions. -/
 theorem tallerNeg_antitone [DenselyOrdered D] {c : E} (h : μ b ≤ μ a) :
     tallerNeg μ c a → tallerNeg μ c b :=
   fun ht ↦ (tallerNeg_iff_taller μ c b).mpr
@@ -166,44 +159,32 @@ theorem isLeast_timeTrace_completive_preEvent :
   rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_preEvent s)]
   exact isLeast_singleton
 
-/-- Uncoerced, *before* a negated event asks for a time before the beginning of time. -/
 theorem not_before_preEvent : ¬ before A (preEvent s) := by
   rw [before_iff_of_isLeast (isLeast_timeTrace_preEvent s)]
   rintro ⟨_, _, h⟩
   exact not_lt_bot h
 
-/-- Coerced to its end, the negated event gives *before* the starting-point reading of the event
-itself, since the two share their informative bound. -/
 theorem before_preEvent_completive_iff :
     before A (completive (preEvent s)) ↔ ∃ t ∈ timeTrace A, t < s :=
   before_completive_iff (isGreatest_timeTrace_preEvent s)
 
-/-- *Before* is ambidirectional on the starting-point reading, since negating an embedded event
-changes nothing, and the endpoint reading of a telic event is lost. -/
 theorem before_ambidirectional (i : NonemptyInterval T) :
     before A (Set.Iic i) ↔ before A (completive (preEvent i.fst)) :=
   (before_iff_of_isLeast (isLeast_timeTrace_stative i)).trans
     (before_preEvent_completive_iff A i.fst).symm
 
-/-- Uncoerced, *after* a negated event is the after-start reading of the event. -/
 theorem after_preEvent_iff : after A (preEvent s) ↔ ∃ t ∈ timeTrace A, s < t :=
   after_iff_of_isGreatest (isGreatest_timeTrace_preEvent s)
 
-/-- Coerced to its onset, *after* a negated event is trivially true of any main clause with a time,
-so nothing is gained and *after* licenses no expletive negation. -/
 theorem after_preEvent_inchoative {t : T} (ht : t ∈ timeTrace A) (h : t ≠ ⊥) :
     after A (inchoative (preEvent s)) :=
   (after_inchoative_iff (isLeast_timeTrace_preEvent s)).mpr ⟨t, ht, bot_lt_iff_ne_bot.mpr h⟩
 
-/-- *Until* treats its embedded clause as *before* does, so it is ambidirectional in the same
-way. -/
 theorem until_preEvent_completive_iff (i : NonemptyInterval T) :
     until_ A (Set.Iic i) ↔ until_ A (completive (preEvent i.fst)) := by
   rw [until_iff_of_isLeast A (isLeast_timeTrace_stative i),
     until_iff_of_isLeast A (isLeast_timeTrace_completive_preEvent i.fst)]
 
-/-- *Since* a punctual event is *since* the negated event coerced to its end, as the two have the
-same single time. -/
 theorem since_preEvent_completive_iff :
     Heinamaki1974.since A (completive (preEvent s)) ↔
       Heinamaki1974.since A {NonemptyInterval.pure s} := by
@@ -223,8 +204,6 @@ def IsAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
 
 variable {T : Type*}
 
-/-- *After* is not ambidirectional under complementation, since with two times *after* the earlier
-of a punctual clause differs from *after* its complement. -/
 theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
     ¬ ∀ (A : Set (NonemptyInterval T)) (B : Set T),
       IsAmbidirectional (fun X ↦ ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, m < t) B := by
@@ -304,15 +283,11 @@ structure Row where
 def Row.ofDatum (e : Datum) : Option Row := do
   pure ⟨← e.parse? "construction" Construction.labels, e.judgment⟩
 
-/-- Every example is read. -/
 theorem isSome_ofDatum : ∀ e ∈ Examples.all, (Row.ofDatum e).isSome := by decide
 
 /-- The paper's examples. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Expletive negation is attested in every scalar relation the paper analyzes, in a
-comparative with a relative adjective, and never in *after* or *while*, which have no row;
-the comparative with a closed-scale adjective rejects it. -/
 theorem en_rows :
     (∀ c : Construction, c.Scalar →
         ∃ d ∈ data, d.construction = c ∧ d.judgment = .acceptable) ∧

@@ -134,7 +134,6 @@ def inf' : PersistenceLevel → PersistenceLevel → PersistenceLevel
   | .exPersBeginning, .exPersEnd | .exPersEnd, .exPersBeginning => .totalNonPersistence
   | .exPersEnd, .quPersBeginning | .quPersBeginning, .exPersEnd => .totalNonPersistence
 
-/-- The features of a join are the union of the features. -/
 theorem features_sup' (l m : PersistenceLevel) : (sup' l m).features = l.features ∪ m.features := by
   revert l m; decide
 

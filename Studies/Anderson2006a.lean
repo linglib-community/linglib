@@ -135,13 +135,10 @@ theorem doyayo_split :
     ∀ m ∈ (InflectionalMarking.ofRow? Examples.doyayo_lexheaded).toList, m.pattern = .split := by
   decide +kernel
 
-/-- Every one of the five patterns is instantiated by some example's marking. -/
 theorem all_patterns_attested (p : InflectionPattern) :
     ∃ r ∈ Examples.all, ∃ m ∈ (InflectionalMarking.ofRow? r).toList, m.pattern = p := by
   cases p <;> decide +kernel
 
-/-- In split/doubled patterns the doubled category is overwhelmingly the subject (chapter 5), and
-every split/doubled example doubles subject agreement and nothing else. -/
 theorem splitDoubled_doubles_subject :
     ∀ r ∈ Examples.all, ∀ m ∈ (InflectionalMarking.ofRow? r).toList,
       m.pattern = .splitDoubled → m.doubled = {.subj} := by

@@ -89,13 +89,11 @@ theorem Monotone.isContiguous [PartialOrder F] {f : ι → F} (hf : Monotone f) 
     IsContiguous f :=
   fun _ _ _ hij hjk he ↦ le_antisymm (hf hij) ((hf hjk).trans_eq he.symm)
 
-/-- Postcomposition with an injective map preserves and reflects contiguity. -/
 theorem isContiguous_comp_iff {G : Type*} {h : F → G} (hh : Function.Injective h) {p : ι → F} :
     IsContiguous (h ∘ p) ↔ IsContiguous p :=
   ⟨fun hp _ _ _ hij hjk he ↦ hh (hp hij hjk (congrArg h he)),
     fun hp _ _ _ hij hjk he ↦ congrArg h (hp hij hjk (hh he))⟩
 
-/-- Precomposition with a monotone map preserves contiguity. -/
 theorem IsContiguous.comp_monotone {κ : Type*} [Preorder κ] {p : ι → F} (hp : IsContiguous p)
     {f : κ → ι} (hf : Monotone f) : IsContiguous (p ∘ f) :=
   fun _ _ _ hij hjk heq ↦ hp (hf hij) (hf hjk) heq

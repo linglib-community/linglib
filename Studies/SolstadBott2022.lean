@@ -110,13 +110,10 @@ instance (p : EntailmentProfile) : Decidable (CarriesSlot p) :=
 instance (p : EntailmentProfile) : Decidable (HoldsEndState p) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- A slot argument is entailed to cause. -/
 theorem causation_mem_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
     .causation ∈ p :=
   EntailmentProfile.causation_mem_of_toRole_eq_some_stimulus h
 
-/-- A slot argument holds the end state only if it is causally affected, so on a grid
-without affected arguments the two mechanisms never pick the same argument. -/
 theorem holdsEndState_iff_of_carriesSlot {p : EntailmentProfile} (h : CarriesSlot p) :
     HoldsEndState p ↔ .causallyAffected ∈ p := by
   simp [HoldsEndState, CarriesSlot] at *; simp [h]
@@ -172,7 +169,6 @@ theorem icons_flip {r r' : RoleList} (h : flip r = some r') (a : Argument) :
     ICons r' a ↔ ICons r a.swap := by
   simp [ICons, profileAt_flip h]
 
-/-- Exchanging subject and object exchanges the biases, whatever the connective. -/
 theorem bias_flip {r r' : RoleList} (h : flip r = some r') (c : Connective) (a : Argument) :
     Bias r' c a ↔ Bias r c a.swap := by
   cases c <;> simp [icaus_flip h, icons_flip h]
@@ -181,18 +177,14 @@ theorem bias_flip {r r' : RoleList} (h : flip r = some r') (c : Connective) (a :
 
 theorem psychState_eq_flip : flip psychCausal = some psychState := rfl
 
-/-- The mirror of Experiment 1: the biases of the experiencer-stimulus class are those of
-the stimulus-experiencer class with the arguments exchanged. -/
 theorem psych_mirror (c : Connective) (a : Argument) :
     Bias psychState c a ↔ Bias psychCausal c a.swap :=
   bias_flip psychState_eq_flip c a
 
-/-- Stimulus-experiencer verbs: I-Caus to the subject, I-Cons to the object. -/
 theorem stimExp_bias (a : Argument) :
     (Bias psychCausal .because a ↔ a = .np1) ∧ (Bias psychCausal .andSo a ↔ a = .np2) := by
   cases a <;> decide
 
-/-- Experiencer-stimulus verbs: I-Caus to the object, I-Cons to the subject. -/
 theorem expStim_bias (a : Argument) :
     (Bias psychState .because a ↔ a = .np2) ∧ (Bias psychState .andSo a ↔ a = .np1) := by
   cases a <;> decide
@@ -221,7 +213,6 @@ argument the continuation is about, and a slotless predicate has no preferred re
 def twoMechanism (r : RoleList) : Option Relation :=
   if ∃ a, ICaus r a then some .explanation else none
 
-/-- The accounts agree on the slot argument. -/
 theorem oneMechanism_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) :
     oneMechanism r a = some .explanation := by
   simp [oneMechanism, icausOne_of_icaus h]
@@ -230,16 +221,11 @@ theorem twoMechanism_of_icaus {r : RoleList} {a : Argument} (h : ICaus r a) :
     twoMechanism r = some .explanation := by
   simp [twoMechanism, (⟨a, h⟩ : ∃ a, ICaus r a)]
 
-/-- The Asymmetry Hypothesis holds that about the end-state argument of a slot predicate, an
-argument not itself entailed to cause, the One-Mechanism Account predicts a consequence and the
-Two-Mechanism Account an explanation. -/
 theorem asymmetry {r : RoleList} {a b : Argument} (hb : ICaus r b) (ha : ¬ ICausOne r a)
     (he : ICons r a) :
     oneMechanism r a = some .result ∧ twoMechanism r = some .explanation :=
   ⟨by simp [oneMechanism, ha, he], twoMechanism_of_icaus hb⟩
 
-/-- For the psych doublets the accounts diverge at the I-Cons argument, the condition
-Experiment 3 forces. -/
 theorem psych_asymmetry :
     oneMechanism psychCausal .np2 = some .result ∧ twoMechanism psychCausal = some .explanation ∧
     oneMechanism psychState .np1 = some .result ∧ twoMechanism psychState = some .explanation := by
@@ -279,23 +265,16 @@ def VerbClass.icausBias (c : VerbClass) : Option Argument :=
 def VerbClass.iconsBias (c : VerbClass) : Option Argument :=
   [Argument.np1, .np2].find? (decide <| ICons c.roles ·)
 
-/-- Stimulus and evocator arguments carry the slot, agents and patients do not: I-Caus is
-subject-biased for stimulus-experiencer verbs, object-biased for experiencer-stimulus and
-agent-evocator verbs, and balanced for agent-patient verbs, as the large norming studies
-the paper reviews found. -/
 theorem icausBias_eq :
     VerbClass.stimExp.icausBias = some .np1 ∧ VerbClass.expStim.icausBias = some .np2 ∧
     VerbClass.agentEvocator.icausBias = some .np2 ∧ VerbClass.agentPat.icausBias = none := by
   decide
 
-/-- I-Cons goes to the object for every class but the experiencer-stimulus verbs, whose
-only state is the subject's. -/
 theorem iconsBias_eq :
     VerbClass.stimExp.iconsBias = some .np2 ∧ VerbClass.expStim.iconsBias = some .np1 ∧
     VerbClass.agentEvocator.iconsBias = some .np2 ∧ VerbClass.agentPat.iconsBias = some .np2 := by
   decide
 
-/-- The evocator plays a dual role, being both the slot argument and the end-state argument. -/
 theorem agentEvocator_dual : ICaus judgment .np2 ∧ ICons judgment .np2 := by decide
 
 /-- Where the accounts part on agent-patient verbs: the agent is a cause on the

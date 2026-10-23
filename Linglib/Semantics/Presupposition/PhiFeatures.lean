@@ -100,7 +100,6 @@ def dom : Option Person → Set E
 @[simp] theorem dom_third : dom c (some .third) = Set.univ := by
   simp [dom]
 
-/-- The inclusive lies inside the first person. -/
 theorem dom_firstInclusive_subset_dom_first :
     dom c (some .firstInclusive) ⊆ dom c (some .first) :=
   fun _ hx ↦ (mem_dom_first c _).2 hx.1
@@ -142,7 +141,6 @@ theorem participants_mem_participantSets_first :
     Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
-/-- The second person denotes the referents in its domain and not in the first person's. -/
 theorem participants_mem_participantSets_second :
     c.participants x ∈ Person.second.participantSets ↔
       x ∈ dom c (some .second) ∧ x ∉ dom c (some .first) := by
@@ -151,8 +149,6 @@ theorem participants_mem_participantSets_second :
     Kaplan.Context.addressee_mem_participants]
   simp; tauto
 
-/-- The third person denotes the referents outside the second person's domain, which contains
-the first person's. -/
 theorem participants_mem_participantSets_third :
     c.participants x ∈ Person.third.participantSets ↔ x ∉ dom c (some .second) := by
   simp only [mem_dom_second, participantSets, Finset.mem_singleton, Finset.ext_iff,
