@@ -7,21 +7,21 @@ public import Linglib.Semantics.Questions.Resolution
 /-!
 # The Table
 
-This file defines the context structure of [farkas-bruce-2010]: the participants' discourse
-commitments, the common ground, and the Table, a stack of the issues under discussion with the
-most recent on top. A declarative raises its proposition as an issue, `Question.ofSet p`, and a
-polar interrogative raises `Question.polar p`; the complete answers of an issue are its
-alternatives, `Question.alt`, the interrogative denotation of [karttunen-1977], and a common
-ground decides an issue when it entails one of them. Each issue on the Table projects the common
+Farkas and Bruce's context structure records the participants' discourse commitments, the common
+ground, and the Table, a stack of the issues under discussion with the most recent on top. A
+declarative raises its proposition as an issue, `Question.ofSet p`, and a polar interrogative
+raises `Question.polar p`; the complete answers of an issue are its alternatives,
+`Question.alt`, Karttunen's interrogative denotation, and a common ground decides an issue when
+it entails one of them. Each issue on the Table projects the common
 grounds that would decide it, and the projected set is derived from the common ground and the
 stack. The moves of the paper are functions on the structure, and the file proves what each does
 to the projected set, the commitment lists, and the Table. Parenthesized numbers are the paper's
 example and definition numbers.
 
-A Table is a discourse state in both projections: its common ground is the `commonGround`
-coordinate (`HasCommonGround`) and its current issue is the top of the stack
-(`Discourse.HasIssue`). It is not a `HasAssertion` instance under its own `assert`, which leaves
-the common ground alone and moves only the projected set.
+A Table is a discourse state in both projections, with the `commonGround` coordinate as its common
+ground (`HasCommonGround`) and the top of the stack as its current issue (`Discourse.HasIssue`).
+It is not a `HasAssertion` instance under its own `assert`, which leaves the common ground alone
+and moves only the projected set.
 
 ## Main definitions
 
@@ -31,7 +31,7 @@ the common ground alone and moves only the projected set.
 * `Table.IsStable`: the Table is empty.
 * `Table.InCrisis`: the common ground is inconsistent or no projected common ground is.
 * `Table.assert`, `Table.polarQuestion`, `Table.settle`, `Table.agreeToDisagree`: the
-  default assertion (9), which commits its author as in [gunlogson-2001], the default polar
+  default assertion (9), which commits its author as in Gunlogson, the default polar
   question (12), the common-ground increasing operation M' (17), and agreeing to disagree (23).
   Assertion confirmation (16) is `Table.commit` of the proposition on top of the Table, and
   total denial (22) is `assert` of its negation.
@@ -57,7 +57,7 @@ the common ground alone and moves only the projected set.
   Table, so it is derived rather than stored.
 * A common ground is a filter of propositions, so a proposition follows from it when it belongs
   to the filter. This is the intersection-based entailment the paper's footnote 8 sets aside as
-  too coarse-grained: here every necessary proposition is decided by every common ground, and
+  too coarse-grained, so every necessary proposition is decided by every common ground, and
   `Question.decidedBy_top` records that the trivial issue is always decided.
 * M' (17) applies in the paper only once the proposition is on every commitment list;
   `Table.settle` is the operation itself, and the trigger is a hypothesis on the caller,
@@ -89,8 +89,8 @@ namespace Commitment
 
 open Question
 
-/-- The context structure `K` of [farkas-bruce-2010]: the Table as a stack of issues, the
-participants' discourse commitments, and the common ground. -/
+/-- The context structure `K` of [farkas-bruce-2010] consists of the Table as a stack of issues,
+the participants' discourse commitments, and the common ground. -/
 @[ext]
 structure Table (A W : Type*) where
   stack : List (Question W)
@@ -103,8 +103,8 @@ variable {A W : Type*}
 
 /-! ### Projecting an issue -/
 
-/-- `ps ∪ P`: add each complete answer of `P` to each projected common ground, discarding the
-inconsistent results. -/
+/-- The projection `ps ∪ P` adds each complete answer of `P` to each projected common ground and
+discards the inconsistent results. -/
 def project (ps : Set (Filter W)) (P : Question W) : Set (Filter W) :=
   Set.image2 (fun f q ↦ f ⊓ 𝓟 q) ps (alt P) \ {⊥}
 
@@ -141,7 +141,7 @@ end Project
 
 variable (K : Table A W) (a : A) (p : Set W) (P : Question W)
 
-/-- The initial context: nothing on the Table, no commitments, the trivial common ground. -/
+/-- The initial context has nothing on the Table, no commitments, and the trivial common ground. -/
 def empty : Table A W := ⟨[], ∅, ⊤⟩
 
 instance : Inhabited (Table A W) := ⟨empty⟩
@@ -154,13 +154,13 @@ instance : Discourse.HasIssue (Table A W) W := ⟨fun K ↦ K.stack.headD ⊤⟩
 /-- A conversation is stable when its Table is empty. -/
 def IsStable : Prop := K.stack = []
 
-/-- `DC_a`: the propositions `a` has publicly committed to. -/
+/-- The discourse commitments `DC_a` are the propositions `a` has publicly committed to. -/
 def discourseCommitments : Set (Set W) := contents (ofCommitter K.commitments a)
 
 /-! ### The projected set -/
 
-/-- The projected set, rebuilt from the common ground by the issues on the Table, oldest first:
-the common grounds that canonically settle what is at issue. -/
+/-- The projected set consists of the common grounds that canonically settle what is at issue,
+rebuilt from the common ground by the issues on the Table, oldest first. -/
 def projectedSet : Set (Filter W) := K.stack.foldr (fun P ps ↦ project ps P) {K.commonGround}
 
 /-- A conversation is in crisis when its common ground or every projected common ground is
@@ -179,23 +179,24 @@ def pop : Table A W := { K with stack := K.stack.tail }
 def commit (force : Force := .doxastic) (source : Source := .selfGenerated) : Table A W :=
   { K with commitments := insert (Commitment.commit a p force source) K.commitments }
 
-/-- Default assertion (9): `a` commits to `p` and places the declarative's issue on the Table. -/
+/-- In the default assertion (9), `a` commits to `p` and places the declarative's issue on the
+Table. -/
 def assert : Table A W := (K.commit a p).push (ofSet p)
 
-/-- Default polar question (12): place the interrogative's issue on the Table. -/
+/-- The default polar question (12) places the interrogative's issue on the Table. -/
 def polarQuestion : Table A W := K.push (polar p)
 
 open scoped Classical in
-/-- The common-ground increasing operation M' (17), applied once `p` is on every commitment
-list: `p` enters the common ground, leaves the individual commitment lists, and the issues the
+/-- In the common-ground increasing operation M' (17), applied once `p` is on every commitment
+list, `p` enters the common ground and leaves the individual commitment lists, and the issues the
 new common ground decides are popped from the top of the Table. -/
 noncomputable def settle : Table A W where
   stack := K.stack.dropWhile fun P ↦ decide (P.DecidedBy (K.commonGround ⊓ 𝓟 p))
   commitments := {c ∈ K.commitments | c.content ≠ p}
   commonGround := K.commonGround ⊓ 𝓟 p
 
-/-- Agreeing to disagree (23), from a Table with the denial on top of the assertion it denies:
-the contradictory pair leaves the Table and the commitments stay. -/
+/-- Agreeing to disagree (23), from a Table with the denial on top of the assertion it denies,
+removes the contradictory pair from the Table and keeps the commitments. -/
 def agreeToDisagree : Table A W := K.pop.pop
 
 /-! ### Coordinates of the moves -/

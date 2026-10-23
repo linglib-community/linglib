@@ -12,12 +12,12 @@ modal operators. An assertion is the update `c⌈π⌉_{a,b}` that creates a com
 performative update, which Sincerity and Competence pass on to beliefs, so that common belief
 and commitment stay apart, as Bary demands. The projected discourse is a commitment space in
 the sense of Cohen and Krifka, a root state together with its cooperative continuations, which
-the speech acts transform: an assertion narrows the root and keeps the continuations in which
+the speech acts transform. An assertion narrows the root and keeps the continuations in which
 the addressee confirms, a question keeps the root and the continuations in which the addressee
-answers, a denegation removes the continuations the denegated act reaches. Cooperativity,
+answers, and a denegation removes the continuations the denegated act reaches. Cooperativity,
 admissibility and possibility of a speech act are the three levels of the thesis's hierarchy of
-discourse expectations: a cooperative act is admissible and every act is possible, but not
-conversely.
+discourse expectations, in which a cooperative act is admissible and every act is possible, but
+not conversely.
 
 ## Main statements
 
@@ -53,8 +53,8 @@ the totality of `update`.
   forces one shared belief relation (`Frame.competent_iff`). The assertion update of Definition 10
   is Definition 4, not the sincere update of Definition 6, so an assertion leaves a sincere root
   sincere only if the speaker already believed its content (`Frame.sincere_restrictCommitment_iff`),
-  and no speech act changes a belief (`root_update_belief`): the informative update 2 holds in
-  sincere, competent states but no speech act brings it about.
+  and no speech act changes a belief (`root_update_belief`). The informative update 2 holds in
+  sincere, competent states, but no speech act brings it about.
 
 ## References
 
@@ -352,8 +352,8 @@ theorem root_update_commitment_le :
     split_ifs
     exacts [ihα C, ihβ C]
 
-/-- No speech act changes a belief relation of the root: assertion is Definition 4, which leaves
-beliefs alone, and every other act keeps the root. -/
+/-- No speech act changes a belief relation of the root, since assertion is Definition 4, which
+leaves beliefs alone, and every other act keeps the root. -/
 @[simp] theorem root_update_belief : (update α C).root.belief = C.root.belief := by
   induction α generalizing C with
   | assert => rfl

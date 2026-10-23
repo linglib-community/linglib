@@ -4,22 +4,22 @@ public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.CompleteLattice.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
-public import Linglib.Discourse.Commitment.Basic
+public import Linglib.Discourse.Commitment.Proposition
 
 /-!
 # Commitment spaces
 
-A commitment space is a set of discourse states with a least member, its root: the current state
-together with the continuations it projects. Speech acts transform spaces in two ways. A basic
-act keeps the projected states that carry its commitments, and the least of them is the new
-root. A meta-speech act keeps the root and prunes the continuations: a question restricts them
-to the answers it proposes, a denegation removes the states an act would reach. Conjunction and
+A commitment space is a set of discourse states with a least member, the root, which is the
+current state; the other members are the continuations the conversation projects. A basic speech
+act keeps the projected states that carry its commitments, and the least of them is the new root.
+A meta-speech act keeps the root and prunes the continuations, as a question restricts them to the
+answers it proposes and a denegation removes the states an act would reach. Conjunction and
 disjunction of acts are intersection and union of the sets of states they reach, which need not
 be rooted, so the laws relating the acts are stated on those sets.
 
-Commitment Space Semantics is the instance over commitment states, sets of `Commitment`s ordered
-by inclusion, where a basic act adds a set of commitments and an assertion adds the speaker's
-commitment to a proposition.
+Commitment Space Semantics is the instance over sets of propositions ordered by inclusion. A basic
+act adds propositions, and an assertion adds the proposition `k⊢φ` that the speaker is committed
+to its content.
 
 ## Main definitions
 
@@ -279,27 +279,25 @@ end CompleteLattice
 
 /-! ### Commitment space semantics -/
 
-variable {A W : Type*} (C : Space (State A W)) (a : A) (φ : Set W) (force : Force)
-  {d : State A W}
+variable {κ W : Type*} (C : Space (Set (Set W))) (O : κ → SetRel W W) (k : κ) (φ : Set W)
+  {d : Set (Set W)}
 
-/-- In the assertion `C + S⊢φ`, `a` commits to `φ` ([cohen-krifka-2014] (37), [krifka-2015]
-(14)). -/
-def assert (force : Force := .doxastic) : Space (State A W) :=
-  C.update {commit a φ force}
+/-- The assertion `C + k⊢φ` adds the proposition that `k` is committed to `φ`
+([cohen-krifka-2014] (37), [krifka-2015] (14)). -/
+def assert : Space (Set (Set W)) := C.update {committed O k φ}
 
 theorem mem_assert :
-    d ∈ C.assert a φ force ↔
-      d = (C.assert a φ force).root ∨ d ∈ C ∧ commit a φ force ∈ d :=
+    d ∈ C.assert O k φ ↔ d = (C.assert O k φ).root ∨ d ∈ C ∧ committed O k φ ∈ d :=
   or_congr_right (and_congr_right fun _ ↦ Set.singleton_subset_iff)
 
-theorem commit_mem_root_assert : commit a φ force ∈ (C.assert a φ force).root :=
+theorem committed_mem_root_assert : committed O k φ ∈ (C.assert O k φ).root :=
   Set.singleton_subset_iff.1 (C.le_root_update _)
 
-theorem root_assert_of_mem (h : insert (commit a φ force) C.root ∈ C) :
-    (C.assert a φ force).root = insert (commit a φ force) C.root :=
+theorem root_assert_of_mem (h : insert (committed O k φ) C.root ∈ C) :
+    (C.assert O k φ).root = insert (committed O k φ) C.root :=
   C.root_update_of_mem h
 
-theorem root_mem_assert_iff : C.root ∈ C.assert a φ force ↔ commit a φ force ∈ C.root :=
+theorem root_mem_assert_iff : C.root ∈ C.assert O k φ ↔ committed O k φ ∈ C.root :=
   C.root_mem_update_iff.trans Set.singleton_subset_iff
 
 end Space
