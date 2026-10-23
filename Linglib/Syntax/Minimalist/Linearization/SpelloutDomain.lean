@@ -69,7 +69,7 @@ def Step.applyInside (step : Step) (D : LinearizedSyntacticObject) : LinearizedS
 
 namespace Derivation
 
-variable (d : Derivation) (m n : ℕ)
+variable (d : Derivation) (hd : HeadFunction) (m n : ℕ)
 
 /-- `d.stage? n` is the ordered object after the first `n` steps, if the replay succeeds. -/
 def stage? : Option LinearizedSyntacticObject := (d.take n).externalize?
@@ -90,17 +90,18 @@ def mergeStage? (item : SyntacticObject) : Option ℕ :=
 
 /-- The head of the object at stage `n`, the token at the lexical head of its root. -/
 def stageHead? : Option LexicalItem.Token :=
-  (d.stage? n).bind fun t ↦ (tokenList t.val).lookup (lexicalHeadAt t ⊥)
+  (d.stage? n).bind fun t ↦ (tokenList t.val).lookup (lexicalHeadAt hd t ⊥)
 
 /-- The stages at which the phase of a head `Φ` holds of is complete: the head heads the object
 built so far, and the next step merges something that projects over it. -/
 def phaseStages (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] : List ℕ :=
   (List.range (d.length + 1)).filter fun n ↦
-    (d.stageHead? n).any (Φ ·) && (n == d.length || d.stageHead? (n + 1) != d.stageHead? n)
+    (d.stageHead? hd n).any (Φ ·) &&
+      (n == d.length || d.stageHead? hd (n + 1) != d.stageHead? hd n)
 
 /-- The schedule that spells each phase out when it is complete. -/
 def phaseSchedule (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] : List (ℕ × ℕ) :=
-  (d.phaseStages Φ).map fun n ↦ (n, n)
+  (d.phaseStages hd Φ).map fun n ↦ (n, n)
 
 /-- A derivation linearizes under a schedule of Spell-outs, each the stage at which a domain is
 built and the stage at which it is spelled out, when their snapshots cohere. -/

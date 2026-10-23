@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.SyntacticObject.Position
+public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
 public import Linglib.Syntax.Projection
 public import Linglib.Core.Data.RoseTree.Get
 
@@ -41,9 +41,10 @@ links are in `Locality/Chain.lean`.
 ## Implementation notes
 
 * Positions, not terms, individuate copies: two deleted copies of one token are the same term.
-* The head daughters follow the raising head, and the drawing convention only where it is
-  undefined (`headIndex?`, `SyntacticObject/Position.lean`), so that a phrase with a specifier
-  merged in place still has a maximal projection to locate a copy in.
+* A copy is located at the maximal projection of its token under a head function, which the
+  analysis supplies (`HeadFunction`). Under `HeadFunction.raising` a phrase with a specifier
+  merged in place has a maximal projection to locate a copy in; under `HeadFunction.label` a
+  phrase merged beside another is unlabeled, and its head projects no further than its sister.
 * A chain here is the copies an object contains; the replay of a derivation
   (`Derivation.externalize?`) builds overt chains, while covert movement and sharing are available
   to the representation only. Remnant movement carries a deleted copy away from its antecedent,
@@ -102,7 +103,7 @@ def tokenList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
 def traceList : RoseTree Vertex → List (TreePath × LexicalItem.Token) :=
   positions (Sum.elim (fun _ ↦ none) id)
 
-variable (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List TreePath :=
@@ -137,41 +138,42 @@ instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 /-- A deleted copy has an antecedent when the projection of a pronounced copy of its token
 c-commands it. -/
 def HasAntecedent (x : TreePath × LexicalItem.Token) : Prop :=
-  ∃ p ∈ occurrences t x.2, CCommands t.val (projectionAt t p) x.1
+  ∃ p ∈ occurrences t x.2, CCommands t.val (projectionAt hd t p) x.1
 
-instance (x : TreePath × LexicalItem.Token) : Decidable (HasAntecedent t x) :=
+instance (x : TreePath × LexicalItem.Token) : Decidable (HasAntecedent hd t x) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- The deleted copies without antecedents. -/
 def orphanTraces : List (TreePath × LexicalItem.Token) :=
-  (traceList t.val).filter (¬ HasAntecedent t ·)
+  (traceList t.val).filter (¬ HasAntecedent hd t ·)
 
 /-! ### Links -/
 
 /-- The copy at `p` is linked to the copy at `q` below it when its projection c-commands `q` and
 the projection of no other copy of `tok` lies between them. -/
 def IsLink (p q : TreePath) : Prop :=
-  CCommands t.val (projectionAt t p) q ∧
-    ∀ r ∈ chain t tok, CCommands t.val (projectionAt t p) (projectionAt t r) →
-      ¬ CCommands t.val (projectionAt t r) q
+  CCommands t.val (projectionAt hd t p) q ∧
+    ∀ r ∈ chain t tok, CCommands t.val (projectionAt hd t p) (projectionAt hd t r) →
+      ¬ CCommands t.val (projectionAt hd t r) q
 
-instance (p q : TreePath) : Decidable (IsLink t tok p q) := inferInstanceAs (Decidable (_ ∧ _))
+instance (p q : TreePath) : Decidable (IsLink hd t tok p q) := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The links of the chain of `tok` pair each copy with the projection of the copy linked to it. -/
 def links : List (TreePath × TreePath) :=
   (chain t tok).flatMap fun q ↦
-    ((chain t tok).filter fun p ↦ IsLink t tok p q).map fun p ↦ (projectionAt t p, q)
+    ((chain t tok).filter fun p ↦ IsLink hd t tok p q).map fun p ↦ (projectionAt hd t p, q)
 
 /-- The top of the chain of `tok` consists of the copies no copy's projection c-commands, where it
 takes scope. -/
 def chainTop : List TreePath :=
-  (chain t tok).filter fun q ↦ (chain t tok).all fun p ↦ ¬ CCommands t.val (projectionAt t p) q
+  (chain t tok).filter fun q ↦
+    (chain t tok).all fun p ↦ ¬ CCommands t.val (projectionAt hd t p) q
 
-theorem not_isLink_self (p : TreePath) : ¬ IsLink t tok p p :=
-  fun h ↦ h.1.2.1 (projectionAt_le t p)
+theorem not_isLink_self (p : TreePath) : ¬ IsLink hd t tok p p :=
+  fun h ↦ h.1.2.1 (projectionAt_le hd t p)
 
 /-- A token with at most one copy has no link. -/
-theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links t tok = [] := by
+theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links hd t tok = [] := by
   simp only [links, List.flatMap_eq_nil_iff, List.map_eq_nil_iff, List.filter_eq_nil_iff,
     decide_eq_true_eq]
   intro q hq p hp
@@ -181,7 +183,7 @@ theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links t
     · simp only [hc, List.mem_singleton] at hp hq
       rw [hp, hq]
     · simp [hc] at h
-  exact not_isLink_self t tok p
+  exact not_isLink_self hd t tok p
 
 
 end Minimalist

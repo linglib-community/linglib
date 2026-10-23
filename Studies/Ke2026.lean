@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Ke2026
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Ke (2026): The domain of transfer
@@ -25,7 +26,8 @@ movement through every edge satisfies (`ex13`), and only when whole phases are s
   (`Minimalist.Derivation.Linearizes`). A whole phase is spelled out when it is complete
   (`Minimalist.Derivation.phaseSchedule`), a complement when its phase head merges.
 * Transfer is read off the chains of the derived object, a link failing when its lower copy lies in
-  a domain transferred by the stage it lands at.
+  a domain transferred by the stage it lands at. A phase is its head's projection under
+  `HeadFunction.raising`, so a phase head's specifiers are in its phase.
 
 ## TODO
 
@@ -96,10 +98,11 @@ def complementSchedule (d : Derivation) : List (ℕ × ℕ) :=
 /-- (13): spelling whole phases out when they are complete, the derivation through the edge of vP₁
 preserves its spell-out order, and the one that skips it, which spells *gave* out before *to whom*
 in vP₁ and after it in CP₁, does not. -/
-theorem ex13 : (derivation .edge).Linearizes ((derivation .edge).phaseSchedule IsPhaseHead) ∧
-    ¬ (derivation .skip).Linearizes ((derivation .skip).phaseSchedule IsPhaseHead) ∧
+theorem ex13 :
+    (derivation .edge).Linearizes ((derivation .edge).phaseSchedule .raising IsPhaseHead) ∧
+    ¬ (derivation .skip).Linearizes ((derivation .skip).phaseSchedule .raising IsPhaseHead) ∧
     (Examples.ex13.judgment = .acceptable ↔
-      ∃ r, (derivation r).Linearizes ((derivation r).phaseSchedule IsPhaseHead)) := by
+      ∃ r, (derivation r).Linearizes ((derivation r).phaseSchedule .raising IsPhaseHead)) := by
   decide +kernel
 
 /-- Spelling complements out instead, even the derivation through every edge reverses an order:
@@ -113,7 +116,7 @@ theorem complement_spellout_fails :
 /-- Ke's schedule: the domain of `h` is transferred once a phase containing the phase of `h` in its
 complement is complete. -/
 def AfterNextPhase (t : LinearizedSyntacticObject) : Schedule :=
-  fun Φ h s ↦ ∃ z ∈ Φ, complement z ≤ projectionAt t h ∧ s < projectionAt t z
+  fun Φ h s ↦ ∃ z ∈ Φ, complement z ≤ projectionAt .raising t h ∧ s < projectionAt .raising t z
 
 instance (t : LinearizedSyntacticObject) (Φ : Finset TreePath) (h s : TreePath) :
     Decidable (AfterNextPhase t Φ h s) :=
@@ -125,7 +128,7 @@ def ObeysTransfer (d : Derivation) (D : LinearizedSyntacticObject → TreePath �
     [∀ t h, DecidablePred (· ∈ D t h)] (σ : LinearizedSyntacticObject → Schedule)
     [∀ t Φ h s, Decidable (σ t Φ h s)] : Prop :=
   ∀ t ∈ d.externalize?, ∀ y ∈ tokenList t.val,
-    ¬ LinkLeaves t y.2 (sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t))
+    ¬ LinkLeaves .raising t y.2 (sealed (occurrencesWith t IsPhaseHead).toFinset (D t) (σ t))
 
 instance (d : Derivation) (D : LinearizedSyntacticObject → TreePath → Set TreePath)
     [∀ t h, DecidablePred (· ∈ D t h)] (σ : LinearizedSyntacticObject → Schedule)
@@ -134,21 +137,21 @@ instance (d : Derivation) (D : LinearizedSyntacticObject → TreePath → Set Tr
 
 /-- Transferred whole as soon as it is complete, vP₁ traps *to whom* and *Mary* at its edge (2b). -/
 theorem edge_trapped_at_completion :
-    ¬ ObeysTransfer (derivation .edge) wholePhaseDomain Pic1 := by
+    ¬ ObeysTransfer (derivation .edge) (wholePhaseDomain .raising) (Pic1 .raising) := by
   decide +kernel
 
 /-- Transferred whole once the next phase is complete, the phases let what moves through their
 edges out, as the transfer of complements does. -/
 theorem transfer_after_next_phase :
-    ObeysTransfer (derivation .edge) wholePhaseDomain AfterNextPhase ∧
-      ObeysTransfer (derivation .edge) (complementDomain · ∅) Pic1 := by
+    ObeysTransfer (derivation .edge) (wholePhaseDomain .raising) AfterNextPhase ∧
+      ObeysTransfer (derivation .edge) (complementDomain .raising · ∅) (Pic1 .raising) := by
   decide +kernel
 
 /-- Skipping the edge of vP₁ is no violation of full-phase transfer, though it is one of the
 transfer of complements: under full-phase transfer the edge effects are spell-out order's alone. -/
 theorem skip_obeys_transfer :
-    ObeysTransfer (derivation .skip) wholePhaseDomain AfterNextPhase ∧
-      ¬ ObeysTransfer (derivation .skip) (complementDomain · ∅) Pic1 := by
+    ObeysTransfer (derivation .skip) (wholePhaseDomain .raising) AfterNextPhase ∧
+      ¬ ObeysTransfer (derivation .skip) (complementDomain .raising · ∅) (Pic1 .raising) := by
   decide +kernel
 
 end Ke2026

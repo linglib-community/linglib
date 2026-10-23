@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Data.Finset.Pairwise
 public import Linglib.Syntax.Minimalist.Probe.SyntacticObject
+public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
 
 /-!
 # Labeling by minimal search
@@ -22,7 +23,8 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
   occurrence of another.
 * `Minimalist.LinearizedSyntacticObject.FindsHead`, `labelsAt`, `labels`: what minimal search finds.
 * `Minimalist.LinearizedSyntacticObject.IsLabeledBy`, `IsLabeledByFeature`, `IsLabeled`.
-* `Minimalist.LinearizedSyntacticObject.LabelDaughter`: the head relation labels induce.
+* `Minimalist.LinearizedSyntacticObject.LabelDaughter`, `Minimalist.HeadFunction.label`: the head
+  relation labels induce, and the head function it gives.
 
 ## Main results
 
@@ -32,6 +34,8 @@ the object, so the lower copy of a phrase that has moved on is invisible to it.
   and two heads are both found.
 * `labelsAt_merge`, `labelsAt_merge_of_not_inDomain`: two non-heads leave the heads of both, and a
   daughter that has moved on is invisible.
+* `Minimalist.HeadFunction.labelDaughter_of_headDaughterRel_label`: the head daughters of the label
+  head function are label daughters.
 
 ## Implementation notes
 
@@ -371,3 +375,35 @@ theorem labelDaughter_iff_of_merge_head (hn : t.termAt n = SyntacticObject.merge
   · exact mem_labelsAt.2 ⟨c, findsHead_self (isHeadAt_iff.2 ⟨a, hc⟩), by simp [hc]⟩
 
 end Minimalist.LinearizedSyntacticObject
+
+namespace Minimalist.HeadFunction
+
+open RoseTree Core.Order PhraseStructure
+
+/-- The label head function, [chomsky-2013]'s: the head daughter of a position is the daughter
+containing the one head minimal search from it finds, and there is none where search finds no head
+or several. -/
+def label : HeadFunction := fun t x ↦
+  if hx : x ∈ t.val.validPaths then
+    (List.range 2).find? fun i ↦
+      if hc : (⟨x.toList ++ [i]⟩ : TreePath) ∈ t.val.validPaths then
+        decide ((t.labelsAt ⟨x, hx⟩).card = 1 ∧ t.labelsAt ⟨x, hx⟩ ⊆ t.labelsAt ⟨_, hc⟩)
+      else false
+  else none
+
+/-- The head daughters of the label head function are label daughters. -/
+theorem labelDaughter_of_headDaughterRel_label {t : LinearizedSyntacticObject}
+    {n c : t.val.Positions} (h : headDaughterRel (label t) n.val c.val) : t.LabelDaughter n c := by
+  obtain ⟨i, hi, hc⟩ := h
+  have hci : (⟨n.val.toList ++ [i]⟩ : TreePath) = c.val := TreePath.ext hc.symm
+  simp only [label, dite_eq_left n.2] at hi
+  have hp := List.find?_some hi
+  rw [dite_eq_left (hci ▸ c.2), decide_eq_true_eq] at hp
+  obtain ⟨hcard, hsub⟩ := hp
+  obtain ⟨a, ha⟩ := Finset.card_eq_one.1 hcard
+  have hcov : n ⋖ c := Positions.covBy_iff.2 (TreePath.covBy_iff.2 ⟨i, hc⟩)
+  refine ⟨hcov, a, ha, ?_⟩
+  have : (⟨⟨n.val.toList ++ [i]⟩, hci ▸ c.2⟩ : t.val.Positions) = c := Subtype.ext hci
+  exact this ▸ hsub (ha ▸ Finset.mem_singleton_self a)
+
+end Minimalist.HeadFunction

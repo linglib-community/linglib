@@ -4,6 +4,7 @@ public import Studies.Chomsky2013
 public import Studies.Collins2005
 public import Linglib.Data.Examples.Boskovic2018
 public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Bošković (2018): On movement out of moved elements, labels, and phases
@@ -25,7 +26,11 @@ which moves a non-phase, obeys the condition while violating the traditional ban
   a Serbo-Croatian possessive adjective with its noun, and the R-feature of a Dutch r-pronoun with
   its preposition. Successive-cyclic and verb-second specifiers share none.
 * The phases are Chomsky's CP, vP and DP, and in Serbo-Croatian, which lacks DP, the noun phrase.
-  Transfer seals the complement of a phase head once its phase is complete.
+  Transfer seals the complement of a phase head once its phase is complete, the phase being the
+  head's projection under `HeadFunction.raising`, so that a phase head's specifiers are in its
+  phase however they are labeled. Read off labels instead (`HeadFunction.label`), the unlabeled
+  verb-second clause of (22) would be complete before its specifier merged, and raising to Spec,CP
+  would leave it: the paper's labels and its phase edges are two notions of projection.
 * Clauses are cut down to the heads each example needs, verbs in their base positions; the word
   orders of the German, Serbo-Croatian and Dutch examples are not modelled.
 
@@ -102,18 +107,20 @@ def IsPhaseHeadNP (a : LexicalItem.Token) : Prop := a.item.cat ∈ [.C, .v, .n]
 instance : DecidablePred IsPhaseHeadNP := fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The PIC on a derivation: no link of a chain in the object it derives leaves the complement of
-a phase head, transferred once its phase is complete. -/
-def ObeysPic (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) : Prop :=
+a phase head, transferred once its phase, the head's projection under `hd`, is complete. -/
+def ObeysPic (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ]
+    (d : Derivation) : Prop :=
   ∀ t ∈ d.externalize?, ∀ x ∈ tokenList t.val,
-    ¬ LinkLeaves t x.2 (sealed (occurrencesWith t Φ).toFinset (complementDomain t ∅) (Pic1 t))
+    ¬ LinkLeaves hd t x.2
+      (sealed (occurrencesWith t Φ).toFinset (complementDomain hd t ∅) (Pic1 hd t))
 
-instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
-    Decidable (ObeysPic Φ d) := by
+instance (hd : HeadFunction) (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
+    Decidable (ObeysPic hd Φ d) := by
   unfold ObeysPic; infer_instance
 
 /-- A derivation converges when it obeys the PIC and moves only labeled elements. -/
 def Converges (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) : Prop :=
-  d.ObeysUIC IsLabeled ∧ ObeysPic Φ d
+  d.ObeysUIC IsLabeled ∧ ObeysPic .raising Φ d
 
 instance (Φ : LexicalItem.Token → Prop) [DecidablePred Φ] (d : Derivation) :
     Decidable (Converges Φ d) :=
@@ -171,8 +178,9 @@ theorem subextraction_surfacePhon (r : Route) :
 crosses the subject's phase from its interior. No derivation converges: the ban on movement out of
 moved elements, deduced, though both routes move *who* out of a moved subject. -/
 theorem ex17 :
-    ¬ (subextraction .edge).ObeysUIC IsLabeled ∧ ObeysPic IsPhaseHead (subextraction .edge) ∧
-      ¬ ObeysPic IsPhaseHead (subextraction .direct) ∧
+    ¬ (subextraction .edge).ObeysUIC IsLabeled ∧
+      ObeysPic .raising IsPhaseHead (subextraction .edge) ∧
+      ¬ ObeysPic .raising IsPhaseHead (subextraction .direct) ∧
       (∀ r, ¬ (subextraction r).ObeysFreezing) ∧
       (Examples.ex17.judgment = .acceptable ↔ ∃ r, Converges IsPhaseHead (subextraction r)) := by
   decide +kernel
@@ -237,6 +245,17 @@ theorem ex22 : v2Moved.ObeysFreezing ∧
     (Examples.ex22a.judgment = .acceptable ↔ Converges IsPhaseHead v2Moved) ∧
     (Examples.ex22c.judgment = .acceptable ↔ Converges IsPhaseHead v2InSitu) := by
   decide +kernel
+
+/-- The verb-second clause of (22c), the complement of *sagte*, has no head daughter by labels, and
+C′ by the raising head. -/
+example : (v2InSitu.externalize?.map fun t ↦ HeadFunction.label t ⟨[1]⟩) = some none ∧
+    (v2InSitu.externalize?.map fun t ↦ HeadFunction.raising t ⟨[1]⟩) = some (some 1) := by
+  decide +kernel
+
+/-- With phases read off labels, (22c) would violate the PIC: the verb-second clause, unlabeled,
+is no projection of C, so *Peter* raising to Spec,CP leaves C's complement after the phase is
+complete. -/
+example : ¬ ObeysPic .label IsPhaseHead v2InSitu := by decide +kernel
 
 /-! ### Base-generated specifiers: Serbo-Croatian possessors (24)–(27) -/
 

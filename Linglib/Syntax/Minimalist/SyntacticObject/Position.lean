@@ -9,7 +9,6 @@ public import Linglib.Core.Data.RoseTree.Positions
 public import Mathlib.Order.Atoms
 public import Linglib.Syntax.Command
 public import Linglib.Syntax.Projection
-public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
@@ -19,21 +18,15 @@ The positions of a linearized syntactic object, the paths to its vertices, form 
 (`RoseTree.Positions`). Each carries a term, the subtree there read as a syntactic object: the
 terms at the covers of a position are the terms its term immediately contains, and the terms at
 the positions below it are the terms its term contains, so c-command by a term occurring once is
-c-command from its position. Each position also has a head daughter, the daughter carrying its
-raising head, and where the raising head is undefined the daughter the drawing convention of the
-embedding makes the head: [marcolli-chomsky-berwick-2025] (Lemma 1.13.5) identify a planar
-embedding with a total head function, which extends the raising head.
+c-command from its position. Which daughter heads a position is not part of the object but of a
+head function (`SyntacticObject/Projection.lean`).
 
 ## Main definitions
 
 * `LinearizedSyntacticObject.termAt`: the term at a position.
-* `Minimalist.headIndex?`, `LinearizedSyntacticObject.headIndexAt`: the head daughter of a planar
-  tree, and of the subtree at each position.
-* `LinearizedSyntacticObject.maximalProjections`, `LinearizedSyntacticObject.branching`,
-  `LinearizedSyntacticObject.above`: the maximal projections and branching positions of a linearized
-  object, and the generators above a position, its closeness key.
-* `Minimalist.projectionAt`, `Minimalist.lexicalHeadAt`, `Minimalist.complement`: the maximal
-  projection of a position, the lexical head of the phrase there, and the sister of a head.
+* `LinearizedSyntacticObject.branching`, `LinearizedSyntacticObject.above`: the branching positions
+  of a linearized object, and the generators above a position, its closeness key.
+* `Minimalist.complement`: the sister of a head.
 
 ## Main statements
 
@@ -45,33 +38,13 @@ embedding with a total head function, which extends the raising head.
   c-command between occurrences, and conversely when sister terms are distinct: Collins and
   Stabler's theorem relating c-command between objects to c-command between occurrences.
 * `LinearizedSyntacticObject.isBranching_of_not_isMax`: a position that is not a leaf branches.
-* `LinearizedSyntacticObject.maximalProjections_eq`: the maximal projections are those of the head
-  relation.
 * `LinearizedSyntacticObject.above_branching_lt_iff`: closeness under the branching positions is
   asymmetric c-command.
-* `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
-  wherever there is one.
 * `Minimalist.mem_cCommandDomain_iff_complement_le`: a head c-commands exactly the positions below
   its complement.
 
-## Implementation notes
-
-* The drawing convention puts specifiers to the left of their heads and heads to the left of their
-  complements: a left leaf that selects nothing is a specifier and the right daughter heads, a left
-  leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
-  raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
-  algorithm leaves unlabeled until one of the two moves on (`Label/MinimalSearch.lean`); labels by
-  shared features arise at landing sites.
-
-## TODO
-
-* The positions at or below the maximal projection of a head occurring once carry exactly the
-  terms within its projection, where the raising head is defined along the projection line.
-
 ## References
 
-* [marcolli-chomsky-berwick-2025]
-* [chomsky-2013]
 * [collins-stabler-2016]
 -/
 
@@ -314,77 +287,11 @@ theorem IsHeadAt.exists_covBy_le (h : t.IsHeadAt q) (ha : ¬ IsMax a) (haq : a �
 
 end LinearizedSyntacticObject
 
-/-! ### Head daughters -/
-
-/-- The raising head of a planar tree, that of its unordered image. -/
-def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
-  (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
-    (UnorderedTree.mk s)).state.head
-
-theorem treeRaisingHead_subtree {t : LinearizedSyntacticObject} (p : t.val.Positions) :
-    treeRaisingHead p.subtree = (t.termAt p).raisingHead := rfl
-
-/-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
-left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
-a left leaf that selects for the head, and otherwise looks in the right daughter. This is the
-head path it assigns. -/
-def conventionHeadPos? : RoseTree Vertex → Option (List ℕ)
-  | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
-  | .node (.inl none) [.node (.inl (some tok)) [], r] =>
-      if tok.item.sel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
-  | .node (.inl none) [_, r] => (conventionHeadPos? r).map (1 :: ·)
-  | .node (.inl none) _ => none
-  | .node (.inr none) _ => none
-
-/-- The head daughter of a planar tree is the first daughter carrying its raising head, and where
-it has none, the first step of the drawing convention's head path. -/
-def headIndex? (s : RoseTree Vertex) : Option ℕ :=
-  ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
-    (conventionHeadPos? s).bind List.head?
-
-/-- The head daughter of the subtree at a position of a linearized object, `none` off the object. -/
-def LinearizedSyntacticObject.headIndexAt (t : LinearizedSyntacticObject) (q : TreePath) :
-    Option ℕ :=
-  (t.val.subtreeAt q.toList).bind headIndex?
-
-/-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
-it. -/
-theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
-    (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
-    (h : treeRaisingHead s = some ℓ) :
-    ∃ i c, headIndex? s = some i ∧ s.children[i]? = some c ∧ treeRaisingHead c = some ℓ := by
-  obtain ⟨v, cs⟩ := s
-  obtain rfl := eq_bare_of_ne_nil hs hc
-  obtain ⟨l, r, rfl⟩ : ∃ l r, cs = [l, r] :=
-    List.length_eq_two.1 ((length_eq_zero_or_two hs).resolve_left fun h0 ↦
-      hc (List.length_eq_zero_iff.1 h0))
-  obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge l r).1 hs
-  have hm : treeRaisingHead (.node Vertex.bare [l, r]) = (merge ⟨_, hl⟩ ⟨_, hr⟩).raisingHead := by
-    simp only [raisingHead, raisingCheck, liftFun, merge_mk]; rfl
-  by_cases hl' : treeRaisingHead l = some ℓ
-  · exact ⟨0, l, by simp [headIndex?, h, hl', List.findIdx?_cons], rfl, hl'⟩
-  · have hr' : treeRaisingHead r = some ℓ :=
-      (raisingHead_merge (l := ⟨_, hl⟩) (r := ⟨_, hr⟩) (hm ▸ h)).resolve_left fun h' ↦ hl' h'
-    exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
-
 /-! ### Closeness at positions -/
 
 namespace LinearizedSyntacticObject
 
 variable (t : LinearizedSyntacticObject)
-
-/-- The maximal projections of a linearized object, the positions that are no position's head
-daughter. -/
-def maximalProjections : Set TreePath :=
-  {x | IsMaximalProjection (headDaughterRel t.headIndexAt) x}
-
-instance : DecidablePred (· ∈ t.maximalProjections) :=
-  fun x ↦ inferInstanceAs (Decidable (IsMaximalProjection (headDaughterRel t.headIndexAt) x))
-
-/-- The maximal projections are those of the head relation, with no adjunction. -/
-theorem maximalProjections_eq :
-    t.maximalProjections = PhraseStructure.maximalProjections (headDaughterRel t.headIndexAt) ⊥ :=
-  PhraseStructure.maximalProjections_bot.symm
 
 /-- The generators in `P` properly dominating a position, the key under which a probe searching the
 object compares goals (`PhraseStructure.ancestors`). -/
@@ -419,16 +326,11 @@ theorem above_branching_lt_of_cCommands (hqg : t.val.CCommands q g)
 
 end LinearizedSyntacticObject
 
-/-! ### Maximal projections and complements -/
+/-! ### Complements -/
 
-section Projection
+section Complement
 
 variable (t : LinearizedSyntacticObject)
-
-/-- The maximal projection of the position `p`, the highest position reached from `p` by climbing
-while the position is the head daughter of its mother. -/
-def projectionAt (p : TreePath) : TreePath :=
-  maximalProjectionAt t.headIndexAt p
 
 /-- The complement of the head at `p` is its sister. -/
 def complement (p : TreePath) : TreePath := ⟨p.toList.dropLast ++ [1 - p.toList.getLastD 0]⟩
@@ -503,12 +405,6 @@ theorem mem_cCommandDomain_iff_complement_le {h q : TreePath} (hh : h ∈ t.val.
     exact IsLeftLinear.eq_of_covBy_of_le (Positions.covBy_iff.1 hm) (Positions.covBy_iff.1 hmc)
       hhq hcq
 
-theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := maximalProjectionAt_le _ p
-
-/-- The lexical head of the phrase at `p`, reached by descending through head daughters. -/
-def lexicalHeadAt (p : TreePath) : TreePath :=
-  (fun q ↦ (t.headIndexAt q).elim q fun i ↦ ⟨q.toList ++ [i]⟩)^[t.val.subtrees.length] p
-
-end Projection
+end Complement
 
 end Minimalist
