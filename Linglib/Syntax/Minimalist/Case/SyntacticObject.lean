@@ -113,16 +113,17 @@ def phaseHeads (IsPhaseHead : LexicalItem.Token → Prop) [DecidablePred IsPhase
   (projectingHeads hd t).filter fun x ↦ decide (IsPhaseHead x.2)
 
 /-- Case for the NPs `xs` of `t`, phase by phase innermost first, `D` giving the domain of each
-phase head and `lex` the case lexical heads value. -/
+phase head, `lex` the case lexical heads value, and `BearsCase` the NPs that bear case. -/
 def CaseAssigners.assignOn (g : CaseAssigners) (D : TreePath → Set TreePath)
     [∀ h, DecidablePred (· ∈ D h)] (IsPhaseHead : LexicalItem.Token → Prop)
     [DecidablePred IsPhaseHead] (lex : LexicalItem.Token → Option Case)
+    (BearsCase : LexicalItem.Token → Prop) [DecidablePred BearsCase]
     (xs : List LexicalItem.Token) : Valuation LexicalItem.Token (Case × Mechanism) :=
   let ph := phaseHeads hd t IsPhaseHead
   let Φ := (ph.map (·.1)).toFinset
   assignBy (fun x ↦ g.rules x.2.item.cat) (fun x tok ↦ decide (VisibleAt hd t Φ D x.1 tok))
     (fun x p q ↦ CCommandsAt hd t Φ D x.1 p.2 q.2) (fun x ↦ CCommandsAt hd t Φ D x.1)
-    (fun x ↦ g.probesAt hd t Φ D x.1) (fun x tok ↦ decide (SpelledOutAt hd t Φ D x.1 tok)) ph
-    (lexicalValuation lex xs)
+    (fun x ↦ g.probesAt hd t Φ D x.1) (fun x tok ↦ decide (SpelledOutAt hd t Φ D x.1 tok))
+    (fun tok ↦ decide (BearsCase tok)) ph (lexicalValuation lex xs)
 
 end Minimalist
