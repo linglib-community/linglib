@@ -160,7 +160,7 @@ def casesOf (g : CaseAssigners) (d : Derivation) (datIO : Bool) :
     Option (Case.Valuation LexicalItem.Token (Case × Case.Mechanism)) :=
   d.externalize?.map fun t ↦
     g.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
-      (fun x ↦ if datIO && x = goalD then some .dat else none) [subjD, objD, goalD]
+      (fun x ↦ if datIO && x = goalD then some .dat else none) (fun _ ↦ True) [subjD, objD, goalD]
 
 /-- The cases of the Mongolian ditransitive. -/
 def ditransitiveCases : Option (Case.Valuation LexicalItem.Token (Case × Case.Mechanism)) :=

@@ -56,15 +56,14 @@ only where a `v` probes.
 * The paper assigns the dative on the VP cycle, before the theme shifts ((14), (30)). Here a
   phase sees an NP through any copy in what it transfers on its own, so the shifted theme's
   lower copy, `<letter>` in (30), keeps the VP-cycle configuration.
-* The covert agent of a passive is a nominal in the specifier of passive v, PRO in (28b).
+* The covert agent of a passive is a nominal in the specifier of passive v, PRO in (28b), which
+  competes for case but bears none (pp. 609–610, note 30).
 
 ## TODO
 
 * Agentive nominalizations ((34)–(37)), raising ((39)–(47)) and *promise* on derivations: the
   nominalizer's own phase, where (4b) also applies, and the edge of the embedded *dien* clause,
   whose T values the raised subject before the matrix clause re-marks it accusative.
-* The covert agent of a passive is a case competitor but no goal of T, which agrees by default
-  (note 30, (73)); here T values it nominative.
 
 ## References
 
@@ -231,7 +230,7 @@ def passiveClause (agent goal : Bool) : Derivation :=
 def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (Option Case)) :=
   d.externalize?.map fun t ↦
     (grammar.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead (fun _ ↦ none)
-      xs).map (·.2.map (·.1))
+      (· ≠ proD) xs).map (·.2.map (·.1))
 
 /-! ### Positions -/
 
@@ -245,8 +244,8 @@ def internal (shifted : Bool) : PhasedNP :=
 /-- A caseless NP inside a noun phrase. -/
 def possessor : PhasedNP := { phase := .D }
 
-/-- The covert agent, merged in the clause. -/
-def pro : PhasedNP := {}
+/-- The covert agent, merged in the clause, competing for case without bearing it. -/
+def pro : PhasedNP := { bearsCase := false }
 
 /-- Finite T probing the clause. -/
 def finite : List (Cat × Cat) := [(.T, .C)]
@@ -286,12 +285,13 @@ theorem causative (shifted : Bool) :
   cases shifted <;> decide +kernel
 
 /-- In a passive the shifted theme is accusative exactly when a covert agent is present, and
-    nominative from T otherwise; a goal is dative either way ((26)–(30)). -/
+    nominative from T otherwise; a goal is dative either way ((26)–(30)). The agent itself takes
+    no case, and T, agreeing with nothing, agrees by default (note 30). -/
 theorem passive :
-    derivedCases (passiveClause true false) [proD, objD] = some [some .nom, some .acc] ∧
+    derivedCases (passiveClause true false) [proD, objD] = some [none, some .acc] ∧
     derivedCases (passiveClause false false) [objD] = some [some .nom] ∧
     derivedCases (passiveClause true true) [proD, goalD, objD] =
-      some [some .nom, some .dat, some .acc] ∧
+      some [none, some .dat, some .acc] ∧
     derivedCases (passiveClause false true) [goalD, objD] = some [some .dat, some .nom] := by
   decide +kernel
 
