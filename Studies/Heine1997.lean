@@ -238,28 +238,21 @@ def russianData : List (Finset Meaning) :=
 ambiguous (73c) at the overlap stage. -/
 theorem russian_stages : ∀ i, stage i ∈ russianData := by decide +kernel
 
-/-- The kinds of possession that languages tend to encode differently, from §1.3
-(pp. 34–35). -/
+/-- The possessive notions of §1.3 (pp. 34–35). -/
 inductive Notion where
-  /-- Possessor and possessee are physically associated at reference time, (29) *do you have a
-  pen?* -/
+  /-- Possessor and possessee are physically associated at reference time (29). -/
   | physical
-  /-- The possessor can use the possessee for a limited time but does not own it, (30) *I have a
-  car that I use to go to the office but it belongs to Judy*. -/
+  /-- The possessor disposes of the possessee for a limited time without owning it (30). -/
   | temporary
-  /-- The possessee is the possessor's property, typically by legal title, (31) *Judy has a car
-  but I use it all the time*. -/
+  /-- The possessee is the possessor's property (31). -/
   | permanent
-  /-- The possessee is inseparable from the possessor, a body part or a relative, (32) *I have
-  blue eyes/two sisters*. -/
+  /-- The possessee is inseparable from the possessor, as a body part or a relative (32). -/
   | inalienable
-  /-- The possessee is not visible or tangible, a disease, a feeling or a psychological state,
-  (33) *He has no time/no mercy*. -/
+  /-- The possessee is not tangible, as a disease or a feeling (33). -/
   | abstract
-  /-- An inanimate possessor and an inseparable possessee, the part-whole relation, (34) *That
-  tree has few branches*. -/
+  /-- An inanimate possessor with an inseparable possessee (34). -/
   | inanimateInalienable
-  /-- An inanimate possessor and a separable possessee, (35) *That tree has crows on it*. -/
+  /-- An inanimate possessor with a separable possessee (35). -/
   | inanimateAlienable
   deriving DecidableEq, Repr
 

@@ -192,15 +192,10 @@ theorem _root_.Article.denotations_realized (a : Article) (idx : ℕ)
 
 /-! ### The possessive determiner's denotation -/
 
-/-- A possessive determiner denotes the possessive definite description: *my cat* picks out the
-unique cat that the speaker stands in the possession relation `rel` to
-(`DefiniteDescription.possessive`). The determiner adds no presupposition of its own; the only
-one is the definite's, that there is exactly one such cat, and where it fails the description
-picks out nothing.
-
-Quantified possessors (*every student's cat*) need the generalized-quantifier analysis,
-`Possession.PossNP`; with an individual possessor it says the same as this description on the
-definite reading (`DefiniteDescription.possNP_iff_exists_mem_denote_possessive`). -/
+/-- A possessive determiner denotes the possessive description: *my cat* is the unique cat to
+which the possessor stands in `rel`. Its only presupposition is the definite's. For quantified
+possessors see `Possession.PossNP`, which agrees with this description at an individual
+possessor (`DefiniteDescription.possNP_iff_exists_mem_denote_possessive`). -/
 noncomputable def _root_.PossessiveDeterminer.denote (_p : PossessiveDeterminer) :
     Nominal (Assignment E) W E :=
   (DefiniteDescription.possessive R possessor rel).toNominal
