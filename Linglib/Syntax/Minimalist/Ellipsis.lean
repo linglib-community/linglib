@@ -12,7 +12,7 @@ public import Linglib.Syntax.Minimalist.Clause.Spine
 # Ellipsis
 
 Merchant's [E] feature on a head of a spine instructs the phonology not to pronounce the head's
-complement, under the presupposition that the complement is given. Each kind of ellipsis is an [E]
+complement. Each kind of ellipsis is an [E]
 feature on a head: VP-ellipsis puts it on Voice and deletes vP, sluicing puts it on C and deletes
 TP, and v-stranding VP-ellipsis puts it on v and deletes VP alone. A site of a spine is a head or
 the adjunction site of the phrase a head projects. [E] deletes the heads of its complement and the
@@ -55,6 +55,12 @@ VP-ellipsis while V does not, and prenominal modifiers, adjoined to NP, survive 
 site built from [E] carries a site of its deletion domain, since a head at the bottom of a spine
 has no complement to silence; that witness is what the surface condition of `Anaphor.DepthModel`
 asks for.
+
+## TODO
+
+* The licensing condition on [E], that the elided complement be given, and the identity condition
+  between an elided phrase and its antecedent; `Mismatch` records only the dimensions such a
+  condition could ignore.
 
 ## References
 

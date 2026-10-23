@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.ChatainSchlenker2026
 public import Linglib.Logic.Trivalent.Flat
 public import Linglib.Logic.Trivalent.Pointwise
+public import Linglib.Semantics.Composition.WithAlternatives
 public import Linglib.Semantics.Modification.Basic
 public import Mathlib.Data.Fintype.Prod
 
@@ -20,7 +21,8 @@ can accommodate one of a trigger's two presuppositions while the other projects.
 
 * `pointwise_projects_or_accommodates`: a context-free operator projects at every argument or
   accommodates at every argument (Table 1).
-* `enrichment_projects_and_accommodates`: one enrichment does both ((66)–(71)).
+* `enrichment_projects_and_accommodates`, `semantic_parallelism`: one enrichment does both, and
+  the clauses stay semantically parallel ((66)–(71)).
 * `enrichment_by_definedness`: enrichment by definedness is `A` (§5.2).
 * `partial_accommodation`, `partial_accommodation_rows`: enrichment by one presupposition of a
   trigger accommodates it alone ((34), (38), (39), §5.2.1).
@@ -36,8 +38,8 @@ engine's truth values are `Prop`, and clauses are composed by hand.
 
 ## TODO
 
-* The syntactic half of the ellipsis argument needs an identity condition between an ellipsis site
-  and its antecedent, which linglib lacks.
+* The syntactic half of the ellipsis argument needs LF trees with a silent `A` interpreted with
+  three-valued truth, which the composition engine lacks.
 * Intermediate accommodation (55), Homer's diagnostic (§4.2.1), and the constraint on Free
   Enrichment that (77) calls for (§5.2.2).
 
@@ -54,6 +56,8 @@ engine's truth values are `Prop`, and clauses are composed by hand.
 namespace ChatainSchlenker2026
 
 open SignType Trivalent
+
+universe u
 
 variable {E W : Type*}
 
@@ -84,7 +88,7 @@ example (R : E → W → Prop) [∀ x, DecidablePred (R x)] (P : E → W → Sig
 
 /-- An enrichment trivial at `Y` and entailing the presupposition at `X` lets the presupposition
 project at `Y` and accommodates it at `X`, so the antecedent and the elided clause of (26) can
-share one λ-abstract and differ ((66)–(71)). -/
+share one λ-abstract and differ ((66)–(70)). -/
 theorem enrichment_projects_and_accommodates (P : E → W → SignType) (R : E → W → Prop)
     [∀ x, DecidablePred (R x)] {X Y : E} (hY : ∀ w, R Y w) (hX : ∀ w, R X w → P X w ≠ 0) :
     gapExt (fun w ↦ ofProp (R Y w) ⊓ P Y w) = gapExt (P Y) ∧
@@ -92,6 +96,14 @@ theorem enrichment_projects_and_accommodates (P : E → W → SignType) (R : E �
   simp only [gapExt_ofProp_inf]
   exact ⟨Set.inter_eq_right.2 fun w _ ↦ hY w,
     Set.eq_empty_of_forall_notMem fun w h ↦ hX w h.1 h.2⟩
+
+/-- The antecedent is the shared λ-abstract at an alternative to the elided clause's focused
+argument, so it lies in that clause's focus value and semantic parallelism holds ((71)). -/
+theorem semantic_parallelism {E W : Type u} (P : E → W → SignType) (R : E → W → Prop)
+    [∀ x, DecidablePred (R x)] (X Y : E) :
+    (fun w ↦ -(ofProp (R Y w) ⊓ P Y w)) ∈
+      ((fun x w ↦ -(ofProp (R x w) ⊓ P x w)) <$> WithAlternatives.focused X).alternatives := by
+  rw [WithAlternatives.alternatives_map_focused]; exact ⟨Y, rfl⟩
 
 /-- Enrichment by definedness is local accommodation by `A` (§5.2). -/
 theorem enrichment_by_definedness (P : E → W → SignType) :

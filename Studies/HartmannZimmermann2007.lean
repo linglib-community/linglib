@@ -106,7 +106,7 @@ front, …) lives in the cell's data row. The antecedent is the canonical
 engine (`pairAnswer`); `ctx_resolves` is the uniform full-resolution
 fact. Ex-situ variants are interpreted at the base structure (fronting
 is A'-movement for the paper, and alternatives do not distribute
-through abstraction: `PredAbs WithAlternatives = ⟨none⟩`). -/
+through abstraction, so `WithAlternatives` has no `PredAbs` instance). -/
 
 /-- The two-point answer domain of a cell's mini-scenario. -/
 inductive Alt | ans | alt
