@@ -285,11 +285,12 @@ def predicted (row : Datum) : Option Bool :=
   | some s, some i, some m => scenario s >>= fun A => verdict A i m
   | _, _, _ => none
 
-theorem rows_agree :
-    ∀ row ∈ Examples.all, ∀ b, predicted row = some b →
-      row.feature? "verdict" = some (if b then "true" else "false") := by decide +kernel
+theorem rows_agree : ∀ row ∈ Examples.all, row.FitsVerdict predicted id := by
+  decide +kernel
 
-example : (Examples.all.filter fun row => (predicted row).isSome).length = 10 := by
+theorem rows_read :
+    (Examples.all.filter fun row =>
+      row.verdict.isSome ∧ (predicted row).isSome).length = 10 := by
   decide +kernel
 
 /-- An unembedded EFCI is ungrammatical exactly when it allows neither modal insertion nor partial

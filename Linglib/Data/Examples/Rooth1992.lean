@@ -24,9 +24,10 @@ def ex_3a : Datum :=
     glossedTokens := []
     context := "Mary introduced Bill and Tom to Sue, and there were no other introductions."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "only"), ("focus", "Bill"), ("truth", "false")] }
+    paperFeatures := [("construction", "only"), ("focus", "Bill")] }
 
 def ex_3b : Datum :=
   { id := "rooth1992_3b"
@@ -37,9 +38,10 @@ def ex_3b : Datum :=
     glossedTokens := []
     context := "Mary introduced Bill and Tom to Sue, and there were no other introductions."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "only"), ("focus", "Sue"), ("truth", "true")] }
+    paperFeatures := [("construction", "only"), ("focus", "Sue")] }
 
 def ex_7 : Datum :=
   { id := "rooth1992_7"

@@ -200,8 +200,8 @@ def valence? (r : Datum) : Option Degree.EvaluativeValence :=
 /-- A row holds in its context when it is judged true, where the paper gives a truth value, and
 when it is not infelicitous otherwise. -/
 def Holds (r : Datum) : Prop :=
-  match r.feature? "truth" with
-  | some t => t = "true"
+  match r.verdict with
+  | some t => t = true
   | none => r.judgment ≠ .unacceptable
 
 instance (r : Datum) : Decidable (Holds r) := by unfold Holds; split <;> infer_instance
@@ -235,11 +235,11 @@ theorem tsp_rows :
 /-- Every declarative judged false is under a class 1 predicate, beside a constituent question
 judged true in the same context ((23) to (36)). -/
 theorem nondistributive_rows :
-    ∀ r ∈ Examples.all, r.feature? "truth" = some "false" →
+    ∀ r ∈ Examples.all, r.verdict = some false →
       r.feature? "clause" = some "declarative" →
         class? r = some .nonDistributive ∧ ∃ r' ∈ Examples.all, r'.context = r.context ∧
           r'.feature? "predicate" = r.feature? "predicate" ∧
-          r'.feature? "clause" = some "constituent" ∧ r'.feature? "truth" = some "true" := by
+          r'.feature? "clause" = some "constituent" ∧ r'.verdict = some true := by
   decide +kernel
 
 /-- Turkish *diye* clauses combine with *um-* 'hope', *kork-* 'fear', and an intransitive verb alike

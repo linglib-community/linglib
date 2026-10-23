@@ -29,9 +29,10 @@ subdomain (70), and the same reasoning yields Free Choice (`freeChoice_of_proper
 Without uniqueness the blocked exhaustivity inference (76) and the plural competitor (77)
 give ignorance of number (`numberIgnorance_of_competition`), which uniqueness makes
 unavailable (`not_numberIgnorance_of_uniqueness`) — the two parameters of Table 1. The
-scenario verdicts (24)–(30) are checked in `rows_agree`, and the singleton-restrictor and
-identity-continuation rows in `restrictor_rows` and `continuation_rows`, each rejected exactly
-under a determiner with a modal component.
+scenario truth-value judgments (28)–(30) are checked in `scenario_verdicts` and the felicity
+rows (24)–(25) in `scenario_felicity`; the singleton-restrictor and identity-continuation rows
+are read by `restrictor_rows` and `continuation_rows`, each rejected exactly under a determiner
+with a modal component.
 
 ## References
 
@@ -197,14 +198,27 @@ where
     | "un" => some true
     | _ => none
 
-/-- A row's observed verdict, which is fine unless the row is deviant or judged false. -/
-def observed (row : Datum) : Bool :=
-  row.judgment == .acceptable && row.feature? "verdict" != some "false"
+/-- The scenario rows with a truth-value judgment, (28) and (30), are true exactly where the
+component the determiner needs holds in the scenario. -/
+theorem scenario_verdicts : ∀ row ∈ Examples.all, row.FitsVerdict predicted id := by
+  decide +kernel
 
-theorem rows_agree :
-    ∀ row ∈ Examples.all, ∀ b, predicted row = some b → observed row = b := by decide +kernel
+/-- The scenario rows judged for felicity rather than truth. -/
+def felicity? (row : Datum) : Option Bool :=
+  match row.verdict with
+  | some _ => none
+  | none => predicted row
 
-theorem scenario_read : Datum.ReadCount predicted Examples.all 7 := by decide +kernel
+/-- The felicity rows (7) and (24)–(25): *algún* is felicitous in a scenario exactly where its
+Modal Variation component holds. -/
+theorem scenario_felicity :
+    ∀ row ∈ Examples.all, row.Fits felicity? fun b ↦ .ofProp (b = true) := by
+  decide +kernel
+
+theorem scenario_read :
+    Datum.ReadCount felicity? Examples.all 3 ∧
+      (Examples.all.filter fun row => row.verdict.isSome ∧ (predicted row).isSome).length = 4 := by
+  decide +kernel
 
 /-- Whether a determiner carries a modal component, (13) and (18): *algún* and the
 *irgend*-series do, *un* and plural *algunos* do not. -/

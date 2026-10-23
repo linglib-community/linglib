@@ -115,9 +115,10 @@ def iz2021_s24a : Datum :=
     glossedTokens := []
     context := "Fred's licence was suspended for 10 years after a car accident 25 years ago; 15 years ago a ladder accident paralysed him."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("truth", "true")] }
+    paperFeatures := [("section", "1")] }
 
 def iz2021_s24c : Datum :=
   { id := "iz2021_s24c"
@@ -128,9 +129,10 @@ def iz2021_s24c : Datum :=
     glossedTokens := []
     context := "Fred's licence was suspended for 10 years after a car accident 25 years ago; 15 years ago a ladder accident paralysed him."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("truth", "false"), ("ai", "at the LB: conveys that Fred drove around the ladder accident")] }
+    paperFeatures := [("section", "1"), ("ai", "at the LB: conveys that Fred drove around the ladder accident")] }
 
 def iz2021_s25 : Datum :=
   { id := "iz2021_s25"
@@ -154,9 +156,10 @@ def iz2021_s26 : Datum :=
     glossedTokens := []
     context := "Fred is 40 and has never driven."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1"), ("truth", "false"), ("ai", "not cancelable")] }
+    paperFeatures := [("section", "1"), ("ai", "not cancelable")] }
 
 def iz2021_s27a : Datum :=
   { id := "iz2021_s27a"

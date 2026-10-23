@@ -232,9 +232,10 @@ def ex_28a : Datum :=
     glossedTokens := [("Juan", "Juan"), ("puede", "may"), ("estar", "be"), ("en", "in"), ("cualquier", "CUALQUIER"), ("parte", "part"), ("de", "of"), ("la", "the"), ("casa", "house")]
     context := "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn)."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "barn27"), ("verdict", "false")] }
+    paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "barn27")] }
 
 def ex_28b : Datum :=
   { id := "alonsoovallemenendezbenito2010_28b"
@@ -245,9 +246,10 @@ def ex_28b : Datum :=
     glossedTokens := [("Juan", "Juan"), ("puede", "may"), ("estar", "be"), ("en", "in"), ("alguna", "ALGUNA"), ("parte", "part"), ("de", "of"), ("la", "the"), ("casa", "house")]
     context := "Hide-and-seek; Juan is hiding. Pedro is convinced that Juan is not in the bathroom or in the kitchen, but for all Pedro knows Juan could be in any of the other rooms of the house, or even outside (say, in the barn)."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "barn27"), ("verdict", "true")] }
+    paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "barn27")] }
 
 def ex_30a : Datum :=
   { id := "alonsoovallemenendezbenito2010_30a"
@@ -258,9 +260,10 @@ def ex_30a : Datum :=
     glossedTokens := []
     context := "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "hiring29"), ("verdict", "false")] }
+    paperFeatures := [("determiner", "cualquiera"), ("modal", "may"), ("scenario", "hiring29")] }
 
 def ex_30b : Datum :=
   { id := "alonsoovallemenendezbenito2010_30b"
@@ -271,9 +274,10 @@ def ex_30b : Datum :=
     glossedTokens := []
     context := "The department of linguistics is hiring a new professor. Several candidates have applied, but some of them don't have a Ph.D. According to University policies, only candidates with a Ph.D. can be hired."
     judgment := .acceptable
+    verdict := some true
     alternatives := []
     readings := []
-    paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "hiring29"), ("verdict", "true")] }
+    paperFeatures := [("determiner", "algún"), ("modal", "may"), ("scenario", "hiring29")] }
 
 def ex_31a : Datum :=
   { id := "alonsoovallemenendezbenito2010_31a"

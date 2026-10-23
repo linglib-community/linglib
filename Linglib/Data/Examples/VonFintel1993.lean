@@ -284,9 +284,10 @@ def ex_25a : Datum :=
     glossedTokens := []
     context := "Tom, John and Harry did not attend; Bill and Mary did."
     judgment := .acceptable
+    verdict := some false
     alternatives := []
     readings := []
-    paperFeatures := [("determiner", "most"), ("truth", "false")] }
+    paperFeatures := [("determiner", "most")] }
 
 def ex_25b : Datum :=
   { id := "vonfintel1993_25b"

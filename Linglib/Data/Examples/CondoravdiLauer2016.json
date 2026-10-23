@@ -119,11 +119,11 @@
     "translation": "",
     "context": "On a subway platform the speaker notices a stranger who appears lost and might be on his way to Harlem; as it happens the stranger wants to go to Hoboken, accessible only by the PATH train.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "hoboken"],
-      ["truth", "false"]
+      ["construction", "hoboken"]
     ],
     "comment": "Intuitively false in the Hoboken scenario, as Condoravdi and Lauer predict, `HobokenScenario.not_possibility_path`; Sæbø's augmented ordering source predicts it true, `HobokenScenario.saebo_path`.",
     "verified": "page-image"
@@ -380,11 +380,11 @@
     "translation": "",
     "context": "You can only take three days off work, and this is mutually known.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "counterfactual"],
-      ["truth", "false"]
+      ["construction", "counterfactual"]
     ],
     "comment": "Von Stechow et al.'s similarity modal gives (31) and (37) the same truth conditions, but (31) can be true when (37) is false.",
     "verified": "page-image"
@@ -608,7 +608,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(49a)"},
     "language": "stan1293",
     "primaryText": "Do you want to play tennis? I want to, but I have to teach.",
-    "discourseSegments": ["Do you want to play tennis?", "I want to, but I have to teach."],
+    "discourseSegments": [
+      "Do you want to play tennis?",
+      "I want to, but I have to teach."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -627,7 +630,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(49b)"},
     "language": "stan1293",
     "primaryText": "Do you want to play tennis? No, I have to teach.",
-    "discourseSegments": ["Do you want to play tennis?", "No, I have to teach."],
+    "discourseSegments": [
+      "Do you want to play tennis?",
+      "No, I have to teach."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1000,7 +1006,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(84)"},
     "language": "stan1293",
     "primaryText": "If Sophie had gone to the parade, she would have seen Pedro. But if Sophie had gone to the parade and been stuck behind a tall person, she would not have seen Pedro.",
-    "discourseSegments": ["If Sophie had gone to the parade, she would have seen Pedro.", "But if Sophie had gone to the parade and been stuck behind a tall person, she would not have seen Pedro."],
+    "discourseSegments": [
+      "If Sophie had gone to the parade, she would have seen Pedro.",
+      "But if Sophie had gone to the parade and been stuck behind a tall person, she would not have seen Pedro."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1019,7 +1028,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(85)"},
     "language": "stan1293",
     "primaryText": "If Sophie had gone to the parade and been stuck behind a tall person, she would not have seen Pedro. But if Sophie had gone to the parade, she would have seen Pedro.",
-    "discourseSegments": ["If Sophie had gone to the parade and been stuck behind a tall person, she would not have seen Pedro.", "But if Sophie had gone to the parade, she would have seen Pedro."],
+    "discourseSegments": [
+      "If Sophie had gone to the parade and been stuck behind a tall person, she would not have seen Pedro.",
+      "But if Sophie had gone to the parade, she would have seen Pedro."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1038,7 +1050,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(86)"},
     "language": "stan1293",
     "primaryText": "If you want to go to the airport and there are track repairs, you should take a taxi. But the taxi would be very expensive and track repairs are very unlikely, so if you want to go to the airport, you should take the Caltrain.",
-    "discourseSegments": ["If you want to go to the airport and there are track repairs, you should take a taxi.", "But the taxi would be very expensive and track repairs are very unlikely, so if you want to go to the airport, you should take the Caltrain."],
+    "discourseSegments": [
+      "If you want to go to the airport and there are track repairs, you should take a taxi.",
+      "But the taxi would be very expensive and track repairs are very unlikely, so if you want to go to the airport, you should take the Caltrain."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1057,7 +1072,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(91a)"},
     "language": "stan1293",
     "primaryText": "I know John wants to go to Hoboken today, not to Harlem. But if he wants to go to Harlem today, he has to take the A train.",
-    "discourseSegments": ["I know John wants to go to Hoboken today, not to Harlem.", "But if he wants to go to Harlem today, he has to take the A train."],
+    "discourseSegments": [
+      "I know John wants to go to Hoboken today, not to Harlem.",
+      "But if he wants to go to Harlem today, he has to take the A train."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1076,7 +1094,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(91b)"},
     "language": "stan1293",
     "primaryText": "I know John wants to go to Hoboken today, not to Harlem. But if he wanted to go to Harlem today, he would have to take the A train.",
-    "discourseSegments": ["I know John wants to go to Hoboken today, not to Harlem.", "But if he wanted to go to Harlem today, he would have to take the A train."],
+    "discourseSegments": [
+      "I know John wants to go to Hoboken today, not to Harlem.",
+      "But if he wanted to go to Harlem today, he would have to take the A train."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1123,12 +1144,12 @@
     "translation": "",
     "context": "Two trains go to Harlem, and Ruud van Nistelrooij is on one of them; the addressee wants to meet him.",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["construction", "strength"],
-      ["modal", "strong"],
-      ["truth", "false"]
+      ["modal", "strong"]
     ],
     "comment": "Huitink's van Nistelrooij case: false with a strong modal even if the addressee effectively prefers meeting him; the strong/weak contrast is left open.",
     "verified": "page-image"
@@ -1157,7 +1178,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(98a)"},
     "language": "stan1293",
     "primaryText": "I know John wants to go to Hoboken today, not to Harlem. But to go to Harlem, he has to take the A train.",
-    "discourseSegments": ["I know John wants to go to Hoboken today, not to Harlem.", "But to go to Harlem, he has to take the A train."],
+    "discourseSegments": [
+      "I know John wants to go to Hoboken today, not to Harlem.",
+      "But to go to Harlem, he has to take the A train."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1176,7 +1200,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(98b)"},
     "language": "stan1293",
     "primaryText": "I know John wants to go to Hoboken today, not to Harlem. But to go to Harlem, he would have to take the A train.",
-    "discourseSegments": ["I know John wants to go to Hoboken today, not to Harlem.", "But to go to Harlem, he would have to take the A train."],
+    "discourseSegments": [
+      "I know John wants to go to Hoboken today, not to Harlem.",
+      "But to go to Harlem, he would have to take the A train."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1270,7 +1297,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(103)"},
     "language": "stan1293",
     "primaryText": "Well, if he wants to go to Harlem right now, he has to / should take the A train.",
-    "discourseSegments": ["A: Why is he doing that?", "B: Well, if he wants to go to Harlem right now, he has to / should take the A train."],
+    "discourseSegments": [
+      "A: Why is he doing that?",
+      "B: Well, if he wants to go to Harlem right now, he has to / should take the A train."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "A and B are watching a disaster movie in which a virus is set free in Harlem. After a scene of people dropping dead in the street, the movie cuts to the hero, C, who is going about his day in Manhattan, oblivious to the outbreak. C is studying the schedule for the A train.",
@@ -1288,7 +1318,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(106a)"},
     "language": "stan1293",
     "primaryText": "If you want to drop out of school, you should talk to the guidance counselor. He will help you with the necessary paper work.",
-    "discourseSegments": ["If you want to drop out of school, you should talk to the guidance counselor.", "He will help you with the necessary paper work."],
+    "discourseSegments": [
+      "If you want to drop out of school, you should talk to the guidance counselor.",
+      "He will help you with the necessary paper work."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1310,7 +1343,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(106b)"},
     "language": "stan1293",
     "primaryText": "If you want to drop out of school, you should talk to the guidance counselor. So we can figure out what makes you unhappy, and find ways to address the issues.",
-    "discourseSegments": ["If you want to drop out of school, you should talk to the guidance counselor.", "So we can figure out what makes you unhappy, and find ways to address the issues."],
+    "discourseSegments": [
+      "If you want to drop out of school, you should talk to the guidance counselor.",
+      "So we can figure out what makes you unhappy, and find ways to address the issues."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1332,7 +1368,10 @@
     "source": {"bibkey": "condoravdi-lauer-2016", "paperLabel": "(106c)"},
     "language": "stan1293",
     "primaryText": "If you want to drop out of school, you should talk to the guidance counselor. Maybe he can convince you to change your mind.",
-    "discourseSegments": ["If you want to drop out of school, you should talk to the guidance counselor.", "Maybe he can convince you to change your mind."],
+    "discourseSegments": [
+      "If you want to drop out of school, you should talk to the guidance counselor.",
+      "Maybe he can convince you to change your mind."
+    ],
     "glossedTokens": [],
     "translation": "",
     "context": "",
@@ -1486,6 +1525,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1493,8 +1533,7 @@
       ["want", "weak"],
       ["modal", "teleological"],
       ["interpretation", "nonAnankastic"],
-      ["implication", "none"],
-      ["truth", "false"]
+      ["implication", "none"]
     ],
     "comment": "Weatherson's weak antecedents, via von Fintel and Iatridou 2006: the desire predicate cannot target effective preferences, so no anankastic construal arises and the sentence is false unless the context treats any such desire as acted upon.",
     "verified": "page-image"
@@ -1509,6 +1548,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1516,8 +1556,7 @@
       ["want", "weak"],
       ["modal", "teleological"],
       ["interpretation", "nonAnankastic"],
-      ["implication", "none"],
-      ["truth", "false"]
+      ["implication", "none"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1532,6 +1571,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1539,8 +1579,7 @@
       ["want", "weak"],
       ["modal", "teleological"],
       ["interpretation", "nonAnankastic"],
-      ["implication", "none"],
-      ["truth", "false"]
+      ["implication", "none"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1555,6 +1594,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1562,8 +1602,7 @@
       ["want", "weak"],
       ["modal", "teleological"],
       ["interpretation", "nonAnankastic"],
-      ["implication", "none"],
-      ["truth", "false"]
+      ["implication", "none"]
     ],
     "comment": "",
     "verified": "page-image"
@@ -1578,6 +1617,7 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
+    "verdict": false,
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1585,8 +1625,7 @@
       ["want", "weak"],
       ["modal", "teleological"],
       ["interpretation", "nonAnankastic"],
-      ["implication", "none"],
-      ["truth", "false"]
+      ["implication", "none"]
     ],
     "comment": "",
     "verified": "page-image"
