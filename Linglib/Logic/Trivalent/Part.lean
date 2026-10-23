@@ -24,6 +24,8 @@ classical value, so theorems proved over either carrier transfer to the other.
 
 * `SignType.ofPart_eq_zero_iff`, `SignType.ofPart_eq_one_iff`, `SignType.ofPart_eq_neg_one_iff`:
   the three values of `ofPart`.
+* `SignType.ofPart_map_not`, `SignType.ofPart_ite_some_false`: negation and enrichment by a
+  two-valued condition transport along `ofPart`.
 * `Trivalent.gapExt_ofPart`: pointwise, the gap is the set of undefined points.
 
 ## References
@@ -68,6 +70,24 @@ variable {p : Part Prop}
 
 @[simp] theorem ofPart_none : ofPart Part.none = 0 :=
   ofPart_eq_zero_iff.2 Part.not_none_dom
+
+/-- Negation transports along `ofPart`. -/
+theorem ofPart_map_not : ofPart (p.map Not) = -ofPart p := by
+  refine eq_of_eq_zero_iff_of_eq_one_iff ?_ ?_
+  · simp only [ofPart_eq_zero_iff, SignType.neg_eq_zero_iff, Part.dom_iff_mem, Part.mem_map_iff]
+    exact not_congr ⟨fun ⟨a, b, hb, _⟩ ↦ ⟨b, hb⟩, fun ⟨a, ha⟩ ↦ ⟨¬ a, a, ha, rfl⟩⟩
+  · simp only [ofPart_eq_one_iff, SignType.neg_eq_one_iff, ofPart_eq_neg_one_iff,
+      Part.mem_map_iff]
+    constructor
+    · rintro ⟨a, ⟨b, hb, rfl⟩, ha⟩
+      exact ⟨b, hb, ha⟩
+    · rintro ⟨a, ha, hna⟩
+      exact ⟨¬ a, ⟨a, ha, rfl⟩, hna⟩
+
+/-- Enrichment by a two-valued condition transports along `ofPart`. -/
+theorem ofPart_ite_some_false (R : Prop) [Decidable R] (p : Part Prop) :
+    ofPart (if R then p else Part.some False) = ofProp R ⊓ ofPart p := by
+  split_ifs with h <;> simp [ofProp, h]
 
 end SignType
 

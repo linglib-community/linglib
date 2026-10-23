@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Data.PFun
+public import Linglib.Logic.Trivalent.Part
 public import Linglib.Semantics.Composition.Tree
 
 /-!
@@ -399,6 +400,14 @@ def Uninterpretable (t : Tree C L) : Prop := interpPartial lex g t = none
 
 /-- A tree is a presupposition failure when its denotation is undefined. -/
 def PresupFailure (t : Tree C L) : Prop := ∃ d, interpPartial lex g t = some d ∧ ¬ d.2.Dom
+
+/-- A sentence fails exactly where its three-valued readout is undefined, so the engine's
+denotations and Strong Kleene propositions agree on presupposition failure. -/
+theorem presupFailure_iff_ofPart_eq_zero {t : Tree C L} {v : Part Prop}
+    (h : interpPartial lex g t = some ⟨.t, v⟩) :
+    PresupFailure lex g t ↔ SignType.ofPart v = 0 := by
+  rw [PresupFailure, SignType.ofPart_eq_zero_iff, h]
+  simp
 
 theorem interpPartial_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1))
     (t : Tree C L) :

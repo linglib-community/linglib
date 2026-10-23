@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Presupposition.Formula
 public import Linglib.Semantics.Presupposition.Occurrence
 
@@ -558,6 +559,12 @@ theorem Formula.middleKleene_ne_zero_iff (I : Atom → Set W) (F : Formula Atom)
       · rw [localContext_eq_inter]; exact ⟨hc, hl⟩
       · rw [localContext_eq_inter] at hl; exact h hl.1 o ho hl.2
     rw [hG, middleKleene_bin_ne_zero I]
+
+/-- Local accommodation of every trigger leaves no undefinedness, so it is all-or-nothing. -/
+theorem Formula.isBivalent_middleKleene_accommodate (I : Atom → Set W) (F : Formula Atom) :
+    Trivalent.IsBivalent (F.accommodate.middleKleene I) :=
+  (Trivalent.isBivalent_iff_forall_ne_zero _).2 fun w ↦
+    (Formula.middleKleene_ne_zero_iff I _ w).2 (by simp)
 
 /-! ### Occurrences -/
 
