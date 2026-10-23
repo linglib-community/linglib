@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.HPSG.Subinterpretation
-public import Mathlib.Data.Fin.VecNotation
+public import Linglib.Core.Data.Fin.VecNotation
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Binding.Basic
 
@@ -173,10 +173,6 @@ private theorem le_ana_iff (σ : Srt) : σ ≤ .ana ↔ σ = .ana := by revert �
 
 private theorem le_ppro_iff (σ : Srt) : σ ≤ .ppro ↔ σ = .ppro := by revert σ; decide
 
-private theorem comp_vecCons₂ {α : Type*} (g : ℕ → α) (a b : ℕ) :
-    (fun i ↦ g (![a, b] i)) = ![g a, g b] := by
-  ext i; match i with | 0 | 1 => rfl
-
 variable {I} {r : U}
 
 open _root_.Binding.Configuration
@@ -184,13 +180,13 @@ open _root_.Binding.Configuration
 theorem satisfies_principleA_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
     I.Satisfies g r principleA ↔ ∀ x, I.S x = .ana → ∀ y, I.R .locO ![y, x] →
       ∃ z, I.R .locO ![z, x] ∧ Codependent I z x := by
-  simp [principleA, locallyOBinds, coindexed, agrees, hr _, le_ana_iff, comp_vecCons₂,
+  simp [principleA, locallyOBinds, coindexed, agrees, hr _, le_ana_iff, Matrix.comp_vec2',
     Codependent]
 
 theorem satisfies_principleB_iff (hr : I.IsRootedAt r) (g : ℕ → U) :
     I.Satisfies g r principleB ↔ ∀ x, I.S x = .ppro → ∀ y, I.R .locO ![y, x] →
       ¬ Codependent I y x := by
-  simp [principleB, locallyOBinds, coindexed, agrees, hr _, le_ppro_iff, comp_vecCons₂,
+  simp [principleB, locallyOBinds, coindexed, agrees, hr _, le_ppro_iff, Matrix.comp_vec2',
     Codependent]
 
 /-- At a root of which every entity is a component, and with nothing locally o-commanding

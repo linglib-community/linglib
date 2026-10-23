@@ -171,6 +171,17 @@ def freeVars : Term Sig → Finset ℕ
   | nil => rfl
   | append_singleton p α ih => rw [path_concat]; exact ih
 
+/-- A term is colon-free when it starts at a variable rather than at the described entity. -/
+def IsColonFree : Term Sig → Prop
+  | colon => False
+  | var _ => True
+  | feat t _ => t.IsColonFree
+
+instance decidableIsColonFree : DecidablePred (IsColonFree (Sig := Sig))
+  | colon => isFalse id
+  | var _ => isTrue trivial
+  | feat t _ => decidableIsColonFree t
+
 end Term
 
 /-! ### Admissible paths -/

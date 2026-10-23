@@ -25,6 +25,8 @@ that structural recursion through a `Fin n → α` argument produces (a substitu
 
 * `Matrix.comp_vecCons`, `Matrix.comp_vecEmpty`: `f ∘ ![…]` pushes `f` into the literal.
 * `Matrix.comp_vecCons'`, `Matrix.comp_vecEmpty'`: the same for `fun i => f (![…] i)`.
+* `Matrix.comp_vec2'`: the two-element case, which `simp` cannot reach from `comp_vecCons'` because
+  `cons_val_fin_one` first turns the tail into a constant function.
 -/
 
 @[expose] public section
@@ -46,5 +48,8 @@ theorem comp_vecCons' (f : α → β) (a : α) (v : Fin n → α) :
 
 theorem comp_vecEmpty' (f : α → β) : (fun i => f (![] i)) = (![] : Fin 0 → β) :=
   empty_eq _
+
+theorem comp_vec2' (f : α → β) (a b : α) : (fun i => f (![a, b] i)) = ![f a, f b] := by
+  ext i; match i with | 0 | 1 => rfl
 
 end Matrix
