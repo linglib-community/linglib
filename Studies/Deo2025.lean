@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.Commitment.Preferential
+public import Linglib.Discourse.Commitment.Sincerity
 public import Linglib.Discourse.Role
 public import Linglib.Data.Examples.Deo2025
 
@@ -83,12 +83,6 @@ party's testimony or expressed preference, and none of `x`'s own, `p ∈ DC_x^de
 def IsDependent (K : State Role W) (x : Role) (p : Set W) (f : Force) : Prop :=
   commit x p f .otherGenerated ∈ K ∧ ¬ IsSource K x p
 
-/-- The contents every participant is committed to under `f`: the common ground for `.doxastic`
-and the joint preferences for `.preferential`, (17b) and (17c), [rudin-2018]'s teleological
-common ground. -/
-def joint (K : State Role W) (f : Force) : Set (Set W) :=
-  ⋂ x, contents (ofForce (ofCommitter K x) f)
-
 /-! ### The conventions, (18) and (20) -/
 
 variable (P : Role → W → PreferenceStructure W) (K : W → State Role W) (B : Set W)
@@ -142,10 +136,11 @@ theorem imperative_contextSets :
     (bara_contextSets K p .preferential w).2.trans (contextSet_ofForce_insert_of_ne nofun)⟩
 
 /-- Once the addressee takes up a *bərə*-utterance's content, it joins the joint commitments under
-its attitude (§4). -/
-theorem mem_joint_insert (s : Commitment.Source) :
-    p ∈ joint (insert (commit .addressee p f s) (bara K p f w)) f :=
-  Set.mem_iInter.2 λ x => match x with
+its attitude (§4): the common ground for `.doxastic` and the joint preferences for
+`.preferential`, (17b) and (17c), [rudin-2018]'s teleological common ground. -/
+theorem mem_jointContents_insert (s : Commitment.Source) :
+    p ∈ jointContents (ofForce (insert (commit .addressee p f s) (bara K p f w)) f) :=
+  Set.mem_iInter.2 fun x ↦ match x with
     | .speaker => ⟨commit .speaker p f, ⟨⟨⟨Or.inr (Or.inr (Or.inl rfl)), rfl⟩, rfl⟩, rfl⟩, rfl⟩
     | .addressee => ⟨commit .addressee p f s, ⟨⟨⟨Or.inl rfl, rfl⟩, rfl⟩, rfl⟩, rfl⟩
 
@@ -159,7 +154,7 @@ only if the addressee takes up `p`; and the speaker's information does not alrea
 addressee taking up `p`. A content the addressee is taken to have taken up already, (7) in its
 first context, fails the last clause. -/
 def Felicitous : Prop :=
-  Sincere P (bara K p f w) w ∧ Want P .speaker g w ∧ benefits g .addressee ∧
+  Sincere (effectivePreference P) (bara K p f w) w ∧ Want P .speaker g w ∧ benefits g .addressee ∧
     B ∩ g ⊆ uptake K p f ∧ ¬ B ⊆ uptake K p f
 
 /-- An offer or invitation leaves the choice to the addressee: the speaker effectively prefers
@@ -170,32 +165,33 @@ def Defers : Prop := Want P .speaker (uptake K p f)ᶜ w
 variable {P K B benefits g p f w}
 
 /-- A sincere *bərə*-utterance is an effective preference for the uptake. -/
-theorem want_uptake_of_sincere (h : Sincere P (bara K p f w) w) :
+theorem want_uptake_of_sincere (h : Sincere (effectivePreference P) (bara K p f w) w) :
     Want P .speaker (uptake K p f) w :=
   h.want (Set.mem_insert _ _)
 
 /-- The *bərə*-utterance is sincere when the speaker effectively prefers the uptake, prefers the
 content if the clause is an imperative, and was sincere before. -/
 theorem sincere_bara_iff :
-    Sincere P (bara K p f w) w ↔ Want P .speaker (uptake K p f) w ∧
-      (f = .preferential → Want P .speaker p w) ∧ Sincere P (K w) w := by
-  refine ⟨λ h => ⟨want_uptake_of_sincere h, λ hf => h _ (Or.inr (Or.inl rfl)) hf rfl,
-    h.mono ((Set.subset_insert _ _).trans (Set.subset_insert _ _))⟩, λ ⟨hu, hp, hK⟩ => ?_⟩
-  rintro c (rfl | rfl | hc) hf hpol
+    Sincere (effectivePreference P) (bara K p f w) w ↔ Want P .speaker (uptake K p f) w ∧
+      (f = .preferential → Want P .speaker p w) ∧ Sincere (effectivePreference P) (K w) w := by
+  refine ⟨fun h ↦ ⟨want_uptake_of_sincere h, fun hf ↦ by subst hf; exact h.want (.inr (.inl rfl)),
+    h.mono ((Set.subset_insert _ _).trans (Set.subset_insert _ _))⟩, fun ⟨hu, hp, hK⟩ ↦ ?_⟩
+  rintro c (rfl | rfl | hc) hpol
   · exact hu
-  · exact hp hf
-  · exact hK c hc hf hpol
+  · cases f
+    exacts [trivial, hp rfl]
+  · exact hK c hc hpol
 
 theorem inter_uptake_eq_empty (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     B ∩ uptake K p f = ∅ :=
-  Set.eq_empty_of_forall_notMem λ v hv => hv.2.2 (h v hv.1)
+  Set.eq_empty_of_forall_notMem fun v hv ↦ hv.2.2 (h v hv.1)
 
 /-- If the addressee is already a source for `p` by the speaker's information, *bərə* is
 infelicitous ((11b), (11c), (15), (9), (16), §3.4). -/
 theorem not_felicitous_of_isSource (benefits : Set W → Role → Prop) (g : Set W) (f : Force)
     (hC : (P .speaker w).Consistent B) (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     ¬ Felicitous P K B benefits g p f w :=
-  λ hf => hC.realistic _ (want_uptake_of_sincere hf.1).1
+  fun hf ↦ hC.realistic _ (want_uptake_of_sincere hf.1).1
     (by rw [Set.inter_comm]; exact inter_uptake_eq_empty h)
 
 /-- When the speaker defers to the addressee, *bərə* is infelicitous, as in an offer or invitation
@@ -203,7 +199,7 @@ theorem not_felicitous_of_isSource (benefits : Set W → Role → Prop) (g : Set
 theorem not_felicitous_of_defers (benefits : Set W → Role → Prop) (g : Set W)
     (hC : (P .speaker w).Consistent B) (h : Defers P K p f w) :
     ¬ Felicitous P K B benefits g p f w :=
-  λ hf => (hC.inter_inter_nonempty_of_mem_maxElts (want_uptake_of_sincere hf.1) h).ne_empty
+  fun hf ↦ (hC.inter_inter_nonempty_of_mem_maxElts (want_uptake_of_sincere hf.1) h).ne_empty
     (by rw [Set.inter_compl_self, Set.inter_empty])
 
 /-- A goal that does not benefit the addressee, §3.4: a request or plea serves the speaker
@@ -211,7 +207,7 @@ alone, (10), and a curse harms the addressee, (11d). -/
 theorem not_felicitous_of_not_benefits (P : Role → W → PreferenceStructure W)
     (K : W → State Role W) (B p : Set W) (f : Force) (w : W) (h : ¬ benefits g .addressee) :
     ¬ Felicitous P K B benefits g p f w :=
-  λ hf => h hf.2.2.1
+  fun hf ↦ h hf.2.2.1
 
 /-! ### The warning of (5): a precondition against a way among many -/
 
@@ -266,11 +262,11 @@ def benefit (q : Set Weather) (_ : Role) : Prop := q = safe
 neither fact. -/
 def w₀ : Weather := ⟨true, true, true, false, false⟩
 
-theorem raining_ne_sunnyTomorrow : raining ≠ sunnyTomorrow := λ h => by
+theorem raining_ne_sunnyTomorrow : raining ≠ sunnyTomorrow := fun h ↦ by
   simpa [raining, sunnyTomorrow] using Set.ext_iff.1 h ⟨true, false, false, false, false⟩
 
 theorem not_isSource (v : Weather) (q : Set Weather) : ¬ IsSource (state v) .addressee q :=
-  λ ⟨_, h⟩ => by simp [state] at h
+  fun ⟨_, h⟩ ↦ by simp [state] at h
 
 theorem mem_state_raining {v : Weather} :
     commit .addressee raining .doxastic .otherGenerated ∈ state v ↔ v.upRain := by
@@ -290,18 +286,18 @@ theorem mem_uptake_sunnyTomorrow {v : Weather} :
 /-- The warning of (5a) is felicitous, since Anu may yet drive without taking Bilal's word on the
 rain. -/
 theorem felicitous_raining : Felicitous prefs state info benefit safe raining .doxastic w₀ := by
-  refine ⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, λ _ _ h => h⟩, nofun, λ c hc hf _ =>
-    absurd (hc.2.2.1.symm.trans hf) nofun⟩, ⟨Or.inr rfl, λ _ _ h => h⟩, rfl, ?_, ?_⟩
+  refine ⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, nofun, fun c hc _ ↦ by
+    rw [hc.2.2.1]; trivial⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl, ?_, ?_⟩
   · rintro v ⟨⟨-, -, hv⟩, hs⟩
     exact mem_uptake_raining.2 (hv hs)
   · intro h
-    simpa [w₀] using mem_uptake_raining.1 (h (show w₀ ∈ info from ⟨rfl, rfl, λ h => (h rfl).elim⟩))
+    simpa [w₀] using mem_uptake_raining.1 (h (show w₀ ∈ info from ⟨rfl, rfl, fun h ↦ (h rfl).elim⟩))
 
 /-- (5b) is not: Anu can stay safe without taking Bilal's word on tomorrow's weather. -/
 theorem not_felicitous_sunnyTomorrow :
-    ¬ Felicitous prefs state info benefit safe sunnyTomorrow .doxastic w₀ := λ h => by
+    ¬ Felicitous prefs state info benefit safe sunnyTomorrow .doxastic w₀ := fun h ↦ by
   have hv : (⟨true, true, false, true, false⟩ : Weather) ∈ info ∩ safe :=
-    ⟨⟨rfl, rfl, λ _ => rfl⟩, Bool.false_ne_true⟩
+    ⟨⟨rfl, rfl, fun _ ↦ rfl⟩, Bool.false_ne_true⟩
   simpa [mem_uptake_sunnyTomorrow] using h.2.2.2.1 hv
 
 end Weather
@@ -348,7 +344,7 @@ def benefit (q : Set Car) (_ : Role) : Prop := q = taking
 def w₀ : Car := ⟨false, false⟩
 
 theorem not_isSource (v : Car) (q : Set Car) : ¬ IsSource (latent v) .addressee q :=
-  λ ⟨_, h⟩ => by simp [latent] at h
+  fun ⟨_, h⟩ ↦ by simp [latent] at h
 
 theorem mem_latent {v : Car} :
     commit .addressee taking .preferential .otherGenerated ∈ latent v ↔ v.up := by
@@ -362,17 +358,17 @@ with *bərə* is felicitous. -/
 theorem felicitous_latent :
     Felicitous prefs latent info benefit taking taking .preferential w₀ ∧
       Want prefs .addressee taking w₀ := by
-  refine ⟨⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, λ _ _ h => h⟩, λ _ => ⟨Or.inr rfl, λ _ _ h => h⟩,
-    λ c hc _ _ => absurd hc.2.2.2.2.2 Bool.false_ne_true⟩, ⟨Or.inr rfl, λ _ _ h => h⟩, rfl,
-    λ v hv => mem_uptake.2 (hv.1 hv.2), λ h => ?_⟩, ⟨rfl, λ _ _ h => h⟩⟩
-  simpa [w₀] using mem_uptake.1 (h (show w₀ ∈ info from λ h => h))
+  refine ⟨⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, fun _ ↦ ⟨Or.inr rfl, fun _ _ h ↦ h⟩,
+    fun c hc _ ↦ absurd hc.2.2.2.2.2 Bool.false_ne_true⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl,
+    fun v hv ↦ mem_uptake.2 (hv.1 hv.2), fun h ↦ ?_⟩, ⟨rfl, fun _ _ h ↦ h⟩⟩
+  simpa [w₀] using mem_uptake.1 (h (show w₀ ∈ info from fun h ↦ h))
 
 /-- In the second context of (15), Bilal's revealed preference makes *bərə* infelicitous under any
 consistent effective preferences of Anu's. -/
 theorem not_felicitous_revealed (P : Role → Car → PreferenceStructure Car)
     (hC : (P .speaker w₀).Consistent info) :
     ¬ Felicitous P revealed info benefit taking taking .preferential w₀ :=
-  not_felicitous_of_isSource _ _ _ hC λ _ _ => ⟨.preferential, Or.inl rfl⟩
+  not_felicitous_of_isSource _ _ _ hC fun _ _ ↦ ⟨.preferential, Or.inl rfl⟩
 
 end Car
 

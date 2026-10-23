@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Hamblin
+public import Mathlib.Order.Filter.Ker
 
 /-!
 # Answerhood predicates on questions
@@ -18,7 +19,9 @@ notions form the quantifier × polarity square of answerhood: resolution (∃, p
 `PartiallyAnsweredBy` (∃, either), `CompletelyAnsweredBy` (∀, either). A question is a
 contextual subquestion of another when its complete answers, cut to the context, partially
 answer it (`IsSubquestionOf`), and a move is relevant to a set of questions when some
-alternative of it partially answers one of them (`IsRelevantTo`).
+alternative of it partially answers one of them (`IsRelevantTo`). A common ground, a filter of
+propositions, decides a question when it entails a complete answer (`DecidedBy`), which on a
+principal filter is resolution.
 
 ## Implementation notes
 
@@ -34,6 +37,7 @@ answers everything, as in [roberts-2012].
 ## References
 
 * [ciardelli-groenendijk-roelofsen-2018]
+* [farkas-bruce-2010]
 * [groenendijk-stokhof-1984]
 * [roberts-2012]
 * [theiler-etal-2018]
@@ -224,5 +228,37 @@ theorem isRelevantTo_polar_iff {p : Set W} {qs : Set (Question W)}
   simp only [IsRelevantTo, alt_polar_of_nontrivial hne hnu,
     Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
     exists_eq_left]
+
+/-! ### Decision by a common ground -/
+
+section DecidedBy
+
+open Filter
+
+variable {f g : Filter W} {p : Set W} {P : Question W}
+
+/-- The common ground `f` decides the issue `P` when it entails one of its complete answers. -/
+def DecidedBy (P : Question W) (f : Filter W) : Prop := ∃ q ∈ alt P, q ∈ f
+
+theorem DecidedBy.mono (h : f ≤ g) : P.DecidedBy g → P.DecidedBy f :=
+  Exists.imp fun _ ⟨hq, hg⟩ ↦ ⟨hq, h hg⟩
+
+theorem DecidedBy.ker_mem (h : P.DecidedBy f) : f.ker ∈ P :=
+  let ⟨q, hq, hf⟩ := h
+  P.downward_closed q (mem_of_mem_alt hq) _ (Set.sInter_subset_of_mem hf)
+
+theorem decidedBy_principal (hQ : Q.IsNormal) : Q.DecidedBy (𝓟 σ) ↔ σ ∈ Q :=
+  (mem_iff_exists_alt_subset hQ).symm
+
+@[simp] theorem decidedBy_top : (⊤ : Question W).DecidedBy f := ⟨_, by simp, univ_mem⟩
+
+@[simp] theorem decidedBy_ofSet : (ofSet p).DecidedBy f ↔ p ∈ f := by simp [DecidedBy]
+
+@[simp] theorem decidedBy_polar : (polar p).DecidedBy f ↔ p ∈ f ∨ pᶜ ∈ f := by
+  by_cases h : p = ∅ ∨ p = Set.univ
+  · rcases h with rfl | rfl <;> simp [polar_empty, polar_univ]
+  · simp [DecidedBy, mem_alt_polar_of_nontrivial (not_or.1 h).1 (not_or.1 h).2]
+
+end DecidedBy
 
 end Question

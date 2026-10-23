@@ -24,10 +24,15 @@ onto the Stalnakerian common ground of `Discourse/CommonGround.lean` by `Commitm
 * `Commitment.State`: a commitment state, the set of commitments accumulated so far.
 * `Commitment.contents`, `Commitment.slate`, `Commitment.contextSet`: what a state
   undertakes, entails, and leaves open.
+* `Commitment.commitmentSet`: the worlds a participant's commitments leave open, [gunlogson-2001]'s
+  `cs_a`.
+* `Commitment.jointContents`: the contents every participant has undertaken.
 
 ## Main results
 
 * `Commitment.ker_slate`: the context set is the kernel of the slate.
+* `Commitment.slate_eq_iInf`, `Commitment.contextSet_eq_iInter_commitmentSet`: a state entails
+  what some participant's commitments entail, and leaves open what all of them leave open.
 * `Commitment.contextSet_insert_of_commit`: a new commitment intersects the context set with
   its content.
 * `Commitment.contextSet_ofForce_insert_of_eq_of_commit`,
@@ -44,6 +49,8 @@ onto the Stalnakerian common ground of `Discourse/CommonGround.lean` by `Commitm
   and Question Tags* (2015)][krifka-2015]
 * [C. Condoravdi and S. Lauer, *Imperatives: Meaning and illocutionary force*
   (2012)][condoravdi-lauer-2012]
+* [C. Gunlogson, *True to Form: Rising and Falling Declaratives as Questions in English*
+  (2001)][gunlogson-2001]
 * [C. Gunlogson, *A Question of Commitment* (2008)][gunlogson-2008]
 -/
 
@@ -77,10 +84,6 @@ structure Commitment (A W : Type*) where
   stance : Commitment.Stance := .commit
   force : Commitment.Force := .doxastic
   source : Commitment.Source := .selfGenerated
-
-theorem Filter.generate_insert {W : Type*} (φ : Set W) (S : Set (Set W)) :
-    Filter.generate (insert φ S) = Filter.generate S ⊓ Filter.principal φ := by
-  rw [Set.insert_eq, Filter.generate_union, Filter.generate_singleton, inf_comm]
 
 namespace Commitment
 
@@ -182,7 +185,8 @@ theorem contents_insert_of_refuse {c : Commitment A W} (h : c.stance = .refuse) 
 
 theorem slate_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
     slate (insert c K) = slate K ⊓ 𝓟 c.content := by
-  rw [slate, slate, contents_insert_of_commit h, Filter.generate_insert]
+  rw [slate, slate, contents_insert_of_commit h, Set.insert_eq, generate_union,
+    generate_singleton, inf_comm]
 
 /-- A new commitment intersects the context set with its content. -/
 theorem contextSet_insert_of_commit {c : Commitment A W} (h : c.stance = .commit) :
@@ -235,5 +239,43 @@ theorem contents_image_commit {ι : Type*} (a : A) (p : ι → Set W) (s : Set �
 theorem contextSet_insert_of_refuse {c : Commitment A W} (h : c.stance = .refuse) :
     contextSet (insert c K) = contextSet K := by
   simp [contextSet, contents_insert_of_refuse h]
+
+/-! ### Participants -/
+
+variable (K)
+
+/-- The worlds compatible with `a`'s undertaken commitments in `K`, [gunlogson-2001]'s `cs_a`. -/
+def commitmentSet (a : A) : Set W := contextSet (ofCommitter K a)
+
+/-- The contents every participant has undertaken in `K`. -/
+def jointContents : Set (Set W) := ⋂ a, contents (ofCommitter K a)
+
+variable {K}
+
+@[simp] theorem commitmentSet_empty (a : A) : commitmentSet (∅ : State A W) a = Set.univ := by
+  simp [commitmentSet, ofCommitter]
+
+theorem mem_jointContents {p : Set W} : p ∈ jointContents K ↔ ∀ a, p ∈ contents (ofCommitter K a) :=
+  Set.mem_iInter
+
+theorem commitmentSet_subset_of_mem_jointContents {p : Set W} (h : p ∈ jointContents K) (a : A) :
+    commitmentSet K a ⊆ p :=
+  contextSet_subset_of_mem_contents _ (mem_jointContents.1 h a)
+
+variable (K)
+
+theorem contents_eq_iUnion : contents K = ⋃ a, contents (ofCommitter K a) := by
+  ext
+  simp only [contents, ofCommitter, Set.mem_image, Set.mem_iUnion, Set.mem_ofPred_eq]
+  exact ⟨fun ⟨c, hc, e⟩ ↦ ⟨c.committer, c, ⟨⟨hc.1, rfl⟩, hc.2⟩, e⟩,
+    fun ⟨_, c, ⟨⟨hc, _⟩, hs⟩, e⟩ ↦ ⟨c, ⟨hc, hs⟩, e⟩⟩
+
+theorem slate_eq_iInf : slate K = ⨅ a, slate (ofCommitter K a) := by
+  rw [slate, contents_eq_iUnion, generate_iUnion]
+  rfl
+
+theorem contextSet_eq_iInter_commitmentSet : contextSet K = ⋂ a, commitmentSet K a := by
+  rw [contextSet, contents_eq_iUnion, Set.sInter_iUnion]
+  rfl
 
 end Commitment
