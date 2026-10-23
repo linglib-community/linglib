@@ -41,7 +41,7 @@ exhaustifying it relative to the alternatives of the constituent *=mi* marks yie
 ## Implementation notes
 
 The paper's composition rule I is the bind of `TwoDim`, whose `⊤` plays the empty not-at-issue
-layer. An illocutionary operator is the move it puts on record: its speaker's commitments,
+layer. An illocutionary operator is the move it puts on record, with its speaker's commitments,
 without their addressee, and the propositions by which it addresses the question under
 discussion, addressing being partial answerhood. Exhaustification is innocent exclusion; the
 paper glosses the alternatives it may deny as those entailing the prejacent, under which a
@@ -192,21 +192,20 @@ def ask (c : Context A W) (Q : Question W) : Context A W := ⟨c.moves, Q⟩
 /-- The commitment state of the record commits the speaker of each move to each of its
 commitments. -/
 def commitments (c : Context A W) : Commitment.State A W :=
-  {k | ∃ m ∈ c.moves, ∃ p ∈ m.commitments, k = Commitment.commit m.speaker p}
+  {q | ∃ m ∈ c.moves, ∃ p ∈ m.commitments, q = (m.speaker, p)}
 
 /-- `c.contextSetOf s` is the set of worlds compatible with the commitments of `s`. -/
-def contextSetOf (c : Context A W) (s : A) : Set W :=
-  Commitment.contextSet (Commitment.ofCommitter c.commitments s)
+def contextSetOf (c : Context A W) (s : A) : Set W := c.commitments.commitmentSet s
 
 theorem mem_contextSetOf {c : Context A W} {s : A} {w : W} :
     w ∈ c.contextSetOf s ↔ ∀ m ∈ c.moves, m.speaker = s → ∀ p ∈ m.commitments, w ∈ p := by
-  simp only [contextSetOf, Commitment.contextSet, Commitment.contents, Commitment.ofCommitter,
-    commitments, Set.mem_sInter, Set.mem_image, Set.mem_ofPred_eq]
+  simp only [contextSetOf, Commitment.State.mem_commitmentSet, commitments, Set.mem_ofPred_eq]
   constructor
-  · intro h m hm hs p hp
-    exact h p ⟨_, ⟨⟨⟨m, hm, p, hp, rfl⟩, hs⟩, rfl⟩, rfl⟩
-  · rintro h _ ⟨_, ⟨⟨⟨m, hm, p, hp, rfl⟩, hs⟩, -⟩, rfl⟩
-    exact h m hm hs p hp
+  · rintro h m hm rfl p hp
+    exact h p ⟨m, hm, p, hp, rfl⟩
+  · rintro h _ ⟨m, hm, p, hp, e⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj e
+    exact h m hm rfl _ hp
 
 end Context
 
@@ -330,7 +329,7 @@ theorem contextSetOf_present_assert_assert_compl :
 
 /-! ### The examples
 
-The examples are evaluated in a model whose worlds are sets of events: an event fixes a value at
+The examples are evaluated in a model whose worlds are sets of events. An event fixes a value at
 each constituent site of the scope sentence, a world is the set of events that happened, and the
 question under discussion asks which event happened. The scope is that the scope event happened,
 and a correction asserts that its variant at the contrasted site did. The propositions in play

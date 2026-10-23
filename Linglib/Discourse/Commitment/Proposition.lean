@@ -32,8 +32,8 @@ are the canonical model in which commitments vary from world to world.
 * `Commitment.disjoint_committed_compl`: a holder whose commitments are consistent is not
   committed to both `φ` and `¬φ`, so `k⊢¬φ` entails the refusal `¬k⊢φ`.
 * `Commitment.committed_ofSets`: a public commitment holds everywhere or nowhere.
-* `Commitment.ofSets_commitmentSet_insert_commit`: adding a commitment to a commitment state is
-  the performative update of its public commitment sets.
+* `Commitment.ofSets_commitmentSet_insert`: adding a commitment to a commitment state is the
+  performative update of its commitment sets.
 
 ## References
 
@@ -132,21 +132,19 @@ theorem committed_ofSets : committed (ofSets P) k φ = {_w | P k ⊆ φ} := rfl
 theorem perform_ofSets : perform (ofSets P) k φ = ofSets fun k' ↦ {v ∈ P k' | k' = k → v ∈ φ} :=
   rfl
 
-theorem ofSets_commitmentSet_insert_commit {A : Type*} (K : State A W) (a : A) (φ : Set W)
-    (f : Force) (s : Source) :
-    ofSets (commitmentSet (insert (commit a φ f s) K)) =
-      perform (ofSets (commitmentSet K)) a φ := by
+theorem ofSets_commitmentSet_insert (K : State κ W) (k : κ) (φ : Set W) :
+    ofSets (insert (k, φ) K).commitmentSet = perform (ofSets K.commitmentSet) k φ := by
   rw [perform_ofSets]
   congr 1
-  funext a'
-  by_cases h : a' = a
+  funext k'
+  by_cases h : k' = k
   · subst h
-    rw [commitmentSet, ofCommitter_insert_of_eq K a' _ rfl, contextSet_insert_of_commit rfl]
+    rw [State.commitmentSet_insert_self]
     ext
-    simp [commitmentSet, and_comm]
-  · rw [commitmentSet, ofCommitter_insert_of_ne K a' _ (Ne.symm h)]
+    simp [and_comm]
+  · rw [State.commitmentSet_insert_of_ne h]
     ext
-    simp [commitmentSet, h]
+    simp [h]
 
 /-! ### Indices -/
 

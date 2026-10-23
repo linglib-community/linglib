@@ -9,20 +9,19 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Farkas and Roelofsen (2017): Division of Labor in Declaratives and Interrogatives
 
-This file formalizes [farkas-roelofsen-2017]'s account of falling and rising declaratives,
-polar interrogatives and tag interrogatives: their inquisitive semantics, the single basic
-convention of use that replaces the Fregean force operators, and the special discourse effects
-of the marked forms. A sentence form is a clause-type marker with an intonation, or a declarative
-anchor with a tag (`Form`, §4.1); the markers are interpreted by the projection operators
-of inquisitive semantics (31), (34), (36): `dec` is the non-inquisitive projection, the double
-complement `Pᶜᶜ`, `int` the non-informative projection `Question.query` applied only to a
-non-inquisitive argument, falling intonation is vacuous and rising intonation is `Question.query`
-again. `Form.interpret` composes them as in (37)–(40): a falling declarative expresses
-`!P` and every other form `?!P`, so that with a non-inquisitive radical the rising declarative,
-the polar interrogatives and the tag interrogatives express one and the same inquisitive
-proposition (`interpret_declarative_falling`, `interpret_marked`, `interpret_interrogative_ofSet`,
-`isInquisitive_interpret_ofSet`; (41) and (43)). Among the forms for that content the polar
-interrogatives are optimal and the rest marked (`Form.IsMarked`, (47)).
+Farkas and Roelofsen account for falling and rising declaratives, polar interrogatives and tag
+interrogatives through their inquisitive semantics, the single basic convention of use that replaces
+the Fregean force operators, and the special discourse effects of the marked forms. A sentence form
+is a clause-type marker with an intonation, or a declarative anchor with a tag (`Form`, §4.1); the
+markers are interpreted by the projection operators of inquisitive semantics (31), (34), (36). `dec`
+is the non-inquisitive projection, the double complement `Pᶜᶜ`, `int` the non-informative projection
+`Question.query` applied only to a non-inquisitive argument, falling intonation is vacuous and
+rising intonation is `Question.query` again. `Form.interpret` composes them as in (37)–(40), so that
+a falling declarative expresses `!P` and every other form `?!P`, and with a non-inquisitive radical
+the rising declarative, the polar interrogatives and the tag interrogatives express one and the same
+inquisitive proposition (`interpret_declarative_falling`, `interpret_marked`,
+`interpret_interrogative_ofSet`, `isInquisitive_interpret_ofSet`; (41) and (43)). Among the forms
+for that content the polar interrogatives are optimal and the rest marked (`Form.IsMarked`, (47)).
 
 A discourse context is a stack of propositions, a commitment state, and for each participant the
 possibilities she has signalled evidence for with a credence interval (the paper's (22) and §3.2;
@@ -34,7 +33,7 @@ forms commit her to nothing (`cs_basic_declarative_falling`, `cs_basic_of_isInqu
 speaker's evidence with the credence interval of (52), (56) and (58), `[zero, low]` for the
 rising declarative, `[moderate, high]` for the rising tag and `[high]` for the falling tag
 (`Form.specialEffect`); `Context.utter` is the full conventional effect, and
-`utter_eq_basic_of_not_isMarked` is the division of labor principle (21): the discourse
+`utter_eq_basic_of_not_isMarked` is the division of labor principle (21), by which the discourse
 effects of the unmarked forms are the basic convention alone. §6 tests the account in
 contexts that fix the speaker's evidence and credence; `Felicitous` renders the reasoning of that
 section on a `Situation`, and `rows_felicitous` checks it against all sixty judgments of
@@ -42,7 +41,7 @@ section on a `Situation`, and `rows_felicitous` checks it against all sixty judg
 
 ## Implementation notes
 
-* The felicity conditions of §6 are the paper's prose reasoning made explicit: a commitment to
+* The felicity conditions of §6 make the paper's prose reasoning explicit. A commitment to
   the radical needs high credence to be possible in the context; an inquisitive proposition on
   the table needs an addressee who is not neutral (61); an unmarked inquisitive form
   presents the speaker as neutral, which needs low credence to be possible (the paper's (63) against
@@ -195,7 +194,7 @@ namespace Context
 variable {A : Type*} (K : Context A W) (x : A)
 
 /-- `cs(x)` is the set of worlds compatible with everything `x` is committed to. -/
-def cs : Set W := contextSet (ofCommitter K.commitments x)
+def cs : Set W := K.commitments.commitmentSet x
 
 /-- The common ground, the smallest set every participant is committed to the actual world
 lying in. -/
@@ -208,7 +207,7 @@ def CommonlyDecided (P : Question W) : Prop := K.cg ∈ P ∨ ∀ s ∈ P, K.cg 
 /-- The basic convention of use (48) puts the proposition on the table and its informative
 content into the speaker's commitments. -/
 def basic (φ : Question W) : Context A W :=
-  ⟨φ :: K.table, insert (commit x φ.info) K.commitments, K.evidence⟩
+  ⟨φ :: K.table, insert (x, φ.info) K.commitments, K.evidence⟩
 
 /-- A special effect enters the highlighted alternative into the speaker's evidence with a
 credence interval. -/
@@ -250,7 +249,7 @@ theorem table_utter (f : Form) (α : Set W) :
 
 theorem commitments_utter (f : Form) (α : Set W) :
     (K.utter x f α).commitments =
-      insert (commit x (f.interpret (ofSet α)).info) K.commitments := by
+      insert (x, (f.interpret (ofSet α)).info) K.commitments := by
   rcases f with i | i | i <;> cases i <;> rfl
 
 omit [DecidableEq A] in
@@ -258,8 +257,7 @@ omit [DecidableEq A] in
 theorem cs_basic_declarative_falling (α : Set W) :
     (K.basic x ((Form.declarative .falling).interpret (ofSet α))).cs x = K.cs x ∩ α := by
   simp only [cs, basic, interpret_declarative_falling, compl_compl_ofSet, info_ofSet]
-  rw [ofCommitter_insert_of_eq K.commitments x (commit x α) rfl, contextSet_insert_of_commit rfl,
-    commit_content, Set.inter_comm]
+  rw [State.commitmentSet_insert_self, Set.inter_comm]
 
 omit [DecidableEq A] in
 /-- An inquisitive proposition commits the speaker only to the trivial possibility, as in (50)
@@ -267,8 +265,7 @@ and (51). -/
 theorem cs_basic_of_isInquisitive {φ : Question W} (h : φ.info = Set.univ) :
     (K.basic x φ).cs x = K.cs x := by
   simp only [cs, basic, h]
-  rw [ofCommitter_insert_of_eq K.commitments x (commit x Set.univ) rfl,
-    contextSet_insert_of_commit rfl, commit_content, Set.univ_inter]
+  rw [State.commitmentSet_insert_self, Set.univ_inter]
 
 /-- A marked form registers the highlighted alternative as evidenced with its credence
 interval, as in (52), (56) and (58). -/
@@ -295,7 +292,7 @@ structure Situation where
   hi : CredenceLevel
   deriving DecidableEq, Repr
 
-/-- A form is felicitous in a situation by the reasoning of §6: a commitment to the radical
+/-- A form is felicitous in a situation by the reasoning of §6, on which a commitment to the radical
 needs high credence to be possible; an issue on the table needs an addressee who is not neutral;
 the unmarked inquisitive form presents the speaker as neutral, which needs low credence to be
 possible; a marked form needs evidence and a credence the context allows within its interval. -/

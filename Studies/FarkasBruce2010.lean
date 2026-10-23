@@ -13,15 +13,15 @@ public import Linglib.Fragments.Romanian.Particles
 # Farkas and Bruce (2010): On Reacting to Assertions and Polar Questions
 
 This file formalizes Farkas and Bruce's account of why reactions to assertions and to polar
-questions overlap only in part. The context structure is `Commitment.Table`: the participants'
-discourse commitments, the common ground, and the Table, whose items project the common grounds that
-would settle them. A default assertion commits its author, places the declarative on the Table and
-projects confirmation alone (9); a default polar question places the interrogative on the Table and
-projects both resolutions (12). So an assertion leaves the common ground as it was, unlike
-Stalnaker's update (`Table.commonGround_assert`, `assert_not_narrowing`); the two moves differ in
-whether the author is committed and in whether the projected set is inquisitive
-(`projectedSet_assert`, `projectedSet_polarQuestion`), and agree in deciding the sentence radical in
-every projected common ground (`Table.mem_of_mem_projectedSet_assert`,
+questions overlap only in part. The context structure is `Commitment.Table`, which records the
+participants' discourse commitments, the common ground, and the Table, whose items project the
+common grounds that would settle them. A default assertion commits its author, places the
+declarative on the Table and projects confirmation alone (9); a default polar question places the
+interrogative on the Table and projects both resolutions (12). So an assertion leaves the common
+ground as it was, unlike Stalnaker's update (`Table.commonGround_assert`, `assert_not_narrowing`);
+the two moves differ in whether the author is committed and in whether the projected set is
+inquisitive (`projectedSet_assert`, `projectedSet_polarQuestion`), and agree in deciding the
+sentence radical in every projected common ground (`Table.mem_of_mem_projectedSet_assert`,
 `Table.mem_or_compl_mem_of_mem_projectedSet_polarQuestion`). Confirmation (16) followed by the
 common-ground increase `M'` (17) settles an assertion (`mem_jointContents_assert_confirm`,
 `isStable_settle_assert`, `mem_commonGround_settle`); a total denial (22) leaves nothing consistent
@@ -32,7 +32,7 @@ agreeing to disagree (23) recovers with the commitments intact (`not_inCrisis_ag
 ground with the answer (`projectedSet_polarQuestion_assert`), and the questioner's confirmation of
 it settles the question (`isStable_settle_polarQuestion`).
 
-§4.3 and §5 classify responding assertions by two features: the relative polarity [same] or
+§4.3 and §5 classify responding assertions by two features, the relative polarity [same] or
 [reverse] of the response to the sentence radical on the Table (31) and the absolute polarity [+] or
 [−] of the asserted sentence. `Sentence` is a radical with its polarity and `Confirming`/`Reversing`
 the move types (26) and (29) on sentences; the same [reverse] response is a denial after an
@@ -41,8 +41,8 @@ assertion and a reverse answer after a question (`inCrisis_reversing_assert`,
 iff the `Discourse.Response` of their polarities is [same] or [reverse], as (31) defines the
 features (`Confirming.iff_relative_eq_positive`, `Reversing.iff_relative_eq_negative`).
 
-§5.2 says what the polarity particles mark, as sets of responses bearing features: the English *yes*
-the unmarked features [same] and [+] and *no* the marked [reverse] and [−], their double duty
+§5.2 says what the polarity particles mark, as sets of responses bearing features. The English *yes*
+marks the unmarked features [same] and [+] and *no* the marked [reverse] and [−], their double duty
 (`english`, `mem_english_iff`); the Romanian *da* [+], *nu* [−] and *ba* [reverse] except in a
 [reverse, −] answer to a question (`romanian`); and French *si* and German *doch* the marked
 combination [reverse, +] (`reversePositive`). Both English particles can confirm a negative
@@ -119,12 +119,13 @@ theorem projectedSet_polarQuestion (hK : K.IsStable) (hp : K.commonGround ⊓ �
 /-- After the addressee confirms (16), the asserted proposition is on every commitment
 list. -/
 theorem mem_jointContents_assert_confirm :
-    p ∈ jointContents ((K.assert .speaker p).commit .addressee p).commitments := by
-  refine mem_jointContents.2 fun a ↦ show p ∈ Table.discourseCommitments _ a from ?_
+    p ∈ ((K.assert .speaker p).commit .addressee p).commitments.jointContents := by
+  refine State.mem_jointContents.2 fun a ↦
+    show p ∈ ((K.assert .speaker p).commit .addressee p).discourseCommitments a from ?_
   cases a
   · rw [Table.discourseCommitments_commit_of_ne (by decide)]
     exact Table.mem_discourseCommitments_assert _ _ _
-  · exact Table.mem_discourseCommitments_commit_self _ _ _ _ _
+  · exact Table.mem_discourseCommitments_commit_self _ _ _
 
 /-- The shared proposition enters the common ground (17). -/
 theorem mem_commonGround_settle :

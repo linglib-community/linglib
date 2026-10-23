@@ -24,7 +24,7 @@ along these relations, `C_{a,b} π` holds exactly on the commitment proposition
   of `O_{a,b}` by `π`.
 * `Frame.Sincere`, `Frame.Competent`: the frame conditions of Definition 5, after Asher and
   Lascarides.
-* `Frame.toState`: the commitments of `a` towards `b` at `w`, as a commitment state.
+* `Frame.toState`: the commitments towards `b` at `w`, as a commitment state keyed by agent.
 
 ## Main results
 
@@ -34,8 +34,8 @@ along these relations, `C_{a,b} π` holds exactly on the commitment proposition
 * `Frame.sincere_restrictCommitment_iff`: the update keeps Sincerity iff the speaker already
   believed `π` everywhere.
 * `Frame.competent_iff`: Competence holds iff all agents share one belief relation.
-* `Frame.slate_toState_restrictCommitment`: on commitment states the update is the insertion of
-  `commit a π`.
+* `Frame.commitmentSet_toState_restrictCommitment`: on commitment states the update is the
+  insertion of `a`'s commitment to `π`.
 * `Frame.sincere_iff_forall_sincere_toState`: Sincerity of a frame is `Commitment.Sincere` of
   every projected commitment state, relative to belief.
 
@@ -57,7 +57,7 @@ hypothesis of the theorems that need it.
 namespace Commitment
 
 open ModalLogic (IsKD45Frame IsK45Frame)
-open scoped ModalLogic SetRel Filter
+open scoped ModalLogic SetRel
 
 variable {W A : Type*}
 
@@ -200,38 +200,38 @@ theorem competent_iff : c.Competent ↔ ∀ x y, c.belief x = c.belief y :=
 
 /-! ### Projection onto commitment states -/
 
-variable (c a b π w)
+variable (c b w)
 
-/-- The commitments of `a` towards `b` at `w` form the commitment state in which `a` commits to
-every proposition true at all `O_{a,b}`-successors of `w`. -/
-def toState : State A W := (commit a ·) '' {π | c.Committed a b π w}
+/-- The commitments towards `b` at `w` form the commitment state in which each agent `a` is
+committed to every proposition true at all `O_{a,b}`-successors of `w`. -/
+def toState : State A W := {q | c.Committed q.1 b q.2 w}
 
-theorem contents_toState : contents (c.toState a b w) = {π | c.Committed a b π w} :=
-  (contents_image_commit a id _).trans (Set.image_id _)
+variable {b w}
 
-theorem slate_toState : slate (c.toState a b w) = 𝓟 {v | w ~[c.commitment (a, b)] v} := by
-  rw [slate, contents_toState]
-  exact (Filter.giGenerate W).l_u_eq (𝓟 _)
+theorem commitmentSet_toState :
+    (c.toState b w).commitmentSet a = {v | w ~[c.commitment (a, b)] v} :=
+  Set.Subset.antisymm (State.commitmentSet_subset (k := a) fun _ ↦ id)
+    fun _ hv ↦ State.mem_commitmentSet.2 fun _ hπ ↦ hπ _ hv
 
-theorem contextSet_toState : contextSet (c.toState a b w) = {v | w ~[c.commitment (a, b)] v} := by
-  rw [← ker_slate, slate_toState, Filter.ker_principal]
-
-/-- On commitment states, `c⌈π⌉_{a,b}` adds the commitment `commit a π`. -/
-theorem slate_toState_restrictCommitment :
-    slate ((c.restrictCommitment a b π).toState a b w) =
-      slate (insert (commit a π) (c.toState a b w)) := by
-  rw [slate_insert_of_commit rfl, slate_toState, slate_toState, Filter.inf_principal]
-  congr 1
-  ext
-  simp
+/-- On commitment states, `c⌈π⌉_{a,b}` adds `a`'s commitment to `π`. -/
+theorem commitmentSet_toState_restrictCommitment :
+    ((c.restrictCommitment a b π).toState b w).commitmentSet =
+      (insert (a, π) (c.toState b w)).commitmentSet := by
+  funext a'
+  by_cases h : a' = a
+  · subst h
+    rw [State.commitmentSet_insert_self, commitmentSet_toState, commitmentSet_toState]
+    ext
+    simp [and_comm]
+  · rw [State.commitmentSet_insert_of_ne h, commitmentSet_toState, commitmentSet_toState,
+      restrictCommitment_other c a b π fun e ↦ h (Prod.mk.inj e).1]
 
 variable {c}
 
 theorem sincere_iff_forall_sincere_toState :
-    c.Sincere ↔
-      ∀ x y w, Commitment.Sincere (fun _ a v ↦ {π | c.Believes a π v}) (c.toState x y w) w :=
-  ⟨fun hs _ _ _ _ ⟨_, hπ, e⟩ _ ↦ e ▸ hs.believes_of_committed hπ,
-    fun h x y p hp ↦ h x y p.1 _ ⟨{v | p.1 ~[c.commitment (x, y)] v}, fun _ ↦ id, rfl⟩ rfl p.2 hp⟩
+    c.Sincere ↔ ∀ y w, Commitment.Sincere (fun a v ↦ {π | c.Believes a π v}) (c.toState y w) w :=
+  ⟨fun hs _ _ _ _ hπ ↦ hs.believes_of_committed hπ,
+    fun h x y p hp ↦ h y p.1 x {v | p.1 ~[c.commitment (x, y)] v} (fun _ ↦ id) p.2 hp⟩
 
 end Frame
 

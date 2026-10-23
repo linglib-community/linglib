@@ -7,29 +7,28 @@ public import Linglib.Data.Examples.Deo2025
 /-!
 # Deo (2025): Take on this commitment: the particle *bərə* in Marathi
 
-This file formalizes [deo-2025-bara]'s analysis of the Marathi utterance-final particle *bərə*
-in declaratives and imperatives. The particle turns a declarative into a warning, a piece of
-advice or a reminder and an imperative into a command, a warning or a strong recommendation,
-(1) to (8) and (12) to (15), and is out in a commissive and in the response to one, (9) and
-(16), and in the imperatives of requests, pleas, offers, permissions, concessions and curses,
-(10) and (11). The analysis is set in a commitment-based theory of sentential force
-([gunlogson-2001], [farkas-bruce-2010], [condoravdi-lauer-2012]): the discourse commitments of
-a participant are doxastic or preferential, (17a), the common ground and the joint preferences
-are their intersections across participants, (17b) and (17c), and a declarative or an
-imperative commits the speaker to its content under the one attitude or the other, (18).
-[gunlogson-2008]'s distinction between the participant who is the source of a commitment and
-one who is a dependent, taking it on from the other party's testimony or expressed preference,
-is extended to preferential commitments, §3.2. *Bərə* adds a commitment of its own, (20): the
-speaker's preferential commitment to the addressee's dependent uptake of the content. Its
-felicity condition, (21), is that the speaker takes the uptake to be a precondition for an
-addressee-benefiting goal among the speaker's effective preferences and, §3.3, that nothing
-shows the addressee's action choices already aligned with the goal. The profile follows, §3.4:
-when the addressee is manifestly a source for the content, the uptake is unrealizable and the
-*bərə* commitment cannot be sincere, which excludes permissions, concessions, commissives and
-their responses, and the revealed preference of (15); an offer or invitation leaves the choice
-to the addressee, against the preference for dependent uptake; a request, a plea or a curse
-serves no addressee-benefiting goal; and the warning of (5a) meets the felicity condition where
-(5b), whose content is one way among many to the goal, does not.
+Deo analyses the Marathi utterance-final particle *bərə* in declaratives and imperatives. The
+particle turns a declarative into a warning, a piece of advice or a reminder and an imperative into
+a command, a warning or a strong recommendation, (1) to (8) and (12) to (15), and is out in a
+commissive and in the response to one, (9) and (16), and in the imperatives of requests, pleas,
+offers, permissions, concessions and curses, (10) and (11). The analysis is set in the
+commitment-based theory of sentential force of Gunlogson, Farkas and Bruce, and Condoravdi and
+Lauer. The discourse commitments of a participant are doxastic or preferential, (17a), the common
+ground and the joint preferences are their intersections across participants, (17b) and (17c), and a
+declarative or an imperative commits the speaker to its content under the one attitude or the other,
+(18). Gunlogson's distinction between the participant who is the source of a commitment and one who
+is a dependent, taking it on from the other party's testimony or expressed preference, is extended
+to preferential commitments, §3.2. *Bərə* adds a commitment of its own, (20), the speaker's
+preferential commitment to the addressee's dependent uptake of the content. Its felicity condition,
+(21), is that the speaker takes the uptake to be a precondition for an addressee-benefiting goal
+among the speaker's effective preferences and, §3.3, that nothing shows the addressee's action
+choices already aligned with the goal. The profile follows, §3.4. When the addressee is manifestly a
+source for the content, the uptake is unrealizable and the *bərə* commitment cannot be sincere,
+which excludes permissions, concessions, commissives and their responses, and the revealed
+preference of (15); an offer or invitation leaves the choice to the addressee, against the
+preference for dependent uptake; a request, a plea or a curse serves no addressee-benefiting goal;
+and the warning of (5a) meets the felicity condition where (5b), whose content is one way among many
+to the goal, does not.
 
 ## Implementation notes
 
@@ -37,7 +36,8 @@ The commitment state is indexed by worlds, as in `CondoravdiLauer2012.imp`, so t
 of a content is a proposition, the worlds at which the addressee is a dependent for it. Being a
 source for a content, the paper's `DC_x^ind`, is having a commitment of one's own to it under
 either attitude, and being a dependent is having a commitment to it on the other party's word
-and none of one's own; `Commitment.Source` supplies the coordinate. The paper's effective
+and none of one's own; `Source` supplies the coordinate, and a commitment is held by a
+participant under an attitude and a source (`Holder`). The paper's effective
 preferences `EP(s, w)` are `Desire.Preferential.Want` and the sincerity of the *bərə*
 commitment is `Commitment.Sincere`, so that its infelicity under a manifest addressee
 commitment is the unrealizability of the uptake, `PreferenceStructure.Consistent.realistic`,
@@ -73,91 +73,107 @@ variable {W : Type*}
 
 /-! ### Sources and dependents, (17) and §3.2 -/
 
-/-- `x` is a source for `p` in `K`: a commitment of `x`'s own to `p` under either attitude,
-`p ∈ DC_x^ind`. -/
-def IsSource (K : State Role W) (x : Role) (p : Set W) : Prop :=
-  ∃ f, commit x p f .selfGenerated ∈ K
+/-- A commitment is generated by its holder or attributed by the other party ([gunlogson-2008]). -/
+inductive Source
+  | selfGenerated
+  | otherGenerated
+  deriving DecidableEq, Repr
 
-/-- `x` is a dependent for `p` under the attitude `f` in `K`: a commitment to `p` on the other
-party's testimony or expressed preference, and none of `x`'s own, `p ∈ DC_x^dep`. -/
-def IsDependent (K : State Role W) (x : Role) (p : Set W) (f : Force) : Prop :=
-  commit x p f .otherGenerated ∈ K ∧ ¬ IsSource K x p
+/-- A commitment is held by a participant under an attitude and a source. -/
+abbrev Holder := (Role × Force) × Source
+
+/-- A participant `x` is a source for `p` in `K` when it has a commitment of its own to `p` under
+either attitude, `p ∈ DC_x^ind`. -/
+def IsSource (K : State Holder W) (x : Role) (p : Set W) : Prop :=
+  ∃ f, (((x, f), .selfGenerated), p) ∈ K
+
+/-- A participant `x` is a dependent for `p` under the attitude `f` in `K` when it is committed to
+`p` on the other party's testimony or expressed preference and has no commitment of its own to
+it, `p ∈ DC_x^dep`. -/
+def IsDependent (K : State Holder W) (x : Role) (p : Set W) (f : Force) : Prop :=
+  (((x, f), .otherGenerated), p) ∈ K ∧ ¬ IsSource K x p
+
+/-- The joint commitments under `f` are the contents every participant is committed to under `f`,
+the common ground for `.doxastic` and the joint preferences for `.preferential`, (17b) and (17c),
+[rudin-2018]'s teleological common ground. -/
+def joint (K : State Holder W) (f : Force) : Set (Set W) :=
+  ⋂ x, {p | ∃ s, (((x, f), s), p) ∈ K}
 
 /-! ### The conventions, (18) and (20) -/
 
-variable (P : Role → W → PreferenceStructure W) (K : W → State Role W) (B : Set W)
+variable (P : Role → W → PreferenceStructure W) (K : W → State Holder W) (B : Set W)
   (benefits : Set W → Role → Prop) (g p : Set W) (f : Force) (w : W)
 
-/-- The uptake of `p` under `f`: the worlds at which `p` is among the addressee's dependent
-commitments, what the speaker prefers in (20). -/
+/-- The uptake of `p` under `f` is the set of worlds at which `p` is among the addressee's
+dependent commitments, what the speaker prefers in (20). -/
 def uptake : Set W := {v | IsDependent (K v) .addressee p f}
 
-/-- Uttering `p` in a clause of force `f` at `w`, (18): a declarative commits the speaker to `p`
-doxastically and an imperative preferentially. -/
-def utter : State Role W := insert (commit .speaker p f) (K w)
+/-- Uttering `p` in a clause of force `f` at `w` commits the speaker to `p` doxastically in a
+declarative and preferentially in an imperative (18). -/
+def utter : State Holder W := insert (((.speaker, f), .selfGenerated), p) (K w)
 
-/-- Uttering `p` in a clause of force `f` with *bərə* at `w`: the clause-type commitment and,
-over and above it, the speaker's preferential commitment to the uptake of `p`, (20). -/
-def bara : State Role W := insert (commit .speaker (uptake K p f) .preferential) (utter K p f w)
+/-- Uttering `p` in a clause of force `f` with *bərə* at `w` adds, over and above the clause-type
+commitment, the speaker's preferential commitment to the uptake of `p` (20). -/
+def bara : State Holder W :=
+  insert (((.speaker, .preferential), .selfGenerated), uptake K p f) (utter K p f w)
 
-/-- *Bərə* augments the force rather than modifying it, §4: whatever the plain utterance
-entails, the *bərə*-utterance entails. -/
-theorem slate_bara_le : slate (bara K p f w) ≤ slate (utter K p f w) :=
-  slate_mono (Set.subset_insert _ _)
+/-- *Bərə* augments the force rather than modifying it (§4), so whatever the plain utterance
+commits a holder to, the *bərə*-utterance commits it to. -/
+theorem commitmentSet_bara_subset (k : Holder) :
+    (bara K p f w).commitmentSet k ⊆ (utter K p f w).commitmentSet k :=
+  State.commitmentSet_anti (Set.subset_insert _ _)
 
-/-- *Bərə*'s own effect: the preferential context set narrows by the uptake and the doxastic one
-stays. -/
-theorem bara_contextSets :
-    contextSet (ofForce (bara K p f w) .preferential) =
-        uptake K p f ∩ contextSet (ofForce (utter K p f w) .preferential) ∧
-      contextSet (ofForce (bara K p f w) .doxastic) =
-        contextSet (ofForce (utter K p f w) .doxastic) :=
-  ⟨contextSet_ofForce_insert_of_eq_of_commit rfl rfl, contextSet_ofForce_insert_of_ne nofun⟩
+/-- *Bərə*'s own effect narrows the speaker's preferential commitment set by the uptake and keeps
+the doxastic one. -/
+theorem bara_commitmentSets :
+    (bara K p f w).commitmentSet ((.speaker, .preferential), .selfGenerated) =
+        uptake K p f ∩ (utter K p f w).commitmentSet ((.speaker, .preferential), .selfGenerated) ∧
+      (bara K p f w).commitmentSet ((.speaker, .doxastic), .selfGenerated) =
+        (utter K p f w).commitmentSet ((.speaker, .doxastic), .selfGenerated) :=
+  ⟨State.commitmentSet_insert_self, State.commitmentSet_insert_of_ne (by simp)⟩
 
-/-- A *bərə*-declarative, (22): the speaker believes the content and prefers its uptake. -/
-theorem declarative_contextSets :
-    contextSet (ofForce (bara K p .doxastic w) .doxastic) =
-        p ∩ contextSet (ofForce (K w) .doxastic) ∧
-      contextSet (ofForce (bara K p .doxastic w) .preferential) =
-        uptake K p .doxastic ∩ contextSet (ofForce (K w) .preferential) :=
-  ⟨(bara_contextSets K p .doxastic w).2.trans (contextSet_ofForce_insert_of_eq_of_commit rfl rfl),
-    (bara_contextSets K p .doxastic w).1.trans
-      (congrArg _ (contextSet_ofForce_insert_of_ne nofun))⟩
+/-- A *bərə*-declarative, (22), commits the speaker to believing the content and to preferring
+its uptake. -/
+theorem declarative_commitmentSets :
+    (bara K p .doxastic w).commitmentSet ((.speaker, .doxastic), .selfGenerated) =
+        p ∩ (K w).commitmentSet ((.speaker, .doxastic), .selfGenerated) ∧
+      (bara K p .doxastic w).commitmentSet ((.speaker, .preferential), .selfGenerated) =
+        uptake K p .doxastic ∩ (K w).commitmentSet ((.speaker, .preferential), .selfGenerated) := by
+  simp [bara, utter, State.commitmentSet_insert_of_ne]
 
-/-- A *bərə*-imperative, (23): the speaker prefers the content and its uptake and believes
-nothing new. -/
-theorem imperative_contextSets :
-    contextSet (ofForce (bara K p .preferential w) .preferential) =
-        uptake K p .preferential ∩ (p ∩ contextSet (ofForce (K w) .preferential)) ∧
-      contextSet (ofForce (bara K p .preferential w) .doxastic) =
-        contextSet (ofForce (K w) .doxastic) :=
-  ⟨(bara_contextSets K p .preferential w).1.trans
-      (congrArg _ (contextSet_ofForce_insert_of_eq_of_commit rfl rfl)),
-    (bara_contextSets K p .preferential w).2.trans (contextSet_ofForce_insert_of_ne nofun)⟩
+/-- A *bərə*-imperative, (23), commits the speaker to preferring the content and its uptake and
+to believing nothing new. -/
+theorem imperative_commitmentSets :
+    (bara K p .preferential w).commitmentSet ((.speaker, .preferential), .selfGenerated) =
+        uptake K p .preferential ∩
+          (p ∩ (K w).commitmentSet ((.speaker, .preferential), .selfGenerated)) ∧
+      (bara K p .preferential w).commitmentSet ((.speaker, .doxastic), .selfGenerated) =
+        (K w).commitmentSet ((.speaker, .doxastic), .selfGenerated) := by
+  simp [bara, utter, State.commitmentSet_insert_of_ne]
 
 /-- Once the addressee takes up a *bərə*-utterance's content, it joins the joint commitments under
-its attitude (§4): the common ground for `.doxastic` and the joint preferences for
-`.preferential`, (17b) and (17c), [rudin-2018]'s teleological common ground. -/
-theorem mem_jointContents_insert (s : Commitment.Source) :
-    p ∈ jointContents (ofForce (insert (commit .addressee p f s) (bara K p f w)) f) :=
+its attitude (§4). -/
+theorem mem_joint_insert (s : Source) :
+    p ∈ joint (insert (((.addressee, f), s), p) (bara K p f w)) f :=
   Set.mem_iInter.2 fun x ↦ match x with
-    | .speaker => ⟨commit .speaker p f, ⟨⟨⟨Or.inr (Or.inr (Or.inl rfl)), rfl⟩, rfl⟩, rfl⟩, rfl⟩
-    | .addressee => ⟨commit .addressee p f s, ⟨⟨⟨Or.inl rfl, rfl⟩, rfl⟩, rfl⟩, rfl⟩
+    | .speaker => ⟨.selfGenerated, Or.inr (Or.inr (Or.inl rfl))⟩
+    | .addressee => ⟨s, Or.inl rfl⟩
 
 /-! ### Felicity, (21) and §3.3 -/
 
 /-- The felicity condition on *bərə*, (21) with the contextual condition of §3.3, at `w` in a
-context with the speaker's information state `B`, the salient goal `g` and the primitive
-`benefits`: the speaker's preferential commitments are sincere; `g` is an effective preference
-of the speaker's that benefits the addressee and, by the speaker's information, is fulfilled
-only if the addressee takes up `p`; and the speaker's information does not already have the
-addressee taking up `p`. A content the addressee is taken to have taken up already, (7) in its
-first context, fails the last clause. -/
+context with the speaker's information state `B`, the salient goal `g` and the primitive `benefits`,
+holds when the speaker's preferential commitments are sincere, `g` is an effective preference of the
+speaker's that benefits the addressee and, by the speaker's information, is fulfilled only if the
+addressee takes up `p`; and the speaker's information does not already have the addressee taking up
+`p`. A content the addressee is taken to have taken up already, (7) in its first context, fails the
+last clause. -/
 def Felicitous : Prop :=
-  Sincere (effectivePreference P) (bara K p f w) w ∧ Want P .speaker g w ∧ benefits g .addressee ∧
+  Sincere (effectivePreference P ∘ Prod.fst) (bara K p f w) w ∧ Want P .speaker g w ∧
+    benefits g .addressee ∧
     B ∩ g ⊆ uptake K p f ∧ ¬ B ⊆ uptake K p f
 
-/-- An offer or invitation leaves the choice to the addressee: the speaker effectively prefers
+/-- An offer or invitation leaves the choice to the addressee, since the speaker effectively prefers
 that any commitment of the addressee to `p` be the addressee's own, the complement of the
 uptake. -/
 def Defers : Prop := Want P .speaker (uptake K p f)ᶜ w
@@ -165,22 +181,25 @@ def Defers : Prop := Want P .speaker (uptake K p f)ᶜ w
 variable {P K B benefits g p f w}
 
 /-- A sincere *bərə*-utterance is an effective preference for the uptake. -/
-theorem want_uptake_of_sincere (h : Sincere (effectivePreference P) (bara K p f w) w) :
+theorem want_uptake_of_sincere (h : Sincere (effectivePreference P ∘ Prod.fst) (bara K p f w) w) :
     Want P .speaker (uptake K p f) w :=
-  h.want (Set.mem_insert _ _)
+  h.mem (Set.mem_insert _ _)
 
 /-- The *bərə*-utterance is sincere when the speaker effectively prefers the uptake, prefers the
 content if the clause is an imperative, and was sincere before. -/
 theorem sincere_bara_iff :
-    Sincere (effectivePreference P) (bara K p f w) w ↔ Want P .speaker (uptake K p f) w ∧
-      (f = .preferential → Want P .speaker p w) ∧ Sincere (effectivePreference P) (K w) w := by
-  refine ⟨fun h ↦ ⟨want_uptake_of_sincere h, fun hf ↦ by subst hf; exact h.want (.inr (.inl rfl)),
+    Sincere (effectivePreference P ∘ Prod.fst) (bara K p f w) w ↔ Want P .speaker (uptake K p f) w ∧
+      (f = .preferential → Want P .speaker p w) ∧
+        Sincere (effectivePreference P ∘ Prod.fst) (K w) w := by
+  refine ⟨fun h ↦ ⟨want_uptake_of_sincere h, fun hf ↦ by subst hf; exact h.mem (.inr (.inl rfl)),
     h.mono ((Set.subset_insert _ _).trans (Set.subset_insert _ _))⟩, fun ⟨hu, hp, hK⟩ ↦ ?_⟩
-  rintro c (rfl | rfl | hc) hpol
-  · exact hu
-  · cases f
+  rintro k q (h | h | hq)
+  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+    exact hu
+  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h
+    cases f
     exacts [trivial, hp rfl]
-  · exact hK c hc hpol
+  · exact hK k q hq
 
 theorem inter_uptake_eq_empty (h : ∀ v ∈ B, IsSource (K v) .addressee p) :
     B ∩ uptake K p f = ∅ :=
@@ -202,18 +221,17 @@ theorem not_felicitous_of_defers (benefits : Set W → Role → Prop) (g : Set W
   fun hf ↦ (hC.inter_inter_nonempty_of_mem_maxElts (want_uptake_of_sincere hf.1) h).ne_empty
     (by rw [Set.inter_compl_self, Set.inter_empty])
 
-/-- A goal that does not benefit the addressee, §3.4: a request or plea serves the speaker
-alone, (10), and a curse harms the addressee, (11d). -/
+/-- A goal that does not benefit the addressee rules out *bərə* (§3.4), as a request or plea serves
+the speaker alone (10) and a curse harms the addressee (11d). -/
 theorem not_felicitous_of_not_benefits (P : Role → W → PreferenceStructure W)
-    (K : W → State Role W) (B p : Set W) (f : Force) (w : W) (h : ¬ benefits g .addressee) :
+    (K : W → State Holder W) (B p : Set W) (f : Force) (w : W) (h : ¬ benefits g .addressee) :
     ¬ Felicitous P K B benefits g p f w :=
   fun hf ↦ h hf.2.2.1
 
-/-! ### The warning of (5): a precondition against a way among many -/
+/-! ### The warning of (5), a precondition against a way among many -/
 
-/-- A world of the scenario of (5): whether it rains today, whether tomorrow is sunny, whether
-Anu drives today, and whether she has taken up, on Bilal's word, each of the two weather
-facts. -/
+/-- A world of the scenario of (5) fixes whether it rains today, whether tomorrow is sunny, whether
+Anu drives today, and whether she has taken up, on Bilal's word, each of the two weather facts. -/
 structure Weather where
   /-- It rains today. -/
   rain : Bool
@@ -229,23 +247,22 @@ structure Weather where
 
 namespace Weather
 
-/-- The content of (5a): it rains today. -/
+/-- The content of (5a) is that it rains today. -/
 def raining : Set Weather := {v | v.rain}
 
-/-- The content of (5b): tomorrow is sunny. -/
+/-- The content of (5b) is that tomorrow is sunny. -/
 def sunnyTomorrow : Set Weather := {v | v.sunny}
 
-/-- Bilal's goal: Anu stays safe, not driving today. -/
+/-- Bilal's goal is that Anu stays safe, not driving today. -/
 def safe : Set Weather := {v | ¬ v.drives}
 
-/-- The addressee's dependent doxastic commitments at a world: to whichever weather facts she has
-taken up. -/
-def state (v : Weather) : State Role Weather :=
-  {c | c.committer = .addressee ∧ c.stance = .commit ∧ c.force = .doxastic ∧
-    c.source = .otherGenerated ∧
-    ((c.content = raining ∧ v.upRain) ∨ (c.content = sunnyTomorrow ∧ v.upSunny))}
+/-- At a world, the addressee is dependently committed to whichever weather facts she has taken
+up. -/
+def state (v : Weather) : State Holder Weather :=
+  {q | q.1 = ((.addressee, .doxastic), .otherGenerated) ∧
+    ((q.2 = raining ∧ v.upRain) ∨ (q.2 = sunnyTomorrow ∧ v.upSunny))}
 
-/-- Bilal's information: the weather facts, and that Anu stays home only if she takes his word on
+/-- Bilal's information is the weather facts and that Anu stays home only if she takes his word on
 the rain. -/
 def info : Set Weather := {v | v.rain ∧ v.sunny ∧ (¬ v.drives → v.upRain)}
 
@@ -258,7 +275,7 @@ def prefs : Role → Weather → PreferenceStructure Weather
 /-- Staying safe is what benefits anyone here. -/
 def benefit (q : Set Weather) (_ : Role) : Prop := q = safe
 
-/-- The world of utterance: it rains, tomorrow is sunny, Anu is set to drive and has taken up
+/-- At the world of utterance it rains, tomorrow is sunny, and Anu is set to drive and has taken up
 neither fact. -/
 def w₀ : Weather := ⟨true, true, true, false, false⟩
 
@@ -269,11 +286,11 @@ theorem not_isSource (v : Weather) (q : Set Weather) : ¬ IsSource (state v) .ad
   fun ⟨_, h⟩ ↦ by simp [state] at h
 
 theorem mem_state_raining {v : Weather} :
-    commit .addressee raining .doxastic .otherGenerated ∈ state v ↔ v.upRain := by
+    (((.addressee, .doxastic), .otherGenerated), raining) ∈ state v ↔ v.upRain := by
   simp [state, raining_ne_sunnyTomorrow]
 
 theorem mem_state_sunnyTomorrow {v : Weather} :
-    commit .addressee sunnyTomorrow .doxastic .otherGenerated ∈ state v ↔ v.upSunny := by
+    (((.addressee, .doxastic), .otherGenerated), sunnyTomorrow) ∈ state v ↔ v.upSunny := by
   simp [state, raining_ne_sunnyTomorrow.symm]
 
 theorem mem_uptake_raining {v : Weather} : v ∈ uptake state raining .doxastic ↔ v.upRain := by
@@ -286,14 +303,16 @@ theorem mem_uptake_sunnyTomorrow {v : Weather} :
 /-- The warning of (5a) is felicitous, since Anu may yet drive without taking Bilal's word on the
 rain. -/
 theorem felicitous_raining : Felicitous prefs state info benefit safe raining .doxastic w₀ := by
-  refine ⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, nofun, fun c hc _ ↦ by
-    rw [hc.2.2.1]; trivial⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl, ?_, ?_⟩
+  refine ⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, nofun, fun _ _ hq ↦ by
+    obtain ⟨h, -⟩ := hq; simp only at h; subst h; trivial⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl,
+    ?_, ?_⟩
   · rintro v ⟨⟨-, -, hv⟩, hs⟩
     exact mem_uptake_raining.2 (hv hs)
   · intro h
     simpa [w₀] using mem_uptake_raining.1 (h (show w₀ ∈ info from ⟨rfl, rfl, fun h ↦ (h rfl).elim⟩))
 
-/-- (5b) is not: Anu can stay safe without taking Bilal's word on tomorrow's weather. -/
+/-- The warning of (5b) is not felicitous, since Anu can stay safe without taking Bilal's word on
+tomorrow's weather. -/
 theorem not_felicitous_sunnyTomorrow :
     ¬ Felicitous prefs state info benefit safe sunnyTomorrow .doxastic w₀ := fun h ↦ by
   have hv : (⟨true, true, false, true, false⟩ : Weather) ∈ info ∩ safe :=
@@ -302,9 +321,9 @@ theorem not_felicitous_sunnyTomorrow :
 
 end Weather
 
-/-! ### The recommendation of (15): a latent against a revealed preference -/
+/-! ### The recommendation of (15), a latent against a revealed preference -/
 
-/-- A world of the scenario of (15): whether Bilal takes the car and whether he has taken up
+/-- A world of the scenario of (15) fixes whether Bilal takes the car and whether he has taken up
 doing so on Anu's proposal. -/
 structure Car where
   /-- Bilal takes the car. -/
@@ -315,20 +334,19 @@ structure Car where
 
 namespace Car
 
-/-- The content of (15): Bilal takes the car today. -/
+/-- The content of (15) is that Bilal takes the car today. -/
 def taking : Set Car := {v | v.takes}
 
-/-- The first context: Bilal's only commitment to taking the car, when he has one, is dependent
+/-- In the first context, Bilal's only commitment to taking the car, when he has one, is dependent
 on Anu's proposal. -/
-def latent (v : Car) : State Role Car :=
-  {c | c.committer = .addressee ∧ c.stance = .commit ∧ c.force = .preferential ∧
-    c.source = .otherGenerated ∧ c.content = taking ∧ v.up}
+def latent (v : Car) : State Holder Car :=
+  {q | q.1 = ((.addressee, .preferential), .otherGenerated) ∧ q.2 = taking ∧ v.up}
 
-/-- The second context: Bilal has revealed his preference for taking the car. -/
-def revealed (v : Car) : State Role Car :=
-  insert (commit .addressee taking .preferential) (latent v)
+/-- In the second context, Bilal has revealed his preference for taking the car. -/
+def revealed (v : Car) : State Holder Car :=
+  insert (((.addressee, .preferential), .selfGenerated), taking) (latent v)
 
-/-- Anu's information: Bilal takes the car only on her proposal. -/
+/-- Anu's information is that Bilal takes the car only on her proposal. -/
 def info : Set Car := {v | v.takes → v.up}
 
 /-- Anu effectively prefers that Bilal take the car and take it up from her; Bilal prefers to
@@ -340,26 +358,26 @@ def prefs : Role → Car → PreferenceStructure Car
 /-- Making the meeting is what benefits anyone here. -/
 def benefit (q : Set Car) (_ : Role) : Prop := q = taking
 
-/-- The world of utterance: Bilal has neither taken the car nor taken up doing so. -/
+/-- At the world of utterance, Bilal has neither taken the car nor taken up doing so. -/
 def w₀ : Car := ⟨false, false⟩
 
 theorem not_isSource (v : Car) (q : Set Car) : ¬ IsSource (latent v) .addressee q :=
   fun ⟨_, h⟩ ↦ by simp [latent] at h
 
 theorem mem_latent {v : Car} :
-    commit .addressee taking .preferential .otherGenerated ∈ latent v ↔ v.up := by
+    (((.addressee, .preferential), .otherGenerated), taking) ∈ latent v ↔ v.up := by
   simp [latent]
 
 theorem mem_uptake {v : Car} : v ∈ uptake latent taking .preferential ↔ v.up := by
   simp [uptake, IsDependent, mem_latent, not_isSource]
 
-/-- The first context of (15): Bilal's preference for the car is latent, and the recommendation
+/-- In the first context of (15), Bilal's preference for the car is latent, and the recommendation
 with *bərə* is felicitous. -/
 theorem felicitous_latent :
     Felicitous prefs latent info benefit taking taking .preferential w₀ ∧
       Want prefs .addressee taking w₀ := by
   refine ⟨⟨sincere_bara_iff.2 ⟨⟨Or.inl rfl, fun _ _ h ↦ h⟩, fun _ ↦ ⟨Or.inr rfl, fun _ _ h ↦ h⟩,
-    fun c hc _ ↦ absurd hc.2.2.2.2.2 Bool.false_ne_true⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl,
+    fun _ _ hq ↦ absurd hq.2.2 Bool.false_ne_true⟩, ⟨Or.inr rfl, fun _ _ h ↦ h⟩, rfl,
     fun v hv ↦ mem_uptake.2 (hv.1 hv.2), fun h ↦ ?_⟩, ⟨rfl, fun _ _ h ↦ h⟩⟩
   simpa [w₀] using mem_uptake.1 (h (show w₀ ∈ info from fun h ↦ h))
 
