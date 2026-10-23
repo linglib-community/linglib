@@ -18,11 +18,12 @@ each reaching the copies it c-commands there; and its elsewhere case goes to the
 pronounced copy it transfers. An NP that shifts to the edge of a phase is thus seen by the phase
 through its lower copy and by the next phase through its higher one, and `PhasedNP`, the order of
 the NPs and the probes of a derivation are all read off the object. Assignment is
-`CaseAssigners.assignBy` over the phase heads innermost first, of which the list calculus is
-another instance (`CaseAssigners.assign_eq_assignBy`).
+`assignBy` over the phase heads innermost first, of which the calculus over NPs placed by hand is
+another instance by definition (`CaseAssigners.assign`).
 
 ## Main definitions
 
+* `Minimalist.copiesAt`: the copies of an NP in what a phase transfers on its own.
 * `Minimalist.VisibleAt`, `Minimalist.SpelledOutAt`: an NP seen by a phase, and spelled out there.
 * `Minimalist.CCommandsAt`, `Minimalist.ReachesAt`: c-command among the NPs of a phase, and the
   NPs a head reaches there.
@@ -30,6 +31,13 @@ another instance (`CaseAssigners.assign_eq_assignBy`).
   heads, deepest first.
 * `Minimalist.CaseAssigners.probesAt`: the probes of a phase.
 * `Minimalist.CaseAssigners.assignOn`: case for the NPs of an object.
+
+## Implementation notes
+
+* Copies count wherever they stand, the representational reading Baker and Vinokurova mention in
+  their note 6. They note that it needs copies in A-bar positions not to count (note 7): an
+  object scrambled above the subject within one phase ((16), (17)) would otherwise make each the
+  other's competitor. No such proviso is modelled.
 
 ## References
 
@@ -48,9 +56,13 @@ open Core.Order Case
 variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (Φ : Finset TreePath)
   (D : TreePath → Set TreePath) [∀ h, DecidablePred (· ∈ D h)] (h : TreePath)
 
+/-- The copies of an NP standing in what the phase head at `h` transfers on its own, each at the
+projection of its token. -/
+def copiesAt (tok : LexicalItem.Token) : List TreePath :=
+  ((chain t tok).map (projectionAt hd t)).filter (· ∈ transferSlice Φ D h)
+
 /-- An NP is seen by the phase head at `h` when a copy of it stands in what `h` transfers. -/
-def VisibleAt (tok : LexicalItem.Token) : Prop :=
-  ∃ p ∈ chain t tok, projectionAt hd t p ∈ transferSlice Φ D h
+def VisibleAt (tok : LexicalItem.Token) : Prop := copiesAt hd t Φ D h tok ≠ []
 
 /-- An NP is spelled out by the phase head at `h` when its pronounced copy stands in what `h`
 transfers. -/
@@ -60,19 +72,16 @@ def SpelledOutAt (tok : LexicalItem.Token) : Prop :=
 /-- In what `h` transfers, `x` c-commands `y` when a copy of `x` there asymmetrically c-commands a
 copy of `y` there. -/
 def CCommandsAt (x y : LexicalItem.Token) : Prop :=
-  ∃ p ∈ chain t x, ∃ q ∈ chain t y,
-    projectionAt hd t p ∈ transferSlice Φ D h ∧ projectionAt hd t q ∈ transferSlice Φ D h ∧
-      t.val.CCommands (projectionAt hd t p) (projectionAt hd t q) ∧
-      ¬ t.val.CCommands (projectionAt hd t q) (projectionAt hd t p)
+  ∃ p ∈ copiesAt hd t Φ D h x, ∃ q ∈ copiesAt hd t Φ D h y,
+    t.val.CCommands p q ∧ ¬ t.val.CCommands q p
 
 /-- The head at `a` reaches an NP when it c-commands a copy of it standing in what `h`
 transfers. -/
 def ReachesAt (a : TreePath) (tok : LexicalItem.Token) : Prop :=
-  ∃ p ∈ chain t tok,
-    projectionAt hd t p ∈ transferSlice Φ D h ∧ t.val.CCommands a (projectionAt hd t p)
+  ∃ p ∈ copiesAt hd t Φ D h tok, t.val.CCommands a p
 
 instance (tok : LexicalItem.Token) : Decidable (VisibleAt hd t Φ D h tok) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
+  inferInstanceAs (Decidable (_ ≠ _))
 
 instance (tok : LexicalItem.Token) : Decidable (SpelledOutAt hd t Φ D h tok) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -85,6 +94,8 @@ instance (a : TreePath) (tok : LexicalItem.Token) : Decidable (ReachesAt hd t Φ
 
 /-- The heads of `t` that project, deepest first: the pronounced tokens heading their mothers. -/
 def projectingHeads : List (TreePath × LexicalItem.Token) :=
+  -- Sorted by bucketing on depth: `List.insertionSort` does not unfold under `decide +kernel` in
+  -- a module file, which the studies' checks run in.
   (List.range t.val.numNodes).reverse.flatMap fun n ↦
     (tokenList t.val).filter fun x ↦ x.1.toList.length == n && projectionAt hd t x.1 != x.1
 
@@ -107,10 +118,11 @@ def CaseAssigners.assignOn (g : CaseAssigners) (D : TreePath → Set TreePath)
     [∀ h, DecidablePred (· ∈ D h)] (IsPhaseHead : LexicalItem.Token → Prop)
     [DecidablePred IsPhaseHead] (lex : LexicalItem.Token → Option Case)
     (xs : List LexicalItem.Token) : Valuation LexicalItem.Token (Case × Mechanism) :=
-  let Φ := ((phaseHeads hd t IsPhaseHead).map (·.1)).toFinset
-  g.assignBy (fun x ↦ x.2.item.cat) (fun x tok ↦ decide (VisibleAt hd t Φ D x.1 tok))
-    (fun x ↦ CCommandsAt hd t Φ D x.1) (fun x ↦ g.probesAt hd t Φ D x.1)
-    (fun x tok ↦ decide (SpelledOutAt hd t Φ D x.1 tok)) (phaseHeads hd t IsPhaseHead)
+  let ph := phaseHeads hd t IsPhaseHead
+  let Φ := (ph.map (·.1)).toFinset
+  assignBy (fun x ↦ g.rules x.2.item.cat) (fun x tok ↦ decide (VisibleAt hd t Φ D x.1 tok))
+    (fun x p q ↦ CCommandsAt hd t Φ D x.1 p.2 q.2) (fun x ↦ CCommandsAt hd t Φ D x.1)
+    (fun x ↦ g.probesAt hd t Φ D x.1) (fun x tok ↦ decide (SpelledOutAt hd t Φ D x.1 tok)) ph
     (lexicalValuation lex xs)
 
 end Minimalist

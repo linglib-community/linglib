@@ -60,8 +60,11 @@ only where a `v` probes.
 
 ## TODO
 
-* Agentive nominalizations ((34)–(37)), raising ((46)) and *promise* on derivations: the
-  nominalizer's own VP phase, and the edge of the embedded *dien* clause.
+* Agentive nominalizations ((34)–(37)), raising ((39)–(47)) and *promise* on derivations: the
+  nominalizer's own phase, where (4b) also applies, and the edge of the embedded *dien* clause,
+  whose T values the raised subject before the matrix clause re-marks it accusative.
+* The covert agent of a passive is a case competitor but no goal of T, which agrees by default
+  (note 30, (73)); here T values it nominative.
 
 ## References
 
@@ -84,51 +87,72 @@ open Minimalist Case DependentCase
     phrase, accusative on the lower of two in the clause, and nominative from T and genitive
     from D under Agree, with no elsewhere case in any domain. -/
 def grammar : CaseAssigners where
-  domains := [(.D, {}), (.v, { high := some .dat }), (.C, { low := some .acc })]
-  agree := [(.T, .nom), (.D, .gen)]
+  rules
+    | .v => { high := some .dat }
+    | .C => { low := some .acc }
+    | _ => {}
+  agreeCase
+    | .T => some .nom
+    | .D => some .gen
+    | _ => none
 
 /-- A purely configurational grammar has the dependent dative and accusative, elsewhere
     nominative in the clause and verb phrase and elsewhere genitive in the noun phrase, and no
     Agree. -/
 def pureMarantz : CaseAssigners where
-  domains := [(.D, { unmarked := some .gen }), (.v, { high := some .dat, unmarked := some .nom }),
-    (.C, { low := some .acc, unmarked := some .nom })]
+  rules
+    | .D => { unmarked := some .gen }
+    | .v => { high := some .dat, unmarked := some .nom }
+    | .C => { low := some .acc, unmarked := some .nom }
+    | _ => {}
 
 /-- A purely Agree-based grammar values nominative from T, accusative from v and genitive from
     D, and has no dependent rule. -/
 def pureChomsky : CaseAssigners where
-  domains := [(.D, {}), (.v, {}), (.C, {})]
-  agree := [(.T, .nom), (.v, .acc), (.D, .gen)]
+  agreeCase
+    | .T => some .nom
+    | .v => some .acc
+    | .D => some .gen
+    | _ => none
 
 /-- Sakha values nothing as unmarked: an NP no rule and no head reaches stays caseless. -/
 theorem no_elsewhere_case {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
-    {xs : List α} {i : ℕ} {x : α} {c : Case} {m : Mechanism}
-    (h : (grammar.assign np probes xs)[i]? = some (x, some (c, m))) : m ≠ .unmarked :=
-  CaseAssigners.mechanism_ne_unmarked (by decide) h
+    (order : List Cat) {xs : List α} {i : ℕ} {x : α} {c : Case} {m : Mechanism}
+    (h : (grammar.assign np probes order xs)[i]? = some (x, some (c, m))) : m ≠ .unmarked := by
+  rw [CaseAssigners.assign] at h
+  refine mechanism_ne_unmarked_of_assignBy ?_ h
+  intro c _
+  cases c <;> rfl
 
 /-- The Agree-based grammar values nothing dative: a dative NP brought it from the lexicon. -/
 theorem pureChomsky_no_dative {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
-    {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hx : xs[i]? = some x)
-    (h : (pureChomsky.assign np probes xs)[i]? = some (x, some (.dat, m))) :
+    (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hx : xs[i]? = some x)
+    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, some (.dat, m))) :
     (np x).lexicalCase = some .dat := by
+  rw [CaseAssigners.assign] at h
   rcases hlex : (np x).lexicalCase with _ | c
-  · exact absurd (CaseAssigners.case_mem_cases hlex h) (by decide)
-  · have := CaseAssigners.assign_getElem?_of_some (g := pureChomsky) (probes := probes) hx hlex
-    rw [this] at h
+  · rcases case_mem_of_assignBy (lex := fun x ↦ (np x).lexicalCase) (x := x) hlex
+      h with ⟨_, -, hc⟩ | ⟨_, -, ⟨_, _⟩, hp, rfl⟩
+    · simp [pureChomsky, Rules.cases] at hc
+    · obtain ⟨⟨hd, d⟩, -, -, hk⟩ := pureChomsky.mem_probesIn np hp
+      revert hk; cases hd <;> simp [pureChomsky]
+  · rw [assignBy_getElem?_of_some (lex := fun x ↦ (np x).lexicalCase) hx hlex] at h
     simp only [Option.some.injEq, Prod.mk.injEq, true_and] at h
     rw [h.1]
 
 /-- The Agree-based grammar values an NP accusative only where a `v` probes: in a derivation
     without one, an accusative NP brought its case from the lexicon. -/
 theorem pureChomsky_v_of_acc {α : Type*} (np : α → PhasedNP) (probes : List (Cat × Cat))
-    {xs : List α} {i : ℕ} {x : α} {m : Mechanism} (hlex : (np x).lexicalCase = none)
-    (h : (pureChomsky.assign np probes xs)[i]? = some (x, some (.acc, m))) :
+    (order : List Cat) {xs : List α} {i : ℕ} {x : α} {m : Mechanism}
+    (hlex : (np x).lexicalCase = none)
+    (h : (pureChomsky.assign np probes order xs)[i]? = some (x, some (.acc, m))) :
     ∃ d, (Cat.v, d) ∈ probes := by
-  obtain rfl := CaseAssigners.mechanism_eq_agree (by decide) hlex h
-  obtain ⟨⟨hd, d⟩, hmem, hh⟩ := CaseAssigners.exists_probe_of_agree h
-  obtain rfl : hd = .v := by
-    change pureChomsky.agreeCase hd = some .acc at hh
-    revert hh; cases hd <;> decide
+  rw [CaseAssigners.assign] at h
+  obtain rfl := mechanism_eq_agree_of_assignBy (rules := pureChomsky.rules)
+    (fun _ _ ↦ rfl) (lex := fun x ↦ (np x).lexicalCase) (x := x) hlex h
+  obtain ⟨_, -, ⟨_, _⟩, hp, rfl⟩ := exists_probe_of_assignBy h
+  obtain ⟨⟨hd, d⟩, hmem, -, hk⟩ := pureChomsky.mem_probesIn np hp
+  obtain rfl : hd = .v := by revert hk; cases hd <;> simp [pureChomsky]
   exact ⟨d, hmem⟩
 
 /-! ### Case read off derivations
@@ -215,7 +239,8 @@ def derivedCases (d : Derivation) (xs : List LexicalItem.Token) : Option (List (
 def subject : PhasedNP := {}
 
 /-- A caseless NP merged in the verb phrase, shifted to the clause edge or not. -/
-def internal (shifted : Bool) : PhasedNP := { phase := .v, shifted }
+def internal (shifted : Bool) : PhasedNP :=
+  { phase := .v, shiftsTo := if shifted then some .C else none }
 
 /-- A caseless NP inside a noun phrase. -/
 def possessor : PhasedNP := { phase := .D }
@@ -226,20 +251,15 @@ def pro : PhasedNP := {}
 /-- Finite T probing the clause. -/
 def finite : List (Cat × Cat) := [(.T, .C)]
 
-/-- The cases of a derivation, positionally. -/
+/-- The domains of hand-placed NPs, innermost first. -/
+def domainOrder : List Cat := [.D, .v, .C]
+
+/-- The cases of hand-placed NPs, positionally. -/
 def cases (g : CaseAssigners) (probes : List (Cat × Cat)) (nps : List PhasedNP) :
     List (Option Case) :=
-  (g.assign id probes nps).map (·.2.map (·.1))
+  (g.assign id probes domainOrder nps).map (·.2.map (·.1))
 
 /-! ### The constructions -/
-
-attribute [local simp] cases CaseAssigners.assign CaseAssigners.domainPass
-  CaseAssigners.probePass
-  Rules.dependentPass Rules.unmarkedPass Valuation.unvalued Valuation.fill Valuation.fillFrom
-  lexicalValuation Valuation.initial CaseAssigners.derive CaseAssigners.rules
-  CaseAssigners.agreeCase grammar pureMarantz PhasedNP.visible PhasedNP.spellOut subject internal
-  possessor pro finite
-
 
 /-- In differential object marking a shifted object is accusative and an unshifted one
     caseless, the subject nominative from T either way ((10), (11)). -/
@@ -286,14 +306,14 @@ theorem possessed :
 theorem agentive_nominal :
     cases grammar [] [pro, internal true] = [none, some .acc] ∧
     cases grammar [] [internal true] = [none] := by
-  simp
+  decide
 
 /-- A subject raised to the clause edge is accusative exactly when the matrix clause has
     another NP; into an impersonal clause it is valued by T alone. -/
 theorem raising :
     cases grammar finite [subject, internal true] = [some .nom, some .acc] ∧
     cases grammar finite [internal true] = [some .nom] := by
-  simp
+  decide
 
 /-- Under *promise* the goal is dative once the raised subject is below it in the verb phrase,
     and accusative when nothing is. -/
@@ -301,14 +321,14 @@ theorem promise :
     cases grammar finite [subject, internal false, internal true] =
       [some .nom, some .dat, some .acc] ∧
     cases grammar finite [subject, internal true] = [some .nom, some .acc] := by
-  simp
+  decide
 
 theorem elsewhere_contrast :
     cases grammar finite [subject, internal false] = [some .nom, none] ∧
     cases grammar [] [subject] = [none] ∧
     cases pureMarantz finite [subject, internal false] = [some .nom, some .nom] ∧
     cases pureMarantz [] [subject] = [some .nom] := by
-  simp
+  decide
 
 /-- The positions the rows are stated over are those the derivations give: on each construction
     the hand-placed NPs value what the derivation does. -/
@@ -413,7 +433,7 @@ def Slot.shifts (r : Datum) (s : Slot) : List Bool :=
 def Slot.occupants (r : Datum) (s : Slot) : Option (List Occupant) :=
   ((r.feature? (s.key ++ "Case")).bind parseCase?).map fun c ↦
     (s.shifts r).map fun sh ↦
-      { np := { phase := s.phase r, shifted := sh }, slot := some s,
+      { np := { phase := s.phase r, shiftsTo := if sh then some .C else none }, slot := some s,
         adjacent := yes r (s.key ++ "Adjacent"), observed := c }
 
 /-- The covert agent is forced in a passive with an agent-oriented adverb and in an agentive
@@ -446,12 +466,12 @@ def probes (r : Datum) : List (Cat × Cat) :=
 /-- The valuations of a domain's occupants. -/
 def derive (g : CaseAssigners) (r : Datum) (d : List Occupant) :
     Valuation Occupant (Case × Mechanism) :=
-  g.assign Occupant.np (probes r) d
+  g.assign Occupant.np (probes r) domainOrder d
 
 /-- The Case filter requires a caseless overt NP to be pseudo-incorporated, an unshifted
     VP-internal NP adjacent to the verb. -/
 def Licensed (o : Occupant) (v : Option (Case × Mechanism)) : Prop :=
-  o.covert = true ∨ v.isSome ∨ (o.np.phase = .v ∧ o.np.shifted = false ∧ o.adjacent = true)
+  o.covert = true ∨ v.isSome ∨ (o.np.phase = .v ∧ o.np.shiftsTo = none ∧ o.adjacent = true)
 
 instance (o : Occupant) (v : Option (Case × Mechanism)) : Decidable (Licensed o v) := by
   unfold Licensed; infer_instance

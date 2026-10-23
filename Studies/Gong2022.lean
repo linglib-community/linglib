@@ -28,13 +28,15 @@ competitor is present, section 5.1 (`acc_subjects`), and the Mongolian grammar d
 
 ## Implementation notes
 
-Heights order the positions of a clause and, for clause-external scrambling, the matrix clause
-above the embedded one. A site records the arguments of its spell-out domain with the case they
-bear when the mover lands, so the presubject position sees a subject already valued nominative,
-the paper's assumption that case is valued as soon as its conditions are met. A lexically cased
-DP is licensed in its base position and a PP has no restrictor to late-merge, so neither can be
-bled. The CP edge of an embedded clause is a step of successive-cyclic movement without a case
-competitor.
+The ditransitive's cases are read off a derivation (`ditransitive`), whose direct object shifts to
+the specifier of vP for the paper's VP-edge site, and Sakha's off [baker-vinokurova-2010]'s. For the
+scrambling chains, heights order the positions of a clause and, for clause-external scrambling, the
+matrix clause above the embedded one. A site records the arguments of its spell-out domain with the
+case they bear when the mover lands, so the presubject position sees a subject already valued
+nominative, the paper's assumption that case is valued as soon as its conditions are met. A
+lexically cased DP is licensed in its base position and a PP has no restrictor to late-merge, so
+neither can be bled. The CP edge of an embedded clause is a step of successive-cyclic movement
+without a case competitor.
 
 ## References
 
@@ -133,45 +135,50 @@ def specTP : Site := ⟨4, [⟨2, some .inst⟩, io], true⟩
 /-! ### The Mongolian grammar of structural case (26) -/
 
 /-- The Mongolian grammar of structural case: accusative on the lower of two NPs in the
-    clause, nominative from T and genitive from D under Agree, and no dependent dative. -/
+    clause, nominative from T under Agree, and no dependent dative; genitive from D is
+    [baker-vinokurova-2010]'s, kept for the comparison with Sakha. -/
 def grammar : CaseAssigners where
-  domains := [(.D, {}), (.v, {}), (.C, { low := some .acc })]
-  agree := [(.T, .nom), (.D, .gen)]
+  rules
+    | .C => { low := some .acc }
+    | _ => {}
+  agreeCase
+    | .T => some .nom
+    | .D => some .gen
+    | _ => none
 
-/-- The arguments of a ditransitive. -/
-inductive DitransitiveArg
-  | subject
-  | directObject
-  | indirectObject
-  deriving DecidableEq, Repr
+open BakerVinokurova2010 (subjD objD goalD verb₂ littleV tense comp IsPhaseHead)
 
-/-- Their positions in a Mongolian ditransitive: the subject above the direct object, shifted to
-    the clause edge, above the dative indirect object. -/
-def DitransitiveArg.position : DitransitiveArg → PhasedNP
-  | .subject => {}
-  | .directObject => { phase := .v, shifted := true }
-  | .indirectObject => { phase := .v, lexicalCase := some .dat }
+/-- A Mongolian ditransitive: the dative indirect object in the specifier of VP, and the direct
+    object shifted above it to the edge of vP, below the subject. -/
+def ditransitive : Derivation :=
+  ⟨verb₂, [.em .left objD, .em .left goalD, .em .right littleV, .im objD .left,
+    .em .left subjD, .em .right tense, .em .right comp]⟩
 
-/-- A ditransitive's arguments, highest first. -/
-def ditransitive : List DitransitiveArg := [.subject, .directObject, .indirectObject]
+/-- The cases a grammar reads off a derivation, the indirect object `goalD` dative from its
+    lexical head where `datIO` says so. -/
+def casesOf (g : CaseAssigners) (d : Derivation) (datIO : Bool) :
+    Option (Case.Valuation LexicalItem.Token (Case × Case.Mechanism)) :=
+  d.externalize?.map fun t ↦
+    g.assignOn .raising t (complementDomain .raising t ∅) IsPhaseHead
+      (fun x ↦ if datIO && x = goalD then some .dat else none) [subjD, objD, goalD]
 
-/-- Its cases, with finite T probing the clause. -/
-def ditransitiveCases : Case.Valuation DitransitiveArg (Case × Case.Mechanism) :=
-  grammar.assign DitransitiveArg.position [(.T, .C)] ditransitive
+/-- The cases of the Mongolian ditransitive. -/
+def ditransitiveCases : Option (Case.Valuation LexicalItem.Token (Case × Case.Mechanism)) :=
+  casesOf grammar ditransitive true
 
 theorem do_gets_dependent_acc :
-    ditransitiveCases.valueOf .directObject = some (.acc, .dependent) := by decide
+    ditransitiveCases.bind (·.valueOf objD) = some (.acc, .dependent) := by decide +kernel
 
 theorem subject_gets_nom_by_agree :
-    ditransitiveCases.valueOf .subject = some (.nom, .agree) := by decide
+    ditransitiveCases.bind (·.valueOf subjD) = some (.nom, .agree) := by decide +kernel
 
 theorem io_has_lexical_case :
-    ditransitiveCases.valueOf .indirectObject = some (.dat, .lexical) := by decide
+    ditransitiveCases.bind (·.valueOf goalD) = some (.dat, .lexical) := by decide +kernel
 
 theorem vpEdge_dependentAcc :
     vpEdge.DependentAcc ∧ ¬ presubject.HasCase ∧
-      (ditransitiveCases.valueOf .directObject).map (·.2) = some .dependent := by
-  decide
+      (ditransitiveCases.bind (·.valueOf objD)).map (·.2) = some .dependent := by
+  decide +kernel
 
 /-! ### The scrambling constructions and their chains -/
 
@@ -321,31 +328,17 @@ theorem acc_subjects :
 theorem mongolian_differs_from_sakha_in_dat_only :
     grammar.rules .v = { BakerVinokurova2010.grammar.rules .v with high := none } ∧
     grammar.rules .C = BakerVinokurova2010.grammar.rules .C ∧
-    grammar.agree = BakerVinokurova2010.grammar.agree := by decide
+    grammar.agreeCase = BakerVinokurova2010.grammar.agreeCase :=
+  ⟨rfl, rfl, funext fun c ↦ by cases c <;> rfl⟩
 
-/-- The arguments of a Sakha ditransitive. -/
-inductive SakhaArg
-  | subject
-  | goal
-  | theme
-  deriving DecidableEq, Repr
-
-/-- Their positions: a subject, a VP-internal goal, and a theme shifted to the phase edge. -/
-def SakhaArg.position : SakhaArg → Minimalist.PhasedNP
-  | .subject => {}
-  | .goal => { phase := .v }
-  | .theme => { phase := .v, shifted := true }
-
-/-- The Sakha ditransitive, highest first. -/
-def sakhaDitransitive : List SakhaArg := [.subject, .goal, .theme]
-
+/-- On Baker and Vinokurova's Sakha ditransitive, the theme shifted, the Mongolian grammar values
+    nothing dative, and so not the goal that the Sakha grammar values dative. -/
 theorem mongolian_derives_no_dative :
-    (∀ s ∈ grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive,
-      s.2.map (·.1) ≠ some .dat) ∧
-    ((grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
-        .goal).map (·.1) ≠
-      ((BakerVinokurova2010.grammar.assign SakhaArg.position [(.T, .C)] sakhaDitransitive).valueOf
-        .goal).map (·.1) := by
-  decide
+    (∀ s ∈ casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false, ∀ p ∈ s,
+      p.2.map (·.1) ≠ some .dat) ∧
+    (casesOf grammar (BakerVinokurova2010.ditransitiveClause true) false).bind (·.valueOf goalD) ≠
+      (casesOf BakerVinokurova2010.grammar (BakerVinokurova2010.ditransitiveClause true) false).bind
+        (·.valueOf goalD) := by
+  decide +kernel
 
 end Gong2022
