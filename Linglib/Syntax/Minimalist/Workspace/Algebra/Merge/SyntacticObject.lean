@@ -45,6 +45,8 @@ syntactic object (`not_isSyntacticObject_of_mem_cutSummandsN`): the mover's pare
 * `Minimalist.SyntacticObject.mergeOpUnitC_current`, `mergeOpC_im`: Internal Merge on the carrier.
 * `Minimalist.SyntacticObject.mergeOpC_node_residual`, `mergeOpC_im_residual`: both beside a
   spectator workspace.
+* `Minimalist.SyntacticObject.mergeOpC_of'_merge`, `mergeOpC_im_of'_merge`: the Merge operator
+  computes MERGE (`Workspace.merge`), Internal Merge on the remainder its cut leaves.
 * `Minimalist.SyntacticObject.numNodes_odd`: a syntactic object has an odd number of vertices.
 * `Minimalist.SyntacticObject.not_isSyntacticObject_of_mem_cutSummandsN`: no pruning cut removing
   one syntactic object from another leaves a syntactic object.
@@ -186,6 +188,33 @@ theorem mergeOpC_im_residual (hm : mover.val.value.isLeft) (h : current.terms.co
     (cutSummandsCN_filter_mover hm h hne) rfl (fun h' ↦ hne (Subtype.ext h')) fun U hU ↦ ?_
   obtain ⟨U', hU', rfl⟩ := Multiset.mem_map.mp hU
   exact disjoint_pair_subtrees (hW U' hU')
+
+/-! ### MERGE computed by the Merge operator -/
+
+/-- External Merge: the Merge operator at the trace cuts computes MERGE on a workspace of which `S`
+    and `S'` are members, when no other member contains them. -/
+theorem mergeOpC_of'_merge (τ : UnorderedTree Vertex → Option LexicalItem.Token)
+    {S S' : SyntacticObject} {W : Workspace} (hle : {S, S'} ≤ W)
+    (hW : ∀ U ∈ W - {S, S'}, S ∉ U.terms ∧ S' ∉ U.terms) :
+    Merge.mergeOpC (R := ℤ) τ Vertex.bare S.val S'.val (of' (W.map Subtype.val))
+      = of' ((W.merge S S').map Subtype.val) := by
+  conv_lhs => rw [← add_tsub_cancel_of_le hle]
+  rw [mergeOpC_node_residual τ S S' hW, Workspace.merge, add_comm]
+
+/-- Internal Merge: the Merge operator at the trace cuts computes MERGE of a uniquely accessible
+    mover with the remainder its cut leaves ([marcolli-chomsky-berwick-2025] Proposition 1.4.2). -/
+theorem mergeOpC_im_of'_merge (hm : mover.val.value.isLeft) (h : current.terms.count mover = 1)
+    (hne : current ≠ mover) {W : Workspace}
+    (hW : ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms) :
+    Merge.mergeOpC (R := ℤ) traceEncoder Vertex.bare (deleteAccessible mover current).val
+        mover.val (Merge.mergeOpUnitC traceEncoder mover.val
+          (of' (({current} + W).map Subtype.val)))
+      = of' ((({deleteAccessible mover current} + W).merge (deleteAccessible mover current)
+          mover).map Subtype.val) := by
+  have hmW : mover ∉ W := fun hm' ↦ (hW mover hm').2 (self_mem_terms mover)
+  rw [mergeOpC_im_residual hm h hne hW, Workspace.merge, Multiset.insert_eq_cons,
+    ← Multiset.singleton_add, add_tsub_add_eq_tsub_left, Multiset.sub_singleton,
+    Multiset.erase_of_notMem hmW, add_comm]
 
 private def demoTok (i : ℕ) : LexicalItem.Token := ⟨.of .N [], i⟩
 
