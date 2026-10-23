@@ -5,55 +5,49 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Syntax.Minimalist.Copy.FormCopy
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
 public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
 public import Linglib.Syntax.Projection
 public import Linglib.Core.Data.RoseTree.Get
+public import Mathlib.Order.Setoid.Basic
 
 /-!
 # Chains on linearized syntactic objects
 
-A linearized syntactic object is a copy-theoretic representation. A vertex `Vertex.lex tok` is a
-pronounced copy of `tok` and a vertex `Vertex.traceOf tok` a deleted one, the trace Internal Merge
-leaves, Marcolli, Chomsky and Berwick's cancellation `T/T_v` with the head of `T_v` remembered.
-The chain of a token is the list of its copies, and a copy stands for the maximal projection of
-its token, so a moved phrase sits where its head projects. A token moves when it has a deleted
-copy. A token bound in situ by an operator, as for Pesetsky, has a single copy. A deleted copy
-above the pronounced one is Huang's covert movement, and a pronounced copy between two deleted
-ones is Sato and Ngui's partial movement, so where a phrase is pronounced and where it takes scope
-come apart without a separate choice of the copy to spell out. A token with two pronounced copies
-is shared, dominated by two mothers, Citko's Parallel Merge.
+A chain is the set of positions of one object. On a copy object, where Internal Merge leaves the
+mover in place, two positions are in one chain when they hold one term (`chainRel`, the kernel of
+`termAt`), so a chain has a position per occurrence of its term (`card_chainRel`), and Form
+Copy's copies are the pairs of its positions in c-command (`self_mem_copyRel_iff`).
 
-A copy is linked to the nearest copy above it, the one whose projection c-commands it with no
-other copy's projection in between, c-command being Reinhart's (`RoseTree.CCommands`).
-A token with one copy has no link (`links_eq_nil_of_length_le_one`). The locality conditions on
-links are in `Locality/Chain.lean`.
+On an object with traces, a lower copy is a trace leaf `Vertex.traceOf tok` remembering the head of
+the mover, and the chain of a token lists its pronounced and deleted copies, each standing for the
+maximal projection of its token under a head function. A token moves when it has a deleted copy, and
+one bound in situ, as for Pesetsky, has a single copy; a deleted copy above the pronounced one is
+Huang's covert movement, a pronounced copy between deleted ones Sato and Ngui's partial movement,
+and a token with two pronounced copies is shared, Citko's Parallel Merge. A copy is linked to the
+nearest copy whose projection c-commands it, c-command being Reinhart's (`RoseTree.CCommands`); the
+locality of links is in `Locality/Chain.lean`.
 
 ## Main definitions
 
+* `Minimalist.LinearizedSyntacticObject.chainRel`: the chains of a copy object.
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
 * `occurrencesWith`: the pronounced copies of the tokens a predicate holds of.
-* `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
-  deleted copies without antecedents, seen from their own conjunct copies.
+* `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
 
 ## Implementation notes
 
-* Positions, not terms, individuate copies: two deleted copies of one token are the same term.
-* A copy is located at the maximal projection of its token under a head function, which the
-  analysis supplies (`HeadFunction`). Under `HeadFunction.raising` a phrase with a specifier
-  merged in place has a maximal projection to locate a copy in; under `HeadFunction.label` a
-  phrase merged beside another is unlabeled, and its head projects no further than its sister.
-* A chain here is the copies an object contains; the replay of a derivation
-  (`Derivation.externalize?`) builds overt chains, while covert movement and sharing are available
-  to the representation only. Remnant movement carries a deleted copy away from its antecedent,
-  so an externalized object can have orphan traces.
+* On an object with traces, positions, not terms, individuate copies: two deleted copies of one
+  token are the same term. Remnant movement carries a deleted copy away from its antecedent, so
+  an externalized object can have orphan traces.
 
 ## TODO
 
-* Chains on the copy object of `Derivation.replayWithCopies?` (`Copy/Replay.lean`), the
-  positions holding one term, with the token chains here as their case without remnant movement.
+* The chains of tokens as the contraction of the chains of the copy object of
+  `Derivation.replayWithCopies?` (`Copy/Replay.lean`), where no remnant moves.
 
 ## References
 
@@ -70,6 +64,47 @@ links are in `Locality/Chain.lean`.
 namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order PhraseStructure
+
+/-! ### Chains of copies -/
+
+namespace LinearizedSyntacticObject
+
+variable {t : LinearizedSyntacticObject}
+
+variable (t) in
+/-- Two positions are in one chain when they hold one term. -/
+def chainRel : Setoid t.val.Positions := Setoid.ker t.termAt
+
+theorem chainRel_iff {p q : t.val.Positions} : t.chainRel p q ↔ t.termAt p = t.termAt q :=
+  Iff.rfl
+
+instance : DecidableRel t.chainRel := fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
+
+variable (t) in
+/-- A chain has a position for each occurrence of its term. -/
+theorem card_chainRel (p : t.val.Positions) :
+    (Finset.univ.filter (t.chainRel p ·)).card = t.toSyntacticObject.terms.count (t.termAt p) := by
+  rw [count_terms]
+  simp only [chainRel_iff, eq_comm]
+
+theorem exists_chainRel_of_self_mem_copyRel {x : SyntacticObject}
+    (h : (x, x) ∈ t.toSyntacticObject.copyRel) :
+    ∃ p q, t.chainRel p q ∧ t.val.CCommands p q ∧ t.termAt p = x := by
+  obtain ⟨p, q, hpq, hp, hq⟩ := exists_cCommands_termAt_of_cCommands h.1
+  exact ⟨p, q, hp.trans hq.symm, hpq, hp⟩
+
+/-- Form Copy relates an object to itself exactly when two positions of its chain are in
+c-command, in an object no term of which is merged with itself. -/
+theorem self_mem_copyRel_iff {x : SyntacticObject}
+    (hs : ∀ p d : t.val.Positions, Order.pred p ⋖ d → d ≠ p → t.termAt d ≠ t.termAt p) :
+    (x, x) ∈ t.toSyntacticObject.copyRel ↔
+      ∃ p q, t.chainRel p q ∧ t.val.CCommands p q ∧ t.termAt p = x := by
+  refine ⟨exists_chainRel_of_self_mem_copyRel, fun ⟨p, q, hpq, hc, hp⟩ ↦ ?_⟩
+  have h := cCommands_termAt_of_cCommands (hs p) hc
+  rw [← chainRel_iff.1 hpq, hp] at h
+  exact ⟨h, rfl⟩
+
+end LinearizedSyntacticObject
 
 /-! ### Copies -/
 

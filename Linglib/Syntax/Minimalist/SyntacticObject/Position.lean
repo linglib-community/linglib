@@ -30,6 +30,7 @@ head function (`SyntacticObject/Projection.lean`).
 
 ## Main statements
 
+* `LinearizedSyntacticObject.terms_eq_map_termAt`: the terms are the terms at the positions.
 * `LinearizedSyntacticObject.immediatelyContains_termAt`,
   `LinearizedSyntacticObject.containsOrEq_termAt`: terms contain one another as their positions
   dominate one another.
@@ -125,6 +126,22 @@ theorem mem_terms_iff : y ∈ t.toSyntacticObject.terms ↔ ∃ q, t.termAt q = 
   rw [mem_terms, ← termAt_bot, containsOrEq_termAt]
   simp
 
+variable (t) in
+/-- The terms of a linearized object are the terms at its positions, one per position. -/
+theorem terms_eq_map_termAt :
+    t.toSyntacticObject.terms = (Finset.univ : Finset t.val.Positions).val.map t.termAt := by
+  apply Multiset.map_injective Subtype.val_injective
+  rw [map_val_terms, Multiset.map_map]
+  change UnorderedTree.subtrees (UnorderedTree.mk t.val) =
+    (Finset.univ : Finset t.val.Positions).val.map (UnorderedTree.mk ∘ Positions.subtree)
+  rw [← Multiset.map_map, Positions.map_subtree_univ, UnorderedTree.subtrees_mk,
+    unorderedSubtrees_eq_map, Multiset.map_coe]
+
+variable (t) in
+theorem count_terms (u : SyntacticObject) :
+    t.toSyntacticObject.terms.count u = (Finset.univ.filter (t.termAt · = u)).card := by
+  rw [terms_eq_map_termAt, Multiset.count_map, Finset.card_def, Finset.filter_val]
+  simp only [eq_comm]
 
 
 variable {a : t.val.Positions} {x : SyntacticObject}
