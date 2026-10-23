@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.ChanShen2026
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Syntax.Minimalist.Locality.Chain
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Chan and Shen (2026): Conditions on *wh-the-hell* licensing
@@ -173,7 +174,7 @@ variable (t : LinearizedSyntacticObject)
 
 /-- The chain of `h` takes scope in matrix Spec-CP: the phrase of a copy at its top is there. -/
 def ReachesScope (h : LexicalItem.Token) : Prop :=
-  ∃ p ∈ chainTop t h, projectionAt t p = ⟨[0]⟩
+  ∃ p ∈ chainTop .raising t h, projectionAt .raising t p = ⟨[0]⟩
 
 instance (h : LexicalItem.Token) : Decidable (ReachesScope t h) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -204,7 +205,7 @@ example : ∀ w ∈ [.bare what, whatTheHell], ∀ island : Bool,
 /-- `m` is part of the phrase of `h`: a pronounced copy of `m` lies in the phrase a pronounced
 copy of `h` heads, so that every copy of `h` carries `m`. Every token is part of its own phrase. -/
 def PartOf (m h : LexicalItem.Token) : Prop :=
-  ∃ p ∈ occurrences t h, ∃ q ∈ occurrences t m, projectionAt t p ≤ q
+  ∃ p ∈ occurrences t h, ∃ q ∈ occurrences t m, projectionAt .raising t p ≤ q
 
 instance (m h : LexicalItem.Token) : Decidable (PartOf t m h) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -241,7 +242,7 @@ theorem licensed_daodi : Licensed daodiQuestion daodi ∧ ¬ ReachesScope daodiQ
 scope of the question operator ([linebarger-1987]), which a wh-phrase c-commanding it blocks. -/
 def Intervention.Licensed (m : LexicalItem.Token) : Prop :=
   ∃ q ∈ occurrences t m, ∀ x ∈ tokenList t.val, x.2.item.wh = true → ¬ PartOf t m x.2 →
-    ¬ CCommands t.val (projectionAt t x.1) q
+    ¬ CCommands t.val (projectionAt .raising t x.1) q
 
 instance (m : LexicalItem.Token) : Decidable (Intervention.Licensed t m) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -294,7 +295,8 @@ theorem structureOf_isSome :
   decide
 
 /-- Extraction fails when a link of the wh-phrase's chain leaves the complex NP. -/
-def CrossesIsland : Prop := ∃ h ∈ occurrences t the, Escapes t what (projectionAt t h)
+def CrossesIsland : Prop :=
+  ∃ h ∈ occurrences t the, Escapes .raising t what (projectionAt .raising t h)
 
 instance : Decidable (CrossesIsland t) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 

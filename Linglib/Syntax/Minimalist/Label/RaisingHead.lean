@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Label.Selection
+public import Linglib.Syntax.Minimalist.SyntacticObject.Projection
 
 /-!
 # The raising head
@@ -15,27 +16,39 @@ function to be raising: the object Internal Merge forms is headed by the head of
 of, so the landing site of a wh-phrase beside a C is headed by C. The raising head reads this off
 the finished object from the selection head, a lower copy satisfying selection as the phrase it
 copies and otherwise invisible (`CopyState`): where two phrases merge and the head of one has a
-lower copy inside the other, the first has raised out of the second, which projects.
+lower copy inside the other, the first has raised out of the second, which projects. A planar
+embedding is a total head function extending it, and the head function `HeadFunction.raising`
+takes the daughter carrying the raising head, and the embedding's head where there is none.
 
 ## Main definitions
 
 * `Minimalist.CopyState`: a selection state or a lower copy, a commutative magma with zero.
 * `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
   raising head of a syntactic object.
+* `Minimalist.headIndex?`, `Minimalist.HeadFunction.raising`: the head daughter of a planar tree,
+  and the head function it gives.
 
 ## Main results
 
 * `Minimalist.SyntacticObject.raisingHead_merge`: the raising head of a merge is a daughter's.
+* `Minimalist.exists_headIndex?_of_treeRaisingHead`: the head daughter carries the raising head
+  wherever there is one.
 
 ## Implementation notes
 
-* The raising head delimits the phases of `Locality/Phase.lean` and gives the head daughters
-  of `SyntacticObject/Position.lean`. Labeling by minimal search is `Label/MinimalSearch.lean`.
+* The drawing convention puts specifiers to the left of their heads and heads to the left of their
+  complements: a left leaf that selects nothing is a specifier and the right daughter heads, a left
+  leaf that selects is the head, and otherwise the right daughter heads. It decides only where the
+  raising head is undefined, at a phrase merged in place beside another phrase, which the labeling
+  algorithm leaves unlabeled until one of the two moves on (`HeadFunction.label`).
+* The raising head also delimits the phases of `Locality/Phase.lean`.
 
 ## TODO
 
-The trace of a token is the lower copy of the phrase the token heads; a moved head, whose lower
-copy would still select, is not distinguished.
+* The trace of a token is the lower copy of the phrase the token heads; a moved head, whose lower
+  copy would still select, is not distinguished.
+* The positions at or below the maximal projection of a head occurring once carry exactly the
+  terms within its projection, where the raising head is defined along the projection line.
 
 ## References
 
@@ -233,5 +246,58 @@ theorem raisingHead_merge {l r : SyntacticObject} {h : LexicalItem.Token}
     split_ifs with h₁ <;> first | rfl | exact (h₁.2 h₁.1).elim
 
 end SyntacticObject
+
+/-! ### Head daughters -/
+
+/-- The raising head of a planar tree, that of its unordered image. -/
+def treeRaisingHead (s : RoseTree Vertex) : Option LexicalItem.Token :=
+  (liftN (fun tok ↦ (⟨.sel (.of tok tok.item.sel), 0⟩ : RaisingState)) raisingTraceState
+    (UnorderedTree.mk s)).state.head
+
+theorem treeRaisingHead_subtree {t : LinearizedSyntacticObject} (p : t.val.Positions) :
+    treeRaisingHead p.subtree = (t.termAt p).raisingHead := rfl
+
+/-- The drawing convention makes a token or trace leaf its own head; at a binary node it takes a
+left leaf that selects nothing for a specifier and looks for the head in the right daughter, takes
+a left leaf that selects for the head, and otherwise looks in the right daughter. This is the
+head path it assigns. -/
+def conventionHeadPos? : RoseTree Vertex → Option (List ℕ)
+  | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
+  | .node (.inl none) [.node (.inl (some tok)) [], r] =>
+      if tok.item.sel = [] then (conventionHeadPos? r).map (1 :: ·) else some [0]
+  | .node (.inl none) [_, r] => (conventionHeadPos? r).map (1 :: ·)
+  | .node (.inl none) _ => none
+  | .node (.inr none) _ => none
+
+/-- The head daughter of a planar tree is the first daughter carrying its raising head, and where
+it has none, the first step of the drawing convention's head path. -/
+def headIndex? (s : RoseTree Vertex) : Option ℕ :=
+  ((treeRaisingHead s).bind fun h ↦ s.children.findIdx? (treeRaisingHead · = some h)) <|>
+    (conventionHeadPos? s).bind List.head?
+
+/-- The raising head function, [marcolli-chomsky-berwick-2025]'s raising head extended to a total
+head function by the drawing convention: the head daughter of the subtree at each position,
+`none` off the object. -/
+def HeadFunction.raising : HeadFunction := fun t q ↦ (t.val.subtreeAt q.toList).bind headIndex?
+
+/-- Where a linearized syntactic object with daughters has a raising head, its head daughter carries
+it. -/
+theorem exists_headIndex?_of_treeRaisingHead {s : RoseTree Vertex} {ℓ : LexicalItem.Token}
+    (hs : IsSyntacticObject (UnorderedTree.mk s)) (hc : s.children ≠ [])
+    (h : treeRaisingHead s = some ℓ) :
+    ∃ i c, headIndex? s = some i ∧ s.children[i]? = some c ∧ treeRaisingHead c = some ℓ := by
+  obtain ⟨v, cs⟩ := s
+  obtain rfl := eq_bare_of_ne_nil hs hc
+  obtain ⟨l, r, rfl⟩ : ∃ l r, cs = [l, r] :=
+    List.length_eq_two.1 ((length_eq_zero_or_two hs).resolve_left fun h0 ↦
+      hc (List.length_eq_zero_iff.1 h0))
+  obtain ⟨hl, hr⟩ := (isSyntacticObject_mk_merge l r).1 hs
+  have hm : treeRaisingHead (.node Vertex.bare [l, r]) = (merge ⟨_, hl⟩ ⟨_, hr⟩).raisingHead := by
+    simp only [raisingHead, raisingCheck, liftFun, merge_mk]; rfl
+  by_cases hl' : treeRaisingHead l = some ℓ
+  · exact ⟨0, l, by simp [headIndex?, h, hl', List.findIdx?_cons], rfl, hl'⟩
+  · have hr' : treeRaisingHead r = some ℓ :=
+      (raisingHead_merge (l := ⟨_, hl⟩) (r := ⟨_, hr⟩) (hm ▸ h)).resolve_left fun h' ↦ hl' h'
+    exact ⟨1, r, by simp [headIndex?, h, hl', hr', List.findIdx?_cons], rfl, hr'⟩
 
 end Minimalist

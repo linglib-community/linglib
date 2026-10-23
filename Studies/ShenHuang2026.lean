@@ -9,6 +9,7 @@ public import Linglib.Syntax.Minimalist.Locality.Chain
 public import Linglib.Data.Examples.ShenHuang2026
 public import Linglib.Data.Examples.DaviesDubinsky2003
 public import Mathlib.Data.Finset.Card
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Shen and Huang (2026): The Role of Phases and Specificity in Definite Islands
@@ -154,7 +155,7 @@ def Config.specific (c : Config) : Option SyntacticObject :=
 /-- The PIC (4) is violated in `t` when a link of the wh-phrase's chain leaves the phase that the
 cell's determiner heads, from its interior. -/
 def Config.ViolatesPIC (c : Config) (t : LinearizedSyntacticObject) : Prop :=
-  ∃ ℓ ∈ c.phaseHead, ∃ h ∈ occurrences t ℓ, Crosses t wh h
+  ∃ ℓ ∈ c.phaseHead, ∃ h ∈ occurrences t ℓ, Crosses .raising t wh h
 
 instance (c : Config) (t : LinearizedSyntacticObject) : Decidable (c.ViolatesPIC t) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))

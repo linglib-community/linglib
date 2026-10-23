@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.BrananErlewine2024
 public import Linglib.Syntax.Minimalist.Copy.Chain
 public import Linglib.Syntax.Minimalist.Probe.Agree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Position
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Branan and Erlewine (2024): Ā-probing for the closest DP
@@ -88,7 +89,7 @@ def probe : Probe (TreePath × LexicalItem.Token) := relD.toProbe r.feats
 satisfies the probe, c-commands it (8). -/
 def Closest (h : TreePath) (g : TreePath × LexicalItem.Token) : Prop :=
   g ∈ r.goals h ∧ r.probe.sat g ∧ ∀ g' ∈ r.goals h, r.probe.sat g' → g' ≠ g →
-    ¬ r.tree.val.CCommands (projectionAt r.tree g'.1) (projectionAt r.tree g.1)
+    ¬ r.tree.val.CCommands (projectionAt .raising r.tree g'.1) (projectionAt .raising r.tree g.1)
 
 instance (h : TreePath) : DecidablePred (r.Closest h) := fun _ ↦ by
   unfold Closest; infer_instance

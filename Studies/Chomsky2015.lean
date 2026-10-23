@@ -3,6 +3,7 @@ module
 public import Studies.Chomsky2013
 public import Linglib.Data.Examples.Chomsky2015
 public import Linglib.Syntax.Minimalist.Locality.Transfer
+public import Linglib.Syntax.Minimalist.Label.MinimalSearch
 
 /-!
 # Chomsky (2015): Problems of projection: Extensions
@@ -22,7 +23,8 @@ criterial position leaves the interrogative C to label the clause by itself, as 
 * The phase heads are C and v*. An occurrence is labeled in the object built at its phase level
   (`Minimalist.phaseLevel`), and the label stays.
 * Transfer seals the complement of a phase head, or of the head inheriting its phasehood, once its
-  phase is complete (`Minimalist.Pic1`).
+  phase is complete (`Minimalist.Pic1`). A phase is its head's projection by labels
+  (`HeadFunction.label`), projection being labeling.
 * The matrix clauses of (2′), (3′) and (4) are cut down to the raised wh-phrase over the verb or
   *do*.
 * Weakness is fixed by the richness of agreement the paper attributes to a language.
@@ -116,7 +118,7 @@ instance : DecidablePred Invisible := fun _ ↦ inferInstanceAs (Decidable (_ �
 
 /-- The object built at the phase level of a position. -/
 def stageOf (t : LinearizedSyntacticObject) (n : t.val.Positions) : LinearizedSyntacticObject :=
-  t.linearizedTermAt (phaseLevel t (occurrencesWith t IsPhaseHead).toFinset n)
+  t.linearizedTermAt (phaseLevel .label t (occurrencesWith t IsPhaseHead).toFinset n)
 
 /-- Labeling at the phase level: an occurrence of `x` is labeled in the object built at its phase
 level, and later movement leaves the label in place. -/
@@ -132,12 +134,12 @@ instance (ag : Agreement) (t : LinearizedSyntacticObject) (x : SyntacticObject) 
 the phase heads `I` holds of are invisible, of the head inheriting its phasehood: the PIC. -/
 def ViolatesPic (I : LexicalItem.Token → Prop) [DecidablePred I] (t : LinearizedSyntacticObject)
     (tok : LexicalItem.Token) : Prop :=
-  LinkLeaves t tok (sealed (occurrencesWith t IsPhaseHead).toFinset
-    (complementDomain t (occurrencesWith t I).toFinset) (Pic1 t))
+  LinkLeaves .label t tok (sealed (occurrencesWith t IsPhaseHead).toFinset
+    (complementDomain .label t (occurrencesWith t I).toFinset) (Pic1 .label t))
 
 instance (I : LexicalItem.Token → Prop) [DecidablePred I] (t : LinearizedSyntacticObject)
     (tok : LexicalItem.Token) : Decidable (ViolatesPic I t tok) :=
-  inferInstanceAs (Decidable (LinkLeaves _ _ _))
+  inferInstanceAs (Decidable (LinkLeaves _ _ _ _))
 
 /-- A nominal of the examples, its determiner selecting the nominalizer, which selects the root. -/
 def dp (id : ℕ) (d r : String) : LinearizedSyntacticObject :=

@@ -6,6 +6,7 @@ public import Linglib.Fragments.Mayan.Kaqchikel.Extraction
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Syntax.Minimalist.Locality.AntiLocality
 public import Studies.CoonMateoPedroPreminger2014
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Erlewine (2016): Anti-locality and Optimality in Kaqchikel Agent Focus
@@ -174,7 +175,8 @@ def Input.clause (i : Input) (c : Candidate) : LinearizedSyntacticObject :=
 /-- The step that extracts `a` is too close: the link landing at the top of its chain moves a
 specifier across no maximal projection but its own, Spec-to-Spec Anti-Locality (42). -/
 def ExtractionTooClose (t : LinearizedSyntacticObject) (a : Arg) : Prop :=
-  ∃ p ∈ chainTop t a.token, ∃ x ∈ links t a.token, x.1 = projectionAt t p ∧ SpecToSpec t x
+  ∃ p ∈ chainTop .raising t a.token, ∃ x ∈ links .raising t a.token,
+    x.1 = projectionAt .raising t p ∧ SpecToSpec .raising t x
 
 instance (t : LinearizedSyntacticObject) (a : Arg) : Decidable (ExtractionTooClose t a) := by
   unfold ExtractionTooClose; infer_instance

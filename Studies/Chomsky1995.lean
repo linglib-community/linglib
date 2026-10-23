@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.SyntacticObject.Build
-public import Linglib.Syntax.Minimalist.SyntacticObject.Position
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 public import Linglib.Syntax.Projection
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Fragments.English.Nouns
@@ -274,10 +274,10 @@ open Core.Order RoseTree PhraseStructure Minimalist
 variable (t : LinearizedSyntacticObject)
 
 /-- The head relation on the positions of `t`, from the head daughter of each subtree. -/
-def HeadDaughterAt (m d : t.val.Positions) : Prop := headDaughterRel t.headIndexAt m d
+def HeadDaughterAt (m d : t.val.Positions) : Prop := headDaughterRel (HeadFunction.raising t) m d
 
 instance : DecidableRel (HeadDaughterAt t) := fun m d ↦
-  inferInstanceAs (Decidable (headDaughterRel t.headIndexAt m d))
+  inferInstanceAs (Decidable (headDaughterRel (HeadFunction.raising t) m d))
 
 theorem headDaughterAt_covBy {m d : t.val.Positions} (h : HeadDaughterAt t m d) : m ⋖ d :=
   Positions.covBy_iff.2 (headDaughterRel_covBy _ h)
@@ -346,8 +346,8 @@ def position (l : List ℕ) (h : (⟨l⟩ : TreePath) ∈ t.val.validPaths := by
 
 /-- *Saw* projects to the root and *the* to its sister, the labels of (11). -/
 theorem maximalProjectionAt_theManSawIt :
-    maximalProjectionAt theManSawIt.headIndexAt ⟨[1, 0]⟩ = ⊥ ∧
-      maximalProjectionAt theManSawIt.headIndexAt ⟨[0, 0]⟩ = ⟨[0]⟩ := by
+    maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[1, 0]⟩ = ⊥ ∧
+      maximalProjectionAt (HeadFunction.raising theManSawIt) ⟨[0, 0]⟩ = ⟨[0]⟩ := by
   decide
 
 /-- The terms of (11), one per position, are seven, as (10) counts them. -/

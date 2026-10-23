@@ -49,7 +49,7 @@ namespace Minimalist
 
 open RoseTree SyntacticObject Core.Order PhraseStructure
 
-variable (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
+variable (hd : HeadFunction) (t : LinearizedSyntacticObject) (tok : LexicalItem.Token)
 
 /-- The positions a phase head occurring only at `a` c-commands carry the terms within its
 complement. -/
@@ -74,22 +74,22 @@ theorem withinComplement_iff_exists_mem_cCommandDomain {t : LinearizedSyntacticO
 head c-commands, the phase's interior, to a position outside the head's maximal projection; the
 Phase Impenetrability Condition forbids it, and a link to the edge does not leave. -/
 def Crosses (h : TreePath) : Prop :=
-  ∃ x ∈ links t tok, x.2 ∈ t.val.cCommandDomain h ∧ ¬ projectionAt t h ≤ x.1
+  ∃ x ∈ links hd t tok, x.2 ∈ t.val.cCommandDomain h ∧ ¬ projectionAt hd t h ≤ x.1
 
-instance (h : TreePath) : Decidable (Crosses t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance (h : TreePath) : Decidable (Crosses hd t tok h) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- A link of the chain of `tok` leaves the domain at `D` when it runs from inside `D` to outside,
 as movement out of an island does. -/
-def Escapes (D : TreePath) : Prop := ∃ x ∈ links t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
+def Escapes (D : TreePath) : Prop := ∃ x ∈ links hd t tok, D ≤ x.2 ∧ ¬ D ≤ x.1
 
-instance (D : TreePath) : Decidable (Escapes t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance (D : TreePath) : Decidable (Escapes hd t tok D) := inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem not_crosses_of_length_le_one (h : (chain t tok).length ≤ 1) (hd : TreePath) :
-    ¬ Crosses t tok hd := by
-  simp [Crosses, links_eq_nil_of_length_le_one t tok h]
+theorem not_crosses_of_length_le_one (h : (chain t tok).length ≤ 1) (p : TreePath) :
+    ¬ Crosses hd t tok p := by
+  simp [Crosses, links_eq_nil_of_length_le_one hd t tok h]
 
 theorem not_escapes_of_length_le_one (h : (chain t tok).length ≤ 1) (D : TreePath) :
-    ¬ Escapes t tok D := by
-  simp [Escapes, links_eq_nil_of_length_le_one t tok h]
+    ¬ Escapes hd t tok D := by
+  simp [Escapes, links_eq_nil_of_length_le_one hd t tok h]
 
 end Minimalist

@@ -9,6 +9,7 @@ public import Mathlib.Order.Minimal
 public import Mathlib.Tactic.DeriveFintype
 public import Studies.BelkNeelemanPhilip2023
 public import Studies.CitkoGracaninYuksek2020
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Citko and Gračanin-Yuksek (2025): Economy in PF Reduction: Why and When (Not) to Elide Multidominant Structures
@@ -330,7 +331,7 @@ theorem cwhTwoAux_pf : pfPhon cwhTwoAux = ["what", "should", "when", "will", "yo
   decide
 
 /-- Each wh-phrase is interpreted in its own conjunct. -/
-theorem cwh_nonpaired : orphanTraces cwh = [] := by decide
+theorem cwh_nonpaired : orphanTraces .raising cwh = [] := by decide
 /-- The shared C′ carries a copy of each wh-phrase into the other conjunct. -/
 theorem cwhBulk_paired : ItReading cwhBulk := by decide
 

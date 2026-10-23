@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.Erlewine2020
 public import Linglib.Syntax.Minimalist.Locality.AntiLocality
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Erlewine (2020): Anti-locality and subject extraction
@@ -102,7 +103,7 @@ def Clause.build (c : Clause) (k : Comp) : LinearizedSyntacticObject :=
 /-- No link of any chain moves a specifier across no maximal projection but its own: Spec-to-Spec
 Anti-Locality (2). -/
 def ObeysAntiLocality (t : LinearizedSyntacticObject) : Prop :=
-  ∀ y ∈ tokenList t.val, ∀ l ∈ links t y.2, ¬ SpecToSpec t l
+  ∀ y ∈ tokenList t.val, ∀ l ∈ links .raising t y.2, ¬ SpecToSpec .raising t l
 
 instance (t : LinearizedSyntacticObject) : Decidable (ObeysAntiLocality t) := by
   unfold ObeysAntiLocality; infer_instance

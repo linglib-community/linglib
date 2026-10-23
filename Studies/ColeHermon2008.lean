@@ -12,6 +12,7 @@ public import Linglib.Syntax.Minimalist.Locality.Freezing
 public import Linglib.Syntax.Minimalist.Derivation.Reconstruction
 public import Linglib.Syntax.Minimalist.Derivation.Remnant
 public import Linglib.Syntax.Minimalist.Copy.Chain
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Cole and Hermon 2008: VP raising in a VOS language
@@ -306,7 +307,8 @@ example : (ex49.vos.surfaceTokens : Multiset _) = ex49.vos.lexTokens :=
 externalized object that trace has no antecedent: a chain read off the traces breaks under
 remnant movement. -/
 example :
-    (ex49.vos.externalize?.map fun t ↦ (orphanTraces t).map (·.2)) = some [ex49.pivot] := by
+    (ex49.vos.externalize?.map fun t ↦ (orphanTraces .raising t).map (·.2)) =
+      some [ex49.pivot] := by
   decide +kernel
 
 /-! ### Every clause goes through a VOS stage (§5) -/

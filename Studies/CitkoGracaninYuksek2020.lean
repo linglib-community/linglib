@@ -7,6 +7,7 @@ module
 
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Mathlib.Data.Finset.Union
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Citko and Gračanin-Yuksek (2020): Conjunction saves multiple sluicing: How *(and) why?
@@ -111,7 +112,8 @@ def cs : LinearizedSyntacticObject :=
 antecedent there, of a token pronounced in the first, which it reads as an E-type pronoun ((41),
 (54)). -/
 def ItReading (t : LinearizedSyntacticObject) : Prop :=
-  ∃ x ∈ orphanTraces t, (⟨[1]⟩ : TreePath) ≤ x.1 ∧ ∃ p ∈ occurrences t x.2, (⟨[0]⟩ : TreePath) ≤ p
+  ∃ x ∈ orphanTraces .raising t, (⟨[1]⟩ : TreePath) ≤ x.1 ∧
+    ∃ p ∈ occurrences t x.2, (⟨[0]⟩ : TreePath) ≤ p
 
 instance : DecidablePred ItReading := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
@@ -150,7 +152,7 @@ theorem csFromCWH_pf : pfPhon csFromCWH = pfPhon cs := by decide
 
 /-- Each wh-phrase of the coordinated wh-question is interpreted only in its own conjunct, so the
 second conjunct's verb is intransitive: the at-all reading (12). -/
-theorem cwh_atAll : orphanTraces cwh = [] := by decide
+theorem cwh_atAll : orphanTraces .raising cwh = [] := by decide
 
 /-- Built on the wh-question, a sluice would have the at-all reading coordinated sluices lack
 (19). -/

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.ErlewineSommerlot2025
 public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
+public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
 # Erlewine and Sommerlot (2025): Voice and Extraction in Malayic
@@ -164,7 +165,7 @@ def cpSteps : List Step :=
 def derivation : Derivation := ⟨(Term.dp .theme).token, c.voicePSteps ++ c.cpSteps⟩
 
 /-- Each phase is spelled out when it is complete. -/
-def schedule : List (ℕ × ℕ) := c.derivation.phaseSchedule IsPhaseHead
+def schedule : List (ℕ × ℕ) := c.derivation.phaseSchedule .raising IsPhaseHead
 
 /-- The derivation's Spell-outs read as terminals, before vocabulary insertion. -/
 def spellouts : List (List Term) :=
