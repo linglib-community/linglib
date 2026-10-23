@@ -25,6 +25,8 @@ makes a constraint on a sort hold of the entities of every subsort.
 * `HPSG.RSRL.Desc`: a formula of the description language.
 * `HPSG.RSRL.Desc.freeVars`: the variables that occur free in a formula.
 * `HPSG.RSRL.Desc.IsColonFree`: no term of the formula starts at the described entity.
+* `HPSG.RSRL.Desc.conj`, `HPSG.RSRL.Desc.disj`: the conjunction and the disjunction of a list of
+  formulae.
 * `HPSG.RSRL.Interpretation.SatisfiesOn`: an entity satisfies a formula under a variable
   assignment, with quantifiers over a given set.
 * `HPSG.RSRL.Interpretation.Satisfies`: the same, with quantifiers over the components of the
@@ -98,6 +100,19 @@ namespace Desc
 
 /-- The biconditional of two formulae. -/
 protected def iff (d e : Desc Sig) : Desc Sig := (d.imp e).and (e.imp d)
+
+/-- The formula `∀ x₀ (x₀ ≈ x₀)`, which every entity satisfies. The description language has no
+constant for truth. -/
+def top : Desc Sig := .all 0 (.pathEq (.var 0) (.var 0))
+
+/-- The negation of `top`, which no entity satisfies. -/
+def bot : Desc Sig := top.neg
+
+/-- The conjunction of a list of formulae. -/
+def conj (ds : List (Desc Sig)) : Desc Sig := ds.foldr and top
+
+/-- The disjunction of a list of formulae. -/
+def disj (ds : List (Desc Sig)) : Desc Sig := ds.foldr or bot
 
 /-- The variables that occur free in a formula ([richter-2024], Definition 5). -/
 def freeVars : Desc Sig → Finset ℕ
@@ -214,6 +229,18 @@ variable {I} {D : Set U} {g g' : ℕ → U} {u u' : U} {d e : Desc Sig}
 @[simp] theorem satisfiesOn_all {x : ℕ} :
     I.SatisfiesOn D g u (.all x d) ↔ ∀ w ∈ D, I.SatisfiesOn D (Function.update g x w) u d :=
   Iff.rfl
+
+@[simp] theorem satisfiesOn_top : I.SatisfiesOn D g u .top := fun _ _ ↦ ⟨_, rfl, rfl⟩
+
+@[simp] theorem satisfiesOn_bot : ¬ I.SatisfiesOn D g u .bot := not_not_intro satisfiesOn_top
+
+@[simp] theorem satisfiesOn_conj {ds : List (Desc Sig)} :
+    I.SatisfiesOn D g u (.conj ds) ↔ ∀ d ∈ ds, I.SatisfiesOn D g u d := by
+  induction ds <;> simp_all [Desc.conj]
+
+@[simp] theorem satisfiesOn_disj {ds : List (Desc Sig)} :
+    I.SatisfiesOn D g u (.disj ds) ↔ ∃ d ∈ ds, I.SatisfiesOn D g u d := by
+  induction ds <;> simp_all [Desc.disj]
 
 @[simp] theorem satisfies_sortAssign {t : Term Sig} {σ : Srt} :
     I.Satisfies g u (.sortAssign t σ) ↔ ∃ v ∈ I.termDenot g t u, I.S v ≤ σ := Iff.rfl
