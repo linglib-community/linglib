@@ -112,8 +112,8 @@ theorem quantizedChange_iff_describes_measurePhrase {n : D} (hn : 0 < n) :
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
         Describes (m s₀) x (measurePhrase n) (τ e).fst (τ e).snd := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
-  simp only [Result, exists_eq_left, describes_iff_sub_mem, measurePhrase, mem_singleton_iff,
-    lt_add_iff_pos_right, hn, true_and]
+  simp only [Result, exists_eq_left, describes_iff_sub_mem, measurePhrase,
+    Degree.Comparison.mem_interval, Degree.Comparison.rel_eq, lt_add_iff_pos_right, hn, true_and]
   constructor
   · rintro ⟨h₁, h₂⟩
     exact ⟨h₁, by rw [h₁, h₂, add_sub_cancel_left]⟩
@@ -128,7 +128,8 @@ theorem nonQuantizedChange_iff_describes_someAmount :
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
         Describes (m s₀) x someAmount (τ e).fst (τ e).snd := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
-  simp only [Result, exists_eq_left, describes_iff_sub_mem, someAmount, mem_Ioi, sub_pos]
+  simp only [Result, exists_eq_left, describes_iff_sub_mem, someAmount,
+    Degree.Comparison.mem_interval, Degree.Comparison.rel_gt, sub_pos]
   constructor
   · rintro ⟨g, h₁, h₂, h₃⟩
     exact ⟨h₁, by rw [h₁, h₃]; exact h₂⟩

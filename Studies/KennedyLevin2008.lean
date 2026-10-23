@@ -33,7 +33,10 @@ scales.
   initial and final intervals of the event. The verbal positive form (26) at the minimum and
   maximum standards is `Degree.MinStandardPos` and `Degree.MaxStandardPos`, as for adjectives.
 * The amount of change is the distance above the derived zero, the positive part of the
-  difference (`coe_measureOfChange_sub`), as the paper glosses the difference function (23).
+  difference (`coe_measureOfChange_sub`), as the paper glosses the difference function (23). A
+  verbal degree modifier compares it with a degree, and on positive values it then has the reading
+  of Hay, Kennedy and Levin's modifier with the same comparison (`describes_interval_iff`); their
+  measure phrase compares by `Degree.Comparison.eq` and the one here by `Degree.Comparison.ge`.
 * The minimum standard is read strictly, `⊥ < ·`, after the prose and Kennedy's positive form,
   though the verbal positive form is printed with `⪰`. An argument that begins with the greatest
   degree meets the maximum standard without changing, so the theorems relating the two readings
@@ -164,41 +167,53 @@ theorem describes_iff_of_subset_Ioi {D : Set δ} (hD : D ⊆ Ioi 0) :
       fun hd ↦ lt_irrefl _ (mem_Ioi.1 (hD hd))
   · rw [posPart_eq_self.2 h.le]
 
+/-- A modifier that compares the amount of change with a degree `n` by `c` is the reading of
+[hay-kennedy-levin-1999] whose difference values stand in `c` to `n`, when these are positive. -/
+theorem describes_interval_iff {c : Comparison} {n : δ} (hc : c.interval n ⊆ Ioi 0) :
+    Describes m x (c.interval n) i f ↔ c.Rel ((measureOfChange m x i f : δ) - m x i) n := by
+  rw [describes_iff_of_subset_Ioi hc, Comparison.mem_interval]
+
 /-- The minimum-standard reading is the reading of [hay-kennedy-levin-1999] with the difference
 value "some amount". -/
 theorem minStandardPos_measureOfChange_iff_describes_someAmount :
     MinStandardPos (measureOfChange m x i) f ↔ Describes m x someAmount i f := by
-  rw [minStandardPos_measureOfChange_iff, describes_iff_sub_mem, someAmount, mem_Ioi, sub_pos]
+  rw [minStandardPos_measureOfChange_iff, describes_iff_sub_mem, someAmount,
+    Comparison.mem_interval, Comparison.rel_gt, sub_pos]
+
+/-- For a positive degree `n`, the amount of change is at least `n`, as a measure phrase requires
+((32)–(33)), exactly when the event is described by the difference values of at least `n`. -/
+theorem le_coe_measureOfChange_sub_iff {n : δ} (hn : 0 < n) :
+    n ≤ (measureOfChange m x i f : δ) - m x i ↔ Describes m x (Comparison.ge.interval n) i f :=
+  (describes_interval_iff (c := .ge) (Ici_subset_Ioi.2 hn)).symm
+
+/-- The measure phrase of [hay-kennedy-levin-1999] fixes the amount of change at exactly its
+degree, comparing by `Comparison.eq` where the measure phrase here compares by `Comparison.ge`. -/
+theorem describes_measurePhrase_iff {n : δ} (hn : 0 < n) :
+    Describes m x (measurePhrase n) i f ↔ (measureOfChange m x i f : δ) - m x i = n :=
+  describes_interval_iff (c := .eq) (singleton_subset_iff.2 hn)
+
+/-- The exact difference value that [hay-kennedy-levin-1999] give a measure phrase entails the
+at-least reading. -/
+theorem le_coe_measureOfChange_sub_of_describes_measurePhrase {n : δ} (hn : 0 < n)
+    (h : Describes m x (measurePhrase n) i f) : n ≤ (measureOfChange m x i f : δ) - m x i :=
+  ((describes_measurePhrase_iff hn).1 h).ge
 
 /-- Against a maximal degree `top` above the initial degree, the maximum-standard reading, which
 *completely* also gives ((34a)), is the reading of [hay-kennedy-levin-1999] with *completely*. -/
 theorem coe_measureOfChange_eq_iff_describes_completely {top : δ} (h : m x i < top) :
     (measureOfChange m x i f : δ) = top ↔ Describes m x (completely top (m x i)) i f := by
-  rw [completely, describes_iff_of_subset_Ioi (singleton_subset_iff.2 (mem_Ioi.2 (sub_pos.2 h))),
-    mem_singleton_iff, sub_left_inj]
+  rw [completely, describes_measurePhrase_iff (sub_pos.2 h), sub_left_inj]
 
 /-- *Slightly*, a positive change up to a small degree `s` ((34b)), is the reading of
 [hay-kennedy-levin-1999] with *slightly*. -/
 theorem minStandardPos_and_le_iff_describes_slightly (s : Ici (m x i)) :
     MinStandardPos (measureOfChange m x i) f ∧ measureOfChange m x i f ≤ s ↔
       Describes m x (slightly ((s : δ) - m x i)) i f := by
-  rw [slightly, describes_iff_of_subset_Ioi Ioc_subset_Ioi_self, mem_Ioc, sub_pos,
-    sub_le_sub_iff_right, Subtype.coe_le_coe]
+  rw [slightly, describes_iff_of_subset_Ioi (D := Comparison.le.interval _ ∩ someAmount)
+    inter_subset_right, mem_inter_iff, Comparison.mem_interval, Comparison.rel_le,
+    sub_le_sub_iff_right, Subtype.coe_le_coe, someAmount, Comparison.mem_interval,
+    Comparison.rel_gt, sub_pos, and_comm]
   rfl
-
-/-- For a positive degree `n`, the amount of change is at least `n`, as a measure phrase requires
-((32)–(33)), exactly when the event is described by the difference values of at least `n`. -/
-theorem le_coe_measureOfChange_sub_iff {n : δ} (hn : 0 < n) :
-    n ≤ (measureOfChange m x i f : δ) - m x i ↔ Describes m x (Ici n) i f :=
-  (describes_iff_of_subset_Ioi (Ici_subset_Ioi.2 hn)).symm
-
-/-- The exact difference value that [hay-kennedy-levin-1999] give a measure phrase entails the
-at-least reading. -/
-theorem le_coe_measureOfChange_sub_of_describes_measurePhrase {n : δ} (hn : 0 < n)
-    (h : Describes m x (measurePhrase n) i f) :
-    n ≤ (measureOfChange m x i f : δ) - m x i :=
-  (mem_singleton_iff.1 ((describes_iff_of_subset_Ioi
-    (singleton_subset_iff.2 (mem_Ioi.2 hn))).1 h)).ge
 
 end Modifiers
 

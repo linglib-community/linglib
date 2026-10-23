@@ -4,6 +4,8 @@ public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Algebra.Order.Group.Defs
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Algebra.Order.Field.Rat
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Degree.MeasurePhrase
 public import Linglib.Semantics.Degree.Scale
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.English.Adjectives
@@ -28,6 +30,12 @@ open-range adjectives are checked against the scales of the English fragment.
 * Degrees form a densely ordered abelian group, whose addition extends the paper's degree addition
   (15), defined only when a summand is positive. The maximal scale value is a degree `top` rather
   than a top element, and density makes "some amount" and *slightly* unbounded.
+* In a group, INCREASE (16) is the differential comparative of the argument at the end of the
+  event with itself at the start (`increase_iff_differentialComparative`).
+* A modifier's difference values are the degrees that stand in a `Degree.Comparison` to its
+  degree: exactly a measure phrase's, at least *significantly*'s standard, and among the positive
+  ones at most *slightly*'s. A monotone decreasing modifier is one whose comparison gives a lower
+  set.
 * The readings of a description are its admissible difference values. Overt material fixes one;
   with none there is the literal "some amount" and, when a maximal or conventional value is
   salient, the bounded value it implicates. The in-adverbial and for-adverbial tests are read as
@@ -55,7 +63,7 @@ open-range adjectives are checked against the scales of the English fragment.
 
 namespace HayKennedyLevin1999
 
-open Degree
+open Degree Set
 open English
 open English.Verbs hiding Verb
 
@@ -75,6 +83,12 @@ def Increase [Add δ] (φ : α → T → δ) (x : α) (d : δ) (t₀ t₁ : T) :
 def Describes [Add δ] (φ : α → T → δ) (x : α) (D : Set δ) (t₀ t₁ : T) :
     Prop :=
   ∃ d ∈ D, Increase φ x d t₀ t₁
+
+/-- In a group an increase by `d` is the differential comparative of `x` at the end of the event
+    with `x` at its start: `x` ends up `d` more `φ` than it began. -/
+theorem increase_iff_differentialComparative [AddCommGroup δ] {φ : α → T → δ} {x : α} {d : δ}
+    {t₀ t₁ : T} : Increase φ x d t₀ t₁ ↔ DifferentialComparative (φ x) t₁ t₀ d := by
+  rw [Increase, DifferentialComparative, sub_eq_iff_eq_add', eq_comm]
 
 /-- With the difference value given, the degree at the end of the event is determined by the
     degree at its start, the source of an identifiable endpoint (§3). -/
@@ -97,22 +111,22 @@ variable [AddCommGroup δ] [LinearOrder δ]
 def IsBounded (D : Set δ) : Prop := ∃ b, 0 < b ∧ b ∈ lowerBounds D
 
 /-- The implicit difference value "some amount" is any positive degree ((9a)). -/
-def someAmount : Set δ := Set.Ioi 0
+def someAmount : Set δ := Comparison.gt.interval 0
 
 /-- A measure phrase fixes the difference value at exactly its degree `m` ((18)). -/
-def measurePhrase (m : δ) : Set δ := {m}
+def measurePhrase (m : δ) : Set δ := Comparison.eq.interval m
 
 /-- *Completely* fixes the difference value at the change that takes the initial degree `i`
     to the scale's maximal value `top` ((21)). -/
-def completely (top i : δ) : Set δ := {top - i}
+def completely (top i : δ) : Set δ := measurePhrase (top - i)
 
 /-- *Significantly*, a monotone increasing modifier, admits the difference values of at
     least the contextual standard `s` ((23)). -/
-def significantly (s : δ) : Set δ := Set.Ici s
+def significantly (s : δ) : Set δ := Comparison.ge.interval s
 
 /-- *Slightly*, a monotone decreasing modifier, admits the positive difference values of at
-    most `s`, since part of a slight increase is a slight increase ((24)). -/
-def slightly (s : δ) : Set δ := Set.Ioc 0 s
+    most `s` ((24)). -/
+def slightly (s : δ) : Set δ := Comparison.le.interval s ∩ someAmount
 
 theorem isBounded_measurePhrase {m : δ} (hm : 0 < m) : IsBounded (measurePhrase m) :=
   ⟨m, hm, fun _ hd ↦ (Set.mem_singleton_iff.1 hd).ge⟩
@@ -124,23 +138,22 @@ theorem isBounded_completely [IsOrderedAddMonoid δ] {top i : δ} (hi : i < top)
 theorem isBounded_significantly {s : δ} (hs : 0 < s) : IsBounded (significantly s) :=
   ⟨s, hs, fun _ hd ↦ hd⟩
 
-/-- A difference value that admits arbitrarily small positive changes specifies no bound. -/
-theorem not_isBounded_of_forall {D : Set δ} (h : ∀ b, 0 < b → ∃ d ∈ D, d < b) :
-    ¬ IsBounded D := by
+/-- A monotone decreasing set of difference values, a lower set like *slightly*'s, specifies no
+    bound on its positive values once it has one, since part of such an increase is again one
+    (§3.1). -/
+theorem not_isBounded_inter_someAmount [DenselyOrdered δ] {D : Set δ} (hD : IsLowerSet D)
+    {d : δ} (hd : d ∈ D) (hd₀ : 0 < d) : ¬ IsBounded (D ∩ someAmount) := by
   rintro ⟨b, hb, hlow⟩
-  obtain ⟨d, hd, hdb⟩ := h b hb
-  exact absurd (hlow hd) (not_le.2 hdb)
+  obtain ⟨c, hc₀, hc⟩ := exists_between (lt_min hb hd₀)
+  exact (hlow (mem_inter (hD (lt_min_iff.1 hc).2.le hd) hc₀)).not_gt (lt_min_iff.1 hc).1
 
 theorem not_isBounded_slightly [DenselyOrdered δ] {s : δ} (hs : 0 < s) :
     ¬ IsBounded (slightly s) :=
-  not_isBounded_of_forall fun b hb ↦ by
-    obtain ⟨c, hc₀, hc⟩ := exists_between (lt_min hb hs)
-    exact ⟨c, ⟨hc₀, (lt_min_iff.1 hc).2.le⟩, (lt_min_iff.1 hc).1⟩
+  not_isBounded_inter_someAmount (isLowerSet_Iic s) (mem_Iic.2 le_rfl) hs
 
 theorem not_isBounded_someAmount [DenselyOrdered δ] : ¬ IsBounded (someAmount (δ := δ)) :=
-  not_isBounded_of_forall fun b hb ↦ by
-    obtain ⟨c, hc₀, hc⟩ := exists_between hb
-    exact ⟨c, hc₀, hc⟩
+  fun h ↦ h.elim fun b hb ↦
+    not_isBounded_inter_someAmount isLowerSet_univ (mem_univ b) hb.1 (by rwa [univ_inter])
 
 /-! ### Readings (§3.2–§3.4) -/
 
