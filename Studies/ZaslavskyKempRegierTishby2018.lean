@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Core.Probability.GibbsVariational
-public import Linglib.Pragmatics.Efficiency
+public import Linglib.Core.Order.Pareto
 
 /-!
 # Zaslavsky, Kemp, Regier and Tishby (2018): Efficient Compression in Color Naming
@@ -25,9 +25,9 @@ complexity and by the information the meanings carry (`accuracy_le_complexity`,
 (`complexity_const`).
 
 The Information Bottleneck objective `F_β = I(M;W) − β I(W;U)` (`objective`) is, up to a
-constant, the β-scalarized cost of `Pragmatics.Efficiency` on the pair of distortion and
-complexity (`objective_eq_weightedCost`), and a language's deviation from optimality at `β` is
-the substrate's `efficiencyLossAt` (`deviation_eq_efficiencyLossAt`). Below `β = 1` the
+constant, complexity plus `β` times distortion (`objective_eq_complexity_add_mul_distortion`), so
+a minimizer at `β > 0` lies on the IB curve, no lexicon being both simpler and less distorting
+(`not_costPair_lt`). Below `β = 1` the
 meaning-blind lexicon is optimal (`objective_const_le`). Every minimizer of `F_β` has the
 self-consistent Boltzmann form in which a word's probability decays exponentially in its
 divergence from the meaning (`ibUpdate`, `IsIBOptimum`, `isIBOptimum_of_forall_objective_le`), so
@@ -84,7 +84,7 @@ eq. S13).
 
 namespace ZaslavskyKempRegierTishby2018
 
-open MeasureTheory ProbabilityTheory InformationTheory Pragmatics.Efficiency Finset Real
+open MeasureTheory ProbabilityTheory InformationTheory Finset Real
 open scoped ENNReal
 
 variable {U M W : Type*} [MeasurableSpace U] [MeasurableSpace M] [MeasurableSpace W]
@@ -214,15 +214,27 @@ theorem accuracy_le_complexity : accuracy meanings source encoder ≤ complexity
 noncomputable def objective (β : ℝ) : ℝ :=
   complexity source encoder - β * accuracy meanings source encoder
 
-/-- The distortion–complexity cost pair of the lexicon. -/
-noncomputable def costPair : CostPair :=
-  ⟨distortion meanings source encoder, complexity source encoder⟩
+/-- The complexity–distortion cost pair of the lexicon. -/
+noncomputable def costPair : ℝ × ℝ :=
+  (complexity source encoder, distortion meanings source encoder)
 
-theorem objective_eq_weightedCost (β : ℝ) :
-    objective meanings source encoder β
-      = weightedCost (costPair meanings source encoder) β - β * sourceInfo meanings source := by
-  rw [objective, weightedCost, costPair, distortion_eq]
+theorem objective_eq_complexity_add_mul_distortion (β : ℝ) :
+    objective meanings source encoder β = complexity source encoder
+      + β * distortion meanings source encoder - β * sourceInfo meanings source := by
+  rw [objective, distortion_eq]
   ring
+
+/-- A minimizer of the objective at `β > 0` lies on the IB curve: no lexicon is both simpler and
+less distorting. -/
+theorem not_costPair_lt {β : ℝ} (hβ : 0 < β)
+    (hmin : ∀ (q : Kernel M W) [IsMarkovKernel q],
+      objective meanings source encoder β ≤ objective meanings source q β)
+    (q : Kernel M W) [IsMarkovKernel q] :
+    ¬ costPair meanings source q < costPair meanings source encoder := fun h ↦ by
+  have := hmin q
+  rw [objective_eq_complexity_add_mul_distortion, objective_eq_complexity_add_mul_distortion,
+    sub_le_sub_iff_right] at this
+  exact (strictMono_fst_add_mul_snd hβ h).not_ge this
 
 /-- For `β ≤ 1` a lexicon ignoring the meaning minimizes the objective, so IB optima are informative
 only above `β = 1` (eq. 6). -/
@@ -363,12 +375,6 @@ variable (encoder' : Kernel M W) [IsMarkovKernel encoder']
 /-- The deviation `ΔF_β` of the lexicon from a reference encoder at `β`. -/
 noncomputable def deviation (β : ℝ) : ℝ :=
   objective meanings source encoder β - objective meanings source encoder' β
-
-theorem deviation_eq_efficiencyLossAt (β : ℝ) :
-    deviation meanings source encoder encoder' β = efficiencyLossAt
-      (costPair meanings source encoder) (costPair meanings source encoder') β := by
-  rw [deviation, efficiencyLossAt, objective_eq_weightedCost, objective_eq_weightedCost]
-  ring
 
 /-- The efficiency loss `ε_l = ΔF_{β_l} / β_l` at the fitted trade-off. -/
 noncomputable def efficiencyLoss (β : ℝ) : ℝ :=

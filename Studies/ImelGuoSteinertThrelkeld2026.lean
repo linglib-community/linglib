@@ -22,10 +22,10 @@ is the expected utility of literal communication under a communicative need dist
 (a `MeasureTheory.Measure` on the space): the speaker picks uniformly among the modals
 expressing the intended point (`speak`), the listener guesses uniformly among the points of the
 modal heard (`ProbabilityTheory.uniformOn`) and earns half credit for each axis guessed right
-(`listen`, `informativeness`). Languages are compared by Pareto dominance on complexity and
-communicative cost (`Dominates`), and naturalness is the fraction of a vocabulary satisfying
-the Independence of Force and Flavor universal of [steinert-threlkeld-imel-guo-2023], the
-substrate's `Modality.ForceFlavorIndependent`.
+(`listen`, `informativeness`). Languages are compared by Pareto dominance, the product order on
+their pairs of complexity and communicative cost (`costPair`), and naturalness is the fraction of
+a vocabulary satisfying the Independence of Force and Flavor universal of
+[steinert-threlkeld-imel-guo-2023], the substrate's `Modality.ForceFlavorIndependent`.
 
 The paper's three results, that every Pareto-optimal system consists of IFF modals, that
 naturalness correlates with optimality, and that the attested inventories are more optimal than
@@ -583,15 +583,11 @@ theorem informativeness_whole (need : Measure ForceFlavor) :
 
 /-! ### Synonymy and dominance -/
 
-/-- `L` dominates `L'` on the trade-off: no worse on either measure, better on one. -/
-def Dominates (need : Measure ForceFlavor) (L L' : Multiset Meaning) : Prop :=
-  totalComplexity L ≤ totalComplexity L' ∧ cost need L ≤ cost need L' ∧
-    (totalComplexity L < totalComplexity L' ∨ cost need L < cost need L')
-
-/-- Pareto optimality within a pool of languages. -/
-def ParetoOptimal (need : Measure ForceFlavor) (pool : Set (Multiset Meaning))
-    (L : Multiset Meaning) : Prop :=
-  L ∈ pool ∧ ∀ L' ∈ pool, ¬ Dominates need L' L
+/-- The complexity and the communicative cost of a language. One language dominates another when
+its pair is smaller in the product order, so the Pareto-optimal languages of a pool are those with
+`MinimalFor (· ∈ pool) (costPair need)`. -/
+noncomputable def costPair (need : Measure ForceFlavor) (L : Multiset Meaning) : ℕ × ℝ≥0∞ :=
+  (totalComplexity L, cost need L)
 
 theorem speakers_replicate (k : ℕ) (m : Meaning) (p : ForceFlavor) :
     speakers (Multiset.replicate k m) p = if p ∈ m then Multiset.replicate k m else 0 := by
@@ -616,18 +612,20 @@ theorem informativeness_replicate (need : Measure ForceFlavor) {k : ℕ} (hk : k
     informativeness need (Multiset.replicate k m) = informativeness need {m} :=
   lintegral_congr fun p => by rw [speak_replicate hk]
 
-theorem dominates_replicate (need : Measure ForceFlavor) {m : Meaning} (hm : m ⊆ space)
-    {k : ℕ} (hk : 2 ≤ k) : Dominates need {m} (Multiset.replicate k m) := by
+theorem costPair_lt_replicate (need : Measure ForceFlavor) {m : Meaning} (hm : m ⊆ space)
+    {k : ℕ} (hk : 2 ≤ k) : costPair need {m} < costPair need (Multiset.replicate k m) := by
   have h1 := one_le_complexity hm
   have hc : totalComplexity {m} = complexity m := by simp [totalComplexity]
   have hcost : cost need {m} = cost need (Multiset.replicate k m) := by
     rw [cost, cost, informativeness_replicate need (by omega)]
-  refine ⟨?_, hcost.le, Or.inl ?_⟩ <;> rw [hc, totalComplexity_replicate] <;> nlinarith
+  refine Prod.mk_lt_mk_of_lt_of_le ?_ hcost.le
+  rw [hc, totalComplexity_replicate]
+  nlinarith
 
-theorem not_paretoOptimal_replicate (need : Measure ForceFlavor)
+theorem not_minimalFor_replicate (need : Measure ForceFlavor)
     {pool : Set (Multiset Meaning)} {m : Meaning} (hm : m ⊆ space) (hpool : {m} ∈ pool)
-    {k : ℕ} (hk : 2 ≤ k) : ¬ ParetoOptimal need pool (Multiset.replicate k m) :=
-  fun h => h.2 _ hpool (dominates_replicate need hm hk)
+    {k : ℕ} (hk : 2 ≤ k) : ¬ MinimalFor (· ∈ pool) (costPair need) (Multiset.replicate k m) :=
+  fun h => h.not_lt hpool (costPair_lt_replicate need hm hk)
 
 /-! ### The universals and naturalness -/
 

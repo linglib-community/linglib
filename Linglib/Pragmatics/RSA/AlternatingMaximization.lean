@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.ChannelCapacity
+public import Linglib.Core.InformationTheory.Surprisal
 public import Linglib.Pragmatics.RSA.Basic
 
 /-!
@@ -18,9 +19,13 @@ Bayesian listener does, so a round of the recursion never lowers it.
 
 * `RSA.expectedUtility`, `RSA.freeEnergy`: the expected utility and the free energy of a speaker
   and a listener, for a prior over states and an observation kernel.
+* `RSA.informationLoss`, `RSA.expectedCost`: the two parts of the expected utility, the expected
+  surprisal of the state under the listener and the expected cost of the utterance.
 
 ## Main statements
 
+* `RSA.expectedUtility_eq_neg_add`: the expected utility is minus the information loss and the
+  expected cost.
 * `RSA.freeEnergy_add_sum_klDiv`, `RSA.freeEnergy_le_freeEnergy_speaker`: against a fixed
   listener the free energy of a speaker falls short of the RSA speaker's by her expected
   divergence from it.
@@ -135,6 +140,29 @@ the state, less the cost of the utterance, over the states, the speaker's observ
 utterances. -/
 noncomputable def expectedUtility (S : Kernel O U) (L : Kernel U W) : ℝ :=
   ∑ w, μ.real {w} * ∫ u, (log ((L u).real {w}) - C u) ∂((S ∘ₖ κ) w)
+
+/-- The information the listener loses about the state, its expected surprisal under her
+interpretation of the speaker's utterance. -/
+noncomputable def informationLoss (S : Kernel O U) (L : Kernel U W) : ℝ :=
+  ∑ w, μ.real {w} * ∫ u, surprisal (L u) w ∂((S ∘ₖ κ) w)
+
+/-- The expected cost of the speaker's utterances. -/
+noncomputable def expectedCost (S : Kernel O U) : ℝ :=
+  ∑ w, μ.real {w} * ∫ u, C u ∂((S ∘ₖ κ) w)
+
+theorem expectedCost_smul (β : ℝ) (S : Kernel O U) :
+    expectedCost μ κ (β • C) S = β * expectedCost μ κ C S := by
+  simp only [expectedCost, Pi.smul_apply, smul_eq_mul, integral_const_mul, Finset.mul_sum,
+    mul_left_comm β]
+
+theorem expectedUtility_eq_neg_add [Finite U] [MeasurableSingletonClass U] [IsFiniteKernel κ]
+    (S : Kernel O U) [IsFiniteKernel S] (L : Kernel U W) :
+    expectedUtility μ κ C S L = -(informationLoss μ κ S L + expectedCost μ κ C S) := by
+  simp only [expectedUtility, informationLoss, expectedCost, surprisal, integral_neg,
+    ← Finset.sum_add_distrib, ← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun w _ ↦ ?_
+  rw [integral_sub .of_finite .of_finite]
+  ring
 
 variable [Fintype O]
 
