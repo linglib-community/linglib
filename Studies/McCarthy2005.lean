@@ -2,6 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Data.Wordlist.McCarthy2005
 public import Studies.Benua1997
 
 /-!
@@ -19,12 +20,12 @@ correspondences (`Paradigm`), the correspondence diagram is read off those
 (`Paradigm.corr`), symmetric and base-free by construction, and `markedness`, `ioFaith`, and
 `opFaith` sum a constraint over the members or the ordered member pairs. The Classical
 Arabic tableaux for the right and left edges of the verb stem and for geminate verbs, the
-Moroccan majority-rules paradigm, and the Hebrew jussive paradigms of Benua are rerun under
-the paper's ranking.
+Moroccan nouns and majority-rules paradigm, and the Hebrew jussive paradigms of Benua are rerun
+under the paper's ranking.
 
 ## References
 
-* [mccarthy-2005]
+* [mccarthy-2005]: the Moroccan nouns (30) (pp. 202–203)
 * [benua-1997]
 -/
 
@@ -160,8 +161,8 @@ syllable extrametrical, as the paper assumes; SWP marks a stressed light syllabl
 namespace Arabic
 
 inductive Seg
-  | f | ayn | l | s | sh | t | j | k | b | n | m | r | hh | g | d | ch | x | q | w | z | zh
-  | a | aa | i | ii | u | schwa
+  | f | ayn | l | s | sh | t | j | k | b | n | m | r | hh | g | d | ch | x | q | w | z | zh | gh
+  | mw | a | aa | i | ii | u | schwa
   deriving DecidableEq, Repr
 
 def IsVowel (c : Seg) : Prop := c ∈ [Seg.a, .aa, .i, .ii, .u, .schwa]
@@ -455,7 +456,10 @@ theorem geminate_alternation :
 
 Schwa is banned from open syllables and triconsonantal clusters are prohibited, so the
 phonology fixes CCəC before C-initial and CəCC before V-initial suffixes; the unaffixed
-verb joins the larger class, *ʃrəb*, whereas nouns — paradigms of one — follow SONCON. -/
+verb joins the larger class, *ʃrəb*, whereas nouns, paradigms of one, follow SONCON (30). The
+paper states no sonority scale, and SONCON reads that of [benua-1997], with the pharyngeals
+[ʕ ħ] among the fricatives, where their features put them, rather than among the glides, where
+Benua puts the Tiberian Hebrew gutturals. -/
 
 /-- \*ə]σ. -/
 def schwaOpen (w : List Seg) : ℕ :=
@@ -467,20 +471,52 @@ def ccc : List Seg → ℕ
     (if ¬IsVowel c₁ ∧ ¬IsVowel c₂ ∧ ¬IsVowel c₃ then 1 else 0) + ccc (c₂ :: c₃ :: rest)
   | _ => 0
 
-/-- Sonority: glide > liquid > nasal > fricative > stop. -/
-def sonority : Seg → ℕ
-  | .j | .w => 5
-  | .l | .r => 4
-  | .n | .m => 3
-  | .f | .s | .sh | .hh | .ayn | .x | .z | .zh => 2
-  | _ => 1
+/-- The class of a segment on the sonority scale of [benua-1997]. -/
+def Seg.toBenua : Seg → Benua1997.Hebrew.Seg
+  | .a | .aa | .i | .ii | .u | .schwa => .vowel
+  | .j | .w => .glide
+  | .l | .r => .liquid
+  | .n | .m | .mw => .nasal
+  | .s | .sh | .z | .zh => .sibilant
+  | .f | .x | .gh | .ayn | .hh => .spirant
+  | .t | .k | .b | .g | .d | .ch | .q => .stop
 
-/-- SONCON (30), on a word of three consonants and a schwa: CəC₂C₃ wants C₂ more sonorous
-than C₃, CC₂əC₃ not. -/
+/-- Sonority, on the scale of [benua-1997]. -/
+def sonority (c : Seg) : ℕ := Benua1997.Hebrew.sonority c.toBenua
+
+/-- Whether SONCON (30) wants a schwa before `c₂ c₃`: `c₂` is more sonorous than `c₃`, or the
+two are a geminate. -/
+def SchwaFirst (c₂ c₃ : Seg) : Prop :=
+  c₂ = c₃ ∨ Phonology.Sonority.profile sonority c₂ c₃ = .gt
+
+instance (c₂ c₃ : Seg) : Decidable (SchwaFirst c₂ c₃) := inferInstanceAs (Decidable (_ ∨ _))
+
+/-- SONCON (30), on a word of three consonants and a schwa. -/
 def sonCon : List Seg → ℕ
-  | [_, .schwa, c₂, c₃] => if sonority c₂ > sonority c₃ then 0 else 1
-  | [_, c₂, .schwa, c₃] => if sonority c₂ > sonority c₃ then 1 else 0
+  | [_, .schwa, c₂, c₃] => if SchwaFirst c₂ c₃ then 0 else 1
+  | [_, c₂, .schwa, c₃] => if SchwaFirst c₂ c₃ then 1 else 0
   | _ => 0
+
+/-- The segment an IPA symbol writes. -/
+def Seg.ofIPA? : String → Option Seg
+  | "f" => some .f | "ʕ" => some .ayn | "l" => some .l | "s" => some .s | "ʃ" => some .sh
+  | "t" => some .t | "j" => some .j | "k" => some .k | "b" => some .b | "n" => some .n
+  | "m" => some .m | "r" => some .r | "ħ" => some .hh | "g" => some .g | "d" => some .d
+  | "x" => some .x | "q" => some .q | "w" => some .w | "z" => some .z | "ʒ" => some .zh
+  | "ɣ" => some .gh | "mʷ" => some .mw | "a" => some .a | "aː" => some .aa | "i" => some .i
+  | "iː" => some .ii | "u" => some .u | "ə" => some .schwa
+  | _ => none
+
+/-- A word of three consonants with its schwa moved to the other gap. -/
+def moveSchwa : List Seg → List Seg
+  | [c₁, .schwa, c₂, c₃] => [c₁, c₂, .schwa, c₃]
+  | [c₁, c₂, .schwa, c₃] => [c₁, .schwa, c₂, c₃]
+  | w => w
+
+/-- In (30) SONCON prefers each noun to the word with its schwa moved. -/
+theorem sonCon_nouns :
+    ∀ f ∈ Wordlist.all, ∃ w ∈ f.segments.mapM Seg.ofIPA?, sonCon w < sonCon (moveSchwa w) := by
+  decide +kernel
 
 /-- The ranking of (32): \*ə]σ, \*CCC >> OP-MAX-V >> SONCON >> IO-MAX-V, IO-DEP-V. -/
 def moroccanRanking : List (Constraint (Paradigm Seg (List Seg))) :=

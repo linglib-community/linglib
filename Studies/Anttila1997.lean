@@ -2,6 +2,7 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.PartiallyOrderedConstraints
 public import Linglib.Data.Examples.Anttila1997
+public import Linglib.Fragments.Finnish.Phonology
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Tactic.Zify
@@ -27,6 +28,7 @@ Item and page numbers follow the ROA-63 manuscript.
 
 * `Syllable`, `Constraint`: syllables as stress, weight, and nuclear sonority, and the twenty
   constraints of (50), with `Constraint.violations` counting on a syllable string.
+* `Sonority.ofVowel`: the nuclear sonority of a vowel, by its height.
 * `finnishGrammar`: the strata of (50) refined by the universal rankings (28).
 * `Shape.cands`: the candidate sets of the categorical tableaux; `word`: the trisyllabic
   candidates of (52) by motif; `wins`: the rankings under which a variant wins its motif.
@@ -62,6 +64,17 @@ def Sonority.rank : Sonority → Fin 3
   | .a => 2
 
 instance : LinearOrder Sonority := LinearOrder.lift' Sonority.rank (by decide)
+
+/-- The sonority of a vowel by its height: the low vowels are A, the high vowels I, and the
+others O. -/
+def Sonority.ofVowel (v : Phonology.Segment) : Sonority :=
+  if v.HasValue .low true then .a else if v.HasValue .high true then .i else .o
+
+/-- The high vowels /i u y/ are I, the mid vowels /o ö/ O, and the low vowels /a ä/ A (§2.2). -/
+theorem Sonority.ofVowel_finnish :
+    [Finnish.i, Finnish.u, Finnish.y, Finnish.o, Finnish.ö, Finnish.a, Finnish.ä].map ofVowel =
+      [.i, .i, .i, .o, .o, .a, .a] := by
+  decide
 
 /-- Syllable weight. -/
 inductive Weight
@@ -485,6 +498,15 @@ theorem rows_frequency :
         ∀ q ∈ (r.feature? "obs_pct" >>= tenths?).toList,
           ((predicted mv.1 mv.2).2 < 2 * (predicted mv.1 mv.2).1 → 500 < q) ∧
             (2 * (predicted mv.1 mv.2).1 < (predicted mv.1 mv.2).2 → q < 500) := by
+  decide +kernel
+
+/-- In (6) the stems ending in a high vowel prefer the weak variant, and those ending in a low
+vowel the strong one. -/
+theorem rows_final_vowel :
+    ∀ r ∈ Examples.all, r.source.paperLabel ∈ ["(6a)", "(6b)", "(6c)"] →
+      ∀ v ∈ (r.feature? "stem" >>= (·.toList.getLast?) >>= Finnish.ofChar).toList,
+        (Sonority.ofVowel v = .i → r.feature? "variant" = some "weak") ∧
+          (Sonority.ofVowel v = .a → r.feature? "variant" = some "strong") := by
   decide +kernel
 
 end Anttila1997

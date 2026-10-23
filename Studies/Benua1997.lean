@@ -2,6 +2,8 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Correspondence.Basic
 public import Linglib.Phonology.OptimalityTheory.Tableau
+public import Linglib.Phonology.Segmental.Sonority
+public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Benua 1997: transderivational identity
@@ -31,13 +33,15 @@ forcing it in rising-sonority clusters (92) and the emergent markedness relation
 `SON-CON ⊆ *COMPLEX-CODA`, spirantization underapplying in 2fs truncation (118)
 versus (119), and the imperative's normal application (135) — the two truncations
 under the single ranking (137), distinguished only by which OO relation their
-morphology invokes (§4.6.3). Out of scope: English affix classes (Ch. 5), the
+morphology invokes (§4.6.3). The sonority scale SON-CON reads refines the modal hierarchy
+(`coarsens_toSonority`) but puts the gutturals with the glides, where their features put them
+with the obstruents (`ofSegment_lt_guttural`). Out of scope: English affix classes (Ch. 5), the
 guttural CODACOND (§4.3.3), opacity (§4.4.3), and the serial alternatives (§3.5,
 §4.7), which the paper rejects as over-generating rather than reconstructs.
 
 ## References
 
-* [benua-1997]
+* [benua-1997]: the sonority scale (pp. 106, 110) and the gutturals as glides (p. 115)
 * [cohn-1990]
 -/
 
@@ -325,13 +329,14 @@ inductive Relation
   | jussive | imperative
   deriving DecidableEq, Repr
 
-/-- Segments by the classes the constraints read, the sonority scale of fn. 64 and the
+/-- Segments by the classes the constraints read: those of the sonority scale and the
 stop/spirant contrast. -/
 inductive Seg
   | vowel | glide | guttural | liquid | nasal | sibilant | spirant | stop
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- Sonority (fn. 64) ranks vowel > glide > liquid > nasal > fricative > stop. -/
+/-- The sonority scale vowel > glide > liquid > nasal > fricative > stop (pp. 106, 110), with
+the gutturals among the glides (p. 115). -/
 def sonority : Seg → ℕ
   | .vowel => 6
   | .glide | .guttural => 5
@@ -339,6 +344,25 @@ def sonority : Seg → ℕ
   | .nasal => 3
   | .sibilant | .spirant => 2
   | .stop => 1
+
+open Phonology (Segment Sonority)
+
+/-- The class of the modal hierarchy that a class falls in. -/
+def Seg.toSonority : Seg → Sonority
+  | .vowel => .vowel
+  | .glide | .guttural => .glide
+  | .liquid => .liquid
+  | .nasal => .nasal
+  | .sibilant | .spirant | .stop => .obstruent
+
+theorem coarsens_toSonority : Sonority.Coarsens Seg.toSonority sonority := by
+  unfold Sonority.Coarsens
+  decide
+
+theorem ofSegment_lt_guttural :
+    ∀ g ∈ [Segment.ofChart .«ʔ», .ofChart .«h», .ofChart .«ʕ», .ofChart .«ħ»],
+      Sonority.ofSegment g < Seg.guttural.toSonority := by
+  decide +kernel
 
 /-- `[±continuant]` on the alternating obstruents. -/
 def continuant : Seg → Option Bool
@@ -359,7 +383,7 @@ def complexCoda (w : List Seg) : ℕ := if (finalCluster w).isSome then 1 else 0
 /-- `SON-CON` (91): a coda that rises in sonority. -/
 def sonCon (w : List Seg) : ℕ :=
   match finalCluster w with
-  | some (x, y) => if sonority x < sonority y then 1 else 0
+  | some (x, y) => if Sonority.profile sonority x y = .lt then 1 else 0
   | none => 0
 
 /-- In the markedness relation TETRU makes emerge (§4.3.2), `SON-CON` marks a subset of the
@@ -370,7 +394,7 @@ theorem sonCon_le_complexCoda (w : List Seg) : sonCon w ≤ complexCoda w := by
   | none => simp
   | some p =>
     obtain ⟨x, y⟩ := p
-    show (if sonority x < sonority y then 1 else 0) ≤ 1
+    show (if Sonority.profile sonority x y = .lt then 1 else 0) ≤ 1
     split <;> omega
 
 /-- `*V-STOP` (112): a post-vocalic stop. -/

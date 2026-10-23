@@ -1,0 +1,232 @@
+{
+  "description": "The Moroccan Arabic nouns of three consonants in (30) of McCarthy's optimal paradigms, CəCC in (30a) and CCəC in (30b). Checked against the page images.",
+  "CellTable": [
+    {
+      "ID": "sg",
+      "Name": "singular",
+      "Features": "Number=Sing"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "dog",
+      "Name": "dog"
+    },
+    {
+      "ID": "wind",
+      "Name": "wind"
+    },
+    {
+      "ID": "sin",
+      "Name": "sin"
+    },
+    {
+      "ID": "sun",
+      "Name": "sun"
+    },
+    {
+      "ID": "game",
+      "Name": "game"
+    },
+    {
+      "ID": "brain",
+      "Name": "brain"
+    },
+    {
+      "ID": "leg",
+      "Name": "leg"
+    },
+    {
+      "ID": "shoulder",
+      "Name": "shoulder"
+    },
+    {
+      "ID": "rope",
+      "Name": "rope"
+    },
+    {
+      "ID": "mule",
+      "Name": "mule"
+    },
+    {
+      "ID": "peg",
+      "Name": "peg"
+    },
+    {
+      "ID": "shroud",
+      "Name": "shroud"
+    }
+  ],
+  "LexemeTable": [
+    {
+      "ID": "dog",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "dog",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "wind",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "wind",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "sin",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "sin",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "sun",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "sun",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "game",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "game",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "brain",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "brain",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "leg",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "leg",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "shoulder",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "shoulder",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "rope",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "rope",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "mule",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "mule",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "peg",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "peg",
+      "POS": "NOUN"
+    },
+    {
+      "ID": "shroud",
+      "Language_ID": "moro1292",
+      "Parameter_ID": "shroud",
+      "POS": "NOUN"
+    }
+  ],
+  "FormTable": [
+    {
+      "ID": "mccarthy2005_dog_sg",
+      "Lexeme_ID": "dog",
+      "Cell": "sg",
+      "Form": "kəlb",
+      "Segments": ["k", "ə", "l", "b"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_wind_sg",
+      "Lexeme_ID": "wind",
+      "Cell": "sg",
+      "Form": "bərd",
+      "Segments": ["b", "ə", "r", "d"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_sin_sg",
+      "Lexeme_ID": "sin",
+      "Cell": "sg",
+      "Form": "dənb",
+      "Segments": ["d", "ə", "n", "b"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_sun_sg",
+      "Lexeme_ID": "sun",
+      "Cell": "sg",
+      "Form": "ʃəmʃ",
+      "Segments": ["ʃ", "ə", "m", "ʃ"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_game_sg",
+      "Lexeme_ID": "game",
+      "Cell": "sg",
+      "Form": "ləʕb",
+      "Segments": ["l", "ə", "ʕ", "b"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_brain_sg",
+      "Lexeme_ID": "brain",
+      "Cell": "sg",
+      "Form": "mʷəxx",
+      "Segments": ["mʷ", "ə", "x", "x"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_leg_sg",
+      "Lexeme_ID": "leg",
+      "Cell": "sg",
+      "Form": "rʒəl",
+      "Segments": ["r", "ʒ", "ə", "l"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_shoulder_sg",
+      "Lexeme_ID": "shoulder",
+      "Cell": "sg",
+      "Form": "ktəf",
+      "Segments": ["k", "t", "ə", "f"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_rope_sg",
+      "Lexeme_ID": "rope",
+      "Cell": "sg",
+      "Form": "ħbəl",
+      "Segments": ["ħ", "b", "ə", "l"],
+      "Source": ["mccarthy-2005[p. 202]"]
+    },
+    {
+      "ID": "mccarthy2005_mule_sg",
+      "Lexeme_ID": "mule",
+      "Cell": "sg",
+      "Form": "bɣəl",
+      "Segments": ["b", "ɣ", "ə", "l"],
+      "Source": ["mccarthy-2005[p. 203]"]
+    },
+    {
+      "ID": "mccarthy2005_peg_sg",
+      "Lexeme_ID": "peg",
+      "Cell": "sg",
+      "Form": "wtəd",
+      "Segments": ["w", "t", "ə", "d"],
+      "Source": ["mccarthy-2005[p. 203]"]
+    },
+    {
+      "ID": "mccarthy2005_shroud_sg",
+      "Lexeme_ID": "shroud",
+      "Cell": "sg",
+      "Form": "kfən",
+      "Segments": ["k", "f", "ə", "n"],
+      "Source": ["mccarthy-2005[p. 203]"]
+    }
+  ]
+}
