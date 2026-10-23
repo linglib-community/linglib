@@ -23,6 +23,8 @@ conversely.
 
 * `committed_assert`, `committed_update`: an assertion commits the speaker, and a commitment at
   the root survives every later speech act.
+* `root_update_belief`: no speech act changes a belief relation of the root, so Sincerity and
+  Competence pass a commitment on to beliefs within a state (Theorem 26) but not across an update.
 * `committed_believes_of_sincere`, `exists_committed_believes_not_committed`: under Sincerity a
   commitment entails a commitment to the corresponding belief, but not conversely, so Krifka's
   "The buffet is open" is stronger than "I believe the buffet is open".
@@ -47,6 +49,12 @@ the totality of `update`.
   Euclidean (`buffet` replaces it); Theorem 31(1) needs `a ≠ b`, since for `a = b` the
   confirming assertion is redundant; and the well-definedness of the assertion update, called
   easy, needs the root case of `le_restrictCommitment_of_mem`.
+* Report to the author: Competence (Definition 5) quantifies over all pairs of agents and so
+  forces one shared belief relation (`Frame.competent_iff`). The assertion update of Definition 10
+  is Definition 4, not the sincere update of Definition 6, so an assertion leaves a sincere root
+  sincere only if the speaker already believed its content (`Frame.sincere_restrictCommitment_iff`),
+  and no speech act changes a belief (`root_update_belief`): the informative update 2 holds in
+  sincere, competent states but no speech act brings it about.
 
 ## References
 
@@ -338,6 +346,20 @@ theorem root_update_commitment_le :
   | question => exact le_rfl
   | empty => exact le_rfl
   | denegate => exact le_rfl
+  | seq α β ihα ihβ => exact (ihβ _).trans (ihα C)
+  | cond π α β ihα ihβ =>
+    simp only [update]
+    split_ifs
+    exacts [ihα C, ihβ C]
+
+/-- No speech act changes a belief relation of the root: assertion is Definition 4, which leaves
+beliefs alone, and every other act keeps the root. -/
+@[simp] theorem root_update_belief : (update α C).root.belief = C.root.belief := by
+  induction α generalizing C with
+  | assert => rfl
+  | question => rfl
+  | empty => rfl
+  | denegate => rfl
   | seq α β ihα ihβ => exact (ihβ _).trans (ihα C)
   | cond π α β ihα ihβ =>
     simp only [update]
