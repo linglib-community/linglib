@@ -150,7 +150,7 @@ theorem resolve_card_union {α : Type*} [DecidableEq α] (h : ns.DeterminateInit
 /-- A target shows the value of its controller's referent when the controller's system has
 every determinate value of the target's. -/
 theorem coarsen_ofCard {src tgt : System}
-    (h : ∀ v ∈ tgt.values, v.isDeterminate → v ∈ src.values) (n : ℕ) :
+    (h : ∀ v ∈ tgt.values, v.IsDeterminate → v ∈ src.values) (n : ℕ) :
     tgt.coarsen (src.ofCard n) = tgt.ofCard n := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp [coarsen, ofCard, fromCard, exactCard]

@@ -26,7 +26,7 @@ The Universal Dependencies case tags are the corpus vocabulary, reached through
 ingests as a value. The oblique realizes as `Acc`, the tag UD's guidelines give the oblique of a
 language with only a direct and an oblique case, and so ingests back as the accusative.
 
-## Main declarations
+## Main definitions
 
 * `Case`: the comparative case values.
 
@@ -41,7 +41,7 @@ language with only a direct and an oblique case, and so ingests back as the accu
 
 @[expose] public section
 
-/-- Grammatical case — the canonical analytical inventory. -/
+/-- The comparative case values. -/
 inductive Case where
   /-- Nominative: citation/subject case. -/
   | nom
