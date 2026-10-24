@@ -61,8 +61,7 @@ conjunction contributes a marker, which is where Slovene departs from same-gende
   `firstExclusive`; the first person unmarked for clusivity has `{S,H}` (91).
 * A union claim reads only which genders occur, as Corbett's rules do
   (`Agreement.ResolutionRule.resolve_congr`), so it is checked on the sublists of a language's
-  genders. Icelandic's genders are three of the comparative labels the fragment uses; the
-  marker assignment sends the other three to `∅` and the claims are restricted to the three.
+  genders.
 
 ## TODO
 
@@ -400,27 +399,25 @@ end Hindi
 
 namespace Icelandic
 
-/-- Icelandic's genders, three of the comparative labels. -/
-def genders : List _root_.Gender := [.masculine, .feminine, .neuter]
-
-/-- The marker assignment (119); the labels Icelandic lacks get none. -/
-def markers : _root_.Gender → GenderSet
+/-- The marker assignment (119). -/
+def markers : _root_.Icelandic.Gender.Value → GenderSet
   | .masculine => {.masc}
   | .feminine => {.fem}
   | .neuter => {.masc, .fem}
-  | .common | .animate | .inanimate => ∅
 
-/-- Union of the marker sets reproduces Corbett's rules on every coordination of Icelandic
-genders ((120)). -/
-theorem map_resolve {cs : List _root_.Gender} (hcs : cs ≠ []) (hg : ∀ c ∈ cs, c ∈ genders) :
+theorem markers_injective : Function.Injective markers := by decide
+
+/-- Union of the marker sets reproduces Corbett's rules on every coordination ((120)). -/
+theorem map_resolve {cs : List _root_.Icelandic.Gender.Value} (hcs : cs ≠ []) :
     (resolve Corbett1991.Icelandic.rules cs).map markers = some (cs.toFinset.sup markers) :=
-  of_sublists (P := fun r s ↦ r.map markers = some (s.sup markers)) (by decide) hcs hg
+  of_sublists (univ := [.masculine, .feminine, .neuter])
+    (P := fun r s ↦ r.map markers = some (s.sup markers)) (by decide) hcs
+    fun c _ ↦ by cases c <;> simp
 
 /-- A same-gender coordination keeps its gender ((105b), (118)). -/
-theorem resolve_pair_self {g : _root_.Gender} (hg : g ∈ genders) :
-    resolve Corbett1991.Icelandic.rules [g, g] = some g := by
-  refine pair_self_of_union (map_resolve (by simp) (by simpa using hg)) ?_
-  revert g; decide
+theorem resolve_pair_self (g : _root_.Icelandic.Gender.Value) :
+    resolve Corbett1991.Icelandic.rules [g, g] = some g :=
+  pair_self_of_union (map_resolve (by simp)) fun _ _ h ↦ markers_injective h
 
 /-- Masculine and feminine are incomparable, so their union is neither and a third gender must
 carry it, the neuter's set ((105c), (119)). -/
@@ -468,9 +465,10 @@ theorem hindi_rows : ∀ row ∈ Examples.all, row.language = "hind1269" →
 /-- In the Icelandic rows the predicate is neuter, the union of the conjuncts' marker sets
 ((115)–(117)). -/
 theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
-    ∀ cs ∈ row.parse? "conjuncts" [("MASC and FEM", [Gender.masculine, .feminine]),
-      ("MASC and NEUT", [.masculine, .neuter]), ("FEM and NEUT", [.feminine, .neuter])],
-    ∀ g ∈ row.parse? "agreement" [("NEUT", Gender.neuter)],
+    ∀ cs ∈ row.parse? "conjuncts"
+      [("MASC and FEM", [_root_.Icelandic.Gender.Value.masculine, .feminine]),
+        ("MASC and NEUT", [.masculine, .neuter]), ("FEM and NEUT", [.feminine, .neuter])],
+    ∀ g ∈ row.parse? "agreement" [("NEUT", _root_.Icelandic.Gender.Value.neuter)],
       (row.judgment = .acceptable ↔ cs.toFinset.sup Icelandic.markers = Icelandic.markers g) := by
   decide +kernel
 

@@ -21,41 +21,54 @@ mass gender is in `Studies/AdamsonAnagnostopoulou2025.lean`.
 
 namespace Serbian.Gender
 
+/-- The three genders. -/
+inductive Value where
+  | masculine
+  | feminine
+  | neuter
+  deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label of each gender. -/
+def Value.toLabel : Value → _root_.Gender
+  | .masculine => .masculine
+  | .feminine => .feminine
+  | .neuter => .neuter
+
 /-- *muškarac* 'man'. -/
-def muskarac : GenderedNoun _root_.Gender :=
+def muskarac : GenderedNoun Value :=
   { form := "muškarac", gloss := "man", gender := .masculine, naturalGender := some .masculine }
 
 /-- *žena* 'woman'. -/
-def zena : GenderedNoun _root_.Gender :=
+def zena : GenderedNoun Value :=
   { form := "žena", gloss := "woman", gender := .feminine, naturalGender := some .feminine }
 
 /-- *čovek* 'person, man'. -/
-def covek : GenderedNoun _root_.Gender :=
+def covek : GenderedNoun Value :=
   { form := "čovek", gloss := "person, man", gender := .masculine,
     naturalGender := some .masculine }
 
 /-- *znanje* 'knowledge'. -/
-def znanje : GenderedNoun _root_.Gender :=
+def znanje : GenderedNoun Value :=
   { form := "znanje", gloss := "knowledge", gender := .neuter }
 
 /-- *intuicija* 'intuition'. -/
-def intuicija : GenderedNoun _root_.Gender :=
+def intuicija : GenderedNoun Value :=
   { form := "intuicija", gloss := "intuition", gender := .feminine }
 
 /-- *selo* 'village'. -/
-def selo : GenderedNoun _root_.Gender := { form := "selo", gloss := "village", gender := .neuter }
+def selo : GenderedNoun Value := { form := "selo", gloss := "village", gender := .neuter }
 
 /-- *brdo* 'hill'. -/
-def brdo : GenderedNoun _root_.Gender := { form := "brdo", gloss := "hill", gender := .neuter }
+def brdo : GenderedNoun Value := { form := "brdo", gloss := "hill", gender := .neuter }
 
 /-- *knjiga* 'book'. -/
-def knjiga : GenderedNoun _root_.Gender :=
+def knjiga : GenderedNoun Value :=
   { form := "knjiga", gloss := "book", gender := .feminine }
 
 /-- *pesak* 'sand'. -/
-def pesak : GenderedNoun _root_.Gender := { form := "pesak", gloss := "sand", gender := .masculine }
+def pesak : GenderedNoun Value := { form := "pesak", gloss := "sand", gender := .masculine }
 
 /-- *mleko* 'milk'. -/
-def mleko : GenderedNoun _root_.Gender := { form := "mleko", gloss := "milk", gender := .neuter }
+def mleko : GenderedNoun Value := { form := "mleko", gloss := "milk", gender := .neuter }
 
 end Serbian.Gender

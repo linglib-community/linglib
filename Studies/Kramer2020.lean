@@ -167,7 +167,7 @@ theorem declension_exceptions :
 
 /-- The disputed rule (26) makes a noun in *-ā* feminine and any other
 masculine. -/
-def phonologicalRule (n : Hausa.Noun) : Gender :=
+def phonologicalRule (n : Hausa.Noun) : Hausa.Gender.Value :=
   if n.EndsInAa then .feminine else .masculine
 
 /-- In (22e) *kadā̀* 'crocodile' ends in *-ā* and is masculine, so (26) is
@@ -177,7 +177,7 @@ theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gende
 
 theorem feminine_remainder_aa :
     ∀ n ∈ Hausa.allNouns,
-      ¬ n.IsNaturalGender id → n.gender = .feminine → n.EndsInAa := by
+      ¬ n.IsNaturalGender Hausa.Gender.Value.toLabel → n.gender = .feminine → n.EndsInAa := by
   decide
 
 /-! ### Lexical gender assignment (§3.2) -/
