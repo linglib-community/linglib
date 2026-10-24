@@ -103,7 +103,7 @@ open Classical in
 /-- Simplification unifies a pair whose backgrounds are consistent at every world into one
 background, and leaves any other content alone. -/
 noncomputable def spl : Content W → Content W
-  | .pair g f => if ∀ w, ((f ⊔ g).accessibleWorlds w).Nonempty then .single (f ⊔ g) else .pair g f
+  | .pair g f => if (f ⊔ g).IsConsistent then .single (f ⊔ g) else .pair g f
   | c => c
 
 /-- The French moods apply the Spanish ones to the simplified content. -/
@@ -123,9 +123,9 @@ structure Backgrounds (W : Type*) where
   /-- The consistent desires, the ordering source of *hope*. -/
   bulc : Background W
   /-- The consistent desires are consistent with the beliefs at every world. -/
-  consistent : ∀ w, ((dox ⊔ bulc).accessibleWorlds w).Nonempty
+  consistent : (dox ⊔ bulc).IsConsistent
   /-- The desires are not consistent with the beliefs⁺ at every world. -/
-  inconsistent : ¬ ∀ w, ((doxPlus ⊔ bul).accessibleWorlds w).Nonempty
+  inconsistent : ¬ (doxPlus ⊔ bul).IsConsistent
 
 namespace Backgrounds
 

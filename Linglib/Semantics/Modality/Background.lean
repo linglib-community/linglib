@@ -23,7 +23,7 @@ modal base at `w` fix the worlds accessible from `w`, and those of an ordering s
 * `Background W`: the backgrounds over `W`, a complete lattice pointwise, with `⊥` the empty
   background.
 * `Background.accessibleWorlds f w`: the worlds verifying every premise of `f w`.
-* `Background.IsRealistic`, `Background.IsTotallyRealistic`.
+* `Background.IsRealistic`, `Background.IsTotallyRealistic`, `Background.IsConsistent`.
 * `Background.restrict f α`: `f` with the premise `α` added at every world.
 * `premisePreorder A`, `w ≤[A] z`, `w <[A] z`: the ordering a premise set induces.
 * `bestWorlds f g w`: the minimal worlds accessible under `f` ranked by `g`.
@@ -78,6 +78,12 @@ def IsRealistic (f : Background W) : Prop := ∀ w, w ∈ f.accessibleWorlds w
 
 /-- A background is totally realistic when its premises at a world single out that world. -/
 def IsTotallyRealistic (f : Background W) : Prop := ∀ w, f.accessibleWorlds w = {w}
+
+/-- A background is consistent when its premises at every world are jointly satisfiable, some
+world verifying them all. -/
+def IsConsistent (f : Background W) : Prop := ∀ w, (f.accessibleWorlds w).Nonempty
+
+theorem IsRealistic.isConsistent (h : f.IsRealistic) : f.IsConsistent := fun w ↦ ⟨w, h w⟩
 
 /-- The background `f` restricted by `α`, the premise a conditional antecedent adds, so that
 *if α, must β* is `must_{f + α} β`. -/

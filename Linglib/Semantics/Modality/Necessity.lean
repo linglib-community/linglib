@@ -34,6 +34,8 @@ backgrounds unify into one and both forces become simple necessity over their un
   base, good possibility is simple necessity over the unified backgrounds.
 * `isRealistic_iff_simpleNecessity_le_id`: a modal base is realistic exactly when simple
   necessity over it is veridical.
+* `isConsistent_iff_simpleNecessity_le_simplePossibility`: a modal base is consistent exactly
+  when simple necessity over it entails simple possibility.
 * `simpleNecessity_iff_sInf_le`: simple necessity is consequence from the premises at the world.
 
 ## Implementation notes
@@ -345,6 +347,9 @@ theorem Background.IsRealistic.isSerial {f : Background W} (h : f.IsRealistic) :
     IsSerial f.accessible :=
   ⟨fun w ↦ ⟨w, h.refl.refl w⟩⟩
 
+theorem isConsistent_iff_isSerial {f : Background W} : f.IsConsistent ↔ IsSerial f.accessible :=
+  ⟨fun h ↦ ⟨h⟩, fun h ↦ h.serial⟩
+
 theorem isRealistic_iff_refl {f : Background W} : f.IsRealistic ↔ f.accessible.IsRefl :=
   ⟨Background.IsRealistic.refl, fun h w ↦ h.refl w⟩
 
@@ -353,6 +358,12 @@ the case being the case, so **T** defines realism. -/
 theorem isRealistic_iff_simpleNecessity_le_id {f : Background W} :
     f.IsRealistic ↔ simpleNecessity f ≤ id :=
   isRealistic_iff_refl.trans box_T_iff.symm
+
+/-- A modal base is consistent exactly when what must be the case can be the case, so **D**
+defines consistency. -/
+theorem isConsistent_iff_simpleNecessity_le_simplePossibility {f : Background W} :
+    f.IsConsistent ↔ simpleNecessity f ≤ simplePossibility f :=
+  isConsistent_iff_isSerial.trans box_D_iff.symm
 
 theorem isRealistic_iff_id_le_simplePossibility {f : Background W} :
     f.IsRealistic ↔ id ≤ simplePossibility f :=
