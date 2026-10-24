@@ -1,24 +1,42 @@
 module
 
+public import Linglib.Fragments.Adyghe.Case
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
 # Adyghe clausal embedding
 
-Adyghe (Northwest Caucasian, ISO 639-3 `ady`) has no embedded declarative and no embedded
-polar interrogative of the matrix shape. A tensed clause under *gʷəpšəsa* 'think', *ŝe* 'know',
-*gʷərəʔʷe* 'understand', *ʔʷa* 'say' or *qəč'ewəpč'a* 'ask' has the shape of a relative
-clause: its verb carries the relativizer *ze-* and the applicative *re-*, and the clause ends in
-the case suffix a noun phrase would bear, absolutive *-r* or oblique *-m* according to the
-matrix predicate. A constituent question under 'ask' is a headless relative without *re-*, and
-the same predicates take plain noun-phrase objects. The volitional and aspectual predicates such
-as *raʔežʼa* 'begin' take an infinitive in *-new* instead.
+Adyghe (Northwest Caucasian, ISO 639-3 `ady`) embeds no clause of the matrix shape. Under
+*gʷəpšəsa* 'think', *ṣ̂e* 'know', *gʷərəʔʷe* 'understand', *ʔʷa* 'say' or *qəč̣'ewəpč̣a* 'ask', a
+tensed declarative or polar complement is a relative clause whose verb carries the relativizer
+*ze-* and the high applicative *re-*, and it ends in the case suffix the matrix predicate assigns
+a noun phrase, the absolutive *-r* or the oblique *-m*. The same clause conveys a declarative
+under 'think', a polar question under 'ask', and either under 'know'. A constituent question
+under 'ask' is a headless relative without *re-*. The one other kind of embedded clause is an
+infinitival or converbal TP, as the infinitive in *-new* under the aspectual raising predicate
+*raʁež'a* 'begin'.
 
-Forms follow Caponigro and Polinsky's transliteration: ʷ marks labialization, ʼ ejectives, ə
-schwa. Factivity values are textbook consensus for the predicate concepts; the paper runs no
-projection tests. The data are Caponigro and Polinsky's; the relativization analysis is stated
-in `Studies/Deal2026.lean`.
+The data are Caponigro and Polinsky's. The factivity values are the textbook ones of the
+predicate concepts; the relative clauses carry no presupposition of their own.
+
+## Main results
+
+* `Adyghe.typers_eq`: a predicate takes *ze-re-* when its complement bears case, the
+  infinitive otherwise, and no other clause-typer.
+
+## Implementation notes
+
+`Complementizer` is the substrate's clause-typing morpheme, not a C head: Caponigro and Polinsky
+argue that *ze-re-* is no complementizer, and the entry's morphs are the relativizer and the
+high applicative. Deal's relativization analysis is in `Studies/Deal2026.lean`.
+
+## Errata
+
+* (109)–(111) spell the matrix verb *ə-gʷəreʁ*, (108) *ə-gʷərəʔʷeʁ*, all glossed
+  '3SG.ERG-understood'; the entry follows (108).
+* The text before (73) says the plain noun phrase under 'ask' bears the oblique *-m*, but
+  *sə-c̣e* 'my name' in (73) and (103) has no case suffix.
 
 ## References
 
@@ -29,64 +47,71 @@ in `Studies/Deal2026.lean`.
 
 namespace Adyghe
 
+open Morphology (Morph)
+
 /-! ### Clause-typers -/
 
-/-- The relativizer *ze-* with the applicative *re-*, on the verb of every tensed clause under an
-attitude predicate; the clause ends in a case suffix ((98), (99), (108)). -/
+/-- The relativizer *zV-*, in the agreement slot of a relativized argument other than the
+absolutive, its vowel *ə*, *e* or none by the phonological environment ((35), (39)). -/
+def relativizer : Morph := .pref "ze"
+
+/-- The high applicative *re-*, above every other applicative and only in relative clauses
+((107)). -/
+def highApplicative : Morph := .pref "re"
+
+/-- The relativizer with the high applicative, on the verb of a relative clause conveying a
+declarative or a polar question ((98), (99), (101)). -/
 def zeRe : Complementizer where
-  morphs := [.pref "ze", .pref "re"]
+  morphs := [relativizer, highApplicative]
   coding := some .indicative
+  types := .of {.declarative, .polar}
   licenser := some .nominal
 
-/-- The infinitive suffix *-new* of the volitional and aspectual class ((54)). -/
+/-- The infinitive suffix *-new* ((54)). -/
 def new : Complementizer where
   morphs := [.suff "new"]
   coding := some .infinitive
   licenser := some .verbal
 
+/-- The clause-typers. -/
+def complementizers : List Complementizer := [zeRe, new]
+
 /-! ### Predicates -/
 
-/-- The case suffix at the right edge of a predicate's clausal complement, absolutive *-r* or
-oblique *-m*, which the matrix predicate assigns ((98), (99)). -/
-inductive ComplementCase where
-  | abs
-  | obl
-  deriving DecidableEq, Repr
-
-/-- An Adyghe complement-taking predicate is a verb entry with the case it assigns to a clausal
-complement. -/
+/-- An Adyghe complement-taking predicate is a verb entry with the case it assigns its nominal
+complement, a noun phrase or a relative clause alike. -/
 structure Verb extends _root_.Verb where
-  /-- The case suffix on the clausal complement, `none` for an infinitival complement. -/
-  complementCase : Option ComplementCase
+  /-- The case of the nominal complement, `none` for a predicate without one. -/
+  complementCase : Option Case := none
 
-/-- *gʷəpšəsa* 'think', which rejects a bare finite complement, takes the relative-shaped one,
-and takes plain noun-phrase objects ((96), (98), (102)). -/
+/-- *gʷəpšəsa* 'think', with a relative clause or a noun phrase in the absolutive ((96), (98),
+(102)). -/
 def gwepshesa : Verb where
   morphs := [.root "gʷəpšəsa"]
   valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
   attitude := some (.doxastic .nonVeridical)
   complementCase := some .abs
 
-/-- *qəč'ewəpč'a* 'ask', whose polar-question complement carries *ze-re-* and whose
-constituent-question complement is a headless relative; it takes plain noun-phrase objects
-((69), (99), (103)). -/
+/-- *qəč̣'ewəpč̣a* 'ask', with a relative clause conveying a question or a noun phrase, in the
+oblique ((69), (99), (103), (116)). -/
 def chewepcha : Verb where
-  morphs := [.root "qəč'ewəpč'a"]
+  morphs := [.root "qəč̣'ewəpč̣a"]
   valency := .of [(ArgumentFrame.question, [0, 1]), (ArgumentFrame.np, [0, 1])]
   speechActVerb := true
   complementCase := some .obl
 
-/-- *ŝe* 'know', also *jeŝe*, whose one relative-shaped complement is ambiguous between the
-declarative and the polar reading ((101)). -/
+/-- *ṣ̂e* 'know', also *jeṣ̂e*, with a relative clause conveying a declarative or a polar question
+or a noun phrase, in the absolutive ((75), (101), (104)). -/
 def she : Verb where
-  morphs := [.root "ŝe"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
+  morphs := [.root "ṣ̂e"]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1]),
+    (ArgumentFrame.np, [0, 1])]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   complementCase := some .abs
 
-/-- *gʷərəʔʷe* 'understand', whose complement is truth-conditionally equivalent with and
-without an overt head noun 'news' or 'verity' ((108)–(110)). -/
+/-- *gʷərəʔʷe* 'understand', whose complement means the same with and without an overt head
+*qeba* 'news' or *ṣ̂əpqə* 'verity' ((108)–(110)). -/
 def gwereqwe : Verb where
   morphs := [.root "gʷərəʔʷe"]
   valency := .ofFrame ArgumentFrame.finiteClause
@@ -94,20 +119,23 @@ def gwereqwe : Verb where
   factivity := some .semi
   complementCase := some .abs
 
-/-- *ʔʷa* 'say'. -/
+/-- *ʔʷa* 'say' (fn. 12). -/
 def qwa : Verb where
   morphs := [.root "ʔʷa"]
   valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   complementCase := some .abs
 
-/-- *raʔežʼa* 'begin', which takes an infinitive in *-new* ((54)). -/
-def raqezha : Verb where
-  morphs := [.root "raʔežʼa"]
-  valency := .ofFrame ArgumentFrame.infinitival
-  complementCase := none
+/-- *raʁež'a* 'begin', a raising predicate over an infinitive ((54)). -/
+def raghezha : Verb where
+  morphs := [.root "raʁež'a"]
+  valency := .ofFrame ArgumentFrame.raising
 
 /-- The predicates with per-predicate data in the paper. -/
-def verbs : List Verb := [gwepshesa, chewepcha, she, gwereqwe, qwa, raqezha]
+def verbs : List Verb := [gwepshesa, chewepcha, she, gwereqwe, qwa, raghezha]
+
+theorem typers_eq :
+    ∀ v ∈ verbs, v.typers complementizers = [if v.complementCase.isSome then zeRe else new] := by
+  decide
 
 end Adyghe
