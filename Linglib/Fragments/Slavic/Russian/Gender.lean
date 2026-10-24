@@ -51,12 +51,6 @@ def Value.ofSex : Sex → Value
   | .male => .masc
   | .female => .fem
 
-/-- The comparative label of each gender. -/
-def Value.toLabel : Value → Gender
-  | .masc => .masculine
-  | .fem => .feminine
-  | .neut => .neuter
-
 /-- The declension classes, with which gender correlates without either fixing the other. -/
 inductive DeclClass where
   /-- The class of *zakon* 'law', typically masculine. -/

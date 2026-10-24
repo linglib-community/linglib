@@ -102,7 +102,7 @@ inductive Referent where
 /-- A three-gender system over a language's genders `G` is a geometry, given by the node each
 node depends on directly, the node a referent contributes as interpretable gender and a
 grammatical gender contributes as uninterpretable gender, the features a plural coordination
-adds, a vocabulary, the gender each sex is assigned, and the comparative label of each gender. -/
+adds, a vocabulary, and the gender each sex is assigned. -/
 structure System (G : Type*) where
   parent : Node → Node
   iNode : Referent → Node
@@ -110,7 +110,6 @@ structure System (G : Type*) where
   plural : Finset Node := ∅
   vocabulary : RuleSet (VocabularyItem Node G)
   ofSex : Sex → G
-  label : G → Gender
 
 namespace System
 
@@ -148,10 +147,6 @@ def converted (a b : Bundle Node) : Option G := L.realize (resolve a b ∪ L.plu
 
 /-- Resolution of two nominals by their referents. -/
 def resolved (r₁ r₂ : Referent) : Option G := L.converted (L.conceptual r₁) (L.conceptual r₂)
-
-/-- The comparative label of the resolution of two nominals by their referents, the terms in
-which languages' resolutions compare. -/
-def resolvedLabel (r₁ r₂ : Referent) : Option Gender := (L.resolved r₁ r₂).map L.label
 
 /-- Resolution through uninterpretable features, each conjunct's set realized, converging on
 one exponent or crashing. -/
@@ -199,7 +194,6 @@ def system : System Value where
     | _ => .cls
   vocabulary := threeWay .masculine .feminine .neuter
   ofSex := Value.ofSex
-  label := Value.toLabel
 
 theorem masc_mem_entailments_fem : .masc ∈ system.entailments .fem := by decide
 
@@ -326,7 +320,6 @@ def system : System _root_.Icelandic.Gender.Value where
     | _ => .cls
   vocabulary := threeWay .masculine .feminine .neuter
   ofSex := _root_.Icelandic.Gender.Value.ofSex
-  label := _root_.Icelandic.Gender.Value.toLabel
 
 theorem masc_not_mem_entailments_fem : .masc ∉ system.entailments .fem := by decide
 
@@ -402,7 +395,6 @@ def system : System Value where
     [{.fem, .anim, .masc, .indiv} ⟷ .feminine, {.anim, .masc, .indiv} ⟷ .masculine,
       {.indiv} ⟷ .masculine, ∅ ⟷ .neuter]
   ofSex := Value.ofSex
-  label := Value.toLabel
 
 /-- An inanimate refers as a mass when it is neuter, the neuter being the mass gender, and as an
 individuated thing otherwise. -/
@@ -443,10 +435,12 @@ theorem mismatchResolution :
 /-- The resolution of mismatched humans and of mismatched inanimates in Greek, Icelandic, and
 Bosnian/Croatian/Serbian (Table 2). -/
 theorem table2 :
-    [Greek.system.resolvedLabel, Icelandic.system.resolvedLabel, BCS.system.resolvedLabel].map
-        (fun f ↦ (f .man .woman, f .thing .thing)) =
-      [(some .masculine, some .neuter), (some .neuter, some .neuter),
-        (some .masculine, some .masculine)] := by
+    (Greek.system.resolved .man .woman, Greek.system.resolved .thing .thing) =
+        (some (Greek.system.ofSex .male), some .neuter) ∧
+      (Icelandic.system.resolved .man .woman, Icelandic.system.resolved .thing .thing) =
+        (some .neuter, some .neuter) ∧
+      (BCS.system.resolved .man .woman, BCS.system.resolved .thing .thing) =
+        (some (BCS.system.ofSex .male), some (BCS.system.ofSex .male)) := by
   decide
 
 end AdamsonAnagnostopoulou2025

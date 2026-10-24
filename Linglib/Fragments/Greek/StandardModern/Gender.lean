@@ -33,12 +33,6 @@ def Value.ofSex : Sex → Value
   | .male => .masculine
   | .female => .feminine
 
-/-- The comparative label of each gender. -/
-def Value.toLabel : Value → _root_.Gender
-  | .masculine => .masculine
-  | .feminine => .feminine
-  | .neuter => .neuter
-
 /-- *andras* 'man'. -/
 def andras : GenderedNoun Value :=
   { form := "andras", gloss := "man", gender := .masculine, sex := some .male }

@@ -306,7 +306,7 @@ nominative or vocative plural *-i*. *Mluvnice češtiny* makes the alternation o
 masculines' (p. 279), and the vocative plural is "s ním identický" 'identical with it'
 (p. 292). -/
 def Class.Palatalizes (k : Class) (σ : Cell) (e : List String) : Prop :=
-  k.gender.toLabel = .masculine ∧ σ.number = .plural ∧
+  k.gender.IsMasculine ∧ σ.number = .plural ∧
     (σ.case = .loc ∧ e = ["í", "ch"] ∨
       k.gender = .mascAnimate ∧ (σ.case = .nom ∨ σ.case = .voc) ∧ e = ["i"])
 
@@ -358,7 +358,7 @@ theorem dat_loc_singular_iff (k : Class) :
 /-- Among masculines only the hard classes have dative singular *-u*, and only the masculine a-stems
 have *-ovi* alone (*Mluvnice češtiny*, p. 292, p. 307, p. 309; Tables 9.2, 9.3, 9.5). -/
 theorem dat_singular_u_ovi (k : Class) :
-    (k.gender.toLabel = .masculine →
+    (k.gender.IsMasculine →
       (["u"] ∈ k.singularEndings .dat ↔ k = .chlap ∨ k = .hrad)) ∧
       (k.singularEndings .dat = [["o", "v", "i"]] ↔ k = .hrdina) := by
   cases k <;> decide

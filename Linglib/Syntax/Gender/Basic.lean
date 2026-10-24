@@ -31,8 +31,9 @@ agreement evidence: distinct genders are distinguished by some agreement target.
   spine is left to studies.
 * Kramer's two-class minimum is the hypothesis `Nontrivial G` where needed: one agreement pattern
   for all nouns is the absence of a system.
-* A fragment's gender enum is a `G`, and its `toLabel` maps it into `Gender`. Assignment systems
-  are in `Syntax/Gender/Assignment.lean`.
+* A fragment's gender enum is a `G`, with the semantic rule that assigns the sexes to its
+  genders (`ofSex`); a gender's comparative label, the gender of male humans and so on, is read
+  off that rule, not stored. Assignment systems are in `Syntax/Gender/Assignment.lean`.
 
 ## References
 
@@ -47,8 +48,8 @@ agreement evidence: distinct genders are distinguished by some agreement target.
 /-- Comparative-concept labels for controller genders ([corbett-1991]).
 
 These are the descriptive labels cross-linguistic comparison uses for a language's agreement
-classes, not a universal value inventory. A language's actual genders form its own type, which a
-fragment's `toLabel` maps into this vocabulary. -/
+classes, not a universal value inventory. A language's actual genders form its own type, and its
+semantic rule, not a stored map, relates them to these labels. -/
 inductive Gender where
   /-- The masculine holds male humans and higher animates, and is the default in many sex-based
   systems. -/

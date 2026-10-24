@@ -63,12 +63,6 @@ def Gender.Value.ofSex : Sex → Gender.Value
   | .male => .masculine
   | .female => .feminine
 
-/-- The comparative label of each gender. -/
-def Gender.Value.toLabel : Gender.Value → Gender
-  | .masculine => .masculine
-  | .feminine => .feminine
-  | .neuter => .neuter
-
 end Icelandic
 
 namespace Icelandic.Nouns
