@@ -220,9 +220,8 @@ def thelo : Verb where
     from [giannakidou-mari-2021]). -/
 def elpizo : Verb where
   morphs := [.root "elpízo"]
-  valency := .of
-    [({ complements := [.clausal (coding := some .subjunctive)] }, [0, 1]),
-     (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames
+    [{ complements := [.clausal (coding := some .subjunctive)] }, ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)

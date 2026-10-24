@@ -27,10 +27,10 @@ open ArgumentStructure Aspect Degree
 definite. -/
 def charge : Verb where
   morphs := [.root "charge"]
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames
+    [ArgumentFrame.np_np,
+     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
+     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .equip, .run}
 
@@ -39,10 +39,10 @@ definite. -/
 def cost : Verb where
   morphs := [.root "cost"]
   past := "cost"
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames
+    [ArgumentFrame.np_np,
+     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
+     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .state
   levinClasses := {LevinClass.cost}
 
@@ -50,9 +50,7 @@ def cost : Verb where
 (*They fined an astronomical amount*). -/
 def fine : Verb where
   morphs := [.root "fine"]
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 (some .indef)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .judgment}
 
@@ -60,10 +58,10 @@ def fine : Verb where
 definite. -/
 def tip : Verb where
   morphs := [.root "tip"]
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames
+    [ArgumentFrame.np_np,
+     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
+     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .throw}
 
@@ -72,10 +70,10 @@ definite. -/
 def strike_ : Verb where
   morphs := [.root "strike"]
   past := "struck"
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames
+    [ArgumentFrame.np_np,
+     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
+     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .achievement
   senseTag := .default
   levinClasses := {LevinClass.amuse, .hit, .soundEmission}
@@ -85,28 +83,24 @@ def forgive : Verb where
   morphs := [.root "forgive"]
   past := "forgave"
   pastPart := "forgiven"
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames
+    [ArgumentFrame.np_np,
+     ArgumentFrame.np_np.leaveImplicit 1 (some .def),
+     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.judgment}
 
 /-- "spare" — the second object may be implicit, a definite; the first may not. -/
 def spare : Verb where
   morphs := [.root "spare"]
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 1 (some .def)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill}
 
 /-- "deny" — the first object may be implicit, a definite; the second may not. -/
 def deny : Verb where
   morphs := [.root "deny"]
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture}
 
@@ -114,9 +108,7 @@ def deny : Verb where
 def permit : Verb where
   morphs := [.root "permit"]
   doubling := true
-  valency := .of
-    [(ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np_np, ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .accomplishment
 
 /-- "begrudge" — neither object may be implicit. -/

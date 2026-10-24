@@ -58,7 +58,7 @@ def wonder : Verb where
 an irrealis complement with a coreferent subject ((27c)). -/
 def know : Verb where
   morphs := [.root "kònì"]
-  valency := .of [(.finiteClause, [0, 1]), (subjunctiveFrame, [0, 1])]
+  valency := .ofFrames [.finiteClause, subjunctiveFrame]
     (controllers := [none, some 0])
 
 /-- *kà'àn* 'say' takes a finite complement. -/

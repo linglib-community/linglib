@@ -59,7 +59,7 @@ def a_vrea : Verb where
 /-- *a spera* 'hope' takes a *să* clause or a *că* clause. -/
 def a_spera : Verb where
   morphs := [.free "a", .root "spera"]
-  valency := .of [(saClause, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [saClause, ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)

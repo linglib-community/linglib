@@ -23,6 +23,8 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
 * `Diathesis.controllerRole`: the argument role of the controller.
 * `Verb.Valency`: a verb's participants, with their entailment profiles, and its diatheses, the
   basic diathesis first.
+* `Verb.Valency.of`, `Verb.Valency.ofFrames`: a valency from frames with the participants of
+  their slots, or from frames whose slots hold the participants in order.
 
 ## Implementation notes
 
@@ -115,11 +117,18 @@ def of (frs : List (ArgumentFrame × List ℕ)) (profiles : List (Option Entailm
   ⟨n, .ofFn fun i ↦ profiles[i.val]?.join,
     frs.mapIdx fun i x ↦ Diathesis.ofSlots x.1 x.2 controllers[i]?.join⟩
 
+/-- The valency whose diatheses are the frames `frs`, each slot holding its own participant in
+slot order, so that a participant fills the same slot in every frame, with the controllers of
+their clausal complements in the same order. -/
+def ofFrames (frs : List ArgumentFrame) (profiles : List (Option EntailmentProfile) := [])
+    (controllers : List (Option ℕ) := []) : Valency :=
+  of (frs.map fun fr ↦ (fr, List.range fr.slots.length)) profiles controllers
+
 /-- The valency of a verb with one diathesis, each slot of its frame holding its own participant
 in slot order, and its clausal complement controlled by `controller`. -/
 def ofFrame (fr : ArgumentFrame) (profiles : List (Option EntailmentProfile) := [])
     (controller : Option ℕ := none) : Valency :=
-  of [(fr, List.range fr.slots.length)] profiles [controller]
+  ofFrames [fr] profiles [controller]
 
 variable (V : Valency)
 
@@ -137,5 +146,9 @@ def profileAt (d : Diathesis V.arity) (s : Slot) : Option EntailmentProfile :=
     (ps : List (Option EntailmentProfile)) (cs : List (Option ℕ)) :
     (of frs ps cs).frames = frs.map (·.1) := by
   apply List.ext_getElem <;> simp [of, frames, Diathesis.ofSlots]
+
+@[simp] theorem frames_ofFrames (frs : List ArgumentFrame) (ps : List (Option EntailmentProfile))
+    (cs : List (Option ℕ)) : (ofFrames frs ps cs).frames = frs := by
+  simp [ofFrames, Function.comp_def]
 
 end Verb.Valency

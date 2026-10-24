@@ -36,7 +36,7 @@ def know : Verb where
   morphs := [.root "know"]
   past := "knew"
   pastPart := "known"
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
   complementSig := some .mono
@@ -67,7 +67,7 @@ def realize : Verb where
 /-- "discover" — semi-factive, weaker projection -/
 def discover : Verb where
   morphs := [.root "discover"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .achievement
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -118,7 +118,7 @@ towards the negative pole ([koev-2026] (17), fn. 7). Its complement is downward 
 licensing of negative polarity items shows. -/
 def doubt : Verb where
   morphs := [.root "doubt"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   scaleDimension := some .confidence
   scalePolarity := .negative
@@ -159,7 +159,7 @@ def intend : Verb where
     ([fusco-sgrizzi-2026]). -/
 def decide_ : Verb where
   morphs := [.root "decide"]
-  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
     (controllers := [some 0])
   vendlerClass := some .achievement
   opaqueContext := true
@@ -169,7 +169,7 @@ def decide_ : Verb where
     or an infinitive its subject controls (*hope to leave*). -/
 def hope : Verb where
   morphs := [.root "hope"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   vendlerClass := some .state
   passivizable := false
@@ -183,7 +183,7 @@ def hope : Verb where
     infinitive its subject controls (*pray to be saved*). -/
 def pray : Verb where
   morphs := [.root "pray"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   vendlerClass := some .state
   passivizable := false
@@ -363,10 +363,8 @@ def ask : Verb where
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : Verb where
   morphs := [.root "investigate"]
-  valency := .of
-    [(ArgumentFrame.question, [0, 1]),
-     (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1])]
+  valency := .ofFrames
+    [ArgumentFrame.question, ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
   vendlerClass := some .activity
   levinClasses := {LevinClass.investigate, .sight}
 
@@ -379,7 +377,7 @@ def depend_on : Verb where
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : Verb where
   morphs := [.root "remember"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -394,10 +392,7 @@ def forget_rog : Verb where
   past := "forgot"
   pastPart := "forgotten"
   doubling := true
-  valency := .of
-    [(ArgumentFrame.finiteClause, [0, 1]),
-     (ArgumentFrame.gerund, [0, 1]),
-     (ArgumentFrame.question, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)

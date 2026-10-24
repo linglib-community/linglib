@@ -41,19 +41,19 @@ open ArgumentStructure
 control. -/
 def querer : Verb where
   morphs := [.root "querer"]
-  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
 
 /-- *esperar* 'hope' takes a *que*-clause in the subjunctive or in the indicative. -/
 def esperar : Verb where
   morphs := [.root "esperar"]
-  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.finiteClause]
 
 /-- *pretender* 'intend' takes an infinitive under subject control and a *que*-clause in the
 subjunctive. -/
 def pretender : Verb where
   morphs := [.root "pretender"]
-  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
     (controllers := [some 0])
 
 /-- The causative *fazer* 'make' takes an infinitive under object control and, as *fazer com

@@ -68,11 +68,11 @@ def admire : Verb where
     definite (familiar). Implicit second obj is indefinite. -/
 def envy : Verb where
   morphs := [.root "envy"]
-  valency := .of
-    [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_np, [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2])]
+  valency := .ofFrames
+    [ArgumentFrame.np,
+     ArgumentFrame.np_np,
+     ArgumentFrame.np_np.leaveImplicit 1 (some .indef),
+     ArgumentFrame.np_np.leaveImplicit 0 (some .def)]
   vendlerClass := some .state
   levinClasses := {LevinClass.admire}
 
@@ -314,7 +314,7 @@ def hit : Verb where
 /-- "push" — AgPat verb (Levin 12) -/
 def push : Verb where
   morphs := [.root "push"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
   incrementality := some .cumulative
   levinClasses := {LevinClass.carry, .funnel, .pushPull, .split}
@@ -322,7 +322,7 @@ def push : Verb where
 /-- "pull" — AgPat verb (Levin 12) -/
 def pull : Verb where
   morphs := [.root "pull"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
   incrementality := some .cumulative
   levinClasses := {LevinClass.carry, .get, .hurt, .pushPull, .split}
@@ -330,28 +330,28 @@ def pull : Verb where
 /-- "shove" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def shove : Verb where
   morphs := [.root "shove"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
   levinClasses := {LevinClass.carry, .pushPull, .split, .throw}
 
 /-- "tug" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def tug : Verb where
   morphs := [.root "tug"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
   levinClasses := {LevinClass.carry, .pushPull, .split}
 
 /-- "yank" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def yank : Verb where
   morphs := [.root "yank"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
   levinClasses := {LevinClass.pushPull, .split}
 
 /-- "jerk" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def jerk : Verb where
   morphs := [.root "jerk"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .activity
   levinClasses := {LevinClass.pushPull}
 
@@ -437,9 +437,7 @@ def bang : Verb where
 /-- "thrash" — Levin 18.3 Spank verbs; a hitting verb for [levin-2026] (32a). -/
 def thrash : Verb where
   morphs := [.root "thrash"]
-  valency := .of
-    [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on)]
   vendlerClass := some .activity
   levinClasses := {LevinClass.spank}
 

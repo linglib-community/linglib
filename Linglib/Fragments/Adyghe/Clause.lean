@@ -88,7 +88,7 @@ structure Verb extends _root_.Verb where
 (102)). -/
 def gwepshesa : Verb where
   morphs := [.root "gʷəpšəsa"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.np]
   attitude := some (.doxastic .nonVeridical)
   complementCase := some .abs
 
@@ -96,7 +96,7 @@ def gwepshesa : Verb where
 oblique ((69), (99), (103), (116)). -/
 def chewepcha : Verb where
   morphs := [.root "qəč̣'ewəpč̣a"]
-  valency := .of [(ArgumentFrame.question, [0, 1]), (ArgumentFrame.np, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.question, ArgumentFrame.np]
   speechActVerb := true
   complementCase := some .obl
 
@@ -104,8 +104,7 @@ def chewepcha : Verb where
 or a noun phrase, in the absolutive ((75), (101), (104)). -/
 def she : Verb where
   morphs := [.root "ṣ̂e"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1]),
-    (ArgumentFrame.np, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question, ArgumentFrame.np]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   complementCase := some .abs

@@ -194,7 +194,7 @@ def vastata : Verb where
 /-- *haluta* 'want', with the A infinitive. -/
 def haluta : Verb where
   morphs := [.root "haluta"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   conjugation := .huomata
   inflectionalStem := [h, a, l, u, a]

@@ -420,7 +420,7 @@ declarative clause. -/
 control. -/
 def vouloir : Verb where
   morphs := [.root "vouloir"]
-  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
@@ -431,7 +431,7 @@ control. Some speakers also accept the subjunctive in a complement about the fut
 entry does not cover. -/
 def esperer : Verb where
   morphs := [.root "espérer"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
@@ -440,7 +440,7 @@ def esperer : Verb where
 /-- *croire* 'believe' takes a *que* clause in the indicative. -/
 def croire : Verb where
   morphs := [.root "croire"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical)
 

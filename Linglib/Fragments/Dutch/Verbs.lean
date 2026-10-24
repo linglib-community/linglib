@@ -273,7 +273,7 @@ def werken : Verb :=
 def lopen : Verb :=
   { simplex "lopen" "gelopen" with
     perfectAuxiliaries := {.be, .have},
-    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
       vendlerClass := some .activity,
     direction := some .place }
 
@@ -282,7 +282,7 @@ gewandeld*. -/
 def wandelen : Verb :=
   { simplex "wandelen" "gewandeld" with
     perfectAuxiliaries := {.be, .have},
-    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
       vendlerClass := some .activity,
     direction := some .place }
 
@@ -291,7 +291,7 @@ pp. 147–148) and atelic. -/
 def rollen : Verb :=
   { simplex "rollen" "gerold" with
     voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
-    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
       vendlerClass := some .activity,
     direction := some .place }
 

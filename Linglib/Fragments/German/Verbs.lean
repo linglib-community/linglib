@@ -142,7 +142,7 @@ subject with no direction. -/
 def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
     perfectAuxiliaries := {.be},
-    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
       vendlerClass := some .activity,
     direction := some .place }
 
@@ -333,7 +333,7 @@ def entwickeln : Verb :=
 takes a noun phrase or a *dass*-clause. -/
 def veranlassen : Verb :=
   { Verb.ofStem ((weak "anlassen").inseparable "ver") with
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause],
       objects := [.acc] }
 
 /-- *vergessen* 'forget' takes a noun phrase or a *dass*-clause; its *ver-* is not separable from
@@ -342,7 +342,7 @@ def vergessen : Verb :=
   { Verb.ofStem
       { infinitive := "vergessen", present := "vergisst", past := "vergaß",
         participle := "vergessen", prefixGe := false } with
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause],
       opaqueContext := true
     objects := [.acc] }
 
@@ -350,7 +350,7 @@ def vergessen : Verb :=
 or a *dass*-clause. -/
 def erwarten : Verb :=
   { Verb.ofStem ((weak "warten").inseparable "er") with
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause],
       opaqueContext := true
     objects := [.acc] }
 
@@ -358,7 +358,7 @@ def erwarten : Verb :=
 phrase or a *dass*-clause. -/
 def beschliessen : Verb :=
   { Verb.ofStem ((strong "schließen" "schließt" "schloss" "geschlossen").inseparable "be") with
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause],
       objects := [.acc] }
 
 /-! ### The entries -/
@@ -373,7 +373,7 @@ direction. -/
 def laufen : Verb :=
   { Verb.ofStem (strong "laufen" "läuft" "lief" "gelaufen") with
     perfectAuxiliaries := {.be},
-    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
       vendlerClass := some .activity,
     direction := some .place }
 
@@ -391,9 +391,7 @@ Zimmer getanzt* (§12.3.2c). -/
 def tanzen : Verb :=
   { Verb.ofStem (weak "tanzen") with
     perfectAuxiliaries := {.be, .have},
-    valency := .of
-      [(ArgumentFrame.intransitive, [0]),
-       (ArgumentFrame.spatialPP, [0, 1])]
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
       [some activitySubjectProfile, none],
     vendlerClass := some .activity}
 
