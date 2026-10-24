@@ -93,6 +93,21 @@ inductive LongEnding where
   | ymi
   deriving DecidableEq, Repr, Fintype
 
+/-- `e.form` is the ending `e` in transliteration. -/
+def LongEnding.form : LongEnding → String
+  | .yj => "yj"
+  | .aja => "aja"
+  | .oe => "oe"
+  | .ye => "ye"
+  | .ogo => "ogo"
+  | .uju => "uju"
+  | .oj => "oj"
+  | .omu => "omu"
+  | .ym => "ym"
+  | .om => "om"
+  | .yx => "yx"
+  | .ymi => "ymi"
+
 /-- The ending of the hard-stem long adjective *nóvyj* 'new' by the gender and subgender of its
 controller, its number and its case, the table of [wade-2020] §145. -/
 def longEnding (g : Gender.Value) (a : Gender.Animacy) (n : Gender.numberSystem.values)
