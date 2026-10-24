@@ -25,6 +25,7 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
   applicable rule strictly undercuts, and its exponent.
 * `RuleSet.realizeMinimalD`: the exponent of the minimal selection, or a fallback where
   no rule applies.
+* `RuleSet.HasMostSpecific`: some applicable rule is at least as specific as every other.
 
 ## Main results
 
@@ -42,6 +43,8 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
   selections produce Elsewhere winners.
 * `RuleSet.selectMinimal_append_singleton`: a rule appended to a rule set and no more specific
   than its rules is selected only where none of them applies.
+* `RuleSet.HasMostSpecific.isChain`: where some applicable rule is most specific, the Elsewhere
+  winners form a chain, as Pāṇinian Determinism requires.
 * `RuleSet.selectMinimal_eq_some_of_applies`,
   `RuleSet.isContiguous_realizeMinimal_of_monotone`: under Pāṇinian Determinism minimal
   selection is consistent under contraction and realizes contiguous patterns.
@@ -243,6 +246,24 @@ theorem realize_realizes
     (h : v.realize f c = some φ) : v.Realizes key c φ := by
   obtain ⟨r, hr, rfl⟩ := Option.map_eq_some_iff.mp h
   exact ⟨r, selectBy_isElsewhereWinner hf hr, rfl⟩
+
+/-! ### Pāṇinian Determinism -/
+
+/-- Some rule of `v` applicable at `c` is at least as specific as every rule applicable there, as
+Stump's Pāṇinian Determinism requires of a rule block at every cell. -/
+def HasMostSpecific (v : RuleSet R) (key : R → κ) (c : Ctx) : Prop :=
+  ∃ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r ≤ key s
+
+instance [DecidableRel (· ≤ · : κ → κ → Prop)] : Decidable (v.HasMostSpecific key c) :=
+  inferInstanceAs (Decidable (∃ r ∈ v.applicable c, ∀ s ∈ v.applicable c, key r ≤ key s))
+
+/-- Where some applicable rule is most specific, the Elsewhere winners form a chain. -/
+theorem HasMostSpecific.isChain (h : v.HasMostSpecific key c) :
+    IsChain (fun r s ↦ key r ≤ key s) {s | v.IsElsewhereWinner key c s} := by
+  obtain ⟨r, hr, hle⟩ := h
+  intro s (hs : v.IsElsewhereWinner key c s) t (ht : v.IsElsewhereWinner key c t) _
+  exact .inl ((hs.le_of_le (mem_applicable.mp hr) (hle s (mem_applicable.mpr hs.1))).trans
+    (hle t (mem_applicable.mpr ht.1)))
 
 /-! ### Order selection -/
 

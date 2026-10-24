@@ -73,6 +73,8 @@ instance (t : Feature) : Repr t.Value := by cases t <;> exact inferInstance
 /-- A token's features give each feature a value or `⊥`. -/
 abbrev Features := (f : Feature) → Flat f.Value
 
+instance : DecidableLT Features := decidableLTOfDecidableLE
+
 namespace Features
 
 /-- The bundle specifying the named values and nothing else. -/

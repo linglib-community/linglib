@@ -100,7 +100,7 @@ section Narrowness
 variable [PartialOrder P]
 
 /-- Narrowness as a key: `r` is at least as narrow as `s` when `r`'s class is properly smaller, or
-the classes coincide and `r` realizes a superset of `s`'s properties. -/
+the classes coincide and `r`'s property set extends `s`'s. -/
 def Rule.narrowness (r : Rule L P F) : Finset L ×ₗ Pᵒᵈ := toLex (r.klass, OrderDual.toDual r.props)
 
 /-- Narrowness (15): a properly smaller class, or the same class and a larger property set. -/
@@ -166,6 +166,9 @@ instance : DecidableRel (Applies : Rule L P F → L × P → Prop) :=
   fun r c ↦ inferInstanceAs (Decidable (c.1 ∈ r.klass ∧ r.props ≤ c.2))
 
 instance : DecidableRel ((· < ·) : Finset L ×ₗ Pᵒᵈ → Finset L ×ₗ Pᵒᵈ → Prop) :=
+  Prod.Lex.decidable _ _
+
+instance : DecidableRel ((· ≤ ·) : Finset L ×ₗ Pᵒᵈ → Finset L ×ₗ Pᵒᵈ → Prop) :=
   Prod.Lex.decidable _ _
 
 /-- A least narrow rule appended to a rule set is selected only where none of its rules applies. -/
