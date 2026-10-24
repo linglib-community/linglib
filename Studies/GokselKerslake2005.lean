@@ -19,7 +19,8 @@ surface forms of the two suffix vowels. The last vowel of a disharmonic loan dec
 appear where they keep vowels and consonants apart (§6.1.3), and a stem-final `a` or `e`,
 the vowel of the negative included, is raised before -(I)yor (§8.2.3.3).
 
-The suffix order of Chapter 8 is licensing by the templates of the finite verb and the nominal.
+The suffix order of Chapter 8 is licensing by the templates of the finite verb and the nominal,
+the person marker of the verb moving where §8.4 allows and nowhere else.
 The grammar's example words are licensed with their stacked voice suffixes, reversed orders are
 not, and the rule that markers of one position cannot co-occur (§8.2.3) holds because the
 template does not repeat the position.
@@ -48,6 +49,7 @@ The possessive and locative existential sentences of §12.1.1.2 are those of
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
 * `finite_verb`: §8.2 (7), every slot of the finite verb.
 * `same_position_excluded`: §8.2.3 (i), since the template does not repeat position 3.
+* `person_mobility`, `person_fixed`: §8.4, the places of a person marker outside the template.
 * `mi_precedes_clitics`, `mi_follows`: §11.1.1.5, the position of *mI* among the markers of a
   predicate.
 * `converbs`, `doubled_converbs`: the converbs of §8.5.2.2 and -DIkçA.
@@ -308,6 +310,42 @@ theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
     ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
   show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
 
+/-- A person marker precedes the copular marker when it is a group-1 marker after -DI, as in
+*git-ti-m-di*, *gel-di-niz-se* and *bak-tı-k-tı*, or the third-person plural, as in
+*kat-sa-lar-dı*, and the third-person plural may also follow -DIr, as in *gid-iyor-dur-lar*,
+beside the orders of the template (§8.3.2, §8.3.3, §8.4). -/
+theorem person_mobility : ∀ w ∈ ([
+      ([g, i, t], [⟨_, di⟩, ⟨_, person .one (.personNumber .first .singular)⟩, ⟨_, pastCopula⟩],
+        "git-ti-m-di"),
+      ([g, i, t], [⟨_, di⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .singular)⟩],
+        "git-ti-ydi-m"),
+      ([g, e, l], [⟨_, di⟩, ⟨_, person .one (.personNumber .second .plural)⟩,
+        ⟨_, conditionalCopula⟩], "gel-di-niz-se"),
+      ([g, e, l], [⟨_, di⟩, ⟨_, conditionalCopula⟩,
+        ⟨_, person .one (.personNumber .second .plural)⟩], "gel-di-yse-niz"),
+      ([b, a, k], [⟨_, di⟩, ⟨_, person .one (.personNumber .first .plural)⟩, ⟨_, pastCopula⟩],
+        "bak-tı-k-tı"),
+      ([k, a, t], [⟨_, sa⟩, ⟨_, person .one (.personNumber .third .plural)⟩, ⟨_, pastCopula⟩],
+        "kat-sa-lar-dı"),
+      ([g, i, d], [⟨_, iyor⟩, ⟨_, person .two (.personNumber .third .plural)⟩, ⟨_, dir⟩],
+        "gid-iyor-lar-dır"),
+      ([g, i, d], [⟨_, iyor⟩, ⟨_, dir⟩, ⟨_, person .two (.personNumber .third .plural)⟩],
+        "gid-iyor-dur-lar")] :
+      List (List Segment × List (Σ σ, Verb.Exponent σ) × String)),
+    Verb.Licensed w.2.1 ∧
+      ofSegmented? w.2.2 = some (realize w.1 (Verb.forms w.2.1)) := by
+  decide
+
+/-- No other person marker leaves its place, so *gid-iyor-um-du*, *gid-iyor-dur-um* and
+*git-se-m-di* are unlicensed (§8.4). -/
+theorem person_fixed :
+    ¬ Verb.Licensed [⟨_, iyor⟩, ⟨_, person .two (.personNumber .first .singular)⟩,
+      ⟨_, pastCopula⟩] ∧
+    ¬ Verb.Licensed [⟨_, iyor⟩, ⟨_, dir⟩, ⟨_, person .two (.personNumber .first .singular)⟩] ∧
+    ¬ Verb.Licensed [⟨_, sa⟩, ⟨_, person .one (.personNumber .first .singular)⟩,
+      ⟨_, pastCopula⟩] := by
+  decide
+
 /-! ### The question clitic (§11.1.1.5) -/
 
 /-- *mI* precedes the copular markers, as in *Gitse miydik?*, *Başlamış mıydınız?* and *Burada
@@ -315,60 +353,51 @@ mıymış?*, the group-2 person markers but the third-person plural, as in *Gidi
 *İster miyiz?* and *Hazır mısınız?*, and -DIr, as in *Unutmuş mudurlar?*, *Evde midir?* and
 *geçmiş miyimdir?*, and the markers after it attach to it, as in *bil-iyor mu-ydu-nuz*
 (§6.3 (5)). -/
-theorem mi_precedes_clitics :
-    realize [g, i, t]
-        (mi.insert [⟨_, sa⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .plural)⟩]) =
-      [g, i, t, s, e] ++ [m, i, y, d, i, k] ∧
-    realize [b, a, ş, l, a]
-        (mi.insert [⟨_, miş⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩]) =
-      [b, a, ş, l, a, m, ı, ş] ++ [m, ı, y, d, ı, n, ı, z] ∧
-    realize [b, u, r, a, d, a] (mi.insert [⟨_, evidentialCopula⟩]) =
-      [b, u, r, a, d, a] ++ [m, ı, y, m, ı, ş] ∧
-    realize [g, i, d] (mi.insert [⟨_, iyor⟩, ⟨_, person .two (.personNumber .second .singular)⟩]) =
-      [g, i, d, i, y, o, r] ++ [m, u, s, u, n] ∧
-    realize [i, s, t, e]
-        (mi.insert [⟨_, aorist⟩, ⟨_, person .two (.personNumber .first .plural)⟩]) =
-      [i, s, t, e, r] ++ [m, i, y, i, z] ∧
-    realize [h, a, z, ı, r] (mi.insert [⟨_, person .two (.personNumber .second .plural)⟩]) =
-      [h, a, z, ı, r] ++ [m, ı, s, ı, n, ı, z] ∧
-    realize [u, n, u, t]
-        (mi.insert [⟨_, miş⟩, ⟨_, dir⟩, ⟨_, person .two (.personNumber .third .plural)⟩]) =
-      [u, n, u, t, m, u, ş] ++ [m, u, d, u, r, l, a, r] ∧
-    realize [e, v, d, e] (mi.insert [⟨_, dir⟩]) = [e, v, d, e] ++ [m, i, d, i, r] ∧
-    realize [g, e, ç]
-        (mi.insert [⟨_, miş⟩, ⟨_, person .two (.personNumber .first .singular)⟩, ⟨_, dir⟩]) =
-      [g, e, ç, m, i, ş] ++ [m, i, y, i, m, d, i, r] ∧
-    realize [b, i, l]
-        (mi.insert [⟨_, iyor⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩]) =
-      [b, i, l, i, y, o, r] ++ [m, u, y, d, u, n, u, z] := by
+theorem mi_precedes_clitics : ∀ w ∈ ([
+      ([g, i, t], [⟨_, sa⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .plural)⟩],
+        ["gitse", "miydik"]),
+      ([b, a, ş, l, a],
+        [⟨_, miş⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩],
+        ["başlamış", "mıydınız"]),
+      ([b, u, r, a, d, a], [⟨_, evidentialCopula⟩], ["burada", "mıymış"]),
+      ([g, i, d], [⟨_, iyor⟩, ⟨_, person .two (.personNumber .second .singular)⟩],
+        ["gidiyor", "musun"]),
+      ([i, s, t, e], [⟨_, aorist⟩, ⟨_, person .two (.personNumber .first .plural)⟩],
+        ["ister", "miyiz"]),
+      ([h, a, z, ı, r], [⟨_, person .two (.personNumber .second .plural)⟩], ["hazır", "mısınız"]),
+      ([u, n, u, t], [⟨_, miş⟩, ⟨_, dir⟩, ⟨_, person .two (.personNumber .third .plural)⟩],
+        ["unutmuş", "mudurlar"]),
+      ([e, v, d, e], [⟨_, dir⟩], ["evde", "midir"]),
+      ([g, e, ç], [⟨_, miş⟩, ⟨_, person .two (.personNumber .first .singular)⟩, ⟨_, dir⟩],
+        ["geçmiş", "miyimdir"]),
+      ([b, i, l], [⟨_, iyor⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩],
+        ["biliyor", "muydunuz"])] :
+      List (List Segment × List (Σ σ, Verb.Exponent σ) × List String)),
+    Verb.Licensed w.2.1 ∧
+      (w.2.2.mapM ofString?).map List.flatten = some (realize w.1 (mi.insert w.2.1)) := by
   decide
 
 /-- *mI* follows the group-1 person markers, as in *Gördün mü?*, *Gitsek mi?* and *Yürüdünüz
 mü?*, those of group 3, as in *Kalayım mı?* and *Başlasın mı?*, the third-person plural, as in
 *Gittiler mi?*, *Uyanırlar mı?* and *Okuldalar mı?*, and a subject complement without markers,
 as in *Akıllı mı?* and *Benimki mi?*. -/
-theorem mi_follows :
-    realize [g, ö, r] (mi.insert [⟨_, di⟩, ⟨_, person .one (.personNumber .second .singular)⟩]) =
-      [g, ö, r, d, ü, n] ++ [m, ü] ∧
-    realize [g, i, t] (mi.insert [⟨_, sa⟩, ⟨_, person .one (.personNumber .first .plural)⟩]) =
-      [g, i, t, s, e, k] ++ [m, i] ∧
-    realize [y, ü, r, ü]
-        (mi.insert [⟨_, di⟩, ⟨_, person .one (.personNumber .second .plural)⟩]) =
-      [y, ü, r, ü, d, ü, n, ü, z] ++ [m, ü] ∧
-    realize [k, a, l]
-        (mi.insert [⟨_, optative⟩, ⟨_, person .three (.personNumber .first .singular)⟩]) =
-      [k, a, l, a, y, ı, m] ++ [m, ı] ∧
-    realize [b, a, ş, l, a] (mi.insert [⟨_, person .three (.personNumber .third .singular)⟩]) =
-      [b, a, ş, l, a, s, ı, n] ++ [m, ı] ∧
-    realize [g, i, t] (mi.insert [⟨_, di⟩, ⟨_, person .one (.personNumber .third .plural)⟩]) =
-      [g, i, t, t, i, l, e, r] ++ [m, i] ∧
-    realize [u, y, a, n]
-        (mi.insert [⟨_, aorist⟩, ⟨_, person .two (.personNumber .third .plural)⟩]) =
-      [u, y, a, n, ı, r, l, a, r] ++ [m, ı] ∧
-    realize [o, k, u, l, d, a] (mi.insert [⟨_, person .two (.personNumber .third .plural)⟩]) =
-      [o, k, u, l, d, a, l, a, r] ++ [m, ı] ∧
-    realize [a, k, ı, l, l, ı] (mi.insert []) = [a, k, ı, l, l, ı] ++ [m, ı] ∧
-    realize [b, e, n, i, m, k, i] (mi.insert []) = [b, e, n, i, m, k, i] ++ [m, i] := by
+theorem mi_follows : ∀ w ∈ ([
+      ([g, ö, r], [⟨_, di⟩, ⟨_, person .one (.personNumber .second .singular)⟩], ["gördün", "mü"]),
+      ([g, i, t], [⟨_, sa⟩, ⟨_, person .one (.personNumber .first .plural)⟩], ["gitsek", "mi"]),
+      ([y, ü, r, ü], [⟨_, di⟩, ⟨_, person .one (.personNumber .second .plural)⟩],
+        ["yürüdünüz", "mü"]),
+      ([k, a, l], [⟨_, optative⟩, ⟨_, person .three (.personNumber .first .singular)⟩],
+        ["kalayım", "mı"]),
+      ([b, a, ş, l, a], [⟨_, person .three (.personNumber .third .singular)⟩], ["başlasın", "mı"]),
+      ([g, i, t], [⟨_, di⟩, ⟨_, person .one (.personNumber .third .plural)⟩], ["gittiler", "mi"]),
+      ([u, y, a, n], [⟨_, aorist⟩, ⟨_, person .two (.personNumber .third .plural)⟩],
+        ["uyanırlar", "mı"]),
+      ([o, k, u, l, d, a], [⟨_, person .two (.personNumber .third .plural)⟩], ["okuldalar", "mı"]),
+      ([a, k, ı, l, l, ı], [], ["akıllı", "mı"]),
+      ([b, e, n, i, m, k, i], [], ["benimki", "mi"])] :
+      List (List Segment × List (Σ σ, Verb.Exponent σ) × List String)),
+    Verb.Licensed w.2.1 ∧
+      (w.2.2.mapM ofString?).map List.flatten = some (realize w.1 (mi.insert w.2.1)) := by
   decide
 
 /-! ### Converbs (§8.5.2.2) -/

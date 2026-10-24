@@ -63,49 +63,34 @@ def mi.suffix : Suffix := ⟨none, [m, I]⟩
 
 /-- *mI* precedes the clitics among the predicate markers but the third-person plural -lAr
 (§11.1.1.5). -/
-def mi.Precedes (x : Σ σ, Verb.Exponent σ) : Prop :=
-  x.2.IsClitic ∧ x ≠ ⟨_, .person .two (.personNumber .third .plural)⟩
+def mi.Precedes (x : Σ σ, Verb.Exponent σ) : Prop := x.2.IsClitic ∧ ¬ x.2.IsThirdPlural
 
 instance : DecidablePred mi.Precedes := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The forms of the markers of a predicate with *mI* before the first marker it precedes, or
 after the last. -/
-def mi.insert : List (Σ σ, Verb.Exponent σ) → List Suffix
-  | [] => [mi.suffix]
-  | x :: xs =>
-    if mi.Precedes x then mi.suffix :: (x :: xs).map (·.2.form) else x.2.form :: mi.insert xs
+def mi.insert (xs : List (Σ σ, Verb.Exponent σ)) : List Suffix :=
+  Verb.forms (xs.takeWhile (!mi.Precedes ·)) ++
+    mi.suffix :: Verb.forms (xs.dropWhile (!mi.Precedes ·))
 
 variable {x : Σ σ, Verb.Exponent σ} {xs pre post : List (Σ σ, Verb.Exponent σ)}
 
 @[simp] theorem mi.insert_nil : mi.insert [] = [mi.suffix] := rfl
 
-@[simp] theorem mi.insert_cons_of_precedes (h : mi.Precedes x) :
-    mi.insert (x :: xs) = mi.suffix :: (x :: xs).map (·.2.form) :=
-  ite_eq_left h
-
-@[simp] theorem mi.insert_cons_of_not_precedes (h : ¬ mi.Precedes x) :
-    mi.insert (x :: xs) = x.2.form :: mi.insert xs :=
-  ite_eq_right h
-
 /-- *mI* immediately precedes the first marker it precedes (§11.1.1.5). -/
 theorem mi.insert_append_cons (hpre : ∀ y ∈ pre, ¬ mi.Precedes y) (hx : mi.Precedes x) :
-    mi.insert (pre ++ x :: post) =
-      pre.map (·.2.form) ++ mi.suffix :: (x :: post).map (·.2.form) := by
-  induction pre with
-  | nil => exact mi.insert_cons_of_precedes hx
-  | cons y pre ih =>
-    rw [List.forall_mem_cons] at hpre
-    rw [List.cons_append, mi.insert_cons_of_not_precedes hpre.1, ih hpre.2]
-    rfl
+    mi.insert (pre ++ x :: post) = Verb.forms pre ++ mi.suffix :: Verb.forms (x :: post) := by
+  have h : ∀ y ∈ pre, (!mi.Precedes y) = true := by simpa using hpre
+  have hx : (!mi.Precedes x) = false := by simpa using hx
+  rw [mi.insert, List.takeWhile_append_of_pos h, List.dropWhile_append_of_pos h,
+    List.takeWhile_cons_of_neg (by simp [hx]), List.dropWhile_cons_of_neg (by simp [hx]),
+    List.append_nil]
 
 /-- *mI* follows the last marker of a predicate if it precedes none of them (§11.1.1.5). -/
 theorem mi.insert_of_forall_not_precedes (h : ∀ y ∈ xs, ¬ mi.Precedes y) :
-    mi.insert xs = xs.map (·.2.form) ++ [mi.suffix] := by
-  induction xs with
-  | nil => rfl
-  | cons y xs ih =>
-    rw [List.forall_mem_cons] at h
-    rw [mi.insert_cons_of_not_precedes h.1, ih h.2]
-    rfl
+    mi.insert xs = Verb.forms xs ++ [mi.suffix] := by
+  have h' : ∀ y ∈ xs, (!mi.Precedes y) = true := by simpa using h
+  rw [mi.insert, List.takeWhile_eq_self_iff.2 h', List.dropWhile_eq_nil_iff.2 h']
+  rfl
 
 end Turkish.QuestionParticles

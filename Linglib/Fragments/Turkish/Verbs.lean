@@ -59,7 +59,7 @@ def suffixes (v : Verb) (sfx : List (Σ σ, Exponent σ)) : List (Σ σ, Exponen
 /-- `v.inflect sfx` is the surface form of the verb under the inflectional suffixes `sfx`,
 which with no suffixes is the stem. -/
 def inflect (v : Verb) (sfx : List (Σ σ, Exponent σ)) : List Segment :=
-  realize v.rootSegments ((v.suffixes sfx).map fun e ↦ Exponent.form e.2)
+  realize v.rootSegments (forms (v.suffixes sfx))
 
 end Verb
 
