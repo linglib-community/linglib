@@ -3,7 +3,6 @@ module
 public import Linglib.Syntax.Clause.Relative
 public import Linglib.Syntax.Gender.Basic
 public import Linglib.Syntax.Number.Basic
-public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Fragments.Arabic.ModernStandard.Case
 
 /-!
@@ -23,15 +22,16 @@ unfilled, and the object of a verb or a preposition is resumed by a personal pro
   distinguishes case, and every form marks number and gender.
 * `Arabic.ModernStandard.relativePronoun_dual_syncretism`: the dual relative pronoun has the
   case syncretism of the dual declension.
-* `Arabic.ModernStandard.relativizer`: the relativizer of an antecedent of each definiteness.
+* `Arabic.ModernStandard.relativizer`: the relativizer, the same after a definite and an
+  indefinite antecedent.
 
 ## Implementation notes
 
-The forms are Ryding's transliterations. The relativizer is indexed by the antecedent's
-definiteness, which decides only its form: resumption occurs "in definite and indefinite
-relative clauses" alike (p. 324), so the realization does not depend on it. The relative
-pronoun agrees with the antecedent, not with the relativized position, so a relativized subject
-is a gap whichever form the pronoun takes.
+The forms are Ryding's transliterations. One relativizer serves both antecedents, which differ
+only in whether *alladhii* introduces the clause, since resumption occurs "in definite and
+indefinite relative clauses" alike (p. 324). The relative pronoun agrees with the antecedent, not
+with the relativized position, so a relativized subject is a gap whichever form the pronoun
+takes.
 
 Ryding states the resumptive rule for the object of a verb or a preposition (p. 324), which
 covers the direct object, the indirect object, a second accusative or the object of *li-* or
@@ -99,21 +99,18 @@ theorem relativePronoun_dual_syncretism :
 
 /-! ### The relativizer -/
 
-/-- The relativizer of an antecedent of definiteness `d`: the definite relative pronoun, cited in
-the masculine singular, for a definite antecedent (§2, p. 323), and none for an indefinite one
-(§3, p. 324). A relativized subject is left unfilled, the verb agreeing with it: *hiya llatii
-ʾarsal-at-i l-duktuur-a* 'she is the one who sent the doctor' (p. 323), *fii ziyaarat-in
-li-dimashq-a ta-staghriq-u ʾusbuuʿ-an* 'on a visit to Damascus [which] lasts a week' (p. 324).
+/-- The relativizer, introduced by the definite relative pronoun after a definite antecedent (§2,
+p. 323) and by nothing after an indefinite one (§3, p. 324). A relativized subject is left
+unfilled, the verb agreeing with it: *hiya llatii ʾarsal-at-i l-duktuur-a* 'she is the one who
+sent the doctor' (p. 323), *fii ziyaarat-in li-dimashq-a ta-staghriq-u ʾusbuuʿ-an* 'on a visit
+to Damascus [which] lasts a week' (p. 324).
 In the dual the pronoun takes the antecedent's case, not the relativized position's: in
 *li-l-zawj-ayni lladh-ayni ya-ntaZir-aani* 'for the couple who are awaiting' the antecedent is
 genitive and the relativized position the subject (p. 323). Every lower position is resumed by
 a personal pronoun, the *ʿaaʾid*, which "must be inserted" (p. 324): *al-kitaab-u lladhii
 qaraʾ-naa-hu* 'the book that we read (it)' (p. 324), *wa-qaal-a fii muʾtamar-in SiHaafiyy-in
 ʿaqad-a-hu ʾams-i* 'he said in a press conference [which] he held (it) yesterday' (p. 325). -/
-def relativizer (d : Definiteness) : Relativizer where
-  form := match d with
-    | .definite => "alladhii"
-    | .indefinite => "∅"
+def relativizer : Relativizer where
   placement := .postNominal
   realize
     | .subject => {.gap}

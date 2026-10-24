@@ -41,7 +41,7 @@ referent: *ein junges Mädchen* 'a young girl'.
 
 namespace German.Adjectives
 
-open German.Determiners (GenderNumber Endingless strongEnding)
+open German.Determiners (Endingless strongEnding)
 
 /-- `strong x c` is the strong ending of the cell, the ending of *dieser* except for *-en* in the
 genitive singular masculine and neuter. -/

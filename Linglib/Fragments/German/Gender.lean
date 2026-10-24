@@ -22,6 +22,7 @@ do, and personal pronouns often follow the sex of the referent instead, especial
 * `German.Gender.Suffix`, `German.Gender.Suffix.gender`: the suffixes that fix the gender of the
   nouns they end, and the gender each fixes.
 * `German.Gender.Suffix.noun`: a noun ending in such a suffix, whose gender is the suffix's.
+* `German.GenderNumber`: the gender and number a noun phrase agrees in.
 
 ## References
 
@@ -109,3 +110,14 @@ theorem not_isNaturalGender_diminutive :
   decide
 
 end German.Gender
+
+namespace German
+
+/-- The agreement value of a German noun phrase, a gender in the singular and only a number in the
+plural, where the genders fall together. -/
+inductive GenderNumber where
+  | sg (g : Gender.Value)
+  | pl
+  deriving DecidableEq, Repr, Fintype
+
+end German

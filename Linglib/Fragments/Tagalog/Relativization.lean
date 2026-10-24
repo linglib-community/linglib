@@ -25,7 +25,6 @@ namespace Tagalog
 
 /-- The postnominal clause joined by the linker *na ~ -ng* relativizes subjects only. -/
 def relLinkerPost : Relativizer where
-  form := "na/-ng"
   placement := .postNominal
   realize
     | .subject => {.gap}
@@ -33,7 +32,6 @@ def relLinkerPost : Relativizer where
 
 /-- The prenominal clause joined by the linker *na ~ -ng* relativizes subjects only. -/
 def relLinkerPre : Relativizer where
-  form := "na/-ng"
   placement := .preNominal
   realize
     | .subject => {.gap}

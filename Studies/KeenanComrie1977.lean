@@ -63,10 +63,11 @@ stronger constraint on languages and satisfies its weakening by promotion.
 * Continuity is order-connectedness in the substrate's `Position` order. A relative pronoun
   agreeing with the head, English *who* (p. 65), leaves the relativized position a gap, so case
   coding is a property of what occupies that position (`IsCaseCoding`).
-* The sample takes Classical Arabic by the Modern Standard Arabic relativizer of a definite
-  antecedent (p. 64) and leaves out Yoruba, whose fragment follows Awobuluyi rather than
-  Table 1. Entries +/− and +? count as +, and a blank, which marks missing data, as −, as for
-  Toba Batak's object of comparison. Table 1 classes Hindi's correlative as internally headed.
+* The sample takes Classical Arabic by the Modern Standard Arabic relativizer, the paper
+  considering only definite relative clauses (p. 64), and leaves out Yoruba, whose fragment
+  follows Awobuluyi rather than Table 1. Entries +/− and +? count as +, and a blank, which marks
+  missing data, as −, as for Toba Batak's object of comparison. Table 1 classes Hindi's
+  correlative as internally headed.
 * Promotion is read off pivot selection, which suits Toba Batak's symmetrical voices.
 
 ## References
@@ -174,9 +175,8 @@ The seventeen languages of Table 1 whose fragments follow it. -/
 
 abbrev english := English.Relativization.relativizers
 abbrev welsh := Welsh.relativizers
-/-- Table 1's Classical Arabic, by the Modern Standard Arabic relativizer of a definite
-antecedent, the paper considering only definite restrictive relative clauses (p. 64). -/
-abbrev arabic : List Relativizer := [Arabic.ModernStandard.relativizer .definite]
+/-- Table 1's Classical Arabic, by the Modern Standard Arabic relativizer. -/
+abbrev arabic : List Relativizer := [Arabic.ModernStandard.relativizer]
 abbrev hebrew := Hebrew.relativizers
 abbrev tobaBatak := TobaBatak.relativizers
 abbrev korean := Korean.relativizers

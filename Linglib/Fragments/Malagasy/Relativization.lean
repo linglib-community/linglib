@@ -23,7 +23,6 @@ namespace Malagasy
 /-- The postnominal clause, optionally introduced by *izay*, leaves the relativized position
 empty and relativizes subjects only. -/
 def relGap : Relativizer where
-  form := "izay/∅"
   placement := .postNominal
   realize
     | .subject => {.gap}

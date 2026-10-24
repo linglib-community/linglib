@@ -25,7 +25,6 @@ namespace HindiUrdu
 
 /-- The postnominal clause with the relative pronoun *jo* relativizes subjects through genitives. -/
 def relJo : Relativizer where
-  form := "jo/jis-"
   placement := .postNominal
   realize
     | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
@@ -34,7 +33,6 @@ def relJo : Relativizer where
 /-- The correlative *jo … vo* keeps the head inside the relative clause and relativizes subjects
 through genitives. -/
 def relCorrelative : Relativizer where
-  form := "jo … vo"
   placement := .correlative
   realize
     | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}

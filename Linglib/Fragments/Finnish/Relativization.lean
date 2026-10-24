@@ -26,7 +26,6 @@ namespace Finnish
 /-- The relative pronoun *joka* declines for the case of the relativized position and relativizes
 subjects through genitives. -/
 def relJoka : Relativizer where
-  form := "joka"
   placement := .postNominal
   realize
     | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}
@@ -35,7 +34,6 @@ def relJoka : Relativizer where
 /-- The prenominal participial clause leaves the relativized position empty and relativizes
 subjects and direct objects only. -/
 def relParticipial : Relativizer where
-  form := "participle"
   placement := .preNominal
   realize
     | .subject | .directObject => {.gap}

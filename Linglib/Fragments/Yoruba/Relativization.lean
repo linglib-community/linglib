@@ -38,7 +38,6 @@ namespace Yoruba
 /-- The introducer *tí*. A relativized subject or genitive retains a pronoun, a direct object,
 indirect object or oblique leaves a gap, and the object of comparison is not relativized. -/
 def relTi : Relativizer where
-  form := "tí"
   placement := .postNominal
   realize
     | .subject | .genitive => {.resumptive}

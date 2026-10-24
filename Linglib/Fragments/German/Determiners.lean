@@ -31,7 +31,6 @@ familiarity, and Moroney classes a language by how its articles mark the two.
 
 ## Main declarations
 
-* `German.Determiners.GenderNumber`: the gender and number a determiner agrees in.
 * `German.Determiners.strongEnding`: the strong endings.
 * `German.Determiners.dieser`, `German.Determiners.einWord`, `German.Determiners.kein`,
   `German.Determiners.ein`, `German.Determiners.definite`: the declensions.
@@ -57,13 +56,6 @@ familiarity, and Moroney classes a language by how its articles mark the two.
 namespace German.Determiners
 
 open German.Case (forms)
-
-/-- A determiner agrees with its noun in a gender in the singular, and only in number in the plural,
-where the genders fall together. -/
-inductive GenderNumber where
-  | sg (g : Gender.Value)
-  | pl
-  deriving DecidableEq, Repr, Fintype
 
 /-! ### Declensions -/
 
