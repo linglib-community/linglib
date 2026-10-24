@@ -144,6 +144,9 @@ theorem lt_def : i₁ < i₂ ↔ i₁ ≤ i₂ ∧ (i₂.fst < i₁.fst ∨ i₁
   rw [lt_iff_le_not_ge]
   exact and_congr_right' (by rw [le_def, not_and_or, not_le, not_le])
 
+theorem notMem_iff {a : α} {i : NonemptyInterval α} : a ∉ i ↔ a < i.fst ∨ i.snd < a := by
+  rw [mem_def, not_and_or, not_le, not_le]
+
 theorem Overlaps.mono_left {i₁' : NonemptyInterval α} (h : i₁.Overlaps i₂) (hle : i₁ ≤ i₁') :
     i₁'.Overlaps i₂ :=
   ⟨(le_def.1 hle).1.trans h.1, h.2.trans (le_def.1 hle).2⟩

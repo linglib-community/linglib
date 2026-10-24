@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Events.PreExistence
+public import Linglib.Semantics.Events.Lifespan
 public import Linglib.Semantics.Attitudes.Anchor
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Events.Basic
@@ -35,9 +35,11 @@ inference follows.
 
 ## Implementation notes
 
-* Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`. Time spans are a
+* Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`. Time spans are a
   function `τ` into `NonemptyInterval`, the run time of an event or the life span of an entity,
-  and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst` (`Event.preExists_iff`).
+  and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst` (`Event.preExists_iff`). θTh's
+  presupposition in (55) is the pre-existence of `Q`, and its assertion the pre-existence of the
+  `Q`s that the `P`-event is about.
 * Truth values are trivalent, as in the paper: a sentence is a trivalent proposition
   `W → SignType`, defined when it is true or false. The existential closure (58) and the past
   tense (60) are both the strong Kleene existential `Trivalent.existsStrong`, the tense over the
@@ -77,13 +79,12 @@ variable {W T X E I : Type*} [LinearOrder T]
 
 open Classical in
 /-- With *hanaxa*, θTh holds of an event `e` at the matrix time `t` when `e` is a `P`-event about
-an individual of `Q` that started before `t`, and presupposes that `Q` describes such an
-individual, (55), (56). -/
+an individual of `Q` that pre-exists `t`, and presupposes that `Q` pre-exists `t`, (55), (56). -/
 noncomputable def thetaTh (τ : X → NonemptyInterval T) (about : E → X)
     (P : W → NonemptyInterval T → E → Prop) (Q : W → NonemptyInterval T → X → Prop)
     (t : NonemptyInterval T) (e : E) : W → SignType :=
   {w | PreExists τ (Q w t) t}.indicator
-    fun w ↦ SignType.ofProp (∃ x, Q w t x ∧ (τ x).fst < t.fst ∧ P w t e ∧ about e = x)
+    fun w ↦ SignType.ofProp (PreExists τ (fun x ↦ Q w t x ∧ P w t e ∧ about e = x) t)
 
 /-- The report (61) is the past tense (60), within the contextual interval `g₁`, over the
 existentially closed (58) θTh-report (57). -/
@@ -104,13 +105,13 @@ noncomputable def reportThat [Anchor E I] (P : W → NonemptyInterval T → E �
 variable {τ : X → NonemptyInterval T} {about : E → X} {P : W → NonemptyInterval T → E → Prop}
   {Q : W → NonemptyInterval T → X → Prop} {g₁ t : NonemptyInterval T} {w : W}
 
-/-- θTh's assertion repeats its presupposition, so θTh is true exactly when its assertion holds,
+/-- θTh's assertion entails its presupposition, so θTh is true exactly when its assertion holds,
 (55), (56). -/
 theorem thetaTh_eq_one_iff {e : E} :
-    thetaTh τ about P Q t e w = 1 ↔ ∃ x, Q w t x ∧ (τ x).fst < t.fst ∧ P w t e ∧ about e = x := by
+    thetaTh τ about P Q t e w = 1 ↔ PreExists τ (fun x ↦ Q w t x ∧ P w t e ∧ about e = x) t := by
   simp only [thetaTh, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
     SignType.ofProp_eq_one_iff, and_iff_right_iff_imp]
-  exact fun ⟨x, hx, hlt, _⟩ ↦ preExists_iff.2 ⟨x, hx, hlt⟩
+  exact PreExists.mono fun _ h ↦ h.1
 
 theorem thetaTh_ne_zero_iff {e : E} : thetaTh τ about P Q t e w ≠ 0 ↔ PreExists τ (Q w t) t := by
   simp [thetaTh]

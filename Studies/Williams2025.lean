@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Viewpoint
-public import Linglib.Semantics.Events.PreExistence
+public import Linglib.Semantics.Events.Lifespan
 public import Studies.White2014
 public import Linglib.Fragments.English.Verbs.Attitude
 public import Linglib.Fragments.English.Verbs.Implicative
@@ -35,7 +35,7 @@ complement holds, while a plain infinitive contradicts it and needs the modal.
   (`Complement`), and closure binds its event (`Complement.closure`).
 * mathlib orders intervals by inclusion: the paper's `τ(e) ⊆ t` is `(τ e) ≤ t`, its `t' < t` in
   (30a) and (30b) is `t'.Precedes t`, the `t ≤ t'` of (37) is `t.IsBefore t'`, and `LB` is `.fst`.
-* Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`, shared with
+* Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`, shared with
   `Studies/Bondarenko2020`. (28b) as printed binds the complement's time existentially, and so bound
   it cannot tell the plain infinitive from the anterior complements (`exists_anterior_iff`). The
   derivations (32), (34) and (36) evaluate the complement at the attitude holder's subjective now,
