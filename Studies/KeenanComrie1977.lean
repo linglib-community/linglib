@@ -47,11 +47,16 @@ stronger constraint on languages and satisfies its weakening by promotion.
 
 * `relativizable_eq_biUnion`: a language relativizes a position iff one of its strategies does.
 * `satisfiesHC1_iff_exists_isPrimary`, `SatisfiesHC2.satisfiesPRC`: the Primary Relativization
-  Constraint follows from the Hierarchy Constraints.
-* `satisfiesHC2_of_mem_sample`, `retainsDownward_of_mem_sample`: the sample obeys them.
-* `exists_positions_eq_Icc`: each position down to the genitive is a cut-off.
-* `not_isUpperSet_relativizable_tobaBatak`, `satisfiesHCPromotion_tobaBatak`: Toba Batak refutes
-  the stronger constraint and satisfies it with promotion.
+  Constraint follows from the Hierarchy Constraints (p. 68).
+* `satisfiesHC2_of_mem_sample`, `retainsDownward_of_mem_sample`: the sample obeys HC₂ and retains
+  pronouns downward (p. 92).
+* `exists_positions_eq_Icc`: each position down to the genitive is a cut-off (Section 1.3).
+* `satisfiesHCPromotion_bot_iff`, `not_isUpperSet_relativizable_tobaBatak`,
+  `satisfiesHCPromotion_tobaBatak`, `mem_relativizable_tobaBatak_iff`: without promotion the
+  constraint is the stronger one, which Toba Batak refutes (p. 68); with promotion Toba Batak
+  satisfies it, relativizing directly the positions its voices cannot promote (p. 69).
+* `hebrew_table1`, `arabic_table1`, `finnish_plus_case_is_primary`, `korean_genitive_retention`,
+  `arabic_table2`: rows of Table 1 (pp. 76–78, Sections 1.3.2 and 1.3.4) and Table 2 (p. 93).
 
 ## Implementation notes
 
@@ -148,19 +153,17 @@ structure SatisfiesPRC (L : List Relativizer) : Prop where
   exists_isPrimary : ∃ s : Strategy, s.IsPrimary L
   isUpperSet_positions : ∀ s : Strategy, s.IsPrimary L → IsUpperSet (s.positions L : Set Position)
 
-/-- The first clause of the Primary Relativization Constraint restates HC₁ (p. 68). -/
+/-- The first clause of the Primary Relativization Constraint restates HC₁. -/
 theorem satisfiesHC1_iff_exists_isPrimary {L : List Relativizer} :
     SatisfiesHC1 L ↔ ∃ s : Strategy, s.IsPrimary L := by
   simp [SatisfiesHC1, relativizable_eq_biUnion, Strategy.IsPrimary]
 
 /-- The Primary Relativization Constraint follows from the Hierarchy Constraints, its second
-clause from HC₂ and the definition of primary (p. 68). -/
+clause from HC₂ and the definition of primary. -/
 theorem SatisfiesHC2.satisfiesPRC {L : List Relativizer} (h₂ : SatisfiesHC2 L)
     (h₁ : SatisfiesHC1 L) : SatisfiesPRC L :=
   ⟨satisfiesHC1_iff_exists_isPrimary.1 h₁, fun s hp ↦ (h₂ s).isUpperSet_of_top_mem hp⟩
 
-/-- Under HC₂, a primary strategy covers exactly the interval from its cut-off up to the subject, as
-in Table 1. -/
 theorem SatisfiesHC2.positions_eq_Icc_top {L : List Relativizer} (h : SatisfiesHC2 L)
     {s : Strategy} (hp : s.IsPrimary L) : s.positions L = Icc ((s.positions L).min' ⟨⊤, hp⟩) ⊤ :=
   eq_Icc_top_of_ordConnected_coe (h s) hp
@@ -196,15 +199,11 @@ def sample : List (List Relativizer) :=
   [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy, mandarin, basque,
     french, german, hindi, japanese, russian, tagalog, turkish]
 
-/-- In Table 1's Hebrew (p. 77), the −case strategy covers subjects and direct objects and the +case
-strategy direct objects and below. -/
 theorem hebrew_table1 :
     (⟨.postNominal, false⟩ : Strategy).positions hebrew = {.subject, .directObject} ∧
       (⟨.postNominal, true⟩ : Strategy).positions hebrew = Iic .directObject := by
   decide
 
-/-- Table 1's Arabic (p. 76): the −case strategy covers the subject alone and the +case strategy
-every other position. -/
 theorem arabic_table1 :
     (⟨.postNominal, false⟩ : Strategy).positions arabic = {.subject} ∧
       (⟨.postNominal, true⟩ : Strategy).positions arabic = {.subject}ᶜ := by
@@ -221,8 +220,7 @@ theorem satisfiesHC2_of_mem_sample {L : List Relativizer} (h : L ∈ sample) :
 theorem satisfiesPRC_of_mem_sample {L : List Relativizer} (h : L ∈ sample) : SatisfiesPRC L :=
   (satisfiesHC2_of_mem_sample h).satisfiesPRC (satisfiesHC1_of_mem_sample h)
 
-/-- Every position from the genitive up is the cut-off of some primary strategy in the sample
-(Section 1.3). -/
+/-- Every position from the genitive up is the cut-off of some primary strategy in the sample. -/
 theorem exists_positions_eq_Icc {p : Position} (hp : .genitive ≤ p) :
     ∃ L ∈ sample, ∃ s : Strategy, s.positions L = Icc p .subject := by
   revert p; decide
@@ -239,7 +237,7 @@ instance (L : List Relativizer) (R : Position → Position → Prop) [DecidableR
     Decidable (SatisfiesHCPromotion L R) :=
   inferInstanceAs (Decidable (∀ _, _))
 
-/-- Without promotion the constraint is the stronger one the paper rejects (p. 68): a language
+/-- Without promotion the constraint is the stronger one the paper rejects, that a language
 relativizes an upper set of the hierarchy. -/
 theorem satisfiesHCPromotion_bot_iff {L : List Relativizer} :
     SatisfiesHCPromotion L ⊥ ↔ IsUpperSet (relativizable L : Set Position) :=
@@ -267,19 +265,19 @@ def tobaBatakRole : Position → Option Voice.TermRole
   | .genitive | .objComparison => none
 
 /-- Toba Batak relativizes indirect objects but not direct objects, refuting the stronger
-constraint (p. 68). -/
+constraint. -/
 theorem not_isUpperSet_relativizable_tobaBatak :
     ¬ IsUpperSet (relativizable tobaBatak : Set Position) := fun h ↦
   absurd (h (show Position.indirectObject ≤ .directObject by decide) (by decide)) (by decide)
 
 /-- Toba Batak satisfies the constraint with promotion, its object voice promoting the direct
-object to subject (p. 69). -/
+object to subject. -/
 theorem satisfiesHCPromotion_tobaBatak :
     SatisfiesHCPromotion tobaBatak (Promotes TobaBatak.voices tobaBatakRole) := by
   decide
 
-/-- Toba Batak relativizes directly the subject and exactly the positions its voices cannot promote
-(p. 69), the object of comparison aside (Table 1). -/
+/-- Toba Batak relativizes directly the subject and exactly the positions its voices cannot
+promote, the object of comparison aside. -/
 theorem mem_relativizable_tobaBatak_iff {p : Position} (hp : p ≠ .objComparison) :
     p ∈ relativizable tobaBatak ↔
       p = .subject ∨ ¬ Promotes TobaBatak.voices tobaBatakRole p .subject := by
@@ -287,15 +285,11 @@ theorem mem_relativizable_tobaBatak_iff {p : Position} (hp : p ≠ .objCompariso
 
 /-! ### Strategies by their relativized position (Section 1.3) -/
 
-/-- Korean (Section 1.3.4, Table 1 p. 78): the −case strategy stops at obliques and a genitive
-requires a retained pronoun. -/
 theorem korean_genitive_retention :
     (⟨.preNominal, false⟩ : Strategy).positions korean = Icc .oblique .subject ∧
       ∀ r ∈ korean, r.realize .genitive = {.resumptive} := by
   decide
 
-/-- Finnish (Section 1.3.2): the case-coding strategy of *joka* is the broader one, the
-participle covering subject and direct object only, both primary. -/
 theorem finnish_plus_case_is_primary :
     (⟨.preNominal, false⟩ : Strategy).positions finnish ⊂
         (⟨.postNominal, true⟩ : Strategy).positions finnish ∧
@@ -318,7 +312,6 @@ def RetainsDownward (L : List Relativizer) : Prop :=
 instance (L : List Relativizer) : Decidable (RetainsDownward L) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Table 2's Arabic (p. 93): pronouns are retained everywhere but the subject. -/
 theorem arabic_table2 : retention arabic = {.subject}ᶜ := by decide
 
 theorem retainsDownward_of_mem_sample {L : List Relativizer} (h : L ∈ sample) :
