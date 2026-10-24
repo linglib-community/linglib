@@ -26,9 +26,9 @@ is filled, so the internal syntax of a clause does not predict its external synt
 factivity cross-cuts the Ā axis as well (table (80)).
 
 The Nez Perce embedding strategy is read off the paper's judgments in
-`Data/Examples/Deal2026.json`. The Adyghe Ā flag is that 'think' takes the Fragment's *ze-re-*
-typer, and the Bulgarian flag is Krapova's double requirement over the Fragment's frames, checked
-against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
+`Data/Examples/Deal2026.json`. The Adyghe Ā flag is that the typer 'think' takes carries the
+Fragment's relativizer *zV-*, and the Bulgarian flag is Krapova's double requirement over the
+Fragment's frames, checked against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
 
 ## Main results
 
@@ -150,10 +150,11 @@ def nezPerce (v : Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .relative⟩
 def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
 
 /-- The Adyghe relative embedding of (43) is V D N CP with an Ā-dependency. Its flag comes from
-the Fragment, where 'think' takes the relativizer *ze-* with the applicative *re-* on its tensed
-complement ([caponigro-polinsky-2011]). -/
+the Fragment, where the clause-typer 'think' takes carries the relativizer *zV-*
+([caponigro-polinsky-2011]). -/
 def adygheRelative : Cell :=
-  ⟨ClauseSpine.cP.append [.N, .D], decide (Adyghe.gwepshesa.toVerb.Takes Adyghe.zeRe)⟩
+  ⟨ClauseSpine.cP.append [.N, .D],
+    decide (∃ z ∈ Adyghe.gwepshesa.typers Adyghe.complementizers, Adyghe.relativizer ∈ z.morphs)⟩
 
 /-- By Krapova's double requirement, reported at footnote 22, *deto* introduces the complement
 of a predicate that is an emotive factive, a factive preferential attitude, and takes a *za*
