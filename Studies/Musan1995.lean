@@ -54,7 +54,7 @@ def holdsAt (τ : X → NonemptyInterval T) (P : X → T → Prop) (x : X) (t : 
 /-- An individual-level predicate holds of an individual throughout its life if it holds of it at
 all (17g). -/
 abbrev IndividualLevel (τ : X → NonemptyInterval T) (P : X → T → Prop) : Prop :=
-  Permanent (fun x ↦ (τ x : Set T)) (holdsAt τ P)
+  Permanent τ (holdsAt τ P)
 
 variable {τ : X → NonemptyInterval T} {P : X → T → Prop} {g : X} {now : T}
 
@@ -70,11 +70,11 @@ theorem past_not_entails_present :
     ⟨0, by decide, ⟨le_rfl, le_rfl⟩, trivial⟩, fun h ↦ absurd h.1.2 (by decide)⟩
 
 /-- The life-time effect (17g): if an individual-level predicate held of Gregory in the past and
-does not hold of him now, his life span ends before now. -/
+does not hold of him now, his life span precedes now. -/
 theorem lifetime_effect (hP : IndividualLevel τ P) (h : ◇[toSetRel ⟦past⟧] (holdsAt τ P g) now)
-    (hover : ¬ P g now) : (τ g).snd < now :=
+    (hover : ¬ P g now) : (τ g).Precedes (.pure now) :=
   let ⟨_, hlt, ht⟩ := h
-  hP.snd_lt ht.1 ht (by simpa using hlt) fun h ↦ hover h.2
+  hP.precedes_pure ht.1 ht (by simpa using hlt) fun h ↦ hover h.2
 
 /-- Gregory, alive from `0` to `1` and from America while alive, was from America at `2` and is
 not now. -/

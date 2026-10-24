@@ -135,8 +135,8 @@ theorem pseudoCleft_presupposition {T Q : Type*} [LinearOrder T] [DecidableEq Q]
     {life run : NonemptyInterval T} {q : T → Q} :
     (PersistenceLevel.ofLifespan life run q = .exPersBeginning → run.fst ∈ life) ∧
       (PersistenceLevel.ofLifespan life run q = .exPersEnd → run.fst ∉ life) :=
-  ⟨fun h ↦ PersistenceLevel.exPersBeginning_le_ofLifespan_iff.1 h.symm.le,
-    fun h hB ↦ absurd (h ▸ PersistenceLevel.exPersBeginning_le_ofLifespan_iff.2 hB) (by decide)⟩
+  ⟨fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersBeginning_iff.1 h).1,
+    fun h ↦ (PersistenceLevel.ofLifespan_eq_exPersEnd_iff.1 h).1⟩
 
 /-- The subject of *kiss* strictly dominates its object on the agentivity lattice, so the
 dominance criterion selects it, [dowty-1991]'s result for (43) without counting entailments. -/

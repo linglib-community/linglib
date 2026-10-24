@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Data.Fintype.Inv
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Basic.SetLike.Basic
 public import Mathlib.Order.Lattice
@@ -21,6 +22,8 @@ rejoining at `totalPersistence`.
 * `PersistenceLevel`: the five valid combinations, each a set of features.
 * `PersistenceLevel.Valid`: Grimm's exclusion principles, with `range_features` showing that the
   five levels are exactly the combinations they leave.
+* `PersistenceLevel.featuresOrderIso`: the levels, ordered by inclusion, as the valid sets of
+  features.
 
 ## Implementation notes
 
@@ -74,6 +77,10 @@ inductive Feature where
   | quPE
   deriving DecidableEq, Repr, Fintype
 
+theorem Feature.forall {p : Feature → Prop} :
+    (∀ f, p f) ↔ p .exPB ∧ p .exPE ∧ p .quPB ∧ p .quPE :=
+  ⟨fun h ↦ ⟨h _, h _, h _, h _⟩, fun ⟨h₁, h₂, h₃, h₄⟩ f ↦ by cases f <;> assumption⟩
+
 /-- The features of a level. -/
 def features : PersistenceLevel → Finset Feature
   | .totalNonPersistence => ∅
@@ -96,6 +103,14 @@ instance : DecidablePred Valid := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ 
 theorem range_features : Set.range features = {s | Valid s} :=
   Set.ext <| (by decide : ∀ s, (∃ l, features l = s) ↔ Valid s)
 
+theorem valid_features (l : PersistenceLevel) : Valid l.features := by
+  cases l <;> decide
+
+theorem existsUnique_features {s : Finset Feature} (hs : Valid s) :
+    ∃! l : PersistenceLevel, l.features = s :=
+  let ⟨l, hl⟩ := (Set.ext_iff.1 range_features s).2 hs
+  ⟨l, hl, fun _ h ↦ features_injective (h.trans hl.symm)⟩
+
 instance : SetLike PersistenceLevel Feature where
   coe l := l.features
   coe_injective _ _ h := features_injective (Finset.coe_injective h)
@@ -113,6 +128,22 @@ theorem le_iff_features_subset {l m : PersistenceLevel} : l ≤ m ↔ l.features
 
 instance : DecidableRel (α := PersistenceLevel) (· ≤ ·) := fun _ _ ↦
   decidable_of_iff _ le_iff_features_subset.symm
+
+/-- The persistence levels, ordered by inclusion, are the valid sets of features. -/
+def featuresOrderIso : PersistenceLevel ≃o {s : Finset Feature // Valid s} where
+  toFun l := ⟨l.features, valid_features l⟩
+  invFun s := Fintype.choose (features · = s.1) (existsUnique_features s.2)
+  left_inv l := features_injective (Fintype.choose_spec (features · = l.features) _)
+  right_inv s := Subtype.ext (Fintype.choose_spec (features · = s.1) _)
+  map_rel_iff' := le_iff_features_subset.symm
+
+@[simp] theorem coe_featuresOrderIso (l : PersistenceLevel) :
+    (featuresOrderIso l : Finset Feature) = l.features :=
+  rfl
+
+@[simp] theorem features_featuresOrderIso_symm (s : {s : Finset Feature // Valid s}) :
+    (featuresOrderIso.symm s).features = s :=
+  congrArg Subtype.val (featuresOrderIso.apply_symm_apply s)
 
 /-- The join of two levels, the level whose features are the union of theirs. -/
 def sup' : PersistenceLevel → PersistenceLevel → PersistenceLevel
