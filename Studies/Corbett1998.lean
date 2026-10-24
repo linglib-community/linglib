@@ -9,7 +9,7 @@ public import Linglib.Fragments.Somali.Gender
 public import Linglib.Fragments.Latin.Gender
 public import Linglib.Fragments.Chichewa.Gender
 public import Linglib.Fragments.CoastalMarind.Gender
-public import Linglib.Syntax.Agreement.Classes
+public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Agreement.Resolution
 public import Linglib.Data.Examples.Corbett1998
 
@@ -41,7 +41,7 @@ rather than the resolved one. The chapter's examples are the rows of
   chapter's classification of the five dimensions carried as data; what a Russian target is
   inflected for is derived from its forms in the fragment, and what it agrees in is the
   inflected dimensions whose origin is the controller.
-* Polarity is the substrate's `Gender.Polar`, which the Somali fragment proves of its
+* Polarity is the substrate's `Morphology.Polar`, which the Somali fragment proves of its
   article (Table 9.1); the verbal prefix is shown not to be polar, the plural prefix
   coinciding with the masculine singular's instead.
 * Number-conditioned gender distinctions are the substrate's convergent maps between the
@@ -163,7 +163,7 @@ open _root_.Somali.Gender
 
 /-- The verbal prefix is not polar, (11)–(14), the plural prefix of either gender being the
 masculine singular's. -/
-theorem not_polar_verbPrefix : ¬ Gender.Polar Value.verbPrefix := by decide
+theorem not_polar_verbPrefix : ¬ Morphology.Polar Value.verbPrefix := by decide
 
 theorem verbPrefix_plural (g : Value) :
     g.verbPrefix (numberSystem.value .plural) =

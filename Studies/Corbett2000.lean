@@ -5,7 +5,7 @@ public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.NormNum
-public import Linglib.Syntax.Agreement.Classes
+public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Number.Resolve
 public import Linglib.Fragments.Bayso.Number
 public import Linglib.Fragments.Teop.Nouns
@@ -505,8 +505,8 @@ end Kiowa
 /-- The Teop articles of the a- and o-classes are polar (Table 5.15), like the Somali article (Table
 5.16), but the e-class breaks the polarity. -/
 theorem teop_inverse :
-    Gender.Polar (fun (c : {c : Teop.NounClass // c ≠ .e}) pl ↦ Teop.headArticle c pl) ∧
-      ¬ Gender.Polar Teop.headArticle ∧ Gender.Faithful Teop.headArticle :=
+    Morphology.Polar (fun (c : {c : Teop.NounClass // c ≠ .e}) pl ↦ Teop.headArticle c pl) ∧
+      ¬ Morphology.Polar Teop.headArticle ∧ Gender.Faithful Teop.headArticle :=
   ⟨by decide, fun h ↦ absurd h.card_le_two (by decide), by decide⟩
 
 namespace Rembarrnga

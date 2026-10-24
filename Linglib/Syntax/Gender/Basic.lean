@@ -22,8 +22,6 @@ agreement evidence: distinct genders are distinguished by some agreement target.
 
 * `Gender.Faithful.card_le_pow`: `f` forms on each of `t` targets support at most `f ^ t`
   controller genders.
-* `Gender.factorsThrough_of_faithful`: under faithful agreement, nouns that agree alike have
-  the same gender, so genders are agreement classes.
 
 ## Implementation notes
 
@@ -41,7 +39,6 @@ agreement evidence: distinct genders are distinguished by some agreement target.
 * [corbett-1991] — genders as agreement classes, crediting [hockett-1958]
 * [zaliznjak-1964] — agreement classes
 * [kramer-2015] — the two-class minimum
-* [corbett-fedden-2016] — canonical gender
 * [harbour-2014] — the universal calculi of number and person, which gender lacks
 -/
 
@@ -111,27 +108,5 @@ theorem Faithful.card_le_pow [Fintype G] [Fintype T] [Fintype F] [DecidableEq T]
   exact Fintype.card_le_of_injective agr h
 
 end Faithful
-
-/-! ### Assignment and agreement
-
-An assignment gives every noun one controller gender, the Canonical Gender Principle of
-[corbett-fedden-2016]. If each noun agrees as its assigned gender does and the genders are
-faithful, nouns that agree alike have the same gender: genders are agreement classes in
-[zaliznjak-1964]'s sense, the starting point of [corbett-1991]'s definition. Corbett's controller
-genders discount subgenders, inquorate genders and overdifferentiated targets on the way from
-agreement classes to genders; those steps are not modelled here. -/
-
-section Assignment
-
-variable {N T F : Type*}
-
-/-- If each noun's agreement `nounAgr` is the agreement `agr` of its assigned gender and `agr` is
-faithful, nouns with the same agreement have the same gender, so genders are agreement classes. -/
-theorem factorsThrough_of_faithful {assign : N → G} {nounAgr : N → T → F} {agr : G → T → F}
-    (med : nounAgr = agr ∘ assign) (faith : Faithful agr) :
-    Function.FactorsThrough assign nounAgr :=
-  fun _ _ hab ↦ faith (by simpa [med] using hab)
-
-end Assignment
 
 end Gender

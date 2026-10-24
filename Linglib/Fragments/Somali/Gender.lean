@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Agreement.Classes
+public import Linglib.Syntax.Gender.AgreementClasses
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
@@ -84,7 +84,7 @@ def Value.verbPrefix (g : Value) : numberSystem.values → VerbPrefix :=
   numberSystem.elim (match g with | .masc => .y | .fem => .t) .y
 
 /-- The article is polar. -/
-theorem polar_article : Gender.Polar Value.article := by decide
+theorem polar_article : Morphology.Polar Value.article := by decide
 
 /-- The article distinguishes the two genders. -/
 theorem faithful_article : Gender.Faithful Value.article := polar_article.faithful
