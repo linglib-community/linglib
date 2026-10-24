@@ -22,6 +22,8 @@ reading on which the indefinite scopes below the binder.
 
 ## Main results
 
+* `ChoiceFunction.exists_forall_mem_apply_eq`: a choice function can pick any prescribed values
+  from a family of properties, provided those from the nonempty ones are members.
 * `ChoiceFunction.some_of_apply`, `ChoiceFunction.forall_apply_iff_some_iff`: a choice function
   witnesses the existential reading, and agrees with it on every predicate only when the
   restrictor has a single member.
@@ -78,12 +80,20 @@ noncomputable def epsilon [Nonempty E] : ChoiceFunction E :=
 instance [Nonempty E] : Nonempty (ChoiceFunction E) :=
   ⟨epsilon⟩
 
-theorem exists_apply_eq {N : E → Prop} {x : E} (hx : N x) : ∃ f : ChoiceFunction E, f N = x := by
+/-- A choice function can pick prescribed values from a family of properties, as long as the
+values picked from the nonempty ones are members. -/
+theorem exists_forall_mem_apply_eq [Nonempty E] {T : Set (E → Prop)} (g : ∀ P ∈ T, E)
+    (hg : ∀ (P : E → Prop) (hP : P ∈ T), (∃ x, P x) → P (g P hP)) :
+    ∃ f : ChoiceFunction E, ∀ P hP, f P = g P hP := by
   classical
+  refine ⟨⟨fun P ↦ if hP : P ∈ T then g P hP else epsilon P, fun P hP ↦ ?_⟩, fun P hP ↦ ?_⟩
+  · split_ifs with h
+    exacts [hg P h hP, epsilon.apply_of_exists hP]
+  · simp [hP]
+
+theorem exists_apply_eq {N : E → Prop} {x : E} (hx : N x) : ∃ f : ChoiceFunction E, f N = x :=
   have : Nonempty E := ⟨x⟩
-  exact ⟨⟨fun P ↦ if P = N then x else epsilon P, fun P hP ↦ by
-    split_ifs with hPN
-    exacts [hPN ▸ hx, epsilon.apply_of_exists hP]⟩, by simp⟩
+  (exists_forall_mem_apply_eq (T := {N}) (fun _ _ ↦ x) fun _ h _ ↦ h ▸ hx).imp fun _ hf ↦ hf N rfl
 
 /-! ### The existential reading
 
@@ -122,12 +132,11 @@ theorem forall_apply_iff_every {N : E → Prop} (hN : ∃ x, N x) (VP : E → Pr
 
 theorem forall_apply_iff_of_not_exists {N : E → Prop} (hN : ¬ ∃ x, N x) (VP : E → Prop) :
     (∀ f : ChoiceFunction E, VP (f N)) ↔ ∀ x, VP x := by
-  classical
   refine ⟨fun h x ↦ ?_, fun h f ↦ h _⟩
   have : Nonempty E := ⟨x⟩
-  have := h ⟨fun P ↦ if ∃ y, P y then epsilon P else x, fun P hP ↦ by
-    simpa [hP] using epsilon.apply_of_exists hP⟩
-  simpa [hN] using this
+  obtain ⟨f, hf⟩ := exists_forall_mem_apply_eq (T := {P | ¬ ∃ y, P y}) (fun _ _ ↦ x)
+    fun _ hP h ↦ (hP h).elim
+  simpa [hf N hN] using h f
 
 /-! ### Scope relative to a binder -/
 
@@ -136,17 +145,14 @@ relative to the binder. Since the restrictor already varies with the variable, o
 function can be assembled from the pointwise choices. -/
 theorem exists_forall_apply_iff [Nonempty E] (R : ι → E → Prop) (VP : E → Prop) :
     (∃ f : ChoiceFunction E, ∀ i, VP (f (R i))) ↔ ∀ i, ∃ f : ChoiceFunction E, VP (f (R i)) := by
-  classical
   refine ⟨fun ⟨f, h⟩ i ↦ ⟨f, h i⟩, fun h ↦ ?_⟩
   choose F hF using h
-  refine ⟨⟨fun P ↦ if hP : ∃ i, P = R i then F hP.choose P else epsilon P, fun P hP ↦ ?_⟩,
-    fun i ↦ ?_⟩
-  · split_ifs
-    exacts [(F _).apply_of_exists hP, epsilon.apply_of_exists hP]
-  · have hi : ∃ j, R i = R j := ⟨i, rfl⟩
-    have := hF hi.choose
-    rw [← hi.choose_spec] at this
-    simpa [hi] using this
+  obtain ⟨f, hf⟩ := exists_forall_mem_apply_eq (T := Set.range R) (fun P hP ↦ F hP.choose P)
+    fun _ _ ↦ (F _).apply_of_exists
+  refine ⟨f, fun i ↦ ?_⟩
+  have hi : R i ∈ Set.range R := ⟨i, rfl⟩
+  rw [hf _ hi]
+  simpa [hi.choose_spec] using hF hi.choose
 
 /-- When distinct values of a bound variable give distinct nonempty restrictors, closing a choice
 function above the binder gives the reading with the existential below it, even if the predicate
@@ -154,17 +160,14 @@ also contains the variable. -/
 theorem exists_forall_apply_iff_of_injective [Nonempty E] {R : ι → E → Prop}
     (hR : Function.Injective R) (hN : ∀ i, ∃ x, R i x) (VP : ι → E → Prop) :
     (∃ f : ChoiceFunction E, ∀ i, VP i (f (R i))) ↔ ∀ i, GQ.some (R i) (VP i) := by
-  classical
   refine ⟨fun ⟨f, h⟩ i ↦ f.some_of_apply (hN i) (h i), fun h ↦ ?_⟩
   choose x hx hVP using h
-  refine ⟨⟨fun P ↦ if hP : ∃ i, R i = P then x hP.choose else epsilon P, fun P hP ↦ ?_⟩,
-    fun i ↦ ?_⟩
-  · split_ifs with h'
-    · have := hx h'.choose
-      rwa [h'.choose_spec] at this
-    · exact epsilon.apply_of_exists hP
-  · have hi : ∃ j, R j = R i := ⟨i, rfl⟩
-    simpa [hi, hR hi.choose_spec] using hVP i
+  obtain ⟨f, hf⟩ := exists_forall_mem_apply_eq (T := Set.range R) (fun _ hP ↦ x hP.choose)
+    fun _ hP _ ↦ by simpa [hP.choose_spec] using hx hP.choose
+  refine ⟨f, fun i ↦ ?_⟩
+  have hi : R i ∈ Set.range R := ⟨i, rfl⟩
+  rw [hf _ hi, hR hi.choose_spec]
+  exact hVP i
 
 /-- Closing a skolemized choice function above a binder of its index gives the reading with the
 existential below the binder. -/

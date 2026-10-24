@@ -37,8 +37,9 @@ the effect (`PredAbs`), not built in.
 
 The tree operations live in the namespace `PhraseStructure.Tree`, so that `t.interp lex g` works.
 Binary nodes sequence effects left to right, whichever daughter is the function, so at
-`M = Cont R` surface scope is the default and inverse scope needs a reordered evaluation
-(`Composition/Cont.lean`). Predicate Abstraction needs a distributor
+`M = Cont R` the engine derives surface scope only: inverse scope needs an evaluation order
+chosen per node, which the engine does not provide (`Studies/Barker2002.lean` marks each rule
+with a permutation of its daughters). Predicate Abstraction needs a distributor
 `(E → M (Ty.Domain ty)) → M (E → Ty.Domain ty)`; scope effects lack one, so under them `.bind`
 nodes fail and binding comes from the order of effects. The abstraction's fallback value
 `valueAt` is never reached, since types do not depend on the assignment. The category of a node

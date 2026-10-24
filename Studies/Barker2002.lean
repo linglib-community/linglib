@@ -464,11 +464,12 @@ theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x
     rw [hC]
     omega
   have hsup : {x | P x} ⊆ (fun f : ChoiceFunction E ↦ f P) '' C := fun x hx ↦ by
-    let f : ChoiceFunction E := ⟨fun Q ↦ if Q = P then x else if Q = N then s else
-      ChoiceFunction.epsilon Q, fun Q hQ ↦ by
-        split_ifs with h₁ h₂
-        exacts [h₁ ▸ hx, h₂ ▸ hs, ChoiceFunction.epsilon.apply_of_exists hQ]⟩
-    exact ⟨f, by simpa [C, f, Ne.symm hP] using hVs, by simp [f]⟩
+    obtain ⟨f, hf⟩ := ChoiceFunction.exists_forall_mem_apply_eq (T := {P, N})
+      (fun Q _ ↦ if Q = P then x else s) fun Q hQ _ ↦ by
+        rcases hQ with h | h
+        · simpa [h] using hx
+        · simpa [show Q = N from h, Ne.symm hP] using hs
+    exact ⟨f, by simpa [C, hf N (by simp), Ne.symm hP] using hVs, by simpa using hf P (by simp)⟩
   have hne : ((fun f : ChoiceFunction E ↦ f P) '' C).Nonempty := by
     obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq hs
     exact ⟨f P, f, by simpa [C, hf] using hVs, rfl⟩
