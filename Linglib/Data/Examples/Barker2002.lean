@@ -91,7 +91,7 @@ def ex_17c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("a > every", .acceptable), ("every > a", .acceptable)]
-    paperFeatures := [("quantifiers", "every a")] }
+    paperFeatures := [("quantifiers", "every a"), ("derivation", "every man saw a woman")] }
 
 def ex_19a : Datum :=
   { id := "barker2002_19a"

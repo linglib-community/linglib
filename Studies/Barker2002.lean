@@ -176,6 +176,24 @@ theorem continuize_binary_swap (M : α → β → γ) (d₁ : Deriv ι α) (d₂
     (binary M (Equiv.swap 0 1) d₁ d₂).continuize = flip M <$> d₂.continuize <*> d₁.continuize :=
   rfl
 
+theorem continuize_island (d : Deriv ι Prop) : (island d).continuize = pure d.eval :=
+  rfl
+
+@[simp] theorem eval_coord (d₁ d₂ : Deriv ι Prop) : (coord d₁ d₂).eval = (d₁.eval ∧ d₂.eval) :=
+  rfl
+
+theorem continuize_binary_of_pure_left (M : α → β → γ) (σ : Equiv.Perm (Fin 2))
+    {d₁ : Deriv ι α} {a : α} (h : d₁.continuize = pure a) (d₂ : Deriv ι β) :
+    (binary M σ d₁ d₂).continuize = M a <$> d₂.continuize := by
+  rcases perm_fin_two σ with rfl | rfl <;>
+    simp only [continuize_binary_one, continuize_binary_swap, h] <;> rfl
+
+theorem continuize_binary_of_pure_right (M : α → β → γ) (σ : Equiv.Perm (Fin 2))
+    (d₁ : Deriv ι α) {d₂ : Deriv ι β} {b : β} (h : d₂.continuize = pure b) :
+    (binary M σ d₁ d₂).continuize = (M · b) <$> d₁.continuize := by
+  rcases perm_fin_two σ with rfl | rfl <;>
+    simp only [continuize_binary_one, continuize_binary_swap, h] <;> rfl
+
 /-! ### Simulation -/
 
 theorem continuize_eq_pure {d : Deriv ι α} {a : α} (h : d.direct = some a) :
@@ -195,19 +213,7 @@ theorem eval_eq_of_direct {d : Deriv ι Prop} {p : Prop} (h : d.direct = some p)
   rw [eval, continuize_eq_pure h]; rfl
 
 @[simp] theorem eval_island (d : Deriv ι Prop) : (island d).eval = d.eval :=
-  ContT.eval_reset _
-
-theorem continuize_binary_of_direct_left (M : α → β → γ) (σ : Equiv.Perm (Fin 2))
-    {d₁ : Deriv ι α} {a : α} (h : d₁.direct = some a) (d₂ : Deriv ι β) :
-    (binary M σ d₁ d₂).continuize = M a <$> d₂.continuize := by
-  rcases perm_fin_two σ with rfl | rfl <;>
-    simp only [continuize_binary_one, continuize_binary_swap, continuize_eq_pure h] <;> rfl
-
-theorem continuize_binary_of_direct_right (M : α → β → γ) (σ : Equiv.Perm (Fin 2))
-    (d₁ : Deriv ι α) {d₂ : Deriv ι β} {b : β} (h : d₂.direct = some b) :
-    (binary M σ d₁ d₂).continuize = (M · b) <$> d₁.continuize := by
-  rcases perm_fin_two σ with rfl | rfl <;>
-    simp only [continuize_binary_one, continuize_binary_swap, continuize_eq_pure h] <;> rfl
+  rfl
 
 /-! ### Integrity -/
 
@@ -314,7 +320,7 @@ def most : Deriv String (ChoiceFunction E) :=
   quant "most" fun D ↦ ∃ C : Set (ChoiceFunction E),
     (∀ P : E → Prop, {x | P x}.ncard < 2 * ((· P) '' C).ncard) ∧ ∀ f ∈ C, D f
 
-variable (j m : E) (left' man' woman' : E → Prop) (saw' friendOf : E → E → Prop)
+variable (j m : E) (left' slept' man' woman' : E → Prop) (saw' liked' friendOf : E → E → Prop)
   (thought' : Prop → E → Prop) (the : ChoiceFunction E)
 
 /-! ### Scope displacement and scope ambiguity -/
@@ -325,32 +331,40 @@ theorem john_left (σ : Equiv.Perm (Fin 2)) :
 
 theorem everyone_left (σ : Equiv.Perm (Fin 2)) :
     (S σ everyone (lex left')).eval = ∀ x, left' x := by
-  rcases perm_fin_two σ with rfl | rfl <;> rfl
+  rw [eval, S, continuize_binary_of_pure_right _ _ _ rfl]
+  rfl
 
 theorem john_saw_NPgq (w : String) (Q : Quantifier.GQ E) (σ τ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NPgq w Q (lex man')))).eval = Q man' (saw' · j) := by
-  rw [eval, S, continuize_binary_of_direct_left _ _ rfl, VP,
-    continuize_binary_of_direct_left _ _ rfl]
+  rw [eval, S, continuize_binary_of_pure_left _ _ rfl, VP,
+    continuize_binary_of_pure_left _ _ rfl]
   rfl
 
 theorem every_man_saw_a_woman_inverse (σ : Equiv.Perm (Fin 2)) :
     (S (Equiv.swap 0 1) (NPgq "every" Quantifier.GQ.every (lex man'))
       (VP σ (lex saw') (NPgq "a" Quantifier.GQ.some (lex woman')))).eval =
       ∃ y, woman' y ∧ ∀ x, man' x → saw' y x := by
-  rcases perm_fin_two σ with rfl | rfl <;> rfl
+  rw [eval, S, continuize_binary_swap, VP, continuize_binary_of_pure_left _ _ rfl]
+  rfl
 
 theorem every_man_saw_a_woman_surface (σ : Equiv.Perm (Fin 2)) :
     (S 1 (NPgq "every" Quantifier.GQ.every (lex man'))
       (VP σ (lex saw') (NPgq "a" Quantifier.GQ.some (lex woman')))).eval =
       ∀ x, man' x → ∃ y, woman' y ∧ saw' y x := by
-  rcases perm_fin_two σ with rfl | rfl <;> rfl
+  rw [eval, S, continuize_binary_one, VP, continuize_binary_of_pure_left _ _ rfl]
+  rfl
 
 theorem a_man_thought_everyone_saw_mary (σ₁ σ₂ σ₃ σ₄ : Equiv.Perm (Fin 2)) :
     (S σ₁ (NPgq "a" Quantifier.GQ.some (lex man'))
       (VS σ₂ (lex thought') (island (S σ₃ everyone (VP σ₄ (lex saw') (lex m)))))).eval =
       ∃ y, man' y ∧ thought' (∀ x, saw' m x) y := by
-  rcases perm_fin_two σ₁ with rfl | rfl <;> rcases perm_fin_two σ₂ with rfl | rfl <;>
-    rcases perm_fin_two σ₃ with rfl | rfl <;> rcases perm_fin_two σ₄ with rfl | rfl <;> rfl
+  have h : (island (S σ₃ everyone (VP σ₄ (lex saw') (lex m)))).continuize =
+      pure (∀ x, saw' m x) := by
+    rw [continuize_island, eval, S, continuize_binary_of_pure_right _ _ _ (continuize_eq_pure rfl)]
+    rfl
+  rw [eval, S, continuize_binary_of_pure_right _ _ _ (by
+    rw [VS, continuize_binary_of_pure_left _ _ rfl, h, map_pure])]
+  rfl
 
 /-- *the friend of* repeated `n` times before *everyone*, with the priorities `σ k` and `τ k` at
 the NP and N nodes of the `k`-th repetition. -/
@@ -364,8 +378,8 @@ theorem continuize_theFriendOfEveryone (σ τ : ℕ → Equiv.Perm (Fin 2)) (n :
   induction n with
   | zero => exact (id_map _).symm
   | succ n ih =>
-    rw [theFriendOfEveryone, NP, continuize_binary_of_direct_left _ _ rfl, N,
-      continuize_binary_of_direct_left _ _ rfl, PPof, continuize_unary, ih]
+    rw [theFriendOfEveryone, NP, continuize_binary_of_pure_left _ _ rfl, N,
+      continuize_binary_of_pure_left _ _ rfl, PPof, continuize_unary, ih]
     simp only [Functor.map_map, Function.iterate_succ_apply']
     rfl
 
@@ -373,7 +387,7 @@ theorem someone_saw_theFriendOfEveryone_surface (σ τ : ℕ → Equiv.Perm (Fin
     (υ : Equiv.Perm (Fin 2)) (n : ℕ) :
     (S 1 someone (VP υ (lex saw') (theFriendOfEveryone friendOf the σ τ n))).eval =
       ∃ x, ∀ y, saw' ((fun z ↦ the (friendOf z))^[n] y) x := by
-  rw [eval, S, continuize_binary_one, VP, continuize_binary_of_direct_left _ _ rfl,
+  rw [eval, S, continuize_binary_one, VP, continuize_binary_of_pure_left _ _ rfl,
     continuize_theFriendOfEveryone]
   rfl
 
@@ -381,7 +395,7 @@ theorem someone_saw_theFriendOfEveryone_inverse (σ τ : ℕ → Equiv.Perm (Fin
     (υ : Equiv.Perm (Fin 2)) (n : ℕ) :
     (S (Equiv.swap 0 1) someone (VP υ (lex saw') (theFriendOfEveryone friendOf the σ τ n))).eval =
       ∀ y, ∃ x, saw' ((fun z ↦ the (friendOf z))^[n] y) x := by
-  rw [eval, S, continuize_binary_swap, VP, continuize_binary_of_direct_left _ _ rfl,
+  rw [eval, S, continuize_binary_swap, VP, continuize_binary_of_pure_left _ _ rfl,
     continuize_theFriendOfEveryone]
   rfl
 
@@ -390,8 +404,8 @@ theorem someone_saw_theFriendOfEveryone_inverse (σ τ : ℕ → Equiv.Perm (Fin
 theorem john_saw_det (w : String) (Q : Cont Prop (ChoiceFunction E)) (σ τ υ : Equiv.Perm (Fin 2)) :
     (S σ (lex j) (VP τ (lex saw') (NP υ (quant w Q) (lex man')))).eval =
       Q fun f ↦ saw' (f man') j := by
-  rw [eval, S, continuize_binary_of_direct_left _ _ rfl, VP,
-    continuize_binary_of_direct_left _ _ rfl, NP, continuize_binary_of_direct_right _ _ _ rfl]
+  rw [eval, S, continuize_binary_of_pure_left _ _ rfl, VP,
+    continuize_binary_of_pure_left _ _ rfl, NP, continuize_binary_of_pure_right _ _ _ rfl]
   rfl
 
 theorem john_saw_every_man_iff (hman : ∃ x, man' x) (σ τ υ : Equiv.Perm (Fin 2)) :
@@ -421,9 +435,8 @@ theorem exists_forall_mem_apply_iff_most [Finite E] {N : E → Prop} (hN : ∃ x
       Quantifier.GQ.most N V := by
   classical
   rw [Quantifier.GQ.most_apply]
-  have hNV : {x | N x}.ncard = {x | N x ∧ V x}.ncard + {x | N x ∧ ¬ V x}.ncard := by
-    rw [← Set.ncard_union_eq (Set.disjoint_left.mpr fun x hx hx' ↦ hx'.2 hx.2)]
-    congr 1; ext x; by_cases V x <;> simp [*]
+  have hNV : {x | N x}.ncard = {x | N x ∧ V x}.ncard + {x | N x ∧ ¬ V x}.ncard :=
+    (Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | N x} {x | V x}).symm
   refine ⟨fun ⟨C, hC, hV⟩ ↦ ?_, fun h ↦ ?_⟩
   · have hsub : (· N) '' C ⊆ {x | N x ∧ V x} := by
       rintro _ ⟨f, hf, rfl⟩
@@ -539,18 +552,33 @@ theorem a_everyone_iff_everyone_a [Nonempty E] (σS σVP σN σVP' σN' : Equiv.
 
 /-! ### Generalized coordination -/
 
-theorem coord_VP_subject_priority (np : Deriv ι E) (P Q : E → Prop) :
+theorem ex27a (σ τ : Equiv.Perm (Fin 2)) :
+    (coord (S σ (lex j) (lex left')) (S τ (lex j) (lex slept')) : Deriv ι Prop).eval =
+      (left' j ∧ slept' j) := by
+  rw [eval_coord, john_left, john_left]
+
+theorem ex27b (σ : Equiv.Perm (Fin 2)) :
+    (S σ (lex j) (coord (lex left') (lex slept')) : Deriv ι Prop).eval = (left' j ∧ slept' j) := by
+  rw [eval, S, continuize_binary_of_pure_left _ _ rfl]
+  rfl
+
+theorem ex27c (σ τ : Equiv.Perm (Fin 2)) :
+    (S σ (lex j) (VP τ (coord (lex saw') (lex liked')) (lex m)) : Deriv ι Prop).eval =
+      (saw' m j ∧ liked' m j) := by
+  rw [eval, S, continuize_binary_of_pure_left _ _ rfl, VP,
+    continuize_binary_of_pure_right _ _ _ rfl]
+  rfl
+
+theorem ex27d (σ : Equiv.Perm (Fin 2)) :
+    (S σ (coord (lex j) (lex m)) (lex left') : Deriv ι Prop).eval = (left' j ∧ left' m) := by
+  rw [eval, S, continuize_binary_of_pure_right _ _ _ rfl]
+  rfl
+
+/-- With the subject taking priority, a coordination of verb phrases denotes their pointwise
+conjunction, the generalized conjunction of [partee-rooth-1983]. -/
+theorem eval_S_coord_one (np : Deriv ι E) (P Q : E → Prop) :
     (S 1 np (coord (lex P) (lex Q))).eval = (S 1 np (lex (P ⊓ Q))).eval :=
   rfl
-
-theorem coord_VP_priority (np : Deriv ι E) (P Q : E → Prop) :
-    (S (Equiv.swap 0 1) np (coord (lex P) (lex Q))).eval =
-      ((S (Equiv.swap 0 1) np (lex P)).eval ∧ (S (Equiv.swap 0 1) np (lex Q)).eval) :=
-  rfl
-
-theorem john_and_mary_left (σ : Equiv.Perm (Fin 2)) :
-    (S σ (coord (lex j) (lex m)) (lex left' : Deriv ι _)).eval = (left' j ∧ left' m) := by
-  rcases perm_fin_two σ with rfl | rfl <;> rfl
 
 /-! ### The paper's examples -/
 
@@ -560,7 +588,7 @@ def wordsOn (c : Char) (s : String) : List String :=
     let w := cs.filter (· ≠ ' ')
     if w = [] then none else some (String.ofList w)
 
-theorem rows_scopings : ∀ e ∈ Examples.all,
+theorem rows_scopings_someoneSawAFriendOfEveryone : ∀ e ∈ Examples.all,
     e.feature? "derivation" = some "someone saw a friend of everyone" → ∀ r ∈ e.readings,
       (r.2 = .acceptable ↔ ∃ σS σVP σNP σN : Equiv.Perm (Fin 2),
         (someoneSawAFriendOfEveryone (E := Unit) (fun _ _ ↦ True) (fun _ _ ↦ True)
@@ -573,6 +601,14 @@ theorem rows_scopings_theFriendOfEveryone : ∀ e ∈ Examples.all,
       (S σS someone (VP υ (lex fun _ _ ↦ True) (theFriendOfEveryone (E := Unit)
         (fun _ _ ↦ True) ChoiceFunction.epsilon (fun _ ↦ σ) (fun _ ↦ τ) 2))).scopeOrder =
         wordsOn '>' r.1) := by
+  decide +kernel
+
+theorem rows_scopings_everyManSawAWoman : ∀ e ∈ Examples.all,
+    e.feature? "derivation" = some "every man saw a woman" → ∀ r ∈ e.readings,
+      (r.2 = .acceptable ↔ ∃ σ τ : Equiv.Perm (Fin 2),
+        (S σ (NPgq "every" Quantifier.GQ.every (lex fun _ ↦ True))
+          (VP τ (lex fun (_ _ : Unit) ↦ True) (NPgq "a" Quantifier.GQ.some (lex fun _ ↦ True)))
+          ).scopeOrder = wordsOn '>' r.1) := by
   decide +kernel
 
 theorem rows_integrity : ∀ e ∈ Examples.all, ∀ c ∈ e.feature? "constituent",
