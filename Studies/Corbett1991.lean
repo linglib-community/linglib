@@ -487,9 +487,9 @@ open _root_.Tamil.Gender
 /-- In Figure 6.8 three singular target genders converge on two in the plural. -/
 theorem convergent : Gender.Convergent Value.sgConcord Value.plConcord := by decide
 
-theorem card_plConcord_le :
-    Nat.card (Set.range Value.plConcord) ≤ Nat.card (Set.range Value.sgConcord) :=
-  convergent.1.card_range_le
+theorem card_plConcord_lt :
+    Nat.card (Set.range Value.plConcord) < Nat.card (Set.range Value.sgConcord) :=
+  convergent.card_range_lt
 
 end Tamil
 

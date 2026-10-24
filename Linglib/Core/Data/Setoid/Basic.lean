@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Data.Fintype.Basic
+public import Mathlib.SetTheory.Cardinal.NatCard
 public import Mathlib.Order.Setoid.Basic
 public import Mathlib.Order.Setoid.Partition
 
@@ -14,10 +15,11 @@ public import Mathlib.Order.Setoid.Partition
 
 This file adds to `Mathlib/Data/Setoid/Basic.lean` the monotonicity of `Setoid.ker` under
 composition and its equality case for an injective outer map, the relation of an indexed meet
-of setoids, the classes of a meet and the order in terms of classes, and decidable equality of
-setoids on a finite type. Mathlib has the monotonicity for algebraic kernels
-(`LinearMap.ker_le_ker_comp`, `MonoidHom.comap_ker`, `RingHom.ker_comp_of_injective`) but not for
-the plain `Setoid.ker` they specialize. [UPSTREAM]
+of setoids, the kernel of a map into a product as the meet of its coordinates' kernels, the
+classes of a meet and the order in terms of classes, the strict antitonicity of the number of
+classes on a finite type, and decidable equality of setoids on a finite type. Mathlib has the
+monotonicity for algebraic kernels (`LinearMap.ker_le_ker_comp`, `MonoidHom.comap_ker`,
+`RingHom.ker_comp_of_injective`) but not for the plain `Setoid.ker` they specialize. [UPSTREAM]
 -/
 
 @[expose] public section
@@ -34,6 +36,21 @@ theorem Setoid.iInf_iff {α : Type*} {ι : Sort*} {f : ι → Setoid α} {a b : 
     (⨅ i, f i) a b ↔ ∀ i, f i a b := by
   rw [iInf, Setoid.sInf_iff]
   simp
+
+/-- The kernel of a map into a product is the meet of the kernels of its coordinates, as
+`LinearMap.ker_pi`. [UPSTREAM] -/
+theorem Setoid.ker_pi {α ι : Type*} {β : ι → Type*} (f : ∀ i, α → β i) :
+    Setoid.ker (fun a i ↦ f i a) = ⨅ i, Setoid.ker (f i) :=
+  Setoid.ext fun _ _ ↦ by simp [Setoid.ker_def, Setoid.iInf_iff, funext_iff]
+
+/-- On a finite type a strictly finer setoid has strictly more classes. [UPSTREAM] -/
+theorem Setoid.card_quotient_strictAnti {α : Type*} [Finite α] :
+    StrictAnti fun r : Setoid α ↦ Nat.card (Quotient r) := by
+  intro r s h
+  let f : Quotient r → Quotient s := Quotient.map' id fun _ _ hab ↦ h.le hab
+  have hf : Function.Surjective f := Quotient.ind fun a ↦ ⟨Quotient.mk r a, rfl⟩
+  refine lt_of_le_of_ne (Nat.card_le_card_of_surjective f hf) fun he ↦ h.not_ge fun a b hab ↦ ?_
+  exact Quotient.exact ((hf.bijective_of_nat_card_le he.ge).1 (Quotient.sound hab))
 
 theorem Setoid.classes_inf {α : Type*} (r s : Setoid α) :
     (r ⊓ s).classes = {c | ∃ a ∈ r.classes, ∃ b ∈ s.classes, c = a ∩ b ∧ c.Nonempty} := by
@@ -60,7 +77,7 @@ theorem Setoid.le_iff_forall_classes {α : Type*} {r s : Setoid α} :
 /-- The kernel of a map into a type with decidable equality is decidable. [UPSTREAM] -/
 instance Setoid.ker.decidableRel {α β : Type*} (f : α → β) [DecidableEq β] :
     DecidableRel (⇑(Setoid.ker f)) :=
-  λ a b => inferInstanceAs (Decidable (f a = f b))
+  fun a b ↦ inferInstanceAs (Decidable (f a = f b))
 
 /-- Equality of setoids on a finite type is decided pairwise. [UPSTREAM] -/
 instance Setoid.decidableEqOfDecidableRel {α : Type*} [Fintype α] (s t : Setoid α)

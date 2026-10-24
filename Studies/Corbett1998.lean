@@ -147,10 +147,10 @@ theorem convergent :
       (longEnding · .inanimate (numberSystem.value .plural) .nom) := by
   decide
 
-theorem card_longEnding_pl_le :
-    Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .plural) .nom)) ≤
+theorem card_longEnding_pl_lt :
+    Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .plural) .nom)) <
       Nat.card (Set.range (longEnding · .inanimate (numberSystem.value .singular) .nom)) :=
-  convergent.1.card_range_le
+  convergent.card_range_lt
 
 theorem gender_mem_inflection_pastVerb :
     .gender ∈ pastVerb.inflection ∧ ∀ k, .gender ∉ (nonpastVerb k).inflection := by decide
