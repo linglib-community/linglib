@@ -42,7 +42,7 @@ do (`defUpdateTopic_descUpdate`).
 ## References
 
 * [krifka-2013]
-* [barker-2002] — the descriptive and metalinguistic uses of *tall*
+* [barker-2002-vagueness] — the descriptive and metalinguistic uses of *tall*
 * [cohen-2001] — the rule types of indefinite-singular generics
 * [greenberg-2007], [kripke-1980] — in-virtue-of generics; necessity a posteriori
 -/

@@ -315,7 +315,8 @@
       {"name": "everyone > someone", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["quantifiers", "someone everyone"]
+      ["quantifiers", "someone everyone"],
+      ["derivation", "someone saw the friend of the friend of everyone"]
     ],
     "comment": "",
     "verified": "page-image"
