@@ -33,8 +33,8 @@ the information inside one cell, and answers it partially when it rules out a ce
   beliefs, only the name, which is true, lets them know the answer.
 * `better_or_inter_or_union`: of two compatible partial answers, one is better, or their
   conjunction or their disjunction is better than both.
-* `knowsSome_of_knows`: knowing who has a pen gives the mention-some knowledge once someone has a
-  pen.
+* `knowsSomeAnswer_of_knows`: knowing who has a pen gives the mention-some knowledge once someone
+  has a pen.
 
 ## Implementation notes
 
@@ -159,32 +159,32 @@ theorem iInf_who (R : E → E → Set W) : ⨅ x, who (R x) = who fun p : E × E
 
 /-- An individual whose alternatives at `w` are given by `R` knows the answer to `Q` at `w` when
 every alternative lies in the cell of `w`, the proposition the question denotes at `w`. -/
-def Knows (R : SetRel W W) (Q : Setoid W) (w : W) : Prop := w ∈ R.core (Q.cell w)
+def Knows (Q : Setoid W) (w : W) (R : SetRel W W) : Prop := w ∈ R.core (Q.cell w)
 
 variable {R : SetRel W W} {Q Q' : Setoid W} {w : W} {p q : Set W}
 
-theorem Knows.mono (hQ : Q ≤ Q') (h : Knows R Q w) : Knows R Q' w :=
+theorem Knows.mono (hQ : Q ≤ Q') (h : Knows Q w R) : Knows Q' w R :=
   fun _ hv ↦ hQ (h hv)
 
-theorem knows_inf_iff : Knows R (Q ⊓ Q') w ↔ Knows R Q w ∧ Knows R Q' w :=
+theorem knows_inf_iff : Knows (Q ⊓ Q') w R ↔ Knows Q w R ∧ Knows Q' w R :=
   ⟨fun h ↦ ⟨h.mono inf_le_left, h.mono inf_le_right⟩, fun h _ hv ↦ ⟨h.1 hv, h.2 hv⟩⟩
 
 /-- To know the answer is to know every true proposition the question decides, which uses no
 factivity, so that the arguments (I) to (VII) of chapter II hold for *tell* as for *know*. -/
-theorem Knows.mem_core (h : Knows R Q w) (hp : Q.Decides p) (hw : w ∈ p) : w ∈ R.core p :=
+theorem Knows.mem_core (h : Knows Q w R) (hp : Q.Decides p) (hw : w ∈ p) : w ∈ R.core p :=
   SetRel.core_mono (hp.cell_subset hw) h
 
 /-- Knowing whether Mary walks is knowing that she walks when she does (chapter II, (I)). -/
-example (h : Knows R (Setoid.polar p) w) (hw : w ∈ p) : w ∈ R.core p :=
+example (h : Knows (Setoid.polar p) w R) (hw : w ∈ p) : w ∈ R.core p :=
   h.mem_core polar_decides hw
 
 /-- Knowing whether Mary walks is knowing that she doesn't when she doesn't (chapter II, (II)). -/
-example (h : Knows R (Setoid.polar p) w) (hw : w ∉ p) : w ∈ R.core pᶜ :=
+example (h : Knows (Setoid.polar p) w R) (hw : w ∉ p) : w ∈ R.core pᶜ :=
   h.mem_core polar_decides.compl hw
 
 /-- Knowing whether Mary walks or Bill sleeps, when Mary doesn't walk and Bill sleeps, is knowing
 that Mary doesn't walk and Bill sleeps (chapter II, (IX)). -/
-example (h : Knows R (Setoid.polar p ⊓ Setoid.polar q) w) (hp : w ∉ p) (hq : w ∈ q) :
+example (h : Knows (Setoid.polar p ⊓ Setoid.polar q) w R) (hp : w ∉ p) (hq : w ∈ q) :
     w ∈ R.core (pᶜ ∩ q) :=
   h.mem_core ((polar_decides.mono inf_le_left).compl.inter (polar_decides.mono inf_le_right))
     ⟨hp, hq⟩
@@ -192,31 +192,30 @@ example (h : Knows R (Setoid.polar p ⊓ Setoid.polar q) w) (hp : w ∉ p) (hq :
 /-- To know who walks is to know of each walker that they walk and of each non-walker that they
 don't (chapter II, p. 87). -/
 theorem knows_who_iff {P : E → Set W} :
-    Knows R (who P) w ↔
+    Knows (who P) w R ↔
       (∀ x, w ∈ P x → w ∈ R.core (P x)) ∧ ∀ x, w ∉ P x → w ∈ R.core (P x)ᶜ := by
   simp only [Knows, SetRel.mem_core, Setoid.mem_cell, who_iff, Set.mem_compl_iff]
   grind
 
-theorem knows_nobody {P : E → Set W} (h : Knows R (who P) w) (hw : ∀ x, w ∉ P x) :
+theorem knows_nobody {P : E → Set W} (h : Knows (who P) w R) (hw : ∀ x, w ∉ P x) :
     w ∈ R.core {v | ∀ x, v ∉ P x} :=
   fun _ hv x ↦ (knows_who_iff.1 h).2 x (hw x) hv
 
 /-- Someone with consistent beliefs within their knowledge who believes of a non-walker that they
 walk doesn't know who walks (chapter II, (VIII) and p. 109). -/
 theorem not_knows_who_of_believes {D K : SetRel W W} {P : E → Set W} {x : E} (hDK : D ⊆ K)
-    (hD : ∃ v, w ~[D] v) (hbel : w ∈ D.core (P x)) (hx : w ∉ P x) : ¬ Knows K (who P) w :=
+    (hD : ∃ v, w ~[D] v) (hbel : w ∈ D.core (P x)) (hx : w ∉ P x) : ¬ Knows (who P) w K :=
   fun h ↦ let ⟨_, hv⟩ := hD; (knows_who_iff.1 h).2 x hx (hDK hv) (hbel hv)
 
 /-! ### Karttunen's postulate for *know* -/
 
 /-- Knowing the answer to a partition satisfies Karttunen's meaning postulate for *know* on the
 Hamblin set, both its clause for the true answers and its clause for an empty set of them. -/
-theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows R (partition H) w) :
-    Karttunen1977.Knows w R H := by
-  refine ⟨SetRel.core_mono (fun v hv ↦ ?_) h, fun h₀ v hv ↦ ?_⟩
-  · exact strongAnswer_subset_weakAnswer H w (by rwa [strongAnswer_eq_cell])
-  · show trueAnswers H v = ∅
-    rw [show trueAnswers H v = trueAnswers H w from h hv, h₀]
+theorem karttunen_knows_of_knows {H : Set (Set W)} (h : Knows (partition H) w R) :
+    Karttunen1977.Knows H w R := by
+  refine ⟨knowsAnswer_of_mem_core_strongAnswer (by rwa [strongAnswer_eq_cell]), fun h₀ v hv ↦ ?_⟩
+  show trueAnswers H v = ∅
+  rw [show trueAnswers H v = trueAnswers H w from h hv, h₀]
 
 /-- When nobody walks, Karttunen's postulate without its empty-answer clause counts anyone as
 knowing who walks (chapter II, pp. 92–93). -/
@@ -246,8 +245,8 @@ def johnBelieves : SetRel Bool Bool := {p | p.2 = false}
 /-- Karttunen's postulate counts John as knowing who walks though he believes Suzy walks too,
 against (VIII), and not as knowing who doesn't walk, against (X) (chapter II, pp. 86–88). -/
 theorem karttunen_knows :
-    Karttunen1977.Knows true john (Set.range walk) ∧ true ∈ johnBelieves.core (walk .suzy) ∧
-      ¬ Karttunen1977.Knows true john (Set.range fun x ↦ (walk x)ᶜ) := by
+    Karttunen1977.Knows (Set.range walk) true john ∧ true ∈ johnBelieves.core (walk .suzy) ∧
+      ¬ Karttunen1977.Knows (Set.range fun x ↦ (walk x)ᶜ) true john := by
   refine ⟨⟨fun v _ ↦ ?_, fun h ↦ absurd h (Set.nonempty_iff_ne_empty.1
       ⟨walk .bill, ⟨.bill, rfl⟩, trivial⟩)⟩, fun _ h ↦ h, fun ⟨h, _⟩ ↦ ?_⟩
   · rintro p ⟨⟨x, rfl⟩, hx⟩
@@ -257,7 +256,7 @@ theorem karttunen_knows :
   · have := h (show true ~[john] false from trivial) (walk .suzy)ᶜ ⟨⟨.suzy, rfl⟩, by simp [walk]⟩
     simp [walk] at this
 
-theorem not_knows : ¬ Knows john (who walk) true :=
+theorem not_knows : ¬ Knows (who walk) true john :=
   not_knows_who_of_believes (D := johnBelieves) (x := .suzy) (Set.subset_univ _) ⟨false, rfl⟩
     (fun _ h ↦ h) (by simp [walk])
 
@@ -290,20 +289,20 @@ def notManButWalks : SetRel (Bool × Bool) (Bool × Bool) :=
   {p | p.2 = (true, true) ∨ p.2 = (false, true)}
 
 theorem who_not_whichDeDicto :
-    Knows notManButWalks (who walk) (true, true) ∧
-      ¬ Knows notManButWalks (whichDeDicto man walk) (true, true) ∧
+    Knows (who walk) (true, true) notManButWalks ∧
+      ¬ Knows (whichDeDicto man walk) (true, true) notManButWalks ∧
       ¬ who walk ≤ whichDeDicto man walk := by
-  have hw : Knows notManButWalks (who walk) (true, true) := fun v hv ↦ by
+  have hw : Knows (who walk) (true, true) notManButWalks := fun v hv ↦ by
     rcases hv with rfl | rfl <;> exact who_iff.2 fun _ ↦ by simp [walk]
-  have hn : ¬ Knows notManButWalks (whichDeDicto man walk) (true, true) := fun h ↦ by
+  have hn : ¬ Knows (whichDeDicto man walk) (true, true) notManButWalks := fun h ↦ by
     have := who_iff.1 (h (show (true, true) ~[notManButWalks] (false, true) from Or.inr rfl)) ()
     simp [man, walk] at this
   exact ⟨hw, hn, fun h ↦ hn (hw.mono h)⟩
 
 theorem whichDeDicto_compl_invalid :
-    Knows notMan (whichDeDicto man walk) (true, false) ∧
-      Knows notMan (whichDeRe man walk (true, false)) (true, false) ∧
-      ¬ Knows notMan (whichDeDicto man fun x ↦ (walk x)ᶜ) (true, false) := by
+    Knows (whichDeDicto man walk) (true, false) notMan ∧
+      Knows (whichDeRe man walk (true, false)) (true, false) notMan ∧
+      ¬ Knows (whichDeDicto man fun x ↦ (walk x)ᶜ) (true, false) notMan := by
   refine ⟨fun v hv ↦ ?_, fun v hv ↦ ?_, fun h ↦ ?_⟩
   · rcases hv with rfl | rfl <;> exact who_iff.2 fun _ ↦ by simp [man, walk]
   · rcases hv with rfl | rfl <;> exact whichDeRe_iff.2 fun _ _ ↦ by simp [walk]
@@ -311,8 +310,8 @@ theorem whichDeDicto_compl_invalid :
     simp [man, walk] at this
 
 theorem whichDeDicto_whichDeRe_compl_invalid :
-    Knows notManWalks (whichDeDicto man walk) (true, false) ∧
-      ¬ Knows notManWalks (whichDeRe man (fun x ↦ (walk x)ᶜ) (true, false)) (true, false) := by
+    Knows (whichDeDicto man walk) (true, false) notManWalks ∧
+      ¬ Knows (whichDeRe man (fun x ↦ (walk x)ᶜ) (true, false)) (true, false) notManWalks := by
   refine ⟨fun v hv ↦ ?_, fun h ↦ ?_⟩
   · rcases hv with rfl | rfl <;> exact who_iff.2 fun _ ↦ by simp [man, walk]
   · have := whichDeRe_iff.1
@@ -322,10 +321,10 @@ theorem whichDeDicto_whichDeRe_compl_invalid :
 /-- The de dicto and de re readings of *John knows which man walks* are logically independent
 (chapter II, p. 90). -/
 theorem readings_independent :
-    (Knows notManButWalks (whichDeRe man walk (true, true)) (true, true) ∧
-        ¬ Knows notManButWalks (whichDeDicto man walk) (true, true)) ∧
-      Knows notManWalks (whichDeDicto man walk) (true, false) ∧
-        ¬ Knows notManWalks (whichDeRe man walk (true, false)) (true, false) := by
+    (Knows (whichDeRe man walk (true, true)) (true, true) notManButWalks ∧
+        ¬ Knows (whichDeDicto man walk) (true, true) notManButWalks) ∧
+      Knows (whichDeDicto man walk) (true, false) notManWalks ∧
+        ¬ Knows (whichDeRe man walk (true, false)) (true, false) notManWalks := by
   refine ⟨⟨(who_not_whichDeDicto.1).mono (who_le_whichDeRe man walk _),
     who_not_whichDeDicto.2.1⟩, whichDeDicto_whichDeRe_compl_invalid.1, fun h ↦ ?_⟩
   have := whichDeRe_iff.1 (h (show (true, false) ~[notManWalks] (false, true) from Or.inr rfl))
@@ -495,7 +494,7 @@ theorem HasTrueAnswer.hasAnswer (h : S.HasTrueAnswer Q) : S.HasAnswer Q :=
   OffersAnswer.anti h (Set.subset_insert i S.doxastic) S.doxastic_nonempty
 
 theorem knows_iff_knowsAnswer (hR : R.image {i} = S.epistemic) :
-    Knows R Q i ↔ S.KnowsAnswer Q := by
+    Knows Q i R ↔ S.KnowsAnswer Q := by
   rw [knowsAnswer_iff, ← hR, SetRel.image_subset_iff, Knows, Set.singleton_subset_iff]
 
 open Classical in
@@ -888,23 +887,22 @@ theorem determined_inter_ne :
 
 end TwoCells
 
-/-! ### Mention-some knowledge, chapter VI, section 5.3 -/
+/-! ### Mention-some knowledge, chapter VI, section 5.3
 
-/-- Someone knows who P's on the mention-some reading when, of someone who P's, they know that
-they P (chapter VI, (25) and (28)). -/
-def KnowsSome (R : SetRel W W) (P : E → Set W) (w : W) : Prop :=
-  ∃ x, w ∈ P x ∧ w ∈ R.core (P x)
+Someone knows who P's on the mention-some reading, (25) and (28), when of someone who P's they
+know that they P, which is `Question.KnowsSomeAnswer` on the Hamblin set `Set.range P`. -/
 
 /-- Knowing who has a pen gives the mention-some knowledge once someone has a pen (chapter VI,
 p. 538). -/
-theorem knowsSome_of_knows {P : E → Set W} {x : E} (h : Knows R (who P) w) (hx : w ∈ P x) :
-    KnowsSome R P w :=
-  ⟨x, hx, h.mem_core (who_decides P x) hx⟩
+theorem knowsSomeAnswer_of_knows {P : E → Set W} {x : E} (h : Knows (who P) w R)
+    (hx : w ∈ P x) : KnowsSomeAnswer (Set.range P) w R :=
+  ⟨P x, ⟨⟨x, rfl⟩, hx⟩, h.mem_core (who_decides P x) hx⟩
 
 /-- When nobody has a pen, *John knows who has a pen* is false on its mention-some reading (chapter
 VI, p. 538). -/
-theorem not_knowsSome {P : E → Set W} (h : ∀ x, w ∉ P x) : ¬ KnowsSome R P w :=
-  fun ⟨x, hx, _⟩ ↦ h x hx
+theorem not_knowsSomeAnswer {P : E → Set W} (h : ∀ x, w ∉ P x) :
+    ¬ KnowsSomeAnswer (Set.range P) w R :=
+  fun ⟨_, ⟨⟨x, rfl⟩, hx⟩, _⟩ ↦ h x hx
 
 /-- A true complete answer to *who has a pen* other than *nobody* is a true complete mention-some
 answer (chapter VI, p. 538). -/
