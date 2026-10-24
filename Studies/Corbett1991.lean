@@ -185,12 +185,12 @@ namespace Tamil
 
 open _root_.Tamil.Gender
 
-/-- The rules read rationality and the sex the noun restricts its referents to. -/
-def sem (n : Tamil.Gender.Noun) : Bool × Option Sex := (n.rational, n.sex)
+/-- The rules read rationality and the gender the noun restricts its referents to. -/
+def sem (n : Tamil.Gender.Noun) : Bool × Option ReferentGender := (n.rational, n.referentGender)
 
 /-- Table 2.1 makes male rationals masculine, female rationals feminine and the residue
 neuter. -/
-def system : Gender.AssignmentSystem (Bool × Option Sex) Unit Value where
+def system : Gender.AssignmentSystem (Bool × Option ReferentGender) Unit Value where
   semantic
     | (true, some .male) => some .masc
     | (true, some .female) => some .fem
@@ -230,14 +230,14 @@ def declension (n : Russian.Gender.Noun) : Option Declension :=
       | .III => .III
       | .IV => .IV
 
-/-- The sex the noun restricts its referents to. -/
-def sem (n : Russian.Gender.Noun) : Option Sex := n.sex
+/-- The gender the noun restricts its referents to. -/
+def sem (n : Russian.Gender.Noun) : Option ReferentGender := n.referentGender
 
 /-- The rules of §3.1.1 for declinable nouns make males masculine and females feminine, then
 declension I masculine, declensions II and III feminine and the rest neuter. The rules for
 acronyms and indeclinables (Figure 3.4) are not modelled. -/
-def system : Gender.AssignmentSystem (Option Sex) (Option Declension) Value where
-  semantic := Option.map Value.ofSex
+def system : Gender.AssignmentSystem (Option ReferentGender) (Option Declension) Value where
+  semantic := Option.map Value.ofReferentGender
   formal
     | some .I => some .masc
     | some .II | some .III => some .fem
@@ -297,13 +297,13 @@ namespace Afar
 
 open _root_.Afar.Gender
 
-/-- The sex the noun restricts its referents to. -/
-def sem (n : Afar.Gender.Noun) : Option Sex := n.sex
+/-- The gender the noun restricts its referents to. -/
+def sem (n : Afar.Gender.Noun) : Option ReferentGender := n.referentGender
 
 /-- The referents' sex first; then a citation form ending in an accented vowel is feminine,
 the rest masculine. -/
-def system : Gender.AssignmentSystem (Option Sex) Bool Value where
-  semantic := Option.map Value.ofSex
+def system : Gender.AssignmentSystem (Option ReferentGender) Bool Value where
+  semantic := Option.map Value.ofReferentGender
   formal acc := if acc then some .fem else none
   residue := .masc
 
@@ -322,12 +322,12 @@ namespace Hausa
 
 open _root_.Hausa
 
-/-- The sex the noun restricts its referents to. -/
-def sem (n : Hausa.Noun) : Option Sex := n.sex
+/-- The gender the noun restricts its referents to. -/
+def sem (n : Hausa.Noun) : Option ReferentGender := n.referentGender
 
 /-- The referents' sex first; then a noun in *-ā* is feminine, the rest masculine. -/
-def system : Gender.AssignmentSystem (Option Sex) Bool Gender.Value where
-  semantic := Option.map Gender.Value.ofSex
+def system : Gender.AssignmentSystem (Option ReferentGender) Bool Gender.Value where
+  semantic := Option.map Gender.Value.ofReferentGender
   formal aa := if aa then some .feminine else none
   residue := .masculine
 
@@ -874,7 +874,7 @@ open _root_.Romanian.Gender
 
 /-- Whether a noun denotes a male animate. -/
 def MaleAnimate (n : Romanian.Gender.Noun) : Prop :=
-  .animate ≤ n.animacy ∧ n.sex = some .male
+  .animate ≤ n.animacy ∧ n.referentGender = some .male
 
 instance : DecidablePred MaleAnimate := fun _ ↦ by unfold MaleAnimate; infer_instance
 

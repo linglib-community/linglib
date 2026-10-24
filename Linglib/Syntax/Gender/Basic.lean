@@ -31,9 +31,10 @@ of male humans and so on, are read off a language's semantic rule rather than st
   spine is left to studies.
 * Kramer's two-class minimum is the hypothesis `Nontrivial G` where needed: one agreement pattern
   for all nouns is the absence of a system.
-* A fragment's gender enum is a `G`, with the semantic rule that assigns the sexes to its
-  genders (`ofSex`); assignment systems are in `Syntax/Gender/Assignment.lean`, and the gender
-  tags of word tokens are the Universal Dependencies ones (`UD.Gender`).
+* A fragment's gender enum is a `G`, with the semantic rule that assigns the referent genders
+  to its genders (`ofReferentGender`); assignment systems are in
+  `Syntax/Gender/Assignment.lean`, and the gender tags of word tokens are the Universal
+  Dependencies ones (`UD.Gender`).
 
 ## References
 

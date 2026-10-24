@@ -68,8 +68,9 @@ namespace Basque
 
 open Agreement Morphology
 
-/-- The cell of the familiar second person *hi* addressed to a person of the given sex. -/
-def familiar (x : Sex) : Bundle := (Bundle.personNumber .second .singular).set .gender x.toUD
+/-- The cell of the familiar second person *hi* addressed to a person of the given gender. -/
+def familiar (x : ReferentGender) : Bundle :=
+  (Bundle.personNumber .second .singular).set .gender x.toUD
 
 /-! ### The three slots -/
 
@@ -142,9 +143,9 @@ theorem displacedErgative_head : ∀ c ∈ Bundle.personNumberCells,
       ((absolutive.realize c).bind (·.head?)).or (thirdAbsolutive .past) := by
   decide
 
-/-- The allocutive suffix of a familiar addressee is, for each sex, the ergative suffix of
+/-- The allocutive suffix of a familiar addressee is, for each gender, the ergative suffix of
 *hi*. -/
-theorem allocutive_eq_ergative (x : Sex) :
+theorem allocutive_eq_ergative (x : ReferentGender) :
     (Pronouns.allocutive .familiar x).map ([·]) = ergative.realize (familiar x) := by
   cases x <;> decide +kernel
 

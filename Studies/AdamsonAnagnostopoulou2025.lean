@@ -102,14 +102,14 @@ inductive Referent where
 /-- A three-gender system over a language's genders `G` is a geometry, given by the node each
 node depends on directly, the node a referent contributes as interpretable gender and a
 grammatical gender contributes as uninterpretable gender, the features a plural coordination
-adds, a vocabulary, and the gender each sex is assigned. -/
+adds, a vocabulary, and the gender each referent gender is assigned. -/
 structure System (G : Type*) where
   parent : Node → Node
   iNode : Referent → Node
   uNode : G → Node
   plural : Finset Node := ∅
   vocabulary : RuleSet (VocabularyItem Node G)
-  ofSex : Sex → G
+  ofReferentGender : ReferentGender → G
 
 namespace System
 
@@ -125,10 +125,11 @@ def conceptual (r : Referent) : Bundle Node := .ofInterp (L.entailments (L.iNode
 def arbitrary (g : G) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
 
 /-- A nominal headed by `n` and referring to `r` bears the interpretable features of `r` and,
-unless the gender of `n` is the one its referents' sex is assigned, the uninterpretable features
+unless the gender of `n` is the one its referents' gender is assigned, the uninterpretable features
 of that gender. -/
 def nominal [DecidableEq G] (n : GenderedNoun G) (r : Referent) : Bundle Node :=
-  if Gender.IsNatural (Option.map L.ofSex) GenderedNoun.sex GenderedNoun.gender n then
+  if Gender.IsNatural (Option.map L.ofReferentGender) GenderedNoun.referentGender
+      GenderedNoun.gender n then
     L.conceptual r
   else L.conceptual r ∪ L.arbitrary n.gender
 
@@ -193,7 +194,7 @@ def system : System Value where
     | .feminine => .fem
     | _ => .cls
   vocabulary := threeWay .masculine .feminine .neuter
-  ofSex := Value.ofSex
+  ofReferentGender := Value.ofReferentGender
 
 theorem masc_mem_entailments_fem : .masc ∈ system.entailments .fem := by decide
 
@@ -319,7 +320,7 @@ def system : System _root_.Icelandic.Gender.Value where
     | .feminine => .fem
     | _ => .cls
   vocabulary := threeWay .masculine .feminine .neuter
-  ofSex := _root_.Icelandic.Gender.Value.ofSex
+  ofReferentGender := _root_.Icelandic.Gender.Value.ofReferentGender
 
 theorem masc_not_mem_entailments_fem : .masc ∉ system.entailments .fem := by decide
 
@@ -394,7 +395,7 @@ def system : System Value where
   vocabulary :=
     [{.fem, .anim, .masc, .indiv} ⟷ .feminine, {.anim, .masc, .indiv} ⟷ .masculine,
       {.indiv} ⟷ .masculine, ∅ ⟷ .neuter]
-  ofSex := Value.ofSex
+  ofReferentGender := Value.ofReferentGender
 
 /-- An inanimate refers as a mass when it is neuter, the neuter being the mass gender, and as an
 individuated thing otherwise. -/
@@ -436,11 +437,11 @@ theorem mismatchResolution :
 Bosnian/Croatian/Serbian (Table 2). -/
 theorem table2 :
     (Greek.system.resolved .man .woman, Greek.system.resolved .thing .thing) =
-        (some (Greek.system.ofSex .male), some .neuter) ∧
+        (some (Greek.system.ofReferentGender .male), some .neuter) ∧
       (Icelandic.system.resolved .man .woman, Icelandic.system.resolved .thing .thing) =
         (some .neuter, some .neuter) ∧
       (BCS.system.resolved .man .woman, BCS.system.resolved .thing .thing) =
-        (some (BCS.system.ofSex .male), some (BCS.system.ofSex .male)) := by
+        (some (BCS.system.ofReferentGender .male), some (BCS.system.ofReferentGender .male)) := by
   decide
 
 end AdamsonAnagnostopoulou2025

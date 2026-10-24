@@ -6,11 +6,11 @@ public import Linglib.Syntax.Category.Noun.Basic
 # Bosnian/Croatian/Serbian nouns by gender
 
 This file gives the nouns of Adamson and Anagnostopoulou's Bosnian/Croatian/Serbian examples, each
-with its grammatical gender and the sex it restricts its referents to where it does: the conjuncts
-of their examples of resolved agreement, *muškarac i žena* 'the man and the woman', *znanje i
-intuicija* 'knowledge and intuition' and *selo i brdo* 'village and hill' ((68)–(70)), and the nouns
-of their Table 1, *žena*, *čovek*, *mleko*, *knjiga* and *pesak*. Their analysis of the neuter as a
-mass gender is in `Studies/AdamsonAnagnostopoulou2025.lean`.
+with its grammatical gender and the gender it restricts its referents to where it does: the
+conjuncts of their examples of resolved agreement, *muškarac i žena* 'the man and the woman',
+*znanje i intuicija* 'knowledge and intuition' and *selo i brdo* 'village and hill' ((68)–(70)),
+and the nouns of their Table 1, *žena*, *čovek*, *mleko*, *knjiga* and *pesak*. Their analysis of
+the neuter as a mass gender is in `Studies/AdamsonAnagnostopoulou2025.lean`.
 
 ## References
 
@@ -29,22 +29,22 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- Male humans are masculine and female humans feminine. -/
-def Value.ofSex : Sex → Value
+def Value.ofReferentGender : ReferentGender → Value
   | .male => .masculine
   | .female => .feminine
 
 /-- *muškarac* 'man'. -/
 def muskarac : GenderedNoun Value :=
-  { form := "muškarac", gloss := "man", gender := .masculine, sex := some .male }
+  { form := "muškarac", gloss := "man", gender := .masculine, referentGender := some .male }
 
 /-- *žena* 'woman'. -/
 def zena : GenderedNoun Value :=
-  { form := "žena", gloss := "woman", gender := .feminine, sex := some .female }
+  { form := "žena", gloss := "woman", gender := .feminine, referentGender := some .female }
 
 /-- *čovek* 'person, man'. -/
 def covek : GenderedNoun Value :=
   { form := "čovek", gloss := "person, man", gender := .masculine,
-    sex := some .male }
+    referentGender := some .male }
 
 /-- *znanje* 'knowledge'. -/
 def znanje : GenderedNoun Value :=

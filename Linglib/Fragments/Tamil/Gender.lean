@@ -46,8 +46,8 @@ inductive Value where
 /-! ### Nouns -/
 
 /-- A Tamil noun with the agreement it takes and the two semantic facts the gender tracks,
-whether the referent is rational, a human or a deity, and the sex it restricts its referents to
-where it does. -/
+whether the referent is rational, a human or a deity, and the gender it restricts its referents
+to where it does. -/
 structure Noun extends GenderedNoun Value where
   /-- Whether the referent is rational, a human or a deity. -/
   rational : Bool
@@ -55,22 +55,22 @@ structure Noun extends GenderedNoun Value where
 
 /-- *aaN* 'man', masculine. -/
 def aaN : Noun :=
-  { form := "aaN", gloss := "man", gender := .masc, sex := some .male,
+  { form := "aaN", gloss := "man", gender := .masc, referentGender := some .male,
     rational := true }
 
 /-- *CivaN* 'Shiva', masculine. -/
 def civaN : Noun :=
-  { form := "CivaN", gloss := "Shiva", gender := .masc, sex := some .male,
+  { form := "CivaN", gloss := "Shiva", gender := .masc, referentGender := some .male,
     rational := true }
 
 /-- *peN* 'woman', feminine. -/
 def peN : Noun :=
-  { form := "peN", gloss := "woman", gender := .fem, sex := some .female,
+  { form := "peN", gloss := "woman", gender := .fem, referentGender := some .female,
     rational := true }
 
 /-- *kaali* 'Kali', feminine. -/
 def kaali : Noun :=
-  { form := "kaali", gloss := "Kali", gender := .fem, sex := some .female,
+  { form := "kaali", gloss := "Kali", gender := .fem, referentGender := some .female,
     rational := true }
 
 /-- *maram* 'tree', neuter. -/
@@ -81,37 +81,37 @@ def viiTu : Noun := { form := "viiTu", gloss := "house", gender := .neut, ration
 
 /-- *cuuriyan* 'sun', masculine as the name of a god. -/
 def cuuriyan : Noun :=
-  { form := "cuuriyan", gloss := "sun", gender := .masc, sex := some .male,
+  { form := "cuuriyan", gloss := "sun", gender := .masc, referentGender := some .male,
     rational := true }
 
 /-- *cantiran* 'moon', masculine as the name of a god. -/
 def cantiran : Noun :=
-  { form := "cantiran", gloss := "moon", gender := .masc, sex := some .male,
+  { form := "cantiran", gloss := "moon", gender := .masc, referentGender := some .male,
     rational := true }
 
 /-- *raaman* 'Raman', masculine. -/
 def raaman : Noun :=
-  { form := "raaman", gloss := "Raman", gender := .masc, sex := some .male,
+  { form := "raaman", gloss := "Raman", gender := .masc, referentGender := some .male,
     rational := true }
 
 /-- *murukan* 'Murugan', masculine. -/
 def murukan : Noun :=
-  { form := "murukan", gloss := "Murugan", gender := .masc, sex := some .male,
+  { form := "murukan", gloss := "Murugan", gender := .masc, referentGender := some .male,
     rational := true }
 
 /-- *akkaa* 'elder sister', feminine. -/
 def akkaa : Noun :=
-  { form := "akkaa", gloss := "elder sister", gender := .fem, sex := some .female,
+  { form := "akkaa", gloss := "elder sister", gender := .fem, referentGender := some .female,
     rational := true }
 
 /-- *tankacci* 'younger sister', feminine. -/
 def tankacci : Noun :=
   { form := "tankacci", gloss := "younger sister", gender := .fem,
-    sex := some .female, rational := true }
+    referentGender := some .female, rational := true }
 
 /-- *annan* 'elder brother', masculine. -/
 def annan : Noun :=
-  { form := "annan", gloss := "elder brother", gender := .masc, sex := some .male,
+  { form := "annan", gloss := "elder brother", gender := .masc, referentGender := some .male,
     rational := true }
 
 /-- *naay* 'dog', neuter. -/

@@ -94,8 +94,8 @@ theorem Features.card_wellFormed :
   rw [Fintype.card_subtype_isLowerSet]; rfl
 
 /-- The feature bundle of a Universal Dependencies gender tag: the masculine the empty bundle,
-the feminine `[+feminine]`, the neuter `[+feminine, +neuter]`; the common gender has no
-sex-based bundle. -/
+the feminine `[+feminine]`, the neuter `[+feminine, +neuter]`; the common gender has
+none. -/
 def Features.ofUD : UD.Gender → Option Features
   | .Masc => some Features.masculine
   | .Fem => some Features.feminine

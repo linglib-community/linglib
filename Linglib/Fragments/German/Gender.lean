@@ -42,13 +42,14 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- Male humans are masculine and female humans feminine. -/
-def Value.ofSex : Sex → Value
+def Value.ofReferentGender : ReferentGender → Value
   | .male => .masc
   | .female => .fem
 
-/-- A noun's gender is natural when it is the one its referents' sex is assigned. -/
+/-- A noun's gender is natural when it is the one its referents' gender is assigned. -/
 abbrev IsNatural (n : GenderedNoun Value) : Prop :=
-  _root_.Gender.IsNatural (Option.map Value.ofSex) GenderedNoun.sex GenderedNoun.gender n
+  _root_.Gender.IsNatural (Option.map Value.ofReferentGender) GenderedNoun.referentGender
+    GenderedNoun.gender n
 
 /-- The suffixes that fix the gender of every noun they end. -/
 inductive Suffix where
@@ -77,12 +78,12 @@ def Suffix.gender : Suffix → Value
 
 /-- `s.noun form gloss` is the noun `form` 'gloss' ending in the suffix `s`, and its gender is the
 one `s` fixes. -/
-def Suffix.noun (s : Suffix) (form gloss : String) (sex : Option Sex := none) :
+def Suffix.noun (s : Suffix) (form gloss : String) (g : Option ReferentGender := none) :
     GenderedNoun Value :=
-  { form, gloss, gender := s.gender, sex }
+  { form, gloss, gender := s.gender, referentGender := g }
 
-theorem Suffix.isNatural_noun_iff (s : Suffix) (form gloss : String) (x : Sex) :
-    IsNatural (s.noun form gloss x) ↔ Value.ofSex x = s.gender := by
+theorem Suffix.isNatural_noun_iff (s : Suffix) (form gloss : String) (x : ReferentGender) :
+    IsNatural (s.noun form gloss x) ↔ Value.ofReferentGender x = s.gender := by
   simp [noun, _root_.Gender.IsNatural]
 
 /-! ### Nouns -/

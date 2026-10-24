@@ -49,13 +49,13 @@ def Noun.definiteArticle (n : Noun) : String := Determiners.singular n.gender .d
 def boek : Noun :=
   { form := "boek", gloss := "book", gender := .neuter, plural := "boeken", diminutive := "boekje" }
 
-/-- *mens* 'human', of common gender, for a human of either sex. -/
+/-- *mens* 'human', of common gender, for a human of any gender. -/
 def mens : Noun := { form := "mens", gloss := "human", gender := .common, plural := "mensen" }
 
 /-- *geest* 'ghost', of common gender. -/
 def geest : Noun := { form := "geest", gloss := "ghost", gender := .common, plural := "geesten" }
 
-/-- *student* 'student', of common gender, for a student of either sex. -/
+/-- *student* 'student', of common gender, for a student of any gender. -/
 def student : Noun :=
   { form := "student", gloss := "student", gender := .common, plural := "studenten" }
 
@@ -102,8 +102,9 @@ def bier : Noun := { form := "bier", gloss := "beer", gender := .neuter, counter
 
 /-! ### Proper names -/
 
-/-- A personal name, restricted to a sex. -/
-def name (form : String) (sex : Sex) : ProperName := { form, gloss := form, sex := some sex }
+/-- A personal name, restricted to a gender. -/
+def name (form : String) (g : ReferentGender) : ProperName :=
+  { form, gloss := form, referentGender := some g }
 
 /-- *Helen*. -/
 def helen : ProperName := name "Helen" .female

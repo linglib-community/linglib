@@ -35,25 +35,25 @@ def chien : Noun := { form := "chien", gloss := "dog", gender := .masculine, plu
 def chat : Noun := { form := "chat", gloss := "cat", gender := .masculine, plural := "chats" }
 def livre : Noun := { form := "livre", gloss := "book", gender := .masculine, plural := "livres" }
 def homme : Noun :=
-  { form := "homme", gloss := "man", gender := .masculine, sex := some .male,
+  { form := "homme", gloss := "man", gender := .masculine, referentGender := some .male,
     plural := "hommes" }
 def garcon : Noun :=
-  { form := "garçon", gloss := "boy", gender := .masculine, sex := some .male,
+  { form := "garçon", gloss := "boy", gender := .masculine, referentGender := some .male,
     plural := "garçons" }
 def professeur : Noun :=
   { form := "professeur", gloss := "teacher", gender := .masculine, plural := "professeurs" }
 def etudiant : Noun :=
-  { form := "étudiant", gloss := "student", gender := .masculine, sex := some .male,
+  { form := "étudiant", gloss := "student", gender := .masculine, referentGender := some .male,
     plural := "étudiants" }
 def avocat : Noun :=
   { form := "avocat", gloss := "lawyer", gender := .masculine, plural := "avocats" }
 def cheval : Noun :=
   { form := "cheval", gloss := "horse", gender := .masculine, plural := "chevaux" }
 def fille : Noun :=
-  { form := "fille", gloss := "girl", gender := .feminine, sex := some .female,
+  { form := "fille", gloss := "girl", gender := .feminine, referentGender := some .female,
     plural := "filles" }
 def femme : Noun :=
-  { form := "femme", gloss := "woman", gender := .feminine, sex := some .female,
+  { form := "femme", gloss := "woman", gender := .feminine, referentGender := some .female,
     plural := "femmes" }
 def table : Noun := { form := "table", gloss := "table", gender := .feminine, plural := "tables" }
 def pomme : Noun := { form := "pomme", gloss := "apple", gender := .feminine, plural := "pommes" }
@@ -68,8 +68,9 @@ def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, coun
 
 /-! ### Proper names -/
 
-/-- A personal name, restricted to a sex. -/
-def name (form : String) (sex : Sex) : ProperName := { form, gloss := form, sex := some sex }
+/-- A personal name, restricted to a gender. -/
+def name (form : String) (g : ReferentGender) : ProperName :=
+  { form, gloss := form, referentGender := some g }
 
 def jean : ProperName := name "Jean" .male
 def marie : ProperName := name "Marie" .female

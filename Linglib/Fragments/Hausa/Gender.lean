@@ -21,7 +21,7 @@ feminine nouns acquired the ending by overt characterization, the addition of th
 ## Main definitions
 
 * `Hausa.Gender.Value` — the two genders
-* `Hausa.Noun` — a noun with its gender and the sex of its referents where it has one
+* `Hausa.Noun` — a noun with its gender and the gender it restricts its referents to, if any
 * `Hausa.Noun.EndsInAa` — the noun ends in *-ā*
 * `Hausa.allNouns` — the nouns
 
@@ -41,19 +41,20 @@ inductive Gender.Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- Male humans are masculine and female humans feminine. -/
-def Gender.Value.ofSex : Sex → Gender.Value
+def Gender.Value.ofReferentGender : ReferentGender → Gender.Value
   | .male => .masculine
   | .female => .feminine
 
-/-- A Hausa noun, with the gender its agreement shows and the sex it restricts its referents to
-where it does. -/
+/-- A Hausa noun, with the gender its agreement shows and the gender it restricts its referents
+to where it does. -/
 abbrev Noun := GenderedNoun Gender.Value
 
 namespace Noun
 
-/-- A noun's gender is natural when it is the one its referents' sex is assigned. -/
+/-- A noun's gender is natural when it is the one its referents' gender is assigned. -/
 abbrev IsNatural (n : Noun) : Prop :=
-  _root_.Gender.IsNatural (Option.map Gender.Value.ofSex) GenderedNoun.sex GenderedNoun.gender n
+  _root_.Gender.IsNatural (Option.map Gender.Value.ofReferentGender) GenderedNoun.referentGender
+    GenderedNoun.gender n
 
 /-- The noun ends in *-ā*, whatever its final tone: the long vowel is one of the last two
 characters, the second being a tone mark. -/

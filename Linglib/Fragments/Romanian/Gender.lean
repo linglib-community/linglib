@@ -30,8 +30,8 @@ inductive Value where
   | neut
   deriving DecidableEq, Repr, Fintype
 
-/-- A Romanian noun with its controller gender, the sex it restricts its referents to where it does,
-and their animacy. -/
+/-- A Romanian noun with its controller gender, the gender it restricts its referents to where it
+does, and their animacy. -/
 structure Noun extends GenderedNoun Value where
   /-- The animacy of the noun's referents. -/
   animacy : Animacy

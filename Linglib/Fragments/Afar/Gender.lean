@@ -30,11 +30,12 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- Male humans are masculine and female humans feminine. -/
-def Value.ofSex : Sex → Value
+def Value.ofReferentGender : ReferentGender → Value
   | .male => .masc
   | .female => .fem
 
-/-- An Afar noun with its gender, the sex it restricts its referents to where it does, and
+/-- An Afar noun with its grammatical gender, the gender it restricts its referents to where it
+does, and
 whether its citation form ends in an accented vowel. -/
 structure Noun extends GenderedNoun Value where
   /-- Whether the citation form ends in an accented vowel. -/

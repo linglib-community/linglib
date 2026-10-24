@@ -7,7 +7,7 @@ public import Linglib.Syntax.Category.Noun.Basic
 # Russian noun gender
 
 This file defines the three controller genders of Russian, masculine, feminine and neuter, and
-nouns with their gender, the sex they restrict their referents to where they do, and their
+nouns with their gender, the gender they restrict their referents to where they do, and their
 declension class. Gender is partly fixed by the referent and partly by the declension (Corbett):
 *djadja* 'uncle' declines like most feminines and is masculine by its referents, and the
 soft-sign nouns are feminine as a rule (Wade §63) but for *put'* 'way', of which "Despite
@@ -46,8 +46,8 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- Sex-differentiable nouns denoting males are masculine and those denoting females
-feminine ([corbett-1991] chapter 3). -/
-def Value.ofSex : Sex → Value
+feminine ([corbett-1991] §3.1.1, p. 34). -/
+def Value.ofReferentGender : ReferentGender → Value
   | .male => .masc
   | .female => .fem
 
@@ -63,8 +63,8 @@ inductive DeclClass where
   | IV
   deriving DecidableEq, Repr
 
-/-- A Russian noun with its controller gender, the sex it restricts its referents to where it
-does, and its declension class. -/
+/-- A Russian noun with its controller gender, the gender it restricts its referents to where
+it does, and its declension class. -/
 structure Noun extends GenderedNoun Value where
   /-- The declension class, left out for a noun whose gender its referents fix. -/
   declClass : Option DeclClass := none
@@ -74,31 +74,31 @@ structure Noun extends GenderedNoun Value where
 
 /-- *otec* 'father'. -/
 def otec : Noun :=
-  { form := "otec", gloss := "father", gender := .masc, sex := some .male }
+  { form := "otec", gloss := "father", gender := .masc, referentGender := some .male }
 
 /-- *mat'* 'mother'. -/
 def mat' : Noun :=
-  { form := "mat'", gloss := "mother", gender := .fem, sex := some .female }
+  { form := "mat'", gloss := "mother", gender := .fem, referentGender := some .female }
 
 /-- *brat* 'brother'. -/
 def brat : Noun :=
-  { form := "brat", gloss := "brother", gender := .masc, sex := some .male }
+  { form := "brat", gloss := "brother", gender := .masc, referentGender := some .male }
 
 /-- *sestra* 'sister'. -/
 def sestra : Noun :=
-  { form := "sestra", gloss := "sister", gender := .fem, sex := some .female }
+  { form := "sestra", gloss := "sister", gender := .fem, referentGender := some .female }
 
 /-- *byk* 'bull'. -/
 def byk : Noun :=
-  { form := "byk", gloss := "bull", gender := .masc, sex := some .male }
+  { form := "byk", gloss := "bull", gender := .masc, referentGender := some .male }
 
 /-- *korova* 'cow'. -/
 def korova : Noun :=
-  { form := "korova", gloss := "cow", gender := .fem, sex := some .female }
+  { form := "korova", gloss := "cow", gender := .fem, referentGender := some .female }
 
 /-- *djadja* 'uncle', of the declension of most feminines and masculine by its referents. -/
 def djadja : Noun :=
-  { form := "djadja", gloss := "uncle", gender := .masc, sex := some .male
+  { form := "djadja", gloss := "uncle", gender := .masc, referentGender := some .male
   , declClass := some .II }
 
 /-! ### Nouns whose declension goes with their gender -/
