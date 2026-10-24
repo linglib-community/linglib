@@ -85,6 +85,7 @@ theorem Noun.toWord_singular (n : Noun) : n.toWord .singular = some n.toWordSg :
 /-! ### Count nouns -/
 
 def pizza : Noun := .common "pizza"
+def year : Noun := .common "year"
 def book : Noun := .common "book"
 def cat : Noun := .common "cat"
 def dog : Noun := .common "dog"

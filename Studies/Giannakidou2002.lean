@@ -274,17 +274,10 @@ instance : DecidablePred Predicted := fun _ ↦ by unfold Predicted; infer_insta
 def connectives : List Connective :=
   [.until, .mexri, .paraMonon, .prin, .til, .fyrrEn, .tot, .pas]
 
-/-- The wordforms of a row's gloss line, each adjacent pair also joined, so a two-word
-connective like *para monon* is found whether it is glossed as one token or two. -/
-def wordformsOf (ex : Datum) : List (List Char) :=
-  let ws := ex.glossedWords.map (·.wordform)
-  ws ++ (ws.zip ws.tail).map fun p ↦ p.1 ++ ' ' :: p.2
-
-/-- The connective a row's gloss line shows: a wordform spelling the declared form of a
-connective's fragment entry. -/
+/-- The connective a row's gloss line shows: the earliest span of the gloss stream spelling the
+declared form of a connective's fragment entry, multiword forms included. -/
 def connectiveOfForm? (ex : Datum) : Option Connective :=
-  (wordformsOf ex).findSome? fun w ↦
-    connectives.find? fun c ↦ w == c.entry.form.toList.map Gloss.toLower
+  Gloss.lookup? (connectives.map fun c ↦ (c.entry.form, c)) ex.glossStream
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let connective ← connectiveOfForm? ex <|>

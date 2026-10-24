@@ -330,19 +330,20 @@ every lexical condition is a form the English fragment declares or realizes — 
 auxiliary entries, and *to tell* the infinitival marker `toInf` with `tell.realize .base`. -/
 def stackOfForm? (e : Datum) : Option (List (Option (Finset Ordering))) :=
   let ts := Gloss.tokens e.primaryText
-  let pair (a b : String) : Bool := (ts.zip ts.tail).contains (a.toList, b.toList)
+  let has (f : String) : Bool := Gloss.containsForm ts f
   let willF := English.Auxiliaries.will.form
   let wouldF := English.Auxiliaries.would.form
   let toF := English.Auxiliaries.toInf.form
   let tellB := English.Verbs.tell.realize .base
-  if pair willF (English.Verbs.promise.realize .base) then
-    if ts.contains wouldF.toList then some [Wurmbrand2014.will.tense]
-    else if pair toF tellB then some [(infinitive true).tense, Wurmbrand2014.will.tense]
+  if has (willF ++ " " ++ English.Verbs.promise.realize .base) then
+    if has wouldF then some [Wurmbrand2014.will.tense]
+    else if has (toF ++ " " ++ tellB) then
+      some [(infinitive true).tense, Wurmbrand2014.will.tense]
     else none
-  else if ts.contains (English.Verbs.promise.realize .past).toList then
-    if pair willF tellB then some [Wurmbrand2014.will.tense, some ⟦past⟧]
-    else if pair wouldF tellB then some [Wurmbrand2014.would.tense, some ⟦past⟧]
-    else if pair toF tellB then some [(infinitive true).tense, some ⟦past⟧]
+  else if has (English.Verbs.promise.realize .past) then
+    if has (willF ++ " " ++ tellB) then some [Wurmbrand2014.will.tense, some ⟦past⟧]
+    else if has (wouldF ++ " " ++ tellB) then some [Wurmbrand2014.would.tense, some ⟦past⟧]
+    else if has (toF ++ " " ++ tellB) then some [(infinitive true).tense, some ⟦past⟧]
     else none
   else none
 

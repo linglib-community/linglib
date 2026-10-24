@@ -1,6 +1,11 @@
 module
 
 public import Linglib.Data.Examples.IatridouZeijlstra2021
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Fragments.English.PolarityItems
+public import Linglib.Fragments.English.Adpositions
+public import Linglib.Fragments.English.Nouns
+public import Linglib.Fragments.English.TemporalConnectives
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Quantification.Exceptive
@@ -487,12 +492,24 @@ inductive Continuation where
   | denial
   deriving DecidableEq, Repr
 
-/-- A cancellation row's adverbial with its continuation. -/
+/-- A row's boundary adverbial, read off its words: the strong-NPI idiom *in years*
+(`English.PolarityItems.inYears`) is the widener, and a boundary is named compositionally, by
+*in* with a numeral and the plural of *year*, or by *since* with a date. The slash-written
+*for/in 15 years* of (24a) tokenizes as one word and stays outside the test. -/
+def adverbialOfForm? (e : Datum) : Option BoundaryAdverbial :=
+  let ts := Gloss.tokens e.primaryText
+  if Gloss.containsForm ts English.PolarityItems.inYears.form then some .widener
+  else if (Gloss.containsForm ts English.Adpositions.in_.form ∧
+        Gloss.containsForm ts (English.Nouns.year.plural.getD English.Nouns.year.form) ∧
+        ts.any fun w ↦ (Datum.digits? w).isSome) ∨
+      (Gloss.containsForm ts English.TemporalConnectives.since.form ∧
+        ts.any fun w ↦ (Datum.digits? w).isSome) then some .lbNamed
+  else none
+
+/-- A cancellation row: its adverbial, read off the sentence, with its continuation, the design
+cell the row's `continuation` feature records. -/
 def cancellation? (e : Datum) : Option (BoundaryAdverbial × Continuation) := do
-  pure (← e.parse? "adverbial"
-      [("in the last 5 years, LB adverbial", .lbNamed),
-        ("in the 5 years that I have been here, LB adverbial", .lbNamed),
-        ("since 2015, LB adverbial", .lbNamed), ("in years", .widener)],
+  pure (← adverbialOfForm? e,
     ← e.parse? "continuation" [("ignorance", .ignorance), ("denial", .denial)])
 
 /-- A canceling continuation is consistent with a named boundary, whose span has an event-free
@@ -504,7 +521,7 @@ def BoundaryAdverbial.band : BoundaryAdverbial → Judgment.Band
 
 /-- The cancellation rows (11)–(12) and (22): the band follows the adverbial alone. -/
 theorem cancellation_rows :
-    Datum.Checks cancellation? (fun p ↦ p.1.band) Examples.all 4 := by decide
+    Datum.Checks cancellation? (fun p ↦ p.1.band) Examples.all 4 := by decide +kernel
 
 /-- A named boundary admits the event-free model the cancellations of (11)–(12) describe. -/
 theorem lbNamed_cancellable :

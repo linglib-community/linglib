@@ -61,8 +61,9 @@ example : toLower 'Ő' = 'ő' := by decide
 example : toLower 'L' = 'l' := by decide
 example : toLower 'é' = 'é' := by decide
 
-/-- Splits a list of characters at the given separators, by a structural recursion the kernel
-reduces. -/
+/-- Splits a list of characters at the given separators. Core has `List.splitOn`, but its body
+does not reduce across the module boundary under `decide`, so the recursion is restated here
+structurally. -/
 def split (seps : List Char) : List Char → List (List Char)
   | [] => [[]]
   | c :: cs =>
@@ -99,6 +100,26 @@ def tokens (s : String) : List (List Char) :=
   ((((split [' '] s.toList).map trim).map (·.map toLower)).filter (!·.isEmpty))
 
 example : tokens "He will tell." = ["he".toList, "will".toList, "tell".toList] := by decide
+
+/-- A declared, possibly multiword, form as the normalized tokens a row's stream shows. The
+fragments keep their forms raw; normalization happens here, where a reader meets a row. -/
+def formTokens (f : String) : List (List Char) := tokens f
+
+/-- The entry of `lex` whose declared form starts earliest in the stream, the first listed where
+several start together. -/
+def lookup? {α : Type*} (lex : List (String × α)) : List (List Char) → Option α
+  | [] => none
+  | ts@(_ :: rest) =>
+    ((lex.find? fun p ↦ (formTokens p.1).isPrefixOf ts).map (·.2)).orElse
+      fun _ ↦ lookup? lex rest
+
+/-- The stream shows the declared form `f`. -/
+def containsForm (ts : List (List Char)) (f : String) : Bool := (lookup? [(f, ())] ts).isSome
+
+example : lookup? [("fyrr en", 1), ("til", 2)] (tokens "svaf fyrr en fimm") = some 1 := by
+  decide
+example : containsForm (tokens "He will tell her.") "will tell" = true := by decide
+example : containsForm (tokens "He told her.") "will tell" = false := by decide
 
 /-- A gloss segment is a category label, as the Leipzig rules write `PST` or `3SG.DF`, when it
 has no lower-case letter; otherwise it is a lexical gloss. -/
@@ -146,3 +167,8 @@ def Datum.glossedWords (e : Datum) : List GlossedWord :=
     let ss := (Gloss.segments s).map Gloss.trim
     let gs := Gloss.segments g
     if ss.length = gs.length then some ⟨ss.zip gs⟩ else none
+
+/-- The row's gloss-line stream: each glossed word's form, split at its internal spaces, the
+stream that declared forms are matched against. -/
+def Datum.glossStream (e : Datum) : List (List Char) :=
+  e.glossedWords.flatMap fun w ↦ (Gloss.split [' '] w.wordform).filter (!·.isEmpty)
