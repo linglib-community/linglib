@@ -4,7 +4,7 @@ public import Mathlib.Algebra.Order.Ring.NNRat
 public import Mathlib.Data.NNRat.BigOperators
 public import Mathlib.MeasureTheory.Measure.AddContent
 public import Linglib.Core.Order.Interval.Set.LinearOrder
-public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Semantics.Polarity.Basic
 

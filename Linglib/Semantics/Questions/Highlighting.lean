@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Polar
 public import Linglib.Logic.Team.Inquisitive
 public import Mathlib.Algebra.Group.Action.Prod
 

@@ -6,7 +6,7 @@ public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Fragments.HindiUrdu.Particles
 public import Linglib.Fragments.Japanese.Particles
-public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Semantics.Presupposition.Verb
 
 /-!

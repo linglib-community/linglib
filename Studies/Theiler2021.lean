@@ -2,7 +2,7 @@ module
 
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Discourse.SpeechAct
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Polar
 public import Linglib.Data.Examples.Theiler2021
 
 /-!

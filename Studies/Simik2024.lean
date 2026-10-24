@@ -2,8 +2,8 @@ module
 
 public import Studies.BuringGunlogson2000
 public import Linglib.Syntax.Negation
-public import Linglib.Semantics.Questions.Hamblin
-public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.HamblinSet
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Discourse.CommonGround
 public import Linglib.Logic.Modal.Defs

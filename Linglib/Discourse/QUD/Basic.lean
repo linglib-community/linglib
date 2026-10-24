@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Data.RoseTree.Licensed
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Entailment
 public import Linglib.Semantics.Questions.Resolution
 
