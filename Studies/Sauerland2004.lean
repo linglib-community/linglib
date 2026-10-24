@@ -52,7 +52,7 @@ namespace Sauerland2004
 
 open NeoGricean Set
 
-attribute [local instance] Set.decidableSubsetOfFintype
+attribute [local instance] Set.decidableSubsetOfFintype Set.decidableSSubsetOfFintype
 
 /-- The scale of disjunction (40). -/
 inductive Connective where
@@ -93,7 +93,6 @@ instance (c : Connective) : DecidablePred (· ∈ ab c) :=
 theorem isSecondaryImplicature_ab_iff (c : Connective) :
     IsSecondaryImplicature (ab .or) (range ab) (ab c) ↔ c = .and := by
   rw [isSecondaryImplicature_range_iff]
-  simp only [ssubset_def]
   cases c <;> decide
 
 /-! ### A scalar item under disjunction (Section 3.3) -/
@@ -129,7 +128,7 @@ theorem isSecondaryImplicature_kai_iff (c : Connective) (q : Quantity) :
     IsSecondaryImplicature (kai (.or, .some)) (range kai) (kai (c, q)) ↔
       c = .and ∨ (c = .R ∧ q = .all) := by
   rw [isSecondaryImplicature_range_iff]
-  simp only [ssubset_def, Prod.forall]
+  simp only [Prod.forall]
   cases c <;> cases q <;> decide
 
 /-! ### Multiple disjunction -/
@@ -148,7 +147,7 @@ theorem isSecondaryImplicature_abc_iff (c d : Connective) :
     IsSecondaryImplicature (abc (.or, .or)) (range abc) (abc (c, d)) ↔
       c = .and ∨ (c = .R ∧ d = .and) := by
   rw [isSecondaryImplicature_range_iff]
-  simp only [ssubset_def, Prod.forall]
+  simp only [Prod.forall]
   cases c <;> cases d <;> decide
 
 end Sauerland2004

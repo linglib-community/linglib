@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Examples.EvcenBaleBarner2026
 public import Studies.VonFintel2001
+public import Linglib.Core.Data.Fintype.Sets
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
@@ -70,6 +71,8 @@ namespace EvcenBaleBarner2026
 
 open EvcenBaleBarner2026.Examples Exhaustification
 
+attribute [local instance] Set.decidableSubsetOfFintype
+
 /-- The three buttons of Experiments 1 and 3. -/
 inductive Button
   | red
@@ -96,10 +99,6 @@ instance (b : Button) (s : Sound) : DecidablePred (· ∈ cond b s) :=
 
 instance (i : Button × Sound) : DecidablePred (· ∈ Function.uncurry cond i) :=
   inferInstanceAs (DecidablePred (· ∈ cond i.1 i.2))
-
-instance (S T : Set World) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] :
-    Decidable (S ⊆ T) :=
-  decidable_of_iff (∀ w, w ∈ S → w ∈ T) Iff.rfl
 
 /-- In the trigger map of [von-fintel-2001]'s answers, button `b` plays the dog sound. -/
 def causesDog (b : Button) : Set World := cond b .dog
@@ -283,10 +282,6 @@ def plays (b : Button2) : Set World2 := {w | w b = true}
 
 instance (b : Button2) : DecidablePred (· ∈ plays b) :=
   fun w ↦ inferInstanceAs (Decidable (w b = true))
-
-instance (S T : Set World2) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] :
-    Decidable (S ⊆ T) :=
-  decidable_of_iff (∀ w, w ∈ S → w ∈ T) Iff.rfl
 
 /-- The cell-level answer *if you press the [shape]s, it plays a dog barking* says the dog button
 is among that shape's, weaker than any one button's answer. -/
