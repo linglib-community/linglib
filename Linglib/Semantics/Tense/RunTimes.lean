@@ -42,7 +42,9 @@ times live in their studies.
 
 namespace Tense
 
-variable {T : Type*} [LinearOrder T]
+section Preorder
+
+variable {T : Type*} [Preorder T]
 
 /-- The time trace of a set of intervals is the set of time points they contain. -/
 def timeTrace (p : Set (NonemptyInterval T)) : Set T :=
@@ -57,6 +59,47 @@ theorem timeTrace_image {α : Type*} (f : α → NonemptyInterval T) (s : Set α
 
 @[simp] theorem timeTrace_empty : timeTrace (∅ : Set (NonemptyInterval T)) = ∅ := by
   ext; simp [timeTrace]
+
+@[simp] theorem timeTrace_union (p q : Set (NonemptyInterval T)) :
+    timeTrace (p ∪ q) = timeTrace p ∪ timeTrace q := by
+  ext; simp [or_and_right, exists_or]
+
+theorem isLeast_timeTrace_singleton (i : NonemptyInterval T) : IsLeast (timeTrace {i}) i.fst :=
+  ⟨⟨i, rfl, le_rfl, i.fst_le_snd⟩, fun _ ⟨_, hj, ht⟩ ↦ (Set.mem_singleton_iff.1 hj ▸ ht).1⟩
+
+theorem isGreatest_timeTrace_singleton (i : NonemptyInterval T) :
+    IsGreatest (timeTrace {i}) i.snd :=
+  ⟨⟨i, rfl, i.fst_le_snd, le_rfl⟩, fun _ ⟨_, hj, ht⟩ ↦ (Set.mem_singleton_iff.1 hj ▸ ht).2⟩
+
+/-! ### Before ever -/
+
+variable {A B : Set (NonemptyInterval T)}
+
+/-- *p before ever q* holds when a time of `p` precedes every time of `q`, Anscombe's universal
+rendering of *before* ([anscombe-1964] §IV–V). -/
+def beforeEver (A B : Set (NonemptyInterval T)) : Prop :=
+  ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
+
+theorem beforeEver_iff :
+    beforeEver A B ↔ (timeTrace A ∩ strictLowerBounds (timeTrace B)).Nonempty :=
+  .rfl
+
+theorem beforeEver_iff_of_isLeast {m : T} (h : IsLeast (timeTrace B) m) :
+    beforeEver A B ↔ ∃ t ∈ timeTrace A, t < m :=
+  ⟨fun ⟨t, ht, h'⟩ ↦ ⟨t, ht, h' m h.1⟩,
+    fun ⟨t, ht, htm⟩ ↦ ⟨t, ht, fun _ h' ↦ htm.trans_le (h.2 h')⟩⟩
+
+theorem beforeEver_singleton_right {i : NonemptyInterval T} :
+    beforeEver A {i} ↔ ∃ j ∈ A, j.fst < i.fst := by
+  rw [beforeEver_iff_of_isLeast (isLeast_timeTrace_singleton i)]
+  exact ⟨fun ⟨_, ⟨j, hj, ht⟩, hlt⟩ ↦ ⟨j, hj, ht.1.trans_lt hlt⟩,
+    fun ⟨j, hj, hlt⟩ ↦ ⟨j.fst, ⟨j, hj, le_rfl, j.fst_le_snd⟩, hlt⟩⟩
+
+end Preorder
+
+section PartialOrder
+
+variable {T : Type*} [PartialOrder T]
 
 @[simp] theorem timeTrace_singleton (i : NonemptyInterval T) :
     timeTrace {i} = (i : Set T) := by
@@ -78,22 +121,20 @@ theorem mem_timeTrace_Iic {i : NonemptyInterval T} {t : T} :
     t ∈ timeTrace (Set.Iic i) ↔ t ∈ i := by
   rw [timeTrace_Iic]; rfl
 
-@[simp] theorem timeTrace_union (p q : Set (NonemptyInterval T)) :
-    timeTrace (p ∪ q) = timeTrace p ∪ timeTrace q := by
-  ext; simp [or_and_right, exists_or]
+theorem isLeast_timeTrace_Iic (i : NonemptyInterval T) : IsLeast (timeTrace (Set.Iic i)) i.fst := by
+  rw [timeTrace_Iic, ← timeTrace_singleton]
+  exact isLeast_timeTrace_singleton i
 
-/-! ### Before ever -/
+theorem isGreatest_timeTrace_Iic (i : NonemptyInterval T) :
+    IsGreatest (timeTrace (Set.Iic i)) i.snd := by
+  rw [timeTrace_Iic, ← timeTrace_singleton]
+  exact isGreatest_timeTrace_singleton i
 
-variable {A B C : Set (NonemptyInterval T)}
+end PartialOrder
 
-/-- *p before ever q* holds when a time of `p` precedes every time of `q`, Anscombe's universal
-rendering of *before* ([anscombe-1964] §IV–V). -/
-def beforeEver (A B : Set (NonemptyInterval T)) : Prop :=
-  ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
+section LinearOrder
 
-theorem beforeEver_iff :
-    beforeEver A B ↔ (timeTrace A ∩ strictLowerBounds (timeTrace B)).Nonempty :=
-  .rfl
+variable {T : Type*} [LinearOrder T] {A B C : Set (NonemptyInterval T)}
 
 /-- *Before* is *not yet*. `A` is before ever `B` exactly when some time of `A` lies outside the
 upward closure of `B`'s times, the times at which `B` holds or has held. -/
@@ -111,5 +152,7 @@ theorem beforeEver_union_right : beforeEver A (B ∪ C) ↔ beforeEver A B ∧ b
     (isLowerSet_strictLowerBounds (timeTrace C)) with h | h
   · rwa [Set.inter_eq_left.2 h]
   · rwa [Set.inter_eq_right.2 h]
+
+end LinearOrder
 
 end Tense

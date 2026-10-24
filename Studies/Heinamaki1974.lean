@@ -97,7 +97,7 @@ def before (A : Set (NonemptyInterval T)) (lb : T) : Prop := ∃ t ∈ timeTrace
 def after (A : Set (NonemptyInterval T)) (lb : T) : Prop := ∃ t ∈ timeTrace A, lb < t
 
 theorem before_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
-    before A lb ↔ Tense.beforeEver A B := (beforeEver_iff_lt_least hlb).symm
+    before A lb ↔ Tense.beforeEver A B := (beforeEver_iff_of_isLeast hlb).symm
 
 theorem after_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     after A lb ↔ Anscombe.after A B := (after_iff_least_lt hlb).symm

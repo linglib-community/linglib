@@ -428,7 +428,7 @@ theorem not_exists_earliest_will [DenselyOrdered T] :
 theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) :
     (∃ t ∈ A, t < m) ↔ Tense.beforeEver (NonemptyInterval.pure '' A)
       (NonemptyInterval.pure '' B) := by
-  rw [Anscombe1964.beforeEver_iff_lt_least (lb := m)]
+  rw [Tense.beforeEver_iff_of_isLeast (m := m)]
   · simp [Tense.timeTrace_image]
   · simpa [Tense.timeTrace_image] using hm
 

@@ -35,9 +35,9 @@ inference follows.
 
 ## Implementation notes
 
-* Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`, shared with
-  `Studies/Williams2025`. Time spans are a function `τ` into `NonemptyInterval`, the run time of an
-  event or the life span of an entity, and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst`.
+* Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`. Time spans are a
+  function `τ` into `NonemptyInterval`, the run time of an event or the life span of an entity,
+  and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst` (`Event.preExists_iff`).
 * Truth values are trivalent, as in the paper: a sentence is a trivalent proposition
   `W → SignType`, defined when it is true or false. The existential closure (58) and the past
   tense (60) are both the strong Kleene existential `Trivalent.existsStrong`, the tense over the
@@ -63,7 +63,6 @@ inference follows.
 * [bondarenko-2020]
 * [fox-2013]
 * [kleene-1952]
-* [williams-2025]
 -/
 
 @[expose] public section
@@ -74,25 +73,6 @@ open Event
 
 variable {W T X E I : Type*} [LinearOrder T]
 
-section ExistsStrong
-
-variable {ι : Sort*} {f : ι → SignType}
-
-private theorem existsStrong_ne_zero_of_forall (h : ∀ i, f i ≠ 0) :
-    Trivalent.existsStrong f ≠ 0 := by
-  simp_all
-
-private theorem existsStrong_ne_zero_of_isEmpty [IsEmpty ι] : Trivalent.existsStrong f ≠ 0 := by
-  simp
-
-private theorem exists_ne_zero_of_existsStrong_ne_zero [Nonempty ι]
-    (h : Trivalent.existsStrong f ≠ 0) : ∃ i, f i ≠ 0 := by
-  by_contra! h'
-  exact h (Trivalent.existsStrong_eq_zero_iff.2 ⟨fun i ↦ by simp [h' i],
-    Classical.arbitrary ι, h' _⟩)
-
-end ExistsStrong
-
 /-! ### θTh and its presupposition, (55), (56) -/
 
 open Classical in
@@ -102,7 +82,7 @@ individual, (55), (56). -/
 noncomputable def thetaTh (τ : X → NonemptyInterval T) (about : E → X)
     (P : W → NonemptyInterval T → E → Prop) (Q : W → NonemptyInterval T → X → Prop)
     (t : NonemptyInterval T) (e : E) : W → SignType :=
-  {w | PreExists τ (Q w t) t.fst}.indicator
+  {w | PreExists τ (Q w t) t}.indicator
     fun w ↦ SignType.ofProp (∃ x, Q w t x ∧ (τ x).fst < t.fst ∧ P w t e ∧ about e = x)
 
 /-- The report (61) is the past tense (60), within the contextual interval `g₁`, over the
@@ -130,41 +110,45 @@ theorem thetaTh_eq_one_iff {e : E} :
     thetaTh τ about P Q t e w = 1 ↔ ∃ x, Q w t x ∧ (τ x).fst < t.fst ∧ P w t e ∧ about e = x := by
   simp only [thetaTh, Trivalent.indicator_apply_eq_one_iff, Set.mem_ofPred_eq,
     SignType.ofProp_eq_one_iff, and_iff_right_iff_imp]
-  exact fun ⟨x, hx, hlt, _⟩ ↦ ⟨x, hx, hlt⟩
+  exact fun ⟨x, hx, hlt, _⟩ ↦ preExists_iff.2 ⟨x, hx, hlt⟩
+
+theorem thetaTh_ne_zero_iff {e : E} : thetaTh τ about P Q t e w ≠ 0 ↔ PreExists τ (Q w t) t := by
+  simp [thetaTh]
 
 /-! ### A CP adds no presupposition, §3.1 -/
 
 /-- A report with a CP is defined at every world, so it presupposes nothing about the
 actual world, §3.1.2. -/
 theorem reportThat_ne_zero [Anchor E I] (p : I → Prop) : reportThat P p g₁ t w ≠ 0 :=
-  existsStrong_ne_zero_of_forall fun _ ↦ by simp
+  Trivalent.existsStrong_ne_zero_iff.2 (.inr fun _ ↦ by simp)
 
 /-! ### A nominalized clause presupposes pre-existence, §3.2.3 -/
 
 /-- The existentially closed θTh-report presupposes pre-existence, (59). -/
 theorem existsStrong_thetaTh_ne_zero_iff [Nonempty E] :
     Trivalent.existsStrong (fun e ↦ thetaTh τ about P Q t e w) ≠ 0 ↔
-      PreExists τ (Q w t) t.fst := by
-  refine ⟨fun h ↦ ?_, fun h ↦ existsStrong_ne_zero_of_forall fun _ ↦ by simp [thetaTh, h]⟩
-  obtain ⟨e, he⟩ := exists_ne_zero_of_existsStrong_ne_zero h
-  simpa [thetaTh] using he
+      PreExists τ (Q w t) t := by
+  rw [Trivalent.existsStrong_ne_zero_iff]
+  refine ⟨?_, fun h ↦ .inr fun _ ↦ thetaTh_ne_zero_iff.2 h⟩
+  rintro (⟨e, he⟩ | h)
+  · exact thetaTh_ne_zero_iff.1 (he ▸ one_ne_zero)
+  · exact thetaTh_ne_zero_iff.1 (h (Classical.arbitrary E))
 
 /-- Over a nonempty contextual past, the report presupposes that the complement describes
 something that started before a past thinking time, (62). -/
 theorem exists_preExists_of_report_ne_zero [Nonempty E]
     (hpast : ∃ t', t'.Precedes t ∧ t' ≤ g₁) (h : report τ about P Q g₁ t w ≠ 0) :
-    ∃ t', t'.Precedes t ∧ t' ≤ g₁ ∧ PreExists τ (Q w t') t'.fst := by
-  obtain ⟨t', ht'⟩ := hpast
-  have : Nonempty {t' // t'.Precedes t ∧ t' ≤ g₁} := ⟨⟨t', ht'⟩⟩
-  obtain ⟨⟨t', hprec, hle⟩, hp⟩ := exists_ne_zero_of_existsStrong_ne_zero h
-  exact ⟨t', hprec, hle, existsStrong_thetaTh_ne_zero_iff.1 hp⟩
+    ∃ t', t'.Precedes t ∧ t' ≤ g₁ ∧ PreExists τ (Q w t') t' := by
+  obtain ⟨⟨t', hprec, hle⟩, hp⟩ | h := Trivalent.existsStrong_ne_zero_iff.1 h
+  · exact ⟨t', hprec, hle, existsStrong_thetaTh_ne_zero_iff.1 (hp ▸ one_ne_zero)⟩
+  · obtain ⟨t', ht'⟩ := hpast
+    exact ⟨t', ht'.1, ht'.2, existsStrong_thetaTh_ne_zero_iff.1 (h ⟨t', ht'⟩)⟩
 
 /-- Over an empty contextual past the report is defined whatever the complement describes, so
 (62) needs the past to be nonempty. -/
 theorem report_ne_zero_of_not_exists (hpast : ¬ ∃ t', t'.Precedes t ∧ t' ≤ g₁) :
     report τ about P Q g₁ t w ≠ 0 :=
-  have : IsEmpty {t' // t'.Precedes t ∧ t' ≤ g₁} := ⟨fun ⟨t', ht'⟩ ↦ hpast ⟨t', ht'⟩⟩
-  existsStrong_ne_zero_of_isEmpty
+  Trivalent.existsStrong_ne_zero_iff.2 (.inr fun ⟨t', ht'⟩ ↦ absurd ⟨t', ht'⟩ hpast)
 
 /-- The report presupposes that the complement describes something in the world of evaluation,
 the factive inference (2b), (3). -/
@@ -183,7 +167,7 @@ theorem support_neg_report :
 the matrix time, independent of the world ((64), (65)). -/
 theorem existsStrong_thetaTh_comp_ne_zero_iff [Nonempty E] [Anchor X I] (p : I → Prop) :
     Trivalent.existsStrong (fun e ↦ thetaTh τ about P (fun _ _ ↦ Anchor.comp p) t e w) ≠ 0 ↔
-      PreExists τ (Anchor.comp p) t.fst :=
+      PreExists τ (Anchor.comp p) t :=
   existsStrong_thetaTh_ne_zero_iff
 
 /-- A report with a CP can be true while its content is false, (1b). One thinking event, at
@@ -202,17 +186,17 @@ Days are integers, Monday `1`, Tuesday `2`, Wednesday `3` (fn. 3), and the think
 Tuesday. -/
 
 /-- A breaking begun on Monday is one Sajana can remember on Tuesday, (4b). -/
-example : PreExists Event.τ (· = (.pure 1 : NonemptyInterval ℤ)) (2 : ℤ) := by
+example : PreExists Event.τ (· = (.pure 1 : NonemptyInterval ℤ)) (.pure 2) := by
   simp
 
 /-- A breaking begun on Wednesday is not, (4c). -/
-example : ¬ PreExists Event.τ (· = (.pure 3 : NonemptyInterval ℤ)) (2 : ℤ) := by
+example : ¬ PreExists Event.τ (· = (.pure 3 : NonemptyInterval ℤ)) (.pure 2) := by
   simp
 
 /-- A child conceived before the time talked about, here `0`, can be remembered, and
 neither it nor Badma need have stopped existing; a child not yet conceived cannot, (5), (8). -/
-example : PreExists (fun (x : NonemptyInterval ℤ) ↦ x) (· = ⟨(-1, 10), by decide⟩) 0 ∧
-    ¬ PreExists (fun (x : NonemptyInterval ℤ) ↦ x) (· = ⟨(2, 10), by decide⟩) 0 := by
+example : PreExists (fun (x : NonemptyInterval ℤ) ↦ x) (· = ⟨(-1, 10), by decide⟩) (.pure 0) ∧
+    ¬ PreExists (fun (x : NonemptyInterval ℤ) ↦ x) (· = ⟨(2, 10), by decide⟩) (.pure 0) := by
   simp
 
 end Bondarenko2020

@@ -89,7 +89,7 @@ variable {A B B' : Set (NonemptyInterval T)}
 theorem uniform_lt_iff_beforeEver (hB : ∃ e, IsLeast (timeTrace B) e) :
     uniform (· < ·) (timeTrace A) (timeTrace B) ↔ beforeEver A B := by
   obtain ⟨e, he⟩ := hB
-  rw [uniform, beforeEver_iff_lt_least he]
+  rw [uniform, beforeEver_iff_of_isLeast he]
   exact exists_congr fun _ ↦ and_congr_right fun _ ↦
     ⟨fun ⟨_, he', h⟩ ↦ by rwa [he.unique he'], fun h ↦ ⟨e, he, h⟩⟩
 

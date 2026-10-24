@@ -418,6 +418,9 @@ variable {ι : Sort*} {p : ι → SignType}
   refine and_congr_right fun hne => exists_congr fun i => ?_
   cases h : p i <;> simp_all
 
+theorem existsStrong_ne_zero_iff : existsStrong p ≠ 0 ↔ (∃ i, p i = 1) ∨ ∀ i, p i ≠ 0 := by
+  rw [ne_eq, existsStrong_eq_zero_iff, not_and_or, not_forall_not, not_exists]
+
 end StrongQuantifiers
 
 /-- Haug's universal quantifier skips undefined instances — undefined only when every

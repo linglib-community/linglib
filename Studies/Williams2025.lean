@@ -111,7 +111,7 @@ def mod (plan : E → NonemptyInterval T → W → Set W) (C : Complement W E T)
 /-- Pre-existence, (28b), holds at the forgetting `e` when the complement describes an event at the
 subjective now, the run time of `e`, that starts before `e` does. -/
 def PreEx (C : Complement W E T) (e : E) (w : W) : Prop :=
-  Event.PreExists τ (C w (τ e)) (τ e).fst
+  Event.PreExists τ (C w (τ e)) (τ e)
 
 /-- A complement needs the modal when it contradicts pre-existence at every forgetting, so that
 without the modal the sentence is a presupposition failure (§5). -/
@@ -155,7 +155,7 @@ theorem not_preEx_aspP : ¬ PreEx (aspP P) e w :=
 (39). -/
 theorem preEx_mod_iff :
     PreEx (mod plan C) e w ↔ ∃ s, mod plan C w (τ e) s ∧ (τ s).fst < (τ e).fst :=
-  Iff.rfl
+  Event.preExists_iff
 
 /-! ### The modal as a last resort, (15) -/
 
@@ -167,13 +167,13 @@ theorem needsMod_aspP (P : W → E → Prop) : NeedsMod (aspP P) :=
 that precedes a forgetting `f`, (15b). -/
 theorem not_needsMod_anterior_aspP {f : E} (h : P w e) (hf : (τ e).Precedes (τ f)) :
     ¬ NeedsMod (anterior (aspP P)) :=
-  fun hn ↦ hn f w ⟨e, ⟨τ e, hf, le_rfl, h⟩, (τ e).fst_le_snd.trans_lt hf⟩
+  fun hn ↦ hn f w (Event.preExists_of_precedes ⟨τ e, hf, le_rfl, h⟩ hf)
 
 /-- The modal meets pre-existence at a forgetting `f`, given a plan holding at the subjective now
 that began before it, (40). -/
 theorem not_needsMod_mod {f s : E} (hs : mod plan C w (τ f) s) (hlt : (τ s).fst < (τ f).fst) :
     ¬ NeedsMod (mod plan C) :=
-  fun hn ↦ hn f w ⟨s, hs, hlt⟩
+  fun hn ↦ hn f w (preEx_mod_iff.2 ⟨s, hs, hlt⟩)
 
 /-! ### Against the Modalized Complement Analysis, §3.1 -/
 
@@ -199,13 +199,14 @@ example : PreEx (anterior (aspP fun (_ : Unit) e ↦ e = (.pure 1 : NonemptyInte
 /-- A call begun on Wednesday is not, (19b). -/
 example : ¬ PreEx (anterior (aspP fun (_ : Unit) e ↦ e = (.pure 3 : NonemptyInterval ℤ)))
     (.pure 2) () := by
-  rintro ⟨_, ⟨_, -, -, rfl⟩, h⟩
+  rintro h
+  obtain ⟨_, ⟨_, -, -, rfl⟩, h⟩ := Event.preExists_iff.1 h
   exact absurd h (by decide)
 
 /-- In (21a) Mary forgot to call back her twin, as told on Monday, and in the plan world `true` she
 calls on Wednesday. -/
 example : PreEx (mod (fun _ _ _ ↦ {true})
       (aspP fun w e ↦ w = true ∧ e = (.pure 3 : NonemptyInterval ℤ))) (.pure 2) false :=
-  ⟨.pure 1, fun _ hw ↦ ⟨.pure 3, by decide, _, le_rfl, hw, rfl⟩, by decide⟩
+  preEx_mod_iff.2 ⟨.pure 1, fun _ hw ↦ ⟨.pure 3, by decide, _, le_rfl, hw, rfl⟩, by decide⟩
 
 end Williams2025
