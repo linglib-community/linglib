@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
@@ -15,9 +14,9 @@ Set A indexes transitive subjects and possessors and Set B intransitive subjects
 of `Mam.Pronouns` complete the person distinctions. In San Juan Atitán Mam, the variety Scott
 describes, a transitive object is not cross-referenced: the verb carries the non-first singular
 Set B *tz'=* whatever the object, which is a full pronoun, though some speakers accept agreeing
-Set B for objects as a more formal variant. The underlying case system is therefore tripartite,
-an ergative from Voice, an accusative from Voice and an absolutive from Infl, visible only
-through agreement, and it holds in every aspect. Set B precedes the stem in the verbal complex,
+Set B for objects as a more formal variant. The marking is therefore tripartite in every aspect,
+which Scott derives from an ergative and an accusative assigned by Voice and an absolutive by
+Infl. Set B precedes the stem in the verbal complex,
 the high-absolutive placement. England's sketch gives the ergative pattern of the other
 varieties, where Set B indexes the object, with the dialectal forms of the enclitics.
 
@@ -25,8 +24,7 @@ varieties, where Set B indexes the object, with the dialectal forms of the encli
 
 * `Mam.setAExponent`, `Mam.setBExponent`, `Mam.defaultSetB`: the two paradigms and the Set B
   of a transitive clause.
-* `Mam.template`, `Mam.assignCase`, `Mam.caseInventory`: the verbal complex, the tripartite case
-  function, and the three cases it realizes.
+* `Mam.template`, `Mam.markerSet`: the verbal complex and the tripartite marking.
 
 ## References
 
@@ -39,7 +37,7 @@ varieties, where Set B indexes the object, with the dialectal forms of the encli
 
 namespace Mam
 
-open Mayan (ExponentTable)
+open Mayan (ExponentTable MarkerSet)
 
 /-! ### The paradigms -/
 
@@ -66,17 +64,19 @@ def setBExponent : ExponentTable :=
 /-- The Set B of a transitive clause, the non-first singular *tz'=* whatever the object. -/
 def defaultSetB : List Morphology.Morph := [.procl "tz'"]
 
-/-! ### The verbal complex and case -/
+/-! ### The verbal complex and the marking -/
 
 /-- The position classes of the verbal complex, the aspect marker, Set B and Set A before the
 stem and no status suffix. -/
 def template : Morphology.AffixTemplate Mayan.VerbSlot := { prefixSlots := [.aspect, .setB, .setA] }
 
-/-- Case is tripartite in every aspect, ergative on the transitive subject, accusative on the
-object and absolutive on the intransitive subject. -/
-def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.tripartite
+/-- Set A on the transitive subject and Set B on the intransitive subject in every aspect; the
+object is not cross-referenced, the verb carrying the default Set B whatever the object. -/
+def markerSet : ArgumentRole → Option MarkerSet
+  | .A => some .setA
+  | .S => some .setB
+  | .P | .R | .T => none
 
-/-- The cases the core roles realize, the ergative, the accusative and the absolutive. -/
-def caseInventory : Finset Case := ArgumentRole.core.image (assignCase .Perf)
+theorem isTripartite_markerSet : Alignment.IsTripartite markerSet := ⟨nofun, nofun, nofun⟩
 
 end Mam

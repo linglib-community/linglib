@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
@@ -19,9 +18,8 @@ Preminger's monograph is the source of the paradigms.
 ## Main declarations
 
 * `Kaqchikel.setAExponent`, `Kaqchikel.setBExponent`: the Set A and Set B paradigms.
-* `Kaqchikel.template`, `Kaqchikel.assignCase`: the verbal complex and the case of each argument
-  by aspect.
-* `Kaqchikel.caseInventory`: the cases the core roles realize in the perfective.
+* `Kaqchikel.template`, `Kaqchikel.markerSet`: the verbal complex and the marking of the
+  arguments by aspect.
 
 ## Implementation notes
 
@@ -40,7 +38,7 @@ of the exponents drop in certain phonological contexts.
 
 namespace Kaqchikel
 
-open Mayan (ExponentTable)
+open Mayan (ExponentTable MarkerSet)
 
 /-! ### The verbal complex -/
 
@@ -52,9 +50,12 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot :=
 /-- Kaqchikel is ergative in every aspect but the progressive, where in the construction with
 the matrix predicate *ajin* Set A cross-references the object rather than the subject, the
 inverted alignment [imanishi-2014] analyses; some varieties lack the pattern. -/
-def assignCase : UD.Aspect → ArgumentRole → Case
-  | .Prog => Alignment.invertedErgative
-  | .Perf | .Imp | .Prosp | .Hab | .Iter => Alignment.ergative
+def markerSet : UD.Aspect → ArgumentRole → Option MarkerSet
+  | .Prog => fun
+    | .S | .A => some .setB
+    | .P => some .setA
+    | .R | .T => none
+  | .Perf | .Imp | .Prosp | .Hab | .Iter => Mayan.ergativeMarking
 
 /-! ### The paradigms -/
 
@@ -78,10 +79,6 @@ def setBExponent : ExponentTable :=
    (.personNumber .third .singular, []), (.personNumber .first .plural, [.pref "oj"]),
    (.personNumber .second .plural, [.pref "ix"]), (.personNumber .third .plural, [.pref "e"])]
 
-theorem isErgative_perfective : Alignment.IsErgative (assignCase .Perf) :=
-  Alignment.isErgative_ergative
-
-/-- The cases the core roles realize in the perfective, the ergative and the absolutive. -/
-def caseInventory : Finset Case := ArgumentRole.core.image (assignCase .Perf)
+theorem isAccusative_markerSet_prog : Alignment.IsAccusative (markerSet .Prog) := ⟨rfl, nofun⟩
 
 end Kaqchikel

@@ -22,7 +22,7 @@ sketch of Tseltal and Tsotsil and Aissen's clause-structure monograph are the so
 
 * `Tsotsil.setAExponent`, `Tsotsil.setAPlural`, `Tsotsil.setBExponent`,
   `Tsotsil.setBPrefixExponent`: the paradigms.
-* `Tsotsil.template`, `Tsotsil.assignCase`: the verbal complex and the ergative case function.
+* `Tsotsil.template`, `Tsotsil.markerSet`: the verbal complex and the ergative marking.
 
 ## Implementation notes
 
@@ -50,7 +50,7 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot :=
   { prefixSlots := [.aspect, .setA], suffixSlots := [.setB] }
 
 /-- Tsotsil is ergative in every aspect. -/
-def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative
+def markerSet : ArgumentRole → Option Mayan.MarkerSet := Mayan.ergativeMarking
 
 /-! ### The paradigms -/
 

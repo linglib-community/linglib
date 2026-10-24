@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Category.Pronoun.Personal
@@ -27,7 +26,7 @@ grammar are the sources.
 
 * `Kiche.setAExponent`, `Kiche.setBExponent`: the two paradigms.
 * `Kiche.laEncl`, `Kiche.alaqEncl`: the honorific second person enclitics.
-* `Kiche.template`, `Kiche.assignCase`: the verbal complex and the ergative case function.
+* `Kiche.template`, `Kiche.markerSet`: the verbal complex and the ergative marking.
 * `Kiche.pronouns`: the independent pronouns.
 
 ## Main results
@@ -55,7 +54,7 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot :=
   { prefixSlots := [.aspect, .setB, .setA], suffixSlots := [.status] }
 
 /-- K'iche' is ergative in every aspect. -/
-def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative
+def markerSet : ArgumentRole → Option Mayan.MarkerSet := Mayan.ergativeMarking
 
 /-! ### The paradigms -/
 
