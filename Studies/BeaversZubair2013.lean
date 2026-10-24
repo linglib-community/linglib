@@ -197,7 +197,7 @@ inductive Root where
   deriving DecidableEq, Fintype, Repr
 
 /-- `r.verb` is the fragment verb of the root `r`. -/
-def Root.verb : Root → Sinhala.Verb
+def Root.verb : Root → Verb
   | .kada => kadann
   | .gila => gilann
   | .mara => marann
@@ -229,17 +229,24 @@ theorem anticausativizes_iff_alternates (r : Root) :
     Anticausativizes r ↔ r.verb.Alternates Voice.anticausative := by
   cases r <;> decide
 
+/-- Inchoatives are always involitive (fn. 7): a diathesis the anticausative derives carries the
+involitive form, *Nimal giluna*, never the volitive *\*giluwa* ((3)). -/
+theorem inchoative_involitive (r : Root) :
+    ∀ c ∈ r.verb.valency.diatheses, ∀ d ∈ r.verb.valency.diatheses,
+      Voice.anticausative.Relates c d → d.form.isSome := by
+  cases r <;> decide
+
 /-- A root that anticausativizes has an involitive stem, where its inchoative surfaces since the
 volitive is barred (§7.3). -/
 theorem hasInvolitive_of_anticausativizes {r : Root} (h : Anticausativizes r) :
-    r.verb.HasInvolitive := by
-  revert h
-  cases r <;> decide
+    HasInvolitive r.verb :=
+  let ⟨c, hc, d, hd, hr⟩ := (anticausativizes_iff_alternates r).1 h
+  ⟨d, hd, inchoative_involitive r c hc d hd hr⟩
 
 /-- The involitive does not mark anticausatives, since *kapa-* 'cut' has an involitive stem
 ((7c)) and no inchoative ((26)). -/
 theorem exists_hasInvolitive_not_anticausativizes :
-    ∃ r : Root, r.verb.HasInvolitive ∧ ¬ Anticausativizes r :=
+    ∃ r : Root, HasInvolitive r.verb ∧ ¬ Anticausativizes r :=
   ⟨.kapa, by decide, by decide⟩
 
 end BeaversZubair2013
