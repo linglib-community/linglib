@@ -332,8 +332,11 @@ open _root_.Hausa
 def sem (n : Hausa.Noun) : Option Gender := n.naturalGender
 
 /-- The referents' gender first; then a noun in *-ā* is feminine, the rest masculine. -/
-def system : Gender.AssignmentSystem (Option Gender) Bool Gender where
-  semantic := id
+def system : Gender.AssignmentSystem (Option Gender) Bool Gender.Value where
+  semantic
+    | some .masculine => some .masculine
+    | some .feminine => some .feminine
+    | _ => none
   formal aa := if aa then some .feminine else none
   residue := .masculine
 
@@ -838,7 +841,7 @@ namespace Icelandic
 /-- By §9.4, homogeneous masculines or feminines keep their gender and any mixture takes the
 neuter, the semantically justified gender for beings of both sexes; the rules are syntactic,
 reading the conjuncts' genders. -/
-def rules : List (ResolutionRule _root_.Gender _root_.Gender) :=
+def rules : List (ResolutionRule _root_.Icelandic.Gender.Value _root_.Icelandic.Gender.Value) :=
   [.all (· = .masculine) .masculine, .all (· = .feminine) .feminine, otherwise .neuter]
 
 end Icelandic
@@ -993,7 +996,7 @@ theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
     ∀ cs ∈ row.parse? "conjuncts"
       [("masc+fem", [_root_.Icelandic.Nouns.drengur, _root_.Icelandic.Nouns.telpa]),
         ("fem+neut", [_root_.Icelandic.Nouns.aer, _root_.Icelandic.Nouns.lamb])],
-      ∀ g ∈ row.parse? "resolved" [("neut", _root_.Gender.neuter)],
+      ∀ g ∈ row.parse? "resolved" [("neut", _root_.Icelandic.Gender.Value.neuter)],
         (row.judgment = .acceptable ↔ resolve Icelandic.rules (cs.map (·.gender)) = some g) := by
   decide +kernel
 

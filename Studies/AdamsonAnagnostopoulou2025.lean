@@ -99,19 +99,21 @@ inductive Referent where
   | mass
   deriving DecidableEq, Repr
 
-/-- A three-gender system is a geometry, given by the node each node depends on directly, the node
-a referent contributes as interpretable gender and a grammatical gender contributes as
-uninterpretable gender, the features a plural coordination adds, and a vocabulary. -/
-structure System where
+/-- A three-gender system over a language's genders `G` is a geometry, given by the node each
+node depends on directly, the node a referent contributes as interpretable gender and a
+grammatical gender contributes as uninterpretable gender, the features a plural coordination
+adds, a vocabulary, and the comparative label of each gender. -/
+structure System (G : Type*) where
   parent : Node → Node
   iNode : Referent → Node
-  uNode : Gender → Node
+  uNode : G → Node
   plural : Finset Node := ∅
-  vocabulary : RuleSet (VocabularyItem Node Gender)
+  vocabulary : RuleSet (VocabularyItem Node G)
+  label : G → Gender
 
 namespace System
 
-variable (L : System)
+variable {G : Type*} (L : System G)
 
 /-- A node entails itself and the nodes it depends on, read up the parent map. -/
 def entailments (n : Node) : Finset Node := (List.iterate L.parent n (Fintype.card Node)).toFinset
@@ -120,51 +122,57 @@ def entailments (n : Node) : Finset Node := (List.iterate L.parent n (Fintype.ca
 def conceptual (r : Referent) : Bundle Node := .ofInterp (L.entailments (L.iNode r))
 
 /-- The uninterpretable features of a nominal of grammatical gender `g`. -/
-def arbitrary (g : Gender) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
+def arbitrary (g : G) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
 
 /-- A nominal headed by `n` and referring to `r` bears the interpretable features of `r` and,
 unless the gender of `n` is its referents', the uninterpretable features of that gender. -/
-def nominal (n : GenderedNoun Gender) (r : Referent) : Bundle Node :=
-  if n.IsNaturalGender id then L.conceptual r else L.conceptual r ∪ L.arbitrary n.gender
+def nominal (n : GenderedNoun G) (r : Referent) : Bundle Node :=
+  if n.IsNaturalGender L.label then L.conceptual r else L.conceptual r ∪ L.arbitrary n.gender
 
 /-- The exponent of a feature set under the Subset Principle. -/
-def realize (fs : Finset Node) : Option Gender :=
+def realize (fs : Finset Node) : Option G :=
   subsetPrinciple L.vocabulary fs
 
 /-- The exponent of a nominal's own gender, as on its determiner, its features at PF
 realized. -/
-def exponent (b : Bundle Node) : Option Gender := L.realize b.toPF
+def exponent (b : Bundle Node) : Option G := L.realize b.toPF
 
 /-- Resolution through conversion, the percolated interpretable features intersected and the
 result, with the coordination's plural features, realized; the intersection is nonempty by
 mismatch resolution. -/
-def converted (a b : Bundle Node) : Option Gender := L.realize (resolve a b ∪ L.plural)
+def converted (a b : Bundle Node) : Option G := L.realize (resolve a b ∪ L.plural)
 
 /-- Resolution of two nominals by their referents. -/
-def resolved (r₁ r₂ : Referent) : Option Gender := L.converted (L.conceptual r₁) (L.conceptual r₂)
+def resolved (r₁ r₂ : Referent) : Option G := L.converted (L.conceptual r₁) (L.conceptual r₂)
+
+/-- The comparative label of the resolution of two nominals by their referents, the terms in
+which languages' resolutions compare. -/
+def resolvedLabel (r₁ r₂ : Referent) : Option Gender := (L.resolved r₁ r₂).map L.label
 
 /-- Resolution through uninterpretable features, each conjunct's set realized, converging on
 one exponent or crashing. -/
-def formal (a b : Bundle Node) : Option Gender := realizeAll L.realize [a.uninterp, b.uninterp]
+def formal [DecidableEq G] (a b : Bundle Node) : Option G :=
+  realizeAll L.realize [a.uninterp, b.uninterp]
 
 /-- A human's percolated interpretable features beside an inanimate's uninterpretable ones. The
 redundancy rule copies the former to PF, and both sets are realized. -/
-def mixed (human inan : Bundle Node) : Option Gender :=
+def mixed [DecidableEq G] (human inan : Bundle Node) : Option G :=
   realizeAll L.realize [human.interp, inan.uninterp]
 
-@[simp] theorem interp_nominal (n : GenderedNoun Gender) (r : Referent) :
+@[simp] theorem interp_nominal (n : GenderedNoun G) (r : Referent) :
     (L.nominal n r).interp = (L.conceptual r).interp := by
   unfold nominal; split_ifs <;> simp [conceptual, arbitrary]
 
-theorem converted_nominal (n₁ n₂ : GenderedNoun Gender) (r₁ r₂ : Referent) :
+theorem converted_nominal (n₁ n₂ : GenderedNoun G) (r₁ r₂ : Referent) :
     L.converted (L.nominal n₁ r₁) (L.nominal n₂ r₂) = L.resolved r₁ r₂ := by
   simp only [converted, resolved, resolve, interp_nominal]
 
 end System
 
-/-- The three-way vocabulary shared by Greek and Icelandic. -/
-def threeWay : RuleSet (VocabularyItem Node Gender) :=
-  [{.fem, .masc} ⟷ .feminine, {.masc} ⟷ .masculine, ∅ ⟷ .neuter]
+/-- The three-way vocabulary shared by Greek and Icelandic, over a language's masculine,
+feminine and neuter. -/
+def threeWay {G : Type*} (masculine feminine neuter : G) : RuleSet (VocabularyItem Node G) :=
+  [{.fem, .masc} ⟷ feminine, {.masc} ⟷ masculine, ∅ ⟷ neuter]
 
 /-! ### Greek -/
 
@@ -173,7 +181,7 @@ namespace Greek
 open _root_.Greek.StandardModern.Gender
 
 /-- CLASS > MASC > FEM. -/
-def system : System where
+def system : System Value where
   parent
     | .fem => .masc
     | _ => .cls
@@ -185,7 +193,8 @@ def system : System where
     | .masculine => .masc
     | .feminine => .fem
     | _ => .cls
-  vocabulary := threeWay
+  vocabulary := threeWay .masculine .feminine .neuter
+  label := Value.toLabel
 
 theorem masc_mem_entailments_fem : .masc ∈ system.entailments .fem := by decide
 
@@ -284,7 +293,7 @@ theorem victim_painting :
 
 theorem clausal : system.realize ∅ = some .neuter := by decide
 
-theorem no_aba (v : RuleSet (VocabularyItem Node Gender)) (hv : v.Antihomophonous) {φ : Gender}
+theorem no_aba (v : RuleSet (VocabularyItem Node Value)) (hv : v.Antihomophonous) {φ : Value}
     (hn : v.Realizes applySet (Neighborhood.ofBundle {.cls}) φ)
     (hf : v.Realizes applySet (Neighborhood.ofBundle {.fem, .masc, .cls}) φ) :
     v.Realizes applySet (Neighborhood.ofBundle {.masc, .cls}) φ :=
@@ -300,7 +309,7 @@ namespace Icelandic
 open _root_.Icelandic.Nouns
 
 /-- CLASS above independent MASC and FEM. -/
-def system : System where
+def system : System _root_.Icelandic.Gender.Value where
   parent _ := .cls
   iNode
     | .man => .masc
@@ -310,7 +319,8 @@ def system : System where
     | .masculine => .masc
     | .feminine => .fem
     | _ => .cls
-  vocabulary := threeWay
+  vocabulary := threeWay .masculine .feminine .neuter
+  label := _root_.Icelandic.Gender.Value.toLabel
 
 theorem masc_not_mem_entailments_fem : .masc ∉ system.entailments .fem := by decide
 
@@ -366,7 +376,7 @@ open _root_.Serbian.Gender
 
 /-- CLASS > INDIV > {GRP, MASC > ANIM > FEM}; a plural coordination bears GRP, and with it
 INDIV. -/
-def system : System where
+def system : System Value where
   parent
     | .fem => .anim
     | .anim => .masc
@@ -385,10 +395,11 @@ def system : System where
   vocabulary :=
     [{.fem, .anim, .masc, .indiv} ⟷ .feminine, {.anim, .masc, .indiv} ⟷ .masculine,
       {.indiv} ⟷ .masculine, ∅ ⟷ .neuter]
+  label := Value.toLabel
 
 /-- An inanimate refers as a mass when it is neuter, the neuter being the mass gender, and as an
 individuated thing otherwise. -/
-def inanimate (n : GenderedNoun Gender) : Bundle Node :=
+def inanimate (n : GenderedNoun Value) : Bundle Node :=
   system.nominal n (if n.gender = .neuter then .mass else .thing)
 
 theorem human_mismatch :
@@ -412,19 +423,21 @@ end BCS
 /-! ### The geometries -/
 
 theorem cls_mem_entailments :
-    ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ n, .cls ∈ L.entailments n := by
+    ∀ e ∈ [Greek.system.entailments, Icelandic.system.entailments, BCS.system.entailments], ∀ n,
+      .cls ∈ e n := by
+  simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide
 
 theorem mismatchResolution :
-    ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ a b,
-      (L.entailments a ∩ L.entailments b).Nonempty := fun L hL a b ↦
-  ⟨.cls, Finset.mem_inter.2 ⟨cls_mem_entailments L hL a, cls_mem_entailments L hL b⟩⟩
+    ∀ e ∈ [Greek.system.entailments, Icelandic.system.entailments, BCS.system.entailments],
+      ∀ a b, (e a ∩ e b).Nonempty := fun e he a b ↦
+  ⟨.cls, Finset.mem_inter.2 ⟨cls_mem_entailments e he a, cls_mem_entailments e he b⟩⟩
 
 /-- The resolution of mismatched humans and of mismatched inanimates in Greek, Icelandic, and
 Bosnian/Croatian/Serbian (Table 2). -/
 theorem table2 :
-    [Greek.system, Icelandic.system, BCS.system].map
-        (fun L ↦ (L.resolved .man .woman, L.resolved .thing .thing)) =
+    [Greek.system.resolvedLabel, Icelandic.system.resolvedLabel, BCS.system.resolvedLabel].map
+        (fun f ↦ (f .man .woman, f .thing .thing)) =
       [(some .masculine, some .neuter), (some .neuter, some .neuter),
         (some .masculine, some .masculine)] := by
   decide

@@ -19,6 +19,7 @@ feminine nouns acquired the ending by overt characterization, the addition of th
 
 ## Main definitions
 
+* `Hausa.Gender.Value` — the two genders, with their comparative labels
 * `Hausa.Noun` — a noun with its gender and the sex of its referents where it has one
 * `Hausa.Noun.EndsInAa` — the noun ends in *-ā*
 * `Hausa.allNouns` — the nouns
@@ -32,9 +33,20 @@ feminine nouns acquired the ending by overt characterization, the addition of th
 
 namespace Hausa
 
+/-- The two genders. -/
+inductive Gender.Value where
+  | masculine
+  | feminine
+  deriving DecidableEq, Repr, Fintype
+
+/-- The comparative label of each gender. -/
+def Gender.Value.toLabel : Gender.Value → Gender
+  | .masculine => .masculine
+  | .feminine => .feminine
+
 /-- A Hausa noun, with the gender its agreement shows and the gender of its referents where it
 has one. -/
-abbrev Noun := GenderedNoun Gender
+abbrev Noun := GenderedNoun Gender.Value
 
 namespace Noun
 
