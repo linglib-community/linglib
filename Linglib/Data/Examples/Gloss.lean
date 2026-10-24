@@ -92,6 +92,14 @@ example : trim "(az".toList = "az".toList := by decide
 example : trim "miatt,".toList = "miatt".toList := by decide
 example : trim "(þangað) til".toList = "þangað til".toList := by decide
 
+/-- The words of an orthographic sentence: split at spaces, annotation punctuation dropped,
+decapitalized. For a language whose sources print no gloss line, the words are matched against
+the forms the language's fragment declares or realizes, which play the gloss line's role. -/
+def tokens (s : String) : List (List Char) :=
+  ((((split [' '] s.toList).map trim).map (·.map toLower)).filter (!·.isEmpty))
+
+example : tokens "He will tell." = ["he".toList, "will".toList, "tell".toList] := by decide
+
 /-- A gloss segment is a category label, as the Leipzig rules write `PST` or `3SG.DF`, when it
 has no lower-case letter; otherwise it is a lexical gloss. -/
 def IsLabel (g : List Char) : Prop := ∀ c ∈ g, ¬ c.isLower
