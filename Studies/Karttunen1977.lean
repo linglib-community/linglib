@@ -98,7 +98,7 @@ footnote 13 is not part of the denotation. -/
 theorem trueAnswers_image_eq_empty_iff :
     trueAnswers (P '' D) w = ∅ ↔ ∀ e ∈ D, w ∉ P e := by
   simp only [Set.eq_empty_iff_forall_notMem, mem_trueAnswers_image_iff, not_exists, not_and]
-  exact ⟨λ h e he hw => h (P e) e he hw rfl, λ h _ e he hw _ => h e he hw⟩
+  exact ⟨fun h e he hw ↦ h (P e) e he hw rfl, fun h _ e he hw _ ↦ h e he hw⟩
 
 theorem trueAnswers_alt_which (hD : D.Nonempty) (hA : IsAntichain (· ⊆ ·) (P '' D)) :
     trueAnswers (alt (which D P)) w = trueAnswers (P '' D) w := by

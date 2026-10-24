@@ -9,18 +9,9 @@
     "context": "",
     "judgment": "acceptable",
     "readings": [
-      {
-        "name": "answers: John / It was John / The person who kicked Sam was John",
-        "judgment": "acceptable"
-      },
-      {
-        "name": "non-answers: *He / *Sam kicked John / *China is populous",
-        "judgment": "ungrammatical"
-      },
-      {
-        "name": "responses but not answers: I don't know / Ask Sam",
-        "judgment": "marginal"
-      }
+      {"name": "answers: John / It was John / The person who kicked Sam was John", "judgment": "acceptable"},
+      {"name": "non-answers: *He / *Sam kicked John / *China is populous", "judgment": "ungrammatical"},
+      {"name": "responses but not answers: I don't know / Ask Sam", "judgment": "marginal"}
     ],
     "paperFeatures": [
       ["claim", "answerhood is as entrenched as sentencehood"]
@@ -43,6 +34,23 @@
       ["answers", "multiple, each full and complete and true"]
     ],
     "comment": "A mention-some question: any open station is a complete true answer.",
+    "verified": "page-image"
+  },
+  {
+    "id": "belnap1982_basket",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "p. 172"},
+    "language": "stan1293",
+    "primaryText": "What's in the basket?",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "Unique Answer Fallacy"],
+      ["answers", "multiple, each full and complete and true"]
+    ],
+    "comment": "Both some apples and three apples count as full and complete answers (p. 172; Section 5).",
     "verified": "page-image"
   },
   {
@@ -134,6 +142,23 @@
     "verified": "page-image"
   },
   {
+    "id": "belnap1982_redhead",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "p. 177"},
+    "language": "stan1293",
+    "primaryText": "Mary remembered that a redhead kicked Sam, but Mary didn't remember which person kicked Sam.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "Distributivity Test"],
+      ["verdict", "consistent, so not an answer"]
+    ],
+    "comment": "So a redhead kicked Sam is not an answer to which person kicked Sam.",
+    "verified": "page-image"
+  },
+  {
     "id": "belnap1982_john",
     "source": {"bibkey": "belnap-1982", "paperLabel": "p. 177"},
     "language": "stan1293",
@@ -148,6 +173,23 @@
       ["verdict", "inconsistent — likely an answer, not guaranteed"]
     ],
     "comment": "The test is a necessary condition only: passing it does not certify answerhood. Judgment from the prose, which prints the sentence inline: \"This is inconsistent\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "belnap1982_mary",
+    "source": {"bibkey": "belnap-1982", "paperLabel": "p. 192"},
+    "language": "stan1293",
+    "primaryText": "Peter knows that Mary loves John but Peter doesn't know which man Mary loves.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "Distributivity Test"],
+      ["verdict", "consistent, so not an answer"]
+    ],
+    "comment": "Belnap rejects the implication from knowing that Mary loves John to knowing which man Mary loves: if Mary loves many men the question has no true answer. The sentence is assembled from the prose, which states the rejected implication.",
     "verified": "page-image"
   }
 ]
