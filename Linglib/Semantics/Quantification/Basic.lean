@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Logic.Aristotelian.Square
+public import Linglib.Semantics.Reference.Iota
 
 /-!
 # Concrete propositional generalized quantifiers
@@ -67,6 +68,11 @@ theorem the_iff {α : Type*} (R S : α → Prop) :
     exact ⟨⟨x, (hx x).2 rfl, fun y hy ↦ (hx y).1 hy⟩, fun y hy ↦ (hx y).1 hy ▸ hS⟩
   · rintro ⟨⟨x, hx, huniq⟩, hS⟩
     exact ⟨x, fun y ↦ ⟨huniq y, fun h ↦ h ▸ hx⟩, hS x hx⟩
+
+theorem the_iff_exists_mem_iota {α : Type*} (R S : α → Prop) : the R S ↔ ∃ x ∈ iota R, S x :=
+  exists_congr fun x ↦ and_congr_left' <|
+    (funext_iff.trans <| forall_congr' fun _ ↦ eq_iff_iff.trans Iff.comm).symm.trans
+      (iota_isPartialInv x R).symm
 
 /-! ### The order on predicates -/
 

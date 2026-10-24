@@ -23,12 +23,13 @@ mass and a numeral needs a classifier. A language's determiners decide which cov
 it blocks, and with the parameter which bare nominals it admits as arguments. A bare plural
 denotes its kind, whose instances meet the existential of derived kind predication in an
 episodic sentence and the generic operator in a generic one. A kind sends each situation to a
-partial individual, ∩ takes the largest member of a property's extension (`iota` of
-`IsGreatest`) where the result is a kind, and ∪ takes the parts of a kind's value (`Set.Iic`).
+partial individual, ∩ takes the largest member of a property's extension where the result is a
+kind, and ∪ takes the parts of a kind's value.
 
 ## Main definitions
 
 * `Chierchia1998.Language.nominalMapping`: the setting of the parameter in each sampled language.
+* `Chierchia1998.up`, `Chierchia1998.down`: ∪ and ∩, (15) and (16).
 * `Chierchia1998.dogsBark`, `Chierchia1998.computersRoute`: the generic logical forms (38b) and
   (39b).
 
@@ -38,9 +39,10 @@ partial individual, ∩ takes the largest member of a property's extension (`iot
   [+arg, −pred] ones.
 * `Chierchia1998.argOnly_blocks_nothing`, `Chierchia1998.predOnly_blocks_iota`: blocking in the
   sampled languages.
-* `Chierchia1998.iota_isGreatest_notMem_of_atom`,
-  `Chierchia1998.not_forall_atom_iota_isGreatest`: ∩ is undefined for a singular property, and
-  the concept of a sum-closed property with a plurality is not singular everywhere.
+* `Chierchia1998.down_up`, `Chierchia1998.up_down`: ∩∪d = d, and ∪∩P = P for mass P, (17a, b).
+* `Chierchia1998.down_notMem_of_atom`, `Chierchia1998.not_forall_atom_down`: ∩ is undefined for
+  a singular property, and the concept of a sum-closed property with a plurality is not singular
+  everywhere.
 * `Chierchia1998.english_licensesBare_iff`, `Chierchia1998.english_not_licensesBare_singular`:
   English admits exactly the bare nominals for which ∩ is defined, and so no bare singular.
 * `Chierchia1998.mem_computersRoute`: Diesing's generalization for (39b).
@@ -53,6 +55,17 @@ Each language's blocking is derived from its fragment's determiner inventory by
 `Determiner.Inventory.Blocks`. The generic operator is the conditional over the normal cases of a
 `Genericity.Normality`. The set `K` of kinds is a parameter, primitive as in the paper, and its
 one stated property, that no kind has a singular instance in every situation, is a hypothesis.
+∩ and ∪ are ι and its partial inverse Id applied at each situation (pp. 359–360), Id sending an
+individual to its parts, `Set.Iic`; on a lower set taking the largest member is the partial
+inverse of `Set.Iic` (`IsLowerSet.iota_isGreatest`). (17b) is stated for a property that is mass
+at each situation, closed downward and under sum, and finite there; membership of ∩P in `K`
+adds nothing to it.
+
+## Errata
+
+* (25e) prints Id(x) = λx[x ≤ y], binding the wrong variable; the text above footnote 14, which
+  has ι undone via the part-of relation, and the footnote's Id(x) = λy[y = x] for a singularity
+  give Id(x) = λy[y ≤ x].
 
 ## References
 
@@ -122,18 +135,32 @@ open Mereology
 
 variable {S E : Type*} {K : Set (S → Option E)} {P : S → Set E}
 
+/-- ∪, (15): the instances of a kind at a situation are the parts of its value there. -/
+def up [Preorder E] (k : S → Option E) (s : S) : Set E := (k s).elim ∅ Set.Iic
+
+/-- The concept of the largest member of a property's extension at each situation, which is ∩
+of (16) where it is a kind. -/
+noncomputable def down [LE E] (P : S → Set E) (s : S) : Option E := iota (IsGreatest (P s))
+
+theorem down_up [PartialOrder E] (k : S → Option E) : down (up k) = k :=
+  funext fun s ↦ iota_isGreatest_elim_Iic (k s)
+
+theorem up_down [SemilatticeSup E] (hP : ∀ s, IsLowerSet (P s)) (hcum : ∀ s, SupClosed (P s))
+    (hfin : ∀ s, (P s).Finite) : up (down P) = P :=
+  funext fun s ↦ elim_Iic_iota_isGreatest (hP s) fun hne ↦
+    iota_isGreatest_isSome_iff.1 ((hcum s).directedOn.iota_isGreatest_isSome (hfin s) hne)
+
 /-- ∩ is undefined for a singular property: its concept is singular in every situation, and no
 kind is. -/
-theorem iota_isGreatest_notMem_of_atom [PartialOrder E]
-    (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d) (hP : ∀ s, ∀ x ∈ P s, Atom x) :
-    (fun s ↦ iota (IsGreatest (P s))) ∉ K :=
+theorem down_notMem_of_atom [PartialOrder E]
+    (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d) (hP : ∀ s, ∀ x ∈ P s, Atom x) : down P ∉ K :=
   fun h ↦ hK _ h fun s _ hd ↦ hP s _ (iota_isGreatest_eq_some_iff.1 hd).1
 
 /-- The concept of a property closed under sum is not singular in every situation once its
 extension somewhere is finite and has a plurality. -/
-theorem not_forall_atom_iota_isGreatest [SemilatticeSup E] {s : S} {x : E}
+theorem not_forall_atom_down [SemilatticeSup E] {s : S} {x : E}
     (hfin : (P s).Finite) (hcum : SupClosed (P s)) (hx : x ∈ P s) (hx0 : ¬ IsBot x)
-    (hxa : ¬ Atom x) : ¬ ∀ s, ∀ d ∈ iota (IsGreatest (P s)), Atom d := fun h ↦ by
+    (hxa : ¬ Atom x) : ¬ ∀ s, ∀ d ∈ down P s, Atom d := fun h ↦ by
   obtain ⟨m, hm⟩ := Option.isSome_iff_exists.1
     (hcum.directedOn.iota_isGreatest_isSome hfin ⟨x, hx⟩)
   have hma := h s m hm
@@ -180,9 +207,8 @@ open Mereology in
 theorem english_not_licensesBare_singular {S E : Type*} [PartialOrder E]
     {K : Set (S → Option E)} {P : S → Set E} (hK : ∀ k ∈ K, ¬ ∀ s, ∀ d ∈ k s, Atom d)
     (hP : ∀ s, ∀ x ∈ P s, Atom x) :
-    ¬ (nominalMapping .english).LicensesBare (determiners .english)
-      ((fun s ↦ iota (IsGreatest (P s))) ∈ K) :=
-  (english_licensesBare_iff _).not.2 (iota_isGreatest_notMem_of_atom hK hP)
+    ¬ (nominalMapping .english).LicensesBare (determiners .english) (down P ∈ K) :=
+  (english_licensesBare_iff _).not.2 (down_notMem_of_atom hK hP)
 
 /-! ### Bare plurals in generic and episodic sentences, §4.1 -/
 
@@ -196,15 +222,15 @@ variable {S E : Type*} [PartialOrder E]
 kind in the restriction of the generic operator, which binds them with the situations. -/
 def dogsBark (N : Normality S (E × S)) (dog : S → Set E) (C : Set (E × S))
     (bark : E → S → Prop) : Set S :=
-  N.gen ({p | p.1 ∈ (iota (IsGreatest (dog p.2))).elim ∅ Set.Iic} ∩ C) {p | bark p.1 p.2}
+  N.gen ({p | p.1 ∈ up (down dog) p.2} ∩ C) {p | bark p.1 p.2}
 
 /-- In *Computers route modern planes* (39b), the object is fronted into the restriction of the
 generic operator and the subject is reconstructed into its scope, where derived kind predication
 reads it existentially. -/
 def computersRoute (N : Normality S (E × S)) (computer plane : S → Set E) (C : Set (E × S))
     (route : E → E → S → Prop) : Set S :=
-  N.gen ({p | p.1 ∈ (iota (IsGreatest (plane p.2))).elim ∅ Set.Iic} ∩ C)
-    {p | Quantifier.GQ.some ((iota (IsGreatest (computer p.2))).elim (∅ : Set E) Set.Iic)
+  N.gen ({p | p.1 ∈ up (down plane) p.2} ∩ C)
+    {p | Quantifier.GQ.some (up (down computer) p.2)
       (route · p.1 p.2)}
 
 /-- In (39b) the fronted bare plural is universal over the normal cases, and the one in scope
@@ -212,16 +238,16 @@ existential over its kind's instances (p. 368). -/
 theorem mem_computersRoute {N : Normality S (E × S)} {computer plane : S → Set E}
     {C : Set (E × S)} {route : E → E → S → Prop} {s : S} :
     s ∈ computersRoute N computer plane C route ↔
-      ∀ p ∈ N.normal s ({p | p.1 ∈ (iota (IsGreatest (plane p.2))).elim ∅ Set.Iic} ∩ C),
-        ∃ x ∈ (iota (IsGreatest (computer p.2))).elim ∅ Set.Iic, route x p.1 p.2 :=
+      ∀ p ∈ N.normal s ({p | p.1 ∈ up (down plane) p.2} ∩ C),
+        ∃ x ∈ up (down computer) p.2, route x p.1 p.2 :=
   Iff.rfl
 
 /-- The generic reading of a bare plural (38b) entails its episodic reading by derived kind
 predication (31c) wherever the kind has a normal instance. -/
 theorem some_up_of_mem_dogsBark {N : Normality S (E × S)} {dog : S → Set E} {C : Set (E × S)}
     {bark : E → S → Prop} {s s' : S} {x : E} (h : s ∈ dogsBark N dog C bark)
-    (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ (iota (IsGreatest (dog p.2))).elim ∅ Set.Iic} ∩ C)) :
-    Quantifier.GQ.some ((iota (IsGreatest (dog s'))).elim (∅ : Set E) Set.Iic) (bark · s') :=
+    (hx : (x, s') ∈ N.normal s ({p | p.1 ∈ up (down dog) p.2} ∩ C)) :
+    Quantifier.GQ.some (up (down dog) s') (bark · s') :=
   ⟨x, (N.normal_subset s _ hx).1, h hx⟩
 
 end Generic

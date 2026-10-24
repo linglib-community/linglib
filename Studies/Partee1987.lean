@@ -12,7 +12,8 @@ mappings between the three types come in inverse pairs, the paper's Figure 1: `l
 substrate's `Quantifier.NP.individual`, and `lower`, the total injection of an entity into
 its principal ultrafilter and its partial inverse; `ident` and `iota`, the singleton property
 of an entity and the unique member of a property; and `nom` and `pred`, the correlates of
-properties and entities after [chierchia-1984] (`lower_lift`, `iota_ident`). The
+properties and entities after Chierchia. The first two pairs are an injection and its
+`Function.partialInv` (`lower_isPartialInv`, `iota_isPartialInv`). The
 definite article has a partial entity meaning, `iota`, and a total quantifier meaning, `THE`,
 which is the determiner `GQ.the`. Whenever `iota(king')` is defined `THE(king')` is its lift,
 and otherwise the empty set of properties, so `lower(THE(king')) = iota(king')` either way. The
@@ -56,12 +57,15 @@ open Quantifier Quantifier.GQ Quantifier.NP
 variable {E : Type*} (j : E) (P : E → Prop)
 
 /-- `lower Q` is the entity whose Montague lift is `Q`, when `Q` is a principal ultrafilter. -/
-noncomputable def lower (Q : NP E) : Option E := iota fun j ↦ Q = individual j
+noncomputable def lower : NP E → Option E := Function.partialInv individual
 
 /-! ### Figure 1: three inverse pairs -/
 
+theorem lower_isPartialInv : Function.IsPartialInv individual (lower (E := E)) :=
+  individual_injective.isPartialInv
+
 theorem lower_lift : lower (individual j) = some j :=
-  (iota_eq_some_iff _).2 ⟨rfl, fun _ h ↦ (individual_injective h).symm⟩
+  Function.partialInv_left individual_injective j
 
 theorem iota_BE_lift : iota (BE (individual j)) = some j := by
   rw [BE_individual]; exact iota_ident j
@@ -69,17 +73,18 @@ theorem iota_BE_lift : iota (BE (individual j)) = some j := by
 /-! ### Figure 2: *the king* in three types (§3.2) -/
 
 theorem the_eq_individual (h : iota P = some j) : the P = individual j :=
-  funext fun S ↦ propext <| (the_sem_iff_iota P S).trans <| by simp [h, individual]
+  funext fun S ↦ propext <| (the_iff_exists_mem_iota P S).trans <| by simp [h, individual]
 
 theorem the_eq_bot (h : iota P = none) : the P = ⊥ :=
-  funext fun S ↦ propext <| (the_sem_iff_iota P S).trans <| by simp [h]
+  funext fun S ↦ propext <| (the_iff_exists_mem_iota P S).trans <| by simp [h]
 
 theorem lower_the : lower (the P) = iota P := by
   cases h : iota P with
   | some j => rw [the_eq_individual j P h, lower_lift]
   | none =>
-    rw [the_eq_bot P h, lower, iota_eq_none_iff]
-    exact fun ⟨j, hj, _⟩ ↦ (congrFun hj ⊤).mpr trivial
+    rw [the_eq_bot P h]
+    exact Option.eq_none_iff_forall_ne_some.2 fun j hj ↦
+      (congrFun ((lower_isPartialInv j ⊥).1 hj) ⊤).mp trivial
 
 theorem BE_the_apply (x : E) : BE (the P) x ↔ ∀ y, P y ↔ y = x :=
   ⟨fun ⟨_, hz, hzx⟩ ↦ hzx ▸ hz, fun h ↦ ⟨x, h, rfl⟩⟩

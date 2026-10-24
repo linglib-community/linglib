@@ -279,12 +279,6 @@ theorem individual_injective : Function.Injective (individual (α := α)) :=
 theorem individual_livesOn {A : α → Prop} {a : α} (ha : A a) : LivesOn (individual a) A :=
   fun _ ↦ ⟨fun h ↦ ⟨ha, h⟩, And.right⟩
 
-/-- The singleton property of an entity, `ident j = {j}`, whose lift is `individual j`. -/
-def ident (j : α) : α → Prop := (· = j)
-
-theorem ident_injective : Function.Injective (ident (α := α)) :=
-  fun a _ h => (congrFun h a).mp rfl
-
 end NP
 
 end Quantifier

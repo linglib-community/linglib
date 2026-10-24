@@ -422,9 +422,9 @@ noncomputable def consGQOrderIso : ConsGQ α ≃o Det α :=
 /-- The isomorphism sends Keenan and Stavi's atom at a restrictor `p` and a scope `q` inside it
 to the predicate of the single group `polarize p q`. -/
 theorem ofGQ_atom {p q : α → Prop} (h : q ≤ p) :
-    Det.ofGQ (KeenanStavi1986.atom p q) = NP.ident (polarize p q) := by
+    Det.ofGQ (KeenanStavi1986.atom p q) = ident (polarize p q) := by
   funext X
-  simp only [NP.ident]
+  simp only [ident]
   refine propext ⟨fun ⟨hp, hq⟩ ↦ ?_, ?_⟩
   · conv_lhs => rw [← polarize_atoms_posAtoms X]
     rw [hp]
@@ -585,13 +585,13 @@ section Scope
 
 variable (N : α → Prop)
 
-theorem all_inf_noun : Det.all ⊓ noun N = NP.ident (polarize N ⊤) := by
+theorem all_inf_noun : Det.all ⊓ noun N = ident (polarize N ⊤) := by
   rw [all_eq_delta_top]
   funext X
   exact propext ⟨fun ⟨h, hX⟩ ↦ (delta_iff_eq_polarize hX).1 h,
     fun h ↦ h ▸ ⟨(delta_iff_eq_polarize (noun_polarize N ⊤)).2 rfl, noun_polarize N ⊤⟩⟩
 
-theorem none_inf_noun : Det.none ⊓ noun N = NP.ident (polarize N ⊥) := by
+theorem none_inf_noun : Det.none ⊓ noun N = ident (polarize N ⊥) := by
   rw [none_eq_delta_bot]
   funext X
   exact propext ⟨fun ⟨h, hX⟩ ↦ (delta_iff_eq_polarize hX).1 h,

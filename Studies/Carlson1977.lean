@@ -170,7 +170,7 @@ the conjunction of two states, each with its own existential over stages: the pr
 theorem some_scopeless_iff {E : Type*} {N : E → Prop} :
     ((∀ P, GQ.some N Pᶜ ↔ ¬ GQ.some N P) ∧
       ∀ S : Set (E → Prop), GQ.some N (sInf S) ↔ ∀ P ∈ S, GQ.some N P) ↔
-      ∃ a, N = NP.ident a := by
+      ∃ a, N = ident a := by
   simp only [← NP.exists_eq_individual_iff, NP.some_eq_individual_iff]
 
 /-! ### A model
