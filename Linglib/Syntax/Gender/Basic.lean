@@ -49,10 +49,9 @@ agreement evidence: distinct genders are distinguished by some agreement target.
 
 /-- Comparative-concept labels for controller genders ([corbett-1991]).
 
-    These are the descriptive labels cross-linguistic comparison uses for a
-    language's agreement classes, not a universal value inventory. A language's
-    actual genders form its own type, which a fragment's `toLabel` maps into this
-    vocabulary. -/
+These are the descriptive labels cross-linguistic comparison uses for a language's agreement
+classes, not a universal value inventory. A language's actual genders form its own type, which a
+fragment's `toLabel` maps into this vocabulary. -/
 inductive Gender where
   /-- The masculine holds male humans and higher animates, and is the default in many sex-based
   systems. -/
@@ -103,8 +102,8 @@ It is an `abbrev` so that `Function.Injective`'s decidability instance (under `[
 abbrev Faithful (agr : G → T → F) : Prop :=
   Function.Injective agr
 
-/-- A language whose agreement morphology shows `f` forms on each of `t`
-    targets supports at most `f ^ t` controller genders. -/
+/-- A language whose agreement morphology shows `f` forms on each of `t` targets supports at
+most `f ^ t` controller genders. -/
 theorem Faithful.card_le_pow [Fintype G] [Fintype T] [Fintype F] [DecidableEq T]
     {agr : G → T → F} (h : Faithful agr) :
     Fintype.card G ≤ Fintype.card F ^ Fintype.card T := by

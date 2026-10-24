@@ -12,19 +12,21 @@ words that agree with them, and nouns whose form varies with gender, after Olsso
 Gender I holds male humans, gender II female humans and all animals, and genders III and IV
 divide the inanimates. Demonstratives, a few adjectives and some postpositions agree by a
 stem-final gender vowel, *e*, *u*, *a*, *i* for genders I–IV, with syncretisms particular to
-each target. Only genders I and II distinguish number, and on every form recorded here their
-plural is the singular form of gender IV (`Gender.pluralGender`); the full demonstrative
-paradigm still separates the four genders (`faithful_demonstrative`). A few nouns vary their
-stem vowel with gender in the same way, and *nanVh* 'face' takes the gender of the one whose
-face it is, Olsson's inherited gender.
+each target. On these forms only genders I and II distinguish number
+(`injective_demonstrative_iff`), and their plural is the singular form of gender IV
+(`Gender.pluralGender`). The suppletive adjective 'small' distinguishes number in every gender
+(`injective_small`), and on it the plural of genders I and II is gender IV's plural
+(`small_plural`), so the affinity holds between the plurals. The full demonstrative paradigm
+separates the four genders (`faithful_demonstrative`). A few nouns vary their stem vowel with
+gender in the same way, and *nanVh* 'face' takes the gender of the one whose face it is,
+Olsson's inherited gender.
 
 ## Implementation notes
 
-* Number is a value of the singular-plural system, and matters only for genders I and II.
+* Number is a value of the singular-plural system.
 * Demonstratives are segmented into their gender vowel and the stem, as in *e-pe*.
-* Only forms alternating by the gender vowel are recorded. The suppletive adjective 'small',
-  the one target that distinguishes number in genders III and IV, and the number-suppletive
-  verb stems group gender IV with the animate plurals too; neither is recorded.
+* The number-suppletive verb stems, which group gender IV with the animate plurals too, are not
+  recorded.
 
 ## References
 
@@ -68,6 +70,13 @@ def light (g : Gender) : numberSystem.values → String :=
     (match g with | .gI => "akek" | .gII => "akuk" | .gIII => "akak" | .gIV => "akik")
     (match g with | .gIII => "akak" | .gI | .gII | .gIV => "akik")
 
+/-- The suppletive adjective 'small', by gender and number ([olsson-2021] Table 3.5), the one
+target that distinguishes number in genders III and IV. -/
+def small (g : Gender) : numberSystem.values → String :=
+  numberSystem.elim
+    (match g with | .gI | .gIII => "papes" | .gII => "papus" | .gIV => "papis")
+    (match g with | .gIII => "wasasuɣ" | .gI | .gII | .gIV => "isahih")
+
 /-- The noun *nanVh* 'face', by the gender and number of the one whose face it is: the one
 noun with overt alternation among the three that take their referent's gender, Olsson's
 inherited gender ([olsson-2021] §5.2.3). -/
@@ -80,9 +89,13 @@ def face (g : Gender) : numberSystem.values → String :=
 the singular and I, II and IV sharing *i-pe* only in the plural ([olsson-2021] §5.1). -/
 theorem faithful_demonstrative : Gender.Faithful demonstrative := by decide
 
+theorem injective_demonstrative_iff (g : Gender) :
+    Function.Injective (demonstrative g) ↔ g = .gI ∨ g = .gII := by
+  cases g <;> decide
+
 /-- The gender whose singular form a gender's plural takes: gender IV, except that gender III
-does not distinguish number. Every recorded form realizes the plural of genders I and II as the
-singular of gender IV, the plural–gender IV affinity that [olsson-2021] §5.3.2 extends to
+does not distinguish number. Every vowel-alternating form realizes the plural of genders I and II
+as the singular of gender IV, the plural–gender IV affinity that [olsson-2021] §5.3.2 extends to
 number-suppletive verb stems. -/
 def Gender.pluralGender : Gender → Gender
   | .gIII => .gIII
@@ -103,6 +116,13 @@ theorem light_plural (g : Gender) :
 theorem face_plural (g : Gender) :
     face g (numberSystem.value .plural) =
       face g.pluralGender (numberSystem.value .singular) := by cases g <;> rfl
+
+theorem injective_small (g : Gender) : Function.Injective (small g) := by
+  cases g <;> decide
+
+theorem small_plural {g : Gender} (hg : g ≠ .gIII) :
+    small g (numberSystem.value .plural) = small .gIV (numberSystem.value .plural) := by
+  cases g <;> first | rfl | exact absurd rfl hg
 
 /-- A noun with its gender. -/
 abbrev Noun := GenderedNoun Gender

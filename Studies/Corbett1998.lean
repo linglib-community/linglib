@@ -49,6 +49,9 @@ rather than the resolved one. The chapter's examples are the rows of
   resolution rules over fragment nouns, one per target form before the semantic rule.
 * The agreement slots of a target, their controllers and their bound of four are described
   in the rows and not modelled.
+* The syncretism claims are stated over the languages' own gender carriers, not over the
+  cell-to-exponent tables of `Syntax/Agreement/Paradigm.lean`, whose gender cells take the
+  comparative labels.
 
 ## TODO
 
@@ -58,9 +61,6 @@ rather than the resolved one. The chapter's examples are the rows of
   German noun phrases are prose only.
 * The Chichewa nouns carry no number, so the restriction of the shared-form rule to plural
   conjuncts, and the triggering of gender resolution by number resolution, are not stated.
-* The syncretism claims are not stated over the cell-to-exponent tables of
-  `Syntax/Agreement/Paradigm.lean`, whose cells are UD-typed where the carriers here are
-  the languages' own.
 
 ## References
 

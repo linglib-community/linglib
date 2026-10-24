@@ -41,11 +41,11 @@ structure Adjective where
   nomSg : Value → String
 
 /-- *acer*, *acris*, *acre* 'sharp'. -/
-def acer : Adjective := ⟨"sharp", λ | .masc => "acer" | .fem => "acris" | .neut => "acre"⟩
+def acer : Adjective := ⟨"sharp", fun | .masc => "acer" | .fem => "acris" | .neut => "acre"⟩
 /-- *facilis*, *facile* 'easy'. -/
-def facilis : Adjective := ⟨"easy", λ | .neut => "facile" | _ => "facilis"⟩
+def facilis : Adjective := ⟨"easy", fun | .neut => "facile" | _ => "facilis"⟩
 /-- *felix* 'happy'. -/
-def felix : Adjective := ⟨"happy", λ _ => "felix"⟩
+def felix : Adjective := ⟨"happy", fun _ ↦ "felix"⟩
 
 /-- The adjectives of Corbett's table. -/
 def allAdjectives : List Adjective := [acer, facilis, felix]
