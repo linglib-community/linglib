@@ -40,6 +40,8 @@ paradigm linkage over a root and by Bonami and Stump's rules of basic stem choic
   patterns when distinct rules carry distinct exponents.
 * `RuleSet.selectBy_isElsewhereWinner`, `RuleSet.selectMinimal_isElsewhereWinner`: both
   selections produce Elsewhere winners.
+* `RuleSet.selectMinimal_append_singleton`: a rule appended to a rule set and no more specific
+  than its rules is selected only where none of them applies.
 * `RuleSet.selectMinimal_eq_some_of_applies`,
   `RuleSet.isContiguous_realizeMinimal_of_monotone`: under Pāṇinian Determinism minimal
   selection is consistent under contraction and realizes contiguous patterns.
@@ -287,6 +289,21 @@ theorem selectMinimal_eq_none_iff :
 theorem selectMinimal_congr (h : v.applicable c = v.applicable c') :
     v.selectMinimal key c = v.selectMinimal key c' := by
   rw [selectMinimal, selectMinimal, h]
+
+/-- A rule appended to `v` that applies at `c` and is no more specific than any rule of `v` is
+selected only where no rule of `v` applies. -/
+theorem selectMinimal_append_singleton (hr : Applies r c) (hle : ∀ s ∈ v, key s ≤ key r) :
+    (v ++ [r]).selectMinimal key c = (v.selectMinimal key c).or (some r) := by
+  have happ : (v ++ [r]).applicable c = v.applicable c ++ [r] := by
+    simp [applicable, List.filter_append, hr]
+  have hfind : (v.applicable c).find? (fun s ↦ (v.applicable c ++ [r]).all
+      fun t ↦ decide (¬ key t < key s)) = v.selectMinimal key c :=
+    List.find?_congr fun s hs ↦ by
+      simp [not_lt_of_ge (hle s (mem_applicable.mp hs).1)]
+  rw [selectMinimal, happ, List.find?_append, hfind]
+  rcases h : v.selectMinimal key c with - | s
+  · simp [selectMinimal_eq_none_iff.mp h]
+  · rfl
 
 /-- A rule system sensitive only to what `A` sees selects the same rule in
 contexts that `A` identifies. -/

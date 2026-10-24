@@ -7,7 +7,7 @@ public import Mathlib.Tactic.DeriveFintype
 # Stump (2016): Inflectional Paradigms
 
 This file formalizes two of the deviations from the canonical content-to-form isomorphism
-argued for in [stump-2016], on the paradigm-linkage model of the substrate's
+argued for in Stump's book, on the paradigm-linkage model of the substrate's
 `Morphology.Linkage`. Latin deponent verbs inflect by means of the morphology that
 ordinarily expresses a verb's passive forms: the deponent *cōnārī* realizes its active
 content cells with the passive personal endings a regular verb like *parāre* uses only for
@@ -193,12 +193,12 @@ def formBlock : Block KVerb String (Finset KForm) :=
     ⟨Finset.univ, {.pastB, .p1, .sg, .masc}, .const (· ++ "yōs")⟩,
     ⟨Finset.univ, {.pastC, .p1, .sg, .masc}, .const (· ++ "yās")⟩,
     ⟨Finset.univ, {.pastD, .p1, .sg, .masc}, .const (· ++ "iyās")⟩,
-    (identityDefault : PFM.Rule KVerb (Finset KForm) (Action String (Finset KForm))) ]
+    identityDefault ]
 
 /-- A form cell `⟨Z, τ⟩` realizes as the value of the PFM1 paradigm function on the
 stem `Z` at the morphomic property set `τ`. -/
 def realizeForm (z : String) (τ : Finset KForm) : String :=
-  (paradigmFunction (fun _ ↦ wup) (fun _ ↦ z) [formBlock] (wup, τ)).1
+  paradigmFunction (fun _ ↦ z) [formBlock] (wup, τ)
 
 /-- The Conjugation II linkage has the single stem and the property mapping `pmII`. -/
 def linkII : Linkage KVerb String (Finset KContent) (Finset KForm) where

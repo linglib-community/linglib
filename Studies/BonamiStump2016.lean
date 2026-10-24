@@ -6,31 +6,34 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Bonami and Stump 2016: Paradigm Function Morphology
 
-This file formalizes the worked PFM1 fragments of [bonami-stump-2016] on the engine of
-`Morphology/Paradigm/Function.lean`: the finite paradigm of four Icelandic verbs (rules of basic
-stem choice, three blocks of rules of exponence, the Identity Function Default), the Sanskrit
-ninth-conjugation portmanteau with the Function Composition Default, and the Sanskrit vocative
-rule of referral.
-
-Morphophonological metageneralizations (umlaut, vowel loss, coalescence) are phonological
-substance outside the engine, so only cells they leave untouched are decided; the strong verbs'
-ablaut alternants enter as basic stems, as in the chapter.
+This file formalizes the worked PFM1 fragments of Bonami and Stump's chapter on the engine of
+`Morphology/Paradigm/Function.lean`: the paradigm function of four Icelandic verbs, the Sanskrit
+ninth-conjugation portmanteau, and the Sanskrit vocative rule of referral. Under the chapter's
+narrowness (15) the weak-class theme vowel `-a` preempts the present subjunctive `-i`, so the
+Icelandic rules derive *kalla* and *ætla* where Table 17.1 has *kalli* and *ætli*.
 
 ## Main definitions
 
-* `iceStems`, `stemChoice`, `blockI`, `blockII`, `blockIII`, `pf` — the Icelandic rules of basic
-  stem choice, basic stem choice, rules of exponence, and paradigm function
-* `blockNi`, `blockHi`, `blockAna` — the Sanskrit `-nī`, `-hi` and portmanteau `-āna` blocks
-* `caseBlock` — a Sanskrit case block with the vocative rule of referral
+* `stemChoice`, `blockI`, `blockII`, `blockIII`, `pf`: basic stem choice by the rules (7), the
+  blocks of Table 17.3, and the Icelandic paradigm function (13).
+* `pfNinth`: the Sanskrit paradigm function (21), over the portmanteau block `[ii,i]` of (20).
+* `caseBlock`: a Sanskrit case block with the vocative rule of referral (17).
 
 ## Main results
 
-* `pf_kalla`, `pf_gripa_imp`, `pf_fljuga`, `pf_gripa_pst` — the chapter's flagship realizations
-* `stem_gripa_pst` — narrowness resolves the `greip`/`grip`/`gríp` stem conflict
-* `blockIII_narrowness` — the three competing second-singular rules are strictly ordered
-* `as_portmanteau`, `kri_composition` — `-āna` overrides `-nī-hi`; a vowel-final root defaults
-  to the composition of Blocks ii and i
-* `voc_refers_to_nom` — the vocative dual takes the nominative dual's exponent
+* `pf_kalla`, `pf_gripa_imp`, `pf_fljuga`, `pf_gripa_pst`: (4a), (4c), (4d), and *greipst*.
+* `stem_gripa_pst`, `nar_aetla_imp`, `blockIII_narrowness`: the conflict of (7c)–(7e), (14), (15).
+* `themeA_lt_sbjvI`, `pf_kalla_sbjv`, `pf_aetla_sbjv`: by clause (ii) of (15), `-a` preempts
+  `-i`, against Table 17.1 and the inputs *ætli-um*, *ætli-ið* of Table 17.4.
+* `as_portmanteau`, `kri_fcd`, `kri_composition`: (22) and (23) by the FCD (24), Table 17.5.
+* `voc_refers_to_nom`, `voc_du`: the vocative dual of DĀNA patterns after the nominative.
+
+## Implementation notes
+
+The metageneralizations (18) are phonological, so the decided cells are ones they leave untouched,
+and the strong verbs' ablaut alternants are basic stems, as in the chapter. Table 17.3 has no rule
+for the strong verbs' past plural `-u`, past subjunctive `-i` or epenthetic `u` (*gripu*, *gripi*,
+*grípur*). The consonant-final roots of (20c) form the class `{AŚ}`.
 
 ## References
 
@@ -48,40 +51,41 @@ open Morphology Morphology.Exponence Morphology.PFM
 
 section Icelandic
 
-/-- The four verbs of Table 17.1 are KALLA (weak.4.a), ÆTLA (weak.4.b), GRÍPA (strong.1.a) and
-FLJÚGA (strong.2.b). -/
+/-- The verbs of Table 17.1: KALLA (weak.4.a), ÆTLA (weak.4.b), GRÍPA (strong.1.a) and FLJÚGA
+(strong.2.b). -/
 inductive Verb | kalla | aetla | gripa | fljuga
   deriving DecidableEq, Fintype
 
-/-- Morphosyntactic properties; person and number are separate properties, as in the chapter's
-`{pst sg}`. -/
+/-- Morphosyntactic properties, with person and number separate as in the chapter's `{pst sg}`. -/
 inductive Feat | ind | sbjv | imp | prs | pst | p1 | p2 | p3 | sg | pl
   deriving DecidableEq, Fintype
 
 open Verb Feat
 
-local notation "ExpoRule" => PFM.Rule Verb (Finset Feat) (Action String (Finset Feat))
-local notation "IFD" => (identityDefault : ExpoRule)
+local notation "ExpoRule" => PFM.Rule Verb (Finset Feat) (Action Verb String (Finset Feat))
 
-/-- Weak conjugation 4. -/
+/-- The weak verbs, all of conjugation 4. -/
 def weak : Finset Verb := {kalla, aetla}
 /-- Weak conjugation 4.b. -/
 def weak4b : Finset Verb := {aetla}
-/-- The strong conjugations. -/
+/-- The strong verbs. -/
 def strong : Finset Verb := {gripa, fljuga}
 
+/-- The weak past plural theme vowel `-u`. -/
+def themeU : ExpoRule := ⟨weak, {pst, pl}, .const (· ++ "u")⟩
+/-- The present subjunctive `-i`. -/
+def sbjvI : ExpoRule := ⟨Finset.univ, {sbjv, prs}, .const (· ++ "i")⟩
+/-- The weak theme vowel `-a`. -/
+def themeA : ExpoRule := ⟨weak, {}, .const (· ++ "a")⟩
+
 /-- Block I of Table 17.3 realizes the theme vowels. -/
-def blockI : Block Verb String (Finset Feat) :=
-  [ ⟨weak, {pst, pl}, .const (· ++ "u")⟩,
-    ⟨Finset.univ, {sbjv, prs}, .const (· ++ "i")⟩,
-    ⟨weak, {}, .const (· ++ "a")⟩,
-    IFD ]
+def blockI : Block Verb String (Finset Feat) := [themeU, sbjvI, themeA, identityDefault]
 
 /-- Block II of Table 17.3 realizes past tense. -/
 def blockII : Block Verb String (Finset Feat) :=
   [ ⟨weak, {pst, sg}, .const (· ++ "ði")⟩,
     ⟨weak, {pst, pl}, .const (· ++ "ðu")⟩,
-    IFD ]
+    identityDefault ]
 
 /-- The weak.4.b imperative `-ðu`. -/
 def weak4bImp : ExpoRule := ⟨weak4b, {imp, p2, sg}, .const (· ++ "ðu")⟩
@@ -98,9 +102,9 @@ def blockIII : Block Verb String (Finset Feat) :=
     ⟨Finset.univ, {p2, pl}, .const (· ++ "ið")⟩,
     ⟨Finset.univ, {ind, prs, p3, pl}, .const (· ++ "a")⟩,
     ⟨strong, {ind, pst, p2, sg}, .const (· ++ "st")⟩,
-    IFD ]
+    identityDefault ]
 
-/-- Rules of basic stem choice (7); the strong verbs' ablaut alternants are listed as stems. -/
+/-- The rules of basic stem choice (7), the strong verbs' ablaut alternants listed as stems. -/
 def iceStems : RuleSet (PFM.Rule Verb (Finset Feat) String) :=
   [ ⟨{kalla}, {}, "kall"⟩,
     ⟨{aetla}, {}, "ætl"⟩,
@@ -113,49 +117,48 @@ def iceStems : RuleSet (PFM.Rule Verb (Finset Feat) String) :=
     ⟨{fljuga}, {ind, prs, sg}, "flýg"⟩,
     ⟨{fljuga}, {}, "fljúg"⟩ ]
 
-/-- The covert lexemic index (11) indexes every stem in `v`'s paradigm with `v`. -/
-def lindex (v : Verb) : String → Verb := fun _ ↦ v
-
-/-- Bonami and Stump's basic stem choice (7) gives a cell the stem of its narrowest applicable
-rule of basic stem choice, the narrowness order of the rules of exponence resolving conflicts. -/
+/-- Basic stem choice gives a cell the stem of its narrowest applicable rule of (7). -/
 def stemChoice : Verb × Finset Feat → String :=
   iceStems.realizeMinimalD Rule.narrowness fun _ ↦ ""
 
 /-- The Icelandic paradigm function (13) applies basic stem choice and then Blocks I–III. -/
-def pf (v : Verb) (σ : Finset Feat) : String × Finset Feat :=
-  paradigmFunction (lindex v) stemChoice [blockI, blockII, blockIII] (v, σ)
+def pf (v : Verb) (σ : Finset Feat) : String :=
+  paradigmFunction stemChoice [blockI, blockII, blockIII] (v, σ)
 
-/-- The form `kallaðir` of (4a) is derived by (6) as `kall` + `-a` + `-ði` + `-r`. -/
-theorem pf_kalla : pf kalla {ind, pst, p2, sg} = ("kallaðir", {ind, pst, p2, sg}) := by decide
+/-- KALLA's second-singular indicative past is `kall` + `-a` + `-ði` + `-r`. -/
+theorem pf_kalla : pf kalla {ind, pst, p2, sg} = "kallaðir" := by decide
 
-/-- The bare imperative `gríp` of (4c) arises as the zero imperative exponent preempts `-r` in Block
-III. -/
-theorem pf_gripa_imp : pf gripa {imp, p2, sg} = ("gríp", {imp, p2, sg}) := by decide
+/-- GRÍPA's second-singular imperative is the bare stem, the zero exponent preempting `-r`. -/
+theorem pf_gripa_imp : pf gripa {imp, p2, sg} = "gríp" := by decide
 
-/-- The form `flaug` of (4d) is the stem of the narrowest stem-choice rule for FLJÚGA, followed
-by the IFD in every block. -/
-theorem pf_fljuga : pf fljuga {ind, pst, p1, sg} = ("flaug", {ind, pst, p1, sg}) := by decide
+/-- FLJÚGA's first-singular indicative past is the stem of its narrowest rule of (7). -/
+theorem pf_fljuga : pf fljuga {ind, pst, p1, sg} = "flaug" := by decide
 
-/-- The strong second-singular past `greipst` of Table 17.1 arises as the strong-verb rule
-preempts `-r`. -/
-theorem pf_gripa_pst : pf gripa {ind, pst, p2, sg} = ("greipst", {ind, pst, p2, sg}) := by decide
+/-- GRÍPA's second-singular indicative past takes the strong `-st`, which preempts `-r`. -/
+theorem pf_gripa_pst : pf gripa {ind, pst, p2, sg} = "greipst" := by decide
 
-/-- The conflict among (7c)–(7e) at `⟨GRÍPA, {ind pst 1sg}⟩` resolves to the three-cell rule. -/
+/-- The three-cell rule (7c) is the narrowest stem rule for GRÍPA's first-singular past. -/
 theorem stem_gripa_pst : stemChoice (gripa, {ind, pst, p1, sg}) = "greip" := by decide
 
-theorem blockI_gripa : evalBlock (lindex gripa) blockI ("gríp", {ind, prs, p1, sg})
-    = ("gríp", {ind, prs, p1, sg}) := by decide
+/-- Block III realizes ÆTLA's second-singular imperative with `-ðu`. -/
+theorem nar_aetla_imp : blockIII.eval (aetla, {imp, p2, sg}) "ætla" = "ætlaðu" := by decide
 
-/-- The example of (14) is the evaluation of Block III
-`[iii : ⟨ætla, {imp 2sg}⟩] = ⟨ætlaðu, σ⟩`. -/
-theorem nar_aetla_imp : evalBlock (lindex aetla) blockIII ("ætla", {imp, p2, sg})
-    = ("ætlaðu", {imp, p2, sg}) := by decide
-
-/-- In the example of (15), the weak.4.b `-ðu` is narrower than the zero imperative, which is
-narrower than `-r`. -/
+/-- The weak.4.b `-ðu` is narrower than the zero imperative, which is narrower than `-r`. -/
 theorem blockIII_narrowness :
     weak4bImp.narrowness < zeroImp.narrowness ∧ zeroImp.narrowness < rSg2.narrowness := by
   decide
+
+/-- The weak-class `-a` is narrower than the verb-class `-i`, whatever their property sets. -/
+theorem themeA_lt_sbjvI : themeA.narrowness < sbjvI.narrowness := by decide
+
+/-- KALLA's first-singular present subjunctive comes out `kalla`, not Table 17.1's `kalli`. -/
+theorem pf_kalla_sbjv : pf kalla {sbjv, prs, p1, sg} = "kalla" := by decide
+
+/-- ÆTLA's first-plural present subjunctive comes out `ætla-um`, not Table 17.4's `ætli-um`. -/
+theorem pf_aetla_sbjv : pf aetla {sbjv, prs, p1, pl} = "ætlaum" := by decide
+
+/-- The Identity Function Default fills Block I for a strong verb in the indicative. -/
+example : blockI.eval (gripa, {ind, prs, p1, sg}) "gríp" = "gríp" := by decide
 
 end Icelandic
 
@@ -163,11 +166,11 @@ end Icelandic
 
 section Portmanteau
 
-/-- The two ninth-conjugation verbs are consonant-final AŚ 'eat' and vowel-final KRĪ 'buy'. -/
+/-- The ninth-conjugation verbs AŚ 'eat', whose root ends in a consonant, and KRĪ 'buy'. -/
 inductive NinthVerb | as | kri
   deriving DecidableEq, Fintype
 
-/-- Properties of the second-person singular imperative active. -/
+/-- The properties of the second-person singular imperative active. -/
 inductive SF | p2 | sg | imp | act
   deriving DecidableEq, Fintype
 
@@ -175,38 +178,36 @@ open NinthVerb SF
 
 /-- Block i (20a) realizes the ninth-conjugation `-nī`. -/
 def blockNi : Block NinthVerb String (Finset SF) :=
-  [ ⟨Finset.univ, {}, .const (· ++ "nī")⟩ ]
+  [⟨Finset.univ, {}, .const (· ++ "nī")⟩]
 
 /-- Block ii (20b) realizes the second-singular imperative active `-hi`. -/
 def blockHi : Block NinthVerb String (Finset SF) :=
-  [ ⟨Finset.univ, {p2, sg, imp, act}, .const (· ++ "hi")⟩ ]
+  [⟨Finset.univ, {p2, sg, imp, act}, .const (· ++ "hi")⟩]
 
-/-- Block [ii,i] (20c) realizes `-āna` after a consonant-final root, consonant-finality being
-carried by the class `{AŚ}`. -/
+/-- The rule (20c) of Block [ii,i] realizes `-āna` after a consonant-final root. -/
 def blockAna : Block NinthVerb String (Finset SF) :=
-  [ ⟨{as}, {p2, sg, imp, act}, .const (· ++ "āna")⟩ ]
+  [⟨{as}, {p2, sg, imp, act}, .const (· ++ "āna")⟩]
 
-/-- By (21) at (22), AŚ takes the portmanteau `-āna` (Table 17.5). -/
-theorem as_portmanteau :
-    evalPortmanteau (fun _ ↦ as) blockAna blockHi blockNi ("aś", {p2, sg, imp, act})
-      = ("aśāna", {p2, sg, imp, act}) := by decide
+/-- The roots of AŚ and KRĪ. -/
+def root : NinthVerb → String
+  | as => "aś"
+  | kri => "krī"
 
-/-- No portmanteau rule applies at (23). -/
-theorem kri_no_portmanteau : blockAna.applicable (kri, ({p2, sg, imp, act} : Finset SF)) = [] :=
-  rfl
+/-- The Sanskrit paradigm function (21) applies Block [ii,i] to the root. -/
+def pfNinth (v : NinthVerb) (σ : Finset SF) : String :=
+  paradigmFunction (fun c ↦ root c.1) [blockAna.portmanteau blockHi blockNi] (v, σ)
 
-/-- At (23), Block [ii,i] defaults to the composition of Blocks ii and i, the Function
-Composition Default (24). -/
-theorem kri_fcd :
-    evalPortmanteau (fun _ ↦ kri) blockAna blockHi blockNi ("krī", {p2, sg, imp, act})
-      = evalBlock (fun _ ↦ kri) blockHi
-          (evalBlock (fun _ ↦ kri) blockNi ("krī", {p2, sg, imp, act})) :=
-  evalPortmanteau_eq_comp_of_not_applies _ _ _ _ _ kri_no_portmanteau
+/-- AŚ takes the portmanteau `-āna`. -/
+theorem as_portmanteau : pfNinth as {p2, sg, imp, act} = "aśāna" := by decide
 
-/-- The composition gives KRĪ's `krīnīhi` of Table 17.5. -/
-theorem kri_composition :
-    evalPortmanteau (fun _ ↦ kri) blockAna blockHi blockNi ("krī", {p2, sg, imp, act})
-      = ("krīnīhi", {p2, sg, imp, act}) := by decide
+/-- No portmanteau rule applies to KRĪ, so Block [ii,i] is the composition of Blocks ii and i. -/
+theorem kri_fcd : pfNinth kri {p2, sg, imp, act} =
+    blockHi.eval (kri, {p2, sg, imp, act}) (blockNi.eval (kri, {p2, sg, imp, act}) "krī") := by
+  simp only [pfNinth, paradigmFunction, evalBlocks_cons, evalBlocks_nil, root]
+  exact Block.eval_portmanteau_of_applicable_eq_nil rfl _
+
+/-- The composition gives KRĪ's `krīnīhi`. -/
+theorem kri_composition : pfNinth kri {p2, sg, imp, act} = "krīnīhi" := by decide
 
 end Portmanteau
 
@@ -224,24 +225,20 @@ inductive NF | nom | voc | du
 
 open Noun NF
 
-/-- The property set `σ/{nom}` of (17) is like `σ` but nominative. -/
+/-- The property set `σ/{nom}` of (17) is `σ` with nominative case. -/
 def toNom (σ : Finset NF) : Finset NF := insert nom (σ.erase voc)
 
-/-- Block i holds a nominative exponent and the vocative rule of referral (17), which
-re-consults the block at the nominative cell. -/
+/-- Block i holds the nominative dual exponent and the vocative rule of referral (17). -/
 def caseBlock : Block Noun String (Finset NF) :=
-  [ ⟨Finset.univ, {nom}, .const (· ++ "e")⟩,
+  [ ⟨Finset.univ, {nom, du}, .const (· ++ "e")⟩,
     ⟨Finset.univ, {voc}, .referral toNom⟩ ]
 
-/-- The vocative dual takes the nominative dual's exponent, a syncretism confined to Block i,
-unlike the whole-word clause (5). -/
+/-- The vocative dual takes the nominative dual's exponent. -/
 theorem voc_refers_to_nom :
-    (evalBlock (fun _ ↦ dana) caseBlock ("dān", {voc, du})).1
-      = (evalBlock (fun _ ↦ dana) caseBlock ("dān", {nom, du})).1 := by decide
+    caseBlock.eval (dana, {voc, du}) "dān" = caseBlock.eval (dana, {nom, du}) "dān" := by decide
 
-/-- The vocative dual is `dāne`, as in Table 17.2. -/
-theorem voc_du : evalBlock (fun _ ↦ dana) caseBlock ("dān", {voc, du}) = ("dāne", {voc, du}) := by
-  decide
+/-- The vocative dual of DĀNA is `dāne`. -/
+theorem voc_du : caseBlock.eval (dana, {voc, du}) "dān" = "dāne" := by decide
 
 end Referral
 
