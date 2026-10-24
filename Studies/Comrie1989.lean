@@ -6,6 +6,7 @@ public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Syntax.Person.Class
 public import Linglib.Semantics.Causation.Morphological
+public import Linglib.Syntax.Clause.Relative
 
 /-!
 # Comrie (1989): Language Universals and Linguistic Typology
@@ -44,7 +45,8 @@ The case systems are the equivalence relations on the three primitives, `caseSys
 that the five are all of them and `discriminates_two_case_iff` that two of them are the
 economical discriminating ones; the book's examples are the rows, over which `marking_monotone`
 is the information-flow prediction, `causee_rows` and `passive_analysis_fails` the hierarchy
-against its rival, `control_rows` the control hierarchy, `compactness_rows` the directness
+against its rival, `range_causeeEmbedding` its place in the accessibility hierarchy of relative
+clauses, `control_rows` the control hierarchy, `compactness_rows` the directness
 correlation through the substrate's monotonicity, and `bias_rows`, `coordination_rows` and
 `mixed_rows` the prototype's predictions.
 
@@ -82,6 +84,8 @@ correlation through the substrate's monotonicity, and `bias_rows`, `coordination
 ## References
 
 * [B. Comrie, *Language Universals and Linguistic Typology* (1989)][comrie-1989]
+* [E. L. Keenan and B. Comrie, *Noun Phrase Accessibility and Universal Grammar*
+  (1977)][keenan-comrie-1977]
 * [B. Comrie, *Ergativity* (1978)][comrie-1978]
 * [M. Silverstein, *Hierarchy of Features and Ergativity* (1976)][silverstein-1976]
 * [R. M. W. Dixon, *The Dyirbal Language of North Queensland* (1972)][dixon-1972]
@@ -237,6 +241,25 @@ theorem marking_contrast : ∀ role : Primitive, role ≠ .S →
   decide
 
 /-! ### The causee hierarchy (§8.2) -/
+
+/-- `causeePosition s` is the position of the same name in [keenan-comrie-1977]'s accessibility
+hierarchy. -/
+def causeePosition : CauseeSlot → Relativization.Position
+  | .directObject => .directObject
+  | .indirectObject => .indirectObject
+  | .oblique => .oblique
+
+/-- The causee hierarchy embedded in the accessibility hierarchy, which the book finds very similar
+to it once the indirect object is included, without the two being necessarily identical
+(p. 177). -/
+def causeeEmbedding : CauseeSlot ↪o Relativization.Position :=
+  OrderEmbedding.ofStrictMono causeePosition fun a b ↦ by revert a b; decide
+
+theorem range_causeeEmbedding :
+    Set.range causeeEmbedding = Set.Icc .oblique .directObject := by
+  ext p
+  simp only [causeeEmbedding, OrderEmbedding.coe_ofStrictMono, Set.mem_range, Set.mem_Icc]
+  revert p; decide
 
 /-- A language's departures from the paradigm case. -/
 structure Parameters where

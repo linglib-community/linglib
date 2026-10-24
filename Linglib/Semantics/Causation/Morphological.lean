@@ -100,7 +100,7 @@ inductive CauseeSlot where
   | directObject
   | indirectObject
   | oblique
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Rank on the hierarchy: DO (2) > IO (1) > OBL (0). -/
 def CauseeSlot.rank : CauseeSlot → ℕ
@@ -109,9 +109,7 @@ def CauseeSlot.rank : CauseeSlot → ℕ
   | .oblique => 0
 
 /-- Oblique < indirect object < direct object: the grammatical-relations hierarchy. -/
-instance : LinearOrder CauseeSlot :=
-  LinearOrder.lift' CauseeSlot.rank fun a b _ ↦ by
-    cases a <;> cases b <;> simp_all [CauseeSlot.rank]
+instance : LinearOrder CauseeSlot := LinearOrder.lift' CauseeSlot.rank (by decide)
 
 /-- The causee's slot given the base verb's valency: the highest slot the base verb's own
 arguments leave free. -/
