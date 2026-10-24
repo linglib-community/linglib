@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Questions.Closure
 public import Linglib.Core.Relation.SetRel
 public import Linglib.Data.Examples.Fox2007
@@ -44,6 +45,10 @@ at every layer.
   no free choice reading at any layer.
 * `embedded_scalar_implicature`: for *the reading or some of the homework*, exhaustification
   denies *all of the homework* but not *the reading*.
+* `isSauerlandExcludable_iff_isSecondaryImplicature`: when every alternative entails the
+  prejacent, the test (57) excludes exactly Sauerland's secondary implicatures.
+* `isSauerlandExcludable_of_isInnocentlyExcludable`: over finitely many alternatives, innocent
+  exclusion only removes alternatives from those the test (57) excludes.
 * `exhIE_infClosure_range`, `sauerland_exclusion_eq_empty`: against the answers to a question,
   innocent exclusion yields *exactly one*, while denying every answer that passes Sauerland's
   test is contradictory.
@@ -57,11 +62,6 @@ but (85) needs the plural disjunctive one, which `exhIE_singular` shows is exclu
 examples the paper leaves to scope or to an economy condition on exhaustification ((21), (34),
 (91b), (93c)) and the case it leaves open (92) are rows of `Data.Examples.Fox2007` without a
 theorem.
-
-## TODO
-
-* The paper equates the innocently excludable alternatives with those for which Sauerland's
-  pragmatic system derives secondary implicatures. Stating this needs a belief operator.
 
 ## References
 
@@ -763,16 +763,53 @@ theorem embedded_scalar_implicature (hah : ah ⊆ sh) (hsh : (sh \ (r ∪ ah)).N
 
 end Chierchia
 
+/-! ### Sauerland's test -/
+
+section Sauerland
+
+variable {C : Set (Set W)} {p q : Set W}
+
+/-- Sauerland's test (57) lets an alternative the prejacent does not entail be excluded when
+denying it, given the prejacent, forces no other such alternative. -/
+def IsSauerlandExcludable (C : Set (Set W)) (p q : Set W) : Prop :=
+  q ∈ C ∧ ¬ p ⊆ q ∧ ∀ r ∈ C, ¬ p ⊆ r → ¬ p \ q ⊆ r
+
+/-- When every alternative entails the prejacent, the test (57) excludes exactly the alternatives
+whose denial is a secondary implicature in Sauerland's system as (42) states it: (57b) replicates
+Sauerland's results. -/
+theorem isSauerlandExcludable_iff_isSecondaryImplicature (hC : ∀ r ∈ C, r ⊆ p) :
+    IsSauerlandExcludable C p q ↔ NeoGricean.IsSecondaryImplicature p C q := by
+  have key : ∀ r ∈ C, ¬ p ⊆ r ↔ r ⊂ p := fun r hr ↦
+    ⟨fun h ↦ ssubset_iff_subset_not_subset.2 ⟨hC r hr, h⟩,
+      fun h ↦ (ssubset_iff_subset_not_subset.1 h).2⟩
+  rw [NeoGricean.isSecondaryImplicature_iff, IsSauerlandExcludable]
+  exact ⟨fun ⟨hq, hpq, h⟩ ↦ ⟨hq, (key q hq).1 hpq, fun r hr hrp ↦ h r hr ((key r hr).2 hrp)⟩,
+    fun ⟨hq, hqp, h⟩ ↦ ⟨hq, (key q hq).2 hqp, fun r hr hpr ↦ h r hr ((key r hr).1 hpr)⟩⟩
+
+/-- Over finitely many alternatives and a consistent prejacent, an alternative in every maximal
+consistent exclusion (61) passes the test (57). -/
+theorem isSauerlandExcludable_of_isInnocentlyExcludable (hC : C.Finite) (hp : p.Nonempty)
+    (h : IsInnocentlyExcludable C p q) : IsSauerlandExcludable C p q := by
+  have extend (X : Set (Set W)) (hX : IsConsistentExclusion C p X) :
+      (p \ ⋃₀ insert q X).Nonempty :=
+    let ⟨M, hXM, hM⟩ := Set.Finite.exists_le_maximal (s := {X | IsConsistentExclusion C p X})
+      (hC.finite_subsets.subset fun _ h ↦ h.1) hX
+    hM.1.2.mono (sdiff_subset_sdiff_right (sUnion_mono (insert_subset (h.2 M hM) hXM)))
+  refine ⟨h.1, fun hpq ↦ ?_, fun r hr hpr hsub ↦ ?_⟩
+  · obtain ⟨w, hw, hwq⟩ := extend ∅ ⟨empty_subset _, by rwa [sUnion_empty, sdiff_empty]⟩
+    exact hwq ⟨q, mem_insert q _, hpq hw⟩
+  · obtain ⟨w, hw, hwqr⟩ :=
+      extend {r} ⟨singleton_subset_iff.2 hr, by rwa [sUnion_singleton, sdiff_nonempty]⟩
+    exact hwqr ⟨r, mem_insert_of_mem _ (mem_singleton r),
+      hsub ⟨hw, fun hwq ↦ hwqr ⟨q, mem_insert q _, hwq⟩⟩⟩
+
+end Sauerland
+
 /-! ### Answers to a question -/
 
 section Hamblin
 
 open Question
-
-/-- Sauerland's test lets an alternative the prejacent does not entail be excluded when denying
-it, given the prejacent, forces no other such alternative. -/
-def IsSauerlandExcludable (C : Set (Set W)) (p q : Set W) : Prop :=
-  q ∈ C ∧ ¬ p ⊆ q ∧ ∀ r ∈ C, ¬ p ⊆ r → ¬ p \ q ⊆ r
 
 variable {ι : Type*} {a : ι → Set W} (ha : Irredundant a)
 include ha
