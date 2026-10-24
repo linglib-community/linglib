@@ -11,9 +11,10 @@ public import Mathlib.Data.Fintype.Prod
 The paper splits Gazdar's scalar implicatures into two tiers. A scalar alternative `ψ` that
 asymmetrically entails the assertion yields the primary implicature `¬Kψ` (42), and `K¬ψ` is a
 secondary implicature when it is consistent with the assertion and all primary implicatures (43);
-these are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. Disjunction sits on the
-scale (40) of *or*, the operators `L` and `R` of (39) that keep one disjunct, and *and*, and the
-scalar alternatives of a sentence are all substitutions of scale-mates for its scalar items (19).
+these are `NeoGricean.primaryImplicatures` and `NeoGricean.IsSecondaryImplicature`. Disjunction
+sits on the scale (40) of *or*, the operators `L` and `R` of (39) that keep one disjunct, and
+*and*, and the scalar alternatives of a sentence are all substitutions of scale-mates for its
+scalar items (19).
 
 Of *A or B* only the exclusiveness implicature `K¬(A and B)` is secondary, the strengthenings
 `K¬A` and `K¬B` being blocked (46). Of *Kai had the broccoli or some of the peas* they are

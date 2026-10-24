@@ -13,13 +13,14 @@ implicature `¬Kψ` is `(Set.Iic ψ)ᶜ` and the secondary implicature `K¬ψ` i
 competence `Kψ ∨ K¬ψ` is resolving the polar question `Question.polar ψ`. The empty state, a
 member of every `Set.Iic`, is the inconsistent speaker.
 
-Asserting `φ` commits the speaker to `Kφ` and to the primary implicature `¬Kψ` of each
-alternative `ψ` that asymmetrically entails `φ`; for such a `ψ`, `K¬ψ` is a secondary implicature
-iff it is consistent with that commitment.
+Asserting `φ` implicates `Kφ` by Quality and the primary implicature `¬Kψ` of each alternative
+`ψ` that asymmetrically entails `φ`; for such a `ψ`, `K¬ψ` is a secondary implicature iff it is
+consistent with `Kφ` and all the primary implicatures.
 
 ## Main definitions
 
-* `NeoGricean.commitment`: `Kφ` with the primary implicatures of the stronger alternatives.
+* `NeoGricean.primaryImplicatures`: the primary implicatures of the stronger alternatives,
+  conjoined.
 * `NeoGricean.IsSecondaryImplicature`: the consistency condition on `K¬ψ`.
 
 ## Main statements
@@ -30,9 +31,13 @@ iff it is consistent with that commitment.
 
 ## Implementation notes
 
-The assertion enters the consistency check as `Kφ`, the speaker's Quality commitment, as in
-Sauerland's own derivation for disjunction; against the bare proposition `φ` the secondary
-implicature `K¬A` of *A or B* would not be blocked.
+The assertion enters the consistency check as `Kφ`, by Quality, as in Sauerland's own
+derivation for disjunction; against the bare proposition `φ` the secondary implicature `K¬A` of
+*A or B* would not be blocked.
+
+`Kφ` and the primary implicatures are the hearer's inferences about the speaker's beliefs, not
+public commitments in the sense of `Commitment.committed`. The two meet at Quality, where Sincerity
+turns the speaker's commitment to the asserted `φ` into the belief `Kφ`.
 
 ## References
 
@@ -54,20 +59,20 @@ variable {W ι : Type*} {s φ ψ : Set W} {alts : Set (Set W)}
 
 /-! ### Primary and secondary implicatures -/
 
-/-- The speaker's commitment after asserting `φ` against `alts`: `Kφ` and the primary
-implicature of each alternative that asymmetrically entails `φ` ([sauerland-2004] (42)). -/
-def commitment (φ : Set W) (alts : Set (Set W)) : Set (Set W) :=
-  Iic φ ∩ ⋂ ψ ∈ alts ∩ Iio φ, (Iic ψ)ᶜ
+/-- The primary implicatures of `φ` against `alts`, conjoined: the states not certain of any
+alternative that asymmetrically entails `φ` ([sauerland-2004] (42)). -/
+def primaryImplicatures (φ : Set W) (alts : Set (Set W)) : Set (Set W) :=
+  ⋂ ψ ∈ alts ∩ Iio φ, (Iic ψ)ᶜ
 
-@[simp] theorem mem_commitment :
-    s ∈ commitment φ alts ↔ s ⊆ φ ∧ ∀ ψ ∈ alts, ψ ⊂ φ → ¬ s ⊆ ψ := by
-  simp [commitment]
+@[simp] theorem mem_primaryImplicatures :
+    s ∈ primaryImplicatures φ alts ↔ ∀ ψ ∈ alts, ψ ⊂ φ → ¬ s ⊆ ψ := by
+  simp [primaryImplicatures]
 
 /-- `K¬ψ` is a secondary implicature of asserting `φ` against `alts` iff `¬Kψ` is a primary
-implicature and some consistent state satisfies both `K¬ψ` and the commitment
+implicature and `K¬ψ` is consistent with `Kφ` and all the primary implicatures
 ([sauerland-2004] (43)). -/
 def IsSecondaryImplicature (φ : Set W) (alts : Set (Set W)) (ψ : Set W) : Prop :=
-  ψ ∈ alts ∧ ψ ⊂ φ ∧ ((commitment φ alts ∩ Iic ψᶜ) \ {∅}).Nonempty
+  ψ ∈ alts ∧ ψ ⊂ φ ∧ ((Iic φ ∩ primaryImplicatures φ alts ∩ Iic ψᶜ) \ {∅}).Nonempty
 
 /-- The strengthened meaning `φ \ ψ` is the canonical witness: `K¬ψ` is a secondary implicature
 iff `φ \ ψ` entails no stronger alternative, so a blocked secondary implicature is always
@@ -75,10 +80,9 @@ blocked by a single primary one. -/
 theorem isSecondaryImplicature_iff : IsSecondaryImplicature φ alts ψ ↔
     ψ ∈ alts ∧ ψ ⊂ φ ∧ ∀ χ ∈ alts, χ ⊂ φ → ¬ φ \ ψ ⊆ χ := by
   refine and_congr_right fun _ ↦ and_congr_right fun hψ ↦ ⟨?_, fun h ↦ ?_⟩
-  · rintro ⟨s, ⟨hcom, hs⟩, -⟩ χ hχ hχφ hsub
-    obtain ⟨hφ, hprim⟩ := mem_commitment.1 hcom
-    exact hprim χ hχ hχφ fun w hw ↦ hsub ⟨hφ hw, hs hw⟩
-  · exact ⟨φ \ ψ, ⟨mem_commitment.2 ⟨sdiff_subset, h⟩, fun _ hw ↦ hw.2⟩,
+  · rintro ⟨s, ⟨⟨hφ, hprim⟩, hs⟩, -⟩ χ hχ hχφ hsub
+    exact mem_primaryImplicatures.1 hprim χ hχ hχφ fun w hw ↦ hsub ⟨hφ hw, hs hw⟩
+  · exact ⟨φ \ ψ, ⟨⟨sdiff_subset, mem_primaryImplicatures.2 h⟩, fun _ hw ↦ hw.2⟩,
       (sdiff_nonempty.2 hψ.2).ne_empty⟩
 
 theorem isSecondaryImplicature_range_iff {f : ι → Set W} {i : ι} :
