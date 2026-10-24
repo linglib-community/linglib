@@ -50,11 +50,6 @@ inductive Value where
   | fem
   deriving DecidableEq, Repr, Fintype
 
-/-- The comparative label of each gender. -/
-def Value.toLabel : Value → Gender
-  | .masc => .masculine
-  | .fem => .feminine
-
 /-- The basic forms of the remote definite article. After a vowel other than *i*, *-kii* is
 *-hii*, and after any vowel *-tii* is *-dii*. -/
 inductive Article where
@@ -108,13 +103,13 @@ def Noun.article (n : Noun) (num : numberSystem.values) : Article :=
   n.gender.article (if n.reduplicatedPlural then numberSystem.value .singular else num)
 
 /-- The noun *ìnan* 'boy'. -/
-def inan : Noun := ⟨⟨⟨"ìnan", "boy"⟩, .masc, some .masculine⟩, "inammá", false⟩
+def inan : Noun := ⟨⟨⟨"ìnan", "boy"⟩, .masc, some .male⟩, "inammá", false⟩
 
 /-- The noun *inán* 'girl'. -/
-def inan' : Noun := ⟨⟨⟨"inán", "girl"⟩, .fem, some .feminine⟩, "ináma", false⟩
+def inan' : Noun := ⟨⟨⟨"inán", "girl"⟩, .fem, some .female⟩, "ináma", false⟩
 
 /-- The noun *nin* 'man', whose plural *niman* is reduplicated. -/
-def nin : Noun := ⟨⟨⟨"nin", "man"⟩, .masc, some .masculine⟩, "niman", true⟩
+def nin : Noun := ⟨⟨⟨"nin", "man"⟩, .masc, some .male⟩, "niman", true⟩
 
 /-- The nouns the sources cite. -/
 def allNouns : List Noun := [inan, inan', nin]

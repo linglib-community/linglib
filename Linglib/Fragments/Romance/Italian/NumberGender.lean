@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Fragments.Romance.Italian.Gender
 
 /-!
 # Italian plurals in *-a*
@@ -26,11 +27,11 @@ inductive PluralClass where
 
 /-- A noun with its singular form and gender, its plural form and gender, and its plural
 class. -/
-structure Noun extends GenderedNoun Gender where
+structure Noun extends GenderedNoun Gender.Value where
   /-- The plural form. -/
   formPl : String
   /-- The gender of the plural. -/
-  plGender : Gender
+  plGender : Gender.Value
   /-- The plural class. -/
   pluralClass : PluralClass
   deriving DecidableEq, Repr
@@ -62,8 +63,8 @@ def aPlurals : List Noun :=
 /-- Regular plurals. -/
 def regulars : List Noun :=
   [⟨⟨⟨"libro", "book"⟩, .masculine, none⟩, "libri", .masculine, .regular⟩,
-    ⟨⟨⟨"ragazzo", "boy"⟩, .masculine, some .masculine⟩, "ragazzi", .masculine, .regular⟩,
+    ⟨⟨⟨"ragazzo", "boy"⟩, .masculine, some .male⟩, "ragazzi", .masculine, .regular⟩,
     ⟨⟨⟨"casa", "house"⟩, .feminine, none⟩, "case", .feminine, .regular⟩,
-    ⟨⟨⟨"ragazza", "girl"⟩, .feminine, some .feminine⟩, "ragazze", .feminine, .regular⟩]
+    ⟨⟨⟨"ragazza", "girl"⟩, .feminine, some .female⟩, "ragazze", .feminine, .regular⟩]
 
 end Italian.NumberGender

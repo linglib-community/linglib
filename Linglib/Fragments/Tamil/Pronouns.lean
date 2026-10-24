@@ -70,18 +70,18 @@ def niiŋgæ : PersonalPronoun :=
 
 /-- The third person singular masculine *avan*. -/
 def avan : PersonalPronoun :=
-  { form := "avan", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "avan", person := some .third, number := some .singular, gender := some .Masc }
 
 /-- The third person singular feminine *avaɭ*. -/
 def avaL : PersonalPronoun :=
-  { form := "avaɭ", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "avaɭ", person := some .third, number := some .singular, gender := some .Fem }
 
 /-- The polite third person singular *avar*. -/
 def avar : PersonalPronoun := { form := "avar", person := some .third, number := some .singular }
 
 /-- The third person plural *avan-ŋgæ*, the plural of *avan*. -/
 def avanŋgæ : PersonalPronoun :=
-  { form := "avan-ŋgæ", person := some .third, number := some .plural, gender := some .masculine }
+  { form := "avan-ŋgæ", person := some .third, number := some .plural, gender := some .Masc }
 
 /-- The second person singular at each grade. -/
 def addressee : Grade → PersonalPronoun

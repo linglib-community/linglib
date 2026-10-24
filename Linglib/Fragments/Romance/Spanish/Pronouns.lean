@@ -54,31 +54,31 @@ def usted : PersonalPronoun :=
 
 /-- *él* 'he, it'. -/
 def el : PersonalPronoun :=
-  { form := "él", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "él", person := some .third, number := some .singular, gender := some .Masc }
 
 /-- *ella* 'she, it'. -/
 def ella : PersonalPronoun :=
-  { form := "ella", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "ella", person := some .third, number := some .singular, gender := some .Fem }
 
 /-- *nosotros* 'we', masculine or mixed. -/
 def nosotros : PersonalPronoun :=
   { form := "nosotros", person := some .first, number := some .plural,
-    gender := some .masculine }
+    gender := some .Masc }
 
 /-- *nosotras* 'we', feminine. -/
 def nosotras : PersonalPronoun :=
   { form := "nosotras", person := some .first, number := some .plural,
-    gender := some .feminine }
+    gender := some .Fem }
 
 /-- *vosotros* 'you', familiar plural, masculine or mixed, used in Spain. -/
 def vosotros : PersonalPronoun :=
   { form := "vosotros", person := some .second, number := some .plural,
-    gender := some .masculine }
+    gender := some .Masc }
 
 /-- *vosotras* 'you', familiar plural, feminine, used in Spain. -/
 def vosotras : PersonalPronoun :=
   { form := "vosotras", person := some .second, number := some .plural,
-    gender := some .feminine }
+    gender := some .Fem }
 
 /-- *ustedes* 'you', plural with third-person agreement: polite in Spain, the only plural of
 address in Latin America. -/
@@ -88,11 +88,11 @@ def ustedes : PersonalPronoun :=
 
 /-- *ellos* 'they', masculine or mixed. -/
 def ellos : PersonalPronoun :=
-  { form := "ellos", person := some .third, number := some .plural, gender := some .masculine }
+  { form := "ellos", person := some .third, number := some .plural, gender := some .Masc }
 
 /-- *ellas* 'they', feminine. -/
 def ellas : PersonalPronoun :=
-  { form := "ellas", person := some .third, number := some .plural, gender := some .feminine }
+  { form := "ellas", person := some .third, number := some .plural, gender := some .Fem }
 
 /-- The pronouns for a single addressee at each grade, *vos* beside *tú* where it is used. -/
 def addresseeSg : Grade → Finset PersonalPronoun

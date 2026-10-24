@@ -82,12 +82,12 @@ def lei_formal : PersonalPronoun :=
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=
-  { form := "lui", person := some .third, number := some .singular, gender := some .masculine,
+  { form := "lui", person := some .third, number := some .singular, gender := some .Masc,
     strength := some .strong }
 
 /-- *lei* — 3sg feminine. -/
 def lei : PersonalPronoun :=
-  { form := "lei", person := some .third, number := some .singular, gender := some .feminine,
+  { form := "lei", person := some .third, number := some .singular, gender := some .Fem,
     strength := some .strong }
 
 /-- *noi* — 1pl. -/
@@ -141,9 +141,9 @@ def Row.number : Row → Number
   | .pl1 | .pl2 | .pl3m | .pl3f => .plural
 
 /-- The gender of a row, marked in the third person alone. -/
-def Row.gender : Row → Option Gender
-  | .sg3m | .pl3m => some .masculine
-  | .sg3f | .pl3f => some .feminine
+def Row.gender : Row → Option UD.Gender
+  | .sg3m | .pl3m => some .Masc
+  | .sg3f | .pl3f => some .Fem
   | _ => none
 
 /-- The cases of the atonic pronouns. -/

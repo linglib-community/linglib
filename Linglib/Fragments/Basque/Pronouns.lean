@@ -2,6 +2,7 @@ module
 
 public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Category.Pronoun.Personal
+public import Linglib.Semantics.Reference.Gender
 
 /-!
 # Basque pronouns and allocutive markers
@@ -71,14 +72,13 @@ theorem phi_zu : HasPhi.phi zu = HasPhi.phi zuek := by decide
 theorem referential_zu : zu.referential = hi.referential := by decide
 
 /-- The Souletin allocutive suffix for an addressee of each grade and gender. A familiar man takes
-*-k* and a familiar woman *-n*, and an addressee of either sex spoken to with respect *-zü*. -/
-def allocutive : Grade → Gender → Option Morphology.Morph
-  | .familiar, .masculine => some (.suff "k")
-  | .familiar, .feminine => some (.suff "n")
-  | .polite, .masculine | .polite, .feminine => some (.suff "zü")
-  | _, _ => none
+*-k* and a familiar woman *-n*, and an addressee of any gender spoken to with respect *-zü*. -/
+def allocutive : Grade → ReferentGender → Option Morphology.Morph
+  | .familiar, .male => some (.suff "k")
+  | .familiar, .female => some (.suff "n")
+  | .polite, .male | .polite, .female => some (.suff "zü")
 
-theorem allocutive_polite : allocutive .polite .masculine = allocutive .polite .feminine := rfl
+theorem allocutive_polite : allocutive .polite .male = allocutive .polite .female := rfl
 
 end Pronouns
 

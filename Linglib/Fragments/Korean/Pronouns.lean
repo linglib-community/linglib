@@ -101,12 +101,12 @@ def taek : PersonalPronoun :=
 /-- The written-narrative masculine third person *geu*. -/
 def geu : PersonalPronoun :=
   { form := "geu", script := some "그", person := some .third, number := some .singular,
-    gender := some .masculine, register := .formal }
+    gender := some .Masc, register := .formal }
 
 /-- The written-narrative feminine third person *geunyeo*. -/
 def geunyeo : PersonalPronoun :=
   { form := "geunyeo", script := some "그녀", person := some .third, number := some .singular,
-    gender := some .feminine, register := .formal }
+    gender := some .Fem, register := .formal }
 
 /-- The colloquial third person *gyae*, neutral for gender. -/
 def gyae : PersonalPronoun :=

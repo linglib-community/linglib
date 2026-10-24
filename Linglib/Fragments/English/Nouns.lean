@@ -8,10 +8,11 @@ public import Linglib.Fragments.English.Inflection
 # English nouns
 
 The English noun as a lexical entry is a `ClassifiedNoun` over no classifiers, which a numeral
-counts directly or not at all, with its lexical gender and its plural where it has them; a regular
+counts directly or not at all, with the gender it restricts its referents to and its plural where it
+has them; a regular
 plural is the noun with the suffix `English.Inflection.s`. Names are the root `ProperName`. English
-nouns have no grammatical gender; the label recorded for *man*, *woman* and the names is the natural
-gender their pronouns agree with. Bare plurals and bare mass nouns are arguments and a bare singular
+nouns have no grammatical gender; *man*, *woman* and the names restrict their referents' gender,
+which their pronouns agree with. Bare plurals and bare mass nouns are arguments and a bare singular
 count noun is not, which Chierchia derives from the Nominal Mapping Parameter
 (`Studies/Chierchia1998.lean`).
 
@@ -38,11 +39,12 @@ namespace English.Nouns
 
 open Morphology
 
-/-- An English noun is a classified noun over no classifiers, with its lexical gender and its
-plural where it has them. -/
+/-- An English noun is a classified noun over no classifiers, with the gender it restricts its
+referents to and its plural where it has them. -/
 structure Noun extends ClassifiedNoun Empty where
-  /-- The natural gender the noun's pronouns agree with, where it has one. -/
-  gender : Option Gender := none
+  /-- The gender the noun restricts its referents to, which its pronouns agree with, where it
+  does. -/
+  referentGender : Option ReferentGender := none
   /-- The plural, where the noun has one. -/
   plural : Option String := none
   deriving DecidableEq
@@ -70,15 +72,20 @@ theorem Noun.realize_eq_none (n : Noun) {m : Number} (hm : m ∉ numberSystem.va
     n.realize m = none := by
   cases m <;> simp_all [numberSystem, Noun.realize]
 
-/-- The singular word token is a `NOUN` with the gender where the entry has one. -/
+/-- The singular word token is a `NOUN`, masculine or feminine by the gender the entry restricts
+its referents to, where it does. -/
 def Noun.toWordSg (n : Noun) : Word :=
   { form := n.form, cat := .NOUN
-    features := Features.of (number := some .singular) (gender := n.gender) }
+    features := Features.of (number := some .singular)
+      (gender := n.referentGender.map ReferentGender.toUD) }
 
 /-- The entry as a word token at a number, where it has a form there. -/
 def Noun.toWord (n : Noun) (num : Number) : Option Word :=
   (n.realize num).map fun form ↦
-    { n.toWordSg with form, features := Features.of (number := some num) (gender := n.gender) }
+    { n.toWordSg with
+      form
+      features := Features.of (number := some num)
+        (gender := n.referentGender.map ReferentGender.toUD) }
 
 theorem Noun.toWord_singular (n : Noun) : n.toWord .singular = some n.toWordSg := rfl
 
@@ -109,11 +116,10 @@ def bean : Noun := .common "bean"
 def lentil : Noun := .common "lentil"
 def spider : Noun := .common "spider"
 def pollenGrain : Noun := .common "pollen grain"
-def father : Noun := { Noun.common "father" with gender := some .masculine }
-def mother : Noun := { Noun.common "mother" with gender := some .feminine }
-def man : Noun := { Noun.common "man" with gender := some .masculine, plural := "men" }
-def woman : Noun :=
-  { Noun.common "woman" with gender := some .feminine, plural := "women" }
+def father : Noun := { Noun.common "father" with referentGender := some .male }
+def mother : Noun := { Noun.common "mother" with referentGender := some .female }
+def man : Noun := { Noun.common "man" with referentGender := some .male, plural := "men" }
+def woman : Noun := { Noun.common "woman" with referentGender := some .female, plural := "women" }
 def fireman : Noun := { Noun.common "fireman" with plural := "firemen" }
 def person : Noun := { Noun.common "person" with plural := "people" }
 def child : Noun := { Noun.common "child" with plural := "children" }
@@ -138,14 +144,14 @@ def mold : Noun := .mass "mold"
 /-! ### Proper names -/
 
 /-- A name glossed by itself. -/
-def name (form : String) (gender : Option Gender := none) : ProperName :=
-  { form, gloss := form, gender }
+def name (form : String) (g : Option ReferentGender := none) : ProperName :=
+  { form, gloss := form, referentGender := g }
 
-def john : ProperName := name "John" (some .masculine)
-def mary : ProperName := name "Mary" (some .feminine)
-def bill : ProperName := name "Bill" (some .masculine)
-def sue : ProperName := name "Sue" (some .feminine)
-def fred : ProperName := name "Fred" (some .masculine)
+def john : ProperName := name "John" (some .male)
+def mary : ProperName := name "Mary" (some .female)
+def bill : ProperName := name "Bill" (some .male)
+def sue : ProperName := name "Sue" (some .female)
+def fred : ProperName := name "Fred" (some .male)
 def sam : ProperName := name "Sam"
 def pat : ProperName := name "Pat"
 

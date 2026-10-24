@@ -59,14 +59,14 @@ inductive Declension
 /-- The lexical CONCORD features, number and gender; case is contextual. -/
 structure ConcordF where
   number : Number
-  gender : Gender
+  gender : UD.Gender
   deriving DecidableEq, Repr
 
 /-- The INDEX features (8): person, number and gender. -/
 structure IndexF where
   person : Person
   number : Number
-  gender : Gender
+  gender : UD.Gender
   deriving DecidableEq, Repr
 
 /-- The sex a noun's referent is lexically restricted to, if any (18). -/
@@ -94,8 +94,8 @@ structure Noun where
 nouns feminine; the constraint does not reach pluralia tantum. -/
 def DecCon (n : Noun) : Prop :=
   match n.decl with
-  | .I => n.concord.gender = .masculine ∨ n.concord.gender = .neuter
-  | .II | .III => n.concord.gender = .feminine
+  | .I => n.concord.gender = .Masc ∨ n.concord.gender = .Neut
+  | .II | .III => n.concord.gender = .Fem
   | .pluralia => True
 
 /-- ConInd (17): concord and index share number and gender. -/
@@ -105,8 +105,8 @@ def ConInd (n : Noun) : Prop :=
 /-- IndSemGen (18): a female-restricted noun has feminine index, a male-restricted one
 masculine. -/
 def IndSemGen (n : Noun) : Prop :=
-  (n.sex = .female → n.index.gender = .feminine) ∧
-    (n.sex = .male → n.index.gender = .masculine)
+  (n.sex = .female → n.index.gender = .Fem) ∧
+    (n.sex = .male → n.index.gender = .Masc)
 
 /-- IndSemNum (22): aggregate reference gives plural index, anything else singular. -/
 def IndSemNum (n : Noun) : Prop :=
@@ -149,23 +149,23 @@ instance (n : Noun) : Decidable (Regular n) := inferInstanceAs (Decidable (∀ _
 
 /-- *knjiga* 'book': regular class II. -/
 def knjiga : Noun :=
-  { decl := .II, concord := ⟨.singular, .feminine⟩, index := ⟨.third, .singular, .feminine⟩,
+  { decl := .II, concord := ⟨.singular, .Fem⟩, index := ⟨.third, .singular, .Fem⟩,
     sex := .unrestricted, count := some .one }
 
 /-- *rad* 'work': regular class I. -/
 def rad : Noun :=
-  { decl := .I, concord := ⟨.singular, .masculine⟩,
-    index := ⟨.third, .singular, .masculine⟩, sex := .unrestricted, count := some .one }
+  { decl := .I, concord := ⟨.singular, .Masc⟩,
+    index := ⟨.third, .singular, .Masc⟩, sex := .unrestricted, count := some .one }
 
 /-- *žena* 'woman': regular and female-denoting. -/
 def žena : Noun :=
-  { decl := .II, concord := ⟨.singular, .feminine⟩, index := ⟨.third, .singular, .feminine⟩,
+  { decl := .II, concord := ⟨.singular, .Fem⟩, index := ⟨.third, .singular, .Fem⟩,
     sex := .female, count := some .one }
 
 /-- *muž* 'husband': regular and male-denoting. -/
 def muž : Noun :=
-  { decl := .I, concord := ⟨.singular, .masculine⟩,
-    index := ⟨.third, .singular, .masculine⟩, sex := .male, count := some .one }
+  { decl := .I, concord := ⟨.singular, .Masc⟩,
+    index := ⟨.third, .singular, .Masc⟩, sex := .male, count := some .one }
 
 /-- *kit* 'whale': masculine with no sex restriction (21). -/
 def kit : Noun := rad
@@ -173,8 +173,8 @@ def kit : Noun := rad
 /-- *Steva*: a male name declining in class II (28); *sudija* 'judge' and *mušterija*
 'customer' applied to males pattern alike (19a), (30b). -/
 def steva : Noun :=
-  { decl := .II, concord := ⟨.singular, .masculine⟩,
-    index := ⟨.third, .singular, .masculine⟩, sex := .male, count := some .one }
+  { decl := .II, concord := ⟨.singular, .Masc⟩,
+    index := ⟨.third, .singular, .Masc⟩, sex := .male, count := some .one }
 
 /-- *sudija* applied to a female (19b): the other resolution of the disjunction (20). -/
 def sudijaFemale : Noun := { žena with }
@@ -184,28 +184,28 @@ def mušterijaUnsexed : Noun := knjiga
 
 /-- *deca* 'children': feminine singular concord, neuter plural index (45). -/
 def deca : Noun :=
-  { decl := .II, concord := ⟨.singular, .feminine⟩, index := ⟨.third, .plural, .neuter⟩,
+  { decl := .II, concord := ⟨.singular, .Fem⟩, index := ⟨.third, .plural, .Neut⟩,
     sex := .unrestricted, count := some .aggregate }
 
 /-- *gospoda* 'gentlemen': like *deca*, male-restricted with masculine plural index (40). -/
 def gospoda : Noun :=
-  { decl := .II, concord := ⟨.singular, .feminine⟩, index := ⟨.third, .plural, .masculine⟩,
+  { decl := .II, concord := ⟨.singular, .Fem⟩, index := ⟨.third, .plural, .Masc⟩,
     sex := .male, count := some .aggregate }
 
 /-- *braća* 'brothers': male-restricted with feminine singular concord and neuter plural
 index (39). -/
 def braća : Noun :=
-  { decl := .II, concord := ⟨.singular, .feminine⟩, index := ⟨.third, .plural, .neuter⟩,
+  { decl := .II, concord := ⟨.singular, .Fem⟩, index := ⟨.third, .plural, .Neut⟩,
     sex := .male, count := some .aggregate }
 
 /-- *makaze* 'scissors' read as one pair: plural throughout against singular reference (35). -/
 def makaze : Noun :=
-  { decl := .pluralia, concord := ⟨.plural, .feminine⟩,
-    index := ⟨.third, .plural, .feminine⟩, sex := .unrestricted, count := some .one }
+  { decl := .pluralia, concord := ⟨.plural, .Fem⟩,
+    index := ⟨.third, .plural, .Fem⟩, sex := .unrestricted, count := some .one }
 
 /-- *devojče* 'girl': female-denoting with neuter index (11). -/
 def devojče : Noun :=
-  { decl := .I, concord := ⟨.singular, .neuter⟩, index := ⟨.third, .singular, .neuter⟩,
+  { decl := .I, concord := ⟨.singular, .Neut⟩, index := ⟨.third, .singular, .Neut⟩,
     sex := .female, count := some .one }
 
 theorem regular_lexicon :
@@ -258,14 +258,14 @@ open Agreement (Bundle)
 
 /-- The bundle of an NP-internal target: its case, and its concord number and gender where it
 is marked for them. -/
-def concordBundle (c : Case) (n : Flat Number) (g : Flat Gender) : Bundle
+def concordBundle (c : Case) (n : Flat Number) (g : Flat UD.Gender) : Bundle
   | .case => c
   | .number => n
   | .gender => g
   | _ => ⊥
 
 /-- The bundle of an index-reading target, a pronoun or a finite verb. -/
-def indexBundle (p : Person) (n : Number) (g : Gender) : Bundle
+def indexBundle (p : Person) (n : Number) (g : UD.Gender) : Bundle
   | .person => p
   | .number => n
   | .gender => g
@@ -290,10 +290,10 @@ instance (p : Bundle) (n : Noun) : Decidable (IndexAgrees p n) :=
   inferInstanceAs (Decidable (Compat _ _))
 
 /-- *ovu dobru*: accusative feminine singular modifiers (41). -/
-def ovu : Bundle := concordBundle .acc Number.singular Gender.feminine
+def ovu : Bundle := concordBundle .acc Number.singular UD.Gender.Fem
 
 /-- *ona*: the neuter plural pronoun (41). -/
-def ona : Bundle := indexBundle .third .plural .neuter
+def ona : Bundle := indexBundle .third .plural .Neut
 
 /-- *kojih*: the genitive plural relative pronoun, unmarked for concord number and gender
 (57). -/
@@ -301,16 +301,16 @@ def kojih : Bundle := concordBundle .gen ⊥ ⊥
 
 /-- On a regular noun the two bundles agree with the same targets (6). -/
 theorem knjiga_agrees :
-    ConcordAgrees (concordBundle .nom Number.singular Gender.feminine) knjiga .nom ∧
-      IndexAgrees (indexBundle .third .singular .feminine) knjiga := by
+    ConcordAgrees (concordBundle .nom Number.singular UD.Gender.Fem) knjiga .nom ∧
+      IndexAgrees (indexBundle .third .singular .Fem) knjiga := by
   decide
 
 /-- Mixed agreement on *deca* (41): the feminine singular modifiers read CONCORD and the
 neuter plural pronoun reads INDEX, while the crossed targets fail (62). -/
 theorem deca_mixed_agreement :
     ConcordAgrees ovu deca .acc ∧ IndexAgrees ona deca ∧
-      ¬ ConcordAgrees (concordBundle .acc Number.plural Gender.neuter) deca .acc ∧
-      ¬ IndexAgrees (indexBundle .third .singular .feminine) deca := by
+      ¬ ConcordAgrees (concordBundle .acc Number.plural UD.Gender.Neut) deca .acc ∧
+      ¬ IndexAgrees (indexBundle .third .singular .Fem) deca := by
   decide
 
 /-- *kojih* agrees in concord with *deca* (56): unmarked features are compatible with

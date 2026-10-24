@@ -181,9 +181,9 @@ def Case3.toLatvian : Case3 → Latvian.Case
 def LNum.toNumber : LNum → Number
   | .sg => .singular | .pl => .plural
 
-/-- The gender a value of `LGen` is. -/
-def LGen.toGender : LGen → Gender
-  | .masc => .masculine | .fem => .feminine
+/-- The gender tag of a value of `LGen`. -/
+def LGen.toUD : LGen → UD.Gender
+  | .masc => .Masc | .fem => .Fem
 
 /-- A Latvian cell: case, number, gender. -/
 structure LCell where
@@ -205,7 +205,7 @@ def latvianRules : RuleSet (Rule LCell latvian String) :=
 /-- The stem of Table 20 at a cell: the root of the form of *pats* in the
 cell's case, number and gender. -/
 def table20stem (c : LCell) : Option String :=
-  (Latvian.Pronouns.pats c.case.toLatvian c.num.toNumber c.gen.toGender).bind
+  (Latvian.Pronouns.pats c.case.toLatvian c.num.toNumber c.gen.toUD).bind
     fun ms ↦ (ms.find? (·.kind = .root)).map (·.form)
 
 /-- Rules (7) generate Table 20's stem distribution. -/

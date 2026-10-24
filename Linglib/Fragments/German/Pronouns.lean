@@ -79,15 +79,15 @@ def sie_formal : PersonalPronoun :=
 
 /-- The third person singular masculine *er*. -/
 def er : PersonalPronoun :=
-  { form := "er", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "er", person := some .third, number := some .singular, gender := some .Masc }
 
 /-- The third person singular feminine *sie*. -/
 def sie_sg : PersonalPronoun :=
-  { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "sie", person := some .third, number := some .singular, gender := some .Fem }
 
 /-- The third person singular neuter *es*. -/
 def es : PersonalPronoun :=
-  { form := "es", person := some .third, number := some .singular, gender := some .neuter }
+  { form := "es", person := some .third, number := some .singular, gender := some .Neut }
 
 /-- The first person plural *wir*. -/
 def wir : PersonalPronoun := { form := "wir", person := some .first, number := some .plural }

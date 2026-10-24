@@ -50,7 +50,7 @@ theorem selector_eq_assignment :
 
 /-- A feminine pronoun is undefined of a referent gendered masculine. The feature does not assert
 the referent's gender but presupposes it, so the denotation has no value at all when it fails. -/
-theorem undefined_of_masculine (hfem : e.gender = some .feminine) (h : g n ∈ Gendered.masculine) :
+theorem undefined_of_masculine (hfem : e.gender = some .Fem) (h : g n ∈ Gendered.masculine) :
     (e.denote n c).toTrivalent scope g ⟨⟩ = 0 := by
   simp [hfem, h]
 

@@ -520,7 +520,7 @@ structure Row where
 /-- A taQTiL noun (9), with its root where the squib identifies it. -/
 structure NounRow where
   form : String
-  gender : Gender
+  gender : UD.Gender
   root : Option (ConsonantalRoot String)
   deriving DecidableEq, Repr
 
@@ -569,7 +569,7 @@ def cellTable : List (String × Cell) :=
   [("pst3msg", .pst3msg), ("actionNoun", .actionNoun), ("passPrtc", .passPrtc), ("pfv", .pfv),
    ("ipfv", .ipfv), ("juss", .juss), ("grnd", .grnd), ("inf", .inf)]
 
-def genderTable : List (String × Gender) := [("masculine", .masculine), ("feminine", .feminine)]
+def genderTable : List (String × UD.Gender) := [("masculine", .Masc), ("feminine", .Fem)]
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let lang ← List.lookup ex.language langTable
@@ -624,7 +624,7 @@ theorem intruder_distribution :
 
 /-- A taQTiL noun whose last consonant is not [t] is masculine (9). -/
 theorem masculine_of_not_t_final :
-    ∀ r ∈ nounRows, r.form.toList.getLast? ≠ some 't' → r.gender = .masculine := by
+    ∀ r ∈ nounRows, r.form.toList.getLast? ≠ some 't' → r.gender = .Masc := by
   decide
 
 /-- The taQTiL derivation of a noun's root reproduces the noun, and the noun is feminine iff the
@@ -634,7 +634,7 @@ def NounRow.Derived (r : NounRow) : Prop :=
   match r.root with
   | some ρ =>
     surfaceChars hebrewTaqtil ρ = r.form.toList ∧
-      (r.gender = .feminine ↔ (derive hebrewTaqtil ρ).affix ≠ [])
+      (r.gender = .Fem ↔ (derive hebrewTaqtil ρ).affix ≠ [])
   | none => True
 
 instance (r : NounRow) : Decidable r.Derived := by

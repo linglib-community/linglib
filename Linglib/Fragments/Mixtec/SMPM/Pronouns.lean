@@ -20,9 +20,9 @@ strengthened by a demonstrative, as in *yé yo'o* 'we (incl.) here', or by the d
 ## Implementation notes
 
 The genders are the carrier `Gender.Value`, visible only on the nonlocal clitics.
-`Gender.Value.toLabel` gives the comparative label of the feminine and the masculine; the other
-four genders have none. A clitic with no plural counterpart has `number := some .general`, so it
-realizes both the singular and the plural third person. The strengthened forms are phrases and
+`Gender.Value.toUD` gives the Universal Dependencies tag of the feminine and the masculine; the
+other four genders have none. A clitic with no plural counterpart has `number := some .general`, so
+it realizes both the singular and the plural third person. The strengthened forms are phrases and
 are not entries; neither is the prevocalic allomorph *=(y)à* of the neutral clitic.
 
 ## References
@@ -66,10 +66,10 @@ def Value.pluralClitic : Value → Option String
   | .feminine => some "=ná"
   | _ => none
 
-/-- The comparative label of a gender, which only the feminine and the masculine have. -/
-def Value.toLabel : Value → Option Gender
-  | .feminine => some .feminine
-  | .masculine => some .masculine
+/-- The Universal Dependencies tag of a gender, which only the feminine and the masculine have. -/
+def Value.toUD : Value → Option UD.Gender
+  | .feminine => some .Fem
+  | .masculine => some .Masc
   | _ => none
 
 theorem clitic_injective : Function.Injective Value.clitic := by decide
@@ -105,12 +105,12 @@ number-neutral otherwise ((5)). -/
 def cl3 (g : Gender.Value) : PersonalPronoun :=
   { form := g.clitic, person := some .third,
     number := some (if g.pluralClitic.isSome then .singular else .general),
-    gender := g.toLabel, strength := some .clitic }
+    gender := g.toUD, strength := some .clitic }
 
 /-- The nonlocal plural clitic of a gender, where it has one ((5)). -/
 def cl3pl (g : Gender.Value) : Option PersonalPronoun :=
   g.pluralClitic.map fun f ↦
-    { form := f, person := some .third, number := some .plural, gender := g.toLabel,
+    { form := f, person := some .third, number := some .plural, gender := g.toUD,
       strength := some .clitic }
 
 /-- The clitic series. -/

@@ -213,26 +213,26 @@ def Feature.dom : Feature → Set E
 
 /-- Over a gendered entity domain, the feminine is defined of the referents not gendered
 masculine and the neuter of those gendered neither way; the masculine, an absent value and the
-non-sex-based genders restrict nothing. -/
-def dom (g : Option Gender) : Set E :=
-  (g.bind Features.fromGender).elim Set.univ (·.inf Feature.dom)
+common gender restrict nothing. -/
+def dom (g : Option UD.Gender) : Set E :=
+  (g.bind Features.ofUD).elim Set.univ (·.inf Feature.dom)
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl
 
 @[simp] theorem mem_dom_neuter :
-    x ∈ dom (some .neuter) ↔ x ∉ Gendered.masculine ∧ x ∉ Gendered.feminine := by
-  simp [dom, Features.fromGender, Features.neuter_eq, Feature.dom]
+    x ∈ dom (some .Neut) ↔ x ∉ Gendered.masculine ∧ x ∉ Gendered.feminine := by
+  simp [dom, Features.ofUD, Features.neuter_eq, Feature.dom]
 
-@[simp] theorem mem_dom_feminine : x ∈ dom (some .feminine) ↔ x ∉ Gendered.masculine := by
-  simp [dom, Features.fromGender, Features.feminine_eq, Feature.dom]
+@[simp] theorem mem_dom_feminine : x ∈ dom (some .Fem) ↔ x ∉ Gendered.masculine := by
+  simp [dom, Features.ofUD, Features.feminine_eq, Feature.dom]
 
-@[simp] theorem dom_masculine : dom (E := E) (some .masculine) = Set.univ := by
-  simp [dom, Features.fromGender, Features.masculine]
+@[simp] theorem dom_masculine : dom (E := E) (some .Masc) = Set.univ := by
+  simp [dom, Features.ofUD, Features.masculine]
 
 /-- The neuter domain lies inside the feminine one, the containment `[+neuter] → [+feminine]` of
 the decomposition as a fact about referents. -/
 theorem dom_neuter_subset_dom_feminine :
-    dom (E := E) (some .neuter) ⊆ dom (some .feminine) :=
+    dom (E := E) (some .Neut) ⊆ dom (some .Fem) :=
   Finset.inf_mono (by decide : Features.feminine ⊆ Features.neuter)
 
 end Gender

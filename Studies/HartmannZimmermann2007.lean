@@ -158,11 +158,12 @@ theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
 Each cell's pragmatic type is *computed* from its controlling context:
 the constructors take a `Focus.Antecedent`, not a tag. -/
 
-def mkExSituUtt (tam pacTAM : TAM) (cell : Agreement.Bundle) (g : Gender) (hasStab : Bool)
-    {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject) : FocusUtterance :=
+def mkExSituUtt (tam pacTAM : TAM) (cell : Agreement.Bundle) (g : Hausa.Gender.Value)
+    (hasStab : Bool) {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject) :
+    FocusUtterance :=
   ⟨mkExSitu tam pacTAM cell (some g) hasStab, ctl.use, foc⟩
 
-def mkInSituUtt (tam : TAM) (cell : Agreement.Bundle) (g : Gender)
+def mkInSituUtt (tam : TAM) (cell : Agreement.Bundle) (g : Hausa.Gender.Value)
     {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject)
     (hasStab : Bool := false) : FocusUtterance :=
   ⟨mkInSitu tam cell (some g) hasStab, ctl.use, foc⟩
@@ -172,10 +173,10 @@ def s1 : Agreement.Bundle := .personNumber .first .singular
 
 /-- The third person masculine singular PAC cell. -/
 def s3m : Agreement.Bundle :=
-  (Agreement.Bundle.personNumber .third .singular).set .gender .masculine
+  (Agreement.Bundle.personNumber .third .singular).set .gender .Masc
 
 /-- The third person feminine singular PAC cell. -/
-def s3f : Agreement.Bundle := (Agreement.Bundle.personNumber .third .singular).set .gender .feminine
+def s3f : Agreement.Bundle := (Agreement.Bundle.personNumber .third .singular).set .gender .Fem
 
 /-- The impersonal PAC cell. -/
 def p4 : Agreement.Bundle := impersonal
@@ -270,8 +271,8 @@ def exSitu_subject_future : FocusUtterance :=
 theorem exSitu_subject_future_IsHausaLicensed :
     exSitu_subject_future.IsHausaLicensed := by decide
 
-theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle) (g : Option Gender)
-    (hs : Bool) : ¬ (mkExSitu .subjunctive t c g hs).Licensed :=
+theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle)
+    (g : Option Hausa.Gender.Value) (hs : Bool) : ¬ (mkExSitu .subjunctive t c g hs).Licensed :=
   fun h ↦ by simpa [mkExSitu, TAM.relCounterparts] using h.2 rfl
 
 /-! ## Universalist Basic Focus Rule (§5, §6.2) -/

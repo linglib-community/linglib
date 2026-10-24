@@ -78,27 +78,27 @@ def you_pl : PersonalPronoun :=
 /-- The third person singular masculine nominative *he*. -/
 def he : PersonalPronoun :=
   { form := "he", person := some .third, number := some .singular, cases := {.nom},
-    gender := some .masculine }
+    gender := some .Masc }
 
 /-- The third person singular masculine accusative *him*. -/
 def him : PersonalPronoun :=
   { form := "him", person := some .third, number := some .singular, cases := {.acc},
-    gender := some .masculine }
+    gender := some .Masc }
 
 /-- The third person singular feminine nominative *she*. -/
 def she : PersonalPronoun :=
   { form := "she", person := some .third, number := some .singular, cases := {.nom},
-    gender := some .feminine }
+    gender := some .Fem }
 
 /-- The third person singular feminine accusative *her*. -/
 def her : PersonalPronoun :=
   { form := "her", person := some .third, number := some .singular, cases := {.acc},
-    gender := some .feminine }
+    gender := some .Fem }
 
 /-- The third person singular neuter *it*, one form for both cases. -/
 def it : PersonalPronoun :=
   { form := "it", person := some .third, number := some .singular, cases := {.nom, .acc},
-    gender := some .neuter }
+    gender := some .Neut }
 
 /-- The third person plural nominative *they*. -/
 def they : PersonalPronoun :=

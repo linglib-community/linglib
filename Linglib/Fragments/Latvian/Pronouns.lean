@@ -59,36 +59,36 @@ def kurš : InterrogativePronoun := { form := "kurš", ontology := .determiner }
 /-- The emphatic pronoun *pats* 'self', feminine *pati*, as stem and ending in each case,
 number and gender ([kalnaca-lokmane-2021], Table 2.21); `none` in the vocative and outside the
 two numbers and the two genders. -/
-def pats : Case → Number → Gender → Option (List Morph)
-  | .nom, .singular, .masculine => some [.root "pat", .suff "s"]
-  | .gen, .singular, .masculine => some [.root "paš", .suff "a"]
-  | .dat, .singular, .masculine => some [.root "paš", .suff "am"]
-  | .acc, .singular, .masculine => some [.root "paš", .suff "u"]
-  | .inst, .singular, .masculine => some [.root "paš", .suff "u"]
-  | .loc, .singular, .masculine => some [.root "paš", .suff "ā"]
-  | .nom, .plural, .masculine => some [.root "paš", .suff "i"]
-  | .gen, .plural, .masculine => some [.root "paš", .suff "u"]
-  | .dat, .plural, .masculine => some [.root "paš", .suff "iem"]
-  | .acc, .plural, .masculine => some [.root "paš", .suff "us"]
-  | .inst, .plural, .masculine => some [.root "paš", .suff "iem"]
-  | .loc, .plural, .masculine => some [.root "paš", .suff "os"]
-  | .nom, .singular, .feminine => some [.root "pat", .suff "i"]
-  | .gen, .singular, .feminine => some [.root "paš", .suff "as"]
-  | .dat, .singular, .feminine => some [.root "paš", .suff "ai"]
-  | .acc, .singular, .feminine => some [.root "paš", .suff "u"]
-  | .inst, .singular, .feminine => some [.root "paš", .suff "u"]
-  | .loc, .singular, .feminine => some [.root "paš", .suff "ā"]
-  | .nom, .plural, .feminine => some [.root "paš", .suff "as"]
-  | .gen, .plural, .feminine => some [.root "paš", .suff "u"]
-  | .dat, .plural, .feminine => some [.root "paš", .suff "ām"]
-  | .acc, .plural, .feminine => some [.root "paš", .suff "as"]
-  | .inst, .plural, .feminine => some [.root "paš", .suff "ām"]
-  | .loc, .plural, .feminine => some [.root "paš", .suff "ās"]
+def pats : Case → Number → UD.Gender → Option (List Morph)
+  | .nom, .singular, .Masc => some [.root "pat", .suff "s"]
+  | .gen, .singular, .Masc => some [.root "paš", .suff "a"]
+  | .dat, .singular, .Masc => some [.root "paš", .suff "am"]
+  | .acc, .singular, .Masc => some [.root "paš", .suff "u"]
+  | .inst, .singular, .Masc => some [.root "paš", .suff "u"]
+  | .loc, .singular, .Masc => some [.root "paš", .suff "ā"]
+  | .nom, .plural, .Masc => some [.root "paš", .suff "i"]
+  | .gen, .plural, .Masc => some [.root "paš", .suff "u"]
+  | .dat, .plural, .Masc => some [.root "paš", .suff "iem"]
+  | .acc, .plural, .Masc => some [.root "paš", .suff "us"]
+  | .inst, .plural, .Masc => some [.root "paš", .suff "iem"]
+  | .loc, .plural, .Masc => some [.root "paš", .suff "os"]
+  | .nom, .singular, .Fem => some [.root "pat", .suff "i"]
+  | .gen, .singular, .Fem => some [.root "paš", .suff "as"]
+  | .dat, .singular, .Fem => some [.root "paš", .suff "ai"]
+  | .acc, .singular, .Fem => some [.root "paš", .suff "u"]
+  | .inst, .singular, .Fem => some [.root "paš", .suff "u"]
+  | .loc, .singular, .Fem => some [.root "paš", .suff "ā"]
+  | .nom, .plural, .Fem => some [.root "paš", .suff "as"]
+  | .gen, .plural, .Fem => some [.root "paš", .suff "u"]
+  | .dat, .plural, .Fem => some [.root "paš", .suff "ām"]
+  | .acc, .plural, .Fem => some [.root "paš", .suff "as"]
+  | .inst, .plural, .Fem => some [.root "paš", .suff "ām"]
+  | .loc, .plural, .Fem => some [.root "paš", .suff "ās"]
   | _, _, _ => none
 
 /-- The instrumental of *pats* is its accusative in the singular and its dative in the plural
 ([kalnaca-lokmane-2021] p. 118). -/
-theorem pats_inst_eq (g : Gender) :
+theorem pats_inst_eq (g : UD.Gender) :
     pats .inst .singular g = pats .acc .singular g ∧
       pats .inst .plural g = pats .dat .plural g := by
   cases g <;> decide

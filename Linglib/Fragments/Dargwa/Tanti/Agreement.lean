@@ -82,12 +82,6 @@ inductive Value where
   | neut
   deriving DecidableEq, Repr, Fintype
 
-/-- Each gender bears the comparative label of the referents it is assigned to. -/
-def Value.toLabel : Value → _root_.Gender
-  | .masc => .masculine
-  | .fem => .feminine
-  | .neut => .neuter
-
 /-- A gender marker is cited without its position, since a target takes it as a prefix, a suffix
 or an infix. -/
 inductive Marker where

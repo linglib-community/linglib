@@ -77,12 +77,12 @@ def anata : PersonalPronoun :=
 /-- 彼 *kare* — 3sg masculine. -/
 def kare : PersonalPronoun :=
   { form := "kare", script := some "彼", person := some .third, number := some .singular,
-    gender := some .masculine }
+    gender := some .Masc }
 
 /-- 彼女 *kanojo* — 3sg feminine. -/
 def kanojo : PersonalPronoun :=
   { form := "kanojo", script := some "彼女", person := some .third, number := some .singular,
-    gender := some .feminine }
+    gender := some .Fem }
 
 /-- 彼ら *karera* — 3pl. -/
 def karera : PersonalPronoun :=

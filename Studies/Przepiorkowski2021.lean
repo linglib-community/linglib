@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.Order.FixedPoints
 public import Linglib.Syntax.HPSG.Subinterpretation
 public import Studies.SagWasowBender2003
 public import Linglib.Syntax.HPSG.Construction

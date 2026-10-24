@@ -106,7 +106,7 @@ def Noun.forms (n : Noun) (σ : Cell) : List (List String) :=
 
 /-- *chlap* 'fellow', the hard masculine animate model (Table 9.2, p. 465). -/
 def chlap : Noun :=
-  { form := "chlap", gloss := "fellow", gender := .mascAnimate, naturalGender := some .masculine,
+  { form := "chlap", gloss := "fellow", gender := .mascAnimate, referentGender := some .male,
     cls := .chlap }
 
 /-- *hrad* 'castle', the hard masculine inanimate model (Table 9.2, p. 465). -/
@@ -116,7 +116,7 @@ def hrad : Noun := { form := "hrad", gloss := "castle", gender := .mascInanimate
 nominative plural *muži* alone, and *Mluvnice češtiny* says that "jméno muž může mít podobu
 obojí, -ové i -i" 'the noun *muž* can have both forms, *-ové* and *-i*' (p. 298). -/
 def muz : Noun :=
-  { form := "muž", gloss := "man", gender := .mascAnimate, naturalGender := some .masculine,
+  { form := "muž", gloss := "man", gender := .mascAnimate, referentGender := some .male,
     cls := .muz, nomPlural := some [["i"], ["o", "v", "é"]] }
 
 /-- *stroj* 'machine', the soft masculine inanimate model (Table 9.3, p. 466). -/
@@ -134,7 +134,7 @@ def uceni : Noun := { form := "učení", gloss := "study", gender := .neuter, cl
 
 /-- *žena* 'woman', the hard feminine a-stem model (Table 9.5, p. 468). -/
 def zena : Noun :=
-  { form := "žena", gloss := "woman", gender := .feminine, naturalGender := some .feminine,
+  { form := "žena", gloss := "woman", gender := .feminine, referentGender := some .female,
     cls := .zena }
 
 /-- *hrdina* 'hero', the hard masculine a-stem model (Table 9.5, p. 468). -/
@@ -146,7 +146,7 @@ def duse : Noun := { form := "duše", gloss := "soul", gender := .feminine, cls 
 
 /-- *paní* 'lady', "a unique item" (p. 468), the one ьja-stem (Table 9.5, p. 468). -/
 def pani : Noun :=
-  { form := "paní", gloss := "lady", gender := .feminine, naturalGender := some .feminine,
+  { form := "paní", gloss := "lady", gender := .feminine, referentGender := some .female,
     cls := .pani }
 
 /-- *kost* 'bone', the i-stem model (Table 9.6, p. 469). -/
@@ -159,7 +159,7 @@ def jehne : Noun := { form := "jehně", gloss := "lamb", gender := .neuter, cls 
 gives as a survival of the u-stem vocative, "chiefly as a means to avoid palatalization of velar
 stems" (p. 465). -/
 def kluk : Noun :=
-  { form := "kluk", gloss := "boy", gender := .mascAnimate, naturalGender := some .masculine,
+  { form := "kluk", gloss := "boy", gender := .mascAnimate, referentGender := some .male,
     cls := .chlap }
 
 /-! ### Nouns that change class with number -/

@@ -10,12 +10,12 @@ public import Linglib.Core.Logic.Function.FactorsThrough
 A *gender* is a class of nouns that take the same agreements, so a language's genders are its
 own: there is no universal inventory of gender values as there is of number and person values.
 This file takes a language's controller genders as a type `G`, whose cardinality is the number of
-genders, and defines the comparative labels they may partially bear and when `G` is *faithful* to
-agreement evidence: distinct genders are distinguished by some agreement target.
+genders, and defines when `G` is *faithful* to agreement evidence: distinct genders are
+distinguished by some agreement target. The comparative names of genders, masculine for the gender
+of male humans and so on, are read off a language's semantic rule rather than stored as values.
 
 ## Main definitions
 
-* `Gender`: the comparative labels, realized in Universal Dependencies in `Morphology/Word/UD`.
 * `Gender.Faithful`: the agreement evidence is injective on genders.
 
 ## Main results
@@ -31,8 +31,10 @@ agreement evidence: distinct genders are distinguished by some agreement target.
   spine is left to studies.
 * Kramer's two-class minimum is the hypothesis `Nontrivial G` where needed: one agreement pattern
   for all nouns is the absence of a system.
-* A fragment's gender enum is a `G`, and its `toLabel` maps it into `Gender`. Assignment systems
-  are in `Syntax/Gender/Assignment.lean`.
+* A fragment's gender enum is a `G`, with the semantic rule that assigns the referent genders
+  to its genders (`ofReferentGender`); assignment systems are in
+  `Syntax/Gender/Assignment.lean`, and the gender tags of word tokens are the Universal
+  Dependencies ones (`UD.Gender`).
 
 ## References
 
@@ -44,37 +46,13 @@ agreement evidence: distinct genders are distinguished by some agreement target.
 
 @[expose] public section
 
-/-- Comparative-concept labels for controller genders ([corbett-1991]).
-
-These are the descriptive labels cross-linguistic comparison uses for a language's agreement
-classes, not a universal value inventory. A language's actual genders form its own type, which a
-fragment's `toLabel` maps into this vocabulary. -/
-inductive Gender where
-  /-- The masculine holds male humans and higher animates, and is the default in many sex-based
-  systems. -/
-  | masculine
-  /-- The feminine holds female humans and higher animates, and is marked in many sex-based
-  systems. -/
-  | feminine
-  /-- The neuter is neither masculine nor feminine, and is the inanimate default in three-gender
-  systems. -/
-  | neuter
-  /-- The common gender merges masculine and feminine (Swedish, Danish). -/
-  | common
-  /-- The animate holds animate referents in animacy-based systems (Algonquian). -/
-  | animate
-  /-- The inanimate holds inanimate referents in animacy-based systems. -/
-  | inanimate
-  deriving DecidableEq, Repr, Fintype
-
 namespace Gender
 
 /-! ### Language-particular genders
 
 A gender system is language-particular: its values are the language's own controller genders,
-supplied as a type `G` (a fragment's gender enum). The comparative labels above enter only through
-a fragment's partial map into them, and `G` need not fit them. This accommodates Bantu-scale
-inventories that no label vocabulary covers. -/
+supplied as a type `G` (a fragment's gender enum), with no shared inventory of values to fit. This
+accommodates Bantu-scale inventories that no label vocabulary covers. -/
 
 variable {G : Type*}
 

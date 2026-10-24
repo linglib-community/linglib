@@ -22,6 +22,7 @@ the core determines gender by meaning as a theorem rather than a stipulation.
 * `Gender.AssignmentSystem.assign`: the gender of a noun under the rules, in order.
 * `Gender.AssignmentSystem.IsStrictSemantic`: a system with no formal rules.
 * `Gender.AssignmentSystem.semanticCore`: the nouns the semantic rules cover.
+* `Gender.IsNatural`: a noun's gender is the one a semantic rule assigns its meaning.
 
 ## Main results
 
@@ -31,6 +32,8 @@ the core determines gender by meaning as a theorem rather than a stipulation.
   a function of meaning.
 * `Gender.AssignmentSystem.factorsThrough_of_isStrictSemantic`: in a strict semantic system,
   gender is a function of meaning everywhere.
+* `Gender.AssignmentSystem.isNatural_iff_mem_semanticCore`: under an assignment, a noun's gender
+  is natural exactly on the semantic core.
 
 ## Implementation notes
 
@@ -48,6 +51,20 @@ functions to an optional gender, so their order of application is fixed by const
 @[expose] public section
 
 namespace Gender
+
+section Natural
+
+variable {N σ G : Type*}
+
+/-- A noun's gender is natural when the semantic rule assigns it to the noun's meaning. -/
+def IsNatural (rule : σ → Option G) (sem : N → σ) (gender : N → G) (n : N) : Prop :=
+  rule (sem n) = some (gender n)
+
+instance [DecidableEq G] (rule : σ → Option G) (sem : N → σ) (gender : N → G) :
+    DecidablePred (IsNatural rule sem gender) :=
+  fun _ ↦ inferInstanceAs (Decidable (_ = _))
+
+end Natural
 
 /-- An assignment system consists of semantic rules reading a noun's meaning, formal rules
 reading its form, and the residue gender. -/
@@ -99,6 +116,12 @@ theorem factorsThrough_semanticCore :
     obtain ⟨g, hg⟩ := Option.isSome_iff_exists.1 b.2
     have hab' : sem a = sem b := hab
     simp [assign, hab', hg]
+
+/-- Under the assignment, a noun's gender is natural exactly when the noun lies in the semantic
+core. -/
+theorem isNatural_iff_mem_semanticCore (n : N) :
+    IsNatural A.semantic sem (A.assign sem form) n ↔ n ∈ A.semanticCore sem := by
+  cases h : A.semantic (sem n) <;> simp [IsNatural, semanticCore, assign, h]
 
 end AssignmentSystem
 

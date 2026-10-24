@@ -51,7 +51,7 @@ rather than the resolved one. The chapter's examples are the rows of
   in the rows and not modelled.
 * The syncretism claims are stated over the languages' own gender carriers, not over the
   cell-to-exponent tables of `Syntax/Agreement/Paradigm.lean`, whose gender cells take the
-  comparative labels.
+  Universal Dependencies tags.
 
 ## TODO
 

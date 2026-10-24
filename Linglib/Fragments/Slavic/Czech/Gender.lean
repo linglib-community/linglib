@@ -13,12 +13,11 @@ noun phrases (for past tenses and conditional) is dominated in turn by any mascu
 masculine–inanimate and feminine" (p. 503), so that *Pes a kočka seděli na rohožce* 'The dog and
 the cat were sitting on the mat' takes the masculine animate plural and *Dům i stáda byly
 zničeny* 'The house and flocks were destroyed' the masculine inanimate plural. The controller
-genders are therefore four, and the comparative labels merge the two masculines.
+genders are therefore four, and `Value.IsMasculine` groups the two masculines.
 
 ## Main definitions
 
 * `Czech.Gender.Value`: the four controller genders
-* `Czech.Gender.Value.toLabel`: their comparative labels
 * `Czech.Gender.Value.IsAnimate`: the masculine animate
 
 ## References
@@ -39,11 +38,13 @@ inductive Value where
   | neuter
   deriving DecidableEq, Repr, Fintype
 
-/-- The comparative label of each gender, both masculines being masculine. -/
-def Value.toLabel : Value → Gender
-  | .mascAnimate | .mascInanimate => .masculine
-  | .feminine => .feminine
-  | .neuter => .neuter
+/-- The masculine, animate or inanimate. -/
+def Value.IsMasculine : Value → Prop
+  | .mascAnimate | .mascInanimate => True
+  | .feminine | .neuter => False
+
+instance : DecidablePred Value.IsMasculine := fun g ↦ by
+  cases g <;> unfold Value.IsMasculine <;> infer_instance
 
 /-- A gender is animate when it is the masculine animate. -/
 def Value.IsAnimate (g : Value) : Prop := g = .mascAnimate

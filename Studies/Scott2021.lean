@@ -3,7 +3,6 @@ module
 public import Linglib.Syntax.Tree.Basic
 public import Linglib.Fragments.Swahili.Relativization
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Linglib.Syntax.Minimalist.Feature.Basic
 public import Linglib.Data.Examples.Scott2021
 
 /-!
@@ -47,7 +46,6 @@ personless true gap (`cleft_rows`, `island_rows`, `parasitic_rows`).
 namespace Scott2021
 
 open Swahili PhraseStructure DistributedMorphology
-open Minimalist (FeatureVal)
 
 /-! ### The structure of pronouns (§5.1) -/
 
@@ -70,31 +68,40 @@ def pronoun (person : Option Person) (number : Number) : Tree DPCat String :=
         | some .second => [.node .Pers [.terminal .Pers "2"]]
         | _ => [])]]
 
+/-- A feature of the Vocabulary is a person, a number, or a gender, the Swahili gender an n is
+specified for: `n_anim`, the paper's `GEN: ANIM`, is the n of the animate gender A (classes 1/2),
+and the inanimate classes are the n of the other genders. -/
+inductive Feature where
+  | person (p : Person)
+  | number (n : Number)
+  | gender (g : Swahili.Gender)
+  deriving DecidableEq, Repr
+
 /-- A terminal contributes its person, its number, or the animate gender. -/
-def terminalFeature : DPCat → String → Option FeatureVal
-  | .Pers, "1" => some ⟨.person, .first⟩
-  | .Pers, "2" => some ⟨.person, .second⟩
-  | .Num, "sg" => some ⟨.number, .singular⟩
-  | .Num, "pl" => some ⟨.number, .plural⟩
-  | .n, "anim" => some ⟨.gender, .animate⟩
+def terminalFeature : DPCat → String → Option Feature
+  | .Pers, "1" => some (.person .first)
+  | .Pers, "2" => some (.person .second)
+  | .Num, "sg" => some (.number .singular)
+  | .Num, "pl" => some (.number .plural)
+  | .n, "anim" => some (.gender .genderA)
   | _, _ => none
 
 /-- The features at a tree's terminals, left to right. -/
-def featureList (t : Tree DPCat String) : List FeatureVal :=
+def featureList (t : Tree DPCat String) : List Feature :=
   t.terminals.filterMap fun (c, w) ↦ terminalFeature c w
 
 /-! ### Vocabulary Insertion (§3.4) -/
 
 /-- The Vocabulary Items of (28), the person-specified animate entries and the personless
 animate defaults *-ye* and *-o*. -/
-def resumptiveVocab : List (VocabularyItem FeatureVal String) :=
-  let entry (fs : Finset FeatureVal) (e : String) : VocabularyItem FeatureVal String := fs ⟷ e
-  [ entry {⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩} "mi",
-    entry {⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩} "si",
-    entry {⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩} "we",
-    entry {⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩} "nyi",
-    entry {⟨.gender, .animate⟩, ⟨.number, .singular⟩} "ye",
-    entry {⟨.gender, .animate⟩, ⟨.number, .plural⟩} "o" ]
+def resumptiveVocab : List (VocabularyItem Feature String) :=
+  let entry (fs : Finset Feature) (e : String) : VocabularyItem Feature String := fs ⟷ e
+  [ entry {.person .first, .gender .genderA, .number .singular} "mi",
+    entry {.person .first, .gender .genderA, .number .plural} "si",
+    entry {.person .second, .gender .genderA, .number .singular} "we",
+    entry {.person .second, .gender .genderA, .number .plural} "nyi",
+    entry {.gender .genderA, .number .singular} "ye",
+    entry {.gender .genderA, .number .plural} "o" ]
 
 /-- The exponent of a pronoun structure, by the Subset Principle over (28). -/
 def spellout (t : Tree DPCat String) : Option String :=
@@ -160,9 +167,9 @@ theorem maxElide_persP :
 theorem person_entails_number :
     ∀ (c : DPCat) (n : Number),
       (featureList (deleteLayer c (pronoun (some .first) n))).any
-          (fun f ↦ decide (f.1 = .person)) = true →
+          (· matches .person _) = true →
         (featureList (deleteLayer c (pronoun (some .first) n))).any
-          (fun f ↦ decide (f.1 = .number)) = true := by
+          (· matches .number _) = true := by
   decide
 
 /-! ### Chain reduction (§5.2–5.3) -/

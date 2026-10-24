@@ -49,18 +49,15 @@ def Noun.definiteArticle (n : Noun) : String := Determiners.singular n.gender .d
 def boek : Noun :=
   { form := "boek", gloss := "book", gender := .neuter, plural := "boeken", diminutive := "boekje" }
 
-/-- *mens* 'human', of common gender and of either natural gender. -/
-def mens : Noun :=
-  { form := "mens", gloss := "human", gender := .common, naturalGender := some .common,
-    plural := "mensen" }
+/-- *mens* 'human', of common gender, for a human of any gender. -/
+def mens : Noun := { form := "mens", gloss := "human", gender := .common, plural := "mensen" }
 
 /-- *geest* 'ghost', of common gender. -/
 def geest : Noun := { form := "geest", gloss := "ghost", gender := .common, plural := "geesten" }
 
-/-- *student* 'student', of common gender and of either natural gender. -/
+/-- *student* 'student', of common gender, for a student of any gender. -/
 def student : Noun :=
-  { form := "student", gloss := "student", gender := .common, naturalGender := some .common,
-    plural := "studenten" }
+  { form := "student", gloss := "student", gender := .common, plural := "studenten" }
 
 /-- *hond* 'dog', of common gender. -/
 def hond : Noun :=
@@ -105,20 +102,20 @@ def bier : Noun := { form := "bier", gloss := "beer", gender := .neuter, counter
 
 /-! ### Proper names -/
 
-/-- A personal name with its natural gender. -/
-def name (form : String) (gender : Gender) : ProperName :=
-  { form, gloss := form, gender := some gender }
+/-- A personal name, restricted to a gender. -/
+def name (form : String) (g : ReferentGender) : ProperName :=
+  { form, gloss := form, referentGender := some g }
 
 /-- *Helen*. -/
-def helen : ProperName := name "Helen" .feminine
+def helen : ProperName := name "Helen" .female
 
 /-- *Jan*. -/
-def jan : ProperName := name "Jan" .masculine
+def jan : ProperName := name "Jan" .male
 
 /-- *Piet*. -/
-def piet : ProperName := name "Piet" .masculine
+def piet : ProperName := name "Piet" .male
 
 /-- *Marie*. -/
-def marie : ProperName := name "Marie" .feminine
+def marie : ProperName := name "Marie" .female
 
 end Dutch.Nouns

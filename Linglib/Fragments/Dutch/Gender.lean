@@ -31,9 +31,4 @@ inductive Value where
   | neuter
   deriving DecidableEq, Repr, Fintype
 
-/-- Each Dutch gender bears the comparative label of the same name. -/
-def Value.toLabel : Value → Gender
-  | .common => .common
-  | .neuter => .neuter
-
 end Dutch.Gender
