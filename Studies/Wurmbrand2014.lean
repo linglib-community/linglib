@@ -6,6 +6,7 @@ public import Linglib.Semantics.Tense.Defs
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Data.Examples.Wurmbrand2014
 public import Linglib.Data.Examples.Gloss
+public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Verbs.Implicative
 public import Linglib.Fragments.English.Verbs.Communication
@@ -43,7 +44,9 @@ parameter, and adverbials that restrict a reference time to an instant fall unde
 lemma as the NOW. The obligatory deletion of *would*'s past is taken as the paper does, as a
 lexical requirement. The `…_rows` fits read the episodic, aspect and sequence-of-tense rows on
 integer time, episodicity decided by the table's three theorems and the tense stack recognized
-in each sentence's words against the forms the English fragment declares or realizes.
+in each sentence's words against the forms the English fragment declares or realizes. Each
+sequence-of-tense row also carries a linearized witness over a study lexicon that pronounces
+the row's sentence (`Minimalist.SpellsOut`) and whose tense spine is that recognized stack.
 
 ## References
 
@@ -360,5 +363,135 @@ theorem sot_rows :
   decide +kernel
 
 end Data
+
+/-! ### Recognition by witness
+
+A linearized syntactic object over a study lexicon pronounces each sequence-of-tense row's
+sentence (`Minimalist.SpellsOut`), and its tense spine is the stack the reader reconstructs, so
+the sequence-of-tense verdicts run on derived structure. The witnesses are right-branching
+linearizations, each embedded clause a constituent; fuller argument structure is the derivation
+step's work. Items take their forms from the English fragment where it declares or realizes
+them; the rows' remaining words, names, pronouns and adverbs among them, enter the study lexicon
+directly, the adverbs at the adpositional category for want of a closer one. -/
+
+section Witness
+
+open Minimalist Examples
+
+/-- *John*. -/
+def liJohn : LexicalItem.Token := ⟨.of .D [] "John", 0⟩
+
+/-- *promised*, the matrix past, `promise` realized at its past cell. -/
+def liPromised : LexicalItem.Token := ⟨.of .V [] (English.Verbs.promise.realize .past), 1⟩
+
+/-- *promise*, the base under *will*. -/
+def liPromise : LexicalItem.Token := ⟨.of .V [] (English.Verbs.promise.realize .base), 2⟩
+
+/-- *will*, the auxiliary entry. -/
+def liWill : LexicalItem.Token := ⟨.of .Mod [] English.Auxiliaries.will.form, 3⟩
+
+/-- *would*, the auxiliary entry. -/
+def liWould : LexicalItem.Token := ⟨.of .Mod [] English.Auxiliaries.would.form, 4⟩
+
+/-- The infinitival marker, `toInf`. -/
+def liTo : LexicalItem.Token := ⟨.of .T [] English.Auxiliaries.toInf.form, 5⟩
+
+/-- *tell* at its base cell. -/
+def liTell : LexicalItem.Token := ⟨.of .V [] (English.Verbs.tell.realize .base), 6⟩
+
+/-- *that*. -/
+def liThat : LexicalItem.Token := ⟨.of .C [] "that", 7⟩
+
+/-- The lower *that*, a second token of the same item. -/
+def liThat' : LexicalItem.Token := ⟨liThat.item, 8⟩
+
+/-- *were*, the embedded past. -/
+def liWere : LexicalItem.Token := ⟨.of .T [] "were", 9⟩
+
+def liMe : LexicalItem.Token := ⟨.of .D [] "me", 10⟩
+def liHe : LexicalItem.Token := ⟨.of .D [] "he", 11⟩
+def liHis : LexicalItem.Token := ⟨.of .D [] "his", 12⟩
+def liMother : LexicalItem.Token := ⟨.of .N [] "mother", 13⟩
+def liThey : LexicalItem.Token := ⟨.of .D [] "they", 14⟩
+def liHaving : LexicalItem.Token := ⟨.of .V [] "having", 15⟩
+def liTheir : LexicalItem.Token := ⟨.of .D [] "their", 16⟩
+def liLast : LexicalItem.Token := ⟨.of .A [] "last", 17⟩
+def liMeal : LexicalItem.Token := ⟨.of .N [] "meal", 18⟩
+def liTogether : LexicalItem.Token := ⟨.of .P [] "together", 19⟩
+def liYesterday : LexicalItem.Token := ⟨.of .P [] "yesterday", 20⟩
+def liTomorrow : LexicalItem.Token := ⟨.of .P [] "tomorrow", 21⟩
+def liTonight : LexicalItem.Token := ⟨.of .P [] "tonight", 22⟩
+def liWhen : LexicalItem.Token := ⟨.of .C [] "when", 23⟩
+
+/-- The study lexicon of the sequence-of-tense sentences, the witness tokens' items. -/
+def lexicon : List LexicalItem :=
+  ([liJohn, liPromised, liPromise, liWill, liWould, liTo, liTell, liThat, liWere, liMe, liHe,
+    liHis, liMother, liThey, liHaving, liTheir, liLast, liMeal, liTogether, liYesterday,
+    liTomorrow, liTonight, liWhen] : List LexicalItem.Token).map (·.item)
+
+/-- The deepest clause the rows share, *they were having their last meal together*. -/
+def wMeal : LinearizedSyntacticObject :=
+  liThey * (liWere * (liHaving * (liTheir * (liLast * (liMeal * liTogether)))))
+
+/-- *tell his mother tomorrow* with the complement `k`. -/
+def wTell (k : LinearizedSyntacticObject) : LinearizedSyntacticObject :=
+  liTell * (liHis * (liMother * (liTomorrow * k)))
+
+/-- (24a): *John promised me yesterday that he will tell … that they were … (when …)*. -/
+def w24a : LinearizedSyntacticObject :=
+  liJohn * (liPromised * (liMe * (liYesterday * (liThat * (liHe * (liWill *
+    wTell (liThat' * (wMeal * liWhen))))))))
+
+/-- (25a): the infinitival variant of (24a). -/
+def w25a : LinearizedSyntacticObject :=
+  liJohn * (liPromised * (liMe * (liYesterday * (liTo * wTell (liThat * wMeal)))))
+
+/-- (27a): the *would* variant of (24a). -/
+def w27a : LinearizedSyntacticObject :=
+  liJohn * (liPromised * (liMe * (liYesterday * (liThat * (liHe * (liWould *
+    wTell (liThat' * wMeal)))))))
+
+/-- (29a): *John will promise me tonight that he would tell … that …*, the deepest clause
+elided in the text. -/
+def w29a : LinearizedSyntacticObject :=
+  liJohn * (liWill * (liPromise * (liMe * (liTonight * (liThat * (liHe * (liWould *
+    wTell ↑liThat')))))))
+
+/-- (30a): the infinitival variant of (29a). -/
+def w30a : LinearizedSyntacticObject :=
+  liJohn * (liWill * (liPromise * (liMe * (liTonight * (liTo *
+    wTell (liThat * (wMeal * liWhen)))))))
+
+/-- The tense a token contributes: the finite pasts, the modal compositions, and the tenseless
+infinitival marker. -/
+def tenseOf (tok : LexicalItem.Token) : Option (Option (Finset Ordering)) :=
+  if tok = liPromised ∨ tok = liWere then some (some ⟦past⟧)
+  else if tok = liWill then some Wurmbrand2014.will.tense
+  else if tok = liWould then some Wurmbrand2014.would.tense
+  else if tok = liTo then some (infinitive true).tense
+  else none
+
+/-- The stack above a witness's lowest tense: its tense items in pronounced order, the lowest
+dropped, nearest first. -/
+def tenseSpine (t : LinearizedSyntacticObject) : List (Option (Finset Ordering)) :=
+  (((Minimalist.pfYield t).filterMap fun tok ↦ tenseOf tok).dropLast).reverse
+
+/-- The five sequence-of-tense rows with their witnesses. -/
+def witnessRows : List (Datum × LinearizedSyntacticObject) :=
+  [(ex_17, w24a), (ex_18, w25a), (ex_19, w27a), (ex_21, w29a), (ex_22, w30a)]
+
+/-- Each witness draws its items from the lexicon and pronounces, word for word, its row's
+sentence. -/
+theorem witnesses_spell : ∀ p ∈ witnessRows,
+    Minimalist.SpellsOut p.2 lexicon (Minimalist.pfPhon p.2) ∧
+      (Minimalist.pfPhon p.2).flatMap (Gloss.tokens ·) = Gloss.tokens p.1.primaryText := by
+  decide +kernel
+
+/-- Each witness's tense spine is the stack the reader reconstructs, so the sequence-of-tense
+verdicts run on derived structure. -/
+theorem witnesses_spine : ∀ p ∈ witnessRows, ∀ s ∈ sotTest? p.1, tenseSpine p.2 = s.1 := by
+  decide +kernel
+
+end Witness
 
 end Wurmbrand2014

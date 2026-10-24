@@ -21,6 +21,8 @@ occurrences silences it everywhere. An [E] head applies once per distinct comple
 
 * `pronouncedAt`, `elidedDomains`, `IsSilenced`: pronunciation under [E].
 * `pfYield`, `pfPhon`: the pronounced tokens and forms, left to right.
+* `SpellsOut`: recognition by checked witness, an object over a lexicon pronouncing a given word
+  sequence.
 
 ## Main statements
 
@@ -71,6 +73,15 @@ def pfYield : List LexicalItem.Token :=
 
 /-- The pronounced forms, left to right. -/
 def pfPhon : List String := (pfYield t).filterMap (·.item.phonForm?)
+
+/-- `t` spells `ws` from `lex`: every pronounced token's item is drawn from `lex`, and the
+pronounced forms are exactly `ws`. Recognition by checked witness: a study exhibits a linearized
+object over its lexicon and proves that it pronounces a row's sentence. -/
+def SpellsOut (lex : List LexicalItem) (ws : List String) : Prop :=
+  (∀ tok ∈ pfYield t, tok.item ∈ lex) ∧ pfPhon t = ws
+
+instance (lex : List LexicalItem) (ws : List String) : Decidable (SpellsOut t lex ws) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A token is pronounced once at most, however many mothers dominate it. -/
 theorem nodup_pfYield : (pfYield t).Nodup := by
