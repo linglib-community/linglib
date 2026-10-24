@@ -342,7 +342,7 @@ theorem judgments_13 :
         exact absurd hw (by decide)),
     iff_of_false (by decide) fun h ↦ not_informative_pexPlural (h.mono fun w hw ↦ by
       obtain ⟨a, -, ha⟩ := exists_mem_notMem_of_card_lt_card (s := w) (t := univ)
-        (by simpa using hw.trans_lt (by decide))
+        ((Set.mem_setOf_eq.mp hw).trans_lt (by decide))
       exact Set.mem_biUnion (by simp) ha)⟩
 
 /-- In (23), with the students known not to have all smiled, *the students didn't smile* asserts
