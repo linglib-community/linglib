@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.List.Infix
 public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 public import Mathlib.Data.Finset.Dedup
 public import Mathlib.Data.List.Chain
@@ -145,7 +144,8 @@ theorem notMem_below_self (s : ClauseSpine) (c : Cat) : c ∉ s.below c := fun h
 
 /-- The complement of a head lies inside the complement of every head above it. -/
 theorem below_prefix (h : c ∈ s.below d) : s.below c <+: s.below d :=
-  List.takeWhile_prefix_takeWhile_of_mem h (by simp)
+  (List.prefix_or_prefix_of_prefix (List.takeWhile_prefix _)
+    (List.takeWhile_prefix _)).resolve_right fun h' ↦ s.notMem_below_self c (h'.subset h)
 
 theorem above_append (s : ClauseSpine) (h : c ∉ l) : (s.append l).above c = s.above c ++ l := by
   induction l using List.reverseRecOn with
