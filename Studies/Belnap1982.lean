@@ -13,60 +13,32 @@ the Assumption that a proposition answering at some world answers wherever it is
 two schemes are intertranslatable, and the third commits the Unique Answer Fallacy. To know a
 question is to know some answer to it, which yields a necessary test for answerhood.
 
-## Main definitions
-
-* `Assumption`: answerhood is noncontingent up to truth (p. 173).
-* `KnowsSomeAnswer`, `InferenceFails`: the Distributivity Principle and Test (pp. 176–177).
-* `quantifyIn`, `singularWhich`: the answers to a question with a quantifier introduced (T12–14,
-  p. 186) and to a singular *which* question (T17, p. 192).
-
 ## Main statements
 
-* `exists_eq_trueAnswers_iff`, `Question.iUnion_trueAnswers`: answers at each world are the true
-  members of a Hamblin set exactly under the Assumption, which is recovered up to its
-  inconsistent members (p. 173).
-* `weakAnswer_mem_iff_of_antichain`, `gas_unique_answer_fallacy`, `basket_answers`: Karttunen's
-  answer is an answer exactly when the true answer is unique, and the gas and basket questions
-  have two (pp. 172, 174).
-* `possibleAnswer_iff_iff_assumption`, `presuppositions_eq`: the two definitions of a possible
-  answer, and the two of presupposition, agree under the Assumption (pp. 175–176).
-* `InferenceFails.notMem`, `test_only_necessary`: the Distributivity Test is necessary and not
-  sufficient for answerhood (p. 177).
-* `knowsSomeAnswer_iff_knows`, `knowsSomeAnswer_not_knows`: the Distributivity Principle is
-  Karttunen's postulate for *know* on unique-answer questions and not on the gas question.
-* `exists_mem_of_mem_trueAnswers_every`, `trueAnswers_quantifyIn_the`,
-  `not_assumption_externalAnswers`: quantifying-in with *every* answers for each `cn` (p. 180),
-  *whether the king of France is bald* has no true answer, and the external view of answerhood
-  violates the Assumption (p. 181).
-* `inferenceFails_of_ne`, `kickedSam_notMem`: *John kicked Sam* does not answer (1) and *Mary
-  loves John* does not answer *which man Mary loves* (pp. 176, 192).
-* `fallacy_rows`, `test_rows`, `king_row`: the judgments.
+* `exists_eq_trueAnswers_iff`: the answers at each world are the true members of a Hamblin set
+  exactly under the Assumption (p. 173).
+* `weakAnswer_mem_iff_of_antichain`: Karttunen's answer is an answer exactly when the true answer
+  is unique (p. 174).
+* `InferenceFails.notMem`: the Distributivity Test (p. 177).
+* `knowsSomeAnswer_iff_knows`: on unique-answer questions the Distributivity Principle is
+  Karttunen's postulate for *know*.
+* `trueAnswers_quantifyIn_the`: *whether the king of France is bald* has no true answer (p. 181).
 
 ## Implementation notes
 
 A question is its Hamblin set, with Bennett's denotation `Question.trueAnswers` and Karttunen's
-answer `Question.weakAnswer`. The inquisitive `Question.alt` keeps only maximal answers, so it
-cannot hold both *some apples* and *three apples* as answers to *What's in the basket?* (p. 172).
-An open question is the family of its answers for each value of its variable, which makes
-`Ans(N, Y, y, n)` (p. 185) membership. Knowledge is the `core` of a reflexive relation, and QMG's
-determiners (p. 185) are `GQ.some`, `GQ.every` and `GQ.the`.
+answer `Question.weakAnswer`. The inquisitive `Question.alt` keeps only maximal answers, and so
+would lose *three apples* beside *some apples* (p. 172).
 
 ## Errata
 
-* p. 176 says that the two definitions of presupposition coincide only if the Assumption holds.
-  They coincide exactly when each possible answer entails that the question has a true answer
-  (`presuppositions_eq_iff`), which can hold without the Assumption
+* The two definitions of presupposition can coincide without the Assumption, against p. 176
   (`exists_presuppositions_eq_not_assumption`).
-* p. 192 derives *Peter knows which man Mary loves* from *Peter knows that Mary loves John* and a
-  premise that the question has a true answer. The derivation needs Peter to know the premise
-  (`knowsSomeAnswer_of_knows_presupposition`); a presupposition true only at the actual world
-  does not suffice (`not_knowsSomeAnswer_of_presupposition`).
+* The premise added on p. 192 must be known to Peter (`not_knowsSomeAnswer_of_presupposition`).
 
 ## TODO
 
-* The simultaneous introduction of several *which* (§4, p. 193) and the answers to *where*,
-  *who* and *what* (§5) are not formalized, nor are the scope readings of *John wonders where two
-  unicorns live* and the *depend* example (§3).
+* Multiple *which* (§4), *where*, *who* and *what* (§5), and the scope readings of §3.
 
 ## References
 
