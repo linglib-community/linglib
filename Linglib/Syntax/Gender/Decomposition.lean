@@ -92,13 +92,13 @@ theorem Features.card_wellFormed :
   rw [Fintype.card_subtype_isLowerSet]; rfl
 
 /-- Map gender features to the comparative labels. -/
-def Features.toGender (f : Features) : Option Gender :=
+def Features.toGender (f : Features) : Option Label :=
   if .neuter ∈ f then if .feminine ∈ f then some .neuter else none
   else if .feminine ∈ f then some .feminine else some .masculine
 
 /-- Map comparative labels to gender features (partial — only sex-based
     labels have feature equivalents). -/
-def Features.fromGender : Gender → Option Features
+def Features.fromGender : Label → Option Features
   | .neuter    => some Features.neuter
   | .feminine  => some Features.feminine
   | .masculine => some Features.masculine

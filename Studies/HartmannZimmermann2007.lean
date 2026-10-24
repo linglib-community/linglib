@@ -158,11 +158,11 @@ theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
 Each cell's pragmatic type is *computed* from its controlling context:
 the constructors take a `Focus.Antecedent`, not a tag. -/
 
-def mkExSituUtt (tam pacTAM : TAM) (cell : Agreement.Bundle) (g : Gender) (hasStab : Bool)
+def mkExSituUtt (tam pacTAM : TAM) (cell : Agreement.Bundle) (g : Gender.Label) (hasStab : Bool)
     {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject) : FocusUtterance :=
   ⟨mkExSitu tam pacTAM cell (some g) hasStab, ctl.use, foc⟩
 
-def mkInSituUtt (tam : TAM) (cell : Agreement.Bundle) (g : Gender)
+def mkInSituUtt (tam : TAM) (cell : Agreement.Bundle) (g : Gender.Label)
     {W : Type*} (ctl : Antecedent W) (foc : Focused := .nonSubject)
     (hasStab : Bool := false) : FocusUtterance :=
   ⟨mkInSitu tam cell (some g) hasStab, ctl.use, foc⟩
@@ -270,7 +270,7 @@ def exSitu_subject_future : FocusUtterance :=
 theorem exSitu_subject_future_IsHausaLicensed :
     exSitu_subject_future.IsHausaLicensed := by decide
 
-theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle) (g : Option Gender)
+theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle) (g : Option Gender.Label)
     (hs : Bool) : ¬ (mkExSitu .subjunctive t c g hs).Licensed :=
   fun h ↦ by simpa [mkExSitu, TAM.relCounterparts] using h.2 rfl
 

@@ -105,9 +105,9 @@ uninterpretable gender, the features a plural coordination adds, and a vocabular
 structure System where
   parent : Node → Node
   iNode : Referent → Node
-  uNode : Gender → Node
+  uNode : Gender.Label → Node
   plural : Finset Node := ∅
-  vocabulary : RuleSet (VocabularyItem Node Gender)
+  vocabulary : RuleSet (VocabularyItem Node Gender.Label)
 
 namespace System
 
@@ -120,50 +120,52 @@ def entailments (n : Node) : Finset Node := (List.iterate L.parent n (Fintype.ca
 def conceptual (r : Referent) : Bundle Node := .ofInterp (L.entailments (L.iNode r))
 
 /-- The uninterpretable features of a nominal of grammatical gender `g`. -/
-def arbitrary (g : Gender) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
+def arbitrary (g : Gender.Label) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
 
 /-- A nominal headed by `n` and referring to `r` bears the interpretable features of `r` and,
 unless the gender of `n` is its referents', the uninterpretable features of that gender. -/
-def nominal (n : GenderedNoun Gender) (r : Referent) : Bundle Node :=
+def nominal (n : GenderedNoun Gender.Label) (r : Referent) : Bundle Node :=
   if n.IsNaturalGender id then L.conceptual r else L.conceptual r ∪ L.arbitrary n.gender
 
 /-- The exponent of a feature set under the Subset Principle. -/
-def realize (fs : Finset Node) : Option Gender :=
+def realize (fs : Finset Node) : Option Gender.Label :=
   subsetPrinciple L.vocabulary fs
 
 /-- The exponent of a nominal's own gender, as on its determiner, its features at PF
 realized. -/
-def exponent (b : Bundle Node) : Option Gender := L.realize b.toPF
+def exponent (b : Bundle Node) : Option Gender.Label := L.realize b.toPF
 
 /-- Resolution through conversion, the percolated interpretable features intersected and the
 result, with the coordination's plural features, realized; the intersection is nonempty by
 mismatch resolution. -/
-def converted (a b : Bundle Node) : Option Gender := L.realize (resolve a b ∪ L.plural)
+def converted (a b : Bundle Node) : Option Gender.Label := L.realize (resolve a b ∪ L.plural)
 
 /-- Resolution of two nominals by their referents. -/
-def resolved (r₁ r₂ : Referent) : Option Gender := L.converted (L.conceptual r₁) (L.conceptual r₂)
+def resolved (r₁ r₂ : Referent) : Option Gender.Label :=
+  L.converted (L.conceptual r₁) (L.conceptual r₂)
 
 /-- Resolution through uninterpretable features, each conjunct's set realized, converging on
 one exponent or crashing. -/
-def formal (a b : Bundle Node) : Option Gender := realizeAll L.realize [a.uninterp, b.uninterp]
+def formal (a b : Bundle Node) : Option Gender.Label :=
+  realizeAll L.realize [a.uninterp, b.uninterp]
 
 /-- A human's percolated interpretable features beside an inanimate's uninterpretable ones. The
 redundancy rule copies the former to PF, and both sets are realized. -/
-def mixed (human inan : Bundle Node) : Option Gender :=
+def mixed (human inan : Bundle Node) : Option Gender.Label :=
   realizeAll L.realize [human.interp, inan.uninterp]
 
-@[simp] theorem interp_nominal (n : GenderedNoun Gender) (r : Referent) :
+@[simp] theorem interp_nominal (n : GenderedNoun Gender.Label) (r : Referent) :
     (L.nominal n r).interp = (L.conceptual r).interp := by
   unfold nominal; split_ifs <;> simp [conceptual, arbitrary]
 
-theorem converted_nominal (n₁ n₂ : GenderedNoun Gender) (r₁ r₂ : Referent) :
+theorem converted_nominal (n₁ n₂ : GenderedNoun Gender.Label) (r₁ r₂ : Referent) :
     L.converted (L.nominal n₁ r₁) (L.nominal n₂ r₂) = L.resolved r₁ r₂ := by
   simp only [converted, resolved, resolve, interp_nominal]
 
 end System
 
 /-- The three-way vocabulary shared by Greek and Icelandic. -/
-def threeWay : RuleSet (VocabularyItem Node Gender) :=
+def threeWay : RuleSet (VocabularyItem Node Gender.Label) :=
   [{.fem, .masc} ⟷ .feminine, {.masc} ⟷ .masculine, ∅ ⟷ .neuter]
 
 /-! ### Greek -/
@@ -284,7 +286,8 @@ theorem victim_painting :
 
 theorem clausal : system.realize ∅ = some .neuter := by decide
 
-theorem no_aba (v : RuleSet (VocabularyItem Node Gender)) (hv : v.Antihomophonous) {φ : Gender}
+theorem no_aba (v : RuleSet (VocabularyItem Node Gender.Label)) (hv : v.Antihomophonous)
+    {φ : Gender.Label}
     (hn : v.Realizes applySet (Neighborhood.ofBundle {.cls}) φ)
     (hf : v.Realizes applySet (Neighborhood.ofBundle {.fem, .masc, .cls}) φ) :
     v.Realizes applySet (Neighborhood.ofBundle {.masc, .cls}) φ :=
@@ -388,7 +391,7 @@ def system : System where
 
 /-- An inanimate refers as a mass when it is neuter, the neuter being the mass gender, and as an
 individuated thing otherwise. -/
-def inanimate (n : GenderedNoun Gender) : Bundle Node :=
+def inanimate (n : GenderedNoun Gender.Label) : Bundle Node :=
   system.nominal n (if n.gender = .neuter then .mass else .thing)
 
 theorem human_mismatch :

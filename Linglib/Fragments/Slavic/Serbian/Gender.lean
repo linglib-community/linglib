@@ -22,40 +22,44 @@ mass gender is in `Studies/AdamsonAnagnostopoulou2025.lean`.
 namespace Serbian.Gender
 
 /-- *muškarac* 'man'. -/
-def muskarac : GenderedNoun _root_.Gender :=
+def muskarac : GenderedNoun _root_.Gender.Label :=
   { form := "muškarac", gloss := "man", gender := .masculine, naturalGender := some .masculine }
 
 /-- *žena* 'woman'. -/
-def zena : GenderedNoun _root_.Gender :=
+def zena : GenderedNoun _root_.Gender.Label :=
   { form := "žena", gloss := "woman", gender := .feminine, naturalGender := some .feminine }
 
 /-- *čovek* 'person, man'. -/
-def covek : GenderedNoun _root_.Gender :=
+def covek : GenderedNoun _root_.Gender.Label :=
   { form := "čovek", gloss := "person, man", gender := .masculine,
     naturalGender := some .masculine }
 
 /-- *znanje* 'knowledge'. -/
-def znanje : GenderedNoun _root_.Gender :=
+def znanje : GenderedNoun _root_.Gender.Label :=
   { form := "znanje", gloss := "knowledge", gender := .neuter }
 
 /-- *intuicija* 'intuition'. -/
-def intuicija : GenderedNoun _root_.Gender :=
+def intuicija : GenderedNoun _root_.Gender.Label :=
   { form := "intuicija", gloss := "intuition", gender := .feminine }
 
 /-- *selo* 'village'. -/
-def selo : GenderedNoun _root_.Gender := { form := "selo", gloss := "village", gender := .neuter }
+def selo : GenderedNoun _root_.Gender.Label :=
+  { form := "selo", gloss := "village", gender := .neuter }
 
 /-- *brdo* 'hill'. -/
-def brdo : GenderedNoun _root_.Gender := { form := "brdo", gloss := "hill", gender := .neuter }
+def brdo : GenderedNoun _root_.Gender.Label :=
+  { form := "brdo", gloss := "hill", gender := .neuter }
 
 /-- *knjiga* 'book'. -/
-def knjiga : GenderedNoun _root_.Gender :=
+def knjiga : GenderedNoun _root_.Gender.Label :=
   { form := "knjiga", gloss := "book", gender := .feminine }
 
 /-- *pesak* 'sand'. -/
-def pesak : GenderedNoun _root_.Gender := { form := "pesak", gloss := "sand", gender := .masculine }
+def pesak : GenderedNoun _root_.Gender.Label :=
+  { form := "pesak", gloss := "sand", gender := .masculine }
 
 /-- *mleko* 'milk'. -/
-def mleko : GenderedNoun _root_.Gender := { form := "mleko", gloss := "milk", gender := .neuter }
+def mleko : GenderedNoun _root_.Gender.Label :=
+  { form := "mleko", gloss := "milk", gender := .neuter }
 
 end Serbian.Gender

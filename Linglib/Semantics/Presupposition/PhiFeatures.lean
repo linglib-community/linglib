@@ -214,7 +214,7 @@ def Feature.dom : Feature → Set E
 /-- Over a gendered entity domain, the feminine is defined of the referents not gendered
 masculine and the neuter of those gendered neither way; the masculine, an absent value and the
 non-sex-based genders restrict nothing. -/
-def dom (g : Option Gender) : Set E :=
+def dom (g : Option Label) : Set E :=
   (g.bind Features.fromGender).elim Set.univ (·.inf Feature.dom)
 
 @[simp] theorem dom_none : dom (E := E) none = Set.univ := rfl

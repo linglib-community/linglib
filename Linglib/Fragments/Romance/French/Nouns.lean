@@ -22,7 +22,7 @@ namespace French.Nouns
 
 /-- A French noun is the root gendered entry, which a numeral counts directly or not at all,
 with its plural. -/
-structure Noun extends GenderedNoun Gender, ClassifiedNoun Empty where
+structure Noun extends GenderedNoun Gender.Label, ClassifiedNoun Empty where
   counters := {none}
   /-- The plural. -/
   plural : Option String := none
@@ -68,7 +68,7 @@ def lait : Noun := { form := "lait", gloss := "milk", gender := .masculine, coun
 /-! ### Proper names -/
 
 /-- A personal name with its natural gender. -/
-def name (form : String) (gender : Gender) : ProperName :=
+def name (form : String) (gender : Gender.Label) : ProperName :=
   { form, gloss := form, gender := some gender }
 
 def jean : ProperName := name "Jean" .masculine

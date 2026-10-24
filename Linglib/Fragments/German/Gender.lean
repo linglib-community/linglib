@@ -41,7 +41,7 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- Each German gender bears the comparative label of the same name. -/
-def Value.toLabel : Value → Gender
+def Value.toLabel : Value → Gender.Label
   | .masc => .masculine
   | .fem => .feminine
   | .neut => .neuter
@@ -73,11 +73,11 @@ def Suffix.gender : Suffix → Value
 
 /-- `s.noun form gloss` is the noun `form` 'gloss' ending in the suffix `s`, and its gender is the
 one `s` fixes. -/
-def Suffix.noun (s : Suffix) (form gloss : String) (naturalGender : Option Gender := none) :
+def Suffix.noun (s : Suffix) (form gloss : String) (naturalGender : Option Gender.Label := none) :
     GenderedNoun Value :=
   { form, gloss, gender := s.gender, naturalGender }
 
-theorem Suffix.isNaturalGender_noun_iff (s : Suffix) (form gloss : String) (g : Gender) :
+theorem Suffix.isNaturalGender_noun_iff (s : Suffix) (form gloss : String) (g : Gender.Label) :
     (s.noun form gloss g).IsNaturalGender Value.toLabel ↔ g = s.gender.toLabel := by
   simp [noun, GenderedNoun.IsNaturalGender]
 

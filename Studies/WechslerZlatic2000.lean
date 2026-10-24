@@ -59,14 +59,14 @@ inductive Declension
 /-- The lexical CONCORD features, number and gender; case is contextual. -/
 structure ConcordF where
   number : Number
-  gender : Gender
+  gender : Gender.Label
   deriving DecidableEq, Repr
 
 /-- The INDEX features (8): person, number and gender. -/
 structure IndexF where
   person : Person
   number : Number
-  gender : Gender
+  gender : Gender.Label
   deriving DecidableEq, Repr
 
 /-- The sex a noun's referent is lexically restricted to, if any (18). -/
@@ -258,14 +258,14 @@ open Agreement (Bundle)
 
 /-- The bundle of an NP-internal target: its case, and its concord number and gender where it
 is marked for them. -/
-def concordBundle (c : Case) (n : Flat Number) (g : Flat Gender) : Bundle
+def concordBundle (c : Case) (n : Flat Number) (g : Flat Gender.Label) : Bundle
   | .case => c
   | .number => n
   | .gender => g
   | _ => ⊥
 
 /-- The bundle of an index-reading target, a pronoun or a finite verb. -/
-def indexBundle (p : Person) (n : Number) (g : Gender) : Bundle
+def indexBundle (p : Person) (n : Number) (g : Gender.Label) : Bundle
   | .person => p
   | .number => n
   | .gender => g
@@ -290,7 +290,7 @@ instance (p : Bundle) (n : Noun) : Decidable (IndexAgrees p n) :=
   inferInstanceAs (Decidable (Compat _ _))
 
 /-- *ovu dobru*: accusative feminine singular modifiers (41). -/
-def ovu : Bundle := concordBundle .acc Number.singular Gender.feminine
+def ovu : Bundle := concordBundle .acc Number.singular Gender.Label.feminine
 
 /-- *ona*: the neuter plural pronoun (41). -/
 def ona : Bundle := indexBundle .third .plural .neuter
@@ -301,7 +301,7 @@ def kojih : Bundle := concordBundle .gen ⊥ ⊥
 
 /-- On a regular noun the two bundles agree with the same targets (6). -/
 theorem knjiga_agrees :
-    ConcordAgrees (concordBundle .nom Number.singular Gender.feminine) knjiga .nom ∧
+    ConcordAgrees (concordBundle .nom Number.singular Gender.Label.feminine) knjiga .nom ∧
       IndexAgrees (indexBundle .third .singular .feminine) knjiga := by
   decide
 
@@ -309,7 +309,7 @@ theorem knjiga_agrees :
 neuter plural pronoun reads INDEX, while the crossed targets fail (62). -/
 theorem deca_mixed_agreement :
     ConcordAgrees ovu deca .acc ∧ IndexAgrees ona deca ∧
-      ¬ ConcordAgrees (concordBundle .acc Number.plural Gender.neuter) deca .acc ∧
+      ¬ ConcordAgrees (concordBundle .acc Number.plural Gender.Label.neuter) deca .acc ∧
       ¬ IndexAgrees (indexBundle .third .singular .feminine) deca := by
   decide
 

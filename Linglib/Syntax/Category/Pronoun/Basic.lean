@@ -111,7 +111,7 @@ structure Pronoun where
   *you*, none where they are unrecorded. -/
   cases : Finset Case := ∅
   /-- The grammatical gender, `none` where the form marks none. -/
-  gender : Option Gender := none
+  gender : Option Gender.Label := none
   /-- The form in its native script. -/
   script : Option String := none
   /-- The strength class of the series the form belongs to, `none` where it is unrecorded or
@@ -156,7 +156,7 @@ instance : Decidable p.WellFormed :=
 section Table
 
 variable {C : Type*} (person : C → Person) (number : C → Option Number)
-  (gender : C → Option Gender) (case : C → Option Case)
+  (gender : C → Option Gender.Label) (case : C → Option Case)
 
 /-- The categories of the cells `s`, those each cell's person and number realize. -/
 def cellCategories (s : Finset C) : Finset Person.Category :=
@@ -170,7 +170,7 @@ def ofCells (s : Finset C) (f : String) : Pronoun :=
     person := Flat.finsetInf s fun c ↦ (person c : Flat Person),
     number := Person.Category.sharedNumber (cellCategories person number s),
     cases := s.biUnion fun c ↦ (case c).toFinset,
-    gender := Flat.finsetInf s fun c ↦ (gender c : Flat Gender) }
+    gender := Flat.finsetInf s fun c ↦ (gender c : Flat Gender.Label) }
 
 /-- The pronoun `f` of a table, filling every cell the table gives it. -/
 def ofTable [Fintype C] (table : C → Finset String) (f : String) : Pronoun :=

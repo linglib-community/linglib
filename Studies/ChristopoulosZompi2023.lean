@@ -182,7 +182,7 @@ def LNum.toNumber : LNum → Number
   | .sg => .singular | .pl => .plural
 
 /-- The gender a value of `LGen` is. -/
-def LGen.toGender : LGen → Gender
+def LGen.toGender : LGen → Gender.Label
   | .masc => .masculine | .fem => .feminine
 
 /-- A Latvian cell: case, number, gender. -/

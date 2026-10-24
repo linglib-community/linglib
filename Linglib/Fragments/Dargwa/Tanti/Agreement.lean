@@ -83,7 +83,7 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- Each gender bears the comparative label of the referents it is assigned to. -/
-def Value.toLabel : Value → _root_.Gender
+def Value.toLabel : Value → _root_.Gender.Label
   | .masc => .masculine
   | .fem => .feminine
   | .neut => .neuter

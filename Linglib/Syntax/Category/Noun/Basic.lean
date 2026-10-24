@@ -67,7 +67,7 @@ structure Noun where
 with, where it has one. -/
 structure ProperName extends Noun where
   /-- The natural gender, where the name has one. -/
-  gender : Option Gender := none
+  gender : Option Gender.Label := none
   deriving DecidableEq, Repr
 
 /-- The word token of a name is a third-person `PROPN` with the name's gender. -/
@@ -81,12 +81,12 @@ structure GenderedNoun (G : Type*) extends Noun where
   /-- The controller gender, the agreements the noun takes. -/
   gender : G
   /-- The gender of the referents, where they have one. -/
-  naturalGender : Option Gender := none
+  naturalGender : Option Gender.Label := none
   deriving DecidableEq, Repr
 
 namespace GenderedNoun
 
-variable {G : Type*} (label : G → Gender) (n : GenderedNoun G)
+variable {G : Type*} (label : G → Gender.Label) (n : GenderedNoun G)
 
 /-- A noun's gender is natural when, under the carrier's comparative labelling, it is the
 gender of its referents. -/

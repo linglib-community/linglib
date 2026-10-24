@@ -401,10 +401,10 @@ end Hindi
 namespace Icelandic
 
 /-- Icelandic's genders, three of the comparative labels. -/
-def genders : List _root_.Gender := [.masculine, .feminine, .neuter]
+def genders : List _root_.Gender.Label := [.masculine, .feminine, .neuter]
 
 /-- The marker assignment (119); the labels Icelandic lacks get none. -/
-def markers : _root_.Gender → GenderSet
+def markers : _root_.Gender.Label → GenderSet
   | .masculine => {.masc}
   | .feminine => {.fem}
   | .neuter => {.masc, .fem}
@@ -412,12 +412,12 @@ def markers : _root_.Gender → GenderSet
 
 /-- Union of the marker sets reproduces Corbett's rules on every coordination of Icelandic
 genders ((120)). -/
-theorem map_resolve {cs : List _root_.Gender} (hcs : cs ≠ []) (hg : ∀ c ∈ cs, c ∈ genders) :
+theorem map_resolve {cs : List _root_.Gender.Label} (hcs : cs ≠ []) (hg : ∀ c ∈ cs, c ∈ genders) :
     (resolve Corbett1991.Icelandic.rules cs).map markers = some (cs.toFinset.sup markers) :=
   of_sublists (P := fun r s ↦ r.map markers = some (s.sup markers)) (by decide) hcs hg
 
 /-- A same-gender coordination keeps its gender ((105b), (118)). -/
-theorem resolve_pair_self {g : _root_.Gender} (hg : g ∈ genders) :
+theorem resolve_pair_self {g : _root_.Gender.Label} (hg : g ∈ genders) :
     resolve Corbett1991.Icelandic.rules [g, g] = some g := by
   refine pair_self_of_union (map_resolve (by simp) (by simpa using hg)) ?_
   revert g; decide
@@ -468,9 +468,9 @@ theorem hindi_rows : ∀ row ∈ Examples.all, row.language = "hind1269" →
 /-- In the Icelandic rows the predicate is neuter, the union of the conjuncts' marker sets
 ((115)–(117)). -/
 theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
-    ∀ cs ∈ row.parse? "conjuncts" [("MASC and FEM", [Gender.masculine, .feminine]),
+    ∀ cs ∈ row.parse? "conjuncts" [("MASC and FEM", [Gender.Label.masculine, .feminine]),
       ("MASC and NEUT", [.masculine, .neuter]), ("FEM and NEUT", [.feminine, .neuter])],
-    ∀ g ∈ row.parse? "agreement" [("NEUT", Gender.neuter)],
+    ∀ g ∈ row.parse? "agreement" [("NEUT", Gender.Label.neuter)],
       (row.judgment = .acceptable ↔ cs.toFinset.sup Icelandic.markers = Icelandic.markers g) := by
   decide +kernel
 

@@ -186,11 +186,11 @@ namespace Tamil
 open _root_.Tamil.Gender
 
 /-- The rules read rationality and the gender of the referents. -/
-def sem (n : Tamil.Gender.Noun) : Bool × Option Gender := (n.rational, n.naturalGender)
+def sem (n : Tamil.Gender.Noun) : Bool × Option Gender.Label := (n.rational, n.naturalGender)
 
 /-- Table 2.1 makes male rationals masculine, female rationals feminine and the residue
 neuter. -/
-def system : Gender.AssignmentSystem (Bool × Option Gender) Unit Value where
+def system : Gender.AssignmentSystem (Bool × Option Gender.Label) Unit Value where
   semantic
     | (true, some .masculine) => some .masc
     | (true, some .feminine) => some .fem
@@ -231,12 +231,12 @@ def declension (n : Russian.Gender.Noun) : Option Declension :=
       | .IV => .IV
 
 /-- The gender of the referents. -/
-def sem (n : Russian.Gender.Noun) : Option Gender := n.naturalGender
+def sem (n : Russian.Gender.Noun) : Option Gender.Label := n.naturalGender
 
 /-- The rules of §3.1.1 for declinable nouns make males masculine and females feminine, then
 declension I masculine, declensions II and III feminine and the rest neuter. The rules for
 acronyms and indeclinables (Figure 3.4) are not modelled. -/
-def system : Gender.AssignmentSystem (Option Gender) (Option Declension) Value where
+def system : Gender.AssignmentSystem (Option Gender.Label) (Option Declension) Value where
   semantic
     | some .masculine => some .masc
     | some .feminine => some .fem
@@ -301,11 +301,11 @@ namespace Afar
 open _root_.Afar.Gender
 
 /-- The gender of the referents. -/
-def sem (n : Afar.Gender.Noun) : Option Gender := n.naturalGender
+def sem (n : Afar.Gender.Noun) : Option Gender.Label := n.naturalGender
 
 /-- The referents' gender first; then a citation form ending in an accented vowel is feminine,
 the rest masculine. -/
-def system : Gender.AssignmentSystem (Option Gender) Bool Value where
+def system : Gender.AssignmentSystem (Option Gender.Label) Bool Value where
   semantic
     | some .masculine => some .masc
     | some .feminine => some .fem
@@ -329,10 +329,10 @@ namespace Hausa
 open _root_.Hausa
 
 /-- The gender of the referents. -/
-def sem (n : Hausa.Noun) : Option Gender := n.naturalGender
+def sem (n : Hausa.Noun) : Option Gender.Label := n.naturalGender
 
 /-- The referents' gender first; then a noun in *-ā* is feminine, the rest masculine. -/
-def system : Gender.AssignmentSystem (Option Gender) Bool Gender where
+def system : Gender.AssignmentSystem (Option Gender.Label) Bool Gender.Label where
   semantic := id
   formal aa := if aa then some .feminine else none
   residue := .masculine
@@ -838,7 +838,7 @@ namespace Icelandic
 /-- By §9.4, homogeneous masculines or feminines keep their gender and any mixture takes the
 neuter, the semantically justified gender for beings of both sexes; the rules are syntactic,
 reading the conjuncts' genders. -/
-def rules : List (ResolutionRule _root_.Gender _root_.Gender) :=
+def rules : List (ResolutionRule _root_.Gender.Label _root_.Gender.Label) :=
   [.all (· = .masculine) .masculine, .all (· = .feminine) .feminine, otherwise .neuter]
 
 end Icelandic
@@ -993,7 +993,7 @@ theorem icelandic_rows : ∀ row ∈ Examples.all, row.language = "icel1247" →
     ∀ cs ∈ row.parse? "conjuncts"
       [("masc+fem", [_root_.Icelandic.Nouns.drengur, _root_.Icelandic.Nouns.telpa]),
         ("fem+neut", [_root_.Icelandic.Nouns.aer, _root_.Icelandic.Nouns.lamb])],
-      ∀ g ∈ row.parse? "resolved" [("neut", _root_.Gender.neuter)],
+      ∀ g ∈ row.parse? "resolved" [("neut", _root_.Gender.Label.neuter)],
         (row.judgment = .acceptable ↔ resolve Icelandic.rules (cs.map (·.gender)) = some g) := by
   decide +kernel
 

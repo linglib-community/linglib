@@ -106,7 +106,7 @@ def bier : Noun := { form := "bier", gloss := "beer", gender := .neuter, counter
 /-! ### Proper names -/
 
 /-- A personal name with its natural gender. -/
-def name (form : String) (gender : Gender) : ProperName :=
+def name (form : String) (gender : Gender.Label) : ProperName :=
   { form, gloss := form, gender := some gender }
 
 /-- *Helen*. -/

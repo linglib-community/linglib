@@ -19,8 +19,8 @@ annotation ingests as features.
 
 ## Main definitions
 
-* `Person.toUD`, `Number.toUD`, `Gender.toUD`, `Case.toUD`: realization as a tag.
-* `Person.fromUD`, `Number.fromUD`, `Gender.fromUD`, `Case.fromUD`: ingestion of a tag.
+* `Person.toUD`, `Number.toUD`, `Gender.Label.toUD`, `Case.toUD`: realization as a tag.
+* `Person.fromUD`, `Number.fromUD`, `Gender.Label.fromUD`, `Case.fromUD`: ingestion of a tag.
 * `Number.toUDPEquiv`: realization and ingestion of number, a partial equivalence.
 * `Morphology.Features.toUD`, `Morphology.Features.ofUD`: realization and ingestion of a token's
   features.
@@ -28,7 +28,7 @@ annotation ingests as features.
 ## Main results
 
 * `Person.fromUD_toUD`: ingestion after realization forgets clusivity.
-* `Gender.isPartialInv_fromUD_toUD`: realization is a partial inverse of ingestion.
+* `Gender.Label.isPartialInv_fromUD_toUD`: realization is a partial inverse of ingestion.
 * `Case.fromUD_toUD`: ingestion after realization is the identity except on the oblique.
 
 ## References
@@ -110,10 +110,10 @@ end Number
 
 /-! ### Gender -/
 
-namespace Gender
+namespace Gender.Label
 
 /-- Realize as an annotation; the animacy labels have no tag. -/
-def toUD : Gender → Option UD.Gender
+def toUD : Label → Option UD.Gender
   | .masculine => some .Masc
   | .feminine => some .Fem
   | .neuter => some .Neut
@@ -122,7 +122,7 @@ def toUD : Gender → Option UD.Gender
   | .inanimate => none
 
 /-- Ingest an annotation. -/
-def fromUD : UD.Gender → Gender
+def fromUD : UD.Gender → Label
   | .Masc => .masculine
   | .Fem => .feminine
   | .Neut => .neuter
@@ -135,11 +135,11 @@ theorem isPartialInv_fromUD_toUD : Function.IsPartialInv fromUD toUD :=
 @[simp] theorem toUD_fromUD (u : UD.Gender) : (fromUD u).toUD = some u :=
   isPartialInv_fromUD_toUD.eq u
 
-theorem fromUD_of_toUD_eq_some {g : Gender} {u : UD.Gender} (h : g.toUD = some u) :
+theorem fromUD_of_toUD_eq_some {g : Label} {u : UD.Gender} (h : g.toUD = some u) :
     fromUD u = g :=
   (isPartialInv_fromUD_toUD u g).1 h
 
-end Gender
+end Gender.Label
 
 /-! ### Case -/
 
@@ -226,7 +226,7 @@ namespace Morphology.Features
 def toUD (f : Features) : UD.MorphFeatures where
   person := (f .person).map Person.toUD
   number := (f .number).bind Number.toUD
-  gender := (f .gender).bind Gender.toUD
+  gender := (f .gender).bind Gender.Label.toUD
   case_ := (f .case).map Case.toUD
   definite := f .definiteness
   degree := f .degree
@@ -243,7 +243,7 @@ def toUD (f : Features) : UD.MorphFeatures where
 def ofUD (m : UD.MorphFeatures) : Features
   | .person => m.person.bind Person.fromUD
   | .number => m.number.bind Number.fromUD
-  | .gender => m.gender.map Gender.fromUD
+  | .gender => m.gender.map Gender.Label.fromUD
   | .case => m.case_.map Case.fromUD
   | .definiteness => m.definite
   | .degree => m.degree

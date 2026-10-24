@@ -64,7 +64,7 @@ namespace Arabic.ModernStandard
 ([ryding-2005] p. 322), with the feminine plural's variants *allaatii* and *allawaatii*; empty
 outside the singular, dual and plural and the two genders. The plural is used only of human
 referents (p. 323). -/
-def relativePronoun : Number → Gender → Case → List String
+def relativePronoun : Number → Gender.Label → Case → List String
   | .singular, .masculine, _ => ["alladhii"]
   | .singular, .feminine, _ => ["allatii"]
   | .dual, .masculine, .nom => ["alladhaani"]
@@ -77,7 +77,7 @@ def relativePronoun : Number → Gender → Case → List String
 
 /-- "Only the dual form of the definite relative pronoun shows difference in case" (p. 322). -/
 theorem relativePronoun_ne_iff_dual :
-    ∀ n ∈ [Number.singular, .dual, .plural], ∀ g ∈ [Gender.masculine, .feminine],
+    ∀ n ∈ [Number.singular, .dual, .plural], ∀ g ∈ [Gender.Label.masculine, .feminine],
       (∃ c c', relativePronoun n g c ≠ relativePronoun n g c') ↔ n = .dual := by
   decide
 
@@ -85,14 +85,14 @@ theorem relativePronoun_ne_iff_dual :
 genders have distinct forms. -/
 theorem relativePronoun_inj :
     ∀ c, ∀ n ∈ [Number.singular, .dual, .plural], ∀ n' ∈ [Number.singular, .dual, .plural],
-      ∀ g ∈ [Gender.masculine, .feminine], ∀ g' ∈ [Gender.masculine, .feminine],
+      ∀ g ∈ [Gender.Label.masculine, .feminine], ∀ g' ∈ [Gender.Label.masculine, .feminine],
         relativePronoun n g c = relativePronoun n' g' c ↔ n = n' ∧ g = g' := by
   decide
 
 /-- The dual relative pronoun merges the genitive and the accusative against the nominative, as
 the dual declension does (p. 188). -/
 theorem relativePronoun_dual_syncretism :
-    ∀ g ∈ [Gender.masculine, .feminine], ∀ s c c',
+    ∀ g ∈ [Gender.Label.masculine, .feminine], ∀ s c c',
       relativePronoun .dual g c = relativePronoun .dual g c' ↔
         Declension.dual s c = Declension.dual s c' := by
   decide

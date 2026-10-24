@@ -40,7 +40,7 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- The comparative label of each gender, both masculines being masculine. -/
-def Value.toLabel : Value → Gender
+def Value.toLabel : Value → Gender.Label
   | .mascAnimate | .mascInanimate => .masculine
   | .feminine => .feminine
   | .neuter => .neuter

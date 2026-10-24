@@ -34,7 +34,7 @@ namespace Hausa
 
 /-- A Hausa noun, with the gender its agreement shows and the gender of its referents where it
 has one. -/
-abbrev Noun := GenderedNoun Gender
+abbrev Noun := GenderedNoun Gender.Label
 
 namespace Noun
 

@@ -15,7 +15,8 @@ agreement evidence: distinct genders are distinguished by some agreement target.
 
 ## Main definitions
 
-* `Gender`: the comparative labels, realized in Universal Dependencies in `Morphology/Word/UD`.
+* `Gender.Label`: the comparative labels, realized in Universal Dependencies in
+  `Morphology/Word/UD`.
 * `Gender.Faithful`: the agreement evidence is injective on genders.
 
 ## Main results
@@ -31,8 +32,8 @@ agreement evidence: distinct genders are distinguished by some agreement target.
   spine is left to studies.
 * Kramer's two-class minimum is the hypothesis `Nontrivial G` where needed: one agreement pattern
   for all nouns is the absence of a system.
-* A fragment's gender enum is a `G`, and its `toLabel` maps it into `Gender`. Assignment systems
-  are in `Syntax/Gender/Assignment.lean`.
+* A fragment's gender enum is a `G`, and its `toLabel` maps it into `Gender.Label`. Assignment
+  systems are in `Syntax/Gender/Assignment.lean`.
 
 ## References
 
@@ -44,12 +45,14 @@ agreement evidence: distinct genders are distinguished by some agreement target.
 
 @[expose] public section
 
+namespace Gender
+
 /-- Comparative-concept labels for controller genders ([corbett-1991]).
 
 These are the descriptive labels cross-linguistic comparison uses for a language's agreement
 classes, not a universal value inventory. A language's actual genders form its own type, which a
 fragment's `toLabel` maps into this vocabulary. -/
-inductive Gender where
+inductive Label where
   /-- The masculine holds male humans and higher animates, and is the default in many sex-based
   systems. -/
   | masculine
@@ -66,8 +69,6 @@ inductive Gender where
   /-- The inanimate holds inanimate referents in animacy-based systems. -/
   | inanimate
   deriving DecidableEq, Repr, Fintype
-
-namespace Gender
 
 /-! ### Language-particular genders
 

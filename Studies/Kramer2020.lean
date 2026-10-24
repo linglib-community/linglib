@@ -112,25 +112,25 @@ theorem not_mixed_of_allSame (h : r.AllSame) : ¬ r.Mixed := by
 /-- The core and remainder genders of a lexicon, the core being the nouns whose gender is
 natural. -/
 def ofNouns {N : Type*} (nouns : List N) (natural : N → Prop) [DecidablePred natural]
-    (gender : N → Gender) : Remainder Gender where
+    (gender : N → Gender.Label) : Remainder Gender.Label where
   core := ((nouns.filter (natural ·)).map gender).toFinset
   remainder := ((nouns.filter (¬ natural ·)).map gender).toFinset
 
 /-- Dieri makes female humans feminine and male humans and every other noun
 masculine. -/
-def dieri : Remainder Gender := ⟨{.masculine, .feminine}, {.masculine}⟩
+def dieri : Remainder Gender.Label := ⟨{.masculine, .feminine}, {.masculine}⟩
 
 /-- Tamil has Dieri's core and puts the remainder in a novel neuter. -/
-def tamil : Remainder Gender := ⟨{.masculine, .feminine}, {.neuter}⟩
+def tamil : Remainder Gender.Label := ⟨{.masculine, .feminine}, {.neuter}⟩
 
 /-- Spanish splits the remainder arbitrarily over both core genders (Table 1), as the
 Fragment records. -/
-def spanish : Remainder Gender :=
+def spanish : Remainder Gender.Label :=
   ofNouns allNouns (·.IsNaturalGender Value.toLabel) (·.gender.toLabel)
 
 /-- Blackfoot makes animates animate and puts inanimates in a novel inanimate gender or
 the recycled animate one. -/
-def blackfoot : Remainder Gender := ⟨{.animate}, {.animate, .inanimate}⟩
+def blackfoot : Remainder Gender.Label := ⟨{.animate}, {.animate, .inanimate}⟩
 
 /-- Table 2 has one remainder gender recycled (Dieri) or novel (Tamil), and different
 remainder genders recycled (Spanish) or both (Blackfoot). -/
@@ -150,7 +150,7 @@ end Remainder
 
 /-- [corbett-1991]'s assignment for the Russian remainder (18) makes Class I
 masculine, Class II or III feminine, and all others neuter. -/
-def declensionGender : Russian.Gender.DeclClass → Gender
+def declensionGender : Russian.Gender.DeclClass → Gender.Label
   | .I => .masculine
   | .II | .III => .feminine
   | .IV => .neuter
@@ -167,7 +167,7 @@ theorem declension_exceptions :
 
 /-- The disputed rule (26) makes a noun in *-ā* feminine and any other
 masculine. -/
-def phonologicalRule (n : Hausa.Noun) : Gender :=
+def phonologicalRule (n : Hausa.Noun) : Gender.Label :=
   if n.EndsInAa then .feminine else .masculine
 
 /-- In (22e) *kadā̀* 'crocodile' ends in *-ā* and is masculine, so (26) is
@@ -202,7 +202,7 @@ def humanGender (e : LexicalEntry) : LexicalEntry :=
   { e with f := e.f || (e.human && e.female) }
 
 /-- Agreement is feminine with [f] and masculine by default. -/
-def gender (e : LexicalEntry) : Gender := if e.f then .feminine else .masculine
+def gender (e : LexicalEntry) : Gender.Label := if e.f then .feminine else .masculine
 
 end LexicalEntry
 
@@ -310,15 +310,17 @@ theorem lexical_eq_structural (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
 
 /-- In (27) the agreement targets of *vrač* 'doctor', the Fragment's
 morphologically masculine Class I noun, take both genders in one phrase. -/
-def hybridTargets : List (String × Gender) := [("xoroš-aja", .feminine), ("glavn-yj", .masculine)]
+def hybridTargets : List (String × Gender.Label) :=
+  [("xoroš-aja", .feminine), ("glavn-yj", .masculine)]
 
-theorem no_lexical_hybrid {targets : List (String × Gender)}
+theorem no_lexical_hybrid {targets : List (String × Gender.Label)}
     (hf : ∃ t ∈ targets, t.2 = .feminine) (hm : ∃ t ∈ targets, t.2 = .masculine) :
     ¬ ∃ e : LexicalEntry, ∀ t ∈ targets, t.2 = e.gender := by
   rintro ⟨e, he⟩
   obtain ⟨t, ht, hft⟩ := hf
   obtain ⟨t', ht', hmt⟩ := hm
-  exact Gender.noConfusion ((hft.symm.trans (he t ht)).trans (hmt.symm.trans (he t' ht')).symm)
+  exact Gender.Label.noConfusion
+    ((hft.symm.trans (he t ht)).trans (hmt.symm.trans (he t' ht')).symm)
 
 /-- (27) is such a case. -/
 theorem lexical_no_hybrid : ¬ ∃ e : LexicalEntry, ∀ t ∈ hybridTargets, t.2 = e.gender :=

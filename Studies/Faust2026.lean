@@ -520,7 +520,7 @@ structure Row where
 /-- A taQTiL noun (9), with its root where the squib identifies it. -/
 structure NounRow where
   form : String
-  gender : Gender
+  gender : Gender.Label
   root : Option (ConsonantalRoot String)
   deriving DecidableEq, Repr
 
@@ -569,7 +569,8 @@ def cellTable : List (String × Cell) :=
   [("pst3msg", .pst3msg), ("actionNoun", .actionNoun), ("passPrtc", .passPrtc), ("pfv", .pfv),
    ("ipfv", .ipfv), ("juss", .juss), ("grnd", .grnd), ("inf", .inf)]
 
-def genderTable : List (String × Gender) := [("masculine", .masculine), ("feminine", .feminine)]
+def genderTable : List (String × Gender.Label) :=
+  [("masculine", .masculine), ("feminine", .feminine)]
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let lang ← List.lookup ex.language langTable

@@ -116,7 +116,7 @@ end Paradigm
 section Table
 
 variable {C : Type*} (person : C → Person) (number : C → Option Number)
-  (gender : C → Option Gender) (case : C → Option Case)
+  (gender : C → Option Gender.Label) (case : C → Option Case)
 
 /-- The personal pronoun `f` filling the cells `s` (`Pronoun.ofCells`), whose referential
 categories are the cells'. -/

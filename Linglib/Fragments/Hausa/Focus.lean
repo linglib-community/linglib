@@ -64,9 +64,10 @@ def ce : Particle := { form := "cē", position := some .postHost }
 
 /-- The stabilizer after a phrase of the given gender; a plural, a prepositional phrase and a verb
 phrase have none. -/
-def stabilizer (g : Option Gender) : Particle := if g = some .feminine then ce else ne
+def stabilizer (g : Option Gender.Label) : Particle := if g = some .feminine then ce else ne
 
-theorem stabilizer_eq_ce_iff (g : Option Gender) : stabilizer g = ce ↔ g = some .feminine := by
+theorem stabilizer_eq_ce_iff (g : Option Gender.Label) :
+    stabilizer g = ce ↔ g = some .feminine := by
   unfold stabilizer
   split_ifs with h
   · simpa using h
@@ -88,7 +89,7 @@ structure FocusConfig where
   pacTAM : TAM
   cell : Bundle
   strategy : Focus.Strategy
-  focusGender : Option Gender
+  focusGender : Option Gender.Label
   hasStab : Bool
   deriving Repr
 
@@ -124,12 +125,12 @@ theorem pacTAM_ne_iff (h : c.Licensed) :
 end FocusConfig
 
 /-- A focus in place, with the clause's TAM. -/
-def mkInSitu (tam : TAM) (cell : Bundle) (g : Option Gender) (hasStab : Bool := false) :
+def mkInSitu (tam : TAM) (cell : Bundle) (g : Option Gender.Label) (hasStab : Bool := false) :
     FocusConfig :=
   ⟨tam, tam, cell, .inSitu, g, hasStab⟩
 
 /-- A fronted focus, its PAC in the TAM `pacTAM`. -/
-def mkExSitu (tam pacTAM : TAM) (cell : Bundle) (g : Option Gender) (hasStab : Bool := true) :
+def mkExSitu (tam pacTAM : TAM) (cell : Bundle) (g : Option Gender.Label) (hasStab : Bool := true) :
     FocusConfig :=
   ⟨tam, pacTAM, cell, .exSitu, g, hasStab⟩
 

@@ -59,7 +59,7 @@ def kurš : InterrogativePronoun := { form := "kurš", ontology := .determiner }
 /-- The emphatic pronoun *pats* 'self', feminine *pati*, as stem and ending in each case,
 number and gender ([kalnaca-lokmane-2021], Table 2.21); `none` in the vocative and outside the
 two numbers and the two genders. -/
-def pats : Case → Number → Gender → Option (List Morph)
+def pats : Case → Number → Gender.Label → Option (List Morph)
   | .nom, .singular, .masculine => some [.root "pat", .suff "s"]
   | .gen, .singular, .masculine => some [.root "paš", .suff "a"]
   | .dat, .singular, .masculine => some [.root "paš", .suff "am"]
@@ -88,7 +88,7 @@ def pats : Case → Number → Gender → Option (List Morph)
 
 /-- The instrumental of *pats* is its accusative in the singular and its dative in the plural
 ([kalnaca-lokmane-2021] p. 118). -/
-theorem pats_inst_eq (g : Gender) :
+theorem pats_inst_eq (g : Gender.Label) :
     pats .inst .singular g = pats .acc .singular g ∧
       pats .inst .plural g = pats .dat .plural g := by
   cases g <;> decide

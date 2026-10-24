@@ -67,7 +67,7 @@ def Value.pluralClitic : Value → Option String
   | _ => none
 
 /-- The comparative label of a gender, which only the feminine and the masculine have. -/
-def Value.toLabel : Value → Option Gender
+def Value.toLabel : Value → Option Gender.Label
   | .feminine => some .feminine
   | .masculine => some .masculine
   | _ => none

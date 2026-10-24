@@ -42,7 +42,7 @@ open Morphology
 plural where it has them. -/
 structure Noun extends ClassifiedNoun Empty where
   /-- The natural gender the noun's pronouns agree with, where it has one. -/
-  gender : Option Gender := none
+  gender : Option Gender.Label := none
   /-- The plural, where the noun has one. -/
   plural : Option String := none
   deriving DecidableEq
@@ -138,7 +138,7 @@ def mold : Noun := .mass "mold"
 /-! ### Proper names -/
 
 /-- A name glossed by itself. -/
-def name (form : String) (gender : Option Gender := none) : ProperName :=
+def name (form : String) (gender : Option Gender.Label := none) : ProperName :=
   { form, gloss := form, gender }
 
 def john : ProperName := name "John" (some .masculine)

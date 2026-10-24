@@ -72,7 +72,7 @@ theorem referential_zu : zu.referential = hi.referential := by decide
 
 /-- The Souletin allocutive suffix for an addressee of each grade and gender. A familiar man takes
 *-k* and a familiar woman *-n*, and an addressee of either sex spoken to with respect *-zü*. -/
-def allocutive : Grade → Gender → Option Morphology.Morph
+def allocutive : Grade → Gender.Label → Option Morphology.Morph
   | .familiar, .masculine => some (.suff "k")
   | .familiar, .feminine => some (.suff "n")
   | .polite, .masculine | .polite, .feminine => some (.suff "zü")

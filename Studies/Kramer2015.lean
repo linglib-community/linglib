@@ -53,7 +53,7 @@ def Head.Cyclic : Head → Prop
 instance : DecidablePred Head.Cyclic := fun h ↦ by cases h <;> unfold Head.Cyclic <;> infer_instance
 
 /-- The gender a head's [±FEM] feature labels, if it bears one. -/
-def Head.gender : Head → Option Gender
+def Head.gender : Head → Option Gender.Label
   | .cat h => h.gender.bind fun gf ↦
       match gf.val with
       | ⟨.fem, .pos⟩ => some .feminine
@@ -63,12 +63,13 @@ def Head.gender : Head → Option Gender
 
 /-- The agreeing gender of a nominal over the root `r` with the heads `hs`, innermost first, in a
 language whose default gender is `default`. -/
-def agreeing (default : Gender) (r : Root) (hs : List Head) : Gender :=
+def agreeing (default : Gender.Label) (r : Root) (hs : List Head) : Gender.Label :=
   agreeingGender Head.gender default ((⟨r, hs⟩ : ComplexHead Root Head).lastCycle Head.Cyclic)
 
 /-- The Highest Gender Hypothesis (32). A nominal agrees as its highest n would over a bare
 root. -/
-theorem highestGender (default : Gender) (r r' : Root) (hs : List Head) (h : Categorizer.Head) :
+theorem highestGender (default : Gender.Label) (r r' : Root) (hs : List Head)
+    (h : Categorizer.Head) :
     agreeing default r (hs ++ [.cat h]) = agreeing default r' [.cat h] := by
   rw [agreeing, agreeing, agreeingGender_lastCycle (above := []) trivial (by simp),
     show [Head.cat h] = [] ++ [.cat h] from rfl,
@@ -90,7 +91,7 @@ theorem german_chen (r : Root) :
 
 /-- By (42), a non-n evaluative head keeps the gender of the highest n, as Russian *l'es-ók* 'little
 forest' stays masculine. -/
-theorem evaluative_transparent (default : Gender) (r : Root) (hs : List Head)
+theorem evaluative_transparent (default : Gender.Label) (r : Root) (hs : List Head)
     (h : Categorizer.Head) :
     agreeing default r (hs ++ [.cat h, .eval]) = agreeing default r (hs ++ [.cat h]) := by
   rw [agreeing, agreeing, show hs ++ [.cat h, .eval] = hs ++ .cat h :: [.eval] from rfl,
