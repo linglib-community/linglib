@@ -8,14 +8,14 @@ module
 public import Mathlib.Data.List.Infix
 
 /-!
-# Short infixes of a three-part concatenation, and prefixes
+# Short infixes of a three-part concatenation, and common prefixes
 
 An infix of `u ++ m ++ v` no longer than `m` cannot contain both an element that occurs only in
 `u` and an element that occurs only in `v`: this is the fact about short windows that pumping
 arguments use, when `m` is a block of the pumped word that separates two others.
 
-The prefixes `inits` lists ascend in the prefix order, and the longest common prefix
-`List.commonPrefix l₁ l₂`, the greatest list that is a prefix of both, is the meet of that order.
+The longest common prefix `List.commonPrefix l₁ l₂`, the greatest list that is a prefix of both,
+is the meet of the prefix order.
 
 ## Main definitions
 
@@ -25,15 +25,12 @@ The prefixes `inits` lists ascend in the prefix order, and the longest common pr
 
 * `List.IsInfix.notMem_or_notMem_of_length_le`: an infix of `u ++ m ++ v` no longer than `m` misses
   every element occurring only in `u` or every element occurring only in `v`.
-* `List.pairwise_inits`: the prefixes `inits` lists ascend in the prefix order.
 
 ## Implementation notes
 
-Each declaration fills a gap. Mathlib states `List.mem_inits` and `List.getElem_inits` but not
-that `inits` is a chain, so `List.pairwise_inits` is an [UPSTREAM] candidate for
-`Mathlib/Data/List/Infix.lean`. Neither core, Batteries nor mathlib defines a longest common
-prefix of lists, and mathlib's `RootedTree` takes its meet as a `SemilatticeInf` instance rather
-than deriving it, so `List.commonPrefix` is an [UPSTREAM] candidate for Batteries beside
+Each declaration fills a gap. Neither core, Batteries nor mathlib defines a longest common prefix
+of lists, and mathlib's `RootedTree` takes its meet as a `SemilatticeInf` instance rather than
+deriving it, so `List.commonPrefix` is an [UPSTREAM] candidate for Batteries beside
 `List.inits`. The short-window lemma, proved from core's `List.infix_append_iff`, would go up only
 with a pumping lemma for context-free languages, which mathlib lacks.
 -/
@@ -88,12 +85,5 @@ theorem prefix_commonPrefix : ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: 
     simpa [commonPrefix] using prefix_commonPrefix (r := rs) (prefix_append _ _) (prefix_append _ _)
 
 end DecidableEq
-
-/-- The prefixes of a list, as `inits` lists them, ascend in the prefix order. -/
-theorem pairwise_inits : ∀ l : List α, l.inits.Pairwise (· <+: ·)
-  | [] => by simp
-  | a :: l => by
-    rw [inits_cons, pairwise_cons, pairwise_map]
-    exact ⟨fun _ _ ↦ nil_prefix, (pairwise_inits l).imp fun h ↦ cons_prefix_cons.2 ⟨rfl, h⟩⟩
 
 end List

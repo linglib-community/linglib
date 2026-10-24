@@ -556,44 +556,38 @@ theorem isProjectionOf_headDaughterRel_iff {h p : TreePath} :
 instance (h p : TreePath) : Decidable (IsProjectionOf (headDaughterRel hd) h p) :=
   decidable_of_iff _ (isProjectionOf_headDaughterRel_iff hd).symm
 
-/-- The maximal projection of `h` is its shortest prefix that is a projection of it. -/
+/-- The maximal projection of `h` is the lowest maximal projection dominating it. -/
 def maximalProjectionAt (h : TreePath) : TreePath :=
-  ⟨(h.toList.inits.find? fun r ↦ decide (IsProjectionOf (headDaughterRel hd) h ⟨r⟩)).getD
-    h.toList⟩
+  ⟨h.toList.take (Nat.findGreatest
+    (fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩) h.toList.length)⟩
 
-theorem maximalProjectionAt_le (h : TreePath) : maximalProjectionAt hd h ≤ h := by
-  unfold maximalProjectionAt
-  cases hf : h.toList.inits.find? _ with
-  | none => exact le_rfl
-  | some r => exact TreePath.le_def.2 ((List.mem_inits _ _).1 (List.mem_of_find?_eq_some hf))
+theorem maximalProjectionAt_le (h : TreePath) : maximalProjectionAt hd h ≤ h :=
+  List.take_prefix _ _
 
-theorem isProjectionOf_maximalProjectionAt (h : TreePath) :
-    IsProjectionOf (headDaughterRel hd) h (maximalProjectionAt hd h) := by
-  unfold maximalProjectionAt
-  cases hf : h.toList.inits.find? _ with
-  | none => exact .refl _
-  | some r => simpa using List.find?_some hf
+theorem isMaximalProjection_maximalProjectionAt (h : TreePath) :
+    IsMaximalProjection (headDaughterRel hd) (maximalProjectionAt hd h) :=
+  Nat.findGreatest_spec (P := fun n ↦ IsMaximalProjection (headDaughterRel hd) ⟨h.toList.take n⟩)
+    (Nat.zero_le _) fun _ ⟨_, _, hi⟩ ↦ by simp at hi
 
 /-- `maximalProjectionAt hd h` is the least projection of `h`. -/
 theorem isLeast_maximalProjectionAt (h : TreePath) :
     IsLeast {p | IsProjectionOf (headDaughterRel hd) h p} (maximalProjectionAt hd h) := by
-  refine ⟨isProjectionOf_maximalProjectionAt hd h, fun p hp ↦ ?_⟩
-  have hH : ∀ m d, headDaughterRel hd m d → m ⋖ d := fun _ _ ↦ headDaughterRel_covBy hd
-  have hmem : p.toList ∈ h.toList.inits := (List.mem_inits _ _).2 (TreePath.le_def.1 (hp.le hH))
-  unfold maximalProjectionAt
-  cases hf : h.toList.inits.find? _ with
-  | none =>
-    exact absurd (by simpa using hp) ((List.find?_eq_none.1 hf) p.toList hmem)
-  | some r =>
-    obtain ⟨-, as, bs, hl, has⟩ := List.find?_eq_some_iff_append.1 hf
-    have hpw := List.pairwise_inits h.toList
-    rw [hl, List.pairwise_append, List.pairwise_cons] at hpw
-    rw [hl] at hmem
-    rcases List.mem_append.1 hmem with hm | hm
-    · exact absurd (by simpa using hp) (by simpa using has _ hm)
-    · rcases List.mem_cons.1 hm with rfl | hm
-      · exact le_rfl
-      · exact TreePath.le_def.2 (hpw.2.1.1 _ hm)
+  refine (isLeast_projections_iff fun _ _ ↦ headDaughterRel_covBy hd).2
+    ⟨(isProjectionOf_headDaughterRel_iff hd).2 ⟨maximalProjectionAt_le hd h, ?_⟩,
+      isMaximalProjection_maximalProjectionAt hd h⟩
+  rintro _ hq hlt
+  obtain ⟨l, hl, rfl⟩ := List.mem_map.1 hq
+  have hl' := List.prefix_iff_eq_take.1 ((List.mem_inits _ _).1 hl)
+  have hfg := Nat.findGreatest_is_greatest (k := l.length)
+    (by simpa [maximalProjectionAt, Nat.findGreatest_le] using TreePath.length_strictMono hlt)
+    ((List.mem_inits _ _).1 hl).length_le
+  rw [← hl'] at hfg
+  by_contra hne
+  exact hfg ((isMaximalProjection_headDaughterRel_iff hd).2 hne)
+
+theorem isProjectionOf_maximalProjectionAt (h : TreePath) :
+    IsProjectionOf (headDaughterRel hd) h (maximalProjectionAt hd h) :=
+  (isLeast_maximalProjectionAt hd h).1
 
 /-! #### Projection and adjunction at positions -/
 
