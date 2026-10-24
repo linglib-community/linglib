@@ -71,8 +71,7 @@ def rank : Position → ℕ
   | .genitive       => 1
   | .objComparison  => 0
 
-theorem rank_injective : Function.Injective rank := by
-  intro a b h; cases a <;> cases b <;> simp_all [rank]
+theorem rank_injective : Function.Injective rank := by decide
 
 /-- In the accessibility order `p ≤ q` iff `p` is no more accessible than `q`. -/
 instance : LinearOrder Position := LinearOrder.lift' rank rank_injective
