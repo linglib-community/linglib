@@ -313,9 +313,9 @@ def ofChar : Char → Option Segment
 writes one. -/
 def ofString? (s : String) : Option (List Segment) := s.toList.mapM ofChar
 
-/-- `ofSegmented? s` reads a word written with its morpheme boundaries marked `-`, as glossed
-examples print it, dropping the boundaries. -/
+/-- `ofSegmented? s` reads a word written with its morpheme boundaries marked `-` and its clitic
+boundaries `=`, as glossed examples print it, dropping the boundaries. -/
 def ofSegmented? (s : String) : Option (List Segment) :=
-  (s.toList.filter (· ≠ '-')).mapM ofChar
+  (s.toList.filter fun c ↦ c ≠ '-' ∧ c ≠ '=').mapM ofChar
 
 end Turkish.Phonology

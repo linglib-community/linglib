@@ -225,4 +225,11 @@ theorem isStrongestTrueAnswer_hamblinCat_compl {p : Set W} {w : W} (hw : w ∉ p
 /-- *=mI* is obligatory in polar questions such as (4), as the fragment records. -/
 example : Turkish.QuestionParticles.mi.distribution .polar .matrix = some .obligatory := rfl
 
+open Turkish.Phonology in
+/-- In its default position in (4), *=mI* follows the markers of the predicate *uyu-du*. -/
+example : ∃ t ∈ Examples.ex_4.glossedTokens,
+    ofSegmented? t.1 = some (Turkish.realize [u, y, u] (Turkish.QuestionParticles.mi.insert
+      [⟨_, .di⟩, ⟨_, .person .one (.personNumber .third .singular)⟩])) := by
+  decide
+
 end TurkHirsch2026

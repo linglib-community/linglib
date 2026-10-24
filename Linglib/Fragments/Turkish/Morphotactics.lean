@@ -45,6 +45,8 @@ exactly when it differs from the last segment of the stem in being a vowel.
 * `Turkish.underlying`, `Turkish.realize`: the underlying and the surface form of a stem with
   a string of suffixes.
 * `Exponent.form`: the citation form of an exponent.
+* `Verb.Exponent.IsClitic`: the copular markers, -DIr and the group-2 person markers, which
+  are clitics (§11.1).
 * `Nominal.forms`: the forms of a string of nominal exponents, with the final `n` of a
   third-person possessive before a case suffix.
 
@@ -60,14 +62,15 @@ exactly when it differs from the last segment of the stem in being a vowel.
 
 ## Implementation notes
 
-The clitics mI and dA, which can interrupt the inflectional string (§6.3 (5)), are Chapter 11
-material outside both templates. The markers' meanings are the matter of Chapter 21 and Appendix
-2. There -DI marks past tense, perfective aspect and direct knowledge, -mIş marks relative past
-tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3), and the copular
--(y)mIş marks evidential modality alone; -mIş followed by a copular marker or -DIr is perfective
-only (§8.2.3.3). The final `n` that the third-person possessives take before a case suffix
-(§6.2, §8.1.2) belongs to neither citation form and is supplied by `Nominal.forms`. Negation of
-the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see `Turkish.Negation`). The grammar's
+The question clitic mI stands among the predicate markers, before the first clitic (§6.3 (5),
+§11.1.1.5), and is placed by `Turkish.QuestionParticles.mi.insert`; the clitic dA, which can
+interrupt -(y)Abil (§6.3 (4)), is not represented. The markers' meanings are the matter of Chapter
+21 and Appendix 2. There -DI marks past tense, perfective aspect and direct knowledge, -mIş marks
+relative past tense, perfective aspect and indirect knowledge (evidential modality, §21.4.3), and
+the copular -(y)mIş marks evidential modality alone; -mIş followed by a copular marker or -DIr is
+perfective only (§8.2.3.3). The final `n` that the third-person possessives take before a case
+suffix (§6.2, §8.1.2) belongs to neither citation form and is supplied by `Nominal.forms`. Negation
+of the aorist is irregular, -mAz for -(A/I)r (§8.2.2; see `Turkish.Negation`). The grammar's
 examples are checked against both templates in `Studies/GokselKerslake2005.lean`.
 
 ## References
@@ -214,11 +217,13 @@ inductive Slot where
 instance : LinearOrder Slot := .lift' Slot.ctorIdx (by decide)
 
 /-- A person-marker group of §8.4. Group 1 follows -DI, -sA and the copular markers -(y)DI and
--(y)sA, and group 2 follows the other position-3 markers, the copular -(y)mIş and nominal
-predicates. The optative and imperative groups 3 and 4 are not represented. -/
+-(y)sA, group 2 follows the other position-3 markers, the copular -(y)mIş and nominal
+predicates, and group 3 the optative, its third-person forms following the verb directly. The
+imperative group 4 is not represented. -/
 inductive PersonGroup where
   | one
   | two
+  | three
   deriving DecidableEq, Repr
 
 /-- The person markers of group 1 (§8.4). The second-person plural is also the formal
@@ -238,10 +243,21 @@ def PersonGroup.two.paradigm : Agreement.Paradigm Suffix :=
    (.personNumber .second .plural, ⟨none, [s, I, n, I, z]⟩),
    (.personNumber .third .plural, ⟨none, [l, A, r]⟩)]
 
+/-- The person markers of group 3 (§8.4). The second-person plural is also the formal singular,
+and the third-person plural is -sIn with -lAr. -/
+def PersonGroup.three.paradigm : Agreement.Paradigm Suffix :=
+  [(.personNumber .first .singular, ⟨none, [y, I, m]⟩),
+   (.personNumber .second .singular, ⟨none, [s, I, n]⟩),
+   (.personNumber .third .singular, ⟨none, [s, I, n]⟩),
+   (.personNumber .first .plural, ⟨none, [l, I, m]⟩),
+   (.personNumber .second .plural, ⟨none, [s, I, n, I, z]⟩),
+   (.personNumber .third .plural, ⟨none, [s, I, n, l, A, r]⟩)]
+
 /-- The paradigm of a person-marker group. -/
 def PersonGroup.paradigm : PersonGroup → Agreement.Paradigm Suffix
   | .one => PersonGroup.one.paradigm
   | .two => PersonGroup.two.paradigm
+  | .three => PersonGroup.three.paradigm
 
 /-- The exponents of each slot (§8.2.1 to §8.4). -/
 inductive Exponent : Slot → Type where
@@ -327,6 +343,16 @@ def Exponent.form : Exponent σ → Suffix
   | .conditionalCopula => ⟨some y, [s, A]⟩
   | .person g c => (g.paradigm.realize c).getD ⟨none, []⟩
   | .dir => ⟨none, [D, I, r]⟩
+
+/-- The exponents that are clitics, the copular markers, -DIr and the person markers of group 2
+(§11.1). -/
+def Exponent.IsClitic : Exponent σ → Prop
+  | .pastCopula | .evidentialCopula | .conditionalCopula | .dir => True
+  | .person g _ => g = .two
+  | _ => False
+
+instance : DecidablePred (Exponent.IsClitic (σ := σ)) := fun e ↦ by
+  cases e <;> unfold Exponent.IsClitic <;> infer_instance
 
 /-- The template of the finite verb lists its slots in the order of §8.2, each of which a verb
 may skip, the voice slot taking any number of suffixes. -/

@@ -2,6 +2,7 @@ module
 
 public import Linglib.Fragments.Turkish.Clause
 public import Linglib.Fragments.Turkish.Possession
+public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Fragments.Turkish.Verbs
 
 /-!
@@ -23,6 +24,10 @@ The grammar's example words are licensed with their stacked voice suffixes, reve
 not, and the rule that markers of one position cannot co-occur (§8.2.3) holds because the
 template does not repeat the position.
 
+The question clitic *mI* stands before the first clitic among the markers of a predicate and
+after the other markers (§11.1.1.5), as `Turkish.QuestionParticles.mi.insert` places it, so the
+grammar's examples are its surface forms, the markers after it attached to it (§6.3 (5)).
+
 The converbs of §8.5.2.2 are those of `Turkish.Converb` on the grammar's verbs, and
 *-(y)Ip* and *-(y)ArAk* follow every slot before the position-3 marker and none after it
 (§28.2).
@@ -43,10 +48,18 @@ The possessive and locative existential sentences of §12.1.1.2 are those of
 * `causative_stems`, `spelled_stems`: the -DIr causatives of §8.2.1.1 and the Fragment's verbs.
 * `finite_verb`: §8.2 (7), every slot of the finite verb.
 * `same_position_excluded`: §8.2.3 (i), since the template does not repeat position 3.
+* `mi_precedes_clitics`, `mi_follows`: §11.1.1.5, the position of *mI* among the markers of a
+  predicate.
 * `converbs`, `doubled_converbs`: the converbs of §8.5.2.2 and -DIkçA.
 * `conjunctive_converbs`: §28.2, -(y)Ip and -(y)ArAk in place of the position-3 marker.
 * `possessive_existential`, `locative_existential`: §12.1.1.2 (21), (22), (26) and (17).
 * `possessive_obligatory`: §14.4 (117), the possessive suffix on the possessee.
+
+## Errata
+
+Among the examples of §11.1.1.5, *Gittiler mı?* should be *Gittiler mi?*, since fronting
+harmony gives a front vowel after *gittiler* (§3.2.1), and *Baslasın mı?* should be
+*Başlasın mı?*.
 
 ## References
 
@@ -57,7 +70,7 @@ The possessive and locative existential sentences of §12.1.1.2 are those of
 
 namespace GokselKerslake2005
 
-open Turkish Phonology Verb.Exponent Nominal.Exponent
+open Turkish Phonology Verb.Exponent Nominal.Exponent QuestionParticles
 
 /-! ### Vowel harmony (Chapter 3) -/
 
@@ -294,6 +307,69 @@ theorem reversed_orders :
 theorem same_position_excluded (m₁ m₂ : Verb.Exponent .tam) :
     ¬ Verb.template.Licensed [⟨_, m₁⟩, ⟨_, m₂⟩] :=
   show [Verb.Slot.tam, .tam] ∉ Verb.template.language by decide
+
+/-! ### The question clitic (§11.1.1.5) -/
+
+/-- *mI* precedes the copular markers, as in *Gitse miydik?*, *Başlamış mıydınız?* and *Burada
+mıymış?*, the group-2 person markers but the third-person plural, as in *Gidiyor musun?*,
+*İster miyiz?* and *Hazır mısınız?*, and -DIr, as in *Unutmuş mudurlar?*, *Evde midir?* and
+*geçmiş miyimdir?*, and the markers after it attach to it, as in *bil-iyor mu-ydu-nuz*
+(§6.3 (5)). -/
+theorem mi_precedes_clitics :
+    realize [g, i, t]
+        (mi.insert [⟨_, sa⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .first .plural)⟩]) =
+      [g, i, t, s, e] ++ [m, i, y, d, i, k] ∧
+    realize [b, a, ş, l, a]
+        (mi.insert [⟨_, miş⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩]) =
+      [b, a, ş, l, a, m, ı, ş] ++ [m, ı, y, d, ı, n, ı, z] ∧
+    realize [b, u, r, a, d, a] (mi.insert [⟨_, evidentialCopula⟩]) =
+      [b, u, r, a, d, a] ++ [m, ı, y, m, ı, ş] ∧
+    realize [g, i, d] (mi.insert [⟨_, iyor⟩, ⟨_, person .two (.personNumber .second .singular)⟩]) =
+      [g, i, d, i, y, o, r] ++ [m, u, s, u, n] ∧
+    realize [i, s, t, e]
+        (mi.insert [⟨_, aorist⟩, ⟨_, person .two (.personNumber .first .plural)⟩]) =
+      [i, s, t, e, r] ++ [m, i, y, i, z] ∧
+    realize [h, a, z, ı, r] (mi.insert [⟨_, person .two (.personNumber .second .plural)⟩]) =
+      [h, a, z, ı, r] ++ [m, ı, s, ı, n, ı, z] ∧
+    realize [u, n, u, t]
+        (mi.insert [⟨_, miş⟩, ⟨_, dir⟩, ⟨_, person .two (.personNumber .third .plural)⟩]) =
+      [u, n, u, t, m, u, ş] ++ [m, u, d, u, r, l, a, r] ∧
+    realize [e, v, d, e] (mi.insert [⟨_, dir⟩]) = [e, v, d, e] ++ [m, i, d, i, r] ∧
+    realize [g, e, ç]
+        (mi.insert [⟨_, miş⟩, ⟨_, person .two (.personNumber .first .singular)⟩, ⟨_, dir⟩]) =
+      [g, e, ç, m, i, ş] ++ [m, i, y, i, m, d, i, r] ∧
+    realize [b, i, l]
+        (mi.insert [⟨_, iyor⟩, ⟨_, pastCopula⟩, ⟨_, person .one (.personNumber .second .plural)⟩]) =
+      [b, i, l, i, y, o, r] ++ [m, u, y, d, u, n, u, z] := by
+  decide
+
+/-- *mI* follows the group-1 person markers, as in *Gördün mü?*, *Gitsek mi?* and *Yürüdünüz
+mü?*, those of group 3, as in *Kalayım mı?* and *Başlasın mı?*, the third-person plural, as in
+*Gittiler mi?*, *Uyanırlar mı?* and *Okuldalar mı?*, and a subject complement without markers,
+as in *Akıllı mı?* and *Benimki mi?*. -/
+theorem mi_follows :
+    realize [g, ö, r] (mi.insert [⟨_, di⟩, ⟨_, person .one (.personNumber .second .singular)⟩]) =
+      [g, ö, r, d, ü, n] ++ [m, ü] ∧
+    realize [g, i, t] (mi.insert [⟨_, sa⟩, ⟨_, person .one (.personNumber .first .plural)⟩]) =
+      [g, i, t, s, e, k] ++ [m, i] ∧
+    realize [y, ü, r, ü]
+        (mi.insert [⟨_, di⟩, ⟨_, person .one (.personNumber .second .plural)⟩]) =
+      [y, ü, r, ü, d, ü, n, ü, z] ++ [m, ü] ∧
+    realize [k, a, l]
+        (mi.insert [⟨_, optative⟩, ⟨_, person .three (.personNumber .first .singular)⟩]) =
+      [k, a, l, a, y, ı, m] ++ [m, ı] ∧
+    realize [b, a, ş, l, a] (mi.insert [⟨_, person .three (.personNumber .third .singular)⟩]) =
+      [b, a, ş, l, a, s, ı, n] ++ [m, ı] ∧
+    realize [g, i, t] (mi.insert [⟨_, di⟩, ⟨_, person .one (.personNumber .third .plural)⟩]) =
+      [g, i, t, t, i, l, e, r] ++ [m, i] ∧
+    realize [u, y, a, n]
+        (mi.insert [⟨_, aorist⟩, ⟨_, person .two (.personNumber .third .plural)⟩]) =
+      [u, y, a, n, ı, r, l, a, r] ++ [m, ı] ∧
+    realize [o, k, u, l, d, a] (mi.insert [⟨_, person .two (.personNumber .third .plural)⟩]) =
+      [o, k, u, l, d, a, l, a, r] ++ [m, ı] ∧
+    realize [a, k, ı, l, l, ı] (mi.insert []) = [a, k, ı, l, l, ı] ++ [m, ı] ∧
+    realize [b, e, n, i, m, k, i] (mi.insert []) = [b, e, n, i, m, k, i] ++ [m, i] := by
+  decide
 
 /-! ### Converbs (§8.5.2.2) -/
 
