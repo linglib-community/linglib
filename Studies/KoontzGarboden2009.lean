@@ -241,7 +241,7 @@ def causer (v : Verb) : Option Causer :=
 /-- Among the fragment's verbs with a causer, the alternating ones are the EFFECTOR verbs
 (§3.1–§3.2). -/
 theorem alternates_iff_effector :
-    ∀ v ∈ allVerbs, ∀ c ∈ causer v.toVerb, (v.Alternates ↔ c = .effector) := by
+    ∀ v ∈ allVerbs, ∀ c ∈ causer v, (v.Alternates Voice.anticausative ↔ c = .effector) := by
   decide
 
 end KoontzGarboden2009

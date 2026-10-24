@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Syntax.Voice.Basic
+public import Linglib.Fragments.Romance.Spanish.Voice
 
 /-!
 # Spanish verbs
@@ -10,9 +10,10 @@ Spanish verbs of change of state form their intransitive in one of two ways. Mos
 reflexive clitic, as *quebrar* 'crack' does in *el florero se quebró*; a small class takes none,
 as *mejorar* 'improve' does in *los sueldos mejoraron*. A few allow both: *hervir* 'boil' is
 usually bare and marginally takes the clitic, and the unaccusatives *caer* 'fall' and *morir*
-'die' occur with and without it. Each verb records the marking of its intransitive, and whether it
-alternates is read off its diatheses: an alternating verb has a transitive diathesis and an
-intransitive one with the patient as subject. The proto-role entailments of the subject are those
+'die' occur with and without it. Each intransitive diathesis records the verb's form in it, with
+the clitic where the verb takes it, and whether a verb alternates is read off its diatheses: an
+alternating verb has a transitive diathesis and an intransitive one with the patient as
+subject. The proto-role entailments of the subject are those
 Koontz-Garboden discusses for the causer, and the classification by marking follows Muñoz Pérez.
 
 The verbs with a lexical reciprocal entry beside their transitive use are those of Palmieri's
@@ -49,119 +50,101 @@ open ArgumentStructure
 
 /-! ### Change-of-state verbs -/
 
-/-- How the intransitive of a change-of-state verb is marked. -/
-inductive AnticausativeMarking where
-  /-- The intransitive takes the reflexive clitic, as *quebrarse*. -/
-  | marked
-  /-- The intransitive is bare, as *mejorar*. -/
-  | unmarked
-  /-- The intransitive occurs with and without the clitic, as *caer* and *caerse*. -/
-  | optional
-  deriving DecidableEq, Repr
-
-/-- A Spanish verb with the marking of its intransitive, `none` where it has none. -/
-structure SpanishVerbEntry extends Verb where
-  /-- The marking of the intransitive. -/
-  anticausativeMarking : Option AnticausativeMarking
-  deriving BEq
-
-/-- The verb alternates when it has a transitive causative use beside its intransitive. -/
-abbrev SpanishVerbEntry.Alternates (v : SpanishVerbEntry) : Prop :=
-  v.toVerb.Alternates Voice.anticausative
-
 /-- [koontz-garboden-2009]'s EFFECTOR, the subject of a verb whose causer need only cause the
 change, whether an agent, an instrument, a natural force or an event. -/
 def effectorSubject : EntailmentProfile := {.causation, .independentExistence}
 
 /-- *abrir* 'open', with a marked intransitive *abrirse*. Its causer may be an agent, an
 instrument or a natural force ([koontz-garboden-2009]). -/
-def abrir : SpanishVerbEntry :=
+def abrir : Verb :=
   { morphs := [.root "abrir"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
-      [some effectorSubject, none],
-    anticausativeMarking := some .marked }
+      [some effectorSubject, none] (forms := [none, some [.root "abrir", .encl "se"]]) }
 
 /-- *romper* 'break', with a marked intransitive *romperse*. Its causer may be an agent, an
 instrument, a natural force or an event ([koontz-garboden-2009]). -/
-def romper : SpanishVerbEntry :=
+def romper : Verb :=
   { morphs := [.root "romper"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
-      [some effectorSubject, none],
-    anticausativeMarking := some .marked }
+      [some effectorSubject, none] (forms := [none, some [.root "romper", .encl "se"]]) }
 
 /-- *hundir* 'sink', with a marked intransitive *hundirse*. Its causer is unrestricted
 ([koontz-garboden-2009]). -/
-def hundir : SpanishVerbEntry :=
+def hundir : Verb :=
   { morphs := [.root "hundir"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
-      [some effectorSubject, none],
-    anticausativeMarking := some .marked }
+      [some effectorSubject, none] (forms := [none, some [.root "hundir", .encl "se"]]) }
 
 /-- *caer* 'fall', an unaccusative that occurs with and without the clitic, *cayó* and *se cayó*
 ([munoz-perez-2026]). -/
-def caer : SpanishVerbEntry :=
-  { morphs := [.root "caer"], valency := .ofFrame ArgumentFrame.intransitive,
-    voiceType := some .nonThematic, anticausativeMarking := some .optional }
+def caer : Verb :=
+  { morphs := [.root "caer"],
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.intransitive]
+      (forms := [none, some [.root "caer", .encl "se"]]),
+    voiceType := some .nonThematic }
 
 /-- *morir* 'die', an unaccusative that occurs with and without the clitic, *murió* and
 *se murió* ([munoz-perez-2026]). -/
-def morir : SpanishVerbEntry :=
-  { morphs := [.root "morir"], valency := .ofFrame ArgumentFrame.intransitive,
-    voiceType := some .nonThematic, anticausativeMarking := some .optional }
+def morir : Verb :=
+  { morphs := [.root "morir"],
+    valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.intransitive]
+      (forms := [none, some [.root "morir", .encl "se"]]),
+    voiceType := some .nonThematic }
 
 /-- *cerrar* 'close', with a marked intransitive *cerrarse*. -/
-def cerrar : SpanishVerbEntry :=
+def cerrar : Verb :=
   { morphs := [.root "cerrar"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .marked }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
+      (forms := [none, some [.root "cerrar", .encl "se"]]) }
 
 /-- *quebrar* 'crack', with a marked intransitive, *el florero se quebró* and never
 *el florero quebró* ([munoz-perez-2026]). -/
-def quebrar : SpanishVerbEntry :=
+def quebrar : Verb :=
   { morphs := [.root "quebrar"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .marked }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
+      (forms := [none, some [.root "quebrar", .encl "se"]]) }
 
 /-- *hervir* 'boil', whose intransitive is usually bare, *el agua hirvió*, and marginally takes
 the clitic ([munoz-perez-2026]). -/
-def hervir : SpanishVerbEntry :=
+def hervir : Verb :=
   { morphs := [.root "hervir"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .optional }
+    valency := .of
+      [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1]),
+        (ArgumentFrame.intransitive, [1])]
+      (forms := [none, none, some [.root "hervir", .encl "se"]]) }
 
 /-- *olvidar* 'forget', whose intransitive *olvidarse* takes a dative experiencer,
 *se me olvidó*. -/
-def olvidar : SpanishVerbEntry :=
+def olvidar : Verb :=
   { morphs := [.root "olvidar"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .marked }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
+      (forms := [none, some [.root "olvidar", .encl "se"]]) }
 
 /-- *ocurrir* 'occur', whose marked form *ocurrirse* takes a dative experiencer,
 *se me ocurrió una idea*. -/
-def ocurrir : SpanishVerbEntry :=
-  { morphs := [.root "ocurrir"], valency := .ofFrame ArgumentFrame.intransitive,
-    anticausativeMarking := some .marked }
+def ocurrir : Verb :=
+  { morphs := [.root "ocurrir"], valency := .ofFrames [ArgumentFrame.intransitive]
+      (forms := [some [.root "ocurrir", .encl "se"]]) }
 
 /-- *mejorar* 'improve', with a bare intransitive, *los sueldos mejoraron* and never
 *los sueldos se mejoraron* ([munoz-perez-2026]). -/
-def mejorar : SpanishVerbEntry :=
+def mejorar : Verb :=
   { morphs := [.root "mejorar"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .unmarked }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])] }
 
 /-- *rasgar* 'tear', with a marked intransitive. Unlike English *tear* it requires a flimsy or
 insubstantial patient and a unidirectional, gash-like separation, and it is incompatible with
 careful, controlled action ([spalek-mcnally-2026] §3.2). -/
-def rasgar : SpanishVerbEntry :=
+def rasgar : Verb :=
   { morphs := [.root "rasgar"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .marked,
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
+      (forms := [none, some [.root "rasgar", .encl "se"]]),
     root := { content := {
       force := {.low, .moderate}
       forceDirection := {.unidirectional}
@@ -173,53 +156,61 @@ def rasgar : SpanishVerbEntry :=
 /-- *asesinar* 'assassinate', whose causer must be an agent, has no intransitive, since with
 the clitic it is only reflexive, *el senador se asesinó* 'the senator killed himself'
 ([koontz-garboden-2009] exx. 24–29). -/
-def asesinar : SpanishVerbEntry :=
+def asesinar : Verb :=
   { morphs := [.root "asesinar"],
-    valency := .ofFrame ArgumentFrame.np [some accomplishmentSubjectProfile, none],
-    anticausativeMarking := none }
+    valency := .ofFrame ArgumentFrame.np [some accomplishmentSubjectProfile, none] }
 
 /-- *cortar* 'cut', which requires an agent and has no intransitive in that sense
 ([koontz-garboden-2009]). In the sense 'snap' it has the marked intransitive of
 *se me cortó la correa* 'the strap snapped on me' ([munoz-perez-2026]), which the marking
 records; the frames are those of 'cut'. -/
-def cortar : SpanishVerbEntry :=
+def cortar : Verb :=
   { morphs := [.root "cortar"],
-    valency := .ofFrame ArgumentFrame.np [some accomplishmentSubjectProfile, none],
-    anticausativeMarking := some .marked }
+    valency := .ofFrame ArgumentFrame.np [some accomplishmentSubjectProfile, none] }
+
+/-- *cortar* in the sense 'snap', with the marked intransitive of *se me cortó la correa* 'the
+strap snapped on me' ([munoz-perez-2026]). -/
+def cortarInchoative : Verb :=
+  { morphs := [.root "cortar"], senseTag := .inchoative,
+    valency := .ofFrames [ArgumentFrame.intransitive]
+      (forms := [some [.root "cortar", .encl "se"]]) }
 
 /-- *ahogar* 'drown', with an EFFECTOR causer and typically an animate theme; *ahogarse* is its
 derived inchoative ([koontz-garboden-2009] exx. 50–52). -/
-def ahogar : SpanishVerbEntry :=
+def ahogar : Verb :=
   { morphs := [.root "ahogar"],
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
        (ArgumentFrame.intransitive, [1])]
-      [some effectorSubject, none],
-    anticausativeMarking := some .marked }
+      [some effectorSubject, none] (forms := [none, some [.root "ahogar", .encl "se"]]) }
 
 /-- *empeorar* 'worsen', an internally caused change of state with a bare intransitive, which
 rejects *por sí solo* 'by itself' ([koontz-garboden-2009] ex. 65a). -/
-def empeorar : SpanishVerbEntry :=
+def empeorar : Verb :=
   { morphs := [.root "empeorar"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .unmarked }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])] }
 
 /-- *quemar* 'burn', with a marked intransitive *quemarse*. -/
-def quemar : SpanishVerbEntry :=
+def quemar : Verb :=
   { morphs := [.root "quemar"],
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
-    anticausativeMarking := some .marked }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])]
+      (forms := [none, some [.root "quemar", .encl "se"]]) }
 
 /-- *crecer* 'grow', an internally caused change of state, which rejects *por sí solo* 'by
 itself' ([koontz-garboden-2009] ex. 65c). -/
-def crecer : SpanishVerbEntry :=
-  { morphs := [.root "crecer"], valency := .ofFrame ArgumentFrame.intransitive,
-    anticausativeMarking := some .unmarked }
+def crecer : Verb :=
+  { morphs := [.root "crecer"], valency := .ofFrame ArgumentFrame.intransitive }
 
 /-- The verbs of the fragment. -/
-def allVerbs : List SpanishVerbEntry :=
+def allVerbs : List Verb :=
   [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar,
-    asesinar, cortar, ahogar, empeorar, crecer, quemar]
+    asesinar, cortar, cortarInchoative, ahogar, empeorar, crecer, quemar]
+
+theorem romper_marks_anticausative : romper.Marks anticausative := by decide
+
+theorem mejorar_alternates_not_marks :
+    mejorar.Alternates Voice.anticausative ∧ ¬ mejorar.Marks anticausative := by
+  decide
 
 /-! ### Verbs of the dative survey
 

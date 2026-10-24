@@ -103,6 +103,9 @@ inductive SenseTag where
   | rogative
   /-- The causative use of an otherwise non-causative verb. -/
   | causative
+  /-- The inchoative use of an otherwise non-inchoative verb, as Spanish *cortarse* 'snap' beside
+  *cortar* 'cut'. -/
+  | inchoative
   /-- The instrument-specific sense. -/
   | instrumental
   /-- The occasion sense, with an agent-evocator subject ([solstad-bott-2024]). -/

@@ -18,6 +18,7 @@ construction. It also records its *pivot*, the syntactically privileged derived 
 * `Voice.Construction.Nucleativized`, `Denucleativized`, `fate`: comparing two constructions.
 * `Voice`, `Voice.of`: an initial and a derived diathesis, with a pivot and a marker.
 * `Voice.Relates`, `Verb.Alternates`: a voice relating two diatheses of a verb.
+* `Verb.formIn`, `Verb.Marks`: the verb's form in a diathesis, and a voice the verb's form marks.
 * `Voice.passive`, `antipassive`, `anticausative`, `causative`, `reflexive`, `applicative`,
   `patientVoice`, `obliqueVoice`, `leaveImplicit`: the voices.
 
@@ -600,6 +601,23 @@ instance (w : Verb) (v : Voice) : Decidable (w.Alternates v) :=
   decidable_of_iff (∃ c ∈ w.valency.diatheses, v.initial.toArgumentFrame ≤ c.toArgumentFrame ∧
       ∃ d ∈ w.valency.diatheses, v.Relates c d)
     ⟨fun ⟨c, hc, _, d, hd, h⟩ ↦ ⟨c, hc, d, hd, h⟩, fun ⟨c, hc, d, hd, h⟩ ↦ ⟨c, hc, h.1, d, hd, h⟩⟩
+
+/-- The verb's form in a diathesis, the citation form unless the diathesis has its own. -/
+def _root_.Verb.formIn (w : Verb) {n : ℕ} (d : Diathesis n) : List Morphology.Morph :=
+  d.form.getD w.morphs
+
+/-- The verb's form marks `v`: the voice relates two of its diatheses, and the derived one's form
+is the initial one's with the voice's marker added. -/
+def _root_.Verb.Marks (w : Verb) (v : Voice) : Prop :=
+  ∃ c ∈ w.valency.diatheses, ∃ d ∈ w.valency.diatheses, v.Relates c d ∧
+    (w.formIn c).Sublist (w.formIn d) ∧ (w.formIn d).Perm (w.formIn c ++ v.marker)
+
+instance (w : Verb) (v : Voice) : Decidable (w.Marks v) :=
+  inferInstanceAs (Decidable (∃ c ∈ w.valency.diatheses, ∃ d ∈ w.valency.diatheses, _ ∧ _ ∧ _))
+
+theorem _root_.Verb.Marks.alternates {w : Verb} {v : Voice} (h : w.Marks v) : w.Alternates v :=
+  let ⟨c, hc, d, hd, hr, _⟩ := h
+  ⟨c, hc, d, hd, hr⟩
 
 /-! ### Alignment -/
 
