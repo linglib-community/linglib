@@ -14,19 +14,18 @@ that the compound becomes non-vacuous.
 
 ## Main definitions
 
-* `Semantics.Property.IsNonVacuous P w d`: `P` has a positive and a negative extension within `d` at
-  `w`.
-* `Semantics.Property.ShiftsHead adj N w`: `adj N` is vacuous within `N` and non-vacuous within `N`
-  widened by the adjective's value, so Partee's rule shifts the head.
+* `IsNonVacuous P w d`: `P` has a positive and a negative extension within `d` at `w`.
+* `Modifier.ShiftsHead adj N w`: `adj N` is vacuous within `N` and non-vacuous within `N` widened
+  by the adjective's value, so Partee's rule shifts the head.
 
 ## Main statements
 
-* `Semantics.Property.not_isNonVacuous_of_isPrivative`, `not_isNonVacuous_self`: privative and
-  tautologous modifiers are vacuous within their head.
-* `Semantics.Property.shiftsHead_iff_of_isPrivative`: a privative adjective shifts its head exactly
-  when there are both things in its value and things in the noun.
-* `Semantics.Property.not_shiftsHead_of_isNonVacuous`: a compound already non-vacuous within its
-  head is not shifted.
+* `Modifier.IsPrivative.not_isNonVacuous`, `not_isNonVacuous_self`: privative and tautologous
+  modifiers are vacuous within their head.
+* `Modifier.IsPrivative.shiftsHead_iff`: a privative adjective shifts its head exactly when there
+  are both things in its value and things in the noun.
+* `Modifier.not_shiftsHead_of_isNonVacuous`: a compound already non-vacuous within its head is not
+  shifted.
 
 ## Implementation notes
 
@@ -44,48 +43,45 @@ coercion (`Studies/Pustejovsky1995.lean`) and the type shifts of noun phrases
 
 @[expose] public section
 
-namespace Semantics.Property
-
-open Modifier
-
 variable {W E : Type*}
 
 /-- `P` is non-vacuous within `d` at `w` when both its positive and its negative extension at
 `w` meet `d`. -/
-def IsNonVacuous (P : Property W E) (w : W) (d : E → Prop) : Prop :=
+def IsNonVacuous (P : W → E → Prop) (w : W) (d : E → Prop) : Prop :=
   (∃ x, d x ∧ P w x) ∧ (∃ x, d x ∧ ¬ P w x)
 
-theorem IsNonVacuous.mono {P : Property W E} {w : W} {d d' : E → Prop}
+theorem IsNonVacuous.mono {P : W → E → Prop} {w : W} {d d' : E → Prop}
     (h : IsNonVacuous P w d) (hdd' : d ≤ d') : IsNonVacuous P w d' :=
   ⟨h.1.imp fun x hx ↦ ⟨hdd' x hx.1, hx.2⟩, h.2.imp fun x hx ↦ ⟨hdd' x hx.1, hx.2⟩⟩
 
-theorem isNonVacuous_of_disjoint {P Q : Property W E} {w : W} {d : E → Prop} (h : Disjoint P Q)
+theorem isNonVacuous_of_disjoint {P Q : W → E → Prop} {w : W} {d : E → Prop} (h : Disjoint P Q)
     (hP : ∃ x, d x ∧ P w x) (hQ : ∃ x, d x ∧ Q w x) : IsNonVacuous P w d :=
   ⟨hP, hQ.imp fun _ hx ↦ ⟨hx.1, fun hPx ↦ h.le_bot w _ ⟨hPx, hx.2⟩⟩⟩
 
-/-- A privative modifier is never non-vacuous within the extension of its noun, the local domain
-that head primacy assigns. -/
-theorem not_isNonVacuous_of_isPrivative {adj : Modifier (Property W E)}
-    (hp : Modifier.IsPrivative adj) (N : Property W E) (w : W) :
-    ¬ IsNonVacuous (adj N) w (N w) :=
-  fun h ↦ h.1.elim fun x hx ↦ isPrivative_iff.1 hp N w x hx.2 hx.1
-
 /-- No predicate is non-vacuous within its own extension, so a tautologous modifier such as
 *real*, whose value is the noun, is vacuous within its head. -/
-theorem not_isNonVacuous_self (P : Property W E) (w : W) : ¬ IsNonVacuous P w (P w) :=
+theorem not_isNonVacuous_self (P : W → E → Prop) (w : W) : ¬ IsNonVacuous P w (P w) :=
   fun h ↦ h.2.elim fun _ hx ↦ hx.2 hx.1
 
-theorem isNonVacuous_sup_self_iff {P : Property W E} {w : W} {d : E → Prop} :
+theorem isNonVacuous_sup_self_iff {P : W → E → Prop} {w : W} {d : E → Prop} :
     IsNonVacuous P w (d ⊔ P w) ↔ (∃ x, P w x) ∧ ∃ x, d x ∧ ¬ P w x :=
   ⟨fun ⟨⟨x, _, hx⟩, ⟨y, hy, hny⟩⟩ ↦ ⟨⟨x, hx⟩, y, hy.resolve_right hny, hny⟩,
     fun ⟨⟨x, hx⟩, ⟨y, hy, hny⟩⟩ ↦ ⟨⟨x, Or.inr hx, hx⟩, ⟨y, Or.inl hy, hny⟩⟩⟩
 
+namespace Modifier
+
+/-- A privative modifier is never non-vacuous within the extension of its noun, the local domain
+that head primacy assigns. -/
+theorem IsPrivative.not_isNonVacuous {adj : Modifier (W → E → Prop)} (hp : IsPrivative adj)
+    (N : W → E → Prop) (w : W) : ¬ IsNonVacuous (adj N) w (N w) :=
+  fun h ↦ h.1.elim fun x hx ↦ isPrivative_iff_forall.1 hp N w x hx.2 hx.1
+
 /-- `adj` shifts the head `N` at `w` when `adj N` is vacuous within `N`, the local domain that head
 primacy assigns, and non-vacuous within `N` widened to include the adjective's value. -/
-def ShiftsHead (adj : Modifier (Property W E)) (N : Property W E) (w : W) : Prop :=
+def ShiftsHead (adj : Modifier (W → E → Prop)) (N : W → E → Prop) (w : W) : Prop :=
   ¬ IsNonVacuous (adj N) w (N w) ∧ IsNonVacuous (adj N) w (N w ⊔ adj N w)
 
-variable {adj : Modifier (Property W E)} {N : Property W E} {w : W}
+variable {adj : Modifier (W → E → Prop)} {N : W → E → Prop} {w : W}
 
 /-- A compound already non-vacuous within its head does not shift the head. -/
 theorem not_shiftsHead_of_isNonVacuous (h : IsNonVacuous (adj N) w (N w)) :
@@ -94,11 +90,10 @@ theorem not_shiftsHead_of_isNonVacuous (h : IsNonVacuous (adj N) w (N w)) :
 
 /-- A privative adjective shifts its head exactly when there are things in its value and things
 in the noun, so *fake fur* widens *fur* just when there are fake furs and real furs. -/
-theorem shiftsHead_iff_of_isPrivative (hp : Modifier.IsPrivative adj) :
+theorem IsPrivative.shiftsHead_iff (hp : IsPrivative adj) :
     ShiftsHead adj N w ↔ (∃ x, adj N w x) ∧ ∃ x, N w x := by
-  rw [ShiftsHead, isNonVacuous_sup_self_iff,
-    and_iff_right (not_isNonVacuous_of_isPrivative hp N w)]
+  rw [ShiftsHead, isNonVacuous_sup_self_iff, and_iff_right (hp.not_isNonVacuous N w)]
   exact and_congr_right fun _ ↦ exists_congr fun x ↦
-    ⟨And.left, fun h ↦ ⟨h, fun h' ↦ isPrivative_iff.1 hp N w x h' h⟩⟩
+    ⟨And.left, fun h ↦ ⟨h, fun h' ↦ isPrivative_iff_forall.1 hp N w x h' h⟩⟩
 
-end Semantics.Property
+end Modifier

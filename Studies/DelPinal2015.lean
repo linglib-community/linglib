@@ -62,8 +62,7 @@ since the E-structure of *fake plastic gun* denies the compound *plastic gun*.
 
 namespace DelPinal2015
 
-open Semantics (Property)
-open Semantics.Property Modifier
+open Modifier
 open Pustejovsky1995 (QualeRole)
 
 variable {W E : Type*}
@@ -75,14 +74,14 @@ which assigns a property to each quale. -/
 @[ext]
 structure DualContent (W E : Type*) where
   /-- The E-structure. -/
-  extension : Property W E
+  extension : W → E → Prop
   /-- The C-structure, the property of each quale. -/
-  quale : QualeRole → Property W E
+  quale : QualeRole → W → E → Prop
 
 namespace DualContent
 
 /-- A dual content as the ordered pair of its E-structure and its C-structure. -/
-def toProd (N : DualContent W E) : Property W E × (QualeRole → Property W E) :=
+def toProd (N : DualContent W E) : (W → E → Prop) × (QualeRole → W → E → Prop) :=
   (N.extension, N.quale)
 
 theorem toProd_injective : Function.Injective (toProd (W := W) (E := E)) :=
@@ -107,12 +106,12 @@ instance : Lattice (DualContent W E) :=
   rfl
 
 /-- The C-structure read as one predicate, the conjunction of the qualia (§7.4). -/
-def cStructure (N : DualContent W E) : Property W E :=
+def cStructure (N : DualContent W E) : W → E → Prop :=
   ⨅ r, N.quale r
 
 /-- The restructuring operators `C`, `F`, `T` and `A` of §3 restrict the extension to one quale,
 as `A(lion)` holds of the lions born as lions. -/
-def withQuale (r : QualeRole) (N : DualContent W E) : Property W E :=
+def withQuale (r : QualeRole) (N : DualContent W E) : W → E → Prop :=
   N.extension ⊓ N.quale r
 
 end DualContent
@@ -125,11 +124,11 @@ section Entries
 
 /-! `made P` is made with the goal that `P` hold, `∃e[making(e) ∧ goal(e, P(x))]`. -/
 
-variable (made : Property W E → Property W E)
+variable (made : (W → E → Prop) → W → E → Prop)
 
 /-- The E-structure of a privative holds of what is not an N, lacks the N's `r` quale, and was
 made with the goal `g`. -/
-def privativeE (r : QualeRole) (g : Property W E) (N : DualContent W E) : Property W E :=
+def privativeE (r : QualeRole) (g : W → E → Prop) (N : DualContent W E) : W → E → Prop :=
   N.extensionᶜ ⊓ (N.quale r)ᶜ ⊓ made g
 
 /-- *fake* (16) maps an N to what is not an N, lacks an N's origin, and was made to look like an
@@ -144,20 +143,20 @@ def fake : Modifier (DualContent W E) := fun N ↦
 
 /-- The E-structure of *counterfeit* (11) is that of *fake* with the goal of looking and
 functioning like an N. -/
-def counterfeitE (N : DualContent W E) : Property W E :=
+def counterfeitE (N : DualContent W E) : W → E → Prop :=
   privativeE made .agentive (N.quale .formal ⊓ N.quale .telic) N
 
 /-- The E-structure of *artificial* (12) is that of *fake* with the goal of functioning like an
 N. -/
-def artificialE (N : DualContent W E) : Property W E :=
+def artificialE (N : DualContent W E) : W → E → Prop :=
   privativeE made .agentive (N.quale .telic) N
 
 /-- The E-structure of *fake* modulated for substance terms (15) holds of what is not an N, lacks
 an N's constitution, and was made to look like an N. -/
-def fakeME (N : DualContent W E) : Property W E :=
+def fakeME (N : DualContent W E) : W → E → Prop :=
   privativeE made .constitutive (N.quale .formal) N
 
-variable {made} {r : QualeRole} {g : Property W E}
+variable {made} {r : QualeRole} {g : W → E → Prop}
 
 /-- A privative N is not an N. -/
 theorem disjoint_privativeE (N : DualContent W E) :
@@ -177,7 +176,7 @@ theorem fake_not_made_for_function {N : DualContent W E}
 end Entries
 
 /-- The E-structure of *typical* (13) holds of an N with every quale of an N. -/
-def typicalE (N : DualContent W E) : Property W E :=
+def typicalE (N : DualContent W E) : W → E → Prop :=
   N.extension ⊓ N.cStructure
 
 theorem typicalE_le (N : DualContent W E) : typicalE N ≤ N.extension :=
@@ -201,7 +200,7 @@ theorem typicalE_eq_cStructure {N : DualContent W E} (h : N.cStructure ≤ N.ext
 
 section Contrasts
 
-variable (made : Property W E → Property W E)
+variable (made : (W → E → Prop) → W → E → Prop)
 
 /-- A typical fake N looks like an N and cannot serve an N's function (18), as the C-structure
 that (16) gives *fake N* says. -/
@@ -212,21 +211,21 @@ theorem typical_fake_formal_not_telic (N : DualContent W E) :
 /-- A fake N need do neither (10), since a badly made fake need not look like an N and may still
 serve an N's function. -/
 theorem fake_not_formal_not_telic :
-    ∃ (made : Property Unit Bool → Property Unit Bool) (N : DualContent Unit Bool) (x : Bool),
+    ∃ (made : (Unit → Bool → Prop) → Unit → Bool → Prop) (N : DualContent Unit Bool) (x : Bool),
       (fake made N).extension () x ∧ ¬ N.quale .formal () x ∧ N.quale .telic () x :=
   ⟨fun _ ↦ ⊤, ⟨fun _ x ↦ x, fun | .telic => ⊤ | _ => ⊥⟩, false,
     by simp [fake, privativeE], by simp, trivial⟩
 
 /-- A fake N need not be made to function like an N, which a counterfeit N is (footnote 14). -/
 theorem fake_not_counterfeit :
-    ∃ (made : Property Unit Bool → Property Unit Bool) (N : DualContent Unit Bool) (x : Bool),
+    ∃ (made : (Unit → Bool → Prop) → Unit → Bool → Prop) (N : DualContent Unit Bool) (x : Bool),
       (fake made N).extension () x ∧ ¬ counterfeitE made N () x :=
   ⟨id, ⟨fun _ x ↦ x, fun | .formal => ⊤ | _ => ⊥⟩, false,
     by simp [fake, privativeE], by simp [counterfeitE, privativeE]⟩
 
 /-- An artificial N need not be made to look like an N, which fakes and counterfeits are (12). -/
 theorem artificial_not_fake_not_counterfeit :
-    ∃ (made : Property Unit Bool → Property Unit Bool) (N : DualContent Unit Bool) (x : Bool),
+    ∃ (made : (Unit → Bool → Prop) → Unit → Bool → Prop) (N : DualContent Unit Bool) (x : Bool),
       artificialE made N () x ∧ ¬ (fake made N).extension () x ∧ ¬ counterfeitE made N () x :=
   ⟨id, ⟨fun _ x ↦ x, fun | .telic => ⊤ | _ => ⊥⟩, false,
     by simp [artificialE, privativeE], by simp [fake, privativeE],
@@ -234,7 +233,7 @@ theorem artificial_not_fake_not_counterfeit :
 
 /-- A fake N may have an N's constitution, as a fake gun may be made of gun parts (footnote 17). -/
 theorem fake_constitutive :
-    ∃ (made : Property Unit Bool → Property Unit Bool) (N : DualContent Unit Bool) (x : Bool),
+    ∃ (made : (Unit → Bool → Prop) → Unit → Bool → Prop) (N : DualContent Unit Bool) (x : Bool),
       (fake made N).extension () x ∧ N.quale .constitutive () x :=
   ⟨fun _ ↦ ⊤, ⟨fun _ x ↦ x, fun | .constitutive => ⊤ | _ => ⊥⟩, false,
     by simp [fake, privativeE], trivial⟩
@@ -269,17 +268,17 @@ theorem fake_brand_made_by_brand_reading {B N : DualContent W E} {w : W} {x : E}
 
 /-! ### Against shifting heads -/
 
-theorem fake_isPrivative {lex : Property W E → DualContent W E}
+theorem fake_isPrivative {lex : (W → E → Prop) → DualContent W E}
     (hlex : Function.LeftInverse DualContent.extension lex) :
     IsPrivative (DualContent.extension ∘ fake made ∘ lex) :=
   fun P ↦ (disjoint_privativeE (lex P)).mono_right (hlex P).ge
 
 /-- Hence the literal *fake N* is vacuous within its head, the local domain of head primacy,
 which is what triggers the head shift of [partee-2010]. -/
-theorem fake_vacuous_in_head {lex : Property W E → DualContent W E}
-    (hlex : Function.LeftInverse DualContent.extension lex) (P : Property W E) (w : W) :
+theorem fake_vacuous_in_head {lex : (W → E → Prop) → DualContent W E}
+    (hlex : Function.LeftInverse DualContent.extension lex) (P : W → E → Prop) (w : W) :
     ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P) w (P w) :=
-  not_isNonVacuous_of_isPrivative (fake_isPrivative hlex) P w
+  Modifier.IsPrivative.not_isNonVacuous (fake_isPrivative hlex) P w
 
 /-- In any domain with a fake N and an N, literal *fake N* is non-vacuous, so no shift is needed
 (§5). -/
@@ -290,10 +289,10 @@ theorem fake_isNonVacuous {N : DualContent W E} {w : W} {d : E → Prop}
 
 /-- If attributive *fake* is the predicate (33), a world with fake and non-fake guns blocks head
 shifting, so every fake gun would wrongly be a gun (§6). -/
-theorem shifting_heads_evil_park_owner {fake gun : Property W E} {w : W}
+theorem shifting_heads_evil_park_owner {fake gun : W → E → Prop} {w : W}
     (hfake : ∃ x, gun w x ∧ fake w x) (hreal : ∃ x, gun w x ∧ ¬ fake w x) :
-    ¬ ShiftsHead (intersective fake) gun w ∧ intersective fake gun ≤ gun :=
-  ⟨not_shiftsHead_of_isNonVacuous
+    ¬ Modifier.ShiftsHead (intersective fake) gun w ∧ intersective fake gun ≤ gun :=
+  ⟨Modifier.not_shiftsHead_of_isNonVacuous
       ⟨hfake.imp fun _ h ↦ ⟨h.1, h.2, h.1⟩, hreal.imp fun _ h ↦ ⟨h.1, fun h' ↦ h.2 h'.1⟩⟩,
     fun _ _ h ↦ h.2⟩
 

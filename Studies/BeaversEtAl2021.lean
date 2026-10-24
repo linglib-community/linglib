@@ -45,7 +45,7 @@ only when it spells out the marked one belongs to one of the three attested type
 
 namespace BeaversEtAl2021
 
-open Semantics Presupposition
+open Presupposition ArgumentStructure
 open scoped SetRel ModalLogic
 
 /-! ### State predicates that entail change -/

@@ -53,7 +53,7 @@ clash with the present is the ⌈then⌉-present puzzle.
 
 namespace Tense
 
-open Semantics
+open scoped Denotes
 open scoped SetRel
 
 /-- A temporal deictic adverb is a pro-form for a time located relative to an anchor, such as

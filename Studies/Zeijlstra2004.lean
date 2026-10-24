@@ -55,7 +55,7 @@ reading as well.
 namespace Zeijlstra2004
 
 open Quantifier Quantifier.GQ Quantifier.Polyadic
-open scoped Semantics
+open scoped Denotes
 
 universe u
 

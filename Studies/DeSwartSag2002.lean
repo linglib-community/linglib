@@ -44,7 +44,7 @@ resumption, so *pas* with an n-word reads only as a double negation.
 namespace DeSwartSag2002
 
 open Quantifier Quantifier.GQ Quantifier.Polyadic NaturalLogic
-open scoped Semantics
+open scoped Denotes
 
 universe u
 

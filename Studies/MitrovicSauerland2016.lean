@@ -63,7 +63,8 @@ have the additive and quantificational uses of Japanese *mo*.
 
 namespace MitrovicSauerland2016
 
-open Quantifier Semantics
+open Quantifier
+open scoped Denotes
 
 /-! ### The two heads, (12) -/
 

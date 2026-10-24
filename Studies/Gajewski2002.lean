@@ -97,7 +97,7 @@ namespace Gajewski2002
 
 open Montague Quantifier Quantifier.GQ Quantifier.Exceptive
 open English.Determiners (QuantityWord)
-open scoped Semantics
+open scoped Denotes
 
 variable {E : Type}
 

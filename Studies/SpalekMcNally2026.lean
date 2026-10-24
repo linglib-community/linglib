@@ -51,7 +51,7 @@ for the foil, robustness and force for the silence, force for the rough.
 
 namespace SpalekMcNally2026
 
-open Semantics.Root Semantics.Root.Content English Spanish.Verbs English.Verbs
+open ArgumentStructure.Root ArgumentStructure.Root.Content English Spanish.Verbs English.Verbs
 
 /-! ### The paper's situations -/
 

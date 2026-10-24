@@ -50,7 +50,8 @@ with equality when time is dense and has no first or last moment.
 
 namespace Tense
 
-open Semantics SetRel
+open SetRel
+open scoped Denotes
 
 /-- A tense denotes the cell of orderings in which the reference time may stand to the perspective
 time, before it for the past, at it for the present and after it for the future. -/

@@ -70,7 +70,7 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
 
 namespace Egressy2026
 
-open Semantics
+open scoped Denotes
 
 open Minimalist Tense Hungarian.Verbs Egressy2026.Examples
 

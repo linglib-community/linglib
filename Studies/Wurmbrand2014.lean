@@ -61,7 +61,7 @@ the row's sentence (`Minimalist.SpellsOut`) and whose tense spine is that recogn
 
 namespace Wurmbrand2014
 
-open Semantics
+open scoped Denotes
 
 /-- The three classes of infinitival complement by tense behaviour. Future irrealis infinitives,
 *decide*, *want* and *plan*, are tenseless with *woll* and future-oriented; propositional

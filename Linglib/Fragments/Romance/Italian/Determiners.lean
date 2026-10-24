@@ -119,7 +119,7 @@ universe u
 contextual like that of English *many*. The n-word *nessuno* reads as `no`, a negative
 quantifier ([de-swart-sag-2002]), or as `Quantifier.GQ.some`, an indefinite whose negation the
 clause supplies ([zeijlstra-2004]). -/
-noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .ogni | .tutti => {Quantifier.GQ.Family.every}
     | .qualche | .alcuni => {Quantifier.GQ.Family.some}

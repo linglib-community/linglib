@@ -54,9 +54,10 @@ choices of speakers and listeners by their Bayes factors.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA Real Semantics
+open MeasureTheory ProbabilityTheory RSA Real
+open scoped Denotes
 open FrankGoodman2012 (Attribute Colour Shape Word)
-open scoped ENNReal Semantics.Superscript
+open scoped ENNReal Denotes.Superscript
 
 namespace QingFranke2015
 

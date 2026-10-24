@@ -51,7 +51,8 @@ determines its alternatives, the classes of its historical equivalence.
 
 @[expose] public section
 
-open Set Semantics Kaplan
+open Set Kaplan
+open scoped Denotes
 open scoped SetRel
 open scoped ModalLogic
 

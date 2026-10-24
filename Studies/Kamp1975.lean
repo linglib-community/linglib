@@ -54,14 +54,13 @@ two agree. Before this, Kamp argues that no many-valued logic handles borderline
 
 namespace Kamp1975
 
-open Semantics (Property)
-open Semantics.Property Modifier
+open Modifier Modifier
 
 /-! ### Bridge to single-world predicates
 
 The classification (`Modifier.IsIntersective`, `.IsSubsective`, …) is
 one order-theoretic definition instantiated at two carriers: the
-intensional `Property W E = W → E → Prop` and the single-world
+intensional `W → E → Prop = W → E → Prop` and the single-world
 `E → Prop`. The bridge theorems below show that fixing a world sends
 the first instance to the second. -/
 
@@ -71,7 +70,7 @@ variable {W E : Type*}
 
 /-- At a fixed world an intersective modifier of intensional properties is an intersective
 modifier of predicates, `N ↦ adj (fun _ ↦ N) w`. -/
-theorem intersective_at_world {adj : Modifier (Property W E)}
+theorem intersective_at_world {adj : Modifier (W → E → Prop)}
     (h : IsIntersective adj) (w : W) :
     IsIntersective (fun N : E → Prop ↦ adj (fun _ ↦ N) w) := by
   obtain ⟨Q, hQ⟩ := h
@@ -79,7 +78,7 @@ theorem intersective_at_world {adj : Modifier (Property W E)}
 
 /-- At a fixed world a subsective modifier of intensional properties is a subsective modifier
 of predicates. -/
-theorem subsective_at_world {adj : Modifier (Property W E)}
+theorem subsective_at_world {adj : Modifier (W → E → Prop)}
     (h : IsSubsective adj) (w : W) :
     IsSubsective (fun N : E → Prop ↦ adj (fun _ ↦ N) w) :=
   fun N ↦ h (fun _ ↦ N) w
@@ -242,31 +241,31 @@ inductive E3 | a | b | c
 
 /-- *gray* is predicative, Kamp's definition (4), since it conjoins a fixed property with the
 noun, so *gray cat* entails both *gray* and *cat*. -/
-def grayAdj : Modifier (Property W2 E3) := fun N w x ↦
+def grayAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
   (match x with | .a => True | _ => False) ∧ N w x
 
 theorem gray_intersective : IsIntersective grayAdj :=
-  isIntersective_iff.mpr
+  Modifier.isIntersective_iff_exists_forall.mpr
     ⟨fun _ x ↦ match x with | .a => True | _ => False,
      fun N w x ↦ by cases x <;> simp [grayAdj]⟩
 
 /-- *gray* is therefore also extensional and subsective. -/
 example : ModalLogic.IsExtensional grayAdj :=
-  isExtensional_of_isIntersective gray_intersective
+  Modifier.IsIntersective.isExtensional gray_intersective
 example : IsSubsective grayAdj := gray_intersective.isSubsective
 
 /-- *fake* is privative, Kamp's definition (5), so *fake gun* entails *not a gun*. Kamp doubts
 that any English adjective is privative "in all of its possible uses". -/
-def fakeAdj : Modifier (Property W2 E3) := fun N w x ↦
+def fakeAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
   (match x with | .b => True | _ => False) ∧ ¬ N w x
 
 theorem fake_privative : IsPrivative fakeAdj :=
-  isPrivative_iff.mpr fun _ _ _ h ↦ h.2
+  Modifier.isPrivative_iff_forall.mpr fun _ _ _ h ↦ h.2
 
 /-- *skillful* is affirmative, Kamp's definition (6), but not extensional. A skillful surgeon
 is a surgeon, yet skill depends on the noun's intension and not just its current extension, as
 in the case of cobblers and darts players that Kamp credits to Lewis. -/
-def skillfulAdj : Modifier (Property W2 E3) := fun N w x ↦
+def skillfulAdj : Modifier (W2 → E3 → Prop) := fun N w x ↦
   N w x ∧ match x with
     | .a => N .w₁ .a  -- a's skill assessment depends on N's intension
     | _  => False
@@ -276,8 +275,8 @@ theorem skillful_subsective : IsSubsective skillfulAdj :=
 
 theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
   intro hext
-  let N₁ : Property W2 E3 := fun _ _ ↦ True
-  let N₂ : Property W2 E3 := fun w x ↦ match w, x with
+  let N₁ : W2 → E3 → Prop := fun _ _ ↦ True
+  let N₂ : W2 → E3 → Prop := fun w x ↦ match w, x with
     | .w₁, .a => False
     | _, _    => True
   have hagree : N₁ .w₂ = N₂ .w₂ := by
@@ -288,7 +287,7 @@ theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
 
 /-- *alleged* satisfies no meaning postulate, Kamp's opening example (1) being that *every
 alleged thief is a thief* is no logical truth. -/
-def allegedAdj : Modifier (Property W2 E3) := fun _N _ x ↦
+def allegedAdj : Modifier (W2 → E3 → Prop) := fun _N _ x ↦
   match x with | .a => True | _ => False
 
 theorem alleged_extensional : ModalLogic.IsExtensional allegedAdj :=
@@ -301,7 +300,7 @@ theorem alleged_not_subsective : ¬ IsSubsective allegedAdj := by
 
 theorem alleged_not_privative : ¬ IsPrivative allegedAdj := by
   intro h
-  exact isPrivative_iff.mp h (fun _ _ ↦ True) .w₁ .a trivial trivial
+  exact Modifier.isPrivative_iff_forall.mp h (fun _ _ ↦ True) .w₁ .a trivial trivial
 
 end Witnesses
 

@@ -57,7 +57,7 @@ open PhraseStructure.Tree
 open Quantifier Quantifier.GQ
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
 open English.Determiners (QuantityWord)
-open scoped Semantics
+open scoped Denotes
 
 /-! ### Model and lexicon
 

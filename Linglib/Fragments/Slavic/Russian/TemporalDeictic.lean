@@ -19,7 +19,7 @@ Russian locates a time relative to the deictic centre with the adverbs *togda* '
 
 namespace Russian.TemporalDeictic
 
-open Semantics
+open scoped Denotes
 
 open Tense
 

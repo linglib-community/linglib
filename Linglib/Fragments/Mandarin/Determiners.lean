@@ -157,7 +157,7 @@ universe u
 *dàbùfèn* as `most`, and *měi*, *suǒyǒu* and *quánbù* as `every`; *hěnduō* has no reading,
 its standard being a value judgment left to context ([kuo-yu-2012]). Speakers judging
 *dàbùfèn* accept its majority reading far more often than a relative one ([wang-2012]). -/
-noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .yixie => {Quantifier.GQ.Family.some}
     | .meiyou => {Quantifier.GQ.Family.no}

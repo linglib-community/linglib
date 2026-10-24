@@ -22,8 +22,6 @@ properties verbs and its human propensities nouns.
 
 @[expose] public section
 
-namespace Semantics
-
 /-- [dixon-1982]'s seven semantic types of property concept, with his English examples (p. 16).
 He sets aside position (*high*, *low*, *near*, *far*), which most languages express by adverbs
 (fn. 11). -/
@@ -45,5 +43,3 @@ inductive PropertyConcept.Class where
   /-- *fast*, *quick*, *slow*. -/
   | speed
   deriving DecidableEq, Fintype, Repr
-
-end Semantics

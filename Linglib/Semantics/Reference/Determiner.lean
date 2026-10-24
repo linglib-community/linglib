@@ -64,7 +64,8 @@ modeled. `Quantifier`, a generalized quantifier rather than an individual denota
 
 @[expose] public section
 
-open Semantics Kaplan DefiniteDescription
+open Kaplan DefiniteDescription
+open scoped Denotes
 open scoped SetRel
 
 variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E → W → E)

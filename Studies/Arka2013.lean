@@ -49,7 +49,6 @@ structures are equational.
 
 namespace Arka2013
 
-open Semantics
 
 open Tense Indonesian Indonesian.Aspect
 

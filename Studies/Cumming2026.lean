@@ -59,7 +59,7 @@ events exempt.
 
 namespace Cumming2026
 
-open Semantics
+open scoped Denotes
 
 open Tense Tense.EvidentialFrame
 

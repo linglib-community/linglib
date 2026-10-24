@@ -32,7 +32,7 @@ it means, so it is not part of `Root`. Participant entailments are the separate 
 
 @[expose] public section
 
-namespace Semantics
+namespace ArgumentStructure
 
 /-- The meaning of a verbal root, its kind signature and its within-class content. -/
 structure Root where
@@ -54,4 +54,4 @@ inductive Root.Position where
   | adjoined
   deriving DecidableEq, Fintype, Repr
 
-end Semantics
+end ArgumentStructure

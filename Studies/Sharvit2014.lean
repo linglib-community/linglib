@@ -72,7 +72,8 @@ a table of permissible languages, and three predictions.
 
 namespace Sharvit2014
 
-open Semantics ModalLogic Tense Montague
+open ModalLogic Tense Montague
+open scoped Denotes
 open Sharvit2003 (Embedded)
 open scoped SetRel
 

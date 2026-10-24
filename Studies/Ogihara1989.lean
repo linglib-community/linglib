@@ -50,7 +50,8 @@ the stove is stronger.
 
 namespace Ogihara1989
 
-open Semantics Montague ModalLogic Tense Partee1973
+open Montague ModalLogic Tense Partee1973
+open scoped Denotes
 open scoped SetRel
 
 variable {T : Type*} [LinearOrder T] {P : NonemptyInterval T → Prop} {K σ : NonemptyInterval T}

@@ -65,7 +65,8 @@ to the study of that paper.
 
 namespace English.NumeralModifiers
 
-open Degree Numerals Semantics
+open Degree Numerals
+open scoped Denotes
 
 /-! ### Bounds and exactifiers -/
 

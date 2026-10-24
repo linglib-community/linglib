@@ -42,7 +42,7 @@ indefinite of `Fragments/Japanese/PolarityItems.lean`.
 namespace Japanese.Determiners
 
 open Quantifier
-open scoped Semantics
+open scoped Denotes
 
 universe u
 
@@ -82,7 +82,7 @@ def toQuantifier (w : QuantityWord) : Quantifier := { form := w.form }
 def toList : List QuantityWord := [.subete, .hotondo, .ryoho]
 
 /-- *Subete* reads as `every`, *hotondo* as `most` and *ryōhō* as `both`. -/
-noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .subete => {Quantifier.GQ.Family.every}
     | .hotondo => {Quantifier.GQ.Family.most}

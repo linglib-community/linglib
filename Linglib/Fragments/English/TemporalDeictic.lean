@@ -19,7 +19,7 @@ janitor turned off the lights. The room was empty then.* The description follows
 
 namespace English.TemporalDeictic
 
-open Semantics
+open scoped Denotes
 
 open Tense
 

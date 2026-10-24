@@ -47,9 +47,10 @@ listener then has a single favourite and reducible when it only excludes a compe
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Semantics Filter
+open MeasureTheory ProbabilityTheory Filter
+open scoped Denotes
 open FrankGoodman2012 (Attribute Colour Word speaker listener)
-open scoped ENNReal Topology Semantics.Superscript
+open scoped ENNReal Topology Denotes.Superscript
 
 namespace SikosEtAl2021
 

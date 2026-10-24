@@ -18,7 +18,7 @@ then', not *tooji ai-mashou*. The description and examples follow [tsilia-zhao-2
 
 namespace Japanese.TemporalDeictic
 
-open Semantics
+open scoped Denotes
 
 open Tense
 

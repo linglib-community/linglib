@@ -122,9 +122,9 @@ theorem v_allosemes_licensed :
     licensed Verbalizer.vocabulary (vContext false) = [.zero] := ⟨rfl, rfl⟩
 
 open Morphology.Exponence in
-theorem ofKinds_is_selectBy_winner (s : Semantics.Root.Kinds) :
+theorem ofKinds_is_selectBy_winner (s : ArgumentStructure.Root.Kinds) :
     (winner? Verbalizer.vocabulary
-        (vContext (decide (.result ∈ Semantics.Root.Kinds.close s)))).map (·.exponent) =
+        (vContext (decide (.result ∈ ArgumentStructure.Root.Kinds.close s)))).map (·.exponent) =
       some (Verbalizer.Alloseme.ofKinds s) := by
   unfold Verbalizer.Alloseme.ofKinds; split_ifs with h <;> simp only [h, decide_true,
     decide_false] <;> rfl

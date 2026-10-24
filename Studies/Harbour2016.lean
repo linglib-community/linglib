@@ -407,7 +407,6 @@ theorem preimage_participants_this {W E P T : Type*} [PartialOrder E]
 
 namespace SpatialModel
 
-open Semantics
 open scoped SetRel
 
 /-! A finite model of (16): the referents are the sets of two individuals under part-of, the

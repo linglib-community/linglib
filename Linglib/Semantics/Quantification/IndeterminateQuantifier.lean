@@ -45,7 +45,7 @@ def reading : GQ.Family.{u} :=
   fun _ _ R S ↦ q.particle.denote (S '' {x | R x})
 
 /-- An indeterminate quantifier denotes its reading. -/
-instance : Semantics.Denotes IndeterminateQuantifier (Set GQ.Family.{u}) where
+instance : Denotes IndeterminateQuantifier (Set GQ.Family.{u}) where
   denote q := {q.reading}
 
 variable {q}

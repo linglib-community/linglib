@@ -52,7 +52,8 @@ continuing topic (Section 5.3).
 
 namespace Jenks2018
 
-open Determiner Semantics
+open Determiner
+open scoped Denotes
 open DefiniteDescription (Restrictor)
 
 /-! ### Environments and principles -/

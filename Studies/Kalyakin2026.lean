@@ -45,7 +45,7 @@ open Minimalist.Ellipsis
 
 /-- The site of a root on the clausal spine. A change-of-state root merges with the direct object, at V in
 v's complement, and a manner root attaches to v, at the VP-adjunction site outside it (§2.2). -/
-def rootSite : Semantics.Root.Position → ClauseSpine.Site
+def rootSite : ArgumentStructure.Root.Position → ClauseSpine.Site
   | .complement => .head .V
   | .adjoined => .adjunct .V
 
@@ -142,7 +142,7 @@ root describing the end state of a change-of-state event merges with the direct 
 imposing a manner on an activity attaches to v. The roots of the paper's complex predicates carry
 the state or manner entailment Kalyakin reads off them. -/
 
-open Semantics
+open ArgumentStructure
 
 /-- *wana* of *wana AGR-arq'-* 'warm up' (3), (8), (75)–(80). -/
 def wana : Root := { kinds := {.state} }

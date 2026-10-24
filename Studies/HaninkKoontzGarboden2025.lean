@@ -63,7 +63,7 @@ appendix also counts 35 Class 3 stems where its table lists 25, the seventy bein
 
 namespace HaninkKoontzGarboden2025
 
-open Semantics Montague Possession Washo
+open Montague Possession Washo
 
 /-! ### The two root meanings, section 4 -/
 

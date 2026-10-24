@@ -172,12 +172,12 @@ def Verbalizer.vocabulary : RuleSet (VocabularyItem Feature Verbalizer.Alloseme)
 /-- The v alloseme over a complement root of signature `s`, the root typology feeding v
 allosemy: eventive when the root entails change, as result roots do, and zero otherwise, as
 over property-concept roots ([beavers-etal-2021]). -/
-def Verbalizer.Alloseme.ofKinds (s : Semantics.Root.Kinds) : Verbalizer.Alloseme :=
-  if .result ∈ Semantics.Root.Kinds.close s then .eventive else .zero
+def Verbalizer.Alloseme.ofKinds (s : ArgumentStructure.Root.Kinds) : Verbalizer.Alloseme :=
+  if .result ∈ ArgumentStructure.Root.Kinds.close s then .eventive else .zero
 
-theorem Verbalizer.ofKinds_introducesEvent_iff (s : Semantics.Root.Kinds) :
+theorem Verbalizer.ofKinds_introducesEvent_iff (s : ArgumentStructure.Root.Kinds) :
     (Verbalizer.Alloseme.ofKinds s).introducesEvent = true ↔
-      .result ∈ Semantics.Root.Kinds.close s := by
+      .result ∈ ArgumentStructure.Root.Kinds.close s := by
   unfold Verbalizer.Alloseme.ofKinds; split_ifs with h <;> simp [h] <;> decide
 
 /-! ### n allosemy -/

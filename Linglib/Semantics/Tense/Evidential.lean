@@ -58,7 +58,7 @@ their closure, await a consumer.
 
 namespace Tense
 
-open Semantics
+open scoped Denotes
 
 /-- An evidential frame consists of the time of speech, the time of the event, and the time at
 which the speaker acquires the evidence for the assertion. -/

@@ -44,7 +44,8 @@ antecedent, which two existential pasts do not require.
 
 namespace Partee1973
 
-open Semantics Montague ModalLogic Tense
+open Montague ModalLogic Tense
+open scoped Denotes
 open scoped SetRel
 
 variable {T : Type*} [LinearOrder T] {P Q : NonemptyInterval T → Prop} {σ : NonemptyInterval T}

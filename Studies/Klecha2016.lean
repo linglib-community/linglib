@@ -36,7 +36,7 @@ orientations its attitude's modal bases and its tense both admit: *think* takes 
 
 namespace Klecha2016
 
-open Semantics
+open scoped Denotes
 
 open Tense HistoricalAlternatives English English.Verbs Kaplan
 

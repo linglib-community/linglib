@@ -41,7 +41,8 @@ Forms are in the Yale romanization. A form is cited by one of its variants: *-ta
 
 namespace Korean.Evidentiality
 
-open Evidential Semantics Tense
+open Evidential Tense
+open scoped Denotes
 
 /-! ### Perceptual evidentials -/
 

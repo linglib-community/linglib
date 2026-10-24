@@ -91,7 +91,8 @@ question is neutral or whose negation the annotation locates (`judgment_iff_pred
 
 namespace Holmberg2016
 
-open Question Discourse Semantics
+open Question Discourse
+open scoped Denotes
 
 /-! ### The polarity head -/
 
@@ -159,7 +160,7 @@ structure PolarInterrogative (W : Type*) where
 
 namespace PolarInterrogative
 
-open Semantics
+open scoped Denotes
 
 variable {W : Type*} (q : PolarInterrogative W)
 

@@ -236,7 +236,7 @@ structure Verb extends Verb.ArgStructure, Verb.Aspect, Verb.Presupposition, Verb
   levinExcluded : Finset LevinClass := ∅
   /-- The meaning of the verb's root, its kind signature and within-class content, read
       rather than the verb's Levin classes. The default `{}` is the unannotated root. -/
-  root : Semantics.Root := {}
+  root : ArgumentStructure.Root := {}
   /-- The morphs of the citation form, in surface order, are the stem with the affixes and
       particles it is cited with. A citation form the entry does not analyse is a single root. -/
   morphs : List Morph

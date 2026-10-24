@@ -50,7 +50,8 @@ the modal-base timing licenses *will*, and the acquisition timing does not
 
 namespace Huijsmans2025
 
-open Modality Semantics Tense
+open Modality Tense
+open scoped Denotes
 
 variable {T W : Type*} [LinearOrder T]
 

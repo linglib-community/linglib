@@ -42,7 +42,8 @@ represented.
 
 namespace Musan1995
 
-open Semantics Tense ModalLogic Event
+open Tense ModalLogic Event
+open scoped Denotes
 
 variable {X T : Type*} [LinearOrder T]
 

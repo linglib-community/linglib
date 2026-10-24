@@ -42,7 +42,7 @@ are the gender of referents the entity domain comes equipped with (`Gendered`).
 
 @[expose] public section
 
-open Kaplan Semantics
+open Kaplan
 
 namespace PersonalPronoun
 
@@ -78,7 +78,7 @@ universe u
 
 /-- A personal pronoun denotes on every model, the index and the context being the Reader
 arguments of its domain. -/
-instance : Semantics.Denotes PersonalPronoun
+instance : Denotes PersonalPronoun
     (∀ (E W P T : Type u) [PartialOrder E] [Gendered E], ℕ → Context W E P T →
       Nominal (Assignment E) W E) :=
   ⟨fun e _ _ _ _ _ _ ↦ e.denote⟩

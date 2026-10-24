@@ -224,7 +224,7 @@ end Determiner
 section English
 
 open English.Determiners (QuantityWord)
-open scoped Semantics
+open scoped Denotes
 
 /-- On its proportional reading `few` is negative strong, though B&C's Table II lists *few* as weak.
 -/

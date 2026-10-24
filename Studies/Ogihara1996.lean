@@ -38,7 +38,8 @@ carry both the morphological tense and the divergent event location.
 
 namespace Ogihara1996
 
-open Tense Semantics
+open Tense
+open scoped Denotes
 open Montague
 
 /-- The frame of a clause embedded under an attitude verb takes the matrix event time as its

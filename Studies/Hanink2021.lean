@@ -69,7 +69,8 @@ sets containing the speaker and the others.
 
 namespace Hanink2021
 
-open Semantics Montague DistributedMorphology Morphology.Exponence
+open Montague DistributedMorphology Morphology.Exponence
+open scoped Denotes
 open DefiniteDescription (Restrictor)
 open scoped Assignment
 

@@ -85,7 +85,7 @@ namespace BonehDoron2013
 open Event (τ)
 open Aspect (UNBOUNDED PERF durative)
 open Modality (Background simpleNecessity)
-open scoped Semantics
+open scoped Denotes
 
 variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 

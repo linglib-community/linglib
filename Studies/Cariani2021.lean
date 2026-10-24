@@ -68,7 +68,7 @@ quantificational tenses. -/
 
 section Symmetric
 
-open Semantics
+open scoped Denotes
 
 /-- Linear symmetric *was* (p. 8): `A` held at some earlier time. -/
 def linearWas {T : Type*} [LinearOrder T] (A : T → Prop) : T → Prop :=

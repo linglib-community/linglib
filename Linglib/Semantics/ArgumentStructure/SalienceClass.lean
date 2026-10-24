@@ -36,7 +36,6 @@ instantiation with attested derivations is `Studies/Lucy1994.lean`.
 
 namespace ArgumentStructure
 
-open Semantics
 
 /-- Lucy's "three large predicate root classes", named for the
     argument(s) the underived root makes salient. Positional roots are
