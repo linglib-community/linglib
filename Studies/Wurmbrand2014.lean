@@ -5,6 +5,10 @@ public import Linglib.Core.Order.Interval.Basic
 public import Linglib.Semantics.Tense.Defs
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Data.Examples.Wurmbrand2014
+public import Linglib.Data.Examples.Gloss
+public import Linglib.Fragments.English.Auxiliaries
+public import Linglib.Fragments.English.Verbs.Implicative
+public import Linglib.Fragments.English.Verbs.Communication
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives
@@ -38,8 +42,8 @@ coincide. The evaluation time of *woll* and the attitude holder's NOW are one in
 parameter, and adverbials that restrict a reference time to an instant fall under the same
 lemma as the NOW. The obligatory deletion of *would*'s past is taken as the paper does, as a
 lexical requirement. The `…_rows` fits read the episodic, aspect and sequence-of-tense rows on
-integer time, episodicity decided by the table's three theorems and the `stack` feature naming
-the tenses above the lowest past, nearest first.
+integer time, episodicity decided by the table's three theorems and the tense stack recognized
+in each sentence's words against the forms the English fragment declares or realizes.
 
 ## References
 
@@ -320,17 +324,31 @@ theorem aspect_rows : Datum.Checks aspectTest?
     Examples.all 9 := by
   decide
 
-/-- The tense stack above the lowest past, nearest first, as a row's `stack` feature names it. -/
-def stackTable : List (String × List (Option (Finset Ordering))) :=
-  [("will, past", [will.tense, some ⟦past⟧]),
-    ("infinitive, past", [(infinitive true).tense, some ⟦past⟧]),
-    ("would, past", [would.tense, some ⟦past⟧]),
-    ("will", [will.tense]),
-    ("infinitive, will", [(infinitive true).tense, will.tense])]
+/-- The tense stack above the lowest past, nearest first, recognized in the sentence's words:
+every lexical condition is a form the English fragment declares or realizes — *promised* and
+*promise* are `English.Verbs.promise.realize` at its past and base cells, *will* and *would* the
+auxiliary entries, and *to tell* the infinitival marker `toInf` with `tell.realize .base`. -/
+def stackOfForm? (e : Datum) : Option (List (Option (Finset Ordering))) :=
+  let ts := Gloss.tokens e.primaryText
+  let pair (a b : String) : Bool := (ts.zip ts.tail).contains (a.toList, b.toList)
+  let willF := English.Auxiliaries.will.form
+  let wouldF := English.Auxiliaries.would.form
+  let toF := English.Auxiliaries.toInf.form
+  let tellB := English.Verbs.tell.realize .base
+  if pair willF (English.Verbs.promise.realize .base) then
+    if ts.contains wouldF.toList then some [Wurmbrand2014.will.tense]
+    else if pair toF tellB then some [(infinitive true).tense, Wurmbrand2014.will.tense]
+    else none
+  else if ts.contains (English.Verbs.promise.realize .past).toList then
+    if pair willF tellB then some [Wurmbrand2014.will.tense, some ⟦past⟧]
+    else if pair wouldF tellB then some [Wurmbrand2014.would.tense, some ⟦past⟧]
+    else if pair toF tellB then some [(infinitive true).tense, some ⟦past⟧]
+    else none
+  else none
 
 /-- A sequence-of-tense row: its stack with the paper's applies/blocked verdict. -/
 def sotTest? (e : Datum) : Option (List (Option (Finset Ordering)) × Bool) := do
-  pure (← e.parse? "stack" stackTable,
+  pure (← stackOfForm? e,
     ← e.parse? "SOT" [("applies", true), ("blocked", false)])
 
 /-- The sequence-of-tense rows (24)–(30): the paper's applies/blocked verdicts are what
@@ -338,7 +356,7 @@ def sotTest? (e : Datum) : Option (List (Option (Finset Ordering)) × Bool) := d
 theorem sot_rows :
     (∀ e ∈ Examples.all, ∀ p ∈ sotTest? e, sotApplies p.1 ⟦past⟧ = p.2) ∧
       Datum.ReadCount sotTest? Examples.all 5 := by
-  decide
+  decide +kernel
 
 end Data
 
