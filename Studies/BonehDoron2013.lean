@@ -1,41 +1,76 @@
 module
 
+public import Linglib.Data.Examples.BonehDoron2013
 public import Linglib.Semantics.Genericity.Normality
-public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Modality.Necessity
+public import Studies.IatridouEtAl2001
 
 /-!
-# Boneh and Doron 2013: Hab and Gen in the expression of habituality
+# Boneh and Doron (2013): Hab and Gen in the expression of habituality
 
-Boneh and Doron argue that habituality involves two covert operators. Gen is the familiar
-modalized universal. Hab is a modalized existential over sums of events: an iteration in every
-world of a gnomic modal base, with only an initiating event that indicates a disposition in the
-actual world. The English auxiliaries mark neither; *would* marks mood, a special case of Gen,
-and *used to* is the imperfective under a retrospective aspect, which places the reference
-interval before the perspective interval. The operators are built on Link's sum closure,
-Kratzer's modal base, Klein's imperfective and Pancheva's final-subinterval perfect
-(`Aspect.perfect`); Del Prete's Italian Same-Object Effect is the configuration of
-`same_object_infelicity`.
+[boneh-doron-2013] derive English habituals from two covert modal operators and two auxiliaries
+that mark aspect and mood. Hab holds of a state that an event indicating a disposition initiates
+and that lies, in every world of a gnomic modal base, within an iteration of events; Gen is a
+modalized universal over the restricted individuals within an interval. *Used to* is the
+retrospective over the imperfective, placing the reference interval before the perspective
+time, and *would* is Gen with a restriction and an interval from the context.
 
 ## Main statements
 
-* `same_object_infelicity`: an indefinite scoping over Hab makes an unrepeatable event recur.
-* `gen_admits_fresh_objects`: Gen's universal lets the object vary.
-* `hab_without_actual_iteration`: Hab holds with a single actual initiating event.
-* `retro_perfect_forces_point`: the retrospective and the perfect share a reference interval only
-  at a degenerate perspective.
-* `usedTo_of_persisting_state`: *used to* does not bound the state.
+* `not_hab_of_subsingleton`: a predicate no object satisfies twice has no habit, so an indefinite
+  over Hab is infelicitous.
+* `hab_of_single_trip`: a habit needs no iteration in the actual world.
+* `mem_usedTo_iff`: *used to* says only that a state began before the perspective time, so its
+  retrospectivity is an implicature.
+* `not_mem_retro_of_overlaps`: no reference interval overlapping the perspective time serves the
+  retrospective.
+* `usedTo_of_universal`: the universal perfect entails *used to*, the scale of (32).
+* `restrictor_rows`, `perspective_rows`, `actualization_rows`: the judgments of (4)–(7), (30),
+  (33), (35) and (42).
+
+## Implementation notes
+
+* States and events share one event domain with a temporal trace. The modal base `MB_{i,w}` is
+  indexed by intervals, and (13) and (21) quantify over all its worlds; the ordering of the worlds
+  by closeness to an ideal world is in the chapter's prose, not its formulas.
+* Iteration (14) is `Mereology.IsPlural`, its gloss: a sum of `P`-events with at least two proper
+  `P`-parts. The chapter leaves "indicating a disposition" unanalyzed, so the events that do are a
+  parameter.
+* The imperfective (19a) is non-strict containment, `Aspect.UNBOUNDED`, and the precedence of
+  (19b) and (34b) is strict, `NonemptyInterval.Precedes`, so the reference interval is disjoint
+  from the perspective time.
+* The perfect of (32) and (33) is the universal perfect of `IatridouEtAl2001`, *since then*
+  setting the left boundary of its span. With *used to* the chapter reads *since then* as a
+  reference interval stretching to the perspective time.
+
+## Errata
+
+* The denotations (18) and (19) make (42c) true in its context (`usedTo_hab_of_single_trip`).
+  Its falsity rests on an assumption the chapter states only in prose in §6.3.2, that a property
+  characterizes an interval only if the interval is extended and the property is actualized at
+  both of its ends (`Characterizes`).
+* The second disjunct of (22b), `∃Q Gen(P_C, Q, i_C, w)`, holds of every restriction through the
+  empty restrictor, since Gen (21) has no existential import, so (22b) does not constrain the
+  context.
+
+## TODO
+
+* Telling (2c) from (2d) by (22b) needs Gen to presuppose that its restrictor is nonempty.
+* The puzzle of (47)–(50) and the contrast (48): Gen over objects through their life spans
+  (`Event.Lifespan`), the kind reading of the bare plural, and the clash of an individual-level
+  predicate with an episodic restrictor.
+* Table (41): the perfective habitual of the simple form, (26)–(27), and the periphrastic forms'
+  selection of the imperfective.
 
 ## References
 
 * [boneh-doron-2013]
 * [link-1983]
 * [kratzer-1981]
-* [klein-1994]
 * [kamp-reyle-1993]
 * [pancheva-2003]
-* [del-prete-2013]
+* [iatridou-anagnostopoulou-izvorski-2001]
 -/
 
 @[expose] public section
@@ -43,253 +78,214 @@ Kratzer's modal base, Klein's imperfective and Pancheva's final-subinterval perf
 namespace BonehDoron2013
 
 open Event (τ)
+open Aspect (UNBOUNDED PERF durative)
+open Modality (Background simpleNecessity)
 
-open Aspect (Perfectivity IMPF)
-open Modality (Background)
+variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
-/-! ### Hab against Gen ((4)–(8), (13)–(15))
+/-! ### Hab and Gen, (12)–(22) -/
 
-Gen needs an explicit restrictor; without one only Hab applies, and an
-indefinite can only scope over it, as in (8) `∃x [cigarette(x) ∧ Hab e
-smoke(e, Mary, x)]`. The contrast between (4a) and (4b) is then a theorem:
-smoking is unrepeatable per cigarette, so the wide-scope form is
-contradictory while Gen's (5a) is satisfiable with a fresh cigarette per
-event. -/
+/-- A state is initiated, (15), when an event that `D` says indicates the disposition precedes
+it. -/
+def Initiated (D : W → E → Prop) (w : W) (s : E) : Prop :=
+  ∃ e, (τ e).Precedes (τ s) ∧ D w e
 
-/-! Iteration, (14), a sum of P-events with at least two distinct proper P-parts on Link's
-closure, is `Mereology.IsPlural`. -/
+/-- Hab, (13): a state is a `P`-habit when it is initiated and lies, in every world of the modal
+base at its run time, within an iteration of `P`-events (14). -/
+def Hab [SemilatticeSup E] (mb : NonemptyInterval T → Background W) (D P : W → E → Prop) (w : W)
+    (s : E) : Prop :=
+  Initiated D w s ∧
+    ∀ w' ∈ (mb (τ s)).accessibleWorlds w, ∃ e, τ s ≤ τ e ∧ Mereology.IsPlural (P w') e
 
-/-- With the indefinite over Hab, the reading is contradictory for a predicate unrepeatable per
-object, such as smoking a cigarette ((4b), (8)). -/
-theorem same_object_infelicity {E C : Type*} [SemilatticeSup E]
-    {smoke : E → C → Prop} {cig : C → Prop}
-    (hOnce : ∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) :
-    ¬ ∃ c, cig c ∧ ∃ e, Mereology.IsPlural (smoke · c) e :=
-  fun ⟨c, _, e, hIter⟩ => Mereology.not_isPlural_of_subsingleton (hOnce c) e hIter
+/-- With the indefinite over Hab, (8), a predicate that no object satisfies twice, such as smoking
+a given cigarette, has no habit over a consistent modal base, (4b) and (9b). -/
+theorem not_hab_of_subsingleton [SemilatticeSup E] {mb : NonemptyInterval T → Background W}
+    {D P : W → E → Prop} {w : W} {s : E} (hmb : ((mb (τ s)).accessibleWorlds w).Nonempty)
+    (hP : ∀ v a b, P v a → P v b → a = b) : ¬ Hab mb D P w s := fun ⟨_, h⟩ ↦
+  let ⟨w', hw'⟩ := hmb
+  let ⟨e, _, he⟩ := h w' hw'
+  Mereology.not_isPlural_of_subsingleton (hP w') e he
 
-/-- Gen holds at the interval `i` and world `w` when every `Q`-individual temporally included in
-`i` is a `P`-individual throughout the gnomic modal base of `i` at `w`, (21). It is GEN with
-every case normal and its modality in the matrix. -/
-def gen {W Z T : Type*} (P Q : Z → W → Prop) (τ : Z → Set T) (mb : Set T → Background W)
-    (i : Set T) (w : W) : Prop :=
-  (i, w) ∈ (⊤ : Genericity.Normality (Set T × W) Z).gen {z | τ z ⊆ i ∧ Q z w}
-    {z | Modality.simpleNecessity (mb i) (P z) w}
+/-- Gen, (21): every `Q`-individual within the interval `i` is a `P`-individual throughout the
+modal base at `i`. It is GEN with every case normal and the modality in the matrix. -/
+def Gen (mb : NonemptyInterval T → Background W) (P Q : W → E → Prop) (i : NonemptyInterval T)
+    (w : W) : Prop :=
+  (i, w) ∈ (⊤ : Genericity.Normality (NonemptyInterval T × W) E).gen {e | τ e ≤ i ∧ Q w e}
+    {e | simpleNecessity (mb i) (P · e) w}
 
-/-- Gen's universal lets the indefinite scope below it, so the unrepeatability premise is
-satisfiable with a fresh cigarette per event, (4a), (5a). -/
-theorem gen_admits_fresh_objects :
-    ∃ smoke : Bool → Bool → Prop, (∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) ∧
-      gen (W := Unit) (fun e _ ↦ ∃ c, smoke e c) (fun _ _ ↦ True) (fun _ ↦ (∅ : Set Unit))
-        (fun _ ↦ ⊥) Set.univ () :=
-  ⟨(· = ·), fun _ _ _ h₁ h₂ ↦ h₁.trans h₂.symm, fun e _ _ _ ↦ ⟨e, rfl⟩⟩
+theorem gen_iff {mb : NonemptyInterval T → Background W} {P Q : W → E → Prop}
+    {i : NonemptyInterval T} {w : W} :
+    Gen mb P Q i w ↔ ∀ e, τ e ≤ i → Q w e → simpleNecessity (mb i) (P · e) w :=
+  ⟨fun h _ hi hQ ↦ h ⟨hi, hQ⟩, fun h e he ↦ h e he.1 he.2⟩
 
-/-- Hab holds when an initiating event that indicates a disposition occurs in the actual world
-and an iteration occurs in every accessible world of the gnomic modal base, (13), (15). The paper
-leaves "indicating a disposition" unanalyzed, so it is a parameter, and the temporal anchoring
-`τ(s) ⊆ τ(e)` is dropped with the event times. -/
-def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : Background W)
-    (indicatesDisposition : W → Prop) (w : W) : Prop :=
-  indicatesDisposition w ∧ ∀ w' ∈ mb.accessibleWorlds w, ∃ e, Mereology.IsPlural (P · w') e
+-- The second disjunct of (22b) holds of every restriction, through the empty restrictor.
+example (mb : NonemptyInterval T → Background W) (Pc : W → E → Prop) (ic : NonemptyInterval T)
+    (w : W) : ∃ Q, Gen mb Pc Q ic w :=
+  ⟨fun _ _ ↦ False, gen_iff.2 fun _ _ h ↦ h.elim⟩
 
-/-- Hab is dispositional, holding on a single actual initiating event with the iteration only in
-the accessible worlds, (16)–(17), (42a–b). -/
-theorem hab_without_actual_iteration :
-    ∃ (P : Finset ℕ → Bool → Prop) (mb : Background Bool),
-      hab P mb (· = false) false ∧ ¬ ∃ e, Mereology.IsPlural (P · false) e := by
-  refine ⟨fun e w' => match w' with | true => e.Nonempty ∧ e ⊆ {0, 1} | false => e = {0},
-    fun _ => {(· = true)}, ⟨rfl, ?_⟩, ?_⟩
-  · intro w' hw'
-    have hw : w' = true := by
-      simpa using hw'
-    subst hw
-    exact ⟨{0} ⊔ {1}, .sum (.base (by decide)) (.base (by decide)),
-      {0}, by decide, {1}, by decide, by decide, by decide, by decide⟩
-  · rintro ⟨e, -, e₁, -, e₂, -, h₁, h₂, hne⟩
-    exact hne (h₁.trans h₂.symm)
+/-! ### *Used to*, (18)–(19) and (28)–(37) -/
 
-/-! ### used to: the imperfective under a retrospective ((18)–(19), (30)–(35))
+section Retro
 
-The auxiliary is the retrospective over the imperfective. The imperfective (19a) is Klein's,
-`IMPF`, and the retrospective (19b) places the reference interval before the perspective
-interval, Kamp and Reyle's P, so *used to* is imperfective and retrospective by construction. -/
+variable {A : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {p : NonemptyInterval T}
+  {t t₀ : T}
 
-/-- The retrospective holds at a perspective interval when some reference interval satisfying
-the description lies wholly before it, (19b). -/
-def retro {W T : Type*} [LinearOrder T] (A : W → Set (NonemptyInterval T)) :
-    W → Set (NonemptyInterval T) :=
-  fun w ↦ {p | ∃ i ∈ A w, i.IsBefore p}
+/-- The retrospective, (19b), holds at a perspective interval that a reference interval of `A`
+precedes. -/
+def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
+  fun w ↦ {p | ∃ i ∈ A w, i.Precedes p}
 
-/-- *Used to* is the retrospective over the imperfective, (18). -/
-def usedToOp {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] (P : W → E → Prop) :
-    W → Set (NonemptyInterval T) :=
-  retro (IMPF P)
+/-- *Used to*, (18): the retrospective over the imperfective (19a). -/
+def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
+  retro (UNBOUNDED P)
 
-/-- One reference interval serves both the retrospective and the perfect only for an instantaneous
-perspective ((32)–(34); see (31)–(33)). -/
-theorem retro_perfect_forces_point {T : Type*} [LinearOrder T]
-    {i p : NonemptyInterval T} (hb : i.IsBefore p) (hf : p.FinalSubinterval i) :
-    p.IsPoint :=
-  le_antisymm p.fst_le_snd (hf.2.trans_le hb)
+/-- *Used to* says only that a state began before the perspective time, which the state may
+outlast, so the retrospectivity of (28) is an implicature, cancelled in (30) and (31). -/
+theorem mem_usedTo_iff : p ∈ usedTo P w ↔ ∃ e, P w e ∧ (τ e).fst < p.fst := by
+  constructor
+  · rintro ⟨i, ⟨e, hi, hP⟩, hp⟩
+    exact ⟨e, hP, ((NonemptyInterval.le_def.1 hi).1.trans i.fst_le_snd).trans_lt hp⟩
+  · rintro ⟨e, hP, hlt⟩
+    exact ⟨.pure (τ e).fst, ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩, hlt⟩
 
-/-- A state persisting past the perspective still satisfies *used to*, so retrospectivity is
-cancellable ((30), (19a)). -/
-theorem usedTo_of_persisting_state {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
-    {P : W → E → Prop} {w : W} {e : E} (hP : P w e)
-    {i p : NonemptyInterval T} (hie : i < τ e) (hip : i.IsBefore p) :
-    p ∈ usedToOp P w :=
-  ⟨i, ⟨e, hie, hP⟩, hip⟩
+/-- *Since then*, (33), *now*, (35), and a simultaneous reading, (36)–(37), need reference
+intervals overlapping the perspective time, and none of these serves the retrospective. -/
+theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retro A w :=
+  fun ⟨i, hi, hp⟩ ↦ NonemptyInterval.precedes_not_overlaps hp (h i hi)
 
-/-! ### The three forms and Table (41) -/
+/-- The universal perfect over a span begun before its time of tense entails *used to*, which
+unlike it does not assert the state at that time (`IatridouEtAl2001.universal_at_rb`), so the two
+form the scale of (32). -/
+theorem usedTo_of_universal (h : (w, t) ∈ PERF ({i | i.fst < t} ∩ durative (UNBOUNDED P) ·)) :
+    .pure t ∈ usedTo P w :=
+  let ⟨_, ⟨hlt, hd⟩, _⟩ := h
+  let ⟨e, hle, hP⟩ := hd (Set.mem_Iic.2 le_rfl)
+  mem_usedTo_iff.2 ⟨e, hP, (NonemptyInterval.le_def.1 hle).1.trans_lt hlt⟩
 
-/-- A `HabitualForm` is one of the English past-habituality forms of (1). -/
-inductive HabitualForm where
-  | simpleForm
-  | usedTo
-  | would
-  deriving DecidableEq, Repr
+/-- `P` characterizes the interval `i` at `w`, the assumption of §6.3.2, when `i` is extended and
+`P` is actualized at both of its ends. -/
+def Characterizes (P : W → E → Prop) (w : W) (i : NonemptyInterval T) : Prop :=
+  i.fst < i.snd ∧ (∃ e, P w e ∧ i.fst ∈ τ e) ∧ ∃ e, P w e ∧ i.snd ∈ τ e
 
-/-- A perspective is internal or retrospective, the second dimension of Table (41). -/
-inductive PerspectiveType where
-  | internal
-  | retrospective
-  deriving DecidableEq, Repr
+/-- A state that began before `t₀` and lasts to `t` verifies *used to* together with *still*, (30),
+and the perfect with *since then*, (33a), but not *used to* with *since then*, (33b). The simple
+past takes *now*, which needs its reference interval to overlap the perspective time, and *used
+to* does not, (35). -/
+theorem perspective_rows {e : E} (he : P w e) (h₀ : (τ e).fst < t₀) (h₁ : t₀ ≤ t)
+    (h₂ : t ≤ (τ e).snd) :
+    (.pure t ∈ usedTo P w ∧ .pure t ∈ UNBOUNDED P w ↔ Examples.ex30.judgment = .acceptable) ∧
+    ((w, t) ∈ PERF ({i | i.fst = t₀} ∩ durative (UNBOUNDED P) ·) ↔
+      Examples.ex33a.judgment = .acceptable) ∧
+    (.pure t ∈ retro (fun w ↦ {i | i.fst = t₀ ∧ i.snd = t} ∩ UNBOUNDED P w) w ↔
+      Examples.ex33b.judgment = .acceptable) ∧
+    ((∃ i ∈ UNBOUNDED P w, i.Overlaps (.pure t)) ↔ Examples.ex35a.judgment = .acceptable) ∧
+    (.pure t ∈ retro (fun w ↦ {i | i.Overlaps (.pure t)} ∩ UNBOUNDED P w) w ↔
+      Examples.ex35b.judgment = .acceptable) := by
+  have ht : .pure t ∈ UNBOUNDED P w :=
+    ⟨e, NonemptyInterval.le_def.2 ⟨h₀.le.trans h₁, h₂⟩, he⟩
+  refine ⟨iff_of_true ⟨mem_usedTo_iff.2 ⟨e, he, h₀.trans_le h₁⟩, ht⟩ rfl,
+    iff_of_true (IatridouEtAl2001.universal_of_covers he h₁ h₀.le h₂) rfl,
+    iff_of_false (not_mem_retro_of_overlaps fun i ⟨⟨_, hi⟩, _⟩ ↦
+      ⟨i.fst_le_snd.trans hi.le, hi.ge⟩) (by decide),
+    iff_of_true ⟨_, ht, NonemptyInterval.overlaps_refl _⟩ rfl,
+    iff_of_false (not_mem_retro_of_overlaps fun _ h ↦ h.1) (by decide)⟩
 
-/-- `admitsViewpoint f v` says that the form `f` admits the viewpoint `v`, the viewpoint column
-of Table (41). The simple form takes either viewpoint, (26)–(27), and the periphrastic forms
-only the imperfective. -/
-def admitsViewpoint : HabitualForm → Perfectivity → Prop
-  | .simpleForm, _ => True
-  | _, .imperfective => True
-  | _, .perfective => False
+end Retro
 
-/-- `admitsPerspective f p` says that the form `f` admits the perspective `p`, the perspective
-column of Table (41). *Used to* is retrospective, *would* internal and the simple form either,
-(35)–(40). -/
-def admitsPerspective : HabitualForm → PerspectiveType → Prop
-  | .simpleForm, _ => True
-  | .usedTo, .retrospective => True
-  | .usedTo, .internal => False
-  | .would, .internal => True
-  | .would, .retrospective => False
+/-! ### The chapter's examples
 
-/-! ### The chapter's judgments -/
+The model has an actual world `false` and one gnomic alternative `true`, accessible at every
+time. Events are intervals of natural-number times, their own run times, with the convex hull as
+sum, and the event indicating a disposition happens at time `0`. -/
 
-/-- An `EnglishDatum` records an English judgment from the chapter. -/
-structure EnglishDatum where
-  sentence : String
-  form : HabitualForm
-  felicitous : Bool
-  exNumber : String
-  deriving Repr
+section Model
 
-/-- *Mary smokes a cigarette after dinner*, (4a), is felicitous, since *after dinner* supplies
-Gen's restrictor and the indefinite scopes below it, as in (5a). -/
-def maryCigaretteAfterDinner : EnglishDatum :=
-  { sentence := "Mary smokes a cigarette after dinner"
-    form := .simpleForm, felicitous := true, exNumber := "(4a)" }
+/-- The gnomic modal base, whose one premise is to be the alternative `true`. -/
+def gnomic : NonemptyInterval ℕ → Background Bool := fun _ _ ↦ {(· = true)}
 
-/-- *Mary smokes a cigarette*, (4b), is infelicitous, since with no explicit restrictor only Hab
-applies and the indefinite scopes over it, (8). -/
-def maryCigarette : EnglishDatum :=
-  { sentence := "#Mary smokes a cigarette"
-    form := .simpleForm, felicitous := false, exNumber := "(4b)" }
+/-- The event indicating a disposition, at time `0`. -/
+def indicating : Bool → NonemptyInterval ℕ → Prop := fun _ e ↦ e = .pure 0
 
-/-- *A flower grows out behind the old shed*, (6b), survives on its plausible same-object
-reading, one flower growing out repeatedly. -/
-def flowerGrows : EnglishDatum :=
-  { sentence := "A flower grows out behind the old shed"
-    form := .simpleForm, felicitous := true, exNumber := "(6b)" }
+/-- An object undergoes the event once, at its own time, as a cigarette is smoked or a rabbit
+killed. -/
+def onceAt : Bool → NonemptyInterval ℕ → ℕ → Prop := fun _ e x ↦ e = .pure x
 
-/-- *Max killed a rabbit repeatedly*, (7b), is infelicitous, since the indefinite scopes over the
-adverbial's quantifier and the same rabbit would be killed repeatedly. -/
-def maxKilledRabbit : EnglishDatum :=
-  { sentence := "#Max killed a rabbit repeatedly"
-    form := .simpleForm, felicitous := false, exNumber := "(7b)" }
+/-- The object may undergo the event at any time, as a flower grows out. -/
+def repeatable : Bool → NonemptyInterval ℕ → Unit → Prop := fun _ e _ ↦ ∃ t, e = .pure t
 
-/-- *In the good old days, people would dress elegantly*, (2c), is infelicitous, since *would*
-requires its restricting episodes to be explicit or presupposed and nothing supplies them. -/
-def wouldDressNoContext : EnglishDatum :=
-  { sentence := "#In the good old days, people would dress elegantly"
-    form := .would, felicitous := false, exNumber := "(2c)" }
+/-- Ruti's trips to work: one actual trip at time `1`, and a trip at every time in the
+alternative. -/
+def toWork : Bool → NonemptyInterval ℕ → Prop
+  | true, e => ∃ t, e = .pure t
+  | false, e => e = .pure 1
 
-/-- With a purpose clause, (2d), the restriction is supplied. -/
-def wouldDressWithContext : EnglishDatum :=
-  { sentence := "In the good old days, people would dress elegantly to go to the opera"
-    form := .would, felicitous := true, exNumber := "(2d)" }
+/-- Travelling by bus, as every trip from time `1` on does. -/
+def byBus : Bool → NonemptyInterval ℕ → Prop := fun _ e ↦ 1 ≤ e.fst
 
-/-- *She went to work by bus*, (42a), is true on a single actual episode, read episodically or
-with Hab. -/
-def sheWentByBus : EnglishDatum :=
-  { sentence := "She went to work by bus"
-    form := .simpleForm, felicitous := true, exNumber := "(42a)" }
+/-- Going to work by bus. -/
+def bus : Bool → NonemptyInterval ℕ → Prop := fun w e ↦ toWork w e ∧ byBus w e
 
-/-- *She would go to work by bus*, (42b), is true on a single episode, since *would* is Gen, about
-the accessible worlds rather than an actual iteration. -/
-def sheWouldGoByBus : EnglishDatum :=
-  { sentence := "She would go to work by bus"
-    form := .would, felicitous := true, exNumber := "(42b)" }
+/-- Ruti's habit, from her first trip to her death. -/
+def habit : NonemptyInterval ℕ := ⟨(1, 2), by decide⟩
 
-/-- *She used to go to work by bus*, (42c), is false on a single episode. The chapter derives the
-actualization requirement from the aspect. The retrospective's extended reference interval
-characterizes a period, and only actualized episodes can characterize one. -/
-def sheUsedToGoByBus : EnglishDatum :=
-  { sentence := "She used to go to work by bus"
-    form := .usedTo, felicitous := false, exNumber := "(42c)" }
+private theorem hab_habit {P : Bool → NonemptyInterval ℕ → Prop} (h₁ : P true (.pure 1))
+    (h₂ : P true (.pure 2)) : Hab gnomic indicating P false habit := by
+  refine ⟨⟨.pure 0, by decide, rfl⟩, fun w' hw' ↦ ⟨habit, le_rfl, ?_⟩⟩
+  obtain rfl : w' = true := by simpa [gnomic] using hw'
+  have h : NonemptyInterval.pure 1 ⊔ .pure 2 = habit := rfl
+  exact ⟨h ▸ .sum (.base h₁) (.base h₂), .pure 1, by decide, .pure 2, by decide, h₁, h₂,
+    by decide⟩
 
-/-- *The London Bridge used to stand on the Thames*, (48a), is felicitous, since *used to* is an
-aspectual operator selecting states, individual-level ones included. -/
-def usedToStand : EnglishDatum :=
-  { sentence := "The London Bridge used to stand on the Thames, now it stands in Arizona"
-    form := .usedTo, felicitous := true, exNumber := "(48a)" }
+/-- Ruti's habit of going to work by bus holds though she went once, (42a), as a habit initiated
+by a single event does, (16)–(17). -/
+theorem hab_of_single_trip :
+    Hab gnomic indicating bus false habit ∧ ¬ ∃ e, Mereology.IsPlural (bus false) e := by
+  refine ⟨hab_habit ⟨⟨1, rfl⟩, le_rfl⟩ ⟨⟨2, rfl⟩, Nat.le_succ 1⟩,
+    fun ⟨e, he⟩ ↦ Mereology.not_isPlural_of_subsingleton ?_ e he⟩
+  rintro _ _ ⟨rfl, -⟩ ⟨rfl, -⟩
+  rfl
 
-/-- *The London Bridge would stand on the Thames*, (48b), is ungrammatical, since habitual *would*
-is Gen, an individual-level predicate is incompatible with an episodic restrictor, and a definite
-subject supplies no nominal one. -/
-def wouldStand : EnglishDatum :=
-  { sentence := "*The London Bridge would stand on the Thames, now it stands in Arizona"
-    form := .would, felicitous := false, exNumber := "(48b)" }
+/-- (18) and (19) verify *used to* in the context of (42), judged false in (42c). -/
+theorem usedTo_hab_of_single_trip : .pure 5 ∈ usedTo (Hab gnomic indicating bus) false :=
+  mem_usedTo_iff.2 ⟨habit, hab_of_single_trip.1, by decide⟩
 
-/-- In *a French teacher would know Latin*, (3a), (47a), the indefinite singular provides Gen's
-restrictor, of objects rather than events, so *would* tolerates the individual-level predicate. -/
-def wouldKnowLatin : EnglishDatum :=
-  { sentence := "a French teacher would know Latin"
-    form := .would, felicitous := true, exNumber := "(3a)/(47a)" }
+/-- Gen with a restrictor admits a fresh cigarette per after-dinner event, (4a) and (5a); with the
+indefinite over Hab or over *repeatedly*, smoking a cigarette and killing a rabbit have no
+habit, (4b), and no iteration, (7b), while a flower that grows out again has one, (6b). -/
+theorem restrictor_rows :
+    ((∀ i, Gen gnomic (fun w e ↦ ∃ c, onceAt w e c) (fun _ e ↦ ∃ t, e = .pure t) i false) ↔
+      Examples.ex4a.judgment = .acceptable) ∧
+    ((∃ c s, Hab gnomic indicating (onceAt · · c) false s) ↔
+      Examples.ex4b.judgment = .acceptable) ∧
+    ((∃ f s, Hab gnomic indicating (repeatable · · f) false s) ↔
+      Examples.ex6b.judgment = .acceptable) ∧
+    ((∃ r e, Mereology.IsPlural (onceAt false · r) e) ↔
+      Examples.ex7b.judgment = .acceptable) :=
+  ⟨iff_of_true (fun _ ↦ gen_iff.2 fun _ _ ⟨t, ht⟩ _ _ ↦ ⟨t, ht⟩) rfl,
+    iff_of_false (fun ⟨_, _, h⟩ ↦ not_hab_of_subsingleton ⟨true, by simp [gnomic]⟩
+      (fun _ _ _ ha hb ↦ ha.trans hb.symm) h) (by decide),
+    iff_of_true ⟨(), habit, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩ rfl,
+    iff_of_false (fun ⟨_, e, h⟩ ↦ Mereology.not_isPlural_of_subsingleton
+      (fun _ _ ha hb ↦ ha.trans hb.symm) e h) (by decide)⟩
 
-/-- *A French teacher used to know Latin*, (3b), (47b), is ungrammatical, since *used to* is
-aspectual rather than quantificational. The indefinite singular finds no operator below Gen, and
-Gen over the whole clause, (50b), gives the wrong truth conditions. A bare plural instead denotes
-the kind and combines directly, (50a). -/
-def usedToKnowLatin : EnglishDatum :=
-  { sentence := "*a French teacher used to know Latin"
-    form := .usedTo, felicitous := false, exNumber := "(3b)/(47b)" }
+/-- In the context of (42), the habit makes the simple form true, (42a), and supplies *would*'s
+restriction, so that *would*, Gen over the trips by (22), is true, (42b); *used to* is false,
+(42c), once its reference interval must be characterized by actual trips. -/
+theorem actualization_rows :
+    (habit ∈ UNBOUNDED (Hab gnomic indicating bus) false ↔
+      Examples.ex42a.feature? "truthValue" = some "true") ∧
+    ((∃ s, τ s = habit ∧ Hab gnomic indicating toWork false s) ∧
+        Gen gnomic byBus toWork habit false ↔
+      Examples.ex42b.feature? "truthValue" = some "true") ∧
+    (.pure 5 ∈ retro (fun w ↦ {i | Characterizes bus w i} ∩ UNBOUNDED (Hab gnomic indicating bus) w)
+        false ↔ Examples.ex42c.feature? "truthValue" = some "true") := by
+  refine ⟨iff_of_true ⟨habit, le_rfl, hab_of_single_trip.1⟩ (by decide),
+    iff_of_true ⟨⟨habit, rfl, hab_habit ⟨1, rfl⟩ ⟨2, rfl⟩⟩,
+      gen_iff.2 fun _ _ h _ _ ↦ h ▸ le_rfl⟩ (by decide), iff_of_false ?_ (by decide)⟩
+  rintro ⟨i, ⟨⟨hlt, ⟨_, ⟨rfl, -⟩, h₁⟩, _, ⟨rfl, -⟩, h₂⟩, -⟩, -⟩
+  rw [Event.τ_nonemptyInterval, NonemptyInterval.mem_pure] at h₁ h₂
+  exact hlt.ne (h₁.trans h₂.symm)
 
-/-- Gen with a restrictor is felicitous and Hab with a wide-scope indefinite is not, (4). -/
-theorem restrictor_contrast :
-    maryCigaretteAfterDinner.felicitous = true ∧ maryCigarette.felicitous = false :=
-  ⟨rfl, rfl⟩
-
-/-- The same-object reading decides felicity, plausible for the flower and absurd for the
-rabbit, (6b), (7b). -/
-theorem sameObjectParallel :
-    flowerGrows.felicitous = true ∧ maxKilledRabbit.felicitous = false :=
-  ⟨rfl, rfl⟩
-
-/-- One actual episode verifies the simple form and *would* but not *used to*, (42). -/
-theorem actualization_contrast :
-    sheWentByBus.felicitous = true ∧ sheWouldGoByBus.felicitous = true ∧
-      sheUsedToGoByBus.felicitous = false :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- *Used to* selects individual-level states, and habitual *would* cannot restrict Gen with
-them, (48). -/
-theorem individual_level_contrast :
-    usedToStand.felicitous = true ∧ wouldStand.felicitous = false :=
-  ⟨rfl, rfl⟩
-
-/-- The indefinite singular restricts Gen under *would* but has no host under aspectual
-*used to*, (3), (47). -/
-theorem would_vs_usedTo_puzzle :
-    wouldKnowLatin.felicitous = true ∧ usedToKnowLatin.felicitous = false :=
-  ⟨rfl, rfl⟩
+end Model
 
 end BonehDoron2013
