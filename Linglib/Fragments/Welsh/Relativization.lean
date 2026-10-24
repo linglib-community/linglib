@@ -25,7 +25,6 @@ namespace Welsh
 /-- The particle *a* leaves the relativized position empty and relativizes subjects and direct
 objects. -/
 def relParticleA : Relativizer where
-  form := "a"
   placement := .postNominal
   realize
     | .subject | .directObject => {.gap}
@@ -34,7 +33,6 @@ def relParticleA : Relativizer where
 /-- The particle *y* puts a personal pronoun in the relativized position and relativizes
 everything from indirect objects down. -/
 def relParticleY : Relativizer where
-  form := "y"
   placement := .postNominal
   realize
     | .indirectObject | .oblique | .genitive | .objComparison => {.resumptive}

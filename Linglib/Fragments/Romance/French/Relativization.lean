@@ -24,7 +24,6 @@ namespace French
 /-- The relative pronouns *qui*, *que*, *dont* and *lequel* code the relativized position and
 relativize subjects through genitives. -/
 def relQui : Relativizer where
-  form := "qui/que/dont/lequel"
   placement := .postNominal
   realize
     | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}

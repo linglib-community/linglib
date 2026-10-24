@@ -34,7 +34,6 @@ namespace Hebrew
 empty or filled by a personal pronoun at the direct object, and filled by a personal pronoun
 from the indirect object down to the object of comparison. -/
 def relShe : Relativizer where
-  form := "she-"
   placement := .postNominal
   realize
     | .subject => {.gap}

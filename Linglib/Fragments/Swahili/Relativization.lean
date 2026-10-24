@@ -58,7 +58,6 @@ open Agreement Morphology
 subject or direct object leaves a gap, and the verb agrees with both; the object of a
 monosyllabic preposition is resumed by a pronoun suffixed to it. -/
 def amba : Relativizer where
-  form := "amba"
   placement := .postNominal
   realize
     | .subject | .directObject => {.gap}

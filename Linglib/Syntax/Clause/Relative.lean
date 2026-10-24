@@ -17,7 +17,8 @@ clause has a placement relative to its head; something occupies the relativized 
   with the subject on top: the Accessibility Hierarchy.
 * `Relativization.Placement` — the clause's placement relative to the head noun.
 * `Relativization.NPRel` — what occupies the relativized position.
-* `Relativizer` — a relativizer with its placement and what occupies NP_rel at each position.
+* `Relativizer` — a relativization strategy, its placement and what occupies NP_rel at each
+  position.
 
 ## Implementation notes
 
@@ -130,13 +131,10 @@ end Relativization
 /-! ### Relativizers -/
 
 open Relativization in
-/-- A relativizer of a language, the particle, pronoun or affix introducing a relative clause or
-the zero relativizer, with the placement of its clause and what occupies NP_rel at each position
-of the hierarchy: empty where it does not relativize the position, several values where they
-alternate. -/
+/-- A relativization strategy of a language, the placement of its clause and what may occupy NP_rel
+at each position of the hierarchy, empty where it does not relativize the position and with
+several values where they alternate. -/
 structure Relativizer where
-  /-- The form, "∅" for the zero relativizer. -/
-  form : String
   /-- The clause's placement relative to the head. -/
   placement : Placement
   /-- What may occupy NP_rel at each position. -/

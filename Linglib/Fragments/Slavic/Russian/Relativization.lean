@@ -26,7 +26,6 @@ namespace Russian
 /-- The relative pronoun *kotoryj* declines for the case of the relativized position and
 relativizes subjects through genitives. -/
 def relKotoryj : Relativizer where
-  form := "kotoryj"
   placement := .postNominal
   realize
     | .subject | .directObject | .indirectObject | .oblique | .genitive => {.relPronoun}

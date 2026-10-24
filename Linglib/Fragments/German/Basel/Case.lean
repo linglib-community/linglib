@@ -36,8 +36,6 @@ the stressed *yy* beside *yych*. The genitive article *s* of names for a whole f
 
 namespace German.Basel
 
-open German.Determiners (GenderNumber)
-
 /-- The three cases. -/
 inductive Case where
   /-- The nominative. -/

@@ -25,7 +25,6 @@ namespace Japanese
 /-- The zero relativizer of the unmarked prenominal clause: the relativized position is left
 empty from subjects through genitives, and at a genitive a pronoun may instead be retained. -/
 def relZero : Relativizer where
-  form := "∅"
   placement := .preNominal
   realize
     | .subject | .directObject | .indirectObject | .oblique => {.gap}

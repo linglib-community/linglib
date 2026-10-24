@@ -24,7 +24,6 @@ namespace Basque
 /-- The prenominal clause closed by the suffix *-n* leaves the relativized position empty and
 relativizes subjects, direct objects and indirect objects. -/
 def relN : Relativizer where
-  form := "-n"
   placement := .preNominal
   realize
     | .subject | .directObject | .indirectObject => {.gap}

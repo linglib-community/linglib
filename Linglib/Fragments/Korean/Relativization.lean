@@ -26,7 +26,6 @@ namespace Korean
 is dropped from subjects through obliques, and at a genitive the possessive pronoun is
 retained. -/
 def relAdnominal : Relativizer where
-  form := "-(n)ɨn, -n, -l"
   placement := .preNominal
   realize
     | .subject | .directObject | .indirectObject | .oblique => {.gap}

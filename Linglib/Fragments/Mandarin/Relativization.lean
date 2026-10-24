@@ -27,7 +27,6 @@ namespace Mandarin
 subject, left empty or filled by a personal pronoun at the direct object, and filled by a
 personal pronoun from the indirect object down. -/
 def relDe : Relativizer where
-  form := "de"
   placement := .preNominal
   realize
     | .subject => {.gap}

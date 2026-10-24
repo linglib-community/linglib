@@ -25,7 +25,6 @@ namespace English.Relativization
 /-- The complementizer *that*, or no marker at all, leaves the relativized position empty and
 relativizes subjects and direct objects. -/
 def relThat : Relativizer where
-  form := "that/∅"
   placement := .postNominal
   realize
     | .subject | .directObject => {.gap}
@@ -34,7 +33,6 @@ def relThat : Relativizer where
 /-- The relative pronouns *who*, *whom*, *which* and *whose* code the relativized position and
 relativize everything from indirect objects down. -/
 def relWhom : Relativizer where
-  form := "who/whom/which/whose"
   placement := .postNominal
   realize
     | .indirectObject | .oblique | .genitive | .objComparison => {.relPronoun}

@@ -27,7 +27,6 @@ namespace TobaBatak
 
 /-- The relativizer *na* leaves the relativized position empty and relativizes subjects only. -/
 def relNa : Relativizer where
-  form := "na"
   placement := .postNominal
   realize
     | .subject => {.gap}
@@ -36,7 +35,6 @@ def relNa : Relativizer where
 /-- The relativizer *ima na*, with a personal pronoun retained in the relativized position,
 relativizes indirect objects, obliques and genitives. -/
 def relImaNa : Relativizer where
-  form := "ima na"
   placement := .postNominal
   realize
     | .indirectObject | .oblique | .genitive => {.resumptive}

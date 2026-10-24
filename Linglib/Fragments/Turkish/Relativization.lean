@@ -26,7 +26,6 @@ namespace Turkish
 position is left empty from subjects through obliques, and a pronominal element is retained at
 genitives and, marginally, objects of comparison. -/
 def relParticiple : Relativizer where
-  form := "-(y)En/-DIK"
   placement := .preNominal
   realize
     | .subject | .directObject | .indirectObject | .oblique => {.gap}
