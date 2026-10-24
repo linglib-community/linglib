@@ -27,8 +27,9 @@ question is to know some answer to it, which yields a necessary test for answerh
 ## Implementation notes
 
 A question is its Hamblin set, with Bennett's denotation `Question.trueAnswers` and Karttunen's
-answer `Question.weakAnswer`. The inquisitive `Question.alt` keeps only maximal answers, and so
-would lose *three apples* beside *some apples* (p. 172).
+answer `Question.weakAnswer`, and the Distributivity Principle is `Question.KnowsSomeAnswer`. The
+inquisitive `Question.alt` keeps only maximal answers, and so loses *three apples* beside *some
+apples* (`alt_biSup_ofSet_basket`, p. 172).
 
 ## Errata
 
@@ -184,6 +185,20 @@ theorem basket_answers :
   · have := congrArg (1 ∈ ·) h
     simp at this
 
+theorem alt_biSup_ofSet_basket : alt (⨆ p ∈ basket, ofSet p) = {{n | 0 < n}} := by
+  rw [alt_biSup_ofSet_eq ⟨_, Or.inl rfl⟩]
+  ext p
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  refine ⟨fun ⟨hp, hmax⟩ ↦ hp.resolve_right fun h ↦ ?_, ?_⟩
+  · subst h
+    have := hmax (Or.inl rfl) (by simp)
+    exact absurd (this (show 1 ∈ {n : ℕ | 0 < n} from Nat.one_pos)) (by simp)
+  · rintro rfl
+    refine ⟨Or.inl rfl, fun q hq hle ↦ ?_⟩
+    rcases hq with rfl | rfl
+    · exact le_rfl
+    · exact absurd (hle (show 1 ∈ {n : ℕ | 0 < n} from Nat.one_pos)) (by simp)
+
 theorem fallacy_rows :
     ((∃ p ∈ trueAnswers gas Set.univ, ∃ q ∈ trueAnswers gas Set.univ, p ≠ q) ↔
       Examples.gas.feature? "answers" = some "multiple, each full and complete and true") ∧
@@ -200,15 +215,6 @@ theorem fallacy_rows :
 section Distributivity
 
 variable {H : Set (Set W)} {p : Set W} {w : W} {K : SetRel W W}
-
-/-- An agent with epistemic alternatives `K` knows some answer to `H` at `w` when some true answer
-holds throughout its alternatives (p. 176). -/
-def KnowsSomeAnswer (H : Set (Set W)) (w : W) (K : SetRel W W) : Prop :=
-  ∃ p ∈ trueAnswers H w, w ∈ K.core p
-
-theorem knowsSomeAnswer_of_mem [K.IsRefl] (hp : p ∈ H) (hw : w ∈ K.core p) :
-    KnowsSomeAnswer H w K :=
-  ⟨p, ⟨hp, hw K.rfl⟩, hw⟩
 
 /-- The inference from knowing that `p` to knowing `H` fails when an agent with factive knowledge
 knows that `p` without knowing some answer to `H` (p. 177). -/
@@ -234,20 +240,15 @@ private theorem inferenceFails_of {v : W} (hw : w ∈ p) (hv : v ∈ p)
   ⟨alsoPossible v, w, inferInstance, mem_core_alsoPossible.2 ⟨hw, hv⟩,
     fun ⟨q, hq, hk⟩ ↦ hn q hq (mem_core_alsoPossible.1 hk).2⟩
 
-theorem knowsSomeAnswer_of_knowsAnswer (h : (trueAnswers H w).Nonempty)
-    (hK : KnowsAnswer H w K) : KnowsSomeAnswer H w K :=
-  let ⟨p, hp⟩ := h
-  ⟨p, hp, SetRel.core_subset_core (weakAnswer_subset H w hp.1 hp.2) hK⟩
-
 /-- On a question with a unique true answer, knowing some answer is knowing the question by
 Karttunen's postulate. -/
 theorem knowsSomeAnswer_iff_knows (h : trueAnswers H w = {p}) :
-    KnowsSomeAnswer H w K ↔ Karttunen1977.Knows w K H := by
-  simp [KnowsSomeAnswer, Karttunen1977.Knows, KnowsAnswer, weakAnswer, h]
+    KnowsSomeAnswer H w K ↔ Karttunen1977.Knows H w K := by
+  simp [Karttunen1977.Knows, knowsSomeAnswer_iff_knowsAnswer h, h]
 
 theorem knowsSomeAnswer_not_knows :
     ∃ K : SetRel (Set Station) (Set Station), K.IsRefl ∧ KnowsSomeAnswer gas Set.univ K ∧
-      ¬Karttunen1977.Knows Set.univ K gas := by
+      ¬Karttunen1977.Knows gas Set.univ K := by
   refine ⟨alsoPossible {Station.a}, inferInstance,
     ⟨isOpen .a, ⟨⟨_, rfl⟩, trivial⟩, mem_core_alsoPossible.2 ⟨trivial, rfl⟩⟩,
     fun ⟨hk, _⟩ ↦ ?_⟩

@@ -110,23 +110,23 @@ theorem told_true {H : Set (Set W)} {p : Set W} (hp : p ∈ trueAnswers H w) : w
 
 /-! ### Knowing a question (footnote 11) -/
 
-variable (Dox : SetRel W W) (H : Set (Set W))
+variable (Dox : SetRel W W)
 
 /-- Footnote 11's meaning postulate, with the proposition-embedding *know* read through the
-agent's doxastic alternatives `Dox`: the agent knows every true answer, and, when there is
-none, knows that there is none. -/
-def Knows : Prop :=
+agent's doxastic alternatives `Dox`, says that the agent knows every true answer and, when there
+is none, knows that there is none. -/
+def Knows (H : Set (Set W)) (w : W) (Dox : SetRel W W) : Prop :=
   KnowsAnswer H w Dox ∧ (trueAnswers H w = ∅ → w ∈ Dox.core {v | trueAnswers H v = ∅})
 
 /-- Knowing *whether p* is knowing `p` at a `p`-world and its negation at another, (31). -/
 theorem knows_pair_iff (p : Set W) :
-    Knows w Dox {p, pᶜ} ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
+    Knows {p, pᶜ} w Dox ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
   by_cases h : w ∈ p
   · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_mem w h, h]
   · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_notMem w h, h]
 
 theorem knows_iff_of_no_witness (h : ∀ e ∈ D, w ∉ P e) :
-    Knows w Dox (P '' D) ↔ ∀ v, w ~[Dox] v → ∀ e ∈ D, v ∉ P e := by
+    Knows (P '' D) w Dox ↔ ∀ v, w ~[Dox] v → ∀ e ∈ D, v ∉ P e := by
   have h0 : trueAnswers (P '' D) w = ∅ := (trueAnswers_image_eq_empty_iff w D P).mpr h
   simp only [Knows, KnowsAnswer, weakAnswer, h0, Set.sInter_empty, Set.mem_univ, imp_true_iff,
     true_and, true_imp_iff, trueAnswers_image_eq_empty_iff, SetRel.mem_core,

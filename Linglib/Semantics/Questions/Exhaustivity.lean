@@ -43,6 +43,8 @@ operator on the members of `H` true at `w`:
   `SetRel.core` over its doxastic alternatives applied to the weak answer, and
   `PossiblyIgnorant H c Dox`, [dayal-2025]'s requirement on the perspectival
   center of a question;
+- `KnowsSomeAnswer H w Dox`, mention-some knowledge of a true member, which knowing the answer
+  implies when there is a true member and equals on a unique one;
 - `exhCell H p`, [fox-2018]'s cells;
 - `ofFinset F`, a finite family of finite propositions, on which the
   presuppositions are decidable.
@@ -60,6 +62,7 @@ of [dayal-2016] needs Hamblin sets whose members entail one another, which
 ## References
 
 * [karttunen-1977]
+* [belnap-1982]
 * [groenendijk-stokhof-1984]
 * [heim-1994]
 * [dayal-1996]
@@ -283,11 +286,15 @@ theorem isStrongestTrueAnswer_alt_iff (Q : Question W) {p : Set W} :
 
 section Knowing
 
-variable {c A : Set W} {Dox : SetRel W W}
+variable {c A p : Set W} {Dox : SetRel W W}
 
-/-- The center knows the answer to `H` at `w`: the weak answer holds throughout its doxastic
+/-- The center knows the answer to `H` at `w` when the weak answer holds throughout its doxastic
 alternatives `Dox`, [karttunen-1977]'s meaning postulate for *know*. -/
 def KnowsAnswer (Dox : SetRel W W) : Prop := w ∈ Dox.core (weakAnswer H w)
+
+/-- The center knows some answer to `H` at `w` when some true member holds throughout its
+alternatives `Dox`, the mention-some *know* of [belnap-1982] and [groenendijk-stokhof-1984]. -/
+def KnowsSomeAnswer (Dox : SetRel W W) : Prop := ∃ p ∈ trueAnswers H w, w ∈ Dox.core p
 
 /-- The perspectival center is possibly ignorant in the context `c` when it may not know the
 answer there, [dayal-2025]'s requirement on the center of a question. -/
@@ -314,6 +321,23 @@ theorem knowsAnswer_id : KnowsAnswer H w .id := by
 theorem knowsAnswer_univ_iff :
     KnowsAnswer H w Set.univ ↔ weakAnswer H w = Set.univ :=
   ⟨fun h => Set.eq_univ_of_forall fun _ => h trivial, fun h _ _ => h ▸ Set.mem_univ _⟩
+
+theorem knowsSomeAnswer_of_mem [Dox.IsRefl] (hp : p ∈ H) (hw : w ∈ Dox.core p) :
+    KnowsSomeAnswer H w Dox :=
+  ⟨p, ⟨hp, hw Dox.rfl⟩, hw⟩
+
+theorem knowsAnswer_of_mem_core_strongAnswer (h : w ∈ Dox.core (strongAnswer H w)) :
+    KnowsAnswer H w Dox :=
+  SetRel.core_subset_core (strongAnswer_subset_weakAnswer H w) h
+
+theorem KnowsAnswer.knowsSomeAnswer (h : KnowsAnswer H w Dox) (hne : (trueAnswers H w).Nonempty) :
+    KnowsSomeAnswer H w Dox :=
+  let ⟨p, hp⟩ := hne
+  ⟨p, hp, SetRel.core_subset_core (weakAnswer_subset H w hp.1 hp.2) h⟩
+
+theorem knowsSomeAnswer_iff_knowsAnswer (h : trueAnswers H w = {p}) :
+    KnowsSomeAnswer H w Dox ↔ KnowsAnswer H w Dox := by
+  simp [KnowsSomeAnswer, KnowsAnswer, weakAnswer, h]
 
 end Knowing
 

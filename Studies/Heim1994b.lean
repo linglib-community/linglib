@@ -160,14 +160,14 @@ def generalizedKnow {α : Type*} (q : W → α) : Prop := w ∈ (Dox x).core {w'
 variable {Dox x w}
 
 theorem generalizedKnow_iff_know_ker {α : Type*} {q : W → α} :
-    generalizedKnow Dox x w q ↔ GroenendijkStokhof1984.Knows (Dox x) (Setoid.ker q) w := Iff.rfl
+    generalizedKnow Dox x w q ↔ GroenendijkStokhof1984.Knows (Setoid.ker q) w (Dox x) := Iff.rfl
 
 theorem Karttunen.simplifiedKnow_trueAnswers (H : Set (Set W)) :
     simplifiedKnow Dox x w (trueAnswers H) ↔ KnowsAnswer H w (Dox x) := Iff.rfl
 
 theorem generalizedKnow_trueAnswers (H : Set (Set W)) :
     generalizedKnow Dox x w (trueAnswers H) ↔
-      GroenendijkStokhof1984.Knows (Dox x) (partition H) w := Iff.rfl
+      GroenendijkStokhof1984.Knows (partition H) w (Dox x) := Iff.rfl
 
 /-- Knowing a bigger answer set is knowing the smaller one (§3). -/
 theorem Karttunen.simplifiedKnow_of_subset {q q' : W → Set (Set W)} (h : q w ⊆ q' w)
@@ -212,7 +212,7 @@ theorem knows_whether_tfae (φ : Set W) :
     [Karttunen.simplifiedKnow Dox x w (Karttunen.whether φ),
       Karttunen.know Dox x w (Karttunen.whether φ),
       generalizedKnow Dox x w (Karttunen.whether φ),
-      GroenendijkStokhof1984.Knows (Dox x) (Setoid.polar φ) w].TFAE := by
+      GroenendijkStokhof1984.Knows (Setoid.polar φ) w (Dox x)].TFAE := by
   tfae_have 1 ↔ 2 :=
     (and_iff_left fun h ↦ absurd h (Karttunen.whether_nonempty φ w).ne_empty).symm
   tfae_have 3 ↔ 4 := by rw [generalizedKnow_iff_know_ker, Karttunen.ker_whether]
@@ -234,7 +234,7 @@ theorem ker_which {S C : E → Set W} (hC : Function.Injective C) :
 
 theorem generalizedKnow_which_iff {S C : E → Set W} (hC : Function.Injective C) :
     generalizedKnow Dox x w (Karttunen.which S C) ↔
-      GroenendijkStokhof1984.Knows (Dox x) (GroenendijkStokhof1984.whichDeDicto S C) w := by
+      GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeDicto S C) w (Dox x) := by
   rw [generalizedKnow_iff_know_ker, ker_which hC]
 
 /-- "Which A are B" and "which B are A" raise the same partition, §6's neutralization. -/
@@ -295,8 +295,8 @@ theorem not_generalizedKnow :
   exact absurd (Set.ext_iff.1 h1 false) (by simp)
 
 theorem not_groenendijkStokhof_know :
-    ¬ GroenendijkStokhof1984.Knows (agnostic ())
-      (GroenendijkStokhof1984.whichDeDicto (fun _ ↦ Set.univ) called) false := by
+    ¬ GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeDicto (fun _ ↦ Set.univ) called)
+      false (agnostic ()) := by
   intro h
   have := h (show (false, true) ∈ agnostic () from trivial)
   simp only [Setoid.mem_cell, whichDeDicto_eq_ker, Setoid.ker_def] at this
@@ -430,8 +430,8 @@ theorem generalizedKnow_holds :
   · rfl
 
 theorem not_groenendijkStokhof_know :
-    ¬ GroenendijkStokhof1984.Knows (agnostic ())
-      (GroenendijkStokhof1984.whichDeDicto student identicalWithSelf) true := by
+    ¬ GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeDicto student identicalWithSelf)
+      true (agnostic ()) := by
   intro h
   have := h (show (true, false) ∈ agnostic () from trivial)
   simp only [Setoid.mem_cell, whichDeDicto_eq_ker, Setoid.ker_def] at this
@@ -497,8 +497,8 @@ theorem generalizedKnow_holds :
 
 /-- Groenendijk and Stokhof make (24) false, (25). -/
 theorem not_groenendijkStokhof_know :
-    ¬ GroenendijkStokhof1984.Knows (john ())
-      (GroenendijkStokhof1984.whichDeDicto student livesWithSpouse) actual := by
+    ¬ GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeDicto student livesWithSpouse)
+      actual (john ()) := by
   intro h
   have := h (show (actual, ((false : Bool), (true : Bool))) ∈ john () from rfl)
   simp only [Setoid.mem_cell, whichDeDicto_eq_ker, Setoid.ker_def, extension_actual,
@@ -523,7 +523,7 @@ theorem ker_whichStructured (S C : E → Set W) :
 
 theorem generalizedKnow_whichStructured_iff {S C : E → Set W} :
     generalizedKnow Dox x w (whichStructured S C) ↔
-      GroenendijkStokhof1984.Knows (Dox x) (GroenendijkStokhof1984.whichDeDicto S C) w := by
+      GroenendijkStokhof1984.Knows (GroenendijkStokhof1984.whichDeDicto S C) w (Dox x) := by
   rw [generalizedKnow_iff_know_ker, ker_whichStructured]
 
 theorem Karttunen.which_eq_image_whichStructured (S C : E → Set W) (w : W) :
