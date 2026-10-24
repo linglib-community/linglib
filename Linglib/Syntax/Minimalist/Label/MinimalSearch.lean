@@ -80,8 +80,14 @@ def FindsHead (n q : t.val.Positions) : Prop :=
   (Probe.relativized fun p ↦ (t.termAt p).token?.isSome).Finds
     {p | n ≤ p ∧ t.InDomain (t.termAt p) (t.termAt n)} (t.above t.branching) q
 
-instance (n : t.val.Positions) : DecidablePred (t.FindsHead n) := fun _ ↦
-  inferInstanceAs (Decidable (Probe.Finds _ _ _ _))
+/-- Decided with the head test first, so that the domain is checked only for heads. -/
+instance (n : t.val.Positions) : DecidablePred (t.FindsHead n) := fun q ↦
+  decidable_of_iff ((Probe.relativized fun p ↦ (t.termAt p).token?.isSome).Finds
+      {p | (t.termAt p).token?.isSome ∧ n ≤ p ∧ t.InDomain (t.termAt p) (t.termAt n)}
+      (t.above t.branching) q) <| by
+    unfold FindsHead Probe.Finds
+    simp only [Set.mem_ofPred_eq, Probe.relativized_sat]
+    exact Iff.of_eq (congrArg (MinimalFor · _ q) (funext fun _ ↦ propext (by tauto)))
 
 /-- The heads minimal search from the occurrence at `n` finds. -/
 def labelsAt (n : t.val.Positions) : Finset LexicalItem.Token :=
