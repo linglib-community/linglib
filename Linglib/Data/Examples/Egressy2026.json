@@ -21,9 +21,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "nonSpeechReporting"],
-      ["matrixVerb", "lát"],
-      ["directPerception", "yes"],
-      ["clauseRole", "object"]
+      ["directPerception", "yes"]
     ],
     "comment": "Direct perception: the past-under-past clause has the simultaneous reading; the backshifted reading is excluded pragmatically, since one cannot directly perceive a past event.",
     "verified": "page-image"
@@ -50,9 +48,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "nonSpeechReporting"],
-      ["matrixVerb", "hall"],
-      ["directPerception", "yes"],
-      ["clauseRole", "object"]
+      ["directPerception", "yes"]
     ],
     "comment": "Direct perception with a verb of hearing; the same verb embeds a speech-reporting clause in (13).",
     "verified": "page-image"
@@ -78,9 +74,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "nonSpeechReporting"],
-      ["matrixVerb", "álmodik"],
-      ["directPerception", "yes"],
-      ["clauseRole", "object"]
+      ["directPerception", "yes"]
     ],
     "comment": "Dreaming as perception in a dream.",
     "verified": "page-image"
@@ -108,9 +102,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "nonSpeechReporting"],
-      ["matrixVerb", "gondol"],
-      ["directPerception", "no"],
-      ["clauseRole", "object"]
+      ["directPerception", "no"]
     ],
     "comment": "Thought and belief: no direct perception, so both readings are available.",
     "verified": "page-image"
@@ -136,9 +128,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "nonSpeechReporting"],
-      ["matrixVerb", "aggaszt"],
-      ["directPerception", "no"],
-      ["clauseRole", "subject"]
+      ["directPerception", "no"]
     ],
     "comment": "A subject clause with the nominative expletive az.",
     "verified": "page-image"
@@ -166,9 +156,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "nonSpeechReporting"],
-      ["matrixVerb", "morog"],
-      ["directPerception", "no"],
-      ["clauseRole", "adjunct"]
+      ["directPerception", "no"]
     ],
     "comment": "A non-argument clause giving the reason for growling; the same verb takes a speech-reporting argument clause in (11).",
     "verified": "page-image"
@@ -199,7 +187,6 @@
     "paperFeatures": [
       ["intermediateClauseType", "nonSpeechReporting"],
       ["deepestClauseType", "nonSpeechReporting"],
-      ["matrixVerb", "álmodik"],
       ["intermediateVerb", "lát"],
       ["intermediateDirectPerception", "yes"],
       ["deepestDirectPerception", "yes"]
@@ -228,9 +215,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "speechReporting"],
-      ["matrixVerb", "mond"],
-      ["directPerception", "no"],
-      ["clauseRole", "object"]
+      ["directPerception", "no"]
     ],
     "comment": "The content of what was said, with the evaluative adverb sajnos in the embedded left periphery: backshifted only.",
     "verified": "page-image"
@@ -256,9 +241,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "speechReporting"],
-      ["matrixVerb", "rikolt"],
-      ["directPerception", "no"],
-      ["clauseRole", "object"]
+      ["directPerception", "no"]
     ],
     "comment": "The content of what was shouted: backshifted only.",
     "verified": "page-image"
@@ -284,9 +267,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "speechReporting"],
-      ["matrixVerb", "morog"],
-      ["directPerception", "no"],
-      ["clauseRole", "object"]
+      ["directPerception", "no"]
     ],
     "comment": "The content of what was growled, an argument clause; contrast the reason adjunct of (9).",
     "verified": "page-image"
@@ -315,9 +296,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "speechReporting"],
-      ["matrixVerb", "telefonál"],
-      ["directPerception", "no"],
-      ["clauseRole", "adjunct"]
+      ["directPerception", "no"]
     ],
     "comment": "A speech-reporting non-argument clause, with the instrumental expletive: backshifted only. The paper prints the alternatives as {Telefonál-t-ál/ Oda jö-tt-él hoz-zám} and 'You {called/approached me}': hoz-zám 'to me' goes with oda jön only.",
     "verified": "page-image"
@@ -347,9 +326,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "speechReporting"],
-      ["matrixVerb", "hall"],
-      ["directPerception", "no"],
-      ["clauseRole", "object"]
+      ["directPerception", "no"]
     ],
     "comment": "The same verb as in (5), now embedding Peti's verbal report; with sajnos the complements of gondol and hisz get an inner-speech interpretation and are backshifted only.",
     "verified": "page-image"
@@ -379,9 +356,7 @@
     ],
     "paperFeatures": [
       ["clauseType", "speechReporting"],
-      ["matrixVerb", "lát"],
-      ["directPerception", "no"],
-      ["clauseRole", "object"]
+      ["directPerception", "no"]
     ],
     "comment": "Indirect perception through signs that are not verbal: the clause describes the content of a sign and behaves as speech-reporting.",
     "verified": "page-image"
@@ -411,7 +386,6 @@
     "paperFeatures": [
       ["intermediateClauseType", "speechReporting"],
       ["deepestClauseType", "speechReporting"],
-      ["matrixVerb", "rikolt"],
       ["intermediateVerb", "morog"],
       ["intermediateDirectPerception", "no"],
       ["deepestDirectPerception", "no"]
@@ -445,7 +419,6 @@
     "paperFeatures": [
       ["intermediateClauseType", "speechReporting"],
       ["deepestClauseType", "nonSpeechReporting"],
-      ["matrixVerb", "rikolt"],
       ["intermediateVerb", "lát"],
       ["intermediateDirectPerception", "no"],
       ["deepestDirectPerception", "yes"]
@@ -479,7 +452,6 @@
     "paperFeatures": [
       ["intermediateClauseType", "nonSpeechReporting"],
       ["deepestClauseType", "speechReporting"],
-      ["matrixVerb", "hall"],
       ["intermediateVerb", "rikolt"],
       ["intermediateDirectPerception", "yes"],
       ["deepestDirectPerception", "no"]
@@ -554,8 +526,7 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["diagnostic", "evaluativeAdverb"],
-      ["matrixVerb", "mond"]
+      ["diagnostic", "evaluativeAdverb"]
     ],
     "comment": "The evaluative adverb sajnos is hosted in the Say layer above foci: the speech-reporting complements of mond, hall and gondol host it, the TP complement of álmodik cannot.",
     "verified": "page-image"
@@ -582,7 +553,6 @@
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "focusMovement"],
-      ["matrixVerb", "hall"],
       ["embeddedAdverb", "no"]
     ],
     "comment": "Focus movement to the matrix Spec,FocP escapes the TP complement of hall but not the clause whose left periphery hosts an evaluative adverb, a SayP.",
@@ -607,8 +577,7 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["diagnostic", "whMovement"],
-      ["matrixVerb", "lát"]
+      ["diagnostic", "whMovement"]
     ],
     "comment": "Wh-movement to the matrix Spec,FocP escapes the TP complement of lát but not the SayP complement of morog.",
     "verified": "page-image"

@@ -11,6 +11,7 @@ public import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 public import Linglib.Fragments.Icelandic.TemporalConnectives
 public import Linglib.Fragments.Dutch.TemporalConnectives
 public import Linglib.Data.Examples.Giannakidou2002
+public import Linglib.Data.Examples.Gloss
 
 /-!
 # Giannakidou (2002): UNTIL, Aspect, and Negation
@@ -41,6 +42,9 @@ the punctual words, and its stativity diagnostics from homogeneity with negation
   perfective description places it within the reference interval, an imperfective one strictly
   around it. The until interval is required to be nondegenerate, which is what excludes a single
   event from satisfying the durative condition at both its endpoints.
+* The connective of a glossed row is read off its gloss line (`Data/Examples/Gloss.lean`): a
+  wordform, or two adjacent ones, spelling the declared form of a fragment entry. The
+  `connective` column remains only on the unglossed rows.
 * Homogeneity is the subinterval property of `Aspect/SubintervalProperty.lean`, and durative
   UNTIL is the durative reading `Aspect.durative` at a nondegenerate span ending at the until
   time.
@@ -266,10 +270,27 @@ def Predicted (r : Row) : Prop :=
 
 instance : DecidablePred Predicted := fun _ ↦ by unfold Predicted; infer_instance
 
+/-- The connectives of the paper. -/
+def connectives : List Connective :=
+  [.until, .mexri, .paraMonon, .prin, .til, .fyrrEn, .tot, .pas]
+
+/-- The wordforms of a row's gloss line, each adjacent pair also joined, so a two-word
+connective like *para monon* is found whether it is glossed as one token or two. -/
+def wordformsOf (ex : Datum) : List (List Char) :=
+  let ws := ex.glossedWords.map (·.wordform)
+  ws ++ (ws.zip ws.tail).map fun p ↦ p.1 ++ ' ' :: p.2
+
+/-- The connective a row's gloss line shows: a wordform spelling the declared form of a
+connective's fragment entry. -/
+def connectiveOfForm? (ex : Datum) : Option Connective :=
+  (wordformsOf ex).findSome? fun w ↦
+    connectives.find? fun c ↦ w == c.entry.form.toList.map Gloss.toLower
+
 def Row.ofDatum (ex : Datum) : Option Row := do
-  let connective ← ex.parse? "connective" [("until", Connective.until), ("mexri", .mexri),
-    ("paraMonon", .paraMonon), ("prin", .prin), ("til", .til), ("fyrrEn", .fyrrEn), ("tot", .tot),
-    ("pas", .pas)]
+  let connective ← connectiveOfForm? ex <|>
+    ex.parse? "connective" [("until", Connective.until), ("mexri", .mexri),
+      ("paraMonon", .paraMonon), ("prin", .prin), ("til", .til), ("fyrrEn", .fyrrEn),
+      ("tot", .tot), ("pas", .pas)]
   let aspect ← ex.parse? "aspect" [("imperfective", AspectForm.imperfective),
     ("perfective", .perfective), ("progressive", .progressive), ("perfect", .perfect),
     ("simplePast", .simplePast)]

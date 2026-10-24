@@ -216,7 +216,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "imperfective"],
       ["eventuality", "eventive"],
       ["licenser", "none"],
@@ -241,7 +240,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "imperfective"],
       ["eventuality", "stative"],
       ["licenser", "none"],
@@ -266,7 +264,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "perfective"],
       ["eventuality", "eventive"],
       ["licenser", "none"],
@@ -291,7 +288,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "perfective"],
       ["eventuality", "eventive"],
       ["licenser", "negation"],
@@ -316,7 +312,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "paraMonon"],
       ["aspect", "perfective"],
       ["eventuality", "eventive"],
       ["licenser", "negation"],
@@ -341,7 +336,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "paraMonon"],
       ["aspect", "perfective"],
       ["eventuality", "eventive"],
       ["licenser", "none"],
@@ -367,7 +361,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "paraMonon"],
       ["aspect", "perfective"],
       ["eventuality", "stative"],
       ["licenser", "negation"],
@@ -397,7 +390,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "paraMonon"],
       ["aspect", "perfective"],
       ["eventuality", "eventive"],
       ["licenser", "negation"],
@@ -513,7 +505,6 @@
       {"name": "It is not true that the princess slept until midnight. (She woke up earlier than that.)", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "imperfective"],
       ["eventuality", "stative"],
       ["licenser", "negation"],
@@ -538,7 +529,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "perfective"],
       ["eventuality", "stative"],
       ["licenser", "negation"],
@@ -566,7 +556,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "imperfective"],
       ["eventuality", "stative"],
       ["licenser", "negation"],
@@ -591,7 +580,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "mexri"],
       ["aspect", "imperfective"],
       ["eventuality", "stative"],
       ["licenser", "negation"],
@@ -619,7 +607,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "paraMonon"],
       ["aspect", "perfective"],
       ["eventuality", "stative"],
       ["licenser", "negation"],
@@ -691,7 +678,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "til"],
       ["aspect", "simplePast"],
       ["eventuality", "stative"],
       ["licenser", "none"],
@@ -716,7 +702,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "til"],
       ["aspect", "progressive"],
       ["eventuality", "eventive"],
       ["licenser", "none"],
@@ -741,7 +726,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "til"],
       ["aspect", "simplePast"],
       ["eventuality", "eventive"],
       ["licenser", "none"],
@@ -766,7 +750,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "fyrrEn"],
       ["aspect", "simplePast"],
       ["eventuality", "eventive"],
       ["licenser", "negation"],
@@ -791,7 +774,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "fyrrEn"],
       ["aspect", "simplePast"],
       ["eventuality", "eventive"],
       ["licenser", "none"],
@@ -816,7 +798,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "tot"],
       ["aspect", "simplePast"],
       ["eventuality", "eventive"],
       ["licenser", "negation"],
@@ -841,7 +822,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["connective", "tot"],
       ["aspect", "simplePast"],
       ["eventuality", "eventive"],
       ["licenser", "none"],

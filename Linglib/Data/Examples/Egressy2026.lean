@@ -26,7 +26,7 @@ def ex_4 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
-    paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "lát"), ("directPerception", "yes"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
 def ex_5 : Datum :=
   { id := "egressy2026_5"
@@ -39,7 +39,7 @@ def ex_5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
-    paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "hall"), ("directPerception", "yes"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
 def ex_6 : Datum :=
   { id := "egressy2026_6"
@@ -52,7 +52,7 @@ def ex_6 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .acceptable), ("backshifted", .unacceptable)]
-    paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "álmodik"), ("directPerception", "yes"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "yes")] }
 
 def ex_7 : Datum :=
   { id := "egressy2026_7"
@@ -65,7 +65,7 @@ def ex_7 : Datum :=
     judgment := .acceptable
     alternatives := [("Peti az-t hit-t-e, hogy Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "gondol"), ("directPerception", "no"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
 def ex_8 : Datum :=
   { id := "egressy2026_8"
@@ -78,7 +78,7 @@ def ex_8 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "aggaszt"), ("directPerception", "no"), ("clauseRole", "subject")] }
+    paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
 def ex_9 : Datum :=
   { id := "egressy2026_9"
@@ -91,7 +91,7 @@ def ex_9 : Datum :=
     judgment := .acceptable
     alternatives := [("Irigyked-t-él (a-miatt, hogy Mari szomorú vol-t).", .acceptable)]
     readings := [("simultaneous", .acceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "nonSpeechReporting"), ("matrixVerb", "morog"), ("directPerception", "no"), ("clauseRole", "adjunct")] }
+    paperFeatures := [("clauseType", "nonSpeechReporting"), ("directPerception", "no")] }
 
 def ex_10 : Datum :=
   { id := "egressy2026_10"
@@ -104,7 +104,7 @@ def ex_10 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
-    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("matrixVerb", "álmodik"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "yes")] }
+    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "yes")] }
 
 def ex_11a : Datum :=
   { id := "egressy2026_11a"
@@ -117,7 +117,7 @@ def ex_11a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "mond"), ("directPerception", "no"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_11b : Datum :=
   { id := "egressy2026_11b"
@@ -130,7 +130,7 @@ def ex_11b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "rikolt"), ("directPerception", "no"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_11c : Datum :=
   { id := "egressy2026_11c"
@@ -143,7 +143,7 @@ def ex_11c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "morog"), ("directPerception", "no"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_12 : Datum :=
   { id := "egressy2026_12"
@@ -156,7 +156,7 @@ def ex_12 : Datum :=
     judgment := .acceptable
     alternatives := [("Oda jö-tt-él hoz-zám (az-zal, hogy (sajnos) Mari szomorú vol-t).", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "telefonál"), ("directPerception", "no"), ("clauseRole", "adjunct")] }
+    paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_13 : Datum :=
   { id := "egressy2026_13"
@@ -169,7 +169,7 @@ def ex_13 : Datum :=
     judgment := .acceptable
     alternatives := [("Zsuzsi az-t gondol-t-a, hogy sajnos Mari szomorú vol-t.", .acceptable), ("Zsuzsi az-t hi-tt-e, hogy sajnos Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "hall"), ("directPerception", "no"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_14 : Datum :=
   { id := "egressy2026_14"
@@ -182,7 +182,7 @@ def ex_14 : Datum :=
     judgment := .acceptable
     alternatives := [("Peti az újság-ban lát-t-a (az-t), hogy (korá-bb-an) Mari szomorú vol-t.", .acceptable)]
     readings := [("simultaneous", .unacceptable), ("backshifted", .acceptable)]
-    paperFeatures := [("clauseType", "speechReporting"), ("matrixVerb", "lát"), ("directPerception", "no"), ("clauseRole", "object")] }
+    paperFeatures := [("clauseType", "speechReporting"), ("directPerception", "no")] }
 
 def ex_15 : Datum :=
   { id := "egressy2026_15"
@@ -195,7 +195,7 @@ def ex_15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
-    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "speechReporting"), ("matrixVerb", "rikolt"), ("intermediateVerb", "morog"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "no")] }
+    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateVerb", "morog"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "no")] }
 
 def ex_16 : Datum :=
   { id := "egressy2026_16"
@@ -208,7 +208,7 @@ def ex_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("intermediate simultaneous", .unacceptable), ("intermediate backshifted", .acceptable), ("deepest simultaneous", .acceptable), ("deepest backshifted", .unacceptable)]
-    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("matrixVerb", "rikolt"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "yes")] }
+    paperFeatures := [("intermediateClauseType", "speechReporting"), ("deepestClauseType", "nonSpeechReporting"), ("intermediateVerb", "lát"), ("intermediateDirectPerception", "no"), ("deepestDirectPerception", "yes")] }
 
 def ex_17 : Datum :=
   { id := "egressy2026_17"
@@ -221,7 +221,7 @@ def ex_17 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("intermediate simultaneous", .acceptable), ("intermediate backshifted", .unacceptable), ("deepest simultaneous", .unacceptable), ("deepest backshifted", .acceptable)]
-    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "speechReporting"), ("matrixVerb", "hall"), ("intermediateVerb", "rikolt"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "no")] }
+    paperFeatures := [("intermediateClauseType", "nonSpeechReporting"), ("deepestClauseType", "speechReporting"), ("intermediateVerb", "rikolt"), ("intermediateDirectPerception", "yes"), ("deepestDirectPerception", "no")] }
 
 def ex_18 : Datum :=
   { id := "egressy2026_18"
@@ -260,7 +260,7 @@ def ex_23 : Datum :=
     judgment := .acceptable
     alternatives := [("Pál az-t hall-ott-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t gondol-t-a, hogy sajnos Ili szomorú vol-t.", .acceptable), ("Pál az-t álmod-t-a, hogy sajnos Ili szomorú vol-t.", .unacceptable)]
     readings := []
-    paperFeatures := [("diagnostic", "evaluativeAdverb"), ("matrixVerb", "mond")] }
+    paperFeatures := [("diagnostic", "evaluativeAdverb")] }
 
 def ex_24 : Datum :=
   { id := "egressy2026_24"
@@ -273,7 +273,7 @@ def ex_24 : Datum :=
     judgment := .acceptable
     alternatives := [("Sajnos (CSAK) A VÁROS-ON hall-ott-am, hogy sajnos keresztül fut-ott-ak.", .questionable), ("Szerencsére (CSAK) A VÁROS-ON hall-ott-am, hogy szerencsére keresztül fut-ott-ak.", .questionable)]
     readings := []
-    paperFeatures := [("diagnostic", "focusMovement"), ("matrixVerb", "hall"), ("embeddedAdverb", "no")] }
+    paperFeatures := [("diagnostic", "focusMovement"), ("embeddedAdverb", "no")] }
 
 def ex_25 : Datum :=
   { id := "egressy2026_25"
@@ -286,7 +286,7 @@ def ex_25 : Datum :=
     judgment := .acceptable
     alternatives := [("Melyik város-on morog-t-ad, hogy keresztül fut-ott-ak?", .questionable)]
     readings := []
-    paperFeatures := [("diagnostic", "whMovement"), ("matrixVerb", "lát")] }
+    paperFeatures := [("diagnostic", "whMovement")] }
 
 def ex_27 : Datum :=
   { id := "egressy2026_27"

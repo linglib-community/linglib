@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 public import Linglib.Syntax.Category.Pronoun.Reflexive
+public import Linglib.Fragments.Hungarian.Case
 
 /-!
 # Hungarian pronouns
@@ -15,6 +16,11 @@ bases of the indefinite series of `Hungarian.Indefinites`.
 The reflexive is the possessive inflection of a stem *mag-*, one form for each person and
 number, from *magam* 'myself' to *maguk* 'themselves', collected in
 `Hungarian.Pronouns.reflexives`. Hungarian has no grammatical gender.
+
+The distal demonstrative *az* 'that' doubles as the expletive correlate of a *hogy*-clause,
+carrying the clause's case: its paradigm is `az`, with the stem-final consonant assimilating to
+a consonant-initial suffix, *azzal* 'with that', and reducing before a postposition, *amiatt*
+'because of that'.
 
 ## References
 
@@ -84,5 +90,20 @@ def maguk : ReflexivePronoun := { form := "maguk", person := some .third, number
 
 /-- The reflexive paradigm. -/
 def reflexives : Finset ReflexivePronoun := {magam, magad, maga, magunk, magatok, maguk}
+
+/-! ### The demonstrative *az* -/
+
+/-- The case paradigm of the distal demonstrative *az* 'that', on the cases its expletive use
+shows: the stem-final *z* assimilates to a consonant-initial suffix, *azzal*, *annak*. -/
+def az : Case → Option String
+  | .nom => some "az"
+  | .acc => some "azt"
+  | .dat => some "annak"
+  | .inst => some "azzal"
+  | _ => none
+
+/-- *amiatt* 'because of that': the demonstrative with the postposition *miatt*, written together
+with the reduced stem *a-*. -/
+def amiatt : String := "amiatt"
 
 end Hungarian.Pronouns
