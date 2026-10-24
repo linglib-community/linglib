@@ -168,7 +168,7 @@ end Measure
 
 section Fragment
 
-open Semantics
+open scoped Denotes
 
 variable {W : Type*} {μ : W → ℕ}
 

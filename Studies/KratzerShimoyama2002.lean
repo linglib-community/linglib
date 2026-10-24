@@ -269,7 +269,7 @@ end FreeChoice
 
 /-! ### Selectivity and intervention (§9) -/
 
-open scoped Semantics in
+open scoped Denotes in
 /-- Japanese indeterminates do not change shape (§9). *Dare-ka* and *dare-mo* share their
 indeterminate and differ in their readings, which their particles' coordinations supply. -/
 theorem japanese_same_base.{u} :

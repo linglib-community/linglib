@@ -71,7 +71,7 @@ not state.
 
 namespace TsiliaZhao2026
 
-open Semantics
+open scoped Denotes
 
 open Tense Tense.Perspective
 

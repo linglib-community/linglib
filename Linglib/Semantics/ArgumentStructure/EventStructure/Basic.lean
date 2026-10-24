@@ -64,7 +64,6 @@ share a universe, so that the type of a denotation can depend on the sort.
 
 namespace ArgumentStructure.EventStructure
 
-open Semantics
 open scoped SetRel
 
 universe u

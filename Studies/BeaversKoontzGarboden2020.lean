@@ -60,7 +60,7 @@ Classes and Alternations* (`rootHypothesis_matches_profile`).
 
 namespace BeaversKoontzGarboden2020
 
-open Semantics Semantics.Root.Kinds
+open ArgumentStructure ArgumentStructure.Root.Kinds
 open scoped SetRel ModalLogic
 
 /-! ### The two theses, at signature level -/

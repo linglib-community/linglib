@@ -67,7 +67,7 @@ universe u
 `every`, `NONEsym` as `no`, the existentials as `Quantifier.GQ.some`, `FEW` as `few`, `MOST` as
 `most`, and the numerals as `atLeast` or `exactly`; `MANY` has no reading, its
 standard being contextual. -/
-noncomputable instance : Semantics.Denotes Sign (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes Sign (Set Quantifier.GQ.Family.{u}) where
   denote
     | .fsAll | .allB | .each => {Quantifier.GQ.Family.every}
     | .noneSym => {Quantifier.GQ.Family.no}

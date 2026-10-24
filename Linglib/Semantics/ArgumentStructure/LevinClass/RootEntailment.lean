@@ -22,7 +22,7 @@ off the signature.
 
 namespace ArgumentStructure
 
-open Semantics Semantics.Root.Kinds
+open ArgumentStructure.Root.Kinds
 
 /-- The root signature a class realizes, where one has been established: manner roots for the
 activity classes, causative-result roots for the externally caused changes of state, pure

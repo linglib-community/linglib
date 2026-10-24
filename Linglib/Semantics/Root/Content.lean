@@ -40,7 +40,7 @@ lies in both (`Root.Content.overlaps_iff_exists_mem`).
 
 @[expose] public section
 
-namespace Semantics.Root.Content
+namespace ArgumentStructure.Root.Content
 
 /-! ### Dimensions -/
 
@@ -126,9 +126,9 @@ structure Situation where
   patientDimensionality : ObjectDimensionality
   deriving DecidableEq, Repr
 
-end Semantics.Root.Content
+end ArgumentStructure.Root.Content
 
-namespace Semantics.Root
+namespace ArgumentStructure.Root
 
 open Content Finset
 
@@ -191,4 +191,4 @@ theorem overlaps_iff_exists_mem : p.Overlaps q ↔ ∃ s, s ∈ p ∧ s ∈ q :=
 
 end Content
 
-end Semantics.Root
+end ArgumentStructure.Root

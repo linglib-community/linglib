@@ -48,7 +48,8 @@ carry different contents (`stack_eq`).
 
 namespace BochnakHanink2021
 
-open Washo Minimalist Semantics
+open Washo Minimalist
+open scoped Denotes
 
 /-! ### Selection -/
 

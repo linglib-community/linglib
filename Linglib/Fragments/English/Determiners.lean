@@ -105,7 +105,7 @@ quantifiers on every finite domain. *None* reads as `no`, *some* as `Quantifier.
 *every* and *each* as `every`, *most* as `most`, *few* as `few`, *half* as `half`, *both* as
 `both` and *neither* as `neither`; *many* has no reading, since [barwise-cooper-1981] leave its
 standard to context. -/
-noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .none_ => {Quantifier.GQ.Family.no}
     | .some_ => {Quantifier.GQ.Family.some}

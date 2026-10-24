@@ -42,8 +42,9 @@ objects. The paper reports the fit of speaker and listener bets to the model.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Semantics
-open scoped ENNReal Topology Semantics.Superscript
+open MeasureTheory ProbabilityTheory
+open scoped Denotes
+open scoped ENNReal Topology Denotes.Superscript
 
 namespace FrankGoodman2012
 

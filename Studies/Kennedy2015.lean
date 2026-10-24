@@ -70,7 +70,8 @@ theorem maxIn_interval_Iic (c : Comparison) (m n : ℕ) :
 
 section Classes
 
-open English.NumeralModifiers Semantics
+open English.NumeralModifiers
+open scoped Denotes
 
 attribute [local simp] moreThan fewerThan over under atLeast atMost minimally maximally upTo from_
   exactly precisely about around approximately roughly almost nearly approximator shortOf

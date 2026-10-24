@@ -19,7 +19,7 @@ anaphoric expression *ekino ton kero* 'at that time'. The examples are those of
 
 namespace Greek.StandardModern.TemporalDeictic
 
-open Semantics
+open scoped Denotes
 
 open Tense
 

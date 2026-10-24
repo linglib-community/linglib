@@ -6,7 +6,7 @@ public import Mathlib.Util.Superscript
 /-!
 # Denotation
 
-This file defines `Semantics.Denotes`, the class of objects that have a denotation, and the
+This file defines `Denotes`, the class of objects that have a denotation, and the
 bracket notation `⟦x⟧` for it, Heim and Kratzer's. A lexical item, a reading, or a whole
 sentence denotes in whatever domain its instance names, so the class gives the library one name
 for the map from a semantic object to its meaning, whether that map is compositional or
@@ -29,8 +29,8 @@ mathlib's `Term.realize`) and gains an instance once its type is indexed by that
 
 ## Main definitions
 
-* `Semantics.Denotes α D`: every object of `α` denotes in `D`; `⟦x⟧` is `Denotes.denote x`.
-* `⟦x⟧ᴹ`, in the scope `Semantics.Superscript`: the denotation of `x` at the parameter `M`.
+* `Denotes α D`: every object of `α` denotes in `D`; `⟦x⟧` is `Denotes.denote x`.
+* `⟦x⟧ᴹ`, in the scope `Denotes.Superscript`: the denotation of `x` at the parameter `M`.
 
 ## References
 
@@ -41,12 +41,12 @@ mathlib's `Term.realize`) and gains an instance once its type is indexed by that
 
 @[expose] public section
 
-namespace Semantics
-
 /-- `Denotes α D` says that every object of `α` denotes in `D`. -/
 class Denotes (α : Type*) (D : outParam Type*) where
   /-- The denotation of `x`, written `⟦x⟧`. -/
   denote : α → D
+
+namespace Denotes
 
 /-- `⟦x⟧` is the denotation of `x`. -/
 scoped notation:max (priority := high) "⟦" x "⟧" => Denotes.denote x
@@ -62,4 +62,4 @@ scoped macro:max "⟦" x:term "⟧" noWs m:superscript(term) : term =>
 
 end Superscript
 
-end Semantics
+end Denotes

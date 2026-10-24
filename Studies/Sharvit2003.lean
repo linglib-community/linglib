@@ -47,7 +47,7 @@ verb, and the fourth type has no source of zero tense.
 
 namespace Sharvit2003
 
-open Semantics
+open scoped Denotes
 
 open Tense
 open scoped ModalLogic

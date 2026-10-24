@@ -71,7 +71,8 @@ operators THR, ST and EV are not formalized. The examples are the rows of
 
 namespace VonStechow2009
 
-open Semantics Tense Aspect ModalLogic
+open Tense Aspect ModalLogic
+open scoped Denotes
 open scoped SetRel
 open Kaplan (Index)
 

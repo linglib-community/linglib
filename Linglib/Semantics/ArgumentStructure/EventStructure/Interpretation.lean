@@ -80,7 +80,7 @@ inductive Postulate
 /-- The kinds a signature carries when the postulate applies to it: a postulate for each kind
 but the state, which imposes nothing beyond the predicate, and the manner of the cause for a
 manner with a cause. -/
-def Postulate.trigger : Postulate → Semantics.Root.Kinds
+def Postulate.trigger : Postulate → ArgumentStructure.Root.Kinds
   | .change => {.result}
   | .cause => {.cause}
   | .manner => {.manner}
@@ -118,7 +118,6 @@ theorem vCause_mono (h : Q ≤ Q') : M.vCause Q ≤ M.vCause Q' :=
 
 section Postulates
 
-open Semantics
 
 variable (M) (P : Entity → State → Prop) (Q : Event → Prop) {ks : Root.Kinds}
 

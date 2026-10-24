@@ -91,7 +91,7 @@ theorem precise_not_mem_underspecified (e : Experiment) :
       Comparison.ge.interval (stimuli e .underspecified).after := by
   cases e <;> simp [stimuli, Comparison.interval_eq, Comparison.interval_ge]
 
-open Semantics in
+open scoped Denotes in
 theorem precise_mem_approximate (e : Experiment) {a : Approximator}
     (ha : (stimuli e .approximate).afterApproximator = some a) {m : Modifier (Set ℕ)}
     (hr : m ∈ ⟦a.modifier⟧)

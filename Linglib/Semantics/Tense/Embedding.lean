@@ -48,7 +48,7 @@ doxastic modal base is Klecha's (`Studies/Klecha2016.lean`).
 
 namespace Tense
 
-open Semantics
+open scoped Denotes
 open scoped SetRel
 
 /-- The Upper Limit Constraint is the cell of the positions a tense's reference time may take

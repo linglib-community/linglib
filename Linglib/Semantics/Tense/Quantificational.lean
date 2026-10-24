@@ -37,7 +37,8 @@ logic.
 
 namespace Tense
 
-open Semantics ModalLogic
+open ModalLogic
+open scoped Denotes
 open scoped SetRel
 
 variable {T : Type*} {C D : Finset Ordering} {P : T → Prop} {t : T}

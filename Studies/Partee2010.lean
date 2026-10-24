@@ -36,7 +36,7 @@ The classes are the paper's labels for the meaning postulates, ordered by the tr
 that its footnote 1 says the postulates do not give, and a natural class is read as an interval
 of that scale. Each Polish adjective's class is the paper's, recorded in the rows'
 `paperFeatures`; for most adjectives of its lists the paper gives only the English. The shift is
-`Semantics.Property.ShiftsHead`, and *real* is the identity modifier.
+`Modifier.ShiftsHead`, and *real* is the identity modifier.
 
 ## References
 
@@ -50,8 +50,7 @@ of that scale. Each Polish adjective's class is the paper's, recorded in the row
 
 namespace Partee2010
 
-open Semantics (Property)
-open Semantics.Property Modifier Examples
+open Modifier Modifier Examples
 
 variable {W E : Type*}
 
@@ -79,7 +78,7 @@ def rank : AdjectiveClass → Fin 4
 instance : LinearOrder AdjectiveClass := LinearOrder.lift' rank (by decide)
 
 /-- The meaning postulate each class stands for; the plain non-subsective class has none. -/
-def postulate : AdjectiveClass → Modifier (Property W E) → Prop
+def postulate : AdjectiveClass → Modifier (W → E → Prop) → Prop
   | .intersective => IsIntersective
   | .subsective => IsSubsective
   | .nonsubsective => fun _ ↦ True
@@ -100,13 +99,13 @@ def classTable : List (String × AdjectiveClass) :=
 /-- The meaning postulates do not order the subsective and privative classes, as Kamp's *skillful*
 and *fake* show (footnote 1). -/
 theorem postulates_not_linear :
-    ¬ (∀ adj : Modifier (Property Kamp1975.W2 Kamp1975.E3),
+    ¬ (∀ adj : Modifier (Kamp1975.W2 → Kamp1975.E3 → Prop),
         AdjectiveClass.subsective.postulate adj → AdjectiveClass.privative.postulate adj) ∧
-      ¬ (∀ adj : Modifier (Property Kamp1975.W2 Kamp1975.E3),
+      ¬ (∀ adj : Modifier (Kamp1975.W2 → Kamp1975.E3 → Prop),
         AdjectiveClass.privative.postulate adj → AdjectiveClass.subsective.postulate adj) :=
-  ⟨fun h ↦ isPrivative_iff.1 (h _ Kamp1975.skillful_subsective) (fun _ _ ↦ True) .w₁ .a
+  ⟨fun h ↦ Modifier.isPrivative_iff_forall.1 (h _ Kamp1975.skillful_subsective) (fun _ _ ↦ True) .w₁ .a
       ⟨trivial, trivial⟩ trivial,
-    fun h ↦ not_isSubsective_of_isPrivative Kamp1975.fake_privative
+    fun h ↦ Modifier.IsPrivative.not_isSubsective Kamp1975.fake_privative
       ⟨fun _ _ ↦ False, .w₁, .b, trivial, id⟩ (h _ Kamp1975.fake_privative)⟩
 
 /-! ### The splitting data -/
@@ -149,27 +148,27 @@ theorem reanalyse_splittable_iff (c : AdjectiveClass) :
 
 /-- *real* is vacuous on its literal head, and on a privatively shifted head non-vacuous iff there
 are both Ns and things in the privative's value (p. 280). -/
-theorem real_isNonVacuous_iff {adj : Modifier (Property W E)} (hp : IsPrivative adj)
-    (N : Property W E) (w : W) :
+theorem real_isNonVacuous_iff {adj : Modifier (W → E → Prop)} (hp : IsPrivative adj)
+    (N : W → E → Prop) (w : W) :
     ¬ IsNonVacuous (id N) w (N w) ∧
       (IsNonVacuous (id N) w (N w ⊔ adj N w) ↔ (∃ x, N w x) ∧ ∃ x, adj N w x) := by
   refine ⟨not_isNonVacuous_self N w, ?_⟩
   change IsNonVacuous N w _ ↔ _
   rw [sup_comm, isNonVacuous_sup_self_iff]
   exact and_congr_right fun _ ↦ exists_congr fun x ↦
-    ⟨And.left, fun h ↦ ⟨h, isPrivative_iff.1 hp N w x h⟩⟩
+    ⟨And.left, fun h ↦ ⟨h, Modifier.isPrivative_iff_forall.1 hp N w x h⟩⟩
 
 /-- On the head a privative shifts, everything is real or fake and not both, as *Is that gun real or
 fake?* (10b) presupposes. -/
-theorem real_xor_fake {adj : Modifier (Property W E)} (hp : IsPrivative adj)
-    {N : Property W E} {w : W} {x : E} (hx : (N w ⊔ adj N w) x) : Xor (N w x) (adj N w x) := by
+theorem real_xor_fake {adj : Modifier (W → E → Prop)} (hp : IsPrivative adj)
+    {N : W → E → Prop} {w : W} {x : E} (hx : (N w ⊔ adj N w) x) : Xor (N w x) (adj N w x) := by
   rcases hx with h | h
-  · exact Or.inl ⟨h, fun h' ↦ isPrivative_iff.1 hp N w x h' h⟩
-  · exact Or.inr ⟨h, isPrivative_iff.1 hp N w x h⟩
+  · exact Or.inl ⟨h, fun h' ↦ Modifier.isPrivative_iff_forall.1 hp N w x h' h⟩
+  · exact Or.inr ⟨h, Modifier.isPrivative_iff_forall.1 hp N w x h⟩
 
 /-- Kamp's privative *fake* shifts a noun with one real instance, the fur of (17). -/
-example (w : Kamp1975.W2) : ShiftsHead Kamp1975.fakeAdj (fun _ x ↦ x = .a) w :=
-  (shiftsHead_iff_of_isPrivative Kamp1975.fake_privative).2
+example (w : Kamp1975.W2) : Modifier.ShiftsHead Kamp1975.fakeAdj (fun _ x ↦ x = .a) w :=
+  (Modifier.IsPrivative.shiftsHead_iff Kamp1975.fake_privative).2
     ⟨⟨.b, trivial, fun h ↦ nomatch h⟩, ⟨.a, rfl⟩⟩
 
 end Partee2010

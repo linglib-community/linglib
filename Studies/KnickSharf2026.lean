@@ -35,7 +35,8 @@ rules it out there. Among the focus alternatives, a domain further in the past i
 
 namespace KnickSharf2026
 
-open Semantics ModalLogic Kaplan
+open ModalLogic Kaplan
+open scoped Denotes
 
 open Aspect
 open Event (τ)

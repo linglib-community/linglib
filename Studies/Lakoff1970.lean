@@ -37,7 +37,7 @@ under sequence of tense, (11b).
 
 namespace Lakoff1970
 
-open Semantics
+open scoped Denotes
 
 open Tense
 

@@ -21,7 +21,7 @@ Ogihara and Sharvit. The example is Tsilia and Zhao's.
 
 namespace Hebrew.TemporalDeictic
 
-open Semantics
+open scoped Denotes
 
 open Tense
 

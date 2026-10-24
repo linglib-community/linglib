@@ -55,7 +55,7 @@ namespace StankovaSimik2025
 open Czech.Particles (nahodou copak)
 open Question Quantifier
 open Simik2024
-open scoped Semantics
+open scoped Denotes
 
 /-! ### Verb position and the readings of negation -/
 

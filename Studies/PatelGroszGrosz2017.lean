@@ -42,7 +42,7 @@ gender-mismatch corpus counts are described in prose.
 
 namespace PatelGroszGrosz2017
 
-open Semantics
+open scoped Denotes
 open DefiniteDescription (Restrictor)
 
 /-- The pragmatic effects that license the strong-article series (§5): the speaker's

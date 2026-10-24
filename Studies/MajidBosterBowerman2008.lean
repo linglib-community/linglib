@@ -48,7 +48,7 @@ fragment lacks the change-of-state *snap* (its *snap* is the manner-of-speaking 
 
 namespace MajidBosterBowerman2008
 
-open Semantics.Root Semantics.Root.Content English English.Verbs
+open ArgumentStructure.Root ArgumentStructure.Root.Content English English.Verbs
 
 /-! ### Clips -/
 

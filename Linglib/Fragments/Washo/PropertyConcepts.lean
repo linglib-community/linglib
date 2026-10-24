@@ -59,11 +59,11 @@ inductive Shape where
 class, with the Dixon category of its root. -/
 structure PropertyConcept extends _root_.Verb where
   /-- The Dixon category of the root, as the appendix assigns it. -/
-  category : Semantics.PropertyConcept.Class
+  category : PropertyConcept.Class
 
 namespace PropertyConcept
 
-variable (root : String) (c : Semantics.PropertyConcept.Class)
+variable (root : String) (c : PropertyConcept.Class)
 
 /-- The Class 1 verb of a root, inflected like any intransitive verb. -/
 def bare : PropertyConcept where

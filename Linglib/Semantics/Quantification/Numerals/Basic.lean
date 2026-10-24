@@ -112,9 +112,9 @@ structure NumeralModifier where
 namespace NumeralModifier
 
 /-- A numeral modifier denotes its readings. -/
-instance : Semantics.Denotes NumeralModifier (Set (Modifier (Set ℕ))) := ⟨readings⟩
+instance : Denotes NumeralModifier (Set (Modifier (Set ℕ))) := ⟨readings⟩
 
-open Semantics in
+open scoped Denotes in
 @[simp] theorem denote_eq_readings (w : NumeralModifier) : ⟦w⟧ = w.readings := rfl
 
 /-- The class of a bound-setting modifier, read off its kind. -/

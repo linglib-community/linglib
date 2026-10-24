@@ -353,7 +353,7 @@ theorem alternating_iff_hasCausativeAlternation :
 /-- The position of a verb's root on the paper's analysis. The root of a causative manner verb
 is a predicate of the causing event adjoined to `v`, and any other root is a predicate of the
 result state in the complement of `v`. -/
-def rootPosition (s : Sample) : Semantics.Root.Position :=
+def rootPosition (s : Sample) : ArgumentStructure.Root.Position :=
   if s ∈ causativeMannerVerbs then .adjoined else .complement
 
 theorem mem_thick_of_rootPosition {s : Sample} (h : s.rootPosition = .adjoined) : s ∈ thick := by

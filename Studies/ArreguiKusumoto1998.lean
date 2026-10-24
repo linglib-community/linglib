@@ -74,7 +74,8 @@ which gives a past under *mae* and a present under *ato* no denotation.
 
 namespace ArreguiKusumoto1998
 
-open Montague PhraseStructure.Tree PhraseStructure Semantics ModalLogic Tense
+open Montague PhraseStructure.Tree PhraseStructure ModalLogic Tense
+open scoped Denotes
 open Japanese.TemporalConnectives (mae ato toki)
 open scoped SetRel
 

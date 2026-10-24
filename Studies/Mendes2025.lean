@@ -42,7 +42,7 @@ in a historical alternative rather than at the anchor (modal displacement).
 
 namespace Mendes2025
 
-open Semantics
+open scoped Denotes
 
 open HistoricalAlternatives DynamicSemantics Update SetRel Kaplan
 open RegisterStructure

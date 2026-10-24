@@ -79,7 +79,7 @@ def toList : List QuantityWord := [.kazdy, .zadny, .nejaky, .nektery]
 /-- The readings available for a word. *Každý* reads as `every`, *žádný* as `no` or as
 `Quantifier.GQ.some`, and *nějaký* and *některý* as `Quantifier.GQ.some`, the partitive
 specificity of *některý* being no part of its truth conditions. -/
-instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .kazdy => {Quantifier.GQ.Family.every}
     | .zadny => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}

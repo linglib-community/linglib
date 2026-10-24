@@ -62,7 +62,7 @@ antecedent bind the strong article's index, since assignments are total.
 
 namespace Schwarz2009
 
-open Semantics
+open scoped Denotes
 open DefiniteDescription (Restrictor)
 
 variable {E W : Type}

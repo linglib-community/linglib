@@ -22,7 +22,7 @@ enclitic coordinators of the old Indo-European languages.
 namespace Latin.Determiners
 
 open Quantifier
-open scoped Semantics
+open scoped Denotes
 
 universe u
 

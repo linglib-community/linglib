@@ -72,7 +72,7 @@ universe u
 determiner reading. The n-word *aucun* reads as `no`, a negative quantifier
 ([de-swart-sag-2002]), or as `Quantifier.GQ.some`, an indefinite whose negation the clause
 supplies ([zeijlstra-2004]). -/
-noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
+noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .tous | .chaque => {Quantifier.GQ.Family.every}
     | .aucun => {Quantifier.GQ.Family.no, Quantifier.GQ.Family.some}

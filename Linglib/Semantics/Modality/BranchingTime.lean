@@ -58,7 +58,7 @@ they use.
 
 namespace BranchingTime
 
-open Semantics
+open scoped Denotes
 
 variable {M : Type*} [PartialOrder M]
 

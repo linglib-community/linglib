@@ -36,7 +36,7 @@ of the typology's display (12).
 
 @[expose] public section
 
-namespace Semantics
+namespace ArgumentStructure
 
 /-! ### Kinds -/
 
@@ -135,4 +135,4 @@ def fullSpec : Kinds := univ
 
 end Root.Kinds
 
-end Semantics
+end ArgumentStructure

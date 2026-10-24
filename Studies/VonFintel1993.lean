@@ -72,7 +72,8 @@ restrictiveness only (`Exceptive.Restrictive`), which is why they also occur wit
 
 namespace VonFintel1993
 
-open Quantifier Quantifier.GQ Quantifier.NP Quantifier.Exceptive Semantics
+open Quantifier Quantifier.GQ Quantifier.NP Quantifier.Exceptive
+open scoped Denotes
 open English.Determiners (QuantityWord)
 
 variable {α : Type*} {Q : GQ α} {A C B : α → Prop}

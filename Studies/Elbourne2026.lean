@@ -31,7 +31,7 @@ type.
 
 ## Implementation notes
 
-* The carrier is the substrate's `Modifier (Property I E)`, `Property I E := I → E → Prop` with
+* The carrier is the substrate's `Modifier (I → E → Prop)`, properties indexed by times, with
   times first, where the article's `⟨e,it⟩` takes the entity first; conjuncts are likewise
   reordered. An intersective adjective is `Modifier.intersective Q`, meet with the property `Q`,
   and the article's second meaning of the indefinite article (32) is that same function, so
@@ -65,8 +65,7 @@ type.
 
 namespace Elbourne2026
 
-open Semantics (Property)
-open Semantics.Property Elbourne2026.Examples
+open Modifier Elbourne2026.Examples
 
 section Theory
 
@@ -76,7 +75,7 @@ variable {I E : Type*}
 
 /-- Applying the intersective *cute* to *donkey* gives at each time the meet of the two extensions
 ((24)–(26)). -/
-theorem intersective_apply_time (Q N : Property I E) (t : I) :
+theorem intersective_apply_time (Q N : I → E → Prop) (t : I) :
     Modifier.intersective Q N t = Modifier.intersective (Q t) (N t) :=
   rfl
 
@@ -84,22 +83,22 @@ theorem intersective_apply_time (Q N : Property I E) (t : I) :
 
 /-- The copula of (8), `λR⟨i,it⟩.λG⟨eit,eit⟩.λx.λt.∃t'(R(t')(t) & G(λy.λt''.⊤)(x)(t'))`, applies
 the adjective to the trivial noun at a time that the tense relation `R` locates. -/
-def copula (R : I → I → Prop) (G : Modifier (Property I E)) : Property I E :=
+def copula (R : I → I → Prop) (G : Modifier (I → E → Prop)) : I → E → Prop :=
   fun t x ↦ ∃ t', R t' t ∧ G ⊤ t' x
 
-theorem copula_intersective (R : I → I → Prop) (Q : Property I E) :
+theorem copula_intersective (R : I → I → Prop) (Q : I → E → Prop) :
     copula R (Modifier.intersective Q) = fun t x ↦ ∃ t', R t' t ∧ Q t' x := by
   funext t x
   simp only [copula, Modifier.intersective, inf_top_eq]
 
 /-- *Fido was cute* (28)–(30) means `λt.∃t'(<(t')(t) & cute(o)(t'))`. -/
-theorem fido_was_cute [LT I] (cute : Property I E) (o : E) (t : I) :
+theorem fido_was_cute [LT I] (cute : I → E → Prop) (o : E) (t : I) :
     copula (· < ·) (Modifier.intersective cute) t o ↔ ∃ t' < t, cute t' o := by
   rw [copula_intersective]
 
 /-- The second meaning (32) of the indefinite article is `Modifier.intersective`, so the copula
 takes *a dog* in *Fido is a dog* ((31)–(33)). -/
-theorem fido_is_a_dog (R : I → I → Prop) (dog : Property I E) (o : E) (t : I) :
+theorem fido_is_a_dog (R : I → I → Prop) (dog : I → E → Prop) (o : E) (t : I) :
     copula R (Modifier.intersective dog) t o ↔ ∃ t', R t' t ∧ dog t' o := by
   rw [copula_intersective]
 
@@ -107,29 +106,29 @@ theorem fido_is_a_dog (R : I → I → Prop) (dog : Property I E) (o : E) (t : I
 
 /-- *former* (44), (60) denotes `λf⟨e,it⟩.λx.λt.∃t'(<(t')(t) & f(x)(t') & ¬f(x)(t))`, asserting
 both the positive and the negative condition. -/
-def former [LT I] : Modifier (Property I E) :=
+def former [LT I] : Modifier (I → E → Prop) :=
   fun N t x ↦ (∃ t' < t, N t' x) ∧ ¬ N t x
 
 /-- *John was a former judge* (45)–(46) means
 `λt.∃t'(<(t')(t) & ∃t''(<(t'')(t') & judge(j)(t'') & ¬judge(j)(t')))`. -/
-theorem john_was_a_former_judge [LT I] (judge : Property I E) (j : E) (t : I) :
+theorem john_was_a_former_judge [LT I] (judge : I → E → Prop) (j : E) (t : I) :
     copula (· < ·) (Modifier.intersective (former judge)) t j ↔
       ∃ t' < t, (∃ t'' < t', judge t'' j) ∧ ¬ judge t' j := by
   rw [copula_intersective]
   exact Iff.rfl
 
 /-- A former N at `t` is not an N at `t` (§3.4), so *former* is privative in Kamp's sense. -/
-theorem former_isPrivative [LT I] : Modifier.IsPrivative (former : Modifier (Property I E)) :=
-  isPrivative_iff.mpr fun _ _ _ h ↦ h.2
+theorem former_isPrivative [LT I] : Modifier.IsPrivative (former : Modifier (I → E → Prop)) :=
+  Modifier.isPrivative_iff_forall.mpr fun _ _ _ h ↦ h.2
 
 theorem former_not_isSubsective [Preorder I] {t' t : I} (h : t' < t) [Nonempty E] :
-    ¬ Modifier.IsSubsective (former : Modifier (Property I E)) :=
-  not_isSubsective_of_isPrivative former_isPrivative
+    ¬ Modifier.IsSubsective (former : Modifier (I → E → Prop)) :=
+  Modifier.IsPrivative.not_isSubsective former_isPrivative
     ⟨fun s _ ↦ s = t', t, Classical.arbitrary E, ⟨t', h, rfl⟩, h.ne'⟩
 
 /-- No property combined intersectively with a noun gives the meaning of *former* (§3.3–3.4). -/
 theorem intersective_ne_former [Preorder I] {t' t : I} (h : t' < t) [Nonempty E]
-    (Q : Property I E) : Modifier.intersective Q ≠ former :=
+    (Q : I → E → Prop) : Modifier.intersective Q ≠ former :=
   fun e ↦ former_not_isSubsective h
     (e ▸ Modifier.intersective_isIntersective Q : Modifier.IsIntersective former).isSubsective
 
@@ -138,7 +137,7 @@ theorem intersective_ne_former [Preorder I] {t' t : I} (h : t' < t) [Nonempty E]
 /-- *localᵢ* (54) denotes `λf⟨e,it⟩.λx.λt.f(x)(t) & local(x)(σ(i))(t)`. The relatum `z` is the
 value of the index under the assignment, so the adjective stays within the type rather than
 taking an internal argument. -/
-def localTo (near : I → E → E → Prop) (z : E) : Modifier (Property I E) :=
+def localTo (near : I → E → E → Prop) (z : E) : Modifier (I → E → Prop) :=
   Modifier.intersective fun t x ↦ near t x z
 
 /-- A frame interprets the non-logical constants of the fragment (8), the thematic relations and
@@ -154,13 +153,13 @@ structure Frame (I E S : Type*) where
 variable {S : Type*}
 
 /-- *every* (8) denotes `λf⟨e,it⟩.λg⟨e,it⟩.λt.∀x(f(x)(t) → g(x)(t))`. -/
-def every (f g : Property I E) (t : I) : Prop := ∀ x, f t x → g t x
+def every (f g : I → E → Prop) (t : I) : Prop := ∀ x, f t x → g t x
 
 /-- *some* and the quantificational *a* (8) denote `λf⟨e,it⟩.λg⟨e,it⟩.λt.∃x(f(x)(t) & g(x)(t))`. -/
-def indefinite (f g : Property I E) (t : I) : Prop := ∃ x, f t x ∧ g t x
+def indefinite (f g : I → E → Prop) (t : I) : Prop := ∃ x, f t x ∧ g t x
 
 /-- *everyone* (56a) denotes `λf⟨e,it⟩.λt.∀x(person(x)(t) → f(x)(t))`. -/
-def everyone (person g : Property I E) (t : I) : Prop := ∀ x, person t x → g t x
+def everyone (person g : I → E → Prop) (t : I) : Prop := ∀ x, person t x → g t x
 
 /-- A transitive verb such as *inspect* (8) or *enter* (56d) denotes
 `λR⟨i,it⟩.λx.λe.λt.P(e) & Theme(e)(x) & R(CUL(e))(t)`. -/
@@ -169,12 +168,12 @@ def Frame.transitive (F : Frame I E S) (P : S → Prop) (R : I → I → Prop) (
   P e ∧ F.theme e x ∧ R (F.cul e) t
 
 /-- Little v (8), (56f) denotes `λF⟨s,it⟩.λx.λt.∃e(F(e)(t) & Agent(e)(x))`. -/
-def Frame.littleV (F : Frame I E S) (G : S → I → Prop) : Property I E :=
+def Frame.littleV (F : Frame I E S) (G : S → I → Prop) : I → E → Prop :=
   fun t x ↦ ∃ e, G e t ∧ F.agent e x
 
 /-- With the object raised lowest (20)–(21), *Every woman inspected some donkey* (14) has its
 inverse scope reading. -/
-theorem inverse_scope [LT I] (F : Frame I E S) (woman donkey : Property I E)
+theorem inverse_scope [LT I] (F : Frame I E S) (woman donkey : I → E → Prop)
     (inspection : S → Prop) (t : I) :
     indefinite donkey
         (fun t x ↦ every woman (F.littleV (F.transitive inspection (· < ·) x)) t) t ↔
@@ -184,7 +183,7 @@ theorem inverse_scope [LT I] (F : Frame I E S) (woman donkey : Property I E)
 
 /-- With the subject raised above the object, the sentence has its surface scope reading
 (22)–(23). -/
-theorem surface_scope [LT I] (F : Frame I E S) (woman donkey : Property I E)
+theorem surface_scope [LT I] (F : Frame I E S) (woman donkey : I → E → Prop)
     (inspection : S → Prop) (t : I) :
     every woman
         (fun t y ↦ indefinite donkey
@@ -195,14 +194,14 @@ theorem surface_scope [LT I] (F : Frame I E S) (woman donkey : Property I E)
 
 /-- In *Everyone entered a local bar* ((55)–(58)), the raised *everyone* binds the index on *local*.
 -/
-theorem everyone_entered_a_local_bar [LT I] (F : Frame I E S) (person bar : Property I E)
+theorem everyone_entered_a_local_bar [LT I] (F : Frame I E S) (person bar : I → E → Prop)
     (near : I → E → E → Prop) (entering : S → Prop) (t : I) :
     everyone person
         (fun t x ↦ indefinite (localTo near x bar)
           (fun t y ↦ F.littleV (F.transitive entering (· < ·) y) t x) t) t ↔
       ∀ x, person t x → ∃ y, near t y x ∧ bar t y ∧
         ∃ e, entering e ∧ F.theme e y ∧ F.cul e < t ∧ F.agent e x := by
-  simp only [everyone, indefinite, localTo, intersective_apply, Frame.littleV, Frame.transitive,
+  simp only [everyone, indefinite, localTo, intersective_apply₂, Frame.littleV, Frame.transitive,
     and_assoc]
 
 end Theory
@@ -322,14 +321,14 @@ variable {I E : Type*}
 
 /-- In *young alleged murderer* (92a) the intersective adjective scopes over the other modifier
 and so commits the speaker to its property. -/
-theorem intersective_outer (Y N : Property I E) (M : Modifier (Property I E)) (t : I) (x : E)
+theorem intersective_outer (Y N : I → E → Prop) (M : Modifier (I → E → Prop)) (t : I) (x : E)
     (h : Modifier.intersective Y (M N) t x) : Y t x :=
   h.1
 
 /-- *Former* applied to an intersectively modified noun need not commit to the modifier, as in
 *alleged young murderer* (92b). -/
 theorem exists_inner_not_committed :
-    ∃ (Y N : Property Bool Unit) (t : Bool) (x : Unit),
+    ∃ (Y N : Bool → Unit → Prop) (t : Bool) (x : Unit),
       former (Modifier.intersective Y N) t x ∧ ¬ Y t x :=
   ⟨fun s _ ↦ s = false, ⊤, true, (),
     ⟨⟨false, by decide, rfl, trivial⟩, fun h ↦ absurd h.1 (by decide)⟩, by decide⟩
@@ -338,22 +337,22 @@ variable {D : Type*}
 
 /-- A gradable adjective with a degree argument (100) denotes
 `λd.λf⟨e,it⟩.λx.λt.f(x)(t) & tall(x)(t)(d)`, of type ⟨d,eiteit⟩. -/
-def gradable (P : I → E → D → Prop) (d : D) : Modifier (Property I E) :=
+def gradable (P : I → E → D → Prop) (d : D) : Modifier (I → E → Prop) :=
   Modifier.intersective fun t x ↦ P t x d
 
 /-- The positive morpheme of [cresswell-1976] in the form (104),
 `λG⟨d,et⟩.λx.∃d(d > standard(G) & G(d)(x))`, is transposed to ⟨d,eiteit⟩ as §4.6 proposes. -/
-def pos [LT D] (standard : (D → Modifier (Property I E)) → D) (G : D → Modifier (Property I E)) :
-    Modifier (Property I E) :=
+def pos [LT D] (standard : (D → Modifier (I → E → Prop)) → D) (G : D → Modifier (I → E → Prop)) :
+    Modifier (I → E → Prop) :=
   fun N t x ↦ ∃ d, standard G < d ∧ G d N t x
 
 /-- With the positive morpheme, a gradable adjective is intersective of type ⟨eit,eit⟩ (§4.6). -/
-theorem pos_gradable [LT D] (standard : (D → Modifier (Property I E)) → D)
+theorem pos_gradable [LT D] (standard : (D → Modifier (I → E → Prop)) → D)
     (P : I → E → D → Prop) :
     pos standard (gradable P) =
       Modifier.intersective fun t x ↦ ∃ d, standard (gradable P) < d ∧ P t x d := by
   funext N t x
-  simp only [pos, gradable, intersective_apply]
+  simp only [pos, gradable, intersective_apply₂]
   exact propext ⟨fun ⟨d, hd, h, hN⟩ ↦ ⟨⟨d, hd, h⟩, hN⟩, fun ⟨⟨d, hd, h⟩, hN⟩ ↦ ⟨d, hd, h, hN⟩⟩
 
 end Replies

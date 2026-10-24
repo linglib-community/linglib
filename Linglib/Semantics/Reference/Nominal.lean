@@ -32,8 +32,6 @@ left to the first dynamic consumer that needs it.
 
 @[expose] public section
 
-namespace Semantics
-
 open Presupposition
 
 /-- A presuppositional, context-relative individual denotation.
@@ -99,13 +97,10 @@ end Values
 
 end Nominal
 
-end Semantics
-
 /-! ### Characters as nominals -/
 
 namespace Kaplan.Character
 
-open Semantics
 
 variable {C W E : Type*}
 

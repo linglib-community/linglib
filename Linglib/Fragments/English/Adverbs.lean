@@ -75,7 +75,7 @@ universe u
 
 /-- An adverb denotes its reading over cases, *always* `every`, *usually* `most`, *sometimes*
 `Quantifier.GQ.some` and *never* `no`. -/
-noncomputable instance : Semantics.Denotes AdverbOfQuantification (Set Quantifier.GQ.Family.{u})
+noncomputable instance : Denotes AdverbOfQuantification (Set Quantifier.GQ.Family.{u})
     where
   denote
     | .always => {Quantifier.GQ.Family.every}
