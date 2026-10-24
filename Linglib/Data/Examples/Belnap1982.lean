@@ -41,6 +41,19 @@ def gas : Datum :=
     readings := []
     paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("answers", "multiple, each full and complete and true")] }
 
+def basket : Datum :=
+  { id := "belnap1982_basket"
+    source := ⟨"belnap-1982", "p. 172"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "What's in the basket?"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("diagnostic", "Unique Answer Fallacy"), ("answers", "multiple, each full and complete and true")] }
+
 def prime : Datum :=
   { id := "belnap1982_prime"
     source := ⟨"belnap-1982", "p. 174"⟩
@@ -106,6 +119,19 @@ def china : Datum :=
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")] }
 
+def redhead : Datum :=
+  { id := "belnap1982_redhead"
+    source := ⟨"belnap-1982", "p. 177"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Mary remembered that a redhead kicked Sam, but Mary didn't remember which person kicked Sam."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")] }
+
 def john : Datum :=
   { id := "belnap1982_john"
     source := ⟨"belnap-1982", "p. 177"⟩
@@ -119,6 +145,19 @@ def john : Datum :=
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "inconsistent — likely an answer, not guaranteed")] }
 
-def all : List Datum := [ex_1, gas, prime, unicorns, grades, king, china, john]
+def mary : Datum :=
+  { id := "belnap1982_mary"
+    source := ⟨"belnap-1982", "p. 192"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Peter knows that Mary loves John but Peter doesn't know which man Mary loves."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "consistent, so not an answer")] }
+
+def all : List Datum := [ex_1, gas, basket, prime, unicorns, grades, king, china, redhead, john, mary]
 
 end Belnap1982.Examples

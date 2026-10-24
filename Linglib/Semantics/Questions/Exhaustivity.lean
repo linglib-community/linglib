@@ -89,6 +89,11 @@ def trueAnswers : Set (Set W) := {p ∈ H | w ∈ p}
 
 theorem trueAnswers_subset : trueAnswers H w ⊆ H := fun _ h => h.1
 
+theorem iUnion_trueAnswers : ⋃ w, trueAnswers H w = {p ∈ H | p.Nonempty} := by
+  ext p
+  simp only [Set.mem_iUnion, mem_trueAnswers, Set.mem_ofPred_eq, Set.Nonempty]
+  exact ⟨fun ⟨w, hp, hw⟩ ↦ ⟨hp, w, hw⟩, fun ⟨hp, w, hw⟩ ↦ ⟨w, hp, hw⟩⟩
+
 /-- The weakly exhaustive answer is the intersection of the true members ([heim-1994]'s Ans₁,
 [beck-rullmann-1999]'s Ans-BR). -/
 def weakAnswer : Set W := ⋂₀ trueAnswers H w
