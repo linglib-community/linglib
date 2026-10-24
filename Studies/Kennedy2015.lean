@@ -29,20 +29,22 @@ extensive (`classA_exclusive`, `classB_inclusive`).
 The ignorance inferences of the Class B modifiers are Sauerland's primary implicatures ((43))
 over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
 asymmetrically entailed by the bare numeral and by *more than m* and by no other alternative, so
-asserting it commits the speaker to ignorance of both, and *at most m* likewise with *fewer than
-m* ((47), `commitment_ge`, `commitment_le`), while the bare numeral and the Class A forms are
-entailed by no alternative at all and carry no ignorance (`commitment_eq_Iic`); and no primary
-implicature strengthens to a secondary one ((44)), each of a Class B form contradicting the
-assertion together with the other (`not_isSecondaryImplicature`).
+asserting it leaves the speaker ignorant of both, and *at most m* likewise with *fewer than
+m* ((47), `primaryImplicatures_ge`, `primaryImplicatures_le`), while the bare numeral and the
+Class A forms are entailed by no alternative at all and have no primary implicatures
+(`primaryImplicatures_eq_univ`); and no primary implicature strengthens to a secondary one
+((44)), each of a Class B form contradicting the assertion together with the other
+(`not_isSecondaryImplicature`).
 
 ## Implementation notes
 
 The worlds of the pragmatics are counts, so a form's content is the set `c.interval m` of counts,
 the alternatives are the five forms of the numeral, one for each `Degree.Comparison`, and the
-neo-Gricean operators are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. A
-root modal is the quantifier `every R` or `GQ.some R` over its accessible worlds `R`, and
-the numeral's two scopes are `Degree.LowScope` and `Degree.HighScope` of `MaxIn {m}` over it. The
-interactions of Class B modifiers with root modals (Section 4.2) are not formalized.
+neo-Gricean operators are `NeoGricean.primaryImplicatures` and
+`NeoGricean.IsSecondaryImplicature`. A root modal is the quantifier `every R` or `GQ.some R` over
+its accessible worlds `R`, and the numeral's two scopes are `Degree.LowScope` and
+`Degree.HighScope` of `MaxIn {m}` over it. The interactions of Class B modifiers with root modals
+(Section 4.2) are not formalized.
 
 ## References
 
@@ -142,38 +144,36 @@ theorem interval_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
   rw [Set.ssubset_def, interval_subset_iff c c' hm, interval_subset_iff c' c hm]
   cases c <;> cases c' <;> simp [Comparison.Rel, imp_iff_not_or] <;> omega
 
-/-- (47a): asserting *at least m* commits the speaker to not knowing that exactly `m` and not
-knowing that more than `m`. -/
-theorem commitment_ge {m : ℕ} (hm : 0 < m) :
-    commitment (Comparison.ge.interval m) (alternatives m) = Iic (Comparison.ge.interval m) ∩
+/-- (47a): the primary implicatures of *at least m* are that the speaker knows neither that
+exactly `m` nor that more than `m`. -/
+theorem primaryImplicatures_ge {m : ℕ} (hm : 0 < m) :
+    primaryImplicatures (Comparison.ge.interval m) (alternatives m) =
       (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.gt.interval m))ᶜ := by
   ext s
-  simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm,
+  simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
     mem_inter_iff, mem_compl_iff, mem_Iic]
-  refine ⟨fun ⟨h, h'⟩ ↦ ⟨⟨h, h' .eq (by simp)⟩, h' .gt (by simp)⟩,
-    fun ⟨⟨h, he⟩, hg⟩ ↦ ⟨h, fun c hc ↦ ?_⟩⟩
+  refine ⟨fun h ↦ ⟨h .eq (by simp), h .gt (by simp)⟩, fun ⟨he, hg⟩ c hc ↦ ?_⟩
   cases c <;> simp at hc <;> assumption
 
-/-- (47b): asserting *at most m* commits the speaker to not knowing that exactly `m` and not
-knowing that fewer than `m`. -/
-theorem commitment_le {m : ℕ} (hm : 0 < m) :
-    commitment (Comparison.le.interval m) (alternatives m) = Iic (Comparison.le.interval m) ∩
+/-- (47b): the primary implicatures of *at most m* are that the speaker knows neither that
+exactly `m` nor that fewer than `m`. -/
+theorem primaryImplicatures_le {m : ℕ} (hm : 0 < m) :
+    primaryImplicatures (Comparison.le.interval m) (alternatives m) =
       (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.lt.interval m))ᶜ := by
   ext s
-  simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm,
+  simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
     mem_inter_iff, mem_compl_iff, mem_Iic]
-  refine ⟨fun ⟨h, h'⟩ ↦ ⟨⟨h, h' .eq (by simp)⟩, h' .lt (by simp)⟩,
-    fun ⟨⟨h, he⟩, hl⟩ ↦ ⟨h, fun c hc ↦ ?_⟩⟩
+  refine ⟨fun h ↦ ⟨h .eq (by simp), h .lt (by simp)⟩, fun ⟨he, hl⟩ c hc ↦ ?_⟩
   cases c <;> simp at hc <;> assumption
 
-/-- No alternative entails the bare numeral or a Class A form, so asserting one commits the
-speaker to no ignorance. -/
-theorem commitment_eq_Iic {m : ℕ} (hm : 0 < m) {c : Comparison} (hc : c = .eq ∨ c.IsStrict) :
-    commitment (c.interval m) (alternatives m) = Iic (c.interval m) := by
+/-- No alternative entails the bare numeral or a Class A form, so they have no primary
+implicatures. -/
+theorem primaryImplicatures_eq_univ {m : ℕ} (hm : 0 < m) {c : Comparison}
+    (hc : c = .eq ∨ c.IsStrict) : primaryImplicatures (c.interval m) (alternatives m) = univ := by
   ext s
-  simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm, mem_Iic,
-    and_iff_left_iff_imp]
-  intro _ c'
+  simp only [mem_primaryImplicatures, alternatives, forall_mem_range, interval_ssubset_iff hm,
+    mem_univ, iff_true]
+  intro c'
   cases c <;> cases c' <;> simp_all [Comparison.IsStrict]
 
 /-- (44) strengthens no form of a numeral: the bare and Class A forms have no stronger

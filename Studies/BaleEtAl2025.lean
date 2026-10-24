@@ -95,7 +95,8 @@ theorem competent_iff_looked (a w : Fin 4) (hw : w ∈ seen) :
 
 /-- An utterance conveys Quality and the weak implicatures of its stronger scalar alternatives,
 so the speaker knows the statement and does not know any stronger one. -/
-def uttered (q : QUtt) : Set (Set (Fin 4)) := commitment (prop q) (range prop)
+def uttered (q : QUtt) : Set (Set (Fin 4)) :=
+  Iic (prop q) ∩ primaryImplicatures (prop q) (range prop)
 
 instance (S : Set (Fin 4)) [DecidablePred (· ∈ S)] (q : QUtt) : Decidable (S ∈ uttered q) :=
   decidable_of_iff (S ⊆ prop q ∧ ∀ q', prop q' ⊂ prop q → ¬ S ⊆ prop q') (by simp [uttered])
