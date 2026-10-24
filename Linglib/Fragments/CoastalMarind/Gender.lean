@@ -1,6 +1,7 @@
 module
 
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Agreement.Classes
 public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
@@ -16,8 +17,9 @@ each target. On these forms only genders I and II distinguish number
 (`injective_demonstrative_iff`), and their plural is the singular form of gender IV
 (`Gender.pluralGender`). The suppletive adjective 'small' distinguishes number in every gender
 (`injective_small`), and on it the plural of genders I and II is gender IV's plural
-(`small_plural`), so the affinity holds between the plurals. The full demonstrative paradigm
-separates the four genders (`faithful_demonstrative`). A few nouns vary their stem vowel with
+(`small_plural`), so the affinity holds between the plurals. The demonstrative's two numbers
+partition the genders crosswise (`crossed_demonstrative`), and together they separate all four
+(`faithful_demonstrative`). A few nouns vary their stem vowel with
 gender in the same way, and *nanVh* 'face' takes the gender of the one whose face it is,
 Olsson's inherited gender.
 
@@ -88,6 +90,11 @@ def face (g : Gender) : numberSystem.values → String :=
 /-- The distal demonstrative alone separates the four genders, I and III sharing *e-pe* only in
 the singular and I, II and IV sharing *i-pe* only in the plural ([olsson-2021] §5.1). -/
 theorem faithful_demonstrative : Gender.Faithful demonstrative := by decide
+
+theorem crossed_demonstrative :
+    Gender.Crossed (demonstrative · (numberSystem.value .singular))
+      (demonstrative · (numberSystem.value .plural)) := by
+  decide
 
 theorem injective_demonstrative_iff (g : Gender) :
     Function.Injective (demonstrative g) ↔ g = .gI ∨ g = .gII := by

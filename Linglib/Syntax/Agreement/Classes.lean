@@ -2,8 +2,9 @@ module
 
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Set.Finite.Range
-public import Mathlib.Order.Setoid.Basic
+public import Mathlib.Order.Comparable
 public import Mathlib.SetTheory.Cardinal.Finite
+public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Syntax.Gender.Basic
 
@@ -11,34 +12,41 @@ public import Linglib.Syntax.Gender.Basic
 # Agreement classes and target genders
 
 This file defines the agreement classes of a language's nouns and the target genders of its
-agreement targets, and classifies the map between the target genders of two numbers.
+agreement targets, and classifies the map between the target genders of two numbers, all in the
+lattice of partitions of the nouns.
 
 An agreement class is a set of nouns that take the same agreement forms on every target in
 every morphosyntactic form, and the controller genders of a language are its agreement
-classes. A target gender is a form an agreeing target distinguishes, and there may be fewer
-target genders than controller genders: Romanian has three of the latter over two of the
-former in each number. The target genders of the singular and the plural determine one
-another, as in French, the singular's determine the plural's without the converse, as in
-German, or neither determines the other, as in Romanian or Lak.
+classes. Each target partitions the nouns by the forms it shows, its target genders, and the
+agreement classes are the meet of these partitions; there may be fewer target genders than
+controller genders, Romanian having three of the latter over two of the former in each number.
+The partitions of the singular and the plural are equal, as in French, the singular's strictly
+finer, as in German, or incomparable, as in Romanian or Lak. A strictly finer plural would
+distinguish more target genders, which Greenberg's universal 37 excludes.
 
 ## Main definitions
 
 * `Gender.agreementClasses`: the kernel of the noun-level agreement map.
 * `Gender.targetGenders`: the range of the agreement map restricted to one target.
-* `Gender.Parallel`, `Gender.Convergent`, `Gender.Crossed`: the map between the target
-  genders of two numbers, as each factors through the other or not.
+* `Gender.Parallel`, `Gender.Convergent`, `Gender.Crossed`: the partitions of two numbers'
+  target genders are equal, the first strictly finer, or incomparable.
 * `Gender.Polar`: an exponent of two features whose polar opposites coincide.
 
 ## Main results
 
+* `Gender.agreementClasses_eq_iInf`, `Gender.faithful_iff_iInf_eq_bot`: the agreement classes
+  are the meet of the targets' partitions, and controller genders are faithful exactly when
+  that meet is discrete.
 * `Gender.card_quotient_agreementClasses`: the controller genders are as many as the
   agreement map has values.
 * `Gender.card_range_le_prod`: the controller genders are at most the product over the
   targets of the target genders.
 * `Gender.agreementClasses_eq_ker_of_faithful`: under faithful agreement mediated by an
   assignment, the agreement classes are the assignment's genders.
-* `Gender.parallel_iff_ker_eq`, `Gender.convergent_iff_ker_lt`: the map between two numbers'
-  target genders is the order of their kernels.
+* `Gender.convergent_or_parallel_or_convergent_or_crossed`: every map between two numbers'
+  target genders is parallel, crossed, or convergent in one direction.
+* `Gender.Convergent.card_range_lt`: a convergent map distinguishes strictly fewer target
+  genders in the second number.
 * `Gender.Polar.card_le_two`, `Gender.Polar.parallel`: polarity forces two-valued features
   and is a parallel system.
 
@@ -47,6 +55,8 @@ German, or neither determines the other, as in Romanian or Lak.
 * The index `T` of the agreement map is whatever the map is restricted to: a target
   category, a morphosyntactic form, or a pair of the two, so that target genders can be
   counted per target as well as per number across targets.
+* The kernel of a map is the syncretism of `Morphology/Paradigm/Basic.lean`, read here over the
+  nouns a target agrees with rather than over the cells of a paradigm.
 * Subgenders, agreement classes differing on a minority of forms, inquorate genders, small
   closed classes whose pattern mixes other genders, and overdifferentiated targets are the
   steps from agreement classes to controller genders that remain to be defined; until then
@@ -71,6 +81,18 @@ variable {N T F : Type*}
 /-- Two nouns fall in one of Zaliznjak's agreement classes when they take the same form on
 every target in every morphosyntactic form. -/
 abbrev agreementClasses (agr : N → T → F) : Setoid N := Setoid.ker agr
+
+/-- The agreement classes are the meet of the partitions the targets induce. -/
+theorem agreementClasses_eq_iInf (agr : N → T → F) :
+    agreementClasses agr = ⨅ t, Setoid.ker (agr · t) :=
+  Setoid.ker_pi fun t n ↦ agr n t
+
+/-- Controller genders are faithful exactly when the targets' partitions meet in the discrete
+one. -/
+theorem faithful_iff_iInf_eq_bot {agr : N → T → F} :
+    Faithful agr ↔ ⨅ t, Setoid.ker (agr · t) = ⊥ := by
+  rw [← agreementClasses_eq_iInf]
+  exact Setoid.ker_eq_bot_iff.symm
 
 /-- The controller genders, being the agreement classes, are as many as the agreement map
 has values. -/
@@ -97,41 +119,52 @@ theorem agreementClasses_eq_ker_of_faithful {G : Type*} {assign : N → G}
 
 section NumberMap
 
-variable {F' : Type*}
+variable {F' : Type*} {sg : N → F} {pl : N → F'}
 
-/-- The map between the target genders of two numbers is parallel when each determines the
-other. -/
-def Parallel (sg : N → F) (pl : N → F') : Prop :=
-  Function.FactorsThrough pl sg ∧ Function.FactorsThrough sg pl
+/-- The map between the target genders of two numbers is parallel when they partition the
+nouns alike. -/
+def Parallel (sg : N → F) (pl : N → F') : Prop := Setoid.ker sg = Setoid.ker pl
 
-/-- Convergent when the first determines the second but not conversely. -/
-def Convergent (sg : N → F) (pl : N → F') : Prop :=
-  Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl
+/-- Convergent when the first number's partition is strictly finer, so that it determines the
+second but not conversely. -/
+def Convergent (sg : N → F) (pl : N → F') : Prop := Setoid.ker sg < Setoid.ker pl
 
-/-- Crossed when neither determines the other. -/
+/-- Crossed when neither partition refines the other. -/
 def Crossed (sg : N → F) (pl : N → F') : Prop :=
-  ¬ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl
+  IncompRel (· ≤ ·) (Setoid.ker sg) (Setoid.ker pl)
 
-/-- Parallel target genders have the same kernel. -/
-theorem parallel_iff_ker_eq {sg : N → F} {pl : N → F'} :
-    Parallel sg pl ↔ Setoid.ker sg = Setoid.ker pl :=
-  (le_antisymm_iff (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
+/-- Every map between two numbers' target genders is convergent, parallel, convergent the other
+way, or crossed. -/
+theorem convergent_or_parallel_or_convergent_or_crossed (sg : N → F) (pl : N → F') :
+    Convergent sg pl ∨ Parallel sg pl ∨ Convergent pl sg ∨ Crossed sg pl :=
+  lt_or_eq_or_gt_or_incompRel _ _
 
-/-- Convergent target genders have strictly ordered kernels. -/
-theorem convergent_iff_ker_lt {sg : N → F} {pl : N → F'} :
-    Convergent sg pl ↔ Setoid.ker sg < Setoid.ker pl :=
-  (lt_iff_le_not_ge (a := Setoid.ker sg) (b := Setoid.ker pl)).symm
+theorem parallel_iff_factorsThrough :
+    Parallel sg pl ↔ Function.FactorsThrough pl sg ∧ Function.FactorsThrough sg pl :=
+  le_antisymm_iff
 
-variable [Fintype N] [DecidableEq F] [DecidableEq F'] (sg : N → F) (pl : N → F')
+theorem convergent_iff_factorsThrough :
+    Convergent sg pl ↔ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl :=
+  lt_iff_le_not_ge
 
-instance : Decidable (Parallel sg pl) := by
-  unfold Parallel; infer_instance
+theorem crossed_iff_factorsThrough :
+    Crossed sg pl ↔ ¬ Function.FactorsThrough pl sg ∧ ¬ Function.FactorsThrough sg pl :=
+  Iff.rfl
 
-instance : Decidable (Convergent sg pl) := by
-  unfold Convergent; infer_instance
+/-- A convergent map distinguishes strictly fewer target genders in the second number. -/
+theorem Convergent.card_range_lt [Finite N] (h : Convergent sg pl) :
+    Nat.card (Set.range pl) < Nat.card (Set.range sg) := by
+  rw [← Nat.card_congr (Setoid.quotientKerEquivRange pl),
+    ← Nat.card_congr (Setoid.quotientKerEquivRange sg)]
+  exact Setoid.card_quotient_strictAnti h
 
-instance : Decidable (Crossed sg pl) := by
-  unfold Crossed; infer_instance
+variable [Fintype N] [DecidableEq F] [DecidableEq F']
+
+instance : Decidable (Parallel sg pl) := decidable_of_iff _ parallel_iff_factorsThrough.symm
+
+instance : Decidable (Convergent sg pl) := decidable_of_iff _ convergent_iff_factorsThrough.symm
+
+instance : Decidable (Crossed sg pl) := decidable_of_iff _ crossed_iff_factorsThrough.symm
 
 end NumberMap
 
@@ -185,10 +218,9 @@ theorem Polar.card_eq_two [Fintype G] [Nontrivial G] [Nontrivial T] (h : Polar f
     Fintype.card G = 2 :=
   le_antisymm h.card_le_two Fintype.one_lt_card
 
-/-- A polar exponent is a parallel system. -/
+/-- A polar exponent is a parallel system, each number separating every value. -/
 theorem Polar.parallel (h : Polar f) (t t' : T) : Parallel (f · t) (f · t') :=
-  ⟨fun _ _ e ↦ congrArg (f · t') (h.injective t e),
-    fun _ _ e ↦ congrArg (f · t) (h.injective t' e)⟩
+  (Setoid.ker_eq_bot_iff.2 (h.injective t)).trans (Setoid.ker_eq_bot_iff.2 (h.injective t')).symm
 
 end Polar
 
