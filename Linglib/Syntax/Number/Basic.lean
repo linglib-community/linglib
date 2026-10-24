@@ -86,12 +86,12 @@ namespace Number
 
 /-- A number value is determinate when its cardinality boundary is fixed. The minimal and unit
 augmented are not, since they depend on the composition of the group. -/
-def isDeterminate : Number → Prop
+def IsDeterminate : Number → Prop
   | .singular | .dual | .trial => True
   | _ => False
 
-instance : DecidablePred isDeterminate := fun n => by
-  cases n <;> unfold isDeterminate <;> infer_instance
+instance : DecidablePred IsDeterminate := fun n => by
+  cases n <;> unfold IsDeterminate <;> infer_instance
 
 /-- A determinate value's referent has an exact cardinality, one for the singular, two for the
 dual and three for the trial; the other values have none. -/
