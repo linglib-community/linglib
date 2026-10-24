@@ -1,7 +1,9 @@
 module
 
 public import Linglib.Data.Examples.Egressy2026
+public import Linglib.Data.Examples.Gloss
 public import Linglib.Fragments.Hungarian.Verbs
+public import Linglib.Fragments.Hungarian.Pronouns
 public import Linglib.Semantics.Tense.Embedding
 public import Linglib.Syntax.Minimalist.Clause.Size
 public import Linglib.Syntax.Minimalist.Probe.Profile
@@ -36,9 +38,10 @@ size-insensitive Sequence of Tense of English in its CP complements sitting insi
   `readings` is `Tense.pastUnderPast` at it, and a chain of embeddings is read pairwise by
   `profile`.
 * The examples are `Data.Examples.Egressy2026`. A row's clause type is its `clauseType`
-  feature, its matrix verb the `Hungarian.Verbs` entry named by its `matrixVerb` feature,
-  and direct perception, which the paper says removes the backshifted reading pragmatically, its
-  `directPerception` feature.
+  feature; its matrix verb and the clause's grammatical role are read off its gloss line
+  (`Data/Examples/Gloss.lean`), the verb by its declared past stem in `Hungarian.Verbs` and the
+  role by the case cell of `Hungarian.Pronouns.az` its expletive realizes. Direct perception, which the paper says removes the
+  backshifted reading pragmatically, is its `directPerception` feature.
 * Footnote 9 allows the complement of *mond* to be an XP with Say > Foc > X > T, which movement
   to Spec,FocP escapes but Agree from T does not; the shared sequence has no such head, so those
   complements are SayPs here.
@@ -254,37 +257,72 @@ theorem singleRows_predicted :
       Agrees e "" (predicted e ct) := by
   decide
 
-/-- The fragment entry named by a row's `matrixVerb` feature. -/
-def matrixVerb? (e : Datum) : Option Verb :=
-  (e.feature? "matrixVerb").bind (Verb.find? verbs ·)
+/-- The matrix verb of a row: among the words before the first complementizer glossed *that*,
+the past-tense one whose stem is a past stem the fragment declares, so *álmod-t-a* finds
+*álmodik*. Every condition is the row's own structure or the lexicon's own forms: matrix
+material precedes the *hogy*-clause, finiteness is the `PST` gloss label, every matrix of the
+paper being past, and the stem matches `Hungarian.Verbs.Verb.stem` exactly. -/
+def matrixVerb? (e : Datum) : Option Hungarian.Verbs.Verb :=
+  (e.glossedWords.takeWhile fun w ↦ w.lexicalGloss? != some "that".toList).findSome? fun w ↦
+    if w.labels.contains "PST".toList then
+      verbs.find? fun v ↦ w.stem == v.stem.toList
+    else none
 
-/-- The verb and clause-type readers read every single-embedding row. -/
+/-- The grammatical role of the embedded clause in the matrix. -/
+inductive ClauseRole where
+  | object
+  | subject
+  | adjunct
+  deriving DecidableEq, Repr
+
+/-- The clause's role, read off its expletive correlate (§2.1–2.2): the word glossed *it* — the
+gloss setting the demonstrative apart from its article homograph — realizes a case cell of
+`Hungarian.Pronouns.az`, accusative *azt* for an object clause, nominative *az* for the subject
+clause, and instrumental *azzal* or *amiatt* 'because of that' for an adjunct. -/
+def clauseRole? (e : Datum) : Option ClauseRole :=
+  e.glossedWords.findSome? fun w ↦
+    if w.lexicalGloss? = some "it".toList then
+      if some w.wordform == (Hungarian.Pronouns.az .acc).map (·.toList) then some .object
+      else if some w.wordform == (Hungarian.Pronouns.az .nom).map (·.toList) then some .subject
+      else if some w.wordform == (Hungarian.Pronouns.az .inst).map (·.toList) ∨
+          w.wordform == Hungarian.Pronouns.amiatt.toList then some .adjunct
+      else none
+    else none
+
+/-- The frame shape a clause role demands of the matrix verb: a clausal complement for an object
+clause, a clausal subject for a subject clause, and for an adjunct a frame with no clausal
+position, the clause sitting outside the valency. -/
+def ClauseRole.FrameOf (r : ClauseRole) (v : _root_.Verb) : Prop :=
+  match r with
+  | .object => ∃ fr ∈ v.valency.frames, fr.HasClausal
+  | .subject => ∃ fr ∈ v.valency.frames, fr.HasClausalSubject
+  | .adjunct => ∃ fr ∈ v.valency.frames, ¬ fr.HasClausal ∧ ¬ fr.HasClausalSubject
+
+instance (r : ClauseRole) (v : _root_.Verb) : Decidable (r.FrameOf v) :=
+  match r with
+  | .object => inferInstanceAs (Decidable (∃ fr ∈ _, _))
+  | .subject => inferInstanceAs (Decidable (∃ fr ∈ _, _))
+  | .adjunct => inferInstanceAs (Decidable (∃ fr ∈ _, _))
+
+/-- The verb, clause-role and clause-type readers read every single-embedding row. -/
 theorem singleRows_readCounts :
-    Datum.ReadCount matrixVerb? singleRows 12 ∧ Datum.ReadCount clauseType? singleRows 12 := by
-  decide
+    Datum.ReadCount matrixVerb? singleRows 12 ∧ Datum.ReadCount clauseRole? singleRows 12 ∧
+      Datum.ReadCount clauseType? singleRows 12 := by
+  decide +kernel
 
-/-- The case of a row's expletive diagnoses the clause's grammatical role (§2.1–2.2), accusative
-*azt* an object, nominative *az* a subject and instrumental *azzal* or *amiatt* an adjunct, and
-the role so named by a row's `clauseRole` feature matches a frame of its matrix verb: a clausal
-complement for an object row, a clausal subject for the subject row, and for an adjunct row a
-frame with no clausal position, the clause sitting outside the valency. -/
+/-- The expletive's case diagnoses the clause's grammatical role, and the role matches a frame
+of the row's matrix verb, both read off the row's own gloss line. -/
 theorem clauseRole_frames : ∀ e ∈ singleRows, ∀ v, matrixVerb? e = some v →
-    ((e.feature? "clauseRole" = some "object" → ∃ fr ∈ v.valency.frames, fr.HasClausal) ∧
-      (e.feature? "clauseRole" = some "subject" →
-        ∃ fr ∈ v.valency.frames, fr.HasClausalSubject) ∧
-      (e.feature? "clauseRole" = some "adjunct" →
-        ∃ fr ∈ v.valency.frames, ¬ fr.HasClausal ∧ ¬ fr.HasClausalSubject)) := by
-  decide
+    ∀ r ∈ clauseRole? e, r.FrameOf v.toVerb := by
+  decide +kernel
 
-/-- No assignment of clause types to matrix verbs fits the rows, since *hall* 'hear' in (5) and (13)
-and *morog* 'growl' in (9) and (11) embed both types (§2.2). -/
+/-- No assignment of clause types to matrix verbs fits the rows: two rows share their matrix
+verb, *hall* 'hear' in (5) and (13), and differ in clause type (§2.2). -/
 theorem clauseType_not_of_verb :
-    ¬ ∃ f : Verb → ClauseType, ∀ e ∈ [ex_5, ex_13, ex_9, ex_11c],
-      ∀ v ct, matrixVerb? e = some v → clauseType? e = some ct → f v = ct := by
-  rintro ⟨f, hf⟩
-  have h5 := hf ex_5 (by simp) hall .nonSpeechReporting rfl rfl
-  have h13 := hf ex_13 (by simp) hall .speechReporting rfl rfl
-  exact absurd (h5.symm.trans h13) (by decide)
+    ¬ ∀ e₁ ∈ singleRows, ∀ e₂ ∈ singleRows,
+      ((matrixVerb? e₁).map (·.toVerb.form) == (matrixVerb? e₂).map (·.toVerb.form)) = true →
+        clauseType? e₁ = clauseType? e₂ := by
+  decide +kernel
 
 /-! ### Multiple embedding (§2.3, §4) -/
 

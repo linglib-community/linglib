@@ -37,6 +37,18 @@ namespace Hungarian.Verbs
 
 open ArgumentStructure
 
+/-- A Hungarian verb is the cross-linguistic `Verb` with the stem its past tense attaches to,
+where that differs from the citation form: an ik-verb drops *-ik*, as *álmodik* ~ *álmod-t-a*,
+and an sz-verb shows its t-stem allomorph, as *hisz* ~ *hi-tt-e*. An entry that lists none is
+regular. -/
+structure Verb extends _root_.Verb where
+  /-- The past stem, where it is not the citation form. -/
+  pastStem : Option String := none
+  deriving BEq
+
+/-- The stem the past tense attaches to. -/
+def Verb.stem (v : Verb) : String := v.pastStem.getD v.toVerb.form
+
 /-- *lát* 'see', a perception verb, transitive and embedding a finite clause. -/
 def lat : Verb where
   morphs := [.root "lát"]
@@ -58,6 +70,7 @@ def almodik : Verb where
   morphs := [.root "álmodik"]
   valency := .ofFrame ArgumentFrame.finiteClause
   opaqueContext := true
+  pastStem := some "álmod"
 
 /-- *gondol* 'think', a doxastic attitude verb. -/
 def gondol : Verb where
@@ -76,6 +89,7 @@ def hisz : Verb where
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical)
   complementSig := some .mono
+  pastStem := some "hi"
 
 /-- *aggaszt* 'worry', a psychological verb whose clause is its nominative subject, beside an
 accusative experiencer: *Az aggasztotta Petit, hogy ...* 'It worried Peti that ...'. -/
@@ -118,6 +132,7 @@ def irigykedik : Verb where
   morphs := [.root "irigykedik"]
   valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .state
+  pastStem := some "irigyked"
 
 /-- The entries. -/
 def verbs : List Verb :=

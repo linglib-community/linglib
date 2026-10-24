@@ -143,7 +143,7 @@ def ex32 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "imperfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
 def ex33 : Datum :=
   { id := "giannakidou2002_ex33"
@@ -156,7 +156,7 @@ def ex33 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
 def ex34 : Datum :=
   { id := "giannakidou2002_ex34"
@@ -169,7 +169,7 @@ def ex34 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
 def ex35 : Datum :=
   { id := "giannakidou2002_ex35"
@@ -182,7 +182,7 @@ def ex35 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
 def ex36 : Datum :=
   { id := "giannakidou2002_ex36"
@@ -195,7 +195,7 @@ def ex36 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
 def ex36pos : Datum :=
   { id := "giannakidou2002_ex36pos"
@@ -208,7 +208,7 @@ def ex36pos : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
 def ex37 : Datum :=
   { id := "giannakidou2002_ex37"
@@ -221,7 +221,7 @@ def ex37 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
 def ex38 : Datum :=
   { id := "giannakidou2002_ex38"
@@ -234,7 +234,7 @@ def ex38 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "noEventContinuation")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
 def ex40 : Datum :=
   { id := "giannakidou2002_ex40"
@@ -299,7 +299,7 @@ def ex48 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("The princess was in a state of not-sleeping until midnight.", .acceptable), ("It is not true that the princess slept until midnight. (She woke up earlier than that.)", .acceptable)]
-    paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
+    paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
 def ex49 : Datum :=
   { id := "giannakidou2002_ex49"
@@ -312,7 +312,7 @@ def ex49 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "plain")] }
 
 def ex51 : Datum :=
   { id := "giannakidou2002_ex51"
@@ -325,7 +325,7 @@ def ex51 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
+    paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
 def ex53 : Datum :=
   { id := "giannakidou2002_ex53"
@@ -338,7 +338,7 @@ def ex53 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "mexri"), ("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "preposed")] }
+    paperFeatures := [("aspect", "imperfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "preposed")] }
 
 def ex57 : Datum :=
   { id := "giannakidou2002_ex57"
@@ -351,7 +351,7 @@ def ex57 : Datum :=
     judgment := .unacceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "paraMonon"), ("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
+    paperFeatures := [("aspect", "perfective"), ("eventuality", "stative"), ("licenser", "negation"), ("test", "noEventContinuation")] }
 
 def ex72 : Datum :=
   { id := "giannakidou2002_ex72"
@@ -390,7 +390,7 @@ def ex43 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "til"), ("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "simplePast"), ("eventuality", "stative"), ("licenser", "none"), ("test", "plain")] }
 
 def ex44 : Datum :=
   { id := "giannakidou2002_ex44"
@@ -403,7 +403,7 @@ def ex44 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "til"), ("aspect", "progressive"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "progressive"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
 def ex45 : Datum :=
   { id := "giannakidou2002_ex45"
@@ -416,7 +416,7 @@ def ex45 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "til"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
 def ex46 : Datum :=
   { id := "giannakidou2002_ex46"
@@ -429,7 +429,7 @@ def ex46 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "fyrrEn"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
+    paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
 def ex46pos : Datum :=
   { id := "giannakidou2002_ex46pos"
@@ -442,7 +442,7 @@ def ex46pos : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "fyrrEn"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
 def ex47a : Datum :=
   { id := "giannakidou2002_ex47a"
@@ -455,7 +455,7 @@ def ex47a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "tot"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
+    paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "negation"), ("test", "plain")] }
 
 def ex47a2 : Datum :=
   { id := "giannakidou2002_ex47a2"
@@ -468,7 +468,7 @@ def ex47a2 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("connective", "tot"), ("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
+    paperFeatures := [("aspect", "simplePast"), ("eventuality", "eventive"), ("licenser", "none"), ("test", "plain")] }
 
 def ex47b : Datum :=
   { id := "giannakidou2002_ex47b"
