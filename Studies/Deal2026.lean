@@ -81,28 +81,17 @@ namespace Deal2026
 
 open NezPerce Minimalist
 
-/-! ### The embedding strategy -/
-
-/-- The two embedding strategies are relative embedding, whose complement obligatorily carries
-the *yox̂ ke* edge and contains an Ā-dependency above TP, and simplex embedding of a bare CP. -/
-inductive EmbeddingStrategy where
-  | relative
-  | simplex
-  deriving DecidableEq, Repr
+/-! ### Relative embedding -/
 
 /-- A predicate embeds relatively when some grammatical notional complement of it carries the
-*yox̂ ke* edge ((27)–(28)); *cuukwe*'s (66b) is only marginal. -/
+*yox̂ ke* edge ((27)–(28)), with an Ā-dependency above TP, and simplex otherwise; *cuukwe*'s
+(66b) is only marginal. Both select a CP; the contrast is internal to the clause selected. -/
 def RelativeEmbedding (v : Verb) : Prop :=
   ∃ row ∈ Examples.all, row.feature? "verb" = some v.form ∧
     row.feature? "edge" = some "yoxKe" ∧ row.judgment = .acceptable
 
 instance (v : Verb) : Decidable (RelativeEmbedding v) :=
   inferInstanceAs (Decidable (∃ row ∈ Examples.all, _))
-
-/-- A predicate's strategy is relative when it embeds relatively and simplex otherwise. Both
-strategies select a CP; the contrast is internal to the clause selected. -/
-def strategy (v : Verb) : EmbeddingStrategy :=
-  if RelativeEmbedding v then .relative else .simplex
 
 /-- The relative-embedding predicates take no noun-phrase object, (41). -/
 theorem nominal_rows :
@@ -113,7 +102,7 @@ theorem nominal_rows :
 
 /-- Every relative embedding is factive (§7). -/
 theorem relative_factive :
-    ∀ v ∈ verbs, strategy v = .relative → v.IsFactive := by
+    ∀ v ∈ verbs, RelativeEmbedding v → v.IsFactive := by
   decide
 
 /-- Consultants endorse the complement under negation, in a question or in a conditional
@@ -143,18 +132,24 @@ structure Cell where
   spine : ClauseSpine
   internalAbar : Bool
 
-/-- A Nez Perce cell is a bare CP whose Ā-dependency is the relative strategy. -/
-def nezPerce (v : Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .relative⟩
+/-- A Nez Perce cell is a bare CP whose Ā-dependency is relative embedding. -/
+def nezPerce (v : Verb) : Cell := ⟨ClauseSpine.cP, decide (RelativeEmbedding v)⟩
 
 /-- English simplex V complementation, *think*, is a bare CP without an Ā-dependency. -/
 def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
 
-/-- The Adyghe relative embedding of (43) is V D N CP with an Ā-dependency. Its flag comes from
-the Fragment, where the clause-typer 'think' takes carries the relativizer *zV-*
-([caponigro-polinsky-2011]). -/
+/-- An Adyghe predicate's complement is a relative clause when the clause-typer the predicate
+takes carries the relativizer *zV-* ([caponigro-polinsky-2011]). -/
+def ZeComplement (v : Adyghe.Verb) : Prop :=
+  ∃ z ∈ v.typers Adyghe.complementizers, Adyghe.relativizer ∈ z.morphs
+
+instance (v : Adyghe.Verb) : Decidable (ZeComplement v) :=
+  inferInstanceAs (Decidable (∃ z ∈ v.typers Adyghe.complementizers, _))
+
+/-- The Adyghe relative embedding of (43) is V D N CP with an Ā-dependency, the complement of
+'think' being a relative clause. -/
 def adygheRelative : Cell :=
-  ⟨ClauseSpine.cP.append [.N, .D],
-    decide (∃ z ∈ Adyghe.gwepshesa.typers Adyghe.complementizers, Adyghe.relativizer ∈ z.morphs)⟩
+  ⟨ClauseSpine.cP.append [.N, .D], decide (ZeComplement Adyghe.gwepshesa)⟩
 
 /-- By Krapova's double requirement, reported at footnote 22, *deto* introduces the complement
 of a predicate that is an emotive factive, a factive preferential attitude, and takes a *za*
@@ -245,10 +240,10 @@ theorem table79 :
 /-- Every cell of table (80) is filled, so factivity and relative-embedding syntax vary
 independently. -/
 theorem table80 :
-    (∃ v ∈ verbs, v.IsFactive ∧ strategy v = .relative) ∧
-      (∃ v ∈ verbs, v.IsFactive ∧ strategy v = .simplex) ∧
-      (∃ v ∈ verbs, ¬ v.IsFactive ∧ strategy v = .simplex) ∧
-      (∃ v ∈ Adyghe.verbs, v.toVerb.Takes Adyghe.zeRe ∧ ¬ v.toVerb.IsFactive) := by
+    (∃ v ∈ verbs, v.IsFactive ∧ RelativeEmbedding v) ∧
+      (∃ v ∈ verbs, v.IsFactive ∧ ¬ RelativeEmbedding v) ∧
+      (∃ v ∈ verbs, ¬ v.IsFactive ∧ ¬ RelativeEmbedding v) ∧
+      (∃ v ∈ Adyghe.verbs, ZeComplement v ∧ ¬ v.toVerb.IsFactive) := by
   decide
 
 /-! ### The D-inflection diagnostic (21) -/
@@ -257,8 +252,8 @@ theorem table80 :
 distinct cases share no forms. This is the case half of the diagnostic that *yox̂* ~ *ko* is a D
 while the invariant *ke* is a C. -/
 theorem paradigm_case_discriminates :
-    ∀ p ∈ relativePronounParadigm, ∀ q ∈ relativePronounParadigm,
-      p.case ≠ q.case → ∀ f ∈ p.forms, f ∉ q.forms := by
+    ∀ c d : NezPerce.Case × RelativePronoun.Column, c.1 ≠ d.1 →
+      Disjoint (RelativePronoun.table c) (RelativePronoun.table d) := by
   decide
 
 end Deal2026
