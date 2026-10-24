@@ -21,8 +21,8 @@ number (`injective_agreementPrefix_iff`).
 
 * Prefixes are given in their nuclear forms. Kirton also lists referent and directive or
   accessory forms.
-* The men's-speech variants are those of the male and masculine class prefixes; the dual and
-  plural prefixes are the same for both speakers.
+* Kirton lists men's-speech variants only for the male and masculine class prefixes, so the dual
+  and plural prefixes are recorded alike for both speakers.
 * A modifier of *wini* 'name', which takes the class of its possessor, agrees with it by the
   class prefix in every number.
 * The possessor prefixes are those of a third person singular possessor, which mark its class.
