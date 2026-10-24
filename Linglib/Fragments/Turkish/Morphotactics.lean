@@ -18,10 +18,12 @@ tense/aspect/modality, copular marker, person marker, -DIr (§8.2). The tense/as
 markers themselves fall into five positions (§8.2.3): the possibility suffix -(y)A (1), which
 precedes the negative (§8.2.3.1), the bound auxiliaries (2), the markers of tense, aspect and
 modality proper (3), the copular markers (4) and -DIr (5). Markers of one position cannot
-co-occur, and every finite verb but the imperative and the third-person optative carries one
-of position 3. The voice slot alone admits a sequence of suffixes, as the four of
-*döğ-üş-tür-t-ül-* in (7) (§8.2, §8.2.1.1). The inflectional suffixes of a nominal appear in
-the order number, possession, case (§8.1).
+co-occur, and every finite verb but the imperative and the third-person optative carries one of
+position 3. The voice slot alone admits a sequence of suffixes, as the four of
+*döğ-üş-tür-t-ül-* in (7) (§8.2, §8.2.1.1). The person marker alone may leave its place: a
+group-1 marker after -DI and the third-person plural may precede the copular marker, and the
+third-person plural may follow -DIr (§8.3.3, §8.4). The inflectional suffixes of a nominal
+appear in the order number, possession, case (§8.1).
 
 The finite verb and the nominal each have a slot inventory, the exponents of each slot, and a
 template of suffix positions, each of which a word may skip, the voice position of the verb
@@ -45,8 +47,11 @@ exactly when it differs from the last segment of the stem in being a vowel.
 * `Turkish.underlying`, `Turkish.realize`: the underlying and the surface form of a stem with
   a string of suffixes.
 * `Exponent.form`: the citation form of an exponent.
+* `Verb.forms`: the citation forms of a string of exponents of the finite verb.
 * `Verb.Exponent.IsClitic`: the copular markers, -DIr and the group-2 person markers, which
   are clitics (§11.1).
+* `Verb.Licensed`: the strings of exponents of the finite verb, in the order of its template
+  or with the person marker moved as §8.4 allows.
 * `Nominal.forms`: the forms of a string of nominal exponents, with the final `n` of a
   third-person possessive before a case suffix.
 
@@ -344,15 +349,40 @@ def Exponent.form : Exponent σ → Suffix
   | .person g c => (g.paradigm.realize c).getD ⟨none, []⟩
   | .dir => ⟨none, [D, I, r]⟩
 
-/-- The exponents that are clitics, the copular markers, -DIr and the person markers of group 2
-(§11.1). -/
+/-- The citation forms of a string of exponents. -/
+def forms (xs : List (Σ σ, Exponent σ)) : List Suffix := xs.map (·.2.form)
+
+@[simp] theorem forms_nil : forms [] = [] := rfl
+
+@[simp] theorem forms_cons (x : Σ σ, Exponent σ) (xs : List (Σ σ, Exponent σ)) :
+    forms (x :: xs) = x.2.form :: forms xs := rfl
+
+@[simp] theorem forms_append (xs ys : List (Σ σ, Exponent σ)) :
+    forms (xs ++ ys) = forms xs ++ forms ys :=
+  List.map_append
+
+/-- The group of a person marker. -/
+def Exponent.group? : Exponent σ → Option PersonGroup
+  | .person g _ => some g
+  | _ => none
+
+/-- The exponents that are clitics, those of the copula and -DIr positions and the person
+markers of group 2 (§11.1). -/
 def Exponent.IsClitic : Exponent σ → Prop
-  | .pastCopula | .evidentialCopula | .conditionalCopula | .dir => True
   | .person g _ => g = .two
-  | _ => False
+  | _ => σ = .copula ∨ σ = .generalizing
 
 instance : DecidablePred (Exponent.IsClitic (σ := σ)) := fun e ↦ by
   cases e <;> unfold Exponent.IsClitic <;> infer_instance
+
+/-- The third-person plural -lAr of groups 1 and 2, the one person marker whose place varies
+(§8.3.3, §8.4). -/
+def Exponent.IsThirdPlural : Exponent σ → Prop
+  | .person g c => g ≠ .three ∧ c = .personNumber .third .plural
+  | _ => False
+
+instance : DecidablePred (Exponent.IsThirdPlural (σ := σ)) := fun e ↦ by
+  cases e <;> unfold Exponent.IsThirdPlural <;> infer_instance
 
 /-- The template of the finite verb lists its slots in the order of §8.2, each of which a verb
 may skip, the voice slot taking any number of suffixes. -/
@@ -362,6 +392,19 @@ def template : Morphology.AffixTemplate Slot where
   stacking := {.voice}
 
 theorem pairwise_lt_suffixSlots : template.suffixSlots.Pairwise (· < ·) := by decide
+
+/-- A string of exponents is licensed in the order of the template, or with its person marker
+before the copular marker when that is a group-1 marker after -DI or the third-person plural,
+or after -DIr when it is the third-person plural (§8.3.2, §8.3.3, §8.4). -/
+def Licensed (xs : List (Σ σ, Exponent σ)) : Prop :=
+  template.Licensed xs ∨
+    ({ template with suffixSlots := [.voice, .possibility, .negation, .auxiliary, .tam, .person,
+        .copula, .generalizing] }.Licensed xs ∧
+      ∃ x ∈ xs, x.2.IsThirdPlural ∨ x.2.group? = some .one ∧ ⟨_, .di⟩ ∈ xs) ∨
+    ({ template with suffixSlots := [.voice, .possibility, .negation, .auxiliary, .tam, .copula,
+        .generalizing, .person] }.Licensed xs ∧ ∃ x ∈ xs, x.2.IsThirdPlural)
+
+instance : DecidablePred Licensed := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 end Verb
 
