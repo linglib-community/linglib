@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Basic
 public import Linglib.Data.Examples.Thomas2026
 public import Mathlib.Probability.ConditionalProbability
 

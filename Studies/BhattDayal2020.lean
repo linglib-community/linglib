@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Polar
+public import Linglib.Semantics.Questions.Constituent
 public import Linglib.Fragments.HindiUrdu.Particles
 
 /-!

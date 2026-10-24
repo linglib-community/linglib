@@ -880,8 +880,6 @@ import Linglib.Semantics.Questions.Basic
 import Linglib.Semantics.Questions.Bias
 import Linglib.Semantics.Questions.Closure
 import Linglib.Semantics.Questions.Entailment
-import Linglib.Semantics.Questions.Exhaustivity
-import Linglib.Semantics.Questions.Hamblin
 import Linglib.Semantics.Questions.Highlighting
 import Linglib.Semantics.Questions.Partition.Basic
 import Linglib.Semantics.Questions.Resolution

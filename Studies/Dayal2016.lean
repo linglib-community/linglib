@@ -6,7 +6,7 @@ public import Mathlib.Data.Set.Lattice.Order
 public import Linglib.Data.Examples.Dayal2016
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Questions.HamblinSet
 
 /-!
 # Dayal (2016): Questions

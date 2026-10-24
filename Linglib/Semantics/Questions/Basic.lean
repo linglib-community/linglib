@@ -23,8 +23,9 @@ public import Mathlib.Basic.Finite.Prod
 
 A `Question W` is a non-empty downward-closed family of information states over `W`, the states
 that resolve an inquisitive proposition ([ciardelli-groenendijk-roelofsen-2018],
-[ciardelli-2022]). Hamblin sets (`Hamblin.lean`) and partition questions
-(`Partition/Inquisitive.lean`) embed into it. Ordered by inclusion, questions form a complete
+[ciardelli-2022]). Hamblin sets embed into it as the questions they generate, polar and
+constituent questions among them (`Polar.lean`, `Constituent.lean`), and so do partition questions
+(`Partition/Inquisitive.lean`). Ordered by inclusion, questions form a complete
 distributive lattice ([puncochar-2019]) whose meet is conjunction and whose join is inquisitive
 disjunction; it is Heyting but not Boolean.
 

@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Interval
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Semantics.Quantification.Defs
-public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Questions.HamblinSet
 public import Studies.AlonsoOvalleMenendezBenito2010
 public import Linglib.Data.Examples.AlonsoOvalleMoghiseh2025b
 

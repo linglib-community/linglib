@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.QUD.Basic
-public import Linglib.Semantics.Questions.Exhaustivity
+public import Linglib.Semantics.Questions.HamblinSet
 public import Studies.FarkasBruce2010
 public import Linglib.Data.Examples.GarassinoJacob2018
 

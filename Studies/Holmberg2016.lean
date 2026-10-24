@@ -3,7 +3,7 @@ module
 public import Linglib.Discourse.Response
 public import Linglib.Semantics.Denotation
 public import Linglib.Syntax.Negation
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Polar
 public import Linglib.Fragments.English.Particles
 public import Linglib.Fragments.Japanese.Particles
 public import Linglib.Fragments.Romance.French.Particles

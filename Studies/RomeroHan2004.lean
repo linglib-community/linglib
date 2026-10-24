@@ -4,7 +4,7 @@ public import Linglib.Data.Examples.RomeroHan2004
 public import Linglib.Discourse.CommonGround
 public import Linglib.Fragments.English.PolarityItems
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Semantics.Questions.Hamblin
+public import Linglib.Semantics.Questions.Polar
 public import Linglib.Semantics.Questions.Bias
 public import Linglib.Syntax.Negation
 public import Mathlib.Order.Interval.Set.Defs
