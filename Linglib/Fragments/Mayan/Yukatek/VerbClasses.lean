@@ -1,8 +1,7 @@
 module
 
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Fragments.Mayan.Agreement
-public import Linglib.Syntax.Case.Alignment
 
 /-!
 # Yukatek Maya verb classes and status
@@ -13,20 +12,16 @@ dependent, and the imperative. The allomorphs of the status suffixes sort verb s
 classes: the active intransitives, unmarked in the incompletive, the inactive intransitives,
 unmarked in the completive, the inchoatives derived from stative roots, the positionals of
 spatial configurations, and the transitives. The status also fixes which set of person
-markers cross-references the sole argument of an intransitive: Set A, the set of transitive
-subjects, in the incompletive, and Set B, the set of transitive objects, in the completive and
-the subjunctive, so that the alignment of an intransitive clause is accusative under
-imperfective status and ergative under perfective status. Bohnemeyer's tables of status
-patterns and marker functions and Hofling's Yucatecan sketch are the sources; the verbs are
-those of Bohnemeyer's examples, whose classification by causation and linking is the matter of
+markers cross-references the sole argument of an intransitive, the split that
+`Yukatek.markerSet` records. Bohnemeyer's tables of status semantics and status
+patterns and Hofling's Yucatecan sketch are the sources; the verbs are those of Bohnemeyer's
+examples, whose classification by causation and linking is the matter of
 `Studies/Bohnemeyer2004.lean`.
 
 ## Main definitions
 
 * `Yukatek.StatusCategory`, `Yukatek.VerbStemClass`, `Yukatek.statusSuffix`: the four statuses,
   the five stem classes, and the status suffix of each class.
-* `Yukatek.sArgumentMarker`, `Yukatek.alignment`: the marker set and the alignment of the
-  intransitive subject under each status.
 * `Yukatek.Verb`, `Yukatek.verbs`: the verbs of Bohnemeyer's examples with their stem classes.
 
 ## Implementation notes
@@ -46,7 +41,6 @@ the completive and the subjunctive are his glosses of the statuses.
 namespace Yukatek
 
 open Aspect (Perfectivity)
-open Mayan (MarkerSet)
 
 /-! ### Status -/
 
@@ -98,23 +92,6 @@ def statusSuffix : VerbStemClass → StatusCategory → Option String
   | .transitiveActive, .completive => some "-ah"
   | .transitiveActive, .subjunctive => some "-ø/-eh"
   | .transitiveActive, .imperative => some "-ø/-eh"
-
-/-! ### The split -/
-
-/-- The marker set of the sole argument of an intransitive under each status, Set A in the
-incompletive and Set B in the completive and the subjunctive; the imperative is outside the
-split. -/
-def sArgumentMarker : StatusCategory → Option MarkerSet
-  | .incompletive => some .setA
-  | .completive | .subjunctive => some .setB
-  | .imperative => none
-
-/-- The alignment a status imposes, accusative under the imperfective incompletive and ergative
-under the perfective completive and subjunctive and by default in the imperative. -/
-def alignment (s : StatusCategory) : Alignment.AlignmentType :=
-  match s.viewpointAspect with
-  | some .imperfective => .accusative
-  | some .perfective | none => .ergative
 
 /-! ### Verbs -/
 
