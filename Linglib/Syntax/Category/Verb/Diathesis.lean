@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile.Basic
+public import Linglib.Morphology.Morph
 
 /-!
 # Diatheses
@@ -17,8 +18,8 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
 
 ## Main definitions
 
-* `Diathesis n`: an argument frame, the slot of each of `n` participants, and the participant
-  that controls the clausal complement.
+* `Diathesis n`: an argument frame, the slot of each of `n` participants, the participant that
+  controls the clausal complement, and the verb's form where it departs from the citation form.
 * `Diathesis.ofSlots`: the diathesis whose slots, in order, hold the listed participants.
 * `Diathesis.controllerRole`: the argument role of the controller.
 * `Verb.Valency`: a verb's participants, with their entailment profiles, and its diatheses, the
@@ -43,6 +44,9 @@ diatheses of a verb, and a voice is an alternation the verb's form marks.
   are then the controller's argument role in the diathesis, never stored, and the controller
   can be followed across diatheses, as Visser's and Bach's generalizations need. A raising
   diathesis has no controller, its subject being no participant of the verb.
+* A diathesis records the verb's form where the verb takes another form in it, as Spanish
+  *romperse* beside *romper*, so an alternation the form marks stays within one valency, its
+  participants followed across both forms. Mel'čuk's diathesis is the rest, without the form.
 
 ## References
 
@@ -64,19 +68,24 @@ structure Diathesis (n : ℕ) extends ArgumentFrame where
   /-- The participant understood as the subject of the clausal complement, `none` where no
   participant controls it, as under raising. -/
   controller : Option (Fin n) := none
+  /-- The verb's form in this diathesis, where it departs from the citation form, as Spanish
+  *romperse* or the Sinhala involitive *kædennə*. -/
+  form : Option (List Morphology.Morph) := none
   deriving DecidableEq, Repr
 
 namespace Diathesis
 
 variable {n : ℕ}
 
-/-- `ofSlots fr ps c` is the diathesis of `fr` whose slots, in the order of
-`ArgumentFrame.slots`, hold the participants `ps`, and whose clausal complement participant `c`
-controls; a participant `ps` does not list is left out. -/
-def ofSlots (fr : ArgumentFrame) (ps : List ℕ) (c : Option ℕ := none) : Diathesis n :=
+/-- `ofSlots fr ps c f` is the diathesis of `fr` whose slots, in the order of
+`ArgumentFrame.slots`, hold the participants `ps`, whose clausal complement participant `c`
+controls, and in which the verb has the form `f`; a participant `ps` does not list is left out. -/
+def ofSlots (fr : ArgumentFrame) (ps : List ℕ) (c : Option ℕ := none)
+    (f : Option (List Morphology.Morph) := none) : Diathesis n :=
   { fr with
     links := .ofFn fun i ↦ ((fr.slots.zip ps).find? (·.2 = i.val)).map (·.1)
-    controller := c.bind fun i ↦ if h : i < n then some ⟨i, h⟩ else none }
+    controller := c.bind fun i ↦ if h : i < n then some ⟨i, h⟩ else none
+    form := f }
 
 /-- The participant occupying a slot, the first if several share it. -/
 def participantAt (d : Diathesis n) (s : Slot) : Option (Fin n) :=
@@ -109,20 +118,23 @@ structure Verb.Valency where
 namespace Verb.Valency
 
 /-- The valency whose diatheses are given as frames with the participants of their slots in slot
-order, and the controllers of their clausal complements in the same order, and whose
-participants have the listed profiles; the participants are numbered from 0. -/
+order, with the controllers of their clausal complements and the verb's forms in them in the
+same order, and whose participants have the listed profiles; the participants are numbered
+from 0. -/
 def of (frs : List (ArgumentFrame × List ℕ)) (profiles : List (Option EntailmentProfile) := [])
-    (controllers : List (Option ℕ) := []) : Valency :=
+    (controllers : List (Option ℕ) := []) (forms : List (Option (List Morphology.Morph)) := []) :
+    Valency :=
   let n := max profiles.length ((frs.flatMap (·.2)).foldr (fun p m ↦ max (p + 1) m) 0)
   ⟨n, .ofFn fun i ↦ profiles[i.val]?.join,
-    frs.mapIdx fun i x ↦ Diathesis.ofSlots x.1 x.2 controllers[i]?.join⟩
+    frs.mapIdx fun i x ↦ Diathesis.ofSlots x.1 x.2 controllers[i]?.join forms[i]?.join⟩
 
 /-- The valency whose diatheses are the frames `frs`, each slot holding its own participant in
 slot order, so that a participant fills the same slot in every frame, with the controllers of
-their clausal complements in the same order. -/
+their clausal complements and the verb's forms in them in the same order. -/
 def ofFrames (frs : List ArgumentFrame) (profiles : List (Option EntailmentProfile) := [])
-    (controllers : List (Option ℕ) := []) : Valency :=
-  of (frs.map fun fr ↦ (fr, List.range fr.slots.length)) profiles controllers
+    (controllers : List (Option ℕ) := []) (forms : List (Option (List Morphology.Morph)) := []) :
+    Valency :=
+  of (frs.map fun fr ↦ (fr, List.range fr.slots.length)) profiles controllers forms
 
 /-- The valency of a verb with one diathesis, each slot of its frame holding its own participant
 in slot order, and its clausal complement controlled by `controller`. -/
@@ -143,12 +155,13 @@ def profileAt (d : Diathesis V.arity) (s : Slot) : Option EntailmentProfile :=
   (d.participantAt s).bind V.profiles.get
 
 @[simp] theorem frames_of (frs : List (ArgumentFrame × List ℕ))
-    (ps : List (Option EntailmentProfile)) (cs : List (Option ℕ)) :
-    (of frs ps cs).frames = frs.map (·.1) := by
+    (ps : List (Option EntailmentProfile)) (cs : List (Option ℕ))
+    (fs : List (Option (List Morphology.Morph))) : (of frs ps cs fs).frames = frs.map (·.1) := by
   apply List.ext_getElem <;> simp [of, frames, Diathesis.ofSlots]
 
 @[simp] theorem frames_ofFrames (frs : List ArgumentFrame) (ps : List (Option EntailmentProfile))
-    (cs : List (Option ℕ)) : (ofFrames frs ps cs).frames = frs := by
+    (cs : List (Option ℕ)) (fs : List (Option (List Morphology.Morph))) :
+    (ofFrames frs ps cs fs).frames = frs := by
   simp [ofFrames, Function.comp_def]
 
 end Verb.Valency

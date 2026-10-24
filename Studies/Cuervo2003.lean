@@ -169,23 +169,23 @@ def gustar : Predicate := ⟨Spanish.Verbs.gustar, .intransitive, [.vBE], true, 
 
 /-- *romper* 'break' as a causative, (35). -/
 def romperCausative : Predicate :=
-  ⟨Spanish.Verbs.romper.toVerb, .np, [.vDO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.romper, .np, [.vDO, .vBE], false, .possessor⟩
 
 /-- *romperse* 'break' as an inchoative, (36), (60). -/
 def romperInchoative : Predicate :=
-  ⟨Spanish.Verbs.romper.toVerb, .intransitive, [.vGO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.romper, .intransitive, [.vGO, .vBE], false, .possessor⟩
 
 /-- *abrir* 'open' as a causative, (90a). -/
 def abrirCausative : Predicate :=
-  ⟨Spanish.Verbs.abrir.toVerb, .np, [.vDO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.abrir, .np, [.vDO, .vBE], false, .possessor⟩
 
 /-- *abrirse* 'open' as an inchoative, (90b). -/
 def abrirInchoative : Predicate :=
-  ⟨Spanish.Verbs.abrir.toVerb, .intransitive, [.vGO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.abrir, .intransitive, [.vGO, .vBE], false, .possessor⟩
 
 /-- *quemarse* 'burn' as an inchoative, (55). -/
 def quemarInchoative : Predicate :=
-  ⟨Spanish.Verbs.quemar.toVerb, .intransitive, [.vGO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.quemar, .intransitive, [.vGO, .vBE], false, .possessor⟩
 
 /-- *caminar* 'walk', an unergative, (39a), (78). -/
 def caminar : Predicate := ⟨Spanish.Verbs.caminar, .intransitive, [.vDO], false, .possessor⟩

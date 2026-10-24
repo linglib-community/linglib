@@ -245,9 +245,29 @@ theorem syncretic_not_isFissionApplicable :
 
 /-! ### The examples -/
 
-/-- The verb of an example, from the Fragment. -/
-def verb? (e : Datum) : Option SpanishVerbEntry :=
-  (e.feature? "verb").bind fun f ↦ allVerbs.find? (·.form = f)
+/-- How the intransitive of a verb is marked. -/
+inductive AnticausativeMarking where
+  /-- The intransitive takes the reflexive clitic, as *quebrarse*. -/
+  | marked
+  /-- The intransitive is bare, as *mejorar*. -/
+  | unmarked
+  /-- The intransitive occurs with and without the clitic, as *caer* and *caerse*. -/
+  | optional
+  deriving DecidableEq, Repr
+
+/-- The marking of a verb's intransitive, read off the forms of its intransitive diatheses: marked
+when each takes the clitic, optional when some do, unmarked when none does, and `none` for a
+verb without an intransitive. -/
+def marking (v : Verb) : Option AnticausativeMarking :=
+  let fs := (v.valency.diatheses.filter (·.toArgumentFrame = .intransitive)).map v.formIn
+  if fs = [] then none
+  else if fs.all (.encl "se" ∈ ·) then some .marked
+  else if fs.any (.encl "se" ∈ ·) then some .optional
+  else some .unmarked
+
+/-- The verb of an example, the Fragment's entry of that form with an intransitive. -/
+def verb? (e : Datum) : Option Verb :=
+  (e.feature? "verb").bind fun f ↦ allVerbs.find? fun v ↦ v.form = f ∧ (marking v).isSome
 
 /-- The bundle of the dative of an example, `none` where it has no dative. -/
 def appl? (e : Datum) : Option (Option Category) :=
@@ -268,7 +288,7 @@ theorem anticausative_rows : ∀ e ∈ Examples.all,
     e.feature? "construction" = some "anticausative" →
     ∃ v ∈ verb? e, ∃ a ∈ appl? e, ∃ s ∈ e.feature? "cluster",
       (.marginal ≤ e.judgment ↔
-        ∃ m ∈ v.anticausativeMarking, ∃ k ∈ clauses a m, ∃ l ∈ clusters k,
+        ∃ m ∈ marking v, ∃ k ∈ clauses a m, ∃ l ∈ clusters k,
           " ".intercalate l = s) := by
   decide +kernel
 
@@ -326,8 +346,8 @@ always possible. -/
 
 /-- The null-reflexive extension predicts that if a verb alternates, its intransitive can take
 the clitic. -/
-def seMarkedIfAlternating (v : SpanishVerbEntry) : Prop :=
-  v.Alternates → v.anticausativeMarking ≠ some .unmarked
+def seMarkedIfAlternating (v : Verb) : Prop :=
+  v.Alternates Voice.anticausative → marking v ≠ some .unmarked
 
 theorem not_seMarkedIfAlternating_mejorar : ¬ seMarkedIfAlternating mejorar := by
   unfold seMarkedIfAlternating; decide
