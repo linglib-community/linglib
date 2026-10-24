@@ -1,0 +1,407 @@
+[
+  {
+    "id": "bonehdoron2013_ex2c",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(2c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In the good old days, people would dress elegantly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "(At the opera). Look at how sloppily people are dressed.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "would"]
+    ],
+    "comment": "Would needs its restricting episodes to be explicit or presupposed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex2d",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(2d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In the good old days, people would dress elegantly to go to the opera.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "(At the opera). Look at how sloppily people are dressed.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "would"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex4a",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(4a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary smokes a cigarette after dinner.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple"]
+    ],
+    "comment": "LF (5a): Gen restricted to Mary-after-dinner events, the indefinite below it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex4b",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(4b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary smokes a cigarette.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple"]
+    ],
+    "comment": "LF (8): the indefinite over Hab, so the same cigarette is smoked habitually.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex6b",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(6b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A flower grows out behind the old shed.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple"]
+    ],
+    "comment": "Read with the same flower growing out; (6a), with the bare plural, is from Carlson 1989.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex7b",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Max killed a rabbit repeatedly.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple"]
+    ],
+    "comment": "The indefinite scopes over the adverbial's quantifier; (7a), with the bare plural, is from Dowty 1979.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex30",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(30)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "... revivals of Broadway musicals that your parents used to go to. Still do.",
+    "discourseSegments": [
+      "... revivals of Broadway musicals that your parents used to go to.",
+      "Still do."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "usedTo"]
+    ],
+    "comment": "Attested on the Internet; cancels the retrospectivity implicature.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex33a",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(33a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Since then, she has gone to work by bus.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Ruti sold her car in 1990.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "perfect"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex33b",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(33b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Since then, she used to go to work by bus.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Ruti sold her car in 1990.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "usedTo"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex35a",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(35a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was very happy. She now went to work by bus.",
+    "discourseSegments": [
+      "Mary was very happy.",
+      "She now went to work by bus."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex35b",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(35b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was very happy. She now used to go to work by bus.",
+    "discourseSegments": [
+      "Mary was very happy.",
+      "She now used to go to work by bus."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "usedTo"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex42a",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(42a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ruti was such a modest person. She went to work by bus.",
+    "discourseSegments": [
+      "Ruti was such a modest person.",
+      "She went to work by bus."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "simple"],
+      ["truthValue", "true"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex42b",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(42b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ruti was such a modest person. She would go to work by bus.",
+    "discourseSegments": [
+      "Ruti was such a modest person.",
+      "She would go to work by bus."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "would"],
+      ["truthValue", "true"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex42c",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(42c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Ruti was such a modest person. She used to go to work by bus.",
+    "discourseSegments": [
+      "Ruti was such a modest person.",
+      "She used to go to work by bus."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Ruti started a new job. She decided to go to work by bus. She only went there once, and shortly after that she died. In a eulogy, one could say:",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "usedTo"],
+      ["truthValue", "false"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex47a_barePlural",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(47a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In the nineteenth century, French teachers would know Latin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "would"],
+      ["subject", "barePlural"]
+    ],
+    "comment": "Repeats (3a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex47a_indefinite",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(47a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In the nineteenth century, a French teacher would know Latin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "would"],
+      ["subject", "indefiniteSingular"]
+    ],
+    "comment": "Repeats (3a).",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex47b_barePlural",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(47b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In the nineteenth century, French teachers used to know Latin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "usedTo"],
+      ["subject", "barePlural"]
+    ],
+    "comment": "Repeats (3b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex47b_indefinite",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(47b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In the nineteenth century, a French teacher used to know Latin.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "usedTo"],
+      ["subject", "indefiniteSingular"]
+    ],
+    "comment": "Repeats (3b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex48a",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(48a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The London Bridge used to stand on the Thames, now it stands in Arizona.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "usedTo"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "bonehdoron2013_ex48b",
+    "source": {"bibkey": "boneh-doron-2013", "paperLabel": "(48b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The London Bridge would stand on the Thames, now it stands in Arizona.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["form", "would"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
