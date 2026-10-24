@@ -232,7 +232,7 @@ theorem verbFocus_scale :
     {ace m, pass {m}} ⊆ ((fun V : Finset E → Set (Grades E) ↦ V {m}) <$>
       focused pass).alternatives ∧
     NeoGricean.IsSecondaryImplicature (pass {m}) {ace m} (ace m) := by
-  refine ⟨?_, NeoGricean.isSecondaryImplicature_of_ssubset (ace_ssubset_pass m)⟩
+  refine ⟨?_, NeoGricean.isSecondaryImplicature_singleton.2 (ace_ssubset_pass m)⟩
   rw [alternatives_map_focused]
   rintro q (rfl | rfl)
   · exact ⟨fun _ ↦ ace m, rfl⟩

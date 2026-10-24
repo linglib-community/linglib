@@ -33,7 +33,7 @@ asymmetrically entailed by the bare numeral and by *more than m* and by no other
 Class A forms are entailed by no alternative at all (`interval_ssubset_iff`, `stronger_ge`,
 `stronger_gt`, and the rest); and neither primary implicature of a Class B form
 strengthens to a secondary one ((44)), each contradicting the assertion together with the other
-(`not_isSecondaryImplicature_ge`, `not_isSecondaryImplicature_le`).
+(`commitment_ge`, `commitment_le`, `not_isSecondaryImplicature`).
 
 ## Implementation notes
 
@@ -175,36 +175,49 @@ theorem stronger_lt {m : ℕ} (hm : 0 < m) : stronger m .lt = ∅ := by
   simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
   cases c <;> simp
 
-/-- The strengthening (44) fails for *at least m*, leaving the ignorance unstrengthened. -/
-theorem not_isSecondaryImplicature_ge (m : ℕ) :
-    ¬ IsSecondaryImplicature (Comparison.ge.interval m) (alternatives m)
-        (Comparison.eq.interval m) ∧
-      ¬ IsSecondaryImplicature (Comparison.ge.interval m) (alternatives m)
-        (Comparison.gt.interval m) := by
-  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.gt.interval m)
-      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
-    simp only [Comparison.mem_interval, Comparison.Rel] at *
-    omega
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.interval m)
-      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
-    simp only [Comparison.mem_interval, Comparison.Rel] at *
-    omega
+/-- (47a): asserting *at least m* commits the speaker to not knowing that exactly `m` and not
+knowing that more than `m`. -/
+theorem commitment_ge {m : ℕ} (hm : 0 < m) :
+    commitment (Comparison.ge.interval m) (alternatives m) = Iic (Comparison.ge.interval m) ∩
+      primaryImplicature (Comparison.eq.interval m) ∩
+        primaryImplicature (Comparison.gt.interval m) := by
+  ext s
+  simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm,
+    mem_inter_iff, mem_Iic, mem_primaryImplicature]
+  refine ⟨fun ⟨h, h'⟩ ↦ ⟨⟨h, h' .eq (by simp)⟩, h' .gt (by simp)⟩,
+    fun ⟨⟨h, he⟩, hg⟩ ↦ ⟨h, fun c hc ↦ ?_⟩⟩
+  cases c <;> simp at hc <;> assumption
 
-/-- (44) fails for *at most m* the same way, with *fewer than m* in place of *more than m*. -/
-theorem not_isSecondaryImplicature_le (m : ℕ) :
-    ¬ IsSecondaryImplicature (Comparison.le.interval m) (alternatives m)
-        (Comparison.eq.interval m) ∧
-      ¬ IsSecondaryImplicature (Comparison.le.interval m) (alternatives m)
-        (Comparison.lt.interval m) := by
-  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.lt.interval m)
-      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
-    simp only [Comparison.mem_interval, Comparison.Rel] at *
-    omega
-  · refine (isSecondaryImplicature_iff.mp h).2 (Comparison.eq.interval m)
-      ⟨_, rfl⟩ fun n ⟨h1, h2⟩ ↦ ?_
-    simp only [Comparison.mem_interval, Comparison.Rel] at *
-    omega
+/-- (47b): asserting *at most m* commits the speaker to not knowing that exactly `m` and not
+knowing that fewer than `m`. -/
+theorem commitment_le {m : ℕ} (hm : 0 < m) :
+    commitment (Comparison.le.interval m) (alternatives m) = Iic (Comparison.le.interval m) ∩
+      primaryImplicature (Comparison.eq.interval m) ∩
+        primaryImplicature (Comparison.lt.interval m) := by
+  ext s
+  simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm,
+    mem_inter_iff, mem_Iic, mem_primaryImplicature]
+  refine ⟨fun ⟨h, h'⟩ ↦ ⟨⟨h, h' .eq (by simp)⟩, h' .lt (by simp)⟩,
+    fun ⟨⟨h, he⟩, hl⟩ ↦ ⟨h, fun c hc ↦ ?_⟩⟩
+  cases c <;> simp at hc <;> assumption
+
+/-- (44) strengthens no form of a numeral: the bare and Class A forms have no stronger
+alternative, and either primary implicature of a Class B form strengthened contradicts the
+assertion together with the other. -/
+theorem not_isSecondaryImplicature {m : ℕ} (hm : 0 < m) (c : Comparison) (ψ : Set ℕ) :
+    ¬ IsSecondaryImplicature (c.interval m) (alternatives m) ψ := by
+  rw [isSecondaryImplicature_iff]
+  rintro ⟨⟨c', rfl⟩, hψ, h⟩
+  have block : ∀ c₁ : Comparison, (c₁, c) ∈
+      [(Comparison.eq, Comparison.ge), (.eq, .le), (.gt, .ge), (.lt, .le)] →
+      c.interval m \ c'.interval m ⊆ c₁.interval m → False := fun c₁ h₁ ↦
+    h _ ⟨c₁, rfl⟩ ((interval_ssubset_iff hm _ _).2 h₁)
+  have key := (interval_ssubset_iff hm c' c).1 hψ
+  simp only [List.mem_cons, Prod.mk.injEq, List.mem_nil_iff, or_false] at key
+  rcases key with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+  · exact block .gt (by simp) fun n ⟨h1, h2⟩ ↦ by simp at h1 h2 ⊢; omega
+  · exact block .lt (by simp) fun n ⟨h1, h2⟩ ↦ by simp at h1 h2 ⊢; omega
+  · exact block .eq (by simp) fun n ⟨h1, h2⟩ ↦ by simp at h1 h2 ⊢; omega
+  · exact block .eq (by simp) fun n ⟨h1, h2⟩ ↦ by simp at h1 h2 ⊢; omega
 
 end Kennedy2015

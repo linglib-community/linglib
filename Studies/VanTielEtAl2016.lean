@@ -28,7 +28,7 @@ the closed grammatical classes, though not in general, ⟨some, most⟩ being op
 account of the inference of
 [sauerland-2004] and [geurts-2010], from the primary inference that the speaker does not
 believe the stronger alternative to the scalar inference by the speaker's competence,
-`two_stage_inference`, is considered as a source of the remaining variance and set aside,
+`NeoGricean.primaryImplicature_inter_competent`, is considered as a source of the remaining variance and set aside,
 since a speaker of *She is pretty* is plausibly opinionated about *beautiful* and the inference
 is nonetheless rare.
 
@@ -109,21 +109,13 @@ theorem LexicalScale.upperBounded_eq_of_isBounded (h : s.IsBounded) :
 
 end Bounded
 
-/-! ### Uniformity and the two-stage inference -/
+/-! ### Uniformity -/
 
 /-- The uniformity assumption: every scale gives rise to the inference at the same rate. -/
 def Uniform {ι : Type*} (rate : ι → ℚ) : Prop := ∀ s t, rate s = rate t
 
 theorem not_uniform_of_ne {ι : Type*} {rate : ι → ℚ} {s t : ι} (h : rate s ≠ rate t) :
     ¬ Uniform rate :=
-  λ hu => h (hu s t)
-
-/-- The two-stage account: from the primary inference, that the speaker does not believe the
-stronger alternative, the competence assumption, that the speaker is opinionated about it,
-yields the scalar inference that the speaker believes it false. -/
-theorem two_stage_inference {believesStrong believesNotStrong : Prop}
-    (primary : ¬ believesStrong) (competence : believesStrong ∨ believesNotStrong) :
-    believesNotStrong :=
-  competence.resolve_left primary
+  fun hu ↦ h (hu s t)
 
 end VanTielEtAl2016
