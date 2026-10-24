@@ -400,19 +400,20 @@ def setB : Language → ExponentTable
   | .kiche => Kiche.setBExponent
   | .yukatek => Yukatek.setBExponent
 
-/-- Case assignment by aspect in a language, from its fragment. -/
-def assignCase : Language → UD.Aspect → ArgumentRole → Case
-  | .chol => Chol.assignCase
-  | .qanjobal => Qanjobal.assignCase
-  | .kaqchikel => Kaqchikel.assignCase
-  | .tseltal => Tseltal.assignCase
-  | .tsotsil => Tsotsil.assignCase
-  | .mam => Mam.assignCase
-  | .kiche => Kiche.assignCase
-  | .yukatek => Yukatek.assignCase
+/-- The marking of a language's perfective clauses by marker set, from its fragment; the
+Yucatec perfective is the completive status. -/
+def perfectiveMarking : Language → ArgumentRole → Option MarkerSet
+  | .chol => Chol.markerSet .Perf
+  | .qanjobal => Qanjobal.markerSet .Perf
+  | .kaqchikel => Kaqchikel.markerSet .Perf
+  | .tseltal => Tseltal.markerSet
+  | .tsotsil => Tsotsil.markerSet
+  | .mam => Mam.markerSet
+  | .kiche => Kiche.markerSet
+  | .yukatek => Yukatek.markerSet .completive
 
 /-- The language is ergatively aligned in the perfective (§2.1). -/
-def IsErgativePerfective (L : Language) : Prop := Alignment.IsErgative (L.assignCase .Perf)
+def IsErgativePerfective (L : Language) : Prop := Alignment.IsErgative L.perfectiveMarking
 
 instance : DecidablePred IsErgativePerfective := fun _ ↦
   inferInstanceAs (Decidable (Alignment.IsErgative _))
@@ -438,7 +439,7 @@ instance : ∀ L r, Decidable (MarksExtraction L r)
 
 end Language
 
-/-- Every registered language but San Juan Atitán Mam, which is tripartite, assigns case
+/-- Every registered language but San Juan Atitán Mam, which is tripartite, marks its arguments
 ergatively in the perfective (§2.1). -/
 theorem isErgativePerfective_iff (L : Language) : L.IsErgativePerfective ↔ L ≠ .mam := by
   cases L <;> decide

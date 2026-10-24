@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
@@ -23,14 +22,12 @@ the paradigms.
 
 * `Qanjobal.setAExponent`, `Qanjobal.setBExponent`: the Set A markers by the following segment
   and the Set B markers.
-* `Qanjobal.template`, `Qanjobal.assignCase`: the verbal complex and the case of each argument by
-  aspect.
+* `Qanjobal.template`, `Qanjobal.markerSet`: the verbal complex and the marking of the
+  arguments by aspect.
 
 ## Implementation notes
 
-Set A on the subject of an aspectless clause is `Alignment.extendedErgative`, Coon's genitive
-rather than a nominative; the descriptive grammars call the pattern nominative-accusative. The
-case function sees aspect only, so the other aspectless contexts, purpose clauses and aspectless
+The marking sees aspect only, so the other aspectless contexts, purpose clauses and aspectless
 complements among them, lie outside it.
 
 ## References
@@ -45,7 +42,7 @@ complements among them, lie outside it.
 
 namespace Qanjobal
 
-open Mayan (ExponentTable)
+open Mayan (ExponentTable MarkerSet)
 
 /-! ### The verbal complex -/
 
@@ -59,9 +56,9 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot :=
 progressive with *lanan* is the one an aspect category names ([mateo-toledo-2008],
 [imanishi-2020]); the other aspectless contexts, purpose clauses and aspectless complements
 among them, lie outside the aspect vocabulary. -/
-def assignCase : UD.Aspect → ArgumentRole → Case
-  | .Prog => Alignment.extendedErgative
-  | .Perf | .Imp | .Prosp | .Hab | .Iter => Alignment.ergative
+def markerSet : UD.Aspect → ArgumentRole → Option MarkerSet
+  | .Prog => Mayan.extendedErgativeMarking
+  | .Perf | .Imp | .Prosp | .Hab | .Iter => Mayan.ergativeMarking
 
 /-! ### Person-number paradigm -/
 

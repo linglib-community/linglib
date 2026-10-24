@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Fragments.Mayan.Yukatek.VerbClasses
@@ -17,24 +16,19 @@ the completive and dependent statuses and the subjects of stative predicates. Th
 Set A forms carry the glides *w* and *y*, and the second and third person plurals are
 discontinuous, the singular prefix with a plural suffix. The verbal complex runs aspect, Set A,
 root, status, Set B, *táan u-muk-ik-en* 's/he is burying me', so Set B follows the stem and
-Yucatec is a low-absolutive language. The status suffix in turn is selected by the aspect
-marker, so the split of the intransitive subject follows the aspect through the status.
-Hofling's comparative sketch of the Yucatecan languages and Bohnemeyer's tables of marker
-functions are the sources.
+Yucatec is a low-absolutive language. Hofling's comparative sketch of the Yucatecan languages
+and Bohnemeyer's tables of marker functions are the sources.
 
 ## Main definitions
 
 * `Yukatek.setAExponent`, `Yukatek.setBExponent`: the Set A and Set B paradigms.
 * `Yukatek.markerSet`: the set of markers cross-referencing each argument under each status.
-* `Yukatek.template`, `Yukatek.assignCase`: the verbal complex and the case of each argument by
-  aspect, read off the status the aspect selects.
+* `Yukatek.template`: the verbal complex.
 
 ## Main statements
 
 * `Yukatek.isErgative_markerSet_iff`: the marking is ergative exactly under the perfective
   statuses, Bohnemeyer's association of the split with the aspect of the status.
-* `Yukatek.isErgative_assignCase_iff`: the case function has the alignment of the marking under
-  the status the aspect selects.
 
 ## Implementation notes
 
@@ -94,11 +88,11 @@ def setBExponent : ExponentTable :=
 [hofling-2017] p. 692): Set A on the transitive subject, Set B on the object, and on the
 intransitive subject Set A in the incompletive and Set B in the completive and the subjunctive.
 The imperative marks neither subject, *jóok'-en* 'go out!', *il-ej-∅* 'see it!' ([hofling-2017]
-Tables 24.54, 24.56), and R and T, outside the functions the sources list, take none. -/
+Tables 24.54, 24.56). -/
 def markerSet : StatusCategory → ArgumentRole → Option MarkerSet
-  | .incompletive, .S | _, .A => some .setA
-  | .completive, .S | .subjunctive, .S | _, .P => some .setB
-  | .imperative, .S | _, .R | _, .T => none
+  | .incompletive => Mayan.extendedErgativeMarking
+  | .completive | .subjunctive => Mayan.ergativeMarking
+  | .imperative => fun r ↦ if r = .P then some .setB else none
 
 /-- The marking is ergative exactly under the statuses of perfective aspect, the completive and
 the subjunctive, Bohnemeyer's association of the split with the aspect of the status
@@ -108,27 +102,6 @@ theorem isErgative_markerSet_iff (s : StatusCategory) :
   cases s <;> decide
 
 theorem isAccusative_markerSet_incompletive : Alignment.IsAccusative (markerSet .incompletive) :=
-  ⟨rfl, nofun⟩
-
-/-! ### Case by aspect -/
-
-/-- The status the marker of each aspect selects ([hofling-2017] Tables 24.49, 24.50): the
-completive under the perfective *t-* and *(j)-*, the incompletive under *k-*, the durative
-*táan*, *suuk* 'customarily' and *ta'ay-tak* 'about to'. No marker expresses the iterative,
-which is put with the incompletive. -/
-def StatusCategory.ofAspect : UD.Aspect → StatusCategory
-  | .Perf => .completive
-  | .Imp | .Prog | .Prosp | .Hab | .Iter => .incompletive
-
-/-- The case of each argument by aspect: ergative where the status the aspect selects puts Set B
-on the intransitive subject, and extended ergative, Set A on every subject, where it puts Set
-A there. -/
-def assignCase (a : UD.Aspect) : ArgumentRole → Case :=
-  if markerSet (.ofAspect a) .S = some .setA then Alignment.extendedErgative
-  else Alignment.ergative
-
-theorem isErgative_assignCase_iff (a : UD.Aspect) :
-    Alignment.IsErgative (assignCase a) ↔ Alignment.IsErgative (markerSet (.ofAspect a)) := by
-  cases a <;> decide
+  Mayan.isAccusative_extendedErgativeMarking
 
 end Yukatek

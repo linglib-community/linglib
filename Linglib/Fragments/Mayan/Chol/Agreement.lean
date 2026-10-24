@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Case.Basic
 public import Linglib.Phonology.Segmental.Defs
 public import Linglib.Fragments.Mayan.Agreement
 public import Linglib.Syntax.Clause.ArgumentRole
@@ -28,7 +27,7 @@ Coon's sketch are the sources.
 
 * `Chol.setAExponent`, `Chol.setBExponent`: the two paradigms, the plural cells with the
   inclusive clitic.
-* `Chol.template`, `Chol.assignCase`: the verbal complex and the case of each argument by
+* `Chol.template`, `Chol.markerSet`: the verbal complex and the marking of the arguments by
   aspect.
 * `Chol.IntransitiveClass`, `Chol.Intransitive`, `Chol.intransitives`: the three classes of
   intransitive verb by the marking of their subject in the perfective, with the grammar's
@@ -36,10 +35,8 @@ Coon's sketch are the sources.
 
 ## Implementation notes
 
-The non-perfective case function is `Alignment.extendedErgative`, Coon's genitive on the
-subject rather than a nominative; the plural cells
-carry the inclusive *=la*, the exclusive *=l(oj)oñ* having no cell in the person–number
-bundles. The first person prefix is *j-* before a stem-initial *k*.
+The plural cells carry the inclusive *=la*, the exclusive *=l(oj)oñ* having no cell in the
+person–number bundles. The first person prefix is *j-* before a stem-initial *k*.
 
 ## References
 
@@ -54,7 +51,7 @@ bundles. The first person prefix is *j-* before a stem-initial *k*.
 
 namespace Chol
 
-open Mayan (ExponentTable)
+open Mayan (ExponentTable MarkerSet)
 
 /-! ### The verbal complex -/
 
@@ -65,9 +62,9 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot :=
 
 /-- Chol is ergative in the perfective and puts Set A on every subject in the other aspects,
 the extended ergative pattern. -/
-def assignCase : UD.Aspect → ArgumentRole → Case
-  | .Perf => Alignment.ergative
-  | .Imp | .Prog | .Prosp | .Hab | .Iter => Alignment.extendedErgative
+def markerSet : UD.Aspect → ArgumentRole → Option MarkerSet
+  | .Perf => Mayan.ergativeMarking
+  | .Imp | .Prog | .Prosp | .Hab | .Iter => Mayan.extendedErgativeMarking
 
 /-! ### The paradigms -/
 

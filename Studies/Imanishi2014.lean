@@ -21,8 +21,10 @@ is base-generated in the matrix and the object, left Case-less by the intransiti
 the highest Case-less DP; where it need not apply the subject stays inside and is that DP,
 (141). The two alignments of the summary (178) are the outputs (`caseOf_kaqchikel`,
 `caseOf_chol`, `caseOf_qanjobal`), they are the library's `Alignment.invertedErgative` and
-`Alignment.extendedErgative`, and the typological gaps (179) and (180), an all-absolutive and
-an all-ergative alignment, are underivable (`not_all_abs`, `not_all_erg`).
+`Alignment.extendedErgative`; spelled out, the ergative from D as Set A and the absolutive as
+Set B, they are the marker sets the grammars record (`spellOut_kaqchikel`, `spellOut_chol`,
+`spellOut_qanjobal`). The typological gaps (179) and (180), an all-absolutive and an
+all-ergative alignment, are underivable (`not_all_abs`, `not_all_erg`).
 
 ## Implementation notes
 
@@ -65,6 +67,13 @@ structure Nominalization where
   [decSuffix : Decidable suffix]
 
 attribute [instance] Nominalization.decSuffix
+
+/-- The marker set that spells out a Case, Set A for the ergative from D, homophonous with the
+genitive, and Set B for the absolutive. -/
+def spellOut : Case → Option Mayan.MarkerSet
+  | .gen => some .setA
+  | .abs => some .setB
+  | _ => none
 
 namespace Nominalization
 
@@ -132,9 +141,19 @@ theorem caseOf_tojolabal :
     ∀ r ∈ ArgumentRole.core, tojolabal.caseOf r = some (invertedErgative r) := by
   decide
 
-theorem caseKaqchikel_prog (r : ArgumentRole) (h : r ∈ ArgumentRole.core) :
-    kaqchikel.caseOf r = some (Kaqchikel.assignCase .Prog r) :=
-  caseOf_kaqchikel r h
+/-- The Cases the analysis derives for the Kaqchikel progressive, spelled out, are the marker
+sets of the grammar: Set B on both subjects and Set A on the object. -/
+theorem spellOut_kaqchikel :
+    ∀ r ∈ ArgumentRole.core, (kaqchikel.caseOf r).bind spellOut = Kaqchikel.markerSet .Prog r := by
+  decide
+
+theorem spellOut_chol :
+    ∀ r ∈ ArgumentRole.core, (chol.caseOf r).bind spellOut = Chol.markerSet .Prog r := by
+  decide
+
+theorem spellOut_qanjobal :
+    ∀ r ∈ ArgumentRole.core, (qanjobal.caseOf r).bind spellOut = Qanjobal.markerSet .Prog r := by
+  decide
 
 /-- (178): the subject is absolutive exactly when the requirement holds. -/
 theorem caseOf_A_eq_abs_iff : L.caseOf .A = some .abs ↔ L.urn = .required := by

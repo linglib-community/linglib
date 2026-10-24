@@ -19,7 +19,7 @@ Aissen and Polian's summary of the two sets are the sources.
 ## Main definitions
 
 * `Tseltal.setAExponent`, `Tseltal.setAPlural`, `Tseltal.setBExponent`: the paradigms.
-* `Tseltal.template`, `Tseltal.assignCase`: the verbal complex and the ergative case function.
+* `Tseltal.template`, `Tseltal.markerSet`: the verbal complex and the ergative marking.
 
 ## References
 
@@ -41,7 +41,7 @@ def template : Morphology.AffixTemplate Mayan.VerbSlot :=
   { prefixSlots := [.aspect, .setA], suffixSlots := [.setB] }
 
 /-- Tseltal is ergative in every aspect. -/
-def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.ergative
+def markerSet : ArgumentRole → Option Mayan.MarkerSet := Mayan.ergativeMarking
 
 /-! ### The paradigms -/
 

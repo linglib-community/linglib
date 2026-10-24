@@ -30,6 +30,8 @@ survey the splits, which arose independently in Cholan, Q'anjob'alan and Yucatec
 * `Mayan.MarkerSet`: Set A and Set B.
 * `Mayan.ExponentTable`: a person-marker paradigm over the six person–number cells, with
   `Mayan.ExponentTable.IsThirdSgZero` for a null third person singular.
+* `Mayan.ergativeMarking`, `Mayan.extendedErgativeMarking`: the two markings of the roles by
+  marker set that recur across the family.
 * `Mayan.VerbSlot`: the position classes of the verbal complex, and `Mayan.absPosition`, the
   `Mayan.ABSPosition` a verbal template determines.
 
@@ -41,15 +43,18 @@ a list of `Morphology.Morph`, empty for zero exponence and of length two for a d
 marker such as a person prefix with a separate plural word. A cell whose only marker is a
 process also renders as `[]`. Tables with pre-consonantal and pre-vocalic shapes are
 `Phonology.Segment.Class → ExponentTable` functions. Each language's fragment carries its own
-tables, its verbal template and its case function by aspect, so the position of the absolutive
-is read off the template rather than recorded beside it; quantification over the family is a
-study's, in `Studies/CoonMateoPedroPreminger2014.lean`.
+tables, its verbal template and its marking of the roles by marker set under whatever splits it,
+so the position of the absolutive is read off the template and the alignment off the marking
+rather than recorded beside them. The case labels that analyses give the two sets, ergative or
+genitive for Set A and absolutive for Set B, are the analyses' and live in their studies;
+quantification over the family is a study's, in `Studies/CoonMateoPedroPreminger2014.lean`.
 
 ## References
 
 * [aissen-england-zavala-2017]
 * [coon-mateo-pedro-preminger-2014]
 * [corbett-1998]
+* [dixon-1994]
 * [kaufman-norman-1984]
 * [tada-1993]
 -/
@@ -99,5 +104,29 @@ def absPosition (t : Morphology.AffixTemplate VerbSlot) : ABSPosition :=
 theorem absPosition_eq_high_iff (t : Morphology.AffixTemplate VerbSlot) :
     absPosition t = .high ↔ .setB ∈ t.prefixSlots := by
   simp [absPosition]
+
+/-! ### Markings
+
+A marking of the argument roles by marker set is an `ArgumentRole → Option MarkerSet`, `none`
+on a role the verb does not cross-reference, and the predicates of `Alignment` read its
+alignment directly. R and T, which those predicates do not read, are `none` throughout. -/
+
+/-- The ergative marking: Set A on the transitive subject, Set B on the intransitive subject and
+the object. -/
+def ergativeMarking : ArgumentRole → Option MarkerSet
+  | .A => some .setA
+  | .S | .P => some .setB
+  | .R | .T => none
+
+/-- The extended ergative marking, Dixon's term: Set A on every subject, Set B on the object. -/
+def extendedErgativeMarking : ArgumentRole → Option MarkerSet
+  | .S | .A => some .setA
+  | .P => some .setB
+  | .R | .T => none
+
+theorem isErgative_ergativeMarking : Alignment.IsErgative ergativeMarking := ⟨rfl, nofun⟩
+
+theorem isAccusative_extendedErgativeMarking :
+    Alignment.IsAccusative extendedErgativeMarking := ⟨rfl, nofun⟩
 
 end Mayan
