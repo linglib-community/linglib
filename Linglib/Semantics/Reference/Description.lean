@@ -232,7 +232,7 @@ theorem denote_possessive_isSome_iff :
 theorem possNP_iff_exists_mem_denote_possessive (B : E → Prop) :
     Possession.PossNP (Quantifier.NP.individual (possessor g s)) Quantifier.GQ.the (rel g s)
         (R g s) B ↔ ∃ x ∈ ⟦possessive R possessor rel⟧ g s, B x := by
-  rw [Possession.possNP_individual_the, the_sem_iff_iota, denote_possessive]
+  rw [Possession.possNP_individual_the, Quantifier.GQ.the_iff_exists_mem_iota, denote_possessive]
 
 end DefiniteDescription
 

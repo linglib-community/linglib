@@ -412,10 +412,10 @@ theorem theFregean_ne_zero_iff {P : (E → SignType)} {x : E} :
   simp [theFregean, not_or]
 
 theorem presupposesUniqueness_theFregean : PresupposesUniqueness (theFregean (E := E)) :=
-  fun _ _ h ↦ (existsUnique_iff_nonempty_subsingleton.1 (theFregean_ne_zero_iff.1 h).1).2
+  fun _ _ h _ ha _ hb ↦ (theFregean_ne_zero_iff.1 h).1.unique ha hb
 
 theorem presupposesExistence_theFregean : PresupposesExistence (theFregean (E := E)) :=
-  fun _ _ h ↦ (existsUnique_iff_nonempty_subsingleton.1 (theFregean_ne_zero_iff.1 h).1).1
+  fun _ _ h ↦ (theFregean_ne_zero_iff.1 h).1.exists
 
 /-- Lowering the Russellian quantifier by `be` presupposes nothing (Table 2). -/
 theorem not_presupposesUniqueness_be_theRussellianGQ [Nontrivial E] :
@@ -433,12 +433,12 @@ theorem be_theFregeanGQ_ne_zero_iff {P : (E → SignType)} {x : E} :
   simp [be, theFregeanGQ]
 
 theorem presupposesUniqueness_be_theFregeanGQ :
-    PresupposesUniqueness (fun P : (E → SignType) ↦ be (theFregeanGQ P)) := fun _ _ h ↦
-  (existsUnique_iff_nonempty_subsingleton.1 (be_theFregeanGQ_ne_zero_iff.1 h)).2
+    PresupposesUniqueness (fun P : (E → SignType) ↦ be (theFregeanGQ P)) := fun _ _ h _ ha _ hb ↦
+  (be_theFregeanGQ_ne_zero_iff.1 h).unique ha hb
 
 theorem presupposesExistence_be_theFregeanGQ :
     PresupposesExistence (fun P : (E → SignType) ↦ be (theFregeanGQ P)) := fun _ _ h ↦
-  (existsUnique_iff_nonempty_subsingleton.1 (be_theFregeanGQ_ne_zero_iff.1 h)).1
+  (be_theFregeanGQ_ne_zero_iff.1 h).exists
 
 theorem identIota_ne_zero_iff {P : (E → SignType)} {x : E} :
     identIota P x ≠ 0 ↔ ∃! y, P y = 1 := by
@@ -449,10 +449,10 @@ theorem identIota_ne_zero_iff {P : (E → SignType)} {x : E} :
 /-- Lowering the individual-denoting Fregean entry by `ident` presupposes both existence and
 uniqueness (Table 2). -/
 theorem presupposesUniqueness_identIota : PresupposesUniqueness (identIota (E := E)) :=
-  fun _ _ h ↦ (existsUnique_iff_nonempty_subsingleton.1 (identIota_ne_zero_iff.1 h)).2
+  fun _ _ h _ ha _ hb ↦ (identIota_ne_zero_iff.1 h).unique ha hb
 
 theorem presupposesExistence_identIota : PresupposesExistence (identIota (E := E)) :=
-  fun _ _ h ↦ (existsUnique_iff_nonempty_subsingleton.1 (identIota_ne_zero_iff.1 h)).1
+  fun _ _ h ↦ (identIota_ne_zero_iff.1 h).exists
 
 /-- Under the Fregean entry *x is not the only P* is never true (§2.2.3), since the
 presupposition that there is exactly one only `P` is inconsistent with the assertion that
@@ -585,7 +585,7 @@ theorem iota_the [DecidablePred (WeakUnique (E := E))] (P : (E → SignType)) :
   · rw [the_eq_of_weakUnique h]
   · rw [(iota_eq_none_iff _).2 fun ⟨_, hx, _⟩ ↦ by
         simp [the_eq_zero_of_not_weakUnique h] at hx,
-      (iota_eq_none_iff _).2 fun hu ↦ h (existsUnique_iff_nonempty_subsingleton.1 hu).2]
+      (iota_eq_none_iff _).2 fun hu ↦ h fun _ ha _ hb ↦ hu.unique ha hb]
 
 /-- On the determinate reading (87), undefinedness of the individual percolates (86), so the
 sentence is classical exactly when the description has exactly one satisfier. -/
@@ -642,9 +642,8 @@ theorem no_determinate_indefinites [Nontrivial E] [DecidablePred (WeakUnique (E 
     {C : Set W}
     (h : ¬ Blocks C (fun α w ↦ F w (α (π w))) the an) :
     ¬ (CCP.Partial.ofTrivalent (fun w ↦ (iota (π w)).elim 0 (G w)) C).Dom := fun hd ↦
-  h <| blocks_of_weakUnique F π fun _ hw ↦
-    (existsUnique_iff_nonempty_subsingleton.1 <| not_not.1 fun hu ↦
-      not_update_dom_iota G hw hu hd).2
+  h <| blocks_of_weakUnique F π fun _ hw _ ha _ hb ↦
+    (not_not.1 fun hu ↦ not_update_dom_iota G hw hu hd).unique ha hb
 
 section AntiUniqueness
 
