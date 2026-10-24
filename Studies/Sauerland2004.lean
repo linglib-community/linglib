@@ -1,30 +1,45 @@
 module
 
 public import Linglib.Pragmatics.NeoGricean.Basic
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Core.Data.Fintype.Sets
+public import Mathlib.Data.Fintype.Pi
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Sauerland (2004): Scalar Implicatures in Complex Sentences
 
-This file formalizes the paper's derivation of the implicatures of disjunction. The paper
-separates primary implicatures, that the speaker is not certain of a stronger alternative,
-from secondary implicatures, that the speaker is certain the alternative is false, and admits
-a secondary implicature only when it is consistent with the assertion and every primary
-implicature; the two conditions are `IsSecondaryImplicature` of
-`Pragmatics/NeoGricean/Basic`. Asserting *A or B* against the alternatives *A*, *B* and
-*A and B* yields the primary implicatures that the speaker is not certain of either disjunct
-or of the conjunction. The secondary implicature that the conjunction is false is consistent
-with them and arises (`conj_secondary`), while the one that *A* is false is blocked: with the
-assertion it would force certainty of *B*, against the primary implicature
-(`disjunct_blocked`); the paper puts the block as a conflict with the possibility of *A*
-that the assertion and the primary implicature about *B* entail. That "not both" arises but
-"not A" does not is the paper's prediction for disjunction, which accounts negating every
-stronger alternative cannot make.
+The paper splits Gazdar's scalar implicatures into two tiers. A scalar alternative `ψ` that
+asymmetrically entails the assertion yields the primary implicature `¬Kψ` (42), and `K¬ψ` is a
+secondary implicature when it is consistent with the assertion and all primary implicatures (43);
+these are `NeoGricean.commitment` and `NeoGricean.IsSecondaryImplicature`. Disjunction sits on the
+scale (40) of *or*, the operators `L` and `R` of (39) that keep one disjunct, and *and*, and the
+scalar alternatives of a sentence are all substitutions of scale-mates for its scalar items (19).
+
+Of *A or B* only the exclusiveness implicature `K¬(A and B)` is secondary, the strengthenings
+`K¬A` and `K¬B` being blocked (46). Of *Kai had the broccoli or some of the peas* they are
+`K¬(broccoli and some)` and `K¬(all)` (49), with `K¬(broccoli and all)`, which `K¬(all)`
+entails, so the scalar item under disjunction gets the implicature earlier accounts missed. Of
+*A or (B or C)* they are the three pairwise exclusiveness implicatures and two that these entail
+(52).
+
+## Main statements
+
+* `isSecondaryImplicature_ab_iff`: (46).
+* `isSecondaryImplicature_kai_iff`: (49).
+* `isSecondaryImplicature_abc_iff`: (52).
 
 ## Implementation notes
 
-The worlds are the four combinations of the disjuncts' truth values, so the assertion excludes
-only the world in which neither holds.
+A world is a valuation of the atoms, or for (47) whether Kai had the broccoli and whether he had
+none, some but not all, or all of the peas. Alternatives are indexed by the scale-mates
+substituted, so one proposition can carry several indices, as *A* does in (51).
+
+## Errata
+
+(51) lists nine primary implicatures of *A or (B or C)*, but the cross product (19) of the two
+disjunctions' scales also yields *A or B*, *A or C* and *A or (B and C)*, which asymmetrically
+entail the assertion. Their primary implicatures block no secondary implicature, so (52) holds
+over all twelve stronger alternatives (`isSecondaryImplicature_abc_iff`).
 
 ## References
 
@@ -35,54 +50,105 @@ only the world in which neither holds.
 
 namespace Sauerland2004
 
-open NeoGricean
+open NeoGricean Set
 
-/-- Worlds distinguished by which of the two disjuncts hold. -/
-inductive DisjWorld where
-  | neither
-  | onlyA
-  | onlyB
-  | both
-  deriving DecidableEq, Repr, Fintype
+attribute [local instance] Set.decidableSubsetOfFintype
 
-namespace DisjWorld
+/-- The scale of disjunction (40). -/
+inductive Connective where
+  | or
+  /-- The operator `L` of (39), which keeps the left disjunct. -/
+  | L
+  /-- The operator `R` of (39), which keeps the right disjunct. -/
+  | R
+  | and
+  deriving DecidableEq, Fintype
 
-/-- The first disjunct A. -/
-def propA : Set DisjWorld := {.onlyA, .both}
+/-- The proposition a connective forms from two propositions. -/
+def Connective.apply {W : Type*} : Connective → Set W → Set W → Set W
+  | .or, A, B => A ∪ B
+  | .L, A, _ => A
+  | .R, _, B => B
+  | .and, A, B => A ∩ B
 
-/-- The second disjunct B. -/
-def propB : Set DisjWorld := {.onlyB, .both}
+instance {W : Type*} (c : Connective) (A B : Set W) [DecidablePred (· ∈ A)]
+    [DecidablePred (· ∈ B)] : DecidablePred (· ∈ c.apply A B) := by
+  cases c <;> unfold Connective.apply <;> infer_instance
 
-/-- The assertion *A or B*. -/
-def disj : Set DisjWorld := {.onlyA, .onlyB, .both}
+/-- The `i`th atomic sentence, true at the valuations that make it true. -/
+def atom {n : ℕ} (i : Fin n) : Set (Fin n → Bool) := {w | w i}
 
-/-- The conjunctive alternative *A and B*. -/
-def conj : Set DisjWorld := {.both}
+instance {n : ℕ} (i : Fin n) : DecidablePred (· ∈ atom i) :=
+  fun w ↦ inferInstanceAs (Decidable (w i = true))
 
-end DisjWorld
+/-! ### Disjunction (Section 3.2) -/
 
-open DisjWorld
+/-- *A `c` B*, the scalar alternative of *A or B* with `c` for *or* (19). -/
+def ab (c : Connective) : Set (Fin 2 → Bool) := c.apply (atom 0) (atom 1)
 
-/-- The scalar alternatives to *A or B*: each disjunct and the
-conjunction. -/
-def orAlts : Set (Set DisjWorld) := {propA, propB, conj}
+instance (c : Connective) : DecidablePred (· ∈ ab c) :=
+  fun w ↦ inferInstanceAs (Decidable (w ∈ c.apply (atom 0) (atom 1)))
 
-theorem conj_secondary : IsSecondaryImplicature disj orAlts conj := by
-  rw [isSecondaryImplicature_iff]
-  refine ⟨⟨.onlyA, by simp [disj, conj]⟩, ?_⟩
-  simp only [orAlts, Set.forall_mem_insert, Set.mem_singleton_iff, forall_eq, Set.subset_def,
-    Set.mem_sdiff, disj, conj, propA, propB]
-  decide
+/-- (46): the only secondary implicature of *A or B* is exclusiveness. -/
+theorem isSecondaryImplicature_ab_iff (c : Connective) :
+    IsSecondaryImplicature (ab .or) (range ab) (ab c) ↔ c = .and := by
+  rw [isSecondaryImplicature_range_iff]
+  simp only [ssubset_def]
+  cases c <;> decide
 
-theorem disjunct_blocked : ¬ IsSecondaryImplicature disj orAlts propA := λ h =>
-  (isSecondaryImplicature_iff.1 h).2 propB (by simp [orAlts])
-    (by simp only [Set.subset_def, Set.mem_sdiff, disj, propA, propB]; decide)
+/-! ### A scalar item under disjunction (Section 3.3) -/
 
-theorem disjunct_blocked' : ¬ IsSecondaryImplicature disj orAlts propB := λ h =>
-  (isSecondaryImplicature_iff.1 h).2 propA (by simp [orAlts])
-    (by simp only [Set.subset_def, Set.mem_sdiff, disj, propA, propB]; decide)
+/-- The scale of the peas quantifier. -/
+inductive Quantity where
+  | some
+  | all
+  deriving DecidableEq, Fintype
 
-theorem strengthened_or_realizable : (disj \ conj).Nonempty :=
-  ⟨.onlyA, by simp [disj, conj]⟩
+/-- Whether Kai had the broccoli, and whether he had none, some but not all, or all of the
+peas. -/
+abbrev Meal := Bool × Fin 3
+
+/-- *Kai had `q` of the peas.* -/
+def Quantity.peas : Quantity → Set Meal
+  | .some => {w | 1 ≤ w.2}
+  | .all => {w | w.2 = 2}
+
+instance (q : Quantity) : DecidablePred (· ∈ q.peas) := by
+  cases q <;> unfold Quantity.peas <;> infer_instance
+
+/-- *Kai had the broccoli `a.1` `a.2` of the peas*, the scalar alternative of (47) with `a.1` for
+*or* and `a.2` for *some* (19). -/
+def kai (a : Connective × Quantity) : Set Meal := a.1.apply {w | w.1} a.2.peas
+
+instance (a : Connective × Quantity) : DecidablePred (· ∈ kai a) :=
+  fun w ↦ inferInstanceAs (Decidable (w ∈ a.1.apply {w : Meal | w.1} a.2.peas))
+
+/-- (48)–(49): of the six primary implicatures of *Kai had the broccoli or some of the peas*,
+those of the two conjunctions and of *Kai had all of the peas* strengthen. -/
+theorem isSecondaryImplicature_kai_iff (c : Connective) (q : Quantity) :
+    IsSecondaryImplicature (kai (.or, .some)) (range kai) (kai (c, q)) ↔
+      c = .and ∨ (c = .R ∧ q = .all) := by
+  rw [isSecondaryImplicature_range_iff]
+  simp only [ssubset_def, Prod.forall]
+  cases c <;> cases q <;> decide
+
+/-! ### Multiple disjunction -/
+
+/-- *A `a.1` (B `a.2` C)*, the scalar alternative of *A or (B or C)* (50) with `a.1` for the outer
+and `a.2` for the inner *or* (19). -/
+def abc (a : Connective × Connective) : Set (Fin 3 → Bool) :=
+  a.1.apply (atom 0) (a.2.apply (atom 1) (atom 2))
+
+instance (a : Connective × Connective) : DecidablePred (· ∈ abc a) :=
+  fun w ↦ inferInstanceAs (Decidable (w ∈ a.1.apply (atom 0) (a.2.apply (atom 1) (atom 2))))
+
+/-- (51)–(52): the secondary implicatures of *A or (B or C)* are `K¬(B and C)` and those of the
+alternatives whose outer connective is *and*. -/
+theorem isSecondaryImplicature_abc_iff (c d : Connective) :
+    IsSecondaryImplicature (abc (.or, .or)) (range abc) (abc (c, d)) ↔
+      c = .and ∨ (c = .R ∧ d = .and) := by
+  rw [isSecondaryImplicature_range_iff]
+  simp only [ssubset_def, Prod.forall]
+  cases c <;> cases d <;> decide
 
 end Sauerland2004

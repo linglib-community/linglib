@@ -91,7 +91,7 @@ instance (S : Finset (Fin 4)) : DecidablePred (· ∈ (↑S : Set (Fin 4))) :=
   fun w ↦ decidable_of_iff (w ∈ S) Finset.mem_coe.symm
 
 instance (S : Set (Fin 4)) [DecidablePred (· ∈ S)] : Decidable (S ∈ competent all) :=
-  decidable_of_iff (S ⊆ all ∨ S ⊆ allᶜ) Iff.rfl
+  decidable_of_iff (S ⊆ all ∨ S ⊆ allᶜ) mem_competent.symm
 
 /-- The speaker is competent about *all* exactly when he looked into the third box. -/
 theorem competent_iff_looked (a w : Fin 4) (hw : w ∈ seen) :
@@ -102,11 +102,10 @@ theorem competent_iff_looked (a w : Fin 4) (hw : w ∈ seen) :
 
 /-- An utterance conveys Quality and the weak implicatures of its stronger scalar alternatives,
 so the speaker knows the statement and does not know any stronger one. -/
-def uttered (q : QUtt) : Set (Set (Fin 4)) :=
-  {S | S ⊆ prop q ∧ ∀ q', prop q' ⊂ prop q → S ∈ primaryImplicature (prop q')}
+def uttered (q : QUtt) : Set (Set (Fin 4)) := commitment (prop q) (range prop)
 
 instance (S : Set (Fin 4)) [DecidablePred (· ∈ S)] (q : QUtt) : Decidable (S ∈ uttered q) :=
-  decidable_of_iff (S ⊆ prop q ∧ ∀ q', prop q' ⊂ prop q → ¬ S ⊆ prop q') Iff.rfl
+  decidable_of_iff (S ⊆ prop q ∧ ∀ q', prop q' ⊂ prop q → ¬ S ⊆ prop q') (by simp [uttered])
 
 /-- With the speaker's contextual knowledge state integrated, the hearer keeps the worlds in
 which what the speaker saw satisfies the epistemic constraints. -/
