@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Fragments.Mayan.Yukatek.VerbClasses
+public import Linglib.Fragments.Mayan.Yukatek.Agreement
 public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Semantics.ArgumentStructure.EventStructure.Basic
 public import Linglib.Core.Relation.ReflTransGen
@@ -45,8 +45,9 @@ are recorded here.
 
 ## Main results
 
-* `linking_derives_completive`, `linking_derives_incompletive`: the split follows from
-  (31)–(33).
+* `linking_derives_split`: the split follows from (31)–(33).
+* `aspect_conditioned_split_family`: under each status with a viewpoint, the marking has the
+  alignment Hindi case has under that viewpoint, the relation to Hindi of §4 (p. 84).
 * `causation_determines_linking` against `template_underdetermines_linking`,
   `stemClass_underdetermines_linking`, `suffix_underdetermines_linking`: what fixes the linking
   and what does not.
@@ -74,7 +75,7 @@ are recorded here.
 namespace Bohnemeyer2004
 
 open ArgumentStructure.EventStructure Aspect Mayan Voice
-open Yukatek (sArgumentMarker VerbStemClass)
+open Yukatek (markerSet StatusCategory VerbStemClass)
 
 /-! ### The verbs and their event structure
 
@@ -259,20 +260,11 @@ the default that the viewpoint selects by (32), and takes the marker of that rol
 def sMarkerFromViewpoint (v : Perfectivity) : Option MarkerSet :=
   markerOf (termRole (linkingDefault v))
 
-/-! ### Linking by viewpoint derives the split
-
-The composed mechanism reproduces the Yukatek split recorded in the Fragment's
-`sArgumentMarker`: perfective status → ergative (set-B), imperfective →
-accusative (set-A). -/
-
-theorem linking_derives_completive :
-    sMarkerFromViewpoint .perfective = sArgumentMarker .completive := rfl
-
-theorem linking_derives_subjunctive :
-    sMarkerFromViewpoint .perfective = sArgumentMarker .subjunctive := rfl
-
-theorem linking_derives_incompletive :
-    sMarkerFromViewpoint .imperfective = sArgumentMarker .incompletive := rfl
+/-- Linking by viewpoint derives the split: under each status with a viewpoint aspect, the sole
+argument takes the marker set the viewpoint selects by (32). -/
+theorem linking_derives_split {s : StatusCategory} {v : Perfectivity}
+    (h : s.viewpointAspect = some v) : markerSet s .S = sMarkerFromViewpoint v := by
+  cases s <;> cases v <;> first | rfl | cases h
 
 /-! ### Linking pattern under transitivization -/
 
@@ -526,12 +518,9 @@ theorem externally_caused_causativize :
 
 /-! ### Bridge to split ergativity -/
 
-theorem linking_consistent_with_split :
-    Yukatek.alignment .completive = .ergative ∧ Yukatek.alignment .incompletive = .accusative :=
-  ⟨rfl, rfl⟩
-
-theorem aspect_conditioned_split_family :
-    Yukatek.alignment .completive = HindiUrdu.alignment .perfective := rfl
+theorem aspect_conditioned_split_family {s : StatusCategory} {v : Perfectivity}
+    (h : s.viewpointAspect = some v) : (HindiUrdu.alignment v).Classifies (markerSet s) := by
+  cases s <;> cases v <;> first | decide | cases h
 
 /-! ### Stem classes vs Lucy's root classes
 
