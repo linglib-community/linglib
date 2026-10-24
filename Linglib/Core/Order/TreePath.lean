@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.List.Lex
 public import Mathlib.Order.Interval.Finset.Defs
-public import Linglib.Core.Data.List.Infix
+public import Linglib.Core.Data.List.CommonPrefix
 public import Linglib.Core.Order.LeftLinear
 
 /-!
