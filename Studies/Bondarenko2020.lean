@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Events.PreExistence
+public import Linglib.Semantics.Events.Lifespan
 public import Linglib.Semantics.Attitudes.Anchor
 public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Semantics.Events.Basic
@@ -35,7 +35,7 @@ inference follows.
 
 ## Implementation notes
 
-* Pre-existence is `Event.PreExists` of `Semantics/Events/PreExistence.lean`. Time spans are a
+* Pre-existence is `Event.PreExists` of `Semantics/Events/Lifespan.lean`. Time spans are a
   function `τ` into `NonemptyInterval`, the run time of an event or the life span of an entity,
   and the paper's `LB(τ(x)) < t` is `(τ x).fst < t.fst` (`Event.preExists_iff`).
 * Truth values are trivalent, as in the paper: a sentence is a trivalent proposition

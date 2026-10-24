@@ -3,34 +3,35 @@ module
 public import Mathlib.Data.Fintype.Prod
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Events.Lifespan
 public import Linglib.Data.Examples.Magri2009
 
 /-!
 # Magri (2009): A Theory of Individual-Level Predicates Based on Blind Mandatory Scalar Implicatures
 
-[magri-2009] explains the oddness of *#Some Italians come from a warm country* and of
-*#Sometimes, John is tall* by one mechanism, the blind mandatory scalar implicature. The
-strengthened meaning is [fox-2007]'s innocent exclusion computed with logical entailment, blind to
-common knowledge (the Blindness Hypothesis (32)), and a sentence whose strengthened meaning
-contradicts common knowledge is odd (the Mismatch Hypothesis (33), `Odd`). Blindness is
-essential: with entailment given common knowledge these sentences would not be strengthened at
-all (`exhIE_image_inter`). The implicature is mandatory because relevance, constrained by (43),
-cannot set aside an alternative that is contextually equivalent to the utterance
-(`disjoint_exhR`), while an ordinary implicature depends on the context (`exists_isRelevance`).
-Both hypotheses carry over to presuppositions, (65) and (66) (`odd_univ_iff`).
+Magri explains the oddness of *#Some Italians come from a warm country* and of *#Sometimes, John is
+tall* by one mechanism, the blind mandatory scalar implicature. The strengthened meaning is Fox's
+innocent exclusion computed with logical entailment, blind to common knowledge (the Blindness
+Hypothesis (32)), and a sentence whose strengthened meaning contradicts common knowledge is odd (the
+Mismatch Hypothesis (33), `Odd`). Blindness is essential: with entailment given common knowledge
+these sentences would not be strengthened at all (`exhIE_image_inter`). The implicature is mandatory
+because relevance, constrained by (43), cannot set aside an alternative that is contextually
+equivalent to the utterance (`disjoint_exhR`), while an ordinary implicature depends on the context
+(`exists_isRelevance`). Both hypotheses carry over to presuppositions, (65) and (66)
+(`odd_univ_iff`).
 
 Individual-level predicates differ from stage-level ones only in common knowledge: they are
-permanent, (70) (`Permanent`), hence homogeneous over any part of a lifespan (`Homogeneous`,
-(71)). The oddness of *sometimes* with *tall*, (72b), is then that of *some* with *come from a
-warm country*, (73) (`odd_some`, `sometimes_odd`). An existential in the scope of a universal,
-against its alternatives with definite descriptions (49), (94), is odd when common knowledge fixes
-a single witness for it (`odd_narrowSome`). This covers the fronted indefinite of (46a) and (54a)
+permanent, (70) (`Event.Permanent`), hence homogeneous over any part of a lifespan (`Homogeneous`,
+(71)). The oddness of *sometimes* with *tall*, (72b), is then that of *some* with *come from a warm
+country*, (73) (`odd_some`, `sometimes_odd`). An existential in the scope of a universal, against
+its alternatives with definite descriptions (49), (94), is odd when common knowledge fixes a single
+witness for it (`odd_narrowSome`). This covers the fronted indefinite of (46a) and (54a)
 (`winner_odd`, `running_odd`) and the existential reading of a bare plural subject of an
-individual-level predicate, (84b), whose narrowest scope puts it below GEN (`existential_odd`).
-A universal over individuals rescues the existential, since distinct individuals may have distinct
+individual-level predicate, (84b), whose narrowest scope puts it below GEN (`existential_odd`). A
+universal over individuals rescues the existential, since distinct individuals may have distinct
 witnesses, (54b) and (102b) (`table_not_odd`, `universal_not_odd`). The same computation predicts
-the German word order facts of [diesing-1992], (8) and (125) (`word_order_rows`). Overt *always*
-competes with GEN, which presupposes homogeneity, so *#John is always tall* is odd, (134a)
+the German word order facts that Diesing describes, (8) and (125) (`word_order_rows`). Overt
+*always* competes with GEN, which presupposes homogeneity, so *#John is always tall* is odd, (134a)
 (`always_odd`), but *Firemen are always tall* is not, (139b) (`always_bare_not_odd`).
 
 ## Implementation notes
@@ -39,6 +40,10 @@ competes with GEN, which presupposes homogeneity, so *#John is always tall* is o
   at issue over individuals and an index (times, or objects and times), with lifespans, nouns and
   restrictors held fixed, so every extension is a logically possible world. The worlds the paper
   exhibits, (98), the table of (54) and the world of §4.3, are constructed.
+* Lifespans are sets of times `span d`, and (70) is `Event.Permanent` of
+  `Semantics/Events/Lifespan.lean`. Following Musan, (76) gives every predicate but a few such
+  as *famous* the presupposition that its argument is alive, which (77) adds to the restrictor of
+  a Q-adverb.
 * GEN contributes its universal assertion (137) to truth conditions; its homogeneity
   presupposition is used only in §4.6, as in the paper. The restrictor `C̃` of (90) is arbitrary,
   as in the paper, and the definite alternatives (93b) restrict GEN to the part of each lifespan
@@ -58,6 +63,7 @@ competes with GEN, which presupposes homogeneity, so *#John is always tall* is o
 * [magri-2009]
 * [fox-2007]
 * [carlson-1977]
+* [musan-1995]
 * [diesing-1992]
 -/
 
@@ -66,6 +72,7 @@ competes with GEN, which presupposes homogeneity, so *#John is always tall* is o
 namespace Magri2009
 
 open Exhaustification Quantifier Set
+open Event (Permanent)
 
 /-! ### Blind strengthening and oddness (§3.2) -/
 
@@ -286,52 +293,42 @@ end Table
 
 section IndividualLevel
 
-variable {E T : Type*} (live : E → T → Prop)
-
-/-- (70): an extension of the predicate compatible with common knowledge about an
-individual-level predicate. True of an individual at some time, it is true of it throughout its
-lifespan `live d`. -/
-def Permanent (f : E → T → Prop) : Prop :=
-  ∀ d, (∃ t, f d t) → ∀ t, live d t → f d t
-
-variable {live} {Wck : Set (E → T → Prop)} {f : E → T → Prop} {j : E} {C D : T → Prop}
-  {t₁ t₂ : T}
+variable {E T : Type*} {span : E → Set T} {Wck : Set (E → T → Prop)} {f : E → T → Prop} {j : E}
+  {C D : T → Prop} {t₁ t₂ : T}
 
 /-- (71): a permanent predicate is homogeneous over any restrictor within a lifespan. -/
-theorem Permanent.homogeneous (hf : Permanent live f) {d : E} {A : T → Prop}
-    (hA : ∀ t, A t → live d t) : Homogeneous A (f d) := by
-  by_cases h : ∃ t, f d t
-  · exact .inl fun t ht ↦ hf d h t (hA t ht)
-  · exact .inr fun t _ ht ↦ h ⟨t, ht⟩
+theorem homogeneous_of_permanent (hf : Permanent span f) {d : E} {A : T → Prop}
+    (hA : ∀ t, A t → t ∈ span d) : Homogeneous A (f d) :=
+  hf.forall_or_forall_not (A := {t | A t}) hA
 
 /-! #### Existential Q-adverbs (§4.1) -/
 
 /-- (79b): *Sometimes, John is tall*, the adverb restricted by `C` and, by (76) and (77), by
 John's lifespan. -/
-def sometimes (live : E → T → Prop) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
-  {f | GQ.some (fun t ↦ live j t ∧ C t) (f j)}
+def sometimes (span : E → Set T) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
+  {f | GQ.some (fun t ↦ t ∈ span j ∧ C t) (f j)}
 
 /-- (80b): its Horn-mate (81) with *always*. -/
-def always (live : E → T → Prop) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
-  {f | GQ.every (fun t ↦ live j t ∧ C t) (f j)}
+def always (span : E → Set T) (j : E) (C : T → Prop) : Set (E → T → Prop) :=
+  {f | GQ.every (fun t ↦ t ∈ span j ∧ C t) (f j)}
 
-private theorem mem_sometimes_sdiff_always (h₁ : live j t₁ ∧ C t₁) (h₂ : live j t₂ ∧ C t₂)
-    (hne : t₁ ≠ t₂) : (fun _ t ↦ t = t₁) ∈ sometimes live j C \ always live j C :=
+private theorem mem_sometimes_sdiff_always (h₁ : t₁ ∈ span j ∧ C t₁) (h₂ : t₂ ∈ span j ∧ C t₂)
+    (hne : t₁ ≠ t₂) : (fun _ t ↦ t = t₁) ∈ sometimes span j C \ always span j C :=
   ⟨⟨t₁, h₁, rfl⟩, fun h ↦ hne (h t₂ h₂).symm⟩
 
 /-- The sentence *#Sometimes, John is tall* is odd for every restrictor meeting John's lifespan
 twice, given (70) (72b), (82). -/
-theorem sometimes_odd (hck : ∀ f ∈ Wck, Permanent live f) (h₁ : live j t₁ ∧ C t₁)
-    (h₂ : live j t₂ ∧ C t₂) (hne : t₁ ≠ t₂) :
-    Odd Wck {sometimes live j C, always live j C} (sometimes live j C) :=
-  odd_some (A := fun (_ : E → T → Prop) t ↦ live j t ∧ C t) (B := fun f ↦ f j)
-    (fun f hf ↦ (hck f hf).homogeneous fun _ h ↦ h.1)
+theorem sometimes_odd (hck : ∀ f ∈ Wck, Permanent span f) (h₁ : t₁ ∈ span j ∧ C t₁)
+    (h₂ : t₂ ∈ span j ∧ C t₂) (hne : t₁ ≠ t₂) :
+    Odd Wck {sometimes span j C, always span j C} (sometimes span j C) :=
+  odd_some (A := fun (_ : E → T → Prop) t ↦ t ∈ span j ∧ C t) (B := fun f ↦ f j)
+    (fun f hf ↦ homogeneous_of_permanent (hck f hf) fun _ h ↦ h.1)
     ⟨fun _ t ↦ t = t₁, mem_sometimes_sdiff_always h₁ h₂ hne⟩
 
 /-- (72a): *Sometimes, John is available* is fine, since common knowledge does not make a
 stage-level predicate permanent. -/
-example (h₁ : live j t₁ ∧ C t₁) (h₂ : live j t₂ ∧ C t₂) (hne : t₁ ≠ t₂) :
-    ¬ Odd univ {sometimes live j C, always live j C} (sometimes live j C) := by
+example (h₁ : t₁ ∈ span j ∧ C t₁) (h₂ : t₂ ∈ span j ∧ C t₂) (hne : t₁ ≠ t₂) :
+    ¬ Odd univ {sometimes span j C, always span j C} (sometimes span j C) := by
   have hw := mem_sometimes_sdiff_always h₁ h₂ hne
   rw [odd_pair_iff ⟨_, hw⟩]
   exact fun h ↦ hw.2 (h ⟨hw.1, trivial⟩)
@@ -340,9 +337,9 @@ example (h₁ : live j t₁ ∧ C t₁) (h₂ : live j t₂ ∧ C t₂) (hne : t
 
 /-- The existential reading (91b) of *Firemen are tall*, scoped below GEN (88) over the `C̃` of
 (90), is odd given (70) and (97) (84b), (99). -/
-theorem existential_odd {N : E → Prop} (hck : ∀ f ∈ Wck, Permanent live f) (hD : ∃ t, D t)
-    (h : (narrowSome N D \ ⋃ d : {d // N d}, definite (fun d t ↦ C t ∧ live d t) d).Nonempty) :
-    Odd Wck (alts N D fun d t ↦ C t ∧ live d t) (narrowSome N D) :=
+theorem existential_odd {N : E → Prop} (hck : ∀ f ∈ Wck, Permanent span f) (hD : ∃ t, D t)
+    (h : (narrowSome N D \ ⋃ d : {d // N d}, definite (fun d t ↦ C t ∧ t ∈ span d) d).Nonempty) :
+    Odd Wck (alts N D fun d t ↦ C t ∧ t ∈ span d) (narrowSome N D) :=
   odd_narrowSome hD (fun f hf x _ i _ hxi _ hj ↦ hck f hf x ⟨i, hxi⟩ _ hj.2) h
 
 end IndividualLevel
@@ -366,12 +363,12 @@ def Fireman.tallAt : Fireman → Fin 3
 
 /-- The lifespans of (98) at the three times of `C̃`: `d₁` is born after the first, `d₃` dies
 before the last. -/
-def lifespan : Fireman → Fin 3 → Prop
-  | .d₁, t => t ≠ 0
-  | .d₂, _ => True
-  | .d₃, t => t ≠ 2
+def lifespan : Fireman → Set (Fin 3)
+  | .d₁ => {t | t ≠ 0}
+  | .d₂ => univ
+  | .d₃ => {t | t ≠ 2}
 
-instance : DecidableRel lifespan := fun d t ↦
+instance (d : Fireman) : DecidablePred (· ∈ lifespan d) := fun t ↦
   match d with
   | .d₁ => inferInstanceAs (Decidable (t ≠ 0))
   | .d₂ => inferInstanceAs (Decidable True)
@@ -384,11 +381,11 @@ def world98 (d : Fireman) (t : Fin 3) : Prop := t = d.tallAt
 /-- The existential reading (91b) and its definite alternatives (93b) in the model of (98), with
 `C` and `C̃` all three times. -/
 abbrev alts98 : Set (Set (Fireman → Fin 3 → Prop)) :=
-  alts (fun _ ↦ True) (fun _ ↦ True) fun d t ↦ True ∧ lifespan d t
+  alts (fun _ ↦ True) (fun _ ↦ True) fun d t ↦ True ∧ t ∈ lifespan d
 
 /-- The world (98) verifies the existential reading and falsifies every definite alternative. -/
 theorem world98_mem : world98 ∈ narrowSome (fun _ ↦ True) (fun _ ↦ True) \
-    ⋃ d : {_d : Fireman // True}, definite (fun d t ↦ True ∧ lifespan d t) d := by
+    ⋃ d : {_d : Fireman // True}, definite (fun d t ↦ True ∧ t ∈ lifespan d) d := by
   simp only [world98, narrowSome, definite, GQ.every, GQ.some, mem_sdiff, mem_ofPred_eq,
     mem_iUnion, not_exists]
   decide
@@ -437,13 +434,13 @@ def distributed {T : Type*} (a : Woman) (p : Man × T) : Prop := p.1 = a.relativ
 
 /-- With the universal object over GEN, the existential reading (105) is not odd under (70) and the
 alternatives (106b), unlike (102a) (102b), (109). -/
-theorem universal_not_odd {T : Type*} {live : Woman → T → Prop} {C D : Man → T → Prop}
-    (h₁ : ∃ t, C .b₂ t ∧ live .a₁ t) (h₂ : ∃ t, C .b₁ t ∧ live .a₂ t) :
-    ¬ Odd {f | ∀ b, Permanent live fun a t ↦ f a (b, t)}
-      (alts (fun _ ↦ True) (fun p ↦ D p.1 p.2) fun a p ↦ C p.1 p.2 ∧ live a p.2)
+theorem universal_not_odd {T : Type*} {span : Woman → Set T} {C D : Man → T → Prop}
+    (h₁ : ∃ t, C .b₂ t ∧ t ∈ span .a₁) (h₂ : ∃ t, C .b₁ t ∧ t ∈ span .a₂) :
+    ¬ Odd {f | ∀ b, Permanent span fun a t ↦ f a (b, t)}
+      (alts (fun _ ↦ True) (fun p ↦ D p.1 p.2) fun a p ↦ C p.1 p.2 ∧ p.2 ∈ span a)
       (narrowSome (fun _ ↦ True) fun p ↦ D p.1 p.2) := by
   have h : distributed ∈ narrowSome (fun _ ↦ True) (fun p : Man × T ↦ D p.1 p.2) \
-      ⋃ a : {_a : Woman // True}, definite (fun a p ↦ C p.1 p.2 ∧ live a p.2) a := by
+      ⋃ a : {_a : Woman // True}, definite (fun a p ↦ C p.1 p.2 ∧ p.2 ∈ span a) a := by
     refine ⟨fun ⟨b, _⟩ _ ↦ ?_, ?_⟩
     · cases b
       exacts [⟨.a₁, trivial, rfl⟩, ⟨.a₂, trivial, rfl⟩]
@@ -496,7 +493,7 @@ end GermanWordOrder
 
 section Always
 
-variable {E T : Type*} {live : E → T → Prop} {Wck : Set (E → T → Prop)} {j : E} {t₁ t₂ : T}
+variable {E T : Type*} {span : E → Set T} {Wck : Set (E → T → Prop)} {j : E} {t₁ t₂ : T}
 
 /-- (137): the homogeneity presupposition of GEN with restrictor `A`, the scope being the
 predicate's extension read through `B`: (138b) for *John is tall*, (141b) for *Firemen are
@@ -507,23 +504,23 @@ def genPresup {α : Type*} (A : α → Prop) (B : (E → T → Prop) → α → 
 
 /-- The sentence *#John is always tall* presupposes nothing (138a) and is odd, since (70) entails
 the presupposition (138b) of *John is tall* (134a), (138). -/
-theorem always_odd (hck : ∀ f ∈ Wck, Permanent live f) (h₁ : live j t₁) (h₂ : live j t₂)
-    (hne : t₁ ≠ t₂) : Odd Wck {univ, genPresup (live j) fun f ↦ f j} univ :=
+theorem always_odd (hck : ∀ f ∈ Wck, Permanent span f) (h₁ : t₁ ∈ span j) (h₂ : t₂ ∈ span j)
+    (hne : t₁ ≠ t₂) : Odd Wck {univ, genPresup (· ∈ span j) fun f ↦ f j} univ :=
   (odd_univ_iff ⟨fun _ t ↦ t = t₁,
     fun h ↦ h.elim (fun h ↦ hne (h t₂ h₂).symm) fun h ↦ h t₁ h₁ rfl⟩).2
-    fun f hf ↦ (hck f hf).homogeneous fun _ h ↦ h
+    fun f hf ↦ homogeneous_of_permanent (hck f hf) fun _ h ↦ h
 
 /-- The sentence *Firemen are always tall* is fine, as (70) allows some firemen to be tall and
 others not (139b), (141). -/
-theorem always_bare_not_odd {N : E → Prop} {d₁ d₂ : E} (h₁ : N d₁ ∧ live d₁ t₁)
-    (h₂ : N d₂ ∧ live d₂ t₂) (hne : d₁ ≠ d₂) :
-    ¬ Odd {f | Permanent live f}
-      {univ, genPresup (fun p : E × T ↦ N p.1 ∧ live p.1 p.2) fun f p ↦ f p.1 p.2} univ := by
-  have hf : (fun d _ ↦ d = d₁) ∉ genPresup (fun p : E × T ↦ N p.1 ∧ live p.1 p.2)
+theorem always_bare_not_odd {N : E → Prop} {d₁ d₂ : E} (h₁ : N d₁ ∧ t₁ ∈ span d₁)
+    (h₂ : N d₂ ∧ t₂ ∈ span d₂) (hne : d₁ ≠ d₂) :
+    ¬ Odd {f | Permanent span f}
+      {univ, genPresup (fun p : E × T ↦ N p.1 ∧ p.2 ∈ span p.1) fun f p ↦ f p.1 p.2} univ := by
+  have hf : (fun d _ ↦ d = d₁) ∉ genPresup (fun p : E × T ↦ N p.1 ∧ p.2 ∈ span p.1)
       fun f p ↦ f p.1 p.2 :=
     fun h ↦ h.elim (fun h ↦ hne (h (d₂, t₂) h₂).symm) fun h ↦ h (d₁, t₁) h₁ rfl
   rw [odd_univ_iff ⟨_, hf⟩]
-  exact fun h ↦ hf (h (show Permanent live fun d _ ↦ d = d₁ from fun _ ⟨_, hd⟩ _ _ ↦ hd))
+  exact fun h ↦ hf (h (show Permanent span fun d _ ↦ d = d₁ from fun _ ⟨_, hd⟩ _ _ ↦ hd))
 
 end Always
 

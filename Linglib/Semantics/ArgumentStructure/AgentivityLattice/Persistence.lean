@@ -30,6 +30,8 @@ persistence at the beginning with existence there and some qualitative persisten
 at the end; this is the reading under which exactly five combinations remain, as the paper says.
 The levels are closed under union but not under intersection, so the meet is the largest level
 inside the intersection, given by a table.
+`AgentivityLattice/OfLifespan.lean` gives the features truth conditions over life spans, under
+which the exclusion principles hold of every participant.
 
 ## References
 

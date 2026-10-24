@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.Case
 public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfEntailmentProfile
+public import Linglib.Semantics.ArgumentStructure.AgentivityLattice.OfLifespan
 public import Linglib.Semantics.ArgumentStructure.RoleList
 public import Studies.Dowty1991
 
@@ -20,6 +21,8 @@ characterizations of the case regions.
   positional verbs to *assassinate*.
 * `kill_subject_range`, `transitive_region_eq_Ici`: agents are closed upward and patients
   downward, so natural forces kill and the object of *hit* must exist when the event begins.
+* `pseudoCleft_presupposition`: the pseudo-cleft (5) presupposes that its object exists when the
+  event begins, which a destroyed object does and a created one does not.
 * `kiss_outranking_from_dominance`: the dominance criterion reproduces Dowty's choice for *kiss*.
 * `build_object_admits_iff`: read literally, the correspondences between Dowty's Proto-Patient
   entailments and persistence exclude the creation level for the object of *build*.
@@ -124,6 +127,16 @@ persistence axis of the transitivity region. -/
 theorem transitive_region_eq_Ici (n : ParticipantType) :
     n.InTransitiveRegion ↔ PersistenceLevel.exPersBeginning ≤ n.2 := by
   revert n; decide
+
+/-- The pseudo-cleft (5) presupposes that its object exists when the event begins: a destroyed
+object meets the presupposition, *What John did to the table was ruin it*, and a created one does
+not, *\*What John did to the table was build it*. -/
+theorem pseudoCleft_presupposition {T Q : Type*} [LinearOrder T] [DecidableEq Q]
+    {life run : NonemptyInterval T} {q : T → Q} :
+    (PersistenceLevel.ofLifespan life run q = .exPersBeginning → run.fst ∈ life) ∧
+      (PersistenceLevel.ofLifespan life run q = .exPersEnd → run.fst ∉ life) :=
+  ⟨fun h ↦ PersistenceLevel.exPersBeginning_le_ofLifespan_iff.1 h.symm.le,
+    fun h hB ↦ absurd (h ▸ PersistenceLevel.exPersBeginning_le_ofLifespan_iff.2 hB) (by decide)⟩
 
 /-- The subject of *kiss* strictly dominates its object on the agentivity lattice, so the
 dominance criterion selects it, [dowty-1991]'s result for (43) without counting entailments. -/
