@@ -95,9 +95,9 @@ for a masculine or feminine, and [inanim] for the neuter *it*. -/
 def pronounFeatures (p : PersonalPronoun) : Finset Feature :=
   (if p.number = some .singular then {.sg} else ∅) ∪
     match p.gender with
-    | some .masculine => {.masc}
-    | some .feminine => {.fem}
-    | some .neuter => {.inanim}
+    | some .Masc => {.masc}
+    | some .Fem => {.fem}
+    | some .Neut => {.inanim}
     | _ => ∅
 
 /-- The Vocabulary Item of a pronoun spells out its features as its form. -/

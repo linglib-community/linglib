@@ -55,19 +55,19 @@ def vostedes : PersonalPronoun :=
 
 /-- *el* — 3sg masculine. -/
 def el : PersonalPronoun :=
-  { form := "el", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "el", person := some .third, number := some .singular, gender := some .Masc }
 
 /-- *ela* — 3sg feminine. -/
 def ela : PersonalPronoun :=
-  { form := "ela", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "ela", person := some .third, number := some .singular, gender := some .Fem }
 
 /-- *eles* — 3pl masculine. -/
 def eles : PersonalPronoun :=
-  { form := "eles", person := some .third, number := some .plural, gender := some .masculine }
+  { form := "eles", person := some .third, number := some .plural, gender := some .Masc }
 
 /-- *elas* — 3pl feminine. -/
 def elas : PersonalPronoun :=
-  { form := "elas", person := some .third, number := some .plural, gender := some .feminine }
+  { form := "elas", person := some .third, number := some .plural, gender := some .Fem }
 
 /-- The second person singular at each grade. -/
 def addresseeSg : Grade → PersonalPronoun

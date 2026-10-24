@@ -68,8 +68,8 @@ namespace Basque
 
 open Agreement Morphology
 
-/-- The cell of the familiar second person *hi* addressed to a person of the given gender. -/
-def familiar (g : Gender) : Bundle := (Bundle.personNumber .second .singular).set .gender g
+/-- The cell of the familiar second person *hi* addressed to a person of the given sex. -/
+def familiar (x : Sex) : Bundle := (Bundle.personNumber .second .singular).set .gender x.toUD
 
 /-! ### The three slots -/
 
@@ -80,8 +80,8 @@ def absolutive : Paradigm (List Morph) :=
 
 /-- The suffixes of the first and second persons, which the dative and ergative slots share. -/
 def participantSuffixes : Paradigm (List Morph) :=
-  [(.personNumber .first .singular, [.suff "t"]), (familiar .masculine, [.suff "k"]),
-   (familiar .feminine, [.suff "n"]), (.personNumber .first .plural, [.suff "gu"]),
+  [(.personNumber .first .singular, [.suff "t"]), (familiar .male, [.suff "k"]),
+   (familiar .female, [.suff "n"]), (.personNumber .first .plural, [.suff "gu"]),
    (.personNumber .second .plural, [.suff "zu"])]
 
 /-- The dative suffixes. -/
@@ -142,10 +142,10 @@ theorem displacedErgative_head : ∀ c ∈ Bundle.personNumberCells,
       ((absolutive.realize c).bind (·.head?)).or (thirdAbsolutive .past) := by
   decide
 
-/-- The allocutive suffix of a familiar addressee is, for each gender, the ergative suffix of
+/-- The allocutive suffix of a familiar addressee is, for each sex, the ergative suffix of
 *hi*. -/
-theorem allocutive_eq_ergative (g : Gender) :
-    (Pronouns.allocutive .familiar g).map ([·]) = ergative.realize (familiar g) := by
-  cases g <;> decide +kernel
+theorem allocutive_eq_ergative (x : Sex) :
+    (Pronouns.allocutive .familiar x).map ([·]) = ergative.realize (familiar x) := by
+  cases x <;> decide +kernel
 
 end Basque

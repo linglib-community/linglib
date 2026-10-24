@@ -67,12 +67,12 @@ def Gender.ofPair (w₁ w₂ : Word) : Gender := if HasPhi.Agree w₁ w₂ then 
 /-- Lisa, of *Lisa gave the leftover pie to Brendan*. -/
 def lisa : Word :=
   ⟨"Lisa", .PROPN,
-    Features.of (person := some .third) (number := some .singular) (gender := some .feminine)⟩
+    Features.of (person := some .third) (number := some .singular) (gender := some .Fem)⟩
 
 /-- Brendan. -/
 def brendan : Word :=
   ⟨"Brendan", .PROPN,
-    Features.of (person := some .third) (number := some .singular) (gender := some .masculine)⟩
+    Features.of (person := some .third) (number := some .singular) (gender := some .Masc)⟩
 
 theorem lisa_brendan :
     Gender.ofPair lisa brendan = .different ∧

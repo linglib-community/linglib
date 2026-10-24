@@ -21,7 +21,7 @@ the gender: *el* and *los* go with a masculine, *la* and *las* with a feminine.
 
 ## Main definitions
 
-* `Spanish.Gender.Value`: the two genders, with their comparative labels.
+* `Spanish.Gender.Value`: the two genders.
 * `Spanish.Gender.Noun`: a noun with its gender, the sex it restricts its referents to where it
   does, and their animacy.
 * `Spanish.Gender.Noun.ofSex`: the entry of a noun whose gender is its referent's sex.

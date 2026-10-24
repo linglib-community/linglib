@@ -415,7 +415,7 @@ theorem taller_man_rows :
     ∀ e ∈ rows "formation", Anomalous e ↔
       ∃ h ∈ headOf e, h.cat = .np ∧
         ∃ s ∈ (e.feature? "standard").bind nounOf, ∃ n ∈ (e.feature? "noun").bind nounOf,
-          s.gender ≠ n.gender := by
+          s.sex ≠ n.sex := by
   decide +kernel
 
 end Bresnan1973

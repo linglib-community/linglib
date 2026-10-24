@@ -20,7 +20,7 @@ feminine nouns acquired the ending by overt characterization, the addition of th
 
 ## Main definitions
 
-* `Hausa.Gender.Value` — the two genders, with their comparative labels
+* `Hausa.Gender.Value` — the two genders
 * `Hausa.Noun` — a noun with its gender and the sex of its referents where it has one
 * `Hausa.Noun.EndsInAa` — the noun ends in *-ā*
 * `Hausa.allNouns` — the nouns
@@ -40,7 +40,7 @@ inductive Gender.Value where
   | feminine
   deriving DecidableEq, Repr, Fintype
 
-/-- The comparative label of each gender. -/
+/-- Male humans are masculine and female humans feminine. -/
 def Gender.Value.ofSex : Sex → Gender.Value
   | .male => .masculine
   | .female => .feminine

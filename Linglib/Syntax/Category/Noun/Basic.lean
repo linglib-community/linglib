@@ -77,7 +77,7 @@ restricts its referent to. -/
 def ProperName.toWord (n : ProperName) : Morphology.Word :=
   { form := n.form, cat := .PROPN
     features := Morphology.Features.of (person := some .third)
-      (gender := n.sex.map fun | .male => .masculine | .female => .feminine) }
+      (gender := n.sex.map Sex.toUD) }
 
 /-- A noun with its controller gender over the carrier `G` and the sex it restricts its referents
 to, where it does. -/

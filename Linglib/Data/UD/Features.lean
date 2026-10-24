@@ -43,7 +43,7 @@ inductive Gender where
   | Fem    -- feminine
   | Neut   -- neuter
   | Com    -- common (masc or fem)
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Grammatical case (UD `Case` feature, https://universaldependencies.org/u/feat/Case.html).
 

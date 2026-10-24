@@ -63,10 +63,10 @@ def impersonal : Bundle := .set .number .plural ⊥
 and the impersonal 4p. -/
 def pacCells : List Bundle :=
   [.personNumber .first .singular,
-    (Bundle.personNumber .second .singular).set .gender .masculine,
-    (Bundle.personNumber .second .singular).set .gender .feminine,
-    (Bundle.personNumber .third .singular).set .gender .masculine,
-    (Bundle.personNumber .third .singular).set .gender .feminine,
+    (Bundle.personNumber .second .singular).set .gender .Masc,
+    (Bundle.personNumber .second .singular).set .gender .Fem,
+    (Bundle.personNumber .third .singular).set .gender .Masc,
+    (Bundle.personNumber .third .singular).set .gender .Fem,
     .personNumber .first .plural, .personNumber .second .plural, .personNumber .third .plural,
     impersonal]
 

@@ -27,7 +27,7 @@ separate word are prefixed to its noun: *gera við* 'repair', *við-ger-ð*.
 
 ## Main definitions
 
-* `Icelandic.Gender.Value`: the three genders, with their comparative labels.
+* `Icelandic.Gender.Value`: the three genders.
 * `Icelandic.Nouns.Deverbal`: a deverbal noun, segmented.
 * `Icelandic.Nouns.Deverbal.tree`, `Icelandic.Nouns.Deverbal.morphs`: its word-formation tree and
   its morphs in linear order.

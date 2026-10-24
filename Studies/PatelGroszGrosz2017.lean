@@ -58,27 +58,27 @@ inductive DEMLicensingContext where
 
 /-- *Er* belongs to the weak series. -/
 def er : PersonalPronoun :=
-  { form := "er", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "er", person := some .third, number := some .singular, gender := some .Masc }
 
 /-- *Sie* belongs to the weak series. -/
 def sie : PersonalPronoun :=
-  { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "sie", person := some .third, number := some .singular, gender := some .Fem }
 
 /-- *Es* belongs to the weak series. -/
 def es : PersonalPronoun :=
-  { form := "es", person := some .third, number := some .singular, gender := some .neuter }
+  { form := "es", person := some .third, number := some .singular, gender := some .Neut }
 
 /-- *Der* belongs to the strong series, the core of *er* plus the anaphoric index. -/
 def der : PersonalPronoun :=
-  { form := "der", person := some .third, number := some .singular, gender := some .masculine }
+  { form := "der", person := some .third, number := some .singular, gender := some .Masc }
 
 /-- *Die* belongs to the strong series. -/
 def die : PersonalPronoun :=
-  { form := "die", person := some .third, number := some .singular, gender := some .feminine }
+  { form := "die", person := some .third, number := some .singular, gender := some .Fem }
 
 /-- *Das* belongs to the strong series. -/
 def das : PersonalPronoun :=
-  { form := "das", person := some .third, number := some .singular, gender := some .neuter }
+  { form := "das", person := some .third, number := some .singular, gender := some .Neut }
 
 /-- A language's third-person pronoun system: the weak and strong series, the article
 inventory, and the pragmatic effects that license the strong series. -/

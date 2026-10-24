@@ -61,16 +61,16 @@ def u : PersonalPronoun :=
 /-- The third person singular masculine *hij*. -/
 def hij : PersonalPronoun :=
   { form := "hij", person := some .third, number := some .singular, cases := {.nom},
-    gender := some .masculine, strength := some .strong }
+    gender := some .Masc, strength := some .strong }
 
 /-- The third person singular feminine *zij*. -/
 def zij_sg : PersonalPronoun :=
   { form := "zij", person := some .third, number := some .singular, cases := {.nom},
-    gender := some .feminine, strength := some .strong }
+    gender := some .Fem, strength := some .strong }
 
 /-- The third person singular neuter *het*. -/
 def het : PersonalPronoun :=
-  { form := "het", person := some .third, number := some .singular, gender := some .neuter,
+  { form := "het", person := some .third, number := some .singular, gender := some .Neut,
     strength := some .strong }
 
 /-- The first person plural *wij*. -/

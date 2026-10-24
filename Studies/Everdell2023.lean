@@ -173,7 +173,7 @@ theorem role_eq :
   obtain h | h | h : b.arguments = 1 ∨ b.arguments = 2 ∨ 3 ≤ b.arguments := by omega
   · simp [role, hierarchy, Available, maxArguments, h]
   · by_cases hp : b.Promotable <;> simp [role, hierarchy, Available, maxArguments, h, hp]
-  · simp [role, hierarchy, List.find?, Available, maxArguments, Nat.not_lt.mpr h,
+  · simp [role, hierarchy, List.find?, Available, maxArguments, show ¬ b.arguments ≤ 2 by omega,
       show b.arguments ≠ 1 by omega, show b.arguments ≠ 2 by omega]
 
 theorem role_eq_agent_iff : b.role = some .agent ↔ b.arguments = 1 := by

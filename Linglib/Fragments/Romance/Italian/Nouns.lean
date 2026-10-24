@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Fragments.Romance.Italian.Gender
 
 /-!
 # Italian nouns
@@ -24,7 +25,7 @@ namespace Italian.Nouns
 
 /-- An Italian noun is the root gendered entry, which a numeral counts directly or not at all,
 with its plural. -/
-structure Noun extends GenderedNoun Gender, ClassifiedNoun Empty where
+structure Noun extends GenderedNoun Gender.Value, ClassifiedNoun Empty where
   counters := {none}
   /-- The plural. -/
   plural : Option String := none

@@ -63,9 +63,9 @@ def Row.number : Row → Number
   | .pl1 | .pl2 | .pl3m | .pl3f => .plural
 
 /-- The gender of a row, marked in the third person alone. -/
-def Row.gender : Row → Option Gender
-  | .sg3m | .pl3m => some .masculine
-  | .sg3f | .pl3f => some .feminine
+def Row.gender : Row → Option UD.Gender
+  | .sg3m | .pl3m => some .Masc
+  | .sg3f | .pl3f => some .Fem
   | _ => none
 
 /-- The cases of the object clitics. -/

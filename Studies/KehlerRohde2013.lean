@@ -349,11 +349,11 @@ lives in the topichood term rather than in Centering's center. -/
 /-- The two characters of (20), both third-person singular feminine. -/
 def amanda : Word :=
   ⟨"Amanda", .PROPN,
-    Features.of (person := some .third) (number := some .singular) (gender := some .feminine)⟩
+    Features.of (person := some .third) (number := some .singular) (gender := some .Fem)⟩
 
 def brittany : Word :=
   ⟨"Brittany", .PROPN,
-    Features.of (person := some .third) (number := some .singular) (gender := some .feminine)⟩
+    Features.of (person := some .third) (number := some .singular) (gender := some .Fem)⟩
 
 theorem she_ambiguous_over_stimuli :
     English.Pronouns.she.toPronoun.CandidateAntecedent amanda ∧

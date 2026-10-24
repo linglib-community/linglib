@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Fintype.Card
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Gender.Basic
+public import Linglib.Data.UD.Features
 
 /-!
 # Feature decomposition of gender
@@ -16,6 +17,7 @@ presentations.
 * `Gender.Features`: the bivalent [±feminine, ±neuter] features as finsets over the chain
   feminine < neuter, whose well-formed cells are `Features.neuter`, `Features.feminine` and
   `Features.masculine`.
+* `Gender.Features.ofUD`: the features of a Universal Dependencies gender tag.
 
 ## Implementation notes
 
@@ -91,21 +93,17 @@ theorem Features.card_wellFormed :
     Fintype.card {gf : Features // IsLowerSet (↑gf : Set Feature)} = 3 := by
   rw [Fintype.card_subtype_isLowerSet]; rfl
 
-/-- Map gender features to the comparative labels. -/
-def Features.toGender (f : Features) : Option Gender :=
-  if .neuter ∈ f then if .feminine ∈ f then some .neuter else none
-  else if .feminine ∈ f then some .feminine else some .masculine
+/-- The feature bundle of a Universal Dependencies gender tag: the masculine the empty bundle,
+the feminine `[+feminine]`, the neuter `[+feminine, +neuter]`; the common gender has no
+sex-based bundle. -/
+def Features.ofUD : UD.Gender → Option Features
+  | .Masc => some Features.masculine
+  | .Fem => some Features.feminine
+  | .Neut => some Features.neuter
+  | .Com => none
 
-/-- Map comparative labels to gender features (partial — only sex-based
-    labels have feature equivalents). -/
-def Features.fromGender : Gender → Option Features
-  | .neuter    => some Features.neuter
-  | .feminine  => some Features.feminine
-  | .masculine => some Features.masculine
-  | _          => none
-
-theorem Features.fromGender_toGender {f : Features} (h : IsLowerSet (↑f : Set Feature)) :
-    f.toGender.bind Features.fromGender = some f := by
-  revert f; decide
+theorem Features.ofUD_isLowerSet {u : UD.Gender} {f : Features} (h : Features.ofUD u = some f) :
+    IsLowerSet (↑f : Set Feature) := by
+  cases u <;> simp only [ofUD, Option.some.injEq, reduceCtorEq] at h <;> subst h <;> decide
 
 end Gender

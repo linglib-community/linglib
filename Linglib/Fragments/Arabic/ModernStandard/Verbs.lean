@@ -32,18 +32,18 @@ open Agreement
 of *katab-* 'wrote' ([ryding-2005] p. 443). -/
 def pastSuffix : Paradigm Morph :=
   [(Bundle.personNumber .first .singular, .suff "tu"),
-   ((Bundle.personNumber .second .singular).set .gender .masculine, .suff "ta"),
-   ((Bundle.personNumber .second .singular).set .gender .feminine, .suff "ti"),
-   ((Bundle.personNumber .third .singular).set .gender .masculine, .suff "a"),
-   ((Bundle.personNumber .third .singular).set .gender .feminine, .suff "at"),
+   ((Bundle.personNumber .second .singular).set .gender .Masc, .suff "ta"),
+   ((Bundle.personNumber .second .singular).set .gender .Fem, .suff "ti"),
+   ((Bundle.personNumber .third .singular).set .gender .Masc, .suff "a"),
+   ((Bundle.personNumber .third .singular).set .gender .Fem, .suff "at"),
    (Bundle.personNumber .second .dual, .suff "tumaa"),
-   ((Bundle.personNumber .third .dual).set .gender .masculine, .suff "aa"),
-   ((Bundle.personNumber .third .dual).set .gender .feminine, .suff "ataa"),
+   ((Bundle.personNumber .third .dual).set .gender .Masc, .suff "aa"),
+   ((Bundle.personNumber .third .dual).set .gender .Fem, .suff "ataa"),
    (Bundle.personNumber .first .plural, .suff "naa"),
-   ((Bundle.personNumber .second .plural).set .gender .masculine, .suff "tum"),
-   ((Bundle.personNumber .second .plural).set .gender .feminine, .suff "tunna"),
-   ((Bundle.personNumber .third .plural).set .gender .masculine, .suff "uu"),
-   ((Bundle.personNumber .third .plural).set .gender .feminine, .suff "na")]
+   ((Bundle.personNumber .second .plural).set .gender .Masc, .suff "tum"),
+   ((Bundle.personNumber .second .plural).set .gender .Fem, .suff "tunna"),
+   ((Bundle.personNumber .third .plural).set .gender .Masc, .suff "uu"),
+   ((Bundle.personNumber .third .plural).set .gender .Fem, .suff "na")]
 
 theorem pastSuffix_gender_eq_bot_iff :
     ∀ c ∈ pastSuffix.cells,

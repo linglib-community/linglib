@@ -240,11 +240,11 @@ def matkaDite : Finset Conjunct := {.woman, .child}
 def otecDite : Finset Conjunct := {.man, .child}
 
 theorem czech_gender :
-    janVera ∉ Gender.dom (some .feminine) ∧
-      matkaDite ∈ Gender.dom (some .feminine) ∧
-      matkaDite ∉ Gender.dom (some .neuter) ∧
-      otecDite ∉ Gender.dom (some .feminine) ∧
-      otecDite ∈ Gender.dom (some .masculine) := by
+    janVera ∉ Gender.dom (some .Fem) ∧
+      matkaDite ∈ Gender.dom (some .Fem) ∧
+      matkaDite ∉ Gender.dom (some .Neut) ∧
+      otecDite ∉ Gender.dom (some .Fem) ∧
+      otecDite ∈ Gender.dom (some .Masc) := by
   simp only [Gender.mem_dom_feminine, Gender.mem_dom_neuter, Gender.dom_masculine, Set.mem_univ,
     and_true, Gendered.masculine, Gendered.feminine, Set.mem_ofPred_eq]
   decide

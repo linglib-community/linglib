@@ -29,7 +29,7 @@ inductive Value where
   | fem
   deriving DecidableEq, Repr, Fintype
 
-/-- The comparative label of each gender. -/
+/-- Male humans are masculine and female humans feminine. -/
 def Value.ofSex : Sex → Value
   | .male => .masc
   | .female => .fem

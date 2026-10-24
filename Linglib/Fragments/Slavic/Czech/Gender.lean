@@ -13,7 +13,7 @@ noun phrases (for past tenses and conditional) is dominated in turn by any mascu
 masculine–inanimate and feminine" (p. 503), so that *Pes a kočka seděli na rohožce* 'The dog and
 the cat were sitting on the mat' takes the masculine animate plural and *Dům i stáda byly
 zničeny* 'The house and flocks were destroyed' the masculine inanimate plural. The controller
-genders are therefore four, and the comparative labels merge the two masculines.
+genders are therefore four, and `Value.IsMasculine` groups the two masculines.
 
 ## Main definitions
 

@@ -9,21 +9,20 @@ public import Linglib.Core.Order.Flat
 public import Linglib.Core.Order.PartialUnify
 public import Linglib.Data.UD.Features
 public import Linglib.Syntax.Case.Basic
-public import Linglib.Syntax.Gender.Basic
 public import Linglib.Syntax.Number.Basic
 public import Linglib.Syntax.Person.Basic
 
 /-!
 # Token features
 
-The morphosyntactic features a word token carries: the agreement dimensions, valued in the
-analytical inventories `Person`, `Number`, `Gender` and `Case`, and the nominal and verbal
-features of the Universal Dependencies annotation, definiteness, degree, pronoun type,
-reflexivity, verb form, tense, aspect, mood, voice and polarity, valued in the tag inventories
-until an analytical one exists. A token's features give each feature a value or `⊥`, a slot of
-the flat order, so subsumption, unification and generalization are the pointwise order, partial
-join and meet; the Universal Dependencies annotation of a token is the matter of
-`Morphology/Word/UD.lean`.
+The morphosyntactic features a word token carries: person, number and case, valued in the
+analytical inventories `Person`, `Number` and `Case`, and gender, definiteness, degree, pronoun
+type, reflexivity, verb form, tense, aspect, mood, voice and polarity, valued in the Universal
+Dependencies tags. Gender has no analytical inventory, a language's genders being its own; the
+other tag-valued features keep the tags until an analytical inventory exists. A token's
+features give each feature a value or `⊥`, a slot of the flat order, so subsumption, unification
+and generalization are the pointwise order, partial join and meet; the Universal Dependencies
+annotation of a token is the matter of `Morphology/Word/UD.lean`.
 
 ## Main declarations
 
@@ -48,12 +47,12 @@ inductive Feature where
   | verbForm | tense | aspect | mood | voice | polarity
   deriving DecidableEq, Repr, Fintype
 
-/-- A feature takes its values in the analytical inventory for an agreement dimension and in the
-Universal Dependencies tags otherwise, reflexivity being privative. -/
+/-- A feature takes its values in the analytical inventory for person, number and case and in
+the Universal Dependencies tags otherwise, reflexivity being privative. -/
 abbrev Feature.Value : Feature → Type
   | .person => Person
   | .number => Number
-  | .gender => Gender
+  | .gender => UD.Gender
   | .case => Case
   | .definiteness => UD.Definite
   | .degree => UD.Degree
@@ -79,7 +78,7 @@ namespace Features
 
 /-- The bundle specifying the named values and nothing else. -/
 def of (person : Option Person := none) (number : Option Number := none)
-    (gender : Option Gender := none) (case_ : Option Case := none)
+    (gender : Option UD.Gender := none) (case_ : Option Case := none)
     (definiteness : Option UD.Definite := none) (degree : Option UD.Degree := none)
     (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
     (verbForm : Option UD.VerbForm := none) (tense : Option UD.Tense := none)

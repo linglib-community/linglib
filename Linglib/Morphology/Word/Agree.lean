@@ -32,10 +32,10 @@ instance Word.instHasPhi : HasPhi Word := ⟨fun w ↦ phi w.features⟩
 theorem Word.not_isTrans_agree : ¬ IsTrans Word HasPhi.Agree := fun ⟨h⟩ ↦
   absurd
     (h ⟨"she", .PRON, Features.of (person := some .third) (number := some .singular)
-          (gender := some .feminine)⟩
+          (gender := some .Fem)⟩
        ⟨"they", .PRON, Features.of (person := some .third)⟩
        ⟨"he", .PRON, Features.of (person := some .third) (number := some .singular)
-          (gender := some .masculine)⟩
+          (gender := some .Masc)⟩
        (by decide) (by decide))
     (by decide)
 
