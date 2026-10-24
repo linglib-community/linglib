@@ -82,13 +82,14 @@ instance (a w : Fin 4) : DecidablePred (· ∈ speakerState a w) :=
 instance (S : Finset (Fin 4)) : DecidablePred (· ∈ (↑S : Set (Fin 4))) :=
   fun w ↦ decidable_of_iff (w ∈ S) Finset.mem_coe.symm
 
-instance (S : Set (Fin 4)) [DecidablePred (· ∈ S)] : Decidable (S ∈ competent all) :=
-  decidable_of_iff (S ⊆ all ∨ S ⊆ allᶜ) mem_competent.symm
+instance (S : Set (Fin 4)) [DecidablePred (· ∈ S)] :
+    Decidable (S ∈ (Question.polar all : Set (Set (Fin 4)))) :=
+  decidable_of_iff (S ⊆ all ∨ S ⊆ allᶜ) Question.mem_polar.symm
 
 /-- The speaker is competent about *all* exactly when he looked into the third box. -/
 theorem competent_iff_looked (a w : Fin 4) (hw : w ∈ seen) :
-    speakerState a w ∈ competent all ↔ a = 3 := by
-  revert a w; decide
+    speakerState a w ∈ Question.polar all ↔ a = 3 := by
+  rw [← SetLike.mem_coe]; revert a w; decide
 
 /-! ### The recipe and its integration with context -/
 
@@ -131,19 +132,19 @@ instance (a : Fin 4) (q : QUtt) : DecidablePred (· ∈ contextual a q) :=
 /-- Competence by default with integration keeps the default where the speaker's contextual
 state bears it out and cancels it where that state contradicts it everywhere. -/
 def competenceDefault (a : Fin 4) (q : QUtt) : Set (Fin 4) :=
-  {w | w ∈ integrated a (uttered q ∩ competent all) ∨
-    ((∀ w', w' ∉ integrated a (uttered q ∩ competent all)) ∧ w ∈ contextual a q)}
+  {w | w ∈ integrated a (uttered q ∩ Question.polar all) ∨
+    ((∀ w', w' ∉ integrated a (uttered q ∩ Question.polar all)) ∧ w ∈ contextual a q)}
 
 instance (a : Fin 4) (q : QUtt) : DecidablePred (· ∈ competenceDefault a q) :=
-  fun w ↦ inferInstanceAs (Decidable (w ∈ integrated a (uttered q ∩ competent all) ∨
-    ((∀ w', w' ∉ integrated a (uttered q ∩ competent all)) ∧ w ∈ contextual a q)))
+  fun w ↦ inferInstanceAs (Decidable (w ∈ integrated a (uttered q ∩ Question.polar all) ∨
+    ((∀ w', w' ∉ integrated a (uttered q ∩ Question.polar all)) ∧ w ∈ contextual a q)))
 
 /-- The default with integration blocked, as under cognitive load. -/
 def competenceDefaultLoad (q : QUtt) : Set (Fin 4) :=
-  unintegrated (uttered q ∩ competent all)
+  unintegrated (uttered q ∩ Question.polar all)
 
 instance (q : QUtt) : DecidablePred (· ∈ competenceDefaultLoad q) :=
-  fun w ↦ inferInstanceAs (Decidable (w ∈ unintegrated (uttered q ∩ competent all)))
+  fun w ↦ inferInstanceAs (Decidable (w ∈ unintegrated (uttered q ∩ Question.polar all)))
 
 /-- A participant answers *Do you think there are red cubes in this box?* with one of these. -/
 inductive Answer

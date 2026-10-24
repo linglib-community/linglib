@@ -28,7 +28,7 @@ the closed grammatical classes, though not in general, ⟨some, most⟩ being op
 account of the inference of
 [sauerland-2004] and [geurts-2010], from the primary inference that the speaker does not
 believe the stronger alternative to the scalar inference by the speaker's competence,
-`NeoGricean.compl_Iic_inter_competent`, is considered as a source of the remaining variance and set aside,
+`NeoGricean.compl_Iic_inter_polar`, is considered as a source of the remaining variance and set aside,
 since a speaker of *She is pretty* is plausibly opinionated about *beautiful* and the inference
 is nonetheless rare.
 

@@ -19,7 +19,6 @@ iff it is consistent with that commitment.
 
 ## Main definitions
 
-* `NeoGricean.competent`: `Kψ ∨ K¬ψ`.
 * `NeoGricean.commitment`: `Kφ` with the primary implicatures of the stronger alternatives.
 * `NeoGricean.IsSecondaryImplicature`: the consistency condition on `K¬ψ`.
 
@@ -27,7 +26,7 @@ iff it is consistent with that commitment.
 
 * `NeoGricean.isSecondaryImplicature_iff`: `K¬ψ` is a secondary implicature iff `φ \ ψ` entails
   no stronger alternative.
-* `NeoGricean.compl_Iic_inter_competent`: the Standard Recipe.
+* `NeoGricean.compl_Iic_inter_polar`: the Standard Recipe.
 
 ## Implementation notes
 
@@ -53,16 +52,6 @@ open Set
 
 variable {W ι : Type*} {s φ ψ : Set W} {alts : Set (Set W)}
 
-/-! ### Epistemic propositions -/
-
-/-- Competence about `ψ`, `Kψ ∨ K¬ψ`: the states that resolve the polar question whether `ψ`. -/
-def competent (ψ : Set W) : Set (Set W) := Question.polar ψ
-
-@[simp] theorem mem_competent : s ∈ competent ψ ↔ s ⊆ ψ ∨ s ⊆ ψᶜ := Question.mem_polar
-
-/-- An epistemic proposition is consistent iff some nonempty state satisfies it. -/
-def Consistent (E : Set (Set W)) : Prop := ∃ s ∈ E, s.Nonempty
-
 /-! ### Primary and secondary implicatures -/
 
 /-- The speaker's commitment after asserting `φ` against `alts`: `Kφ` and the primary
@@ -75,9 +64,10 @@ def commitment (φ : Set W) (alts : Set (Set W)) : Set (Set W) :=
   simp [commitment]
 
 /-- `K¬ψ` is a secondary implicature of asserting `φ` against `alts` iff `¬Kψ` is a primary
-implicature and `K¬ψ` is consistent with the commitment ([sauerland-2004] (43)). -/
+implicature and some consistent state satisfies both `K¬ψ` and the commitment
+([sauerland-2004] (43)). -/
 def IsSecondaryImplicature (φ : Set W) (alts : Set (Set W)) (ψ : Set W) : Prop :=
-  ψ ∈ alts ∧ ψ ⊂ φ ∧ Consistent (commitment φ alts ∩ Iic ψᶜ)
+  ψ ∈ alts ∧ ψ ⊂ φ ∧ ((commitment φ alts ∩ Iic ψᶜ) \ {∅}).Nonempty
 
 /-- The strengthened meaning `φ \ ψ` is the canonical witness: `K¬ψ` is a secondary implicature
 iff `φ \ ψ` entails no stronger alternative, so a blocked secondary implicature is always
@@ -89,7 +79,7 @@ theorem isSecondaryImplicature_iff : IsSecondaryImplicature φ alts ψ ↔
     obtain ⟨hφ, hprim⟩ := mem_commitment.1 hcom
     exact hprim χ hχ hχφ fun w hw ↦ hsub ⟨hφ hw, hs hw⟩
   · exact ⟨φ \ ψ, ⟨mem_commitment.2 ⟨sdiff_subset, h⟩, fun _ hw ↦ hw.2⟩,
-      sdiff_nonempty.2 hψ.2⟩
+      (sdiff_nonempty.2 hψ.2).ne_empty⟩
 
 theorem isSecondaryImplicature_range_iff {f : ι → Set W} {i : ι} :
     IsSecondaryImplicature φ (range f) (f i) ↔ f i ⊂ φ ∧ ∀ j, f j ⊂ φ → ¬ φ \ f i ⊆ f j := by
@@ -103,10 +93,13 @@ theorem isSecondaryImplicature_singleton : IsSecondaryImplicature φ {ψ} ψ ↔
 /-! ### Competence and the Standard Recipe -/
 
 /-- The Standard Recipe: on consistent states, the weak implicature `¬Kψ` together with
-competence about `ψ` is the strong implicature `K¬ψ`. -/
-theorem compl_Iic_inter_competent (ψ : Set W) : (Iic ψ)ᶜ ∩ competent ψ = Iic ψᶜ \ {∅} := by
+competence about `ψ`, resolving the polar question whether `ψ`, is the strong implicature
+`K¬ψ`. -/
+theorem compl_Iic_inter_polar (ψ : Set W) :
+    (Iic ψ)ᶜ ∩ Question.polar ψ = Iic ψᶜ \ {∅} := by
   ext s
-  simp only [mem_inter_iff, mem_compl_iff, mem_Iic, mem_competent, mem_sdiff, mem_singleton_iff]
+  simp only [mem_inter_iff, mem_compl_iff, mem_Iic, SetLike.mem_coe, Question.mem_polar,
+    mem_sdiff, mem_singleton_iff]
   refine ⟨fun ⟨h, hc⟩ ↦ ⟨hc.resolve_left h, fun he ↦ h (he ▸ empty_subset ψ)⟩,
     fun ⟨hψ, hs⟩ ↦ ⟨fun h ↦ ?_, Or.inr hψ⟩⟩
   obtain ⟨w, hw⟩ := nonempty_iff_ne_empty.2 hs
