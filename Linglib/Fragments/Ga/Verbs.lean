@@ -90,7 +90,7 @@ def miamihie : Verb where
 negation the `ni`-frame keeps it (ex 117a). -/
 def kai : Verb where
   morphs := [.root "kai"]
-  valency := .of [(niFrame, [0, 1]), (akeFrame, [0, 1])] (controllers := [some 0])
+  valency := .ofFrames [niFrame, akeFrame] (controllers := [some 0])
   readings := [akeReading]
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -108,7 +108,7 @@ def nye : Verb where
 (ex 105: *Osa kplɛnɔ ni/akɛ Taki á-tsɛ́ Momo*). -/
 def kpleno : Verb where
   morphs := [.root "kplɛnɔ"]
-  valency := .of [(niFrame, [0, 1]), (akeFrame, [0, 1])] (controllers := [some 0])
+  valency := .ofFrames [niFrame, akeFrame] (controllers := [some 0])
 
 /-- *kpaŋ* 'plan, decide' is a subject-control verb whose complement only `ni` introduces (ex 106),
 with the irrealis marker obligatory (ex 89d). -/
@@ -130,7 +130,7 @@ def kpagbe : Verb where
 `ni`-clause with the high-tone anaphoric subject (ex 112: 'Aku thought to buy a book'). -/
 def dweng : Verb where
   morphs := [.root "dwɛŋ"]
-  valency := .of [(akeFrame, [0, 1]), (niFrame, [0, 1])] (controllers := [none, some 0])
+  valency := .ofFrames [akeFrame, niFrame] (controllers := [none, some 0])
   readings := [akeReading]
   attitude := some (.doxastic .nonVeridical)
 

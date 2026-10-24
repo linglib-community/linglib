@@ -52,7 +52,7 @@ def Verb.stem (v : Verb) : String := v.pastStem.getD v.toVerb.form
 /-- *lát* 'see', a perception verb, transitive and embedding a finite clause. -/
 def lat : Verb where
   morphs := [.root "lát"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
@@ -61,7 +61,7 @@ def lat : Verb where
 /-- *hall* 'hear', a perception verb that embeds a perceived event or a heard report alike. -/
 def hall : Verb where
   morphs := [.root "hall"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
   vendlerClass := some .state
 
@@ -116,7 +116,7 @@ def rikolt : Verb where
 adjunct and derivedly complement-taking with the accusative expletive *azt*. -/
 def morog : Verb where
   morphs := [.root "morog"]
-  valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.finiteClause]
   vendlerClass := some .activity
   speechActVerb := true
 

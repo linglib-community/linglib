@@ -79,14 +79,14 @@ def hamupayEs : Verb := { hamupay with morphs := hamupay.morphs ++ [es] }
 /-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
 def ashashEs : Verb where
   morphs := [.root "ašaš", es]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.np]
   typer := ge
 
 /-- *i:gi* 'see'; it also takes an internally headed relative and a plain DP ((10), (20),
 (89)). -/
 def iigi : Verb where
   morphs := [.root "i:gi"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.np]
   typer := ge
 
 /-- *damal* 'hear', attested only with event nominalizations, the perception reading that needs
@@ -119,7 +119,7 @@ def metgiibilEs : Verb where
 headed relative ((53), (55)). -/
 def suus : Verb where
   morphs := [.root "suʔuʔuš"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
   typer := ge
 
 /-- *gum-suʔuʔuš* 'dream' with the reflexive, intransitive; its dependent-mood clause is read as a

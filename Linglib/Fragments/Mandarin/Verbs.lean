@@ -91,7 +91,7 @@ its non-factive counterpart. -/
 def zhidao : Verb := {
   morphs := [.root "zhīdào"]
   script := some "知道"
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.question]
   passivizable := false
   opaqueContext := true
   attitude := some (.doxastic .veridical)

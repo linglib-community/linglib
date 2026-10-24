@@ -144,9 +144,7 @@ def donate : Verb where
 /-- "obtain" — Levin 13.5.2 Obtain verbs. -/
 def obtain : Verb where
   morphs := [.root "obtain"]
-  valency := .of
-    [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.for_)]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.obtain}
 
@@ -170,9 +168,7 @@ def learn : Verb where
 def hold : Verb where
   morphs := [.root "hold"]
   past := "held"
-  valency := .of
-    [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on)]
   vendlerClass := some .state
   levinClasses := {LevinClass.conjecture, .fit, .hold}
 
@@ -289,7 +285,7 @@ def draw : Verb where
   morphs := [.root "draw"]
   past := "drew"
   pastPart := "drawn"
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.objectDrop (some .indef), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.performance, .pushPull, .remove, .scribble, .split}
@@ -361,7 +357,7 @@ def appoint : Verb where
 def hear : Verb where
   morphs := [.root "hear"]
   past := "heard"
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
   vendlerClass := some .state
   levinClasses := {LevinClass.see}
 
@@ -389,7 +385,7 @@ def evaluate : Verb where
 /-- "marry" — Levin 36 Social Interaction verbs. -/
 def marry : Verb where
   morphs := [.root "marry"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.objectDrop (some .reciprocal), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .reciprocal)]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.amalgamate, .marry}
 
@@ -445,10 +441,8 @@ def hiccup : Verb where
     class the library does not name. -/
 def blink : Verb where
   morphs := [.root "blink"]
-  valency := .of
-    [(ArgumentFrame.intransitive, [0]),
-     (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.objectDrop (some .bodyPart), [0, 1])]
+  valency := .ofFrames
+    [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.objectDrop (some .bodyPart)]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClasses := {LevinClass.wink}

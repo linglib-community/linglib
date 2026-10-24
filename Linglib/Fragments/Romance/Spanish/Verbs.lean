@@ -230,7 +230,7 @@ psych verb and two unergatives, one of which also takes an object. -/
 /-- *mandar* 'send' — transitive, directional towards a recipient. -/
 def mandar : Verb where
   morphs := [.root "mandar"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.np_pp, [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp]
 
 /-- *preparar* 'fix, prepare' — transitive verb of creation. -/
 def preparar : Verb where
@@ -240,7 +240,7 @@ def preparar : Verb where
 /-- *sacar* 'take away' — transitive, directional away from a source. -/
 def sacar : Verb where
   morphs := [.root "sacar"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.np_pp, [0, 1, 2])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp]
 
 /-- *lavar* 'wash' — transitive activity, non-directional. -/
 def lavar : Verb where
@@ -290,7 +290,7 @@ def caminar : Verb where
 /-- *correr* 'run' — unergative, also transitive with an object naming the race run. -/
 def correr : Verb where
   morphs := [.root "correr"]
-  valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.np, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.np]
 
 /-! ### Verbs with a lexical reciprocal entry -/
 
@@ -347,7 +347,7 @@ def encontrar : Verb where
 /-- *creer* 'believe' takes a *que* clause in the indicative. -/
 def creer : Verb where
   morphs := [.root "creer"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause]
   opaqueContext := true
   attitude := some (.doxastic .nonVeridical)
 
@@ -355,7 +355,7 @@ def creer : Verb where
 infinitive under subject control. -/
 def querer : Verb where
   morphs := [.root "querer"]
-  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
@@ -366,7 +366,7 @@ control. With an indicative clause about the future the verb means 'expect', a s
 does not cover. -/
 def esperar : Verb where
   morphs := [.root "esperar"]
-  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
@@ -384,9 +384,9 @@ def hacer : Verb where
 the subjunctive and a belief in the indicative. -/
 def convencer : Verb where
   morphs := [.root "convencer"]
-  valency := .of
-    [(⟨some .nominal, [.nominal, .clausal (some .subjunctive) (.only .declarative)]⟩, [0, 1, 2]),
-     (⟨some .nominal, [.nominal, .clausal (some .indicative) (.only .declarative)]⟩, [0, 1, 2])]
+  valency := .ofFrames
+    [⟨some .nominal, [.nominal, .clausal (some .subjunctive) (.only .declarative)]⟩,
+     ⟨some .nominal, [.nominal, .clausal (some .indicative) (.only .declarative)]⟩]
   opaqueContext := true
 
 end Spanish.Verbs

@@ -50,10 +50,9 @@ def cabanga : Verb where
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
 def funa : Verb where
   morphs := [.root "funa"]
-  valency := .of
-    [({ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
-     [0, 1]),
-     (ArgumentFrame.np, [0, 1])]
+  valency := .ofFrames
+    [{ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
+     ArgumentFrame.np]
   attitude := some (.preferential .positive true)
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/

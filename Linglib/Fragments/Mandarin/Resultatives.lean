@@ -49,13 +49,13 @@ def ku : Verb :=
 /-- 吃 *chī* 'eat'. -/
 def chi : Verb :=
   { morphs := [.root "chī"], script := some "吃",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [0])],
+    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.intransitive],
     vendlerClass := some .activity }
 
 /-- 喝 *hē* 'drink'. -/
 def he : Verb :=
   { morphs := [.root "hē"], script := some "喝",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [0])],
+    valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.intransitive],
     vendlerClass := some .activity }
 
 /-- 推 *tuī* 'push'. -/

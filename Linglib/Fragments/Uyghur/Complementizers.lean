@@ -54,33 +54,32 @@ def participialFrame : ArgumentFrame := .typedBy lik (some (.overt (some .gen)))
 complement is obligatory. -/
 def de : Verb where
   morphs := [.root "de"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1]),
-    (participialFrame, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.np, participialFrame]
   speechActVerb := true
 
 /-- *oyla-* 'think'. -/
 def oyla : Verb where
   morphs := [.root "oyla"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, participialFrame]
   attitude := some (.doxastic .nonVeridical)
 
 /-- *bil-* 'know'. -/
 def bil : Verb where
   morphs := [.root "bil"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, participialFrame]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
 /-- *unut-* 'forget'. -/
 def unut : Verb where
   morphs := [.root "unut"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, participialFrame]
   factivity := some .full
 
 /-- *éyt-* 'tell'. -/
 def eyt : Verb where
   morphs := [.root "éyt"]
-  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, participialFrame]
   voiceType := some .agentive
   speechActVerb := true
 

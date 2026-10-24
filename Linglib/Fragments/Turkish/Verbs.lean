@@ -73,7 +73,7 @@ def nominalizedQuestion : ArgumentFrame :=
 def kork : Verb where
   morphs := [.root "kork"]
   rootSegments := [k, o, r, k]
-  valency := .of [(ArgumentFrame.gerund, [0, 1]), (nominalizedQuestion, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative true)
@@ -91,7 +91,7 @@ def um : Verb where
 def endişelen : Verb where
   morphs := [.root "endişelen"]
   rootSegments := [e, n, d, i, ş, e, l, e, n]
-  valency := .of [(ArgumentFrame.gerund, [0, 1]), (nominalizedQuestion, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative false)

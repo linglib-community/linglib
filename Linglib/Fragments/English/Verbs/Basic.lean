@@ -192,10 +192,10 @@ def eat : Verb where
   morphs := [.root "eat"]
   past := "ate"
   pastPart := "eaten"
-  valency := .of
-    [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames
+    [ArgumentFrame.np,
+     ArgumentFrame.objectDrop (some .indef),
+     ArgumentFrame.pp (some Adpositions.at_)]
     [some accomplishmentSubjectProfile, some consumptionObject]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -291,7 +291,7 @@ def buy : Verb where
 def meet : Verb where
   morphs := [.root "meet"]
   past := "met"
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.objectDrop (some .reciprocal), [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.objectDrop (some .reciprocal)]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.contiguousLocation, .meet}
 
@@ -338,9 +338,7 @@ def see : Verb where
   morphs := [.root "see"]
   past := "saw"
   pastPart := "seen"
-  valency := .of
-    [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.finiteClause, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.finiteClause]
     [some perception.subjectProfile, none]
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
@@ -366,10 +364,10 @@ def drink : Verb where
   morphs := [.root "drink"]
   past := "drank"
   pastPart := "drunk"
-  valency := .of
-    [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+  valency := .ofFrames
+    [ArgumentFrame.np,
+     ArgumentFrame.objectDrop (some .indef),
+     ArgumentFrame.pp (some Adpositions.at_)]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.eat}

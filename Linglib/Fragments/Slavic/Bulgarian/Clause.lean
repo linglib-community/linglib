@@ -62,7 +62,7 @@ def zadeto : Complementizer := { deto with morphs := [.free "zadeto"] }
 
 /-- The valency of an emotive factive, a finite clause or a *za* phrase (59). -/
 def emotiveValency : Verb.Valency :=
-  .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  .ofFrames [ArgumentFrame.finiteClause, ArgumentFrame.pp]
 
 /-- *săžaljavam* 'regret', the predicate of the projection trials (57). -/
 def sazhaljavam : Verb where

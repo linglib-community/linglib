@@ -111,7 +111,7 @@ def pensare : Verb where
 some speakers, and a bare infinitive under subject control. -/
 def volere : Verb where
   morphs := [.root "volere"]
-  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
     (controllers := [none, some 0])
   passivizable := false
   opaqueContext := true
@@ -321,7 +321,7 @@ def chiacchierare : Verb where
 /-- *correre* 'run', a verb of manner of motion that selects a directional phrase. -/
 def correre : Verb where
   morphs := [.root "correre"]
-  valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
   perfectAuxiliaries := {.be, .have}
   vendlerClass := some .activity
   direction := some .place
@@ -329,7 +329,7 @@ def correre : Verb where
 /-- *saltare* 'jump', a verb of manner of motion that selects a directional phrase. -/
 def saltare : Verb where
   morphs := [.root "saltare"]
-  valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])]
+  valency := .ofFrames [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
   perfectAuxiliaries := {.be, .have}
   vendlerClass := some .activity
   direction := some .place
