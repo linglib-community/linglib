@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.BonehDoron2013
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Mereology
 public import Linglib.Semantics.Modality.Necessity
+public import Linglib.Semantics.Tense.Perspective
 public import Studies.IatridouEtAl2001
 
 /-!
@@ -22,7 +23,8 @@ time, and *would* is Gen with a restriction and an interval from the context.
   over Hab is infelicitous.
 * `hab_of_single_trip`: a habit needs no iteration in the actual world.
 * `mem_usedTo_iff`: *used to* says only that a state began before the perspective time, so its
-  retrospectivity is an implicature.
+  retrospectivity is an implicature; the composite of its two cells says so
+  (`comp_retro_imperfective`).
 * `not_mem_retro_of_overlaps`: no reference interval overlapping the perspective time serves the
   retrospective.
 * `usedTo_of_universal`: the universal perfect entails *used to*, the scale of (32).
@@ -37,9 +39,12 @@ time, and *would* is Gen with a restriction and an interval from the context.
 * Iteration (14) is `Mereology.IsPlural`, its gloss: a sum of `P`-events with at least two proper
   `P`-parts. The chapter leaves "indicating a disposition" unanalyzed, so the events that do are a
   parameter.
-* The imperfective (19a) is non-strict containment, `Aspect.UNBOUNDED`, and the precedence of
-  (19b) and (34b) is strict, `NonemptyInterval.Precedes`, so the reference interval is disjoint
-  from the perspective time.
+* The imperfective (19a) is non-strict containment, `Aspect.UNBOUNDED`. The retrospective (19b)
+  is the perspectival past of `Tense.Perspective`, a reference interval strictly preceding the
+  perspective time and so disjoint from it, as (34b) says; the internal perspective is the
+  perspectival present, overlap.
+* Gen (21) ranges over individuals, objects or events, so it takes their temporal extent, an
+  event's run time or an object's life span, as an argument.
 * The perfect of (32) and (33) is the universal perfect of `IatridouEtAl2001`, *since then*
   setting the left boundary of its span. With *used to* the chapter reads *since then* as a
   reference interval stretching to the perspective time.
@@ -57,9 +62,9 @@ time, and *would* is Gen with a restriction and an interval from the context.
 ## TODO
 
 * Telling (2c) from (2d) by (22b) needs Gen to presuppose that its restrictor is nonempty.
-* The puzzle of (47)–(50) and the contrast (48): Gen over objects through their life spans
-  (`Event.Lifespan`), the kind reading of the bare plural, and the clash of an individual-level
-  predicate with an episodic restrictor.
+* The puzzle of (47)–(50) and the contrast (48): Gen over French teachers by their life spans,
+  the kind reading of the bare plural, and the clash of an individual-level predicate with an
+  episodic restrictor.
 * Table (41): the perfective habitual of the simple form, (26)–(27), and the periphrastic forms'
   selection of the imperfective.
 
@@ -80,6 +85,7 @@ namespace BonehDoron2013
 open Event (τ)
 open Aspect (UNBOUNDED PERF durative)
 open Modality (Background simpleNecessity)
+open scoped Semantics
 
 variable {W E T : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
@@ -106,21 +112,22 @@ theorem not_hab_of_subsingleton [SemilatticeSup E] {mb : NonemptyInterval T → 
   let ⟨e, _, he⟩ := h w' hw'
   Mereology.not_isPlural_of_subsingleton (hP w') e he
 
-/-- Gen, (21): every `Q`-individual within the interval `i` is a `P`-individual throughout the
-modal base at `i`. It is GEN with every case normal and the modality in the matrix. -/
-def Gen (mb : NonemptyInterval T → Background W) (P Q : W → E → Prop) (i : NonemptyInterval T)
-    (w : W) : Prop :=
-  (i, w) ∈ (⊤ : Genericity.Normality (NonemptyInterval T × W) E).gen {e | τ e ≤ i ∧ Q w e}
-    {e | simpleNecessity (mb i) (P · e) w}
+/-- Gen, (21): every `Q`-individual whose temporal extent `ext` lies within the interval `i` is a
+`P`-individual throughout the modal base at `i`. It is GEN with every case normal and the
+modality in the matrix. -/
+def Gen {Z : Type*} (ext : Z → NonemptyInterval T) (mb : NonemptyInterval T → Background W)
+    (P Q : W → Z → Prop) (i : NonemptyInterval T) (w : W) : Prop :=
+  (i, w) ∈ (⊤ : Genericity.Normality (NonemptyInterval T × W) Z).gen {z | ext z ≤ i ∧ Q w z}
+    {z | simpleNecessity (mb i) (P · z) w}
 
-theorem gen_iff {mb : NonemptyInterval T → Background W} {P Q : W → E → Prop}
-    {i : NonemptyInterval T} {w : W} :
-    Gen mb P Q i w ↔ ∀ e, τ e ≤ i → Q w e → simpleNecessity (mb i) (P · e) w :=
-  ⟨fun h _ hi hQ ↦ h ⟨hi, hQ⟩, fun h e he ↦ h e he.1 he.2⟩
+theorem gen_iff {Z : Type*} {ext : Z → NonemptyInterval T} {mb : NonemptyInterval T → Background W}
+    {P Q : W → Z → Prop} {i : NonemptyInterval T} {w : W} :
+    Gen ext mb P Q i w ↔ ∀ z, ext z ≤ i → Q w z → simpleNecessity (mb i) (P · z) w :=
+  ⟨fun h _ hi hQ ↦ h ⟨hi, hQ⟩, fun h z hz ↦ h z hz.1 hz.2⟩
 
 -- The second disjunct of (22b) holds of every restriction, through the empty restrictor.
 example (mb : NonemptyInterval T → Background W) (Pc : W → E → Prop) (ic : NonemptyInterval T)
-    (w : W) : ∃ Q, Gen mb Pc Q ic w :=
+    (w : W) : ∃ Q, Gen τ mb Pc Q ic w :=
   ⟨fun _ _ ↦ False, gen_iff.2 fun _ _ h ↦ h.elim⟩
 
 /-! ### *Used to*, (18)–(19) and (28)–(37) -/
@@ -131,27 +138,46 @@ variable {A : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {p 
   {t t₀ : T}
 
 /-- The retrospective, (19b), holds at a perspective interval that a reference interval of `A`
-precedes. -/
+precedes, the perspectival past. -/
 def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ {p | ∃ i ∈ A w, i.Precedes p}
+  fun w ↦ (Tense.Perspective.toSetRel ⟦Tense.past⟧).preimage (A w)
 
 /-- *Used to*, (18): the retrospective over the imperfective (19a). -/
 def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
   retro (UNBOUNDED P)
 
+/-- *Used to* relates the perspective time to the run time of its state through the composite of
+the retrospective's cell and the imperfective's. -/
+theorem usedTo_eq_preimage : usedTo P w = (Allen.toSetRel (Allen.inv Allen.precedes)).preimage
+    ((Allen.toSetRel Allen.le).preimage (τ '' {e | P w e})) := by
+  rw [usedTo, retro, Tense.Perspective.toSetRel_eq_inv, Tense.denote_past, Allen.ofPosition_lt,
+    ← Allen.toSetRel_inv, Aspect.unbounded_eq_preimage]
+
+/-- The composite of the retrospective and the imperfective: the state began before the
+perspective time, and may have ended at any time after that. -/
+theorem comp_retro_imperfective :
+    Allen.comp (Allen.inv Allen.precedes) Allen.le = Allen.atoms.filter (·.fstFst = .gt) := by
+  decide +kernel
+
 /-- *Used to* says only that a state began before the perspective time, which the state may
 outlast, so the retrospectivity of (28) is an implicature, cancelled in (30) and (31). -/
 theorem mem_usedTo_iff : p ∈ usedTo P w ↔ ∃ e, P w e ∧ (τ e).fst < p.fst := by
   constructor
-  · rintro ⟨i, ⟨e, hi, hP⟩, hp⟩
-    exact ⟨e, hP, ((NonemptyInterval.le_def.1 hi).1.trans i.fst_le_snd).trans_lt hp⟩
+  · intro h
+    rw [usedTo_eq_preimage] at h
+    obtain ⟨_, ⟨e, hP, rfl⟩, h⟩ := Allen.preimage_toSetRel_subset_comp _ h
+    rw [Allen.mem_toSetRel, comp_retro_imperfective] at h
+    exact ⟨e, hP, compare_gt_iff_gt.1 (Finset.mem_filter.1 h).2⟩
   · rintro ⟨e, hP, hlt⟩
-    exact ⟨.pure (τ e).fst, ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩, hlt⟩
+    exact ⟨.pure (τ e).fst, ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩,
+      Tense.Perspective.mem_toSetRel.2 (Tense.Perspective.presup_past.2 hlt)⟩
 
 /-- *Since then*, (33), *now*, (35), and a simultaneous reading, (36)–(37), need reference
 intervals overlapping the perspective time, and none of these serves the retrospective. -/
 theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retro A w :=
-  fun ⟨i, hi, hp⟩ ↦ NonemptyInterval.precedes_not_overlaps hp (h i hi)
+  fun ⟨i, hi, hp⟩ ↦
+    NonemptyInterval.precedes_not_overlaps
+      (Tense.Perspective.presup_past.1 (Tense.Perspective.mem_toSetRel.1 hp)) (h i hi)
 
 /-- The universal perfect over a span begun before its time of tense entails *used to*, which
 unlike it does not assert the state at that time (`IatridouEtAl2001.universal_at_rb`), so the two
@@ -253,7 +279,7 @@ theorem usedTo_hab_of_single_trip : .pure 5 ∈ usedTo (Hab gnomic indicating bu
 indefinite over Hab or over *repeatedly*, smoking a cigarette and killing a rabbit have no
 habit, (4b), and no iteration, (7b), while a flower that grows out again has one, (6b). -/
 theorem restrictor_rows :
-    ((∀ i, Gen gnomic (fun w e ↦ ∃ c, onceAt w e c) (fun _ e ↦ ∃ t, e = .pure t) i false) ↔
+    ((∀ i, Gen τ gnomic (fun w e ↦ ∃ c, onceAt w e c) (fun _ e ↦ ∃ t, e = .pure t) i false) ↔
       Examples.ex4a.judgment = .acceptable) ∧
     ((∃ c s, Hab gnomic indicating (onceAt · · c) false s) ↔
       Examples.ex4b.judgment = .acceptable) ∧
@@ -275,7 +301,7 @@ theorem actualization_rows :
     (habit ∈ UNBOUNDED (Hab gnomic indicating bus) false ↔
       Examples.ex42a.feature? "truthValue" = some "true") ∧
     ((∃ s, τ s = habit ∧ Hab gnomic indicating toWork false s) ∧
-        Gen gnomic byBus toWork habit false ↔
+        Gen τ gnomic byBus toWork habit false ↔
       Examples.ex42b.feature? "truthValue" = some "true") ∧
     (.pure 5 ∈ retro (fun w ↦ {i | Characterizes bus w i} ∩ UNBOUNDED (Hab gnomic indicating bus) w)
         false ↔ Examples.ex42c.feature? "truthValue" = some "true") := by

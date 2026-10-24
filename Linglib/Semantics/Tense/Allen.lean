@@ -23,21 +23,27 @@ their converses and composites, and chains of cells.
 * `Allen.Relation`, `Allen.relation`, `Allen.atoms`: the relations and the realizable ones.
 * `Allen.toSetRel`, `Allen.inv`, `Allen.comp`: a cell as a relation, its converse and composite.
 * `Allen.precedes`, `Allen.isBefore`, `Allen.le`, `Allen.lt`, `Allen.overlaps`,
-  `Allen.startsWithin`, `Allen.eq`, `Allen.pure`, `Allen.ofPosition`: named cells.
+  `Allen.startsWithin`, `Allen.finalSubinterval`, `Allen.eq`, `Allen.pure`, `Allen.ofPosition`:
+  named cells.
 * `Allen.HoldsAlong`, `Allen.compAlong`: chains of cells and their composites.
 * `NonemptyInterval.position`: the position of two intervals.
 
 ## Main results
 
 * `Allen.card_atoms`: twenty-six relations are realizable.
-* `Allen.toSetRel_comp`: composition is exact on dense time without endpoints.
+* `Allen.toSetRel_comp`: composition is exact on dense time without endpoints, and so are the
+  operators the cells induce on sets of intervals (`Allen.preimage_toSetRel_comp`).
+* `Allen.comp_precedes_precedes`: precedence is transitive, an entry of Allen's table that the
+  kernel decides.
 * `Allen.comp_pure`: on points, Allen composition is the composition of comparison cells.
 * `Allen.mem_compAlong_iff`: on dense time, the composite of a chain is exactly realized.
 
 ## Implementation notes
 
 A relation records whether each interval is a point; with the four cross comparisons alone
-composition is not exact.
+composition is not exact. The composite places a second interval only beside first intervals
+that stand to it in the first cell, which keeps it small enough for `decide +kernel`; it is
+irreducible, so that elaboration, which never needs its value, does not compute it.
 
 ## References
 
@@ -170,17 +176,26 @@ end LinearOrder
 
 /-- The composite of two cells: the relations of an interval to a third compatible with its
 standing in `C` to a second that stands in `D` to the third, read off configurations of the three
-intervals' endpoints among six points. -/
-def comp (C D : Finset Relation) : Finset Relation :=
-  atoms.filter fun t ↦ ∃ e : Fin 6 → Fin 6, e 0 ≤ e 1 ∧ e 2 ≤ e 3 ∧ e 4 ≤ e 5 ∧
-    ofEndpoints (e 0) (e 1) (e 2) (e 3) ∈ C ∧ ofEndpoints (e 2) (e 3) (e 4) (e 5) ∈ D ∧
-    ofEndpoints (e 0) (e 1) (e 4) (e 5) = t
+intervals' endpoints among six points. The second interval is placed only beside a first that
+stands in `C` to it, so the kernel decides composites of the named cells. -/
+@[irreducible] def comp (C D : Finset Relation) : Finset Relation :=
+  let ends : Finset (Fin 6 × Fin 6) := Finset.univ.filter fun x ↦ x.1 ≤ x.2
+  ((ends ×ˢ ends).filter fun x ↦ ofEndpoints x.1.1 x.1.2 x.2.1 x.2.2 ∈ C).biUnion fun x ↦
+    (ends.filter fun y ↦ ofEndpoints x.2.1 x.2.2 y.1 y.2 ∈ D).image
+      fun y ↦ ofEndpoints x.1.1 x.1.2 y.1 y.2
 
 theorem mem_comp {C D : Finset Relation} {t : Relation} :
     t ∈ comp C D ↔ t ∈ atoms ∧ ∃ e : Fin 6 → Fin 6, e 0 ≤ e 1 ∧ e 2 ≤ e 3 ∧ e 4 ≤ e 5 ∧
       ofEndpoints (e 0) (e 1) (e 2) (e 3) ∈ C ∧ ofEndpoints (e 2) (e 3) (e 4) (e 5) ∈ D ∧
-      ofEndpoints (e 0) (e 1) (e 4) (e 5) = t :=
-  Finset.mem_filter
+      ofEndpoints (e 0) (e 1) (e 4) (e 5) = t := by
+  simp only [comp, Finset.mem_biUnion, Finset.mem_image, Finset.mem_filter, Finset.mem_product,
+    Finset.mem_univ, true_and, Prod.exists]
+  constructor
+  · rintro ⟨a, b, c, d, ⟨⟨hab, hcd⟩, hC⟩, e, f, ⟨hef, hD⟩, rfl⟩
+    exact ⟨relation_mem_atoms (⟨(a, b), hab⟩ : NonemptyInterval (Fin 6)) ⟨(e, f), hef⟩,
+      ![a, b, c, d, e, f], hab, hcd, hef, hC, hD, rfl⟩
+  · rintro ⟨-, e, h01, h23, h45, hC, hD, rfl⟩
+    exact ⟨e 0, e 1, e 2, e 3, ⟨⟨h01, h23⟩, hC⟩, e 4, e 5, ⟨h45, hD⟩, rfl⟩
 
 section LinearOrder
 
@@ -235,6 +250,19 @@ theorem toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T] :
     rw [← this] at hD
     exact hD
 
+/-- The preimage under one cell of the preimage under another lies in the preimage under their
+composite, so a complex aspect relates its outer interval to the run time as the composite
+cell says. -/
+theorem preimage_toSetRel_subset_comp (s : Set (NonemptyInterval T)) :
+    (toSetRel C).preimage ((toSetRel D).preimage s) ⊆ (toSetRel (comp C D)).preimage s := by
+  rw [← SetRel.preimage_comp]
+  exact fun _ ⟨k, hk, hik⟩ ↦ ⟨k, hk, toSetRel_comp_subset hik⟩
+
+theorem preimage_toSetRel_comp [DenselyOrdered T] [NoMinOrder T] [NoMaxOrder T]
+    (s : Set (NonemptyInterval T)) :
+    (toSetRel C).preimage ((toSetRel D).preimage s) = (toSetRel (comp C D)).preimage s := by
+  rw [← SetRel.preimage_comp, toSetRel_comp]
+
 end LinearOrder
 
 /-! ### Named cells -/
@@ -256,6 +284,11 @@ def overlaps : Finset Relation := atoms.filter fun r ↦ r.fstSnd ≠ .gt ∧ r.
 
 /-- The first interval starts within the second. -/
 def startsWithin : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.fstSnd ≠ .gt
+
+/-- The first interval lies within the second and ends with it. -/
+def finalSubinterval : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd = .eq
+
+theorem comp_precedes_precedes : comp precedes precedes = precedes := by decide +kernel
 
 /-- The position of the first interval relative to the second: before it, after it, or
 overlapping it. -/
@@ -318,6 +351,8 @@ def ofPosition (C : Finset Ordering) : Finset Relation := atoms.filter (·.posit
 
 theorem ofPosition_eq : ofPosition {.eq} = overlaps := by decide +kernel
 
+theorem ofPosition_lt : ofPosition {.lt} = precedes := by decide +kernel
+
 section LinearOrder
 
 variable {T : Type*} [LinearOrder T] {i j : NonemptyInterval T}
@@ -349,6 +384,13 @@ theorem relation_mem_filter {p : Relation → Prop} [DecidablePred p] :
 @[simp] theorem relation_mem_startsWithin : relation i j ∈ startsWithin ↔ i.fst ∈ j := by
   rw [startsWithin, relation_mem_filter]
   simp [relation, ofEndpoints, NonemptyInterval.mem_def, compare_le_iff_le, compare_ge_iff_ge]
+
+@[simp] theorem relation_mem_finalSubinterval :
+    relation i j ∈ finalSubinterval ↔ i.FinalSubinterval j := by
+  rw [finalSubinterval, relation_mem_filter]
+  simp only [relation, ofEndpoints, NonemptyInterval.FinalSubinterval, NonemptyInterval.le_def,
+    ne_eq, compare_eq_iff_eq, ← compare_ge_iff_ge (a := i.fst)]
+  exact ⟨fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₁, h₂.le⟩, h₂⟩, fun ⟨⟨h₁, _⟩, h₂⟩ ↦ ⟨h₁, h₂⟩⟩
 
 @[simp] theorem relation_mem_ofPosition {C : Finset Ordering} :
     relation i j ∈ ofPosition C ↔ i.position j ∈ C := by
