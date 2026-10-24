@@ -13,7 +13,6 @@
     "readings": [],
     "paperFeatures": [
       ["section", "1"],
-      ["adverbial", "in the last 5 years, LB adverbial"],
       ["ai", "cancelable"]
     ],
     "comment": "",
@@ -33,7 +32,6 @@
     "readings": [],
     "paperFeatures": [
       ["section", "1"],
-      ["adverbial", "since 2015, LB adverbial"],
       ["ai", "cancelable"]
     ],
     "comment": "",
@@ -52,7 +50,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["adverbial", "in the 5 years that I have been here, LB adverbial"],
       ["continuation", "ignorance"],
       ["section", "1"],
       ["ai", "canceled"]
@@ -73,7 +70,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["adverbial", "in the last 5 years, LB adverbial"],
       ["continuation", "denial"],
       ["section", "1"],
       ["ai", "canceled"]
@@ -96,7 +92,6 @@
     "paperFeatures": [
       ["continuation", "ignorance"],
       ["section", "1"],
-      ["adverbial", "in years"],
       ["ai", "not cancelable"]
     ],
     "comment": "Constant's observation.",
@@ -117,7 +112,6 @@
     "paperFeatures": [
       ["continuation", "denial"],
       ["section", "1"],
-      ["adverbial", "in years"],
       ["ai", "not cancelable"]
     ],
     "comment": "Constant's observation.",
@@ -366,8 +360,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["section", "3.1"],
-      ["adverbial", "in years is only a PTS adverbial"]
+      ["section", "3.1"]
     ],
     "comment": "",
     "verified": "page-image"
