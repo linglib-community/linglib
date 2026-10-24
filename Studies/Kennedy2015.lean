@@ -28,12 +28,12 @@ extensive (`classA_exclusive`, `classB_inclusive`).
 
 The ignorance inferences of the Class B modifiers are Sauerland's primary implicatures ((43))
 over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
-asymmetrically entailed by the bare numeral and by *more than m* and by no other alternative,
-*at most m* by the bare numeral and *fewer than m* ((47)), while the bare numeral and the
-Class A forms are entailed by no alternative at all (`interval_ssubset_iff`, `stronger_ge`,
-`stronger_gt`, and the rest); and neither primary implicature of a Class B form
-strengthens to a secondary one ((44)), each contradicting the assertion together with the other
-(`commitment_ge`, `commitment_le`, `not_isSecondaryImplicature`).
+asymmetrically entailed by the bare numeral and by *more than m* and by no other alternative, so
+asserting it commits the speaker to ignorance of both, and *at most m* likewise with *fewer than
+m* ((47), `commitment_ge`, `commitment_le`), while the bare numeral and the Class A forms are
+entailed by no alternative at all and carry no ignorance (`commitment_eq_Iic`); and no primary
+implicature strengthens to a secondary one ((44)), each of a Class B form contradicting the
+assertion together with the other (`not_isSecondaryImplicature`).
 
 ## Implementation notes
 
@@ -126,11 +126,6 @@ end Modals
 comparison, as sets of counts. -/
 def alternatives (m : ℕ) : Set (Set ℕ) := Set.range fun c : Comparison ↦ c.interval m
 
-/-- The alternatives that asymmetrically entail a form (43), as comparisons, give the form's
-primary implicatures as their negated knowledge. -/
-def stronger (m : ℕ) (c : Comparison) : Set Comparison :=
-  {c' | c'.interval m ⊂ c.interval m}
-
 private theorem interval_subset_iff (c c' : Comparison) {m : ℕ} (hm : 0 < m) :
     c.interval m ⊆ c'.interval m ↔
       (c.Rel 0 m → c'.Rel 0 m) ∧ (c.Rel m m → c'.Rel m m) ∧
@@ -147,43 +142,14 @@ theorem interval_ssubset_iff {m : ℕ} (hm : 0 < m) (c c' : Comparison) :
   rw [Set.ssubset_def, interval_subset_iff c c' hm, interval_subset_iff c' c hm]
   cases c <;> cases c' <;> simp [Comparison.Rel, imp_iff_not_or] <;> omega
 
-/-- *At least m* (47a) is asymmetrically entailed by the bare numeral and by *more than m*, so
-its primary implicatures are ignorance of both. -/
-theorem stronger_ge {m : ℕ} (hm : 0 < m) : stronger m .ge = {.eq, .gt} := by
-  ext c
-  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
-  cases c <;> simp
-
-/-- *At most m* (47b) is asymmetrically entailed by the bare numeral and by *fewer than m*. -/
-theorem stronger_le {m : ℕ} (hm : 0 < m) : stronger m .le = {.eq, .lt} := by
-  ext c
-  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
-  cases c <;> simp
-
-theorem stronger_eq {m : ℕ} (hm : 0 < m) : stronger m .eq = ∅ := by
-  ext c
-  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
-  cases c <;> simp
-
-theorem stronger_gt {m : ℕ} (hm : 0 < m) : stronger m .gt = ∅ := by
-  ext c
-  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
-  cases c <;> simp
-
-theorem stronger_lt {m : ℕ} (hm : 0 < m) : stronger m .lt = ∅ := by
-  ext c
-  simp only [stronger, Set.mem_ofPred_eq, interval_ssubset_iff hm]
-  cases c <;> simp
-
 /-- (47a): asserting *at least m* commits the speaker to not knowing that exactly `m` and not
 knowing that more than `m`. -/
 theorem commitment_ge {m : ℕ} (hm : 0 < m) :
     commitment (Comparison.ge.interval m) (alternatives m) = Iic (Comparison.ge.interval m) ∩
-      primaryImplicature (Comparison.eq.interval m) ∩
-        primaryImplicature (Comparison.gt.interval m) := by
+      (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.gt.interval m))ᶜ := by
   ext s
   simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm,
-    mem_inter_iff, mem_Iic, mem_primaryImplicature]
+    mem_inter_iff, mem_compl_iff, mem_Iic]
   refine ⟨fun ⟨h, h'⟩ ↦ ⟨⟨h, h' .eq (by simp)⟩, h' .gt (by simp)⟩,
     fun ⟨⟨h, he⟩, hg⟩ ↦ ⟨h, fun c hc ↦ ?_⟩⟩
   cases c <;> simp at hc <;> assumption
@@ -192,14 +158,23 @@ theorem commitment_ge {m : ℕ} (hm : 0 < m) :
 knowing that fewer than `m`. -/
 theorem commitment_le {m : ℕ} (hm : 0 < m) :
     commitment (Comparison.le.interval m) (alternatives m) = Iic (Comparison.le.interval m) ∩
-      primaryImplicature (Comparison.eq.interval m) ∩
-        primaryImplicature (Comparison.lt.interval m) := by
+      (Iic (Comparison.eq.interval m))ᶜ ∩ (Iic (Comparison.lt.interval m))ᶜ := by
   ext s
   simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm,
-    mem_inter_iff, mem_Iic, mem_primaryImplicature]
+    mem_inter_iff, mem_compl_iff, mem_Iic]
   refine ⟨fun ⟨h, h'⟩ ↦ ⟨⟨h, h' .eq (by simp)⟩, h' .lt (by simp)⟩,
     fun ⟨⟨h, he⟩, hl⟩ ↦ ⟨h, fun c hc ↦ ?_⟩⟩
   cases c <;> simp at hc <;> assumption
+
+/-- No alternative entails the bare numeral or a Class A form, so asserting one commits the
+speaker to no ignorance. -/
+theorem commitment_eq_Iic {m : ℕ} (hm : 0 < m) {c : Comparison} (hc : c = .eq ∨ c.IsStrict) :
+    commitment (c.interval m) (alternatives m) = Iic (c.interval m) := by
+  ext s
+  simp only [mem_commitment, alternatives, forall_mem_range, interval_ssubset_iff hm, mem_Iic,
+    and_iff_left_iff_imp]
+  intro _ c'
+  cases c <;> cases c' <;> simp_all [Comparison.IsStrict]
 
 /-- (44) strengthens no form of a numeral: the bare and Class A forms have no stronger
 alternative, and either primary implicature of a Class B form strengthened contradicts the

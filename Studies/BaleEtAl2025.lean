@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Linglib.Pragmatics.NeoGricean.Basic
+public import Linglib.Core.Data.Fintype.Sets
 public import Studies.GoodmanStuhlmuller2013
 public import Linglib.Data.Examples.BaleEtAl2025
 
@@ -51,6 +52,9 @@ namespace BaleEtAl2025
 
 open GoodmanStuhlmuller2013 NeoGricean Set
 
+attribute [local instance] Set.decidableSubsetOfFintype Set.decidableSSubsetOfFintype
+  Set.decidableEqOfFintype
+
 /-! ### Worlds, evidence and knowledge states -/
 
 /-- The proposition a quantified statement about the three boxes expresses. -/
@@ -74,18 +78,6 @@ def speakerState (a w : Fin 4) : Set (Fin 4) :=
 
 instance (a w : Fin 4) : DecidablePred (· ∈ speakerState a w) :=
   fun _ ↦ decidable_of_iff _ (mem_compatible.symm.trans Finset.mem_coe.symm)
-
-instance (S T : Set (Fin 4)) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] :
-    Decidable (S ⊆ T) :=
-  decidable_of_iff (∀ w, w ∈ S → w ∈ T) Iff.rfl
-
-instance (S T : Set (Fin 4)) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] :
-    Decidable (S ⊂ T) :=
-  decidable_of_iff (S ⊆ T ∧ ¬ T ⊆ S) Iff.rfl
-
-instance (S T : Set (Fin 4)) [DecidablePred (· ∈ S)] [DecidablePred (· ∈ T)] :
-    Decidable (S = T) :=
-  decidable_of_iff (∀ w, w ∈ S ↔ w ∈ T) Set.ext_iff.symm
 
 instance (S : Finset (Fin 4)) : DecidablePred (· ∈ (↑S : Set (Fin 4))) :=
   fun w ↦ decidable_of_iff (w ∈ S) Finset.mem_coe.symm
