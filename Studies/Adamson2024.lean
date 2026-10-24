@@ -326,13 +326,12 @@ namespace Yanyuwa
 open _root_.Yanyuwa
 
 theorem name_agreement (s : Speaker) (g : _root_.Yanyuwa.Gender) :
-    (inheritedGender PossessionType.inalienable.possessorPosition g).map (agreementPrefix s) =
-      some (agreementPrefix s g) :=
+    (inheritedGender PossessionType.inalienable.possessorPosition g).map (classPrefix s) =
+      some (classPrefix s g) :=
   rfl
 
 theorem classes_separated (s : Speaker) :
-    ¬ Function.Injective (agreementPrefix s) ∧
-      Function.Injective fun g ↦ (agreementPrefix s g, decide g.HasNumber) := by
+    ¬ Function.Injective (classPrefix s) ∧ _root_.Gender.Faithful (agreementPrefix s) := by
   cases s <;> decide
 
 theorem name_alienable (g : _root_.Yanyuwa.Gender) :

@@ -35,6 +35,8 @@ German, or neither determines the other, as in Romanian or Lak.
   agreement map has values.
 * `Gender.card_range_le_prod`: the controller genders are at most the product over the
   targets of the target genders.
+* `Gender.agreementClasses_eq_ker_of_faithful`: under faithful agreement mediated by an
+  assignment, the agreement classes are the assignment's genders.
 * `Gender.parallel_iff_ker_eq`, `Gender.convergent_iff_ker_lt`: the map between two numbers'
   target genders is the order of their kernels.
 * `Gender.Polar.card_le_two`, `Gender.Polar.parallel`: polarity forces two-valued features
