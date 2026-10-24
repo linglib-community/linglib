@@ -145,7 +145,7 @@ theorem notMem_below_self (s : ClauseSpine) (c : Cat) : c ∉ s.below c := fun h
 
 /-- The complement of a head lies inside the complement of every head above it. -/
 theorem below_prefix (h : c ∈ s.below d) : s.below c <+: s.below d :=
-  List.takeWhile_bne_prefix_of_mem h
+  List.takeWhile_prefix_takeWhile_of_mem h (by simp)
 
 theorem above_append (s : ClauseSpine) (h : c ∉ l) : (s.append l).above c = s.above c ++ l := by
   induction l using List.reverseRecOn with

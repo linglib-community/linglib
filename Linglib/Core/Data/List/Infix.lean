@@ -15,8 +15,10 @@ no longer than `m` cannot contain both an element that occurs only in `u` and an
 occurs only in `v`: this is the fact about short windows that pumping arguments use, when `m` is a
 block of the pumped word that separates two others.
 
-The longest common prefix `List.commonPrefix l₁ l₂` is the greatest list that is a prefix of
-both, the meet of the prefix order.
+Two prefixes of one list are comparable in the prefix order, so the prefixes `inits` lists
+ascend in it, and `l.takeWhile q` is a prefix of `l.takeWhile p` once `q` fails inside
+`l.takeWhile p`. The longest common prefix `List.commonPrefix l₁ l₂` is the greatest list that is
+a prefix of both, the meet of the prefix order.
 
 ## Main definitions
 
@@ -29,13 +31,14 @@ both, the meet of the prefix order.
 * `List.IsInfix.notMem_or_notMem_of_length_le`: an infix of `u ++ m ++ v` no longer than `m` misses
   every element occurring only in `u` or every element occurring only in `v`.
 * `List.pairwise_inits`: the prefixes `inits` lists ascend in the prefix order.
-* `List.takeWhile_bne_prefix_of_mem`: what precedes the first `c` is a prefix of what precedes
-  the first `d`, when `c` comes before the first `d`.
+* `List.takeWhile_prefix_takeWhile_of_mem`: `l.takeWhile q <+: l.takeWhile p` when some element
+  of `l.takeWhile p` fails `q`.
 
 ## Implementation notes
 
-[UPSTREAM] candidate: `Mathlib/Data/List/Infix.lean`, or core `Init/Data/List/Sublist.lean` beside
-`List.infix_append_iff`. Neither core, Batteries nor mathlib defines a longest common prefix of
+[UPSTREAM] candidates: the infix lemmas for `Mathlib/Data/List/Infix.lean` or core
+`Init/Data/List/Sublist.lean` beside `List.infix_append_iff`, the `takeWhile` lemma beside
+`List.takeWhile_prefix`. Neither core, Batteries nor mathlib defines a longest common prefix of
 lists.
 -/
 
@@ -66,6 +69,20 @@ theorem IsInfix.notMem_or_notMem_of_length_le (hl : l <:+: u ++ m ++ v)
   · exact .inl fun hx' ↦ hx (h.subset hx')
   · exact .inl fun hx' ↦ hx (mem_append_left v (h.eq_of_length_le hlen ▸ hx'))
 
+/-- The prefixes of a list, as `inits` lists them, ascend in the prefix order. -/
+theorem pairwise_inits : ∀ l : List α, l.inits.Pairwise (· <+: ·)
+  | [] => by simp
+  | a :: l => by
+    rw [inits_cons, pairwise_cons, pairwise_map]
+    exact ⟨fun _ _ ↦ nil_prefix, (pairwise_inits l).imp fun h ↦ cons_prefix_cons.2 ⟨rfl, h⟩⟩
+
+/-- What precedes the first failure of `q` is a prefix of what precedes the first failure of `p`,
+when some element before the latter fails `q`. -/
+theorem takeWhile_prefix_takeWhile_of_mem {p q : α → Bool} (hx : x ∈ l.takeWhile p) (hq : ¬q x) :
+    l.takeWhile q <+: l.takeWhile p :=
+  (prefix_or_prefix_of_prefix (takeWhile_prefix q) (takeWhile_prefix p)).resolve_right
+    fun h ↦ hq (all_eq_true.1 all_takeWhile x (h.subset hx))
+
 section DecidableEq
 
 variable [DecidableEq α]
@@ -95,29 +112,6 @@ theorem prefix_commonPrefix : ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: 
   | _ :: rs, _, _, ⟨_, rfl⟩, ⟨_, rfl⟩ => by
     simpa [commonPrefix] using prefix_commonPrefix (r := rs) (prefix_append _ _) (prefix_append _ _)
 
-/-- An element before the first `d` cuts off a prefix of what comes before the first `d`. -/
-theorem takeWhile_bne_prefix_of_mem {c d : α} :
-    ∀ {l : List α}, c ∈ l.takeWhile (· != d) → l.takeWhile (· != c) <+: l.takeWhile (· != d)
-  | [], _ => by simp
-  | x :: l, h => by
-    by_cases hxd : x = d
-    · simp [hxd] at h
-    by_cases hxc : x = c
-    · simp [hxc]
-    have hd : (x :: l).takeWhile (· != d) = x :: l.takeWhile (· != d) := by simp [hxd]
-    have hc : (x :: l).takeWhile (· != c) = x :: l.takeWhile (· != c) := by simp [hxc]
-    rw [hd] at h
-    rw [hd, hc]
-    exact cons_prefix_cons.2 ⟨rfl,
-      takeWhile_bne_prefix_of_mem ((mem_cons.1 h).resolve_left (Ne.symm hxc))⟩
-
 end DecidableEq
-
-/-- The prefixes of a list, as `inits` lists them, ascend in the prefix order. -/
-theorem pairwise_inits : ∀ l : List α, l.inits.Pairwise (· <+: ·)
-  | [] => by simp
-  | a :: l => by
-    rw [inits_cons, pairwise_cons, pairwise_map]
-    exact ⟨fun _ _ ↦ nil_prefix, (pairwise_inits l).imp fun h ↦ cons_prefix_cons.2 ⟨rfl, h⟩⟩
 
 end List
