@@ -91,7 +91,7 @@ def ex_17c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("a > every", .acceptable), ("every > a", .acceptable)]
-    paperFeatures := [("quantifiers", "every a")] }
+    paperFeatures := [("quantifiers", "every a"), ("derivation", "every man saw a woman")] }
 
 def ex_19a : Datum :=
   { id := "barker2002_19a"
@@ -247,7 +247,7 @@ def ex_42a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("someone > everyone", .acceptable), ("everyone > someone", .acceptable)]
-    paperFeatures := [("quantifiers", "someone everyone")] }
+    paperFeatures := [("quantifiers", "someone everyone"), ("derivation", "someone saw the friend of the friend of everyone")] }
 
 def ex_43 : Datum :=
   { id := "barker2002_43"
