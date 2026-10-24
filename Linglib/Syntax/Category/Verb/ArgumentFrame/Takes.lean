@@ -18,7 +18,10 @@ typer records only the [noonan-2007] coding and the sentence types it
 types, so the relation lives on those two axes (`takes_iff_coding_types`):
 matching needs positive evidence on one of them, a non-clausal position
 takes nothing, and the subject-requirement axis is position-side and never
-matched.
+matched. Selection is by these features alone, so two typers recording the
+same coding and sentence types are taken by the same predicates; a lexical
+restriction beyond them, as of Bulgarian *deto* to some emotive factives, is
+a list the fragment records.
 
 ## Main definitions
 

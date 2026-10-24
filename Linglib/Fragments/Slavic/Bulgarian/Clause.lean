@@ -23,6 +23,12 @@ ones Krapova names and are open-ended in the paper. The data are Krapova's; the 
 analysis of *deto* and the double requirement behind its distribution are stated in
 `Studies/Deal2026.lean`.
 
+## Implementation notes
+
+*deto* and *zadeto* record the coding and sentence type of *če*, so `Verb.Takes`, which selects
+by those, takes all three alike. The predicates *deto* introduces are `detoTakers`, a lexical
+list, which `Studies/Deal2026.lean` proves the double requirement picks out.
+
 ## References
 
 * [krapova-2010]
@@ -50,76 +56,74 @@ def deto : Complementizer where
   types := .only .declarative
 
 /-- The form *zadeto* of the same complementizer (fn. 45). -/
-def zadeto : Complementizer where
-  morphs := [.free "zadeto"]
-  coding := some .indicative
-  types := .only .declarative
+def zadeto : Complementizer := { deto with morphs := [.free "zadeto"] }
 
 /-! ### Predicates -/
 
-/-- The frames of an emotive factive, a finite clause or a *za* phrase (59). -/
-def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentFrame.pp]
+/-- The valency of an emotive factive, a finite clause or a *za* phrase (59). -/
+def emotiveValency : Verb.Valency :=
+  .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
 
 /-- *săžaljavam* 'regret', the predicate of the projection trials (57). -/
 def sazhaljavam : Verb where
   morphs := [.root "săžaljavam"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *vinoven săm* 'be one's fault' ((57b)). -/
 def vinovenSam : Verb where
   morphs := [.root "vinoven", .free "săm"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *jad me e* 'be sorry, regret' ((56b)). -/
 def jadMeE : Verb where
   morphs := [.root "jad", .free "me", .free "e"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *radvam se* 'be happy'. -/
 def radvamSe : Verb where
   morphs := [.root "radvam", .free "se"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .positive true)
   factivity := some .full
 
 /-- *nedovolstvam* 'be dissatisfied'. -/
 def nedovolstvam : Verb where
   morphs := [.root "nedovolstvam"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *pritesnjavam se* 'worry'. -/
 def pritesnjavamSe : Verb where
   morphs := [.root "pritesnjavam", .free "se"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative false)
   factivity := some .full
 
 /-- *žal mi e* 'be sorry'. -/
 def zhalMiE : Verb where
   morphs := [.root "žal", .free "mi", .free "e"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *măčno mi e* 'be sad'. -/
 def machnoMiE : Verb where
   morphs := [.root "măčno", .free "mi", .free "e"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *sram me e* 'feel ashamed'. -/
 def sramMeE : Verb where
   morphs := [.root "sram", .free "me", .free "e"]
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
+  valency := emotiveValency
   attitude := some (.preferential .negative true)
   factivity := some .full
 

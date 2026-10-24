@@ -114,27 +114,30 @@ def cuukwe : Verb where
 def verbs : List Verb :=
   [liloy, etqew, cicwaay, eeys, qeese, timneneki, timiipni, neki, hi, cuukwe]
 
-/-! ### Relative-pronoun paradigm
+/-! ### The relative pronoun -/
 
-The *yox̂/ko* paradigm from [deal-2016a], reproduced at [deal-2026] (22).
-Cells are indexed by `NezPerce.Case` × `Number`. -/
+namespace RelativePronoun
 
-/-- A relative-pronoun cell from [deal-2026] (22). -/
-structure RelativePronoun where
-  case : Case
-  number : Number
-  forms : List String  -- multiple if idiolectal variation
-  deriving Repr
+/-- The number columns of the relative-pronoun table (22). -/
+inductive Column where
+  | sg | pl
+  deriving DecidableEq, Fintype, Repr
 
-def rp_nom_sg : RelativePronoun := ⟨.nom, .singular, ["yox̂"]⟩
-def rp_nom_pl : RelativePronoun := ⟨.nom, .plural, ["yox̂me"]⟩
-def rp_erg_sg : RelativePronoun := ⟨.erg, .singular, ["konim"]⟩
-def rp_erg_pl : RelativePronoun := ⟨.erg, .plural, ["konmam"]⟩
-def rp_acc_sg : RelativePronoun := ⟨.acc, .singular, ["konya"]⟩
-def rp_acc_pl : RelativePronoun := ⟨.acc, .plural, ["konmana", "yox̂mene"]⟩
+/-- The number of a column. -/
+def Column.number : Column → Number
+  | .sg => .singular
+  | .pl => .plural
 
-/-- The full paradigm has three cases × two numbers, six cells. -/
-def relativePronounParadigm : List RelativePronoun :=
-  [rp_nom_sg, rp_nom_pl, rp_erg_sg, rp_erg_pl, rp_acc_sg, rp_acc_pl]
+/-- Table (22) of [deal-2026], after [deal-2016a]: the forms of the relative pronoun *yox̂* ~
+*ko-* by case and number, the accusative plural in idiolectal variation. -/
+def table : Case × Column → Finset String
+  | (.nom, .sg) => {"yox̂"}
+  | (.nom, .pl) => {"yox̂me"}
+  | (.erg, .sg) => {"konim"}
+  | (.erg, .pl) => {"konmam"}
+  | (.acc, .sg) => {"konya"}
+  | (.acc, .pl) => {"konmana", "yox̂mene"}
+
+end RelativePronoun
 
 end NezPerce
