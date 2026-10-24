@@ -165,53 +165,35 @@ theorem after_completive_iff (h : IsGreatest (timeTrace B) m) :
 
 variable (A) (i : NonemptyInterval T)
 
-theorem isLeast_timeTrace_stative : IsLeast (timeTrace (Set.Iic i)) i.fst :=
-  ⟨mem_timeTrace_Iic.mpr ⟨le_rfl, i.fst_le_snd⟩,
-    fun _ ht ↦ (mem_timeTrace_Iic.mp ht).1⟩
-
-theorem isGreatest_timeTrace_stative : IsGreatest (timeTrace (Set.Iic i)) i.snd :=
-  ⟨mem_timeTrace_Iic.mpr ⟨i.fst_le_snd, le_rfl⟩,
-    fun _ ht ↦ (mem_timeTrace_Iic.mp ht).2⟩
-
-theorem isLeast_timeTrace_accomplishment :
-    IsLeast (timeTrace {i}) i.fst := by
-  rw [timeTrace_singleton, ← timeTrace_Iic]
-  exact isLeast_timeTrace_stative i
-
-theorem isGreatest_timeTrace_accomplishment :
-    IsGreatest (timeTrace {i}) i.snd := by
-  rw [timeTrace_singleton, ← timeTrace_Iic]
-  exact isGreatest_timeTrace_stative i
-
 /-- Against a process, *before* has one reading, precedence of its onset ((4a)), since inchoative
 coercion changes nothing and completive coercion is unavailable. -/
 theorem before_process :
     ∀ B ∈ readings .process (Set.Iic i), (before A B ↔ ∃ t ∈ timeTrace A, t < i.fst) := by
   simp only [readings, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  exact ⟨before_iff_of_isLeast (isLeast_timeTrace_stative i),
-    (before_inchoative_iff (isLeast_timeTrace_stative i)).trans
-      (before_iff_of_isLeast (isLeast_timeTrace_stative i))⟩
+  exact ⟨before_iff_of_isLeast (isLeast_timeTrace_Iic i),
+    (before_inchoative_iff (isLeast_timeTrace_Iic i)).trans
+      (before_iff_of_isLeast (isLeast_timeTrace_Iic i))⟩
 
 /-- Against a culmination, *before* reads as precedence of its start ((5a), the paper's
 (23a)) ... -/
 theorem before_culmination_start :
     before A {i} ↔ ∃ t ∈ timeTrace A, t < i.fst :=
-  before_iff_of_isLeast (isLeast_timeTrace_accomplishment i)
+  before_iff_of_isLeast (isLeast_timeTrace_singleton i)
 
 /-- ... or, under completive coercion, of its telos ((23b)). -/
 theorem before_culmination_telos :
     before A (completive {i}) ↔ ∃ t ∈ timeTrace A, t < i.snd :=
-  before_completive_iff (isGreatest_timeTrace_accomplishment i)
+  before_completive_iff (isGreatest_timeTrace_singleton i)
 
 /-- Against a process, *after* reads as succession of its end ((5b), the paper's (24a)) ... -/
 theorem after_process_end :
     after A (Set.Iic i) ↔ ∃ t ∈ timeTrace A, i.snd < t :=
-  after_iff_of_isGreatest (isGreatest_timeTrace_stative i)
+  after_iff_of_isGreatest (isGreatest_timeTrace_Iic i)
 
 /-- ... or, under inchoative coercion, of its onset ((24b)). -/
 theorem after_process_onset :
     after A (inchoative (Set.Iic i)) ↔ ∃ t ∈ timeTrace A, i.fst < t :=
-  after_inchoative_iff (isLeast_timeTrace_stative i)
+  after_inchoative_iff (isLeast_timeTrace_Iic i)
 
 /-- Against a culmination, *after* has one reading, succession of its telos ((4b)), since completive
 coercion changes nothing and inchoative coercion is unavailable. -/
@@ -219,42 +201,42 @@ theorem after_culmination :
     ∀ B ∈ readings .culmination {i},
       (after A B ↔ ∃ t ∈ timeTrace A, i.snd < t) := by
   simp only [readings, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  exact ⟨after_iff_of_isGreatest (isGreatest_timeTrace_accomplishment i),
-    (after_completive_iff (isGreatest_timeTrace_accomplishment i)).trans
-      (after_iff_of_isGreatest (isGreatest_timeTrace_accomplishment i))⟩
+  exact ⟨after_iff_of_isGreatest (isGreatest_timeTrace_singleton i),
+    (after_completive_iff (isGreatest_timeTrace_singleton i)).trans
+      (after_iff_of_isGreatest (isGreatest_timeTrace_singleton i))⟩
 
 theorem before_stative_iff (h : IsLeast (timeTrace B) m) :
     before (Set.Iic i) B ↔ i.fst < m := by
   rw [before_iff_of_isLeast h]
   exact ⟨fun ⟨_, ht, htm⟩ ↦ (mem_timeTrace_Iic.mp ht).1.trans_lt htm,
-    fun h ↦ ⟨i.fst, (isLeast_timeTrace_stative i).1, h⟩⟩
+    fun h ↦ ⟨i.fst, (isLeast_timeTrace_Iic i).1, h⟩⟩
 
 theorem after_stative_iff (h : IsGreatest (timeTrace B) m) :
     after (Set.Iic i) B ↔ m < i.snd := by
   rw [after_iff_of_isGreatest h]
   exact ⟨fun ⟨_, ht, htm⟩ ↦ htm.trans_le (mem_timeTrace_Iic.mp ht).2,
-    fun h ↦ ⟨i.snd, (isGreatest_timeTrace_stative i).1, h⟩⟩
+    fun h ↦ ⟨i.snd, (isGreatest_timeTrace_Iic i).1, h⟩⟩
 
 variable (j : NonemptyInterval T)
 
 theorem before_stative_accomplishment_iff :
     before (Set.Iic i) {j} ↔ i.fst < j.fst :=
-  before_stative_iff i (isLeast_timeTrace_accomplishment j)
+  before_stative_iff i (isLeast_timeTrace_singleton j)
 
 theorem before_stative_completive_iff :
     before (Set.Iic i) (completive {j}) ↔ i.fst < j.snd :=
   before_stative_iff i (by
-    rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_accomplishment j)]
+    rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_singleton j)]
     exact isLeast_singleton)
 
 theorem after_stative_stative_iff :
     after (Set.Iic i) (Set.Iic j) ↔ j.snd < i.snd :=
-  after_stative_iff i (isGreatest_timeTrace_stative j)
+  after_stative_iff i (isGreatest_timeTrace_Iic j)
 
 theorem after_stative_inchoative_iff :
     after (Set.Iic i) (inchoative (Set.Iic j)) ↔ j.fst < i.snd :=
   after_stative_iff i (by
-    rw [timeTrace_inchoative_of_isLeast (isLeast_timeTrace_stative j)]
+    rw [timeTrace_inchoative_of_isLeast (isLeast_timeTrace_Iic j)]
     exact isGreatest_singleton)
 
 /-- In (23), *before* the start of the climb is false and *before* its telos true. -/
@@ -338,7 +320,7 @@ theorem not_before_completive_antitone (h₃ : ∃ a b c : T, a < b ∧ b < c) :
       rintro t ht
       obtain rfl := NonemptyInterval.mem_pure.mp ht
       exact NonemptyInterval.mem_def.mpr ⟨le_rfl, hab.le.trans hbc.le⟩)
-    ⟨a, isGreatest_timeTrace_accomplishment _⟩
+    ⟨a, isGreatest_timeTrace_singleton _⟩
     ((before_culmination_telos _ _).mpr ⟨b, mem_timeTrace_pure.mpr rfl, hbc⟩)
   obtain ⟨t, ht, htm⟩ := (before_culmination_telos _ _).mp this
   obtain rfl := mem_timeTrace_pure.mp ht
@@ -348,7 +330,7 @@ theorem not_before_completive_antitone (h₃ : ∃ a b c : T, a < b ∧ b < c) :
 
 theorem before_iff_beforeEver (h : IsLeast (timeTrace B) m) :
     before A B ↔ Tense.beforeEver A B :=
-  (before_iff_of_isLeast h).trans (beforeEver_iff_lt_least h).symm
+  (before_iff_of_isLeast h).trans (beforeEver_iff_of_isLeast h).symm
 
 theorem after_imp_after : after A B → Anscombe.after A B := by
   rintro ⟨t, ht, m, hm, htm⟩

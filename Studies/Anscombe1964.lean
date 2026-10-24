@@ -119,11 +119,6 @@ theorem before_not_beforeEver :
   ⟨{pure 5}, {pure 1, pure 9}, ⟨5, by simp, 9, by simp, by decide⟩,
     fun ⟨t, ht, h⟩ => absurd (h 1 (by simp)) (by simp at ht; subst ht; decide)⟩
 
-theorem beforeEver_iff_lt_least {lb : T} (hlb : IsLeast (timeTrace B) lb) :
-    Tense.beforeEver A B ↔ ∃ t ∈ timeTrace A, t < lb :=
-  ⟨fun ⟨a, ha, h⟩ => ⟨a, ha, h lb hlb.1⟩,
-    fun ⟨a, ha, h⟩ => ⟨a, ha, fun _ ht' => h.trans_le (hlb.2 ht')⟩⟩
-
 /-! ### Instantaneous events (§VI–§VIII) -/
 
 /-- When *p* reports an instantaneous event, *p after q* is *q before p* (§X, case 2). -/
@@ -159,7 +154,7 @@ theorem nonempty_of_before : Anscombe.before A B → (timeTrace B).Nonempty :=
 
 theorem before_iff_lt_least {lb : T} (hB : (timeTrace B).OrdConnected)
     (hlb : IsLeast (timeTrace B) lb) : Anscombe.before A B ↔ ∃ t ∈ timeTrace A, t < lb := by
-  rw [before_iff_beforeEver hB, beforeEver_iff_lt_least hlb, and_iff_left ⟨lb, hlb.1⟩]
+  rw [before_iff_beforeEver hB, beforeEver_iff_of_isLeast hlb, and_iff_left ⟨lb, hlb.1⟩]
 
 /-- *p after q* is *p after q began* (§III (3), §X case 3a); *q before p* gives it too
 (`after_of_before`, case 3b). -/

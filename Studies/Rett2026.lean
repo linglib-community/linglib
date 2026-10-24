@@ -149,10 +149,10 @@ variable [OrderBot T] (s : T)
 def preEvent : Set (NonemptyInterval T) := Set.Iic ⟨⟨⊥, s⟩, bot_le⟩
 
 theorem isLeast_timeTrace_preEvent : IsLeast (timeTrace (preEvent s)) ⊥ :=
-  isLeast_timeTrace_stative _
+  isLeast_timeTrace_Iic _
 
 theorem isGreatest_timeTrace_preEvent : IsGreatest (timeTrace (preEvent s)) s :=
-  isGreatest_timeTrace_stative _
+  isGreatest_timeTrace_Iic _
 
 theorem isLeast_timeTrace_completive_preEvent :
     IsLeast (timeTrace (completive (preEvent s))) s := by
@@ -170,7 +170,7 @@ theorem before_preEvent_completive_iff :
 
 theorem before_ambidirectional (i : NonemptyInterval T) :
     before A (Set.Iic i) ↔ before A (completive (preEvent i.fst)) :=
-  (before_iff_of_isLeast (isLeast_timeTrace_stative i)).trans
+  (before_iff_of_isLeast (isLeast_timeTrace_Iic i)).trans
     (before_preEvent_completive_iff A i.fst).symm
 
 theorem after_preEvent_iff : after A (preEvent s) ↔ ∃ t ∈ timeTrace A, s < t :=
@@ -182,7 +182,7 @@ theorem after_preEvent_inchoative {t : T} (ht : t ∈ timeTrace A) (h : t ≠ �
 
 theorem until_preEvent_completive_iff (i : NonemptyInterval T) :
     until_ A (Set.Iic i) ↔ until_ A (completive (preEvent i.fst)) := by
-  rw [until_iff_of_isLeast A (isLeast_timeTrace_stative i),
+  rw [until_iff_of_isLeast A (isLeast_timeTrace_Iic i),
     until_iff_of_isLeast A (isLeast_timeTrace_completive_preEvent i.fst)]
 
 theorem since_preEvent_completive_iff :
