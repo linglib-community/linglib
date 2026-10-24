@@ -39,6 +39,9 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
   run times.
 * `Aspect.unbounded_eq_lowerClosure`: the non-strict imperfective holds on their lower closure.
 * `Aspect.inclusive_eq_upperClosure`: the inclusive reading is the upper closure.
+* `Aspect.ViewpointType.denote_eq_preimage`, `Aspect.unbounded_eq_preimage`,
+  `Aspect.perfect_eq_preimage`: the operators are preimages under Allen cells, so complex aspects
+  compose by `Allen.comp`.
 
 ## Implementation notes
 
@@ -157,6 +160,18 @@ theorem mem_prosp : t ∈ PROSP P w ↔ ∃ e : E, t.IsBefore (τ e) ∧ P w e :
 
 theorem mem_unbounded : t ∈ UNBOUNDED P w ↔ ∃ e : E, t ≤ τ e ∧ P w e := Iff.rfl
 
+/-- The operator of a viewpoint is the preimage of the predicate's run times under the
+viewpoint's cell. -/
+theorem ViewpointType.denote_eq_preimage (v : ViewpointType) (P : W → E → Prop) (w : W) :
+    v.denote P w = (Allen.toSetRel v.cell).preimage (τ '' {e | P w e}) := by
+  ext t
+  simp [ViewpointType.denote, ofRel, SetRel.preimage, ViewpointType.ttTSitRelation_iff, and_comm]
+
+theorem unbounded_eq_preimage (P : W → E → Prop) (w : W) :
+    UNBOUNDED P w = (Allen.toSetRel Allen.le).preimage (τ '' {e | P w e}) := by
+  ext t
+  simp [UNBOUNDED, ofRel, SetRel.preimage, and_comm]
+
 theorem impf_subset_unbounded (P : W → E → Prop) (w : W) : IMPF P w ⊆ UNBOUNDED P w :=
   ofRel_mono (R := (· < ·)) (S := (· ≤ ·)) (fun _ _ ↦ le_of_lt) P w
 
@@ -204,6 +219,14 @@ theorem perf_eq_atPoint_perfect (p : W → Set (NonemptyInterval T)) :
   change pts.snd = s.time ↔ NonemptyInterval.pure s.time ≤ pts ∧ s.time = pts.snd
   rw [NonemptyInterval.le_def]
   exact ⟨fun h ↦ ⟨⟨h ▸ pts.fst_le_snd, h.ge⟩, h.symm⟩, fun h ↦ h.2.symm⟩
+
+/-- The perfect is the preimage of the perfect time spans under the final-subinterval cell, so
+the perfect of a viewpoint relates its reference interval to the run time as the composite of
+the two cells does (`Allen.preimage_toSetRel_subset_comp`). -/
+theorem perfect_eq_preimage (p : W → Set (NonemptyInterval T)) (w : W) :
+    perfect p w = (Allen.toSetRel Allen.finalSubinterval).preimage (p w) := by
+  ext i
+  simp [perfect, SetRel.preimage]
 
 theorem perfect_mono (h : ∀ w, p w ⊆ q w) (w : W) : perfect p w ⊆ perfect q w :=
   fun _ ⟨pts, hp, hf⟩ ↦ ⟨pts, h w hp, hf⟩
