@@ -102,13 +102,14 @@ inductive Referent where
 /-- A three-gender system over a language's genders `G` is a geometry, given by the node each
 node depends on directly, the node a referent contributes as interpretable gender and a
 grammatical gender contributes as uninterpretable gender, the features a plural coordination
-adds, a vocabulary, and the comparative label of each gender. -/
+adds, a vocabulary, the gender each sex is assigned, and the comparative label of each gender. -/
 structure System (G : Type*) where
   parent : Node → Node
   iNode : Referent → Node
   uNode : G → Node
   plural : Finset Node := ∅
   vocabulary : RuleSet (VocabularyItem Node G)
+  ofSex : Sex → G
   label : G → Gender
 
 namespace System
@@ -125,9 +126,12 @@ def conceptual (r : Referent) : Bundle Node := .ofInterp (L.entailments (L.iNode
 def arbitrary (g : G) : Bundle Node := .ofUninterp (L.entailments (L.uNode g))
 
 /-- A nominal headed by `n` and referring to `r` bears the interpretable features of `r` and,
-unless the gender of `n` is its referents', the uninterpretable features of that gender. -/
-def nominal (n : GenderedNoun G) (r : Referent) : Bundle Node :=
-  if n.IsNaturalGender L.label then L.conceptual r else L.conceptual r ∪ L.arbitrary n.gender
+unless the gender of `n` is the one its referents' sex is assigned, the uninterpretable features
+of that gender. -/
+def nominal [DecidableEq G] (n : GenderedNoun G) (r : Referent) : Bundle Node :=
+  if Gender.IsNatural (Option.map L.ofSex) GenderedNoun.sex GenderedNoun.gender n then
+    L.conceptual r
+  else L.conceptual r ∪ L.arbitrary n.gender
 
 /-- The exponent of a feature set under the Subset Principle. -/
 def realize (fs : Finset Node) : Option G :=
@@ -159,11 +163,11 @@ redundancy rule copies the former to PF, and both sets are realized. -/
 def mixed [DecidableEq G] (human inan : Bundle Node) : Option G :=
   realizeAll L.realize [human.interp, inan.uninterp]
 
-@[simp] theorem interp_nominal (n : GenderedNoun G) (r : Referent) :
+@[simp] theorem interp_nominal [DecidableEq G] (n : GenderedNoun G) (r : Referent) :
     (L.nominal n r).interp = (L.conceptual r).interp := by
   unfold nominal; split_ifs <;> simp [conceptual, arbitrary]
 
-theorem converted_nominal (n₁ n₂ : GenderedNoun G) (r₁ r₂ : Referent) :
+theorem converted_nominal [DecidableEq G] (n₁ n₂ : GenderedNoun G) (r₁ r₂ : Referent) :
     L.converted (L.nominal n₁ r₁) (L.nominal n₂ r₂) = L.resolved r₁ r₂ := by
   simp only [converted, resolved, resolve, interp_nominal]
 
@@ -194,6 +198,7 @@ def system : System Value where
     | .feminine => .fem
     | _ => .cls
   vocabulary := threeWay .masculine .feminine .neuter
+  ofSex := Value.ofSex
   label := Value.toLabel
 
 theorem masc_mem_entailments_fem : .masc ∈ system.entailments .fem := by decide
@@ -320,6 +325,7 @@ def system : System _root_.Icelandic.Gender.Value where
     | .feminine => .fem
     | _ => .cls
   vocabulary := threeWay .masculine .feminine .neuter
+  ofSex := _root_.Icelandic.Gender.Value.ofSex
   label := _root_.Icelandic.Gender.Value.toLabel
 
 theorem masc_not_mem_entailments_fem : .masc ∉ system.entailments .fem := by decide
@@ -395,6 +401,7 @@ def system : System Value where
   vocabulary :=
     [{.fem, .anim, .masc, .indiv} ⟷ .feminine, {.anim, .masc, .indiv} ⟷ .masculine,
       {.indiv} ⟷ .masculine, ∅ ⟷ .neuter]
+  ofSex := Value.ofSex
   label := Value.toLabel
 
 /-- An inanimate refers as a mass when it is neuter, the neuter being the mass gender, and as an

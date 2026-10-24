@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Syntax.Gender.Assignment
 
 /-!
 # Hausa gender
@@ -40,15 +41,19 @@ inductive Gender.Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- The comparative label of each gender. -/
-def Gender.Value.toLabel : Gender.Value → Gender
-  | .masculine => .masculine
-  | .feminine => .feminine
+def Gender.Value.ofSex : Sex → Gender.Value
+  | .male => .masculine
+  | .female => .feminine
 
-/-- A Hausa noun, with the gender its agreement shows and the gender of its referents where it
-has one. -/
+/-- A Hausa noun, with the gender its agreement shows and the sex it restricts its referents to
+where it does. -/
 abbrev Noun := GenderedNoun Gender.Value
 
 namespace Noun
+
+/-- A noun's gender is natural when it is the one its referents' sex is assigned. -/
+abbrev IsNatural (n : Noun) : Prop :=
+  _root_.Gender.IsNatural (Option.map Gender.Value.ofSex) GenderedNoun.sex GenderedNoun.gender n
 
 /-- The noun ends in *-ā*, whatever its final tone: the long vowel is one of the last two
 characters, the second being a tone mark. -/
@@ -58,23 +63,23 @@ abbrev EndsInAa (n : Noun) : Prop :=
 end Noun
 
 /-- *yārinyā̀* 'girl'. -/
-def yarinya : Noun := ⟨⟨"yārinyā̀", "girl"⟩, .feminine, some .feminine⟩
+def yarinya : Noun := ⟨⟨"yārinyā̀", "girl"⟩, .feminine, some .female⟩
 
 /-- *màcè* 'woman', a basic feminine word not in *-ā*, perhaps once a derived form meaning
 'female'. -/
-def mace : Noun := ⟨⟨"màcè", "woman"⟩, .feminine, some .feminine⟩
+def mace : Noun := ⟨⟨"màcè", "woman"⟩, .feminine, some .female⟩
 
 /-- *kā̀zā* 'hen', opposite *zàkarā̀* 'cock'. -/
-def kaza : Noun := ⟨⟨"kā̀zā", "hen"⟩, .feminine, some .feminine⟩
+def kaza : Noun := ⟨⟨"kā̀zā", "hen"⟩, .feminine, some .female⟩
 
 /-- *rìgā* 'gown'. -/
 def riga : Noun := ⟨⟨"rìgā", "gown"⟩, .feminine, none⟩
 
 /-- *yārò* 'boy'. -/
-def yaro : Noun := ⟨⟨"yārò", "boy"⟩, .masculine, some .masculine⟩
+def yaro : Noun := ⟨⟨"yārò", "boy"⟩, .masculine, some .male⟩
 
 /-- *mùtûm* 'man'. -/
-def mutum : Noun := ⟨⟨"mùtûm", "man"⟩, .masculine, some .masculine⟩
+def mutum : Noun := ⟨⟨"mùtûm", "man"⟩, .masculine, some .male⟩
 
 /-- *turmī* 'mortar'. -/
 def turmi : Noun := ⟨⟨"turmī", "mortar"⟩, .masculine, none⟩
@@ -92,7 +97,7 @@ def rana : Noun := ⟨⟨"rānā", "sun"⟩, .feminine, none⟩
 def kada : Noun := ⟨⟨"kadā̀", "crocodile"⟩, .masculine, none⟩
 
 /-- *ùbā* 'father', a native masculine in *-ā*. -/
-def uba : Noun := ⟨⟨"ùbā", "father"⟩, .masculine, some .masculine⟩
+def uba : Noun := ⟨⟨"ùbā", "father"⟩, .masculine, some .male⟩
 
 /-- The nouns. -/
 def allNouns : List Noun :=

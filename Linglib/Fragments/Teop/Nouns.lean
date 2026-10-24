@@ -81,13 +81,13 @@ abbrev Noun := GenderedNoun NounClass
 /-! ### The e-class -/
 
 /-- *iaa* 'mum'. -/
-def iaa : Noun := ⟨⟨"iaa", "mum"⟩, .e, some .feminine⟩
+def iaa : Noun := ⟨⟨"iaa", "mum"⟩, .e, some .female⟩
 
 /-- *tetee* 'dad'. -/
-def tetee : Noun := ⟨⟨"tetee", "dad"⟩, .e, some .masculine⟩
+def tetee : Noun := ⟨⟨"tetee", "dad"⟩, .e, some .male⟩
 
 /-- *sina* 'mother', which takes a possessor. -/
-def sina : Noun := ⟨⟨"sina", "mother"⟩, .e, some .feminine⟩
+def sina : Noun := ⟨⟨"sina", "mother"⟩, .e, some .female⟩
 
 /-- *maagee* 'friend'. -/
 def maagee : Noun := ⟨⟨"maagee", "friend"⟩, .e, none⟩
@@ -104,10 +104,10 @@ def guu : Noun := ⟨⟨"guu", "pig"⟩, .e, none⟩
 /-! ### The a-class -/
 
 /-- *moon* 'woman'. -/
-def moon : Noun := ⟨⟨"moon", "woman"⟩, .a, some .feminine⟩
+def moon : Noun := ⟨⟨"moon", "woman"⟩, .a, some .female⟩
 
 /-- *otei* 'man'. -/
-def otei : Noun := ⟨⟨"otei", "man"⟩, .a, some .masculine⟩
+def otei : Noun := ⟨⟨"otei", "man"⟩, .a, some .male⟩
 
 /-- *beikoo* 'child'. -/
 def beikoo : Noun := ⟨⟨"beikoo", "child"⟩, .a, none⟩

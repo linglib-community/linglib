@@ -6,8 +6,9 @@ public import Linglib.Syntax.Category.Noun.Basic
 # Modern Greek nouns by gender
 
 The nouns of Adamson and Anagnostopoulou's Greek examples, each with its grammatical gender and the
-gender of its referents where they have one. The gender of *andras* 'man' and *gineka* 'woman' is
-natural, the gender of their referents. *Koritsi* 'girl' is neuter though its referents are female,
+sex it restricts its referents to where it does. The gender of *andras* 'man' and *gineka* 'woman'
+is natural, the one their referents' sex is assigned. *Koritsi* 'girl' is neuter though its
+referents are female,
 and *megalofiia* 'genius' and *thima* 'victim' are feminine and neuter whoever they refer to. The
 inanimates are of all three genders.
 
@@ -27,6 +28,11 @@ inductive Value where
   | neuter
   deriving DecidableEq, Repr, Fintype
 
+/-- Male humans are masculine and female humans feminine. -/
+def Value.ofSex : Sex → Value
+  | .male => .masculine
+  | .female => .feminine
+
 /-- The comparative label of each gender. -/
 def Value.toLabel : Value → _root_.Gender
   | .masculine => .masculine
@@ -35,52 +41,52 @@ def Value.toLabel : Value → _root_.Gender
 
 /-- *andras* 'man'. -/
 def andras : GenderedNoun Value :=
-  { form := "andras", gloss := "man", gender := .masculine, naturalGender := some .masculine }
+  { form := "andras", gloss := "man", gender := .masculine, sex := some .male }
 
 /-- *gineka* 'woman'. -/
 def gineka : GenderedNoun Value :=
-  { form := "gineka", gloss := "woman", gender := .feminine, naturalGender := some .feminine }
+  { form := "gineka", gloss := "woman", gender := .feminine, sex := some .female }
 
 /-- *Petros*. -/
 def petros : GenderedNoun Value :=
-  { form := "Petros", gloss := "Petros", gender := .masculine, naturalGender := some .masculine }
+  { form := "Petros", gloss := "Petros", gender := .masculine, sex := some .male }
 
 /-- *Kostas*. -/
 def kostas : GenderedNoun Value :=
-  { form := "Kostas", gloss := "Kostas", gender := .masculine, naturalGender := some .masculine }
+  { form := "Kostas", gloss := "Kostas", gender := .masculine, sex := some .male }
 
 /-- *Giorgos*. -/
 def giorgos : GenderedNoun Value :=
   { form := "Giorgos", gloss := "Giorgos", gender := .masculine,
-    naturalGender := some .masculine }
+    sex := some .male }
 
 /-- *Maria*. -/
 def maria : GenderedNoun Value :=
-  { form := "Maria", gloss := "Maria", gender := .feminine, naturalGender := some .feminine }
+  { form := "Maria", gloss := "Maria", gender := .feminine, sex := some .female }
 
 /-- *Giota*. -/
 def giota : GenderedNoun Value :=
-  { form := "Giota", gloss := "Giota", gender := .feminine, naturalGender := some .feminine }
+  { form := "Giota", gloss := "Giota", gender := .feminine, sex := some .female }
 
 /-- *kleftis* 'thief'. -/
 def kleftis : GenderedNoun Value :=
-  { form := "kleftis", gloss := "thief", gender := .masculine, naturalGender := some .masculine }
+  { form := "kleftis", gloss := "thief", gender := .masculine, sex := some .male }
 
 /-- *filos* 'friend'. -/
 def filos : GenderedNoun Value :=
-  { form := "filos", gloss := "friend", gender := .masculine, naturalGender := some .masculine }
+  { form := "filos", gloss := "friend", gender := .masculine, sex := some .male }
 
 /-- *adherfi* 'sister'. -/
 def adherfi : GenderedNoun Value :=
-  { form := "adherfi", gloss := "sister", gender := .feminine, naturalGender := some .feminine }
+  { form := "adherfi", gloss := "sister", gender := .feminine, sex := some .female }
 
 /-- *mitera* 'mother'. -/
 def mitera : GenderedNoun Value :=
-  { form := "mitera", gloss := "mother", gender := .feminine, naturalGender := some .feminine }
+  { form := "mitera", gloss := "mother", gender := .feminine, sex := some .female }
 
 /-- *koritsi* 'girl', neuter though its referents are female. -/
 def koritsi : GenderedNoun Value :=
-  { form := "koritsi", gloss := "girl", gender := .neuter, naturalGender := some .feminine }
+  { form := "koritsi", gloss := "girl", gender := .neuter, sex := some .female }
 
 /-- *megalofiia* 'genius', feminine whoever the genius. -/
 def megalofiia : GenderedNoun Value :=

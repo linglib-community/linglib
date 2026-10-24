@@ -30,27 +30,27 @@ inductive Value where
   deriving DecidableEq, Repr, Fintype
 
 /-- The comparative label of each gender. -/
-def Value.toLabel : Value → Gender
-  | .masc => .masculine
-  | .fem => .feminine
+def Value.ofSex : Sex → Value
+  | .male => .masc
+  | .female => .fem
 
-/-- An Afar noun with its gender, the gender of its referents where it has one, and
+/-- An Afar noun with its gender, the sex it restricts its referents to where it does, and
 whether its citation form ends in an accented vowel. -/
 structure Noun extends GenderedNoun Value where
   /-- Whether the citation form ends in an accented vowel. -/
   finalAccentedVowel : Bool
   deriving DecidableEq, Repr
 
-def baqla : Noun := ⟨⟨⟨"bàqla", "husband"⟩, .masc, some .masculine⟩, false⟩
-def barra : Noun := ⟨⟨⟨"barrà", "woman, wife"⟩, .fem, some .feminine⟩, true⟩
-def baxa : Noun := ⟨⟨⟨"bàxa", "son"⟩, .masc, some .masculine⟩, false⟩
-def baxa' : Noun := ⟨⟨⟨"baxà", "daughter"⟩, .fem, some .feminine⟩, true⟩
-def toobokoyta : Noun := ⟨⟨⟨"toobokòyta", "brother"⟩, .masc, some .masculine⟩, false⟩
-def toobokoyta' : Noun := ⟨⟨⟨"toobokoytà", "sister"⟩, .fem, some .feminine⟩, true⟩
-def bariseyna : Noun := ⟨⟨⟨"barisèyna", "male teacher"⟩, .masc, some .masculine⟩, false⟩
-def bariseyna' : Noun := ⟨⟨⟨"bariseynà", "female teacher"⟩, .fem, some .feminine⟩, true⟩
-def kuta : Noun := ⟨⟨⟨"kùta", "dog"⟩, .masc, some .masculine⟩, false⟩
-def kuta' : Noun := ⟨⟨⟨"kutà", "bitch"⟩, .fem, some .feminine⟩, true⟩
+def baqla : Noun := ⟨⟨⟨"bàqla", "husband"⟩, .masc, some .male⟩, false⟩
+def barra : Noun := ⟨⟨⟨"barrà", "woman, wife"⟩, .fem, some .female⟩, true⟩
+def baxa : Noun := ⟨⟨⟨"bàxa", "son"⟩, .masc, some .male⟩, false⟩
+def baxa' : Noun := ⟨⟨⟨"baxà", "daughter"⟩, .fem, some .female⟩, true⟩
+def toobokoyta : Noun := ⟨⟨⟨"toobokòyta", "brother"⟩, .masc, some .male⟩, false⟩
+def toobokoyta' : Noun := ⟨⟨⟨"toobokoytà", "sister"⟩, .fem, some .female⟩, true⟩
+def bariseyna : Noun := ⟨⟨⟨"barisèyna", "male teacher"⟩, .masc, some .male⟩, false⟩
+def bariseyna' : Noun := ⟨⟨⟨"bariseynà", "female teacher"⟩, .fem, some .female⟩, true⟩
+def kuta : Noun := ⟨⟨⟨"kùta", "dog"⟩, .masc, some .male⟩, false⟩
+def kuta' : Noun := ⟨⟨⟨"kutà", "bitch"⟩, .fem, some .female⟩, true⟩
 def cato : Noun := ⟨⟨⟨"catò", "help"⟩, .fem, none⟩, true⟩
 def karma : Noun := ⟨⟨⟨"karmà", "autumn"⟩, .fem, none⟩, true⟩
 def ceder : Noun := ⟨⟨⟨"cedèr", "supper time"⟩, .masc, none⟩, false⟩
@@ -60,9 +60,9 @@ def baanta : Noun := ⟨⟨⟨"baànta", "trumpet"⟩, .masc, none⟩, false⟩
 /-- *doònik* 'sail-boat': feminine against the accent rule. -/
 def doonik : Noun := ⟨⟨⟨"doònik", "sail-boat"⟩, .fem, none⟩, false⟩
 /-- *abbà* 'father' is masculine by its referents against the accent rule. -/
-def abba : Noun := ⟨⟨⟨"abbà", "father"⟩, .masc, some .masculine⟩, true⟩
+def abba : Noun := ⟨⟨⟨"abbà", "father"⟩, .masc, some .male⟩, true⟩
 /-- *gabbixeèra* 'slender-waisted female' is feminine by its referents against the accent rule. -/
-def gabbixeera : Noun := ⟨⟨⟨"gabbixeèra", "slender-waisted female"⟩, .fem, some .feminine⟩, false⟩
+def gabbixeera : Noun := ⟨⟨⟨"gabbixeèra", "slender-waisted female"⟩, .fem, some .female⟩, false⟩
 
 def allNouns : List Noun :=
   [baqla, barra, baxa, baxa', toobokoyta, toobokoyta', bariseyna, bariseyna', kuta, kuta', cato,

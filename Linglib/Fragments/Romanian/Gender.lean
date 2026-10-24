@@ -30,24 +30,18 @@ inductive Value where
   | neut
   deriving DecidableEq, Repr, Fintype
 
-/-- The comparative label of each gender. -/
-def Value.toLabel : Value → Gender
-  | .masc => .masculine
-  | .fem => .feminine
-  | .neut => .neuter
-
-/-- A Romanian noun with its controller gender, the gender of its referents where it has one,
+/-- A Romanian noun with its controller gender, the sex it restricts its referents to where it does,
 and their animacy. -/
 structure Noun extends GenderedNoun Value where
   /-- The animacy of the noun's referents. -/
   animacy : Animacy
   deriving DecidableEq, Repr
 
-def barbat : Noun := ⟨⟨⟨"bărbat", "man"⟩, .masc, some .masculine⟩, .human⟩
-def fata : Noun := ⟨⟨⟨"fată", "girl"⟩, .fem, some .feminine⟩, .human⟩
+def barbat : Noun := ⟨⟨⟨"bărbat", "man"⟩, .masc, some .male⟩, .human⟩
+def fata : Noun := ⟨⟨⟨"fată", "girl"⟩, .fem, some .female⟩, .human⟩
 def scaun : Noun := ⟨⟨⟨"scaun", "chair"⟩, .neut, none⟩, .inanimate⟩
-def femeie : Noun := ⟨⟨⟨"femeie", "woman"⟩, .fem, some .feminine⟩, .human⟩
-def baiat : Noun := ⟨⟨⟨"băiat", "boy"⟩, .masc, some .masculine⟩, .human⟩
+def femeie : Noun := ⟨⟨⟨"femeie", "woman"⟩, .fem, some .female⟩, .human⟩
+def baiat : Noun := ⟨⟨⟨"băiat", "boy"⟩, .masc, some .male⟩, .human⟩
 def usa : Noun := ⟨⟨⟨"uşă", "door"⟩, .fem, none⟩, .inanimate⟩
 def perete : Noun := ⟨⟨⟨"perete", "wall"⟩, .masc, none⟩, .inanimate⟩
 def masa : Noun := ⟨⟨⟨"masă", "table"⟩, .fem, none⟩, .inanimate⟩

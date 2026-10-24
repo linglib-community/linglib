@@ -34,20 +34,20 @@ structure Noun extends GenderedNoun Gender, ClassifiedNoun Empty where
 
 def libro : Noun := { form := "libro", gloss := "book", gender := .masculine, plural := "libri" }
 def ragazzo : Noun :=
-  { form := "ragazzo", gloss := "boy", gender := .masculine, naturalGender := some .masculine,
+  { form := "ragazzo", gloss := "boy", gender := .masculine, sex := some .male,
     plural := "ragazzi" }
 def uomo : Noun :=
-  { form := "uomo", gloss := "man", gender := .masculine, naturalGender := some .masculine,
+  { form := "uomo", gloss := "man", gender := .masculine, sex := some .male,
     plural := "uomini" }
 def gatto : Noun := { form := "gatto", gloss := "cat", gender := .masculine, plural := "gatti" }
 def cane : Noun := { form := "cane", gloss := "dog", gender := .masculine, plural := "cani" }
 def tavolo : Noun :=
   { form := "tavolo", gloss := "table", gender := .masculine, plural := "tavoli" }
 def ragazza : Noun :=
-  { form := "ragazza", gloss := "girl", gender := .feminine, naturalGender := some .feminine,
+  { form := "ragazza", gloss := "girl", gender := .feminine, sex := some .female,
     plural := "ragazze" }
 def donna : Noun :=
-  { form := "donna", gloss := "woman", gender := .feminine, naturalGender := some .feminine,
+  { form := "donna", gloss := "woman", gender := .feminine, sex := some .female,
     plural := "donne" }
 def casa : Noun := { form := "casa", gloss := "house", gender := .feminine, plural := "case" }
 
@@ -60,11 +60,10 @@ def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, co
 
 /-! ### Proper names -/
 
-/-- A personal name with its natural gender. -/
-def name (form : String) (gender : Gender) : ProperName :=
-  { form, gloss := form, gender := some gender }
+/-- A personal name, restricted to a sex. -/
+def name (form : String) (sex : Sex) : ProperName := { form, gloss := form, sex := some sex }
 
-def paolo : ProperName := name "Paolo" .masculine
-def maria : ProperName := name "Maria" .feminine
+def paolo : ProperName := name "Paolo" .male
+def maria : ProperName := name "Maria" .female
 
 end Italian.Nouns

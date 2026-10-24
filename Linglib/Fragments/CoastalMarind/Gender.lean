@@ -137,27 +137,27 @@ abbrev Noun := GenderedNoun Gender
 /-! ### Nouns with overt gender -/
 
 /-- *anem* 'man'. -/
-def anem : Noun := ⟨⟨"anem", "man"⟩, .gI, some .masculine⟩
+def anem : Noun := ⟨⟨"anem", "man"⟩, .gI, some .male⟩
 
 /-- *anum* 'woman'. -/
-def anum : Noun := ⟨⟨"anum", "woman"⟩, .gII, some .feminine⟩
+def anum : Noun := ⟨⟨"anum", "woman"⟩, .gII, some .female⟩
 
 /-- *namek* 'clanmate', of a man. -/
-def namek : Noun := ⟨⟨"namek", "clanmate"⟩, .gI, some .masculine⟩
+def namek : Noun := ⟨⟨"namek", "clanmate"⟩, .gI, some .male⟩
 
 /-- *namuk* 'clanmate', of a woman. -/
-def namuk : Noun := ⟨⟨"namuk", "clanmate"⟩, .gII, some .feminine⟩
+def namuk : Noun := ⟨⟨"namuk", "clanmate"⟩, .gII, some .female⟩
 
 /-- *wananggib* 'son'. -/
-def wananggib : Noun := ⟨⟨"wananggib", "son"⟩, .gI, some .masculine⟩
+def wananggib : Noun := ⟨⟨"wananggib", "son"⟩, .gI, some .male⟩
 
 /-- *wananggub* 'daughter'. -/
-def wananggub : Noun := ⟨⟨"wananggub", "daughter"⟩, .gII, some .feminine⟩
+def wananggub : Noun := ⟨⟨"wananggub", "daughter"⟩, .gII, some .female⟩
 
 /-- *eɣal* 'a certain man'. -/
-def «eɣal» : Noun := ⟨⟨"eɣal", "a certain man"⟩, .gI, some .masculine⟩
+def «eɣal» : Noun := ⟨⟨"eɣal", "a certain man"⟩, .gI, some .male⟩
 
 /-- *eɣul* 'a certain woman'. -/
-def «eɣul» : Noun := ⟨⟨"eɣul", "a certain woman"⟩, .gII, some .feminine⟩
+def «eɣul» : Noun := ⟨⟨"eɣul", "a certain woman"⟩, .gII, some .female⟩
 
 end CoastalMarind

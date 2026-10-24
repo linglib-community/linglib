@@ -29,10 +29,11 @@ Spanish, Russian, and Hausa data are the Fragments' nouns rather than the review
 `Remainder.spanish` reads the split of Table 1 off the Fragment, and the two assignment accounts are
 compared on every noun of the Fragment's shape rather than on its list, the lexical one on every
 noun but a hybrid. A noun is [human] for Harris when its referents are human or animals whose gender
-is their sex, read off the Fragment's animacy and natural gender. The determiner items of (25) go
-through the library's Subset Principle, so *el* for [−fem] and for featureless *n* is a computation
-rather than a listing, checked against the Fragment's article. The hybrid datum (27) is the one
-hand-typed example, since the Russian Fragment records only the morphological gender of *vrač*.
+is their sex, read off the Fragment's animacy and the sex its nouns restrict their referents to.
+The determiner items of (25) go through the library's Subset Principle, so *el* for [−fem] and for
+featureless *n* is a computation rather than a listing, checked against the Fragment's article. The
+hybrid datum (27) is the one hand-typed example, since the Russian Fragment records only the
+morphological gender of *vrač*.
 
 ## References
 
@@ -126,7 +127,7 @@ def tamil : Remainder Gender := ⟨{.masculine, .feminine}, {.neuter}⟩
 /-- Spanish splits the remainder arbitrarily over both core genders (Table 1), as the
 Fragment records. -/
 def spanish : Remainder Gender :=
-  ofNouns allNouns (·.IsNaturalGender Value.toLabel) (·.gender.toLabel)
+  ofNouns allNouns (·.IsNatural) (·.gender.toLabel)
 
 /-- Blackfoot makes animates animate and puts inanimates in a novel inanimate gender or
 the recycled animate one. -/
@@ -177,7 +178,7 @@ theorem phonologicalRule_kada : phonologicalRule Hausa.kada ≠ Hausa.kada.gende
 
 theorem feminine_remainder_aa :
     ∀ n ∈ Hausa.allNouns,
-      ¬ n.IsNaturalGender Hausa.Gender.Value.toLabel → n.gender = .feminine → n.EndsInAa := by
+      ¬ n.IsNatural → n.gender = .feminine → n.EndsInAa := by
   decide
 
 /-! ### Lexical gender assignment (§3.2) -/
@@ -206,8 +207,8 @@ def gender (e : LexicalEntry) : Gender := if e.f then .feminine else .masculine
 
 end LexicalEntry
 
-/-- A noun is a hybrid when its referents have a gender other than its own. -/
-def IsHybrid (n : Spanish.Gender.Noun) : Prop := ∃ g ∈ n.naturalGender, g ≠ n.gender.toLabel
+/-- A noun is a hybrid when its referents' sex is assigned a gender other than its own. -/
+def IsHybrid (n : Spanish.Gender.Noun) : Prop := ∃ x ∈ n.sex, Value.ofSex x ≠ n.gender
 
 instance (n : Spanish.Gender.Noun) : Decidable (IsHybrid n) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -216,16 +217,16 @@ instance (n : Spanish.Gender.Noun) : Decidable (IsHybrid n) :=
 gender is their sex (higher animals honoris causa), [female] when its referents are female,
 and carries a listed [f] when it is feminine without its referents having a gender. -/
 def lexicalEntry (n : Spanish.Gender.Noun) : LexicalEntry :=
-  ⟨decide (n.animacy = .human ∨ n.naturalGender.isSome),
-    decide (n.naturalGender = some .feminine),
-    decide (n.naturalGender = none ∧ n.gender = .fem)⟩
+  ⟨decide (n.animacy = .human ∨ n.sex.isSome),
+    decide (n.sex = some .female),
+    decide (n.sex = none ∧ n.gender = .fem)⟩
 
 theorem lexical_faithful (n : Spanish.Gender.Noun) (h : ¬ IsHybrid n) :
     (lexicalEntry n).humanGender.gender = n.gender.toLabel := by
   obtain ⟨⟨_, g, b⟩, _⟩ := n
   cases g <;> rcases b with _ | l <;> (try cases l) <;>
     simp_all [IsHybrid, lexicalEntry, LexicalEntry.humanGender, LexicalEntry.gender,
-      Value.toLabel]
+      Value.toLabel, Value.ofSex]
 
 theorem allNouns_not_hybrid : ∀ n ∈ allNouns, ¬ IsHybrid n := by
   decide
@@ -233,7 +234,7 @@ theorem allNouns_not_hybrid : ∀ n ∈ allNouns, ¬ IsHybrid n := by
 /-- Human Cloning of *el estudiante* yields an entry of each gender: the lexical account
 derives *la estudiante* (14a). -/
 theorem estudiante_cloned :
-    (lexicalEntry (estudiante .masc)).humanCloning.map (·.humanGender.gender) =
+    (lexicalEntry (estudiante .male)).humanCloning.map (·.humanGender.gender) =
       [.masculine, .feminine] := by
   decide
 
@@ -251,9 +252,9 @@ def spanishHeads : List Categorizer.Head := [.n_iFem, .n_iMasc, .n_plain, .n_uFe
 nouns and u[+fem] for the arbitrarily feminine remainder, *persona* among
 them, and is plain otherwise. -/
 def nHead (n : Spanish.Gender.Noun) : Categorizer.Head :=
-  match n.gender, n.naturalGender with
-  | .fem, some .feminine => .n_iFem
-  | .masc, some .masculine => .n_iMasc
+  match n.gender, n.sex with
+  | .fem, some .female => .n_iFem
+  | .masc, some .male => .n_iMasc
   | .fem, _ => .n_uFem
   | _, _ => .n_plain
 
@@ -263,9 +264,9 @@ theorem nHead_mem_spanishHeads (n : Spanish.Gender.Noun) : nHead n ∈ spanishHe
 
 /-- The n of either entry of *estudiante* bears an interpretable gender feature: its gender is
 its referent's (14a). -/
-theorem nHead_estudiante (g : Value) :
-    (nHead (estudiante g)).gender.map (·.interp) = some .interpretable := by
-  cases g <;> decide
+theorem nHead_estudiante (x : Sex) :
+    (nHead (estudiante x)).gender.map (·.interp) = some .interpretable := by
+  cases x <;> decide
 
 /-- A definite determiner bears [d], [def], and the gender it
 acquires by agreement. -/

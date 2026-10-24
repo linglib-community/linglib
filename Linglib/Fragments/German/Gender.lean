@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Syntax.Gender.Assignment
 
 /-!
 # German gender
@@ -40,11 +41,14 @@ inductive Value where
   | neut
   deriving DecidableEq, Repr, Fintype
 
-/-- Each German gender bears the comparative label of the same name. -/
-def Value.toLabel : Value → Gender
-  | .masc => .masculine
-  | .fem => .feminine
-  | .neut => .neuter
+/-- Male humans are masculine and female humans feminine. -/
+def Value.ofSex : Sex → Value
+  | .male => .masc
+  | .female => .fem
+
+/-- A noun's gender is natural when it is the one its referents' sex is assigned. -/
+abbrev IsNatural (n : GenderedNoun Value) : Prop :=
+  _root_.Gender.IsNatural (Option.map Value.ofSex) GenderedNoun.sex GenderedNoun.gender n
 
 /-- The suffixes that fix the gender of every noun they end. -/
 inductive Suffix where
@@ -73,13 +77,13 @@ def Suffix.gender : Suffix → Value
 
 /-- `s.noun form gloss` is the noun `form` 'gloss' ending in the suffix `s`, and its gender is the
 one `s` fixes. -/
-def Suffix.noun (s : Suffix) (form gloss : String) (naturalGender : Option Gender := none) :
+def Suffix.noun (s : Suffix) (form gloss : String) (sex : Option Sex := none) :
     GenderedNoun Value :=
-  { form, gloss, gender := s.gender, naturalGender }
+  { form, gloss, gender := s.gender, sex }
 
-theorem Suffix.isNaturalGender_noun_iff (s : Suffix) (form gloss : String) (g : Gender) :
-    (s.noun form gloss g).IsNaturalGender Value.toLabel ↔ g = s.gender.toLabel := by
-  simp [noun, GenderedNoun.IsNaturalGender]
+theorem Suffix.isNatural_noun_iff (s : Suffix) (form gloss : String) (x : Sex) :
+    IsNatural (s.noun form gloss x) ↔ Value.ofSex x = s.gender := by
+  simp [noun, _root_.Gender.IsNatural]
 
 /-! ### Nouns -/
 
@@ -96,17 +100,16 @@ def bedeutung : GenderedNoun Value := Suffix.ung.noun "Bedeutung" "meaning"
 def buechlein : GenderedNoun Value := Suffix.lein.noun "Büchlein" "little book"
 
 /-- *Mädchen* 'girl' is neuter, though its referents are female. -/
-def maedchen : GenderedNoun Value := Suffix.chen.noun "Mädchen" "girl" (some .feminine)
+def maedchen : GenderedNoun Value := Suffix.chen.noun "Mädchen" "girl" (some .female)
 
 /-- *Fräulein* 'young lady' is neuter, though its referents are female. -/
-def fraeulein : GenderedNoun Value := Suffix.lein.noun "Fräulein" "young lady" (some .feminine)
+def fraeulein : GenderedNoun Value := Suffix.lein.noun "Fräulein" "young lady" (some .female)
 
 /-- *Bübchen* 'little boy' is neuter, though its referents are male. -/
-def buebchen : GenderedNoun Value := Suffix.chen.noun "Bübchen" "little boy" (some .masculine)
+def buebchen : GenderedNoun Value := Suffix.chen.noun "Bübchen" "little boy" (some .male)
 
-theorem not_isNaturalGender_diminutive :
-    ¬ maedchen.IsNaturalGender Value.toLabel ∧ ¬ fraeulein.IsNaturalGender Value.toLabel ∧
-      ¬ buebchen.IsNaturalGender Value.toLabel := by
+theorem not_isNatural_diminutive :
+    ¬ IsNatural maedchen ∧ ¬ IsNatural fraeulein ∧ ¬ IsNatural buebchen := by
   decide
 
 end German.Gender

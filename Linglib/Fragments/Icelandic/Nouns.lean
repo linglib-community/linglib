@@ -15,8 +15,8 @@ Icelandic has three genders, the masculine, the feminine and the neuter, and the
 only indirectly related to the sex of its referents: most nouns for women are feminine, but *skáld*
 'poet' is neuter whoever the poet, as Thráinsson's overview of the nominal inflection notes. The
 gendered nouns are those of Adamson and Anagnostopoulou's Icelandic examples and of the
-coordinations Corbett resolves, each with its grammatical gender and the gender of its referents
-where they have one.
+coordinations Corbett resolves, each with its grammatical gender and the sex it restricts its
+referents to where it does.
 
 The deverbal nouns are each segmented into their morphs: an optional prefixed preposition,
 the root, an optional overt verbalizer, and a nominalizing suffix. The nominalizers are many
@@ -58,6 +58,11 @@ inductive Gender.Value where
   | neuter
   deriving DecidableEq, Repr, Fintype
 
+/-- Male humans are masculine and female humans feminine. -/
+def Gender.Value.ofSex : Sex → Gender.Value
+  | .male => .masculine
+  | .female => .feminine
+
 /-- The comparative label of each gender. -/
 def Gender.Value.toLabel : Gender.Value → Gender
   | .masculine => .masculine
@@ -74,15 +79,15 @@ open Morphology (Morph)
 
 /-- *maður* 'man', masculine. -/
 def madur : GenderedNoun Gender.Value :=
-  { form := "maður", gloss := "man", gender := .masculine, naturalGender := some .masculine }
+  { form := "maður", gloss := "man", gender := .masculine, sex := some .male }
 
 /-- *kona* 'woman', feminine. -/
 def kona : GenderedNoun Gender.Value :=
-  { form := "kona", gloss := "woman", gender := .feminine, naturalGender := some .feminine }
+  { form := "kona", gloss := "woman", gender := .feminine, sex := some .female }
 
 /-- *Jón*, a man's name, masculine. -/
 def jon : GenderedNoun Gender.Value :=
-  { form := "Jón", gloss := "Jón", gender := .masculine, naturalGender := some .masculine }
+  { form := "Jón", gloss := "Jón", gender := .masculine, sex := some .male }
 
 /-- *skáld* 'poet', neuter whatever the sex of the poet. -/
 def skald : GenderedNoun Gender.Value := { form := "skáld", gloss := "poet", gender := .neuter }
@@ -106,15 +111,15 @@ def epli : GenderedNoun Gender.Value := { form := "epli", gloss := "apple", gend
 
 /-- *drengur* 'boy', masculine. -/
 def drengur : GenderedNoun Gender.Value :=
-  { form := "drengur", gloss := "boy", gender := .masculine, naturalGender := some .masculine }
+  { form := "drengur", gloss := "boy", gender := .masculine, sex := some .male }
 
 /-- *telpa* 'girl', feminine. -/
 def telpa : GenderedNoun Gender.Value :=
-  { form := "telpa", gloss := "girl", gender := .feminine, naturalGender := some .feminine }
+  { form := "telpa", gloss := "girl", gender := .feminine, sex := some .female }
 
 /-- *ær* 'ewe', feminine, the *á* of [corbett-1991]'s ch. 9 (57) its accusative. -/
 def aer : GenderedNoun Gender.Value :=
-  { form := "ær", gloss := "ewe", gender := .feminine, naturalGender := some .feminine }
+  { form := "ær", gloss := "ewe", gender := .feminine, sex := some .female }
 
 /-- *lamb* 'lamb', neuter. -/
 def lamb : GenderedNoun Gender.Value := { form := "lamb", gloss := "lamb", gender := .neuter }

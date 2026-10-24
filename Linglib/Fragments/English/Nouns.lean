@@ -138,14 +138,13 @@ def mold : Noun := .mass "mold"
 /-! ### Proper names -/
 
 /-- A name glossed by itself. -/
-def name (form : String) (gender : Option Gender := none) : ProperName :=
-  { form, gloss := form, gender }
+def name (form : String) (sex : Option Sex := none) : ProperName := { form, gloss := form, sex }
 
-def john : ProperName := name "John" (some .masculine)
-def mary : ProperName := name "Mary" (some .feminine)
-def bill : ProperName := name "Bill" (some .masculine)
-def sue : ProperName := name "Sue" (some .feminine)
-def fred : ProperName := name "Fred" (some .masculine)
+def john : ProperName := name "John" (some .male)
+def mary : ProperName := name "Mary" (some .female)
+def bill : ProperName := name "Bill" (some .male)
+def sue : ProperName := name "Sue" (some .female)
+def fred : ProperName := name "Fred" (some .male)
 def sam : ProperName := name "Sam"
 def pat : ProperName := name "Pat"
 

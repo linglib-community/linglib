@@ -62,8 +62,8 @@ def aPlurals : List Noun :=
 /-- Regular plurals. -/
 def regulars : List Noun :=
   [⟨⟨⟨"libro", "book"⟩, .masculine, none⟩, "libri", .masculine, .regular⟩,
-    ⟨⟨⟨"ragazzo", "boy"⟩, .masculine, some .masculine⟩, "ragazzi", .masculine, .regular⟩,
+    ⟨⟨⟨"ragazzo", "boy"⟩, .masculine, some .male⟩, "ragazzi", .masculine, .regular⟩,
     ⟨⟨⟨"casa", "house"⟩, .feminine, none⟩, "case", .feminine, .regular⟩,
-    ⟨⟨⟨"ragazza", "girl"⟩, .feminine, some .feminine⟩, "ragazze", .feminine, .regular⟩]
+    ⟨⟨⟨"ragazza", "girl"⟩, .feminine, some .female⟩, "ragazze", .feminine, .regular⟩]
 
 end Italian.NumberGender

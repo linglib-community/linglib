@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Reference.Animacy
 public import Linglib.Syntax.Category.Noun.Basic
+public import Linglib.Syntax.Gender.Assignment
 public import Linglib.Syntax.Number.Basic
 
 /-!
@@ -21,9 +22,9 @@ the gender: *el* and *los* go with a masculine, *la* and *las* with a feminine.
 ## Main definitions
 
 * `Spanish.Gender.Value`: the two genders, with their comparative labels.
-* `Spanish.Gender.Noun`: a noun with its gender, the gender of its referents where they have
-  one, and their animacy.
-* `Spanish.Gender.Noun.ofNaturalGender`: the entry of a noun whose gender is its referent's sex.
+* `Spanish.Gender.Noun`: a noun with its gender, the sex it restricts its referents to where it
+  does, and their animacy.
+* `Spanish.Gender.Noun.ofSex`: the entry of a noun whose gender is its referent's sex.
 * `Spanish.Gender.Value.definiteArticle`: the definite article of each gender in each number.
 
 ## Main results
@@ -57,58 +58,66 @@ def Value.toLabel : Value → Gender
   | .masc => .masculine
   | .fem => .feminine
 
-/-- A noun with its gender, the gender of its referents where they have one, and their
+/-- Male humans are masculine and female humans feminine. -/
+def Value.ofSex : Sex → Value
+  | .male => .masc
+  | .female => .fem
+
+/-- A noun with its gender, the sex it restricts its referents to where it does, and their
 animacy. -/
 structure Noun extends GenderedNoun Value where
   /-- The animacy of the noun's referents. -/
   animacy : Animacy
   deriving DecidableEq, Repr
 
-/-- `Noun.ofNaturalGender form gloss a g` is the noun `form` 'gloss' for a referent of gender
-`g` and animacy `a`, whose gender is `g`. -/
-def Noun.ofNaturalGender (form gloss : String) (animacy : Animacy) (g : Value) :
-    Noun :=
-  ⟨⟨⟨form, gloss⟩, g, some g.toLabel⟩, animacy⟩
+/-- A noun's gender is natural when it is the one its referents' sex is assigned. -/
+abbrev Noun.IsNatural (n : Noun) : Prop :=
+  _root_.Gender.IsNatural (Option.map Value.ofSex) (·.sex) (·.gender) n
+
+/-- `Noun.ofSex form gloss a x` is the noun `form` 'gloss' for a referent of sex `x` and animacy
+`a`, whose gender is the one that sex is assigned. -/
+def Noun.ofSex (form gloss : String) (animacy : Animacy) (x : Sex) : Noun :=
+  ⟨⟨⟨form, gloss⟩, Value.ofSex x, some x⟩, animacy⟩
 
 @[simp]
-theorem Noun.isNaturalGender_ofNaturalGender (form gloss : String) (a : Animacy)
-    (g : Value) : (Noun.ofNaturalGender form gloss a g).IsNaturalGender Value.toLabel :=
+theorem Noun.isNatural_ofSex (form gloss : String) (a : Animacy) (x : Sex) :
+    (Noun.ofSex form gloss a x).IsNatural :=
   rfl
 
 /-! ### Nouns taking the referent's gender -/
 
 /-- *hombre* 'man'. -/
-def hombre : Noun := .ofNaturalGender "hombre" "man" .human .masc
+def hombre : Noun := .ofSex "hombre" "man" .human .male
 
 /-- *mujer* 'woman'. -/
-def mujer : Noun := .ofNaturalGender "mujer" "woman" .human .fem
+def mujer : Noun := .ofSex "mujer" "woman" .human .female
 
 /-- *niño* 'boy'. -/
-def niño : Noun := .ofNaturalGender "niño" "boy" .human .masc
+def niño : Noun := .ofSex "niño" "boy" .human .male
 
 /-- *niña* 'girl'. -/
-def niña : Noun := .ofNaturalGender "niña" "girl" .human .fem
+def niña : Noun := .ofSex "niña" "girl" .human .female
 
 /-- *rey* 'king'. -/
-def rey : Noun := .ofNaturalGender "rey" "king" .human .masc
+def rey : Noun := .ofSex "rey" "king" .human .male
 
 /-- *reina* 'queen'. -/
-def reina : Noun := .ofNaturalGender "reina" "queen" .human .fem
+def reina : Noun := .ofSex "reina" "queen" .human .female
 
 /-- *gato* 'cat', whose plural *los gatos* also covers cats of either sex. -/
-def gato : Noun := .ofNaturalGender "gato" "cat" .animate .masc
+def gato : Noun := .ofSex "gato" "cat" .animate .male
 
 /-- *gata* 'she-cat'. -/
-def gata : Noun := .ofNaturalGender "gata" "she-cat" .animate .fem
+def gata : Noun := .ofSex "gata" "she-cat" .animate .female
 
 /-- *soldado* 'soldier', *un soldado* of a man and *una soldado* of a woman. -/
-def soldado : Value → Noun := .ofNaturalGender "soldado" "soldier" .human
+def soldado : Sex → Noun := .ofSex "soldado" "soldier" .human
 
 /-- *estudiante* 'student', *el estudiante* of a man and *la estudiante* of a woman. -/
-def estudiante : Value → Noun := .ofNaturalGender "estudiante" "student" .human
+def estudiante : Sex → Noun := .ofSex "estudiante" "student" .human
 
 /-- *artista* 'artist', *el artista* of a man and *la artista* of a woman. -/
-def artista : Value → Noun := .ofNaturalGender "artista" "artist" .human
+def artista : Sex → Noun := .ofSex "artista" "artist" .human
 
 /-! ### Nouns of one gender for either sex -/
 
@@ -160,7 +169,7 @@ def vaso : Noun := { form := "vaso", gloss := "glass", gender := .masc, animacy 
 /-- The nouns, with both entries of each noun of one form for either sex. -/
 def allNouns : List Noun :=
   [hombre, mujer, niño, niña, rey, reina, gato, gata] ++
-    ([soldado, estudiante, artista].flatMap fun n ↦ [n .masc, n .fem]) ++
+    ([soldado, estudiante, artista].flatMap fun n ↦ [n .male, n .female]) ++
     [persona, ángel, mesa, silla, casa, puerta, ventana, cama, libro, zapato, coche, árbol,
       cielo, vaso]
 
