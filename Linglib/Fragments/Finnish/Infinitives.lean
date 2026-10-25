@@ -36,7 +36,7 @@ in *sano-a* 'say' and *huomat-a* 'notice'. The E infinitive changes the -A to -e
 ## Main results
 
 * `Finnish.Infinitive.toCase_mem_cases_ma_iff`: of the local cases the MA infinitive takes the
-  interior series and, of the exterior series, the adessive alone.
+  internal cases and, of the external cases, the adessive alone.
 * `Finnish.Infinitive.surface_base_e`: the E infinitive of Karlsson's stems in -e.
 
 ## Implementation notes
@@ -77,8 +77,8 @@ def cases : Infinitive → Finset Case
   | .ma => {.ine, .ela, .ill, .ade, .abess, .instr}
   | .minen => {.nom, .part}
 
-/-- Of the local cases the MA infinitive takes the interior series and, of the exterior
-series, the adessive alone. -/
+/-- Of the local cases the MA infinitive takes the internal cases and, of the external cases,
+the adessive alone. -/
 theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.Path.Direction}
     {c : _root_.Case} (h : _root_.Case.toCase r d = some c) :
     c ∈ ma.cases.image Case.label ↔ r = .interior ∨ r = .exterior ∧ d = .place := by

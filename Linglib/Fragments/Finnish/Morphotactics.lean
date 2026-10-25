@@ -41,6 +41,8 @@ vowel the third person is usually -Vn, as in *talo-ssa-an* 'in his house', besid
 * `Finnish.Nominal.not_wellFormed_nominativePlural_case`,
   `Finnish.Nominal.not_wellFormed_comitative`: the nominative plural takes no case ending and a
   comitative needs a possessive ending.
+* `Finnish.Nominal.injective_caseEndings`: the endings of the two numbers separate the cases,
+  though those of the singular do not.
 * `Finnish.Nominal.continuations_third`: the third-person possessive ending after the inessive
   and after the illative.
 * `Finnish.Nominal.realize_gen_possessive`: with a possessive ending the genitive is the
@@ -188,14 +190,26 @@ theorem not_wellFormed_comitative : ¬ WellFormed [⟨_, .case .com⟩] := by
 def numberSystem : Number.System := { values := {.singular, .plural} }
 
 /-- The endings of the case `c` in the number `num`, where in the plural the genitive is -en, or
--den or -tten (§13.1.2), the partitive -A or -tA and the illative -hVn or -siin. -/
+-den or -tten (§13.1.2), the accusative -dät (§13.3.1), the partitive -A or -tA and the illative
+-hVn or -siin. -/
 def caseEndings (num : numberSystem.values) (c : Case) : List (List Segment) :=
   numberSystem.elim (Declension.endings c)
     (match c with
     | .gen => [[e, n], [d, e, n], [t, t, e, n]]
+    | .acc => [[d, ä, t]]
     | .part => [[A], [t, A]]
     | .ill => [[h, V, n], [s, i, i, n]]
     | c => Declension.endings c) (n := num)
+
+theorem not_injective_caseEndings_singular :
+    ¬ Function.Injective (caseEndings (numberSystem.value .singular)) :=
+  fun h ↦ absurd (h (a₁ := .gen) (a₂ := .instr) rfl) (by decide)
+
+/-- The endings of the two numbers separate the cases, the plural parting the genitive and the
+instructive, which are both -n in the singular. -/
+theorem injective_caseEndings : Function.Injective fun c ↦
+    (caseEndings (numberSystem.value .singular) c, caseEndings (numberSystem.value .plural) c) := by
+  decide
 
 /-- Before a possessive ending the translative -ksi is -kse, and a final consonant is dropped. -/
 def beforePossessive (x : List Segment) : List Segment :=
