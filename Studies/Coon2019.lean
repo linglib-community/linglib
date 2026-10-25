@@ -35,13 +35,14 @@ heads whose parametric semantics supplies two of the three properties the licens
 an external argument and its implicitness; the third, inherent ergative case, is the transitive
 head's own, since the substrate's Case checking is the accusative of v. The count adopts the
 Obligatory Case Parameter of footnote 15, one of the two options the paper leaves open. The
-class of a root fixes which realizations its internal slot admits; that an intransitive root's
-argument is only ever a full DP encodes the absence of unaccusative subject incorporation, (48),
-which the paper leaves to typology, and no implicit option for such roots is attested. The event
-semantics of §3.2.2 records truth conditions; the locus of Existential Closure that separates
-the two antipassives lives in the -aj predicate. Status suffixes, derived transitives in -ej,
-word order, stative -an stems, the inanimate causer of (70a) and the isolated -j form (71) are
-recorded as data only.
+same two properties and the realization of the internal argument compute the voice of each stem
+in the substrate's types of voice alternation. The class of a root fixes which realizations its
+internal slot admits; that an intransitive root's argument is only ever a full DP encodes the
+absence of unaccusative subject incorporation, (48), which the paper leaves to typology, and no
+implicit option for such roots is attested. The event semantics of §3.2.2 records truth
+conditions; the locus of Existential Closure that separates the two antipassives lives in the
+-aj predicate. Status suffixes, derived transitives in -ej, word order, stative -an stems, the
+inanimate causer of (70a) and the isolated -j form (71) are recorded as data only.
 
 ## Errata
 
@@ -210,18 +211,26 @@ def WellFormed (rc : RootClass) (v : V) (i : Internal) : Prop :=
 instance (rc : RootClass) (v : V) (i : Internal) : Decidable (WellFormed rc v i) := by
   unfold WellFormed; infer_instance
 
-/-- The voice of the fragment a head derives with a realization of the internal argument
-(Section 4) is the transitive stem under the transitive head, the passives under -ch and -j, the
-attested -chaj carrying the -aj that closes the implicit agent, and under -w the incorporation
-antipassive with a bare NP and, with -aj closing an implicit theme, the absolutive antipassive;
-none under the null intransitive head, whose stem is no voice. -/
-def V.voice : V → Internal → Option Voice
-  | .transitive, _ => some Chuj.transitive
-  | .intransitive, _ => none
-  | .ch, _ => some Chuj.passive
-  | .j, _ => some Chuj.agentlessPassive
-  | .w, .implicit => some Chuj.absolutiveAntipassive
-  | .w, _ => some Chuj.incorporationAntipassive
+/-- The position a realization of the internal argument takes in a stem's frame: a full DP is
+nominal, a bare NP incorporated, and an implicit argument implicit. -/
+def Internal.position? : Internal → Option ArgumentFrame.Position
+  | .dp => some .nominal
+  | .np => some .incorporated
+  | .implicit => some (.implicit none)
+  | .absent => none
+
+/-- The voice of a transitive root's stem under a head and a realization of the internal argument,
+from the transitive stem (§4, (78)). A head that merges an overt agent keeps it as the subject,
+the internal argument after it; otherwise the internal argument is the subject, the agent implicit
+under a head that merges an implicit one and out of participant structure under a head that
+merges none. -/
+def stemVoice (v : V) (i : Internal) : Voice :=
+  if v.head.IsThematic ∧ ¬ v.head.ExternalImplicit then
+    .of .np ⟨some .nominal, i.position?.toList⟩
+      [some .external, i.position?.map fun _ ↦ ArgumentFrame.Slot.complement 0]
+  else if v.head.ExternalImplicit then
+    .of .np ⟨some .nominal, [.implicit none]⟩ [some (.complement 0), some .external]
+  else .of .np .intransitive [none, some .external]
 
 /-- A root class forms a stem with a head when the head is well-formed on it under some
 realization; stems with other derivational suffixes, (11) and (15), are not in view. -/
@@ -237,18 +246,12 @@ theorem formsStem_iff :
       (∀ v, FormsStem .pos v ↔ v = .w) ∧ ∀ v, FormsStem .nom v ↔ v = .w := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> intro v <;> cases v <;> decide
 
-/-- The stems of a transitive root are exactly the five voices of the fragment, (58). -/
-theorem voice_tv_iff (vo : Voice) :
-    vo ∈ Chuj.voices ↔ ∃ v i, WellFormed .tv v i ∧ v.voice i = some vo := by
-  constructor
-  · intro h
-    simp only [Chuj.voices, Finset.mem_insert, Finset.mem_singleton] at h
-    rcases h with rfl | rfl | rfl | rfl | rfl
-    exacts [⟨.transitive, .dp, by decide, rfl⟩, ⟨.w, .np, by decide, rfl⟩,
-      ⟨.w, .implicit, by decide, rfl⟩, ⟨.j, .dp, by decide, rfl⟩, ⟨.ch, .dp, by decide, rfl⟩]
-  · rintro ⟨v, i, hw, hv⟩
-    cases v <;> cases i <;> simp only [V.voice, Option.some.injEq, reduceCtorEq] at hv <;>
-      first | exact absurd hw (by decide) | (subst hv; decide)
+/-- The voices of a transitive root's stems are exactly the five voices of the fragment, markers
+aside, the fragment keeping *-waj* and *-chaj* undecomposed ((56), (58)). -/
+theorem stemVoice_image :
+    (Finset.univ.filter fun p : V × Internal ↦ WellFormed .tv p.1 p.2).image
+        (fun p ↦ stemVoice p.1 p.2) = Chuj.voices.image (·.marked []) := by
+  decide
 
 /-- A transitive root's stem has a full DP under the transitive head and both passives, and a bare
 NP or an implicit argument under -w ((78), (79)). -/
@@ -298,6 +301,16 @@ theorem agentiveIntransitive_iff (v : V) (i : Internal) :
     AgentiveIntransitive v i ↔ v = .w ∧ i ≠ .dp := by
   cases v <;> cases i <;> decide
 
+/-- The type of voice alternation of a transitive root's stem follows from its head (§4.1, (78)):
+a head that merges no external argument gives a decausativization, the agentless passive in -j,
+one that merges an implicit agent a passivization, -chaj, and the agentive intransitive stems are
+the antipassivizations, -w and -waj. -/
+theorem stemVoice_types (v : V) (i : Internal) (hw : WellFormed .tv v i) :
+    ((stemVoice v i).IsDecausativization ↔ ¬ v.head.IsThematic) ∧
+      ((stemVoice v i).IsPassivization ↔ v.head.ExternalImplicit) ∧
+      ((stemVoice v i).IsAntipassivization ↔ AgentiveIntransitive v i) := by
+  cases v <;> cases i <;> first | exact absurd hw (by decide) | decide
+
 /-! ### Implicit arguments and -aj -/
 
 /-- The implicit arguments of a stem, the existentially bound agent of -ch and the implicit
@@ -321,12 +334,10 @@ theorem aj_table :
     Aj .ch .dp ∧ Aj .w .implicit ∧ ¬ Aj .j .dp ∧ ¬ Aj .w .np ∧ ¬ Aj .transitive .dp := by
   decide
 
-/-- -aj appears on exactly the stems of a transitive root whose voice leaves a participant implicit
-or oblique, available to an oblique DP with its thematic role; the stems without it fill the slot
-with a bare noun or do not project it (§4.2). -/
-theorem aj_iff_implicit_or_oblique (v : V) (i : Internal) (hw : WellFormed .tv v i) :
-    ∀ vo ∈ v.voice i, Aj v i ↔
-      ∃ j, vo.derived.construction j = .implicit ∨ vo.derived.construction j = .term .X := by
+/-- -aj appears on exactly the stems of a transitive root whose voice leaves a participant
+implicit, the overt reflex of its existential binding, which an oblique DP can name (§4.2). -/
+theorem aj_iff_implicit (v : V) (i : Internal) (hw : WellFormed .tv v i) :
+    Aj v i ↔ ∃ j, (stemVoice v i).derived.construction j = .implicit := by
   cases v <;> cases i <;> first | exact absurd hw (by decide) | decide
 
 /-! ### Agent diagnostics -/
