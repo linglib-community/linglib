@@ -137,7 +137,7 @@ with the arcs of its bracketing. -/
 def fig1Sov : Graph 6 :=
   .ofArcs [Word.mk' "rizba" .NOUN, Word.mk' "redal" .ADJ, Word.mk' "lanferda" .NOUN,
       Word.mk' "sool" .ADP, Word.mk' "barsadi" .NOUN, Word.mk' "kyse" .VERB]
-    5 [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case_)]
+    5 [(5, 0, .nsubj), (5, 4, .obj), (4, 2, .nmod), (2, 1, .amod), (2, 3, .case)]
 
 /-- Object first, [[RED STOOL ON] HUNTER-OBJ] MOUNTIE PUNCH. -/
 def fig1Osv : Graph 6 := fig1Sov.linearize [1, 2, 3, 4, 0, 5] (by decide)

@@ -56,22 +56,22 @@ def perf_system_p3 : Cell :=
   { number := ↑UD.Number.Plur, person := ↑UD.Person.third, system := ↑System.perf }
 
 /-- The acc sg cell, `Case=Acc|Number=Sing`. -/
-def acc_sg : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
+def acc_sg : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
 
 /-- The gen sg cell, `Case=Gen|Number=Sing`. -/
-def gen_sg : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
+def gen_sg : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
 
 /-- The dat sg cell, `Case=Dat|Number=Sing`. -/
-def dat_sg : Cell := { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing }
+def dat_sg : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing }
 
 /-- The acc pl cell, `Case=Acc|Number=Plur`. -/
-def acc_pl : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur }
+def acc_pl : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur }
 
 /-- The gen pl cell, `Case=Gen|Number=Plur`. -/
-def gen_pl : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
+def gen_pl : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
 
 /-- The dat pl cell, `Case=Dat|Number=Plur`. -/
-def dat_pl : Cell := { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur }
+def dat_pl : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur }
 
 /-- The act s1 cell, `Number=Sing|Person=1|Voice=Act`. -/
 def act_s1 : Cell :=

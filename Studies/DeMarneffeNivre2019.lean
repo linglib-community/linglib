@@ -82,7 +82,7 @@ def ex1a : Tree 9 :=
       Word.mk' "snowing" .VERB, Word.mk' "I" .PRON, Word.mk' "went" .VERB, Word.mk' "for" .ADP,
       Word.mk' "a" .DET, Word.mk' "run" .NOUN]
     5 [(5, 3, .advcl), (3, 0, .mark), (3, 1, .nsubj), (3, 2, .aux), (5, 4, .nsubj),
-      (5, 8, .obl), (8, 6, .case_), (8, 7, .det)])
+      (5, 8, .obl), (8, 6, .case), (8, 7, .det)])
 
 /-- (1b) *I went for a run, while it was snowing*. -/
 def ex1b : Tree 9 :=
@@ -90,7 +90,7 @@ def ex1b : Tree 9 :=
       Word.mk' "a" .DET, Word.mk' "run" .NOUN, Word.mk' "while" .SCONJ, Word.mk' "it" .PRON,
       Word.mk' "was" .AUX, Word.mk' "snowing" .VERB]
     1 [(1, 8, .advcl), (8, 5, .mark), (8, 6, .nsubj), (8, 7, .aux), (1, 0, .nsubj),
-      (1, 4, .obl), (4, 2, .case_), (4, 3, .det)])
+      (1, 4, .obl), (4, 2, .case), (4, 3, .det)])
 
 /-- §3.1: the two orders of (1) have identical dependency representations: (1b) is (1a)
 relabelled along the rotation of the positions by five. -/
@@ -105,7 +105,7 @@ def ex2a : Tree 8 :=
       Word.mk' "the" .DET, Word.mk' "bin" .NOUN, Word.mk' "with" .ADP, Word.mk' "old" .ADJ,
       Word.mk' "trash" .NOUN]
     1 [(1, 0, .nsubj), (1, 2, .compound), (1, 4, .obj), (4, 3, .det), (4, 7, .nmod),
-      (7, 5, .case_), (7, 6, .amod)])
+      (7, 5, .case), (7, 6, .amod)])
 
 /-- (2b) *She threw the bin with old trash out*. -/
 def ex2b : Tree 8 :=
@@ -113,7 +113,7 @@ def ex2b : Tree 8 :=
       Word.mk' "bin" .NOUN, Word.mk' "with" .ADP, Word.mk' "old" .ADJ, Word.mk' "trash" .NOUN,
       Word.mk' "out" .ADP]
     1 [(1, 0, .nsubj), (1, 7, .compound), (1, 3, .obj), (3, 2, .det), (3, 6, .nmod),
-      (6, 4, .case_), (6, 5, .amod)])
+      (6, 4, .case), (6, 5, .amod)])
 
 /-- (3a) *She threw out the bin*. -/
 def ex3a : Tree 5 :=
@@ -187,7 +187,7 @@ def fig4a : Tree 8 :=
 /-- Figure 4b: content words as heads, as in Universal Dependencies. -/
 def fig4b : Tree 8 :=
   .mk' (.ofArcs fig4Words 1 [(1, 0, .nsubj), (1, 5, .ccomp), (5, 2, .mark), (5, 3, .nsubj),
-    (5, 4, .aux), (5, 7, .obl), (7, 6, .case_)])
+    (5, 4, .aux), (5, 7, .obl), (7, 6, .case)])
 
 /-- Figure 4: the content-word-headed tree satisfies §4.5's principle and the
 function-word-headed tree does not, *that*, *will* and *on* heading *will*, *rely* and *her*. -/
@@ -200,7 +200,7 @@ def fig7en : Tree 10 :=
       Word.mk' "chase" .VERB, Word.mk' "the" .DET, Word.mk' "cat" .NOUN, Word.mk' "out" .ADP,
       Word.mk' "of" .ADP, Word.mk' "the" .DET, Word.mk' "room" .NOUN]
     3 [(3, 1, .nsubj), (1, 0, .det), (3, 2, .aux), (3, 5, .obj), (5, 4, .det), (3, 9, .obl),
-      (9, 6, .case_), (6, 7, .fixed), (9, 8, .det)])
+      (9, 6, .case), (6, 7, .fixed), (9, 8, .det)])
 
 /-- Figure 7, Finnish: *koira jahtaa kissan huoneesta*, the relations marked by case. -/
 def fig7fi : Tree 4 :=

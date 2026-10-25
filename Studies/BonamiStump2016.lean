@@ -282,7 +282,7 @@ inductive Noun | dana
 open Noun
 
 /-- The property set of case `k` and number `n`. -/
-def nominal (k : Case) (n : Number) : Features := .of (number := some n) (case_ := some k)
+def nominal (k : Case) (n : Number) : Features := .of (number := some n) (case := some k)
 
 /-- The property set `σ/{nom}` of (17) is `σ` with nominative case. -/
 def toNom (σ : Features) : Features := Function.update σ .case (some Case.nom)
@@ -290,7 +290,7 @@ def toNom (σ : Features) : Features := Function.update σ .case (some Case.nom)
 /-- Block i holds the nominative dual exponent and the vocative rule of referral (17). -/
 def caseBlock : Block Noun String Features :=
   [ ⟨Finset.univ, nominal .nom .dual, .const (· ++ "e")⟩,
-    ⟨Finset.univ, .of (case_ := some .voc), .referral toNom⟩ ]
+    ⟨Finset.univ, .of (case := some .voc), .referral toNom⟩ ]
 
 /-- The vocative dual takes the nominative dual's exponent. -/
 theorem voc_refers_to_nom : caseBlock.eval (dana, nominal .voc .dual) "dān" =

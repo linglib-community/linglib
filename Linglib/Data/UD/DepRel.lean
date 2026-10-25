@@ -47,9 +47,8 @@ inductive DepRel where
   | appos
   /-- A function word expressing tense, mood, aspect, voice or evidentiality on a predicate. -/
   | aux
-  /-- A case-marking element of a nominal, such as a preposition, postposition or clitic, with the
-  label `case`. -/
-  | case_
+  /-- A case-marking element of a nominal, such as a preposition, postposition or clitic. -/
+  | case
   /-- A coordinating conjunction, attached to the following conjunct. -/
   | cc
   /-- A clausal complement of a verb or adjective without an obligatorily controlled subject. -/
@@ -167,7 +166,7 @@ def kind : DepRel → Kind
   | nmod | appos | nummod => .cell .nominalDependent .nominal
   | acl => .cell .nominalDependent .clause
   | amod => .cell .nominalDependent .modifierWord
-  | det | clf | case_ => .cell .nominalDependent .functionWord
+  | det | clf | case => .cell .nominalDependent .functionWord
   | conj | cc => .coordination
   | fixed | flat | compound => .multiwordExpression
   | list | parataxis => .loose

@@ -133,7 +133,7 @@ abbrev CzCell : Type := Czech.Declension.Cell
 
 /-- The case of a form's cell. -/
 def caseOfForm (f : Form Wordlist.Cell) : Option Case :=
-  (f.cell.case_ : Option UD.Case).map Case.fromUD
+  (f.cell.case : Option UD.Case).bind Case.fromUD
 
 /-- The number of a form's cell. -/
 def numberOfForm (f : Form Wordlist.Cell) : Option Number :=

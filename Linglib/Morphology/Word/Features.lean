@@ -78,7 +78,7 @@ namespace Features
 
 /-- The bundle specifying the named values and nothing else. -/
 def of (person : Option Person := none) (number : Option Number := none)
-    (gender : Option UD.Gender := none) (case_ : Option Case := none)
+    (gender : Option UD.Gender := none) (case : Option Case := none)
     (definiteness : Option UD.Definite := none) (degree : Option UD.Degree := none)
     (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
     (verbForm : Option UD.VerbForm := none) (tense : Option UD.Tense := none)
@@ -87,7 +87,7 @@ def of (person : Option Person := none) (number : Option Number := none)
   | .person => person
   | .number => number
   | .gender => gender
-  | .case => case_
+  | .case => case
   | .definiteness => definiteness
   | .degree => degree
   | .pronType => pronType

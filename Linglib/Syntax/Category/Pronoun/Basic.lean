@@ -185,7 +185,7 @@ def toWord (pronType : Option UD.PronType := none) (reflex : Option Unit := none
     Morphology.Word :=
   { form := p.form, cat := .PRON,
     features := .of (person := p.person) (number := p.number) (gender := p.gender)
-      (case_ := p.case) (reflex := reflex) (pronType := pronType) }
+      (case := p.case) (reflex := reflex) (pronType := pronType) }
 
 /-- The token of a pronoun bears the pronoun's φ-features, whatever its pronoun type and reflexive
 marking. -/

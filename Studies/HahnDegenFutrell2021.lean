@@ -81,7 +81,7 @@ def longObjectFirst : Graph 11 :=
       Word.mk' "green" .ADJ, Word.mk' "broccoli" .NOUN, Word.mk' "with" .ADP,
       Word.mk' "a" .DET, Word.mk' "fork" .NOUN]
     1 [(1, 0, .nsubj), (1, 7, .obj), (7, 2, .det), (4, 3, .advmod), (7, 4, .amod),
-      (6, 5, .advmod), (7, 6, .amod), (10, 8, .case_), (10, 9, .det), (1, 10, .obl)]
+      (6, 5, .advmod), (7, 6, .amod), (10, 8, .case), (10, 9, .det), (1, 10, .obl)]
 
 /-- The shifted order of example (2), in which the prepositional phrase precedes the long
 object. -/
@@ -92,7 +92,7 @@ def shifted : Graph 11 :=
       Word.mk' "delicious" .ADJ, Word.mk' "bright" .ADV, Word.mk' "green" .ADJ,
       Word.mk' "broccoli" .NOUN]
     1 [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
-      (9, 8, .advmod), (10, 9, .amod), (4, 2, .case_), (4, 3, .det), (1, 4, .obl)]
+      (9, 8, .advmod), (10, 9, .amod), (4, 2, .case), (4, 3, .det), (1, 4, .obl)]
 
 theorem longObjectFirst_eq_reorderDependents :
     longObjectFirst = shifted.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩) :=

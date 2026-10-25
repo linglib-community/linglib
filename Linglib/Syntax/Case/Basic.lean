@@ -22,8 +22,9 @@ containment orders in `Syntax/Case/Order.lean` and Blake's hierarchy of case sys
 `Studies/Blake1994.lean`.
 
 The Universal Dependencies case tags are the corpus vocabulary, reached through
-`Morphology/Word/UD.lean` ([de-marneffe-zeman-2021]). Every value realizes as a tag and every tag
-ingests as a value. The oblique realizes as `Acc`, the tag UD's guidelines give the oblique of a
+`Morphology/Word/UD.lean` ([de-marneffe-zeman-2021]). Every value realizes as a tag, and every tag
+but the comparative, considerative, distributive, equative, additive and lative ingests as a
+value. The oblique realizes as `Acc`, the tag UD's guidelines give the oblique of a
 language with only a direct and an oblique case, and so ingests back as the accusative.
 
 ## Main definitions

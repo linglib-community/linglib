@@ -209,7 +209,7 @@ def cliticOf : Wordlist.Clitic → Clitic
 
 /-- The plural exponent of a cell, *-t* in the nominative and *-i-* in the other cases. -/
 def numberOf (c : Wordlist.Cell) : Option (Nominal.Exponent .number) :=
-  match (c.number : Option UD.Number), (c.case_ : Option UD.Case) with
+  match (c.number : Option UD.Number), (c.case : Option UD.Case) with
   | some .Plur, some .Nom => some .nominativePlural
   | some .Plur, _ => some .plural
   | _, _ => none
@@ -220,7 +220,7 @@ def spell (w : String) : Option (List Segment) := (w.toList.map Char.toLower).ma
 /-- A word from a form's segmentation and cell. -/
 def Word.ofForm (f : Form Wordlist.Cell) : Option Word := do
   let stem ← f.segments.head?.bind spell
-  let c ← (f.cell.case_ : Option UD.Case).bind caseEnding
+  let c ← (f.cell.case : Option UD.Case).bind caseEnding
   let inf := (f.cell.infinitive : Option Wordlist.Infinitive).map infinitiveOf
   let num := numberOf f.cell
   let p := (f.cell.possessor : Option Wordlist.Possessor).map possessorOf
