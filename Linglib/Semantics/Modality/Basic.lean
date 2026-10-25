@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Order.UpperLower.Principal
 public import Linglib.Pragmatics.SocialMeaning.Register
+public import Linglib.Semantics.Degree.Boundedness
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Bounds.Defs
@@ -35,6 +36,9 @@ perspective and orientation locate a modal claim in time.
 
 * `Modality.ModalForce.monotone_standard`, `Modality.ModalForce.strictMono_standard`: a stronger
   force sets a stronger standard, so the strength order is the order of the standards.
+* `Modality.ModalForce.standard_possibility_mem`, `Modality.ModalForce.standard_weakNecessity_mem`:
+  possibility's standard is a minimum standard, which the scale fixes, and weak necessity's a
+  threshold, which it does not.
 
 ## References
 
@@ -153,6 +157,18 @@ theorem strictMono_standard [DenselyOrdered D] (hθ : ⊥ < θ) (hθθ' : θ < �
   have hθ'' := SetLike.ext_iff.1 h θ
   cases f <;> cases g <;>
     simp [standard, hx, hxθ.not_ge, (hxθ.trans hθθ').not_ge, hθθ'.not_ge] at hx' hθ'' ⊢
+
+/-- Possibility's standard is a minimum standard, the one existential closure above the least
+degree gives ([grano-2026]), and so one the scale fixes. -/
+theorem standard_possibility_mem :
+    standard θ θ' .possibility ∈ Degree.PositiveStandard.minEndpoint.standards D :=
+  ⟨⊥, isBot_bot, rfl⟩
+
+/-- Weak necessity's standard is a threshold, which the scale does not fix, so that weak
+necessity, like a relative adjective, needs a comparison class ([grano-2026] §7). -/
+theorem standard_weakNecessity_mem :
+    standard θ θ' .weakNecessity ∈ Degree.PositiveStandard.contextual.standards D :=
+  ⟨θ, .inr rfl⟩
 
 end Standard
 

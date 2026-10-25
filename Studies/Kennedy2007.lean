@@ -144,8 +144,8 @@ theorem fragment_pairs_table61 :
 /-! ### Interpretive Economy (§4.2–§4.3) -/
 
 theorem open_requires_comparison_class :
-    Boundedness.IsRelative .open_ :=
-  trivial
+    Boundedness.IsRelative .open_ := by
+  decide
 
 open English.Adjectives in
 /-- *Bent* and *straight* could take a relative standard, but their scale fixes the transition

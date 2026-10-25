@@ -7,10 +7,10 @@ public import Linglib.Syntax.Category.Adjective.Basic
 # Gradable adjectives
 
 This file defines `Degree.GradableAdjective`, a syntactic adjective together with its degree
-semantics. The scale an adjective measures on, its positive standard and its Kennedy class are
-read off its `Degree.Gradability`, its dimension, polarity and any lexically fixed standard, so
-that *wet* and *dry* share one scale and differ only in pole. The file also defines antonym pairs
-and the ways a multidimensional adjective binds its dimensions.
+semantics. The scale an adjective measures on and its positive standard, whose kind is Kennedy's
+class of the adjective, are read off its `Degree.Gradability`, its dimension, polarity and any
+lexically fixed standard, so that *wet* and *dry* share one scale and differ only in pole. The
+file also defines antonym pairs and the ways a multidimensional adjective binds its dimensions.
 
 An antonym pair is contradictory when its poles take complementary standards, the minimum and the
 maximum of one scale, as Kennedy and McNally explain for *open* and *closed*. A pair of extreme
@@ -21,7 +21,6 @@ relative to a contextual range, is left to the studies.
 
 ## Main definitions
 
-* `AdjectiveClass`: Kennedy's classes of gradable adjectives.
 * `GradableAdjective`: a syntactic adjective with its degree semantics.
 * `GradableAdjective.boundedness`: the scale an adjective measures on.
 * `GradableAdjective.standard`: the positive standard of an adjective.
@@ -57,26 +56,6 @@ namespace Degree
 
 /-! ### Kennedy's adjective classes -/
 
-/-- An adjective class is Kennedy's classification of an adjective by its scale structure and
-standard ([kennedy-2007], [kennedy-mcnally-2005]), with further classes for the lexical necessity
-and extreme standards and for non-gradable adjectives. -/
-inductive AdjectiveClass where
-  /-- The standard varies with a comparison class, as for *tall*, *expensive* and *big*. -/
-  | relative
-  /-- The standard is the maximum of the scale, as for *full*, *straight*, *closed* and *dry*. -/
-  | absoluteMaximum
-  /-- The standard is the minimum of the scale, as for *wet*, *bent*, *open* and *dirty*. -/
-  | absoluteMinimum
-  /-- The standard is a necessity threshold, as for *decent* and *acceptable* ([beltrama-2025]). -/
-  | mildlyPositive
-  /-- The standard lies beyond that of the weak adjective on the same pole, as for *gigantic* and
-  *pristine* ([morzycki-2012]). -/
-  | extreme
-  /-- The adjective has no degree argument and no scale, as for *atomic*, *prime*, *deceased* and
-  *pregnant*; an adjective that is not gradable belongs here rather than in a gradable class. -/
-  | nonGradable
-  deriving Repr, DecidableEq
-
 /-! ### The gradable adjective -/
 
 /-- A spatial configuration type classifies the spatial state an adjective describes in a
@@ -90,8 +69,8 @@ inductive SpatialConfigType where
 
 /-- A **gradable adjective** is a syntactic adjective together with its degree semantics,
     namely any lexically fixed standard, its resultative spatial configuration ([levin-2026]) and
-    its evaluative valence ([nouwen-2024]). Its scale, positive standard and adjective class are
-    derived from its dimension and polarity. -/
+    its evaluative valence ([nouwen-2024]). Its scale and positive standard are derived from its
+    dimension and polarity. -/
 structure GradableAdjective extends Adjective where
   /-- The lexically fixed positive standard, for a partial adjective on a closed scale or for an
       adjective on an open scale whose standard its lexicon fixes, such as the necessity standard
@@ -125,25 +104,6 @@ theorem admits_standard (g : GradableAdjective) (h : g.lexicalStandard = none) :
   | some d =>
     simpa [boundedness, standard, gradability?, hd] using
       Gradability.admits_standard (g := ⟨d, g.polarity, g.lexicalStandard⟩) h
-
-/-- Kennedy's class of an adjective is read off its standard, and is non-gradable exactly when
-    the adjective has no dimension ([kennedy-2007], [kennedy-mcnally-2005]). -/
-def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
-  match g.dimension with
-  | none => .nonGradable
-  | some _ =>
-    match g.standard with
-    | .contextual  => .relative
-    | .minEndpoint => .absoluteMinimum
-    | .maxEndpoint => .absoluteMaximum
-    | .necessity   => .mildlyPositive
-    | .extreme     => .extreme
-
-/-- An adjective is relative when its class is the relative one. -/
-def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass = .relative
-
-instance (g : GradableAdjective) : Decidable g.IsRelative := by
-  unfold IsRelative; infer_instance
 
 end GradableAdjective
 

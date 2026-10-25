@@ -41,7 +41,8 @@ degree, always has the minimum standard, and at it the positive form is a compar
   least or greatest degree adjoined.
 * `Boundedness.DegreeShape`: the canonical linear order of each boundedness.
 * `Degree.IsInvariant`: a standard every automorphism of the degrees maps to itself.
-* `PositiveStandard`: the kinds of standard of the positive form.
+* `PositiveStandard`, `PositiveStandard.standards`: the kinds of standard of the positive form,
+  and the standards of each kind on a scale.
 * `Boundedness.Admits`, `Boundedness.defaultStandard`: the standards Interpretive Economy admits
   on a scale, and the one it prefers.
 * `EndpointModifier`, `Boundedness.Licenses`: maximizers and minimizers, licensed by an endpoint.
@@ -52,9 +53,10 @@ degree, always has the minimum standard, and at it the positive form is a compar
 * `Degree.isInvariant_iff_of_exists_orderIso`: where an automorphism carries any degree between
   the endpoints to any other, the invariant standards are the trivial and the endpoint ones.
 * `Boundedness.admits_contextual`: the contextual standard is admitted exactly on an open scale.
+* `PositiveStandard.requiresComparisonClass_iff`, `PositiveStandard.complementary_iff`: the scale
+  fixes exactly the endpoint standards, and only the minimum and the maximum are complementary.
 * `preimage_projIci_comp_Ioi_bot`: a comparative is the positive form of a difference function
   at the minimum standard.
-* `Boundedness.complementary_defaultStandard_dual_iff`: poles on a half-closed scale contradict.
 
 ## Implementation notes
 
@@ -461,34 +463,105 @@ inductive PositiveStandard where
   | extreme
   deriving DecidableEq, Repr
 
-/-- A standard requires a comparison class when fixing it needs contextual information about a
-domain. [kennedy-2007] argues against a comparison-class argument of the positive form, as in
-[klein-1980], and states the positive form with a standard-fixing function,
-`⟦pos⟧ = λg.λx. g(x) ⪰ s(g)` ((27)), which still needs that information for the contextual and
-necessity standards. An extreme standard lies beyond the degrees a context makes salient
-([morzycki-2012]), so it needs that information too. -/
-def PositiveStandard.RequiresComparisonClass : PositiveStandard → Prop
-  | .contextual  => True
-  | .minEndpoint => False
-  | .maxEndpoint => False
-  | .necessity   => True
-  | .extreme     => True
+/-- The standards of a kind on a scale. A minimum standard is the set of degrees above a least
+degree and a maximum standard the set from a greatest one; a contextual, necessity or extreme
+standard is a threshold, the degrees above or from some degree, which the context or the lexicon
+fixes and the scale does not. -/
+def PositiveStandard.standards (s : PositiveStandard) (D : Type*) [Preorder D] :
+    Set (UpperSet D) :=
+  match s with
+  | .minEndpoint => {U | ∃ m, IsBot m ∧ U = .Ioi m}
+  | .maxEndpoint => {U | ∃ m, IsTop m ∧ U = .Ici m}
+  | .contextual | .necessity | .extreme => {U | ∃ θ, U = .Ioi θ ∨ U = .Ici θ}
 
-instance : DecidablePred PositiveStandard.RequiresComparisonClass
-  | .contextual  => inferInstanceAs (Decidable True)
-  | .minEndpoint => inferInstanceAs (Decidable False)
-  | .maxEndpoint => inferInstanceAs (Decidable False)
-  | .necessity   => inferInstanceAs (Decidable True)
-  | .extreme     => inferInstanceAs (Decidable True)
+namespace PositiveStandard
 
-/-- Two standards are complementary when one is the minimum and the other the maximum. The poles
-of an antonym pair that take them are contradictory, denying one asserting the other
-([kennedy-2007] (47)), and any other pair of standards leaves a gap. -/
-def PositiveStandard.Complementary (s t : PositiveStandard) : Prop :=
-  s = .minEndpoint ∧ t = .maxEndpoint ∨ s = .maxEndpoint ∧ t = .minEndpoint
+/-- A kind of standard requires a comparison class when the scale does not fix its standards, an
+automorphism of some scale moving one of them. [kennedy-2007] argues against a comparison-class
+argument of the positive form, as in [klein-1980], and states the positive form with a
+standard-fixing function, `⟦pos⟧ = λg.λx. g(x) ⪰ s(g)` ((27)), which needs contextual information
+about a domain to fix a threshold: a contextual or necessity standard, or an extreme one beyond
+the degrees a context makes salient ([morzycki-2012]). -/
+def RequiresComparisonClass (s : PositiveStandard) : Prop :=
+  ∃ (D : Type) (_ : LinearOrder D), ∃ U ∈ s.standards D, ¬ IsInvariant U
 
-instance : DecidableRel PositiveStandard.Complementary := fun _ _ ↦ by
-  unfold PositiveStandard.Complementary; infer_instance
+/-- The scale fixes exactly the endpoint standards. -/
+theorem requiresComparisonClass_iff {s : PositiveStandard} :
+    s.RequiresComparisonClass ↔ s ≠ .minEndpoint ∧ s ≠ .maxEndpoint := by
+  refine ⟨fun ⟨D, _, U, hU, hn⟩ ↦ ⟨?_, ?_⟩, fun ⟨h₁, h₂⟩ ↦ ?_⟩
+  · rintro rfl
+    obtain ⟨m, hm, rfl⟩ := hU
+    exact hn (isInvariant_Ioi_of_isBot hm)
+  · rintro rfl
+    obtain ⟨m, hm, rfl⟩ := hU
+    exact hn (isInvariant_Ici_of_isTop hm)
+  · have h0 : ¬ IsInvariant (UpperSet.Ioi (0 : ℤ)) := fun h ↦ by
+      have := h (OrderIso.addRight 1)
+      rw [UpperSet.map_Ioi] at this
+      simpa using (UpperSet.Ioi_strictMono ℤ).injective this
+    cases s
+    case minEndpoint => exact absurd rfl h₁
+    case maxEndpoint => exact absurd rfl h₂
+    all_goals exact ⟨ℤ, inferInstance, UpperSet.Ioi 0, ⟨0, .inl rfl⟩, h0⟩
+
+instance : DecidablePred RequiresComparisonClass :=
+  fun _ ↦ decidable_of_iff _ requiresComparisonClass_iff.symm
+
+/-- Two kinds of standard are complementary when on every scale a standard of the one and a
+standard of the other on the reversed scale, where the antonym measures, partition the degrees,
+so that the poles taking them are contradictory, denying one asserting the other
+([kennedy-2007] (47)). -/
+def Complementary (s t : PositiveStandard) : Prop :=
+  ∀ (D : Type) [LinearOrder D], ∀ U ∈ s.standards D, ∀ V ∈ t.standards Dᵒᵈ,
+    IsCompl (U : Set D) (OrderDual.toDual ⁻¹' V)
+
+/-- Only the minimum and the maximum standards are complementary: any other pair leaves a gap or
+an overlap on some scale. -/
+theorem complementary_iff {s t : PositiveStandard} :
+    s.Complementary t ↔
+      s = .minEndpoint ∧ t = .maxEndpoint ∨ s = .maxEndpoint ∧ t = .minEndpoint := by
+  constructor
+  · intro h
+    -- a standard of each kind on a closed scale and on its reversal, with three degrees as tests
+    let rep : PositiveStandard → UpperSet (WithTop (WithBot ℤ))
+      | .minEndpoint => .Ioi ⊥
+      | .maxEndpoint => .Ici ⊤
+      | _ => .Ioi ((0 : ℤ) : WithBot ℤ)
+    let drep : PositiveStandard → UpperSet (WithTop (WithBot ℤ))ᵒᵈ
+      | .minEndpoint => .Ioi ⊥
+      | .maxEndpoint => .Ici ⊤
+      | _ => .Ioi (OrderDual.toDual ((0 : ℤ) : WithBot ℤ))
+    have hrep (s : PositiveStandard) : rep s ∈ s.standards _ := by
+      cases s
+      exacts [⟨_, .inl rfl⟩, ⟨⊥, isBot_bot, rfl⟩, ⟨⊤, isTop_top, rfl⟩, ⟨_, .inl rfl⟩,
+        ⟨_, .inl rfl⟩]
+    have hdrep (t : PositiveStandard) : drep t ∈ t.standards _ := by
+      cases t
+      exacts [⟨_, .inl rfl⟩, ⟨⊥, isBot_bot, rfl⟩, ⟨⊤, isTop_top, rfl⟩, ⟨_, .inl rfl⟩,
+        ⟨_, .inl rfl⟩]
+    have hx := fun x ↦ Set.ext_iff.1 (h _ _ (hrep s) _ (hdrep t)).compl_eq x
+    have h0 := hx ((0 : ℤ) : WithBot ℤ)
+    have h1 := hx ((1 : ℤ) : WithBot ℤ)
+    have h2 := hx ((-1 : ℤ) : WithBot ℤ)
+    cases s <;> cases t <;>
+      simp only [rep, drep, UpperSet.coe_Ioi, UpperSet.coe_Ici, Set.mem_Ioi, Set.mem_Ici,
+        Set.mem_compl_iff, Set.mem_preimage] at h0 h1 h2 <;>
+      first | (exfalso; revert h0 h1 h2; decide) | simp
+  · rintro (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) D _ U ⟨m, hm, rfl⟩ V ⟨m', hm', rfl⟩
+    · have : OrderDual.ofDual m' = m := le_antisymm (OrderDual.toDual_le.1 (hm' _)) (hm _)
+      have hV : OrderDual.toDual ⁻¹' (UpperSet.Ici m' : Set _) = Set.Iic m := by
+        ext x; simp [← this, OrderDual.le_toDual]
+      rw [hV, UpperSet.coe_Ioi, ← Set.compl_Ioi]
+      exact isCompl_compl
+    · have : OrderDual.ofDual m' = m := le_antisymm (hm _) (OrderDual.le_toDual.1 (hm' _))
+      have hV : OrderDual.toDual ⁻¹' (UpperSet.Ioi m' : Set _) = Set.Iio m := by
+        ext x; simp [← this, OrderDual.lt_toDual]
+      rw [hV, UpperSet.coe_Ici, ← Set.compl_Ici]
+      exact isCompl_compl
+
+instance : DecidableRel Complementary := fun _ _ ↦ decidable_of_iff _ complementary_iff.symm
+
+end PositiveStandard
 
 /-! ### Difference functions
 
@@ -521,14 +594,14 @@ namespace Boundedness
 allowing a contextual standard only where conventional meaning is insufficient ([kennedy-2007]
 (66)). The standards a scale itself fixes are those every automorphism of its degrees fixes, and
 the endpoint standards are among them (`isInvariant_Ioi_of_isBot`), so a scale admits an endpoint
-standard where it has the endpoint, and the contextual standard only where it fixes no standard
-but the trivial ones. The lexical necessity and extreme standards it never admits. On the
+standard where it has a standard of that kind, and the contextual standard only where it fixes no
+standard but the trivial ones. The lexical necessity and extreme standards it never admits. On the
 canonical scales the endpoint standards are the only nontrivial invariant ones
 (`isInvariant_degreeShape_iff`). -/
 def Admits (b : Boundedness) : PositiveStandard → Prop
   | .contextual  => ∀ U : UpperSet b.DegreeShape, IsInvariant U → U = ⊥ ∨ U = ⊤
-  | .minEndpoint => ∃ m : b.DegreeShape, IsBot m
-  | .maxEndpoint => ∃ m : b.DegreeShape, IsTop m
+  | .minEndpoint => (PositiveStandard.minEndpoint.standards b.DegreeShape).Nonempty
+  | .maxEndpoint => (PositiveStandard.maxEndpoint.standards b.DegreeShape).Nonempty
   | .necessity   => False
   | .extreme     => False
 
@@ -540,11 +613,13 @@ endpoint fixes the endpoint standard ([kennedy-2007] (66)). -/
   simp only [← not_exists, exists_isBot_degreeShape, exists_isTop_degreeShape]
   cases b <;> decide
 
-@[simp] theorem admits_minEndpoint {b : Boundedness} : b.Admits .minEndpoint ↔ b.HasMin :=
-  exists_isBot_degreeShape b
+@[simp] theorem admits_minEndpoint {b : Boundedness} : b.Admits .minEndpoint ↔ b.HasMin := by
+  rw [← exists_isBot_degreeShape]
+  exact ⟨fun ⟨_, m, hm, _⟩ ↦ ⟨m, hm⟩, fun ⟨m, hm⟩ ↦ ⟨_, m, hm, rfl⟩⟩
 
-@[simp] theorem admits_maxEndpoint {b : Boundedness} : b.Admits .maxEndpoint ↔ b.HasMax :=
-  exists_isTop_degreeShape b
+@[simp] theorem admits_maxEndpoint {b : Boundedness} : b.Admits .maxEndpoint ↔ b.HasMax := by
+  rw [← exists_isTop_degreeShape]
+  exact ⟨fun ⟨_, m, hm, _⟩ ↦ ⟨m, hm⟩, fun ⟨m, hm⟩ ↦ ⟨_, m, hm, rfl⟩⟩
 
 @[simp] theorem not_admits_necessity (b : Boundedness) : ¬ b.Admits .necessity := id
 
