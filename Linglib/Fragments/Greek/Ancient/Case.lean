@@ -11,7 +11,7 @@ the Latin ablative the genitive expresses source, while the dative expresses loc
 instrument beside the indirect object, so that the Greek dative is the more comprehensive case.
 Blake gives the system, vocative aside, as the four-case stage of his hierarchy.
 
-## Main declarations
+## Main definitions
 
 * `Greek.Ancient.Case`: the five cases.
 * `Greek.Ancient.Case.label`, `Greek.Ancient.Case.functions`: the comparative value each case is

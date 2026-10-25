@@ -16,7 +16,7 @@ survives for names of towns and a few nouns such as *domī* 'at home'. The goal 
 expressed by the accusative, there being no allative. Blake takes Latin as his running example
 of an inflectional case system.
 
-## Main declarations
+## Main definitions
 
 * `Latin.Case`: the six cases, in the order of the school paradigms.
 * `Latin.Case.label`, `Latin.Case.functions`: the comparative value each case is named for, and

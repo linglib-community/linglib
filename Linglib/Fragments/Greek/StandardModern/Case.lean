@@ -7,11 +7,11 @@ public import Linglib.Syntax.Case.Basic
 
 Standard Modern Greek has four cases: nominative, accusative, genitive and vocative. The dative
 of Ancient Greek (`Greek.Ancient.Case`) is gone, and the indirect object of a ditransitive is a
-genitive, beside a prepositional phrase in *se* with the accusative
-([michelioudakis-sitaridou-2010]). Blake gives the system, vocative aside, as a three-case
-nominative–accusative–genitive system ([blake-1994]).
+genitive, beside a prepositional phrase in *se* with the accusative. Blake counts the system,
+vocative aside, as a nominative–accusative–genitive system. The endings that distinguish the four
+cases are in `Greek.StandardModern.Declension`.
 
-## Main declarations
+## Main definitions
 
 * `Greek.StandardModern.Case`: the four cases.
 * `Greek.StandardModern.Case.label`, `Greek.StandardModern.Case.functions`: the comparative value
@@ -19,8 +19,10 @@ nominative–accusative–genitive system ([blake-1994]).
 
 ## References
 
-* [blake-1994]
+* [blake-2001]
 * [michelioudakis-sitaridou-2010]
+* [ralli-2000]
+* [sims-2006]
 -/
 
 @[expose] public section
@@ -48,7 +50,8 @@ def label : Case → _root_.Case
   | gen => .gen
   | voc => .voc
 
-/-- The comparative values a case expresses: the genitive also expresses the indirect object. -/
+/-- The comparative values a case expresses: the genitive also expresses the indirect object
+([michelioudakis-sitaridou-2010] (1a)). -/
 def functions : Case → Finset _root_.Case
   | gen => {.gen, .dat}
   | c => {c.label}
