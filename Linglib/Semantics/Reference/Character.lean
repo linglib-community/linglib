@@ -72,11 +72,6 @@ theorem const_isDirectlyReferential (e : E) :
     (const e : Character C W E).IsDirectlyReferential :=
   dthat_isDirectlyReferential _
 
-/-- Rigidifying at a context differs from the description whenever the description varies. -/
-theorem dthat_ne {f : W → E} {w₀ w₁ : W} (h : f w₁ ≠ f w₀) :
-    (dthat f : Character W W E) w₀ ≠ f :=
-  fun e ↦ h (congrFun e w₁).symm
-
 /-- A character holds at a context when its content is true at the world of that context: the
 evaluation of a root sentence. -/
 def HoldsAt (world : C → W) (χ : Character C W Prop) (c : C) : Prop := χ c (world c)

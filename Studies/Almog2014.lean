@@ -7,13 +7,14 @@ module
 
 public import Studies.Kripke1980
 public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Semantics.Reference.Character
 
 /-!
 # Almog (2014): Referential Mechanics
 
 This file formalizes the formal core of [almog-2014]. Rigid designation and directly
 referential content are separated by Kaplan's `dthat`: `dthat[the φ]` designates rigidly and
-so is scope-inert (`dthat_deRe_iff_deDicto`), yet two descriptions that co-denote at the
+so is scope-inert (`dthat_largeScope_eq_smallScope`), yet two descriptions that co-denote at the
 context world rigidify to one content (`dthat_eq_dthat_of_eq`), so rigidity alone leaves the
 informativeness of an identity unexplained, while a structured singular proposition keeps the
 individuals apart (`SingularProposition.mk_ne_mk_of_ne`). Co-referential rigid designators
@@ -49,13 +50,13 @@ namespace Almog2014
 
 open Kripke1980 Kaplan
 
-variable {W E : Type*} {desc desc₁ desc₂ : W → E} {c w₀ w : W}
+variable {W E : Type*} {desc desc₁ desc₂ : W → E} {c : W}
 
 /-! ### Rigidity without singularity -/
 
-theorem dthat_deRe_iff_deDicto (P : E → W → Prop) :
-    deRe P (Character.dthat desc c) w₀ w ↔ deDicto P (Character.dthat desc c) w :=
-  (isRigid_iff_deRe_iff_deDicto (Character.dthat desc c) w₀).1 (isRigid_const (desc c)) P w
+theorem dthat_largeScope_eq_smallScope (O : (W → Prop) → W → Prop) (P : E → W → Prop) :
+    largeScope O P (Character.dthat desc c) = smallScope O P (Character.dthat desc c) :=
+  largeScope_eq_smallScope (Character.dthat_isDirectlyReferential desc c) O P
 
 theorem dthat_eq_dthat_of_eq (h : desc₁ c = desc₂ c) :
     (Character.dthat desc₁ : Character W W E) c = Character.dthat desc₂ c :=
