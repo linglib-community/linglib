@@ -79,8 +79,8 @@ theorem forces_eq : ∀ m ∈ Tlingit.modals, m.forces = {lexicalForce m} ∧ m.
 /-! ### Scales -/
 
 theorem scalemates :
-    Scalemates lexicalForce potentialMode futureMode ∧
-      ∀ m ∈ dubitatives, ¬ HasScalemate lexicalForce Tlingit.modals m := by
+    ModalItem.Scalemates lexicalForce potentialMode futureMode ∧
+      ∀ m ∈ dubitatives, ¬ ModalItem.HasScalemate lexicalForce Tlingit.modals m := by
   decide
 
 /-- In upward-entailing contexts the dubitatives serve for necessity ((21)–(24)), but the potential

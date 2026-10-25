@@ -81,11 +81,12 @@ def lexicalForce (m : ModalItem) : ModalForce := if m = sgi then .necessity else
 /-- In an upward-entailing context each modal serves, on [deal-2011]'s account, for exactly the
 forces of Fig. 1. -/
 theorem forces_usable : ∀ m ∈ modals, ∀ g, g.classical ∈ m.classical.forces ↔
-    Deal2011.Usable .positive (lexicalForce m) (Deal2011.HasScalemate lexicalForce modals m) g := by
+    Deal2011.Usable .positive (lexicalForce m) (ModalItem.HasScalemate lexicalForce modals m)
+      g := by
   decide
 
 theorem hasScalemate_iff : ∀ m ∈ modals,
-    Deal2011.HasScalemate lexicalForce modals m ↔ m.Circumstantial := by
+    ModalItem.HasScalemate lexicalForce modals m ↔ m.Circumstantial := by
   decide
 
 /-! ### Rows -/

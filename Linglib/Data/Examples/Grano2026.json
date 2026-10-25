@@ -1,0 +1,668 @@
+[
+  {
+    "id": "grano2026_1",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There is a book for you to read on the table.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "acceptable"},
+      {"name": "weakNecessity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "a"],
+      ["interpretation", "weak"]
+    ],
+    "comment": "The there-construction forces a weak reading of the weak quantifier (p. 712).",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_2_the",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The book for you to read is on the table.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "unacceptable"},
+      {"name": "weakNecessity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "the"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "The source prints the three determiners as one line, The/Each/Every.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_2_each",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Each book for you to read is on the table.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "unacceptable"},
+      {"name": "weakNecessity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "each"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "The source prints the three determiners as one line, The/Each/Every.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_2_every",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every book for you to read is on the table.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "unacceptable"},
+      {"name": "weakNecessity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "every"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "The source prints the three determiners as one line, The/Each/Every.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_8a",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Cats that you could adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Cats that you could adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "could"],
+      ["determiner", "bare plural"],
+      ["interpretation", "weak"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_8b",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... There are several cats that you could adopt in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "There are several cats that you could adopt in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "could"],
+      ["determiner", "several"],
+      ["interpretation", "weak"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_8c",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(8c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Several cats that you could adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Several cats that you could adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "could"],
+      ["determiner", "several"],
+      ["interpretation", "either"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_8d",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(8d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Several of the cats that you could adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Several of the cats that you could adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "could"],
+      ["determiner", "several of the"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_8e",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(8e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Every cat that you could adopt is in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Every cat that you could adopt is in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "could"],
+      ["determiner", "every"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_9a",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(9a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Cats that you should adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Cats that you should adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "should"],
+      ["determiner", "bare plural"],
+      ["interpretation", "weak"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_9b",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(9b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... There are several cats that you should adopt in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "There are several cats that you should adopt in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "should"],
+      ["determiner", "several"],
+      ["interpretation", "weak"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_9c",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(9c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Several cats that you should adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Several cats that you should adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "should"],
+      ["determiner", "several"],
+      ["interpretation", "either"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_9d",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(9d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Several of the cats that you should adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Several of the cats that you should adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "should"],
+      ["determiner", "several of the"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_9e",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(9e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Every cat that you should adopt is in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Every cat that you should adopt is in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "should"],
+      ["determiner", "every"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_10a",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Cats for you to adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Cats for you to adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "bare plural"],
+      ["interpretation", "weak"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_10b",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... There are several cats for you to adopt in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "There are several cats for you to adopt in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "several"],
+      ["interpretation", "weak"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_10c",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(10c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Several cats for you to adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Several cats for you to adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "variable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "several"],
+      ["interpretation", "either"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_10d",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(10d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Several of the cats for you to adopt are in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Several of the cats for you to adopt are in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "several of the"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_10e",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(10e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "You may adopt at most one cat... Every cat for you to adopt is in the next room.",
+    "discourseSegments": [
+      "You may adopt at most one cat...",
+      "Every cat for you to adopt is in the next room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "At an animal shelter whose policy allows only one cat adoption per family, the speaker says the preamble and one of the continuations.",
+    "judgment": "questionable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "every"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_61a",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(61a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Books for my first grader to read are not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "bare plural"],
+      ["interpretation", "generic"]
+    ],
+    "comment": "Salient reading: books that my first grader is allowed to read are not heavy (p. 733).",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_61b",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(61b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Snacks for you to eat before dinner are low in calories.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "bare plural"],
+      ["interpretation", "generic"]
+    ],
+    "comment": "Salient reading: snacks that you are allowed to eat before dinner are low in calories (p. 733).",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_66_1",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Always, books for my first grader to read are not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "bare plural"],
+      ["interpretation", "adverb"]
+    ],
+    "comment": "The source prints the four adverbs as one line, {Always/In general/For the most part/Sometimes}.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_66_2",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In general, books for my first grader to read are not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "bare plural"],
+      ["interpretation", "adverb"]
+    ],
+    "comment": "The source prints the four adverbs as one line, {Always/In general/For the most part/Sometimes}.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_66_3",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "For the most part, books for my first grader to read are not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "bare plural"],
+      ["interpretation", "adverb"]
+    ],
+    "comment": "The source prints the four adverbs as one line, {Always/In general/For the most part/Sometimes}.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_66_4",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(66)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sometimes, books for my first grader to read are not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "bare plural"],
+      ["interpretation", "adverb"]
+    ],
+    "comment": "The source prints the four adverbs as one line, {Always/In general/For the most part/Sometimes}.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_67_the",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(67)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The book for my first grader to read is not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "unacceptable"},
+      {"name": "weakNecessity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "the"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "The source prints the three determiners as one line, The/Each/Every.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_67_each",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(67)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Each book for my first grader to read is not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "unacceptable"},
+      {"name": "weakNecessity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "each"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "The source prints the three determiners as one line, The/Each/Every.",
+    "verified": "page-image"
+  },
+  {
+    "id": "grano2026_67_every",
+    "source": {"bibkey": "grano-2026", "paperLabel": "(67)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every book for my first grader to read is not heavy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "possibility", "judgment": "unacceptable"},
+      {"name": "weakNecessity", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["modal", "for"],
+      ["determiner", "every"],
+      ["interpretation", "strong"]
+    ],
+    "comment": "The source prints the three determiners as one line, The/Each/Every.",
+    "verified": "page-image"
+  }
+]
