@@ -56,8 +56,9 @@ variable {T : Type*} [LinearOrder T]
 def NotAfter (t t₀ : NonemptyInterval T) : Prop := ¬ t₀.Precedes t
 
 theorem notAfter_iff_presup (t t₀ : NonemptyInterval T) :
-    NotAfter t t₀ ↔ Tense.Perspective.Presup Tense.upperLimitConstraint t₀ t := by
-  simp [NotAfter, Tense.Perspective.Presup, Tense.upperLimitConstraint, Tense.denote_future]
+    NotAfter t t₀ ↔
+      Tense.Perspective.Presup (Allen.ofPosition Tense.upperLimitConstraint) t₀ t := by
+  simp [NotAfter, Tense.upperLimitConstraint, Tense.denote_future]
 
 theorem notAfter_self (t : NonemptyInterval T) : NotAfter t t := precedes_irrefl t
 

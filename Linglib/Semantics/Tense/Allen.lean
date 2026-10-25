@@ -42,8 +42,9 @@ their converses and composites, and chains of cells.
 
 A relation records whether each interval is a point; with the four cross comparisons alone
 composition is not exact. The composite places a second interval only beside first intervals
-that stand to it in the first cell, which keeps it small enough for `decide +kernel`; it is
-irreducible, so that elaboration, which never needs its value, does not compute it.
+that stand to it in the first cell, which keeps it small enough for `decide +kernel`. It and the
+named cells are irreducible, so that elaboration, which never needs their values, does not compute
+them.
 
 ## References
 
@@ -268,24 +269,31 @@ end LinearOrder
 /-! ### Named cells -/
 
 /-- The first interval ends before the second starts. -/
+@[irreducible]
 def precedes : Finset Relation := atoms.filter (·.sndFst = .lt)
 
 /-- The first interval ends no later than the second starts. -/
+@[irreducible]
 def isBefore : Finset Relation := atoms.filter (·.sndFst ≠ .gt)
 
 /-- The first interval lies within the second. -/
+@[irreducible]
 def le : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd ≠ .gt
 
 /-- The first interval lies within the second and is not the whole of it. -/
+@[irreducible]
 def lt : Finset Relation := le.filter fun r ↦ r.fstFst = .gt ∨ r.sndSnd = .lt
 
 /-- The two intervals overlap. -/
+@[irreducible]
 def overlaps : Finset Relation := atoms.filter fun r ↦ r.fstSnd ≠ .gt ∧ r.sndFst ≠ .lt
 
 /-- The first interval starts within the second. -/
+@[irreducible]
 def startsWithin : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.fstSnd ≠ .gt
 
 /-- The first interval lies within the second and ends with it. -/
+@[irreducible]
 def finalSubinterval : Finset Relation := atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd = .eq
 
 theorem comp_precedes_precedes : comp precedes precedes = precedes := by decide +kernel
@@ -340,10 +348,6 @@ theorem _root_.NonemptyInterval.position_eq_ite :
   · rw [NonemptyInterval.position_self, compare_eq_iff_eq.2 rfl]
   · rw [NonemptyInterval.position_eq_gt.2 (by exact h), compare_gt_iff_gt.2 h]
 
-theorem _root_.NonemptyInterval.position_eq_eq_of_le {i' : NonemptyInterval T}
-    (h : i.position j = .eq) (hle : i ≤ i') : i'.position j = .eq :=
-  NonemptyInterval.position_eq_eq.2 ((NonemptyInterval.position_eq_eq.1 h).mono_left hle)
-
 /-- An interval containing `i` stands to `j` where `i` does, or overlaps it. -/
 theorem _root_.NonemptyInterval.position_eq_or_eq_eq_of_le {i' : NonemptyInterval T}
     (hle : i ≤ i') : i'.position j = i.position j ∨ i'.position j = .eq := by
@@ -357,6 +361,7 @@ theorem _root_.NonemptyInterval.position_eq_or_eq_eq_of_le {i' : NonemptyInterva
 end LinearOrder
 
 /-- The cell of the relations whose position is one of `C`. -/
+@[irreducible]
 def ofPosition (C : Finset Ordering) : Finset Relation := atoms.filter (·.position ∈ C)
 
 theorem ofPosition_eq : ofPosition {.eq} = overlaps := by decide +kernel
@@ -413,9 +418,11 @@ end LinearOrder
 The comparison cells of the tenses are the cells of point intervals. -/
 
 /-- The two intervals are the same. -/
+@[irreducible]
 def eq : Finset Relation := atoms.filter fun r ↦ r.fstFst = .eq ∧ r.sndSnd = .eq
 
 /-- The cell of point intervals whose points compare as `C` allows. -/
+@[irreducible]
 def pure (C : Finset Ordering) : Finset Relation :=
   atoms.filter fun r ↦ r.firstShape = .eq ∧ r.secondShape = .eq ∧ r.fstFst ∈ C
 

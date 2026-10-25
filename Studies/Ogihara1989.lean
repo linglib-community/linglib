@@ -61,7 +61,7 @@ variable {T : Type*} [LinearOrder T] {P : NonemptyInterval T → Prop} {K σ : N
 subinterval of `K`, as *Yes, I saw her* (`Examples.ex_57`) says of the day. It is Partee's past
 tense with its index bound by an existential quantifier over the subintervals of `K`. -/
 theorem restricted_iff_exists_past :
-    ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ K ∧ P t) σ ↔
+    ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ K ∧ P t) σ ↔
       ∃ t ≤ K, lambdaAbsG n (Past n P σ) g t := by
   simp [Past, Diamond, and_left_comm]
 
@@ -75,11 +75,11 @@ interval is past and has no subinterval at which the speaker turned off the stov
 it. -/
 theorem no_subinterval_iff_not_restricted :
     Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ↔
-      Perspective.Presup ⟦past⟧ σ (g n) ∧
-        ¬ ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ g n ∧ P t) σ :=
+      Perspective.Presup Allen.precedes σ (g n) ∧
+        ¬ ◇[Perspective.toSetRel Allen.precedes] (fun t ↦ t ≤ g n ∧ P t) σ :=
   ⟨fun h ↦ ⟨h.1, fun ⟨t, _, hle, hP⟩ ↦ h.2 ⟨t, hle, hP⟩⟩, fun h ↦ ⟨h.1, fun ⟨t, hle, hP⟩ ↦
-    h.2 ⟨t, Perspective.presup_past.2 (NonemptyInterval.precedes_of_le_of_precedes hle
-      (Perspective.presup_past.1 h.1)), hle, hP⟩⟩⟩
+    h.2 ⟨t, Perspective.presup_precedes.2 (NonemptyInterval.precedes_of_le_of_precedes hle
+      (Perspective.presup_precedes.1 h.1)), hle, hP⟩⟩⟩
 
 /-- A speaker who turned off the stove at no subinterval of the salient interval did not turn it
 off at that interval. -/
@@ -94,23 +94,25 @@ theorem deictic_too_weak :
     ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
       (P : NonemptyInterval ℤ → Prop),
       Past 0 (fun t ↦ ¬ P t) σ g ∧ ¬ Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
-  ⟨.pure 10, fun _ ↦ ⟨(0, 5), by decide⟩, (· = .pure 3), ⟨by decide, by decide⟩,
+  ⟨.pure 10, fun _ ↦ ⟨(0, 5), by decide⟩, (· = .pure 3),
+    ⟨Perspective.presup_precedes.2 (by decide), by decide⟩,
     fun h ↦ h.2 ⟨.pure 3, by decide, rfl⟩⟩
 
 /-- A speaker who never turned off the stove turned it off at no subinterval of the salient
 interval. -/
-theorem never_entails_no_subinterval (hn : Perspective.Presup ⟦past⟧ σ (g n))
-    (h : ¬ ◇[Perspective.toSetRel ⟦past⟧] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
-  ⟨hn, fun ⟨t, hle, hP⟩ ↦ h ⟨t, Perspective.presup_past.2
-    (NonemptyInterval.precedes_of_le_of_precedes hle (Perspective.presup_past.1 hn)), hP⟩⟩
+theorem never_entails_no_subinterval (hn : Perspective.Presup Allen.precedes σ (g n))
+    (h : ¬ ◇[Perspective.toSetRel Allen.precedes] P σ) : Past n (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g :=
+  ⟨hn, fun ⟨t, hle, hP⟩ ↦ h ⟨t, Perspective.presup_precedes.2
+    (NonemptyInterval.precedes_of_le_of_precedes hle (Perspective.presup_precedes.1 hn)), hP⟩⟩
 
 /-- The sentence is true of a speaker who turned off the stove before the salient interval. -/
 theorem never_too_strong :
     ∃ (σ : NonemptyInterval ℤ) (g : Assignment (NonemptyInterval ℤ))
       (P : NonemptyInterval ℤ → Prop),
-      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Perspective.toSetRel ⟦past⟧] P σ := by
-  refine ⟨.pure 10, fun _ ↦ ⟨(5, 6), by decide⟩, (· = .pure 1), ⟨by decide, ?_⟩, .pure 1,
-    by decide, rfl⟩
+      Past 0 (fun t ↦ ¬ ∃ t' ≤ t, P t') σ g ∧ ◇[Perspective.toSetRel Allen.precedes] P σ := by
+  refine ⟨.pure 10, fun _ ↦ ⟨(5, 6), by decide⟩, (· = .pure 1),
+    ⟨Perspective.presup_precedes.2 (by decide), ?_⟩, .pure 1,
+    Perspective.presup_precedes.2 (by decide), rfl⟩
   rintro ⟨t, ht, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 ht).1 (by decide)
 

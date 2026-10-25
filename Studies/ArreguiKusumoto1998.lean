@@ -125,7 +125,7 @@ scope. -/
 def Model.denote (M : Model T) : (w : Word) → Ty.Domain (NonemptyInterval T) Unit w.ty
   | .vp k => M.vp k
   | .attitude k => M.attitude k
-  | .past | .after => ◇[Perspective.toSetRel ⟦past⟧]
+  | .past | .after => ◇[Perspective.toSetRel Allen.precedes]
   | .before => before
   | .speechTime => M.speechTime
   | .at_ => fun t' t ↦ t = t'
@@ -156,10 +156,12 @@ def Model.extension (M : Model T) (lf : LF) : NonemptyInterval T → Prop :=
 
 /-! ### Before and after -/
 
-theorem before_iff_not_diamond : before X t ↔ ¬ ◇[Perspective.toSetRel ⟦future⟧ᶜ] X t := by
-  simp only [before, Diamond, Perspective.mem_toSetRel, Perspective.Presup, Finset.mem_compl,
-    not_exists, not_and, not_imp_not]
-  exact forall₂_congr fun t' _ ↦ (Perspective.presup_future (π := t) (r := t')).symm
+theorem before_iff_not_diamond :
+    before X t ↔ ¬ ◇[Perspective.toSetRel (Allen.ofPosition ⟦future⟧ᶜ)] X t := by
+  simp only [before, Diamond, Perspective.mem_toSetRel, Perspective.presup_ofPosition,
+    Finset.mem_compl, denote_future, Finset.mem_singleton, NonemptyInterval.position_eq_gt,
+    not_exists, not_and]
+  exact forall_congr' fun _ ↦ not_imp_not.symm
 
 /-- *Before* is not veridical (18a), holding of every time when its clause has none. -/
 theorem before_of_forall_not (h : ∀ t', ¬ X t') (t : NonemptyInterval T) : before X t :=
