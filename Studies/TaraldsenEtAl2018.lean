@@ -222,10 +222,10 @@ theorem xhosa_plurals :
 /-- The class-prefix entries lexicalize the Fragment's subject concords of classes 5, 7, 2
 and 8, so one set of entries serves prefixes and concords (60)–(61). -/
 theorem xhosa_prefix_sc_identity :
-    exponents xhosaPrefixes [.cls 5] = some [Xhosa.NounClass.cl5.subjPrefix] ∧
-      exponents xhosaPrefixes [.cls 7] = some [Xhosa.NounClass.cl7.subjPrefix] ∧
-      exponents xhosaPrefixes [.cls 1, .num] = some [Xhosa.NounClass.cl2.subjPrefix] ∧
-      exponents xhosaPrefixes [.cls 7, .num] = some [Xhosa.NounClass.cl8.subjPrefix] := by
+    exponents xhosaPrefixes [.cls 5] = (Xhosa.subjPrefix .cl5).map ([·]) ∧
+      exponents xhosaPrefixes [.cls 7] = (Xhosa.subjPrefix .cl7).map ([·]) ∧
+      exponents xhosaPrefixes [.cls 1, .num] = (Xhosa.subjPrefix .cl2).map ([·]) ∧
+      exponents xhosaPrefixes [.cls 7, .num] = (Xhosa.subjPrefix .cl8).map ([·]) := by
   decide
 
 /-! ### The Changana and Rhonga lexicon

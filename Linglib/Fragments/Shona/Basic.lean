@@ -23,54 +23,26 @@ open Bantu
 
 /-! ### Classes -/
 
-/-- The noun classes in the Bantu numbering; classes 15–18 are absent or unproductive. -/
-inductive NounClass where
-  /-- *mu-*: murume 'man'. -/
-  | cl1
-  /-- *va-*: varume 'men'. -/
-  | cl2
-  /-- *mu-*: muti 'tree'. -/
-  | cl3
-  /-- *mi-*: miti 'trees'. -/
-  | cl4
-  /-- *ri-*, often unprefixed: zai 'egg'. -/
-  | cl5
-  /-- *ma-*: mazai 'eggs'. -/
-  | cl6
-  /-- *chi-*: chingwa 'bread'. -/
-  | cl7
-  /-- *zvi-*: zvingwa 'loaves'. -/
-  | cl8
-  /-- *n-*: imbwa 'dog'. -/
-  | cl9
-  /-- *n-*, *dzi-*: imbwa 'dogs'. -/
-  | cl10
-  /-- *ru-*: rukova 'stream'. -/
-  | cl11
-  /-- *ka-*, the diminutive singular: kasikana 'small girl'. -/
-  | cl12
-  /-- *tu-*, the diminutive plural: tusikana 'small girls'. -/
-  | cl13
-  /-- *hu-*, *u-*: huchi 'honey'. -/
-  | cl14
-  deriving DecidableEq, Repr
+/-- The subject marker of a class on the verb; classes 15–18 are absent or unproductive. -/
+def subjPrefix : NounClass → Option String
+  | .cl1 => some "a"     -- noun prefix mu-: murume 'man'
+  | .cl2 => some "va"    -- va-: varume 'men'
+  | .cl3 => some "u"     -- mu-: muti 'tree'
+  | .cl4 => some "i"     -- mi-: miti 'trees'
+  | .cl5 => some "ri"    -- ri-, often unprefixed: zai 'egg'
+  | .cl6 => some "a"     -- ma-: mazai 'eggs'
+  | .cl7 => some "chi"   -- chi-: chingwa 'bread'
+  | .cl8 => some "zvi"   -- zvi-: zvingwa 'loaves'
+  | .cl9 => some "i"     -- n-: imbwa 'dog'
+  | .cl10 => some "dzi"  -- n-, dzi-: imbwa 'dogs'
+  | .cl11 => some "ru"   -- ru-: rukova 'stream'
+  | .cl12 => some "ka"   -- ka-, the diminutive singular: kasikana 'small girl'
+  | .cl13 => some "tu"   -- tu-, the diminutive plural: tusikana 'small girls'
+  | .cl14 => some "hu"   -- hu-, u-: huchi 'honey'
+  | _ => none
 
-/-- The subject marker of a class on the verb. -/
-def NounClass.subjPrefix : NounClass → String
-  | .cl1 => "a"
-  | .cl2 => "va"
-  | .cl3 => "u"
-  | .cl4 => "i"
-  | .cl5 => "ri"
-  | .cl6 => "a"
-  | .cl7 => "chi"
-  | .cl8 => "zvi"
-  | .cl9 => "i"
-  | .cl10 => "dzi"
-  | .cl11 => "ru"
-  | .cl12 => "ka"
-  | .cl13 => "tu"
-  | .cl14 => "hu"
+/-- The classes, those with a subject marker. -/
+def classes : Finset NounClass := Finset.univ.filter fun c ↦ (subjPrefix c).isSome
 
 /-! ### Genders -/
 

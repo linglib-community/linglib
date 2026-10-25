@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Agreement.Paradigm
 public import Linglib.Syntax.Gender.Basic
 public import Linglib.Morphology.Morph
+public import Linglib.Fragments.Bantu.Params
 
 /-!
 # Swahili noun classes
@@ -19,12 +20,12 @@ negative indicative *ha-* precedes the subject prefix, changing in the three per
 
 ## Main definitions
 
-* `Swahili.NounClass`, `NounClass.subjPrefix`: the classes and the subject prefix of each
+* `Swahili.subjPrefix`, `Swahili.classes`: the subject prefix of each class and the classes
 * `Swahili.Gender`, `Gender.singularClass`, `Gender.pluralClass`, `Gender.class`: the five
   genders as pairs of classes
 * `Swahili.subjectPrefix`: the subject prefixes of the person cells, the third person those of
   classes 1 and 2
-* `Swahili.NounClass.negSubjPrefix`, `Swahili.negativeSubjectPrefix`: the negative subject
+* `Swahili.negSubjPrefix`, `Swahili.negativeSubjectPrefix`: the negative subject
   prefixes of the classes and of the person cells
 
 ## Main results
@@ -54,63 +55,33 @@ negative indicative *ha-* precedes the subject prefix, changing in the three per
 
 namespace Swahili
 
-open Agreement Morphology
+open Agreement Bantu Morphology
 
 /-! ### Classes -/
 
-/-- A noun class in the Bantu numbering. -/
-inductive NounClass where
-  /-- The prefix *m-* or *mw-*, as in *mtu* 'person' and *mwalimu* 'teacher'. -/
-  | cl1
-  /-- The prefix *wa-*, as in *watu* 'people'. -/
-  | cl2
-  /-- The prefix *m-* or *mw-*, as in *mti* 'tree'. -/
-  | cl3
-  /-- The prefix *mi-*, as in *miti* 'trees'. -/
-  | cl4
-  /-- The prefix *ji-*, often absent, as in *joka* 'giant snake'. -/
-  | cl5
-  /-- The prefix *ma-*, as in *maji* 'water'. -/
-  | cl6
-  /-- The prefix *ki-*, as in *kikapu* 'basket'. -/
-  | cl7
-  /-- The prefix *vi-*, as in *vikapu* 'baskets'. -/
-  | cl8
-  /-- A nasal prefix, as in *nyoka* 'snake' and *nyumba* 'house'. -/
-  | cl9
-  /-- A nasal prefix, as in *nyumba* 'houses'. -/
-  | cl10
-  /-- *u-*, the class Corbett and Welmers number 11 and pair with class 10. -/
-  | cl14
-  /-- *ku-*, the infinitive class: *ku-la* 'to eat'. -/
-  | cl15
-  /-- *pa-*, a locative class of definite place: *hapa pa-na miti* 'there are trees here'. -/
-  | cl16
-  /-- *ku-*, a locative class of indefinite place: *nje ku-na watu* 'there are some people
-  outside'. -/
-  | cl17
-  /-- *mu-*, a locative class of area or withinness: *kisima-ni m-na maji* 'there is water in
-  the well'. -/
-  | cl18
-  deriving DecidableEq, Repr, Fintype
+/-- The subject prefix of a class on the verb, *m-* in class 18 before a consonant; Swahili has
+no classes 11–13. -/
+def subjPrefix : NounClass → Option Morph
+  | .cl1 => some (.pref "a")    -- noun prefix m-, mw-: mtu 'person', mwalimu 'teacher'
+  | .cl2 => some (.pref "wa")   -- wa-: watu 'people'
+  | .cl3 => some (.pref "u")    -- m-, mw-: mti 'tree'
+  | .cl4 => some (.pref "i")    -- mi-: miti 'trees'
+  | .cl5 => some (.pref "li")   -- ji-, often absent: joka 'giant snake'
+  | .cl6 => some (.pref "ya")   -- ma-: maji 'water'
+  | .cl7 => some (.pref "ki")   -- ki-: kikapu 'basket'
+  | .cl8 => some (.pref "vi")   -- vi-: vikapu 'baskets'
+  | .cl9 => some (.pref "i")    -- a nasal: nyoka 'snake', nyumba 'house'
+  | .cl10 => some (.pref "zi")  -- a nasal: nyumba 'houses'
+  | .cl14 => some (.pref "u")   -- u-, the class Corbett and Welmers number 11
+  | .cl15 => some (.pref "ku")  -- ku-, the infinitive: ku-la 'to eat'
+  | .cl16 => some (.pref "pa")  -- definite place: hapa pa-na miti 'there are trees here'
+  | .cl17 => some (.pref "ku")  -- indefinite place: nje ku-na watu 'there are people outside'
+  | .cl18 => some (.pref "m")   -- area or withinness: kisima-ni m-na maji 'there is water in
+                                -- the well'
+  | _ => none
 
-/-- The subject prefix of the class on the verb, *m-* in class 18 before a consonant. -/
-def NounClass.subjPrefix : NounClass → Morph
-  | .cl1 => .pref "a"
-  | .cl2 => .pref "wa"
-  | .cl3 => .pref "u"
-  | .cl4 => .pref "i"
-  | .cl5 => .pref "li"
-  | .cl6 => .pref "ya"
-  | .cl7 => .pref "ki"
-  | .cl8 => .pref "vi"
-  | .cl9 => .pref "i"
-  | .cl10 => .pref "zi"
-  | .cl14 => .pref "u"
-  | .cl15 => .pref "ku"
-  | .cl16 => .pref "pa"
-  | .cl17 => .pref "ku"
-  | .cl18 => .pref "m"
+/-- The classes, those with a subject prefix. -/
+def classes : Finset NounClass := Finset.univ.filter fun c ↦ (subjPrefix c).isSome
 
 /-! ### Genders -/
 
@@ -153,7 +124,7 @@ def Gender.class (g : Gender) : numberSystem.values → NounClass :=
 
 /-- Subject agreement, singular and plural, distinguishes the five genders. -/
 theorem Gender.faithful_subjPrefix :
-    Gender.Faithful fun (g : Gender) (n : numberSystem.values) ↦ (g.class n).subjPrefix := by
+    Gender.Faithful fun (g : Gender) (n : numberSystem.values) ↦ subjPrefix (g.class n) := by
   decide
 
 /-! ### Subject prefixes of the persons -/
@@ -162,10 +133,10 @@ theorem Gender.faithful_subjPrefix :
 participants and the prefixes of classes 1 and 2 for the third person. -/
 def subjectPrefix : Paradigm Morph :=
   [(.personNumber .first .singular, .pref "ni"), (.personNumber .second .singular, .pref "u"),
-    (.personNumber .third .singular, NounClass.cl1.subjPrefix),
+    (.personNumber .third .singular, (subjPrefix .cl1).get rfl),
     (.personNumber .first .plural, .pref "tu"),
     (.personNumber .second .plural, .pref "m"),
-    (.personNumber .third .plural, NounClass.cl2.subjPrefix)]
+    (.personNumber .third .plural, (subjPrefix .cl2).get rfl)]
 
 /-! ### Negative subject prefixes -/
 
@@ -174,18 +145,18 @@ def ha : Morph := .pref "ha"
 
 /-- The negative subject prefix of a class is *ha-* before its subject prefix, into which the
 *a-* of class 1 is elided. -/
-def NounClass.negSubjPrefix : NounClass → List Morph
-  | .cl1 => [ha]
-  | c => [ha, c.subjPrefix]
+def negSubjPrefix : NounClass → Option (List Morph)
+  | .cl1 => some [ha]
+  | c => (subjPrefix c).map ([ha, ·])
 
 /-- The negative subject prefixes of the person cells are *si-*, *hu-* and *ha-* in the
 singular and *ha-* before *tu-*, *m-* and *wa-* in the plural. -/
 def negativeSubjectPrefix : Paradigm (List Morph) :=
   [(.personNumber .first .singular, [.pref "si"]), (.personNumber .second .singular, [.pref "hu"]),
-    (.personNumber .third .singular, NounClass.cl1.negSubjPrefix),
+    (.personNumber .third .singular, (negSubjPrefix .cl1).get rfl),
     (.personNumber .first .plural, [ha, .pref "tu"]),
     (.personNumber .second .plural, [ha, .pref "m"]),
-    (.personNumber .third .plural, NounClass.cl2.negSubjPrefix)]
+    (.personNumber .third .plural, (negSubjPrefix .cl2).get rfl)]
 
 /-- A negative person prefix is *ha-* before the affirmative one exactly in the plural, the
 three persons singular changing. -/

@@ -246,7 +246,7 @@ theorem not_factorsThrough_gender :
   fun h ↦ absurd (h (a := human) (b := animal) (by decide)) (by decide)
 
 /-- The plural subject marker of a core class's gender. -/
-def pluralSubjPrefix (c : Core) : String := c.gender.pluralClass.subjPrefix
+def pluralSubjPrefix (c : Core) : String := c.gender.plSubjPrefix
 
 /-- The Xhosa plural subject marker is conditioned on [±Human] alone, so classes 8 and 10 share
 *zi-* (footnote 7). -/

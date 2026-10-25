@@ -24,7 +24,7 @@ gap it is a movement copy without person, the analysis of `Studies/Scott2021.lea
 * `Swahili.amba`, `Swahili.relativizers`: the relativizer *amba*
 * `Swahili.pronoun`, `Swahili.resumptive`: the full and the resumptive pronouns by person and
   number
-* `Swahili.NounClass.concord?`: the relative concord of classes 1 to 10
+* `Swahili.concord?`: the relative concord of classes 1 to 10
 * `Swahili.Preposition`, `Preposition.TriggersResumption`: the prepositions and connectives
   with their syllable count, and the minimal-word condition on resumption
 
@@ -84,7 +84,7 @@ def resumptive : Paradigm Morph :=
 
 /-- The relative concord of a class, the suffix of *amba* and the resumptive pronoun of a noun
 of the class, for classes 1 to 10. -/
-def NounClass.concord? : NounClass → Option Morph
+def concord? : Bantu.NounClass → Option Morph
   | .cl1 => some (.suff "ye")
   | .cl2 => some (.suff "o")
   | .cl3 => some (.suff "o")
@@ -100,8 +100,8 @@ def NounClass.concord? : NounClass → Option Morph
 /-- The third person resumptives are the concords of classes 1 and 2, the animate gender, and
 so carry number and gender but no person. -/
 theorem resumptive_third :
-    resumptive.realize (.personNumber .third .singular) = Gender.genderA.singularClass.concord? ∧
-      resumptive.realize (.personNumber .third .plural) = Gender.genderA.pluralClass.concord? :=
+    resumptive.realize (.personNumber .third .singular) = concord? Gender.genderA.singularClass ∧
+      resumptive.realize (.personNumber .third .plural) = concord? Gender.genderA.pluralClass :=
   ⟨rfl, rfl⟩
 
 /-! ### Resumption and the minimal word -/
