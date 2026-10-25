@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Composition.Cont
+public import Mathlib.Control.Monad.Cont
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Data.Examples.Barker2002
@@ -121,18 +121,18 @@ inductive Deriv (ι : Type) : Type → Type 1
 namespace Deriv
 
 /-- The Continuation Schema has a rule nest the continuations of its daughters in the order of
-its permutation. An island evaluates its clause, and coordination hands its continuation to each
-conjunct. -/
+its permutation. An island hands its continuation the clause evaluated at the identity
+continuation (20b), and coordination hands its continuation to each conjunct. -/
 def continuize : ∀ {α : Type}, Deriv ι α → Cont Prop α
   | _, node (α := α) M σ d =>
     (M ∘ Equiv.piCongrLeft α σ) <$> sequence fun k ↦ (d (σ k)).continuize
   | _, quant _ q => q
   | _, bind _ q d => d.continuize >>= q
-  | _, island d => ContT.reset d.continuize
+  | _, island d => pure (d.continuize.run id)
   | _, coord d₁ d₂ => fun k ↦ d₁.continuize k ∧ d₂.continuize k
 
 /-- The sentence meaning is the continuized meaning at the trivial continuation. -/
-def eval (d : Deriv ι Prop) : Prop := ContT.eval d.continuize
+def eval (d : Deriv ι Prop) : Prop := d.continuize.run id
 
 /-- The meaning the direct grammar assigns, where it assigns one. -/
 def direct : ∀ {α : Type}, Deriv ι α → Option α
@@ -207,7 +207,7 @@ theorem continuize_eq_pure {d : Deriv ι α} {a : α} (h : d.direct = some a) :
       Function.comp_apply]
     congr 2
     exact (Equiv.piCongrLeft _ σ).apply_symm_apply t
-  | island d ih => rw [continuize, ih h, ContT.reset_pure]
+  | island d ih => rw [continuize, ih h]; rfl
 
 theorem eval_eq_of_direct {d : Deriv ι Prop} {p : Prop} (h : d.direct = some p) : d.eval = p := by
   rw [eval, continuize_eq_pure h]; rfl

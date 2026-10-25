@@ -761,7 +761,6 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Factivity
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Composition.Assignment
-import Linglib.Semantics.Composition.Cont
 import Linglib.Semantics.Composition.Coordination
 import Linglib.Semantics.Composition.Model
 import Linglib.Semantics.Composition.Tree
