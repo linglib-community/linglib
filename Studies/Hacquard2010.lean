@@ -23,9 +23,9 @@ worlds as that event, so the outer layer of quantification is vacuous, (53) to (
 `attitude_can_iff` and `attitude_must_iff`, the possibility case once the information state is
 consistent; and Yalcin's supposition (58) is incoherent because the modal quantifies over the
 supposition's own content, `not_attitude_suppose`. Cinque's puzzle (section 3) is that
-[cinque-1999]'s hierarchy fixes the epistemic head above tense and the root head below aspect,
-`tPast_lt_iff_eq_modEpistemic`, where a single flavor-neutral entry should suffice; the paper derives the same
-matrix correlation from the content of the binding event, `epistemic_high_iff`. The paper's
+[cinque-1999]'s hierarchy fixes the epistemic head above tense and the root head below aspect
+(`tPast_lt_iff_eq_modEpistemic`), where a single flavor-neutral entry should suffice; the paper
+derives the same matrix correlation from the content of the binding event, `epistemic_high_iff`. The paper's
 examples are the rows of `Data.Examples.Hacquard2010`.
 
 ## Implementation notes
