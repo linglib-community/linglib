@@ -80,7 +80,7 @@ noncomputable def comulTreeEpsStep (ε : R) (a : α)
     UnorderedTree α × (ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :=
   (UnorderedTree.node a (bs.map Prod.fst),
     ofTree (UnorderedTree.node a (bs.map Prod.fst)) ⊗ₜ[R] 1 +
-      TensorProduct.map (aeval fun t ↦ ε • ofTree (R := R) t).toLinearMap (bPlusLin a)
+      TensorProduct.map (aeval fun t ↦ ε • ofTree (R := R) t).toLinearMap (bPlus a)
         (bs.map Prod.snd).prod)
 
 private theorem fold_comulTreeEpsStep_fst (ε : R) (T : UnorderedTree α) :
@@ -101,7 +101,7 @@ noncomputable def comulTreeEps (ε : R) (T : UnorderedTree α) :
 theorem comulTreeEps_node (ε : R) (a : α) (F : Forest (UnorderedTree α)) :
     comulTreeEps ε (UnorderedTree.node a F) =
       ofTree (UnorderedTree.node a F) ⊗ₜ[R] 1 +
-        TensorProduct.map (aeval fun t ↦ ε • ofTree (R := R) t).toLinearMap (bPlusLin a)
+        TensorProduct.map (aeval fun t ↦ ε • ofTree (R := R) t).toLinearMap (bPlus a)
           (F.map (comulTreeEps ε)).prod := by
   rw [comulTreeEps, UnorderedTree.fold_node, comulTreeEpsStep, Multiset.map_map, Multiset.map_map]
   have h : Prod.fst ∘ UnorderedTree.fold (comulTreeEpsStep (R := R) (α := α) ε) = id :=
@@ -129,7 +129,7 @@ theorem comulEps_one : comulEps (1 : R) = comulAlgHomN (α := α) := by
     have hθ : (aeval fun t ↦ (1 : R) • ofTree (R := R) (T := UnorderedTree α) t) = AlgHom.id R _ :=
       algHom_ext_ofTree fun t ↦ by simp
     rw [comulTreeEps_node, hθ, Multiset.map_congr rfl ih, ← comulAlgHomN_apply_ofTree,
-      ← bPlusLin_of', comulAlgHomN_bPlusLin_cocycle, comulAlgHomN_apply_of']
+      ← bPlus_of', comulAlgHomN_bPlus_cocycle, comulAlgHomN_apply_of']
     rfl
 
 /-- At `ε = 0` every tree is primitive for the weighted coproduct, since only whole components reach
@@ -146,14 +146,14 @@ theorem comulTreeEps_zero (T : UnorderedTree α) :
       refine congrArg _ (Multiset.map_congr rfl fun c hc ↦ ?_)
       simp [ih c hc]
     have hmap (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
-        TensorProduct.map (aeval fun t ↦ (0 : R) • ofTree (R := R) t).toLinearMap (bPlusLin a) z =
-          LinearMap.lTensor _ (bPlusLin a) (Algebra.TensorProduct.map
+        TensorProduct.map (aeval fun t ↦ (0 : R) • ofTree (R := R) t).toLinearMap (bPlus a) z =
+          LinearMap.lTensor _ (bPlus a) (Algebra.TensorProduct.map
             (aeval fun t ↦ (0 : R) • ofTree (R := R) t) (AlgHom.id R _) z) := by
       induction z using TensorProduct.inductionOn with
       | tmul x y => simp
       | add x y hx hy => simp only [map_add, hx, hy]
     rw [comulTreeEps_node, hmap, hθ, Algebra.TensorProduct.includeRight_apply,
-      LinearMap.lTensor_tmul, bPlusLin_of']
+      LinearMap.lTensor_tmul, bPlus_of']
 
 /-- At `ε = 0` the weighted coproduct is the primitive coproduct. -/
 theorem comulEps_zero : comulEps (0 : R) = comulPrim (T := UnorderedTree α) :=
@@ -213,9 +213,9 @@ private theorem comulTreeEps_eq_add_smul (ε : R) (T : UnorderedTree α) :
   induction T with
   | node a F ih =>
     obtain ⟨W, hW⟩ := prod_map_eq_add_smul ε F (comulTreeEps ε) (comulTreeEps 0) ih
-    obtain ⟨V, hV⟩ := map_aeval_eq_add_smul ε (bPlusLin a) (F.map (comulTreeEps 0)).prod
+    obtain ⟨V, hV⟩ := map_aeval_eq_add_smul ε (bPlus a) (F.map (comulTreeEps 0)).prod
     refine ⟨V + TensorProduct.map (aeval fun t ↦ ε • ofTree (R := R) t).toLinearMap
-      (bPlusLin a) W, ?_⟩
+      (bPlus a) W, ?_⟩
     rw [comulTreeEps_node, comulTreeEps_node, hW, map_add, map_smul, hV, smul_add]
     abel
 

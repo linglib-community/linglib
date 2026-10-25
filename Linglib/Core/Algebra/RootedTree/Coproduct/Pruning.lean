@@ -18,11 +18,11 @@ the cut subtrees, with the Hochschild 1-cocycle property of grafting and the cou
 * `ConnesKreimer.comulTreeN`, `ConnesKreimer.comulForestN`, `ConnesKreimer.comulAlgHomN`: the
   Δ^ρ coproduct, as the generic admissible-cut coproduct (`Coproduct/WithCuts.lean`) at the
   enumeration `cutSummandsN`.
-* `ConnesKreimer.bPlusLin`: grafting `B+_a` as a linear map.
+* `ConnesKreimer.bPlus`: grafting `B+_a` as a linear map.
 
 ## Main results
 
-* `ConnesKreimer.comulAlgHomN_bPlusLin_cocycle`: the Hochschild 1-cocycle law
+* `ConnesKreimer.comulAlgHomN_bPlus_cocycle`: the Hochschild 1-cocycle law
   `Δ^ρ ∘ B+_a = B+_a ⊗ 1 + (id ⊗ B+_a) ∘ Δ^ρ`.
 * `ConnesKreimer.counit_rTensor_comulAlgHomN`, `ConnesKreimer.counit_lTensor_comulAlgHomN`: the
   counit laws.
@@ -110,7 +110,7 @@ noncomputable def comulAlgHomN :
 /-! ## Hochschild 1-cocycle for `B+_a`
 
 `B+_a : Forest (UnorderedTree α) → UnorderedTree α` is the smart constructor
-`UnorderedTree.node a`. Linearly extended to `bPlusLin a : H →ₗ[R] H` (sending
+`UnorderedTree.node a`. Linearly extended to `bPlus a : H →ₗ[R] H` (sending
 basis element `of' F` to `ofTree (UnorderedTree.node a F)`), it satisfies
 the Hochschild 1-cocycle property:
 
@@ -130,19 +130,19 @@ coassociativity (§A.7-δ): the subalgebra `A := {x | (Δ ⊗ id)(Δ x) =
 /-- The grafting map `B+_a` extends the smart constructor `UnorderedTree.node a` linearly
     to an `R`-linear endomorphism of `ConnesKreimer R (UnorderedTree α)`,
     sending the basis element `of' F` to `ofTree (UnorderedTree.node a F)`. -/
-noncomputable def bPlusLin (a : α) :
+noncomputable def bPlus (a : α) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
   ConnesKreimer.linearLift (fun F => ofTree (UnorderedTree.node a F))
 
-@[simp] theorem bPlusLin_of' (a : α) (F : Forest (UnorderedTree α)) :
-    bPlusLin (R := R) a (of' F) = ofTree (UnorderedTree.node a F) := by
-  rw [bPlusLin, ConnesKreimer.linearLift_of']
+@[simp] theorem bPlus_of' (a : α) (F : Forest (UnorderedTree α)) :
+    bPlus (R := R) a (of' F) = ofTree (UnorderedTree.node a F) := by
+  rw [bPlus, ConnesKreimer.linearLift_of']
 
-@[simp] theorem bPlusLin_one (a : α) :
-    bPlusLin (R := R) a (1 : ConnesKreimer R (UnorderedTree α)) =
+@[simp] theorem bPlus_one (a : α) :
+    bPlus (R := R) a (1 : ConnesKreimer R (UnorderedTree α)) =
       ofTree (UnorderedTree.leaf a) := by
-  show bPlusLin (R := R) a (of' 0) = _
-  rw [bPlusLin_of']
+  show bPlus (R := R) a (of' 0) = _
+  rw [bPlus_of']
   show ofTree (UnorderedTree.node a 0) = ofTree (UnorderedTree.leaf a)
   rfl
 
@@ -165,25 +165,25 @@ theorem comulTreeN_leaf (a : α) :
 theorem comulTreeN_node_cocycle (a : α) (F : Forest (UnorderedTree α)) :
     comulTreeN (R := R) (UnorderedTree.node a F) =
       ofTree (UnorderedTree.node a F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulForestN F) := by
+      (LinearMap.lTensor _ (bPlus (R := R) a)) (comulForestN F) := by
   unfold comulTreeN comulTreeNG
   rw [cutSummandsN_node, comulForestN_eq_sum,
       map_multiset_sum (LinearMap.lTensor (ConnesKreimer R (UnorderedTree α))
-        (bPlusLin (R := R) a))]
+        (bPlus (R := R) a))]
   simp only [Multiset.map_map]
   refine congr_arg (_ + ·) (congr_arg Multiset.sum
     (Multiset.map_congr rfl (fun pf _ => ?_)))
   show of' (R := R) pf.1 ⊗ₜ[R] ofTree (UnorderedTree.node a pf.2) =
-       (LinearMap.lTensor (ConnesKreimer R (UnorderedTree α)) (bPlusLin (R := R) a))
+       (LinearMap.lTensor (ConnesKreimer R (UnorderedTree α)) (bPlus (R := R) a))
          (of' (R := R) pf.1 ⊗ₜ[R] of' (R := R) pf.2)
-  rw [LinearMap.lTensor_tmul, bPlusLin_of']
+  rw [LinearMap.lTensor_tmul, bPlus_of']
 
 /-- The cocycle, lifted to the algebra-hom level on tree basis elements. -/
-theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (UnorderedTree α)) :
-    comulAlgHomN (R := R) (bPlusLin (R := R) a (of' F)) =
-      bPlusLin (R := R) a (of' F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN (of' F)) := by
-  rw [bPlusLin_of', comulAlgHomN_apply_ofTree, comulAlgHomN_apply_of']
+theorem comulAlgHomN_bPlus_cocycle (a : α) (F : Forest (UnorderedTree α)) :
+    comulAlgHomN (R := R) (bPlus (R := R) a (of' F)) =
+      bPlus (R := R) a (of' F) ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
+      (LinearMap.lTensor _ (bPlus (R := R) a)) (comulAlgHomN (of' F)) := by
+  rw [bPlus_of', comulAlgHomN_apply_ofTree, comulAlgHomN_apply_of']
   exact comulTreeN_node_cocycle a F
 
 /-! ## Counit laws
@@ -191,9 +191,9 @@ theorem comulAlgHomN_bPlusLin_cocycle (a : α) (F : Forest (UnorderedTree α)) :
 `(ε ⊗ id) ∘ Δ^ρ = lid⁻¹` and `(id ⊗ ε) ∘ Δ^ρ = rid⁻¹`, checked on trees through the cocycle
 `comulTreeN_node_cocycle`. The left law needs induction on the tree. -/
 
-private theorem counit_bPlusLin (a : α) (y : ConnesKreimer R (UnorderedTree α)) :
-    counit (R := R) (bPlusLin (R := R) a y) = 0 := by
-  have h : (counit (R := R)).toLinearMap ∘ₗ bPlusLin (R := R) a = 0 :=
+private theorem counit_bPlus (a : α) (y : ConnesKreimer R (UnorderedTree α)) :
+    counit (R := R) (bPlus (R := R) a y) = 0 := by
+  have h : (counit (R := R)).toLinearMap ∘ₗ bPlus (R := R) a = 0 :=
     ConnesKreimer.lhom_ext' fun F ↦ by simp
   exact congr($h y)
 
@@ -206,8 +206,8 @@ theorem counit_rTensor_comulAlgHomN :
     have hF := algHom_of'_eq_of_ofTree ih
     have h (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
         Algebra.TensorProduct.map counit (AlgHom.id R _)
-          (LinearMap.lTensor _ (bPlusLin (R := R) a) z) =
-        LinearMap.lTensor R (bPlusLin a) (Algebra.TensorProduct.map counit (AlgHom.id R _) z) := by
+          (LinearMap.lTensor _ (bPlus (R := R) a) z) =
+        LinearMap.lTensor R (bPlus a) (Algebra.TensorProduct.map counit (AlgHom.id R _) z) := by
       induction z using TensorProduct.inductionOn <;> simp_all
     simp [comulTreeN_node_cocycle, h, by simpa using hF]
 
@@ -218,8 +218,8 @@ theorem counit_lTensor_comulAlgHomN :
   obtain ⟨a, F, rfl⟩ : ∃ a F, T = UnorderedTree.node a F := ⟨_, _, (node_eta T).symm⟩
   have h (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
       Algebra.TensorProduct.map (AlgHom.id R _) counit
-        (LinearMap.lTensor _ (bPlusLin (R := R) a) z) = 0 := by
-    induction z using TensorProduct.inductionOn <;> simp_all [counit_bPlusLin]
+        (LinearMap.lTensor _ (bPlus (R := R) a) z) = 0 := by
+    induction z using TensorProduct.inductionOn <;> simp_all [counit_bPlus]
   simp [comulTreeN_node_cocycle, h]
 
 section CoassocFoissy
@@ -263,18 +263,18 @@ theorem mem_coassocSubalg (x : ConnesKreimer R (UnorderedTree α)) :
 
 /-! ### Linear extension of the cocycle
 
-Both sides of `comulAlgHomN_bPlusLin_cocycle` are linear, so it extends from forests to all of
+Both sides of `comulAlgHomN_bPlus_cocycle` are linear, so it extends from forests to all of
 `H` by `ConnesKreimer.lhom_ext'`. -/
 
-theorem comulAlgHomN_bPlusLin_cocycle_general (a : α)
+theorem comulAlgHomN_bPlus_cocycle_general (a : α)
     (x : ConnesKreimer R (UnorderedTree α)) :
-    comulAlgHomN (bPlusLin (R := R) a x) =
-      bPlusLin (R := R) a x ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
-      (LinearMap.lTensor _ (bPlusLin (R := R) a)) (comulAlgHomN x) := by
-  have heq : (comulAlgHomN (R := R) (α := α)).toLinearMap ∘ₗ bPlusLin (R := R) a =
-      (TensorProduct.mk R _ _).flip 1 ∘ₗ bPlusLin (R := R) a +
-        LinearMap.lTensor _ (bPlusLin (R := R) a) ∘ₗ (comulAlgHomN (R := R) (α := α)).toLinearMap :=
-    ConnesKreimer.lhom_ext' fun F ↦ comulAlgHomN_bPlusLin_cocycle a F
+    comulAlgHomN (bPlus (R := R) a x) =
+      bPlus (R := R) a x ⊗ₜ[R] (1 : ConnesKreimer R (UnorderedTree α)) +
+      (LinearMap.lTensor _ (bPlus (R := R) a)) (comulAlgHomN x) := by
+  have heq : (comulAlgHomN (R := R) (α := α)).toLinearMap ∘ₗ bPlus (R := R) a =
+      (TensorProduct.mk R _ _).flip 1 ∘ₗ bPlus (R := R) a +
+        LinearMap.lTensor _ (bPlus (R := R) a) ∘ₗ (comulAlgHomN (R := R) (α := α)).toLinearMap :=
+    ConnesKreimer.lhom_ext' fun F ↦ comulAlgHomN_bPlus_cocycle a F
   exact congr($heq x)
 
 /-! ### Closure of `coassocSubalg` under `B+_a`
@@ -311,8 +311,8 @@ private theorem comulAlgHomN_lTensor_bPlus_commute (a : α)
     (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     (Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
         (AlgHom.id R (ConnesKreimer R (UnorderedTree α))))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
-    (LinearMap.lTensor _ (bPlusLin (R := R) a))
+      ((LinearMap.lTensor _ (bPlus (R := R) a)) z) =
+    (LinearMap.lTensor _ (bPlus (R := R) a))
       ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
         (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))) z) := by
   induction z using TensorProduct.inductionOn with
@@ -327,8 +327,8 @@ private theorem assoc_lTensor_bPlus_commute (a : α)
           ConnesKreimer R (UnorderedTree α)) :
     (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
         (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
-    (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
+      ((LinearMap.lTensor _ (bPlus (R := R) a)) z) =
+    (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlus (R := R) a)))
       ((Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
         (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α))) z) := by
   induction z using TensorProduct.inductionOn with
@@ -350,12 +350,12 @@ private theorem lTensor_id_Δ_bPlus_eq (a : α)
     (z : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     (Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (comulAlgHomN (R := R) (α := α)))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a)) z) =
+      ((LinearMap.lTensor _ (bPlus (R := R) a)) z) =
     (Algebra.TensorProduct.assoc R R R (ConnesKreimer R (UnorderedTree α))
         (ConnesKreimer R (UnorderedTree α)) (ConnesKreimer R (UnorderedTree α)))
-      ((LinearMap.lTensor _ (bPlusLin (R := R) a) z) ⊗ₜ
+      ((LinearMap.lTensor _ (bPlus (R := R) a) z) ⊗ₜ
         (1 : ConnesKreimer R (UnorderedTree α))) +
-    (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
+    (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlus (R := R) a)))
       ((Algebra.TensorProduct.map (AlgHom.id R (ConnesKreimer R (UnorderedTree α)))
         (comulAlgHomN (R := R) (α := α))) z) := by
   induction z using TensorProduct.inductionOn with
@@ -367,7 +367,7 @@ private theorem lTensor_id_Δ_bPlus_eq (a : α)
     -- ✓ by simp with all the relevant tmul + cocycle lemmas.
     simp only [LinearMap.lTensor_tmul, Algebra.TensorProduct.map_tmul,
                Algebra.TensorProduct.assoc_tmul, AlgHom.id_apply,
-               comulAlgHomN_bPlusLin_cocycle_general, TensorProduct.tmul_add]
+               comulAlgHomN_bPlus_cocycle_general, TensorProduct.tmul_add]
   | add z₁ z₂ ih₁ ih₂ =>
     simp only [map_add, TensorProduct.add_tmul]
     rw [ih₁, ih₂]
@@ -375,7 +375,7 @@ private theorem lTensor_id_Δ_bPlus_eq (a : α)
 
 theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (UnorderedTree α))
     (hx : x ∈ coassocSubalg (R := R) (α := α)) :
-    bPlusLin (R := R) a x ∈ coassocSubalg (R := R) (α := α) := by
+    bPlus (R := R) a x ∈ coassocSubalg (R := R) (α := α) := by
   rw [mem_coassocSubalg] at hx ⊢
   -- The proof structure: express both `coassocLHS (B+_a x)` and `coassocRHS (B+_a x)`
   -- in the form `shared + (lTensor H (lTensor H B+_a))(coassocXXX x)` with the
@@ -384,11 +384,11 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (UnorderedTree α)
   -- shared := (B+_a x) ⊗ (1 ⊗ 1) + assoc(((lTensor H B+_a)(Δ x)) ⊗ 1)
   show (Algebra.TensorProduct.assoc R R R _ _ _)
         ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-          (AlgHom.id R _)) (comulAlgHomN (bPlusLin (R := R) a x))) =
+          (AlgHom.id R _)) (comulAlgHomN (bPlus (R := R) a x))) =
        (Algebra.TensorProduct.map (AlgHom.id R _)
-          (comulAlgHomN (R := R) (α := α))) (comulAlgHomN (bPlusLin (R := R) a x))
+          (comulAlgHomN (R := R) (α := α))) (comulAlgHomN (bPlus (R := R) a x))
   -- Apply cocycle on x: Δ(B+_a x) = (B+_a x) ⊗ 1 + (lTensor _ B+_a)(Δ x).
-  rw [comulAlgHomN_bPlusLin_cocycle_general]
+  rw [comulAlgHomN_bPlus_cocycle_general]
   -- Distribute (map ⊗ id), (map id ⊗ ·), assoc through the addition.
   rw [map_add, map_add, map_add]
   -- LHS first term: assoc((map Δ id)(Bx ⊗ 1)) = assoc(Δ(Bx) ⊗ 1)
@@ -397,23 +397,23 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (UnorderedTree α)
   --                  = Bx ⊗ (1 ⊗ 1) + assoc(((lTensor _ B+a)(Δx)) ⊗ 1)
   rw [show (Algebra.TensorProduct.assoc R R R _ _ _)
         ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
-          (AlgHom.id R _)) (bPlusLin (R := R) a x ⊗ₜ
+          (AlgHom.id R _)) (bPlus (R := R) a x ⊗ₜ
             (1 : ConnesKreimer R (UnorderedTree α)))) =
-      (bPlusLin (R := R) a x) ⊗ₜ ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ
+      (bPlus (R := R) a x) ⊗ₜ ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ
         (1 : ConnesKreimer R (UnorderedTree α))) +
       (Algebra.TensorProduct.assoc R R R _ _ _)
-        ((LinearMap.lTensor _ (bPlusLin (R := R) a))
+        ((LinearMap.lTensor _ (bPlus (R := R) a))
           (comulAlgHomN x) ⊗ₜ (1 : ConnesKreimer R (UnorderedTree α))) from by
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply,
-        comulAlgHomN_bPlusLin_cocycle_general, TensorProduct.add_tmul, map_add,
+        comulAlgHomN_bPlus_cocycle_general, TensorProduct.add_tmul, map_add,
         Algebra.TensorProduct.assoc_tmul]]
   -- LHS second term: use Δ⊗id-vs-id⊗B+a commutation, then assoc-vs-B+a commutation.
   rw [comulAlgHomN_lTensor_bPlus_commute, assoc_lTensor_bPlus_commute]
   -- RHS first term: (map id Δ)(Bx ⊗ 1) = Bx ⊗ Δ(1) = Bx ⊗ (1 ⊗ 1).
   rw [show (Algebra.TensorProduct.map (AlgHom.id R _)
             (comulAlgHomN (R := R) (α := α)))
-          (bPlusLin (R := R) a x ⊗ₜ (1 : ConnesKreimer R (UnorderedTree α))) =
-        (bPlusLin (R := R) a x) ⊗ₜ
+          (bPlus (R := R) a x ⊗ₜ (1 : ConnesKreimer R (UnorderedTree α))) =
+        (bPlus (R := R) a x) ⊗ₜ
           ((1 : ConnesKreimer R (UnorderedTree α)) ⊗ₜ
             (1 : ConnesKreimer R (UnorderedTree α))) from by
     rw [Algebra.TensorProduct.map_tmul, AlgHom.id_apply, map_one,
@@ -423,11 +423,11 @@ theorem bPlus_mem_coassocSubalg (a : α) (x : ConnesKreimer R (UnorderedTree α)
   -- Now both sides are `Bx ⊗ (1⊗1) + assoc(...) + (lTensor (lTensor B+a))(coassocXXX_inner x)`,
   -- modulo associativity. Use hx (coassocLHS x = coassocRHS x — defeq to the inner forms)
   -- to bridge the two third summands; then `abel` for reordering.
-  have hlift : (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
+  have hlift : (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlus (R := R) a)))
                 ((Algebra.TensorProduct.assoc R R R _ _ _)
                   ((Algebra.TensorProduct.map (comulAlgHomN (R := R) (α := α))
                     (AlgHom.id R _)) (comulAlgHomN x))) =
-              (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlusLin (R := R) a)))
+              (LinearMap.lTensor _ (LinearMap.lTensor _ (bPlus (R := R) a)))
                 ((Algebra.TensorProduct.map (AlgHom.id R _)
                   (comulAlgHomN (R := R) (α := α))) (comulAlgHomN x)) :=
     congrArg _ hx
@@ -471,10 +471,10 @@ theorem ofTree_mem_coassocSubalg (T : UnorderedTree α) :
     rw [show (UnorderedTree.mk (RoseTree.node a children) : UnorderedTree α) =
         UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk))
         from (UnorderedTree.node_mk_tree_list a children).symm]
-    -- ofTree (UnorderedTree.node a F) = bPlusLin a (of' F) by bPlusLin_of'.
+    -- ofTree (UnorderedTree.node a F) = bPlus a (of' F) by bPlus_of'.
     rw [show ofTree (UnorderedTree.node a (Multiset.ofList (children.map UnorderedTree.mk)))
-            = bPlusLin (R := R) a (of' (Multiset.ofList (children.map UnorderedTree.mk)))
-            from (bPlusLin_of' a _).symm]
+            = bPlus (R := R) a (of' (Multiset.ofList (children.map UnorderedTree.mk)))
+            from (bPlus_of' a _).symm]
     apply bPlus_mem_coassocSubalg
     -- of' F ∈ coassocSubalg, where F = Multiset.ofList (children.map mk).
     apply of'_mem_coassocSubalg_of_trees

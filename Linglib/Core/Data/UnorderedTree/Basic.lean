@@ -259,6 +259,13 @@ theorem node_eta (t : UnorderedTree α) : node (value t) (children t) = t := by
   induction t with
   | node a F => rw [value_node, children_node]
 
+@[simp] theorem node_inj {a b : α} {F G : Multiset (UnorderedTree α)} :
+    node a F = node b G ↔ a = b ∧ F = G :=
+  ⟨fun h ↦ ⟨by simpa using congrArg value h, by simpa using congrArg children h⟩,
+    fun ⟨ha, hF⟩ ↦ ha ▸ hF ▸ rfl⟩
+
+theorem node_injective (a : α) : Function.Injective (node a) := fun _ _ h ↦ (node_inj.mp h).2
+
 /-! ### Node count of a `node` -/
 
 theorem numNodes_pos (t : UnorderedTree α) : 0 < t.numNodes :=
