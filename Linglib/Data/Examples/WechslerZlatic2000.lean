@@ -154,7 +154,7 @@ def ex_11 : Datum :=
     glossedTokens := [("Ova", "this.NT.PL"), ("telad", "calves"), ("imaju", "have.PL"), ("po", "each"), ("dva", "two"), ("roga", "horns")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Ova telad ima po dva roga.", .ungrammatical)]
+    alternatives := [("Ova telad ima po dva roga.", .ungrammatical), ("Ova telad ima po dva roga.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "telad"), ("predicate", "distributive")] }
 
@@ -271,7 +271,7 @@ def ex_20 : Datum :=
     glossedTokens := [("Sreo", "met.1SG"), ("sam", "AUX"), ("gospodu", "gentlemen.ACC"), ("Oni", "they.M.PL"), ("su", "AUX.PL"), ("bili", "were.M.PL"), ("jako", "very"), ("ljubazni", "kind.M.PL")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Sreo sam gospodu. Ona su bila jako ljubazna.", .ungrammatical)]
+    alternatives := [("Sreo sam gospodu. Ona su bila jako ljubazna.", .ungrammatical), ("Sreo sam gospodu. Ona su bila jako ljubazna.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "gospoda"), ("pronoun", "masculine plural")] }
 
@@ -336,7 +336,7 @@ def ex_25 : Datum :=
     glossedTokens := [("Ja", "I"), ("smatram", "consider"), ("decu", "children.ACC(F.SG[N.PL])"), ("gladnom", "hungry.INST.FEM.SG")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Ja smatram decu gladnim.", .ungrammatical)]
+    alternatives := [("Ja smatram decu gladnim.", .ungrammatical), ("Ja smatram decu gladnim.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "secondary predicate")] }
 
@@ -349,7 +349,7 @@ def ex_26 : Datum :=
     glossedTokens := [("Jelena", "Yelena(F.SG[F.SG])"), ("i", "and"), ("deca", "children(F.SG[N.PL])"), ("su", "AUX.3.PL"), ("došli", "came.M.PL")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Jelena i deca su došle.", .ungrammatical)]
+    alternatives := [("Jelena i deca su došle.", .ungrammatical), ("Jelena i deca su došle.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
@@ -362,7 +362,7 @@ def ex_27 : Datum :=
     glossedTokens := [("Jelena", "Yelena(F.SG[F.SG])"), ("i", "and"), ("deca", "children(F.SG[N.PL])"), ("su", "AUX.3.PL"), ("gladni", "hungry.M.PL")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Jelena i deca su gladne.", .ungrammatical)]
+    alternatives := [("Jelena i deca su gladne.", .ungrammatical), ("Jelena i deca su gladne.", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
@@ -375,7 +375,7 @@ def ex_28 : Datum :=
     glossedTokens := [("Ta", "that"), ("deca", "children(F.SG[N.PL])"), ("i", "and"), ("ta", "those"), ("čudovišta", "monsters(N.PL[N.PL])"), ("su", "AUX"), ("se", "REFL"), ("lepo", "well"), ("igrala", "played.N.PL")]
     context := ""
     judgment := .acceptable
-    alternatives := [("Ta deca i ta čudovišta su se lepo igrali.", .marginal)]
+    alternatives := [("Ta deca i ta čudovišta su se lepo igrali.", .marginal), ("Ta deca i ta čudovišta su se lepo igrali.", .marginal)]
     readings := []
     paperFeatures := [("noun", "deca"), ("target", "coordination")] }
 
@@ -388,7 +388,7 @@ def ex_29 : Datum :=
     glossedTokens := [("deca", "children"), ("koja", "who.N.PL"), ("su", "AUX.PL"), ("tada", "then"), ("bila", "were")]
     context := ""
     judgment := .acceptable
-    alternatives := [("deca koja je tada bila", .ungrammatical)]
+    alternatives := [("deca koja je tada bila", .ungrammatical), ("deca koja je tada bila", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "nominative")] }
 
@@ -414,7 +414,7 @@ def ex_31 : Datum :=
     glossedTokens := [("deca", "children"), ("koje", "who.GEN.F.SG"), ("se", "REFL"), ("svi", "all"), ("plaše", "fear")]
     context := ""
     judgment := .acceptable
-    alternatives := [("deca kojih se svi plaše", .acceptable)]
+    alternatives := [("deca kojih se svi plaše", .acceptable), ("deca kojih se svi plaše", .acceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "genitive")] }
 
@@ -427,7 +427,7 @@ def ex_32 : Datum :=
     glossedTokens := [("moja", "my"), ("deca", "children"), ("što", "that"), ("ih", "3.ACC.PL"), ("nije", "NEG.AUX"), ("briga", "care"), ("nizašta", "nothing")]
     context := ""
     judgment := .acceptable
-    alternatives := [("moja deca, što je nije briga nizašta", .ungrammatical)]
+    alternatives := [("moja deca, što je nije briga nizašta", .ungrammatical), ("moja deca, što je nije briga nizašta", .unacceptable)]
     readings := []
     paperFeatures := [("noun", "deca"), ("relative", "što")] }
 
@@ -457,6 +457,19 @@ def ex_34 : Datum :=
     readings := []
     paperFeatures := [("noun", "Majestad"), ("concord", "feminine"), ("index", "masculine")] }
 
-def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34]
+def ex_35 : Datum :=
+  { id := "wechslerzlatic2000_35"
+    source := ⟨"wechsler-zlatic-2000", "(62)"⟩
+    reportedIn := none
+    language := "sout1528"
+    primaryText := "moja deca, što je se svi plaše"
+    glossedTokens := [("moja", "my"), ("deca", "children"), ("što", "that"), ("je", "3.GEN.F.SG"), ("se", "REFL"), ("svi", "all"), ("plaše", "fear")]
+    context := ""
+    judgment := .unacceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("noun", "deca"), ("relative", "što"), ("resumptive", "singular")] }
+
+def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_10, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_27, ex_28, ex_29, ex_30, ex_31, ex_32, ex_33, ex_34, ex_35]
 
 end WechslerZlatic2000.Examples
