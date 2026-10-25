@@ -21,6 +21,48 @@
     "verified": "page-image"
   },
   {
+    "id": "tsiliazhao2026_7a",
+    "source": {"bibkey": "tsilia-zhao-2026", "paperLabel": "(7a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary was feeling sick then.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrix", "past"],
+      ["environment", "root"],
+      ["then", "compatible"]
+    ],
+    "comment": "The past denotes a time apart from the utterance time, which *then* can restrict. The row expands the printed (7a) Mary was feeling sick (then).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tsiliazhao2026_7b",
+    "source": {"bibkey": "tsilia-zhao-2026", "paperLabel": "(7b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary will be feeling sick then.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrix", "future"],
+      ["environment", "root"],
+      ["then", "compatible"]
+    ],
+    "comment": "The future denotes a time apart from the utterance time, which *then* can restrict. The row expands the printed (7b) Mary will be feeling sick (then).",
+    "verified": "page-image"
+  },
+  {
     "id": "tsiliazhao2026_8",
     "source": {"bibkey": "tsilia-zhao-2026", "paperLabel": "(8)"},
     "reportedIn": null,
@@ -64,7 +106,7 @@
       ["shifted", "yes"],
       ["then", "incompatible"]
     ],
-    "comment": "The ⌈then⌉-present puzzle: the shifted present does not refer to the utterance time, yet *tote* remains incompatible with it; from Tsilia (2021). The row expands the starred variant of the printed (*tote).",
+    "comment": "The ⌜then⌝-present puzzle: the shifted present does not refer to the utterance time, yet *tote* remains incompatible with it; from Tsilia (2021). The row expands the starred variant of the printed (*tote).",
     "verified": "page-image"
   },
   {
@@ -135,6 +177,29 @@
       ["shifted", "no"]
     ],
     "comment": "The English present under past never shifts: it indicates the utterance time, and (19) with *two thousand years ago* is infelicitous; *then* is impossible, (20).",
+    "verified": "page-image"
+  },
+  {
+    "id": "tsiliazhao2026_20",
+    "source": {"bibkey": "tsilia-zhao-2026", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A month ago, John found out that Mary loves him then.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrix", "past"],
+      ["environment", "attitude report"],
+      ["embedded", "present"],
+      ["shifted", "no"],
+      ["then", "incompatible"]
+    ],
+    "comment": "The unshifted English present of (18) overlaps the utterance time, so *then* is impossible with it.",
     "verified": "page-image"
   },
   {
@@ -262,7 +327,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "variable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -299,6 +364,29 @@
     "verified": "page-image"
   },
   {
+    "id": "tsiliazhao2026_31d",
+    "source": {"bibkey": "tsilia-zhao-2026", "paperLabel": "(31d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "In 2030, John will be married to someone who is in jail then.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["matrix", "future"],
+      ["environment", "relative clause"],
+      ["embedded", "present"],
+      ["shifted", "deleted"],
+      ["then", "compatible"]
+    ],
+    "comment": "The present under future is deleted by sequence of tense under WOLL's PRES, (91), (93), and a deleted tense carries no perspectival presupposition. From Tsilia (2021), adapted from von Fintel and Heim; the row expands the printed (then).",
+    "verified": "page-image"
+  },
+  {
     "id": "tsiliazhao2026_32",
     "source": {"bibkey": "tsilia-zhao-2026", "paperLabel": "(32)"},
     "reportedIn": null,
@@ -314,9 +402,10 @@
     ],
     "readings": [],
     "paperFeatures": [
+      ["matrix", "future"],
       ["then", "past-oriented only"]
     ],
-    "comment": "Japanese *tooji* is used only with past expressions, so the present-under-future cells are not applicable for Japanese.",
+    "comment": "Japanese *tooji* is used only with past expressions, so it is ruled out even with a matrix future tense, and the present-under-future cells are not applicable for Japanese.",
     "verified": "page-image"
   },
   {

@@ -7,8 +7,7 @@ public import Linglib.Semantics.Tense.Perspective
 
 Russian locates a time relative to the deictic centre with the adverbs *togda* 'then' and
 *sejčas* 'now'. *Togda* is distal, referring to a past or future time away from the centre;
-*sejčas* refers to a time that includes the centre. The examples are those of
-[tsilia-zhao-2026].
+*sejčas* refers to a time that includes the centre. The examples are Tsilia and Zhao's.
 
 ## References
 

@@ -8,53 +8,46 @@ public import Linglib.Fragments.Slavic.Russian.TemporalDeictic
 public import Linglib.Data.Examples.TsiliaZhao2026
 
 /-!
-# Tsilia and Zhao (2026): Tense and Perspective: A Solution to the ⌈then⌉-Present Puzzle
+# Tsilia and Zhao (2026): Tense and perspective
 
-This file formalizes the solution of [tsilia-zhao-2026] to the ⌈then⌉-present puzzle, (12):
-the temporal adverb ⌈then⌉ cannot restrict a present-tensed verb phrase, whether the present
-is shifted or not. In Greek, Hebrew, Russian and Japanese a present under a past attitude
-verb shifts to the attitude's time, (8), yet ⌈then⌉ is still excluded, (9)–(11), although it
-restricts an embedded past with the same simultaneous reference, (38)–(39), and a deleted,
-sequence-of-tense past, (48)–(49). Tenses and ⌈then⌉ are temporal pronouns with
-presuppositions relative to a perspective parameter `π`, (69)–(71): PRES overlap, PAST
-precedence, ⌈then⌉ disjointness, the substrate's `Tense.Perspective.Presup` at the cells
-`present`, `past` and `presentᶜ`. Tense shift is the rebinding of `π`, by the propositional
-operator OP_π of (73), to an evaluation index that an attitude verb or WOLL binds, so a
-clausemate PRES and ⌈then⌉ shift together and read the same `π`; since ⌈then⌉ restricts the
-reference of the tense it modifies, (76), their presuppositions clash whatever `π` is,
-`not_restricted_present`, the derivations (77), (79), (81) and (82), and so for each adverb of
-the sample, `not_restricted_present_of_mem`. A pronominal anchor would let the two anchor
-separately, (36), which is coherent, `exists_split_anchor`, hence the parameter. ⌈then⌉
-restricts a PAST to its own reference, `restricted_past_self`, and a deleted tense, carrying no
-presupposition, (86)–(87), is compatible with ⌈then⌉ when no operator shifts the perspective
-onto its reference, (89), `restricted_top_of_not_overlaps` and `not_restricted_top_of_le`.
-Japanese *tooji* is past-oriented and so, unlike *then*, excluded of a future time, (32),
-`presup_then_not_tooji_of_precedes`. Russian *sejčas* 'now' has the presupposition of PRES,
-(115), and restricts a present, `restricted_present_sejchas`.
+The temporal adverb ⌜then⌝ cannot restrict a present tense, whether the present is shifted or not,
+(12). Tenses and ⌜then⌝ are temporal pronouns presupposing a position relative to a perspective
+`π`, (69)–(71): PRES overlap, PAST precedence and ⌜then⌝ disjointness, the substrate's
+`Tense.Perspective.Presup` at the cells `present`, `past` and `presentᶜ`. The operator OP_π of
+(73) rebinds `π` for a whole clause, so a clausemate tense and ⌜then⌝, which restricts the tense's
+reference (76), read the same `π`, and a present clashes with ⌜then⌝ whatever `π` is. A deleted
+tense carries no presupposition, (86)–(87).
+
+## Main results
+
+* `TsiliaZhao2026.not_restricted_present`: a distal adverb cannot restrict a present.
+* `TsiliaZhao2026.accepted_iff_exists_restricted`: an example with ⌜then⌝ is accepted exactly
+  when some perspective satisfies the presuppositions of its tense and its adverb.
+* `TsiliaZhao2026.exists_split_anchor`: pronominal anchors would let a present and ⌜then⌝ anchor
+  apart, (36), hence the parameter.
 
 ## Implementation notes
 
-Times are closed intervals of a linear order, and clause meanings are their presuppositions
-as functions of the perspective; the assertion, the assignment and the evaluation index are
-suppressed, so OP_π is instantiation of the perspective, and the intensional binding that
-licenses a shift, absent in relative clauses under past except in Japanese, is described by
-the rows. The typology of Tables 1 and 2 is the rows: under past the present shifts in
-attitude reports in Greek, Hebrew, Russian and Japanese, in relative clauses only in
-Japanese, and never in English, whose present under past indicates the utterance time; under
-future it shifts everywhere, WOLL binding the index, and only English admits ⌈then⌉ there,
-its present being deleted under WOLL's PRES rather than shifted, a difference among
-sequence-of-tense languages the paper leaves open, (94)–(97). The perspective is not the
-context's time, since Greek shifts the present but never *tora* 'now', (99). The examples are
-the rows of `Data.Examples.TsiliaZhao2026`.
+Times are closed intervals of a linear order, and clause meanings are their presuppositions as
+functions of the perspective; the assertion, the assignment and the evaluation index are
+suppressed, so OP_π is instantiation of the perspective, and whether a language shifts or deletes
+a tense in a given environment, Tables 1 and 2, is read from the rows. An example's tense is its
+embedded tense, or else its matrix tense, and is `⊤` when the paper analyses it as deleted, as the
+English present under future, (90)–(93); its adverb is the ⌜then⌝ of its language.
 
 ## TODO
 
 The paper derives the exclusion of *sejčas* from a simultaneous embedded past, (112), from the
-presuppositions (114) and (115) "just like the ⌈then⌉-present puzzle". Containment and the two
+presuppositions (114) and (115) "just like the ⌜then⌝-present puzzle". Containment and the two
 presuppositions are jointly satisfiable, `exists_restricted_past_present`, because precedence,
 unlike overlap, does not pass to a containing time; the exclusion follows once the reference of
 *sejčas* lies within the perspective, `not_restricted_past_of_le`, an assumption the paper does
 not state.
+
+The rows record which tenses are deleted rather than deriving it from generalization (94), that a
+sequence-of-tense language with a shiftable present cannot delete it. The argument of section 7
+that the perspective is neither the context's time nor the index's, (98)–(104), with the unshifted
+*tora* 'now' of (99), is not formalized.
 
 ## References
 
@@ -91,15 +84,17 @@ theorem not_restricted_present {a : DeicticAdverb} (ha : a.IsDistal)
     (r th π : NonemptyInterval T) : ¬ Restricted ⟦present⟧ a.cell r th π :=
   fun ⟨hr, hle, hth⟩ ↦ not_presup_of_presup_present ha hr hle hth
 
-/-- The ⌈then⌉ adverbs of the paper's sample. -/
-def thenAdverbs : List DeicticAdverb :=
-  [English.TemporalDeictic.then_, Greek.StandardModern.TemporalDeictic.tote,
-    Hebrew.TemporalDeictic.az, Russian.TemporalDeictic.togda, Japanese.TemporalDeictic.tooji]
+/-- The ⌜then⌝ adverbs of the paper's sample, by the Glottocode of their language. -/
+def thenAdverbs : List (String × DeicticAdverb) :=
+  [("stan1293", English.TemporalDeictic.then_),
+    ("mode1248", Greek.StandardModern.TemporalDeictic.tote),
+    ("hebr1245", Hebrew.TemporalDeictic.az), ("russ1263", Russian.TemporalDeictic.togda),
+    ("nucl1643", Japanese.TemporalDeictic.tooji)]
 
-/-- No adverb of the sample restricts a present tense, the ⌈then⌉-present puzzle (12). -/
-theorem not_restricted_present_of_mem {a : DeicticAdverb} (ha : a ∈ thenAdverbs)
+/-- No adverb of the sample restricts a present tense, the ⌜then⌝-present puzzle (12). -/
+theorem not_restricted_present_of_mem {a : DeicticAdverb} (ha : a ∈ thenAdverbs.map Prod.snd)
     (r th π : NonemptyInterval T) : ¬ Restricted ⟦present⟧ a.cell r th π :=
-  not_restricted_present ((by decide : ∀ a ∈ thenAdverbs, a.IsDistal) a ha) r th π
+  not_restricted_present ((by decide : ∀ a ∈ thenAdverbs.map Prod.snd, a.IsDistal) a ha) r th π
 
 /-- The clash is the adverb's doing: Russian *sejčas* 'now', with the presupposition of PRES,
 (115), restricts a present tense. -/
@@ -108,7 +103,7 @@ theorem restricted_present_sejchas (r : NonemptyInterval T) :
   ⟨presup_present.2 (NonemptyInterval.overlaps_refl r), le_rfl,
     presup_present.2 (NonemptyInterval.overlaps_refl r)⟩
 
-/-- With pronominal anchors, PRES and ⌈then⌉ could take different times and the clause would be
+/-- With pronominal anchors, PRES and ⌜then⌝ could take different times and the clause would be
 coherent (36). -/
 theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.Overlaps π₂) :
     ∃ r th, Presup ⟦present⟧ π₁ r ∧ r ≤ th ∧ Presup ⟦present⟧ᶜ π₂ th :=
@@ -118,7 +113,7 @@ theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.Ove
 /-! ### Past and deleted tense (sections 3 and 6) -/
 
 /-- (38), (39), (44): a PAST admits at its own reference any adverb whose cell admits
-precedence, ⌈then⌉ and *tooji* alike. -/
+precedence, ⌜then⌝ and *tooji* alike. -/
 theorem restricted_past_self (hC : .lt ∈ C) (h : Presup ⟦past⟧ π r) : Restricted ⟦past⟧ C r r π :=
   ⟨h, le_rfl, h.mono (Finset.singleton_subset_iff.2 hC)⟩
 
@@ -135,7 +130,7 @@ theorem restricted_top_iff : Restricted ⊤ C r th π ↔ r ≤ th ∧ Presup C 
   and_iff_right presup_top
 
 /-- (89a): with no OP_π the perspective stays the utterance time, from which the reported
-meeting is disjoint, and ⌈then⌉ restricts the deleted past. -/
+meeting is disjoint, and ⌜then⌝ restricts the deleted past. -/
 theorem restricted_top_of_not_overlaps (h : ¬ r.Overlaps π) : Restricted ⊤ ⟦present⟧ᶜ r r π :=
   restricted_top_iff.2 ⟨le_rfl, presup_compl_present.2 h⟩
 
@@ -144,6 +139,27 @@ restrict it (89b). -/
 theorem not_restricted_top_of_le (hC : .eq ∉ C) (hr : r ≤ π) : ¬ Restricted ⊤ C r th π :=
   fun ⟨_, hle, hth⟩ ↦ not_presup_of_presup_present hC
     (presup_present.2 (NonemptyInterval.overlaps_of_le hr)) hle hth
+
+/-! ### The examples -/
+
+/-- The cell of the tense an example's adverb restricts: its embedded tense, or else its matrix
+tense, and `⊤` for a deleted tense. -/
+def tenseCell (row : Datum) : Option (Finset Ordering) :=
+  if row.feature? "shifted" = some "deleted" then some ⊤ else
+    row.parse? (if (row.feature? "embedded").isSome then "embedded" else "matrix")
+      [("present", ⟦present⟧), ("past", ⟦past⟧), ("future", ⟦future⟧), ("deleted past", ⊤)]
+
+/-- The ⌜then⌝ of an example's language, if the example has one. -/
+def adverb (row : Datum) : Option DeicticAdverb :=
+  (row.feature? "then").bind fun _ ↦ thenAdverbs.lookup row.language
+
+/-- An example with ⌜then⌝ is accepted, by some speakers at least, exactly when some perspective
+satisfies the presuppositions of its tense and of the adverb restricting it. -/
+theorem accepted_iff_exists_restricted [Nontrivial T] :
+    ∀ row ∈ Examples.all, ∀ C ∈ tenseCell row, ∀ a ∈ adverb row,
+      (.variable ≤ row.judgment ↔ ∃ π r th : NonemptyInterval T, Restricted C a.cell r th π) := by
+  simp only [Restricted, exists_presup_iff]
+  decide +kernel
 
 /-! ### Perspective-sensitive *now* (section 7) -/
 
