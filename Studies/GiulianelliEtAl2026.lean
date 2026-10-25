@@ -98,7 +98,7 @@ theorem informationValue_one_sub_prefixIndicator (hc : μ {y | c <+: y} ≠ 0) (
   have := μ.isProbabilityMeasure_continuation hc
   have hi : Integrable (fun a ↦ prefixIndicator a w c) (μ.continuation c) :=
     (integrable_const 1).indicator .of_discrete
-  rw [informationValue, integral_sub (integrable_const _) hi, integral_const,
+  rw [informationValue, genSurprisal, id, integral_sub (integrable_const _) hi, integral_const,
     integral_prefixIndicator, condPrefixProb_ofMeasure hc]
   simp
 
@@ -118,6 +118,6 @@ theorem iiv_eq_informationValue [IsFiniteMeasure μ] {d : List α → List α �
   have := μ.isProbabilityMeasure_continuation hcw
   have hdw (a a' : List α) : d a (w ++ a') = d a w := by
     rw [hd, List.take_append_of_le_length hw, ← hd]
-  simp only [iiv, informationValue, hdw, integral_const, probReal_univ, one_smul]
+  simp only [iiv, informationValue, genSurprisal, id, hdw, integral_const, probReal_univ, one_smul]
 
 end GiulianelliEtAl2026

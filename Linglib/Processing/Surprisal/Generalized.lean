@@ -68,12 +68,9 @@ noncomputable def genSurprisal (L : Kernel C A) (f : ℝ → ℝ) (g : A → W �
   f (∫ a, g a w c ∂(L c))
 
 /-- Information value with the mean as its summary statistic: the expected distance `d` from the
-alternatives to the target. -/
-noncomputable def informationValue (L : Kernel C A) (d : A → W → C → ℝ) (c : C) (w : W) : ℝ :=
-  ∫ a, d a w c ∂(L c)
-
-theorem genSurprisal_id (L : Kernel C A) (g : A → W → C → ℝ) (c : C) (w : W) :
-    genSurprisal L id g c w = informationValue L g c w := rfl
+alternatives to the target, the model with the identity warping and the distance as score. -/
+noncomputable def informationValue (L : Kernel C A) (d : A → W → C → ℝ) : C → W → ℝ :=
+  genSurprisal L id d
 
 /-! ### Anticipation and responsivity -/
 
