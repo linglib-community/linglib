@@ -103,13 +103,13 @@ namespace Perspective
 variable [LinearOrder T] {π : NonemptyInterval T} {Q : NonemptyInterval T → Prop}
 
 @[simp] theorem diamond_toSetRel_past :
-    ◇[toSetRel ⟦past⟧] Q π ↔ ∃ r, r.Precedes π ∧ Q r := by
+    ◇[toSetRel Allen.precedes] Q π ↔ ∃ r, r.Precedes π ∧ Q r := by
   simp [Diamond]
 
 /-- On dense time the past of a past is a past on intervals too. -/
 theorem diamond_past_diamond_past [DenselyOrdered T] (Q : NonemptyInterval T → Prop) :
-    ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] Q) = ◇[toSetRel ⟦past⟧] Q := by
-  rw [← diamond_comp, toSetRel_past_comp_self]
+    ◇[toSetRel Allen.precedes] (◇[toSetRel Allen.precedes] Q) = ◇[toSetRel Allen.precedes] Q := by
+  rw [← diamond_comp, toSetRel_precedes_comp_self]
 
 end Perspective
 

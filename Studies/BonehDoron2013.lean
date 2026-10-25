@@ -140,7 +140,7 @@ variable {A : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {p 
 /-- The retrospective, (19b), holds at a perspective interval that a reference interval of `A`
 precedes, the perspectival past. -/
 def retro (A : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ (Tense.Perspective.toSetRel ⟦Tense.past⟧).preimage (A w)
+  fun w ↦ (Tense.Perspective.toSetRel Allen.precedes).preimage (A w)
 
 /-- *Used to*, (18): the retrospective over the imperfective (19a). -/
 def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
@@ -150,8 +150,8 @@ def usedTo (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
 the retrospective's cell and the imperfective's. -/
 theorem usedTo_eq_preimage : usedTo P w = (Allen.toSetRel (Allen.inv Allen.precedes)).preimage
     ((Allen.toSetRel Allen.le).preimage (τ '' {e | P w e})) := by
-  rw [usedTo, retro, Tense.Perspective.toSetRel_eq_inv, Tense.denote_past, Allen.ofPosition_lt,
-    ← Allen.toSetRel_inv, Aspect.unbounded_eq_preimage]
+  rw [usedTo, retro, Tense.Perspective.toSetRel_eq_inv, ← Allen.toSetRel_inv,
+    Aspect.unbounded_eq_preimage]
 
 /-- The composite of the retrospective and the imperfective: the state began before the
 perspective time, and may have ended at any time after that. -/
@@ -170,14 +170,14 @@ theorem mem_usedTo_iff : p ∈ usedTo P w ↔ ∃ e, P w e ∧ (τ e).fst < p.fs
     exact ⟨e, hP, compare_gt_iff_gt.1 (Finset.mem_filter.1 h).2⟩
   · rintro ⟨e, hP, hlt⟩
     exact ⟨.pure (τ e).fst, ⟨e, NonemptyInterval.le_def.2 ⟨le_rfl, (τ e).fst_le_snd⟩, hP⟩,
-      Tense.Perspective.mem_toSetRel.2 (Tense.Perspective.presup_past.2 hlt)⟩
+      Tense.Perspective.mem_toSetRel.2 (Tense.Perspective.presup_precedes.2 hlt)⟩
 
 /-- *Since then*, (33), *now*, (35), and a simultaneous reading, (36)–(37), need reference
 intervals overlapping the perspective time, and none of these serves the retrospective. -/
 theorem not_mem_retro_of_overlaps (h : ∀ i ∈ A w, i.Overlaps p) : p ∉ retro A w :=
   fun ⟨i, hi, hp⟩ ↦
     NonemptyInterval.precedes_not_overlaps
-      (Tense.Perspective.presup_past.1 (Tense.Perspective.mem_toSetRel.1 hp)) (h i hi)
+      (Tense.Perspective.presup_precedes.1 (Tense.Perspective.mem_toSetRel.1 hp)) (h i hi)
 
 /-- The universal perfect over a span begun before its time of tense entails *used to*, which
 unlike it does not assert the state at that time (`IatridouEtAl2001.universal_at_rb`), so the two

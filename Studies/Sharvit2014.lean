@@ -113,35 +113,36 @@ start of the contextually relevant interval, whatever the cell of the tense. A c
 follows a time of the predicate can be started later, one that overlaps it can be widened to the
 whole interval, and one that precedes it can be started at the start of the interval. -/
 theorem IsEarliest.eq_fst_of_diamond [DenselyOrdered M] {c : Finset Ordering}
-    (h : IsEarliest C {t | ◇[Perspective.toSetRel c] (· ∈ q) t} m) : m = C.fst := by
+    (h : IsEarliest C {t | ◇[Perspective.toSetRel (Allen.ofPosition c)] (· ∈ q) t} m) :
+    m = C.fst := by
   refine h.fst_le.eq_of_not_lt' fun hlt ↦ ?_
   obtain ⟨t, ⟨⟨r, hr, hq⟩, htC⟩, hm⟩ := h.1
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 htC
-  rw [Perspective.mem_toSetRel, Perspective.Presup] at hr
+  rw [Perspective.mem_toSetRel, Perspective.presup_ofPosition] at hr
   rcases hpos : r.position t with _ | _ | _
   · have hrt : r.snd < t.fst := NonemptyInterval.position_eq_lt.1 hpos
     obtain ⟨a, ha, ham⟩ := exists_between (max_lt (hrt.trans_le hm.1) hlt)
     have hra : r.position (.pure a) = .lt :=
       NonemptyInterval.position_eq_lt.2 ((le_max_left _ _).trans_lt ha)
     exact absurd (h.le_of_mem (t := .pure a) ⟨r, by rwa [Perspective.mem_toSetRel,
-      Perspective.Presup, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2
+      Perspective.presup_ofPosition, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2
         ⟨(le_max_right _ _).trans ha.le, ham.le.trans (hm.2.trans h₂)⟩)
       (NonemptyInterval.mem_pure_self a)) ham.not_ge
   · have hrC : r.position C = .eq := NonemptyInterval.position_eq_eq.2
       ((NonemptyInterval.overlaps_comm _ _).1 (((NonemptyInterval.overlaps_comm _ _).1
         (NonemptyInterval.position_eq_eq.1 hpos)).mono_left htC))
-    exact hlt.ne' (h.eq_fst_of_mem ⟨r, by rwa [Perspective.mem_toSetRel, Perspective.Presup,
-      hrC, ← hpos], hq⟩)
+    exact hlt.ne' (h.eq_fst_of_mem ⟨r, by
+      rwa [Perspective.mem_toSetRel, Perspective.presup_ofPosition, hrC, ← hpos], hq⟩)
   · have hra : r.position (.pure C.fst) = .gt := NonemptyInterval.position_eq_gt.2
       ((h₁.trans t.fst_le_snd).trans_lt (NonemptyInterval.position_eq_gt.1 hpos))
     exact hlt.not_ge (h.le_of_mem (t := .pure C.fst) ⟨r, by rwa [Perspective.mem_toSetRel,
-      Perspective.Presup, hra, ← hpos], hq⟩ (NonemptyInterval.le_def.2 ⟨le_rfl, C.fst_le_snd⟩)
-      (NonemptyInterval.mem_pure_self _))
+      Perspective.presup_ofPosition, hra, ← hpos], hq⟩
+      (NonemptyInterval.le_def.2 ⟨le_rfl, C.fst_le_snd⟩) (NonemptyInterval.mem_pure_self _))
 
 /-- On dense time a clause with an existentially quantified tense never satisfies the presupposition
 of *before*, the inherent presupposition failure of (27). -/
 theorem not_beforeDefined_diamond [DenselyOrdered M] {c : Finset Ordering} :
-    ¬ BeforeDefined C {t | ◇[Perspective.toSetRel c] (· ∈ q) t} :=
+    ¬ BeforeDefined C {t | ◇[Perspective.toSetRel (Allen.ofPosition c)] (· ∈ q) t} :=
   fun ⟨_, h, hlt⟩ ↦ hlt.ne' h.eq_fst_of_diamond
 
 /-! ### Tensed clauses under *before* -/
@@ -150,6 +151,14 @@ theorem not_beforeDefined_diamond [DenselyOrdered M] {c : Finset Ordering} :
 def cell : Embedded → Finset Ordering
   | .past => ⟦Tense.past⟧
   | .present => ⟦Tense.present⟧
+
+@[simp] theorem presup_cell_past {π t : NonemptyInterval M} :
+    Perspective.Presup (Allen.ofPosition (cell .past)) π t ↔ t.Precedes π := by
+  simp [cell, Tense.denote_past]
+
+@[simp] theorem presup_cell_present {π t : NonemptyInterval M} :
+    Perspective.Presup (Allen.ofPosition (cell .present)) π t ↔ t.Overlaps π := by
+  simp [cell, Tense.denote_present]
 
 /-- The readings of a tensed clause that is the complement of *before*. -/
 inductive Reading
@@ -168,8 +177,8 @@ inductive Reading
 speech time. -/
 def Reading.denote (SP : NonemptyInterval M) (q : Set (NonemptyInterval M)) :
     Reading → Set (NonemptyInterval M)
-  | .pronominal τ => {t | Perspective.Presup (cell τ) SP t ∧ t ∈ q}
-  | .existential τ => {t | ◇[Perspective.toSetRel (cell τ)] (· ∈ q) t}
+  | .pronominal τ => {t | Perspective.Presup (Allen.ofPosition (cell τ)) SP t ∧ t ∈ q}
+  | .existential τ => {t | ◇[Perspective.toSetRel (Allen.ofPosition (cell τ))] (· ∈ q) t}
   | .null => q
 
 /-- A clause whose verb takes the pronominal tense `τ` with evaluation index `j` and referential
@@ -177,7 +186,7 @@ index `k`, as in (30a), says that the time of `k` stands to the time of `j` as t
 and that the predicate holds at it. -/
 def clause (τ : Embedded) (j k : ℕ) (q : Set (NonemptyInterval M)) :
     Assignment (NonemptyInterval M) → Prop :=
-  fun g ↦ Perspective.Presup (cell τ) (g j) (g k) ∧ g k ∈ q
+  fun g ↦ Perspective.Presup (Allen.ofPosition (cell τ)) (g j) (g k) ∧ g k ∈ q
 
 variable {τ : Embedded} {j k : ℕ} {g : Assignment (NonemptyInterval M)}
 
@@ -195,7 +204,7 @@ theorem lambdaAbsG_exists_clause (hjk : j ≠ k) :
 theorem lambdaAbsG_clause_self :
     {t | lambdaAbsG k (clause .present k k q) g t} = Reading.null.denote SP q := by
   ext t
-  simp [clause, Reading.denote, cell]
+  simp [clause, Reading.denote, cell, Tense.denote_present]
 
 namespace Reading
 
@@ -226,9 +235,9 @@ theorem fails_iff {r : Reading} : r.Fails ↔ ∃ τ, r = .existential τ := by
     h ℚ ⟨(0, 10), by norm_num⟩ SP {.pure 5} ⟨5, isEarliest_fst_of_subset_singleton h₁ h₂
       (NonemptyInterval.le_def.2 ⟨by norm_num, by norm_num⟩), by norm_num⟩
   rcases r with (_ | _) | τ | _
-  · exact absurd h (key (.pure 20) _ ⟨Perspective.presup_past.2 (by
+  · exact absurd h (key (.pure 20) _ ⟨presup_cell_past.2 (by
       show (5 : ℚ) < 20; norm_num), rfl⟩ fun _ h ↦ h.2)
-  · exact absurd h (key (.pure 5) _ ⟨Perspective.presup_present.2
+  · exact absurd h (key (.pure 5) _ ⟨presup_cell_present.2
       (NonemptyInterval.overlaps_refl _), rfl⟩ fun _ h ↦ h.2)
   · exact ⟨τ, rfl⟩
   · exact absurd h (key (.pure 0) _ rfl subset_rfl)
@@ -240,19 +249,19 @@ theorem stumpEffect_iff {r : Reading} : r.StumpEffect ↔ r = .pronominal .prese
         r.denote (.pure 10) {.pure 0, .pure 1} → ¬ r.StumpEffect := fun r hd h ↦
       absurd (h ℤ (.pure 10) (.pure 5) (.pure 1) _ (by decide) hd) (by decide)
     rcases r with (_ | _) | (_ | _) | _
-    · exact absurd h (key _ ⟨by decide, by simp⟩)
+    · exact absurd h (key _ ⟨presup_cell_past.2 (by decide), by simp⟩)
     · rfl
-    · exact absurd h (key _ ⟨.pure 0, by decide, by simp⟩)
-    · exact absurd h (key _ ⟨.pure 1, by decide, by simp⟩)
+    · exact absurd h (key _ ⟨.pure 0, presup_cell_past.2 (by decide), by simp⟩)
+    · exact absurd h (key _ ⟨.pure 1, presup_cell_present.2 (by decide), by simp⟩)
     · exact absurd h (key _ (by simp [denote]))
   · subst hr
-    exact ht.trans_le (Perspective.presup_present.1 hd.1).2
+    exact ht.trans_le (presup_cell_present.1 hd.1).2
 
 /-- The pronominal past has no p-shiftability, its earliest time preceding the speech time (35). -/
 theorem noPShiftability_pronominal_past : (pronominal .past).NoPShiftability :=
   fun _ _ _ _ _ _ h ↦
     let ⟨_, ⟨ht, _⟩, hm⟩ := h.1
-    hm.2.trans_lt (Perspective.presup_past.1 ht.1)
+    hm.2.trans_lt (presup_cell_past.1 ht.1)
 
 /-- A tense with no meaning of its own is p-shiftable, in that the earliest time of its clause may
 follow the speech time (36). -/
