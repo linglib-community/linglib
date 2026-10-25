@@ -170,8 +170,8 @@ instance : ∀ m s, Decidable (LicensesPos m s)
 
 theorem licenses_iff_exists_admits (m : EndpointModifier) (b : Boundedness) :
     b.Licenses m ↔ ∃ s, b.Admits s ∧ LicensesPos m s := by
-  cases m <;> cases b <;> simp [Boundedness.Licenses, LicensesPos, Boundedness.Admits,
-    Boundedness.HasMin, Boundedness.HasMax]
+  cases m <;> cases b <;> simp [Boundedness.Licenses, LicensesPos, Boundedness.HasMin,
+    Boundedness.HasMax]
 
 /-- A relative adjective licenses neither endpoint modifier, so *completely likely* and *slightly
 likely* lack a degree reading ((4.62), (4.63)). -/

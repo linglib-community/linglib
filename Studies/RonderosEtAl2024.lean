@@ -25,8 +25,8 @@ adjectives.
 
 * `perceptual_matches`: the perceptual account predicts the effects found.
 * `pragmatic_fails`: the pragmatic account does not.
-* `baseline_higher_iff_not_relative`: the baseline is higher exactly for the non-gradable
-  adjective types.
+* `baseline_higher_iff_not_requiresComparisonClass`: the baseline is higher exactly for the
+  adjective types whose interpretation needs no comparison class.
 
 ## Implementation notes
 
@@ -166,11 +166,12 @@ instance : DecidablePred Informative
   | .color => isFalse id
   | .scalar | .material => isTrue trivial
 
-/-- Scalar adjectives are relative gradable, and colour and material adjectives are non-gradable
+/-- The standard of an adjective type: scalar adjectives are relative gradable, with a
+contextual standard, and colour and material adjectives are non-gradable, with none
 ([kennedy-2007]). -/
-def AdjType.adjectiveClass : AdjType → Degree.AdjectiveClass
-  | .scalar => .relative
-  | .color | .material => .nonGradable
+def AdjType.standard : AdjType → Option Degree.PositiveStandard
+  | .scalar => some .contextual
+  | .color | .material => none
 
 /-! ### The accounts of the contrast effect -/
 
@@ -247,10 +248,10 @@ what was found. -/
 theorem pragmatic_fails : ¬ ∀ t, pragmatic.PredictsEffect t ↔ Effect t := by decide +kernel
 
 /-- The baseline follows the adjective classes. Looks to the property-matching objects exceed
-those for scalar adjectives exactly for the non-gradable types, which need no comparison class
+those for scalar adjectives exactly for the types whose interpretation needs no comparison class
 ([aparicio-xiang-kennedy-2015]). -/
-theorem baseline_higher_iff_not_relative :
-    ∀ t, BaselineHigherThanScalar t ↔ t.adjectiveClass ≠ .relative := by
+theorem baseline_higher_iff_not_requiresComparisonClass :
+    ∀ t, BaselineHigherThanScalar t ↔ ∀ s ∈ t.standard, ¬ s.RequiresComparisonClass := by
   decide +kernel
 
 theorem salience_not_baseline : ¬ ∀ t, BaselineHigherThanScalar t → Salient t := by
