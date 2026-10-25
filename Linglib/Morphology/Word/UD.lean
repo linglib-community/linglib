@@ -32,6 +32,8 @@ as features, which drops them.
 
 * `Person.fromUD_toUD`: ingestion after realization is the identity, clusivity included.
 * `Case.fromUD_toUD`: ingestion after realization is the identity except on the oblique.
+* `Morphology.Features.ofUD_toUD`: for a token, ingestion after realization is the identity
+  except at case and number.
 
 ## References
 
@@ -246,5 +248,24 @@ def ofUD (m : UD.MorphFeatures) : Features
   | .evident => m.evident
   | .polarity => m.polarity
   | .polite => m.polite
+
+/-- Ingestion inverts realization except at case and number: the oblique case returns as the
+accusative, and a number value without a tag returns as `none`. -/
+theorem ofUD_toUD (f : Features) (t : Feature) :
+    ofUD (toUD f) t =
+      match t with
+      | .case => (f .case).map fun c ↦ if c = .obl then .acc else c
+      | .number => (f .number).bind fun n ↦ if n.toUD = none then none else some n
+      | t => f t := by
+  cases t
+  case person => rcases h : f .person with - | p <;> simp only [ofUD, toUD, h] <;>
+    [rfl; (cases p <;> rfl)]
+  case number => rcases h : f .number with - | n <;> simp only [ofUD, toUD, h] <;>
+    [rfl; (cases n <;> rfl)]
+  case case => rcases h : f .case with - | c <;> simp only [ofUD, toUD, h] <;>
+    [rfl; (cases c <;> rfl)]
+  case poss => rcases h : f .poss with - | ⟨⟩ <;> simp only [ofUD, toUD, h] <;> rfl
+  case reflex => rcases h : f .reflex with - | ⟨⟩ <;> simp only [ofUD, toUD, h] <;> rfl
+  all_goals rfl
 
 end Morphology.Features
