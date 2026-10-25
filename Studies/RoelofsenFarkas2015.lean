@@ -17,11 +17,12 @@ conveys the even answer after *Is it even?* and the odd one after *Is it odd?*
 (`presup_query_ofPolarity`), and on a response sharing its antecedent's radical the relative
 feature is Farkas and Bruce's relative polarity (`relativePresup_smul_iff`).
 
-Languages differ in which particles realize which features, and a particle dedicated to a
-combination blocks the others. English *yes* and *no* each realize a natural class of features,
-so both occur in responses to a negative antecedent (`english_usable`), while French *si* and
-German *doch* realize [reverse, +] alone. The account agrees with what Farkas and Bruce say the
-English particles mark (`usable_english_iff_mem`).
+Languages differ in which particles realize which features (`PolarityParticle.targets`), and a
+particle dedicated to a combination blocks the others of its language. English *yes* and *no*
+each realize a natural class of features (`english_natural_class`), so both occur in responses to
+a negative antecedent (`english_usable`), while French *si* and German *doch* realize
+[reverse, +] alone. The account agrees with what Farkas and Bruce say the English particles, *si*
+and *doch* mark (`usable_iff_mem_marks`).
 
 ## Implementation notes
 
@@ -139,115 +140,124 @@ inductive Target where
   | combination (r s : Polarity)
   deriving DecidableEq, Repr
 
-/-- An English particle realizes the relative and the absolute feature of its polarity, *yes*
-[agree] and [+], and *no* [reverse] and [−] (76). -/
-def english (p : English.PolarityParticle) : List Target :=
-  [.feature (.relative p.polarity), .feature (.absolute p.polarity)]
+/-- The polarity particles of the paper's examples. -/
+inductive PolarityParticle where
+  | yes | no | oui | non | si | ja | nein | doch
+  deriving DecidableEq, Repr, Fintype
 
-/-- French *oui* realizes [+], *non* [−], and *si* the combination [reverse, +] (118). -/
-def french : French.PolarityParticle → List Target
+/-- The fragment entry of a particle. -/
+def PolarityParticle.entry : PolarityParticle → Particle
+  | .yes => English.PolarityParticles.yes
+  | .no => English.PolarityParticles.no
+  | .oui => French.PolarityParticles.oui
+  | .non => French.PolarityParticles.non
+  | .si => French.PolarityParticles.si
+  | .ja => German.PolarityParticles.ja
+  | .nein => German.PolarityParticles.nein
+  | .doch => German.PolarityParticles.doch
+
+/-- The English particles. -/
+def english : List PolarityParticle := [.yes, .no]
+
+/-- The French particles. -/
+def french : List PolarityParticle := [.oui, .non, .si]
+
+/-- The German particles. -/
+def german : List PolarityParticle := [.ja, .nein, .doch]
+
+example : english.map PolarityParticle.entry = English.PolarityParticles.all := rfl
+
+example : french.map PolarityParticle.entry = French.PolarityParticles.all := rfl
+
+example : german.map PolarityParticle.entry = German.PolarityParticles.all := rfl
+
+namespace PolarityParticle
+
+/-- The particles of the language of `p`, which compete with it. -/
+def inventory : PolarityParticle → List PolarityParticle
+  | .yes | .no => english
+  | .oui | .non | .si => french
+  | .ja | .nein | .doch => german
+
+/-- What a particle realizes: English *yes* [agree] and [+] and *no* [reverse] and [−] (76),
+French *oui* [+], *non* [−] and *si* the combination [reverse, +] (118), and German *ja* [agree]
+and [+], *nein* [reverse] and [−] and *doch* the combination [reverse, +] (123). -/
+def targets : PolarityParticle → List Target
+  | .yes | .ja => [.feature (.relative .positive), .feature (.absolute .positive)]
+  | .no | .nein => [.feature (.relative .negative), .feature (.absolute .negative)]
   | .oui => [.feature (.absolute .positive)]
   | .non => [.feature (.absolute .negative)]
-  | .si => [.combination .negative .positive]
-
-/-- German *ja* realizes [agree] and [+], *nein* [reverse] and [−], and *doch* the combination
-[reverse, +] (123). -/
-def german : German.PolarityParticle → List Target
-  | .ja => [.feature (.relative .positive), .feature (.absolute .positive)]
-  | .nein => [.feature (.relative .negative), .feature (.absolute .negative)]
-  | .doch => [.combination .negative .positive]
-
-section Usable
-
-variable {P : Type*} (R : P → List Target)
+  | .si | .doch => [.combination .negative .positive]
 
 /-- A particle can realize the combination [r, s] when it realizes one of its features or the
 combination itself. -/
-def Realizes (p : P) (r s : Polarity) : Prop :=
-  .feature (.relative r) ∈ R p ∨ .feature (.absolute s) ∈ R p ∨ .combination r s ∈ R p
+def Realizes (p : PolarityParticle) (r s : Polarity) : Prop :=
+  .feature (.relative r) ∈ p.targets ∨ .feature (.absolute s) ∈ p.targets ∨
+    .combination r s ∈ p.targets
 
-/-- A particle is usable in an [r, s] response when it can realize it and no particle dedicated
-to the combination blocks it. -/
-def Usable (p : P) (r s : Polarity) : Prop :=
-  Realizes R p r s ∧ ∀ q, .combination r s ∈ R q → .combination r s ∈ R p
+/-- A particle is usable in an [r, s] response when it can realize it and no particle of its
+language dedicated to the combination blocks it. -/
+def Usable (p : PolarityParticle) (r s : Polarity) : Prop :=
+  p.Realizes r s ∧ ∀ q ∈ p.inventory, .combination r s ∈ q.targets → .combination r s ∈ p.targets
 
-instance (p : P) (r s : Polarity) : Decidable (Realizes R p r s) :=
+instance (p : PolarityParticle) (r s : Polarity) : Decidable (p.Realizes r s) :=
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-instance [Fintype P] [DecidableEq P] (p : P) (r s : Polarity) : Decidable (Usable R p r s) :=
+instance (p : PolarityParticle) (r s : Polarity) : Decidable (p.Usable r s) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-end Usable
+end PolarityParticle
 
 /-- In English, [agree, +] responses take *yes*, [reverse, −] responses *no*, and [agree, −]
 and [reverse, +] responses either particle (77). -/
-theorem english_usable (p : English.PolarityParticle) :
-    (Usable english p .positive .positive ↔ p = .yes) ∧
-      (Usable english p .negative .negative ↔ p = .no) ∧
-      Usable english p .positive .negative ∧ Usable english p .negative .positive := by
-  cases p <;> decide
+theorem english_usable : ∀ p ∈ english,
+    (p.Usable .positive .positive ↔ p = .yes) ∧ (p.Usable .negative .negative ↔ p = .no) ∧
+      p.Usable .positive .negative ∧ p.Usable .negative .positive := by
+  decide
 
 /-- French [agree, +] responses take *oui*, [reverse, +] responses *si*, and [agree, −] and
 [reverse, −] responses *non* (119)–(122). -/
-theorem french_usable (p : French.PolarityParticle) :
-    (Usable french p .positive .positive ↔ p = .oui) ∧
-      (Usable french p .negative .positive ↔ p = .si) ∧
-      (Usable french p .positive .negative ↔ p = .non) ∧
-      (Usable french p .negative .negative ↔ p = .non) := by
-  cases p <;> decide
+theorem french_usable : ∀ p ∈ french,
+    (p.Usable .positive .positive ↔ p = .oui) ∧ (p.Usable .negative .positive ↔ p = .si) ∧
+      (p.Usable .positive .negative ↔ p = .non) ∧ (p.Usable .negative .negative ↔ p = .non) := by
+  decide
 
 /-- German [agree, +] responses take *ja*, [reverse, +] responses *doch*, [reverse, −]
 responses *nein*, and [agree, −] responses *ja* or *nein* (124)–(127). -/
-theorem german_usable (p : German.PolarityParticle) :
-    (Usable german p .positive .positive ↔ p = .ja) ∧
-      (Usable german p .negative .positive ↔ p = .doch) ∧
-      (Usable german p .negative .negative ↔ p = .nein) ∧
-      (Usable german p .positive .negative ↔ p ≠ .doch) := by
-  cases p <;> decide
+theorem german_usable : ∀ p ∈ german,
+    (p.Usable .positive .positive ↔ p = .ja) ∧ (p.Usable .negative .positive ↔ p = .doch) ∧
+      (p.Usable .negative .negative ↔ p = .nein) ∧ (p.Usable .positive .negative ↔ p ≠ .doch) := by
+  decide
 
-/-- Each English particle realizes a natural class of features, those of its polarity, *yes*
-the unmarked ones and *no* the marked ones (80). -/
-theorem mem_english_iff {p : English.PolarityParticle} {f : Feature} :
-    Target.feature f ∈ english p ↔ f.value = p.polarity := by
-  cases f <;> simp [english, Response.Feature.value]
+/-- Each English particle realizes a natural class of features, those of one value, *yes* the
+unmarked ones and *no* the marked ones (80). -/
+theorem english_natural_class :
+    ∀ p ∈ english, ∃ v : Polarity, ∀ f : Feature, .feature f ∈ p.targets ↔ f.value = v := by
+  decide
 
-theorem combination_notMem_english (p : English.PolarityParticle) (r s : Polarity) :
-    Target.combination r s ∉ english p := by
-  simp [english]
-
-theorem usable_english_iff_mem (p : English.PolarityParticle) (x : Response) :
-    Usable english p x.relative x.polarity ↔ x ∈ FarkasBruce2010.english p := by
-  simp [Usable, Realizes, mem_english_iff, combination_notMem_english, Response.Feature.value,
-    FarkasBruce2010.mem_english_iff]
-
-theorem usable_si_iff_mem_reversePositive (x : Response) :
-    Usable french .si x.relative x.polarity ↔ x ∈ FarkasBruce2010.reversePositive := by
+/-- The account agrees with what Farkas and Bruce say the English particles, *si* and *doch*
+mark. -/
+theorem usable_iff_mem_marks (x : Response) :
+    (PolarityParticle.yes.Usable x.relative x.polarity ↔
+        x ∈ FarkasBruce2010.PolarityParticle.yes.marks) ∧
+      (PolarityParticle.no.Usable x.relative x.polarity ↔
+        x ∈ FarkasBruce2010.PolarityParticle.no.marks) ∧
+      (PolarityParticle.si.Usable x.relative x.polarity ↔
+        x ∈ FarkasBruce2010.PolarityParticle.si.marks) ∧
+      (PolarityParticle.doch.Usable x.relative x.polarity ↔
+        x ∈ FarkasBruce2010.PolarityParticle.doch.marks) := by
   obtain ⟨m, a, s⟩ := x
   cases m <;> cases a <;> cases s <;> decide
 
 /-! ### The examples -/
 
-/-- The particles of the examples. -/
-inductive Particle where
-  | en (p : English.PolarityParticle)
-  | fr (p : French.PolarityParticle)
-  | de (p : German.PolarityParticle)
-  deriving DecidableEq, Repr
+/-- The particles of each language's examples, by Glottocode. -/
+def particlesOf : List (String × List PolarityParticle) :=
+  [("stan1293", english), ("stan1290", french), ("stan1295", german)]
 
-/-- A particle is usable in an [r, s] response in its language. -/
-def Particle.Usable : Particle → Polarity → Polarity → Prop
-  | .en p, r, s => RoelofsenFarkas2015.Usable english p r s
-  | .fr p, r, s => RoelofsenFarkas2015.Usable french p r s
-  | .de p, r, s => RoelofsenFarkas2015.Usable german p r s
-
-instance (p : Particle) (r s : Polarity) : Decidable (p.Usable r s) := by
-  cases p <;> unfold Particle.Usable <;> infer_instance
-
-/-- The particles of each language, by Glottocode and spelling. -/
-def particleTable : List (String × List (String × Particle)) :=
-  [("stan1293", [English.PolarityParticle.yes, .no].map fun p ↦ (p.form, .en p)),
-    ("stan1290", [French.PolarityParticle.oui, .non, .si].map fun p ↦ (p.form, .fr p)),
-    ("stan1295", [German.PolarityParticle.ja, .nein, .doch].map fun p ↦ (p.form, .de p))]
+/-- The particle of a row, by its spelling among the particles of the row's language. -/
+def particleOf? (ex : Datum) : Option PolarityParticle := do
+  ex.parse? "particle" ((← List.lookup ex.language particlesOf).map fun p ↦ (p.entry.form, p))
 
 def polarityTable : List (String × Polarity) := [("positive", .positive), ("negative", .negative)]
 
@@ -256,7 +266,7 @@ and of the response, the relative feature the paper assigns it, the particle, an
 structure Row where
   response : Response
   relative : Polarity
-  particle : Particle
+  particle : PolarityParticle
   judgment : Judgment
   deriving DecidableEq, Repr
 
@@ -264,11 +274,10 @@ def relativeTable : List (String × Polarity) := [("agree", .positive), ("revers
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   guard (ex.feature? "reaction" = some "assertion")
-  let table ← List.lookup ex.language particleTable
   let antecedent ← ex.parse? "antecedent" polarityTable
   let polarity ← ex.parse? "response" polarityTable
   let relative ← ex.parse? "relative" relativeTable
-  let particle ← ex.parse? "particle" table
+  let particle ← particleOf? ex
   pure ⟨⟨.assertion, antecedent, polarity⟩, relative, particle, ex.judgment⟩
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
@@ -292,13 +301,13 @@ polarity of the response, its particle, what it conveys, and the judgment. -/
 structure QuestionRow where
   question : Option (Polarity × Polarity)
   response : Polarity
-  particle : English.PolarityParticle
+  particle : PolarityParticle
   conveys : Option Polarity
   judgment : Judgment
   deriving DecidableEq, Repr
 
 def QuestionRow.ofDatum (ex : Datum) : Option QuestionRow := do
-  let particle ← ex.parse? "particle" [("yes", English.PolarityParticle.yes), ("no", .no)]
+  let particle ← particleOf? ex
   let response ← ex.parse? "response" polarityTable
   if ex.feature? "reaction" = some "question" then
     let t ← ex.parse? "antecedent" polarityTable
@@ -319,7 +328,7 @@ theorem ofDatum_isSome :
 `s` applied to the radical (`presup_query_ofPolarity`), and when no particle response to the
 alternative question is acceptable (`not_relativePresup_disj`). -/
 def QuestionRow.Predicted : QuestionRow → Prop
-  | ⟨some (t, a), s, p, c, j⟩ => (j = .acceptable ↔ Usable english p (s / t) s) ∧ c = some (s * a)
+  | ⟨some (t, a), s, p, c, j⟩ => (j = .acceptable ↔ p.Usable (s / t) s) ∧ c = some (s * a)
   | ⟨none, _, _, _, j⟩ => j ≠ .acceptable
 
 instance : DecidablePred QuestionRow.Predicted := fun r ↦ by

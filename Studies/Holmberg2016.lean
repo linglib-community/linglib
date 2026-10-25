@@ -22,8 +22,8 @@ denotes, the same for a negative interrogative as for its positive counterpart
 valued polarity feature, spelled out by a particle or an echoed verb, merged with the clause
 inherited from the question and eliding it, so that it chooses one of the two alternatives
 (`smul_mem_alt`). The particles of
-English, Swedish, French and Japanese spell out the features `english`, `swedish`, `french` and
-`japanese`. The two systems for answering negative questions follow from the syntax of negation
+English, Swedish, French and Japanese spell out the features `feature` assigns them. The two
+systems for answering negative questions follow from the syntax of negation
 (`AnswerFeature.answer`): a middle negation values the polarity head before the particle can,
 so a plain affirmative clashes and the negative particle confirms the negative alternative,
 while a low negation is out of reach, so *yes* confirms the negative alternative and *no* is a
@@ -77,7 +77,7 @@ question is neutral or whose negation the annotation locates (`judgment_iff_pred
 * The very formal English that does not use *-n't* at all, where a question with *not* must,
   as the book says presumably, carry the positive-bias reading as well, is not modelled: `negations`
   is stated for the varieties that use *-n't*.
-* The book discusses French *oui* and *si* but not *non*, which `french` gives [−Pol], as the
+* The book discusses French *oui* and *si* but not *non*, which `feature` gives [−Pol], as the
   negative particle of every language the book discusses.
 
 ## References
@@ -351,36 +351,61 @@ theorem smul_mem_alt {q : PolarInterrogative W} (hne : q.radical ≠ ∅)
 
 /-! ### The particles -/
 
-/-- An English particle spells out the valued feature of its polarity. -/
-def english (p : English.PolarityParticle) : AnswerFeature := .value p.polarity
+/-- The polarity particles of the book's examples. -/
+inductive PolarityParticle where
+  | yes | no | ja | nej | jo | oui | non | si | un | uun
+  deriving DecidableEq, Repr, Fintype
 
-/-- The features of the Swedish particles, *jo* being [+Pol, REV]. -/
-def swedish : Swedish.PolarityParticle → AnswerFeature
-  | .ja => .value .positive
-  | .nej => .value .negative
-  | .jo => .reversing
+/-- The fragment entry of a particle. -/
+def PolarityParticle.entry : PolarityParticle → Particle
+  | .yes => English.PolarityParticles.yes
+  | .no => English.PolarityParticles.no
+  | .ja => Swedish.PolarityParticles.ja
+  | .nej => Swedish.PolarityParticles.nej
+  | .jo => Swedish.PolarityParticles.jo
+  | .oui => French.PolarityParticles.oui
+  | .non => French.PolarityParticles.non
+  | .si => French.PolarityParticles.si
+  | .un => Japanese.PolarityParticles.un
+  | .uun => Japanese.PolarityParticles.uun
 
-/-- The features of the French particles, *si* being [+Pol, REV]. -/
-def french : French.PolarityParticle → AnswerFeature
-  | .oui => .value .positive
-  | .non => .value .negative
-  | .si => .reversing
+/-- The English particles. -/
+def english : List PolarityParticle := [.yes, .no]
 
-/-- The features of the Japanese particles. -/
-def japanese : Japanese.PolarityParticle → AnswerFeature
-  | .un => .value .positive
-  | .uun => .value .negative
+/-- The Swedish particles. -/
+def swedish : List PolarityParticle := [.ja, .nej, .jo]
+
+/-- The French particles. -/
+def french : List PolarityParticle := [.oui, .non, .si]
+
+/-- The Japanese particles. -/
+def japanese : List PolarityParticle := [.un, .uun]
+
+example : english.map PolarityParticle.entry = English.PolarityParticles.all := rfl
+
+example : swedish.map PolarityParticle.entry = Swedish.PolarityParticles.all := rfl
+
+example : french.map PolarityParticle.entry = French.PolarityParticles.all := rfl
+
+example : japanese.map PolarityParticle.entry = Japanese.PolarityParticles.all := rfl
+
+/-- The feature a particle spells out: a valued polarity feature, [+Pol] for the affirmative
+particles and [−Pol] for the negative ones, or [+Pol, REV] for Swedish *jo* and French *si*. -/
+def feature : PolarityParticle → AnswerFeature
+  | .yes | .ja | .oui | .un => .value .positive
+  | .no | .nej | .non | .uun => .value .negative
+  | .jo | .si => .reversing
 
 /-! ### English (Section 4.3) -/
 
 theorem negative_neutralization :
-    (english .yes).answer (.height .low) = some .negative ∧
-      (english .no).answer (.height .middle) = some .negative := by
+    (feature .yes).answer (.height .low) = some .negative ∧
+      (feature .no).answer (.height .middle) = some .negative := by
   decide
 
-theorem yes_ill_formed_middle : (english .yes).answer (.height .middle) = none := by decide
+theorem yes_ill_formed_middle : (feature .yes).answer (.height .middle) = none := by decide
 
-theorem no_double_negation : (english .no).answer (.height .low) = some .positive := by decide
+theorem no_double_negation : (feature .no).answer (.height .low) = some .positive := by decide
 
 /-! ### The polarity-based system (Section 4.4) -/
 
@@ -419,29 +444,29 @@ def swedishNegation : Finset NegationHeight := {.middle, .high}
 theorem swedish_polarityBased : PolarityBased swedishNegation := by decide
 
 theorem swedish_ja_ne_negative {h : NegationHeight} (hh : h ∈ swedishNegation) :
-    (swedish .ja).answer (.height h) ≠ some .negative :=
+    (feature .ja).answer (.height h) ≠ some .negative :=
   swedish_polarityBased.answer_ne_negative hh
 
 theorem swedish_negative_question :
-    (swedish .ja).answer (.height .middle) = none ∧
-      (swedish .nej).answer (.height .middle) = some .negative ∧
-      (swedish .jo).answer (.height .middle) = some .positive := by
+    (feature .ja).answer (.height .middle) = none ∧
+      (feature .nej).answer (.height .middle) = some .negative ∧
+      (feature .jo).answer (.height .middle) = some .positive := by
   decide
 
 theorem swedish_responses :
-    (swedish .nej).responses {.height .middle} = {⟨.polarQuestion, .negative, .negative⟩} ∧
-      (swedish .ja).responses {.height .middle} = ∅ :=
+    (feature .nej).responses {.height .middle} = {⟨.polarQuestion, .negative, .negative⟩} ∧
+      (feature .ja).responses {.height .middle} = ∅ :=
   ⟨AnswerFeature.responses_value_negative_of_valuesHead rfl,
     AnswerFeature.responses_value_positive_of_valuesHead rfl⟩
 
 theorem swedish_adverb :
-    (swedish .ja).answer .screened = some .negative ∧
-      (swedish .nej).answer .screened = some .positive := by
+    (feature .ja).answer .screened = some .negative ∧
+      (feature .nej).answer .screened = some .positive := by
   decide
 
 theorem french_negative_question :
-    (french .oui).answer (.height .middle) = none ∧
-      (french .si).answer (.height .middle) = some .positive := by
+    (feature .oui).answer (.height .middle) = none ∧
+      (feature .si).answer (.height .middle) = some .positive := by
   decide
 
 theorem responses_reversing_eq_reversePositive {N : Set ClauseNegation}
@@ -460,17 +485,17 @@ theorem no_reversal_needed_truth_based (f : AnswerFeature) : f.answer (.height .
 /-- With low negation, Japanese *un* confirms that he does not drink coffee and *uun* that he does
 (Section 4.10). -/
 theorem japanese_negative_question :
-    (japanese .un).answer (.height .low) = some .negative ∧
-      (japanese .uun).answer (.height .low) = some .positive := by
+    (feature .un).answer (.height .low) = some .negative ∧
+      (feature .uun).answer (.height .low) = some .positive := by
   decide
 
 theorem japanese_responses :
-    (japanese .un).responses {.height .low} =
+    (feature .un).responses {.height .low} =
         {x | x.reactsTo = .polarQuestion ∧ x.antecedent = .negative ∧ x.relative = .positive} ∧
-      (japanese .uun).responses {.height .low} =
+      (feature .uun).responses {.height .low} =
         {x | x.reactsTo = .polarQuestion ∧ x.antecedent = .negative ∧ x.relative = .negative} := by
   constructor <;>
-  · rw [japanese, AnswerFeature.responses_value_of_forall_not_valuesHead (by decide)]
+  · rw [feature, AnswerFeature.responses_value_of_forall_not_valuesHead (by decide)]
     simp [ClauseNegation.primaryPolarity, ClauseNegation.InClause]
 
 /-! ### Positive-bias questions (Section 4.8) -/
@@ -520,18 +545,15 @@ theorem answer_of_mem_negations_restrictive {n : ClauseNegation}
 
 theorem exists_mem_negations_tolerant :
     ∃ n ∈ negations .tolerant (some .preposed),
-      (english .yes).answer n ≠ (english .yes).answer .absent :=
+      (feature .yes).answer n ≠ (feature .yes).answer .absent :=
   ⟨.height .middle, by simp [negations], by decide⟩
 
 /-! ### The examples -/
 
 
-/-- The features of each language's particles, by Glottocode and spelling. -/
-def featureTable : List (String × List (String × AnswerFeature)) :=
-  [("stan1293", [English.PolarityParticle.yes, .no].map fun p ↦ (p.form, english p)),
-    ("swed1254", [Swedish.PolarityParticle.ja, .nej, .jo].map fun p ↦ (p.form, swedish p)),
-    ("stan1290", [French.PolarityParticle.oui, .non, .si].map fun p ↦ (p.form, french p)),
-    ("nucl1643", [Japanese.PolarityParticle.un, .uun].map fun p ↦ (p.form, japanese p))]
+/-- The particles of each language, by Glottocode. -/
+def particlesOf : List (String × List PolarityParticle) :=
+  [("stan1293", english), ("swed1254", swedish), ("stan1290", french), ("nucl1643", japanese)]
 
 /-- The negation of a question, by where the annotation locates it. -/
 def negationTable : List (String × ClauseNegation) :=
@@ -558,8 +580,8 @@ answer is a single particle of one of the four languages. -/
 def Row.ofDatum (ex : Datum) : Option Row := do
   let negation ← if ex.feature? "question" = some "neutral" then some .absent
     else ex.parse? "negation" negationTable
-  let table ← List.lookup ex.language featureTable
-  let feature ← ex.parse? "answer" table
+  let ps ← List.lookup ex.language particlesOf
+  let feature ← ex.parse? "answer" (ps.map fun p ↦ (p.entry.form, Holmberg2016.feature p))
   let target := ex.parse? "confirms" polarityTable <|> ex.parse? "intended" polarityTable
   pure ⟨negation, feature, target, ex.judgment⟩
 
@@ -575,8 +597,8 @@ instance : DecidablePred Row.Predicted := fun _ ↦ inferInstanceAs (Decidable (
 
 /-- The rows include *Har Johan inte kommit?* answered by *\*Ja* and by *Jo* (Section 4.5). -/
 theorem kommit_mem_rows :
-    ⟨.height .middle, swedish .ja, none, .ungrammatical⟩ ∈ rows ∧
-      ⟨.height .middle, swedish .jo, some .positive, .acceptable⟩ ∈ rows := by
+    ⟨.height .middle, feature .ja, none, .ungrammatical⟩ ∈ rows ∧
+      ⟨.height .middle, feature .jo, some .positive, .acceptable⟩ ∈ rows := by
   decide
 
 theorem judgment_iff_predicted : ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.Predicted) := by

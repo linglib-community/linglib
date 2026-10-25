@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Swedish particles
@@ -15,7 +14,7 @@ German *wohl* it lacks a reportative meaning. Its role in rejecting questions, w
 and with *men* 'but', is analysed in `SeeligerRepp2018`. Swedish also has clause-initial *visst*
 and *nog*, which can mark positive rejecting questions and are not formalized here.
 
-The polarity particles are `Swedish.PolarityParticle`: *ja* 'yes', *nej* 'no', and *jo*,
+The polarity particles are `Swedish.PolarityParticles`: *ja* 'yes', *nej* 'no', and *jo*,
 glossed yes.REV, the polarity-reversing affirmative that confirms the positive alternative of a
 negative question ([holmberg-2016]).
 
@@ -43,22 +42,21 @@ def val : Particle where
 
 end Swedish.Particles
 
-namespace Swedish
+namespace Swedish.PolarityParticles
 
-/-- The Swedish polarity particles. -/
-inductive PolarityParticle where
-  /-- *ja* 'yes': *Vill han ha kaffe?* 'Does he want coffee?' — *Ja*. -/
-  | ja
-  /-- *nej* 'no': *Har Johan inte kommit?* 'Has Johan not arrived?' — *Nej*, he has not. -/
-  | nej
-  /-- *jo* 'yes.REV', contradicting a negative: *Har Johan inte kommit?* — *Jo*, he has. -/
-  | jo
-  deriving DecidableEq, Repr, Fintype
+/-- *ja* 'yes': *Vill han ha kaffe?* 'Does he want coffee?' — *Ja*. -/
+def ja : Particle where
+  form := "ja"
 
-/-- The spelling of a polarity particle. -/
-def PolarityParticle.form : PolarityParticle → String
-  | .ja => "ja"
-  | .nej => "nej"
-  | .jo => "jo"
+/-- *nej* 'no': *Har Johan inte kommit?* 'Has Johan not arrived?' — *Nej*, he has not. -/
+def nej : Particle where
+  form := "nej"
 
-end Swedish
+/-- *jo* 'yes.REV', contradicting a negative: *Har Johan inte kommit?* — *Jo*, he has. -/
+def jo : Particle where
+  form := "jo"
+
+/-- The polarity particles. -/
+def all : List Particle := [ja, nej, jo]
+
+end Swedish.PolarityParticles

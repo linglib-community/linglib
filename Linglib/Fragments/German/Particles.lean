@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Particle.Basic
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # German modal particles
@@ -19,7 +18,7 @@ statement into a question expecting the answer yes, and with *wohl* it hopes tha
 the case. A sentence type the grammar says nothing about is left unrecorded.
 
 The polarity particles *ja*, *nein* and *doch*, answering and responding, are
-`German.PolarityParticle`; the response *doch* is also used as a separate utterance before a
+`German.PolarityParticles`; the response *doch* is also used as a separate utterance before a
 Verum focus correction (`TurcoBraunDimroth2014`). The analyses of the modal particles are with
 the studies of them: Gutzmann's typing of *ja*, *denn* and *wohl* with his own examples,
 Theiler's *denn*, Seeliger and Repp's *doch wohl*.
@@ -86,22 +85,21 @@ def modalParticles : List Particle := [ja, denn, wohl, halt, doch]
 
 end German.Particles
 
-namespace German
+namespace German.PolarityParticles
 
-/-- The German polarity particles. -/
-inductive PolarityParticle where
-  /-- *ja* 'yes'. -/
-  | ja
-  /-- *nein* 'no'. -/
-  | nein
-  /-- *doch* 'yes', contradicting a negative: *Kommt er nicht?* — *Doch*, he is coming. -/
-  | doch
-  deriving DecidableEq, Repr, Fintype
+/-- *ja* 'yes'. -/
+def ja : Particle where
+  form := "ja"
 
-/-- The spelling of a polarity particle. -/
-def PolarityParticle.form : PolarityParticle → String
-  | .ja => "ja"
-  | .nein => "nein"
-  | .doch => "doch"
+/-- *nein* 'no'. -/
+def nein : Particle where
+  form := "nein"
 
-end German
+/-- *doch* 'yes', contradicting a negative: *Kommt er nicht?* — *Doch*, he is coming. -/
+def doch : Particle where
+  form := "doch"
+
+/-- The polarity particles. -/
+def all : List Particle := [ja, nein, doch]
+
+end German.PolarityParticles

@@ -55,6 +55,7 @@ this through freeness (`IsCancelSMul`) without building the torsor.
 * [farkas-bruce-2010]
 * [roelofsen-farkas-2015]
 * [sadock-zwicky-1985]
+* [koenig-siemund-2007]
 * [holmberg-2016]
 -/
 
