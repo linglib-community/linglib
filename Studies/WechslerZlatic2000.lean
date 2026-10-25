@@ -315,35 +315,11 @@ theorem hybrid_lexicon :
 
 /-! ### Patterns: breaks cut the chain into contiguous cells -/
 
-/-- A two-type mismatch pattern is a bipartition of the four chain positions, identified with
-the cell of the declension position. -/
-def bipartitions : Finset (Finset (Fin 4)) :=
-  Finset.univ.filter fun S ↦ (0 : Fin 4) ∈ S ∧ S ≠ Finset.univ
-
 /-- The position of the break at a link. -/
 def ChainLink.position : ChainLink → Fin 4
   | .decCon => 0
   | .conInd => 1
   | .indSem => 2
-
-/-- The cell of the declension position when the chain breaks at one link: the positions up
-to the break. -/
-def cell (l : ChainLink) : Finset (Fin 4) := Finset.univ.filter (· ≤ l.position)
-
-/-- A pattern the chain can produce is an initial segment of the chain. -/
-def IsInitialSegment (S : Finset (Fin 4)) : Prop := ∀ i ∈ S, ∀ j, j ≤ i → j ∈ S
-
-instance : DecidablePred IsInitialSegment := fun _ ↦ inferInstanceAs (Decidable (∀ _, _))
-
-/-- Seven patterns a priori (n. 3). -/
-theorem seven_patterns : bipartitions.card = 7 := by decide
-
-theorem predicted_patterns :
-    bipartitions.filter IsInitialSegment = Finset.univ.image cell ∧
-      (Finset.univ.image cell).card = 3 ∧
-      brokenLinks steva = {.decCon} ∧ brokenLinks deca = {.conInd} ∧
-        brokenLinks makaze = {.indSem} := by
-  decide
 
 /-- Two positions fall in one cell when no broken link cuts between them (5). -/
 def SameCell (B : Finset ChainLink) (i j : Fin 4) : Prop :=
@@ -355,6 +331,9 @@ instance (B : Finset ChainLink) (i j : Fin 4) : Decidable (SameCell B i j) :=
 /-- The cells a set of breaks cuts the chain into. -/
 def cells (B : Finset ChainLink) : Finset (Finset (Fin 4)) :=
   Finset.univ.image fun i ↦ Finset.univ.filter (SameCell B i)
+
+/-- The cell of the declension position under a set of breaks. -/
+def declCell (B : Finset ChainLink) : Finset (Fin 4) := Finset.univ.filter (SameCell B 0)
 
 /-- An interval of chain positions. -/
 def IsInterval (c : Finset (Fin 4)) : Prop := ∀ i ∈ c, ∀ j ∈ c, ∀ k, i ≤ k → k ≤ j → k ∈ c
@@ -368,14 +347,33 @@ theorem cells_card : ∀ B : Finset ChainLink, (cells B).card = B.card + 1 := by
 pattern observed" (p. 824): every cell any break set produces is an interval. -/
 theorem cells_isInterval : ∀ B : Finset ChainLink, ∀ c ∈ cells B, IsInterval c := by decide
 
+/-- A two-type mismatch pattern is a bipartition of the four chain positions, identified with
+the cell of the declension position. -/
+def bipartitions : Finset (Finset (Fin 4)) :=
+  Finset.univ.filter fun S ↦ (0 : Fin 4) ∈ S ∧ S ≠ Finset.univ
+
+/-- Seven patterns a priori (n. 3). -/
+theorem seven_patterns : bipartitions.card = 7 := by decide
+
+/-- The chain can produce exactly the bipartitions whose declension cell is an interval, the
+declension cells of the three one-break patterns, and exactly those are attested (n. 3). -/
+theorem predicted_patterns :
+    bipartitions.filter IsInterval = (Finset.univ.image fun l : ChainLink ↦ declCell {l}) ∧
+      (bipartitions.filter IsInterval).card = 3 ∧
+      brokenLinks steva = {.decCon} ∧ brokenLinks deca = {.conInd} ∧
+        brokenLinks makaze = {.indSem} := by
+  decide
+
 /-- A three-type pattern is a partition of the four positions into a doubleton and two
 singletons, identified with its doubleton: six a priori, the three contiguous ones possible,
-and *braća*, breaking `ConInd` and `IndSem`, shows the contiguous
-declension–concord doubleton (p. 824). -/
+and *braća*, breaking `ConInd` and `IndSem`, shows the contiguous declension–concord
+doubleton (p. 824). -/
 theorem three_type_patterns :
     (Finset.univ.filter fun T : Finset (Fin 4) ↦ T.card = 2).card = 6 ∧
       ((Finset.univ.filter fun T : Finset (Fin 4) ↦ T.card = 2).filter IsInterval).card = 3 ∧
-      cells (brokenLinks braća) = {{0, 1}, {2}, {3}} ∧ IsInterval {0, 1} := by
+      cells (brokenLinks braća) = {{0, 1}, {2}, {3}} ∧
+      declCell (brokenLinks braća) ∈
+        (Finset.univ.filter fun T : Finset (Fin 4) ↦ T.card = 2).filter IsInterval := by
   decide
 
 /-! ### Agreement as compatibility -/
@@ -437,10 +435,16 @@ theorem deca_mixed_agreement :
       ¬ IndexAgrees (indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem) deca := by
   decide
 
-theorem compat_number_indexTarget_iff (n : Noun) (hn : ConInd n) (t : Bundle) :
-    Compat (t .number) (n.indexTarget .number) ↔
-      Compat (t .number) (n.concordAt .nom .number) := by
-  simp only [Noun.indexTarget, Noun.concordAt, indexBundle, concordBundle, hn.1]
+/-- On a noun observing `ConInd` a target marked only in number and gender cannot tell the
+routes apart: concord and index matching "gives the illusion (or so we claim) that a single
+feature bundle on the noun is responsible for all the agreeing items" (p. 806). -/
+theorem indexAgrees_iff_concordAgrees {n : Noun} (hn : ConInd n) (c : Case)
+    (num : Flat Number) (g : Flat UD.Gender) :
+    IndexAgrees (indexBundle ⊥ num g) n ↔ ConcordAgrees (concordBundle c num g) n c := by
+  simp only [IndexAgrees, ConcordAgrees, Noun.indexTarget, Noun.concordAt, compat_pi_iff]
+  refine ⟨fun h d ↦ ?_, fun h d ↦ ?_⟩ <;> have h1 := h .number <;> have h2 := h .gender <;>
+    cases d <;> simp_all [indexBundle, concordBundle, hn.1, hn.2, bot_compat,
+      compat_self]
 
 /-! ### Relative pronouns (57) -/
 
@@ -491,19 +495,27 @@ theorem kojih_not_modifies_knjiga : ¬ Modifies kojih knjiga ∧ Modifies koje k
 
 open Examples
 
-/-- A row paired with one glossed target: the example, the noun, the route (a case for a
-concord reader, `none` for an index reader) and the target's bundle. -/
+/-- The route a target reads: concord at its case, or the index. -/
+inductive Route
+  | concord (case : Case)
+  | index
+  deriving DecidableEq, Repr
+
+/-- A row paired with one glossed target: the example, the noun, the route and the number
+and gender the target's form is marked for; the rows' pronouns and finite forms are all
+third person. -/
 structure RowTarget where
   ex : Datum
   noun : Noun
-  case? : Option Case
-  bundle : Bundle
+  route : Route
+  number : Flat Number
+  gender : Flat UD.Gender
 
 /-- The target agrees with the noun through its route. -/
 def RowTarget.Agrees (r : RowTarget) : Prop :=
-  match r.case? with
-  | some c => ConcordAgrees r.bundle r.noun c
-  | none => IndexAgrees r.bundle r.noun
+  match r.route with
+  | .concord c => ConcordAgrees (concordBundle c r.number r.gender) r.noun c
+  | .index => IndexAgrees (indexBundle ↑Person.third r.number r.gender) r.noun
 
 instance (r : RowTarget) : Decidable r.Agrees := by
   unfold RowTarget.Agrees; split <;> infer_instance
@@ -512,46 +524,46 @@ instance (r : RowTarget) : Decidable r.Agrees := by
 adjectives through concord at their case, pronouns, finite verbs and auxiliaries through the
 index. Participles and coordinated predicates are not paired (§7.3). -/
 def paired : List RowTarget :=
-  [⟨ex_1, knjiga, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_1, knjiga, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_2, devojče, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Neut⟩,
-   ⟨ex_4, knjiga, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_6, sudijaMale, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_6, sudijaMale, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_7, sudijaFemale, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_7, sudijaFemale, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_8, kit, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_9, kit, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_10, teladOne, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_10, teladOne, none, indexBundle ↑Person.third ↑Number.singular ⊥⟩,
-   ⟨ex_10, teladAggregate, some .nom, concordBundle .nom ↑Number.plural ↑UD.Gender.Neut⟩,
-   ⟨ex_10, teladAggregate, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_11, teladAggregate, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_12, steva, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_12, steva, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_13, mušterijaUnsexed, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_13, mušterijaUnsexed, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_14, mušterijaMale, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_14, mušterijaMale, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Masc⟩,
-   ⟨ex_15, sudijeAggregate, some .nom, concordBundle .nom ↑Number.plural ↑UD.Gender.Fem⟩,
-   ⟨ex_15, sudijeAggregate, none, indexBundle ↑Person.third ↑Number.plural ↑UD.Gender.Fem⟩,
-   ⟨ex_16, naočare, some .nom, concordBundle .nom ↑Number.plural ⊥⟩,
-   ⟨ex_16, naočare, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_17, braća, none, indexBundle ↑Person.third ↑Number.plural ↑UD.Gender.Neut⟩,
-   ⟨ex_18, braća, some .acc, concordBundle .acc ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_19, braća, some .inst, concordBundle .inst ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_20, gospoda, none, indexBundle ↑Person.third ↑Number.plural ↑UD.Gender.Masc⟩,
-   ⟨ex_21, deca, some .acc, ovu⟩,
-   ⟨ex_21, deca, none, ona⟩,
-   ⟨ex_22, deca, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_23, deca, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_23, deca, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_24, deca, some .nom, concordBundle .nom ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_24, deca, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_25, deca, some .inst, concordBundle .inst ↑Number.singular ↑UD.Gender.Fem⟩,
-   ⟨ex_29, deca, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_32, deca, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩,
-   ⟨ex_33, deca, none, indexBundle ↑Person.third ↑Number.plural ⊥⟩]
+  [⟨ex_1, knjiga, .concord .nom, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_1, knjiga, .index, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_2, devojče, .index, ↑Number.singular, ↑UD.Gender.Neut⟩,
+   ⟨ex_4, knjiga, .concord .nom, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_6, sudijaMale, .concord .nom, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_6, sudijaMale, .index, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_7, sudijaFemale, .concord .nom, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_7, sudijaFemale, .index, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_8, kit, .concord .nom, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_9, kit, .index, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_10, teladOne, .concord .nom, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_10, teladOne, .index, ↑Number.singular, ⊥⟩,
+   ⟨ex_10, teladAggregate, .concord .nom, ↑Number.plural, ↑UD.Gender.Neut⟩,
+   ⟨ex_10, teladAggregate, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_11, teladAggregate, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_12, steva, .concord .nom, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_12, steva, .index, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_13, mušterijaUnsexed, .concord .nom, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_13, mušterijaUnsexed, .index, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_14, mušterijaMale, .concord .nom, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_14, mušterijaMale, .index, ↑Number.singular, ↑UD.Gender.Masc⟩,
+   ⟨ex_15, sudijeAggregate, .concord .nom, ↑Number.plural, ↑UD.Gender.Fem⟩,
+   ⟨ex_15, sudijeAggregate, .index, ↑Number.plural, ↑UD.Gender.Fem⟩,
+   ⟨ex_16, naočare, .concord .nom, ↑Number.plural, ⊥⟩,
+   ⟨ex_16, naočare, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_17, braća, .index, ↑Number.plural, ↑UD.Gender.Neut⟩,
+   ⟨ex_18, braća, .concord .acc, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_19, braća, .concord .inst, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_20, gospoda, .index, ↑Number.plural, ↑UD.Gender.Masc⟩,
+   ⟨ex_21, deca, .concord .acc, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_21, deca, .index, ↑Number.plural, ↑UD.Gender.Neut⟩,
+   ⟨ex_22, deca, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_23, deca, .concord .nom, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_23, deca, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_24, deca, .concord .nom, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_24, deca, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_25, deca, .concord .inst, ↑Number.singular, ↑UD.Gender.Fem⟩,
+   ⟨ex_29, deca, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_32, deca, .index, ↑Number.plural, ⊥⟩,
+   ⟨ex_33, deca, .index, ↑Number.plural, ⊥⟩]
 
 /-- Each glossed target of an acceptable example agrees through its route. -/
 theorem paired_agree : ∀ r ∈ paired, r.Agrees ∧ r.ex.judgment = .acceptable := by decide
@@ -561,12 +573,12 @@ plural pronoun with *gospoda* (40), the plural secondary predicate with *deca* (
 singular auxiliary under *koja* (54), and the singular resumptives of the *što*-relatives
 (59), (62). -/
 def starred : List RowTarget :=
-  [⟨ex_11, teladAggregate, none, indexBundle ↑Person.third ↑Number.singular ⊥⟩,
-   ⟨ex_20, gospoda, none, indexBundle ↑Person.third ↑Number.plural ↑UD.Gender.Neut⟩,
-   ⟨ex_25, deca, some .inst, concordBundle .inst ↑Number.plural ⊥⟩,
-   ⟨ex_29, deca, none, indexBundle ↑Person.third ↑Number.singular ⊥⟩,
-   ⟨ex_32, deca, none, indexBundle ↑Person.third ↑Number.singular ⊥⟩,
-   ⟨ex_35, deca, none, indexBundle ↑Person.third ↑Number.singular ↑UD.Gender.Fem⟩]
+  [⟨ex_11, teladAggregate, .index, ↑Number.singular, ⊥⟩,
+   ⟨ex_20, gospoda, .index, ↑Number.plural, ↑UD.Gender.Neut⟩,
+   ⟨ex_25, deca, .concord .inst, ↑Number.plural, ⊥⟩,
+   ⟨ex_29, deca, .index, ↑Number.singular, ⊥⟩,
+   ⟨ex_32, deca, .index, ↑Number.singular, ⊥⟩,
+   ⟨ex_35, deca, .index, ↑Number.singular, ↑UD.Gender.Fem⟩]
 
 /-- Each starred alternant fails to agree, and its row records the mark. -/
 theorem starred_fail :
