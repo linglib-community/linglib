@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Clause.Basic
 
 /-!
-# German verb second
+# German word order
 
 This file records where the finite verb of German moves to the left periphery, as a
 distribution over sentence types and embedding contexts. German is verb second in root

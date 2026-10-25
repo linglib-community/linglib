@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Clause.Basic
 
 /-!
-# English verb second
+# English word order
 
 This file records where the finite verb of Standard English and of Belfast English moves to the
 left periphery, as a distribution over sentence types and embedding contexts. Standard English
@@ -21,7 +21,7 @@ reports; Westergaard notes that the imperative movement may target a lower head.
 
 @[expose] public section
 
-namespace English.V2
+namespace English
 
 open Clause
 
@@ -43,6 +43,6 @@ root-like yes/no-questions. -/
 def Belfast.verbSecond : Distribution
   | .imperative, .matrix => some .obligatory
   | .polar, .quasiSubordinated => some .obligatory
-  | t, e => English.V2.verbSecond t e
+  | t, e => English.verbSecond t e
 
-end English.V2
+end English

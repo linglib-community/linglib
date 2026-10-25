@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Clause.Basic
 
 /-!
-# Danish verb second
+# Danish word order
 
 This file records where the finite verb of Danish moves to the left periphery, as a
 distribution over sentence types and embedding contexts. A main clause is verb second: the

@@ -3,7 +3,7 @@ module
 public import Linglib.Syntax.Clause.Basic
 
 /-!
-# Norwegian verb second
+# Norwegian word order
 
 This file records where the finite verb of Standard Norwegian and of the Nordmøre dialect moves
 to the left periphery, as a distribution over sentence types and embedding contexts. Standard
