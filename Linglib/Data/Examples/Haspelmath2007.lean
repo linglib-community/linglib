@@ -366,6 +366,19 @@ def ex37 : Datum :=
     readings := []
     paperFeatures := [("section", "1.4"), ("pattern", "a_co_b"), ("coordinands", "4"), ("omission", "none")] }
 
+def deletion : Datum :=
+  { id := "haspelmath2007_deletion"
+    source := ⟨"haspelmath-2007", "p. 14"⟩
+    reportedIn := none
+    language := "yoru1245"
+    primaryText := "epo, ẹran, ata àti àlùbọ́sà"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.4"), ("pattern", "a_co_b"), ("coordinands", "4"), ("omission", "allButLast")] }
+
 def ex43 : Datum :=
   { id := "haspelmath2007_ex43"
     source := ⟨"haspelmath-2007", "(43)"⟩
@@ -456,6 +469,32 @@ def ex59a : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("section", "3"), ("pattern", "a_co_b"), ("coordinands", "np"), ("emphatic", "no")] }
+
+def ex59b : Datum :=
+  { id := "haspelmath2007_ex59b"
+    source := ⟨"haspelmath-2007", "(59b)"⟩
+    reportedIn := none
+    language := "yoru1245"
+    primaryText := "epo ni mo ń-rà tí mo tún ń-tà"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3"), ("coordinands", "relative")] }
+
+def ex59c : Datum :=
+  { id := "haspelmath2007_ex59c"
+    source := ⟨"haspelmath-2007", "(59c)"⟩
+    reportedIn := none
+    language := "yoru1245"
+    primaryText := "ó mú mi l' ára dá, èmi kì yió sì gbàgbé"
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "3"), ("coordinands", "main")] }
 
 def ex60a : Datum :=
   { id := "haspelmath2007_ex60a"
@@ -730,6 +769,6 @@ def ex91b : Datum :=
     readings := []
     paperFeatures := [("section", "5.3"), ("conjunction", "summary")] }
 
-def all : List Datum := [ex5, ex6a, ex6b, ex7a, ex12a, ex12b, ex18b, ex20, ex21, ex22, ex23, ex24a, ex24b, ex25, ex26, ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35, ex36a, ex36b, ex37, ex43, ex44, ex57a, ex57b, ex58a, ex58b, ex59a, ex60a, ex62a, ex62b, ex63a, ex63b, ex64a, ex64b, ex77a, ex77b, ex78a, ex78b, ex79, ex80c, ex81, ex85a, ex85b, ex86, ex87a, ex87c, ex89c, ex91b]
+def all : List Datum := [ex5, ex6a, ex6b, ex7a, ex12a, ex12b, ex18b, ex20, ex21, ex22, ex23, ex24a, ex24b, ex25, ex26, ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35, ex36a, ex36b, ex37, deletion, ex43, ex44, ex57a, ex57b, ex58a, ex58b, ex59a, ex59b, ex59c, ex60a, ex62a, ex62b, ex63a, ex63b, ex64a, ex64b, ex77a, ex77b, ex78a, ex78b, ex79, ex80c, ex81, ex85a, ex85b, ex86, ex87a, ex87c, ex89c, ex91b]
 
 end Haspelmath2007.Examples
