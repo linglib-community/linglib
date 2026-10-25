@@ -3,6 +3,7 @@ module
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Category.Noun.Basic
 public import Linglib.Semantics.Reference.Animacy
+public import Linglib.Fragments.Bantu.Params
 
 /-!
 # Chichewa noun gender
@@ -28,7 +29,7 @@ as Corbett and Mtenje and Corbett describe. The entries are the plural nouns the
 
 namespace Chichewa.Gender
 
-/-- The genders the sources attest, by singular and plural class. -/
+/-- The genders the sources attest, named by their singular and plural classes. -/
 inductive Value where
   | g1_2
   | g5_6
@@ -41,10 +42,30 @@ inductive SubjPrefix where
   | zi
   deriving DecidableEq, Repr, Fintype
 
+/-- The singular class of a gender. -/
+def Value.singularClass : Value → Bantu.NounClass
+  | .g1_2 => .cl1
+  | .g5_6 => .cl5
+  | .g7_8 => .cl7
+
+/-- The plural class of a gender. -/
+def Value.pluralClass : Value → Bantu.NounClass
+  | .g1_2 => .cl2
+  | .g5_6 => .cl6
+  | .g7_8 => .cl8
+
+/-- The subject prefix of a plural class the sources attest. -/
+def subjPrefix : Bantu.NounClass → Option SubjPrefix
+  | .cl2 | .cl6 => some .a
+  | .cl8 => some .zi
+  | _ => none
+
+theorem Value.isSome_subjPrefix_pluralClass (v : Value) : (subjPrefix v.pluralClass).isSome := by
+  cases v <;> rfl
+
 /-- The subject prefix of each gender's plural. -/
-def Value.plSubjPrefix : Value → SubjPrefix
-  | .g1_2 | .g5_6 => .a
-  | .g7_8 => .zi
+def Value.plSubjPrefix (v : Value) : SubjPrefix :=
+  (subjPrefix v.pluralClass).get v.isSome_subjPrefix_pluralClass
 
 /-- A plural noun, its form carrying its class prefix, with its gender and the animacy of its
 referents. -/

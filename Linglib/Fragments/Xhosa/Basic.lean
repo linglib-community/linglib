@@ -6,7 +6,7 @@ public import Linglib.Fragments.Bantu.Params
 /-!
 # Xhosa noun classes
 
-This file defines the Xhosa noun-class system: the eleven classes with their subject markers,
+This file defines the Xhosa noun-class system: the eleven classes, by their subject markers,
 the five genders that pair a singular class with its plural ([carstens-1991]), and the semantic
 core each gender bears ([carstens-2026]).
 
@@ -25,45 +25,23 @@ open Bantu
 
 /-! ### Classes -/
 
-/-- The noun classes in the Bantu numbering; classes 11–14 and 16–18 are absent. -/
-inductive NounClass where
-  /-- *um-*, *u-*: umntu 'person'. -/
-  | cl1
-  /-- *aba-*: abantu 'people'. -/
-  | cl2
-  /-- *um-*: umthi 'tree'. -/
-  | cl3
-  /-- *imi-*: imithi 'trees'. -/
-  | cl4
-  /-- *i-*: iqanda 'egg'. -/
-  | cl5
-  /-- *ama-*: amaqanda 'eggs'. -/
-  | cl6
-  /-- *isi-*: isitya 'dish'. -/
-  | cl7
-  /-- *izi-*: izitya 'dishes'. -/
-  | cl8
-  /-- *in-*: inja 'dog'. -/
-  | cl9
-  /-- *iin-*: iinja 'dogs'. -/
-  | cl10
-  /-- *uku-*, the infinitive and gerund class: ukucula 'to sing'. -/
-  | cl15
-  deriving DecidableEq, Repr, Fintype
+/-- The subject marker of a class on the verb; classes 11–14 and 16–18 are absent. -/
+def subjPrefix : NounClass → Option String
+  | .cl1 => some "u"    -- noun prefix um-, u-: umntu 'person'
+  | .cl2 => some "ba"   -- aba-: abantu 'people'
+  | .cl3 => some "u"    -- um-: umthi 'tree'
+  | .cl4 => some "i"    -- imi-: imithi 'trees'
+  | .cl5 => some "li"   -- i-: iqanda 'egg'
+  | .cl6 => some "a"    -- ama-: amaqanda 'eggs'
+  | .cl7 => some "si"   -- isi-: isitya 'dish'
+  | .cl8 => some "zi"   -- izi-: izitya 'dishes'
+  | .cl9 => some "i"    -- in-: inja 'dog'
+  | .cl10 => some "zi"  -- iin-: iinja 'dogs'
+  | .cl15 => some "ku"  -- uku-, the infinitive and gerund class: ukucula 'to sing'
+  | _ => none
 
-/-- The subject marker of a class on the verb. -/
-def NounClass.subjPrefix : NounClass → String
-  | .cl1 => "u"
-  | .cl2 => "ba"
-  | .cl3 => "u"
-  | .cl4 => "i"
-  | .cl5 => "li"
-  | .cl6 => "a"
-  | .cl7 => "si"
-  | .cl8 => "zi"
-  | .cl9 => "i"
-  | .cl10 => "zi"
-  | .cl15 => "ku"
+/-- The classes, those with a subject marker. -/
+def classes : Finset NounClass := Finset.univ.filter fun c ↦ (subjPrefix c).isSome
 
 /-! ### Genders -/
 
@@ -95,8 +73,12 @@ def Gender.pluralClass : Gender → NounClass
   | .genderD => .cl8
   | .genderE => .cl10
 
+theorem Gender.isSome_subjPrefix_pluralClass (g : Gender) : (subjPrefix g.pluralClass).isSome := by
+  cases g <;> rfl
+
 /-- The subject marker of a gender's plural class. -/
-def Gender.plSubjPrefix (g : Gender) : String := g.pluralClass.subjPrefix
+def Gender.plSubjPrefix (g : Gender) : String :=
+  (subjPrefix g.pluralClass).get g.isSome_subjPrefix_pluralClass
 
 /-- Gender A bears the core [human], D [inanimate] and E [animal], while B and C bear
 none. -/

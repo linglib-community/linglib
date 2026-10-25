@@ -42,7 +42,7 @@ prefix is a list of morphs because the negative is *ha-* before the affirmative 
 
 namespace Swahili.Possession
 
-open Swahili Agreement Morphology
+open Swahili Agreement Bantu Morphology
 
 /-- The *na* of association, 'with'. -/
 def na : Morph := .free "na"
@@ -73,35 +73,35 @@ theorem persons :
 /-- *-na* 'have' takes each class's subject prefix, as in *ki-na*, *i-na*, *zi-na* and the
 negatives, class 3 keeping its *u-* (pp. 98–99, p. 71). -/
 theorem classes :
-    [NounClass.cl7, .cl9, .cl10].map (fun c ↦ Morph.surface (present [c.subjPrefix])) =
-        ["ki-na", "i-na", "zi-na"] ∧
-      [NounClass.cl3, .cl9, .cl10].map (fun c ↦ Morph.surface (present c.negSubjPrefix)) =
-        ["ha-u-na", "ha-i-na", "ha-zi-na"] ∧
+    [NounClass.cl7, .cl9, .cl10].map (fun c ↦ (subjPrefix c).map (Morph.surface <| present [·])) =
+        [some "ki-na", some "i-na", some "zi-na"] ∧
+      [NounClass.cl3, .cl9, .cl10].map (fun c ↦ (negSubjPrefix c).map (Morph.surface ∘ present)) =
+        [some "ha-u-na", some "ha-i-na", some "ha-zi-na"] ∧
       (subjectPrefix.realize (.personNumber .second .singular)).map (present [·]) =
-        some (present [NounClass.cl3.subjPrefix]) ∧
+        (subjPrefix .cl3).map (present [·]) ∧
       (negativeSubjectPrefix.realize (.personNumber .second .singular)).map present ≠
-        some (present NounClass.cl3.negSubjPrefix) := by
+        (negSubjPrefix .cl3).map present := by
   decide
 
 /-- *Alikuwa na watoto wengi* 'he had many children' and *hakuwa na kitu* 'he hadn't anything'
 (p. 144). -/
 theorem third_singular_past :
-    Morph.surface (past [NounClass.cl1.subjPrefix]) = "a-li-ku-wa na" ∧
-      Morph.surface (negativePast NounClass.cl1.negSubjPrefix) = "ha-ku-wa na" := by
+    (subjPrefix .cl1).map (Morph.surface <| past [·]) = some "a-li-ku-wa na" ∧
+      (negSubjPrefix .cl1).map (Morph.surface ∘ negativePast) = some "ha-ku-wa na" := by
   decide
 
 /-- The locative classes 17, 16 and 18 form the existential, *kuna*, *hakuna*, *kulikuwa na* and so
 on, in the present, past and future (p. 213). -/
 theorem existential :
-    [NounClass.cl17, .cl16, .cl18].map (fun c ↦
-        [present [c.subjPrefix], present c.negSubjPrefix, past [c.subjPrefix],
-          negativePast c.negSubjPrefix, future [c.subjPrefix], future c.negSubjPrefix].map
-          Morph.surface) =
-      [["ku-na", "ha-ku-na", "ku-li-ku-wa na", "ha-ku-ku-wa na", "ku-ta-ku-wa na",
+    [NounClass.cl17, .cl16, .cl18].map (fun c ↦ (subjPrefix c).bind fun m ↦
+        (negSubjPrefix c).map fun n ↦
+          [present [m], present n, past [m], negativePast n, future [m], future n].map
+            Morph.surface) =
+      [some ["ku-na", "ha-ku-na", "ku-li-ku-wa na", "ha-ku-ku-wa na", "ku-ta-ku-wa na",
           "ha-ku-ta-ku-wa na"],
-        ["pa-na", "ha-pa-na", "pa-li-ku-wa na", "ha-pa-ku-wa na", "pa-ta-ku-wa na",
+        some ["pa-na", "ha-pa-na", "pa-li-ku-wa na", "ha-pa-ku-wa na", "pa-ta-ku-wa na",
           "ha-pa-ta-ku-wa na"],
-        ["m-na", "ha-m-na", "m-li-ku-wa na", "ha-m-ku-wa na", "m-ta-ku-wa na",
+        some ["m-na", "ha-m-na", "m-li-ku-wa na", "ha-m-ku-wa na", "m-ta-ku-wa na",
           "ha-m-ta-ku-wa na"]] := by
   decide
 

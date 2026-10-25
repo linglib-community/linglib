@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Storment2026
+public import Linglib.Fragments.Setswana.Basic
 public import Linglib.Syntax.Agreement.Bundle
 public import Linglib.Syntax.Minimalist.Probe.Search
 public import Studies.Collins2005
@@ -13,7 +14,8 @@ is a `Derivation` in which Voice raises the VP, holding the verb and the theme, 
 Spec,vP, and the theme then raises to Spec,TP; head movement of the verb is the rival analysis.
 T and Voice search depth first; T's φ-probe copies by unification and may search past a defective
 goal. Each of the paper's examples is paired with what the grammar generates: the position of a
-dependent, licensing by T and Voice, agreement and the conjoint verb form.
+dependent, licensing by T and Voice, English agreement, Setswana subject markers and the conjoint
+verb form.
 
 ## Main results
 
@@ -28,8 +30,9 @@ dependent, licensing by T and Voice, agreement and the conjoint verb form.
 
 * The quote is outside the derivation (§3.5). A second DP sits in the VP as in (132) when it
   precedes the agent, and at the vP level when it follows, the position §2 diagnoses.
-* The theme bears third person and no number (§3.1.4, §6). Noun class has no carrier, so a
-  Setswana marker counts as default when T ends valued in no number.
+* The theme bears third person and no number (§3.1.4, §6). The agreement bundle has no noun
+  class, so a Setswana marker is read off the agreement T ends with: class 17's when it values no
+  number, else the agent's, by the agent's class.
 * The judgments of (40) are Collins and Branigan's, which the paper disputes; the analysis
   generates its starred *advises* (`generated_ex40_sg`).
 
@@ -103,6 +106,8 @@ structure Clause where
   agent : String
   /-- The agent's φ-features. -/
   agentPhi : Agreement.Bundle := ⊥
+  /-- The agent's noun class, in Setswana. -/
+  agentClass : Option Bantu.NounClass := none
   /-- An overt locative theme; the theme is otherwise the quotative operator. -/
   theme : Option String := none
   /-- What else the VP holds. -/
@@ -369,6 +374,19 @@ theorem valuations_empty (c : Construction) : p.valuations c ∅ = {p.value c �
 def agreement (l : Language) (c : Construction) : Finset (Option AgreementForm) :=
   (p.valuations c l.probe).image spellOut
 
+/-- The Setswana subject marker of an agreement form in a tense: class 17's for default agreement
+(47), and otherwise the agent's, by person for a speech-act participant and by class else. -/
+def marker (t : UD.Tense) : AgreementForm → Option String
+  | .default => (if t = .Past then Setswana.pastSubjPrefix else Setswana.subjPrefix) .cl17
+  | .agent =>
+    if p.agentPhi.IsSAP then
+      if t = .Past then none else Setswana.subjectPrefix.realize p.agentPhi
+    else p.agentClass.bind (if t = .Past then Setswana.pastSubjPrefix else Setswana.subjPrefix)
+
+/-- The Setswana subject markers T may spell out in a tense. -/
+def markers (c : Construction) (t : UD.Tense) : Finset (Option String) :=
+  (p.agreement .setswana c).image (·.bind (p.marker t))
+
 /-- The verb is disjoint when the theme, the agent and every dependent merged in the vP have left
 it, the generalization of §3.4. -/
 def IsDisjoint : Prop :=
@@ -392,7 +410,7 @@ def Clause.position (p : Clause) (x : LexicalItem.Token) : Position :=
   if s.idxOf x < s.idxOf p.agentTok then .beforeAgent else .afterAgent
 
 /-- What a row shows: its clause, language and construction, with the position of its dependent,
-its agreement and its verb form where it records them. -/
+its agreement, its subject marker and its verb form where it records them. -/
 structure Observation where
   /-- The language. -/
   language : Language
@@ -402,18 +420,21 @@ structure Observation where
   construction : Construction
   /-- Where the dependent surfaces. -/
   position : Option Position
-  /-- The agreement. -/
+  /-- The agreement, English verb agreement read as default or the agent's. -/
   agreement : Option AgreementForm
+  /-- The Setswana subject marker and its tense. -/
+  subjectMarker : Option (String × UD.Tense)
   /-- The verb form. -/
   verbForm : Option VerbForm
 
 /-- The grammar generates what a row shows: an inversion is licensed, its dependent is where the
-derivation puts it, its agreement is one T may spell out, and its verb form is the one §3.4
-gives. -/
+derivation puts it, its agreement and subject marker are ones T may spell out, and its verb form
+is the one §3.4 gives. -/
 def Observation.Generated (o : Observation) : Prop :=
   (o.construction = .inversion → o.clause.Licensed .vpMovement) ∧
     (∀ pos ∈ o.position, ∀ x ∈ o.clause.dependents, o.clause.position x = pos) ∧
     (∀ a ∈ o.agreement, some a ∈ o.clause.agreement o.language o.construction) ∧
+    (∀ m ∈ o.subjectMarker, some m.1 ∈ o.clause.markers o.construction m.2) ∧
     ∀ f ∈ o.verbForm, (f = .disjoint ↔ o.clause.IsDisjoint)
 
 instance (o : Observation) : Decidable o.Generated := by
@@ -432,6 +453,7 @@ def Clause.ofRow (row : Datum) : Option Clause := do
       (← row.parse? "number" [("sg", Number.singular), ("pl", .plural)])).getD ⊥
   let base : Clause :=
     { verb := ← row.feature? "verb", agent := ← row.feature? "agent", agentPhi,
+      agentClass := (row.feature? "class").bind Bantu.NounClass.ofNumeral?,
       theme := row.feature? "theme" }
   match row.feature? "dependent", row.feature? "category" with
   | none, _ => return base
@@ -454,6 +476,8 @@ def Observation.ofRow (row : Datum) : Option Observation := do
     | some _ => (row.parse? "position" positions).map some
   return ⟨language, ← Clause.ofRow row, construction, position,
     row.parse? "agreement" [("default", .default), ("agent", .agent)],
+    (row.feature? "subjectMarker").map
+      (·, (row.parse? "tense" [("past", UD.Tense.Past)]).getD .Pres),
     row.parse? "verbForm" [("conjoint", .conjoint), ("disjoint", .disjoint)]⟩
 
 /-- An example the paper judges is acceptable exactly when the grammar generates the position of

@@ -225,25 +225,6 @@ def shonaNominal (n : Shona.Noun) : Nominal Shona.Gender := .stack (shonaCore n.
 def rows (glottocode : String) : List Datum :=
   Examples.all.filter (·.language = glottocode)
 
-/-- The Xhosa plural class a row's class number names. -/
-def xhosaClassOf : String → Option Xhosa.NounClass
-  | "2" => some .cl2
-  | "4" => some .cl4
-  | "6" => some .cl6
-  | "8" => some .cl8
-  | "10" => some .cl10
-  | _ => none
-
-/-- The Shona plural class a row's class number names. -/
-def shonaClassOf : String → Option Shona.NounClass
-  | "2" => some .cl2
-  | "4" => some .cl4
-  | "6" => some .cl6
-  | "8" => some .cl8
-  | "10" => some .cl10
-  | "13" => some .cl13
-  | _ => none
-
 section Rows
 
 variable {G C N : Type*} [DecidableEq G] (status : G → GenderStatus) (pluralClass : G → C)
@@ -270,13 +251,13 @@ end Rows
 /-- The Xhosa rows are predicted, (6)–(9), (37)–(49), (55), (81)–(91) and (111). -/
 theorem xhosa_rows :
     ∀ e ∈ rows "xhos1239", ∃ p ∈ conjuncts Xhosa.Nouns.all (·.form) xhosaNominal e,
-      Predicts Xhosa.Gender.status Xhosa.Gender.pluralClass xhosaClassOf p e := by
+      Predicts Xhosa.Gender.status Xhosa.Gender.pluralClass Bantu.NounClass.ofNumeral? p e := by
   decide +kernel
 
 /-- The Shona rows are predicted, matching agreement confined to 1/2 and 7/8, (58)–(68). -/
 theorem shona_rows :
     ∀ e ∈ rows "shon1251", ∃ p ∈ conjuncts Shona.Nouns.all (·.form) shonaNominal e,
-      Predicts Shona.Gender.status Shona.Gender.pluralClass shonaClassOf p e := by
+      Predicts Shona.Gender.status Shona.Gender.pluralClass Bantu.NounClass.ofNumeral? p e := by
   decide +kernel
 
 /-- Gender-matching agreement is chosen at least as often as default exactly in the cells whose

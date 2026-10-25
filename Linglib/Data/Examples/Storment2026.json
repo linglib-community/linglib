@@ -75,6 +75,26 @@
       [
         "agent",
         "Seabelo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "class",
+        "1"
+      ],
+      [
+        "subjectMarker",
+        "ga"
+      ],
+      [
+        "tense",
+        "past"
       ]
     ],
     "comment": "",
@@ -1322,8 +1342,12 @@
         "pl"
       ],
       [
-        "agreement",
-        "default"
+        "class",
+        "10"
+      ],
+      [
+        "subjectMarker",
+        "go"
       ]
     ],
     "comment": "The subject marker is the default class 17, not class 10 of the agent.",
@@ -1383,8 +1407,12 @@
         "pl"
       ],
       [
-        "agreement",
-        "agent"
+        "class",
+        "10"
+      ],
+      [
+        "subjectMarker",
+        "di"
       ]
     ],
     "comment": "The starred alternative of (36): the agent’s class 10 marker.",
@@ -1444,8 +1472,8 @@
         "sg"
       ],
       [
-        "agreement",
-        "default"
+        "subjectMarker",
+        "go"
       ]
     ],
     "comment": "",
@@ -1505,8 +1533,8 @@
         "sg"
       ],
       [
-        "agreement",
-        "agent"
+        "subjectMarker",
+        "ke"
       ]
     ],
     "comment": "The starred alternative of (38): first person agreement with the agent.",
@@ -1806,8 +1834,16 @@
         "sg"
       ],
       [
-        "agreement",
-        "agent"
+        "class",
+        "1"
+      ],
+      [
+        "subjectMarker",
+        "a"
+      ],
+      [
+        "tense",
+        "past"
       ]
     ],
     "comment": "",
@@ -1867,8 +1903,16 @@
         "sg"
       ],
       [
-        "agreement",
-        "default"
+        "class",
+        "1"
+      ],
+      [
+        "subjectMarker",
+        "ga"
+      ],
+      [
+        "tense",
+        "past"
       ]
     ],
     "comment": "The starred alternative of (65): default agreement without inversion.",
@@ -1992,8 +2036,8 @@
         "sg"
       ],
       [
-        "agreement",
-        "default"
+        "subjectMarker",
+        "go"
       ]
     ],
     "comment": "Aspectual auxiliary raising: both subject markers are the default class 17.",
@@ -2197,6 +2241,26 @@
       [
         "agent",
         "Seabelo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "class",
+        "1"
+      ],
+      [
+        "subjectMarker",
+        "ga"
+      ],
+      [
+        "tense",
+        "past"
       ]
     ],
     "comment": "",
@@ -2831,8 +2895,12 @@
         "sg"
       ],
       [
-        "agreement",
-        "default"
+        "subjectMarker",
+        "ga"
+      ],
+      [
+        "tense",
+        "past"
       ]
     ],
     "comment": "Setswana locative inversion with a class 17 locative subject marker.",
@@ -2944,8 +3012,12 @@
         "sg"
       ],
       [
-        "agreement",
-        "default"
+        "class",
+        "1"
+      ],
+      [
+        "subjectMarker",
+        "go"
       ]
     ],
     "comment": "Aspectual auxiliary raising in locative inversion, as in QI.",
@@ -3005,8 +3077,12 @@
         "pl"
       ],
       [
-        "agreement",
-        "agent"
+        "class",
+        "10"
+      ],
+      [
+        "subjectMarker",
+        "di"
       ]
     ],
     "comment": "Without inversion the subject marker tracks the agent.",
@@ -3066,8 +3142,12 @@
         "pl"
       ],
       [
-        "agreement",
-        "default"
+        "class",
+        "10"
+      ],
+      [
+        "subjectMarker",
+        "go"
       ]
     ],
     "comment": "The starred alternative of (35): the default class 17 marker.",
@@ -3127,8 +3207,8 @@
         "sg"
       ],
       [
-        "agreement",
-        "agent"
+        "subjectMarker",
+        "ke"
       ]
     ],
     "comment": "",
@@ -3188,8 +3268,8 @@
         "sg"
       ],
       [
-        "agreement",
-        "default"
+        "subjectMarker",
+        "go"
       ]
     ],
     "comment": "The starred alternative of (37).",
@@ -3634,8 +3714,12 @@
         "pl"
       ],
       [
-        "agreement",
-        "default"
+        "class",
+        "10"
+      ],
+      [
+        "subjectMarker",
+        "go"
       ]
     ],
     "comment": "The paper takes (136b) from Demuth and Mmusi (1997:5).",
