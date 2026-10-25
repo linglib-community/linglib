@@ -84,10 +84,6 @@ theorem bMinus_of'_of_forall_ne (a : α) {F : Forest (UnorderedTree α)}
   classical
   exact ext_coeff fun G ↦ by simp [← of'_singleton, coeff_of']
 
-theorem bMinus_ofTree_of_value_ne {a : α} {T : UnorderedTree α} (h : T.value ≠ a) :
-    bMinus (R := R) a (ofTree T) = 0 :=
-  bMinus_of'_of_forall_ne a fun _ hG ↦ h (by rw [← Multiset.singleton_inj.mp hG, value_node])
-
 theorem bMinus_of'_of_card_ne_one (a : α) {F : Forest (UnorderedTree α)} (h : F.card ≠ 1) :
     bMinus (R := R) a (of' F) = 0 :=
   bMinus_of'_of_forall_ne a fun _ hG ↦ h (hG ▸ Multiset.card_singleton _)
@@ -147,29 +143,22 @@ theorem bMinus_insertion (a : α) (x y : ConnesKreimer R (UnorderedTree α)) :
   have h : insertion.compr₂ (bMinus (R := R) a) = product.comp (bMinus a) :=
     lhom_ext' fun A ↦ lhom_ext' fun B ↦ by
       rw [LinearMap.compr₂_apply, LinearMap.comp_apply]
-      rcases ne_or_eq A.card 1 with hA | hA
-      · rw [bMinus_of'_of_card_ne_one a hA, map_zero, LinearMap.zero_apply, insertion_of'_of',
-          map_multiset_sum, Multiset.map_map]
-        refine Multiset.sum_eq_zero fun _ hz ↦ ?_
-        obtain ⟨X, hX, rfl⟩ := Multiset.mem_map.mp hz
-        exact bMinus_of'_of_card_ne_one a (by rwa [insertionMultiset_card_eq A B hX])
-      obtain ⟨T, rfl⟩ := Multiset.card_eq_one.mp hA
-      obtain ⟨b, F, rfl⟩ : ∃ b F, T = node b F := ⟨_, _, (node_eta T).symm⟩
-      rcases eq_or_ne b a with rfl | hb
-      · rw [of'_singleton, ← bPlus_of', insertion_bPlus, bMinus_bPlus, bMinus_bPlus]
-      rw [of'_singleton, bMinus_ofTree_of_value_ne (by rwa [value_node]), map_zero,
-        LinearMap.zero_apply, ← of'_singleton, insertion_of'_of', map_multiset_sum,
-        Multiset.map_map]
+      by_cases hA : ∃ F, A = {node a F}
+      · obtain ⟨F, rfl⟩ := hA
+        rw [of'_singleton, ← bPlus_of', insertion_bPlus, bMinus_bPlus, bMinus_bPlus]
+      rw [bMinus_of'_of_forall_ne a fun F h ↦ hA ⟨F, h.symm⟩, map_zero, LinearMap.zero_apply,
+        insertion_of'_of', map_multiset_sum, Multiset.map_map]
       refine Multiset.sum_eq_zero fun _ hz ↦ ?_
       obtain ⟨X, hX, rfl⟩ := Multiset.mem_map.mp hz
-      obtain ⟨T', rfl, hT'⟩ := insertionMultiset_singleton_value _ B hX
-      exact bMinus_ofTree_of_value_ne (by rwa [hT', value_node])
+      exact bMinus_of'_of_forall_ne a fun G hG ↦
+        hA (exists_eq_singleton_node_of_mem_insertionMultiset (hG ▸ hX))
   exact LinearMap.congr_fun₂ h x y
 
 /-- `B⁻_a (x ⋆ y) = ε(x) • B⁻_a y + B⁻_a x ⋆ y`, from `x ⋆ G = Σ (x ∘ G₂) G₁` by `bMinus_mul`
 and `bMinus_insertion`. -/
 theorem bMinus_product (a : α) (x y : ConnesKreimer R (UnorderedTree α)) :
     bMinus a (product x y) = counit x • bMinus a y + product (bMinus a x) y := by
+  -- `1 ⋆ G = G`, read through `product_of'`.
   have hε (G : Forest (UnorderedTree α)) :
       (G.antidiagonal.map fun p ↦ counit (of' (R := R) p.2) • of' (R := R) p.1).sum = of' G := by
     simpa [product_of', insertion_one_left] using product_one_left (of' (R := R) G)

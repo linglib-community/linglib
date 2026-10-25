@@ -38,7 +38,7 @@ so `y` pairs against crowns and `x` against trunks. The uncrossed statement is f
 one-vertex trees `x = •_p` and `y = •_q` and the chain `z` with root `p` and leaf `q`, the left
 side is `1` and `pairing₂ (x ⊗ y) (Δ^ρ z)` is `0`.
 
-The duality is proved by strong induction on the total weight of a basis forest `z = of' C`. The
+The duality is proved on basis forests `z = of' C` by recursion on the number of vertices. The
 one-tree step uses the adjunction of `B⁺` and `B⁻` (`BMinus.lean`) and the Hochschild cocycle
 property; the step for several trees uses the product rule of the pairing.
 
@@ -97,61 +97,51 @@ private lemma pairing₂_of'_of'_mul (A B : Forest (UnorderedTree α))
 
 /-! ### The duality theorem -/
 
+/-- The duality on a basis forest, by recursion on its number of vertices. -/
+private theorem pairing_gl_of' (C : Forest (UnorderedTree α))
+    (x y : ConnesKreimer R (UnorderedTree α)) :
+    pairing (product x y) (of' C) = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (of' C)) := by
+  rcases Multiset.empty_or_exists_mem C with rfl | ⟨T, hT⟩
+  · -- No trees: both sides are counits.
+    simp [Algebra.TensorProduct.one_def, pairing_one_right, counit_product, mul_comm]
+  obtain ⟨C', rfl⟩ := Multiset.exists_cons_of_mem hT
+  rcases Multiset.empty_or_exists_mem C' with rfl | ⟨T₂, hT₂⟩
+  · -- One tree `B⁺_a W`: the `B⁻` recurrence on the left, the cocycle on the right.
+    obtain ⟨a, W, rfl⟩ : ∃ a W, T = UnorderedTree.node a W := ⟨_, _, (node_eta T).symm⟩
+    rw [Multiset.cons_zero, of'_singleton, ← bPlus_of', pairing_product_bPlus,
+      comulAlgHomN_bPlus_cocycle, map_add, pairing₂_tmul_tmul, pairing₂_lTensor_bPlus,
+      ← pairing_gl_of' W, ← pairing_bMinus, pairing_one_right]
+    ring
+  · -- Several trees `T ::ₘ C'`: both sides are bilinear in `(x, y)`, so split off `T` on basis
+    -- forests.
+    have h : (product (R := R)).compr₂ (pairing.flip (of' (T ::ₘ C'))) =
+        (TensorProduct.mk R _ _).flip.compr₂
+          (pairing₂.flip (comulAlgHomN (R := R) (of' (T ::ₘ C')))) :=
+      lhom_ext' fun A ↦ lhom_ext' fun B ↦ by
+        simp only [LinearMap.compr₂_apply, LinearMap.flip_apply, TensorProduct.mk_apply]
+        rw [← Multiset.singleton_add, of'_add, pairing_product_of'_mul_of', map_mul,
+          pairing₂_of'_of'_mul]
+        exact congrArg Multiset.sum <| Multiset.map_congr rfl fun pq _ ↦ by
+          rw [pairing_gl_of' {T}, pairing_gl_of' C']
+    exact LinearMap.congr_fun₂ h x y
+termination_by (C.map UnorderedTree.numNodes).sum
+decreasing_by
+  all_goals subst_vars; simp only [Multiset.map_cons, Multiset.sum_cons]
+  · simp
+  · have := (UnorderedTree.numNodes_pos T₂).trans_le
+      (Multiset.single_le_sum (fun _ _ ↦ Nat.zero_le _) _ (Multiset.mem_map_of_mem _ hT₂))
+    simp only [Multiset.map_singleton, Multiset.sum_singleton]; omega
+  · have := UnorderedTree.numNodes_pos T
+    omega
+
 /-- The Grossman–Larson product is the transpose of the pruning coproduct under the
 symmetry-weighted pairing, `⟨x ⋆ y, z⟩ = pairing₂ (y ⊗ x) (Δ^ρ z)`. The tensor slots are crossed:
 the grafted factor `y` pairs against the pruned crowns and the host `x` against the trunks. -/
 theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedTree α)) :
-    pairing (product x y) z = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (R := R) z) := by
-  -- Core statement at basis `z = of' C`, strong induction on total weight.
-  suffices core : ∀ (n : ℕ) (C : Forest (UnorderedTree α)),
-      (C.map UnorderedTree.numNodes).sum = n →
-      ∀ x y : ConnesKreimer R (UnorderedTree α),
-      pairing (R := R)
-          (product x y) (ConnesKreimer.of' C) =
-        pairing₂ (R := R) (y ⊗ₜ[R] x)
-          (comulAlgHomN (R := R) (ConnesKreimer.of' C)) by
-    have h : pairing (R := R) (product x y) =
-        (pairing₂ (R := R) (y ⊗ₜ[R] x)).comp
-          (comulAlgHomN (R := R)).toLinearMap :=
-      ConnesKreimer.lhom_ext' fun C => core _ C rfl x y
-    exact LinearMap.congr_fun h z
-  intro n
-  induction n using Nat.strong_induction_on with
-  | _ n IH =>
-    intro C hC x y
-    rcases Multiset.empty_or_exists_mem C with hC0 | ⟨T, hT⟩
-    · -- No trees: both sides are counits.
-      subst hC0
-      simp [Algebra.TensorProduct.one_def, pairing_one_right, counit_product, mul_comm]
-    · obtain ⟨C', rfl⟩ := Multiset.exists_cons_of_mem hT
-      rcases Multiset.empty_or_exists_mem C' with hC'0 | ⟨T₂, hT₂⟩
-      · -- One tree `B⁺_a W`: the `B⁻` recurrence on the left, the cocycle on the right.
-        subst hC'0
-        obtain ⟨a, W, rfl⟩ : ∃ a W, T = UnorderedTree.node a W := ⟨_, _, (node_eta T).symm⟩
-        have hW : (W.map UnorderedTree.numNodes).sum < n := by simp at hC; omega
-        rw [Multiset.cons_zero, of'_singleton, ← bPlus_of', pairing_product_bPlus,
-          comulAlgHomN_bPlus_cocycle, map_add, pairing₂_tmul_tmul, pairing₂_lTensor_bPlus,
-          ← IH _ hW W rfl, ← pairing_bMinus, pairing_one_right]
-        ring
-      · -- Several trees `T ::ₘ C'`, both lighter than `C`.
-        have hsum : T.numNodes + (C'.map UnorderedTree.numNodes).sum = n := by simpa using hC
-        have hT := UnorderedTree.numNodes_pos T
-        have hC' := (UnorderedTree.numNodes_pos T₂).trans_le
-          (Multiset.single_le_sum (fun _ _ ↦ Nat.zero_le _) _ (Multiset.mem_map_of_mem _ hT₂))
-        have hTlt : (({T} : Forest (UnorderedTree α)).map UnorderedTree.numNodes).sum < n := by
-          simp only [Multiset.map_singleton, Multiset.sum_singleton]; omega
-        have hC'lt : (C'.map UnorderedTree.numNodes).sum < n := by omega
-        -- Both sides are bilinear in `(x, y)`: split off the head tree on basis forests.
-        have h : (product (R := R)).compr₂ (pairing.flip (of' (T ::ₘ C'))) =
-            (TensorProduct.mk R _ _).flip.compr₂
-              (pairing₂.flip (comulAlgHomN (R := R) (of' (T ::ₘ C')))) :=
-          lhom_ext' fun A ↦ lhom_ext' fun B ↦ by
-            simp only [LinearMap.compr₂_apply, LinearMap.flip_apply, TensorProduct.mk_apply]
-            rw [← Multiset.singleton_add, of'_add, pairing_product_of'_mul_of', map_mul,
-              pairing₂_of'_of'_mul]
-            exact congrArg Multiset.sum <| Multiset.map_congr rfl fun pq _ ↦ by
-              rw [IH _ hTlt {T} rfl, IH _ hC'lt C' rfl]
-        exact LinearMap.congr_fun₂ h x y
+    pairing (product x y) z = pairing₂ (R := R) (y ⊗ₜ[R] x) (comulAlgHomN (R := R) z) :=
+  LinearMap.congr_fun (lhom_ext' (f := pairing (product x y))
+    (g := (pairing₂ (y ⊗ₜ[R] x)).comp (comulAlgHomN (R := R)).toLinearMap)
+    fun C ↦ pairing_gl_of' C x y) z
 
 /-! ### The pairing as a map to the convolution algebra -/
 
@@ -170,24 +160,6 @@ convolution product is associative. -/
 theorem pairing_product_assoc (x y z : ConnesKreimer R (UnorderedTree α)) :
     pairing (R := R) (product (product x y) z) = pairing (product x (product y z)) :=
   toConv_injective <| by simp only [toConv_pairing_product, mul_assoc]
-
-theorem comulAlgHomN_eq_G {R : Type*} [CommSemiring R] {α : Type*} :
-    comulAlgHomN (R := R) (α := α) = comulAlgHomNG (R := R) cutSummandsN := rfl
-
-/-- The pruning cuts are admissible, by the coassociativity and counit laws of `Δ^ρ`. -/
-instance {α : Type*} : IsAdmissibleCuts (cutSummandsN (α := α)) where
-  coassoc := by
-    intro R _
-    rw [← comulAlgHomN_eq_G]
-    exact comulAlgHomN_coassoc_algHom
-  counit_rTensor := by
-    intro R _
-    rw [← comulAlgHomN_eq_G]
-    exact counit_rTensor_comulAlgHomN
-  counit_lTensor := by
-    intro R _
-    rw [← comulAlgHomN_eq_G]
-    exact counit_lTensor_comulAlgHomN
 
 end ConnesKreimer
 

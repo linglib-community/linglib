@@ -192,6 +192,16 @@ theorem insertionMultiset_singleton_value (T : UnorderedTree α) (B : Multiset (
   obtain ⟨T', hT', rfl⟩ := h
   exact ⟨mk T', rfl, value_of_mem_insertion hT'⟩
 
+/-- Grafting into `A` gives a single tree with root `a` only if `A` is one. -/
+theorem exists_eq_singleton_node_of_mem_insertionMultiset {a : α}
+    {A B G : Multiset (UnorderedTree α)} (h : {node a G} ∈ insertionMultiset A B) :
+    ∃ F, A = {node a F} := by
+  obtain ⟨T, rfl⟩ := Multiset.card_eq_one.mp
+    ((insertionMultiset_card_eq A B h).symm.trans (Multiset.card_singleton _))
+  obtain ⟨T', hT', hv⟩ := insertionMultiset_singleton_value T B h
+  rw [← Multiset.singleton_inj.mp hT', value_node] at hv
+  exact ⟨T.children, by rw [hv, node_eta]⟩
+
 /-- Splits of an output forest are splits of the host and of the guests, each guest following
 its host. -/
 theorem insertionMultiset_antidiagonal (A G : Multiset (UnorderedTree α)) :
