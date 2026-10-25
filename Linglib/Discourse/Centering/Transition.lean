@@ -1,44 +1,48 @@
 module
 
 public import Linglib.Discourse.Centering.Basic
-public import Mathlib.Data.List.Defs
+public import Mathlib.Data.List.Zip
+public import Mathlib.Order.Prod.Lex.Basic
+public import Mathlib.Order.WithBot
 
 /-!
 # Centering theory: transitions
 
-Grosz, Joshi, and Weinstein classify the move from one utterance to the next by whether the
-backward-looking center is kept and, if so, whether it is the preferred center: continuation,
-retaining, or shifting. Rule 2 orders the three, continuation first, and prefers sequences of
-earlier transitions to sequences of later ones. This file classifies a pair of utterances from
-its centers, scans a discourse for the centers and transitions of each utterance after the
-first, and carries Rule 2's order as the `LinearOrder` on `Transition`.
+The transition from one utterance to the next is classified by two tests on the backward-looking
+center of the second: whether it is the backward-looking center of the first, or the first has
+none, and whether it is the preferred center of the second. Kibble calls the tests *cohesion* and
+*salience*. Brennan, Friedman, and Pollard's four transitions, named continue, retain, smooth
+shift, and rough shift by Walker, Iida, and Cote, are the four outcomes of the two tests; Grosz,
+Joshi, and Weinstein's three, continuation, retaining, and shifting, do not apply the second test
+to a shift. Rule 2 orders the transitions by the first test and then by the second.
 
 ## Main declarations
 
-* `Discourse.Centering.Transition`: the three transition types, linearly ordered by Rule 2.
-* `Transition.ofCenters`: the transition determined by the prior center, the current center, and
-  the current preferred center.
-* `Discourse.Centering.transition`: the transition into an utterance from the previous one,
-  given the prior center.
-* `Discourse.Centering.cbs` and `transitions`: the centers and transitions along a discourse.
+* `Discourse.Centering.ExtendedTransition`: the four transitions, ordered lexicographically by
+  their outcomes on the two tests, `cohesion` and `salience`.
+* `Discourse.Centering.Transition`: the three transitions; `ExtendedTransition.toTransition`
+  merges the two shifts and is monotone.
+* `ExtendedTransition.ofCenters`, `Transition.ofCenters`: the transition determined by the prior
+  backward-looking center, the current one, and the current preferred center.
+* `Discourse.Centering.cbs`, `transitions`: the centers and transitions along a discourse.
 
 ## Implementation notes
 
-The paper's definitions presuppose a prior backward-looking center. When there is none, as for
-the second utterance of a segment, the center counts as kept, so the utterance continues or
-retains according to whether its center is its preferred center: the proposal of Walker, Iida,
-and Cote that [poesio-stevenson-eugenio-hitzeman-2004] reports, on which the first utterance's
-center is underspecified until the second is processed. An utterance with no backward-looking
-center shifts, as the paper's shifting clause reads when the center is undefined.
+Grosz, Joshi, and Weinstein state Rule 2 on sequences of transitions; the orders here are its
+restriction to single transitions, as Brennan, Friedman, and Pollard state it, and a study
+compares sequences pointwise.
 
-Rule 2 prefers sequences of continuations to sequences of retentions and those to sequences of
-shifts, and in particular prefers a pair of continuations to a pair of retentions. The order on
-`Transition` is its content on single transitions; a study compares sequences by that order
-pointwise.
+The first test passes when there is no prior center: Walker, Iida, and Cote treat the center of a
+segment's first utterance as a variable bound to the center of the second, so the second continues
+or retains. An utterance with no backward-looking center has no extended transition, as Poesio
+and colleagues note of the four-way table; `Transition.ofCenters` counts it as shifting.
 
 ## References
 
 * [grosz-joshi-weinstein-1995]
+* [brennan-friedman-pollard-1987]
+* [walker-iida-cote-1994]
+* [kibble-2001]
 * [poesio-stevenson-eugenio-hitzeman-2004]
 -/
 
@@ -46,8 +50,9 @@ pointwise.
 
 namespace Discourse.Centering
 
-/-- The transition into an utterance: its backward-looking center is kept and is its preferred
-center, kept but not preferred, or changed. -/
+/-! ### Transitions and Rule 2 -/
+
+/-- The transitions of Grosz, Joshi, and Weinstein. -/
 inductive Transition where
   | continuation
   | retaining
@@ -56,51 +61,115 @@ inductive Transition where
 
 namespace Transition
 
-/-- Rule 2's rank: continuation over retaining over shifting. -/
-@[simp] def rank : Transition → ℕ
-  | .continuation => 2
-  | .retaining => 1
-  | .shifting => 0
+/-- The outcome of the second test on a transition whose center is kept, `⊥` on a shift. -/
+def salience : Transition → WithBot Bool
+  | continuation => (true : Bool)
+  | retaining => (false : Bool)
+  | shifting => ⊥
 
-/-- Rule 2's order on single transitions, continuation the greatest. -/
+/-- Rule 2: continuation, then retaining, then shifting. -/
 instance : LinearOrder Transition :=
-  LinearOrder.lift' rank fun a b h ↦ by cases a <;> cases b <;> simp_all
-
-theorem retaining_lt_continuation : retaining < continuation := by decide
-
-theorem shifting_lt_retaining : shifting < retaining := by decide
-
-variable {E : Type*} [DecidableEq E]
-
-/-- The transition determined by the prior backward-looking center, the current one, and the
-current preferred center. The center is kept when it is defined and, if the prior center is
-defined, equal to it. -/
-def ofCenters : Option E → Option E → Option E → Transition
-  | _, none, _ => .shifting
-  | prevCb, some c, curCp =>
-    if ∀ p ∈ prevCb, p = c then if curCp = some c then .continuation else .retaining
-    else .shifting
-
-@[simp] theorem ofCenters_none (prevCb curCp : Option E) :
-    ofCenters prevCb none curCp = .shifting := rfl
-
-theorem ofCenters_some (prevCb curCp : Option E) (c : E) : ofCenters prevCb (some c) curCp =
-    if ∀ p ∈ prevCb, p = c then if curCp = some c then .continuation else .retaining
-    else .shifting := rfl
-
-theorem ofCenters_some_some (p c : E) (curCp : Option E) : ofCenters (some p) (some c) curCp =
-    if p = c then if curCp = some c then .continuation else .retaining else .shifting := by
-  simp [ofCenters_some]
+  LinearOrder.lift' salience fun a b h ↦ by cases a <;> cases b <;> cases h <;> rfl
 
 end Transition
 
-variable {E R : Type*} [DecidableEq E] [LinearOrder R]
+/-- The transitions of Brennan, Friedman, and Pollard's extended table. -/
+inductive ExtendedTransition where
+  | continue
+  | retain
+  | smoothShift
+  | roughShift
+  deriving DecidableEq, Repr
+
+namespace ExtendedTransition
+
+/-- Whether the center of a transition is kept: the first test. -/
+def cohesion : ExtendedTransition → Bool
+  | .continue | .retain => true
+  | .smoothShift | .roughShift => false
+
+/-- Whether the center of a transition is the preferred center: the second test. -/
+def salience : ExtendedTransition → Bool
+  | .continue | .smoothShift => true
+  | .retain | .roughShift => false
+
+@[ext] theorem ext {t t' : ExtendedTransition} (hc : t.cohesion = t'.cohesion)
+    (hs : t.salience = t'.salience) : t = t' := by
+  cases t <;> cases t' <;> simp_all [cohesion, salience]
+
+/-- The transition on which the first test comes out `c` and the second `s`. -/
+def ofTests (c s : Prop) [Decidable c] [Decidable s] : ExtendedTransition :=
+  if c then if s then .continue else .retain else if s then .smoothShift else .roughShift
+
+section ofTests
+
+variable (c s : Prop) [Decidable c] [Decidable s]
+
+@[simp] theorem cohesion_ofTests : (ofTests c s).cohesion = decide c := by
+  unfold ofTests; split_ifs <;> simp_all [cohesion]
+
+@[simp] theorem salience_ofTests : (ofTests c s).salience = decide s := by
+  unfold ofTests; split_ifs <;> simp_all [salience]
+
+end ofTests
+
+/-- Rule 2: the order by the first test and then by the second. -/
+instance : LinearOrder ExtendedTransition :=
+  LinearOrder.lift' (fun t ↦ toLex (t.cohesion, t.salience)) fun _ _ h ↦
+    have h := Prod.ext_iff.mp (toLex.injective h); ext h.1 h.2
+
+theorem lt_iff_toLex_lt {t t' : ExtendedTransition} :
+    t < t' ↔ toLex (t.cohesion, t.salience) < toLex (t'.cohesion, t'.salience) := Iff.rfl
+
+/-- The transition of Grosz, Joshi, and Weinstein that a transition refines. -/
+def toTransition : ExtendedTransition → Transition
+  | .continue => .continuation
+  | .retain => .retaining
+  | .smoothShift | .roughShift => .shifting
+
+theorem toTransition_mono : Monotone toTransition := by
+  intro a b; cases a <;> cases b <;> decide
+
+end ExtendedTransition
+
+/-! ### Transitions from centers -/
+
+variable {E : Type*} [DecidableEq E]
+
+/-- The transition into an utterance with backward-looking center `c` and preferred center `cp`,
+after one with backward-looking center `prevCb`. -/
+def ExtendedTransition.ofCenters (prevCb : Option E) (c : E) (cp : Option E) :
+    ExtendedTransition :=
+  ofTests (∀ p ∈ prevCb, p = c) (cp = some c)
+
+/-- The transition into an utterance with backward-looking center `cb` and preferred center `cp`,
+after one with backward-looking center `prevCb`, shifting if `cb` is undefined. -/
+def Transition.ofCenters (prevCb : Option E) : Option E → Option E → Transition
+  | none, _ => .shifting
+  | some c, cp => (ExtendedTransition.ofCenters prevCb c cp).toTransition
+
+namespace Transition
+
+@[simp] theorem ofCenters_none (prevCb cp : Option E) : ofCenters prevCb none cp = .shifting :=
+  rfl
+
+/-- The transitions of [grosz-joshi-weinstein-1995]: the center is kept, and is the preferred
+center or not, or it changes. -/
+theorem ofCenters_some (prevCb cp : Option E) (c : E) : ofCenters prevCb (some c) cp =
+    if ∀ p ∈ prevCb, p = c then if cp = some c then continuation else retaining
+    else shifting := by
+  simp only [ofCenters, ExtendedTransition.ofCenters, ExtendedTransition.ofTests]
+  split_ifs <;> rfl
+
+end Transition
+
+/-! ### Scanning a discourse -/
+
+variable {R : Type*} [LinearOrder R]
 
 /-- The transition into `cur` from `prev`, given the backward-looking center of `prev`. -/
 def transition (prevCb : Option E) (prev cur : Utterance E R) : Transition :=
   .ofCenters prevCb (cb prev cur) cur.cp
-
-/-! ### Scanning a discourse -/
 
 /-- The backward-looking center of each utterance of `d` after the first. -/
 def cbs (d : List (Utterance E R)) : List (Option E) := List.zipWith cb d d.tail
@@ -108,7 +177,7 @@ def cbs (d : List (Utterance E R)) : List (Option E) := List.zipWith cb d d.tail
 /-- The transition into each utterance of `d` after the first, the first of them with no prior
 center. -/
 def transitions (d : List (Utterance E R)) : List Transition :=
-  List.zipWith3 Transition.ofCenters (none :: cbs d) (cbs d) (d.tail.map Utterance.cp)
+  List.zipWith3 transition (none :: cbs d) d d.tail
 
 @[simp] theorem cbs_nil : cbs ([] : List (Utterance E R)) = [] := rfl
 
@@ -124,22 +193,10 @@ def transitions (d : List (Utterance E R)) : List Transition :=
 
 @[simp] theorem transitions_singleton (u : Utterance E R) : transitions [u] = [] := rfl
 
-theorem transitions_cons_cons (u₁ u₂ : Utterance E R) (d : List (Utterance E R)) :
-    transitions (u₁ :: u₂ :: d) = transition none u₁ u₂ ::
-      List.zipWith3 Transition.ofCenters (cbs (u₁ :: u₂ :: d)) (cbs (u₂ :: d))
-        (d.map Utterance.cp) := rfl
-
-private theorem length_zipWith3 : ∀ {p c q : List (Option E)}, p.length = c.length + 1 →
-    q.length = c.length → (List.zipWith3 Transition.ofCenters p c q).length = c.length
-  | [], _, _, hp, _ => (Nat.succ_ne_zero _ hp.symm).elim
-  | _ :: _, [], q, _, _ => by cases q <;> rfl
-  | _ :: _, _ :: _, [], _, hq => (Nat.succ_ne_zero _ hq.symm).elim
-  | _ :: _, _ :: _, _ :: _, hp, hq =>
-    congrArg Nat.succ (length_zipWith3 (Nat.succ_injective hp) (Nat.succ_injective hq))
-
 @[simp] theorem length_transitions (d : List (Utterance E R)) :
     (transitions d).length = d.length - 1 := by
-  unfold transitions
-  exact (length_zipWith3 (by simp) (by simp)).trans (length_cbs d)
+  rw [transitions, ← List.zipWith_zipWith_left (fun (f : Utterance E R → Transition) ↦ f)
+    transition]
+  simp [List.length_zipWith]
 
 end Discourse.Centering
