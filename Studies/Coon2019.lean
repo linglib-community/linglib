@@ -30,17 +30,23 @@ ergative case, Ch'ol, has no agentive intransitive stems.
 
 The roots of the class table (5), of (17) and (20) and of the examples are the forms of
 `Data/Wordlist/Coon2019`, each with its class as Coon's analysis, and the class fixes the root's
-type, valency and compatibility with the agent-merging head. The heads are Minimalist Voice heads whose parametric semantics supplies two of the three
-properties the licensing count reads, an external argument and its implicitness; the third,
-inherent ergative case, is the transitive head's own, since the substrate's Case checking is
-the accusative of v. The count adopts the Obligatory Case Parameter of footnote 15,
-one of the two options the paper leaves open. The class of a root fixes which realizations its
-internal slot admits; that an intransitive root's argument is only ever a full DP encodes the
-absence of unaccusative subject incorporation, (48), which the paper leaves to typology, and no
-implicit option for such roots is attested. The event semantics of §3.2.2 records truth
-conditions; the locus of Existential Closure that separates the two antipassives lives in the
--aj predicate. Status suffixes, derived transitives in -ej, word order, stative -an stems, the
-inanimate causer of (70a) and the isolated -j form (71) are recorded as data only.
+type, valency and compatibility with the agent-merging head. The heads are Minimalist Voice
+heads whose parametric semantics supplies two of the three properties the licensing count reads,
+an external argument and its implicitness; the third, inherent ergative case, is the transitive
+head's own, since the substrate's Case checking is the accusative of v. The count adopts the
+Obligatory Case Parameter of footnote 15, one of the two options the paper leaves open. The
+class of a root fixes which realizations its internal slot admits; that an intransitive root's
+argument is only ever a full DP encodes the absence of unaccusative subject incorporation, (48),
+which the paper leaves to typology, and no implicit option for such roots is attested. The event
+semantics of §3.2.2 records truth conditions; the locus of Existential Closure that separates
+the two antipassives lives in the -aj predicate. Status suffixes, derived transitives in -ej,
+word order, stative -an stems, the inanimate causer of (70a) and the isolated -j form (71) are
+recorded as data only.
+
+## Errata
+
+The template (56a) marks the agent of the transitive stem with Set B. Transitive subjects are
+cross-referenced with Set A (ergative) prefixes, as §2.2 states and (10) shows.
 
 ## References
 
@@ -315,6 +321,14 @@ theorem aj_table :
     Aj .ch .dp ∧ Aj .w .implicit ∧ ¬ Aj .j .dp ∧ ¬ Aj .w .np ∧ ¬ Aj .transitive .dp := by
   decide
 
+/-- -aj appears on exactly the stems of a transitive root whose voice leaves a participant implicit
+or oblique, available to an oblique DP with its thematic role; the stems without it fill the slot
+with a bare noun or do not project it (§4.2). -/
+theorem aj_iff_implicit_or_oblique (v : V) (i : Internal) (hw : WellFormed .tv v i) :
+    ∀ vo ∈ v.voice i, Aj v i ↔
+      ∃ j, vo.derived.construction j = .implicit ∨ vo.derived.construction j = .term .X := by
+  cases v <;> cases i <;> first | exact absurd hw (by decide) | decide
+
 /-! ### Agent diagnostics -/
 
 /-- The reading of an oblique -uj phrase adjoined to a passive is the agent when the head has an
@@ -353,14 +367,12 @@ def close : S → Prop := fun e ↦ ∃ x, P x e
 def transitiveStem : S → Prop := P a
 
 /-- The incorporation antipassive (44), in which the bare NP restricts the root and Existential
-Closure
-applies at once, so nothing is left open above v ~ VoiceP, footnote 28. -/
+Closure applies at once, so nothing is left open above v ~ VoiceP, footnote 28. -/
 def incorporationStem : S → Prop := close (restrict P Q)
 
 /-- The absolutive antipassive (75), in which the implicit argument saturates the root as a
-variable
-that the closure -aj spells out binds; the truth conditions coincide with closing at the root,
-the difference of locus that footnote 28 draws being what `aj` records. -/
+variable that the closure -aj spells out binds; the truth conditions coincide with closing at the
+root, the difference of locus that footnote 28 draws being what `aj` records. -/
 def absolutiveStem : S → Prop := close P
 
 /-- Every stem of a transitive root composes with an internal argument (§5). Each describes

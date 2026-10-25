@@ -123,7 +123,7 @@ def slot? : ArgumentFrame.Position → Option (ConstructionGrammar.Slot String)
   | .adpositional _ none => some { filler := .open_ .ADP }
   | .clausal .. => some { filler := .phrasal }
   | .expletive => some { filler := .open_ .PRON }
-  | .implicit _ => none
+  | .implicit _ | .incorporated => none
 
 /-- `linearize fr` is the form of the frame `fr` in English order, the subject, the head verb and
 the expressed complements, an order the book states once, at the subject-predicate construction

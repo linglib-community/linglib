@@ -7,10 +7,10 @@ public import Linglib.Morphology.Morph
 # Voice
 
 A *construction* of a verb gives each potential participant a status: a nominal term with a
-transitivity-related role, a dative oblique, an implied participant, or absent. A *voice* relates
-an initial and a derived diathesis of the participants, and so an initial and a derived
-construction. It also records its *pivot*, the syntactically privileged derived term, and its
-*marker*, the morphs coding it on the verb.
+transitivity-related role, a dative oblique, an incorporated noun, an implied participant, or
+absent. A *voice* relates an initial and a derived diathesis of the participants, and so an
+initial and a derived construction. It also records its *pivot*, the syntactically privileged
+derived term, and its *marker*, the morphs coding it on the verb.
 
 ## Main definitions
 
@@ -101,11 +101,12 @@ instance : DecidablePred ParticipantFate.RemovesFromCoreStatus := fun f ↦ by
 /-! ### Constructions -/
 
 /-- A construction expresses a potential participant of its verb as a nominal term with a
-transitivity-related role or as a dative oblique, leaves it implied but unexpressed, or has it
-outside participant structure. -/
+transitivity-related role, as a dative oblique or as an incorporated noun, leaves it implied but
+unexpressed, or has it outside participant structure. -/
 inductive Status where
   | term (r : TermRole)
   | dative
+  | incorporated
   | implicit
   | absent
   deriving DecidableEq, Repr
@@ -272,12 +273,14 @@ end Construction
 
 /-- The status a frame gives the participant of slot `s` is its transitivity-related role if `s` is
 a core slot, X if it is an expressed oblique, and absent if it is an expletive or unfilled. An
+incorporated noun expresses its participant without a term ([creissels-2024] §17.2.2). An
 implicit slot leaves its participant implied, unless it is understood as the subject itself or as
 its members; then the subject's term cumulates the two roles ([creissels-2024] §8.3.3). Levin's
 understood reflexive and reciprocal objects are therefore cumulations, not implied participants. -/
 def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : Status :=
   match fr.argumentRole s, fr.get? s with
   | some r, _ => .term (.ofArgumentRole r)
+  | none, some .incorporated => .incorporated
   | none, some (.implicit (some .reflexive)) | none, some (.implicit (some .reciprocal)) =>
       (fr.argumentRole .external).elim .implicit (.term ∘ .ofArgumentRole)
   | none, some (.implicit _) => .implicit
@@ -489,8 +492,11 @@ def impersonalPassive (fr : ArgumentFrame := .np) : Voice :=
         (List.range fr.complements.length).map (some ∘ complement) with pivot := none }
 
 /-- The antipassive denucleativizes the initial P and makes the initial A the S of an
-intransitive construction ([creissels-2024] §8.3.2.3). -/
-def antipassive : Voice := of .np .pp [some external, some (complement 0)]
+intransitive construction ([creissels-2024] §8.3.2.3). The derived construction has the initial
+P at position `p`: an oblique by default, an implicit argument, or an incorporated noun
+(§10.2). -/
+def antipassive (p : ArgumentFrame.Position := .adpositional) : Voice :=
+  of .np ⟨some .nominal, [p]⟩ [some external, some (complement 0)]
 
 /-- The voice that leaves the `i`-th complement of `fr` unexpressed but implied, with
 interpretation `a`; every participant keeps its slot. Examples are Fillmore's null complements and
@@ -554,6 +560,14 @@ theorem impersonalPassive_isImpersonal (fr : ArgumentFrame) :
 theorem passive_not_isImpersonal : ¬ passive.IsImpersonal := by decide
 
 theorem antipassive_isValencyDecreasing : antipassive.IsValencyDecreasing := by decide
+
+/-- The antipassive keeps the initial P in participant structure whether the derived construction
+encodes it as an oblique, leaves it implicit or incorporates it ([creissels-2024] §10.2). -/
+theorem antipassive_fateOfRole_P :
+    antipassive.fateOfRole .P = .denucleativized ∧
+      (antipassive (.implicit none)).fateOfRole .P = .denucleativized ∧
+      (antipassive .incorporated).fateOfRole .P = .denucleativized := by
+  decide
 
 theorem reflexive_cumulates : reflexive.Cumulates := by decide
 
