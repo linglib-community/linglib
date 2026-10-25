@@ -16,7 +16,8 @@ where they exist, and each tag ingests as a value where one exists. A first pers
 its clusivity, so ingestion inverts the realization of person. The annotation has no tag for
 five values of number and tags the oblique case `Acc`; the analytical inventories have no value
 for the zero and the fourth person, four tags of number and six of case. A token's features
-realize as an annotation, and an annotation ingests as features.
+realize as an annotation, which leaves the written-token flags unset, and an annotation ingests
+as features, which drops them.
 
 ## Main definitions
 
@@ -200,39 +201,50 @@ end Case
 
 namespace Morphology.Features
 
-/-- The annotation of a token's features. -/
+/-- The annotation of a token's features; the foreign, abbreviation and typo flags of the
+written token are no features and stay unset. -/
 def toUD (f : Features) : UD.MorphFeatures where
-  person := (f .person).map (·.toUD.1)
-  clusivity := (f .person).bind (·.toUD.2)
-  number := (f .number).bind Number.toUD
+  pronType := f .pronType
+  numType := f .numType
+  poss := (f .poss).isSome
+  reflex := (f .reflex).isSome
   gender := f .gender
+  animacy := f .animacy
+  number := (f .number).bind Number.toUD
   case := (f .case).map Case.toUD
   definite := f .definiteness
   degree := f .degree
-  pronType := f .pronType
-  reflex := (f .reflex).isSome
   verbForm := f .verbForm
+  mood := f .mood
   tense := f .tense
   aspect := f .aspect
-  mood := f .mood
   voice := f .voice
+  evident := f .evident
   polarity := f .polarity
+  person := (f .person).map (·.toUD.1)
+  clusivity := (f .person).bind (·.toUD.2)
+  polite := f .polite
 
 /-- The features an annotation ingests as. -/
 def ofUD (m : UD.MorphFeatures) : Features
   | .person => m.person.bind fun u ↦ Person.fromUD (u, m.clusivity)
   | .number => m.number.bind Number.fromUD
   | .gender => m.gender
+  | .animacy => m.animacy
   | .case => m.case.bind Case.fromUD
   | .definiteness => m.definite
   | .degree => m.degree
   | .pronType => m.pronType
+  | .numType => m.numType
+  | .poss => if m.poss then some () else none
   | .reflex => if m.reflex then some () else none
   | .verbForm => m.verbForm
   | .tense => m.tense
   | .aspect => m.aspect
   | .mood => m.mood
   | .voice => m.voice
+  | .evident => m.evident
   | .polarity => m.polarity
+  | .polite => m.polite
 
 end Morphology.Features
