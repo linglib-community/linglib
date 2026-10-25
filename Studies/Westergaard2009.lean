@@ -52,17 +52,20 @@ subject is new.
 Westergaard's Fin⁰ and Wh⁰ heads are realized as the embedded root-like cells of Bhatt and
 Dayal: German complementizer-less verb-second complements and Belfast English embedded
 inversion are both `quasiSubordinated`, and her Wh⁰ is the yes/no cell her Belfast example
-instantiates. Danish is the one variety whose table entry is not the fragment's required set,
-since only some Danish exclamatives are verb second. The cues (57) and (60) for verb movement
-to I°, which she motivates with Icelandic, the cue for English inflectional elements,
-*som*-insertion, focus-sensitive adverbs, *kanskje*, and the acquisition chapters are not
-formalized; the Tromsø rows have no fragment and enter only the *wh*-word model.
+instantiates. Danish is the one variety whose table entry is not the fragment's required set but
+its possible set on the table's seven heads, since only some Danish exclamatives are verb
+second; the Danish fragment takes its exclamative and imperative cells from Westergaard and the
+others from Vikner. The cues (57) and (60) for verb movement to I°, which she motivates with
+Icelandic, the cue for English inflectional elements, *som*-insertion, focus-sensitive adverbs,
+*kanskje*, and the acquisition chapters are not formalized; the Tromsø rows have no fragment and
+enter only the *wh*-word model.
 
 ## References
 
 * [westergaard-2009]
 * [rizzi-1997]
 * [henry-1997]
+* [vikner-1995]
 -/
 
 @[expose] public section
@@ -99,6 +102,11 @@ abbrev german : V2Grammar :=
 /-- Danish moves the verb to Decl⁰, Int⁰, Pol⁰ and Excl⁰. -/
 abbrev danish : V2Grammar := {root .declarative, root .constituent, root .polar, root .exclamative}
 
+/-- The seven heads of Table 3.1, as the cells they type. -/
+abbrev tableHeads : SetRel SentenceType EmbeddingContext :=
+  {root .declarative, root .constituent, root .polar, root .exclamative, root .imperative,
+    (.declarative, .quasiSubordinated), (.polar, .quasiSubordinated)}
+
 /-- Table 3.1 is the required set of the fragment for Standard Norwegian, Standard English,
 Nordmøre, Belfast English and German. -/
 theorem table_3_1_eq_required :
@@ -107,11 +115,12 @@ theorem table_3_1_eq_required :
       English.V2.Belfast.verbSecond.required = belfast ∧ German.verbSecond.required = german := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> ext c <;> revert c <;> decide
 
-/-- Table 3.1's Danish grammar lies between the fragment's required and possible cells, since
-verb second in some exclamatives only is marked as movement to Excl⁰. -/
+/-- Table 3.1's Danish grammar contains the fragment's required cells and is its possible cells
+among the table's heads, since verb second in some exclamatives only is marked as movement to
+Excl⁰. -/
 theorem danish_table_3_1 :
-    Danish.verbSecond.required ⊆ danish ∧ danish ⊆ Danish.verbSecond.possible := by
-  refine ⟨?_, ?_⟩ <;> intro c <;> revert c <;> decide
+    Danish.verbSecond.required ⊆ danish ∧ Danish.verbSecond.possible ∩ tableHeads = danish := by
+  refine ⟨fun c ↦ ?_, Set.ext fun c ↦ ?_⟩ <;> revert c <;> decide
 
 /-- Nordmøre Norwegian is the mirror image of Standard English on Decl⁰ and Int⁰. -/
 theorem nordmore_english_mirror :
