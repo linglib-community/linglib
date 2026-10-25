@@ -101,6 +101,12 @@ theorem measureEntropy_eq_tsum_mul_surprisal (μ : Measure S) [IsZeroOrProbabili
     Hm[μ] = ∑' s, μ.real {s} * surprisal μ s := by
   simp_rw [measureEntropy_of_isProbabilityMeasure, negMulLog_measureReal_singleton]
 
+theorem measureEntropy_eq_integral_surprisal [Countable S] [MeasurableSingletonClass S]
+    (μ : Measure S) [IsZeroOrProbabilityMeasure μ] (h : Integrable (surprisal μ) μ) :
+    Hm[μ] = ∫ s, surprisal μ s ∂μ := by
+  rw [integral_countable h, measureEntropy_eq_tsum_mul_surprisal]
+  rfl
+
 theorem measureEntropy_univ_smul : Hm[(μ Set.univ)⁻¹ • μ] = Hm[μ] := by
   by_cases hμ : IsFiniteMeasure μ
   · rcases eq_zero_or_neZero μ with rfl | _
