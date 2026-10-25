@@ -32,9 +32,9 @@ tie of (10) two backward-looking centers under grammatical-function ranking and 
 linear disambiguation (`ex10`), and the adjunct clauses of (14) and (16) the two definitions of
 the previous utterance pulling in opposite directions (`ex14`, `ex16`). Constraint 1 is
 unpacked into CB uniqueness and entity continuity (`strong_iff`), uniqueness holds under any
-ranking that separates the previous utterance's realizations (`cbAll_length_le_one`), the three
-forms of Rule 1 are ordered (`CbPronominalized.rule1Original`), and the four-way transition
-classification of Brennan, Friedman, and Pollard refines the three-way one
+ranking that separates the previous utterance's realizations (`cbUniqueness_of_role_injective`),
+the three forms of Rule 1 are ordered (`CbPronominalized.rule1Original`), and the four-way
+transition classification of Brennan, Friedman, and Pollard refines the three-way one
 (`bfp_toTransition`).
 
 ## Implementation notes
@@ -68,29 +68,22 @@ section Constraint1
 variable [DecidableEq E] [LinearOrder R] {U : Type*} [Membership E U]
   [∀ (u : U) (e : E), Decidable (e ∈ u)]
 
-/-- The backward-looking centers of `cur` after `prev` under a partial ranking: the entities of
-the highest-ranked realizations in `prev` that `cur` realizes, each once. Under a ranking that
-separates the realizations there is at most one. -/
-def cbAll (prev : Utterance E R) (cur : U) : List E :=
-  let realized := prev.realizations.filter (·.entity ∈ cur)
-  match realized.argmax (·.role) with
-  | none => []
-  | some top => ((realized.filter (·.role = top.role)).map (·.entity)).dedup
-
 /-- CB uniqueness: at most one backward-looking center, the weak form of Constraint 1. -/
-def CBUniqueness (prev : Utterance E R) (cur : U) : Prop := (cbAll prev cur).length ≤ 1
+def CBUniqueness (prev : Utterance E R) (cur : U) : Prop := (backwardCenters prev cur).card ≤ 1
 
 /-- Entity continuity: the utterance realizes some forward-looking center of the previous one. -/
-def EntityContinuity (prev : Utterance E R) (cur : U) : Prop := 1 ≤ (cbAll prev cur).length
+def EntityContinuity (prev : Utterance E R) (cur : U) : Prop :=
+  (backwardCenters prev cur).Nonempty
 
 /-- The strong form of Constraint 1: exactly one backward-looking center. -/
-def Constraint1Strong (prev : Utterance E R) (cur : U) : Prop := (cbAll prev cur).length = 1
+def Constraint1Strong (prev : Utterance E R) (cur : U) : Prop :=
+  (backwardCenters prev cur).card = 1
 
 instance (prev : Utterance E R) (cur : U) : Decidable (CBUniqueness prev cur) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
 instance (prev : Utterance E R) (cur : U) : Decidable (EntityContinuity prev cur) :=
-  inferInstanceAs (Decidable (_ ≤ _))
+  inferInstanceAs (Decidable (Finset.Nonempty _))
 
 instance (prev : Utterance E R) (cur : U) : Decidable (Constraint1Strong prev cur) :=
   inferInstanceAs (Decidable (_ = _))
@@ -99,24 +92,22 @@ instance (prev : Utterance E R) (cur : U) : Decidable (Constraint1Strong prev cu
 theorem strong_iff (prev : Utterance E R) (cur : U) :
     Constraint1Strong prev cur ↔ CBUniqueness prev cur ∧ EntityContinuity prev cur := by
   unfold Constraint1Strong CBUniqueness EntityContinuity
+  rw [← Finset.card_pos]
   omega
 
-theorem cbAll_length_le_one (prev : Utterance E R) (cur : U)
+/-- CB uniqueness holds under any ranking that separates the realizations of the previous
+utterance. -/
+theorem cbUniqueness_of_role_injective (prev : Utterance E R) (cur : U)
     (h : ∀ r₁ ∈ prev.realizations, ∀ r₂ ∈ prev.realizations,
       r₁.role = r₂.role → r₁.entity = r₂.entity) :
-    (cbAll prev cur).length ≤ 1 := by
-  dsimp only [cbAll]
-  split
-  · simp
-  next top hm =>
-    have htop : top ∈ prev.realizations :=
-      List.mem_of_mem_filter (List.argmax_mem (Option.mem_def.2 hm))
-    rw [← List.card_toFinset]
-    refine (Finset.card_le_card fun e he ↦ Finset.mem_singleton.2 ?_).trans
-      (Finset.card_singleton top.entity).le
-    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 (List.mem_toFinset.1 he)
-    obtain ⟨hr₁, hr₂⟩ := List.mem_filter.1 hr
-    exact h r (List.mem_of_mem_filter hr₁) top htop (by simpa using hr₂)
+    CBUniqueness prev cur := by
+  refine Finset.card_le_one.2 fun a ha b hb ↦ ?_
+  obtain ⟨hpa, hca, hma⟩ := mem_backwardCenters.1 ha
+  obtain ⟨hpb, hcb, hmb⟩ := mem_backwardCenters.1 hb
+  have hab := le_antisymm (hmb a hpa hca) (hma b hpb hcb)
+  obtain ⟨ra, hra, rfl, hea⟩ := prev.exists_rank_eq hpa
+  obtain ⟨rb, hrb, rfl, heb⟩ := prev.exists_rank_eq hpb
+  exact h ra hra rb hrb (WithBot.coe_injective (hea.symm.trans (hab.trans heb)))
 
 end Constraint1
 
@@ -289,7 +280,8 @@ inductive Ent10 where
   deriving DecidableEq, Repr
 
 /-- In (10) the corner cupboard and Branicki tie as backward-looking centers under
-grammatical-function ranking, and linear order picks the cupboard. -/
+grammatical-function ranking, and linear order picks the cupboard, as `cb` does by surface
+order. -/
 theorem ex10 :
     let u227 : Utterance Ent10 GrammaticalRole :=
       ⟨[⟨.drawing, .subject, false⟩, ⟨.cupboard, .other, false⟩, ⟨.branicki, .other, false⟩]⟩
@@ -302,8 +294,9 @@ theorem ex10 :
     let v229 : Utterance Ent10 (GFLin 4) :=
       ⟨[GFLin.name .dubois .subject 0, GFLin.name .dealer .other 1,
         GFLin.name .cupboard .object 2, GFLin.name .branicki .other 3]⟩
-    (cbAll u227 u229).length = 2 ∧ ¬ CBUniqueness u227 u229 ∧ EntityContinuity u227 u229 ∧
-      cbAll v227 v229 = [.cupboard] := by
+    (backwardCenters u227 u229).card = 2 ∧ ¬ CBUniqueness u227 u229 ∧
+      EntityContinuity u227 u229 ∧ cb u227 u229 = some .cupboard ∧
+      backwardCenters v227 v229 = {.cupboard} := by
   decide
 
 /-- The entities of (14) and (16). -/
