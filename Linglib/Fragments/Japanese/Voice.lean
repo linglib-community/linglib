@@ -19,7 +19,7 @@ subject taking *ni* only; the substitution of *niyotte* is Jo and Seo's test for
 
 ## Main results
 
-* `Japanese.directPassive_isValencyDecreasing` — the direct passive demotes the agent
+* `Japanese.directPassive_isPassivization` — the direct passive is a passivization
 * `Japanese.newParticipant_indirectPassive` — the indirect passive introduces an affected
   subject, the A of a transitive and the S of an intransitive construction
 
@@ -59,7 +59,7 @@ def DirectPassivizable (w : Verb) : Prop := ∃ vt ∈ w.voiceType, vt.AssignsTh
 instance (w : Verb) : Decidable (DirectPassivizable w) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-theorem directPassive_isValencyDecreasing : directPassive.IsValencyDecreasing := by decide
+theorem directPassive_isPassivization : directPassive.IsPassivization := by decide
 
 /-- The indirect passive introduces an affected subject: the A of a transitive verb's derived
 construction, the S of an intransitive verb's. -/
