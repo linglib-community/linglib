@@ -123,8 +123,7 @@ theorem isAnticipatory_surprisal (L : Kernel C A) :
 its own surprisal. -/
 theorem genSurprisal_id_surprisal [Countable A] [MeasurableSingletonClass A] (L : Kernel C A)
     [IsMarkovKernel L] (c : C) (hL : Integrable (surprisal (L c)) (L c)) (w : W) :
-    genSurprisal L id (fun a (_ : W) c ↦ surprisal (L c) a) c w = Hm[L c] := by
-  rw [genSurprisal, id, integral_countable hL, measureEntropy_eq_tsum_mul_surprisal]
-  rfl
+    genSurprisal L id (fun a (_ : W) c ↦ surprisal (L c) a) c w = Hm[L c] :=
+  (measureEntropy_eq_integral_surprisal _ hL).symm
 
 end Surprisal
