@@ -864,6 +864,42 @@
     "verified": "page-image"
   },
   {
+    "id": "haspelmath2007_deletion",
+    "source": {
+      "bibkey": "haspelmath-2007",
+      "paperLabel": "p. 14"
+    },
+    "language": "yoru1245",
+    "primaryText": "epo, ẹran, ata àti àlùbọ́sà",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "palm-oil, meat, pepper and onions",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "1.4"
+      ],
+      [
+        "pattern",
+        "a_co_b"
+      ],
+      [
+        "coordinands",
+        "4"
+      ],
+      [
+        "omission",
+        "allButLast"
+      ]
+    ],
+    "comment": "Rowlands (1969:36), coordinator àti as in (25); he notes the deletion is possibly an imitation of English usage.",
+    "verified": "page-image"
+  },
+  {
     "id": "haspelmath2007_ex43",
     "source": {
       "bibkey": "haspelmath-2007",
@@ -1077,6 +1113,62 @@
       ]
     ],
     "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2007_ex59b",
+    "source": {
+      "bibkey": "haspelmath-2007",
+      "paperLabel": "(59b)"
+    },
+    "language": "yoru1245",
+    "primaryText": "epo ni mo ń-rà tí mo tún ń-tà",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "It is palm-oil that I buy and in turn sell",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "coordinands",
+        "relative"
+      ]
+    ],
+    "comment": "tí conjoins relative clauses, Rowlands (1969:201–3).",
+    "verified": "page-image"
+  },
+  {
+    "id": "haspelmath2007_ex59c",
+    "source": {
+      "bibkey": "haspelmath-2007",
+      "paperLabel": "(59c)"
+    },
+    "language": "yoru1245",
+    "primaryText": "ó mú mi l' ára dá, èmi kì yió sì gbàgbé",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "He caused me to get better, and I shall not forget",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ],
+      [
+        "coordinands",
+        "main"
+      ]
+    ],
+    "comment": "sì conjoins main clauses, before the verb of the second clause, Rowlands (1969:201–3).",
     "verified": "page-image"
   },
   {

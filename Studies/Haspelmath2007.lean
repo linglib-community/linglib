@@ -59,6 +59,14 @@ counterexample from Tinrin the chapter records.
   case-marker" without naming the case, have no source in the rows; the Fragments record, after
   Beyer and after Göksel and Kerslake, that both are still comitative markers
   (`former_case_marker_isAlsoComitative`).
+* The rows record §1.4 coordinator omission as a feature, all but the last coordinator kept,
+  all but the first, or none; `omitted` is Table 1.1's omission column and `omittedFirst` the
+  Classical Tibetan and Amharic alternative of (36).
+
+## TODO
+
+* The Somali rows (60b–c) and §4.2's natural conjunction, Yoruba *t-A-t-B* at p. 24, are not
+  yet encoded.
 
 ## References
 
@@ -67,6 +75,7 @@ counterexample from Tinrin the chapter records.
 * [dryer-1992]
 * [goksel-kerslake-2005]
 * [greenberg-1963]
+* [rowlands-1969]
 * [stassen-2000]
 -/
 
@@ -139,15 +148,29 @@ def full (p : Pattern) (n : ℕ) : Option (List (Option Morph.Side)) :=
   | (s, none) => some (List.replicate (n - 1) s ++ [none])
   | (s, t) => if s = t then some (List.replicate n s) else none
 
-/-- Keep the last coordinator of a construction read from the end. -/
-def keepLastRev : List (Option Morph.Side) → List (Option Morph.Side)
+/-- Keep the first coordinator of a construction, eliminating the rest. -/
+def keepFirst : List (Option Morph.Side) → List (Option Morph.Side)
   | [] => []
-  | none :: l => none :: keepLastRev l
+  | none :: l => none :: keepFirst l
   | s :: l => s :: l.map fun _ ↦ none
 
-/-- Coordinator omission, §1.4, eliminates all but the last coordinator. -/
+/-- A construction with omission has at most one coordinator left. -/
+theorem keepFirst_countP (l : List (Option Morph.Side)) :
+    (keepFirst l).countP Option.isSome ≤ 1 := by
+  induction l with
+  | nil => simp [keepFirst]
+  | cons s l ih =>
+    cases s <;> simp_all [keepFirst]
+
+/-- Coordinator omission, §1.4, eliminates all but the last coordinator, the omission of
+Table 1.1. -/
 def omitted (p : Pattern) (n : ℕ) : Option (List (Option Morph.Side)) :=
-  (full p n).map fun l ↦ (keepLastRev l.reverse).reverse
+  (full p n).map fun l ↦ (keepFirst l.reverse).reverse
+
+/-- Omission eliminating all but the first coordinator, the Classical Tibetan and Amharic
+alternative of (36), which p. 13 sets against Table 1.1. -/
+def omittedFirst (p : Pattern) (n : ℕ) : Option (List (Option Morph.Side)) :=
+  (full p n).map keepFirst
 
 /-- Table 1.1 for four coordinands gives the full pattern and the pattern with coordinator
 omission of each of the five binary patterns it lists. -/
@@ -191,6 +214,24 @@ theorem pattern?_ne_coAB : ∀ d ∈ Examples.all, pattern? d ≠ some (some .be
 theorem prepositive_bisyndetic_emphatic :
     ∀ d ∈ Examples.all, pattern? d = some (some .before, some .before) →
       emphatic? d = some true := by
+  decide
+
+/-- Classical Tibetan and Amharic, (36), both with the basic pattern A-co B, keep the first
+coordinator of a multiple coordination, A-co B C …, which is not the omission Table 1.1 derives
+for their pattern. -/
+theorem allButFirst_ne_omitted :
+    ∀ d ∈ Examples.all, d.feature? "omission" = some "allButFirst" →
+      ∀ p ∈ pattern? d, ∀ n ∈ d.nat? "coordinands",
+        omittedFirst p n = some (some .after :: List.replicate (n - 1) none) ∧
+          omittedFirst p n ≠ omitted p n := by
+  decide
+
+/-- The Yoruba lists of [rowlands-1969], p. 14: *epo, ẹran, ata àti àlùbọ́sà* 'palm-oil, meat,
+pepper and onions' keeps *àti* on the last of four coordinands only, the omission Table 1.1
+derives for A àti B; Rowlands suspects an imitation of English usage. -/
+theorem deletion_omitted :
+    ∃ p ∈ pattern? Examples.deletion, ∃ n ∈ Examples.deletion.nat? "coordinands",
+      omitted p n = some [none, none, none, some .before] := by
   decide
 
 /-- Comitative-sourced coordinators show harmonic comitative patterns, except Tauya *-sou* (85b),
@@ -268,6 +309,7 @@ def attestations : List Attestation :=
     ⟨ex36a, .plain ClassicalTibetan.Coordination.dang⟩,
     ⟨ex36b, .plain (co (.suff "nna"))⟩,
     ⟨ex37, .plain (co (.free "oh"))⟩,
+    ⟨deletion, .plain Yoruba.Coordination.ati⟩,
     ⟨ex43, .correlative English.Coordination.bothAnd⟩,
     ⟨ex57a, .plain Korean.Coordination.gwa⟩,
     ⟨ex58a, .plain Turkish.Coordination.ile⟩,
@@ -377,6 +419,22 @@ theorem correlatives_conjunctive_or_disjunctive : ∀ r ∈ correlatives,
 (45a). -/
 theorem yoruba_bothSingle :
     CorrelativeShape.classify Yoruba.Coordination.atiAti = .bothSingle := by
+  decide
+
+/-! ### Types of coordinands, §3 -/
+
+/-- Beyond the binary contrast of noun-phrase and event coordination, (57)–(58), Yoruba
+distinguishes three coordinand types, (59): *àti* for noun phrases, *tí* for relative clauses
+and *sì* for main clauses, each row with its coordinator. -/
+def yorubaContrasts : List (Datum × Coordinator) :=
+  [(Examples.ex59a, Yoruba.Coordination.ati), (Examples.ex59b, Yoruba.Coordination.ti),
+    (Examples.ex59c, Yoruba.Coordination.si)]
+
+/-- The three coordinand types of (59) each take their own conjunctive coordinator. -/
+theorem yorubaContrasts_distinct :
+    (yorubaContrasts.map fun r ↦ r.1.feature? "coordinands").Nodup ∧
+      (yorubaContrasts.map fun r ↦ r.2.morph).Nodup ∧
+      ∀ r ∈ yorubaContrasts, r.2.role = .conjunctive := by
   decide
 
 /-! ### Payne's implicational sequence, §3 -/

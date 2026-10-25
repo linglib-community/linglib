@@ -5,14 +5,18 @@ public import Linglib.Syntax.Category.Coordinator
 /-!
 # Yoruba coordinators
 
-Yoruba conjoins noun phrases with the free word *àtí* before the second coordinand. Repeated
-before each coordinand, *àtí A àtí B*, it gives the emphatic 'both … and', the construction
-Haspelmath cites from Rowlands.
+Yoruba conjoins noun phrases with the free word *àti* before the second coordinand, *èmi àti
+Kẹ́hìndé* 'Kehinde and I'. Repeated before each coordinand, *àti A àti B*, it gives the emphatic
+'both … and', and in a list every *àti* but the last may be deleted. Other coordinand types
+conjoin with other words, *tí* for relative clauses and *sì* for main clauses, the three-way
+contrast Haspelmath cites from Rowlands.
 
 ## Main definitions
 
-* `Yoruba.Coordination.ati`: the conjunctive coordinator.
-* `Yoruba.Coordination.atiAti`: the emphatic conjunction.
+* `Yoruba.Coordination.ati`, `Yoruba.Coordination.atiAti`: noun-phrase *àti* and the emphatic
+  *àti … àti*.
+* `Yoruba.Coordination.ti`, `Yoruba.Coordination.si`: the relative-clause and main-clause
+  coordinators.
 
 ## References
 
@@ -24,11 +28,21 @@ Haspelmath cites from Rowlands.
 
 namespace Yoruba.Coordination
 
-/-- *àtí* 'and', repeated for 'both … and'. -/
+/-- *àti* 'and', conjoining noun phrases; repeated for 'both … and', and in a list deleted from
+every coordinand but the last. -/
 def ati : Coordinator :=
-  { morph := .free "àtí", gloss := "and", role := .conjunctive }
+  { morph := .free "àti", gloss := "and", role := .conjunctive }
 
-/-- *àtí … àtí* 'both … and'. -/
+/-- *tí* 'and', conjoining relative clauses: the form of the relative introducer
+`Yoruba.relTi`. -/
+def ti : Coordinator :=
+  { morph := .free "tí", gloss := "and", role := .conjunctive }
+
+/-- *sì* 'and', conjoining main clauses, before the verb of the second clause. -/
+def si : Coordinator :=
+  { morph := .free "sì", gloss := "and", role := .conjunctive }
+
+/-- *àti … àti* 'both … and'. -/
 def atiAti : Coordinator.Correlative := ⟨[ati.morph], [ati.morph], ati⟩
 
 end Yoruba.Coordination
