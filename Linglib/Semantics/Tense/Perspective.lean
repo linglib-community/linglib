@@ -24,14 +24,16 @@ reference stands where the reference does, or overlaps `π`.
 * `Tense.DeicticAdverb.IsDistal`: the cell excludes overlap, as for English *then*.
 * `Tense.Perspective.Presup`: the presupposition of a temporal pronoun with a given cell, and
   `Tense.Perspective.toSetRel` the relation it induces from the perspective.
+* `Tense.Perspective.Restricted`: an adverb restricting a tense, both presuppositions holding and
+  the tense's reference lying within the adverb's.
 
 ## Main results
 
 * `Tense.Perspective.Presup.restrict`: a time containing a reference stands to the perspective in
   the composite of containment with the reference's cell.
-* `Tense.Perspective.exists_presup_iff`: on dense time, an adverb can restrict a tense exactly when
-  its cell meets that composite, and `Tense.Perspective.exists_presup_ofPosition_iff` the same
-  for cells of positions.
+* `Tense.Perspective.exists_restricted_iff`: on dense time, an adverb can restrict a tense exactly
+  when its cell meets that composite, and `Tense.Perspective.exists_restricted_ofPosition_iff` the
+  same for cells of positions.
 * `Tense.Perspective.not_presup_of_presup_overlaps`: a distal adverb cannot restrict a reference
   that overlaps the perspective.
 
@@ -93,6 +95,12 @@ instance : Decidable (Presup A π r) := inferInstanceAs (Decidable (_ ∈ A))
 
 @[simp] theorem presup_top : Presup ⊤ π r := Finset.mem_univ _
 
+/-- An adverb with cell `B` and reference `th` restricts a tense with cell `A` and reference `r`
+relative to the perspective `π`: both presuppositions hold and the tense's reference lies within
+the adverb's. -/
+def Restricted (A B : Finset Allen.Relation) (π r th : NonemptyInterval T) : Prop :=
+  Presup A π r ∧ r ≤ th ∧ Presup B π th
+
 /-- A time containing the reference stands to the perspective in the composite of containment
 with the reference's cell. -/
 theorem Presup.restrict (h : Presup A π r) (hle : r ≤ th) :
@@ -102,8 +110,8 @@ theorem Presup.restrict (h : Presup A π r) (hle : r ≤ th) :
 
 /-- On dense time, an adverb with cell `B` can restrict a reference with cell `A` for some
 perspective exactly when `B` meets the composite of containment with `A`. -/
-theorem exists_presup_iff [DenselyOrdered T] [Nontrivial T] :
-    (∃ π r th : NonemptyInterval T, Presup A π r ∧ r ≤ th ∧ Presup B π th) ↔
+theorem exists_restricted_iff [DenselyOrdered T] [Nontrivial T] :
+    (∃ π r th : NonemptyInterval T, Restricted A B π r th) ↔
       (Allen.comp (Allen.inv Allen.le) A ∩ B).Nonempty := by
   refine ⟨fun ⟨π, r, th, hr, hle, hth⟩ ↦ ⟨_, Finset.mem_inter.2 ⟨hr.restrict hle, hth⟩⟩,
     fun ⟨_, ht⟩ ↦ ?_⟩
@@ -139,10 +147,11 @@ theorem not_presup_of_presup_overlaps (hC : .eq ∉ C) (hr : Presup Allen.overla
 
 /-- An adverb with positions `D` can restrict a reference with positions `C` for some
 perspective exactly when `D` admits a position of `C`, or overlap. -/
-theorem exists_presup_ofPosition_iff [Nontrivial T] {D : Finset Ordering} :
-    (∃ π r th : NonemptyInterval T, Presup (Allen.ofPosition C) π r ∧ r ≤ th ∧
-      Presup (Allen.ofPosition D) π th) ↔ ∃ o ∈ C, o ∈ D ∨ .eq ∈ D := by
-  simp only [presup_ofPosition]
+theorem exists_restricted_ofPosition_iff [Nontrivial T] {D : Finset Ordering} :
+    (∃ π r th : NonemptyInterval T,
+      Restricted (Allen.ofPosition C) (Allen.ofPosition D) π r th) ↔
+        ∃ o ∈ C, o ∈ D ∨ .eq ∈ D := by
+  simp only [Restricted, presup_ofPosition]
   refine ⟨fun ⟨π, r, th, hr, hle, hth⟩ ↦ ⟨_, hr, ?_⟩, fun ⟨o, ho, h⟩ ↦ ?_⟩
   · rcases NonemptyInterval.position_eq_or_eq_eq_of_le (j := π) hle with h | h <;> rw [h] at hth
     exacts [.inl hth, .inr hth]
