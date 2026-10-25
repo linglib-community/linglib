@@ -57,6 +57,12 @@ of position the causative/inchoative also covers are not mapped. Where neither i
 causee meets no condition, so a verb shows the causative/inchoative or the induced action
 alternation only where Levin's condition is verified.
 
+## Errata
+
+* Part One lists the verbs of modes of being involving motion among those showing the *swarm*
+  alternation (p. 54), and their class page stars the locative alternation with *The fort
+  fluttered with many flags* (p. 251). `LevinClass.Participates` reads the class pages.
+
 ## References
 
 * [levin-1993]

@@ -1,0 +1,1040 @@
+[
+  {
+    "id": "holefraser2026_17",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(17)"},
+    "language": "stan1293",
+    "primaryText": "The pool is swimming with turtles. No, that's not true. There are just a few turtles.",
+    "discourseSegments": [
+      "The pool is swimming with turtles.",
+      "No, that's not true. There are just a few turtles."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "abundance"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_18",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(18)"},
+    "language": "stan1293",
+    "primaryText": "The metro is crawling with rats. No, that's not true. There are just a few rats.",
+    "discourseSegments": [
+      "The metro is crawling with rats.",
+      "No, that's not true. There are just a few rats."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "abundance"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_19",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(19)"},
+    "language": "stan1293",
+    "primaryText": "The sky is glittering with stars. No, that's not true. There are just a few stars.",
+    "discourseSegments": [
+      "The sky is glittering with stars.",
+      "No, that's not true. There are just a few stars."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "abundance"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_30b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(30b)"},
+    "language": "stan1295",
+    "primaryText": "Der Teich schwamm heute vor Fischen!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Today the pond was swimming with fish!",
+    "context": "There are normally a few fish swimming in the pond.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Der Teich schwamm heute nur so vor Fischen!", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["diagnostic", "nur so"]
+    ],
+    "comment": "The paper prints nur so in parentheses; without it the sentence is the alternant's in the printed context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_31b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(31b)"},
+    "language": "stan1295",
+    "primaryText": "Das Gleisbett krabbelte heute vor Kakerlaken!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "Today the tracks were crawling with cockroaches!",
+    "context": "There are normally a few cockroaches crawling on the underground tracks.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Das Gleisbett krabbelte heute nur so vor Kakerlaken!", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["diagnostic", "nur so"]
+    ],
+    "comment": "The paper prints nur so in parentheses; without it the sentence is the alternant's in the printed context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_32b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(32b)"},
+    "language": "stan1295",
+    "primaryText": "Die Werkshalle hat heute vor Maschinen gesummt!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "The workshop was humming with (the sound of) machines today!",
+    "context": "There's usually a subdued sound of industriousness in the factory.",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "Die Werkshalle hat heute vor Maschinen nur so gesummt!", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["diagnostic", "nur so"]
+    ],
+    "comment": "The paper prints nur so in parentheses; without it the sentence is the alternant's in the printed context.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_38a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(38a)"},
+    "language": "stan1293",
+    "primaryText": "Turtles aren't even swimming in the pool, let alone diving in it!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["diagnostic", "not even"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_38b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(38b)"},
+    "language": "stan1293",
+    "primaryText": "The pool isn't even swimming with turtles, let alone infested by them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "The pool isn't swimming with turtles, let alone infested by them.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["diagnostic", "not even"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_39a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(39a)"},
+    "language": "stan1293",
+    "primaryText": "Rats aren't even crawling in the metro, let alone eating scraps of half-rotten food!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["diagnostic", "not even"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_39b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(39b)"},
+    "language": "stan1293",
+    "primaryText": "The metro isn't even crawling with rats, let alone infested by them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "The metro isn't crawling with rats, let alone infested by them.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["diagnostic", "not even"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_40a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(40a)"},
+    "language": "stan1293",
+    "primaryText": "Steaks aren't even simmering in the pan, let alone sizzling!",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["diagnostic", "not even"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_40b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(40b)"},
+    "language": "stan1293",
+    "primaryText": "The pan isn't even simmering with steaks, let alone sizzling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [
+      {"form": "The pan isn't simmering with steaks, let alone sizzling.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["diagnostic", "not even"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_45B_mirativity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(45)"},
+    "language": "stan1293",
+    "primaryText": "The pool is swimming with turtles. No, that's not true. This is not remarkable for me.",
+    "discourseSegments": [
+      "The pool is swimming with turtles.",
+      "No, that's not true. This is not remarkable for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "mirativity"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_45Bprime_mirativity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(45)"},
+    "language": "stan1293",
+    "primaryText": "The pool is swimming with turtles. Hey, wait a minute! This is not remarkable for me.",
+    "discourseSegments": [
+      "The pool is swimming with turtles.",
+      "Hey, wait a minute! This is not remarkable for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "mirativity"],
+      ["response", "wait a minute"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_45B_scalarity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(45)"},
+    "language": "stan1293",
+    "primaryText": "The pool is swimming with turtles. No, that's not true. This is not a lot for me.",
+    "discourseSegments": [
+      "The pool is swimming with turtles.",
+      "No, that's not true. This is not a lot for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "scalarity"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_45Bprime_scalarity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(45)"},
+    "language": "stan1293",
+    "primaryText": "The pool is swimming with turtles. Hey, wait a minute! This is not a lot for me.",
+    "discourseSegments": [
+      "The pool is swimming with turtles.",
+      "Hey, wait a minute! This is not a lot for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "scalarity"],
+      ["response", "wait a minute"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_46B_mirativity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "The metro is crawling with rats. No, that's not true. This is not remarkable for me.",
+    "discourseSegments": [
+      "The metro is crawling with rats.",
+      "No, that's not true. This is not remarkable for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "mirativity"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_46Bprime_mirativity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "The metro is crawling with rats. Hey, wait a minute! This is not remarkable for me.",
+    "discourseSegments": [
+      "The metro is crawling with rats.",
+      "Hey, wait a minute! This is not remarkable for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "mirativity"],
+      ["response", "wait a minute"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_46B_scalarity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "The metro is crawling with rats. No, that's not true. This is not a lot for me.",
+    "discourseSegments": [
+      "The metro is crawling with rats.",
+      "No, that's not true. This is not a lot for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "scalarity"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_46Bprime_scalarity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(46)"},
+    "language": "stan1293",
+    "primaryText": "The metro is crawling with rats. Hey, wait a minute! This is not a lot for me.",
+    "discourseSegments": [
+      "The metro is crawling with rats.",
+      "Hey, wait a minute! This is not a lot for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "scalarity"],
+      ["response", "wait a minute"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_47B_mirativity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "The pan is sizzling with steaks. No, that's not true. This is not remarkable for me.",
+    "discourseSegments": [
+      "The pan is sizzling with steaks.",
+      "No, that's not true. This is not remarkable for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "mirativity"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_47Bprime_mirativity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "The pan is sizzling with steaks. Hey, wait a minute! This is not remarkable for me.",
+    "discourseSegments": [
+      "The pan is sizzling with steaks.",
+      "Hey, wait a minute! This is not remarkable for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "mirativity"],
+      ["response", "wait a minute"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_47B_scalarity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "The pan is sizzling with steaks. No, that's not true. This is not a lot for me.",
+    "discourseSegments": [
+      "The pan is sizzling with steaks.",
+      "No, that's not true. This is not a lot for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "scalarity"],
+      ["response", "denial"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_47Bprime_scalarity",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(47)"},
+    "language": "stan1293",
+    "primaryText": "The pan is sizzling with steaks. Hey, wait a minute! This is not a lot for me.",
+    "discourseSegments": [
+      "The pan is sizzling with steaks.",
+      "Hey, wait a minute! This is not a lot for me."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "scalarity"],
+      ["response", "wait a minute"]
+    ],
+    "comment": "A and B are two speakers; the paper prints 'not remarkable/not a lot'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_49a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(49a)"},
+    "language": "stan1293",
+    "primaryText": "Josie believes that turtles are swimming in the pool and that it isn't a big deal that there is an extremely large amount of turtles swimming in the pool.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["content", "scalarity"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "negative"]
+    ],
+    "comment": "The paper brackets the final clause, spelling out what 'it' refers to.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_49b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(49b)"},
+    "language": "stan1293",
+    "primaryText": "Josie believes that turtles are swimming in the pool. That turtles are swimming in the pool isn't remarkable for her.",
+    "discourseSegments": [
+      "Josie believes that turtles are swimming in the pool.",
+      "That turtles are swimming in the pool isn't remarkable for her."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["content", "mirativity"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "negative"]
+    ],
+    "comment": "Josie and her are coindexed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_50a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(50a)"},
+    "language": "stan1293",
+    "primaryText": "Josie believes that the pool is swimming with turtles and that it isn't a big deal.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "scalarity"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "negative"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_50b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(50b)"},
+    "language": "stan1293",
+    "primaryText": "Josie believes that the pool is swimming with turtles. That the pool is swimming with turtles isn't remarkable for her.",
+    "discourseSegments": [
+      "Josie believes that the pool is swimming with turtles.",
+      "That the pool is swimming with turtles isn't remarkable for her."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["content", "mirativity"],
+      ["diagnostic", "obligatory local effect"],
+      ["holder", "negative"]
+    ],
+    "comment": "Josie and her are coindexed.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_51a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(51a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants frankly crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "speech-act"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_51b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(51b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk frankly crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "speech-act"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_52a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(52a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants fortunately crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "evaluation"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_52b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(52b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk fortunately crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "evaluation"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_53a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(53a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants surprisingly crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "mirativity"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_53b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(53b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk surprisingly crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "mirativity"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_54a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(54a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants certainly crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "epistemic modality"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_54b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(54b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk certainly crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "epistemic modality"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_55a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(55a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants just crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "scalar evaluation"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9). just on its scalar reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_55b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(55b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk just crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "scalar evaluation"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9). just on its scalar reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_56a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(56a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants once crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "deictic tense"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_56b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(56b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk once crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "deictic tense"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_57a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(57a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants habitually crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "habitual aspect"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_57b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(57b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk habitually crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "habitual aspect"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_58a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(58a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants still crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "continuative aspect I"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_58b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(58b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk still crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "continuative aspect I"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_59a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(59a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants briefly crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "durative aspect"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_59b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(59b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk briefly crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "durative aspect"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_60a",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(60a)"},
+    "language": "stan1293",
+    "primaryText": "I remember ants almost crawling on the sidewalk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember ants crawling on the sidewalk.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "base"],
+      ["projection", "prospective aspect"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  },
+  {
+    "id": "holefraser2026_60b",
+    "source": {"bibkey": "hole-fraser-2026", "paperLabel": "(60b)"},
+    "language": "stan1293",
+    "primaryText": "I remember the sidewalk almost crawling with ants.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {"form": "I remember the sidewalk crawling with ants.", "judgment": "acceptable"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["alternant", "nonBase"],
+      ["projection", "prospective aspect"]
+    ],
+    "comment": "Judged without comma intonation around the adverb (fn. 9).",
+    "verified": "page-image"
+  }
+]
