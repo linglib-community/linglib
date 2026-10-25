@@ -585,22 +585,22 @@ noncomputable def carrierEmptyEquiv : SyntacticObject Empty ≃* FreeCommMagma U
 /-- Merge on `V(𝔗)` is the grafting operator after the disjoint union (Lemma 1.3.3), a bilinear
 map. -/
 noncomputable def mergeLin : TreeAlgebra →ₗ[ℤ] TreeAlgebra →ₗ[ℤ] TreeAlgebra :=
-  (LinearMap.mul ℤ TreeAlgebra).compr₂ (bPlusLin ())
+  (LinearMap.mul ℤ TreeAlgebra).compr₂ (bPlus ())
 
-@[simp] theorem mergeLin_apply (a b : TreeAlgebra) : mergeLin a b = bPlusLin () (a * b) := rfl
+@[simp] theorem mergeLin_apply (a b : TreeAlgebra) : mergeLin a b = bPlus () (a * b) := rfl
 
 theorem mergeLin_comm (a b : TreeAlgebra) : mergeLin a b = mergeLin b a := by
   rw [mergeLin_apply, mergeLin_apply, _root_.mul_comm]
 
 theorem mergeLin_ofTree (s t : UnorderedTree Unit) :
     mergeLin (ofTree s) (ofTree t) = ofTree (UnorderedTree.node () {s, t}) := by
-  rw [mergeLin_apply, ← of'_singleton, ← of'_singleton, ← of'_add, bPlusLin_of']
+  rw [mergeLin_apply, ← of'_singleton, ← of'_singleton, ← of'_add, bPlus_of']
   rfl
 
 /-- Merge extends to formal series `X = ∑ Xₗ` degree by degree, the degree-`n` term of `𝔐(X, Y)`
 being `∑_{i+j=n} 𝔐(Xᵢ, Yⱼ)`. -/
 noncomputable def mergeSeries (X Y : TreeAlgebra⟦X⟧) : TreeAlgebra⟦X⟧ :=
-  PowerSeries.mk fun n ↦ bPlusLin () (coeff n (X * Y))
+  PowerSeries.mk fun n ↦ bPlus () (coeff n (X * Y))
 
 @[simp] theorem coeff_mergeSeries (X Y : TreeAlgebra⟦X⟧) (n : ℕ) :
     coeff n (mergeSeries X Y) = ∑ p ∈ antidiagonal n, mergeLin (coeff p.1 X) (coeff p.2 Y) := by
@@ -784,7 +784,7 @@ workspace by the primitive coproduct, keeps the terms whose left factor has `k` 
 grafts those under a new root labelled `a`, and multiplies back. -/
 noncomputable def formSet (a : α) (k : ℕ) :
     ConnesKreimer R (UnorderedTree α) →ₗ[R] ConnesKreimer R (UnorderedTree α) :=
-  LinearMap.mul' R _ ∘ₗ (bPlusLin a).rTensor _ ∘ₗ (homogeneousComponent k).rTensor _ ∘ₗ
+  LinearMap.mul' R _ ∘ₗ (bPlus a).rTensor _ ∘ₗ (homogeneousComponent k).rTensor _ ∘ₗ
     comulPrim.toLinearMap
 
 variable [DecidableEq α]
@@ -798,7 +798,7 @@ theorem formSet_of' (a : α) (k : ℕ) (F : Forest (UnorderedTree α)) :
     AlgHom.toLinearMap_apply, rTensor_homogeneousComponent_comulPrim_of', map_multiset_sum,
     map_multiset_sum, Multiset.map_map, Multiset.map_map]
   refine congrArg Multiset.sum (Multiset.map_congr rfl fun S _ ↦ ?_)
-  simp [bPlusLin_of']
+  simp [bPlus_of']
 
 /-- With fewer than `k` components there is nothing to group. -/
 theorem formSet_of'_of_card_lt (a : α) {k : ℕ} {F : Forest (UnorderedTree α)}
@@ -897,9 +897,9 @@ noncomputable def toCK (S : SyntacticObject) : ConnesKreimer ℕ (UnorderedTree 
 /-- Merge factors through the grafting operator on the disjoint union of its arguments, with the
 bare root label (Lemma 1.3.3). -/
 theorem toCK_merge (l r : SyntacticObject) :
-    toCK (merge l r) = bPlusLin Vertex.bare (toCK l * toCK r) := by
+    toCK (merge l r) = bPlus Vertex.bare (toCK l * toCK r) := by
   rw [toCK, toCK, toCK, ← of'_singleton (R := ℕ) l.val, ← of'_singleton (R := ℕ) r.val, ← of'_add,
-    bPlusLin_of', merge_val]
+    bPlus_of', merge_val]
   rfl
 
 open WithConv

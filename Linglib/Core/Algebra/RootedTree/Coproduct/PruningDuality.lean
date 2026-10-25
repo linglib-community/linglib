@@ -62,16 +62,16 @@ variable {R : Type*} [CommSemiring R] {α : Type*} [DecidableEq α]
 
 /-! ### Adjoint through the second tensor slot -/
 
-private lemma pairing₂_lTensor_bPlusLin (a : α)
+private lemma pairing₂_lTensor_bPlus (a : α)
     (u v : ConnesKreimer R (UnorderedTree α))
     (V : ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α)) :
     pairing₂ (R := R) (u ⊗ₜ[R] v)
-        ((LinearMap.lTensor _ (bPlusLin (R := R) a)) V) =
-      pairing₂ (R := R) (u ⊗ₜ[R] (bMinusLin (R := R) a v)) V := by
+        ((LinearMap.lTensor _ (bPlus (R := R) a)) V) =
+      pairing₂ (R := R) (u ⊗ₜ[R] (bMinus (R := R) a v)) V := by
   induction V using TensorProduct.inductionOn with
   | tmul p q =>
     rw [LinearMap.lTensor_tmul, pairing₂_tmul_tmul, pairing₂_tmul_tmul,
-        ← bMinusLin_pairing_adjoint]
+        ← pairing_bMinus]
   | add V₁ V₂ ih₁ ih₂ => simp only [map_add, ih₁, ih₂]
 
 /-! ### Tensor-square of the pairing product rule -/
@@ -129,9 +129,9 @@ theorem pairing_gl_eq_pairing_coproduct_Rho (x y z : ConnesKreimer R (UnorderedT
         subst hC'0
         obtain ⟨a, W, rfl⟩ : ∃ a W, T = UnorderedTree.node a W := ⟨_, _, (node_eta T).symm⟩
         have hW : (W.map UnorderedTree.numNodes).sum < n := by simp at hC; omega
-        rw [Multiset.cons_zero, of'_singleton, ← bPlusLin_of', pairing_apply_bPlus_gl_mul,
-          comulAlgHomN_bPlusLin_cocycle, map_add, pairing₂_tmul_tmul, pairing₂_lTensor_bPlusLin,
-          ← IH _ hW W rfl, ← bMinusLin_pairing_adjoint, pairing_one_right]
+        rw [Multiset.cons_zero, of'_singleton, ← bPlus_of', pairing_product_bPlus,
+          comulAlgHomN_bPlus_cocycle, map_add, pairing₂_tmul_tmul, pairing₂_lTensor_bPlus,
+          ← IH _ hW W rfl, ← pairing_bMinus, pairing_one_right]
         ring
       · -- Several trees `T ::ₘ C'`, both lighter than `C`.
         have hsum : T.numNodes + (C'.map UnorderedTree.numNodes).sum = n := by simpa using hC
