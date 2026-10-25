@@ -17,7 +17,7 @@ stratum as world–assignment pairs.
 ## References
 
 - [groenendijk-stokhof-veltman-1996], [elliott-sudo-2025]
-- [kamp-vangenabith-reyle-2011], Def. 0.22
+- [kamp-vangenabith-reyle-2011], Def. 22
 - [heim-1982]
 -/
 
@@ -137,7 +137,7 @@ theorem compat_iff_forall : Compat p q ↔
     ⟨hw.symm, fun v => Flat.le_or_right (hc v)⟩⟩
 
 /-- Two partial points are compatible iff they share their world and agree where both are defined
-([kamp-vangenabith-reyle-2011], Def. 0.26). -/
+([kamp-vangenabith-reyle-2011], Def. 26). -/
 theorem compat_iff : Compat p q ↔
     p.world = q.world ∧
       ∀ v (e e' : M), p.assignment v = ↑e → q.assignment v = ↑e' → e = e' := by

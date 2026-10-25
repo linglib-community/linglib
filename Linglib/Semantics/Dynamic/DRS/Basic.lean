@@ -270,6 +270,9 @@ theorem varFinset_eq (K : DRS L V) :
     K.varFinset = K.referents ∪ Condition.varFinsetL K.conditions := by
   cases K; rfl
 
+theorem referents_subset_varFinset (K : DRS L V) : K.referents ⊆ K.varFinset := by
+  rw [varFinset_eq]; exact Finset.subset_union_left
+
 theorem varFinsetL_subset_varFinset (K : DRS L V) :
     Condition.varFinsetL K.conditions ⊆ K.varFinset := by
   rw [varFinset_eq]; exact Finset.subset_union_right
