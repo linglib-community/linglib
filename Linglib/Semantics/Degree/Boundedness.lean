@@ -77,6 +77,8 @@ closed scale is Kennedy's and stays a stipulation (`defaultStandard`).
 * [E. Klein, *A Semantics for Positive and Comparative Adjectives* (1980)][klein-1980]
 * [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
   Mildness* (2025)][beltrama-2025]
+* [T. Grano, *Variable-Force Modality in English Infinitival Relatives: A Matter of Degree*
+  (2026)][grano-2026]
 * [M. Morzycki, *Adjectival Extremeness: Degree Modification and Contextually Restricted Scales*
   (2012)][morzycki-2012]
 -/
@@ -515,6 +517,16 @@ the one at the minimum, which is why a totally closed scale prefers its maximum.
 theorem MaxStandardPos.minStandardPos [OrderBot D] [OrderTop D] (h : (⊥ : D) < ⊤)
     (hx : MaxStandardPos μ x) : MinStandardPos μ x :=
   h.trans_le hx
+
+/-- The minimum standard is the weakest nontrivial standard: no standard lies between it and the
+one every degree meets, so strengthening an existential claim about degrees to one above the
+least only just escapes triviality ([grano-2026]). -/
+theorem bot_covBy_Ioi_bot {D : Type*} [PartialOrder D] [OrderBot D] :
+    (⊥ : UpperSet D) ⋖ UpperSet.Ioi ⊥ := by
+  refine ⟨bot_lt_iff_ne_bot.2 fun h ↦ by simpa using congrArg ((⊥ : D) ∈ ·) h, fun U h1 h2 ↦ ?_⟩
+  by_cases hb : (⊥ : D) ∈ U
+  · exact h1.ne' (SetLike.ext fun y ↦ by simpa using U.upper bot_le hb)
+  · exact h2.not_ge fun y hy ↦ bot_lt_iff_ne_bot.2 fun h ↦ hb (h ▸ hy)
 
 end PositiveForm
 

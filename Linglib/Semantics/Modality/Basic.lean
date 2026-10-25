@@ -27,8 +27,8 @@ perspective and orientation locate a modal claim in time.
   classical force `ModalForce.classical`, which reads weak necessity as necessity.
 * `Modality.ModalForce.standard`: the standard a force sets on a scale of propositions.
 * `Modality.ModalFlavor` and the pair type `Modality.ForceFlavor`.
-* `Modality.ModalItem`, with its domain and variation predicates and its classical reading
-  `ModalItem.classical`.
+* `Modality.ModalItem`, with its domain and variation predicates, its classical reading
+  `ModalItem.classical`, and the Horn scales it forms, `ModalItem.Scalemates`.
 * `Modality.TemporalPerspective`, `Modality.TemporalOrientation`.
 
 ## Main statements
@@ -41,6 +41,7 @@ perspective and orientation locate a modal claim in time.
 * [kratzer-1981]
 * [lassiter-2017]
 * [grano-2026]
+* [deal-2011]
 * [von-fintel-iatridou-2008]
 * [rubinstein-2014]
 * [agha-jeretic-2022]
@@ -239,6 +240,24 @@ theorem forces_classical (m : ModalItem) :
 @[simp]
 theorem flavors_classical (m : ModalItem) : m.classical.flavors = m.flavors := by
   simp only [classical, flavors, Finset.image_image, Prod.map_snd', Function.id_comp]
+
+/-- Two modals are scalemates, forming a Horn scale, when their lexical forces `lex` differ on the
+classical scale and they share a flavour: only quantifiers over the same domain form a scale
+([deal-2011] §2.1). A modal with a weaker scalemate leaves the weaker force to it
+([grano-2026] §4.5). -/
+def Scalemates (lex : ModalItem → ModalForce) (m m' : ModalItem) : Prop :=
+  (lex m).classical ≠ (lex m').classical ∧ ∃ fl ∈ m.flavors, fl ∈ m'.flavors
+
+/-- A modal has a scalemate in an inventory. -/
+def HasScalemate (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) : Prop :=
+  ∃ m' ∈ L, Scalemates lex m m'
+
+instance (lex : ModalItem → ModalForce) (m m' : ModalItem) : Decidable (Scalemates lex m m') :=
+  inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _))
+
+instance (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) :
+    Decidable (HasScalemate lex L m) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 end ModalItem
 

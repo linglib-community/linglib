@@ -165,27 +165,11 @@ theorem flexible_iff : (∀ g, ServesFor π fo s g) ↔ ¬ s ∧ StrongerIn π f
 
 /-! ### Scales (§2) -/
 
-/-- Two modals are scalemates, forming a Horn scale, when their lexical forces differ and they
-share a flavour: only quantifiers over the same domain form a scale (§2.1). -/
-def Scalemates (lex : ModalItem → ModalForce) (m m' : ModalItem) : Prop :=
-  (lex m).classical ≠ (lex m').classical ∧ ∃ fl ∈ m.flavors, fl ∈ m'.flavors
-
-/-- A modal has a scalemate in an inventory. -/
-def HasScalemate (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) : Prop :=
-  ∃ m' ∈ L, Scalemates lex m m'
-
-instance (lex : ModalItem → ModalForce) (m m' : ModalItem) : Decidable (Scalemates lex m m') :=
-  inferInstanceAs (Decidable (_ ∧ ∃ _ ∈ _, _))
-
-instance (lex : ModalItem → ModalForce) (L : List ModalItem) (m : ModalItem) :
-    Decidable (HasScalemate lex L m) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
 /-- A modal of the inventory `L` serves in a context of polarity `π` for the force `g`, given its
 lexical force and whether it has a scalemate in `L`. -/
 def ServesIn (lex : ModalItem → ModalForce) (L : List ModalItem) (π : Polarity) (m : ModalItem)
     (g : ModalForce) : Prop :=
-  ServesFor π (lex m) (HasScalemate lex L m) g
+  ServesFor π (lex m) (ModalItem.HasScalemate lex L m) g
 
 /-- The Nez Perce modals are possibility modals (§2): *o'qa*, the participial construction,
 which appears to express possibility, *'ax̂*, which speakers judge equivalent to *o'qa*, and the
@@ -193,7 +177,9 @@ epistemic particles 'maybe'. -/
 def lexicalForce (_ : ModalItem) : ModalForce := .possibility
 
 /-- *O'qa* is a quantifier without a scale (§2.6). -/
-theorem oqa_scaleFree : ¬ HasScalemate lexicalForce NezPerce.modals NezPerce.oqa := by decide
+theorem oqa_scaleFree :
+    ¬ ModalItem.HasScalemate lexicalForce NezPerce.modals NezPerce.oqa := by
+  decide
 
 theorem oqa_flexible :
     (∀ g, ServesIn lexicalForce NezPerce.modals .positive NezPerce.oqa g) ∧
@@ -204,7 +190,7 @@ theorem oqa_flexible :
 theorem oqa_forces :
     ∀ g, g.classical ∈ NezPerce.oqa.classical.forces ↔
       Usable .positive (lexicalForce NezPerce.oqa)
-        (HasScalemate lexicalForce NezPerce.modals NezPerce.oqa) g := by
+        (ModalItem.HasScalemate lexicalForce NezPerce.modals NezPerce.oqa) g := by
   decide
 
 /-! ### Rows -/
@@ -233,9 +219,9 @@ theorem rows :
     ∀ e ∈ Examples.all, ∀ m ∈ e.parse? "modal" modalTable,
       ∀ π ∈ e.parse? "environment" polarityTable,
         (∀ g ∈ e.parse? "force" forceTable, (e.judgment = .acceptable ↔
-          Usable π (lexicalForce m) (HasScalemate lexicalForce NezPerce.modals m) g)) ∧
+          Usable π (lexicalForce m) (ModalItem.HasScalemate lexicalForce NezPerce.modals m) g)) ∧
         ∀ r ∈ e.readings, ∃ g ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
-          Usable π (lexicalForce m) (HasScalemate lexicalForce NezPerce.modals m) g) := by
+          Usable π (lexicalForce m) (ModalItem.HasScalemate lexicalForce NezPerce.modals m) g) := by
   decide
 
 end Deal2011

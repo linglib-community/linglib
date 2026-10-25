@@ -287,7 +287,7 @@ theorem oqa_rows :
       ∀ π ∈ e.parse? "downwardEntailing" polarityTable, ∀ r ∈ e.readings,
         ∃ fo ∈ forceTable.lookup r.1, (r.2 = .acceptable ↔
           Deal2011.Usable π (Deal2011.lexicalForce NezPerce.oqa)
-            (Deal2011.HasScalemate Deal2011.lexicalForce NezPerce.modals NezPerce.oqa) fo) := by
+            (ModalItem.HasScalemate Deal2011.lexicalForce NezPerce.modals NezPerce.oqa) fo) := by
   decide
 
 /-- (42)–(43): Nsyilxcen *mat* is accepted in possibility and necessity contexts and *cmay* in
@@ -302,11 +302,11 @@ theorem nsyilxcen_rows :
 theorem nsyilxcen_not_scalar :
     ¬ ∃ lex : ModalItem → ModalForce, ∀ m ∈ Nsyilxcen.modals, ∀ g,
       g.classical ∈ m.classical.forces ↔
-        Deal2011.Usable .positive (lex m) (Deal2011.HasScalemate lex Nsyilxcen.modals m) g := by
+        Deal2011.Usable .positive (lex m) (ModalItem.HasScalemate lex Nsyilxcen.modals m) g := by
   rintro ⟨lex, h⟩
   have hm := h Nsyilxcen.mat (by decide)
   have hc := h Nsyilxcen.cmay (by decide)
-  simp only [Deal2011.HasScalemate, Deal2011.Scalemates, Nsyilxcen.modals, List.mem_cons,
+  simp only [ModalItem.HasScalemate, ModalItem.Scalemates, Nsyilxcen.modals, List.mem_cons,
     List.not_mem_nil, or_false, exists_eq_or_imp, exists_eq_left] at hm hc
   generalize lex Nsyilxcen.mat = a at hm hc
   generalize lex Nsyilxcen.cmay = b at hm hc
