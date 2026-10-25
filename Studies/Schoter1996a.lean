@@ -30,6 +30,8 @@ presupposition a contradiction after a negative carrier as well as a positive on
 
 ## Main statements
 
+* `top_kLE_eval_closure`: an assertion is at least true after closure, in any state and under
+  any lexicon (§3.5.6).
 * `penguin_principle`, `nixon_diamond`, `weak_tweety_triangle`: the defaults of §3.7.3.
 * `presupposition_rows`: the inference patterns (6.12) of presupposition.
 * `cancellation_contrast`: the links predict the contradiction marks of (6.11c) and (6.11d), and
@@ -55,6 +57,10 @@ presupposition a contradiction after a negative carrier as well as a positive on
   §3.7.3 passes the `½` evidence for John's adulthood on to his employment. Read strictly, no link
   could fire at the top level, a presumed antecedent would pass nothing on, and the weak Tweety
   triangle would come out `P⁻` rather than `C`. The file reads `σᵢ` with `i ≤ b`.
+* §3.5.6 claims that an assertion with neither defeasible nor inconsistent components, such as
+  `ψ ∧ ¬ψ`, is exactly true after closure in `E⊥`. The lexicon's links can still make it
+  inconsistent: (6.12c) asserts `R ∧ ¬F` and both conjuncts come out `I`
+  (`consistent_assertion_eq_I`). The weaker claim, at least true, holds in any state.
 
 ## TODO
 
@@ -81,6 +87,9 @@ namespace Schoter1996a
 /-- The thesis's `PRESUP` (§3.2.2): the evidential bilattice over the 3-chain `Fin 3 ~ {0, ½, 1}`,
 `FOUR` with defeasible and presumed values added. -/
 abbrev PRESUP := Fin 3 ⊙ Fin 3
+
+/-- The degree `½` of the chain `{0, ½, 1}`. -/
+abbrev half : Fin 3 := 1
 
 /-- Fitting's conflation on `PRESUP` (Definition 3.4), complementing each coordinate on the chain
 by `Fin.rev`. -/
@@ -228,9 +237,9 @@ def presumably (i : S) (v : S ⊙ S) : S ⊙ S :=
   guard (semiDesignation i v) ⊤ ⊔ₖ guard (semiDesignation i vᶜ) ⊥
 
 theorem presumably_table :
-    presumably 1 PRESUP.Pplus = PRESUP.T ∧ presumably 1 PRESUP.T = PRESUP.T ∧
-      presumably 1 PRESUP.F = PRESUP.F ∧ presumably 1 PRESUP.U = PRESUP.U ∧
-      presumably 1 PRESUP.I = PRESUP.I := by
+    presumably half PRESUP.Pplus = PRESUP.T ∧ presumably half PRESUP.T = PRESUP.T ∧
+      presumably half PRESUP.F = PRESUP.F ∧ presumably half PRESUP.U = PRESUP.U ∧
+      presumably half PRESUP.I = PRESUP.I := by
   decide
 
 /-- The evidential threshold function `ω` (Definition 3.23) suppresses the dominated evidence, so
@@ -306,6 +315,15 @@ structure Link (α S : Type*) where
   cons : Formula α
   deriving DecidableEq
 
+/-- The strict link `φ ⇀ ψ`, of full strength (§3.5.1). -/
+def Link.strict [Top S] (φ ψ : Formula α) : Link α S := ⟨φ, ⊤, ψ⟩
+
+@[inherit_doc] scoped infixr:25 " ⇀ " => Link.strict
+
+/-- `πⱼ` attenuates a link to strength `j` (§3.5.1; Definition 3.13, clause 2). -/
+def Link.presumably [Min S] (j : S) (l : Link α S) : Link α S :=
+  { l with strength := j ⊓ l.strength }
+
 variable [LinearOrder S] [BoundedOrder S]
 
 /-- A link fires at level `i` (Definition 3.24) when its strength is at least `i` and its
@@ -362,7 +380,82 @@ theorem closure_eq_iterate {L : Finset (Link α (Fin 3))} {I : α → Know (Fin 
   simp only [List.foldl_cons, List.foldl_nil]
   rw [closureAt_eq_iterate h₂, closureAt_eq_iterate h₁]
 
+theorem le_closureAt : I ≤ closureAt L i I :=
+  Function.monotone_iterate_of_id_le (le_step L i) (Nat.zero_le _) I
+
+theorem le_closure : I ≤ closure L I := by
+  rw [closure]
+  generalize (Finset.univ.filter (fun j : S ↦ ⊥ < j)).sort (· ≥ ·) = l
+  induction l generalizing I with
+  | nil => exact le_rfl
+  | cons j l ih =>
+    rw [List.foldl_cons]
+    exact le_closureAt.trans ih
+
 end Closure
+
+/-! ### Assertion and evaluation (§3.5.6)
+
+A formula asserted to full degree is at least true in any setup holding its infons, since the
+weighting never removes full evidence and the guard passes its second argument through once its
+first is at least true. Closure only adds information, so an assertion is verified after closure
+whatever the state and the lexicon. -/
+
+section Verification
+
+variable {α S : Type*} [LinearOrder S] [BoundedOrder S]
+
+theorem pro_weight_eq_top {x : S ⊙ S} (h : x.pro = ⊤) : (weight x).pro = ⊤ := by
+  unfold weight
+  split_ifs with h₁ h₂
+  · exact h
+  · exact absurd h₂ (h ▸ not_top_lt)
+  · exact h
+
+theorem con_weight_eq_top {x : S ⊙ S} (h : x.con = ⊤) : (weight x).con = ⊤ := by
+  unfold weight
+  split_ifs with h₁ h₂
+  · exact absurd h₁ (h ▸ not_top_lt)
+  · exact h
+  · exact h
+
+variable [DecidableEq α] {J : α → Know (S ⊙ S)}
+
+/-- A setup holding the infons of a full assertion makes the formula designated, and one holding
+those of a full denial makes its negation designated. -/
+theorem designated_eval_of_infons_le :
+    ∀ (φ : Formula α) (b : Bool), φ.infons ⊤ b ≤ J →
+      Designated (bif b then φ.eval J else (φ.eval J)ᶜ)
+  | .atom p, false, h => by
+    have hp : (.mk ⊥ ⊤ : S ⊙ S) ≤ₖ ofKnow (J p) :=
+      kLE_def.mpr (by simpa [Formula.infons] using h p)
+    rw [← Product.mk_pro_con (ofKnow (J p))] at hp
+    exact con_weight_eq_top (le_top.antisymm (Product.mk_kLE_mk.mp hp).2)
+  | .atom p, true, h => by
+    have hp : (.mk ⊤ ⊥ : S ⊙ S) ≤ₖ ofKnow (J p) :=
+      kLE_def.mpr (by simpa [Formula.infons] using h p)
+    rw [← Product.mk_pro_con (ofKnow (J p))] at hp
+    exact pro_weight_eq_top (le_top.antisymm (Product.mk_kLE_mk.mp hp).1)
+  | .neg φ, b, h => by
+    have := designated_eval_of_infons_le φ (!b) h
+    cases b <;> simpa [Formula.eval] using this
+  | .guard φ ψ, b, h => by
+    have hφ := designated_eval_of_infons_le φ true (le_sup_left.trans h)
+    have hψ := designated_eval_of_infons_le ψ b (le_sup_right.trans h)
+    have hg : (Formula.guard φ ψ).eval J = ψ.eval J :=
+      Product.guard_of_top_kLE (designated_iff_top_kLE.mp hφ) _
+    rwa [hg]
+
+variable [Finite α] [Fintype S]
+
+/-- An agent that accepts a full assertion verifies it after closure, whatever its state and its
+lexicon (§3.5.6; verification is Definition 3.31). -/
+theorem top_kLE_eval_closure (L : Finset (Link α S)) (I : α → Know (S ⊙ S)) (φ : Formula α) :
+    (⊤ : S ⊙ S) ≤ₖ φ.eval (closure L (I ⊔ φ.infons ⊤ true)) :=
+  designated_iff_top_kLE.mp
+    (designated_eval_of_infons_le φ true (le_sup_right.trans le_closure))
+
+end Verification
 
 /-! ### Defeasible reasoning (§3.7.3)
 
@@ -398,18 +491,21 @@ inductive Student
 open Tweety in
 /-- Birds presumably fly, and penguins are birds that do not fly. -/
 def tweetyLinks : Finset (Link Tweety (Fin 3)) :=
-  {⟨atom bird, 1, atom flies⟩, ⟨atom penguin, ⊤, atom bird⟩, ⟨atom penguin, ⊤, neg (atom flies)⟩}
+  {(atom bird ⇀ atom flies).presumably half, atom penguin ⇀ atom bird,
+    atom penguin ⇀ neg (atom flies)}
 
 open Nixon in
 /-- Quakers tend to be pacifists and republicans tend not to be (3.6). -/
 def nixonLinks : Finset (Link Nixon (Fin 3)) :=
-  {⟨atom quaker, 1, atom pacifist⟩, ⟨atom republican, 1, neg (atom pacifist)⟩}
+  {(atom quaker ⇀ atom pacifist).presumably half,
+    (atom republican ⇀ neg (atom pacifist)).presumably half}
 
 open Student in
 /-- Students are normally adults and normally not employed, and adults normally employed (3.8). -/
 def studentLinks : Finset (Link Student (Fin 3)) :=
-  {⟨atom student, 1, atom adult⟩, ⟨atom student, 1, neg (atom employed)⟩,
-    ⟨atom adult, 1, atom employed⟩}
+  {(atom student ⇀ atom adult).presumably half,
+    (atom student ⇀ neg (atom employed)).presumably half,
+    (atom adult ⇀ atom employed).presumably half}
 
 open Tweety in
 /-- The penguin principle (3.4)–(3.5): Tweety presumably flies until it turns out to be a
@@ -452,12 +548,12 @@ variable {α : Type*} [DecidableEq α]
 
 /-- Implication `φ → ψ` (Definition 6.1): a modus ponens and a modus tollens link. -/
 def implication (φ ψ : Formula α) : Finset (Link α (Fin 3)) :=
-  {⟨φ, ⊤, ψ⟩, ⟨neg ψ, ⊤, neg φ⟩}
+  {φ ⇀ ψ, neg ψ ⇀ neg φ}
 
 /-- Presupposition `φ ≫ ψ` (Definition 6.5): strict modus ponens, defeasible modus ponens from
 `¬φ`, and strict modus tollens. -/
 def presupposition (φ ψ : Formula α) : Finset (Link α (Fin 3)) :=
-  {⟨φ, ⊤, ψ⟩, ⟨neg φ, 1, ψ⟩, ⟨neg ψ, ⊤, neg φ⟩}
+  {φ ⇀ ψ, (neg φ ⇀ ψ).presumably half, neg ψ ⇀ neg φ}
 
 /-- The links of entailment are among those of presupposition (§6.2.3). -/
 theorem implication_subset_presupposition (φ ψ : Formula α) :
@@ -511,7 +607,17 @@ theorem presupposition_rows :
 /-- A link passes a presumed antecedent on as a presumed consequent (the discussion after
 Definition 3.28): presumably John regrets failing the exam, so presumably he failed it. -/
 theorem link_carries_presumption :
-    (atom fail).eval (closure regretLinks ((atom regret).infons 1 true)) = PRESUP.Pplus := by
+    (atom fail).eval (closure regretLinks ((atom regret).infons half true)) = PRESUP.Pplus := by
+  rw [closure_eq_iterate (m := 2) (n := 2)] <;> decide
+
+/-- (6.12c) asserts the consistent `R ∧ ¬F`, which has no defeasible part, into `E⊥`, and both
+conjuncts, whose truth meet is the value of the conjunction (Definition 3.21, clause 3), come out
+`I`. -/
+theorem consistent_assertion_eq_I :
+    (atom regret).eval (closure regretLinks
+        ((atom regret).infons ⊤ true ⊔ (neg (atom fail)).infons ⊤ true)) ⊓
+      (neg (atom fail)).eval (closure regretLinks
+        ((atom regret).infons ⊤ true ⊔ (neg (atom fail)).infons ⊤ true)) = PRESUP.I := by
   rw [closure_eq_iterate (m := 2) (n := 2)] <;> decide
 
 end Presupposition
@@ -564,9 +670,7 @@ theorem cancellation_contrast :
     ¬ ((atom fail).eval ((neg guarded).infons ⊤ true ⊔
         (neg (atom fail)).infons (⊤ : Fin 3) true) = PRESUP.I ↔
       Examples.ex6_11d.judgment = .unacceptable) := by
-  refine ⟨iff_of_true presupposition_rows.2.2.1.1 rfl, ?_, by decide, by decide⟩
-  rw [presupposition_rows.2.2.2.1.1]
-  decide
+  refine ⟨?_, ?_, by decide, by decide⟩ <;> rw [closure_eq_iterate (m := 2) (n := 2)] <;> decide
 
 end Guard
 
@@ -589,7 +693,7 @@ open Wrong
 /-- Being wrong about something implies its negation and not being wrong implies it, and
 "regret" presupposes its complement. -/
 def wrongLinks : Finset (Link Wrong (Fin 3)) :=
-  {⟨atom wrong, ⊤, neg (atom regret)⟩, ⟨neg (atom wrong), ⊤, atom regret⟩} ∪
+  {atom wrong ⇀ neg (atom regret), neg (atom wrong) ⇀ atom regret} ∪
     presupposition (atom regret) (atom fail)
 
 /-- (6.13) and (6.14): from "John was wrong about Mary regretting failing the exam" the agent
