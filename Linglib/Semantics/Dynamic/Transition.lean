@@ -4,32 +4,40 @@ public import Linglib.Semantics.Dynamic.State
 
 /-!
 # Transitions between context fibers
-[kamp-vangenabith-reyle-2011] (Defs. 24, 27)
 
-The hom type of indexed dynamic semantics: a `Transition W M X Y` is a
-world-indexed relation between an `X`-assignment and a `Y`-assignment,
-`Y ⊇ X`. Objects are bases; a DRS denotes an arrow `X ⟶ X ∪ U`;
-sequencing is world-pointwise relational composition. The predecessor of
-this file stated transitions on total assignments and carried
-`supported_left`/`supported_right` invariants; typing the relation at the
-assignments dissolves both, and the identity transition becomes plain
-equality rather than agreement-on-`X`.
+A `Transition W M X Y` is a world-indexed relation from assignments of the referents in `X` to
+assignments of the referents in `Y ⊇ X`. Transitions compose by world-pointwise relational
+composition, with equality as identity. Applied to information states, a transition is a context
+change potential in Kamp, van Genabith and Reyle's sense (Def. 24): it takes the points of the
+`X`-stratum to points of the `Y`-stratum, preserving worlds. The name follows Fernando's
+transition-system reading of dynamic semantics.
 
-Applying a transition acts fiberwise on sets of possibilities — the
-presheaf fibers of `Category.lean` — functorially (`apply_comp`). The
-chapter's own name for the induced map is the (regular) *Context Change
-Potential* (Def. 24); *transition* names the underlying relation, after
-the transition-system reading of dynamic semantics ([fernando-1992],
-cited there).
+## Main definitions
 
-## Main declarations
+* `Transition`, `Transition.id`, `Transition.comp`: transitions and their composition.
+* `Transition.apply`, `Transition.applyState`: context change on fibers and on states.
+* `Transition.ofTotal`: a relation on total assignments, typed at bases.
+* `Transition.IsExtension`: outputs restrict to their inputs.
+* `Transition.randomAssign`: the transition `X ⟶ insert x X` leaving `x` free.
 
-* `Transition` — the typed relation; `id`, `comp` and their laws.
-* `Transition.apply` — Def. 24's context change, on fibers.
-* `Transition.copy` — repackaging along base equalities (the
-  `Filter.copy` pattern; the cast point, kept out of every statement).
-* `Transition.IsExtension` — Def. 27(ii): established referents persist.
-* `Transition.randomAssign` — the generating arrow `X ⟶ insert x X`.
+## Main statements
+
+* `Transition.applyState_comp`: context change is functorial.
+* `Transition.applyState_eq_biUnion`, `Transition.applyState_congr_world`: context change is
+  distributive and extensional.
+* `Transition.IsExtension.applyState_le`: an extension only adds information (Def. 27(ii)).
+
+## Implementation notes
+
+`Transition.copy` repackages a transition along equalities of its bases, as `Filter.copy` does,
+so that no statement carries a cast.
+
+## References
+
+* [kamp-vangenabith-reyle-2011]
+* [fernando-1992]
+* [groenendijk-stokhof-1991]
+* [heim-1982]
 -/
 
 @[expose] public section
@@ -126,6 +134,31 @@ def applyState (u : Transition W M X Y) (I : State W V M) :
 
 theorem uniformAt_applyState (u : Transition W M X Y) (I : State W V M) :
     State.UniformAt Y (u.applyState I) := fun _ hq => hq.1
+
+theorem applyState_mono (u : Transition W M X Y) {I I' : State W V M} (h : I ⊆ I') :
+    u.applyState I ⊆ u.applyState I' :=
+  fun _ ⟨hq, p, hp, hrest⟩ => ⟨hq, p, h hp, hrest⟩
+
+/-- Context change is distributive: the image of a state is the union of the images of its
+points. -/
+theorem applyState_eq_biUnion (u : Transition W M X Y) (I : State W V M) :
+    u.applyState I = ⋃ p ∈ I, u.applyState ({p} : Set (Possibility W V (Flat M))) := by
+  refine Set.ext fun q => ⟨fun ⟨hq, p, hp, hrest⟩ => Set.mem_iUnion₂.mpr ⟨p, hp, hq, p, rfl, hrest⟩,
+    fun h => ?_⟩
+  obtain ⟨p, hp, hq, p', rfl, hrest⟩ := Set.mem_iUnion₂.mp h
+  exact ⟨hq, p', hp, hrest⟩
+
+/-- Context change is extensional: its image at a world depends only on the input's points at
+that world. -/
+theorem applyState_congr_world (u : Transition W M X Y) {I I' : State W V M} {w : W}
+    (h : ∀ p : Possibility W V (Flat M), p.world = w → (p ∈ I ↔ p ∈ I'))
+    {q : Possibility W V (Flat M)} (hq : q.world = w) :
+    q ∈ u.applyState I ↔ q ∈ u.applyState I' := by
+  constructor
+  · rintro ⟨hY, p, hp, hpX, hw, hrest⟩
+    exact ⟨hY, p, (h p (hw.trans hq)).mp hp, hpX, hw, hrest⟩
+  · rintro ⟨hY, p, hp, hpX, hw, hrest⟩
+    exact ⟨hY, p, (h p (hw.trans hq)).mpr hp, hpX, hw, hrest⟩
 
 /-- The point of the `Y`-stratum carrying a given world and assignment. -/
 private noncomputable def ptOf (Y : Set V) (w : W) (e : Y → M) : Possibility W V (Flat M) :=
@@ -308,7 +341,7 @@ theorem copy_comp_copy (u : Transition W M X Y) (v : Transition W M Y Z)
 /-- A transition is an *extension* when outputs restrict to their inputs:
 established referents persist, only new ones are assigned. -/
 def IsExtension (u : Transition W M X Y) : Prop :=
-  ∀ ⦃w e e'⦄, u.rel w e e' → e = fun v => e' ⟨v.1, u.grow v.2⟩
+  ∀ ⦃w e e'⦄, u.rel w e e' → e = Set.domRestrict₂ (π := fun _ => M) u.grow e'
 
 theorem isExtension_id : (id X : Transition W M X X).IsExtension :=
   fun _ _ _ h => h
@@ -318,6 +351,38 @@ theorem IsExtension.comp {u : Transition W M X Y} {v : Transition W M Y Z}
     (hu : u.IsExtension) (hv : v.IsExtension) : (u.comp v).IsExtension := by
   rintro w e e' ⟨k, hek, hke⟩
   rw [hu hek, hv hke]
+  rfl
+
+/-- Under an extension, every point of the image comes from an input point that it extends. -/
+theorem IsExtension.exists_le_of_mem_applyState {u : Transition W M X Y} (hu : u.IsExtension)
+    {I : State W V M} {q : Possibility W V (Flat M)} (hq : q ∈ u.applyState I) :
+    ∃ p ∈ I, p.domain = X ∧ p ≤ q ∧ q ∈ u.applyState ({p} : Set (Possibility W V (Flat M))) := by
+  obtain ⟨hY, p, hp, hpX, hw, e, e', he, he', hrel⟩ := hq
+  refine ⟨p, hp, hpX, ⟨hw, fun x => ?_⟩, hY, p, rfl, hpX, hw, e, e', he, he', hrel⟩
+  by_cases hx : x ∈ X
+  · rw [he ⟨x, hx⟩, he' ⟨x, u.grow hx⟩, hu hrel]
+    rfl
+  · have hbot : p.assignment x = ⊥ := not_not.mp fun h => hx (hpX ▸ h)
+    exact hbot ▸ bot_le
+
+/-- An extension only adds information: its image of a state is at least as informative as the
+state (Def. 27(ii)). -/
+theorem IsExtension.applyState_le {u : Transition W M X Y} (hu : u.IsExtension)
+    (I : State W V M) : u.applyState I ≤ I :=
+  State.le_def.mpr fun _ hq =>
+    let ⟨p, hp, _, hpq, _⟩ := hu.exists_le_of_mem_applyState hq
+    ⟨p, hp, hpq⟩
+
+/-- Under an extension, a point of the image extending a point of a state uniform at the base
+comes from that point alone. -/
+theorem IsExtension.mem_applyState_iff_of_le {u : Transition W M X Y} (hu : u.IsExtension)
+    {I : State W V M} (hI : State.UniformAt X I) {p q : Possibility W V (Flat M)} (hp : p ∈ I)
+    (hpq : p ≤ q) :
+    q ∈ u.applyState I ↔ q ∈ u.applyState ({p} : Set (Possibility W V (Flat M))) := by
+  refine ⟨fun hq => ?_, fun hq => u.applyState_mono (Set.singleton_subset_iff.mpr hp) hq⟩
+  obtain ⟨p', -, hp'X, hp'q, hq'⟩ := hu.exists_le_of_mem_applyState hq
+  rwa [((Possibility.le_iff_eq_restrict hp'X).mp hp'q).trans
+    ((Possibility.le_iff_eq_restrict (hI p hp)).mp hpq).symm] at hq'
 
 end Transition
 

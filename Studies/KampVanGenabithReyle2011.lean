@@ -13,6 +13,8 @@ the objects of context change are information states rather than propositions. P
 of an intensional model whose information states record different witnesses for their referent.
 In the worked discourse (43), *John owns a donkey. It loves him.*, applying the context change
 potential of the second sentence to the state the first expresses gives the state of their merge.
+The context change potentials of DRSs are regular (Definition 27) and relate to the states DRSs
+express relative to an assignment (Definition 29) as (44) states.
 
 ## Main statements
 
@@ -20,6 +22,23 @@ potential of the second sentence to the state the first expresses gives the stat
   proposition and differ.
 * `ccp_action`: updating the state of the first sentence of (43) with the second is the state of
   their merge, as the chapter remarks after Definition 24.
+* `ccp_informative`: a context change potential only adds information (Definition 27(ii)).
+* `mem_ccp_iff_mem_relState`: (44).
+
+## Implementation notes
+
+`DRS.transition` is total, as partial operations are in mathlib: on a base missing a free
+referent, outside the domain that condition (i) (p. 160) and Definition 24(i) give, it
+existentially closes that referent, and theorems take the referential presupposition where they
+need it. Distributivity and extensionality follow from the form of Definition 24(ii) alone, for
+any transition, and do not use the absence of `□` and `◇`.
+
+## Errata
+
+Definition 27(i) defines a regular context change potential on the states whose base includes its
+own base, where the informal condition (i) it summarises (p. 160) and Definition 24(i) use its
+referential presupposition, for a DRS the free referents: for the update of (43), `{z, u}`
+against `{x, y}`. `update_bound` is Definition 24(i)'s condition for (43).
 
 ## References
 
@@ -68,10 +87,6 @@ def marbleOut : DRS mLang ℕ := .mk {0} [.atom ⟨.marble, ![0]⟩, .atom ⟨.o
 /-- The first sentence of (42)(ii), `[x | coin x, out x]`. -/
 def coinOut : DRS mLang ℕ := .mk {0} [.atom ⟨.coin, ![0]⟩, .atom ⟨.out, ![0]⟩]
 
-theorem marbleOut_proper : marbleOut.IsProper := by decide
-
-theorem coinOut_proper : coinOut.IsProper := by decide
-
 private theorem exists_marbleOut_iff (w : Bool) :
     (∃ f g : ℕ → Fin 2, letI := bag w; DRS.toRelAt ∅ marbleOut f g) ↔ w = true :=
   ⟨fun ⟨_, _, _, _, hout, _⟩ ↦ hout, fun hw ↦
@@ -84,8 +99,8 @@ private theorem exists_coinOut_iff (w : Bool) :
 
 /-- The two states determine the same proposition, Definition 23(v). -/
 theorem marble_worlds_eq_coin :
-    Possibility.world '' marbleOut.state bag marbleOut_proper =
-      Possibility.world '' coinOut.state bag coinOut_proper := by
+    Possibility.world '' marbleOut.state bag =
+      Possibility.world '' coinOut.state bag := by
   rw [DRS.image_world_state, DRS.image_world_state]
   ext w
   exact (exists_marbleOut_iff w).trans (exists_coinOut_iff w).symm
@@ -94,14 +109,14 @@ theorem marble_worlds_eq_coin :
 def witness (d : Fin 2) : Possibility Bool ℕ (Flat (Fin 2)) :=
   ⟨true, fun v ↦ if v = 0 then ↑d else ⊥⟩
 
-theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag marbleOut_proper := by
+theorem witness_mem_marbleOut : witness 0 ∈ marbleOut.state bag := by
   refine (DRS.mem_state bag).mpr ⟨?_, fun _ ↦ 0, fun _ ↦ 0,
     ⟨fun _ h ↦ absurd h (by simp), rfl, rfl, trivial⟩, fun v hv ↦ ?_⟩
   · ext v
     by_cases hv : v = 0 <;> simp [witness, marbleOut, hv]
   · simp [witness, show v = 0 by simpa [marbleOut] using hv]
 
-theorem witness_notMem_coinOut : witness 0 ∉ coinOut.state bag coinOut_proper := by
+theorem witness_notMem_coinOut : witness 0 ∉ coinOut.state bag := by
   intro h
   obtain ⟨-, f, g, ⟨-, hcoin, -⟩, hval⟩ := (DRS.mem_state bag).mp h
   have hg : g 0 = 1 := hcoin
@@ -113,7 +128,7 @@ theorem witness_notMem_coinOut : witness 0 ∉ coinOut.state bag coinOut_proper 
 `marble_worlds_eq_coin`, this is Partee's argument that context change operates on information
 states, not on propositions. -/
 theorem marble_ne_coin :
-    marbleOut.state bag marbleOut_proper ≠ coinOut.state bag coinOut_proper :=
+    marbleOut.state bag ≠ coinOut.state bag :=
   fun h ↦ witness_notMem_coinOut (h ▸ witness_mem_marbleOut)
 
 /-! ### The action of a context change potential ((43), Definition 24) -/
@@ -152,9 +167,70 @@ theorem update_fresh :
 /-- Applying the second sentence's context change potential to the first's information state yields
 that of their merge (43) (Definition 24). -/
 theorem ccp_action {W M : Type*} (interp : W → dLang.Structure M) :
-    (update.transition interp context.referents update_bound).applyState
-        (context.state interp context_proper) =
-      (context.merge update).state interp (DRS.isProper_merge context_proper update_bound) :=
-  DRS.state_merge interp context update context_proper update_bound update_fresh
+    (update.transition interp context.referents).applyState (context.state interp) =
+      (context.merge update).state interp :=
+  DRS.state_merge interp context update context_proper update_fresh
+
+/-! ### Regular context change potentials (pp. 160–162) -/
+
+section Regular
+
+variable {L : Language} {V W M : Type*} [DecidableEq V] (interp : W → L.Structure M)
+  (K : DRS L V) (X : Finset V)
+
+/-- The base of the output is the base of the input grown by the universe (p. 161, (ii)). -/
+theorem ccp_base (I : State W V M) :
+    State.UniformAt ↑(X ∪ K.referents) ((K.transition interp X).applyState I) :=
+  Transition.uniformAt_applyState _ I
+
+/-- A context change potential is distributive (p. 161, (iii)). -/
+theorem ccp_distributive (I : State W V M) :
+    (K.transition interp X).applyState I =
+      ⋃ p ∈ I, (K.transition interp X).applyState ({p} : Set (Possibility W V (Flat M))) :=
+  Transition.applyState_eq_biUnion _ I
+
+/-- A context change potential only adds information: its output carries at least as much
+information as its input (Definitions 25 and 27(ii)). -/
+theorem ccp_informative (I : State W V M) : (K.transition interp X).applyState I ≤ I :=
+  (DRS.transition_isExtension interp K X).applyState_le I
+
+/-- A context change potential is extensional: states that coincide at a world have outputs
+that coincide there (p. 162). -/
+theorem ccp_extensional {I I' : State W V M} {w : W}
+    (h : ∀ p : Possibility W V (Flat M), p.world = w → (p ∈ I ↔ p ∈ I'))
+    {q : Possibility W V (Flat M)} (hq : q.world = w) :
+    q ∈ (K.transition interp X).applyState I ↔ q ∈ (K.transition interp X).applyState I' :=
+  Transition.applyState_congr_world _ h hq
+
+/-- The state at which the referents in `X` take their values under `g`, at every world. -/
+def fixedAt (X : Finset V) (g : V → M) : State W V M :=
+  {p | p.domain = ↑X ∧ ∀ v ∈ X, p.assignment v = ↑(g v)}
+
+/-- The information state `K` expresses relative to an assignment `g` of a base including its
+free referents (Definition 29(ii)). -/
+def relState (g : V → M) : State W V M :=
+  (K.transition interp X).applyState (fixedAt X g)
+
+/-- At the empty base the state relative to an assignment is the state the DRS expresses: Definition
+29(ii) generalises Definition 22 to improper DRSs (p. 161). -/
+theorem relState_empty (g : V → M) : relState interp K ∅ g = K.state interp := by
+  have h : fixedAt (W := W) ∅ g = ⊤ := by
+    ext p
+    simp only [fixedAt, Finset.coe_empty, Finset.notMem_empty, IsEmpty.forall_iff,
+      implies_true, and_true, Possibility.domain_eq_empty_iff]
+    exact State.mem_top.symm
+  rw [relState, h, DRS.state]
+
+/-- (44): at an extension of a point of the input with assignment `g`, the output of the context
+change potential agrees with the state relative to `g`. -/
+theorem mem_ccp_iff_mem_relState {I : State W V M} (hI : State.UniformAt ↑X I) (g : V → M)
+    {p q : Possibility W V (Flat M)} (hp : p ∈ I) (hpg : ∀ v ∈ X, p.assignment v = ↑(g v))
+    (hpq : p ≤ q) :
+    q ∈ (K.transition interp X).applyState I ↔ q ∈ relState interp K X g := by
+  have hu := DRS.transition_isExtension interp K X
+  rw [hu.mem_applyState_iff_of_le hI hp hpq, relState,
+    hu.mem_applyState_iff_of_le (I := fixedAt X g) (fun _ h => h.1) ⟨hI p hp, hpg⟩ hpq]
+
+end Regular
 
 end KampVanGenabithReyle2011

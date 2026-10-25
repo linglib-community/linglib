@@ -28,13 +28,6 @@ from the empty state.
 An embedding with domain `X` is a total assignment read only at `X`. An intensional model, with
 constant domain and world-relative relations, is a family `interp : W → L.Structure M`.
 
-## Errata
-
-Def. 27(i) defines a regular context change potential on the states whose base includes its own
-base, where the informal condition it summarises and Def. 24(i) use its referential
-presupposition, for a DRS the free referents: for the update of (43), `{z, u}` against `{x, y}`.
-`DRS.transition` follows Def. 24(i).
-
 ## References
 
 * [kamp-vangenabith-reyle-2011]
@@ -362,38 +355,36 @@ section ContextChange
 variable {W : Type*} (interp : W → L.Structure M)
 
 /-- The context change potential of a DRS (Def. 24): at each world, the persistence semantics
-in that world's structure, from the base to the base grown by the universe. The referential
-presupposition `K.freeVarFinset ⊆ X` is the domain condition of Def. 24(i). -/
-def DRS.transition (K : DRS L V) (X : Finset V) (_hK : K.freeVarFinset ⊆ X) :
+in that world's structure, from the base to the base grown by the universe. On a base missing a
+free referent of `K`, outside the domain of Def. 24(i), that referent is existentially closed. -/
+def DRS.transition (K : DRS L V) (X : Finset V) :
     Transition W M (↑X : Set V) (↑(X ∪ K.referents) : Set V) :=
   Transition.ofTotal (Finset.coe_subset.mpr Finset.subset_union_left)
     fun w => letI := interp w; DRS.toRelAt X K
 
 /-- The context change potential of a DRS only extends assignments (Def. 27(ii)). -/
-theorem DRS.transition_isExtension (K : DRS L V) (X : Finset V) (hK : K.freeVarFinset ⊆ X) :
-    (K.transition interp X hK).IsExtension := by
+theorem DRS.transition_isExtension (K : DRS L V) (X : Finset V) :
+    (K.transition interp X).IsExtension := by
   rintro w e e' ⟨f, g, rfl, rfl, hrel⟩
   obtain ⟨U, conds⟩ := K
-  exact funext fun v => (hrel.1 v.2).symm
+  exact Set.domRestrict_eq_domRestrict_iff.mpr hrel.1.symm
 
-theorem DRS.transition_copy {X X' : Finset V} (K : DRS L V) (hX : X = X')
-    (hK : K.freeVarFinset ⊆ X) (hK' : K.freeVarFinset ⊆ X') :
-    (K.transition interp X hK).copy (Finset.coe_inj.mpr hX) (by rw [hX]) =
-      K.transition interp X' hK' := by
+theorem DRS.transition_copy {X X' : Finset V} (K : DRS L V) (hX : X = X') :
+    (K.transition interp X).copy (Finset.coe_inj.mpr hX) (by rw [hX]) =
+      K.transition interp X' := by
   subst hX; rfl
 
 /-- The information state a proper DRS expresses (Def. 22), its context change potential applied
 to the empty state. -/
-def DRS.state (K : DRS L V) (hK : K.IsProper) : State W V M :=
-  (K.transition interp ∅ (Finset.subset_empty.mpr hK)).applyState ⊤
+def DRS.state (K : DRS L V) : State W V M :=
+  (K.transition interp ∅).applyState ⊤
 
-theorem DRS.uniformAt_state (K : DRS L V) (hK : K.IsProper) :
-    State.UniformAt ↑K.referents (K.state interp hK) := by
-  simpa [DRS.state] using Transition.uniformAt_applyState
-    (K.transition interp ∅ (Finset.subset_empty.mpr hK)) ⊤
+theorem DRS.uniformAt_state (K : DRS L V) :
+    State.UniformAt ↑K.referents (K.state interp) := by
+  simpa [DRS.state] using Transition.uniformAt_applyState (K.transition interp ∅) ⊤
 
-theorem DRS.mem_state {K : DRS L V} {hK : K.IsProper} {q : Possibility W V (Flat M)} :
-    q ∈ K.state interp hK ↔ q.domain = ↑K.referents ∧ ∃ f g : V → M,
+theorem DRS.mem_state {K : DRS L V} {q : Possibility W V (Flat M)} :
+    q ∈ K.state interp ↔ q.domain = ↑K.referents ∧ ∃ f g : V → M,
       (letI := interp q.world; DRS.toRelAt ∅ K f g) ∧
         ∀ v ∈ K.referents, q.assignment v = ↑(g v) := by
   constructor
@@ -410,10 +401,10 @@ theorem DRS.mem_state {K : DRS L V} {hK : K.IsProper} {q : Possibility W V (Flat
     ext v
     exact iff_of_false (fun h => h rfl) (by simp)
 
-/-- The proposition the state of a proper DRS determines (Def. 23(v)) is the proposition the DRS
-expresses, the worlds where it is true (Def. 20). -/
-theorem DRS.image_world_state (K : DRS L V) (hK : K.IsProper) :
-    Possibility.world '' K.state interp hK =
+/-- The proposition the state of a DRS determines (Def. 23(v)) is the set of worlds where the DRS
+is true, for a proper DRS the proposition it expresses (Def. 20). -/
+theorem DRS.image_world_state (K : DRS L V) :
+    Possibility.world '' K.state interp =
       {w | ∃ f g : V → M, letI := interp w; DRS.toRelAt ∅ K f g} := by
   ext w
   constructor
@@ -428,12 +419,11 @@ theorem DRS.image_world_state (K : DRS L V) (hK : K.IsProper) :
 
 /-- Sequencing the context change potentials of two DRSs gives that of their merge, repackaged
 along the associativity of the grown bases. -/
-theorem DRS.transition_merge {X : Finset V} (K₁ K₂ : DRS L V)
-    (h₁ : K₁.freeVarFinset ⊆ X) (h₂ : K₂.freeVarFinset ⊆ X ∪ K₁.referents)
+theorem DRS.transition_merge {X : Finset V} (K₁ K₂ : DRS L V) (h₁ : K₁.freeVarFinset ⊆ X)
     (hfresh : Disjoint K₂.referents
       (Condition.varFinsetL K₁.conditions \ (X ∪ K₁.referents))) :
-    (K₁.transition interp X h₁).comp (K₂.transition interp (X ∪ K₁.referents) h₂) =
-      ((K₁.merge K₂).transition interp X (DRS.freeVarFinset_merge_subset h₁ h₂)).copy rfl
+    (K₁.transition interp X).comp (K₂.transition interp (X ∪ K₁.referents)) =
+      ((K₁.merge K₂).transition interp X).copy rfl
         (by rw [DRS.referents_merge, ← Finset.union_assoc]) := by
   have hS : Transition.ReadsAt (W := W) ↑(X ∪ K₁.referents)
       fun w => letI := interp w; DRS.toRelAt (M := M) (X ∪ K₁.referents) K₂ :=
@@ -446,16 +436,13 @@ theorem DRS.transition_merge {X : Finset V} (K₁ K₂ : DRS L V)
 /-- The context change potential of a DRS takes the state of a proper context DRS to the state of
 their merge, as the chapter observes of (43) after Def. 24. -/
 theorem DRS.state_merge (K₁ K₂ : DRS L V) (h₁ : K₁.IsProper)
-    (h₂ : K₂.freeVarFinset ⊆ K₁.referents)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions \ K₁.referents)) :
-    (K₂.transition interp K₁.referents h₂).applyState (K₁.state interp h₁) =
-      (K₁.merge K₂).state interp (DRS.isProper_merge h₁ h₂) := by
+    (K₂.transition interp K₁.referents).applyState (K₁.state interp) =
+      (K₁.merge K₂).state interp := by
   simp only [DRS.state]
-  rw [← DRS.transition_copy interp K₂ (Finset.empty_union _)
-      (h₂.trans Finset.subset_union_right) h₂,
+  rw [← DRS.transition_copy interp K₂ (Finset.empty_union K₁.referents),
     Transition.applyState_copy, ← Transition.applyState_comp,
-    DRS.transition_merge interp K₁ K₂ (Finset.subset_empty.mpr h₁)
-      (h₂.trans Finset.subset_union_right) (by rwa [Finset.empty_union]),
+    DRS.transition_merge interp K₁ K₂ (Finset.subset_empty.mpr h₁) (by rwa [Finset.empty_union]),
     Transition.applyState_copy]
 
 end ContextChange
