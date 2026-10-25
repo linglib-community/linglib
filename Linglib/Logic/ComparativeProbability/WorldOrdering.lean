@@ -350,8 +350,7 @@ theorem kratzerLift_iff : KratzerLift r A B ↔ ∀ b ∈ B \ A, ∃ a ∈ A \ B
   simp only [KratzerLift, not_exists, not_and, not_forall]
   exact forall₂_congr fun _ _ ↦ by simp
 
-theorem kratzerLift_univ_iff' (r : α → α → Prop) (A : Set α) :
-    KratzerLift r A Set.univ ↔ A = Set.univ := by
+theorem kratzerLift_univ_iff : KratzerLift r A Set.univ ↔ A = Set.univ := by
   rw [kratzerLift_iff]
   constructor
   · intro h
