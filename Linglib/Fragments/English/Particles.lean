@@ -1,8 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Syntax.Category.Particle.Basic
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # English particles
@@ -18,8 +16,7 @@ the matza*.
 
 ## Main definitions
 
-* `English.PolarityParticle`, `English.PolarityParticle.polarity`: the polarity particles and
-  their polarity.
+* `English.PolarityParticles.yes`, `no`, `all`: the polarity particles.
 * `English.Particles.quick`: the meta-question adverb.
 
 ## References
@@ -31,27 +28,20 @@ the matza*.
 
 @[expose] public section
 
-namespace English
+namespace English.PolarityParticles
 
-/-- The English polarity particles. -/
-inductive PolarityParticle where
-  /-- *yes*. -/
-  | yes
-  /-- *no*. -/
-  | no
-  deriving DecidableEq, Repr, Fintype
+/-- *yes*. -/
+def yes : Particle where
+  form := "yes"
 
-/-- The polarity of a polarity particle, positive for *yes* and negative for *no*. -/
-def PolarityParticle.polarity : PolarityParticle → Polarity
-  | .yes => .positive
-  | .no => .negative
+/-- *no*. -/
+def no : Particle where
+  form := "no"
 
-/-- The spelling of a polarity particle. -/
-def PolarityParticle.form : PolarityParticle → String
-  | .yes => "yes"
-  | .no => "no"
+/-- The polarity particles. -/
+def all : List Particle := [yes, no]
 
-end English
+end English.PolarityParticles
 
 namespace English.Particles
 

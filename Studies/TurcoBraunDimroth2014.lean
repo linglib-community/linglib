@@ -51,7 +51,7 @@ The production results are not formalized. Dutch speakers used *wel* in most utt
 contexts, fewer in correction, an effect the paper leaves unexplained, and Verum focus never in
 contrast and rarely in correction; German speakers used Verum focus in more than 70% of the
 utterances of both contexts and never a sentence-internal particle. In correction only, some
-German speakers produced the polarity particle *doch*, `German.PolarityParticle.doch`, as a
+German speakers produced the polarity particle *doch*, `German.PolarityParticles.doch`, as a
 separate utterance before a Verum focus utterance; the paper codes the combination as another
 realization, not an affirmative particle, since *doch* never carried the correction by
 itself. *Wel* was mostly accented, as a downstepped fall in
