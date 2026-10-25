@@ -10,17 +10,17 @@ public import Mathlib.Order.Prod.Lex.Basic
 import all Mathlib.Data.List.Sort  -- for unfolding `List.insertionSort`
 
 /-!
-# Poesio, Stevenson, Di Eugenio and Hitzeman (2004): Centering: A Parametric Theory and Its Instantiations
+# Poesio, Stevenson, Di Eugenio and Hitzeman (2004): Centering as a parametric theory
 
-This file formalizes the parametric reading of centering theory in
-[poesio-stevenson-eugenio-hitzeman-2004]. The claims of [grosz-joshi-weinstein-1995], Constraint
-1 on the uniqueness of the backward-looking center, Rule 1 on its pronominalization, and Rule 2
-on the preference among transitions, can only be evaluated once the notions they quantify over
-are fixed, and the literature has fixed them in several ways: what an utterance is, which
-utterance counts as the previous one, when an entity is realized, which noun phrases introduce
-forward-looking centers, how the centers are ranked, and which pronouns Rule 1 governs. Each
-setting is an instantiation of the theory, and the paper's corpus study finds that different
-instantiations make different claims true.
+This file formalizes the parametric reading of centering theory by Poesio, Stevenson, Di Eugenio,
+and Hitzeman. The claims of Grosz, Joshi, and Weinstein, Constraint 1 on the uniqueness of the
+backward-looking center, Rule 1 on its pronominalization, and Rule 2 on the preference among
+transitions, can only be evaluated once the notions they quantify over are fixed, and the
+literature has fixed them in several ways: what an utterance is, which utterance counts as the
+previous one, when an entity is realized, which noun phrases introduce forward-looking centers,
+how the centers are ranked, and which pronouns Rule 1 governs. Each setting is an instantiation
+of the theory, and the paper's corpus study finds that different instantiations make different
+claims true.
 
 The instantiations are the substrate's parameters: the realization relation is the `Membership`
 instance, the ranking is the `LinearOrder` on roles, the CF filter is `cfFilter`, the utterance
@@ -34,8 +34,8 @@ the previous utterance pulling in opposite directions (`ex14`, `ex16`). Constrai
 unpacked into CB uniqueness and entity continuity (`strong_iff`), uniqueness holds under any
 ranking that separates the previous utterance's realizations (`cbAll_length_le_one`), the three
 forms of Rule 1 are ordered (`CbPronominalized.rule1Original`), and the four-way transition
-classification of [brennan-friedman-pollard-1987] refines the three-way one with its
-preference order (`bfp_toTransition`, `toTransition_mono`).
+classification of Brennan, Friedman, and Pollard refines the three-way one
+(`bfp_toTransition`).
 
 ## Implementation notes
 
@@ -140,62 +140,25 @@ end Rule1
 
 /-! ### Transitions (§2.2.3, §2.3.3) -/
 
-/-- The four transitions of [brennan-friedman-pollard-1987]: the center is kept, or the previous
-utterance had none, and is the preferred center (continue) or not (retain); or the center
-changes and is the preferred center (smooth shift) or not (rough shift). -/
-inductive BFPTransition where
-  | continue
-  | retain
-  | smoothShift
-  | roughShift
-  deriving DecidableEq, Repr, Fintype
-
-/-- Rule 2 on single transitions: continue over retain over smooth shift over rough shift. -/
-def BFPTransition.rank : BFPTransition → ℕ
-  | .continue => 3
-  | .retain => 2
-  | .smoothShift => 1
-  | .roughShift => 0
-
-instance : LinearOrder BFPTransition := LinearOrder.lift' BFPTransition.rank (by decide)
-
-/-- The three-way transition each four-way one refines. -/
-def BFPTransition.toTransition : BFPTransition → Transition
-  | .continue => .continuation
-  | .retain => .retaining
-  | .smoothShift | .roughShift => .shifting
-
-/-- The four-way preference order refines the three-way one. -/
-theorem toTransition_mono {t₁ t₂ : BFPTransition} (h : t₁ ≤ t₂) :
-    t₁.toTransition ≤ t₂.toTransition := by
-  revert t₁ t₂; decide
-
 section Transitions
 
 variable [DecidableEq E] [LinearOrder R]
 
-/-- The four-way classification of an utterance after an utterance with center `prevCb`, `none`
-for an utterance with no center. -/
-def bfp (prev cur : Utterance E R) (prevCb : Option E) : Option BFPTransition :=
-  (cb prev cur).map fun c ↦
-    if ∀ p ∈ prevCb, p = c then if cur.cp = some c then .continue else .retain
-    else if cur.cp = some c then .smoothShift else .roughShift
+/-- The four-way classification of [brennan-friedman-pollard-1987] of an utterance after an
+utterance with center `prevCb`, `none` for an utterance with no center. -/
+def bfp (prev cur : Utterance E R) (prevCb : Option E) : Option ExtendedTransition :=
+  (cb prev cur).map fun c ↦ .ofCenters prevCb c cur.cp
 
 theorem bfp_eq_none_iff (prev cur : Utterance E R) (prevCb : Option E) :
     bfp prev cur prevCb = none ↔ cb prev cur = none := by
   simp [bfp]
 
-theorem bfp_toTransition {prev cur : Utterance E R} {prevCb : Option E} {t : BFPTransition}
-    (h : bfp prev cur prevCb = some t) :
+/-- The four-way classification refines the three-way one. -/
+theorem bfp_toTransition {prev cur : Utterance E R} {prevCb : Option E}
+    {t : ExtendedTransition} (h : bfp prev cur prevCb = some t) :
     t.toTransition = transition prevCb prev cur := by
-  unfold bfp transition at *
-  rcases hc : cb prev cur with _ | c
-  · simp [hc] at h
-  · rw [hc] at h
-    simp only [Option.map_some, Option.some.injEq] at h
-    subst h
-    rw [Transition.ofCenters_some]
-    split_ifs <;> rfl
+  obtain ⟨c, hc, rfl⟩ := Option.map_eq_some_iff.mp h
+  simp [transition, hc, Transition.ofCenters]
 
 end Transitions
 

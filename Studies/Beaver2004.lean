@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.Centering.Basic
+public import Linglib.Discourse.Centering.Transition
 public import Linglib.Discourse.Centering.GrammaticalRole
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
@@ -144,31 +144,23 @@ theorem align_factors_through_cb_and_cp [DecidableEq E] [LinearOrder R]
 
 /-! ### Table (19): the COT ranking is the BFP transition preference -/
 
-/-- BFP's four transition types. -/
-inductive BFPTransition where
-  | continue_
-  | retain
-  | smoothShift
-  | roughShift
-  deriving DecidableEq, Repr
-
-/-- The BFP preference: continue > retain > smooth shift > rough shift. -/
-def BFPTransition.rank : BFPTransition → ℕ
-  | .continue_ => 3
-  | .retain => 2
-  | .smoothShift => 1
-  | .roughShift => 0
-
-/-- The transition a candidate realizes, read off its COHERE and ALIGN
-verdicts: topic kept and aligned is a continuation, kept but unaligned a
-retain, changed but aligned a smooth shift, changed and unaligned a rough
-shift. -/
+/-- The transition a candidate realizes, read off its COHERE and ALIGN verdicts. -/
 def bfpTransition [DecidableEq E] [LinearOrder R] (prev : Utterance E R)
-    (priorTopic : Option E) (c : Candidate E R) : BFPTransition :=
-  if (cohere prev priorTopic) c = 0 then
-    if (align prev) c = 0 then .continue_ else .retain
-  else
-    if (align prev) c = 0 then .smoothShift else .roughShift
+    (priorTopic : Option E) (c : Candidate E R) : ExtendedTransition :=
+  .ofTests ((cohere prev priorTopic) c = 0) ((align prev) c = 0)
+
+/-- COHERE and ALIGN are the tests of [brennan-friedman-pollard-1987] when the prior topic is
+defined (p. 17). -/
+theorem bfpTransition_some [DecidableEq E] [LinearOrder R] {prev : Utterance E R} {p x : E}
+    {c : Candidate E R} (h : cb prev c.utt = some x) :
+    bfpTransition prev (some p) c = .ofCenters (some p) x c.utt.cp := by
+  ext <;> simp [bfpTransition, ExtendedTransition.ofCenters, cohere, align, h] <;> exact eq_comm
+
+/-- With no prior topic COHERE fails (p. 17), where the first test of [walker-iida-cote-1994]
+passes. -/
+theorem bfpTransition_none_cohesion [DecidableEq E] [LinearOrder R] (prev : Utterance E R)
+    (c : Candidate E R) : (bfpTransition prev none c).cohesion = false := by
+  simp [bfpTransition, cohere, Option.isSome_iff_ne_none]
 
 private theorem profile_lt_iff_last_two {p q : ViolationProfile 6}
     (h : ∀ i : Fin 6, i.val < 4 → p i = q i) :
@@ -204,8 +196,7 @@ theorem cot_iff_bfp [DecidableEq E] [LinearOrder R]
         toLex ((cotRanking prev priorTopic).get · c2) i) :
     toLex ((cotRanking prev priorTopic).get · c1) <
         toLex ((cotRanking prev priorTopic).get · c2) ↔
-      (bfpTransition prev priorTopic c2).rank <
-        (bfpTransition prev priorTopic c1).rank := by
+      bfpTransition prev priorTopic c2 < bfpTransition prev priorTopic c1 := by
   rw [profile_lt_iff_last_two h]
   have e1 : ∀ c : Candidate E R,
       toLex ((cotRanking prev priorTopic).get · c) (4 : Fin 6) =
@@ -218,8 +209,10 @@ theorem cot_iff_bfp [DecidableEq E] [LinearOrder R]
   have b2 : (cohere prev priorTopic) c2 ≤ 1 := Constraint.binary_le_one _ _
   have b3 : (align prev) c1 ≤ 1 := Constraint.binary_le_one _ _
   have b4 : (align prev) c2 ≤ 1 := Constraint.binary_le_one _ _
-  unfold bfpTransition
-  split_ifs <;> simp only [BFPTransition.rank] <;> omega
+  simp only [ExtendedTransition.lt_iff_toLex_lt, Prod.Lex.toLex_lt_toLex, bfpTransition,
+    ExtendedTransition.cohesion_ofTests, ExtendedTransition.salience_ofTests, Bool.lt_iff,
+    decide_eq_true_eq, decide_eq_false_iff_not, decide_eq_decide]
+  omega
 
 /-! ### Example (12): a retain -/
 
