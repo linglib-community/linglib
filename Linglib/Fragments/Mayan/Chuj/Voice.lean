@@ -30,8 +30,8 @@ decomposition lives in her study.
 
 ## Implementation notes
 
-The absolutive antipassive is entered with its oblique patient. Left without one, it is the
-patientless antipassive `Voice.antipassive (.implicit none)`.
+The absolutive antipassive leaves its patient implicit, as the passive leaves its agent; an
+oblique may express either.
 
 ## References
 
@@ -48,8 +48,8 @@ def transitive : Voice := Voice.active
 /-- *-w*: the incorporation antipassive, the object a bare noun. -/
 def incorporationAntipassive : Voice := (Voice.antipassive .incorporated).marked [.suff "w"]
 
-/-- *-waj*: the absolutive antipassive, the patient an oblique. -/
-def absolutiveAntipassive : Voice := Voice.antipassive.marked [.suff "waj"]
+/-- *-waj*: the absolutive antipassive, the patient implicit or an oblique. -/
+def absolutiveAntipassive : Voice := (Voice.antipassive (.implicit none)).marked [.suff "waj"]
 
 /-- *-j*: the agentless passive, with no agent in participant structure. -/
 def agentlessPassive : Voice := Voice.anticausative.marked [.suff "j"]
