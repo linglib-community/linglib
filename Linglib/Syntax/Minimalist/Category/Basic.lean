@@ -59,8 +59,8 @@ inductive Cat where
   | Mod   -- modality ([cinque-1999]; modal auxiliaries)
   | Rel   -- relative (cartographic left periphery, [rizzi-1997])
   | Pol   -- polarity ([laka-1990]; ΣP for affirmation/negation)
-  | Asp   -- aspect ([cinque-1999]; inner inflectional, between Voice and T)
-  | Evid  -- evidential ([cinque-1999]; outer inflectional, above T below Fin)
+  | Asp   -- aspect ([cinque-1999]; inflectional, the aspect heads of `Cartography.Head`)
+  | Evid  -- evidential ([cinque-1999]; inflectional, the evidential mood of `Cartography.Head`)
   /-- The nominalizer ([keine-2020]): the Hindi nominalized clause, a clause type distinct from
       CP. -/
   | Nmlz

@@ -36,7 +36,9 @@ The F-values place the families on one scale, `n` with `v`, `Q` with `T`, `Num` 
 `D` with `Foc`. Rizzi's order Fin < Foc < Top < Force fixes the verbal left periphery, Borer's
 individuation before counting puts `Q` below `Num`, the Say layer of embedded speech reports
 sits between Foc and C as in Egressy, and Speas and Tenny's speech-act head closes the verbal
-sequence. Prepositions form their own family, with den Dikken's Place and Path above them,
+sequence. Tense, negation, modality, polarity, aspect and evidentiality share the inflectional
+level; `Cartography.Head` orders the clausal heads that level collapses, some aspect heads among
+them below Voice. Prepositions form their own family, with den Dikken's Place and Path above them,
 following Chomsky's `[−V, −N]`, whereas Grimshaw places P in the nominal extended projection.
 
 ## References
