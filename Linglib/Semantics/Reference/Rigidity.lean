@@ -22,6 +22,7 @@ Rigid intensions that agree at one index agree everywhere, which is the necessit
 * `isRigid_iff_subsingleton_range`, `isRigidOn_iff_subsingleton_image`: the mathlib face.
 * `isRigid_of_subsingleton`: over a single index every intension is rigid.
 * `IsRigid.eq_of_apply_eq`: rigid intensions that agree at one index are equal.
+* `IsRigid.ne`: a rigid intension is not a nonrigid one.
 * `IsRigid.map`, `IsRigid.of_comp_injective`, `IsRigid.precomp`, `IsRigidOn.precomp`,
   `IsRigidOn.mono`: closure under composition and restriction.
 
@@ -68,9 +69,8 @@ theorem IsRigid.eq_of_apply_eq {f g : W → τ} (hf : IsRigid f) (hg : IsRigid g
     (h : f w = g w) : f = g :=
   funext fun w' => (hf w' w).trans (h.trans (hg w w'))
 
-theorem const_ne_of_not_isRigid {f : W → τ} (h : ¬ IsRigid f) (w : W) :
-    (fun _ => f w) ≠ f :=
-  fun e => h (e ▸ isRigid_const (f w))
+theorem IsRigid.ne {f g : W → τ} (hf : IsRigid f) (hg : ¬ IsRigid g) : f ≠ g :=
+  fun e => hg (e ▸ hf)
 
 theorem IsRigid.map {f : W → τ} (h : IsRigid f) (g : τ → τ') : IsRigid (g ∘ f) :=
   fun w₁ w₂ => congrArg g (h w₁ w₂)
