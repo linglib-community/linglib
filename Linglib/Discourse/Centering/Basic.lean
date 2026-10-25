@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Core.Order.Argmax
+public import Mathlib.Data.List.MinMax
 public import Mathlib.Data.List.Sort
 public import Mathlib.Order.RelClasses
 
@@ -20,20 +22,29 @@ pronominalizes its backward-looking center.
   order. `e ∈ u` says that `u` realizes `e`.
 * `Utterance.ranked`, `Utterance.cf`, `Utterance.cp`: the realizations in rank order, the
   forward-looking centers, and the preferred center.
+* `Utterance.rank`: the rank of an entity in an utterance, the highest role in which it is
+  realized.
+* `Discourse.Centering.backwardCenters`: the entities realized in both utterances that the
+  previous one ranks highest, several when roles tie.
 * `Discourse.Centering.cb`: the backward-looking center, for any current utterance with
-  decidable membership, characterized by `cb_eq_some_iff` and `role_le_of_cb`.
+  decidable membership, characterized by `cb_eq_some_iff` and `cb_mem_backwardCenters`.
 * `Discourse.Centering.PronominalizationConstraint` and `CbPronominalized`: Rule 1 and Gordon,
   Grosz, and Gilliom's unconditional strengthening of it.
 
 ## Implementation notes
 
 The ranking of forward-looking centers is a `LinearOrder` on the role type, higher meaning more
-prominent; two realizations in the same role tie, and the sort is stable, so ties keep surface
-order. An entity realized twice is listed twice among the forward-looking centers, which leaves
-the backward-looking center, the preferred center, and Rule 1 unaffected.
+prominent. Grosz, Joshi, and Weinstein take the forward-looking centers to be partially ordered
+and define the backward-looking center on their list: the first of them the next utterance
+realizes. Two realizations in the same role tie, so the ranking of entities by `Utterance.rank`
+can have several highest-ranked candidates, collected by `backwardCenters`; `cb` follows the list,
+whose sort is stable, so it breaks such ties by surface order. An entity realized twice is listed
+twice among the forward-looking centers, which leaves the backward-looking center, the preferred
+center, and Rule 1 unaffected.
 
 The current utterance of `cb` is any type with decidable entity membership, so that a study can
-let an utterance realize an entity indirectly, as in [poesio-stevenson-eugenio-hitzeman-2004].
+let an utterance realize an entity indirectly, as Poesio and colleagues do for associative
+reference.
 
 ## References
 
@@ -120,6 +131,44 @@ theorem cp_mem (h : u.cp = some e) : e ∈ u := u.mem_cf.mp (u.cp_mem_cf h)
 
 end Cf
 
+/-! ### Ranks -/
+
+section Rank
+
+variable [DecidableEq E] (u : Utterance E R) {e : E}
+
+/-- The entities `u` realizes. -/
+def entities : Finset E := (u.realizations.map (·.entity)).toFinset
+
+@[simp] theorem mem_entities : e ∈ u.entities ↔ e ∈ u := by simp [entities, mem_iff]
+
+variable [LinearOrder R]
+
+/-- The rank of `e` in `u`: the highest role in which `u` realizes it, `⊥` if it does not. -/
+def rank (e : E) : WithBot R := ((u.realizations.filter (·.entity = e)).map (·.role)).maximum
+
+theorem role_le_rank {r : Realization E R} (hr : r ∈ u.realizations) :
+    (r.role : WithBot R) ≤ u.rank r.entity :=
+  List.le_maximum_of_mem' (List.mem_map_of_mem (List.mem_filter.2 ⟨hr, by simp⟩))
+
+theorem rank_le_iff {b : WithBot R} :
+    u.rank e ≤ b ↔ ∀ r ∈ u.realizations, r.entity = e → (r.role : WithBot R) ≤ b := by
+  refine ⟨fun h r hr he ↦ by subst he; exact (u.role_le_rank hr).trans h, fun h ↦ ?_⟩
+  exact List.maximum_le_of_forall_le fun a ha ↦ by
+    obtain ⟨r, hr, rfl⟩ := List.mem_map.1 ha
+    exact h r (List.mem_filter.1 hr).1 (by simpa using (List.mem_filter.1 hr).2)
+
+theorem exists_rank_eq (h : e ∈ u) :
+    ∃ r ∈ u.realizations, r.entity = e ∧ u.rank e = r.role := by
+  obtain ⟨r, hr, rfl⟩ := h
+  have hne : (u.realizations.filter (·.entity = r.entity)).map (·.role) ≠ [] :=
+    List.ne_nil_of_mem (List.mem_map_of_mem (List.mem_filter.2 ⟨hr, by simp⟩))
+  obtain ⟨m, hm⟩ := WithBot.ne_bot_iff_exists.1 (List.maximum_ne_bot_of_ne_nil hne)
+  obtain ⟨r', hr', rfl⟩ := List.mem_map.1 (List.maximum_mem hm.symm)
+  exact ⟨r', (List.mem_filter.1 hr').1, by simpa using (List.mem_filter.1 hr').2, hm.symm⟩
+
+end Rank
+
 end Utterance
 
 /-! ### The backward-looking center -/
@@ -168,6 +217,32 @@ theorem role_le_of_cb (h : cb prev cur = some e) {r : Realization E R}
   · rcases List.mem_cons.mp hr₂ with rfl | hr₂
     · exact le_rfl
     · exact hs.2.1.1 r hr₂
+
+variable [DecidableEq E]
+
+/-- The backward-looking centers of `cur` after `prev` when roles may tie: the entities realized
+in both that `prev` ranks highest. -/
+def backwardCenters (prev : Utterance E R) (cur : U) : Finset E :=
+  (prev.entities.filter (· ∈ cur)).argmax prev.rank
+
+theorem mem_backwardCenters : e ∈ backwardCenters prev cur ↔
+    e ∈ prev ∧ e ∈ cur ∧ ∀ e' ∈ prev, e' ∈ cur → prev.rank e' ≤ prev.rank e := by
+  simp [backwardCenters, Finset.mem_argmax, and_assoc]
+
+/-- The backward-looking center is one of the highest-ranked candidates. -/
+theorem cb_mem_backwardCenters (h : cb prev cur = some e) : e ∈ backwardCenters prev cur := by
+  refine mem_backwardCenters.2 ⟨prev.mem_cf.1 (cb_mem_cf h), mem_of_cb h, fun e' _ hcur ↦ ?_⟩
+  refine prev.rank_le_iff.2 fun r hr he ↦ ?_
+  obtain ⟨r', hr', rfl, hle⟩ := role_le_of_cb h hr (he ▸ hcur)
+  exact (WithBot.coe_le_coe.2 hle).trans (prev.role_le_rank hr')
+
+theorem cb_eq_none_iff_backwardCenters_eq_empty :
+    cb prev cur = none ↔ backwardCenters prev cur = ∅ := by
+  rw [cb_eq_none_iff, backwardCenters, ← Finset.not_nonempty_iff_eq_empty]
+  refine ⟨fun h ⟨e, he⟩ ↦ ?_, fun h e he hcur ↦ h (Finset.argmax_nonempty ⟨e, ?_⟩)⟩
+  · have := (Finset.mem_filter.1 (Finset.mem_argmax.1 he).1)
+    exact h e (prev.mem_cf.2 ((Utterance.mem_entities _).1 this.1)) this.2
+  · simpa using ⟨prev.mem_cf.1 he, hcur⟩
 
 end Cb
 
