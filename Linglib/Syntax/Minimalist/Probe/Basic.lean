@@ -33,6 +33,8 @@ the probe searches rather than relativizing the probe.
 * `Minimalist.Probe.Licensed`, `Minimalist.Probe.AllLicensed`: a goal the search reaches, and
   every needy goal occurrence being reached.
 * `Minimalist.Probe.cascade`: the first finding of an ordered sequence of probes.
+* `Minimalist.Probe.comap`: a probe read through a map into its goals, as a probe on the
+  positions of a tree reads the features of the term at each.
 
 ## Main results
 
@@ -100,6 +102,16 @@ def indiscriminate : Probe α := relativized fun _ ↦ True
 @[simp] theorem insatiable_sat (a : α) : ¬ (insatiable f).sat a := id
 @[simp] theorem indiscriminate_int (a : α) : (indiscriminate : Probe α).int a := trivial
 @[simp] theorem indiscriminate_sat (a : α) : (indiscriminate : Probe α).sat a := trivial
+
+/-- The probe on `β` that reads each goal through `f`. -/
+def comap {β : Type*} (f : β → α) (p : Probe α) : Probe β :=
+  ⟨fun b ↦ p.int (f b), fun b ↦ p.sat (f b)⟩
+
+@[simp] theorem comap_int {β : Type*} (f : β → α) (p : Probe α) (b : β) :
+    (p.comap f).int b ↔ p.int (f b) := .rfl
+
+@[simp] theorem comap_sat {β : Type*} (f : β → α) (p : Probe α) (b : β) :
+    (p.comap f).sat b ↔ p.sat (f b) := .rfl
 
 /-! ### Search -/
 

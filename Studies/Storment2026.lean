@@ -2,8 +2,8 @@ module
 
 public import Linglib.Data.Examples.Storment2026
 public import Linglib.Syntax.Agreement.Bundle
-public import Linglib.Syntax.Minimalist.Probe.Agree
-public import Studies.BrananErlewine2026
+public import Linglib.Syntax.Minimalist.Probe.Search
+public import Studies.Collins2005
 
 /-!
 # Storment (2026): Quotative inversion as smuggling
@@ -11,26 +11,27 @@ public import Studies.BrananErlewine2026
 This file derives quotative and locative inversion in English and Setswana as smuggling. A clause
 is a `Derivation` in which Voice raises the VP, holding the verb and the theme, over the agent in
 Spec,vP, and the theme then raises to Spec,TP; head movement of the verb is the rival analysis.
-T's φ-probe searches depth first, copies by unification and may search past a defective goal.
-Each of the paper's examples is paired with what the grammar generates: the position of a
+T and Voice search depth first; T's φ-probe copies by unification and may search past a defective
+goal. Each of the paper's examples is paired with what the grammar generates: the position of a
 dependent, licensing by T and Voice, agreement and the conjoint verb form.
 
 ## Main results
 
 * `Storment2026.ex122_licensed_iff`: only VP movement licenses the theme ((113), (116)).
+* `Storment2026.inversion_smugglesViaVoice`: inversion, like the passive, is voice (121).
 * `Storment2026.search_finds_theme`: depth-first search finds the theme ((118), (119), p. 35).
-* `Storment2026.agree_eq_of_not_defective`: defective circumvention needs a defective goal (59).
+* `Storment2026.agreesWith_iff_of_not_defective`: defective circumvention needs a defective
+  goal (59).
 * `Storment2026.acceptable_iff_generated`: the examples, acceptable exactly when generated.
-* `Storment2026.generated_ex40_sg`: the analysis admits the starred *advises* of (40) (§3.1.2).
 
 ## Implementation notes
 
 * The quote is outside the derivation (§3.5). A second DP sits in the VP as in (132) when it
   precedes the agent, and at the vP level when it follows, the position §2 diagnoses.
-* Agree reads T's goals in the order of the stage's leaves, the depth-first order of (118),
-  since every specifier is merged on the left.
 * The theme bears third person and no number (§3.1.4, §6). Noun class has no carrier, so a
   Setswana marker counts as default when T ends valued in no number.
+* The judgments of (40) are Collins and Branigan's, which the paper disputes; the analysis
+  generates its starred *advises* (`generated_ex40_sg`).
 
 ## TODO
 
@@ -52,7 +53,7 @@ dependent, licensing by T and Voice, agreement and the conjoint verb form.
 namespace Storment2026
 
 open Minimalist SyntacticObject
-open BrananErlewine2026 (Matches depthFirst depth)
+open Minimalist.Probe (depthFirst depth)
 
 /-! ### The derivation (§2, §4) -/
 
@@ -133,6 +134,14 @@ def verbTok : LexicalItem.Token :=
 /-- The agent's token. -/
 def agentTok : LexicalItem.Token := ⟨.of .D [] (phonForm := p.agent), 2⟩
 
+/-- The tokens of the complement and the VP-external element. -/
+def dependents : List LexicalItem.Token :=
+  (p.complement.map (·.token)).toList ++ (p.external.map (·.token)).toList
+
+/-- The DPs: the theme, the agent and any dependent DP. -/
+def dps : List LexicalItem.Token :=
+  [p.themeTok, p.agentTok] ++ p.dependents.filter (·.item.cat = .D)
+
 /-- The steps that build the VP from the verb. -/
 def vpSteps : List Step :=
   match p.complement with
@@ -160,16 +169,13 @@ def tStage (a : Analysis) : Derivation := (p.voiceP a).append [.em .left t₀]
 /-- Inversion (122): the theme A-moves to Spec,TP. -/
 def inversion (a : Analysis) : Derivation := (p.tStage a).append [.im p.themeTok]
 
-/-- The DPs: the theme, the agent and any second DP. -/
-def dps : List LexicalItem.Token :=
-  [p.themeTok, p.agentTok] ++ (match p.complement with | some c@(.dp _) => [c.token] | _ => []) ++
-    (match p.external with | some e@(.dp _) => [e.token] | _ => [])
-
 end Clause
+
+/-! ### Licensing and search (§4, §5) -/
 
 /-- At a stage of `d`, the probe on `h` licenses the DP its depth-first search finds (118). -/
 def Licenses (d : Derivation) (h x : LexicalItem.Token) : Prop :=
-  ∃ t ∈ d.externalize?, Matches t h depthFirst x
+  ∃ t ∈ d.externalize?, ↑x ∈ t.goalsBy (t.leafProbe .D) h (depthFirst ·.val)
 
 instance (d : Derivation) (h x : LexicalItem.Token) : Decidable (Licenses d h x) := by
   unfold Licenses; infer_instance
@@ -181,6 +187,15 @@ def Clause.Licensed (p : Clause) (a : Analysis) : Prop :=
 
 instance (p : Clause) (a : Analysis) : Decidable (p.Licensed a) := by
   unfold Clause.Licensed; infer_instance
+
+/-- A derivation smuggles `x` past `w` via VoiceP when a step smuggles it into the specifier of a
+Voice head, voice in the sense of (121), after [storment-2025]. -/
+def SmugglesViaVoice (d : Derivation) (x w : SyntacticObject) : Prop :=
+  ∃ i < d.length, d.IsSmugglingStep i x w ∧
+    ∃ q ∈ (d.take i).externalize?, ∃ v ∈ q.toSyntacticObject.selHead, v.item.cat = .Voice
+
+instance (d : Derivation) (x w : SyntacticObject) : Decidable (SmugglesViaVoice d x w) := by
+  unfold SmugglesViaVoice; infer_instance
 
 /-- (122): *"Hey," said John*. -/
 def ex122 : Clause := { verb := "said", agent := "John" }
@@ -201,10 +216,13 @@ agent lets T find the theme (116). -/
 theorem ex122_licensed_iff (a : Analysis) : ex122.Licensed a ↔ a = .vpMovement := by
   cases a <;> decide +kernel
 
-theorem vpMovement_smuggles :
-    (ex122.inversion .vpMovement).IsSmugglingStep (ex122.vP.length + 1) op ex122.agentTok ∧
-      ¬ (ex122.inversion .headMovement).IsSmugglingStep (ex122.vP.length + 1) op
-        ex122.agentTok := by
+/-- Quotative inversion smuggles the theme past the agent via VoiceP, as the passive of
+[collins-2005] smuggles its object, and head movement of the verb does not (§4.3). -/
+theorem inversion_smugglesViaVoice :
+    SmugglesViaVoice (Collins2005.ex9.passive .partP false) Collins2005.ex9.patient
+        Collins2005.ex9.agent ∧
+      SmugglesViaVoice (ex122.inversion .vpMovement) op ex122.agentTok ∧
+      ¬ SmugglesViaVoice (ex122.inversion .headMovement) op ex122.agentTok := by
   decide +kernel
 
 /-- The quote is outside the derivation, which pronounces the verb and the agent of (122). -/
@@ -221,26 +239,23 @@ theorem complement_orders :
 example : (ex117.inversion .vpMovement).surfacePhon = ["piped", "up", "John", "loudly"] := by
   decide
 
-/-! ### Search (§4.2)
-
-T's search finds the theme before the agent although neither c-commands the other. -/
-
 /-- Depth-first search finds the theme alone (118), as does breadth-first search in (116) (119);
 a control clause in the VP puts the theme as deep as the agent, so breadth-first search over
-unordered sisters finds both, while depth-first search still finds the theme (p. 35). -/
+unordered sisters finds both, while depth-first search still finds the theme alone (p. 35). -/
 theorem search_finds_theme :
     (∃ t ∈ (ex122.tStage .vpMovement).externalize?,
-      Matches t t₀ depthFirst op ∧ ¬ Matches t t₀ depthFirst ex122.agentTok ∧
-        Matches t t₀ depth op ∧ ¬ Matches t t₀ depth ex122.agentTok) ∧
+      t.goalsBy (t.leafProbe .D) t₀ (depthFirst ·.val) = {↑op} ∧
+        t.goalsBy (t.leafProbe .D) t₀ (depth ·.val) = {↑op}) ∧
     ∃ t ∈ (ex26.tStage .vpMovement).externalize?,
-      Matches t t₀ depthFirst op ∧ ¬ Matches t t₀ depthFirst ex26.agentTok ∧
-        Matches t t₀ depth op ∧ Matches t t₀ depth ex26.agentTok := by
+      t.goalsBy (t.leafProbe .D) t₀ (depthFirst ·.val) = {↑op} ∧
+        t.goalsBy (t.leafProbe .D) t₀ (depth ·.val) = {↑op, ↑ex26.agentTok} := by
   decide +kernel
 
 /-! ### Agreement (§3.1)
 
-T's φ-probe seeks a set of dimensions. Copying a goal's features to it is unification, so that a
-goal conflicting with what T has copied leaves it at `⊤`, the irresolvable clash of (59). -/
+T's φ-probe seeks a set of dimensions. Agree copies a goal's features to it by unification, so a
+goal conflicting with what T has copied leaves it at `⊤`, the irresolvable clash of (59), and the
+order of copying is idle: T ends with the join of what it agrees with. -/
 
 open Agreement
 
@@ -255,10 +270,10 @@ def Defective (P : Finset Dimension) (g : Bundle) : Prop :=
 instance (P : Finset Dimension) : DecidablePred (Defective P) := fun _ ↦ by
   unfold Defective; infer_instance
 
-theorem not_defective_empty (g : Bundle) : ¬ Defective ∅ g := Finset.not_ssubset_empty _
+@[simp] theorem not_defective_empty (g : Bundle) : ¬ Defective ∅ g := Finset.not_ssubset_empty _
 
 /-- T's φ-probe seeking `P` copies from every goal bearing φ and halts at one not defective for
-it. -/
+it; `phiProbe ∅` halts at the first goal bearing φ. -/
 def phiProbe (P : Finset Dimension) : Probe Bundle where
   int g := g ≠ ⊥
   sat g := g ≠ ⊥ ∧ ¬ Defective P g
@@ -270,34 +285,18 @@ def phiProbe (P : Finset Dimension) : Probe Bundle where
     (phiProbe P).sat g ↔ g ≠ ⊥ ∧ ¬ Defective P g :=
   .rfl
 
-open scoped PartialUnify in
-/-- Agree copies a goal's features to T by unification. -/
-def copy (g : Bundle) (s : WithTop Bundle) : WithTop Bundle := s ⊔ ↑g
-
-/-- The values T may end with on the goals `gs`: Agree halting at the first goal bearing φ,
-`phiProbe ∅`, or searching past a defective goal, defective circumvention ((59), after
-[storment-2025]). -/
-def valuations (P : Finset Dimension) (gs : List Bundle) : Finset (WithTop Bundle) :=
-  {((phiProbe ∅).agree copy ⊥ gs).state, ((phiProbe P).agree copy ⊥ gs).state}
-
-/-- Defective circumvention needs a defective goal: when the first goal bearing φ is not
-defective, Agree halts there with or without it (59). -/
-theorem agree_eq_of_not_defective {P : Finset Dimension} {gs : List Bundle}
-    (h : ∀ g ∈ gs.find? (· ≠ ⊥), ¬ Defective P g) (s : WithTop Bundle) :
-    (phiProbe P).agree copy s gs = (phiProbe ∅).agree copy s gs := by
-  induction gs generalizing s with
-  | nil => rfl
-  | cons g gs ih =>
-    by_cases hg : g = ⊥
-    · subst hg
-      simp only [List.find?_cons, ne_eq, not_true_eq_false, decide_false] at h
-      simp [Probe.agree_cons, ih h]
-    · have hd : ¬ Defective P g := h g (by simp [hg])
-      simp [Probe.agree_cons, hg, hd, not_defective_empty]
-
-theorem valuations_empty (gs : List Bundle) :
-    valuations ∅ gs = {((phiProbe ∅).agree copy ⊥ gs).state} :=
-  Finset.pair_eq_singleton _
+/-- Defective circumvention needs a defective goal: when the first goal bearing φ that the search
+finds is not defective, Agree past it agrees with the goals Agree halting there does (59). -/
+theorem agreesWith_iff_of_not_defective {α β : Type*} [Finite α] [LinearOrder β]
+    {φ : α → Bundle} {s : Set α} {key : α → β} {P : Finset Dimension}
+    (h : ∀ g, ((phiProbe ∅).comap φ).Finds s key g → ¬ Defective P (φ g)) (a : α) :
+    ((phiProbe P).comap φ).AgreesWith s key a ↔ ((phiProbe ∅).comap φ).AgreesWith s key a := by
+  refine ⟨fun ⟨⟨ha, hP⟩, hi⟩ ↦ ⟨⟨ha, fun b hb hbe hlt ↦ ?_⟩, hi⟩,
+    fun ⟨⟨ha, he⟩, hi⟩ ↦ ⟨⟨ha, fun b hb hbP ↦ he hb ⟨hbP.1, not_defective_empty _⟩⟩, hi⟩⟩
+  obtain ⟨g, ⟨hg, hge⟩, hmin⟩ := Set.exists_min_image
+    {x | x ∈ s ∧ ((phiProbe ∅).comap φ).sat x} key (Set.toFinite _) ⟨b, hb, hbe⟩
+  exact hP hg ⟨hge.1, h g ⟨⟨hg, hge⟩, fun j hj _ ↦ hmin j hj⟩⟩
+    ((hmin b ⟨hb, hbe⟩).trans_lt hlt)
 
 /-- Agreement shows the agent's features or the default, third singular in English and class 17
 *go* in Setswana (47). -/
@@ -340,22 +339,40 @@ variable (p : Clause)
 def phi (x : LexicalItem.Token) : Bundle :=
   if x = p.themeTok then themePhi else if x = p.agentTok then p.agentPhi else ⊥
 
+/-- The φ-features at a position of `t`, those of the token there. -/
+def phiAt (t : LinearizedSyntacticObject) (q : t.val.Positions) : Bundle :=
+  (t.termAt q).token?.elim ⊥ p.phi
+
 /-- The stage at which T probes. -/
 def probeStage : Construction → Derivation
   | .inversion => p.tStage .vpMovement
   | .noninverted => p.vP.append [.em .left t₀]
 
-/-- T's goals in the order its search meets them. -/
-def goals (c : Construction) : List Bundle := (p.probeStage c).surfaceTokens.map p.phi
+open scoped PartialUnify in
+/-- The value T ends with when its probe seeks `P`: the join of the φ-features of the goals its
+depth-first search agrees with (118). -/
+def value (c : Construction) (P : Finset Dimension) : WithTop Bundle :=
+  ((p.probeStage c).externalize?.map fun t ↦
+    (Finset.univ.filter fun q ↦ ∃ a : t.val.Positions, t.termAt a = ↑t₀ ∧
+      ((phiProbe P).comap (p.phiAt t)).AgreesWith {x | t.val.CCommands a x} (depthFirst ·.val)
+        q).sup fun q ↦ (p.phiAt t q : WithTop Bundle)).getD ⊤
+
+/-- The values T may end with (59): halting at the first goal bearing φ, or searching past a
+defective goal, defective circumvention, after [storment-2025]. -/
+def valuations (c : Construction) (P : Finset Dimension) : Finset (WithTop Bundle) :=
+  {p.value c ∅, p.value c P}
+
+theorem valuations_empty (c : Construction) : p.valuations c ∅ = {p.value c ∅} :=
+  Finset.pair_eq_singleton _
 
 /-- The agreement T may spell out. -/
 def agreement (l : Language) (c : Construction) : Finset (Option AgreementForm) :=
-  (valuations l.probe (p.goals c)).image spellOut
+  (p.valuations c l.probe).image spellOut
 
-/-- The verb is disjoint when every DP and adjunct merged in the vP has left it, the
-generalization of §3.4. -/
+/-- The verb is disjoint when the theme, the agent and every dependent merged in the vP have left
+it, the generalization of §3.4. -/
 def IsDisjoint : Prop :=
-  ∀ x ∈ p.dps ++ (p.external.map (·.token)).toList,
+  ∀ x ∈ [p.themeTok, p.agentTok] ++ p.dependents,
     ∃ m ∈ (p.inversion .vpMovement).movedItems, Contains m x
 
 instance : Decidable p.IsDisjoint := by unfold IsDisjoint; infer_instance
@@ -369,10 +386,10 @@ inductive Position
   | beforeAgent | afterAgent
   deriving DecidableEq, Repr
 
-/-- Where the inversion of `p` puts `form` relative to its agent. -/
-def Clause.position (p : Clause) (form : String) : Position :=
-  let s := (p.inversion .vpMovement).surfacePhon
-  if s.idxOf form < s.idxOf p.agent then .beforeAgent else .afterAgent
+/-- Where the inversion of `p` puts the token `x` relative to its agent. -/
+def Clause.position (p : Clause) (x : LexicalItem.Token) : Position :=
+  let s := (p.inversion .vpMovement).surfaceTokens
+  if s.idxOf x < s.idxOf p.agentTok then .beforeAgent else .afterAgent
 
 /-- What a row shows: its clause, language and construction, with the position of its dependent,
 its agreement and its verb form where it records them. -/
@@ -383,8 +400,8 @@ structure Observation where
   clause : Clause
   /-- The construction. -/
   construction : Construction
-  /-- The dependent and where it surfaces. -/
-  position : Option (String × Position)
+  /-- Where the dependent surfaces. -/
+  position : Option Position
   /-- The agreement. -/
   agreement : Option AgreementForm
   /-- The verb form. -/
@@ -395,7 +412,7 @@ derivation puts it, its agreement is one T may spell out, and its verb form is t
 gives. -/
 def Observation.Generated (o : Observation) : Prop :=
   (o.construction = .inversion → o.clause.Licensed .vpMovement) ∧
-    (∀ d ∈ o.position, o.clause.position d.1 = d.2) ∧
+    (∀ pos ∈ o.position, ∀ x ∈ o.clause.dependents, o.clause.position x = pos) ∧
     (∀ a ∈ o.agreement, some a ∈ o.clause.agreement o.language o.construction) ∧
     ∀ f ∈ o.verbForm, (f = .disjoint ↔ o.clause.IsDisjoint)
 
@@ -434,7 +451,7 @@ def Observation.ofRow (row : Datum) : Option Observation := do
     ("li", .inversion), ("preposedQuote", .noninverted), ("canonical", .noninverted)]
   let position ← match row.feature? "dependent" with
     | none => some none
-    | some d => (row.parse? "position" positions).map fun pos ↦ some (d, pos)
+    | some _ => (row.parse? "position" positions).map some
   return ⟨language, ← Clause.ofRow row, construction, position,
     row.parse? "agreement" [("default", .default), ("agent", .agent)],
     row.parse? "verbForm" [("conjoint", .conjoint), ("disjoint", .disjoint)]⟩
@@ -446,8 +463,6 @@ theorem acceptable_iff_generated : ∀ row ∈ Examples.all, row.source.bibkey =
     ∀ o ∈ Observation.ofRow row, (row.judgment = .acceptable ↔ o.Generated) := by
   decide +kernel
 
-/-- The analysis admits the *advises* of (40), default agreement, which [collins-branigan-1997]
-star and the paper defends with (41). -/
 theorem generated_ex40_sg : ∀ o ∈ Observation.ofRow Examples.ex40_sg, o.Generated := by
   decide +kernel
 

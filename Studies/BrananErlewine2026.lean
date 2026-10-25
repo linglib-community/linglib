@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Copy.Chain
-public import Linglib.Syntax.Minimalist.Probe.Minimal
+public import Linglib.Syntax.Minimalist.Probe.Search
 public import Mathlib.Data.List.Lex
 public import Studies.Collins2005
 
@@ -20,9 +20,7 @@ deep, so breadth-first search cannot prefer the theme (9).
 ## Implementation notes
 
 * A search order is a key on positions, and the node a search matches is the one the probe finds
-  under that key (`Probe.Finds`). Depth-first search, left to right, is the lexicographic order
-  on paths; breadth-first search orders by depth and then left to right; with unordered sisters it
-  orders by depth alone.
+  under that key (`Probe.Finds`), the search orders of `Probe/Search.lean`.
 * The tree of (7) is the figure's, with arbitrary leaves. That of (9) is Collins2005's passive at
   the stage where Infl probes, PartP in Spec,VoiceP, and its potential goals are its DPs.
 
@@ -42,28 +40,7 @@ deep, so breadth-first search cannot prefer the theme (9).
 namespace BrananErlewine2026
 
 open Minimalist Core.Order
-
-/-! ### Search orders -/
-
-/-- Depth-first search, left to right: the lexicographic order on paths, which considers a node
-before the nodes it dominates and the nodes of a left daughter before those of its sister. -/
-def depthFirst (q : TreePath) : List ℕ := q.toList
-
-/-- Breadth-first search, left to right: by depth, then left to right. -/
-def breadthFirst (q : TreePath) : ℕ ×ₗ List ℕ := toLex (q.toList.length, q.toList)
-
-/-- Breadth-first search with unordered sisters: by depth alone. -/
-def depth (q : TreePath) : ℕ := q.toList.length
-
-theorem breadthFirst_lt_of_depth_lt {a b : TreePath} (h : depth a < depth b) :
-    breadthFirst a < breadthFirst b :=
-  Prod.Lex.toLex_lt_toLex.2 (.inl h)
-
-theorem depth_complement {b : TreePath} (hb : b ≠ ⊥) : depth (complement b) = depth b := by
-  have : b.toList ≠ [] := fun h ↦ hb (TreePath.ext h)
-  simp only [depth, complement, List.length_append, List.length_dropLast, List.length_singleton]
-  have := List.length_pos_iff.2 this
-  omega
+open Minimalist.Probe (depthFirst breadthFirst depth breadthFirst_lt_of_depth_lt depth_complement)
 
 /-! ### Breadth-first search and Closest (2) -/
 
@@ -162,35 +139,13 @@ theorem finds_depthFirst_iff (hs : ∀ q ∈ s, RightBranching q.val.toList) :
 
 /-! ### Smuggling (9) -/
 
-/-- The probe for a D goal, satisfied by the D heads of `t`. -/
-def dProbe (t : LinearizedSyntacticObject) : Probe t.val.Positions :=
-  .relativized fun q ↦ (t.termAt q).token?.map (·.item.cat) = some .D
-
-/-- The positions an occurrence of `h` c-commands. -/
-def domain (t : LinearizedSyntacticObject) (h : LexicalItem.Token) : Set t.val.Positions :=
-  {q | ∃ o ∈ occurrencesWith t (· = h), complement o ≤ q.val}
-
-instance (t : LinearizedSyntacticObject) (h : LexicalItem.Token) :
-    DecidablePred (· ∈ domain t h) := fun _ ↦ by unfold domain; infer_instance
-
-/-- The search of the probe on `h` under `key` matches the token `g`. -/
-def Matches {κ : Type*} [Preorder κ] [DecidableRel ((· < ·) : κ → κ → Prop)]
-    (t : LinearizedSyntacticObject) (h : LexicalItem.Token) (key : TreePath → κ)
-    (g : LexicalItem.Token) : Prop :=
-  ∃ q, (dProbe t).Finds (domain t h) (key ·.val) q ∧ t.termAt q = ↑g
-
-instance {κ : Type*} [Preorder κ] [DecidableRel ((· < ·) : κ → κ → Prop)]
-    (t : LinearizedSyntacticObject) (h : LexicalItem.Token) (key : TreePath → κ)
-    (g : LexicalItem.Token) : Decidable (Matches t h key g) := by
-  unfold Matches; infer_instance
-
 /-- In (9), depth-first search from Infl matches the smuggled theme alone, while breadth-first
 search cannot prefer it. -/
 theorem ex9 : ∃ t ∈ (Collins2005.ex9.preRaising .partP false).externalize?,
-    Matches t Collins2005.infl₀ depthFirst Collins2005.ex9.patient ∧
-      ¬ Matches t Collins2005.infl₀ depthFirst Collins2005.ex9.agent ∧
-      Matches t Collins2005.infl₀ depth Collins2005.ex9.patient ∧
-      Matches t Collins2005.infl₀ depth Collins2005.ex9.agent := by
+    ↑Collins2005.ex9.patient ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depthFirst ·.val) ∧
+      ↑Collins2005.ex9.agent ∉ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depthFirst ·.val) ∧
+      ↑Collins2005.ex9.patient ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depth ·.val) ∧
+      ↑Collins2005.ex9.agent ∈ t.goalsBy (t.leafProbe .D) Collins2005.infl₀ (depth ·.val) := by
   decide +kernel
 
 end BrananErlewine2026
