@@ -16,8 +16,8 @@ does not.
 
 ## Main results
 
-* `QBSML.diamond_split`: an enriched split disjunction supported on a modal pairing yields a
-  non-empty world-set witness for each disjunct, the shared core.
+* `QBSML.witnesses_of_enrich_disj`: an enriched split disjunction yields a non-empty substate
+  supporting each disjunct, the shared core.
 * `QBSML.narrowScopeFC`, `QBSML.boxFC`, `QBSML.universalFC`: the free-choice facts, Facts 8,
   7 and 9.
 * `QBSML.boxExiFC`: quantified box free choice, `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ`.
@@ -55,38 +55,28 @@ variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 variable (M : Model W Domain Const Pred)
 variable {α β : Formula Var Const Pred} {s : Finset (Index W Var Domain)}
 
-/-! ### The diamond split -/
+/-! ### The split witnesses -/
 
-private theorem poss_of_subset_modalLift {X : Finset W}
-    {g : PartialAssign Var Domain} {t : Finset (Index W Var Domain)}
-    (hα : α.NEFree) (ht : t ⊆ State.modalLift X g)
-    (h : support M α.enrich t) :
-    ∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g) :=
-  ⟨State.worldProj t, State.worldProj_subset_of_subset_modalLift ht,
-    State.worldProj_nonempty (nonempty_of_support_enrich h),
-    (State.modalLift_worldProj_of_subset ht).symm ▸ support_of_support_enrich hα h⟩
-
-/-- An enriched split disjunction supported on a modal pairing yields a non-empty world-set
-witness for each disjunct. This is the shared core of the free-choice facts. -/
-theorem diamond_split {X : Finset W} {g : PartialAssign Var Domain}
-    (hα : α.NEFree) (hβ : β.NEFree)
-    (hsupp : support M (Formula.disj α β).enrich (State.modalLift X g)) :
-    (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M α (State.modalLift Y g)) ∧
-    (∃ Y, Y ⊆ X ∧ Y.Nonempty ∧ support M β (State.modalLift Y g)) := by
-  obtain ⟨t₁, h₁, t₂, h₂, hsplit⟩ := hsupp.1
-  exact ⟨poss_of_subset_modalLift M hα (le_sup_left.trans_eq hsplit) h₁,
-    poss_of_subset_modalLift M hβ (le_sup_right.trans_eq hsplit) h₂⟩
+/-- An enriched split disjunction yields a non-empty substate supporting each disjunct. This is the
+shared core of the free-choice facts. -/
+theorem witnesses_of_enrich_disj {u : Finset (Index W Var Domain)} (hα : α.NEFree)
+    (hβ : β.NEFree) (h : support M (Formula.disj α β).enrich u) :
+    (∃ t ⊆ u, t.Nonempty ∧ support M α t) ∧ ∃ t ⊆ u, t.Nonempty ∧ support M β t :=
+  have ⟨t₁, h₁, t₂, h₂, hu⟩ := h.1
+  ⟨⟨t₁, le_sup_left.trans_eq hu, nonempty_of_support_enrich h₁,
+      support_of_support_enrich hα h₁⟩,
+    ⟨t₂, le_sup_right.trans_eq hu, nonempty_of_support_enrich h₂,
+      support_of_support_enrich hβ h₂⟩⟩
 
 private theorem possFC_on (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (.poss (Formula.disj α β).enrich) s) :
-    support M (.poss α) s ∧ support M (.poss β) s := by
-  refine ⟨fun i hi ↦ ?_, fun i hi ↦ ?_⟩
-  · obtain ⟨X, hX, -, hsupp⟩ := h i hi
-    exact (diamond_split M hα hβ hsupp).1.imp
-      fun Y ⟨hYX, hYne, hY⟩ ↦ ⟨hYX.trans hX, hYne, hY⟩
-  · obtain ⟨X, hX, -, hsupp⟩ := h i hi
-    exact (diamond_split M hα hβ hsupp).2.imp
-      fun Y ⟨hYX, hYne, hY⟩ ↦ ⟨hYX.trans hX, hYne, hY⟩
+    support M (.poss α) s ∧ support M (.poss β) s :=
+  ⟨fun i hi ↦
+    have ⟨_, hu, _, h'⟩ := h i hi
+    (witnesses_of_enrich_disj M hα hβ h').1.imp fun _ ⟨ht, hne, h₁⟩ ↦ ⟨ht.trans hu, hne, h₁⟩,
+   fun i hi ↦
+    have ⟨_, hu, _, h'⟩ := h i hi
+    (witnesses_of_enrich_disj M hα hβ h').2.imp fun _ ⟨ht, hne, h₂⟩ ↦ ⟨ht.trans hu, hne, h₂⟩⟩
 
 /-! ### Free choice (Facts 7, 8 and 9) -/
 
@@ -108,68 +98,43 @@ theorem boxFC (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M (Formula.enrich (Formula.nec (.disj α β))) s) :
     support M (.poss α) s ∧ support M (.poss β) s := by
   rw [support_enrich_nec_iff] at h
-  exact ⟨fun i hi ↦ (diamond_split M hα hβ (h.1 i hi)).1,
-    fun i hi ↦ (diamond_split M hα hβ (h.1 i hi)).2⟩
+  exact ⟨fun i hi ↦ (witnesses_of_enrich_disj M hα hβ (h.1 i hi)).1,
+    fun i hi ↦ (witnesses_of_enrich_disj M hα hβ (h.1 i hi)).2⟩
 
 /-! ### Quantified □-free choice
 
 `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` is the composite of Fact 7 with an existential under the
 modal, the form Yan's Asher and Heim solutions invoke (see `Studies/Yan2023.lean`). -/
 
-private theorem poss_exi_of_subset_extendFunctional
-    {γ : Formula Var Const Pred} {X₀ : Finset W}
-    {g : PartialAssign Var Domain} {x : Var}
-    {hf : Index W Var Domain → Finset Domain}
-    {t : Finset (Index W Var Domain)}
-    (htsub : t ⊆ State.extendFunctional (State.modalLift X₀ g) x hf)
-    (htne : t.Nonempty) (hsupp : support M γ t) :
-    ∃ Y, Y ⊆ X₀ ∧ Y.Nonempty ∧
-      support M (.exi x γ) (State.modalLift Y g) := by
-  have hpar : ∀ j ∈ t, ∃ i ∈ State.modalLift (State.worldProj t) g,
-      ∃ d, Index.update i x d = j := by
-    intro j hj
-    obtain ⟨i, hi, d, -, rfl⟩ := State.mem_extendFunctional.mp (htsub hj)
-    refine ⟨i, State.mem_modalLift.mpr
-      ⟨?_, (State.mem_modalLift.mp hi).2⟩, d, rfl⟩
-    exact State.mem_worldProj.mpr ⟨i.update x d, hj, Index.world_update i x d⟩
-  have hcov : ∀ i' ∈ State.modalLift (State.worldProj t) g,
-      ∃ d, Index.update i' x d ∈ t := by
-    intro i' hi'
-    obtain ⟨hi'w, hi'g⟩ := State.mem_modalLift.mp hi'
-    obtain ⟨j, hjt, hjw⟩ := State.mem_worldProj.mp hi'w
-    obtain ⟨i, hi, d, -, rfl⟩ := State.mem_extendFunctional.mp (htsub hjt)
-    have hii' : i' = i := by
-      refine Prod.ext ?_ (hi'g.trans (State.mem_modalLift.mp hi).2.symm)
-      show i'.world = i.world
-      rw [← hjw, Index.world_update]
-    exact ⟨d, hii' ▸ hjt⟩
-  refine ⟨State.worldProj t, ?_, State.worldProj_nonempty htne,
-    support_exi_of_update_closure M hpar hcov hsupp⟩
-  intro w hw
-  obtain ⟨j, hjt, rfl⟩ := State.mem_worldProj.mp hw
-  obtain ⟨i, hi, d, -, rfl⟩ := State.mem_extendFunctional.mp (htsub hjt)
-  rw [Index.world_update]
-  exact (State.mem_modalLift.mp hi).1
+/-- A non-empty state supporting `γ` inside the universal extension `u[x]` yields a non-empty
+substate of `u` supporting `∃xγ`: the indices of `u` with an `x`-variant in it. -/
+private theorem exists_support_exi_of_subset_extendUniversal {γ : Formula Var Const Pred} {x : Var}
+    {u t : Finset (Index W Var Domain)} (htu : t ⊆ State.extendUniversal u x) (htne : t.Nonempty)
+    (h : support M γ t) : ∃ v ⊆ u, v.Nonempty ∧ support M (.exi x γ) v := by
+  classical
+  refine ⟨u.filter fun i ↦ ∃ j ∈ t, j ∈ i.variants x, Finset.filter_subset _ _, ?_,
+    t, fun j hj ↦ ?_, fun i hi ↦ (Finset.mem_filter.mp hi).2, h⟩
+  · obtain ⟨j, hj⟩ := htne
+    obtain ⟨i, hi, hji⟩ := Finset.mem_biUnion.mp (htu hj)
+    exact ⟨i, Finset.mem_filter.mpr ⟨hi, j, hj, hji⟩⟩
+  · obtain ⟨i, hi, hji⟩ := Finset.mem_biUnion.mp (htu hj)
+    exact Finset.mem_biUnion.mpr ⟨i, Finset.mem_filter.mpr ⟨hi, j, hj, hji⟩, hji⟩
 
 /-- Quantified box free choice is `[□∃x(α ∨ β)]⁺ ⊨ ◇∃xα ∧ ◇∃xβ` for `NE`-free `α`, `β`.
-The enriched premise puts the enriched split disjunction on the functional extension of each
-index's full accessible lift, and each non-empty half yields a `◇∃x` witness. -/
+The enriched premise puts the enriched split disjunction on a state inside the universal extension
+of each index's successors, and each non-empty half yields a `◇∃x` witness. -/
 theorem boxExiFC {x : Var} (hα : α.NEFree) (hβ : β.NEFree)
     (h : support M
       (Formula.enrich (Formula.nec (.exi x (.disj α β)))) s) :
     support M (.poss (.exi x α)) s ∧ support M (.poss (.exi x β)) s := by
   rw [support_enrich_nec_iff] at h
   refine ⟨fun i hi ↦ ?_, fun i hi ↦ ?_⟩
-  · obtain ⟨hf, -, hD⟩ := (h.1 i hi).1
-    obtain ⟨t₁, h₁, t₂, -, hsplit⟩ := hD.1
-    exact poss_exi_of_subset_extendFunctional M
-      (le_sup_left.trans_eq hsplit)
-      (nonempty_of_support_enrich h₁) (support_of_support_enrich hα h₁)
-  · obtain ⟨hf, -, hD⟩ := (h.1 i hi).1
-    obtain ⟨t₁, -, t₂, h₂, hsplit⟩ := hD.1
-    exact poss_exi_of_subset_extendFunctional M
-      (le_sup_right.trans_eq hsplit)
-      (nonempty_of_support_enrich h₂) (support_of_support_enrich hβ h₂)
+  · obtain ⟨S, hS, -, hD⟩ := (h.1 i hi).1
+    obtain ⟨t, htS, htne, ht⟩ := (witnesses_of_enrich_disj M hα hβ hD).1
+    exact exists_support_exi_of_subset_extendUniversal M (htS.trans hS) htne ht
+  · obtain ⟨S, hS, -, hD⟩ := (h.1 i hi).1
+    obtain ⟨t, htS, htne, ht⟩ := (witnesses_of_enrich_disj M hα hβ hD).2
+    exact exists_support_exi_of_subset_extendUniversal M (htS.trans hS) htne ht
 
 /-! ### Ignorance (Fact 3) -/
 
@@ -178,7 +143,7 @@ private theorem poss_predc_of_stateBased {P : Pred} {c : Const}
     (hts : t ⊆ s)
     (htne : t.Nonempty) (h : support M (.predc P c) t) :
     support M (.poss (.predc P c)) s := by
-  intro i hi
+  refine support_poss_iff.mpr fun i hi ↦ ?_
   refine ⟨State.worldProj t, ?_, State.worldProj_nonempty htne, ?_⟩
   · rw [hSB i.world (State.mem_worldProj.mpr ⟨i, hi, rfl⟩)]
     exact State.worldProj_mono hts
@@ -218,19 +183,9 @@ private theorem exi_of_subset_extendUniversal_singleton
     {i : Index W Var Domain} {x : Var} {t : Finset (Index W Var Domain)}
     (htsub : t ⊆ State.extendUniversal {i} x) (htne : t.Nonempty)
     (hsupp : support M γ t) :
-    support M (.exi x γ) {i} := by
-  refine support_exi_of_update_closure M ?_ ?_ hsupp
-  · intro j hj
-    obtain ⟨d, i', hi', hupd⟩ := State.mem_extendUniversal.mp (htsub hj)
-    exact ⟨i', hi', d, hupd⟩
-  · intro i' hi'
-    rw [Finset.mem_singleton] at hi'
-    subst hi'
-    obtain ⟨j₀, hj₀⟩ := htne
-    obtain ⟨d, i'', hi'', hupd⟩ := State.mem_extendUniversal.mp (htsub hj₀)
-    rw [Finset.mem_singleton] at hi''
-    subst hi''
-    exact ⟨d, by rwa [hupd]⟩
+    support M (.exi x γ) {i} :=
+  have ⟨_, hv, hne, h⟩ := exists_support_exi_of_subset_extendUniversal M htsub htne hsupp
+  (hne.subset_singleton_iff.mp hv) ▸ h
 
 /-- Distribution `[∀x(α ∨ β)]⁺ ⊨ ∃xα ∧ ∃xβ` holds for `NE`-free `α`, `β` on a singleton state (Fact
 5). -/
@@ -252,16 +207,15 @@ private theorem exi_poss_atom_of_subset_extendUniversal
     (hsupp : support M (.pred P x) t) :
     support M (.exi x (.poss (.pred P x))) s := by
   obtain ⟨j₀, hj₀⟩ := htne
-  obtain ⟨d, i₀, hi₀s, hupd⟩ := State.mem_extendUniversal.mp (htsub hj₀)
+  obtain ⟨i₀, hi₀s, d, hupd⟩ := State.mem_extendUniversal.mp (htsub hj₀)
   obtain ⟨d', hassign, hmem⟩ := hsupp j₀ hj₀
   rw [← hupd] at hassign hmem
-  simp only [Index.assign_update, Function.update_self,
-    Flat.coe_inj] at hassign
+  simp only [Index.assign_update, PartialAssign.update_self, Flat.coe_inj] at hassign
   rw [← hassign] at hmem
   rw [Index.world_update] at hmem
   -- hmem : d ∈ M.relInterp₁ P i₀.world
-  refine ⟨fun _ ↦ {d}, fun j _ ↦ Finset.singleton_nonempty d, ?_⟩
-  intro j hj
+  refine support_exi_iff.mpr ⟨fun _ ↦ {d}, fun j _ ↦ Finset.singleton_nonempty d,
+    support_poss_iff.mpr fun j hj ↦ ?_⟩
   obtain ⟨i, his, d'', hd'', hupd'⟩ := State.mem_extendFunctional.mp hj
   rw [Finset.mem_singleton] at hd''
   subst hd''
@@ -278,7 +232,7 @@ private theorem exi_poss_atom_of_subset_extendUniversal
     rw [Finset.mem_singleton] at hkw
     refine ⟨d'', ?_, ?_⟩
     · rw [hka, ← hupd']
-      simp only [Index.assign_update, Function.update_self]
+      simp only [Index.assign_update, PartialAssign.update_self]
     · rw [hkw]
       exact hmem
 

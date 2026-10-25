@@ -9,36 +9,35 @@ public import Linglib.Logic.Team.Definability
 /-!
 # QBSML formula properties
 
-This file proves that the support of an NE-free QBSML formula has the closure properties of
-[anttila-2021] Proposition 2.2.8: it is downward closed, closed under unions, and contains the
-empty state. Such a formula is therefore flat, as in `Logic/Team/BSML/Properties.lean`, and a
-state supports it iff its translation is classically satisfied at every index of the state.
+This file proves that the support of a QBSML formula is closed under unions, and, when the
+formula is `NE`-free, downward closed and contains the empty state. An `NE`-free formula is
+therefore flat, as in `Logic/Team/BSML/Properties.lean`, and a state supports it iff its
+translation is classically satisfied at every index of the state.
 
 ## Main declarations
 
-* `support_empty_of_neFree`, `isLowerSet_support_of_neFree`, `supClosed_support_of_neFree`: the
-  three closure properties.
-* `isFlat_support_of_neFree`: NE-free formulas are flat ([anttila-2021] Proposition 2.2.16).
-* `definableClass_support_neFree_subset`: NE-free formulas define flat properties.
+* `supClosed_support`, `support_empty_of_neFree`, `isLowerSet_support_of_neFree`: the closure
+  properties.
+* `isFlat_support_of_neFree`: `NE`-free formulas are flat.
 * `Formula.toFormula?`, `support_iff_forall_realizeAt`: [aloni-vanormondt-2023] Proposition 4.1
   for modal-free formulas, with mathlib's `Formula.Realize` as classical satisfaction.
-* `Formula.toModal?`, `support_iff_forall_realize`: Proposition 4.1 for all NE-free formulas, via
-  a translation into `ModalFormula` defined exactly on them (`exists_toModal?_of_neFree`).
+* `Formula.toModal?`, `support_iff_forall_realize`: Proposition 4.1 for all `NE`-free formulas.
 * `eval_mapAtoms_iff`: replacing atoms by bilaterally equivalent formulas preserves support.
-* `support_disj_inl`, `support_nec_iff`, `support_nec_mono`, `support_exi_of_update_closure`:
-  disjunction introduction, monotonicity of `□`, and existential introduction.
 
 ## Implementation notes
 
-BSML proves its closure properties in separate inductions. QBSML proves downward and union
-closure in one induction, because union closure of the existential clause (`State.supClosed_exi`)
-needs downward closure of the subformula. Union closure is proved here for NE-free formulas,
-and in BSML for all formulas.
+Each closure property is proved for both polarities by induction on the formula, each case the
+lemma of its operation in `Team/Operations.lean`. The quantifier cases are those of the box and
+the lax diamond of modal inclusion logic, both of which preserve union closure; the strict
+diamond does not ([anttila-haggblom-yang-2025] p. 759).
 
 ## References
 
-* [aloni-vanormondt-2023]
-* [anttila-2021]
+* [aloni-vanormondt-2023] Aloni and van Ormondt, Modified Numerals and Split Disjunction: The
+  First-Order Case
+* [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
+* [anttila-haggblom-yang-2025] Anttila, Häggblom and Yang, Axiomatizing modal inclusion logic
+  and its variants
 -/
 
 @[expose] public section
@@ -53,7 +52,31 @@ section Closure
 
 variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-/-! ### Empty-team property for NE-free formulas -/
+/-! ### Closure properties by induction over the connectives
+
+Each case is the closure lemma of its operation from `Team/Operations.lean`, and negation swaps
+the two polarities. -/
+
+private theorem support_and_antiSupport_supClosed (φ : Formula Var Const Pred)
+    (M : Model W Domain Const Pred) :
+    SupClosed {s | support M φ s} ∧ SupClosed {s | antiSupport M φ s} := by
+  induction φ with
+  | pred P x => exact ⟨supClosed_flat _, supClosed_flat _⟩
+  | predc P c => exact ⟨supClosed_flat _, supClosed_flat _⟩
+  | ne => exact ⟨supClosed_ne, supClosed_singleton_empty⟩
+  | neg _ ih => exact ih.symm
+  | conj _ _ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
+  | disj _ _ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
+  | poss _ _ => exact ⟨supClosed_flat _, supClosed_flat _⟩
+  | exi x _ ih => exact ⟨ih.1.possLax, ih.2.necImage⟩
+  | univ x _ ih => exact ⟨ih.1.necImage, ih.2.possLax⟩
+
+/-- QBSML support is union closed, as BSML's is ([anttila-2021] Proposition 2.2.8).
+    [aloni-vanormondt-2023] Fact 2 states this for `NE`-free quantified formulas, but its argument
+    does not use the hypothesis. -/
+theorem supClosed_support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred) :
+    SupClosed {s : Finset (Index W Var Domain) | support M φ s} :=
+  (support_and_antiSupport_supClosed φ M).1
 
 private theorem support_and_antiSupport_empty_of_neFree
     {φ : Formula Var Const Pred} (hNE : φ.NEFree)
@@ -67,54 +90,33 @@ private theorem support_and_antiSupport_empty_of_neFree
   | conj _ _ ih₁ ih₂ => exact ⟨⟨ih₁.1, ih₂.1⟩, empty_mem_tensor ih₁.2 ih₂.2⟩
   | disj _ _ ih₁ ih₂ => exact ⟨empty_mem_tensor ih₁.1 ih₂.1, ⟨ih₁.2, ih₂.2⟩⟩
   | poss _ _ => exact ⟨empty_mem_flat _, empty_mem_flat _⟩
-  | @exi x _ _ ih => exact ⟨State.empty_mem_exi ih.1, State.empty_mem_univ ih.2⟩
-  | @univ x _ _ ih => exact ⟨State.empty_mem_univ ih.1, State.empty_mem_exi ih.2⟩
+  | exi x _ ih => exact ⟨empty_mem_possLax ih.1, empty_mem_necImage ih.2⟩
+  | univ x _ ih => exact ⟨empty_mem_necImage ih.1, empty_mem_possLax ih.2⟩
 
 theorem support_empty_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     support M φ ∅ :=
   (support_and_antiSupport_empty_of_neFree hNE M).1
 
-/-! ### Downward and union closure for NE-free formulas -/
-
-/-- Support and anti-support of an NE-free formula are downward and union closed. The quantifier
-cases are [aloni-vanormondt-2023] Fact 2 and the others are [anttila-2021] Proposition 2.2.8. -/
-private theorem support_and_antiSupport_dc_uc_of_neFree
-    {φ : Formula Var Const Pred} (hNE : φ.NEFree)
-    (M : Model W Domain Const Pred) :
-    (IsLowerSet {s | support M φ s} ∧ SupClosed {s | support M φ s}) ∧
-    (IsLowerSet {s | antiSupport M φ s} ∧ SupClosed {s | antiSupport M φ s}) := by
+private theorem support_and_antiSupport_isLowerSet_of_neFree
+    {φ : Formula Var Const Pred} (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
+    IsLowerSet {s | support M φ s} ∧ IsLowerSet {s | antiSupport M φ s} := by
   induction hNE with
-  | pred P x => exact ⟨⟨isLowerSet_flat _, supClosed_flat _⟩, ⟨isLowerSet_flat _, supClosed_flat _⟩⟩
-  | predc P c =>
-    exact ⟨⟨isLowerSet_flat _, supClosed_flat _⟩, ⟨isLowerSet_flat _, supClosed_flat _⟩⟩
+  | pred P x => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
+  | predc P c => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
   | neg _ ih => exact ih.symm
-  | conj _ _ ih₁ ih₂ =>
-    exact ⟨⟨ih₁.1.1.inter ih₂.1.1, ih₁.1.2.inter ih₂.1.2⟩,
-      ⟨ih₁.2.1.tensor ih₂.2.1, ih₁.2.2.tensor ih₂.2.2⟩⟩
-  | disj _ _ ih₁ ih₂ =>
-    exact ⟨⟨ih₁.1.1.tensor ih₂.1.1, ih₁.1.2.tensor ih₂.1.2⟩,
-      ⟨ih₁.2.1.inter ih₂.2.1, ih₁.2.2.inter ih₂.2.2⟩⟩
-  | poss _ _ =>
-    exact ⟨⟨isLowerSet_flat _, supClosed_flat _⟩, ⟨isLowerSet_flat _, supClosed_flat _⟩⟩
-  | @exi x _ _ ih =>
-    exact ⟨⟨State.isLowerSet_exi ih.1.1, State.supClosed_exi ih.1.1 ih.1.2⟩,
-      ⟨State.isLowerSet_univ ih.2.1, State.supClosed_univ ih.2.2⟩⟩
-  | @univ x _ _ ih =>
-    exact ⟨⟨State.isLowerSet_univ ih.1.1, State.supClosed_univ ih.1.2⟩,
-      ⟨State.isLowerSet_exi ih.2.1, State.supClosed_exi ih.2.1 ih.2.2⟩⟩
+  | conj _ _ ih₁ ih₂ => exact ⟨ih₁.1.inter ih₂.1, ih₁.2.tensor ih₂.2⟩
+  | disj _ _ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
+  | poss _ _ => exact ⟨isLowerSet_flat _, isLowerSet_flat _⟩
+  | exi x _ ih => exact ⟨ih.1.possLax, ih.2.necImage⟩
+  | univ x _ ih => exact ⟨ih.1.necImage, ih.2.possLax⟩
 
-/-- NE-free QBSML formulas are downward closed ([anttila-2021] Proposition 2.2.8 part 1, for
-    first-order formulas). -/
+/-- `NE`-free QBSML formulas are downward closed ([aloni-vanormondt-2023] Fact 2,
+    [anttila-2021] Proposition 2.2.8). -/
 theorem isLowerSet_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsLowerSet { t : Finset (Index W Var Domain) | support M φ t } :=
-  (support_and_antiSupport_dc_uc_of_neFree hNE M).1.1
-
-theorem supClosed_support_of_neFree {φ : Formula Var Const Pred}
-    (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
-    SupClosed { t : Finset (Index W Var Domain) | support M φ t } :=
-  (support_and_antiSupport_dc_uc_of_neFree hNE M).1.2
+  (support_and_antiSupport_isLowerSet_of_neFree hNE M).1
 
 /-! ### Flatness corollary -/
 
@@ -125,7 +127,7 @@ theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
     IsFlat { t : Finset (Index W Var Domain) | support M φ t } :=
   isFlat_of_isLowerSet_supClosed_empty
     (isLowerSet_support_of_neFree hNE M)
-    (supClosed_support_of_neFree hNE M)
+    (supClosed_support M φ)
     (support_empty_of_neFree hNE M)
 
 /-! ### Soundness for the flat cell (Definability bridge) -/
@@ -224,73 +226,7 @@ theorem eval_mapAtoms_iff (M : Model W Domain Const Pred)
   induction φ with
   | pred P x => exact hfp P x
   | predc P c => exact hfc P c
-  | ne => exact fun _ _ ↦ Iff.rfl
-  | neg ψ ih =>
-    intro b s
-    cases b with
-    | true => exact ih false s
-    | false => exact ih true s
-  | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro b s
-    cases b with
-    | true => exact and_congr (ih₁ true s) (ih₂ true s)
-    | false =>
-      constructor
-      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
-        exact ⟨t₁, (ih₁ false t₁).mp h₁, t₂, (ih₂ false t₂).mp h₂, hsplit⟩
-      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
-        exact ⟨t₁, (ih₁ false t₁).mpr h₁, t₂, (ih₂ false t₂).mpr h₂, hsplit⟩
-  | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    intro b s
-    cases b with
-    | true =>
-      constructor
-      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
-        exact ⟨t₁, (ih₁ true t₁).mp h₁, t₂, (ih₂ true t₂).mp h₂, hsplit⟩
-      · rintro ⟨t₁, h₁, t₂, h₂, hsplit⟩
-        exact ⟨t₁, (ih₁ true t₁).mpr h₁, t₂, (ih₂ true t₂).mpr h₂, hsplit⟩
-    | false => exact and_congr (ih₁ false s) (ih₂ false s)
-  | poss ψ ih =>
-    intro b s
-    cases b with
-    | true =>
-      constructor
-      · intro h i hi
-        obtain ⟨X, hX, hne, hsupp⟩ := h i hi
-        exact ⟨X, hX, hne, (ih true _).mp hsupp⟩
-      · intro h i hi
-        obtain ⟨X, hX, hne, hsupp⟩ := h i hi
-        exact ⟨X, hX, hne, (ih true _).mpr hsupp⟩
-    | false =>
-      constructor
-      · exact fun h i hi ↦ (ih false _).mp (h i hi)
-      · exact fun h i hi ↦ (ih false _).mpr (h i hi)
-  | exi x ψ ih =>
-    intro b s
-    cases b with
-    | true =>
-      constructor
-      · rintro ⟨hf, hne, hsupp⟩
-        exact ⟨hf, hne, (ih true _).mp hsupp⟩
-      · rintro ⟨hf, hne, hsupp⟩
-        exact ⟨hf, hne, (ih true _).mpr hsupp⟩
-    | false =>
-      constructor
-      · exact fun h ↦ (ih false _).mp h
-      · exact fun h ↦ (ih false _).mpr h
-  | univ x ψ ih =>
-    intro b s
-    cases b with
-    | true =>
-      constructor
-      · exact fun h ↦ (ih true _).mp h
-      · exact fun h ↦ (ih true _).mpr h
-    | false =>
-      constructor
-      · rintro ⟨hf, hne, hsupp⟩
-        exact ⟨hf, hne, (ih false _).mp hsupp⟩
-      · rintro ⟨hf, hne, hsupp⟩
-        exact ⟨hf, hne, (ih false _).mpr hsupp⟩
+  | _ => intro b s; cases b <;> simp only [Formula.mapAtoms, eval, *]
 
 /-! ### Upward monotonicity of the NE-free fragment -/
 
@@ -313,25 +249,6 @@ theorem support_nec_mono (M : Model W Domain Const Pred)
     {s : Finset (Index W Var Domain)} (hα : support M α.nec s) :
     support M β.nec s :=
   fun i hi ↦ h _ (hα i hi)
-
-/-! ### Existential introduction via witness reconstruction -/
-
-/-- A state `s` supports `∃x γ` if some state `t` supporting `γ` consists of indices of `s` with
-    `x` reassigned and contains such a reassignment of each index of `s`. This is the existential
-    step of the free-choice facts (`Logic/Team/QBSML/FreeChoice.lean`). -/
-theorem support_exi_of_update_closure (M : Model W Domain Const Pred)
-    {γ : Formula Var Const Pred} {x : Var}
-    {s t : Finset (Index W Var Domain)}
-    (hpar : ∀ j ∈ t, ∃ i ∈ s, ∃ d, i.update x d = j)
-    (hcov : ∀ i ∈ s, ∃ d, i.update x d ∈ t)
-    (hsupp : support M γ t) :
-    support M (.exi x γ) s := by
-  refine ⟨fun i ↦ Finset.univ.filter (fun d ↦ i.update x d ∈ t), ?_, ?_⟩
-  · intro i hi
-    obtain ⟨d, hd⟩ := hcov i hi
-    exact ⟨d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hd⟩⟩
-  · rw [State.extendFunctional_filter_of_update_mem hpar]
-    exact hsupp
 
 end Fragment
 
@@ -410,8 +327,8 @@ private lemma update_refines [DecidableEq Var] {i : Index W Var Domain} {v : Var
   rw [Index.assign_update]
   by_cases hy : y = x
   · subst hy
-    rw [Function.update_self, Function.update_self]
-  · rw [Function.update_of_ne hy, Function.update_of_ne hy]
+    rw [PartialAssign.update_self, Function.update_self]
+  · rw [PartialAssign.update_of_ne hy, Function.update_of_ne hy]
     exact hv y
 
 section RealizeAt
@@ -568,7 +485,7 @@ private theorem support_and_antiSupport_singleton_realizeAt
       subst hψ
       have hNE : φ.NEFree := neFree_of_toFormula? hφ
       constructor
-      · rw [Formula.realizeAt_ex₁]
+      · rw [support_exi_iff, Formula.realizeAt_ex₁]
         constructor
         · rintro ⟨h, hne, hsupp⟩
           have hsupp' := (support_iff_forall_singleton hNE M _).mp hsupp
@@ -593,9 +510,9 @@ private theorem support_and_antiSupport_singleton_realizeAt
         · intro h d
           exact ((ih hφ (update_refines hv x d)).2).mp
             (h (i.update x d) (State.mem_extendUniversal.mpr
-              ⟨d, i, Finset.mem_singleton_self i, rfl⟩))
+              ⟨i, Finset.mem_singleton_self i, d, rfl⟩))
         · intro h j hj
-          obtain ⟨d, i', hi', hupd⟩ := State.mem_extendUniversal.mp hj
+          obtain ⟨i', hi', d, hupd⟩ := State.mem_extendUniversal.mp hj
           rw [Finset.mem_singleton] at hi'
           subst hi'
           subst hupd
@@ -617,14 +534,14 @@ private theorem support_and_antiSupport_singleton_realizeAt
         · intro h d
           exact ((ih hφ (update_refines hv x d)).1).mp
             (h (i.update x d) (State.mem_extendUniversal.mpr
-              ⟨d, i, Finset.mem_singleton_self i, rfl⟩))
+              ⟨i, Finset.mem_singleton_self i, d, rfl⟩))
         · intro h j hj
-          obtain ⟨d, i', hi', hupd⟩ := State.mem_extendUniversal.mp hj
+          obtain ⟨i', hi', d, hupd⟩ := State.mem_extendUniversal.mp hj
           rw [Finset.mem_singleton] at hi'
           subst hi'
           subst hupd
           exact ((ih hφ (update_refines hv x d)).1).mpr (h d)
-      · rw [Formula.realizeAt_all₁, not_forall]
+      · rw [antiSupport_univ_iff, Formula.realizeAt_all₁, not_forall]
         constructor
         · rintro ⟨h, hne, hanti⟩
           have hanti' := (antiSupport_iff_forall_singleton hNE M _).mp hanti
@@ -933,7 +850,7 @@ private theorem support_and_antiSupport_singleton_realize
       subst hτ
       have hNE : φ.NEFree := neFree_of_toModal? hφ
       constructor
-      · rw [ModalFormula.realize_diamond]
+      · rw [support_poss_iff, ModalFormula.realize_diamond]
         constructor
         · intro h
           obtain ⟨X, hX, ⟨w', hw'⟩, hsupp⟩ :=
@@ -976,7 +893,7 @@ private theorem support_and_antiSupport_singleton_realize
       subst hτ
       have hNE : φ.NEFree := neFree_of_toModal? hφ
       constructor
-      · rw [ModalFormula.realize_ex]
+      · rw [support_exi_iff, ModalFormula.realize_ex]
         constructor
         · rintro ⟨h, hne, hsupp⟩
           have hsupp' := (support_iff_forall_singleton hNE M _).mp hsupp
@@ -1001,9 +918,9 @@ private theorem support_and_antiSupport_singleton_realize
         · intro h d
           exact ((ih hφ (update_refines hv x d)).2).mp
             (h (i.update x d) (State.mem_extendUniversal.mpr
-              ⟨d, i, Finset.mem_singleton_self i, rfl⟩))
+              ⟨i, Finset.mem_singleton_self i, d, rfl⟩))
         · intro h j hj
-          obtain ⟨d, i', hi', hupd⟩ := State.mem_extendUniversal.mp hj
+          obtain ⟨i', hi', d, hupd⟩ := State.mem_extendUniversal.mp hj
           rw [Finset.mem_singleton] at hi'
           subst hi'
           subst hupd
@@ -1025,14 +942,14 @@ private theorem support_and_antiSupport_singleton_realize
         · intro h d
           exact ((ih hφ (update_refines hv x d)).1).mp
             (h (i.update x d) (State.mem_extendUniversal.mpr
-              ⟨d, i, Finset.mem_singleton_self i, rfl⟩))
+              ⟨i, Finset.mem_singleton_self i, d, rfl⟩))
         · intro h j hj
-          obtain ⟨d, i', hi', hupd⟩ := State.mem_extendUniversal.mp hj
+          obtain ⟨i', hi', d, hupd⟩ := State.mem_extendUniversal.mp hj
           rw [Finset.mem_singleton] at hi'
           subst hi'
           subst hupd
           exact ((ih hφ (update_refines hv x d)).1).mpr (h d)
-      · rw [ModalFormula.realize_all, not_forall]
+      · rw [antiSupport_univ_iff, ModalFormula.realize_all, not_forall]
         constructor
         · rintro ⟨h, hne, hanti⟩
           have hanti' := (antiSupport_iff_forall_singleton hNE M _).mp hanti

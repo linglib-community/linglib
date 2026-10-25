@@ -115,12 +115,10 @@ theorem eval_of_eval_enrich (hNE : φ.NEFree) (h : eval M pol φ.enrich s) : eva
   | exi x _ ih =>
     cases pol
     · exact ih ((antiSupport_conj_ne M _ s).mp h)
-    · obtain ⟨f, hf, h'⟩ := h.1
-      exact ⟨f, hf, ih h'⟩
+    · exact h.1.imp fun _ ⟨hS, hcov, h'⟩ ↦ ⟨hS, hcov, ih h'⟩
   | univ x _ ih =>
     cases pol
-    · obtain ⟨f, hf, h'⟩ := (antiSupport_conj_ne M _ s).mp h
-      exact ⟨f, hf, ih h'⟩
+    · exact ((antiSupport_conj_ne M _ s).mp h).imp fun _ ⟨hS, hcov, h'⟩ ↦ ⟨hS, hcov, ih h'⟩
     · exact ih h.1
 
 theorem support_of_support_enrich (hNE : φ.NEFree) (h : support M φ.enrich s) :

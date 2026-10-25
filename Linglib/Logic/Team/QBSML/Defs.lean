@@ -11,38 +11,45 @@ public import Linglib.Logic.Team.Kripke
 /-!
 # Quantified bilateral state-based modal logic (QBSML)
 
-QBSML ([aloni-vanormondt-2023]) is the first-order extension of BSML
-([aloni-2022], [anttila-2021]). A formula is evaluated bilaterally —
-supported or anti-supported — at a *state*: a finite set of *indices*
-`⟨w, g⟩` pairing a world with a partial variable assignment. Quantifiers
-are interpreted by extending states, disjunction by splitting them, and
-the non-emptiness atom `NE` — the only source of non-classical behaviour —
-by state non-emptiness.
+QBSML is the first-order extension of BSML. A formula is supported or anti-supported at a
+*state*, a finite set of *indices* `⟨w, g⟩` pairing a world with a partial assignment. An index
+has modal successors `R(wᵢ)[gᵢ]` and `x`-variants `i[x/d]`. The modalities are BSML's over the
+successors, and the quantifiers are the box and the lax diamond of modal inclusion logic over the
+variants. Disjunction splits states, and the non-emptiness atom `NE` is the only source of
+non-classical behaviour.
 
 ## Main definitions
 
-* `Index`, `State.worldProj`: indices `⟨w, g⟩` and the world projection `s↓`.
-* `State.extendIndividual`, `State.extendUniversal`,
-  `State.extendFunctional`: the state extensions `s[x/d]`, `s[x]`, `s[x/h]`.
-* `State.modalLift`: a set of worlds, paired with one assignment.
-* `Formula`: the formula language; `Formula.nec` is the derived `□`;
-  `Formula.NEFree` the NE-free fragment.
-* `Model`, `Model.ofMonadic`: models, as `ModalStructure`s over the monadic
-  signature with constants `(Language.monadic Pred)[[Const]]`.
+* `Index`, `Index.update`: indices `⟨w, g⟩` and their updates `i[x/d]`.
+* `Index.successors`, `Index.variants`: the modal successors and the `x`-variants of an index.
+* `State.worldProj`, `State.modalLift`: the world projection `s↓` and the pairing `X[g]`.
+* `State.extendUniversal`, `State.extendFunctional`: the extensions `s[x]` and `s[x/h]`.
+* `Formula`, `Formula.nec`, `Formula.NEFree`: formulas, the derived `□`, the `NE`-free fragment.
+* `Model`, `Model.ofMonadic`: models over the monadic signature with constants.
 * `eval`, `support`, `antiSupport`: bilateral evaluation.
+
+## Main statements
+
+* `support_poss_iff`, `support_exi_iff`: the paper's clauses for `◇` and `∃`.
 
 ## Implementation notes
 
-* The paper takes `□` primitive and derives `◇`; we invert this, so
-  `eval`'s `poss` clauses match the paper's derived `◇`-clauses.
-* The paper's requirement that all indices of a state share an assignment
-  domain is not enforced at the type level; the state operations
-  preserve it.
-* Each `eval` clause is an operation on team properties applied to the
-  support sets of the subformulas: the propositional and modal clauses are
-  those of `Team/Operations.lean` (`Team.flat`, `Team.tensor`, `Team.ne`),
-  the quantifier clauses `State.univ` and `State.exi` below. The closure
-  inductions of `QBSML/Properties.lean` are folds over their lemmas.
+* The paper takes `□` primitive and derives `◇`; we invert this, so `eval`'s `poss` clauses are
+  the paper's derived `◇`-clauses. Predicates are monadic, as in all of the paper's examples.
+* The paper's existential clause is the lax diamond over the variants (`support_exi_iff`), the
+  lax quantifier of the paper's fn. 10; the universal clause `s[x] ⊨ φ` is the box over them.
+* The paper's requirement that the indices of a state share an assignment domain is not
+  enforced; the state operations preserve it.
+
+## References
+
+* [aloni-vanormondt-2023] Aloni and van Ormondt, Modified Numerals and Split Disjunction: The
+  First-Order Case
+* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [anttila-haggblom-yang-2025] Anttila, Häggblom and Yang, Axiomatizing modal inclusion logic
+  and its variants
+* [yan-2023] Yan, Monotonicity in Intensional Contexts: Weakening and Pragmatic Effects under
+  Modals and Attitudes
 -/
 
 @[expose] public section
@@ -55,8 +62,8 @@ variable {W Var Domain : Type*}
 
 /-! ### Indices -/
 
-/-- An index is a (world, assignment) pair ([aloni-vanormondt-2023]
-    Definition 4.2: `i = ⟨wᵢ, gᵢ⟩`), with `gᵢ` a `PartialAssign`. -/
+/-- An index `⟨w, g⟩` pairs a world with a partial assignment ([aloni-vanormondt-2023]
+    Definition 4.2). -/
 abbrev Index (W Var Domain : Type*) := W × PartialAssign Var Domain
 
 /-- The world component of an index. -/
@@ -69,386 +76,212 @@ section Update
 
 variable [DecidableEq Var]
 
-/-- Update an index's assignment ([aloni-vanormondt-2023] Definitions 4.3–4.4:
-    `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`, with the assignment update `gᵢ[x/d]` as
-    mathlib's `Function.update`). -/
-def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) :
-    Index W Var Domain :=
-  (i.world, Function.update i.assign x ↑d)
+/-- The update `i[x/d] = ⟨wᵢ, gᵢ[x/d]⟩` of an index ([aloni-vanormondt-2023] Definitions 4.3
+    and 4.4). -/
+def Index.update (i : Index W Var Domain) (x : Var) (d : Domain) : Index W Var Domain :=
+  (i.world, i.assign.update x d)
 
-@[simp] theorem Index.world_update (i : Index W Var Domain) (x : Var)
-    (d : Domain) : (i.update x d).world = i.world := rfl
+@[simp] theorem Index.world_update (i : Index W Var Domain) (x : Var) (d : Domain) :
+    (i.update x d).world = i.world := rfl
 
-@[simp] theorem Index.assign_update (i : Index W Var Domain) (x : Var)
-    (d : Domain) : (i.update x d).assign = Function.update i.assign x ↑d :=
-  rfl
+@[simp] theorem Index.assign_update (i : Index W Var Domain) (x : Var) (d : Domain) :
+    (i.update x d).assign = i.assign.update x d := rfl
 
 end Update
 
-/-! ### The world projection -/
+/-! ### World projection and modal pairing -/
 
 section WorldProj
 
-variable [DecidableEq W]
+variable [DecidableEq W] {s : Finset (Index W Var Domain)}
 
-/-- The world projection `s↓` of a state of indices: the set of worlds
-    appearing in some index ([aloni-vanormondt-2023] Definition 4.10:
-    `s↓ := {w | ∃g, (w, g) ∈ s}`). Frame conditions on accessibility are
-    stated relative to `s↓`, so QBSML reuses BSML's notions via this
-    projection. -/
+/-- The world projection `s↓ = {w | ⟨w, g⟩ ∈ s}` of a state ([aloni-vanormondt-2023]
+    Definition 4.10). -/
 def State.worldProj (s : Finset (Index W Var Domain)) : Finset W :=
   s.image Index.world
 
-@[simp] theorem State.mem_worldProj {s : Finset (Index W Var Domain)} {w : W} :
-    w ∈ State.worldProj s ↔ ∃ i ∈ s, i.world = w :=
+@[simp] theorem State.mem_worldProj {w : W} : w ∈ State.worldProj s ↔ ∃ i ∈ s, i.world = w :=
   Finset.mem_image
 
-theorem State.worldProj_mono {s t : Finset (Index W Var Domain)} (h : s ⊆ t) :
+theorem State.worldProj_mono {t : Finset (Index W Var Domain)} (h : s ⊆ t) :
     State.worldProj s ⊆ State.worldProj t :=
   Finset.image_subset_image h
 
-theorem State.worldProj_nonempty {s : Finset (Index W Var Domain)}
-    (h : s.Nonempty) : (State.worldProj s).Nonempty :=
+theorem State.worldProj_nonempty (h : s.Nonempty) : (State.worldProj s).Nonempty :=
   h.image _
 
 end WorldProj
-
-/-! ### State extensions -/
-
-section State
-
-variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
-
-/-- **Individual extension** `s[x/d]`: assign `x` to `d` in every index
-    ([aloni-vanormondt-2023] Definition 4.5: `s[x/d] := {i[x/d] | i ∈ s}`). -/
-def State.extendIndividual (s : Finset (Index W Var Domain))
-    (x : Var) (d : Domain) : Finset (Index W Var Domain) :=
-  s.image (fun i => i.update x d)
-
-/-- **Universal extension** `s[x]`: extend with every domain value at `x`
-    ([aloni-vanormondt-2023] Definition 4.6: `s[x] := {i[x/d] | i ∈ s, d ∈ D}`).
-    Requires `[Fintype Domain]` to range over the entire domain. -/
-def State.extendUniversal [Fintype Domain] (s : Finset (Index W Var Domain))
-    (x : Var) : Finset (Index W Var Domain) :=
-  Finset.univ.biUnion (fun d : Domain => State.extendIndividual s x d)
-
-/-- **Functional extension** `s[x/h]`: for each `i ∈ s`, extend with values
-    drawn from `h i` ([aloni-vanormondt-2023] Definition 4.7:
-    `s[x/h] := {i[x/d] | i ∈ s, d ∈ h(i)}`). Interprets existential
-    quantification: `∃x φ` iff `M, s[x/h] ⊨ φ` for some functional `h`. -/
-def State.extendFunctional (s : Finset (Index W Var Domain))
-    (x : Var) (h : Index W Var Domain → Finset Domain) :
-    Finset (Index W Var Domain) :=
-  s.biUnion (fun i => (h i).image (fun d => i.update x d))
-
-/-! ### Membership characterisations -/
-
-@[simp] theorem State.mem_extendIndividual {s : Finset (Index W Var Domain)}
-    {x : Var} {d : Domain} {j : Index W Var Domain} :
-    j ∈ State.extendIndividual s x d ↔ ∃ i ∈ s, i.update x d = j :=
-  Finset.mem_image
-
-@[simp] theorem State.mem_extendUniversal [Fintype Domain]
-    {s : Finset (Index W Var Domain)} {x : Var} {j : Index W Var Domain} :
-    j ∈ State.extendUniversal s x ↔ ∃ d, ∃ i ∈ s, i.update x d = j := by
-  simp only [State.extendUniversal, Finset.mem_biUnion, Finset.mem_univ,
-    true_and, State.mem_extendIndividual]
-
-@[simp] theorem State.mem_extendFunctional {s : Finset (Index W Var Domain)}
-    {x : Var} {h : Index W Var Domain → Finset Domain} {j : Index W Var Domain} :
-    j ∈ State.extendFunctional s x h ↔ ∃ i ∈ s, ∃ d ∈ h i, i.update x d = j := by
-  simp only [State.extendFunctional, Finset.mem_biUnion, Finset.mem_image]
-
-/-! ### Extension algebra -/
-
-theorem State.extendIndividual_empty (x : Var) (d : Domain) :
-    State.extendIndividual (∅ : Finset (Index W Var Domain)) x d = ∅ :=
-  Finset.image_empty _
-
-theorem State.extendIndividual_union (s t : Finset (Index W Var Domain))
-    (x : Var) (d : Domain) :
-    State.extendIndividual (s ∪ t) x d =
-      State.extendIndividual s x d ∪ State.extendIndividual t x d :=
-  Finset.image_union ..
-
-theorem State.extendIndividual_mono {s t : Finset (Index W Var Domain)}
-    (x : Var) (d : Domain) (hsub : s ⊆ t) :
-    State.extendIndividual s x d ⊆ State.extendIndividual t x d :=
-  Finset.image_subset_image hsub
-
-theorem State.extendUniversal_empty [Fintype Domain] (x : Var) :
-    State.extendUniversal (∅ : Finset (Index W Var Domain)) x = ∅ := by
-  ext j
-  simp
-
-theorem State.extendUniversal_union [Fintype Domain]
-    (s t : Finset (Index W Var Domain)) (x : Var) :
-    State.extendUniversal (s ∪ t) x =
-      State.extendUniversal s x ∪ State.extendUniversal t x := by
-  simp only [State.extendUniversal, State.extendIndividual_union,
-    Finset.biUnion_union]
-
-theorem State.extendUniversal_mono [Fintype Domain]
-    {s t : Finset (Index W Var Domain)} (x : Var) (hsub : s ⊆ t) :
-    State.extendUniversal s x ⊆ State.extendUniversal t x :=
-  Finset.biUnion_mono fun d _ => State.extendIndividual_mono x d hsub
-
-theorem State.extendFunctional_empty (x : Var)
-    (h : Index W Var Domain → Finset Domain) :
-    State.extendFunctional (∅ : Finset (Index W Var Domain)) x h = ∅ :=
-  Finset.biUnion_empty
-
-theorem State.extendFunctional_union (s t : Finset (Index W Var Domain))
-    (x : Var) (h : Index W Var Domain → Finset Domain) :
-    State.extendFunctional (s ∪ t) x h =
-      State.extendFunctional s x h ∪ State.extendFunctional t x h :=
-  Finset.union_biUnion
-
-theorem State.extendFunctional_mono {s t : Finset (Index W Var Domain)}
-    (x : Var) (h : Index W Var Domain → Finset Domain) (hsub : s ⊆ t) :
-    State.extendFunctional s x h ⊆ State.extendFunctional t x h :=
-  Finset.biUnion_subset_biUnion_of_subset_left _ hsub
-
-theorem State.extendUniversal_eq_extendFunctional [Fintype Domain]
-    (s : Finset (Index W Var Domain)) (x : Var) :
-    State.extendUniversal s x =
-      State.extendFunctional s x (fun _ => Finset.univ) := by
-  ext j
-  simp only [State.mem_extendUniversal, State.mem_extendFunctional,
-    Finset.mem_univ, true_and]
-  tauto
-
-theorem State.extendFunctional_filter_of_update_mem [Fintype Domain]
-    {s t : Finset (Index W Var Domain)} {x : Var}
-    (hpar : ∀ j ∈ t, ∃ i ∈ s, ∃ d, i.update x d = j) :
-    State.extendFunctional s x
-      (fun i => Finset.univ.filter (fun d => i.update x d ∈ t)) = t := by
-  ext j
-  rw [State.mem_extendFunctional]
-  constructor
-  · rintro ⟨i, -, d, hd, rfl⟩
-    exact (Finset.mem_filter.mp hd).2
-  · intro hj
-    obtain ⟨i, hi, d, rfl⟩ := hpar j hj
-    exact ⟨i, hi, d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hj⟩, rfl⟩
-
-/-! ### The quantifier clauses as operations on team properties
-
-The universal-extension clause is the preimage of a property along `s ↦ s[x]`, and the
-functional-extension clause asks for some functional, non-empty on the state, whose
-extension lies in the property. These are the operations the quantifier cases of the closure
-inductions in `QBSML/Properties.lean` consume, beside those of `Team/Operations.lean`. Union
-closure of the functional clause needs downward closure of the property, which is why
-QBSML's union closure is confined to the `NE`-free fragment. -/
-
-/-- Universal extension `s ↦ s[x]` as a map of the bounded join-semilattice of states. -/
-def State.extendUniversalHom [Fintype Domain] (x : Var) :
-    SupBotHom (Finset (Index W Var Domain)) (Finset (Index W Var Domain)) where
-  toFun s := State.extendUniversal s x
-  map_sup' s t := State.extendUniversal_union s t x
-  map_bot' := State.extendUniversal_empty x
-
-@[simp] theorem State.extendUniversalHom_apply [Fintype Domain] (x : Var)
-    (s : Finset (Index W Var Domain)) : State.extendUniversalHom x s = State.extendUniversal s x :=
-  rfl
-
-/-- The universal-extension clause: `s[x] ∈ P`. -/
-def State.univ [Fintype Domain] (x : Var) (P : Team.TeamProperty (Index W Var Domain)) :
-    Team.TeamProperty (Index W Var Domain) :=
-  State.extendUniversalHom x ⁻¹' P
-
-/-- The functional-extension clause: `s[x/h] ∈ P` for some `h` non-empty on `s`. -/
-def State.exi (x : Var) (P : Team.TeamProperty (Index W Var Domain)) :
-    Team.TeamProperty (Index W Var Domain) :=
-  {s | ∃ h : Index W Var Domain → Finset Domain, (∀ i ∈ s, (h i).Nonempty) ∧
-    State.extendFunctional s x h ∈ P}
-
-section QuantifierClauses
-
-variable {x : Var} {P : Team.TeamProperty (Index W Var Domain)} {s : Finset (Index W Var Domain)}
-
-@[simp] theorem State.mem_univ [Fintype Domain] :
-    s ∈ State.univ x P ↔ State.extendUniversal s x ∈ P := Iff.rfl
-
-@[simp] theorem State.mem_exi :
-    s ∈ State.exi x P ↔ ∃ h : Index W Var Domain → Finset Domain,
-      (∀ i ∈ s, (h i).Nonempty) ∧ State.extendFunctional s x h ∈ P := Iff.rfl
-
-theorem State.isLowerSet_univ [Fintype Domain] (hP : IsLowerSet P) :
-    IsLowerSet (State.univ x P) :=
-  hP.preimage (OrderHomClass.mono (State.extendUniversalHom x))
-
-theorem State.supClosed_univ [Fintype Domain] (hP : SupClosed P) :
-    SupClosed (State.univ x P) :=
-  hP.preimage (State.extendUniversalHom x)
-
-theorem State.empty_mem_univ [Fintype Domain] (hP : ∅ ∈ P) : ∅ ∈ State.univ x P :=
-  by rw [State.univ, Set.mem_preimage, ← Finset.bot_eq_empty, map_bot]; exact hP
-
-theorem State.isLowerSet_exi (hP : IsLowerSet P) : IsLowerSet (State.exi x P) := by
-  rintro s t hts ⟨h, hne, hs⟩
-  exact ⟨h, fun i hi ↦ hne i (hts hi), hP (State.extendFunctional_mono x h hts) hs⟩
-
-theorem State.supClosed_exi (hP : IsLowerSet P) (hP' : SupClosed P) :
-    SupClosed (State.exi x P) := by
-  rintro s ⟨h_s, hne_s, hs⟩ t ⟨h_t, hne_t, ht⟩
-  classical
-  refine ⟨fun i ↦ if i ∈ s then h_s i else h_t i, fun i hi ↦ ?_, ?_⟩
-  · by_cases his : i ∈ s
-    · simpa [his] using hne_s i his
-    · simpa [his] using hne_t i ((Finset.mem_union.mp hi).resolve_left his)
-  · have eq1 : State.extendFunctional (s ∪ t) x (fun i ↦ if i ∈ s then h_s i else h_t i) =
-        State.extendFunctional s x h_s ∪ State.extendFunctional (t \ s) x h_t := by
-      rw [← Finset.union_sdiff_self_eq_union, State.extendFunctional_union]
-      congr 1
-      · unfold State.extendFunctional
-        exact Finset.biUnion_congr rfl fun i hi ↦ by simp [hi]
-      · unfold State.extendFunctional
-        exact Finset.biUnion_congr rfl fun i hi ↦ by simp [(Finset.mem_sdiff.mp hi).2]
-    show State.extendFunctional (s ∪ t) x _ ∈ P
-    rw [eq1]
-    exact hP' hs (hP (State.extendFunctional_mono x h_t Finset.sdiff_subset) ht)
-
-theorem State.empty_mem_exi (hP : ∅ ∈ P) : ∅ ∈ State.exi x P :=
-  ⟨fun _ ↦ ∅, fun _ hi ↦ absurd hi (Finset.notMem_empty _), by
-    rw [State.extendFunctional_empty]; exact hP⟩
-
-end QuantifierClauses
-
-end State
-
-/-! ### Modal pairing -/
 
 section ModalLift
 
 variable [DecidableEq W] [Fintype Var] [DecidableEq Domain]
 
-/-- **Modal pairing** `R(wᵢ)[gᵢ]`: pair each accessible world with the
-    assignment of the original index. Used in modal evaluation
+/-- The pairing `X[g] = {⟨w, g⟩ | w ∈ X}` of a set of worlds with one assignment
     ([aloni-vanormondt-2023] Definition 4.9). -/
 def State.modalLift (X : Finset W) (g : PartialAssign Var Domain) :
     Finset (Index W Var Domain) :=
-  X.image (fun v => (v, g))
+  X.image fun v ↦ (v, g)
 
-@[simp] theorem State.mem_modalLift {X : Finset W} {g : PartialAssign Var Domain}
-    {i : Index W Var Domain} :
-    i ∈ State.modalLift X g ↔ i.world ∈ X ∧ i.assign = g := by
-  constructor
-  · intro h
+variable {s : Finset (Index W Var Domain)} {X : Finset W} {g : PartialAssign Var Domain}
+
+@[simp] theorem State.mem_modalLift {i : Index W Var Domain} :
+    i ∈ State.modalLift X g ↔ i.world ∈ X ∧ i.assign = g where
+  mp h := by
     obtain ⟨v, hv, rfl⟩ := Finset.mem_image.mp h
     exact ⟨hv, rfl⟩
-  · rintro ⟨h, rfl⟩
+  mpr := by
+    rintro ⟨h, rfl⟩
     exact Finset.mem_image.mpr ⟨i.world, h, rfl⟩
 
-@[simp] theorem State.modalLift_singleton (w : W)
-    (g : PartialAssign Var Domain) :
+@[simp] theorem State.modalLift_singleton (w : W) (g : PartialAssign Var Domain) :
     State.modalLift {w} g = {(w, g)} :=
   Finset.image_singleton ..
 
-@[simp] theorem State.worldProj_modalLift (X : Finset W)
-    (g : PartialAssign Var Domain) :
-    State.worldProj (State.modalLift X g) = X := by
-  ext w
-  simp only [State.mem_worldProj, State.mem_modalLift]
-  constructor
-  · rintro ⟨i, ⟨hX, -⟩, rfl⟩
-    exact hX
-  · exact fun hw => ⟨(w, g), ⟨hw, rfl⟩, rfl⟩
+theorem State.modalLift_mono {Y : Finset W} (h : X ⊆ Y) :
+    State.modalLift X g ⊆ State.modalLift Y g :=
+  Finset.image_subset_image h
 
-theorem State.modalLift_worldProj_of_subset {s : Finset (Index W Var Domain)}
-    {X : Finset W} {g : PartialAssign Var Domain}
-    (h : s ⊆ State.modalLift X g) :
+theorem State.worldProj_subset_of_subset_modalLift (h : s ⊆ State.modalLift X g) :
+    State.worldProj s ⊆ X := fun _ hw ↦ by
+  obtain ⟨i, hi, rfl⟩ := State.mem_worldProj.mp hw
+  exact (State.mem_modalLift.mp (h hi)).1
+
+theorem State.modalLift_worldProj_of_subset (h : s ⊆ State.modalLift X g) :
     State.modalLift (State.worldProj s) g = s := by
   ext i
   simp only [State.mem_modalLift, State.mem_worldProj]
   constructor
   · rintro ⟨⟨j, hjs, hjw⟩, hig⟩
-    have : i = j :=
-      Prod.ext hjw.symm (hig.trans (State.mem_modalLift.mp (h hjs)).2.symm)
-    exact this ▸ hjs
-  · intro his
-    exact ⟨⟨i, his, rfl⟩, (State.mem_modalLift.mp (h his)).2⟩
+    obtain rfl : i = j := Prod.ext hjw.symm (hig.trans (State.mem_modalLift.mp (h hjs)).2.symm)
+    exact hjs
+  · exact fun his ↦ ⟨⟨i, his, rfl⟩, (State.mem_modalLift.mp (h his)).2⟩
 
-theorem State.worldProj_subset_of_subset_modalLift
-    {s : Finset (Index W Var Domain)} {X : Finset W}
-    {g : PartialAssign Var Domain} (h : s ⊆ State.modalLift X g) :
-    State.worldProj s ⊆ X := by
-  rw [← State.worldProj_modalLift X g]
-  exact State.worldProj_mono h
+/-- The modal successors `R(wᵢ)[gᵢ]` of an index: the worlds its world accesses, paired with its
+    assignment ([aloni-vanormondt-2023] Definition 4.9). -/
+def Index.successors (R : W → Finset W) (i : Index W Var Domain) : Finset (Index W Var Domain) :=
+  State.modalLift (R i.world) i.assign
+
+@[simp] theorem Index.mem_successors {R : W → Finset W} {i j : Index W Var Domain} :
+    j ∈ i.successors R ↔ j.world ∈ R i.world ∧ j.assign = i.assign :=
+  State.mem_modalLift
 
 end ModalLift
+
+/-! ### Variants and state extensions -/
+
+section Variants
+
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
+
+/-- The `x`-variants `{i[x/d] | d ∈ D}` of an index. -/
+def Index.variants [Fintype Domain] (x : Var) (i : Index W Var Domain) :
+    Finset (Index W Var Domain) :=
+  Finset.univ.image (i.update x)
+
+@[simp] theorem Index.mem_variants [Fintype Domain] {x : Var} {i j : Index W Var Domain} :
+    j ∈ i.variants x ↔ ∃ d, i.update x d = j := by
+  simp [Index.variants]
+
+/-- The functional extension `s[x/h] = {i[x/d] | i ∈ s, d ∈ h(i)}` ([aloni-vanormondt-2023]
+    Definition 4.7). -/
+def State.extendFunctional (s : Finset (Index W Var Domain)) (x : Var)
+    (h : Index W Var Domain → Finset Domain) : Finset (Index W Var Domain) :=
+  s.biUnion fun i ↦ (h i).image (i.update x)
+
+/-- The universal extension `s[x] = {i[x/d] | i ∈ s, d ∈ D}` ([aloni-vanormondt-2023]
+    Definition 4.6), the union of the `x`-variants of the indices of `s`. -/
+def State.extendUniversal [Fintype Domain] (s : Finset (Index W Var Domain)) (x : Var) :
+    Finset (Index W Var Domain) :=
+  s.biUnion (Index.variants x)
+
+variable {s : Finset (Index W Var Domain)} {x : Var} {j : Index W Var Domain}
+
+@[simp] theorem State.mem_extendFunctional {h : Index W Var Domain → Finset Domain} :
+    j ∈ State.extendFunctional s x h ↔ ∃ i ∈ s, ∃ d ∈ h i, i.update x d = j := by
+  simp [State.extendFunctional]
+
+@[simp] theorem State.mem_extendUniversal [Fintype Domain] :
+    j ∈ State.extendUniversal s x ↔ ∃ i ∈ s, ∃ d, i.update x d = j := by
+  simp [State.extendUniversal]
+
+/-- A state is in the lax diamond of a property over the `x`-variants iff one of its functional
+    `x`-extensions is in it. -/
+theorem State.mem_possLax_variants_iff [Fintype Domain]
+    {P : Team.TeamProperty (Index W Var Domain)} :
+    s ∈ Team.possLax (Index.variants x) P ↔
+      ∃ h : Index W Var Domain → Finset Domain,
+        (∀ i ∈ s, (h i).Nonempty) ∧ State.extendFunctional s x h ∈ P where
+  mp := fun ⟨S, hS, hcov, hSP⟩ ↦ by
+    refine ⟨fun i ↦ Finset.univ.filter fun d ↦ i.update x d ∈ S, fun i hi ↦ ?_, ?_⟩
+    · obtain ⟨_, hjS, hj⟩ := hcov i hi
+      obtain ⟨d, rfl⟩ := Index.mem_variants.mp hj
+      exact ⟨d, Finset.mem_filter.mpr ⟨Finset.mem_univ d, hjS⟩⟩
+    · convert hSP using 1
+      ext j
+      simp only [State.mem_extendFunctional, Finset.mem_filter, Finset.mem_univ, true_and]
+      refine ⟨fun ⟨_, _, _, hd, hj⟩ ↦ hj ▸ hd, fun hj ↦ ?_⟩
+      obtain ⟨i, hi, hji⟩ := Finset.mem_biUnion.mp (hS hj)
+      obtain ⟨d, rfl⟩ := Index.mem_variants.mp hji
+      exact ⟨i, hi, d, hj, rfl⟩
+  mpr := fun ⟨h, hne, hP⟩ ↦ by
+    refine ⟨State.extendFunctional s x h, fun j hj ↦ ?_, fun i hi ↦ ?_, hP⟩
+    · obtain ⟨i, hi, d, -, rfl⟩ := State.mem_extendFunctional.mp hj
+      exact Finset.mem_biUnion.mpr ⟨i, hi, Index.mem_variants.mpr ⟨d, rfl⟩⟩
+    · obtain ⟨d, hd⟩ := hne i hi
+      exact ⟨i.update x d, State.mem_extendFunctional.mpr ⟨i, hi, d, hd, rfl⟩,
+        Index.mem_variants.mpr ⟨d, rfl⟩⟩
+
+end Variants
 
 /-! ### The formula language -/
 
 variable {Const Pred : Type*}
 
-/-- QBSML formula language ([aloni-vanormondt-2023] Definition 4.1),
-    parameterized over variable type `Var`, constant type `Const`, and
-    (monadic) predicate type `Pred`. The paper's terms `t := c | x` appear
-    as the two atom constructors. `□` is not primitive — see
-    `Formula.nec`. -/
+/-- The formulas of QBSML ([aloni-vanormondt-2023] Definition 4.1) over variables `Var`,
+    individual constants `Const` and monadic predicates `Pred`. The terms `t := c | x` appear as
+    the two atom constructors, and `□` is the abbreviation `Formula.nec`. -/
 inductive Formula (Var : Type*) (Const : Type*) (Pred : Type*) where
-  /-- Monadic predicate applied to a variable. -/
+  /-- A predicate applied to a variable. -/
   | pred : Pred → Var → Formula Var Const Pred
-  /-- Monadic predicate applied to an individual constant. -/
+  /-- A predicate applied to an individual constant. -/
   | predc : Pred → Const → Formula Var Const Pred
-  /-- Non-emptiness atom: state is non-empty. -/
+  /-- The non-emptiness atom. -/
   | ne : Formula Var Const Pred
-  /-- Bilateral negation: swap support/anti-support. -/
+  /-- Negation, which swaps support and anti-support. -/
   | neg : Formula Var Const Pred → Formula Var Const Pred
   /-- Conjunction. -/
-  | conj : Formula Var Const Pred → Formula Var Const Pred →
-      Formula Var Const Pred
-  /-- Split (tensor) disjunction. -/
-  | disj : Formula Var Const Pred → Formula Var Const Pred →
-      Formula Var Const Pred
-  /-- Possibility modal. -/
+  | conj : Formula Var Const Pred → Formula Var Const Pred → Formula Var Const Pred
+  /-- Split disjunction. -/
+  | disj : Formula Var Const Pred → Formula Var Const Pred → Formula Var Const Pred
+  /-- The possibility modality. -/
   | poss : Formula Var Const Pred → Formula Var Const Pred
-  /-- Existential quantifier. -/
+  /-- The existential quantifier. -/
   | exi : Var → Formula Var Const Pred → Formula Var Const Pred
-  /-- Universal quantifier. -/
+  /-- The universal quantifier. -/
   | univ : Var → Formula Var Const Pred → Formula Var Const Pred
   deriving Repr
 
-/-- Necessity, derived: `□φ := ¬◇¬φ`. [aloni-vanormondt-2023] takes `□`
-    primitive and `◇ := ¬□¬` derived; we invert this, so `eval`'s `poss`
-    clauses match the paper's derived `◇`-clauses and `nec` matches its
-    primitive `□`. -/
+/-- Necessity `□φ` abbreviates `¬◇¬φ`. -/
 def Formula.nec (φ : Formula Var Const Pred) : Formula Var Const Pred :=
   .neg (.poss (.neg φ))
 
-/-- The NE-free fragment: formulas not containing the `NE` atom. On this
-    fragment QBSML reduces to classical first-order modal logic
-    ([aloni-vanormondt-2023] analogue of [anttila-2021]
-    Proposition 2.2.16); see `Logic/Team/QBSML/Properties.lean`. -/
+/-- The `NE`-free fragment, on which QBSML is classical first-order modal logic
+    ([aloni-vanormondt-2023] Proposition 4.1). -/
 inductive Formula.NEFree : Formula Var Const Pred → Prop
   | pred (P : Pred) (x : Var) : NEFree (.pred P x)
   | predc (P : Pred) (c : Const) : NEFree (.predc P c)
   | neg {φ : Formula Var Const Pred} : NEFree φ → NEFree (.neg φ)
-  | conj {φ ψ : Formula Var Const Pred} :
-      NEFree φ → NEFree ψ → NEFree (.conj φ ψ)
-  | disj {φ ψ : Formula Var Const Pred} :
-      NEFree φ → NEFree ψ → NEFree (.disj φ ψ)
+  | conj {φ ψ : Formula Var Const Pred} : NEFree φ → NEFree ψ → NEFree (.conj φ ψ)
+  | disj {φ ψ : Formula Var Const Pred} : NEFree φ → NEFree ψ → NEFree (.disj φ ψ)
   | poss {φ : Formula Var Const Pred} : NEFree φ → NEFree (.poss φ)
   | exi (x : Var) {φ : Formula Var Const Pred} : NEFree φ → NEFree (.exi x φ)
   | univ (x : Var) {φ : Formula Var Const Pred} : NEFree φ → NEFree (.univ x φ)
 
-/-- The derived `□φ := ¬◇¬φ` preserves NE-freeness. -/
-theorem Formula.NEFree.nec {φ : Formula Var Const Pred}
-    (h : φ.NEFree) : φ.nec.NEFree :=
-  .neg (.poss (.neg h))
-
 /-! ### Atom substitution -/
 
-/-- Substitute a formula for each atom, commuting with every connective and
-    quantifier (and fixing `NE`). The generic congruence machinery for
-    atom-rewriting operations: an atom map whose images are bilaterally
-    equivalent to the atoms is *salva veritate* (`eval_mapAtoms_iff` in
-    `Logic/Team/QBSML/Properties.lean`), so each such operation — e.g.
-    [yan-2023]'s reinterpretation function in `Studies/Yan2023.lean` — needs
-    only its two atom lemmas. -/
-def Formula.mapAtoms
-    (fp : Pred → Var → Formula Var Const Pred)
+/-- Substitute a formula for each atom, commuting with the connectives and quantifiers and fixing
+    `NE`; [yan-2023]'s reinterpretation function is an instance. -/
+def Formula.mapAtoms (fp : Pred → Var → Formula Var Const Pred)
     (fc : Pred → Const → Formula Var Const Pred) :
     Formula Var Const Pred → Formula Var Const Pred
   | .pred P x => fp P x
@@ -461,11 +294,9 @@ def Formula.mapAtoms
   | .exi x φ => .exi x (φ.mapAtoms fp fc)
   | .univ x φ => .univ x (φ.mapAtoms fp fc)
 
-theorem Formula.NEFree.mapAtoms
-    {fp : Pred → Var → Formula Var Const Pred}
-    {fc : Pred → Const → Formula Var Const Pred}
-    (hfp : ∀ P x, (fp P x).NEFree) (hfc : ∀ P c, (fc P c).NEFree)
-    {φ : Formula Var Const Pred} (h : φ.NEFree) :
+theorem Formula.NEFree.mapAtoms {fp : Pred → Var → Formula Var Const Pred}
+    {fc : Pred → Const → Formula Var Const Pred} (hfp : ∀ P x, (fp P x).NEFree)
+    (hfc : ∀ P c, (fc P c).NEFree) {φ : Formula Var Const Pred} (h : φ.NEFree) :
     (φ.mapAtoms fp fc).NEFree := by
   induction h with
   | pred P x => exact hfp P x
@@ -479,22 +310,17 @@ theorem Formula.NEFree.mapAtoms
 
 /-! ### Models -/
 
-/-- A QBSML model ([aloni-vanormondt-2023] Definition 4.2:
-    `M = ⟨W, D, R, I⟩`) **is** a constant-domain first-order Kripke
-    structure over the monadic signature with constants: accessibility `R`
-    plus the world-indexed interpretation `I`, carried as a family of
-    mathlib structures (`FirstOrder.Language.ModalStructure`) — true by
-    construction, not by bridge. -/
-abbrev Model (W : Type*) (Domain : Type*) (Const : Type*)
-    (Pred : Type*) :=
+/-- A QBSML model `⟨W, D, R, I⟩` ([aloni-vanormondt-2023] Definition 4.2) is a constant-domain
+    first-order Kripke structure over the monadic signature with constants. -/
+abbrev Model (W : Type*) (Domain : Type*) (Const : Type*) (Pred : Type*) :=
   FirstOrder.Language.ModalStructure ((Language.monadic Pred)[[Const]]) W Domain
 
 /-- The unary relation symbol of the predicate `P`. -/
 abbrev predSymb (P : Pred) : ((Language.monadic Pred)[[Const]]).Relations 1 :=
   Sum.inl P
 
-/-- The QBSML model with accessibility `access`, constant interpretation
-    `κ`, and valuation `V`. -/
+/-- The QBSML model with accessibility `access`, constant interpretation `κ`, and valuation
+    `V`. -/
 def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
     (κ : W → Const → Domain) (V : W → Pred → Domain → Prop) :
     Model W Domain Const Pred :=
@@ -519,13 +345,10 @@ def Model.ofMonadic {W Domain Const Pred : Type*} (access : W → Finset W)
 
 section Evaluation
 
-variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain]
-variable [Fintype Domain]
+variable [DecidableEq W] [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 
-/-- Bilateral evaluation of QBSML formulas ([aloni-vanormondt-2023]
-    Definition 4.9): `eval M true φ s` is support (`M, s ⊨ φ`),
-    `eval M false φ s` anti-support (`M, s ⫤ φ`). Negation flips the
-    polarity, making double-negation elimination definitional. -/
+/-- Bilateral evaluation ([aloni-vanormondt-2023] Definition 4.9): `eval M true φ s` is support
+    `M, s ⊨ φ` and `eval M false φ s` is anti-support `M, s ⫤ φ`. -/
 def eval (M : Model W Domain Const Pred) :
     Bool → Formula Var Const Pred → Finset (Index W Var Domain) → Prop
   | true,  .pred P x, s =>
@@ -546,15 +369,12 @@ def eval (M : Model W Domain Const Pred) :
   | false, .conj φ ψ, s => s ∈ Team.tensor {t | eval M false φ t} {t | eval M false ψ t}
   | true,  .disj φ ψ, s => s ∈ Team.tensor {t | eval M true φ t} {t | eval M true ψ t}
   | false, .disj φ ψ, s => eval M false φ s ∧ eval M false ψ s
-  | true,  .poss ψ, s =>
-      s ∈ Team.flat fun i ↦ ∃ X : Finset W, X ⊆ M.access i.world ∧ X.Nonempty ∧
-        State.modalLift X i.assign ∈ {t | eval M true ψ t}
-  | false, .poss ψ, s =>
-      s ∈ Team.flat fun i ↦ State.modalLift (M.access i.world) i.assign ∈ {t | eval M false ψ t}
-  | true,  .univ x ψ, s => s ∈ State.univ x {t | eval M true ψ t}
-  | false, .univ x ψ, s => s ∈ State.exi x {t | eval M false ψ t}
-  | true,  .exi x ψ, s => s ∈ State.exi x {t | eval M true ψ t}
-  | false, .exi x ψ, s => s ∈ State.univ x {t | eval M false ψ t}
+  | true,  .poss ψ, s => s ∈ Team.poss (Index.successors M.access) {t | eval M true ψ t}
+  | false, .poss ψ, s => s ∈ Team.nec (Index.successors M.access) {t | eval M false ψ t}
+  | true,  .univ x ψ, s => s ∈ Team.necImage (Index.variants x) {t | eval M true ψ t}
+  | false, .univ x ψ, s => s ∈ Team.possLax (Index.variants x) {t | eval M false ψ t}
+  | true,  .exi x ψ, s => s ∈ Team.possLax (Index.variants x) {t | eval M true ψ t}
+  | false, .exi x ψ, s => s ∈ Team.necImage (Index.variants x) {t | eval M false ψ t}
 
 /-- Support: positive evaluation. -/
 abbrev support (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
@@ -566,13 +386,39 @@ abbrev antiSupport (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
     (s : Finset (Index W Var Domain)) : Prop :=
   eval M false φ s
 
-@[simp] lemma support_neg (M : Model W Domain Const Pred)
-    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
-    support M (.neg φ) s ↔ antiSupport M φ s := Iff.rfl
+@[simp] lemma support_neg (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
+    (s : Finset (Index W Var Domain)) : support M (.neg φ) s ↔ antiSupport M φ s := Iff.rfl
 
-@[simp] lemma antiSupport_neg (M : Model W Domain Const Pred)
-    (φ : Formula Var Const Pred) (s : Finset (Index W Var Domain)) :
-    antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
+@[simp] lemma antiSupport_neg (M : Model W Domain Const Pred) (φ : Formula Var Const Pred)
+    (s : Finset (Index W Var Domain)) : antiSupport M (.neg φ) s ↔ support M φ s := Iff.rfl
+
+variable {M : Model W Domain Const Pred} {φ : Formula Var Const Pred} {x : Var}
+  {s : Finset (Index W Var Domain)}
+
+theorem support_poss_iff : support M (.poss φ) s ↔
+    ∀ i ∈ s, ∃ X ⊆ M.access i.world, X.Nonempty ∧ support M φ (State.modalLift X i.assign) :=
+  forall₂_congr fun i _ ↦
+    ⟨fun ⟨t, ht, hne, h⟩ ↦ ⟨State.worldProj t, State.worldProj_subset_of_subset_modalLift ht,
+        State.worldProj_nonempty hne, (State.modalLift_worldProj_of_subset ht).symm ▸ h⟩,
+      fun ⟨X, hX, hne, h⟩ ↦ ⟨State.modalLift X i.assign, State.modalLift_mono hX, hne.image _, h⟩⟩
+
+theorem antiSupport_poss_iff : antiSupport M (.poss φ) s ↔
+    ∀ i ∈ s, antiSupport M φ (State.modalLift (M.access i.world) i.assign) := Iff.rfl
+
+theorem support_univ_iff : support M (.univ x φ) s ↔ support M φ (State.extendUniversal s x) :=
+  Iff.rfl
+
+theorem antiSupport_exi_iff :
+    antiSupport M (.exi x φ) s ↔ antiSupport M φ (State.extendUniversal s x) := Iff.rfl
+
+theorem support_exi_iff : support M (.exi x φ) s ↔ ∃ h : Index W Var Domain → Finset Domain,
+    (∀ i ∈ s, (h i).Nonempty) ∧ support M φ (State.extendFunctional s x h) :=
+  State.mem_possLax_variants_iff
+
+theorem antiSupport_univ_iff : antiSupport M (.univ x φ) s ↔
+    ∃ h : Index W Var Domain → Finset Domain,
+      (∀ i ∈ s, (h i).Nonempty) ∧ antiSupport M φ (State.extendFunctional s x h) :=
+  State.mem_possLax_variants_iff
 
 end Evaluation
 

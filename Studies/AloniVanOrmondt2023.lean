@@ -201,7 +201,7 @@ theorem fig14_premise :
 theorem fig14_conclusion_fails :
     ¬ support fig14Model (.univ .x (.conj (.poss three) (.poss more))) fig14State := by
   intro h
-  obtain ⟨X, hX, hne, hsupp⟩ := h.1 (fig14Index.update .x .b) (by decide)
+  obtain ⟨X, hX, hne, hsupp⟩ := support_poss_iff.mp h.1 (fig14Index.update .x .b) (by decide)
   have hX' : X ⊆ {wPaQb} := by
     simpa [fig14Model, Model.ofMonadic, Index.update, fig14Index] using hX
   obtain rfl : X = {wPaQb} := hne.subset_singleton_iff.mp hX'
