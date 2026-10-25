@@ -1,11 +1,11 @@
 module
 
+public import Linglib.Core.Order.UpperLower.Principal
 public import Linglib.Pragmatics.SocialMeaning.Register
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Bounds.Defs
 public import Mathlib.Order.UpperLower.CompleteLattice
-public import Mathlib.Order.UpperLower.Principal
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -136,13 +136,12 @@ def standard (θ θ' : D) : ModalForce → UpperSet D
 so a necessity claim entails the weak necessity claim, which entails the possibility claim. -/
 theorem monotone_standard (hθ : ⊥ < θ) (hθθ' : θ ≤ θ') : Monotone (standard θ θ') := by
   intro f g hfg
-  rw [← UpperSet.coe_subset_coe]
-  cases f <;> cases g <;> simp only [standard, UpperSet.coe_Ioi, UpperSet.coe_Ici] <;> first
-    | exact subset_rfl
+  cases f <;> cases g <;> first
+    | exact le_rfl
     | exact absurd hfg (by decide)
-    | exact Set.Ici_subset_Ioi.2 hθ
-    | exact Set.Ici_subset_Ioi.2 (hθ.trans_le hθθ')
-    | exact Set.Ici_subset_Ici.2 hθθ'
+    | exact UpperSet.Ioi_le_Ici hθ
+    | exact UpperSet.Ioi_le_Ici (hθ.trans_le hθθ')
+    | exact (UpperSet.Ici_strictMono D).monotone hθθ'
 
 /-- On a dense scale with thresholds strictly in order, the strength order of the forces is
 exactly the order of their standards. -/

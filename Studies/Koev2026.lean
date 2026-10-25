@@ -200,9 +200,9 @@ variable {α D : Type*} [LinearOrder D] [OrderTop D] (Cr : α → D)
 
 /-- *Believe* at the maximum of a credence scale and *doubt* at the minimum of its dual are
 contradictory (17). -/
-theorem isCompl_maxStandardPos_minStandardPos_dual :
-    IsCompl {p | MaxStandardPos Cr p} {p | MinStandardPos (OrderDual.toDual ∘ Cr) p} :=
-  (Kennedy2007.isCompl_minStandardPos_maxStandardPos_dual (OrderDual.toDual ∘ Cr)).symm
+theorem isCompl_maxStandard_minStandard_dual :
+    IsCompl (Cr ⁻¹' Set.Ici ⊤) ((OrderDual.toDual ∘ Cr) ⁻¹' Set.Ioi ⊥) :=
+  (Kennedy2007.antonyms_isCompl (OrderDual.toDual ∘ Cr)).symm
 
 end Credence
 
@@ -235,8 +235,8 @@ def hintikka : Doxastic.DoxasticPredicate W E where
 credence's support, the universal force of (1). -/
 theorem holdsAt_hintikka_iff [DiscreteMeasurableSpace W] [Countable W]
     [∀ x w, IsProbabilityMeasure (Cr x w)] (x : E) (p : Set W) (w : W) :
-    (hintikka Cr).HoldsAt x (· ∈ p) w ↔ MaxStandardPos (Lassiter2017.likelihood (Cr x w)) p := by
-  rw [← Lassiter2017.mem_certain_iff_maxStandardPos, Lassiter2017.mem_certain_iff,
+    (hintikka Cr).HoldsAt x (· ∈ p) w ↔ p ∈ Lassiter2017.likelihood (Cr x w) ⁻¹' Set.Ici ⊤ := by
+  rw [← Lassiter2017.certain_eq_preimage, Lassiter2017.mem_certain_iff,
     measureReal_def, ENNReal.toReal_eq_one_iff, ← prob_compl_eq_zero_iff .of_discrete,
     ← mem_ae_iff, ← Filter.eventually_mem_set, ae_iff_of_countable]
   simp [Doxastic.DoxasticPredicate.holdsAt_iff, hintikka, Doxastic.VeridicalityHolds, box_iff]

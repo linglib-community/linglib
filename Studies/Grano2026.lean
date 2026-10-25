@@ -98,8 +98,9 @@ theorem closure_iff (μ : α → D) (x : α) :
 
 /-- Existential closure above the least degree only just escapes triviality: the standard of
 possibility covers the one every degree meets (p. 729). -/
-theorem closure_covBy : (⊥ : UpperSet D) ⋖ ModalForce.standard θ θ' .possibility :=
-  bot_covBy_Ioi_bot
+theorem closure_covBy : (⊥ : UpperSet D) ⋖ ModalForce.standard θ θ' .possibility := by
+  rw [← UpperSet.Ici_bot]
+  exact UpperSet.Ici_covBy_Ioi ⊥
 
 /-- An unselective universal binding the degree in its restriction, (62), is local existential
 closure, (63)–(65). -/

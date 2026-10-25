@@ -118,8 +118,8 @@ theorem good_gap (tp : Degree.ThresholdPair D) (h : tp.neg ≤ tp.pos) : tp.gap.
 
 /-! ### Against the minimum-standard analysis -/
 
-theorem comparative_entails_minStandardPos [OrderBot D] {y : E} (h : μ y w < μ x w) :
-    Degree.MinStandardPos (μ · w) x :=
+theorem comparative_entails_minStandard [OrderBot D] {y : E} (h : μ y w < μ x w) :
+    x ∈ (μ · w) ⁻¹' Set.Ioi ⊥ :=
   bot_le.trans_lt h
 
 /-- Under a necessity standard it does not ((51b)): an object can outvalue another and fall

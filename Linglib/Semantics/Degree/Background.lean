@@ -26,8 +26,8 @@ to a positive form, upward monotonicity, holds on a total background and on no o
 
 Read as extensions, the threshold properties form a monotone delineation exactly when the
 background is total, the parallel the authors draw with Klein's consistency postulate, and the
-thresholds are degree thresholds pulled back along the measure exactly when the measure reflects
-the background.
+thresholds are the preimages of standards on the degrees, upper sets of them, exactly when the
+measure reflects the background.
 
 ## Main statements
 
@@ -36,8 +36,8 @@ the background.
 * `maxComparative_and_not_mem_image`: the comparative does not entail the positive form.
 * `isMonotoneOn_upperSets_iff`: the thresholds form a monotone delineation iff the background
   is total.
-* `forall_isUpperSet_exists_preimage_iff`: the thresholds are pulled-back degree thresholds iff
-  the measure reflects the background.
+* `forall_isUpperSet_exists_preimage_iff`: the thresholds are preimages of standards on the
+  degrees iff the measure reflects the background.
 
 ## References
 
@@ -150,14 +150,13 @@ theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : S
     MaxComparative .gt (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
   ⟨exists_isUpperSet_of_maxComparative hm, maxComparative_of_exists_isUpperSet hμ hb⟩
 
-/-- Every threshold property of the background is a degree threshold pulled back along the
-measure iff the measure reflects the background. -/
+/-- Every threshold property of the background is the preimage of a standard on the degrees iff
+the measure reflects the background. -/
 theorem forall_isUpperSet_exists_preimage_iff :
-    (∀ T : Set S, IsUpperSet T → ∃ U : Set D, IsUpperSet U ∧ T = μ ⁻¹' U) ↔
-      ∀ a b, μ a ≤ μ b → a ≤ b := by
-  refine ⟨fun h a b hab ↦ ?_, fun h T hT ↦ ⟨upperClosure (μ '' T), (upperClosure _).upper, ?_⟩⟩
-  · obtain ⟨U, hU, hT⟩ := h (Ici a) (isUpperSet_Ici a)
-    exact (Set.ext_iff.1 hT b).2 (hU hab ((Set.ext_iff.1 hT a).1 (mem_Ici.2 le_rfl)))
+    (∀ T : Set S, IsUpperSet T → ∃ U : UpperSet D, T = μ ⁻¹' U) ↔ ∀ a b, μ a ≤ μ b → a ≤ b := by
+  refine ⟨fun h a b hab ↦ ?_, fun h T hT ↦ ⟨upperClosure (μ '' T), ?_⟩⟩
+  · obtain ⟨U, hT⟩ := h (Ici a) (isUpperSet_Ici a)
+    exact (Set.ext_iff.1 hT b).2 (U.upper hab ((Set.ext_iff.1 hT a).1 (mem_Ici.2 le_rfl)))
   · refine Set.ext fun s ↦ ⟨fun hs ↦ subset_upperClosure ⟨s, hs, rfl⟩, ?_⟩
     rintro ⟨_, ⟨t, ht, rfl⟩, hts⟩
     exact hT (h t s hts) ht
@@ -168,7 +167,7 @@ theorem total_of_reflect_le {D : Type*} [LinearOrder D] {μ : S → D}
 
 theorem exists_isUpperSet_forall_ne_preimage {D : Type*} [LinearOrder D] (μ : S → D) {s t : S}
     (hst : ¬ s ≤ t) (hts : ¬ t ≤ s) :
-    ∃ T : Set S, IsUpperSet T ∧ ∀ U : Set D, IsUpperSet U → T ≠ μ ⁻¹' U := by
+    ∃ T : Set S, IsUpperSet T ∧ ∀ U : UpperSet D, T ≠ μ ⁻¹' U := by
   by_contra h
   push Not at h
   obtain h | h := total_of_reflect_le (forall_isUpperSet_exists_preimage_iff.1 h) s t

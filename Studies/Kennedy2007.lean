@@ -11,18 +11,16 @@ with a contextual standard, from absolute ones, whose standard is an endpoint of
 minimum (*wet*, *bent*) or the maximum (*full*, *dry*). The positive form is
 `⟦pos⟧ = λg λx. g(x) ≥ s(g)` (27), with the standard `s` fixed by the scale rather than by a
 comparison class, and Interpretive Economy (66) derives it from the scale structure. This file
-checks the diagnostics of Section 3.2 that separate the three positive forms,
-`Degree.RelativePos`, `Degree.MinStandardPos` and `Degree.MaxStandardPos`.
+checks the diagnostics of Section 3.2 that separate the positive forms at the three standards,
+the preimages of `Set.Ioi θ`, `Set.Ioi ⊥` and `Set.Ici ⊤` under the measure.
 
 ## Main results
 
-* `exists_relativePos_of_lt`, `maxStandardPos_and_not_iff`: definite descriptions, (53)–(54).
-* `not_maxStandardPos_of_lt_top`, `not_minStandardPos_iff`: the Sorites second premise,
-  (57)–(58).
-* `isCompl_minStandardPos_maxStandardPos_dual`: the denial of a minimum-standard adjective
-  asserts its maximum-standard antonym, (47).
-* `minStandardPos_of_comparative`, `not_maxStandardPos_of_comparative`,
-  `relativePos_undetermined_of_comparative`: comparatives, (49)–(51).
+* `definite_relative`, `definite_maximum`: definite descriptions, (53)–(54).
+* `sorites_maximum`, `sorites_minimum`: the Sorites second premise, (57)–(58).
+* `antonyms_isCompl`: the denial of a minimum-standard adjective asserts its maximum-standard
+  antonym, (47).
+* `wet_of_wetter`, `not_dry_of_drier`, `long_undetermined_of_longer`: comparatives, (49)–(51).
 * `table61_iff_licenses`: maximizers and minimizers follow the endpoints of the scale, (61).
 * `bent_straight_absolute`: Interpretive Economy selects the endpoint standard of *bent* and
   *straight* over a relative one, p. 37.
@@ -48,57 +46,57 @@ variable {Entity D : Type*} [LinearOrder D]
 
 /-- *The long one* succeeds because two objects of different length can always be told apart by
 a contextual standard. -/
-theorem exists_relativePos_of_lt (μ : Entity → D) {a b : Entity} (h : μ b < μ a) :
-    ∃ θ, RelativePos μ θ a ∧ ¬ RelativePos μ θ b :=
+theorem definite_relative (μ : Entity → D) {a b : Entity} (h : μ b < μ a) :
+    ∃ θ, a ∈ μ ⁻¹' Set.Ioi θ ∧ b ∉ μ ⁻¹' Set.Ioi θ :=
   ⟨μ b, h, lt_irrefl _⟩
 
 /-- A maximum-standard adjective distinguishes two objects only when exactly one is at the maximum,
 as in *the full one* (54). -/
-theorem maxStandardPos_and_not_iff [OrderTop D] (μ : Entity → D) (a b : Entity) :
-    MaxStandardPos μ a ∧ ¬ MaxStandardPos μ b ↔ μ a = ⊤ ∧ μ b ≠ ⊤ := by
+theorem definite_maximum [OrderTop D] (μ : Entity → D) (a b : Entity) :
+    a ∈ μ ⁻¹' Set.Ici ⊤ ∧ b ∉ μ ⁻¹' Set.Ici ⊤ ↔ μ a = ⊤ ∧ μ b ≠ ⊤ := by
   simp
 
 /-! ### The Sorites second premise (§3.2, (57)–(58)) -/
 
 /-- A theater with one fewer occupied seat than a full one is not full (57), since any degree
 below the maximum fails a maximum standard. -/
-theorem not_maxStandardPos_of_lt_top [OrderTop D] {μ : Entity → D} {x : Entity}
-    (h : μ x < ⊤) : ¬ MaxStandardPos μ x :=
+theorem sorites_maximum [OrderTop D] {μ : Entity → D} {x : Entity} (h : μ x < ⊤) :
+    x ∉ μ ⁻¹' Set.Ici ⊤ :=
   h.not_ge
 
 /-- A rod with no bend is not bent (58), since exactly the minimum fails a minimum standard. -/
-theorem not_minStandardPos_iff [OrderBot D] (μ : Entity → D) (x : Entity) :
-    ¬ MinStandardPos μ x ↔ μ x = ⊥ :=
-  not_lt.trans le_bot_iff
+theorem sorites_minimum [OrderBot D] (μ : Entity → D) (x : Entity) :
+    x ∉ μ ⁻¹' Set.Ioi ⊥ ↔ μ x = ⊥ := by
+  simp
 
 /-- A minimum standard and its antonym's maximum standard on the dual scale partition the domain, so
 *the door is not open* entails *the door is closed* (47). -/
-theorem isCompl_minStandardPos_maxStandardPos_dual [OrderBot D] (μ : Entity → D) :
-    IsCompl {x | MinStandardPos μ x} {x | MaxStandardPos (OrderDual.toDual ∘ μ) x} := by
-  have : {x | MaxStandardPos (OrderDual.toDual ∘ μ) x} = {x | MinStandardPos μ x}ᶜ := by
+theorem antonyms_isCompl [OrderBot D] (μ : Entity → D) :
+    IsCompl (μ ⁻¹' Set.Ioi ⊥) ((OrderDual.toDual ∘ μ) ⁻¹' Set.Ici ⊤) := by
+  have : (OrderDual.toDual ∘ μ) ⁻¹' Set.Ici ⊤ = (μ ⁻¹' Set.Ioi ⊥)ᶜ := by
     ext x
-    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, not_minStandardPos_iff, maxStandardPos_iff,
-      Function.comp]
+    simp only [Set.mem_preimage, Function.comp_apply, Set.mem_Ici, top_le_iff,
+      Set.mem_compl_iff, Set.mem_Ioi, not_lt, le_bot_iff]
     exact OrderDual.toDual.injective.eq_iff
   rw [this]
   exact isCompl_compl
 
 /-! ### Comparatives (§3.2, (49)–(52)) -/
 
-/-- *The floor is wetter than the countertop* entails *the floor is wet* (49). -/
-theorem minStandardPos_of_comparative [OrderBot D] {μ : Entity → D} {a b : Entity}
-    (h : μ b < μ a) : MinStandardPos μ a :=
-  bot_le.trans_lt h
+/-- *The floor is wetter than the countertop* entails *the floor is wet* (49): the comparative is
+the positive form at the countertop's degree, a stronger standard than the minimum. -/
+theorem wet_of_wetter [OrderBot D] (μ : Entity → D) (b : Entity) :
+    μ ⁻¹' Set.Ioi (μ b) ⊆ μ ⁻¹' Set.Ioi ⊥ :=
+  Set.preimage_mono (Set.Ioi_subset_Ioi bot_le)
 
 /-- *The floor is drier than the countertop* entails *the countertop is not dry* (50). -/
-theorem not_maxStandardPos_of_comparative [OrderTop D] {μ : Entity → D} {a b : Entity}
-    (h : μ b < μ a) : ¬ MaxStandardPos μ b :=
-  not_maxStandardPos_of_lt_top (h.trans_le le_top)
+theorem not_dry_of_drier [OrderTop D] {μ : Entity → D} {a b : Entity} (h : μ b < μ a) :
+    b ∉ μ ⁻¹' Set.Ici ⊤ :=
+  sorites_maximum (h.trans_le le_top)
 
 /-- *Rod A is longer than rod B* entails neither that A is long nor that it is not (51). -/
-theorem relativePos_undetermined_of_comparative (μ : Entity → D) {a b : Entity}
-    (h : μ b < μ a) :
-    (∃ θ, RelativePos μ θ a) ∧ ∃ θ, ¬ RelativePos μ θ a :=
+theorem long_undetermined_of_longer (μ : Entity → D) {a b : Entity} (h : μ b < μ a) :
+    (∃ θ, a ∈ μ ⁻¹' Set.Ioi θ) ∧ ∃ θ, a ∉ μ ⁻¹' Set.Ioi θ :=
   ⟨⟨μ b, h⟩, μ a, lt_irrefl _⟩
 
 /-! ### Degree modifiers (§3.2, (61)) -/
