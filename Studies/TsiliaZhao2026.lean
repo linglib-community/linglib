@@ -75,12 +75,6 @@ open Tense Tense.Perspective
 variable {T : Type*} [LinearOrder T] {B : Finset Allen.Relation} {C : Finset Ordering}
   {r th π : NonemptyInterval T}
 
-/-- (76)–(77): the presuppositions of a clause whose tense, with cell `tense` and reference `r`,
-is modified by an adverb with cell `adv` and reference `th`, as a function of the perspective.
-The silent *during* places the reference of the tense within that of the adverb. -/
-def Restricted (tense adv : Finset Allen.Relation) (r th π : NonemptyInterval T) : Prop :=
-  Presup tense π r ∧ r ≤ th ∧ Presup adv π th
-
 /-! ### The clash and the shift-together effect (section 5) -/
 
 /-- PRES, (69), presupposes overlap with the perspective. -/
@@ -94,14 +88,14 @@ theorem presup_past : Presup (Allen.ofPosition ⟦past⟧) π r ↔ r.Precedes �
 /-- A present-tensed clause modified by a distal adverb is contradictory whatever the perspective
 ((75), (78), (81)–(82)). -/
 theorem not_restricted_present {a : DeicticAdverb} (ha : a.IsDistal) (r th π : NonemptyInterval T) :
-    ¬ Restricted (Allen.ofPosition ⟦present⟧) (Allen.ofPosition a.cell) r th π :=
+    ¬ Restricted (Allen.ofPosition ⟦present⟧) (Allen.ofPosition a.cell) π r th :=
   fun ⟨hr, hle, hth⟩ ↦ not_presup_of_presup_overlaps ha (presup_overlaps.2 (presup_present.1 hr))
     hle hth
 
 /-- Anand and Toosarvandani's present, their (11a), presupposes containment in the perspective,
 and a distal adverb is excluded with it all the same. -/
 theorem not_restricted_le {a : DeicticAdverb} (ha : a.IsDistal) (r th π : NonemptyInterval T) :
-    ¬ Restricted Allen.le (Allen.ofPosition a.cell) r th π :=
+    ¬ Restricted Allen.le (Allen.ofPosition a.cell) π r th :=
   fun ⟨hr, hle, hth⟩ ↦ not_presup_of_presup_overlaps ha
     (presup_overlaps.2 (NonemptyInterval.overlaps_of_le (presup_le.1 hr))) hle hth
 
@@ -115,7 +109,7 @@ def thenAdverbs : List (String × DeicticAdverb) :=
 /-- No adverb of the sample restricts a present tense, the ⌜then⌝-present puzzle (12). -/
 theorem not_restricted_present_of_mem {a : DeicticAdverb} (ha : a ∈ thenAdverbs.map Prod.snd)
     (r th π : NonemptyInterval T) :
-    ¬ Restricted (Allen.ofPosition ⟦present⟧) (Allen.ofPosition a.cell) r th π :=
+    ¬ Restricted (Allen.ofPosition ⟦present⟧) (Allen.ofPosition a.cell) π r th :=
   not_restricted_present ((by decide : ∀ a ∈ thenAdverbs.map Prod.snd, a.IsDistal) a ha) r th π
 
 /-- The clash is the adverb's doing: Russian *sejčas* 'now', with the presupposition of PRES,
@@ -139,7 +133,7 @@ theorem exists_split_anchor {π₁ π₂ : NonemptyInterval T} (h : ¬ π₁.Ove
 /-- (38), (39), (44): a PAST admits at its own reference any adverb whose positions admit
 precedence, ⌜then⌝ and *tooji* alike. -/
 theorem restricted_past_self (hC : .lt ∈ C) (h : Presup (Allen.ofPosition ⟦past⟧) π r) :
-    Restricted (Allen.ofPosition ⟦past⟧) (Allen.ofPosition C) r r π :=
+    Restricted (Allen.ofPosition ⟦past⟧) (Allen.ofPosition C) π r r :=
   ⟨h, le_rfl, by rwa [presup_ofPosition, NonemptyInterval.position_eq_lt.2 (presup_past.1 h)]⟩
 
 /-- (32): *tooji* is used only of past times, so unlike English *then* it cannot refer to a time
@@ -151,19 +145,19 @@ theorem presup_then_not_tooji_of_precedes (h : π.Precedes th) :
     denote_past, NonemptyInterval.position_eq_gt.2 h]
 
 /-- (86)–(87): a deleted tense carries no presupposition, so only the adverb's remains. -/
-theorem restricted_top_iff : Restricted ⊤ B r th π ↔ r ≤ th ∧ Presup B π th :=
+theorem restricted_top_iff : Restricted ⊤ B π r th ↔ r ≤ th ∧ Presup B π th :=
   and_iff_right presup_top
 
 /-- (89a): with no OP_π the perspective stays the utterance time, from which the reported
 meeting is disjoint, and ⌜then⌝ restricts the deleted past. -/
 theorem restricted_top_of_not_overlaps (h : ¬ r.Overlaps π) :
-    Restricted ⊤ (Allen.ofPosition ⟦present⟧ᶜ) r r π :=
+    Restricted ⊤ (Allen.ofPosition ⟦present⟧ᶜ) π r r :=
   restricted_top_iff.2 ⟨le_rfl, by simpa [denote_present] using h⟩
 
 /-- With OP_π shifting the perspective onto the time of the reported speech, a distal adverb cannot
 restrict it (89b). -/
 theorem not_restricted_top_of_le (hC : .eq ∉ C) (hr : r ≤ π) :
-    ¬ Restricted ⊤ (Allen.ofPosition C) r th π :=
+    ¬ Restricted ⊤ (Allen.ofPosition C) π r th :=
   fun ⟨_, hle, hth⟩ ↦ not_presup_of_presup_overlaps hC
     (presup_overlaps.2 (NonemptyInterval.overlaps_of_le hr)) hle hth
 
@@ -185,8 +179,8 @@ satisfies the presuppositions of its tense and of the adverb restricting it. -/
 theorem accepted_iff_exists_restricted [Nontrivial T] :
     ∀ row ∈ Examples.all, ∀ C ∈ tenseCell row, ∀ a ∈ adverb row,
       (.variable ≤ row.judgment ↔ ∃ π r th : NonemptyInterval T,
-        Restricted (Allen.ofPosition C) (Allen.ofPosition a.cell) r th π) := by
-  simp only [Restricted, exists_presup_ofPosition_iff]
+        Restricted (Allen.ofPosition C) (Allen.ofPosition a.cell) π r th) := by
+  simp only [exists_restricted_ofPosition_iff]
   decide +kernel
 
 /-! ### Perspective-sensitive *now* (section 7) -/
@@ -194,14 +188,14 @@ theorem accepted_iff_exists_restricted [Nontrivial T] :
 /-- (112), (114)–(115): a past reference cannot be restricted by a *sejčas* whose reference
 lies within the perspective. -/
 theorem not_restricted_past_of_le (hth : th ≤ π) :
-    ¬ Restricted (Allen.ofPosition ⟦past⟧) B r th π :=
+    ¬ Restricted (Allen.ofPosition ⟦past⟧) B π r th :=
   fun ⟨hr, hle, _⟩ ↦ NonemptyInterval.precedes_not_overlaps (presup_past.1 hr)
     (NonemptyInterval.overlaps_of_le (hle.trans hth))
 
 /-- The presuppositions (114) and (115) alone do not exclude a past under *sejčas*. -/
 theorem exists_restricted_past_present {a b : T} (hab : a < b) :
     ∃ r th π : NonemptyInterval T,
-      Restricted (Allen.ofPosition ⟦past⟧) (Allen.ofPosition ⟦present⟧) r th π :=
+      Restricted (Allen.ofPosition ⟦past⟧) (Allen.ofPosition ⟦present⟧) π r th :=
   ⟨.pure a, ⟨(a, b), hab.le⟩, .pure b, presup_past.2 (by exact hab),
     NonemptyInterval.le_def.2 ⟨le_rfl, hab.le⟩, presup_present.2 ⟨hab.le, le_rfl⟩⟩
 

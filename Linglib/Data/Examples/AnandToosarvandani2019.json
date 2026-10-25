@@ -1,0 +1,562 @@
+[
+  {
+    "id": "anandtoosarvandani2019_5",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(5)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The janitor turned off the lights. The room was empty now.",
+    "discourseSegments": [
+      "The janitor turned off the lights.",
+      "The room was empty now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "overlapping",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "final"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ]
+    ],
+    "comment": "Printed e1 ∘ s2: with now in final position the second sentence overlaps the first.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_7",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(7)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "People began to leave. The room was empty now.",
+    "discourseSegments": [
+      "People began to leave.",
+      "The room was empty now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "overlapping",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "forward-shifted",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "final"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ],
+      [
+        "aspect",
+        "state cannot overlap"
+      ]
+    ],
+    "comment": "Printed #, *e1 ∘ s2: the state cannot overlap the beginning to leave, as in Partee's (6), and final now does not shift forward.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_8",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(8)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "People began to leave. Now, the room was empty.",
+    "discourseSegments": [
+      "People began to leave.",
+      "Now, the room was empty."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "forward-shifted",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "initial"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ],
+      [
+        "sister",
+        "yes"
+      ],
+      [
+        "anterior",
+        "no"
+      ]
+    ],
+    "comment": "Printed e1 < s2.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_29_initial",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(29)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How things have changed since the campaign! Cohen plead guilty last week and incurred Trump's wrath. Now, he enjoyed his full support.",
+    "discourseSegments": [
+      "How things have changed since the campaign!",
+      "Cohen plead guilty last week and incurred Trump's wrath.",
+      "Now, he enjoyed his full support."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "backshifted",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "initial"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ],
+      [
+        "sister",
+        "yes"
+      ],
+      [
+        "anterior",
+        "yes"
+      ]
+    ],
+    "comment": "Printed {#Now,} with *e1, e2 > s3: the enjoying cannot precede the incurring of Trump's wrath. The row expands the initial variant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_29_final",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(29)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How things have changed since the campaign! Cohen plead guilty last week and incurred Trump's wrath. He enjoyed his full support now.",
+    "discourseSegments": [
+      "How things have changed since the campaign!",
+      "Cohen plead guilty last week and incurred Trump's wrath.",
+      "He enjoyed his full support now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "backshifted",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "final"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ],
+      [
+        "anterior",
+        "yes"
+      ]
+    ],
+    "comment": "Printed {#now} with *e1, e2 > s3. The row expands the final variant.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_36a",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(36a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "People began to leave. Then, the room was empty.",
+    "discourseSegments": [
+      "People began to leave.",
+      "Then, the room was empty."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "forward-shifted",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "initial"
+      ],
+      [
+        "demonstrative",
+        "then"
+      ],
+      [
+        "sister",
+        "yes"
+      ],
+      [
+        "anterior",
+        "no"
+      ]
+    ],
+    "comment": "Printed e1 < s2.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_36b",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(36b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "People began to leave. The room was empty then.",
+    "discourseSegments": [
+      "People began to leave.",
+      "The room was empty then."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "overlapping",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "forward-shifted",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "final"
+      ],
+      [
+        "demonstrative",
+        "then"
+      ],
+      [
+        "aspect",
+        "state cannot overlap"
+      ]
+    ],
+    "comment": "Printed #, *e1 ∘ s2: in final position then must be simultaneous.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_37",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(37)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "How things have changed since the campaign! Cohen plead guilty last week and incurred Trump's wrath. Then, he enjoyed his full support.",
+    "discourseSegments": [
+      "How things have changed since the campaign!",
+      "Cohen plead guilty last week and incurred Trump's wrath.",
+      "Then, he enjoyed his full support."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "backshifted",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "initial"
+      ],
+      [
+        "demonstrative",
+        "then"
+      ],
+      [
+        "sister",
+        "yes"
+      ],
+      [
+        "anterior",
+        "yes"
+      ]
+    ],
+    "comment": "Printed e1, e2 > s3: the campaign makes an earlier interval retrievable.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_38",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(38)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Cohen incurred Trump's wrath yesterday. Then, he enjoyed his full support.",
+    "discourseSegments": [
+      "Cohen incurred Trump's wrath yesterday.",
+      "Then, he enjoyed his full support."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "backshifted",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "forward-shifted",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "initial"
+      ],
+      [
+        "demonstrative",
+        "then"
+      ],
+      [
+        "sister",
+        "yes"
+      ],
+      [
+        "anterior",
+        "no"
+      ]
+    ],
+    "comment": "Printed *e1 > e2: in a two-sentence discourse only forward movement is possible.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_40a",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(40a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The janitor turned off the lights. The room was empty now.",
+    "discourseSegments": [
+      "The janitor turned off the lights.",
+      "The room was empty now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "overlapping",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "final"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ]
+    ],
+    "comment": "Printed e1 ∘ s2: the room's emptiness is described from the perspective of the turning off.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_40b",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(40b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The janitor turned off the lights. The room was empty then.",
+    "discourseSegments": [
+      "The janitor turned off the lights.",
+      "The room was empty then."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "overlapping",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "final"
+      ],
+      [
+        "demonstrative",
+        "then"
+      ]
+    ],
+    "comment": "Printed e1 ∘ s2: the emptiness is described from another vantage point, possibly the utterance.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_47a",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(47a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Whenever he used to go to a restaurant, Max would avoid all kinds of seafood. Recently, he got over his fear. He had a nice meal last night. Now, he ordered the salmon.",
+    "discourseSegments": [
+      "Whenever he used to go to a restaurant, Max would avoid all kinds of seafood.",
+      "Recently, he got over his fear.",
+      "He had a nice meal last night.",
+      "Now, he ordered the salmon."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "overlapping",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "initial"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ],
+      [
+        "sister",
+        "no"
+      ],
+      [
+        "anterior",
+        "no"
+      ]
+    ],
+    "comment": "Printed e1 ⊃ e2: in an elaboration the preceding sentence answers no sister subquestion, so initial now may overlap it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "anandtoosarvandani2019_47b",
+    "source": {
+      "bibkey": "anand-toosarvandani-2019",
+      "paperLabel": "(47b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Whenever he used to go to a restaurant, Max would avoid all kinds of seafood. Recently, he got over his fear. He had a nice meal last night. He ordered the salmon now.",
+    "discourseSegments": [
+      "Whenever he used to go to a restaurant, Max would avoid all kinds of seafood.",
+      "Recently, he got over his fear.",
+      "He had a nice meal last night.",
+      "He ordered the salmon now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "overlapping",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "position",
+        "final"
+      ],
+      [
+        "demonstrative",
+        "now"
+      ]
+    ],
+    "comment": "Printed e1 ⊃ e2.",
+    "verified": "page-image"
+  }
+]
