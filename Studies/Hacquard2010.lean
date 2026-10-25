@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.Basic
 public import Linglib.Semantics.Modality.EventRelativity
+public import Linglib.Syntax.Cartography
 public import Linglib.Data.Examples.Hacquard2010
 
 /-!
@@ -22,9 +23,9 @@ worlds as that event, so the outer layer of quantification is vacuous, (53) to (
 `attitude_can_iff` and `attitude_must_iff`, the possibility case once the information state is
 consistent; and Yalcin's supposition (58) is incoherent because the modal quantifies over the
 supposition's own content, `not_attitude_suppose`. Cinque's puzzle (section 3) is that
-[cinque-1999]'s hierarchy fixes the epistemic head above tense and the root head below aspect,
-`CinqueHead`, where a single flavor-neutral entry should suffice; the paper derives the same
-matrix correlation from the content of the binding event, `epistemic_high_iff`. The paper's
+[cinque-1999]'s hierarchy fixes the epistemic head above tense and the root head below aspect
+(`tPast_lt_iff_eq_modEpistemic`), where a single flavor-neutral entry should suffice; the paper
+derives the same matrix correlation from the content of the binding event, `epistemic_high_iff`. The paper's
 examples are the rows of `Data.Examples.Hacquard2010`.
 
 ## Implementation notes
@@ -35,6 +36,11 @@ contentless events; the descriptive part of an attitude or asserting event, `Exp
 in the paper's derivations, and the circumstantial modal base (61), whose event dependence the
 paper leaves open, is not defined. The individual and time a modal is keyed to (section 4) enter
 only through the binding event; the Italian restructuring evidence belongs to [hacquard-2006].
+
+(10) says that root modals are below aspect. The hierarchy places one root modal head, the
+volitional, below habitual aspect but above perfect and progressive aspect, and leaves the
+obligation and ability heads of the root modals the paper discusses unplaced. (10) agrees with
+Cinque's first approximation of the hierarchy, which puts a root head among the lowest aspects.
 
 ## References
 
@@ -111,48 +117,22 @@ theorem not_attitude_suppose {rain : W → Prop} (hC : con e = some C) (hne : C.
   obtain ⟨w₁, hw₁, hnr⟩ := (contentPossibility_iff_of_eq_some hC).1 (h w₀ hw₀).2
   exact hnr (h w₁ hw₁).1
 
-/-! ### Cinque's puzzle, section 3 -/
+/-! ### Cinque's puzzle, section 3
 
-/-- [cinque-1999]'s hierarchy at the granularity the paper uses: an epistemic head above tense,
-a root head below aspect. -/
-inductive CinqueHead
-  | modEpistemic
-  | tense
-  | aspect
-  | modRoot
-  deriving DecidableEq
+The paper's (10) is the part of [cinque-1999]'s hierarchy, `Cartography.Head`, that the puzzle
+turns on. -/
 
-namespace CinqueHead
+/-- Of the modal heads of the hierarchy, the epistemic one alone is above tense, so the hierarchy
+fixes the flavor of a modal by its position. -/
+theorem tPast_lt_iff_eq_modEpistemic {h : Cartography.Head} (hm : h.family = .modality) :
+    .tPast < h ↔ h = .modEpistemic := by
+  revert h
+  decide
 
-/-- Height in the hierarchy, the topmost head highest. -/
-def height : CinqueHead → ℕ
-  | .modEpistemic => 3
-  | .tense => 2
-  | .aspect => 1
-  | .modRoot => 0
-
-/-- `h` sits above `h'` in the hierarchy. -/
-def Above (h h' : CinqueHead) : Prop := h'.height < h.height
-
-instance : DecidableRel Above := fun h h' ↦ inferInstanceAs (Decidable (h'.height < h.height))
-
-/-- A high head sits above tense. -/
-def IsHigh (h : CinqueHead) : Prop := h.Above .tense
-
-instance : DecidablePred IsHigh := fun h ↦ inferInstanceAs (Decidable (h.Above .tense))
-
-/-- The flavor the hierarchy stipulates for each modal head. -/
-def flavor : CinqueHead → Option ModalFlavor
-  | .modEpistemic => some .epistemic
-  | .modRoot => some .circumstantial
-  | _ => none
-
-theorem isHigh_iff (h : CinqueHead) : h.IsHigh ↔ h.flavor = some .epistemic := by
-  cases h <;> decide
-
-theorem aspect_above_modRoot : CinqueHead.aspect.Above .modRoot := by decide
-
-end CinqueHead
+/-- The volitional head, the only root modal head the hierarchy places, is below habitual aspect.
+-/
+theorem modVolitional_lt_aspHabitual : Cartography.Head.modVolitional < .aspHabitual := by
+  decide
 
 /-- One flavor-neutral entry gives an epistemic modal base exactly in the position above tense,
 since the VP event of (59) lacks content (section 6.3). -/
