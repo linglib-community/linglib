@@ -134,7 +134,7 @@ def ex2a : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Lucie" .PROPN,
      Word.mk' "talked" .VERB, Word.mk' "about" .ADP, Word.mk' "him" .PRON]
-    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)],
+    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case)],
    3, 5, 0, Examples.ex2a⟩
 
 /-- In (3a) *John and Mary talked about himself* the reflexive fares no better. -/
@@ -142,7 +142,7 @@ def ex3a : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "John" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN,
      Word.mk' "talked" .VERB, Word.mk' "about" .ADP, Word.mk' "himself" .PRON]
-    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)],
+    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case)],
    3, 5, 0, Examples.ex3a⟩
 
 /-- In (5a) *Both John and Mary love him* the paired coordinator forces distribution, and the
@@ -159,7 +159,7 @@ def ex9a : Stimulus :=
   ⟨4, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "talked" .VERB, Word.mk' "about" .ADP,
      Word.mk' "himself" .PRON]
-    1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_)],
+    1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case)],
    1, 3, 0, Examples.ex9a⟩
 
 /-- (9b) *Max talked about him* is the non-coordinate pronoun baseline, marginal by Condition B,
@@ -168,7 +168,7 @@ def ex9b : Stimulus :=
   ⟨4, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "talked" .VERB, Word.mk' "about" .ADP,
      Word.mk' "him" .PRON]
-    1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_)],
+    1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case)],
    1, 3, 0, Examples.ex9b⟩
 
 /-- In (11a) *Max and Lucie talked about his work* the possessive is no valent of the verb. -/
@@ -177,7 +177,7 @@ def ex11a : Stimulus :=
     [Word.mk' "Max" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Lucie" .PROPN,
      Word.mk' "talked" .VERB, Word.mk' "about" .ADP, Word.mk' "his" .PRON,
      Word.mk' "work" .NOUN]
-    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 6, .obl), (6, 4, .case_),
+    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 6, .obl), (6, 4, .case),
        (6, 5, .nmod)],
    3, 5, 0, Examples.ex11a⟩
 
@@ -186,7 +186,7 @@ def ex11e : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "Max" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Lucie" .PROPN,
      Word.mk' "talked" .VERB, Word.mk' "about" .ADP, Word.mk' "Max" .PROPN]
-    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)],
+    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case)],
    3, 5, 0, Examples.ex11e⟩
 
 /-- In (20b) *Hank and Hillary appear to her to be good friends* the experiencer of a raising
@@ -197,7 +197,7 @@ def ex20b : Stimulus :=
      Word.mk' "appear" .VERB, Word.mk' "to" .ADP, Word.mk' "her" .PRON,
      Word.mk' "to" .PART, Word.mk' "be" .AUX, Word.mk' "good" .ADJ,
      Word.mk' "friends" .NOUN]
-    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_),
+    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case),
        (3, 9, .xcomp), (9, 6, .mark), (9, 7, .cop), (9, 8, .amod)],
    3, 5, 2, Examples.ex20b⟩
 
@@ -208,7 +208,7 @@ def ex24a : Stimulus :=
     [Word.mk' "John" .PROPN, Word.mk' "talked" .VERB, Word.mk' "about" .ADP,
      Word.mk' "himself" .PRON, Word.mk' "and" .CCONJ, Word.mk' "his" .PRON,
      Word.mk' "mother" .NOUN]
-    1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case_), (3, 4, .cc), (3, 6, .conj),
+    1 [(1, 0, .nsubj), (1, 3, .obl), (3, 2, .case), (3, 4, .cc), (3, 6, .conj),
        (6, 5, .nmod)],
    1, 3, 0, Examples.ex24a⟩
 
@@ -242,7 +242,7 @@ def ex55a : Stimulus :=
   ⟨6, .ofArcs
     [Word.mk' "Sophy" .PROPN, Word.mk' "and" .CCONJ, Word.mk' "Edgar" .PROPN,
      Word.mk' "voted" .VERB, Word.mk' "for" .ADP, Word.mk' "her" .PRON]
-    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case_)],
+    3 [(3, 0, .nsubj), (0, 1, .cc), (0, 2, .conj), (3, 5, .obl), (5, 4, .case)],
    3, 5, 0, Examples.ex55a⟩
 
 theorem vote_counterexample : ex55a.Violates ∧ ex55a.row.judgment = .acceptable := by decide

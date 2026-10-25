@@ -20,19 +20,19 @@ open CLDF.Wordlist
 abbrev Cell := UD.MorphFeatures
 
 /-- The nominative singular cell, `Case=Nom|Number=Sing`. -/
-def nom_sg : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing }
+def nom_sg : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing }
 
 /-- The accusative singular cell, `Case=Acc|Number=Sing`. -/
-def acc_sg : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
+def acc_sg : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
 
 /-- The genitive singular cell, `Case=Gen|Number=Sing`. -/
-def gen_sg : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
+def gen_sg : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
 
 /-- The nominative plural cell, `Case=Nom|Number=Plur`. -/
-def nom_pl : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
+def nom_pl : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
 
 /-- The genitive plural cell, `Case=Gen|Number=Plur`. -/
-def gen_pl : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
+def gen_pl : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
 
 def Lexemes.rope : Lexeme :=
   { id := "rope", languageId := "nucl1301", parameterId := "rope", label := "ip",

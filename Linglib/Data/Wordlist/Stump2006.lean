@@ -30,238 +30,238 @@ inductive Grade where
 abbrev Cell := UD.MorphFeatures
 
 /-- The nom sg cell, `Case=Nom|Number=Sing`. -/
-def nom_sg : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing }
+def nom_sg : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing }
 
 /-- The gen sg cell, `Case=Gen|Number=Sing`. -/
-def gen_sg : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
+def gen_sg : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
 
 /-- The dat sg cell, `Case=Dat|Number=Sing`. -/
-def dat_sg : Cell := { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing }
+def dat_sg : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing }
 
 /-- The acc sg cell, `Case=Acc|Number=Sing`. -/
-def acc_sg : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
+def acc_sg : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
 
 /-- The voc sg cell, `Case=Voc|Number=Sing`. -/
-def voc_sg : Cell := { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Sing }
+def voc_sg : Cell := { case := ↑UD.Case.Voc, number := ↑UD.Number.Sing }
 
 /-- The loc sg cell, `Case=Loc|Number=Sing`. -/
-def loc_sg : Cell := { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Sing }
+def loc_sg : Cell := { case := ↑UD.Case.Loc, number := ↑UD.Number.Sing }
 
 /-- The ins sg cell, `Case=Ins|Number=Sing`. -/
-def ins_sg : Cell := { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Sing }
+def ins_sg : Cell := { case := ↑UD.Case.Ins, number := ↑UD.Number.Sing }
 
 /-- The nom pl cell, `Case=Nom|Number=Plur`. -/
-def nom_pl : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
+def nom_pl : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
 
 /-- The gen pl cell, `Case=Gen|Number=Plur`. -/
-def gen_pl : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
+def gen_pl : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
 
 /-- The dat pl cell, `Case=Dat|Number=Plur`. -/
-def dat_pl : Cell := { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur }
+def dat_pl : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur }
 
 /-- The acc pl cell, `Case=Acc|Number=Plur`. -/
-def acc_pl : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur }
+def acc_pl : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur }
 
 /-- The voc pl cell, `Case=Voc|Number=Plur`. -/
-def voc_pl : Cell := { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Plur }
+def voc_pl : Cell := { case := ↑UD.Case.Voc, number := ↑UD.Number.Plur }
 
 /-- The loc pl cell, `Case=Loc|Number=Plur`. -/
-def loc_pl : Cell := { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Plur }
+def loc_pl : Cell := { case := ↑UD.Case.Loc, number := ↑UD.Number.Plur }
 
 /-- The ins pl cell, `Case=Ins|Number=Plur`. -/
-def ins_pl : Cell := { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Plur }
+def ins_pl : Cell := { case := ↑UD.Case.Ins, number := ↑UD.Number.Plur }
 
 /-- The nom sg masc cell, `Case=Nom|Number=Sing|Gender=Masc`. -/
 def nom_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The voc sg masc cell, `Case=Voc|Number=Sing|Gender=Masc`. -/
 def voc_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Voc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The acc sg masc cell, `Case=Acc|Number=Sing|Gender=Masc`. -/
 def acc_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The ins sg masc cell, `Case=Ins|Number=Sing|Gender=Masc`. -/
 def ins_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The dat sg masc cell, `Case=Dat|Number=Sing|Gender=Masc`. -/
 def dat_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The abl sg masc cell, `Case=Abl|Number=Sing|Gender=Masc`. -/
 def abl_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Abl, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Abl, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The gen sg masc cell, `Case=Gen|Number=Sing|Gender=Masc`. -/
 def gen_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The loc sg masc cell, `Case=Loc|Number=Sing|Gender=Masc`. -/
 def loc_sg_masc : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The nom du masc cell, `Case=Nom|Number=Dual|Gender=Masc`. -/
 def nom_du_masc : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The voc du masc cell, `Case=Voc|Number=Dual|Gender=Masc`. -/
 def voc_du_masc : Cell :=
-  { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Voc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The acc du masc cell, `Case=Acc|Number=Dual|Gender=Masc`. -/
 def acc_du_masc : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The ins du masc cell, `Case=Ins|Number=Dual|Gender=Masc`. -/
 def ins_du_masc : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The dat du masc cell, `Case=Dat|Number=Dual|Gender=Masc`. -/
 def dat_du_masc : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The abl du masc cell, `Case=Abl|Number=Dual|Gender=Masc`. -/
 def abl_du_masc : Cell :=
-  { case_ := ↑UD.Case.Abl, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Abl, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The gen du masc cell, `Case=Gen|Number=Dual|Gender=Masc`. -/
 def gen_du_masc : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The loc du masc cell, `Case=Loc|Number=Dual|Gender=Masc`. -/
 def loc_du_masc : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The nom pl masc cell, `Case=Nom|Number=Plur|Gender=Masc`. -/
 def nom_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The voc pl masc cell, `Case=Voc|Number=Plur|Gender=Masc`. -/
 def voc_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Voc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The acc pl masc cell, `Case=Acc|Number=Plur|Gender=Masc`. -/
 def acc_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The ins pl masc cell, `Case=Ins|Number=Plur|Gender=Masc`. -/
 def ins_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The dat pl masc cell, `Case=Dat|Number=Plur|Gender=Masc`. -/
 def dat_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The abl pl masc cell, `Case=Abl|Number=Plur|Gender=Masc`. -/
 def abl_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Abl, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Abl, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The gen pl masc cell, `Case=Gen|Number=Plur|Gender=Masc`. -/
 def gen_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The loc pl masc cell, `Case=Loc|Number=Plur|Gender=Masc`. -/
 def loc_pl_masc : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The nom sg neut cell, `Case=Nom|Number=Sing|Gender=Neut`. -/
 def nom_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The voc sg neut cell, `Case=Voc|Number=Sing|Gender=Neut`. -/
 def voc_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Voc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The acc sg neut cell, `Case=Acc|Number=Sing|Gender=Neut`. -/
 def acc_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The ins sg neut cell, `Case=Ins|Number=Sing|Gender=Neut`. -/
 def ins_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The dat sg neut cell, `Case=Dat|Number=Sing|Gender=Neut`. -/
 def dat_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The abl sg neut cell, `Case=Abl|Number=Sing|Gender=Neut`. -/
 def abl_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Abl, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Abl, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The gen sg neut cell, `Case=Gen|Number=Sing|Gender=Neut`. -/
 def gen_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The loc sg neut cell, `Case=Loc|Number=Sing|Gender=Neut`. -/
 def loc_sg_neut : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The nom du neut cell, `Case=Nom|Number=Dual|Gender=Neut`. -/
 def nom_du_neut : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The voc du neut cell, `Case=Voc|Number=Dual|Gender=Neut`. -/
 def voc_du_neut : Cell :=
-  { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Voc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The acc du neut cell, `Case=Acc|Number=Dual|Gender=Neut`. -/
 def acc_du_neut : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The ins du neut cell, `Case=Ins|Number=Dual|Gender=Neut`. -/
 def ins_du_neut : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The dat du neut cell, `Case=Dat|Number=Dual|Gender=Neut`. -/
 def dat_du_neut : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The abl du neut cell, `Case=Abl|Number=Dual|Gender=Neut`. -/
 def abl_du_neut : Cell :=
-  { case_ := ↑UD.Case.Abl, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Abl, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The gen du neut cell, `Case=Gen|Number=Dual|Gender=Neut`. -/
 def gen_du_neut : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The loc du neut cell, `Case=Loc|Number=Dual|Gender=Neut`. -/
 def loc_du_neut : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Neut }
 
 /-- The nom pl neut cell, `Case=Nom|Number=Plur|Gender=Neut`. -/
 def nom_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The voc pl neut cell, `Case=Voc|Number=Plur|Gender=Neut`. -/
 def voc_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Voc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Voc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The acc pl neut cell, `Case=Acc|Number=Plur|Gender=Neut`. -/
 def acc_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The ins pl neut cell, `Case=Ins|Number=Plur|Gender=Neut`. -/
 def ins_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The dat pl neut cell, `Case=Dat|Number=Plur|Gender=Neut`. -/
 def dat_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The abl pl neut cell, `Case=Abl|Number=Plur|Gender=Neut`. -/
 def abl_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Abl, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Abl, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The gen pl neut cell, `Case=Gen|Number=Plur|Gender=Neut`. -/
 def gen_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The loc pl neut cell, `Case=Loc|Number=Plur|Gender=Neut`. -/
 def loc_pl_neut : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 def Lexemes.room : Lexeme :=
   { id := "room", languageId := "czec1258", parameterId := "room" }

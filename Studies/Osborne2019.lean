@@ -148,7 +148,7 @@ def passiveTree : Graph 4 :=
 
 def longPassiveTree : Graph 6 :=
   .ofArcs [the_, ball, was_, kickedPass, by_, john] 3
-    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obl), (5, 4, .case_)]
+    [(1, 0, .det), (3, 1, .nsubj), (3, 2, .aux), (3, 5, .obl), (5, 4, .case)]
 
 example : passiveTree.SatisfiesFrames (.ofList [(3, passiveValency English.Verbs.kick)]) := by
   decide

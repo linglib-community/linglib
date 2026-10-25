@@ -256,7 +256,7 @@ def shareRound : List Segment → List Segment
 the accusative -I or the genitive -In (§3.3). -/
 def suffixVowels (cell : Wordlist.Cell) : List Segment :=
   (if cell.number = ↑UD.Number.Plur then [A'] else []) ++
-    if cell.case_ = ↑UD.Case.Nom then [] else [I]
+    if cell.case = ↑UD.Case.Nom then [] else [I]
 
 /-! ### The tableaux (14), (20) and (22) -/
 

@@ -66,310 +66,310 @@ structure Cell extends UD.MorphFeatures where
   deriving DecidableEq, Repr
 
 /-- The nom cell, `Case=Nom`. -/
-def nom : Cell := { case_ := ↑UD.Case.Nom }
+def nom : Cell := { case := ↑UD.Case.Nom }
 
 /-- The gen cell, `Case=Gen`. -/
-def gen : Cell := { case_ := ↑UD.Case.Gen }
+def gen : Cell := { case := ↑UD.Case.Gen }
 
 /-- The acc cell, `Case=Acc`. -/
-def acc : Cell := { case_ := ↑UD.Case.Acc }
+def acc : Cell := { case := ↑UD.Case.Acc }
 
 /-- The part cell, `Case=Par`. -/
-def part : Cell := { case_ := ↑UD.Case.Par }
+def part : Cell := { case := ↑UD.Case.Par }
 
 /-- The ine cell, `Case=Ine`. -/
-def ine : Cell := { case_ := ↑UD.Case.Ine }
+def ine : Cell := { case := ↑UD.Case.Ine }
 
 /-- The ela cell, `Case=Ela`. -/
-def ela : Cell := { case_ := ↑UD.Case.Ela }
+def ela : Cell := { case := ↑UD.Case.Ela }
 
 /-- The ill cell, `Case=Ill`. -/
-def ill : Cell := { case_ := ↑UD.Case.Ill }
+def ill : Cell := { case := ↑UD.Case.Ill }
 
 /-- The ade cell, `Case=Ade`. -/
-def ade : Cell := { case_ := ↑UD.Case.Ade }
+def ade : Cell := { case := ↑UD.Case.Ade }
 
 /-- The abl cell, `Case=Abl`. -/
-def abl : Cell := { case_ := ↑UD.Case.Abl }
+def abl : Cell := { case := ↑UD.Case.Abl }
 
 /-- The all cell, `Case=All`. -/
-def allat : Cell := { case_ := ↑UD.Case.All }
+def allat : Cell := { case := ↑UD.Case.All }
 
 /-- The ess cell, `Case=Ess`. -/
-def ess : Cell := { case_ := ↑UD.Case.Ess }
+def ess : Cell := { case := ↑UD.Case.Ess }
 
 /-- The transl cell, `Case=Tra`. -/
-def transl : Cell := { case_ := ↑UD.Case.Tra }
+def transl : Cell := { case := ↑UD.Case.Tra }
 
 /-- The com 1sg possessor cell, `Case=Com|Possessor=1sg`. -/
-def com_px1sg : Cell := { case_ := ↑UD.Case.Com, possessor := ↑Possessor.sg1 }
+def com_px1sg : Cell := { case := ↑UD.Case.Com, possessor := ↑Possessor.sg1 }
 
 /-- The abess cell, `Case=Abe`. -/
-def abess : Cell := { case_ := ↑UD.Case.Abe }
+def abess : Cell := { case := ↑UD.Case.Abe }
 
 /-- The inst cell, `Case=Ins`. -/
-def inst : Cell := { case_ := ↑UD.Case.Ins }
+def inst : Cell := { case := ↑UD.Case.Ins }
 
 /-- The nom 1sg possessor cell, `Case=Nom|Possessor=1sg`. -/
-def nom_px1sg : Cell := { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.sg1 }
+def nom_px1sg : Cell := { case := ↑UD.Case.Nom, possessor := ↑Possessor.sg1 }
 
 /-- The nom 2sg possessor cell, `Case=Nom|Possessor=2sg`. -/
-def nom_px2sg : Cell := { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.sg2 }
+def nom_px2sg : Cell := { case := ↑UD.Case.Nom, possessor := ↑Possessor.sg2 }
 
 /-- The nom 3sg possessor cell, `Case=Nom|Possessor=3sg`. -/
-def nom_px3sg : Cell := { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.sg3 }
+def nom_px3sg : Cell := { case := ↑UD.Case.Nom, possessor := ↑Possessor.sg3 }
 
 /-- The ela 1sg possessor cell, `Case=Ela|Possessor=1sg`. -/
-def ela_px1sg : Cell := { case_ := ↑UD.Case.Ela, possessor := ↑Possessor.sg1 }
+def ela_px1sg : Cell := { case := ↑UD.Case.Ela, possessor := ↑Possessor.sg1 }
 
 /-- The all 2sg possessor cell, `Case=All|Possessor=2sg`. -/
-def allat_px2sg : Cell := { case_ := ↑UD.Case.All, possessor := ↑Possessor.sg2 }
+def allat_px2sg : Cell := { case := ↑UD.Case.All, possessor := ↑Possessor.sg2 }
 
 /-- The ine 1sg possessor cell, `Case=Ine|Possessor=1sg`. -/
-def ine_px1sg : Cell := { case_ := ↑UD.Case.Ine, possessor := ↑Possessor.sg1 }
+def ine_px1sg : Cell := { case := ↑UD.Case.Ine, possessor := ↑Possessor.sg1 }
 
 /-- The ill 2sg possessor cell, `Case=Ill|Possessor=2sg`. -/
-def ill_px2sg : Cell := { case_ := ↑UD.Case.Ill, possessor := ↑Possessor.sg2 }
+def ill_px2sg : Cell := { case := ↑UD.Case.Ill, possessor := ↑Possessor.sg2 }
 
 /-- The nom a-infinitive cell, `Case=Nom|VerbForm=Inf|Infinitive=a`. -/
 def nom_infa : Cell :=
-  { case_ := ↑UD.Case.Nom, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a }
+  { case := ↑UD.Case.Nom, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a }
 
 /-- The transl a-infinitive 1pl possessor cell, `Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=1pl`.
 -/
 def transl_infa_px1pl : Cell :=
-  { case_ := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
+  { case := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
     possessor := ↑Possessor.pl1 }
 
 /-- The ine e-infinitive 1sg possessor cell, `Case=Ine|VerbForm=Inf|Infinitive=e|Possessor=1sg`. -/
 def ine_infe_px1sg : Cell :=
-  { case_ := ↑UD.Case.Ine, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.e,
+  { case := ↑UD.Case.Ine, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.e,
     possessor := ↑Possessor.sg1 }
 
 /-- The ine e-infinitive 1pl possessor cell, `Case=Ine|VerbForm=Inf|Infinitive=e|Possessor=1pl`. -/
 def ine_infe_px1pl : Cell :=
-  { case_ := ↑UD.Case.Ine, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.e,
+  { case := ↑UD.Case.Ine, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.e,
     possessor := ↑Possessor.pl1 }
 
 /-- The inst e-infinitive cell, `Case=Ins|VerbForm=Inf|Infinitive=e`. -/
 def inst_infe : Cell :=
-  { case_ := ↑UD.Case.Ins, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.e }
+  { case := ↑UD.Case.Ins, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.e }
 
 /-- The ade ma-infinitive cell, `Case=Ade|VerbForm=Inf|Infinitive=ma`. -/
 def ade_infma : Cell :=
-  { case_ := ↑UD.Case.Ade, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
+  { case := ↑UD.Case.Ade, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
 
 /-- The abess ma-infinitive cell, `Case=Abe|VerbForm=Inf|Infinitive=ma`. -/
 def abess_infma : Cell :=
-  { case_ := ↑UD.Case.Abe, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
+  { case := ↑UD.Case.Abe, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
 
 /-- The ill ma-infinitive cell, `Case=Ill|VerbForm=Inf|Infinitive=ma`. -/
 def ill_infma : Cell :=
-  { case_ := ↑UD.Case.Ill, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
+  { case := ↑UD.Case.Ill, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
 
 /-- The transl a-infinitive 2sg possessor cell, `Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=2sg`.
 -/
 def transl_infa_px2sg : Cell :=
-  { case_ := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
+  { case := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
     possessor := ↑Possessor.sg2 }
 
 /-- The ade 1sg possessor cell, `Case=Ade|Possessor=1sg`. -/
-def ade_px1sg : Cell := { case_ := ↑UD.Case.Ade, possessor := ↑Possessor.sg1 }
+def ade_px1sg : Cell := { case := ↑UD.Case.Ade, possessor := ↑Possessor.sg1 }
 
 /-- The ela 2sg possessor cell, `Case=Ela|Possessor=2sg`. -/
-def ela_px2sg : Cell := { case_ := ↑UD.Case.Ela, possessor := ↑Possessor.sg2 }
+def ela_px2sg : Cell := { case := ↑UD.Case.Ela, possessor := ↑Possessor.sg2 }
 
 /-- The ill 1sg possessor cell, `Case=Ill|Possessor=1sg`. -/
-def ill_px1sg : Cell := { case_ := ↑UD.Case.Ill, possessor := ↑Possessor.sg1 }
+def ill_px1sg : Cell := { case := ↑UD.Case.Ill, possessor := ↑Possessor.sg1 }
 
 /-- The nom 1pl possessor cell, `Case=Nom|Possessor=1pl`. -/
-def nom_px1pl : Cell := { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.pl1 }
+def nom_px1pl : Cell := { case := ↑UD.Case.Nom, possessor := ↑Possessor.pl1 }
 
 /-- The nom 2pl possessor cell, `Case=Nom|Possessor=2pl`. -/
-def nom_px2pl : Cell := { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.pl2 }
+def nom_px2pl : Cell := { case := ↑UD.Case.Nom, possessor := ↑Possessor.pl2 }
 
 /-- The nom 3pl possessor cell, `Case=Nom|Possessor=3pl`. -/
-def nom_px3pl : Cell := { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.pl3 }
+def nom_px3pl : Cell := { case := ↑UD.Case.Nom, possessor := ↑Possessor.pl3 }
 
 /-- The part 3sg possessor cell, `Case=Par|Possessor=3sg`. -/
-def part_px3sg : Cell := { case_ := ↑UD.Case.Par, possessor := ↑Possessor.sg3 }
+def part_px3sg : Cell := { case := ↑UD.Case.Par, possessor := ↑Possessor.sg3 }
 
 /-- The ess 3pl possessor cell, `Case=Ess|Possessor=3pl`. -/
-def ess_px3pl : Cell := { case_ := ↑UD.Case.Ess, possessor := ↑Possessor.pl3 }
+def ess_px3pl : Cell := { case := ↑UD.Case.Ess, possessor := ↑Possessor.pl3 }
 
 /-- The transl a-infinitive 3sg possessor cell, `Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=3sg`.
 -/
 def transl_infa_px3sg : Cell :=
-  { case_ := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
+  { case := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
     possessor := ↑Possessor.sg3 }
 
 /-- The ine 3pl possessor cell, `Case=Ine|Possessor=3pl`. -/
-def ine_px3pl : Cell := { case_ := ↑UD.Case.Ine, possessor := ↑Possessor.pl3 }
+def ine_px3pl : Cell := { case := ↑UD.Case.Ine, possessor := ↑Possessor.pl3 }
 
 /-- The ade 3sg possessor cell, `Case=Ade|Possessor=3sg`. -/
-def ade_px3sg : Cell := { case_ := ↑UD.Case.Ade, possessor := ↑Possessor.sg3 }
+def ade_px3sg : Cell := { case := ↑UD.Case.Ade, possessor := ↑Possessor.sg3 }
 
 /-- The all 3pl possessor cell, `Case=All|Possessor=3pl`. -/
-def allat_px3pl : Cell := { case_ := ↑UD.Case.All, possessor := ↑Possessor.pl3 }
+def allat_px3pl : Cell := { case := ↑UD.Case.All, possessor := ↑Possessor.pl3 }
 
 /-- The abl 3sg possessor cell, `Case=Abl|Possessor=3sg`. -/
-def abl_px3sg : Cell := { case_ := ↑UD.Case.Abl, possessor := ↑Possessor.sg3 }
+def abl_px3sg : Cell := { case := ↑UD.Case.Abl, possessor := ↑Possessor.sg3 }
 
 /-- The ill 3pl possessor cell, `Case=Ill|Possessor=3pl`. -/
-def ill_px3pl : Cell := { case_ := ↑UD.Case.Ill, possessor := ↑Possessor.pl3 }
+def ill_px3pl : Cell := { case := ↑UD.Case.Ill, possessor := ↑Possessor.pl3 }
 
 /-- The transl a-infinitive 1sg possessor cell, `Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=1sg`.
 -/
 def transl_infa_px1sg : Cell :=
-  { case_ := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
+  { case := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
     possessor := ↑Possessor.sg1 }
 
 /-- The transl a-infinitive 2pl possessor cell, `Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=2pl`.
 -/
 def transl_infa_px2pl : Cell :=
-  { case_ := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
+  { case := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
     possessor := ↑Possessor.pl2 }
 
 /-- The ine ma-infinitive cell, `Case=Ine|VerbForm=Inf|Infinitive=ma`. -/
 def ine_infma : Cell :=
-  { case_ := ↑UD.Case.Ine, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
+  { case := ↑UD.Case.Ine, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
 
 /-- The ela ma-infinitive cell, `Case=Ela|VerbForm=Inf|Infinitive=ma`. -/
 def ela_infma : Cell :=
-  { case_ := ↑UD.Case.Ela, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
+  { case := ↑UD.Case.Ela, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
 
 /-- The inst ma-infinitive cell, `Case=Ins|VerbForm=Inf|Infinitive=ma`. -/
 def inst_infma : Cell :=
-  { case_ := ↑UD.Case.Ins, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
+  { case := ↑UD.Case.Ins, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma }
 
 /-- The nom plural cell, `Case=Nom|Number=Plur`. -/
-def nom_pl : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
+def nom_pl : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
 
 /-- The nom -kin cell, `Case=Nom|Clitic=kin`. -/
-def nom_kin : Cell := { case_ := ↑UD.Case.Nom, clitic := ↑Clitic.kin }
+def nom_kin : Cell := { case := ↑UD.Case.Nom, clitic := ↑Clitic.kin }
 
 /-- The ela plural cell, `Case=Ela|Number=Plur`. -/
-def ela_pl : Cell := { case_ := ↑UD.Case.Ela, number := ↑UD.Number.Plur }
+def ela_pl : Cell := { case := ↑UD.Case.Ela, number := ↑UD.Number.Plur }
 
 /-- The ine -hAn cell, `Case=Ine|Clitic=hAn`. -/
-def ine_han : Cell := { case_ := ↑UD.Case.Ine, clitic := ↑Clitic.hAn }
+def ine_han : Cell := { case := ↑UD.Case.Ine, clitic := ↑Clitic.hAn }
 
 /-- The nom plural -kin cell, `Case=Nom|Number=Plur|Clitic=kin`. -/
-def nom_pl_kin : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur, clitic := ↑Clitic.kin }
+def nom_pl_kin : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur, clitic := ↑Clitic.kin }
 
 /-- The ine 2sg possessor -kO cell, `Case=Ine|Possessor=2sg|Clitic=kO`. -/
 def ine_px2sg_ko : Cell :=
-  { case_ := ↑UD.Case.Ine, possessor := ↑Possessor.sg2, clitic := ↑Clitic.kO }
+  { case := ↑UD.Case.Ine, possessor := ↑Possessor.sg2, clitic := ↑Clitic.kO }
 
 /-- The ine plural 1pl possessor cell, `Case=Ine|Number=Plur|Possessor=1pl`. -/
 def ine_pl_px1pl : Cell :=
-  { case_ := ↑UD.Case.Ine, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl1 }
+  { case := ↑UD.Case.Ine, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl1 }
 
 /-- The ela plural -kAAn cell, `Case=Ela|Number=Plur|Clitic=kAAn`. -/
 def ela_pl_kaan : Cell :=
-  { case_ := ↑UD.Case.Ela, number := ↑UD.Number.Plur, clitic := ↑Clitic.kAAn }
+  { case := ↑UD.Case.Ela, number := ↑UD.Number.Plur, clitic := ↑Clitic.kAAn }
 
 /-- The ine plural 2pl possessor -kin cell, `Case=Ine|Number=Plur|Possessor=2pl|Clitic=kin`. -/
 def ine_pl_px2pl_kin : Cell :=
-  { case_ := ↑UD.Case.Ine, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl2,
+  { case := ↑UD.Case.Ine, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl2,
     clitic := ↑Clitic.kin }
 
 /-- The abl -kO cell, `Case=Abl|Clitic=kO`. -/
-def abl_ko : Cell := { case_ := ↑UD.Case.Abl, clitic := ↑Clitic.kO }
+def abl_ko : Cell := { case := ↑UD.Case.Abl, clitic := ↑Clitic.kO }
 
 /-- The nom plural -kO cell, `Case=Nom|Number=Plur|Clitic=kO`. -/
-def nom_pl_ko : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur, clitic := ↑Clitic.kO }
+def nom_pl_ko : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur, clitic := ↑Clitic.kO }
 
 /-- The gen -hAn cell, `Case=Gen|Clitic=hAn`. -/
-def gen_han : Cell := { case_ := ↑UD.Case.Gen, clitic := ↑Clitic.hAn }
+def gen_han : Cell := { case := ↑UD.Case.Gen, clitic := ↑Clitic.hAn }
 
 /-- The nom 3sg possessor -kO cell, `Case=Nom|Possessor=3sg|Clitic=kO`. -/
 def nom_px3sg_ko : Cell :=
-  { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.sg3, clitic := ↑Clitic.kO }
+  { case := ↑UD.Case.Nom, possessor := ↑Possessor.sg3, clitic := ↑Clitic.kO }
 
 /-- The ade plural 1pl possessor cell, `Case=Ade|Number=Plur|Possessor=1pl`. -/
 def ade_pl_px1pl : Cell :=
-  { case_ := ↑UD.Case.Ade, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl1 }
+  { case := ↑UD.Case.Ade, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl1 }
 
 /-- The ine plural 1pl possessor -hAn cell, `Case=Ine|Number=Plur|Possessor=1pl|Clitic=hAn`. -/
 def ine_pl_px1pl_han : Cell :=
-  { case_ := ↑UD.Case.Ine, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl1,
+  { case := ↑UD.Case.Ine, number := ↑UD.Number.Plur, possessor := ↑Possessor.pl1,
     clitic := ↑Clitic.hAn }
 
 /-- The ill ma-infinitive -kO cell, `Case=Ill|VerbForm=Inf|Infinitive=ma|Clitic=kO`. -/
 def ill_infma_ko : Cell :=
-  { case_ := ↑UD.Case.Ill, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma,
+  { case := ↑UD.Case.Ill, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma,
     clitic := ↑Clitic.kO }
 
 /-- The ade ma-infinitive -kin cell, `Case=Ade|VerbForm=Inf|Infinitive=ma|Clitic=kin`. -/
 def ade_infma_kin : Cell :=
-  { case_ := ↑UD.Case.Ade, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma,
+  { case := ↑UD.Case.Ade, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma,
     clitic := ↑Clitic.kin }
 
 /-- The abess ma-infinitive -kAAn cell, `Case=Abe|VerbForm=Inf|Infinitive=ma|Clitic=kAAn`. -/
 def abess_infma_kaan : Cell :=
-  { case_ := ↑UD.Case.Abe, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma,
+  { case := ↑UD.Case.Abe, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.ma,
     clitic := ↑Clitic.kAAn }
 
 /-- The transl a-infinitive 3sg possessor -hAn cell,
 `Case=Tra|VerbForm=Inf|Infinitive=a|Possessor=3sg|Clitic=hAn`. -/
 def transl_infa_px3sg_han : Cell :=
-  { case_ := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
+  { case := ↑UD.Case.Tra, verbForm := ↑UD.VerbForm.Inf, infinitive := ↑Infinitive.a,
     possessor := ↑Possessor.sg3, clitic := ↑Clitic.hAn }
 
 /-- The part 1pl possessor cell, `Case=Par|Possessor=1pl`. -/
-def part_px1pl : Cell := { case_ := ↑UD.Case.Par, possessor := ↑Possessor.pl1 }
+def part_px1pl : Cell := { case := ↑UD.Case.Par, possessor := ↑Possessor.pl1 }
 
 /-- The nom 2pl possessor -kin cell, `Case=Nom|Possessor=2pl|Clitic=kin`. -/
 def nom_px2pl_kin : Cell :=
-  { case_ := ↑UD.Case.Nom, possessor := ↑Possessor.pl2, clitic := ↑Clitic.kin }
+  { case := ↑UD.Case.Nom, possessor := ↑Possessor.pl2, clitic := ↑Clitic.kin }
 
 /-- The abl 1sg possessor -hAn cell, `Case=Abl|Possessor=1sg|Clitic=hAn`. -/
 def abl_px1sg_han : Cell :=
-  { case_ := ↑UD.Case.Abl, possessor := ↑Possessor.sg1, clitic := ↑Clitic.hAn }
+  { case := ↑UD.Case.Abl, possessor := ↑Possessor.sg1, clitic := ↑Clitic.hAn }
 
 /-- The all 2sg possessor -kO cell, `Case=All|Possessor=2sg|Clitic=kO`. -/
 def allat_px2sg_ko : Cell :=
-  { case_ := ↑UD.Case.All, possessor := ↑Possessor.sg2, clitic := ↑Clitic.kO }
+  { case := ↑UD.Case.All, possessor := ↑Possessor.sg2, clitic := ↑Clitic.kO }
 
 /-- The ill 1pl possessor cell, `Case=Ill|Possessor=1pl`. -/
-def ill_px1pl : Cell := { case_ := ↑UD.Case.Ill, possessor := ↑Possessor.pl1 }
+def ill_px1pl : Cell := { case := ↑UD.Case.Ill, possessor := ↑Possessor.pl1 }
 
 /-- The part plural 3sg possessor cell, `Case=Par|Number=Plur|Possessor=3sg`. -/
 def part_pl_px3sg : Cell :=
-  { case_ := ↑UD.Case.Par, number := ↑UD.Number.Plur, possessor := ↑Possessor.sg3 }
+  { case := ↑UD.Case.Par, number := ↑UD.Number.Plur, possessor := ↑Possessor.sg3 }
 
 /-- The ill 3sg possessor cell, `Case=Ill|Possessor=3sg`. -/
-def ill_px3sg : Cell := { case_ := ↑UD.Case.Ill, possessor := ↑Possessor.sg3 }
+def ill_px3sg : Cell := { case := ↑UD.Case.Ill, possessor := ↑Possessor.sg3 }
 
 /-- The ill plural 3sg possessor cell, `Case=Ill|Number=Plur|Possessor=3sg`. -/
 def ill_pl_px3sg : Cell :=
-  { case_ := ↑UD.Case.Ill, number := ↑UD.Number.Plur, possessor := ↑Possessor.sg3 }
+  { case := ↑UD.Case.Ill, number := ↑UD.Number.Plur, possessor := ↑Possessor.sg3 }
 
 /-- The ine plural cell, `Case=Ine|Number=Plur`. -/
-def ine_pl : Cell := { case_ := ↑UD.Case.Ine, number := ↑UD.Number.Plur }
+def ine_pl : Cell := { case := ↑UD.Case.Ine, number := ↑UD.Number.Plur }
 
 /-- The ill plural cell, `Case=Ill|Number=Plur`. -/
-def ill_pl : Cell := { case_ := ↑UD.Case.Ill, number := ↑UD.Number.Plur }
+def ill_pl : Cell := { case := ↑UD.Case.Ill, number := ↑UD.Number.Plur }
 
 /-- The ess plural cell, `Case=Ess|Number=Plur`. -/
-def ess_pl : Cell := { case_ := ↑UD.Case.Ess, number := ↑UD.Number.Plur }
+def ess_pl : Cell := { case := ↑UD.Case.Ess, number := ↑UD.Number.Plur }
 
 /-- The all plural cell, `Case=All|Number=Plur`. -/
-def allat_pl : Cell := { case_ := ↑UD.Case.All, number := ↑UD.Number.Plur }
+def allat_pl : Cell := { case := ↑UD.Case.All, number := ↑UD.Number.Plur }
 
 /-- The transl plural cell, `Case=Tra|Number=Plur`. -/
-def transl_pl : Cell := { case_ := ↑UD.Case.Tra, number := ↑UD.Number.Plur }
+def transl_pl : Cell := { case := ↑UD.Case.Tra, number := ↑UD.Number.Plur }
 
 /-- The part plural cell, `Case=Par|Number=Plur`. -/
-def part_pl : Cell := { case_ := ↑UD.Case.Par, number := ↑UD.Number.Plur }
+def part_pl : Cell := { case := ↑UD.Case.Par, number := ↑UD.Number.Plur }
 
 /-- The gen plural cell, `Case=Gen|Number=Plur`. -/
-def gen_pl : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
+def gen_pl : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
 
 /-- The gen plural 3sg possessor cell, `Case=Gen|Number=Plur|Possessor=3sg`. -/
 def gen_pl_px3sg : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur, possessor := ↑Possessor.sg3 }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur, possessor := ↑Possessor.sg3 }
 
 def Lexemes.car : Lexeme :=
   { id := "car", languageId := "finn1318", parameterId := "car" }

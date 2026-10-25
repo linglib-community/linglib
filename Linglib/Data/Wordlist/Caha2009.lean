@@ -19,226 +19,216 @@ open CLDF.Wordlist
 abbrev Cell := UD.MorphFeatures
 
 /-- The nominative singular cell, `Case=Nom|Number=Sing`. -/
-def nom_sg : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing }
+def nom_sg : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing }
 
 /-- The nominative singular fem cell, `Case=Nom|Number=Sing|Gender=Fem`. -/
-def nom_sg_f : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
+def nom_sg_f : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
 
 /-- The nominative singular masc cell, `Case=Nom|Number=Sing|Gender=Masc`. -/
 def nom_sg_m : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The nominative singular neut cell, `Case=Nom|Number=Sing|Gender=Neut`. -/
 def nom_sg_n : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The accusative singular cell, `Case=Acc|Number=Sing`. -/
-def acc_sg : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
+def acc_sg : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing }
 
 /-- The accusative singular fem cell, `Case=Acc|Number=Sing|Gender=Fem`. -/
-def acc_sg_f : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
+def acc_sg_f : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
 
 /-- The accusative singular masc cell, `Case=Acc|Number=Sing|Gender=Masc`. -/
 def acc_sg_m : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The accusative singular neut cell, `Case=Acc|Number=Sing|Gender=Neut`. -/
 def acc_sg_n : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The genitive singular cell, `Case=Gen|Number=Sing`. -/
-def gen_sg : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
+def gen_sg : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing }
 
 /-- The genitive singular fem cell, `Case=Gen|Number=Sing|Gender=Fem`. -/
-def gen_sg_f : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
+def gen_sg_f : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
 
 /-- The genitive singular masc cell, `Case=Gen|Number=Sing|Gender=Masc`. -/
 def gen_sg_m : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The genitive singular neut cell, `Case=Gen|Number=Sing|Gender=Neut`. -/
 def gen_sg_n : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The prepositional singular cell, `Case=Loc|Number=Sing`. -/
-def prep_sg : Cell := { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Sing }
+def prep_sg : Cell := { case := ↑UD.Case.Loc, number := ↑UD.Number.Sing }
 
 /-- The prepositional singular fem cell, `Case=Loc|Number=Sing|Gender=Fem`. -/
 def prep_sg_f : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
 
 /-- The prepositional singular masc cell, `Case=Loc|Number=Sing|Gender=Masc`. -/
 def prep_sg_m : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The prepositional singular neut cell, `Case=Loc|Number=Sing|Gender=Neut`. -/
 def prep_sg_n : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The dative singular cell, `Case=Dat|Number=Sing`. -/
-def dat_sg : Cell := { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing }
+def dat_sg : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing }
 
 /-- The dative singular fem cell, `Case=Dat|Number=Sing|Gender=Fem`. -/
-def dat_sg_f : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
+def dat_sg_f : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
 
 /-- The dative singular masc cell, `Case=Dat|Number=Sing|Gender=Masc`. -/
 def dat_sg_m : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The dative singular neut cell, `Case=Dat|Number=Sing|Gender=Neut`. -/
 def dat_sg_n : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The instrumental singular cell, `Case=Ins|Number=Sing`. -/
-def ins_sg : Cell := { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Sing }
+def ins_sg : Cell := { case := ↑UD.Case.Ins, number := ↑UD.Number.Sing }
 
 /-- The instrumental singular fem cell, `Case=Ins|Number=Sing|Gender=Fem`. -/
-def ins_sg_f : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
+def ins_sg_f : Cell := { case := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Fem }
 
 /-- The instrumental singular masc cell, `Case=Ins|Number=Sing|Gender=Masc`. -/
 def ins_sg_m : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Masc }
 
 /-- The instrumental singular neut cell, `Case=Ins|Number=Sing|Gender=Neut`. -/
 def ins_sg_n : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Sing, gender := ↑UD.Gender.Neut }
 
 /-- The nominative dual cell, `Case=Nom|Number=Dual`. -/
-def nom_du : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Dual }
+def nom_du : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Dual }
 
 /-- The nominative dual masc cell, `Case=Nom|Number=Dual|Gender=Masc`. -/
 def nom_du_m : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The accusative dual cell, `Case=Acc|Number=Dual`. -/
-def acc_du : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Dual }
+def acc_du : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Dual }
 
 /-- The accusative dual masc cell, `Case=Acc|Number=Dual|Gender=Masc`. -/
 def acc_du_m : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The genitive dual cell, `Case=Gen|Number=Dual`. -/
-def gen_du : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Dual }
+def gen_du : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Dual }
 
 /-- The genitive dual masc cell, `Case=Gen|Number=Dual|Gender=Masc`. -/
 def gen_du_m : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The prepositional dual cell, `Case=Loc|Number=Dual`. -/
-def prep_du : Cell := { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Dual }
+def prep_du : Cell := { case := ↑UD.Case.Loc, number := ↑UD.Number.Dual }
 
 /-- The prepositional dual masc cell, `Case=Loc|Number=Dual|Gender=Masc`. -/
 def prep_du_m : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The dative dual cell, `Case=Dat|Number=Dual`. -/
-def dat_du : Cell := { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Dual }
+def dat_du : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Dual }
 
 /-- The dative dual masc cell, `Case=Dat|Number=Dual|Gender=Masc`. -/
 def dat_du_m : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The instrumental dual cell, `Case=Ins|Number=Dual`. -/
-def ins_du : Cell := { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Dual }
+def ins_du : Cell := { case := ↑UD.Case.Ins, number := ↑UD.Number.Dual }
 
 /-- The instrumental dual masc cell, `Case=Ins|Number=Dual|Gender=Masc`. -/
 def ins_du_m : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Dual, gender := ↑UD.Gender.Masc }
 
 /-- The nominative plural cell, `Case=Nom|Number=Plur`. -/
-def nom_pl : Cell := { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
+def nom_pl : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur }
 
 /-- The nominative plural fem cell, `Case=Nom|Number=Plur|Gender=Fem`. -/
-def nom_pl_f : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
+def nom_pl_f : Cell := { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
 
 /-- The nominative plural masc cell, `Case=Nom|Number=Plur|Gender=Masc`. -/
 def nom_pl_m : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The nominative plural neut cell, `Case=Nom|Number=Plur|Gender=Neut`. -/
 def nom_pl_n : Cell :=
-  { case_ := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Nom, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The accusative plural cell, `Case=Acc|Number=Plur`. -/
-def acc_pl : Cell := { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur }
+def acc_pl : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur }
 
 /-- The accusative plural fem cell, `Case=Acc|Number=Plur|Gender=Fem`. -/
-def acc_pl_f : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
+def acc_pl_f : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
 
 /-- The accusative plural masc cell, `Case=Acc|Number=Plur|Gender=Masc`. -/
 def acc_pl_m : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The accusative plural neut cell, `Case=Acc|Number=Plur|Gender=Neut`. -/
 def acc_pl_n : Cell :=
-  { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The genitive plural cell, `Case=Gen|Number=Plur`. -/
-def gen_pl : Cell := { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
+def gen_pl : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur }
 
 /-- The genitive plural fem cell, `Case=Gen|Number=Plur|Gender=Fem`. -/
-def gen_pl_f : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
+def gen_pl_f : Cell := { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
 
 /-- The genitive plural masc cell, `Case=Gen|Number=Plur|Gender=Masc`. -/
 def gen_pl_m : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The genitive plural neut cell, `Case=Gen|Number=Plur|Gender=Neut`. -/
 def gen_pl_n : Cell :=
-  { case_ := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Gen, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The prepositional plural cell, `Case=Loc|Number=Plur`. -/
-def prep_pl : Cell := { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Plur }
+def prep_pl : Cell := { case := ↑UD.Case.Loc, number := ↑UD.Number.Plur }
 
 /-- The prepositional plural fem cell, `Case=Loc|Number=Plur|Gender=Fem`. -/
 def prep_pl_f : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
 
 /-- The prepositional plural masc cell, `Case=Loc|Number=Plur|Gender=Masc`. -/
 def prep_pl_m : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The prepositional plural neut cell, `Case=Loc|Number=Plur|Gender=Neut`. -/
 def prep_pl_n : Cell :=
-  { case_ := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Loc, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The dative plural cell, `Case=Dat|Number=Plur`. -/
-def dat_pl : Cell := { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur }
+def dat_pl : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur }
 
 /-- The dative plural fem cell, `Case=Dat|Number=Plur|Gender=Fem`. -/
-def dat_pl_f : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
+def dat_pl_f : Cell := { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
 
 /-- The dative plural masc cell, `Case=Dat|Number=Plur|Gender=Masc`. -/
 def dat_pl_m : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The dative plural neut cell, `Case=Dat|Number=Plur|Gender=Neut`. -/
 def dat_pl_n : Cell :=
-  { case_ := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Dat, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 /-- The instrumental plural cell, `Case=Ins|Number=Plur`. -/
-def ins_pl : Cell := { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Plur }
+def ins_pl : Cell := { case := ↑UD.Case.Ins, number := ↑UD.Number.Plur }
 
 /-- The instrumental plural fem cell, `Case=Ins|Number=Plur|Gender=Fem`. -/
-def ins_pl_f : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
+def ins_pl_f : Cell := { case := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Fem }
 
 /-- The instrumental plural masc cell, `Case=Ins|Number=Plur|Gender=Masc`. -/
 def ins_pl_m : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Masc }
 
 /-- The instrumental plural neut cell, `Case=Ins|Number=Plur|Gender=Neut`. -/
 def ins_pl_n : Cell :=
-  { case_ := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
+  { case := ↑UD.Case.Ins, number := ↑UD.Number.Plur, gender := ↑UD.Gender.Neut }
 
 def Lexemes.srp_sin : Lexeme :=
   { id := "srp_sin", languageId := "sout1528", parameterId := "son", label := "sîn" }

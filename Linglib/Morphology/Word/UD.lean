@@ -11,23 +11,26 @@ public import Linglib.Morphology.Word.Features
 /-!
 # Universal Dependencies annotation of tokens
 
-Each analytical inventory of person, number, gender and case realizes as a Universal Dependencies
-tag where one exists, and each tag ingests as a value. The two directions are not inverse: the
-annotation has no tag for clusivity, for minimal and augmented number or for animacy genders, and
-it tags the oblique case `Acc`. A token's features realize as an annotation record, and an
-annotation ingests as features.
+Each analytical inventory of person, number and case realizes as Universal Dependencies tags
+where they exist, and each tag ingests as a value where one exists. A first person realizes with
+its clusivity, so ingestion inverts the realization of person. The annotation has no tag for
+five values of number and tags the oblique case `Acc`; the analytical inventories have no value
+for the zero and the fourth person, four tags of number and six of case. A token's features
+realize as an annotation, which leaves the written-token flags unset, and an annotation ingests
+as features, which drops them.
 
 ## Main definitions
 
-* `Person.toUD`, `Number.toUD`, `Case.toUD`: realization as a tag.
-* `Person.fromUD`, `Number.fromUD`, `Case.fromUD`: ingestion of a tag.
-* `Number.toUDPEquiv`: realization and ingestion of number, a partial equivalence.
+* `Person.toUD`, `Number.toUD`, `Case.toUD`: realization as tags.
+* `Person.fromUD`, `Number.fromUD`, `Case.fromUD`: ingestion of tags.
+* `Person.toUDPEquiv`, `Number.toUDPEquiv`: realization and ingestion of person and of number,
+  partial equivalences.
 * `Morphology.Features.toUD`, `Morphology.Features.ofUD`: realization and ingestion of a token's
   features.
 
 ## Main results
 
-* `Person.fromUD_toUD`: ingestion after realization forgets clusivity.
+* `Person.fromUD_toUD`: ingestion after realization is the identity, clusivity included.
 * `Case.fromUD_toUD`: ingestion after realization is the identity except on the oblique.
 
 ## References
@@ -41,27 +44,33 @@ annotation ingests as features.
 
 namespace Person
 
-/-- Realization as a tag collapses clusivity to the first person. -/
-def toUD : Person → UD.Person
-  | .first | .firstInclusive | .firstExclusive => .first
-  | .second => .second
-  | .third => .third
+/-- Realization as a person tag and, for an inclusive or exclusive first person, a clusivity
+tag. -/
+def toUD : Person → UD.Person × Option UD.Clusivity
+  | .first => (.first, none)
+  | .firstInclusive => (.first, some .In)
+  | .firstExclusive => (.first, some .Ex)
+  | .second => (.second, none)
+  | .third => (.third, none)
 
-/-- Ingest an annotation; the impersonal `Person=0` is the absence of a person. -/
-def fromUD : UD.Person → Option Person
-  | .first => some .first
-  | .second => some .second
-  | .third => some .third
-  | .zero => none
+/-- Ingest a person tag with a clusivity tag, which only the first person takes; the zero and the
+fourth person have no value. -/
+def fromUD : UD.Person × Option UD.Clusivity → Option Person
+  | (.first, none) => some .first
+  | (.first, some .In) => some .firstInclusive
+  | (.first, some .Ex) => some .firstExclusive
+  | (.second, none) => some .second
+  | (.third, none) => some .third
+  | _ => none
 
-/-- Realization is a partial inverse of ingestion up to clusivity, which has no tag. -/
-theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p.coarsen := by cases p <;> decide
+/-- Realization and ingestion of person are a partial equivalence: a person has its tags exactly
+when they ingest as it. -/
+def toUDPEquiv : Person ≃. UD.Person × Option UD.Clusivity where
+  toFun p := some p.toUD
+  invFun := fromUD
+  inv p u := by obtain ⟨_ | _ | _ | _ | _, _ | _ | _⟩ := u <;> cases p <;> decide
 
-@[simp] theorem toUD_fromUD {u : UD.Person} {p : Person} (h : fromUD u = some p) :
-    p.toUD = u := by
-  cases u <;> simp only [fromUD, Option.some.injEq, reduceCtorEq] at h <;> subst h <;> rfl
-
-theorem ud_conflates_clusivity : Person.firstInclusive.toUD = Person.firstExclusive.toUD := rfl
+theorem fromUD_toUD (p : Person) : fromUD p.toUD = some p := by cases p <;> rfl
 
 end Person
 
@@ -85,7 +94,7 @@ def toUD : Number → Option UD.Number
   | .unitAugmented => none
   | .globalPlural => none
 
-/-- Ingest an annotation; the inverse, collective and count tags have no value. -/
+/-- Ingest an annotation; the inverse, collective, count and plurale tantum tags have no value. -/
 def fromUD : UD.Number → Option Number
   | .Sing => some .singular
   | .Plur => some .plural
@@ -97,6 +106,7 @@ def fromUD : UD.Number → Option Number
   | .Inv => none
   | .Coll => none
   | .Count => none
+  | .Ptan => none
 
 /-- Realization and ingestion of number are a partial equivalence: a value has a tag exactly when
 that tag ingests as the value. -/
@@ -143,44 +153,47 @@ def toUD : Case → UD.Case
   | .perl => .Per
   | .abess => .Abe
 
-/-- Ingest an annotation. -/
-def fromUD : UD.Case → Case
-  | .Nom => .nom
-  | .Acc => .acc
-  | .Gen => .gen
-  | .Dat => .dat
-  | .Ins => .inst
-  | .Loc => .loc
-  | .Voc => .voc
-  | .Abl => .abl
-  | .Erg => .erg
-  | .Abs => .abs
-  | .Par => .part
-  | .Ess => .ess
-  | .Tra => .transl
-  | .Com => .com
-  | .Ade => .ade
-  | .Ine => .ine
-  | .Ill => .ill
-  | .Ela => .ela
-  | .All => .all
-  | .Sub => .sub
-  | .Sup => .sup
-  | .Del => .del
-  | .Ter => .ter
-  | .Tem => .tem
-  | .Cau => .caus
-  | .Ben => .ben
-  | .Per => .perl
-  | .Abe => .abess
+/-- Ingest an annotation; the comparative, considerative, distributive, equative, additive and
+lative tags have no value. -/
+def fromUD : UD.Case → Option Case
+  | .Abs => some .abs
+  | .Acc => some .acc
+  | .Erg => some .erg
+  | .Nom => some .nom
+  | .Abe => some .abess
+  | .Ben => some .ben
+  | .Cau => some .caus
+  | .Com => some .com
+  | .Dat => some .dat
+  | .Gen => some .gen
+  | .Ins => some .inst
+  | .Par => some .part
+  | .Tem => some .tem
+  | .Tra => some .transl
+  | .Voc => some .voc
+  | .Abl => some .abl
+  | .Ade => some .ade
+  | .All => some .all
+  | .Del => some .del
+  | .Ela => some .ela
+  | .Ess => some .ess
+  | .Ill => some .ill
+  | .Ine => some .ine
+  | .Loc => some .loc
+  | .Per => some .perl
+  | .Sub => some .sub
+  | .Sup => some .sup
+  | .Ter => some .ter
+  | .Cmp | .Cns | .Dis | .Equ | .Add | .Lat => none
 
 /-- Ingestion after realization is the identity but on the oblique, which realizes as `Acc`, the
 tag UD's guidelines give the oblique of a language with a direct and an oblique case only, and
 ingests as the accusative. -/
-theorem fromUD_toUD (c : Case) : fromUD c.toUD = if c = .obl then .acc else c := by
+theorem fromUD_toUD (c : Case) : fromUD c.toUD = some (if c = .obl then .acc else c) := by
   cases c <;> rfl
 
-theorem toUD_fromUD (u : UD.Case) : (fromUD u).toUD = u := by cases u <;> rfl
+theorem toUD_fromUD {u : UD.Case} {c : Case} (h : fromUD u = some c) : c.toUD = u := by
+  cases u <;> cases h <;> rfl
 
 end Case
 
@@ -188,38 +201,50 @@ end Case
 
 namespace Morphology.Features
 
-/-- The annotation of a token's features. -/
+/-- The annotation of a token's features; the foreign, abbreviation and typo flags of the
+written token are no features and stay unset. -/
 def toUD (f : Features) : UD.MorphFeatures where
-  person := (f .person).map Person.toUD
-  number := (f .number).bind Number.toUD
+  pronType := f .pronType
+  numType := f .numType
+  poss := (f .poss).isSome
+  reflex := (f .reflex).isSome
   gender := f .gender
-  case_ := (f .case).map Case.toUD
+  animacy := f .animacy
+  number := (f .number).bind Number.toUD
+  case := (f .case).map Case.toUD
   definite := f .definiteness
   degree := f .degree
-  pronType := f .pronType
-  reflex := (f .reflex).isSome
   verbForm := f .verbForm
+  mood := f .mood
   tense := f .tense
   aspect := f .aspect
-  mood := f .mood
   voice := f .voice
+  evident := f .evident
   polarity := f .polarity
+  person := (f .person).map (·.toUD.1)
+  clusivity := (f .person).bind (·.toUD.2)
+  polite := f .polite
 
 /-- The features an annotation ingests as. -/
 def ofUD (m : UD.MorphFeatures) : Features
-  | .person => m.person.bind Person.fromUD
+  | .person => m.person.bind fun u ↦ Person.fromUD (u, m.clusivity)
   | .number => m.number.bind Number.fromUD
   | .gender => m.gender
-  | .case => m.case_.map Case.fromUD
+  | .animacy => m.animacy
+  | .case => m.case.bind Case.fromUD
   | .definiteness => m.definite
   | .degree => m.degree
   | .pronType => m.pronType
+  | .numType => m.numType
+  | .poss => if m.poss then some () else none
   | .reflex => if m.reflex then some () else none
   | .verbForm => m.verbForm
   | .tense => m.tense
   | .aspect => m.aspect
   | .mood => m.mood
   | .voice => m.voice
+  | .evident => m.evident
   | .polarity => m.polarity
+  | .polite => m.polite
 
 end Morphology.Features

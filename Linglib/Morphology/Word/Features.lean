@@ -16,13 +16,16 @@ public import Linglib.Syntax.Person.Basic
 # Token features
 
 The morphosyntactic features a word token carries: person, number and case, valued in the
-analytical inventories `Person`, `Number` and `Case`, and gender, definiteness, degree, pronoun
-type, reflexivity, verb form, tense, aspect, mood, voice and polarity, valued in the Universal
-Dependencies tags. Gender has no analytical inventory, a language's genders being its own; the
-other tag-valued features keep the tags until an analytical inventory exists. A token's
-features give each feature a value or `⊥`, a slot of the flat order, so subsumption, unification
-and generalization are the pointwise order, partial join and meet; the Universal Dependencies
-annotation of a token is the matter of `Morphology/Word/UD.lean`.
+analytical inventories `Person`, `Number` and `Case`, and gender, animacy, definiteness, degree,
+pronoun type, numeral type, possessivity, reflexivity, verb form, tense, aspect, mood, voice,
+evidentiality, polarity and politeness, valued in the Universal Dependencies tags. Gender has no
+analytical inventory, a language's genders being its own; the other tag-valued features keep the
+tags until an analytical inventory exists. Clusivity is no feature of its own, the person value
+carrying it, and the foreign-word, abbreviation and typo flags describe the written token rather
+than its morphosyntax and stay in the annotation record. A token's features give each feature a
+value or `⊥`, a slot of the flat order, so subsumption, unification and generalization are the
+pointwise order, partial join and meet; the Universal Dependencies annotation of a token is the
+matter of `Morphology/Word/UD.lean`.
 
 ## Main declarations
 
@@ -43,27 +46,32 @@ namespace Morphology
 
 /-- The morphosyntactic features of a token. -/
 inductive Feature where
-  | person | number | gender | case | definiteness | degree | pronType | reflex
-  | verbForm | tense | aspect | mood | voice | polarity
+  | person | number | gender | animacy | case | definiteness | degree | pronType | numType
+  | poss | reflex | verbForm | tense | aspect | mood | voice | evident | polarity | polite
   deriving DecidableEq, Repr, Fintype
 
 /-- A feature takes its values in the analytical inventory for person, number and case and in
-the Universal Dependencies tags otherwise, reflexivity being privative. -/
+the Universal Dependencies tags otherwise, possessivity and reflexivity being privative. -/
 abbrev Feature.Value : Feature → Type
   | .person => Person
   | .number => Number
   | .gender => UD.Gender
+  | .animacy => UD.Animacy
   | .case => Case
   | .definiteness => UD.Definite
   | .degree => UD.Degree
   | .pronType => UD.PronType
+  | .numType => UD.NumType
+  | .poss => Unit
   | .reflex => Unit
   | .verbForm => UD.VerbForm
   | .tense => UD.Tense
   | .aspect => UD.Aspect
   | .mood => UD.Mood
   | .voice => UD.Voice
+  | .evident => UD.Evident
   | .polarity => UD.Polarity
+  | .polite => UD.Polite
 
 instance (t : Feature) : DecidableEq t.Value := by cases t <;> exact inferInstance
 
@@ -78,31 +86,40 @@ namespace Features
 
 /-- The bundle specifying the named values and nothing else. -/
 def of (person : Option Person := none) (number : Option Number := none)
-    (gender : Option UD.Gender := none) (case_ : Option Case := none)
-    (definiteness : Option UD.Definite := none) (degree : Option UD.Degree := none)
-    (pronType : Option UD.PronType := none) (reflex : Option Unit := none)
-    (verbForm : Option UD.VerbForm := none) (tense : Option UD.Tense := none)
-    (aspect : Option UD.Aspect := none) (mood : Option UD.Mood := none)
-    (voice : Option UD.Voice := none) (polarity : Option UD.Polarity := none) : Features
+    (gender : Option UD.Gender := none) (animacy : Option UD.Animacy := none)
+    (case : Option Case := none) (definiteness : Option UD.Definite := none)
+    (degree : Option UD.Degree := none) (pronType : Option UD.PronType := none)
+    (numType : Option UD.NumType := none) (poss : Option Unit := none)
+    (reflex : Option Unit := none) (verbForm : Option UD.VerbForm := none)
+    (tense : Option UD.Tense := none) (aspect : Option UD.Aspect := none)
+    (mood : Option UD.Mood := none) (voice : Option UD.Voice := none)
+    (evident : Option UD.Evident := none) (polarity : Option UD.Polarity := none)
+    (polite : Option UD.Polite := none) : Features
   | .person => person
   | .number => number
   | .gender => gender
-  | .case => case_
+  | .animacy => animacy
+  | .case => case
   | .definiteness => definiteness
   | .degree => degree
   | .pronType => pronType
+  | .numType => numType
+  | .poss => poss
   | .reflex => reflex
   | .verbForm => verbForm
   | .tense => tense
   | .aspect => aspect
   | .mood => mood
   | .voice => voice
+  | .evident => evident
   | .polarity => polarity
+  | .polite => polite
 
 instance : Repr Features where
   reprPrec f _ :=
-    repr (f .person, f .number, f .gender, f .case, f .definiteness, f .degree, f .pronType,
-      f .reflex, f .verbForm, f .tense, f .aspect, f .mood, f .voice, f .polarity)
+    repr (f .person, f .number, f .gender, f .animacy, f .case, f .definiteness, f .degree,
+      f .pronType, f .numType, f .poss, f .reflex, f .verbForm, f .tense, f .aspect, f .mood,
+      f .voice, f .evident, f .polarity, f .polite)
 
 /-- The token is an interrogative or relative pro-form. -/
 def IsWh (f : Features) : Prop := f .pronType = some .Int ∨ f .pronType = some .Rel

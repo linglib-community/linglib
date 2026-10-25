@@ -79,14 +79,19 @@ KEYWORDS = {"def", "if", "then", "else", "do", "fun", "let", "in", "at", "by", "
             "analyses", "Cell",
             "Analysis", "Form", "Lexeme", "Paradigm", "RootClasses", "FormRelation"}
 
-# UD feature -> (`UD.MorphFeatures` field, `UD` type). `Reflex` is a Bool field, not listed.
-FEATURES = {"Number": ("number", "Number"), "Gender": ("gender", "Gender"),
-            "Case": ("case_", "Case"), "Definite": ("definite", "Definite"),
-            "Degree": ("degree", "Degree"), "PronType": ("pronType", "PronType"),
-            "Person": ("person", "Person"), "VerbForm": ("verbForm", "VerbForm"),
-            "Tense": ("tense", "Tense"), "Aspect": ("aspect", "Aspect"), "Mood": ("mood", "Mood"),
-            "Voice": ("voice", "Voice"), "Polarity": ("polarity", "Polarity")}
-PERSON = {"0": "zero", "1": "first", "2": "second", "3": "third"}
+# UD feature -> (`UD.MorphFeatures` field, `UD` type)
+FEATURES = {"PronType": ("pronType", "PronType"), "NumType": ("numType", "NumType"),
+            "Gender": ("gender", "Gender"), "Animacy": ("animacy", "Animacy"),
+            "Number": ("number", "Number"), "Case": ("case", "Case"),
+            "Definite": ("definite", "Definite"), "Degree": ("degree", "Degree"),
+            "VerbForm": ("verbForm", "VerbForm"), "Mood": ("mood", "Mood"),
+            "Tense": ("tense", "Tense"), "Aspect": ("aspect", "Aspect"),
+            "Voice": ("voice", "Voice"), "Evident": ("evident", "Evident"),
+            "Polarity": ("polarity", "Polarity"), "Person": ("person", "Person"),
+            "Polite": ("polite", "Polite"), "Clusivity": ("clusivity", "Clusivity")}
+# UD features whose one value is `Yes` -> their `Bool` field of `UD.MorphFeatures`
+FLAGS = {"Poss": "poss", "Reflex": "reflex", "Foreign": "foreign", "Abbr": "abbr", "Typo": "typo"}
+PERSON = {"0": "zero", "1": "first", "2": "second", "3": "third", "4": "fourth"}
 # the names `Judgment.ofName?` reads, `Linglib/Data/Examples/Judgment.lean`
 JUDGMENTS = {"acceptable", "marginal", "questionable", "unacceptable", "ungrammatical"}
 
@@ -316,6 +321,10 @@ class Module:
                     if ctor not in self.ud.get(ty, set()):
                         fail(f"{where}: {fname}={value} is not a constructor of UD.{ty}")
                     fields.append((field, f"↑UD.{ty}.{ctor}"))
+                elif fname in FLAGS:
+                    if value != "Yes":
+                        fail(f"{where}: {fname}={value} is not {fname}=Yes")
+                    fields.append((FLAGS[fname], "true"))
                 elif fname in self.enums:
                     if fname not in extended:
                         extended.append(fname)

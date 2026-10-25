@@ -5,215 +5,282 @@ public import Linglib.Core.Order.Flat
 
 /-!
 # Universal Dependencies: morphological features
-[de-marneffe-zeman-2021]
 
-The morphological feature tags of UD v2, nominal, pronominal and verbal, and the annotation
-record `MorphFeatures`, a tag or `⊥` in each feature. The analytical inventories of person,
-number, gender and case realize as these tags and ingest from them in `Morphology/Word/UD.lean`;
-the remaining tags serve as the value types of a token's features until an analytical
-inventory exists.
+The universal features of Universal Dependencies v2, an inductive of the values of each, and the
+annotation record `UD.MorphFeatures`, which gives each feature a value or `⊥`, and each feature
+whose one value is `Yes` a `Bool`. The analytical inventories of person, number and case realize
+as these tags and ingest from them in `Morphology/Word/UD.lean`; the other tags serve as the
+values of a token's features until an analytical inventory exists.
 
-Official site: <https://universaldependencies.org/>
+## Implementation notes
+
+* The features and values are those of the source's Table 2 (p. 263), in its order, with the
+  glosses of the guidelines of the same date. `NounClass` is left out: its values are per
+  language family (`Bantu1` to `Bantu23`, `Wol1` to `Wol12`, and more), an open list.
+* The layers of a feature, such as the possessor's number `Number[psor]` of a possessive
+  (pp. 264–265), are not represented.
+* Later guidelines tag the Hungarian sublative `Sbl` and use `Sub` for the subessive, and add the
+  cases `Sbe` and `Spl`, the degrees `Dim` and `Aug` and the mood `Int`; the tags here are
+  Table 2's, under which `Sub` is the sublative. Neither the guidelines of 2021 nor the later
+  ones document `Tense=Nfut`, which Table 2 lists.
+
+## References
+
+* [de-marneffe-zeman-2021]
 -/
 
 @[expose] public section
 
-
 namespace UD
 
--- Nominal Features
+/-! ### Lexical features -/
 
-/-- Grammatical number -/
+/-- Pronominal type, the values of `PronType`. -/
+inductive PronType where
+  | Art    -- article
+  | Dem    -- demonstrative pronoun, determiner, numeral or adverb
+  | Emp    -- emphatic determiner
+  | Exc    -- exclamative determiner
+  | Ind    -- indefinite pronoun, determiner, numeral or adverb
+  | Int    -- interrogative pronoun, determiner, numeral or adverb
+  | Neg    -- negative pronoun, determiner or adverb
+  | Prs    -- personal or possessive personal pronoun or determiner
+  | Rcp    -- reciprocal pronoun
+  | Rel    -- relative pronoun, determiner, numeral or adverb
+  | Tot    -- total (collective) pronoun, determiner or adverb
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Numeral type, the values of `NumType`. -/
+inductive NumType where
+  | Card   -- cardinal
+  | Dist   -- distributive
+  | Frac   -- fraction
+  | Mult   -- multiplicative
+  | Ord    -- ordinal
+  | Range  -- range of values
+  | Sets   -- number of sets of things, collective
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-! ### Nominal features -/
+
+/-- Gender, the values of `Gender`. -/
+inductive Gender where
+  | Com    -- common
+  | Fem    -- feminine
+  | Masc   -- masculine
+  | Neut   -- neuter
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Animacy, the values of `Animacy`. -/
+inductive Animacy where
+  | Anim   -- animate
+  | Hum    -- human
+  | Inan   -- inanimate
+  | Nhum   -- non-human
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Number, the values of `Number`. -/
 inductive Number where
-  | Sing   -- singular: cat, I
-  | Plur   -- plural: cats, we
-  | Dual   -- dual (two): eyes (in some languages)
-  | Tri    -- trial (three)
-  | Pauc   -- paucal (few)
+  | Coll   -- collective, mass, singulare tantum
+  | Count  -- count plural
+  | Dual   -- dual
   | Grpa   -- greater paucal
   | Grpl   -- greater plural
-  | Inv    -- inverse number
-  | Coll   -- collective
-  | Count  -- count form
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Grammatical gender -/
-inductive Gender where
-  | Masc   -- masculine
-  | Fem    -- feminine
-  | Neut   -- neuter
-  | Com    -- common (masc or fem)
+  | Inv    -- inverse
+  | Pauc   -- paucal
+  | Plur   -- plural
+  | Ptan   -- plurale tantum
+  | Sing   -- singular
+  | Tri    -- trial
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Grammatical case (UD `Case` feature, https://universaldependencies.org/u/feat/Case.html).
-
-    Battle-tested annotation tagset shared across all UD treebanks. The 28
-    constructors below cover the standard UD values. This is the
-    *realization* vocabulary; the canonical analytical inventory is the
-    root-namespace `Case` (`Syntax/Case/Basic.lean`), realized and ingested in
-    `Morphology/Word/UD.lean`. -/
+/-- Case, the values of `Case`: the core, the non-core and the local cases, as the guidelines
+group them and Table 2 rows them. -/
 inductive Case where
-  | Nom    -- nominative: subject
-  | Acc    -- accusative: direct object
-  | Gen    -- genitive: possessor
-  | Dat    -- dative: indirect object
-  | Ins    -- instrumental
-  | Loc    -- locative
-  | Voc    -- vocative
-  | Abl    -- ablative
-  | Erg    -- ergative
   | Abs    -- absolutive
-  -- Additional cases for specific languages
+  | Acc    -- accusative, oblique
+  | Erg    -- ergative
+  | Nom    -- nominative, direct
+
+  | Abe    -- abessive
+  | Ben    -- benefactive, destinative
+  | Cau    -- causative, motivative, purposive
+  | Cmp    -- comparative
+  | Cns    -- considerative
+  | Com    -- comitative, associative
+  | Dat    -- dative
+  | Dis    -- distributive
+  | Equ    -- equative
+  | Gen    -- genitive
+  | Ins    -- instrumental, instructive
   | Par    -- partitive
-  | Ess    -- essive
-  | Tra    -- translative
-  | Com    -- comitative
+  | Tem    -- temporal
+  | Tra    -- translative, factive
+  | Voc    -- vocative
+
+  | Abl    -- ablative
+  | Add    -- additive
   | Ade    -- adessive
-  | Ine    -- inessive
-  | Ill    -- illative
-  | Ela    -- elative
   | All    -- allative
+  | Del    -- delative
+  | Ela    -- elative
+  | Ess    -- essive, prolative
+  | Ill    -- illative
+  | Ine    -- inessive
+  | Lat    -- lative, directional allative
+  | Loc    -- locative
+  | Per    -- perlative
   | Sub    -- sublative
   | Sup    -- superessive
-  | Del    -- delative
-  | Ter    -- terminative
-  | Tem    -- temporal
-  | Cau    -- causative
-  | Ben    -- benefactive
-  | Per    -- perlative: path, motion through
-  | Abe    -- abessive/privative: 'without X'
+  | Ter    -- terminative, terminal allative
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Definiteness -/
+/-- Definiteness, the values of `Definite`. -/
 inductive Definite where
-  | Def    -- definite: the cat
-  | Ind    -- indefinite: a cat
+  | Com    -- complex, of the improper annexation of Arabic
+  | Cons   -- construct state, reduced definiteness
+  | Def    -- definite
+  | Ind    -- indefinite
   | Spec   -- specific indefinite
-  | Cons   -- construct state
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Degree of comparison (for adjectives/adverbs) -/
+/-- Comparison, the values of `Degree`. -/
 inductive Degree where
-  | Pos    -- positive: big
-  | Cmp    -- comparative: bigger
-  | Sup    -- superlative: biggest
   | Abs    -- absolute superlative
+  | Cmp    -- comparative
   | Equ    -- equative
-  deriving DecidableEq, Repr, Inhabited
+  | Pos    -- positive
+  | Sup    -- superlative
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
--- Pronominal Features
+/-! ### Verbal features -/
 
-/-- Pronoun type -/
-inductive PronType where
-  | Prs    -- personal: I, you, he
-  | Rcp    -- reciprocal: each other
-  | Art    -- article
-  | Int    -- interrogative: who, what
-  | Rel    -- relative: who, which
-  | Dem    -- demonstrative: this, that
-  | Emp    -- emphatic
-  | Tot    -- total/collective: all, every
-  | Neg    -- negative: nobody, nothing
-  | Ind    -- indefinite: somebody, something
-  | Exc    -- exclamative
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Grammatical person -/
-inductive Person where
-  | first  -- 1st person: I, we
-  | second -- 2nd person: you
-  | third  -- 3rd person: he, she, it, they
-  | zero   -- 0 person (impersonal)
-  deriving DecidableEq, Repr, Inhabited
-
--- Verbal Features
-
-/-- Verb form -/
+/-- Verbal form, the values of `VerbForm`. -/
 inductive VerbForm where
+  | Conv   -- converb, adverbial participle
   | Fin    -- finite
-  | Inf    -- infinitive
-  | Part   -- participle
-  | Ger    -- gerund
   | Gdv    -- gerundive
+  | Ger    -- gerund
+  | Inf    -- infinitive
+  | Part   -- participle, verbal adjective
   | Sup    -- supine
-  | Conv   -- converb/adverbial participle
-  | Vnoun  -- verbal noun (masdar)
-  deriving DecidableEq, Repr, Inhabited
+  | Vnoun  -- verbal noun, masdar
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Grammatical tense -/
+/-- Mood, the values of `Mood`. -/
+inductive Mood where
+  | Adm    -- admirative
+  | Cnd    -- conditional
+  | Des    -- desiderative
+  | Imp    -- imperative
+  | Ind    -- indicative, realis
+  | Irr    -- irrealis
+  | Jus    -- jussive, injunctive
+  | Nec    -- necessitative
+  | Opt    -- optative
+  | Pot    -- potential
+  | Prp    -- purposive
+  | Qot    -- quotative
+  | Sub    -- subjunctive, conjunctive
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Tense, the values of `Tense`. -/
 inductive Tense where
-  | Past   -- past: walked
-  | Pres   -- present: walks
-  | Fut    -- future: will walk
+  | Fut    -- future
   | Imp    -- imperfect
+  | Nfut   -- non-future
+  | Past   -- past, preterite, aorist
   | Pqp    -- pluperfect
-  deriving DecidableEq, Repr, Inhabited
+  | Pres   -- present, non-past
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Grammatical aspect -/
+/-- Aspect, the values of `Aspect`. -/
 inductive Aspect where
-  | Imp    -- imperfective
-  | Perf   -- perfective
+  | Hab    -- habitual
+  | Imp    -- imperfect
+  | Iter   -- iterative, frequentative
+  | Perf   -- perfect
   | Prog   -- progressive
   | Prosp  -- prospective
-  | Hab    -- habitual
-  | Iter   -- iterative
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Grammatical mood -/
-inductive Mood where
-  | Ind    -- indicative
-  | Sub    -- subjunctive
-  | Imp    -- imperative
-  | Cnd    -- conditional
-  | Opt    -- optative
-  | Jus    -- jussive
-  | Pot    -- potential
-  | Qot    -- quotative
-  | Adm    -- admirative
-  | Nec    -- necessitative
-  | Irr    -- irrealis
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Grammatical voice -/
+/-- Voice, the values of `Voice`. -/
 inductive Voice where
-  | Act    -- active
-  | Pass   -- passive
-  | Mid    -- middle
-  | Rcp    -- reciprocal
-  | Cau    -- causative
+  | Act    -- active, actor focus
   | Antip  -- antipassive
+  | Bfoc   -- beneficiary focus
+  | Cau    -- causative
   | Dir    -- direct
   | Inv    -- inverse
-  | Lfoc   -- location-focus
-  | Bfoc   -- beneficiary-focus
-  deriving DecidableEq, Repr, Inhabited
+  | Lfoc   -- location focus
+  | Mid    -- middle
+  | Pass   -- passive, patient focus
+  | Rcp    -- reciprocal
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Polarity -/
+/-- Evidentiality, the values of `Evident`. -/
+inductive Evident where
+  | Fh     -- firsthand
+  | Nfh    -- non-firsthand
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Polarity, the values of `Polarity`. -/
 inductive Polarity where
-  | Pos    -- positive/affirmative
   | Neg    -- negative
-  deriving DecidableEq, Repr, Inhabited
+  | Pos    -- positive, affirmative
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
--- Feature Bundle
+/-- Person, the values `0` to `4` of `Person`. -/
+inductive Person where
+  | zero   -- zero person, impersonal
+  | first
+  | second
+  | third
+  | fourth -- a third person distinguished from another third person
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- A morphological annotation record, a tag or `⊥` in each feature. -/
+/-- Politeness, the values of `Polite`. -/
+inductive Polite where
+  | Elev   -- referent elevating
+  | Form   -- formal register
+  | Humb   -- speaker humbling
+  | Infm   -- informal register
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-- Clusivity, the values of `Clusivity`. -/
+inductive Clusivity where
+  | In     -- inclusive
+  | Ex     -- exclusive
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-! ### Annotation -/
+
+/-- A morphological annotation, a value or `⊥` in each feature, and `true` in each feature whose
+one value is `Yes` where it has that value. -/
 structure MorphFeatures where
-  number   : Flat Number   := ⊥
-  gender   : Flat Gender   := ⊥
-  case_    : Flat Case     := ⊥
-  definite : Flat Definite := ⊥
-  degree   : Flat Degree   := ⊥
-  pronType : Flat PronType := ⊥
-  /-- Reflexive, `Reflex=Yes`; `false` when the feature is absent. -/
-  reflex   : Bool          := false
-  person   : Flat Person   := ⊥
-  verbForm : Flat VerbForm := ⊥
-  tense    : Flat Tense    := ⊥
-  aspect   : Flat Aspect   := ⊥
-  mood     : Flat Mood     := ⊥
-  voice    : Flat Voice    := ⊥
-  polarity : Flat Polarity := ⊥
+  pronType  : Flat PronType  := ⊥
+  numType   : Flat NumType   := ⊥
+  poss      : Bool           := false
+  reflex    : Bool           := false
+  foreign   : Bool           := false
+  abbr      : Bool           := false
+  typo      : Bool           := false
+  gender    : Flat Gender    := ⊥
+  animacy   : Flat Animacy   := ⊥
+  number    : Flat Number    := ⊥
+  case      : Flat Case      := ⊥
+  definite  : Flat Definite  := ⊥
+  degree    : Flat Degree    := ⊥
+  verbForm  : Flat VerbForm  := ⊥
+  mood      : Flat Mood      := ⊥
+  tense     : Flat Tense     := ⊥
+  aspect    : Flat Aspect    := ⊥
+  voice     : Flat Voice     := ⊥
+  evident   : Flat Evident   := ⊥
+  polarity  : Flat Polarity  := ⊥
+  person    : Flat Person    := ⊥
+  polite    : Flat Polite    := ⊥
+  clusivity : Flat Clusivity := ⊥
   deriving DecidableEq, Repr, Inhabited
-
 
 end UD

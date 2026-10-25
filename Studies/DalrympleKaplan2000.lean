@@ -113,8 +113,8 @@ abbrev Distributes {α : Type*} (P : α → Prop) (s : Finset α) : Prop := ∀ 
 /-- The accusative and nominative requirements of the two verbs of (17) have no upper bound in the
 subsumption order. -/
 theorem requirements_not_compatible :
-    ¬ Compat (Morphology.Features.of (case_ := some .acc))
-      (Morphology.Features.of (case_ := some .nom)) := by
+    ¬ Compat (Morphology.Features.of (case := some .acc))
+      (Morphology.Features.of (case := some .nom)) := by
   decide
 
 open German.Pronouns in

@@ -245,7 +245,7 @@ def bellumLinkage : Linkage BellumLex BellumStem BellumCell BellumCell where
 /-- `bellRealize` reads the realization of each form cell of `bell` off the attested forms,
 the paper's (22). -/
 def bellRealize : BellumStem → BellumCell → List String
-  | _, σ => attested "war" { case_ := ↑σ.case.ud, number := ↑σ.num.ud }
+  | _, σ => attested "war" { case := ↑σ.case.ud, number := ↑σ.num.ud }
 
 /-- The nominative and accusative singular share a form correspondent, a directional
 syncretism. -/
@@ -267,7 +267,7 @@ theorem bellum_nom_acc_realize_eq :
 /-- The nominative singular realizes through the accusative form cell. -/
 theorem bellum_nom_realizes_acc :
     bellumLinkage.realized bellRealize .bellum ⟨.nom, .sg⟩ =
-      {(attested "war" { case_ := ↑UD.Case.Acc, number := ↑UD.Number.Sing }, ⟨.acc, .sg⟩)} := by
+      {(attested "war" { case := ↑UD.Case.Acc, number := ↑UD.Number.Sing }, ⟨.acc, .sg⟩)} := by
   decide
 
 /-- BELLUM's linkage is not injective, since syncretism is a failure of injectivity. -/
