@@ -5,7 +5,6 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Studies.Kripke1980
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Reference.Character
 
@@ -48,7 +47,7 @@ from its semantics, so nothing would be proved about it.
 
 namespace Almog2014
 
-open Kripke1980 Kaplan
+open Kaplan
 
 variable {W E : Type*} {desc desc₁ desc₂ : W → E} {c : W}
 
@@ -60,7 +59,7 @@ theorem dthat_largeScope_eq_smallScope (O : (W → Prop) → W → Prop) (P : E 
 
 theorem dthat_eq_dthat_of_eq (h : desc₁ c = desc₂ c) :
     (Character.dthat desc₁ : Character W W E) c = Character.dthat desc₂ c :=
-  funext λ _ => h
+  funext fun _ ↦ h
 
 /-- A singular proposition: a structured pair of an individual and a property. -/
 structure SingularProposition (W E : Type*) where
@@ -77,7 +76,7 @@ variable {a b : E} {P : E → W → Prop}
 def flatten (p : SingularProposition W E) : W → Prop := p.property p.individual
 
 theorem mk_ne_mk_of_ne (h : a ≠ b) : mk a P ≠ mk b P :=
-  λ e => h (congrArg individual e)
+  fun e ↦ h (congrArg individual e)
 
 end SingularProposition
 
@@ -85,12 +84,12 @@ end SingularProposition
 
 theorem const_ne_dthat_of_ne {intended : E} (h : desc c ≠ intended) :
     (Character.const intended : Character W W E) c ≠ Character.dthat desc c :=
-  λ e => h (congrFun e c).symm
+  fun e ↦ h (congrFun e c).symm
 
 /-! ### The Russell–Partee–Kaplan challenge -/
 
 theorem not_exists_individual_eq_forall (a b : E) (hab : a ≠ b) :
-    ¬ ∃ e : E, Quantifier.NP.individual e = λ P => ∀ x, P x := by
+    ¬ ∃ e : E, Quantifier.NP.individual e = fun P ↦ ∀ x, P x := by
   rintro ⟨e, he⟩
   have h : ∀ x, x = e := (congrFun he (· = e)).mp rfl
   exact hab ((h a).trans (h b).symm)

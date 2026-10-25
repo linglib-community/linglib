@@ -13,16 +13,23 @@ in the sense of Kaplan. Rigidity is subsingletonness of the range
 (`isRigidOn_iff_subsingleton_image`); the closure properties are those of `Set.Subsingleton`.
 Rigid intensions that agree at one index agree everywhere, which is the necessity of identity.
 
+An operator `O` governing the predication of `P` of a designator `f` has a large scope reading,
+which evaluates `f` at the index of the whole sentence, and a small scope reading, which
+evaluates it at each index the operator reaches. The readings coincide for a rigid designator,
+and the designator whose reference `f` fixes at an index, the constant intension at what `f`
+designates there, takes the large scope reading of `f` into the small.
+
 ## Main definitions
 
 * `IsRigid f`, `IsRigidOn f S`: constancy of `f : W → τ` everywhere, or on `S`.
+* `largeScope O P f`, `smallScope O P f`: the two scope readings of `O` over `P` of `f`.
 
 ## Main results
 
 * `isRigid_iff_subsingleton_range`, `isRigidOn_iff_subsingleton_image`: the mathlib face.
-* `isRigid_of_subsingleton`: over a single index every intension is rigid.
 * `IsRigid.eq_of_apply_eq`: rigid intensions that agree at one index are equal.
-* `IsRigid.ne`: a rigid intension is not a nonrigid one.
+* `largeScope_eq_smallScope`: the scope readings coincide for a rigid designator.
+* `largeScope_eq_smallScope_const`: fixing the reference at an index.
 * `IsRigid.map`, `IsRigid.of_comp_injective`, `IsRigid.precomp`, `IsRigidOn.precomp`,
   `IsRigidOn.mono`: closure under composition and restriction.
 
@@ -49,40 +56,59 @@ theorem isRigid_iff_subsingleton_range : IsRigid f ↔ (Set.range f).Subsingleto
 theorem isRigidOn_iff_subsingleton_image : IsRigidOn f S ↔ (f '' S).Subsingleton := by
   simp [IsRigidOn, Set.Subsingleton]
 
-theorem isRigid_const (x : τ) : IsRigid fun _ : W => x := fun _ _ => rfl
+theorem isRigid_const (x : τ) : IsRigid fun _ : W ↦ x := fun _ _ ↦ rfl
 
 /-- Over a single index every intension is rigid. -/
 theorem isRigid_of_subsingleton [Subsingleton W] (f : W → τ) : IsRigid f :=
   isRigid_iff_subsingleton_range.2 (Set.subsingleton_range f)
 
 theorem IsRigidOn.mono (h : IsRigidOn f S) (hT : T ⊆ S) : IsRigidOn f T :=
-  fun w₁ hw₁ w₂ hw₂ => h w₁ (hT hw₁) w₂ (hT hw₂)
+  fun w₁ hw₁ w₂ hw₂ ↦ h w₁ (hT hw₁) w₂ (hT hw₂)
 
 theorem IsRigid.isRigidOn {f : W → τ} (h : IsRigid f) (S : Set W) : IsRigidOn f S :=
-  fun w₁ _ w₂ _ => h w₁ w₂
+  fun w₁ _ w₂ _ ↦ h w₁ w₂
 
-theorem IsRigid.eq_const {f : W → τ} (h : IsRigid f) (w : W) : f = fun _ => f w :=
-  funext fun w' => h w' w
+theorem IsRigid.eq_const {f : W → τ} (h : IsRigid f) (w : W) : f = fun _ ↦ f w :=
+  funext fun w' ↦ h w' w
 
 /-- Rigid intensions that agree at one index are equal, which is the necessity of identity. -/
 theorem IsRigid.eq_of_apply_eq {f g : W → τ} (hf : IsRigid f) (hg : IsRigid g) {w : W}
     (h : f w = g w) : f = g :=
-  funext fun w' => (hf w' w).trans (h.trans (hg w w'))
+  funext fun w' ↦ (hf w' w).trans (h.trans (hg w w'))
 
 theorem IsRigid.ne {f g : W → τ} (hf : IsRigid f) (hg : ¬ IsRigid g) : f ≠ g :=
-  fun e => hg (e ▸ hf)
+  fun e ↦ hg (e ▸ hf)
 
 theorem IsRigid.map {f : W → τ} (h : IsRigid f) (g : τ → τ') : IsRigid (g ∘ f) :=
-  fun w₁ w₂ => congrArg g (h w₁ w₂)
+  fun w₁ w₂ ↦ congrArg g (h w₁ w₂)
 
 theorem IsRigid.of_comp_injective {g : τ → τ'} (hg : Function.Injective g)
     (h : IsRigid (g ∘ f)) : IsRigid f :=
-  fun w₁ w₂ => hg (h w₁ w₂)
+  fun w₁ w₂ ↦ hg (h w₁ w₂)
 
 theorem IsRigid.precomp {f : W → τ} (h : IsRigid f) (g : W' → W) : IsRigid (f ∘ g) :=
-  fun w₁ w₂ => h (g w₁) (g w₂)
+  fun w₁ w₂ ↦ h (g w₁) (g w₂)
 
 theorem IsRigidOn.precomp {f : W → τ} {S : Set W} (h : IsRigidOn f S) (g : W' → W) :
     IsRigidOn (f ∘ g) (g ⁻¹' S) :=
-  fun w₁ hw₁ w₂ hw₂ => h (g w₁) hw₁ (g w₂) hw₂
+  fun w₁ hw₁ w₂ hw₂ ↦ h (g w₁) hw₁ (g w₂) hw₂
 
+/-! ### Scope -/
+
+/-- The large scope reading of the operator `O` over the predication of `P` of `f`, which
+evaluates `f` at the index of the whole sentence. -/
+def largeScope (O : (W → Prop) → W → Prop) (P : τ → W → Prop) (f : W → τ) (w : W) : Prop :=
+  O (P (f w)) w
+
+/-- The small scope reading, which evaluates `f` at each index the operator reaches. -/
+def smallScope (O : (W → Prop) → W → Prop) (P : τ → W → Prop) (f : W → τ) : W → Prop :=
+  O fun v ↦ P (f v) v
+
+theorem largeScope_eq_smallScope {f : W → τ} (h : IsRigid f) (O : (W → Prop) → W → Prop)
+    (P : τ → W → Prop) : largeScope O P f = smallScope O P f :=
+  funext fun w ↦ congrArg (O · w) (funext fun v ↦ by rw [h v w])
+
+/-- The designator whose reference `f` fixes at `w` takes the large scope reading of `f`. -/
+theorem largeScope_eq_smallScope_const (O : (W → Prop) → W → Prop) (P : τ → W → Prop)
+    (f : W → τ) (w : W) : largeScope O P f w = smallScope O P (fun _ ↦ f w) w :=
+  rfl
