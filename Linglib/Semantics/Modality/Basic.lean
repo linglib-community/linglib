@@ -4,13 +4,17 @@ public import Linglib.Pragmatics.SocialMeaning.Register
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Order.Bounds.Defs
+public import Mathlib.Order.UpperLower.CompleteLattice
+public import Mathlib.Order.UpperLower.Principal
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Modal force and flavor
 
 This file defines the vocabulary of modal typology. A modal force is a quantificational
-strength, necessity, weak necessity or possibility, ordered by strength; a modal flavor is a
+strength, necessity, weak necessity or possibility, ordered by strength. On a degree semantics of
+modality a force is a standard on one scale of propositions, and the strength order is the order
+of the standards (`ModalForce.monotone_standard`). A modal flavor is a
 source of modality, epistemic, deontic, bouletic or circumstantial, after Kratzer; and a modal
 item pairs a form with the force-flavor pairs it can express, the representation of a modal's
 meaning in Imel, Guo and Steinert-Threlkeld's analysis of modal typology. Condoravdi's temporal
@@ -21,14 +25,22 @@ perspective and orientation locate a modal claim in time.
 * `Modality.ModalForce`, with the strength order `possibility < weakNecessity < necessity`,
   the classical dual `ModalForce.dual`, the concord class `ModalForce.IsUniversal`, and the
   classical force `ModalForce.classical`, which reads weak necessity as necessity.
+* `Modality.ModalForce.standard`: the standard a force sets on a scale of propositions.
 * `Modality.ModalFlavor` and the pair type `Modality.ForceFlavor`.
 * `Modality.ModalItem`, with its domain and variation predicates and its classical reading
   `ModalItem.classical`.
 * `Modality.TemporalPerspective`, `Modality.TemporalOrientation`.
 
+## Main statements
+
+* `Modality.ModalForce.monotone_standard`, `Modality.ModalForce.strictMono_standard`: a stronger
+  force sets a stronger standard, so the strength order is the order of the standards.
+
 ## References
 
 * [kratzer-1981]
+* [lassiter-2017]
+* [grano-2026]
 * [von-fintel-iatridou-2008]
 * [rubinstein-2014]
 * [agha-jeretic-2022]
@@ -105,6 +117,44 @@ theorem dual_dual : f.dual.dual = f.classical := by cases f <;> rfl
 @[simp]
 theorem classical_eq_necessity_iff : f.classical = necessity ↔ f.IsUniversal := by
   cases f <;> decide
+
+/-! ### Forces as standards -/
+
+section Standard
+variable {D : Type*} [LinearOrder D] [OrderBot D] {θ θ' : D}
+
+/-- On a degree semantics of modality, the standard a force sets on a scale of propositions:
+possibility asks for a degree above the least, and weak necessity and necessity for degrees
+from their thresholds `θ` and `θ'` ([lassiter-2017], [grano-2026]). -/
+def standard (θ θ' : D) : ModalForce → UpperSet D
+  | possibility => .Ioi ⊥
+  | weakNecessity => .Ici θ
+  | necessity => .Ici θ'
+
+/-- With thresholds in order above the least degree, a stronger force sets a stronger standard,
+so a necessity claim entails the weak necessity claim, which entails the possibility claim. -/
+theorem monotone_standard (hθ : ⊥ < θ) (hθθ' : θ ≤ θ') : Monotone (standard θ θ') := by
+  intro f g hfg
+  rw [← UpperSet.coe_subset_coe]
+  cases f <;> cases g <;> simp only [standard, UpperSet.coe_Ioi, UpperSet.coe_Ici] <;> first
+    | exact subset_rfl
+    | exact absurd hfg (by decide)
+    | exact Set.Ici_subset_Ioi.2 hθ
+    | exact Set.Ici_subset_Ioi.2 (hθ.trans_le hθθ')
+    | exact Set.Ici_subset_Ici.2 hθθ'
+
+/-- On a dense scale with thresholds strictly in order, the strength order of the forces is
+exactly the order of their standards. -/
+theorem strictMono_standard [DenselyOrdered D] (hθ : ⊥ < θ) (hθθ' : θ < θ') :
+    StrictMono (standard θ θ') := by
+  obtain ⟨x, hx, hxθ⟩ := exists_between hθ
+  refine (monotone_standard hθ hθθ'.le).strictMono_of_injective fun f g h ↦ ?_
+  have hx' := SetLike.ext_iff.1 h x
+  have hθ'' := SetLike.ext_iff.1 h θ
+  cases f <;> cases g <;>
+    simp [standard, hx, hxθ.not_ge, (hxθ.trans hθθ').not_ge, hθθ'.not_ge] at hx' hθ'' ⊢
+
+end Standard
 
 end ModalForce
 

@@ -7,7 +7,8 @@ module
 
 public import Linglib.Phonology.Segmental.Basic
 public import Linglib.Phonology.Segmental.NaturalClass
-public import Mathlib.Order.UpperLower.Basic
+public import Mathlib.Order.UpperLower.CompleteLattice
+public import Mathlib.Order.UpperLower.Principal
 import Mathlib.Data.Fintype.Lattice
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Powerset
@@ -17,11 +18,11 @@ import Linglib.Phonology.Segmental.PHOIBLE
 # Sonority scales
 
 A sonority scale ranks segments, or classes of them, in a linear order. A set is a cut of a
-scale when it is what lies above some point of the scale, and contiguous when it is what lies
-within some interval, the preimage of an order-connected set. A feature cuts a scale when the
-segments with one of its values form a cut. The cuts of a scale are nested, so features whose
-values cross do not both cut it, and two features whose values combine freely do not both divide
-it into contiguous classes. A scale coarsens another when it preserves its order, and the cuts of
+scale when it is what the scale places in an upper set of its points, and contiguous when it is
+what lies within some interval, the preimage of an order-connected set. A feature cuts a scale
+when the segments with one of its values form a cut. The cuts of a scale are nested, as the upper
+sets of a linear order are, so features whose values cross do not both cut it, and two features
+whose values combine freely do not both divide it into contiguous classes. A scale coarsens another when it preserves its order, and the cuts of
 the coarser scale are cuts of the finer one.
 
 The base scale is the sonority hierarchy of Hayes's Table 4.1, the modal hierarchy of Parker:
@@ -67,8 +68,8 @@ namespace Sonority
 
 variable {α β γ : Type*} [LinearOrder β] [LinearOrder γ] {σ : α → β} {τ : α → γ} {S T : Set α}
 
-/-- A set is a cut of a scale when it is the set of elements above some point of the scale. -/
-def IsCut (σ : α → β) (S : Set α) : Prop := ∃ U : Set β, IsUpperSet U ∧ S = σ ⁻¹' U
+/-- A set is a cut of a scale when it is what the scale places in an upper set of its points. -/
+def IsCut (σ : α → β) (S : Set α) : Prop := ∃ U : UpperSet β, S = σ ⁻¹' U
 
 /-- A set is contiguous on a scale when it is the preimage of an order-connected set. -/
 def Contiguous (σ : α → β) (S : Set α) : Prop := ∃ I : Set β, I.OrdConnected ∧ S = σ ⁻¹' I
@@ -80,16 +81,16 @@ def Coarsens (τ : α → γ) (σ : α → β) : Prop := ∀ a b, σ a ≤ σ b 
 def profile (σ : α → β) (a b : α) : Ordering := compare (σ a) (σ b)
 
 theorem IsCut.total (hS : IsCut σ S) (hT : IsCut σ T) : S ⊆ T ∨ T ⊆ S := by
-  obtain ⟨U, hU, rfl⟩ := hS
-  obtain ⟨V, hV, rfl⟩ := hT
-  exact (hU.total hV).imp (Set.preimage_mono ·) (Set.preimage_mono ·)
+  obtain ⟨U, rfl⟩ := hS
+  obtain ⟨V, rfl⟩ := hT
+  exact (le_total V U).imp (Set.preimage_mono ·) (Set.preimage_mono ·)
 
 theorem not_isCut_and_isCut (hST : ¬ S ⊆ T) (hTS : ¬ T ⊆ S) : ¬ (IsCut σ S ∧ IsCut σ T) :=
   fun ⟨hS, hT⟩ ↦ (hS.total hT).elim hST hTS
 
 theorem IsCut.contiguous (h : IsCut σ S) : Contiguous σ S := by
-  obtain ⟨U, hU, rfl⟩ := h
-  exact ⟨U, hU.ordConnected, rfl⟩
+  obtain ⟨U, rfl⟩ := h
+  exact ⟨U, U.upper.ordConnected, rfl⟩
 
 theorem contiguous_iff :
     Contiguous σ S ↔ ∀ a ∈ S, ∀ b ∈ S, ∀ c, σ a ≤ σ c → σ c ≤ σ b → c ∈ S := by
@@ -106,10 +107,10 @@ instance [Fintype α] [DecidablePred (· ∈ S)] : Decidable (Contiguous σ S) :
   decidable_of_iff _ contiguous_iff.symm
 
 theorem IsCut.of_coarsens (h : Coarsens τ σ) (hS : IsCut τ S) : IsCut σ S := by
-  obtain ⟨U, hU, rfl⟩ := hS
-  refine ⟨{y | ∃ a ∈ τ ⁻¹' U, σ a ≤ y}, fun x y hxy ⟨a, ha, hax⟩ ↦ ⟨a, ha, hax.trans hxy⟩, ?_⟩
+  obtain ⟨U, rfl⟩ := hS
+  refine ⟨⟨{y | ∃ a ∈ τ ⁻¹' U, σ a ≤ y}, fun x y hxy ⟨a, ha, hax⟩ ↦ ⟨a, ha, hax.trans hxy⟩⟩, ?_⟩
   ext b
-  exact ⟨fun hb ↦ ⟨b, hb, le_rfl⟩, fun ⟨a, ha, hab⟩ ↦ hU (h a b hab) ha⟩
+  exact ⟨fun hb ↦ ⟨b, hb, le_rfl⟩, fun ⟨a, ha, hab⟩ ↦ U.upper (h a b hab) ha⟩
 
 /-- Two features whose values combine freely do not both divide a scale into contiguous classes. -/
 theorem not_contiguous_of_independent (σ : α → β) {φ ψ : α → Bool}
@@ -196,10 +197,9 @@ theorem isCut_features :
       IsCut id {c : Sonority | c.toSegment.HasValue .approximant true} ∧
       IsCut id {c : Sonority | c.toSegment.HasValue .consonantal false} ∧
       IsCut id {c : Sonority | c.toSegment.HasValue .syllabic true} := by
-  refine ⟨⟨Set.Ici nasal, isUpperSet_Ici _, ?_⟩, ⟨Set.Ici liquid, isUpperSet_Ici _, ?_⟩,
-    ⟨Set.Ici glide, isUpperSet_Ici _, ?_⟩, ⟨Set.Ici vowel, isUpperSet_Ici _, ?_⟩⟩ <;>
+  refine ⟨⟨.Ici nasal, ?_⟩, ⟨.Ici liquid, ?_⟩, ⟨.Ici glide, ?_⟩, ⟨.Ici vowel, ?_⟩⟩ <;>
   · ext c
-    simp only [Set.mem_preimage, id, Set.mem_Ici]
+    simp only [Set.mem_preimage, id, UpperSet.coe_Ici, Set.mem_Ici]
     cases c <;> decide
 
 /-- The features `ofSegment` reads, the four of Table 4.1. -/
