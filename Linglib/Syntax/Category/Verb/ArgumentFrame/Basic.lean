@@ -10,11 +10,11 @@ public import Linglib.Core.Data.List.Forall2
 /-! # Argument frames
 
 An *argument frame* of a predicate is its external argument, if any, and its complement
-positions in order. A *position* is nominal, adpositional, clausal, implicit or expletive, and
-records what the predicate selects there: the type of case (in Blake's sense) and the adposition
-of an adpositional position; Noonan's coding, the sentence types and the subject requirement of a
-clausal one; the interpretation of an implicit one. Positions and frames are partially ordered by
-refinement, so a schematic frame lies below every frame instantiating it.
+positions in order. A *position* is nominal, adpositional, clausal, implicit, incorporated or
+expletive, and records what the predicate selects there: the type of case (in Blake's sense) and
+the adposition of an adpositional position; Noonan's coding, the sentence types and the subject
+requirement of a clausal one; the interpretation of an implicit one. Positions and frames are
+partially ordered by refinement, so a schematic frame lies below every frame instantiating it.
 
 ## Main definitions
 
@@ -44,6 +44,7 @@ CP-external shells in `Studies/Deal2026.lean`.
 * [blake-2001]
 * [bruening-2021]
 * [comrie-1978]
+* [creissels-2024]
 * [deal-2026]
 * [fillmore-1986]
 * [levin-1993]
@@ -71,8 +72,10 @@ namespace ArgumentFrame
 
 /-- An argument position of a frame is nominal; adpositional, with the type of case marked and the
 adposition selected; clausal, with the coding, the sentence types and the subject requirement
-selected; implicit, an unexpressed argument with its interpretation; or expletive. Every axis is
-optional, and `none` or `⊥` selects nothing. -/
+selected; implicit, an unexpressed argument with its interpretation; incorporated, a bare noun
+incorporated or pseudo-incorporated into the verb, expressing the argument without projecting a
+noun phrase ([creissels-2024] §17.1); or expletive. Every axis is optional, and `none` or `⊥`
+selects nothing. -/
 inductive Position where
   | nominal
   | adpositional (relation : Option Case.Kind := none)
@@ -81,6 +84,7 @@ inductive Position where
       (types : Clause.Selection := ⊥)
       (embeddedSubject : Option Clause.EmbeddedSubject := none)
   | implicit (interp : Option ImplicitInterp := none)
+  | incorporated
   | expletive
   deriving DecidableEq, Repr
 
@@ -128,6 +132,7 @@ inductive Kind where
   | adpositional
   | clausal
   | implicit
+  | incorporated
   | expletive
   deriving DecidableEq, Repr
 
@@ -137,6 +142,7 @@ def kind : Position → Kind
   | adpositional .. => .adpositional
   | clausal .. => .clausal
   | implicit _ => .implicit
+  | incorporated => .incorporated
   | expletive => .expletive
 
 /-- The position is nominal, the core case. -/
