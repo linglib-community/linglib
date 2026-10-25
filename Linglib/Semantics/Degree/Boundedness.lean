@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Order.Interval.Set.ProjIcc
+public import Linglib.Core.Order.UpperLower.Principal
 public import Mathlib.Algebra.Order.Group.OrderIso
 public import Mathlib.Algebra.Order.Ring.Int
 public import Mathlib.Order.Directed
@@ -24,12 +25,13 @@ about its degrees. The tag is what a lexical entry stores, since a record field 
 The negative member of an antonym pair measures on the same degrees in the reverse order, and
 `Boundedness.dual` is that operation on tags. The file also defines the standards of the positive
 form and Kennedy's Interpretive Economy, which selects among them by the tag. A standard is an
-upper set of degrees, and Kennedy's are the degrees above the least, those from the greatest and
-those above a contextual threshold. Interpretive Economy uses a standard the scale itself fixes
-when there is one. Where an automorphism carries any degree between the endpoints to any other,
-the standards every automorphism fixes are the trivial ones and the endpoint ones, so a scale
-with an endpoint rules out the contextual standard. A difference function, which measures on the ray
-above a degree, always has the minimum standard, and at it the positive form is a comparative.
+upper set of degrees, and the positive form of a measure at it is the preimage of the standard.
+Kennedy's standards are the degrees above the least, those from the greatest and those above a
+contextual threshold. Interpretive Economy uses a standard the scale itself fixes when there is
+one. Where an automorphism carries any degree between the endpoints to any other, the standards
+every automorphism fixes are the trivial ones and the endpoint ones, so a scale with an endpoint
+rules out the contextual standard. A difference function, which measures on the ray above a
+degree, always has the minimum standard, and at it the positive form is a comparative.
 
 ## Main definitions
 
@@ -39,8 +41,7 @@ above a degree, always has the minimum standard, and at it the positive form is 
   least or greatest degree adjoined.
 * `Boundedness.DegreeShape`: the canonical linear order of each boundedness.
 * `Degree.IsInvariant`: a standard every automorphism of the degrees maps to itself.
-* `PositiveStandard`, `MinStandardPos`, `MaxStandardPos`, `RelativePos`: the standards of the
-  positive form, and the positive form at Kennedy's standards.
+* `PositiveStandard`: the kinds of standard of the positive form.
 * `Boundedness.Admits`, `Boundedness.defaultStandard`: the standards Interpretive Economy admits
   on a scale, and the one it prefers.
 * `EndpointModifier`, `Boundedness.Licenses`: maximizers and minimizers, licensed by an endpoint.
@@ -51,7 +52,7 @@ above a degree, always has the minimum standard, and at it the positive form is 
 * `Degree.isInvariant_iff_of_exists_orderIso`: where an automorphism carries any degree between
   the endpoints to any other, the invariant standards are the trivial and the endpoint ones.
 * `Boundedness.admits_contextual`: the contextual standard is admitted exactly on an open scale.
-* `minStandardPos_projIci_comp_iff`: a comparative is the positive form of a difference function
+* `preimage_projIci_comp_Ioi_bot`: a comparative is the positive form of a difference function
   at the minimum standard.
 * `Boundedness.complementary_defaultStandard_dual_iff`: poles on a half-closed scale contradict.
 
@@ -77,8 +78,6 @@ closed scale is Kennedy's and stays a stipulation (`defaultStandard`).
 * [E. Klein, *A Semantics for Positive and Comparative Adjectives* (1980)][klein-1980]
 * [A. Beltrama, *Evaluation, Thresholds, and Practical Commitments: The Grammar of Adjectival
   Mildness* (2025)][beltrama-2025]
-* [T. Grano, *Variable-Force Modality in English Infinitival Relatives: A Matter of Degree*
-  (2026)][grano-2026]
 * [M. Morzycki, *Adjectival Extremeness: Degree Modification and Contextually Restricted Scales*
   (2012)][morzycki-2012]
 -/
@@ -434,10 +433,16 @@ theorem Boundedness.isInvariant_degreeShape_iff (b : Boundedness) {U : UpperSet 
 
 /-! ### Standards and Interpretive Economy
 
-The positive form of a gradable predicate is true of what meets a standard on its scale.
-Interpretive Economy maximizes the contribution of conventional meaning, so a scale with an endpoint
-rules out the contextual standard, and a totally closed scale admits both endpoint standards and
-prefers the maximum. -/
+The positive form of a gradable predicate at a standard `U` is the preimage `μ ⁻¹' U` of the
+standard under its measure, true of what the measure places in the standard. Kennedy's standards
+are the degrees above the least, `Set.Ioi ⊥`, as for *wet* and *bent*; those from the greatest,
+`Set.Ici ⊤`, as for *dry* and *full*; and those above a contextual threshold `θ`, `Set.Ioi θ`,
+as for *tall*. When the least degree is below the greatest, the maximum standard is stronger than
+the minimum (`UpperSet.Ioi_le_Ici`), and the minimum standard is the weakest nontrivial one,
+covering the standard every degree meets (`UpperSet.Ici_covBy_Ioi`). Interpretive Economy
+maximizes the contribution of conventional meaning, so a scale with an endpoint rules out the
+contextual standard, and a totally closed scale admits both endpoint standards and prefers the
+maximum. -/
 
 /-- A positive standard is the kind of threshold the positive form compares a degree with, a
 contextual norm on an open scale and an endpoint on a closed one ([kennedy-2007]), or a standard
@@ -485,51 +490,6 @@ def PositiveStandard.Complementary (s t : PositiveStandard) : Prop :=
 instance : DecidableRel PositiveStandard.Complementary := fun _ _ ↦ by
   unfold PositiveStandard.Complementary; infer_instance
 
-/-! ### The positive form at Kennedy's standards -/
-
-section PositiveForm
-variable {α D : Type*} [Preorder D] (μ : α → D)
-
-/-- The positive form at the minimum standard holds of `x` when its degree is above the least
-degree of the scale, as for *wet* and *bent*. -/
-def MinStandardPos [OrderBot D] (x : α) : Prop := μ x ∈ UpperSet.Ioi ⊥
-
-/-- The positive form at the maximum standard holds of `x` when its degree is the greatest degree
-of the scale, as for *dry* and *full*. -/
-def MaxStandardPos [OrderTop D] (x : α) : Prop := μ x ∈ UpperSet.Ici ⊤
-
-/-- The positive form at a contextual standard `θ` holds of `x` when its degree exceeds `θ`, as
-for *tall*. -/
-def RelativePos (θ : D) (x : α) : Prop := μ x ∈ UpperSet.Ioi θ
-
-variable {μ} {x : α}
-
-@[simp] theorem minStandardPos_iff [OrderBot D] : MinStandardPos μ x ↔ ⊥ < μ x := .rfl
-
-@[simp] theorem relativePos_iff {θ : D} : RelativePos μ θ x ↔ θ < μ x := .rfl
-
-@[simp] theorem maxStandardPos_iff {D : Type*} [PartialOrder D] [OrderTop D] {μ : α → D} :
-    MaxStandardPos μ x ↔ μ x = ⊤ :=
-  top_le_iff
-
-/-- When the least degree is below the greatest, the positive form at the maximum standard entails
-the one at the minimum, which is why a totally closed scale prefers its maximum. -/
-theorem MaxStandardPos.minStandardPos [OrderBot D] [OrderTop D] (h : (⊥ : D) < ⊤)
-    (hx : MaxStandardPos μ x) : MinStandardPos μ x :=
-  h.trans_le hx
-
-/-- The minimum standard is the weakest nontrivial standard: no standard lies between it and the
-one every degree meets, so strengthening an existential claim about degrees to one above the
-least only just escapes triviality ([grano-2026]). -/
-theorem bot_covBy_Ioi_bot {D : Type*} [PartialOrder D] [OrderBot D] :
-    (⊥ : UpperSet D) ⋖ UpperSet.Ioi ⊥ := by
-  refine ⟨bot_lt_iff_ne_bot.2 fun h ↦ by simpa using congrArg ((⊥ : D) ∈ ·) h, fun U h1 h2 ↦ ?_⟩
-  by_cases hb : (⊥ : D) ∈ U
-  · exact h1.ne' (SetLike.ext fun y ↦ by simpa using U.upper bot_le hb)
-  · exact h2.not_ge fun y hy ↦ bot_lt_iff_ne_bot.2 fun h ↦ hb (h ▸ hy)
-
-end PositiveForm
-
 /-! ### Difference functions
 
 The difference function of a measure `μ` at a degree `d` is `Set.projIci d ∘ μ`, which measures on
@@ -539,19 +499,19 @@ a difference function, giving the truth conditions of a comparative with standar
 maximum standard exactly when the scale of `μ` has one. -/
 
 section Difference
-variable {α D : Type*} [LinearOrder D] {μ : α → D} {d : D} {x : α}
+variable {α D : Type*} [LinearOrder D] {μ : α → D} {d : D}
 
-/-- The positive form of a difference function at the minimum standard holds of what `μ` places
-above `d`, the comparative ([kennedy-mcnally-2005], [kennedy-levin-2008] (24)). -/
-theorem minStandardPos_projIci_comp_iff : MinStandardPos (Set.projIci d ∘ μ) x ↔ d < μ x :=
-  Set.bot_lt_projIci
+/-- The positive form of a difference function at the minimum standard is the comparative with
+standard `d` ([kennedy-mcnally-2005], [kennedy-levin-2008] (24)). -/
+theorem preimage_projIci_comp_Ioi_bot : (Set.projIci d ∘ μ) ⁻¹' Set.Ioi ⊥ = μ ⁻¹' Set.Ioi d :=
+  Set.ext fun _ ↦ Set.bot_lt_projIci
 
 /-- Unless `d` is the greatest degree, the positive form of a difference function at the maximum
 standard is that of `μ` itself ([kennedy-levin-2008] fn. 16). -/
-theorem maxStandardPos_projIci_comp_iff [OrderTop D] (hd : d ≠ ⊤) :
-    MaxStandardPos (Set.projIci d ∘ μ) x ↔ MaxStandardPos μ x := by
-  rw [maxStandardPos_iff, maxStandardPos_iff, Function.comp_apply, Set.projIci_eq_top,
-    or_iff_right hd]
+theorem preimage_projIci_comp_Ici_top [OrderTop D] (hd : d ≠ ⊤) :
+    (Set.projIci d ∘ μ) ⁻¹' Set.Ici ⊤ = μ ⁻¹' Set.Ici ⊤ := by
+  ext x
+  simp [Set.projIci_eq_top, hd]
 
 end Difference
 

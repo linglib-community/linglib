@@ -146,24 +146,23 @@ variable [LinearOrder D] {m : S → α → T → D} {b : D} {s₀ : S} {φ : α 
 /-- From a source below the maximum, the telic reading of a degree achievement on a scale closed
 above, on which the theme reaches the maximum ([kennedy-levin-2008]), is exactly a quantized
 change to `⊤`, as for *straighten*. -/
-theorem quantizedChange_top_iff_maxStandardPos [OrderTop D] (hb : b ≠ ⊤) :
+theorem quantizedChange_top_iff_maxStandard [OrderTop D] (hb : b ≠ ⊤) :
     QuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ⊤ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
-        MaxStandardPos (measureOfChange (m s₀) x (τ e).fst) (τ e).snd := by
+        (τ e).snd ∈ measureOfChange (m s₀) x (τ e).fst ⁻¹' Set.Ici ⊤ := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
   simp only [Result, exists_eq_left, hb.lt_top, true_and]
-  exact and_congr_right fun h ↦
-    ((maxStandardPos_measureOfChange_iff (h ▸ hb)).trans maxStandardPos_iff).symm
+  exact and_congr_right fun h ↦ by rw [preimage_measureOfChange_Ici_top (h ▸ hb)]; simp
 
 /-- The atelic reading of a degree achievement, on which the theme ends above where it began
 ([kennedy-levin-2008]), is exactly a non-quantized change, as for *widen* or *cool*. -/
-theorem nonQuantizedChange_iff_minStandardPos :
+theorem nonQuantizedChange_iff_minStandard :
     NonQuantizedChange (fun _ s _ ↦ s = s₀) (Result m b) φ ↔
       ∀ x e, φ x e → m s₀ x (τ e).fst = b ∧
-        MinStandardPos (measureOfChange (m s₀) x (τ e).fst) (τ e).snd := by
+        (τ e).snd ∈ measureOfChange (m s₀) x (τ e).fst ⁻¹' Set.Ioi ⊥ := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
-  simp only [Result, exists_eq_left, minStandardPos_measureOfChange_iff, exists_and_left,
-    exists_eq_right']
+  simp only [Result, exists_eq_left, preimage_measureOfChange_Ioi_bot, Set.mem_preimage,
+    Set.mem_Ioi, exists_and_left, exists_eq_right']
   exact and_congr_right fun h ↦ by rw [h]
 
 end KennedyLevin

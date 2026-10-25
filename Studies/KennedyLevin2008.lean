@@ -31,7 +31,7 @@ scales.
   and `⊤` are the derived zero and the inherited maximum, and `measureOfChange m x i` is the
   difference function of `m x` at the degree `x` has at the time `i`. The paper applies `m` to the
   initial and final intervals of the event. The verbal positive form (26) at the minimum and
-  maximum standards is `Degree.MinStandardPos` and `Degree.MaxStandardPos`, as for adjectives.
+  maximum standards is the preimage of `Set.Ioi ⊥` and of `Set.Ici ⊤`, as for adjectives.
 * The amount of change is the distance above the derived zero, the positive part of the
   difference (`coe_measureOfChange_sub`), as the paper glosses the difference function (23). A
   verbal degree modifier compares it with a degree, and on positive values it then has the reading
@@ -114,26 +114,25 @@ section Readings
 
 variable {α δ T : Type*} [LinearOrder δ] {m : α → T → δ} {x : α} {i f : T}
 
-/-- The minimum-standard reading of a degree achievement (27) holds iff the argument ends with more
-of the property than it began with. -/
-theorem minStandardPos_measureOfChange_iff :
-    MinStandardPos (measureOfChange m x i) f ↔ m x i < m x f :=
-  minStandardPos_projIci_comp_iff
+/-- The minimum-standard reading of a degree achievement (27) is the comparative with the degree
+the argument begins with: it holds iff the argument ends with more of the property. -/
+theorem preimage_measureOfChange_Ioi_bot :
+    measureOfChange m x i ⁻¹' Set.Ioi ⊥ = m x ⁻¹' Set.Ioi (m x i) :=
+  preimage_projIci_comp_Ioi_bot
 
 variable [OrderTop δ]
 
 /-- Unless the argument begins at the greatest degree, the maximum-standard reading of a degree
 achievement (27) is its adjective's positive form at the end (§7.3.3). -/
-theorem maxStandardPos_measureOfChange_iff (h : m x i ≠ ⊤) :
-    MaxStandardPos (measureOfChange m x i) f ↔ MaxStandardPos (m x) f :=
-  maxStandardPos_projIci_comp_iff h
+theorem preimage_measureOfChange_Ici_top (h : m x i ≠ ⊤) :
+    measureOfChange m x i ⁻¹' Set.Ici ⊤ = m x ⁻¹' Set.Ici ⊤ :=
+  preimage_projIci_comp_Ici_top h
 
 /-- Unless the argument begins with the greatest degree, the telic reading entails the atelic
 one, which is why it is preferred (§7.3.3). -/
-theorem minStandardPos_of_maxStandardPos (h : m x i ≠ ⊤)
-    (hmax : MaxStandardPos (measureOfChange m x i) f) :
-    MinStandardPos (measureOfChange m x i) f :=
-  hmax.minStandardPos h.lt_top
+theorem preimage_measureOfChange_Ici_top_subset (h : m x i ≠ ⊤) :
+    measureOfChange m x i ⁻¹' Set.Ici ⊤ ⊆ measureOfChange m x i ⁻¹' Set.Ioi ⊥ :=
+  Set.preimage_mono (Set.Ici_subset_Ioi.2 h.lt_top)
 
 end Readings
 
@@ -172,10 +171,10 @@ theorem describes_interval_iff {c : Comparison} {n : δ} (hc : c.interval n ⊆ 
 
 /-- The minimum-standard reading is the reading of [hay-kennedy-levin-1999] with the difference
 value "some amount". -/
-theorem minStandardPos_measureOfChange_iff_describes_someAmount :
-    MinStandardPos (measureOfChange m x i) f ↔ Describes m x someAmount i f := by
-  rw [minStandardPos_measureOfChange_iff, describes_iff_sub_mem, someAmount,
-    Comparison.mem_interval, Comparison.rel_gt, sub_pos]
+theorem mem_preimage_Ioi_bot_iff_describes_someAmount :
+    f ∈ measureOfChange m x i ⁻¹' Set.Ioi ⊥ ↔ Describes m x someAmount i f := by
+  rw [preimage_measureOfChange_Ioi_bot, Set.mem_preimage, Set.mem_Ioi, describes_iff_sub_mem,
+    someAmount, Comparison.mem_interval, Comparison.rel_gt, sub_pos]
 
 /-- For positive `n`, the amount of change is at least `n` iff the event is described by the
 difference values of at least `n` ((32)–(33)). -/
@@ -203,8 +202,8 @@ theorem coe_measureOfChange_eq_iff_describes_completely {top : δ} (h : m x i < 
 
 /-- *Slightly*, a positive change up to a small degree `s` ((34b)), is the reading of
 [hay-kennedy-levin-1999] with *slightly*. -/
-theorem minStandardPos_and_le_iff_describes_slightly (s : Ici (m x i)) :
-    MinStandardPos (measureOfChange m x i) f ∧ measureOfChange m x i f ≤ s ↔
+theorem mem_preimage_Ioi_bot_and_le_iff_describes_slightly (s : Ici (m x i)) :
+    f ∈ measureOfChange m x i ⁻¹' Set.Ioi ⊥ ∧ measureOfChange m x i f ≤ s ↔
       Describes m x (slightly ((s : δ) - m x i)) i f := by
   rw [slightly, describes_iff_of_subset_Ioi (D := Comparison.le.interval _ ∩ someAmount)
     inter_subset_right, mem_inter_iff, Comparison.mem_interval, Comparison.rel_le,

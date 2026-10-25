@@ -18,9 +18,9 @@ Chapters 4 to 6 place the epistemic adjectives and auxiliaries on one scale. *Li
 *probable* measure a proposition by its probability, on a scale bounded below by the likelihood
 of a contradiction and above by that of a tautology (`likelihood_univ`, `ofOrder_probability`),
 and they are relative adjectives on it. *Certain* takes the scale's maximum as its standard and
-*possible* its minimum, so the three are Kennedy's three positive forms on one closed
-scale (`mem_likely_iff_relativePos`, `mem_certain_iff_maxStandardPos`,
-`mem_possible_iff_minStandardPos`). A relative adjective on a closed scale is what Kennedy's
+*possible* its minimum, so the three are the positive forms of likelihood at Kennedy's three
+standards on one closed scale (`likely_eq_preimage`, `certain_eq_preimage`,
+`possible_eq_preimage`). A relative adjective on a closed scale is what Kennedy's
 Interpretive Economy excludes, `Degree.Boundedness.Admits`, and what the book's own typology
 (4.58) allows: *likely* is the counter-example of p. 82
 (`coherent_and_not_admits_contextual_probability`). The distribution of *completely* and
@@ -213,18 +213,17 @@ variable [IsProbabilityMeasure P]
 theorem mem_certain_iff : A ∈ certain P ↔ P.real A = 1 :=
   ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
-theorem mem_likely_iff_relativePos (θ : Probability) :
-    A ∈ likely P θ ↔ RelativePos (likelihood P) θ A :=
-  Iff.rfl
+theorem likely_eq_preimage (θ : Probability) : likely P θ = likelihood P ⁻¹' Set.Ioi θ :=
+  rfl
 
-theorem mem_certain_iff_maxStandardPos :
-    A ∈ certain P ↔ MaxStandardPos (likelihood P) A := by
-  rw [mem_certain_iff, maxStandardPos_iff, Subtype.ext_iff, coe_likelihood,
-    Set.Icc.coe_top]
+theorem certain_eq_preimage : certain P = likelihood P ⁻¹' Set.Ici ⊤ := by
+  ext A
+  rw [mem_certain_iff, Set.mem_preimage, Set.mem_Ici, top_le_iff, Subtype.ext_iff,
+    coe_likelihood, Set.Icc.coe_top]
 
-theorem mem_possible_iff_minStandardPos :
-    A ∈ possible P ↔ MinStandardPos (likelihood P) A := by
-  rw [mem_possible_iff, minStandardPos_iff, ← Subtype.coe_lt_coe, coe_likelihood,
+theorem possible_eq_preimage : possible P = likelihood P ⁻¹' Set.Ioi ⊥ := by
+  ext A
+  rw [mem_possible_iff, Set.mem_preimage, Set.mem_Ioi, ← Subtype.coe_lt_coe, coe_likelihood,
     Set.Icc.coe_bot]
 
 /-- The English fragment agrees, since its *possible* takes the minimum standard and its
