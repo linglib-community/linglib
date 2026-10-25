@@ -119,7 +119,6 @@ def toNominal (χ : Character C W E) : Nominal C W E where
 
 theorem isDirectlyReferential_iff (χ : Character C W E) :
     χ.IsDirectlyReferential ↔ ∀ c, IsRigid (χ.toNominal.selector c) :=
-  forall_congr' fun _ ↦
-    ⟨fun h ↦ h.map some, fun h ↦ h.of_comp_injective (Option.some_injective E)⟩
+  forall_congr' fun _ ↦ (Option.some_injective E).isRigid_comp_iff.symm
 
 end Kaplan.Character

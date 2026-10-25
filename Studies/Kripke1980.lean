@@ -82,18 +82,19 @@ theorem isRigid_iff_forall_exists_forall_iff [Nonempty W] :
     exact ((hx v).1 rfl).symm.trans ((hx w).1 rfl)
 
 /-- The large and small scope readings of necessity along `R` agree at `w` for every simple
-sentence iff the designator designates at every world accessible from `w` what it designates
-at `w`. -/
+sentence iff the designator agrees, on the worlds accessible from `w`, with the rigid
+designator whose reference it fixes at `w`. -/
 theorem forall_largeScope_box_iff_smallScope_box_iff :
-    (∀ P, largeScope □[R] P t w ↔ smallScope □[R] P t w) ↔ ∀ v, w ~[R] v → t v = t w :=
+    (∀ P, largeScope □[R] P t w ↔ smallScope □[R] P t w) ↔
+      Set.EqOn t (fun _ ↦ t w) {v | w ~[R] v} :=
   ⟨fun h v hv ↦ (h fun e _ ↦ e = t w).1 (fun _ _ ↦ rfl) v hv, fun h _ ↦
-    forall₂_congr fun v hv ↦ by simp only [h v hv]⟩
+    forall₂_congr fun _ hv ↦ by simp only [h hv]⟩
 
 theorem isRigid_iff_largeScope_eq_smallScope :
     IsRigid t ↔ ∀ P, largeScope □[Set.univ] P t = smallScope □[Set.univ] P t :=
   ⟨fun h P ↦ largeScope_eq_smallScope h _ P, fun h v w ↦
-    forall_largeScope_box_iff_smallScope_box_iff.1 (fun P ↦ iff_of_eq (congrFun (h P) w)) v
-      trivial⟩
+    forall_largeScope_box_iff_smallScope_box_iff.1 (fun P ↦ iff_of_eq (congrFun (h P) w))
+      (show v ∈ {v | w ~[Set.univ] v} from trivial)⟩
 
 theorem largeScope_diamond_and_not_smallScope (ht : ∀ w, F (t w) w) (h : ¬ F (t w₀) w) :
     largeScope ◇[Set.univ] (fun x v ↦ ¬ F x v) t w₀ ∧
