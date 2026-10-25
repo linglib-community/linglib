@@ -126,6 +126,15 @@ theorem le_iff_eqOn_domain : g ≤ h ↔ Set.EqOn g h g.domain := by
 theorem domain_mono (hgh : g ≤ h) : g.domain ⊆ h.domain :=
   fun x hx ↦ ne_bot_of_le_ne_bot hx (hgh x)
 
+theorem eq_of_le_of_domain_subset (hgh : g ≤ h) (hdom : h.domain ⊆ g.domain) : h = g :=
+  le_antisymm (Pi.le_def.mpr fun x => by
+    by_cases hx : g x = ⊥
+    · have hhx : h x = ⊥ := by
+        by_contra hhx
+        exact hdom hhx hx
+      exact hhx ▸ bot_le
+    · exact (le_iff_eqOn_domain.mp hgh hx).ge) hgh
+
 theorem covBy_iff : g ⋖ h ↔ ∃ x, g x = ⊥ ∧ h x ≠ ⊥ ∧ ∀ y ≠ x, g y = h y := by
   simp only [Pi.covBy_iff, Flat.covBy_iff, and_assoc]
 

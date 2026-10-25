@@ -381,9 +381,42 @@ theorem isTest_iff_exists_guard : IsTest u ↔ ∃ C, u = guard C :=
 
 /-- A transformer is *distributive* if it acts per-element:
 `φ s = ⋃ i ∈ s, φ {i}` — equivalently, it preserves arbitrary joins
-(`Collapse.lean`'s `isDistributive_iff_map_sSup`). -/
+(`isDistributive_iff_map_sSup`). -/
 def IsDistributive (φ : CCP S) : Prop :=
   ∀ s, φ s = {p | ∃ i ∈ s, p ∈ φ {i}}
+
+/-- A CCP is distributive iff it preserves arbitrary joins of states. -/
+theorem isDistributive_iff_map_sSup (φ : CCP S) :
+    CCP.IsDistributive φ ↔ ∀ T : Set (Set S), φ (sSup T) = sSup (φ '' T) := by
+  simp only [Set.sSup_eq_sUnion]
+  constructor
+  · intro h T
+    ext j
+    constructor
+    · intro hj
+      rw [h] at hj
+      obtain ⟨i, ⟨t, ht, hit⟩, hji⟩ := hj
+      refine ⟨φ t, ⟨t, ht, rfl⟩, ?_⟩
+      rw [h t]
+      exact ⟨i, hit, hji⟩
+    · rintro ⟨_, ⟨t, ht, rfl⟩, hjt⟩
+      rw [h t] at hjt
+      obtain ⟨i, hit, hji⟩ := hjt
+      rw [h]
+      exact ⟨i, ⟨t, ht, hit⟩, hji⟩
+  · intro h s
+    have hs : s = ⋃₀ ((fun i => ({i} : Set S)) '' s) := by
+      ext i
+      simp
+    ext j
+    constructor
+    · intro hj
+      rw [hs, h] at hj
+      obtain ⟨_, ⟨_, ⟨i, hi, rfl⟩, rfl⟩, hji⟩ := hj
+      exact ⟨i, hi, hji⟩
+    · rintro ⟨i, hi, hji⟩
+      rw [hs, h]
+      exact ⟨φ {i}, ⟨{i}, ⟨i, hi, rfl⟩, rfl⟩, hji⟩
 
 /-! ### The classical fragment -/
 

@@ -777,16 +777,16 @@ theorem _root_.DRT.Condition.toDPL_dis (l r : DRS L V) :
 variable [DecidableEq V] (M : Type x) [L.Structure M]
 
 private theorem eval_toDPL_of_conditions (K : DRS L V)
-    (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesCondition f c}) :
+    (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesConditionTotal f c}) :
     K.toDPL.eval M = K.toRel := by
   ext ⟨g, k⟩
   rw [DRS.toDPL_eq, mem_eval_exs, eval_conjs_map M _ _ _ h]
-  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifies_iff, Set.mem_ofPred_eq]
+  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifiesTotal_iff, Set.mem_ofPred_eq]
   exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
 
 /-- The translation of a condition is the test of its verification (Fact 25 for conditions). -/
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
-    c.toDPL.eval M = test {f : V → M | VerifiesCondition f c} := by
+    c.toDPL.eval M = test {f : V → M | VerifiesConditionTotal f c} := by
   induction c with
   | atom a =>
     rw [Condition.toDPL_atom, eval_rel]

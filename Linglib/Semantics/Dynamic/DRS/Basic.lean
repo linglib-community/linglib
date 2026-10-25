@@ -378,8 +378,8 @@ No discourse referent is declared twice along a nesting path: each universe is
 fresh for the ambient declarations, threaded through sub-boxes the way
 verification threads the base (the antecedent of a `⇒` feeds its referents
 into the consequent). This is the hypothesis under which the total
-agree-off-universe semantics and the persistence semantics coincide
-(`DRS.trueRel_iff_toRelAt` in `DRS/Indexed.lean`). -/
+agree-off-universe semantics and the partial semantics coincide
+(`DRS.trueRel_iff_exists_verifies` in `DRS/Dynamics.lean`). -/
 
 mutual
 /-- A DRS is *reuse-free* at ambient declarations `X` when its universe avoids `X` and its

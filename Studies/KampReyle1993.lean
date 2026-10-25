@@ -1,8 +1,9 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Indexed
+public import Linglib.Semantics.Dynamic.DRS.Dynamics
 public import Linglib.Semantics.Dynamic.DRS.Accessibility
 public import Linglib.Core.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 
 /-!
 # Kamp and Reyle (1993): From Discourse to Logic
@@ -10,8 +11,8 @@ public import Linglib.Core.Data.Fin.VecNotation
 A discourse is interpreted by constructing a discourse representation structure (DRS), and a DRS
 is verified by a partial embedding of its referents into a model. A sub-DRS is verified by
 extensions of the embedding that keep the values it has already assigned (Defs. 1.4.4, 2.1.4),
-which is the semantics `DRS.toRelAt` at a base, and a proper DRS is true when some embedding of
-its universe verifies it (Def. 1.4.5).
+the semantics `DRS.Verifies`, and a DRS is true when some embedding of its universe verifies it
+from the empty input (Def. 1.4.5, `DRS.IsTrue`).
 
 ## Main statements
 
@@ -29,10 +30,8 @@ its universe verifies it (Def. 1.4.5).
 ## Implementation notes
 
 The truth conditions are claims over arbitrary models, proved by unfolding the verifying
-embeddings. An embedding with domain `X` is a total assignment read only at `X`, so the truth of
-a proper DRS is `∃ g, DRS.toRelAt ∅ K f g` for any input `f`, which plays no role at the empty
-base. Names enter a DRS
-as the unary conditions the construction algorithm writes for them.
+embeddings; the witnesses are built from `⊥` by `PartialAssign.update`. Names enter a DRS as the
+unary conditions the construction algorithm writes for them.
 
 ## References
 
@@ -63,6 +62,38 @@ variable {M : Type*} [krLang.Structure M]
 `L`). Lets truth-conditions read as `rm .farmer ![e]`. -/
 abbrev rm {n} (R : krLang.Relations n) (x : Fin n → M) : Prop := Structure.RelMap R x
 
+omit [krLang.Structure M] in
+private theorem flat_inj {g : PartialAssign ℕ M} {a : ℕ} {m n : M}
+    (h1 : g a = ↑m) (h2 : g a = ↑n) : m = n :=
+  Flat.coe_injective (h1.symm.trans h2)
+
+private theorem holds_atom1 {R : krLang.Relations 1} {a : ℕ} {g : PartialAssign ℕ M} :
+    (Condition.atom ⟨R, ![a]⟩ : Condition krLang ℕ).Holds g ↔
+      ∃ m : M, g a = ↑m ∧ rm R ![m] := by
+  rw [Condition.holds_atom]
+  constructor
+  · rintro ⟨v, hv, hrel⟩
+    have he : v = ![v 0] := funext fun i => by fin_cases i; rfl
+    exact ⟨v 0, hv 0, he ▸ hrel⟩
+  · rintro ⟨m, hm, hrel⟩
+    refine ⟨![m], fun i => ?_, hrel⟩
+    fin_cases i
+    exact hm
+
+private theorem holds_atom2 {R : krLang.Relations 2} {a b : ℕ} {g : PartialAssign ℕ M} :
+    (Condition.atom ⟨R, ![a, b]⟩ : Condition krLang ℕ).Holds g ↔
+      ∃ m n : M, g a = ↑m ∧ g b = ↑n ∧ rm R ![m, n] := by
+  rw [Condition.holds_atom]
+  constructor
+  · rintro ⟨v, hv, hrel⟩
+    have he : v = ![v 0, v 1] := funext fun i => by fin_cases i <;> rfl
+    exact ⟨v 0, v 1, hv 0, hv 1, he ▸ hrel⟩
+  · rintro ⟨m, n, hm, hn, hrel⟩
+    refine ⟨![m, n], fun i => ?_, hrel⟩
+    fin_cases i
+    · exact hm
+    · exact hn
+
 /-! ### Names and pronouns: "Jones owns Ulysses. It fascinates him." (1.1) -/
 
 /-- The completed §1.1 DRS of (1.1),
@@ -73,22 +104,35 @@ def ulyssesDiscourse : DRS krLang ℕ :=
   .mk {1, 2, 3, 4} [.atom ⟨.jones, ![1]⟩, .atom ⟨.ulysses, ![2]⟩, .atom ⟨.owns, ![1, 2]⟩,
     .eq 3 2, .eq 4 1, .atom ⟨.fascinates, ![3, 4]⟩]
 
-/-- The (1.1) discourse is true iff a single pair verifies both sentences. -/
-theorem ulysses_tc (f : ℕ → M) :
-    (∃ g, DRS.toRelAt ∅ ulyssesDiscourse f g) ↔
+/-- The (1.1) discourse is true iff a single pair verifies both sentences (Def. 1.4.5). -/
+theorem ulysses_tc :
+    ulyssesDiscourse.IsTrue M ↔
       ∃ x y : M, rm .jones ![x] ∧ rm .ulysses ![y] ∧ rm .owns ![x, y] ∧
         rm .fascinates ![y, x] := by
-  simp only [ulyssesDiscourse, DRS.toRelAt_mk, Condition.holdsAllAt_cons,
-    Condition.holdsAllAt_nil, Condition.holdsAt_atom, Condition.holdsAt_eq,
-    Language.Atom.realize_mk, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true,
-    Finset.coe_empty, Set.eqOn_empty, true_and]
   constructor
-  · rintro ⟨g, hj, hu, ho, h32, h41, hf⟩
-    rw [h32, h41] at hf
-    exact ⟨g 1, g 2, hj, hu, ho, hf⟩
+  · rintro ⟨g, -, -, h1, h2, h3, h4, h5, h6, -⟩
+    obtain ⟨x, hx, hjones⟩ := holds_atom1.mp h1
+    obtain ⟨y, hy, hulysses⟩ := holds_atom1.mp h2
+    obtain ⟨x', y', hx', hy', howns⟩ := holds_atom2.mp h3
+    obtain ⟨m, hm3, hm2⟩ := h4
+    obtain ⟨n, hn4, hn1⟩ := h5
+    obtain ⟨p, q, hp, hq, hfasc⟩ := holds_atom2.mp h6
+    rw [flat_inj hx' hx, flat_inj hy' hy] at howns
+    rw [flat_inj hp hm3, flat_inj hm2 hy, flat_inj hq hn4, flat_inj hn1 hx] at hfasc
+    exact ⟨x, y, hjones, hulysses, howns, hfasc⟩
   · rintro ⟨x, y, hj, hu, ho, hf⟩
-    let g : ℕ → M := fun n ↦ match n with | 2 => y | 3 => y | _ => x
-    exact ⟨g, hj, hu, ho, rfl, rfl, hf⟩
+    refine ⟨((((⊥ : PartialAssign ℕ M).update 1 x).update 2 y).update 3 y).update 4 x, ?_⟩
+    rw [ulyssesDiscourse, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    refine ⟨bot_le, ?_, holds_atom1.mpr ⟨x, by simp, hj⟩, holds_atom1.mpr ⟨y, by simp, hu⟩,
+      holds_atom2.mpr ⟨x, y, by simp, by simp, ho⟩, (Condition.holds_eq 3 2).mpr
+        ⟨y, by simp, by simp⟩, (Condition.holds_eq 4 1).mpr ⟨x, by simp, by simp⟩,
+      holds_atom2.mpr ⟨y, x, by simp, by simp, hf⟩⟩
+    ext n
+    simp only [PartialAssign.domain_update, PartialAssign.domain_bot, Set.mem_insert_iff,
+      Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
+      Set.mem_singleton_iff]
+    tauto
 
 /-- The completed (1.1) DRS is proper (Def. 1.4.2–1.4.3), every referent its conditions use
 being introduced by the discourse itself. -/
@@ -105,23 +149,40 @@ def porscheDiscourse : DRS krLang ℕ := .mk {1} [.atom ⟨.jones, ![1]⟩, .neg
 
 /-- (1.57) is true when there is no Porsche that Jones owns, the negated box being verified by
 the non-existence of a verifying extension. -/
-theorem porsche_tc (f : ℕ → M) :
-    (∃ g, DRS.toRelAt ∅ porscheDiscourse f g) ↔
+theorem porsche_tc :
+    porscheDiscourse.IsTrue M ↔
       ∃ x : M, rm .jones ![x] ∧ ¬ ∃ y : M, rm .porsche ![y] ∧ rm .owns ![x, y] := by
-  simp only [porscheDiscourse, porscheNeg, DRS.toRelAt_mk, Condition.holdsAllAt_cons,
-    Condition.holdsAllAt_nil, Condition.holdsAt_atom, Condition.holdsAt_neg,
-    Language.Atom.realize_mk, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true,
-    Finset.empty_union, Finset.coe_empty, Finset.coe_singleton, Set.eqOn_empty,
-    Set.eqOn_singleton, true_and]
   constructor
-  · rintro ⟨g, hj, hneg⟩
-    refine ⟨g 1, hj, fun ⟨y, hp, ho⟩ ↦ hneg ⟨Function.update g 2 y, ?_, ?_, ?_⟩⟩
-    · simp
-    · simpa using hp
-    · simpa using ho
+  · rintro ⟨g, -, hdom, h1, hneg, -⟩
+    obtain ⟨x, hx, hjones⟩ := holds_atom1.mp h1
+    refine ⟨x, hjones, ?_⟩
+    rintro ⟨y, hp, ho⟩
+    refine hneg ⟨g.update 2 y, ?_⟩
+    rw [porscheNeg, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    have h2bot : g 2 = ⊥ := by
+      have h2 : (2 : ℕ) ∉ g.domain := by
+        rw [hdom]
+        simp
+      simpa using h2
+    refine ⟨(PartialAssign.covBy_update h2bot y).le, ?_,
+      holds_atom1.mpr ⟨y, by simp, hp⟩, holds_atom2.mpr ⟨x, y, by simp [hx], by simp, ho⟩⟩
+    rw [PartialAssign.domain_update, Set.insert_eq, Finset.coe_singleton]
+    exact Set.union_comm _ _
   · rintro ⟨x, hj, hn⟩
-    refine ⟨fun _ ↦ x, hj, fun ⟨g', h1, hp, ho⟩ ↦ hn ⟨g' 2, hp, ?_⟩⟩
-    rwa [h1] at ho
+    refine ⟨PartialAssign.single 1 x, ?_⟩
+    rw [porscheDiscourse, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    refine ⟨bot_le, by simp, holds_atom1.mpr ⟨x, by simp, hj⟩, ?_⟩
+    rintro ⟨g', hle', hdom', hp, ho, -⟩
+    obtain ⟨y, hy, hporsche⟩ := holds_atom1.mp hp
+    obtain ⟨x', y', hx', hy', howns⟩ := holds_atom2.mp ho
+    have h1 : g' 1 = ↑x := by
+      have h := PartialAssign.le_iff_eqOn_domain.mp hle' (x := 1) (by simp)
+      rw [PartialAssign.single_eq_same] at h
+      exact h.symm
+    rw [flat_inj hx' h1, flat_inj hy' hy] at howns
+    exact hn ⟨y, hporsche, howns⟩
 
 /-- From the top-level position, the referent trapped under `¬` is not accessible
 (Def. 2.1.3) — the reason a continuation "*It fascinates him." cannot resolve *it*. -/
@@ -151,22 +212,49 @@ def donkey : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyCons]
 
 /-- By the verification clause for `⇒` ((2.31), Def. 2.1.4), the donkey sentence is true iff every
 owning farmer–donkey pair satisfies `beats`. -/
-theorem donkey_universal_reading (f : ℕ → M) :
-    (∃ g, DRS.toRelAt ∅ donkey f g) ↔
+theorem donkey_universal_reading :
+    donkey.IsTrue M ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [donkey, donkeyAnte, donkeyCons, DRS.toRelAt_mk, Condition.holdsAllAt_cons,
-    Condition.holdsAllAt_nil, Condition.holdsAt_atom, Condition.holdsAt_imp,
-    Language.Atom.realize_mk, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true,
-    Finset.empty_union, Finset.union_empty, Finset.coe_empty, Set.eqOn_empty, true_and]
   constructor
-  · rintro ⟨g, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    let g' : ℕ → M := fun n ↦ match n with | 2 => e₂ | _ => e₁
-    obtain ⟨g'', hag, hb⟩ := himp g' ⟨hf, hd, ho⟩
-    rwa [hag (by simp : (1 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ)),
-      hag (by simp : (2 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ))] at hb
+  · rintro ⟨g, -, hdom, himp, -⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    have hg : g = ⊥ := PartialAssign.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
+    subst hg
+    have hante : donkeyAnte.Verifies (⊥ : PartialAssign ℕ M)
+        (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) := by
+      rw [donkeyAnte, DRS.verifies_mk]
+      simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+      refine ⟨bot_le, ?_, holds_atom1.mpr ⟨e₁, by simp, hf⟩, holds_atom1.mpr ⟨e₂, by simp, hd⟩,
+        holds_atom2.mpr ⟨e₁, e₂, by simp, by simp, ho⟩⟩
+      ext n
+      simp only [PartialAssign.domain_update, PartialAssign.domain_bot, Set.mem_insert_iff,
+        Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
+        Set.mem_singleton_iff]
+      tauto
+    obtain ⟨g₂, hle₂, hdom₂, hb, -⟩ := himp _ hante
+    have hg₂ : g₂ = ((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂ :=
+      PartialAssign.eq_of_le_of_domain_subset hle₂ (by rw [hdom₂]; simp)
+    obtain ⟨m, n, hm, hn, hbeats⟩ := holds_atom2.mp hb
+    rw [hg₂] at hm hn
+    rw [← flat_inj (show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 1 = ↑e₁ by simp) hm,
+      ← flat_inj (show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 2 = ↑e₂ by simp) hn]
+      at hbeats
+    exact hbeats
   · intro hall
-    exact ⟨f, fun g' ⟨hf, hd, ho⟩ ↦ ⟨g', Set.eqOn_refl _ _, hall _ _ ⟨hf, hd, ho⟩⟩⟩
+    refine ⟨⊥, ?_⟩
+    rw [donkey, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    refine ⟨le_rfl, by simp, ?_⟩
+    rintro g₁ ⟨-, hdom₁, hf, hd, ho, -⟩
+    obtain ⟨e₁, h1, hfarmer⟩ := holds_atom1.mp hf
+    obtain ⟨e₂, h2, hdonkey⟩ := holds_atom1.mp hd
+    obtain ⟨m, n, hm, hn, howns⟩ := holds_atom2.mp ho
+    rw [flat_inj hm h1, flat_inj hn h2] at howns
+    refine ⟨g₁, ?_⟩
+    rw [donkeyCons, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    exact ⟨le_rfl, by simp,
+      holds_atom2.mpr ⟨e₁, e₂, h1, h2, hall e₁ e₂ ⟨hfarmer, hdonkey, howns⟩⟩⟩
 
 theorem donkey_proper : donkey.IsProper := by decide
 
@@ -176,32 +264,69 @@ def donkeyPronounCons : DRS krLang ℕ := .mk {3} [.eq 3 2, .atom ⟨.beats, ![1
 /-- (2.47) with the pronoun completed by referent-plus-equation. -/
 def donkeyPronoun : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyPronounCons]
 
-theorem donkeyPronoun_tc (f : ℕ → M) :
-    (∃ g, DRS.toRelAt ∅ donkeyPronoun f g) ↔
+theorem donkeyPronoun_tc :
+    donkeyPronoun.IsTrue M ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [donkeyPronoun, donkeyAnte, donkeyPronounCons, DRS.toRelAt_mk,
-    Condition.holdsAllAt_cons, Condition.holdsAllAt_nil, Condition.holdsAt_atom,
-    Condition.holdsAt_eq, Condition.holdsAt_imp, Language.Atom.realize_mk, Matrix.comp_vecCons,
-    Matrix.comp_vecEmpty, and_true, Finset.empty_union, Finset.coe_empty, Set.eqOn_empty,
-    true_and]
   constructor
-  · rintro ⟨g, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    let g' : ℕ → M := fun n ↦ match n with | 2 => e₂ | _ => e₁
-    obtain ⟨g'', hag, h32, hb⟩ := himp g' ⟨hf, hd, ho⟩
-    rwa [h32, hag (by simp : (1 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ)),
-      hag (by simp : (2 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ))] at hb
+  · rintro ⟨g, -, hdom, himp, -⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    have hg : g = ⊥ := PartialAssign.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
+    subst hg
+    have hante : donkeyAnte.Verifies (⊥ : PartialAssign ℕ M)
+        (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) := by
+      rw [donkeyAnte, DRS.verifies_mk]
+      simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+      refine ⟨bot_le, ?_, holds_atom1.mpr ⟨e₁, by simp, hf⟩, holds_atom1.mpr ⟨e₂, by simp, hd⟩,
+        holds_atom2.mpr ⟨e₁, e₂, by simp, by simp, ho⟩⟩
+      ext n
+      simp only [PartialAssign.domain_update, PartialAssign.domain_bot, Set.mem_insert_iff,
+        Set.mem_union, Set.mem_empty_iff_false, Finset.coe_insert, Finset.coe_singleton,
+        Set.mem_singleton_iff]
+      tauto
+    obtain ⟨g₂, hle₂, hdom₂, h32, hb, -⟩ := himp _ hante
+    obtain ⟨m', hm3, hm2⟩ := h32
+    obtain ⟨m, n, hm, hn, hbeats⟩ := holds_atom2.mp hb
+    have h1 : g₂ 1 = ↑e₁ := by
+      have h := PartialAssign.le_iff_eqOn_domain.mp hle₂ (x := 1)
+        (by simp [PartialAssign.domain_update])
+      rw [show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 1 = ↑e₁ by simp] at h
+      exact h.symm
+    have h2 : g₂ 2 = ↑e₂ := by
+      have h := PartialAssign.le_iff_eqOn_domain.mp hle₂ (x := 2)
+        (by simp [PartialAssign.domain_update])
+      rw [show (((⊥ : PartialAssign ℕ M).update 1 e₁).update 2 e₂) 2 = ↑e₂ by simp] at h
+      exact h.symm
+    rw [flat_inj hm h1, flat_inj hn hm3, flat_inj hm2 h2] at hbeats
+    exact hbeats
   · intro hall
-    refine ⟨f, fun g' ⟨hf, hd, ho⟩ ↦ ⟨Function.update g' 3 (g' 2), fun x hx ↦ ?_, by simp, ?_⟩⟩
-    · have : x ≠ 3 := by rintro rfl; simp at hx
-      simp [this]
-    · simpa using hall (g' 1) (g' 2) ⟨hf, hd, ho⟩
+    refine ⟨⊥, ?_⟩
+    rw [donkeyPronoun, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    refine ⟨le_rfl, by simp, ?_⟩
+    rintro g₁ ⟨-, hdom₁, hf, hd, ho, -⟩
+    obtain ⟨e₁, h1, hfarmer⟩ := holds_atom1.mp hf
+    obtain ⟨e₂, h2, hdonkey⟩ := holds_atom1.mp hd
+    obtain ⟨m, n, hm, hn, howns⟩ := holds_atom2.mp ho
+    rw [flat_inj hm h1, flat_inj hn h2] at howns
+    have h3bot : g₁ 3 = ⊥ := by
+      have h3 : (3 : ℕ) ∉ g₁.domain := by
+        rw [hdom₁]
+        simp
+      simpa using h3
+    refine ⟨g₁.update 3 e₂, ?_⟩
+    rw [donkeyPronounCons, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true]
+    refine ⟨(PartialAssign.covBy_update h3bot e₂).le, ?_,
+      (Condition.holds_eq 3 2).mpr ⟨e₂, by simp, by simp [h2]⟩,
+      holds_atom2.mpr ⟨e₁, e₂, by simp [h1], by simp,
+        hall e₁ e₂ ⟨hfarmer, hdonkey, howns⟩⟩⟩
+    rw [PartialAssign.domain_update, Set.insert_eq, Finset.coe_singleton]
+    exact Set.union_comm _ _
 
 /-- Completing the pronoun directly or by a referent and an equation gives the same truth
 conditions, (2.44) and (2.45). -/
-theorem donkeyPronoun_agree (f : ℕ → M) :
-    (∃ g, DRS.toRelAt ∅ donkeyPronoun f g) ↔ ∃ g, DRS.toRelAt ∅ donkey f g :=
-  (donkeyPronoun_tc f).trans (donkey_universal_reading f).symm
+theorem donkeyPronoun_agree : donkeyPronoun.IsTrue M ↔ donkey.IsTrue M :=
+  donkeyPronoun_tc.trans donkey_universal_reading.symm
 
 /-! ### Subordination and accessibility geometry -/
 
@@ -248,7 +373,7 @@ instance : krLang.Structure (Fin 2) where
 
 /-- The donkey conditional is true in this model, whose only owning pair `(0, 1)` is a beating
 pair. -/
-theorem donkey_true_in_model (f : ℕ → Fin 2) : ∃ g, DRS.toRelAt ∅ donkey f g := by
+theorem donkey_true_in_model : donkey.IsTrue (Fin 2) := by
   rw [donkey_universal_reading]
   rintro e₁ e₂ ⟨hf, hd, -⟩
   exact ⟨hf, hd⟩
@@ -261,7 +386,7 @@ instance : krLang.Structure Bool where
     | 2, .owns => fun args ↦ args 0 = false ∧ args 1 = true
     | _, _ => fun _ ↦ False
 
-theorem donkey_false_in_model (f : ℕ → Bool) : ¬ ∃ g, DRS.toRelAt ∅ donkey f g := by
+theorem donkey_false_in_model : ¬ donkey.IsTrue Bool := by
   rw [donkey_universal_reading]
   exact fun h ↦ h false true ⟨rfl, rfl, rfl, rfl⟩
 

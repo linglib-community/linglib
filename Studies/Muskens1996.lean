@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Indexed
+public import Linglib.Semantics.Dynamic.DRS.Dynamics
 public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Mathlib.Data.Fin.VecNotation
 
@@ -317,10 +317,11 @@ end Representational
 assignments and notes a second difference: on `[ | [x | man x] ⇒ [x | mortal x]]`, where `x` is
 declared twice, standard DRT ignores the second declaration and says that every man is mortal,
 while here the second `x` takes a new value and the box says that there is a mortal if there is
-a man. The persistence semantics `DRS.toRelAt` (`DRS/Indexed.lean`) renders standard DRT, and in a
-model with a non-mortal man the two truth values differ (`fn4_diverges`). The witness is proper
-(`fn4_isProper`), so what fails is reuse-freeness (`fn4_not_reuseFreeAt`), the hypothesis of the
-reconciliation `DRS.trueRel_iff_toRelAt`. -/
+a man. The partial semantics `DRS.Verifies` (`DRS/Verification.lean`) renders standard DRT: the
+re-declaration is inert, and in a model with a non-mortal man the two truth values differ
+(`fn4_diverges`). The witness is proper (`fn4_isProper`), so what fails is reuse-freeness
+(`fn4_not_reuseFreeAt`), the hypothesis of the reconciliation
+`DRS.trueRel_iff_exists_verifies`. -/
 
 section Fn4
 
@@ -356,36 +357,48 @@ theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by decide
 
 theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   refine (DRS.trueRel_iff_exists_extends _ _).2 ⟨g, fun _ _ ↦ rfl, ?_⟩
-  rw [verifies_iff]
+  rw [verifiesTotal_iff]
   intro c hc
   simp only [fn4, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
-  rw [verifies_imp]
+  rw [verifiesTotal_imp]
   intro g₁ _ _
   refine ⟨Function.update g₁ 0 1,
     fun x hx ↦ by rw [Function.update_apply, ite_eq_right (by simpa [fn4Cons] using hx)], ?_⟩
-  rw [verifies_iff]
+  rw [verifiesTotal_iff]
   intro c hc
   simp only [fn4Cons, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
-  rw [verifies_atom, Language.Atom.realize_mk]
+  rw [verifiesTotal_atom, Language.Atom.realize_mk]
   show Function.update g₁ 0 1 0 = 1
   simp
 
-theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g' := by
-  rintro ⟨g', hg'⟩
-  have himp : Condition.holdsAt (∅ ∪ ∅) (.imp fn4Ante fn4Cons) g' := hg'.2.1
-  have hman : DRS.toRelAt (∅ ∪ ∅) fn4Ante g' fun _ ↦ 0 :=
-    ⟨fun x hx ↦ absurd hx (by simp), rfl, trivial⟩
-  obtain ⟨g₂, heq, hmortal, -⟩ := himp _ hman
-  have h0 : g₂ 0 = 0 := heq (by simp [fn4Ante])
-  have h1 : g₂ 0 = 1 := hmortal
-  exact absurd (h0.symm.trans h1) (by decide)
+/-- Under the partial semantics the re-declaration of `x` is inert, so the witness says that
+every man is mortal, which fails in the model. -/
+theorem fn4_not_isTrue : ¬ fn4.IsTrue (Fin 2) := by
+  rintro ⟨g', -, hdom, himp, -⟩
+  have hg' : g' = ⊥ :=
+    PartialAssign.eq_of_le_of_domain_subset bot_le (by rw [hdom]; simp)
+  subst hg'
+  have hman : fn4Ante.Verifies (⊥ : PartialAssign ℕ (Fin 2)) (PartialAssign.single 0 0) := by
+    rw [fn4Ante, DRS.verifies_mk]
+    simp only [Condition.holdsAll_cons, Condition.holdsAll_nil, and_true, Condition.holds_atom]
+    exact ⟨bot_le, by simp, ![0], fun i => by rw [Subsingleton.elim i 0]; simp, rfl⟩
+  obtain ⟨g₂, hle₂, hdom₂, hmortal, -⟩ := himp _ hman
+  have hg₂ : g₂ = PartialAssign.single 0 0 :=
+    PartialAssign.eq_of_le_of_domain_subset hle₂ (by rw [hdom₂]; simp)
+  obtain ⟨v, hv, hrel⟩ := hmortal
+  have h0 : g₂ 0 = ↑(v 0) := hv 0
+  rw [hg₂, PartialAssign.single_eq_same] at h0
+  have hv0 : (0 : Fin 2) = v 0 := Flat.coe_injective h0
+  have h1 : v 0 = 1 := hrel
+  rw [← hv0] at h1
+  exact absurd h1 (by decide)
 
-/-- The reconciliation `DRS.trueRel_iff_toRelAt` fails on the witness. -/
+/-- The reconciliation `DRS.trueRel_iff_exists_verifies` fails on the witness. -/
 theorem fn4_diverges (g : ℕ → Fin 2) :
-    ¬ (DRS.trueRel fn4 g ↔ ∃ g', DRS.toRelAt ∅ fn4 g g') :=
-  fun h ↦ fn4_not_toRelAt g (h.mp (fn4_trueRel g))
+    ¬ (DRS.trueRel fn4 g ↔ fn4.IsTrue (Fin 2)) :=
+  fun h ↦ fn4_not_isTrue (h.mp (fn4_trueRel g))
 
 end Fn4
 

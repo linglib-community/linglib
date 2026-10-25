@@ -38,7 +38,7 @@ Muskens draws a DRS as a box `[u₁ … uₙ | γ₁ … γₘ]`. Verification a
   without a mutual block, keeping the structure API.
 * `conditions` is a `List`, since an inductive cannot nest through
   `Finset`/`Multiset`; set semantics is recovered by the interpretation
-  (`verifies_perm`, `DRS/Verification.lean`).
+  (`verifiesTotal_perm`, `DRS/Verification.lean`).
 * `DRT` is the owning namespace, on the `FirstOrder.Language` pattern.
 
 ## References
