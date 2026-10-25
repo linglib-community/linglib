@@ -7,19 +7,20 @@ module
 
 public import Mathlib.Basic.Rel
 public import Mathlib.Data.Set.Functor
+import all Init.Control.State  -- for unfolding `StateT.orElse`
 
 /-!
 # The set monad under the state and reader transformers
 
 Membership in the computations of `StateT σ Set` and `ReaderT σ Set`, with `Set.monad` as the
-monad: a computation run at an input is a set of results, and `pure`, `<$>`, `>>=` and `<*>`
-act on it as singleton, image, indexed union and pointwise application. The statements are
+monad: a computation run at an input is a set of results, and `pure`, `<$>`, `>>=`, `<*>` and
+`<|>` act on it as singleton, image, indexed union, pointwise application and union. The statements are
 about the local instance `Set.monad`, so they apply wherever a file enables it.
 
 ## Main results
 
-* `Set.mem_stateT_bind`, `Set.mem_stateT_map`, `Set.mem_stateT_pure`, `Set.mem_stateT_seq`:
-  results of `StateT σ Set` computations.
+* `Set.mem_stateT_bind`, `Set.mem_stateT_map`, `Set.mem_stateT_pure`, `Set.mem_stateT_seq`,
+  `Set.mem_stateT_orElse`: results of `StateT σ Set` computations.
 * `Set.mk_mem_stateT_map`, `Set.mk_mem_stateT_map_seq`: the same for a value–state pair, with
   `f <$> m <*> n` running `m` and then `n` from its output state.
 * `Set.mem_readerT_bind`, `Set.mem_readerT_map`, `Set.mem_readerT_pure`: results of
@@ -59,6 +60,11 @@ variable {σ α β γ : Type u}
 @[simp] theorem mem_stateT_seq (m : StateT σ Set (α → β)) (n : StateT σ Set α) (s : σ)
     (r : β × σ) : r ∈ (m <*> n) s ↔ ∃ q ∈ m s, ∃ q' ∈ n q.2, r = (q.1 q'.1, q'.2) := by
   simp only [seq_eq_bind_map, mem_stateT_bind, mem_stateT_map]
+
+@[simp] theorem mem_stateT_orElse (m n : StateT σ Set α) (s : σ) (r : α × σ) :
+    r ∈ (m <|> n) s ↔ r ∈ m s ∨ r ∈ n s := by
+  show r ∈ StateT.orElse m (fun _ ↦ n) s ↔ _
+  simp [StateT.orElse, Set.orElse_def]
 
 theorem mk_mem_stateT_map {f : α → β} {m : StateT σ Set α} {s s' : σ} {b : β} :
     (b, s') ∈ (f <$> m) s ↔ ∃ a, (a, s') ∈ m s ∧ b = f a := by
