@@ -11,7 +11,6 @@ manner-of-speaking class, *whisper*, *shout*, *mumble* and the rest, with *speak
 ## References
 
 * [bruening-2021]
-* [storment-2026]
 -/
 
 @[expose] public section
@@ -56,13 +55,9 @@ def claim : Verb where
   vendlerClass := some .achievement
   levinClasses := {LevinClass.say}
 
-/-! ### Manner of Speaking (Levin 37.3) -/
+/-! ### Manner of Speaking (Levin 37.3)
 
-/-! Manner-of-speaking (MoS) verbs specify *how* something is said.
-    [storment-2026] shows these divide into two classes:
-    - **QI-permitting** (unaccusative): whisper, murmur, mumble, mutter, shout,
-      cry, scream, shriek, yell, groan, grumble, hiss, sigh, whimper, snap
-    - **Non-QI** (unergative): speak, talk -/
+Manner-of-speaking verbs specify how something is said. -/
 
 /-- "whisper" — Levin 37.3 Manner of Speaking verbs. -/
 def whisper : Verb where
@@ -185,8 +180,7 @@ def snap : Verb where
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .break_, .crane, .mannerOfSpeaking, .soundEmission}
 
-/-- "speak" — agentive communication verb, blocks quotative inversion (unergative)
-    Levin 37.5 Talk verbs. -/
+/-- "speak" — Levin 37.5 Talk verbs. -/
 def speak : Verb where
   morphs := [.root "speak"]
   past := "spoke"
@@ -197,8 +191,7 @@ def speak : Verb where
   passivizable := false
   levinClasses := {LevinClass.talk}
 
-/-- "talk" — agentive communication verb, blocks quotative inversion (unergative)
-    Levin 37.5 Talk verbs. -/
+/-- "talk" — Levin 37.5 Talk verbs. -/
 def talk : Verb where
   morphs := [.root "talk"]
   speechActVerb := true
