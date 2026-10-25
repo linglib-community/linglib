@@ -161,6 +161,8 @@ instance [Preorder L] [Preorder R] [BoundedOrder L] [BoundedOrder R] :
 instance [Preorder L] [Preorder R] [DecidableLE L] [DecidableLE R] :
     DecidableLE (Know (L ⊙ R)) :=
   inferInstanceAs (DecidableLE (L × R))
+instance [Fintype L] [Fintype R] : Fintype (Know (L ⊙ R)) :=
+  inferInstanceAs (Fintype (L × R))
 
 @[simp] theorem mk_kLE_mk [Preorder L] [Preorder R] {a₁ a₂ : L} {b₁ b₂ : R} :
     mk a₁ b₁ ≤ₖ mk a₂ b₂ ↔ a₁ ≤ a₂ ∧ b₁ ≤ b₂ := Iff.rfl
