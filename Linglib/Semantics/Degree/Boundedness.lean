@@ -1,9 +1,13 @@
 module
 
 public import Linglib.Core.Order.Interval.Set.ProjIcc
+public import Mathlib.Algebra.Order.Group.OrderIso
 public import Mathlib.Algebra.Order.Ring.Int
 public import Mathlib.Order.Directed
+public import Mathlib.Order.Hom.WithTopBot
 public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.UpperLower.CompleteLattice
+public import Mathlib.Order.UpperLower.Principal
 public import Mathlib.Order.WithBot
 public import Mathlib.Tactic.DeriveFintype
 
@@ -19,36 +23,46 @@ about its degrees. The tag is what a lexical entry stores, since a record field 
 
 The negative member of an antonym pair measures on the same degrees in the reverse order, and
 `Boundedness.dual` is that operation on tags. The file also defines the standards of the positive
-form and Kennedy's Interpretive Economy, which selects among them by the tag. A scale with an
-endpoint rules out the contextual standard, and a totally closed scale prefers its maximum. A
-difference function, which measures on the ray above a degree, always has the minimum standard,
-and at it the positive form is a comparative.
+form and Kennedy's Interpretive Economy, which selects among them by the tag. A standard is an
+upper set of degrees, and Kennedy's are the degrees above the least, those from the greatest and
+those above a contextual threshold. Interpretive Economy uses a standard the scale itself fixes
+when there is one. Where an automorphism carries any degree between the endpoints to any other,
+the standards every automorphism fixes are the trivial ones and the endpoint ones, so a scale
+with an endpoint rules out the contextual standard. A difference function, which measures on the ray
+above a degree, always has the minimum standard, and at it the positive form is a comparative.
 
 ## Main definitions
 
 * `Boundedness`: the four endpoint profiles, with the predicates `HasMin` and `HasMax`.
 * `Boundedness.ofOrder`: the boundedness of an order.
-* `Boundedness.dual`: the boundedness with its ends exchanged.
-* `Boundedness.withMin`: the boundedness with a least degree adjoined.
-* `Boundedness.withMax`: the boundedness with a greatest degree adjoined.
-* `Boundedness.DegreeShape`: a linear order of each boundedness.
-* `PositiveStandard`: the standards of the positive form.
-* `PositiveStandard.Complementary`: the standards of contradictory poles.
-* `MinStandardPos`, `MaxStandardPos`, `RelativePos`: the positive form at Kennedy's standards.
-* `Boundedness.Admits`: the standards Interpretive Economy admits on a scale.
-* `Boundedness.defaultStandard`: the standard Interpretive Economy prefers on a scale.
+* `Boundedness.dual`, `Boundedness.withMin`, `Boundedness.withMax`: the ends exchanged, and a
+  least or greatest degree adjoined.
+* `Boundedness.DegreeShape`: the canonical linear order of each boundedness.
+* `Degree.IsInvariant`: a standard every automorphism of the degrees maps to itself.
+* `PositiveStandard`, `MinStandardPos`, `MaxStandardPos`, `RelativePos`: the standards of the
+  positive form, and the positive form at Kennedy's standards.
+* `Boundedness.Admits`, `Boundedness.defaultStandard`: the standards Interpretive Economy admits
+  on a scale, and the one it prefers.
 * `EndpointModifier`, `Boundedness.Licenses`: maximizers and minimizers, licensed by an endpoint.
 
 ## Main statements
 
-* `Boundedness.ofOrder_orderDual`: the order dual has the dual boundedness.
 * `Boundedness.ofOrder_degreeShape`: every boundedness is that of a linear order.
-* `Boundedness.admits_withMin_iff`: a scale with a least degree adjoined admits the minimum
-  standard, and the maximum exactly when the original scale has one.
+* `Degree.isInvariant_iff_of_exists_orderIso`: where an automorphism carries any degree between
+  the endpoints to any other, the invariant standards are the trivial and the endpoint ones.
+* `Boundedness.admits_contextual`: the contextual standard is admitted exactly on an open scale.
 * `minStandardPos_projIci_comp_iff`: a comparative is the positive form of a difference function
   at the minimum standard.
-* `Boundedness.defaultStandard_eq_maxEndpoint_iff`: the default standard is the maximum iff any.
 * `Boundedness.complementary_defaultStandard_dual_iff`: poles on a half-closed scale contradict.
+
+## Implementation notes
+
+Kennedy states Interpretive Economy as maximizing the contribution of conventional meaning
+((66)). Reading the standards a scale contributes as those fixed by every automorphism of its
+degrees is this library's. It makes the admissibility of each standard a theorem about the
+canonical scale of each tag, the integers with the endpoints adjoined, on which a shift carries
+any degree between the endpoints to any other. The preference for the maximum on a totally
+closed scale is Kennedy's and stays a stipulation (`defaultStandard`).
 
 ## References
 
@@ -269,7 +283,152 @@ theorem exists_isBot_degreeShape (b : Boundedness) : (∃ m : b.DegreeShape, IsB
 theorem exists_isTop_degreeShape (b : Boundedness) : (∃ m : b.DegreeShape, IsTop m) ↔ b.HasMax := by
   rw [← hasMax_ofOrder, ofOrder_degreeShape]
 
+theorem exists_not_isBot_not_isTop (b : Boundedness) :
+    ∃ x : b.DegreeShape, ¬ IsBot x ∧ ¬ IsTop x := by
+  cases b
+  · exact ⟨(0 : ℤ), not_isBot _, not_isTop _⟩
+  · exact ⟨((0 : ℤ) : WithBot ℤ), fun h ↦ (WithBot.bot_lt_coe 0).not_ge (h ⊥),
+      fun h ↦ absurd (h ((1 : ℤ) : WithBot ℤ)) (by simp)⟩
+  · exact ⟨((0 : ℤ) : WithTop ℤ), fun h ↦ absurd (h ((-1 : ℤ) : WithTop ℤ)) (by simp),
+      fun h ↦ (WithTop.coe_lt_top 0).not_ge (h ⊤)⟩
+  · exact ⟨(((0 : ℤ) : WithBot ℤ) : WithTop (WithBot ℤ)),
+      fun h ↦ absurd (h ⊥) (by simp), fun h ↦ absurd (h ⊤) (by simp)⟩
+
+private theorem exists_orderIso_withBot {x y : WithBot ℤ} (hx : ¬ IsBot x) (hy : ¬ IsBot y) :
+    ∃ f : WithBot ℤ ≃o WithBot ℤ, f x = y := by
+  obtain ⟨a, rfl⟩ := WithBot.ne_bot_iff_exists.1 (show x ≠ ⊥ from mt isBot_iff_eq_bot.2 hx)
+  obtain ⟨c, rfl⟩ := WithBot.ne_bot_iff_exists.1 (show y ≠ ⊥ from mt isBot_iff_eq_bot.2 hy)
+  exact ⟨(OrderIso.addRight (c - a)).withBotCongr, by simp⟩
+
+private theorem exists_orderIso_withTop {x y : WithTop ℤ} (hx : ¬ IsTop x) (hy : ¬ IsTop y) :
+    ∃ f : WithTop ℤ ≃o WithTop ℤ, f x = y := by
+  obtain ⟨a, rfl⟩ := WithTop.ne_top_iff_exists.1 (show x ≠ ⊤ from mt isTop_iff_eq_top.2 hx)
+  obtain ⟨c, rfl⟩ := WithTop.ne_top_iff_exists.1 (show y ≠ ⊤ from mt isTop_iff_eq_top.2 hy)
+  exact ⟨(OrderIso.addRight (c - a)).withTopCongr, by simp⟩
+
+private theorem exists_orderIso_withTop_withBot {x y : WithTop (WithBot ℤ)}
+    (hxb : ¬ IsBot x) (hxt : ¬ IsTop x) (hyb : ¬ IsBot y) (hyt : ¬ IsTop y) :
+    ∃ f : WithTop (WithBot ℤ) ≃o WithTop (WithBot ℤ), f x = y := by
+  obtain ⟨x, rfl⟩ := WithTop.ne_top_iff_exists.1 (show x ≠ ⊤ from mt isTop_iff_eq_top.2 hxt)
+  obtain ⟨y, rfl⟩ := WithTop.ne_top_iff_exists.1 (show y ≠ ⊤ from mt isTop_iff_eq_top.2 hyt)
+  obtain ⟨f, hf⟩ := exists_orderIso_withBot (x := x) (y := y)
+    (fun h ↦ hxb (isBot_iff_eq_bot.2 (by simp [isBot_iff_eq_bot.1 h])))
+    (fun h ↦ hyb (isBot_iff_eq_bot.2 (by simp [isBot_iff_eq_bot.1 h])))
+  exact ⟨f.withTopCongr, by simp [hf]⟩
+
+theorem exists_orderIso_degreeShape (b : Boundedness) (x y : b.DegreeShape)
+    (hxb : ¬ IsBot x) (hxt : ¬ IsTop x) (hyb : ¬ IsBot y) (hyt : ¬ IsTop y) :
+    ∃ f : b.DegreeShape ≃o b.DegreeShape, f x = y := by
+  cases b
+  exacts [⟨OrderIso.addRight (y - x), by simp⟩, exists_orderIso_withBot hxb hyb,
+    exists_orderIso_withTop hxt hyt, exists_orderIso_withTop_withBot hxb hxt hyb hyt]
+
 end Boundedness
+
+/-! ### Invariant standards
+
+A standard of a scale is an upper set of its degrees, and the positive form at it holds of what
+the measure places in it, so that a stronger standard, a smaller upper set, entails a weaker one.
+A standard is invariant when the order alone singles it out, every automorphism of the degrees
+mapping it to itself. All degrees and none are invariant, as are the degrees above a least one
+and those from a greatest one, and where any degree between the endpoints is carried to any
+other by an automorphism, as on the canonical scales, these are all. -/
+
+section Invariant
+variable {D : Type*}
+
+/-- A standard is invariant when every order automorphism of the degrees maps it to itself. -/
+def IsInvariant [Preorder D] (U : UpperSet D) : Prop := ∀ f : D ≃o D, UpperSet.map f U = U
+
+variable [PartialOrder D] {U : UpperSet D} {m : D}
+
+theorem isInvariant_bot : IsInvariant (⊥ : UpperSet D) := fun f ↦ map_bot (UpperSet.map f)
+
+theorem isInvariant_top : IsInvariant (⊤ : UpperSet D) := fun f ↦ map_top (UpperSet.map f)
+
+theorem isInvariant_Ioi_of_isBot (hm : IsBot m) : IsInvariant (UpperSet.Ioi m) := fun f ↦ by
+  rw [UpperSet.map_Ioi, le_antisymm (by simpa using f.monotone (hm (f.symm m))) (hm (f m))]
+
+theorem isInvariant_Ici_of_isTop (hm : IsTop m) : IsInvariant (UpperSet.Ici m) := fun f ↦ by
+  rw [UpperSet.map_Ici, le_antisymm (hm (f m)) (by simpa using f.monotone (hm (f.symm m)))]
+
+theorem IsInvariant.apply_mem (hU : IsInvariant U) (f : D ≃o D) {x : D} (hx : x ∈ U) :
+    f x ∈ U := by
+  rw [← hU f, UpperSet.mem_map]
+  simpa using hx
+
+end Invariant
+
+section Homogeneous
+variable {D : Type*} [LinearOrder D] {U : UpperSet D}
+
+/-- Where an automorphism carries any degree strictly between the endpoints to any other, the
+invariant standards are the trivial ones and the endpoint ones. -/
+theorem isInvariant_iff_of_exists_orderIso (hI : ∃ x : D, ¬ IsBot x ∧ ¬ IsTop x)
+    (h : ∀ x y : D, ¬ IsBot x → ¬ IsTop x → ¬ IsBot y → ¬ IsTop y → ∃ f : D ≃o D, f x = y) :
+    IsInvariant U ↔
+      U = ⊥ ∨ U = ⊤ ∨ (∃ m, IsBot m ∧ U = .Ioi m) ∨ ∃ m, IsTop m ∧ U = .Ici m := by
+  refine ⟨fun hU ↦ ?_, ?_⟩
+  · obtain ⟨x, hxb, hxt⟩ := hI
+    by_cases hA : ∃ y ∈ U, ¬ IsBot y ∧ ¬ IsTop y
+    · obtain ⟨y, hyU, hyb, hyt⟩ := hA
+      -- with one degree between the endpoints, `U` holds every degree that is not least
+      have hnb : ∀ z, ¬ IsBot z → z ∈ U := fun z hz ↦ by
+        by_cases hzt : IsTop z
+        · exact U.upper (hzt y) hyU
+        · obtain ⟨f, rfl⟩ := h y z hyb hyt hz hzt
+          exact hU.apply_mem f hyU
+      by_cases hB : ∃ m : D, IsBot m
+      · obtain ⟨m, hm⟩ := hB
+        by_cases hmU : m ∈ U
+        · exact .inl (SetLike.ext fun z ↦ by simpa using U.upper (hm z) hmU)
+        · refine .inr (.inr (.inl ⟨m, hm, SetLike.ext fun z ↦ ?_⟩))
+          simp only [UpperSet.mem_Ioi_iff]
+          refine ⟨fun hz ↦ (hm z).lt_of_ne ?_, fun hz ↦ hnb z fun hz' ↦ hz.ne' ?_⟩
+          · rintro rfl; exact hmU hz
+          · exact le_antisymm (hz' m) (hm z)
+      · push Not at hB
+        exact .inl (SetLike.ext fun z ↦ by simpa using hnb z (hB z))
+    · push Not at hA
+      -- with none, `U` holds only greatest degrees, since `x` follows a least one
+      have hb : ∀ z ∈ U, IsTop z := fun z hz ↦ by
+        by_cases hzb : IsBot z
+        · exact absurd (hA x (U.upper (hzb x) hz) hxb) hxt
+        · exact hA z hz hzb
+      by_cases hT : ∃ t, t ∈ U
+      · obtain ⟨t, ht⟩ := hT
+        refine .inr (.inr (.inr ⟨t, hb t ht, SetLike.ext fun z ↦ ?_⟩))
+        simp only [UpperSet.mem_Ici_iff]
+        exact ⟨fun hz ↦ hb z hz t, fun hz ↦ U.upper hz ht⟩
+      · push Not at hT
+        exact .inr (.inl (SetLike.ext fun z ↦ by simpa using fun h' ↦ hT z h'))
+  · rintro (rfl | rfl | ⟨m, hm, rfl⟩ | ⟨m, hm, rfl⟩)
+    exacts [isInvariant_bot, isInvariant_top, isInvariant_Ioi_of_isBot hm,
+      isInvariant_Ici_of_isTop hm]
+
+theorem forall_isInvariant_iff_of_exists_orderIso (hI : ∃ x : D, ¬ IsBot x ∧ ¬ IsTop x)
+    (h : ∀ x y : D, ¬ IsBot x → ¬ IsTop x → ¬ IsBot y → ¬ IsTop y → ∃ f : D ≃o D, f x = y) :
+    (∀ U : UpperSet D, IsInvariant U → U = ⊥ ∨ U = ⊤) ↔
+      (∀ m : D, ¬ IsBot m) ∧ ∀ m : D, ¬ IsTop m := by
+  refine ⟨fun H ↦ ⟨fun m hm ↦ ?_, fun m hm ↦ ?_⟩, fun ⟨hb, ht⟩ U hU ↦ ?_⟩
+  · obtain ⟨x, hxb, -⟩ := hI
+    rcases H _ (isInvariant_Ioi_of_isBot hm) with h' | h'
+    · simpa using congrArg (m ∈ ·) h'
+    · have hx : x ∈ UpperSet.Ioi m := (hm x).lt_of_ne fun h ↦ hxb (h ▸ hm)
+      exact UpperSet.notMem_top (h' ▸ hx)
+  · obtain ⟨x, -, hxt⟩ := hI
+    rcases H _ (isInvariant_Ici_of_isTop hm) with h' | h'
+    · exact hxt fun z ↦ (hm z).trans (by simpa using congrArg (x ∈ ·) h')
+    · simpa using congrArg (m ∈ ·) h'
+  · rcases (isInvariant_iff_of_exists_orderIso hI h).1 hU with h' | h' | ⟨m, hm, -⟩ | ⟨m, hm, -⟩
+    exacts [.inl h', .inr h', (hb m hm).elim, (ht m hm).elim]
+
+end Homogeneous
+
+theorem Boundedness.isInvariant_degreeShape_iff (b : Boundedness) {U : UpperSet b.DegreeShape} :
+    IsInvariant U ↔
+      U = ⊥ ∨ U = ⊤ ∨ (∃ m, IsBot m ∧ U = .Ioi m) ∨ ∃ m, IsTop m ∧ U = .Ici m :=
+  isInvariant_iff_of_exists_orderIso b.exists_not_isBot_not_isTop b.exists_orderIso_degreeShape
 
 /-! ### Standards and Interpretive Economy
 
@@ -331,22 +490,31 @@ variable {α D : Type*} [Preorder D] (μ : α → D)
 
 /-- The positive form at the minimum standard holds of `x` when its degree is above the least
 degree of the scale, as for *wet* and *bent*. -/
-def MinStandardPos [OrderBot D] (x : α) : Prop := ⊥ < μ x
+def MinStandardPos [OrderBot D] (x : α) : Prop := μ x ∈ UpperSet.Ioi ⊥
 
 /-- The positive form at the maximum standard holds of `x` when its degree is the greatest degree
 of the scale, as for *dry* and *full*. -/
-def MaxStandardPos [OrderTop D] (x : α) : Prop := μ x = ⊤
+def MaxStandardPos [OrderTop D] (x : α) : Prop := μ x ∈ UpperSet.Ici ⊤
 
 /-- The positive form at a contextual standard `θ` holds of `x` when its degree exceeds `θ`, as
 for *tall*. -/
-def RelativePos (θ : D) (x : α) : Prop := θ < μ x
+def RelativePos (θ : D) (x : α) : Prop := μ x ∈ UpperSet.Ioi θ
 
-variable {μ} in
+variable {μ} {x : α}
+
+@[simp] theorem minStandardPos_iff [OrderBot D] : MinStandardPos μ x ↔ ⊥ < μ x := .rfl
+
+@[simp] theorem relativePos_iff {θ : D} : RelativePos μ θ x ↔ θ < μ x := .rfl
+
+@[simp] theorem maxStandardPos_iff {D : Type*} [PartialOrder D] [OrderTop D] {μ : α → D} :
+    MaxStandardPos μ x ↔ μ x = ⊤ :=
+  top_le_iff
+
 /-- When the least degree is below the greatest, the positive form at the maximum standard entails
 the one at the minimum, which is why a totally closed scale prefers its maximum. -/
-theorem MaxStandardPos.minStandardPos [OrderBot D] [OrderTop D] (h : (⊥ : D) < ⊤) {x : α}
+theorem MaxStandardPos.minStandardPos [OrderBot D] [OrderTop D] (h : (⊥ : D) < ⊤)
     (hx : MaxStandardPos μ x) : MinStandardPos μ x :=
-  h.trans_eq (Eq.symm hx)
+  h.trans_le hx
 
 end PositiveForm
 
@@ -370,25 +538,56 @@ theorem minStandardPos_projIci_comp_iff : MinStandardPos (Set.projIci d ∘ μ) 
 standard is that of `μ` itself ([kennedy-levin-2008] fn. 16). -/
 theorem maxStandardPos_projIci_comp_iff [OrderTop D] (hd : d ≠ ⊤) :
     MaxStandardPos (Set.projIci d ∘ μ) x ↔ MaxStandardPos μ x := by
-  rw [MaxStandardPos, MaxStandardPos, Function.comp_apply, Set.projIci_eq_top, or_iff_right hd]
+  rw [maxStandardPos_iff, maxStandardPos_iff, Function.comp_apply, Set.projIci_eq_top,
+    or_iff_right hd]
 
 end Difference
 
 namespace Boundedness
 
-/-- Interpretive Economy admits an endpoint standard exactly where the scale has that endpoint, the
-contextual standard, which context must supply, only on a totally open scale, and the lexical
-necessity and extreme standards never ([kennedy-2007] (66)). A totally closed scale therefore
-admits both endpoints ((67)–(68)). -/
+/-- Interpretive Economy computes truth conditions from conventional meaning where it can,
+allowing a contextual standard only where conventional meaning is insufficient ([kennedy-2007]
+(66)). The standards a scale itself fixes are those every automorphism of its degrees fixes, and
+the endpoint standards are among them (`isInvariant_Ioi_of_isBot`), so a scale admits an endpoint
+standard where it has the endpoint, and the contextual standard only where it fixes no standard
+but the trivial ones. The lexical necessity and extreme standards it never admits. On the
+canonical scales the endpoint standards are the only nontrivial invariant ones
+(`isInvariant_degreeShape_iff`). -/
 def Admits (b : Boundedness) : PositiveStandard → Prop
-  | .contextual  => b = .open_
-  | .minEndpoint => b.HasMin
-  | .maxEndpoint => b.HasMax
+  | .contextual  => ∀ U : UpperSet b.DegreeShape, IsInvariant U → U = ⊥ ∨ U = ⊤
+  | .minEndpoint => ∃ m : b.DegreeShape, IsBot m
+  | .maxEndpoint => ∃ m : b.DegreeShape, IsTop m
   | .necessity   => False
   | .extreme     => False
 
-instance (b : Boundedness) (s : PositiveStandard) : Decidable (b.Admits s) := by
-  cases s <;> simp only [Admits] <;> infer_instance
+/-- The contextual standard is admitted exactly on a totally open scale, since a scale with an
+endpoint fixes the endpoint standard ([kennedy-2007] (66)). -/
+@[simp] theorem admits_contextual {b : Boundedness} : b.Admits .contextual ↔ b = .open_ := by
+  rw [Admits, forall_isInvariant_iff_of_exists_orderIso b.exists_not_isBot_not_isTop
+    b.exists_orderIso_degreeShape]
+  simp only [← not_exists, exists_isBot_degreeShape, exists_isTop_degreeShape]
+  cases b <;> decide
+
+@[simp] theorem admits_minEndpoint {b : Boundedness} : b.Admits .minEndpoint ↔ b.HasMin :=
+  exists_isBot_degreeShape b
+
+@[simp] theorem admits_maxEndpoint {b : Boundedness} : b.Admits .maxEndpoint ↔ b.HasMax :=
+  exists_isTop_degreeShape b
+
+@[simp] theorem not_admits_necessity (b : Boundedness) : ¬ b.Admits .necessity := id
+
+@[simp] theorem not_admits_extreme (b : Boundedness) : ¬ b.Admits .extreme := id
+
+instance (b : Boundedness) : (s : PositiveStandard) → Decidable (b.Admits s)
+  | .contextual  => decidable_of_iff _ admits_contextual.symm
+  | .minEndpoint => decidable_of_iff _ admits_minEndpoint.symm
+  | .maxEndpoint => decidable_of_iff _ admits_maxEndpoint.symm
+  | .necessity   => isFalse id
+  | .extreme     => isFalse id
+
+theorem not_admits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
+    ¬ b.Admits .contextual :=
+  mt admits_contextual.1 h
 
 /-- The default standard of a scale is the one Interpretive Economy forces where it admits only
 one, and the maximum on a totally closed scale, since a maximum standard entails a minimum one. -/
@@ -414,22 +613,6 @@ theorem complementary_defaultStandard_dual_iff {b : Boundedness} :
       b = .lowerClosed ∨ b = .upperClosed := by
   cases b <;> decide
 
-@[simp] theorem admits_contextual {b : Boundedness} : b.Admits .contextual ↔ b = .open_ :=
-  Iff.rfl
-
-@[simp] theorem admits_minEndpoint {b : Boundedness} : b.Admits .minEndpoint ↔ b.HasMin :=
-  Iff.rfl
-
-@[simp] theorem admits_maxEndpoint {b : Boundedness} : b.Admits .maxEndpoint ↔ b.HasMax :=
-  Iff.rfl
-
-@[simp] theorem not_admits_necessity (b : Boundedness) : ¬ b.Admits .necessity := id
-
-@[simp] theorem not_admits_extreme (b : Boundedness) : ¬ b.Admits .extreme := id
-
-theorem not_admits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :
-    ¬ b.Admits .contextual := h
-
 /-- A scale is relative when its default standard needs a comparison class, which is to say when
 it is open, as for *tall*, *expensive* and *big*. -/
 def IsRelative (b : Boundedness) : Prop := b.defaultStandard.RequiresComparisonClass
@@ -441,7 +624,7 @@ instance : DecidablePred IsRelative :=
 original scale has one ([kennedy-levin-2008] (23), (25)). -/
 theorem admits_withMin_iff {b : Boundedness} {s : PositiveStandard} :
     b.withMin.Admits s ↔ s = .minEndpoint ∨ s = .maxEndpoint ∧ b.HasMax := by
-  cases b <;> cases s <;> simp [Admits, withMin, HasMin, HasMax]
+  cases b <;> cases s <;> simp [withMin, HasMin, HasMax]
 
 theorem defaultStandard_withMin (b : Boundedness) :
     b.withMin.defaultStandard = if b.HasMax then .maxEndpoint else .minEndpoint := by

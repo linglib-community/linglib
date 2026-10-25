@@ -219,12 +219,12 @@ theorem mem_likely_iff_relativePos (θ : Probability) :
 
 theorem mem_certain_iff_maxStandardPos :
     A ∈ certain P ↔ MaxStandardPos (likelihood P) A := by
-  rw [mem_certain_iff, MaxStandardPos, Subtype.ext_iff, coe_likelihood,
+  rw [mem_certain_iff, maxStandardPos_iff, Subtype.ext_iff, coe_likelihood,
     Set.Icc.coe_top]
 
 theorem mem_possible_iff_minStandardPos :
     A ∈ possible P ↔ MinStandardPos (likelihood P) A := by
-  rw [mem_possible_iff, MinStandardPos, ← Subtype.coe_lt_coe, coe_likelihood,
+  rw [mem_possible_iff, minStandardPos_iff, ← Subtype.coe_lt_coe, coe_likelihood,
     Set.Icc.coe_bot]
 
 /-- The English fragment agrees, since its *possible* takes the minimum standard and its
@@ -318,14 +318,15 @@ theorem pos_possible (h : θ .possible = 0) : pos P θ .possible = possible P :=
 /-- The positive forms are antitone in strength, so *certain*, *must*, *likely*, *might*, *possible*
 each entail the next (p. 152, §6.1, (6.14), (6.18), §6.5). -/
 theorem antitone_pos (hθ : StrictMono θ) : Antitone (pos P θ) := by
-  intro i j hij A hA
-  rw [mem_pos_iff] at hA ⊢
+  -- each item's interval lies between the strict and the weak bound at its threshold
+  have hI (i : EpistemicItem) (x : ℝ) : i.comparison.interval x ⊆ Set.Ici x := by
+    cases i <;> first | exact subset_rfl | exact Set.Ioi_subset_Ici_self
+  have hO (i : EpistemicItem) (x : ℝ) : Set.Ioi x ⊆ i.comparison.interval x := by
+    cases i <;> first | exact subset_rfl | exact Set.Ioi_subset_Ici_self
+  intro i j hij
   rcases hij.lt_or_eq with h | rfl
-  · have hlt : θ i < θ j := hθ h
-    cases i <;> cases j <;>
-      simp only [EpistemicItem.comparison, Comparison.rel_ge, Comparison.rel_gt] at hA ⊢ <;>
-      first | exact absurd h (by decide) | linarith
-  · exact hA
+  · exact Set.preimage_mono <| (hI j _).trans <| (Set.Ici_subset_Ioi.2 (hθ h)).trans (hO i _)
+  · exact le_rfl
 
 /-- *Must* `A` leaves `¬A` at most `1 − θ_must` likely, so above one half `A` is more likely
 than its negation (6.16). -/

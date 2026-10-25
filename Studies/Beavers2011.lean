@@ -152,7 +152,8 @@ theorem quantizedChange_top_iff_maxStandardPos [OrderTop D] (hb : b ≠ ⊤) :
         MaxStandardPos (measureOfChange (m s₀) x (τ e).fst) (τ e).snd := by
   refine forall₂_congr fun x e ↦ imp_congr_right fun _ ↦ ?_
   simp only [Result, exists_eq_left, hb.lt_top, true_and]
-  exact and_congr_right fun h ↦ (maxStandardPos_measureOfChange_iff (h ▸ hb)).symm
+  exact and_congr_right fun h ↦
+    ((maxStandardPos_measureOfChange_iff (h ▸ hb)).trans maxStandardPos_iff).symm
 
 /-- The atelic reading of a degree achievement, on which the theme ends above where it began
 ([kennedy-levin-2008]), is exactly a non-quantized change, as for *widen* or *cool*. -/
