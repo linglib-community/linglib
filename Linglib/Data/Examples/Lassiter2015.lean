@@ -15,6 +15,19 @@ this module; declarations live in `namespace Lassiter2015.Examples`.
 
 namespace Lassiter2015.Examples
 
+def ex2b : Datum :=
+  { id := "lassiter2015_ex2b"
+    source := ⟨"lassiter-2015", "(2b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Sam is as likely to win the lottery as he is not to win it."
+    glossedTokens := []
+    context := "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ¬φ"), ("truthValue", "false")] }
+
 def ex4 : Datum :=
   { id := "lassiter2015_ex4"
     source := ⟨"lassiter-2015", "(4)"⟩
@@ -26,7 +39,20 @@ def ex4 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ψ_i for each i")] }
+    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ψ_i for each i"), ("truthValue", "true")] }
+
+def ex5 : Datum :=
+  { id := "lassiter2015_ex5"
+    source := ⟨"lassiter-2015", "(5)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Sam is as likely to win the lottery as Mary or Sue is."
+    glossedTokens := []
+    context := "The same lottery."
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ ψ ∧ φ ⪰ χ"), ("truthValue", "true")] }
 
 def ex8 : Datum :=
   { id := "lassiter2015_ex8"
@@ -38,8 +64,8 @@ def ex8 : Datum :=
     context := "The same lottery."
     judgment := .acceptable
     alternatives := []
-    readings := [("φ ⪰ (ψ ∨ χ)", .unacceptable), ("φ ⪰ ψ ∧ φ ⪰ χ", .acceptable)]
-    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")] }
+    readings := []
+    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)"), ("truthValue", "false")] }
 
 def ex9 : Datum :=
   { id := "lassiter2015_ex9"
@@ -52,7 +78,7 @@ def ex9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)")] }
+    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ ∨ χ)"), ("truthValue", "false")] }
 
 def ex12 : Datum :=
   { id := "lassiter2015_ex12"
@@ -65,7 +91,7 @@ def ex12 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)")] }
+    paperFeatures := [("section", "1.1"), ("form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)"), ("truthValue", "false")] }
 
 def ex33c : Datum :=
   { id := "lassiter2015_ex33c"
@@ -78,7 +104,7 @@ def ex33c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "1.4"), ("form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))")] }
+    paperFeatures := [("section", "1.4"), ("form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))"), ("truthValue", "false")] }
 
 def ex35 : Datum :=
   { id := "lassiter2015_ex35"
@@ -104,7 +130,7 @@ def ex48 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("section", "2.2"), ("measure", "symmetric fuzzy")] }
+    paperFeatures := [("section", "2.2"), ("measure", "symmetric fuzzy"), ("truthValue", "false")] }
 
 def ex50 : Datum :=
   { id := "lassiter2015_ex50"
@@ -210,6 +236,6 @@ def ex65b : Datum :=
     readings := []
     paperFeatures := [("section", "4"), ("pattern", "more likely than to might")] }
 
-def all : List Datum := [ex4, ex8, ex9, ex12, ex33c, ex35, ex48, ex50, ex51, ex53, ex54, ex56, ex62, ex65a, ex65b]
+def all : List Datum := [ex2b, ex4, ex5, ex8, ex9, ex12, ex33c, ex35, ex48, ex50, ex51, ex53, ex54, ex56, ex62, ex65a, ex65b]
 
 end Lassiter2015.Examples

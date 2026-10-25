@@ -1,5 +1,25 @@
 [
   {
+    "id": "lassiter2015_ex2b",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(2b)"},
+    "language": "stan1293",
+    "primaryText": "Sam is as likely to win the lottery as he is not to win it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A lottery with a million tickets; three siblings, Sam, Mary and Sue, buy two tickets each, and nobody else buys more than two.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["form", "φ ⪰ ¬φ"],
+      ["truthValue", "false"]
+    ],
+    "comment": "The conclusion of the invalid inference (2), restated as (14): each customer is overwhelmingly less likely to win than not to win.",
+    "verified": "page-image"
+  },
+  {
     "id": "lassiter2015_ex4",
     "source": {"bibkey": "lassiter-2015", "paperLabel": "(4)"},
     "language": "stan1293",
@@ -13,9 +33,30 @@
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ ψ_i for each i"]
+      ["form", "φ ⪰ ψ_i for each i"],
+      ["truthValue", "true"]
     ],
     "comment": "True, since Sam holds as many tickets as anyone; the starting point of the iterated disjunction puzzle.",
+    "verified": "page-image"
+  },
+  {
+    "id": "lassiter2015_ex5",
+    "source": {"bibkey": "lassiter-2015", "paperLabel": "(5)"},
+    "language": "stan1293",
+    "primaryText": "Sam is as likely to win the lottery as Mary or Sue is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The same lottery.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"],
+      ["form", "φ ⪰ ψ ∧ φ ⪰ χ"],
+      ["truthValue", "true"]
+    ],
+    "comment": "True because the disjunction in the comparative complement is read as a wide-scope conjunction, as in (6)-(7).",
     "verified": "page-image"
   },
   {
@@ -29,15 +70,13 @@
     "context": "The same lottery.",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "φ ⪰ (ψ ∨ χ)", "judgment": "unacceptable"},
-      {"name": "φ ⪰ ψ ∧ φ ⪰ χ", "judgment": "acceptable"}
-    ],
+    "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ (ψ ∨ χ)"]
+      ["form", "φ ⪰ (ψ ∨ χ)"],
+      ["truthValue", "false"]
     ],
-    "comment": "False on the reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two; the conjunctive reading of the disjunction in a comparative complement is set aside.",
+    "comment": "False on the prominent reading equivalent to (9): Mary and Sue hold four tickets together against Sam's two. The wide-scope conjunctive reading of the disjunction is (5)'s.",
     "verified": "page-image"
   },
   {
@@ -54,7 +93,8 @@
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ (ψ ∨ χ)"]
+      ["form", "φ ⪰ (ψ ∨ χ)"],
+      ["truthValue", "false"]
     ],
     "comment": "Unambiguously false; the reading (8) shares.",
     "verified": "page-image"
@@ -73,7 +113,8 @@
     "readings": [],
     "paperFeatures": [
       ["section", "1.1"],
-      ["form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)"]
+      ["form", "φ ⪰ (ψ₁ ∨ … ∨ ψ₇)"],
+      ["truthValue", "false"]
     ],
     "comment": "Iterating the puzzle; feeding each conclusion back as a premise reaches (14), that Sam is as likely to win as not.",
     "verified": "page-image"
@@ -92,7 +133,8 @@
     "readings": [],
     "paperFeatures": [
       ["section", "1.4"],
-      ["form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))"]
+      ["form", "(φ ∧ ¬ψ ∧ ¬χ) ⪰ ((¬φ ∧ ψ ∧ ¬χ) ∨ (¬φ ∧ ¬ψ ∧ χ))"],
+      ["truthValue", "false"]
     ],
     "comment": "The modified disjunction puzzle's conclusion: as invalid as (8), yet valid for the revised comparative possibility once the alternatives are stated as disjoint.",
     "verified": "page-image"
@@ -130,7 +172,8 @@
     "readings": [],
     "paperFeatures": [
       ["section", "2.2"],
-      ["measure", "symmetric fuzzy"]
+      ["measure", "symmetric fuzzy"],
+      ["truthValue", "false"]
     ],
     "comment": "Compatible with a symmetric fuzzy measure for likely; clearly wrong unless going to school is impossible, which the equal-shares axiom enforces.",
     "verified": "page-image"
