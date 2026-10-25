@@ -7,8 +7,7 @@ public import Linglib.Semantics.Tense.Perspective
 
 Modern Greek *tote* 'then' is the distal temporal deictic adverb, referring to a past or future
 time away from the deictic centre. It is a single adverb, distinct from the periphrastic
-anaphoric expression *ekino ton kero* 'at that time'. The examples are those of
-[tsilia-zhao-2026].
+anaphoric expression *ekino ton kero* 'at that time'. The examples are Tsilia and Zhao's.
 
 ## References
 

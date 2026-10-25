@@ -344,6 +344,16 @@ theorem _root_.NonemptyInterval.position_eq_eq_of_le {i' : NonemptyInterval T}
     (h : i.position j = .eq) (hle : i ≤ i') : i'.position j = .eq :=
   NonemptyInterval.position_eq_eq.2 ((NonemptyInterval.position_eq_eq.1 h).mono_left hle)
 
+/-- An interval containing `i` stands to `j` where `i` does, or overlaps it. -/
+theorem _root_.NonemptyInterval.position_eq_or_eq_eq_of_le {i' : NonemptyInterval T}
+    (hle : i ≤ i') : i'.position j = i.position j ∨ i'.position j = .eq := by
+  cases h : i'.position j with
+  | lt => exact .inl (NonemptyInterval.position_eq_lt.2 <|
+      NonemptyInterval.precedes_of_le_of_precedes hle (NonemptyInterval.position_eq_lt.1 h)).symm
+  | eq => exact .inr rfl
+  | gt => exact .inl (NonemptyInterval.position_eq_gt.2 <|
+      (NonemptyInterval.position_eq_gt.1 h).trans_le (NonemptyInterval.le_def.1 hle).1).symm
+
 end LinearOrder
 
 /-- The cell of the relations whose position is one of `C`. -/

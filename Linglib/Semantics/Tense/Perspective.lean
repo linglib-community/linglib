@@ -13,17 +13,18 @@ temporal pronouns: each denotes a time, an interval of a linear order, and presu
 stands to a temporal perspective `π`, itself an interval, in one of the positions its cell
 admits. An interval precedes, overlaps or follows another
 (`NonemptyInterval.position`), so PRES, which presupposes overlap with `π`, is the cell
-`present`; PAST, which presupposes precedence, is `past`; and the adverb ⌈then⌉, which
+`present`; PAST, which presupposes precedence, is `past`; and the adverb ⌜then⌝, which
 presupposes disjointness, is `presentᶜ`. On point intervals the presupposition is the comparison
 of the points, which the pronominal tense of `Semantics/Tense/Pronoun.lean` presupposes
 (`presup_pure`).
 
 The perspective is an interpretation parameter that an operator rebinds for a whole clause, so a
 clausemate tense and adverb read the same `π`, and the adverb restricts the tense: the reference
-of the tense lies within that of the adverb. Overlap passes to a containing interval, so an
-adverb can restrict a present tense exactly when its cell admits overlap
-(`exists_presup_present_iff`). The adverbs whose cell excludes it are the distal ones, and their
-clash with the present is the ⌈then⌉-present puzzle.
+of the tense lies within that of the adverb. A containing interval stands to the perspective
+where the reference does, or overlaps it, so an adverb can restrict a tense exactly when its cell
+admits a position of the tense's cell, or overlap (`exists_presup_iff`). The adverbs that cannot
+restrict a present are those whose cell excludes overlap, the distal ones, and their clash with
+the present is the ⌜then⌝-present puzzle.
 
 ## Main definitions
 
@@ -38,6 +39,7 @@ clash with the present is the ⌈then⌉-present puzzle.
 
 * `Tense.Perspective.not_presup_of_presup_present`: a reference overlapping the perspective
   cannot be restricted by a distal adverb.
+* `Tense.Perspective.exists_presup_iff`: the cells that can restrict a tense.
 * `Tense.Perspective.exists_presup_present_iff`: the distal cells are exactly those that cannot
   restrict a present.
 * `Tense.Perspective.Presup.mono`: a stronger cell satisfies a weaker one's presupposition, so
@@ -140,10 +142,31 @@ theorem eq_mem_of_presup_present (hr : Presup ⟦present⟧ π r) (hle : r ≤ t
   rwa [Presup, h] at hth
 
 /-- A reference overlapping the perspective cannot be restricted by an adverb whose cell excludes
-overlap with it, the ⌈then⌉-present clash. -/
+overlap with it, the ⌜then⌝-present clash. -/
 theorem not_presup_of_presup_present (hC : .eq ∉ C) (hr : Presup ⟦present⟧ π r) (hle : r ≤ th) :
     ¬ Presup C π th :=
   fun hth ↦ hC (eq_mem_of_presup_present hr hle hth)
+
+/-- An adverb with cell `D` can restrict a reference with cell `C` exactly when `D` admits a
+position of `C`, or overlap. -/
+theorem exists_presup_iff [Nontrivial T] :
+    (∃ π r th : NonemptyInterval T, Presup C π r ∧ r ≤ th ∧ Presup D π th) ↔
+      ∃ o ∈ C, o ∈ D ∨ .eq ∈ D := by
+  refine ⟨fun ⟨π, r, th, hr, hle, hth⟩ ↦ ⟨_, hr, ?_⟩, fun ⟨o, ho, h⟩ ↦ ?_⟩
+  · rcases NonemptyInterval.position_eq_or_eq_eq_of_le (j := π) hle with h | h <;>
+      rw [Presup, h] at hth
+    exacts [.inl hth, .inr hth]
+  obtain ⟨a, b, hab⟩ := exists_pair_lt T
+  obtain ⟨x, y, hxy⟩ : ∃ x y : T, compare x y = o := by
+    cases o
+    exacts [⟨a, b, compare_lt_iff_lt.2 hab⟩, ⟨a, a, compare_eq_iff_eq.2 rfl⟩,
+      ⟨b, a, compare_gt_iff_gt.2 hab⟩]
+  have hr : Presup C (.pure y) (.pure x) := by rwa [presup_pure, hxy]
+  rcases h with h | h
+  · exact ⟨_, _, _, hr, le_rfl, by rwa [presup_pure, hxy]⟩
+  refine ⟨.pure y, .pure x, .pure x ⊔ .pure y, hr, le_sup_left, ?_⟩
+  rwa [Presup, NonemptyInterval.position_eq_eq.2
+    (NonemptyInterval.overlaps_symm (NonemptyInterval.overlaps_of_le le_sup_right))]
 
 /-- The cells that can restrict a present tense are exactly those that admit overlap. -/
 theorem exists_presup_present_iff [Nonempty T] :

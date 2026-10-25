@@ -7,7 +7,7 @@ public import Linglib.Semantics.Tense.Perspective
 
 Japanese *tōji* 'then, at that time' refers to a time before the deictic centre. Unlike English
 *then* it is used only of past times: for a future meeting one says *sonotoki ai-mashou* 'see you
-then', not *tooji ai-mashou*. The description and examples follow [tsilia-zhao-2026].
+then', not *tooji ai-mashou*. The description and examples are Tsilia and Zhao's.
 
 ## References
 

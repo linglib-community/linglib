@@ -28,6 +28,32 @@ def ex_6 : Datum :=
     readings := []
     paperFeatures := [("matrix", "present"), ("environment", "root"), ("then", "incompatible")] }
 
+def ex_7a : Datum :=
+  { id := "tsiliazhao2026_7a"
+    source := ⟨"tsilia-zhao-2026", "(7a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Mary was feeling sick then."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("matrix", "past"), ("environment", "root"), ("then", "compatible")] }
+
+def ex_7b : Datum :=
+  { id := "tsiliazhao2026_7b"
+    source := ⟨"tsilia-zhao-2026", "(7b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Mary will be feeling sick then."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("matrix", "future"), ("environment", "root"), ("then", "compatible")] }
+
 def ex_8 : Datum :=
   { id := "tsiliazhao2026_8"
     source := ⟨"tsilia-zhao-2026", "(8)"⟩
@@ -92,6 +118,19 @@ def ex_18 : Datum :=
     alternatives := []
     readings := [("double access: Mary loves John at the utterance time and at the finding out", .acceptable)]
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "no")] }
+
+def ex_20 : Datum :=
+  { id := "tsiliazhao2026_20"
+    source := ⟨"tsilia-zhao-2026", "(20)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "A month ago, John found out that Mary loves him then."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "no"), ("then", "incompatible")] }
 
 def ex_21 : Datum :=
   { id := "tsiliazhao2026_21"
@@ -166,7 +205,7 @@ def ex_30d : Datum :=
     primaryText := "In 2030, John will say that he is in jail then."
     glossedTokens := []
     context := ""
-    judgment := .marginal
+    judgment := .variable
     alternatives := []
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "deleted"), ("then", "variation")] }
@@ -184,6 +223,19 @@ def ex_31a : Datum :=
     readings := []
     paperFeatures := [("matrix", "future"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "yes"), ("then", "incompatible")] }
 
+def ex_31d : Datum :=
+  { id := "tsiliazhao2026_31d"
+    source := ⟨"tsilia-zhao-2026", "(31d)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "In 2030, John will be married to someone who is in jail then."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("matrix", "future"), ("environment", "relative clause"), ("embedded", "present"), ("shifted", "deleted"), ("then", "compatible")] }
+
 def ex_32 : Datum :=
   { id := "tsiliazhao2026_32"
     source := ⟨"tsilia-zhao-2026", "(32)"⟩
@@ -195,7 +247,7 @@ def ex_32 : Datum :=
     judgment := .ungrammatical
     alternatives := [("Sonotoki ai-mashou.", .acceptable)]
     readings := []
-    paperFeatures := [("then", "past-oriented only")] }
+    paperFeatures := [("matrix", "future"), ("then", "past-oriented only")] }
 
 def ex_38 : Datum :=
   { id := "tsiliazhao2026_38"
@@ -236,6 +288,6 @@ def ex_99 : Datum :=
     readings := []
     paperFeatures := [("matrix", "past"), ("environment", "attitude report"), ("embedded", "present"), ("shifted", "yes"), ("indexical", "unshifted")] }
 
-def all : List Datum := [ex_6, ex_8, ex_11, ex_9, ex_10, ex_18, ex_21, ex_25, ex_28, ex_29, ex_30a, ex_30d, ex_31a, ex_32, ex_38, ex_48, ex_99]
+def all : List Datum := [ex_6, ex_7a, ex_7b, ex_8, ex_11, ex_9, ex_10, ex_18, ex_20, ex_21, ex_25, ex_28, ex_29, ex_30a, ex_30d, ex_31a, ex_31d, ex_32, ex_38, ex_48, ex_99]
 
 end TsiliaZhao2026.Examples

@@ -41,7 +41,7 @@ analyses do not use. The norm of (4.2.2) is defined only on proper intervals, so
 is a positive `NonemptyInterval.length`. The particles take the measurement `μ_α(a)` of their
 evaluation argument as a point. *Le* is commonly called a perfective marker; the dissertation strips
 its temporal content down to precedence, which is the relation `Aspect` assigns to the perfect,
-`le_get_iff_perfect`. The first part of the dissertation, the ⌈then⌉-present puzzle, is joint work
+`le_get_iff_perfect`. The first part of the dissertation, the ⌜then⌝-present puzzle, is joint work
 with Tsilia, formalized in `Studies/TsiliaZhao2026.lean`.
 
 The library takes states and activities alike to have the subinterval property; here an activity
