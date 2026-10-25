@@ -17,6 +17,7 @@ public import Linglib.Fragments.Mayan.Mam.Extraction
 public import Linglib.Fragments.Mayan.Kiche.Agreement
 public import Linglib.Fragments.Mayan.Kiche.Extraction
 public import Linglib.Fragments.Mayan.Yukatek.Agreement
+public import Linglib.Fragments.Mayan.Yukatek.Extraction
 public import Linglib.Data.Examples.CoonMateoPedroPreminger2014
 
 /-!
@@ -419,8 +420,7 @@ instance : DecidablePred IsErgativePerfective := fun _ ↦
   inferInstanceAs (Decidable (Alignment.IsErgative _))
 
 /-- The fragment records a reflex for the extraction of an argument on some verb, with
-third-person arguments where the marking depends on their person. The Yukatek fragment records
-no extraction reflexes, and its value is a junk `False`. -/
+third-person arguments where the marking depends on their person. -/
 def MarksExtraction : Language → ArgumentRole → Prop
   | .chol, r => ∃ m ∈ Chol.Extraction.realize (.argument r), m.Nonempty
   | .qanjobal, r => ∃ m ∈ Qanjobal.Extraction.realize .third (.argument r), m.Nonempty
@@ -429,13 +429,13 @@ def MarksExtraction : Language → ArgumentRole → Prop
   | .tsotsil, r => ∃ m ∈ Tsotsil.Extraction.realize (.argument r), m.Nonempty
   | .mam, r => (Mam.Extraction.realize (.argument r)).Nonempty
   | .kiche, r => ∃ c, (Kiche.Extraction.realize c (.argument r)).Nonempty
-  | .yukatek, _ => False
+  | .yukatek, r => ∃ m ∈ Yukatek.Extraction.realize (.argument r), m.Nonempty
 
 instance : ∀ L r, Decidable (MarksExtraction L r)
-  | .chol, _ | .qanjobal, _ | .tseltal, _ | .tsotsil, _ => Option.decidableExistsMem _
+  | .chol, _ | .qanjobal, _ | .tseltal, _ | .tsotsil, _ | .yukatek, _ =>
+      Option.decidableExistsMem _
   | .mam, _ => Finset.decidableNonempty
   | .kaqchikel, _ | .kiche, _ => Fintype.decidableExistsFintype
-  | .yukatek, _ => inferInstanceAs (Decidable False)
 
 end Language
 
@@ -463,6 +463,13 @@ theorem tada (L : Language) (h₁ : L ≠ .tsotsil) (h₂ : L ≠ .yukatek) {r :
 theorem tsotsil_marks_free_extraction :
     Language.tsotsil.MarksExtraction .A ∧
       Converges ⟨Language.tsotsil.licenser, true, .transitive agentive .dp, some .A, false⟩ := by
+  decide
+
+/-- Yucatec is the outlier of (19): its absolutive is low, so the regular derivation extracts
+its transitive subject, yet it marks the extraction with Agent Focus. -/
+theorem yukatek_marks_free_extraction :
+    Language.yukatek.MarksExtraction .A ∧
+      Converges ⟨Language.yukatek.licenser, true, .transitive agentive .dp, some .A, false⟩ := by
   decide
 
 /-- With a third-person agent and a full DP object, a Q'anjob'al clause converges exactly under the
