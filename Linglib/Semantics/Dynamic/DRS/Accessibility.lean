@@ -26,12 +26,18 @@ accessibility.
 
 * `DRT.DRS.mem_occurrences_iff`: the computed occurrences are exactly those reached by the walk,
   so `DRS.Accessible` is decidable.
+* `DRT.DRS.isProper_iff_forall_occurrence`: a DRS is proper iff the referents of every atomic
+  condition are accessible where it occurs.
 
 ## Implementation notes
 
 Kamp and Reyle state Def. 2.1.3 and Def. 2.4.4 for DRS values. Read on values, they let a chain
 pass through a second occurrence of an equal box and make a referent accessible where no
 occurrence of the condition sees it, so the definitions here quantify over occurrences.
+`AccessibleFrom`, like Def. 2.1.3, asks only that some occurrence of the condition see the
+referent, which properness does not imply: in `[ | ¬[y | P y], ¬[ | P y]]` the condition `P y`
+sees `y` at its first occurrence and leaves it free at its second. Properness is therefore
+characterized at occurrences.
 
 ## References
 
@@ -267,5 +273,82 @@ instance [DecidableEq V] (host : DRS L V) (u v : V) : Decidable (DRS.Accessible 
   decidable_of_iff (∃ p ∈ DRS.occurrences [host] host,
       u ∈ p.2.referents ∧ v ∈ scopeReferents p.1)
     (by simp only [DRS.Accessible, Occurrence, DRS.mem_occurrences_iff])
+
+/-! ### Properness and accessibility -/
+
+section Properness
+
+variable [DecidableEq V]
+
+private theorem forall_mem_occurrences_iff_of_conditions {K : DRS L V} {bs : List (DRS L V)}
+    (h : ∀ d ∈ K.conditions,
+      ((∀ p ∈ Condition.occurrences d (K :: bs), ∀ γ ∈ p.2.conditions, γ.IsAtomic →
+          γ.freeVarFinset ⊆ scopeReferents p.1) ∧
+        (d.IsAtomic → d.freeVarFinset ⊆ scopeReferents (K :: bs))) ↔
+      d.freeVarFinset ⊆ scopeReferents (K :: bs)) :
+    (∀ p ∈ DRS.occurrences (K :: bs) K, ∀ γ ∈ p.2.conditions, γ.IsAtomic →
+      γ.freeVarFinset ⊆ scopeReferents p.1) ↔ K.freeVarFinset ⊆ scopeReferents bs := by
+  rw [DRS.freeVarFinset_eq, sdiff_le_iff, Finset.sup_eq_union, ← scopeReferents_cons,
+    Condition.freeVarFinsetL_subset_iff, ← forall₂_congr h]
+  simp only [DRS.mem_occurrences, forall_eq_or_imp, forall_and]
+  constructor
+  · rintro ⟨h₁, h₂⟩
+    exact ⟨fun d hd p hp => h₂ p ⟨d, hd, hp⟩, h₁⟩
+  · rintro ⟨h₂, h₁⟩
+    exact ⟨h₁, fun p ⟨d, hd, hp⟩ => h₂ d hd p hp⟩
+
+private theorem Condition.forall_mem_occurrences_iff (c : Condition L V) :
+    ∀ {bs : List (DRS L V)},
+      ((∀ p ∈ Condition.occurrences c bs, ∀ γ ∈ p.2.conditions, γ.IsAtomic →
+          γ.freeVarFinset ⊆ scopeReferents p.1) ∧
+        (c.IsAtomic → c.freeVarFinset ⊆ scopeReferents bs)) ↔
+      c.freeVarFinset ⊆ scopeReferents bs := by
+  induction c with
+  | atom a => intro bs; simp [Condition.occurrences, Condition.IsAtomic.atom]
+  | eq u v => intro bs; simp [Condition.occurrences, Condition.IsAtomic.eq]
+  | neg K ih =>
+    intro bs
+    rw [Condition.occurrences_neg, Condition.freeVarFinset_neg,
+      ← forall_mem_occurrences_iff_of_conditions fun d hd => ih d hd]
+    exact and_iff_left nofun
+  | imp a c iha ihc =>
+    intro bs
+    rw [Condition.occurrences_imp, Condition.freeVarFinset_imp, Finset.union_subset_iff,
+      sdiff_le_iff, Finset.sup_eq_union, ← scopeReferents_cons, List.forall_mem_append,
+      ← forall_mem_occurrences_iff_of_conditions fun d hd => iha d hd,
+      ← forall_mem_occurrences_iff_of_conditions fun d hd => ihc d hd]
+    exact and_iff_left nofun
+  | dis l r ihl ihr =>
+    intro bs
+    rw [Condition.occurrences_dis, Condition.freeVarFinset_dis, Finset.union_subset_iff,
+      List.forall_mem_append,
+      ← forall_mem_occurrences_iff_of_conditions fun d hd => ihl d hd,
+      ← forall_mem_occurrences_iff_of_conditions fun d hd => ihr d hd]
+    exact and_iff_left nofun
+
+/-- At an occurrence of `K` below the boxes `bs`, the referents of every atomic condition are
+accessible where it occurs iff the free referents of `K` are declared in `bs`. -/
+theorem DRS.forall_mem_occurrences_iff (K : DRS L V) (bs : List (DRS L V)) :
+    (∀ p ∈ DRS.occurrences (K :: bs) K, ∀ γ ∈ p.2.conditions, γ.IsAtomic →
+      γ.freeVarFinset ⊆ scopeReferents p.1) ↔ K.freeVarFinset ⊆ scopeReferents bs :=
+  forall_mem_occurrences_iff_of_conditions fun d _ => d.forall_mem_occurrences_iff
+
+/-- A DRS is proper iff, at every occurrence of every atomic condition, the condition's
+referents are declared in the boxes accessible there (Defs. 1.4.2–1.4.3, Def. 2.1.3). -/
+theorem DRS.isProper_iff_forall_occurrence (K : DRS L V) :
+    K.IsProper ↔ ∀ p, Occurrence K p → ∀ γ ∈ p.2.conditions, γ.IsAtomic →
+      γ.freeVarFinset ⊆ scopeReferents p.1 := by
+  simp only [Occurrence, ← DRS.mem_occurrences_iff]
+  rw [DRS.forall_mem_occurrences_iff K [], scopeReferents_nil, Finset.subset_empty]
+  rfl
+
+/-- In a proper DRS every referent of an atomic condition is accessible from it. -/
+theorem DRS.IsProper.accessibleFrom {K : DRS L V} (hK : K.IsProper)
+    {p : List (DRS L V) × DRS L V} (hp : Occurrence K p) {γ : Condition L V}
+    (hγ : γ ∈ p.2.conditions) (hat : γ.IsAtomic) {x : V} (hx : x ∈ γ.freeVarFinset) :
+    AccessibleFrom K x γ :=
+  ⟨p, hp, hγ, K.isProper_iff_forall_occurrence.mp hK p hp γ hγ hat hx⟩
+
+end Properness
 
 end DRT

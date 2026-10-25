@@ -116,6 +116,11 @@ end DRS
     (fun _ h => absurd h List.not_mem_nil)
     (fun _ _ hd hds _ he => (List.mem_cons.1 he).elim (· ▸ hd) (hds _)) c
 
+/-- A condition is atomic when it is an atom or an equation (Def. 1.4.1). -/
+inductive Condition.IsAtomic : Condition L V → Prop
+  | atom (a : L.Atom V) : Condition.IsAtomic (.atom a)
+  | eq (u v : V) : Condition.IsAtomic (.eq u v)
+
 /-! ### Subordination -/
 
 /-- `DirectlySubordinate K' K` says `K'` is a sub-box of one of `K`'s conditions, by the `neg`

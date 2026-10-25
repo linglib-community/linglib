@@ -5,16 +5,16 @@ public import Linglib.Semantics.Dynamic.DRS.Basic
 /-!
 # Verifying embeddings for DRSs
 
-This file defines verification of DRSs by embeddings into a `FirstOrder.Language.Structure`,
-following Kamp and Reyle's Def. 1.4.4.
-An embedding `f : V → M` assigns discourse referents to individuals;
-`Verifies f K` says `f` verifies every condition of `K`, and a sub-DRS is
-entered by existentially (re)assigning along its extension relation
-`Box.Extends`. For `imp`, the consequent witness extends the *antecedent*
-embedding, so antecedent referents stay visible in the consequent (Def. 2.1.4);
-the `∨` clause is Def. 2.4.2(ii)(h). Verification reads an embedding only at the
-free referents, so whether some extension of an input verifies a proper DRS does
-not depend on the input: it is truth in the model (Def. 1.4.5).
+This file defines verification of DRSs by total embeddings into a
+`FirstOrder.Language.Structure`, the semantics of Muskens's relational DRT. `Verifies f K` says
+that `f` verifies every condition of `K`, and a sub-DRS is entered by existentially reassigning
+its universe along `Box.Extends`, the antecedent of a conditional staying visible in its
+consequent. The clauses follow Kamp and Reyle's Defs. 1.4.4, 2.1.4 and 2.4.2, but their
+embeddings are partial and a sub-DRS extends them, keeping the value of a referent already
+assigned; that semantics is `DRS.toRelAt` (`DRS/Indexed.lean`), and the two agree on DRSs that
+declare no referent twice (`DRS.trueRel_iff_toRelAt`). Verification reads an embedding only at the
+free referents, so whether some extension of an input verifies a proper DRS does not depend on
+the input.
 
 ## Main definitions
 
@@ -31,12 +31,9 @@ not depend on the input: it is truth in the model (Def. 1.4.5).
 
 ## Implementation notes
 
-* Embeddings here are total, and a re-declared referent is freely reassigned;
-  the book's are partial functions that sub-DRSs strictly *extend*, so a
-  re-declared referent keeps its value (Muskens, fn. 4). The two agree
-  on DRSs that declare each referent once — the construction algorithm never
-  re-declares — but diverge on re-declaration: `[ | [x | man x] ⇒ [x | mortal x]]`
-  says "every man is mortal" there, "if there is a man there is a mortal" here.
+* On a DRS that re-declares a referent the two semantics diverge (Muskens's fn. 4):
+  `[ | [x | man x] ⇒ [x | mortal x]]` says that every man is mortal in Kamp and Reyle's, and
+  that there is a mortal if there is a man here (`Studies/Muskens1996.lean`).
 * `Verifies`, `VerifiesCondition` and `VerifiesAll` are defined by structural recursion
   through the nested conditions, so the clause characterizations (`verifies_neg`, …) hold by
   `Iff.rfl`; `verifies_iff` recovers the `∀ c ∈ K.conditions` form.
@@ -232,7 +229,7 @@ theorem exists_extends_verifies_congr {K : DRS L V} {f₁ f₂ : V → M}
     (verifies_of_eqOn fun c _ _ _ => verifiesCondition_congr c) h
 
 /-- A proper DRS is verified by some extension of any input iff some embedding
-verifies it, which is its truth in the model (Def. 1.4.5). -/
+verifies it. -/
 theorem exists_extends_verifies_iff_of_isProper {K : DRS L V} (hK : K.IsProper)
     (f : V → M) : (∃ g, K.Extends f g ∧ Verifies g K) ↔ ∃ g : V → M, Verifies g K := by
   refine ⟨fun ⟨g, _, hg⟩ => ⟨g, hg⟩, fun ⟨g, hg⟩ =>

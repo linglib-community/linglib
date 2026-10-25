@@ -11,7 +11,9 @@ translation is realized exactly when the DRS is verified, Kamp and Reyle's reduc
 language to first-order logic in §1.5, also given by Muskens. The universe of a sub-DRS is
 existentially closed (`closeExists`, via `Formula.iExs`), and the antecedent of a `⇒` universally
 (`closeForall`, via `Formula.iAlls`). The translation of a proper DRS realizes the same way under
-every assignment, as truth in the model (p. 138).
+every assignment, as truth in the model (p. 138). The translation is correct for the verification
+of `DRS/Verification.lean`, and so for Kamp and Reyle's own semantics on DRSs that declare no
+referent twice (`DRS.trueRel_iff_toRelAt`).
 
 ## Main declarations
 

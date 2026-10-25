@@ -250,6 +250,12 @@ theorem varFinset_subset_varFinsetL {c : Condition L V} {cs : List (Condition L 
   | nil => simp
   | cons c cs ih => simp [ih, Finset.union_assoc]
 
+theorem freeVarFinsetL_subset_iff {cs : List (Condition L V)} {S : Finset V} :
+    freeVarFinsetL cs ⊆ S ↔ ∀ c ∈ cs, c.freeVarFinset ⊆ S := by
+  induction cs with
+  | nil => simp
+  | cons c cs ih => simp [Finset.union_subset_iff, ih]
+
 theorem freeVarFinset_subset_freeVarFinsetL {c : Condition L V} {cs : List (Condition L V)}
     (hc : c ∈ cs) : c.freeVarFinset ⊆ freeVarFinsetL cs := by
   induction cs with

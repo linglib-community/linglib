@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Dynamics
+public import Linglib.Semantics.Dynamic.DRS.Indexed
 public import Linglib.Semantics.Dynamic.DRS.Accessibility
 public import Linglib.Core.Data.Fin.VecNotation
 
@@ -8,9 +8,10 @@ public import Linglib.Core.Data.Fin.VecNotation
 # Kamp and Reyle (1993): From Discourse to Logic
 
 A discourse is interpreted by constructing a discourse representation structure (DRS), and a DRS
-is verified by an embedding of its referents into a model. The worked examples are evaluated
-through `DRS.trueRel`, Muskens's relational truth, which is the existential closure of the book's
-Def. 1.4.5.
+is verified by a partial embedding of its referents into a model. A sub-DRS is verified by
+extensions of the embedding that keep the values it has already assigned (Defs. 1.4.4, 2.1.4),
+which is the semantics `DRS.toRelAt` at a base, and a proper DRS is true when some embedding of
+its universe verifies it (Def. 1.4.5).
 
 ## Main statements
 
@@ -21,19 +22,21 @@ Def. 1.4.5.
 * `donkey_universal_reading`, `donkeyPronoun_agree`: *If a farmer owns a donkey he beats it.*
   (2.47) gets its universal reading from the verification clause for `⇒`, whether or not the
   pronoun has a referent of its own.
+* `DRT.DRS.isProper_iff_forall_occurrence` (in `DRS/Accessibility.lean`): a DRS is proper iff
+  every referent of an atomic condition is accessible where the condition occurs, the
+  motivation for Def. 1.4.3 (p. 111).
 
 ## Implementation notes
 
 The truth conditions are claims over arbitrary models, proved by unfolding the verifying
-embeddings; sequencing a discourse is `DRS.merge`, whose dynamics is the Merging Lemma
-`DRS.toRel_merge`. Names enter a DRS as the unary conditions the construction algorithm writes
-for them.
+embeddings. An embedding with domain `X` is a total assignment read only at `X`, so the truth of
+a proper DRS is `∃ g, DRS.toRelAt ∅ K f g` for any input `f`, which plays no role at the empty
+base. Names enter a DRS
+as the unary conditions the construction algorithm writes for them.
 
 ## References
 
 * [kamp-reyle-1993]
-* [muskens-1996]
-* [geurts-beaver-maier-2024]
 -/
 
 @[expose] public section
@@ -71,21 +74,21 @@ def ulyssesDiscourse : DRS krLang ℕ :=
     .eq 3 2, .eq 4 1, .atom ⟨.fascinates, ![3, 4]⟩]
 
 /-- The (1.1) discourse is true iff a single pair verifies both sentences. -/
-theorem ulysses_tc (a : ℕ → M) :
-    DRS.trueRel ulyssesDiscourse a ↔
+theorem ulysses_tc (f : ℕ → M) :
+    (∃ g, DRS.toRelAt ∅ ulyssesDiscourse f g) ↔
       ∃ x y : M, rm .jones ![x] ∧ rm .ulysses ![y] ∧ rm .owns ![x, y] ∧
         rm .fascinates ![y, x] := by
-  simp only [DRS.trueRel_iff, ulyssesDiscourse, DRS.toRel_iff, Box.Extends,
-    verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
-    implies_true, verifies_atom, Language.Atom.realize_mk, verifies_eq, Matrix.comp_vecCons,
-    Matrix.comp_vecEmpty, and_true]
+  simp only [ulyssesDiscourse, DRS.toRelAt_mk, Condition.holdsAllAt_cons,
+    Condition.holdsAllAt_nil, Condition.holdsAt_atom, Condition.holdsAt_eq,
+    Language.Atom.realize_mk, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true,
+    Finset.coe_empty, Set.eqOn_empty, true_and]
   constructor
-  · rintro ⟨a', -, hj, hu, ho, h32, h41, hf⟩
+  · rintro ⟨g, hj, hu, ho, h32, h41, hf⟩
     rw [h32, h41] at hf
-    exact ⟨a' 1, a' 2, hj, hu, ho, hf⟩
+    exact ⟨g 1, g 2, hj, hu, ho, hf⟩
   · rintro ⟨x, y, hj, hu, ho, hf⟩
-    exact ⟨fun n ↦ match n with | 1 => x | 2 => y | 3 => y | 4 => x | n => a n,
-      fun z hz ↦ by dsimp only; split <;> simp_all, hj, hu, ho, rfl, rfl, hf⟩
+    let g : ℕ → M := fun n ↦ match n with | 2 => y | 3 => y | _ => x
+    exact ⟨g, hj, hu, ho, rfl, rfl, hf⟩
 
 /-- The completed (1.1) DRS is proper (Def. 1.4.2–1.4.3), every referent its conditions use
 being introduced by the discourse itself. -/
@@ -102,23 +105,23 @@ def porscheDiscourse : DRS krLang ℕ := .mk {1} [.atom ⟨.jones, ![1]⟩, .neg
 
 /-- (1.57) is true when there is no Porsche that Jones owns, the negated box being verified by
 the non-existence of a verifying extension. -/
-theorem porsche_tc (a : ℕ → M) :
-    DRS.trueRel porscheDiscourse a ↔
+theorem porsche_tc (f : ℕ → M) :
+    (∃ g, DRS.toRelAt ∅ porscheDiscourse f g) ↔
       ∃ x : M, rm .jones ![x] ∧ ¬ ∃ y : M, rm .porsche ![y] ∧ rm .owns ![x, y] := by
-  simp only [DRS.trueRel_iff, porscheDiscourse, porscheNeg, DRS.toRel_iff, Box.Extends,
-    verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
-    implies_true, verifies_neg, verifies_atom, Language.Atom.realize_mk, Matrix.comp_vecCons,
-    Matrix.comp_vecEmpty, and_true]
+  simp only [porscheDiscourse, porscheNeg, DRS.toRelAt_mk, Condition.holdsAllAt_cons,
+    Condition.holdsAllAt_nil, Condition.holdsAt_atom, Condition.holdsAt_neg,
+    Language.Atom.realize_mk, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true,
+    Finset.empty_union, Finset.coe_empty, Finset.coe_singleton, Set.eqOn_empty,
+    Set.eqOn_singleton, true_and]
   constructor
-  · rintro ⟨a', -, hj, hneg⟩
-    exact ⟨a' 1, hj, fun ⟨y, hp, ho⟩ ↦ hneg
-      ⟨fun n ↦ match n with | 2 => y | n => a' n,
-        fun z hz ↦ by dsimp only; split <;> simp_all, hp, ho⟩⟩
+  · rintro ⟨g, hj, hneg⟩
+    refine ⟨g 1, hj, fun ⟨y, hp, ho⟩ ↦ hneg ⟨Function.update g 2 y, ?_, ?_, ?_⟩⟩
+    · simp
+    · simpa using hp
+    · simpa using ho
   · rintro ⟨x, hj, hn⟩
-    refine ⟨fun n ↦ match n with | 1 => x | n => a n,
-      fun z hz ↦ by dsimp only; split <;> simp_all, hj, fun ⟨g, hag, hp, ho⟩ ↦ hn ⟨g 2, hp, ?_⟩⟩
-    rw [hag 1 (by simp)] at ho
-    exact ho
+    refine ⟨fun _ ↦ x, hj, fun ⟨g', h1, hp, ho⟩ ↦ hn ⟨g' 2, hp, ?_⟩⟩
+    rwa [h1] at ho
 
 /-- From the top-level position, the referent trapped under `¬` is not accessible
 (Def. 2.1.3) — the reason a continuation "*It fascinates him." cannot resolve *it*. -/
@@ -148,22 +151,22 @@ def donkey : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyCons]
 
 /-- By the verification clause for `⇒` ((2.31), Def. 2.1.4), the donkey sentence is true iff every
 owning farmer–donkey pair satisfies `beats`. -/
-theorem donkey_universal_reading (a : ℕ → M) :
-    DRS.trueRel donkey a ↔
+theorem donkey_universal_reading (f : ℕ → M) :
+    (∃ g, DRS.toRelAt ∅ donkey f g) ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_iff, Box.Extends,
-    verifies_mk, List.forall_mem_cons, List.not_mem_nil,
-    false_implies, implies_true, verifies_imp, verifies_atom, Language.Atom.realize_mk,
-    Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true]
+  simp only [donkey, donkeyAnte, donkeyCons, DRS.toRelAt_mk, Condition.holdsAllAt_cons,
+    Condition.holdsAllAt_nil, Condition.holdsAt_atom, Condition.holdsAt_imp,
+    Language.Atom.realize_mk, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true,
+    Finset.empty_union, Finset.union_empty, Finset.coe_empty, Set.eqOn_empty, true_and]
   constructor
-  · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    obtain ⟨v'', hag, hb⟩ := himp (fun n ↦ match n with | 1 => e₁ | 2 => e₂ | n => a' n)
-      (fun z hz ↦ by split <;> simp_all) ⟨hf, hd, ho⟩
-    simpa [hag 1 (by simp), hag 2 (by simp)] using hb
+  · rintro ⟨g, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    let g' : ℕ → M := fun n ↦ match n with | 2 => e₂ | _ => e₁
+    obtain ⟨g'', hag, hb⟩ := himp g' ⟨hf, hd, ho⟩
+    rwa [hag (by simp : (1 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ)),
+      hag (by simp : (2 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ))] at hb
   · intro hall
-    exact ⟨a, fun _ _ ↦ rfl, fun v' _ ⟨hf, hd, ho⟩ ↦
-      ⟨v', fun _ _ ↦ rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
+    exact ⟨f, fun g' ⟨hf, hd, ho⟩ ↦ ⟨g', Set.eqOn_refl _ _, hall _ _ ⟨hf, hd, ho⟩⟩⟩
 
 theorem donkey_proper : donkey.IsProper := by decide
 
@@ -173,30 +176,32 @@ def donkeyPronounCons : DRS krLang ℕ := .mk {3} [.eq 3 2, .atom ⟨.beats, ![1
 /-- (2.47) with the pronoun completed by referent-plus-equation. -/
 def donkeyPronoun : DRS krLang ℕ := .mk ∅ [.imp donkeyAnte donkeyPronounCons]
 
-theorem donkeyPronoun_tc (a : ℕ → M) :
-    DRS.trueRel donkeyPronoun a ↔
+theorem donkeyPronoun_tc (f : ℕ → M) :
+    (∃ g, DRS.toRelAt ∅ donkeyPronoun f g) ↔
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
-  simp only [DRS.trueRel_iff, donkeyPronoun, donkeyAnte, donkeyPronounCons, DRS.toRel_iff,
-    Box.Extends, verifies_mk, List.forall_mem_cons, List.not_mem_nil,
-    false_implies, implies_true, verifies_imp, verifies_atom, Language.Atom.realize_mk,
-    verifies_eq, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true]
+  simp only [donkeyPronoun, donkeyAnte, donkeyPronounCons, DRS.toRelAt_mk,
+    Condition.holdsAllAt_cons, Condition.holdsAllAt_nil, Condition.holdsAt_atom,
+    Condition.holdsAt_eq, Condition.holdsAt_imp, Language.Atom.realize_mk, Matrix.comp_vecCons,
+    Matrix.comp_vecEmpty, and_true, Finset.empty_union, Finset.coe_empty, Set.eqOn_empty,
+    true_and]
   constructor
-  · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
-    obtain ⟨v'', hag, h32, hb⟩ := himp (fun n ↦ match n with | 1 => e₁ | 2 => e₂ | n => a' n)
-      (fun z hz ↦ by split <;> simp_all) ⟨hf, hd, ho⟩
-    rw [h32] at hb
-    simpa [hag 1 (by simp), hag 2 (by simp)] using hb
+  · rintro ⟨g, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
+    let g' : ℕ → M := fun n ↦ match n with | 2 => e₂ | _ => e₁
+    obtain ⟨g'', hag, h32, hb⟩ := himp g' ⟨hf, hd, ho⟩
+    rwa [h32, hag (by simp : (1 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ)),
+      hag (by simp : (2 : ℕ) ∈ (↑({1, 2} : Finset ℕ) : Set ℕ))] at hb
   · intro hall
-    exact ⟨a, fun _ _ ↦ rfl, fun v' _ ⟨hf, hd, ho⟩ ↦
-      ⟨fun n ↦ match n with | 3 => v' 2 | n => v' n,
-        fun z hz ↦ by dsimp only; split <;> simp_all, rfl, hall (v' 1) (v' 2) ⟨hf, hd, ho⟩⟩⟩
+    refine ⟨f, fun g' ⟨hf, hd, ho⟩ ↦ ⟨Function.update g' 3 (g' 2), fun x hx ↦ ?_, by simp, ?_⟩⟩
+    · have : x ≠ 3 := by rintro rfl; simp at hx
+      simp [this]
+    · simpa using hall (g' 1) (g' 2) ⟨hf, hd, ho⟩
 
 /-- Completing the pronoun directly or by a referent and an equation gives the same truth
 conditions, (2.44) and (2.45). -/
-theorem donkeyPronoun_agree (a : ℕ → M) :
-    DRS.trueRel donkeyPronoun a ↔ DRS.trueRel donkey a :=
-  (donkeyPronoun_tc a).trans (donkey_universal_reading a).symm
+theorem donkeyPronoun_agree (f : ℕ → M) :
+    (∃ g, DRS.toRelAt ∅ donkeyPronoun f g) ↔ ∃ g, DRS.toRelAt ∅ donkey f g :=
+  (donkeyPronoun_tc f).trans (donkey_universal_reading f).symm
 
 /-! ### Subordination and accessibility geometry -/
 
@@ -208,8 +213,8 @@ theorem donkey_antecedent_subordinate : DirectlySubordinate donkeyAnte donkey :=
 theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkey :=
   .impCons (a := donkeyAnte) (by simp [donkey])
 
-/-- The antecedent is accessible to the consequent ([geurts-beaver-maier-2024]
-§4.2) — the geometry that licenses the donkey anaphora. -/
+/-- The antecedent is accessible to the consequent, so that its referents are accessible from the
+consequent's conditions (Def. 2.1.3(ii)(b)), the geometry that licenses the donkey anaphora. -/
 theorem donkey_antecedent_accessible : AccessibleTo donkey donkeyAnte donkeyCons :=
   ⟨[donkeyCons, donkeyAnte, donkey], .single (.impCons (by simp [donkey])), by simp⟩
 
@@ -243,7 +248,7 @@ instance : krLang.Structure (Fin 2) where
 
 /-- The donkey conditional is true in this model, whose only owning pair `(0, 1)` is a beating
 pair. -/
-theorem donkey_true_in_model (a : ℕ → Fin 2) : DRS.trueRel donkey a := by
+theorem donkey_true_in_model (f : ℕ → Fin 2) : ∃ g, DRS.toRelAt ∅ donkey f g := by
   rw [donkey_universal_reading]
   rintro e₁ e₂ ⟨hf, hd, -⟩
   exact ⟨hf, hd⟩
@@ -256,7 +261,7 @@ instance : krLang.Structure Bool where
     | 2, .owns => fun args ↦ args 0 = false ∧ args 1 = true
     | _, _ => fun _ ↦ False
 
-theorem donkey_false_in_model (a : ℕ → Bool) : ¬ DRS.trueRel donkey a := by
+theorem donkey_false_in_model (f : ℕ → Bool) : ¬ ∃ g, DRS.toRelAt ∅ donkey f g := by
   rw [donkey_universal_reading]
   exact fun h ↦ h false true ⟨rfl, rfl, rfl, rfl⟩
 
