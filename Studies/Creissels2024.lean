@@ -15,16 +15,16 @@ A valency alternation relates two constructions of one verb, which express its p
 nominal terms with the transitivity-related roles A, P, S or X, as dative obliques, as implied
 participants, or not at all. Marked by verbal morphology it is a voice alternation, and the
 oriented types are defined by nucleativization, a participant becoming a core term, and
-denucleativization, a core term ceasing to be one, by demotion within participant structure or
-by suppression from it. Symmetrical voices select a pivot without either and fall outside the
-typology. Alignment is reformulated as obligatory A-coding or P-coding, which split-S languages
-violate.
+denucleativization, a core term ceasing to be one, whether it is maintained in participant
+structure or suppressed from it. Symmetrical voices select a pivot without either and fall
+outside the typology. Alignment is reformulated as obligatory A-coding or P-coding, which split-S
+languages violate.
 
 ## Main statements
 
 * `rows_classified`: every derived construction of the book's examples realizes the type the
   book assigns it.
-* `voices_typed`: the substrate's voices realize the types they are named for.
+* `voices_typed`: the book's voices of §8.3.4.1, §8.3.5 and §8.3.7 realize their types.
 * `stacking_tswana`, `stacking_nahuatl`: stacked voice markers compose their alternations.
 * `balinese_symmetrical`: beside a passive, an applicative and a causative, the symmetrical
   voices of Balinese are its agent and patient voices.
@@ -37,15 +37,14 @@ violate.
 
 ## Implementation notes
 
-* An alternation is a pair of `Voice.Construction`s, a type a predicate on the pair with the
-  participant the type singles out as a parameter. The semantic conditions that separate
+* The types of voice alternation are the substrate's (`Syntax/Voice/Construction.lean`),
+  predicates on a pair of `Voice.Construction`s with the participant the type singles out as a
+  parameter; `Kind` names them as the book does, for the rows. The semantic conditions that separate
   causativization from the other A/S-nucleativizations are not modelled; the rows carry the
   book's label. Reflexivization and reciprocalization share their structure, and what separates
   them, an individual or a group as S, is stated for §11.3's polysemy over the reciprocity
   quantifiers of `Semantics/Plurality/Reciprocal.lean`, with "a sizeable proportion" of the
   group read as all of it.
-* Passivization also keeps the initial P nuclear, which footnote 1 of §8.1.3 states beside the
-  three defining features of §8.3.2.1.
 * Frames record no dative oblique and no concernee, so D-applicativization and
   concernativization have examples but no voice.
 * The Obligatory Coding Principle is stated over the flags of S in the book's intransitive
@@ -72,130 +71,6 @@ open Voice Voice.Construction
 
 variable {ι : Type*}
 
-/-! ### The main types of voice alternation (§8.3) -/
-
-/-- The two constructions imply the same participants. -/
-def PreservesStructure (c d : Construction ι) : Prop := ∀ i, c i = .absent ↔ d i = .absent
-
-/-- A participant is demoted, the common core of §8.3.2, when it is denucleativized without
-leaving participant structure and no participant is nucleativized. -/
-def Demoted (c d : Construction ι) (i : ι) : Prop :=
-  c.Denucleativized d i ∧ d i ≠ .absent ∧ ¬ c.Nucleativizes d
-
-/-- In passivization the initial construction is transitive and its A is demoted, and its P
-remains a core term, as S in the canonical case and as P after a double-P construction. -/
-def Passivization (c d : Construction ι) : Prop :=
-  c.Transitive ∧ (∀ i, c i = .term .A → Demoted c d i) ∧ ∀ i, c i = .term .P → (d i).Nuclear
-
-/-- In the impersonal variant of passivization the initial P keeps its coding, so the derived
-construction has neither A nor S. -/
-def ImpersonalPassivization (c d : Construction ι) : Prop := Passivization c d ∧ d.Impersonal
-
-/-- In antipassivization the initial construction is transitive, participant structure is
-unchanged, a P is demoted, and the initial A becomes the S of an intransitive construction, or
-keeps the role of A after a double-P construction. -/
-def Antipassivization (c d : Construction ι) : Prop :=
-  c.Transitive ∧ PreservesStructure c d ∧ (∃ i, c i = .term .P ∧ Demoted c d i) ∧
-    ∀ i, c i = .term .A → d i = .term .S ∨ d i = .term .A
-
-/-- In S-denucleativization the initial construction is intransitive and its S is demoted. -/
-def SDenucleativization (c d : Construction ι) : Prop :=
-  ¬ c.Transitive ∧ (∃ i, c i = .term .S) ∧ ∀ i, c i = .term .S → Demoted c d i
-
-/-- In decausativization the initial construction is transitive, its A is suppressed from
-participant structure, and its P becomes the S of an intransitive construction. -/
-def Decausativization (c d : Construction ι) : Prop :=
-  c.Transitive ∧ (∀ i, c i = .term .A → c.Suppressed d i) ∧ ∀ i, c i = .term .P → d i = .term .S
-
-/-- In A/S-nucleativization a participant is nucleativized and takes over the role of A or S,
-the initial A or S coded as P or denucleativized. Causativization, where the new participant
-instigates or controls the event, the A/S-nucleativization of an oblique, and
-concernativization, where it is a concernee of the initial S or P, share this structure. -/
-def ANucleativization (c d : Construction ι) (i : ι) : Prop :=
-  c.Nucleativized d i ∧ (d i = .term .A ∨ d i = .term .S) ∧
-    ∀ j, (c j = .term .A ∨ c j = .term .S) → d j = .term .P ∨ ¬ (d j).Nuclear
-
-/-- In reflexivization and reciprocalization two participant roles expressed as A and P, or as
-S and a dative oblique, are cumulated by the S term of the derived construction. -/
-def Cumulation (c d : Construction ι) : Prop :=
-  ∃ a p, a ≠ p ∧ ((c a = .term .A ∧ c p = .term .P) ∨ (c a = .term .S ∧ c p = .dative)) ∧
-    d a = .term .S ∧ d p = .term .S
-
-/-- In applicativization the initial A or S keeps the role of A or S, and the derived
-construction introduces, in a role other than A or S, an applied participant. -/
-def Applicativization (c d : Construction ι) (applied : ι) : Prop :=
-  (∀ j, (c j = .term .A ∨ c j = .term .S) → d j = .term .A ∨ d j = .term .S) ∧
-    c.Introduced d applied ∧ d applied ≠ .term .A ∧ d applied ≠ .term .S
-
-/-- In P-applicativization the applied phrase is a P, and the initial A or S is the A of the
-derived transitive construction. -/
-def PApplicativization (c d : Construction ι) (applied : ι) : Prop :=
-  Applicativization c d applied ∧ d applied = .term .P ∧
-    ∀ j, (c j = .term .A ∨ c j = .term .S) → d j = .term .A
-
-/-- In D-applicativization the applied phrase is a dative oblique. -/
-def DApplicativization (c d : Construction ι) (applied : ι) : Prop :=
-  Applicativization c d applied ∧ d applied = .dative
-
-/-- In X-applicativization the applied phrase is an ordinary oblique. -/
-def XApplicativization (c d : Construction ι) (applied : ι) : Prop :=
-  Applicativization c d applied ∧ d applied = .term .X
-
-/-- In portative derivation an intransitive verb of motion becomes transitive, its S the A of
-the derived construction and a carried entity its P. -/
-def Portative (c d : Construction ι) (carried : ι) : Prop :=
-  ¬ c.Transitive ∧ c.Nucleativized d carried ∧ d carried = .term .P ∧
-    ∀ j, c j = .term .S → d j = .term .A
-
-section
-variable [Fintype ι] [DecidableEq ι] (c d : Construction ι)
-
-instance : Decidable (PreservesStructure c d) := inferInstanceAs (Decidable (∀ _, _))
-instance (i : ι) : Decidable (Demoted c d i) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (Passivization c d) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (ImpersonalPassivization c d) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (Antipassivization c d) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (SDenucleativization c d) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (Decausativization c d) := inferInstanceAs (Decidable (_ ∧ _))
-instance (i : ι) : Decidable (ANucleativization c d i) := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable (Cumulation c d) := inferInstanceAs (Decidable (∃ _, _))
-instance (i : ι) : Decidable (Applicativization c d i) := inferInstanceAs (Decidable (_ ∧ _))
-instance (i : ι) : Decidable (PApplicativization c d i) := inferInstanceAs (Decidable (_ ∧ _))
-instance (i : ι) : Decidable (DApplicativization c d i) := inferInstanceAs (Decidable (_ ∧ _))
-instance (i : ι) : Decidable (XApplicativization c d i) := inferInstanceAs (Decidable (_ ∧ _))
-instance (i : ι) : Decidable (Portative c d i) := inferInstanceAs (Decidable (_ ∧ _))
-
-end
-
-variable {c d : Construction ι}
-
-theorem Decausativization.not_preservesStructure (h : Decausativization c d) :
-    ¬ PreservesStructure c d :=
-  let ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ := h
-  fun hp ↦ absurd ((hp a).mpr (hA a ha).2) (by simp [ha])
-
-theorem Passivization.not_decausativization (h : Passivization c d) : ¬ Decausativization c d :=
-  let ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ := h
-  fun h' ↦ (hA a ha).2.1 (h'.2.1 a ha).2
-
-theorem SDenucleativization.not_nuclear (h : SDenucleativization c d)
-    (hc : ∀ i, (c i).Nuclear → c i = .term .S) (i : ι) : ¬ (d i).Nuclear := fun hd ↦ by
-  by_cases hi : (c i).Nuclear
-  · exact (h.2.2 i (hc i hi)).1.2 hd
-  · obtain ⟨s, hs⟩ := h.2.1
-    exact (h.2.2 s hs).2.2 ⟨i, hi, hd⟩
-
-theorem Portative.not_aNucleativization {i : ι} (h : Portative c d i)
-    (hS : ∃ s, c s = .term .S) (j : ι) : ¬ ANucleativization c d j := by
-  grind [Portative, ANucleativization, Status.Nuclear]
-
-theorem not_passivization_of_isSymmetrical (h : c.IsSymmetrical d) : ¬ Passivization c d :=
-  fun ⟨⟨⟨a, ha⟩, _⟩, hA, _⟩ ↦ h.not_denucleativizes ⟨a, (hA a ha).1⟩
-
-theorem not_aNucleativization_of_isSymmetrical (h : c.IsSymmetrical d) (i : ι) :
-    ¬ ANucleativization c d i :=
-  fun hc ↦ h.not_nucleativizes ⟨i, hc.1⟩
-
 /-! ### The types the book names -/
 
 /-- The types of voice alternation the book names, symmetrical voices included. -/
@@ -220,20 +95,20 @@ inductive Kind where
 /-- Whether a pair of constructions realizes a type, given the participant the type singles
 out; the three A/S-nucleativizations and the two cumulations share their structure. -/
 def Kind.Realize (c d : Construction ι) : Kind → Option ι → Prop
-  | .passivization, _ => Passivization c d
-  | .impersonalPassivization, _ => ImpersonalPassivization c d
-  | .antipassivization, _ => Antipassivization c d
-  | .sDenucleativization, _ => SDenucleativization c d
-  | .decausativization, _ => Decausativization c d
-  | .causativization, some i => ANucleativization c d i
-  | .concernativization, some i => ANucleativization c d i
-  | .aNucleativization, some i => ANucleativization c d i
-  | .reflexivization, _ => Cumulation c d
-  | .reciprocalization, _ => Cumulation c d
-  | .pApplicativization, some i => PApplicativization c d i
-  | .dApplicativization, some i => DApplicativization c d i
-  | .xApplicativization, some i => XApplicativization c d i
-  | .portative, some i => Portative c d i
+  | .passivization, _ => c.IsPassivization d
+  | .impersonalPassivization, _ => c.IsImpersonalPassivization d
+  | .antipassivization, _ => c.IsAntipassivization d
+  | .sDenucleativization, _ => c.IsSDenucleativization d
+  | .decausativization, _ => c.IsDecausativization d
+  | .causativization, some i => c.IsASNucleativization d i
+  | .concernativization, some i => c.IsASNucleativization d i
+  | .aNucleativization, some i => c.IsASNucleativization d i
+  | .reflexivization, _ => c.IsCumulation d
+  | .reciprocalization, _ => c.IsCumulation d
+  | .pApplicativization, some i => c.IsPApplicativization d i
+  | .dApplicativization, some i => c.IsDApplicativization d i
+  | .xApplicativization, some i => c.IsXApplicativization d i
+  | .portative, some i => c.IsPortative d i
   | .symmetrical, _ => c.IsSymmetrical d
   | _, none => False
 
@@ -241,7 +116,7 @@ instance [Fintype ι] [DecidableEq ι] (c d : Construction ι) (k : Kind) (o : O
     Decidable (k.Realize c d o) := by
   cases k <;> cases o <;> simp only [Kind.Realize] <;> infer_instance
 
-/-! ### The substrate's voices -/
+/-! ### The book's voices -/
 
 open ArgumentFrame.Slot in
 /-- In A/S-nucleativization of an oblique (§8.3.4.1) an instrumental oblique takes over the
@@ -260,22 +135,13 @@ open ArgumentFrame.Slot in
 A and a carried entity the P. -/
 def portative : Voice := .of .intransitive .np [some external, some (complement 0)]
 
-/-- Each voice with the type it is named for. -/
-def voiceTypes : List (Voice × Kind) :=
-  [(passive, .passivization), (impersonalPassive, .impersonalPassivization),
-    (impersonalPassive .intransitive, .sDenucleativization),
-    (antipassive, .antipassivization), (anticausative, .decausativization),
-    (causative, .causativization), (reflexive, .reflexivization),
-    (reciprocal, .reciprocalization),
-    (instrumentNucleativization, .aNucleativization), (applicative, .pApplicativization),
-    (obliqueApplicative, .xApplicativization), (portative, .portative),
-    (patientVoice, .symmetrical)]
-
-/-- Each voice relates an initial and a derived construction that realize the type it is
-named for. -/
+/-- The book's voices of §8.3.4.1, §8.3.5 and §8.3.7 realize the types they are named for. -/
 theorem voices_typed :
-    ∀ e ∈ voiceTypes, ∃ o, e.2.Realize e.1.initial.construction e.1.derived.construction o := by
-  decide +kernel
+    instrumentNucleativization.IsASNucleativization ∧
+      (∃ i, obliqueApplicative.initial.construction.IsXApplicativization
+        obliqueApplicative.derived.construction i) ∧
+      ∃ i, portative.initial.construction.IsPortative portative.derived.construction i := by
+  decide
 
 theorem instrumentNucleativization_neutral :
     instrumentNucleativization.Nucleativizes ∧ instrumentNucleativization.Denucleativizes ∧
@@ -290,8 +156,8 @@ leaves the breaker out of participant structure and makes the thing broken the S
 passivization. -/
 theorem break_decausativization :
     ∃ c ∈ English.Verbs.break_.valency.basic?, ∃ d ∈ English.Verbs.break_.valency.diatheses,
-      Decausativization c.construction d.construction ∧
-        ¬ Passivization c.construction d.construction := by
+      c.construction.IsDecausativization d.construction ∧
+        ¬ c.construction.IsPassivization d.construction := by
   decide +kernel
 
 /-! ### Alignment and the Obligatory Coding Principle (§1.3.4) -/
@@ -494,7 +360,7 @@ theorem ambitransitivity_rows : ∀ row ∈ all,
     (construction init).Transitive ∧ ¬ (construction row).Transitive ∧
     (∀ i, construction init i = .term .P → construction row i = .term .S) ∧
     (∀ i, construction init i = .term .A → ¬ (construction row i).Nuclear) ∧
-    (PreservesStructure (construction init) (construction row) ↔ row.language = "bamb1269") := by
+    ((construction init).PreservesStructure (construction row) ↔ row.language = "bamb1269") := by
   decide +kernel
 
 theorem coexpression :
@@ -509,23 +375,23 @@ theorem coexpression :
 /-- In Tswana (38), passivizing the applicative of the causative is the composite of the three
 alternations, through (38d) and (38e). -/
 theorem stacking_tswana :
-    Relation.Comp (Relation.Comp (ANucleativization · · 2) (PApplicativization · · 3))
-      Passivization (construction ex_8_38a) (construction ex_8_38h) :=
+    Relation.Comp (Relation.Comp (IsASNucleativization · · 2) (IsPApplicativization · · 3))
+      Construction.IsPassivization (construction ex_8_38a) (construction ex_8_38h) :=
   ⟨construction ex_8_38e, ⟨construction ex_8_38d, by decide +kernel, by decide +kernel⟩,
     by decide +kernel⟩
 
 /-- Classical Nahuatl (39) forms the passive of the antipassive of the causative, through
 (39b) and (39c). -/
 theorem stacking_nahuatl :
-    Relation.Comp (Relation.Comp (ANucleativization · · 2) Antipassivization) Passivization
-      (construction ex_8_39a) (construction ex_8_39e) :=
+    Relation.Comp (Relation.Comp (IsASNucleativization · · 2) Construction.IsAntipassivization)
+      Construction.IsPassivization (construction ex_8_39a) (construction ex_8_39e) :=
   ⟨construction ex_8_39c, ⟨construction ex_8_39b, by decide +kernel, by decide +kernel⟩,
     by decide +kernel⟩
 
 /-- Passivization need not yield an intransitive construction: the passive (38f) of the
 double-P applicative (38c) is transitive, the applied P taking A coding. -/
 theorem passive_transitive :
-    Passivization (construction ex_8_38c) (construction ex_8_38f) ∧
+    (construction ex_8_38c).IsPassivization (construction ex_8_38f) ∧
     (construction ex_8_38f).Transitive := by
   decide +kernel
 
@@ -566,8 +432,7 @@ def balineseCausative : Voice :=
   (Voice.of .np .np_pp [some (complement 0), some (complement 1), some external]).marked
     [.suff "ang"]
 
-theorem balinesePassive_passivization :
-    Passivization balinesePassive.initial.construction balinesePassive.derived.construction := by
+theorem balinesePassive_isPassivization : balinesePassive.IsPassivization := by
   decide
 
 /-- The applicative and the causative relate the constructions of rows (50) and (51), which list

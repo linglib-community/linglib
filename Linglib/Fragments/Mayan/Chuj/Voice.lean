@@ -25,8 +25,8 @@ decomposition lives in her study.
 
 ## Main results
 
-* `Chuj.agentFate`: the agent is kept by *-w* and *-waj*, demoted but present under *-chaj*,
-  and absent under *-j*
+* `Chuj.alternationTypes`: the two antipassives are antipassivizations, *-chaj* a
+  passivization, and *-j* a decausativization
 
 ## Implementation notes
 
@@ -61,13 +61,12 @@ def passive : Voice := Voice.passive.marked [.suff "chaj"]
 def voices : Finset Voice :=
   {transitive, incorporationAntipassive, absolutiveAntipassive, agentlessPassive, passive}
 
-/-- The four intransitivizing suffixes differ in the fate of the agent: kept by *-w* and
-*-waj*, demoted but present under *-chaj*, absent under *-j* ([coon-2019]). -/
-theorem agentFate :
-    incorporationAntipassive.fateOfRole .A = .maintained ∧
-      absolutiveAntipassive.fateOfRole .A = .maintained ∧
-      passive.fateOfRole .A = .denucleativized ∧
-      agentlessPassive.fateOfRole .A = .suppressed := by
+/-- The antipassives *-w* and *-waj* are antipassivizations and *-chaj* a passivization; *-j*,
+with no agent in participant structure, is a decausativization and not a passivization. -/
+theorem alternationTypes :
+    incorporationAntipassive.IsAntipassivization ∧ absolutiveAntipassive.IsAntipassivization ∧
+      passive.IsPassivization ∧ agentlessPassive.IsDecausativization ∧
+      ¬ agentlessPassive.IsPassivization := by
   decide
 
 end Chuj
