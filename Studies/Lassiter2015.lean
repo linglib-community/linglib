@@ -25,7 +25,8 @@ likely to win as not; the lottery's probability measure makes the first true and
 
 ## Main statements
 
-* `lottery_collapse`: an order validating the modified disjunction puzzle infers (14) from (4).
+* `lottery_collapse`: in any finite lottery, an order validating the modified disjunction puzzle
+  infers (14) from (4).
 * `lottery_rows`: the fair lottery decides the paper's lottery sentences as judged.
 * `not_exists_lift`: no lift of a world order fixes the order of every measure agreeing with it.
 * `not_mustToProbably_of_ncard_lt`: under Kratzer's *must* the m-lifting refutes (35) whenever
@@ -41,6 +42,7 @@ likely to win as not; the lottery's probability measure makes the first true and
 * The injection of the m-lifting, (34) and (60), has `φ ∩ ⋂f(w)` as codomain, not as image.
 * Probabilities are mathlib probability measures on a discrete space, compared on their real
   values.
+* In §4 the measure lives on the epistemic space: almost every world is accessible.
 
 ## Errata
 
@@ -63,6 +65,7 @@ likely to win as not; the lottery's probability measure makes the first true and
 namespace Lassiter2015
 
 open ComparativeProbability Modality MeasureTheory ProbabilityTheory
+open scoped Function
 
 variable {W : Type*}
 
@@ -71,9 +74,11 @@ variable {W : Type*}
 /-- The million tickets of the lottery. -/
 abbrev Ticket := Fin 1000000
 
-/-- `wins s` is the proposition that a holder in `s` wins, holder `n` holding tickets `2n` and
-`2n + 1`. -/
-def wins (s : Set ℕ) : Set Ticket := {t | t.val / 2 ∈ s}
+/-- The holder of a ticket, holder `n` holding tickets `2n` and `2n + 1`. -/
+def holder (t : Ticket) : ℕ := t.val / 2
+
+/-- `wins s` is the proposition that a holder in `s` wins. -/
+def wins (s : Set ℕ) : Set Ticket := holder ⁻¹' s
 
 /-- The fair lottery draws every ticket with the same probability. -/
 noncomputable abbrev lottery : Measure Ticket := uniformOn Set.univ
@@ -84,7 +89,7 @@ theorem lottery_inducedGe_iff {A B : Set Ticket} : lottery.inducedGe A B ↔ B.n
 theorem ncard_wins_zero : (wins {0}).ncard = 2 := by
   have : wins {0} = ↑({⟨0, by norm_num⟩, ⟨1, by norm_num⟩} : Finset Ticket) := by
     ext t
-    simp only [wins, Set.mem_ofPred_eq, Set.mem_singleton_iff, Finset.coe_insert,
+    simp only [wins, holder, Set.mem_preimage, Set.mem_singleton_iff, Finset.coe_insert,
       Finset.coe_singleton, Set.mem_insert_iff, Fin.ext_iff]
     omega
   rw [this, Set.ncard_coe_finset]
@@ -92,7 +97,7 @@ theorem ncard_wins_zero : (wins {0}).ncard = 2 := by
 
 theorem ncard_wins_le (n : ℕ) : (wins {n}).ncard ≤ 2 := by
   have h : Set.MapsTo Fin.val (wins {n}) {2 * n, 2 * n + 1} := fun t ht ↦ by
-    simp only [wins, Set.mem_ofPred_eq, Set.mem_singleton_iff] at ht
+    simp only [wins, holder, Set.mem_preimage, Set.mem_singleton_iff] at ht
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
     omega
   exact (Set.ncard_le_ncard_of_injOn _ h Fin.val_injective.injOn).trans
@@ -101,11 +106,13 @@ theorem ncard_wins_le (n : ℕ) : (wins {n}).ncard ≤ 2 := by
 theorem ncard_wins_one_two : (wins {1, 2}).ncard = 4 := by
   have : wins {1, 2} = ↑({2, 3, 4, 5} : Finset Ticket) := by
     ext t
-    simp only [wins, Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_ofPred_eq,
+    simp only [wins, holder, Set.mem_preimage, Set.mem_insert_iff, Set.mem_singleton_iff,
       Finset.coe_insert, Finset.coe_singleton, Fin.ext_iff, Fin.coe_ofNat_eq_mod, Nat.reduceMod]
     omega
   rw [this, Set.ncard_coe_finset]
   rfl
+
+theorem exists_holder_ne : ∃ t, holder t ≠ 0 := ⟨⟨2, by norm_num⟩, by decide⟩
 
 theorem lottery_four : ∀ n ≠ 0, lottery.inducedGe (wins {0}) (wins {n}) := fun n _ ↦
   lottery_inducedGe_iff.2 (ncard_wins_zero ▸ ncard_wins_le n)
@@ -137,7 +144,7 @@ theorem lottery_rows :
       Examples.ex33c.feature? "truthValue" = some "true") := by
   have h12 : ¬lottery.inducedGe (wins {0}) (wins (Set.Icc 1 7)) := fun h ↦
     lottery_not_nine ((lottery_inducedGe_iff.2 (Set.ncard_le_ncard fun t ht ↦ by
-      simp only [wins, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff,
+      simp only [wins, holder, Set.mem_preimage, Set.mem_insert_iff, Set.mem_singleton_iff,
         Set.mem_Icc] at ht ⊢
       omega)).trans h)
   exact ⟨iff_of_false lottery_not_fourteen (by decide), iff_of_true lottery_four (by decide),
@@ -189,22 +196,25 @@ theorem ModifiedDisjunctionPuzzle.biUnion {r : Set W → Set W → Prop}
       (ih (hB.subset (Set.subset_insert _ _)) (fun j hj ↦ hA j (Finset.mem_cons_of_mem hj))
         fun j hj ↦ h j (Finset.mem_cons_of_mem hj))
 
-/-- An order validating the modified disjunction puzzle infers (14) from (4), feeding each
-conclusion back as a premise as in (13). -/
-theorem lottery_collapse {r : Set Ticket → Set Ticket → Prop} (hr : ModifiedDisjunctionPuzzle r)
-    (h : ∀ n ≠ 0, r (wins {0}) (wins {n})) : r (wins {0}) (wins {0})ᶜ := by
-  have hd : (Set.univ : Set ℕ).PairwiseDisjoint fun n ↦ wins {n} :=
-    fun m _ n _ hmn ↦ Set.disjoint_left.2 fun _ hm hn ↦ hmn (hm.symm.trans hn)
-  have hc : ⋃ n ∈ Finset.Ioo 0 500000, wins {n} = (wins {0})ᶜ := by
+/-- In a finite lottery, an order validating the modified disjunction puzzle infers that `a` is as
+likely to win as not from `a` being as likely to win as anyone else, feeding each conclusion back
+as a premise as in (13). -/
+theorem lottery_collapse {T ι : Type*} [Finite T] {r : Set T → Set T → Prop}
+    (hr : ModifiedDisjunctionPuzzle r) (holder : T → ι) {a : ι} (ha : ∃ t, holder t ≠ a)
+    (h : ∀ b ≠ a, r (holder ⁻¹' {a}) (holder ⁻¹' {b})) :
+    r (holder ⁻¹' {a}) (holder ⁻¹' {a})ᶜ := by
+  classical
+  have := Fintype.ofFinite T
+  have hc : ⋃ b ∈ (Finset.univ.image holder).erase a, holder ⁻¹' {b} = (holder ⁻¹' {a})ᶜ := by
     ext t
-    have := t.isLt
-    simp only [wins, Set.mem_iUnion, Set.mem_ofPred_eq, Set.mem_singleton_iff, Finset.mem_Ioo,
-      Set.mem_compl_iff, exists_prop]
-    exact ⟨fun ⟨_, ⟨_, _⟩, _⟩ ↦ by omega, fun _ ↦ ⟨_, ⟨by omega, by omega⟩, rfl⟩⟩
+    simp [eq_comm]
+  obtain ⟨t, ht⟩ := ha
   rw [← hc]
-  exact hr.biUnion ⟨1, by simp⟩ (hd.subset (Set.subset_univ _))
-    (fun n hn ↦ hd (Set.mem_univ 0) (Set.mem_univ n) (Finset.mem_Ioo.1 hn).1.ne)
-    fun n hn ↦ h n (Finset.mem_Ioo.1 hn).1.ne'
+  exact hr.biUnion ⟨holder t, by simp [ht]⟩
+    ((Set.pairwiseDisjoint_fiber holder _).subset (Set.subset_univ _))
+    (fun b hb ↦ Set.pairwiseDisjoint_fiber holder Set.univ (Set.mem_univ a) (Set.mem_univ b)
+      (Finset.ne_of_mem_erase hb).symm)
+    fun b hb ↦ h b (Finset.ne_of_mem_erase hb)
 
 section Revised
 
@@ -221,36 +231,28 @@ theorem revised_countermodel_overlap {A B C : Set W} (hB : KratzerLift r A B)
     (hC : KratzerLift r A C) (hn : ¬KratzerLift r A (B ∪ C)) :
     (∃ u ∈ B \ A, ∃ v ∈ A ∩ C, ¬(r u v ∧ ¬r v u)) ∨
       ∃ u ∈ C \ A, ∃ v ∈ A ∩ B, ¬(r u v ∧ ¬r v u) := by
+  have key {B C : Set W} (hB : KratzerLift r A B) {u : W} (hu : u ∈ B \ A)
+      (hall : ∀ v ∈ A \ (B ∪ C), r u v ∧ ¬r v u) : ∃ v ∈ A ∩ C, ¬(r u v ∧ ¬r v u) := by
+    by_contra hnone
+    push Not at hnone
+    exact hB ⟨u, hu, fun v hv ↦ (em (v ∈ C)).elim (fun hvC ↦ hnone v ⟨hv.1, hvC⟩)
+      fun hvC ↦ hall v ⟨hv.1, fun h ↦ h.elim hv.2 hvC⟩⟩
   simp only [KratzerLift, not_not] at hn
-  obtain ⟨u, ⟨huBC, huA⟩, hall⟩ := hn
-  rcases huBC with huB | huC
-  · left
-    refine ⟨u, ⟨huB, huA⟩, ?_⟩
-    by_contra hnone
-    push Not at hnone
-    exact hB ⟨u, ⟨huB, huA⟩, fun v ⟨hvA, hvB⟩ ↦ by
-      by_cases hvC : v ∈ C
-      · exact hnone v ⟨hvA, hvC⟩
-      · exact hall v ⟨hvA, fun h ↦ h.elim hvB hvC⟩⟩
-  · right
-    refine ⟨u, ⟨huC, huA⟩, ?_⟩
-    by_contra hnone
-    push Not at hnone
-    exact hC ⟨u, ⟨huC, huA⟩, fun v ⟨hvA, hvC⟩ ↦ by
-      by_cases hvB : v ∈ B
-      · exact hnone v ⟨hvA, hvB⟩
-      · exact hall v ⟨hvA, fun h ↦ h.elim hvB hvC⟩⟩
+  obtain ⟨u, ⟨huB | huC, huA⟩, hall⟩ := hn
+  · exact .inl ⟨u, ⟨huB, huA⟩, key hB ⟨huB, huA⟩ hall⟩
+  · exact .inr ⟨u, ⟨huC, huA⟩, key hC ⟨huC, huA⟩ (Set.union_comm B C ▸ hall)⟩
 
 theorem kratzerLift_modifiedDisjunctionPuzzle : ModifiedDisjunctionPuzzle (KratzerLift r) :=
   fun _ _ _ hB hC _ ↦ kratzerLift_rightUnion_of_disjoint r hB hC
 
+end Revised
+
 theorem lifts_lottery_collapse (r : Ticket → Ticket → Prop) :
     ((∀ n ≠ 0, LewisLift r (wins {0}) (wins {n})) → LewisLift r (wins {0}) (wins {0})ᶜ) ∧
       ((∀ n ≠ 0, KratzerLift r (wins {0}) (wins {n})) → KratzerLift r (wins {0}) (wins {0})ᶜ) :=
-  ⟨lottery_collapse (modifiedDisjunctionPuzzle_of_rightUnion rightUnion_lewisLift),
-    lottery_collapse (kratzerLift_modifiedDisjunctionPuzzle r)⟩
-
-end Revised
+  ⟨lottery_collapse (modifiedDisjunctionPuzzle_of_rightUnion rightUnion_lewisLift) holder
+      exists_holder_ne,
+    lottery_collapse (kratzerLift_modifiedDisjunctionPuzzle r) holder exists_holder_ne⟩
 
 /-! ### §1.5 Lifting an order on worlds -/
 
@@ -299,19 +301,23 @@ theorem peaked_real (A : Set (Fin 3)) :
     peaked.real A = ∑ i, A.indicator ![6 / 10, 2 / 10, 2 / 10] i :=
   Measure.sum_ofReal_smul_dirac_real_apply peaked_nonneg A
 
-theorem skewed_agrees (u v : Fin 3) : (u ≤[onlyBest 0] v) ↔ skewed {v} ≤ skewed {u} := by
-  rw [onlyBest_le, ← Measure.inducedGe, Measure.inducedGe_iff_real, skewed_real, skewed_real]
-  fin_cases u <;> fin_cases v <;> simp <;> norm_num
+theorem skewed_agrees : (premisePreorder (onlyBest 0)).le = (skewed.inducedGe on fun u ↦ {u}) :=
+  funext₂ fun u v ↦ propext <| by
+    rw [Function.onFun, Measure.inducedGe_iff_real, skewed_real, skewed_real]
+    rw [onlyBest_le]
+    fin_cases u <;> fin_cases v <;> simp <;> norm_num
 
-theorem peaked_agrees (u v : Fin 3) : (u ≤[onlyBest 0] v) ↔ peaked {v} ≤ peaked {u} := by
-  rw [onlyBest_le, ← Measure.inducedGe, Measure.inducedGe_iff_real, peaked_real, peaked_real]
-  fin_cases u <;> fin_cases v <;> simp <;> norm_num
+theorem peaked_agrees : (premisePreorder (onlyBest 0)).le = (peaked.inducedGe on fun u ↦ {u}) :=
+  funext₂ fun u v ↦ propext <| by
+    rw [Function.onFun, Measure.inducedGe_iff_real, peaked_real, peaked_real]
+    rw [onlyBest_le]
+    fin_cases u <;> fin_cases v <;> simp <;> norm_num
 
 /-- No lift of the order on three worlds with the first alone best fixes the order on propositions
 of every probability measure agreeing with it on singletons (p. 662). -/
 theorem not_exists_lift :
     ¬∃ ge : Set (Fin 3) → Set (Fin 3) → Prop, ∀ P : Measure (Fin 3), IsProbabilityMeasure P →
-      (∀ u v, (u ≤[onlyBest 0] v) ↔ P {v} ≤ P {u}) → P.inducedGe = ge := by
+      (premisePreorder (onlyBest 0)).le = (P.inducedGe on fun u ↦ {u}) → P.inducedGe = ge := by
   rintro ⟨ge, h⟩
   have := congrFun₂ ((h skewed inferInstance skewed_agrees).trans
     (h peaked inferInstance peaked_agrees).symm) {0} {1, 2}
@@ -338,7 +344,7 @@ theorem mLift_refutes_V6 :
 /-! ### §2.1 Scales of probability -/
 
 theorem lottery_not_modifiedDisjunctionPuzzle : ¬ModifiedDisjunctionPuzzle lottery.inducedGe :=
-  fun h ↦ lottery_not_fourteen (lottery_collapse h lottery_four)
+  fun h ↦ lottery_not_fourteen (lottery_collapse h holder exists_holder_ne lottery_four)
 
 theorem prob_refutes_rightUnion : ¬RightUnion skewed.inducedGe := by
   intro h
@@ -369,8 +375,8 @@ namespace SymmetricFuzzyMeasure
 
 variable (μ : SymmetricFuzzyMeasure W)
 
-/-- `μ.likelihood A B` holds when `A` measures at least as much as `B`. -/
-def likelihood (A B : Set W) : Prop := μ.mu B ≤ μ.mu A
+/-- `μ.inducedGe A B` holds when `A` measures at least as much as `B`. -/
+def inducedGe (A B : Set W) : Prop := μ.mu B ≤ μ.mu A
 
 /-- A probability measure is a symmetric fuzzy measure through its real values. -/
 noncomputable def ofMeasure [MeasurableSpace W] [DiscreteMeasurableSpace W] (P : Measure W)
@@ -399,7 +405,7 @@ def toQualAdd (h : μ.EqualShares) : QualAddMeasure ℝ W where
 variable {μ}
 
 theorem EqualShares.strictDisjunctionIntro (h : μ.EqualShares) :
-    StrictDisjunctionIntro μ.likelihood :=
+    StrictDisjunctionIntro μ.inducedGe :=
   show StrictDisjunctionIntro (μ.toQualAdd h).inducedGe from
     ComparativeProbability.strictDisjunctionIntro
 
@@ -431,18 +437,18 @@ noncomputable def cutClass : SymmetricFuzzyMeasure (Fin 3) where
         | exact absurd (h a2) b2
         | norm_num
 
-theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro cutClass.likelihood := fun h ↦
-  (h {1} {0} ⟨by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass],
-    by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass]⟩).2
-    (by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass])
+theorem fuzzy_refutes_V13 : ¬StrictDisjunctionIntro cutClass.inducedGe := fun h ↦
+  (h {1} {0} ⟨by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass],
+    by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass]⟩).2
+    (by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass])
 
 theorem rows_48 :
-    ¬(cutClass.likelihood {0} ({0} ∪ {1}) ↔ Examples.ex48.feature? "truthValue" = some "true") ∧
+    ¬(cutClass.inducedGe {0} ({0} ∪ {1}) ↔ Examples.ex48.feature? "truthValue" = some "true") ∧
       ∀ μ : SymmetricFuzzyMeasure W, μ.EqualShares → ∀ movies school : Set W,
         μ.mu (school \ movies) ≠ 0 →
-        (μ.likelihood movies (movies ∪ school) ↔
+        (μ.inducedGe movies (movies ∪ school) ↔
           Examples.ex48.feature? "truthValue" = some "true") :=
-  ⟨fun h ↦ absurd (h.1 (by norm_num [SymmetricFuzzyMeasure.likelihood, cutClass])) (by decide),
+  ⟨fun h ↦ absurd (h.1 (by norm_num [SymmetricFuzzyMeasure.inducedGe, cutClass])) (by decide),
     fun _ h _ _ hs ↦ iff_of_false (fun h' ↦ hs (h.union_le_iff.1 h')) (by decide)⟩
 
 /-! ### §3 Bridging rules -/
@@ -451,23 +457,23 @@ section Bridges
 
 variable (r : W → W → Prop) [MeasurableSpace W] (P : Measure W)
 
-/-- BR1 (57) requires the revised lift to constrain probability. -/
-def Bridge1 : Prop := ∀ A B, KratzerLift r A B → P B ≤ P A
+/-- BR1 (57): the probability order includes the revised lift. -/
+def Bridge1 : Prop := KratzerLift r ≤ P.inducedGe
 
-/-- BR2 (59) requires the world order to constrain probability on singletons. -/
-def Bridge2 : Prop := ∀ u v, r u v → P {v} ≤ P {u}
+/-- BR2 (59): on singletons the probability order includes the world order. -/
+def Bridge2 : Prop := r ≤ (P.inducedGe on fun u ↦ {u})
 
-/-- BR3 (61) requires the m-lifting to constrain probability. -/
-def Bridge3 : Prop := ∀ A B, MatchingLift r A B → P B ≤ P A
+/-- BR3 (61): the probability order includes the m-lifting. -/
+def Bridge3 : Prop := MatchingLift r ≤ P.inducedGe
 
 theorem bridge1_disjoint_puzzle (h : Bridge1 r P) {A B C : Set W} (hB : Disjoint A B)
     (hC : Disjoint A C) (hAB : KratzerLift r A B) (hAC : KratzerLift r A C) :
-    P (B ∪ C) ≤ P A :=
+    P.inducedGe A (B ∪ C) :=
   h _ _ (kratzerLift_rightUnion_of_disjoint r hB hC hAB hAC)
 
 theorem bridge3_of_agree [Fintype W] [MeasurableSingletonClass W]
-    (h : ∀ v u, r v u ↔ P {u} ≤ P {v}) : Bridge3 r P :=
-  fun _ _ hAB ↦ HollidayIcard2013.measure_le_of_matchingLift P r h hAB
+    (h : r = (P.inducedGe on fun u ↦ {u})) : Bridge3 r P :=
+  fun _ _ ↦ HollidayIcard2013.measure_le_of_matchingLift P r fun v u ↦ by rw [h]; rfl
 
 end Bridges
 
@@ -483,14 +489,14 @@ theorem bridge1_kratzer :
 theorem not_bridge1_skewed : ¬Bridge1 (premisePreorder (onlyBest 0)).le skewed := fun h ↦ by
   have := h {0} {1, 2} (kratzerLift_iff.2 fun _ _ ↦ ⟨0, ⟨rfl, by simp⟩, fun ⟨_, h2⟩ ↦
     h2 ((onlyBest_le _ _ _).2 fun _ ↦ rfl)⟩)
-  rw [← Measure.inducedGe, Measure.inducedGe_iff_real, skewed_real, skewed_real] at this
+  rw [Measure.inducedGe_iff_real, skewed_real, skewed_real] at this
   simp [Fin.sum_univ_three, Set.indicator_apply] at this
   norm_num at this
 
 theorem bridge2_refutes_V6 :
     Bridge2 (premisePreorder (onlyBest 0)).le skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) := by
-  refine ⟨fun u v huv ↦ (skewed_agrees u v).1 huv, fun hV6 ↦ ?_⟩
+  refine ⟨skewed_agrees.le, fun hV6 ↦ ?_⟩
   have h := (hV6 _ (must_onlyBest 0 0)).1
   simp [Measure.inducedGe_iff_real, skewed_real, Fin.sum_univ_three, Set.indicator_apply] at h
   norm_num at h
@@ -498,7 +504,7 @@ theorem bridge2_refutes_V6 :
 theorem bridge3_refutes_V6 :
     Bridge3 (premisePreorder (onlyBest 0)).le skewed ∧
       ¬MustToProbably skewed.inducedGe (Yalcin2010.must (onlyBest (0 : Fin 3)) · 0) :=
-  ⟨bridge3_of_agree _ _ fun v u ↦ skewed_agrees v u, bridge2_refutes_V6.2⟩
+  ⟨bridge3_of_agree _ _ skewed_agrees, bridge2_refutes_V6.2⟩
 
 /-- Masses `0.5001` and `0.4999` on two worlds, the model of BR1 on p. 674. -/
 noncomputable def thin : Measure (Fin 2) := Measure.ofRealWeights ![5001 / 10000, 4999 / 10000]
@@ -571,28 +577,28 @@ def probMust (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ici θ
 /-- The dual *might* holds when `Pr(A) > 1 - θ`. -/
 def probMight (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ioi (1 - θ)
 
-theorem quant_must (hP : P (f.accessibleWorlds w)ᶜ = 0) (h : humanNecessity f ⊥ (· ∈ A) w) :
-    P Aᶜ = 0 :=
-  measure_mono_null (Set.compl_subset_compl.2 fun _ hv ↦
-    (humanNecessity_bot_iff f _ w).1 h _ hv) hP
+theorem quant_must (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : humanNecessity f ⊥ (· ∈ A) w) :
+    ∀ᵐ v ∂P, v ∈ A :=
+  hP.mono fun v hv ↦ (humanNecessity_bot_iff f _ w).1 h v hv
 
-theorem quant_might (hP : P (f.accessibleWorlds w)ᶜ = 0) (h : P A ≠ 0) :
+theorem quant_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) (h : P A ≠ 0) :
     humanPossibility f ⊥ (· ∈ A) w := fun hn ↦
-  h (by simpa using quant_must P (A := Aᶜ) hP hn)
+  h (measure_eq_zero_iff_ae_notMem.2 (quant_must P (A := Aᶜ) hP hn))
 
-theorem quant_moreLikely_might (hP : P (f.accessibleWorlds w)ᶜ = 0)
+theorem quant_moreLikely_might (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w)
     (h : Strict P.inducedGe A B) : humanPossibility f ⊥ (· ∈ A) w :=
   quant_might P hP fun h0 ↦ h.2 (by simp [Measure.inducedGe, h0])
 
 variable [IsProbabilityMeasure P]
 
-theorem quant_mustToProbably [DiscreteMeasurableSpace W] (hP : P (f.accessibleWorlds w)ᶜ = 0) :
+theorem quant_mustToProbably [DiscreteMeasurableSpace W]
+    (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
     MustToProbably P.inducedGe (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) := fun A h ↦ by
-  have h0 := quant_must P hP h
+  have h0 : P Aᶜ = 0 := quant_must P hP h
   have h1 := (prob_compl_eq_zero_iff (.of_discrete : MeasurableSet A)).1 h0
   refine ⟨?_, ?_⟩ <;> simp [Measure.inducedGe, h0, h1]
 
-theorem rows_35 [DiscreteMeasurableSpace W] (hP : P (f.accessibleWorlds w)ᶜ = 0) :
+theorem rows_35 [DiscreteMeasurableSpace W] (hP : ∀ᵐ v ∂P, v ∈ f.accessibleWorlds w) :
     (MustToProbably P.inducedGe (fun A ↦ humanNecessity f ⊥ (· ∈ A) w) ↔
         Examples.ex35.judgment = .acceptable) ∧
       ¬(MustToProbably (MatchingLift (premisePreorder (onlyBest 0)).le)
@@ -603,15 +609,18 @@ theorem rows_35 [DiscreteMeasurableSpace W] (hP : P (f.accessibleWorlds w)ᶜ = 
 theorem probMust_one_iff (A : Set W) : probMust P 1 A ↔ P.real A = 1 :=
   ⟨fun h ↦ le_antisymm measureReal_le_one h, fun h ↦ h.ge⟩
 
+theorem probMust_one_iff_ae [DiscreteMeasurableSpace W] : probMust P 1 A ↔ ∀ᵐ v ∂P, v ∈ A := by
+  rw [probMust_one_iff, measureReal_def, ENNReal.toReal_eq_one_iff,
+    ← prob_compl_eq_zero_iff .of_discrete, ae_iff]
+  rfl
+
 /-- At threshold one the probabilistic *must* is the quantificational one when the epistemic space
 is the set of worlds of positive probability (p. 676). -/
 theorem probMust_one_iff_humanNecessity [DiscreteMeasurableSpace W] [Countable W]
     (hf : f.accessibleWorlds w = {v | P {v} ≠ 0}) :
     probMust P 1 A ↔ humanNecessity f ⊥ (· ∈ A) w := by
-  rw [probMust_one_iff, humanNecessity_bot_iff, simpleNecessity_iff, hf, measureReal_def,
-    ENNReal.toReal_eq_one_iff, ← prob_compl_eq_zero_iff .of_discrete,
-    measure_null_iff_singleton (Set.to_countable _)]
-  exact ⟨fun h v hv ↦ by_contra fun hA ↦ hv (h v hA), fun h v hv ↦ by_contra fun h0 ↦ hv (h v h0)⟩
+  rw [probMust_one_iff_ae, ae_iff_of_countable, humanNecessity_bot_iff, simpleNecessity_iff, hf]
+  rfl
 
 theorem probMight_iff_not_probMust_compl [DiscreteMeasurableSpace W] (θ : ℝ) (A : Set W) :
     probMight P θ A ↔ ¬ probMust P θ Aᶜ := by

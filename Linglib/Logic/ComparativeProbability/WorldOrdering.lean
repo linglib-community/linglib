@@ -372,14 +372,4 @@ theorem kratzerLift_rightUnion_of_disjoint (r : α → α → Prop) {A B C : Set
   · exact hAC ⟨b, ⟨hb, hbA⟩, fun a ha ↦
       hall a ⟨ha.1, fun h ↦ h.elim (Set.disjoint_left.mp hB ha.1) (Set.disjoint_left.mp hC ha.1)⟩⟩
 
-theorem RightUnion.biUnion {r : Set α → Set α → Prop} (hJ : RightUnion r) {ι : Type*}
-    {s : Finset ι} (hs : s.Nonempty) {A : Set α} {B : ι → Set α} (h : ∀ i ∈ s, r A (B i)) :
-    r A (⋃ i ∈ s, B i) := by
-  classical
-  induction hs using Finset.Nonempty.cons_induction with
-  | singleton i => simpa using h i (Finset.mem_singleton_self i)
-  | cons i s hi hs ih =>
-    rw [Finset.cons_eq_insert, Finset.set_biUnion_insert]
-    exact hJ _ _ _ (h i (Finset.mem_cons_self i s)) (ih fun j hj ↦ h j (Finset.mem_cons_of_mem hj))
-
 end ComparativeProbability
