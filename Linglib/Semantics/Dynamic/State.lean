@@ -219,7 +219,7 @@ theorem isLUB_union : IsLUB {s, s'} (s ∪ s') :=
 /-! ### States up to informational equivalence
 
 The Smyth kernel is full: `UpperSet`'s complete lattice is the algebra
-of states up to equivalence, and Def. 0.26's unrestricted
+of states up to equivalence, and Def. 26's unrestricted
 (arbitrary-family) merge is `sSup` there. -/
 
 /-- Up to informational equivalence, states are exactly the upper sets
@@ -246,7 +246,7 @@ def antisymmetrizationOrderIso :
 
 /-! ### Familiarity
 
-The worldly content of a state — Def. 0.23(v)'s proposition,
+The worldly content of a state — Def. 23(v)'s proposition,
 [elliott-sudo-2025] Def. 3.1's 𝒲 — is the image `Possibility.world '' s`. -/
 
 /-- A referent is *familiar* at a state: defined at every point. -/
