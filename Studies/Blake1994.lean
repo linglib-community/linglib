@@ -68,7 +68,8 @@ functions the Latin cases express fill it.
   ablative, its genitive and dative expressing the functions of the Latin one, and its dative is
   the more comprehensive case.
 * `gaps_finnish`, `gaps_hungarian`, `gaps_dargwa`, `gaps_mongolian`, `gaps_yakut`, `gaps_basel`:
-  the gaps among the fragment inventories.
+  the gaps among the fragment inventories, the Finnish dative filled by a function of the allative
+  (`conforms_finnish_functions`).
 
 ## Implementation notes
 
@@ -286,8 +287,13 @@ theorem fragments_conform :
   simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
   decide
 
-/-- Finnish has no dative, the allative marking the recipient. -/
+/-- Finnish has no dative. -/
 theorem gaps_finnish : gaps (Finset.univ.image Finnish.Case.label) = {.dat} := by decide
+
+/-- The Finnish allative *-lle* has dative functions (p. 154), and the Finnish functions
+conform. -/
+theorem conforms_finnish_functions : Conforms (Finset.univ.biUnion Finnish.Case.functions) := by
+  decide
 
 /-- Hungarian has no genitive, the dative marking the possessor, as in the Pama-Nyungan languages
 Blake mentions. -/
