@@ -74,6 +74,8 @@ def domain (p : Possibility W V (Flat M)) : Set V :=
 
 @[simp] theorem mem_domain {v : V} : v ∈ p.domain ↔ p.assignment v ≠ ⊥ := Iff.rfl
 
+@[simp] theorem domain_assignment : PartialAssign.domain p.assignment = p.domain := rfl
+
 theorem domain_mono (h : p ≤ q) : p.domain ⊆ q.domain := fun v =>
   (ne_bot_of_le_ne_bot · (h.2 v))
 

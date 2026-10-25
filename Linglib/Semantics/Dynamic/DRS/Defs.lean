@@ -38,7 +38,7 @@ Muskens draws a DRS as a box `[u₁ … uₙ | γ₁ … γₘ]`. Verification a
   without a mutual block, keeping the structure API.
 * `conditions` is a `List`, since an inductive cannot nest through
   `Finset`/`Multiset`; set semantics is recovered by the interpretation
-  (`verifies_perm`, `DRS/Verification.lean`).
+  (`verifiesTotal_perm`, `DRS/Verification.lean`).
 * `DRT` is the owning namespace, on the `FirstOrder.Language` pattern.
 
 ## References
@@ -115,6 +115,11 @@ end DRS
     (motive_3 := fun cs => ∀ c ∈ cs, motive c) atom eq neg imp dis (fun _ _ h => h)
     (fun _ h => absurd h List.not_mem_nil)
     (fun _ _ hd hds _ he => (List.mem_cons.1 he).elim (· ▸ hd) (hds _)) c
+
+/-- A condition is atomic when it is an atom or an equation (Def. 1.4.1). -/
+inductive Condition.IsAtomic : Condition L V → Prop
+  | atom (a : L.Atom V) : Condition.IsAtomic (.atom a)
+  | eq (u v : V) : Condition.IsAtomic (.eq u v)
 
 /-! ### Subordination -/
 

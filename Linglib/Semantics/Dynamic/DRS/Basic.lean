@@ -250,6 +250,12 @@ theorem varFinset_subset_varFinsetL {c : Condition L V} {cs : List (Condition L 
   | nil => simp
   | cons c cs ih => simp [ih, Finset.union_assoc]
 
+theorem freeVarFinsetL_subset_iff {cs : List (Condition L V)} {S : Finset V} :
+    freeVarFinsetL cs ⊆ S ↔ ∀ c ∈ cs, c.freeVarFinset ⊆ S := by
+  induction cs with
+  | nil => simp
+  | cons c cs ih => simp [Finset.union_subset_iff, ih]
+
 theorem freeVarFinset_subset_freeVarFinsetL {c : Condition L V} {cs : List (Condition L V)}
     (hc : c ∈ cs) : c.freeVarFinset ⊆ freeVarFinsetL cs := by
   induction cs with
@@ -372,8 +378,8 @@ No discourse referent is declared twice along a nesting path: each universe is
 fresh for the ambient declarations, threaded through sub-boxes the way
 verification threads the base (the antecedent of a `⇒` feeds its referents
 into the consequent). This is the hypothesis under which the total
-agree-off-universe semantics and the persistence semantics coincide
-(`DRS.trueRel_iff_toRelAt` in `DRS/Indexed.lean`). -/
+agree-off-universe semantics and the partial semantics coincide
+(`DRS.trueRel_iff_exists_verifies` in `DRS/Dynamics.lean`). -/
 
 mutual
 /-- A DRS is *reuse-free* at ambient declarations `X` when its universe avoids `X` and its

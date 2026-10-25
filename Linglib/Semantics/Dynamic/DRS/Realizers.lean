@@ -84,8 +84,9 @@ theorem mem_realizers {g : c.vars → M} : g ∈ s.realizers M ↔ ∀ l ∈ s.l
 
 /-- An embedding verifies the DRS of a theory exactly when its restriction to the context's
 referents realizes the theory. -/
-theorem verifies_toDRS_iff {g : V → M} : Verifies g s.toDRS ↔ g ∘ Subtype.val ∈ s.realizers M := by
-  rw [verifies_iff, mem_realizers]
+theorem verifies_toDRS_iff {g : V → M} :
+    VerifiesTotal g s.toDRS ↔ g ∘ Subtype.val ∈ s.realizers M := by
+  rw [verifiesTotal_iff, mem_realizers]
   simp only [toDRS, DRS.conditions_mk, List.mem_map, Finset.mem_toList, forall_exists_index,
     and_imp, forall_apply_eq_imp_iff₂]
   refine forall₂_congr fun l _ ↦ ?_
