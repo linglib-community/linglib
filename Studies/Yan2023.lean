@@ -250,7 +250,7 @@ Table 4.1, is valid. -/
 theorem nec_exi_within_mono {P Q : Pred} {x : Var}
     (h : support M (Formula.nec (.exi x (within P Q x))) s) :
     support M (Formula.nec (.exi x (.pred Q x))) s :=
-  support_nec_mono M (λ _ h' => by obtain ⟨hf, hne, hs⟩ := h'; exact ⟨hf, hne, hs.2⟩) h
+  support_nec_mono M (fun _ h' ↦ by obtain ⟨S, hS, hcov, hs⟩ := h'; exact ⟨S, hS, hcov, hs.2⟩) h
 
 /-- By free choice from the enriched reinterpreted want, (14) and (27), the agent is ok with
 `Q` within `P` and with `Q` outside `P`. -/
@@ -278,8 +278,8 @@ theorem not_support_enrich_nec_disj {A B : Pred} {c : Const} (hs : s.Nonempty)
     ¬ support M (Formula.enrich (Formula.nec (.disj (.predc A c) (.predc B c)))) s := by
   intro h
   obtain ⟨i, hi⟩ := hs
-  obtain ⟨X, hX, ⟨w, hw⟩, hsupp⟩ := (boxFC M (.predc _ _) (.predc _ _) h).2 i hi
-  exact hB i hi w (hX hw) (hsupp (w, i.assign) (State.mem_modalLift.mpr ⟨hw, rfl⟩))
+  obtain ⟨t, ht, ⟨j, hj⟩, hsupp⟩ := (boxFC M (.predc _ _) (.predc _ _) h).2 i hi
+  exact hB i hi j.world (Index.mem_successors.mp (ht hj)).1 (hsupp j hj)
 
 theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
     (hacc : ∀ i ∈ s, (M.access i.world).Nonempty)
@@ -304,7 +304,8 @@ theorem support_enrich_nec_exi_within {P Q : Pred} {x : Var} (hs : s.Nonempty)
     obtain ⟨j, hj⟩ := hL
     obtain ⟨d, hd⟩ := hfne j hj
     exact ⟨j.update x d, State.mem_extendFunctional.mpr ⟨j, hj, d, hd, rfl⟩⟩
-  refine ⟨⟨hf, hfne, ⟨⟨λ j' hj' => ?_, hext⟩, ⟨λ j' hj' => ?_, hext⟩⟩, hext⟩, hL⟩
+  refine ⟨support_exi_iff.mpr
+    ⟨hf, hfne, ⟨⟨λ j' hj' => ?_, hext⟩, ⟨λ j' hj' => ?_, hext⟩⟩, hext⟩, hL⟩
   · obtain ⟨j, -, d, hd, rfl⟩ := State.mem_extendFunctional.mp hj'
     exact ⟨d, by simp, ((Finset.mem_filter.mp hd).2).1⟩
   · obtain ⟨j, -, d, hd, rfl⟩ := State.mem_extendFunctional.mp hj'
@@ -315,8 +316,8 @@ theorem support_enrich_nec_exi_pred_of_within {P Q : Pred} {x : Var}
     support M (Formula.enrich (Formula.nec (.exi x (.pred Q x)))) s := by
   rw [support_enrich_nec_iff] at h ⊢
   refine ⟨λ i hi => ?_, h.2⟩
-  obtain ⟨⟨hf, hfne, ⟨⟨-, hQ⟩, -⟩⟩, hL⟩ := h.1 i hi
-  exact ⟨⟨hf, hfne, hQ⟩, hL⟩
+  obtain ⟨⟨S, hS, hcov, ⟨⟨-, hQ⟩, -⟩⟩, hL⟩ := h.1 i hi
+  exact ⟨⟨S, hS, hcov, hQ⟩, hL⟩
 
 theorem not_support_enrich_reinterpret {sub : Pred → Pred → Prop} [DecidableRel sub]
     {P Q : Pred} {x : Var} (hsub : sub P Q) (hs : s.Nonempty)
@@ -325,18 +326,14 @@ theorem not_support_enrich_reinterpret {sub : Pred → Pred → Prop} [Decidable
     ¬ support M (Formula.enrich (reinterpret sub P (Formula.nec (.exi x (.pred Q x))))) s := by
   intro h
   obtain ⟨i, hi⟩ := hs
-  obtain ⟨X, hX, ⟨w, hw⟩, hf, hfne, hs'⟩ := (fc_of_reinterpret M hsub h).2 i hi
-  have hj : ((w, i.assign) : Index W Var Domain) ∈ State.modalLift X i.assign :=
-    State.mem_modalLift.mpr ⟨hw, rfl⟩
-  obtain ⟨d, hd⟩ := hfne _ hj
-  have hjd : Index.update (w, i.assign) x d ∈
-      State.extendFunctional (State.modalLift X i.assign) x hf :=
-    State.mem_extendFunctional.mpr ⟨_, hj, d, hd, rfl⟩
-  obtain ⟨d₁, hd₁, hnP⟩ := hs'.1 _ hjd
-  obtain ⟨d₂, hd₂, hQ⟩ := hs'.2 _ hjd
+  obtain ⟨t, ht, ⟨j, hj⟩, S, -, hcov, hs'⟩ := (fc_of_reinterpret M hsub h).2 i hi
+  obtain ⟨_, hy, hyj⟩ := hcov j hj
+  obtain ⟨d, rfl⟩ := Index.mem_variants.mp hyj
+  obtain ⟨d₁, hd₁, hnP⟩ := hs'.1 _ hy
+  obtain ⟨d₂, hd₂, hQ⟩ := hs'.2 _ hy
   simp at hd₁ hd₂
   subst hd₁ hd₂
-  exact hnP (hPQ i hi w (hX hw) d hQ)
+  exact hnP (hPQ i hi j.world (Index.mem_successors.mp (ht hj)).1 d hQ)
 
 end Pattern
 

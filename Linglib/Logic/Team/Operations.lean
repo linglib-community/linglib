@@ -19,7 +19,7 @@ teams are those all of whose points make the formula classically true.
 
 * `Team.flat`, `Team.tensor`, `Team.ne`, `Team.poss`, `Team.nec`: the BSML connectives.
 * `Team.biUnionHom`, `Team.possWitness`, `Team.necImage`, `Team.possLax`: the modal
-  clauses of modal dependence and inclusion logic.
+  clauses of modal dependence and inclusion logic, and the quantifier clauses of QBSML.
 
 ## Main results
 
