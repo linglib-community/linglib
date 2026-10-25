@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.SelectionFunction
+public import Linglib.Semantics.Reference.Rigidity
 
 /-!
 # Stalnaker (1975): Indicative Conditionals
@@ -183,12 +184,9 @@ def Reasonable (σ : List L) (P : L) : Prop :=
 the conclusion's in every context. -/
 def Entails (P Q : L) : Prop := ∀ k, I.prop P k ⊆ I.prop Q k
 
-/-- A sentence is rigid when it expresses the same proposition in every context. -/
-def Rigid (P : L) : Prop := ∀ k k', I.prop P k = I.prop P k'
-
 theorem changeSeq_singleton (P : L) (k : K) : I.changeSeq [P] k = I.change P k := rfl
 
-theorem Reasonable.of_entails {P Q : L} (hQ : I.Rigid Q) (h : I.Entails P Q) :
+theorem Reasonable.of_entails {P Q : L} (hQ : IsRigid (I.prop Q)) (h : I.Entails P Q) :
     I.Reasonable [P] Q := fun k _ ↦ by
   rw [changeSeq_singleton, I.contextSet_change, hQ (I.change P k) k]
   exact fun _ hw ↦ h _ hw.2
