@@ -335,7 +335,6 @@ import Linglib.Fragments.Cantonese.ResultativeComplements
 import Linglib.Fragments.Chichewa.Gender
 import Linglib.Fragments.Chichewa.Reciprocals
 import Linglib.Fragments.CoastalMarind.Gender
-import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Dutch.Adjectives
 import Linglib.Fragments.Dutch.Adpositions
@@ -362,7 +361,6 @@ import Linglib.Fragments.English.Reciprocals
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.Tense
-import Linglib.Fragments.English.V2
 import Linglib.Fragments.Farsi.Coordination
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
@@ -396,7 +394,6 @@ import Linglib.Fragments.German.Pronouns
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Relativization
 import Linglib.Fragments.German.Tense
-import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.Verbs
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Greek.StandardModern.Complementizers
@@ -519,7 +516,6 @@ import Linglib.Fragments.Ndebele.Clause
 import Linglib.Fragments.NezPerce.Clause
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Fragments.Niuean.Modals
-import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Poko.Tone
 import Linglib.Fragments.Punjabi.Pronouns
