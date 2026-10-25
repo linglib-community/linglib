@@ -26,7 +26,7 @@ def ex1a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Saruman")] }
 
 def ex4 : Datum :=
   { id := "storment2026_ex4"
@@ -39,7 +39,7 @@ def ex4 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi")] }
+    paperFeatures := [("construction", "qi"), ("verb", "botsa"), ("agent", "Seabelo")] }
 
 def ex7 : Datum :=
   { id := "storment2026_ex7"
@@ -65,7 +65,7 @@ def ex10 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the man"), ("dependent", "drunk"), ("category", "adjunct"), ("position", "afterAgent")] }
 
 def ex12 : Datum :=
   { id := "storment2026_ex12"
@@ -78,7 +78,7 @@ def ex12 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the man"), ("dependent", "drunk"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
 def ex14 : Datum :=
   { id := "storment2026_ex14"
@@ -91,7 +91,7 @@ def ex14 : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("heavyNPShift", "yes")] }
+    paperFeatures := [("construction", "qi"), ("verb", "shouted"), ("agent", "the man I’ve never met before"), ("dependent", "drunk"), ("category", "adjunct"), ("heavyNPShift", "yes")] }
 
 def ex15 : Datum :=
   { id := "storment2026_ex15"
@@ -104,7 +104,7 @@ def ex15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "cried"), ("agent", "Cecil"), ("dependent", "to get the crowd’s attention"), ("category", "adjunct"), ("position", "afterAgent")] }
 
 def ex16 : Datum :=
   { id := "storment2026_ex16"
@@ -117,7 +117,7 @@ def ex16 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "cried"), ("agent", "Cecil"), ("dependent", "to get the crowd’s attention"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
 def ex19 : Datum :=
   { id := "storment2026_ex19"
@@ -130,7 +130,7 @@ def ex19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "softly"), ("category", "adjunct"), ("position", "afterAgent")] }
 
 def ex20 : Datum :=
   { id := "storment2026_ex20"
@@ -143,7 +143,7 @@ def ex20 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "softly"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
 def ex25a : Datum :=
   { id := "storment2026_ex25a"
@@ -156,7 +156,7 @@ def ex25a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "muttering all about"), ("category", "adjunct"), ("position", "afterAgent")] }
 
 def ex25b : Datum :=
   { id := "storment2026_ex25b"
@@ -169,7 +169,7 @@ def ex25b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Gollum"), ("dependent", "muttering all about"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
 def ex26a : Datum :=
   { id := "storment2026_ex26a"
@@ -182,7 +182,7 @@ def ex26a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "tried"), ("agent", "Alex"), ("dependent", "to yell"), ("category", "control"), ("position", "beforeAgent")] }
 
 def ex26b : Datum :=
   { id := "storment2026_ex26b"
@@ -195,7 +195,7 @@ def ex26b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "tried"), ("agent", "Alex"), ("dependent", "to yell"), ("category", "control"), ("position", "afterAgent")] }
 
 def ex29a : Datum :=
   { id := "storment2026_ex29a"
@@ -208,7 +208,7 @@ def ex29a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "called"), ("agent", "John"), ("dependent", "out"), ("category", "particle"), ("position", "beforeAgent")] }
 
 def ex29b : Datum :=
   { id := "storment2026_ex29b"
@@ -221,7 +221,7 @@ def ex29b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "called"), ("agent", "John"), ("dependent", "out"), ("category", "particle"), ("position", "afterAgent")] }
 
 def ex11 : Datum :=
   { id := "storment2026_ex11"
@@ -234,7 +234,7 @@ def ex11 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("dependent", "a tagilwe"), ("category", "adjunct"), ("position", "afterAgent")] }
 
 def ex13 : Datum :=
   { id := "storment2026_ex13"
@@ -247,7 +247,7 @@ def ex13 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("dependent", "a tagilwe"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
 def ex17 : Datum :=
   { id := "storment2026_ex17"
@@ -260,7 +260,7 @@ def ex17 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "go-ile"), ("agent", "Seabelo"), ("dependent", "go kopa thuso"), ("category", "adjunct"), ("position", "afterAgent")] }
 
 def ex18 : Datum :=
   { id := "storment2026_ex18"
@@ -273,7 +273,7 @@ def ex18 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "go-ile"), ("agent", "Seabelo"), ("dependent", "go kopa thuso"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
 def ex21 : Datum :=
   { id := "storment2026_ex21"
@@ -286,7 +286,7 @@ def ex21 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "kgosi"), ("dependent", "kapela"), ("category", "adjunct"), ("position", "afterAgent")] }
 
 def ex22 : Datum :=
   { id := "storment2026_ex22"
@@ -299,7 +299,7 @@ def ex22 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpAdjunct"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "kgosi"), ("dependent", "kapela"), ("category", "adjunct"), ("position", "beforeAgent")] }
 
 def ex27 : Datum :=
   { id := "storment2026_ex27"
@@ -312,7 +312,7 @@ def ex27 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "beforeAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "batla"), ("agent", "Seabelo"), ("dependent", "go bua"), ("category", "control"), ("position", "beforeAgent")] }
 
 def ex28 : Datum :=
   { id := "storment2026_ex28"
@@ -325,7 +325,7 @@ def ex28 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("material", "vpComplement"), ("position", "afterAgent")] }
+    paperFeatures := [("construction", "qi"), ("verb", "batla"), ("agent", "Seabelo"), ("dependent", "go bua"), ("category", "control"), ("position", "afterAgent")] }
 
 def ex36 : Datum :=
   { id := "storment2026_ex36"
@@ -338,7 +338,7 @@ def ex36 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM17")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "dikgomo"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
 
 def ex36_sm10 : Datum :=
   { id := "storment2026_ex36_sm10"
@@ -351,7 +351,7 @@ def ex36_sm10 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM10")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "dikgomo"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
 
 def ex38 : Datum :=
   { id := "storment2026_ex38"
@@ -364,7 +364,7 @@ def ex38 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM17")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "nna"), ("person", "1"), ("number", "sg"), ("agreement", "default")] }
 
 def ex38_ke : Datum :=
   { id := "storment2026_ex38_ke"
@@ -377,12 +377,12 @@ def ex38_ke : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("subjectMarker", "SM.1SG")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "nna"), ("person", "1"), ("number", "sg"), ("agreement", "agent")] }
 
 def ex40 : Datum :=
   { id := "storment2026_ex40"
-    source := ⟨"storment-2026", "(40)"⟩
-    reportedIn := none
+    source := ⟨"collins-branigan-1997", ""⟩
+    reportedIn := some ⟨"storment-2026", "(40)"⟩
     language := "stan1293"
     primaryText := "‘Avoid beef,’ advise all the New Age dieticians."
     glossedTokens := []
@@ -390,12 +390,12 @@ def ex40 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("agreement", "plural")] }
+    paperFeatures := [("construction", "qi"), ("verb", "advise"), ("agent", "all the New Age dieticians"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
 
 def ex40_sg : Datum :=
   { id := "storment2026_ex40_sg"
-    source := ⟨"storment-2026", "(40)"⟩
-    reportedIn := none
+    source := ⟨"collins-branigan-1997", ""⟩
+    reportedIn := some ⟨"storment-2026", "(40)"⟩
     language := "stan1293"
     primaryText := "‘Avoid beef,’ advises all the New Age dieticians."
     glossedTokens := []
@@ -403,7 +403,7 @@ def ex40_sg : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "agreement"), ("agreement", "singular")] }
+    paperFeatures := [("construction", "qi"), ("verb", "advises"), ("agent", "all the New Age dieticians"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
 
 def ex62a : Datum :=
   { id := "storment2026_ex62a"
@@ -442,7 +442,7 @@ def ex64 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("agreement", "plural")] }
+    paperFeatures := [("construction", "preposedQuote"), ("verb", "answer"), ("agent", "the Hobbits"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
 
 def ex64_sg : Datum :=
   { id := "storment2026_ex64_sg"
@@ -455,7 +455,7 @@ def ex64_sg : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("agreement", "singular")] }
+    paperFeatures := [("construction", "preposedQuote"), ("verb", "answers"), ("agent", "the Hobbits"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
 
 def ex65 : Datum :=
   { id := "storment2026_ex65"
@@ -468,7 +468,7 @@ def ex65 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("subjectMarker", "SM.3SG.PST")] }
+    paperFeatures := [("construction", "preposedQuote"), ("verb", "botsa"), ("agent", "Seabelo"), ("person", "3"), ("number", "sg"), ("agreement", "agent")] }
 
 def ex65_ga : Datum :=
   { id := "storment2026_ex65_ga"
@@ -481,7 +481,7 @@ def ex65_ga : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "preposedQuote"), ("diagnostic", "agreement"), ("subjectMarker", "SM17.PST")] }
+    paperFeatures := [("construction", "preposedQuote"), ("verb", "botsa"), ("agent", "Seabelo"), ("person", "3"), ("number", "sg"), ("agreement", "default")] }
 
 def ex67a : Datum :=
   { id := "storment2026_ex67a"
@@ -520,7 +520,7 @@ def ex77 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "raising"), ("subjectMarker", "SM17")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "nna"), ("person", "1"), ("number", "sg"), ("agreement", "default")] }
 
 def ex87 : Datum :=
   { id := "storment2026_ex87"
@@ -533,7 +533,7 @@ def ex87 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "conjointDisjoint"), ("verbForm", "conjoint")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("verbForm", "conjoint")] }
 
 def ex87_disj : Datum :=
   { id := "storment2026_ex87_disj"
@@ -546,7 +546,7 @@ def ex87_disj : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "conjointDisjoint"), ("verbForm", "disjoint")] }
+    paperFeatures := [("construction", "qi"), ("verb", "bua"), ("agent", "Seabelo"), ("verbForm", "disjoint")] }
 
 def ex88 : Datum :=
   { id := "storment2026_ex88"
@@ -559,7 +559,7 @@ def ex88 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the night wind"), ("dependent", "to the little lamb"), ("category", "pp"), ("position", "afterAgent")] }
 
 def ex89 : Datum :=
   { id := "storment2026_ex89"
@@ -572,7 +572,7 @@ def ex89 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
+    paperFeatures := [("construction", "qi"), ("verb", "botsa"), ("agent", "Seabelo")] }
 
 def ex90 : Datum :=
   { id := "storment2026_ex90"
@@ -585,7 +585,7 @@ def ex90 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Frodo")] }
 
 def ex92 : Datum :=
   { id := "storment2026_ex92"
@@ -598,7 +598,7 @@ def ex92 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "Mary")] }
 
 def ex93a : Datum :=
   { id := "storment2026_ex93a"
@@ -624,7 +624,7 @@ def ex96a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
+    paperFeatures := [("construction", "qi"), ("verb", "goes"), ("agent", "the weasel")] }
 
 def ex97a : Datum :=
   { id := "storment2026_ex97a"
@@ -637,7 +637,7 @@ def ex97a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("diagnostic", "quoteCategory")] }
+    paperFeatures := [("construction", "qi"), ("verb", "said"), ("agent", "the professor of linguistics")] }
 
 def ex123 : Datum :=
   { id := "storment2026_ex123"
@@ -663,7 +663,7 @@ def ex125 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("smuggledDPs", "2")] }
+    paperFeatures := [("construction", "qi"), ("verb", "warned"), ("agent", "John"), ("dependent", "Mary"), ("category", "dp"), ("position", "beforeAgent")] }
 
 def ex127 : Datum :=
   { id := "storment2026_ex127"
@@ -676,7 +676,7 @@ def ex127 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("smuggledDPs", "2")] }
+    paperFeatures := [("construction", "qi"), ("verb", "warned"), ("agent", "John"), ("dependent", "Mary"), ("category", "dp"), ("position", "afterAgent")] }
 
 def ex129 : Datum :=
   { id := "storment2026_ex129"
@@ -689,7 +689,7 @@ def ex129 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("smuggledDPs", "1")] }
+    paperFeatures := [("construction", "qi"), ("verb", "warned"), ("agent", "John"), ("dependent", "to Mary"), ("category", "pp"), ("position", "afterAgent")] }
 
 def ex126 : Datum :=
   { id := "storment2026_ex126"
@@ -702,7 +702,7 @@ def ex126 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("smuggledDPs", "2")] }
+    paperFeatures := [("construction", "qi"), ("verb", "tlhagisitse"), ("agent", "Thabo"), ("dependent", "Neo"), ("category", "dp"), ("position", "beforeAgent")] }
 
 def ex130 : Datum :=
   { id := "storment2026_ex130"
@@ -715,7 +715,7 @@ def ex130 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "qi"), ("smuggledDPs", "1")] }
+    paperFeatures := [("construction", "qi"), ("verb", "tlhagisitse"), ("agent", "Thabo"), ("dependent", "a tlhagisa Neo"), ("category", "clause"), ("position", "afterAgent")] }
 
 def ex134a : Datum :=
   { id := "storment2026_ex134a"
@@ -728,7 +728,7 @@ def ex134a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "li"), ("smuggledDPs", "2")] }
+    paperFeatures := [("construction", "li"), ("verb", "walked"), ("agent", "Mary"), ("theme", "into the room"), ("dependent", "her dog"), ("category", "dp"), ("position", "afterAgent")] }
 
 def ex135 : Datum :=
   { id := "storment2026_ex135"
@@ -741,7 +741,7 @@ def ex135 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "li"), ("smuggledDPs", "2")] }
+    paperFeatures := [("construction", "li"), ("verb", "et-ela"), ("agent", "basimane"), ("dependent", "koko"), ("category", "dp"), ("position", "afterAgent")] }
 
 def ex55 : Datum :=
   { id := "storment2026_ex55"
@@ -754,7 +754,7 @@ def ex55 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "li")] }
+    paperFeatures := [("construction", "li"), ("verb", "goroga"), ("agent", "terena"), ("theme", "kwa maemelong a diterena"), ("person", "3"), ("number", "sg"), ("agreement", "default")] }
 
 def ex136a : Datum :=
   { id := "storment2026_ex136a"
@@ -767,7 +767,7 @@ def ex136a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "li")] }
+    paperFeatures := [("construction", "li"), ("verb", "leapt"), ("agent", "Gimli"), ("theme", "down from the wall")] }
 
 def ex138 : Datum :=
   { id := "storment2026_ex138"
@@ -780,8 +780,177 @@ def ex138 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "li"), ("diagnostic", "raising"), ("subjectMarker", "SM17")] }
+    paperFeatures := [("construction", "li"), ("verb", "tsene"), ("agent", "Seabelo"), ("theme", "mo kamore-ng"), ("person", "3"), ("number", "sg"), ("agreement", "default")] }
 
-def all : List Datum := [ex1a, ex4, ex7, ex10, ex12, ex14, ex15, ex16, ex19, ex20, ex25a, ex25b, ex26a, ex26b, ex29a, ex29b, ex11, ex13, ex17, ex18, ex21, ex22, ex27, ex28, ex36, ex36_sm10, ex38, ex38_ke, ex40, ex40_sg, ex62a, ex62b, ex64, ex64_sg, ex65, ex65_ga, ex67a, ex69a, ex77, ex87, ex87_disj, ex88, ex89, ex90, ex92, ex93a, ex96a, ex97a, ex123, ex125, ex127, ex129, ex126, ex130, ex134a, ex135, ex55, ex136a, ex138]
+def ex35 : Datum :=
+  { id := "storment2026_ex35"
+    source := ⟨"storment-2026", "(35)"⟩
+    reportedIn := none
+    language := "tswa1253"
+    primaryText := "Dikgomo di bua, Mmuu."
+    glossedTokens := [("Dikgomo", "cows"), ("di", "SM10"), ("bua", "say"), ("Mmuu", "moo")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "canonical"), ("verb", "bua"), ("agent", "Dikgomo"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
+
+def ex35_go : Datum :=
+  { id := "storment2026_ex35_go"
+    source := ⟨"storment-2026", "(35)"⟩
+    reportedIn := none
+    language := "tswa1253"
+    primaryText := "Dikgomo go bua, Mmuu."
+    glossedTokens := [("Dikgomo", "cows"), ("go", "SM17"), ("bua", "say"), ("Mmuu", "moo")]
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "canonical"), ("verb", "bua"), ("agent", "Dikgomo"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
+
+def ex37 : Datum :=
+  { id := "storment2026_ex37"
+    source := ⟨"storment-2026", "(37)"⟩
+    reportedIn := none
+    language := "tswa1253"
+    primaryText := "Nna ke re, Dumela."
+    glossedTokens := [("Nna", "I"), ("ke", "SM.1SG"), ("re", "say"), ("Dumela", "hello")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "canonical"), ("verb", "re"), ("agent", "Nna"), ("person", "1"), ("number", "sg"), ("agreement", "agent")] }
+
+def ex37_go : Datum :=
+  { id := "storment2026_ex37_go"
+    source := ⟨"storment-2026", "(37)"⟩
+    reportedIn := none
+    language := "tswa1253"
+    primaryText := "Nna go re, Dumela."
+    glossedTokens := [("Nna", "I"), ("go", "SM17"), ("re", "say"), ("Dumela", "hello")]
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "canonical"), ("verb", "re"), ("agent", "Nna"), ("person", "1"), ("number", "sg"), ("agreement", "default")] }
+
+def ex41a : Datum :=
+  { id := "storment2026_ex41a"
+    source := ⟨"storment-2026", "(41a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "‘God bless you’ says the men."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "qi"), ("verb", "says"), ("agent", "the men"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
+
+def ex45j : Datum :=
+  { id := "storment2026_ex45j"
+    source := ⟨"storment-2026", "(45j)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "‘Giddy up’ says us."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "qi"), ("verb", "says"), ("agent", "us"), ("person", "1"), ("number", "pl"), ("agreement", "default")] }
+
+def ex46a_we : Datum :=
+  { id := "storment2026_ex46a_we"
+    source := ⟨"storment-2026", "(46a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "‘What do we do now?’ ask we."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "qi"), ("verb", "ask"), ("agent", "we"), ("person", "1"), ("number", "pl"), ("agreement", "agent")] }
+
+def ex46a_us : Datum :=
+  { id := "storment2026_ex46a_us"
+    source := ⟨"storment-2026", "(46a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "‘What do we do now?’ ask us."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "qi"), ("verb", "ask"), ("agent", "us"), ("person", "1"), ("number", "pl"), ("agreement", "agent")] }
+
+def ex59_1 : Datum :=
+  { id := "storment2026_ex59_1"
+    source := ⟨"storment-2026", "(59)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "‘What?!’ asks the men."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "qi"), ("verb", "asks"), ("agent", "the men"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
+
+def ex59_2 : Datum :=
+  { id := "storment2026_ex59_2"
+    source := ⟨"storment-2026", "(59)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "‘What?!’ ask the men."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "qi"), ("verb", "ask"), ("agent", "the men"), ("person", "3"), ("number", "pl"), ("agreement", "agent")] }
+
+def ex128 : Datum :=
+  { id := "storment2026_ex128"
+    source := ⟨"storment-2026", "(128)"⟩
+    reportedIn := none
+    language := "tswa1253"
+    primaryText := "Go na le mathaithai kwa pele, go tlhagisitse Thabo Neo."
+    glossedTokens := [("Go na le mathaithai kwa pele", "SM17 be with puzzles 17LOC ahead"), ("go", "SM17"), ("tlhagisitse", "warn"), ("Thabo", "Thabo"), ("Neo", "Neo")]
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "qi"), ("verb", "tlhagisitse"), ("agent", "Thabo"), ("dependent", "Neo"), ("category", "dp"), ("position", "afterAgent")] }
+
+def ex134b : Datum :=
+  { id := "storment2026_ex134b"
+    source := ⟨"storment-2026", "(134b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Into the room walked her dog Mary."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "li"), ("verb", "walked"), ("agent", "Mary"), ("theme", "into the room"), ("dependent", "her dog"), ("category", "dp"), ("position", "beforeAgent")] }
+
+def ex136b : Datum :=
+  { id := "storment2026_ex136b"
+    source := ⟨"storment-2026", "(136b)"⟩
+    reportedIn := none
+    language := "tswa1253"
+    primaryText := "Mo lefatshe-ng go fula dikgomo."
+    glossedTokens := [("Mo", "18LOC"), ("lefatshe-ng", "country-LOC"), ("go", "SM17"), ("fula", "graze"), ("dikgomo", "cattle")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "li"), ("verb", "fula"), ("agent", "dikgomo"), ("theme", "mo lefatshe-ng"), ("person", "3"), ("number", "pl"), ("agreement", "default")] }
+
+def all : List Datum := [ex1a, ex4, ex7, ex10, ex12, ex14, ex15, ex16, ex19, ex20, ex25a, ex25b, ex26a, ex26b, ex29a, ex29b, ex11, ex13, ex17, ex18, ex21, ex22, ex27, ex28, ex36, ex36_sm10, ex38, ex38_ke, ex40, ex40_sg, ex62a, ex62b, ex64, ex64_sg, ex65, ex65_ga, ex67a, ex69a, ex77, ex87, ex87_disj, ex88, ex89, ex90, ex92, ex93a, ex96a, ex97a, ex123, ex125, ex127, ex129, ex126, ex130, ex134a, ex135, ex55, ex136a, ex138, ex35, ex35_go, ex37, ex37_go, ex41a, ex45j, ex46a_we, ex46a_us, ex59_1, ex59_2, ex128, ex134b, ex136b]
 
 end Storment2026.Examples

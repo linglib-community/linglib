@@ -18,6 +18,14 @@
       [
         "construction",
         "qi"
+      ],
+      [
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "Saruman"
       ]
     ],
     "comment": "Quotative inversion: the quote precedes the verb and the agent follows it.",
@@ -59,6 +67,14 @@
       [
         "construction",
         "qi"
+      ],
+      [
+        "verb",
+        "botsa"
+      ],
+      [
+        "agent",
+        "Seabelo"
       ]
     ],
     "comment": "",
@@ -109,8 +125,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "the man"
+      ],
+      [
+        "dependent",
+        "drunk"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -141,8 +169,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "the man"
+      ],
+      [
+        "dependent",
+        "drunk"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -173,8 +213,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "shouted"
+      ],
+      [
+        "agent",
+        "the man I’ve never met before"
+      ],
+      [
+        "dependent",
+        "drunk"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "heavyNPShift",
@@ -205,8 +257,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "cried"
+      ],
+      [
+        "agent",
+        "Cecil"
+      ],
+      [
+        "dependent",
+        "to get the crowd’s attention"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -237,8 +301,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "cried"
+      ],
+      [
+        "agent",
+        "Cecil"
+      ],
+      [
+        "dependent",
+        "to get the crowd’s attention"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -269,8 +345,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "Gollum"
+      ],
+      [
+        "dependent",
+        "softly"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -301,8 +389,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "Gollum"
+      ],
+      [
+        "dependent",
+        "softly"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -333,8 +433,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "Gollum"
+      ],
+      [
+        "dependent",
+        "muttering all about"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -365,8 +477,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "Gollum"
+      ],
+      [
+        "dependent",
+        "muttering all about"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -397,8 +521,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpComplement"
+        "verb",
+        "tried"
+      ],
+      [
+        "agent",
+        "Alex"
+      ],
+      [
+        "dependent",
+        "to yell"
+      ],
+      [
+        "category",
+        "control"
       ],
       [
         "position",
@@ -429,8 +565,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpComplement"
+        "verb",
+        "tried"
+      ],
+      [
+        "agent",
+        "Alex"
+      ],
+      [
+        "dependent",
+        "to yell"
+      ],
+      [
+        "category",
+        "control"
       ],
       [
         "position",
@@ -461,8 +609,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpComplement"
+        "verb",
+        "called"
+      ],
+      [
+        "agent",
+        "John"
+      ],
+      [
+        "dependent",
+        "out"
+      ],
+      [
+        "category",
+        "particle"
       ],
       [
         "position",
@@ -493,8 +653,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpComplement"
+        "verb",
+        "called"
+      ],
+      [
+        "agent",
+        "John"
+      ],
+      [
+        "dependent",
+        "out"
+      ],
+      [
+        "category",
+        "particle"
       ],
       [
         "position",
@@ -550,8 +722,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "dependent",
+        "a tagilwe"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -607,8 +791,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "dependent",
+        "a tagilwe"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -668,8 +864,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "go-ile"
+      ],
+      [
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "dependent",
+        "go kopa thuso"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -729,8 +937,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "go-ile"
+      ],
+      [
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "dependent",
+        "go kopa thuso"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -790,8 +1010,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "kgosi"
+      ],
+      [
+        "dependent",
+        "kapela"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -851,8 +1083,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpAdjunct"
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "kgosi"
+      ],
+      [
+        "dependent",
+        "kapela"
+      ],
+      [
+        "category",
+        "adjunct"
       ],
       [
         "position",
@@ -920,8 +1164,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpComplement"
+        "verb",
+        "batla"
+      ],
+      [
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "dependent",
+        "go bua"
+      ],
+      [
+        "category",
+        "control"
       ],
       [
         "position",
@@ -989,8 +1245,20 @@
         "qi"
       ],
       [
-        "material",
-        "vpComplement"
+        "verb",
+        "batla"
+      ],
+      [
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "dependent",
+        "go bua"
+      ],
+      [
+        "category",
+        "control"
       ],
       [
         "position",
@@ -1038,12 +1306,24 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "bua"
       ],
       [
-        "subjectMarker",
-        "SM17"
+        "agent",
+        "dikgomo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "default"
       ]
     ],
     "comment": "The subject marker is the default class 17, not class 10 of the agent.",
@@ -1087,12 +1367,24 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "bua"
       ],
       [
-        "subjectMarker",
-        "SM10"
+        "agent",
+        "dikgomo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "agent"
       ]
     ],
     "comment": "The starred alternative of (36): the agent’s class 10 marker.",
@@ -1136,12 +1428,24 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "bua"
       ],
       [
-        "subjectMarker",
-        "SM17"
+        "agent",
+        "nna"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "default"
       ]
     ],
     "comment": "",
@@ -1185,12 +1489,24 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "bua"
       ],
       [
-        "subjectMarker",
-        "SM.1SG"
+        "agent",
+        "nna"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "agent"
       ]
     ],
     "comment": "The starred alternative of (38): first person agreement with the agent.",
@@ -1199,8 +1515,8 @@
   {
     "id": "storment2026_ex40",
     "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "(40)"
+      "bibkey": "collins-branigan-1997",
+      "paperLabel": ""
     },
     "language": "stan1293",
     "primaryText": "‘Avoid beef,’ advise all the New Age dieticians.",
@@ -1217,22 +1533,38 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "advise"
+      ],
+      [
+        "agent",
+        "all the New Age dieticians"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
       ],
       [
         "agreement",
-        "plural"
+        "agent"
       ]
     ],
-    "comment": "English agreement tracks the postverbal agent; the paper takes the judgments from Collins and Branigan (1997).",
-    "verified": "page-image"
+    "comment": "Collins and Branigan’s example and judgments, which the paper reports and disputes with (41).",
+    "verified": "page-image",
+    "reportedIn": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(40)"
+    }
   },
   {
     "id": "storment2026_ex40_sg",
     "source": {
-      "bibkey": "storment-2026",
-      "paperLabel": "(40)"
+      "bibkey": "collins-branigan-1997",
+      "paperLabel": ""
     },
     "language": "stan1293",
     "primaryText": "‘Avoid beef,’ advises all the New Age dieticians.",
@@ -1249,16 +1581,32 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "advises"
+      ],
+      [
+        "agent",
+        "all the New Age dieticians"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
       ],
       [
         "agreement",
-        "singular"
+        "default"
       ]
     ],
-    "comment": "The starred alternative of (40).",
-    "verified": "page-image"
+    "comment": "The starred alternative of (40), Collins and Branigan’s judgment, which the paper rejects (§3.1.2).",
+    "verified": "page-image",
+    "reportedIn": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(40)"
+    }
   },
   {
     "id": "storment2026_ex62a",
@@ -1337,12 +1685,24 @@
         "preposedQuote"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "answer"
+      ],
+      [
+        "agent",
+        "the Hobbits"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
       ],
       [
         "agreement",
-        "plural"
+        "agent"
       ]
     ],
     "comment": "Without inversion, agreement must track the agent.",
@@ -1369,12 +1729,24 @@
         "preposedQuote"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "answers"
+      ],
+      [
+        "agent",
+        "the Hobbits"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
       ],
       [
         "agreement",
-        "singular"
+        "default"
       ]
     ],
     "comment": "The starred alternative of (64).",
@@ -1418,12 +1790,24 @@
         "preposedQuote"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "botsa"
       ],
       [
-        "subjectMarker",
-        "SM.3SG.PST"
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "agent"
       ]
     ],
     "comment": "",
@@ -1467,12 +1851,24 @@
         "preposedQuote"
       ],
       [
-        "diagnostic",
-        "agreement"
+        "verb",
+        "botsa"
       ],
       [
-        "subjectMarker",
-        "SM17.PST"
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "default"
       ]
     ],
     "comment": "The starred alternative of (65): default agreement without inversion.",
@@ -1580,12 +1976,24 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "raising"
+        "verb",
+        "bua"
       ],
       [
-        "subjectMarker",
-        "SM17"
+        "agent",
+        "nna"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "default"
       ]
     ],
     "comment": "Aspectual auxiliary raising: both subject markers are the default class 17.",
@@ -1629,8 +2037,12 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "conjointDisjoint"
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "Seabelo"
       ],
       [
         "verbForm",
@@ -1682,8 +2094,12 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "conjointDisjoint"
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "Seabelo"
       ],
       [
         "verbForm",
@@ -1714,8 +2130,24 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "quoteCategory"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "the night wind"
+      ],
+      [
+        "dependent",
+        "to the little lamb"
+      ],
+      [
+        "category",
+        "pp"
+      ],
+      [
+        "position",
+        "afterAgent"
       ]
     ],
     "comment": "The quote itself need not be preverbal: the verb–agent order survives.",
@@ -1759,8 +2191,12 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "quoteCategory"
+        "verb",
+        "botsa"
+      ],
+      [
+        "agent",
+        "Seabelo"
       ]
     ],
     "comment": "",
@@ -1787,8 +2223,12 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "quoteCategory"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "Frodo"
       ]
     ],
     "comment": "The quote may split around the verb and the agent.",
@@ -1815,8 +2255,12 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "quoteCategory"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "Mary"
       ]
     ],
     "comment": "The split need not fall at a constituent boundary of the quote.",
@@ -1871,8 +2315,12 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "quoteCategory"
+        "verb",
+        "goes"
+      ],
+      [
+        "agent",
+        "the weasel"
       ]
     ],
     "comment": "A quote need not have internal grammatical structure.",
@@ -1899,8 +2347,12 @@
         "qi"
       ],
       [
-        "diagnostic",
-        "quoteCategory"
+        "verb",
+        "said"
+      ],
+      [
+        "agent",
+        "the professor of linguistics"
       ]
     ],
     "comment": "A quote need not be grammatical.",
@@ -1951,8 +2403,24 @@
         "qi"
       ],
       [
-        "smuggledDPs",
-        "2"
+        "verb",
+        "warned"
+      ],
+      [
+        "agent",
+        "John"
+      ],
+      [
+        "dependent",
+        "Mary"
+      ],
+      [
+        "category",
+        "dp"
+      ],
+      [
+        "position",
+        "beforeAgent"
       ]
     ],
     "comment": "A goal DP and the quotative theme cannot both be smuggled.",
@@ -1979,8 +2447,24 @@
         "qi"
       ],
       [
-        "smuggledDPs",
-        "2"
+        "verb",
+        "warned"
+      ],
+      [
+        "agent",
+        "John"
+      ],
+      [
+        "dependent",
+        "Mary"
+      ],
+      [
+        "category",
+        "dp"
+      ],
+      [
+        "position",
+        "afterAgent"
       ]
     ],
     "comment": "Reversing agent and goal does not help.",
@@ -2007,8 +2491,24 @@
         "qi"
       ],
       [
-        "smuggledDPs",
-        "1"
+        "verb",
+        "warned"
+      ],
+      [
+        "agent",
+        "John"
+      ],
+      [
+        "dependent",
+        "to Mary"
+      ],
+      [
+        "category",
+        "pp"
+      ],
+      [
+        "position",
+        "afterAgent"
       ]
     ],
     "comment": "A PP goal is licensed inside the PP.",
@@ -2056,8 +2556,24 @@
         "qi"
       ],
       [
-        "smuggledDPs",
-        "2"
+        "verb",
+        "tlhagisitse"
+      ],
+      [
+        "agent",
+        "Thabo"
+      ],
+      [
+        "dependent",
+        "Neo"
+      ],
+      [
+        "category",
+        "dp"
+      ],
+      [
+        "position",
+        "beforeAgent"
       ]
     ],
     "comment": "",
@@ -2113,8 +2629,24 @@
         "qi"
       ],
       [
-        "smuggledDPs",
-        "1"
+        "verb",
+        "tlhagisitse"
+      ],
+      [
+        "agent",
+        "Thabo"
+      ],
+      [
+        "dependent",
+        "a tlhagisa Neo"
+      ],
+      [
+        "category",
+        "clause"
+      ],
+      [
+        "position",
+        "afterAgent"
       ]
     ],
     "comment": "The goal is expressed in an adjunct clause.",
@@ -2141,8 +2673,28 @@
         "li"
       ],
       [
-        "smuggledDPs",
-        "2"
+        "verb",
+        "walked"
+      ],
+      [
+        "agent",
+        "Mary"
+      ],
+      [
+        "theme",
+        "into the room"
+      ],
+      [
+        "dependent",
+        "her dog"
+      ],
+      [
+        "category",
+        "dp"
+      ],
+      [
+        "position",
+        "afterAgent"
       ]
     ],
     "comment": "The transitivity constraint holds of locative inversion too.",
@@ -2186,8 +2738,24 @@
         "li"
       ],
       [
-        "smuggledDPs",
-        "2"
+        "verb",
+        "et-ela"
+      ],
+      [
+        "agent",
+        "basimane"
+      ],
+      [
+        "dependent",
+        "koko"
+      ],
+      [
+        "category",
+        "dp"
+      ],
+      [
+        "position",
+        "afterAgent"
       ]
     ],
     "comment": "The paper takes (135) from Demuth and Mmusi (1997:14).",
@@ -2241,6 +2809,30 @@
       [
         "construction",
         "li"
+      ],
+      [
+        "verb",
+        "goroga"
+      ],
+      [
+        "agent",
+        "terena"
+      ],
+      [
+        "theme",
+        "kwa maemelong a diterena"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "default"
       ]
     ],
     "comment": "Setswana locative inversion with a class 17 locative subject marker.",
@@ -2265,6 +2857,18 @@
       [
         "construction",
         "li"
+      ],
+      [
+        "verb",
+        "leapt"
+      ],
+      [
+        "agent",
+        "Gimli"
+      ],
+      [
+        "theme",
+        "down from the wall"
       ]
     ],
     "comment": "English locative inversion, the paper’s parallel to quotative inversion.",
@@ -2320,15 +2924,721 @@
         "li"
       ],
       [
-        "diagnostic",
-        "raising"
+        "verb",
+        "tsene"
       ],
       [
-        "subjectMarker",
-        "SM17"
+        "agent",
+        "Seabelo"
+      ],
+      [
+        "theme",
+        "mo kamore-ng"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "default"
       ]
     ],
     "comment": "Aspectual auxiliary raising in locative inversion, as in QI.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex35",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(35)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dikgomo di bua, Mmuu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dikgomo",
+        "cows"
+      ],
+      [
+        "di",
+        "SM10"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "Mmuu",
+        "moo"
+      ]
+    ],
+    "translation": "Cows say, ‘Moo.’",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "canonical"
+      ],
+      [
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "Dikgomo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "agent"
+      ]
+    ],
+    "comment": "Without inversion the subject marker tracks the agent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex35_go",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(35)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Dikgomo go bua, Mmuu.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Dikgomo",
+        "cows"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "bua",
+        "say"
+      ],
+      [
+        "Mmuu",
+        "moo"
+      ]
+    ],
+    "translation": "Cows say, ‘Moo.’",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "canonical"
+      ],
+      [
+        "verb",
+        "bua"
+      ],
+      [
+        "agent",
+        "Dikgomo"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "default"
+      ]
+    ],
+    "comment": "The starred alternative of (35): the default class 17 marker.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex37",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(37)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Nna ke re, Dumela.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nna",
+        "I"
+      ],
+      [
+        "ke",
+        "SM.1SG"
+      ],
+      [
+        "re",
+        "say"
+      ],
+      [
+        "Dumela",
+        "hello"
+      ]
+    ],
+    "translation": "I say, ‘Hello.’",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "canonical"
+      ],
+      [
+        "verb",
+        "re"
+      ],
+      [
+        "agent",
+        "Nna"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "agent"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex37_go",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(37)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Nna go re, Dumela.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Nna",
+        "I"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "re",
+        "say"
+      ],
+      [
+        "Dumela",
+        "hello"
+      ]
+    ],
+    "translation": "I say, ‘Hello.’",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "canonical"
+      ],
+      [
+        "verb",
+        "re"
+      ],
+      [
+        "agent",
+        "Nna"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "sg"
+      ],
+      [
+        "agreement",
+        "default"
+      ]
+    ],
+    "comment": "The starred alternative of (37).",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex41a",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(41a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘God bless you’ says the men.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "verb",
+        "says"
+      ],
+      [
+        "agent",
+        "the men"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "default"
+      ]
+    ],
+    "comment": "Default agreement with a plural agent; a corpus example the paper cites from Storment (2025:139).",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex45j",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(45j)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘Giddy up’ says us.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "verb",
+        "says"
+      ],
+      [
+        "agent",
+        "us"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "default"
+      ]
+    ],
+    "comment": "An accusative first person agent with default agreement; a corpus example (Instagram).",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex46a_we",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(46a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘What do we do now?’ ask we.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "verb",
+        "ask"
+      ],
+      [
+        "agent",
+        "we"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "agent"
+      ]
+    ],
+    "comment": "Agreement cannot track a first person agent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex46a_us",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(46a)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘What do we do now?’ ask us.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "verb",
+        "ask"
+      ],
+      [
+        "agent",
+        "us"
+      ],
+      [
+        "person",
+        "1"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "agent"
+      ]
+    ],
+    "comment": "Agreement cannot track a first person agent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex59_1",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘What?!’ asks the men.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "verb",
+        "asks"
+      ],
+      [
+        "agent",
+        "the men"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "default"
+      ]
+    ],
+    "comment": "Agree without defective circumvention: default third singular.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex59_2",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "‘What?!’ ask the men.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "verb",
+        "ask"
+      ],
+      [
+        "agent",
+        "the men"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "agent"
+      ]
+    ],
+    "comment": "Agree with defective circumvention: agreement with the agent.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex128",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(128)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Go na le mathaithai kwa pele, go tlhagisitse Thabo Neo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Go na le mathaithai kwa pele",
+        "SM17 be with puzzles 17LOC ahead"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "tlhagisitse",
+        "warn"
+      ],
+      [
+        "Thabo",
+        "Thabo"
+      ],
+      [
+        "Neo",
+        "Neo"
+      ]
+    ],
+    "translation": "‘There is danger ahead,’ warns Thabo to Neo.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "qi"
+      ],
+      [
+        "verb",
+        "tlhagisitse"
+      ],
+      [
+        "agent",
+        "Thabo"
+      ],
+      [
+        "dependent",
+        "Neo"
+      ],
+      [
+        "category",
+        "dp"
+      ],
+      [
+        "position",
+        "afterAgent"
+      ]
+    ],
+    "comment": "Reversing the agent and the goal does not help.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex134b",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(134b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Into the room walked her dog Mary.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "li"
+      ],
+      [
+        "verb",
+        "walked"
+      ],
+      [
+        "agent",
+        "Mary"
+      ],
+      [
+        "theme",
+        "into the room"
+      ],
+      [
+        "dependent",
+        "her dog"
+      ],
+      [
+        "category",
+        "dp"
+      ],
+      [
+        "position",
+        "beforeAgent"
+      ]
+    ],
+    "comment": "The transitivity constraint holds of locative inversion too.",
+    "verified": "page-image"
+  },
+  {
+    "id": "storment2026_ex136b",
+    "source": {
+      "bibkey": "storment-2026",
+      "paperLabel": "(136b)"
+    },
+    "language": "tswa1253",
+    "primaryText": "Mo lefatshe-ng go fula dikgomo.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      [
+        "Mo",
+        "18LOC"
+      ],
+      [
+        "lefatshe-ng",
+        "country-LOC"
+      ],
+      [
+        "go",
+        "SM17"
+      ],
+      [
+        "fula",
+        "graze"
+      ],
+      [
+        "dikgomo",
+        "cattle"
+      ]
+    ],
+    "translation": "In the country graze cattle.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "li"
+      ],
+      [
+        "verb",
+        "fula"
+      ],
+      [
+        "agent",
+        "dikgomo"
+      ],
+      [
+        "theme",
+        "mo lefatshe-ng"
+      ],
+      [
+        "person",
+        "3"
+      ],
+      [
+        "number",
+        "pl"
+      ],
+      [
+        "agreement",
+        "default"
+      ]
+    ],
+    "comment": "The paper takes (136b) from Demuth and Mmusi (1997:5).",
     "verified": "page-image"
   }
 ]
