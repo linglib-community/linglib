@@ -9,16 +9,17 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 # Minimal search over syntactic objects
 
 This file instantiates probe search at the tree: a probe on the head at a position of a
-linearized object searches the positions the head c-commands, closest by the branching positions
-above them, and so finds a goal that no other satisfier asymmetrically c-commands: the Minimal
-Link Condition, with mutually c-commanding candidates equidistant. Positions closed to the search,
+linearized object searches the positions the head c-commands in some order, a key on positions.
+Closest by the branching positions above them, it finds a goal that no other satisfier
+asymmetrically c-commands: the Minimal Link Condition, with mutually c-commanding candidates
+equidistant. Procedural search orders are in `Probe/Search.lean`. Positions closed to the search,
 by the PIC or by a horizon, cut its domain. Agree and labeling are both this search; what Agree
 then does to the goal's features is `Minimalist.FeatureBundle.applyAgree`.
 
 ## Main definitions
 
-* `Minimalist.LinearizedSyntacticObject.goals`, `goalsUnder`: the terms a probe on a head finds,
-  and those it finds with some positions closed to it.
+* `Minimalist.LinearizedSyntacticObject.goalsBy`, `goals`, `goalsUnder`: the terms a probe on a
+  head finds under a search order, under closeness, and with some positions closed to it.
 * `Minimalist.LinearizedSyntacticObject.leafProbe`, `phraseProbe`: the probes satisfied by the
   leaves of a category, and by the phrases its heads form.
 
@@ -63,19 +64,37 @@ theorem finds_above_branching_iff (hs : IsAntichain (· ≤ ·) {q | q ∈ s ∧
   simpa only [Probe.Finds, and_imp] using minimalFor_iff_of_isAntichain hs (fun _ h ↦ h.2 h.1)
     fun _ _ ↦ above_branching_lt_iff
 
+section Search
+
+variable {β : Type*} [Preorder β] [DecidableRel ((· < ·) : β → β → Prop)]
+
+variable (t) in
+/-- The terms a probe on the head `h` finds when its search orders positions by `key`: those at
+the first satisfying positions that an occurrence of `h` c-commands. -/
+def goalsBy (p : Probe t.val.Positions) (h : SyntacticObject) (key : t.val.Positions → β) :
+    Finset SyntacticObject :=
+  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
+    p.Finds {q | t.val.CCommands a q} key g).image t.termAt
+
+theorem mem_goalsBy {h x : SyntacticObject} {key : t.val.Positions → β} :
+    x ∈ t.goalsBy p h key ↔
+      ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.val.CCommands a q} key g ∧ t.termAt g = x := by
+  simp only [goalsBy, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+  exact ⟨fun ⟨g, ⟨a, ha, hg⟩, hx⟩ ↦ ⟨a, ha, g, hg, hx⟩,
+    fun ⟨a, ha, g, hg, hx⟩ ↦ ⟨g, ⟨a, ha, hg⟩, hx⟩⟩
+
+end Search
+
 variable (t) in
 /-- The terms a probe on the head `h` finds: those at the closest satisfying positions that an
 occurrence of `h` c-commands. -/
 def goals (p : Probe t.val.Positions) (h : SyntacticObject) : Finset SyntacticObject :=
-  (Finset.univ.filter fun g ↦ ∃ a, t.termAt a = h ∧
-    p.Finds {q | t.val.CCommands a q} (t.above t.branching) g).image t.termAt
+  t.goalsBy p h (t.above t.branching)
 
 theorem mem_goals {h x : SyntacticObject} : x ∈ t.goals p h ↔
     ∃ a, t.termAt a = h ∧ ∃ g, p.Finds {q | t.val.CCommands a q} (t.above t.branching) g ∧
-      t.termAt g = x := by
-  simp only [goals, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
-  exact ⟨fun ⟨g, ⟨a, ha, hg⟩, hx⟩ ↦ ⟨a, ha, g, hg, hx⟩,
-    fun ⟨a, ha, g, hg, hx⟩ ↦ ⟨g, ⟨a, ha, hg⟩, hx⟩⟩
+      t.termAt g = x :=
+  mem_goalsBy
 
 variable (t) in
 /-- The terms a probe on the head `h` finds when, at each occurrence `a` of `h`, the positions
@@ -88,7 +107,7 @@ def goalsUnder (p : Probe t.val.Positions) (h : SyntacticObject)
 
 @[simp] theorem goalsUnder_empty {h : SyntacticObject} :
     t.goalsUnder p h (fun _ ↦ ∅) = t.goals p h := by
-  simp only [goalsUnder, goals, Set.mem_empty_iff_false, not_false_eq_true, and_true]
+  simp only [goalsUnder, goals, goalsBy, Set.mem_empty_iff_false, not_false_eq_true, and_true]
 
 theorem mem_goalsUnder_of_finds {h : SyntacticObject}
     {cut : Core.Order.TreePath → Set Core.Order.TreePath}
