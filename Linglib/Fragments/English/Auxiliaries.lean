@@ -5,7 +5,7 @@ public import Linglib.Data.UD.Features
 public import Linglib.Fragments.English.Nouns
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Pragmatics.SocialMeaning.Register
-public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Modality.Typology
 public import Linglib.Syntax.Agreement.Target
 public import Linglib.Syntax.Category.Auxiliary.Basic
 public import Linglib.Syntax.Number.Basic

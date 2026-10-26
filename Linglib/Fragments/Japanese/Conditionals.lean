@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Conditionals.Reading
+public import Linglib.Semantics.Conditionals.Typology
 public import Linglib.Semantics.Modality.XMarking
 public import Linglib.Fragments.Japanese.Morph
 

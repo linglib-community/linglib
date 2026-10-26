@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Modality.Typology
 public import Linglib.Data.Examples.Matthewson2013
 public import Linglib.Fragments.Gitksan.Modals
 public import Linglib.Fragments.English.Auxiliaries

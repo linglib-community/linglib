@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.Grano2026
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Semantics.Degree.Boundedness
-public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Modality.Typology
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Set.Card

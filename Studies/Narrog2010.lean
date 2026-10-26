@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Modality.Typology
 
 /-!
 # Narrog (2010): (Inter)subjectification in the Domain of Modality and Mood
