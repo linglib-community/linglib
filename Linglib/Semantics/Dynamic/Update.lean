@@ -233,6 +233,10 @@ several. -/
 def maxBy {α : Type*} [Preorder α] (f : S → α) (D : Update S) : Update S :=
   {(i, j) | i ~[D] j ∧ ∀ k, i ~[D] k → ¬f j < f k}
 
+theorem mem_maxBy {α : Type*} [Preorder α] {f : S → α} :
+    i ~[maxBy f D] j ↔ MaximalFor (i ~[D] ·) f j :=
+  and_congr_right fun _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦ not_lt_iff_le_imp_ge
+
 theorem maxBy_subset {α : Type*} [Preorder α] (f : S → α) (D : Update S) : maxBy f D ⊆ D :=
   fun _ h ↦ h.1
 
