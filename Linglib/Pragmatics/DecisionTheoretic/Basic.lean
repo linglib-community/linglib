@@ -24,7 +24,8 @@ factor of E is the ratio of the two conditional probabilities of E. The paper's 
   (Partial Definition 6); `Context.Nondegenerate` marks a live issue
 - `bayesFactor`: the ratio P(E∣H) / P(E∣¬H)
 - `relevance`: its logarithm, Merin's relevance of E to H (Definition 4)
-- `posRelevant`, `negRelevant`, `irrelevant`: the relevance signs (Definition 5)
+- `posRelevant`, `negRelevant`, `irrelevant`: the relevance signs (Definition 5), and
+  `relevanceSign`, the sign of P(E∣H) − P(E∣¬H), which swapping the issue negates
 - `hContrary`: A and B have opposite relevance signs
 - `CondIndepIssue`: independence of A and B conditionally on H and on ¬H (Definition 9), the
   content of the Conditional Independence Presumption (Hypothesis 2)
@@ -196,6 +197,21 @@ theorem negRelevant_iff_cond_lt {ctx : Context W} {e : Set W}
   rw [negRelevant, bayesFactor_def, ENNReal.div_lt_iff (.inl h) (.inl (measure_ne_top _ _)),
     one_mul]
 
+/-- The relevance sign of E for H, the sign of P(E∣H) − P(E∣¬H): `1` when E is positively
+relevant to H and `-1` when it is negatively relevant (Definition 5). -/
+noncomputable def relevanceSign (ctx : Context W) (e : Set W) : SignType :=
+  SignType.sign ((ctx.prior[|ctx.topic]).real e - (ctx.prior[|ctx.topicᶜ]).real e)
+
+theorem relevanceSign_swapIssue (ctx : Context W) (e : Set W) :
+    relevanceSign (swapIssue ctx) e = -relevanceSign ctx e := by
+  rw [relevanceSign, relevanceSign, ← Left.sign_neg, neg_sub]
+  simp [swapIssue]
+
+theorem relevanceSign_eq_one_iff {ctx : Context W} {e : Set W} :
+    relevanceSign ctx e = 1 ↔ posRelevant ctx e := by
+  rw [relevanceSign, sign_eq_one_iff, sub_pos, posRelevant_iff_cond_lt, measureReal_def,
+    measureReal_def, ENNReal.toReal_lt_toReal (measure_ne_top _ _) (measure_ne_top _ _)]
+
 /-! ### Monotonicity
 
 Shedding ¬H-worlds from an utterance can only strengthen it as an argument for
@@ -250,6 +266,24 @@ theorem relevance_count :
     relevance ⟨topic, .of_discrete, .count⟩ e =
       Real.log (((topic ∩ e).ncard / topic.ncard) / ((topicᶜ ∩ e).ncard / topicᶜ.ncard)) :=
   congrArg Real.log (toReal_bayesFactor_count topic e)
+
+theorem relevanceSign_count :
+    relevanceSign ⟨topic, .of_discrete, .count⟩ e =
+      SignType.sign ((topic ∩ e).ncard / topic.ncard - (topicᶜ ∩ e).ncard / topicᶜ.ncard : ℝ) :=
+  congrArg SignType.sign
+    (congrArg₂ (· - ·) (uniformOn_real_apply topic e) (uniformOn_real_apply topicᶜ e))
+
+variable {topic} in
+/-- On a live issue the relevance sign compares cross-products of counts. -/
+theorem relevanceSign_count_eq (h : topic.Nonempty) (hc : topicᶜ.Nonempty) :
+    relevanceSign ⟨topic, .of_discrete, .count⟩ e =
+      SignType.sign ((topic ∩ e).ncard * topicᶜ.ncard - (topicᶜ ∩ e).ncard * topic.ncard : ℤ) := by
+  have h₁ : (0 : ℝ) < topic.ncard := by exact_mod_cast (Set.ncard_pos topic.toFinite).2 h
+  have h₂ : (0 : ℝ) < topicᶜ.ncard := by exact_mod_cast (Set.ncard_pos topicᶜ.toFinite).2 hc
+  rw [relevanceSign_count, div_sub_div _ _ h₁.ne' h₂.ne', div_eq_mul_inv, sign_mul,
+    sign_pos (inv_pos.2 (mul_pos h₁ h₂)), mul_one, ← sign_intCast (α := ℝ)]
+  push_cast
+  ring_nf
 
 variable {topic e}
 

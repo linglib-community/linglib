@@ -2,59 +2,65 @@ module
 
 public import Linglib.Data.Examples.Zheng2025
 public import Linglib.Fragments.Mandarin.QuestionParticles
+public import Linglib.Pragmatics.DecisionTheoretic.Basic
 public import Linglib.Semantics.Modality.Kernel
 public import Linglib.Semantics.Questions.Bias
-public import Mathlib.Data.Set.Card
+public import Studies.Theiler2021
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Zheng (2025): Nandao-Qs, When Surprise Sparks Inquiry
 
-This file formalizes Zheng's felicity conditions for Mandarin *nandao* questions, which
-are driven by unexpected contextual evidence rather than by the speaker's epistemic bias. The
-conditions are stated over von Fintel and Gillies's kernel, the set of propositions directly
-available in the context: some piece of evidence in the kernel raises the probability of the
-prejacent (`evidenceSupports`), the kernel conflicts with the information state `U` in place
-before the evidence, the beliefs, norms, desires or default expectations of the speaker
-(`unexpected`), and the prejacent is not itself directly settled in the kernel
-(`nandaoFelicitous`, the final condition (11)). Generalized to questions through the
-instantiations of the question's highlighted property, (13), the first condition requires
-every instantiation to follow from the evidence (`nandaoQFelicitous`), which reduces to (11)
-for a polar question (`nandaoQFelicitous_singleton`) and excludes a wh-question one of whose
-instantiations no evidence supports (`not_nandaoQFelicitous_of_unsupported`), the paper's account
-of why *nandao* selects polar questions only (`nandao_distribution`), which matches the rows of
-(12) (`nandao_distribution_judgments`).
+Zheng gives Mandarin *nandao* questions felicity conditions on unexpected contextual evidence
+rather than on the speaker's epistemic bias. Over von Fintel and Gillies's kernel `K`, the
+propositions directly available in the context, *nandao φ?* needs evidence positively relevant
+to `φ` in Merin's sense, evidence that conflicts with the prior state `U`, and `φ` not directly
+settled in `K`, (11). A question needs evidence relevant to every instantiation of its
+highlighted property in Theiler's sense, (13), and §4 adds that learning each instantiation be
+necessary for resolving the conflict, Theiler's condition on *denn* with resolving for
+proceeding. In the dripping-raincoat scenario of (2), (3) and (5), each context is placed in
+Sudo's grid by the relevance signs of the evidence and of A's beliefs.
 
-The dripping-raincoat scenario of (2), (3) and (5) is a four-world model: the question is
-felicitous whether the conflicting state is a belief that it is not raining or the default
-expectation that people do not wear raincoats (`raincoat_nandao_felicitous`,
-`raincoat_default_felicitous`), and infelicitous without the evidence
-(`no_evidence_infelicitous`) or when the evidence is expected
-(`expected_evidence_infelicitous`), which is (6). The link to rhetorical questions in §5 runs
-through Farkas's closed-question condition: a closed polar question is resolved in the
-common ground whenever the speaker's beliefs are consistent with it (`resolved_of_closed_polar`),
-the argument of the paper's footnote on (17).
+## Main statements
+
+* `nandaoQFelicitous_zero`, `not_necessaryToResolve_of_sufficient`: (13) for a polar question is
+  (11), and §4 excludes a why-question with another sufficient answer.
+* `felicitous_iff_mem_nandaoProfile`: in the scenario, felicity is the paper's profile.
+* `xuProfile_not_necessary_not_sufficient`: negative epistemic bias is neither (§2.2).
+* `situation_expectsWet`: the grid does not determine felicity (§2.3).
+* `nandao_distribution`: *nandao* selects polar questions only, (12).
 
 ## Implementation notes
 
-* The paper's "significantly raises" is sharpened to strict raising of the conditional
-  probability under the uniform counting measure on a finite set of worlds
-  (`evidenceRaises`).
-* The information state `U` is a list of propositions, like the kernel; the default state of the
-  paper's footnote is one such proposition.
-* Highlighted properties enter only through their set of instantiations.
+The paper's "significantly raises" is Merin's positive relevance under a prior, the counting
+measure in the scenario, whose worlds are rain, a sprinkler that wets the coat, and a dry day.
+The prior state of a context is A's beliefs with the default expectations, and only the beliefs
+are its epistemic coordinate, the paper not counting the default state as epistemic bias
+(fn. 6). Xu judges the context and sentence of (3) infelicitous, his (12) on p. 55. `Closed`
+reads the closed-question condition relative to the speaker's doxastic state, as §5.1
+paraphrases it.
+
+## Errata
+
+* Footnote 9 calls a closed polar question unresolved in the common ground impossible, since
+  `p` and `¬p` would both be doxastically inconsistent with it. That holds for consistency with a
+  doxastic state (`resolved_of_closed_polar`) but not for Farkas's d-consistency (12), which is
+  stronger than consistency (13), and under which such an issue is unresolvable (15).
 
 ## TODO
 
-* Why-questions, every instantiation of which may follow from the evidence, are excluded in §4 by
-  the requirement that the instantiation learnt resolve the conflict between `K` and `U`, which is
-  not encoded, so `not_nandaoQFelicitous_of_unsupported` covers the other wh-questions only.
+* Farkas's projection (52c) requires d-consistency where `Commitment.Table.project` requires
+  consistency; once it does, `Closed` is the Table's.
 
 ## References
 
 * [zheng-2025]
 * [von-fintel-gillies-2010]
+* [merin-1999-relevance]
+* [theiler-2021]
+* [sudo-2013]
 * [xu-2012]
+* [xu-2017]
 * [farkas-2025]
 -/
 
@@ -62,66 +68,81 @@ the argument of the paper's footnote on (17).
 
 namespace Zheng2025
 
-open Modality (Kernel)
-open Modality
+open MeasureTheory Modality DTS Question
+open Theiler2021 (Property instantiations instantiations_zero Necessary Sufficient)
 
-variable {W : Type*}
+/-! ### Felicity conditions, (11) and (13) -/
 
-/-! ### Kernel-theoretic felicity conditions -/
+section Felicity
 
-/-- Evidence `p` raises the probability of `φ` under the uniform counting measure on a finite
-`W`: `P(φ | p) > P(φ)`. -/
-def evidenceRaises (p φ : Set W) : Prop :=
-  (p ∩ φ).ncard * Nat.card W > φ.ncard * p.ncard
+variable {W : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W] (μ : Measure W)
+  (k : Kernel W) (u : Set (W → Prop)) {D : Type*} {n : ℕ}
 
-instance (p φ : W → Prop) [Fintype W] [DecidablePred p] [DecidablePred φ] :
-    Decidable (evidenceRaises p φ) :=
-  decidable_of_iff
-    ((Finset.univ.filter fun w ↦ p w ∧ φ w).card * Fintype.card W >
-      (Finset.univ.filter φ).card * (Finset.univ.filter p).card) <| by
-    show _ ↔ {w | p w ∧ φ w}.ncard * Nat.card W > {w | φ w}.ncard * {w | p w}.ncard
-    simp [Set.ncard_eq_toFinset_card', Nat.card_eq_fintype_card]
-
-section
-
-variable (k : Kernel W) (u : Set (W → Prop)) (φ : W → Prop)
-
-/-- Some proposition in `K` raises the probability of `φ`, (11i). -/
-def evidenceSupports : Prop :=
-  ∃ p ∈ k.props, evidenceRaises p φ
-
-/-- The evidence in `K` is unexpected given the prior information state `U`, (11ii). -/
+/-- The evidence in `K` is unexpected given the prior state `U`, (11ii). -/
 def unexpected : Prop :=
   Disjoint k.base {w | sInf u w}
 
-/-- *Nandao φ?* is felicitous iff some evidence in `K` raises the probability of `φ`, the
-evidence is unexpected given the prior state `U`, and `φ` is not directly settled in `K`,
-(11). -/
-def nandaoFelicitous : Prop :=
-  evidenceSupports k φ ∧ unexpected k u ∧ ¬ k.directlySettles φ
+/-- *Nandao φ?* is felicitous iff some evidence in `K` is positively relevant to `φ` under the
+prior `μ`, the evidence is unexpected given `U`, and `φ` is not directly settled in `K`, (11). -/
+def nandaoFelicitous (φ : Set W) : Prop :=
+  (∃ p ∈ k.props, posRelevant ⟨φ, .of_discrete, μ⟩ {w | p w}) ∧ unexpected k u ∧
+    ¬ k.directlySettles (· ∈ φ)
 
-end
+/-- *Nandao Q?* is felicitous iff some evidence in `K` is positively relevant to every
+instantiation of the highlighted property `f` of `Q`, the evidence is unexpected, and no
+instantiation is directly settled in `K`, (13). -/
+def nandaoQFelicitous (f : Property D W n) : Prop :=
+  (∃ p ∈ k.props, ∀ φ ∈ instantiations f, posRelevant ⟨φ, .of_discrete, μ⟩ {w | p w}) ∧
+    unexpected k u ∧ ∀ φ ∈ instantiations f, ¬ k.directlySettles (· ∈ φ)
 
-/-! ### Questions through their highlighted property, (13) -/
+theorem nandaoQFelicitous_zero (f : Property D W 0) :
+    nandaoQFelicitous μ k u f ↔ nandaoFelicitous μ k u (f default) := by
+  simp [nandaoQFelicitous, nandaoFelicitous, instantiations_zero]
 
-/-- *Nandao Q?* is felicitous iff some evidence in `K` raises the probability of every
-instantiation of the question's highlighted property, the evidence is unexpected, and no
-instantiation is directly settled in `K`. -/
-def nandaoQFelicitous (k : Kernel W) (u : Set (W → Prop)) (f : Set (W → Prop)) : Prop :=
-  (∃ p ∈ k.props, ∀ φ ∈ f, evidenceRaises p φ) ∧ unexpected k u ∧
-    ∀ φ ∈ f, ¬ k.directlySettles φ
-
-/-- For a polar question, whose highlighted property has the prejacent as its one
-instantiation, (13) is (11). -/
-theorem nandaoQFelicitous_singleton (k : Kernel W) (u : Set (W → Prop)) (φ : W → Prop) :
-    nandaoQFelicitous k u {φ} ↔ nandaoFelicitous k u φ := by
-  simp [nandaoQFelicitous, nandaoFelicitous, evidenceSupports]
-
-theorem not_nandaoQFelicitous_of_unsupported {k : Kernel W} {u : Set (W → Prop)}
-    {f : Set (W → Prop)} {φ : W → Prop} (hφ : φ ∈ f)
-    (h : ∀ p ∈ k.props, ¬ evidenceRaises p φ) : ¬ nandaoQFelicitous k u f := by
+theorem not_nandaoQFelicitous_of_not_posRelevant {f : Property D W n} {φ : Set W}
+    (hφ : φ ∈ instantiations f) (h : ∀ p ∈ k.props, ¬ posRelevant ⟨φ, .of_discrete, μ⟩ {w | p w}) :
+    ¬ nandaoQFelicitous μ k u f := by
   rintro ⟨⟨p, hp, hall⟩, -, -⟩
   exact h p hp (hall φ hφ)
+
+/-- Where a context sits in Sudo's grid for `φ`: the relevance signs of the evidence and of the
+speaker's beliefs. -/
+noncomputable def situation (φ : Set W) (beliefs : Set (W → Prop)) : SignType × SignType :=
+  (relevanceSign ⟨φ, .of_discrete, μ⟩ k.base,
+    relevanceSign ⟨φ, .of_discrete, μ⟩ {w | sInf beliefs w})
+
+end Felicity
+
+/-! ### Resolving the conflict, §4 -/
+
+section Resolution
+
+variable {W D : Type*} {n : ℕ} {resolve : Set W → Prop}
+
+/-- §4's requirement that learning each instantiation of the highlighted property be a
+necessary precondition for resolving the conflict between the evidence and the prior state,
+`resolve` holding of the states from which it is resolved: Theiler's condition on *denn* with
+resolving for proceeding. -/
+def NecessaryToResolve (resolve : Set W → Prop) (f : Property D W n) : Prop :=
+  ∀ φ ∈ instantiations f, Necessary resolve (· ⊆ φ)
+
+theorem necessaryToResolve_zero (f : Property D W 0) :
+    NecessaryToResolve resolve f ↔ Necessary resolve (· ⊆ f default) := by
+  simp [NecessaryToResolve, instantiations_zero]
+
+/-- A question with an answer that suffices to resolve the conflict without entailing one of
+its instantiations fails §4's requirement, as a why-question does. -/
+theorem not_necessaryToResolve_of_sufficient {f : Property D W n} {p q : Set W}
+    (hq : q ∈ instantiations f) (hp : Sufficient resolve (· ⊆ p)) (hpq : ¬ p ⊆ q) :
+    ¬ NecessaryToResolve resolve f :=
+  fun h ↦ Theiler2021.not_necessary_of_sufficient hp hpq (h q hq)
+
+example (p : Set W) : NecessaryToResolve (· ⊆ p) (fun _ : Fin 0 → D ↦ p) :=
+  (necessaryToResolve_zero _).2 fun _ ↦ id
+
+end Resolution
+
+/-! ### The distribution of *nandao*, (12) -/
 
 open Mandarin.QuestionParticles (nandao) in
 /-- *Nandao* selects polar questions only, (12). -/
@@ -139,81 +160,188 @@ theorem nandao_distribution_judgments : ∀ e ∈ Examples.all, ∀ t ∈ senten
     (t ∈ nandao.distribution.possible.dom ↔ e.judgment ≠ .ungrammatical) := by
   decide
 
-/-- The bias profile of *nandao* requires contextual evidence for the prejacent, the paper's
-evidential bias, and places no requirement on the prior state of the speaker, so that a neutral
-prior state is compatible with it, (3). -/
-def nandaoProfile : Question.BiasProfile := ⟨.plus .positive, Finset.univ⟩
+/-! ### Bias profiles -/
+
+/-- The paper's profile of *nandao*: evidence for the prejacent, with any prior belief (§2.2). -/
+def nandaoProfile : BiasProfile := ⟨.plus .positive, Finset.univ⟩
+
+/-- Xu's profile of *nandao*, which §2.1 argues against: a prior belief in the negation of the
+prejacent, with any evidence ([xu-2017] pp. 56-57). -/
+def xuProfile : BiasProfile := ⟨Finset.univ, .plus .negative⟩
 
 /-! ### The dripping-raincoat scenario, (2), (3) and (5) -/
 
-/-- The worlds of the scenario, in which it rains, the sprinkler ran and the coat is wet without
-rain, it is dry, or the weather is unknown. -/
+/-- The worlds of the scenario: it rains, a sprinkler wets the coat without rain, or it is
+dry. -/
 inductive World
-  | rain | sprinkler | dry | unknown
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  | rain | sprinkler | dry
+  deriving DecidableEq, Repr, Fintype
 
-/-- B enters wearing a dripping raincoat. -/
-abbrev wearingRaincoat : World → Prop := fun w ↦ w = .rain ∨ w = .sprinkler
+instance : MeasurableSpace World := ⊤
 
-/-- A's belief that it is not raining, (2). -/
-abbrev expectDry : World → Prop := fun w ↦ w = .dry ∨ w = .unknown
+instance : DiscreteMeasurableSpace World := ⟨fun _ ↦ trivial⟩
 
-/-- The default expectation that people do not wear raincoats, the state of (3) and of
-context 1 of (5). -/
-abbrev expectNoRaincoat : World → Prop := fun w ↦ ¬ wearingRaincoat w
+/-- B's coat drips. -/
+abbrev wetCoat : World → Prop := fun w ↦ w = .rain ∨ w = .sprinkler
 
 /-- It is raining outside, the prejacent. -/
 abbrev isRaining : World → Prop := (· = .rain)
 
+/-- A's belief that it is not raining. -/
+abbrev notRaining : World → Prop := fun w ↦ w ≠ .rain
+
+/-- The default expectation that coats are dry. -/
+abbrev dryCoat : World → Prop := fun w ↦ ¬ wetCoat w
+
 /-- The kernel carrying the direct evidence of the wet coat. -/
-def raincoatK : Kernel World := ⟨{wearingRaincoat}⟩
+def raincoatK : Kernel World := ⟨{wetCoat}⟩
 
-private theorem raincoat_unexpected_of {u : World → Prop} (h : ∀ w, wearingRaincoat w → ¬ u w) :
-    unexpected raincoatK {u} := by
-  simp only [unexpected, raincoatK, Kernel.base_singleton, sInf_singleton,
-    Set.disjoint_left]
-  exact fun w hw ↦ h w hw
+/-- A context of the scenario: the evidence, A's beliefs, and the default expectations, which
+with the beliefs are the prior state. -/
+structure RaincoatContext where
+  evidence : Kernel World
+  beliefs : Set (World → Prop)
+  defaults : Set (World → Prop)
 
-private theorem raincoat_not_settled : ¬ raincoatK.directlySettles isRaining := by
-  simp only [raincoatK, Kernel.directlySettles_singleton, Set.ofPred_subset_ofPred,
-    Set.disjoint_left]
+namespace RaincoatContext
+
+/-- *Nandao waimian xiayu-le ma?* is felicitous in the context. -/
+def Felicitous (c : RaincoatContext) : Prop :=
+  nandaoFelicitous .count c.evidence (c.beliefs ∪ c.defaults) {w | isRaining w}
+
+/-- The context's place in Sudo's grid. -/
+noncomputable def situation (c : RaincoatContext) : SignType × SignType :=
+  Zheng2025.situation .count c.evidence {w | isRaining w} c.beliefs
+
+end RaincoatContext
+
+/-- (2): A believes it is not raining, and B enters in a dripping raincoat. -/
+def believesDry : RaincoatContext := ⟨raincoatK, {notRaining}, {dryCoat}⟩
+
+/-- (3) and context 1 of (5): A expects nothing about the weather. -/
+def noBelief : RaincoatContext := ⟨raincoatK, ∅, {dryCoat}⟩
+
+/-- Context 2 of (5): B enters without the raincoat. -/
+def noEvidence : RaincoatContext := ⟨⟨∅⟩, ∅, {dryCoat}⟩
+
+/-- Context 3 of (5): A thinks it will not rain, and B enters without the raincoat. -/
+def believesDryNoEvidence : RaincoatContext := ⟨⟨∅⟩, {notRaining}, {dryCoat}⟩
+
+/-- The dripping raincoat when A already expects a wet coat, as in context 2 of (6). -/
+def expectsWet : RaincoatContext := ⟨raincoatK, ∅, {wetCoat}⟩
+
+private theorem relevanceSign_isRaining (e : Set World) :
+    relevanceSign ⟨{w | isRaining w}, .of_discrete, .count⟩ e =
+      SignType.sign (({w | isRaining w} ∩ e).ncard * {w | isRaining w}ᶜ.ncard -
+        ({w | isRaining w}ᶜ ∩ e).ncard * {w | isRaining w}.ncard : ℤ) :=
+  relevanceSign_count_eq (topic := {w | isRaining w}) e ⟨.rain, rfl⟩ ⟨.dry, by simp⟩
+
+private theorem posRelevant_wetCoat :
+    posRelevant ⟨{w | isRaining w}, .of_discrete, .count⟩ {w | wetCoat w} := by
+  rw [← relevanceSign_eq_one_iff, relevanceSign_isRaining]
+  simp only [Set.ncard_eq_toFinset_card']
   decide
 
-/-- *Nandao waimian xiayu-le ma?* is felicitous when A believes it is not raining, (2). -/
-theorem raincoat_nandao_felicitous : nandaoFelicitous raincoatK {expectDry} isRaining :=
-  ⟨⟨wearingRaincoat, Set.mem_singleton _, by decide⟩,
-    raincoat_unexpected_of (by decide), raincoat_not_settled⟩
+private theorem felicitous_of_unexpected {c : RaincoatContext} (hk : c.evidence = raincoatK)
+    (hu : ∀ w, wetCoat w → ¬ sInf (c.beliefs ∪ c.defaults) w) : c.Felicitous := by
+  refine ⟨⟨wetCoat, by simp [hk, raincoatK], posRelevant_wetCoat⟩, ?_, ?_⟩
+  · simp only [unexpected, hk, raincoatK, Kernel.base_singleton, Set.disjoint_left]
+    exact fun w hw ↦ hu w hw
+  · simp only [hk, raincoatK, Kernel.directlySettles_singleton, Set.mem_ofPred_eq,
+      Set.ofPred_subset_ofPred, Set.disjoint_left]
+    decide
 
-/-- The question is felicitous with only the default expectation of no raincoats, so epistemic bias
-is not necessary, (3) and context 1 of (5). -/
-theorem raincoat_default_felicitous :
-    nandaoFelicitous raincoatK {expectNoRaincoat} isRaining :=
-  ⟨⟨wearingRaincoat, Set.mem_singleton _, by decide⟩,
-    raincoat_unexpected_of (by decide), raincoat_not_settled⟩
-
-/-- Without the evidence the question is infelicitous, whatever A believes, contexts 2 and 3
-of (5): epistemic bias is not sufficient. -/
-theorem no_evidence_infelicitous (u : Set (World → Prop)) :
-    ¬ nandaoFelicitous ⟨∅⟩ u isRaining := by
+private theorem not_felicitous_of_empty {c : RaincoatContext} (hk : c.evidence = ⟨∅⟩) :
+    ¬ c.Felicitous := by
   rintro ⟨⟨p, hp, -⟩, -, -⟩
-  exact hp
+  simp [hk] at hp
 
-/-- When the evidence is expected, the prior state already allowing wet coats, the question is
-infelicitous, as in context 2 of (6). -/
-theorem expected_evidence_infelicitous :
-    ¬ nandaoFelicitous raincoatK {wearingRaincoat} isRaining := by
+theorem felicitous_believesDry : believesDry.Felicitous :=
+  felicitous_of_unexpected rfl fun w hw h ↦ by
+    simp only [believesDry, Set.singleton_union, sInf_insert, sInf_singleton, Pi.inf_apply,
+      inf_Prop_eq] at h
+    exact h.2 hw
+
+theorem felicitous_noBelief : noBelief.Felicitous :=
+  felicitous_of_unexpected rfl fun w hw h ↦ by
+    simp only [noBelief, Set.empty_union, sInf_singleton] at h
+    exact h hw
+
+theorem not_felicitous_expectsWet : ¬ expectsWet.Felicitous := by
   rintro ⟨-, hInc, -⟩
-  have h1 : World.rain ∈ raincoatK.base :=
-    Kernel.mem_base.mpr (by simp [raincoatK, wearingRaincoat])
-  have h2 : World.rain ∈ {w | sInf ({wearingRaincoat} : Set (World → Prop)) w} := by
-    simp [wearingRaincoat]
-  exact Set.disjoint_left.mp hInc h1 h2
+  exact Set.disjoint_left.mp hInc (show World.rain ∈ raincoatK.base by simp [raincoatK, wetCoat])
+    (by simp [expectsWet, wetCoat])
+
+theorem situation_believesDry : believesDry.situation = (1, -1) := by
+  simp only [RaincoatContext.situation, situation, believesDry, raincoatK, Kernel.base_singleton,
+    sInf_singleton, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+  decide
+
+theorem situation_noBelief : noBelief.situation = (1, 0) := by
+  simp only [RaincoatContext.situation, situation, noBelief, raincoatK, Kernel.base_singleton,
+    sInf_empty, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+  decide
+
+theorem situation_noEvidence : noEvidence.situation = (0, 0) := by
+  simp only [RaincoatContext.situation, situation, noEvidence, Kernel.base, sInf_empty,
+    relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+  decide
+
+theorem situation_believesDryNoEvidence : believesDryNoEvidence.situation = (0, -1) := by
+  simp only [RaincoatContext.situation, situation, believesDryNoEvidence, Kernel.base,
+    sInf_empty, sInf_singleton, relevanceSign_isRaining, Set.ncard_eq_toFinset_card']
+  decide
+
+/-- In the contexts of (2), (3) and (5), the question is felicitous exactly when the context's
+situation lies in the paper's profile. -/
+theorem felicitous_iff_mem_nandaoProfile :
+    ∀ c ∈ [believesDry, noBelief, noEvidence, believesDryNoEvidence],
+      c.Felicitous ↔ c.situation ∈ nandaoProfile.felicity := by
+  simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq,
+    situation_believesDry, situation_noBelief, situation_noEvidence,
+    situation_believesDryNoEvidence]
+  exact ⟨iff_of_true felicitous_believesDry (by decide),
+    iff_of_true felicitous_noBelief (by decide),
+    iff_of_false (not_felicitous_of_empty rfl) (by decide),
+    iff_of_false (not_felicitous_of_empty rfl) (by decide)⟩
+
+/-- Negative epistemic bias is not necessary, (3) being felicitous outside Xu's profile, and not
+sufficient, context 3 of (5) being infelicitous inside it (§2.2). -/
+theorem xuProfile_not_necessary_not_sufficient :
+    (noBelief.Felicitous ∧ noBelief.situation ∉ xuProfile.felicity) ∧
+      (¬ believesDryNoEvidence.Felicitous ∧
+        believesDryNoEvidence.situation ∈ xuProfile.felicity) := by
+  rw [situation_noBelief, situation_believesDryNoEvidence]
+  exact ⟨⟨felicitous_noBelief, by decide⟩, not_felicitous_of_empty rfl, by decide⟩
+
+/-- Evidence that the prior state expects sits where the evidence of (3) does and is
+infelicitous, so the grid does not determine felicity (§2.3). -/
+theorem situation_expectsWet :
+    expectsWet.situation = noBelief.situation ∧ noBelief.Felicitous ∧ ¬ expectsWet.Felicitous :=
+  ⟨rfl, felicitous_noBelief, not_felicitous_expectsWet⟩
+
+/-- The rows of (2), (3) and (5) with their contexts. -/
+def rowContexts : List (Datum × RaincoatContext) :=
+  [(Examples.ex2, believesDry), (Examples.ex3, noBelief), (Examples.ex5_ctx1, noBelief),
+    (Examples.ex5_ctx2, noEvidence), (Examples.ex5_ctx3, believesDryNoEvidence)]
+
+theorem judgments_rowContexts :
+    ∀ x ∈ rowContexts, x.1.judgment = .acceptable ↔ x.2.Felicitous := by
+  simp only [rowContexts, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp,
+    forall_eq]
+  exact ⟨iff_of_true rfl felicitous_believesDry, iff_of_true rfl felicitous_noBelief,
+    iff_of_true rfl felicitous_noBelief, iff_of_false (by decide) (not_felicitous_of_empty rfl),
+    iff_of_false (by decide) (not_felicitous_of_empty rfl)⟩
 
 /-! ### Closed questions and rhetorical use, §5 -/
 
-/-- [farkas-2025]'s closed-question condition: every alternative of the issue not already
-entailed by the common ground is doxastically inconsistent with it, given the speaker's
-doxastic state `dox`. -/
+section Closed
+
+variable {W : Type*}
+
+/-- The closed-question condition of [farkas-2025], relative to the speaker's doxastic state
+`dox`: every alternative of the issue not entailed by the common ground is inconsistent with it
+and with `dox`. -/
 def Closed (issue : Set (Set W)) (cg dox : Set W) : Prop :=
   ∀ p ∈ issue, ¬ cg ⊆ p → Disjoint (cg ∩ p) dox
 
@@ -227,5 +355,7 @@ theorem resolved_of_closed_polar {p cg dox : Set W} (hcons : (cg ∩ dox).Nonemp
   by_cases hp : w ∈ p
   · exact Set.disjoint_left.mp h₁ ⟨hw.1, hp⟩ hw.2
   · exact Set.disjoint_left.mp h₂ ⟨hw.1, hp⟩ hw.2
+
+end Closed
 
 end Zheng2025

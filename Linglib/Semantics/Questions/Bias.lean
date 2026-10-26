@@ -11,7 +11,9 @@ A polar question is sensitive to two bodies of information bearing on its prejac
 contextual evidence available in the discourse, as Büring and Gunlogson put it, and the prior
 belief of the speaker, the original bias of Ladd and of Romero and Han. Each supports `p`,
 supports `¬p`, or neither, so its state is a sign, `1`, `-1` or `0`, and reading it relative to
-`¬p` negates it.
+`¬p` negates it. Under a prior the state is the relevance sign of the body of information for
+`p` in Merin's decision-theoretic semantics, `DTS.relevanceSign`, which swapping `p` for `¬p`
+negates.
 
 A bias value in Sudo's scheme is the set of states a question is compatible with:
 [+s] (`BiasValue.plus`), its complement [−s] (`BiasValue.minus`) and [neutral]. A `BiasProfile`
