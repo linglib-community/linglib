@@ -30,13 +30,15 @@ appear through the prior.
 
 ## Implementation notes
 
-* Provenance. No paper states the conjecture; it is proposed here. The speaker over a salience
-  prior is Orita, Vornov, Feldman and Daumé's at `α = 1`, with their cost replaced by an ease
-  that may depend on the referent and the plan. The larger predictability effects expected with
-  same-gender characters are Kravtchenko's prediction, and the factorization and its strong form
-  are Kehler and Rohde's. That predictability effects are larger with transfer-of-possession
-  verbs, whose Goal bias lives in continuations that advance the narrative, is Rosa and Arnold's
-  suggestion, weakly supported in Liao, Brochhagen, Boleda and Mayol's meta-analysis.
+* Provenance. No paper states the conjecture; it is proposed here. The speaker is Orita, Vornov,
+  Feldman and Daumé's at `α = 1`. Kravtchenko's rational speech act model already adds a
+  grammatical bias to the cost and observes that without channel noise predictability cannot
+  affect unambiguous pronouns; the factorization and its strong form are Kehler and Rohde's; and
+  the link between transfer verbs, end-state continuations and predictability effects is Rosa and
+  Arnold's suggestion, weakly supported in Liao, Brochhagen, Boleda and Mayol's meta-analysis.
+  What is proposed here is an ease that reads the continuation's plan, which confines
+  predictability effects on unambiguous pronouns to end-state continuations, where Kravtchenko's
+  noisy channel predicts weaker effects in every continuation.
 * State. Untested, since the test crosses character gender, the referent's thematic role at a
   fixed position, and the continuation's coherence relation, and no study reports those cells. Rosa
   and Arnold find the Goal effect in Occasion and Result continuations, pooled over gender;
