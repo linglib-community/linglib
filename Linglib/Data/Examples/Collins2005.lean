@@ -26,7 +26,7 @@ def ex9a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "inSitu"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
+    paperFeatures := [("construction", "passive"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
 
 def ex9b : Datum :=
   { id := "collins2005_ex9b"
@@ -39,7 +39,7 @@ def ex9b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
+    paperFeatures := [("construction", "passive"), ("verb", "written"), ("agent", "John"), ("patient", "the book")] }
 
 def ex10a : Datum :=
   { id := "collins2005_ex10a"
@@ -52,7 +52,7 @@ def ex10a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
 
 def ex10b : Datum :=
   { id := "collins2005_ex10b"
@@ -65,7 +65,7 @@ def ex10b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "given"), ("agent", "each professor"), ("patient", "the book"), ("pp", "to the other")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "each professor"), ("patient", "the book"), ("pp", "to the other")] }
 
 def ex10c : Datum :=
   { id := "collins2005_ex10c"
@@ -78,7 +78,7 @@ def ex10c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "npi"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "no professor"), ("patient", "the book"), ("pp", "to any student")] }
 
 def ex10d : Datum :=
   { id := "collins2005_ex10d"
@@ -91,7 +91,7 @@ def ex10d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "each professor"), ("patient", "a book"), ("pp", "to the other")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "other"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "each professor"), ("patient", "a book"), ("pp", "to the other")] }
 
 def ex15a : Datum :=
   { id := "collins2005_ex15a"
@@ -104,7 +104,7 @@ def ex15a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
+    paperFeatures := [("construction", "passive"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
 
 def ex15b : Datum :=
   { id := "collins2005_ex15b"
@@ -117,7 +117,7 @@ def ex15b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "headMovement"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
+    paperFeatures := [("construction", "passive"), ("verb", "summed"), ("agent", "the coach"), ("patient", "the argument"), ("particle", "up")] }
 
 def ex18a : Datum :=
   { id := "collins2005_ex18a"
@@ -130,7 +130,7 @@ def ex18a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
+    paperFeatures := [("construction", "passive"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
 
 def ex18b : Datum :=
   { id := "collins2005_ex18b"
@@ -143,7 +143,7 @@ def ex18b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "headMovement"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
+    paperFeatures := [("construction", "passive"), ("verb", "spoken"), ("agent", "Mary"), ("patient", "John"), ("particle", "to")] }
 
 def ex23a : Datum :=
   { id := "collins2005_ex23a"
@@ -247,7 +247,7 @@ def ex56c : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("evacuated", "false"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
+    paperFeatures := [("construction", "passive"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
 
 def ex56d : Datum :=
   { id := "collins2005_ex56d"
@@ -260,7 +260,7 @@ def ex56d : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "passive"), ("analysis", "partP"), ("evacuated", "true"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
+    paperFeatures := [("construction", "passive"), ("verb", "given"), ("agent", "John"), ("patient", "the book"), ("pp", "to Mary")] }
 
 def ex60a : Datum :=
   { id := "collins2005_ex60a"
@@ -273,7 +273,7 @@ def ex60a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "every student"), ("patient", "a gift"), ("pp", "to his professor")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "every student"), ("patient", "a gift"), ("pp", "to his professor")] }
 
 def ex72a : Datum :=
   { id := "collins2005_ex72a"
@@ -286,7 +286,7 @@ def ex72a : Datum :=
     judgment := .questionable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("pp", "to herself")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("be", "were"), ("pp", "to herself")] }
 
 def ex74a : Datum :=
   { id := "collins2005_ex74a"
@@ -299,7 +299,7 @@ def ex74a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("pp", "to herself")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "reflexive"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("be", "were"), ("pp", "to herself")] }
 
 def ex75 : Datum :=
   { id := "collins2005_ex75"
@@ -312,7 +312,7 @@ def ex75 : Datum :=
     judgment := .marginal
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "given"), ("agent", "every boy"), ("patient", "money"), ("pp", "to his mother")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "variable"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "every boy"), ("patient", "money"), ("pp", "to his mother")] }
 
 def ex76a : Datum :=
   { id := "collins2005_ex76a"
@@ -325,7 +325,7 @@ def ex76a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "sent"), ("agent", "her"), ("patient", "the magazines"), ("pp", "to Mary's mother"), ("felicity", "infelicitous")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "her"), ("patient", "the magazines"), ("be", "were"), ("pp", "to Mary's mother"), ("adjunct", "yesterday"), ("felicity", "infelicitous")] }
 
 def ex80a : Datum :=
   { id := "collins2005_ex80a"
@@ -338,7 +338,7 @@ def ex80a : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "pronoun"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "false"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("pp", "to her")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "pronoun"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "sent"), ("agent", "Mary"), ("patient", "the magazines"), ("be", "were"), ("pp", "to her")] }
 
 def ex85a : Datum :=
   { id := "collins2005_ex85a"
@@ -351,7 +351,7 @@ def ex85a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "pp"), ("dependent", "external"), ("evacuated", "false"), ("verb", "given"), ("agent", "John's mother"), ("patient", "the book"), ("pp", "to him")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "pp"), ("dependent", "external"), ("verb", "given"), ("agent", "John's mother"), ("patient", "the book"), ("pp", "to him")] }
 
 def ex85b : Datum :=
   { id := "collins2005_ex85b"
@@ -364,7 +364,7 @@ def ex85b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "him"), ("patient", "the book"), ("pp", "to John's mother")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "name"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "him"), ("patient", "the book"), ("pp", "to John's mother")] }
 
 def ex91a : Datum :=
   { id := "collins2005_ex91a"
@@ -377,7 +377,7 @@ def ex91a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "external"), ("dependent", "pp"), ("evacuated", "true"), ("verb", "given"), ("agent", "the students"), ("patient", "books"), ("pp", "to each other")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "external"), ("dependent", "pp"), ("verb", "given"), ("agent", "the students"), ("patient", "books"), ("be", "were"), ("pp", "to each other")] }
 
 def ex91b : Datum :=
   { id := "collins2005_ex91b"
@@ -390,7 +390,7 @@ def ex91b : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "pp"), ("dependent", "external"), ("evacuated", "false"), ("verb", "given"), ("agent", "each other"), ("patient", "books"), ("pp", "to the students")] }
+    paperFeatures := [("construction", "licensing"), ("dependency", "reciprocal"), ("antecedent", "pp"), ("dependent", "external"), ("verb", "given"), ("agent", "each other"), ("patient", "books"), ("be", "were"), ("pp", "to the students")] }
 
 def all : List Datum := [ex9a, ex9b, ex10a, ex10b, ex10c, ex10d, ex15a, ex15b, ex18a, ex18b, ex23a, ex23b, ex23c, ex23d, ex27a, ex27b, ex29, ex56c, ex56d, ex60a, ex72a, ex74a, ex75, ex76a, ex80a, ex85a, ex85b, ex91a, ex91b]
 
