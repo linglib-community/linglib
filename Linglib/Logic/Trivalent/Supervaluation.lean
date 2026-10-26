@@ -29,6 +29,7 @@ Strong Kleene: `p ∨ ¬p` is supertrue where `p` is `0`, and Strong Kleene leav
 
 * `Trivalent.Formula.bivalentVariants`: the formulas over atoms paired with standards that read
   each occurrence of an atom at a standard.
+* `SignType.supervaluationOn`: the supervaluation of a predicate over a set.
 
 ## Main results
 
@@ -38,8 +39,8 @@ Strong Kleene: `p ∨ ¬p` is supertrue where `p` is `0`, and Strong Kleene leav
   is the supervaluation of its bivalent variants.
 * `Trivalent.forallStrong_eq_supervaluation`, `Trivalent.existsStrong_eq_supervaluation`: the
   Strong Kleene quantifiers are supervaluations over the readings of their instances.
-* `SignType.supervaluationOn_eq_of_between`: over a family between two of its members, along a
-  relation the predicate respects, the supervaluation is that over the two members.
+* `SignType.supervaluationOn_eq_of_between`: over a set where the predicate at each member lies
+  between its values at two members, the supervaluation is that over the two.
 
 ## References
 
@@ -121,10 +122,10 @@ theorem supervaluation_piFinset_exists (hS : ∀ i, (S i).Nonempty) :
 /-! ### Supervaluation over a set
 
 `supervaluation` decides its cases over a finite family. Over a set they are decided classically,
-and over a finite set the two agree. A family lying between two of its members, along a relation
-that the predicate respects, has the supervaluation of those two members: the predicate holds
-throughout the family exactly when it holds at the lower member, and fails throughout exactly
-when it fails at the upper one. -/
+and over a finite set the two agree. Where the predicate at every member of a set follows from its
+value at one member `lo` and implies its value at another `hi`, it holds throughout the set
+exactly when it holds at `lo` and fails throughout exactly when it fails at `hi`, so the set has
+the supervaluation of the two. -/
 
 section SupervaluationOn
 
@@ -159,42 +160,39 @@ theorem supervaluationOn_congr (h : ∀ a ∈ s, P a ↔ Q a) :
     exact and_congr_right fun _ ↦ forall₂_congr fun a ha ↦ not_congr (h a ha)
 
 /-- Over a finite set, supervaluation over the set is the supervaluation of the family. -/
-@[simp] theorem supervaluationOn_coe (s : Finset α) [DecidablePred P] :
+@[simp] theorem supervaluationOn_coe_finset (s : Finset α) [DecidablePred P] :
     supervaluationOn ↑s P = supervaluation s P := by
-  refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_
-  · simp [supervaluationOn_eq_one_iff, supervaluation_eq_one_iff]
-  · simp [supervaluationOn_eq_neg_one_iff, supervaluation_eq_neg_one_iff]
+  simp [supervaluationOn, supervaluation]
 
 theorem supervaluationOn_image {β : Type*} (f : α → β) (Q : β → Prop) :
     supervaluationOn (f '' s) Q = supervaluationOn s (Q ∘ f) := by
-  refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_
-  · simp [supervaluationOn_eq_one_iff]
-  · simp [supervaluationOn_eq_neg_one_iff]
+  refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_ <;>
+    simp [supervaluationOn_eq_one_iff, supervaluationOn_eq_neg_one_iff]
 
-variable {r : α → α → Prop} {lo hi : α}
+variable {lo hi : α}
 
-/-- Over a set lying between two of its members along a relation that `P` respects, the
-supervaluation of `P` is its supervaluation over those two members. -/
+/-- Over a set where `P` at each member follows from `P lo` and implies `P hi`, for members `lo`
+and `hi`, the supervaluation of `P` is its supervaluation over `lo` and `hi`. -/
 theorem supervaluationOn_eq_of_between (hlo : lo ∈ s) (hhi : hi ∈ s)
-    (hs : ∀ a ∈ s, r lo a ∧ r a hi) (hP : ∀ ⦃a b⦄, r a b → P a → P b) :
+    (hs : ∀ a ∈ s, (P lo → P a) ∧ (P a → P hi)) :
     supervaluationOn s P = supervaluationOn {lo, hi} P := by
   refine eq_of_eq_one_iff_of_eq_neg_one_iff ?_ ?_
   · simp only [supervaluationOn_eq_one_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq]
-    exact ⟨fun h ↦ ⟨h lo hlo, h hi hhi⟩, fun h a ha ↦ hP (hs a ha).1 h.1⟩
+    exact ⟨fun h ↦ ⟨h lo hlo, h hi hhi⟩, fun h a ha ↦ (hs a ha).1 h.1⟩
   · simp only [supervaluationOn_eq_neg_one_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
       forall_eq_or_imp, forall_eq, Set.insert_nonempty, true_and]
     exact ⟨fun h ↦ ⟨h.2 lo hlo, h.2 hi hhi⟩, fun h ↦ ⟨⟨lo, hlo⟩, fun a ha hPa ↦
-      h.2 (hP (hs a ha).2 hPa)⟩⟩
+      h.2 ((hs a ha).2 hPa)⟩⟩
 
-/-- Over a finite family lying between two of its members along a relation that `P` respects,
-the supervaluation of `P` is its supervaluation over those two members. -/
+/-- Over a finite family where `P` at each member follows from `P lo` and implies `P hi`, for
+members `lo` and `hi`, the supervaluation of `P` is its supervaluation over `lo` and `hi`. -/
 theorem supervaluation_eq_of_between [DecidablePred P] [DecidableEq α] {s : Finset α}
-    (hlo : lo ∈ s) (hhi : hi ∈ s) (hs : ∀ a ∈ s, r lo a ∧ r a hi)
-    (hP : ∀ ⦃a b⦄, r a b → P a → P b) :
+    (hlo : lo ∈ s) (hhi : hi ∈ s) (hs : ∀ a ∈ s, (P lo → P a) ∧ (P a → P hi)) :
     supervaluation s P = supervaluation {lo, hi} P := by
-  rw [← supervaluationOn_coe, ← supervaluationOn_coe, Finset.coe_insert, Finset.coe_singleton]
-  exact supervaluationOn_eq_of_between hlo hhi hs hP
+  rw [← supervaluationOn_coe_finset, ← supervaluationOn_coe_finset, Finset.coe_insert,
+    Finset.coe_singleton]
+  exact supervaluationOn_eq_of_between hlo hhi hs
 
 end SupervaluationOn
 

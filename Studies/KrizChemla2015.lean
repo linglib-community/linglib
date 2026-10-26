@@ -432,11 +432,12 @@ theorem toFlat_pointwise_le :
 
 theorem pointwise_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
     pointwise q d = supervaluation q d := by
-  rw [pointwise, SignType.supervaluation_eq_of_between (r := List.Forall₂ (· ≤ ·))
+  rw [pointwise, SignType.supervaluation_eq_of_between
       (List.mem_toFinset.2 (resolve_mem_resolutions .k3 d))
-      (List.mem_toFinset.2 (resolve_mem_resolutions .lp d))
-      (fun _ hc ↦ resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc))
-      (fun _ _ ↦ holds_of_forall₂_le hq), supervaluation_eq_image,
+      (List.mem_toFinset.2 (resolve_mem_resolutions .lp d)) fun _ hc ↦
+        ⟨holds_of_forall₂_le hq (resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc)).1,
+          holds_of_forall₂_le hq (resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc)).2⟩,
+    supervaluation_eq_image,
     show (Finset.univ : Finset Designation) = {.k3, .lp} by decide, Finset.image_insert,
     Finset.image_singleton]
 

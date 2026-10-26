@@ -34,8 +34,8 @@ all*.
 
 * `eval_strongKleene_pexIE_eq_one_iff`: a sentence is true by Strong Kleene, its scalar items read
   by `pex`, exactly when all its parses are true, (21)–(24).
-* `supervaluationOn_parses_eq_of_monotone`: under a raised monotone quantifier, truth on all parses
-  is the Strong Kleene value.
+* `supervaluationOn_parses_eq_entitywise`: under a raised monotone or antitone quantifier, truth on
+  all parses is the Strong Kleene value.
 * `exactlyTwo_parses_false_entitywise_undefined`: under *exactly two* it is not.
 * `speaker_readings_real_lt_iff`: the speaker ranks the true messages by the surprisal of their LP
   reading less the cost.
@@ -145,19 +145,20 @@ end Readings
 
 Spector shows that Truth on all parses gives the Strong Kleene projection of `pex` in
 propositional logic and says that a similar construction extends it to quantifiers. On the
-composition engine, a parse reads from its environment whether the scalar item carries the
-exhaustivity operator, a reader effect, and a reader distributes the scope of a raised quantifier
-as one parse for every entity (`ReaderT.preservesConst`). Strong Kleene quantification chooses a
-reading at each entity instead, which the set effect does (`SetM.mem_run_distribute`), and the set
-effect does not preserve constant families (`SetM.not_preservesConst`). The parse with the
-operator is the stronger, so every entity-wise choice lies between the two parses, and the two
-effects give a monotone or antitone quantifier the same value. Under *exactly two* they do not, so
-for quantified sentences truth on all parses and the Strong Kleene projection of `pex` come
-apart. -/
+composition engine, the scalar predicate is trivalent, and a parse reads it at one designation
+standard, with the exhaustivity operator at K3 and without it at LP. Read from the environment,
+a reader effect, the standard is shared by every entity a raised quantifier ranges over, since a
+reader distributes constant families to constant functions
+(`Distributive.PreservesConst.readerT`). Strong Kleene quantification reads each entity at a
+standard of its own, which the set effect does (`SetM.mem_run_distribute`); it does not preserve
+constant families (`SetM.not_preservesConst`). Every entity-wise reading lies between the two
+parses, so a monotone or antitone quantifier gets the same value from both effects. *Exactly two*
+does not, and for it Truth on all parses and the Strong Kleene projection of `pex` come apart. -/
 
 section Quantifiers
 
 open Montague PhraseStructure
+open Trivalent (Designation)
 
 /-- The words of a sentence whose quantifier is raised over a scalar predicate. -/
 inductive QWord
@@ -165,100 +166,79 @@ inductive QWord
   | scalar
   deriving DecidableEq
 
-variable {E : Type} (Q : (E → Prop) → Prop) (lo hi : E → Prop)
+variable {E : Type} (Q : (E → Prop) → Prop) (p : E → SignType)
 
-/-- Under the reader effect, the scalar predicate reads its parse, with the exhaustivity operator
-(`lo`) or without it (`hi`). -/
-def parseLex : QWord → Option (Denotation E Unit (ReaderM Bool))
+/-- Under the reader effect, the trivalent scalar predicate is read at the standard of the parse. -/
+def parseLex : QWord → Option (Denotation E Unit (ReaderM Designation))
   | .quant => some ⟨(.e ⇒ .t) ⇒ .t, pure Q⟩
-  | .scalar => some ⟨.e ⇒ .t, fun b ↦ if b then lo else hi⟩
+  | .scalar => some ⟨.e ⇒ .t, fun d x ↦ d.threshold ≤ p x⟩
 
-/-- Under the set effect, the scalar predicate denotes both its parses. -/
+/-- Under the set effect, the trivalent scalar predicate denotes its readings at both standards. -/
 def setLex : QWord → Option (Denotation E Unit SetM)
   | .quant => some ⟨(.e ⇒ .t) ⇒ .t, pure Q⟩
-  | .scalar => some ⟨.e ⇒ .t, ({lo, hi} : Set (E → Prop))⟩
+  | .scalar => some ⟨.e ⇒ .t, Set.range fun (d : Designation) x ↦ d.threshold ≤ p x⟩
 
 /-- The quantifier raised over the scalar predicate, `[Q [λ₁ [t₁ scalar]]]`. -/
 def raised : Tree Unit QWord := .bin (.leaf .quant) (.binder 1 (.bin (.tr 1) (.leaf .scalar)))
 
-/-- Each parse gives the quantifier one reading of the predicate for every entity. -/
 theorem interp_parseLex (g : Assignment E) :
-    Tree.interp (parseLex Q lo hi) g raised = some ⟨.t, fun b ↦ Q (if b then lo else hi)⟩ :=
+    Tree.interp (parseLex Q p) g raised = some ⟨.t, fun d ↦ Q fun x ↦ d.threshold ≤ p x⟩ :=
   rfl
 
-/-- The set effect gives the quantifier every predicate that takes one of the two readings at
-each entity. -/
 theorem interp_setLex (g : Assignment E) :
-    Tree.interp (setLex Q lo hi) g raised =
-      some ⟨.t, Q '' Set.univ.pi fun x ↦ ({lo x, hi x} : Set Prop)⟩ := by
+    Tree.interp (setLex Q p) g raised = some ⟨.t,
+      (Q '' Set.univ.pi fun x ↦ Set.range fun d : Designation ↦ d.threshold ≤ p x : Set Prop)⟩ := by
   refine congrArg (fun v : Set Prop ↦ some (⟨.t, v⟩ : Denotation E Unit SetM))
-    (Set.ext fun p ↦ ?_)
-  change p ∈ ((fun f a ↦ f a) <$> (pure Q : SetM ((E → Prop) → Prop)) <*>
+    (Set.ext fun b ↦ ?_)
+  change b ∈ ((fun f a ↦ f a) <$> (pure Q : SetM ((E → Prop) → Prop)) <*>
     distribute fun x ↦ (fun a f ↦ f a) <$> (pure x : SetM E) <*>
-      ({lo, hi} : Set (E → Prop))).run ↔ _
+      (Set.range fun (d : Designation) x ↦ d.threshold ≤ p x : Set (E → Prop))).run ↔ _
   simp only [SetM.run_seq, SetM.run_map, SetM.run_pure, Set.image_singleton, Set.mem_seq_iff,
     Set.mem_singleton_iff, exists_eq_left, SetM.mem_run_distribute, Set.mem_image,
     Set.mem_univ_pi]
   refine exists_congr fun f ↦ and_congr_left fun _ ↦ forall_congr' fun x ↦ ?_
-  simp only [SetM.run, Set.mem_insert_iff, Set.mem_singleton_iff, exists_eq_or_imp,
-    exists_eq_left]
-  exact or_congr eq_comm eq_comm
+  simp [SetM.run]
 
-private theorem range_parses :
-    Set.range (fun b : Bool ↦ Q (if b then lo else hi)) = Q '' {lo, hi} := by
-  ext p
-  simp [or_comm]
+variable {Q p}
 
-variable {Q lo hi}
+private theorem between_of_mem_pi {f : E → Prop}
+    (hf : f ∈ Set.univ.pi fun x ↦ Set.range fun d : Designation ↦ d.threshold ≤ p x) :
+    (fun x ↦ 1 ≤ p x) ≤ f ∧ f ≤ fun x ↦ 0 ≤ p x := by
+  refine ⟨fun x h ↦ ?_, fun x h ↦ ?_⟩ <;> obtain ⟨d, hd⟩ := hf x trivial
+  · exact hd.mp (le_trans (by cases d <;> decide) h)
+  · exact le_trans (by cases d <;> decide) (hd.mpr h)
 
-private theorem between_of_le (hlh : lo ≤ hi) {f : E → Prop}
-    (hf : f ∈ Set.univ.pi fun x ↦ ({lo x, hi x} : Set Prop)) : lo ≤ f ∧ f ≤ hi := by
-  have hf (x : E) : f x = lo x ∨ f x = hi x := hf x trivial
-  exact ⟨fun x h ↦ (hf x).elim (· ▸ h) (· ▸ hlh x h),
-    fun x h ↦ (hf x).elim (fun e ↦ hlh x (e ▸ h)) (· ▸ h)⟩
+private theorem supervaluationOn_eq_pair (hQ : Monotone Q ∨ Antitone Q) {s : Set (E → Prop)}
+    (hs : s ⊆ Set.univ.pi fun x ↦ Set.range fun d : Designation ↦ d.threshold ≤ p x)
+    (hk3 : (fun x ↦ 1 ≤ p x) ∈ s) (hlp : (fun x ↦ 0 ≤ p x) ∈ s) :
+    SignType.supervaluationOn s Q =
+      SignType.supervaluationOn {fun x ↦ 1 ≤ p x, fun x ↦ 0 ≤ p x} Q := by
+  obtain hQ | hQ := hQ
+  · exact SignType.supervaluationOn_eq_of_between hk3 hlp fun f hf ↦
+      ⟨hQ (between_of_mem_pi (hs hf)).1, hQ (between_of_mem_pi (hs hf)).2⟩
+  · rw [Set.pair_comm]
+    exact SignType.supervaluationOn_eq_of_between hlp hk3 fun f hf ↦
+      ⟨hQ (between_of_mem_pi (hs hf)).2, hQ (between_of_mem_pi (hs hf)).1⟩
 
-/-- When the parse with the operator is the stronger and the quantifier is monotone, truth on all
-parses is the entity-wise supervaluation, so Spector's extension to quantifiers holds. -/
-theorem supervaluationOn_parses_eq_of_monotone (hlh : lo ≤ hi) (hQ : Monotone Q) :
-    SignType.supervaluationOn (Set.range fun b : Bool ↦ Q (if b then lo else hi)) id =
-      SignType.supervaluationOn (Q '' Set.univ.pi fun x ↦ ({lo x, hi x} : Set Prop)) id := by
-  rw [range_parses, SignType.supervaluationOn_image, SignType.supervaluationOn_image]
-  refine (SignType.supervaluationOn_eq_of_between (r := (· ≤ ·)) ?_ ?_
-    (fun _ hf ↦ between_of_le hlh hf) fun _ _ hab ↦ hQ hab).symm
-  exacts [fun _ _ ↦ .inl rfl, fun _ _ ↦ .inr rfl]
-
-/-- The same holds of an antitone quantifier. -/
-theorem supervaluationOn_parses_eq_of_antitone (hlh : lo ≤ hi) (hQ : Antitone Q) :
-    SignType.supervaluationOn (Set.range fun b : Bool ↦ Q (if b then lo else hi)) id =
-      SignType.supervaluationOn (Q '' Set.univ.pi fun x ↦ ({lo x, hi x} : Set Prop)) id := by
-  rw [range_parses, SignType.supervaluationOn_image, SignType.supervaluationOn_image,
-    Set.pair_comm]
-  refine (SignType.supervaluationOn_eq_of_between (r := fun a b ↦ b ≤ a) ?_ ?_
-    (fun _ hf ↦ (between_of_le hlh hf).symm) fun _ _ hab ↦ hQ hab).symm
-  exacts [fun _ _ ↦ .inr rfl, fun _ _ ↦ .inl rfl]
-
-/-- With three students, two of whom solved every problem and one some but not all, *exactly two
-students solved some of the problems* is false on both parses, so false by Truth on all parses,
-and undefined entity-wise: reading the item with the operator for one of the two who solved every
-problem gives exactly two. -/
-theorem exactlyTwo_parses_false_entitywise_undefined :
-    SignType.supervaluationOn (Set.range fun b : Bool ↦
-        {x : Fin 3 | (if b then (· = 2) else fun _ ↦ True) x}.ncard = 2) id = -1 ∧
-      SignType.supervaluationOn ((fun P : Fin 3 → Prop ↦ {x | P x}.ncard = 2) ''
-        Set.univ.pi fun x ↦ ({x = 2, True} : Set Prop)) id = 0 := by
-  have h2 : {x : Fin 3 | x ≠ 1}.ncard = 2 := by
-    rw [show {x : Fin 3 | x ≠ 1} = {0, 2} by ext x; fin_cases x <;> simp]
-    exact Set.ncard_pair (by decide)
-  constructor
-  · rw [SignType.supervaluationOn_eq_neg_one_iff]
-    refine ⟨Set.range_nonempty _, ?_⟩
-    rintro _ ⟨b, rfl⟩
-    cases b <;> simp
-  · rw [SignType.supervaluationOn_eq_zero_iff]
-    refine ⟨⟨_, ⟨fun x ↦ x ≠ 1, fun x _ ↦ ?_, rfl⟩, h2⟩, ⟨_, ⟨(· = 2), fun x _ ↦ .inl rfl, rfl⟩,
-      ?_⟩⟩
-    · fin_cases x <;> simp
-    · simp
+/-- Under a raised monotone or antitone quantifier, truth on all parses is the Strong Kleene
+value: the predicate read at one standard for every entity and at a standard for each entity
+give the same supervaluation. -/
+theorem supervaluationOn_parses_eq_entitywise (hQ : Monotone Q ∨ Antitone Q) (g : Assignment E)
+    {r : ReaderM Designation Prop} {X : SetM Prop}
+    (hr : Tree.interp (parseLex Q p) g raised = some ⟨.t, r⟩)
+    (hX : Tree.interp (setLex Q p) g raised = some ⟨.t, X⟩) :
+    SignType.supervaluationOn (Set.range r.run) id = SignType.supervaluationOn X.run id := by
+  rw [interp_parseLex] at hr
+  rw [interp_setLex] at hX
+  simp only [Option.some.injEq, Sigma.mk.inj_iff, heq_eq_eq, true_and] at hr hX
+  subst hr hX
+  change SignType.supervaluationOn
+    (Set.range (Q ∘ fun (d : Designation) x ↦ d.threshold ≤ p x)) id = _
+  dsimp only [SetM.run]
+  rw [Set.range_comp, SignType.supervaluationOn_image, SignType.supervaluationOn_image,
+    Function.id_comp, supervaluationOn_eq_pair hQ (Set.range_subset_iff.2 fun d x _ ↦ ⟨d, rfl⟩)
+      ⟨.k3, rfl⟩ ⟨.lp, rfl⟩,
+    supervaluationOn_eq_pair hQ subset_rfl (fun x _ ↦ ⟨.k3, rfl⟩) fun x _ ↦ ⟨.lp, rfl⟩]
 
 end Quantifiers
 
@@ -478,6 +458,42 @@ theorem meaning_someButNotAll_eq_one_iff {w : World} :
 theorem readings_null (d : Trivalent.Designation) : readings meaning d .null = .univ :=
   Set.eq_univ_of_forall fun w ↦ (forall_mem_readings_iff.2
     (meaning_eq_one_iff.2 (by rw [exhIE_singleton rfl]; trivial))) d
+
+/-- Three students: two solved every problem, one some but not all. -/
+def solved : Fin 3 → World := ![.all, .all, .justSome]
+
+/-- *Exactly two students solved some of the problems*, *some* read by `pex`, is false on both
+parses (one student solved some but not all, three solved some), so false by Truth on all parses,
+and undefined entity-wise: reading *some* with the operator for one of the two who solved every
+problem leaves exactly two. -/
+theorem exactlyTwo_parses_false_entitywise_undefined (g : Assignment (Fin 3))
+    {r : ReaderM Trivalent.Designation Prop} {X : SetM Prop}
+    (hr : PhraseStructure.Tree.interp (parseLex (fun P ↦ {x | P x}.ncard = 2)
+      fun x ↦ meaning .some (solved x)) g raised = some ⟨.t, r⟩)
+    (hX : PhraseStructure.Tree.interp (setLex (fun P ↦ {x | P x}.ncard = 2)
+      fun x ↦ meaning .some (solved x)) g raised = some ⟨.t, X⟩) :
+    SignType.supervaluationOn (Set.range r.run) id = -1 ∧
+      SignType.supervaluationOn X.run id = 0 := by
+  rw [interp_parseLex] at hr
+  rw [interp_setLex] at hX
+  simp only [Option.some.injEq, Sigma.mk.inj_iff, heq_eq_eq, true_and] at hr hX
+  subst hr hX
+  have hk3 (x : Fin 3) : 1 ≤ meaning .some (solved x) ↔ x = 2 := by
+    rw [show ∀ a : SignType, 1 ≤ a ↔ a = 1 by decide, meaning_some_eq_one_iff]
+    fin_cases x <;> simp [solved]
+  have hlp (x : Fin 3) : 0 ≤ meaning .some (solved x) := by
+    rw [show ∀ a : SignType, 0 ≤ a ↔ a ≠ -1 by decide, Ne, meaning, pexIE_eq_neg_one_iff]
+    fin_cases x <;> simp [solved, literal]
+  refine ⟨SignType.supervaluationOn_eq_neg_one_iff.2 ⟨Set.range_nonempty _, ?_⟩,
+    SignType.supervaluationOn_eq_zero_iff.2 ⟨⟨_, ⟨fun x ↦
+      (![.lp, .k3, .k3] x : Trivalent.Designation).threshold ≤ meaning .some (solved x),
+      fun x _ ↦ ⟨_, rfl⟩, rfl⟩, ?_⟩, ⟨_, ⟨_, fun x _ ↦ ⟨.k3, rfl⟩, rfl⟩, ?_⟩⟩⟩
+  · rintro _ ⟨d, rfl⟩
+    cases d <;> simp [ReaderT.run, hk3, hlp]
+  · show Set.ncard _ = 2
+    rw [show {x : Fin 3 | _} = {0, 2} by ext x; fin_cases x <;> simp [hk3, hlp]]
+    exact Set.ncard_pair (by decide)
+  · simp [hk3]
 
 /-- Negation does not see the exhaustivity operator: *it is not the case that some* is true by
 Strong Kleene exactly where none, (22). -/

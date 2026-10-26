@@ -32,8 +32,8 @@ into that set, not only the constant ones.
 
 ## Main results
 
-* `Distributive.preservesConst_id`, `ReaderT.preservesConst`: the identity functor preserves
-  constant families, and so does a reader over a functor that does.
+* `Distributive.preservesConst_id`, `Distributive.PreservesConst.readerT`: the identity functor
+  preserves constant families, and so does a reader over a functor that does.
 * `SetM.mem_run_distribute`: the set functor distributes a family to its choice functions.
 * `SetM.not_preservesConst`: the set functor does not preserve constant families.
 
@@ -84,10 +84,9 @@ instance [Distributive m] : Distributive (ReaderT ρ m) where
   rfl
 
 /-- A reader over a functor that preserves constant families preserves them too. -/
-theorem preservesConst [Monad m] [Distributive m] (h : Distributive.PreservesConst m) :
-    Distributive.PreservesConst (ReaderT ρ m) := fun ι α x ↦ by
-  funext r
-  exact h ι α (x r)
+theorem _root_.Distributive.PreservesConst.readerT [Monad m] [Distributive m]
+    (h : Distributive.PreservesConst m) : Distributive.PreservesConst (ReaderT ρ m) :=
+  fun ι α x ↦ funext fun r ↦ h ι α (x r)
 
 end ReaderT
 
@@ -101,13 +100,13 @@ instance : Distributive SetM.{u} where
     g ∈ (distribute f).run ↔ ∀ i, g i ∈ (f i).run :=
   Set.mem_univ_pi
 
-@[simp] theorem run_pure {α : Type u} (a : α) : (pure a : SetM α).run = {a} :=
+theorem run_pure {α : Type u} (a : α) : (pure a : SetM α).run = {a} :=
   rfl
 
-@[simp] theorem run_map {α β : Type u} (f : α → β) (m : SetM α) : (f <$> m).run = f '' m.run :=
+theorem run_map {α β : Type u} (f : α → β) (m : SetM α) : (f <$> m).run = f '' m.run :=
   rfl
 
-@[simp] theorem run_seq {α β : Type u} (f : SetM (α → β)) (m : SetM α) :
+theorem run_seq {α β : Type u} (f : SetM (α → β)) (m : SetM α) :
     (f <*> m).run = Set.seq f.run m.run :=
   rfl
 
