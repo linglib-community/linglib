@@ -120,8 +120,7 @@ theorem isLowerSet_support_of_neFree {φ : Formula Var Const Pred}
 
 /-! ### Flatness corollary -/
 
-/-- NE-free QBSML formulas are flat ([anttila-2021] Proposition 2.2.16). This follows from the
-    three closure properties by [anttila-2021] Proposition 2.2.2 (`Team.isFlat_iff`). -/
+/-- NE-free QBSML formulas are flat, as BSML's are ([anttila-2021] Corollary 2.2.9). -/
 theorem isFlat_support_of_neFree {φ : Formula Var Const Pred}
     (hNE : φ.NEFree) (M : Model W Domain Const Pred) :
     IsFlat { t : Finset (Index W Var Domain) | support M φ t } :=

@@ -11,13 +11,16 @@ bounded-bisimulation-invariant team properties, a question Aloni, Anttila and Ya
 the vocabulary of `Team/Definability.lean` this is `definableClass (support M) =
 {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P}`. One inclusion collects the closure
 properties of support; the other is proved within one model over finitely many atoms, from the
-characteristic formulas of `Characteristic.lean`.
+characteristic formulas of `Characteristic.lean`. The `NE`-free fragment, classical modal logic,
+is likewise complete for the flat bounded-bisimulation-invariant properties.
 
 ## Main results
 
 * `bisimClosed_support`: support is closed under bounded bisimulation.
-* `definableClass_support_subset`, `subset_definableClass_support`: the two inclusions.
-* `definableClass_support_eq`: their equality.
+* `definableClass_support_eq`: BSML defines exactly the convex, union-closed,
+  bisimulation-invariant properties.
+* `definableClass_support_neFree_eq`: the `NE`-free fragment defines exactly the flat,
+  bisimulation-invariant properties.
 
 ## References
 
@@ -148,5 +151,32 @@ theorem definableClass_support_eq [Fintype W] [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) :
     definableClass (support M) = {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} :=
   (definableClass_support_subset M).antisymm (subset_definableClass_support M)
+
+/-! ### The `NE`-free fragment -/
+
+theorem definableClass_support_neFree_subset (M : KripkeModel W Atom) :
+    definableClass (fun φ : {φ : Formula Atom // φ.NEFree} ↦ support M φ.1) ⊆
+      {P | IsFlat P ∧ BisimClosed M P} :=
+  definableClass_subset fun φ ↦ ⟨isFlat_support_of_neFree φ.2 M, bisimClosed_support M φ.1⟩
+
+/-- The `NE`-free fragment of BSML is expressively complete for the flat,
+bounded-bisimulation-closed team properties ([aloni-anttila-yang-2024] Proposition 3.13). -/
+theorem definableClass_support_neFree_eq [Fintype W] [Fintype Atom] [Inhabited Atom]
+    (M : KripkeModel W Atom) :
+    definableClass (fun φ : {φ : Formula Atom // φ.NEFree} ↦ support M φ.1) =
+      {P | IsFlat P ∧ BisimClosed M P} := by
+  classical
+  refine (definableClass_support_neFree_subset M).antisymm ?_
+  rintro P ⟨hP, k, hk⟩
+  obtain ⟨e, he⟩ : ∃ e : Fin (Fintype.card Atom) → Atom, e.Surjective :=
+    ⟨_, (Fintype.equivFin Atom).symm.surjective⟩
+  set L := ((Finset.univ.filter fun w ↦ {w} ∈ P).image (worldType e M k)).toList
+  refine ⟨⟨bigDisj (L.map (hintikka e k)), neFree_bigDisj _ ?_⟩, Set.ext fun t ↦ ?_⟩
+  · simpa using fun τ _ ↦ neFree_hintikka e k τ
+  simp only [Set.mem_ofPred_eq, support_bigDisj_hintikka_iff, L, Finset.mem_toList,
+    Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+  rw [hP t]
+  refine forall₂_congr fun v _ ↦ ⟨fun ⟨w, hw, hwv⟩ ↦ ?_, fun hv ↦ ⟨v, hv, rfl⟩⟩
+  exact (hk.singleton ((worldType_eq_iff_worldBisim he k w v).mp hwv)).mp hw
 
 end BSML
