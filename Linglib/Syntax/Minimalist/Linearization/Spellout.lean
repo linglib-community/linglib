@@ -40,7 +40,7 @@ everywhere.
 * Movement leaves deleted copies (a copy object is read through its contraction), so no mother of
   a shared token dominates another, and de Vries's spell-out of remerged nodes, his (56),
   pronounces it once every mother has been traversed: at its last occurrence, the one `List.dedup`
-  keeps.
+  keeps (`Linearization/Multidominance.lean`, `remergedYield_getLast?_eq_tokens`).
 * [E] tells PF to skip its complement (Merchant, p. 60). Ellipsis applies once per elided term, as
   Citko and Gračanin-Yuksek count it: once for a shared [E] head over a shared complement, their
   (38b), and twice over two complements, their (38d).
