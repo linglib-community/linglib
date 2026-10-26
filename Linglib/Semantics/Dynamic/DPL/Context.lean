@@ -290,20 +290,6 @@ theorem comp (hR : HasContext R c) (hS : HasContext S d) :
         Finset.piecewise_eq_of_notMem, Context.I_mul, Context.O_mul,
         Context.B_mul]
 
-/-- The DPL implication of a `c`-relation and a `d`-relation is a `(c → d)`-relation
-(Theorem 3.9). -/
-theorem impl (hR : HasContext R c) (hS : HasContext S d) :
-    HasContext (test (Update.impl R S)) (c.impl d) := by
-  refine hasContext_test_iff.mpr ⟨isTest_test _, ?_⟩
-  rintro f f' hI ⟨-, hall⟩
-  refine ⟨rfl, fun k hRk ↦ ?_⟩
-  -- Lemma 3.7 twice: patch the antecedent back to `f`, then transfer
-  -- the consequent forward to `k`.
-  obtain ⟨j, hSj⟩ := hall (hR.patch
-    (hI.mono (Finset.coe_subset.mpr Finset.subset_union_left)).symm hRk)
-  exact ⟨_, hS.patch ((hR.patch_eqOn hRk hI.symm).mono
-    (fun v hv ↦ by grind [Context.I_mul])).symm hSj⟩
-
 end HasContext
 
 /-! ### The DPL generators, typed -/
@@ -358,6 +344,13 @@ theorem impl_eq (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d
 /-- The negation of a `c`-relation is a test at its inputs. -/
 theorem neg (h : HasContext R c) : HasContext (test (Update.neg R)) (Context.test c.I) :=
   hasContext_test_of_dependsOn fun _ _ hI ↦ congrArg Not (h.dependsOn_dom hI)
+
+/-- The DPL implication of a `c`-relation and a `d`-relation is a `(c → d)`-relation
+(Theorem 3.9), by the typing of composition and negation. -/
+theorem impl (hR : HasContext R c) (hS : HasContext S d) :
+    HasContext (test (Update.impl R S)) (c.impl d) := by
+  rw [impl_eq_neg_comp_test_neg]
+  exact (hR.comp hS.neg).neg
 
 /-- The disjunction of a `c`-relation and a `d`-relation is a test at their inputs. -/
 theorem disj (hR : HasContext R c) (hS : HasContext S d) :

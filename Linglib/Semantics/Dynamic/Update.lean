@@ -221,6 +221,10 @@ theorem impl_comp (D₁ D₂ D₃ : Update S) : impl (D₁ ○ D₂) D₃ = impl
 theorem dom_comp (D₁ D₂ : Update S) : (D₁ ○ D₂).dom = D₁.preimage D₂.dom := by
   rw [← preimage_univ_right, preimage_comp, preimage_univ_right]
 
+theorem impl_eq_neg_comp_test_neg (D₁ D₂ : Update S) :
+    impl D₁ D₂ = neg (D₁ ○ test (neg D₂)) := by
+  simp only [neg_eq_compl_dom, dom_comp, dom_test, ← core_compl, compl_compl, impl_eq_core_dom]
+
 /-! ### Maximization -/
 
 /-- Maximization under a valuation `f` keeps the outputs of `D` at which no other output of `D`
