@@ -111,30 +111,12 @@ section Policy
 
 variable (extract : RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β))))
 
-private theorem augActionG_remainder_ne_nil (hne : ∀ t r, extract t = some r → r ≠ [])
-    (t : RoseTree (α ⊕ β)) : ∀ a ∈ augActionG extract t, a.2 ≠ [] := by
-  intro a ha
-  rw [augActionG_eq] at ha
-  rcases Multiset.mem_add.mp ha with h | h
-  · cases hex : extract t with
-    | none => rw [hex] at h; exact absurd h (Multiset.notMem_zero a)
-    | some r =>
-      rw [hex] at h
-      obtain rfl := Multiset.mem_singleton.mp h
-      exact hne t r hex
-  · obtain ⟨p, _, rfl⟩ := Multiset.mem_map.mp h
-    exact List.cons_ne_nil _ _
-
-private theorem cutListSummandsG_remainder_ne_nil (hne : ∀ t r, extract t = some r → r ≠ [])
-    (t : RoseTree (α ⊕ β)) (ts : List (RoseTree (α ⊕ β))) :
-    ∀ q ∈ cutListSummandsG extract (t :: ts), q.2 ≠ [] := by
-  intro q hq
-  rw [cutListSummandsG_cons] at hq
-  obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
-  obtain ⟨c, cs, hc⟩ :=
-    List.exists_cons_of_ne_nil (augActionG_remainder_ne_nil extract hne t pr.1
-      (Multiset.mem_product.mp hpr).1)
-  simp [hc]
+private theorem remainder_ne_nil_of_mem_cutListSummandsG
+    (hne : ∀ t r, extract t = some r → r ≠ []) :
+    ∀ cs, ∀ q ∈ cutListSummandsG extract cs, cs ≠ [] → q.2 ≠ [] :=
+  cutListSummandsG_induction extract (P := fun cs q ↦ cs ≠ [] → q.2 ≠ [])
+    (fun h ↦ (h rfl).elim) (fun t r h _ ↦ hne t r h) (fun _ _ _ _ _ _ ↦ List.cons_ne_nil _ _)
+    (fun _ _ _ _ _ _ ha _ _ ↦ List.append_ne_nil_of_left_ne_nil (ha (List.cons_ne_nil _ _)) _)
 
 private theorem two_le_numNodes_of_mem_cutSummandsG (hne : ∀ t r, extract t = some r → r ≠ []) :
     ∀ (t : RoseTree (α ⊕ β)), ∀ p ∈ cutSummandsG extract t, p.1 ≠ 0 → 2 ≤ p.2.numNodes
@@ -146,12 +128,10 @@ private theorem two_le_numNodes_of_mem_cutSummandsG (hne : ∀ t r, extract t = 
     rw [cutSummandsG_node] at hp
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
     obtain ⟨d, ds, hd⟩ := List.exists_cons_of_ne_nil
-      (cutListSummandsG_remainder_ne_nil extract hne c cs q hq)
+      (remainder_ne_nil_of_mem_cutListSummandsG extract hne _ q hq (List.cons_ne_nil c cs))
     have := d.numNodes_pos
     simp only [hd, RoseTree.numNodes_node, List.map_cons, List.sum_cons]
     omega
-
-mutual
 
 /-- When each remainder carries one trace, the crown and the trunk of a cut carry the tree's traces
     and one more for each tree extracted. -/
@@ -159,71 +139,25 @@ theorem cutSummandsG_numTraces
     (hext : ∀ t r, extract t = some r → (r.map RoseTree.numTraces).sum = 1) :
     ∀ (t : RoseTree (α ⊕ β)), ∀ p ∈ cutSummandsG extract t,
       (Multiset.map RoseTree.numTraces p.1).sum + RoseTree.numTraces p.2 =
-        RoseTree.numTraces t + Multiset.card p.1
-  | .node a cs => by
-    intro p hp
-    rw [cutSummandsG_node] at hp
-    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    have h := cutListSummandsG_numTraces hext cs q hq
-    cases a with
-    | inl x =>
-      simp only [RoseTree.numTraces_node_inl]
-      omega
-    | inr y =>
+        RoseTree.numTraces t + Multiset.card p.1 := fun t p hp ↦ by
+  have hne : ∀ t r, extract t = some r → r ≠ [] := fun t r h hr ↦ by simpa [hr] using hext t r h
+  simpa using cutSummandsG_induction extract
+    (P := fun cs q ↦ (q.1.map RoseTree.numTraces).sum + (q.2.map RoseTree.numTraces).sum =
+      (cs.map RoseTree.numTraces).sum + Multiset.card q.1)
+    (by simp) (fun t r h ↦ by simp [hext t r h])
+    (fun a cs q hq hs ↦ by
       rcases eq_or_ne cs [] with rfl | hcs
-      · rw [cutListSummandsG_nil] at hq
-        obtain rfl := Multiset.mem_singleton.mp hq
+      · rw [cutListSummandsG_nil, Multiset.mem_singleton] at hq
+        subst hq
         simp
-      · obtain ⟨t', ts', rfl⟩ := List.exists_cons_of_ne_nil hcs
-        have hne : ∀ t r, extract t = some r → r ≠ [] := fun t r h hr ↦ by
-          simpa [hr] using hext t r h
-        rw [RoseTree.numTraces_node_of_ne_nil (Sum.inr y) q.2
-            (cutListSummandsG_remainder_ne_nil extract hne t' ts' q hq),
-          RoseTree.numTraces_node_of_ne_nil (Sum.inr y) _ hcs]
-        omega
-
-theorem cutListSummandsG_numTraces
-    (hext : ∀ t r, extract t = some r → (r.map RoseTree.numTraces).sum = 1) :
-    ∀ (cs : List (RoseTree (α ⊕ β))), ∀ q ∈ cutListSummandsG extract cs,
-      (Multiset.map RoseTree.numTraces q.1).sum + (q.2.map RoseTree.numTraces).sum =
-        (cs.map RoseTree.numTraces).sum + Multiset.card q.1
-  | [] => by
-    intro q hq
-    rw [cutListSummandsG_nil] at hq
-    obtain rfl := Multiset.mem_singleton.mp hq
-    simp
-  | t :: ts => by
-    intro q hq
-    rw [cutListSummandsG_cons] at hq
-    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
-    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
-    have h1 := augActionG_numTraces hext t pr.1 ha
-    have h2 := cutListSummandsG_numTraces hext ts pr.2 hq'
-    rw [Multiset.map_add, Multiset.sum_add, List.map_append, List.sum_append,
-        Multiset.card_add, List.map_cons, List.sum_cons]
-    omega
-
-theorem augActionG_numTraces
-    (hext : ∀ t r, extract t = some r → (r.map RoseTree.numTraces).sum = 1) :
-    ∀ (t : RoseTree (α ⊕ β)), ∀ a ∈ augActionG extract t,
-      (Multiset.map RoseTree.numTraces a.1).sum + (a.2.map RoseTree.numTraces).sum =
-        RoseTree.numTraces t + Multiset.card a.1
-  | t => by
-    intro a ha
-    rw [augActionG_eq] at ha
-    rcases Multiset.mem_add.mp ha with h | h
-    · cases hex : extract t with
-      | none => rw [hex] at h; exact absurd h (Multiset.notMem_zero a)
-      | some r =>
-        rw [hex] at h
-        obtain rfl := Multiset.mem_singleton.mp h
-        simp [hext t r hex]
-    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
-      have h := cutSummandsG_numTraces hext t p hp
-      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil]
-      omega
-
-end
+      · have h2 := remainder_ne_nil_of_mem_cutListSummandsG extract hne cs q hq hcs
+        simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero,
+          RoseTree.numTraces_node_of_ne_nil _ _ h2, RoseTree.numTraces_node_of_ne_nil _ _ hcs]
+        omega)
+    (fun t ts a b _ _ ha hb ↦ by
+      simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, Multiset.map_add,
+        Multiset.sum_add, List.map_append, List.sum_append, Multiset.card_add] at *
+      omega) t p hp
 
 end Policy
 
