@@ -176,7 +176,7 @@ theorem not_antitone_conditionalNecessity :
       {w | Restrictor.conditionalNecessity (fun _ ↦ ∅) (fun _ ↦ {(· = 0)}) α (· = 0) w} :=
   fun h ↦ by
     have := @h (· = 1) (fun _ ↦ True) (fun _ _ ↦ trivial) 0
-    simp only [Restrictor.conditionalNecessity, necessity_iff, bestWorlds,
+    simp only [Restrictor.conditionalNecessity_iff_necessity_of_finite, necessity_iff, bestWorlds,
       Preorder.mem_minimals_iff,
       Background.mem_accessibleWorlds, Background.restrict, Preorder.ofCriteria_le_iff,
       Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,

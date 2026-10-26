@@ -6,6 +6,7 @@ public import Linglib.Semantics.Mood.Defs
 public import Linglib.Data.Examples.CondoravdiLauer2016
 public import Studies.VonFintelIatridou2005
 public import Mathlib.Tactic.FinCases
+public import Mathlib.Data.Fintype.Sigma
 
 /-!
 # Condoravdi and Lauer 2016: anankastic conditionals are just conditionals
@@ -29,8 +30,8 @@ cases.
 
 ## Main statements
 
-* `conditionalNecessity_orderingSource_iff`: under consistent effective preferences the
-  paraphrase (89) of (88) is exact.
+* `conditionalNecessity_orderingSource_iff`: under consistent effective preferences and the Limit
+  Assumption the paraphrase (89) of (88) is exact.
 * `HobokenScenario.anankastic_harlem`, `HobokenScenario.not_possibility_path`: in the Hoboken
   scenario the Harlem sentence (1) is true and (14) false, where Sæbø's analysis makes (1) false
   and (14) true, and the mere-desire construal makes (1) false.
@@ -42,7 +43,9 @@ cases.
 
 ## Implementation notes
 
-* Both modals are Kratzer's `necessity`, as (88) says. The priority modal's ordering source is
+* Both modals are Kratzer's `necessity`, as (88) says, the outer one the restrictor conditional,
+  which is Kratzer's limit-free necessity and agrees with `necessity` at the best worlds under the
+  Limit Assumption, as on every model here. The priority modal's ordering source is
   `orderingSource P a`, the maximal preferences of `P a v` at each world `v`, so an anankastic is
   `conditionalNecessity` with no operator of its own, and Sæbø's rival restricts the same
   ordering source where the paper restricts the outer modal base.
@@ -156,7 +159,7 @@ theorem necessity_designatedGoal_iff_haveTo {f : Background W} {p r : W → Prop
     (h : ((f.restrict p).accessibleWorlds w).Nonempty) :
     necessity f (fun _ ↦ {p}) r w ↔ VonFintelIatridou2005.haveTo f p r w := by
   have hf : f ⊔ (fun _ ↦ {p}) = f.restrict p := funext fun _ ↦ Set.union_singleton
-  rw [VonFintelIatridou2005.haveTo, conditionalNecessity, necessity_iff, necessity_iff,
+  rw [VonFintelIatridou2005.haveTo, conditionalNecessity_bot_iff, necessity_iff, necessity_iff,
     bestWorlds_bot, bestWorlds_eq_accessibleWorlds_sup (hf ▸ h), hf]
 
 /-! ### Double-modal structure -/
@@ -169,9 +172,10 @@ theorem single_modal_strengthening {f g : Background W} {α β γ : W → Prop}
     ∀ u ∈ bestWorlds (f.restrict α) g w, ¬ β u := by
   intro u hu hβ
   have hu' := Background.mem_accessibleWorlds_restrict.1 hu.1
-  exact h₂ u (mem_bestWorlds_of_subset
+  exact necessity_of_conditionalNecessity h₂ u (mem_bestWorlds_of_subset
     (fun v hv ↦ Background.accessibleWorlds_restrict_mono (fun _ h ↦ h.1) hv)
-    hu (Background.mem_accessibleWorlds_restrict.2 ⟨hu'.1, hu'.2, hβ⟩)) (h₁ u hu)
+    hu (Background.mem_accessibleWorlds_restrict.2 ⟨hu'.1, hu'.2, hβ⟩))
+    (necessity_of_conditionalNecessity h₁ u hu)
 
 /-! ### The analysis -/
 
@@ -213,10 +217,11 @@ theorem not_want_of_mem_restricted {f : Background W} (hC : ∀ w, (P a w).Consi
 /-- Under consistency (66), the conditional (88) holds iff its paraphrase (89) does, and compatible
 goals such as comfort in (92) remain. -/
 theorem conditionalNecessity_orderingSource_iff {f₁ g₁ f₂ : Background W} {α : W → Prop}
-    (hC : ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, (P a v).Consistent (f₂.accessibleWorlds v)) :
+    (hC : ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, (P a v).Consistent (f₂.accessibleWorlds v))
+    (hlim : LimitAssumption (f₁.restrict α) g₁ w) :
     conditionalNecessity f₁ g₁ α (necessity f₂ (orderingSource P a) (· ∈ q)) w ↔
       ∀ v ∈ bestWorlds (f₁.restrict α) g₁ w, f₂.accessibleWorlds v ∩ ⋂₀ (P a v).maxElts ⊆ q := by
-  simp only [conditionalNecessity, necessity_iff]
+  simp only [conditionalNecessity_iff_necessity hlim, necessity_iff]
   refine forall₂_congr fun v hv ↦ ?_
   rw [bestWorlds_orderingSource (hC v hv)]
   rfl
@@ -331,7 +336,7 @@ private theorem anankastic_dest {d t : Set World}
     (hd : ∀ u : World, u.harlemTrain = .aTrain → (u ∈ d ↔ u ∈ t)) :
     conditionalNecessity fBelS ⊥ (Want ep () d) (necessity fHist (orderingSource ep ()) (· ∈ t))
       w := by
-  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_ep v).2
+  refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_ep v) (.bot _ _)).2
     fun v hv u ⟨hu, hdu⟩ ↦ ?_
   have hv' := Background.mem_accessibleWorlds_restrict.1 hv.1
   exact (hd u ((mem_fHist.1 hu).2.trans (mem_fBelS.1 hv'.1))).1 (hdu d hv'.2)
@@ -353,7 +358,7 @@ every world (§2.3). -/
 theorem not_possibility_path :
     ¬ conditionalNecessity fBelS ⊥ (Want ep () harlem)
       (possibility fHist (orderingSource ep ()) (· ∈ path)) w := fun h ↦ by
-  obtain ⟨u, hu, hpath⟩ := h ⟨.harlem, .aTrain, .aTrain⟩
+  obtain ⟨u, hu, hpath⟩ := necessity_of_conditionalNecessity h ⟨.harlem, .aTrain, .aTrain⟩
     (mem_bestWorlds_fBelS rfl ⟨rfl, fun _ _ h ↦ h⟩)
   rw [mem_bestAccessible, bestWorlds_fHist] at hu
   have := (mem_fHist.1 hu.1).2
@@ -364,7 +369,8 @@ theorem not_possibility_path :
 theorem not_anankastic_desire :
     ¬ conditionalNecessity fBelS ⊥ (Want desire () harlem)
       (necessity fHist (orderingSource ep ()) (· ∈ aTrain)) w₀ := fun h ↦
-  nomatch h w₀ (mem_bestWorlds_fBelS rfl ⟨.inl rfl, fun _ _ h ↦ h⟩) w₀
+  nomatch necessity_of_conditionalNecessity h w₀
+    (mem_bestWorlds_fBelS rfl ⟨.inl rfl, fun _ _ h ↦ h⟩) w₀
     (by rw [mem_bestAccessible, bestWorlds_fHist]; exact ⟨mem_fHist.2 ⟨rfl, rfl⟩, nofun⟩)
 
 private theorem w₀_mem_bestWorlds : w₀ ∈ bestWorlds fBelS (orderingSource ep ()) w₀ := by
@@ -479,7 +485,8 @@ Chinese train. -/
 theorem haveTo_chinese_comfortFirst :
     conditionalNecessity ⊥ ⊥ (Want comfortFirst () vladivostok)
       (necessity ⊥ (orderingSource comfortFirst ()) (· ∈ takeChinese)) w := by
-  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_comfortFirst v).2
+  refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_comfortFirst v)
+    (.bot _ _)).2
     fun _ _ u ⟨_, hu⟩ ↦ ?_
   rw [maxElts_comfortFirst] at hu
   have h₁ : u ∈ vladivostok := hu _ ⟨.inl rfl, vladivostok_ne_cheap⟩
@@ -490,7 +497,7 @@ theorem haveTo_chinese_comfortFirst :
 theorem haveTo_russian_costFirst :
     conditionalNecessity ⊥ ⊥ (Want costFirst () vladivostok)
       (necessity ⊥ (orderingSource costFirst ()) (· ∈ takeRussian)) w := by
-  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_costFirst v).2
+  refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_costFirst v) (.bot _ _)).2
     fun _ _ u ⟨_, hu⟩ ↦ ?_
   rw [maxElts_costFirst] at hu
   have h₁ : u ∈ vladivostok := hu _ ⟨.inl rfl, vladivostok_ne_comfort⟩
@@ -505,7 +512,8 @@ theorem not_haveTo_chinese_costFirst :
   have hw : Want costFirst () vladivostok w := by
     rw [Want, maxElts_costFirst]
     exact ⟨.inl rfl, vladivostok_ne_comfort⟩
-  have := (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_costFirst v).1 h w
+  have := (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_costFirst v)
+    (.bot _ _)).1 h w
     (mem_bestWorlds_bot_restrict hw) ⟨by simp, maxElts_costFirst (w := w) ▸ russian_mem⟩
   exact nomatch this
 
@@ -559,8 +567,8 @@ def strong (_ : Unit) (_ : World) : PreferenceStructure World := .single travel
 theorem should_vaccine :
     conditionalNecessity ⊥ ⊥ (Want ep () travel)
       (necessity ⊥ (orderingSource ep ()) (· ∈ vaccinated)) w := by
-  refine (conditionalNecessity_orderingSource_iff fun _ _ ↦
-    PreferenceStructure.consistent_discrete ⟨⟨.go, .vaccine⟩, by simp, ?_⟩).2
+  refine (conditionalNecessity_orderingSource_iff (fun _ _ ↦
+    PreferenceStructure.consistent_discrete ⟨⟨.go, .vaccine⟩, by simp, ?_⟩) (.bot _ _)).2
       fun _ _ u ⟨_, hu⟩ ↦ ?_
   · rintro _ (rfl | rfl)
     exacts [rfl, fun _ ↦ rfl]
@@ -570,7 +578,8 @@ theorem should_vaccine :
 theorem not_should_vaccine_strong :
     ¬ conditionalNecessity ⊥ ⊥ (Want strong () travel)
       (necessity ⊥ (orderingSource strong ()) (· ∈ vaccinated)) w := fun h ↦
-  nomatch h w (mem_bestWorlds_bot_restrict (α := Want strong () travel) ⟨rfl, fun _ _ h ↦ h⟩)
+  nomatch necessity_of_conditionalNecessity h w
+    (mem_bestWorlds_bot_restrict (α := Want strong () travel) ⟨rfl, fun _ _ h ↦ h⟩)
     ⟨.go, .none⟩
     (by
       rw [mem_bestAccessible, bestWorlds_orderingSource
@@ -593,12 +602,12 @@ namespace AirportScenario
 /-- Whether there is repair work on the tracks. -/
 inductive Tracks
   | clear | repairs
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- How the addressee gets to the airport. -/
 inductive Way
   | train | ride | stay
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 /-- A world records the state of the tracks and the way the addressee goes. -/
 structure World where
@@ -606,7 +615,7 @@ structure World where
   tracks : Tracks
   /-- The way the addressee goes. -/
   way : Way
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
 variable {w : World}
 
@@ -649,7 +658,7 @@ by noon. -/
 theorem should_train :
     conditionalNecessity ⊥ gNorm (Want ep () noon)
       (necessity fHist (orderingSource ep ()) (· ∈ byTrain)) w := by
-  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_ep v).2
+  refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_ep v) (.of_finite _ _ _)).2
     fun v hv u ⟨hu, hn⟩ ↦ ?_
   have hc : ((((⊥ : Background World).restrict (Want ep () noon)) ⊔ gNorm).accessibleWorlds
       w).Nonempty := by
@@ -667,7 +676,7 @@ theorem should_train :
 theorem should_ride :
     conditionalNecessity ⊥ gNorm (fun v ↦ Want ep () noon v ∧ v ∈ repairs)
       (necessity fHist (orderingSource ep ()) (· ∈ byRide)) w := by
-  refine (conditionalNecessity_orderingSource_iff fun v _ ↦ consistent_ep v).2
+  refine (conditionalNecessity_orderingSource_iff (fun v _ ↦ consistent_ep v) (.of_finite _ _ _)).2
     fun v hv u ⟨hu, hn⟩ ↦ ?_
   have hvr : v.tracks = .repairs := (Background.mem_accessibleWorlds_restrict.1 hv.1).2.2
   rcases hn noon ⟨rfl, fun _ _ h ↦ h⟩ with h | ⟨-, h⟩
@@ -681,7 +690,8 @@ theorem not_single_modal :
       conditionalNecessity ⊥ (orderingSource ep ()) (fun v ↦ Want ep () noon v ∧ v ∈ repairs)
         (· ∈ byRide) w) := fun ⟨h₁, h₂⟩ ↦ by
   refine single_modal_strengthening h₁
-    (necessity_mono (fun _ hr ht ↦ nomatch hr.symm.trans ht) h₂) ⟨.repairs, .ride⟩ ?_ rfl
+    (OrderingSemantics.IsNecessity.mono h₂ fun _ hr ht ↦ nomatch hr.symm.trans ht)
+    ⟨.repairs, .ride⟩ ?_ rfl
   rw [bestWorlds_orderingSource
     (PreferenceStructure.consistent_single ⟨⟨.repairs, .ride⟩, .inl rfl,
       Background.mem_accessibleWorlds_restrict.2 ⟨by simp, rfl, fun _ _ h ↦ h⟩⟩)]

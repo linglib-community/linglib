@@ -164,6 +164,10 @@ theorem LimitAssumption.of_finite [Finite W] (f g : Background W) (w : W) :
     LimitAssumption f g w := fun _ hu ↦
   Preorder.exists_le_mem_minimals (letI := premisePreorder (g w); wellFounded_lt) hu
 
+/-- An empty ordering source satisfies the Limit Assumption, every accessible world being best. -/
+theorem LimitAssumption.bot (f : Background W) (w : W) : LimitAssumption f ⊥ w :=
+  fun u hu ↦ ⟨u, (bestWorlds_bot f w).symm ▸ hu, (premisePreorder ((⊥ : Background W) w)).le_refl u⟩
+
 theorem humanNecessity_of_necessity {f g : Background W} {p : W → Prop}
     {w : W} (hlim : LimitAssumption f g w) (h : necessity f g p w) :
     humanNecessity f g p w :=
