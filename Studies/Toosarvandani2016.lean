@@ -10,11 +10,12 @@ public import Linglib.Syntax.Clause.Chaining
 Northern Paiute chains clauses by asyndetic coordination: a marked clause carries the simultaneous
 suffix *-na* or the sequential suffix *-si*, relative tenses placing its reference time around its
 evaluation time (38) or before it (46), and the coordinator binds that evaluation time to the
-reference time of the unmarked clause (§4). Aspect places a reference time within a nonfinal
-subpart of the event time (35) or around it (36), and *-na* selects the imperfective (40). A
-sequential chain of perfectives thus holds just in case the marked event precedes the unmarked one
-(59), and a simultaneous chain of imperfectives just in case the two overlap (57); linear order
-plays no part (§4.2), and two sequential marked clauses are not ordered at all (§4.3).
+reference time of the unmarked clause (§4). The progressive places a reference time within a
+nonfinal subpart of the event time (35) and the perfective around it (36), and *-na* selects the
+imperfective, which in a marked clause is the progressive (40). A sequential chain of perfectives
+thus holds just in case the marked event precedes the unmarked one (59), and a simultaneous chain
+of progressives just in case the two overlap (57); linear order plays no part (§4.2), and two
+sequential marked clauses are not ordered at all (§4.3).
 
 ## Main statements
 
@@ -22,7 +23,7 @@ plays no part (§4.2), and two sequential marked clauses are not ordered at all 
 * `exists_holds_iff`, `mem_eventRel_iff`: a chain with one marked clause holds for some reference
   times exactly when its events satisfy the truth condition of its suffix and aspects.
 * `sequential_iff`, `simultaneous_iff`: a sequential chain of perfectives holds just in case its
-  marked event precedes its unmarked one, and a simultaneous chain of imperfectives just in case
+  marked event precedes its unmarked one, and a simultaneous chain of progressives just in case
   they overlap.
 * `sequential_unordered`: any two times precede a common later one.
 * `rows_agree`: the verdicts of (39), (47), (66) and (71) in their contexts.
@@ -31,7 +32,8 @@ plays no part (§4.2), and two sequential marked clauses are not ordered at all 
 
 The suffixes are a `MedialForm` whose timing is their relative tense, each marked clause evaluated
 against the unmarked clause rather than the next one. The aspects are `Aspect.Perfectivity`, the
-imperfective with the meaning of (35) and (41), which the unmarked imperfective of (39) shares. The
+opposition the simultaneous suffix selects on, and the imperfective has the progressive's meaning,
+overt (35) or null (41), which the unmarked clause of (39), glossed IPFV, is taken to share. The
 contexts are configurations of run times on the natural numbers; the truth conditions compare
 endpoints, so they hold there as on any dense copy. Narrative progression (§5) is not formalized.
 
@@ -51,7 +53,8 @@ open scoped SetRel
 /-! ### Aspect and relative tense -/
 
 /-- The cell of an aspect, the reference time first: within a nonfinal subpart of the event time
-for the imperfective (35), around it for the perfective (36). -/
+for the imperfective, whose meaning is the progressive's (35), (41), and around it for the
+perfective (36). -/
 def cell : Perfectivity → Finset Allen.Relation
   | .imperfective => Allen.le \ Allen.finalSubinterval
   | .perfective => Aspect.ViewpointType.perfective.cell
@@ -273,7 +276,7 @@ theorem sequential_iff :
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e).Precedes (τ e') := by
   simp only [exists_holds_iff, mem_eventRel_iff, TruthCondition]
 
-/-- A simultaneous chain of imperfectives holds just in case the two events, neither a point,
+/-- A simultaneous chain of progressives holds just in case the two events, neither a point,
 overlap in more than a point (57). -/
 theorem simultaneous_iff :
     (∃ t₁ t : NonemptyInterval T, Holds [(⟨.sim, .imperfective, P⟩, t₁)] .imperfective Q w t) ↔
