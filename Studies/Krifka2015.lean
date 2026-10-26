@@ -3,7 +3,6 @@ module
 public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Discourse.Commitment.Space
 public import Linglib.Discourse.Commitment.Table
-public import Linglib.Discourse.QUD.Issue
 public import Linglib.Discourse.Role
 public import Studies.BuringGunlogson2000
 
@@ -358,8 +357,6 @@ entails, or inside what the root entails when the space has no continuations. -/
 noncomputable def toIssue : Question W :=
   if continuations C = ∅ then Question.ofSet (⋂₀ C.root)
   else ⨆ c ∈ continuations C, Question.ofSet (⋂₀ c)
-
-noncomputable instance : Discourse.HasIssue (Space (Set (Set W))) W := ⟨toIssue⟩
 
 theorem mem_toIssue_iff {i : Set W} :
     i ∈ toIssue C ↔

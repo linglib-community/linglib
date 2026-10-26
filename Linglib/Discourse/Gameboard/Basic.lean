@@ -1,8 +1,6 @@
 module
 
 public import Linglib.Discourse.Gameboard.Defs
-public import Linglib.Discourse.QUD.Issue
-public import Mathlib.Order.Filter.Finite
 
 /-!
 # Dialogue gameboard operations
@@ -18,10 +16,6 @@ some of an utterance's contextual parameters, and the utterances it produces are
 contextual extensions. Utterance Interpolation accommodates a question as MaxQUD and records a move
 co-propositional with it, and a Clarification Context Update Rule does so for a question built from
 a constituent of the maximal pending utterance, with the turn kept or passed on.
-
-A gameboard whose facts have common grounds has the meet of them as its common ground, and adding
-a fact is Stalnakerian assertion of it; a gameboard whose questions have issues has the issue of
-MaxQUD.
 
 ## Main definitions
 
@@ -40,7 +34,6 @@ MaxQUD.
 * `Discourse.Gameboard.downdateQud_eq_self_iff`, `Discourse.Gameboard.nonResolveCond_pushQud_iff`.
 * `Discourse.Gameboard.sublist_qud_downdateQud_iff`: the downdate of (44) is the largest of the
   downdates Appendix B allows.
-* `Discourse.Gameboard.commonGround_addFact`: adding a fact meets the common ground with it.
 * `Discourse.Gameboard.clarify_eq_some_iff`.
 
 ## Implementation notes
@@ -296,43 +289,6 @@ theorem qud_clarify (h : d.clarify C t i u m = some d') :
   exact ⟨v, hv, hu, by cases t <;> rfl⟩
 
 end Interpolation
-
-section CommonGround
-
-variable {W : Type*} [HasCommonGround D.Fact W]
-
-/-- FACTS is the common ground ([ginzburg-2012] (55) p. 90), a set of facts rather than their
-conjunction (p. 67), so the common ground of a gameboard is the meet of its facts'. -/
-instance : HasCommonGround (Gameboard D) W where
-  commonGround d := ⨅ p ∈ d.facts, commonGround p
-
-/-- Adding a fact to FACTS meets the common ground with the fact's, Stalnakerian assertion when
-facts are sets of worlds. -/
-theorem commonGround_addFact (p : D.Fact) :
-    commonGround (d.addFact p) = commonGround p ⊓ commonGround d :=
-  Finset.iInf_insert p d.facts _
-
-end CommonGround
-
-section Issue
-
-variable {W : Type*} [HasIssue D.Question W]
-
-/-- The issue of a gameboard is that of MaxQUD ([ginzburg-2012] §4.3.3 p. 68), and the trivial
-issue when QUD is empty. -/
-instance : HasIssue (Gameboard D) W where
-  toIssue d := (d.maxQud.map HasIssue.toIssue).getD ⊤
-
-@[simp] theorem toIssue_pushQud (i : InformationStructure D.toGrammaticalDomain D.Question) :
-    HasIssue.toIssue (d.pushQud i) = HasIssue.toIssue i.question := rfl
-
-@[simp] theorem toIssue_addFact (p : D.Fact) :
-    HasIssue.toIssue (d.addFact p) = HasIssue.toIssue d := rfl
-
-@[simp] theorem toIssue_initial (s a : D.Participant) (cg : Finset D.Fact) :
-    HasIssue.toIssue (initial s a cg) = ⊤ := rfl
-
-end Issue
 
 end Gameboard
 

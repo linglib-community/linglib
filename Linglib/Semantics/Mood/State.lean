@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Discourse.QUD.Issue
+public import Linglib.Discourse.CommonGround
 public import Linglib.Semantics.Dynamic.Expectation
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Questions.Partition.Inquisitive
@@ -176,12 +176,6 @@ theorem le_inquire_iff (c : State W) (q : Setoid W) :
   ⟨fun h ↦ h.2.trans inf_le_right, fun h ↦ ⟨le_rfl, le_inf le_rfl h⟩⟩
 
 /-! ### Discourse projections -/
-
-/-- The inquiry partition, read as an issue. -/
-instance : Discourse.HasIssue (State W) W := ⟨fun c ↦ Question.fromSetoid c.inquiry⟩
-
-@[simp] theorem toIssue_eq (c : State W) :
-    Discourse.HasIssue.toIssue c = Question.fromSetoid c.inquiry := rfl
 
 /-- The context set is the common ground, and `assert` is Stalnakerian on it. -/
 instance : HasAssertion (State W) W where
