@@ -27,7 +27,7 @@ p. 54).
   position classes.
 * `Adposition.Takes`, `IsIntransitive`, `IsTransitive`, `IsParticle`: valence.
 * `Adposition.IsSimple`, `form`, `toWord`: the exponent.
-* `Adposition.kinds`, `IsSpatial`: the types of case among the values marked.
+* `Adposition.IsSpatial`: an adposition marking a spatial value.
 
 ## Main results
 
@@ -177,22 +177,16 @@ instance : Decidable a.IsTransitive := inferInstanceAs (Decidable (∃ c, a.Take
 instance : Decidable a.IsParticle := inferInstanceAs (Decidable (∀ c ∈ a.complements, c = none))
 
 theorem isParticle_iff : a.IsParticle ↔ ¬ a.IsTransitive := by
-  refine ⟨fun h ⟨c, hc⟩ ↦ Option.some_ne_none c (h _ hc), fun h c hc ↦ ?_⟩
-  cases c with
-  | none => rfl
-  | some c => exact absurd ⟨c, hc⟩ h
+  simp [IsParticle, IsTransitive, Takes, Option.forall]
 
 /-! ### The values marked -/
 
-/-- The types of case among the values the adposition marks. -/
-def kinds : Finset Case.Kind := a.functions.image Case.kind
-
 /-- A spatial adposition marks a spatial value. -/
-def IsSpatial : Prop := .spatial ∈ a.kinds
+def IsSpatial : Prop := ∃ c ∈ a.functions, c.kind = .spatial
 
-instance : Decidable a.IsSpatial := inferInstanceAs (Decidable (_ ∈ _))
+instance : Decidable a.IsSpatial := inferInstanceAs (Decidable (∃ c ∈ a.functions, _))
 
 theorem isSpatial_iff : a.IsSpatial ↔ ∃ c ∈ a.functions, c.dirOf.isSome := by
-  simp [IsSpatial, kinds, Case.kind_eq_spatial_iff]
+  simp [IsSpatial, Case.kind_eq_spatial_iff]
 
 end Adposition

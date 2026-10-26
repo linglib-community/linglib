@@ -21,7 +21,9 @@ but *af* 'off' is also a preposition, and the complement of a non-spatial prepos
 
 ## Main results
 
-* `Dutch.Adpositions.direction_post_ne_place`: every postpositional use denotes a path.
+* `Dutch.Adpositions.isSpatial_iff_exists_direction`: the entries with a spatial use are the
+  spatial ones.
+* `Dutch.Adpositions.exists_direction_post_ne_place`: every postpositional use denotes a path.
 * `Dutch.Adpositions.pre_of_post`: every postposition but *af* is also a preposition.
 * `Dutch.Adpositions.not_isSpatial_of_not_rPronoun`: the adpositions that resist
   R-pronominalization are non-spatial.
@@ -39,8 +41,9 @@ but *af* 'off' is also a preposition, and the complement of a non-spatial prepos
   point or a point on the path. The directional prepositions are the eight the grammar tests
   against verbs of location; *door* 'through', which the grammar marks as both, is recorded as
   locational, and *over* is two entries as in the grammar. The direction of a postpositional
-  use is read off the grammar's gloss.
-* A circumposition is an entry with a complex form and the circumpositional position, recorded
+  use is read off the grammar's gloss. A position with no spatial use, as that of *na* 'after',
+  has no direction.
+* A circumposition is an entry with a compound form and the circumpositional position, recorded
   with the direction of its directional use, since the grammar suspects that the locational
   uses of the circumpositions that have one are prepositional phrases with a particle.
 * An entry used with its complement omitted records `none` among its complements, and one
@@ -62,10 +65,10 @@ namespace Dutch
 the direction of the path a spatial use there denotes, and with whether its complement can be
 R-pronominalized. -/
 structure Adposition extends _root_.Adposition where
-  /-- `direction l` is `.place` when a use in position `l` is locational and `.goal`, `.source`
-  or `.route` when it denotes a path whose endpoint, starting point or interior is the
-  reference object; a position the entry does not take is `.place`. -/
-  direction : _root_.Adposition.Linearization → Spatial.Path.Direction := fun _ ↦ .place
+  /-- `direction l` is `.place` when the use in position `l` is locational and `.goal`, `.source`
+  or `.route` when it denotes a path whose endpoint, starting point or interior is the reference
+  object; it is `none` when the entry has no spatial use in `l` or does not take `l`. -/
+  direction : _root_.Adposition.Linearization → Option Spatial.Path.Direction := fun _ ↦ none
   /-- The complement can be replaced by an R-word, as *met de pop* 'with the doll' beside *er
   ... mee* 'with it'. -/
   rPronoun : Bool := true
@@ -80,28 +83,36 @@ def Adposition.marks (a : Adposition) (c : Case) : Adposition :=
 
 namespace Adpositions
 
-/-- `preposition form functions` is the preposition over a noun phrase marking `functions`,
-by default a locational one. -/
-def preposition (form : String) (functions : Finset Case := {.loc}) : Adposition :=
+/-- `preposition form functions` is the preposition over a noun phrase marking `functions`, with
+no spatial use. -/
+def preposition (form : String) (functions : Finset Case) : Adposition :=
   { morphs := [.free form], linearization := {.pre}, functions, complements := {some .np} }
 
-/-- `directional form d` is the preposition over a noun phrase denoting a path in direction
-`d`. -/
-def directional (form : String) (d : Spatial.Path.Direction) : Adposition :=
-  { preposition form {Case.ofDir d} with direction := fun _ ↦ d }
+/-- `locational form` is the locational preposition over a noun phrase. -/
+def locational (form : String) : Adposition :=
+  { preposition form {Case.ofDir .place} with
+    direction := fun | .pre => some .place | _ => none }
+
+/-- `directional form d ls` is the adposition over a noun phrase denoting a path in direction `d`
+in each of the positions `ls`, by default a preposition. -/
+def directional (form : String) (d : Spatial.Path.Direction)
+    (ls : Finset _root_.Adposition.Linearization := {.pre}) : Adposition :=
+  { preposition form {Case.ofDir d} with
+    linearization := ls, direction := fun l ↦ if l ∈ ls then some d else none }
 
 /-- `ambipositional form d` is the spatial adposition over a noun phrase that is locational
 before its complement and denotes a path in direction `d` after it. -/
 def ambipositional (form : String) (d : Spatial.Path.Direction) : Adposition :=
-  { preposition form {.loc, Case.ofDir d} with
-    linearization := {.pre, .post}, direction := fun | .post => d | _ => .place }
+  { preposition form {Case.ofDir .place, Case.ofDir d} with
+    linearization := {.pre, .post},
+    direction := fun | .pre => some .place | .post => some d | _ => none }
 
 /-- `circumposition first second d` is the circumposition *first … second* over a noun phrase,
 denoting a path in direction `d`, or locational when `d` is `.place`. -/
 def circumposition (first second : String) (d : Spatial.Path.Direction) : Adposition :=
   { morphs := [.free first, .free second], linearization := {.circum},
     functions := {Case.ofDir d}, complements := {some .np},
-    direction := fun | .circum => d | _ => .place }
+    direction := fun | .circum => some d | _ => none }
 
 
 /-! ### Spatial adpositions
@@ -116,20 +127,20 @@ the path. -/
 
 /-- *aan* 'on' is a locational preposition, also used without its complement, *Jan doet een jas
 aan* 'Jan puts on a coat', and the second part of *achter … aan* and *tegen … aan*. -/
-def aan : Adposition := (preposition "aan").bare
+def aan : Adposition := (locational "aan").bare
 
 /-- *achter* 'behind' is a deictic locational preposition, *Jan staat achter de auto* 'Jan
 stands behind the car', and the particle of *achter blijven* 'lag behind'. -/
-def achter : Adposition := (preposition "achter").bare
+def achter : Adposition := (locational "achter").bare
 
 /-- *beneden* 'below' is a locational preposition, *Jan bevindt zich beneden de grote rivieren*
 'Jan is south of the big rivers', and is used without its complement, *de kamer beneden* 'the
 room downstairs'. -/
-def beneden : Adposition := (preposition "beneden").bare
+def beneden : Adposition := (locational "beneden").bare
 
 /-- *bij* 'near' is a locational preposition, also used without its complement, *het
 postkantoor is dicht bij* 'the post office is close by'. -/
-def bij : Adposition := (preposition "bij").bare
+def bij : Adposition := (locational "bij").bare
 
 /-- *binnen* 'inside' is locational before its complement and denotes a goal path after it,
 *het huis binnen* 'into the house', and is the particle of *binnen komen* 'come in'. -/
@@ -137,11 +148,11 @@ def binnen : Adposition := (ambipositional "binnen" .goal).bare
 
 /-- *boven* 'above' is a locational preposition, *de lamp hangt boven de kast* 'the lamp hangs
 above the cupboard', and the particle of *boven komen* 'come to the surface'. -/
-def boven : Adposition := (preposition "boven").bare
+def boven : Adposition := (locational "boven").bare
 
 /-- *buiten* 'outside' is a locational preposition and the particle of *buiten komen* 'get
 outside'. -/
-def buiten : Adposition := (preposition "buiten").bare
+def buiten : Adposition := (locational "buiten").bare
 
 /-- *door* 'through' is locational before its complement, where the grammar marks it directional
 as well, and denotes a route after it, *het hek door* 'through the gate' and the temporal *het
@@ -167,7 +178,7 @@ is driving to Groningen', and is the first part of *naar … toe*. -/
 def naar : Adposition := directional "naar" .goal
 
 /-- *naast* 'next to' is a deictic locational preposition. -/
-def naast : Adposition := preposition "naast"
+def naast : Adposition := locational "naast"
 
 /-- *om* 'around' is locational before its complement, *de mannen zitten om de tafel* 'the men
 sit around the table', denotes a route after it, *de hoek om* 'around the corner', and is used
@@ -177,7 +188,7 @@ def om : Adposition := ((ambipositional "om" .route).marks .tem).bare
 
 /-- *onder* 'under' is a locational preposition, *de bal ligt onder de kast* 'the ball lies
 under the cupboard', and the first part of *onder … door*. -/
-def onder : Adposition := preposition "onder"
+def onder : Adposition := locational "onder"
 
 /-- *op* 'on' is locational before its complement and denotes a goal path after it, *op de berg*
 'on the mountain' against *de berg op* 'up the mountain', and is used without its complement,
@@ -186,10 +197,10 @@ def op : Adposition := ((ambipositional "op" .goal).marks .tem).bare
 
 /-- *over* 'across', the grammar's first *over*, denotes a route before its complement and
 after it, *het grasveld over* 'across the lawn', and is the first part of *over … heen*. -/
-def over₁ : Adposition := { directional "over" .route with linearization := {.pre, .post} }
+def over₁ : Adposition := directional "over" .route {.pre, .post}
 
 /-- *over* 'over', the grammar's second *over*, is a locational preposition. -/
-def over₂ : Adposition := preposition "over"
+def over₂ : Adposition := locational "over"
 
 /-- *rond* 'around' is locational before its complement, *de kaarsen staan rond de kerststal*
 'the candles stand around the crib', and denotes a route after it, *het plein rond* 'around
@@ -199,10 +210,10 @@ def rond : Adposition := ambipositional "rond" .route
 /-- *tegen* 'against' is a locational preposition, *de ladder ligt tegen de muur* 'the ladder
 lies against the wall', also temporal, 'towards', and the first part of *tegen … aan*, *tegen
 … in* and *tegen … op*. -/
-def tegen : Adposition := (preposition "tegen").marks .tem
+def tegen : Adposition := (locational "tegen").marks .tem
 
 /-- *tegenover* 'opposite' is a locational preposition. -/
-def tegenover : Adposition := preposition "tegenover"
+def tegenover : Adposition := locational "tegenover"
 
 /-- *tot* 'until, as far as' denotes a path on which its complement is a point, the endpoint of
 a part of the path, also temporally, and takes an adpositional phrase as well as a noun
@@ -213,7 +224,7 @@ def tot : Adposition :=
 /-- *tussen* 'between' is a locational preposition, *de lamp staat tussen twee vazen* 'the
 lamp stands between two vases', also temporal, and the first part of *tussen … in* and
 *tussen … door*. -/
-def tussen : Adposition := (preposition "tussen").marks .tem
+def tussen : Adposition := (locational "tussen").marks .tem
 
 /-- *uit* 'out of' is locational before its complement in the grammar's classification and
 denotes a source path after it, *de auto uit* 'out of the car' and the temporal *dag in dag
@@ -242,21 +253,17 @@ koekjes zijn voor jou* 'the biscuits are for you', it takes an adpositional phra
 het eten* 'for after dinner', and an adjective phrase, *voor hoe lang* 'for how long', and it
 takes a finite clause in *voordat* 'before'. -/
 def voor : Adposition :=
-  { preposition "voor" {.loc, .tem, .ben} with
+  { ((locational "voor").marks .tem).marks .ben with
     complements := {some .np, some .pp, some .ap, some .clause} }
 
 /-- *voorbij* 'past' denotes a path on which its complement lies, before its complement and
 after it, *het huis voorbij* 'past the house'. -/
-def voorbij : Adposition :=
-  { directional "voorbij" .route with linearization := {.pre, .post} }
+def voorbij : Adposition := directional "voorbij" .route {.pre, .post}
 
 /-- *af* 'off' is the one postposition that is not also a preposition, denoting a source path,
 *de berg af* 'down the mountain'; it is used without its complement, *Jan zet zijn hoed af*
 'Jan takes his hat off', and is the second part of *van … af* and *op … af*. -/
-def af : Adposition :=
-  ({ preposition "af" {.abl} with
-    linearization := {.post}, direction := fun | .post => .source | _ => .place } :
-    Adposition).bare
+def af : Adposition := (directional "af" .source {.post}).bare
 
 /-- *heen* is a particle and the second part of *over … heen* and its kin, and is not an
 adposition on its own. -/
@@ -349,9 +356,20 @@ def inventory : List Adposition :=
    vanAf, onderDoor, tussenDoor, overHeen, doorHeen, omHeen, naarToe, tussenIn,
    na, tijdens, met, zonder, dankzij, namens, ondanks, ongeacht, vanwege, volgens, wegens]
 
+/-- A direction is recorded only at a position the entry takes, and the case that expresses it is
+among the values the entry marks. -/
+theorem mem_of_mem_direction : ∀ a ∈ inventory, ∀ l, ∀ d ∈ a.direction l,
+    l ∈ a.linearization ∧ Case.ofDir d ∈ a.functions := by
+  decide
+
+/-- The entries with a spatial use are the spatial ones. -/
+theorem isSpatial_iff_exists_direction :
+    ∀ a ∈ inventory, a.IsSpatial ↔ ∃ l, (a.direction l).isSome := by
+  decide
+
 /-- Every postpositional use denotes a path. -/
-theorem direction_post_ne_place :
-    ∀ a ∈ inventory, a.IsPostposition → a.direction .post ≠ .place := by
+theorem exists_direction_post_ne_place :
+    ∀ a ∈ inventory, a.IsPostposition → ∃ d ∈ a.direction .post, d ≠ .place := by
   decide
 
 /-- Every postposition but *af* is also a preposition. -/
