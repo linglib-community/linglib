@@ -227,7 +227,8 @@ theorem range_linearization :
 
 /-! ### Extraction -/
 
-theorem extractable_nominal_iff (d : Spatial.Path.Direction) : Extractable .nominal d ↔ d ≠ .place :=
+theorem extractable_nominal_iff (d : Spatial.Path.Direction) :
+    Extractable .nominal d ↔ d ≠ .place :=
   extractable_iff_raises
 
 theorem extractable_rPronoun (d : Spatial.Path.Direction) : Extractable .rPronoun d :=
@@ -271,8 +272,9 @@ theorem pointLocative_not_postP :
 derived from the path that use denotes. -/
 theorem linearization_direction_post :
     ∀ a ∈ inventory, a.IsPostposition →
-      linearization (some .nominal) (a.direction .post) = some .post :=
-  fun a ha h ↦ (linearization_eq_post_iff _ _).2 ⟨rfl, direction_post_ne_place a ha h⟩
+      ∃ d ∈ a.direction .post, linearization (some .nominal) d = some .post :=
+  fun a ha h ↦ (exists_direction_post_ne_place a ha h).imp fun _ ⟨hd, hne⟩ ↦
+    ⟨hd, (linearization_eq_post_iff _ _).2 ⟨rfl, hne⟩⟩
 
 /-- A circumposition is a postposition with a prepositional-phrase complement, so each
 circumposition of the grammar is a listed preposition followed by a listed postposition or
@@ -280,7 +282,7 @@ particle. -/
 theorem circumP_parts :
     ∀ a ∈ inventory, ¬ a.IsSimple →
       ∃ b ∈ inventory, ∃ c ∈ inventory, a.morphs = b.morphs ++ c.morphs ∧
-        b.IsPreposition ∧ (c.IsPostposition ∨ c.IsIntransitive) := by
+        b.IsPreposition ∧ (c.IsPostposition ∨ c.IsParticle) := by
   decide
 
 /-- Every postposition but *af* is also a preposition, so the postpositional order is derived from
@@ -295,7 +297,7 @@ theorem circumP_parts_not_preP : ¬ af.IsPreposition ∧ ¬ heen.IsPreposition :
 
 theorem postP_has_both_readings :
     ∀ a ∈ inventory, a.IsAmbiposition →
-      a.direction .pre = .place ∨ a.toAdposition = over₁.toAdposition ∨
+      a.direction .pre = some .place ∨ a.toAdposition = over₁.toAdposition ∨
         a.toAdposition = voorbij.toAdposition := by
   decide
 
@@ -320,7 +322,8 @@ theorem no_rPron_not_postP :
 
 /-! ### Directional phrases and the perfect auxiliary -/
 
-theorem op_van_paths : op.direction .post = .goal ∧ van.direction .pre = .source := ⟨rfl, rfl⟩
+theorem op_van_paths : op.direction .post = some .goal ∧ van.direction .pre = some .source :=
+  ⟨rfl, rfl⟩
 
 /-- A path complementive makes the event of a verb of motion a change of location and the verb
 unaccusative, and a location complementive leaves it unergative. -/
@@ -336,14 +339,16 @@ phrase of *op* is locational and its verb takes *hebben* 'have', and in *de fiet
 op gereden* 'the cyclist rode up the hill' the postpositional phrase denotes a goal path and its
 verb takes *zijn* 'be'. -/
 theorem perfect_op (r : PerfectAuxiliary) :
-    (verbClass (op.direction .pre)).selection r = .have ∧
-      (verbClass (op.direction .post)).selection r = .be :=
+    (op.direction .pre).map (verbClass · |>.selection r) = some .have ∧
+      (op.direction .post).map (verbClass · |>.selection r) = some .be :=
   ⟨rfl, rfl⟩
 
 /-- A postpositional phrase denotes a path and is the complementive of a verb of traversing, which
 is unaccusative and takes *zijn* 'be'. -/
 theorem postP_selects_zijn (r : PerfectAuxiliary) :
-    ∀ a ∈ inventory, .post ∈ a.linearization → (verbClass (a.direction .post)).selection r = .be :=
-  fun a ha h ↦ (selection_verbClass_eq_be_iff r _).2 (direction_post_ne_place a ha h)
+    ∀ a ∈ inventory, .post ∈ a.linearization →
+      ∃ d ∈ a.direction .post, (verbClass d).selection r = .be :=
+  fun a ha h ↦ (exists_direction_post_ne_place a ha h).imp fun _ ⟨hd, hne⟩ ↦
+    ⟨hd, (selection_verbClass_eq_be_iff r _).2 hne⟩
 
 end BroekhuisCorver2026

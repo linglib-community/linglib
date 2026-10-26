@@ -97,11 +97,12 @@ theorem met_zonder_not_spatial : ¬ met.IsSpatial ∧ ¬ zonder.IsSpatial := by
   decide
 
 /-- A point locative is one of the grammar's directional prepositions. -/
-theorem pointLocative_directional : ∀ a ∈ pointLocatives, a.direction .pre ≠ .place := by
+theorem pointLocative_directional :
+    ∀ a ∈ pointLocatives, ∃ d ∈ a.direction .pre, d ≠ .place := by
   decide
 
 /-- A narrow locative is locational before its complement. -/
-theorem narrowLocative_locational : ∀ a ∈ narrowLocatives, a.direction .pre = .place := by
+theorem narrowLocative_locational : ∀ a ∈ narrowLocatives, a.direction .pre = some .place := by
   decide
 
 /-- A point locative is a preposition only: an inherently directional adposition checks the
@@ -113,13 +114,13 @@ theorem pointLocative_linearization : ∀ a ∈ pointLocatives, a.linearization 
 the complement is read as the path and the location the preposition denotes as its endpoint,
 which is why a length modifier can measure it. -/
 theorem narrowLocative_direction_post :
-    ∀ a ∈ narrowLocatives, a.IsPostposition → a.direction .post = .goal := by
+    ∀ a ∈ narrowLocatives, a.IsPostposition → a.direction .post = some .goal := by
   decide
 
 /-- The postposition of an extended locative denotes a route or a source path, *het bos door*
 'through the woods', never a goal: the complement already extends along the path. -/
 theorem extendedLocative_direction_post :
-    ∀ a ∈ extendedLocatives, a.IsPostposition → a.direction .post ≠ .goal := by
+    ∀ a ∈ extendedLocatives, a.IsPostposition → ∃ d ∈ a.direction .post, d ≠ .goal := by
   decide
 
 /-! ### The directionality phrase -/
