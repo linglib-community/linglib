@@ -42,6 +42,8 @@ as *c'on* 'like', have the third in every series.
   first series to the second, whatever becomes of its case.
 * `Georgian.subject_case_ne_iff`: the subject changes case from the first series to the second
   exactly in the transitive and medial classes.
+* `Georgian.subject_affixes_eq_A_iff`, `Georgian.directObject_affixes_eq_A_iff`: Set A marks the
+  subject unless it is dative, and the direct object exactly when the subject is dative.
 
 ## Implementation notes
 
@@ -176,9 +178,12 @@ theorem subject_case_ne_iff (v : VerbClass) :
       v = .transitive ∨ v = .medial := by
   cases v <;> decide
 
-theorem affixes_eq_A_iff (v : VerbClass) (s : Series) :
-    ((pattern v s).subject.affixes = some .A ↔ (pattern v s).subject.case ≠ .dat) ∧
-    ((pattern v s).directObject.affixes = some .A ↔ (pattern v s).subject.case = .dat) := by
+theorem subject_affixes_eq_A_iff (v : VerbClass) (s : Series) :
+    (pattern v s).subject.affixes = some .A ↔ (pattern v s).subject.case ≠ .dat := by
+  cases v <;> cases s <;> decide
+
+theorem directObject_affixes_eq_A_iff (v : VerbClass) (s : Series) :
+    (pattern v s).directObject.affixes = some .A ↔ (pattern v s).subject.case = .dat := by
   cases v <;> cases s <;> decide
 
 end Georgian

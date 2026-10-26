@@ -1,13 +1,16 @@
 module
 
 public import Linglib.Fragments.Georgian.Case
+public import Mathlib.Order.Setoid.Basic
 
 /-!
 # Georgian noun declension
 
 The declension of Georgian nouns, after Hewitt's tables of one noun for each class of stem. A
 consonant stem, as *k'ac-i* 'man', takes seven distinct endings, and every modern plural takes the
-same endings after the plural suffix *-eb-*. Most common nouns in *-a* and *-e*, as *zġva* 'sea'
+same endings after the plural suffix *-eb-*. Many consonant stems lose a vowel by syncope in the
+genitive, the instrumental and the adverbial singular and in the modern plural, as *gutan-i*
+'plough', genitive *gutn-is(a)*. Most common nouns in *-a* and *-e*, as *zġva* 'sea'
 and *t'q'e* 'wood', lose their vowel before the genitive and the instrumental endings, and keep
 the seven cases apart too. The stems that keep their vowel, those in *-o*, *-u* and *-i*, the
 proper names in *-a* and *-e* and a few common nouns such as *mela* 'fox', have *-s(a)* in the
@@ -18,21 +21,20 @@ ending *-t(a)* in the other cases.
 
 ## Main statements
 
-* `consonant_injective`, `plural_injective`: a consonant stem and every modern plural keep the
-  seven cases apart (Hewitt pp. 33–34).
+* `consonant_injective`, `plural_injective`: a consonant stem without syncope and every modern
+  plural keep the seven cases apart (Hewitt pp. 33–34).
 * `singular_gen_eq_dat`, `singular_voc_eq_nom`: the stems that keep their vowel have the dative as
   genitive, and the proper names and the *i*-stems the nominative as vocative (pp. 38–41).
-* `injOn_singular`: the singulars keep apart every two cases other than the genitive and the
-  vocative.
+* `ker_singular_le_ker_sota`: no singular is more syncretic than a proper name's, so the only
+  syncretisms of the singular are genitive with dative and vocative with nominative.
 * `oldPlural_eq_oldPlural_iff`: the old plural has one form for the five oblique cases (p. 33).
 
 ## Implementation notes
 
 The forms are Hewitt's, in his transliteration and with his two forms of a vocative, and the
 long form of an ending is in parentheses: *-s(a)* is *-s*, or *-sa* before a monosyllable such as
-*da* 'and'. The consonant stems whose vowel syncopates, as *gutan-i* 'plough', genitive
-*gutn-is(a)*, are left out. The old plural instrumental and adverbial, which Hewitt gives in
-parentheses as rarely attested, if at all, are included.
+*da* 'and'. The old plural does not syncopate, so it takes the full stem. Its instrumental and
+adverbial, which Hewitt gives in parentheses as rarely attested, if at all, are included.
 
 ## References
 
@@ -53,8 +55,13 @@ def ending : Case → String
   | .inst => "-it(a)"
   | .adv => "-ad(a)"
 
-/-- The declension of a consonant stem, its endings after the stem. -/
-def consonant (stem : String) (c : Case) : String := stem ++ ending c
+/-- The declension of a consonant stem, its endings after the stem, or after the stem reduced by
+syncope in the genitive, the instrumental and the adverbial. -/
+def consonant (stem : String) (reduced : String := stem) : Case → String
+  | .gen => reduced ++ ending .gen
+  | .inst => reduced ++ ending .inst
+  | .adv => reduced ++ ending .adv
+  | c => stem ++ ending c
 
 /-- The modern plural, which declines the stem with the plural suffix *-eb-* as a consonant
 stem. -/
@@ -82,6 +89,30 @@ def kaci : Noun where
   singular := consonant "k'ac"
   plural := some (plural "k'ac")
   oldPlural := some (oldPlural "k'ac")
+
+/-- *gutan-i* 'plough', a consonant stem with syncope. -/
+def gutani : Noun where
+  singular := consonant "gutan" "gutn"
+  plural := some (plural "gutn")
+  oldPlural := some (oldPlural "gutan")
+
+/-- *c'el-i* 'year', a consonant stem with syncope. -/
+def celi : Noun where
+  singular := consonant "c'el" "c'l"
+  plural := some (plural "c'l")
+  oldPlural := some (oldPlural "c'el")
+
+/-- *mac'on-i* 'yoghurt', a consonant stem whose *-o-* reduces to *-v-*. -/
+def maconi : Noun where
+  singular := consonant "mac'on" "mac'vn"
+  plural := some (plural "mac'vn")
+  oldPlural := some (oldPlural "mac'on")
+
+/-- *godor-i* 'basket', a consonant stem whose *-o-* is lost. -/
+def godori : Noun where
+  singular := consonant "godor" "godr"
+  plural := some (plural "godr")
+  oldPlural := some (oldPlural "godor")
 
 /-- *zġva* 'sea', an *a*-stem, which loses its vowel in the genitive, the instrumental and the
 adverbial singular and in the modern plural. -/
@@ -143,7 +174,8 @@ def giorgi : Noun where
     | .inst => "giorgi-t(a)" | .adv => "giorgi-d(a)"
 
 /-- The nouns of Hewitt's tables. -/
-def nouns : List Noun := [kaci, zgva, sota, tqe, elene, uro, juju, taksi, giorgi]
+def nouns : List Noun :=
+  [kaci, gutani, celi, maconi, godori, zgva, sota, tqe, elene, uro, juju, taksi, giorgi]
 
 /-! ### The cases the paradigms distinguish -/
 
@@ -151,14 +183,16 @@ theorem ending_injective : Function.Injective ending := by
   decide
 
 /-- A consonant stem keeps the seven cases apart. -/
-theorem consonant_injective (stem : String) : Function.Injective (consonant stem) :=
-  fun _ _ h ↦ ending_injective ((String.append_right_inj stem).1 h)
+theorem consonant_injective (stem : String) : Function.Injective (consonant stem) := by
+  have h c : consonant stem stem c = stem ++ ending c := by cases c <;> rfl
+  exact fun c d hcd ↦ ending_injective ((String.append_right_inj stem).1 (by rwa [h, h] at hcd))
 
 /-- Every modern plural keeps the seven cases apart. -/
 theorem plural_injective (stem : String) : Function.Injective (plural stem) :=
   consonant_injective _
 
-theorem singular_injective : ∀ n ∈ [kaci, zgva, tqe], Function.Injective n.singular := by
+theorem singular_injective :
+    ∀ n ∈ [kaci, gutani, celi, maconi, godori, zgva, tqe], Function.Injective n.singular := by
   decide
 
 /-- The genitive singular is the dative in the stems that keep their vowel. -/
@@ -170,12 +204,12 @@ theorem singular_voc_eq_nom :
     ∀ n ∈ [sota, elene, taksi, giorgi], n.singular .voc = n.singular .nom := by
   decide
 
-/-- The singulars keep apart every two cases other than the genitive and the vocative. -/
-theorem injOn_singular : ∀ n ∈ nouns, Set.InjOn n.singular {.gen, .voc}ᶜ := by
-  have h : ∀ n ∈ nouns, ∀ c ∉ ({.gen, .voc} : Finset Case), ∀ d ∉ ({.gen, .voc} : Finset Case),
-      n.singular c = n.singular d → c = d := by
-    decide
-  exact fun n hn c hc d hd ↦ h n hn c (by simpa using hc) d (by simpa using hd)
+/-- No singular is more syncretic than a proper name's: the only syncretisms of the singular are
+the genitive with the dative and the vocative with the nominative. -/
+theorem ker_singular_le_ker_sota :
+    ∀ n ∈ nouns, Setoid.ker n.singular ≤ Setoid.ker sota.singular := by
+  simp only [Setoid.le_def, Setoid.ker_def]
+  decide
 
 /-- The old plural has one form for the five oblique cases, and distinct forms for the
 nominative and the vocative. -/
