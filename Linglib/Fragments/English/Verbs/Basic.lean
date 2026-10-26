@@ -174,13 +174,14 @@ def go : Verb where
   levinClasses := {LevinClass.inherentlyDirectedMotion}
   levinExcluded := {LevinClass.meander}
 
-/-- In *run into the room* a bounded goal phrase makes a verb of manner of motion directed and
-telic, while *run behind the house* leaves it as it is, and so does any path phrase *sleep*, which
-selects none. -/
-example : (run.withPath Adposition.into).direction = some .goal ∧
-    (run.withPath Adposition.into).vendlerClass = some .accomplishment ∧
-    run.withPath Adposition.behind = run.toVerb ∧ sleep.withPath Adposition.into = sleep.toVerb :=
-  ⟨rfl, rfl, rfl, rfl⟩
+/-- In *run into the room* the spatial value *into* marks, the illative, makes a verb of manner of
+motion directed and telic, while *run behind the house* leaves it as it is, and so does any path
+phrase *sleep*, which selects none. -/
+example : (∀ c ∈ Adpositions.into.functions, c.kind = .spatial →
+      (run.withPath (.ofCase c)).direction = some .goal ∧
+        (run.withPath (.ofCase c)).vendlerClass = some .accomplishment) ∧
+    run.withPath Adposition.behind = run.toVerb ∧ sleep.withPath (.ofCase .ill) = sleep.toVerb :=
+  ⟨by decide, rfl, rfl⟩
 
 /-- *Dance* says nothing of a path, *run* displaces its subject without a direction, and *arrive*
 lexicalizes a goal ([levin-hovav-1995] p. 147). -/

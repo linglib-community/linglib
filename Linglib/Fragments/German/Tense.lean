@@ -242,8 +242,8 @@ directional phrase, which it selects, while *arbeiten*, which selects none, keep
 (§12.3.2). -/
 example :
     perfectAuxiliary frieren .impersonal = .have ∧
-    perfectAuxiliary (tanzen.withPath Adposition.into) .intransitive = .be ∧
-    perfectAuxiliary (arbeiten.withPath Adposition.into) .intransitive = .have := by
+    perfectAuxiliary (tanzen.withPath (.ofCase .ill)) .intransitive = .be ∧
+    perfectAuxiliary (arbeiten.withPath (.ofCase .ill)) .intransitive = .have := by
   decide
 
 open Verbs in

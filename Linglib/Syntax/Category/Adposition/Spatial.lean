@@ -18,11 +18,13 @@ axial parts are what case morphology lacks, a flat paradigm rather than a ranked
 * `Adposition.SpatialReading`: the cartographic decomposition.
 * `Adposition.SpatialReading.direction`, `IsBounded`: the direction and boundedness of a
   reading, read off its shape.
+* `Adposition.SpatialReading.ofCase`: the reading of a case value.
 
 ## Main results
 
 * `Adposition.SpatialReading.direction_eq_place_iff`: a reading is locative exactly when it has no
   path.
+* `Adposition.SpatialReading.direction_ofCase`: a case value reads in the direction it expresses.
 
 ## References
 
@@ -83,6 +85,18 @@ theorem IsBounded.direction_ne_place (h : r.IsBounded) : r.direction ≠ .place 
   obtain ⟨s, hs, -⟩ := h
   simp_all [direction_eq_place_iff]
 
+/-- The reading of a case value, its localization and the shape of its path, with no axial
+part: the illative reads as a cofinal path into the interior. -/
+def ofCase (c : Case) : SpatialReading := { localization := c.localizationOf, shape := c.shape? }
+
+@[simp] theorem direction_ofCase (c : Case) : (ofCase c).direction = c.dirOf.getD .place := by
+  cases c <;> rfl
+
+/-- Every case value with a path reads as a bounded path, since no case expresses *towards*. -/
+theorem isBounded_ofCase_iff {c : Case} :
+    (ofCase c).IsBounded ↔ (ofCase c).direction ≠ .place := by
+  cases c <;> decide
+
 end SpatialReading
 
 /-! ### Readings -/
@@ -92,8 +106,5 @@ def behind : SpatialReading := { axPart := some .back }
 
 /-- The reading of *under* is axial (bottom) and locative. -/
 def under : SpatialReading := { axPart := some .bottom }
-
-/-- The reading of *into* is a cofinal path into the interior. -/
-def into : SpatialReading := { localization := some .interior, shape := some .cofinal }
 
 end Adposition

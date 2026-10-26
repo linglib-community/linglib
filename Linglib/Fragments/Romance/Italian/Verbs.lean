@@ -382,10 +382,10 @@ theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty
 /-- *Correre* takes *essere* with a phrase that brings it to an endpoint and *avere* with *verso*
 'towards', while *nuotare* keeps *avere* (§14.20). -/
 example :
-    perfectAuxiliary (correre.withPath Adposition.into) .intransitive = .be ∧
-    perfectAuxiliary (correre.withPath { Adposition.into with shape := some .approximative })
+    perfectAuxiliary (correre.withPath (.ofCase .ill)) .intransitive = .be ∧
+    perfectAuxiliary (correre.withPath { shape := some .approximative })
       .intransitive = .have ∧
-    perfectAuxiliary (nuotare.withPath Adposition.into) .intransitive = .have := by
+    perfectAuxiliary (nuotare.withPath (.ofCase .ill)) .intransitive = .have := by
   decide
 
 end Italian.Verbs

@@ -409,7 +409,7 @@ express the state that results; and *avoir* for the others (§811). -/
 
 /-- In *Marie a couru jusqu'à la maison* ([sorace-2000] (42b)) the directional phrase is an
 adjunct to *courir*, which it leaves as it is. -/
-example : courir.withPath Adposition.into = courir := rfl
+example : courir.withPath (.ofCase .ill) = courir := rfl
 
 /-! ### Attitude verbs
 
