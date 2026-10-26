@@ -71,8 +71,8 @@ embeddability of *you* (`Pred.embedsYou`) and into the blocking of aspect loweri
 ## Implementation notes
 
 The two projections are the binary split of Travis, MacDonald, Tsai and Sybesma; their
-heights are those of the functional sequence in `Syntax/Minimalist/Category/FunctionalSequence`,
-outer aspect at the level of T and inner aspect at the level of v, so containment is a
+heights are those of `Cat.Asp` and `Cat.InnerAsp` in the functional sequence, outer aspect at
+the level of T and inner aspect at the level of v, so containment is a
 comparison of levels. Chomsky's defective intervention is not a
 relation between heads: an embedded projection blocks association whatever its features, which
 is the paper's claim. The semicomplementizer and Exfoliation, the restitutive reading, the
@@ -105,11 +105,10 @@ inductive AspProjection where
   | inner
   deriving DecidableEq, Repr
 
-/-- The height of a projection in the functional sequence, the level of T for the outer one and
-of v for the inner one. -/
+/-- The height of a projection in the functional sequence, that of outer and of inner aspect. -/
 def AspProjection.level : AspProjection → ℕ
-  | .outer => Cat.fValue .T
-  | .inner => Cat.fValue .v
+  | .outer => Cat.fValue .Asp
+  | .inner => Cat.fValue .InnerAsp
 
 /-- Type I, the finite CP. -/
 def typeI : ComplementSize := .cP

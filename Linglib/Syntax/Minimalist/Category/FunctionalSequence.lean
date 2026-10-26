@@ -36,10 +36,11 @@ The F-values place the families on one scale, `n` with `v`, `Q` with `T`, `Num` 
 `D` with `Foc`. Rizzi's order Fin < Foc < Top < Force fixes the verbal left periphery, Borer's
 individuation before counting puts `Q` below `Num`, the Say layer of embedded speech reports
 sits between Foc and C as in Egressy, and Speas and Tenny's speech-act head closes the verbal
-sequence. Tense, negation, modality, polarity, aspect and evidentiality share the inflectional
-level; `Cartography.Head` orders the clausal heads that level collapses, some aspect heads among
-them below Voice. Prepositions form their own family, with den Dikken's Place and Path above them,
-following Chomsky's `[−V, −N]`, whereas Grimshaw places P in the nominal extended projection.
+sequence. Tense, negation, mood, modality, polarity, outer aspect and evidentiality share the
+inflectional level, inner aspect shares the level of v, and `Cartography.Head` orders the clausal
+heads these levels collapse. Prepositions form their own family, with den Dikken's Place and Path
+above them, following Chomsky's `[−V, −N]`, whereas Grimshaw places P in the nominal extended
+projection.
 
 ## References
 
@@ -68,7 +69,7 @@ inductive CatFamily
 /-- The family of a category, the extended projection it belongs to. -/
 def Cat.family : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA | .Say
-  | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid | .Nmlz => .verbal
+  | .Force | .Neg | .Mod | .Mood | .Rel | .Pol | .Asp | .InnerAsp | .Evid | .Nmlz => .verbal
   | .N | .n | .Num | .Dem | .Q | .D | .K => .nominal
   | .A | .a => .adjectival
   | .P | .Place | .Path => .adpositional
@@ -105,8 +106,8 @@ nominal and adpositional levels aligned to the verbal ones.
 | level | verbal                     | nominal | adjectival | adpositional |
 |-------|----------------------------|---------|------------|--------------|
 | 0     | V                          | N       | A          | P            |
-| 1     | v, Voice, Appl             | n       | a          | Place        |
-| 2     | T, Neg, Mod, Pol, Asp, Evid | Q       |            | Path         |
+| 1     | v, Voice, Appl, InnerAsp   | n       | a          | Place        |
+| 2     | T, Neg, Mod, Mood, Pol, Asp, Evid | Q |          | Path         |
 | 3     | Fin, Nmlz                  | Num     |            |              |
 | 4     | Foc                        | D, Dem  |            |              |
 | 5     | Top, Rel, Say              | K       |            |              |
@@ -114,8 +115,8 @@ nominal and adpositional levels aligned to the verbal ones.
 | 7     | SA                         |         |            |              | -/
 def Cat.fValue : Cat → ℕ
   | .V | .N | .A | .P => 0
-  | .v | .n | .a | .Voice | .Appl | .Place => 1
-  | .T | .Q | .Neg | .Mod | .Pol | .Asp | .Evid | .Path => 2
+  | .v | .n | .a | .Voice | .Appl | .InnerAsp | .Place => 1
+  | .T | .Q | .Neg | .Mod | .Mood | .Pol | .Asp | .Evid | .Path => 2
   | .Fin | .Num | .Nmlz => 3
   | .Foc | .D | .Dem => 4
   | .Top | .Rel | .K | .Say => 5

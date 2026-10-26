@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Core.Order.OrdConnected
+public import Linglib.Syntax.Minimalist.Category.FunctionalSequence
 public import Mathlib.Order.Interval.Set.LinearOrder
 public import Mathlib.Tactic.DeriveFintype
 
@@ -18,12 +20,23 @@ A clause that projects up to a head contains every head below it, so the heads o
 `h` are the lower set `Set.Iic h`, and the heads in a clause of size `b` but not in one of size `a`
 form the interval `Set.Ioc a b` (`Set.Iic_sdiff_Iic`). A later proposal that adds heads to
 Cinque's refines the order: its hierarchy receives an order embedding of `Cartography.Head`, and a
-head it places immediately above or below one of Cinque's covers it or is covered by it.
+head it places immediately above or below one of Cinque's covers it or is covered by it. The
+categorial features of `Minimalist.Cat` coarsen the order: `Cartography.Head.cat` sends each head
+to its category, and a higher head's category is at least as high in the functional sequence,
+so each level of the sequence is an interval of the hierarchy. Cinque's own kinds of head are not:
+moods, modalities, tenses and aspects interleave.
 
 ## Main definitions
 
 * `Cartography.Head`: the heads of the universal hierarchy, with its linear order.
 * `Cartography.Head.family`: the kind of head, `Cartography.Family`.
+* `Cartography.Head.cat`: the category of a head in `Minimalist.Cat`.
+
+## Main statements
+
+* `Cartography.Head.monotone_fValue_cat`: the F-values of the categories are monotone in the
+  hierarchy.
+* `Cartography.Head.not_isContiguous_family`: the kinds of head are not intervals of it.
 
 ## Implementation notes
 
@@ -34,9 +47,9 @@ head it places immediately above or below one of Cinque's covers it or is covere
   not heads here.
 * Cinque marks the pairing of *characteristically* with generic or progressive aspect, and the
   head of *always*, as uncertain.
-* The categorial features of `Minimalist.Cat` are coarser: one `Asp` category at the inflectional
-  level above Voice, where four of Cinque's aspect heads sit below Voice, and one `Mod` category
-  for modal auxiliaries, where Cinque distinguishes moods from modalities.
+* `Head.cat` sends Cinque's four aspect heads below Voice to inner aspect, the aspect of the v
+  shell, the other aspect heads to outer aspect, and the moods other than the evidential to
+  `Cat.Mood`.
 
 ## References
 
@@ -133,6 +146,33 @@ def family : Head → Family
   | modVolitional | modPossibility | modNecessity | modEpistemic => .modality
   | moodIrrealis | moodEvidential | moodEvaluative | moodSpeechAct => .mood
   | _ => .aspect
+
+/-- The category of a head among the categorial features. -/
+def cat : Head → Minimalist.Cat
+  | voice => .Voice
+  | aspSgCompletiveII | aspFrequentativeII | aspRepetitiveII | aspCelerativeII => .InnerAsp
+  | tAnterior | tFuture | tPast => .T
+  | modVolitional | modPossibility | modNecessity | modEpistemic => .Mod
+  | moodEvidential => .Evid
+  | moodIrrealis | moodEvaluative | moodSpeechAct => .Mood
+  | _ => .Asp
+
+theorem family_cat (h : Head) : h.cat.family = .verbal := by
+  cases h <;> rfl
+
+theorem monotone_fValue_cat : Monotone fun h : Head ↦ h.cat.fValue := by
+  unfold Monotone
+  decide
+
+theorem isContiguous_fValue_cat : IsContiguous fun h : Head ↦ h.cat.fValue :=
+  monotone_fValue_cat.isContiguous
+
+/-- No order on the kinds of head is coarsened by the hierarchy
+(`isContiguous_iff_exists_monotone`): the anterior tense and the volitional modality sit among the
+aspects. -/
+theorem not_isContiguous_family : ¬ IsContiguous family := by
+  unfold IsContiguous
+  decide
 
 end Head
 

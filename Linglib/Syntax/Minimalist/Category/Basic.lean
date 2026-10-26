@@ -59,8 +59,12 @@ inductive Cat where
   | Mod   -- modality ([cinque-1999]; modal auxiliaries)
   | Rel   -- relative (cartographic left periphery, [rizzi-1997])
   | Pol   -- polarity ([laka-1990]; ΣP for affirmation/negation)
-  | Asp   -- aspect ([cinque-1999]; inflectional, the aspect heads of `Cartography.Head`)
-  | Evid  -- evidential ([cinque-1999]; inflectional, the evidential mood of `Cartography.Head`)
+  | Asp   -- outer aspect ([cinque-1999]; above Voice, inflectional)
+  /-- Inner aspect ([travis-2010]): Aktionsart in the v shell, below Voice. -/
+  | InnerAsp
+  | Evid  -- evidential mood ([cinque-1999]; inflectional)
+  /-- Mood ([cinque-1999]): the speech-act, evaluative and irrealis moods, inflectional. -/
+  | Mood
   /-- The nominalizer ([keine-2020]): the Hindi nominalized clause, a clause type distinct from
       CP. -/
   | Nmlz
