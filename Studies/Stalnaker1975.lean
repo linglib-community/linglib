@@ -304,23 +304,23 @@ def culpritOf : Culprit → Set Suspect
 
 open Classical in
 /-- A selection function that, off the antecedent, reaches for someone else first. -/
-noncomputable def someoneElseFirst : SelectionFunction Suspect where
-  sel w A :=
-    if w ∈ A then w
-    else if Suspect.someoneElse ∈ A then .someoneElse
-    else if Suspect.gardener ∈ A then .gardener
-    else .butler
-  inclusion w A hA := by
-    split_ifs with hw hs hg
-    · exact hw
-    · exact hs
-    · exact hg
-    · obtain ⟨v, hv⟩ := hA
-      cases v with
-      | butler => exact hv
-      | gardener => exact absurd hv hg
-      | someoneElse => exact absurd hv hs
-  centering w A hw := by simp [hw]
+noncomputable def someoneElseFirst : SelectionFunction Suspect :=
+  .ofSel (fun w A ↦
+      if w ∈ A then w
+      else if Suspect.someoneElse ∈ A then .someoneElse
+      else if Suspect.gardener ∈ A then .gardener
+      else .butler)
+    (fun w A hA ↦ by
+      split_ifs with hw hs hg
+      · exact hw
+      · exact hs
+      · exact hg
+      · obtain ⟨v, hv⟩ := hA
+        cases v with
+        | butler => exact hv
+        | gardener => exact absurd hv hg
+        | someoneElse => exact absurd hv hs)
+    fun w A hw ↦ by simp [hw]
 
 theorem not_entails_direct :
     ¬ EntailsInL Suspect (.or (.atom Culprit.butler) (.atom .gardener))
@@ -335,7 +335,8 @@ theorem not_entails_direct :
   have h2 : Suspect.someoneElse ∈ ({Suspect.butler}ᶜ : Set Suspect) :=
     fun h ↦ Suspect.noConfusion h
   rw [mem_selectionConditional_of_nonempty _ ⟨_, h2⟩] at this
-  simp only [someoneElseFirst, ite_eq_right h1, ite_eq_left h2] at this
+  simp only [someoneElseFirst, SelectionFunction.sel_ofSel, ite_eq_right h1, ite_eq_left h2]
+    at this
   exact (by decide : Suspect.someoneElse ≠ .gardener) this
 
 /-! ### Fatalism -/
@@ -355,26 +356,26 @@ def fateOf : Fate → Set Outcome
 
 open Classical in
 /-- A selection function that, off the antecedent, reaches first for survival. -/
-noncomputable def survivalFirst : SelectionFunction Outcome where
-  sel w A :=
-    if w ∈ A then w
-    else if (false, true) ∈ A then (false, true)
-    else if (false, false) ∈ A then (false, false)
-    else if (true, true) ∈ A then (true, true)
-    else (true, false)
-  inclusion w A hA := by
-    split_ifs with hw h1 h2 h3
-    · exact hw
-    · exact h1
-    · exact h2
-    · exact h3
-    · obtain ⟨v, hv⟩ := hA
-      rcases v with ⟨_ | _, _ | _⟩
-      · exact absurd hv h2
-      · exact absurd hv h1
-      · exact hv
-      · exact absurd hv h3
-  centering w A hw := by simp [hw]
+noncomputable def survivalFirst : SelectionFunction Outcome :=
+  .ofSel (fun w A ↦
+      if w ∈ A then w
+      else if (false, true) ∈ A then (false, true)
+      else if (false, false) ∈ A then (false, false)
+      else if (true, true) ∈ A then (true, true)
+      else (true, false))
+    (fun w A hA ↦ by
+      split_ifs with hw h1 h2 h3
+      · exact hw
+      · exact h1
+      · exact h2
+      · exact h3
+      · obtain ⟨v, hv⟩ := hA
+        rcases v with ⟨_ | _, _ | _⟩
+        · exact absurd hv h2
+        · exact absurd hv h1
+        · exact hv
+        · exact absurd hv h3)
+    fun w A hw ↦ by simp [hw]
 
 /-- The null context of the fatalist, with a selection function reaching first for survival. -/
 noncomputable def fateCtx : Context Outcome := ⟨Set.univ, survivalFirst, fun _ _ _ _ ↦ trivial⟩
