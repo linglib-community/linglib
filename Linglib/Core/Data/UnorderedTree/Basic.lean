@@ -320,6 +320,17 @@ theorem map_node (f : α → β) (a : α) (cs : Multiset (UnorderedTree α)) :
       simp [List.map_map, Function.comp_def, map_mk],
     node_mk_tree_list]
 
+@[simp] theorem value_map (f : α → β) (t : UnorderedTree α) : (map f t).value = f t.value :=
+  Quotient.inductionOn t fun p ↦ RoseTree.value_map f p
+
+theorem map_injective {f : α → β} (hf : Function.Injective f) : Function.Injective (map f) := by
+  cases isEmpty_or_nonempty α with
+  | inl h => exact fun t _ _ ↦ (h.false t.value).elim
+  | inr _ =>
+    obtain ⟨g, hg⟩ := hf.hasLeftInverse
+    exact Function.LeftInverse.injective (g := map g) fun t ↦ by
+      rw [map_map, hg.comp_eq_id, map_id]
+
 /-! ### Counting interactions -/
 
 @[simp] theorem numNodes_map (f : α → β) (t : UnorderedTree α) :

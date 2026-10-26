@@ -325,4 +325,55 @@ theorem SyntacticObject.not_sisters_of_toLinearizedLeaf? {s x z : SyntacticObjec
     simp [ImmediatelyContains, traceOf_val] at hwx
   · simp [toLinearizedLeaf?, merge_val] at hs
 
+/-! ### Relabelling -/
+
+section Map
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+  {τ τ' : SyntacticObject → Option LexicalItem.Token}
+
+theorem SyntacticObject.toLinearizedLeaf?_map (f : LexicalItem.Token → LexicalItem.Token)
+    (s : SyntacticObject) :
+    (s.map f).toLinearizedLeaf? = s.toLinearizedLeaf?.map (LinearizedSyntacticObject.map f) := by
+  rcases s.exists_form with ⟨a, rfl⟩ | rfl | ⟨a, rfl⟩ | ⟨l, r, rfl⟩ <;>
+    simp [toLinearizedLeaf?, merge_val]
+
+theorem SyntacticObject.headTrace_map (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
+    (s : SyntacticObject) : (s.headTrace τ).map f = (s.map f).headTrace τ' := by
+  unfold headTrace; rw [hτ]; cases τ s <;> simp
+
+theorem SyntacticObject.traceLinearized_map (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
+    (s : SyntacticObject) : (s.traceLinearized τ).map f = (s.map f).traceLinearized τ' := by
+  unfold traceLinearized; rw [hτ]; cases τ s <;> simp
+
+namespace LinearizedSyntacticObject
+
+theorem map_val_find? (p : LinearizedSyntacticObject) (t : SyntacticObject) :
+    (p.find? t).map Subtype.val = p.val.subtrees.find? (mk · = t.val) := by
+  rw [find?, Option.map_pmap, Option.pmap_eq_map, Option.map_id']
+
+theorem find?_map (hf : Function.Injective f) (p : LinearizedSyntacticObject)
+    (t : SyntacticObject) : (p.map f).find? (t.map f) = (p.find? t).map (map f) := by
+  have hv := UnorderedTree.map_injective (SyntacticObject.Vertex.map_injective hf)
+  apply Option.map_injective Subtype.val_injective
+  rw [map_val_find?, Option.map_map, val_map, RoseTree.subtrees_map, List.find?_map,
+    SyntacticObject.val_map]
+  have hcomp : Subtype.val ∘ map f = RoseTree.map (SyntacticObject.Vertex.map f) ∘ Subtype.val :=
+    rfl
+  rw [hcomp, ← Option.map_map, map_val_find?]
+  congr 2
+  funext q
+  simp only [Function.comp_apply, ← UnorderedTree.map_mk, hv.eq_iff]
+
+theorem replace_map (hf : Function.Injective f) (p : LinearizedSyntacticObject)
+    (t : SyntacticObject) (r : LinearizedSyntacticObject) :
+    (p.replace t r).map f = (p.map f).replace (t.map f) (r.map f) :=
+  Subtype.ext <| RoseTree.map_replaceIf _ _ (fun s ↦ by
+    rw [SyntacticObject.val_map, ← UnorderedTree.map_mk,
+      (UnorderedTree.map_injective (SyntacticObject.Vertex.map_injective hf)).eq_iff]) p.val
+
+end LinearizedSyntacticObject
+
+end Map
+
 end Minimalist

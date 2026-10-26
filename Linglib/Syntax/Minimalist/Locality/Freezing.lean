@@ -95,6 +95,21 @@ theorem obeysFreezing_append_iff :
     (d.append [.em side item]).ObeysFreezing ↔ d.ObeysFreezing := by
   simp [obeysFreezing_append_iff]
 
+/-! ### Relabelling -/
+
+section Map
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+
+theorem frozen_map_iff (hf : Function.Injective f) : (d.map f).Frozen (x.map f) ↔ d.Frozen x := by
+  simp only [Frozen, movedItems_map, List.mem_map, exists_exists_and_eq_and, contains_map_iff hf]
+
+theorem obeysFreezing_map_iff (hf : Function.Injective f) :
+    (d.map f).ObeysFreezing ↔ d.ObeysFreezing := by
+  simp only [ObeysFreezing, movedItems_map, List.pairwise_map, contains_map_iff hf]
+
+end Map
+
 /-! ### Unlabeled immobility -/
 
 variable (L : LinearizedSyntacticObject → SyntacticObject → Prop)

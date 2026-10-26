@@ -35,6 +35,8 @@ harmonic linearization of its object.
   the derived object.
 * `Minimalist.Derivation.externalize?_eq_linearize?`: a harmonic derivation records the harmonic
   linearization of its object.
+* `Minimalist.Derivation.externalize?_map`: a relabelled derivation externalizes to the relabelled
+  object, under an injective relabelling the trace encoder commutes with.
 
 ## Implementation notes
 
@@ -154,6 +156,54 @@ theorem stack_eq_nil_of_replay? {d : Derivation} {c : Cfg LinearizedSyntacticObj
   exact key _ _ _ hm rfl h
 
 end Derivation
+
+/-! ### Relabelling -/
+
+section Map
+
+variable {f : LexicalItem.Token → LexicalItem.Token}
+  {τ' : SyntacticObject → Option LexicalItem.Token}
+
+theorem Step.replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
+    (step : Step) (c : Cfg LinearizedSyntacticObject) :
+    (step.map f).replay? (c.map (LinearizedSyntacticObject.map f)) τ' =
+      (step.replay? c τ).map (Cfg.map (LinearizedSyntacticObject.map f)) := by
+  obtain ⟨p, st⟩ := c
+  cases step with
+  | em side item => simp [Step.map, Step.replay?, Cfg.map]
+  | im mover side =>
+    simp [Step.map, Step.replay?, Cfg.map, LinearizedSyntacticObject.find?_map hf,
+      LinearizedSyntacticObject.replace_map hf, SyntacticObject.traceLinearized_map hτ,
+      Function.comp_def]
+  | extract mover =>
+    simp [Step.map, Step.replay?, Cfg.map, LinearizedSyntacticObject.find?_map hf,
+      LinearizedSyntacticObject.replace_map hf, SyntacticObject.traceLinearized_map hτ,
+      Function.comp_def]
+  | remerge side => cases st <;> simp [Step.map, Step.replay?, Cfg.map]
+
+namespace Derivation
+
+theorem replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
+    (d : Derivation) :
+    (d.map f).replay? τ' = (d.replay? τ).map (Cfg.map (LinearizedSyntacticObject.map f)) := by
+  simp only [replay?, map, SyntacticObject.toLinearizedLeaf?_map]
+  cases d.initial.toLinearizedLeaf? with
+  | none => rfl
+  | some p =>
+    simp only [Option.map_some, Option.bind_some, List.foldlM_map]
+    exact (List.map_foldlM (f := fun c step ↦ step.replay? c τ)
+      (g := fun c step ↦ (step.map f).replay? c τ')
+      (fun c step ↦ (Step.replay?_map hf hτ step c).symm) d.steps ⟨p, []⟩).symm
+
+theorem externalize?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f) = (τ s).map f)
+    (d : Derivation) :
+    (d.map f).externalize? τ' = (d.externalize? τ).map (LinearizedSyntacticObject.map f) := by
+  rw [externalize?, externalize?, replay?_map hf hτ, Option.map_map, Option.map_map]
+  rfl
+
+end Derivation
+
+end Map
 
 private theorem Step.map_of_replay? {c c' : Cfg LinearizedSyntacticObject} {step : Step}
     (h : step.replay? c τ = some c') :

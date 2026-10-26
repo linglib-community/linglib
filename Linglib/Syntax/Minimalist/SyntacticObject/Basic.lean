@@ -35,6 +35,8 @@ is a homomorphism for the vocabulary the two carriers share, `leaf`, `trace`, `t
 * `Minimalist.SyntacticObject`, `Minimalist.LinearizedSyntacticObject`: the unordered and the
   ordered carrier, each with `leaf`, `trace`, `traceOf` and `merge`.
 * `Minimalist.LinearizedSyntacticObject.toSyntacticObject`: forgetting the order.
+* `Minimalist.SyntacticObject.map`, `Minimalist.LinearizedSyntacticObject.map`: relabelling along
+  a map of lexical alphabets, the induced homomorphism of free commutative magmas.
 
 ## Main results
 
@@ -372,5 +374,134 @@ theorem exists_form (s : SyntacticObject L) :
   | merge l r _ _ => exact Or.inr (Or.inr (Or.inr ⟨l, r, rfl⟩))
 
 end SyntacticObject
+
+/-! ### Functoriality -/
+
+namespace SyntacticObject
+
+variable {L L' L'' : Type}
+
+/-- The vertex with its label relabelled by `f`. -/
+def Vertex.map (f : L → L') : Vertex L → Vertex L' := Sum.map (Option.map f) (Option.map f)
+
+@[simp] theorem Vertex.map_lex (f : L → L') (a : L) :
+    (Vertex.lex a).map f = Vertex.lex (f a) := rfl
+
+@[simp] theorem Vertex.map_bare (f : L → L') : (Vertex.bare : Vertex L).map f = Vertex.bare := rfl
+
+@[simp] theorem Vertex.map_trace (f : L → L') :
+    (Vertex.trace : Vertex L).map f = Vertex.trace := rfl
+
+@[simp] theorem Vertex.map_traceOf (f : L → L') (a : L) :
+    (Vertex.traceOf a).map f = Vertex.traceOf (f a) := rfl
+
+@[simp] theorem Vertex.map_id : Vertex.map (id : L → L) = id := by
+  funext v; rcases v with (_ | _) | (_ | _) <;> rfl
+
+theorem Vertex.map_comp (f : L → L') (g : L' → L'') :
+    Vertex.map g ∘ Vertex.map f = Vertex.map (g ∘ f) := by
+  funext v; rcases v with (_ | _) | (_ | _) <;> rfl
+
+theorem Vertex.map_injective {f : L → L'} (hf : Function.Injective f) :
+    Function.Injective (Vertex.map f) :=
+  Sum.map_injective.2 ⟨Option.map_injective hf, Option.map_injective hf⟩
+
+theorem Vertex.licenses_map_iff (f : L → L') (a : Vertex L) (ks : List (Vertex L)) :
+    (a.map f).Licenses (ks.map (Vertex.map f) : Multiset _) ↔ a.Licenses ks := by
+  rcases a with (_ | _) | _ <;> simp [Vertex.map, Vertex.Licenses]
+
+end SyntacticObject
+
+theorem isSyntacticObject_map_iff {L L' : Type} (f : L → L')
+    (t : UnorderedTree (SyntacticObject.Vertex L)) :
+    IsSyntacticObject (t.map (SyntacticObject.Vertex.map f)) ↔ IsSyntacticObject t := by
+  refine Quotient.inductionOn t fun p ↦ ?_
+  show IsSyntacticObject ((UnorderedTree.mk p).map _) ↔ IsSyntacticObject (UnorderedTree.mk p)
+  rw [UnorderedTree.map_mk, isSyntacticObject_mk, isSyntacticObject_mk]
+  exact RoseTree.licensed_map_iff (SyntacticObject.Vertex.licenses_map_iff f)
+
+namespace SyntacticObject
+
+variable {L L' L'' : Type}
+
+/-- The syntactic object with its labels relabelled by `f`, the homomorphism of free commutative
+magmas that a map of lexical alphabets induces. -/
+def map (f : L → L') (s : SyntacticObject L) : SyntacticObject L' :=
+  ⟨s.val.map (Vertex.map f), (isSyntacticObject_map_iff f _).2 s.2⟩
+
+@[simp] theorem val_map (f : L → L') (s : SyntacticObject L) :
+    (s.map f).val = s.val.map (Vertex.map f) := rfl
+
+@[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) :=
+  Subtype.ext (UnorderedTree.map_leaf _ _)
+
+@[simp] theorem map_trace (f : L → L') : (trace : SyntacticObject L).map f = trace :=
+  Subtype.ext (UnorderedTree.map_leaf _ _)
+
+@[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) :=
+  Subtype.ext (UnorderedTree.map_leaf _ _)
+
+@[simp] theorem map_merge (f : L → L') (l r : SyntacticObject L) :
+    (merge l r).map f = merge (l.map f) (r.map f) :=
+  Subtype.ext (by simp [UnorderedTree.map_node])
+
+@[simp] theorem map_id (s : SyntacticObject L) : s.map id = s :=
+  Subtype.ext (by rw [val_map, Vertex.map_id, UnorderedTree.map_id])
+
+@[simp] theorem map_map (f : L → L') (g : L' → L'') (s : SyntacticObject L) :
+    (s.map f).map g = s.map (g ∘ f) :=
+  Subtype.ext (by rw [val_map, val_map, val_map, UnorderedTree.map_map, Vertex.map_comp])
+
+theorem map_injective {f : L → L'} (hf : Function.Injective f) :
+    Function.Injective (map f : SyntacticObject L → SyntacticObject L') :=
+  fun _ _ h ↦ Subtype.ext (UnorderedTree.map_injective (Vertex.map_injective hf)
+    (congrArg Subtype.val h))
+
+end SyntacticObject
+
+namespace LinearizedSyntacticObject
+
+open SyntacticObject (Vertex)
+
+variable {L L' L'' : Type}
+
+/-- The linearized object with its labels relabelled by `f`. -/
+def map (f : L → L') (p : LinearizedSyntacticObject L) : LinearizedSyntacticObject L' :=
+  ⟨p.val.map (Vertex.map f), by
+    rw [← UnorderedTree.map_mk]; exact (isSyntacticObject_map_iff f _).2 p.2⟩
+
+@[simp] theorem val_map (f : L → L') (p : LinearizedSyntacticObject L) :
+    (p.map f).val = p.val.map (Vertex.map f) := rfl
+
+@[simp] theorem map_leaf (f : L → L') (a : L) : (leaf a).map f = leaf (f a) :=
+  Subtype.ext (by simp)
+
+@[simp] theorem map_trace (f : L → L') : (trace : LinearizedSyntacticObject L).map f = trace :=
+  Subtype.ext (by simp)
+
+@[simp] theorem map_traceOf (f : L → L') (a : L) : (traceOf a).map f = traceOf (f a) :=
+  Subtype.ext (by simp)
+
+@[simp] theorem map_merge (f : L → L') (l r : LinearizedSyntacticObject L) :
+    (merge l r).map f = merge (l.map f) (r.map f) :=
+  Subtype.ext (by simp)
+
+@[simp] theorem toSyntacticObject_map (f : L → L') (p : LinearizedSyntacticObject L) :
+    (p.map f).toSyntacticObject = p.toSyntacticObject.map f :=
+  Subtype.ext (UnorderedTree.map_mk _ _).symm
+
+@[simp] theorem map_id (p : LinearizedSyntacticObject L) : p.map id = p :=
+  Subtype.ext (by rw [val_map, Vertex.map_id, RoseTree.id_map])
+
+@[simp] theorem map_map (f : L → L') (g : L' → L'') (p : LinearizedSyntacticObject L) :
+    (p.map f).map g = p.map (g ∘ f) :=
+  Subtype.ext (by rw [val_map, val_map, val_map, ← RoseTree.comp_map, Vertex.map_comp])
+
+theorem map_injective {f : L → L'} (hf : Function.Injective f) :
+    Function.Injective (map f : LinearizedSyntacticObject L → LinearizedSyntacticObject L') :=
+  fun _ _ h ↦ Subtype.ext (RoseTree.map_injective (Vertex.map_injective hf)
+    (congrArg Subtype.val h))
+
+end LinearizedSyntacticObject
 
 end Minimalist

@@ -76,16 +76,16 @@ def erase (s : SyntacticObject) : UnorderedTree (Option LexicalItem ⊕ Option L
 @[simp]
 theorem erase_leaf (tok : LexicalItem.Token) :
     (leaf tok).erase = UnorderedTree.leaf (.inl (some tok.item)) :=
-  map_leaf _ _
+  UnorderedTree.map_leaf _ _
 
 @[simp]
 theorem erase_trace : trace.erase = UnorderedTree.leaf (.inr none) :=
-  map_leaf _ _
+  UnorderedTree.map_leaf _ _
 
 @[simp]
 theorem erase_traceOf (tok : LexicalItem.Token) :
     (traceOf tok).erase = UnorderedTree.leaf (.inr (some tok.item)) :=
-  map_leaf _ _
+  UnorderedTree.map_leaf _ _
 
 @[simp]
 theorem erase_merge (l r : SyntacticObject) :
@@ -130,61 +130,24 @@ instance : DecidableRel IsRepetition := fun _ _ ↦ inferInstanceAs (Decidable (
 
 /-! ### Fresh inscriptions -/
 
-/-- The vertex map renaming the token of a lexical leaf or a trace by `f`. -/
-def Vertex.mapToken (f : LexicalItem.Token → LexicalItem.Token) : Vertex → Vertex :=
-  Sum.map (Option.map f) (Option.map f)
-
-theorem isSyntacticObject_map_mapToken (f : LexicalItem.Token → LexicalItem.Token)
-    (s : SyntacticObject) : IsSyntacticObject (s.val.map (Vertex.mapToken f)) := by
-  induction s using ind with
-  | leaf tok => exact (leaf (f tok)).2
-  | trace => exact trace.2
-  | traceOf tok => exact (traceOf (f tok)).2
-  | merge l r hl hr =>
-    convert (merge ⟨_, hl⟩ ⟨_, hr⟩).2 using 1
-    simp [map_node, Vertex.mapToken]
-
-/-- The object `s` with each of its tokens renamed by `f`. -/
-def mapTokens (f : LexicalItem.Token → LexicalItem.Token) (s : SyntacticObject) :
-    SyntacticObject :=
-  ⟨s.val.map (Vertex.mapToken f), isSyntacticObject_map_mapToken f s⟩
-
 variable {f : LexicalItem.Token → LexicalItem.Token}
 
-@[simp]
-theorem mapTokens_leaf (tok : LexicalItem.Token) : (leaf tok).mapTokens f = leaf (f tok) :=
-  Subtype.ext (map_leaf _ _)
-
-@[simp]
-theorem mapTokens_trace : trace.mapTokens f = trace :=
-  Subtype.ext (map_leaf _ _)
-
-@[simp]
-theorem mapTokens_traceOf (tok : LexicalItem.Token) :
-    (traceOf tok).mapTokens f = traceOf (f tok) :=
-  Subtype.ext (map_leaf _ _)
-
-@[simp]
-theorem mapTokens_merge (l r : SyntacticObject) :
-    (merge l r).mapTokens f = merge (l.mapTokens f) (r.mapTokens f) :=
-  Subtype.ext (by simp [mapTokens, map_node, Vertex.mapToken])
-
-theorem erase_mapTokens (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject) :
-    (s.mapTokens f).erase = s.erase := by
-  simp only [erase, mapTokens, map_map]
+theorem erase_map (hf : ∀ t, (f t).item = t.item) (s : SyntacticObject) :
+    (s.map f).erase = s.erase := by
+  simp only [erase, val_map, UnorderedTree.map_map]
   congr 1
   funext v
-  rcases v with (_ | t) | (_ | t) <;> simp [Vertex.mapToken, hf]
+  rcases v with (_ | t) | (_ | t) <;> simp [Vertex.map, hf]
 
 /-- The inscription of `s` from fresh tokens, each index raised by `k`, as External Merge
 introduces a second inscription of an object. -/
 def renumber (k : ℕ) : SyntacticObject → SyntacticObject :=
-  mapTokens fun t ↦ ⟨t.item, t.id + k⟩
+  map fun t ↦ ⟨t.item, t.id + k⟩
 
 /-- A renumbered inscription is structurally identical to the original. -/
 theorem structurallyIdentical_renumber (k : ℕ) (s : SyntacticObject) :
     StructurallyIdentical s (s.renumber k) :=
-  (erase_mapTokens (f := fun t ↦ ⟨t.item, t.id + k⟩) (fun _ ↦ rfl) s).symm
+  (erase_map (f := fun t ↦ ⟨t.item, t.id + k⟩) (fun _ ↦ rfl) s).symm
 
 /-! ### The copy relation -/
 

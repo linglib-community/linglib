@@ -44,6 +44,8 @@ a well-founded strict order and decides it.
 * `SyntacticObject.wellFounded_flip_contains`: the proper term relation is
   well-founded.
 * `SyntacticObject.card_accessibleTerms`: one accessible term per edge.
+* `SyntacticObject.cCommands_map_iff`: an injective relabelling preserves and reflects
+  c-command.
 
 ## Implementation notes
 
@@ -170,6 +172,10 @@ instance : IsStrictOrder (SyntacticObject L) Contains where
   trans _ _ _ := TransGen.trans
 
 theorem contains_irrefl (x : SyntacticObject L) : ¬ Contains x x := irrefl x
+
+theorem contains_iff_containsOrEq_and_ne : Contains x y ↔ ContainsOrEq x y ∧ y ≠ x :=
+  ⟨fun h ↦ ⟨h.to_reflTransGen, fun hyx ↦ contains_irrefl x (hyx ▸ h)⟩,
+    fun ⟨h, hne⟩ ↦ (containsOrEq_iff_eq_or_contains.1 h).resolve_left hne⟩
 
 end SyntacticObject
 
@@ -431,6 +437,46 @@ theorem yield_le_of_mem_terms {s u : SyntacticObject L} (h : u ∈ s.terms) : u.
     · exact le_rfl
     · exact (ihl h).trans (by rw [yield_merge]; exact Multiset.le_add_right _ _)
     · exact (ihr h).trans (by rw [yield_merge]; exact Multiset.le_add_left _ _)
+
+/-! ### Relabelling -/
+
+section Map
+
+variable {L' : Type} {f : L → L'}
+
+theorem terms_map (f : L → L') (s : SyntacticObject L) :
+    (s.map f).terms = s.terms.map (map f) := by
+  induction s using ind with
+  | leaf a => simp
+  | trace => simp
+  | traceOf a => simp
+  | merge l r ihl ihr => simp [ihl, ihr]
+
+theorem immediatelyContains_map_iff (hf : Function.Injective f) :
+    ImmediatelyContains (x.map f) (y.map f) ↔ ImmediatelyContains x y := by
+  rcases x.exists_form with ⟨a, rfl⟩ | rfl | ⟨a, rfl⟩ | ⟨l, r, rfl⟩ <;>
+    simp [(map_injective hf).eq_iff]
+
+theorem containsOrEq_map_iff (hf : Function.Injective f) :
+    ContainsOrEq (x.map f) (y.map f) ↔ ContainsOrEq x y := by
+  rw [← mem_terms, ← mem_terms, terms_map, Multiset.mem_map_of_injective (map_injective hf)]
+
+theorem contains_map_iff (hf : Function.Injective f) :
+    Contains (x.map f) (y.map f) ↔ Contains x y := by
+  rw [contains_iff_containsOrEq_and_ne, contains_iff_containsOrEq_and_ne,
+    containsOrEq_map_iff hf, (map_injective hf).ne_iff]
+
+theorem sisters_map_iff (hf : Function.Injective f) :
+    Sisters (root.map f) (x.map f) (y.map f) ↔ Sisters root x y := by
+  simp only [Sisters, terms_map, Multiset.mem_map, exists_exists_and_eq_and,
+    immediatelyContains_map_iff hf, (map_injective hf).ne_iff]
+
+theorem cCommands_map_iff (hf : Function.Injective f) :
+    CCommands (root.map f) (x.map f) (y.map f) ↔ CCommands root x y := by
+  simp only [CCommands, terms_map, Multiset.mem_map, exists_exists_and_eq_and,
+    sisters_map_iff hf, containsOrEq_map_iff hf]
+
+end Map
 
 end SyntacticObject
 
