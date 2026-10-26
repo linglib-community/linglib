@@ -43,8 +43,9 @@ when*) shares its whole C′ and elides it once, which hides the vP edge both wh
   at two positions is shared, a moved wh-phrase leaves traces at the vP edge and its base position,
   and the coordinator is left out, so a string is its conjuncts' words. A right node raising
   candidate is a pruning derivation of Belk, Neeleman and Philip, each free pruning an ellipsis.
-* The paired reading and Pronunciation Economy are the it reading and the ban on vacuous ellipsis
-  of the authors' earlier paper (`CitkoGracaninYuksek2020`).
+* The paired reading is the it reading of the authors' earlier paper (`CitkoGracaninYuksek2020`),
+  and Pronunciation Economy is that paper's ban on vacuous ellipsis
+  (`Minimalist.PronunciationEconomy`).
 * As the paper's footnote on the parameter allows, every edge with several wh-specifiers receives
   an asterisk, and a language is the set of categories whose asterisks PF cannot interpret.
 * The candidates are the derivations the paper compares; optimality is minimality among them
@@ -70,7 +71,7 @@ namespace CitkoGracaninYuksek2025
 
 open Minimalist Minimalist.LinearizedSyntacticObject RoseTree
 open Minimalist.SyntacticObject (Vertex)
-open CitkoGracaninYuksek2020 (tok tokens ItReading NoVacuousEllipsis)
+open CitkoGracaninYuksek2020 (tok ItReading)
 
 /-! ### The lexicon -/
 
@@ -202,7 +203,7 @@ instance : DecidableLT DerivationCost := decidableLTOfDecidableLE
 Merges, a shared constituent being built once, and its elided domains as the applications of
 ellipsis. The terms are [marcolli-chomsky-berwick-2025]'s subtrees, each taken once. -/
 def cost (t : LinearizedSyntacticObject) : DerivationCost
-  | .lexicalItems => (tokens t).card
+  | .lexicalItems => (tokens t).length
   | .mergeOps => (t.val.subtrees.filter (·.arity ≠ 0)).dedup.length
   | .ellipsisOps => (elidedDomains t).length
 
@@ -275,7 +276,7 @@ def romanian : Finset Cat := ∅
 /-- A derivation is admissible in a language when none of its ellipses is vacuous, Pronunciation
 Economy (39), and it converges at PF. -/
 def Admissible (mwf : Finset Cat) (t : LinearizedSyntacticObject) : Prop :=
-  NoVacuousEllipsis t ∧ ConvergesIn mwf t
+  PronunciationEconomy t ∧ ConvergesIn mwf t
 
 instance (mwf : Finset Cat) (t : LinearizedSyntacticObject) : Decidable (Admissible mwf t) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -307,7 +308,7 @@ instance : Decidable (Optimal mwf l t) := decidable_of_iff _ optimal_iff.symm
 
 theorem optimal_congr (h : ∀ s ∈ l, pfAsterisks s = ∅) : Optimal mwf l t ↔ Optimal mwf' l t := by
   have key (m : Finset Cat) : (fun s ↦ s ∈ l ∧ Competes s t ∧ Admissible m s) =
-      fun s ↦ s ∈ l ∧ Competes s t ∧ NoVacuousEllipsis s := by
+      fun s ↦ s ∈ l ∧ Competes s t ∧ PronunciationEconomy s := by
     funext s
     simp +contextual [Admissible, convergesIn_of_pfAsterisks_eq_empty, h]
   simp only [Optimal, key]
@@ -374,9 +375,9 @@ theorem paired_csCandidates :
 theorem v_mem_asterisked_cs : v ∈ asterisked cs := by decide
 theorem pfAsterisks_csCandidates : ∀ t ∈ csCandidates, pfAsterisks t = ∅ := by decide
 
-theorem csSharedC_vacuous : ¬ NoVacuousEllipsis csSharedC := by decide
+theorem csSharedC_vacuous : ¬ PronunciationEconomy csSharedC := by decide
 theorem csnrTwoE_excluded :
-    ¬ NoVacuousEllipsis csnrTwoE ∧ cost csSharedC < cost csnrTwoE := by
+    ¬ PronunciationEconomy csnrTwoE ∧ cost csSharedC < cost csnrTwoE := by
   decide
 
 /-- In every language the coordinated sluice has two optimal derivations. For the paired

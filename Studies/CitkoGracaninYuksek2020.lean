@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
-public import Mathlib.Data.Finset.Union
 public import Linglib.Syntax.Minimalist.Label.RaisingHead
 
 /-!
@@ -20,13 +19,14 @@ trace, which gives the sluice its it reading (*what John sang and where he sang 
 wh-question shares everything but its wh-phrases, so each wh-phrase stands in one conjunct and the
 question has only the at-all reading. Its structure cannot underlie a sluice: the shared
 complementizer would elide both TPs, and the second ellipsis would silence nothing new, which
-economy bans.
+economy bans, as Fox's Scope Economy bans vacuous scope shifting
+(`Minimalist.PronunciationEconomy`).
 
 ## Main statements
 
 * `csFromCWH_vacuous`: a coordinated sluice cannot have the structure of a coordinated
   wh-question, whose shared [E] complementizer would elide its second TP vacuously.
-* `cs_noVacuousEllipsis`, `cs_itReading`: in the biclausal sluice each ellipsis silences a string
+* `cs_pronunciationEconomy`, `cs_itReading`: in the biclausal sluice each ellipsis silences a string
   of its own, and the E-type pronoun gives the it reading.
 
 ## Implementation notes
@@ -117,33 +117,6 @@ def ItReading (t : LinearizedSyntacticObject) : Prop :=
 
 instance : DecidablePred ItReading := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-! ### Vacuous ellipsis -/
-
-/-- The tokens of `t`, each once. -/
-def tokens (t : LinearizedSyntacticObject) : Finset LexicalItem.Token :=
-  ((tokenList t.val).map (·.2)).toFinset
-
-/-- The pronounceable tokens the application of ellipsis at the domain `K` silences. -/
-def silencedBy (t : LinearizedSyntacticObject) (K : TreePath) : Finset LexicalItem.Token :=
-  (tokens t).filter fun s ↦ s.item.phonForm?.isSome ∧ (occurrences t s).any (decide <| K ≤ ·)
-
-/-- The application at `K` is vacuous when the earlier applications already silenced every token
-it silences. -/
-def IsVacuous (t : LinearizedSyntacticObject) (K : TreePath) : Prop :=
-  silencedBy t K ⊆ ((elidedDomains t).takeWhile (· ≠ K)).toFinset.biUnion (silencedBy t)
-
-instance (t : LinearizedSyntacticObject) (K : TreePath) : Decidable (IsVacuous t K) :=
-  inferInstanceAs (Decidable (silencedBy t K ⊆ _))
-
-/-- Economy bans vacuous ellipsis, since an operation applies only when it affects pronunciation or
-interpretation, as Fox's Scope Economy bans vacuous scope shifting, and ellipsis affects only
-pronunciation. -/
-def NoVacuousEllipsis (t : LinearizedSyntacticObject) : Prop :=
-  ∀ K ∈ elidedDomains t, ¬ IsVacuous t K
-
-instance (t : LinearizedSyntacticObject) : Decidable (NoVacuousEllipsis t) :=
-  inferInstanceAs (Decidable (∀ _ ∈ _, _))
-
 /-! ### Coordinated wh-questions and coordinated sluices -/
 
 theorem cwh_pf : pfPhon cwh = ["what", "where", "John", "sang"] := by decide
@@ -158,13 +131,13 @@ theorem cwh_atAll : orphanTraces .raising cwh = [] := by decide
 (19). -/
 theorem csFromCWH_not_itReading : ¬ ItReading csFromCWH := by decide
 
-/-- The shared [E] complementizer elides both TPs, and the second deletion silences nothing the
-first did not (69b). -/
-theorem csFromCWH_vacuous : ¬ NoVacuousEllipsis csFromCWH := by decide
+/-- The shared [E] complementizer elides both TPs, and deleting either leaves the pronunciation the
+other gives (69b). -/
+theorem csFromCWH_vacuous : ¬ PronunciationEconomy csFromCWH := by decide
 
 /-- In the biclausal sluice each TP dominates a string of its own, so neither ellipsis is vacuous
 (70b). -/
-theorem cs_noVacuousEllipsis : NoVacuousEllipsis cs := by decide
+theorem cs_pronunciationEconomy : PronunciationEconomy cs := by decide
 
 /-- The E-type pronoun gives the coordinated sluice the it reading (56). -/
 theorem cs_itReading : ItReading cs := by decide
