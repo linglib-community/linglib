@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Modality.Typology
 
 /-!
 # Dutch modals

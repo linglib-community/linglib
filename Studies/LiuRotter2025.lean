@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Basic
+public import Linglib.Semantics.Modality.Typology
 public import Linglib.Fragments.English.Auxiliaries
 public import Linglib.Fragments.English.Adverbs
 public import Linglib.Data.Examples.LiuRotter2025

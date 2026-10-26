@@ -1,9 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Insert
-public import Mathlib.Order.Interval.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Morphology.Morph
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Logic.Natural.Soundness
 public import Linglib.Semantics.Conditionals.Basic
@@ -21,8 +19,7 @@ that* paraphrase. The two readings give the antecedent opposite entailment direc
 source of their opposite polarity-item profiles: for a conditional over a domain that grows with
 the antecedent, such as the material or the strict conditional, the hypothetical antecedent is
 downward entailing and every other clause upward entailing, while over the closest
-antecedent-worlds the antecedent is neither. Languages may lexicalize the split, as Japanese
-*-ra* and German *falls* mark only hypothetical conditionals.
+antecedent-worlds the antecedent is neither.
 
 ## Main definitions
 
@@ -32,7 +29,6 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
 * `Conditional.Reading.Felicitous`: the discourse condition of each reading on its antecedent.
 * `Conditional.Reading.clauseSignature`: the projectivity signature of each clause under a
   reading, whose sign is `Conditional.Reading.clausePolarity`.
-* `Conditional.Marker`: a conditional marker, its exponent with the readings it can mark.
 
 ## Main results
 
@@ -41,18 +37,10 @@ antecedent-worlds the antecedent is neither. Languages may lexicalize the split,
 * `Conditional.Reading.exists_not_antitone_hypothetical_closestImp`: over the closest
   antecedent-worlds the hypothetical antecedent is not downward entailing.
 
-## Implementation notes
-
-The sources often attest a marker with one reading and say nothing about the other, so a
-marker's readings are recorded as an interval of sets of readings: the readings it is attested
-marking below, the readings it is not known to exclude above. A marker the sources describe
-fully has a one-point interval.
-
 ## References
 
 * [S. Iatridou, *Topics in Conditionals* (1991)][iatridou-1991]
 * [L. Haegeman, *Conditional clauses: External and internal syntax* (2003)][haegeman-2003]
-* [D. Lassiter, *Sorting Out Left-Nested Conditionals* (2025)][lassiter-2025]
 -/
 
 @[expose] public section
@@ -215,21 +203,5 @@ theorem exists_not_antitone_hypothetical_closestImp :
 end Signature
 
 end Reading
-
-/-- A conditional marker is an exponent together with the readings it can mark. Japanese *-ra* and
-German *falls* mark only hypothetical conditionals, and *nara*, *wenn* and English *if* mark either
-([lassiter-2025]). -/
-structure Marker where
-  /-- The exponent, in surface order. -/
-  morphs : List Morphology.Morph
-  /-- Native script form, when distinct. -/
-  script : Option String := none
-  /-- The set of readings the marker can mark lies in this interval: it contains the readings the
-  sources attest, and is contained in the readings they do not exclude. -/
-  readings : NonemptyInterval (Finset Reading)
-  deriving DecidableEq
-
-/-- The surface form is the morphs' forms with their boundary notation. -/
-def Marker.form (m : Marker) : String := Morphology.Morph.surface m.morphs
 
 end Conditional

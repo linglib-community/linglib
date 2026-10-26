@@ -14,6 +14,17 @@ can only shrink the domain, so strong necessity entails weak necessity (`strong_
 and not conversely (`weak_not_entails_strong`); with an empty secondary ordering source the two
 coincide (`weak_eq_strong_no_secondary`).
 
+## Implementation notes
+
+Both forces are stated over best worlds, as von Fintel and Iatridou state them, and so presuppose
+the Limit Assumption; under it strong necessity is Kratzer's human necessity
+(`strongNecessity_iff_humanNecessity`).
+
+## TODO
+
+A weak necessity that needs no Limit Assumption, over the refinement of the primary ordering
+source by the secondary one.
+
 ## References
 
 * [von-fintel-iatridou-2008]
@@ -32,6 +43,10 @@ variable {W : Type*}
 /-- Strong necessity, *must φ*, is Kratzer's necessity over the best accessible worlds. -/
 def strongNecessity (f g : Background W) (p : W → Prop) (w : W) : Prop :=
   necessity f g p w
+
+theorem strongNecessity_iff_humanNecessity {f g : Background W} {p : W → Prop} {w : W}
+    (hlim : LimitAssumption f g w) : strongNecessity f g p w ↔ humanNecessity f g p w :=
+  (humanNecessity_iff_necessity hlim).symm
 
 /-- Weak necessity, *ought φ*, is necessity over the `g'`-best of the `g`-best accessible
 worlds. -/
