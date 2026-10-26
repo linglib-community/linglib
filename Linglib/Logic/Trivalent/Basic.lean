@@ -80,6 +80,11 @@ theorem eq_of_eq_zero_iff_of_eq_one_iff {a b : SignType} (h₀ : a = 0 ↔ b = 0
     (h₁ : a = 1 ↔ b = 1) : a = b := by
   revert h₀ h₁; cases a <;> cases b <;> decide
 
+/-- Two values agree once they agree on being `1` and on being `-1`. -/
+theorem eq_of_eq_one_iff_of_eq_neg_one_iff {a b : SignType} (h₁ : a = 1 ↔ b = 1)
+    (h₂ : a = -1 ↔ b = -1) : a = b := by
+  revert h₁ h₂; cases a <;> cases b <;> decide
+
 @[simp] protected theorem neg_zero : -(0 : SignType) = 0 := rfl
 
 attribute [simp] SignType.neg_eq_zero_iff SignType.nonpos_iff_ne_one SignType.nonneg_iff_ne_neg_one
@@ -687,6 +692,12 @@ theorem supervaluation_not (hs : s.Nonempty) :
   · exact (supervaluation_eq_one_iff ..).2 ((supervaluation_eq_neg_one_iff ..).1 h).2
   · exact (supervaluation_eq_neg_one_iff ..).2
       ⟨hs, fun a ha hn ↦ hn ((supervaluation_eq_one_iff ..).1 h a ha)⟩
+
+/-- Every value is the supervaluation of its designation at the two standards, `1` designated at
+both, `-1` at neither, and `0` at LP alone. -/
+@[simp] theorem supervaluation_threshold_le (a : SignType) :
+    supervaluation Finset.univ (fun d : Trivalent.Designation ↦ d.threshold ≤ a) = a := by
+  cases a <;> decide
 
 end Supervaluation
 

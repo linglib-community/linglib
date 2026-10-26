@@ -421,6 +421,10 @@ variable {ι : Sort*} {p : ι → SignType}
 theorem existsStrong_ne_zero_iff : existsStrong p ≠ 0 ↔ (∃ i, p i = 1) ∨ ∀ i, p i ≠ 0 := by
   rw [ne_eq, existsStrong_eq_zero_iff, not_and_or, not_forall_not, not_exists]
 
+/-- The Strong Kleene quantifiers are dual under Kleene's negation. -/
+theorem neg_forallStrong : -forallStrong p = existsStrong fun i ↦ -p i :=
+  SignType.eq_of_eq_one_iff_of_eq_neg_one_iff (by simp) (by simp)
+
 end StrongQuantifiers
 
 /-- Haug's universal quantifier skips undefined instances — undefined only when every
