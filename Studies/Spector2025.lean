@@ -269,16 +269,12 @@ variable {W U ι : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpa
   [MeasurableSpace U] [MeasurableSingletonClass U] [Fintype ι] [Nonempty ι] [MeasurableSpace ι]
   [MeasurableSingletonClass ι]
 
-/-- The literal listeners of the parses, as one listener on pairs of a parse and a world. -/
-noncomputable def parseListener (μ : Measure W) (parse : ι → U → Set W) (σ : U) :
-    Measure (ι × W) :=
-  Measure.sum fun i ↦ (listener μ (truthful (parse i)) σ).map (Prod.mk i)
-
-/-- The MaxiMin speaker (28) addresses the listeners of the parses and entertains every parse at
-the world she is in. -/
+/-- The MaxiMin speaker (28) addresses the literal listeners of the parses and entertains every
+parse at the world she is in. -/
 noncomputable def speaker (μ : Measure W) (α : ℝ) (C : U → ℝ) (parse : ι → U → Set W) :
     Kernel W U :=
-  maximinSpeaker α C (parseListener μ parse) fun w ↦ Measure.count.prod (Measure.dirac w)
+  maximinSpeaker α C (parseListener fun i ↦ listener μ (truthful (parse i)))
+    fun w ↦ Measure.count.prod (Measure.dirac w)
 
 instance (μ : Measure W) (α : ℝ) (C : U → ℝ) (parse : ι → U → Set W) :
     IsFiniteKernel (speaker μ α C parse) :=
@@ -287,50 +283,34 @@ instance (μ : Measure W) (α : ℝ) (C : U → ℝ) (parse : ι → U → Set W
 variable {μ : Measure W} [IsFiniteMeasure μ] {α : ℝ} {C : U → ℝ} {parse : ι → U → Set W} {w : W}
   {σ τ : U}
 
-instance (σ : U) : IsFiniteMeasure (parseListener μ parse σ) := by
-  unfold parseListener; infer_instance
-
-omit [Nonempty ι] [IsFiniteMeasure μ] in
-theorem parseListener_apply_singleton (σ : U) (i : ι) (w : W) :
-    parseListener μ parse σ {(i, w)} = listener μ (truthful (parse i)) σ {w} := by
-  rw [parseListener, Measure.sum_apply _ (measurableSet_singleton _), tsum_fintype,
-    Finset.sum_eq_single i]
-  · rw [Measure.map_apply measurable_prodMk_left (measurableSet_singleton _)]
-    congr 1; ext; simp
-  · intro j _ hji
-    rw [Measure.map_apply measurable_prodMk_left (measurableSet_singleton _)]
-    convert measure_empty (μ := listener μ (truthful (parse j)) σ)
-    ext; simp [hji]
-  · simp
-
-omit [Fintype ι] [Nonempty ι] [MeasurableSingletonClass ι] in
-private theorem prod_dirac_apply_singleton_ne_zero_iff (ν : Measure ι) (hν : ∀ i, ν {i} ≠ 0)
-    (p : ι × W) : ν.prod (Measure.dirac w) {p} ≠ 0 ↔ p.2 = w := by
-  obtain ⟨i, v⟩ := p
-  rw [← Set.singleton_prod_singleton, Measure.prod_prod, Measure.dirac_apply]
-  by_cases hv : v = w <;> simp [hv, hν i, Ne.symm]
-
-omit [Nonempty ι] [IsFiniteMeasure μ] in
-private theorem essInf_parseListener (σ : U) (w : W) :
-    essInf (fun p ↦ parseListener μ parse σ {p}) (Measure.count.prod (Measure.dirac w)) =
-      ⨅ i, listener μ (truthful (parse i)) σ {w} := by
-  have hc (i : ι) : Measure.count {i} ≠ 0 := by simp
-  rw [essInf_eq_biInf]
-  refine le_antisymm (le_iInf fun i ↦ ?_) (le_iInf₂ fun p hp ↦ ?_)
-  · have h := (prod_dirac_apply_singleton_ne_zero_iff (w := w) _ hc (i, w)).2 rfl
-    rw [← parseListener_apply_singleton σ i w]
-    exact biInf_le (fun p ↦ parseListener μ parse σ {p}) h
-  · obtain ⟨i, v⟩ := p
-    obtain rfl : v = w := (prod_dirac_apply_singleton_ne_zero_iff _ hc _).1 hp
-    rw [parseListener_apply_singleton σ i v]
-    exact iInf_le (fun i ↦ listener μ (truthful (parse i)) σ {v}) i
-
 omit [Nonempty ι] [IsFiniteMeasure μ] in
 /-- The MaxiMin speaker weighs a message at a world by the least mass the literal listener of one
 of its parses gives the world, to the power of the rationality, times the cost weight (28). -/
 theorem speaker_eq_ofWeights : speaker μ α C parse = Kernel.ofWeights fun w σ ↦
     (⨅ i, listener μ (truthful (parse i)) σ {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C σ))) := by
-  simp only [speaker, maximinSpeaker, essInf_parseListener]
+  simp [speaker, maximinSpeaker, essInf_prod_dirac_parseListener]
+
+/-- The speaker uses a message at a world of positive prior mass exactly when it is true there on
+all its parses, the principle of Truth on all parses. -/
+theorem speaker_apply_singleton_ne_zero_iff (hα : 0 < α) (hw : μ {w} ≠ 0) :
+    speaker μ α C parse w {σ} ≠ 0 ↔ ∀ i, w ∈ parse i σ := by
+  rw [speaker, ne_eq, maximinSpeaker_parseListener_apply_singleton_eq_zero_iff _ hα
+    ⟨Classical.arbitrary ι, by simp⟩]
+  simp only [Measure.count_singleton, ne_eq, one_ne_zero, not_false_eq_true, true_and, not_exists]
+  exact forall_congr' fun i ↦ by
+    rw [← ne_eq, listener_truthful_apply_singleton_ne_zero_iff, and_iff_left hw]
+
+omit [Nonempty ι] in
+theorem speaker_apply_singleton_eq_zero (hα : 0 < α) {i : ι} (h : w ∉ parse i σ) :
+    speaker μ α C parse w {σ} = 0 := by
+  rw [speaker, maximinSpeaker_parseListener_apply_singleton_eq_zero_iff _ hα ⟨i, by simp⟩]
+  exact ⟨i, by simp, not_not.1 fun hL ↦
+    h ((listener_truthful_apply_singleton_ne_zero_iff μ (parse i) σ w).1 hL).1⟩
+
+theorem listener_apply_singleton_ne_zero_iff_forall_mem (hα : 0 < α) :
+    listener μ (speaker μ α C parse) σ {w} ≠ 0 ↔ μ {w} ≠ 0 ∧ ∀ i, w ∈ parse i σ := by
+  rw [RSA.listener_apply_singleton_ne_zero_iff]
+  exact and_congr_right fun hw ↦ speaker_apply_singleton_ne_zero_iff hα hw
 
 omit [Fintype W] [DiscreteMeasurableSpace W] [Fintype ι] [MeasurableSpace ι]
   [MeasurableSingletonClass ι] [IsFiniteMeasure μ] in
@@ -339,41 +319,6 @@ private theorem weight_ne_top (hα : 0 ≤ α) (w : W) (σ : U) :
   ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα
     (ne_top_of_le_ne_top (measure_ne_top _ _) (iInf_le _ (Classical.arbitrary ι))))
     ENNReal.ofReal_ne_top
-
-omit [Fintype W] [MeasurableSpace ι] [MeasurableSingletonClass ι] in
-private theorem weight_eq_zero_iff (hα : 0 < α) :
-    (⨅ i, listener μ (truthful (parse i)) σ {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C σ))) = 0 ↔
-      ∃ i, w ∉ parse i σ ∨ μ {w} = 0 := by
-  rw [mul_eq_zero, or_iff_left (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne',
-    ENNReal.rpow_eq_zero_iff_of_pos hα]
-  refine ⟨fun h ↦ ?_, fun ⟨i, hi⟩ ↦ le_antisymm ((iInf_le _ i).trans ?_) bot_le⟩
-  · obtain ⟨i, hi⟩ := exists_eq_ciInf_of_finite (f := fun i ↦ listener μ (truthful (parse i)) σ {w})
-    refine ⟨i, ?_⟩
-    by_contra! hc
-    exact (listener_truthful_apply_singleton_ne_zero_iff μ (parse i) σ w).2 hc (hi.trans h)
-  · exact (not_not.1 fun hne ↦ ((listener_truthful_apply_singleton_ne_zero_iff μ (parse i) σ w).1
-      hne).elim fun h₁ h₂ ↦ hi.elim (· h₁) h₂).le
-
-/-- The speaker uses a message at a world of positive prior mass exactly when it is true there on
-all its parses, the principle of Truth on all parses. -/
-theorem speaker_apply_singleton_ne_zero_iff (hα : 0 < α) (hw : μ {w} ≠ 0) :
-    speaker μ α C parse w {σ} ≠ 0 ↔ ∀ i, w ∈ parse i σ := by
-  rw [speaker_eq_ofWeights]
-  refine ⟨fun h i ↦ by_contra fun hi ↦ h (Kernel.ofWeights_apply_singleton_eq_zero
-    ((weight_eq_zero_iff hα).2 ⟨i, .inl hi⟩)), fun h ↦ ?_⟩
-  refine Kernel.ofWeights_apply_singleton_ne_zero (fun h0 ↦ ?_) (weight_ne_top hα.le w)
-  obtain ⟨i, hi | hi⟩ := (weight_eq_zero_iff hα).1 h0
-  exacts [hi (h i), hw hi]
-
-theorem speaker_apply_singleton_eq_zero (hα : 0 < α) {i : ι} (h : w ∉ parse i σ) :
-    speaker μ α C parse w {σ} = 0 := by
-  rw [speaker_eq_ofWeights]
-  exact Kernel.ofWeights_apply_singleton_eq_zero ((weight_eq_zero_iff hα).2 ⟨i, .inl h⟩)
-
-theorem listener_apply_singleton_ne_zero_iff_forall_mem (hα : 0 < α) :
-    listener μ (speaker μ α C parse) σ {w} ≠ 0 ↔ μ {w} ≠ 0 ∧ ∀ i, w ∈ parse i σ := by
-  rw [RSA.listener_apply_singleton_ne_zero_iff]
-  exact and_congr_right fun hw ↦ speaker_apply_singleton_ne_zero_iff hα hw
 
 omit [Fintype W] [DiscreteMeasurableSpace W] [Fintype U] [MeasurableSpace U]
   [MeasurableSingletonClass U] [Fintype ι] [MeasurableSpace ι] [MeasurableSingletonClass ι] in
@@ -406,11 +351,19 @@ theorem speaker_real_lt_iff (hα : 0 < α) (hw : μ {w} ≠ 0) (hσ : ∀ i, w �
     (speaker μ α C parse w).real {σ} < (speaker μ α C parse w).real {τ} ↔
       -Real.log (⨆ i, μ (parse i σ)).toReal - C σ <
         -Real.log (⨆ i, μ (parse i τ)).toReal - C τ := by
-  have hσ0 := (weight_eq_zero_iff (C := C) hα).not.2 fun ⟨i, hi⟩ ↦ hi.elim (· (hσ i)) hw
-  rw [speaker_eq_ofWeights, Kernel.ofWeights_real_singleton_lt_iff w
-      (fun h ↦ hσ0 (Finset.sum_eq_zero_iff.1 h σ (Finset.mem_univ _)))
-      (ENNReal.sum_ne_top.2 fun _ _ ↦ weight_ne_top hα.le w _),
-    ← ENNReal.toReal_lt_toReal (weight_ne_top hα.le w _) (weight_ne_top hα.le w _),
+  have hb : ∃ p, Measure.count.prod (Measure.dirac w) {p} ≠ 0 :=
+    ⟨(Classical.arbitrary ι, w), (Measure.prod_dirac_apply_singleton_ne_zero_iff _ _ _).2
+      ⟨by simp, rfl⟩⟩
+  have h0 : ∃ u, ∀ p, Measure.count.prod (Measure.dirac w) {p} ≠ 0 →
+      parseListener (fun i ↦ listener μ (truthful (parse i))) u {p} ≠ 0 := ⟨σ, fun ⟨i, v⟩ hp ↦ by
+    obtain ⟨-, rfl⟩ := (Measure.prod_dirac_apply_singleton_ne_zero_iff _ _ (i, v)).1 hp
+    rw [parseListener_apply_singleton]
+    exact (listener_truthful_apply_singleton_ne_zero_iff μ (parse i) σ v).2 ⟨hσ i, hw⟩⟩
+  rw [speaker, maximinSpeaker_real_singleton_lt_iff
+    (b := fun w ↦ Measure.count.prod (Measure.dirac w)) hα.le hb h0]
+  simp only [essInf_prod_dirac_parseListener, Set.mem_ofPred_eq, Measure.count_singleton, ne_eq,
+    one_ne_zero, not_false_eq_true, iInf_pos]
+  rw [← ENNReal.toReal_lt_toReal (weight_ne_top hα.le w _) (weight_ne_top hα.le w _),
     weight_toReal hw hσ, weight_toReal hw hτ, Real.exp_lt_exp, mul_lt_mul_iff_of_pos_left hα]
   constructor <;> intro h <;> linarith
 
@@ -430,11 +383,10 @@ theorem speaker_real_lt_null_iff [IsProbabilityMeasure μ] {ν : U} (hν : ∀ i
 omit [Nonempty ι] [IsFiniteMeasure μ] in
 /-- The MaxiMin speaker is the same whatever prior of full support she holds over the parses. -/
 theorem speaker_eq_maximinSpeaker (ν : Measure ι) (hν : ∀ i, ν {i} ≠ 0) :
-    speaker μ α C parse =
-      maximinSpeaker α C (parseListener μ parse) fun w ↦ ν.prod (Measure.dirac w) :=
-  Kernel.ext fun _ ↦ maximinSpeaker_congr_belief fun p ↦ not_iff_not.1
-    ((prod_dirac_apply_singleton_ne_zero_iff _ (by simp) p).trans
-      (prod_dirac_apply_singleton_ne_zero_iff _ hν p).symm)
+    speaker μ α C parse = maximinSpeaker α C (parseListener fun i ↦ listener μ (truthful (parse i)))
+      fun w ↦ ν.prod (Measure.dirac w) :=
+  Kernel.ext fun _ ↦ maximinSpeaker_congr_belief fun p ↦ not_iff_not.1 <| by
+    simp [Measure.prod_dirac_apply_singleton_ne_zero_iff, hν]
 
 omit [IsFiniteMeasure μ] in
 /-- The speaker of [spector-2017] and [cremers-wilcox-spector-2023], who maximizes the expected
@@ -442,11 +394,11 @@ utility over the parses under a prior of full support, uses the messages the Max
 uses, so she too derives Truth on all parses (footnote 12). -/
 theorem speaker_apply_singleton_eq_zero_iff_expected (ν : Measure ι) [IsFiniteMeasure ν]
     (hν : ∀ i, ν {i} ≠ 0) (hα : 0 < α) :
-    RSA.speaker α C (parseListener μ parse) (fun w ↦ ν.prod (Measure.dirac w)) w {σ} = 0 ↔
-      speaker μ α C parse w {σ} = 0 := by
-  rw [speaker_eq_maximinSpeaker ν hν, maximinSpeaker_apply_singleton_eq_zero_iff_speaker
-    (b := fun w ↦ ν.prod (Measure.dirac w)) hα
-    ⟨(Classical.arbitrary ι, w), (prod_dirac_apply_singleton_ne_zero_iff _ hν _).2 rfl⟩]
+    RSA.speaker α C (parseListener fun i ↦ listener μ (truthful (parse i)))
+        (fun w ↦ ν.prod (Measure.dirac w)) w {σ} = 0 ↔ speaker μ α C parse w {σ} = 0 := by
+  rw [speaker_parseListener_apply_singleton_eq_zero_iff _ hα, speaker,
+    maximinSpeaker_parseListener_apply_singleton_eq_zero_iff _ hα ⟨Classical.arbitrary ι, by simp⟩]
+  simp [hν]
 
 /-! #### The readings of a trivalent meaning as the parses -/
 

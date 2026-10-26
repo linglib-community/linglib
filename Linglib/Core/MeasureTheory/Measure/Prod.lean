@@ -12,10 +12,11 @@ public import Mathlib.MeasureTheory.Measure.Real
 /-!
 # Measures on a product at atoms
 
-The product measure at a pair on reals and at a set given by its fibers over a finite second
-coordinate; the marginals `Measure.fst` and `Measure.snd` at a singleton, as sums over the other
-coordinate when it ranges over a finite type, in `ℝ≥0∞` and on reals; and absolute continuity of
-a joint with respect to the product of its marginals. `[UPSTREAM]` candidate for
+The product measure at a pair on reals, the atoms of a product with a point mass, and the
+product measure at a set given by its fibers over a finite second coordinate; the marginals
+`Measure.fst` and `Measure.snd` at a singleton, as sums over the other coordinate when it ranges
+over a finite type, in `ℝ≥0∞` and on reals; and absolute continuity of a joint with respect to
+the product of its marginals. `[UPSTREAM]` candidate for
 `Mathlib/MeasureTheory/Measure/Prod.lean`.
 -/
 
@@ -30,6 +31,13 @@ variable {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
 theorem prod_real_singleton (μ : Measure α) (ν : Measure β) [SFinite ν] (a : α) (b : β) :
     (μ.prod ν).real {(a, b)} = μ.real {a} * ν.real {b} := by
   rw [← Set.singleton_prod_singleton, measureReal_prod_prod]
+
+/-- The atoms of `μ.prod (dirac b)` are the atoms of `μ` paired with `b`. -/
+theorem prod_dirac_apply_singleton_ne_zero_iff [MeasurableSingletonClass β] (μ : Measure α)
+    (b : β) (p : α × β) : μ.prod (dirac b) {p} ≠ 0 ↔ μ {p.1} ≠ 0 ∧ p.2 = b := by
+  obtain ⟨a, b'⟩ := p
+  rw [← Set.singleton_prod_singleton, prod_prod, dirac_apply]
+  by_cases h : b' = b <;> simp [h, Ne.symm]
 
 /-! ### Sets given by their fibers over a finite coordinate -/
 
