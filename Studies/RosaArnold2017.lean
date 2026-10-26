@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.RosaArnold2017
 public import Linglib.Data.Experiments.RosaArnold2017
 public import Linglib.Fragments.English.Pronouns
 public import Linglib.Morphology.Word.Agree
+public import Studies.KehlerRohde2013
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.Linarith
 
@@ -26,9 +27,12 @@ shows that a subject source pronominalized above a nonsubject goal, the earlier 
 evidence against predictability, is consistent with a positive thematic effect whenever the
 subject effect exceeds it. The pronoun rates of the three experiments and the rating study are
 `Data/Experiments/RosaArnold2017`; `topical_not_fits` reads the Experiment 1 contrast at fixed
-grammatical role and `goal_expected` the rating study. The effect sizes, the marginal
-amplification of the goal effect under Occasion and Result continuations in Experiment 2, and
-the shorter latencies for goal continuations stay in prose.
+grammatical role and `goal_expected` the rating study. In Experiment 2 the goal effect is
+significant only in Occasion and Result continuations, the group whose relations focus the end
+state of the previous event, which are the relations where Kehler and Rohde's interpretation is
+Goal-biased (`goalEffects_significant_iff_goalBiased`), though the interaction itself is marginal
+(`not_coherenceInteraction_significant`). The effect sizes and the shorter latencies for goal
+continuations stay in prose.
 
 ## Implementation notes
 
@@ -36,6 +40,9 @@ the shorter latencies for goal continuations stay in prose.
   logistic link guarantees for population rates.
 * The gender contrast of an item is derived from the characters' φ-features: a pronoun is
   ambiguous exactly when the two characters agree.
+* The Occasion/Result group is the paper's, motivated by the end-state reasoning that Kehler and
+  Rohde also use; what the two studies share is that interpretation and production split along
+  it.
 
 ## References
 
@@ -128,5 +135,47 @@ theorem topical_not_fits (M : Model) (hM : M.Topical) : ¬ M.Fits (rate .retelli
     (by decide +kernel)
   rw [h] at hlt
   exact lt_irrefl _ hlt
+
+/-! ### Coherence and the goal effect (Experiment 2) -/
+
+/-- The coherence codes in Kehler's classification, Background having no counterpart there. -/
+def CoherenceCode.toCoherence : CoherenceCode → Option Discourse.Coherence.Relation
+  | .elaboration => some .elaboration
+  | .explanation => some .explanation
+  | .occasion => some .occasion
+  | .parallel => some .parallel
+  | .result => some .result
+  | .violatedExpectation => some .violatedExpectation
+  | .background => none
+
+/-- The code of each of Kehler and Rohde's five relations. -/
+def codeOf : KehlerRohde2013.Relation → CoherenceCode
+  | .occasion => .occasion
+  | .elaboration => .elaboration
+  | .explanation => .explanation
+  | .violatedExpectation => .violatedExpectation
+  | .result => .result
+
+theorem coherenceGroups_eq_occasionResult_iff (c : CoherenceCode) :
+    (coherenceGroups c).group = .occasionResult ↔
+      ∃ r ∈ c.toCoherence, KehlerRohde2013.FocusesEndState r := by
+  cases c <;> decide
+
+theorem goalEffects_significant_iff (g : CoherenceGroup) :
+    (goalEffects g).p.Significant (1 / 20) ↔ g = .occasionResult := by
+  revert g; decide +kernel
+
+theorem not_coherenceInteraction_significant :
+    ¬ (coherenceInteraction[0]'(by decide)).p.Significant (1 / 20) := by
+  decide +kernel
+
+/-- Across the five relations both studies code, the goal effect on production is significant
+exactly where Kehler and Rohde's interpretation is Goal-biased, both following the end state. -/
+theorem goalEffects_significant_iff_goalBiased (k : KehlerRohde2013.Relation) :
+    (goalEffects (coherenceGroups (codeOf k)).group).p.Significant (1 / 20) ↔
+      KehlerRohde2013.perfectiveSourceGiven k < 50 := by
+  rw [goalEffects_significant_iff, coherenceGroups_eq_occasionResult_iff,
+    KehlerRohde2013.goalBiased_iff_focusesEndState]
+  cases k <;> simp [codeOf, CoherenceCode.toCoherence, KehlerRohde2013.Relation.toCoherence]
 
 end RosaArnold2017

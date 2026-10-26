@@ -12,7 +12,8 @@ The pronoun rates of the three production experiments, an in-person event retell
 completion over the story materials, and a sentence completion with disconnected items, by the
 continued character's thematic role, its grammatical role, and whether the two characters share a
 gender, with the next-mention rating study over the Experiment 1 stimuli. Page numbers are those of
-the authors' accepted manuscript.
+the authors' accepted manuscript. Experiment 2 also codes each continuation's coherence relation,
+collapsed into Occasion/Result and Other.
 
 ## References
 
@@ -57,6 +58,32 @@ inductive Gender where
   | same
   /-- different-gender: the characters differ in gender -/
   | different
+  deriving DecidableEq, Repr, Fintype
+
+/-- The coherence relation coded for a continuation in Experiment 2. -/
+inductive CoherenceCode where
+  /-- elaboration: elaboration -/
+  | elaboration
+  /-- explanation: explanation -/
+  | explanation
+  /-- occasion: occasion -/
+  | occasion
+  /-- parallel: parallel -/
+  | parallel
+  /-- result: result -/
+  | result
+  /-- violated expectations: violated expectations -/
+  | violatedExpectation
+  /-- background: background -/
+  | background
+  deriving DecidableEq, Repr, Fintype
+
+/-- The two groups the coherence codes are collapsed into. -/
+inductive CoherenceGroup where
+  /-- Occasion/Result: occasion or result, events that follow the previous one -/
+  | occasionResult
+  /-- Other: every other continuation type -/
+  | other
   deriving DecidableEq, Repr, Fintype
 
 /-- The participants of the next-mention rating study. (Rating studies, manuscript p. 20; checked
@@ -122,5 +149,70 @@ def overall : Experiment → Role → Overall
   | .completion, .source => ⟨some 51⟩
   | .renamed, .goal => ⟨none⟩
   | .renamed, .source => ⟨none⟩
+
+/-- A row of manuscript p. 32: the group each coherence code of Experiment 2 is collapsed into. -/
+structure CoherenceGrouping where
+  /-- The group it is collapsed into. -/
+  group : CoherenceGroup
+  deriving DecidableEq, Repr
+
+/-- The cells of manuscript p. 32, by code; checked against the page images. -/
+def coherenceGroups : CoherenceCode → CoherenceGrouping
+  | .elaboration => ⟨.other⟩
+  | .explanation => ⟨.other⟩
+  | .occasion => ⟨.occasionResult⟩
+  | .parallel => ⟨.other⟩
+  | .result => ⟨.occasionResult⟩
+  | .violatedExpectation => ⟨.other⟩
+  | .background => ⟨.other⟩
+
+/-- A row of manuscript p. 32: the number of Experiment 2 continuations by the continued
+character's role and the coherence group. -/
+structure ContinuationCount where
+  /-- The number of continuations. -/
+  count : ℕ
+  deriving DecidableEq, Repr
+
+/-- The cells of manuscript p. 32, by role and group; checked against the page images. -/
+def continuationCounts : Role → CoherenceGroup → ContinuationCount
+  | .goal, .occasionResult => ⟨120⟩
+  | .goal, .other => ⟨103⟩
+  | .source, .occasionResult => ⟨81⟩
+  | .source, .other => ⟨121⟩
+
+/-- A row of manuscript p. 33: the contrast in pronoun use between goal and source continuations
+in Experiment 2, by coherence group. -/
+structure GoalEffect where
+  /-- The estimate β. -/
+  estimate : Decimal
+  /-- Its standard error. -/
+  se : Decimal
+  /-- The t-value. -/
+  t : Decimal
+  /-- The p-value. -/
+  p : PValue
+  deriving DecidableEq, Repr
+
+/-- The cells of manuscript p. 33, by group; checked against the page images. -/
+def goalEffects : CoherenceGroup → GoalEffect
+  | .occasionResult => ⟨⟨122, 2⟩, ⟨40, 2⟩, ⟨306, 2⟩, ⟨.eq, ⟨2, 3⟩⟩⟩
+  | .other => ⟨⟨86, 2⟩, ⟨55, 2⟩, ⟨156, 2⟩, ⟨.eq, ⟨12, 2⟩⟩⟩
+
+/-- A row of Table 6, manuscript p. 34: the goal by coherence relation interaction of the
+Experiment 2 production model. -/
+structure CoherenceInteraction where
+  /-- The estimate. -/
+  estimate : Decimal
+  /-- Its standard error. -/
+  se : Decimal
+  /-- The t-value. -/
+  t : Decimal
+  /-- The p-value. -/
+  p : PValue
+  deriving DecidableEq, Repr
+
+/-- The row of Table 6, manuscript p. 34; checked against the page images. -/
+def coherenceInteraction : List CoherenceInteraction :=
+  [⟨⟨108, 2⟩, ⟨57, 2⟩, ⟨188, 2⟩, ⟨.eq, ⟨6, 2⟩⟩⟩]
 
 end RosaArnold2017

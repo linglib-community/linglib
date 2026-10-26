@@ -1,7 +1,7 @@
 {
   "meta": {
     "bibkey": "rosa-arnold-2017",
-    "description": "The pronoun rates of the three production experiments, an in-person event retelling, a sentence completion over the story materials, and a sentence completion with disconnected items, by the continued character's thematic role, its grammatical role, and whether the two characters share a gender, with the next-mention rating study over the Experiment 1 stimuli. Page numbers are those of the authors' accepted manuscript."
+    "description": "The pronoun rates of the three production experiments, an in-person event retelling, a sentence completion over the story materials, and a sentence completion with disconnected items, by the continued character's thematic role, its grammatical role, and whether the two characters share a gender, with the next-mention rating study over the Experiment 1 stimuli. Page numbers are those of the authors' accepted manuscript. Experiment 2 also codes each continuation's coherence relation, collapsed into Occasion/Result and Other."
   },
   "types": [
     {
@@ -70,6 +70,63 @@
           "name": "different",
           "label": "different-gender",
           "doc": "the characters differ in gender"
+        }
+      ]
+    },
+    {
+      "name": "CoherenceCode",
+      "doc": "The coherence relation coded for a continuation in Experiment 2.",
+      "levels": [
+        {
+          "name": "elaboration",
+          "label": "elaboration",
+          "doc": "elaboration"
+        },
+        {
+          "name": "explanation",
+          "label": "explanation",
+          "doc": "explanation"
+        },
+        {
+          "name": "occasion",
+          "label": "occasion",
+          "doc": "occasion"
+        },
+        {
+          "name": "parallel",
+          "label": "parallel",
+          "doc": "parallel"
+        },
+        {
+          "name": "result",
+          "label": "result",
+          "doc": "result"
+        },
+        {
+          "name": "violatedExpectation",
+          "label": "violated expectations",
+          "doc": "violated expectations"
+        },
+        {
+          "name": "background",
+          "label": "background",
+          "doc": "background"
+        }
+      ]
+    },
+    {
+      "name": "CoherenceGroup",
+      "doc": "The two groups the coherence codes are collapsed into.",
+      "levels": [
+        {
+          "name": "occasionResult",
+          "label": "Occasion/Result",
+          "doc": "occasion or result, events that follow the previous one"
+        },
+        {
+          "name": "other",
+          "label": "Other",
+          "doc": "every other continuation type"
         }
       ]
     }
@@ -368,6 +425,198 @@
           "experiment": "3",
           "role": "source",
           "pronouns": null
+        }
+      ]
+    },
+    {
+      "name": "coherenceGroups",
+      "structure": "CoherenceGrouping",
+      "doc": "the group each coherence code of Experiment 2 is collapsed into.",
+      "locator": "manuscript p. 32",
+      "verified": "page-image",
+      "key": [
+        "code"
+      ],
+      "columns": [
+        {
+          "name": "code",
+          "type": "CoherenceCode",
+          "doc": "The coherence code."
+        },
+        {
+          "name": "group",
+          "type": "CoherenceGroup",
+          "doc": "The group it is collapsed into."
+        }
+      ],
+      "rows": [
+        {
+          "code": "elaboration",
+          "group": "Other"
+        },
+        {
+          "code": "explanation",
+          "group": "Other"
+        },
+        {
+          "code": "occasion",
+          "group": "Occasion/Result"
+        },
+        {
+          "code": "parallel",
+          "group": "Other"
+        },
+        {
+          "code": "result",
+          "group": "Occasion/Result"
+        },
+        {
+          "code": "violated expectations",
+          "group": "Other"
+        },
+        {
+          "code": "background",
+          "group": "Other"
+        }
+      ]
+    },
+    {
+      "name": "continuationCounts",
+      "structure": "ContinuationCount",
+      "doc": "the number of Experiment 2 continuations by the continued character's role and the coherence group.",
+      "locator": "manuscript p. 32",
+      "verified": "page-image",
+      "key": [
+        "role",
+        "group"
+      ],
+      "columns": [
+        {
+          "name": "role",
+          "type": "Role",
+          "doc": "The thematic role of the continued character."
+        },
+        {
+          "name": "group",
+          "type": "CoherenceGroup",
+          "doc": "The coherence group."
+        },
+        {
+          "name": "count",
+          "type": "nat",
+          "doc": "The number of continuations."
+        }
+      ],
+      "rows": [
+        {
+          "role": "goal",
+          "group": "Occasion/Result",
+          "count": 120
+        },
+        {
+          "role": "goal",
+          "group": "Other",
+          "count": 103
+        },
+        {
+          "role": "source",
+          "group": "Occasion/Result",
+          "count": 81
+        },
+        {
+          "role": "source",
+          "group": "Other",
+          "count": 121
+        }
+      ]
+    },
+    {
+      "name": "goalEffects",
+      "structure": "GoalEffect",
+      "doc": "the contrast in pronoun use between goal and source continuations in Experiment 2, by coherence group.",
+      "locator": "manuscript p. 33",
+      "verified": "page-image",
+      "key": [
+        "group"
+      ],
+      "columns": [
+        {
+          "name": "group",
+          "type": "CoherenceGroup",
+          "doc": "The coherence group."
+        },
+        {
+          "name": "estimate",
+          "type": "decimal",
+          "doc": "The estimate β."
+        },
+        {
+          "name": "se",
+          "type": "decimal",
+          "doc": "Its standard error."
+        },
+        {
+          "name": "t",
+          "type": "decimal",
+          "doc": "The t-value."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "group": "Occasion/Result",
+          "estimate": "1.22",
+          "se": "0.40",
+          "t": "3.06",
+          "p": "0.002"
+        },
+        {
+          "group": "Other",
+          "estimate": "0.86",
+          "se": "0.55",
+          "t": "1.56",
+          "p": "0.12"
+        }
+      ]
+    },
+    {
+      "name": "coherenceInteraction",
+      "structure": "CoherenceInteraction",
+      "doc": "the goal by coherence relation interaction of the Experiment 2 production model.",
+      "locator": "Table 6, manuscript p. 34",
+      "verified": "page-image",
+      "columns": [
+        {
+          "name": "estimate",
+          "type": "decimal",
+          "doc": "The estimate."
+        },
+        {
+          "name": "se",
+          "type": "decimal",
+          "doc": "Its standard error."
+        },
+        {
+          "name": "t",
+          "type": "decimal",
+          "doc": "The t-value."
+        },
+        {
+          "name": "p",
+          "type": "pvalue",
+          "doc": "The p-value."
+        }
+      ],
+      "rows": [
+        {
+          "estimate": "1.08",
+          "se": "0.57",
+          "t": "1.88",
+          "p": "0.06"
         }
       ]
     }
