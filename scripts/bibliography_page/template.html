@@ -36,7 +36,6 @@
 }
 .filter.role[aria-pressed="true"] { color: var(--primary); border-color: var(--tertiary); }
 .filter.role[aria-pressed="true"]::before { opacity: 1; }
-.filter.tag[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--theme); }
 #sort { margin-left: auto; }
 .status { font-size: 15px; color: var(--secondary); margin: 14px 0 22px; min-height: 1.6em; }
 .status button { color: var(--primary); text-decoration: underline; text-decoration-color: var(--tertiary); text-underline-offset: 3px; }
@@ -83,7 +82,6 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
     <input id="q" type="search" placeholder="Search by author, title, year, or file" aria-label="Search the bibliography" autocomplete="off" spellcheck="false">
   </div>
   <div class="row" id="roles" role="group" aria-label="Role"></div>
-  <div class="row" id="tags" role="group" aria-label="Area"></div>
   <p class="status" id="status" aria-live="polite"></p>
   <ol class="entries" id="list"></ol>
 </main>
@@ -104,8 +102,6 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
 
   const ROLES = ["formalized", "foundational", "cited"];
   const DEFAULT_ROLES = all.some((e) => e.role) ? ["formalized", "foundational"] : ROLES;
-  const TAGS = ["Pragmatics", "Semantics", "Syntax", "Morphology", "Phonology", "Typology", "Other"];
-  const tagOf = (area) => { const t = area ? area[0].toUpperCase() + area.slice(1) : ""; return TAGS.includes(t) && t !== "Other" ? t : "Other"; };
   const shortPath = (p) => p.replace(/^(Linglib|Studies)\//, "").replace(/\.lean$/, "");
   const FIRST = 5;
 
@@ -113,7 +109,6 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
   const list = $("list");
   for (const e of all) {
     e.role = ROLES.includes(e.role) ? e.role : "cited";
-    e.tag = tagOf(e.area);
     e.hay = fold(e.search + " " + e.authors);
     e.paths = fold(e.places.map((p) => p.path).join(" "));
   }
@@ -164,20 +159,17 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
   const byYear = all.slice().sort((a, b) => (b.year || "").localeCompare(a.year || ""));
 
   // ---- controls
-  const roleCount = {}, tagCount = {};
-  for (const e of all) { roleCount[e.role] = (roleCount[e.role] || 0) + 1; tagCount[e.tag] = (tagCount[e.tag] || 0) + 1; }
+  const roleCount = {};
+  for (const e of all) roleCount[e.role] = (roleCount[e.role] || 0) + 1;
   $("roles").innerHTML = ROLES.map((r) =>
     `<button type="button" class="filter role" data-role="${r}" style="--bar: var(--${r})">${r} <span class="n">(${num(roleCount[r] || 0)})</span></button>`).join("") +
     `<button type="button" class="filter" id="sort" title="Sort order"></button>`;
-  $("tags").innerHTML = TAGS.filter((t) => tagCount[t]).map((t) =>
-    `<button type="button" class="filter tag" data-tag="${t}">${t}</button>`).join("");
 
   const q = $("q"), status = $("status"), sortBtn = $("sort");
-  let roles = new Set(DEFAULT_ROLES), tags = new Set(), sort = "az", order = "", hiding = [];
+  let roles = new Set(DEFAULT_ROLES), sort = "az", order = "", hiding = [];
 
   function paint() {
     for (const b of document.querySelectorAll(".role")) b.setAttribute("aria-pressed", roles.has(b.dataset.role));
-    for (const b of document.querySelectorAll(".tag")) b.setAttribute("aria-pressed", tags.has(b.dataset.tag));
     sortBtn.textContent = sort === "year" ? "Newest" : "A–Z";
   }
 
@@ -185,7 +177,7 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
     const terms = fold(q.value).split(/\s+/).filter(Boolean);
     const on = [], hiddenBy = {};
     for (const e of all) {
-      const match = (!tags.size || tags.has(e.tag)) && terms.every((t) => hit(e, t));
+      const match = terms.every((t) => hit(e, t));
       e.on = match && roles.has(e.role);
       if (e.on) on.push(e);
       else if (match) hiddenBy[e.role] = (hiddenBy[e.role] || 0) + 1;
@@ -210,13 +202,12 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
   }
   const update = () => { apply(); save(); };
 
-  // ---- URL hash: #q=…&role=…&tag=…&sort=year, or #key for one entry
+  // ---- URL hash: #q=…&role=…&sort=year, or #key for one entry
   function save() {
     const p = new URLSearchParams();
     if (q.value.trim()) p.set("q", q.value.trim());
     const r = ROLES.filter((x) => roles.has(x));
     if (r.join() !== DEFAULT_ROLES.join()) p.set("role", r.join(","));
-    if (tags.size) p.set("tag", TAGS.filter((x) => tags.has(x)).join(","));
     if (sort !== "az") p.set("sort", sort);
     const h = p.toString();
     history.replaceState(null, "", h ? "#" + h : location.pathname + location.search);
@@ -227,7 +218,6 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
     if (!h.includes("=")) return all.some((e) => e.key === h) ? h : null;
     const p = new URLSearchParams(h);
     if (p.has("role")) roles = new Set(p.get("role").split(",").filter((x) => ROLES.includes(x)));
-    if (p.has("tag")) tags = new Set(p.get("tag").split(",").filter((x) => TAGS.includes(x)));
     if (p.has("q")) q.value = p.get("q");
     if (p.get("sort") === "year") sort = "year";
     return null;
@@ -242,12 +232,6 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
     if (!b) return;
     if (b === sortBtn) sort = sort === "az" ? "year" : "az";
     else roles.has(b.dataset.role) ? roles.delete(b.dataset.role) : roles.add(b.dataset.role);
-    update();
-  });
-  $("tags").addEventListener("click", (ev) => {
-    const b = ev.target.closest("button");
-    if (!b) return;
-    tags.has(b.dataset.tag) ? tags.delete(b.dataset.tag) : tags.add(b.dataset.tag);
     update();
   });
   status.addEventListener("click", (ev) => {
@@ -272,13 +256,13 @@ ol.entries { list-style: none; margin: 0; padding: 0; }
     if (!target) return apply();
     const e = all.find((x) => x.key === target);
     apply();
-    if (!e.on) { roles.add(e.role); tags.clear(); q.value = ""; apply(); }
+    if (!e.on) { roles.add(e.role); q.value = ""; apply(); }
     for (const h of list.querySelectorAll(".hit")) h.classList.remove("hit");
     e.el.classList.add("hit");
     requestAnimationFrame(() => e.el.scrollIntoView());
   }
   addEventListener("hashchange", () => {
-    if (location.hash.includes("=")) { roles = new Set(DEFAULT_ROLES); tags = new Set(); q.value = ""; sort = "az"; }
+    if (location.hash.includes("=")) { roles = new Set(DEFAULT_ROLES); q.value = ""; sort = "az"; }
     go(load());
   });
   go(load());

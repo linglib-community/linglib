@@ -309,16 +309,14 @@ def build(sha, docs_base):
                 unrendered.append((key, field, f[field]))
         places = sorted((place(p, sha, docs_base) for p in used.get(key, ())),
                         key=lambda p: (order.get(p["path"].split("/")[0], 4), p["path"]))
-        sub = f.get("subfield", "")
         search = " ".join([key, tex_text(f.get("author", "")), tex_text(f.get("editor", "")),
                            f.get("year", ""), tex_text(f.get("title", "")),
-                           tex_text(f.get("journal", "")), tex_text(f.get("booktitle", "")), sub])
+                           tex_text(f.get("journal", "")), tex_text(f.get("booktitle", ""))])
         rows.append({
             "key": key, "authors": authors(f), "year": f.get("year", ""),
             "sort": [surname(f.get("author") or f.get("editor") or key), f.get("year", ""), key],
             "title": tex_html(f.get("title", "")), "venue": venue(kind, f),
             "doi": f.get("doi", ""), "url": f.get("url", ""),
-            "area": sub.split("/")[0].split(";")[0].strip() if sub else "",
             "role": role(key, f, studies), "places": places,
             "search": search.replace("‘", "'").replace("’", "'").lower()})
     rows.sort(key=lambda r: r.pop("sort"))
