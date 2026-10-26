@@ -29,8 +29,6 @@ forbidden, since a trace is not an accessible term. This is the admissible-cut e
 
 ## Main results
 
-* `ConnesKreimer.cutSummandsCN_numEdges`: crown edges plus trunk vertices recover the vertices of
-  the tree.
 * `ConnesKreimer.cutSummandsCN_filter_empty`: the empty cut is the unique cut with empty crown.
 * `ConnesKreimer.cutSummandsCN_filter_crown_eq_singleton`: a lexical subtree occurring once is
   extracted by one cut, whose trunk replaces it by its trace.
@@ -51,16 +49,10 @@ def traceLeaf (b : β) : RoseTree (α ⊕ β) := .node (Sum.inr b) []
 
 /-! ### Δ^c extraction policy -/
 
-/-- The Δ^c extraction policy extracts `Sum.inl`-rooted (non-trace)
-    subtrees whole, leaving a single `traceLeaf (τ t)` in the
-    parent's child slot, and declines to extract `Sum.inr`-rooted (trace)
-    subtrees.
-
-    Declining at trace subtrees is required for coassociativity —
-    without it, iterated Δ^c produces "trace of trace" right-channel
-    terms that break the double-cut bijection — and matches
-    [marcolli-chomsky-berwick-2025] Definition 1.2.2's restriction of
-    cuts to accessible terms, which excludes trace placeholders. -/
+/-- The Δ^c extraction policy cuts a `Sum.inl`-rooted subtree `t` whole, leaving the trace leaf
+    `traceLeaf (τ t)` in its slot, and never cuts a trace, which is not an accessible term
+    ([marcolli-chomsky-berwick-2025], proof of Lemma 1.6.3, p. 65). Cutting traces would also
+    break coassociativity, since iterated Δ^c would then leave traces of traces. -/
 def extractC (τ : RoseTree (α ⊕ β) → β) :
     RoseTree (α ⊕ β) → Option (List (RoseTree (α ⊕ β)))
   | t@(.node (Sum.inl _) _) => some [traceLeaf (τ t)]
@@ -197,62 +189,6 @@ noncomputable def cutSummandsCN (τ : UnorderedTree (α ⊕ β) → β) :
     cutSummandsCN τ (UnorderedTree.mk T) =
       (ConnesKreimer.cutSummandsCP (τ ∘ UnorderedTree.mk) T).map
         ConnesKreimer.projSummand := rfl
-
-/-- `Σ (wᵢ − 1) + card = Σ wᵢ` for tree-level forests (each `wᵢ ≥ 1`). -/
-private theorem sum_map_numNodes_sub_one_add_card {γ : Type*}
-    (F : Multiset (RoseTree γ)) :
-    ((F.map (fun t => RoseTree.numNodes t - 1)).sum + Multiset.card F =
-      (F.map RoseTree.numNodes).sum) := by
-  induction F using Multiset.induction_on with
-  | empty => rfl
-  | cons a F ih =>
-    have h1 : 1 ≤ RoseTree.numNodes a := RoseTree.numNodes_pos a
-    rw [Multiset.map_cons, Multiset.map_cons, Multiset.sum_cons,
-        Multiset.sum_cons, Multiset.card_cons]
-    omega
-
-/-- Δ^c cut summands conserve edges, since the trace marker replaces
-    the cut subtree by a unit-weight leaf, so crown edges plus trunk
-    weight recover the tree weight exactly. Descends
-    `cutSummandsG_numNodes` through `UnorderedTree.mk`. -/
-theorem cutSummandsCN_numEdges (τ : UnorderedTree (α ⊕ β) → β)
-    (T : UnorderedTree (α ⊕ β)) :
-    ∀ p ∈ cutSummandsCN τ T,
-      (p.1.map UnorderedTree.numEdges).sum + p.2.numNodes = T.numNodes := by
-  obtain ⟨T₀, rfl⟩ : ∃ T₀ : RoseTree (α ⊕ β), T = UnorderedTree.mk T₀ :=
-    ⟨T.out, (Quotient.out_eq T).symm⟩
-  intro p hp
-  rw [cutSummandsCN_mk] at hp
-  obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-  rw [cutSummandsCP_def] at hq
-  have hext : ∀ (t : RoseTree (α ⊕ β)) r,
-      extractC (τ ∘ UnorderedTree.mk) t = some r →
-      (r.map RoseTree.numNodes).sum = 1 := by
-    intro t r h
-    cases t with
-    | node x cs =>
-      cases x with
-      | inl a =>
-        rw [extractC_inl] at h
-        obtain rfl := (Option.some.injEq _ _ ▸ h :
-          [traceLeaf ((τ ∘ UnorderedTree.mk)
-            (RoseTree.node (Sum.inl a) cs))] = r)
-        simp [traceLeaf]
-      | inr b =>
-        rw [extractC_inr] at h
-        exact absurd h (by simp)
-  have h := cutSummandsG_numNodes _ hext T₀ q hq
-  have hsub := sum_map_numNodes_sub_one_add_card q.1
-  show ((q.1.map UnorderedTree.mk).map UnorderedTree.numEdges).sum +
-      (UnorderedTree.mk q.2).numNodes = (UnorderedTree.mk T₀).numNodes
-  rw [UnorderedTree.numNodes_mk, UnorderedTree.numNodes_mk]
-  rw [show ((q.1.map UnorderedTree.mk).map UnorderedTree.numEdges).sum =
-      ((q.1.map (fun t => RoseTree.numNodes t - 1)).sum) from by
-    show ((q.1.map UnorderedTree.mk).map
-        (fun T => UnorderedTree.numNodes T - 1)).sum = _
-    rw [Multiset.map_map]
-    rfl]
-  omega
 
 /-- The empty cut `(0, T)` is the unique cut summand of `cutSummandsCN τ T` with empty crown. -/
 theorem cutSummandsCN_filter_empty
