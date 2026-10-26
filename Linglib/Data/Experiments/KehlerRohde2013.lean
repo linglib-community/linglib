@@ -13,7 +13,8 @@ aspect manipulation, an instruction manipulation, a prompt manipulation and a vo
 each reporting proportions of Source interpretations, coherence relations, next mentions or
 pronominalized references. Proportions are printed to two places; the paper prints the Violated
 Expectation relation as Violated Exp in Tables 3, 4 and 6. The first-mention rates of the prompt
-manipulation are printed in the text, not in a table.
+manipulation and the figures of the worked example from Arnold (2001)'s Source-Goal data are printed
+in the text, not in a table.
 
 ## References
 
@@ -241,5 +242,34 @@ structure SubjectBias where
 def subjectBiases : Voice → SubjectBias
   | .active => ⟨⟨81, 2⟩, ⟨74, 2⟩⟩
   | .passive => ⟨⟨59, 2⟩, ⟨60, 2⟩⟩
+
+/-- A row of p. 15: the proportion of references to a position that were pronominalized in Arnold
+(2001)'s Source-Goal contexts, the subject being the Source and the non-subject the Goal,
+printed in the text. -/
+structure ArnoldPronominalized where
+  /-- The proportion of references that are pronouns. -/
+  proportion : Decimal
+  deriving DecidableEq, Repr
+
+/-- The cells of p. 15, by position; checked against the page images. -/
+def arnoldPronominalizations : Position → ArnoldPronominalized
+  | .subject => ⟨⟨76, 2⟩⟩
+  | .nonSubject => ⟨⟨20, 2⟩⟩
+
+/-- A row of p. 15: the worked example of Equation (11) on Arnold (2001)'s data, printed in the
+text: the next-mention probability of the Goal, the probability of a pronoun, and the
+predicted interpretation bias of a pronoun toward the Goal. -/
+structure ArnoldPrediction where
+  /-- P(Goal), the next-mention probability of the Goal. -/
+  goalNextMention : Decimal
+  /-- P(pronoun), the probability of pronominalization. -/
+  pronounRate : Decimal
+  /-- The interpretation bias toward the Goal that Equation (11) predicts. -/
+  goalInterpretation : Decimal
+  deriving DecidableEq, Repr
+
+/-- The row of p. 15; checked against the page images. -/
+def arnoldPrediction : List ArnoldPrediction :=
+  [⟨⟨86, 2⟩, ⟨28, 2⟩, ⟨61, 2⟩⟩]
 
 end KehlerRohde2013
