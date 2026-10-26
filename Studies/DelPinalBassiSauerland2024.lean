@@ -45,9 +45,18 @@ since the factive denies belief in the at-issue prejacent. Quantifiers over `S` 
 presupposition universally, as the Weak Kleene quantifiers over the subtype of `S`, and
 *exactly one* is `∃!` with the same projection.
 
+## Errata
+
+* The paper says after (9) that, other than the includable alternatives, it follows Bassi, Del
+  Pinal and Sauerland (2021), but (20) has the presupposition of `pex^{IE+II}[□(T ∧ B)]`
+  project from under negation, which needs the trivalent entry the earlier paper sets aside in
+  its footnote 15. With that paper's falsity conditions, those of the prejacent
+  (`Exhaustification.pexIE`), `¬pex^{IE+II}[□(T ∧ B)]` would be true wherever `¬□T ∨ ¬□B` is.
+
 ## References
 
 * [delpinal-bassi-sauerland-2024]
+* [bassi-delpinal-sauerland-2021]
 * [bar-lev-fox-2020]
 * [gotzner-romoli-santorio-2020]
 * [goldstein-2019]
