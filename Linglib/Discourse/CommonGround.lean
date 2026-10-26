@@ -15,8 +15,8 @@ takes a common ground `c` to `c ⊓ 𝓟 φ`, so a history of assertions lands o
 of their intersection in whatever order they are made, and a history that asserts more leaves a
 stronger common ground.
 
-`HasCommonGround` and `HasAssertion` connect richer discourse states (commitment slates,
-gameboards, probabilistic states) to this projection.
+`HasCommonGround` and `HasAssertion` connect richer discourse states (the Table of commitments,
+mood states, scoreboards, probabilistic states) to this projection.
 
 ## Main definitions
 

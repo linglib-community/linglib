@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Discourse.QUD.Issue
+public import Linglib.Discourse.CommonGround
 public import Linglib.Semantics.Questions.Resolution
 
 /-!
@@ -18,10 +18,10 @@ stack. The moves of the paper are functions on the structure, and the file prove
 to the projected set, the commitment lists, and the Table. Parenthesized numbers are the paper's
 example and definition numbers.
 
-A Table is a discourse state in both projections, with the `commonGround` coordinate as its common
-ground (`HasCommonGround`) and the top of the stack as its current issue (`Discourse.HasIssue`).
-It is not a `HasAssertion` instance under its own `assert`, which leaves the common ground alone
-and moves only the projected set.
+A Table is a discourse state with the `commonGround` coordinate as its common ground
+(`HasCommonGround`), and its current issue is the top of the stack (`Table.issue`). It is not a
+`HasAssertion` instance under its own `assert`, which leaves the common ground alone and moves
+only the projected set.
 
 ## Main definitions
 
@@ -149,7 +149,7 @@ instance : Inhabited (Table A W) := ⟨empty⟩
 instance : HasCommonGround (Table A W) W := ⟨Table.commonGround⟩
 
 /-- The current issue is the top of the Table, the trivial issue when the Table is empty. -/
-instance : Discourse.HasIssue (Table A W) W := ⟨fun K ↦ K.stack.headD ⊤⟩
+def issue : Question W := K.stack.headD ⊤
 
 /-- A conversation is stable when its Table is empty. -/
 def IsStable : Prop := K.stack = []
@@ -238,13 +238,11 @@ open scoped Classical in
 
 @[simp] theorem _root_.HasCommonGround.commonGround_table :
     HasCommonGround.commonGround K = K.commonGround := rfl
-@[simp] theorem toIssue_empty : Discourse.HasIssue.toIssue (empty : Table A W) = ⊤ := rfl
-@[simp] theorem toIssue_push : Discourse.HasIssue.toIssue (K.push P) = P := rfl
-@[simp] theorem toIssue_commit :
-    Discourse.HasIssue.toIssue (K.commit a p) = Discourse.HasIssue.toIssue K := rfl
-@[simp] theorem toIssue_assert : Discourse.HasIssue.toIssue (K.assert a p) = ofSet p := rfl
-@[simp] theorem toIssue_polarQuestion :
-    Discourse.HasIssue.toIssue (K.polarQuestion p) = polar p := rfl
+@[simp] theorem issue_empty : (empty : Table A W).issue = ⊤ := rfl
+@[simp] theorem issue_push : (K.push P).issue = P := rfl
+@[simp] theorem issue_commit : (K.commit a p).issue = K.issue := rfl
+@[simp] theorem issue_assert : (K.assert a p).issue = ofSet p := rfl
+@[simp] theorem issue_polarQuestion : (K.polarQuestion p).issue = polar p := rfl
 
 /-! ### Stability -/
 
@@ -253,7 +251,7 @@ open scoped Classical in
 theorem not_isStable_push : ¬ (K.push P).IsStable := List.cons_ne_nil _ _
 
 variable {K} in
-theorem toIssue_eq_top_of_isStable (h : K.IsStable) : Discourse.HasIssue.toIssue K = ⊤ :=
+theorem issue_eq_top_of_isStable (h : K.IsStable) : K.issue = ⊤ :=
   congrArg (List.headD · ⊤) h
 
 variable {K} in
@@ -374,8 +372,7 @@ theorem decidedBy_of_mem_projectedSet_of_mem_stack (hf : f ∈ K.projectedSet) (
     · obtain ⟨g, hg, hfg⟩ := exists_le_of_mem_project hf
       exact (ih hg hP).mono hfg
 
-theorem settles_of_mem_projectedSet (hf : f ∈ K.projectedSet) :
-    Discourse.HasIssue.settles f.ker K := by
+theorem ker_mem_issue_of_mem_projectedSet (hf : f ∈ K.projectedSet) : f.ker ∈ K.issue := by
   change f.ker ∈ K.stack.headD ⊤
   cases h : K.stack with
   | nil => exact mem_top
