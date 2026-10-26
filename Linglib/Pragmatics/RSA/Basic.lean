@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.MeasureTheory.Function.EssSup
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.Prod
@@ -42,11 +43,16 @@ reduce to counting, are treated in `Linglib.Pragmatics.RSA.Uniform`.
   belief, less a cost. Its weights are the geometric mean of the listener's mass over the belief
   to the power `α`, times `exp (-(α * C))`; at the point-mass belief it is the speaker of
   eqs. 2/6–7, with weights `L ^ α * exp (-(α * C))` (`RSA.speaker_dirac_eq_ofWeights`).
+* `RSA.maximinSpeaker`: the speaker who values an utterance by its least utility over the states
+  she entertains, whose weights put the essential infimum of the listener's mass over her belief
+  where `RSA.speaker` puts its geometric mean.
 
 ## Main results
 
 * `RSA.speaker_apply_singleton_eq_zero_iff`: the speaker produces exactly the utterances whose
   listener rules out no state she entertains.
+* `RSA.maximinSpeaker_apply_singleton_eq_zero_iff_speaker`: the MaxiMin speaker produces the
+  utterances the expected-utility speaker produces.
 * `RSA.listener_prod_fst`: lexical uncertainty. Against independent priors over states and a
   latent, the state marginal of the joint listener is the listener of the speaker averaged over
   the latent.
@@ -65,6 +71,7 @@ reduce to counting, are treated in `Linglib.Pragmatics.RSA.Uniform`.
   (2016)][bergen-levy-goodman-2016]
 * [M. Franke and L. Bergen, *Theory-Driven Statistical Modeling for Semantics and Pragmatics: A
   Case Study on Grammatically Generated Implicature Readings* (2020)][franke-bergen-2020]
+* [spector-2025]
 -/
 
 @[expose] public section
@@ -708,6 +715,88 @@ theorem speaker_apply_singleton_eq_zero_iff [IsFiniteMeasure (b o)] (hα : 0 < �
     Measure.geomMean_eq_zero_iff]
 
 end Speaker
+
+/-! #### The MaxiMin speaker
+
+A speaker who is maximally averse to the risk of being misread values an utterance by its least
+utility over the states she entertains, the MaxiMin rule, instead of by its expected utility. Her
+weight puts the essential infimum of the listener's mass over her belief where the expected-utility
+speaker puts its geometric mean. She produces the utterances that speaker produces, and is that
+speaker when her belief is a point mass, but she depends on her belief only through the states
+it entertains, not through their probabilities. -/
+
+private theorem essInf_ne_top [Countable W] {β ν : Measure W} [IsFiniteMeasure ν]
+    (hβ : ∃ w, β {w} ≠ 0) : essInf (fun w ↦ ν {w}) β ≠ ∞ := by
+  obtain ⟨w, hw⟩ := hβ
+  rw [essInf_eq_biInf]
+  exact ne_top_of_le_ne_top (measure_ne_top ν {w}) (iInf₂_le w hw)
+
+section MaxiMin
+
+variable [Fintype U] [Countable O] [MeasurableSingletonClass O]
+
+/-- The MaxiMin speaker at rationality `α` and cost `C` addresses the listener `L` and at `o`
+believes `b o`. Her weight for an utterance is the essential infimum of its listener's mass over
+her belief, to the power `α`, times the cost weight. -/
+noncomputable def maximinSpeaker (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
+    Kernel O U :=
+  Kernel.ofWeights fun o u ↦
+    essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+
+instance (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
+    IsFiniteKernel (maximinSpeaker α C L b) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+variable {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W} {o : O} {u : U}
+
+theorem maximinSpeaker_apply_singleton [MeasurableSingletonClass U] (u : U) :
+    maximinSpeaker α C L b o {u} =
+      essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) /
+        ∑ u', essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_apply_singleton _ o u
+
+/-- The MaxiMin speaker who knows the state is the speaker who knows it. -/
+theorem maximinSpeaker_dirac [Fintype W] [MeasurableSingletonClass W] (α : ℝ) (C : U → ℝ)
+    (L : U → Measure W) : maximinSpeaker α C L Measure.dirac = speaker α C L Measure.dirac := by
+  simp only [maximinSpeaker, speaker, essInf_dirac, Measure.geomMean_dirac]
+
+/-- The MaxiMin speaker depends on her belief only through the states it entertains. -/
+theorem maximinSpeaker_congr_belief [Countable W] [MeasurableSingletonClass U] {b' : O → Measure W}
+    (h : ∀ w, b o {w} = 0 ↔ b' o {w} = 0) :
+    maximinSpeaker α C L b o = maximinSpeaker α C L b' o := by
+  have hs : {w | b o {w} ≠ 0} = {w | b' o {w} ≠ 0} := Set.ext fun w ↦ (h w).not
+  refine Measure.ext_of_singleton fun u ↦ ?_
+  simp only [maximinSpeaker_apply_singleton, essInf_eq_biInf, hs]
+
+variable [Fintype W] [∀ u, IsFiniteMeasure (L u)] [MeasurableSingletonClass U]
+
+/-- The MaxiMin speaker never produces an utterance whose listener rules out a state she
+entertains. -/
+theorem maximinSpeaker_apply_singleton_eq_zero_iff (hα : 0 < α) (hb : ∃ w, b o {w} ≠ 0) :
+    maximinSpeaker α C L b o {u} = 0 ↔ ∃ w, b o {w} ≠ 0 ∧ L u {w} = 0 := by
+  rw [maximinSpeaker_apply_singleton, ENNReal.div_eq_zero_iff,
+    or_iff_left (ENNReal.sum_ne_top.2 fun _ _ ↦ weight_ne_top hα.le (essInf_ne_top hb) _),
+    mul_eq_zero, or_iff_left (ofReal_exp_ne_zero _), ENNReal.rpow_eq_zero_iff_of_pos hα,
+    essInf_eq_zero_iff]
+
+/-- The MaxiMin speaker produces exactly the utterances the expected-utility speaker produces. -/
+theorem maximinSpeaker_apply_singleton_eq_zero_iff_speaker [IsFiniteMeasure (b o)] (hα : 0 < α)
+    (hb : ∃ w, b o {w} ≠ 0) : maximinSpeaker α C L b o {u} = 0 ↔ speaker α C L b o {u} = 0 := by
+  rw [maximinSpeaker_apply_singleton_eq_zero_iff hα hb, speaker_apply_singleton_eq_zero_iff hα]
+
+/-- Row preference of the MaxiMin speaker compares the weights; the normalization cancels. -/
+theorem maximinSpeaker_real_singleton_lt_iff (hα : 0 ≤ α) (hb : ∃ w, b o {w} ≠ 0)
+    (h0 : ∃ u, ∀ w, b o {w} ≠ 0 → L u {w} ≠ 0) {u u' : U} :
+    (maximinSpeaker α C L b o).real {u} < (maximinSpeaker α C L b o).real {u'} ↔
+      essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) <
+        essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_real_singleton_lt_iff o
+    (fun h ↦ let ⟨u₀, hu₀⟩ := h0
+      weight_ne_zero hα (fun h' ↦ (essInf_eq_zero_iff.1 h').elim fun w ⟨hw, hL⟩ ↦ hu₀ w hw hL) _
+        (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
+    (ENNReal.sum_ne_top.mpr fun _ _ ↦ weight_ne_top hα (essInf_ne_top hb) _)
+
+end MaxiMin
 
 /-! #### The speaker against a graded meaning
 
