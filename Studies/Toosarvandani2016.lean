@@ -11,28 +11,29 @@ Northern Paiute chains clauses by asyndetic coordination: a marked clause carrie
 suffix *-na* or the sequential suffix *-si*, relative tenses placing its reference time around its
 evaluation time (38) or before it (46), and the coordinator binds that evaluation time to the
 reference time of the unmarked clause (§4). Aspect places a reference time within a nonfinal
-subpart of the event time (35) or around it (36), and *-na* selects the former (40). A sequential
-chain of perfectives thus holds just in case the marked event precedes the unmarked one (59), and
-a simultaneous chain of progressives just in case the two overlap (57); linear order plays no part
-(§4.2), and two sequential marked clauses are not ordered at all (§4.3).
+subpart of the event time (35) or around it (36), and *-na* selects the imperfective (40). A
+sequential chain of perfectives thus holds just in case the marked event precedes the unmarked one
+(59), and a simultaneous chain of imperfectives just in case the two overlap (57); linear order
+plays no part (§4.2), and two sequential marked clauses are not ordered at all (§4.3).
 
 ## Main statements
 
 * `holds_perm`: the truth of a chain does not depend on the order of its marked clauses.
-* `exists_holds_iff`: on dense time, a chain with one marked clause holds for some reference times
-  exactly when its two events stand in the composite cell.
+* `exists_holds_iff`, `mem_eventRel_iff`: a chain with one marked clause holds for some reference
+  times exactly when its events satisfy the truth condition of its suffix and aspects.
 * `sequential_iff`, `simultaneous_iff`: a sequential chain of perfectives holds just in case its
-  marked event precedes its unmarked one, and a simultaneous chain of progressives just in case
+  marked event precedes its unmarked one, and a simultaneous chain of imperfectives just in case
   they overlap.
-* `sequential_unordered`: two times before a third may stand in any relation.
+* `sequential_unordered`: any two times precede a common later one.
 * `rows_agree`: the verdicts of (39), (47), (66) and (71) in their contexts.
 
 ## Implementation notes
 
 The suffixes are a `MedialForm` whose timing is their relative tense, each marked clause evaluated
-against the unmarked clause rather than the next one. The unmarked imperfective of (39), glossed
-IPFV, gets the meaning the paper gives *-wɨnnɨ* (35), and the contexts are configurations of run
-times that their descriptions fix. Narrative progression (§5) is not formalized.
+against the unmarked clause rather than the next one. The aspects are `Aspect.Perfectivity`, the
+imperfective with the meaning of (35) and (41), which the unmarked imperfective of (39) shares. The
+contexts are configurations of run times on the natural numbers; the truth conditions compare
+endpoints, so they hold there as on any dense copy. Narrative progression (§5) is not formalized.
 
 ## References
 
@@ -44,32 +45,16 @@ times that their descriptions fix. Narrative progression (§5) is not formalized
 namespace Toosarvandani2016
 
 open Event (τ)
+open Aspect (Perfectivity)
+open scoped SetRel
 
 /-! ### Aspect and relative tense -/
 
-/-- The aspects of a clause, overt as the progressive *-wɨnnɨ* and the perfective *-hu* or carried
-by a null head with the same meaning. -/
-inductive Viewpoint where
-  | progressive
-  | perfective
-  deriving DecidableEq, Repr, Fintype
-
 /-- The cell of an aspect, the reference time first: within a nonfinal subpart of the event time
-for the progressive (35), around it for the perfective (36). -/
-def Viewpoint.cell : Viewpoint → Finset Allen.Relation
-  | .progressive => Allen.atoms.filter fun r ↦ r.fstFst ≠ .lt ∧ r.sndSnd = .lt
+for the imperfective (35), around it for the perfective (36). -/
+def cell : Perfectivity → Finset Allen.Relation
+  | .imperfective => Allen.le \ Allen.finalSubinterval
   | .perfective => Aspect.ViewpointType.perfective.cell
-
-theorem relation_mem_progressive {T : Type*} [LinearOrder T] {t s : NonemptyInterval T} :
-    Allen.relation t s ∈ Viewpoint.progressive.cell ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
-  rw [Viewpoint.cell, Allen.relation_mem_filter]
-  simp [Allen.relation, Allen.ofEndpoints, compare_lt_iff_lt]
-
-/-- The operator of an aspect: the reference times at which it places an event of the
-predicate. -/
-def Viewpoint.denote {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T]
-    (v : Viewpoint) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
-  Aspect.ofRel (fun t s ↦ (t, s) ∈ Allen.toSetRel v.cell) P
 
 /-- The suffixes of a marked clause, the simultaneous *-na* and the sequential *-si*. -/
 inductive Suffix where
@@ -92,14 +77,44 @@ instance : MedialForm Suffix where
   timing := Suffix.timing
   IndexesSubject _ := False
 
-/-- The simultaneous suffix selects imperfective aspect, the sequential suffix either (40). -/
-def Suffix.Selects : Suffix → Viewpoint → Prop
-  | .sim, v => v = .progressive
+/-- The simultaneous suffix selects the imperfective, the sequential suffix either aspect (40). -/
+def Suffix.Selects : Suffix → Perfectivity → Prop
+  | .sim, p => p = .imperfective
   | .seq, _ => True
 
-instance : ∀ s v, Decidable (Suffix.Selects s v)
+instance : ∀ s p, Decidable (Suffix.Selects s p)
   | .sim, _ => inferInstanceAs (Decidable (_ = _))
   | .seq, _ => instDecidableTrue
+
+section
+
+variable {T : Type*} [LinearOrder T] {t₁ t s : NonemptyInterval T}
+
+@[simp] theorem mem_cell_imperfective :
+    (t, s) ∈ Allen.toSetRel (cell .imperfective) ↔ s.fst ≤ t.fst ∧ t.snd < s.snd := by
+  simp only [cell, Allen.mem_toSetRel, Finset.mem_sdiff, Allen.relation_mem_le,
+    Allen.relation_mem_finalSubinterval, NonemptyInterval.FinalSubinterval,
+    NonemptyInterval.le_def]
+  exact ⟨fun ⟨⟨h₁, h₂⟩, h₃⟩ ↦ ⟨h₁, h₂.lt_of_ne fun h ↦ h₃ ⟨⟨h₁, h₂⟩, h⟩⟩,
+    fun ⟨h₁, h₂⟩ ↦ ⟨⟨h₁, h₂.le⟩, fun h ↦ h₂.ne h.2⟩⟩
+
+@[simp] theorem mem_cell_perfective :
+    (t, s) ∈ Allen.toSetRel (cell .perfective) ↔ t.fst ≤ s.fst ∧ s.snd ≤ t.snd := by
+  rw [show cell .perfective = Aspect.ViewpointType.perfective.cell from rfl,
+    ← Aspect.ViewpointType.ttTSitRelation_iff]
+  exact NonemptyInterval.le_def
+
+@[simp] theorem mem_timing_sim :
+    (t₁, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.sim) ↔ t₁.fst ≤ t.fst ∧ t.snd ≤ t₁.snd := by
+  change (t₁, t) ∈ Allen.toSetRel (Allen.inv Allen.le) ↔ _
+  simp [NonemptyInterval.le_def]
+
+@[simp] theorem mem_timing_seq :
+    (t₁, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) ↔ t₁.snd < t.fst := by
+  change (t₁, t) ∈ Allen.toSetRel Allen.precedes ↔ _
+  simp [NonemptyInterval.Precedes]
+
+end
 
 /-! ### Clause chains -/
 
@@ -107,103 +122,174 @@ section
 
 variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T]
 
+/-- The operator of an aspect: the reference times at which it places an event of the
+predicate. -/
+def denote (p : Perfectivity) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
+  Aspect.ofRel (fun t s ↦ (t, s) ∈ Allen.toSetRel (cell p)) P
+
 /-- A marked clause: its suffix, its aspect and its predicate of events. -/
 structure Marked (W E : Type*) where
   /-- The suffix. -/
   suffix : Suffix
   /-- The aspect. -/
-  aspect : Viewpoint
+  aspect : Perfectivity
   /-- The predicate of events. -/
   pred : W → E → Prop
 
-/-- A chain holds at world `w` and time `t` when its unmarked clause, of aspect `v` and predicate
+/-- A chain holds at world `w` and time `t` when its unmarked clause, of aspect `b` and predicate
 `Q`, holds at `t`, and each marked clause holds at the reference time the context gives it, which
 stands to `t` as the clause's suffix says (56). -/
-def Holds (cs : List (Marked W E × NonemptyInterval T)) (v : Viewpoint) (Q : W → E → Prop)
+def Holds (cs : List (Marked W E × NonemptyInterval T)) (b : Perfectivity) (Q : W → E → Prop)
     (w : W) (t : NonemptyInterval T) : Prop :=
-  (∀ c ∈ cs, c.2 ∈ c.1.aspect.denote c.1.pred w ∧
-    (c.2, t) ∈ Allen.toSetRel (MedialForm.timing c.1.suffix)) ∧ t ∈ v.denote Q w
+  (∀ c ∈ cs, c.2 ∈ denote c.1.aspect c.1.pred w ∧
+    (c.2, t) ∈ Allen.toSetRel (MedialForm.timing c.1.suffix)) ∧ t ∈ denote b Q w
 
 theorem holds_perm {cs cs' : List (Marked W E × NonemptyInterval T)} (h : cs.Perm cs')
-    {v : Viewpoint} {Q : W → E → Prop} {w : W} {t : NonemptyInterval T} :
-    Holds cs v Q w t ↔ Holds cs' v Q w t := by
+    {b : Perfectivity} {Q : W → E → Prop} {w : W} {t : NonemptyInterval T} :
+    Holds cs b Q w t ↔ Holds cs' b Q w t := by
   simp only [Holds, h.mem_iff]
 
 end
 
-/-- The cell in which the event of a marked clause with suffix `s` and aspect `a` stands to the
-event of an unmarked clause of aspect `b`: through the reference times of the two clauses. -/
-def eventCell (s : Suffix) (a b : Viewpoint) : Finset Allen.Relation :=
-  Allen.comp (Allen.comp (Allen.inv a.cell) s.timing) b.cell
+section
 
-theorem exists_holds_iff {T : Type*} [LinearOrder T] [DenselyOrdered T] [NoMinOrder T]
-    [NoMaxOrder T] {W E : Type*} [Event.TemporalTrace E T] {s : Suffix} {a b : Viewpoint}
-    {P Q : W → E → Prop} {w : W} :
+variable {T : Type*} [LinearOrder T]
+
+/-- How the event of a marked clause with suffix `s` and aspect `a` may stand to the event of an
+unmarked clause of aspect `b`: through the reference times of the two clauses. -/
+def eventRel (s : Suffix) (a b : Perfectivity) :
+    SetRel (NonemptyInterval T) (NonemptyInterval T) :=
+  (Allen.toSetRel (cell a)).inv ○ Allen.toSetRel (MedialForm.timing s) ○ Allen.toSetRel (cell b)
+
+/-- The truth condition of a chain with one marked clause on the run times `i` of its marked event
+and `j` of its unmarked event. -/
+def TruthCondition (i j : NonemptyInterval T) : Suffix → Perfectivity → Perfectivity → Prop
+  | .sim, .imperfective, .imperfective =>
+    i.fst < j.snd ∧ j.fst < i.snd ∧ i.fst < i.snd ∧ j.fst < j.snd
+  | .sim, .imperfective, .perfective => i.fst ≤ j.fst ∧ j.snd < i.snd
+  | .sim, .perfective, .imperfective => j.fst < j.snd
+  | .sim, .perfective, .perfective => True
+  | .seq, .imperfective, .imperfective => i.fst < j.snd ∧ i.fst < i.snd ∧ j.fst < j.snd
+  | .seq, .imperfective, .perfective => i.fst < j.fst ∧ i.fst < i.snd
+  | .seq, .perfective, .imperfective => i.snd < j.snd ∧ j.fst < j.snd
+  | .seq, .perfective, .perfective => i.Precedes j
+
+instance (i j : NonemptyInterval T) :
+    ∀ s a b, Decidable (TruthCondition i j s a b)
+  | .sim, .imperfective, .imperfective | .sim, .imperfective, .perfective
+  | .sim, .perfective, .imperfective | .seq, .imperfective, .imperfective
+  | .seq, .imperfective, .perfective | .seq, .perfective, .imperfective
+  | .seq, .perfective, .perfective => by unfold TruthCondition; infer_instance
+  | .sim, .perfective, .perfective => instDecidableTrue
+
+theorem mem_eventRel_iff [DenselyOrdered T] {i j : NonemptyInterval T} {s : Suffix}
+    {a b : Perfectivity} : (i, j) ∈ eventRel s a b ↔ TruthCondition i j s a b := by
+  have hi := i.fst_le_snd
+  have hj := j.fst_le_snd
+  cases s <;> cases a <;> cases b <;>
+    simp only [eventRel, SetRel.mem_comp, SetRel.mem_inv, mem_cell_imperfective,
+      mem_cell_perfective, mem_timing_sim, mem_timing_seq, TruthCondition,
+      NonemptyInterval.Precedes]
+  · exact ⟨fun _ ↦ trivial, fun _ ↦ ⟨j, ⟨i ⊔ j, NonemptyInterval.le_def.1 le_sup_left,
+      NonemptyInterval.le_def.1 le_sup_right⟩, le_rfl, le_rfl⟩⟩
+  · constructor
+    · rintro ⟨t, -, h₅, h₆⟩
+      exact h₅.trans_lt (t.fst_le_snd.trans_lt h₆)
+    · intro h
+      exact ⟨.pure j.fst, ⟨i ⊔ .pure j.fst, NonemptyInterval.le_def.1 le_sup_left,
+        NonemptyInterval.le_def.1 le_sup_right⟩, le_rfl, h⟩
+  · constructor
+    · rintro ⟨t, ⟨t₁, ⟨h₁, h₂⟩, h₃, h₄⟩, h₅, h₆⟩
+      exact ⟨(h₁.trans h₃).trans h₅, (h₆.trans h₄).trans_lt h₂⟩
+    · rintro ⟨h₁, h₂⟩
+      exact ⟨j, ⟨j, ⟨h₁, h₂⟩, le_rfl, le_rfl⟩, le_rfl, le_rfl⟩
+  · constructor
+    · rintro ⟨t, ⟨t₁, ⟨h₁, h₂⟩, h₃, h₄⟩, h₅, h₆⟩
+      have ht := t.fst_le_snd
+      exact ⟨(h₁.trans h₃).trans_lt (ht.trans_lt h₆), h₅.trans_lt (ht.trans_lt (h₄.trans_lt h₂)),
+        h₁.trans_lt (t₁.fst_le_snd.trans_lt h₂), h₅.trans_lt (ht.trans_lt h₆)⟩
+    · rintro ⟨h₁, h₂, h₃, h₄⟩
+      exact ⟨.pure (max i.fst j.fst), ⟨.pure (max i.fst j.fst),
+        ⟨le_max_left _ _, max_lt h₃ h₂⟩, le_rfl, le_rfl⟩, le_max_right _ _, max_lt h₁ h₄⟩
+  · constructor
+    · rintro ⟨t, ⟨t₁, ⟨h₁, h₂⟩, h₃⟩, h₅, h₆⟩
+      exact h₂.trans_lt (h₃.trans_le h₅)
+    · intro h
+      exact ⟨j, ⟨i, ⟨le_rfl, le_rfl⟩, h⟩, le_rfl, le_rfl⟩
+
+  · constructor
+    · rintro ⟨t, ⟨t₁, ⟨h₁, h₂⟩, h₃⟩, h₅, h₆⟩
+      exact ⟨h₂.trans_lt (h₃.trans_le (t.fst_le_snd.trans h₆.le)),
+        h₅.trans_lt (t.fst_le_snd.trans_lt h₆)⟩
+    · rintro ⟨h₁, h₂⟩
+      obtain ⟨b, hb, hjb, hbj⟩ : ∃ b, i.snd < b ∧ j.fst ≤ b ∧ b < j.snd := by
+        rcases lt_or_ge i.snd j.fst with h | h
+        · exact ⟨j.fst, h, le_rfl, h₂⟩
+        · obtain ⟨b, hb₁, hb₂⟩ := exists_between h₁
+          exact ⟨b, hb₁, h.trans hb₁.le, hb₂⟩
+      exact ⟨.pure b, ⟨i, ⟨le_rfl, le_rfl⟩, hb⟩, hjb, hbj⟩
+  · constructor
+    · rintro ⟨t, ⟨t₁, ⟨h₁, h₂⟩, h₃⟩, h₅, h₆⟩
+      exact ⟨(h₁.trans t₁.fst_le_snd).trans_lt (h₃.trans_le h₅),
+        h₁.trans_lt (t₁.fst_le_snd.trans_lt h₂)⟩
+    · rintro ⟨h₁, h₂⟩
+      exact ⟨j, ⟨.pure i.fst, ⟨le_rfl, h₂⟩, h₁⟩, le_rfl, le_rfl⟩
+  · constructor
+    · rintro ⟨t, ⟨t₁, ⟨h₁, h₂⟩, h₃⟩, h₅, h₆⟩
+      have ht := t.fst_le_snd
+      exact ⟨(h₁.trans t₁.fst_le_snd).trans_lt (h₃.trans_le (ht.trans h₆.le)),
+        h₁.trans_lt (t₁.fst_le_snd.trans_lt h₂), h₅.trans_lt (ht.trans_lt h₆)⟩
+    · rintro ⟨h₁, h₂, h₃⟩
+      obtain ⟨b, hb, hjb, hbj⟩ : ∃ b, i.fst < b ∧ j.fst ≤ b ∧ b < j.snd := by
+        rcases lt_or_ge i.fst j.fst with h | h
+        · exact ⟨j.fst, h, le_rfl, h₃⟩
+        · obtain ⟨b, hb₁, hb₂⟩ := exists_between h₁
+          exact ⟨b, hb₁, h.trans hb₁.le, hb₂⟩
+      exact ⟨.pure b, ⟨.pure i.fst, ⟨le_rfl, h₂⟩, hb⟩, hjb, hbj⟩
+end
+
+section
+
+variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T] {s : Suffix}
+  {a b : Perfectivity} {P Q : W → E → Prop} {w : W}
+
+theorem exists_holds_iff :
     (∃ t₁ t : NonemptyInterval T, Holds [(⟨s, a, P⟩, t₁)] b Q w t) ↔
-      ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e, τ e') ∈ Allen.toSetRel (eventCell s a b) := by
-  simp only [Holds, eventCell, Allen.toSetRel_comp, Allen.toSetRel_inv, List.mem_singleton,
-    forall_eq, Viewpoint.denote, Aspect.mem_ofRel, SetRel.mem_comp, SetRel.mem_inv]
+      ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e, τ e') ∈ eventRel s a b := by
+  simp only [Holds, eventRel, denote, List.mem_singleton, forall_eq, Aspect.mem_ofRel,
+    SetRel.mem_comp, SetRel.mem_inv]
   constructor
   · rintro ⟨t₁, t, ⟨⟨e, h₁, hP⟩, h₂⟩, e', h₃, hQ⟩
     exact ⟨e, e', hP, hQ, t, ⟨t₁, h₁, h₂⟩, h₃⟩
   · rintro ⟨e, e', hP, hQ, t, ⟨t₁, h₁, h₂⟩, h₃⟩
     exact ⟨t₁, t, ⟨⟨e, h₁, hP⟩, h₂⟩, e', h₃, hQ⟩
 
-/-! ### The truth conditions -/
-
-section
-
-variable {T : Type*} [LinearOrder T] {W E : Type*} [Event.TemporalTrace E T] {P Q : W → E → Prop}
-  {w : W}
+variable [DenselyOrdered T]
 
 /-- A sequential chain of perfectives holds just in case the marked event precedes the unmarked
 one (59). -/
 theorem sequential_iff :
     (∃ t₁ t : NonemptyInterval T, Holds [(⟨.seq, .perfective, P⟩, t₁)] .perfective Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e).Precedes (τ e') := by
-  simp only [Holds, List.mem_singleton, forall_eq, Viewpoint.denote, Aspect.mem_ofRel,
-    Viewpoint.cell, ← Aspect.ViewpointType.ttTSitRelation_iff,
-    Aspect.ViewpointType.ttTSitRelation]
-  change (∃ t₁ t, ((∃ e, τ e ≤ t₁ ∧ P w e) ∧ (t₁, t) ∈ Allen.toSetRel Allen.precedes) ∧
-    ∃ e, τ e ≤ t ∧ Q w e) ↔ _
-  simp only [Allen.mem_toSetRel, Allen.relation_mem_precedes]
-  constructor
-  · rintro ⟨t₁, t, ⟨⟨e, he, hP⟩, h⟩, e', he', hQ⟩
-    exact ⟨e, e', hP, hQ, NonemptyInterval.precedes_of_le_of_precedes he
-      ((NonemptyInterval.le_def.1 he').1 |> fun h' ↦ lt_of_lt_of_le h h')⟩
-  · rintro ⟨e, e', hP, hQ, h⟩
-    exact ⟨τ e, τ e', ⟨⟨e, le_rfl, hP⟩, h⟩, e', le_rfl, hQ⟩
+  simp only [exists_holds_iff, mem_eventRel_iff, TruthCondition]
 
-/-- A simultaneous chain of progressives holds just in case the two events, neither a point,
+/-- A simultaneous chain of imperfectives holds just in case the two events, neither a point,
 overlap in more than a point (57). -/
 theorem simultaneous_iff :
-    (∃ t₁ t : NonemptyInterval T, Holds [(⟨.sim, .progressive, P⟩, t₁)] .progressive Q w t) ↔
+    (∃ t₁ t : NonemptyInterval T, Holds [(⟨.sim, .imperfective, P⟩, t₁)] .imperfective Q w t) ↔
       ∃ e e' : E, P w e ∧ Q w e' ∧ (τ e).fst < (τ e').snd ∧ (τ e').fst < (τ e).snd ∧
         (τ e).fst < (τ e).snd ∧ (τ e').fst < (τ e').snd := by
-  simp only [Holds, List.mem_singleton, forall_eq, Viewpoint.denote, Aspect.mem_ofRel,
-    Allen.mem_toSetRel, relation_mem_progressive]
-  change (∃ t₁ t, ((∃ e, ((τ e).fst ≤ t₁.fst ∧ t₁.snd < (τ e).snd) ∧ P w e) ∧
-    (t₁, t) ∈ Allen.toSetRel (Allen.inv Allen.le)) ∧
-    ∃ e, ((τ e).fst ≤ t.fst ∧ t.snd < (τ e).snd) ∧ Q w e) ↔ _
-  simp only [Allen.toSetRel_inv, SetRel.mem_inv, Allen.mem_toSetRel, Allen.relation_mem_le,
-    NonemptyInterval.le_def]
-  constructor
-  · rintro ⟨t₁, t, ⟨⟨e, ⟨h₁, h₂⟩, hP⟩, h₃, h₄⟩, e', ⟨h₅, h₆⟩, hQ⟩
-    have h := t.fst_le_snd
-    exact ⟨e, e', hP, hQ, (h₁.trans h₃).trans_lt (h.trans_lt h₆),
-      h₅.trans_lt (h.trans_lt (h₄.trans_lt h₂)), h₁.trans_lt (t₁.fst_le_snd.trans_lt h₂),
-      h₅.trans_lt (h.trans_lt h₆)⟩
-  · rintro ⟨e, e', hP, hQ, h₁, h₂, h₃, h₄⟩
-    let p := max (τ e).fst (τ e').fst
-    refine ⟨NonemptyInterval.pure p, NonemptyInterval.pure p,
-      ⟨⟨e, ⟨le_max_left _ _, max_lt h₃ h₂⟩, hP⟩, le_rfl, le_rfl⟩, e',
-      ⟨le_max_right _ _, max_lt h₁ h₄⟩, hQ⟩
+  simp only [exists_holds_iff, mem_eventRel_iff, TruthCondition]
 
 end
 
-theorem sequential_unordered :
-    Allen.comp Allen.precedes (Allen.inv Allen.precedes) = Allen.atoms := by
-  decide +kernel
+theorem sequential_unordered {T : Type*} [LinearOrder T] [NoMaxOrder T]
+    (t₁ t₂ : NonemptyInterval T) :
+    ∃ t, (t₁, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) ∧
+      (t₂, t) ∈ Allen.toSetRel (MedialForm.timing Suffix.seq) := by
+  obtain ⟨b, hb⟩ := exists_gt (max t₁.snd t₂.snd)
+  exact ⟨.pure b, mem_timing_seq.2 ((le_max_left _ _).trans_lt hb),
+    mem_timing_seq.2 ((le_max_right _ _).trans_lt hb)⟩
 
 /-! ### The verdicts -/
 
@@ -236,14 +322,14 @@ def Ev.time : Ev → NonemptyInterval ℕ
 and the aspect and event of its unmarked clause. -/
 structure Config where
   suffix : Suffix
-  aspect : Viewpoint
+  aspect : Perfectivity
   marked : List Ev
-  unmarkedAspect : Viewpoint
+  unmarkedAspect : Perfectivity
   unmarked : Ev
 
-/-- The aspect columns of the rows, the imperfective read as the progressive. -/
-def aspects : List (String × Viewpoint) :=
-  [("prog", .progressive), ("ipfv", .progressive), ("pfv", .perfective)]
+/-- The aspect columns of the rows. -/
+def aspects : List (String × Perfectivity) :=
+  [("prog", .imperfective), ("ipfv", .imperfective), ("pfv", .perfective)]
 
 /-- The event columns of the rows. -/
 def events : List (String × Ev) :=
@@ -259,18 +345,18 @@ def config (e : Datum) : Option Config := do
   let ms ← (e.features "markedEvent").mapM (List.lookup · events)
   pure ⟨s, a, ms, b, u⟩
 
-/-- The predicted verdict: each marked event stands to the unmarked event in the composite cell. -/
+/-- The predicted verdict: each marked event and the unmarked event meet the truth condition. -/
 def Config.verdict (c : Config) : Bool :=
   decide (∀ m ∈ c.marked,
-    Allen.relation m.time c.unmarked.time ∈ eventCell c.suffix c.aspect c.unmarkedAspect)
+    TruthCondition m.time c.unmarked.time c.suffix c.aspect c.unmarkedAspect)
 
-/-- The verdicts of (39), (47), (66) and (71) are those the composite cells predict. -/
+/-- The verdicts of (39), (47), (66) and (71) are those the truth conditions predict. -/
 theorem rows_agree : ∀ e ∈ Examples.all, e.FitsVerdict config Config.verdict := by
-  decide +kernel
+  decide
 
-/-- The simultaneous suffix takes the progressive (40b) and not the perfective (40c). -/
+/-- The simultaneous suffix takes the imperfective (40b) and not the perfective (40c). -/
 theorem selection :
-    (Examples.ex_40b.judgment = .acceptable ↔ Suffix.sim.Selects .progressive) ∧
+    (Examples.ex_40b.judgment = .acceptable ↔ Suffix.sim.Selects .imperfective) ∧
       (Examples.ex_40c.judgment = .ungrammatical ↔ ¬ Suffix.sim.Selects .perfective) := by
   decide
 
