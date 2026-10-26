@@ -97,8 +97,8 @@ abbrev denial : Table Discourse.Role W := (K.assert .speaker p).assert .addresse
 /-- A world can survive the assertion of `p` in a `Commitment.Table` without satisfying `p`. -/
 theorem assert_not_narrowing :
     ∃ (K : Table Discourse.Role Bool) (p : Set Bool) (w : Bool),
-      w ∈ HasCommonGround.contextSet (K.assert .speaker p) ∧ w ∉ p :=
-  ⟨.empty, {true}, false, by simp [HasCommonGround.contextSet], Bool.false_ne_true⟩
+      w ∈ (K.assert .speaker p).commonGround.ker ∧ w ∉ p :=
+  ⟨.empty, {true}, false, by simp, Bool.false_ne_true⟩
 
 /-- From a stable context an assertion projects the single common ground with `p`, a
 categorical bias towards confirmation (8). -/

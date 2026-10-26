@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Discourse.CommonGround
+public import Mathlib.Order.Filter.Ker
 
 /-!
 # Caie 2023: disjunctive context updating
@@ -53,7 +53,7 @@ there.
 
 namespace Caie2023
 
-open Filter Set HasAssertion HasCommonGround
+open Filter Set
 
 variable {C W : Type*} (cs : Set W) (interp : W → C) (I : W → Set C) (sem : C → W → Prop)
 
@@ -68,9 +68,8 @@ assertion is true there under some context available there, so a world is elimin
 the disjunction of the propositions the assertion expresses at it is false there. -/
 def disjunctiveDiagonal : Set W := {w | ∃ c ∈ I w, sem c w}
 
-theorem contextSet_assert_disjunctiveDiagonal :
-    contextSet (assert (𝓟 cs) (disjunctiveDiagonal I sem)) = cs ∩ disjunctiveDiagonal I sem := by
-  simp [contextSet]
+example : (𝓟 cs ⊓ 𝓟 (disjunctiveDiagonal I sem)).ker = cs ∩ disjunctiveDiagonal I sem := by
+  simp
 
 theorem disjunctiveDiagonal_singleton :
     disjunctiveDiagonal (fun w => {interp w}) sem = diagonal interp sem := by

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Discourse.CommonGround
+public import Mathlib.Order.Filter.Basic
 public import Linglib.Semantics.Dynamic.Expectation
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Questions.Partition.Inquisitive
@@ -177,21 +177,20 @@ theorem le_inquire_iff (c : State W) (q : Setoid W) :
 
 /-! ### Discourse projections -/
 
-/-- The context set is the common ground, and `assert` is Stalnakerian on it. -/
-instance : HasAssertion (State W) W where
-  commonGround c := Filter.principal c.info
-  initial := ⊤
-  assert c φ := c.assert (· ∈ φ)
-  commonGround_initial := Filter.principal_univ
-  commonGround_assert c φ :=
-    show Filter.principal {w ∈ c.info | w ∈ φ} = Filter.principal c.info ⊓ Filter.principal φ by
-      rw [Set.sep_mem_eq, Filter.inf_principal]
+/-- Assertion is Stalnaker's: the principal filter of the context set semiconjugates it to the
+meet with the asserted proposition. -/
+theorem semiconj_assert (φ : Set W) :
+    Function.Semiconj (fun c : State W ↦ Filter.principal c.info) (·.assert (· ∈ φ))
+      (· ⊓ Filter.principal φ) :=
+  fun c ↦ show Filter.principal {w ∈ c.info | w ∈ φ} = Filter.principal c.info ⊓ Filter.principal φ
+    by rw [Set.sep_mem_eq, Filter.inf_principal]
 
-@[simp] theorem commonGround_eq (c : State W) :
-    HasCommonGround.commonGround c = Filter.principal c.info := rfl
-
-@[simp] theorem contextSet_eq (c : State W) : HasCommonGround.contextSet c = c.info := by
-  simp [HasCommonGround.contextSet]
+/-- Inquiry is inquisitive update: the inquiry partition, read as an issue, semiconjugates
+`inquire` to the meet with the question. -/
+theorem semiconj_inquire (q : Setoid W) :
+    Function.Semiconj (fun c : State W ↦ Question.fromSetoid c.inquiry) (·.inquire q)
+      (· ⊓ Question.fromSetoid q) :=
+  fun _ ↦ Question.fromSetoid_inf _ _
 
 /-! ### Answerhood -/
 

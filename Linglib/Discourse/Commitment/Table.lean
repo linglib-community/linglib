@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Discourse.CommonGround
 public import Linglib.Semantics.Questions.Resolution
 
 /-!
@@ -18,10 +17,10 @@ stack. The moves of the paper are functions on the structure, and the file prove
 to the projected set, the commitment lists, and the Table. Parenthesized numbers are the paper's
 example and definition numbers.
 
-A Table is a discourse state with the `commonGround` coordinate as its common ground
-(`HasCommonGround`), and its current issue is the top of the stack (`Table.issue`). It is not a
-`HasAssertion` instance under its own `assert`, which leaves the common ground alone and moves
-only the projected set.
+A Table has the `commonGround` coordinate as its common ground and the top of the stack as its
+current issue (`Table.issue`). Its `assert` is a proposal, which leaves the common ground alone and
+moves only the projected set; settling a proposition meets the common ground with it, Stalnaker's
+update.
 
 ## Main definitions
 
@@ -146,8 +145,6 @@ def empty : Table A W := ⟨[], ∅, ⊤⟩
 
 instance : Inhabited (Table A W) := ⟨empty⟩
 
-instance : HasCommonGround (Table A W) W := ⟨Table.commonGround⟩
-
 /-- The current issue is the top of the Table, the trivial issue when the Table is empty. -/
 def issue : Question W := K.stack.headD ⊤
 
@@ -236,8 +233,6 @@ open scoped Classical in
 @[simp] theorem commonGround_agreeToDisagree :
     K.agreeToDisagree.commonGround = K.commonGround := rfl
 
-@[simp] theorem _root_.HasCommonGround.commonGround_table :
-    HasCommonGround.commonGround K = K.commonGround := rfl
 @[simp] theorem issue_empty : (empty : Table A W).issue = ⊤ := rfl
 @[simp] theorem issue_push : (K.push P).issue = P := rfl
 @[simp] theorem issue_commit : (K.commit a p).issue = K.issue := rfl
