@@ -438,7 +438,7 @@ theorem sideward2b_minimalYield :
     (S := eaten.val) (S' := theD.val)
     (fun x hx _ ↦ by
       rw [sidewardTermC, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx
-      rcases hx with rfl | rfl <;> exact ⟨_, rfl⟩)
+      rcases hx with rfl | rfl <;> rfl)
     (by simp [sidewardTermC])).mpr (by simp [sidewardTermC])
   simpa [sidewardTermC] using this
 
@@ -465,7 +465,7 @@ example : ¬ NoComplexityLoss.Map (fun T ↦ Forest.accessibleSize {T})
   NoComplexityLoss.not_map_accessibleSize_componentMap_merge none sidewardTermC_mem
     (fun x hx _ ↦ by
       rw [sidewardTermC, Multiset.insert_eq_cons, Multiset.mem_cons, Multiset.mem_singleton] at hx
-      rcases hx with rfl | rfl <;> exact ⟨_, rfl⟩)
+      rcases hx with rfl | rfl <;> rfl)
     (S := eaten.val) (S' := theD.val) (by simp [sidewardTermC]) (.inr (by decide))
 
 /-- The term of Sideward Merge of type 3(a) of *the* and *apple* cuts both out of *the apple*. -/

@@ -68,11 +68,6 @@ theorem numTraces_node_of_ne_nil (v : α ⊕ β) (cs : List (RoseTree (α ⊕ β
     numTraces (.node (Sum.inl a) cs) = (cs.map numTraces).sum :=
   countP_leaves_node_of_not _ cs (by simp)
 
-theorem numTraces_lt_numNodes_of_inl (a : α) (cs : List (RoseTree (α ⊕ β))) :
-    numTraces (RoseTree.node (Sum.inl a) cs) <
-      numNodes (RoseTree.node (Sum.inl a) cs) :=
-  countP_leaves_lt_numNodes_of_not _ cs (by simp)
-
 end RoseTree
 
 namespace UnorderedTree
@@ -98,9 +93,11 @@ def numTraces (t : UnorderedTree (α ⊕ β)) : ℕ := t.leaves.countP (·.isRig
       = (F.map UnorderedTree.numTraces).sum :=
   countP_leaves_node_of_not _ _ F (by simp)
 
-theorem numTraces_lt_numNodes_of_rootInl (t : UnorderedTree (α ⊕ β)) (x : α)
-    (h : t.value = Sum.inl x) : t.numTraces < t.numNodes :=
-  countP_leaves_lt_numNodes_of_not_root _ t (by rw [h]; simp)
+theorem numTraces_lt_numNodes_of_isLeft {t : UnorderedTree (α ⊕ β)} (h : t.value.isLeft) :
+    t.numTraces < t.numNodes :=
+  countP_leaves_lt_numNodes_of_not_root _ t <| by
+    obtain ⟨a, ha⟩ := Sum.isLeft_iff.mp h
+    simp [ha]
 
 end UnorderedTree
 
@@ -265,14 +262,14 @@ theorem cutSummandsCN_numTraces (T : UnorderedTree (α ⊕ β)) :
       cutSummandsG_numTraces (extractC (τ ∘ UnorderedTree.mk))
         (fun s _ h ↦ by obtain ⟨_ | _, _⟩ := s <;> simp at h; simp [← h, traceLeaf]) t q hq
 
-/-- Every tree a trace cut extracts has a vertex that is not a trace, its `Sum.inl` root. -/
-theorem cutSummandsCN_crown_numTraces_lt_numNodes (T : UnorderedTree (α ⊕ β)) :
-    ∀ p ∈ cutSummandsCN τ T, ∀ Tv ∈ p.1, Tv.numTraces < Tv.numNodes :=
+/-- Every tree a trace cut extracts has a lexical root, since traces are never cut. -/
+theorem cutSummandsCN_value_isLeft_of_mem_crown (T : UnorderedTree (α ⊕ β)) :
+    ∀ p ∈ cutSummandsCN τ T, ∀ Tv ∈ p.1, Tv.value.isLeft :=
   Quotient.inductionOn T fun t p hp x hx ↦ by
     rw [UnorderedTree.quot_mk_eq_mk, cutSummandsCN_mk] at hp
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
     obtain ⟨⟨_ | _, cs⟩, hy, rfl⟩ := Multiset.mem_map.mp hx
-    · exact RoseTree.numTraces_lt_numNodes_of_inl _ cs
+    · rfl
     · simpa using isSome_of_mem_crown_cutSummandsG _ t q hq _ hy
 
 /-- A trace cut never touches the root, so the trunk keeps the tree's root label. -/
