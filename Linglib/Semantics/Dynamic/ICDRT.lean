@@ -190,7 +190,8 @@ theorem fixes_randomAssign_ivar (φ : PVar) (v : IVar) :
 at which no other output gives `φ` a proper superset. -/
 theorem mem_maxAt_prop {D : Update (State W E)} :
     i ~[maxAt φ D] j ↔ i ~[D] j ∧ ∀ k, i ~[D] k → ¬j.prop φ ⊂ k.prop φ :=
-  Iff.rfl
+  mem_maxBy_iff_forall_gt.trans <| and_congr_right fun _ ↦
+    ⟨fun h _ hk hlt ↦ h hlt hk, fun h _ hlt hk ↦ h _ hk hlt⟩
 
 /-! ### Relative variable update -/
 

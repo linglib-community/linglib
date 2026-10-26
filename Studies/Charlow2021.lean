@@ -96,14 +96,14 @@ variable [PartialOrder E]
 theorem mem_maxAt_Evar_comp_test {u : R} {Q : E → Prop} {C : Condition S} {i j : S} :
     i ~[maxAt u (Evar u Q ○ test C)] j ↔
       ∃ y, j = extend i u y ∧ Maximal (fun y ↦ Q y ∧ extend i u y ∈ C) y := by
-  simp only [maxAt, maxBy, Set.mem_ofPred_eq, mem_comp_test, mem_Evar]
+  simp only [maxAt, mem_maxBy_iff_forall_gt, mem_comp_test, mem_Evar]
   constructor
   · rintro ⟨⟨⟨y, hy, rfl⟩, hC⟩, hmax⟩
     refine ⟨y, rfl, maximal_iff_forall_gt.2 ⟨⟨hy, hC⟩, fun y' hlt ⟨hy', hC'⟩ ↦ ?_⟩⟩
-    exact hmax _ ⟨⟨y', hy', rfl⟩, hC'⟩ (by simpa [val_extend_self] using hlt)
+    exact hmax (by simpa [val_extend_self] using hlt) ⟨⟨y', hy', rfl⟩, hC'⟩
   · rintro ⟨y, rfl, hm⟩
     refine ⟨⟨⟨y, hm.prop.1, rfl⟩, hm.prop.2⟩, ?_⟩
-    rintro k ⟨⟨y', hy', rfl⟩, hC'⟩ hlt
+    rintro k hlt ⟨⟨y', hy', rfl⟩, hC'⟩
     rw [val_extend_self, val_extend_self] at hlt
     exact (maximal_iff_forall_gt.1 hm).2 hlt ⟨hy', hC'⟩
 
@@ -120,15 +120,15 @@ theorem mem_maxAt_Evar_comp {v : R} {P Q : E → Prop} {D : Update S} (hD : Fixe
       exact ⟨hx, hk⟩
     · rintro ⟨hx, hk⟩
       exact ⟨_, ⟨_, hx, rfl⟩, hk⟩
-  simp only [maxAt, maxBy, Set.mem_ofPred_eq, key]
+  simp only [maxAt, mem_maxBy_iff_forall_gt, key]
   constructor
   · rintro ⟨⟨hP, hj⟩, hmax⟩
     refine ⟨hj, maximal_iff_forall_gt.2 ⟨⟨hP, (hQ _ hP).1 ⟨_, hj⟩⟩, fun x hlt ⟨hx, hQx⟩ ↦ ?_⟩⟩
     obtain ⟨k, hk⟩ := (hQ x hx).2 hQx
     have hkv : val v k = x := (hD _ _ hk).trans (val_extend_self ..)
-    exact hmax k ⟨hkv ▸ hx, hkv ▸ hk⟩ (hkv ▸ hlt)
+    exact hmax (hkv ▸ hlt) ⟨hkv ▸ hx, hkv ▸ hk⟩
   · rintro ⟨hj, hm⟩
-    refine ⟨⟨hm.prop.1, hj⟩, fun k ⟨hP, hk⟩ hlt ↦ ?_⟩
+    refine ⟨⟨hm.prop.1, hj⟩, fun k hlt ⟨hP, hk⟩ ↦ ?_⟩
     exact (maximal_iff_forall_gt.1 hm).2 hlt ⟨hP, (hQ _ hP).1 ⟨k, hk⟩⟩
 
 /-- `card v n` tests that the value of `v` has `n` atoms (19). -/
@@ -367,7 +367,7 @@ def maxAtU (v : R) (K : CCP S) : CCP S := fun s ↦ {j ∈ K s | ∀ h ∈ K s, 
 /-- Pointwise maximization is update-theoretic maximization on a singleton (79). -/
 theorem lower_maxAtU_image (v : R) (D : Update S) : CCP.lower (maxAtU v D.image) = maxAt v D := by
   ext ⟨i, j⟩
-  simp [maxAtU, maxAt, maxBy]
+  simp [maxAtU, maxAt, mem_maxBy_iff_forall_gt, imp_not_comm]
 
 /-- `exactlyU v n P` is the update-theoretic modified numeral (81), of the same form as (3). -/
 def exactlyU (v : R) (n : ℕ) (P : E → Prop) : Cont (CCP S) R :=

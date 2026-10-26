@@ -349,7 +349,7 @@ def maxSub (u' u : R) (D : Update (Set S)) : Update (Set S) :=
   max u' (test (structSubAll u' u) ○ D)
 
 theorem mem_max : I ~[max u D] J ↔ MaximalFor (I ~[intro u ○ D] ·) (nonDummy u) J :=
-  mem_maxBy
+  Iff.rfl
 
 theorem max_subset (u : R) (D : Update (Set S)) : max u D ⊆ intro u ○ D :=
   maxBy_subset _ _

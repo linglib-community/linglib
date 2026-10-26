@@ -227,25 +227,28 @@ theorem impl_eq_neg_comp_test_neg (D₁ D₂ : Update S) :
 
 /-! ### Maximization -/
 
-/-- Maximization under a valuation `f` keeps the outputs of `D` at which no other output of `D`
-has a strictly greater value. The maxima are local, since a nondeterministic `D` may have
-several. -/
-def maxBy {α : Type*} [Preorder α] (f : S → α) (D : Update S) : Update S :=
-  {(i, j) | i ~[D] j ∧ ∀ k, i ~[D] k → ¬f j < f k}
+/-- Maximization under a valuation `f` keeps the outputs of `D` at which `f` is maximal among
+the outputs. The maxima are local, since a nondeterministic `D` may have several. -/
+def maxBy {α : Type*} [LE α] (f : S → α) (D : Update S) : Update S :=
+  {(i, j) | MaximalFor (i ~[D] ·) f j}
 
-theorem mem_maxBy {α : Type*} [Preorder α] {f : S → α} :
+theorem mem_maxBy {α : Type*} [LE α] {f : S → α} :
     i ~[maxBy f D] j ↔ MaximalFor (i ~[D] ·) f j :=
-  and_congr_right fun _ ↦ forall_congr' fun _ ↦ imp_congr_right fun _ ↦ not_lt_iff_le_imp_ge
+  Iff.rfl
 
-theorem maxBy_subset {α : Type*} [Preorder α] (f : S → α) (D : Update S) : maxBy f D ⊆ D :=
+theorem mem_maxBy_iff_forall_gt {α : Type*} [Preorder α] {f : S → α} :
+    i ~[maxBy f D] j ↔ i ~[D] j ∧ ∀ ⦃k⦄, f j < f k → ¬i ~[D] k :=
+  and_congr_right fun _ ↦ ⟨fun h _ hlt hk ↦ hlt.not_ge (h hk hlt.le),
+    fun h _ hk hle ↦ not_lt_iff_le_imp_ge.1 (fun hlt ↦ h hlt hk) hle⟩
+
+theorem maxBy_subset {α : Type*} [LE α] (f : S → α) (D : Update S) : maxBy f D ⊆ D :=
   fun _ h ↦ h.1
 
 theorem maxBy_eq_self {α : Type*} [Preorder α] {f : S → α}
     (h : ∀ i j, i ~[D] j → f j = f i) : maxBy f D = D := by
   ext ⟨i, j⟩
-  refine ⟨And.left, fun hD ↦ ⟨hD, fun k hk hlt ↦ ?_⟩⟩
-  rw [h i j hD, h i k hk] at hlt
-  exact lt_irrefl _ hlt
+  refine ⟨And.left, fun hD ↦ ⟨hD, fun k hk _ ↦ ?_⟩⟩
+  rw [h i j hD, h i k hk]
 
 /-! ### The plural lift -/
 
