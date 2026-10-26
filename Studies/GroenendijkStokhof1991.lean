@@ -138,8 +138,8 @@ variable (φ ψ)
 
 /-! ### Some logical facts, section 3.4 -/
 
-theorem impl_eq_neg_comp_neg : (φ ⇒ ψ) = ∼(φ ○ ∼ψ) := by
-  simp only [neg_eq_compl_dom, dom_comp, dom_test, ← core_compl, compl_compl, impl_eq_core_dom]
+theorem impl_eq_neg_comp_neg : (φ ⇒ ψ) = ∼(φ ○ ∼ψ) :=
+  congrArg test (impl_eq_neg_comp_test_neg φ ψ)
 
 theorem disj_eq_neg_comp_neg_neg : (φ ⋎ ψ) = ∼(∼φ ○ ∼ψ) := by
   rw [test_comp_test, neg_test, neg_eq_compl_dom, neg_eq_compl_dom, Set.compl_inter,
