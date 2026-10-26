@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.KrizChemla2015
 public import Linglib.Data.Experiments.KrizChemla2015
 public import Linglib.Logic.Trivalent.Flat
+public import Linglib.Logic.Trivalent.Supervaluation
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Semantics.Quantification.NumberTree
 public import Studies.Magri2014
@@ -431,23 +432,13 @@ theorem toFlat_pointwise_le :
 
 theorem pointwise_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
     pointwise q d = supervaluation q d := by
-  have hk3 := List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)
-  have hlp := List.mem_toFinset.2 (resolve_mem_resolutions .lp d)
-  have hall : (∀ c ∈ (resolutions d).toFinset, holds q c) ↔ allReading q d :=
-    ⟨fun h ↦ h _ hk3, fun h c hc ↦ holds_of_forall₂_le hq
-      (resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc)).1 h⟩
-  have hex : (∃ c ∈ (resolutions d).toFinset, holds q c) ↔ someReading q d :=
-    ⟨fun ⟨c, hc, h⟩ ↦ holds_of_forall₂_le hq
-      (resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc)).2 h, fun h ↦ ⟨_, hlp, h⟩⟩
-  have hle := allReading_imp_someReading (d := d) hq
-  cases h : supervaluation q d
-  · have ⟨hs, ha⟩ : someReading q d ∧ ¬ allReading q d := by
-      have := supervaluation_eq_zero_iff.1 h
-      tauto
-    exact (SignType.supervaluation_eq_zero_iff ..).2 ⟨hex.2 hs, _, hk3, ha⟩
-  · exact (SignType.supervaluation_eq_neg_one_iff ..).2 ⟨⟨_, hk3⟩,
-      fun c hc hq' ↦ (supervaluation_eq_neg_one_iff.1 h).1 (hex.1 ⟨c, hc, hq'⟩)⟩
-  · exact (SignType.supervaluation_eq_one_iff ..).2 (hall.2 (supervaluation_eq_one_iff.1 h).2)
+  rw [pointwise, SignType.supervaluation_eq_of_between (r := List.Forall₂ (· ≤ ·))
+      (List.mem_toFinset.2 (resolve_mem_resolutions .k3 d))
+      (List.mem_toFinset.2 (resolve_mem_resolutions .lp d))
+      (fun _ hc ↦ resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc))
+      (fun _ _ ↦ holds_of_forall₂_le hq), supervaluation_eq_image,
+    show (Finset.univ : Finset Designation) = {.k3, .lp} by decide, Finset.image_insert,
+    Finset.image_singleton]
 
 theorem pointwise_compl : pointwise qᶜ d = -pointwise q d :=
   SignType.supervaluation_not _ ⟨_, List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)⟩
