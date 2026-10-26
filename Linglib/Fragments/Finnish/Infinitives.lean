@@ -35,7 +35,7 @@ in *sano-a* 'say' and *huomat-a* 'notice'. The E infinitive changes the -A to -e
 
 ## Main results
 
-* `Finnish.Infinitive.toCase_mem_cases_ma_iff`: of the local cases the MA infinitive takes the
+* `Finnish.Infinitive.cells_image_cases_ma`: of the local cases the MA infinitive takes the
   internal cases and, of the external cases, the adessive alone.
 * `Finnish.Infinitive.surface_base_e`: the E infinitive of Karlsson's stems in -e.
 
@@ -79,10 +79,10 @@ def cases : Infinitive → Finset Case
 
 /-- Of the local cases the MA infinitive takes the internal cases and, of the external cases,
 the adessive alone. -/
-theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.Path.Direction}
-    {c : _root_.Case} (h : _root_.Case.toCase r d = some c) :
-    c ∈ ma.cases.image Case.label ↔ r = .interior ∨ r = .exterior ∧ d = .place := by
-  cases r <;> cases d <;> cases h <;> decide
+theorem cells_image_cases_ma : _root_.Case.cells (ma.cases.image Case.label) =
+    ({.interior} : Finset Spatial.Localization) ×ˢ
+      ({.place, .source, .goal} : Finset Spatial.Path.Direction) ∪ {(.exterior, .place)} := by
+  decide
 
 /-- The A infinitive ends in -dA after a long vowel or a diphthong, -tA after `s`, the stem's
 final consonant with -A after `l`, `n` or `r`, and -A otherwise. -/

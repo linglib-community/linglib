@@ -74,6 +74,9 @@ def gen : Cell := { case := ↑UD.Case.Gen }
 /-- The acc cell, `Case=Acc`. -/
 def acc : Cell := { case := ↑UD.Case.Acc }
 
+/-- The acc plural cell, `Case=Acc|Number=Plur`. -/
+def acc_pl : Cell := { case := ↑UD.Case.Acc, number := ↑UD.Number.Plur }
+
 /-- The part cell, `Case=Par`. -/
 def part : Cell := { case := ↑UD.Case.Par }
 
@@ -377,6 +380,18 @@ def Lexemes.car : Lexeme :=
 def Lexemes.him_her : Lexeme :=
   { id := "him_her", languageId := "finn1318", parameterId := "him_her" }
 
+def Lexemes.whom : Lexeme :=
+  { id := "whom", languageId := "finn1318", parameterId := "whom" }
+
+def Lexemes.us : Lexeme :=
+  { id := "us", languageId := "finn1318", parameterId := "us" }
+
+def Lexemes.you_pl : Lexeme :=
+  { id := "you_pl", languageId := "finn1318", parameterId := "you_pl" }
+
+def Lexemes.them : Lexeme :=
+  { id := "them", languageId := "finn1318", parameterId := "them" }
+
 def Lexemes.milk : Lexeme :=
   { id := "milk", languageId := "finn1318", parameterId := "milk" }
 
@@ -546,6 +561,46 @@ def hanet : Form Cell :=
     segments := ["häne", "t"]
     source := [
       ⟨"karlsson-2017", "§3.1"⟩
+    ] }
+
+def kenet : Form Cell :=
+  { id := "karlsson2017_kenet"
+    lexeme := Lexemes.whom
+    cell := acc
+    form := "kenet"
+    segments := ["kene", "t"]
+    source := [
+      ⟨"karlsson-2017", "§13.3.2"⟩
+    ] }
+
+def meidat : Form Cell :=
+  { id := "karlsson2017_meidat"
+    lexeme := Lexemes.us
+    cell := acc_pl
+    form := "meidät"
+    segments := ["me", "i", "dät"]
+    source := [
+      ⟨"karlsson-2017", "§13.3.2"⟩
+    ] }
+
+def teidat : Form Cell :=
+  { id := "karlsson2017_teidat"
+    lexeme := Lexemes.you_pl
+    cell := acc_pl
+    form := "teidät"
+    segments := ["te", "i", "dät"]
+    source := [
+      ⟨"karlsson-2017", "§13.3.2"⟩
+    ] }
+
+def heidat : Form Cell :=
+  { id := "karlsson2017_heidat"
+    lexeme := Lexemes.them
+    cell := acc_pl
+    form := "heidät"
+    segments := ["he", "i", "dät"]
+    source := [
+      ⟨"karlsson-2017", "§13.3.2"⟩
     ] }
 
 def maitoa : Form Cell :=
@@ -1989,33 +2044,34 @@ def kalojensa : Form Cell :=
     ] }
 
 /-- Every lexeme of the data. -/
-def lexemes : List Lexeme := [Lexemes.car, Lexemes.him_her, Lexemes.milk, Lexemes.water,
-  Lexemes.family, Lexemes.country, Lexemes.porvoo, Lexemes.table, Lexemes.teacher, Lexemes.wife,
-  Lexemes.passport, Lexemes.foot, Lexemes.book, Lexemes.bottle, Lexemes.shelf, Lexemes.house,
-  Lexemes.hand, Lexemes.say, Lexemes.eat, Lexemes.run, Lexemes.speak, Lexemes.bag, Lexemes.guest,
-  Lexemes.get, Lexemes.father, Lexemes.mother, Lexemes.live, Lexemes.meet, Lexemes.drink,
-  Lexemes.be, Lexemes.rest, Lexemes.pull, Lexemes.mention, Lexemes.do, Lexemes.come, Lexemes.learn,
-  Lexemes.son, Lexemes.ring, Lexemes.head, Lexemes.fish, Lexemes.girl, Lexemes.cross, Lexemes.stone,
-  Lexemes.child, Lexemes.boy, Lexemes.day, Lexemes.road, Lexemes.obstacle, Lexemes.state]
+def lexemes : List Lexeme := [Lexemes.car, Lexemes.him_her, Lexemes.whom, Lexemes.us,
+  Lexemes.you_pl, Lexemes.them, Lexemes.milk, Lexemes.water, Lexemes.family, Lexemes.country,
+  Lexemes.porvoo, Lexemes.table, Lexemes.teacher, Lexemes.wife, Lexemes.passport, Lexemes.foot,
+  Lexemes.book, Lexemes.bottle, Lexemes.shelf, Lexemes.house, Lexemes.hand, Lexemes.say,
+  Lexemes.eat, Lexemes.run, Lexemes.speak, Lexemes.bag, Lexemes.guest, Lexemes.get, Lexemes.father,
+  Lexemes.mother, Lexemes.live, Lexemes.meet, Lexemes.drink, Lexemes.be, Lexemes.rest, Lexemes.pull,
+  Lexemes.mention, Lexemes.do, Lexemes.come, Lexemes.learn, Lexemes.son, Lexemes.ring, Lexemes.head,
+  Lexemes.fish, Lexemes.girl, Lexemes.cross, Lexemes.stone, Lexemes.child, Lexemes.boy, Lexemes.day,
+  Lexemes.road, Lexemes.obstacle, Lexemes.state]
 
 /-- Every form the sources accept. -/
-def all : List (Form Cell) := [auto, auton, hanet, maitoa, vetta, perhetta, autossa, autosta,
-  autoon, maahan, porvooseen, poydalla, poydalta, poydalle, opettajana, opettajaksi, vaimoineni,
-  passitta, jalan, kirjani, kirjasi, kirjansa, pullo, pullossa, pulloni, pullostani, hyllyssa,
-  hyllylla, hyllysi, hyllyllesi, taloon, hyllynsa, kadessani, kateen, kateesi, katta, sanoa, syoda,
-  juosta, juostaksemme, sanoessani, syodessamme, juosten, syomalla, sanomatta, sanomaan, puhuaksesi,
-  puhumalla, autollani, autostasi, autooni, laukkuni, laukkusi, laukkunsa_3sg, laukkumme, laukkunne,
-  laukkunsa_3pl, taloaan, vieraanaan, saadakseen, talossaan, autollaan, isalleen, aidiltaan,
-  aitiaan, talonsa, autonsa, isaansa, aitinsa, sanoakseni, elaaksemme, tavataksesi, juodakseen,
-  ollaksenne, lepaamassa, lepaamaan, vetamalla, mainitsematta, tekemasta, tuleman, pullot, pullokin,
-  pulloista, pullossahan, pullotkin, pullossasiko, pulloissamme, pulloistakaan, pulloissannekin,
-  hyllyltako, hyllytko, hyllynhan, talonsako, hyllyillamme, kasi, kadet, kasissammehan, lepaamaanko,
-  vetamallakin, mainitsemattakaan, oppiakseenhan, maatamme, poikannekin, aidiltanihan, isallesiko,
-  maahamme, perhettaan, talojaan, renkaitaan, paataan, taloansa, kalansa, kalaansa_ill,
-  kalaansa_part, kaloihinsa, taloissa, taloihin, taloina, taloille, taloiksi, hyllyja, hyllyjen,
-  pulloja, pullojen, tyttoja, tyttojen, pulloissa, maissa, risteissa, kivissa, lapsia, talojen,
-  poikia, poikien, kirjoja, kirjojen, paivia, paivien, kasien, maita, maiden, maitten, teita,
-  teiden, esteitten, valtioiden, kalojensa]
+def all : List (Form Cell) := [auto, auton, hanet, kenet, meidat, teidat, heidat, maitoa, vetta,
+  perhetta, autossa, autosta, autoon, maahan, porvooseen, poydalla, poydalta, poydalle, opettajana,
+  opettajaksi, vaimoineni, passitta, jalan, kirjani, kirjasi, kirjansa, pullo, pullossa, pulloni,
+  pullostani, hyllyssa, hyllylla, hyllysi, hyllyllesi, taloon, hyllynsa, kadessani, kateen, kateesi,
+  katta, sanoa, syoda, juosta, juostaksemme, sanoessani, syodessamme, juosten, syomalla, sanomatta,
+  sanomaan, puhuaksesi, puhumalla, autollani, autostasi, autooni, laukkuni, laukkusi, laukkunsa_3sg,
+  laukkumme, laukkunne, laukkunsa_3pl, taloaan, vieraanaan, saadakseen, talossaan, autollaan,
+  isalleen, aidiltaan, aitiaan, talonsa, autonsa, isaansa, aitinsa, sanoakseni, elaaksemme,
+  tavataksesi, juodakseen, ollaksenne, lepaamassa, lepaamaan, vetamalla, mainitsematta, tekemasta,
+  tuleman, pullot, pullokin, pulloista, pullossahan, pullotkin, pullossasiko, pulloissamme,
+  pulloistakaan, pulloissannekin, hyllyltako, hyllytko, hyllynhan, talonsako, hyllyillamme, kasi,
+  kadet, kasissammehan, lepaamaanko, vetamallakin, mainitsemattakaan, oppiakseenhan, maatamme,
+  poikannekin, aidiltanihan, isallesiko, maahamme, perhettaan, talojaan, renkaitaan, paataan,
+  taloansa, kalansa, kalaansa_ill, kalaansa_part, kaloihinsa, taloissa, taloihin, taloina, taloille,
+  taloiksi, hyllyja, hyllyjen, pulloja, pullojen, tyttoja, tyttojen, pulloissa, maissa, risteissa,
+  kivissa, lapsia, talojen, poikia, poikien, kirjoja, kirjojen, paivia, paivien, kasien, maita,
+  maiden, maitten, teita, teiden, esteitten, valtioiden, kalojensa]
 
 /-- Every form a source marks, as marginal, questionable, unacceptable or ungrammatical. -/
 def marked : List (Form Cell) := []

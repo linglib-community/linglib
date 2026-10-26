@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Syntax.Case.Spatial
 
 /-!
 # Hungarian case
@@ -21,6 +21,11 @@ genitive as a superficial exception to the case hierarchy.
 ## Main definitions
 
 * `Hungarian.Case`, `Hungarian.Case.label`: the cases with a comparative label, and that label.
+
+## Main results
+
+* `Hungarian.Case.cells_image_label`: the local cases fill the matrix of three regions by three
+  directions.
 
 ## Implementation notes
 
@@ -100,5 +105,11 @@ def Case.label : Case → _root_.Case
   | transl => .transl
   | ter => .ter
   | tem => .tem
+
+/-- The nine local cases are the matrix of three regions by three directions. -/
+theorem Case.cells_image_label : _root_.Case.cells (Finset.univ.image Case.label) =
+    (.univ : Finset Spatial.Localization) ×ˢ
+      ({.place, .source, .goal} : Finset Spatial.Path.Direction) := by
+  decide
 
 end Hungarian

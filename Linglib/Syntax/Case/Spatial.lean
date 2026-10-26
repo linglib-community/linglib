@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Case.Basic
 public import Linglib.Semantics.Events.Path
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Spatial cases
@@ -18,6 +19,7 @@ the spatial cases among the semantic cases, apart from the grammatical ones.
   expresses, if any.
 * `Case.toCase`, `Case.spatialDecomp`: a spatial case from its localization and direction, and
   back.
+* `Case.cells`: the localization-direction pairs whose case is in an inventory.
 * `Case.ofDir`: the localization-neutral case of a direction.
 * `Case.shape?`: the shape of the paths a directional case expresses.
 * `Case.Kind`, `Case.kind`: grammatical, spatial and other semantic cases.
@@ -111,6 +113,17 @@ theorem spatialDecomp_toCase (r : Localization) (d : Direction) :
     (toCase r d).bind spatialDecomp =
       (toCase r d).map (fun _ => (r, d)) := by
   cases r <;> cases d <;> decide
+
+/-- The localization-direction pairs whose case is in `s`. -/
+def cells (s : Finset Case) : Finset (Localization × Direction) :=
+  Finset.univ.filter fun p ↦ ∃ c ∈ toCase p.1 p.2, c ∈ s
+
+@[simp] theorem mem_cells {s : Finset Case} {p : Localization × Direction} :
+    p ∈ cells s ↔ ∃ c ∈ toCase p.1 p.2, c ∈ s := by
+  simp [cells]
+
+theorem cells_mono : Monotone cells := fun _ _ h ↦
+  Finset.monotone_filter_right _ fun _ _ ⟨c, hc, hs⟩ ↦ ⟨c, hc, h hs⟩
 
 /-- `ofDir d` is the case that expresses `d` with no localization, the general locative,
 allative, ablative or perlative. -/
