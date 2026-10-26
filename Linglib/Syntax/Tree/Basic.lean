@@ -248,6 +248,41 @@ theorem map_rose (f : W → W') (l : Label C W) (cs : List (Tree C W)) :
     (bind n c t).map f = bind n c (t.map f) := by
   simp [map, bind, Label.mapWord]
 
+section Inversion
+
+variable {f : W → W'} {t : Tree C W} {c : C}
+
+theorem map_eq_terminal_iff {w' : W'} :
+    t.map f = terminal c w' ↔ ∃ w, t = terminal c w ∧ f w = w' := by
+  refine ⟨fun h ↦ ?_, fun ⟨w, ht, hw⟩ ↦ by rw [ht, map_terminal, hw]⟩
+  rcases t with ⟨l, cs⟩
+  cases l <;> simp_all [map_rose, Label.mapWord]
+
+theorem map_eq_node_iff {cs' : List (Tree C W')} :
+    t.map f = node c cs' ↔ ∃ cs, t = node c cs ∧ cs.map (map f) = cs' := by
+  refine ⟨fun h ↦ ?_, fun ⟨cs, ht, hcs⟩ ↦ by rw [ht, map_node, hcs]⟩
+  rcases t with ⟨l, cs⟩
+  cases l <;> simp_all [map_rose, Label.mapWord]
+
+theorem map_eq_adjoin_iff {cs' : List (Tree C W')} :
+    t.map f = adjoin c cs' ↔ ∃ cs, t = adjoin c cs ∧ cs.map (map f) = cs' := by
+  refine ⟨fun h ↦ ?_, fun ⟨cs, ht, hcs⟩ ↦ by rw [ht, map_adjoin, hcs]⟩
+  rcases t with ⟨l, cs⟩
+  cases l <;> simp_all [map_rose, Label.mapWord]
+
+theorem map_eq_trace_iff {n : ℕ} : t.map f = trace n c ↔ t = trace n c := by
+  refine ⟨fun h ↦ ?_, fun h ↦ by rw [h, map_trace]⟩
+  rcases t with ⟨l, cs⟩
+  cases l <;> simp_all [map_rose, Label.mapWord]
+
+theorem map_eq_bind_iff {n : ℕ} {b' : Tree C W'} :
+    t.map f = bind n c b' ↔ ∃ b, t = bind n c b ∧ b.map f = b' := by
+  refine ⟨fun h ↦ ?_, fun ⟨b, ht, hb⟩ ↦ by rw [ht, map_bind, hb]⟩
+  rcases t with ⟨l, cs⟩
+  cases l <;> simp_all [map_rose, Label.mapWord, List.map_eq_singleton_iff]
+
+end Inversion
+
 @[simp] theorem map_id (t : Tree C W) : t.map id = t := by
   rw [map, show Label.mapWord (C := C) (id : W → W) = id from funext Label.mapWord_id]
   exact RoseTree.id_map t

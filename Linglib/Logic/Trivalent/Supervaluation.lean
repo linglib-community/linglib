@@ -39,8 +39,8 @@ Strong Kleene: `p ∨ ¬p` is supertrue where `p` is `0`, and Strong Kleene leav
   is the supervaluation of its bivalent variants.
 * `Trivalent.forallStrong_eq_supervaluation`, `Trivalent.existsStrong_eq_supervaluation`: the
   Strong Kleene quantifiers are supervaluations over the readings of their instances.
-* `SignType.supervaluationOn_eq_of_between`: over a set where the predicate at each member lies
-  between its values at two members, the supervaluation is that over the two.
+* `Trivalent.supervaluationOn_pi_eq_const_of_monotone`: for a monotone `Q`, reading each index at
+  a standard of its own gives the supervaluation of reading every index at one.
 
 ## References
 
@@ -201,6 +201,45 @@ end SignType
 namespace Trivalent
 
 open SignType
+
+section Standards
+
+variable {ι : Type*} {Q : (ι → Prop) → Prop} (p : ι → SignType)
+
+private theorem between_threshold_le (c : ι → Designation) :
+    (fun i ↦ 1 ≤ p i) ≤ (fun i ↦ (c i).threshold ≤ p i) ∧
+      (fun i ↦ (c i).threshold ≤ p i) ≤ fun i ↦ 0 ≤ p i := by
+  refine ⟨fun i h ↦ le_trans ?_ h, fun i h ↦ le_trans ?_ h⟩ <;> cases c i <;> decide
+
+/-- For a monotone `Q`, reading each index at a standard of its own gives the supervaluation of
+reading every index at one standard. -/
+theorem supervaluationOn_pi_eq_const_of_monotone (hQ : Monotone Q) :
+    supervaluationOn Set.univ (fun c : ι → Designation ↦ Q fun i ↦ (c i).threshold ≤ p i) =
+      supervaluationOn Set.univ fun d : Designation ↦ Q fun i ↦ d.threshold ≤ p i := by
+  have h := between_threshold_le p
+  refine (supervaluationOn_eq_of_between (Set.mem_univ (Function.const ι Designation.k3))
+    (Set.mem_univ (Function.const ι Designation.lp)) fun c _ ↦ ⟨hQ (h c).1, hQ (h c).2⟩).trans
+    (Eq.trans ?_ (supervaluationOn_eq_of_between (Set.mem_univ Designation.k3)
+      (Set.mem_univ Designation.lp) fun d _ ↦ ⟨hQ (h (Function.const ι d)).1,
+        hQ (h (Function.const ι d)).2⟩).symm)
+  rw [← Set.image_pair, supervaluationOn_image]
+  rfl
+
+/-- For an antitone `Q`, reading each index at a standard of its own gives the supervaluation of
+reading every index at one standard. -/
+theorem supervaluationOn_pi_eq_const_of_antitone (hQ : Antitone Q) :
+    supervaluationOn Set.univ (fun c : ι → Designation ↦ Q fun i ↦ (c i).threshold ≤ p i) =
+      supervaluationOn Set.univ fun d : Designation ↦ Q fun i ↦ d.threshold ≤ p i := by
+  have h := between_threshold_le p
+  refine (supervaluationOn_eq_of_between (Set.mem_univ (Function.const ι Designation.lp))
+    (Set.mem_univ (Function.const ι Designation.k3)) fun c _ ↦ ⟨hQ (h c).2, hQ (h c).1⟩).trans
+    (Eq.trans ?_ (supervaluationOn_eq_of_between (Set.mem_univ Designation.lp)
+      (Set.mem_univ Designation.k3) fun d _ ↦ ⟨hQ (h (Function.const ι d)).2,
+        hQ (h (Function.const ι d)).1⟩).symm)
+  rw [← Set.image_pair, supervaluationOn_image]
+  rfl
+
+end Standards
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
