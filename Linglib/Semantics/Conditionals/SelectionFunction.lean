@@ -13,11 +13,12 @@ This file defines selection functions and the selection conditional. A selection
 a world and a possible proposition to a world at which the proposition holds, the world itself
 when it holds there: intuitively the closest world at which the proposition holds. The selection
 conditional *if p, q* is true when `q` holds at the world selected for `p`, and vacuously true
-when `p` is impossible. A selection establishes an ordering of the worlds it selects, its
-priority, and a selection function satisfying Stalnaker's condition (4) is the conditional of the
-closest worlds under its priority, a well-ordering with each world first in its own. A similarity
-ordering with ties corresponds to the class of selection functions its completions determine, and
-for a single conditional the supervaluation over them is the conditional of the closest worlds.
+when `p` is impossible. Under Stalnaker's condition (4) the selection at a world is a rational
+choice, so a selection function satisfying it is the conditional of the closest worlds under the
+ordering its choices from pairs reveal, a well-ordering with each world first in its own. A
+similarity ordering with ties corresponds to the class of selection functions its completions
+determine, and for a single conditional the supervaluation over them is the conditional of the
+closest worlds.
 
 ## Main definitions
 
@@ -25,7 +26,6 @@ for a single conditional the supervaluation over them is the conditional of the 
 * `selectionConditional`: the selection conditional.
 * `SelectionFunction.IsCSO`: Stalnaker's condition (4), that antecedents each true at the world
   selected for the other select the same world.
-* `Conditional.Prior`: the priority a selection establishes among the worlds it selects.
 * `SelectionFunction.restrict`: a selection function restricted to a set of worlds.
 * `SelectionFunction.along`, `SelectionFunction.modal`: selection along an accessibility relation
   and the selectional modal it defines.
@@ -38,11 +38,11 @@ for a single conditional the supervaluation over them is the conditional of the 
 * `SelectionFunction.modal_eq_core`, `SelectionFunction.modal_inter_refl`,
   `SelectionFunction.modal_eq_id`: the selectional modal along a relation is necessity along a
   function, idle where the relation is reflexive and the identity along a reflexive relation.
-* `Conditional.Prior.antisymm`, `Conditional.Prior.trans`, `Conditional.Prior.total`: under
-  condition (4), priority is a total ordering of the selected worlds.
+* `SelectionFunction.IsCSO.isRational`: under condition (4) the selection is a rational choice.
 * `SelectionFunction.IsCSO.selectionConditional_eq_closestImp`: under condition (4), the selection
-  conditional is the conditional of the closest worlds under priority, which is centered and
-  well-founded (`SelectionFunction.IsCSO.isCentered`, `SelectionFunction.IsCSO.wellFounded`).
+  conditional is the conditional of the closest worlds under the ordering the selection reveals on
+  pairs, which is centered and well-founded (`SelectionFunction.IsCSO.isCentered`,
+  `SelectionFunction.IsCSO.wellFounded`).
 * `SelectionFunction.Compatible.isCSO`: selection by a completion satisfies condition (4).
 * `mem_closestImp_iff_forall_compatible`: the conditional of the closest worlds is the
   supervaluation over completions.
@@ -242,73 +242,23 @@ theorem SelectionFunction.restrict_sel_of_not_nonempty (s : SelectionFunction W)
 
 end CSO
 
-/-! ### Priority
+/-! ### Condition (4) as rational choice
 
-A selection establishes an ordering of the worlds it selects ([stalnaker-1968] fn. 8): selecting
-`v` for an antecedent makes `v` prior to every world of the antecedent. When each domain of a
-conditional is a set of antecedent-worlds with at most one member, condition (4) says that
-priority is antisymmetric, and priority is then a total ordering of the selected worlds, each
-domain holding the least selected world of its antecedent. A selection function satisfying
-condition (4) is therefore the conditional of the closest worlds under its priority, the converse
-of `SelectionFunction.Compatible.isCSO`. -/
+Under condition (4) the worlds a selection function picks at a world form a rational choice: the
+relation under which `B` follows from `A` when the world selected for `A` lies in `B` is rational
+and preserves consistency (`Nonmonotonic.IsRational`). Its choices are therefore those of the
+closest worlds under the ordering they reveal on pairs, a well-ordering with each world first in
+its own, and a selection function satisfying condition (4) is the conditional of the closest
+worlds under that ordering, the converse of `SelectionFunction.Compatible.isCSO`. -/
 
-section Priority
-
-variable {I W : Type*} {D : I → Set W → Set W} {i : I} {A : Set W} {v u x : W}
-
-/-- `v` is prior to `u` at `i` when some antecedent true at `u` has the domain `{v}`. -/
-def Prior (D : I → Set W → Set W) (i : I) (v u : W) : Prop := ∃ A, D i A = {v} ∧ u ∈ A
-
-theorem Prior.of_mem (hD : (D i A).Subsingleton) (hv : v ∈ D i A) (hu : u ∈ A) :
-    Prior D i v u :=
-  ⟨A, hD.eq_singleton_of_mem hv, hu⟩
-
-theorem Prior.self (hsub : ∀ A, D i A ⊆ A) (h : Prior D i v u) : Prior D i v v :=
-  let ⟨A, hA, _⟩ := h
-  ⟨A, hA, hsub A (hA ▸ rfl)⟩
-
-section CSO
-
-variable (hcso : ∀ A B, D i B ⊆ A → D i A ⊆ B → D i A = D i B)
-include hcso
-
-theorem Prior.antisymm (h : Prior D i v u) (h' : Prior D i u v) : v = u := by
-  obtain ⟨A, hA, huA⟩ := h
-  obtain ⟨B, hB, hvB⟩ := h'
-  have := hcso A B (by simpa [hB] using huA) (by simpa [hA] using hvB)
-  rwa [hA, hB, Set.singleton_eq_singleton_iff] at this
-
-theorem Prior.nonempty (h : Prior D i v u) (hv : v ∈ A) : (D i A).Nonempty := by
-  obtain ⟨B, hB, -⟩ := h
-  refine Set.nonempty_iff_ne_empty.2 fun hA ↦ ?_
-  have := hcso A B (by simpa [hB] using hv) (by simp [hA])
-  simp [hA, hB] at this
-
-variable (hss : ∀ A, (D i A).Subsingleton) (hsub : ∀ A, D i A ⊆ A)
-include hss hsub
-
-theorem Prior.trans (h : Prior D i v u) (h' : Prior D i u x) : Prior D i v x := by
-  obtain ⟨y, hy⟩ := h.nonempty hcso (A := {v, u, x}) (by simp)
-  have hle : ∀ z ∈ ({v, u, x} : Set W), Prior D i y z := fun _ hz ↦ .of_mem (hss _) hy hz
-  rcases hsub _ hy with rfl | rfl | rfl
-  · exact hle x (by simp)
-  · exact (Prior.antisymm hcso h (hle v (by simp))) ▸ h'
-  · exact (Prior.antisymm hcso h' (hle u (by simp))) ▸ h
-
-theorem Prior.total (hv : Prior D i v v) : Prior D i v u ∨ Prior D i u v := by
-  obtain ⟨y, hy⟩ := hv.nonempty hcso (A := {v, u}) (by simp)
-  rcases hsub _ hy with rfl | rfl
-  exacts [.inl (.of_mem (hss _) hy (by simp)), .inr (.of_mem (hss _) hy (by simp))]
-
-end CSO
+section RationalChoice
 
 namespace SelectionFunction
 
-variable {s : SelectionFunction W} {w : W} {B : Set W}
+variable {W : Type*} {s : SelectionFunction W} {w : W} {A B : Set W}
 
-theorem domain_singleton (s : SelectionFunction W) (w v : W) : s.domain w {v} = {v} := by
-  rw [s.domain_eq_singleton (Set.singleton_nonempty v),
-    s.inclusion w {v} (Set.singleton_nonempty v)]
+theorem eq_empty_of_domain_subset_empty (h : s.domain w A ⊆ ∅) : A = ∅ :=
+  Set.not_nonempty_iff_eq_empty.1 fun hA ↦ h ⟨rfl, s.inclusion w A hA⟩
 
 theorem IsCSO.domain_eq (hs : s.IsCSO) (h₁ : s.domain w B ⊆ A) (h₂ : s.domain w A ⊆ B) :
     s.domain w A = s.domain w B := by
@@ -319,45 +269,60 @@ theorem IsCSO.domain_eq (hs : s.IsCSO) (h₁ : s.domain w B ⊆ A) (h₂ : s.dom
   rw [s.domain_eq_singleton hA, s.domain_eq_singleton hB] at *
   rw [hs w A B hA hB (h₁ rfl) (h₂ rfl)]
 
-/-- Under condition (4), priority is a linear order at each world. -/
-noncomputable abbrev IsCSO.linearOrder (hs : s.IsCSO) (w : W) : LinearOrder W where
-  le := Prior s.domain w
-  le_refl v := ⟨{v}, s.domain_singleton w v, rfl⟩
-  le_trans _ _ _ := Prior.trans (fun _ _ ↦ hs.domain_eq) (fun _ ↦ s.subsingleton_domain)
-    fun _ ↦ Set.inter_subset_right
-  le_antisymm _ _ := Prior.antisymm fun _ _ ↦ hs.domain_eq
-  le_total v _ := Prior.total (fun _ _ ↦ hs.domain_eq) (fun _ ↦ s.subsingleton_domain)
-    (fun _ ↦ Set.inter_subset_right) ⟨{v}, s.domain_singleton w v, rfl⟩
-  toDecidableLE := Classical.decRel _
+/-- Under condition (4) the selection at a world is a rational choice. -/
+theorem IsCSO.isRational (hs : s.IsCSO) (w : W) :
+    Nonmonotonic.IsRational fun A B ↦ s.domain w A ⊆ B where
+  refl _ := Set.inter_subset_right
+  rightWeakening h hBC := h.trans hBC
+  and h h' := Set.subset_inter h h'
+  or {φ ψ _} h h' x hx := by
+    have hsub {θ : Set W} (hθ : x ∈ θ) : s.domain w (φ ∪ ψ) ⊆ θ :=
+      fun y hy ↦ s.subsingleton_domain hx hy ▸ hθ
+    rcases hx.2 with hxφ | hxψ
+    · rw [hs.domain_eq (Set.inter_subset_right.trans Set.subset_union_left) (hsub hxφ)] at hx
+      exact h hx
+    · rw [hs.domain_eq (Set.inter_subset_right.trans Set.subset_union_right) (hsub hxψ)] at hx
+      exact h' hx
+  cautiousMonotonicity h h' := by
+    rw [hs.domain_eq (Set.subset_inter Set.inter_subset_right h)
+      (Set.inter_subset_right.trans Set.inter_subset_left)]
+    exact h'
+  rationalMonotonicity {_ ψ _} h h' := by
+    obtain ⟨x, hx, hxψ⟩ := Set.not_subset.1 h'
+    have hψ : s.domain w _ ⊆ ψ := fun y hy ↦ s.subsingleton_domain hx hy ▸ not_not.1 hxψ
+    rw [hs.domain_eq (Set.subset_inter Set.inter_subset_right hψ)
+      (Set.inter_subset_right.trans Set.inter_subset_left)]
+    exact h
+
+/-- Under condition (4), the ordering at `w` that the selection reveals on pairs: `v` comes at
+least as close as `u` when it is the world selected from `{v, u}`. -/
+noncomputable abbrev IsCSO.linearOrder (hs : s.IsCSO) (w : W) : LinearOrder W :=
+  { (hs.isRational w).preorder fun _ ↦ eq_empty_of_domain_subset_empty with
+    le_antisymm := fun v u hvu huv ↦ s.subsingleton_domain hvu (Set.pair_comm u v ▸ huv)
+    le_total := ((hs.isRational w).total_preorder fun _ ↦ eq_empty_of_domain_subset_empty).total
+    toDecidableLE := Classical.decRel _ }
 
 theorem IsCSO.minimals_eq_domain (hs : s.IsCSO) (p : Set W) :
-    (hs.linearOrder w).toPreorder.minimals p = s.domain w p := by
-  ext v
-  refine ⟨fun ⟨hv, hmin⟩ ↦ ?_,
-    fun hv ↦ ⟨hv.2, fun _ hu _ ↦ Prior.of_mem s.subsingleton_domain hv hu⟩⟩
-  have hD := s.domain_eq_singleton (w := w) ⟨v, hv⟩
-  have hprior : Prior s.domain w (s.sel w p) v := ⟨p, hD, hv⟩
-  rw [hD]
-  exact Prior.antisymm (fun _ _ ↦ hs.domain_eq) (hmin (s.inclusion w p ⟨v, hv⟩) hprior) hprior
+    (hs.linearOrder w).toPreorder.minimals p = s.domain w p :=
+  (hs.isRational w).minimals_preorder (fun _ ↦ eq_empty_of_domain_subset_empty) p
 
 theorem IsCSO.isCentered (hs : s.IsCSO) : IsCentered fun w ↦ (hs.linearOrder w).toPreorder :=
   fun w w' hne ↦ @lt_of_le_of_ne W (hs.linearOrder w).toPartialOrder _ _
-    ⟨{w, w'}, s.domain_of_mem (by simp), by simp⟩ hne
+    (show w ∈ s.domain w {w, w'} by rw [s.domain_of_mem (by simp)]; rfl) hne
 
 theorem IsCSO.wellFounded (hs : s.IsCSO) (w : W) :
     WellFounded (hs.linearOrder w).toPreorder.lt :=
-  WellFounded.wellFounded_iff_has_min.2 fun p hp ↦
-    ⟨s.sel w p, s.inclusion w p hp, fun _ hu hlt ↦ hlt.2 ⟨p, s.domain_eq_singleton hp, hu⟩⟩
+  (hs.isRational w).wellFounded_preorder_lt fun _ ↦ eq_empty_of_domain_subset_empty
 
 /-- Under condition (4), the selection conditional is the conditional of the closest worlds
-under priority. -/
+under the ordering the selection reveals. -/
 theorem IsCSO.selectionConditional_eq_closestImp (hs : s.IsCSO) (p q : Set W) :
     selectionConditional s p q = closestImp (fun w ↦ (hs.linearOrder w).toPreorder) p q :=
   Set.ext fun _ ↦ by rw [mem_closestImp, hs.minimals_eq_domain]; rfl
 
 end SelectionFunction
 
-end Priority
+end RationalChoice
 
 /-! ### Selection functions compatible with a similarity ordering
 

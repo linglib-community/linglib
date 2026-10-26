@@ -21,7 +21,8 @@ classical propositional logic and defines necessity as `¬A > A`.
 
 * `isSelectionFunction_minimals`: under Stalnaker's assumption the closest accessible
   antecedent-world is a selection function.
-* `IsSelectionFunction.isLinearOrder_prior`: priority totally orders the selected worlds.
+* `IsSelectionFunction.isLinearOrder_prior`, `IsSelectionFunction.prior_iff_mem_pair`: priority
+  totally orders the selected worlds, and is the order that choices from pairs reveal.
 * `Provable.sound`: every theorem of C2 is valid.
 * `provable_neg_corner`: a denied conditional is the conditional of the opposite consequent.
 * `not_valid_trans`, `not_valid_strengthening`, `not_valid_contraposition`: the three inferences
@@ -104,6 +105,61 @@ theorem isSelectionFunction_domain {s : SelectionFunction W} (hs : s.IsCSO) :
     rw [Set.univ_inter, hs.minimals_eq_domain]
   exact hD ▸ h
 
+/-! ### Priority
+
+A selection establishes an ordering of the worlds it selects (fn. 8): selecting `v` for an
+antecedent makes `v` prior to every world of the antecedent. When each domain is a set of
+antecedent-worlds with at most one member, condition (4) says that priority is antisymmetric, and
+priority is then a total ordering of the selected worlds. -/
+
+section Priority
+
+variable {A : Set W} {u x : W}
+
+/-- `v` is prior to `u` at `w` when some antecedent true at `u` has the domain `{v}`. -/
+def Prior (D : W → Set W → Set W) (w v u : W) : Prop := ∃ A, D w A = {v} ∧ u ∈ A
+
+theorem Prior.of_mem (hD : (D w A).Subsingleton) (hv : v ∈ D w A) (hu : u ∈ A) :
+    Prior D w v u :=
+  ⟨A, hD.eq_singleton_of_mem hv, hu⟩
+
+section CSO
+
+variable (hcso : ∀ A B, D w B ⊆ A → D w A ⊆ B → D w A = D w B)
+include hcso
+
+theorem Prior.antisymm (h : Prior D w v u) (h' : Prior D w u v) : v = u := by
+  obtain ⟨A, hA, huA⟩ := h
+  obtain ⟨B, hB, hvB⟩ := h'
+  have := hcso A B (by simpa [hB] using huA) (by simpa [hA] using hvB)
+  rwa [hA, hB, Set.singleton_eq_singleton_iff] at this
+
+theorem Prior.nonempty (h : Prior D w v u) (hv : v ∈ A) : (D w A).Nonempty := by
+  obtain ⟨B, hB, -⟩ := h
+  refine Set.nonempty_iff_ne_empty.2 fun hA ↦ ?_
+  have := hcso A B (by simpa [hB] using hv) (by simp [hA])
+  simp [hA, hB] at this
+
+variable (hss : ∀ A, (D w A).Subsingleton) (hsub : ∀ A, D w A ⊆ A)
+include hss hsub
+
+theorem Prior.trans (h : Prior D w v u) (h' : Prior D w u x) : Prior D w v x := by
+  obtain ⟨y, hy⟩ := h.nonempty hcso (A := {v, u, x}) (by simp)
+  have hle : ∀ z ∈ ({v, u, x} : Set W), Prior D w y z := fun _ hz ↦ .of_mem (hss _) hy hz
+  rcases hsub _ hy with rfl | rfl | rfl
+  · exact hle x (by simp)
+  · exact (Prior.antisymm hcso h (hle v (by simp))) ▸ h'
+  · exact (Prior.antisymm hcso h' (hle u (by simp))) ▸ h
+
+theorem Prior.total (hv : Prior D w v v) : Prior D w v u ∨ Prior D w u v := by
+  obtain ⟨y, hy⟩ := hv.nonempty hcso (A := {v, u}) (by simp)
+  rcases hsub _ hy with rfl | rfl
+  exacts [.inl (.of_mem (hss _) hy (by simp)), .inr (.of_mem (hss _) hy (by simp))]
+
+end CSO
+
+end Priority
+
 namespace IsSelectionFunction
 
 variable (hM : IsSelectionFunction R D)
@@ -115,6 +171,14 @@ theorem isLinearOrder_prior (w : W) : IsLinearOrder {v // Prior D w v v} (Prior 
   trans _ _ _ := Prior.trans (hM.cso w) (hM.subsingleton w) (hM.subset w)
   antisymm _ _ h h' := Subtype.ext (Prior.antisymm (hM.cso w) h h')
   total v _ := Prior.total (hM.cso w) (hM.subsingleton w) (hM.subset w) v.2
+
+/-- Priority is the order that choices from pairs reveal: `v` is prior to `u` exactly when `v` is
+the world selected from `{v, u}`, the ordering of `SelectionFunction.IsCSO.linearOrder`. -/
+theorem prior_iff_mem_pair {u : W} : Prior D w v u ↔ v ∈ D w {v, u} := by
+  refine ⟨fun ⟨A, hA, huA⟩ ↦ ?_, fun h ↦ .of_mem (hM.subsingleton w _) h (by simp)⟩
+  have hvA : v ∈ A := hM.subset w A (by rw [hA]; rfl)
+  rw [hM.cso w {v, u} A (by rw [hA]; simp) ((hM.subset w _).trans (Set.pair_subset hvA huA)), hA]
+  rfl
 
 /-- Condition (3) puts the base world first in priority. -/
 theorem prior_base (w u : W) : Prior D w w u :=
