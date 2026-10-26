@@ -145,7 +145,7 @@ theorem mu_of_conjunctive_particle {q : IndeterminateQuantifier}
 
 /-- The universal reading of Japanese *dare-mo* 'everyone' is μ, (1a). -/
 theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
-    (h : d ∈ ⟦Japanese.Determiners.dare_mo⟧) : d α = mu :=
+    (h : d ∈ ⟦Japanese.Determiners.dareMo⟧) : d α = mu :=
   mu_of_conjunctive_particle rfl h
 
 /-- Latin *quis-que* 'each' is μ on the indeterminate *quis*, (40). -/

@@ -7,18 +7,18 @@ public import Linglib.Syntax.Category.Pronoun.Reflexive
 public import Linglib.Syntax.Category.Pronoun.Interrogative
 
 /-!
-# Japanese pronouns and the addressee-honorific marker
+# Japanese pronouns
 
 The personal pronouns of Japanese are the first-person forms *watashi*, *boku* and *ore*, which
 differ in register, the last two indexing the masculine stance Ochs describes, the second-person
-*kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera*. With them are the
-reciprocal *otagai*, the reflexive *jibun*, and the addressee-honorific verbal marker *-mas-*,
-which Alok and Bhalla show to be sensitive to the complementizer when embedded. The indeterminate
-pronouns of Kratzer and Shimoyama, *dare* 'who', *nani* 'what', *dono* 'which', *doko* 'where',
-*itsu* 'when', *naze* 'why' and *dō* 'how', are the interrogatives, and the quantifiers and
-indefinite series of `Fragments/Japanese/Determiners.lean` and
-`Fragments/Japanese/Indefinites.lean` are built on them, as is *nan-* 'how many' before a
-classifier.
+*kimi* and *anata*, and the third-person *kare*, *kanojo* and *karera*. With them are the reciprocal
+*otagai* and the reflexive *jibun*. The honorific grades rank *kimi* below *anata*, as they rank the
+plain verb below the addressee-honorific suffix *-mas-* (`Japanese.Verb.Exponent.mas`), which Alok
+and Bhalla show to be sensitive to the complementizer when embedded. The indeterminate pronouns of
+Kratzer and Shimoyama, *dare* 'who', *nani* 'what', *dono* 'which', *doko* 'where', *itsu* 'when',
+*naze* 'why' and *dō* 'how', are the interrogatives, and the quantifiers and indefinite series of
+`Fragments/Japanese/Determiners.lean` and `Fragments/Japanese/Indefinites.lean` are built on them,
+as is *nan-* 'how many' before a classifier.
 
 ## References
 
@@ -44,47 +44,47 @@ instance : LinearOrder Grade := LinearOrder.lift' Grade.ctorIdx (by decide)
 
 namespace Pronouns
 
-/-- 私 *watashi* — 1sg, neutral. -/
+/-- 私 *watashi* 'I', of neutral register. -/
 def watashi : PersonalPronoun :=
   { form := "watashi", script := some "私", person := some .first, number := some .singular,
     register := .neutral }
 
-/-- 僕 *boku* — 1sg informal, masculine-associated through register rather
-    than a gender feature ([ochs-1992]). -/
+/-- 僕 *boku* 'I', informal, associated with men through its register rather than a gender
+feature ([ochs-1992]). -/
 def boku : PersonalPronoun :=
   { form := "boku", script := some "僕", person := some .first, number := some .singular,
     register := .informal }
 
-/-- 俺 *ore* — 1sg very informal; indexes masculinity through an assertive
-    stance ([ochs-1992]). -/
+/-- 俺 *ore* 'I', very informal, indexing masculinity through an assertive stance
+([ochs-1992]). -/
 def ore : PersonalPronoun :=
   { form := "ore", script := some "俺", person := some .first, number := some .singular,
     register := .informal }
 
-/-- 私たち *watashitachi* — 1pl. -/
+/-- 私たち *watashitachi* 'we'. -/
 def watashitachi : PersonalPronoun :=
   { form := "watashitachi", script := some "私たち", person := some .first,
     number := some .plural }
 
-/-- 君 *kimi* — 2sg plain. -/
+/-- 君 *kimi* 'you', of the plain grade. -/
 def kimi : PersonalPronoun :=
   { form := "kimi", script := some "君", person := some .second, number := some .singular }
 
-/-- あなた *anata* — 2sg polite. -/
+/-- あなた *anata* 'you', of the polite grade. -/
 def anata : PersonalPronoun :=
   { form := "anata", script := some "あなた", person := some .second, number := some .singular }
 
-/-- 彼 *kare* — 3sg masculine. -/
+/-- 彼 *kare* 'he'. -/
 def kare : PersonalPronoun :=
   { form := "kare", script := some "彼", person := some .third, number := some .singular,
     gender := some .Masc }
 
-/-- 彼女 *kanojo* — 3sg feminine. -/
+/-- 彼女 *kanojo* 'she'. -/
 def kanojo : PersonalPronoun :=
   { form := "kanojo", script := some "彼女", person := some .third, number := some .singular,
     gender := some .Fem }
 
-/-- 彼ら *karera* — 3pl. -/
+/-- 彼ら *karera* 'they'. -/
 def karera : PersonalPronoun :=
   { form := "karera", script := some "彼ら", person := some .third, number := some .plural }
 
@@ -97,7 +97,7 @@ def addressee : Grade → PersonalPronoun
 def pronouns : Finset PersonalPronoun :=
   {watashi, boku, ore, watashitachi, kimi, anata, kare, kanojo, karera}
 
-/-- 互い *otagai* — the reciprocal pronoun, distinct from the reflexive *jibun*. -/
+/-- 互い *otagai* 'each other', the reciprocal, distinct from the reflexive *jibun*. -/
 def otagai : ReciprocalPronoun :=
   { form := "otagai", script := some "互い", number := some .plural }
 
@@ -132,17 +132,16 @@ def doo : InterrogativePronoun := { form := "dō", script := some "どう", onto
 /-- 何 *nan-* 'how many', before a classifier. -/
 def nan : InterrogativePronoun := { form := "nan", script := some "何", ontology := .amount }
 
-/-- *dore* 'which one', the determiner of Haspelmath's table. -/
-def dore : InterrogativePronoun := { form := "dore", ontology := .determiner }
+/-- どれ *dore* 'which one', the determiner of Haspelmath's table. -/
+def dore : InterrogativePronoun :=
+  { form := "dore", script := some "どれ", ontology := .determiner }
 
-/-- *ikura* 'how much'. -/
-def ikura : InterrogativePronoun := { form := "ikura", ontology := .amount }
+/-- いくら *ikura* 'how much'. -/
+def ikura : InterrogativePronoun := { form := "ikura", script := some "いくら", ontology := .amount }
 
-/-- *ikutsu* 'how many'. -/
-def ikutsu : InterrogativePronoun := { form := "ikutsu", ontology := .amount }
-
-/-- The addressee-honorific suffix *-mas-* on the verb, of the polite grade. -/
-def mas : Morphology.Morph := .suff "mas"
+/-- いくつ *ikutsu* 'how many'. -/
+def ikutsu : InterrogativePronoun :=
+  { form := "ikutsu", script := some "いくつ", ontology := .amount }
 
 end Pronouns
 

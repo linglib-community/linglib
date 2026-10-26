@@ -6,23 +6,21 @@ public import Linglib.Syntax.Category.Verb.Basic
 # Japanese verbs
 
 The Japanese clause-embedding and departure predicates the studies of Qing and Uegaki and of
-Ozaki consume: the preferential attitudes *tanoshimi* 'look forward to', *osore* 'fear',
-*kitai* 'expect', *nozomu* 'hope' and *shinpai* 'worry', whose distributivity over
-alternatives follows from the kind of preference each records; the morphological causative
-in *-(s)ase*, whose causee is accusative under the coercive reading and dative under the
-permissive one; and the departure verbs *hanareru* 'leave' and *deru* 'exit', which take
-their source in the accusative or the ablative and are unaccusative, their Voice being
-non-thematic.
+Ozaki consume: the preferential attitudes *tanoshimi* 'look forward to', *osore* 'fear', *kitai*
+'expect', *nozomu* 'hope' and *shinpai* 'worry', whose distributivity over alternatives follows from
+the kind of preference each records, and the departure verbs *hanareru* 'leave' and *deru* 'exit',
+which take their source in the accusative or the ablative and are unaccusative, their Voice being
+non-thematic. The causative suffix *-(s)ase* is a position of the verb template,
+`Japanese.Verb.Exponent.sase`.
 
 ## Main definitions
 
-* `Japanese.verbs` — the attitude, causative and departure verbs
+* `Japanese.verbs`: the attitude and departure verbs.
 
 ## References
 
 * [ozaki-2026]
 * [qing-uegaki-2025]
-* [song-1996]
 -/
 
 @[expose] public section
@@ -78,20 +76,6 @@ def shinpai : Verb where
   opaqueContext := true
   attitude := some (.preferential .negative false)
 
-/-! ### Causatives -/
-
-/-- 行かせる *ik-ase-ru* 'make go', the causative of *iku* with an accusative causee. -/
-def ik_ase : Verb where
-  morphs := [.root "ik", .suff "ase", .suff "ru"]
-  script := some "行かせる"
-  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
-
-/-- 食べさせる *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
-def tabe_sase : Verb where
-  morphs := [.root "tabe", .suff "sase", .suff "ru"]
-  script := some "食べさせる"
-  valency := .ofFrame ArgumentFrame.smallClause.withObject (controller := some 1)
-
 /-! ### Departure verbs -/
 
 /-- 離れる *hanareru* 'leave' takes the leaver as its theme and the source in the accusative or
@@ -114,6 +98,6 @@ def deru : Verb where
 
 /-- The inventory. -/
 def verbs : List Verb :=
-  [tanoshimi, osore, kitai, nozomu, shinpai, ik_ase, tabe_sase, hanareru, deru]
+  [tanoshimi, osore, kitai, nozomu, shinpai, hanareru, deru]
 
 end Japanese

@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Fragments.Japanese.Coordination
 public import Linglib.Fragments.Japanese.Pronouns
 public import Linglib.Syntax.Category.Pronoun.Indefinite
 
@@ -9,9 +10,9 @@ public import Linglib.Syntax.Category.Pronoun.Indefinite
 Japanese builds its indefinite series on the indeterminate pronouns with a particle: *-ka*
 (*dare-ka* 'someone'), *-mo* (*dare-mo* 'nobody' with clausemate negation, and without negation the
 universal 'everyone') and *-demo* (*dare-demo* 'anyone'). A member of a series is its marker applied
-to an interrogative of `Japanese.Pronouns`, which derives its form and category. The members are
-those of Haspelmath's table, in the Hepburn spelling of the interrogatives where he writes *itu*,
-*doo* and *ikutu*.
+to an interrogative of `Japanese.Pronouns`, which derives its form and category; the particles *ka*
+and *mo* are the coordinators of `Japanese.Coordination`. The members are those of Haspelmath's
+table, in the Hepburn spelling of the interrogatives where he writes *itu*, *doo* and *ikutu*.
 
 ## References
 
@@ -27,11 +28,13 @@ open Pronouns
 
 /-! ### The markers -/
 
-/-- The *-ka* marker puts the particle *-ka* after the indeterminate. -/
-def ka : InterrogativePronoun → IndefinitePronoun := IndefinitePronoun.ofInterrogative (· ++ "-ka")
+/-- The *-ka* marker puts the particle `Japanese.Coordination.ka` after the indeterminate. -/
+def ka : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative (· ++ "-" ++ Coordination.ka.morph.form)
 
-/-- The *-mo* marker puts the particle *-mo* after the indeterminate. -/
-def mo : InterrogativePronoun → IndefinitePronoun := IndefinitePronoun.ofInterrogative (· ++ "-mo")
+/-- The *-mo* marker puts the particle `Japanese.Coordination.mo` after the indeterminate. -/
+def mo : InterrogativePronoun → IndefinitePronoun :=
+  IndefinitePronoun.ofInterrogative (· ++ "-" ++ Coordination.mo.morph.form)
 
 /-- The *-demo* marker puts *-demo* after the indeterminate. -/
 def demo : InterrogativePronoun → IndefinitePronoun :=
