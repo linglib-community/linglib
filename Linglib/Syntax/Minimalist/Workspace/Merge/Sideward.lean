@@ -65,14 +65,14 @@ private theorem mergeOpG_pair_eq_mul (lbl : α) {S S' T T' : UnorderedTree α}
     mergeOpG (R := R) cuts lbl S S' (of' {T, T'}) = of' {UnorderedTree.node lbl {S, S'}} *
       (((treeCutsG cuts T).filter (·.1 = A)).map fun p ↦ of' (R := R) p.2).sum *
       (((treeCutsG cuts T').filter (·.1 = B)).map fun p ↦ of' (R := R) p.2).sum := by
-  rw [mergeOpG_apply_of', forestCutsG_pair, Multiset.filter_map,
+  rw [mergeOpG_apply_of', forestCutsG_pair, Multiset.conv, Multiset.filter_map,
     Multiset.filter_congr (q := fun x : (Forest _ × Forest _) × (Forest _ × Forest _) ↦
       x.1.1 = A ∧ x.2.1 = B) fun ⟨a, b⟩ hx ↦ h a (Multiset.mem_product.mp hx).1 b
         (Multiset.mem_product.mp hx).2,
     Multiset.filter_product (fun a : Forest (UnorderedTree α) × Forest (UnorderedTree α) ↦ a.1 = A)
       (fun b : Forest (UnorderedTree α) × Forest (UnorderedTree α) ↦ b.1 = B),
     Multiset.map_map, mul_assoc, ← Multiset.sum_map_product_mul]
-  simp only [Function.comp_def, combinerProjG, of'_add]
+  simp only [Function.comp_def, Prod.snd_add, of'_add]
 
 /-- Merge on a one-tree workspace is Sideward Merge of type 3(a) ([marcolli-chomsky-berwick-2025]
 Lemma 1.4.5). -/

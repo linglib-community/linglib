@@ -112,13 +112,9 @@ noncomputable def cutTensor (p : Forest (UnorderedTree α) × Forest (UnorderedT
     ConnesKreimer R (UnorderedTree α) ⊗[R] ConnesKreimer R (UnorderedTree α) :=
   of' (R := R) p.1 ⊗ₜ[R] of' p.2
 
-theorem cutTensor_combinerProjG (p q : Forest (UnorderedTree α) × Forest (UnorderedTree α)) :
-    cutTensor (R := R) (combinerProjG (p, q)) = cutTensor p * cutTensor q := by
-  obtain ⟨F1, m1⟩ := p
-  obtain ⟨F2, m2⟩ := q
-  show cutTensor (R := R) (F1 + F2, m1 + m2) = _
-  unfold cutTensor
-  simp only [of'_add, Algebra.TensorProduct.tmul_mul_tmul]
+theorem cutTensor_add (p q : Forest (UnorderedTree α) × Forest (UnorderedTree α)) :
+    cutTensor (R := R) (p + q) = cutTensor p * cutTensor q := by
+  simp only [cutTensor, Prod.fst_add, Prod.snd_add, of'_add, Algebra.TensorProduct.tmul_mul_tmul]
 
 /-- `comulTreeNG` as a single multiset sum over `treeCutsG`. -/
 theorem comulTreeNG_eq_sum
@@ -143,14 +139,9 @@ theorem comulForestNG_eq_sum
     show (1 : _) = of' (R := R) (0 : Forest (UnorderedTree α)) ⊗ₜ[R] of' 0
     rw [of'_zero, Algebra.TensorProduct.one_def]
   | cons T F ih =>
-    rw [comulForestNG_cons, comulTreeNG_eq_sum, ih, forestCutsG_cons,
-        Multiset.map_map,
-        show (cutTensor (R := R) ∘ combinerProjG) =
-            (fun p => cutTensor (R := R) p.1 * cutTensor p.2) from by
-          funext p
-          obtain ⟨p₁, p₂⟩ := p
-          exact cutTensor_combinerProjG p₁ p₂,
-        Multiset.sum_map_product_mul]
+    rw [comulForestNG_cons, comulTreeNG_eq_sum, ih, forestCutsG_cons, Multiset.conv,
+      Multiset.map_map, ← Multiset.sum_map_product_mul]
+    exact congrArg Multiset.sum <| Multiset.map_congr rfl fun p _ ↦ (cutTensor_add p.1 p.2).symm
 
 /-! ### The policy-indexed carrier `WithCuts`
 

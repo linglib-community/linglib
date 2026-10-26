@@ -161,8 +161,7 @@ private theorem forestCutsN_zero (τ : UnorderedTree (α ⊕ β) → β) :
 
 private theorem forestCutsN_cons (τ : UnorderedTree (α ⊕ β) → β)
     (T : UnorderedTree (α ⊕ β)) (F : Forest (UnorderedTree (α ⊕ β))) :
-    forestCutsN τ (T ::ₘ F) =
-      (treeCutsN τ T ×ˢ forestCutsN τ F).map ConnesKreimer.combinerProjG :=
+    forestCutsN τ (T ::ₘ F) = (treeCutsN τ T).conv (forestCutsN τ F) :=
   forestCutsG_cons _ T F
 
 /-- `comulCForestN` is a sum over `forestCutsN`. -/
@@ -301,22 +300,6 @@ private theorem treeCutsN_mk (τ : UnorderedTree (α ⊕ β) → β) (t : RoseTr
   rw [cutSummandsCN_mk, Multiset.map_cons, Multiset.map_map, Multiset.map_map]
   congr 1
 
-/-- Naturality of the cut combiner under `projPair`. -/
-private theorem combinerProjG_nat
-    (A B : Multiset (Forest (RoseTree (α ⊕ β)) × Forest (RoseTree (α ⊕ β)))) :
-    ((A.map projPair) ×ˢ (B.map projPair)).map ConnesKreimer.combinerProjG
-      = ((A ×ˢ B).map (fun pq => (pq.1.1 + pq.2.1, pq.1.2 + pq.2.2))).map projPair := by
-  rw [← Multiset.prodMap_map_product, Multiset.map_map, Multiset.map_map]
-  apply Multiset.map_congr rfl; rintro ⟨⟨F1, m1⟩, ⟨F2, m2⟩⟩ _
-  show ConnesKreimer.combinerProjG
-      ((F1.map UnorderedTree.mk, m1.map UnorderedTree.mk), (F2.map UnorderedTree.mk,
-        m2.map UnorderedTree.mk))
-    = projPair (F1 + F2, m1 + m2)
-  show (F1.map UnorderedTree.mk + F2.map UnorderedTree.mk,
-    m1.map UnorderedTree.mk + m2.map UnorderedTree.mk)
-      = ((F1 + F2).map UnorderedTree.mk, (m1 + m2).map UnorderedTree.mk)
-  rw [Multiset.map_add, Multiset.map_add]
-
 private theorem forestCutsN_mk (τ : UnorderedTree (α ⊕ β) → β)
     (F : Forest (RoseTree (α ⊕ β))) :
     forestCutsN τ (F.map UnorderedTree.mk)
@@ -326,8 +309,9 @@ private theorem forestCutsN_mk (τ : UnorderedTree (α ⊕ β) → β)
     rw [Multiset.map_zero, forestCutsN_zero, DoubleCut.forestCutsP_zero,
         Multiset.map_singleton]; rfl
   | cons t F ih =>
-    rw [Multiset.map_cons, forestCutsN_cons, treeCutsN_mk, ih, DoubleCut.forestCutsP_cons,
-        DoubleCut.convFP_eq, combinerProjG_nat]
+    rw [Multiset.map_cons, forestCutsN_cons, treeCutsN_mk, ih, DoubleCut.forestCutsP_cons]
+    exact (Multiset.map_conv _ _ fun _ _ ↦
+      Prod.ext (Multiset.map_add ..) (Multiset.map_add ..)).symm
 
 private theorem dcLHS_mk (τ : UnorderedTree (α ⊕ β) → β) (t : RoseTree (α ⊕ β)) :
     dcLHS τ (UnorderedTree.mk t) = (DoubleCut.dcLHSP

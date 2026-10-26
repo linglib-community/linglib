@@ -315,7 +315,7 @@ private theorem cutSummandsN_theApple : cutSummandsN theApple.val =
     show theD.val = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
     show appleN.val = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCutsG, treeCutsG, cutSummandsN_leaf, cutSummandsN_leaf]
-  simp [combinerProjG, Multiset.cons_product, -cutSummandsN_mk]
+  simp [Multiset.conv, Multiset.cons_product, -cutSummandsN_mk]
   exact Multiset.cons_swap _ _ _
 
 /-- The pruning cut extracting *the* from *the apple* is the only one with crown `{the}`. -/
@@ -333,7 +333,7 @@ private theorem filter_cutSummandsN_theApple :
     show theD.val = UnorderedTree.leaf (Vertex.lex ⟨.of .D [.N] "the", 0⟩) from rfl,
     show appleN.val = UnorderedTree.leaf (Vertex.lex ⟨.of .N [] "apple", 1⟩) from rfl,
     treeCutsG, treeCutsG, cutSummandsN_leaf, cutSummandsN_leaf]
-  simp [combinerProjG, Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
+  simp [Multiset.conv, Multiset.cons_product, Multiset.filter_singleton, hne, hcard,
     -cutSummandsN_mk]
 
 /-- Sideward Merge of type 2(b) at the trace cuts merges *eaten* with *the* beside the remainder

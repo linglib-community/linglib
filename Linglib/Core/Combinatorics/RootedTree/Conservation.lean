@@ -107,9 +107,9 @@ theorem cutSummandsN_self_not_mem_crown (T : UnorderedTree α)
 
 /-! ### Unary vertices left by a pruning cut
 
-The deletion coproduct contracts the vertices a pruning cut leaves with a single child. In a full
-binary tree the cut leaves the parent of each tree it extracts with a single child, unless it
-extracts both of the parent's children, which leaves the parent a leaf. -/
+In a full binary tree a pruning cut leaves the parent of each tree it extracts with a single child,
+unless it extracts both of the parent's children, which leaves the parent a leaf. Contracting the
+unary vertices of the trunk then removes one more vertex for each. -/
 
 /-- Deleting the crown of a pruning cut and contracting the unary vertices of its trunk removes,
     besides the crown's own edges, one edge for each crown component and one for each unary
@@ -125,68 +125,42 @@ theorem cutSummandsN_numEdges_contractUnary {T : UnorderedTree α}
   have := p.2.contractUnary.numEdges_add_one
   omega
 
-mutual
-
-private theorem cutSummandsG_pruning_numUnary : ∀ (t : RoseTree α),
-    t.Licensed (fun _ ks ↦ Multiset.card (ks : Multiset α) = 0 ∨
-      Multiset.card (ks : Multiset α) = 2) →
-    ∀ p ∈ cutSummandsG pruning t, ∃ k, Multiset.card p.1 = p.2.numUnary + 2 * k
-  | .node a cs => by
-    intro ht p hp
-    rw [cutSummandsG_node] at hp
-    obtain ⟨⟨crown, rest⟩, hq, rfl⟩ := Multiset.mem_map.mp hp
-    obtain ⟨hlen, k, hk⟩ := cutListSummandsG_pruning_numUnary cs (fun _ ↦ ht.of_mem) _ hq
-    have hcs : cs.length = 0 ∨ cs.length = 2 := by simpa using ht.rel_root
-    rcases rest with _ | ⟨d, _ | ⟨e, rest⟩⟩
-    · simp only [List.length_nil, List.map_nil, List.sum_nil, add_zero] at hk
-      rcases hcs with h | h
-      · exact ⟨k, by simp; omega⟩
-      · exact ⟨k + 1, by simp; omega⟩
-    · simp only [List.length_cons, List.length_nil, List.map_cons, List.map_nil, List.sum_cons,
-        List.sum_nil] at hk hlen
-      exact ⟨k, by simp; omega⟩
-    · simp only [List.length_cons, List.map_cons, List.sum_cons] at hk hlen
-      exact ⟨k, by simp; omega⟩
-
-private theorem cutListSummandsG_pruning_numUnary : ∀ (cs : List (RoseTree α)),
-    (∀ c ∈ cs, c.Licensed fun _ ks ↦ Multiset.card (ks : Multiset α) = 0 ∨
-      Multiset.card (ks : Multiset α) = 2) →
-    ∀ q ∈ cutListSummandsG pruning cs, q.2.length ≤ cs.length ∧
-      ∃ k, Multiset.card q.1 + q.2.length = cs.length + (q.2.map RoseTree.numUnary).sum + 2 * k
-  | [] => by
-    intro _ q hq
-    rw [cutListSummandsG_nil] at hq
-    obtain rfl := Multiset.mem_singleton.mp hq
-    exact ⟨le_rfl, 0, rfl⟩
-  | t :: ts => by
-    intro hcs q hq
-    rw [cutListSummandsG_cons] at hq
-    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
-    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
-    obtain ⟨h₁, k₁, hk₁⟩ :=
-      augActionG_pruning_numUnary t (hcs t (List.mem_cons_self ..)) pr.1 ha
-    obtain ⟨h₂, k₂, hk₂⟩ := cutListSummandsG_pruning_numUnary ts
-      (fun c hc ↦ hcs c (List.mem_cons_of_mem _ hc)) pr.2 hq'
-    refine ⟨?_, k₁ + k₂, ?_⟩ <;>
-    · simp only [Multiset.card_add, List.length_append, List.map_append, List.sum_append,
-        List.length_cons]
-      omega
-
-private theorem augActionG_pruning_numUnary : ∀ (t : RoseTree α),
-    t.Licensed (fun _ ks ↦ Multiset.card (ks : Multiset α) = 0 ∨
-      Multiset.card (ks : Multiset α) = 2) →
-    ∀ a ∈ augActionG pruning t, a.2.length ≤ 1 ∧
-      ∃ k, Multiset.card a.1 + a.2.length = 1 + (a.2.map RoseTree.numUnary).sum + 2 * k
-  | t => by
-    intro ht a ha
-    rw [augActionG_eq_some _ t [] rfl] at ha
-    rcases Multiset.mem_cons.mp ha with rfl | ha
-    · exact ⟨by simp, 0, by simp⟩
-    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp ha
-      obtain ⟨k, hk⟩ := cutSummandsG_pruning_numUnary t ht p hp
-      exact ⟨by simp, k, by simp; omega⟩
-
-end
+private theorem cutSummandsG_pruning_numUnary (t : RoseTree α)
+    (ht : t.Licensed fun _ ks ↦ Multiset.card (ks : Multiset α) = 0 ∨
+      Multiset.card (ks : Multiset α) = 2) :
+    ∀ p ∈ cutSummandsG pruning t, ∃ k, Multiset.card p.1 = p.2.numUnary + 2 * k := fun p hp ↦ by
+  obtain ⟨-, k, hk⟩ := cutSummandsG_induction pruning
+    (P := fun cs q ↦ (∀ c ∈ cs, c.Licensed fun _ ks ↦ Multiset.card (ks : Multiset α) = 0 ∨
+        Multiset.card (ks : Multiset α) = 2) →
+      q.2.length ≤ cs.length ∧
+        ∃ k, Multiset.card q.1 + q.2.length = cs.length + (q.2.map RoseTree.numUnary).sum + 2 * k)
+    (fun _ ↦ ⟨le_rfl, 0, rfl⟩)
+    (fun _ _ h _ ↦ by cases h; exact ⟨by simp, 0, by simp⟩)
+    (fun a cs ⟨crown, rest⟩ _ hP hL ↦ by
+      have ht := hL _ (List.mem_singleton_self _)
+      obtain ⟨hlen, k, hk⟩ := hP fun _ hc ↦ ht.of_mem hc
+      have hcs : cs.length = 0 ∨ cs.length = 2 := by simpa using ht.rel_root
+      refine ⟨by simp, ?_⟩
+      rcases rest with _ | ⟨d, _ | ⟨e, rest⟩⟩
+      · simp only [List.length_nil, List.map_nil, List.sum_nil, add_zero] at hk
+        rcases hcs with h | h
+        · exact ⟨k, by simp; omega⟩
+        · exact ⟨k + 1, by simp; omega⟩
+      · simp only [List.length_cons, List.length_nil, List.map_cons, List.map_nil, List.sum_cons,
+          List.sum_nil] at hk hlen
+        exact ⟨k, by simp; omega⟩
+      · simp only [List.length_cons, List.map_cons, List.sum_cons] at hk hlen
+        exact ⟨k, by simp; omega⟩)
+    (fun _ _ _ _ _ _ ha hb hL ↦ by
+      obtain ⟨h₁, k₁, hk₁⟩ := ha fun c hc ↦
+        hL c (List.mem_cons.mpr (.inl (List.mem_singleton.mp hc)))
+      obtain ⟨h₂, k₂, hk₂⟩ := hb fun c hc ↦ hL c (List.mem_cons_of_mem _ hc)
+      refine ⟨?_, k₁ + k₂, ?_⟩ <;>
+      · simp only [Multiset.card_add, List.length_append, List.map_append, List.sum_append,
+          List.length_cons, List.length_nil] at *
+        omega)
+    t p hp (by simpa using ht)
+  exact ⟨k, by simp at hk; omega⟩
 
 /-- In a full binary tree a pruning cut leaves a unary vertex for each tree it extracts, less two
     for each vertex both of whose children it extracts. -/

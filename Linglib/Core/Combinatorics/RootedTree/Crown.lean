@@ -41,101 +41,41 @@ variable {α : Type*} (extract : RoseTree α → Option (List (RoseTree α)))
 
 /-! ### Crown components are proper subtrees -/
 
-mutual
+/-- Every crown component of a cut of a list of children is a subtree of one of them. -/
+theorem mk_mem_of_mem_crown_cutListSummandsG :
+    ∀ (cs : List (RoseTree α)), ∀ q ∈ cutListSummandsG extract cs, ∀ x ∈ q.1,
+      UnorderedTree.mk x ∈ unorderedSubtreesList cs :=
+  cutListSummandsG_induction extract
+    (P := fun cs q ↦ ∀ x ∈ q.1, UnorderedTree.mk x ∈ unorderedSubtreesList cs) (by simp)
+    (fun t _ _ x hx ↦ by
+      obtain ⟨_, _⟩ := t
+      simp_all [unorderedSubtreesList, unorderedSubtrees])
+    (fun _ _ _ _ h x hx ↦ by
+      simp only [unorderedSubtreesList, unorderedSubtrees, Multiset.mem_add, Multiset.mem_cons]
+      exact .inl (.inr (h x hx)))
+    (fun _ _ _ _ _ _ ha hb x hx ↦ by
+      rw [unorderedSubtreesList, Multiset.mem_add]
+      exact (Multiset.mem_add.mp hx).imp (by simpa [unorderedSubtreesList] using ha x) (hb x))
+
+theorem mk_mem_of_mem_crown_augActionG (t : RoseTree α) :
+    ∀ a ∈ augActionG extract t, ∀ x ∈ a.1, UnorderedTree.mk x ∈ unorderedSubtrees t := by
+  simpa [unorderedSubtreesList] using mk_mem_of_mem_crown_cutListSummandsG extract [t]
 
 /-- Every crown component of a cut of `t` is a subtree of a child of `t`. -/
 theorem mk_mem_of_mem_crown_cutSummandsG :
     ∀ (t : RoseTree α), ∀ p ∈ cutSummandsG extract t, ∀ x ∈ p.1,
       UnorderedTree.mk x ∈ unorderedSubtreesList t.children
-  | .node a cs => by
-    intro p hp x hx
+  | .node a cs, p, hp => by
     rw [cutSummandsG_node] at hp
     obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    exact mk_mem_of_mem_crown_cutListSummandsG cs q hq x hx
-
-theorem mk_mem_of_mem_crown_cutListSummandsG :
-    ∀ (cs : List (RoseTree α)), ∀ q ∈ cutListSummandsG extract cs, ∀ x ∈ q.1,
-      UnorderedTree.mk x ∈ unorderedSubtreesList cs
-  | [] => by
-    intro q hq x hx
-    rw [cutListSummandsG_nil] at hq
-    obtain rfl := Multiset.mem_singleton.mp hq
-    exact absurd hx (Multiset.notMem_zero x)
-  | t :: ts => by
-    intro q hq x hx
-    rw [cutListSummandsG_cons] at hq
-    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
-    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
-    rw [unorderedSubtreesList, Multiset.mem_add]
-    rcases Multiset.mem_add.mp hx with h | h
-    · exact .inl (mk_mem_of_mem_crown_augActionG t pr.1 ha x h)
-    · exact .inr (mk_mem_of_mem_crown_cutListSummandsG ts pr.2 hq' x h)
-
-theorem mk_mem_of_mem_crown_augActionG :
-    ∀ (t : RoseTree α), ∀ a ∈ augActionG extract t, ∀ x ∈ a.1,
-      UnorderedTree.mk x ∈ unorderedSubtrees t
-  | .node b cs => by
-    intro a ha x hx
-    rw [augActionG_eq] at ha
-    rw [unorderedSubtrees, Multiset.mem_cons]
-    rcases Multiset.mem_add.mp ha with h | h
-    · cases hE : extract (.node b cs) with
-      | none => rw [hE] at h; exact absurd h (Multiset.notMem_zero a)
-      | some r =>
-        rw [hE] at h
-        obtain rfl := Multiset.mem_singleton.mp h
-        exact .inl (by rw [Multiset.mem_singleton.mp hx])
-    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
-      exact .inr (mk_mem_of_mem_crown_cutSummandsG (.node b cs) p hp x hx)
-
-end
-
-/-! ### Crown components are cut where the policy allows -/
-
-mutual
+    exact mk_mem_of_mem_crown_cutListSummandsG extract cs q hq
 
 /-- Every crown component of a cut is a subtree at which the policy allows a cut. -/
-theorem isSome_of_mem_crown_cutSummandsG :
-    ∀ (t : RoseTree α), ∀ p ∈ cutSummandsG extract t, ∀ x ∈ p.1, (extract x).isSome
-  | .node a cs => by
-    intro p hp x hx
-    rw [cutSummandsG_node] at hp
-    obtain ⟨q, hq, rfl⟩ := Multiset.mem_map.mp hp
-    exact isSome_of_mem_crown_cutListSummandsG cs q hq x hx
-
-theorem isSome_of_mem_crown_cutListSummandsG :
-    ∀ (cs : List (RoseTree α)), ∀ q ∈ cutListSummandsG extract cs, ∀ x ∈ q.1, (extract x).isSome
-  | [] => by
-    intro q hq x hx
-    rw [cutListSummandsG_nil] at hq
-    obtain rfl := Multiset.mem_singleton.mp hq
-    exact absurd hx (Multiset.notMem_zero x)
-  | t :: ts => by
-    intro q hq x hx
-    rw [cutListSummandsG_cons] at hq
-    obtain ⟨pr, hpr, rfl⟩ := Multiset.mem_map.mp hq
-    obtain ⟨ha, hq'⟩ := Multiset.mem_product.mp hpr
-    rcases Multiset.mem_add.mp hx with h | h
-    · exact isSome_of_mem_crown_augActionG t pr.1 ha x h
-    · exact isSome_of_mem_crown_cutListSummandsG ts pr.2 hq' x h
-
-theorem isSome_of_mem_crown_augActionG :
-    ∀ (t : RoseTree α), ∀ a ∈ augActionG extract t, ∀ x ∈ a.1, (extract x).isSome
-  | .node b cs => by
-    intro a ha x hx
-    rw [augActionG_eq] at ha
-    rcases Multiset.mem_add.mp ha with h | h
-    · cases hE : extract (.node b cs) with
-      | none => rw [hE] at h; exact absurd h (Multiset.notMem_zero a)
-      | some r =>
-        rw [hE] at h
-        obtain rfl := Multiset.mem_singleton.mp h
-        rw [Multiset.mem_singleton.mp hx, hE]
-        rfl
-    · obtain ⟨p, hp, rfl⟩ := Multiset.mem_map.mp h
-      exact isSome_of_mem_crown_cutSummandsG (.node b cs) p hp x hx
-
-end
+theorem isSome_of_mem_crown_cutSummandsG (t : RoseTree α) :
+    ∀ p ∈ cutSummandsG extract t, ∀ x ∈ p.1, (extract x).isSome :=
+  fun p hp ↦ cutSummandsG_induction extract (P := fun _ q ↦ ∀ x ∈ q.1, (extract x).isSome)
+    (by simp) (fun _ _ h x hx ↦ by simp_all) (fun _ _ _ _ h ↦ h)
+    (fun _ _ _ _ _ _ ha hb x hx ↦ (Multiset.mem_add.mp hx).elim (ha x) (hb x)) t p hp
 
 /-! ### Every proper subtree is a crown component
 
