@@ -26,25 +26,17 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 * `Minor2022.split`, `Minor2022.distW`, `Minor2022.distS`: the split (90), and weak and strong
   distributivity (93) over the distributivity operator (94), `Update.dist`.
 * `Minor2022.sentence`: a subject over a distributivity operator over a verb and its object.
+* `Minor2022.max`, `Minor2022.detPl`, `Minor2022.detSg`: maximization over assignments (106) and the
+  plural and singular quantificational determiners (108), (109).
 
 ## Main results
 
-* `Minor2022.singleton_mem_cumul_randomAssign_pair`: cumulative dref introduction splits an
-  assignment where (60) cannot (fn. 28).
-* `Minor2022.mem_atomic_inter_unique_iff`: the singular is atomicity of the sum of the values
-  (§5.1).
-* `Minor2022.acrossModels_ssubset_iff`: strict inclusion across models is Generalized Strength
-  (89), the pointwise order on meanings.
 * `Minor2022.exh_vp`: Exh with Generalized Strength (89) negates the singular alternative (115).
-* `Minor2022.split_split`, `Minor2022.distW_distW`, `Minor2022.distS_distS`,
-  `Minor2022.distW_distS`, `Minor2022.distS_distW`: the idempotence (92) and the stacking
-  equivalences (98a)–(98d).
-* `Minor2022.cumulative_iff`, `Minor2022.dependent_iff`, `Minor2022.distW_cardinal_iff`,
-  `Minor2022.distS_bare_iff`: the truth conditions (116), (129), (148) and (170).
-* `Minor2022.singleton_mem_dom_distW_test_iff`: a singular restrictor under weak distributivity
-  leaves the sum at most one atomic part, the global atomicity of §6.4.3.
+* `Minor2022.dependent_iff`: the truth conditions (129) of a bare plural under floating *all*.
+* `Minor2022.detPl_most_iff`: the truth conditions of *most* with a bare plural object (131).
+* `Minor2022.detSg_every_iff`: the truth conditions of *every* with a bare plural object (174).
 * `Minor2022.judgments`: in the context of the girl-and-hat examples, the analysis predicts the
-  judgments of (3), (4), (11a) and (13).
+  judgments of (3), (4), (10b), (11a), (12b) and (13).
 
 ## Implementation notes
 
@@ -65,10 +57,9 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 
 ## TODO
 
-* Quantificational determiners (105)–(109) with maximization (106), the conservativity argument
-  for the Ban on Singular Licensors ((186)–(195)) beyond its global-atomicity lemma, modified
-  numerals (§6.3.2, §6.3.3), the other sites of Exh, the discourse rule (200), and the
-  Schein–Kratzer sentences of Appendix 2.
+* The conservativity argument for the Ban on Singular Licensors ((186)–(195)) beyond its
+  global-atomicity lemma, modified numerals (§6.3.2, §6.3.3), the other sites of Exh, the
+  discourse rule (200), and the Schein–Kratzer sentences of Appendix 2.
 
 ## References
 
@@ -415,6 +406,15 @@ theorem singleton_mem_dom_distW_iff (huu' : u ≠ u') :
   exact exists_congr fun b ↦ ⟨fun ⟨⟨⟨hne, hn⟩, _, hv⟩, hC⟩ ↦ ⟨hne, fun a ha ↦ ⟨hn ha, hv ha⟩, hC⟩,
     fun ⟨hne, h, hC⟩ ↦ ⟨⟨⟨hne, fun a ha ↦ (h a ha).1⟩, hne, fun a ha ↦ (h a ha).2⟩, hC⟩⟩
 
+/-- Over a split state, the bare plural condition says the object is not one and the same atom at
+every atomic part of the subject. -/
+theorem image_mem_bare_iff {u u' : R} {k : S} {b : E → E} :
+    (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ bare u' ↔
+      ¬((∀ a ∈ atomsBelow (val u k), Atom (b a)) ∧ (b '' atomsBelow (val u k)).Subsingleton) := by
+  simp only [bare, atomic, unique, Set.mem_compl_iff, Set.mem_inter_iff, Set.mem_ofPred_eq,
+    Set.image_image, Set.image_subset_iff, val_extend_self]
+  simp [Set.subset_def, val_extend_self]
+
 variable (P M)
 
 /-- On the cumulative reading (116) of *Three students carried boxes*, a sum satisfying the
@@ -445,9 +445,8 @@ theorem dependent_iff (huu' : u ≠ u') :
   refine exists_congr fun x ↦ and_congr_right fun _ ↦ ?_
   rw [singleton_mem_dom_distW_iff huu', val_extend_self]
   refine exists_congr fun b ↦ and_congr_right fun _ ↦ and_congr_right fun _ ↦ ?_
-  simp only [bare, atomic, unique, Set.mem_compl_iff, Set.mem_inter_iff, Set.mem_ofPred_eq,
-    Set.image_image, Set.image_subset_iff, val_extend_self]
-  simp [Set.subset_def, val_extend_self]
+  simpa only [val_extend_self] using
+    image_mem_bare_iff (u := u) (k := extend i u x) (u' := u') (b := b)
 
 /-- Under weak distributivity a cardinality condition counts at every atomic part of the
 subject (148), the Ban on Numerals. -/
@@ -476,18 +475,195 @@ theorem distS_bare_iff (huu' : u ≠ u') :
   simp only [singleton_mem_dom_sentence_iff, singleton_mem_dom_distS_iff, val_extend_self,
     singleton_mem_dom_vp_iff huu', bare, Set.mem_compl_iff, singleton_mem_atomic_inter_unique_iff]
 
+/-! ### Quantificational determiners (§5.4.4) -/
+
+/-- Maximization `max_u` (106) at the level of assignments: `D` succeeds, and on no `u`-variant of
+the input on which `D` succeeds does an assignment give `u` a value above its value in the input. -/
+def max (u : R) (D : Update (Set S)) : Update (Set S) :=
+  {(I, J) | I ~[D] J ∧ ∀ I', I ~[intro u] I' → I' ∈ D.dom →
+    ∀ i ∈ I, ∀ i' ∈ I', i ~[randomAssign u] i' → val u i' ≤ val u i}
+
+/-- `MOST{u', u}` (107a): at every assignment the value of `u` has more atoms than the part of the
+value of `u'` outside it. -/
+def most (u' u : R) : Condition (Set S) :=
+  {I | I.Nonempty ∧ ∀ i ∈ I,
+    (atomsBelow (val u' i) \ atomsBelow (val u i)).ncard < atomCount E (val u i)}
+
+/-- `EVERY{u', u}` (107b): at every assignment the values of `u'` and `u` have as many atoms. -/
+def every (u' u : R) : Condition (Set S) :=
+  {I | I.Nonempty ∧ ∀ i ∈ I, atomCount E (val u' i) = atomCount E (val u i)}
+
+/-- The externally static weak distributivity operator `dist'_w` (97a) tests that weak
+distributivity can update the state. -/
+def distW' (u : R) (D : Update (Set S)) : Update (Set S) := test (distW u D).dom
+
+/-- The externally static strong distributivity operator `dist'_s` (97b). -/
+def distS' (u : R) (D : Update (Set S)) : Update (Set S) := test (distS u D).dom
+
+/-- The plural determiner (108): it introduces the maxset dref `u'` and the refset dref `u`,
+relates them by the static determiner `q`, and maximizes `u'` over the restrictor and `u` over the
+restrictor and the nuclear scope, both under weak distributivity. -/
+def detPl (q : R → R → Condition (Set S)) (u' u : R) (P P' : R → Update (Set S)) :
+    Update (Set S) :=
+  intro u' ○ intro u ○ test (q u' u) ○ max u' (distW' u' (P u')) ○ max u (distW u (P u ○ P' u))
+
+/-- The singular determiner (109), which maximizes under strong distributivity. -/
+def detSg (q : R → R → Condition (Set S)) (u' u : R) (P P' : R → Update (Set S)) :
+    Update (Set S) :=
+  intro u' ○ intro u ○ test (q u' u) ○ max u' (distS' u' (P u')) ○ max u (distS u (P u ○ P' u))
+
+/-- On a one-assignment state, maximization compares the value of `u` with those of its
+`u`-variants on which the update succeeds. -/
+theorem singleton_mem_max_iff {k : S} {J : Set S} :
+    {k} ~[max u D] J ↔ {k} ~[D] J ∧ ∀ y, {extend k u y} ∈ D.dom → y ≤ val u k := by
+  refine ⟨fun ⟨hD, hmax⟩ ↦ ⟨hD, fun y hy ↦ ?_⟩,
+    fun ⟨hD, h⟩ ↦ ⟨hD, fun I' hI' hdom i hi i' hi' _ ↦ ?_⟩⟩
+  · simpa [val_extend_self] using
+      hmax _ (singleton_mem_intro_iff.2 ⟨y, rfl⟩) hy k rfl _ rfl ⟨y, rfl⟩
+  · obtain ⟨y, rfl⟩ := singleton_mem_intro_iff.1 hI'
+    rw [Set.mem_singleton_iff] at hi hi'
+    subst hi hi'
+    rw [val_extend_self]
+    exact h y hdom
+
+variable {u'' : R}
+
+/-- The schema (105) at a one-assignment input: values `x'` of `u'` and `x` of `u` pass the test
+`q`, `x'` is the greatest value of `u'` passing `T`, and `x` the greatest value of `u` on which `D`
+succeeds. -/
+theorem singleton_mem_dom_schema_iff {q T : Condition (Set S)} (h₁ : u' ≠ u) :
+    {i} ∈ (intro u' ○ intro u ○ test q ○ max u' (test T) ○ max u D).dom ↔
+      ∃ x' x, {extend (extend i u' x') u x} ∈ q ∧ {extend (extend i u' x') u x} ∈ T ∧
+        (∀ y, {extend (extend (extend i u' x') u x) u' y} ∈ T → y ≤ x') ∧
+        {extend (extend i u' x') u x} ∈ D.dom ∧
+        ∀ y, {extend (extend (extend i u' x') u x) u y} ∈ D.dom → y ≤ x := by
+  have hv' (x' x : E) : val u' (extend (extend i u' x') u x) = x' := by
+    rw [val_extend_of_ne _ _ _ _ h₁, val_extend_self]
+  constructor
+  · rintro ⟨J, K, ⟨L, ⟨M, ⟨N, hiN, hNM⟩, rfl, hq⟩, hmax'⟩, hmax⟩
+    obtain ⟨x', rfl⟩ := singleton_mem_intro_iff.1 hiN
+    obtain ⟨x, rfl⟩ := singleton_mem_intro_iff.1 hNM
+    obtain ⟨⟨rfl, hT⟩, hT'⟩ := singleton_mem_max_iff.1 hmax'
+    obtain ⟨hD, hD'⟩ := singleton_mem_max_iff.1 hmax
+    refine ⟨x', x, hq, hT, fun y hy ↦ ?_, ⟨J, hD⟩, fun y hy ↦ ?_⟩
+    · simpa [hv'] using hT' y (by simpa using hy)
+    · simpa [val_extend_self] using hD' y hy
+  · rintro ⟨x', x, hq, hT, hT', ⟨J, hD⟩, hD'⟩
+    refine ⟨J, _, ⟨_, ⟨_, ⟨_, singleton_mem_intro_iff.2 ⟨x', rfl⟩,
+      singleton_mem_intro_iff.2 ⟨x, rfl⟩⟩, rfl, hq⟩, singleton_mem_max_iff.2 ⟨⟨rfl, hT⟩,
+      fun y hy ↦ ?_⟩⟩, singleton_mem_max_iff.2 ⟨hD, fun y hy ↦ ?_⟩⟩
+    · rw [hv']
+      exact hT' y (by simpa using hy)
+    · rw [val_extend_self]
+      exact hD' y hy
+
+theorem mem_dom_distW_test_comp {C : Condition (Set S)} :
+    I ∈ (distW u (test C ○ D)).dom ↔ split u I ∈ C ∧ I ∈ (distW u D).dom := by
+  simp only [mem_dom, mem_distW, mem_test_comp]
+  exact ⟨fun ⟨J, hC, hD⟩ ↦ ⟨hC, J, hD⟩, fun ⟨hC, J, hD⟩ ↦ ⟨J, hC, hD⟩⟩
+
+/-- A restrictor under weak distributivity holds of every atomic part of the value. -/
+theorem singleton_mem_dom_distW_lex_iff {k : S} {P : E → Prop} :
+    {k} ∈ (distW u (test (lex P u))).dom ↔
+      (atomsBelow (val u k)).Nonempty ∧ ∀ a ∈ atomsBelow (val u k), P a := by
+  simp only [mem_dom, mem_distW, mem_test_iff_left, exists_eq_left', mem_lex,
+    image_val_split_singleton, Set.subset_def, Set.mem_ofPred_eq]
+
+/-- A singular restrictor under strong distributivity holds of every atomic part of the value. -/
+theorem singleton_mem_dom_distS_lex_iff {k : S} {P : E → Prop} :
+    {k} ∈ (distS u (test (atomic u ∩ unique u ∩ lex P u))).dom ↔
+      (atomsBelow (val u k)).Nonempty ∧ ∀ a ∈ atomsBelow (val u k), P a := by
+  rw [singleton_mem_dom_distS_iff]
+  refine and_congr_right fun _ ↦ forall₂_congr fun a ha ↦ ?_
+  rw [dom_test, Set.mem_inter_iff, singleton_mem_atomic_inter_unique_iff, singleton_mem_lex_iff,
+    val_extend_self]
+  exact and_iff_right ha.1
+
+/-- A restrictor and a nuclear scope with a bare plural object under weak distributivity: every
+atomic part of the value satisfies the restrictor and `verb`s a sum of `noun`s, not one and the same
+atom for all of them. -/
+theorem singleton_mem_dom_distW_scope_iff {k : S} {P : E → Prop} (h : u ≠ u'') :
+    {k} ∈ (distW u (test (lex P u) ○ (vp u u'' M ○ test (bare u'')))).dom ↔
+      (atomsBelow (val u k)).Nonempty ∧ (∀ a ∈ atomsBelow (val u k), P a) ∧
+        ∃ b : E → E, (∀ a ∈ atomsBelow (val u k), M.noun (b a) ∧ M.verb a (b a)) ∧
+          ¬((∀ a ∈ atomsBelow (val u k), Atom (b a)) ∧
+            (b '' atomsBelow (val u k)).Subsingleton) := by
+  rw [mem_dom_distW_test_comp, singleton_mem_dom_distW_iff h]
+  simp only [mem_lex, image_val_split_singleton, Set.subset_def, Set.mem_ofPred_eq,
+    image_mem_bare_iff]
+  exact ⟨fun ⟨⟨hne, hP⟩, b, _, hb, hbare⟩ ↦ ⟨hne, hP, b, hb, hbare⟩,
+    fun ⟨hne, hP, b, hb, hbare⟩ ↦ ⟨⟨hne, hP⟩, b, hne, hb, hbare⟩⟩
+
+/-- A singular restrictor and a nuclear scope with a bare plural object under strong
+distributivity: every atomic part of the value satisfies the restrictor and `verb`s a non-atomic
+sum of `noun`s. -/
+theorem singleton_mem_dom_distS_scope_iff {k : S} {P : E → Prop} (h : u ≠ u'') :
+    {k} ∈ (distS u (test (atomic u ∩ unique u ∩ lex P u) ○
+      (vp u u'' M ○ test (bare u'')))).dom ↔
+      (atomsBelow (val u k)).Nonempty ∧ ∀ a ∈ atomsBelow (val u k), P a ∧
+        ∃ b, M.noun b ∧ M.verb a b ∧ ¬Atom b := by
+  rw [singleton_mem_dom_distS_iff]
+  refine and_congr_right fun _ ↦ forall₂_congr fun a ha ↦ ?_
+  rw [dom_comp, preimage_test, Set.mem_inter_iff, Set.mem_inter_iff,
+    singleton_mem_atomic_inter_unique_iff, singleton_mem_lex_iff, val_extend_self,
+    singleton_mem_dom_vp_iff h, val_extend_self]
+  simp only [bare, Set.mem_compl_iff, singleton_mem_atomic_inter_unique_iff, val_extend_self]
+  exact ⟨fun ⟨⟨_, hP⟩, h⟩ ↦ ⟨hP, h⟩, fun ⟨hP, h⟩ ↦ ⟨⟨ha.1, hP⟩, h⟩⟩
+
+/-- The plural determiner *most* over a restrictor `P` with a bare plural object (131), (137): the
+greatest sum of `P`-atoms each of which `verb`s a sum of `noun`s, more than one overall, has more
+atoms than the rest of the greatest sum of `P`-atoms (pp. 479–480). -/
+theorem detPl_most_iff (h₁ : u' ≠ u) (h₂ : u ≠ u'') :
+    {i} ∈ (detPl most u' u (fun v ↦ test (lex P v)) (fun v ↦ vp v u'' M ○ test (bare u''))).dom ↔
+      ∃ x' x, IsGreatest {y | (atomsBelow y).Nonempty ∧ ∀ a ∈ atomsBelow y, P a} x' ∧
+        IsGreatest {y | (atomsBelow y).Nonempty ∧ (∀ a ∈ atomsBelow y, P a) ∧
+          ∃ b : E → E, (∀ a ∈ atomsBelow y, M.noun (b a) ∧ M.verb a (b a)) ∧
+            ¬((∀ a ∈ atomsBelow y, Atom (b a)) ∧ (b '' atomsBelow y).Subsingleton)} x ∧
+        (atomsBelow x' \ atomsBelow x).ncard < atomCount E x := by
+  have hv' (x' x : E) : val u' (extend (extend i u' x') u x) = x' := by
+    rw [val_extend_of_ne _ _ _ _ h₁, val_extend_self]
+  simp only [detPl, distW']
+  rw [singleton_mem_dom_schema_iff h₁]
+  refine exists₂_congr fun x' x ↦ ?_
+  simp only [singleton_mem_dom_distW_lex_iff, singleton_mem_dom_distW_scope_iff M h₂,
+    val_extend_self, hv', most, Set.mem_ofPred_eq, Set.singleton_nonempty, Set.mem_singleton_iff,
+    forall_eq, true_and, IsGreatest, upperBounds]
+  exact ⟨fun ⟨hq, hR, hR', hC, hC'⟩ ↦ ⟨⟨hR, hR'⟩, ⟨hC, hC'⟩, hq⟩,
+    fun ⟨⟨hR, hR'⟩, ⟨hC, hC'⟩, hq⟩ ↦ ⟨hq, hR, hR', hC, hC'⟩⟩
+
+/-- The singular determiner *every* over a singular restrictor `P` with a bare plural object (174),
+(177): the greatest sum of `P`-atoms each of which `verb`s a non-atomic sum of `noun`s has as many
+atoms as the greatest sum of `P`-atoms, so every `P`-atom does (p. 491). -/
+theorem detSg_every_iff (h₁ : u' ≠ u) (h₂ : u ≠ u'') :
+    {i} ∈ (detSg every u' u (fun v ↦ test (atomic v ∩ unique v ∩ lex P v))
+      (fun v ↦ vp v u'' M ○ test (bare u''))).dom ↔
+      ∃ x' x, IsGreatest {y | (atomsBelow y).Nonempty ∧ ∀ a ∈ atomsBelow y, P a} x' ∧
+        IsGreatest {y | (atomsBelow y).Nonempty ∧ ∀ a ∈ atomsBelow y, P a ∧
+          ∃ b, M.noun b ∧ M.verb a b ∧ ¬Atom b} x ∧ atomCount E x' = atomCount E x := by
+  have hv' (x' x : E) : val u' (extend (extend i u' x') u x) = x' := by
+    rw [val_extend_of_ne _ _ _ _ h₁, val_extend_self]
+  simp only [detSg, distS']
+  rw [singleton_mem_dom_schema_iff h₁]
+  refine exists₂_congr fun x' x ↦ ?_
+  simp only [singleton_mem_dom_distS_lex_iff, singleton_mem_dom_distS_scope_iff M h₂,
+    val_extend_self, hv', every, Set.mem_ofPred_eq, Set.singleton_nonempty, Set.mem_singleton_iff,
+    forall_eq, true_and, IsGreatest, upperBounds]
+  exact ⟨fun ⟨hq, hR, hR', hC, hC'⟩ ↦ ⟨⟨hR, hR'⟩, ⟨hC, hC'⟩, hq⟩,
+    fun ⟨⟨hR, hR'⟩, ⟨hC, hC'⟩, hq⟩ ↦ ⟨hq, hR, hR', hC, hC'⟩⟩
+
 /-! ### The girls and their hats (§1, §2)
 
-The examples (3), (4), (11a) and (13) are judged in a context where each girl wore a single hat
-and no two girls the same hat. -/
+The examples (3), (4), (10b), (11a), (12b) and (13) are judged in a context where each girl wore a
+single hat and no two girls the same hat. -/
 
 /-- Three girls `0`, `1`, `2` and three hats `3`, `4`, `5`. -/
 abbrev Thing := Fin 6
 
-/-- The drefs of the subject and of the object. -/
+/-- The drefs of the subject, of the object and of a determiner's maxset. -/
 inductive Dref where
   | subj
   | obj
+  | maxset
   deriving DecidableEq
 
 /-- Each girl wears her own hat, `0` the hat `3`, `1` the hat `4` and `2` the hat `5`. -/
@@ -504,6 +680,13 @@ def hats : Model (Finset Thing) where
 /-- *The girls*, whose value is the sum of the girls. -/
 def theGirls (x : Finset Thing) : Prop := x = {0, 1, 2}
 
+/-- The restrictor *girl(s)* of a determiner. -/
+def girl (x : Finset Thing) : Prop := x.Nonempty ∧ x ⊆ {0, 1, 2}
+
+private theorem le_of_forall_girl {y : Finset Thing} (h : ∀ a ∈ atomsBelow y, girl a) :
+    y ≤ {0, 1, 2} := fun g hg ↦
+  Finset.singleton_subset_iff.1 (h _ (by rw [atomsBelow_finset]; exact ⟨g, hg, rfl⟩)).2
+
 theorem hats_verb_iff {x y : Finset Thing} :
     hats.verb x y ↔ x.Nonempty ∧ (∀ a ∈ x, ∃ b ∈ y, Wears a b) ∧ ∀ b ∈ y, ∃ a ∈ x, Wears a b := by
   simp [hats, Plurality.Cumulativity.cumulation_map_singleton, Set.LiftRel]
@@ -516,8 +699,7 @@ theorem exists_eq_singleton_of_verb {g : Thing} {y : Finset Thing} (h : hats.ver
 
 variable (i : Dref → Finset Thing)
 
-/-- The analysis predicts the judgments of (4), (11a), (3) and (13), which fill four cells of Table
-2. -/
+/-- The analysis predicts the judgments of (4), (11a), (3), (13), (10b) and (12b). -/
 theorem judgments :
     (Examples.ex_4.judgment = .acceptable ↔
       {i} ∈ (sentence Dref.subj Dref.obj theGirls id hats (cardinal (1 < ·) Dref.obj)).dom) ∧
@@ -527,13 +709,25 @@ theorem judgments :
     (Examples.ex_11a.judgment = .acceptable ↔
       {i} ∈ (sentence Dref.subj Dref.obj theGirls (distW Dref.subj) hats (bare Dref.obj)).dom) ∧
     (Examples.ex_13.judgment = .acceptable ↔
-      {i} ∈ (sentence Dref.subj Dref.obj theGirls (distS Dref.subj) hats (bare Dref.obj)).dom) := by
+      {i} ∈ (sentence Dref.subj Dref.obj theGirls (distS Dref.subj) hats (bare Dref.obj)).dom) ∧
+    (Examples.ex_10b.judgment = .acceptable ↔
+      {i} ∈ (detPl most Dref.maxset Dref.subj (fun v ↦ test (lex girl v))
+        (fun v ↦ vp v Dref.obj hats ○ test (bare Dref.obj))).dom) ∧
+    (Examples.ex_12b.judgment = .acceptable ↔
+      {i} ∈ (detSg every Dref.maxset Dref.subj (fun v ↦ test (atomic v ∩ unique v ∩ lex girl v))
+        (fun v ↦ vp v Dref.obj hats ○ test (bare Dref.obj))).dom) := by
   have hne : Dref.subj ≠ Dref.obj := nofun
+  have hne' : Dref.maxset ≠ Dref.subj := nofun
   have h0 : ({0} : Finset Thing) ∈ atomsBelow ({0, 1, 2} : Finset Thing) := by
     rw [atomsBelow_finset]
     exact ⟨0, by decide, rfl⟩
+  have hgirls : (atomsBelow ({0, 1, 2} : Finset Thing)).Nonempty ∧
+      ∀ a ∈ atomsBelow ({0, 1, 2} : Finset Thing), girl a := by
+    refine ⟨⟨_, h0⟩, ?_⟩
+    rw [atomsBelow_finset, Set.forall_mem_image]
+    exact fun g hg ↦ ⟨Finset.singleton_nonempty g, Finset.singleton_subset_iff.2 hg⟩
   refine ⟨iff_of_true rfl ?_, iff_of_false (by decide) ?_, iff_of_true rfl ?_,
-    iff_of_false (by decide) ?_⟩
+    iff_of_false (by decide) ?_, iff_of_true rfl ?_, iff_of_false (by decide) ?_⟩
   · rw [cumulative_cardinal_iff _ _ hne]
     refine ⟨_, rfl, {3, 4, 5}, ⟨by decide, by decide⟩, hats_verb_iff.2 (by decide), ?_⟩
     rw [atomCount_finset]
@@ -559,5 +753,26 @@ theorem judgments :
     obtain ⟨y, -, hy, hat⟩ := h _ h0
     obtain ⟨b, rfl⟩ := exists_eq_singleton_of_verb hy
     exact hat (atom_iff_isAtom.2 (Finset.isAtom_singleton b))
+  · rw [detPl_most_iff girl hats hne' hne]
+    refine ⟨_, _, ⟨hgirls, fun y hy ↦ le_of_forall_girl hy.2⟩,
+      ⟨⟨hgirls.1, hgirls.2, fun a ↦ a.image (· + 3), ?_, fun hs ↦ ?_⟩,
+        fun y hy ↦ le_of_forall_girl hy.2.1⟩, ?_⟩
+    · rw [atomsBelow_finset, Set.forall_mem_image]
+      intro g hg
+      refine ⟨⟨by simp, ?_⟩, hats_verb_iff.2 ?_⟩ <;> revert g <;> decide
+    · have h1 : ({1} : Finset Thing) ∈ atomsBelow ({0, 1, 2} : Finset Thing) := by
+        rw [atomsBelow_finset]
+        exact ⟨1, by decide, rfl⟩
+      have := hs.2 (Set.mem_image_of_mem _ h0) (Set.mem_image_of_mem _ h1)
+      revert this
+      decide
+    · simp [atomCount_finset]
+  · rw [detSg_every_iff girl hats hne' hne]
+    rintro ⟨-, x, -, ⟨⟨⟨a, ha⟩, h⟩, -⟩, -⟩
+    obtain ⟨-, b, -, hb, hat⟩ := h a ha
+    rw [atomsBelow_finset] at ha
+    obtain ⟨g, -, rfl⟩ := ha
+    obtain ⟨c, rfl⟩ := exists_eq_singleton_of_verb hb
+    exact hat (atom_iff_isAtom.2 (Finset.isAtom_singleton c))
 
 end Minor2022
