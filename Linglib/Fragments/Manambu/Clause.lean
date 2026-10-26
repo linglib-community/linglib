@@ -7,20 +7,33 @@ public import Linglib.Syntax.Clause.Chaining
 /-!
 # Manambu medial clauses
 
-Manambu (Ndu, East Sepik Province, Papua New Guinea) chains medial clauses before a single
-main clause and marks the medial predicate with one of nine suffixes. Six are sensitive to
-switch-reference: the completive pair *-ku* (same subject) and *-k* (different subject)
-'after', *-ta:y* 'while' and *-taka* 'as soon as' with same-subject forms only, and *-kǝb*
-(different subject) and *-ta:y-kǝb* (same subject) for a brief temporal overlap; *-ga:y* 'if'
-marks an unlikely condition with the same subject, and *-lǝk* 'because' and the versatile *-n*
-are neutral. The verb is bare before the same-subject markers and *-n*, carries subject
-cross-referencing before *-k* and *-kǝb*, and the tensed cross-referencing of a main clause
-before *-lǝk*. Medial clauses are negated with *-ma:r-*, except after *-ga:y*, and the
-same-subject completive and *-n* clauses occur on their own.
+Manambu (Ndu, East Sepik Province, Papua New Guinea) chains medial clauses before one main
+clause, marking the medial verb with one of nine suffixes. Seven mark switch-reference: the
+completives *-ku* (same subject) and *-k* (different subject) 'after', also read as reason or real
+condition, *-ta:y-kǝb* and *-kǝb* 'as soon as', and the same-subject *-ta:y* 'while', *-taka*
+'immediately after' and *-ga:y* 'if', an unlikely condition. *-lǝk* 'because' and *-n*, sequence,
+simultaneity or manner, are neutral. The verb before a marker is uninflected, partially inflected
+with subject cross-referencing (*-k*, *-kǝb*), or fully inflected with tensed cross-referencing
+(*-lǝk*). The completive auxiliary *napa-* carries the marker after a verb in *-n*, and the clause
+keeps only its temporal readings.
+
+## Main definitions
+
+* `Manambu.MedialMarker`: the nine markers, with their switch-reference values, the relations
+  they encode, the inflection of the verb before them and the columns of the grammar's table of
+  medial clauses; they are a `Clause.Chaining.MedialForm`.
+* `Manambu.MedialMarker.completiveRelations`: the relations of a medial clause with *napa-*.
 
 ## Implementation notes
 
-* The clause-chaining typology over the markers is in `Studies/SarvasyAikhenvald2025.lean`.
+The switch-reference values and relations are those of Aikhenvald's survey of the Ndu family
+(Table 3), which gives *-ku* and *-k* one meaning and *-ta:y-kǝb* and *-kǝb* another; the grammar
+describes *-ta:y-kǝb* by the meaning of *-ta:y* (§18.6) and pairs only *-ku* with *-k* (§18.1).
+The verb type and the predicate, negation and *napa-* columns are the grammar's (Table 18.1),
+where *-ta:y* and *-kǝb* also head a verbless predicate, which the survey reserves for *-n*. The
+stand-alone clauses are the survey's (§9.2); the grammar also has desubordinated *-ta:y* and
+*-kǝb* clauses (18.35, 18.47). The allomorphs *-tataka* and *-kǝkǝb* after a light root are not
+represented. The grammar's account is checked in `Studies/Aikhenvald2008.lean`.
 
 ## References
 
@@ -32,48 +45,56 @@ same-subject completive and *-n* clauses occur on their own.
 
 namespace Manambu
 
-open Clause.Chaining (InterclauseRelation SwitchReference)
-open Morphology (Morph)
+open Clause.Chaining Morphology
 
-/-- The inflection a medial verb carries before its marker. -/
+/-- *-ma:r-*, the negator of dependent clauses. -/
+def dependentNegator : Morph := .suff "ma:r"
+
+/-- *napa-*, the completive auxiliary of medial clauses. -/
+def completive : Morph := .root "napa"
+
+/-- The inflection of a medial verb before its marker. -/
 inductive MedialInflection where
-  /-- The bare stem. -/
+  /-- The verb is uninflected, a bare stem. -/
   | uninflected
-  /-- The non-tensed subject cross-referencing markers of a dependent verb. -/
-  | subject
-  /-- The tensed subject cross-referencing of a main-clause verb. -/
-  | tensedSubject
+  /-- The verb is partially inflected, with the subject cross-referencing of a dependent
+  verb. -/
+  | partiallyInflected
+  /-- The verb is fully inflected, with the tensed subject cross-referencing of a main verb. -/
+  | fullyInflected
   deriving DecidableEq, Repr, Fintype
 
-/-- The markers of medial clauses, suffixes on the medial predicate. -/
+/-- The markers of medial clauses, suffixes on the medial verb. -/
 inductive MedialMarker where
-  /-- *-ku*, the same-subject completive 'after', also read as reason. -/
+  /-- *-ku* is the same-subject completive 'after', also read as reason or real condition. -/
   | ku
-  /-- *-k*, the different-subject completive 'after', also read as reason or real condition. -/
+  /-- *-k* is the different-subject completive 'after', also read as reason or real
+  condition. -/
   | k
-  /-- *-ta:y* 'while', cotemporaneous 'before, during and after', same subject only. -/
+  /-- *-ta:y* 'while' marks an action begun before the next clause's and overlapping it, with
+  the same subject. -/
   | tay
-  /-- *-taka* 'as soon as', immediate sequence, same subject only; *-tataka* after a light
-  root. -/
+  /-- *-taka*, *-tataka* after a light root, marks an action immediately followed by the next
+  clause's, with the same subject. -/
   | taka
-  /-- *-kǝb* 'as soon as', immediate sequence with a possible short overlap, different subject;
-  *-kǝkǝb* after a light root. -/
+  /-- *-kǝb* 'as soon as', *-kǝkǝb* after a light root, marks an action immediately followed by
+  the next clause's with a brief overlap, with a different subject. -/
   | keb
-  /-- *-ta:y-kǝb*, an action started before the following clause's and overlapping with it,
-  same subject. -/
+  /-- *-ta:y-kǝb* 'as soon as', the only bimorphemic marker, is the same-subject form of
+  *-kǝb*. -/
   | taykeb
-  /-- *-lǝk* 'because', not sensitive to switch-reference. -/
+  /-- *-lǝk* 'because' marks a reason and is neutral to switch-reference. -/
   | lek
-  /-- *-ga:y* 'if', an unlikely condition, same subject. -/
+  /-- *-ga:y* 'if' marks an unlikely condition, with the same subject. -/
   | gay
-  /-- *-n*, simultaneous, preceding or concomitant action or manner, not sensitive to
+  /-- *-n* marks a sequential or simultaneous action or a manner and is neutral to
   switch-reference. -/
   | n
   deriving DecidableEq, Repr, Fintype
 
 namespace MedialMarker
 
-/-- The morphs of a marker. -/
+/-- The morphs of a marker, after a heavy root. -/
 def morphs : MedialMarker → List Morph
   | ku => [.suff "ku"]
   | k => [.suff "k"]
@@ -85,69 +106,65 @@ def morphs : MedialMarker → List Morph
   | gay => [.suff "ga:y"]
   | n => [.suff "n"]
 
-/-- The form of a marker in boundary notation. -/
-def form (m : MedialMarker) : String := Morph.surface m.morphs
-
-/-- The switch-reference value a marker carries; `none` for *-lǝk* and *-n*. -/
+/-- The switch-reference value of a marker, `none` for *-lǝk* and *-n*. -/
 def sr : MedialMarker → Option SwitchReference
   | ku | tay | taka | taykeb | gay => some .ss
   | k | keb => some .ds
   | lek | n => none
 
-/-- The interclausal relations a marker encodes. -/
+/-- The interclausal relations a marker encodes, one set for the two completives and one for the
+two 'as soon as' markers. -/
 def relations : MedialMarker → Finset InterclauseRelation
-  | ku => {.sequential, .causal}
-  | k => {.sequential, .causal, .conditional}
-  | tay | taykeb => {.simultaneous}
+  | ku | k => {.sequential, .causal, .conditional}
+  | tay => {.simultaneous}
   | taka => {.sequential}
-  | keb => {.sequential, .simultaneous}
+  | keb | taykeb => {.sequential, .simultaneous}
   | lek => {.causal}
   | gay => {.conditional}
   | n => {.sequential, .simultaneous, .manner}
 
-/-- The inflection of the verb before the marker. -/
+/-- The inflection of the verb before a marker. -/
 def inflection : MedialMarker → MedialInflection
   | ku | tay | taka | taykeb | gay | n => .uninflected
-  | k | keb => .subject
-  | lek => .tensedSubject
+  | k | keb => .partiallyInflected
+  | lek => .fullyInflected
 
 /-- The verb before the marker cross-references its subject. -/
 def IndexesSubject (m : MedialMarker) : Prop := m.inflection ≠ .uninflected
 
-instance : DecidablePred IndexesSubject := fun _ => inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred IndexesSubject := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
 /-- The marked verb can head the predicate of a verbless clause. -/
 def HeadsPredicate (m : MedialMarker) : Prop := m = n ∨ m = tay ∨ m = keb
 
-instance : DecidablePred HeadsPredicate := fun _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+instance : DecidablePred HeadsPredicate := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
-/-- The medial clause can be negated. -/
+/-- The medial clause can be negated and its verb repeated. -/
 def Negatable (m : MedialMarker) : Prop := m ≠ gay
 
-instance : DecidablePred Negatable := fun _ => inferInstanceAs (Decidable (_ ≠ _))
+instance : DecidablePred Negatable := fun _ ↦ inferInstanceAs (Decidable (_ ≠ _))
 
-/-- The marker combines with the completive auxiliary *napa-*. -/
+/-- The completive auxiliary *napa-* can carry the marker. -/
 def WithCompletive (m : MedialMarker) : Prop := m ≠ taykeb ∧ m ≠ lek ∧ m ≠ gay
 
-instance : DecidablePred WithCompletive := fun _ => inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+instance : DecidablePred WithCompletive := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- A medial clause with the marker occurs on its own, as a command or with a resultative
 sense. -/
 def StandsAlone (m : MedialMarker) : Prop := m = ku ∨ m = n
 
-instance : DecidablePred StandsAlone := fun _ => inferInstanceAs (Decidable (_ ∨ _))
+instance : DecidablePred StandsAlone := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
-instance : Clause.Chaining.MedialForm MedialMarker where
+instance : MedialForm MedialMarker where
   sr := sr
   relations := relations
   IndexesSubject := IndexesSubject
 
+/-- The relations a medial clause encodes when *napa-* carries its marker, the temporal relations
+of the marker. -/
+def completiveRelations (m : MedialMarker) : Finset InterclauseRelation :=
+  m.relations.filter InterclauseRelation.Temporal
+
 end MedialMarker
-
-/-- *-ma:r-*, the negator of dependent clauses. -/
-def dependentNegator : Morph := .suff "ma:r"
-
-/-- *napa-*, the completive auxiliary of medial clauses. -/
-def completive : Morph := .root "napa"
 
 end Manambu

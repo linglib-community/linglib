@@ -1,0 +1,51 @@
+[
+  {
+    "id": "aikhenvald2008_ex18_17",
+    "source": {"bibkey": "aikhenvald-2008", "paperLabel": "18.17"},
+    "reportedIn": null,
+    "language": "mana1298",
+    "primaryText": "dǝ-kǝ-dǝ ñan gu kǝ-ku kiya-dǝ-k ata gra:d",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dǝ-kǝ-dǝ", "he-POSS-masc.sg"], ["ñan", "child"], ["gu", "water"],
+      ["kǝ-ku", "consume-COMPL.SS"], ["kiya-dǝ-k", "die-3masc.sg-COMPL.DS"], ["ata", "then"],
+      ["gra:d", "cry+3masc.sgBAS.P"]
+    ],
+    "translation": "After/because his son had died after/because he drowned (lit. consumed water) he (father) cried",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "after", "judgment": "acceptable"},
+      {"name": "because", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "Both medial clauses, kǝ-ku with the same-subject completive and kiya-dǝ-k with the different-subject completive, read 'after' or 'because'. The translation's coindexing subscripts (his_i son_j, he_j, he_i) are omitted; the source writes schwa, here U+01DD as in the Fragment.",
+    "verified": "page-image"
+  },
+  {
+    "id": "aikhenvald2008_ex18_53",
+    "source": {"bibkey": "aikhenvald-2008", "paperLabel": "18.53"},
+    "reportedIn": null,
+    "language": "mana1298",
+    "primaryText": "dǝ-kǝ-dǝ ñan kiya-n napa-dǝ-k sǝbǝn-ǝn napa-ku makǝn ata ra:d",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["dǝ-kǝ-dǝ", "he-POSS-masc.sg"], ["ñan", "child"], ["kiya-n", "die-SEQ"],
+      ["napa-dǝ-k", "COMPL.VB-3masc.sg-COMPL.DS"], ["sǝbǝn-ǝn", "return-SEQ"],
+      ["napa-ku", "COMPL.VB-COMPL.SS"], ["makǝn", "in.mourning"], ["ata", "then"],
+      ["ra:d", "sit+3masc.sgBAS.P"]
+    ],
+    "translation": "After/*because his son had died, after/*because he came back, he (father) sat in mourning",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "after", "judgment": "acceptable"},
+      {"name": "because", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "Both medial clauses carry the completive auxiliary napa- after a verb in -n, the first with the different-subject and the second with the same-subject completive, and read 'after' but not 'because'; the source sets off the first complex predicate with slashes. The translation's coindexing subscripts (his_i son_j, he_i) are omitted; the source writes schwa, here U+01DD as in the Fragment.",
+    "verified": "page-image"
+  }
+]
