@@ -6,13 +6,13 @@ public import Linglib.Syntax.Case.Spatial
 # Finnish case
 
 Karlsson's table of cases lists fifteen, with their endings in the singular: the nominative,
-which has none, the genitive -n, the accusative -t, which only the personal pronouns take, as in
-*häne-t* 'him, her', the partitive -A, the six local cases, and the essive -nA, the translative
--ksi, the comitative -ine, the abessive -ttA and the instructive -n. The local cases are
-structured along two dimensions, location, inside or outside, and direction, static, away from or
-towards. The internal cases are the inessive -ssA 'in', the elative -stA 'out of' and the illative
--Vn 'into', and the external cases the adessive -llA 'on', the ablative -ltA 'off' and the
-allative -lle 'onto'.
+which has none, the genitive -n, the accusative -t, which only the personal pronouns and *kuka*
+'who' take, as in *häne-t* 'him, her', the partitive -A, the six local cases, and the essive
+-nA, the translative -ksi, the comitative -ine, the abessive -ttA and the instructive -n. The
+local cases are structured along two dimensions, location, inside or outside, and direction,
+static, away from or towards. The internal cases are the inessive -ssA 'in', the elative -stA
+'out of' and the illative -Vn 'into', and the external cases the adessive -llA 'on', the ablative
+-ltA 'off' and the allative -lle 'onto'.
 
 Finnish has no surface series, which Hungarian has (`Hungarian.Case`), and no dative, and the
 external cases do the work of both: the adessive, ablative and allative also mean on, off and
@@ -31,8 +31,8 @@ is the genitive's, as in *jala-n* 'on foot' beside *auto-n* 'of a car'.
 
 * `Finnish.Case.isSome_spatialDecomp_label_iff`: the local cases are those whose label decomposes
   into a localization and a direction.
-* `Finnish.Case.toCase_mem_image_label_iff`, `Finnish.Case.toCase_mem_biUnion_functions`: the
-  labels fill the interior and exterior cells of the decomposition, and the functions every cell.
+* `Finnish.Case.cells_image_label`, `Finnish.Case.cells_biUnion_functions`: the labels fill the
+  interior and exterior localizations of the table, and the functions every localization.
 
 ## Implementation notes
 
@@ -121,19 +121,22 @@ theorem isSome_spatialDecomp_label_iff (c : Case) :
     c.label.spatialDecomp.isSome ↔ c.label.kind = .spatial := by
   cases c <;> decide
 
-variable {r : Spatial.Localization} {d : Spatial.Path.Direction} {c : _root_.Case}
+open _root_.Case (cells)
+open Spatial (Localization)
+open Spatial.Path (Direction)
 
-/-- The local cases are the internal and external cases ([karlsson-2017] p. 228): a cell of the
-decomposition is the label of a Finnish case exactly when its localization is not the surface. -/
-theorem toCase_mem_image_label_iff (h : _root_.Case.toCase r d = some c) :
-    c ∈ Finset.univ.image label ↔ r ≠ .surface := by
-  cases r <;> cases d <;> cases h <;> decide
+/-- The local cases are the internal and external cases, each static, away from or towards
+([karlsson-2017] p. 228). -/
+theorem cells_image_label : cells (Finset.univ.image label) =
+    ({.interior, .exterior} : Finset Localization) ×ˢ
+      ({.place, .source, .goal} : Finset Direction) := by
+  decide
 
 /-- The external cases also express the surface relations, so that the functions of the Finnish
-cases fill every cell of the decomposition. -/
-theorem toCase_mem_biUnion_functions (h : _root_.Case.toCase r d = some c) :
-    c ∈ Finset.univ.biUnion functions := by
-  cases r <;> cases d <;> cases h <;> decide
+cases fill every localization. -/
+theorem cells_biUnion_functions : cells (Finset.univ.biUnion functions) =
+    (.univ : Finset Localization) ×ˢ ({.place, .source, .goal} : Finset Direction) := by
+  decide
 
 end Case
 

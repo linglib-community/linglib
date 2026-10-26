@@ -37,6 +37,11 @@
       "Features": "Case=Acc"
     },
     {
+      "ID": "acc_pl",
+      "Name": "acc plural",
+      "Features": "Case=Acc|Number=Plur"
+    },
+    {
       "ID": "part",
       "Name": "part",
       "Features": "Case=Par"
@@ -459,6 +464,26 @@
       "Description": ""
     },
     {
+      "ID": "whom",
+      "Name": "whom",
+      "Description": ""
+    },
+    {
+      "ID": "us",
+      "Name": "us",
+      "Description": ""
+    },
+    {
+      "ID": "you_pl",
+      "Name": "you (pl.)",
+      "Description": ""
+    },
+    {
+      "ID": "them",
+      "Name": "them",
+      "Description": ""
+    },
+    {
       "ID": "milk",
       "Name": "milk",
       "Description": ""
@@ -704,6 +729,26 @@
       "ID": "him_her",
       "Language_ID": "finn1318",
       "Parameter_ID": "him_her"
+    },
+    {
+      "ID": "whom",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "whom"
+    },
+    {
+      "ID": "us",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "us"
+    },
+    {
+      "ID": "you_pl",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "you_pl"
+    },
+    {
+      "ID": "them",
+      "Language_ID": "finn1318",
+      "Parameter_ID": "them"
     },
     {
       "ID": "milk",
@@ -964,8 +1009,40 @@
       "Cell": "acc",
       "Form": "hänet",
       "Segments": ["häne", "t"],
-      "Comment": "The accusative ending is confined to the personal pronouns.",
+      "Comment": "The accusative ending is confined to the personal pronouns and kuka.",
       "Source": ["karlsson-2017[§3.1]"]
+    },
+    {
+      "ID": "karlsson2017_kenet",
+      "Lexeme_ID": "whom",
+      "Cell": "acc",
+      "Form": "kenet",
+      "Segments": ["kene", "t"],
+      "Source": ["karlsson-2017[§13.3.2]"]
+    },
+    {
+      "ID": "karlsson2017_meidat",
+      "Lexeme_ID": "us",
+      "Cell": "acc_pl",
+      "Form": "meidät",
+      "Segments": ["me", "i", "dät"],
+      "Source": ["karlsson-2017[§13.3.2]"]
+    },
+    {
+      "ID": "karlsson2017_teidat",
+      "Lexeme_ID": "you_pl",
+      "Cell": "acc_pl",
+      "Form": "teidät",
+      "Segments": ["te", "i", "dät"],
+      "Source": ["karlsson-2017[§13.3.2]"]
+    },
+    {
+      "ID": "karlsson2017_heidat",
+      "Lexeme_ID": "them",
+      "Cell": "acc_pl",
+      "Form": "heidät",
+      "Segments": ["he", "i", "dät"],
+      "Source": ["karlsson-2017[§13.3.2]"]
     },
     {
       "ID": "karlsson2017_maitoa",

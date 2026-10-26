@@ -202,8 +202,8 @@ def caseEndings (num : numberSystem.values) (c : Case) : List (List Segment) :=
     | c => Declension.endings c) (n := num)
 
 theorem not_injective_caseEndings_singular :
-    ¬ Function.Injective (caseEndings (numberSystem.value .singular)) :=
-  fun h ↦ absurd (h (a₁ := .gen) (a₂ := .instr) rfl) (by decide)
+    ¬ Function.Injective (caseEndings (numberSystem.value .singular)) := by
+  decide
 
 /-- The endings of the two numbers separate the cases, the plural parting the genitive and the
 instructive, which are both -n in the singular. -/

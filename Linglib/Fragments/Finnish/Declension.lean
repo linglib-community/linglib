@@ -18,11 +18,6 @@ illative have alternants that the shape of the stem selects: the partitive -tA a
 ## Main definitions
 
 * `Finnish.Declension.endings`: the endings of each case, the ending after a short vowel first.
-* `Finnish.Declension.ending`: the ending of a case after a stem in a short vowel.
-
-## Main results
-
-* `Finnish.Declension.isSome_ending`: every case has an ending.
 
 ## Implementation notes
 
@@ -57,12 +52,5 @@ def endings : Case → List (List Segment)
   | .com => [[i, n, e]]
   | .abess => [[t, t, A]]
   | .instr => [[n]]
-
-/-- The ending of a case after a stem in a short vowel. -/
-def ending (c : Case) : Option (List Segment) := (endings c).head?
-
-/-- Every case has an ending. -/
-theorem isSome_ending (c : Case) : (ending c).isSome := by
-  cases c <;> decide
 
 end Finnish.Declension
