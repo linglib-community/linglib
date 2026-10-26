@@ -690,7 +690,7 @@ theorem not_single_modal :
       conditionalNecessity ⊥ (orderingSource ep ()) (fun v ↦ Want ep () noon v ∧ v ∈ repairs)
         (· ∈ byRide) w) := fun ⟨h₁, h₂⟩ ↦ by
   refine single_modal_strengthening h₁
-    (OrderingSemantics.IsNecessity.mono h₂ fun _ hr ht ↦ nomatch hr.symm.trans ht)
+    (Filter.mem_of_superset h₂ fun _ hr ht ↦ nomatch hr.symm.trans ht)
     ⟨.repairs, .ride⟩ ?_ rfl
   rw [bestWorlds_orderingSource
     (PreferenceStructure.consistent_single ⟨⟨.repairs, .ride⟩, .inl rfl,

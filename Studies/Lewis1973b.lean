@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.OrderingSemantics.Filter
+public import Linglib.Semantics.Modality.OrderingSemantics
 public import Linglib.Core.Order.Filter.Ultrafilter
 public import Studies.Stalnaker1968
 public import Mathlib.NumberTheory.Real.Irrational
