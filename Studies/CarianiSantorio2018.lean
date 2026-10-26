@@ -303,8 +303,9 @@ theorem not_necessity_warriorsCap_or_compl (w : W) :
 
 theorem not_conditionalNecessity_wearsCap_or_compl (w : W) :
     ¬ (Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCap) w ∨
-      Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCapᶜ) w) :=
-  not_necessity_or_necessity_compl (v := .cw) (v' := .cg)
+      Restrictor.conditionalNecessity histBase ⊥ (· ∈ wearsCap) (· ∈ warriorsCapᶜ) w) := by
+  rw [Restrictor.conditionalNecessity_bot_iff, Restrictor.conditionalNecessity_bot_iff]
+  exact not_necessity_or_necessity_compl (v := .cw) (v' := .cg)
     (by simp [-Background.mem_accessibleWorlds, wearsCap])
     (by simp [-Background.mem_accessibleWorlds, wearsCap]) (by simp [warriorsCap])
     (by simp [warriorsCap])

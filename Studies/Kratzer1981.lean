@@ -230,14 +230,16 @@ theorem justice_must_be_done :
 /-- If someone was treated unjustly, the injustice must be amended for (60). -/
 theorem injustice_must_be_amended :
     conditionalNecessity ⊥ morallyGood injustice amended none := by
-  simp only [conditionalNecessity, necessity, ModalLogic.Box, mem_bestAccessible,
+  simp only [conditionalNecessity_iff_necessity_of_finite,
+    necessity, ModalLogic.Box, mem_bestAccessible,
     mem_bestWorlds_injustice_iff, forall_eq]
   decide
 
 /-- (61) is false, since the injustice need not be rewarded. -/
 theorem not_injustice_must_be_rewarded :
     ¬ conditionalNecessity ⊥ morallyGood injustice rewarded none := by
-  simp only [conditionalNecessity, necessity, ModalLogic.Box, mem_bestAccessible,
+  simp only [conditionalNecessity_iff_necessity_of_finite,
+    necessity, ModalLogic.Box, mem_bestAccessible,
     mem_bestWorlds_injustice_iff, forall_eq]
   decide
 
