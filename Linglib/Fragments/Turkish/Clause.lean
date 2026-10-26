@@ -19,7 +19,7 @@ take no person marker, except one before *-cAsInA* and the third-person plural b
 
 * `Turkish.Converb`: the converbial suffixes on one verb, with their forms, the relations they
   encode and `Converb.follows`, the last slot of the finite verb that may precede them; they
-  are a `Clause.Chaining.MedialForm`.
+  are a `MedialForm`.
 * `Turkish.DoubledConverb`: the converbial subordinators on two verbs.
 
 ## Implementation notes
@@ -45,7 +45,6 @@ The other converbs built on the subordinators -DIK, -(y)AcAK, -mA and -mAK (§8.
 
 namespace Turkish
 
-open Clause.Chaining (InterclauseRelation)
 open Turkish.Phonology
 
 /-- The converbial suffixes on one verb, those of §8.5.2.2 that need no postposition, and
@@ -123,7 +122,7 @@ instance : DecidablePred PersonMarked := fun _ ↦ inferInstanceAs (Decidable (_
 def verbForm (_ : Converb) : UD.VerbForm := .Conv
 
 /-- The converbs as medial forms, neutral to switch-reference. -/
-instance : Clause.Chaining.MedialForm Converb where
+instance : MedialForm Converb where
   sr _ := none
   relations := relations
   IndexesSubject := PersonMarked

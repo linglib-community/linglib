@@ -33,7 +33,7 @@ bridged by recapitulative and by summary linkage.
 * `Nungon.Medial` — the three medial forms, same-subject, different-subject and perfect,
   with their morphs by person and number (`morphs`), the switch-reference value they carry
   (`sr`), the relations they encode (`relations`) and whether they index the subject
-  (`IndexesSubject`), which make them an instance of `Clause.Chaining.MedialForm`
+  (`IndexesSubject`), which make them an instance of `MedialForm`
 
 ## Implementation notes
 
@@ -50,7 +50,6 @@ The clause-chaining typology over these forms is in `Studies/SarvasyAikhenvald20
 
 namespace Nungon
 
-open Clause.Chaining (InterclauseRelation SwitchReference)
 open Morphology (Morph)
 
 /-- *-a*, the medial verb suffix, *-ya* after a vowel. -/
@@ -120,7 +119,7 @@ def IndexesSubject (m : Medial) : Prop := m ≠ ss
 
 instance : DecidablePred IndexesSubject := fun _ => inferInstanceAs (Decidable (_ ≠ _))
 
-instance : Clause.Chaining.MedialForm Medial where
+instance : MedialForm Medial where
   sr := sr
   relations := relations
   IndexesSubject := IndexesSubject

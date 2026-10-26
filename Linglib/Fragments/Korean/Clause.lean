@@ -40,7 +40,6 @@ final clause. Forms are in the Revised Romanization; Sohn writes *-ko*, *-e(se)*
 
 namespace Korean
 
-open Clause.Chaining (InterclauseRelation)
 open Morphology (Morph)
 
 /-- The conjunctive suffixes. -/
@@ -174,7 +173,7 @@ def verbForm (_ : Converb) : UD.VerbForm := .Conv
 
 /-- The converbs as medial forms, neutral to switch-reference, encoding their relations, and
 never indexing the subject. -/
-instance : Clause.Chaining.MedialForm Converb where
+instance : MedialForm Converb where
   sr _ := none
   relations := relations
   IndexesSubject _ := False

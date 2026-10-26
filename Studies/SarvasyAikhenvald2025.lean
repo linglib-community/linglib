@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.UD.Features
 public import Linglib.Syntax.Clause.Chaining
 public import Linglib.Fragments.Nungon.Clause
 public import Linglib.Fragments.Manambu.Clause
@@ -57,7 +58,53 @@ volume and the latter's switch-reference system was misrecorded as tracking seve
 
 namespace SarvasyAikhenvald2025
 
-open Clause.Chaining
+/-! ### Retention of inflectional categories and bridging -/
+
+/-- How much of an inflectional category a medial verb retains relative to an independent verb. -/
+inductive CategoryRetention where
+  /-- The category is unmarked on medial verbs, its value inherited from the final verb. -/
+  | absent
+  /-- Medial verbs mark fewer values than independent verbs, such as relative tense or a binary
+  realis/irrealis split. -/
+  | restricted
+  /-- Medial verbs mark the same range of values as independent verbs. -/
+  | full
+  deriving DecidableEq, Repr, Fintype
+
+/-- How far a language's medial forms retain a category, given which of them admit it: fully when
+every form does, restrictedly when some do, and not at all when none does. -/
+def CategoryRetention.ofPred {ι : Type*} [Fintype ι] (p : ι → Prop) [DecidablePred p] :
+    CategoryRetention :=
+  if ∀ i, p i then .full else if ∃ i, p i then .restricted else .absent
+
+/-- The inflectional categories along which a medial verb is reduced. -/
+inductive InflectionalCategory where
+  | tense
+  | agreement
+  | mood
+  /-- Independent negation of the medial clause. -/
+  | polarity
+  | aspect
+  deriving DecidableEq, Repr, Fintype
+
+/-- The UD verb form of a medial verb retaining each category as given, finite when every
+category is fully retained and a converb otherwise. -/
+def udVerbForm (p : InflectionalCategory → CategoryRetention) : UD.VerbForm :=
+  if ∀ c, p c = .full then .Fin else .Conv
+
+/-- How far the medial verbs of a language retain subject agreement. -/
+def agreement (M : Type*) [MedialForm M] [Fintype M] : CategoryRetention :=
+  .ofPred (MedialForm.IndexesSubject (M := M))
+
+/-- The bridging constructions spanning chain boundaries in oral narrative. -/
+inductive BridgingType where
+  /-- Recapitulative (tail-head) linkage, in which the first medial clause of a new chain repeats
+  the final clause of the preceding one. -/
+  | recapitulative
+  /-- Summary linkage, in which a generic verb such as 'do' or 'be' summarizes the preceding
+  chain. -/
+  | summary
+  deriving DecidableEq, Repr, Fintype
 
 /-! ### The sample -/
 
@@ -125,9 +172,9 @@ def aspect : Language → CategoryRetention
   | turkish => .ofPred Turkish.Converb.Tensed
 
 /-- The retention profile of a language's medial verbs, agreement read off its forms. -/
-def medialMorph (L : Language) : MedialMorphProfile
+def medialMorph (L : Language) : InflectionalCategory → CategoryRetention
   | .tense => L.tense
-  | .agreement => MedialForm.agreement L.Forms
+  | .agreement => agreement L.Forms
   | .mood => L.mood
   | .polarity => L.polarity
   | .aspect => L.aspect
@@ -151,8 +198,7 @@ end Language
 
 theorem ss_forms_lack_subject_marking :
     MedialForm.SSUnmarked Nungon.Medial ∧ MedialForm.SSUnmarked Manambu.MedialMarker ∧
-      MedialForm.agreement Nungon.Medial = .restricted ∧
-      MedialForm.agreement Manambu.MedialMarker = .restricted := by
+      agreement Nungon.Medial = .restricted ∧ agreement Manambu.MedialMarker = .restricted := by
   decide
 
 theorem relations_fused_with_sr :
@@ -170,10 +216,10 @@ theorem tense_from_final_verb :
 theorem negated_individually : Language.polarity .turkish = .full := by decide
 
 theorem converb_form :
-    (Language.medialMorph .korean).udVerbForm = .Conv ∧
-      (Language.medialMorph .turkish).udVerbForm = .Conv ∧
-      (∀ c : Korean.Converb, c.verbForm = (Language.medialMorph .korean).udVerbForm) ∧
-      ∀ c : Turkish.Converb, c.verbForm = (Language.medialMorph .turkish).udVerbForm := by
+    udVerbForm (Language.medialMorph .korean) = .Conv ∧
+      udVerbForm (Language.medialMorph .turkish) = .Conv ∧
+      (∀ c : Korean.Converb, c.verbForm = udVerbForm (Language.medialMorph .korean)) ∧
+      ∀ c : Turkish.Converb, c.verbForm = udVerbForm (Language.medialMorph .turkish) := by
   decide
 
 theorem sr_and_tense : ∀ L : Language, MedialForm.HasSR L.Forms → L.tense ≠ .full := by
