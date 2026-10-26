@@ -4,6 +4,7 @@ public import Mathlib.Order.UpperLower.Closure
 public import Linglib.Discourse.Commitment.Space
 public import Linglib.Discourse.Commitment.Table
 public import Linglib.Discourse.Role
+public import Linglib.Pragmatics.DecisionTheoretic.Basic
 public import Studies.BuringGunlogson2000
 
 /-!
@@ -51,7 +52,8 @@ a reverse tag disjoins it with the monopolar question of the negation.
   depends on the actor of a stage.
 * The licensing conditions behind the table of acceptable uses are stated on the evidence and
   are not derived from the spaces. Contextual evidence is the set of worlds it leaves open, which
-  is the proposition, everything, or its complement.
+  is the proposition, everything, or its complement, and under any prior on which the issue is
+  live it has the relevance sign it is built from (`relevanceSign_evidence`).
 
 ## TODO
 
@@ -66,14 +68,11 @@ a reverse tag disjoins it with the monopolar question of the negation.
 
 ## References
 
-* [M. Krifka, *Bias in Commitment Space Semantics: Declarative Questions, Negated Questions,
-  and Question Tags* (2015)][krifka-2015]
-* [A. Cohen and M. Krifka, *Superlative quantifiers and meta-speech acts*
-  (2014)][cohen-krifka-2014]
-* [D. F. Farkas and K. B. Bruce, *On Reacting to Assertions and Polar Questions*
-  (2010)][farkas-bruce-2010]
-* [D. Büring and C. Gunlogson, *Aren't Positive and Negative Polar Questions the Same?*
-  (2000)][buring-gunlogson-2000]
+* [krifka-2015]
+* [cohen-krifka-2014]
+* [farkas-bruce-2010]
+* [buring-gunlogson-2000]
+* [merin-1999-relevance]
 -/
 
 @[expose] public section
@@ -565,14 +564,27 @@ theorem table1 (e : SignType) :
   cases e <;> simp [Licensed, MonopolarLicensed, BipolarLicensed,
     HighNegationLicensed, evidence, raining_ne_empty, raining_ne_univ]
 
+open BuringGunlogson2000 in
 theorem licensed_iff_felicitous (r : Option Polarity) (e : SignType) :
     Licensed (evidence raining e) raining r ↔ BuringGunlogson2000.Felicitous r e := by
-  have h : ∀ e : SignType, (e ≠ -1 ↔ BuringGunlogson2000.Felicitous none e) ∧
-      (e = -1 ↔ BuringGunlogson2000.Felicitous (some .negative) e) ∧
-      (e ≠ 1 ↔ BuringGunlogson2000.Felicitous (some .positive) e) := by decide
   rcases r with _ | _ | _
-  exacts [(table1 e).1.trans (h e).1, (table1 e).2.2.trans (h e).2.2,
-    (table1 e).2.1.trans (h e).2.1]
+  exacts [(table1 e).1.trans (felicitous_none_iff_ne e).symm,
+    (table1 e).2.2.trans (felicitous_some_positive_iff_ne e).symm,
+    (table1 e).2.1.trans (felicitous_some_negative_iff_eq e).symm]
+
+instance : MeasurableSpace Weather := ⊤
+
+instance : DiscreteMeasurableSpace Weather := ⟨fun _ ↦ trivial⟩
+
+/-- The evidence of each sign has that relevance sign for `raining`, in Merin's sense, under any
+finite prior on which the issue is live. -/
+theorem relevanceSign_evidence (μ : MeasureTheory.Measure Weather)
+    [MeasureTheory.IsFiniteMeasure μ] [h : DTS.Context.Nondegenerate ⟨raining, .of_discrete, μ⟩]
+    (e : SignType) : DTS.relevanceSign ⟨raining, .of_discrete, μ⟩ (evidence raining e) = e := by
+  cases e
+  · exact DTS.relevanceSign_univ _
+  · exact DTS.relevanceSign_eq_neg_one_of_subset_compl subset_rfl h.compl_ne_zero
+  · exact DTS.relevanceSign_eq_one_of_subset subset_rfl h.topic_ne_zero
 
 /-! ### Question tags (44), (45) -/
 
