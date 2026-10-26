@@ -1,0 +1,48 @@
+[
+  {
+    "id": "brasoveanu2010_5",
+    "source": {"bibkey": "brasoveanu-2010", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Harvey courts a woman at every convention. She is very pretty.",
+    "discourseSegments": [
+      "Harvey courts a woman at every convention.",
+      "She is very pretty."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "same woman", "judgment": "acceptable"},
+      {"name": "possibly different women", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "The first sentence is from Karttunen (1976) (p. 443). The singular pronoun of the second sentence allows only the 'same woman' reading of the first (p. 444).",
+    "verified": "page-image"
+  },
+  {
+    "id": "brasoveanu2010_6",
+    "source": {"bibkey": "brasoveanu-2010", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Harvey courts a woman at every convention. She always comes to the banquet with him.",
+    "discourseSegments": [
+      "Harvey courts a woman at every convention.",
+      "She always comes to the banquet with him."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "same woman", "judgment": "acceptable"},
+      {"name": "possibly different women", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [],
+    "comment": "The first sentence is from Karttunen (1976) (p. 443). With the adverb the second sentence is also compatible with the 'possibly different women' reading of the first (p. 444). The paper prints a bracketed third sentence, The woman is usually also very pretty., omitted here.",
+    "verified": "page-image"
+  }
+]
