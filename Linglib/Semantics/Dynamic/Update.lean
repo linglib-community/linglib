@@ -31,6 +31,7 @@ is in `Collapse.lean`.
 * `Update.maxBy`: the outputs of an update at which a valuation is locally maximal.
 * `Update.cumul`, `Update.strictLift`: the cumulative and the strict lift of an update to plural
   states, `Set.LiftRel` of its relation and the images of its selections.
+* `Update.dist`: an update of plural states applied to each row's singleton state.
 * `CCP.guard`, `CCP.might`, `CCP.must`, `CCP.negTest`: whole-state tests.
 * `CCP.IsEliminative`, `CCP.IsTest`, `CCP.IsDistributive`,
   `CCP.IsClassical`: the classification of transformers.
@@ -307,6 +308,64 @@ theorem singleton_mem_strictLift_iff {i : S} :
   refine ⟨fun ⟨f, hf, h⟩ ↦ ⟨f i, hf i rfl, h ▸ Set.image_singleton⟩, ?_⟩
   rintro ⟨j, hj, rfl⟩
   exact ⟨fun _ ↦ j, fun k hk ↦ by rwa [Set.mem_singleton_iff.1 hk], Set.image_singleton⟩
+
+/-- The distributivity operator of [brasoveanu-2008] ([minor-2022] (94)) updates the singleton state
+of every input row separately and glues the outputs together. -/
+def dist (D : Update (Set S)) : Update (Set S) :=
+  {(I, J) | ∃ ρ : SetRel S (Set S), ρ.Nonempty ∧ ρ.dom = I ∧ ⋃₀ ρ.cod = J ∧
+    ∀ p ∈ ρ, ({p.1}, p.2) ∈ D}
+
+theorem dom_dist (D : Update (Set S)) :
+    (dist D).dom = {I | I.Nonempty ∧ ∀ k ∈ I, {k} ∈ D.dom} := by
+  ext I
+  constructor
+  · rintro ⟨J, ρ, ⟨⟨k, L⟩, hp⟩, rfl, -, hD⟩
+    exact ⟨⟨k, L, hp⟩, fun k ⟨L, hk⟩ ↦ ⟨L, hD (k, L) hk⟩⟩
+  · rintro ⟨⟨k, hk⟩, h⟩
+    obtain ⟨L, hL⟩ := h k hk
+    refine ⟨_, {p | p.1 ∈ I ∧ ({p.1}, p.2) ∈ D}, ⟨(k, L), hk, hL⟩, ?_, rfl, fun p hp ↦ hp.2⟩
+    ext j
+    exact ⟨fun ⟨_, hj, _⟩ ↦ hj, fun hj ↦ let ⟨L, hL⟩ := h j hj; ⟨L, hj, hL⟩⟩
+
+/-- Distributing twice distributes once. -/
+theorem dist_dist (D : Update (Set S)) : dist (dist D) = dist D := by
+  ext ⟨I, J⟩
+  constructor
+  · rintro ⟨ρ, hne, rfl, rfl, hD⟩
+    choose σ hσne hσdom hσcod hσD using hD
+    have hfst {p : S × Set S} (hp : p ∈ ρ) {q : S × Set S} (hq : q ∈ σ p hp) : q.1 = p.1 :=
+      Set.mem_singleton_iff.1 (hσdom p hp ▸ ⟨q.2, hq⟩)
+    refine ⟨{q | ∃ p, ∃ hp : p ∈ ρ, q ∈ σ p hp}, ?_, ?_, ?_, fun q ⟨p, hp, hq⟩ ↦ hσD p hp q hq⟩
+    · obtain ⟨p, hp⟩ := hne
+      obtain ⟨q, hq⟩ := hσne p hp
+      exact ⟨q, p, hp, hq⟩
+    · ext k
+      constructor
+      · rintro ⟨M, p, hp, hq⟩
+        obtain rfl : k = p.1 := hfst hp hq
+        exact ⟨p.2, hp⟩
+      · rintro ⟨L, hkL⟩
+        obtain ⟨⟨k', M⟩, hq⟩ := hσne _ hkL
+        obtain rfl : k' = k := hfst hkL hq
+        exact ⟨M, _, hkL, hq⟩
+    · ext x
+      simp only [Set.mem_sUnion, SetRel.mem_cod]
+      constructor
+      · rintro ⟨M, ⟨k, p, hp, hq⟩, hx⟩
+        exact ⟨p.2, ⟨p.1, hp⟩, hσcod p hp ▸ ⟨M, ⟨k, hq⟩, hx⟩⟩
+      · rintro ⟨L, ⟨k, hkL⟩, hx⟩
+        have h : ⋃₀ (σ _ hkL).cod = L := hσcod _ hkL
+        rw [← h] at hx
+        obtain ⟨M, ⟨k', hq⟩, hxM⟩ := hx
+        exact ⟨M, ⟨k', _, hkL, hq⟩, hxM⟩
+  · rintro ⟨ρ, hne, hdom, hcod, hD⟩
+    refine ⟨ρ, hne, hdom, hcod, fun p hp ↦ ⟨{p}, Set.singleton_nonempty _, ?_, ?_, ?_⟩⟩
+    · ext k
+      simp [SetRel.mem_dom, Prod.ext_iff, eq_comm]
+    · ext x
+      simp [SetRel.mem_cod, Prod.ext_iff]
+    · rintro q rfl
+      exact hD _ hp
 
 end Update
 

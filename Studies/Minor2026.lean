@@ -210,7 +210,8 @@ theorem exists_mem_vp_atomic_not_unique {a b : E} (ha : Atom a) (hb : Atom b) (h
   have hne : (f '' {extend i u a, extend i u b}).Nonempty := ⟨_, _, Or.inl rfl, rfl⟩
   refine ⟨{extend i u a, extend i u b}, f '' {extend i u a, extend i u b},
     mem_comp_test.2 ⟨mem_comp_test.2 ⟨⟨f, fun r _ ↦ ⟨val u r, rfl⟩, rfl⟩,
-      ⟨hne.image _, fun _ _ ↦ trivial⟩, hne.image _, fun _ _ ↦ trivial⟩, ?_⟩, fun hU ↦ hab ?_⟩
+      mem_lex.2 ⟨hne.image _, fun _ _ ↦ trivial⟩, mem_lex₂.2 ⟨hne.image _, fun _ _ ↦ trivial⟩⟩, ?_⟩,
+    fun hU ↦ hab ?_⟩
   · rintro _ ⟨_, ⟨r, rfl | rfl, rfl⟩, rfl⟩
     · simpa [hf, val_extend_self] using ha
     · simpa [hf, val_extend_self] using hb
@@ -388,7 +389,7 @@ theorem wideScope_iff (hxy : x ≠ y) (hwx : w ≠ x) (hwy : w ≠ y) (hxw' : x 
     simp [val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx]
   simp only [Set.mem_inter_iff, Set.mem_compl_iff, Team.dep, Set.mem_ofPred_eq,
     Set.factorsThrough_domRestrict_iff_of_subsingleton hw,
-    lex₂, atomic, Set.mem_ofPred_eq, Set.image_image, Set.forall_mem_image,
+    mem_lex₂, atomic, Set.mem_ofPred_eq, Set.image_image, Set.forall_mem_image,
     Set.image_nonempty, Set.subset_def, val_extend_self,
     val_extend_of_ne _ _ _ _ hwy, val_extend_of_ne _ _ _ _ hwx, val_extend_of_ne _ _ _ _ hxy,
     val_extend_of_ne _ _ _ _ hxw', val_extend_of_ne _ _ _ _ hyw']

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Minor2022
-public import Linglib.Semantics.Dynamic.RegisterStructure
+public import Linglib.Semantics.Dynamic.PCDRT
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Plurality.Cumulativity
 public import Mathlib.Data.Set.Card
@@ -23,8 +23,8 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 * `Minor2022.intro`: dref introduction (60), the strict lift of random assignment.
 * `Minor2022.atomic`, `Minor2022.unique`, `Minor2022.cardinal`: the conditions (75), (77) and (78),
   each a property of the values of a dref across the state.
-* `Minor2022.split`, `Minor2022.dist`, `Minor2022.distW`, `Minor2022.distS`: the split (90), the
-  distributivity operator (94), and weak and strong distributivity (93).
+* `Minor2022.split`, `Minor2022.distW`, `Minor2022.distS`: the split (90), and weak and strong
+  distributivity (93) over the distributivity operator (94), `Update.dist`.
 * `Minor2022.sentence`: a subject over a distributivity operator over a verb and its object.
 
 ## Main results
@@ -36,8 +36,9 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 * `Minor2022.acrossModels_ssubset_iff`: strict inclusion across models is Generalized Strength
   (89), the pointwise order on meanings.
 * `Minor2022.exh_vp`: Exh with Generalized Strength (89) negates the singular alternative (115).
-* `Minor2022.split_split`, `Minor2022.distW_distW`, `Minor2022.distW_distS`,
-  `Minor2022.distS_distW`: the idempotence (92) and the stacking equivalences (98a), (98c), (98d).
+* `Minor2022.split_split`, `Minor2022.distW_distW`, `Minor2022.distS_distS`,
+  `Minor2022.distW_distS`, `Minor2022.distS_distW`: the idempotence (92) and the stacking
+  equivalences (98a)–(98d).
 * `Minor2022.cumulative_iff`, `Minor2022.dependent_iff`, `Minor2022.distW_cardinal_iff`,
   `Minor2022.distS_bare_iff`: the truth conditions (116), (129), (148) and (170).
 * `Minor2022.singleton_mem_dom_distW_test_iff`: a singular restrictor under weak distributivity
@@ -49,6 +50,8 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
 
 * Assignments come from any register structure and values from any partial order, whose atoms are
   `Mereology.Atom`. The examples take finite sets of atoms, whose sum is union.
+* Every register content is an individual, so the lexical relations (63) are Plural CDRT's atomic
+  conditions `PCDRT.atom` at the identity `PCDRT.ValueEmbedding`.
 * The event dref of event closure (72) is folded into a verb relating the values of the agent and
   the theme: in every derivation formalized here it is introduced together with the object.
 * A model fixes the object noun and the verb. A meaning varying with the model is read as a set of
@@ -66,7 +69,6 @@ wearing hats* and *All the girls were wearing several hats* need more than one h
   for the Ban on Singular Licensors ((186)–(195)) beyond its global-atomicity lemma, modified
   numerals (§6.3.2, §6.3.3), the other sites of Exh, the discourse rule (200), and the
   Schein–Kratzer sentences of Appendix 2.
-* The stacking equivalence (98b), which needs `dist (dist D) = dist D`.
 
 ## References
 
@@ -121,36 +123,24 @@ theorem singleton_mem_cumul_randomAssign_pair {x y : E} (hxy : x ≠ y) :
 
 /-! ### Lexical relations (§4.4) -/
 
-/-- A lexical relation `R{u}` (63) holds of a state when `u` has values there and they satisfy
-it. -/
-def lex (P : E → Prop) (u : R) : Condition (Set S) :=
-  {I | (val u '' I).Nonempty ∧ val u '' I ⊆ {x | P x}}
+/-- A lexical relation `R{u}` (63) is Plural CDRT's atomic condition, at registers whose every
+content is an individual. -/
+def lex (P : E → Prop) (u : R) : Condition (Set S) := PCDRT.atom (fun x ↦ P (x 0)) ![u]
 
-/-- A two-place lexical relation `R{u, u'}` (63) holds of a state when the pairs of values of `u`
-and `u'` exist and satisfy it. -/
+/-- A two-place lexical relation `R{u, u'}` (63). -/
 def lex₂ (P : E → E → Prop) (u u' : R) : Condition (Set S) :=
-  {I | ((fun i ↦ (val u i, val u' i)) '' I).Nonempty ∧
-    (fun i ↦ (val u i, val u' i)) '' I ⊆ {p | P p.1 p.2}}
+  PCDRT.atom (fun x ↦ P (x 0) (x 1)) ![u, u']
 
-/-! ### The distributivity operator (94) -/
+theorem mem_lex {P : E → Prop} :
+    I ∈ lex P u ↔ (val u '' I).Nonempty ∧ val u '' I ⊆ {x | P x} := by
+  rw [lex, PCDRT.mem_atom_vec1, PCDRT.value_eq_image]
+  rfl
 
-/-- The distributivity operator `dist` of [brasoveanu-2008] (94) updates the singleton state of
-every assignment separately and glues the outputs. -/
-def dist (D : Update (Set S)) : Update (Set S) :=
-  {(I, J) | ∃ ρ : SetRel S (Set S), ρ.Nonempty ∧ ρ.dom = I ∧ ⋃₀ ρ.cod = J ∧
-    ∀ p ∈ ρ, ({p.1}, p.2) ∈ D}
-
-theorem dom_dist (D : Update (Set S)) :
-    (dist D).dom = {I | I.Nonempty ∧ ∀ k ∈ I, {k} ∈ D.dom} := by
-  ext I
-  constructor
-  · rintro ⟨J, ρ, ⟨⟨k, L⟩, hp⟩, rfl, -, hD⟩
-    exact ⟨⟨k, L, hp⟩, fun k ⟨L, hk⟩ ↦ ⟨L, hD (k, L) hk⟩⟩
-  · rintro ⟨⟨k, hk⟩, h⟩
-    obtain ⟨L, hL⟩ := h k hk
-    refine ⟨_, {p | p.1 ∈ I ∧ ({p.1}, p.2) ∈ D}, ⟨(k, L), hk, hL⟩, ?_, rfl, fun p hp ↦ hp.2⟩
-    ext j
-    exact ⟨fun ⟨_, hj, _⟩ ↦ hj, fun hj ↦ let ⟨L, hL⟩ := h j hj; ⟨L, hj, hL⟩⟩
+theorem mem_lex₂ {P : E → E → Prop} : I ∈ lex₂ P u u' ↔
+    ((fun i ↦ (val u i, val u' i)) '' I).Nonempty ∧
+      (fun i ↦ (val u i, val u' i)) '' I ⊆ {p | P p.1 p.2} := by
+  rw [lex₂, PCDRT.mem_atom_vec2, PCDRT.dep_eq_image]
+  rfl
 
 /-! ### Models, Exh, and the VP (§5.3, §6) -/
 
@@ -209,11 +199,11 @@ def sentence (P : E → Prop) (d : Update (Set S) → Update (Set S)) (M : Model
 variable {P : E → Prop} {M : Model E} {C : Condition (Set S)} {D : Update (Set S)}
 
 theorem singleton_mem_lex_iff {j : S} : {j} ∈ lex P u ↔ P (val u j) := by
-  simp [lex]
+  simp [mem_lex]
 
 theorem singleton_mem_lex₂_iff {P : E → E → Prop} {j : S} :
     {j} ∈ lex₂ P u u' ↔ P (val u j) (val u' j) := by
-  simp [lex₂]
+  simp [mem_lex₂]
 
 theorem singleton_mem_dom_intro_comp_iff :
     {i} ∈ (intro u ○ test C ○ D).dom ↔ ∃ x, {extend i u x} ∈ C ∧ {extend i u x} ∈ D.dom := by
@@ -295,7 +285,7 @@ theorem exh_vp {y : E} (hy : ¬ Atom y) (i : S) :
         acrossModels fun M : Model E ↦ vp u u' M ○ test (bare (S := S) u') := by
   refine exh_acrossModels_comp_test (comp_test_lt ⟨fun _ ↦ True, fun _ _ ↦ True⟩ fun h ↦ hy ?_)
   have hp : ({i}, {extend i u' y}) ∈ vp u u' ⟨fun _ ↦ True, fun _ _ ↦ True⟩ :=
-    ⟨_, singleton_mem_intro_iff.2 ⟨y, rfl⟩, rfl, by simp [lex, lex₂]⟩
+    ⟨_, singleton_mem_intro_iff.2 ⟨y, rfl⟩, rfl, by simp [mem_lex, mem_lex₂]⟩
   have := (mem_comp_test.1 (h hp)).2.1
   simpa [atomic, val_extend_self] using this
 
@@ -355,6 +345,19 @@ theorem distW_distS (u : R) (D : Update (Set S)) : distW u (distS u D) = distS u
   ext ⟨I, J⟩
   simp only [mem_distW, mem_distS, split_split]
 
+/-- Strong distributivity is idempotent (98b): on a split state every row is its own split, and
+`Update.dist` is idempotent. -/
+theorem distS_distS (u : R) (D : Update (Set S)) : distS u (distS u D) = distS u D := by
+  ext ⟨I, J⟩
+  simp only [mem_distS]
+  rw [← dist_dist D]
+  have key {ρ : SetRel S (Set S)} (hdom : ρ.dom = split u I) {p : S × Set S} (hp : p ∈ ρ) :
+      ({p.1}, p.2) ∈ distS u D ↔ ({p.1}, p.2) ∈ dist D := by
+    have hp' : p.1 ∈ split u I := hdom ▸ (⟨p.2, hp⟩ : p.1 ∈ ρ.dom)
+    rw [mem_distS, split_singleton_of_atom (atom_of_mem_split hp')]
+  exact ⟨fun ⟨ρ, hne, hdom, hcod, hD⟩ ↦ ⟨ρ, hne, hdom, hcod, fun p hp ↦ (key hdom hp).1 (hD p hp)⟩,
+    fun ⟨ρ, hne, hdom, hcod, hD⟩ ↦ ⟨ρ, hne, hdom, hcod, fun p hp ↦ (key hdom hp).2 (hD p hp)⟩⟩
+
 /-- Strong over weak distributivity is strong distributivity (98d). -/
 theorem distS_distW (u : R) (D : Update (Set S)) : distS u (distW u D) = distS u D := by
   ext ⟨I, J⟩
@@ -407,7 +410,7 @@ theorem singleton_mem_dom_distW_iff (huu' : u ≠ u') :
         (∀ a ∈ atomsBelow (val u k), M.noun (b a) ∧ M.verb a (b a)) ∧
         (fun a ↦ extend (extend k u a) u' (b a)) '' atomsBelow (val u k) ∈ C := by
   rw [vp, singleton_mem_dom_distW_intro_iff]
-  simp only [lex, lex₂, Set.mem_inter_iff, Set.mem_ofPred_eq, dom_test, Set.image_nonempty,
+  simp only [mem_lex, mem_lex₂, Set.mem_inter_iff, Set.mem_ofPred_eq, dom_test, Set.image_nonempty,
     Set.subset_def, Set.forall_mem_image, val_extend_self, val_extend_of_ne _ _ _ _ huu']
   exact exists_congr fun b ↦ ⟨fun ⟨⟨⟨hne, hn⟩, _, hv⟩, hC⟩ ↦ ⟨hne, fun a ha ↦ ⟨hn ha, hv ha⟩, hC⟩,
     fun ⟨hne, h, hC⟩ ↦ ⟨⟨⟨hne, fun a ha ↦ (h a ha).1⟩, hne, fun a ha ↦ (h a ha).2⟩, hC⟩⟩
