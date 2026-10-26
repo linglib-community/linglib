@@ -32,7 +32,11 @@ partially ordered by refinement, so a schematic frame lies below every frame ins
 The external argument is the subject position of the surface clause, `none` for a predicate that
 selects no subject (an impersonal passive, a raising predicate). An unaccusative verb's sole
 argument is its subject; unaccusativity is a property of the verb's diatheses
-(`Verb.IsUnaccusative`). The roles S, A, P, R and T are computed from the frame's coding
+(`Verb.IsUnaccusative`). The type of case of an adpositional position is that of the value its
+use marks (`Position.adposition`), not of every value the adposition marks: a grammaticised
+preposition has no meaning independent of its construction (the Cambridge Grammar, p. 601), and
+the *at* of *laugh at* (p. 654) is not spatial. The roles S, A, P, R and T are
+computed from the frame's coding
 (`ArgumentFrame.argumentRole`), never stored. `ArgumentFrame` is not under `Verb` because
 complement-taking is cross-categorial: Noonan's complement-taking predicates include adjectives
 and nouns. Control is a participant of a diathesis (`Diathesis.controller`); attitude and opacity
@@ -47,6 +51,7 @@ CP-external shells in `Studies/Deal2026.lean`.
 * [creissels-2024]
 * [deal-2026]
 * [fillmore-1986]
+* [huddleston-pullum-2002]
 * [levin-1993]
 * [noonan-2007]
 -/
@@ -90,9 +95,11 @@ inductive Position where
 
 namespace Position
 
-/-- The adpositional position selecting `p`, with the type of case `p` marks when it marks
-one type. -/
-def adposition (p : Adposition) : Position := .adpositional p.kind? (some p)
+/-- The adpositional position selecting `p` in a use marking `c`, a value `p` marks, or no value,
+as for the *at* of *laugh at*; its type of case is that of `c`. -/
+def adposition (p : Option Adposition := none) (c : Option Case := none)
+    (_h : ∀ a ∈ p, ∀ x ∈ c, x ∈ a.functions := by decide) : Position :=
+  .adpositional (c.map Case.kind) p
 
 /-- The position's recorded coding, if clausal. -/
 def coding? : Position → Option Clause.ComplementType
@@ -417,19 +424,21 @@ def objectDrop (a : Option ImplicitInterp := none) : ArgumentFrame := np.leaveIm
 /-- The double-object frame has two nominal complements. -/
 def np_np : ArgumentFrame := ⟨some .nominal, [.nominal, .nominal]⟩
 
-/-- The PP frame has one adpositional complement, selecting `p` when given, with the type of
-    case `p` marks when it marks one type. -/
-def pp (p : Option Adposition := none) : ArgumentFrame :=
-  ⟨some .nominal, [.adpositional (p.bind Adposition.kind?) p]⟩
+/-- The PP frame has one adpositional complement, selecting `p` in a use marking `c` when
+    given. -/
+def pp (p : Option Adposition := none) (c : Option Case := none)
+    (h : ∀ a ∈ p, ∀ x ∈ c, x ∈ a.functions := by decide) : ArgumentFrame :=
+  ⟨some .nominal, [.adposition p c h]⟩
 
 /-- The spatial PP frame has one spatial adpositional complement, whatever its adposition, as
     the locative or directional phrase a verb of motion selects. -/
 def spatialPP : ArgumentFrame := ⟨some .nominal, [.adpositional (some .spatial)]⟩
 
-/-- The NP + PP frame has a nominal plus an adpositional complement, selecting `p`
-    when given, with the type of case `p` marks when it marks one type. -/
-def np_pp (p : Option Adposition := none) : ArgumentFrame :=
-  ⟨some .nominal, [.nominal, .adpositional (p.bind Adposition.kind?) p]⟩
+/-- The NP + PP frame has a nominal plus an adpositional complement, selecting `p` in a use
+    marking `c` when given. -/
+def np_pp (p : Option Adposition := none) (c : Option Case := none)
+    (h : ∀ a ∈ p, ∀ x ∈ c, x ∈ a.functions := by decide) : ArgumentFrame :=
+  ⟨some .nominal, [.nominal, .adposition p c h]⟩
 
 /-- The NP + spatial PP frame has a nominal and a spatial adpositional complement, whatever its
     adposition, as the destination of a verb of putting or the path of an induced action. -/

@@ -72,7 +72,7 @@ def promise : Verb where
     [(ArgumentFrame.infinitival, [0, 1]),
      (ArgumentFrame.infinitival.withObject, [0, 2, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .def), [0, 2, 1])]
     (controllers := [some 0, some 0])
   vendlerClass := some .achievement

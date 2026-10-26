@@ -25,13 +25,12 @@ takes. An adposition may occur without its term when the term is understood (Hag
   position classes.
 * `Adposition.Takes`, `IsIntransitive`, `IsTransitive`, `IsParticle`: valence.
 * `Adposition.IsComplex`, `form`, `toWord`: the exponent.
-* `Adposition.kinds`, `kind?`, `IsSpatial`: the types of case among the values marked.
+* `Adposition.kinds`, `IsSpatial`: the types of case among the values marked.
 
 ## Main results
 
 * `Adposition.isParticle_iff`: a particle takes no complement.
 * `Adposition.isSpatial_iff`: a spatial adposition marks a value with a direction.
-* `Adposition.kind?_eq_some_iff`: the type of an adposition is the type all its values share.
 
 ## Implementation notes
 
@@ -174,17 +173,6 @@ theorem isParticle_iff : a.IsParticle ↔ ¬ a.IsTransitive := by
 
 /-- The types of case among the values the adposition marks. -/
 def kinds : Finset Case.Kind := a.functions.image Case.kind
-
-/-- The type of case the adposition marks, when all its values share one. -/
-def kind? : Option Case.Kind :=
-  if a.kinds = {.grammatical} then some .grammatical
-  else if a.kinds = {.spatial} then some .spatial
-  else if a.kinds = {.semantic} then some .semantic
-  else none
-
-theorem kind?_eq_some_iff {k : Case.Kind} : a.kind? = some k ↔ a.kinds = {k} := by
-  unfold kind?
-  cases k <;> split_ifs <;> simp_all
 
 /-- A spatial adposition marks a spatial value. -/
 def IsSpatial : Prop := .spatial ∈ a.kinds

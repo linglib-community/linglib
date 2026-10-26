@@ -136,7 +136,7 @@ def pay : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 
@@ -147,9 +147,9 @@ def assign : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 0 (some .def), [0, 1, 2]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.futureHaving}
 
@@ -161,7 +161,7 @@ def serve : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.fit, .fulfilling, .give, .masquerade}
 
@@ -174,7 +174,7 @@ def teach : Verb where
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 1, 2]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .indef), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 2, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.transferOfMessage}
 
@@ -208,8 +208,8 @@ def award : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.futureHaving}
 
@@ -219,8 +219,8 @@ def forward_ : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send}
 
@@ -230,7 +230,7 @@ def grant : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture, .futureHaving}
 
@@ -240,7 +240,7 @@ def offer : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.characterize, .futureHaving, .reflexiveAppearance}
 
@@ -250,8 +250,8 @@ def reserve : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 2, 1]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 2, 1]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.get}
 
@@ -263,9 +263,10 @@ def pass : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .def), [0, 1, 2]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 0 (some .def),
+       [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give, .marry, .send, .throw}
@@ -276,7 +277,7 @@ def hand : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send}
 
@@ -286,7 +287,7 @@ def mail : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2])]
   levinClasses := {LevinClass.send}
 
 /-- "lend" — neither argument may be implicit. -/
@@ -296,7 +297,7 @@ def lend : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 

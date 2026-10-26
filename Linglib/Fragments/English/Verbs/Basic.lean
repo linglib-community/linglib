@@ -211,8 +211,8 @@ def kick : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
     [some accomplishmentSubjectProfile, some contactObject, none, none]
   vendlerClass := some .activity
   root := { content := {
@@ -221,6 +221,10 @@ def kick : Verb where
     agentControl := {.neutral, .compatible}
   } }
   levinClasses := {LevinClass.bodyInternalMotion, .carry, .crane, .hit, .split, .throw}
+
+/-- The conative *at* of *eat at* marks no value, so *eat* selects no spatial phrase, while the
+*on* of *kick him on the shin* locates the contact on a surface. -/
+example : ¬ eat.TakesSpatial ∧ kick.TakesSpatial := by decide
 
 /-- "aim" — with an *at*-phrase, and transitive with one -/
 def aim : Verb where
@@ -239,9 +243,10 @@ def give : Verb where
   valency := .of
     [(ArgumentFrame.np_np, [0, 1, 2]),
      (ArgumentFrame.np_pp, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .indef), [0, 2, 1]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .def), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 2, 1]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 0 (some .indef),
+       [0, 2, 1]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .def), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 
@@ -281,7 +286,7 @@ def buy : Verb where
   past := "bought"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
     [some possessionTransfer.subjectProfile, none, none]
   vendlerClass := some .accomplishment
@@ -316,9 +321,10 @@ def sell : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_pp, [0, 1, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
-     ((ArgumentFrame.np_pp (some Adpositions.to_)).leaveImplicit 0 (some .def), [0, 1, 2]),
-     (ArgumentFrame.np_pp.leaveImplicit 1 (some .indef), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
+     ((ArgumentFrame.np_pp (some Adpositions.to_) (some .dat)).leaveImplicit 0 (some .def),
+       [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 1 (some .indef), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
     [some possessionTransfer.subjectProfile, none, none]
   vendlerClass := some .accomplishment
@@ -390,10 +396,10 @@ def build : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.for_) (some .ben), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
-     (ArgumentFrame.np_pp (some Adpositions.into), [0, 3, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.into) (some .transl), [0, 3, 1])]
     [some accomplishmentSubjectProfile, some creationObject, none, none]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -412,7 +418,7 @@ def write : Verb where
      (ArgumentFrame.np_pp, [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
      (ArgumentFrame.np_np.leaveImplicit 1 (some .indef), [0, 2, 1]),
-     (ArgumentFrame.np_pp.leaveImplicit 0 (some .indef), [0, 1, 2]),
+     ((ArgumentFrame.np_pp).leaveImplicit 0 (some .indef), [0, 1, 2]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
@@ -435,7 +441,7 @@ def sweep : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
     [some wipeManner.subjectProfile, none, none]
   vendlerClass := some .activity
   passivizable := true
@@ -455,7 +461,7 @@ def sweep_instr : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
     [some wipeInstrument.subjectProfile, none, none]
   vendlerClass := some .activity
   passivizable := true

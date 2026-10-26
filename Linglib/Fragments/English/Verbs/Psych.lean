@@ -306,8 +306,8 @@ def hit : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.contiguousLocation, .hit, .nonAgentiveImpact, .throw}
 
@@ -372,7 +372,7 @@ def fling : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.throw}
 
@@ -382,7 +382,7 @@ def slam : Verb where
   morphs := [.root "slam"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.nonAgentiveImpact, .throw}
@@ -393,7 +393,7 @@ def punch : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.carve, .swat}
 
@@ -404,8 +404,8 @@ def smack : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3]),
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3]),
      (ArgumentFrame.np, [3, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.crane, .hit}
@@ -417,8 +417,8 @@ def thump : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.hit, .soundEmission}
 
@@ -429,15 +429,15 @@ def bang : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.funnel, .hit, .nonAgentiveImpact, .soundEmission}
 
 /-- "thrash" — Levin 18.3 Spank verbs; a hitting verb for [levin-2026] (32a). -/
 def thrash : Verb where
   morphs := [.root "thrash"]
-  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on)]
+  valency := .ofFrames [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.on) (some .sup)]
   vendlerClass := some .activity
   levinClasses := {LevinClass.spank}
 
@@ -447,8 +447,8 @@ def hammer : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.on) (some .sup), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.build, .funnel, .hit}
 
@@ -462,7 +462,7 @@ def scrape : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.cut, .funnel, .wipeManner}
 
@@ -474,7 +474,7 @@ def wipe : Verb where
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_spatialPP, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_) (some .inst), [0, 1, 3])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.funnel, .wipeManner}
 
@@ -483,7 +483,7 @@ def carry : Verb where
   morphs := [.root "carry"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .activity
   incrementality := some .cumulative
@@ -494,7 +494,7 @@ def drag : Verb where
   morphs := [.root "drag"]
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_) (some .dat), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .activity
   incrementality := some .cumulative
