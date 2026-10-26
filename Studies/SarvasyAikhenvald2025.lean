@@ -120,7 +120,7 @@ before the suffixes that admit it, and in Turkish the aspect markers before the 
 tensed stem. -/
 def aspect : Language → CategoryRetention
   | nungon => .absent
-  | manambu => .ofPred fun m : Manambu.MedialMarker ↦ m.inflection = .tensedSubject
+  | manambu => .ofPred fun m : Manambu.MedialMarker ↦ m.inflection = .fullyInflected
   | korean => .ofPred Korean.Converb.AllowsTense
   | turkish => .ofPred Turkish.Converb.Tensed
 
