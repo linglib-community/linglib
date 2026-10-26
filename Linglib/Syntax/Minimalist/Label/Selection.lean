@@ -324,4 +324,11 @@ theorem selHead_map (hf : LexicalItem.Token.PreservesSelection f) :
 
 end SyntacticObject
 
+theorem LexicalItem.Token.PreservesSelection.swap {a b : LexicalItem.Token}
+    (hc : a.item.cat = b.item.cat) (hs : a.item.sel = b.item.sel) (ha : a ≠ .bareTrace)
+    (hb : b ≠ .bareTrace) : LexicalItem.Token.PreservesSelection (Equiv.swap a b) where
+  cat t := by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hc]
+  sel t := by rw [Equiv.swap_apply_def]; split_ifs <;> subst_vars <;> simp [hs]
+  bareTrace := Equiv.swap_apply_of_ne_of_ne ha.symm hb.symm
+
 end Minimalist
