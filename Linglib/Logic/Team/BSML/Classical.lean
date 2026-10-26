@@ -34,8 +34,8 @@ definitions, as Aloni and Anttila observe.
 equations of Proposition 2.2.16 are stated for `NE`-free formulas only, as in the sources.
 The proposition is one induction over the polarity parameter of `eval`, with the split
 clauses discharged by `Team.mem_tensor_flat` and the `◇`-support clause by
-`Team.exists_nonempty_subset_forall_iff`. Flatness of the `NE`-free fragment is also
-derived from its closure properties in `Properties.lean` (`isFlat_support_of_neFree`).
+`Team.exists_nonempty_subset_forall_iff`. The sources derive the proposition from the flatness
+of the `NE`-free fragment; here flatness is derived from it (`isFlat_support_of_neFree`).
 
 ## References
 
