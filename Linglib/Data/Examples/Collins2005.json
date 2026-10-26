@@ -427,6 +427,32 @@
     "verified": "page-image"
   },
   {
+    "id": "collins2005_ex60a",
+    "source": {"bibkey": "collins-2005", "paperLabel": "(60a)"},
+    "language": "stan1293",
+    "primaryText": "A gift was given by every student to his professor.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A quantifier in the by-phrase binding a pronoun in a PP that follows it, evacuated before the remnant PartP fronted.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "licensing"],
+      ["dependency", "variable"],
+      ["antecedent", "external"],
+      ["dependent", "pp"],
+      ["evacuated", "true"],
+      ["verb", "given"],
+      ["agent", "every student"],
+      ["patient", "a gift"],
+      ["pp", "to his professor"]
+    ],
+    "comment": "The external argument c-commands what follows it, (60b)–(60e) likewise; compare (75).",
+    "verified": "page-image"
+  },
+  {
     "id": "collins2005_ex72a",
     "source": {"bibkey": "collins-2005", "paperLabel": "(72a)"},
     "language": "stan1293",
@@ -505,6 +531,33 @@
     "verified": "page-image"
   },
   {
+    "id": "collins2005_ex76a",
+    "source": {"bibkey": "collins-2005", "paperLabel": "(76a)"},
+    "language": "stan1293",
+    "primaryText": "The magazines were sent to Mary's mother by her yesterday.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Principle C with the name inside the fronted PartP and a coindexed pronoun in the by-phrase.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "licensing"],
+      ["dependency", "name"],
+      ["antecedent", "external"],
+      ["dependent", "pp"],
+      ["evacuated", "false"],
+      ["verb", "sent"],
+      ["agent", "her"],
+      ["patient", "the magazines"],
+      ["pp", "to Mary's mother"],
+      ["felicity", "infelicitous"]
+    ],
+    "comment": "Unmarked; the paper finds (76a)–(76c) not very felicitous but not totally unacceptable, against the active (78a) *She sent the magazines to Mary's mother, and concludes that PartP does not reconstruct obligatorily (§9.2). Printed with the alternative pronouns the idiot, the idiot herself.",
+    "verified": "page-image"
+  },
+  {
     "id": "collins2005_ex80a",
     "source": {"bibkey": "collins-2005", "paperLabel": "(80a)"},
     "language": "stan1293",
@@ -580,6 +633,58 @@
       ["pp", "to John's mother"]
     ],
     "comment": "Also (60e); (86)–(87) likewise.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2005_ex91a",
+    "source": {"bibkey": "collins-2005", "paperLabel": "(91a)"},
+    "language": "stan1293",
+    "primaryText": "Books were given by the students to each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A reciprocal in a PP that follows the by-phrase, evacuated before the remnant PartP fronted.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "licensing"],
+      ["dependency", "reciprocal"],
+      ["antecedent", "external"],
+      ["dependent", "pp"],
+      ["evacuated", "true"],
+      ["verb", "given"],
+      ["agent", "the students"],
+      ["patient", "books"],
+      ["pp", "to each other"]
+    ],
+    "comment": "(92a) and (93a) likewise.",
+    "verified": "page-image"
+  },
+  {
+    "id": "collins2005_ex91b",
+    "source": {"bibkey": "collins-2005", "paperLabel": "(91b)"},
+    "language": "stan1293",
+    "primaryText": "Books were given to the students by each other.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A reciprocal in the by-phrase with its antecedent in a PP inside the fronted PartP, which does not c-command the external argument.",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "licensing"],
+      ["dependency", "reciprocal"],
+      ["antecedent", "pp"],
+      ["dependent", "external"],
+      ["evacuated", "false"],
+      ["verb", "given"],
+      ["agent", "each other"],
+      ["patient", "books"],
+      ["pp", "to the students"]
+    ],
+    "comment": "The contrast with (91a) is clearest with the reciprocal unstressed; (92b) and (93b) likewise.",
     "verified": "page-image"
   }
 ]

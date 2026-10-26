@@ -182,11 +182,9 @@ NP, shared by the conjuncts that have one, and the mother's GAP is the first con
 theorem coordConstruct_isWellTyped (g₁ g₂ : Bool) : (coordConstruct g₁ g₂).IsWellTyped := by
   cases g₁ <;> cases g₂ <;> decide
 
-def bools : List (String × Bool) := [("true", true), ("false", false)]
-
 theorem coordination_rows :
-    ∀ x ∈ probing "coordination", ∀ g₁ ∈ x.parse? "gapInFirst" bools,
-      ∀ g₂ ∈ x.parse? "gapInSecond" bools,
+    ∀ x ∈ probing "coordination", ∀ g₁ ∈ x.bool? "gapInFirst",
+      ∀ g₂ ∈ x.bool? "gapInSecond",
         (x.judgment = .acceptable ↔ (coordConstruct g₁ g₂).Models swbGrammar) := by
   decide +kernel
 

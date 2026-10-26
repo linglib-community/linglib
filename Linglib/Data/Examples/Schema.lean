@@ -28,6 +28,7 @@ sentence-level counterpart of `Data/Wordlist/`.
   `paperFeatures`.
 * `Datum.parse?`: the first value of a key read through a table.
 * `Datum.digits?`, `Datum.nat?`, `Datum.int?`: numerals.
+* `Datum.bool?`: a truth value written `true` or `false`.
 * `Datum.judgments`, `Datum.JudgedFelicitous`: every printed mark, and felicity as the mark and
   the prose give it.
 * `Datum.Fits`, `Datum.ReadCount`: a prediction's fit with the judgment band of what a reader
@@ -201,6 +202,9 @@ def decimal? : Option Rat :=
     match s.toList.span (· ≠ '.') with
     | (i, []) => (digits? i).map fun n ↦ (n : Rat)
     | (i, _ :: f) => do pure ((← digits? i) + (← digits? f) / 10 ^ f.length)
+
+/-- `e.bool? key` is the first value of `key` in `e` read as `true` or `false`. -/
+def bool? : Option Bool := e.parse? key [("true", true), ("false", false)]
 
 /-- `e.judgments` is every mark the paper prints on `e`: its judgment, then the further marks
 of a split mark such as `??/*`, recorded as `alsoJudged`. -/
