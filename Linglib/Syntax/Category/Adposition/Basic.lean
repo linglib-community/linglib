@@ -8,14 +8,16 @@ public import Mathlib.Data.Finset.Image
 /-!
 # Adpositions
 
-An adposition is a grammatical word that forms a phrase with a term it governs and marks, as a
-case affix does, the relation of that term to the head of the phrase (Hagège's definition,
-p. 8). Haspelmath groups case markers and adpositions together as *flags*, since they do the same
-work and cannot be told apart consistently across languages. So an entry here records the
-relations it marks as comparative case values, a set because adpositions are polysemous, beside
-its exponent as morphs, the positions it takes relative to its term, and the complements it
-takes. An adposition may occur without its term when the term is understood (Hagège p. 54,
-*she stayed in*), and a particle such as Dutch *heen* occurs only without one.
+An adposition is a grammatical word that forms a phrase with a term it governs and, like a case
+affix, relates that term to another unit, mostly a verb, noun or adjective, by marking the
+grammatical and semantic link between them (Hagège's definition, p. 8). Case markers and
+adpositions cannot be told apart consistently across languages (Haspelmath p. 97), so an entry
+records the relations it marks as the comparative case values that case markers mark, a set
+because adpositions are polysemous, beside its exponent as morphs, the positions it takes
+relative to its term, and the complements it takes. An adposition may occur without its term:
+*in* is transitive in *She stayed in the house* and intransitive in *She stayed in* (Huddleston
+and Pullum p. 635), the entity the term would refer to being given by the context (Hagège
+p. 54).
 
 ## Main definitions
 
@@ -24,7 +26,7 @@ takes. An adposition may occur without its term when the term is understood (Hag
 * `Adposition.IsPreposition`, `IsPostposition`, `IsCircumposition`, `IsAmbiposition`: the
   position classes.
 * `Adposition.Takes`, `IsIntransitive`, `IsTransitive`, `IsParticle`: valence.
-* `Adposition.IsComplex`, `form`, `toWord`: the exponent.
+* `Adposition.IsSimple`, `form`, `toWord`: the exponent.
 * `Adposition.kinds`, `IsSpatial`: the types of case among the values marked.
 
 ## Main results
@@ -34,11 +36,20 @@ takes. An adposition may occur without its term when the term is understood (Hag
 
 ## Implementation notes
 
-* The positions follow Dryer's WALS chapter 85 with circumpositions added. They are a set,
-  since an ambiposition such as Dutch *op* is one lexeme preposed or postposed (Hagège
-  pp. 114–116). A circumposition lists its pieces in surface order, the first before the term.
+* The positions are Dryer's prepositions, postpositions and inpositions (WALS chapter 85) and
+  the circumpositions, whose two parts stand at the beginning and the end of the phrase (Hagège
+  p. 115). They are a set, since an ambiposition is one adposition that can be preposed or
+  postposed to its term (Hagège p. 114), as Dutch *op* is; two adpositions that share a form,
+  each restricted to its own position, are homonyms rather than one ambiposition (p. 115), and
+  two entries. A circumposition lists its pieces in surface order, the first before the term.
 * The transitive and intransitive uses of one preposition are one entry, as in Huddleston and
-  Pullum (p. 635).
+  Pullum (p. 635). A particle, which governs no term and so falls outside Hagège's definition,
+  is an entry as well, so that a circumposition such as Dutch *over … heen* is made of entries.
+* Haspelmath's *flag*, his term for case markers and adpositions together, is a bound form, and
+  an adposition that can occur in isolation is not one (pp. 96, 99); the entries are
+  adpositions bound or free, the attachment of each piece recorded in its morph.
+* `IsSimple` is Hagège's simple adposition; his complex adposition is an adposition with a case
+  affix (§2.2.3), which he keeps apart from a compound one (p. 129).
 * `functions` is `∅` where no comparative value fits, as for *despite*.
 * The case an adposition governs on its complement (Corbett) is a fact about a language's own
   case values and is left to the fragments.
@@ -115,12 +126,14 @@ def form : String := Morph.surface a.morphs
 
 instance : Repr Adposition := ⟨fun a _ ↦ a.form⟩
 
-/-- A complex adposition has more than one piece, *in front of*, *van … af*. -/
-def IsComplex : Prop := 1 < a.morphs.length
+/-- A simple adposition cannot be analysed into component parts, so it is a single morph; *van …
+af* is not simple. -/
+def IsSimple : Prop := a.morphs.length = 1
 
-instance : Decidable a.IsComplex := inferInstanceAs (Decidable (_ < _))
+instance : Decidable a.IsSimple := inferInstanceAs (Decidable (_ = _))
 
-/-- The adposition as a word, UD category `ADP`. -/
+/-- The adposition as a word, UD category `ADP`. A circumposition's pieces are separate words, and
+its form joins them. -/
 def toWord : Word := { form := a.form, cat := .ADP }
 
 @[simp] theorem cat_toWord : a.toWord.cat = .ADP := rfl

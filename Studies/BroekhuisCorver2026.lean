@@ -278,7 +278,7 @@ theorem linearization_direction_post :
 circumposition of the grammar is a listed preposition followed by a listed postposition or
 particle. -/
 theorem circumP_parts :
-    ∀ a ∈ inventory, a.IsComplex →
+    ∀ a ∈ inventory, ¬ a.IsSimple →
       ∃ b ∈ inventory, ∃ c ∈ inventory, a.morphs = b.morphs ++ c.morphs ∧
         b.IsPreposition ∧ (c.IsPostposition ∨ c.IsIntransitive) := by
   decide
