@@ -23,7 +23,6 @@ meant by one does, so the grammatical domain comes first.
 
 * `Discourse.GrammaticalDomain`, `Discourse.Gameboard.Domain`: the types gameboards are built
   from.
-* `Discourse.IllocutionaryAct`: an illocutionary relation applied to its content.
 * `Discourse.SubUtterance`, `Discourse.LocutionaryProposition`: sub-utterances and utterances.
 * `Discourse.InformationStructure`: a question with its focus-establishing constituents.
 * `Discourse.Gameboard`: the dialogue gameboard.
@@ -92,27 +91,6 @@ structure Gameboard.Domain extends GrammaticalDomain.{u} where
 attribute [instance] Gameboard.Domain.decEqParticipant Gameboard.Domain.decEqFact
   Gameboard.Domain.decEqQuestion Gameboard.Domain.decEqContent
 
-/-- An illocutionary act is the illocutionary relation of an illocutionary proposition applied
-to its content ([ginzburg-2012] (8c) p. 361), without the speaker and addressee that the
-proposition also records. The inventory is that of the rules of Ch. 4 less parting and
-counter-parting. -/
-inductive IllocutionaryAct (Fact Question : Type*) where
-  /-- Asserting a fact. -/
-  | assert : Fact → IllocutionaryAct Fact Question
-  /-- Asking a question. -/
-  | ask : Question → IllocutionaryAct Fact Question
-  /-- Accepting an assertion. -/
-  | accept : Fact → IllocutionaryAct Fact Question
-  /-- Asking for confirmation of an assertion. -/
-  | check : Fact → IllocutionaryAct Fact Question
-  /-- Confirming in response to a check. -/
-  | confirm : Fact → IllocutionaryAct Fact Question
-  /-- Greeting. -/
-  | greet : IllocutionaryAct Fact Question
-  /-- Counter-greeting. -/
-  | counterGreet : IllocutionaryAct Fact Question
-  deriving Repr, DecidableEq
-
 variable (G : GrammaticalDomain.{u})
 
 /-- A sub-utterance carries a phonological form, a category and a denotation, which make any
@@ -167,9 +145,7 @@ structure InformationStructure (Question : Type u) where
 /-- The dialogue gameboard of a participant is their public share of the conversational state
 ([ginzburg-2012] (43) p. 175); each participant has their own. Its moves and pending utterances
 are locutionary propositions whose contents are the domain's, and its questions under discussion
-are information structures (p. 239). With `IllocutionaryAct` contents it is the gameboard of
-Ch. 4 ((100) p. 111), whose moves are illocutionary propositions. QUD is a partial order in
-(43), here a list. -/
+are information structures (p. 239). QUD is a partial order in (43), here a list. -/
 structure Gameboard (D : Gameboard.Domain.{u}) where
   /-- The speaker. -/
   speaker : D.Participant

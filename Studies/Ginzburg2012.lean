@@ -16,11 +16,10 @@ when some rule makes it the latest move (`Coherent`). Asking a question keeps `n
 exactly when no fact resolves it, the Question Introduction Appropriateness Condition, and FACTS
 update restores the condition (`askQud_nonResolveCond_iff`, `factUpdate_nonResolveCond`); a genre
 makes an initiating move a relevant Free Speech move (`IsInitiating`, `coherent_of_isInitiating`);
-self-repair is Parameter Identification with the turn held
-(`parameterIdentification_eq_repair_swapTurn`); and each clarification rule makes the clarified
-constituent of the maximal pending utterance the focus-establishing constituent of MaxQUD
-(`focusEstablishing_parameterIdentification`, `focusEstablishing_parameterFocussing`,
-`focusEstablishing_repair`).
+each clarification rule is a question and a turn merged with Utterance Interpolation
+(`clarify`), so it makes the clarified constituent of the maximal pending utterance the
+focus-establishing constituent of MaxQUD (`focusEstablishing_clarify`); and self-repair is
+Parameter Identification with the turn held (`parameterIdentification_eq_repair_swapTurn`).
 
 The worked traces of Ch. 4 reach the tabulated gameboards (`Ex66.trace`, `Ex66.trace68_table`,
 `Ex79.trace`), and after "Is George here? / Is WHO here?" the two participants' gameboards differ
@@ -47,6 +46,8 @@ clarification request, a self-repair and a bare follow-up question, as the rules
 * Appendix B's backwards-looking appropriateness repair ((29) p. 375) makes the pending utterance
   the focus-establishing constituent, where its statement in the text ((31) p. 287) and every
   other clarification rule make it the clarified constituent; the rule follows (31).
+* Utterance Interpolation ((67) p. 190) also adds the most recent speech event to FACTS; the
+  rules here leave FACTS as it is.
 * Ask and Assert QUD-incrementation push their question with no focus-establishing constituent,
   as in Ch. 4; the Ch. 7 version that pairs a wh-question with its wh-phrase (p. 241) is not
   modelled.
@@ -80,6 +81,26 @@ inductive Parameter
 parameters, which are also the denotations of the names contributing them. -/
 abbrev grammar : GrammaticalDomain :=
   { Form := String, Category := Category, Label := Parameter, Denotation := Parameter }
+
+/-- An illocutionary act is the illocutionary relation of an illocutionary proposition applied
+to its content ((8c) p. 361), without the speaker and addressee that the proposition also
+records. The inventory is that of the rules of Ch. 4 less parting and counter-parting. -/
+inductive IllocutionaryAct (Fact Question : Type*) where
+  /-- Asserting a fact. -/
+  | assert : Fact → IllocutionaryAct Fact Question
+  /-- Asking a question. -/
+  | ask : Question → IllocutionaryAct Fact Question
+  /-- Accepting an assertion. -/
+  | accept : Fact → IllocutionaryAct Fact Question
+  /-- Asking for confirmation of an assertion. -/
+  | check : Fact → IllocutionaryAct Fact Question
+  /-- Confirming in response to a check. -/
+  | confirm : Fact → IllocutionaryAct Fact Question
+  /-- Greeting. -/
+  | greet : IllocutionaryAct Fact Question
+  /-- Counter-greeting. -/
+  | counterGreet : IllocutionaryAct Fact Question
+  deriving Repr, DecidableEq
 
 /-- What a gameboard's content types supply: the polar question `p?`, the
 aboutness and influence relations of q-specificity, and resolution, with `p`
@@ -159,6 +180,43 @@ inductive Turn
 def Turn.act : Turn → Board P Fact Q → Board P Fact Q
   | .keep, d => d
   | .change, d => d.swapTurn
+
+/-- Utterance Interpolation with Question Accommodation ((67) p. 190): `q` is accommodated as
+MaxQUD, with the clarified constituent `u` as its focus-establishing constituent, and `cr`, which
+must address `q`, becomes LatestMove. -/
+def interpolate (q : Q) (u : SubUtterance grammar) (cr : Utterance Fact Q) (d : Board P Fact Q) :
+    Option (Board P Fact Q) :=
+  if qudContrib cr.content = some q then some ((d.pushQud ⟨q, {u}⟩).recordMove cr) else none
+
+/-- A Clarification Context Update Rule merged with Utterance Interpolation ((71) p. 192): given
+a constituent `u` of MaxPending `v`, the turn `t` is taken and the question `q v` the rule
+assigns is accommodated. -/
+def clarify (t : Turn) (q : Utterance Fact Q → Q) (u : SubUtterance grammar)
+    (cr : Utterance Fact Q) (d : Board P Fact Q) : Option (Board P Fact Q) :=
+  match d.pending with
+  | v :: _ => if u ∈ v.constituents then interpolate (q v) u cr (t.act d) else none
+  | [] => none
+
+section Clarify
+
+variable {t : Turn} {q : Utterance Fact Q → Q} {u : SubUtterance grammar}
+  {cr : Utterance Fact Q} {d d' : Board P Fact Q}
+
+theorem focusEstablishing_clarify (h : clarify t q u cr d = some d') :
+    (∃ v ∈ d.pending.head?, u ∈ v.constituents) ∧
+      d'.qud.head?.map (·.focusEstablishing) = some {u} := by
+  unfold clarify interpolate at h
+  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
+  obtain ⟨hu, -, ⟨⟩⟩ := h
+  exact ⟨⟨_, by simp [*], hu⟩, rfl⟩
+
+theorem speaker_clarify (h : clarify t q u cr d = some d') : d'.speaker = (t.act d).speaker := by
+  unfold clarify interpolate at h
+  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
+  obtain ⟨-, -, ⟨⟩⟩ := h
+  rfl
+
+end Clarify
 
 /-- The conversational rules of [ginzburg-2012] (Appendix B), with the utterance,
 question or turn a nondeterministic rule chooses made an argument. Ch. 4:
@@ -247,20 +305,9 @@ def Rule.apply : Rule P Fact Q → Board P Fact Q → Option (Board P Fact Q)
       if u.parameters = ∅ then (r.apply { d with pending := rest }).filter (·.latestMove = some u)
       else none
     | [] => none
-  | .parameterIdentification u cr, d => match d.pending with
-    | v :: _ =>
-      if u ∈ v.constituents ∧
-          qudContrib cr.content = some (Clarifiable.mean (Fact := Fact) d.speaker u) then
-        some ((d.swapTurn.pushQud ⟨Clarifiable.mean (Fact := Fact) d.speaker u, {u}⟩).recordMove cr)
-      else none
-    | [] => none
-  | .parameterFocussing u cr, d => match d.pending with
-    | v :: _ =>
-      if u ∈ v.constituents ∧
-          qudContrib cr.content = some (Clarifiable.focus (P := P) v.content u) then
-        some ((d.swapTurn.pushQud ⟨Clarifiable.focus (P := P) v.content u, {u}⟩).recordMove cr)
-      else none
-    | [] => none
+  | .parameterIdentification u cr, d =>
+    clarify .change (fun _ ↦ Clarifiable.mean (Fact := Fact) d.speaker u) u cr d
+  | .parameterFocussing u cr, d => clarify .change (Clarifiable.focus (P := P) ·.content u) u cr d
   | .crAccommodation u, d => match d.pending, d.latestMove with
     | v :: rest, some v₀ =>
       if u ∈ v₀.constituents ∧
@@ -271,13 +318,7 @@ def Rule.apply : Rule P Fact Q → Board P Fact Q → Option (Board P Fact Q)
         | none => none
       else none
     | _, _ => none
-  | .repair u cr, d => match d.pending with
-    | v :: _ =>
-      if u ∈ v.constituents ∧
-          qudContrib cr.content = some (Clarifiable.mean (Fact := Fact) d.speaker u) then
-        some ((d.pushQud ⟨Clarifiable.mean (Fact := Fact) d.speaker u, {u}⟩).recordMove cr)
-      else none
-    | [] => none
+  | .repair u cr, d => clarify .keep (fun _ ↦ Clarifiable.mean (Fact := Fact) d.speaker u) u cr d
 
 /-- Apply a trace of rules in sequence (the composition of conversational rules). -/
 def run (trace : List (Rule P Fact Q)) (d : Board P Fact Q) : Option (Board P Fact Q) :=
@@ -341,58 +382,25 @@ theorem coherent_of_isInitiating {G : Set (Board P Fact Q)} {d : Board P Fact Q}
     {u : Utterance Fact Q} (h : IsInitiating G d u) : Coherent d u :=
   ⟨.freeSpeech u .keep, d.recordMove u, by simp [Rule.apply, h.1, Turn.act], by simp⟩
 
-/-! ### Self- and other-correction (§8.2)
+/-! ### Clarification (§6.6, §8.2)
 
-Backwards-looking appropriateness repair (ex. 31 p. 287) is Parameter
-Identification (ex. 70 p. 192) without the turn change: the speaker of a
-pending utterance accommodates the issue of what they meant by one of its
+A Clarification Context Update Rule fixes the question it accommodates and who takes the turn,
+and is merged with Utterance Interpolation ((71) p. 192). In the final versions of the rules
+(Appendix B (26e) p. 374, and (31) p. 287 for repair), MaxQUD is paired with the clarified
+sub-utterance, a constituent of the maximal pending utterance, as its focus-establishing
+constituent, which a reprise fragment must then match in category (p. 254). Backwards-looking
+appropriateness repair ((31) p. 287) is Parameter Identification ((70) p. 192) without the turn
+change: the speaker of a pending utterance accommodates the issue of what they meant by one of its
 constituents and continues co-propositionally with it. -/
 
 theorem parameterIdentification_eq_repair_swapTurn (u : SubUtterance grammar)
     (cr : Utterance Fact Q) (d : Board P Fact Q) :
     (Rule.parameterIdentification u cr).apply d =
       ((Rule.repair u cr).apply d).map Gameboard.swapTurn := by
-  unfold Rule.apply
-  split <;> simp
-
-/-! ### The clarified constituent as focus-establishing constituent
-
-In the final versions of the clarification rules (Appendix B (26e) p. 374, and (31) p. 287 for
-repair), MaxQUD is paired with the clarified sub-utterance, a constituent of the maximal pending
-utterance, as its focus-establishing constituent, which a reprise fragment must then match in
-category (p. 254). -/
-
-section FocusEstablishing
-
-variable {u : SubUtterance grammar} {cr : Utterance Fact Q} {d d' : Board P Fact Q}
-
-theorem focusEstablishing_parameterIdentification
-    (h : (Rule.parameterIdentification u cr).apply d = some d') :
-    (∃ v ∈ d.pending.head?, u ∈ v.constituents) ∧
-      d'.qud.head?.map (·.focusEstablishing) = some {u} := by
-  unfold Rule.apply at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
-  obtain ⟨⟨hu, -⟩, ⟨⟩⟩ := h
-  exact ⟨⟨_, by simp [*], hu⟩, rfl⟩
-
-theorem focusEstablishing_parameterFocussing
-    (h : (Rule.parameterFocussing u cr).apply d = some d') :
-    (∃ v ∈ d.pending.head?, u ∈ v.constituents) ∧
-      d'.qud.head?.map (·.focusEstablishing) = some {u} := by
-  unfold Rule.apply at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
-  obtain ⟨⟨hu, -⟩, ⟨⟩⟩ := h
-  exact ⟨⟨_, by simp [*], hu⟩, rfl⟩
-
-theorem focusEstablishing_repair (h : (Rule.repair u cr).apply d = some d') :
-    (∃ v ∈ d.pending.head?, u ∈ v.constituents) ∧
-      d'.qud.head?.map (·.focusEstablishing) = some {u} := by
-  unfold Rule.apply at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
-  obtain ⟨⟨hu, -⟩, ⟨⟩⟩ := h
-  exact ⟨⟨_, by simp [*], hu⟩, rfl⟩
-
-end FocusEstablishing
+  simp only [Rule.apply, clarify, interpolate, Turn.act]
+  split
+  · split_ifs <;> rfl
+  · rfl
 
 /-! ### Worked traces (Ch. 4)
 
@@ -653,31 +661,20 @@ section Turn
 variable {P Fact Q : Type} [DecidableEq P] [DecidableEq Fact] [DecidableEq Q] [Content Fact Q]
   [Clarifiable P Fact Q] {d d' : Board P Fact Q}
 
-theorem speaker_parameterIdentification {u : SubUtterance grammar} {cr : Utterance Fact Q}
-    (h : (Rule.parameterIdentification u cr).apply d = some d') : d'.speaker = d.addressee := by
-  unfold Rule.apply at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
-  obtain ⟨-, h⟩ := h
-  cases h
-  rfl
+variable {u : SubUtterance grammar} {cr : Utterance Fact Q}
 
-theorem speaker_parameterFocussing {u : SubUtterance grammar} {cr : Utterance Fact Q}
-    (h : (Rule.parameterFocussing u cr).apply d = some d') : d'.speaker = d.addressee := by
-  unfold Rule.apply at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
-  obtain ⟨-, h⟩ := h
-  cases h
-  rfl
+theorem speaker_parameterIdentification
+    (h : (Rule.parameterIdentification u cr).apply d = some d') : d'.speaker = d.addressee :=
+  speaker_clarify h
 
-theorem speaker_repair {u : SubUtterance grammar} {cr : Utterance Fact Q}
-    (h : (Rule.repair u cr).apply d = some d') : d'.speaker = d.speaker := by
-  unfold Rule.apply at h
-  split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
-  obtain ⟨-, h⟩ := h
-  cases h
-  rfl
+theorem speaker_parameterFocussing (h : (Rule.parameterFocussing u cr).apply d = some d') :
+    d'.speaker = d.addressee :=
+  speaker_clarify h
 
-theorem speaker_qspec {u : Utterance Fact Q} {t : Turn} (h : (Rule.qspec u t).apply d = some d') :
+theorem speaker_repair (h : (Rule.repair u cr).apply d = some d') : d'.speaker = d.speaker :=
+  speaker_clarify h
+
+theorem speaker_qspec {m : Utterance Fact Q} {t : Turn} (h : (Rule.qspec m t).apply d = some d') :
     d'.speaker = (t.act d).speaker := by
   unfold Rule.apply at h
   split at h <;> simp only [Option.ite_none_right_eq_some, reduceCtorEq] at h
