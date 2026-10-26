@@ -721,30 +721,16 @@ theorem readings_eq_of_choice (choice : L → Option (Denotation E W M S)) (t : 
 @[simp] theorem readings_terminal (c : C) (w : L) : readings lex g (.terminal c w) = lex w := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.terminal c ⟨(w, d), h⟩, rfl, rfl⟩⟩
-  rcases r with ⟨l, cs⟩
-  simp only [Tree.map_rose, RoseTree.node.injEq, List.map_eq_nil_iff] at hr
-  obtain ⟨hl, rfl⟩ := hr
-  cases l with
-  | terminal c' p =>
-    simp only [Tree.Label.mapWord, Tree.Label.terminal.injEq] at hl
-    obtain ⟨rfl, rfl⟩ := hl
-    cases Option.some.inj hd
-    exact p.2
-  | _ => simp [Tree.Label.mapWord] at hl
+  obtain ⟨p, rfl, rfl⟩ := Tree.map_eq_terminal_iff.1 hr
+  cases Option.some.inj hd
+  exact p.2
 
 @[simp] theorem readings_trace (n : ℕ) (c : C) :
     readings lex g (.trace n c) = {⟨.e, pure (g n)⟩} := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.trace n c, rfl, h ▸ rfl⟩⟩
-  rcases r with ⟨l, cs⟩
-  simp only [Tree.map_rose, RoseTree.node.injEq, List.map_eq_nil_iff] at hr
-  obtain ⟨hl, rfl⟩ := hr
-  cases l with
-  | trace n' c' =>
-    simp only [Tree.Label.mapWord, Tree.Label.trace.injEq] at hl
-    obtain ⟨rfl, rfl⟩ := hl
-    exact (Option.some.inj hd).symm
-  | _ => simp [Tree.Label.mapWord] at hl
+  obtain rfl := Tree.map_eq_trace_iff.1 hr
+  exact (Option.some.inj hd).symm
 
 /-- A binary node's readings are the pointwise compositions of its daughters'. -/
 theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M S} :
@@ -753,24 +739,26 @@ theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation 
         Mode.combine? Mode.evalM d₁ d₂ = some d := by
   constructor
   · rintro ⟨r, hr, hd⟩
-    rcases r with ⟨l, cs⟩
-    simp only [Tree.map_rose, RoseTree.node.injEq] at hr
-    obtain ⟨hl, hcs⟩ := hr
-    cases l with
-    | node c' =>
-      simp only [Tree.Label.mapWord, Tree.Label.node.injEq] at hl
-      subst hl
-      obtain ⟨r₁, cs₁, rfl, rfl, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
-      obtain ⟨r₂, cs₂, rfl, rfl, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
-      obtain rfl := List.map_eq_nil_iff.mp hcs₂
-      rw [interp_node_binary] at hd
-      obtain ⟨d₁, h₁, hd⟩ := Option.bind_eq_some_iff.mp hd
-      obtain ⟨d₂, h₂, hd⟩ := Option.bind_eq_some_iff.mp hd
-      exact ⟨d₁, ⟨r₁, rfl, h₁⟩, d₂, ⟨r₂, rfl, h₂⟩, hd⟩
-    | _ => simp [Tree.Label.mapWord] at hl
+    obtain ⟨cs, rfl, hcs⟩ := Tree.map_eq_node_iff.1 hr
+    obtain ⟨r₁, cs₁, rfl, rfl, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
+    obtain ⟨r₂, cs₂, rfl, rfl, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
+    obtain rfl := List.map_eq_nil_iff.mp hcs₂
+    rw [interp_node_binary] at hd
+    obtain ⟨d₁, h₁, hd⟩ := Option.bind_eq_some_iff.mp hd
+    obtain ⟨d₂, h₂, hd⟩ := Option.bind_eq_some_iff.mp hd
+    exact ⟨d₁, ⟨r₁, rfl, h₁⟩, d₂, ⟨r₂, rfl, h₂⟩, hd⟩
   · rintro ⟨d₁, ⟨r₁, hr₁, hd₁⟩, d₂, ⟨r₂, hr₂, hd₂⟩, h⟩
     exact ⟨.node c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
       by rw [interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
+
+/-- A binder's readings interpret it over a resolution of its body, which reads each occurrence
+the same way at every value of the bound variable. -/
+theorem mem_readings_bind {n : ℕ} {c : C} {t : Tree C L} {d : Denotation E W M S} :
+    d ∈ readings lex g (.bind n c t) ↔ ∃ r : Tree C {p : L × Denotation E W M S // p.2 ∈ lex p.1},
+      r.map (·.1.1) = t ∧ interp (fun p ↦ some p.1.2) g (.bind n c r) = some d := by
+  refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun ⟨r, hr, hd⟩ ↦ ⟨.bind n c r, by rw [Tree.map_bind, hr], hd⟩⟩
+  obtain ⟨b, rfl, hb⟩ := Tree.map_eq_bind_iff.1 hr
+  exact ⟨b, hb, hd⟩
 
 end Readings
 
