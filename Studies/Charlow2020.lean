@@ -50,9 +50,10 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
   over-generation.
 * `Si.a_paper_that_she_wrote`: the determiners of Appendix A derive (66).
 * `Si.nobody_met_iff`: abstraction by a choice function over-generates (77).
-* `Si.abstractChoice_eq_distribute`: the two lines of (74) agree when distinct values of the
-  variable have distinct alternatives.
-* `Si.sSup_readings_nobodyMet_iff`: the layering of (80) and (81) does not over-generate (77).
+* `Si.abstractChoice_eq_distribute`: the two lines of (74) agree when the alternatives are
+  nonempty and distinct at distinct values of the variable.
+* `Si.sSup_readings_nobodyMet_iff`: the layering of (80) and (81) gives (77) the wide-scope
+  reading of the indefinite, not the functional one.
 
 ## Implementation notes
 
@@ -65,22 +66,27 @@ restrictor holds a bound pronoun cannot outscope the pronoun's binder.
 * `Si.cf_reading_iff` assumes that no two candidates wrote the same papers, which the paper's
   gloss of (69) needs and leaves implicit.
 * `Si.abstractChoice` is the first line of (74); the composition engine's set effect abstracts by
-  the second, and resolving words before interpretation gives the layering of (80) and (81).
+  the second, and resolving words before interpretation gives the layering of (80) and (81) for
+  lexical alternatives that do not depend on the assignment.
 
 ## Errata
 
 * Footnote 25 says that the two lines of (74) are equivalent when every alternative set is
-  nonempty, and (75) equates the first with a Skolemized choice function. A choice function picks
-  the same member from equal sets, so the first line also needs distinct alternatives at distinct
-  values of the variable (`Si.abstractChoice_eq_distribute`). With truth values as alternatives
-  that fails: where everyone met some but not all linguists, the first line gives
-  `[λ₀ t₀ met a linguist]` the two constant predicates, the second line and the right-hand side
-  of (75) every predicate (`Si.abstractChoice_met_linguist`).
+  nonempty, and (75) and (76) equate the first with a Skolemized choice function. A choice
+  function picks the same member from equal sets, so values of the variable with the same
+  alternatives receive the same one under the first line but not under the second; distinct
+  alternatives at distinct values suffice for the two to agree (`Si.abstractChoice_eq_distribute`).
+  With truth values as alternatives, two people who each met some but not all linguists already
+  separate them: the first line gives `[λ₀ t₀ met a linguist]` the constant predicates, the second
+  line and the right-hand side of (75) every predicate (`Si.abstractChoice_ne_distribute`,
+  `Si.range_skolem_eq_distribute`). The verdict on (77) holds under either line
+  (`Si.nobody_met_iff`, `Si.sSup_interp_nobodyMet_iff`).
 * Figure 9 prints `die X` for `die x`.
 
 ## TODO
 
 * (46), and point-wise composition with a closure inside the island (45) on (46) and (47).
+* (78), whose `wrote x y` puts the paper second where (69) and (82) put it first.
 * (79) and (82) on the composition engine, (88), and Appendix B.
 
 ## References
@@ -564,7 +570,8 @@ theorem abstractChoice_subset_distribute (n : ℕ) (m : ReaderT (Assignment E) S
   rintro _ ⟨f, rfl⟩
   exact SetM.mem_run_distribute.2 fun x ↦ f.apply_of_exists (hm x)
 
-/-- When distinct values of the index give distinct alternatives, the two lines of (74) agree. -/
+/-- When the alternatives are nonempty and distinct values of the index give distinct ones, the
+two lines of (74) agree. -/
 theorem abstractChoice_eq_distribute (n : ℕ) (m : ReaderT (Assignment E) Set Prop)
     (g : Assignment E) (hm : ∀ x, (m (g[n ↦ x])).Nonempty)
     (hinj : Function.Injective fun x ↦ m (g[n ↦ x])) :
@@ -575,10 +582,9 @@ theorem abstractChoice_eq_distribute (n : ℕ) (m : ReaderT (Assignment E) Set P
     hm fun x ↦ (· = P x)).2 fun x ↦ ⟨P x, SetM.mem_run_distribute.1 hP x, rfl⟩
   exact ⟨f, funext hf⟩
 
-/-- Footnote 25 asks only for nonempty alternatives, but a choice function picks the same member
-from equal sets. Where everyone met some but not all linguists, `[λ₀ t₀ met a linguist]` has
-both truth values as alternatives at every value of the variable: the first line of (74) gives
-it the constant predicates, the second, like the right-hand side of (75), every predicate. -/
+/-- Where everyone met some but not all linguists, `[λ₀ t₀ met a linguist]` has both truth values
+as alternatives at every value of the variable: the first line of (74) gives it the constant
+predicates, the second every predicate. -/
 theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
     (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
     abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g = Set.range (Function.const E) ∧
@@ -595,6 +601,31 @@ theorem abstractChoice_met_linguist (ling : Set E) (met : E → E → Prop)
   refine ⟨fun ⟨f, hf⟩ ↦ ⟨f fun _ ↦ True, hf⟩, fun ⟨p, hp⟩ ↦ ?_⟩
   obtain ⟨f, hf⟩ := ChoiceFunction.exists_apply_eq (N := fun _ : Prop ↦ True) (x := p) trivial
   exact ⟨f, hf ▸ hp⟩
+
+/-- Footnote 25 asks only for nonempty alternatives, but a choice function picks the same member
+from equal sets: with two individuals who each met some but not all linguists, the two lines of
+(74) differ. -/
+theorem abstractChoice_ne_distribute [Nontrivial E] (ling : Set E) (met : E → E → Prop)
+    (h : ∀ x, (∃ y ∈ ling, met y x) ∧ ∃ y ∈ ling, ¬ met y x) (g : Assignment E) :
+    abstractChoice 0 (fun g ↦ (fun y ↦ met y (g 0)) '' ling) g ≠
+      (distribute (M := SetM) fun x ↦ (fun y ↦ met y x) '' ling).run := by
+  rw [(abstractChoice_met_linguist ling met h g).1, (abstractChoice_met_linguist ling met h g).2]
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  intro hc
+  obtain ⟨p, hp⟩ : (· = a) ∈ Set.range (Function.const E) := hc ▸ Set.mem_univ _
+  exact hab (((congrFun hp b).symm.trans (congrFun hp a)).mpr rfl).symm
+
+/-- The right-hand side of (75), a Skolemized choice function attached to the restrictor, is the
+second line of (74). -/
+theorem range_skolem_eq_distribute (ling : Set E) (met : E → E → Prop) (hling : ling.Nonempty) :
+    Set.range (fun F : E → ChoiceFunction E ↦ fun x ↦ met (F x (· ∈ ling)) x) =
+      (distribute (M := SetM) fun x ↦ (fun y ↦ met y x) '' ling).run := by
+  ext P
+  refine ⟨fun ⟨F, hF⟩ ↦ hF ▸ SetM.mem_run_distribute.2 fun x ↦
+    ⟨_, (F x).apply_of_exists hling, rfl⟩, fun hP ↦ ?_⟩
+  choose y hy hyP using fun x ↦ (SetM.mem_run_distribute.1 hP x : ∃ y ∈ ling, met y x = P x)
+  choose F hF using fun x ↦ ChoiceFunction.exists_apply_eq (N := (· ∈ ling)) (hy x)
+  exact ⟨F, funext fun x ↦ (congrArg (met · x) (hF x)).trans (hyP x)⟩
 
 end AlternativeSemantics
 
@@ -705,8 +736,8 @@ theorem readings_nobodyMet (g : Assignment E) :
       ⟨.bin (.tr 0) (.bin (.leaf ⟨(.met, ⟨.e ⇒ .e ⇒ .t, met⟩), _, rfl, rfl⟩)
         (.leaf ⟨(.aPhonologist, ⟨.e, y⟩), _, rfl, hy⟩)), rfl, rfl⟩, rfl⟩
 
-/-- Under the layering of (80) and (81), (77) has a true alternative exactly when nobody met some
-phonologist. -/
+/-- Under the layering of (80) and (81), (77) has a true alternative exactly when there is a
+phonologist nobody met, the wide-scope reading of the indefinite. -/
 theorem sSup_readings_nobodyMet_iff (g : Assignment E) :
     sSup {b : Prop | (⟨.t, b⟩ : Denotation E Unit Id) ∈
       Tree.readings (Tree.wordReadings (lexicon human phon met)) g nobodyMet} ↔
