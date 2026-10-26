@@ -3,7 +3,7 @@ module
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Pruning
 public import Linglib.Core.Algebra.RootedTree.Coproduct.WithCuts
 public import Linglib.Core.Data.UnorderedTree.Count
-public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceCut
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceCut
 public import Mathlib.LinearAlgebra.TensorProduct.Basic
 public import Mathlib.RingTheory.TensorProduct.Maps
 

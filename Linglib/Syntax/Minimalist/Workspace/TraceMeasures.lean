@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.Algebra.Coproduct.TraceConservation
+public import Linglib.Syntax.Minimalist.Workspace.Coproduct.TraceConservation
 
 /-!
 # Trace-aware size measures of workspaces

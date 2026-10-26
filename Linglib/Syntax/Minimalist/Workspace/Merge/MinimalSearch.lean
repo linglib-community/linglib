@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Workspace.Algebra.Merge.Internal
+public import Linglib.Syntax.Minimalist.Workspace.Merge.Internal
 public import Linglib.Core.Algebra.RootedTree.Coproduct.Primitive
 public import Mathlib.Algebra.Order.Monoid.Multiset
 
