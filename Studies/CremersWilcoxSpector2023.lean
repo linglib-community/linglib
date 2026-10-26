@@ -18,15 +18,20 @@ free strengthenings and the wonky-world models stay anti-exhaustive for suitable
 Grammatical lexical uncertainty and the lexical-intentions speaker keep the posterior of both
 below the prior whenever *A and B* costs no more than *A and not B*, and the supervaluationist
 model, which resolves the ambiguity through the question under discussion, does so whatever the
-costs. The experiment finds no anti-exhaustivity.
+costs. The experiment finds no anti-exhaustivity. Each model's section ends in its verdict, that
+its listener's posterior after *A* is `AntiExhaustive` exactly when a condition holds or always
+`Exhaustive`, except Degen and colleagues' wonky model, whose posterior (A.5a) the paper evaluates
+numerically.
 
 ## Main statements
 
-* `prior_lt_listener_iff`: the baseline listener is anti-exhaustive exactly when the prior log
-  odds exceed the cost disadvantage of *A and not B* (6b).
-* `svListener_fst_lt_prior`: the supervaluationist listener never is (Appendix A.3).
-* `luListener_exh_lt_prior`: nor is the grammatical lexical-uncertainty listener (§4.3).
-* `liListener_lt_prior`: nor is the lexical-intentions listener (§4.4).
+* `antiExhaustive_listener_iff`: the baseline listener is anti-exhaustive exactly when the prior
+  log odds exceed the cost disadvantage of *A and not B* (6b).
+* `antiExhaustive_bayesWonkyListener_iff`: the Bayesian wonky listener is, exactly when *A*'s use
+  in the world of both exceeds its use in the world of A alone, averaged over backgrounds (A.2).
+* `exhaustive_svListener`: the supervaluationist listener is exhaustive, whatever the costs (A.3).
+* `exhaustive_luListener`: the grammatical lexical-uncertainty listener is exhaustive (§4.3).
+* `exhaustive_liListener`: the lexical-intentions listener is exhaustive (§4.4).
 
 ## Implementation notes
 
@@ -34,6 +39,10 @@ costs. The experiment finds no anti-exhaustivity.
   interpretations, mapped to her answer and taken as one listener on pairs, as in `Spector2017`,
   under any prior on exhaustification. The paper fixes `P(i_exh) = 1/2` in its fit (Appendix
   B.3); Appendix A.3 needs only `P(i_exh) > 0`, and so do the theorems.
+* The wonky models take the listener's prior on the backgrounds as a measure, the paper's `ω`
+  being its mass on the wonky background. They share one speaker on pairs of a world and a
+  background and differ only in the listener's prior there, so their posteriors are (A.5a) and
+  (A.5b) (`wonkyListener_fst_real_wab`, `bayesWonkyListener_real_wab`).
 * Lexical uncertainty and lexical intentions take the interpretations equiprobable, as the paper's
   fits do (Appendices B.4, B.5). Each model's two descriptions in the paper, a joint posterior and
   the inverse of the averaged speaker, agree (`luJointListener_fst`, `bayesWonkyJointListener_fst`).
@@ -50,9 +59,9 @@ costs. The experiment finds no anti-exhaustivity.
 
 ## TODO
 
-* The non-Bayesian wonky model's limits in the prior and the Bayesian wonky model's wonkiness
-  threshold of Appendix A.2 (numerically, anti-exhaustivity for `p < .04` and `p ∈ [.57, .95]` at
-  `ω = 0.1`, and a threshold of about `0.9`).
+* The verdict on Degen and colleagues' model, which Appendix A.2 reaches numerically from (A.5a):
+  anti-exhaustivity for `p < .04` and `p ∈ [.57, .95]` at `ω = 0.1`; and the Bayesian model's
+  wonkiness threshold, about `0.9` (both checked numerically).
 * The second-level speakers, the production models svRSA1, svRSA2 and RSA-LI2 (Appendix B), and
   the experiment's results (§5).
 
@@ -327,6 +336,13 @@ theorem prior_real_wa : s.prior.real {.wa} = 1 - s.p := by
 theorem prior_real_wab : s.prior.real {.wab} = s.p := by
   rw [measureReal_def, prior_wab, ENNReal.toReal_ofReal s.p_pos.le]
 
+/-- A posterior over the worlds after *A* is anti-exhaustive when it puts more on the world of
+both than the prior does (6b). -/
+def AntiExhaustive (μ : Measure World) : Prop := s.prior.real {.wab} < μ.real {.wab}
+
+/-- It is exhaustive when it puts less. -/
+def Exhaustive (μ : Measure World) : Prop := μ.real {.wab} < s.prior.real {.wab}
+
 end Setting
 
 /-- The wonky prior is uniform over the two worlds. -/
@@ -536,242 +552,228 @@ theorem comp_speaker_literal_ne_zero (u : Message) : (s.speaker literal ∘ₘ s
 noncomputable def listener : Kernel Message World :=
   RSA.listener s.prior (s.speaker literal)
 
-theorem prior_lt_listener_iff_speaker_lt :
-    s.prior.real {.wab} < (listener s .a).real {.wab} ↔
+theorem antiExhaustive_listener_iff_speaker_lt :
+    s.AntiExhaustive (listener s .a) ↔
       (s.speaker literal .wa).real {.a} < (s.speaker literal .wab).real {.a} := by
-  rw [listener, RSA.listener_apply_eq_posterior _ _ (comp_speaker_literal_ne_zero s _)]
+  rw [Setting.AntiExhaustive, listener,
+    RSA.listener_apply_eq_posterior _ _ (comp_speaker_literal_ne_zero s _)]
   exact real_lt_posterior_real_singleton_iff_of_pair (s.speaker literal) s.prior (by decide)
     s.prior_support (comp_speaker_literal_ne_zero s _) (s.prior_ne_zero _) (s.prior_ne_zero _)
 
 /-- The listener is anti-exhaustive iff the prior log odds exceed the cost disadvantage of *A and
 not B* over *A and B*, whatever the rationality (6b). -/
-theorem prior_lt_listener_iff :
-    s.prior.real {.wab} < (listener s .a).real {.wab} ↔
+theorem antiExhaustive_listener_iff :
+    s.AntiExhaustive (listener s .a) ↔
       s.cAndNotB - s.cAndB < Real.log s.p - Real.log (1 - s.p) := by
-  rw [prior_lt_listener_iff_speaker_lt, Setting.speaker, speaker_literal_wa_a _ s.prior_ne_zero,
+  rw [antiExhaustive_listener_iff_speaker_lt, Setting.speaker,
+    speaker_literal_wa_a _ s.prior_ne_zero,
     speaker_literal_wab_a _ s.prior_ne_zero, Setting.prior_real_wa, Setting.prior_real_wab,
     s.logistic_lt_iff, sub_lt_sub_iff, add_comm (Real.log s.p)]
 
-theorem prior_lt_listener_iff_of_cost_eq (hc : s.cAndB = s.cAndNotB) :
-    s.prior.real {.wab} < (listener s .a).real {.wab} ↔ 1 / 2 < s.p := by
-  rw [prior_lt_listener_iff, hc, sub_self, sub_pos,
+theorem antiExhaustive_listener_iff_of_cost_eq (hc : s.cAndB = s.cAndNotB) :
+    s.AntiExhaustive (listener s .a) ↔ 1 / 2 < s.p := by
+  rw [antiExhaustive_listener_iff, hc, sub_self, sub_pos,
     Real.log_lt_log_iff (by linarith [s.p_lt_one]) s.p_pos]
   constructor <;> intro <;> linarith
 
 end Baseline
 
-/-! ### Lexical uncertainty (§4.3)
+/-! ### The wonky-world models (§4.1)
 
-The listener holds independent priors over worlds and interpretation functions, infers both from
-the message and marginalizes on the interpretation, which is to invert the speaker averaged over
-the interpretations (item 4). The grammatical version (EXH-LU) has the literal and the
-exhaustified interpretations, and the free version (FREE-LU) adds the anti-exhaustive one. -/
+The listener is unsure which prior over the worlds the speaker assumes: the measured one, or the
+uniform prior of a wonky background. Both models share the speaker, who assumes her background's
+prior (items 1 to 3), and differ only in the listener's prior over worlds and backgrounds. In
+Degen and colleagues' model she draws the background and then the world under it (item 4); in the
+Bayesian version she keeps the measured prior on the worlds, independent of the background (items
+4 and 5). Her prior on the backgrounds is `β`, whose mass on the wonky one is the paper's `ω`. -/
 
-section LexicalUncertainty
+section Wonky
 
-variable (s : Setting) {I : Type*} [Fintype I] [MeasurableSpace I] [MeasurableSingletonClass I]
-  (meaning : I → Meaning)
+variable (s : Setting) (β : Measure Background)
 
-/-- The speaker marginalised over equiprobable interpretation functions (item 4 of the §4.3
+/-- The speaker's prior is uniform in the wonky background and the measured one otherwise. -/
+noncomputable def worldPrior : Background → Measure World
+  | .wonky => wonkyPrior
+  | .measured => s.prior
+
+instance (b : Background) : IsProbabilityMeasure (worldPrior s b) := by
+  cases b <;> dsimp only [worldPrior] <;> infer_instance
+
+theorem worldPrior_ne_zero (b : Background) (w : World) : worldPrior s b {w} ≠ 0 := by
+  cases b
+  · exact wonkyPrior_ne_zero w
+  · exact s.prior_ne_zero w
+
+/-- The speaker under a background, with the background's prior in the literal listener
+(items 1 to 3 of the §4.1 model). -/
+noncomputable def bgSpeaker (b : Background) : Kernel World Message :=
+  speaker (worldPrior s b) literal s
+
+instance (b : Background) : IsFiniteKernel (bgSpeaker s b) :=
+  inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+
+theorem bgSpeaker_wonky_wab_a :
+    (bgSpeaker s .wonky .wab).real {.a} = s.logistic (s.cAndB - Real.log 2) := by
+  rw [bgSpeaker, speaker_literal_wab_a _ (worldPrior_ne_zero s .wonky), worldPrior,
+    wonkyPrior_real_singleton, Real.log_inv, ← sub_eq_add_neg]
+
+theorem bgSpeaker_wonky_wa_a :
+    (bgSpeaker s .wonky .wa).real {.a} = s.logistic (s.cAndNotB - Real.log 2) := by
+  rw [bgSpeaker, speaker_literal_wa_a _ (worldPrior_ne_zero s .wonky), worldPrior,
+    wonkyPrior_real_singleton, Real.log_inv, ← sub_eq_add_neg]
+
+theorem bgSpeaker_measured_wab_a :
+    (bgSpeaker s .measured .wab).real {.a} = s.logistic (s.cAndB + Real.log s.p) := by
+  rw [bgSpeaker, speaker_literal_wab_a _ (worldPrior_ne_zero s .measured), worldPrior,
+    Setting.prior_real_wab]
+
+theorem bgSpeaker_measured_wa_a :
+    (bgSpeaker s .measured .wa).real {.a} = s.logistic (s.cAndNotB + Real.log (1 - s.p)) := by
+  rw [bgSpeaker, speaker_literal_wa_a _ (worldPrior_ne_zero s .measured), worldPrior,
+    Setting.prior_real_wa]
+
+/-- The speaker at a world and a background. -/
+noncomputable def wonkySpeaker : Kernel (World × Background) Message :=
+  Kernel.ofFunOfCountable fun x ↦ bgSpeaker s x.2 x.1
+
+theorem wonkySpeaker_apply (x : World × Background) : wonkySpeaker s x = bgSpeaker s x.2 x.1 :=
+  rfl
+
+instance : IsFiniteKernel (wonkySpeaker s) :=
+  ⟨⟨1, ENNReal.one_lt_top, fun x ↦ by
+    rw [wonkySpeaker_apply, bgSpeaker, speaker, RSA.speaker]
+    exact Kernel.ofWeights_apply_univ_le_one _ _⟩⟩
+
+/-- The world given the background. -/
+noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountable (worldPrior s)
+
+instance : IsMarkovKernel (worldKernel s) :=
+  ⟨fun b ↦ by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+
+/-- The prior of Degen and colleagues' listener draws the background, then the world under it
+(item 4 of the §4.1 model). -/
+noncomputable def wonkyJoint : Measure (World × Background) :=
+  (β ⊗ₘ worldKernel s).map Prod.swap
+
+/-- The listener of Degen and colleagues' model (item 4 of the §4.1 model). -/
+noncomputable def wonkyListener : Kernel Message (World × Background) :=
+  RSA.listener (wonkyJoint s β) (wonkySpeaker s)
+
+/-- The Bayesian listener keeps the measured prior on the worlds, independent of the background
+(item 4 of the Bayesian §4.1 model). -/
+noncomputable def bayesWonkyJointListener : Kernel Message (World × Background) :=
+  RSA.listener (s.prior.prod β) (wonkySpeaker s)
+
+/-- The speaker averaged over the backgrounds (item 5 of the Bayesian §4.1 model). -/
+noncomputable def bayesWonkySpeaker : Kernel World Message := ∑ b, β {b} • bgSpeaker s b
+
+/-- The Bayesian listener as the inverse of the averaged speaker (item 5 of the Bayesian §4.1
 model). -/
-noncomputable def luSpeaker : Kernel World Message :=
-  ∑ i, uniformOn Set.univ {i} • s.speaker (meaning i)
+noncomputable def bayesWonkyListener : Kernel Message World :=
+  RSA.listener s.prior (bayesWonkySpeaker s β)
 
-instance : IsFiniteKernel (luSpeaker s meaning) :=
+/-- The speaker who surely assumes the measured prior is the baseline speaker (§4.1). -/
+theorem bayesWonkySpeaker_dirac_measured :
+    bayesWonkySpeaker s (Measure.dirac .measured) = s.speaker literal := by
+  ext1 w
+  simp [bayesWonkySpeaker, sum_background, bgSpeaker, worldPrior]
+
+/-- The two descriptions of the Bayesian model agree (items 4 and 5). -/
+theorem bayesWonkyJointListener_fst :
+    (bayesWonkyJointListener s β).fst = bayesWonkyListener s β := by
+  rw [bayesWonkyJointListener, RSA.listener_prod_fst, bayesWonkyListener]
+  congr 1
+
+variable [IsFiniteMeasure β]
+
+instance : IsFiniteMeasure (wonkyJoint s β) := by
+  unfold wonkyJoint; infer_instance
+
+instance : IsFiniteKernel (bayesWonkySpeaker s β) :=
   IsFiniteKernel.finsetSum _ fun _ _ ↦ IsFiniteKernel.smul_of_ne_top _ (measure_ne_top _ _)
 
-theorem luSpeaker_real_singleton (w : World) (u : Message) :
-    (luSpeaker s meaning w).real {u} =
-      (Fintype.card I : ℝ)⁻¹ * ∑ i, (s.speaker (meaning i) w).real {u} := by
-  simp only [luSpeaker, measureReal_def, sum_apply, smul_apply, Measure.finsetSum_apply,
-    Measure.smul_apply, smul_eq_mul, uniformOn_univ_apply_singleton, ← Finset.mul_sum]
-  rw [ENNReal.toReal_mul, ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _, ENNReal.toReal_inv,
-    ENNReal.toReal_natCast]
+omit [IsFiniteMeasure β] in
+theorem wonkyJoint_real_singleton (w : World) (b : Background) :
+    (wonkyJoint s β).real {(w, b)} = β.real {b} * (worldPrior s b).real {w} := by
+  rw [measureReal_def, wonkyJoint, Measure.map_apply measurable_swap (measurableSet_singleton _),
+    show Prod.swap ⁻¹' {(w, b)} = {(b, w)} by ext; exact Prod.swap_eq_iff_eq_swap,
+    Measure.compProd_apply_singleton,
+    worldKernel, Kernel.ofFunOfCountable_apply, ENNReal.toReal_mul, ← measureReal_def,
+    ← measureReal_def]
 
-theorem luSpeaker_apply_singleton_ne_zero_iff {w : World} {u : Message} :
-    luSpeaker s meaning w {u} ≠ 0 ↔ ∃ i, s.speaker (meaning i) w {u} ≠ 0 := by
-  simp [luSpeaker, Measure.finsetSum_apply, uniformOn_univ_singleton_ne_zero]
+theorem bayesWonkySpeaker_real_singleton (w : World) (u : Message) :
+    (bayesWonkySpeaker s β w).real {u} =
+      β.real {.wonky} * (bgSpeaker s .wonky w).real {u} +
+        β.real {.measured} * (bgSpeaker s .measured w).real {u} := by
+  simp only [bayesWonkySpeaker, measureReal_def, sum_apply, smul_apply, Measure.finsetSum_apply,
+    Measure.smul_apply, smul_eq_mul]
+  rw [sum_background,
+    ENNReal.toReal_add (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
+      (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+    ENNReal.toReal_mul, ENNReal.toReal_mul]
 
-variable [Nonempty I] in
-theorem comp_luSpeaker_ne_zero (u : Message) : (luSpeaker s meaning ∘ₘ s.prior) {u} ≠ 0 :=
-  let i := Classical.arbitrary I
-  let ⟨w, hw⟩ := (meaning i).exists_world u
-  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w)
-    ((luSpeaker_apply_singleton_ne_zero_iff s meaning).mpr
-      ⟨i, speaker_ne_zero _ s.prior_ne_zero _ s hw⟩)
-
-/-- The Bayesian inverse of the averaged speaker (item 4 of the §4.3 model). -/
-noncomputable def luListener : Kernel Message World := RSA.listener s.prior (luSpeaker s meaning)
-
-/-- The joint posterior over worlds and interpretation functions, under independent priors over
-the two. -/
-noncomputable def luJointListener : Kernel Message (World × I) :=
-  RSA.listener (s.prior.prod (uniformOn Set.univ)) fun p ↦ s.speaker (meaning p.2) p.1
-
-/-- The joint posterior marginalized on interpretation functions is the listener of item 4: the
-two descriptions of the model in §4.3 agree. -/
-theorem luJointListener_fst : (luJointListener s meaning).fst = luListener s meaning := by
-  rw [luJointListener, RSA.listener_prod_fst, luListener]
-  congr 1
-  ext w : 1
-  simp [luSpeaker]
-
-theorem luListener_exh_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
-    (luListener s Interpretation.meaning .a).real {.wab} < s.prior.real {.wab} := by
-  rw [luListener, RSA.listener_apply_eq_posterior _ _ (comp_luSpeaker_ne_zero s _ _),
-    posterior_real_singleton_lt_iff_of_pair _ _ (by decide) s.prior_support
-      (comp_luSpeaker_ne_zero s _ _) (s.prior_ne_zero _) (s.prior_ne_zero _),
-    luSpeaker_real_singleton, luSpeaker_real_singleton]
-  simp only [sum_interpretation, Interpretation.meaning]
-  rw [speaker_exhaustified_wab_a, speaker_exhaustified_wa_a, Setting.speaker,
-    speaker_literal_wab_a _ s.prior_ne_zero, speaker_literal_wa_a _ s.prior_ne_zero,
-    Setting.prior_real_wab, Setting.prior_real_wa]
-  have h₁ := s.logistic_lt (show s.cAndB + Real.log s.p < s.cAndNotB by
-    linarith [Real.log_neg s.p_pos s.p_lt_one])
-  have h₂ := s.logistic_nonneg (s.cAndNotB + Real.log (1 - s.p))
-  rw [show Fintype.card Interpretation = 2 from rfl, Nat.cast_ofNat]
-  linarith
-
-theorem prior_lt_luListener_free_iff :
-    s.prior.real {.wab} < (luListener s FreeInterpretation.meaning .a).real {.wab} ↔
-      s.logistic (s.cAndNotB + Real.log (1 - s.p)) + s.logistic s.cAndNotB <
-        s.logistic (s.cAndB + Real.log s.p) + s.logistic s.cAndB := by
-  rw [luListener, RSA.listener_apply_eq_posterior _ _ (comp_luSpeaker_ne_zero s _ _),
-    real_lt_posterior_real_singleton_iff_of_pair _ _ (by decide) s.prior_support
-      (comp_luSpeaker_ne_zero s _ _) (s.prior_ne_zero _) (s.prior_ne_zero _),
-    luSpeaker_real_singleton, luSpeaker_real_singleton]
-  simp only [sum_freeInterpretation, FreeInterpretation.meaning]
-  rw [speaker_exhaustified_wab_a, speaker_exhaustified_wa_a, speaker_antiExhaustive_wab_a,
-    speaker_antiExhaustive_wa_a, Setting.speaker, speaker_literal_wab_a _ s.prior_ne_zero,
-    speaker_literal_wa_a _ s.prior_ne_zero, Setting.prior_real_wab, Setting.prior_real_wa]
-  have hI : (0 : ℝ) < (Fintype.card FreeInterpretation : ℝ)⁻¹ := by positivity
-  constructor <;> intro h <;> nlinarith
-
-theorem prior_lt_luListener_free_iff_of_cost_eq (hc : s.cAndB = s.cAndNotB) :
-    s.prior.real {.wab} < (luListener s FreeInterpretation.meaning .a).real {.wab} ↔
-      1 / 2 < s.p := by
-  rw [prior_lt_luListener_free_iff, hc, add_lt_add_iff_right, s.logistic_lt_iff,
-    add_lt_add_iff_left, Real.log_lt_log_iff (by linarith [s.p_lt_one]) s.p_pos]
-  constructor <;> intro <;> linarith
-
-end LexicalUncertainty
-
-/-! ### Lexical intentions (§4.4) -/
-
-section LexicalIntentions
-
-variable (s : Setting)
-
-/-- The literal listener of a message under a chosen interpretation (item 1 of the §4.4
-model). -/
-noncomputable def liL0 : Kernel (Message × Interpretation) World :=
-  RSA.listener s.prior (RSA.truthful fun x ↦ x.2.meaning.extension x.1)
-
-instance : IsFiniteKernel (liL0 s) :=
-  inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
-
-theorem liL0_apply (x : Message × Interpretation) : liL0 s x = s.L0 x.2.meaning x.1 := by
-  rw [liL0, RSA.listener_truthful_apply]
-  exact (RSA.listener_truthful_apply _ _ _).symm
-
-/-- The speaker over messages and interpretations (item 3 of the §4.4 model). -/
-noncomputable def liSpeaker : Kernel World (Message × Interpretation) :=
-  RSA.speaker s.lam (fun x ↦ s.cost x.1) (liL0 s) Measure.dirac
-
-instance : IsFiniteKernel (liSpeaker s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
-
-/-- The speaker's messages, the interpretations marginalised (item 5 of the §4.4 model). -/
-noncomputable def liMessageSpeaker : Kernel World Message := (liSpeaker s).map Prod.fst
-
-instance : IsFiniteKernel (liMessageSpeaker s) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.map _ _))
-
-theorem liMessageSpeaker_apply_singleton (w : World) (u : Message) :
-    liMessageSpeaker s w {u} = liSpeaker s w {(u, .lit)} + liSpeaker s w {(u, .exh)} := by
-  rw [liMessageSpeaker, Kernel.map_apply _ measurable_fst]
-  exact (Measure.fst_apply_singleton (liSpeaker s w) u).trans (sum_interpretation _)
-
-theorem liMessageSpeaker_real_singleton (w : World) (u : Message) :
-    (liMessageSpeaker s w).real {u} =
-      (liSpeaker s w).real {(u, .lit)} + (liSpeaker s w).real {(u, .exh)} := by
-  rw [liMessageSpeaker, Kernel.map_apply _ measurable_fst]
-  exact (Measure.fst_real_singleton_eq_sum (liSpeaker s w) u).trans (sum_interpretation _)
-
-theorem liWeight_ne_top (w : World) (x : Message × Interpretation) :
-    liL0 s x {w} ^ s.lam * s.costFactor x.1 ≠ ∞ := by
-  rw [liL0_apply]
-  exact weight_ne_top s.prior x.2.meaning s x.1 w
-
-theorem liMessageSpeaker_real_wab_a :
-    (liMessageSpeaker s .wab).real {.a} =
-      Real.exp (s.lam * Real.log s.p) /
-        (Real.exp (s.lam * Real.log s.p) + 2 * Real.exp (-(s.lam * s.cAndB))) := by
-  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_dirac_eq_ofWeights,
-    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wab),
-    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wab), Fintype.sum_prod_type,
-    sum_message]
-  simp (disch := decide) only [sum_interpretation, liL0_apply, Interpretation.meaning, Setting.L0,
-    weight_toReal s.prior s.prior_ne_zero, weight_eq_zero s.prior, ENNReal.toReal_zero]
-  simp (disch := decide) only [L0_literal_a, L0_eq_one s.prior s.prior_ne_zero, ← measureReal_def,
-    Setting.prior_real_wab, ENNReal.toReal_one, Real.log_one, Setting.cost, sub_zero, zero_sub,
-    mul_neg, add_zero]
+/-- In Degen and colleagues' model the posterior on the world of both after *A* is (A.5a). -/
+theorem wonkyListener_fst_real_wab :
+    (wonkyListener s β .a).fst.real {.wab} =
+      (β.real {.measured} * s.p * s.logistic (s.cAndB + Real.log s.p) +
+          β.real {.wonky} * 2⁻¹ * s.logistic (s.cAndB - Real.log 2)) /
+        (β.real {.measured} * s.p * s.logistic (s.cAndB + Real.log s.p) +
+          β.real {.wonky} * 2⁻¹ * s.logistic (s.cAndB - Real.log 2) +
+          β.real {.measured} * (1 - s.p) * s.logistic (s.cAndNotB + Real.log (1 - s.p)) +
+          β.real {.wonky} * 2⁻¹ * s.logistic (s.cAndNotB - Real.log 2)) := by
+  rw [wonkyListener, RSA.listener_fst_real_singleton]
+  simp only [Fintype.sum_prod_type, sum_world, sum_background, wonkyJoint_real_singleton,
+    wonkySpeaker_apply, bgSpeaker_wonky_wab_a, bgSpeaker_wonky_wa_a, bgSpeaker_measured_wab_a,
+    bgSpeaker_measured_wa_a, worldPrior, wonkyPrior_real_singleton, Setting.prior_real_wa,
+    Setting.prior_real_wab]
   ring
 
-theorem liMessageSpeaker_real_wa_a :
-    (liMessageSpeaker s .wa).real {.a} =
-      (Real.exp (s.lam * Real.log (1 - s.p)) + 1) /
-        (Real.exp (s.lam * Real.log (1 - s.p)) + 1 + 2 * Real.exp (-(s.lam * s.cAndNotB))) := by
-  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_dirac_eq_ofWeights,
-    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wa),
-    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wa), Fintype.sum_prod_type,
-    sum_message]
-  simp (disch := decide) only [sum_interpretation, liL0_apply, Interpretation.meaning, Setting.L0,
-    weight_toReal s.prior s.prior_ne_zero, weight_eq_zero s.prior, ENNReal.toReal_zero]
-  simp (disch := decide) only [L0_literal_a, L0_eq_one s.prior s.prior_ne_zero, ← measureReal_def,
-    Setting.prior_real_wa, ENNReal.toReal_one, Real.log_one, Setting.cost, sub_zero, zero_sub,
-    mul_neg, mul_zero, Real.exp_zero, add_zero]
+/-- In the Bayesian model the posterior on the world of both after *A* is (A.5b). -/
+theorem bayesWonkyListener_real_wab :
+    (bayesWonkyListener s β .a).real {.wab} =
+      s.p * (β.real {.measured} * s.logistic (s.cAndB + Real.log s.p) +
+          β.real {.wonky} * s.logistic (s.cAndB - Real.log 2)) /
+        (s.p * (β.real {.measured} * s.logistic (s.cAndB + Real.log s.p) +
+            β.real {.wonky} * s.logistic (s.cAndB - Real.log 2)) +
+          (1 - s.p) * (β.real {.measured} * s.logistic (s.cAndNotB + Real.log (1 - s.p)) +
+            β.real {.wonky} * s.logistic (s.cAndNotB - Real.log 2))) := by
+  rw [bayesWonkyListener, RSA.listener_real_singleton]
+  simp only [sum_world, bayesWonkySpeaker_real_singleton, bgSpeaker_wonky_wab_a,
+    bgSpeaker_wonky_wa_a, bgSpeaker_measured_wab_a, bgSpeaker_measured_wa_a,
+    Setting.prior_real_wa, Setting.prior_real_wab]
   ring
 
-theorem liSpeaker_ne_zero {w : World} {u : Message} (hw : literal.sat u w = true) :
-    liSpeaker s w {(u, .lit)} ≠ 0 :=
-  RSA.speaker_dirac_apply_singleton_ne_zero s.lam_pos.le (by
-    rw [liL0_apply]
-    exact L0_ne_zero s.prior s.prior_ne_zero literal hw)
+/-- The Bayesian listener is anti-exhaustive exactly when the excess of *A*'s use in the world of
+both over the world of A alone, averaged over the backgrounds, is positive (Appendix A.2). -/
+theorem antiExhaustive_bayesWonkyListener_iff [IsProbabilityMeasure β] :
+    s.AntiExhaustive (bayesWonkyListener s β .a) ↔
+      0 < β.real {.measured} * (s.logistic (s.cAndB + Real.log s.p) -
+          s.logistic (s.cAndNotB + Real.log (1 - s.p))) +
+        β.real {.wonky} * (s.logistic (s.cAndB - Real.log 2) -
+          s.logistic (s.cAndNotB - Real.log 2)) := by
+  have hβ : β.real {.wonky} + β.real {.measured} = 1 := by
+    rw [← sum_background (fun b ↦ β.real {b}), sum_measureReal_singleton, Finset.coe_univ,
+      probReal_univ]
+  have hf (x : ℝ) : 0 < s.logistic x := Real.sigmoid_pos _
+  have hw := measureReal_nonneg (μ := β) (s := {.wonky})
+  have hm := measureReal_nonneg (μ := β) (s := {.measured})
+  have hp' : 0 < 1 - s.p := by linarith [s.p_lt_one]
+  have hX : 0 < β.real {.measured} * s.logistic (s.cAndB + Real.log s.p) +
+      β.real {.wonky} * s.logistic (s.cAndB - Real.log 2) := by
+    rcases (show 0 < β.real {.measured} ∨ 0 < β.real {.wonky} by
+      by_contra h; push Not at h; linarith) with h | h
+    · have := mul_nonneg hw (hf (s.cAndB - Real.log 2)).le
+      nlinarith [mul_pos h (hf (s.cAndB + Real.log s.p))]
+    · have := mul_nonneg hm (hf (s.cAndB + Real.log s.p)).le
+      nlinarith [mul_pos h (hf (s.cAndB - Real.log 2))]
+  have hY : 0 ≤ β.real {.measured} * s.logistic (s.cAndNotB + Real.log (1 - s.p)) +
+      β.real {.wonky} * s.logistic (s.cAndNotB - Real.log 2) := by
+    nlinarith [hf (s.cAndNotB + Real.log (1 - s.p)), hf (s.cAndNotB - Real.log 2)]
+  rw [Setting.AntiExhaustive, bayesWonkyListener_real_wab, Setting.prior_real_wab,
+    lt_div_iff₀ (by nlinarith [s.p_pos])]
+  constructor <;> intro h <;> nlinarith [mul_pos s.p_pos hp']
 
-theorem comp_liMessageSpeaker_ne_zero (u : Message) :
-    (liMessageSpeaker s ∘ₘ s.prior) {u} ≠ 0 :=
-  let ⟨w, hw⟩ := literal.exists_world u
-  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) (by
-    rw [liMessageSpeaker_apply_singleton]
-    exact ne_of_gt (lt_of_lt_of_le (pos_iff_ne_zero.mpr (liSpeaker_ne_zero s hw)) le_self_add))
-
-/-- The pragmatic listener of the lexical-intentions model (item 6 of the §4.4 model). -/
-noncomputable def liListener : Kernel Message World :=
-  RSA.listener s.prior (liMessageSpeaker s)
-
-/-- When *A and B* costs no more than *A and not B*, the speaker uses *A* less in the world of both
-than in the world of A alone (§4.4). -/
-theorem liMessageSpeaker_wab_lt_wa (hc : s.cAndB ≤ s.cAndNotB) :
-    (liMessageSpeaker s .wab).real {.a} < (liMessageSpeaker s .wa).real {.a} := by
-  rw [liMessageSpeaker_real_wab_a, liMessageSpeaker_real_wa_a,
-    div_lt_div_iff₀ (by positivity) (by positivity)]
-  have h₁ : Real.exp (s.lam * Real.log s.p) < 1 :=
-    Real.exp_lt_one_iff.mpr (mul_neg_of_pos_of_neg s.lam_pos (Real.log_neg s.p_pos s.p_lt_one))
-  have h₂ : Real.exp (-(s.lam * s.cAndNotB)) ≤ Real.exp (-(s.lam * s.cAndB)) :=
-    Real.exp_le_exp.mpr (by nlinarith [s.lam_pos])
-  have h₃ := Real.exp_pos (-(s.lam * s.cAndNotB))
-  have h₄ := Real.exp_pos (s.lam * Real.log (1 - s.p))
-  nlinarith [mul_lt_mul_of_pos_right h₁ h₃, mul_pos h₄ (Real.exp_pos (-(s.lam * s.cAndB)))]
-
-/-- So the listener is never anti-exhaustive (§4.4). -/
-theorem liListener_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
-    (liListener s .a).real {.wab} < s.prior.real {.wab} := by
-  rw [liListener, RSA.listener_apply_eq_posterior _ _ (comp_liMessageSpeaker_ne_zero s _),
-    posterior_real_singleton_lt_iff_of_pair _ _ (by decide) s.prior_support
-      (comp_liMessageSpeaker_ne_zero s _) (s.prior_ne_zero _) (s.prior_ne_zero _)]
-  exact liMessageSpeaker_wab_lt_wa s hc
-
-end LexicalIntentions
+end Wonky
 
 /-! ### The supervaluationist model (§4.2)
 
@@ -897,8 +899,8 @@ theorem comp_svSpeaker_ne_zero (u : Message) :
 
 /-- In the question-sensitive model the posterior of both A and B falls below its prior, for every
 prior, cost and prior on exhaustification that gives it positive mass (Appendix A.3). -/
-theorem svListener_fst_lt_prior [IsProbabilityMeasure ρ] (hν : ν {.exh} ≠ 0) :
-    (svListener s ρ ν .a).fst.real {.wab} < s.prior.real {.wab} := by
+theorem exhaustive_svListener [IsProbabilityMeasure ρ] (hν : ν {.exh} ≠ 0) :
+    s.Exhaustive (svListener s ρ ν .a).fst := by
   have hm : 0 < ∑ p, (svJoint s ρ).real {p} * (svSpeaker s ρ ν p).real {.a} := by
     rw [← Measure.comp_real_singleton]
     exact ENNReal.toReal_pos (comp_svSpeaker_ne_zero hρ _) (measure_ne_top _ _)
@@ -910,224 +912,226 @@ theorem svListener_fst_lt_prior [IsProbabilityMeasure ρ] (hν : ν {.exh} ≠ 0
   have hp' : 0 < 1 - s.p := by linarith [s.p_lt_one]
   have h0 : (svSpeaker s ρ ν (.wab, .fine)).real {.a} = 0 :=
     (measureReal_eq_zero_iff (measure_ne_top _ _)).mpr (svSpeaker_wab_fine_a hρ hν)
-  rw [svListener, RSA.listener_fst_real_singleton, div_lt_iff₀ hm]
+  rw [Setting.Exhaustive, svListener, RSA.listener_fst_real_singleton, div_lt_iff₀ hm]
   simp only [Fintype.sum_prod_type, sum_world, sum_qud, svJoint_real_singleton,
     Setting.prior_real_wa, Setting.prior_real_wab, h0, ← svSpeaker_coarse, mul_zero, add_zero]
   nlinarith [mul_pos (mul_pos (mul_pos s.p_pos hp') hqf) hy]
 
 end Supervaluationist
 
-/-! ### The wonky-world models (§4.1) -/
+/-! ### Lexical uncertainty (§4.3)
 
-section Wonky
+The listener holds independent priors over worlds and interpretation functions, infers both from
+the message and marginalizes on the interpretation, which is to invert the speaker averaged over
+the interpretations (item 4). The grammatical version (EXH-LU) has the literal and the
+exhaustified interpretations, and the free version (FREE-LU) adds the anti-exhaustive one. -/
 
-variable (s : Setting) (ω : ℝ) (hω₀ : 0 ≤ ω) (hω₁ : ω ≤ 1)
+section LexicalUncertainty
 
-/-- The speaker's prior is uniform in the wonky background and the measured one otherwise. -/
-noncomputable def worldPrior : Background → Measure World
-  | .wonky => wonkyPrior
-  | .measured => s.prior
+variable (s : Setting) {I : Type*} [Fintype I] [MeasurableSpace I] [MeasurableSingletonClass I]
+  (meaning : I → Meaning)
 
-instance (b : Background) : IsProbabilityMeasure (worldPrior s b) := by
-  cases b <;> dsimp only [worldPrior] <;> infer_instance
-
-theorem worldPrior_ne_zero (b : Background) (w : World) : worldPrior s b {w} ≠ 0 := by
-  cases b
-  · exact wonkyPrior_ne_zero w
-  · exact s.prior_ne_zero w
-
-/-- The speaker under a background, with the background's prior in the literal listener
-(items 1 to 3 of the §4.1 model). -/
-noncomputable def bgSpeaker (b : Background) : Kernel World Message :=
-  speaker (worldPrior s b) literal s
-
-instance (b : Background) : IsFiniteKernel (bgSpeaker s b) :=
-  inferInstanceAs (IsFiniteKernel (speaker _ _ _))
-
-theorem bgSpeaker_wonky_wab_a :
-    (bgSpeaker s .wonky .wab).real {.a} = s.logistic (s.cAndB - Real.log 2) := by
-  rw [bgSpeaker, speaker_literal_wab_a _ (worldPrior_ne_zero s .wonky), worldPrior,
-    wonkyPrior_real_singleton, Real.log_inv, ← sub_eq_add_neg]
-
-theorem bgSpeaker_wonky_wa_a :
-    (bgSpeaker s .wonky .wa).real {.a} = s.logistic (s.cAndNotB - Real.log 2) := by
-  rw [bgSpeaker, speaker_literal_wa_a _ (worldPrior_ne_zero s .wonky), worldPrior,
-    wonkyPrior_real_singleton, Real.log_inv, ← sub_eq_add_neg]
-
-theorem bgSpeaker_measured_wab_a :
-    (bgSpeaker s .measured .wab).real {.a} = s.logistic (s.cAndB + Real.log s.p) := by
-  rw [bgSpeaker, speaker_literal_wab_a _ (worldPrior_ne_zero s .measured), worldPrior,
-    Setting.prior_real_wab]
-
-theorem bgSpeaker_measured_wa_a :
-    (bgSpeaker s .measured .wa).real {.a} = s.logistic (s.cAndNotB + Real.log (1 - s.p)) := by
-  rw [bgSpeaker, speaker_literal_wa_a _ (worldPrior_ne_zero s .measured), worldPrior,
-    Setting.prior_real_wa]
-
-/-- The wonky background has weight the wonkiness `ω`, and the measured one `1 - ω`. -/
-noncomputable def bgWeight : Background → ℝ≥0∞
-  | .wonky => ENNReal.ofReal ω
-  | .measured => ENNReal.ofReal (1 - ω)
-
-theorem bgWeight_ne_top (b : Background) : bgWeight ω b ≠ ∞ := by
-  cases b <;> exact ENNReal.ofReal_ne_top
-
-theorem bgWeight_exists_ne_zero : ∃ b, bgWeight ω b ≠ 0 :=
-  (le_or_gt ω 0).elim (fun h ↦ ⟨.measured, by simp [bgWeight]; linarith⟩)
-    (fun h ↦ ⟨.wonky, by simp [bgWeight, h]⟩)
-
-/-- The prior on backgrounds puts `ω` on the wonky background and `1 - ω` on the measured
-one. -/
-noncomputable def bgPrior : Measure Background := ∑ b, bgWeight ω b • Measure.dirac b
-
-theorem bgPrior_apply_singleton (b : Background) : bgPrior ω {b} = bgWeight ω b :=
-  Measure.sum_smul_dirac_apply_singleton _ b
-
-instance : IsFiniteMeasure (bgPrior ω) :=
-  ⟨by
-    rw [bgPrior, Measure.finsetSum_apply]
-    exact ENNReal.sum_lt_top.mpr fun b _ ↦ by
-      rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
-      exact (bgWeight_ne_top ω b).lt_top⟩
-
-/-- The speaker marginalised over the listener's uncertainty about the speaker's prior (item 5
-of the §4.1 model, the Bayesian version). -/
-noncomputable def bayesWonkySpeaker : Kernel World Message :=
-  ∑ b, bgWeight ω b • bgSpeaker s b
-
-instance : IsFiniteKernel (bayesWonkySpeaker s ω) :=
-  IsFiniteKernel.finsetSum _ fun b _ ↦ IsFiniteKernel.smul_of_ne_top _ (bgWeight_ne_top ω b)
-
-include hω₀ hω₁ in
-theorem bayesWonkySpeaker_real_singleton (w : World) (u : Message) :
-    (bayesWonkySpeaker s ω w).real {u} =
-      ω * (bgSpeaker s .wonky w).real {u} + (1 - ω) * (bgSpeaker s .measured w).real {u} := by
-  simp only [bayesWonkySpeaker, measureReal_def, sum_apply, smul_apply, Measure.finsetSum_apply,
-    Measure.smul_apply, smul_eq_mul]
-  rw [sum_background,
-    ENNReal.toReal_add (ENNReal.mul_ne_top (bgWeight_ne_top ω _) (measure_ne_top _ _))
-      (ENNReal.mul_ne_top (bgWeight_ne_top ω _) (measure_ne_top _ _)),
-    ENNReal.toReal_mul, ENNReal.toReal_mul]
-  simp only [bgWeight, ENNReal.toReal_ofReal hω₀, ENNReal.toReal_ofReal (sub_nonneg.mpr hω₁)]
-
-theorem bayesWonkySpeaker_zero (w : World) : bayesWonkySpeaker s 0 w = s.speaker literal w := by
-  simp [bayesWonkySpeaker, sum_background, bgWeight, bgSpeaker, worldPrior]
-
-theorem comp_bayesWonkySpeaker_ne_zero (u : Message) :
-    (bayesWonkySpeaker s ω ∘ₘ s.prior) {u} ≠ 0 := by
-  obtain ⟨w, hw⟩ := literal.exists_world u
-  obtain ⟨b, hb⟩ := bgWeight_exists_ne_zero ω
-  refine Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) ?_
-  simp only [bayesWonkySpeaker, sum_apply, smul_apply, Measure.finsetSum_apply,
-    Measure.smul_apply, smul_eq_mul, ne_eq, Finset.sum_eq_zero_iff, Finset.mem_univ,
-    true_implies, mul_eq_zero, not_forall, not_or]
-  exact ⟨b, hb, speaker_ne_zero _ (worldPrior_ne_zero s b) _ s hw⟩
-
-/-- The Bayesian wonky listener, with the measured prior (item 5 of the Bayesian §4.1
+/-- The speaker marginalised over equiprobable interpretation functions (item 4 of the §4.3
 model). -/
-noncomputable def bayesWonkyListener : Kernel Message World :=
-  RSA.listener s.prior (bayesWonkySpeaker s ω)
+noncomputable def luSpeaker : Kernel World Message :=
+  ∑ i, uniformOn Set.univ {i} • s.speaker (meaning i)
 
-/-- The joint posterior over worlds and the speaker's background, with the measured prior on
-worlds independent of the prior on backgrounds (item 4 of the Bayesian §4.1 model). -/
-noncomputable def bayesWonkyJointListener : Kernel Message (World × Background) :=
-  RSA.listener (s.prior.prod (bgPrior ω)) fun p ↦ bgSpeaker s p.2 p.1
+instance : IsFiniteKernel (luSpeaker s meaning) :=
+  IsFiniteKernel.finsetSum _ fun _ _ ↦ IsFiniteKernel.smul_of_ne_top _ (measure_ne_top _ _)
 
-theorem bayesWonkyJointListener_fst :
-    (bayesWonkyJointListener s ω).fst = bayesWonkyListener s ω := by
-  rw [bayesWonkyJointListener, RSA.listener_prod_fst, bayesWonkyListener]
+theorem luSpeaker_real_singleton (w : World) (u : Message) :
+    (luSpeaker s meaning w).real {u} =
+      (Fintype.card I : ℝ)⁻¹ * ∑ i, (s.speaker (meaning i) w).real {u} := by
+  simp only [luSpeaker, measureReal_def, sum_apply, smul_apply, Measure.finsetSum_apply,
+    Measure.smul_apply, smul_eq_mul, uniformOn_univ_apply_singleton, ← Finset.mul_sum]
+  rw [ENNReal.toReal_mul, ENNReal.toReal_sum fun _ _ ↦ measure_ne_top _ _, ENNReal.toReal_inv,
+    ENNReal.toReal_natCast]
+
+theorem luSpeaker_apply_singleton_ne_zero_iff {w : World} {u : Message} :
+    luSpeaker s meaning w {u} ≠ 0 ↔ ∃ i, s.speaker (meaning i) w {u} ≠ 0 := by
+  simp [luSpeaker, Measure.finsetSum_apply, uniformOn_univ_singleton_ne_zero]
+
+variable [Nonempty I] in
+theorem comp_luSpeaker_ne_zero (u : Message) : (luSpeaker s meaning ∘ₘ s.prior) {u} ≠ 0 :=
+  let i := Classical.arbitrary I
+  let ⟨w, hw⟩ := (meaning i).exists_world u
+  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w)
+    ((luSpeaker_apply_singleton_ne_zero_iff s meaning).mpr
+      ⟨i, speaker_ne_zero _ s.prior_ne_zero _ s hw⟩)
+
+/-- The Bayesian inverse of the averaged speaker (item 4 of the §4.3 model). -/
+noncomputable def luListener : Kernel Message World := RSA.listener s.prior (luSpeaker s meaning)
+
+/-- The joint posterior over worlds and interpretation functions, under independent priors over
+the two. -/
+noncomputable def luJointListener : Kernel Message (World × I) :=
+  RSA.listener (s.prior.prod (uniformOn Set.univ)) fun p ↦ s.speaker (meaning p.2) p.1
+
+/-- The joint posterior marginalized on interpretation functions is the listener of item 4: the
+two descriptions of the model in §4.3 agree. -/
+theorem luJointListener_fst : (luJointListener s meaning).fst = luListener s meaning := by
+  rw [luJointListener, RSA.listener_prod_fst, luListener]
   congr 1
   ext w : 1
-  simp [bayesWonkySpeaker, bgPrior_apply_singleton]
+  simp [luSpeaker]
 
-include hω₀ hω₁ in
-/-- The Bayesian wonky listener is anti-exhaustive iff the wonkiness-weighted excess of *A*'s use in
-the world of both over the world of A alone is positive (Appendix A.2). -/
-theorem prior_lt_bayesWonkyListener_iff :
-    s.prior.real {.wab} < (bayesWonkyListener s ω .a).real {.wab} ↔
-      0 < (1 - ω) * (s.logistic (s.cAndB + Real.log s.p) -
-          s.logistic (s.cAndNotB + Real.log (1 - s.p))) +
-        ω * (s.logistic (s.cAndB - Real.log 2) - s.logistic (s.cAndNotB - Real.log 2)) := by
-  rw [bayesWonkyListener,
-    RSA.listener_apply_eq_posterior _ _ (comp_bayesWonkySpeaker_ne_zero s ω _),
-    real_lt_posterior_real_singleton_iff_of_pair _ _ (by decide)
-      s.prior_support (comp_bayesWonkySpeaker_ne_zero s ω _) (s.prior_ne_zero _)
-      (s.prior_ne_zero _),
-    bayesWonkySpeaker_real_singleton s ω hω₀ hω₁, bayesWonkySpeaker_real_singleton s ω hω₀ hω₁,
-    bgSpeaker_wonky_wab_a, bgSpeaker_wonky_wa_a, bgSpeaker_measured_wab_a,
-    bgSpeaker_measured_wa_a]
+theorem exhaustive_luListener (hc : s.cAndB ≤ s.cAndNotB) :
+    s.Exhaustive (luListener s Interpretation.meaning .a) := by
+  rw [Setting.Exhaustive, luListener,
+    RSA.listener_apply_eq_posterior _ _ (comp_luSpeaker_ne_zero s _ _),
+    posterior_real_singleton_lt_iff_of_pair _ _ (by decide) s.prior_support
+      (comp_luSpeaker_ne_zero s _ _) (s.prior_ne_zero _) (s.prior_ne_zero _),
+    luSpeaker_real_singleton, luSpeaker_real_singleton]
+  simp only [sum_interpretation, Interpretation.meaning]
+  rw [speaker_exhaustified_wab_a, speaker_exhaustified_wa_a, Setting.speaker,
+    speaker_literal_wab_a _ s.prior_ne_zero, speaker_literal_wa_a _ s.prior_ne_zero,
+    Setting.prior_real_wab, Setting.prior_real_wa]
+  have h₁ := s.logistic_lt (show s.cAndB + Real.log s.p < s.cAndNotB by
+    linarith [Real.log_neg s.p_pos s.p_lt_one])
+  have h₂ := s.logistic_nonneg (s.cAndNotB + Real.log (1 - s.p))
+  rw [show Fintype.card Interpretation = 2 from rfl, Nat.cast_ofNat]
+  linarith
+
+theorem antiExhaustive_luListener_free_iff :
+    s.AntiExhaustive (luListener s FreeInterpretation.meaning .a) ↔
+      s.logistic (s.cAndNotB + Real.log (1 - s.p)) + s.logistic s.cAndNotB <
+        s.logistic (s.cAndB + Real.log s.p) + s.logistic s.cAndB := by
+  rw [Setting.AntiExhaustive, luListener,
+    RSA.listener_apply_eq_posterior _ _ (comp_luSpeaker_ne_zero s _ _),
+    real_lt_posterior_real_singleton_iff_of_pair _ _ (by decide) s.prior_support
+      (comp_luSpeaker_ne_zero s _ _) (s.prior_ne_zero _) (s.prior_ne_zero _),
+    luSpeaker_real_singleton, luSpeaker_real_singleton]
+  simp only [sum_freeInterpretation, FreeInterpretation.meaning]
+  rw [speaker_exhaustified_wab_a, speaker_exhaustified_wa_a, speaker_antiExhaustive_wab_a,
+    speaker_antiExhaustive_wa_a, Setting.speaker, speaker_literal_wab_a _ s.prior_ne_zero,
+    speaker_literal_wa_a _ s.prior_ne_zero, Setting.prior_real_wab, Setting.prior_real_wa]
+  have hI : (0 : ℝ) < (Fintype.card FreeInterpretation : ℝ)⁻¹ := by positivity
   constructor <;> intro h <;> nlinarith
 
-/-- The world given the background. -/
-noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountable (worldPrior s)
+theorem antiExhaustive_luListener_free_iff_of_cost_eq (hc : s.cAndB = s.cAndNotB) :
+    s.AntiExhaustive (luListener s FreeInterpretation.meaning .a) ↔ 1 / 2 < s.p := by
+  rw [antiExhaustive_luListener_free_iff, hc, add_lt_add_iff_right, s.logistic_lt_iff,
+    add_lt_add_iff_left, Real.log_lt_log_iff (by linarith [s.p_lt_one]) s.p_pos]
+  constructor <;> intro <;> linarith
 
-instance : IsMarkovKernel (worldKernel s) :=
-  ⟨fun b ↦ by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+end LexicalUncertainty
 
-/-- The prior of the non-Bayesian model draws the background, then the world under it (item 4
-of the §4.1 model). -/
-noncomputable def wonkyJoint : Measure (Background × World) := bgPrior ω ⊗ₘ worldKernel s
+/-! ### Lexical intentions (§4.4) -/
 
-instance : IsFiniteMeasure (wonkyJoint s ω) :=
-  inferInstanceAs (IsFiniteMeasure (bgPrior ω ⊗ₘ worldKernel s))
+section LexicalIntentions
 
-theorem wonkyJoint_apply_singleton (b : Background) (w : World) :
-    wonkyJoint s ω {(b, w)} = bgWeight ω b * worldPrior s b {w} := by
-  rw [wonkyJoint, Measure.compProd_apply_singleton, bgPrior_apply_singleton, worldKernel,
-    Kernel.ofFunOfCountable_apply]
+variable (s : Setting)
 
-theorem wonkyJoint_real_singleton (b : Background) (w : World) :
-    (wonkyJoint s ω).real {(b, w)} = (bgWeight ω b).toReal * (worldPrior s b).real {w} := by
-  rw [measureReal_def, wonkyJoint_apply_singleton, ENNReal.toReal_mul, measureReal_def]
+/-- The literal listener of a message under a chosen interpretation (item 1 of the §4.4
+model). -/
+noncomputable def liL0 : Kernel (Message × Interpretation) World :=
+  RSA.listener s.prior (RSA.truthful fun x ↦ x.2.meaning.extension x.1)
 
-/-- The speaker of the non-Bayesian model, at a background and a world. -/
-noncomputable def wonkySpeaker : Kernel (Background × World) Message :=
-  Kernel.ofFunOfCountable fun x ↦ bgSpeaker s x.1 x.2
+instance : IsFiniteKernel (liL0 s) :=
+  inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
 
-theorem wonkySpeaker_apply (x : Background × World) : wonkySpeaker s x = bgSpeaker s x.1 x.2 :=
-  rfl
+theorem liL0_apply (x : Message × Interpretation) : liL0 s x = s.L0 x.2.meaning x.1 := by
+  rw [liL0, RSA.listener_truthful_apply]
+  exact (RSA.listener_truthful_apply _ _ _).symm
 
-instance : IsFiniteKernel (wonkySpeaker s) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun x ↦ by
-    rw [wonkySpeaker_apply, bgSpeaker, speaker, RSA.speaker]
-    exact Kernel.ofWeights_apply_univ_le_one _ _⟩⟩
+/-- The speaker over messages and interpretations (item 3 of the §4.4 model). -/
+noncomputable def liSpeaker : Kernel World (Message × Interpretation) :=
+  RSA.speaker s.lam (fun x ↦ s.cost x.1) (liL0 s) Measure.dirac
 
-theorem wonkySpeaker_ne_zero {w : World} {u : Message} (b : Background)
-    (hw : literal.sat u w = true) : wonkySpeaker s (b, w) {u} ≠ 0 := by
-  rw [wonkySpeaker_apply]
-  exact speaker_ne_zero _ (worldPrior_ne_zero s _) _ s hw
+instance : IsFiniteKernel (liSpeaker s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
-theorem comp_wonkySpeaker_ne_zero (u : Message) : (wonkySpeaker s ∘ₘ wonkyJoint s ω) {u} ≠ 0 :=
+/-- The speaker's messages, the interpretations marginalised (item 5 of the §4.4 model). -/
+noncomputable def liMessageSpeaker : Kernel World Message := (liSpeaker s).map Prod.fst
+
+instance : IsFiniteKernel (liMessageSpeaker s) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.map _ _))
+
+theorem liMessageSpeaker_apply_singleton (w : World) (u : Message) :
+    liMessageSpeaker s w {u} = liSpeaker s w {(u, .lit)} + liSpeaker s w {(u, .exh)} := by
+  rw [liMessageSpeaker, Kernel.map_apply _ measurable_fst]
+  exact (Measure.fst_apply_singleton (liSpeaker s w) u).trans (sum_interpretation _)
+
+theorem liMessageSpeaker_real_singleton (w : World) (u : Message) :
+    (liMessageSpeaker s w).real {u} =
+      (liSpeaker s w).real {(u, .lit)} + (liSpeaker s w).real {(u, .exh)} := by
+  rw [liMessageSpeaker, Kernel.map_apply _ measurable_fst]
+  exact (Measure.fst_real_singleton_eq_sum (liSpeaker s w) u).trans (sum_interpretation _)
+
+theorem liWeight_ne_top (w : World) (x : Message × Interpretation) :
+    liL0 s x {w} ^ s.lam * s.costFactor x.1 ≠ ∞ := by
+  rw [liL0_apply]
+  exact weight_ne_top s.prior x.2.meaning s x.1 w
+
+theorem liMessageSpeaker_real_wab_a :
+    (liMessageSpeaker s .wab).real {.a} =
+      Real.exp (s.lam * Real.log s.p) /
+        (Real.exp (s.lam * Real.log s.p) + 2 * Real.exp (-(s.lam * s.cAndB))) := by
+  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_dirac_eq_ofWeights,
+    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wab),
+    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wab), Fintype.sum_prod_type,
+    sum_message]
+  simp (disch := decide) only [sum_interpretation, liL0_apply, Interpretation.meaning, Setting.L0,
+    weight_toReal s.prior s.prior_ne_zero, weight_eq_zero s.prior, ENNReal.toReal_zero]
+  simp (disch := decide) only [L0_literal_a, L0_eq_one s.prior s.prior_ne_zero, ← measureReal_def,
+    Setting.prior_real_wab, ENNReal.toReal_one, Real.log_one, Setting.cost, sub_zero, zero_sub,
+    mul_neg, add_zero]
+  ring
+
+theorem liMessageSpeaker_real_wa_a :
+    (liMessageSpeaker s .wa).real {.a} =
+      (Real.exp (s.lam * Real.log (1 - s.p)) + 1) /
+        (Real.exp (s.lam * Real.log (1 - s.p)) + 1 + 2 * Real.exp (-(s.lam * s.cAndNotB))) := by
+  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_dirac_eq_ofWeights,
+    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wa),
+    Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wa), Fintype.sum_prod_type,
+    sum_message]
+  simp (disch := decide) only [sum_interpretation, liL0_apply, Interpretation.meaning, Setting.L0,
+    weight_toReal s.prior s.prior_ne_zero, weight_eq_zero s.prior, ENNReal.toReal_zero]
+  simp (disch := decide) only [L0_literal_a, L0_eq_one s.prior s.prior_ne_zero, ← measureReal_def,
+    Setting.prior_real_wa, ENNReal.toReal_one, Real.log_one, Setting.cost, sub_zero, zero_sub,
+    mul_neg, mul_zero, Real.exp_zero, add_zero]
+  ring
+
+theorem liSpeaker_ne_zero {w : World} {u : Message} (hw : literal.sat u w = true) :
+    liSpeaker s w {(u, .lit)} ≠ 0 :=
+  RSA.speaker_dirac_apply_singleton_ne_zero s.lam_pos.le (by
+    rw [liL0_apply]
+    exact L0_ne_zero s.prior s.prior_ne_zero literal hw)
+
+theorem comp_liMessageSpeaker_ne_zero (u : Message) :
+    (liMessageSpeaker s ∘ₘ s.prior) {u} ≠ 0 :=
   let ⟨w, hw⟩ := literal.exists_world u
-  let ⟨b, hb⟩ := bgWeight_exists_ne_zero ω
-  have hj : wonkyJoint s ω {(b, w)} ≠ 0 := by
-    rw [wonkyJoint_apply_singleton]; exact mul_ne_zero hb (worldPrior_ne_zero s b w)
-  Measure.comp_apply_singleton_ne_zero _ _ hj (wonkySpeaker_ne_zero s b hw)
+  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) (by
+    rw [liMessageSpeaker_apply_singleton]
+    exact ne_of_gt (lt_of_lt_of_le (pos_iff_ne_zero.mpr (liSpeaker_ne_zero s hw)) le_self_add))
 
-/-- The non-Bayesian listener, uncertain about the background and the world jointly (item 4
-of the §4.1 model). -/
-noncomputable def wonkyListener : Kernel Message (Background × World) :=
-  RSA.listener (wonkyJoint s ω) (wonkySpeaker s)
+/-- The pragmatic listener of the lexical-intentions model (item 6 of the §4.4 model). -/
+noncomputable def liListener : Kernel Message World :=
+  RSA.listener s.prior (liMessageSpeaker s)
 
-include hω₀ hω₁ in
-theorem prior_lt_wonkyListener_iff :
-    s.prior.real {.wab} < (wonkyListener s ω .a).snd.real {.wab} ↔
-      s.p * (ω * 2⁻¹ * (s.logistic (s.cAndNotB - Real.log 2) + s.logistic (s.cAndB - Real.log 2)) +
-        (1 - ω) * ((1 - s.p) * s.logistic (s.cAndNotB + Real.log (1 - s.p)) +
-          s.p * s.logistic (s.cAndB + Real.log s.p))) <
-      ω * 2⁻¹ * s.logistic (s.cAndB - Real.log 2) +
-        (1 - ω) * (s.p * s.logistic (s.cAndB + Real.log s.p)) := by
-  have hm : 0 < ∑ p, (wonkyJoint s ω).real {p} * (wonkySpeaker s p).real {.a} := by
-    rw [← Measure.comp_real_singleton]
-    exact ENNReal.toReal_pos (comp_wonkySpeaker_ne_zero s ω _) (measure_ne_top _ _)
-  rw [wonkyListener, RSA.listener_snd_real_singleton, lt_div_iff₀ hm]
-  simp only [Fintype.sum_prod_type, sum_background, sum_world, wonkyJoint_real_singleton,
-    wonkySpeaker_apply, bgSpeaker_wonky_wab_a, bgSpeaker_wonky_wa_a, bgSpeaker_measured_wab_a,
-    bgSpeaker_measured_wa_a, bgWeight, ENNReal.toReal_ofReal hω₀,
-    ENNReal.toReal_ofReal (sub_nonneg.mpr hω₁), worldPrior, wonkyPrior_real_singleton,
-    Setting.prior_real_wa, Setting.prior_real_wab]
-  constructor <;> intro h <;> linarith
+/-- When *A and B* costs no more than *A and not B*, the speaker uses *A* less in the world of both
+than in the world of A alone (§4.4). -/
+theorem liMessageSpeaker_wab_lt_wa (hc : s.cAndB ≤ s.cAndNotB) :
+    (liMessageSpeaker s .wab).real {.a} < (liMessageSpeaker s .wa).real {.a} := by
+  rw [liMessageSpeaker_real_wab_a, liMessageSpeaker_real_wa_a,
+    div_lt_div_iff₀ (by positivity) (by positivity)]
+  have h₁ : Real.exp (s.lam * Real.log s.p) < 1 :=
+    Real.exp_lt_one_iff.mpr (mul_neg_of_pos_of_neg s.lam_pos (Real.log_neg s.p_pos s.p_lt_one))
+  have h₂ : Real.exp (-(s.lam * s.cAndNotB)) ≤ Real.exp (-(s.lam * s.cAndB)) :=
+    Real.exp_le_exp.mpr (by nlinarith [s.lam_pos])
+  have h₃ := Real.exp_pos (-(s.lam * s.cAndNotB))
+  have h₄ := Real.exp_pos (s.lam * Real.log (1 - s.p))
+  nlinarith [mul_lt_mul_of_pos_right h₁ h₃, mul_pos h₄ (Real.exp_pos (-(s.lam * s.cAndB)))]
 
-end Wonky
+/-- So the listener is never anti-exhaustive (§4.4). -/
+theorem exhaustive_liListener (hc : s.cAndB ≤ s.cAndNotB) :
+    s.Exhaustive (liListener s .a) := by
+  rw [Setting.Exhaustive, liListener,
+    RSA.listener_apply_eq_posterior _ _ (comp_liMessageSpeaker_ne_zero s _),
+    posterior_real_singleton_lt_iff_of_pair _ _ (by decide) s.prior_support
+      (comp_liMessageSpeaker_ne_zero s _) (s.prior_ne_zero _) (s.prior_ne_zero _)]
+  exact liMessageSpeaker_wab_lt_wa s hc
+
+end LexicalIntentions
 
 end CremersWilcoxSpector2023
