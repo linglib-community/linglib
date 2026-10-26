@@ -6,8 +6,7 @@ public import Linglib.Syntax.Category.Particle.Additive
 # Hindi-Urdu focus particles
 
 The additive particle *bhii* 'also, even' follows the phrase it adds; on the indefinite *koii*
-'someone' it gives *koii bhii* 'anybody'. Repeated after each of two conjuncts it is the
-coordinator `HindiUrdu.Coordination.bhii`.
+'someone' it gives *koii bhii* 'anybody'.
 
 ## Main definitions
 
