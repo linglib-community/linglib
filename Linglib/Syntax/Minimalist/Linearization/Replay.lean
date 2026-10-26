@@ -168,18 +168,10 @@ theorem Step.replay?_map (hf : Function.Injective f) (hτ : ∀ s, τ' (s.map f)
     (step : Step) (c : Cfg LinearizedSyntacticObject) :
     (step.map f).replay? (c.map (LinearizedSyntacticObject.map f)) τ' =
       (step.replay? c τ).map (Cfg.map (LinearizedSyntacticObject.map f)) := by
-  obtain ⟨p, st⟩ := c
-  cases step with
-  | em side item => simp [Step.map, Step.replay?, Cfg.map]
-  | im mover side =>
+  rcases c with ⟨p, _ | ⟨m, st⟩⟩ <;> cases step <;>
     simp [Step.map, Step.replay?, Cfg.map, LinearizedSyntacticObject.find?_map hf,
       LinearizedSyntacticObject.replace_map hf, SyntacticObject.traceLinearized_map hτ,
       Function.comp_def]
-  | extract mover =>
-    simp [Step.map, Step.replay?, Cfg.map, LinearizedSyntacticObject.find?_map hf,
-      LinearizedSyntacticObject.replace_map hf, SyntacticObject.traceLinearized_map hτ,
-      Function.comp_def]
-  | remerge side => cases st <;> simp [Step.map, Step.replay?, Cfg.map]
 
 namespace Derivation
 
