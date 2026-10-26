@@ -63,7 +63,7 @@ def satsu : Classifier := { toMorph := .suff "satsu", script := some "冊" }
 /-- *-tsubu* 粒, grains. -/
 def tsubu : Classifier := { toMorph := .suff "tsubu", script := some "粒" }
 
-/-- *-dai* 台, machines and vehicles. -/
+/-- *-dai* 台, furniture, machines, and land and air vehicles. -/
 def dai : Classifier := { toMorph := .suff "dai", script := some "台" }
 
 /-- *-ken* 軒, buildings. -/
@@ -114,8 +114,8 @@ def shoku : Classifier := { toMorph := .suff "shoku", script := some "食" }
 /-- *-teki* 滴, drops. -/
 def teki : Classifier := { toMorph := .suff "teki", script := some "滴" }
 
-/-- *-sao* 竿, poles. -/
-def sao : Classifier := { toMorph := .suff "sao", script := some "竿" }
+/-- *-sao* 棹, chests, flags and stick-shaped sweets. -/
+def sao : Classifier := { toMorph := .suff "sao", script := some "棹" }
 
 /-- *-wa* 羽, birds. -/
 def wa : Classifier := { toMorph := .suff "wa", script := some "羽" }
@@ -123,13 +123,13 @@ def wa : Classifier := { toMorph := .suff "wa", script := some "羽" }
 /-- *-furi* 振, swords. -/
 def furi : Classifier := { toMorph := .suff "furi", script := some "振" }
 
-/-- *-zen* 膳, pairs of chopsticks. -/
+/-- *-zen* 膳, trays and pairs of chopsticks, and the bowls of rice that go with them. -/
 def zen : Classifier := { toMorph := .suff "zen", script := some "膳" }
 
 /-- *-kyaku* 脚, furniture with legs. -/
 def kyaku : Classifier := { toMorph := .suff "kyaku", script := some "脚" }
 
-/-- *-rin* 輪, flowers and wheels. -/
+/-- *-rin* 輪, flowers. -/
 def rin : Classifier := { toMorph := .suff "rin", script := some "輪" }
 
 /-- *-kumi* 組, pairs. -/
