@@ -749,28 +749,26 @@ instance (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) 
     IsFiniteKernel (maximinSpeaker α C L b) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
-variable {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W} {o : O} {u : U}
-
-theorem maximinSpeaker_apply_singleton [MeasurableSingletonClass U] (u : U) :
-    maximinSpeaker α C L b o {u} =
-      essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) /
-        ∑ u', essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
-  Kernel.ofWeights_apply_singleton _ o u
-
 /-- The MaxiMin speaker who knows the state is the speaker who knows it. -/
 theorem maximinSpeaker_dirac [Fintype W] [MeasurableSingletonClass W] (α : ℝ) (C : U → ℝ)
     (L : U → Measure W) : maximinSpeaker α C L Measure.dirac = speaker α C L Measure.dirac := by
   simp only [maximinSpeaker, speaker, essInf_dirac, Measure.geomMean_dirac]
 
-/-- The MaxiMin speaker depends on her belief only through the states it entertains. -/
-theorem maximinSpeaker_congr_belief [Countable W] [MeasurableSingletonClass U] {b' : O → Measure W}
-    (h : ∀ w, b o {w} = 0 ↔ b' o {w} = 0) :
-    maximinSpeaker α C L b o = maximinSpeaker α C L b' o := by
-  have hs : {w | b o {w} ≠ 0} = {w | b' o {w} ≠ 0} := Set.ext fun w ↦ (h w).not
-  refine Measure.ext_of_singleton fun u ↦ ?_
-  simp only [maximinSpeaker_apply_singleton, essInf_eq_biInf, hs]
+variable [MeasurableSingletonClass U] {α : ℝ} {C : U → ℝ} {L : U → Measure W} {b : O → Measure W}
+  {o : O} {u : U}
 
-variable [Fintype W] [∀ u, IsFiniteMeasure (L u)] [MeasurableSingletonClass U]
+theorem maximinSpeaker_apply_singleton (u : U) :
+    maximinSpeaker α C L b o {u} =
+      essInf (fun w ↦ L u {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) /
+        ∑ u', essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_apply_singleton _ o u
+
+/-- The MaxiMin speaker depends on her belief only through its null sets. -/
+theorem maximinSpeaker_congr_belief {b' : O → Measure W} (h : ae (b o) = ae (b' o)) :
+    maximinSpeaker α C L b o = maximinSpeaker α C L b' o :=
+  Measure.ext_of_singleton fun u ↦ by simp only [maximinSpeaker_apply_singleton, essInf, h]
+
+variable [Fintype W] [∀ u, IsFiniteMeasure (L u)]
 
 /-- The MaxiMin speaker never produces an utterance whose listener rules out a state she
 entertains. -/
@@ -779,7 +777,7 @@ theorem maximinSpeaker_apply_singleton_eq_zero_iff (hα : 0 < α) (hb : ∃ w, b
   rw [maximinSpeaker_apply_singleton, ENNReal.div_eq_zero_iff,
     or_iff_left (ENNReal.sum_ne_top.2 fun _ _ ↦ weight_ne_top hα.le (essInf_ne_top hb) _),
     mul_eq_zero, or_iff_left (ofReal_exp_ne_zero _), ENNReal.rpow_eq_zero_iff_of_pos hα,
-    essInf_eq_zero_iff]
+    ENNReal.essInf_eq_zero_iff]
 
 /-- The MaxiMin speaker produces exactly the utterances the expected-utility speaker produces. -/
 theorem maximinSpeaker_apply_singleton_eq_zero_iff_speaker [IsFiniteMeasure (b o)] (hα : 0 < α)
@@ -794,7 +792,8 @@ theorem maximinSpeaker_real_singleton_lt_iff (hα : 0 ≤ α) (hb : ∃ w, b o {
         essInf (fun w ↦ L u' {w}) (b o) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
   Kernel.ofWeights_real_singleton_lt_iff o
     (fun h ↦ let ⟨u₀, hu₀⟩ := h0
-      weight_ne_zero hα (fun h' ↦ (essInf_eq_zero_iff.1 h').elim fun w ⟨hw, hL⟩ ↦ hu₀ w hw hL) _
+      weight_ne_zero hα (fun h' ↦ (ENNReal.essInf_eq_zero_iff.1 h').elim fun w ⟨hw, hL⟩ ↦
+        hu₀ w hw hL) _
         (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
     (ENNReal.sum_ne_top.mpr fun _ _ ↦ weight_ne_top hα (essInf_ne_top hb) _)
 
@@ -848,16 +847,16 @@ omit [MeasurableSpace U] in
 value of the parses' listeners at `w` over the parses `ν` allows. -/
 theorem essInf_prod_dirac_parseListener [Countable ι] [Countable W] :
     essInf (fun p ↦ parseListener L u {p}) (ν.prod (Measure.dirac w)) =
-      ⨅ i ∈ {i | ν {i} ≠ 0}, L i u {w} := by
+      ⨅ (i) (_ : ν {i} ≠ 0), L i u {w} := by
   rw [essInf_eq_biInf]
   refine le_antisymm (le_iInf₂ fun i hi ↦ ?_) (le_iInf₂ fun p hp ↦ ?_)
   · rw [← parseListener_apply_singleton L u i w]
-    exact biInf_le (fun p ↦ parseListener L u {p})
-      ((Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, w)).2 ⟨hi, rfl⟩)
+    exact iInf₂_le (f := fun p (_ : ν.prod (Measure.dirac w) {p} ≠ 0) ↦ parseListener L u {p})
+      (i, w) ((Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, w)).2 ⟨hi, rfl⟩)
   · obtain ⟨i, v⟩ := p
     obtain ⟨hi, rfl⟩ := (Measure.prod_dirac_apply_singleton_ne_zero_iff ν w (i, v)).1 hp
     rw [parseListener_apply_singleton]
-    exact biInf_le (fun i ↦ L i u {v}) hi
+    exact iInf₂_le (f := fun i (_ : ν {i} ≠ 0) ↦ L i u {v}) i hi
 
 omit [MeasurableSpace U] in
 private theorem exists_prod_dirac_parseListener_eq_zero_iff :
