@@ -1,33 +1,60 @@
 module
 
 public import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
+public import Linglib.Core.MeasureTheory.MeasurableSpace.Constructions
 public import Linglib.Core.Probability.Kernel.Module
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.RSA.QUD
 public import Linglib.Semantics.Exhaustification.Finite
 
 /-!
 # Exhaustivity and anti-exhaustivity in the Rational Speech Act framework
 
-A listener who hears *A* where *A and B* was available infers that B is false. In the
-baseline Rational Speech Act model a prior biased towards the world of both A and B reverses
-the inference: the listener is anti-exhaustive exactly when the log odds of the prior exceed
-the cost disadvantage of *A and not B* over *A and B*, whatever the rationality. Lexical
-uncertainty over free strengthenings and the wonky-world models stay anti-exhaustive for
-suitable priors, while grammatical lexical uncertainty, the lexical-intentions speaker and
-the supervaluationist speaker keep the posterior of both below the prior whenever *A and B*
-costs no more than *A and not B*. The experiment finds no anti-exhaustivity.
+A listener who hears *A* where *A and B* was available infers that B is false. In the baseline
+Rational Speech Act model a prior biased towards the world of both A and B reverses the
+inference: the listener is anti-exhaustive exactly when the log odds of the prior exceed the cost
+disadvantage of *A and not B* over *A and B*, whatever the rationality. Lexical uncertainty over
+free strengthenings and the wonky-world models stay anti-exhaustive for suitable priors.
+Grammatical lexical uncertainty and the lexical-intentions speaker keep the posterior of both
+below the prior whenever *A and B* costs no more than *A and not B*, and the supervaluationist
+model, which resolves the ambiguity through the question under discussion, does so whatever the
+costs. The experiment finds no anti-exhaustivity.
 
-We state each model on the substrate's kernel face and prove the paper's conditions on reals
-for an arbitrary prior, rationality and costs. The lexical-uncertainty models and the Bayesian
-wonky model are given in the paper both as a joint posterior over worlds and a latent and as the
-inverse of the speaker averaged over the latent, and the two agree (`luJointListener_fst`,
-`bayesWonkyJointListener_fst`).
+## Main statements
+
+* `prior_lt_listener_iff`: the baseline listener is anti-exhaustive exactly when the prior log
+  odds exceed the cost disadvantage of *A and not B* (6b).
+* `svListener_fst_lt_prior`: the supervaluationist listener never is (Appendix A.3).
+* `luListener_exh_lt_prior`: nor is the grammatical lexical-uncertainty listener (§4.3).
+* `liListener_lt_prior`: nor is the lexical-intentions listener (§4.4).
+
+## Implementation notes
+
+* The supervaluationist speaker is `RSA.speaker` against the literal listeners of the
+  interpretations, mapped to her answer and taken as one listener on pairs, as in `Spector2017`,
+  under any prior on exhaustification. The paper fixes `P(i_exh) = 1/2` in its fit (Appendix
+  B.3); Appendix A.3 needs only `P(i_exh) > 0`, and so do the theorems.
+* Lexical uncertainty and lexical intentions take the interpretations equiprobable, as the paper's
+  fits do (Appendices B.4, B.5). Each model's two descriptions in the paper, a joint posterior and
+  the inverse of the averaged speaker, agree (`luJointListener_fst`, `bayesWonkyJointListener_fst`).
+
+## Errata
+
+* Appendix A.2 defines anti-exhaustivity as `L1(w_ab|A) > P(w_ab|b1)` and calls the right-hand
+  side the measured prior, but `b1` is the wonky background (§4.1, Appendix B.2); the measured
+  prior is `P(w_ab|b2) = p`, which the theorems use.
+* Appendix B.2's posteriors `L1(w_ab|A)` pair `p` and the numerator with `S1(A|w_a, ·)`; with
+  `w_a` and `w_ab` exchanged they are (A.5).
+* Item 7 of the §4.2 model takes the logarithm of a sum of logarithms, and item 7 of the §4.3
+  model has `L_n(w|u) ∝ log(S_n(w|u))` for `P(w) S_n(u|w)`, as item 9 of §4.4 has it.
 
 ## TODO
 
-* The non-Bayesian wonky model's limits in the prior and the Bayesian wonky model's
-  wonkiness threshold are not derived.
+* The non-Bayesian wonky model's limits in the prior and the Bayesian wonky model's wonkiness
+  threshold of Appendix A.2 (numerically, anti-exhaustivity for `p < .04` and `p ∈ [.57, .95]` at
+  `ω = 0.1`, and a threshold of about `0.9`).
+* The second-level speakers, the production models svRSA1, svRSA2 and RSA-LI2 (Appendix B), and
+  the experiment's results (§5).
 
 ## References
 
@@ -59,6 +86,7 @@ inductive World where
   deriving DecidableEq, Fintype, Nonempty
 
 instance : MeasurableSpace World := ⊤
+instance : DiscreteMeasurableSpace World := ⟨fun _ ↦ trivial⟩
 
 /-- The three messages are *A*, *A and B* and *A and not B*. -/
 inductive Message where
@@ -68,6 +96,7 @@ inductive Message where
   deriving DecidableEq, Fintype, Nonempty
 
 instance : MeasurableSpace Message := ⊤
+instance : DiscreteMeasurableSpace Message := ⟨fun _ ↦ trivial⟩
 
 /-- The literal meaning of each message. -/
 def truth : Message → World → Bool
@@ -143,6 +172,7 @@ inductive Interpretation where
   deriving DecidableEq, Fintype, Nonempty
 
 instance : MeasurableSpace Interpretation := ⊤
+instance : DiscreteMeasurableSpace Interpretation := ⟨fun _ ↦ trivial⟩
 
 /-- The meaning of a grammatical interpretation. -/
 def Interpretation.meaning : Interpretation → Meaning
@@ -181,6 +211,7 @@ inductive QUD where
   deriving DecidableEq, Fintype, Nonempty
 
 instance : MeasurableSpace QUD := ⊤
+instance : DiscreteMeasurableSpace QUD := ⟨fun _ ↦ trivial⟩
 
 section Sums
 
@@ -498,7 +529,8 @@ theorem baseline_a_lt_aAndNotB_iff :
 
 theorem comp_speaker_literal_ne_zero (u : Message) : (s.speaker literal ∘ₘ s.prior) {u} ≠ 0 :=
   let ⟨w, hw⟩ := literal.exists_world u
-  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w) (speaker_ne_zero _ s.prior_ne_zero _ s hw)
+  Measure.comp_apply_singleton_ne_zero _ _ (s.prior_ne_zero w)
+    (speaker_ne_zero _ s.prior_ne_zero _ s hw)
 
 /-- The pragmatic listener (eq. 4). -/
 noncomputable def listener : Kernel Message World :=
@@ -717,12 +749,11 @@ theorem comp_liMessageSpeaker_ne_zero (u : Message) :
 noncomputable def liListener : Kernel Message World :=
   RSA.listener s.prior (liMessageSpeaker s)
 
-theorem liListener_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
-    (liListener s .a).real {.wab} < s.prior.real {.wab} := by
-  rw [liListener, RSA.listener_apply_eq_posterior _ _ (comp_liMessageSpeaker_ne_zero s _),
-    posterior_real_singleton_lt_iff_of_pair _ _ (by decide) s.prior_support
-      (comp_liMessageSpeaker_ne_zero s _) (s.prior_ne_zero _) (s.prior_ne_zero _),
-    liMessageSpeaker_real_wab_a, liMessageSpeaker_real_wa_a,
+/-- When *A and B* costs no more than *A and not B*, the speaker uses *A* less in the world of both
+than in the world of A alone (§4.4). -/
+theorem liMessageSpeaker_wab_lt_wa (hc : s.cAndB ≤ s.cAndNotB) :
+    (liMessageSpeaker s .wab).real {.a} < (liMessageSpeaker s .wa).real {.a} := by
+  rw [liMessageSpeaker_real_wab_a, liMessageSpeaker_real_wa_a,
     div_lt_div_iff₀ (by positivity) (by positivity)]
   have h₁ : Real.exp (s.lam * Real.log s.p) < 1 :=
     Real.exp_lt_one_iff.mpr (mul_neg_of_pos_of_neg s.lam_pos (Real.log_neg s.p_pos s.p_lt_one))
@@ -732,96 +763,74 @@ theorem liListener_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
   have h₄ := Real.exp_pos (s.lam * Real.log (1 - s.p))
   nlinarith [mul_lt_mul_of_pos_right h₁ h₃, mul_pos h₄ (Real.exp_pos (-(s.lam * s.cAndB)))]
 
+/-- So the listener is never anti-exhaustive (§4.4). -/
+theorem liListener_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
+    (liListener s .a).real {.wab} < s.prior.real {.wab} := by
+  rw [liListener, RSA.listener_apply_eq_posterior _ _ (comp_liMessageSpeaker_ne_zero s _),
+    posterior_real_singleton_lt_iff_of_pair _ _ (by decide) s.prior_support
+      (comp_liMessageSpeaker_ne_zero s _) (s.prior_ne_zero _) (s.prior_ne_zero _)]
+  exact liMessageSpeaker_wab_lt_wa s hc
+
 end LexicalIntentions
 
-/-! ### The supervaluationist model (§4.2) -/
+/-! ### The supervaluationist model (§4.2)
+
+The model is Spector's 2017 first speaker applied to exhaustification. The literal listener of an
+interpretation is uncertain about the world and the question jointly (item 3). The speaker, who
+knows her world and the question she addresses, maximizes her expected utility over the
+interpretations under a prior on exhaustification, the utility of each being the literal
+listener's probability of her answer (items 4 and 5), and the pragmatic listener infers the world
+and the question (item 6). -/
 
 section Supervaluationist
 
-variable (s : Setting)
+/-- The coarse question has a single answer, and the fine one answers with the world. -/
+def QUD.answer : QUD → World → Option World
+  | .coarse, _ => none
+  | .fine, w => some w
 
-/-- The coarse question puts both worlds in one cell, and the fine one distinguishes them. -/
-def QUD.cell : QUD → World → Set World
-  | .coarse, _ => Set.univ
-  | .fine, w => {w}
+/-- The answer at a world and a question, together with the question. -/
+def answer (x : World × QUD) : Option World × QUD := (x.2.answer x.1, x.2)
 
-/-- The literal listener's mass, under an interpretation, on the cell of a world in a question
-(item 3 of the §4.2 model, conditioned on the question). -/
-noncomputable def cell (i : Interpretation) (q : QUD) (u : Message) (w : World) : ℝ≥0∞ :=
-  s.L0 i.meaning u (q.cell w)
+variable (s : Setting) (ρ : Measure QUD) (ν : Measure Interpretation)
 
-theorem cell_coarse (i : Interpretation) (u : Message) (w : World) :
-    cell s i .coarse u w = 1 :=
-  L0_apply_univ s.prior s.prior_ne_zero _ u
+/-- The prior over worlds and questions, independent (items 3 and 6 of the §4.2 model). -/
+noncomputable def svJoint : Measure (World × QUD) := s.prior.prod ρ
 
-theorem cell_fine (i : Interpretation) (u : Message) (w : World) :
-    cell s i .fine u w = s.L0 i.meaning u {w} := rfl
+instance [IsFiniteMeasure ρ] : IsFiniteMeasure (svJoint s ρ) := by
+  unfold svJoint; infer_instance
 
-/-- The supervaluationist weight is the geometric mean over the two interpretations, taken
-equiprobable, of the literal listener's mass on the cell, raised to the rationality, times the
-cost factor. The prior of the question, common to every message, is left out (item 4 of the
-§4.2 model). -/
-noncomputable def svWeight (x : World × QUD) (u : Message) : ℝ≥0∞ :=
-  cell s .lit x.2 u x.1 ^ (s.lam / 2) * cell s .exh x.2 u x.1 ^ (s.lam / 2) * s.costFactor u
+/-- The literal listener of an interpretation, uncertain about the world and the question (item 3
+of the §4.2 model). -/
+noncomputable def svL0 (i : Interpretation) : Kernel Message (World × QUD) :=
+  RSA.listener (svJoint s ρ) (RSA.truthful fun u ↦ Prod.fst ⁻¹' i.meaning.extension u)
 
-theorem svWeight_ne_top (x : World × QUD) (u : Message) : svWeight s x u ≠ ∞ :=
-  ENNReal.mul_ne_top
-    (ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg (half_pos s.lam_pos).le
-        (measure_ne_top _ _))
-      (ENNReal.rpow_ne_top_of_nonneg (half_pos s.lam_pos).le (measure_ne_top _ _)))
-    (s.costFactor_ne_top u)
+instance (i : Interpretation) : IsFiniteKernel (svL0 s ρ i) :=
+  inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
 
-theorem svWeight_fine_ne_zero {w : World} {u : Message} (hl : truth u w = true)
-    (he : exh u w = true) : svWeight s (w, .fine) u ≠ 0 :=
-  mul_ne_zero
-    (mul_ne_zero
-      ((ENNReal.rpow_eq_zero_iff_of_pos (half_pos s.lam_pos)).not.2
-        (L0_ne_zero s.prior s.prior_ne_zero literal hl))
-      ((ENNReal.rpow_eq_zero_iff_of_pos (half_pos s.lam_pos)).not.2
-        (L0_ne_zero s.prior s.prior_ne_zero exhaustified he)))
-    (s.costFactor_ne_zero u)
+/-- The supervaluationist speaker, at a world and a question, maximizes her expected utility over
+the interpretations under the prior `ν` on them, the utility of each being the literal listener's
+probability of her answer (items 4 and 5 of the §4.2 model). -/
+noncomputable def svSpeaker : Kernel (World × QUD) Message :=
+  RSA.speaker s.lam s.cost (RSA.parseListener fun i ↦ (svL0 s ρ i).map answer)
+    fun x ↦ ν.prod (Measure.dirac (answer x))
 
-/-- The supervaluationist speaker, at a world and a question (item 5 of the §4.2 model). -/
-noncomputable def svSpeaker : Kernel (World × QUD) Message := Kernel.ofWeights (svWeight s)
+instance : IsFiniteKernel (svSpeaker s ρ ν) :=
+  inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
-instance : IsFiniteKernel (svSpeaker s) := inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+/-- The pragmatic listener, jointly over worlds and questions (item 6 of the §4.2 model). -/
+noncomputable def svListener : Kernel Message (World × QUD) :=
+  RSA.listener (svJoint s ρ) (svSpeaker s ρ ν)
 
-theorem svSpeaker_coarse : svSpeaker s (.wa, .coarse) = svSpeaker s (.wab, .coarse) := by
-  have h : svWeight s (.wa, .coarse) = svWeight s (.wab, .coarse) :=
-    funext fun u ↦ by simp only [svWeight, cell_coarse]
-  simp only [svSpeaker, Kernel.ofWeights, Kernel.ofFunOfCountable_apply, h]
-
-theorem svSpeaker_wab_fine_a : svSpeaker s (.wab, .fine) {.a} = 0 :=
-  Kernel.ofWeights_apply_singleton_eq_zero (by
-    simp (disch := decide) only [svWeight, cell_fine, Setting.L0, Interpretation.meaning,
-      L0_eq_zero, ENNReal.zero_rpow_of_pos (half_pos s.lam_pos), mul_zero, zero_mul])
-
-theorem svSpeaker_real_wab_fine_a : (svSpeaker s (.wab, .fine)).real {.a} = 0 :=
-  (measureReal_eq_zero_iff (measure_ne_top _ _)).mpr (svSpeaker_wab_fine_a s)
-
-theorem svSpeaker_fine_ne_zero {w : World} {u : Message} (hl : truth u w = true)
-    (he : exh u w = true) : svSpeaker s (w, .fine) {u} ≠ 0 :=
-  Kernel.ofWeights_apply_singleton_ne_zero (svWeight_fine_ne_zero s hl he) (svWeight_ne_top s _)
-
-/-- Under either question, *A* is used no more in the world of both than in the world of A
-alone (Appendix A.3, the speaker). -/
-theorem svSpeaker_wab_le_wa (q : QUD) : svSpeaker s (.wab, q) {.a} ≤ svSpeaker s (.wa, q) {.a} := by
-  cases q
-  · rw [svSpeaker_coarse]
-  · rw [svSpeaker_wab_fine_a]; exact zero_le
-
-variable (Q : Measure QUD) (hQ : Q {.fine} ≠ 0)
-
-/-- The joint prior over worlds and questions, independent. -/
-noncomputable def svJoint : Measure (World × QUD) := s.prior.prod Q
+theorem svSpeaker_coarse : svSpeaker s ρ ν (.wa, .coarse) = svSpeaker s ρ ν (.wab, .coarse) :=
+  rfl
 
 theorem svJoint_apply_singleton (w : World) (q : QUD) :
-    svJoint s Q {(w, q)} = s.prior {w} * Q {q} := by
-  show (s.prior.prod Q) {(w, q)} = _
-  rw [← Set.singleton_prod_singleton, Measure.prod_prod]
+    svJoint s ρ {(w, q)} = s.prior {w} * ρ {q} := by
+  rw [svJoint, ← Set.singleton_prod_singleton, Measure.prod_prod]
 
 theorem svJoint_real_singleton (w : World) (q : QUD) :
-    (svJoint s Q).real {(w, q)} = s.prior.real {w} * Q.real {q} :=
+    (svJoint s ρ).real {(w, q)} = s.prior.real {w} * ρ.real {q} :=
   Measure.prod_real_singleton _ _ _ _
 
 theorem exists_truth_and_exh (u : Message) : ∃ w, truth u w = true ∧ exh u w = true := by
@@ -830,39 +839,80 @@ theorem exists_truth_and_exh (u : Message) : ∃ w, truth u w = true ∧ exh u w
   · exact ⟨.wab, rfl, by decide⟩
   · exact ⟨.wa, rfl, by decide⟩
 
-include hQ in
-theorem comp_svSpeaker_ne_zero (u : Message) : (svSpeaker s ∘ₘ svJoint s Q) {u} ≠ 0 :=
+variable {s ρ ν} [IsFiniteMeasure ρ] (hρ : ∀ q, ρ {q} ≠ 0)
+include hρ
+
+theorem svL0_map_answer_eq_zero_iff (i : Interpretation) (u : Message) (w : World) (q : QUD) :
+    (svL0 s ρ i).map answer u {answer (w, q)} = 0 ↔
+      ∀ v, q.answer v = q.answer w → i.meaning.sat u v = false := by
+  rw [svL0, RSA.listener_truthful_map_apply_singleton, ENNReal.div_eq_zero_iff,
+    or_iff_left (measure_ne_top _ _), measure_null_iff_singleton (Set.to_countable _)]
+  have hprod (p : World × QUD) : svJoint s ρ {p} ≠ 0 := by
+    rw [← Prod.mk.eta (p := p), svJoint_apply_singleton]
+    exact mul_ne_zero (s.prior_ne_zero p.1) (hρ p.2)
+  simp only [hprod, imp_false]
+  refine ⟨fun h v hv ↦ Bool.eq_false_iff.2 fun hvu ↦ h (v, q) ⟨hvu, by simp [answer, hv]⟩, ?_⟩
+  rintro h ⟨v, q'⟩ ⟨hvu, hx⟩
+  simp only [answer, Set.mem_preimage, Set.mem_singleton_iff, Prod.mk.injEq] at hx
+  obtain ⟨hv, rfl⟩ := hx
+  exact Bool.false_ne_true ((h v hv).symm.trans hvu)
+
+variable [IsFiniteMeasure ν]
+
+/-- The speaker never uses a message that an interpretation of positive prior makes false
+throughout the cell of her world in her question: Truth on all parses, relative to the question. -/
+theorem svSpeaker_apply_singleton_eq_zero_iff (w : World) (q : QUD) (u : Message) :
+    svSpeaker s ρ ν (w, q) {u} = 0 ↔
+      ∃ i, ν {i} ≠ 0 ∧ ∀ v, q.answer v = q.answer w → i.meaning.sat u v = false := by
+  rw [svSpeaker, RSA.speaker_parseListener_apply_singleton_eq_zero_iff _ s.lam_pos]
+  exact exists_congr fun i ↦ and_congr_right fun _ ↦ svL0_map_answer_eq_zero_iff hρ i u w q
+
+theorem svSpeaker_wab_fine_a (hν : ν {.exh} ≠ 0) : svSpeaker s ρ ν (.wab, .fine) {.a} = 0 :=
+  (svSpeaker_apply_singleton_eq_zero_iff hρ _ _ _).2 ⟨.exh, hν, fun v hv ↦ by
+    obtain rfl : v = .wab := Option.some.inj hv
+    decide⟩
+
+theorem svSpeaker_fine_ne_zero {w : World} {u : Message} (hl : truth u w = true)
+    (he : exh u w = true) : svSpeaker s ρ ν (w, .fine) {u} ≠ 0 := by
+  rw [ne_eq, svSpeaker_apply_singleton_eq_zero_iff hρ]
+  rintro ⟨i, -, h⟩
+  cases i
+  · exact Bool.false_ne_true ((h w rfl).symm.trans hl)
+  · exact Bool.false_ne_true ((h w rfl).symm.trans he)
+
+/-- Under either question, *A* is used no more in the world of both than in the world of A alone,
+whatever the priors (Appendix A.3, the speaker). -/
+theorem svSpeaker_wab_le_wa (hν : ν {.exh} ≠ 0) (q : QUD) :
+    svSpeaker s ρ ν (.wab, q) {.a} ≤ svSpeaker s ρ ν (.wa, q) {.a} := by
+  cases q
+  · rw [svSpeaker_coarse]
+  · rw [svSpeaker_wab_fine_a hρ hν]; exact zero_le
+
+theorem comp_svSpeaker_ne_zero (u : Message) :
+    (svSpeaker s ρ ν ∘ₘ svJoint s ρ) {u} ≠ 0 :=
   let ⟨w, hw⟩ := exists_truth_and_exh u
-  have hj : svJoint s Q {(w, .fine)} ≠ 0 := by
-    rw [svJoint_apply_singleton]; exact mul_ne_zero (s.prior_ne_zero w) hQ
-  Measure.comp_apply_singleton_ne_zero _ _ hj (svSpeaker_fine_ne_zero s hw.1 hw.2)
+  Measure.comp_apply_singleton_ne_zero _ _
+    (by rw [svJoint_apply_singleton]; exact mul_ne_zero (s.prior_ne_zero w) (hρ .fine))
+    (svSpeaker_fine_ne_zero hρ hw.1 hw.2)
 
-variable [IsProbabilityMeasure Q]
-
-instance : IsProbabilityMeasure (svJoint s Q) :=
-  inferInstanceAs (IsProbabilityMeasure (Measure.prod _ _))
-
-/-- The pragmatic listener, jointly over worlds and questions (item 6 of the §4.2 model). -/
-noncomputable def svListener : Kernel Message (World × QUD) :=
-  RSA.listener (svJoint s Q) (svSpeaker s)
-
-include hQ in
 /-- In the question-sensitive model the posterior of both A and B falls below its prior, for every
-prior and cost (Appendix A.3). -/
-theorem svListener_fst_lt_prior : (svListener s Q .a).fst.real {.wab} < s.prior.real {.wab} := by
-  have hm : 0 < ∑ p, (svJoint s Q).real {p} * (svSpeaker s p).real {.a} := by
+prior, cost and prior on exhaustification that gives it positive mass (Appendix A.3). -/
+theorem svListener_fst_lt_prior [IsProbabilityMeasure ρ] (hν : ν {.exh} ≠ 0) :
+    (svListener s ρ ν .a).fst.real {.wab} < s.prior.real {.wab} := by
+  have hm : 0 < ∑ p, (svJoint s ρ).real {p} * (svSpeaker s ρ ν p).real {.a} := by
     rw [← Measure.comp_real_singleton]
-    exact ENNReal.toReal_pos (comp_svSpeaker_ne_zero s Q hQ _) (measure_ne_top _ _)
-  have hy : 0 < (svSpeaker s (.wa, .fine)).real {.a} :=
-    ENNReal.toReal_pos (svSpeaker_fine_ne_zero s rfl (by decide)) (measure_ne_top _ _)
-  have hqf : 0 < Q.real {.fine} := ENNReal.toReal_pos hQ (measure_ne_top _ _)
-  have hz := measureReal_nonneg (μ := svSpeaker s (.wa, .coarse)) (s := {.a})
-  have hqc := measureReal_nonneg (μ := Q) (s := {.coarse})
+    exact ENNReal.toReal_pos (comp_svSpeaker_ne_zero hρ _) (measure_ne_top _ _)
+  have hy : 0 < (svSpeaker s ρ ν (.wa, .fine)).real {.a} :=
+    ENNReal.toReal_pos (svSpeaker_fine_ne_zero hρ rfl (by decide)) (measure_ne_top _ _)
+  have hqf : 0 < ρ.real {.fine} := ENNReal.toReal_pos (hρ .fine) (measure_ne_top _ _)
+  have hz := measureReal_nonneg (μ := svSpeaker s ρ ν (.wa, .coarse)) (s := {.a})
+  have hqc := measureReal_nonneg (μ := ρ) (s := {.coarse})
   have hp' : 0 < 1 - s.p := by linarith [s.p_lt_one]
+  have h0 : (svSpeaker s ρ ν (.wab, .fine)).real {.a} = 0 :=
+    (measureReal_eq_zero_iff (measure_ne_top _ _)).mpr (svSpeaker_wab_fine_a hρ hν)
   rw [svListener, RSA.listener_fst_real_singleton, div_lt_iff₀ hm]
   simp only [Fintype.sum_prod_type, sum_world, sum_qud, svJoint_real_singleton,
-    Setting.prior_real_wa, Setting.prior_real_wab, svSpeaker_real_wab_fine_a, ← svSpeaker_coarse,
-    mul_zero, add_zero]
+    Setting.prior_real_wa, Setting.prior_real_wab, h0, ← svSpeaker_coarse, mul_zero, add_zero]
   nlinarith [mul_pos (mul_pos (mul_pos s.p_pos hp') hqf) hy]
 
 end Supervaluationist
