@@ -88,14 +88,6 @@
         {"name": "polarity", "label": "POLARITY", "doc": "POLARITY"},
         {"name": "interaction", "label": "CONTEXT × POLARITY", "doc": "their interaction"}
       ]
-    },
-    {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {"name": "below", "label": "<", "doc": "as an upper bound"},
-        {"name": "exact", "label": "=", "doc": "as a value"}
-      ]
     }
   ],
   "constants": [
@@ -275,19 +267,18 @@
         {"name": "effect", "type": "Effect", "doc": "The term tested."},
         {"name": "df", "type": "nat", "doc": "The degrees of freedom of the chi-square statistic."},
         {"name": "chiSq", "type": "decimal", "doc": "The chi-square statistic."},
-        {"name": "bound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The p-value."}
+        {"name": "p", "type": "pvalue", "doc": "The p-value."}
       ],
       "rows": [
-        {"experiment": "Experiment 1", "effect": "CONTEXT", "df": 1, "chiSq": "12.7", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 1", "effect": "POLARITY", "df": 1, "chiSq": "52.2", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 1", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "10.9", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 2", "effect": "CONTEXT", "df": 1, "chiSq": "97.3", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 2", "effect": "POLARITY", "df": 1, "chiSq": "0.53", "bound": "=", "p": "0.469"},
-        {"experiment": "Experiment 2", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "0.24", "bound": "=", "p": "0.624"},
-        {"experiment": "Experiment 3", "effect": "CONTEXT", "df": 1, "chiSq": "15.8", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 3", "effect": "POLARITY", "df": 1, "chiSq": "34.2", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 3", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "0.019", "bound": "=", "p": "0.892"}
+        {"experiment": "Experiment 1", "effect": "CONTEXT", "df": 1, "chiSq": "12.7", "p": "< 0.001"},
+        {"experiment": "Experiment 1", "effect": "POLARITY", "df": 1, "chiSq": "52.2", "p": "< 0.001"},
+        {"experiment": "Experiment 1", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "10.9", "p": "< 0.001"},
+        {"experiment": "Experiment 2", "effect": "CONTEXT", "df": 1, "chiSq": "97.3", "p": "< 0.001"},
+        {"experiment": "Experiment 2", "effect": "POLARITY", "df": 1, "chiSq": "0.53", "p": "0.469"},
+        {"experiment": "Experiment 2", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "0.24", "p": "0.624"},
+        {"experiment": "Experiment 3", "effect": "CONTEXT", "df": 1, "chiSq": "15.8", "p": "< 0.001"},
+        {"experiment": "Experiment 3", "effect": "POLARITY", "df": 1, "chiSq": "34.2", "p": "< 0.001"},
+        {"experiment": "Experiment 3", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "0.019", "p": "0.892"}
       ]
     },
     {
@@ -302,31 +293,30 @@
         {"name": "term", "type": "Term", "doc": "The fixed effect."},
         {"name": "beta", "type": "decimal", "doc": "The estimate."},
         {"name": "se", "type": "decimal", "doc": "Its standard error."},
-        {"name": "bound", "type": "option Bound", "doc": "How the p-value is printed, where it is."},
-        {"name": "p", "type": "option decimal", "doc": "The p-value, where printed."}
+        {"name": "p", "type": "option pvalue", "doc": "The p-value, where printed."}
       ],
       "rows": [
-        {"experiment": "Experiment 1", "term": "θ1", "beta": "-0.49", "se": "0.21", "bound": null, "p": null},
-        {"experiment": "Experiment 1", "term": "θ2", "beta": "1.34", "se": "0.23", "bound": null, "p": null},
-        {"experiment": "Experiment 1", "term": "θ3", "beta": "3.07", "se": "0.28", "bound": null, "p": null},
-        {"experiment": "Experiment 1", "term": "θ4", "beta": "7.23", "se": "0.51", "bound": null, "p": null},
-        {"experiment": "Experiment 1", "term": "CONTEXT", "beta": "1.41", "se": "0.40", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 1", "term": "POLARITY", "beta": "3.36", "se": "0.37", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 1", "term": "CONTEXT × POLARITY", "beta": "2.43", "se": "0.74", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 2", "term": "θ1", "beta": "-1.88", "se": "0.10", "bound": null, "p": null},
-        {"experiment": "Experiment 2", "term": "θ2", "beta": "-0.60", "se": "0.09", "bound": null, "p": null},
-        {"experiment": "Experiment 2", "term": "θ3", "beta": "0.20", "se": "0.09", "bound": null, "p": null},
-        {"experiment": "Experiment 2", "term": "θ4", "beta": "2.15", "se": "0.10", "bound": null, "p": null},
-        {"experiment": "Experiment 2", "term": "CONTEXT", "beta": "3.26", "se": "0.17", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 2", "term": "POLARITY", "beta": "0.13", "se": "0.17", "bound": "=", "p": "0.47"},
-        {"experiment": "Experiment 2", "term": "CONTEXT × POLARITY", "beta": "-0.17", "se": "0.35", "bound": "=", "p": "0.62"},
-        {"experiment": "Experiment 3", "term": "θ1", "beta": "-0.11", "se": "0.26", "bound": null, "p": null},
-        {"experiment": "Experiment 3", "term": "θ2", "beta": "0.73", "se": "0.26", "bound": null, "p": null},
-        {"experiment": "Experiment 3", "term": "θ3", "beta": "1.50", "se": "0.27", "bound": null, "p": null},
-        {"experiment": "Experiment 3", "term": "θ4", "beta": "2.93", "se": "0.28", "bound": null, "p": null},
-        {"experiment": "Experiment 3", "term": "CONTEXT", "beta": "0.61", "se": "0.15", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 3", "term": "POLARITY", "beta": "3.15", "se": "0.41", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 3", "term": "CONTEXT × POLARITY", "beta": "0.06", "se": "0.41", "bound": "=", "p": "0.89"}
+        {"experiment": "Experiment 1", "term": "θ1", "beta": "-0.49", "se": "0.21", "p": null},
+        {"experiment": "Experiment 1", "term": "θ2", "beta": "1.34", "se": "0.23", "p": null},
+        {"experiment": "Experiment 1", "term": "θ3", "beta": "3.07", "se": "0.28", "p": null},
+        {"experiment": "Experiment 1", "term": "θ4", "beta": "7.23", "se": "0.51", "p": null},
+        {"experiment": "Experiment 1", "term": "CONTEXT", "beta": "1.41", "se": "0.40", "p": "< 0.001"},
+        {"experiment": "Experiment 1", "term": "POLARITY", "beta": "3.36", "se": "0.37", "p": "< 0.001"},
+        {"experiment": "Experiment 1", "term": "CONTEXT × POLARITY", "beta": "2.43", "se": "0.74", "p": "< 0.001"},
+        {"experiment": "Experiment 2", "term": "θ1", "beta": "-1.88", "se": "0.10", "p": null},
+        {"experiment": "Experiment 2", "term": "θ2", "beta": "-0.60", "se": "0.09", "p": null},
+        {"experiment": "Experiment 2", "term": "θ3", "beta": "0.20", "se": "0.09", "p": null},
+        {"experiment": "Experiment 2", "term": "θ4", "beta": "2.15", "se": "0.10", "p": null},
+        {"experiment": "Experiment 2", "term": "CONTEXT", "beta": "3.26", "se": "0.17", "p": "< 0.001"},
+        {"experiment": "Experiment 2", "term": "POLARITY", "beta": "0.13", "se": "0.17", "p": "0.47"},
+        {"experiment": "Experiment 2", "term": "CONTEXT × POLARITY", "beta": "-0.17", "se": "0.35", "p": "0.62"},
+        {"experiment": "Experiment 3", "term": "θ1", "beta": "-0.11", "se": "0.26", "p": null},
+        {"experiment": "Experiment 3", "term": "θ2", "beta": "0.73", "se": "0.26", "p": null},
+        {"experiment": "Experiment 3", "term": "θ3", "beta": "1.50", "se": "0.27", "p": null},
+        {"experiment": "Experiment 3", "term": "θ4", "beta": "2.93", "se": "0.28", "p": null},
+        {"experiment": "Experiment 3", "term": "CONTEXT", "beta": "0.61", "se": "0.15", "p": "< 0.001"},
+        {"experiment": "Experiment 3", "term": "POLARITY", "beta": "3.15", "se": "0.41", "p": "< 0.001"},
+        {"experiment": "Experiment 3", "term": "CONTEXT × POLARITY", "beta": "0.06", "se": "0.41", "p": "0.89"}
       ]
     },
     {

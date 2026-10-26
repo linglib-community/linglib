@@ -46,22 +46,6 @@
           "doc": "large, narrow, short, small, tall, thick, thin, wide"
         }
       ]
-    },
-    {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {
-          "name": "below",
-          "label": "<",
-          "doc": "as an upper bound"
-        },
-        {
-          "name": "exact",
-          "label": "=",
-          "doc": "as a value"
-        }
-      ]
     }
   ],
   "tables": [
@@ -97,8 +81,8 @@
         },
         {
           "name": "p",
-          "type": "option decimal",
-          "doc": "The bound below which the cluster's permutation p-value lies."
+          "type": "option pvalue",
+          "doc": "The cluster's permutation p-value."
         }
       ],
       "rows": [
@@ -107,14 +91,14 @@
           "onset": 240,
           "offset": 600,
           "tSum": "39.61",
-          "p": "0.01"
+          "p": "< 0.01"
         },
         {
           "adjType": "scalar",
           "onset": 260,
           "offset": 500,
           "tSum": "33.07",
-          "p": "0.01"
+          "p": "< 0.01"
         },
         {
           "adjType": "material",
@@ -147,13 +131,8 @@
           "doc": "The estimate of the effect of condition."
         },
         {
-          "name": "bound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value, from the Satterthwaite approximation."
         },
         {
@@ -166,21 +145,18 @@
         {
           "adjType": "color",
           "beta": "0.24",
-          "bound": "<",
-          "p": "0.05",
+          "p": "< 0.05",
           "t": "2.41"
         },
         {
           "adjType": "scalar",
           "beta": "0.19",
-          "bound": "<",
-          "p": "0.05",
+          "p": "< 0.05",
           "t": "2.02"
         },
         {
           "adjType": "material",
           "beta": "0.10",
-          "bound": "=",
           "p": "0.28",
           "t": "1.08"
         }
@@ -204,13 +180,8 @@
           "doc": "The estimate of the difference."
         },
         {
-          "name": "bound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         },
         {
@@ -223,15 +194,13 @@
         {
           "adjType": "color",
           "beta": "0.25",
-          "bound": "<",
-          "p": "0.01",
+          "p": "< 0.01",
           "z": "2.80"
         },
         {
           "adjType": "material",
           "beta": "0.24",
-          "bound": "<",
-          "p": "0.05",
+          "p": "< 0.05",
           "z": "2.40"
         }
       ]

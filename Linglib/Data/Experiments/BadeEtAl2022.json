@@ -52,14 +52,6 @@
       ]
     },
     {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {"name": "below", "label": "<", "doc": "an upper bound"},
-        {"name": "exact", "label": "=", "doc": "an exact value"}
-      ]
-    },
-    {
       "name": "Generator",
       "doc": "The alternative-generating item of an illusory-inference paradigm.",
       "levels": [
@@ -133,23 +125,21 @@
         {"name": "table", "type": "nat", "doc": "The printed table the row is from."},
         {"name": "est", "type": "decimal", "doc": "The estimate."},
         {"name": "se", "type": "decimal", "doc": "The standard error."},
-        {"name": "pBound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The p-value."},
-        {"name": "pCorrBound", "type": "Bound", "doc": "How the corrected p-value is printed."},
-        {"name": "pCorr", "type": "decimal", "doc": "The Holm-corrected p-value."},
+        {"name": "p", "type": "pvalue", "doc": "The p-value."},
+        {"name": "pCorr", "type": "pvalue", "doc": "The Holm-corrected p-value."},
         {"name": "verdict", "type": "Verdict", "doc": "The paper's reading of the contrast."}
       ],
       "rows": [
-        {"modal": "Deontic", "contrast": "Canon. vs. no-base.", "table": 1, "est": "6.9", "se": "1.5", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.001", "verdict": "higher"},
-        {"modal": "Epistemic", "contrast": "Canon. vs. no-base.", "table": 1, "est": "6.2", "se": "1.5", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.01", "verdict": "higher"},
-        {"modal": "Deontic", "contrast": "Canon. vs. rev.", "table": 2, "est": "0.01", "se": "0.5", "pBound": "=", "p": "0.99", "pCorrBound": "=", "pCorr": "0.99", "verdict": "no difference"},
-        {"modal": "Deontic", "contrast": "Canon. vs. flat", "table": 2, "est": "1.5", "se": "0.5", "pBound": "<", "p": "0.01", "pCorrBound": "<", "pCorr": "0.05", "verdict": "higher"},
-        {"modal": "Epistemic", "contrast": "Canon. vs. rev.", "table": 2, "est": "0.98", "se": "0.5", "pBound": "<", "p": "0.06", "pCorrBound": "=", "pCorr": "0.11", "verdict": "marginally higher", "note": "the paper calls this contrast only marginally significant and the interaction suggestive of an order effect for epistemics"},
-        {"modal": "Epistemic", "contrast": "Canon. vs. flat", "table": 2, "est": "2.8", "se": "0.5", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.001", "verdict": "higher"},
-        {"modal": "Epistemic", "contrast": "Flat vs. no-baseline", "table": 3, "est": "0.5", "se": "2.2", "pBound": "=", "p": "0.83", "pCorrBound": "=", "pCorr": "1", "verdict": "no difference"},
-        {"modal": "Epistemic", "contrast": "Reversed vs. no-baseline", "table": 3, "est": "5.2", "se": "1.5", "pBound": "=", "p": "0.00053", "pCorrBound": "<", "pCorr": "0.0001", "verdict": "higher", "note": "the corrected p-value is printed smaller than the uncorrected one, as in the paper"},
-        {"modal": "Deontic", "contrast": "Flat vs. no-baseline", "table": 4, "est": "5.0", "se": "1.2", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.001", "verdict": "higher", "note": "Table 4's caption misprints 'epistemics'; the text makes it the deontic table"},
-        {"modal": "Deontic", "contrast": "Reversed vs. no-baseline", "table": 4, "est": "6.5", "se": "1.2", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.001", "verdict": "higher"}
+        {"modal": "Deontic", "contrast": "Canon. vs. no-base.", "table": 1, "est": "6.9", "se": "1.5", "p": "< 0.0001", "pCorr": "< 0.001", "verdict": "higher"},
+        {"modal": "Epistemic", "contrast": "Canon. vs. no-base.", "table": 1, "est": "6.2", "se": "1.5", "p": "< 0.0001", "pCorr": "< 0.01", "verdict": "higher"},
+        {"modal": "Deontic", "contrast": "Canon. vs. rev.", "table": 2, "est": "0.01", "se": "0.5", "p": "0.99", "pCorr": "0.99", "verdict": "no difference"},
+        {"modal": "Deontic", "contrast": "Canon. vs. flat", "table": 2, "est": "1.5", "se": "0.5", "p": "< 0.01", "pCorr": "< 0.05", "verdict": "higher"},
+        {"modal": "Epistemic", "contrast": "Canon. vs. rev.", "table": 2, "est": "0.98", "se": "0.5", "p": "< 0.06", "pCorr": "0.11", "verdict": "marginally higher", "note": "the paper calls this contrast only marginally significant and the interaction suggestive of an order effect for epistemics"},
+        {"modal": "Epistemic", "contrast": "Canon. vs. flat", "table": 2, "est": "2.8", "se": "0.5", "p": "< 0.0001", "pCorr": "< 0.001", "verdict": "higher"},
+        {"modal": "Epistemic", "contrast": "Flat vs. no-baseline", "table": 3, "est": "0.5", "se": "2.2", "p": "0.83", "pCorr": "1", "verdict": "no difference"},
+        {"modal": "Epistemic", "contrast": "Reversed vs. no-baseline", "table": 3, "est": "5.2", "se": "1.5", "p": "0.00053", "pCorr": "< 0.0001", "verdict": "higher", "note": "the corrected p-value is printed smaller than the uncorrected one, as in the paper"},
+        {"modal": "Deontic", "contrast": "Flat vs. no-baseline", "table": 4, "est": "5.0", "se": "1.2", "p": "< 0.0001", "pCorr": "< 0.001", "verdict": "higher", "note": "Table 4's caption misprints 'epistemics'; the text makes it the deontic table"},
+        {"modal": "Deontic", "contrast": "Reversed vs. no-baseline", "table": 4, "est": "6.5", "se": "1.2", "p": "< 0.0001", "pCorr": "< 0.001", "verdict": "higher"}
       ]
     },
     {
@@ -163,16 +153,14 @@
         {"name": "structure", "type": "Structure", "doc": "The structure."},
         {"name": "est", "type": "decimal", "doc": "The estimate."},
         {"name": "se", "type": "decimal", "doc": "The standard error."},
-        {"name": "pBound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The p-value."},
-        {"name": "pCorrBound", "type": "Bound", "doc": "How the corrected p-value is printed."},
-        {"name": "pCorr", "type": "decimal", "doc": "The Holm-corrected p-value."},
+        {"name": "p", "type": "pvalue", "doc": "The p-value."},
+        {"name": "pCorr", "type": "pvalue", "doc": "The Holm-corrected p-value."},
         {"name": "verdict", "type": "Verdict", "doc": "Whether epistemics drew fewer yes-responses."}
       ],
       "rows": [
-        {"structure": "Canonical", "est": "0.6", "se": "0.14", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.01", "verdict": "lower"},
-        {"structure": "Flat", "est": "1.9", "se": "0.2", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.001", "verdict": "lower"},
-        {"structure": "Reversed", "est": "1.6", "se": "0.2", "pBound": "<", "p": "0.0001", "pCorrBound": "<", "pCorr": "0.001", "verdict": "lower"}
+        {"structure": "Canonical", "est": "0.6", "se": "0.14", "p": "< 0.0001", "pCorr": "< 0.01", "verdict": "lower"},
+        {"structure": "Flat", "est": "1.9", "se": "0.2", "p": "< 0.0001", "pCorr": "< 0.001", "verdict": "lower"},
+        {"structure": "Reversed", "est": "1.6", "se": "0.2", "p": "< 0.0001", "pCorr": "< 0.001", "verdict": "lower"}
       ]
     },
     {

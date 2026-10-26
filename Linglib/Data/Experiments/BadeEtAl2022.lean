@@ -78,14 +78,6 @@ inductive Verdict where
   | lower
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: an upper bound -/
-  | below
-  /-- =: an exact value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- The alternative-generating item of an illusory-inference paradigm. -/
 inductive Generator where
   /-- disjunction: or else -/
@@ -207,14 +199,10 @@ structure Contrast10 where
   est : Decimal
   /-- The standard error. -/
   se : Decimal
-  /-- How the p-value is printed. -/
-  pBound : Bound
   /-- The p-value. -/
-  p : Decimal
-  /-- How the corrected p-value is printed. -/
-  pCorrBound : Bound
+  p : PValue
   /-- The Holm-corrected p-value. -/
-  pCorr : Decimal
+  pCorr : PValue
   /-- The paper's reading of the contrast. -/
   verdict : Verdict
   deriving DecidableEq, Repr
@@ -222,64 +210,46 @@ structure Contrast10 where
 /-- The cells of Tables 1-4, pp. 2:14-2:17; verdicts §2.3.2-§2.4, pp. 2:13-2:18, by modal and
 contrast; checked against the PDF text layer only. -/
 def contrasts : Modal → Contrast → Contrast10
-  | .deontic, .canonicalVsBaseline => ⟨1, ⟨69, 1⟩, ⟨15, 1⟩, .below, ⟨1, 4⟩, .below, ⟨1, 3⟩, .higher⟩
-  | .epistemic, .canonicalVsBaseline =>
-    ⟨1,
-     ⟨62, 1⟩,
-     ⟨15, 1⟩,
-     .below,
-     ⟨1, 4⟩,
-     .below,
-     ⟨1, 2⟩,
-     .higher⟩
+  | .deontic, .canonicalVsBaseline => ⟨1, ⟨69, 1⟩, ⟨15, 1⟩, ⟨.lt, ⟨1, 4⟩⟩, ⟨.lt, ⟨1, 3⟩⟩, .higher⟩
+  | .epistemic, .canonicalVsBaseline => ⟨1, ⟨62, 1⟩, ⟨15, 1⟩, ⟨.lt, ⟨1, 4⟩⟩, ⟨.lt, ⟨1, 2⟩⟩, .higher⟩
   | .deontic, .canonicalVsReversed =>
     ⟨2,
      ⟨1, 2⟩,
      ⟨5, 1⟩,
-     .exact,
-     ⟨99, 2⟩,
-     .exact,
-     ⟨99, 2⟩,
+     ⟨.eq, ⟨99, 2⟩⟩,
+     ⟨.eq, ⟨99, 2⟩⟩,
      .noDifference⟩
-  | .deontic, .canonicalVsFlat => ⟨2, ⟨15, 1⟩, ⟨5, 1⟩, .below, ⟨1, 2⟩, .below, ⟨5, 2⟩, .higher⟩
+  | .deontic, .canonicalVsFlat => ⟨2, ⟨15, 1⟩, ⟨5, 1⟩, ⟨.lt, ⟨1, 2⟩⟩, ⟨.lt, ⟨5, 2⟩⟩, .higher⟩
   | .epistemic, .canonicalVsReversed =>  -- the paper calls this contrast only marginally significant and the interaction suggestive of an order effect for epistemics
     ⟨2,
      ⟨98, 2⟩,
      ⟨5, 1⟩,
-     .below,
-     ⟨6, 2⟩,
-     .exact,
-     ⟨11, 2⟩,
+     ⟨.lt, ⟨6, 2⟩⟩,
+     ⟨.eq, ⟨11, 2⟩⟩,
      .marginallyHigher⟩
-  | .epistemic, .canonicalVsFlat => ⟨2, ⟨28, 1⟩, ⟨5, 1⟩, .below, ⟨1, 4⟩, .below, ⟨1, 3⟩, .higher⟩
+  | .epistemic, .canonicalVsFlat => ⟨2, ⟨28, 1⟩, ⟨5, 1⟩, ⟨.lt, ⟨1, 4⟩⟩, ⟨.lt, ⟨1, 3⟩⟩, .higher⟩
   | .epistemic, .flatVsBaseline =>
     ⟨3,
      ⟨5, 1⟩,
      ⟨22, 1⟩,
-     .exact,
-     ⟨83, 2⟩,
-     .exact,
-     ⟨1, 0⟩,
+     ⟨.eq, ⟨83, 2⟩⟩,
+     ⟨.eq, ⟨1, 0⟩⟩,
      .noDifference⟩
   | .epistemic, .reversedVsBaseline =>  -- the corrected p-value is printed smaller than the uncorrected one, as in the paper
     ⟨3,
      ⟨52, 1⟩,
      ⟨15, 1⟩,
-     .exact,
-     ⟨53, 5⟩,
-     .below,
-     ⟨1, 4⟩,
+     ⟨.eq, ⟨53, 5⟩⟩,
+     ⟨.lt, ⟨1, 4⟩⟩,
      .higher⟩
   | .deontic, .flatVsBaseline =>  -- Table 4's caption misprints 'epistemics'; the text makes it the deontic table
     ⟨4,
      ⟨50, 1⟩,
      ⟨12, 1⟩,
-     .below,
-     ⟨1, 4⟩,
-     .below,
-     ⟨1, 3⟩,
+     ⟨.lt, ⟨1, 4⟩⟩,
+     ⟨.lt, ⟨1, 3⟩⟩,
      .higher⟩
-  | .deontic, .reversedVsBaseline => ⟨4, ⟨65, 1⟩, ⟨12, 1⟩, .below, ⟨1, 4⟩, .below, ⟨1, 3⟩, .higher⟩
+  | .deontic, .reversedVsBaseline => ⟨4, ⟨65, 1⟩, ⟨12, 1⟩, ⟨.lt, ⟨1, 4⟩⟩, ⟨.lt, ⟨1, 3⟩⟩, .higher⟩
 
 /-- A row of Table 5, p. 2:17; §2.3.2, p. 2:17: the epistemic-against-deontic contrast within
 each structure (Table 5); epistemic is named first. -/
@@ -288,14 +258,10 @@ structure ModalContrast where
   est : Decimal
   /-- The standard error. -/
   se : Decimal
-  /-- How the p-value is printed. -/
-  pBound : Bound
   /-- The p-value. -/
-  p : Decimal
-  /-- How the corrected p-value is printed. -/
-  pCorrBound : Bound
+  p : PValue
   /-- The Holm-corrected p-value. -/
-  pCorr : Decimal
+  pCorr : PValue
   /-- Whether epistemics drew fewer yes-responses. -/
   verdict : Verdict
   deriving DecidableEq, Repr
@@ -303,9 +269,9 @@ structure ModalContrast where
 /-- The cells of Table 5, p. 2:17; §2.3.2, p. 2:17, by structure; checked against the PDF text
 layer only. -/
 def modalContrasts : Structure → ModalContrast
-  | .canonical => ⟨⟨6, 1⟩, ⟨14, 2⟩, .below, ⟨1, 4⟩, .below, ⟨1, 2⟩, .lower⟩
-  | .flat => ⟨⟨19, 1⟩, ⟨2, 1⟩, .below, ⟨1, 4⟩, .below, ⟨1, 3⟩, .lower⟩
-  | .reversed => ⟨⟨16, 1⟩, ⟨2, 1⟩, .below, ⟨1, 4⟩, .below, ⟨1, 3⟩, .lower⟩
+  | .canonical => ⟨⟨6, 1⟩, ⟨14, 2⟩, ⟨.lt, ⟨1, 4⟩⟩, ⟨.lt, ⟨1, 2⟩⟩, .lower⟩
+  | .flat => ⟨⟨19, 1⟩, ⟨2, 1⟩, ⟨.lt, ⟨1, 4⟩⟩, ⟨.lt, ⟨1, 3⟩⟩, .lower⟩
+  | .reversed => ⟨⟨16, 1⟩, ⟨2, 1⟩, ⟨.lt, ⟨1, 4⟩⟩, ⟨.lt, ⟨1, 3⟩⟩, .lower⟩
 
 /-- A row of §2.1, p. 2:10: the findings of Mascarenhas and Picat (2019) as this paper reports
 them. -/

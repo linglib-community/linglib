@@ -104,14 +104,6 @@ inductive Found where
   | no
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: As an upper bound. -/
-  | below
-  /-- =: As a value, in the tables without a relation sign. -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- How many of their students a teacher likes in a situation of Table 12. -/
 inductive Share where
   /-- all: All of them. -/
@@ -277,97 +269,93 @@ structure Diagnostic where
   beta : Decimal
   /-- The χ² statistic. -/
   chiSq : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
-  /-- The p-value, when printed as a decimal. -/
-  p : Option Decimal
-  /-- The exponent of the p-value, when printed as a power of ten. -/
-  pPowerOfTen : Option ℤ
+  /-- The p-value, printed as a decimal or as a power of ten. -/
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 81 rows of §2.1.6, Tables 3–11, in the paper's order; checked against the page images. -/
 def diagnostics : List Diagnostic :=
-  [⟨.a0, .unembedded, .gap, 1, ⟨56, 1⟩, ⟨347, 0⟩, .below, none, some (-15)⟩,
-   ⟨.a0, .unembedded, .gap, 2, ⟨63, 1⟩, ⟨623, 0⟩, .below, none, some (-15)⟩,
-   ⟨.a0, .unembedded, .gap, 3, ⟨525, 2⟩, ⟨615, 2⟩, .exact, some ⟨13, 3⟩, none⟩,
-   ⟨.a1, .unembedded, .gap, 1, ⟨-78, 1⟩, ⟨132, 1⟩, .exact, some ⟨3, 4⟩, none⟩,
-   ⟨.a1, .unembedded, .gap, 2, ⟨-51, 1⟩, ⟨979, 2⟩, .exact, some ⟨2, 3⟩, none⟩,
-   ⟨.a1, .unembedded, .gap, 3, ⟨-35, 0⟩, ⟨126, 1⟩, .exact, some ⟨4, 4⟩, none⟩,
-   ⟨.a1, .negation, .gap, 1, ⟨-38, 1⟩, ⟨980, 2⟩, .exact, some ⟨2, 3⟩, none⟩,
-   ⟨.a1, .negation, .gap, 2, ⟨-44, 1⟩, ⟨198, 1⟩, .exact, none, some (-5)⟩,
-   ⟨.a1, .negation, .gap, 3, ⟨-49, 1⟩, ⟨117, 1⟩, .exact, some ⟨7, 4⟩, none⟩,
-   ⟨.a2, .unembedded, .gap, 1, ⟨-49, 1⟩, ⟨289, 1⟩, .exact, none, some (-7)⟩,
-   ⟨.a2, .unembedded, .gap, 2, ⟨-46, 1⟩, ⟨627, 2⟩, .exact, some ⟨12, 3⟩, none⟩,
-   ⟨.a2, .unembedded, .gap, 3, ⟨-39, 1⟩, ⟨572, 2⟩, .exact, some ⟨17, 3⟩, none⟩,
-   ⟨.a2, .all, .gap, 1, ⟨-38, 1⟩, ⟨697, 2⟩, .exact, some ⟨8, 3⟩, none⟩,
-   ⟨.a2, .all, .gap, 2, ⟨-35, 1⟩, ⟨110, 1⟩, .exact, some ⟨9, 4⟩, none⟩,
-   ⟨.a2, .all, .gap, 3, ⟨-37, 1⟩, ⟨711, 2⟩, .exact, some ⟨8, 3⟩, none⟩,
-   ⟨.a2, .no, .gap, 1, ⟨-16, 2⟩, ⟨74, 3⟩, .exact, some ⟨79, 2⟩, none⟩,
-   ⟨.a2, .no, .gap, 2, ⟨-14, 1⟩, ⟨217, 2⟩, .exact, some ⟨14, 2⟩, none⟩,
-   ⟨.a2, .no, .gap, 3, ⟨-69, 2⟩, ⟨85, 2⟩, .exact, some ⟨36, 2⟩, none⟩,
-   ⟨.a3, .unembedded, .gap, 1, ⟨-45, 1⟩, ⟨247, 1⟩, .exact, none, some (-6)⟩,
-   ⟨.a3, .unembedded, .gap, 2, ⟨-36, 1⟩, ⟨111, 1⟩, .exact, some ⟨9, 4⟩, none⟩,
-   ⟨.a3, .unembedded, .gap, 3, ⟨-39, 1⟩, ⟨103, 1⟩, .exact, some ⟨1, 3⟩, none⟩,
-   ⟨.a3, .all, .gap, 1, ⟨-25, 1⟩, ⟨105, 1⟩, .exact, some ⟨1, 3⟩, none⟩,
-   ⟨.a3, .all, .gap, 2, ⟨-114, 2⟩, ⟨457, 2⟩, .exact, some ⟨3, 2⟩, none⟩,
-   ⟨.a3, .all, .gap, 3, ⟨-15, 1⟩, ⟨391, 2⟩, .exact, some ⟨48, 3⟩, none⟩,
-   ⟨.a3, .exactly, .gap, 1, ⟨-91, 1⟩, ⟨107, 1⟩, .exact, some ⟨1, 3⟩, none⟩,
-   ⟨.a3, .exactly, .gap, 2, ⟨-64, 1⟩, ⟨127, 1⟩, .exact, some ⟨4, 4⟩, none⟩,
-   ⟨.a3, .exactly, .gap, 3, ⟨-47, 1⟩, ⟨545, 2⟩, .exact, some ⟨20, 3⟩, none⟩,
-   ⟨.a3, .exactly, .gapQ, 1, ⟨-34, 1⟩, ⟨527, 2⟩, .exact, some ⟨2, 2⟩, none⟩,
-   ⟨.a3, .exactly, .gapQ, 2, ⟨-12, 1⟩, ⟨25, 1⟩, .exact, some ⟨11, 2⟩, none⟩,
-   ⟨.a3, .exactly, .gapQ, 3, ⟨-46, 2⟩, ⟨48, 2⟩, .exact, some ⟨49, 2⟩, none⟩,
-   ⟨.b1, .unembedded, .gap, 1, ⟨75, 1⟩, ⟨726, 1⟩, .exact, none, some (-16)⟩,
-   ⟨.b1, .unembedded, .gap, 2, ⟨72, 1⟩, ⟨122, 0⟩, .exact, none, some (-27)⟩,
-   ⟨.b1, .unembedded, .gap, 3, ⟨29, 1⟩, ⟨24, 0⟩, .exact, none, some (-6)⟩,
-   ⟨.b1, .negation, .gap, 1, ⟨21, 0⟩, ⟨641, 1⟩, .exact, none, some (-15)⟩,
-   ⟨.b1, .negation, .gap, 2, ⟨64, 1⟩, ⟨96, 0⟩, .exact, none, some (-22)⟩,
-   ⟨.b1, .negation, .gap, 3, ⟨28, 0⟩, ⟨123, 0⟩, .exact, none, some (-28)⟩,
-   ⟨.b2, .unembedded, .gap, 1, ⟨52, 1⟩, ⟨152, 1⟩, .exact, none, some (-4)⟩,
-   ⟨.b2, .unembedded, .gap, 2, ⟨85, 1⟩, ⟨258, 1⟩, .exact, none, some (-6)⟩,
-   ⟨.b2, .unembedded, .gap, 3, ⟨27, 1⟩, ⟨147, 1⟩, .exact, none, some (-4)⟩,
-   ⟨.b2, .all, .gap, 1, ⟨38, 1⟩, ⟨108, 1⟩, .exact, some ⟨10, 4⟩, none⟩,
-   ⟨.b2, .all, .gap, 2, ⟨35, 1⟩, ⟨140, 1⟩, .exact, some ⟨2, 4⟩, none⟩,
-   ⟨.b2, .all, .gap, 3, ⟨8, 1⟩, ⟨35, 1⟩, .exact, some ⟨61, 3⟩, none⟩,
-   ⟨.b2, .no, .gap, 1, ⟨-68, 2⟩, ⟨108, 2⟩, .exact, some ⟨30, 2⟩, none⟩,
-   ⟨.b2, .no, .gap, 2, ⟨14, 1⟩, ⟨177, 2⟩, .exact, some ⟨18, 2⟩, none⟩,
-   ⟨.b2, .no, .gap, 3, ⟨18, 2⟩, ⟨31, 2⟩, .exact, some ⟨58, 2⟩, none⟩,
-   ⟨.b3, .unembedded, .gap, 1, ⟨105, 1⟩, ⟨37, 0⟩, .exact, none, some (-9)⟩,
-   ⟨.b3, .unembedded, .gap, 2, ⟨54, 1⟩, ⟨285, 1⟩, .exact, none, some (-7)⟩,
-   ⟨.b3, .unembedded, .gap, 3, ⟨22, 1⟩, ⟨115, 1⟩, .exact, some ⟨7, 4⟩, none⟩,
-   ⟨.b3, .all, .gap, 1, ⟨31, 1⟩, ⟨221, 1⟩, .exact, none, some (-5)⟩,
-   ⟨.b3, .all, .gap, 2, ⟨22, 1⟩, ⟨153, 1⟩, .exact, none, some (-4)⟩,
-   ⟨.b3, .all, .gap, 3, ⟨16, 1⟩, ⟨74, 1⟩, .exact, some ⟨6, 3⟩, none⟩,
-   ⟨.b3, .exactly, .gap, 1, ⟨20, 1⟩, ⟨712, 2⟩, .exact, some ⟨76, 4⟩, none⟩,
-   ⟨.b3, .exactly, .gap, 2, ⟨35, 1⟩, ⟨209, 1⟩, .exact, none, some (-5)⟩,
-   ⟨.b3, .exactly, .gap, 3, ⟨18, 1⟩, ⟨44, 1⟩, .exact, some ⟨36, 3⟩, none⟩,
-   ⟨.b3, .exactly, .gapQ, 1, ⟨-17, 2⟩, ⟨65, 3⟩, .exact, some ⟨80, 2⟩, none⟩,
-   ⟨.b3, .exactly, .gapQ, 2, ⟨17, 1⟩, ⟨574, 2⟩, .exact, some ⟨17, 3⟩, none⟩,
-   ⟨.b3, .exactly, .gapQ, 3, ⟨99, 2⟩, ⟨18, 1⟩, .exact, some ⟨18, 2⟩, none⟩,
-   ⟨.c2, .all, .gap, 1, ⟨67, 1⟩, ⟨267, 1⟩, .exact, none, some (-6)⟩,  -- printed E-every
-   ⟨.c2, .all, .gap, 2, ⟨77, 1⟩, ⟨351, 1⟩, .exact, none, some (-8)⟩,  -- printed E-every
-   ⟨.c2, .all, .gap, 3, ⟨49, 1⟩, ⟨40, 1⟩, .exact, some ⟨46, 3⟩, none⟩,  -- printed E-every
-   ⟨.c2, .no, .gap, 1, ⟨13, 1⟩, ⟨82, 1⟩, .exact, some ⟨4, 3⟩, none⟩,
-   ⟨.c2, .no, .gap, 2, ⟨11, 1⟩, ⟨52, 1⟩, .exact, some ⟨22, 3⟩, none⟩,
-   ⟨.c2, .no, .gap, 3, ⟨16, 1⟩, ⟨78, 1⟩, .exact, some ⟨5, 3⟩, none⟩,
-   ⟨.c3, .all, .gap, 1, ⟨19, 1⟩, ⟨188, 1⟩, .exact, none, some (-4)⟩,
-   ⟨.c3, .all, .gap, 2, ⟨16, 1⟩, ⟨164, 1⟩, .exact, none, some (-4)⟩,
-   ⟨.c3, .all, .gap, 3, ⟨15, 1⟩, ⟨97, 1⟩, .exact, some ⟨2, 3⟩, none⟩,
-   ⟨.c3, .exactly, .gap, 1, ⟨39, 1⟩, ⟨210, 1⟩, .exact, none, some (-5)⟩,
-   ⟨.c3, .exactly, .gap, 2, ⟨77, 1⟩, ⟨388, 1⟩, .exact, none, some (-9)⟩,
-   ⟨.c3, .exactly, .gap, 3, ⟨66, 1⟩, ⟨135, 1⟩, .exact, some ⟨2, 4⟩, none⟩,
-   ⟨.c3, .exactly, .gapQ, 1, ⟨-45, 2⟩, ⟨14, 1⟩, .exact, some ⟨23, 2⟩, none⟩,
-   ⟨.c3, .exactly, .gapQ, 2, ⟨68, 2⟩, ⟨20, 1⟩, .exact, some ⟨15, 2⟩, none⟩,
-   ⟨.c3, .exactly, .gapQ, 3, ⟨-1, 2⟩, ⟨2, 2⟩, .exact, some ⟨88, 2⟩, none⟩,
-   ⟨.c4, .all, .gap, 1, ⟨22, 1⟩, ⟨175, 1⟩, .exact, none, some (-6)⟩,
-   ⟨.c4, .all, .gap, 2, ⟨14, 1⟩, ⟨99, 1⟩, .exact, some ⟨2, 3⟩, none⟩,
-   ⟨.c4, .all, .gap, 3, ⟨15, 1⟩, ⟨76, 1⟩, .exact, some ⟨6, 3⟩, none⟩,
-   ⟨.c4, .exactly, .gap, 1, ⟨82, 1⟩, ⟨167, 1⟩, .exact, none, some (-4)⟩,
-   ⟨.c4, .exactly, .gap, 2, ⟨67, 1⟩, ⟨362, 1⟩, .exact, none, some (-8)⟩,
-   ⟨.c4, .exactly, .gap, 3, ⟨57, 1⟩, ⟨68, 1⟩, .exact, some ⟨9, 3⟩, none⟩,
-   ⟨.c4, .exactly, .gapQQ, 1, ⟨44, 1⟩, ⟨134, 1⟩, .exact, some ⟨2, 4⟩, none⟩,
-   ⟨.c4, .exactly, .gapQQ, 2, ⟨76, 1⟩, ⟨494, 1⟩, .exact, none, some (-11)⟩,
-   ⟨.c4, .exactly, .gapQQ, 3, ⟨70, 1⟩, ⟨115, 1⟩, .exact, some ⟨7, 4⟩, none⟩]
+  [⟨.a0, .unembedded, .gap, 1, ⟨56, 1⟩, ⟨347, 0⟩, ⟨.lt, ⟨1, 15⟩⟩⟩,
+   ⟨.a0, .unembedded, .gap, 2, ⟨63, 1⟩, ⟨623, 0⟩, ⟨.lt, ⟨1, 15⟩⟩⟩,
+   ⟨.a0, .unembedded, .gap, 3, ⟨525, 2⟩, ⟨615, 2⟩, ⟨.eq, ⟨13, 3⟩⟩⟩,
+   ⟨.a1, .unembedded, .gap, 1, ⟨-78, 1⟩, ⟨132, 1⟩, ⟨.eq, ⟨3, 4⟩⟩⟩,
+   ⟨.a1, .unembedded, .gap, 2, ⟨-51, 1⟩, ⟨979, 2⟩, ⟨.eq, ⟨2, 3⟩⟩⟩,
+   ⟨.a1, .unembedded, .gap, 3, ⟨-35, 0⟩, ⟨126, 1⟩, ⟨.eq, ⟨4, 4⟩⟩⟩,
+   ⟨.a1, .negation, .gap, 1, ⟨-38, 1⟩, ⟨980, 2⟩, ⟨.eq, ⟨2, 3⟩⟩⟩,
+   ⟨.a1, .negation, .gap, 2, ⟨-44, 1⟩, ⟨198, 1⟩, ⟨.eq, ⟨1, 5⟩⟩⟩,
+   ⟨.a1, .negation, .gap, 3, ⟨-49, 1⟩, ⟨117, 1⟩, ⟨.eq, ⟨7, 4⟩⟩⟩,
+   ⟨.a2, .unembedded, .gap, 1, ⟨-49, 1⟩, ⟨289, 1⟩, ⟨.eq, ⟨1, 7⟩⟩⟩,
+   ⟨.a2, .unembedded, .gap, 2, ⟨-46, 1⟩, ⟨627, 2⟩, ⟨.eq, ⟨12, 3⟩⟩⟩,
+   ⟨.a2, .unembedded, .gap, 3, ⟨-39, 1⟩, ⟨572, 2⟩, ⟨.eq, ⟨17, 3⟩⟩⟩,
+   ⟨.a2, .all, .gap, 1, ⟨-38, 1⟩, ⟨697, 2⟩, ⟨.eq, ⟨8, 3⟩⟩⟩,
+   ⟨.a2, .all, .gap, 2, ⟨-35, 1⟩, ⟨110, 1⟩, ⟨.eq, ⟨9, 4⟩⟩⟩,
+   ⟨.a2, .all, .gap, 3, ⟨-37, 1⟩, ⟨711, 2⟩, ⟨.eq, ⟨8, 3⟩⟩⟩,
+   ⟨.a2, .no, .gap, 1, ⟨-16, 2⟩, ⟨74, 3⟩, ⟨.eq, ⟨79, 2⟩⟩⟩,
+   ⟨.a2, .no, .gap, 2, ⟨-14, 1⟩, ⟨217, 2⟩, ⟨.eq, ⟨14, 2⟩⟩⟩,
+   ⟨.a2, .no, .gap, 3, ⟨-69, 2⟩, ⟨85, 2⟩, ⟨.eq, ⟨36, 2⟩⟩⟩,
+   ⟨.a3, .unembedded, .gap, 1, ⟨-45, 1⟩, ⟨247, 1⟩, ⟨.eq, ⟨1, 6⟩⟩⟩,
+   ⟨.a3, .unembedded, .gap, 2, ⟨-36, 1⟩, ⟨111, 1⟩, ⟨.eq, ⟨9, 4⟩⟩⟩,
+   ⟨.a3, .unembedded, .gap, 3, ⟨-39, 1⟩, ⟨103, 1⟩, ⟨.eq, ⟨1, 3⟩⟩⟩,
+   ⟨.a3, .all, .gap, 1, ⟨-25, 1⟩, ⟨105, 1⟩, ⟨.eq, ⟨1, 3⟩⟩⟩,
+   ⟨.a3, .all, .gap, 2, ⟨-114, 2⟩, ⟨457, 2⟩, ⟨.eq, ⟨3, 2⟩⟩⟩,
+   ⟨.a3, .all, .gap, 3, ⟨-15, 1⟩, ⟨391, 2⟩, ⟨.eq, ⟨48, 3⟩⟩⟩,
+   ⟨.a3, .exactly, .gap, 1, ⟨-91, 1⟩, ⟨107, 1⟩, ⟨.eq, ⟨1, 3⟩⟩⟩,
+   ⟨.a3, .exactly, .gap, 2, ⟨-64, 1⟩, ⟨127, 1⟩, ⟨.eq, ⟨4, 4⟩⟩⟩,
+   ⟨.a3, .exactly, .gap, 3, ⟨-47, 1⟩, ⟨545, 2⟩, ⟨.eq, ⟨20, 3⟩⟩⟩,
+   ⟨.a3, .exactly, .gapQ, 1, ⟨-34, 1⟩, ⟨527, 2⟩, ⟨.eq, ⟨2, 2⟩⟩⟩,
+   ⟨.a3, .exactly, .gapQ, 2, ⟨-12, 1⟩, ⟨25, 1⟩, ⟨.eq, ⟨11, 2⟩⟩⟩,
+   ⟨.a3, .exactly, .gapQ, 3, ⟨-46, 2⟩, ⟨48, 2⟩, ⟨.eq, ⟨49, 2⟩⟩⟩,
+   ⟨.b1, .unembedded, .gap, 1, ⟨75, 1⟩, ⟨726, 1⟩, ⟨.eq, ⟨1, 16⟩⟩⟩,
+   ⟨.b1, .unembedded, .gap, 2, ⟨72, 1⟩, ⟨122, 0⟩, ⟨.eq, ⟨1, 27⟩⟩⟩,
+   ⟨.b1, .unembedded, .gap, 3, ⟨29, 1⟩, ⟨24, 0⟩, ⟨.eq, ⟨1, 6⟩⟩⟩,
+   ⟨.b1, .negation, .gap, 1, ⟨21, 0⟩, ⟨641, 1⟩, ⟨.eq, ⟨1, 15⟩⟩⟩,
+   ⟨.b1, .negation, .gap, 2, ⟨64, 1⟩, ⟨96, 0⟩, ⟨.eq, ⟨1, 22⟩⟩⟩,
+   ⟨.b1, .negation, .gap, 3, ⟨28, 0⟩, ⟨123, 0⟩, ⟨.eq, ⟨1, 28⟩⟩⟩,
+   ⟨.b2, .unembedded, .gap, 1, ⟨52, 1⟩, ⟨152, 1⟩, ⟨.eq, ⟨1, 4⟩⟩⟩,
+   ⟨.b2, .unembedded, .gap, 2, ⟨85, 1⟩, ⟨258, 1⟩, ⟨.eq, ⟨1, 6⟩⟩⟩,
+   ⟨.b2, .unembedded, .gap, 3, ⟨27, 1⟩, ⟨147, 1⟩, ⟨.eq, ⟨1, 4⟩⟩⟩,
+   ⟨.b2, .all, .gap, 1, ⟨38, 1⟩, ⟨108, 1⟩, ⟨.eq, ⟨10, 4⟩⟩⟩,
+   ⟨.b2, .all, .gap, 2, ⟨35, 1⟩, ⟨140, 1⟩, ⟨.eq, ⟨2, 4⟩⟩⟩,
+   ⟨.b2, .all, .gap, 3, ⟨8, 1⟩, ⟨35, 1⟩, ⟨.eq, ⟨61, 3⟩⟩⟩,
+   ⟨.b2, .no, .gap, 1, ⟨-68, 2⟩, ⟨108, 2⟩, ⟨.eq, ⟨30, 2⟩⟩⟩,
+   ⟨.b2, .no, .gap, 2, ⟨14, 1⟩, ⟨177, 2⟩, ⟨.eq, ⟨18, 2⟩⟩⟩,
+   ⟨.b2, .no, .gap, 3, ⟨18, 2⟩, ⟨31, 2⟩, ⟨.eq, ⟨58, 2⟩⟩⟩,
+   ⟨.b3, .unembedded, .gap, 1, ⟨105, 1⟩, ⟨37, 0⟩, ⟨.eq, ⟨1, 9⟩⟩⟩,
+   ⟨.b3, .unembedded, .gap, 2, ⟨54, 1⟩, ⟨285, 1⟩, ⟨.eq, ⟨1, 7⟩⟩⟩,
+   ⟨.b3, .unembedded, .gap, 3, ⟨22, 1⟩, ⟨115, 1⟩, ⟨.eq, ⟨7, 4⟩⟩⟩,
+   ⟨.b3, .all, .gap, 1, ⟨31, 1⟩, ⟨221, 1⟩, ⟨.eq, ⟨1, 5⟩⟩⟩,
+   ⟨.b3, .all, .gap, 2, ⟨22, 1⟩, ⟨153, 1⟩, ⟨.eq, ⟨1, 4⟩⟩⟩,
+   ⟨.b3, .all, .gap, 3, ⟨16, 1⟩, ⟨74, 1⟩, ⟨.eq, ⟨6, 3⟩⟩⟩,
+   ⟨.b3, .exactly, .gap, 1, ⟨20, 1⟩, ⟨712, 2⟩, ⟨.eq, ⟨76, 4⟩⟩⟩,
+   ⟨.b3, .exactly, .gap, 2, ⟨35, 1⟩, ⟨209, 1⟩, ⟨.eq, ⟨1, 5⟩⟩⟩,
+   ⟨.b3, .exactly, .gap, 3, ⟨18, 1⟩, ⟨44, 1⟩, ⟨.eq, ⟨36, 3⟩⟩⟩,
+   ⟨.b3, .exactly, .gapQ, 1, ⟨-17, 2⟩, ⟨65, 3⟩, ⟨.eq, ⟨80, 2⟩⟩⟩,
+   ⟨.b3, .exactly, .gapQ, 2, ⟨17, 1⟩, ⟨574, 2⟩, ⟨.eq, ⟨17, 3⟩⟩⟩,
+   ⟨.b3, .exactly, .gapQ, 3, ⟨99, 2⟩, ⟨18, 1⟩, ⟨.eq, ⟨18, 2⟩⟩⟩,
+   ⟨.c2, .all, .gap, 1, ⟨67, 1⟩, ⟨267, 1⟩, ⟨.eq, ⟨1, 6⟩⟩⟩,  -- printed E-every
+   ⟨.c2, .all, .gap, 2, ⟨77, 1⟩, ⟨351, 1⟩, ⟨.eq, ⟨1, 8⟩⟩⟩,  -- printed E-every
+   ⟨.c2, .all, .gap, 3, ⟨49, 1⟩, ⟨40, 1⟩, ⟨.eq, ⟨46, 3⟩⟩⟩,  -- printed E-every
+   ⟨.c2, .no, .gap, 1, ⟨13, 1⟩, ⟨82, 1⟩, ⟨.eq, ⟨4, 3⟩⟩⟩,
+   ⟨.c2, .no, .gap, 2, ⟨11, 1⟩, ⟨52, 1⟩, ⟨.eq, ⟨22, 3⟩⟩⟩,
+   ⟨.c2, .no, .gap, 3, ⟨16, 1⟩, ⟨78, 1⟩, ⟨.eq, ⟨5, 3⟩⟩⟩,
+   ⟨.c3, .all, .gap, 1, ⟨19, 1⟩, ⟨188, 1⟩, ⟨.eq, ⟨1, 4⟩⟩⟩,
+   ⟨.c3, .all, .gap, 2, ⟨16, 1⟩, ⟨164, 1⟩, ⟨.eq, ⟨1, 4⟩⟩⟩,
+   ⟨.c3, .all, .gap, 3, ⟨15, 1⟩, ⟨97, 1⟩, ⟨.eq, ⟨2, 3⟩⟩⟩,
+   ⟨.c3, .exactly, .gap, 1, ⟨39, 1⟩, ⟨210, 1⟩, ⟨.eq, ⟨1, 5⟩⟩⟩,
+   ⟨.c3, .exactly, .gap, 2, ⟨77, 1⟩, ⟨388, 1⟩, ⟨.eq, ⟨1, 9⟩⟩⟩,
+   ⟨.c3, .exactly, .gap, 3, ⟨66, 1⟩, ⟨135, 1⟩, ⟨.eq, ⟨2, 4⟩⟩⟩,
+   ⟨.c3, .exactly, .gapQ, 1, ⟨-45, 2⟩, ⟨14, 1⟩, ⟨.eq, ⟨23, 2⟩⟩⟩,
+   ⟨.c3, .exactly, .gapQ, 2, ⟨68, 2⟩, ⟨20, 1⟩, ⟨.eq, ⟨15, 2⟩⟩⟩,
+   ⟨.c3, .exactly, .gapQ, 3, ⟨-1, 2⟩, ⟨2, 2⟩, ⟨.eq, ⟨88, 2⟩⟩⟩,
+   ⟨.c4, .all, .gap, 1, ⟨22, 1⟩, ⟨175, 1⟩, ⟨.eq, ⟨1, 6⟩⟩⟩,
+   ⟨.c4, .all, .gap, 2, ⟨14, 1⟩, ⟨99, 1⟩, ⟨.eq, ⟨2, 3⟩⟩⟩,
+   ⟨.c4, .all, .gap, 3, ⟨15, 1⟩, ⟨76, 1⟩, ⟨.eq, ⟨6, 3⟩⟩⟩,
+   ⟨.c4, .exactly, .gap, 1, ⟨82, 1⟩, ⟨167, 1⟩, ⟨.eq, ⟨1, 4⟩⟩⟩,
+   ⟨.c4, .exactly, .gap, 2, ⟨67, 1⟩, ⟨362, 1⟩, ⟨.eq, ⟨1, 8⟩⟩⟩,
+   ⟨.c4, .exactly, .gap, 3, ⟨57, 1⟩, ⟨68, 1⟩, ⟨.eq, ⟨9, 3⟩⟩⟩,
+   ⟨.c4, .exactly, .gapQQ, 1, ⟨44, 1⟩, ⟨134, 1⟩, ⟨.eq, ⟨2, 4⟩⟩⟩,
+   ⟨.c4, .exactly, .gapQQ, 2, ⟨76, 1⟩, ⟨494, 1⟩, ⟨.eq, ⟨1, 11⟩⟩⟩,
+   ⟨.c4, .exactly, .gapQQ, 3, ⟨70, 1⟩, ⟨115, 1⟩, ⟨.eq, ⟨7, 4⟩⟩⟩]
 
 /-- A row of Table 12: the situations of the theoretical comparison for 'Exactly 2 teachers like
 their students', how many of their students Bill, Mary and Sue like, the condition each

@@ -54,7 +54,7 @@ def quantifiers (x : Run) : List Quantifier :=
 .05 level. -/
 def found (x : Run) (e : Effect) : Option Bool :=
   (tests.find? fun t ↦ t.experiment = x ∧ t.model = .mixed ∧ t.effect = e).map fun t ↦
-    decide (t.p.toRat < 1 / 20)
+    decide (t.p.Significant (1 / 20))
 
 /-- Whether an account predicts a context effect for a quantifier, which it does when on some
 mixed picture it accepts the sentence in one context and not the other; none where linglib does

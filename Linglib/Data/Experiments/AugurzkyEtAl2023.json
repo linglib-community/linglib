@@ -56,14 +56,6 @@
         {"name": "interaction", "label": "CONTEXT × POLARITY", "doc": "the interaction of CONTEXT and POLARITY"},
         {"name": "contextTerms", "label": "CONTEXT and its interactions", "doc": "the joint effect of CONTEXT and its interactions"}
       ]
-    },
-    {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {"name": "below", "label": "<", "doc": "as an upper bound"},
-        {"name": "exact", "label": "=", "doc": "as a value"}
-      ]
     }
   ],
   "constants": [
@@ -165,17 +157,16 @@
         {"name": "effect", "type": "Effect", "doc": "The term tested."},
         {"name": "df", "type": "nat", "doc": "The degrees of freedom of the chi-square statistic."},
         {"name": "chiSq", "type": "decimal", "doc": "The chi-square statistic."},
-        {"name": "bound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The p-value."}
+        {"name": "p", "type": "pvalue", "doc": "The p-value."}
       ],
       "rows": [
-        {"experiment": "Experiment 1", "model": "mixed", "effect": "CONTEXT", "df": 1, "chiSq": "49", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 1", "model": "mixed", "effect": "POLARITY", "df": 1, "chiSq": "93", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 1", "model": "mixed", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "11", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 2", "model": "controls", "effect": "CONTEXT and its interactions", "df": 3, "chiSq": "0.46", "bound": "=", "p": "0.93"},
-        {"experiment": "Experiment 2", "model": "mixed", "effect": "CONTEXT", "df": 1, "chiSq": "89", "bound": "<", "p": "0.001"},
-        {"experiment": "Experiment 2", "model": "mixed", "effect": "POLARITY", "df": 1, "chiSq": "0.02", "bound": "=", "p": "0.90"},
-        {"experiment": "Experiment 2", "model": "mixed", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "2.1", "bound": "=", "p": "0.15"}
+        {"experiment": "Experiment 1", "model": "mixed", "effect": "CONTEXT", "df": 1, "chiSq": "49", "p": "< 0.001"},
+        {"experiment": "Experiment 1", "model": "mixed", "effect": "POLARITY", "df": 1, "chiSq": "93", "p": "< 0.001"},
+        {"experiment": "Experiment 1", "model": "mixed", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "11", "p": "< 0.001"},
+        {"experiment": "Experiment 2", "model": "controls", "effect": "CONTEXT and its interactions", "df": 3, "chiSq": "0.46", "p": "0.93"},
+        {"experiment": "Experiment 2", "model": "mixed", "effect": "CONTEXT", "df": 1, "chiSq": "89", "p": "< 0.001"},
+        {"experiment": "Experiment 2", "model": "mixed", "effect": "POLARITY", "df": 1, "chiSq": "0.02", "p": "0.90"},
+        {"experiment": "Experiment 2", "model": "mixed", "effect": "CONTEXT × POLARITY", "df": 1, "chiSq": "2.1", "p": "0.15"}
       ]
     }
   ]

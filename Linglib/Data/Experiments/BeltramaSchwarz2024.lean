@@ -150,14 +150,6 @@ inductive Term where
   | nerdyTask
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- Experimental items, each in nine Persona × Screen Fit versions. (§4.2, p. 9; checked against
 the page images.) -/
 def items : ℕ := 24
@@ -273,41 +265,31 @@ structure PersonaContrast where
   se : Decimal
   /-- The z statistic, unsigned as printed. -/
   z : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 8 rows of §4.5, pp. 12–13; §5.3, p. 17; §6, p. 20, in the paper's order; checked against
 the page images. -/
 def personaContrasts : List PersonaContrast :=
-  [⟨.coveredScreen, .imprecise, .nerdy, ⟨20, 2⟩, ⟨662, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.coveredScreen, .imprecise, .chill, ⟨20, 2⟩, ⟨761, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.coveredScreen, .control, .nerdy, ⟨18, 2⟩, ⟨7, 2⟩, .exact, ⟨99, 2⟩⟩,
-   ⟨.coveredScreen, .control, .chill, ⟨18, 2⟩, ⟨5, 2⟩, .exact, ⟨99, 2⟩⟩,
-   ⟨.truthValueJudgment, .imprecise, .chill, ⟨24, 2⟩, ⟨843, 2⟩, .below, ⟨1, 4⟩⟩,
+  [⟨.coveredScreen, .imprecise, .nerdy, ⟨20, 2⟩, ⟨662, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.coveredScreen, .imprecise, .chill, ⟨20, 2⟩, ⟨761, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.coveredScreen, .control, .nerdy, ⟨18, 2⟩, ⟨7, 2⟩, ⟨.eq, ⟨99, 2⟩⟩⟩,
+   ⟨.coveredScreen, .control, .chill, ⟨18, 2⟩, ⟨5, 2⟩, ⟨.eq, ⟨99, 2⟩⟩⟩,
+   ⟨.truthValueJudgment, .imprecise, .chill, ⟨24, 2⟩, ⟨843, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
    ⟨.truthValueJudgment,  -- printed as Nerdy vs. No.Persona in the sentence on Chill
      .control,
      .nerdy,
      ⟨24, 2⟩,
      ⟨5, 2⟩,
-     .exact,
-     ⟨97, 2⟩⟩,
-   ⟨.coveredScreen,  -- combined analysis, §6
-     .imprecise,
-     .nerdy,
-     ⟨43, 2⟩,
-     ⟨440, 2⟩,
-     .below,
-     ⟨1, 4⟩⟩,
+     ⟨.eq, ⟨97, 2⟩⟩⟩,
+   ⟨.coveredScreen, .imprecise, .nerdy, ⟨43, 2⟩, ⟨440, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,  -- combined analysis, §6
    ⟨.truthValueJudgment,  -- combined analysis, §6
      .imprecise,
      .nerdy,
      ⟨45, 2⟩,
      ⟨151, 2⟩,
-     .exact,
-     ⟨28, 2⟩⟩]
+     ⟨.eq, ⟨28, 2⟩⟩⟩]
 
 /-- A row of §6, pp. 20–21: a contrast of Imprecise rejection rates between the two tasks within
 a persona condition. -/
@@ -321,17 +303,15 @@ structure TaskContrast where
   se : Decimal
   /-- The z statistic. -/
   z : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 3 rows of §6, pp. 20–21, in the paper's order; checked against the page images. -/
 def taskContrasts : List TaskContrast :=
-  [⟨none, .noDifference, ⟨37, 2⟩, ⟨100, 2⟩, .exact, ⟨30, 2⟩⟩,
-   ⟨some .nerdy, .noDifference, ⟨46, 2⟩, ⟨176, 2⟩, .exact, ⟨8, 2⟩⟩,
-   ⟨some .chill, .noDifference, ⟨37, 2⟩, ⟨6, 2⟩, .exact, ⟨95, 2⟩⟩]
+  [⟨none, .noDifference, ⟨37, 2⟩, ⟨100, 2⟩, ⟨.eq, ⟨30, 2⟩⟩⟩,
+   ⟨some .nerdy, .noDifference, ⟨46, 2⟩, ⟨176, 2⟩, ⟨.eq, ⟨8, 2⟩⟩⟩,
+   ⟨some .chill, .noDifference, ⟨37, 2⟩, ⟨6, 2⟩, ⟨.eq, ⟨95, 2⟩⟩⟩]
 
 /-- A row of §4.5, pp. 12–15; §5.3, pp. 17–19; §6, p. 20: a coefficient of a mixed-effects
 logistic regression on rejections, covered choices in Experiment 1 and wrong judgments in
@@ -349,82 +329,74 @@ structure Coefficient where
   se : Decimal
   /-- The z statistic, unsigned as printed. -/
   z : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 26 rows of §4.5, pp. 12–15; §5.3, pp. 17–19; §6, p. 20, in the paper's order; checked
 against the page images. -/
 def coefficients : List Coefficient :=
-  [⟨.coveredScreen, .main, .chill, ⟨-67, 2⟩, ⟨13, 2⟩, ⟨486, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.coveredScreen, .main, .nerdy, ⟨77, 2⟩, ⟨14, 2⟩, ⟨554, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.coveredScreen, .main, .nerdyScreenFit, ⟨-78, 2⟩, ⟨13, 2⟩, ⟨57, 1⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.coveredScreen, .main, .chillScreenFit, ⟨66, 2⟩, ⟨13, 2⟩, ⟨486, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.coveredScreen, .main, .screenFit, ⟨0, 2⟩, ⟨10, 2⟩, ⟨9, 2⟩, .exact, ⟨92, 2⟩⟩,
-   ⟨.coveredScreen, .similarity, .persona, ⟨223, 2⟩, ⟨24, 2⟩, ⟨912, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.coveredScreen, .similarity, .similarity, ⟨60, 2⟩, ⟨23, 2⟩, ⟨259, 2⟩, .below, ⟨1, 2⟩⟩,
-   ⟨.coveredScreen, .similarity, .gender, ⟨1, 2⟩, ⟨27, 2⟩, ⟨5, 2⟩, .exact, ⟨97, 2⟩⟩,
-   ⟨.coveredScreen, .similarity, .personaSimilarity, ⟨65, 2⟩, ⟨45, 2⟩, ⟨143, 2⟩, .exact, ⟨15, 2⟩⟩,
-   ⟨.coveredScreen, .similarity, .personaGender, ⟨33, 2⟩, ⟨28, 2⟩, ⟨18, 2⟩, .exact, ⟨23, 2⟩⟩,
-   ⟨.coveredScreen, .similarity, .genderSimilarity, ⟨6, 2⟩, ⟨14, 2⟩, ⟨46, 2⟩, .exact, ⟨64, 2⟩⟩,
+  [⟨.coveredScreen, .main, .chill, ⟨-67, 2⟩, ⟨13, 2⟩, ⟨486, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.coveredScreen, .main, .nerdy, ⟨77, 2⟩, ⟨14, 2⟩, ⟨554, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.coveredScreen, .main, .nerdyScreenFit, ⟨-78, 2⟩, ⟨13, 2⟩, ⟨57, 1⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.coveredScreen, .main, .chillScreenFit, ⟨66, 2⟩, ⟨13, 2⟩, ⟨486, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.coveredScreen, .main, .screenFit, ⟨0, 2⟩, ⟨10, 2⟩, ⟨9, 2⟩, ⟨.eq, ⟨92, 2⟩⟩⟩,
+   ⟨.coveredScreen, .similarity, .persona, ⟨223, 2⟩, ⟨24, 2⟩, ⟨912, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.coveredScreen, .similarity, .similarity, ⟨60, 2⟩, ⟨23, 2⟩, ⟨259, 2⟩, ⟨.lt, ⟨1, 2⟩⟩⟩,
+   ⟨.coveredScreen, .similarity, .gender, ⟨1, 2⟩, ⟨27, 2⟩, ⟨5, 2⟩, ⟨.eq, ⟨97, 2⟩⟩⟩,
+   ⟨.coveredScreen, .similarity, .personaSimilarity, ⟨65, 2⟩, ⟨45, 2⟩, ⟨143, 2⟩, ⟨.eq, ⟨15, 2⟩⟩⟩,
+   ⟨.coveredScreen, .similarity, .personaGender, ⟨33, 2⟩, ⟨28, 2⟩, ⟨18, 2⟩, ⟨.eq, ⟨23, 2⟩⟩⟩,
+   ⟨.coveredScreen, .similarity, .genderSimilarity, ⟨6, 2⟩, ⟨14, 2⟩, ⟨46, 2⟩, ⟨.eq, ⟨64, 2⟩⟩⟩,
    ⟨.coveredScreen,
      .similarity,
      .personaGenderSimilarity,
      ⟨33, 2⟩,
      ⟨29, 2⟩,
      ⟨113, 2⟩,
-     .exact,
-     ⟨25, 2⟩⟩,
-   ⟨.coveredScreen, .similarityNerdy, .similarity, ⟨92, 2⟩, ⟨36, 2⟩, ⟨256, 2⟩, .exact, ⟨1, 2⟩⟩,
-   ⟨.coveredScreen, .similarityChill, .similarity, ⟨27, 2⟩, ⟨28, 2⟩, ⟨95, 2⟩, .exact, ⟨33, 2⟩⟩,
-   ⟨.truthValueJudgment, .main, .chill, ⟨104, 2⟩, ⟨16, 2⟩, ⟨629, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.truthValueJudgment, .main, .chillScreenFit, ⟨100, 2⟩, ⟨16, 2⟩, ⟨614, 2⟩, .below, ⟨1, 4⟩⟩,
+     ⟨.eq, ⟨25, 2⟩⟩⟩,
+   ⟨.coveredScreen, .similarityNerdy, .similarity, ⟨92, 2⟩, ⟨36, 2⟩, ⟨256, 2⟩, ⟨.eq, ⟨1, 2⟩⟩⟩,
+   ⟨.coveredScreen, .similarityChill, .similarity, ⟨27, 2⟩, ⟨28, 2⟩, ⟨95, 2⟩, ⟨.eq, ⟨33, 2⟩⟩⟩,
+   ⟨.truthValueJudgment, .main, .chill, ⟨104, 2⟩, ⟨16, 2⟩, ⟨629, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.truthValueJudgment, .main, .chillScreenFit, ⟨100, 2⟩, ⟨16, 2⟩, ⟨614, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
    ⟨.truthValueJudgment,  -- printed as Nerd
      .main,
      .nerdy,
      ⟨2, 2⟩,
      ⟨15, 2⟩,
      ⟨15, 2⟩,
-     .exact,
-     ⟨87, 2⟩⟩,
+     ⟨.eq, ⟨87, 2⟩⟩⟩,
    ⟨.truthValueJudgment,  -- printed as Nerd and Screen Fit
      .main,
      .nerdyScreenFit,
      ⟨3, 2⟩,
      ⟨18, 2⟩,
      ⟨18, 2⟩,
-     .exact,
-     ⟨85, 2⟩⟩,
-   ⟨.truthValueJudgment, .similarity, .persona, ⟨157, 2⟩, ⟨27, 2⟩, ⟨568, 2⟩, .below, ⟨1, 4⟩⟩,
-   ⟨.truthValueJudgment, .similarity, .similarity, ⟨24, 2⟩, ⟨27, 2⟩, ⟨89, 2⟩, .exact, ⟨36, 2⟩⟩,
-   ⟨.truthValueJudgment, .similarity, .gender, ⟨13, 2⟩, ⟨11, 2⟩, ⟨117, 2⟩, .exact, ⟨23, 2⟩⟩,
+     ⟨.eq, ⟨85, 2⟩⟩⟩,
+   ⟨.truthValueJudgment, .similarity, .persona, ⟨157, 2⟩, ⟨27, 2⟩, ⟨568, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩,
+   ⟨.truthValueJudgment, .similarity, .similarity, ⟨24, 2⟩, ⟨27, 2⟩, ⟨89, 2⟩, ⟨.eq, ⟨36, 2⟩⟩⟩,
+   ⟨.truthValueJudgment, .similarity, .gender, ⟨13, 2⟩, ⟨11, 2⟩, ⟨117, 2⟩, ⟨.eq, ⟨23, 2⟩⟩⟩,
    ⟨.truthValueJudgment,  -- printed as No.Persona*Similarity
      .similarity,
      .personaSimilarity,
      ⟨27, 2⟩,
      ⟨27, 2⟩,
      ⟨101, 2⟩,
-     .exact,
-     ⟨30, 2⟩⟩,
-   ⟨.truthValueJudgment, .similarity, .personaGender, ⟨7, 2⟩, ⟨7, 2⟩, ⟨102, 2⟩, .exact, ⟨30, 2⟩⟩,
-   ⟨.truthValueJudgment, .similarity, .genderSimilarity, ⟨4, 2⟩, ⟨7, 2⟩, ⟨54, 2⟩, .exact, ⟨58, 2⟩⟩,
+     ⟨.eq, ⟨30, 2⟩⟩⟩,
+   ⟨.truthValueJudgment, .similarity, .personaGender, ⟨7, 2⟩, ⟨7, 2⟩, ⟨102, 2⟩, ⟨.eq, ⟨30, 2⟩⟩⟩,
+   ⟨.truthValueJudgment, .similarity, .genderSimilarity, ⟨4, 2⟩, ⟨7, 2⟩, ⟨54, 2⟩, ⟨.eq, ⟨58, 2⟩⟩⟩,
    ⟨.truthValueJudgment,
      .similarity,
      .personaGenderSimilarity,
      ⟨3, 2⟩,
      ⟨7, 2⟩,
      ⟨41, 2⟩,
-     .exact,
-     ⟨67, 2⟩⟩,
+     ⟨.eq, ⟨67, 2⟩⟩⟩,
    ⟨.truthValueJudgment,  -- combined analysis of both tasks, §6
      .combined,
      .nerdyTask,
      ⟨62, 2⟩,
      ⟨31, 2⟩,
      ⟨199, 2⟩,
-     .exact,
-     ⟨4, 2⟩⟩]
+     ⟨.eq, ⟨4, 2⟩⟩⟩]
 
 end BeltramaSchwarz2024

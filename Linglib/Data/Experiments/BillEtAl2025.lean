@@ -88,14 +88,6 @@ inductive Contrast where
   | jMuVsMu
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- Whether the authors star the p-value. -/
 inductive Mark where
   /-- *: starred -/
@@ -171,10 +163,8 @@ structure Lrt where
   df : ℕ
   /-- The chi-square statistic. -/
   chiSq : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   /-- Whether the authors star the p-value. -/
   mark : Mark
   deriving DecidableEq, Repr
@@ -182,23 +172,22 @@ structure Lrt where
 /-- The cells of Tables 1 and 2, 5:9 and 5:11 (Georgian); Tables 4 and 5, 5:13 (Hungarian), by
 language and measure and effect; checked against the page images. -/
 def lrt : Language → Measure → Effect → Lrt
-  | .georgian, .accuracy, .group => ⟨1, ⟨1227, 2⟩, .below, ⟨1, 3⟩, .starred⟩
-  | .georgian, .accuracy, .sentence => ⟨2, ⟨224, 2⟩, .exact, ⟨327, 3⟩, .plain⟩
-  | .georgian, .accuracy, .interaction => ⟨2, ⟨195, 2⟩, .exact, ⟨377, 3⟩, .plain⟩
-  | .georgian, .playedN, .group => ⟨1, ⟨3588, 2⟩, .below, ⟨1, 3⟩, .starred⟩
-  | .georgian, .playedN, .sentence => ⟨2, ⟨1495, 2⟩, .below, ⟨1, 3⟩, .starred⟩
-  | .georgian, .playedN, .interaction => ⟨2, ⟨2389, 2⟩, .below, ⟨1, 3⟩, .starred⟩
-  | .hungarian, .accuracy, .group => ⟨1, ⟨75, 2⟩, .exact, ⟨385, 3⟩, .plain⟩
-  | .hungarian, .accuracy, .sentence => ⟨2, ⟨293, 2⟩, .exact, ⟨231, 3⟩, .plain⟩
-  | .hungarian, .accuracy, .interaction => ⟨2, ⟨182, 2⟩, .exact, ⟨402, 3⟩, .plain⟩
+  | .georgian, .accuracy, .group => ⟨1, ⟨1227, 2⟩, ⟨.lt, ⟨1, 3⟩⟩, .starred⟩
+  | .georgian, .accuracy, .sentence => ⟨2, ⟨224, 2⟩, ⟨.eq, ⟨327, 3⟩⟩, .plain⟩
+  | .georgian, .accuracy, .interaction => ⟨2, ⟨195, 2⟩, ⟨.eq, ⟨377, 3⟩⟩, .plain⟩
+  | .georgian, .playedN, .group => ⟨1, ⟨3588, 2⟩, ⟨.lt, ⟨1, 3⟩⟩, .starred⟩
+  | .georgian, .playedN, .sentence => ⟨2, ⟨1495, 2⟩, ⟨.lt, ⟨1, 3⟩⟩, .starred⟩
+  | .georgian, .playedN, .interaction => ⟨2, ⟨2389, 2⟩, ⟨.lt, ⟨1, 3⟩⟩, .starred⟩
+  | .hungarian, .accuracy, .group => ⟨1, ⟨75, 2⟩, ⟨.eq, ⟨385, 3⟩⟩, .plain⟩
+  | .hungarian, .accuracy, .sentence => ⟨2, ⟨293, 2⟩, ⟨.eq, ⟨231, 3⟩⟩, .plain⟩
+  | .hungarian, .accuracy, .interaction => ⟨2, ⟨182, 2⟩, ⟨.eq, ⟨402, 3⟩⟩, .plain⟩
   | .hungarian, .playedN, .group =>  -- printed `< .05` without a star
     ⟨1,
      ⟨654, 2⟩,
-     .below,
-     ⟨5, 2⟩,
+     ⟨.lt, ⟨5, 2⟩⟩,
      .plain⟩
-  | .hungarian, .playedN, .sentence => ⟨2, ⟨219, 2⟩, .exact, ⟨334, 3⟩, .plain⟩
-  | .hungarian, .playedN, .interaction => ⟨2, ⟨55, 2⟩, .exact, ⟨761, 3⟩, .plain⟩
+  | .hungarian, .playedN, .sentence => ⟨2, ⟨219, 2⟩, ⟨.eq, ⟨334, 3⟩⟩, .plain⟩
+  | .hungarian, .playedN, .interaction => ⟨2, ⟨55, 2⟩, ⟨.eq, ⟨761, 3⟩⟩, .plain⟩
 
 /-- A row of Table 3, 5:11: a Tukey-adjusted follow-up contrast between two sentence types in the
 Georgian sentence-played-n model, on the log scale: a negative estimate means the first
@@ -212,22 +201,20 @@ structure ContrastTest where
   df : ℕ
   /-- The t ratio. -/
   t : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The Tukey-adjusted p-value. -/
-  p : Decimal
+  p : PValue
   /-- Whether the authors star the p-value. -/
   mark : Mark
   deriving DecidableEq, Repr
 
 /-- The cells of Table 3, 5:11, by group and contrast; checked against the page images. -/
 def contrasts : Group → Contrast → ContrastTest
-  | .adult, .jVsJMu => ⟨⟨19, 3⟩, ⟨26, 3⟩, 1120, ⟨708, 3⟩, .exact, ⟨759, 3⟩, .plain⟩
-  | .adult, .jVsMu => ⟨⟨-3, 3⟩, ⟨27, 3⟩, 1120, ⟨-102, 3⟩, .exact, ⟨994, 3⟩, .plain⟩
-  | .adult, .jMuVsMu => ⟨⟨-21, 3⟩, ⟨25, 3⟩, 1120, ⟨-850, 3⟩, .exact, ⟨672, 3⟩, .plain⟩
-  | .child, .jVsJMu => ⟨⟨-176, 3⟩, ⟨31, 3⟩, 1121, ⟨-5681, 3⟩, .below, ⟨1, 4⟩, .starred⟩
-  | .child, .jVsMu => ⟨⟨-69, 3⟩, ⟨31, 3⟩, 1121, ⟨-2230, 3⟩, .exact, ⟨67, 3⟩, .plain⟩
-  | .child, .jMuVsMu => ⟨⟨106, 3⟩, ⟨3, 2⟩, 1121, ⟨3555, 3⟩, .below, ⟨1, 2⟩, .starred⟩
+  | .adult, .jVsJMu => ⟨⟨19, 3⟩, ⟨26, 3⟩, 1120, ⟨708, 3⟩, ⟨.eq, ⟨759, 3⟩⟩, .plain⟩
+  | .adult, .jVsMu => ⟨⟨-3, 3⟩, ⟨27, 3⟩, 1120, ⟨-102, 3⟩, ⟨.eq, ⟨994, 3⟩⟩, .plain⟩
+  | .adult, .jMuVsMu => ⟨⟨-21, 3⟩, ⟨25, 3⟩, 1120, ⟨-850, 3⟩, ⟨.eq, ⟨672, 3⟩⟩, .plain⟩
+  | .child, .jVsJMu => ⟨⟨-176, 3⟩, ⟨31, 3⟩, 1121, ⟨-5681, 3⟩, ⟨.lt, ⟨1, 4⟩⟩, .starred⟩
+  | .child, .jVsMu => ⟨⟨-69, 3⟩, ⟨31, 3⟩, 1121, ⟨-2230, 3⟩, ⟨.eq, ⟨67, 3⟩⟩, .plain⟩
+  | .child, .jMuVsMu => ⟨⟨106, 3⟩, ⟨3, 2⟩, 1121, ⟨3555, 3⟩, ⟨.lt, ⟨1, 2⟩⟩, .starred⟩
 
 /-- A row of fn. 12, 5:14: the Georgian children's inaccurate responses by kind, with the
 percentage of all 103 errors as printed. -/

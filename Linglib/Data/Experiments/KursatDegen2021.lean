@@ -67,14 +67,6 @@ inductive Predictor where
   | logRatio
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- A row of §2.3 and §4.3, pp. 679 and 683: the effect of material against colour, the reference
 level, on a measure of perceptual difficulty in a norming experiment. -/
 structure Verification where
@@ -84,29 +76,25 @@ structure Verification where
   se : Decimal
   /-- The t statistic, printed for the linear regressions. -/
   t : Option Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of §2.3 and §4.3, pp. 679 and 683, by experiment and measure; checked against the
 page images. -/
 def verification : Norming → DifficultyMeasure → Verification
-  | .exp1, .error => ⟨⟨48, 2⟩, ⟨12, 2⟩, none, .below, ⟨1, 4⟩⟩
+  | .exp1, .error => ⟨⟨48, 2⟩, ⟨12, 2⟩, none, ⟨.lt, ⟨1, 4⟩⟩⟩
   | .exp1, .responseTime =>  -- the printed standard error and t statistic do not agree
     ⟨⟨544, 2⟩,
      ⟨474, 2⟩,
      some ⟨1149, 2⟩,
-     .below,
-     ⟨1, 4⟩⟩
-  | .exp3, .error => ⟨⟨96, 2⟩, ⟨9, 2⟩, none, .below, ⟨1, 4⟩⟩
+     ⟨.lt, ⟨1, 4⟩⟩⟩
+  | .exp3, .error => ⟨⟨96, 2⟩, ⟨9, 2⟩, none, ⟨.lt, ⟨1, 4⟩⟩⟩
   | .exp3, .responseTime =>  -- the t statistic is printed as negative
     ⟨⟨24, 2⟩,
      ⟨18, 3⟩,
      some ⟨-5962, 2⟩,
-     .below,
-     ⟨1, 4⟩⟩
+     ⟨.lt, ⟨1, 4⟩⟩⟩
 
 /-- A row of §3.3 and §4.3, pp. 681–684: the effect of a predictor on the log odds that the
 speaker of Exp. 2 mentions the redundant property. -/
@@ -115,10 +103,8 @@ structure RedundantUse where
   beta : Decimal
   /-- The standard error. -/
   se : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of §3.3 and §4.3, pp. 681–684, by predictor; checked against the page images. -/
@@ -126,15 +112,13 @@ def redundantUse : Predictor → RedundantUse
   | .redundantProperty =>  -- the reference level is given as colour, the reading as more colour
     ⟨⟨232, 2⟩,
      ⟨64, 2⟩,
-     .below,
-     ⟨1, 4⟩⟩
+     ⟨.lt, ⟨1, 4⟩⟩⟩
   | .propertyType =>  -- the text calls this an effect on response time
     ⟨⟨743, 2⟩,
      ⟨227, 2⟩,
-     .below,
-     ⟨1, 3⟩⟩
-  | .difficulty => ⟨⟨-113, 1⟩, ⟨1641, 2⟩, .exact, ⟨49, 2⟩⟩
-  | .interaction => ⟨⟨1357, 2⟩, ⟨3187, 2⟩, .exact, ⟨67, 2⟩⟩
-  | .logRatio => ⟨⟨531, 2⟩, ⟨387, 2⟩, .exact, ⟨17, 2⟩⟩
+     ⟨.lt, ⟨1, 3⟩⟩⟩
+  | .difficulty => ⟨⟨-113, 1⟩, ⟨1641, 2⟩, ⟨.eq, ⟨49, 2⟩⟩⟩
+  | .interaction => ⟨⟨1357, 2⟩, ⟨3187, 2⟩, ⟨.eq, ⟨67, 2⟩⟩⟩
+  | .logRatio => ⟨⟨531, 2⟩, ⟨387, 2⟩, ⟨.eq, ⟨17, 2⟩⟩⟩
 
 end KursatDegen2021

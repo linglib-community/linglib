@@ -30,22 +30,6 @@
           "doc": "the inclusive shares the third person plural form"
         }
       ]
-    },
-    {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {
-          "name": "below",
-          "label": "<",
-          "doc": "as an upper bound"
-        },
-        {
-          "name": "exact",
-          "label": "=",
-          "doc": "as a value"
-        }
-      ]
     }
   ],
   "constants": [],
@@ -73,13 +57,8 @@
           "doc": "The coefficient."
         },
         {
-          "name": "bound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         }
       ],
@@ -88,36 +67,31 @@
           "baseline": "First-inclusive",
           "condition": null,
           "beta": "1.59",
-          "bound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "baseline": "First-inclusive",
           "condition": "Third-inclusive",
           "beta": "-1.83",
-          "bound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "baseline": "First-inclusive",
           "condition": "Second-inclusive",
           "beta": "-0.572",
-          "bound": "=",
           "p": "0.055"
         },
         {
           "baseline": "Second-inclusive",
           "condition": null,
           "beta": "0.97",
-          "bound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         },
         {
           "baseline": "Second-inclusive",
           "condition": "Third-inclusive",
           "beta": "-1.2",
-          "bound": "<",
-          "p": "0.001"
+          "p": "< 0.001"
         }
       ]
     }

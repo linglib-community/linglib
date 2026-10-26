@@ -62,14 +62,6 @@ inductive Level where
   | occasionVerbs
   deriving DecidableEq, Repr, Fintype
 
-/-- Whether a printed p-value is exact or an upper bound. -/
-inductive PBound where
-  /-- =: p as printed -/
-  | exact
-  /-- <: p is below the printed value -/
-  | below
-  deriving DecidableEq, Repr, Fintype
-
 /-- The context types of Block 1. -/
 inductive Context where
   /-- neutral: the trigger's sentence after an introductory sentence only -/
@@ -199,18 +191,16 @@ structure ContextTestExp1 where
   chiSquare : Decimal
   /-- Its degrees of freedom. -/
   df : ℕ
-  /-- The printed p. -/
-  p : Decimal
-  /-- Whether p is exact or a bound. -/
-  pBound : PBound
+  /-- The p-value. -/
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 4 rows of §2.3.2, pp. 11:28-29, in the paper's order; checked against the page images. -/
 def contextTestsExp1 : List ContextTestExp1 :=
-  [⟨.occasion, .anaphoric, ⟨2908, 2⟩, 1, ⟨1, 3⟩, .below⟩,
-   ⟨.occasion, .cataphoric, ⟨3672, 2⟩, 1, ⟨1, 3⟩, .below⟩,
-   ⟨.pronoun, .cataphoric, ⟨3, 2⟩, 1, ⟨87, 2⟩, .exact⟩,
-   ⟨.demonstrative, .cataphoric, ⟨192, 2⟩, 1, ⟨17, 2⟩, .exact⟩]
+  [⟨.occasion, .anaphoric, ⟨2908, 2⟩, 1, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.occasion, .cataphoric, ⟨3672, 2⟩, 1, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.pronoun, .cataphoric, ⟨3, 2⟩, 1, ⟨.eq, ⟨87, 2⟩⟩⟩,
+   ⟨.demonstrative, .cataphoric, ⟨192, 2⟩, 1, ⟨.eq, ⟨17, 2⟩⟩⟩]
 
 /-- A row of Figure 7, p. 11:37, plotted only; the occasion-verb means are printed in §3.2.2, p.
 11:36: the mean acceptability rating of a trigger type's sentence in a context type in Block
@@ -263,17 +253,15 @@ structure ContextTestExp2 where
   chiSquare : Decimal
   /-- Its degrees of freedom. -/
   df : ℕ
-  /-- The printed p. -/
-  p : Decimal
-  /-- Whether p is exact or a bound. -/
-  pBound : PBound
+  /-- The p-value. -/
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 3 rows of §3.2.2, pp. 11:36-37, in the paper's order; checked against the page images. -/
 def contextTestsExp2 : List ContextTestExp2 :=
-  [⟨.occasion, .anaphoric, ⟨2465, 2⟩, 1, ⟨1, 3⟩, .below⟩,
-   ⟨.occasion, .cataphoric, ⟨3162, 2⟩, 1, ⟨1, 3⟩, .below⟩,
-   ⟨.too, .cataphoric, ⟨115, 2⟩, 1, ⟨28, 2⟩, .exact⟩]
+  [⟨.occasion, .anaphoric, ⟨2465, 2⟩, 1, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.occasion, .cataphoric, ⟨3162, 2⟩, 1, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.too, .cataphoric, ⟨115, 2⟩, 1, ⟨.eq, ⟨28, 2⟩⟩⟩]
 
 /-- A row of §2.3.1, p. 11:25; §3.2.1, pp. 11:33-34; the by-trigger points of Figures 1 and 4 are
 plotted only: the mean projectivity and at-issueness ratings of a verb class's implication in
@@ -322,10 +310,8 @@ structure Correlation where
   df : ℕ
   /-- The t statistic. -/
   t : Decimal
-  /-- The printed p. -/
-  p : Decimal
-  /-- Whether p is exact or a bound. -/
-  pBound : PBound
+  /-- The p-value. -/
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 3 rows of §2.3.1, pp. 11:24-26; §3.2.1, p. 11:34, in the paper's order; checked against
@@ -336,16 +322,14 @@ def correlations : List Correlation :=
      ⟨-70, 2⟩,
      6,
      ⟨-237, 2⟩,
-     ⟨6, 2⟩,
-     .exact⟩,
+     ⟨.eq, ⟨6, 2⟩⟩⟩,
    ⟨.exp1,  -- one lexicalization per verb; the paper cautions against reading the breakdown as more than limited data
      .occasionVerbs,
      ⟨5, 2⟩,
      14,
      ⟨18, 2⟩,
-     ⟨86, 2⟩,
-     .exact⟩,
-   ⟨.exp2, .triggerTypes, ⟨-90, 2⟩, 7, ⟨-533, 2⟩, ⟨1, 2⟩, .below⟩]
+     ⟨.eq, ⟨86, 2⟩⟩⟩,
+   ⟨.exp2, .triggerTypes, ⟨-90, 2⟩, 7, ⟨-533, 2⟩, ⟨.lt, ⟨1, 2⟩⟩⟩]
 
 /-- A row of Table 3, analyses B and C, p. 11:48: the follow-up regression of projectivity on
 antecedent type for one group of items in Experiment 3, scaled to [0, 100], with the trigger-
@@ -377,15 +361,13 @@ structure OrderTest where
   chiSquare : Decimal
   /-- Its degrees of freedom. -/
   df : ℕ
-  /-- The printed p. -/
-  p : Decimal
-  /-- Whether p is exact or a bound. -/
-  pBound : PBound
+  /-- The p-value. -/
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of §4.3, p. 11:47, by group; checked against the page images. -/
 def orderTests : TriggerGroup → OrderTest
-  | .occasion => ⟨⟨130, 2⟩, 1, ⟨26, 2⟩, .exact⟩
-  | .factiveAspectual => ⟨⟨2076, 1⟩, 1, ⟨1, 3⟩, .below⟩
+  | .occasion => ⟨⟨130, 2⟩, 1, ⟨.eq, ⟨26, 2⟩⟩⟩
+  | .factiveAspectual => ⟨⟨2076, 1⟩, 1, ⟨.lt, ⟨1, 3⟩⟩⟩
 
 end SolstadBott2024

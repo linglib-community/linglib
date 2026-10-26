@@ -69,14 +69,6 @@ inductive Effect where
   | interaction
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- The lives at stake in the risky-choice scenario. (Experiment 1, Materials and (3), p. 4146;
 checked against the page images.) -/
 def livesAtStake : ℕ := 600
@@ -179,22 +171,20 @@ structure MixedModelEffect where
   se : Decimal
   /-- The z statistic. -/
   z : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
-  /-- The p-value or its bound. -/
-  p : Decimal
+  /-- The p-value. -/
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 8 rows of Results and Discussion of Experiments 1–3, pp. 4146–4148, in the paper's order;
 checked against the page images. -/
 def mixedModels : List MixedModelEffect :=
-  [⟨.exp1RiskyChoice, .frame, ⟨143, 2⟩, ⟨65, 2⟩, ⟨222, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp1Attribute, .frame, ⟨1543, 2⟩, ⟨423, 2⟩, ⟨365, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.exp2, .interaction, ⟨-135, 2⟩, ⟨64, 2⟩, ⟨-209, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp2, .modifier, ⟨15, 2⟩, ⟨37, 2⟩, ⟨40, 2⟩, .exact, ⟨69, 2⟩⟩,
-   ⟨.exp2, .frame, ⟨2, 2⟩, ⟨31, 2⟩, ⟨7, 2⟩, .exact, ⟨95, 2⟩⟩,
-   ⟨.exp3, .interaction, ⟨-3453, 2⟩, ⟨1654, 2⟩, ⟨-209, 2⟩, .below, ⟨5, 2⟩⟩,
-   ⟨.exp3, .modifier, ⟨1052, 2⟩, ⟨1131, 2⟩, ⟨93, 2⟩, .exact, ⟨35, 2⟩⟩,
-   ⟨.exp3, .frame, ⟨1141, 2⟩, ⟨1209, 2⟩, ⟨94, 2⟩, .exact, ⟨35, 2⟩⟩]
+  [⟨.exp1RiskyChoice, .frame, ⟨143, 2⟩, ⟨65, 2⟩, ⟨222, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp1Attribute, .frame, ⟨1543, 2⟩, ⟨423, 2⟩, ⟨365, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.exp2, .interaction, ⟨-135, 2⟩, ⟨64, 2⟩, ⟨-209, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp2, .modifier, ⟨15, 2⟩, ⟨37, 2⟩, ⟨40, 2⟩, ⟨.eq, ⟨69, 2⟩⟩⟩,
+   ⟨.exp2, .frame, ⟨2, 2⟩, ⟨31, 2⟩, ⟨7, 2⟩, ⟨.eq, ⟨95, 2⟩⟩⟩,
+   ⟨.exp3, .interaction, ⟨-3453, 2⟩, ⟨1654, 2⟩, ⟨-209, 2⟩, ⟨.lt, ⟨5, 2⟩⟩⟩,
+   ⟨.exp3, .modifier, ⟨1052, 2⟩, ⟨1131, 2⟩, ⟨93, 2⟩, ⟨.eq, ⟨35, 2⟩⟩⟩,
+   ⟨.exp3, .frame, ⟨1141, 2⟩, ⟨1209, 2⟩, ⟨94, 2⟩, ⟨.eq, ⟨35, 2⟩⟩⟩]
 
 end ClausWalch2024

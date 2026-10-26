@@ -36,14 +36,6 @@
         {"name": "interaction", "label": "interaction", "doc": "property type by perceptual difficulty, in the same analysis"},
         {"name": "logRatio", "label": "log ratio", "doc": "the log ratio of the mean response time for the sufficient property to that for the redundant property, residualized on property type, in a second analysis"}
       ]
-    },
-    {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {"name": "below", "label": "<", "doc": "as an upper bound"},
-        {"name": "exact", "label": "=", "doc": "as a value"}
-      ]
     }
   ],
   "tables": [
@@ -60,14 +52,13 @@
         {"name": "beta", "type": "decimal", "doc": "The coefficient."},
         {"name": "se", "type": "decimal", "doc": "The standard error."},
         {"name": "t", "type": "option decimal", "doc": "The t statistic, printed for the linear regressions."},
-        {"name": "bound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The p-value."}
+        {"name": "p", "type": "pvalue", "doc": "The p-value."}
       ],
       "rows": [
-        {"experiment": "Exp. 1", "measure": "error", "beta": "0.48", "se": "0.12", "t": null, "bound": "<", "p": "0.0001"},
-        {"experiment": "Exp. 1", "measure": "response time", "beta": "5.44", "se": "4.74", "t": "11.49", "bound": "<", "p": "0.0001", "note": "the printed standard error and t statistic do not agree"},
-        {"experiment": "Exp. 3", "measure": "error", "beta": "0.96", "se": "0.09", "t": null, "bound": "<", "p": "0.0001"},
-        {"experiment": "Exp. 3", "measure": "response time", "beta": "0.24", "se": "0.018", "t": "-59.62", "bound": "<", "p": "0.0001", "note": "the t statistic is printed as negative"}
+        {"experiment": "Exp. 1", "measure": "error", "beta": "0.48", "se": "0.12", "t": null, "p": "< 0.0001"},
+        {"experiment": "Exp. 1", "measure": "response time", "beta": "5.44", "se": "4.74", "t": "11.49", "p": "< 0.0001", "note": "the printed standard error and t statistic do not agree"},
+        {"experiment": "Exp. 3", "measure": "error", "beta": "0.96", "se": "0.09", "t": null, "p": "< 0.0001"},
+        {"experiment": "Exp. 3", "measure": "response time", "beta": "0.24", "se": "0.018", "t": "-59.62", "p": "< 0.0001", "note": "the t statistic is printed as negative"}
       ]
     },
     {
@@ -81,15 +72,14 @@
         {"name": "predictor", "type": "Predictor", "doc": "The predictor."},
         {"name": "beta", "type": "decimal", "doc": "The coefficient."},
         {"name": "se", "type": "decimal", "doc": "The standard error."},
-        {"name": "bound", "type": "Bound", "doc": "How the p-value is printed."},
-        {"name": "p", "type": "decimal", "doc": "The p-value."}
+        {"name": "p", "type": "pvalue", "doc": "The p-value."}
       ],
       "rows": [
-        {"predictor": "redundant property", "beta": "2.32", "se": "0.64", "bound": "<", "p": "0.0001", "note": "the reference level is given as colour, the reading as more colour"},
-        {"predictor": "property type", "beta": "7.43", "se": "2.27", "bound": "<", "p": "0.001", "note": "the text calls this an effect on response time"},
-        {"predictor": "perceptual difficulty", "beta": "-11.3", "se": "16.41", "bound": "=", "p": "0.49"},
-        {"predictor": "interaction", "beta": "13.57", "se": "31.87", "bound": "=", "p": "0.67"},
-        {"predictor": "log ratio", "beta": "5.31", "se": "3.87", "bound": "=", "p": "0.17"}
+        {"predictor": "redundant property", "beta": "2.32", "se": "0.64", "p": "< 0.0001", "note": "the reference level is given as colour, the reading as more colour"},
+        {"predictor": "property type", "beta": "7.43", "se": "2.27", "p": "< 0.001", "note": "the text calls this an effect on response time"},
+        {"predictor": "perceptual difficulty", "beta": "-11.3", "se": "16.41", "p": "0.49"},
+        {"predictor": "interaction", "beta": "13.57", "se": "31.87", "p": "0.67"},
+        {"predictor": "log ratio", "beta": "5.31", "se": "3.87", "p": "0.17"}
       ]
     }
   ]

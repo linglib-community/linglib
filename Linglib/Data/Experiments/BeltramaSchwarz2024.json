@@ -263,22 +263,6 @@
           "doc": "interaction"
         }
       ]
-    },
-    {
-      "name": "Bound",
-      "doc": "How a p-value is printed.",
-      "levels": [
-        {
-          "name": "below",
-          "label": "<",
-          "doc": "as an upper bound"
-        },
-        {
-          "name": "exact",
-          "label": "=",
-          "doc": "as a value"
-        }
-      ]
     }
   ],
   "constants": [
@@ -605,13 +589,8 @@
           "doc": "The z statistic, unsigned as printed."
         },
         {
-          "name": "bound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         }
       ],
@@ -622,8 +601,7 @@
           "persona": "Nerdy",
           "se": "0.20",
           "z": "6.62",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Covered Screen",
@@ -631,8 +609,7 @@
           "persona": "Chill",
           "se": "0.20",
           "z": "7.61",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Covered Screen",
@@ -640,7 +617,6 @@
           "persona": "Nerdy",
           "se": "0.18",
           "z": "0.07",
-          "bound": "=",
           "p": "0.99"
         },
         {
@@ -649,7 +625,6 @@
           "persona": "Chill",
           "se": "0.18",
           "z": "0.05",
-          "bound": "=",
           "p": "0.99"
         },
         {
@@ -658,8 +633,7 @@
           "persona": "Chill",
           "se": "0.24",
           "z": "8.43",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Truth Value Judgment",
@@ -667,7 +641,6 @@
           "persona": "Nerdy",
           "se": "0.24",
           "z": "0.05",
-          "bound": "=",
           "p": "0.97",
           "note": "printed as Nerdy vs. No.Persona in the sentence on Chill"
         },
@@ -677,8 +650,7 @@
           "persona": "Nerdy",
           "se": "0.43",
           "z": "4.40",
-          "bound": "<",
-          "p": "0.0001",
+          "p": "< 0.0001",
           "note": "combined analysis, §6"
         },
         {
@@ -687,7 +659,6 @@
           "persona": "Nerdy",
           "se": "0.45",
           "z": "1.51",
-          "bound": "=",
           "p": "0.28",
           "note": "combined analysis, §6"
         }
@@ -721,13 +692,8 @@
           "doc": "The z statistic."
         },
         {
-          "name": "bound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         }
       ],
@@ -737,7 +703,6 @@
           "verdict": "no difference",
           "se": "0.37",
           "z": "1.00",
-          "bound": "=",
           "p": "0.30"
         },
         {
@@ -745,7 +710,6 @@
           "verdict": "no difference",
           "se": "0.46",
           "z": "1.76",
-          "bound": "=",
           "p": "0.08"
         },
         {
@@ -753,7 +717,6 @@
           "verdict": "no difference",
           "se": "0.37",
           "z": "0.06",
-          "bound": "=",
           "p": "0.95"
         }
       ]
@@ -796,13 +759,8 @@
           "doc": "The z statistic, unsigned as printed."
         },
         {
-          "name": "bound",
-          "type": "Bound",
-          "doc": "How the p-value is printed."
-        },
-        {
           "name": "p",
-          "type": "decimal",
+          "type": "pvalue",
           "doc": "The p-value."
         }
       ],
@@ -814,8 +772,7 @@
           "beta": "-0.67",
           "se": "0.13",
           "z": "4.86",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Covered Screen",
@@ -824,8 +781,7 @@
           "beta": "0.77",
           "se": "0.14",
           "z": "5.54",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Covered Screen",
@@ -834,8 +790,7 @@
           "beta": "-0.78",
           "se": "0.13",
           "z": "5.7",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Covered Screen",
@@ -844,8 +799,7 @@
           "beta": "0.66",
           "se": "0.13",
           "z": "4.86",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Covered Screen",
@@ -854,7 +808,6 @@
           "beta": "0.00",
           "se": "0.10",
           "z": "0.09",
-          "bound": "=",
           "p": "0.92"
         },
         {
@@ -864,8 +817,7 @@
           "beta": "2.23",
           "se": "0.24",
           "z": "9.12",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Covered Screen",
@@ -874,8 +826,7 @@
           "beta": "0.60",
           "se": "0.23",
           "z": "2.59",
-          "bound": "<",
-          "p": "0.01"
+          "p": "< 0.01"
         },
         {
           "task": "Covered Screen",
@@ -884,7 +835,6 @@
           "beta": "0.01",
           "se": "0.27",
           "z": "0.05",
-          "bound": "=",
           "p": "0.97"
         },
         {
@@ -894,7 +844,6 @@
           "beta": "0.65",
           "se": "0.45",
           "z": "1.43",
-          "bound": "=",
           "p": "0.15"
         },
         {
@@ -904,7 +853,6 @@
           "beta": "0.33",
           "se": "0.28",
           "z": "0.18",
-          "bound": "=",
           "p": "0.23"
         },
         {
@@ -914,7 +862,6 @@
           "beta": "0.06",
           "se": "0.14",
           "z": "0.46",
-          "bound": "=",
           "p": "0.64"
         },
         {
@@ -924,7 +871,6 @@
           "beta": "0.33",
           "se": "0.29",
           "z": "1.13",
-          "bound": "=",
           "p": "0.25"
         },
         {
@@ -934,7 +880,6 @@
           "beta": "0.92",
           "se": "0.36",
           "z": "2.56",
-          "bound": "=",
           "p": "0.01"
         },
         {
@@ -944,7 +889,6 @@
           "beta": "0.27",
           "se": "0.28",
           "z": "0.95",
-          "bound": "=",
           "p": "0.33"
         },
         {
@@ -954,8 +898,7 @@
           "beta": "1.04",
           "se": "0.16",
           "z": "6.29",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Truth Value Judgment",
@@ -964,8 +907,7 @@
           "beta": "1.00",
           "se": "0.16",
           "z": "6.14",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Truth Value Judgment",
@@ -974,7 +916,6 @@
           "beta": "0.02",
           "se": "0.15",
           "z": "0.15",
-          "bound": "=",
           "p": "0.87",
           "note": "printed as Nerd"
         },
@@ -985,7 +926,6 @@
           "beta": "0.03",
           "se": "0.18",
           "z": "0.18",
-          "bound": "=",
           "p": "0.85",
           "note": "printed as Nerd and Screen Fit"
         },
@@ -996,8 +936,7 @@
           "beta": "1.57",
           "se": "0.27",
           "z": "5.68",
-          "bound": "<",
-          "p": "0.0001"
+          "p": "< 0.0001"
         },
         {
           "task": "Truth Value Judgment",
@@ -1006,7 +945,6 @@
           "beta": "0.24",
           "se": "0.27",
           "z": "0.89",
-          "bound": "=",
           "p": "0.36"
         },
         {
@@ -1016,7 +954,6 @@
           "beta": "0.13",
           "se": "0.11",
           "z": "1.17",
-          "bound": "=",
           "p": "0.23"
         },
         {
@@ -1026,7 +963,6 @@
           "beta": "0.27",
           "se": "0.27",
           "z": "1.01",
-          "bound": "=",
           "p": "0.30",
           "note": "printed as No.Persona*Similarity"
         },
@@ -1037,7 +973,6 @@
           "beta": "0.07",
           "se": "0.07",
           "z": "1.02",
-          "bound": "=",
           "p": "0.30"
         },
         {
@@ -1047,7 +982,6 @@
           "beta": "0.04",
           "se": "0.07",
           "z": "0.54",
-          "bound": "=",
           "p": "0.58"
         },
         {
@@ -1057,7 +991,6 @@
           "beta": "0.03",
           "se": "0.07",
           "z": "0.41",
-          "bound": "=",
           "p": "0.67"
         },
         {
@@ -1067,7 +1000,6 @@
           "beta": "0.62",
           "se": "0.31",
           "z": "1.99",
-          "bound": "=",
           "p": "0.04",
           "note": "combined analysis of both tasks, §6"
         }

@@ -64,22 +64,6 @@
    ]
   },
   {
-   "name": "PBound",
-   "doc": "Whether a printed p-value is exact or an upper bound.",
-   "levels": [
-    {
-     "name": "exact",
-     "label": "=",
-     "doc": "p as printed"
-    },
-    {
-     "name": "below",
-     "label": "<",
-     "doc": "p is below the printed value"
-    }
-   ]
-  },
-  {
    "name": "Context",
    "doc": "The context types of Block 1.",
    "levels": [
@@ -415,13 +399,8 @@
     },
     {
      "name": "p",
-     "type": "decimal",
-     "doc": "The printed p."
-    },
-    {
-     "name": "pBound",
-     "type": "PBound",
-     "doc": "Whether p is exact or a bound."
+     "type": "pvalue",
+     "doc": "The p-value."
     }
    ],
    "rows": [
@@ -430,32 +409,28 @@
      "context": "anaphoric",
      "chiSquare": "29.08",
      "df": 1,
-     "p": "0.001",
-     "pBound": "<"
+     "p": "< 0.001"
     },
     {
      "trigger": "occasion verbs",
      "context": "cataphoric",
      "chiSquare": "36.72",
      "df": 1,
-     "p": "0.001",
-     "pBound": "<"
+     "p": "< 0.001"
     },
     {
      "trigger": "personal pronoun",
      "context": "cataphoric",
      "chiSquare": "0.03",
      "df": 1,
-     "p": "0.87",
-     "pBound": "="
+     "p": "0.87"
     },
     {
      "trigger": "demonstrative NP",
      "context": "cataphoric",
      "chiSquare": "1.92",
      "df": 1,
-     "p": "0.17",
-     "pBound": "="
+     "p": "0.17"
     }
    ]
   },
@@ -653,13 +628,8 @@
     },
     {
      "name": "p",
-     "type": "decimal",
-     "doc": "The printed p."
-    },
-    {
-     "name": "pBound",
-     "type": "PBound",
-     "doc": "Whether p is exact or a bound."
+     "type": "pvalue",
+     "doc": "The p-value."
     }
    ],
    "rows": [
@@ -668,24 +638,21 @@
      "context": "anaphoric",
      "chiSquare": "24.65",
      "df": 1,
-     "p": "0.001",
-     "pBound": "<"
+     "p": "< 0.001"
     },
     {
      "trigger": "occasion verbs",
      "context": "cataphoric",
      "chiSquare": "31.62",
      "df": 1,
-     "p": "0.001",
-     "pBound": "<"
+     "p": "< 0.001"
     },
     {
      "trigger": "too",
      "context": "cataphoric",
      "chiSquare": "1.15",
      "df": 1,
-     "p": "0.28",
-     "pBound": "="
+     "p": "0.28"
     }
    ]
   },
@@ -812,13 +779,8 @@
     },
     {
      "name": "p",
-     "type": "decimal",
-     "doc": "The printed p."
-    },
-    {
-     "name": "pBound",
-     "type": "PBound",
-     "doc": "Whether p is exact or a bound."
+     "type": "pvalue",
+     "doc": "The p-value."
     }
    ],
    "rows": [
@@ -829,7 +791,6 @@
      "df": 6,
      "t": "-2.37",
      "p": "0.06",
-     "pBound": "=",
      "note": "marginally significant; the sentence cites Tonhauser, Beaver and Degen 2018 as the pattern replicated"
     },
     {
@@ -839,7 +800,6 @@
      "df": 14,
      "t": "0.18",
      "p": "0.86",
-     "pBound": "=",
      "note": "one lexicalization per verb; the paper cautions against reading the breakdown as more than limited data"
     },
     {
@@ -848,8 +808,7 @@
      "r": "-0.90",
      "df": 7,
      "t": "-5.33",
-     "p": "0.01",
-     "pBound": "<"
+     "p": "< 0.01"
     }
    ]
   },
@@ -962,13 +921,8 @@
     },
     {
      "name": "p",
-     "type": "decimal",
-     "doc": "The printed p."
-    },
-    {
-     "name": "pBound",
-     "type": "PBound",
-     "doc": "Whether p is exact or a bound."
+     "type": "pvalue",
+     "doc": "The p-value."
     }
    ],
    "rows": [
@@ -976,15 +930,13 @@
      "group": "occasion verbs",
      "chiSquare": "1.30",
      "df": 1,
-     "p": "0.26",
-     "pBound": "="
+     "p": "0.26"
     },
     {
      "group": "Mandelkern triggers",
      "chiSquare": "207.6",
      "df": 1,
-     "p": "0.001",
-     "pBound": "<"
+     "p": "< 0.001"
     }
    ]
   }

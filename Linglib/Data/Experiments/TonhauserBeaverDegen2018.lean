@@ -123,14 +123,6 @@ inductive Significance where
   | ns
   deriving DecidableEq, Repr, Fintype
 
-/-- Whether a printed p-value is an upper or a lower bound. -/
-inductive PBound where
-  /-- <: p is below the printed value -/
-  | below
-  /-- >: p is above the printed value -/
-  | above
-  deriving DecidableEq, Repr, Fintype
-
 /-- A row of the by-expression means plotted in the Exp. 1a mean-projectivity-against-mean-not-
 at-issueness figure (fig:f-proj-ai-1a in the authors' LaTeX); the discover and know means are
 printed in the summary of Exps. 1a and 1b: the mean certain-that (projectivity) and asking-
@@ -222,31 +214,27 @@ structure Effect where
   t : Decimal
   /-- The likelihood-ratio chi-square on one degree of freedom. -/
   chiSq : Decimal
-  /-- The printed p bound. -/
-  p : Decimal
-  /-- Whether p is below or above the printed value. -/
-  pBound : PBound
+  /-- The p-value. -/
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The cells of the regression paragraphs of the four Results sections, by experiment; checked
 against the PDF text layer only. -/
 def atIssuenessEffect : Experiment → Effect
-  | .exp1a => ⟨⟨37, 2⟩, ⟨10, 2⟩, ⟨370, 2⟩, ⟨920, 2⟩, ⟨3, 3⟩, .below⟩
-  | .exp1b => ⟨⟨34, 2⟩, ⟨4, 2⟩, ⟨931, 2⟩, ⟨3136, 2⟩, ⟨1, 4⟩, .below⟩
+  | .exp1a => ⟨⟨37, 2⟩, ⟨10, 2⟩, ⟨370, 2⟩, ⟨920, 2⟩, ⟨.lt, ⟨3, 3⟩⟩⟩
+  | .exp1b => ⟨⟨34, 2⟩, ⟨4, 2⟩, ⟨931, 2⟩, ⟨3136, 2⟩, ⟨.lt, ⟨1, 4⟩⟩⟩
   | .exp2a =>  -- simplified random-effects structure; marginal under the full structure
     ⟨⟨29, 2⟩,
      ⟨6, 2⟩,
      ⟨521, 2⟩,
      ⟨2094, 2⟩,
-     ⟨1, 4⟩,
-     .below⟩
+     ⟨.lt, ⟨1, 4⟩⟩⟩
   | .exp2b =>  -- the sign in the predicted direction
     ⟨⟨3, 2⟩,
      ⟨4, 2⟩,
      ⟨83, 2⟩,
      ⟨68, 2⟩,
-     ⟨4, 1⟩,
-     .above⟩
+     ⟨.gt, ⟨4, 1⟩⟩⟩
 
 /-- A row of the at-issueness paragraphs of the four Results sections: Pearson correlations of
 mean projectivity with mean not-at-issueness, by target expression and without collapsing

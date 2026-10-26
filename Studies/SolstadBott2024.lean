@@ -149,13 +149,13 @@ def TriggerTwo.felicity : TriggerTwo → Felicity
 the trigger's constraint is met. A following sentence helps occasion verbs and does not help
 pronouns, demonstratives or *auch*. -/
 theorem contextTests_iff_licenses :
-    (∀ r ∈ contextTestsExp1, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context) ∧
-      ∀ r ∈ contextTestsExp2, r.p.toRat < 1 / 20 ↔ r.trigger.felicity.Licenses r.context := by
+    (∀ r ∈ contextTestsExp1, r.p.Significant (1 / 20) ↔ r.trigger.felicity.Licenses r.context) ∧
+      ∀ r ∈ contextTestsExp2, r.p.Significant (1 / 20) ↔ r.trigger.felicity.Licenses r.context := by
   decide +kernel
 
 theorem weak_of_occasion_tests (f : Felicity) :
     (∀ r ∈ contextTestsExp1, r.trigger = .occasion →
-      (r.p.toRat < 1 / 20 ↔ f.Licenses r.context ∧ ¬ f.Licenses .neutral)) ↔ f = .weak := by
+      (r.p.Significant (1 / 20) ↔ f.Licenses r.context ∧ ¬ f.Licenses .neutral)) ↔ f = .weak := by
   revert f; decide +kernel
 
 theorem neutral_lt_of_licenses :
@@ -239,7 +239,7 @@ instance (g : TriggerGroup) (y : Antecedent) : Decidable (Reliable g y) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 theorem reliable_triggerLast_iff (g : TriggerGroup) :
-    Reliable g .triggerLast ↔ (orderTests g).p.toRat < 1 / 20 := by
+    Reliable g .triggerLast ↔ (orderTests g).p.Significant (1 / 20) := by
   revert g; decide +kernel
 
 /-- An account fits a group of items when each other antecedent type differs reliably from the

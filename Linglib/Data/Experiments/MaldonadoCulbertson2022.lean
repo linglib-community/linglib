@@ -40,14 +40,6 @@ inductive Condition where
   | thirdInclusive
   deriving DecidableEq, Repr, Fintype
 
-/-- How a p-value is printed. -/
-inductive Bound where
-  /-- <: as an upper bound -/
-  | below
-  /-- =: as a value -/
-  | exact
-  deriving DecidableEq, Repr, Fintype
-
 /-- A row of §3.3, p. 318: a coefficient of a treatment-coded model of accuracy in the second
 testing block, the intercept or the difference of a condition from the baseline. -/
 structure Contrast where
@@ -57,18 +49,16 @@ structure Contrast where
   condition : Option Condition
   /-- The coefficient. -/
   beta : Decimal
-  /-- How the p-value is printed. -/
-  bound : Bound
   /-- The p-value. -/
-  p : Decimal
+  p : PValue
   deriving DecidableEq, Repr
 
 /-- The 5 rows of §3.3, p. 318, in the paper's order; checked against the PDF text layer only. -/
 def contrasts : List Contrast :=
-  [⟨.firstInclusive, none, ⟨159, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.firstInclusive, some .thirdInclusive, ⟨-183, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.firstInclusive, some .secondInclusive, ⟨-572, 3⟩, .exact, ⟨55, 3⟩⟩,
-   ⟨.secondInclusive, none, ⟨97, 2⟩, .below, ⟨1, 3⟩⟩,
-   ⟨.secondInclusive, some .thirdInclusive, ⟨-12, 1⟩, .below, ⟨1, 3⟩⟩]
+  [⟨.firstInclusive, none, ⟨159, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.firstInclusive, some .thirdInclusive, ⟨-183, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.firstInclusive, some .secondInclusive, ⟨-572, 3⟩, ⟨.eq, ⟨55, 3⟩⟩⟩,
+   ⟨.secondInclusive, none, ⟨97, 2⟩, ⟨.lt, ⟨1, 3⟩⟩⟩,
+   ⟨.secondInclusive, some .thirdInclusive, ⟨-12, 1⟩, ⟨.lt, ⟨1, 3⟩⟩⟩]
 
 end MaldonadoCulbertson2022
