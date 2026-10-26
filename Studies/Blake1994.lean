@@ -5,6 +5,7 @@ public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Fragments.Arabic.ModernStandard.Case
 public import Linglib.Fragments.Dargwa.Tanti.Case
 public import Linglib.Fragments.Finnish.Case
+public import Linglib.Fragments.Georgian.Case
 public import Linglib.Fragments.German.Basel.Case
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.Greek.Ancient.Case
@@ -67,9 +68,10 @@ functions the Latin cases express fill it.
 * `latin_abl_functions_ancient_greek`, `latin_dat_functions_ssubset_ancient_greek`: Greek has no
   ablative, its genitive and dative expressing the functions of the Latin one, and its dative is
   the more comprehensive case.
-* `gaps_finnish`, `gaps_hungarian`, `gaps_dargwa`, `gaps_mongolian`, `gaps_yakut`, `gaps_basel`:
-  the gaps among the fragment inventories, the Finnish dative filled by a function of the allative
-  (`conforms_finnish_functions`).
+* `gaps_finnish`, `gaps_hungarian`, `gaps_dargwa`, `gaps_mongolian`, `gaps_yakut`,
+  `gaps_georgian`, `gaps_basel`: the gaps among the fragment inventories, the Finnish dative filled
+  by a function of the allative (`conforms_finnish_functions`) and the Georgian locative by one of
+  the dative (`conforms_georgian_functions`).
 
 ## Implementation notes
 
@@ -309,6 +311,15 @@ theorem gaps_mongolian : gaps (Finset.univ.image Mongolian.Case.label) = {.loc} 
 
 /-- Yakut has no locative. -/
 theorem gaps_yakut : gaps (Finset.univ.image Yakut.Case.label) = {.loc} := by decide
+
+/-- Georgian has no locative, which the postpositions *-ši* and *-ze* express. -/
+theorem gaps_georgian : gaps (Finset.univ.image Georgian.Case.label) = {.loc} := by decide
+
+/-- The Georgian dative keeps the locative with a few nouns, and the Georgian functions
+conform. -/
+theorem conforms_georgian_functions :
+    Conforms (Finset.univ.biUnion Georgian.Case.functions) := by
+  decide
 
 /-- Basel German has no genitive, its possessor a dative construction. -/
 theorem gaps_basel : gaps (Finset.univ.image German.Basel.Case.label) = {.gen} := by decide
