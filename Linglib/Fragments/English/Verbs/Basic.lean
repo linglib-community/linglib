@@ -392,7 +392,7 @@ def build : Verb where
      (ArgumentFrame.objectDrop (some .indef), [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2]),
      (ArgumentFrame.np_np, [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.outOf), [0, 1, 3]),
+     (ArgumentFrame.np_pp (some Adpositions.out), [0, 1, 3]),
      (ArgumentFrame.np_pp (some Adpositions.into), [0, 3, 1])]
     [some accomplishmentSubjectProfile, some creationObject, none, none]
   vendlerClass := some .accomplishment
