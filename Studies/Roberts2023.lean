@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Modality.HistoricalAlternatives
 public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Discourse.CommonGround
 public import Linglib.Discourse.SpeechAct
 public import Linglib.Discourse.QUD.Basic
 public import Linglib.Core.Data.List.Forall2
@@ -44,8 +43,8 @@ applicability condition is its negation `≤`, which agrees with the paper's `�
 order is total. The property an accepted direction adds to the goals is the imperative's
 denotation, its realization conditions, and the paper leaves where it enters the hierarchy
 open; here it is appended below the goals already held. The common ground is the library's
-filter with the Stalnakerian assertion of `Discourse/CommonGround.lean`, so the scoreboard is a
-`HasAssertion` instance. The addressee-part relation is flattened to membership in the set of
+filter of `Discourse/CommonGround.lean`, and assertion meets it with the asserted proposition
+(`Scoreboard.semiconj_assert`). The addressee-part relation is flattened to membership in the set of
 addressees, and the restriction of the property to addressees, which the paper writes as a
 domain restriction on the abstracted individual, is left to the conservativity presupposition
 rather than built into the domain of `realizes`.
@@ -215,12 +214,12 @@ def Denotation.defaultForce : Denotation I W T → Discourse.SpeechAct.Force
 namespace Scoreboard
 
 /-- Assertion (57) is Stalnaker's: an accepted proposition joins the common ground. -/
-instance : HasAssertion (Scoreboard I W T) (Index W T) where
-  commonGround := cg
-  initial := ⟨⊤, [], fun _ ↦ []⟩
-  assert K p := { K with cg := K.cg ⊓ 𝓟 p }
-  commonGround_initial := rfl
-  commonGround_assert _ _ := rfl
+def assert (K : Scoreboard I W T) (p : Set (Index W T)) : Scoreboard I W T :=
+  { K with cg := K.cg ⊓ 𝓟 p }
+
+theorem semiconj_assert (p : Set (Index W T)) :
+    Function.Semiconj (cg : Scoreboard I W T → _) (·.assert p) (· ⊓ 𝓟 p) :=
+  fun _ ↦ rfl
 
 variable [DecidableEq I] (K : Scoreboard I W T) (i : I)
 
@@ -228,17 +227,16 @@ variable [DecidableEq I] (K : Scoreboard I W T) (i : I)
 posed question the questions under discussion, and a property directed to `i` adds its
 realization by `i` to `i`'s goals, below those already held. -/
 def accept : Denotation I W T → Scoreboard I W T
-  | .proposition p => HasAssertion.assert K p
+  | .proposition p => K.assert p
   | .question q => { K with qud := q :: K.qud }
   | .property P => { K with goals := Function.update K.goals i (K.goals i ++ [(P · i)]) }
 
 variable (p : Set (Index W T)) (P : Index W T → I → Prop)
 
-@[simp] theorem accept_proposition : K.accept i (.proposition p) = HasAssertion.assert K p :=
+@[simp] theorem accept_proposition : K.accept i (.proposition p) = K.assert p :=
   rfl
 
-@[simp] theorem commonGround_accept_property :
-    commonGround (K.accept i (.property P)) = commonGround K :=
+@[simp] theorem cg_accept_property : (K.accept i (.property P)).cg = K.cg :=
   rfl
 
 @[simp] theorem accept_property_qud : (K.accept i (.property P)).qud = K.qud := rfl

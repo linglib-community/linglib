@@ -110,9 +110,8 @@ asserted. -/
 @[simps time antecedent consequent]
 def ofDatedFacts (facts : List (ℤ × Set W)) (time : ℤ) (antecedent consequent : Set W) :
     Scenario W where
-  commonGround t := HasCommonGround.commonGround
-    (HasAssertion.play (HasAssertion.initial : Filter W) ((facts.filter (·.1 ≤ t)).map (·.2)))
-  antitone_commonGround := HasAssertion.antitone_commonGround_play _ fun _ _ h ↦
+  commonGround t := ((facts.filter (·.1 ≤ t)).map (·.2)).foldl (· ⊓ Filter.principal ·) ⊤
+  antitone_commonGround _ _ h := Filter.foldl_inf_principal_anti <|
     List.map_subset _ fun _ hf ↦ by
       simp only [List.mem_filter, decide_eq_true_eq] at hf ⊢
       exact ⟨hf.1, hf.2.trans h⟩
@@ -147,7 +146,7 @@ variable {S κ}
 
 theorem mem_live_ofDatedFacts {facts : List (ℤ × Set W)} {time : ℤ} {A C : Set W} {t : ℤ}
     {v : W} : v ∈ (ofDatedFacts facts time A C).live t ↔ ∀ f ∈ facts, f.1 ≤ t → v ∈ f.2 := by
-  simp only [live, ofDatedFacts, HasAssertion.commonGround_play_initial, Filter.ker_principal,
+  simp only [live, ofDatedFacts, Filter.foldl_inf_principal_top, Filter.ker_principal,
     Set.mem_iInter, List.mem_map, List.mem_filter, decide_eq_true_eq]
   exact ⟨fun h f hf ht ↦ h _ ⟨f, ⟨hf, ht⟩, rfl⟩, fun h _ ⟨f, ⟨hf, ht⟩, hp⟩ ↦ hp ▸ h f hf ht⟩
 

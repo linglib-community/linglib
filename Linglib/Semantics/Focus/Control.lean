@@ -31,7 +31,8 @@ shape through the appropriate case.
 
 Payloads are flat Hamblin sets, `Set (Set W)`, keeping antecedents over finite models
 `decide`-friendly; a `Question` supplies one through `Question.alt`. The `assertion` payload
-is a raw prior proposition; the `HasAssertion` hookup (a correction/denial move) is deferred.
+is a raw prior proposition; connecting it to the common ground (a correction or denial move) is
+deferred.
 -/
 
 @[expose] public section

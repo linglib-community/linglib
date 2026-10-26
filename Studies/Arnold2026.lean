@@ -57,7 +57,7 @@ the properties the row states (`Agrees`), and the examples are tested on every a
 
 namespace Arnold2026
 
-open KonnellyCowper2020 Filter HasCommonGround HasAssertion
+open KonnellyCowper2020 Filter
 
 /-- The two kinds of singular *they*. -/
 inductive Kind
@@ -129,13 +129,13 @@ def story (n : ℕ) : List (Set (Set StoryFact)) :=
 
 /-- The common ground after `n` steps of the story, told from scratch. -/
 def storyGround (n : ℕ) : Filter (Set StoryFact) :=
-  commonGround (play (initial : Filter (Set StoryFact)) (story n))
+  (story n).foldl (· ⊓ 𝓟 ·) ⊤
 
 theorem storyGround_eq (n : ℕ) : storyGround n = 𝓟 (⋂ p ∈ story n, p) :=
-  commonGround_play_initial _
+  foldl_inf_principal_top _
 
 theorem antitone_storyGround : Antitone storyGround :=
-  antitone_commonGround_play _ fun _ _ h ↦
+  fun _ _ h ↦ foldl_inf_principal_anti <|
     List.cons_subset_cons _ (List.map_subset _ (List.range_subset.2 h))
 
 /-- The teller counts a common ground as underspecified while it accepts nothing beyond what

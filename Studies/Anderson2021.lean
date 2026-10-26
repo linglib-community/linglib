@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Pragmatics.RSA.Uniform
-public import Linglib.Discourse.CommonGround.Measure
+public import Linglib.Core.MeasureTheory.Measure.AE
 
 /-!
 # Anderson (2021): Tell Me Everything You Know
@@ -11,7 +11,9 @@ worlds, substitutes it for the world prior of every agent in the chain (the lite
 listener conditions the common ground on the utterance, the pragmatic listener inverts the
 speaker against it), and after each turn increments it with the pragmatic listener's
 posterior, discounted by a learning rate. Worlds can then regain probability, since the update
-is a mixture and not an intersection, which is its limit at learning rate one, and a speaker
+is a mixture and not an intersection, which is its limit at learning rate one: the update joins
+the common ground with the posterior's (`ae_updateCG`) where Stalnaker's assertion meets it, and a
+speaker
 whose literal listener reads the common ground prefers what is new to what is already
 established. Observations are sampled from the speaker's private beliefs: by weight,
 above a confidence threshold (a speaker with nothing to say passes with the null utterance),
@@ -60,19 +62,31 @@ theorem updateCG_one (cg post : Measure W) : updateCG cg post 1 = post := by
   rw [updateCG, tsub_self, zero_smul, one_smul, zero_add]
 
 theorem notMem_contextSet_updateCG_one (cg post : Measure W) {w : W} (h : post {w} = 0) :
-    w ∉ HasCommonGround.contextSet (updateCG cg post 1) := by
-  rw [updateCG_one, HasCommonGround.contextSet_measure]
+    w ∉ (ae (updateCG cg post 1)).ker := by
+  rw [updateCG_one, ker_ae]
   exact fun hw => hw h
 
 /-- Below learning rate one the prior keeps every world it supports, so a world the posterior
 rules out can regain probability (footnote 7). -/
 theorem mem_contextSet_updateCG (cg post : Measure W) {lr : ℝ≥0} (hlr : lr < 1) {w : W}
-    (hcg : cg {w} ≠ 0) : w ∈ HasCommonGround.contextSet (updateCG cg post lr) := by
-  rw [HasCommonGround.contextSet_measure]
+    (hcg : cg {w} ≠ 0) : w ∈ (ae (updateCG cg post lr)).ker := by
+  rw [ker_ae]
   show updateCG cg post lr {w} ≠ 0
   rw [updateCG_apply]
   exact fun h => hcg ((mul_eq_zero.mp (add_eq_zero.mp h).1).resolve_left
     (ENNReal.coe_ne_zero.mpr (tsub_pos_of_lt hlr).ne'))
+
+/-- Strictly between learning rates `0` and `1` the update joins the prior's almost-everywhere
+filter with the posterior's, where Stalnaker's assertion would meet them. -/
+theorem ae_updateCG (cg post : Measure W) {lr : ℝ≥0} (h0 : lr ≠ 0) (h1 : lr < 1) :
+    ae (updateCG cg post lr) = ae cg ⊔ ae post := by
+  rw [updateCG, ae_add_measure_eq, Measure.ae_smul_measure_eq (tsub_pos_of_lt h1).ne',
+    Measure.ae_smul_measure_eq h0]
+
+/-- The context set of the update is the union of the prior's and the posterior's. -/
+theorem ker_ae_updateCG (cg post : Measure W) {lr : ℝ≥0} (h0 : lr ≠ 0) (h1 : lr < 1) :
+    (ae (updateCG cg post lr)).ker = (ae cg).ker ∪ (ae post).ker := by
+  rw [ae_updateCG cg post h0 h1, Filter.ker_sup]
 
 /-! ### Selecting observations (§7) -/
 
