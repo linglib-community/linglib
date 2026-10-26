@@ -11,20 +11,41 @@ Mandarin has no articles. A bare noun serves as a unique definite, an anaphoric 
 the demonstrative *nà* 'that', in donkey sentences too, and possession is marked with *de*. The
 quantifiers are cardinal, *yīxiē* 'some', *méiyǒu* 'no' and *hěnduō* 'many', proportional,
 *shǎoshù* 'a minority of', *duōshù* and *dàbùfèn* 'most', or universal, *měi* 'every', *suǒyǒu*
-and *quánbù* 'all'. Words that mean the same differ in what may follow them and in whether they
-need the adverb *dōu*. *Měi* must be followed by a classifier, as numerals and demonstratives
-must, *hěnduō* may be, and the other words stand directly before the noun. A preverbal phrase
-with *měi*, *suǒyǒu*, *quánbù* or *dàbùfèn* needs *dōu* before the verb, as in *suǒyǒu shīrén
-dōu zuò báirìmèng* 'all poets daydream', and one with *hěnduō* admits it. The existential verb
-*yǒu* introduces the cardinal phrases and not the universal ones.
+and *quánbù* 'all'. Words that mean the same differ in what may follow them: *měi* must be
+followed by a classifier, as numerals and demonstratives must, *hěnduō* may be, and the other
+words stand directly before the noun. Whether a word needs the adverb *dōu* follows its meaning
+instead. A preverbal phrase with a universal word needs *dōu* before the verb, as in *suǒyǒu
+shīrén dōu zuò báirìmèng* 'all poets daydream', and one with *hěnduō* admits it. The existential
+verb *yǒu* introduces phrases with *yīxiē*, *hěnduō* and *shǎoshù* and not the universal ones.
+
+## Main results
+
+* `Mandarin.Determiners.QuantityWord.requiresDou_iff`: a word needs *dōu* exactly when it reads
+  as `every`.
+* `Mandarin.Determiners.QuantityWord.not_factorsThrough_takesClassifier`: whether a word takes a
+  classifier is not a function of its readings.
 
 ## Implementation notes
 
 * Each quantifier denotes the set of generalized-quantifier readings available for it, which is
   empty for *hěnduō*, whose standard is left to context.
+* Speakers differ over *dōu* with *dàbùfèn*: Lin has it obligatory and Chen optional, both as
+  cited by Tsai, and Kuo and Yu find *dōu* optional with proportional quantifiers, so *dàbùfèn* is
+  entered as not needing it. Kuo and Yu's *duōshù shīrén huì zuò báirìmèng* 'most poets
+  daydream' has no *dōu* after the modal *huì*, which lets even a phrase with *měi* drop it (Cao,
+  as cited by Tsai).
+* No source stars *dàbùfèn* before a classifier. It is entered with the words that take none
+  since its *bùfèn* 'part' is itself a partitive measure for Chao, as the *xiē* of *yīxiē* is,
+  which Li and Thompson count a classifier and `Mandarin.Classifiers` enters as one.
 * On Tsai's analysis *suǒyǒu*, *quánbù* and *dàbùfèn* are not determiners but introduce sets of
   alternatives that *dōu* closes. That reading lives at another type and is not among the sets
   recorded here.
+
+## Errata
+
+* Kuo and Yu state that the generalized existential quantifiers other than *yīxiē* and
+  *méiyǒu* require a classifier (p. 666), but give *hěnduō yìngzhēngzhě* 'many applicants' in
+  (3a) and *yǒu hěnduō xuéshēng* 'there are many students' in (26a).
 
 ## References
 
@@ -39,7 +60,12 @@ dōu zuò báirìmèng* 'all poets daydream', and one with *hěnduō* admits it.
 
 @[expose] public section
 
+universe u
+
 namespace Mandarin.Determiners
+
+open Quantifier
+open scoped Denotes
 
 /-! ## Quantificational determiners -/
 
@@ -87,23 +113,33 @@ def toList : List QuantityWord :=
 
 theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 
+/-- The readings available for a word, as generalized quantifiers on every finite domain.
+*Yīxiē* reads as `Quantifier.GQ.some`, *méiyǒu* as `no`, *shǎoshù* as `few`, *duōshù* and
+*dàbùfèn* as `most`, and *měi*, *suǒyǒu* and *quánbù* as `every`; *hěnduō* has no reading,
+its standard being a value judgment left to context ([kuo-yu-2012]). Speakers judging
+*dàbùfèn* accept its majority reading far more often than a relative one ([wang-2012],
+§4.2.2.2). -/
+noncomputable instance : Denotes QuantityWord (Set GQ.Family.{u}) where
+  denote
+    | .yixie => {GQ.Family.some}
+    | .meiyou => {GQ.Family.no}
+    | .shaoshu => {GQ.Family.few}
+    | .duoshu | .dabufen => {GQ.Family.most}
+    | .mei | .suoyou | .quanbu => {GQ.Family.every}
+    | .henduo => ∅
+
 /-! ### The classifier -/
 
 /-- The word may stand before a classifier, as in *měi-liàng chē* 'every car' and *hěnduō-tiáo
-kùzi* 'many pairs of pants'. The others may not, as in the ill-formed *\*suǒyǒu-ge xuéshēng*,
-*\*yīxiē-pǐ mǎ* and *\*duōshù-ge xiǎohái* ([kuo-yu-2012]). No source stars *dàbùfèn* before a
-classifier. It is entered with the others because its *bùfèn* 'part' is itself a partitive
-measure in [chao-1968]'s list, as the *xiē* of *yīxiē* is, and [tsai-2015] likens both *bùfèn*
-and the *shù* 'quantity' of *duōshù* to quantity-denoting classifiers, so the measure position
-of these words is filled. -/
+kùzi* 'many pairs of pants', and the others may not, as in *\*suǒyǒu-ge xuéshēng*, *\*yīxiē-pǐ
+mǎ* and *\*duōshù-ge xiǎohái* ([kuo-yu-2012]). -/
 def TakesClassifier : QuantityWord → Prop
   | .mei | .henduo => True
   | _ => False
 
 /-- The word may stand before the noun with no classifier between them, as in *hěnduō
-yìngzhēngzhě* 'many applicants' and *suǒyǒu shīrén* 'all poets'. *Měi* may not, *\*měi chē*,
-the noun *rén* 'person' apart. [kuo-yu-2012] star *hěnduō kùzi* in their survey of classifiers
-and give *hěnduō* before a bare noun elsewhere, as does [tsai-2015]. -/
+yìngzhēngzhě* 'many applicants' and *suǒyǒu shīrén* 'all poets', which *měi* may not, *\*měi
+chē*, the noun *rén* 'person' apart ([kuo-yu-2012], [li-thompson-1981]). -/
 def TakesBareNoun : QuantityWord → Prop
   | .mei => False
   | _ => True
@@ -114,57 +150,29 @@ instance : DecidablePred TakesClassifier := fun w ↦ by
 instance : DecidablePred TakesBareNoun := fun w ↦ by
   unfold TakesBareNoun; cases w <;> infer_instance
 
-/-- The word needs a classifier, as [li-thompson-1981] say of *měi*. -/
-def RequiresClassifier (w : QuantityWord) : Prop := w.TakesClassifier ∧ ¬ w.TakesBareNoun
-
-/-- The word cannot precede a classifier. -/
-def ExcludesClassifier (w : QuantityWord) : Prop := ¬ w.TakesClassifier ∧ w.TakesBareNoun
-
-instance : DecidablePred RequiresClassifier := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-instance : DecidablePred ExcludesClassifier := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-theorem takesClassifier_or_takesBareNoun (w : QuantityWord) :
-    w.TakesClassifier ∨ w.TakesBareNoun := by decide +revert
-
-theorem requiresClassifier_iff {w : QuantityWord} : w.RequiresClassifier ↔ w = .mei := by
-  decide +revert
-
-theorem takesClassifier_and_takesBareNoun_iff {w : QuantityWord} :
-    w.TakesClassifier ∧ w.TakesBareNoun ↔ w = .henduo := by decide +revert
-
-theorem excludesClassifier_iff {w : QuantityWord} :
-    w.ExcludesClassifier ↔ w ≠ .mei ∧ w ≠ .henduo := by decide +revert
+/-- Whether a word takes a classifier is not a function of its readings: *měi* and *suǒyǒu*
+both read as `every`, and only *měi* takes one ([kuo-yu-2012], p. 666). -/
+theorem not_factorsThrough_takesClassifier :
+    ¬ Function.FactorsThrough TakesClassifier fun w ↦ (⟦w⟧ : Set GQ.Family.{u}) :=
+  fun h ↦ (h (a := .mei) (b := .suoyou) rfl).mp trivial
 
 /-! ### The adverb *dōu* -/
 
-/-- A preverbal phrase headed by the word needs *dōu* before the verb, as in *{měi-ge,
-suǒyǒu-de, dàbùfèn-de} rén \*(dōu) mǎi-le shū* 'every person, all people, most people bought a
-book', against *hěnduō rén (dōu) mǎi-le shū* 'many people bought a book' ([tsai-2015]) and
-*duōshù shīrén huì zuò báirìmèng* 'most poets daydream' ([kuo-yu-2012]). -/
+/-- A preverbal phrase headed by the word needs *dōu* before the verb, as in *měi-ge xuéshēng
+\*(dōu) xiě-le yī-shǒu shī* 'every student wrote a poem' ([kuo-yu-2012]), against *hěnduō rén
+(dōu) mǎi-le shū* 'many people bought a book' ([tsai-2015]). -/
 def RequiresDou : QuantityWord → Prop
-  | .mei | .suoyou | .quanbu | .dabufen => True
+  | .mei | .suoyou | .quanbu => True
   | _ => False
 
 instance : DecidablePred RequiresDou := fun w ↦ by unfold RequiresDou; cases w <;> infer_instance
 
-/-! ### The available readings -/
-
-universe u
-
-/-- The readings available for a word, as generalized quantifiers on every finite domain.
-*Yīxiē* reads as `Quantifier.GQ.some`, *méiyǒu* as `no`, *shǎoshù* as `few`, *duōshù* and
-*dàbùfèn* as `most`, and *měi*, *suǒyǒu* and *quánbù* as `every`; *hěnduō* has no reading,
-its standard being a value judgment left to context ([kuo-yu-2012]). Speakers judging
-*dàbùfèn* accept its majority reading far more often than a relative one ([wang-2012]). -/
-noncomputable instance : Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
-  denote
-    | .yixie => {Quantifier.GQ.Family.some}
-    | .meiyou => {Quantifier.GQ.Family.no}
-    | .shaoshu => {Quantifier.GQ.Family.few}
-    | .duoshu | .dabufen => {Quantifier.GQ.Family.most}
-    | .mei | .suoyou | .quanbu => {Quantifier.GQ.Family.every}
-    | .henduo => ∅
+/-- A word needs *dōu* exactly when its one reading is `every`, *dōu* being obligatory in basic
+universal quantification ([kuo-yu-2012], p. 655). -/
+theorem requiresDou_iff {w : QuantityWord} :
+    w.RequiresDou ↔ ⟦w⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
+  cases w <;> simp [RequiresDou, Denotes.denote, GQ.Family.some_ne_every, GQ.Family.no_ne_every,
+    GQ.Family.most_ne_every, GQ.Family.few_ne_every]
 
 end QuantityWord
 
