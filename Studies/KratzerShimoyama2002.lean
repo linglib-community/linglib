@@ -273,11 +273,11 @@ open scoped Denotes in
 /-- Japanese indeterminates do not change shape (§9). *Dare-ka* and *dare-mo* share their
 indeterminate and differ in their readings, which their particles' coordinations supply. -/
 theorem japanese_same_base.{u} :
-    Japanese.Determiners.dare_ka.indeterminate = Japanese.Determiners.dare_mo.indeterminate ∧
-      (⟦Japanese.Determiners.dare_ka⟧ : Set Quantifier.GQ.Family.{u}) ≠
-        ⟦Japanese.Determiners.dare_mo⟧ := by
+    Japanese.Determiners.dareKa.indeterminate = Japanese.Determiners.dareMo.indeterminate ∧
+      (⟦Japanese.Determiners.dareKa⟧ : Set Quantifier.GQ.Family.{u}) ≠
+        ⟦Japanese.Determiners.dareMo⟧ := by
   refine ⟨rfl, ?_⟩
-  rw [Japanese.Determiners.denote_dare_ka, Japanese.Determiners.denote_dare_mo]
+  rw [Japanese.Determiners.denote_dareKa, Japanese.Determiners.denote_dareMo]
   exact fun h ↦ Quantifier.GQ.Family.some_ne_every (Set.singleton_eq_singleton_iff.1 h)
 
 /-- The Latvian series serve pairwise disjoint functions on [haspelmath-1997]'s map, so they are

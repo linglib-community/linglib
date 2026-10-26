@@ -47,19 +47,19 @@ open scoped Denotes
 universe u
 
 /-- *Dare-ka* is 'someone'. -/
-def dare_ka : IndeterminateQuantifier := ⟨Pronouns.dare, Coordination.ka, none⟩
+def dareKa : IndeterminateQuantifier := ⟨Pronouns.dare, Coordination.ka, none⟩
 
 /-- *Dare-mo* is 'everyone'. -/
-def dare_mo : IndeterminateQuantifier := ⟨Pronouns.dare, Coordination.mo, none⟩
+def dareMo : IndeterminateQuantifier := ⟨Pronouns.dare, Coordination.mo, none⟩
 
 /-- *Dono* N *mo* is 'every N'. -/
-def dono_N_mo : IndeterminateQuantifier := ⟨Pronouns.dono, Coordination.mo, none⟩
+def donoMo : IndeterminateQuantifier := ⟨Pronouns.dono, Coordination.mo, none⟩
 
 /-- *Nan-nin-ka* is 'several people', with the classifier *-nin*. -/
-def nan_nin_ka : IndeterminateQuantifier := ⟨Pronouns.nan, Coordination.ka, some Classifiers.nin⟩
+def nanNinKa : IndeterminateQuantifier := ⟨Pronouns.nan, Coordination.ka, some Classifiers.nin⟩
 
 /-- `indefinites` lists the indeterminate quantifiers. -/
-def indefinites : List IndeterminateQuantifier := [dare_ka, dare_mo, dono_N_mo, nan_nin_ka]
+def indefinites : List IndeterminateQuantifier := [dareKa, dareMo, donoMo, nanNinKa]
 
 /-- The quantifiers that are words of their own are *subete* 'all', *hotondo* 'most' and *ryōhō*
 'both'. -/
@@ -95,10 +95,10 @@ def inventory : Determiner.Inventory :=
   indefinites.map (.quantifier ·.toQuantifier) ++
     QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-theorem denote_dare_ka : ⟦dare_ka⟧ = ({GQ.Family.some} : Set GQ.Family.{u}) := by
-  rw [← IndeterminateQuantifier.reading_of_disjunctive (q := dare_ka) rfl]; rfl
+theorem denote_dareKa : ⟦dareKa⟧ = ({GQ.Family.some} : Set GQ.Family.{u}) := by
+  rw [← IndeterminateQuantifier.reading_of_disjunctive (q := dareKa) rfl]; rfl
 
-theorem denote_dare_mo : ⟦dare_mo⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
-  rw [← IndeterminateQuantifier.reading_of_conjunctive (q := dare_mo) rfl]; rfl
+theorem denote_dareMo : ⟦dareMo⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
+  rw [← IndeterminateQuantifier.reading_of_conjunctive (q := dareMo) rfl]; rfl
 
 end Japanese.Determiners

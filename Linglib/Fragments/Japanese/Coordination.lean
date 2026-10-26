@@ -35,12 +35,12 @@ def to_ : Coordinator :=
   { morph := .encl "to", gloss := "and", role := .conjunctive }
 
 /-- *mo* 'and', enclitic on each conjunct, also the additive particle `Japanese.FocusParticles.mo`
-and the universal particle of the indeterminates, `Japanese.Determiners.dare_mo`. -/
+and the universal particle of the indeterminates, `Japanese.Determiners.dareMo`. -/
 def mo : Coordinator :=
   { morph := .encl "mo", gloss := "and", role := .conjunctive }
 
 /-- *ka* 'or', enclitic, also the question particle and the existential particle of the
-indeterminates, `Japanese.Determiners.dare_ka`. -/
+indeterminates, `Japanese.Determiners.dareKa`. -/
 def ka : Coordinator :=
   { morph := .encl "ka", gloss := "or; question; some", role := .disjunctive }
 

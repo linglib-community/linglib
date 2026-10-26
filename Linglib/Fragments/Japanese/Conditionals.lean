@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Conditionals.Reading
 public import Linglib.Semantics.Modality.XMarking
+public import Linglib.Fragments.Japanese.Morph
 
 /-!
 # Japanese conditional markers
@@ -44,8 +45,9 @@ def eba : Conditional.Marker where
   morphs := [.suff "(e)ba"]
   readings := ⟨({.hypothetical}, ⊤), le_top⟩
 
-/-- Japanese X-marking is the fake past *-ta* ([ogihara-2014], [mizuno-kaufmann-2019];
-[mizuno-2024] ex. 3). -/
-def xMarking : Option Modality.XMarking.XMarkingExponent := some ⟨"-ta", [.past]⟩
+/-- Japanese X-marking is the fake past, the past suffix `Japanese.Verb.Exponent.ta`
+([ogihara-2014], [mizuno-kaufmann-2019]; [mizuno-2024] ex. 3). -/
+def xMarking : Option Modality.XMarking.XMarkingExponent :=
+  some ⟨Morphology.Morph.surface Verb.Exponent.ta.morphs, [.past]⟩
 
 end Japanese.Conditionals

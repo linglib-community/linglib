@@ -34,7 +34,7 @@ open PolarityItem
     [watanabe-2004] analyzes it as a negative-concord item.
 
     On the Hamblin-universal analysis of *-mo* ([shimoyama-2006],
-    [kratzer-shimoyama-2002]; so also `Japanese.Determiners.dare_mo`)
+    [kratzer-shimoyama-2002]; so also `Japanese.Determiners.dareMo`)
     *dare-mo…nai* is ∀ scoping over negation; the rival negative-indefinite
     tradition posits ¬∃
     (truth-conditionally equivalent under plain clausemate negation, teased
